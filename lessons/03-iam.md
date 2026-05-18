@@ -12,6 +12,287 @@ Sau bài này bạn có thể:
 
 ## 2. Lý thuyết
 
+### 2.0 Analogy — IAM như toà nhà văn phòng
+
+Để dễ hình dung, tưởng tượng AWS Account của bạn là **1 toà nhà văn phòng**:
+
+| Khái niệm IAM | Trong toà nhà | Ý nghĩa |
+|---------------|----------------|---------|
+| **AWS Account** | Toà nhà | Boundary, có chủ sở hữu (root). |
+| **Root user** | Chủ toà nhà | Chìa khoá tổng, mở mọi cửa. **Cất đi**, chỉ dùng khi cần. |
+| **IAM User** | Nhân viên có thẻ tên | 1 người = 1 thẻ riêng, không share. |
+| **IAM Group** | Phòng ban (Dev, Ops, HR) | Cùng phòng → cùng quyền vào phòng nào. |
+| **IAM Role** | Thẻ khách tạm thời quầy lễ tân | Đến → đổi CMND → lấy thẻ tạm → vào → trả lại. **Không có chủ cố định**. |
+| **Policy** | Tờ giấy "thẻ này được vào phòng nào" | Quy định cụ thể quyền truy cập. |
+| **Trust Policy** (của Role) | Quy định ai được đổi lấy thẻ khách | "Chỉ EC2 service / chỉ account B / chỉ user login Google được lấy thẻ này". |
+| **Permissions Policy** | Sau khi có thẻ, vào được phòng nào | "Thẻ này mở được kho A, không mở được kho B". |
+| **STS** | Quầy lễ tân | Phát thẻ tạm có thời hạn (1 giờ, 12 giờ…). |
+| **MFA** | Thẻ + vân tay | 2 lớp xác thực, mất thẻ chưa đủ vào được. |
+| **SCP** | Quy định toàn toà nhà của chủ đầu tư | "Cấm tuyệt đối hút thuốc trong toà nhà" — dù bạn là Admin trong công ty thuê. |
+| **Permission Boundary** | Hợp đồng lao động giới hạn quyền tối đa của nhân viên | Sếp giao Admin nhưng hợp đồng giới hạn "chỉ Asia" → chỉ Asia. |
+| **Resource-based Policy** | Khoá ổ cửa của 1 phòng cụ thể | "Phòng này cho phép cả nhân viên công ty B vào". |
+| **Access Key** | Chìa khoá vật lý | Có chìa = vào được. **Mất là nguy hiểm**, không hết hạn. |
+| **Session Token (STS)** | Thẻ tạm có dán giờ hết hạn | An toàn hơn chìa khoá vật lý. |
+
+---
+
+### 2.0.1 Câu chuyện: 1 ngày làm việc với IAM
+
+**Tình huống**: Bạn quản lý team 5 dev + 2 ops cho công ty Acme, có 1 web app (EC2 + S3 + RDS) và 1 CI/CD GitHub Actions.
+
+#### Sai cách (anti-pattern)
+- Chia chung 1 user `acme-root@gmail.com`, ai cần thì hỏi sếp xin pass.
+- Mỗi dev tự `aws configure` access key root vào laptop.
+- App EC2 hardcode access key trong `.env`.
+- GitHub Actions secret = access key của 1 user.
+
+→ Hệ quả: dev bị hack máy → leak key root → attacker xoá hết.
+
+#### Đúng cách
+1. **Root** đăng ký xong, bật MFA hardware, **cất ngăn kéo**.
+2. Tạo **IAM Group `Developers`** với policy `PowerUserAccess` (không phải Admin).
+3. Tạo **IAM User `alice`, `bob`, …** cho từng dev, add vào group, **bật MFA mỗi user**.
+4. **App trên EC2** → tạo **Role `app-prod-role`** trust `ec2.amazonaws.com`, gắn `AmazonS3ReadOnly` + DDB read/write. **Không có access key nào**.
+5. **GitHub Actions** → setup **OIDC Provider**, tạo **Role `gh-actions-deployer`** trust GitHub OIDC, condition `sub = repo:acme/web:*`. Workflow `AssumeRoleWithWebIdentity` → temp credential 1 giờ.
+6. **Ops cross-account** sang account `acme-prod`: tạo **Role `OpsAdmin`** ở prod trust account `acme-dev`, condition MFA. Ops trong dev `AssumeRole` khi cần.
+7. **SCP** ở Organization: deny mọi region trừ `ap-southeast-1` + `us-east-1`.
+8. **Permission Boundary** cho group `Developers`: max `s3:*, ec2:*, logs:*` nhưng KHÔNG bao gồm `iam:*` → dev không thể tạo role tự nâng quyền.
+
+→ Bị hack 1 dev laptop chỉ ảnh hưởng phạm vi dev đó, không leak prod.
+
+---
+
+### 2.0.2 Use case map — chọn cái nào khi nào
+
+| Tình huống | Dùng gì | Tại sao |
+|-----------|---------|---------|
+| Người thật login console | **IAM User** (nếu ít) hoặc **IAM Identity Center** (nếu ≥ 2 account / ≥ 5 user) | Identity Center có SSO, không cần tạo user từng account. |
+| EC2/Lambda/ECS gọi AWS API | **IAM Role + Instance Profile / Execution Role** | Temp credential auto-rotate, không hardcode. |
+| App on-prem (datacenter công ty) gọi AWS | **IAM Roles Anywhere** (X.509 cert) hoặc **IAM User access key cuối cùng** | Roles Anywhere = không có long-term key. |
+| GitHub Actions / GitLab CI deploy AWS | **OIDC Federation + Role** | Không lưu access key trong CI secret. |
+| User login Google/Facebook vào app, app cần upload S3 | **Cognito Identity Pool → temp IAM credential** | Web/mobile user không có IAM user. |
+| Account A muốn cho account B đọc S3 bucket | **Bucket Policy + IAM Role cross-account** | 2 cách: resource policy trực tiếp (đơn giản) hoặc AssumeRole (audit tốt hơn). |
+| Cho contractor truy cập 1 tuần | **IAM Role với MaxSessionDuration + AssumeRole** | Hết hạn tự revoke, không phải xoá user. |
+| Lambda trong account A gọi DynamoDB account B | **Cross-account Role** + Lambda execution role có `sts:AssumeRole` | DynamoDB không có resource policy, phải qua role. |
+| Bắt mọi user phải MFA mới làm việc | **Identity policy + Condition `aws:MultiFactorAuthPresent`** hoặc **SCP** | Force MFA. |
+| Giới hạn region cho cả org | **SCP với `aws:RequestedRegion`** | SCP áp toàn account. |
+| Sếp giao "tạo user dev được trong giới hạn" | **Permission Boundary** | Delegate tạo user nhưng không escalate. |
+| Service A của AWS gọi service B (vd Lambda gọi S3) | **Service-linked Role** hoặc execution role | AWS quản, ít cấu hình. |
+| Audit ai làm gì | **CloudTrail** + **Access Analyzer** + **Credential Report** | Không phải feature IAM thuần, nhưng đi kèm. |
+
+---
+
+### 2.0.3 Ví dụ cụ thể cho từng entity
+
+#### IAM User — khi nào dùng / không
+✅ **Dùng**:
+- CI/CD legacy không hỗ trợ OIDC (chạy trên server tự host).
+- Cá nhân học AWS lần đầu, 1 account.
+- Service account cho bot Slack/script chạy ngoài AWS.
+
+❌ **Không dùng**:
+- ≥ 2 account → dùng IAM Identity Center.
+- Workload chạy trên AWS (EC2, Lambda, ECS) → dùng Role.
+- GitHub Actions → dùng OIDC.
+
+**Ví dụ tạo user:**
+```bash
+# User `alice` cho dev
+aws iam create-user --user-name alice
+aws iam create-login-profile --user-name alice --password 'Temp123!' --password-reset-required
+aws iam add-user-to-group --group-name Developers --user-name alice
+aws iam enable-mfa-device --user-name alice --serial-number arn:aws:iam::123456789012:mfa/alice ...
+```
+
+#### IAM Group — khi nào dùng
+✅ Luôn dùng khi có ≥ 2 user cùng vai trò.
+
+**Ví dụ phân nhóm thực tế:**
+- `Developers` — `PowerUserAccess` (mọi service trừ IAM).
+- `Ops` — `AdministratorAccess` + MFA required.
+- `BillingViewers` — `Billing` read-only, cho kế toán.
+- `Auditors` — `SecurityAudit` + `ViewOnlyAccess`.
+- `DataScientists` — `AmazonS3ReadOnlyAccess` + `AmazonAthenaFullAccess`.
+
+#### IAM Role — 4 use case kinh điển
+**1. EC2 đọc S3** (Instance Profile)
+```bash
+# Trust policy: ai assume? → EC2 service
+{ "Service": "ec2.amazonaws.com" }
+# Permissions: S3 read
+```
+EC2 boot → IMDS auto-rotate credential 6 giờ.
+
+**2. Lambda ghi DynamoDB** (Execution Role)
+```bash
+{ "Service": "lambda.amazonaws.com" }
+# Permissions: dynamodb:PutItem + logs:CreateLogStream
+```
+Tạo Lambda → chọn execution role → done.
+
+**3. Cross-account: account dev gọi prod S3**
+```bash
+# Ở prod: role `DevReadOnly` trust account dev
+{ "AWS": "arn:aws:iam::DEV-ACCOUNT:root" }
+# Permissions: s3:Get* trên bucket cụ thể
+```
+Dev `aws sts assume-role --role-arn arn:aws:iam::PROD:role/DevReadOnly`.
+
+**4. Federated: GitHub Actions deploy**
+```bash
+# Trust policy: federated OIDC
+{
+  "Federated": "arn:aws:iam::123:oidc-provider/token.actions.githubusercontent.com",
+  "Action": "sts:AssumeRoleWithWebIdentity",
+  "Condition": { "StringLike": { "...:sub": "repo:acme/web:ref:refs/heads/main" } }
+}
+```
+Workflow GitHub → `aws-actions/configure-aws-credentials@v4` → temp credential.
+
+#### Policy — ví dụ progressive
+
+**Level 1 — Allow basic** (cho intern read S3):
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Action": ["s3:GetObject", "s3:ListBucket"],
+    "Resource": ["arn:aws:s3:::reports/*", "arn:aws:s3:::reports"]
+  }]
+}
+```
+
+**Level 2 — Giới hạn theo resource cụ thể** (chỉ EC2 trong region SG có tag `Env=dev`):
+```json
+{
+  "Effect": "Allow",
+  "Action": ["ec2:StartInstances", "ec2:StopInstances"],
+  "Resource": "arn:aws:ec2:ap-southeast-1:*:instance/*",
+  "Condition": {
+    "StringEquals": { "ec2:ResourceTag/Env": "dev" }
+  }
+}
+```
+→ Dev chỉ start/stop được instance của họ (tag `Env=dev`), không động được prod (`Env=prod`).
+
+**Level 3 — Bắt buộc MFA mới đụng được delete**:
+```json
+{
+  "Effect": "Allow",
+  "Action": "s3:DeleteObject",
+  "Resource": "arn:aws:s3:::important-data/*",
+  "Condition": {
+    "Bool": { "aws:MultiFactorAuthPresent": "true" },
+    "NumericLessThan": { "aws:MultiFactorAuthAge": "3600" }
+  }
+}
+```
+→ Chỉ delete được trong 1 giờ sau khi MFA.
+
+**Level 4 — Deny vượt cấp** (chống developer tự nâng quyền):
+```json
+{
+  "Effect": "Deny",
+  "Action": ["iam:*", "organizations:*", "account:*"],
+  "Resource": "*"
+}
+```
+→ Gắn vào Developer group, **Explicit Deny luôn thắng** → dev không thể tạo Admin user.
+
+#### SCP — ví dụ thực tế
+
+**Case 1: cấm region khác**
+```json
+{
+  "Effect": "Deny",
+  "NotAction": ["iam:*", "route53:*", "cloudfront:*", "support:*"],
+  "Resource": "*",
+  "Condition": {
+    "StringNotEquals": { "aws:RequestedRegion": ["ap-southeast-1", "us-east-1"] }
+  }
+}
+```
+→ Mọi user trong account dù Admin cũng không launch được EC2 ở Mumbai. **Tránh shadow IT + tránh data leak compliance**.
+
+**Case 2: cấm tắt CloudTrail**
+```json
+{ "Effect": "Deny",
+  "Action": ["cloudtrail:StopLogging", "cloudtrail:DeleteTrail"],
+  "Resource": "*" }
+```
+→ Hacker compromise admin cũng không xoá audit log được.
+
+**Case 3: bắt mọi EC2 phải có tag `Project`**
+```json
+{ "Effect": "Deny",
+  "Action": "ec2:RunInstances",
+  "Resource": "arn:aws:ec2:*:*:instance/*",
+  "Condition": { "Null": { "aws:RequestTag/Project": "true" } } }
+```
+→ FinOps được đảm bảo.
+
+#### Permission Boundary — kịch bản delegation
+
+**Bài toán**: Sếp muốn cho mỗi dev được **tự tạo IAM role cho Lambda của họ**, nhưng KHÔNG được tạo role Admin.
+
+**Sai**: gắn `iam:*` cho dev → dev tự tạo role `MyAdmin` rồi assume → escalate.
+
+**Đúng**:
+1. Tạo Boundary policy `DevBoundary` = max `s3:*, dynamodb:*, logs:*, lambda:*` (KHÔNG có `iam:*`).
+2. Gắn cho dev policy:
+   ```json
+   { "Effect": "Allow",
+     "Action": "iam:CreateRole",
+     "Resource": "*",
+     "Condition": {
+       "StringEquals": { "iam:PermissionsBoundary": "arn:aws:iam::123:policy/DevBoundary" }
+     }}
+   ```
+3. Dev tạo role được, nhưng **bắt buộc** gắn boundary `DevBoundary` → role mới không thể có quyền vượt boundary.
+
+#### Resource-based policy — ví dụ S3 bucket
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowPartnerRead",
+      "Effect": "Allow",
+      "Principal": { "AWS": "arn:aws:iam::PARTNER-ACCT:root" },
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::shared-reports/*"
+    },
+    {
+      "Sid": "DenyInsecureTransport",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "s3:*",
+      "Resource": ["arn:aws:s3:::shared-reports", "arn:aws:s3:::shared-reports/*"],
+      "Condition": { "Bool": { "aws:SecureTransport": "false" } }
+    }
+  ]
+}
+```
+→ Partner account đọc được file, nhưng phải qua HTTPS.
+
+---
+
+### 2.0.4 5 hiểu lầm phổ biến
+
+1. **"IAM Role = chức danh của user"** — SAI. Role = identity tạm thời mọi thứ (EC2, Lambda, người khác) đều có thể "đeo" tạm. Không gắn vào 1 người cố định.
+
+2. **"Có IAM policy là Allow"** — SAI. Default là **Deny**. Phải có Allow rõ ràng, **và** không có Deny chồng. Không Allow = Deny.
+
+3. **"Bucket policy override IAM policy"** — SAI. 2 cái cộng dồn. Allow ở **bất kỳ một bên** trong same account là đủ. Cross-account thì cần **cả 2** allow.
+
+4. **"SCP grant quyền"** — SAI. SCP **chỉ giới hạn trần**, không grant. User vẫn cần IAM policy để có quyền thực sự.
+
+5. **"Access Key của user X có nghĩa là ai gọi cũng là user X"** — ĐÚNG về kỹ thuật, nhưng **đó chính là vấn đề** — vì sao không nên dùng access key. Mất key = mất identity.
+
+---
+
 ### 2.1 IAM là gì?
 IAM trả lời 2 câu hỏi:
 1. **AuthN — Ai đang gọi API?** (user/role/service)

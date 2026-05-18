@@ -1,0 +1,19 @@
+# LocalStack runtime data
+.localstack-data/
+volume/
+
+# Lambda build artifacts
+*.zip
+node_modules/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# Local credentials (just in case)
+.env
+.env.local
+*.pem
+credentials

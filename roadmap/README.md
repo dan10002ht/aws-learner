@@ -48,6 +48,7 @@ Nếu bạn đang làm việc trên GCP hằng ngày, đọc **[aws-vs-gcp.md](a
 - `roadmap/` — lộ trình tổng thể, checklist, tài nguyên.
 - `roadmap/aws-vs-gcp.md` — bảng map service AWS ↔ GCP (cho người đang làm GCP).
 - `lessons/` — bài học chi tiết từng chủ đề, có lab hướng dẫn và lab thay thế (no-cost).
+- `practice/` — bài tập thực hành theo lesson (LocalStack + AWS CLI + Terraform + diagrams).
 
 Đọc theo thứ tự trong [clf-c02.md](clf-c02.md) trước, làm lab tương ứng trong `lessons/`, rồi mới sang SAA.
 

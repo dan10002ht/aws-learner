@@ -15,10 +15,10 @@ Mỗi bài học có cấu trúc:
 2. [02-shared-responsibility.md](02-shared-responsibility.md)
 3. [03-iam.md](03-iam.md)
 4. [04-ec2.md](04-ec2.md)
-5. [05-s3.md](05-s3.md)
-6. [06-vpc.md](06-vpc.md)
-7. [07-databases.md](07-databases.md)
-8. [08-billing.md](08-billing.md)
+5. [05-s3.md](05-s3.md) ✅
+6. [06-vpc.md](06-vpc.md) ✅
+7. [07-databases.md](07-databases.md) ✅
+8. [08-billing.md](08-billing.md) ✅
 
 ## Mở rộng (SAA-C03)
 

@@ -1,0 +1,21 @@
+services:
+  localstack:
+    container_name: localstack
+    image: localstack/localstack:3
+    ports:
+      - "4566:4566"            # LocalStack edge port (all services qua port này)
+      - "4510-4559:4510-4559"  # external services port range
+    environment:
+      - DEBUG=0
+      - SERVICES=s3,lambda,iam,sts,logs,cloudwatch,sqs,sns,dynamodb,events,apigateway
+      - PERSISTENCE=1
+      - LAMBDA_EXECUTOR=docker-reuse
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "./.localstack-data:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

@@ -1,0 +1,34 @@
+# Credentials & secrets
+.env
+.env.*
+*.pem
+*.key
+*credentials*
+aws-credentials
+.aws/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+.terraform.lock.hcl
+
+# LocalStack
+.localstack/
+volume/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Build / temp
+node_modules/
+__pycache__/
+*.pyc
+.pytest_cache/
+tmp/
+*.log
