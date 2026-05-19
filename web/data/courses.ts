@@ -1,0 +1,97 @@
+import type { Course, CourseId } from "@/lib/types";
+
+export const courses: Course[] = [
+  {
+    id: "CLF-C02",
+    code: "CLF-C02",
+    title: "AWS Certified Cloud Practitioner",
+    shortTitle: "Cloud Practitioner",
+    level: "Foundational",
+    description:
+      "Khoá nền tảng AWS: khái niệm cloud, mô hình dịch vụ, security cơ bản, billing. Phù hợp người mới bắt đầu.",
+    hint: "Bắt đầu từ đây nếu bạn mới làm quen với AWS.",
+    durationHours: 30,
+    passingScore: 70,
+    examMinutes: 90,
+    examQuestions: 65,
+    accentColor: "#06b6d4",
+    order: 1,
+    status: "available",
+  },
+  {
+    id: "SAA-C03",
+    code: "SAA-C03",
+    title: "AWS Certified Solutions Architect — Associate",
+    shortTitle: "Solutions Architect",
+    level: "Associate",
+    description:
+      "Thiết kế hệ thống AWS có tính sẵn sàng cao, chi phí hợp lý, an toàn và scalable. Đi sâu vào EC2, VPC, S3, IAM, DB.",
+    hint: "Sau khi nắm vững CLF, đây là chứng chỉ Associate phổ biến nhất.",
+    durationHours: 80,
+    passingScore: 72,
+    examMinutes: 130,
+    examQuestions: 65,
+    prerequisites: ["CLF-C02"],
+    accentColor: "#a855f7",
+    order: 2,
+    status: "coming-soon",
+  },
+  {
+    id: "DVA-C02",
+    code: "DVA-C02",
+    title: "AWS Certified Developer — Associate",
+    shortTitle: "Developer",
+    level: "Associate",
+    description:
+      "Dành cho developer: Lambda, API Gateway, DynamoDB, CI/CD, SAM/CDK, cấu hình runtime SDK.",
+    hint: "Phù hợp lập trình viên muốn build serverless trên AWS.",
+    durationHours: 70,
+    passingScore: 72,
+    examMinutes: 130,
+    examQuestions: 65,
+    prerequisites: ["CLF-C02"],
+    accentColor: "#22c55e",
+    order: 3,
+    status: "coming-soon",
+  },
+  {
+    id: "SOA-C02",
+    code: "SOA-C02",
+    title: "AWS Certified SysOps Administrator — Associate",
+    shortTitle: "SysOps Admin",
+    level: "Associate",
+    description:
+      "Vận hành hệ thống AWS: monitoring, automation, networking advanced, troubleshooting, cost optimization.",
+    hint: "Cho ai làm DevOps / vận hành. Khó hơn SAA do có lab thực hành.",
+    durationHours: 80,
+    passingScore: 72,
+    examMinutes: 180,
+    examQuestions: 65,
+    prerequisites: ["CLF-C02"],
+    accentColor: "#eab308",
+    order: 4,
+    status: "coming-soon",
+  },
+  {
+    id: "SAP-C02",
+    code: "SAP-C02",
+    title: "AWS Certified Solutions Architect — Professional",
+    shortTitle: "Architect Pro",
+    level: "Professional",
+    description:
+      "Nâng cao: kiến trúc multi-account, hybrid, migration lớn, cost & security ở quy mô enterprise.",
+    hint: "Đỉnh cao của Solutions Architect. Yêu cầu đã có SAA.",
+    durationHours: 120,
+    passingScore: 75,
+    examMinutes: 180,
+    examQuestions: 75,
+    prerequisites: ["SAA-C03"],
+    accentColor: "#ef4444",
+    order: 5,
+    status: "coming-soon",
+  },
+];
+
+export function getCourse(id: CourseId | string): Course | undefined {
+  return courses.find((c) => c.id === id);
+}
