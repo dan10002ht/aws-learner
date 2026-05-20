@@ -11,6 +11,91 @@ Sau bài này bạn có thể:
 
 ## 2. Lý thuyết
 
+### 2.0 Analogy — Database như các loại tủ lưu trữ
+
+| Database | Loại tủ trong nhà | Đặc trưng |
+|----------|---------------------|-----------|
+| **RDS (MySQL/Postgres)** | Tủ hồ sơ có ngăn kéo theo alphabet | Quan hệ, ACID, SQL. Dễ tìm khi biết key, khó tìm khi không. |
+| **Aurora** | Tủ hồ sơ siêu tốc, tự nhân bản 6 bản qua 3 phòng | RDS-compatible nhưng 3-5x performance, storage tự scale. |
+| **DynamoDB** | Vô số hộc nhỏ đánh số sẵn, lấy 1 hộc < 1 giây | NoSQL key-value, single-digit ms latency, scale ∞. |
+| **DocumentDB** | Album dán document JSON | MongoDB-compatible. |
+| **Neptune** | Sơ đồ gia phả với mũi tên nối | Graph database (social, fraud detection). |
+| **Timestream** | Cuốn nhật ký theo ngày tháng | Time-series (IoT, metrics). |
+| **Keyspaces** | Cassandra wide-column | Apache Cassandra-compatible. |
+| **QLDB** | Sổ kế toán có niêm phong từng trang | Immutable ledger, cryptographic verify. |
+| **ElastiCache (Redis/Memcached)** | Bàn ngay chỗ ngồi để vật dụng dùng liên tục | In-memory, sub-millisecond. |
+| **MemoryDB** | Bàn có két chống cháy | Redis-compatible nhưng durable (Multi-AZ). |
+| **OpenSearch** | Thư mục search có index ngược | Full-text search, log analytics. |
+| **Redshift** | Kho lưu trữ phân tích báo cáo cả công ty | Data warehouse, OLAP cột. |
+| **Athena** | Đội điều tra đến tận kho lục file | Query S3 trực tiếp bằng SQL. |
+| **Glue** | Người dọn dẹp + đánh nhãn kho | ETL + Data Catalog. |
+
+**Quy tắc vàng**: chọn DB **theo access pattern** (đọc/ghi/query thế nào) chứ không theo "mới nhất / phổ biến". OLTP nhỏ → RDS. OLTP scale ∞ → DynamoDB. OLAP báo cáo → Redshift / Athena.
+
+---
+
+### 2.0.1 Câu chuyện — Startup chọn DB sai và phải migrate trong khủng hoảng
+
+**Tình huống**: Acme làm app social network. Founder kỹ thuật quen MongoDB từ trường, deploy MongoDB self-managed trên EC2.
+
+#### Phase 1 (sai cách) — 0 → 10k user
+- 1 EC2 r5.large + MongoDB self-managed.
+- Chạy ổn 1 năm, $200/tháng.
+- Backup: cron `mongodump` mỗi đêm vào S3.
+
+#### Phase 2 (khủng hoảng) — 100k user
+- DB chậm, query post timeline 5 giây.
+- Cài thêm 2 replica → vẫn chậm vì write all-to-one.
+- Sharding tay → 3 tháng dev, downtime 2 lần mỗi shard rebalance.
+- DBA mới vào: "MongoDB cho social timeline là sai schema design — phải dùng denormalized fan-out, nên dùng DynamoDB + GSI".
+
+#### Phase 3 (migrate đau đớn)
+- 6 tháng migrate sang **DynamoDB** với schema redesign.
+- Học lại pattern: **single-table design**, **hot partition**, **GSI**, **DynamoDB Streams**.
+- Sau migrate: query 30ms, scale lên 1M user dễ dàng, không cần DBA.
+
+#### Bài học
+- **Chọn DB sai từ đầu** = nợ kỹ thuật khổng lồ.
+- **Self-managed DB trên EC2** chỉ nên khi bạn có DBA full-time và lý do thật sự (compliance, custom engine).
+- **DocumentDB managed** sẽ tốt hơn MongoDB self-managed về vận hành, nhưng **vẫn cùng paradigm** — không cứu được lỗi schema design.
+- Với social network, **DynamoDB + denormalize timeline + caching ElastiCache** là pattern được kiểm chứng (Netflix, Lyft, Tinder dùng).
+
+---
+
+### 2.0.2 Use case map — chọn DB cho 12 tình huống
+
+| Tình huống | Recommend | Lý do |
+|------------|-----------|-------|
+| User profile + transactional (đặt hàng, payment) | **RDS Postgres** hoặc **Aurora Postgres** | ACID, SQL quen thuộc, foreign key. |
+| Catalog sản phẩm e-commerce 100k items, search + filter | **RDS** + **OpenSearch** (cho search) | RDS authoritative, OpenSearch index search. |
+| Cart, session người dùng web | **DynamoDB** (TTL) hoặc **ElastiCache Redis** | Single-digit ms latency, ephemeral OK. |
+| Like, follow, timeline (social network) | **DynamoDB** denormalized | Hot read fan-out, scale ∞. |
+| Bảng leaderboard game realtime | **ElastiCache Redis** (sorted set) | O(log n) ranking. |
+| IoT sensor data 1M event/s | **Timestream** hoặc **DynamoDB + Kinesis** | Time-series optimized. |
+| Báo cáo BI cuối tháng từ data 1 năm | **Redshift** | Columnar, optimized OLAP. |
+| Ad-hoc query trên log S3 không cần DB riêng | **Athena** | Pay-per-query, serverless. |
+| Phân tích log app | **OpenSearch** | Full-text + dashboards. |
+| Knowledge graph (recommendation, fraud) | **Neptune** | Graph traversal nhanh. |
+| Sổ giao dịch ngân hàng cần immutable audit | **QLDB** | Cryptographic verify. |
+| Cache query RDS để giảm tải | **ElastiCache** (read-through pattern) | Tự động evict, TTL. |
+| Multi-region active-active write | **DynamoDB Global Tables** hoặc **Aurora Global** | Multi-master replication. |
+
+---
+
+### 2.0.3 5 hiểu lầm phổ biến về Database AWS
+
+1. **"RDS và Aurora là 1"** — SAI. RDS là **dịch vụ managed** cho 6 engine (MySQL, Postgres, MariaDB, Oracle, SQL Server, Aurora). Aurora là **engine của AWS**, compatible wire-protocol với MySQL/Postgres nhưng kiến trúc khác (storage tách compute, auto-scale 10GB → 128TB, replicate 6 copy qua 3 AZ). Aurora là 1 tuỳ chọn engine trong RDS.
+
+2. **"DynamoDB là MongoDB của AWS"** — SAI. DynamoDB là **key-value/document NoSQL** với access pattern phải design trước. MongoDB là **document NoSQL flexible schema, query phong phú hơn**. AWS equivalent của MongoDB là **DocumentDB**. Đừng nghĩ DynamoDB query được như MongoDB — DynamoDB chỉ query theo **partition key + sort key** (hoặc GSI).
+
+3. **"Multi-AZ trong RDS giúp scale read"** — SAI. Multi-AZ là **HA** — standby ở AZ khác sync replication, **không serve traffic**. Muốn scale read dùng **Read Replica** (async replication, có thể đọc, có thể cross-region). Multi-AZ và Read Replica là 2 khái niệm độc lập.
+
+4. **"DynamoDB scale tự động hoàn toàn miễn lo"** — SAI một phần. DynamoDB scale capacity tự động **nếu dùng On-Demand mode** hoặc **Auto Scaling cho Provisioned mode**. Nhưng **hot partition** (1 partition key bị truy cập nhiều) vẫn throttle. Cần design partition key đều (vd thêm random suffix cho hot key, hoặc dùng **adaptive capacity**).
+
+5. **"ElastiCache Redis durable như DynamoDB"** — SAI. ElastiCache Redis có **snapshot + AOF** nhưng vẫn có thể mất data nếu node crash giữa snapshot. Muốn Redis durable thật sự (Multi-AZ sync) → dùng **MemoryDB for Redis** (durable in-memory DB của AWS).
+
+---
+
 ### 2.1 Map nhu cầu → service
 
 | Nhu cầu | Service |

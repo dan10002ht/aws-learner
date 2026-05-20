@@ -36,7 +36,7 @@ export default function PracticeListPage({ params }: { params: { courseId: strin
       </Link>
 
       <header>
-        <h1 className="text-3xl font-extrabold">Luyện đề</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold">Luyện đề</h1>
         <p className="text-[var(--text-dim)] mt-2">
           Practice = xem giải thích ngay sau mỗi câu. Exam = có timer, nộp bài cuối mới chấm điểm.
         </p>
@@ -75,22 +75,22 @@ function SetRow({ setKey, courseId, label, description, count }: {
 }) {
   const disabled = count === 0;
   return (
-    <div className={`card p-4 flex items-center justify-between gap-3 ${disabled ? "opacity-50" : ""}`}>
+    <div className={`card p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${disabled ? "opacity-50" : ""}`}>
       <div className="min-w-0 flex-1">
-        <div className="font-semibold truncate">{label}</div>
+        <div className="font-semibold">{label}</div>
         <div className="text-sm text-[var(--text-dim)] mt-0.5">{description}</div>
         <div className="text-xs text-[var(--text-mute)] mt-1">{count} câu khả dụng</div>
       </div>
-      <div className="flex items-center gap-2 flex-shrink-0">
+      <div className="flex items-center gap-2 sm:flex-shrink-0">
         <Link
           href={disabled ? "#" : `/courses/${courseId}/practice/${encodeURIComponent(setKey)}`}
-          className={`btn3d btn3d-primary btn3d-sm ${disabled ? "pointer-events-none" : ""}`}
+          className={`btn3d btn3d-primary btn3d-sm flex-1 sm:flex-none ${disabled ? "pointer-events-none" : ""}`}
         >
           Practice <ChevronRight size={14} />
         </Link>
         <Link
           href={disabled ? "#" : `/courses/${courseId}/exam/${encodeURIComponent(setKey)}`}
-          className={`btn3d btn3d-secondary btn3d-sm ${disabled ? "pointer-events-none" : ""}`}
+          className={`btn3d btn3d-secondary btn3d-sm flex-1 sm:flex-none ${disabled ? "pointer-events-none" : ""}`}
         >
           Exam <ChevronRight size={14} />
         </Link>

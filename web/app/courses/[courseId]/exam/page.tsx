@@ -23,27 +23,27 @@ export default function ExamListPage({ params }: { params: { courseId: string } 
         ← Tổng quan {course.shortTitle}
       </Link>
       <header>
-        <h1 className="text-3xl font-extrabold">Mô phỏng thi</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold">Mô phỏng thi</h1>
         <p className="text-[var(--text-dim)] mt-2">Có timer. Không hiện đáp án cho tới khi nộp bài. Kết quả ghi vào History.</p>
       </header>
 
       {mock && (
         <div className="card p-6 relative overflow-hidden">
           <span className="absolute top-0 left-0 right-0 h-1" style={{ background: course.accentColor }} />
-          <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
             <div className="min-w-0">
               <div className="text-xs font-mono text-[var(--text-mute)]">{course.code}</div>
               <div className="font-bold text-lg">{mock.label}</div>
               <div className="text-sm text-[var(--text-dim)] mt-1">{mock.description}</div>
-              <div className="flex items-center gap-4 text-xs text-[var(--text-dim)] mt-3">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--text-dim)] mt-3">
                 <span className="flex items-center gap-1"><Clock size={14} /> {course.examMinutes} phút</span>
-                <span>· {questions.filter((q) => q.courseId === course.id).length} câu khả dụng</span>
-                <span>· Pass {course.passingScore}%</span>
+                <span>{questions.filter((q) => q.courseId === course.id).length} câu khả dụng</span>
+                <span>Pass {course.passingScore}%</span>
               </div>
             </div>
             <Link
               href={`/courses/${course.id}/exam/${encodeURIComponent(mock.key)}`}
-              className="btn3d btn3d-primary"
+              className="btn3d btn3d-primary w-full md:w-auto"
             >
               Vào phòng thi <ChevronRight size={16} />
             </Link>
@@ -62,14 +62,14 @@ export default function ExamListPage({ params }: { params: { courseId: string } 
               : 0;
             const disabled = count === 0;
             return (
-              <div key={s.key} className={`card p-4 flex items-center justify-between gap-3 ${disabled ? "opacity-50" : ""}`}>
+              <div key={s.key} className={`card p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${disabled ? "opacity-50" : ""}`}>
                 <div className="min-w-0">
                   <div className="font-semibold">{s.label}</div>
                   <div className="text-xs text-[var(--text-dim)] mt-1">{count} câu · {s.defaultExamMinutes} phút mặc định</div>
                 </div>
                 <Link
                   href={disabled ? "#" : `/courses/${course.id}/exam/${encodeURIComponent(s.key)}`}
-                  className={`btn3d btn3d-secondary btn3d-sm ${disabled ? "pointer-events-none" : ""}`}
+                  className={`btn3d btn3d-secondary btn3d-sm w-full sm:w-auto ${disabled ? "pointer-events-none" : ""}`}
                 >
                   Vào thi <ChevronRight size={14} />
                 </Link>

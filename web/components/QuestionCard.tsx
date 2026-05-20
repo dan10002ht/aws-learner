@@ -27,7 +27,7 @@ export default function QuestionCard({
   const isMulti = question.type === "multi";
 
   return (
-    <div className="card p-6">
+    <div className="card p-4 sm:p-6">
       <div className="flex items-center justify-between mb-4 text-xs text-[var(--text-mute)] uppercase tracking-wide">
         <span>
           {questionNumber !== undefined && totalQuestions !== undefined && (
@@ -37,7 +37,7 @@ export default function QuestionCard({
         <span>{question.difficulty} · {isMulti ? "Multi" : "Single"}</span>
       </div>
 
-      <h2 className="text-lg md:text-xl font-bold mb-5 leading-snug">{question.question}</h2>
+      <h2 className="text-base sm:text-lg md:text-xl font-bold mb-5 leading-snug">{question.question}</h2>
 
       <div className="space-y-2.5">
         {optionMap.map((origIdx, displayedIdx) => {

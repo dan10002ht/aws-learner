@@ -34,7 +34,7 @@ export default function HistoryPage() {
     <div className="space-y-6">
       <header className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="text-3xl font-extrabold">History</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold">History</h1>
           <p className="text-[var(--text-dim)] mt-1">Lịch sử {items.length} lần luyện/thi gần đây.</p>
         </div>
         {items.length > 0 && (

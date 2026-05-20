@@ -9,7 +9,7 @@ export default function HomePage() {
     <div className="space-y-12">
       <section className="pt-6 pb-2">
         <p className="text-sm font-semibold tracking-widest text-brand-500 uppercase mb-2">AWS Learner</p>
-        <h1 className="text-4xl md:text-5xl font-extrabold leading-tight max-w-2xl">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight max-w-2xl">
           Học AWS từ <span className="text-brand-500">cơ bản</span> đến <span className="text-brand-500">pro</span>.
         </h1>
         <p className="text-[var(--text-dim)] mt-3 max-w-2xl">

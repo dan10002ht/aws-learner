@@ -12,6 +12,93 @@ Sau bài này bạn có thể:
 
 ## 2. Lý thuyết
 
+### 2.0 Analogy — VPC như khu đô thị có cổng
+
+| Khái niệm VPC | Trong khu đô thị | Ý nghĩa |
+|---------------|--------------------|---------|
+| **VPC** | Cả khu đô thị có tường rào | Mạng ảo isolated, 1 region. |
+| **CIDR block** | Bản đồ địa chỉ nhà của khu | `10.0.0.0/16` = 65k địa chỉ. |
+| **Subnet** | 1 dãy phố trong khu | Block IP nhỏ hơn, nằm trong 1 AZ. |
+| **Public subnet** | Dãy phố mặt tiền có cổng ra đường lớn | Có route 0.0.0.0/0 → IGW. |
+| **Private subnet** | Dãy phố trong ngõ | Không có route IGW. Chỉ ra Internet qua NAT. |
+| **IGW (Internet Gateway)** | Cổng chính của khu đô thị (2 chiều) | Nối VPC ↔ Internet. |
+| **NAT Gateway** | Cổng phụ "1 chiều" cho ngõ | Private subnet ra Internet OK, Internet vào KHÔNG. |
+| **Route Table** | Bản đồ chỉ đường trên mỗi dãy phố | "Đi đâu thì rẽ cổng nào". |
+| **Security Group** | Bảo vệ ngay trước nhà bạn | Stateful, allow-only, gắn ENI. |
+| **NACL (Network ACL)** | Trạm gác đầu mỗi dãy phố | Stateless, có allow + deny, gắn subnet. |
+| **VPC Peering** | Cầu nối 2 khu đô thị | Point-to-point, không transitive. |
+| **Transit Gateway** | Vòng xuyến trung tâm nối nhiều khu | Hub-spoke, có transitive routing. |
+| **VPC Endpoint (Gateway)** | Lối tắt riêng tới chợ S3 / DynamoDB | Không qua IGW, không tốn data transfer. |
+| **VPC Endpoint (Interface)** | Quầy đại diện AWS service trong khu | ENI trong subnet bạn, đi qua PrivateLink. |
+| **Direct Connect** | Đường hầm vật lý riêng tới datacenter công ty | Bandwidth lớn, không qua Internet. |
+| **Site-to-Site VPN** | Đường hầm mã hoá qua Internet | Rẻ, nhanh setup. |
+| **Flow Logs** | Camera ghi lại mọi xe ra/vào | Audit + troubleshoot. |
+
+**Quy tắc vàng**: VPC = regional, subnet = AZ-bound. Đây là **bẫy #1** của người từ GCP qua AWS (GCP VPC global, subnet regional).
+
+---
+
+### 2.0.1 Câu chuyện — Startup mất $9,000 vì NAT Gateway và data transfer
+
+**Tình huống**: Acme deploy microservices trên ECS. Architect mới thiết kế: 5 service đặt trong private subnet, mỗi service gọi S3 và DynamoDB. Mỗi service generate ~10TB request/tháng (logs, metrics, image processing).
+
+#### Sai cách
+1. **5 service trong private subnet** đi qua **1 NAT Gateway** để gọi `s3.ap-southeast-1.amazonaws.com`.
+2. **NAT Gateway data processing fee**: **$0.045/GB**.
+3. 50TB/tháng × $0.045 = **$2,250 chỉ riêng data processing NAT**.
+4. Cộng **NAT Gateway hourly** $0.045 × 730h = $33.
+5. Service gọi RDS ở **AZ khác** → cross-AZ data transfer **$0.01/GB inter-AZ** in + out → thêm $500.
+6. CloudWatch Logs từ ECS → log endpoint cross-region (vì cấu hình sai) → **$0.09/GB** cross-region = thêm $5,000.
+
+→ Tổng bill **$9,000/tháng cho data movement** mà không tạo value gì.
+
+#### Đúng cách
+1. **VPC Endpoint Gateway cho S3 & DynamoDB** — **FREE**, không qua NAT, không tốn data transfer trong region.
+2. **VPC Endpoint Interface cho các AWS service khác** (Logs, KMS, Secrets) — $0.01/giờ + $0.01/GB nhưng vẫn rẻ hơn NAT nhiều.
+3. **CloudWatch Logs trong same region** với app, không cross-region.
+4. **Đặt RDS cùng AZ với app chính** (Multi-AZ vẫn OK, chỉ chú ý read traffic về primary).
+5. **VPC Flow Logs** để monitor data flow, alert khi cross-AZ vượt threshold.
+6. **Cost Explorer group by "Usage Type"** xem `DataTransfer-*` mỗi tháng.
+
+→ Bill giảm từ $9k xuống **~$200/tháng**. Saving = 97%.
+
+(Đây là **anti-pattern phổ biến nhất** về cost. NAT Gateway data processing fee là **silent killer** mà nhiều team không để ý đến khi audit.)
+
+---
+
+### 2.0.2 Use case map — Networking architectures
+
+| Tình huống | Architecture | Lý do |
+|------------|--------------|-------|
+| Web app 3-tier truyền thống | Public subnet (ALB) + Private subnet (EC2/ECS) + Private subnet (RDS) | Standard pattern. |
+| Microservices nội bộ không cần Internet | Tất cả Private subnet + VPC Endpoint cho AWS services | Không có NAT cost. |
+| Lambda cần truy cập RDS trong VPC | Lambda trong VPC + ENI trong private subnet | Lambda VPC mode. |
+| 2 VPC trong 1 account cần nói chuyện (vd dev ↔ shared services) | **VPC Peering** | Đơn giản nhất, point-to-point. |
+| 10+ VPC cross-account, cross-region | **Transit Gateway** | Hub-spoke, scale tốt. |
+| On-prem ↔ AWS thuần Internet | **Site-to-Site VPN** | Rẻ, encrypted IPsec. |
+| On-prem ↔ AWS bandwidth lớn ổn định | **Direct Connect** | Cáp vật lý private, 1-100 Gbps. |
+| User Internet → static site | CloudFront + S3 (no VPC) | Serverless. |
+| User Internet → app | CloudFront → ALB (public) → EC2 (private) | DDoS protection từ Shield free. |
+| Cho phép third-party access service của bạn | **PrivateLink (VPC Endpoint Service)** | Không expose qua Internet. |
+| Multi-region active-active | VPC ở 2+ region + Route 53 latency-based routing | + DynamoDB Global Tables. |
+| Compliance: tất cả traffic phải qua firewall | **AWS Network Firewall** đặt giữa subnet | Hoặc dùng appliance bên thứ ba. |
+
+---
+
+### 2.0.3 5 hiểu lầm phổ biến về VPC
+
+1. **"Private subnet = không có Internet"** — SAI một phần. Private subnet **không có Internet inbound** (không gắn IGW). Nhưng nếu route table có 0.0.0.0/0 → NAT Gateway → vẫn **outbound Internet OK**. Nhiều bug security là vì dev tưởng private là isolated hoàn toàn, mà app trong đó vẫn `curl api.attacker.com` được.
+
+2. **"Security Group là firewall của subnet"** — SAI. SG ở **instance level** (ENI), không phải subnet. **NACL** mới ở subnet level. SG stateful (return traffic auto cho qua), NACL stateless (phải khai báo cả inbound + outbound).
+
+3. **"VPC Peering có thể nối nhiều VPC như mesh"** — SAI một phần. Peering chỉ **point-to-point**, **không transitive** (A-B peering + B-C peering KHÔNG cho A ↔ C). Muốn mesh thì dùng **Transit Gateway**.
+
+4. **"Đổi CIDR của VPC sau khi tạo được"** — SAI. CIDR primary không đổi được. Chỉ thêm **secondary CIDR** (max 5 thêm). Plan CIDR cẩn thận từ đầu — vd `/16` cho VPC chính, chia `/20` cho subnet, để chừa chỗ cho expand.
+
+5. **"NAT Gateway free, chỉ tốn data transfer"** — SAI nghiêm trọng. NAT Gateway tính **$0.045/giờ** (~$33/tháng/AZ) + **$0.045/GB** processing fee. 3 AZ × NAT = $100/tháng baseline trước khi data. Đây là 1 trong những **service tốn tiền âm thầm** nhất AWS. **VPC Endpoint Gateway (S3/DDB) free** — luôn dùng khi có thể.
+
+---
+
 ### 2.1 VPC là gì
 - **VPC** = mạng ảo isolated của bạn trong 1 region.
 - Bạn chọn **CIDR block** (private IP range, RFC 1918): `10.0.0.0/16`, `172.16.0.0/16`, `192.168.0.0/16`.

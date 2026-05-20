@@ -31,7 +31,7 @@ export default function WrongAnswersPage() {
     <div className="space-y-6">
       <header className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="text-3xl font-extrabold">Review</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold">Review</h1>
           <p className="text-[var(--text-dim)] mt-1">
             {items.length} câu cần ôn lại — trả lời đúng ở Practice sẽ tự xóa.
           </p>

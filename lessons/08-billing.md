@@ -12,6 +12,99 @@ Sau bài này bạn có thể:
 
 ## 2. Lý thuyết
 
+### 2.0 Analogy — Billing AWS như hoá đơn tiện ích thành phố
+
+| Khái niệm AWS | Tương đương ở đời thực |
+|---------------|------------------------|
+| **Compute (EC2/Lambda)** | Tiền điện theo kWh dùng |
+| **Storage (S3/EBS)** | Tiền kho gửi đồ theo m² × tháng |
+| **Data Transfer Out** | Tiền chuyển phát nhanh tính theo kg |
+| **Data Transfer In** | Gửi đồ vào kho — **miễn phí** |
+| **NAT Gateway processing** | Phí gửi đồ qua bưu điện trung gian |
+| **Free Tier** | Tháng đầu khuyến mãi của nhà mạng |
+| **Reserved Instance / Savings Plans** | Hợp đồng dùng 1-3 năm để được giảm giá |
+| **Spot** | Phòng còn trống giảm 90%, có thể bị "đuổi" bất ngờ |
+| **AWS Organizations Consolidated Billing** | Gộp hoá đơn cả gia đình để được volume discount |
+| **AWS Budgets** | Đặt báo thức "tháng này không quá 5 triệu" |
+| **Cost Explorer** | Bảng kê chi tiết hoá đơn, biểu đồ theo tháng/category |
+| **Pricing Calculator** | Công cụ ước lượng hoá đơn trước khi đăng ký |
+| **Trusted Advisor** | Nhân viên tư vấn xem có dùng phí phạm không |
+| **Compute Optimizer** | AI gợi ý "máy này quá to so với nhu cầu, đổi máy nhỏ hơn" |
+| **Cost Anomaly Detection** | Phát hiện hoá đơn tháng này tăng bất thường |
+| **Tag-based cost allocation** | Dán nhãn từng phòng (Marketing/Engineering) để tách hoá đơn |
+
+**Quy tắc vàng**: AWS bill được tính theo **3 dimension**: **compute** (giờ × type), **storage** (GB × tháng), **data transfer** (GB out). 80% chi phí bất ngờ đến từ **data transfer** và **resource quên xoá** (NAT Gateway, EIP, EBS unattached, RDS).
+
+---
+
+### 2.0.1 Câu chuyện — 3 cú "bill shock" kinh điển và cách phòng tránh
+
+**Case 1: Crypto miner $50k overnight (2021)**
+- Dev commit access key lên GitHub public.
+- Bot crawler GitHub đánh cắp trong 5 phút.
+- Launch 20 EC2 p3.16xlarge × 5 region × 10 giờ = **$24,000**.
+- Data transfer cross-region thêm $10,000.
+- AWS Support refund 70% (lần đầu, một lần duy nhất). Founder mất ngủ 1 tuần.
+
+**Case 2: $14,000 cho 1 query DynamoDB (2020)**
+- Dev viết Lambda gọi `dynamodb.scan()` (KHÔNG phải query) trên table 50GB.
+- Scan đọc toàn bộ table = 50GB request mỗi lần.
+- Cron mỗi 5 phút × 30 ngày = 8,640 lần × 50GB = 432TB read.
+- DynamoDB On-Demand: $0.25/million read request capacity unit.
+- Bill cuối tháng: **$14,000**.
+
+**Case 3: NAT Gateway $5,000/tháng (silent killer)**
+- Microservices đặt private subnet, gọi S3 qua **NAT Gateway** (chứ không phải VPC Endpoint).
+- 100TB traffic/tháng × $0.045/GB = **$4,500 data processing**.
+- + NAT Gateway × 3 AZ × 24h = $100.
+- Không ai phát hiện trong 6 tháng → mất $30k.
+
+**Bài học chung**:
+1. **Budget alert ngay từ ngày 1** ($1, $5, $20...).
+2. **Cost Anomaly Detection** (free) bật tự động.
+3. **SCP chặn** region/family không dùng (ngăn launch p3 ở Tokyo nếu bạn ở SG).
+4. **GitHub Secret Scanning** + `git-secrets` pre-commit hook.
+5. **VPC Endpoint cho S3/DDB** (FREE) thay NAT.
+6. **Service Quotas** giảm về số thực sự cần (vd vCPU limit 16 thay vì 256).
+7. **Tag mọi resource** với `Owner`, `Project`, `Env` — Cost Explorer group by tag.
+8. **Review monthly bill** vào ngày 1 mỗi tháng — đừng đợi quý.
+
+---
+
+### 2.0.2 Use case map — tool nào cho việc gì
+
+| Tình huống | Tool AWS | Free? |
+|------------|----------|-------|
+| Ước lượng cost trước khi triển khai | **AWS Pricing Calculator** | Free |
+| Xem chi phí đã dùng theo service/tag | **AWS Cost Explorer** | Free (basic) |
+| Đặt ngân sách + alert khi vượt | **AWS Budgets** | $0.02/budget/ngày sau 2 budget đầu |
+| Detect chi phí tăng bất thường | **AWS Cost Anomaly Detection** | Free |
+| Tối ưu instance size đang dùng | **Compute Optimizer** | Free |
+| Best-practice check (security, cost, performance) | **Trusted Advisor** (7 check free, full với Business+ Support) | Free/Paid |
+| Tax invoice + monthly bill PDF | **Billing Console** | Free |
+| Phân tích chi phí across nhiều account | **Cost & Usage Report (CUR)** → Athena | CUR free, query Athena tính tiền |
+| Tự động dừng EC2 idle | **Instance Scheduler** (CloudFormation template) | Free |
+| Multi-account: gộp bill + volume discount | **AWS Organizations + Consolidated Billing** | Free |
+| Mua resource từ vendor third-party | **AWS Marketplace** | Tính qua bill AWS |
+| Cấp dev quyền dùng nhưng giới hạn region/family | **Service Control Policy (SCP)** | Free (cần Organizations) |
+| Giới hạn số vCPU launch được | **Service Quotas** | Free |
+
+---
+
+### 2.0.3 5 hiểu lầm phổ biến về AWS Billing
+
+1. **"Stop EC2 = không tốn tiền"** — SAI. Compute không tính, nhưng **EBS volume vẫn tính** ($0.10/GB/tháng gp3). Quên 100GB EBS 1 năm = $120. **Elastic IP** không gắn vào running EC2 cũng tính $0.005/giờ ($3.6/tháng). **Snapshot** EBS cũng tính phí.
+
+2. **"Free Tier dùng thoải mái 12 tháng"** — SAI. Free Tier có **giới hạn cụ thể** (vd 750h/tháng EC2 t2/t3.micro). Chạy 2 EC2 24/7 = 1,440h → vượt 690h → tính tiền. Free Tier **không reset mỗi tháng nếu vượt** — hết là hết. Data transfer free 100GB/tháng tổng cho cả account.
+
+3. **"Data transfer trong VPC free"** — SAI một phần. **Same AZ = free**. **Cross-AZ = $0.01/GB** (in + out). **Cross-region = $0.02-0.09/GB**. NAT Gateway processing $0.045/GB. Internet egress $0.09/GB (first 10TB). Đây là 1 trong những source chi phí **âm thầm** lớn nhất.
+
+4. **"Reserved Instance không dùng được thì mất tiền"** — SAI một phần. RI bạn đã trả là không refund (trừ Convertible RI có thể đổi). Nhưng RI **áp dụng tự động** trên mọi instance match trong account (và cả org nếu RI sharing on). Nếu workload đổi, **Convertible RI** đổi family được. **Savings Plans linh hoạt hơn** — apply trên mọi compute (EC2, Fargate, Lambda) tự động.
+
+5. **"Trusted Advisor cho biết hết cách tối ưu cost"** — SAI một phần. Trusted Advisor free tier chỉ có **7 check cơ bản**. Full check (idle EC2, low utilization, RI underutilized, Savings Plans recommendation, S3 bucket without lifecycle...) cần **Business Support trở lên** ($100+/tháng). **Compute Optimizer** free và tốt hơn cho instance right-sizing.
+
+---
+
 ### 2.1 Mô hình pricing AWS — 3 dimension cốt lõi
 
 1. **Compute** — pay per second/hour (EC2, Lambda invocation + duration).

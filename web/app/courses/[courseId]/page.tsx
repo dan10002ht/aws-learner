@@ -40,7 +40,7 @@ export default function CourseDashboardPage({ params }: { params: { courseId: st
             </span>
             <span className="text-xs font-mono text-[var(--text-mute)]">{course.code}</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold leading-tight">{course.title}</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-tight">{course.title}</h1>
           <p className="text-[var(--text-dim)] mt-2 max-w-2xl">{course.description}</p>
         </div>
       </header>

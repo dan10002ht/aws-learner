@@ -4,12 +4,16 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
+import rehypeRaw from "rehype-raw";
 import { ChevronLeft, ChevronRight, ListChecks } from "lucide-react";
 import { courses, getCourse } from "@/data/courses";
 import { getLessonBySlug, lessonsOfCourse } from "@/data/lessons";
 import { readLessonMarkdown } from "@/lib/lessonContent";
 import { questionsInLesson } from "@/lib/questions";
+import { extractToc } from "@/lib/toc";
 import MarkLessonRead from "@/components/MarkLessonRead";
+import LessonToc from "@/components/LessonToc";
+import MobileLessonNav from "@/components/MobileLessonNav";
 import type { CourseId } from "@/lib/types";
 
 export function generateStaticParams() {
@@ -34,12 +38,14 @@ export default function LessonPage({ params }: { params: { courseId: string; slu
   const prev = lessons[idx - 1];
   const next = lessons[idx + 1];
   const practiceCount = questionsInLesson(course.id, params.slug).length;
+  const toc = md ? extractToc(md) : [];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-[200px_minmax(0,1fr)_200px] gap-6 xl:gap-8">
       <MarkLessonRead courseId={course.id} slug={params.slug} />
 
-      <aside className="lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto scrollbar-thin">
+      {/* Left sidebar — lesson list (desktop) */}
+      <aside className="hidden lg:block lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto scrollbar-thin">
         <Link href={`/courses/${course.id}`} className="text-xs uppercase tracking-widest text-[var(--text-dim)] hover:text-[var(--text)] mb-3 inline-block">
           ← Tổng quan khoá
         </Link>
@@ -61,12 +67,23 @@ export default function LessonPage({ params }: { params: { courseId: string; slu
       </aside>
 
       <article className="min-w-0">
-        <div className="flex items-center justify-between gap-3 mb-6 flex-wrap">
+        <MobileLessonNav
+          courseId={course.id}
+          courseCode={course.code}
+          currentSlug={params.slug}
+          currentLessonOrder={lesson.order}
+          currentShortTitle={lesson.shortTitle}
+          lessons={lessons.map((l) => ({ slug: l.slug, order: l.order, shortTitle: l.shortTitle }))}
+          toc={toc}
+          practiceCount={practiceCount}
+        />
+
+        <div className="hidden lg:flex items-center justify-between gap-3 mb-6 flex-wrap">
           <div className="text-xs text-[var(--text-mute)] font-mono">{course.code} · Bài {lesson.order}</div>
           {practiceCount > 0 && (
             <Link
               href={`/courses/${course.id}/practice/${encodeURIComponent(`${course.id}|lesson|${params.slug}`)}`}
-              className="btn3d btn3d-primary btn3d-sm"
+              className="btn3d btn3d-primary btn3d-sm ml-auto"
             >
               <ListChecks size={16} /> Luyện {practiceCount} câu
             </Link>
@@ -75,7 +92,7 @@ export default function LessonPage({ params }: { params: { courseId: string; slu
 
         {md ? (
           <div className="prose-article">
-            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSlug, rehypeHighlight]}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw, rehypeSlug, rehypeHighlight]}>
               {md}
             </ReactMarkdown>
           </div>
@@ -98,6 +115,11 @@ export default function LessonPage({ params }: { params: { courseId: string; slu
           ) : <span />}
         </div>
       </article>
+
+      {/* Right sidebar — TOC (desktop) */}
+      <aside className="hidden lg:block lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto scrollbar-thin">
+        <LessonToc items={toc} />
+      </aside>
     </div>
   );
 }
