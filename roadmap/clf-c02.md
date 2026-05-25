@@ -42,7 +42,7 @@
 **Mục tiêu:** Hiểu cloud là gì, 3 mô hình dịch vụ, 4 mô hình deployment, cấu trúc vật lý của AWS.
 
 ### Bài học
-- [ ] Bài 1: Cloud computing là gì? On-prem vs Cloud → [lessons/01-cloud-concepts.md](../lessons/01-cloud-concepts.md)
+- [ ] Bài 1: Cloud computing là gì? On-prem vs Cloud → [lessons/clf-c02/01-cloud-concepts.md](../lessons/clf-c02/01-cloud-concepts.md)
 - [ ] Bài 2: IaaS / PaaS / SaaS, Public / Private / Hybrid cloud.
 - [ ] Bài 3: AWS Global Infrastructure — Region, AZ, Edge Location, Local Zone, Wavelength, Outposts.
 - [ ] Bài 4: 6 lợi thế của cloud (thuộc lòng nguyên văn EN).
@@ -71,8 +71,8 @@
 **Mục tiêu:** Hiểu shared responsibility, IAM cơ bản, các dịch vụ security.
 
 ### Bài học
-- [ ] Bài 5: Shared Responsibility Model → [lessons/02-shared-responsibility.md](../lessons/02-shared-responsibility.md)
-- [ ] Bài 6: IAM — User, Group, Role, Policy, Root best practices → [lessons/03-iam.md](../lessons/03-iam.md)
+- [ ] Bài 5: Shared Responsibility Model → [lessons/clf-c02/02-shared-responsibility.md](../lessons/clf-c02/02-shared-responsibility.md)
+- [ ] Bài 6: IAM — User, Group, Role, Policy, Root best practices → [lessons/clf-c02/03-iam.md](../lessons/clf-c02/03-iam.md)
 - [ ] Bài 7: MFA, Access Key vs Session Token, IAM Identity Center (SSO, thay thế cho AWS SSO cũ).
 - [ ] Bài 8: KMS, Secrets Manager, GuardDuty, Shield, WAF, Inspector, Macie, Artifact, Trusted Advisor, Security Hub, Detective.
 
@@ -121,10 +121,10 @@
 ## Tuần 3 — Compute & Storage
 
 ### Bài học
-- [ ] Bài 9: EC2 — Instance families, AMI, pricing 4 loại → [lessons/04-ec2.md](../lessons/04-ec2.md)
+- [ ] Bài 9: EC2 — Instance families, AMI, pricing 4 loại → [lessons/clf-c02/04-ec2.md](../lessons/clf-c02/04-ec2.md)
 - [ ] Bài 10: EBS vs Instance Store vs EFS vs FSx.
 - [ ] Bài 11: Lambda, Fargate, ECS, EKS, Beanstalk, Lightsail, Batch — khi nào dùng gì.
-- [ ] Bài 12: S3 — Storage classes, versioning, lifecycle, Glacier variants → [lessons/05-s3.md](../lessons/05-s3.md)
+- [ ] Bài 12: S3 — Storage classes, versioning, lifecycle, Glacier variants → [lessons/clf-c02/05-s3.md](../lessons/clf-c02/05-s3.md)
 
 ### Deep dive EC2 pricing (cực hay ra đề)
 | Pricing | Giảm giá | Cam kết | Use case |
@@ -174,9 +174,9 @@
 ## Tuần 4 — Network & Database
 
 ### Bài học
-- [ ] Bài 13: VPC, Subnet, IGW, NAT GW, Route Table, SG vs NACL → [lessons/06-vpc.md](../lessons/06-vpc.md)
+- [ ] Bài 13: VPC, Subnet, IGW, NAT GW, Route Table, SG vs NACL → [lessons/clf-c02/06-vpc.md](../lessons/clf-c02/06-vpc.md)
 - [ ] Bài 14: Route 53, CloudFront, API Gateway, ELB (ALB/NLB/GLB).
-- [ ] Bài 15: RDS, Aurora, DynamoDB, ElastiCache, Redshift, DocumentDB, Neptune, Timestream, QLDB → [lessons/07-databases.md](../lessons/07-databases.md)
+- [ ] Bài 15: RDS, Aurora, DynamoDB, ElastiCache, Redshift, DocumentDB, Neptune, Timestream, QLDB → [lessons/clf-c02/07-databases.md](../lessons/clf-c02/07-databases.md)
 - [ ] Bài 16: Direct Connect, Site-to-Site VPN, Transit Gateway, PrivateLink (khái niệm).
 
 ### Deep dive SG vs NACL
@@ -223,7 +223,7 @@
 ## Tuần 5 — Billing, Pricing, Support, Management Tools
 
 ### Bài học
-- [ ] Bài 17: AWS Pricing model, TCO Calculator, Pricing Calculator → [lessons/08-billing.md](../lessons/08-billing.md)
+- [ ] Bài 17: AWS Pricing model, TCO Calculator, Pricing Calculator → [lessons/clf-c02/08-billing.md](../lessons/clf-c02/08-billing.md)
 - [ ] Bài 18: AWS Organizations, Consolidated Billing, Control Tower, SCP, OU.
 - [ ] Bài 19: Cost Explorer, Budgets, CUR (Cost & Usage Report), Savings Plans, Compute Optimizer.
 - [ ] Bài 20: Support Plans (Basic, Developer, Business, Enterprise On-Ramp, Enterprise).

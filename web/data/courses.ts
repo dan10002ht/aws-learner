@@ -34,7 +34,7 @@ export const courses: Course[] = [
     prerequisites: ["CLF-C02"],
     accentColor: "#a855f7",
     order: 2,
-    status: "coming-soon",
+    status: "available",
   },
   {
     id: "DVA-C02",

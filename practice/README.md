@@ -1,9 +1,9 @@
 # Practice — Thực hành theo bài học
 
-Folder này chứa bài tập thực hành cho từng lesson. Mỗi lesson có 1 folder riêng (`01-cloud-concepts/`, `02-shared-responsibility/`, …) với cấu trúc:
+Folder này chứa bài tập thực hành cho từng lesson, gom theo chứng chỉ (`clf-c02/`, `saa-c03/`, …). Mỗi lesson có 1 folder riêng (`01-cloud-concepts/`, `02-shared-responsibility/`, …) với cấu trúc:
 
 ```
-practice/0X-topic/
+practice/<course>/0X-topic/
 ├── README.md           # Đề bài + tiêu chí pass + gợi ý
 ├── solution.md         # Lời giải / giải thích (mở sau khi tự làm)
 ├── localstack/         # Script chạy LocalStack (no-cost)
@@ -36,7 +36,7 @@ practice/0X-topic/
    ```
 2. Mỗi exercise:
    ```bash
-   cd practice/0X-topic/localstack
+   cd practice/<course>/0X-topic/localstack
    localstack start -d        # Khởi động (chạy nền)
    ./setup.sh
    ./exercise-1.sh
@@ -53,7 +53,7 @@ practice/0X-topic/
 - Đặt region cố định: `export AWS_DEFAULT_REGION=ap-southeast-1`.
 
 ```bash
-cd practice/0X-topic/aws-cli
+cd practice/<course>/0X-topic/aws-cli
 ./setup.sh
 ./exercise-1.sh
 ./teardown.sh          # 🚨 ALWAYS run sau khi xong

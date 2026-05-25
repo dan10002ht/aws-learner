@@ -9,20 +9,35 @@ Mỗi bài học có cấu trúc:
 5. **Câu hỏi tự kiểm tra** — 3–5 câu dạng exam.
 6. **Flashcard** — key term cần thuộc lòng.
 
-## Thứ tự khuyến nghị (CLF-C02)
+## Cấu trúc thư mục
 
-1. [01-cloud-concepts.md](01-cloud-concepts.md)
-2. [02-shared-responsibility.md](02-shared-responsibility.md)
-3. [03-iam.md](03-iam.md)
-4. [04-ec2.md](04-ec2.md)
-5. [05-s3.md](05-s3.md) ✅
-6. [06-vpc.md](06-vpc.md) ✅
-7. [07-databases.md](07-databases.md) ✅
-8. [08-billing.md](08-billing.md) ✅
+```
+lessons/
+├── clf-c02/        # CLF-C02 (Foundational)
+├── saa-c03/        # SAA-C03 (Associate) — sẽ thêm dần
+└── foundations/    # Cross-cert: CAP, consistency, replication…
+```
 
-## Mở rộng (SAA-C03)
+Lộ trình học chi tiết theo từng chứng chỉ: xem [../roadmap/](../roadmap/).
 
-Các bài 10+ tập trung vào **thiết kế kiến trúc**, sẽ được tạo dần khi bạn học xong CLF.
+## CLF-C02
+
+1. [clf-c02/01-cloud-concepts.md](clf-c02/01-cloud-concepts.md)
+2. [clf-c02/02-shared-responsibility.md](clf-c02/02-shared-responsibility.md)
+3. [clf-c02/03-iam.md](clf-c02/03-iam.md)
+4. [clf-c02/04-ec2.md](clf-c02/04-ec2.md)
+5. [clf-c02/05-s3.md](clf-c02/05-s3.md)
+6. [clf-c02/06-vpc.md](clf-c02/06-vpc.md)
+7. [clf-c02/07-databases.md](clf-c02/07-databases.md)
+8. [clf-c02/08-billing.md](clf-c02/08-billing.md)
+
+## SAA-C03
+
+Sẽ tạo dần sau khi học xong CLF. Đọc [foundations/](foundations/README.md) song song.
+
+## Foundations — Distributed Systems
+
+Kiến thức nền tảng (CAP, consistency, replication, sharding…) gắn với AWS — đọc song song khi bước vào SAA. Xem [foundations/](foundations/README.md).
 
 ---
 
