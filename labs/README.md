@@ -56,15 +56,22 @@ docker compose down -v       # xoá sạch (làm lại từ đầu)
 
 ## 3. Lộ trình lab (SAA-C03)
 
-| # | Lab | Domain SAA | Service |
-|---|---|---|---|
-| 01 | [S3 Basics](./lab01-s3-basics/) | Resilient + Secure | S3, versioning, lifecycle, encryption |
-| 02 | [S3 → Lambda Event](./lab02-s3-lambda/) | Resilient + High-Performing | S3 event, Lambda, IAM role |
-| 03 | SQS Decoupling *(coming)* | Resilient | SQS, dead-letter queue |
-| 04 | DynamoDB + Lambda *(coming)* | High-Performing | DynamoDB streams, GSI |
-| 05 | API Gateway + Lambda *(coming)* | Secure + High-Performing | REST API, throttling |
+| # | Lab | Domain SAA | Service | Lesson liên quan |
+|---|---|---|---|---|
+| 01 | [S3 Basics](./lab01-s3-basics/) | Resilient + Secure | S3, versioning, lifecycle, encryption | [05-s3](../lessons/clf-c02/05-s3.md) |
+| 02 | [S3 → Lambda Event](./lab02-s3-lambda/) | Resilient + High-Performing | S3 event, Lambda, IAM role | [13-decoupling](../lessons/saa-c03/13-decoupling.md) |
+| 03 | [SQS Decoupling](./lab03-sqs-decoupling/) | Resilient | SQS Standard/FIFO, DLQ, visibility timeout, long polling | [13-decoupling](../lessons/saa-c03/13-decoupling.md) |
+| 04 | [DynamoDB + Streams](./lab04-dynamodb-streams/) | High-Performing | DynamoDB, GSI, Streams → Lambda, On-demand | [15-db-design](../lessons/saa-c03/15-db-design.md) |
+| 05 | [API Gateway + Lambda](./lab05-apigw-lambda/) | Secure + High-Performing | REST API, Lambda proxy, throttling, usage plan, API key | [13-decoupling](../lessons/saa-c03/13-decoupling.md) |
+| 06 | [SNS Fan-out](./lab06-sns-fanout/) | Resilient | SNS → multi-SQS fan-out, filter policy, message attributes | [13-decoupling](../lessons/saa-c03/13-decoupling.md) |
+| 07 | [KMS Encryption](./lab07-kms-encryption/) | Secure | Customer-managed CMK, envelope encryption, SSE-KMS, rotation | [11-kms](../lessons/saa-c03/11-kms.md) |
+| 08 | [IAM Policies Deep](./lab08-iam-policies/) | Secure | Permission boundary, assume-role + MFA, condition keys, bucket policy | [10-iam-advanced](../lessons/saa-c03/10-iam-advanced.md) |
+| 09 | [S3 Advanced](./lab09-s3-advanced/) | Resilient + Secure | Versioning + lifecycle + CRR + presigned + multipart + Object Lock | [14-storage-design](../lessons/saa-c03/14-storage-design.md) |
+| 10 | [Step Functions](./lab10-step-functions/) | Resilient | Standard workflow, Choice/Parallel, Retry/Catch, error handling | [13-decoupling](../lessons/saa-c03/13-decoupling.md) |
 
-> **Lưu ý:** LocalStack không mô phỏng tốt VPC/EC2/ELB/RDS networking. Những phần đó mình sẽ học qua **architecture diagram + scenario question** ở module riêng, không lab được trên LocalStack Community.
+> **Lưu ý:** LocalStack Community **không** mô phỏng đầy đủ EC2/ASG/ELB/RDS/Route53 production networking. Những phần đó học qua **architecture diagram + scenario question** trong [practice/saa-c03/](../practice/saa-c03/), không lab trực tiếp được.
+>
+> Mỗi lab có script `lab.sh`/`deploy.sh` (chạy 1 phát end-to-end) + `verify.sh` (kiểm tra hậu chạy). Một số dùng Lambda → có file `index.mjs`/`*.mjs` đi kèm.
 
 ## 4. SAA-C03 exam tóm tắt
 

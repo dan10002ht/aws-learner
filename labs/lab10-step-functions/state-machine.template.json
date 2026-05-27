@@ -1,0 +1,95 @@
+{
+  "Comment": "Lab 10 — Order processing workflow (validate → process w/ retry → notify, Catch on failure)",
+  "StartAt": "Validate",
+  "States": {
+    "Validate": {
+      "Type": "Task",
+      "Resource": "VALIDATOR_ARN",
+      "Catch": [{
+        "ErrorEquals": ["AmountTooLargeError"],
+        "Next": "RejectLarge",
+        "ResultPath": "$.error"
+      }],
+      "Next": "CheckHasImage"
+    },
+    "CheckHasImage": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.hasImage",
+          "BooleanEquals": true,
+          "Next": "ParallelProcess"
+        }
+      ],
+      "Default": "Process"
+    },
+    "ParallelProcess": {
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "StartAt": "Process",
+          "States": {
+            "Process": {
+              "Type": "Task",
+              "Resource": "PROCESSOR_ARN",
+              "Retry": [{
+                "ErrorEquals": ["TransientError"],
+                "IntervalSeconds": 1,
+                "MaxAttempts": 3,
+                "BackoffRate": 2.0
+              }],
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "Thumbnail",
+          "States": {
+            "Thumbnail": {
+              "Type": "Pass",
+              "Result": "thumbnail-generated",
+              "End": true
+            }
+          }
+        }
+      ],
+      "Next": "Notify",
+      "Catch": [{
+        "ErrorEquals": ["States.ALL"],
+        "Next": "Failed",
+        "ResultPath": "$.error"
+      }]
+    },
+    "Process": {
+      "Type": "Task",
+      "Resource": "PROCESSOR_ARN",
+      "Retry": [{
+        "ErrorEquals": ["TransientError"],
+        "IntervalSeconds": 1,
+        "MaxAttempts": 3,
+        "BackoffRate": 2.0
+      }],
+      "Catch": [{
+        "ErrorEquals": ["States.ALL"],
+        "Next": "Failed",
+        "ResultPath": "$.error"
+      }],
+      "Next": "Notify"
+    },
+    "Notify": {
+      "Type": "Task",
+      "Resource": "NOTIFIER_ARN",
+      "End": true
+    },
+    "RejectLarge": {
+      "Type": "Fail",
+      "Error": "AmountTooLargeError",
+      "Cause": "Order exceeds limit, manual review required"
+    },
+    "Failed": {
+      "Type": "Fail",
+      "Error": "WorkflowFailed",
+      "Cause": "Processing failed after retries"
+    }
+  }
+}
