@@ -2,9 +2,34 @@
 
 **Mục tiêu:** Thi đậu CLF-C02 (65 câu, 90 phút, passing ~700/1000, $100, có 15 câu unscored).
 
-**Thời gian gợi ý:** 4–6 tuần, 1–2 giờ/ngày.
+**Thời gian gợi ý:** 6–8 tuần, 1–2 giờ/ngày.
 
 **Triết lý học:** CLF là exam "diện rộng, không sâu" — bạn cần **nhận diện service nào giải quyết vấn đề gì**, KHÔNG cần cấu hình chi tiết. Nhưng nếu học đúng cách ngay từ CLF, bạn sẽ tiết kiệm ~40% thời gian khi lên SAA.
+
+## Map exam domain → lesson
+
+| Domain (% scored) | Task statement | Lesson |
+|---|---|---|
+| **D1 Cloud Concepts (24%)** | 1.1 Benefits / 1.4 Cloud economics / 3.2 Global infra | [01-cloud-concepts](../lessons/clf-c02/01-cloud-concepts.md) |
+| | 1.2 Design principles (Well-Architected) | [09-well-architected](../lessons/clf-c02/09-well-architected.md) |
+| | 1.3 Migration & CAF | [10-migration-caf](../lessons/clf-c02/10-migration-caf.md) |
+| **D2 Security & Compliance (30%)** | 2.1 Shared responsibility | [02-shared-responsibility](../lessons/clf-c02/02-shared-responsibility.md) |
+| | 2.3 IAM / access management | [03-iam](../lessons/clf-c02/03-iam.md) |
+| | 2.2 + 2.4 Security services (KMS, WAF, GuardDuty, …) | [18-security-extended](../lessons/clf-c02/18-security-extended.md) |
+| **D3 Cloud Technology & Services (34%)** | 3.1 Deploy/IaC/CLI/SDK/Console | [13-deploy-iac](../lessons/clf-c02/13-deploy-iac.md) |
+| | 3.3 EC2 + pricing | [04-ec2](../lessons/clf-c02/04-ec2.md) |
+| | 3.3 Containers / Lambda / Beanstalk / ASG / ELB | [11-compute-extended](../lessons/clf-c02/11-compute-extended.md) |
+| | 3.4 Databases | [07-databases](../lessons/clf-c02/07-databases.md) |
+| | 3.5 VPC / Networking | [06-vpc](../lessons/clf-c02/06-vpc.md) |
+| | 3.6 S3 | [05-s3](../lessons/clf-c02/05-s3.md) |
+| | 3.6 EBS / EFS / FSx / Backup / Storage Gateway | [12-storage-extended](../lessons/clf-c02/12-storage-extended.md) |
+| | 3.7 AI/ML | [15-ai-ml](../lessons/clf-c02/15-ai-ml.md) |
+| | 3.7 Analytics | [16-analytics](../lessons/clf-c02/16-analytics.md) |
+| | 3.8 App integration (SNS/SQS/EventBridge/Step Functions) | [14-app-integration](../lessons/clf-c02/14-app-integration.md) |
+| | 3.8 Dev tools / EUC / IoT / SES / Connect / Amplify | [19-other-services](../lessons/clf-c02/19-other-services.md) |
+| **D4 Billing, Pricing & Support (12%)** | 4.1 + 4.2 Pricing + billing tools | [08-billing](../lessons/clf-c02/08-billing.md) |
+| | 4.3 Support + technical resources + Partner | [19-other-services](../lessons/clf-c02/19-other-services.md) |
+| | Management & Governance (CloudWatch / CloudTrail / Config / Trusted Advisor / Organizations / Control Tower) | [17-monitoring-governance](../lessons/clf-c02/17-monitoring-governance.md) |
 
 ---
 
@@ -256,7 +281,36 @@
 
 ---
 
-## Tuần 6 — Ôn tập & Practice exam
+## Tuần 6 — Topics quan trọng còn lại (CLF-C02 đầy đủ)
+
+> Đây là phần phủ các Task Statement của CLF-C02 mà 8 bài đầu chưa chạm tới. **Bắt buộc học** trước khi vào tuần 7 ôn tập.
+
+### Design principles & Migration (Domain 1 còn lại)
+- [ ] Bài 22: Well-Architected Framework — 6 pillar → [lessons/clf-c02/09-well-architected.md](../lessons/clf-c02/09-well-architected.md)
+- [ ] Bài 23: Migration to AWS + CAF (7 R, Snow Family, MGN, DMS, SCT, DRS) → [lessons/clf-c02/10-migration-caf.md](../lessons/clf-c02/10-migration-caf.md)
+
+### Compute & Storage mở rộng (Domain 3)
+- [ ] Bài 24: Containers, Lambda, ASG, ELB → [lessons/clf-c02/11-compute-extended.md](../lessons/clf-c02/11-compute-extended.md)
+- [ ] Bài 25: EBS, EFS, FSx, Storage Gateway, Backup, DRS → [lessons/clf-c02/12-storage-extended.md](../lessons/clf-c02/12-storage-extended.md)
+
+### Deploy & Operate
+- [ ] Bài 26: CLI, SDK, Console, IaC (CloudFormation/CDK/SAM), Systems Manager → [lessons/clf-c02/13-deploy-iac.md](../lessons/clf-c02/13-deploy-iac.md)
+
+### Application Integration & AI/ML & Analytics (Domain 3.7, 3.8)
+- [ ] Bài 27: SNS, SQS, EventBridge, Step Functions, MQ → [lessons/clf-c02/14-app-integration.md](../lessons/clf-c02/14-app-integration.md)
+- [ ] Bài 28: SageMaker, Bedrock, Rekognition, Polly, Transcribe, Translate, Comprehend, Lex, Kendra, Personalize → [lessons/clf-c02/15-ai-ml.md](../lessons/clf-c02/15-ai-ml.md)
+- [ ] Bài 29: Athena, Redshift, EMR, Glue, Kinesis, MSK, OpenSearch, QuickSight, Data Exchange, Lake Formation → [lessons/clf-c02/16-analytics.md](../lessons/clf-c02/16-analytics.md)
+
+### Monitoring, Governance & Security mở rộng (Domain 2, 4)
+- [ ] Bài 30: CloudWatch, CloudTrail, Config, X-Ray, Trusted Advisor, Compute Optimizer, Health Dashboard, Organizations, Control Tower, Service Catalog, Audit Manager → [lessons/clf-c02/17-monitoring-governance.md](../lessons/clf-c02/17-monitoring-governance.md)
+- [ ] Bài 31: KMS, CloudHSM, Secrets Manager, ACM, Cognito, Directory Service, WAF, Shield, Network Firewall, GuardDuty, Inspector, Macie, Detective, Security Hub, RAM, Artifact → [lessons/clf-c02/18-security-extended.md](../lessons/clf-c02/18-security-extended.md)
+
+### Other services (Domain 3.8 + 4.3)
+- [ ] Bài 32: Dev Tools (Code*), WorkSpaces, AppStream, IoT Core, IoT Greengrass, Amplify, AppSync, Device Farm, SES, Connect, Activate, IQ, AMS, Marketplace, Partner Network, Solutions Architects → [lessons/clf-c02/19-other-services.md](../lessons/clf-c02/19-other-services.md)
+
+---
+
+## Tuần 7 — Ôn tập & Practice exam
 
 - [ ] Review toàn bộ flashcard service (khoảng ~80 service hay ra).
 - [ ] Làm **3 bộ practice exam**:
