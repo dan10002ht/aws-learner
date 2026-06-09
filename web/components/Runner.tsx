@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, RotateCw, Send, Square, Trophy } from "lucide-react";
+import { ChevronLeft, ChevronRight, LayoutGrid, RotateCw, Send, Square, Trophy, X } from "lucide-react";
 import QuestionCard from "./QuestionCard";
 import Timer from "./Timer";
 import Button3D from "./Button3D";
@@ -46,6 +46,7 @@ export default function Runner({ setKey, mode }: Props) {
   const [revealed, setRevealed] = useState<boolean[]>([]);
   const [startedAt, setStartedAt] = useState(0);
   const [finishedAt, setFinishedAt] = useState(0);
+  const [showPalette, setShowPalette] = useState(false); // mobile palette drawer
 
   const available = useMemo(() => {
     if (!set) return 0;
@@ -251,19 +252,97 @@ export default function Runner({ setKey, mode }: Props) {
     const p = prepared[currentIdx];
     const sel = selections[currentIdx] ?? [];
     const rev = revealed[currentIdx];
+    const answeredCount = selections.filter((s) => (s ?? []).length > 0).length;
+    const isExam = mode === "exam";
+
+    const paletteGrid = (
+      <div className="grid grid-cols-8 sm:grid-cols-10 lg:grid-cols-6 gap-1.5">
+        {prepared.map((_, i) => {
+          const answered = (selections[i] ?? []).length > 0;
+          const isCur = i === currentIdx;
+          return (
+            <button
+              key={i}
+              onClick={() => {
+                setCurrentIdx(i);
+                setShowPalette(false);
+              }}
+              className={`aspect-square text-xs rounded-md border-2 font-semibold transition ${
+                isCur
+                  ? "border-brand-500 bg-brand-500/15 text-brand-600"
+                  : answered
+                  ? "border-success/40 bg-success/10 text-success"
+                  : "border-[var(--border)] text-[var(--text-mute)] hover:border-[var(--border-strong)]"
+              }`}
+            >
+              {i + 1}
+            </button>
+          );
+        })}
+      </div>
+    );
+
+    const palettePanel = (
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="text-xs font-bold uppercase tracking-widest text-[var(--text-dim)]">Bảng câu hỏi</div>
+          <div className="text-xs text-[var(--text-mute)]">
+            <span className="text-success font-semibold">{answeredCount}</span> / {prepared.length}
+          </div>
+        </div>
+        {paletteGrid}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.7rem] text-[var(--text-mute)] pt-1">
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded border-2 border-brand-500 bg-brand-500/15 inline-block" /> hiện tại</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded border-2 border-success/40 bg-success/10 inline-block" /> đã trả lời</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded border-2 border-[var(--border)] inline-block" /> chưa</span>
+        </div>
+      </div>
+    );
+
+    const navButtons = (
+      <div className="flex justify-between gap-3">
+        <Button3D variant="secondary" size="sm" onClick={() => setCurrentIdx((i) => Math.max(0, i - 1))} disabled={currentIdx === 0}>
+          <ChevronLeft size={16} /> Trước
+        </Button3D>
+        {mode === "practice" ? (
+          !rev ? (
+            <Button3D variant="primary" size="sm" onClick={() => onCheck(currentIdx)} disabled={sel.length === 0}>
+              Kiểm tra
+            </Button3D>
+          ) : currentIdx < prepared.length - 1 ? (
+            <Button3D variant="primary" size="sm" onClick={() => setCurrentIdx((i) => i + 1)}>
+              Tiếp <ChevronRight size={16} />
+            </Button3D>
+          ) : (
+            <Button3D variant="primary" size="sm" onClick={finishAttempt}>
+              Hoàn thành
+            </Button3D>
+          )
+        ) : currentIdx < prepared.length - 1 ? (
+          <Button3D variant="primary" size="sm" onClick={() => setCurrentIdx((i) => i + 1)}>
+            Tiếp <ChevronRight size={16} />
+          </Button3D>
+        ) : (
+          <Button3D variant="primary" size="sm" onClick={finishAttempt}>
+            <Send size={14} /> Nộp bài
+          </Button3D>
+        )}
+      </div>
+    );
 
     return (
-      <div className="space-y-4 max-w-3xl mx-auto">
+      <div className={isExam ? "max-w-6xl mx-auto space-y-4" : "max-w-3xl mx-auto space-y-4"}>
+        {/* Top bar */}
         <div className="flex items-center justify-between flex-wrap gap-2">
-          <div className="text-xs uppercase tracking-widest text-[var(--text-dim)] font-bold">
+          <div className="text-xs uppercase tracking-widest text-[var(--text-dim)] font-bold truncate">
             {set.label}
           </div>
           <div className="flex items-center gap-2">
-            {mode === "exam" && (
+            {isExam && (
               <Timer startMs={startedAt} totalMs={config.examMinutes * 60_000} onExpire={finishAttempt} />
             )}
             <Button3D variant="secondary" size="sm" onClick={finishAttempt}>
-              {mode === "exam" ? <><Send size={14} /> Nộp bài</> : <><Square size={14} /> Kết thúc</>}
+              {isExam ? <><Send size={14} /> Nộp bài</> : <><Square size={14} /> Kết thúc</>}
             </Button3D>
           </div>
         </div>
@@ -275,68 +354,51 @@ export default function Runner({ setKey, mode }: Props) {
           />
         </div>
 
-        <QuestionCard
-          question={p.q}
-          optionMap={p.optionMap}
-          selected={sel}
-          revealed={rev}
-          questionNumber={currentIdx + 1}
-          totalQuestions={prepared.length}
-          onToggle={(d) => onToggle(currentIdx, d)}
-        />
+        <div className={isExam ? "flex flex-col lg:flex-row gap-4 items-start" : ""}>
+          {/* Main column */}
+          <div className="flex-1 min-w-0 w-full space-y-4">
+            {isExam && (
+              <button
+                onClick={() => setShowPalette(true)}
+                className="lg:hidden flex items-center gap-2 text-sm font-medium text-[var(--text-dim)] hover:text-[var(--text)]"
+              >
+                <LayoutGrid size={16} /> Bảng câu hỏi ({answeredCount}/{prepared.length})
+              </button>
+            )}
 
-        <div className="flex justify-between gap-3">
-          <Button3D variant="secondary" size="sm" onClick={() => setCurrentIdx((i) => Math.max(0, i - 1))} disabled={currentIdx === 0}>
-            <ChevronLeft size={16} /> Trước
-          </Button3D>
-          {mode === "practice" ? (
-            !rev ? (
-              <Button3D variant="primary" size="sm" onClick={() => onCheck(currentIdx)} disabled={sel.length === 0}>
-                Kiểm tra
-              </Button3D>
-            ) : currentIdx < prepared.length - 1 ? (
-              <Button3D variant="primary" size="sm" onClick={() => setCurrentIdx((i) => i + 1)}>
-                Tiếp <ChevronRight size={16} />
-              </Button3D>
-            ) : (
-              <Button3D variant="primary" size="sm" onClick={finishAttempt}>
-                Hoàn thành
-              </Button3D>
-            )
-          ) : currentIdx < prepared.length - 1 ? (
-            <Button3D variant="primary" size="sm" onClick={() => setCurrentIdx((i) => i + 1)}>
-              Tiếp <ChevronRight size={16} />
-            </Button3D>
-          ) : (
-            <Button3D variant="primary" size="sm" onClick={finishAttempt}>
-              <Send size={14} /> Nộp bài
-            </Button3D>
+            <QuestionCard
+              question={p.q}
+              optionMap={p.optionMap}
+              selected={sel}
+              revealed={rev}
+              questionNumber={currentIdx + 1}
+              totalQuestions={prepared.length}
+              onToggle={(d) => onToggle(currentIdx, d)}
+            />
+
+            {navButtons}
+          </div>
+
+          {/* Desktop sidebar */}
+          {isExam && (
+            <aside className="hidden lg:block w-64 flex-shrink-0 sticky top-4">
+              <div className="card p-4">{palettePanel}</div>
+            </aside>
           )}
         </div>
 
-        {mode === "exam" && (
-          <div className="card p-4">
-            <div className="text-xs font-bold uppercase tracking-widest text-[var(--text-dim)] mb-2">Bảng câu hỏi</div>
-            <div className="grid grid-cols-8 sm:grid-cols-10 md:grid-cols-12 gap-1.5">
-              {prepared.map((_, i) => {
-                const answered = (selections[i] ?? []).length > 0;
-                const isCur = i === currentIdx;
-                return (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentIdx(i)}
-                    className={`aspect-square text-xs rounded-md border-2 font-semibold transition ${
-                      isCur
-                        ? "border-brand-500 bg-brand-500/15 text-brand-600"
-                        : answered
-                        ? "border-success/40 bg-success/10 text-success"
-                        : "border-[var(--border)] text-[var(--text-mute)] hover:border-[var(--border-strong)]"
-                    }`}
-                  >
-                    {i + 1}
-                  </button>
-                );
-              })}
+        {/* Mobile drawer */}
+        {isExam && showPalette && (
+          <div className="lg:hidden fixed inset-0 z-50 flex">
+            <div className="absolute inset-0 bg-black/60" onClick={() => setShowPalette(false)} />
+            <div className="relative ml-auto h-full w-72 max-w-[80%] bg-[var(--surface)] border-l border-[var(--border)] p-4 overflow-y-auto animate-fade-up">
+              <button
+                onClick={() => setShowPalette(false)}
+                className="absolute top-3 right-3 text-[var(--text-mute)] hover:text-[var(--text)]"
+              >
+                <X size={18} />
+              </button>
+              <div className="mt-6">{palettePanel}</div>
             </div>
           </div>
         )}
