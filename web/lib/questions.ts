@@ -15,6 +15,13 @@ export interface BuildOptions {
   setKey: string;
   shuffleQuestions?: boolean;
   shuffleOptions?: boolean;
+  /**
+   * Smart exam ordering: interleave questions by domain (round-robin from
+   * shuffled per-domain buckets) so domains are spread evenly through the
+   * exam — mimicking the mixed pattern of the real exam — instead of
+   * clustering. Overrides shuffleQuestions when set.
+   */
+  smartOrder?: boolean;
   limit?: number;
   wrongIds?: string[];
 }
@@ -22,6 +29,29 @@ export interface BuildOptions {
 export interface PreparedQuestion {
   q: Question;
   optionMap: number[];
+}
+
+/**
+ * Spread questions evenly across domains: shuffle each domain's bucket, then
+ * round-robin pull one from each bucket. Domains with more questions (per the
+ * blueprint weighting) naturally appear more often but never cluster.
+ */
+function interleaveByDomain(items: PreparedQuestion[]): PreparedQuestion[] {
+  const buckets = new Map<number, PreparedQuestion[]>();
+  for (const p of items) {
+    const d = p.q.domain ?? 0;
+    if (!buckets.has(d)) buckets.set(d, []);
+    buckets.get(d)!.push(p);
+  }
+  const shuffledBuckets = [...buckets.values()].map((b) => shuffle(b));
+  const result: PreparedQuestion[] = [];
+  const maxLen = Math.max(0, ...shuffledBuckets.map((b) => b.length));
+  for (let i = 0; i < maxLen; i++) {
+    for (const b of shuffledBuckets) {
+      if (i < b.length) result.push(b[i]);
+    }
+  }
+  return result;
 }
 
 export function buildQuestions(opts: BuildOptions): PreparedQuestion[] {
@@ -43,7 +73,11 @@ export function buildQuestions(opts: BuildOptions): PreparedQuestion[] {
   }
 
   let prepared = pool.map((q) => ({ q, optionMap: q.options.map((_, i) => i) }));
-  if (opts.shuffleQuestions) prepared = shuffle(prepared);
+  if (opts.smartOrder) {
+    prepared = interleaveByDomain(prepared);
+  } else if (opts.shuffleQuestions) {
+    prepared = shuffle(prepared);
+  }
   if (opts.limit && opts.limit > 0) prepared = prepared.slice(0, opts.limit);
   if (opts.shuffleOptions) {
     prepared = prepared.map(({ q, optionMap }) => ({ q, optionMap: shuffle(optionMap) }));

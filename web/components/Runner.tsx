@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, RotateCw, Send, Square, Trophy } from "lucide-react";
 import QuestionCard from "./QuestionCard";
@@ -29,6 +29,9 @@ export default function Runner({ setKey, mode }: Props) {
   const set = getSet(setKey);
   const defaultCount = set?.defaultCount ?? 10;
   const defaultMin = set?.defaultExamMinutes ?? 10;
+  // Full mock in exam mode: skip setup, drop straight into the exam with a
+  // smart blueprint-ordered shuffle.
+  const autoExam = mode === "exam" && set?.kind === "course-mock";
 
   const [phase, setPhase] = useState<Phase>("setup");
   const [config, setConfig] = useState<Config>({
@@ -59,6 +62,7 @@ export default function Runner({ setKey, mode }: Props) {
     const built = buildQuestions({
       setKey,
       shuffleQuestions: config.shuffleQuestions,
+      smartOrder: autoExam,
       shuffleOptions: config.shuffleOptions,
       limit: config.count,
       wrongIds,
@@ -70,7 +74,12 @@ export default function Runner({ setKey, mode }: Props) {
     setCurrentIdx(0);
     setStartedAt(Date.now());
     setPhase("running");
-  }, [config, setKey, set]);
+  }, [config, setKey, set, autoExam]);
+
+  // Auto-start the exam for full mocks: no setup screen, go straight in.
+  useEffect(() => {
+    if (autoExam && phase === "setup") start();
+  }, [autoExam, phase, start]);
 
   const finishAttempt = useCallback(() => {
     const endAt = Date.now();
@@ -156,6 +165,15 @@ export default function Runner({ setKey, mode }: Props) {
     return (
       <div className="card p-6 text-center">
         <p className="text-[var(--text-dim)]">Không tìm thấy bộ câu hỏi này.</p>
+      </div>
+    );
+  }
+
+  // Auto-start exam: show a brief loader instead of the setup form.
+  if (autoExam && phase === "setup") {
+    return (
+      <div className="card p-8 text-center max-w-xl mx-auto">
+        <p className="text-[var(--text-dim)]">Đang vào phòng thi…</p>
       </div>
     );
   }
