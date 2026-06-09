@@ -31,6 +31,26 @@ export function questionsInMock(courseId: CourseId, mock: number): number {
 }
 
 /**
+ * The single full "Mô phỏng thi" exam set: pulls from the whole course pool
+ * (mock undefined) and is sampled by blueprint weighting at runtime. Used on
+ * the exam page; not listed among the fixed practice mocks.
+ */
+export function courseExamSet(courseId: CourseId): QuestionSet | undefined {
+  const course = getCourse(courseId);
+  if (!course) return undefined;
+  return {
+    key: `${courseId}|mock`,
+    kind: "course-mock",
+    courseId,
+    mock: undefined,
+    label: `${course.code} — Mô phỏng thi`,
+    description: `Trộn thông minh theo blueprint, ${course.examQuestions} câu, ${course.examMinutes} phút.`,
+    defaultCount: course.examQuestions,
+    defaultExamMinutes: course.examMinutes,
+  };
+}
+
+/**
  * Build all sets available within a course.
  *  - Course full mock
  *  - One set per chapter
@@ -94,5 +114,9 @@ export function getSet(key: string): QuestionSet | undefined {
   }
   const parts = key.split("|");
   const courseId = parts[0] as CourseId;
+  // Full exam set: `${courseId}|mock` (no mock number).
+  if (parts.length === 2 && parts[1] === "mock") {
+    return courseExamSet(courseId);
+  }
   return setsForCourse(courseId).find((s) => s.key === key);
 }

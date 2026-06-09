@@ -22,6 +22,12 @@ export interface BuildOptions {
    * clustering. Overrides shuffleQuestions when set.
    */
   smartOrder?: boolean;
+  /**
+   * Blueprint exam: sample `limit` questions from the whole course pool
+   * weighted by the official domain mix, then interleave by domain. Used for
+   * the single "Mô phỏng thi" full exam.
+   */
+  blueprintExam?: boolean;
   limit?: number;
   wrongIds?: string[];
 }
@@ -54,6 +60,37 @@ function interleaveByDomain(items: PreparedQuestion[]): PreparedQuestion[] {
   return result;
 }
 
+/** Official CLF-C02 domain weighting (fraction of scored content). */
+const CLF_DOMAIN_WEIGHTS: Record<number, number> = { 1: 0.24, 2: 0.30, 3: 0.34, 4: 0.12 };
+
+/**
+ * Sample `limit` questions from a pool following the exam blueprint domain
+ * weighting (e.g. 65 → ~16 D1 / 19 D2 / 22 D3 / 8 D4), backfilling from
+ * leftovers if a domain is short.
+ */
+function pickByBlueprint(pool: Question[], limit: number): Question[] {
+  const buckets: Record<number, Question[]> = { 1: [], 2: [], 3: [], 4: [] };
+  const others: Question[] = [];
+  for (const q of pool) {
+    if (q.domain && buckets[q.domain]) buckets[q.domain].push(q);
+    else others.push(q);
+  }
+  for (const d of [1, 2, 3, 4]) buckets[d] = shuffle(buckets[d]);
+
+  const picked: Question[] = [];
+  for (const d of [1, 2, 3, 4]) {
+    const target = Math.round(limit * CLF_DOMAIN_WEIGHTS[d]);
+    const n = Math.min(target, buckets[d].length);
+    picked.push(...buckets[d].slice(0, n));
+    buckets[d] = buckets[d].slice(n);
+  }
+  if (picked.length < limit) {
+    const leftover = shuffle([...buckets[1], ...buckets[2], ...buckets[3], ...buckets[4], ...others]);
+    picked.push(...leftover.slice(0, limit - picked.length));
+  }
+  return picked.slice(0, limit);
+}
+
 export function buildQuestions(opts: BuildOptions): PreparedQuestion[] {
   const set = getSet(opts.setKey);
   if (!set) return [];
@@ -70,6 +107,17 @@ export function buildQuestions(opts: BuildOptions): PreparedQuestion[] {
   } else if (set.lessonSlugs && set.lessonSlugs.length) {
     const ls = new Set(set.lessonSlugs);
     pool = questions.filter((q) => q.courseId === set.courseId && ls.has(q.lesson));
+  }
+
+  // Blueprint full exam: weighted sample across the whole pool, then interleave.
+  if (opts.blueprintExam) {
+    const limit = opts.limit && opts.limit > 0 ? opts.limit : pool.length;
+    const picked = pickByBlueprint(pool, limit);
+    let prep = interleaveByDomain(picked.map((q) => ({ q, optionMap: q.options.map((_, i) => i) })));
+    if (opts.shuffleOptions) {
+      prep = prep.map(({ q, optionMap }) => ({ q, optionMap: shuffle(optionMap) }));
+    }
+    return prep;
   }
 
   let prepared = pool.map((q) => ({ q, optionMap: q.options.map((_, i) => i) }));

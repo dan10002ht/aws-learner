@@ -29,9 +29,9 @@ export default function Runner({ setKey, mode }: Props) {
   const set = getSet(setKey);
   const defaultCount = set?.defaultCount ?? 10;
   const defaultMin = set?.defaultExamMinutes ?? 10;
-  // Full mock in exam mode: skip setup, drop straight into the exam with a
-  // smart blueprint-ordered shuffle.
-  const autoExam = mode === "exam" && set?.kind === "course-mock";
+  // Full exam ("Mô phỏng thi"): skip setup, drop straight into the exam with a
+  // blueprint-weighted smart shuffle across the whole course pool.
+  const autoExam = mode === "exam" && set?.kind === "course-mock" && set?.mock === undefined;
 
   const [phase, setPhase] = useState<Phase>("setup");
   const [config, setConfig] = useState<Config>({
@@ -62,7 +62,7 @@ export default function Runner({ setKey, mode }: Props) {
     const built = buildQuestions({
       setKey,
       shuffleQuestions: config.shuffleQuestions,
-      smartOrder: autoExam,
+      blueprintExam: autoExam,
       shuffleOptions: config.shuffleOptions,
       limit: config.count,
       wrongIds,
