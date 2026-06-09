@@ -130,7 +130,33 @@ export default function QuestionCard({
       {revealed && (
         <div className="mt-3 p-4 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] animate-fade-up">
           <div className="text-xs font-bold text-brand-600 uppercase tracking-widest mb-2">Giải thích</div>
-          <p className="text-sm leading-relaxed">{question.explanation}</p>
+          {(() => {
+            // Tách explanation theo từng đáp án nếu có dạng "A đúng — ..." / "B SAI — ...".
+            const clauses = question.explanation
+              .split(/(?=(?:^|\s)[A-E]\s+(?:đúng|SAI|sai)\b)/g)
+              .map((s) => s.trim())
+              .filter(Boolean);
+            const perOption =
+              clauses.length > 1 && clauses.every((c) => /^[A-E]\s+(?:đúng|SAI|sai)\b/.test(c));
+            if (!perOption) {
+              return <p className="text-sm leading-relaxed">{question.explanation}</p>;
+            }
+            return (
+              <ul className="space-y-1.5">
+                {clauses.map((c, i) => {
+                  const isWrong = /^[A-E]\s+(?:SAI|sai)\b/.test(c);
+                  return (
+                    <li key={i} className="text-sm leading-relaxed flex gap-2">
+                      <span className={isWrong ? "text-danger font-bold" : "text-success font-bold"}>
+                        {isWrong ? "✗" : "✓"}
+                      </span>
+                      <span>{c}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            );
+          })()}
         </div>
       )}
     </div>
