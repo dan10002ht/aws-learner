@@ -14,7 +14,7 @@ export default function ExamListPage({ params }: { params: { courseId: string } 
   const course = getCourse(params.courseId as CourseId);
   if (!course) notFound();
   const sets = setsForCourse(course.id);
-  const mock = sets.find((s) => s.kind === "course-mock");
+  const mockSets = sets.filter((s) => s.kind === "course-mock");
   const chapters = sets.filter((s) => s.kind === "chapter");
 
   return (
@@ -27,28 +27,38 @@ export default function ExamListPage({ params }: { params: { courseId: string } 
         <p className="text-[var(--text-dim)] mt-2">Có timer. Không hiện đáp án cho tới khi nộp bài. Kết quả ghi vào History.</p>
       </header>
 
-      {mock && (
-        <div className="card p-6 relative overflow-hidden">
-          <span className="absolute top-0 left-0 right-0 h-1" style={{ background: course.accentColor }} />
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
-            <div className="min-w-0">
-              <div className="text-xs font-mono text-[var(--text-mute)]">{course.code}</div>
-              <div className="font-bold text-lg">{mock.label}</div>
-              <div className="text-sm text-[var(--text-dim)] mt-1">{mock.description}</div>
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--text-dim)] mt-3">
-                <span className="flex items-center gap-1"><Clock size={14} /> {course.examMinutes} phút</span>
-                <span>{questions.filter((q) => q.courseId === course.id).length} câu khả dụng</span>
-                <span>Pass {course.passingScore}%</span>
-              </div>
-            </div>
-            <Link
-              href={`/courses/${course.id}/exam/${encodeURIComponent(mock.key)}`}
-              className="btn3d btn3d-primary w-full md:w-auto"
-            >
-              Vào phòng thi <ChevronRight size={16} />
-            </Link>
+      {mockSets.length > 0 && (
+        <section>
+          <h2 className="text-lg font-bold mb-3">Đề mô phỏng đầy đủ</h2>
+          <div className="space-y-3">
+            {mockSets.map((mock) => {
+              const count = questions.filter((q) => q.courseId === course.id && q.mock === mock.mock).length;
+              return (
+                <div key={mock.key} className="card p-6 relative overflow-hidden">
+                  <span className="absolute top-0 left-0 right-0 h-1" style={{ background: course.accentColor }} />
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="text-xs font-mono text-[var(--text-mute)]">{course.code}</div>
+                      <div className="font-bold text-lg">{mock.label}</div>
+                      <div className="text-sm text-[var(--text-dim)] mt-1">{mock.description}</div>
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--text-dim)] mt-3">
+                        <span className="flex items-center gap-1"><Clock size={14} /> {course.examMinutes} phút</span>
+                        <span>{count} câu</span>
+                        <span>Pass {course.passingScore}%</span>
+                      </div>
+                    </div>
+                    <Link
+                      href={`/courses/${course.id}/exam/${encodeURIComponent(mock.key)}`}
+                      className="btn3d btn3d-primary w-full md:w-auto"
+                    >
+                      Vào phòng thi <ChevronRight size={16} />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        </div>
+        </section>
       )}
 
       <section>

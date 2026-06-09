@@ -131,15 +131,40 @@ export default function QuestionCard({
         <div className="mt-3 p-4 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] animate-fade-up">
           <div className="text-xs font-bold text-brand-600 uppercase tracking-widest mb-2">Giải thích</div>
           {(() => {
-            // Tách explanation theo từng đáp án nếu có dạng "A đúng — ..." / "B SAI — ...".
-            const clauses = question.explanation
+            const raw = question.explanation;
+
+            // Format MỚI (shuffle-safe): nhiều dòng phân tách bằng \n, dòng ✓/✗ theo nội dung.
+            const lines = raw.split("\n").map((s) => s.trim()).filter(Boolean);
+            if (lines.length > 1) {
+              return (
+                <div className="space-y-1.5">
+                  {lines.map((line, i) => {
+                    const mark = line.startsWith("✓") ? "ok" : line.startsWith("✗") ? "bad" : null;
+                    if (!mark) {
+                      return <p key={i} className="text-sm leading-relaxed">{line}</p>;
+                    }
+                    return (
+                      <div key={i} className="text-sm leading-relaxed flex gap-2">
+                        <span className={mark === "bad" ? "text-danger font-bold" : "text-success font-bold"}>
+                          {mark === "bad" ? "✗" : "✓"}
+                        </span>
+                        <span>{line.replace(/^[✓✗]\s*/, "")}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            }
+
+            // Format CŨ: tách theo "A đúng — ..." / "B SAI — ..." (content cũ chưa migrate).
+            const clauses = raw
               .split(/(?=(?:^|\s)[A-E]\s+(?:đúng|SAI|sai)\b)/g)
               .map((s) => s.trim())
               .filter(Boolean);
             const perOption =
               clauses.length > 1 && clauses.every((c) => /^[A-E]\s+(?:đúng|SAI|sai)\b/.test(c));
             if (!perOption) {
-              return <p className="text-sm leading-relaxed">{question.explanation}</p>;
+              return <p className="text-sm leading-relaxed">{raw}</p>;
             }
             return (
               <ul className="space-y-1.5">

@@ -1,6 +1,7 @@
 import type { CourseId } from "@/lib/types";
 import { chaptersOfCourse, lessonsOfCourse } from "./lessons";
 import { getCourse } from "./courses";
+import { questions } from "./questions";
 
 export type SetKind = "lesson" | "chapter" | "course-mock" | "wrong-answers";
 
@@ -11,8 +12,22 @@ export interface QuestionSet {
   label: string;
   description: string;
   lessonSlugs?: string[];
+  mock?: number;          // for course-mock: which fixed mock set
   defaultExamMinutes: number;
   defaultCount: number;
+}
+
+/** Distinct mock numbers available for a course, sorted ascending. */
+function mockNumbers(courseId: CourseId): number[] {
+  const nums = new Set<number>();
+  for (const q of questions) {
+    if (q.courseId === courseId && typeof q.mock === "number") nums.add(q.mock);
+  }
+  return [...nums].sort((a, b) => a - b);
+}
+
+export function questionsInMock(courseId: CourseId, mock: number): number {
+  return questions.filter((q) => q.courseId === courseId && q.mock === mock).length;
 }
 
 /**
@@ -25,15 +40,19 @@ export function setsForCourse(courseId: CourseId): QuestionSet[] {
   const course = getCourse(courseId);
   if (!course) return [];
 
-  const mock: QuestionSet = {
-    key: `${courseId}|mock`,
-    kind: "course-mock",
+  // Một bộ "Mock đề" cố định cho mỗi số mock có trong ngân hàng câu hỏi.
+  // Mỗi mock được cân bằng theo blueprint (D1 24% / D2 30% / D3 34% / D4 12%).
+  const mocks = mockNumbers(courseId);
+  const mockSets: QuestionSet[] = mocks.map((n) => ({
+    key: `${courseId}|mock|${n}`,
+    kind: "course-mock" as const,
     courseId,
-    label: `${course.code} — Full Mock`,
-    description: `Đề mô phỏng đầy đủ ${course.examQuestions} câu, ${course.examMinutes} phút.`,
+    mock: n,
+    label: `${course.code} — Mock đề ${n}`,
+    description: `Đề mô phỏng cố định #${n}, cân theo blueprint (~${course.examQuestions} câu, ${course.examMinutes} phút).`,
     defaultCount: course.examQuestions,
     defaultExamMinutes: course.examMinutes,
-  };
+  }));
 
   const chapterSets: QuestionSet[] = chaptersOfCourse(courseId).map((c) => ({
     key: `${courseId}|chapter|${c.id}`,
@@ -57,7 +76,7 @@ export function setsForCourse(courseId: CourseId): QuestionSet[] {
     defaultExamMinutes: 10,
   }));
 
-  return [mock, ...chapterSets, ...lessonSets];
+  return [...mockSets, ...chapterSets, ...lessonSets];
 }
 
 export function getSet(key: string): QuestionSet | undefined {

@@ -12,7 +12,9 @@ export function generateStaticParams() {
 
 function countQ(set: ReturnType<typeof setsForCourse>[number]): number {
   if (set.kind === "course-mock") {
-    return questions.filter((q) => q.courseId === set.courseId).length;
+    return questions.filter(
+      (q) => q.courseId === set.courseId && (set.mock === undefined || q.mock === set.mock)
+    ).length;
   }
   if (set.lessonSlugs) {
     const ls = new Set(set.lessonSlugs);
@@ -25,7 +27,7 @@ export default function PracticeListPage({ params }: { params: { courseId: strin
   const course = getCourse(params.courseId as CourseId);
   if (!course) notFound();
   const sets = setsForCourse(course.id);
-  const mock = sets.find((s) => s.kind === "course-mock");
+  const mockSets = sets.filter((s) => s.kind === "course-mock");
   const chapterSets = sets.filter((s) => s.kind === "chapter");
   const lessonSets = sets.filter((s) => s.kind === "lesson");
 
@@ -42,10 +44,17 @@ export default function PracticeListPage({ params }: { params: { courseId: strin
         </p>
       </header>
 
-      {mock && (
+      {mockSets.length > 0 && (
         <section>
-          <h2 className="text-lg font-bold mb-3">Đề tổng hợp</h2>
-          <SetRow setKey={mock.key} courseId={course.id} label={mock.label} description={mock.description} count={countQ(mock)} />
+          <h2 className="text-lg font-bold mb-3">Đề mô phỏng (Full Mock)</h2>
+          <p className="text-sm text-[var(--text-dim)] mb-3">
+            Mỗi bộ là một đề cố định, trộn câu theo blueprint thật của kỳ thi. Luyện lần lượt từng bộ để bao quát toàn bộ đề.
+          </p>
+          <div className="space-y-2">
+            {mockSets.map((s) => (
+              <SetRow key={s.key} setKey={s.key} courseId={course.id} label={s.label} description={s.description} count={countQ(s)} />
+            ))}
+          </div>
         </section>
       )}
 

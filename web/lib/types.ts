@@ -35,6 +35,8 @@ export interface Question {
   options: string[];
   correctIndices: number[];
   explanation: string;
+  domain?: 1 | 2 | 3 | 4;  // CLF-C02 content domain (blueprint)
+  mock?: number;           // fixed mock set number this question belongs to
 }
 
 export interface Lesson {

@@ -34,7 +34,9 @@ export function buildQuestions(opts: BuildOptions): PreparedQuestion[] {
     const ids = new Set(opts.wrongIds ?? []);
     pool = questions.filter((q) => ids.has(q.id) && q.courseId === set.courseId);
   } else if (set.kind === "course-mock") {
-    pool = questions.filter((q) => q.courseId === set.courseId);
+    pool = questions.filter(
+      (q) => q.courseId === set.courseId && (set.mock === undefined || q.mock === set.mock)
+    );
   } else if (set.lessonSlugs && set.lessonSlugs.length) {
     const ls = new Set(set.lessonSlugs);
     pool = questions.filter((q) => q.courseId === set.courseId && ls.has(q.lesson));

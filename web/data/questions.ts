@@ -1,6 +1,7 @@
 import type { Question } from "@/lib/types";
+import { generatedQuestions } from "./generatedQuestions";
 
-export const questions: Question[] = [
+const curatedQuestions: Question[] = [
   // ============================================================
   // LESSON 01: CLOUD CONCEPTS
   // ============================================================
@@ -831,6 +832,8 @@ export const questions: Question[] = [
       "IAM, AWS Organizations, AWS Cost Explorer (interface), VPC (bản thân VPC — chỉ tính NAT/DX/data transfer), CloudFormation engine — đều free. EC2/S3/RDS đều tính phí theo usage.",
   },
 ];
+
+export const questions: Question[] = [...curatedQuestions, ...generatedQuestions];
 
 export function getQuestionById(id: string): Question | undefined {
   return questions.find((q) => q.id === id);
