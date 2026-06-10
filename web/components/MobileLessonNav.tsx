@@ -11,6 +11,11 @@ interface LessonLike {
   shortTitle: string;
 }
 
+interface LessonGroup {
+  label: string;
+  lessons: LessonLike[];
+}
+
 interface Props {
   courseId: string;
   courseCode: string;
@@ -18,6 +23,7 @@ interface Props {
   currentLessonOrder: number;
   currentShortTitle: string;
   lessons: LessonLike[];
+  groups?: LessonGroup[];
   toc: TocItem[];
   practiceCount: number;
 }
@@ -31,9 +37,12 @@ export default function MobileLessonNav({
   currentLessonOrder,
   currentShortTitle,
   lessons,
+  groups,
   toc,
   practiceCount,
 }: Props) {
+  // Group by chapter (exam domain) when provided, else one unnamed group.
+  const lessonGroups: LessonGroup[] = groups?.length ? groups : [{ label: "", lessons }];
   const [sheet, setSheet] = useState<SheetKind>(null);
   const [progress, setProgress] = useState(0);
   const [activeHeading, setActiveHeading] = useState("");
@@ -162,32 +171,41 @@ export default function MobileLessonNav({
         title="Danh sách bài học"
         onClose={() => setSheet(null)}
       >
-        <nav className="flex flex-col gap-0.5 pb-2">
-          {lessons.map((l) => {
-            const isCurrent = l.slug === currentSlug;
-            return (
-              <Link
-                key={l.slug}
-                href={`/courses/${courseId}/learn/${l.slug}`}
-                onClick={() => setSheet(null)}
-                className={`flex items-center gap-3 px-3 py-3 rounded-lg transition ${
-                  isCurrent
-                    ? "bg-brand-500/10 text-brand-600 font-semibold"
-                    : "text-[var(--text-dim)] active:bg-[var(--surface-2)]"
-                }`}
-              >
-                <span className="font-mono text-xs w-7 shrink-0 text-[var(--text-mute)]">
-                  {String(l.order).padStart(2, "0")}
-                </span>
-                <span className="text-[15px] leading-snug">{l.shortTitle}</span>
-                {isCurrent && (
-                  <span className="ml-auto text-[10px] uppercase tracking-wider text-brand-500 font-bold">
-                    đang đọc
-                  </span>
-                )}
-              </Link>
-            );
-          })}
+        <nav className="flex flex-col gap-3 pb-2">
+          {lessonGroups.map((g, gi) => (
+            <div key={gi} className="flex flex-col gap-0.5">
+              {g.label && (
+                <div className="text-[0.7rem] font-bold uppercase tracking-wide text-[var(--text-mute)] px-3 pt-1 pb-0.5 leading-tight">
+                  {g.label}
+                </div>
+              )}
+              {g.lessons.map((l) => {
+                const isCurrent = l.slug === currentSlug;
+                return (
+                  <Link
+                    key={l.slug}
+                    href={`/courses/${courseId}/learn/${l.slug}`}
+                    onClick={() => setSheet(null)}
+                    className={`flex items-center gap-3 px-3 py-3 rounded-lg transition ${
+                      isCurrent
+                        ? "bg-brand-500/10 text-brand-600 font-semibold"
+                        : "text-[var(--text-dim)] active:bg-[var(--surface-2)]"
+                    }`}
+                  >
+                    <span className="font-mono text-xs w-7 shrink-0 text-[var(--text-mute)]">
+                      {String(l.order).padStart(2, "0")}
+                    </span>
+                    <span className="text-[15px] leading-snug">{l.shortTitle}</span>
+                    {isCurrent && (
+                      <span className="ml-auto text-[10px] uppercase tracking-wider text-brand-500 font-bold">
+                        đang đọc
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </nav>
       </Sheet>
 

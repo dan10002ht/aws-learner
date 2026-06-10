@@ -7,7 +7,7 @@ import rehypeSlug from "rehype-slug";
 import rehypeRaw from "rehype-raw";
 import { ChevronLeft, ChevronRight, ListChecks } from "lucide-react";
 import { courses, getCourse } from "@/data/courses";
-import { getLessonBySlug, lessonsOfCourse } from "@/data/lessons";
+import { getLessonBySlug, lessonsOfCourse, chaptersOfCourse } from "@/data/lessons";
 import { readLessonMarkdown } from "@/lib/lessonContent";
 import { questionsInLesson } from "@/lib/questions";
 import { extractToc } from "@/lib/toc";
@@ -34,6 +34,15 @@ export default function LessonPage({ params }: { params: { courseId: string; slu
 
   const md = readLessonMarkdown(course.id, params.slug);
   const lessons = lessonsOfCourse(course.id);
+  const bySlug = new Map(lessons.map((l) => [l.slug, l]));
+  // Group lessons by chapter (exam domain) for the sidebar TOC.
+  const chapterGroups = chaptersOfCourse(course.id)
+    .map((c) => ({
+      // "Domain 1 — Cloud Concepts (24%)" → "Cloud Concepts (24%)"
+      label: c.title.includes("—") ? c.title.split("—").slice(1).join("—").trim() : c.title,
+      lessons: c.lessonSlugs.map((s) => bySlug.get(s)).filter(Boolean) as typeof lessons,
+    }))
+    .filter((g) => g.lessons.length > 0);
   const idx = lessons.findIndex((l) => l.slug === params.slug);
   const prev = lessons[idx - 1];
   const next = lessons[idx + 1];
@@ -49,19 +58,27 @@ export default function LessonPage({ params }: { params: { courseId: string; slu
         <Link href={`/courses/${course.id}`} className="text-xs uppercase tracking-widest text-[var(--text-dim)] hover:text-[var(--text)] mb-3 inline-block">
           ← Tổng quan khoá
         </Link>
-        <nav className="flex flex-col gap-0.5">
-          {lessons.map((l) => (
-            <Link
-              key={l.slug}
-              href={`/courses/${course.id}/learn/${l.slug}`}
-              className={`text-sm px-3 py-1.5 rounded-md transition ${
-                l.slug === params.slug
-                  ? "bg-brand-500/10 text-brand-600 font-semibold"
-                  : "text-[var(--text-dim)] hover:bg-[var(--surface-2)] hover:text-[var(--text)]"
-              }`}
-            >
-              {String(l.order).padStart(2, "0")}. {l.shortTitle}
-            </Link>
+        <nav className="flex flex-col gap-3">
+          {chapterGroups.map((g, gi) => (
+            <div key={gi} className="flex flex-col gap-0.5">
+              <div className="text-[0.7rem] font-bold uppercase tracking-wide text-[var(--text-mute)] px-3 pt-1 pb-0.5 leading-tight">
+                {g.label}
+              </div>
+              {g.lessons.map((l) => (
+                <Link
+                  key={l.slug}
+                  href={`/courses/${course.id}/learn/${l.slug}`}
+                  className={`text-sm px-3 py-1.5 rounded-md transition flex gap-2 ${
+                    l.slug === params.slug
+                      ? "bg-brand-500/10 text-brand-600 font-semibold"
+                      : "text-[var(--text-dim)] hover:bg-[var(--surface-2)] hover:text-[var(--text)]"
+                  }`}
+                >
+                  <span className="text-[var(--text-mute)] font-mono text-xs mt-0.5">{String(l.order).padStart(2, "0")}</span>
+                  <span>{l.shortTitle}</span>
+                </Link>
+              ))}
+            </div>
           ))}
         </nav>
       </aside>
@@ -74,6 +91,10 @@ export default function LessonPage({ params }: { params: { courseId: string; slu
           currentLessonOrder={lesson.order}
           currentShortTitle={lesson.shortTitle}
           lessons={lessons.map((l) => ({ slug: l.slug, order: l.order, shortTitle: l.shortTitle }))}
+          groups={chapterGroups.map((g) => ({
+            label: g.label,
+            lessons: g.lessons.map((l) => ({ slug: l.slug, order: l.order, shortTitle: l.shortTitle })),
+          }))}
           toc={toc}
           practiceCount={practiceCount}
         />
