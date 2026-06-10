@@ -64,6 +64,7 @@ function interleaveByDomain(items: PreparedQuestion[]): PreparedQuestion[] {
 const DOMAIN_WEIGHTS: Record<string, Record<number, number>> = {
   "CLF-C02": { 1: 0.24, 2: 0.30, 3: 0.34, 4: 0.12 },
   "SAA-C03": { 1: 0.30, 2: 0.26, 3: 0.24, 4: 0.20 },
+  "DVA-C02": { 1: 0.32, 2: 0.26, 3: 0.24, 4: 0.18 },
 };
 const DEFAULT_WEIGHTS: Record<number, number> = { 1: 0.25, 2: 0.25, 3: 0.25, 4: 0.25 };
 

@@ -1,0 +1,309 @@
+# Authentication & Authorization
+
+Bài này thuộc **DVA-C02 Domain 2: Security** — domain chiếm ~26% đề thi và là nơi nhiều câu hỏi tình huống "chọn dịch vụ đúng" xuất hiện. Với vai trò developer, bạn cần phân biệt rõ **authentication** (bạn là ai?) và **authorization** (bạn được phép làm gì?), rồi map đúng vào các service AWS: Cognito, IAM, STS.
+
+> 💡 Mẹo thi: Khi đọc đề, gạch chân 3 thứ: (1) ai đang đăng nhập — end user của app hay developer/service? (2) cần JWT hay cần AWS credentials? (3) federated từ provider nào (Google/Facebook/SAML/OIDC)? Ba câu này quyết định 80% câu Cognito.
+
+---
+
+## 1. Bức tranh tổng thể: Authn vs Authz trên AWS
+
+| Khái niệm | Service chính | Output |
+|-----------|---------------|--------|
+| End user đăng nhập app (web/mobile) | **Cognito User Pool** | JWT (id/access/refresh token) |
+| Đổi danh tính lấy quyền gọi AWS service | **Cognito Identity Pool** | Temporary AWS credentials (qua STS) |
+| App/service/EC2/Lambda gọi AWS API | **IAM Role** | Temporary credentials (qua STS) |
+| Cấp credentials tạm thời, federation | **STS** | AccessKeyId + SecretAccessKey + SessionToken |
+| Quyền chi tiết "được làm gì" | **IAM Policy** (+ Cognito groups) | Allow/Deny |
+
+Quy tắc vàng cần thuộc lòng:
+
+- **User Pool = authentication** → trả về **token JWT**, KHÔNG phải AWS credentials.
+- **Identity Pool = authorization để gọi AWS** → trả về **AWS credentials tạm thời**.
+- Hai cái này **độc lập** và **thường dùng chung**: User Pool xác thực user → đưa token cho Identity Pool → Identity Pool đổi lấy AWS credentials.
+
+> ⚠️ Bẫy: Đây là bẫy kinh điển nhất của bài này. "User Pool cấp AWS credentials" là **SAI**. "Identity Pool cấp JWT" cũng **SAI**. Nhớ: Pool người dùng → token; Pool danh tính → credentials.
+
+---
+
+## 2. Amazon Cognito User Pools
+
+User Pool là một **user directory** (kho người dùng) có sẵn tính năng sign-up, sign-in, MFA, quên mật khẩu, email/SMS verification. Bạn không phải tự build bảng `users` + hash password nữa.
+
+### 2.1 Khi nào dùng
+
+- App cần đăng ký / đăng nhập người dùng.
+- Cần social login (Google, Facebook, Apple, Amazon) hoặc enterprise login (SAML, OIDC) **gộp chung một chỗ**.
+- Cần một identity provider chuẩn OAuth 2.0 / OIDC để bảo vệ API.
+
+### 2.2 Ba loại token (PHẢI thuộc)
+
+Sau khi đăng nhập thành công, User Pool trả về 3 JWT:
+
+| Token | Mục đích | Chứa gì | Dùng để |
+|-------|----------|---------|---------|
+| **ID token** | Xác thực danh tính user | Thông tin user (email, name, custom attributes, `cognito:groups`) | Truyền identity cho frontend/backend; xác thực qua Identity Pool |
+| **Access token** | Phân quyền truy cập resource | Scopes OAuth, `username`, groups | Gọi API được bảo vệ; gọi Cognito self-service API (đổi mật khẩu...) |
+| **Refresh token** | Lấy token mới khi hết hạn | Opaque (không phải JWT đọc được) | Xin id/access token mới mà không bắt user login lại |
+
+- ID & Access token mặc định hết hạn sau **1 giờ** (cấu hình được).
+- Refresh token mặc định **30 ngày** (1h–10 năm).
+
+> ⚠️ Bẫy: Đề hỏi "token nào chứa thông tin profile/email của user?" → **ID token**. "Token nào dùng để authorize gọi API/resource?" → **Access token**. Đừng lẫn. Refresh token KHÔNG dùng để gọi API — chỉ để xin token mới.
+
+### 2.3 JWT validation (rất hay ra)
+
+Backend nhận token trong header `Authorization: Bearer <jwt>` và phải **tự verify**:
+
+1. Tách JWT thành 3 phần (header.payload.signature).
+2. Lấy `kid` từ header → tải public key từ **JWKS endpoint**:
+   `https://cognito-idp.{region}.amazonaws.com/{userPoolId}/.well-known/jwks.json`
+3. Verify chữ ký (RS256), kiểm tra `exp` (chưa hết hạn), `iss` (đúng User Pool), `aud`/`client_id` (đúng app client), `token_use` (`id` hay `access`).
+
+```javascript
+// Node.js với aws-jwt-verify (thư viện chính chủ AWS)
+import { CognitoJwtVerifier } from "aws-jwt-verify";
+
+const verifier = CognitoJwtVerifier.create({
+  userPoolId: "us-east-1_AbCdEf123",
+  tokenUse: "access",        // hoặc "id"
+  clientId: "1example23456789",
+});
+
+try {
+  const payload = await verifier.verify(token); // throw nếu invalid
+  console.log("OK:", payload.sub, payload["cognito:groups"]);
+} catch {
+  // 401 Unauthorized
+}
+```
+
+> 💡 Mẹo thi: Với **API Gateway**, bạn KHÔNG cần tự viết code verify. Dùng **Cognito Authorizer** (REST API) hoặc **JWT Authorizer** (HTTP API) — chỉ trỏ tới User Pool, API Gateway tự validate token. Đề mô tả "cần bảo vệ API Gateway bằng Cognito với ít code nhất" → chọn Cognito/JWT authorizer.
+
+### 2.4 App Client
+
+- Đại diện cho 1 ứng dụng kết nối tới User Pool (web app, mobile app...).
+- **Public client** (mobile/SPA): KHÔNG có client secret (vì không giữ bí mật được).
+- **Confidential client** (backend server): CÓ client secret.
+- Cấu hình OAuth flows, callback URLs, allowed scopes ở đây.
+
+### 2.5 Hosted UI
+
+- Trang đăng nhập/đăng ký **AWS host sẵn**, customize logo/CSS được.
+- Hỗ trợ OAuth 2.0 flows: **Authorization code grant** (khuyến nghị cho web/mobile có backend), Implicit (cũ, tránh dùng).
+- Đỡ phải tự code form login + xử lý social login.
+
+> 💡 Mẹo thi: "Cần login page nhanh, có sẵn social login, không muốn tự build UI" → **Hosted UI** + Authorization code grant.
+
+### 2.6 Lambda Triggers (customize luồng auth)
+
+User Pool cho phép gắn Lambda vào các điểm trong vòng đời auth:
+
+| Trigger | Khi nào chạy | Dùng làm gì |
+|---------|--------------|-------------|
+| **Pre Sign-up** | Trước khi tạo user | Auto-confirm, validate domain email |
+| **Post Confirmation** | Sau khi confirm | Ghi user vào DynamoDB, gửi welcome email |
+| **Pre Token Generation** | Trước khi phát token | **Thêm/sửa custom claims**, sửa groups trong token |
+| **Pre Authentication / Post Authentication** | Quanh lúc login | Chặn login, audit logging |
+| **Custom Auth (Define/Create/Verify Auth Challenge)** | Luồng passwordless/OTP | Tự build challenge (OTP qua SMS, CAPTCHA) |
+| **Migrate User** | Khi login user chưa có trong pool | Import dần từ hệ thống cũ |
+
+> ⚠️ Bẫy: "Thêm custom claim vào token" → **Pre Token Generation**, KHÔNG phải Pre Authentication. "Lưu user vào DB sau khi đăng ký xong" → **Post Confirmation**.
+
+---
+
+## 3. Amazon Cognito Identity Pools (Federated Identities)
+
+Identity Pool **không** quản lý user. Nhiệm vụ duy nhất: nhận một danh tính đã xác thực (token) và **đổi lấy AWS credentials tạm thời** để app gọi trực tiếp AWS service (S3, DynamoDB...).
+
+### 3.1 Khi nào dùng
+
+- Mobile/web app cần **gọi thẳng AWS service** từ client (upload S3, đọc DynamoDB) mà KHÔNG đi qua backend của bạn.
+- Cần cấp quyền cho cả **guest (unauthenticated)** lẫn user đã đăng nhập.
+
+### 3.2 Authenticated vs Unauthenticated role
+
+Identity Pool gắn với **2 IAM role**:
+
+| Role | Dành cho | Ví dụ quyền |
+|------|----------|-------------|
+| **Authenticated role** | User đã login (qua User Pool, Google, SAML...) | Read/write `s3://bucket/${user-id}/*` |
+| **Unauthenticated role** | Guest chưa login | Chỉ read public content |
+
+> ⚠️ Bẫy: Identity Pool hỗ trợ guest access (unauthenticated role) — User Pool thì KHÔNG. Nếu đề nói "cho phép khách vãng lai chưa đăng nhập gọi AWS service với quyền hạn chế" → **Identity Pool + unauthenticated role**.
+
+### 3.3 Luồng kết hợp User Pool + Identity Pool
+
+```
+[App] --login--> [User Pool] --(ID token JWT)--> [App]
+[App] --(ID token)--> [Identity Pool] --(GetCredentialsForIdentity)-->
+   [STS] --(temp AWS credentials)--> [App] --gọi S3/DynamoDB--> [AWS]
+```
+
+Bên dưới, Identity Pool gọi STS **`AssumeRoleWithWebIdentity`** để lấy credentials.
+
+```javascript
+// AWS SDK v3 — lấy credentials từ Identity Pool, dùng cho S3
+import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
+import { S3Client } from "@aws-sdk/client-s3";
+
+const s3 = new S3Client({
+  region: "us-east-1",
+  credentials: fromCognitoIdentityPool({
+    clientConfig: { region: "us-east-1" },
+    identityPoolId: "us-east-1:abcd-1234-...",
+    logins: {
+      // ID token (KHÔNG phải access token) từ User Pool
+      "cognito-idp.us-east-1.amazonaws.com/us-east-1_AbCdEf123": idToken,
+    },
+  }),
+});
+```
+
+> 💡 Mẹo thi: Khi đưa token từ User Pool vào Identity Pool qua `logins`, dùng **ID token**, không phải access token. Đây là chi tiết hay bị hỏi xoáy.
+
+---
+
+## 4. STS & IAM Roles cho app/service
+
+STS (Security Token Service) cấp **temporary credentials** (có `SessionToken`, tự hết hạn). Đây là cách AWS-khuyến nghị thay cho long-term access keys.
+
+### 4.1 Các API STS cần nhớ
+
+| API | Dùng khi | Input danh tính |
+|-----|----------|-----------------|
+| **AssumeRole** | Cross-account, EC2/Lambda đổi role, escalate quyền | IAM principal (user/role) hiện có |
+| **AssumeRoleWithWebIdentity** | Login qua **OIDC/web** (Google, Facebook, Cognito) | Web identity token (JWT) |
+| **AssumeRoleWithSAML** | Login qua **SAML 2.0** (enterprise AD, ADFS, Okta) | SAML assertion |
+| **GetSessionToken** | MFA cho long-term credentials của IAM user | IAM user keys |
+
+> ⚠️ Bẫy: Phân biệt theo nguồn danh tính:
+> - **Web/OIDC/social/Cognito** → `AssumeRoleWithWebIdentity`
+> - **SAML/enterprise/Active Directory** → `AssumeRoleWithSAML`
+> - **Đã có IAM principal, đổi role / cross-account** → `AssumeRole`
+
+### 4.2 Trust policy vs Permission policy
+
+Một IAM role có 2 policy:
+
+- **Trust policy** (Assume role policy): AI được phép assume role này (`Principal`).
+- **Permission policy**: Role này được làm GÌ sau khi assume.
+
+```json
+// Trust policy cho phép Lambda assume role
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Principal": { "Service": "lambda.amazonaws.com" },
+    "Action": "sts:AssumeRole"
+  }]
+}
+```
+
+```bash
+# CLI: assume role cross-account
+aws sts assume-role \
+  --role-arn arn:aws:iam::222222222222:role/AppRole \
+  --role-session-name dev-session
+# -> trả về AccessKeyId, SecretAccessKey, SessionToken (hết hạn ~1h)
+```
+
+> 💡 Mẹo thi: Lambda/EC2 KHÔNG nên chứa access key trong code/env. Gắn **execution role / instance profile** → SDK tự lấy temp credentials qua STS. Đề thấy "hardcode access key" gần như luôn là đáp án SAI.
+
+### 4.3 Federation (SAML / OIDC)
+
+- **OIDC federation**: tin tưởng một OIDC provider (Google, Cognito User Pool, GitHub Actions...) → `AssumeRoleWithWebIdentity`.
+- **SAML federation**: tin tưởng IdP doanh nghiệp (ADFS, Okta) → `AssumeRoleWithSAML`. Dùng khi cho nhân viên công ty truy cập AWS.
+- Trong cả hai, bạn tạo một **IAM Identity Provider** + IAM role có trust policy trỏ tới provider đó.
+
+---
+
+## 5. Fine-grained access control (phân quyền chi tiết)
+
+### 5.1 Cognito Groups → IAM role
+
+- Tạo **group** trong User Pool, gán mỗi group một **IAM role** + precedence.
+- `cognito:groups` xuất hiện trong token; Identity Pool có thể chọn role theo group (**Choose role from token**).
+- Dùng để: admin group → role nhiều quyền; user group → role hạn chế.
+
+### 5.2 IAM Policy Conditions + policy variables
+
+Phân quyền theo chính danh tính user, ví dụ mỗi user chỉ truy cập folder S3 của mình:
+
+```json
+{
+  "Effect": "Allow",
+  "Action": ["s3:GetObject", "s3:PutObject"],
+  "Resource": "arn:aws:s3:::my-bucket/${cognito-identity.amazonaws.com:sub}/*"
+}
+```
+
+- `${cognito-identity.amazonaws.com:sub}` được thay bằng identity ID của user lúc runtime → mỗi user 1 prefix riêng, dùng CHUNG một role.
+- Với DynamoDB, dùng condition `dynamodb:LeadingKeys` để giới hạn theo partition key = user id.
+
+```json
+{
+  "Effect": "Allow",
+  "Action": ["dynamodb:GetItem", "dynamodb:Query"],
+  "Resource": "arn:aws:dynamodb:*:*:table/GameScores",
+  "Condition": {
+    "ForAllValues:StringEquals": {
+      "dynamodb:LeadingKeys": ["${cognito-identity.amazonaws.com:sub}"]
+    }
+  }
+}
+```
+
+> 💡 Mẹo thi: "Hàng nghìn user, mỗi người chỉ truy cập dữ liệu của mình, KHÔNG muốn tạo nghìn role/policy" → một role + **IAM policy variable** (`${...:sub}`) hoặc `dynamodb:LeadingKeys`. Đây là pattern multi-tenant rất hay ra.
+
+---
+
+## 6. Cross-service auth trong microservices
+
+Khi service A gọi service B (Lambda → Lambda, ECS → API Gateway):
+
+| Cách | Khi nào |
+|------|---------|
+| **IAM auth (SigV4)** | Service-to-service nội bộ AWS; gắn role, ký request bằng SigV4. API Gateway bật **IAM authorization** |
+| **Cognito/JWT authorizer** | API có end user; token đi kèm theo request |
+| **Lambda authorizer** | Logic auth tùy biến (token custom, kiểm tra DB) |
+
+- Mỗi Lambda/service có **execution role riêng** (least privilege) — không dùng chung một role to.
+- Truyền identity của user xuống các service phía sau: forward ID token, hoặc dùng API Gateway mapping để truyền claims qua context.
+
+> ⚠️ Bẫy: Service-to-service trong AWS thì **không cần Cognito** — dùng IAM role + SigV4 là đủ và bảo mật hơn. Cognito là cho **end user**, không phải cho service backend gọi nhau.
+
+---
+
+## 7. Bảng quyết định nhanh "khi nào dùng gì"
+
+| Tình huống | Đáp án |
+|------------|--------|
+| App cần sign-up/sign-in user, social login | **Cognito User Pool** |
+| Cần JWT để bảo vệ API Gateway, ít code | **User Pool + Cognito/JWT Authorizer** |
+| Mobile app gọi thẳng S3/DynamoDB từ client | **Identity Pool** → temp AWS credentials |
+| Cho phép guest chưa login dùng app hạn chế | **Identity Pool + unauthenticated role** |
+| Login bằng Google/Facebook lấy AWS credentials | `AssumeRoleWithWebIdentity` (qua Identity Pool) |
+| Nhân viên login bằng Active Directory/Okta vào AWS | **SAML federation** → `AssumeRoleWithSAML` |
+| Lambda/EC2 gọi AWS service | **IAM execution role / instance profile** |
+| Cross-account access | `AssumeRole` + trust policy |
+| Thêm custom claim vào token | **Pre Token Generation** trigger |
+| Mỗi user chỉ truy cập data riêng, 1 role duy nhất | **IAM policy variable** `${...:sub}` / `LeadingKeys` |
+| Service-to-service nội bộ AWS | **IAM role + SigV4** (không cần Cognito) |
+
+---
+
+## 8. Tổng kết các bẫy thi quan trọng nhất
+
+> ⚠️ Bẫy tổng hợp — đọc lại trước khi thi:
+> 1. **User Pool → token (JWT); Identity Pool → AWS credentials.** Đừng đảo ngược.
+> 2. **ID token** = thông tin user; **Access token** = authorize gọi resource; **Refresh token** = xin token mới (không gọi API).
+> 3. Đưa token vào Identity Pool `logins` dùng **ID token**.
+> 4. Guest/unauthenticated access là tính năng của **Identity Pool**, không phải User Pool.
+> 5. **Web/OIDC/Cognito** → `AssumeRoleWithWebIdentity`; **SAML/AD** → `AssumeRoleWithSAML`; cross-account/đổi role → `AssumeRole`.
+> 6. Custom claim → **Pre Token Generation**; lưu DB sau đăng ký → **Post Confirmation**.
+> 7. Multi-tenant nhiều user → **1 role + IAM policy variable**, đừng tạo nghìn role.
+> 8. Service nội bộ AWS gọi nhau → **IAM + SigV4**, không phải Cognito.
+> 9. Đừng bao giờ hardcode access key — luôn dùng **role + temporary credentials qua STS**.
+> 10. Bảo vệ API Gateway ít code nhất → **Cognito Authorizer**, không tự viết JWT validation.

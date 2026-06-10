@@ -1,0 +1,76 @@
+{
+  "course": "DVA-C02",
+  "createdNote": "stamp after build",
+  "parts": [
+    {
+      "id": "L-d1",
+      "kind": "lessons",
+      "scope": "Domain1 Development: 5 bài (sdk-api, lambda, api-gateway, dynamodb, app-integration)",
+      "status": "done",
+      "note": "5 bài, ~250-400 dòng"
+    },
+    {
+      "id": "L-d2",
+      "kind": "lessons",
+      "scope": "Domain2 Security: 3 bài (auth, encryption, secrets)",
+      "status": "done",
+      "note": "3 bài"
+    },
+    {
+      "id": "L-d3",
+      "kind": "lessons",
+      "scope": "Domain3 Deployment: 4 bài (packaging-iac, cicd, deploy-strategies, beanstalk)",
+      "status": "done",
+      "note": "4 bài"
+    },
+    {
+      "id": "L-d4",
+      "kind": "lessons",
+      "scope": "Domain4 Troubleshooting&Opt: 3 bài (observability, xray, optimization)",
+      "status": "done",
+      "note": ""
+    },
+    {
+      "id": "REVIEW-L",
+      "kind": "review",
+      "scope": "Review toàn bộ 15 lesson DVA",
+      "status": "done",
+      "note": "15 bài real, build pass"
+    },
+    {
+      "id": "Q-d1",
+      "kind": "questions",
+      "scope": "Domain1 questions ~63 câu (3 mock)",
+      "status": "pending",
+      "note": ""
+    },
+    {
+      "id": "Q-d2",
+      "kind": "questions",
+      "scope": "Domain2 questions ~51 câu",
+      "status": "pending",
+      "note": ""
+    },
+    {
+      "id": "Q-d3",
+      "kind": "questions",
+      "scope": "Domain3 questions ~48 câu",
+      "status": "pending",
+      "note": ""
+    },
+    {
+      "id": "Q-d4",
+      "kind": "questions",
+      "scope": "Domain4 questions ~36 câu",
+      "status": "pending",
+      "note": ""
+    },
+    {
+      "id": "ENABLE",
+      "kind": "finalize",
+      "scope": "set status available + review gate + build + push",
+      "status": "pending",
+      "note": ""
+    }
+  ]
+}

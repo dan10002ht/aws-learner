@@ -165,11 +165,50 @@ const saaChapters: Chapter[] = [
   { id: "saa-ch1", courseId: "SAA-C03", title: "Phụ lục — Nền tảng hệ phân tán", lessonSlugs: ["foundations-01-cap-theorem", "foundations-02-consistency-models", "foundations-03-replication-and-quorum", "foundations-04-latency-vs-consistency", "foundations-05-partitioning-and-sharding", "foundations-06-failure-modes"], category: "foundation" },
 ];
 
+// DVA-C02 — Developer Associate. Chapters ordered by blueprint weight:
+// D1 Development 32% / D2 Security 26% / D3 Deployment 24% / D4 Troubleshooting & Optimization 18%.
+const dvaLessons: Lesson[] = [
+  // Domain 1 — Development with AWS Services (32%)
+  { slug: "dva-d1-01-sdk-api", courseId: "DVA-C02", title: "SDK, CLI & API Calls", shortTitle: "SDK & API", chapter: "dva-ch1", order: 1, available: true,
+    description: "AWS SDK & CLI, programmatic access, pagination, retries/exponential backoff, error handling, credential chain.", file: "dva-c02/d1-01-sdk-api.md" },
+  { slug: "dva-d1-02-lambda", courseId: "DVA-C02", title: "Developing AWS Lambda", shortTitle: "Lambda", chapter: "dva-ch1", order: 2, available: true,
+    description: "Config (memory/timeout/concurrency/layers/extensions/env vars), VPC access, lifecycle, destinations/DLQ, cold start, tuning.", file: "dva-c02/d1-02-lambda.md" },
+  { slug: "dva-d1-03-api-gateway", courseId: "DVA-C02", title: "Amazon API Gateway", shortTitle: "API Gateway", chapter: "dva-ch1", order: 3, available: true,
+    description: "REST/HTTP/WebSocket, stages, integrations, request/response transform, validation, authorizers, throttling, caching.", file: "dva-c02/d1-03-api-gateway.md" },
+  { slug: "dva-d1-04-dynamodb", courseId: "DVA-C02", title: "DynamoDB for Developers", shortTitle: "DynamoDB", chapter: "dva-ch1", order: 4, available: true,
+    description: "Partition/sort keys, GSI/LSI, query vs scan, consistency, capacity modes, DAX, Streams, TTL, transactions.", file: "dva-c02/d1-04-dynamodb.md" },
+  { slug: "dva-d1-05-app-integration", courseId: "DVA-C02", title: "App Integration & Messaging", shortTitle: "Integration", chapter: "dva-ch1", order: 5, available: true,
+    description: "SQS, SNS, EventBridge, Step Functions, Kinesis, fan-out, event-driven & async patterns, Amazon Q Developer.", file: "dva-c02/d1-05-app-integration.md" },
+  // Domain 2 — Security (26%)
+  { slug: "dva-d2-01-auth", courseId: "DVA-C02", title: "Authentication & Authorization", shortTitle: "Auth", chapter: "dva-ch2", order: 6, available: true,
+    description: "Cognito user/identity pools, JWT/bearer tokens, IAM roles, STS AssumeRole, federation, fine-grained access.", file: "dva-c02/d2-01-auth.md" },
+  { slug: "dva-d2-02-encryption", courseId: "DVA-C02", title: "Encryption with KMS & ACM", shortTitle: "Encryption", chapter: "dva-ch2", order: 7, available: true,
+    description: "KMS envelope encryption, at rest/in transit, client vs server-side, ACM, key rotation, cross-account keys.", file: "dva-c02/d2-02-encryption.md" },
+  { slug: "dva-d2-03-secrets", courseId: "DVA-C02", title: "Secrets & Sensitive Data", shortTitle: "Secrets", chapter: "dva-ch2", order: 8, available: true,
+    description: "Secrets Manager vs SSM Parameter Store, env var encryption, PII/PHI, masking & sanitization.", file: "dva-c02/d2-03-secrets.md" },
+  // Domain 3 — Deployment (24%)
+  { slug: "dva-d3-01-packaging-iac", courseId: "DVA-C02", title: "Packaging & IaC", shortTitle: "IaC", chapter: "dva-ch3", order: 9, available: true,
+    description: "AWS SAM, CloudFormation, CDK, AppConfig, artifacts, Lambda layers, container images, dependency packaging.", file: "dva-c02/d3-01-packaging-iac.md" },
+  { slug: "dva-d3-02-cicd", courseId: "DVA-C02", title: "CI/CD Pipeline", shortTitle: "CI/CD", chapter: "dva-ch3", order: 10, available: true,
+    description: "CodePipeline, CodeBuild (buildspec), CodeDeploy (appspec), CodeArtifact, commit-triggered build/test/deploy.", file: "dva-c02/d3-02-cicd.md" },
+  { slug: "dva-d3-03-deploy-strategies", courseId: "DVA-C02", title: "Deployment Strategies & Rollbacks", shortTitle: "Deploy Strategies", chapter: "dva-ch3", order: 11, available: true,
+    description: "Blue/green, canary, rolling, Lambda versions/aliases, traffic shifting, rollbacks, API Gateway stage variables.", file: "dva-c02/d3-03-deploy-strategies.md" },
+  { slug: "dva-d3-04-beanstalk", courseId: "DVA-C02", title: "Elastic Beanstalk & Environments", shortTitle: "Beanstalk", chapter: "dva-ch3", order: 12, available: true,
+    description: "Elastic Beanstalk deployment policies (all-at-once, rolling, immutable), environments, .ebextensions.", file: "dva-c02/d3-04-beanstalk.md" },
+  // Domain 4 — Troubleshooting & Optimization (18%)
+  { slug: "dva-d4-01-observability", courseId: "DVA-C02", title: "Observability: CloudWatch", shortTitle: "Observability", chapter: "dva-ch4", order: 13, available: true,
+    description: "CloudWatch Logs, metrics, alarms, EMF custom metrics, Logs Insights, dashboards, structured logging.", file: "dva-c02/d4-01-observability.md" },
+  { slug: "dva-d4-02-xray", courseId: "DVA-C02", title: "Tracing with AWS X-Ray", shortTitle: "X-Ray", chapter: "dva-ch4", order: 14, available: true,
+    description: "X-Ray segments/subsegments, annotations vs metadata, service map, SDK instrumentation, sampling.", file: "dva-c02/d4-02-xray.md" },
+  { slug: "dva-d4-03-optimization", courseId: "DVA-C02", title: "Optimization & Caching", shortTitle: "Optimization", chapter: "dva-ch4", order: 15, available: true,
+    description: "Lambda concurrency/performance, ElastiCache, DAX, API Gateway & CloudFront caching, resource optimization.", file: "dva-c02/d4-03-optimization.md" },
+];
+
 const dvaChapters: Chapter[] = [
-  { id: "dva-ch1", courseId: "DVA-C02", title: "Development with AWS Services", lessonSlugs: [], category: "compute" },
-  { id: "dva-ch2", courseId: "DVA-C02", title: "Security",                       lessonSlugs: [], category: "security" },
-  { id: "dva-ch3", courseId: "DVA-C02", title: "Deployment",                     lessonSlugs: [], category: "foundation" },
-  { id: "dva-ch4", courseId: "DVA-C02", title: "Troubleshooting & Optimization", lessonSlugs: [], category: "billing" },
+  { id: "dva-ch1", courseId: "DVA-C02", title: "Domain 1 — Development with AWS Services (32%)", lessonSlugs: ["dva-d1-01-sdk-api", "dva-d1-02-lambda", "dva-d1-03-api-gateway", "dva-d1-04-dynamodb", "dva-d1-05-app-integration"], category: "compute" },
+  { id: "dva-ch2", courseId: "DVA-C02", title: "Domain 2 — Security (26%)",                       lessonSlugs: ["dva-d2-01-auth", "dva-d2-02-encryption", "dva-d2-03-secrets"], category: "security" },
+  { id: "dva-ch3", courseId: "DVA-C02", title: "Domain 3 — Deployment (24%)",                     lessonSlugs: ["dva-d3-01-packaging-iac", "dva-d3-02-cicd", "dva-d3-03-deploy-strategies", "dva-d3-04-beanstalk"], category: "foundation" },
+  { id: "dva-ch4", courseId: "DVA-C02", title: "Domain 4 — Troubleshooting & Optimization (18%)", lessonSlugs: ["dva-d4-01-observability", "dva-d4-02-xray", "dva-d4-03-optimization"], category: "billing" },
 ];
 
 const soaChapters: Chapter[] = [
@@ -191,7 +230,7 @@ const sapChapters: Chapter[] = [
 // =====================================================================
 // Aggregate
 // =====================================================================
-export const lessons: Lesson[] = [...clfLessons, ...saaLessons];
+export const lessons: Lesson[] = [...clfLessons, ...saaLessons, ...dvaLessons];
 export const chapters: Chapter[] = [...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters];
 
 export function lessonsOfCourse(courseId: CourseId): Lesson[] {
