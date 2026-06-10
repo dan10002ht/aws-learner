@@ -14,6 +14,7 @@ import { extractToc } from "@/lib/toc";
 import MarkLessonRead from "@/components/MarkLessonRead";
 import LessonToc from "@/components/LessonToc";
 import MobileLessonNav from "@/components/MobileLessonNav";
+import LessonSidebarNav from "@/components/LessonSidebarNav";
 import type { CourseId } from "@/lib/types";
 
 export function generateStaticParams() {
@@ -58,29 +59,14 @@ export default function LessonPage({ params }: { params: { courseId: string; slu
         <Link href={`/courses/${course.id}`} className="text-xs uppercase tracking-widest text-[var(--text-dim)] hover:text-[var(--text)] mb-3 inline-block">
           ← Tổng quan khoá
         </Link>
-        <nav className="flex flex-col gap-3">
-          {chapterGroups.map((g, gi) => (
-            <div key={gi} className="flex flex-col gap-0.5">
-              <div className="text-[0.7rem] font-bold uppercase tracking-wide text-[var(--text-mute)] px-3 pt-1 pb-0.5 leading-tight">
-                {g.label}
-              </div>
-              {g.lessons.map((l) => (
-                <Link
-                  key={l.slug}
-                  href={`/courses/${course.id}/learn/${l.slug}`}
-                  className={`text-sm px-3 py-1.5 rounded-md transition flex gap-2 ${
-                    l.slug === params.slug
-                      ? "bg-brand-500/10 text-brand-600 font-semibold"
-                      : "text-[var(--text-dim)] hover:bg-[var(--surface-2)] hover:text-[var(--text)]"
-                  }`}
-                >
-                  <span className="text-[var(--text-mute)] font-mono text-xs mt-0.5">{String(l.order).padStart(2, "0")}</span>
-                  <span>{l.shortTitle}</span>
-                </Link>
-              ))}
-            </div>
-          ))}
-        </nav>
+        <LessonSidebarNav
+          courseId={course.id}
+          currentSlug={params.slug}
+          groups={chapterGroups.map((g) => ({
+            label: g.label,
+            lessons: g.lessons.map((l) => ({ slug: l.slug, order: l.order, shortTitle: l.shortTitle })),
+          }))}
+        />
       </aside>
 
       <article className="min-w-0">

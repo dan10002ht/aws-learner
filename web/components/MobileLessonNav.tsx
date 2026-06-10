@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { List, ListChecks, X, ChevronLeft } from "lucide-react";
+import { List, ListChecks, X, ChevronLeft, ChevronRight } from "lucide-react";
 import type { TocItem } from "@/lib/toc";
 
 interface LessonLike {
@@ -43,6 +43,17 @@ export default function MobileLessonNav({
 }: Props) {
   // Group by chapter (exam domain) when provided, else one unnamed group.
   const lessonGroups: LessonGroup[] = groups?.length ? groups : [{ label: "", lessons }];
+  const activeGroupIdx = lessonGroups.findIndex((g) => g.lessons.some((l) => l.slug === currentSlug));
+  // Only the active lesson's domain expanded by default (collapse the rest).
+  const [openGroups, setOpenGroups] = useState<Set<number>>(
+    () => new Set(activeGroupIdx >= 0 ? [activeGroupIdx] : [0])
+  );
+  const toggleGroup = (i: number) =>
+    setOpenGroups((prev) => {
+      const next = new Set(prev);
+      next.has(i) ? next.delete(i) : next.add(i);
+      return next;
+    });
   const [sheet, setSheet] = useState<SheetKind>(null);
   const [progress, setProgress] = useState(0);
   const [activeHeading, setActiveHeading] = useState("");
@@ -172,14 +183,24 @@ export default function MobileLessonNav({
         onClose={() => setSheet(null)}
       >
         <nav className="flex flex-col gap-3 pb-2">
-          {lessonGroups.map((g, gi) => (
+          {lessonGroups.map((g, gi) => {
+            const isOpen = !g.label || openGroups.has(gi);
+            const hasActive = g.lessons.some((l) => l.slug === currentSlug);
+            return (
             <div key={gi} className="flex flex-col gap-0.5">
               {g.label && (
-                <div className="text-[0.7rem] font-bold uppercase tracking-wide text-[var(--text-mute)] px-3 pt-1 pb-0.5 leading-tight">
-                  {g.label}
-                </div>
+                <button
+                  onClick={() => toggleGroup(gi)}
+                  className={`flex items-center gap-1.5 px-3 py-2 text-left text-[0.7rem] font-bold uppercase tracking-wide leading-tight ${
+                    hasActive ? "text-brand-600" : "text-[var(--text-mute)]"
+                  }`}
+                >
+                  <ChevronRight size={13} className={`shrink-0 transition-transform ${isOpen ? "rotate-90" : ""}`} />
+                  <span className="flex-1">{g.label}</span>
+                  {!isOpen && <span className="font-mono text-[0.65rem] opacity-70">{g.lessons.length}</span>}
+                </button>
               )}
-              {g.lessons.map((l) => {
+              {isOpen && g.lessons.map((l) => {
                 const isCurrent = l.slug === currentSlug;
                 return (
                   <Link
@@ -205,7 +226,8 @@ export default function MobileLessonNav({
                 );
               })}
             </div>
-          ))}
+            );
+          })}
         </nav>
       </Sheet>
 
