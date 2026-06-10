@@ -8623,168 +8623,4598 @@ export const generatedQuestions: Question[] = [
     "mock": 5
   },
   {
-    "id": "saa-m1-001",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-01-iam-deep-dive",
+    "id": "dva-m1-001",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-04-dynamodb",
     "certifications": [
-      "SAA-C03"
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Developer dùng BatchWriteItem để nạp dữ liệu hàng loạt vào DynamoDB. Những phát biểu nào về BatchWriteItem là ĐÚNG? (Chọn 2)",
+    "options": [
+      "Mỗi lệnh BatchWriteItem ghi tối đa 25 item (Put/Delete)",
+      "Response có thể chứa UnprocessedItems mà ứng dụng phải tự retry, nên dùng exponential backoff",
+      "BatchWriteItem là atomic: nếu một item fail thì toàn bộ batch rollback",
+      "BatchWriteItem hỗ trợ UpdateItem để cập nhật từng phần thuộc tính",
+      "BatchWriteItem tự động đảm bảo strongly consistent cho mọi write"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "BatchWriteItem giới hạn 25 item/lần, không atomic, và có thể trả về UnprocessedItems cần tự retry.\n✓ Tối đa 25 item mỗi lệnh — đúng (và ≤16MB).\n✓ UnprocessedItems phải tự retry với exponential backoff — đúng, một số item có thể chưa xử lý do throttle.\n✗ Atomic/rollback toàn batch — sai, BatchWriteItem KHÔNG atomic; muốn all-or-nothing dùng Transactions.\n✗ Hỗ trợ UpdateItem — sai, batch chỉ Put/Delete, không có UpdateItem.\n✗ Tự đảm bảo strongly consistent — sai, consistency là khái niệm của read; phát biểu này không hợp lệ cho write batch.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-002",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-03-api-gateway",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một GET endpoint trên REST API trả về danh mục sản phẩm ít thay đổi và đang chịu tải đọc rất cao gây độ trễ và chi phí backend. Bạn muốn giảm tải và tăng tốc bằng API Gateway caching. Những phát biểu nào ĐÚNG về caching này? (Chọn 2)",
+    "options": [
+      "Caching được bật ở cấp STAGE và có thể cấu hình TTL cho từng method",
+      "Có thể chọn các request parameter làm cache key để phân biệt các response khác nhau",
+      "Caching chỉ áp dụng cho method POST và PUT, không áp dụng cho GET",
+      "API Gateway cache là miễn phí và tự bật mặc định cho mọi stage",
+      "Cache được lưu phía client trình duyệt, không nằm ở API Gateway"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "API Gateway cache bật ở stage, có TTL và hỗ trợ cache key dựa trên parameter; cache này có tính phí.\n✓ Bật ở cấp stage và TTL theo method: caching cấu hình trên stage (kích thước cache) và TTL có thể override cho từng method.\n✓ Cache key theo parameter: chọn query string/header/path làm cache key để phân tách các kết quả khác nhau.\n✗ Chỉ cho POST/PUT: ngược lại, caching hữu ích nhất cho GET (đọc nhiều, ít đổi).\n✗ Miễn phí và mặc định: cache có tính phí theo dung lượng và phải bật thủ công.\n✗ Lưu ở trình duyệt: cache nằm tại API Gateway, không phải client.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-003",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-01-sdk-api",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một developer gọi DynamoDB Query với FilterExpression và Limit. Ở lần gọi đầu, response trả về Items rỗng nhưng vẫn có LastEvaluatedKey. Code hiện tại dừng vòng lặp ngay khi Items rỗng. Vấn đề là gì?",
+    "options": [
+      "Một page có thể rỗng do filter/limit nhưng vẫn còn dữ liệu; phải tiếp tục đến khi không còn LastEvaluatedKey",
+      "Items rỗng nghĩa là bảng không có bản ghi nào khớp; dừng là đúng",
+      "LastEvaluatedKey rỗng là tín hiệu duy nhất để dừng; Items không liên quan",
+      "FilterExpression không bao giờ trả về page rỗng nên đây là lỗi của SDK"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "DynamoDB áp Limit trên số item đọc được trước khi áp FilterExpression nên một page có thể rỗng items mà vẫn còn LastEvaluatedKey; điều kiện dừng đúng là khi LastEvaluatedKey vắng mặt.\n✓ Page rỗng do filter/limit là bình thường; phải lặp tới khi không còn LastEvaluatedKey.\n✗ Items rỗng KHÔNG đồng nghĩa hết dữ liệu vì còn LastEvaluatedKey.\n✗ Việc dừng dựa trên LastEvaluatedKey là đúng, nhưng nói Items không liên quan là sai logic vì chính lỗi ở đây là code dừng theo Items rỗng.\n✗ FilterExpression hoàn toàn có thể tạo page rỗng; đây không phải lỗi SDK.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-004",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-02-lambda",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng có Lambda function được gọi đột biến tới 3000 concurrent invocation, làm cạn account concurrency và khiến các function quan trọng khác bị throttle. Đội muốn giới hạn function này tối đa 500 concurrent và đảm bảo các function khác luôn còn capacity. Cấu hình nào đúng?",
+    "options": [
+      "Đặt reserved concurrency = 500 cho function này",
+      "Đặt provisioned concurrency = 500 cho function này",
+      "Tăng account-level concurrency limit lên 3000 qua Service Quotas",
+      "Bật Lambda Destinations để chuyển hướng các invocation vượt quá 500"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Reserved concurrency vừa đặt trần (cap) cho function vừa dành riêng phần concurrency đó khỏi pool chung.\n✓ Reserved concurrency = 500 giới hạn function ở 500 đồng thời và bảo vệ pool chung cho các function khác.\n✗ Provisioned concurrency giữ ấm môi trường (chống cold start) nhưng không phải là cơ chế đặt trần để bảo vệ function khác khỏi throttle.\n✗ Tăng account limit không ngăn function này tiếp tục ăn hết capacity.\n✗ Destinations định tuyến kết quả thành công/thất bại của async invocation, không phải để giới hạn concurrency.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-005",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-02-lambda",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đội phát triển muốn tích hợp một công cụ giám sát của bên thứ ba để thu thập telemetry và đẩy log của Lambda function tới hệ thống quan sát riêng, chạy như tiến trình độc lập bên cạnh runtime mà không sửa code function. Cơ chế Lambda nào phù hợp nhất?",
+    "options": [
+      "Lambda Extension (external extension) chạy song song trong cùng execution environment",
+      "Lambda Layer chứa thư viện logging",
+      "Lambda Destinations on-success",
+      "Environment variable trỏ tới endpoint của hệ thống quan sát"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lambda Extensions chạy như tiến trình riêng trong execution environment, dùng cho telemetry/observability mà không sửa code.\n✓ External Extension tích hợp công cụ giám sát/telemetry, chạy độc lập bên cạnh runtime, không cần sửa code function.\n✗ Layer chỉ chia sẻ code/dependency, không chạy như tiến trình song song.\n✗ Destinations định tuyến kết quả async invocation, không phải thu thập telemetry liên tục.\n✗ Env var chỉ là cấu hình, không phải cơ chế chạy agent giám sát.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-006",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-03-api-gateway",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần một authorizer cho API Gateway dựa trên một header Authorization tùy chỉnh chứa token bên thứ ba (không phải Cognito), với logic xác thực riêng và muốn cache kết quả phân quyền để giảm số lần gọi. Cách nào phù hợp nhất?",
+    "options": [
+      "Lambda authorizer kiểu TOKEN, dùng Identity Source là header Authorization và bật TTL cache cho policy trả về",
+      "Cognito user pool authorizer trỏ tới một user pool trống",
+      "IAM authorizer và yêu cầu client ký SigV4",
+      "Resource policy chặn theo IP và bỏ qua token"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Token bên thứ ba với logic tùy chỉnh cần Lambda authorizer kiểu TOKEN, có thể cache theo identity source.\n✓ Lambda authorizer TOKEN và cache: nhận token từ header, chạy logic verify tùy chỉnh, trả về IAM policy; bật authorization caching (TTL) theo identity source để giảm số lần gọi.\n✗ Cognito authorizer: chỉ verify JWT của user pool, không xử lý token bên thứ ba.\n✗ IAM authorizer: yêu cầu credential AWS, không phù hợp token bên thứ ba.\n✗ Resource policy theo IP: không xác thực token, không đáp ứng yêu cầu.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-007",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-04-dynamodb",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bảng DynamoDB dùng partition key là 'status' với chỉ 3 giá trị (ACTIVE, PENDING, CLOSED). Đa số traffic dồn vào ACTIVE. Ứng dụng bị throttle dù tổng provisioned capacity vẫn còn dư nhiều. Nguyên nhân gốc và cách khắc phục tốt nhất là gì?",
+    "options": [
+      "Hot partition do partition key cardinality thấp; thiết kế lại key có cardinality cao, phân bố đều",
+      "Thiếu RCU/WCU; tăng provisioned capacity của bảng lên gấp đôi",
+      "Region quá tải; chuyển bảng sang Region khác",
+      "Thiếu index; thêm một LSI trên thuộc tính status"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Throttle dù còn capacity là dấu hiệu kinh điển của hot partition do key cardinality thấp.\n✓ Hot partition do cardinality thấp, redesign key phân bố đều — đúng, traffic dồn vào ít giá trị PK gây nóng một partition.\n✗ Tăng provisioned capacity — capacity tổng còn dư nên vấn đề không nằm ở thiếu RCU/WCU; tăng thêm vẫn nóng partition đó.\n✗ Chuyển Region — không liên quan, vấn đề là thiết kế key.\n✗ Thêm LSI trên status — LSI dùng chung PK với bảng, không giải quyết hot partition mà còn tệ hơn.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-008",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-05-app-integration",
+    "certifications": [
+      "DVA-C02"
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty có nhiều ứng dụng EC2 cần truy cập một S3 bucket để lưu log. Hiện tại developer đang nhúng access key vào code chạy trên các instance này. Là Solutions Architect, bạn cần loại bỏ long-term credentials mà vẫn cấp quyền truy cập S3 với least operational overhead. Giải pháp nào phù hợp nhất?",
+    "question": "Một consumer poll SQS bằng short polling (WaitTimeSeconds=0) và đang phát sinh rất nhiều empty receive (phản hồi rỗng), làm tăng chi phí API call. Cách tối ưu nhất để giảm số empty response và giảm chi phí là gì?",
     "options": [
-      "Tạo IAM role với policy truy cập S3 và gán role đó vào instance profile của các EC2 instance",
-      "Tạo một IAM user dùng chung, gắn policy S3, rồi phân phối access key cho tất cả instance qua Systems Manager Parameter Store",
-      "Lưu access key trong Secrets Manager và để ứng dụng đọc key khi khởi động",
-      "Bật S3 bucket policy cho phép truy cập public và giới hạn bằng VPC endpoint"
+      "Bật long polling bằng cách đặt ReceiveMessageWaitTimeSeconds lên 20",
+      "Tăng visibility timeout của queue lên 12 giờ",
+      "Chuyển queue từ Standard sang FIFO",
+      "Giảm MaxNumberOfMessages mỗi lần receive xuống 1"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "IAM role gắn qua instance profile cung cấp temporary credentials tự động xoay vòng, loại bỏ hoàn toàn long-term key.\n✓ IAM role + instance profile: EC2 nhận temporary credentials qua STS, không cần quản lý key, least operational overhead.\n✗ IAM user dùng chung + access key: vẫn là long-term credentials, vi phạm best practice và khó xoay vòng.\n✗ Lưu access key trong Secrets Manager: vẫn tồn tại long-term key, thêm phức tạp vận hành.\n✗ Bucket policy public: tạo lỗ hổng bảo mật, không giải quyết vấn đề credential.",
+    "explanation": "Long polling chờ tới khi có message hoặc hết thời gian (tối đa 20s) thay vì trả về ngay → giảm empty receive và chi phí.\n✓ Đặt ReceiveMessageWaitTimeSeconds=20: bật long polling, giảm số phản hồi rỗng, giảm chi phí polling và latency.\n✗ Tăng visibility timeout: chỉ ảnh hưởng thời gian message bị ẩn sau khi nhận, không liên quan tới empty receive.\n✗ Chuyển sang FIFO: thay đổi thứ tự/dedup chứ không giải quyết empty polling.\n✗ Giảm MaxNumberOfMessages: làm tệ hơn, vẫn poll rỗng và còn ít message mỗi lần.",
     "domain": 1,
     "mock": 1
   },
   {
-    "id": "saa-m2-001",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-01-iam-deep-dive",
+    "id": "dva-m1-009",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-01-sdk-api",
     "certifications": [
-      "SAA-C03"
+      "DVA-C02"
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một tổ chức quản lý nhiều AWS account bằng AWS Organizations. Security team muốn đảm bảo rằng KHÔNG account thành viên nào, kể cả admin của account đó, có thể tắt CloudTrail hoặc tạo tài nguyên ngoài region eu-west-1. Giải pháp nào thực thi điều này một cách tập trung và hiệu quả nhất?",
+    "question": "Một ứng dụng gọi ec2.run_instances trong một workflow có retry. Đôi khi do timeout mạng, request được gửi lại và tạo ra nhiều instance trùng nhau ngoài ý muốn. Cách khắc phục đúng và rẻ nhất là gì?",
     "options": [
-      "Áp dụng Service Control Policy (SCP) ở cấp OU để deny các action cloudtrail:StopLogging và deny mọi action ngoài eu-west-1",
-      "Gắn IAM permission boundary cho mọi IAM user trong các account thành viên",
-      "Tạo IAM policy deny gắn trực tiếp vào từng role admin của mỗi account",
-      "Bật AWS Config rule để phát hiện và tự động bật lại CloudTrail khi bị tắt"
+      "Truyền cùng một ClientToken (idempotency token) cố định cho các lần retry của cùng thao tác",
+      "Sinh một ClientToken (UUID) mới cho mỗi lần retry để phân biệt request",
+      "Tắt toàn bộ retry của SDK để không bao giờ gọi lại RunInstances",
+      "Sau khi tạo, gọi DescribeInstances rồi terminate các instance dư thừa"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "SCP đặt giới hạn quyền tối đa cho toàn bộ account thành viên, kể cả admin của account đó, và được quản lý tập trung.\n✓ SCP ở cấp OU: chặn được mọi IAM principal trong account (kể cả admin), thực thi tập trung, đúng mục tiêu phòng ngừa.\n✗ Permission boundary cho từng user: chỉ giới hạn user/role cụ thể, admin có thể bỏ qua bằng cách tạo entity khác, không tập trung.\n✗ IAM deny policy trên từng role: admin có thể chỉnh sửa hoặc gỡ policy, không ngăn chặn triệt để.\n✗ AWS Config auto-remediation: mang tính phản ứng (detective) chứ không phòng ngừa, CloudTrail vẫn bị tắt trong khoảng thời gian giữa.",
+    "explanation": "RunInstances hỗ trợ ClientToken làm idempotency key; gọi lại với cùng token sẽ không tạo thêm instance.\n✓ Giữ cố định cùng ClientToken khi retry đảm bảo idempotent, không tạo trùng.\n✗ Sinh token mới mỗi lần retry khiến mỗi request bị coi là khác nhau, vẫn tạo trùng.\n✗ Tắt retry làm mất khả năng phục hồi khi lỗi tạm thời, không phải giải pháp tốt.\n✗ Tạo rồi dọn dẹp thủ công tốn kém, dễ race condition và lãng phí tài nguyên.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-010",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-02-lambda",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Lambda function có độ trễ p99 cao do cold start nghiêm trọng, ảnh hưởng tới API đồng bộ phục vụ người dùng. Yêu cầu là giảm cold start một cách đáng tin cậy cho lưu lượng dự đoán được, chấp nhận chi phí. Giải pháp tối ưu là gì?",
+    "options": [
+      "Cấu hình Provisioned Concurrency và dùng Application Auto Scaling để scale theo lịch lưu lượng",
+      "Tăng reserved concurrency của function lên mức tối đa",
+      "Tăng memory-size lên 10240 MB để loại bỏ cold start",
+      "Chuyển deployment package từ container image sang .zip để tránh cold start hoàn toàn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Provisioned Concurrency giữ sẵn các execution environment đã khởi tạo, loại bỏ cold start cho số lượng đã cấu hình.\n✓ Provisioned Concurrency kết hợp Application Auto Scaling theo lịch xử lý lưu lượng dự đoán được, giảm cold start tin cậy.\n✗ Reserved concurrency chỉ giới hạn/dành chỗ concurrency, không giữ ấm môi trường nên không giảm cold start.\n✗ Tăng memory có thể rút ngắn init đôi chút nhưng không loại bỏ cold start.\n✗ Đổi sang .zip không loại bỏ cold start; cold start vẫn xảy ra với mọi định dạng package.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-011",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-03-api-gateway",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một ứng dụng web chạy tại https://app.example.com gọi một REST API trên API Gateway tại một domain khác. Trình duyệt báo lỗi CORS khi gửi request POST với header Content-Type: application/json. Cách xử lý đúng tại API Gateway là gì?",
+    "options": [
+      "Bật CORS để API Gateway trả về header Access-Control-Allow-Origin và cấu hình method OPTIONS (preflight)",
+      "Thêm header X-Forwarded-For vào tất cả response của method POST",
+      "Chuyển integration từ Lambda proxy sang non-proxy để tự thêm header",
+      "Bật API caching trên stage để cache kết quả preflight"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "CORS yêu cầu API trả về các header Access-Control-Allow-* và xử lý preflight OPTIONS.\n✓ Bật CORS và OPTIONS: trình duyệt gửi preflight OPTIONS trước POST có Content-Type không phải dạng đơn giản; API Gateway cần trả Access-Control-Allow-Origin/Methods/Headers.\n✗ X-Forwarded-For: không liên quan tới CORS.\n✗ Đổi sang non-proxy: không bắt buộc; vấn đề là thiếu header CORS, không phải kiểu integration.\n✗ Caching: không giải quyết lỗi CORS.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-012",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-04-dynamodb",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một developer cần truy xuất tất cả order của một customer cụ thể, biết trước customerId là partition key của bảng Orders. Thao tác nào hiệu quả và tiết kiệm chi phí nhất?",
+    "options": [
+      "Query với KeyConditionExpression theo customerId",
+      "Scan toàn bảng rồi filter theo customerId",
+      "Scan với FilterExpression theo customerId",
+      "BatchGetItem cho tất cả order của customer"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Biết partition key → Query chỉ đọc đúng partition, nhanh và rẻ hơn Scan.\n✓ Query theo customerId — đúng, chỉ tiêu thụ RCU cho dữ liệu khớp key, hiệu quả nhất.\n✗ Scan rồi filter client-side — đọc toàn bảng, tốn RCU cho mọi item kể cả không liên quan.\n✗ Scan + FilterExpression — Filter áp dụng SAU khi đọc, vẫn tính RCU trên toàn bộ item quét qua.\n✗ BatchGetItem — yêu cầu biết full primary key (PK+SK) của từng item, không lấy được \"tất cả\" theo một customerId.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-013",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-04-dynamodb",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một bảng cần phản ứng real-time mỗi khi item thay đổi: khi giá sản phẩm cập nhật, một Lambda phải tính delta giữa giá cũ và giá mới rồi gửi notification. Cấu hình DynamoDB Streams nào phù hợp nhất?",
+    "options": [
+      "Bật Streams với StreamViewType = NEW_AND_OLD_IMAGES và gắn Lambda trigger",
+      "Bật Streams với StreamViewType = NEW_IMAGE và gắn Lambda trigger",
+      "Bật Streams với StreamViewType = KEYS_ONLY và để Lambda GetItem giá cũ",
+      "Dùng TTL để phát sinh sự kiện thay đổi giá"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cần cả giá cũ lẫn mới để tính delta → StreamViewType NEW_AND_OLD_IMAGES.\n✓ NEW_AND_OLD_IMAGES + Lambda — đúng, stream record chứa cả image cũ và mới, Lambda tính delta trực tiếp.\n✗ NEW_IMAGE — chỉ có giá mới, không có giá cũ để tính delta.\n✗ KEYS_ONLY + GetItem giá cũ — stream chỉ có key; GetItem chỉ lấy được giá hiện tại (mới), không lấy lại được giá cũ đã bị ghi đè.\n✗ TTL — chỉ để xóa item hết hạn, không phải cơ chế bắt sự kiện thay đổi giá.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-014",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-05-app-integration",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đội DevOps cần chạy một Lambda dọn dẹp dữ liệu tạm mỗi ngày lúc 02:00 UTC, theo mô hình serverless không quản lý server cron. Cách triển khai đúng và tối ưu nhất là gì?",
+    "options": [
+      "EventBridge rule (hoặc EventBridge Scheduler) với biểu thức cron(0 2 * * ? *) target tới Lambda",
+      "SQS delay queue với DelaySeconds tính ra 24 giờ để kích hoạt Lambda",
+      "Step Functions Standard với một state Wait 24 giờ lặp vô hạn",
+      "SNS topic publish định kỳ bằng một CloudWatch alarm"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chạy task theo lịch cron/rate serverless → EventBridge scheduled rule/Scheduler là cách chuẩn thay cho cron server.\n✓ EventBridge cron(0 2 * * ? *) target Lambda: đúng cú pháp lịch, serverless, không cần quản lý server.\n✗ SQS delay queue: DelaySeconds tối đa chỉ 15 phút, không thể lên lịch hằng ngày.\n✗ Step Functions Wait lặp: cồng kềnh, tốn state transition và không phải cách lên lịch chuẩn.\n✗ SNS + CloudWatch alarm: alarm dựa trên metric, không phải cơ chế lập lịch theo thời gian.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-015",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-01-sdk-api",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một request từ một thiết bị IoT tự ký SigV4 (không dùng SDK) tới một API liên tục thất bại với SignatureDoesNotMatch, dù access key, secret và region đều đúng và IAM policy cho phép. Nguyên nhân khả dĩ nhất là gì?",
+    "options": [
+      "Đồng hồ hệ thống của thiết bị bị lệch (clock skew) khiến timestamp trong chữ ký không hợp lệ",
+      "IAM policy thiếu quyền nên cần thêm Allow cho action tương ứng",
+      "Resource đích không tồn tại nên trả về lỗi chữ ký",
+      "Thiết bị thiếu AWS_SESSION_TOKEN nên không thể ký request"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SignatureDoesNotMatch là lỗi chữ ký, thường do clock skew làm timestamp dùng để tính chữ ký bị sai; nó khác AccessDenied (vấn đề IAM).\n✓ Đồng hồ lệch khiến timestamp trong canonical request sai, dẫn tới chữ ký không khớp.\n✗ Thiếu quyền IAM sẽ trả về AccessDenied, không phải SignatureDoesNotMatch.\n✗ Resource không tồn tại sẽ trả về lỗi ResourceNotFound/404, không phải lỗi chữ ký.\n✗ Session token chỉ cần với credentials tạm thời; thiếu nó (khi dùng key thường) không gây SignatureDoesNotMatch.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-016",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-02-lambda",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Lambda function dùng environment variable chứa API key. Yêu cầu bảo mật là key phải được mã hóa at rest bằng customer managed KMS key và chỉ giải mã trong runtime khi cần, đồng thời kiểm soát được ai giải mã được. Cách nào đúng nhất?",
+    "options": [
+      "Bật encryption helper với customer managed CMK cho env var, giải mã bằng KMS Decrypt trong code khi khởi tạo",
+      "Để nguyên env var dạng plaintext vì Lambda đã tự mã hóa bằng AWS managed key mặc định",
+      "Lưu API key trực tiếp trong deployment package code",
+      "Đặt API key vào /tmp và mã hóa file bằng OpenSSL"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lambda cho phép mã hóa env var bằng customer managed CMK và giải mã runtime qua KMS, kiểm soát qua key policy/IAM.\n✓ Encryption helper với CMK mã hóa giá trị, code gọi KMS Decrypt khi init; quyền decrypt được kiểm soát bằng KMS key policy/IAM.\n✗ AWS managed key mặc định mã hóa at rest nhưng giá trị hiển thị plaintext trong console và không kiểm soát decrypt theo CMK riêng.\n✗ Hardcode key trong code là anti-pattern, không mã hóa và khó xoay vòng.\n✗ /tmp là ephemeral và không cung cấp kiểm soát truy cập key tập trung.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-017",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-02-lambda",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Lambda function async đôi khi thất bại do lỗi tạm thời (throttle downstream). Đội muốn function tự retry các lỗi này một số lần và sau khi hết retry thì payload thất bại được lưu lại để điều tra, với cấu hình đơn giản. Lựa chọn nào đúng?",
+    "options": [
+      "Cấu hình Maximum Retry Attempts cho async invocation và đặt một on-failure Destination (hoặc DLQ) để lưu event thất bại",
+      "Tăng reserved concurrency để loại bỏ mọi lỗi throttle",
+      "Bật Provisioned Concurrency để tránh thất bại",
+      "Đặt batch size nhỏ hơn để giảm lỗi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Async invocation hỗ trợ cấu hình số lần retry và đích on-failure (Destination hoặc DLQ) để lưu event thất bại.\n✓ Maximum Retry Attempts xử lý lỗi tạm thời, on-failure Destination/DLQ lưu payload thất bại để điều tra.\n✗ Reserved concurrency không loại bỏ lỗi throttle ở downstream service.\n✗ Provisioned Concurrency chống cold start, không xử lý lỗi runtime.\n✗ Batch size không áp dụng cho async invocation đơn lẻ kiểu này.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-018",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-03-api-gateway",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong non-proxy integration của một REST API, bạn cần đọc một path parameter tên 'orderId' và một query string 'status' rồi đưa chúng vào JSON body gửi tới backend qua mapping template. Biểu thức VTL nào lấy đúng các giá trị này?",
+    "options": [
+      "$input.params('orderId') cho path và $input.params('status') cho query string",
+      "$context.requestId cho path và $stageVariables.status cho query string",
+      "$input.body.orderId và $input.body.status",
+      "$util.escapeJavaScript($input.path) cho cả hai giá trị"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Trong VTL của API Gateway, $input.params('name') lấy được path, query và header parameter theo tên.\n✓ $input.params('orderId') / $input.params('status'): hàm params() truy xuất tham số từ path/query/header theo tên, đúng cho cả hai.\n✗ $context.requestId / $stageVariables: không phải tham số request của client; stageVariables là biến cấu hình stage.\n✗ $input.body.orderId: body không chứa path/query parameter.\n✗ $util.escapeJavaScript($input.path): escape là tiện ích chuỗi, không truy xuất tham số riêng lẻ.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-019",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-04-dynamodb",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng đọc nặng (read-heavy) cần giảm latency truy vấn DynamoDB từ vài mili giây xuống microsecond, và muốn thay đổi code tối thiểu vì API phải tương thích DynamoDB. Dữ liệu đọc chấp nhận eventually consistent. Giải pháp tối ưu là gì?",
+    "options": [
+      "Thêm DynamoDB Accelerator (DAX) trước bảng",
+      "Triển khai Amazon ElastiCache for Redis với cache-aside thủ công",
+      "Bật strongly consistent read trên mọi truy vấn",
+      "Tăng provisioned RCU và bật Auto Scaling"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Read microsecond + API tương thích + code tối thiểu → DAX là lựa chọn chuẩn cho DynamoDB.\n✓ DAX — đúng, in-memory cache quản lý sẵn, API tương thích DynamoDB, đưa read xuống microsecond với code thay đổi tối thiểu.\n✗ ElastiCache Redis — phải tự viết logic cache-aside, nhiều code hơn DAX.\n✗ Strongly consistent read — không giảm latency, thậm chí tốn RCU gấp đôi và không dùng được cache.\n✗ Tăng RCU + Auto Scaling — cải thiện throughput chứ không hạ latency xuống microsecond.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-020",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-05-app-integration",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một service xử lý đơn hàng nhận traffic dạng burst: vào giờ khuyến mãi, lượng request tăng đột biến rồi giảm. Đội phát triển muốn tách rời (decouple) producer và consumer, hấp thụ (buffer) các đỉnh tải để worker xử lý dần, đảm bảo không mất message. Mỗi message chỉ cần một consumer xử lý. Dịch vụ nào phù hợp nhất?",
+    "options": [
+      "Amazon SQS Standard queue",
+      "Amazon SNS topic với nhiều email subscriber",
+      "Amazon Kinesis Data Streams với nhiều shard",
+      "AWS Step Functions Express workflow"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Use case kinh điển của SQS: decouple, buffer, hấp thụ burst, point-to-point (1 message → 1 consumer).\n✓ SQS Standard queue: hấp thụ đỉnh tải, worker kéo về xử lý dần, throughput gần như không giới hạn, đúng mô hình point-to-point.\n✗ SNS topic: là pub/sub fan-out (1 message → nhiều subscriber), không phải hàng đợi buffer cho 1 consumer.\n✗ Kinesis Data Streams: dành cho streaming real-time/replay nhiều consumer, phức tạp và đắt hơn cho nhu cầu buffer đơn thuần.\n✗ Step Functions Express: là orchestration workflow, không phải hàng đợi đệm message.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-021",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-03-secrets",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Bạn đang chọn giữa Secrets Manager và SSM Parameter Store cho các tình huống khác nhau. Những phát biểu nào ĐÚNG? (Chọn 2)",
+    "options": [
+      "Secrets Manager hỗ trợ automatic rotation tích hợp sẵn còn Parameter Store thì không có native rotation",
+      "Parameter Store standard tier với String parameter không phát sinh phí lưu trữ, còn mỗi secret trong Secrets Manager bị tính phí hàng tháng",
+      "Parameter Store SecureString không hỗ trợ mã hoá bằng KMS, chỉ Secrets Manager mới mã hoá được",
+      "Secrets Manager không thể lưu giá trị tuỳ ý dạng key-value, chỉ lưu được database credential",
+      "Parameter Store không cho phép tổ chức tham số theo cấu trúc phân cấp (hierarchy)"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "So sánh cốt lõi: rotation và chi phí là hai khác biệt quan trọng nhất.\n✓ Secrets Manager có native rotation qua Lambda; Parameter Store không có rotation tích hợp sẵn.\n✓ Parameter Store standard String miễn phí lưu trữ; Secrets Manager tính phí mỗi secret mỗi tháng cộng phí API.\n✗ SecureString chính là kiểu được mã hoá bằng KMS, nên phát biểu này sai.\n✗ Secrets Manager lưu được cả JSON key-value tuỳ ý, không giới hạn ở database credential.\n✗ Parameter Store hỗ trợ hierarchy bằng đường dẫn như /app/prod/db, nên phát biểu này sai.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-022",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-01-auth",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một team triển khai REST API trên API Gateway với Cognito authorizer (User Pool). Khi client gọi API, họ cần biết phải gửi token nào và xác thực diễn ra ra sao. Những phát biểu nào sau đây ĐÚNG? (Chọn 2)",
+    "options": [
+      "Client gửi ID token hoặc access token của User Pool trong header Authorization để authorizer verify",
+      "Cognito authorizer tự kiểm tra chữ ký, hết hạn và issuer của JWT mà không cần code",
+      "Client phải gửi temporary AWS credentials từ Identity Pool vào header để được phép gọi",
+      "Authorizer dùng refresh token để xác thực mỗi request đến API",
+      "API Gateway gọi STS AssumeRole để xác thực JWT của người dùng"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Cognito authorizer nhận JWT (ID/access token) trong Authorization header và tự verify mà không cần code.\n✓ Gửi ID/access token để verify — đúng, đây là token User Pool dùng cho authorizer.\n✓ Authorizer tự verify chữ ký/hết hạn/issuer — đúng, tích hợp sẵn, không cần code.\n✗ Gửi temporary AWS credentials — đó là cho gọi dịch vụ AWS qua Identity Pool, không phải Cognito authorizer.\n✗ Dùng refresh token mỗi request — refresh token chỉ để đổi token mới, không gửi để xác thực API.\n✗ API Gateway gọi STS AssumeRole — verify JWT không liên quan STS AssumeRole.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-023",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-01-auth",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một Identity Pool cho phép người dùng đăng nhập truy cập DynamoDB, nhưng yêu cầu mỗi người dùng chỉ được đọc/ghi các item có partition key bằng chính Cognito identity ID của họ (fine-grained access). Cách cấu hình đúng là gì?",
+    "options": [
+      "Dùng IAM policy với điều kiện ${cognito-identity.amazonaws.com:sub} so khớp với leading key của DynamoDB",
+      "Viết Lambda authorizer kiểm tra identity ID trước mỗi request DynamoDB",
+      "Tạo một IAM role riêng cho mỗi người dùng khi họ đăng ký",
+      "Bật DynamoDB encryption at rest để cô lập dữ liệu từng người dùng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Fine-grained access tới DynamoDB dùng IAM policy condition với biến cognito-identity sub khớp leading key.\n✓ Policy condition với cognito-identity sub — đúng, hạn chế truy cập theo identity ID ở partition key.\n✗ Lambda authorizer — dùng cho API Gateway, không kiểm soát truy cập trực tiếp item DynamoDB qua SDK.\n✗ Role riêng mỗi người dùng — không khả thi và không mở rộng được.\n✗ Encryption at rest — bảo vệ dữ liệu lúc lưu, không kiểm soát quyền truy cập theo người dùng.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-024",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-01-auth",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một công ty cần người dùng đăng nhập bằng Facebook và Google, sau đó nhận temporary AWS credentials để upload ảnh lên S3. Họ KHÔNG cần quản lý directory người dùng riêng (không cần username/password riêng). Kiến trúc tối ưu nhất là gì?",
+    "options": [
+      "Dùng Cognito Identity Pool với Facebook và Google làm external providers, không cần User Pool",
+      "Bắt buộc tạo User Pool và liên kết mọi người dùng social vào đó trước",
+      "Tạo IAM user cho mỗi người dùng social và cấp access key",
+      "Dùng API Gateway Lambda authorizer để đổi social token lấy access key"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Identity Pool hỗ trợ trực tiếp social IdP để đổi token lấy AWS credentials, không bắt buộc User Pool.\n✓ Identity Pool với Facebook/Google trực tiếp — đúng, tối ưu khi chỉ cần AWS credentials, không cần directory.\n✗ Bắt buộc User Pool — không cần thiết khi không quản lý directory, thêm phức tạp.\n✗ IAM user + access key — credentials tĩnh, không mở rộng, kém an toàn.\n✗ Lambda authorizer đổi lấy access key — không phải cơ chế cấp AWS credentials, sai mô hình.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-025",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-02-encryption",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Account A sở hữu một KMS key. Một Lambda function ở Account B cần dùng key này để giải mã dữ liệu. Cần cấu hình gì để hoạt động?",
+    "options": [
+      "Chỉ cần thêm IAM policy cho role Lambda ở Account B với kms:Decrypt",
+      "Chỉ cần sửa key policy ở Account A cho phép Account B",
+      "Key policy ở Account A cho phép principal của Account B, VÀ IAM policy của role Lambda ở Account B cho phép gọi kms:Decrypt trên ARN key đó",
+      "Tạo bản sao key trong Account B bằng GenerateDataKeyWithoutPlaintext"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Cross-account KMS cần cả hai phía: key policy bên chủ key và IAM policy bên dùng key.\n✓ Account A mở quyền trong key policy cho Account B, và Account B cấp IAM policy gọi kms:Decrypt trên ARN đầy đủ của key.\n✗ Chỉ IAM policy bên B mà key policy A chưa mở vẫn AccessDenied.\n✗ Chỉ key policy A mà role B không có IAM cho phép cũng AccessDenied.\n✗ Không thể sao chép một KMS key sang account khác như vậy.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-026",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-02-encryption",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một developer dùng AWS managed key (aws/s3) cho bucket nhưng sếp yêu cầu: (1) tự định nghĩa key policy chi tiết, (2) tự bật/tắt rotation, (3) cấp quyền cross-account. AWS managed key có đáp ứng được không, và nên làm gì?",
+    "options": [
+      "Có, AWS managed key cho phép sửa key policy và rotation tùy ý",
+      "Không, AWS managed key không cho sửa key policy và không tự bật/tắt rotation; cần chuyển sang customer managed key",
+      "Có, chỉ cần bật automatic rotation trên AWS managed key",
+      "Không, nhưng giải pháp là dùng AWS owned key thay thế"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "AWS managed key bị hạn chế: không sửa key policy, không tự điều khiển rotation.\n✓ Cần customer managed key để tự định nghĩa key policy, kiểm soát rotation và cấp quyền cross-account.\n✗ AWS managed key không cho sửa key policy và rotation cố định mỗi năm.\n✗ Không thể bật/tắt rotation tùy ý trên AWS managed key.\n✗ AWS owned key thậm chí không thấy được trong account, càng không kiểm soát được.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-027",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-03-secrets",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần lưu một chuỗi cấu hình dài 8 KB trong SSM Parameter Store. Tier standard chỉ hỗ trợ tối đa 4 KB mỗi parameter. Cần làm gì?",
+    "options": [
+      "Dùng advanced tier của Parameter Store, hỗ trợ giá trị tới 8 KB",
+      "Tách chuỗi thành hai standard parameter và tự ghép lại trong code",
+      "Chuyển sang dùng environment variable của Lambda thay vì Parameter Store",
+      "Nén chuỗi rồi lưu base64 trong một standard String parameter"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Advanced tier hỗ trợ giá trị tới 8 KB và nhiều parameter hơn, có tính phí.\n✓ Advanced tier nâng giới hạn kích thước lên 8 KB, đúng nhu cầu, đổi lại phát sinh phí.\n✗ Tách parameter rồi tự ghép gây phức tạp và dễ lỗi không cần thiết.\n✗ Env var của Lambda có giới hạn riêng và không phù hợp lưu cấu hình chia sẻ.\n✗ Nén/base64 có thể vượt giới hạn 4 KB tuỳ dữ liệu và làm khó đọc/bảo trì.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-028",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-01-auth",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một backend microservice nhận request kèm JWT từ Cognito User Pool và cần tự verify chữ ký của token trong code (không qua API Gateway). Developer cần lấy public key để kiểm tra chữ ký. Nguồn nào cung cấp các khóa này?",
+    "options": [
+      "JWKS endpoint của User Pool tại .../.well-known/jwks.json",
+      "AWS KMS customer managed key của tài khoản",
+      "AWS Secrets Manager nơi lưu khóa private của User Pool",
+      "STS endpoint trả về khóa công khai của session"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cognito User Pool công bố public key tại JWKS endpoint để bên thứ ba verify chữ ký JWT.\n✓ JWKS endpoint — đúng, chứa các public key (kid) để kiểm tra chữ ký token.\n✗ KMS key — không lưu khóa ký JWT của User Pool.\n✗ Secrets Manager — User Pool quản lý khóa private nội bộ, không expose ra Secrets Manager.\n✗ STS endpoint — cấp credentials, không cung cấp khóa verify JWT.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-029",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-01-auth",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong khi gỡ lỗi, developer thấy API Gateway trả về 401 Unauthorized cho mọi request dù client gửi JWT hợp lệ trong header. Nguyên nhân phổ biến nào sau đây nên kiểm tra ĐẦU TIÊN với Cognito authorizer?",
+    "options": [
+      "Token được gửi sai header hoặc sai tên (mặc định authorizer mong đợi header Authorization)",
+      "User Pool đã bị xóa hoàn toàn khỏi Region",
+      "DynamoDB table thiếu encryption at rest",
+      "S3 bucket policy chặn API Gateway"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lỗi 401 thường do token không gửi đúng header mà authorizer mong đợi (mặc định là Authorization).\n✓ Sai header/tên token — đúng, nguyên nhân phổ biến nhất gây 401 dù token hợp lệ.\n✗ User Pool bị xóa — sẽ gây lỗi cấu hình rõ ràng hơn, không phải nguyên nhân phổ biến nhất.\n✗ DynamoDB encryption — không liên quan xác thực API.\n✗ S3 bucket policy — không liên quan đến authorizer JWT của API Gateway.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-030",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-02-encryption",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Dữ liệu được mã hóa bằng KMS ở us-east-1 và lưu vào DynamoDB Global Table replicate sang eu-west-1. Ứng dụng ở eu-west-1 cần giải mã nhanh mà không gọi cross-Region tới us-east-1. Giải pháp nào đúng?",
+    "options": [
+      "Dùng single-Region KMS key bình thường, KMS tự xử lý cross-Region",
+      "Tạo multi-Region KMS key với replica ở cả us-east-1 và eu-west-1",
+      "Bật automatic rotation để key dùng được ở nhiều Region",
+      "Dùng SSE-C để client tự mang key qua các Region"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Ciphertext của single-Region key không dùng được ở Region khác; cần multi-Region key.\n✓ Multi-Region key có cùng key ID và cùng material ở nhiều Region; ciphertext mã hóa ở us-east-1 decrypt được ở eu-west-1 không cần gọi lại Region gốc.\n✗ Single-Region key không cho decrypt ciphertext ở Region khác.\n✗ Rotation không biến key single-Region thành multi-Region.\n✗ SSE-C là phương án S3, không giải quyết bản chất multi-Region của KMS key.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-031",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-03-secrets",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một developer lưu API key của bên thứ ba trong SSM Parameter Store dạng SecureString. Khi đọc qua AWS CLI bằng lệnh get-parameter, giá trị trả về vẫn ở dạng mã hoá (ciphertext). Cần làm gì để nhận giá trị plaintext?",
+    "options": [
+      "Thêm tham số --with-decryption vào lệnh get-parameter",
+      "Đổi parameter sang kiểu String thay vì SecureString",
+      "Cấp quyền kms:Encrypt cho IAM role đang dùng",
+      "Bật parameter policy với Expiration để buộc giải mã"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SecureString chỉ được giải mã khi yêu cầu --with-decryption và caller có quyền kms:Decrypt.\n✓ Cờ --with-decryption yêu cầu Parameter Store giải mã giá trị bằng KMS trước khi trả về.\n✗ Đổi sang String làm mất tính bảo mật, không phải cách đúng để lấy plaintext an toàn.\n✗ Giải mã cần kms:Decrypt chứ không phải kms:Encrypt.\n✗ Parameter policy điều khiển vòng đời (expiration, notification), không liên quan đến giải mã.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-032",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-03-secrets",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một RDS MySQL database được quản lý credential bằng Secrets Manager với rotation 30 ngày dùng rotation function 'single user'. Sau lần rotate đầu tiên, ứng dụng báo lỗi xác thực. Nguyên nhân khả năng cao nhất?",
+    "options": [
+      "Ứng dụng đang cache password cũ và không gọi lại GetSecretValue sau khi rotate",
+      "Rotation single user không được Secrets Manager hỗ trợ cho RDS MySQL",
+      "Secrets Manager đã xoá secret sau khi rotate nên không còn giá trị để đọc",
+      "RDS không cho phép thay đổi password qua Secrets Manager rotation function"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Sau rotation, password trong DB đã đổi; ứng dụng cache password cũ sẽ xác thực thất bại.\n✓ Ứng dụng cache password cũ và không refresh từ Secrets Manager là nguyên nhân phổ biến gây lỗi sau rotation.\n✗ Rotation single-user được hỗ trợ cho RDS; đây không phải nguyên nhân.\n✗ Secrets Manager không xoá secret sau rotation; nó cập nhật phiên bản AWSCURRENT.\n✗ Rotation function chính là cơ chế đổi password trên RDS, nên phát biểu này sai.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-033",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-01-auth",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một ứng dụng dùng Cognito Identity Pool với cả authenticated và unauthenticated (guest) access. Người dùng đăng nhập (authenticated) được phép ghi vào bucket S3, còn khách (guest) chỉ được đọc một số object công khai. Cách triển khai đúng theo best practice là gì?",
+    "options": [
+      "Gán hai IAM role riêng cho authenticated role và unauthenticated role với policy phù hợp",
+      "Dùng chung một IAM role cho cả hai và kiểm tra trong code ứng dụng",
+      "Gán policy trực tiếp lên Identity Pool thay vì dùng IAM role",
+      "Tắt unauthenticated access và cấp access key tĩnh cho khách"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Identity Pool hỗ trợ tách biệt authenticated role và unauthenticated role, mỗi role có quyền riêng.\n✓ Hai IAM role riêng — đúng, authenticated role có quyền ghi, unauthenticated role chỉ đọc.\n✗ Một role chung + kiểm tra trong code — kém an toàn, vi phạm least privilege và dễ bị lạm dụng.\n✗ Policy trực tiếp lên Identity Pool — Identity Pool ánh xạ tới IAM role, không gắn policy trực tiếp kiểu đó.\n✗ Access key tĩnh — chống lại nguyên tắc dùng temporary credentials, không an toàn.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-034",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-01-auth",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một ứng dụng dùng Cognito User Pool để đăng nhập, sau đó cần gọi cả (1) một REST API tùy biến của công ty và (2) ghi file trực tiếp lên S3 bằng SDK. Cách kết hợp đúng các thành phần Cognito là gì?",
+    "options": [
+      "Gửi JWT của User Pool tới REST API (qua Cognito authorizer); đồng thời đưa JWT vào Identity Pool để lấy AWS credentials gọi S3",
+      "Dùng access token của User Pool trực tiếp làm AWS credentials để gọi S3",
+      "Dùng temporary AWS credentials từ Identity Pool làm Bearer token cho REST API",
+      "Dùng refresh token cho cả gọi REST API và gọi S3"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "JWT dùng cho API (authentication); Identity Pool đổi JWT lấy AWS credentials để gọi S3.\n✓ JWT tới API + Identity Pool cho S3 — đúng, tách đúng hai luồng token và credentials.\n✗ Access token làm AWS credentials — sai, JWT không phải AWS credentials để gọi S3.\n✗ AWS credentials làm Bearer token — sai, credentials không phải JWT để gọi API qua Cognito authorizer.\n✗ Refresh token cho cả hai — refresh token chỉ để đổi token mới, không gọi API hay S3.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-035",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-02-encryption",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng phân tích lưu lượng cao ghi hàng nghìn object/giây vào S3 với SSE-KMS và bắt đầu bị throttle vì quá nhiều lời gọi KMS. Cách giảm số lần gọi KMS hiệu quả nhất là gì?",
+    "options": [
+      "Chuyển toàn bộ sang SSE-C để không gọi KMS nữa",
+      "Bật S3 Bucket Keys để dùng một data key cấp bucket, giảm số lần gọi KMS",
+      "Tắt mã hóa cho bucket để loại bỏ KMS",
+      "Tăng giới hạn 4 KB của KMS Encrypt API"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mỗi PUT/GET SSE-KMS gọi KMS; S3 Bucket Keys giảm đáng kể số lần gọi.\n✓ S3 Bucket Keys tạo một data key cấp bucket, giảm số lần gọi GenerateDataKey/Decrypt tới KMS, hạ throttle và chi phí.\n✗ SSE-C tự giữ key mỗi request, đổi mô hình bảo mật và không phải giải pháp throttle KMS mong muốn.\n✗ Tắt mã hóa vi phạm yêu cầu bảo mật.\n✗ Giới hạn 4 KB là cố định, không tăng được và không liên quan throttle SSE-KMS.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-036",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-03-secrets",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một ứng dụng cần lưu connection string của database, gồm username và password, và yêu cầu password được tự động xoay (rotate) mỗi 30 ngày mà không cần viết code lập lịch. Dịch vụ AWS nào phù hợp nhất?",
+    "options": [
+      "AWS Secrets Manager với automatic rotation bật cho secret",
+      "SSM Parameter Store với SecureString và một CloudWatch Events rule tự viết",
+      "S3 bucket được mã hoá bằng SSE-KMS lưu file JSON chứa credential",
+      "DynamoDB table với encryption at rest lưu username và password"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Secrets Manager hỗ trợ tự động xoay credential bằng Lambda rotation function tích hợp sẵn, không cần tự viết lịch.\n✓ Secrets Manager có automatic rotation native, lý tưởng cho database credential cần xoay định kỳ.\n✗ Parameter Store không có auto-rotation native, phải tự xây dựng toàn bộ logic xoay.\n✗ S3 chỉ lưu trữ và mã hoá, không có cơ chế xoay credential tự động.\n✗ DynamoDB là database, không cung cấp tính năng quản lý hay xoay secret.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-037",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-03-secrets",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Ứng dụng lưu hồ sơ y tế (PHI) phải tuân thủ HIPAA. Logs ứng dụng vô tình ghi cả số bảo hiểm và chẩn đoán bệnh nhân ra CloudWatch Logs. Cách tốt nhất để giảm rủi ro lộ PHI trong logs?",
+    "options": [
+      "Áp dụng data masking/sanitization ở tầng ứng dụng trước khi ghi log, và bật CloudWatch Logs data protection policy để che dữ liệu nhạy cảm",
+      "Tắt hoàn toàn logging để không có dữ liệu nào bị ghi",
+      "Chuyển toàn bộ log sang S3 bucket public với versioning",
+      "Tăng retention của log group lên vô hạn để dễ audit về sau"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "PHI cần được mask trước khi ghi (application-level sanitization) kết hợp CloudWatch Logs data protection để phát hiện/che.\n✓ Mask ở tầng ứng dụng kết hợp CloudWatch Logs data protection policy là cách phòng thủ nhiều lớp đúng chuẩn.\n✗ Tắt logging làm mất khả năng quan sát và audit cần thiết cho vận hành/tuân thủ.\n✗ S3 public bucket khiến PHI bị phơi bày rộng, vi phạm HIPAA nghiêm trọng.\n✗ Tăng retention không giải quyết vấn đề lộ dữ liệu, chỉ kéo dài thời gian dữ liệu nhạy cảm tồn tại.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-038",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-01-packaging-iac",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một developer cần truyền thông tin của một resource AWS::SQS::Queue (logical ID MyQueue) sang nơi khác trong CÙNG template. Những phát biểu nào về intrinsic functions là ĐÚNG? (Chọn 3)",
+    "options": [
+      "Ref MyQueue trả về URL của queue",
+      "Fn::GetAtt MyQueue.Arn trả về ARN của queue",
+      "Ref MyQueue trả về ARN của queue",
+      "Fn::GetAtt MyQueue.QueueName phải dùng Fn::ImportValue để hoạt động",
+      "Fn::Sub có thể nhúng ${MyQueue} để chèn giá trị Ref của queue vào chuỗi"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "Mỗi resource định nghĩa giá trị riêng cho Ref và các thuộc tính GetAtt; Fn::Sub có thể nội suy Ref.\n✓ Với AWS::SQS::Queue, Ref trả về queue URL\n✓ GetAtt MyQueue.Arn trả về ARN của queue\n✓ Fn::Sub cho phép nhúng ${MyQueue} tương đương Ref bên trong chuỗi\n✗ Ref của SQS queue trả về URL, không phải ARN\n✗ GetAtt trong cùng template không cần Fn::ImportValue; ImportValue chỉ dùng cho cross-stack export",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-039",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-01-packaging-iac",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Team đang chọn cách tổ chức hạ tầng CloudFormation. Những phát biểu nào về nested stacks và cross-stack export là ĐÚNG? (Chọn 3)",
+    "options": [
+      "Nested stack được tham chiếu bằng resource AWS::CloudFormation::Stack trỏ tới template con trên S3",
+      "Cross-stack reference dùng Outputs với Export ở stack nguồn và Fn::ImportValue ở stack đích",
+      "Nested stack chỉ chia sẻ giá trị qua Fn::ImportValue giữa các cây stack độc lập",
+      "Cross-stack export cho phép import giá trị giữa các region khác nhau tự do",
+      "Không thể xóa stack nguồn khi giá trị export của nó đang được stack khác import"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "Nested stack và cross-stack export là hai mô hình tái sử dụng khác nhau với ràng buộc riêng.\n✓ Nested stack khai báo bằng AWS::CloudFormation::Stack với TemplateURL trỏ template con trên S3\n✓ Cross-stack dùng Export trong Outputs và Fn::ImportValue để nhập ở stack khác\n✓ CloudFormation chặn xóa/thay đổi export đang được stack khác import\n✗ Nested stack truyền giá trị qua Parameters/Outputs của stack con, không phải Fn::ImportValue\n✗ Export chỉ dùng được trong cùng region và account, không xuyên region tự do",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-040",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-01-packaging-iac",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Developer muốn test một Lambda function được định nghĩa trong SAM template ngay trên máy local, kích hoạt bằng một event JSON mẫu, trước khi deploy lên AWS. Lệnh nào phù hợp nhất?",
+    "options": [
+      "sam local invoke với tham số --event",
+      "sam deploy --guided rồi gọi từ console",
+      "aws lambda invoke trỏ tới function ARN",
+      "sam build --use-container"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SAM CLI hỗ trợ chạy và test function cục bộ trong container Docker mô phỏng môi trường Lambda.\n✓ sam local invoke chạy function trên máy local với event JSON truyền qua --event\n✗ sam deploy --guided thực sự triển khai lên AWS, không phải test local\n✗ aws lambda invoke yêu cầu function đã được deploy lên AWS\n✗ sam build chỉ build artifact, không thực thi function với event",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-041",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-02-cicd",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong một CodePipeline, developer muốn output (mã nguồn đã được build) từ stage Build được dùng làm input cho stage Deploy. Cơ chế nào của CodePipeline cho phép truyền dữ liệu giữa các stage?",
+    "options": [
+      "Output artifacts và input artifacts được lưu trong artifact store (S3)",
+      "Biến môi trường được export trực tiếp giữa các action",
+      "CodePipeline tự sao chép file qua EFS được mount vào mọi stage",
+      "Truyền qua tham số SSM Parameter Store giữa các stage"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "CodePipeline dùng artifact store để chuyển dữ liệu giữa các stage.\n✓ Mỗi action có output artifact và input artifact; CodePipeline lưu chúng trong artifact store S3 và truyền giữa các stage\n✗ Env vars không phải cơ chế truyền artifact giữa các stage trong CodePipeline\n✗ CodePipeline không mount EFS để chia sẻ file giữa stage\n✗ SSM Parameter Store dùng cho cấu hình/tham số, không phải để truyền artifact build",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-042",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-03-deploy-strategies",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một developer cần triển khai phiên bản mới của ứng dụng lên môi trường staging nội bộ. Yêu cầu đơn giản: nhanh nhất có thể, chấp nhận downtime ngắn vì không có người dùng thật. Chiến lược deployment nào phù hợp nhất?",
+    "options": [
+      "All-at-once: cập nhật toàn bộ instance cùng lúc",
+      "Blue/green: tạo môi trường mới hoàn toàn rồi chuyển traffic",
+      "Canary 10% trong 10 phút rồi mới chuyển hết",
+      "Rolling with additional batch để giữ nguyên capacity"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Môi trường staging không người dùng thật, ưu tiên tốc độ và chấp nhận downtime.\n✓ All-at-once nhanh nhất, đơn giản nhất nhưng có downtime ngắn, phù hợp cho staging.\n✗ Blue/green tốn tài nguyên gấp đôi và phức tạp, không cần cho staging.\n✗ Canary kéo dài thời gian triển khai không cần thiết.\n✗ Rolling with additional batch giữ capacity nhưng chậm hơn và không cần khi chấp nhận downtime.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-043",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-04-beanstalk",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một developer triển khai ứng dụng web lên Elastic Beanstalk với 8 EC2 instances. Yêu cầu: trong suốt quá trình deploy version mới, ứng dụng phải LUÔN duy trì đủ 8 instances phục vụ (không được giảm capacity) và KHÔNG có downtime, đồng thời chi phí tăng thêm tạm thời được chấp nhận. Deployment policy nào phù hợp nhất nếu muốn chi phí thấp HƠN immutable nhưng vẫn không giảm capacity?",
+    "options": [
+      "Rolling with additional batch",
+      "Rolling",
+      "All at once",
+      "Immutable"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cần duy trì đủ full capacity (không giảm) và zero-downtime, chi phí thấp hơn immutable.\n✓ Rolling with additional batch: thêm 1 batch instances mới trước, nên trong lúc deploy luôn giữ đủ capacity gốc, chi phí chỉ tăng 1 batch.\n✗ Rolling: deploy theo batch tại chỗ nên capacity bị GIẢM tạm thời trong mỗi batch.\n✗ All at once: deploy đồng loạt, gây downtime hoàn toàn.\n✗ Immutable: zero-downtime và giữ capacity nhưng nhân đôi instances nên chi phí cao hơn yêu cầu.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-044",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-01-packaging-iac",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong một CloudFormation template, developer cần truyền tên (resource name) của một S3 bucket vừa tạo vào biến môi trường của Lambda. Với AWS::S3::Bucket, hàm intrinsic nào trả về chính tên bucket?",
+    "options": [
+      "Ref đối với logical ID của bucket",
+      "Fn::GetAtt với thuộc tính Arn",
+      "Fn::ImportValue với tên bucket",
+      "Fn::FindInMap với mapping bucket"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mỗi resource quy định giá trị mà Ref và GetAtt trả về; với AWS::S3::Bucket, Ref trả về tên bucket.\n✓ Ref logical ID của AWS::S3::Bucket trả về bucket name\n✗ GetAtt Arn trả về ARN đầy đủ (arn:aws:s3:::...) chứ không phải chỉ tên\n✗ ImportValue dùng để nhập giá trị đã export từ stack khác, không liên quan ở đây\n✗ FindInMap tra giá trị tĩnh trong section Mappings, không lấy thuộc tính runtime của resource",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-045",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-01-packaging-iac",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một developer dùng AWS CDK (TypeScript) để định nghĩa hạ tầng. Trong CI/CD, bước nào tạo ra CloudFormation template từ code CDK để sau đó có thể deploy?",
+    "options": [
+      "cdk synth biên dịch constructs thành CloudFormation template",
+      "cdk deploy trực tiếp gọi SAM Transform",
+      "cdk bootstrap sinh ra template ứng dụng",
+      "sam build chuyển CDK app thành template"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "CDK định nghĩa hạ tầng bằng code rồi tổng hợp ra CloudFormation.\n✓ cdk synth biên dịch các construct thành CloudFormation template (trong cdk.out)\n✗ cdk deploy thực hiện synth rồi triển khai, nhưng không dùng SAM Transform; bước sinh template là synth\n✗ cdk bootstrap chuẩn bị môi trường (S3/ECR/role) cho CDK, không sinh template ứng dụng\n✗ sam build dành cho SAM project, không xử lý CDK app",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-046",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-02-cicd",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "CodeBuild của một dự án cần truy cập một mật khẩu database để chạy integration test, nhưng không được hardcode trong buildspec.yml. Cách bảo mật được khuyến nghị để inject giá trị này vào biến môi trường của build là gì?",
+    "options": [
+      "Tham chiếu Secrets Manager (hoặc SSM Parameter Store) qua mục env/secrets-manager hoặc env/parameter-store trong buildspec.yml",
+      "Ghi mật khẩu plaintext vào phần env/variables trong buildspec.yml",
+      "Lưu mật khẩu trong appspec.yml và để CodeBuild đọc",
+      "Đính kèm mật khẩu vào output artifact để stage sau đọc"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "CodeBuild có thể lấy secret runtime từ Secrets Manager/Parameter Store.\n✓ Khai báo trong env/secrets-manager hoặc env/parameter-store của buildspec để inject giá trị bí mật vào biến môi trường mà không hardcode\n✗ Ghi plaintext vào env/variables làm lộ secret trong source, không an toàn\n✗ appspec.yml thuộc CodeDeploy, không phải nơi CodeBuild đọc env var\n✗ Đưa secret vào artifact làm rò rỉ và sai mục đích của artifact",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-047",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-03-deploy-strategies",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một REST API trên API Gateway có stage PROD trỏ tới Lambda alias. Khi triển khai version mới, developer muốn dùng stage variable để dễ dàng trỏ stage tới một Lambda alias khác mà không phải sửa code integration. Cách cấu hình đúng là gì?",
+    "options": [
+      "Dùng stage variable trong ARN integration kiểu Function:${stageVariables.lambdaAlias} và đặt giá trị biến ở từng stage",
+      "Hard-code version number của Lambda trực tiếp trong integration request",
+      "Tạo một API Gateway riêng cho mỗi alias Lambda",
+      "Bật caching ở stage để tự động chuyển sang alias mới"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Stage variables giúp cùng một định nghĩa API trỏ tới các target khác nhau theo stage.\n✓ Tham chiếu ${stageVariables.lambdaAlias} trong ARN integration cho phép mỗi stage trỏ tới alias mong muốn mà không sửa code.\n✗ Hard-code version làm mất tính linh hoạt và phải redeploy khi đổi.\n✗ Tạo API riêng cho mỗi alias là dư thừa và khó quản lý.\n✗ Caching không liên quan tới việc chọn alias đích.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-048",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-04-beanstalk",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đội DevOps muốn mỗi lần deploy version mới lên Elastic Beanstalk được thực hiện trên một tập instances HOÀN TOÀN mới trong một Auto Scaling group tạm thời; nếu health check thất bại thì rollback cực nhanh bằng cách hủy group mới mà không ảnh hưởng instances đang chạy. Họ chấp nhận chi phí gấp đôi tạm thời. Policy nào đáp ứng đúng nhất?",
+    "options": [
+      "Immutable",
+      "Rolling with additional batch",
+      "All at once",
+      "Rolling"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Yêu cầu: instances hoàn toàn mới trong ASG tạm thời, rollback an toàn nhất, chấp nhận double capacity.\n✓ Immutable: tạo full set instances mới trong group tạm; lỗi thì chỉ cần xóa instances mới, instances cũ nguyên vẹn nên rollback an toàn nhất.\n✗ Rolling with additional batch: vẫn deploy in-place trên một phần instances cũ, không tạo full set mới.\n✗ All at once: thay thế tại chỗ, không an toàn, có downtime.\n✗ Rolling: deploy in-place trên instances hiện có, rollback phức tạp hơn.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-049",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-01-packaging-iac",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Stack A export tên của một VPC Subnet bằng Outputs với Export Name. Stack B (triển khai sau, độc lập) cần dùng subnet này. Trong template Stack B, cách đúng để tham chiếu giá trị đã export là gì?",
+    "options": [
+      "Fn::ImportValue với tên export do Stack A khai báo",
+      "Fn::GetAtt trỏ tới resource subnet của Stack A",
+      "Ref tới logical ID của subnet trong Stack A",
+      "Định nghĩa subnet là nested stack của Stack A bên trong Stack B"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cross-stack reference dùng cơ chế Export (ở stack nguồn) và Fn::ImportValue (ở stack đích).\n✓ Fn::ImportValue lấy giá trị đã được export từ stack khác trong cùng region/account\n✗ GetAtt chỉ truy cập resource trong cùng template, không xuyên stack\n✗ Ref chỉ tham chiếu resource/parameter trong cùng template\n✗ Nested stack là quan hệ cha-con trong cùng deployment, khác hoàn toàn cross-stack export",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-050",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-02-cicd",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một developer cần định nghĩa các lệnh build chạy trong CodeBuild cho một ứng dụng Node.js (cài dependency, chạy test, đóng gói artifact). File cấu hình nào CodeBuild sử dụng và đặt mặc định ở đâu?",
+    "options": [
+      "buildspec.yml ở thư mục gốc của source repository",
+      "appspec.yml ở thư mục gốc của source repository",
+      "buildspec.json trong S3 bucket của pipeline",
+      "Dockerfile ở thư mục gốc của source repository"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "CodeBuild đọc buildspec để biết các lệnh build theo từng phase.\n✓ buildspec.yml đặt mặc định ở root của source là file CodeBuild dùng để định nghĩa phases và artifacts\n✗ appspec.yml là file của CodeDeploy, không phải CodeBuild\n✗ CodeBuild dùng định dạng YAML (buildspec.yml/.yaml), không phải buildspec.json\n✗ Dockerfile chỉ build image, không định nghĩa các phase build của CodeBuild",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-051",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-02-cicd",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một pipeline có stage Build (CodeBuild) tạo file đóng gói, và stage Deploy (CodeDeploy lên EC2). Deployment liên tục thất bại với lỗi không tìm thấy appspec.yml. Source code build ra một thư mục con 'dist/' chứa app và appspec.yml nằm trong dist/. Nguyên nhân và cách khắc phục đúng nhất là gì?",
+    "options": [
+      "appspec.yml phải nằm ở root của input artifact mà CodeDeploy nhận; cấu hình artifacts base-directory hoặc files trong buildspec để appspec.yml ở gốc artifact",
+      "CodeDeploy không hỗ trợ appspec.yml từ CodeBuild; phải tự upload thủ công lên S3",
+      "Phải đổi tên appspec.yml thành buildspec.yml để CodeDeploy nhận diện",
+      "Thêm hook DownloadBundle vào appspec.yml để chỉ định lại vị trí file"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "CodeDeploy yêu cầu appspec.yml ở root của bundle (artifact) nhận được.\n✓ Khi appspec.yml nằm trong dist/, nó không ở root artifact; dùng artifacts base-directory hoặc files trong buildspec để đưa appspec.yml ra gốc artifact là cách sửa đúng\n✗ CodeDeploy hỗ trợ nhận artifact từ pipeline; không cần upload thủ công\n✗ buildspec.yml và appspec.yml có vai trò khác nhau, đổi tên là sai hoàn toàn\n✗ DownloadBundle không phải hook bạn cấu hình để định vị appspec.yml",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-052",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-03-deploy-strategies",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đội DevOps muốn triển khai dịch vụ ECS với khả năng: chạy song song task set mới và cũ, kiểm thử bằng test listener trước khi chuyển production traffic, và có thể rollback tức thì. Giải pháp nào đúng?",
+    "options": [
+      "ECS blue/green deployment thông qua CodeDeploy với production và test listener trên Application Load Balancer",
+      "ECS rolling update (deployment type mặc định của ECS service)",
+      "Tự viết script đổi desired count của hai service ECS thủ công",
+      "Dùng AWS Batch để chạy task set mới song song"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Yêu cầu test listener và chuyển traffic tức thì là đặc trưng của blue/green qua CodeDeploy.\n✓ ECS blue/green với CodeDeploy tạo replacement task set, cho test qua test listener rồi reroute production listener, rollback nhanh.\n✗ ECS rolling update thay thế task tại chỗ, không có test listener riêng và không reroute tức thì.\n✗ Script thủ công dễ lỗi, không có cơ chế rollback tự động.\n✗ AWS Batch dùng cho batch jobs, không phải triển khai service.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-053",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-04-beanstalk",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng xử lý job nền đọc message từ Amazon SQS, không cần phục vụ HTTP request từ người dùng cuối. Team muốn dùng Elastic Beanstalk để quản lý. Cấu hình environment nào phù hợp?",
+    "options": [
+      "Worker environment tier (Beanstalk tự cài daemon đọc SQS và POST vào ứng dụng)",
+      "Web server environment tier với một Application Load Balancer public",
+      "Web server environment tier với CNAME swap",
+      "Tạo một environment tier tùy chỉnh tên là 'queue tier'"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Ứng dụng xử lý job nền từ SQS, không phục vụ HTTP trực tiếp cho user.\n✓ Worker environment tier: Beanstalk chạy một SQS daemon đọc message và POST tới đường dẫn cục bộ của ứng dụng, đúng cho workload xử lý nền.\n✗ Web server tier với ALB public: dành cho ứng dụng nhận HTTP request từ client, không tối ưu cho consumer SQS.\n✗ Web server tier với CNAME swap: CNAME swap là kỹ thuật blue/green cho web tier, không liên quan workload SQS.\n✗ 'queue tier' tùy chỉnh: Beanstalk chỉ có hai tier là web server và worker, không có tier tùy chỉnh này.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-054",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-01-observability",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một team muốn: (1) đếm số dòng OutOfMemory trong log để dựng alarm, và (2) khi alarm kích hoạt thì gửi thông báo email cho on-call. Những thành phần nào cần dùng? (Chọn 2)",
+    "options": [
+      "Metric filter với pattern OutOfMemory để phát một CloudWatch metric",
+      "CloudWatch alarm với action trỏ tới một SNS topic (subscriber là email)",
+      "Subscription filter đẩy log sang Firehose để đếm OutOfMemory",
+      "Logs Insights query chạy theo lịch để tạo metric thường trực",
+      "Composite alarm bắt buộc để gửi được email qua SNS"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Đếm pattern trong log để alarm dùng metric filter; gửi email dùng alarm action tới SNS.\n✓ Metric filter biến số dòng OutOfMemory thành metric để alarm theo dõi.\n✓ Alarm action trỏ tới SNS topic có subscriber email gửi thông báo cho on-call.\n✗ Firehose dùng để nạp/lưu log, không phải để đếm pattern tạo metric.\n✗ Logs Insights là query ad-hoc, không tạo metric thường trực để alarm.\n✗ Composite alarm không bắt buộc; một metric alarm đơn đã đủ gửi SNS.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-055",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-03-optimization",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Một SNS topic gửi mọi thông báo đơn hàng tới nhiều SQS queue, nhưng mỗi consumer chỉ quan tâm một loại sự kiện (ví dụ chỉ order_cancelled). Hiện consumer phải nhận tất cả rồi tự lọc, gây xử lý thừa và tốn chi phí. Những hành động nào giúp giảm xử lý thừa? (Chọn 2)",
+    "options": [
+      "Gắn subscription filter policy trên mỗi SQS subscription để chỉ nhận message khớp thuộc tính",
+      "Thêm message attributes vào message publish để filter policy đánh giá được",
+      "Tăng visibility timeout của các queue để consumer có thêm thời gian lọc",
+      "Bật long polling trên các queue để giảm số message nhận về",
+      "Chuyển sang FIFO topic để message tự động được phân loại theo nội dung"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "SNS message filtering cho phép mỗi subscription chỉ nhận message khớp filter policy, loại bỏ xử lý thừa ngay tại nguồn.\n✓ Filter policy trên subscription — đúng, chỉ chuyển message phù hợp tới từng queue.\n✓ Thêm message attributes khi publish — đúng, filter policy mặc định đánh giá dựa trên message attributes nên cần đính kèm chúng.\n✗ Tăng visibility timeout — chỉ ảnh hưởng thời gian message bị ẩn khi đang xử lý, không giảm lượng message thừa.\n✗ Long polling — giảm empty receive/chi phí polling chứ không lọc bỏ message không liên quan.\n✗ FIFO topic — đảm bảo thứ tự/loại trùng, không tự phân loại theo nội dung.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-056",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-01-observability",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Team muốn stream toàn bộ log của một log group gần real-time vào S3 để lưu trữ và phân tích sau, KHÔNG muốn viết code xử lý log. Lựa chọn nào phù hợp nhất?",
+    "options": [
+      "Subscription filter trỏ tới Kinesis Data Firehose delivery stream ghi vào S3",
+      "Subscription filter trỏ tới một Lambda function ghi từng batch vào S3",
+      "Metric filter trỏ tới S3",
+      "Logs Insights query xuất kết quả tự động vào S3"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Firehose là đường nạp dữ liệu vào S3/OpenSearch/Redshift mà không cần code.\n✓ Subscription filter → Firehose → S3 là cấu hình managed, không cần viết code xử lý.\n✗ Subscription filter → Lambda yêu cầu viết code xử lý batch.\n✗ Metric filter chỉ tạo metric, không stream log và không trỏ tới S3.\n✗ Logs Insights là công cụ query ad-hoc, không phải pipeline lưu trữ liên tục.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-057",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-02-xray",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng chạy trên EC2 đã được instrument bằng X-Ray SDK. Code chạy bình thường nhưng không có trace nào xuất hiện trong X-Ray console. CloudWatch Logs cho thấy lỗi 'unable to send segments'. Nguyên nhân khả dĩ nhất là gì?",
+    "options": [
+      "X-Ray daemon không chạy trên EC2 nên SDK không có nơi gửi segment qua UDP",
+      "Sampling rule đang đặt fixed rate = 100% nên X-Ray từ chối nhận trace",
+      "Annotation chưa được khai báo nên X-Ray không tạo segment",
+      "Service map chưa được tạo thủ công trong console trước khi gửi trace"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Trên EC2, SDK gửi segment qua UDP tới X-Ray daemon; thiếu daemon là nguyên nhân phổ biến gây mất trace.\n✓ Không có daemon chạy thì SDK không gửi được segment, gây lỗi 'unable to send segments'.\n✗ Sampling 100% chỉ làm gửi nhiều hơn, không gây từ chối.\n✗ Annotation không liên quan tới việc tạo/gửi segment.\n✗ Service map được tự sinh từ trace, không cần tạo thủ công.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-058",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-03-optimization",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một hàm Lambda xử lý ảnh đang chạy chậm và developer nghi ngờ bị giới hạn CPU. Trong Lambda, mối quan hệ giữa memory và CPU được cấu hình như thế nào, và công cụ nào giúp tìm cấu hình memory tối ưu về chi phí/hiệu năng?",
+    "options": [
+      "CPU được cấp tỉ lệ thuận theo memory; dùng AWS Lambda Power Tuning để tìm memory tối ưu",
+      "CPU cấu hình độc lập với memory qua tham số vCPU; dùng Compute Optimizer để chỉnh vCPU",
+      "Memory không ảnh hưởng CPU; chỉ tăng timeout để hàm có thêm thời gian CPU",
+      "CPU tỉ lệ nghịch với memory; giảm memory để được nhiều CPU hơn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Trong Lambda bạn chỉ chọn memory, còn CPU (và network) được cấp tỉ lệ thuận theo lượng memory đó.\n✓ CPU tỉ lệ thuận memory + Power Tuning — đúng, tăng memory cũng tăng CPU; AWS Lambda Power Tuning dùng Step Functions để so sánh nhiều mức memory về chi phí và thời gian.\n✗ Cấu hình vCPU độc lập — Lambda không cho đặt vCPU riêng.\n✗ Memory không ảnh hưởng CPU — sai, CPU gắn liền với memory.\n✗ CPU tỉ lệ nghịch — sai hoàn toàn, giảm memory làm giảm CPU.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-059",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-01-observability",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Team phát hiện một log group đang lưu log vĩnh viễn (Never expire) và chi phí lưu trữ tăng dần. Cách xử lý tối ưu, ít tốn công nhất là gì?",
+    "options": [
+      "Đặt retention policy cho log group (ví dụ retention-in-days = 30)",
+      "Viết một Lambda chạy theo lịch để gọi API xóa các log event cũ",
+      "Tạo metric filter để tự động xóa log khi vượt ngưỡng dung lượng",
+      "Bật detailed monitoring để CloudWatch tự dọn log cũ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Retention policy là cơ chế gốc để giới hạn thời gian giữ log.\n✓ Đặt retention-in-days giúp CloudWatch tự xóa log quá hạn, không cần code.\n✗ Tự viết Lambda xóa log là cách thủ công, kém tối ưu và dễ lỗi.\n✗ Metric filter chỉ phát sinh metric từ log, không xóa log.\n✗ Detailed monitoring không liên quan đến dọn dẹp log.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-060",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-01-observability",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một pipeline cần stream log gần real-time với throughput rất cao, nhiều consumer độc lập đọc song song và cần khả năng replay/giữ thứ tự để xử lý phức tạp. Destination nào của subscription filter phù hợp nhất?",
+    "options": [
+      "Kinesis Data Streams",
+      "Kinesis Data Firehose",
+      "Một Lambda function duy nhất",
+      "S3 trực tiếp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Kinesis Data Streams hợp với throughput cao, nhiều consumer, replay/ordering.\n✓ Kinesis Data Streams hỗ trợ nhiều consumer song song, replay theo shard và giữ thứ tự.\n✗ Firehose là delivery managed vào S3/OpenSearch, không cho nhiều consumer độc lập replay.\n✗ Một Lambda đơn không đáp ứng nhiều consumer độc lập và replay.\n✗ Subscription filter không trỏ trực tiếp tới S3; phải qua Firehose.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-061",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-02-xray",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một developer thấy chi phí X-Ray tăng cao vì một endpoint health-check nội bộ tạo hàng triệu trace mỗi ngày, trong khi các endpoint nghiệp vụ khác cần giữ tỉ lệ lấy mẫu cao. Giải pháp tối ưu nhất là gì?",
+    "options": [
+      "Tạo sampling rule riêng cho path health-check với reservoir và fixed rate rất thấp (gần 0), giữ default rule cho phần còn lại",
+      "Tắt instrument X-Ray trên toàn bộ ứng dụng để loại trace health-check",
+      "Chuyển mọi annotation của health-check thành metadata để giảm chi phí",
+      "Định tuyến health-check qua một X-Ray daemon riêng với buffer nhỏ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Sampling rule có thể match theo thuộc tính như URL path, cho phép lấy mẫu khác nhau theo endpoint.\n✓ Rule riêng match path health-check với rate gần 0 cắt phần lớn trace tốn kém, vẫn giữ rule mặc định cho nghiệp vụ.\n✗ Tắt toàn bộ instrument làm mất trace nghiệp vụ cần thiết.\n✗ Đổi annotation sang metadata không giảm số trace.\n✗ Daemon riêng không thay đổi tỉ lệ lấy mẫu theo endpoint.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-062",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-03-optimization",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một nhóm cần lớp caching in-memory hỗ trợ các kiểu dữ liệu phong phú (sorted set, list), replication, persistence và pub/sub cho một bảng xếp hạng (leaderboard) thời gian thực. Engine ElastiCache nào phù hợp nhất?",
+    "options": [
+      "ElastiCache for Redis",
+      "ElastiCache for Memcached",
+      "DynamoDB DAX",
+      "Amazon CloudFront"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Yêu cầu sorted set, replication, persistence, pub/sub là đặc trưng của Redis.\n✓ ElastiCache for Redis — đúng, hỗ trợ kiểu dữ liệu phong phú (sorted set lý tưởng cho leaderboard), replication, persistence và pub/sub.\n✗ Memcached — chỉ là cache key-value đơn giản, đa luồng, không có sorted set/persistence/replication/pub-sub.\n✗ DAX — chỉ là cache cho DynamoDB, không phải cache đa năng với các kiểu dữ liệu trên.\n✗ CloudFront — là CDN cache nội dung HTTP, không phải in-memory data store.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-063",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-01-observability",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Team cần monitor memory utilization (% RAM đã dùng) của các EC2 instance và đẩy lên CloudWatch để dựng alarm. Cách đúng là gì?",
+    "options": [
+      "Cài CloudWatch Agent (unified agent) trên instance để thu thập và đẩy memory metric",
+      "Bật detailed monitoring để CloudWatch lấy memory metric mỗi 1 phút",
+      "Dùng metric MemoryUtilization có sẵn trong namespace AWS/EC2",
+      "Tạo metric filter trên log group của instance để trích memory"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "EC2 không tự gửi memory/disk usage vì hypervisor không nhìn thấy bên trong OS.\n✓ CloudWatch Agent thu thập memory/disk từ trong OS và đẩy lên CloudWatch.\n✗ Detailed monitoring chỉ đưa metric có sẵn (CPU, network...) về 1 phút, KHÔNG thêm memory.\n✗ Namespace AWS/EC2 không có MemoryUtilization mặc định.\n✗ Metric filter chỉ trích từ log đã có, instance không tự log memory.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-064",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-02-xray",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong một trace, developer muốn đính kèm toàn bộ payload JSON của một request (object lớn, nhiều trường) để debug nhưng KHÔNG cần dùng để filter. Cách lưu phù hợp nhất là gì?",
+    "options": [
+      "Ghi payload dưới dạng metadata bằng put_metadata",
+      "Ghi payload dưới dạng annotation bằng put_annotation",
+      "Đặt toàn bộ payload làm trace ID",
+      "Lưu payload vào sampling rule để hiển thị kèm trace"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Metadata để đính kèm dữ liệu chi tiết không cần filter; annotation chỉ nên dùng cho giá trị filter được.\n✓ Metadata phù hợp lưu object JSON lớn dùng để debug, không bị index.\n✗ Annotation chỉ nhận kiểu giá trị đơn giản và để filter, không hợp cho payload lớn.\n✗ Trace ID là định danh, không dùng lưu payload.\n✗ Sampling rule kiểm soát lấy mẫu, không lưu dữ liệu hiển thị.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "dva-m1-065",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-03-optimization",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một developer triển khai ElastiCache theo chiến lược lazy loading (cache-aside) cho dữ liệu sản phẩm. Vấn đề nào là nhược điểm CỐ HỮU của lazy loading mà developer cần lường trước?",
+    "options": [
+      "Dữ liệu trong cache có thể cũ (stale) vì cache chỉ cập nhật khi có cache miss",
+      "Mọi lần ghi đều phải ghi đồng thời vào cache làm tăng độ trễ ghi",
+      "Cache luôn chứa cả dữ liệu không bao giờ được đọc, gây lãng phí bộ nhớ",
+      "Không thể đặt TTL cho các key trong ElastiCache"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lazy loading chỉ nạp dữ liệu vào cache khi xảy ra cache miss, nên không tự cập nhật khi dữ liệu nguồn thay đổi.\n✓ Dữ liệu có thể stale — đúng, vì cache chỉ refresh khi miss; thường kết hợp TTL để hạn chế.\n✗ Mọi lần ghi vào cache — đó là đặc điểm của write-through, không phải lazy loading.\n✗ Cache chứa dữ liệu không bao giờ đọc — đó là nhược điểm của write-through (ghi cả dữ liệu chưa được đọc).\n✗ Không thể đặt TTL — sai, ElastiCache hỗ trợ TTL.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "dva-m2-001",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-01-sdk-api",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Đội phát triển cần đảm bảo idempotency khi client có thể retry các thao tác. Với mỗi service, cơ chế NÀO là cách đúng để chống xử lý/tạo trùng? (Chọn 2)",
+    "options": [
+      "DynamoDB: dùng conditional write với ConditionExpression attribute_not_exists(orderId)",
+      "SQS FIFO: dùng MessageDeduplicationId để khử trùng message trong cửa sổ 5 phút",
+      "S3: dùng ContinuationToken để đảm bảo PutObject không tạo trùng object",
+      "EC2: tăng max_attempts trong retry config để đảm bảo RunInstances chỉ tạo một instance",
+      "Lambda: bật adaptive retry mode để invoke đồng bộ trở nên idempotent"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Idempotency đạt được bằng cơ chế dedup/điều kiện phù hợp từng service: conditional write cho DynamoDB và deduplication ID cho SQS FIFO.\n✓ ConditionExpression attribute_not_exists đảm bảo chỉ ghi khi item chưa tồn tại, chống tạo trùng trong DynamoDB.\n✓ MessageDeduplicationId của SQS FIFO loại bỏ message trùng trong cửa sổ 5 phút.\n✗ ContinuationToken là cơ chế phân trang của S3, không liên quan idempotency của PutObject.\n✗ Tăng max_attempts chỉ tăng số lần retry, càng dễ tạo trùng nếu không dùng ClientToken.\n✗ adaptive retry mode chỉ điều tiết tốc độ/retry, không làm invoke trở nên idempotent.",
     "domain": 1,
     "mock": 2
   },
   {
-    "id": "saa-m3-001",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-01-iam-deep-dive",
+    "id": "dva-m2-002",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-01-sdk-api",
     "certifications": [
-      "SAA-C03"
+      "DVA-C02"
     ],
-    "difficulty": "medium",
+    "difficulty": "easy",
     "type": "single",
-    "question": "Account A chứa một S3 bucket cần được account B truy cập đọc dữ liệu. Yêu cầu là account B chỉ được cấp quyền tạm thời và account A muốn kiểm soát chính xác principal nào ở account B được phép. Cách triển khai cross-account access nào là tối ưu và an toàn nhất?",
+    "question": "Một developer chạy ứng dụng Python trên EC2 instance đã gắn instance profile có quyền truy cập S3. Tuy nhiên, trên instance này cũng có biến môi trường AWS_ACCESS_KEY_ID và AWS_SECRET_ACCESS_KEY (của một IAM user khác) được set sẵn. Khi code khởi tạo client mà KHÔNG truyền key, SDK sẽ dùng credentials nào?",
     "options": [
-      "Tạo IAM role trong account A với trust policy cho phép account B AssumeRole, và account B dùng STS AssumeRole để lấy temporary credentials",
-      "Tạo IAM user trong account A và chia sẻ access key với account B",
-      "Gắn bucket policy trong account A cho phép Principal là toàn bộ account B (root)",
-      "Bật S3 Access Points và cấp quyền public-read cho bucket"
+      "Credentials từ environment variables (IAM user)",
+      "Credentials từ instance profile (IMDS) vì code chạy trên EC2",
+      "SDK ném lỗi vì có hai nguồn credentials xung đột",
+      "Credentials trong file ~/.aws/credentials nếu tồn tại"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "IAM role với trust policy cung cấp cross-account access bằng temporary credentials và cho phép kiểm soát chi tiết principal được tin tưởng.\n✓ IAM role + STS AssumeRole: temporary credentials, trust policy kiểm soát chính xác ai được assume, best practice cho cross-account.\n✗ Chia sẻ access key của IAM user: long-term credentials, rủi ro cao, vi phạm least privilege.\n✗ Bucket policy cho toàn bộ root account B: cấp quyền quá rộng, mọi principal account B đều truy cập được, không kiểm soát chi tiết.\n✗ Public-read access point: lộ dữ liệu ra ngoài, không phù hợp yêu cầu cấp quyền có kiểm soát.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-002",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-01-iam-deep-dive",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một IAM user có một identity-based policy ALLOW s3:GetObject trên bucket X. Account chứa user này nằm trong OU có SCP chỉ cho phép các action EC2 (không bao gồm S3). Đồng thời bucket X (cùng account) có bucket policy ALLOW user đó GetObject. Khi user gọi s3:GetObject, kết quả là gì?",
-    "options": [
-      "Bị từ chối, vì SCP không cho phép S3 nên permission tối đa của account đã loại trừ s3:GetObject",
-      "Được phép, vì cả identity-based policy lẫn resource-based policy đều ALLOW",
-      "Được phép, vì resource-based policy luôn ưu tiên hơn SCP",
-      "Bị từ chối, vì cần thêm một explicit allow trong permission boundary"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "SCP đặt trần quyền tối đa; nếu action không nằm trong SCP allow thì coi như implicit deny, request bị chặn dù các policy khác allow.\n✓ Bị từ chối do SCP: SCP chỉ allow EC2, s3:GetObject nằm ngoài giới hạn nên bị implicit deny ở cấp account.\n✗ Được phép vì identity + resource policy allow: SCP được đánh giá và giới hạn permission tối đa, nên các allow này không có hiệu lực.\n✗ Resource-based policy ưu tiên hơn SCP: sai, SCP luôn giới hạn boundary của account trước.\n✗ Cần explicit allow trong permission boundary: tình huống không đề cập permission boundary; vấn đề nằm ở SCP.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-002",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-01-iam-deep-dive",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một công ty dùng Active Directory on-premises và muốn cho phép nhân viên đăng nhập AWS Management Console bằng tài khoản AD hiện có, không tạo IAM user riêng cho từng người, và quản lý quyền tập trung trên nhiều account trong Organizations. Giải pháp nào phù hợp nhất với least operational overhead?",
-    "options": [
-      "Triển khai AWS IAM Identity Center, kết nối với AD qua AWS Managed Microsoft AD hoặc AD Connector, và gán permission set cho các account",
-      "Tạo IAM user cho từng nhân viên trong mỗi account và đồng bộ mật khẩu thủ công với AD",
-      "Thiết lập SAML federation trực tiếp giữa AD FS và từng IAM identity provider trong mỗi account",
-      "Dùng Amazon Cognito user pool để federate nhân viên vào console"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "IAM Identity Center tích hợp AD và quản lý quyền truy cập đa account tập trung qua permission set, giảm tối đa vận hành.\n✓ IAM Identity Center + AD: SSO tập trung, gán permission set cho nhiều account, không cần IAM user, least operational overhead.\n✗ IAM user từng account đồng bộ mật khẩu: vận hành cực lớn, không scale, không tập trung.\n✗ SAML federation riêng cho từng account: cấu hình IdP lặp lại ở mỗi account, vận hành nặng so với Identity Center.\n✗ Cognito user pool: dành cho ứng dụng web/mobile customer-facing, không tối ưu cho SSO console của nhân viên với AD.",
+    "explanation": "Credential provider chain dừng ngay khi tìm thấy nguồn đầu tiên; environment variables đứng TRƯỚC instance profile/IMDS nên thắng.\n✓ Environment variables được duyệt trước IMDS trong chain nên SDK dùng key của IAM user, bỏ qua instance role.\n✗ Instance profile (IMDS) đứng gần cuối chain, chỉ được dùng khi các nguồn trước không có.\n✗ Chain không báo lỗi xung đột; nó chỉ lấy nguồn đầu tiên tìm thấy.\n✗ Shared credentials file đứng sau env vars, không được ưu tiên ở đây.",
     "domain": 1,
     "mock": 2
   },
   {
-    "id": "saa-m3-002",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-01-iam-deep-dive",
+    "id": "dva-m2-003",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-01-sdk-api",
     "certifications": [
-      "SAA-C03"
+      "DVA-C02"
     ],
-    "difficulty": "medium",
+    "difficulty": "hard",
     "type": "single",
-    "question": "Một mobile app cần cho phép hàng triệu người dùng cuối upload ảnh lên S3. App dùng Google và Facebook để đăng nhập. Bạn cần cấp temporary AWS credentials cho từng người dùng với quyền giới hạn, không tạo IAM user cho mỗi người. Giải pháp nào tối ưu?",
+    "question": "Một hàm Lambda gọi EC2 DescribeInstances và xử lý lỗi. Trong một burst, nó nhận lỗi RequestLimitExceeded. Đồng thời ở một nhánh khác, nó nhận ValidationException do tham số sai. Cách xử lý đúng cho từng loại lỗi là gì?",
     "options": [
-      "Dùng Amazon Cognito identity pool để federate người dùng qua các OIDC provider và cấp temporary credentials qua STS",
-      "Tạo một IAM role chung và nhúng access key của role vào app",
-      "Tạo IAM user cho mỗi người dùng cuối thông qua API tự động",
-      "Dùng SCP để giới hạn quyền upload của từng người dùng"
+      "RequestLimitExceeded: retry với exponential backoff + jitter; ValidationException: KHÔNG retry, sửa tham số",
+      "Cả hai đều retry với exponential backoff vì đều là lỗi tạm thời",
+      "Cả hai đều KHÔNG retry vì đều là lỗi 4xx phía client",
+      "RequestLimitExceeded: sửa code ngay; ValidationException: retry vì sẽ tự khỏi"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "Cognito identity pool được thiết kế để federate người dùng web/mobile qua social IdP và cấp temporary AWS credentials theo từng người với quyền giới hạn.\n✓ Cognito identity pool + OIDC: web identity federation, temporary credentials qua STS, scale tới hàng triệu user, không tạo IAM user.\n✗ Nhúng access key của role: role không có long-term key để nhúng; nhúng key tĩnh trong app là rủi ro nghiêm trọng.\n✗ IAM user cho mỗi người dùng: vượt quota IAM user và không scale tới hàng triệu người.\n✗ SCP: dùng cho account trong Organizations, không liên quan tới người dùng cuối của app.",
+    "explanation": "RequestLimitExceeded là throttling (retryable) trong khi ValidationException là lỗi client non-retryable cần sửa request.\n✓ Throttling thì retry với backoff + jitter; lỗi validation thì sửa tham số chứ retry vô ích.\n✗ ValidationException không tự khỏi khi retry vì tham số vẫn sai.\n✗ Không phải mọi lỗi 4xx đều non-retryable; throttling là 4xx đặc thù nhưng retryable.\n✗ Đảo ngược cách xử lý hai loại lỗi là sai hoàn toàn.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-004",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-02-lambda",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Nhiều Lambda function trong một tổ chức cùng dùng chung một bộ thư viện chia sẻ nặng (~40 MB) và các binary phụ trợ. Đội muốn tránh đóng gói lặp lại trong từng deployment package và quản lý phiên bản tập trung. Giải pháp nào phù hợp nhất?",
+    "options": [
+      "Đóng gói thư viện thành một Lambda Layer và gắn layer đó vào các function",
+      "Dùng Lambda Extensions để inject thư viện vào runtime",
+      "Tải thư viện từ S3 vào /tmp ở mỗi cold start",
+      "Tăng ephemeral storage /tmp lên 10 GB và copy thư viện vào đó"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lambda Layers cho phép chia sẻ code/dependency giữa nhiều function và quản lý phiên bản tập trung.\n✓ Layer chứa thư viện chung được nhiều function gắn vào, tránh đóng gói lặp và được versioned riêng.\n✗ Extensions dùng cho công cụ giám sát/observability/secrets, không phải để phân phối thư viện ứng dụng.\n✗ Tải từ S3 mỗi cold start làm tăng latency và phức tạp, không phải cách quản lý tập trung tốt nhất.\n✗ Tăng /tmp không giải quyết việc đóng gói và versioning thư viện chung.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-005",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-03-api-gateway",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một nhóm phát triển cần xây dựng một REST API đơn giản chỉ làm proxy chuyển tiếp HTTP request tới các hàm Lambda, với chi phí thấp nhất và độ trễ thấp. Họ KHÔNG cần các tính năng như request validation phức tạp, usage plans hay API keys. Loại API nào của API Gateway là phù hợp NHẤT?",
+    "options": [
+      "HTTP API",
+      "REST API",
+      "WebSocket API",
+      "GraphQL API qua AppSync"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "HTTP API được thiết kế cho proxy Lambda/HTTP đơn giản, rẻ hơn và độ trễ thấp hơn REST API.\n✓ HTTP API: chi phí thấp hơn (tới khoảng 70%), độ trễ thấp, hỗ trợ Lambda proxy và JWT authorizer, lý tưởng cho proxy đơn giản.\n✗ REST API: nhiều tính năng (API keys, usage plans, request validation, caching) nhưng đắt hơn và không cần thiết ở đây.\n✗ WebSocket API: dành cho kết nối hai chiều thời gian thực, không phù hợp mô hình request/response HTTP.\n✗ AppSync GraphQL: là dịch vụ khác, không phải API Gateway và không cần thiết cho proxy đơn giản.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-006",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-03-api-gateway",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một REST API có 3 stage: dev, test, prod, mỗi stage cần gọi một hàm Lambda khác nhau (myfunc-dev, myfunc-test, myfunc-prod) mà KHÔNG phải tạo lại integration cho từng stage. Cách làm tối ưu là gì?",
+    "options": [
+      "Dùng stage variable (ví dụ ${stageVariables.lambdaAlias}) trong cấu hình integration URI và đặt giá trị khác nhau cho mỗi stage",
+      "Tạo 3 REST API riêng biệt, mỗi API trỏ tới một Lambda",
+      "Hard-code ARN của prod và dùng resource policy để chuyển hướng theo stage",
+      "Dùng Lambda alias 'PROD' cho cả ba stage và phân biệt bằng API key"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Stage variables cho phép một integration trỏ động tới các target khác nhau theo stage.\n✓ Stage variable trong integration URI: tham chiếu ${stageVariables.xxx} để mỗi stage gọi Lambda/alias tương ứng, một định nghĩa dùng cho nhiều môi trường.\n✗ 3 API riêng: trùng lặp cấu hình, khó bảo trì, không tối ưu.\n✗ Hard-code prod và resource policy: resource policy không định tuyến tới Lambda khác nhau.\n✗ Cùng alias PROD và API key: API key không chọn backend; mọi stage sẽ gọi cùng một hàm.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-007",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-04-dynamodb",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Nhiều client cùng cập nhật thuộc tính 'stock' của một item product, gây ra lost update (ghi đè lẫn nhau). Developer muốn đảm bảo chỉ ghi nếu item chưa bị thay đổi kể từ lúc đọc. Cách triển khai chuẩn trong DynamoDB là gì?",
+    "options": [
+      "Optimistic locking: thêm thuộc tính 'version', dùng ConditionExpression 'version = :v' và tăng version mỗi lần update",
+      "Dùng BatchWriteItem để gom các update thành một lần ghi",
+      "Bật strongly consistent read khi GetItem rồi PutItem bình thường",
+      "Tăng WCU của bảng để các write không tranh chấp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Tránh lost update khi nhiều client sửa cùng item → optimistic locking với version + ConditionExpression.\n✓ Optimistic locking version + ConditionExpression — đúng, write chỉ thành công nếu version chưa đổi, nếu không thì fail để client retry.\n✗ BatchWriteItem — không atomic, không hỗ trợ điều kiện theo version, không ngăn lost update.\n✗ Strongly consistent read rồi PutItem — đọc mới vẫn không khóa ghi; giữa đọc và ghi client khác có thể chen vào.\n✗ Tăng WCU — giải quyết throttling chứ không phải tranh chấp logic/lost update.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-008",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-05-app-integration",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một hệ thống thanh toán xử lý giao dịch tài khoản: các giao dịch trên cùng một tài khoản phải được xử lý đúng thứ tự và tuyệt đối không được xử lý trùng lặp. Throughput khoảng vài trăm message mỗi giây. Lựa chọn nào đúng nhất?",
+    "options": [
+      "SQS FIFO queue, dùng MessageGroupId theo accountId",
+      "SQS Standard queue và thiết kế consumer idempotent",
+      "SNS Standard topic với filter policy theo accountId",
+      "Kinesis Data Streams với partition key là accountId"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Yêu cầu thứ tự + không trùng lặp + throughput vừa phải → SQS FIFO, dùng MessageGroupId để giữ thứ tự trong từng tài khoản.\n✓ SQS FIFO với MessageGroupId=accountId: đảm bảo thứ tự trong từng nhóm và exactly-once (khử trùng lặp).\n✗ Standard + idempotent: idempotent tránh tác động trùng nhưng Standard là best-effort ordering, không đảm bảo thứ tự xử lý.\n✗ SNS topic: là pub/sub, không phải hàng đợi giữ thứ tự xử lý point-to-point.\n✗ Kinesis: giữ thứ tự theo shard nhưng không khử trùng lặp built-in; nặng hơn nhu cầu này.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-009",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-01-sdk-api",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một ứng dụng .NET (SDK không bật adaptive mode) gọi nhiều API DynamoDB song song với mức concurrency rất cao và liên tục bị throttle dù đã có exponential backoff + jitter ở mỗi client. Cấu hình SDK nào giúp giảm throttle hiệu quả nhất ở phía client?",
+    "options": [
+      "Bật retry mode adaptive để SDK tự áp client-side rate limiting, giảm tốc độ gửi khi bị throttle",
+      "Tăng read_timeout và connect_timeout để mỗi request chờ lâu hơn",
+      "Chuyển sang legacy retry mode để giảm số lần retry",
+      "Hard-code access key vào client để bỏ qua bước dò credential chain cho nhanh"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khi concurrency cao gây throttle có hệ thống, adaptive mode bổ sung client-side rate limiting để tự bóp tốc độ gửi, vượt trội so với chỉ backoff đơn lẻ.\n✓ Adaptive mode kết hợp retry standard và rate limiting phía client, giảm áp lực gửi khi bị throttle nhiều.\n✗ Tăng timeout chỉ thay đổi thời gian chờ kết nối/đọc, không giảm tỉ lệ throttle.\n✗ Legacy mode retry ít loại lỗi hơn và yếu hơn standard/adaptive, không giúp với throttle quy mô lớn.\n✗ Hard-code key không liên quan tới throttle và còn vi phạm best practice bảo mật.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-010",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-02-lambda",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Lambda function được gọi ASYNCHRONOUSLY bởi S3 event. Khi function ném lỗi sau khi hết số lần retry, đội muốn ghi lại payload event thất bại để phân tích VÀ cũng muốn nhận kết quả thành công gửi tới một SQS queue khác. Cấu hình nào đáp ứng cả hai yêu cầu một cách hiện đại nhất?",
+    "options": [
+      "Dùng Lambda Destinations: on-failure tới một SQS queue và on-success tới SQS queue khác",
+      "Dùng DLQ (SQS) cho thất bại và poll function thủ công để gửi kết quả thành công",
+      "Bật X-Ray để capture cả event thành công lẫn thất bại",
+      "Tăng số lần Maximum Retry Attempts để event tự xử lý thành công"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lambda Destinations cho async invocation hỗ trợ định tuyến cả on-success và on-failure, kèm context phong phú hơn DLQ.\n✓ Destinations cho phép cấu hình đích riêng cho on-failure và on-success, đáp ứng cả hai yêu cầu.\n✗ DLQ chỉ bắt được thất bại và chỉ chứa payload, không xử lý kết quả thành công.\n✗ X-Ray dùng để trace/quan sát, không lưu payload event để xử lý lại.\n✗ Tăng retry không đảm bảo thành công và không ghi lại thất bại hay định tuyến thành công.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-011",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-03-api-gateway",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một REST API cung cấp cho khách hàng bên thứ ba. Bạn cần giới hạn mỗi khách hàng tối đa 10.000 request/ngày và 50 request/giây, đồng thời nhận diện từng khách hàng. Cách triển khai đúng là gì?",
+    "options": [
+      "Tạo usage plan với throttling và quota, gắn API key cho mỗi khách hàng và liên kết với usage plan",
+      "Bật account-level throttling và cấp cùng một API key cho tất cả khách hàng",
+      "Dùng Lambda authorizer để tự đếm request trong DynamoDB cho từng khách hàng",
+      "Cấu hình WAF rate-based rule giới hạn 50 request/giây cho toàn API"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Usage plan và API key là cơ chế gốc của API Gateway để áp quota/throttle theo từng client.\n✓ Usage plan và API key: usage plan định nghĩa quota (10.000/ngày) và rate/burst (50 rps); mỗi API key gắn với plan để nhận diện và đo từng khách hàng.\n✗ Account-level throttle và key chung: không tách biệt theo khách hàng, không có quota riêng.\n✗ Lambda authorizer tự đếm: phức tạp, tốn kém, trùng lặp tính năng có sẵn.\n✗ WAF rate-based: áp cho IP/toàn API, không gắn quota theo khách hàng cụ thể.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-012",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-04-dynamodb",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bảng Products đã chạy production với partition key 'productId'. Team cần thêm một access pattern mới: truy vấn sản phẩm theo 'categoryId'. Họ cần một index tạo được trên bảng đang chạy, không cần strongly consistent read. Giải pháp nào đúng?",
+    "options": [
+      "Tạo Global Secondary Index (GSI) với partition key categoryId",
+      "Tạo Local Secondary Index (LSI) với sort key categoryId",
+      "Tạo lại bảng từ đầu để thêm LSI categoryId",
+      "Dùng Scan với FilterExpression theo categoryId"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "LSI chỉ tạo được lúc tạo bảng; thêm index sau khi bảng chạy → GSI.\n✓ GSI partition key categoryId — đúng, GSI tạo/xóa được bất kỳ lúc nào và hỗ trợ partition key khác bảng gốc.\n✗ LSI sort key categoryId — LSI phải được tạo cùng lúc với bảng, không thêm được vào bảng đang chạy.\n✗ Tạo lại bảng để thêm LSI — tốn kém, gây downtime/migration không cần thiết khi GSI giải quyết được.\n✗ Scan + Filter — đọc toàn bảng mỗi lần, tốn kém và chậm cho access pattern lặp lại.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-013",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-04-dynamodb",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bảng ở chế độ provisioned có một GSI để truy vấn theo một access pattern phụ. Trong giờ cao điểm, các write vào BẢNG GỐC bắt đầu bị throttle dù bảng gốc còn dư WCU. Nguyên nhân khả dĩ nhất là gì?",
+    "options": [
+      "GSI bị thiếu WCU, khiến write vào bảng gốc cũng bị throttle theo",
+      "Strongly consistent read trên GSI tiêu thụ hết WCU của bảng",
+      "GSI tự động dùng chung WCU với bảng nên không bao giờ throttle riêng",
+      "LSI trên bảng đã hết dung lượng 10GB cho partition"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Trong provisioned mode, nếu GSI thiếu WCU để cập nhật, write vào bảng gốc cũng bị throttle (back-pressure).\n✓ GSI thiếu WCU làm write bảng gốc throttle — đúng, GSI có capacity riêng; khi GSI không theo kịp, DynamoDB tạo back-pressure chặn write gốc.\n✗ Strongly consistent read trên GSI — GSI không hỗ trợ strongly consistent read, và read tiêu RCU chứ không tiêu WCU.\n✗ GSI dùng chung WCU, không throttle riêng — sai, GSI có capacity tách biệt và có thể throttle riêng.\n✗ LSI hết 10GB partition — đây nói về giới hạn LSI chứ không phải nguyên nhân throttle write do GSI; đề không có LSI.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-014",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-01-sdk-api",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một developer dùng Boto3 để Scan một bảng DynamoDB lớn. Code chỉ đọc resp['Items'] một lần rồi dừng, nên thường thiếu nhiều bản ghi. Cần kiểm tra/đọc trường nào trong response để biết còn dữ liệu cần phân trang tiếp?",
+    "options": [
+      "LastEvaluatedKey trong response, truyền lại làm ExclusiveStartKey ở lần gọi kế tiếp",
+      "NextToken trong response, truyền lại làm NextToken ở lần gọi kế tiếp",
+      "NextContinuationToken trong response, truyền lại làm ContinuationToken",
+      "IsTruncated trong response, truyền lại làm Marker"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "DynamoDB Scan/Query dùng LastEvaluatedKey (response) và ExclusiveStartKey (request kế tiếp); khi LastEvaluatedKey vắng mặt là đã hết dữ liệu.\n✓ LastEvaluatedKey/ExclusiveStartKey là cặp phân trang đúng của DynamoDB.\n✗ NextToken là cơ chế của nhiều API generic, không phải của DynamoDB Scan/Query.\n✗ NextContinuationToken/ContinuationToken thuộc S3 ListObjectsV2.\n✗ IsTruncated/Marker thuộc các API kiểu cũ của S3 (ListObjects v1), không áp dụng cho DynamoDB.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-015",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-01-sdk-api",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một script Boto3 chạy trong container ECS (đã có task role phù hợp) bị lỗi NoRegionError khi khởi tạo client DynamoDB. Cách khắc phục đúng và phù hợp best practice nhất là gì?",
+    "options": [
+      "Đặt region qua tham số region_name khi tạo client hoặc qua biến môi trường AWS_REGION/AWS_DEFAULT_REGION",
+      "Hard-code access key và secret vào code để SDK tự suy ra region",
+      "Gắn thêm một instance profile cho container vì task role không cung cấp region",
+      "Chuyển sang dùng raw HTTP API và tự ký SigV4 để bỏ qua yêu cầu region"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "NoRegionError xảy ra khi không xác định được region từ tham số, env var hay file config; cách đúng là cung cấp region.\n✓ Truyền region_name hoặc set AWS_REGION/AWS_DEFAULT_REGION là cách chuẩn để giải quyết.\n✗ Hard-code key không liên quan tới region và vi phạm best practice; credentials và region là hai khái niệm khác nhau.\n✗ Trên ECS dùng task role, không gắn instance profile để lấy region; region không đến từ role.\n✗ Tự ký SigV4 vẫn cần region trong canonical request nên không bỏ qua được yêu cầu region.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-016",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-02-lambda",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một Lambda function được trigger bởi SQS standard queue qua event source mapping với batch size = 10. Khi xử lý một batch, message thứ 5 ném lỗi còn các message khác thành công. Mặc định, toàn bộ batch quay lại queue và bị xử lý lại, gây trùng lặp. Cách hiệu quả nhất để chỉ message lỗi được retry là gì?",
+    "options": [
+      "Bật ReportBatchItemFailures và trả về danh sách batchItemFailures chứa messageId của các message thất bại",
+      "Đặt batch size = 1 để mỗi message là một invocation riêng",
+      "Chuyển sang FIFO queue để Lambda tự bỏ qua message lỗi",
+      "Bật DLQ trên function để tự động loại các message lỗi khỏi batch"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Partial batch response (ReportBatchItemFailures) cho phép báo riêng các message lỗi để chỉ chúng được trả về queue.\n✓ Bật ReportBatchItemFailures và trả batchItemFailures giúp chỉ message thất bại được retry, tránh xử lý lại cả batch.\n✗ Batch size = 1 giải quyết trùng lặp nhưng kém hiệu quả và tốn kém hơn nhiều, không phải cách tối ưu.\n✗ FIFO không tự bỏ qua message lỗi; nó còn block xử lý theo message group.\n✗ DLQ trên function (async) không áp dụng cho event source mapping SQS theo cách này; redrive là cấu hình trên queue.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-017",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-03-api-gateway",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với Lambda proxy integration trên API Gateway REST API, hàm Lambda phải trả về kết quả như thế nào để client nhận HTTP 200 kèm body JSON đúng?",
+    "options": [
+      "Trả về object có dạng { \"statusCode\": 200, \"headers\": {...}, \"body\": \"<chuỗi JSON>\" }",
+      "Trả về trực tiếp object JSON nghiệp vụ; API Gateway tự bọc thành response",
+      "Trả về { \"status\": 200, \"payload\": {...} } và để mapping template chuyển đổi",
+      "Trả về chuỗi rỗng và đặt statusCode trong stage variable"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lambda proxy yêu cầu output đúng cấu trúc statusCode/headers/body, với body là chuỗi (string).\n✓ { statusCode, headers, body }: đây là định dạng bắt buộc của proxy integration; body phải là chuỗi (thường dùng JSON.stringify).\n✗ Trả object nghiệp vụ trực tiếp: đó là hành vi của non-proxy; với proxy sẽ gây lỗi 502 Malformed Lambda proxy response.\n✗ { status, payload }: sai tên trường, không đúng contract của proxy.\n✗ Chuỗi rỗng và stage variable: stage variable không dùng để đặt statusCode.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-018",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-03-api-gateway",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một backend cần xây dựng kênh giao tiếp hai chiều thời gian thực để server có thể chủ động đẩy thông báo tới các client đang kết nối (ví dụ ứng dụng chat). Loại API Gateway nào phù hợp nhất?",
+    "options": [
+      "WebSocket API với các route $connect, $disconnect và route tùy chỉnh",
+      "REST API với long polling và API caching",
+      "HTTP API với JWT authorizer và CORS",
+      "REST API với Lambda proxy integration và usage plans"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "WebSocket API hỗ trợ kết nối hai chiều bền vững, cho phép server đẩy dữ liệu tới client.\n✓ WebSocket API: duy trì kết nối, dùng route $connect/$disconnect và route tùy chỉnh; server đẩy message qua @connections API, lý tưởng cho chat/real-time.\n✗ REST và long polling: mô phỏng được nhưng kém hiệu quả, tăng độ trễ và chi phí.\n✗ HTTP API: chỉ request/response, không có kết nối bền vững hai chiều.\n✗ REST và Lambda proxy: vẫn là mô hình request/response, không đẩy chủ động được.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-019",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-04-dynamodb",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Developer viết code Query và in ra số item nhận được, nhưng phát hiện chỉ nhận về một phần kết quả (khoảng 1MB dữ liệu) dù bảng có nhiều dữ liệu khớp hơn. Nguyên nhân và cách sửa là gì?",
+    "options": [
+      "Response giới hạn 1MB; phải lặp dùng LastEvaluatedKey truyền vào ExclusiveStartKey để lấy các trang tiếp",
+      "Bảng thiếu RCU; tăng provisioned read capacity",
+      "Phải dùng Scan thay vì Query để lấy đủ dữ liệu",
+      "Đặt Limit lớn hơn để DynamoDB trả tất cả trong một response"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Một response Query/Scan giới hạn 1MB; còn dữ liệu thì có LastEvaluatedKey cần phân trang.\n✓ Lặp với LastEvaluatedKey → ExclusiveStartKey — đúng, đây là pagination chuẩn để lấy hết các trang.\n✗ Tăng RCU — capacity không liên quan tới giới hạn 1MB mỗi response.\n✗ Đổi sang Scan — Scan cũng giới hạn 1MB mỗi response, vấn đề không được giải quyết.\n✗ Đặt Limit lớn hơn — Limit giới hạn số item tối đa mỗi trang, không vượt được trần 1MB/response.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-020",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-05-app-integration",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi một đơn hàng được tạo, hệ thống cần kích hoạt đồng thời ba xử lý độc lập: cập nhật kho, gửi email xác nhận, và đẩy dữ liệu sang analytics. Mỗi hệ thống cần buffer riêng, retry riêng và độ bền (không mất message nếu một consumer tạm down). Kiến trúc nào phù hợp nhất?",
+    "options": [
+      "SNS topic fan-out, mỗi hệ thống có một SQS queue riêng subscribe vào topic",
+      "Một SQS Standard queue duy nhất cho cả ba hệ thống cùng poll",
+      "SNS topic với ba Lambda subscriber trực tiếp, không có SQS",
+      "Kinesis Data Streams với ba consumer dùng enhanced fan-out"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Pattern SNS + SQS fan-out: 1 event → nhiều consumer độc lập, mỗi consumer có buffer/retry/DLQ riêng và độ bền cao.\n✓ SNS fan-out + SQS riêng mỗi hệ thống: mỗi service xử lý theo nhịp riêng, có buffer và độ bền, không mất message khi một consumer down.\n✗ Một SQS queue chung: 1 message chỉ 1 consumer lấy → không thể cả ba cùng xử lý độc lập.\n✗ SNS + Lambda trực tiếp không SQS: nếu subscriber down, message có thể mất, thiếu buffer/độ bền.\n✗ Kinesis enhanced fan-out: phù hợp streaming/replay analytics, nặng và phức tạp hơn nhu cầu fan-out sự kiện đơn giản này.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-021",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-03-secrets",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Khi phân loại dữ liệu (data classification) cho một ứng dụng, những hành động nào là best practice để bảo vệ PII/PHI? (Chọn 2)",
+    "options": [
+      "Dùng Amazon Macie để tự động phát hiện và phân loại dữ liệu nhạy cảm như PII trong S3",
+      "Áp dụng mã hoá at-rest và in-transit cho dữ liệu được phân loại là nhạy cảm",
+      "Lưu PII không mã hoá nhưng đặt tag 'sensitive' lên object để cảnh báo",
+      "Ghi đầy đủ PII vào application logs để dễ truy vết khi cần điều tra",
+      "Cấp quyền đọc PII cho mọi developer để tăng tốc độ phát triển"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Bảo vệ PII/PHI cần phát hiện tự động và mã hoá đầu cuối, kèm least privilege.\n✓ Macie tự động phát hiện và phân loại PII trong S3, hỗ trợ data classification ở quy mô lớn.\n✓ Mã hoá at-rest và in-transit là yêu cầu cơ bản để bảo vệ dữ liệu nhạy cảm.\n✗ Chỉ gắn tag mà không mã hoá vẫn để lộ PII ở dạng plaintext.\n✗ Ghi PII vào logs làm tăng bề mặt rò rỉ, cần mask thay vì ghi đầy đủ.\n✗ Cấp quyền PII rộng rãi vi phạm least privilege và quy định bảo mật.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-022",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-01-auth",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một ứng dụng web sử dụng Amazon Cognito User Pool để đăng nhập người dùng. Sau khi xác thực thành công, ứng dụng cần gọi một API backend và phải gửi kèm token để chứng minh danh tính người dùng đã đăng nhập, đồng thời chứa các claim như email và tên hiển thị. Loại token nào của Cognito User Pool phù hợp nhất để truyền thông tin danh tính người dùng?",
+    "options": [
+      "ID token (JWT) chứa các claim về danh tính người dùng",
+      "Access token (JWT) dùng để cấp quyền truy cập resource server scope",
+      "Refresh token dùng để lấy token mới khi token cũ hết hạn",
+      "Temporary AWS credentials do STS cấp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "ID token là JWT chứa các claim về danh tính (email, name, sub...) dùng để xác thực ai là người dùng.\n✓ ID token — đúng, chứa thông tin danh tính người dùng dùng để authenticate.\n✗ Access token — chủ yếu chứa scope/quyền truy cập resource server, không tập trung vào claim danh tính.\n✗ Refresh token — chỉ để đổi lấy ID/access token mới, không truyền danh tính.\n✗ Temporary AWS credentials — đến từ Identity Pool/STS để gọi dịch vụ AWS, không phải để authenticate người dùng tới API thường.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-023",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-01-auth",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Khi Cognito Identity Pool cấp temporary AWS credentials cho người dùng đã federate qua một web identity provider (như Cognito User Pool hoặc Google), STS API nào được sử dụng phía sau để giả lập IAM role?",
+    "options": [
+      "AssumeRoleWithWebIdentity",
+      "AssumeRole",
+      "AssumeRoleWithSAML",
+      "GetFederationToken"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Với web/OIDC identity, Identity Pool dùng STS AssumeRoleWithWebIdentity để cấp credentials.\n✓ AssumeRoleWithWebIdentity — đúng, dùng cho danh tính web/OIDC như Cognito/Google.\n✗ AssumeRole — dùng giữa các IAM principal/role, không phải web identity.\n✗ AssumeRoleWithSAML — dùng cho federation SAML, không phải web identity provider.\n✗ GetFederationToken — federation kiểu cũ qua IAM user credentials, không dùng trong luồng này.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-024",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-02-encryption",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một developer cần mã hóa một file log 8 GB lưu trên EC2 trước khi upload lên S3, sử dụng KMS key của công ty. Cách tiếp cận đúng là gì?",
+    "options": [
+      "Gọi KMS Encrypt trực tiếp với toàn bộ 8 GB dữ liệu và KeyId của CMK",
+      "Dùng envelope encryption: gọi GenerateDataKey để lấy plaintext data key, mã hóa file tại EC2 bằng AES, lưu encrypted data key cạnh file",
+      "Chia file thành các block 4 KB rồi gọi Encrypt nhiều lần cho từng block",
+      "Gọi GenerateDataKeyWithoutPlaintext rồi dùng ciphertext blob để mã hóa trực tiếp 8 GB"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "KMS Encrypt chỉ xử lý tối đa 4 KB nên không dùng được cho file lớn.\n✓ Envelope encryption với GenerateDataKey: KMS trả plaintext data key (mã hóa data tại chỗ) và encrypted data key (lưu cạnh file).\n✗ Gọi Encrypt trực tiếp 8 GB vượt giới hạn 4 KB.\n✗ Chia 4 KB rồi Encrypt nhiều lần là kém tối ưu, tốn vô số request KMS và sai mô hình.\n✗ GenerateDataKeyWithoutPlaintext không trả plaintext key nên không thể mã hóa data ngay tại client.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-025",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-02-encryption",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một service cần được cấp quyền tạm thời, chi tiết để dùng một KMS key cho việc mã hóa, mà không muốn sửa key policy mỗi lần. Cơ chế KMS nào phù hợp nhất?",
+    "options": [
+      "Thêm dòng Allow vĩnh viễn vào key policy cho service",
+      "Tạo Grant bằng CreateGrant và thu hồi bằng RevokeGrant khi xong",
+      "Gắn IAM policy inline vào root account",
+      "Dùng AWS managed key vì nó tự cấp grant"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Grant cấp quyền tạm thời, chi tiết cho một principal, thích hợp cho delegation ngắn hạn.\n✓ CreateGrant cấp quyền dùng key cho principal cụ thể trong thời gian ngắn, RevokeGrant thu hồi, không cần sửa key policy.\n✗ Thêm Allow vĩnh viễn vào key policy không phải tạm thời và phải sửa policy.\n✗ IAM policy gắn vào root không phải cơ chế delegation tạm thời của KMS.\n✗ AWS managed key không cho bạn tự cấp grant tùy ý và không sửa được policy.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-026",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-03-secrets",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đội phát triển cần lưu khoảng 500 cấu hình ứng dụng dạng plain text (không nhạy cảm) như feature flags và endpoint URL, ưu tiên CHI PHÍ THẤP NHẤT. Lựa chọn nào tối ưu?",
+    "options": [
+      "SSM Parameter Store standard tier với kiểu String (miễn phí)",
+      "AWS Secrets Manager, mỗi cấu hình một secret",
+      "AWS AppConfig với hosted configuration profile riêng cho từng giá trị",
+      "SSM Parameter Store advanced tier với kiểu SecureString"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Parameter Store standard tier String parameters miễn phí, phù hợp cho cấu hình không nhạy cảm.\n✓ Parameter Store standard tier String không tính phí lưu trữ, tối ưu chi phí cho dữ liệu không nhạy cảm.\n✗ Secrets Manager tính phí mỗi secret mỗi tháng, lãng phí cho dữ liệu không nhạy cảm.\n✗ AppConfig phục vụ quản lý cấu hình động/triển khai, dư thừa cho giá trị tĩnh đơn giản.\n✗ Advanced tier SecureString phát sinh phí, không cần thiết cho plain text không nhạy cảm.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-027",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-01-auth",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một ứng dụng mobile cần cho phép người dùng đã đăng nhập qua Cognito User Pool truy cập trực tiếp các object trong Amazon S3 và ghi vào DynamoDB bằng AWS SDK. Thành phần nào của Cognito chịu trách nhiệm đổi token xác thực lấy temporary AWS credentials để gọi các dịch vụ AWS này?",
+    "options": [
+      "Cognito Identity Pool (Federated Identities)",
+      "Cognito User Pool app client",
+      "Cognito Hosted UI",
+      "Cognito Pre Token Generation Lambda trigger"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Identity Pool nhận token (từ User Pool hoặc IdP khác) và đổi lấy temporary AWS credentials qua STS.\n✓ Identity Pool — đúng, cấp temporary AWS credentials để gọi trực tiếp S3/DynamoDB.\n✗ User Pool app client — quản lý cấu hình OAuth/đăng nhập, không cấp AWS credentials.\n✗ Hosted UI — chỉ là giao diện đăng nhập, không cấp credentials.\n✗ Pre Token Generation Lambda — chỉ tùy biến claim trong token, không cấp AWS credentials.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-028",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-01-auth",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một API Gateway HTTP API cần ủy quyền request bằng JWT do một OIDC provider bên thứ ba (không phải Cognito) phát hành, kiểm tra issuer và audience. Developer muốn cấu hình native, ít code nhất. Loại authorizer nào nên dùng?",
+    "options": [
+      "JWT authorizer của HTTP API, cấu hình issuer và audience",
+      "Lambda authorizer dạng REQUEST gọi tới IdP để introspect token",
+      "Cognito authorizer trỏ tới một User Pool giả lập",
+      "IAM authorizer với SigV4"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "HTTP API hỗ trợ JWT authorizer native cho mọi OIDC provider, chỉ cần khai báo issuer/audience.\n✓ JWT authorizer — đúng, hỗ trợ OIDC bất kỳ, ít cấu hình, verify token tự động.\n✗ Lambda authorizer introspect — chạy được nhưng phải viết code, phức tạp hơn cần thiết.\n✗ Cognito authorizer — gắn với User Pool, không dùng được cho IdP bên thứ ba.\n✗ IAM authorizer/SigV4 — dành cho danh tính IAM, không verify JWT OIDC.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-029",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-02-encryption",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Ứng dụng cần lưu một API token nhỏ (khoảng 200 byte) đã được mã hóa bằng KMS trong bảng cấu hình. Developer nên gọi API nào để mã hóa trực tiếp?",
+    "options": [
+      "GenerateDataKey với KeySpec AES_256",
+      "Encrypt với KeyId của KMS key",
+      "CreateGrant rồi truyền token vào grant",
+      "GenerateDataKeyWithoutPlaintext"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Dữ liệu nhỏ (≤ 4 KB) như token có thể mã hóa trực tiếp bằng KMS.\n✓ Encrypt phù hợp cho dữ liệu nhỏ ≤ 4 KB, KMS trả ciphertext trực tiếp, không cần tự quản data key.\n✗ GenerateDataKey dùng cho envelope encryption với dữ liệu lớn, dư thừa cho 200 byte.\n✗ CreateGrant chỉ cấp quyền dùng key, không mã hóa dữ liệu.\n✗ GenerateDataKeyWithoutPlaintext sinh data key chưa dùng ngay, không mã hóa token.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-030",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-02-encryption",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khách hàng muốn S3 mã hóa object phía server nhưng KHÔNG muốn AWS giữ key mã hóa; thay vào đó client gửi kèm key trong mỗi request. Lựa chọn nào đúng và yêu cầu kèm theo là gì?",
+    "options": [
+      "SSE-S3, bắt buộc dùng HTTPS",
+      "SSE-KMS, key lưu trong KMS",
+      "SSE-C, bắt buộc dùng HTTPS vì key đi qua header",
+      "Client-side encryption, S3 chỉ thấy ciphertext"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "SSE-C để server (S3) mã hóa nhưng key do client cung cấp mỗi request.\n✓ SSE-C: client gửi key trong header mỗi request, S3 mã hóa rồi quên key; bắt buộc HTTPS vì key truyền qua header.\n✗ SSE-S3 dùng key AWS quản lý, không phải client cung cấp.\n✗ SSE-KMS lưu key trong KMS, không phải client mang theo.\n✗ Client-side là client tự mã hóa trước khi gửi, không phải server mã hóa.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-031",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-03-secrets",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Sau khi Secrets Manager rotate password, ứng dụng của bạn đôi khi vẫn nhận password CŨ trong vài giây đầu. Bạn muốn luôn lấy phiên bản đang hoạt động hiện tại. Tham số nào khi gọi GetSecretValue đảm bảo điều này?",
+    "options": [
+      "Dùng VersionStage = AWSCURRENT (giá trị mặc định)",
+      "Dùng VersionStage = AWSPREVIOUS",
+      "Dùng VersionStage = AWSPENDING",
+      "Truyền VersionId của phiên bản đầu tiên được tạo"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Secrets Manager dùng staging label để định danh phiên bản; AWSCURRENT là bản đang hoạt động.\n✓ AWSCURRENT trỏ tới phiên bản đang sử dụng hiện tại và là mặc định khi không chỉ định version.\n✗ AWSPREVIOUS là phiên bản cũ ngay trước, sẽ lấy password đã hết hiệu lực.\n✗ AWSPENDING là bản mới đang trong quá trình rotation, chưa được kích hoạt.\n✗ VersionId của bản đầu tiên trỏ tới giá trị cũ, không phải giá trị hiện hành.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-032",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-03-secrets",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng cần password để kết nối tới database của bên thứ ba (không phải RDS, Redshift hay DocumentDB) và muốn rotation tự động. Cách triển khai đúng với Secrets Manager?",
+    "options": [
+      "Tạo Lambda rotation function tuỳ chỉnh theo bốn bước (createSecret, setSecret, testSecret, finishSecret) cho secret",
+      "Bật RDS-managed rotation vì nó hỗ trợ mọi loại database",
+      "Dùng SecureString của Parameter Store vì nó tự rotate mọi credential",
+      "Không thể rotate vì Secrets Manager chỉ hỗ trợ database AWS-native"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Với database không native, cần Lambda rotation function tuỳ chỉnh theo 4 bước chuẩn.\n✓ Lambda rotation function tuỳ chỉnh với bốn bước cho phép rotate credential của bất kỳ hệ thống nào.\n✗ RDS-managed rotation chỉ áp dụng cho các database AWS được hỗ trợ, không phải bên thứ ba bất kỳ.\n✗ SecureString của Parameter Store không có rotation tự động native.\n✗ Secrets Manager hỗ trợ rotate cả non-native qua custom Lambda, nên phát biểu này sai.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-033",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-01-auth",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty enterprise muốn nhân viên đăng nhập ứng dụng bằng tài khoản công ty (corporate directory) đã hỗ trợ SAML 2.0, sau đó nhận temporary AWS credentials để gọi dịch vụ AWS. Họ muốn dùng Cognito. Kiến trúc đúng là gì?",
+    "options": [
+      "Cấu hình SAML IdP làm identity provider cho Cognito, rồi dùng Identity Pool đổi lấy AWS credentials",
+      "Tạo IAM user cho mỗi nhân viên và phân phối access key",
+      "Dùng API key của API Gateway cho từng nhân viên",
+      "Lưu mật khẩu corporate vào Cognito User Pool và xác thực trực tiếp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Federation SAML kết hợp Identity Pool cho phép đổi danh tính liên kết lấy temporary AWS credentials.\n✓ SAML IdP + Identity Pool — đúng, federate corporate directory rồi cấp AWS credentials tạm thời.\n✗ IAM user + access key — không mở rộng và dùng credentials tĩnh, kém an toàn.\n✗ API key — chỉ định danh client cho API Gateway, không phải xác thực nhân viên.\n✗ Lưu mật khẩu corporate vào User Pool — sao chép credentials, vi phạm bảo mật và mục tiêu federation.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-034",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-02-encryption",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một website tĩnh phục vụ qua CloudFront cần HTTPS với chứng chỉ tự động gia hạn và miễn phí. Giải pháp nào phù hợp nhất?",
+    "options": [
+      "Tự mua chứng chỉ từ CA bên ngoài rồi import vào EC2",
+      "Dùng ACM public certificate ở Region us-east-1 và gắn vào CloudFront distribution",
+      "Dùng AWS Private CA để cấp chứng chỉ nội bộ cho CloudFront",
+      "Tạo self-signed certificate và import vào ACM"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "ACM cung cấp chứng chỉ public miễn phí, tự gia hạn, tích hợp CloudFront.\n✓ ACM public certificate miễn phí, tự renew; CloudFront yêu cầu chứng chỉ nằm ở us-east-1.\n✗ Mua chứng chỉ ngoài rồi import vào EC2 không liên quan CloudFront và không tự gia hạn.\n✗ Private CA dành cho chứng chỉ nội bộ, không được trình duyệt công cộng tin cậy.\n✗ Self-signed certificate không được trình duyệt tin cậy, gây cảnh báo bảo mật.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-035",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-02-encryption",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Developer cần re-encrypt một ciphertext nhỏ (dưới 4 KB) từ KMS key cũ sang KMS key mới mà không để lộ plaintext ra ngoài KMS. API nào nên dùng?",
+    "options": [
+      "Decrypt bằng key cũ rồi Encrypt lại bằng key mới ở phía client",
+      "ReEncrypt để KMS đổi key trực tiếp mà plaintext không rời KMS",
+      "GenerateDataKey với key mới",
+      "CreateGrant trỏ ciphertext sang key mới"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "ReEncrypt đổi data từ key này sang key khác hoàn toàn bên trong KMS.\n✓ ReEncrypt: KMS giải mã rồi mã hóa lại bằng key mới mà plaintext không bao giờ rời KMS, áp dụng cho dữ liệu ≤ 4 KB.\n✗ Decrypt rồi Encrypt lại ở client làm plaintext lộ ra ngoài KMS, kém an toàn.\n✗ GenerateDataKey sinh data key mới, không re-encrypt ciphertext sẵn có.\n✗ CreateGrant chỉ cấp quyền, không chuyển đổi ciphertext.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-036",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-03-secrets",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Lambda function cần truy cập một database password. Yêu cầu: dùng Secrets Manager, giảm số lần gọi API tới Secrets Manager (tránh throttling và chi phí), nhưng vẫn lấy được giá trị mới sau khi rotate. Cách triển khai tối ưu?",
+    "options": [
+      "Dùng AWS Parameters and Secrets Lambda Extension để cache secret trong bộ nhớ với TTL",
+      "Lưu password vào environment variable lúc deploy bằng CloudFormation",
+      "Gọi GetSecretValue ở mỗi lần invoke không cache",
+      "Hardcode password trong code và rotate thủ công khi cần"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lambda Extension cache secret với TTL, giảm gọi API mà vẫn refresh khi hết TTL.\n✓ Parameters and Secrets Lambda Extension cache cục bộ với TTL, giảm gọi API nhưng tự refresh để bắt giá trị sau rotation.\n✗ Lưu vào env var lúc deploy khiến giá trị cũ sau khi rotate, không tự cập nhật.\n✗ Gọi GetSecretValue mỗi invoke tốn API call và dễ bị throttle, không tối ưu.\n✗ Hardcode password vi phạm best practice bảo mật nghiêm trọng.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-037",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-03-secrets",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Team muốn tổ chức cấu hình theo môi trường: /myapp/dev/db-url, /myapp/prod/db-url. Họ cần một lệnh duy nhất lấy tất cả parameter dưới /myapp/prod/. API nào của Parameter Store phù hợp?",
+    "options": [
+      "GetParametersByPath với Path = /myapp/prod/ và Recursive = true",
+      "GetParameter gọi lần lượt cho từng tên parameter đầy đủ",
+      "DescribeParameters lọc theo prefix rồi đọc từng cái",
+      "PutParameter với Overwrite để gom các giá trị lại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Hierarchy cho phép dùng GetParametersByPath để lấy hàng loạt theo đường dẫn.\n✓ GetParametersByPath với path prefix và Recursive trả về tất cả parameter trong nhánh chỉ với một lời gọi.\n✗ Gọi GetParameter từng cái không tận dụng hierarchy và tốn nhiều request.\n✗ DescribeParameters trả metadata chứ không trả giá trị, và lọc kém hiệu quả.\n✗ PutParameter dùng để ghi, không phải để đọc nhiều giá trị.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-038",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-02-cicd",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một developer cần một CodeBuild build (giai đoạn build) xuất ra HAI loại đầu ra: (1) các file ứng dụng đã đóng gói để CodeDeploy dùng, và (2) báo cáo kết quả unit test để hiển thị trong CodeBuild. Trong buildspec.yml, những phần nào được dùng đúng mục đích? (Chọn 2)",
+    "options": [
+      "Phần artifacts để khai báo các file output (gồm appspec.yml và app) chuyển sang stage sau",
+      "Phần reports để khai báo report group chứa kết quả test (ví dụ JUnit/Cucumber)",
+      "Phần hooks với BeforeInstall/AfterInstall để gắn kết quả test",
+      "Phần phases/post_build dùng để định nghĩa report group test",
+      "Phần cache để lưu báo cáo test giữa các lần build"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "buildspec có phần artifacts cho output và phần reports cho test report.\n✓ artifacts khai báo các file output (gồm appspec.yml, app) để truyền sang stage Deploy\n✓ reports khai báo report group chứa kết quả test theo định dạng như JUnit để CodeBuild hiển thị\n✗ hooks BeforeInstall/AfterInstall là khái niệm của appspec.yml CodeDeploy, không thuộc buildspec\n✗ post_build chạy lệnh, không phải nơi định nghĩa report group (report group khai báo ở phần reports)\n✗ cache dùng tái sử dụng dependency, không phải lưu báo cáo test",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-039",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-04-beanstalk",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Trong một bài kiểm tra, developer cần CHỌN các deployment policy của Elastic Beanstalk vừa đảm bảo ZERO-DOWNTIME vừa KHÔNG làm GIẢM capacity sẵn sàng trong suốt quá trình deploy. Chọn TẤT CẢ đáp án đúng.",
+    "options": [
+      "Immutable",
+      "Rolling with additional batch",
+      "Rolling",
+      "All at once",
+      "Single instance recreate"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Cần đồng thời zero-downtime và không giảm capacity.\n✓ Immutable: tạo full set instances mới song song nên không giảm capacity và zero-downtime.\n✓ Rolling with additional batch: thêm 1 batch dư trước khi deploy nên luôn giữ đủ capacity gốc và zero-downtime.\n✗ Rolling: deploy in-place theo batch nên capacity bị giảm tạm thời trong mỗi batch.\n✗ All at once: thay thế đồng loạt gây downtime và giảm capacity.\n✗ Single instance recreate: không phải policy giữ capacity, gây gián đoạn.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-040",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-01-packaging-iac",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trước khi cập nhật một CloudFormation stack production quan trọng, team muốn xem CHÍNH XÁC những resource nào sẽ được thêm, sửa, hoặc XÓA/thay thế (replacement) mà chưa áp dụng thay đổi. Tính năng nào nên dùng?",
+    "options": [
+      "Tạo và review một change set trước khi execute",
+      "Bật termination protection rồi update trực tiếp",
+      "Chạy drift detection trên stack",
+      "Dùng update với rollback configuration"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Change set cho biết tác động dự kiến của một update trước khi thực thi.\n✓ Change set liệt kê các action Add/Modify/Remove và đánh dấu resource bị replacement, an toàn để review trước\n✗ Termination protection chỉ chống xóa stack, không xem trước thay đổi\n✗ Drift detection phát hiện cấu hình thực tế lệch khỏi template, không dự đoán tác động update sắp tới\n✗ Rollback configuration xử lý khi update lỗi, không hiển thị thay đổi trước",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-041",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-02-cicd",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một CodeDeploy deployment lên EC2 in-place cần dừng web server cũ trước khi cài bản mới và chạy smoke test sau khi cài đặt. Developer cấu hình các script này ở đâu và theo lifecycle hook nào?",
+    "options": [
+      "Trong appspec.yml: dừng server ở hook ApplicationStop hoặc BeforeInstall, smoke test ở hook ValidateService",
+      "Trong buildspec.yml: dừng server ở phase pre_build, smoke test ở phase post_build",
+      "Trong appspec.yml: cả hai script đặt ở hook AfterInstall vì hook này chạy mọi script",
+      "Trong buildspec.yml phase install và trong appspec.yml hook BeforeAllowTraffic"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "CodeDeploy dùng appspec.yml và lifecycle hooks để chạy script triển khai.\n✓ appspec.yml định nghĩa hooks; ApplicationStop/BeforeInstall để dừng server cũ, ValidateService để smoke test sau khi cài là đúng vòng đời\n✗ buildspec.yml thuộc CodeBuild, không điều khiển lifecycle deploy của CodeDeploy\n✗ Đặt cả hai vào AfterInstall sai vì dừng server cần xảy ra trước khi cài, và validate cần ở cuối\n✗ Trộn buildspec với hook BeforeAllowTraffic không phù hợp; BeforeAllowTraffic là hook của blue/green, không cho EC2 in-place đơn giản này",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-042",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-03-deploy-strategies",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng production chạy trên Elastic Beanstalk cần triển khai version mới với yêu cầu: KHÔNG được giảm capacity tổng dưới mức hiện tại trong suốt quá trình deploy, và muốn tránh chi phí duy trì hai môi trường đầy đủ. Chính sách deployment nào tối ưu?",
+    "options": [
+      "Rolling with additional batch",
+      "All-at-once",
+      "Blue/green",
+      "Immutable với toàn bộ instance mới rồi mới swap"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Yêu cầu giữ nguyên capacity nhưng không muốn nhân đôi toàn bộ môi trường.\n✓ Rolling with additional batch khởi tạo một batch phụ trước để duy trì full capacity trong khi cập nhật từng batch, chi phí tăng nhẹ chứ không gấp đôi.\n✗ All-at-once gây giảm capacity và downtime.\n✗ Blue/green nhân đôi môi trường, tốn kém hơn yêu cầu.\n✗ Immutable tạo toàn bộ instance mới song song, chi phí tạm thời cao hơn additional batch.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-043",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-04-beanstalk",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Để đạt blue/green deployment với zero-downtime trên Elastic Beanstalk, developer clone environment hiện tại (blue) sang environment mới (green), deploy version mới lên green và test. Bước cuối cùng để chuyển traffic sang green với gián đoạn tối thiểu là gì?",
+    "options": [
+      "Thực hiện Swap Environment URLs giữa hai environments (đổi CNAME)",
+      "Terminate environment blue rồi trỏ DNS Route 53 thủ công sang green",
+      "Đổi deployment policy của blue sang immutable",
+      "Dùng all-at-once deploy lại trên blue với version của green"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Blue/green trên Beanstalk hoàn tất bằng việc hoán đổi CNAME giữa hai environments.\n✓ Swap Environment URLs: Beanstalk đổi CNAME của blue và green, traffic chuyển ngay sang green mà không downtime, dễ rollback bằng cách swap lại.\n✗ Terminate blue rồi sửa DNS thủ công: gây downtime và mất khả năng rollback nhanh.\n✗ Đổi policy blue sang immutable: deployment policy không thực hiện chuyển traffic giữa hai environments.\n✗ All-at-once deploy lại trên blue: phá vỡ mục đích blue/green và gây downtime trên blue.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-044",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-01-packaging-iac",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Lambda function (SAM) cần quyền đọc/ghi vào một bảng DynamoDB tên Orders. Developer muốn cấp quyền theo least privilege mà không tự viết IAM policy JSON dài dòng. Cách tốt nhất trong SAM là gì?",
+    "options": [
+      "Dùng SAM policy template DynamoDBCrudPolicy với tham số TableName",
+      "Gắn managed policy AmazonDynamoDBFullAccess vào function role",
+      "Đặt AssumeRole tới một role có quyền admin DynamoDB",
+      "Thêm resource-based policy trên bảng DynamoDB cho function ARN"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SAM cung cấp policy templates đã được giới hạn phạm vi theo tham số, giúp least privilege dễ dàng.\n✓ DynamoDBCrudPolicy với TableName giới hạn quyền CRUD đúng vào bảng Orders\n✗ AmazonDynamoDBFullAccess cấp quyền lên mọi bảng, vi phạm least privilege\n✗ AssumeRole tới role admin là quá rộng và không cần thiết\n✗ Resource-based policy không phải cách SAM cấp quyền theo policy template và không giải quyết yêu cầu least privilege qua cấu hình SAM ở đây",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-045",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-02-cicd",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đội phát triển muốn pipeline tự động chạy ngay khi có commit mới được push lên nhánh main của repository CodeCommit. Cách cấu hình được khuyến nghị (gần realtime, không polling) là gì?",
+    "options": [
+      "Dùng Amazon EventBridge (CloudWatch Events) rule bắt sự kiện commit của CodeCommit để khởi động pipeline",
+      "Bật periodic polling của CodePipeline kiểm tra repository mỗi vài phút",
+      "Tạo cron job trên EC2 gọi StartPipelineExecution mỗi phút",
+      "Cấu hình S3 event notification trên repository CodeCommit"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "EventBridge cho phép trigger pipeline gần realtime khi có commit.\n✓ EventBridge rule bắt sự kiện thay đổi reference của CodeCommit và khởi động pipeline là cách được khuyến nghị, nhanh và không tốn polling\n✗ Polling gây độ trễ và tốn API call, không phải lựa chọn tối ưu\n✗ Cron job trên EC2 phức tạp, tốn chi phí và không cần thiết\n✗ CodeCommit không phải S3, không tạo S3 event notification",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-046",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-02-cicd",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Đội triển khai một dịch vụ chạy trên Amazon ECS dùng CodeDeploy blue/green. appspec.yml cho ECS khác với appspec cho EC2. Thành phần BẮT BUỘC nào phải khai báo trong appspec.yml cho deployment ECS?",
+    "options": [
+      "Resources trỏ tới TaskDefinition và LoadBalancerInfo (ContainerName, ContainerPort)",
+      "Danh sách file ánh xạ source/destination giống deployment EC2 in-place",
+      "Hook ApplicationStop và ApplicationStart để dừng/khởi động container",
+      "Đường dẫn tới buildspec.yml để CodeDeploy build lại task"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "appspec.yml cho ECS có cấu trúc riêng dựa trên TaskDefinition và container.\n✓ Phần Resources phải trỏ tới TaskDefinition và LoadBalancerInfo gồm ContainerName/ContainerPort cho deployment ECS\n✗ Ánh xạ file source/destination chỉ áp dụng cho deployment EC2/on-premises, không dùng cho ECS\n✗ ApplicationStop/ApplicationStart là hook cho EC2/on-premises, không phải cho ECS\n✗ CodeDeploy không build task qua buildspec; appspec không tham chiếu buildspec.yml",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-047",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-03-deploy-strategies",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Sau khi CodeDeploy hoàn tất chuyển 100% traffic sang Lambda version mới và deployment báo Succeeded, đội phát hiện lỗi nghiêm trọng 30 phút sau. CloudWatch alarm gắn trong deployment không còn kích hoạt rollback vì deployment đã kết thúc. Cách nhanh nhất để khôi phục là gì?",
+    "options": [
+      "Cập nhật weighted alias PROD trỏ 100% về version cũ ngay lập tức",
+      "Khởi động một deployment CodeDeploy mới và chờ canary chạy lại",
+      "Xóa version Lambda mới để traffic tự quay về version cũ",
+      "Tạo lại alias PROD từ đầu trỏ tới version cũ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Sau khi deployment Succeeded, alarm-based rollback của CodeDeploy không còn tác dụng; cần hành động thủ công nhanh nhất.\n✓ Trỏ alias PROD 100% về version cũ là thao tác tức thì, không cần deploy lại.\n✗ Deployment CodeDeploy mới với canary tốn thời gian, không phải nhanh nhất khi đang sự cố.\n✗ Xóa version có thể làm alias trỏ tới version không tồn tại và gây lỗi invoke, không khôi phục đúng.\n✗ Tạo lại alias từ đầu phức tạp và rủi ro hơn so với chỉ cập nhật version trỏ tới.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-048",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-04-beanstalk",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một environment Beanstalk được tạo với database RDS gắn kèm (coupled) qua console trong cùng environment. Team lo ngại rằng khi terminate environment sẽ mất dữ liệu. Giải pháp BEST practice cho production để bảo toàn dữ liệu là gì?",
+    "options": [
+      "Tạo RDS instance tách rời (decoupled) bên ngoài Beanstalk và truyền endpoint qua environment variables",
+      "Đặt deletion policy của RDS coupled thành Retain qua .ebextensions và giữ nguyên coupling",
+      "Bật Multi-AZ cho RDS coupled để tránh mất dữ liệu khi terminate",
+      "Chuyển environment sang worker tier để RDS không bị xóa"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "RDS coupled vào environment sẽ bị xóa cùng environment, rủi ro cho production.\n✓ Tạo RDS decoupled bên ngoài và truyền endpoint qua env variables: vòng đời database tách khỏi environment, terminate environment không xóa DB, đây là best practice production.\n✗ Đặt deletion policy Retain cho RDS coupled: chỉ giảm rủi ro xóa nhưng database vẫn nằm trong vòng đời environment và khó quản lý.\n✗ Bật Multi-AZ: tăng high availability chứ không ngăn việc database bị xóa khi terminate environment.\n✗ Chuyển sang worker tier: không liên quan tới coupling của RDS.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-049",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-01-packaging-iac",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Lambda function cần thư viện numpy/pandas dung lượng lớn được chia sẻ với nhiều function khác, đồng thời giữ kích thước gói deployment của mỗi function nhỏ. Cách đóng gói TỐI ƯU là gì?",
+    "options": [
+      "Đưa các thư viện chung vào một Lambda layer và attach cho các function",
+      "Tăng giới hạn package size bằng cách dùng S3 cho mỗi zip",
+      "Đóng gói mỗi function dưới dạng container image 10 GB",
+      "Dùng AppConfig để phân phối thư viện lúc runtime"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lambda layer cho phép tách dependency dùng chung khỏi mã function.\n✓ Layer chứa numpy/pandas được nhiều function tái sử dụng, giữ gói code từng function nhỏ\n✗ Dùng S3 cho zip chỉ giúp upload package lớn, không chia sẻ và không giảm trùng lặp\n✗ Container image 10 GB cho mỗi function là khả thi nhưng kém tối ưu khi mục tiêu là chia sẻ thư viện và gói nhỏ\n✗ AppConfig phân phối cấu hình/feature flag chứ không phân phối thư viện code",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-050",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-02-cicd",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong buildspec.yml, developer cần chạy lệnh cài đặt runtime và dependency TRƯỚC khi biên dịch source. Sau khi build xong cần đẩy Docker image lên ECR. Các lệnh đó nên đặt vào những phase nào?",
+    "options": [
+      "Cài runtime/dependency vào phase install, đẩy image lên ECR vào phase post_build",
+      "Cài runtime/dependency vào phase build, đẩy image lên ECR vào phase pre_build",
+      "Cài runtime/dependency vào phase pre_build, đẩy image lên ECR vào phase install",
+      "Đặt tất cả lệnh vào phase build vì các phase khác không chạy lệnh shell"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Thứ tự phase của buildspec: install, pre_build, build, post_build.\n✓ install dùng để cài runtime/dependency, post_build chạy sau build để đẩy image lên ECR là đúng best practice\n✗ build là nơi biên dịch, không phải để cài runtime; pre_build chạy trước build nên không hợp để push image sau build\n✗ pre_build dùng cho việc chuẩn bị (như login ECR), không nên đặt cài runtime ở đó; install không chạy sau build\n✗ Mọi phase đều có thể chạy lệnh shell; gom hết vào build là kém tổ chức",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-051",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-02-cicd",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một pipeline đa stage cần stage Deploy chỉ được thực thi sau khi có người quản lý phê duyệt thủ công ngay sau stage Build. Cách triển khai đúng trong CodePipeline là gì?",
+    "options": [
+      "Thêm một action loại Manual approval (action category Approval) trước stage Deploy, tùy chọn gửi thông báo qua SNS",
+      "Cấu hình một CodeBuild action chạy lệnh chờ input từ console",
+      "Đặt một Lambda action poll bảng DynamoDB cho đến khi có cờ approve",
+      "Bật chế độ pause của artifact store để dừng pipeline cho tới khi resume"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "CodePipeline có sẵn action loại Manual approval cho việc phê duyệt thủ công.\n✓ Thêm Approval action trước stage Deploy, có thể tích hợp SNS để thông báo người duyệt là cách chuẩn và tối ưu\n✗ CodeBuild chờ input từ console không phải cơ chế approval và sẽ timeout\n✗ Lambda poll DynamoDB là giải pháp tự chế phức tạp, không cần thiết khi đã có Manual approval\n✗ Artifact store không có chế độ pause/resume pipeline",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-052",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-03-deploy-strategies",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Developer dùng AWS SAM để triển khai Lambda với traffic shifting. Trong mục DeploymentPreference, họ muốn tăng traffic đều đặn 10% mỗi 2 phút cho tới khi đạt 100%. Type nào cần khai báo?",
+    "options": [
+      "Linear10PercentEvery2Minutes",
+      "Canary10Percent2Minutes",
+      "AllAtOnce",
+      "Canary10Percent30Minutes"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Tăng đều theo bước cố định là linear.\n✓ Linear10PercentEvery2Minutes tăng 10% mỗi 2 phút cho đến 100% — đúng yêu cầu tăng đều.\n✗ Canary chỉ có hai bước (một phần ngay rồi phần còn lại), không tăng đều liên tục.\n✗ AllAtOnce chuyển toàn bộ một lần, không có shifting dần.\n✗ Canary10Percent30Minutes vẫn là canary hai bước, không phải tăng đều mỗi 2 phút.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-053",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-04-beanstalk",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Developer cần cài thêm package OS, chạy lệnh khởi tạo và đặt option settings cho environment Beanstalk một cách khai báo trong source bundle. Cơ chế nào nên dùng?",
+    "options": [
+      "Thêm các file cấu hình YAML/JSON trong thư mục .ebextensions của application source bundle",
+      "Sửa trực tiếp user data của Launch Template sau khi environment chạy",
+      "Đặt mọi thứ vào Dockerrun.aws.json bất kể platform",
+      "Dùng AWS Systems Manager State Manager thủ công ngoài Beanstalk"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Beanstalk cho phép tùy biến environment khai báo qua .ebextensions.\n✓ .ebextensions với file YAML/JSON: cho phép khai báo packages, commands, container_commands, option_settings... được Beanstalk áp dụng khi deploy, đúng cơ chế chuẩn.\n✗ Sửa user data Launch Template thủ công: Beanstalk quản lý launch config, thay đổi thủ công sẽ bị ghi đè và không lặp lại được.\n✗ Dockerrun.aws.json cho mọi platform: chỉ dùng cho platform Docker, không phải cơ chế chung.\n✗ State Manager thủ công ngoài Beanstalk: không tích hợp vào source bundle và lệch khỏi quy trình Beanstalk.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-054",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-02-xray",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Đội ngũ chuẩn bị bật X-Ray cho ứng dụng container trên EC2 dùng X-Ray SDK. Họ cần đảm bảo segment được gửi và hiển thị thành công. Những điều kiện nào sau đây là cần thiết? (Chọn 2)",
+    "options": [
+      "IAM role gắn vào instance/task có quyền xray:PutTraceSegments và xray:PutTelemetryRecords",
+      "X-Ray daemon đang chạy và lắng nghe UDP cổng 2000 để nhận segment từ SDK",
+      "Mỗi downstream call phải được ghi thành annotation thì mới gửi được segment",
+      "Phải tắt sampling hoàn toàn để mọi request đều được gửi",
+      "Phải tạo trước service map trong console khớp với tên service"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Trên EC2/ECS, gửi trace cần IAM permission đúng và một daemon nhận segment qua UDP.\n✓ IAM role cần xray:PutTraceSegments và xray:PutTelemetryRecords để daemon đẩy được trace.\n✓ X-Ray daemon phải chạy và nghe UDP 2000 để nhận segment từ SDK.\n✗ Downstream call không bắt buộc thành annotation để gửi segment.\n✗ Không cần tắt sampling; sampling giúp giảm chi phí, không chặn hiển thị.\n✗ Service map tự sinh từ trace, không cần tạo trước.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-055",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-01-observability",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Khi so sánh Embedded Metric Format (EMF) và PutMetricData để phát custom metric trong môi trường Lambda, những phát biểu nào ĐÚNG? (Chọn 2)",
+    "options": [
+      "EMF không thêm network call/latency vì chỉ ghi log JSON, CloudWatch tự trích metric",
+      "PutMetricData gọi API trực tiếp tới CloudWatch nên thêm latency và có thể bị throttle",
+      "EMF tạo metric miễn phí còn PutMetricData luôn tính phí",
+      "PutMetricData giữ được context log đi kèm metric còn EMF thì không",
+      "Chỉ PutMetricData mới hỗ trợ dimensions, EMF không hỗ trợ dimensions"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Khác biệt cốt lõi nằm ở cách truyền và chi phí runtime/API, không phải giá metric.\n✓ EMF chỉ ghi log JSON nên không thêm network call/latency.\n✓ PutMetricData là API call đồng bộ, thêm latency và có thể bị throttle.\n✗ Cả hai đều tạo custom metric tính phí như nhau ở mức metric; EMF không miễn phí.\n✗ Ngược lại: EMF giữ context log đi kèm metric, PutMetricData chỉ có số.\n✗ Cả EMF và PutMetricData đều hỗ trợ dimensions.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-056",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-01-observability",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một dịch vụ cần alarm phản ứng trong vòng dưới 1 phút khi traffic burst đột ngột (period 10 giây). Cấu hình metric nào bắt buộc để alarm period 10s hợp lệ?",
+    "options": [
+      "Custom metric high-resolution (StorageResolution = 1)",
+      "Custom metric standard (StorageResolution = 60)",
+      "Bật detailed monitoring để metric về 1 giây",
+      "Standard metric với evaluation period nhiều data point hơn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Alarm period 10s/30s chỉ dùng được với metric high-resolution.\n✓ High-resolution metric (StorageResolution = 1, granularity 1 giây) cho phép alarm period 10s/30s.\n✗ Standard metric (60s) chỉ cho alarm period tối thiểu 60s.\n✗ Detailed monitoring đưa metric EC2 về 1 phút, không phải 1 giây, không liên quan high-resolution.\n✗ Tăng số data point không thay đổi được period tối thiểu của metric standard.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-057",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-02-xray",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một developer instrument ứng dụng ECS trên Fargate bằng X-Ray SDK. Họ muốn segment được gửi tới X-Ray. Thành phần nào cần được triển khai trong task để nhận segment từ SDK và chuyển tới X-Ray?",
+    "options": [
+      "Chạy X-Ray daemon như một sidecar container trong task definition",
+      "Bật Active tracing trong cấu hình task definition của Fargate",
+      "Gắn một X-Ray VPC endpoint vào ENI của task thay cho daemon",
+      "Cài CloudWatch agent để chuyển segment X-Ray"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Trên ECS/Fargate, SDK gửi segment qua UDP tới X-Ray daemon; daemon thường chạy dưới dạng sidecar.\n✓ X-Ray daemon dạng sidecar container nhận segment qua UDP và đẩy lên X-Ray.\n✗ Active tracing là tính năng của Lambda, không phải tùy chọn task definition cho SDK của ECS.\n✗ VPC endpoint chỉ giúp kết nối riêng, không thay thế vai trò gom segment của daemon.\n✗ CloudWatch agent không phải thành phần nhận segment X-Ray.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-058",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-03-optimization",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một ứng dụng dùng write-through cache với ElastiCache: mỗi lần ghi dữ liệu đều cập nhật cả database và cache. Nhược điểm chính của write-through là gì, và cách giảm thiểu phổ biến nào nên áp dụng?",
+    "options": [
+      "Cache có thể chứa nhiều dữ liệu không bao giờ được đọc; giảm thiểu bằng cách đặt TTL để loại bỏ key ít dùng",
+      "Cache luôn trả dữ liệu stale; giảm thiểu bằng cách tắt TTL hoàn toàn",
+      "Read luôn miss lần đầu; giảm thiểu bằng cách bật lazy loading thay thế",
+      "Ghi sẽ không bao giờ cập nhật cache; giảm thiểu bằng cách thêm DAX"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Write-through ghi mọi dữ liệu vào cache kể cả dữ liệu hiếm khi được đọc, làm phình cache.\n✓ Cache chứa dữ liệu không được đọc + TTL — đúng, đó là điểm yếu của write-through; đặt TTL để dọn các key ít dùng và tránh phình bộ nhớ.\n✗ Luôn trả stale + tắt TTL — sai, write-through giữ cache mới; tắt TTL không phải giảm thiểu.\n✗ Read luôn miss lần đầu — đó là đặc điểm của lazy loading, không phải write-through.\n✗ Ghi không cập nhật cache — sai, bản chất write-through là cập nhật cache khi ghi.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-059",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-01-observability",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một developer cần điều tra một sự cố đã xảy ra hôm qua bằng cách phân tích các log event CŨ trong một log group (đếm số lỗi theo từng khoảng 5 phút). Công cụ nào phù hợp nhất?",
+    "options": [
+      "CloudWatch Logs Insights query trên log group",
+      "Tạo metric filter mới với pattern ERROR rồi xem metric",
+      "Subscription filter đẩy log sang Lambda để đếm",
+      "PutMetricData để ghi số lỗi vào CloudWatch"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Logs Insights phân tích được log đã có sẵn, kể cả log cũ.\n✓ Logs Insights query (filter + stats count by bin) phân tích log quá khứ tương tác.\n✗ Metric filter chỉ áp dụng cho log MỚI ghi sau khi tạo, không hồi tố log cũ.\n✗ Subscription filter chỉ xử lý log mới đến gần real-time, không phân tích log cũ.\n✗ PutMetricData chỉ ghi metric thủ công, không phân tích log có sẵn.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-060",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-02-xray",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một developer bật tracing cho ứng dụng và muốn lọc (filter) các trace theo userId để nhanh chóng tìm request của một khách hàng cụ thể trong X-Ray console. Cách ghi dữ liệu nào cho phép lọc trực tiếp theo userId?",
+    "options": [
+      "Ghi userId dưới dạng annotation bằng put_annotation — annotation được index và filter được qua filter expression",
+      "Ghi userId dưới dạng metadata bằng put_metadata — metadata được index và search được",
+      "Ghi userId vào CloudWatch Logs rồi dùng Logs Insights để liên kết với trace",
+      "Ghi userId vào tên của subsegment để X-Ray tự động index"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "X-Ray có annotation (indexed, filter được) và metadata (không index).\n✓ Annotation được index và dùng được trong filter expression nên lọc theo userId nhanh.\n✗ Metadata KHÔNG được index, không filter được, chỉ để đính kèm dữ liệu chi tiết.\n✗ Logs Insights không phải cách filter trace gốc trong X-Ray và phức tạp hơn.\n✗ Tên subsegment không phải cơ chế index annotation và không filter theo giá trị tùy ý.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-061",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-03-optimization",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một developer chạy hàm Lambda được gọi liên tục và muốn loại bỏ độ trễ do cold start gây ra ngay cả khi không có request nào trong vài phút. Tính năng nào của Lambda giữ sẵn các execution environment đã được khởi tạo để phục vụ request ngay lập tức?",
+    "options": [
+      "Provisioned concurrency",
+      "Reserved concurrency",
+      "Tăng giá trị timeout của hàm",
+      "Bật Lambda SnapStart cho runtime Python"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Để loại bỏ cold start cần giữ sẵn các môi trường đã được khởi tạo (initialized) trước khi request đến.\n✓ Provisioned concurrency — đúng, khởi tạo sẵn một số môi trường để không có cold start.\n✗ Reserved concurrency — chỉ giới hạn/đảm bảo số concurrency tối đa cho hàm, không làm ấm sẵn môi trường.\n✗ Tăng timeout — chỉ cho phép hàm chạy lâu hơn, không ảnh hưởng cold start.\n✗ SnapStart — giảm cold start bằng snapshot nhưng không giữ sẵn môi trường đã khởi tạo theo kiểu warm như provisioned concurrency, và không phù hợp với mô tả 'giữ sẵn environment để phục vụ ngay'.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-062",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-01-observability",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng Lambda (Node.js) cần phát một custom business metric (ví dụ số đơn hàng đã xử lý) lên CloudWatch nhưng team muốn tránh tăng thời gian thực thi và tránh gọi API đồng bộ tới CloudWatch trong mỗi invocation. Giải pháp tối ưu là gì?",
+    "options": [
+      "Ghi metric theo Embedded Metric Format (EMF) ra log; CloudWatch tự trích metric từ log",
+      "Gọi cloudwatch.putMetricData() đồng bộ ở cuối mỗi invocation",
+      "Tạo metric filter trên log group để đếm số đơn hàng",
+      "Bật high-resolution metric trong cấu hình Lambda"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "EMF cho phép ghi metric kèm log JSON mà không tốn API call hay latency.\n✓ EMF chỉ ghi log ra stdout, CloudWatch trích metric, không thêm latency và không gọi API đồng bộ.\n✗ PutMetricData đồng bộ thêm một network call và latency vào mỗi invocation.\n✗ Metric filter chỉ đếm pattern có sẵn trong log, không phải cách phát business metric có cấu trúc với dimensions tùy ý hiệu quả như EMF, và phụ thuộc bạn đã log đúng định dạng.\n✗ High-resolution là độ phân giải metric, không giải quyết vấn đề latency/API.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-063",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-02-xray",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đội phát triển muốn bật X-Ray cho một Lambda function viết bằng Python để xem trace trong service map. Cách bật tracing đơn giản, được khuyến nghị nhất là gì?",
+    "options": [
+      "Bật Active tracing trên cấu hình Lambda function (kèm IAM permission cho X-Ray)",
+      "Cài và chạy X-Ray daemon như một process nền bên trong Lambda runtime",
+      "Tạo một EC2 instance riêng chạy X-Ray daemon để Lambda gửi UDP tới",
+      "Cấu hình CloudWatch Synthetics canary để sinh trace cho Lambda"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Với Lambda, dùng Active tracing thay vì tự chạy daemon.\n✓ Bật Active tracing là cách chuẩn; AWS quản lý daemon, chỉ cần thêm IAM permission cho X-Ray.\n✗ Không cần (và không nên) tự chạy X-Ray daemon trong Lambda runtime.\n✗ EC2 chạy daemon là mô hình cho EC2/ECS, không phù hợp Lambda và tốn kém.\n✗ Synthetics canary là để giám sát endpoint, không phải cách bật tracing cho function.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-064",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-02-xray",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Sau khi bật Active tracing cho Lambda, trace của Lambda xuất hiện nhưng các lời gọi downstream tới DynamoDB và một HTTP API bên ngoài KHÔNG hiện thành subsegment trên service map. Code không có thay đổi gì khác. Nguyên nhân khả dĩ nhất là gì?",
+    "options": [
+      "AWS SDK client trong code chưa được patch/instrument bằng X-Ray SDK nên không sinh subsegment cho downstream call",
+      "IAM role Lambda thiếu quyền dynamodb:DescribeTable nên X-Ray ẩn subsegment",
+      "Active tracing chỉ tạo segment chứ không bao giờ tạo subsegment",
+      "Sampling rule mặc định loại bỏ mọi subsegment của downstream"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Active tracing tạo segment cho lần gọi Lambda, nhưng subsegment cho downstream cần SDK được instrument (patch AWS SDK / HTTP client).\n✓ Chưa patch AWS SDK / HTTP client bằng X-Ray SDK nên downstream call không sinh subsegment.\n✗ Thiếu dynamodb:DescribeTable không liên quan tới việc ẩn subsegment tracing.\n✗ Active tracing vẫn cho phép subsegment khi SDK được instrument.\n✗ Sampling không chọn lọc bỏ riêng subsegment downstream theo cách này.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "dva-m2-065",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-03-optimization",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một REST API trên API Gateway gọi backend tốn kém cho cùng các tham số được lặp lại nhiều lần. Developer muốn giảm tải backend bằng cách cache phản hồi và đảm bảo mỗi tổ hợp tham số/header có entry cache riêng. Cấu hình nào đúng?",
+    "options": [
+      "Bật API Gateway caching cho stage, đặt TTL và chọn các tham số làm cache key",
+      "Bật CloudFront trước API Gateway và để mặc định cache theo toàn bộ query string",
+      "Tăng provisioned concurrency của Lambda backend để phản hồi nhanh hơn",
+      "Bật lazy loading trong API Gateway integration request"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "API Gateway có caching ở mức stage với TTL và cho phép chọn method request parameter làm cache key để phân biệt entry per-key.\n✓ Bật caching ở stage + TTL + cache key — đúng, đáp ứng yêu cầu cache theo từng tổ hợp tham số.\n✗ CloudFront cache mặc định toàn bộ query string — có thể hỗ trợ nhưng không trực tiếp là tính năng per-key cache key của API Gateway và phức tạp hơn cho REST API nội bộ này.\n✗ Provisioned concurrency — chỉ giảm cold start, không cache kết quả nên backend vẫn bị gọi mỗi lần.\n✗ Lazy loading trong integration — không phải tính năng của API Gateway.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "dva-m3-001",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-02-lambda",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một Lambda function trong VPC gặp tình trạng lúc cao điểm bị lỗi liên quan tới ENI và đôi khi cold start lâu hơn. Đội muốn tối ưu kiến trúc mạng và hiệu năng. Những phát biểu nào sau đây ĐÚNG về Lambda networking và performance? (Chọn 2)",
+    "options": [
+      "Lambda dùng Hyperplane ENI, được chia sẻ giữa các execution environment cùng function/subnet/security group, giúp giảm cold start so với mô hình ENI cũ",
+      "Để truy cập service AWS như S3/DynamoDB từ Lambda trong VPC mà không qua NAT Gateway, có thể dùng VPC Gateway/Interface Endpoint",
+      "Mỗi concurrent invocation của Lambda trong VPC luôn tạo một ENI mới riêng, nên cần nhiều IP private",
+      "Gán Provisioned Concurrency làm Lambda thoát khỏi VPC để giảm cold start",
+      "Đặt function vào một subnet duy nhất (single-AZ) làm tăng độ sẵn sàng và lượng IP khả dụng"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Câu hỏi kiểm tra hiểu biết về Hyperplane ENI và VPC endpoints.\n✓ Lambda dùng Hyperplane ENI chia sẻ theo bộ (function/subnet/SG), giảm đáng kể cold start liên quan ENI so với trước.\n✓ VPC Gateway Endpoint (S3, DynamoDB) hoặc Interface Endpoint cho phép truy cập service mà không cần NAT Gateway.\n✗ Mô hình hiện tại KHÔNG tạo ENI mới cho mỗi concurrent invocation; đó là hành vi cũ trước Hyperplane.\n✗ Provisioned Concurrency không làm function rời khỏi VPC; cấu hình VPC vẫn áp dụng.\n✗ Đặt function vào một subnet duy nhất (single-AZ) làm giảm độ sẵn sàng và pool IP; nên dùng nhiều subnet ở nhiều AZ.",
     "domain": 1,
     "mock": 3
   },
   {
-    "id": "saa-m1-003",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-01-iam-deep-dive",
+    "id": "dva-m3-002",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-01-sdk-api",
     "certifications": [
-      "SAA-C03"
+      "DVA-C02"
     ],
-    "difficulty": "hard",
+    "difficulty": "medium",
     "type": "single",
-    "question": "Một nền tảng cho phép nhiều team tự tạo IAM role cho ứng dụng của họ. Security team lo ngại các team sẽ tự cấp quyền quá rộng (ví dụ AdministratorAccess). Yêu cầu: cho phép team tạo role nhưng đảm bảo các role họ tạo KHÔNG BAO GIỜ có quyền vượt quá một tập giới hạn cho trước. Cơ chế nào phù hợp nhất?",
+    "question": "Một script tự code vòng lặp retry cho lời gọi API bị throttle. Hiện tại tất cả các instance của ứng dụng retry sau đúng các mốc 1s, 2s, 4s, 8s. Vào giờ cao điểm, các retry vẫn dồn cục và tiếp tục bị throttle. Thay đổi nào khắc phục tốt nhất?",
     "options": [
-      "Buộc các role do team tạo phải gắn một permission boundary do security team định nghĩa, và dùng IAM policy điều kiện để chỉ cho phép tạo role khi có boundary đó",
-      "Áp dụng SCP deny mọi action iam:CreateRole cho các team",
-      "Tạo sẵn tất cả role và không cho team quyền tạo role nào",
-      "Gắn AWS Config rule cảnh báo khi role có quyền quá rộng"
+      "Thêm jitter (nhiễu ngẫu nhiên) vào thời gian chờ exponential backoff",
+      "Tăng số lần retry tối đa từ 4 lên 50 để chắc chắn thành công",
+      "Giảm thời gian chờ về 0 để retry càng nhanh càng tốt",
+      "Bỏ exponential backoff, chuyển sang khoảng chờ cố định 1 giây"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "Permission boundary đặt trần quyền tối đa cho một entity; bắt buộc gắn boundary khi tạo role cho phép delegation an toàn.\n✓ Permission boundary bắt buộc khi tạo role: role do team tạo không bao giờ vượt boundary, vẫn cho phép team tự tạo role, đúng yêu cầu delegation.\n✗ SCP deny CreateRole: chặn hoàn toàn việc tạo role, mâu thuẫn với yêu cầu cho team tự tạo.\n✗ Tạo sẵn mọi role: không scale, mất tính tự phục vụ, vận hành nặng.\n✗ Config rule cảnh báo: detective, role rộng quyền vẫn tồn tại đến khi được phát hiện và sửa.",
+    "explanation": "Các client backoff theo cùng mốc thời gian cố định sẽ retry đồng loạt (thundering herd); jitter phân tán các lần retry.\n✓ Jitter ngẫu nhiên hóa thời điểm retry nên các client không dồn cục, giảm throttle.\n✗ Tăng số lần retry không giải quyết việc dồn cục; chỉ kéo dài và làm trầm trọng tải.\n✗ Chờ 0 giây khiến tất cả retry ngay lập tức, làm throttle nặng hơn.\n✗ Khoảng chờ cố định vẫn khiến các client đồng bộ thời điểm retry, không tốt bằng backoff + jitter.",
     "domain": 1,
-    "mock": 1
+    "mock": 3
   },
   {
-    "id": "saa-m1-004",
+    "id": "dva-m3-003",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-02-lambda",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một Lambda function viết bằng Node.js mở một connection pool tới Amazon RDS. Developer muốn giảm latency của các invocation sau lần gọi đầu tiên bằng cách tái dùng connection. Cách triển khai nào là tối ưu?",
+    "options": [
+      "Khởi tạo connection pool BÊN NGOÀI hàm handler (ở phạm vi module/global) để tái dùng qua execution context được warm",
+      "Khởi tạo connection pool BÊN TRONG handler ở đầu mỗi invocation rồi đóng lại ở cuối",
+      "Lưu connection object vào /tmp dưới dạng file và đọc lại ở invocation sau",
+      "Bật Provisioned Concurrency để Lambda tự động chia sẻ connection giữa các function khác nhau"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Code khởi tạo nằm ngoài handler chỉ chạy một lần khi tạo execution context và được tái dùng ở các warm start.\n✓ Đặt connection pool ngoài handler giúp tái dùng giữa các invocation trên cùng execution context, giảm latency.\n✗ Khởi tạo trong handler tạo lại connection mỗi lần gọi, làm tăng latency và gây cạn connection ở RDS.\n✗ /tmp chỉ lưu được file/byte, không serialize được socket/connection object đang sống.\n✗ Provisioned Concurrency giữ ấm môi trường nhưng không chia sẻ connection giữa các function khác nhau; nó không phải cơ chế tái dùng connection ở đây.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-004",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-02-lambda",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một Lambda function tiêu thụ một Kinesis Data Stream với 1 shard qua event source mapping. Khi một record gây lỗi, toàn bộ shard bị chặn (poison pill) vì Lambda retry vô hạn theo thứ tự. Đội cần tránh block shard nhưng không mất dữ liệu lỗi để điều tra. Cấu hình event source mapping nào phù hợp nhất?",
+    "options": [
+      "Đặt MaximumRetryAttempts hữu hạn, BisectBatchOnFunctionError = true và cấu hình on-failure destination (SQS/SNS)",
+      "Đặt ParallelizationFactor = 10 để xử lý song song nhiều record",
+      "Tăng batch size lên mức tối đa để xử lý nhanh hơn qua record lỗi",
+      "Chuyển trigger sang SQS DLQ trực tiếp từ Kinesis"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Với stream, cần giới hạn retry, chia nhỏ batch khi lỗi và gửi record lỗi tới destination để không mất dữ liệu và không block shard.\n✓ MaximumRetryAttempts hữu hạn + BisectBatchOnFunctionError + on-failure destination giúp cô lập record lỗi, gửi đi điều tra và bỏ qua để không block shard.\n✗ ParallelizationFactor tăng song song trong một shard nhưng không giải quyết poison pill block.\n✗ Tăng batch size không vượt qua được record lỗi; vẫn bị block.\n✗ Kinesis không gắn DLQ trực tiếp như vậy; on-failure destination mới là cơ chế đúng.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-005",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-03-api-gateway",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một REST API cần biến đổi body request đến từ client (XML) sang JSON trước khi gửi tới một HTTP backend, và biến đổi ngược lại response. Backend KHÔNG nên thấy định dạng gốc. Giải pháp phù hợp nhất là gì?",
+    "options": [
+      "Dùng non-proxy integration với mapping templates (VTL) cho cả Integration Request và Integration Response",
+      "Dùng Lambda proxy integration và để client tự chuyển đổi",
+      "Bật request validation để API Gateway tự chuyển XML sang JSON",
+      "Dùng stage variables để chỉ định bộ chuyển đổi tại runtime"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Việc transform request/response cần non-proxy integration với mapping templates VTL.\n✓ Non-proxy và mapping templates: cho phép viết VTL để map/transform body ở Integration Request và Integration Response.\n✗ Lambda proxy: proxy chuyển nguyên payload, không cho phép mapping template biến đổi.\n✗ Request validation: chỉ kiểm tra schema/tham số bắt buộc, không chuyển đổi định dạng.\n✗ Stage variables: chỉ là biến cấu hình theo stage, không thực hiện transform.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-006",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-04-dynamodb",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một ứng dụng mới ra mắt có lưu lượng truy cập rất khó dự đoán, lúc tăng đột biến lúc gần như không có. Team không muốn dành thời gian tinh chỉnh capacity và muốn tránh throttling khi traffic spike. Chế độ capacity nào của DynamoDB phù hợp nhất?",
+    "options": [
+      "On-demand capacity mode",
+      "Provisioned capacity với giá trị RCU/WCU cố định cao",
+      "Provisioned capacity với Reserved Capacity dài hạn",
+      "Provisioned capacity với Auto Scaling target 70%"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Traffic spiky/khó đoán và không muốn quản lý capacity → On-demand tự scale gần như tức thì.\n✓ On-demand — đúng, tự động scale theo từng request, không cần tinh chỉnh, hạn chế throttling khi spike.\n✗ Provisioned RCU/WCU cố định cao — lãng phí tiền khi tải thấp và vẫn có thể throttle nếu spike vượt mức.\n✗ Reserved Capacity — cam kết dài hạn cho tải ổn định, không hợp ứng dụng mới khó đoán.\n✗ Provisioned + Auto Scaling — phản ứng chậm hơn on-demand với burst đột ngột nên dễ throttle lúc spike.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-007",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-04-dynamodb",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một bảng session lưu các phiên đăng nhập tạm thời. Team muốn DynamoDB tự động xóa các item hết hạn để tiết kiệm chi phí lưu trữ, không tốn WCU cho việc xóa thủ công. Cách cấu hình đúng là gì?",
+    "options": [
+      "Bật TTL trên một thuộc tính chứa epoch timestamp tính bằng giây (Number)",
+      "Bật TTL trên một thuộc tính chứa ISO 8601 datetime string",
+      "Tạo một Lambda chạy theo lịch để Scan và DeleteItem các item cũ",
+      "Đặt một thuộc tính expiresAt bằng milliseconds và bật TTL"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "TTL yêu cầu attribute là epoch time tính bằng giây (Number) và xóa nền không tốn WCU.\n✓ TTL với epoch seconds (Number) — đúng, đây là format bắt buộc để TTL hoạt động và item được xóa tự động không tính WCU.\n✗ ISO 8601 string — sai format, TTL chỉ đọc Number epoch giây nên item sẽ không bị xóa.\n✗ Lambda Scan + DeleteItem định kỳ — tốn RCU/WCU và chi phí Lambda, không tối ưu so với TTL.\n✗ Milliseconds — TTL hiểu giá trị là giây; dùng milliseconds khiến thời điểm xóa sai lệch rất xa.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-008",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-01-sdk-api",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một ứng dụng Lambda gọi DynamoDB và đôi khi nhận lỗi ProvisionedThroughputExceededException trong giai đoạn lưu lượng tăng đột biến ngắn. Cách xử lý ĐÚNG NHẤT theo best practice của AWS là gì?",
+    "options": [
+      "Retry request với exponential backoff cộng jitter",
+      "Tăng vĩnh viễn RCU/WCU của bảng lên mức tối đa ngay khi gặp lỗi đầu tiên",
+      "Bắt lỗi và bỏ qua (swallow) để ứng dụng không bị crash",
+      "Chuyển sang gọi API bằng raw HTTP và tự ký SigV4 để vượt rate limit"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "ProvisionedThroughputExceededException là lỗi throttling retryable; phản ứng chuẩn là retry với exponential backoff và jitter.\n✓ Exponential backoff + jitter giúp giãn các lần retry, tránh thundering herd và xử lý được spike ngắn.\n✗ Tăng capacity ngay lên tối đa gây tốn chi phí và không cần thiết cho spike ngắn; backoff thường đủ.\n✗ Bỏ qua lỗi làm mất dữ liệu/giao dịch, không phải xử lý đúng.\n✗ Tự ký SigV4 không vượt được rate limit; throttling do service áp đặt bất kể cách ký.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-009",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-02-lambda",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một Lambda function CPU-bound xử lý ảnh hiện cấu hình 256 MB memory và chạy khá chậm. Đội phát triển muốn giảm thời gian thực thi mà KHÔNG viết lại code, đồng thời có thể rẻ hơn. Hành động nào phù hợp nhất?",
+    "options": [
+      "Tăng memory-size của function lên mức cao hơn (ví dụ 1024 MB) vì CPU được cấp tỉ lệ thuận với memory",
+      "Tăng timeout của function lên 900 giây",
+      "Giảm memory-size xuống 128 MB để tiết kiệm chi phí mỗi ms",
+      "Bật reserved concurrency để Lambda ưu tiên CPU cho function này"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Trong Lambda, CPU (và network) được cấp tỉ lệ thuận với memory; tăng memory làm function CPU-bound chạy nhanh hơn.\n✓ Tăng memory cấp nhiều CPU hơn, giảm thời gian chạy; với tác vụ CPU-bound, tổng chi phí có thể giảm dù giá mỗi ms tăng.\n✗ Tăng timeout chỉ cho phép chạy lâu hơn trước khi bị kill, không làm function nhanh hơn.\n✗ Giảm memory làm CPU ít đi, function chạy chậm hơn nữa.\n✗ Reserved concurrency chỉ giới hạn/đảm bảo số concurrency, không cấp thêm CPU.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-010",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-02-lambda",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một Lambda function được API Gateway gọi đồng bộ. Khi traffic tăng và Lambda bị throttle do vượt concurrency, đội muốn client thấy hành vi đúng và có khả năng tự retry hợp lý. Phát biểu nào mô tả đúng hành vi và best practice?",
+    "options": [
+      "Synchronous invocation trả về lỗi throttling 429 (TooManyRequestsException) và client nên áp dụng exponential backoff để retry",
+      "Lambda tự động đưa các invocation bị throttle vào DLQ để xử lý lại",
+      "Synchronous throttle khiến Lambda tự retry hai lần trước khi trả lỗi cho client",
+      "Lambda chuyển các request bị throttle sang chế độ async và xử lý sau"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Với invocation đồng bộ, throttling trả lỗi 429 ngay cho caller; caller chịu trách nhiệm retry với backoff.\n✓ Throttle đồng bộ trả 429/TooManyRequestsException; client áp dụng exponential backoff (và jitter) để retry là best practice.\n✗ DLQ và auto-retry chỉ áp dụng cho async invocation, không phải sync.\n✗ Lambda không tự retry cho sync invocation; trách nhiệm retry thuộc về caller.\n✗ Lambda không tự chuyển sync request bị throttle sang async.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-011",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-03-api-gateway",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một POST endpoint nhận JSON. Bạn muốn API Gateway từ chối sớm (HTTP 400) các request thiếu trường bắt buộc hoặc sai kiểu dữ liệu để tránh gọi Lambda lãng phí, mà không viết thêm code. Cách triển khai đúng là gì?",
+    "options": [
+      "Tạo Model (JSON Schema) cho request body và bật Request Validator kiểm tra body trên method",
+      "Dùng mapping template VTL để throw lỗi khi thiếu trường",
+      "Bật API caching để loại bỏ request không hợp lệ",
+      "Thêm Lambda authorizer kiểm tra schema của body"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Request validation bằng Model (JSON Schema) cho phép API Gateway tự reject body không hợp lệ trước khi gọi backend.\n✓ Model và Request Validator: định nghĩa JSON Schema (required/type), gắn validator kiểu 'validate body' để API Gateway trả 400 mà không gọi Lambda.\n✗ Mapping template VTL: có thể kiểm tra nhưng phức tạp và là cách thủ công, không phải cơ chế validation chuẩn.\n✗ API caching: không có vai trò xác thực dữ liệu đầu vào.\n✗ Lambda authorizer: dùng cho phân quyền, không nhận hay kiểm tra request body.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-012",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-04-dynamodb",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Hệ thống ngân hàng cần chuyển tiền: trừ tiền tài khoản A và cộng tiền tài khoản B trên cùng một bảng DynamoDB. Hai thao tác phải cùng thành công hoặc cùng thất bại (all-or-nothing). API nào phù hợp?",
+    "options": [
+      "TransactWriteItems",
+      "BatchWriteItem",
+      "Hai lần UpdateItem riêng biệt có ConditionExpression",
+      "PutItem với ReturnValues = ALL_OLD"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Nhiều thao tác ghi all-or-nothing trên cùng region/account → TransactWriteItems (ACID).\n✓ TransactWriteItems — đúng, đảm bảo atomic all-or-nothing cho nhiều item/bảng.\n✗ BatchWriteItem — KHÔNG atomic, một item fail không rollback các item khác.\n✗ Hai UpdateItem riêng — nếu lệnh thứ hai fail, lệnh đầu đã commit, không rollback được.\n✗ PutItem ALL_OLD — chỉ ghi một item và trả giá trị cũ, không bao trùm hai thao tác nguyên tử.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-013",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-05-app-integration",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Lambda được trigger bởi SQS (event source mapping) với function timeout là 60 giây. Trong production, một số message bị xử lý lặp lại nhiều lần dù logic xử lý không lỗi. Nguyên nhân khả dĩ nhất và cách khắc phục là gì?",
+    "options": [
+      "Visibility timeout nhỏ hơn thời gian xử lý; đặt visibility timeout ít nhất bằng 6 lần function timeout (ví dụ 360 giây)",
+      "Queue đang là Standard; chuyển sang FIFO để bật exactly-once",
+      "Long polling đang tắt; bật ReceiveMessageWaitTimeSeconds=20",
+      "Thiếu DLQ; gắn DLQ vào Lambda function để chặn message lặp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Nếu visibility timeout nhỏ hơn thời gian xử lý, message hiện lại trước khi consumer kịp DeleteMessage → bị xử lý lại.\n✓ Đặt visibility timeout ít nhất bằng 6 lần function timeout (360s): best practice cho SQS+Lambda, đủ thời gian xử lý và retry mà không bị hiện lại sớm.\n✗ Chuyển sang FIFO: FIFO có dedup nhưng vấn đề ở đây là cấu hình visibility timeout, không phải bản chất Standard.\n✗ Bật long polling: chỉ giảm empty receive, không liên quan message bị xử lý lặp.\n✗ DLQ trên Lambda: với SQS+Lambda, DLQ đặt trên SQS queue chứ không phải trên function; và DLQ không ngăn xử lý lặp.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-014",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-01-sdk-api",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Boto3 client được cấu hình Config(retries={'max_attempts': 4, 'mode': 'standard'}). Với một request liên tục bị ThrottlingException, SDK sẽ thực hiện tổng cộng bao nhiêu lần gọi tới service trước khi ném lỗi ra ngoài?",
+    "options": [
+      "4 lần gọi (1 lần đầu + 3 lần retry)",
+      "5 lần gọi (1 lần đầu + 4 lần retry)",
+      "3 lần gọi vì standard mode luôn cố định 3",
+      "8 lần gọi do exponential nhân đôi số lần thử"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Trong Boto3, max_attempts là TỔNG số lần thử bao gồm cả lần gọi đầu tiên.\n✓ max_attempts=4 nghĩa là 1 lần gọi đầu cộng 3 lần retry, tổng 4 lần.\n✗ 5 lần là hiểu nhầm max_attempts là số retry thêm ngoài lần đầu.\n✗ standard mode không cố định 3; số lần do max_attempts quyết định.\n✗ Exponential backoff chỉ ảnh hưởng thời gian chờ, không nhân đôi số lần thử.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-015",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-02-lambda",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Lambda function cần truy cập một database trong VPC private subnet VÀ gọi một third-party API public trên Internet. Sau khi gắn function vào VPC, các call tới database thành công nhưng call ra Internet bị timeout. Giải pháp đúng để cả hai hoạt động là gì?",
+    "options": [
+      "Đặt Lambda ENI vào private subnet và thêm route tới NAT Gateway (nằm ở public subnet) để có Internet outbound",
+      "Gán một Elastic IP trực tiếp cho Lambda function để nó truy cập Internet",
+      "Đặt Lambda vào public subnet và gán public IP cho ENI của Lambda",
+      "Thêm Internet Gateway route trực tiếp vào private subnet nơi Lambda chạy"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lambda trong VPC không có public IP; ra Internet phải đi qua NAT Gateway đặt ở public subnet.\n✓ Đặt ENI ở private subnet và route 0.0.0.0/0 tới NAT Gateway cho phép outbound Internet trong khi vẫn truy cập database nội bộ.\n✗ Lambda không nhận Elastic IP gán trực tiếp; ENI do Lambda quản lý không có public IP.\n✗ Đặt Lambda vào public subnet không cấp public IP cho ENI của Lambda, nên vẫn không ra được Internet.\n✗ Route IGW trong private subnet không giúp được vì ENI của Lambda không có public IP để IGW định tuyến.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-016",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-02-lambda",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Lambda function tải một model ML (~200 MB) từ S3 để inference. Mỗi invocation lại tải lại model làm latency cao. Đội muốn tránh tải lại trong cùng execution environment được warm. Cách tối ưu nhất là gì?",
+    "options": [
+      "Tải model về /tmp (hoặc biến global) một lần ở cold start và tái dùng cho các warm invocation tiếp theo",
+      "Tăng batch size của event source mapping để tải model ít lần hơn",
+      "Lưu model vào environment variable đã mã hóa KMS",
+      "Đặt timeout lớn hơn để có thời gian tải model mỗi lần"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Nội dung /tmp và biến global tồn tại giữa các invocation trên cùng execution context được warm.\n✓ Tải model vào /tmp hoặc biến global một lần ở cold start rồi tái dùng giúp warm invocation không tải lại, giảm latency.\n✗ Tăng batch size không liên quan tới việc cache model trong môi trường.\n✗ Env var giới hạn 4 KB tổng, không thể chứa model 200 MB.\n✗ Tăng timeout không loại bỏ việc tải lại model mỗi lần.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-017",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-03-api-gateway",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Người dùng đã đăng nhập qua một Amazon Cognito user pool và nhận được ID token (JWT). Bạn muốn API Gateway REST API tự xác thực token này và từ chối request không hợp lệ mà không cần viết code authorizer. Lựa chọn nào phù hợp nhất?",
+    "options": [
+      "Cognito user pool authorizer",
+      "IAM authorizer (AWS_IAM) với SigV4",
+      "Lambda (TOKEN) authorizer tự viết để verify JWT",
+      "API key gắn với usage plan"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cognito user pool authorizer xác thực JWT từ user pool một cách tự nhiên, không cần code.\n✓ Cognito user pool authorizer: client gửi ID/Access token trong header; API Gateway tự verify với user pool, không cần Lambda.\n✗ IAM (SigV4): dùng cho credential AWS/role, không hợp với JWT của người dùng đăng nhập qua Cognito.\n✗ Lambda authorizer tự viết: làm được nhưng phải tự code verify JWT, không tối ưu khi đã có sẵn Cognito authorizer.\n✗ API key: chỉ để định danh/đo lường, KHÔNG phải cơ chế xác thực người dùng.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-018",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-04-dynamodb",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Yêu cầu nghiệp vụ: sau khi một item được ghi, mọi lần đọc tiếp theo PHẢI thấy ngay giá trị mới nhất (không chấp nhận dữ liệu cũ). Khi gọi GetItem, developer cần cấu hình gì?",
+    "options": [
+      "Đặt ConsistentRead = true (strongly consistent read)",
+      "Để mặc định eventually consistent read cho nhanh",
+      "Đọc qua một Global Secondary Index",
+      "Đặt ReturnConsumedCapacity = TOTAL"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cần thấy ngay dữ liệu mới nhất → strongly consistent read bằng ConsistentRead=true.\n✓ ConsistentRead=true — đúng, đảm bảo đọc phản ánh mọi write thành công trước đó.\n✗ Eventually consistent (mặc định) — có thể trả về bản cũ trong khoảng thời gian ngắn.\n✗ Đọc qua GSI — GSI KHÔNG hỗ trợ strongly consistent read, luôn eventually consistent.\n✗ ReturnConsumedCapacity — chỉ trả về thông tin capacity tiêu thụ, không ảnh hưởng consistency.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-019",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-04-dynamodb",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bảng có item kích thước 8KB. Ứng dụng cần thực hiện 100 strongly consistent read mỗi giây trên các item này ở chế độ provisioned. Cần provision tối thiểu bao nhiêu RCU?",
+    "options": [
+      "200 RCU",
+      "100 RCU",
+      "400 RCU",
+      "50 RCU"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "1 RCU = 1 strongly consistent read item ≤4KB; item 8KB = 2 × 4KB → 2 RCU/read, ×100 = 200.\n✓ 200 RCU — đúng: 8KB làm tròn lên bội số 4KB = 2 block → 2 RCU mỗi strongly consistent read, ×100 read/s = 200 RCU.\n✗ 100 RCU — bỏ qua việc item 8KB cần 2 RCU mỗi read (chỉ đúng nếu item ≤4KB).\n✗ 400 RCU — gấp đôi không cần thiết; 400 ứng với item 16KB hoặc tính nhầm đơn vị.\n✗ 50 RCU — đó là con số cho eventually consistent (½ RCU/read), không phải strongly consistent.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-020",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-05-app-integration",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một quy trình duyệt chi phí gồm nhiều bước có thứ tự, nhánh điều kiện, retry chi tiết, và có một bước cần con người phê duyệt (có thể mất vài giờ tới vài ngày) trước khi tiếp tục. Cần audit lịch sử từng bước. Giải pháp tối ưu nhất là gì?",
+    "options": [
+      "Step Functions Standard, dùng callback pattern waitForTaskToken cho bước human approval",
+      "Step Functions Express, dùng state Wait cho bước phê duyệt",
+      "Chuỗi Lambda gọi nhau trực tiếp, lưu trạng thái vào DynamoDB",
+      "EventBridge choreography: mỗi service tự phản ứng với event mà không có điều phối trung tâm"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Workflow dài, có audit chi tiết, có human approval → Step Functions Standard với waitForTaskToken để chờ phản hồi bên ngoài rồi tiếp tục.\n✓ Standard + waitForTaskToken: hỗ trợ workflow tới 1 năm, lịch sử thực thi chi tiết, callback chờ người phê duyệt rồi resume.\n✗ Express + Wait: Express tối đa 5 phút và không lưu lịch sử thực thi chi tiết, không hợp cho phê duyệt kéo dài nhiều giờ/ngày.\n✗ Lambda gọi nhau + DynamoDB: tự xây orchestration thủ công, khó retry/branching/audit, dễ lỗi và Lambda tối đa 15 phút.\n✗ EventBridge choreography: không có điều phối trung tâm, khó theo dõi thứ tự/trạng thái và bước phê duyệt tuần tự.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-021",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-02-encryption",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một developer xây dựng hệ thống lưu file lớn (lớn hơn 4 KB) đã mã hóa lên S3 và phải audit mọi lần dữ liệu được giải mã. Những phát biểu nào về KMS và mã hóa là ĐÚNG? (Chọn 2)",
+    "options": [
+      "KMS Encrypt/Decrypt API chỉ xử lý tối đa 4 KB, nên file lớn phải dùng envelope encryption với GenerateDataKey",
+      "Mọi lời gọi KMS được ghi vào CloudTrail, cho phép audit ai dùng key và lúc nào",
+      "GenerateDataKey chỉ trả về encrypted data key, không trả plaintext",
+      "SSE-C dùng KMS key để mã hóa và ghi audit qua CloudTrail",
+      "Automatic rotation của customer managed key đổi cả key ID lẫn ARN sau mỗi chu kỳ"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Câu hỏi kiểm tra giới hạn 4 KB, audit qua CloudTrail và vài bẫy phổ biến.\n✓ KMS Encrypt/Decrypt giới hạn 4 KB; file lớn dùng GenerateDataKey (envelope encryption).\n✓ Mọi lời gọi KMS ghi vào CloudTrail, phục vụ audit việc dùng key.\n✗ GenerateDataKey trả CẢ plaintext lẫn encrypted data key (chỉ GenerateDataKeyWithoutPlaintext mới bỏ plaintext).\n✗ SSE-C không liên quan KMS; key do client cung cấp mỗi request.\n✗ Automatic rotation giữ nguyên key ID/ARN, chỉ đổi key material bên trong.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-022",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-01-auth",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty muốn tự động thêm một custom claim 'department' vào ID token mà Cognito User Pool phát hành, dựa trên thuộc tính người dùng, để API backend đọc và phân quyền. Cơ chế nào của Cognito User Pool nên dùng?",
+    "options": [
+      "Pre Token Generation Lambda trigger",
+      "Pre Sign-up Lambda trigger",
+      "Post Confirmation Lambda trigger",
+      "Migrate User Lambda trigger"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Pre Token Generation trigger cho phép thêm/sửa claim trong token ngay trước khi phát hành.\n✓ Pre Token Generation — đúng, tùy biến claim trong ID/access token.\n✗ Pre Sign-up — chạy khi đăng ký, để tự xác nhận/validate, không sửa token.\n✗ Post Confirmation — chạy sau khi xác nhận tài khoản, không liên quan token claim.\n✗ Migrate User — dùng khi di trú người dùng từ directory cũ, không sửa claim token.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-023",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-01-auth",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một developer cần phân biệt rõ vai trò của Cognito User Pool và Identity Pool trong ứng dụng. Phát biểu nào mô tả ĐÚNG sự khác biệt cốt lõi?",
+    "options": [
+      "User Pool xử lý đăng nhập và phát hành JWT (authentication); Identity Pool đổi danh tính lấy temporary AWS credentials (authorization tới AWS)",
+      "User Pool cấp temporary AWS credentials; Identity Pool phát hành JWT",
+      "Cả hai đều phát hành JWT giống hệt nhau, chỉ khác tên",
+      "Identity Pool dùng để đăng ký người dùng, User Pool chỉ để gọi dịch vụ AWS"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đây là bẫy kinh điển: User Pool = token/xác thực, Identity Pool = AWS credentials.\n✓ User Pool phát hành JWT, Identity Pool cấp AWS credentials — đúng, phân vai trò chuẩn.\n✗ User Pool cấp AWS credentials — sai, đó là việc của Identity Pool.\n✗ Cả hai phát hành JWT giống nhau — sai, chỉ User Pool phát hành JWT người dùng.\n✗ Đảo vai trò đăng ký/gọi dịch vụ — sai hoàn toàn về chức năng.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-024",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-02-encryption",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một IAM user đã có IAM policy cho phép kms:Decrypt trên một customer managed key, nhưng khi gọi Decrypt vẫn nhận AccessDenied. Nguyên nhân khả dĩ nhất là gì?",
+    "options": [
+      "User cần bật MFA mới gọi được KMS API",
+      "Key policy của KMS key chưa cấp quyền cho user/account đó nên IAM policy không có hiệu lực",
+      "KMS key chưa bật automatic rotation",
+      "User đang gọi sai Region nên KMS từ chối"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Với KMS, key policy là cổng chính; nếu key policy không mở, IAM policy vô dụng.\n✓ Key policy phải cho phép account (thường qua dòng root) thì IAM policy mới có hiệu lực.\n✗ MFA không phải yêu cầu mặc định để gọi KMS API.\n✗ Rotation không liên quan tới quyền Decrypt; data cũ vẫn giải mã được.\n✗ Sai Region trả lỗi NotFound/khác, không phải AccessDenied do quyền, và đề nói user có policy đúng.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-025",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-02-encryption",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ALB cần phục vụ HTTPS cho ứng dụng public và đội vận hành không muốn lo việc gia hạn chứng chỉ thủ công. Đồng thời backend microservice nội bộ (không expose internet) cần chứng chỉ TLS riêng. Cặp giải pháp nào đúng?",
+    "options": [
+      "ACM public certificate cho ALB; AWS Private CA cho microservice nội bộ",
+      "AWS Private CA cho ALB; ACM public certificate cho microservice nội bộ",
+      "Self-signed cert cho ALB; ACM public certificate cho microservice nội bộ",
+      "ACM public certificate cho cả hai vì nó miễn phí"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Public HTTPS dùng ACM public cert; chứng chỉ nội bộ dùng Private CA.\n✓ ACM public certificate cho ALB (miễn phí, tự gia hạn, được trình duyệt tin cậy); Private CA cấp chứng chỉ nội bộ cho microservice.\n✗ Đảo ngược: Private CA cho ALB public sẽ không được trình duyệt công cộng tin cậy.\n✗ Self-signed trên ALB gây cảnh báo bảo mật cho người dùng.\n✗ ACM public cert không phù hợp cho microservice nội bộ không expose internet; nên dùng Private CA.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-026",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-03-secrets",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Tổ chức cần chia sẻ một secret (license key dùng chung) từ Account A cho ứng dụng chạy ở Account B. Cách đúng để cho phép cross-account access tới secret trong Secrets Manager?",
+    "options": [
+      "Gắn resource policy lên secret cho phép principal của Account B, và cấp quyền KMS key tương ứng cho Account B",
+      "Copy secret thành environment variable rồi gửi qua email cho team Account B",
+      "Bật public access cho secret để mọi account đọc được",
+      "Tạo IAM user trong Account A và chia sẻ access key cho Account B"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cross-account secret cần resource-based policy trên secret và quyền dùng KMS key (phải là customer managed key, không dùng default AWS managed key).\n✓ Resource policy cho phép principal Account B kèm quyền dùng customer managed KMS key là cách chuẩn cho cross-account.\n✗ Gửi secret qua email là rò rỉ dữ liệu nhạy cảm, không phải giải pháp kỹ thuật.\n✗ Secrets Manager không có chế độ public access; phơi bày secret là sai hoàn toàn.\n✗ Chia sẻ access key của IAM user là anti-pattern, vi phạm least privilege và khó audit.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-027",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-01-auth",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một SPA (single-page app) dùng Cognito Hosted UI với OAuth 2.0. Access token có hiệu lực 1 giờ và đã hết hạn, nhưng người dùng vẫn đang trong phiên làm việc dài. Ứng dụng cần lấy access token mới mà KHÔNG bắt người dùng đăng nhập lại. Cách đúng là gì?",
+    "options": [
+      "Dùng refresh token để yêu cầu access token và ID token mới",
+      "Dùng access token cũ để tự gia hạn chính nó",
+      "Gọi STS GetSessionToken để tạo access token mới",
+      "Tải lại JWKS endpoint để làm mới chữ ký token"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Refresh token được dùng để lấy access/ID token mới khi chúng hết hạn, tránh đăng nhập lại.\n✓ Refresh token — đúng, đổi lấy token mới trong thời gian refresh token còn hiệu lực.\n✗ Access token cũ tự gia hạn — token JWT đã hết hạn không thể tự làm mới.\n✗ STS GetSessionToken — cấp AWS credentials, không liên quan token User Pool.\n✗ Tải lại JWKS — JWKS chỉ là khóa public để verify chữ ký, không tạo token mới.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-028",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-01-auth",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một ứng dụng cần cho phép người dùng dùng thử các tính năng cơ bản (ví dụ tải vài ảnh mẫu từ S3) mà KHÔNG cần đăng nhập, nhưng vẫn phải gọi dịch vụ AWS một cách an toàn bằng quyền hạn chế. Tính năng nào của Cognito hỗ trợ điều này?",
+    "options": [
+      "Unauthenticated (guest) access của Identity Pool với IAM role quyền tối thiểu",
+      "Hosted UI ở chế độ ẩn danh của User Pool",
+      "Refresh token vô thời hạn của User Pool",
+      "API key public của API Gateway"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Identity Pool có unauthenticated role cho phép guest gọi AWS với quyền hạn chế mà không cần đăng nhập.\n✓ Unauthenticated guest access — đúng, cấp temporary credentials hạn chế cho khách.\n✗ Hosted UI ẩn danh — Hosted UI dùng để đăng nhập, không có chế độ guest cấp AWS credentials.\n✗ Refresh token vô thời hạn — không liên quan và không phải cơ chế guest.\n✗ API key public — chỉ định danh client, không cấp quyền gọi dịch vụ AWS an toàn.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-029",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-02-encryption",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đội bảo mật yêu cầu mọi lần object trong S3 được giải mã phải được audit (ai, khi nào), đồng thời cần kiểm soát key policy và rotation. Lựa chọn mã hóa S3 nào đáp ứng tốt nhất?",
+    "options": [
+      "SSE-S3 với key aws/s3 do AWS quản lý",
+      "SSE-KMS với customer managed key",
+      "SSE-C với key do client cung cấp mỗi request",
+      "Client-side encryption với AWS Encryption SDK"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Yêu cầu audit từng lần dùng key cộng kiểm soát key policy và rotation chỉ thỏa với SSE-KMS dùng customer managed key.\n✓ SSE-KMS với customer managed key ghi mọi lần Decrypt/GenerateDataKey vào CloudTrail, cho kiểm soát key policy và rotation.\n✗ SSE-S3 dùng key AWS quản lý, không cho kiểm soát key policy/rotation chi tiết.\n✗ SSE-C không liên quan KMS, không có audit qua CloudTrail cho việc dùng key.\n✗ Client-side encryption khả thi nhưng phức tạp hơn và không phải lựa chọn tối ưu khi chỉ cần audit phía S3/KMS.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-030",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-02-encryption",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong luồng envelope encryption, sau khi gọi GenerateDataKey và dùng plaintext data key để mã hóa file, đâu là bước xử lý đúng với best practice?",
+    "options": [
+      "Lưu cả plaintext data key lẫn encrypted data key cạnh file để giải mã nhanh sau này",
+      "Xóa plaintext data key khỏi bộ nhớ ngay sau khi mã hóa xong, chỉ lưu encrypted data key (CiphertextBlob) cạnh file",
+      "Gửi plaintext data key lên KMS để KMS lưu hộ",
+      "Lưu plaintext data key vào file mã hóa rồi gửi cả lên S3"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bí quyết bảo mật của envelope encryption: không bao giờ lưu plaintext data key.\n✓ Xóa plaintext data key khỏi RAM ngay sau khi dùng, chỉ lưu encrypted data key cạnh file; khi cần thì gọi Decrypt để lấy lại plaintext key.\n✗ Lưu cả plaintext data key phá vỡ bảo mật vì lộ key thật.\n✗ KMS không lưu data key của bạn; KMS chỉ giữ CMK.\n✗ Nhúng plaintext data key vào dữ liệu rồi gửi đi làm lộ key hoàn toàn.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-031",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-03-secrets",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một ứng dụng multi-tenant SaaS lưu dữ liệu của nhiều khách hàng trong cùng một DynamoDB table, mỗi item có thuộc tính tenantId làm partition key. Yêu cầu: mỗi tenant chỉ truy cập được dữ liệu của mình, dùng IAM một cách tối ưu nhất. Giải pháp đúng?",
+    "options": [
+      "Dùng IAM policy với điều kiện dynamodb:LeadingKeys ràng buộc theo tenantId (partition key) để giới hạn truy cập theo tenant",
+      "Tạo một IAM user riêng và một bảng DynamoDB riêng cho mỗi tenant",
+      "Cho tất cả tenant dùng chung một IAM role với quyền full access và lọc dữ liệu ở phía client",
+      "Mã hoá mỗi item bằng một KMS key riêng cho từng tenant và bỏ qua IAM"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Điều kiện dynamodb:LeadingKeys cho phép giới hạn truy cập theo partition key value, lý tưởng cho fine-grained multi-tenant.\n✓ dynamodb:LeadingKeys ràng buộc truy cập theo giá trị partition key (tenantId), thực thi cô lập tenant ở tầng IAM.\n✗ Tạo bảng và user riêng cho mỗi tenant không mở rộng được khi số tenant lớn.\n✗ Lọc ở client với quyền full access không an toàn vì IAM vẫn cho phép đọc dữ liệu tenant khác.\n✗ Mã hoá per-tenant không thay thế được kiểm soát truy cập IAM; vẫn cần authorization ở tầng API.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-032",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-01-auth",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một developer cấu hình REST API trên Amazon API Gateway và muốn API tự động kiểm tra JWT do Cognito User Pool phát hành (kiểm tra chữ ký, issuer, hết hạn) mà không phải viết code xác thực thủ công. Họ muốn cấu hình đơn giản nhất, ít code nhất. Giải pháp nào phù hợp?",
+    "options": [
+      "Dùng Cognito authorizer của API Gateway, trỏ tới User Pool",
+      "Viết Lambda authorizer tự tải JWKS và verify chữ ký JWT thủ công",
+      "Bật IAM authorization và ký request bằng SigV4",
+      "Dùng API key gắn vào usage plan để kiểm soát truy cập"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cognito authorizer tích hợp sẵn với User Pool và tự verify JWT, ít cấu hình và không cần code.\n✓ Cognito authorizer — đúng, tự kiểm tra token User Pool, đơn giản nhất.\n✗ Lambda authorizer thủ công — chạy được nhưng phải tự viết logic verify/JWKS, nhiều code không cần thiết.\n✗ IAM authorization/SigV4 — dùng cho danh tính IAM/credentials, không xác thực JWT người dùng cuối.\n✗ API key — chỉ để định danh client và throttling, không xác thực người dùng.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-033",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-01-auth",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng dùng Cognito User Pool. Developer thấy access token chứa scope như 'aws.cognito.signin.user.admin' và các custom scope của resource server, còn ID token thì chứa email, name. Khi gọi một resource server tự định nghĩa với OAuth scopes để phân quyền, token nào nên được gửi đi?",
+    "options": [
+      "Access token vì nó mang OAuth scopes dùng để authorize",
+      "ID token vì nó mang thông tin danh tính người dùng",
+      "Refresh token vì nó tồn tại lâu nhất",
+      "Bất kỳ token nào cũng được vì cả ba đều là JWT"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Access token mang scope để authorize truy cập resource server; ID token để authenticate danh tính.\n✓ Access token — đúng, chứa OAuth scopes dùng cho authorization tới resource server.\n✗ ID token — dùng để xác thực danh tính, không chứa scope authorize resource server theo chuẩn.\n✗ Refresh token — chỉ để đổi token mới, không gọi resource server.\n✗ Bất kỳ token nào — sai, mỗi loại token có mục đích riêng.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-034",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-02-encryption",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Công ty muốn KMS key tự động đổi key material định kỳ mà không cần sửa code ứng dụng hay cập nhật alias. Cấu hình nào đáp ứng?",
+    "options": [
+      "Bật automatic key rotation trên một customer managed symmetric key",
+      "Thực hiện manual rotation: tạo key mới và cập nhật alias trỏ sang",
+      "Dùng AWS owned key vì nó tự rotate",
+      "Import key material mới mỗi năm vào cùng key"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Automatic rotation đổi key material nhưng giữ nguyên key ID/ARN nên ứng dụng không phải sửa gì.\n✓ Automatic rotation trên customer managed symmetric key: key ID không đổi, AWS tự sinh material mới, không cần sửa code/alias.\n✗ Manual rotation buộc cập nhật alias trỏ sang key mới, ứng dụng có thể cần điều chỉnh.\n✗ AWS owned key bạn không kiểm soát và thường không thấy trong account.\n✗ Import material thủ công không phải cách tự động và phức tạp.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-035",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-02-encryption",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Đội DevOps cần share một snapshot EBS đã mã hóa (bằng customer managed KMS key) sang một AWS account khác để account đó khôi phục volume. Ngoài việc share snapshot, cần làm gì để account kia decrypt được?",
+    "options": [
+      "Không cần làm gì thêm, share snapshot là đủ",
+      "Cập nhật key policy của KMS key để cho phép account kia dùng key (kms:Decrypt, kms:CreateGrant...) và share snapshot",
+      "Chuyển snapshot sang SSE-S3 trước khi share",
+      "Bật automatic rotation cho KMS key"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Snapshot mã hóa cần cả quyền dùng KMS key ở account đích.\n✓ Phải sửa key policy của KMS key cho phép account kia (kms:Decrypt, kms:CreateGrant...) ngoài việc share snapshot, nếu không account kia không decrypt được.\n✗ Chỉ share snapshot mà không share quyền key thì account kia không giải mã được.\n✗ SSE-S3 không liên quan tới snapshot EBS.\n✗ Rotation không cấp quyền cross-account.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-036",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-03-secrets",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một developer muốn mã hoá các environment variable của Lambda chứa thông tin nhạy cảm bằng customer managed KMS key, và giải mã ngay trong handler bằng encryption helper. Cấu hình nào đúng?",
+    "options": [
+      "Bật 'Enable helpers for encryption in transit' trên env var, dùng customer managed KMS key, và gọi kms:Decrypt trong code khi khởi tạo",
+      "Để Lambda dùng KMS key mặc định và đọc env var trực tiếp là đã được mã hoá in transit",
+      "Lưu giá trị nhạy cảm vào /tmp của Lambda rồi đọc lại",
+      "Đặt giá trị nhạy cảm vào Lambda layer và import lúc runtime"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Encryption helpers mã hoá env var bằng customer managed key; code dùng kms:Decrypt để giải mã in-memory lúc khởi tạo.\n✓ Bật encryption helper với customer managed key và gọi kms:Decrypt trong code là cách chuẩn để bảo vệ env var nhạy cảm.\n✗ Lambda mặc định đã mã hoá env var at rest, nhưng giá trị vẫn hiện plaintext trong console; cần helper và customer managed key để mã hoá in transit.\n✗ Ghi vào /tmp không mã hoá và không giải quyết vấn đề bảo mật env var.\n✗ Lambda layer lưu code/thư viện, không phải nơi an toàn để giấu secret.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-037",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d2-03-secrets",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn muốn nhận thông báo và tự động hoá khi một secret trong Secrets Manager sắp tới hạn rotation hoặc khi rotation thất bại. Cách giám sát phù hợp nhất?",
+    "options": [
+      "Dùng EventBridge bắt sự kiện từ Secrets Manager/CloudTrail và CloudWatch Alarm để cảnh báo khi rotation thất bại",
+      "Bật S3 access logging trên bucket chứa secret",
+      "Dùng VPC Flow Logs để theo dõi truy cập vào secret",
+      "Tạo một cron job trên EC2 đọc secret mỗi phút để kiểm tra"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Giám sát rotation dùng EventBridge/CloudTrail events kết hợp CloudWatch để cảnh báo và tự động hoá.\n✓ EventBridge bắt sự kiện rotation và CloudWatch Alarm cảnh báo khi thất bại là cách giám sát chuẩn, không tốn polling.\n✗ Secrets không lưu trong S3 nên S3 access logging không liên quan.\n✗ VPC Flow Logs ghi lưu lượng mạng, không phản ánh trạng thái rotation của secret.\n✗ Cron đọc secret mỗi phút gây tốn API call và không phát hiện được lỗi rotation hiệu quả.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-038",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-03-deploy-strategies",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một đội triển khai Lambda production dùng CodeDeploy canary và muốn cơ chế rollback an toàn cùng kiểm thử trước khi shift. Những thành phần/khái niệm nào sau đây ĐÚNG và nên áp dụng? (Chọn 2)",
+    "options": [
+      "Gắn CloudWatch alarm vào deployment group để CodeDeploy tự rollback khi alarm ALARM trong lúc canary",
+      "Dùng BeforeAllowTraffic và AfterAllowTraffic Lambda hooks để chạy validation trước/sau khi cho traffic",
+      "Để client gọi trực tiếp $LATEST nhằm luôn nhận version mới nhất trong production",
+      "Đặt traffic shifting trên chính số version thay vì alias để đơn giản hóa",
+      "Bật API Gateway request validation để tự động rollback Lambda khi có lỗi 5xx"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "CodeDeploy Lambda dựa vào alias, alarm và lifecycle hooks.\n✓ CloudWatch alarm gắn vào deployment group cho phép automatic rollback trong canary.\n✓ BeforeAllowTraffic/AfterAllowTraffic hooks chạy hàm validation trước và sau khi shift traffic.\n✗ Gọi $LATEST trong production là anti-pattern, không cho phép traffic shifting có kiểm soát.\n✗ Traffic shifting hoạt động trên alias chứ không phải số version cố định.\n✗ API Gateway request validation chỉ kiểm tra schema request, không rollback Lambda.",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-039",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-01-packaging-iac",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một developer viết file template SAM để định nghĩa một Lambda function (AWS::Serverless::Function) và một API Gateway. Khi chạy sam deploy, CloudFormation báo lỗi không nhận diện được resource type AWS::Serverless::Function. Nguyên nhân nào KHẢ DĨ NHẤT?",
+    "options": [
+      "Template thiếu dòng Transform: AWS::Serverless-2016-10-31 ở cấp cao nhất",
+      "Template thiếu section Resources",
+      "Region chưa bật service AWS SAM",
+      "Function thiếu thuộc tính Runtime"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SAM template được CloudFormation xử lý qua macro Transform để chuyển các resource AWS::Serverless::* thành resource CloudFormation chuẩn.\n✓ Thiếu Transform: AWS::Serverless-2016-10-31 khiến CloudFormation không biết cách diễn giải AWS::Serverless::Function\n✗ Thiếu Resources sẽ báo lỗi khác (template phải có Resources) chứ không phải lỗi không nhận diện resource type\n✗ Không có khái niệm bật service SAM theo region; SAM chỉ là framework trên CloudFormation\n✗ Thiếu Runtime cũng gây lỗi nhưng là lỗi validate thuộc tính, không phải lỗi unknown resource type",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-040",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-01-packaging-iac",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Team có một dependency đặc thù cần kích thước lớn (>250 MB unzipped) và một runtime tùy biến không có sẵn. Họ muốn đóng gói Lambda function bằng công cụ container quen thuộc và đẩy lên ECR. Lựa chọn đóng gói nào phù hợp nhất?",
+    "options": [
+      "Đóng gói function dưới dạng container image (tối đa 10 GB) lưu ở ECR",
+      "Tách dependency thành nhiều Lambda layer cộng dồn quá 250 MB",
+      "Dùng zip deployment package upload qua S3",
+      "Triển khai code lên EC2 và mô phỏng Lambda runtime"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Container image hỗ trợ artifact lớn và runtime tùy biến, vượt giới hạn của zip.\n✓ Container image cho Lambda hỗ trợ tới 10 GB và runtime tùy biến, lưu trên ECR, hợp nhu cầu\n✗ Layer cũng bị giới hạn tổng unzipped 250 MB cho cả function + layers nên không vượt được\n✗ Zip package bị giới hạn 250 MB unzipped, không đủ\n✗ Triển khai lên EC2 phá vỡ mô hình serverless và không phải đóng gói Lambda",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-041",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-02-cicd",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một developer triển khai một hàm Lambda qua CodeDeploy với canary deployment. Cần chạy một script kiểm tra phiên bản mới trước khi chuyển hoàn toàn traffic sang nó. Lifecycle hook nào của CodeDeploy (Lambda) nên dùng để validate trước khi shift traffic?",
+    "options": [
+      "BeforeAllowTraffic",
+      "AfterAllowTraffic",
+      "ApplicationStop",
+      "DownloadBundle"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Deployment Lambda của CodeDeploy chỉ có hai hook: BeforeAllowTraffic và AfterAllowTraffic.\n✓ BeforeAllowTraffic chạy trước khi traffic được chuyển sang version mới, phù hợp để validate\n✗ AfterAllowTraffic chạy sau khi đã chuyển traffic, không validate trước được\n✗ ApplicationStop là hook của deployment EC2/on-premises, không áp dụng cho Lambda\n✗ DownloadBundle là sự kiện nội bộ trên EC2 agent, không phải hook cho Lambda",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-042",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-03-deploy-strategies",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một fintech yêu cầu: khi deploy Lambda version mới, chuyển 10% traffic ngay lập tức, theo dõi trong 10 phút, rồi nếu ổn thì chuyển 100%. Đây là canary deployment qua CodeDeploy. Họ chọn preset nào?",
+    "options": [
+      "CodeDeployDefault.LambdaCanary10Percent10Minutes",
+      "CodeDeployDefault.LambdaLinear10PercentEvery10Minutes",
+      "CodeDeployDefault.LambdaLinear10PercentEvery1Minute",
+      "CodeDeployDefault.LambdaAllAtOnce"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Canary = chuyển một phần ngay, chờ rồi chuyển phần còn lại; linear = tăng đều theo bước.\n✓ LambdaCanary10Percent10Minutes shift 10% ngay, chờ 10 phút rồi shift nốt 90% — đúng mô tả.\n✗ Linear10PercentEvery10Minutes tăng dần 10% mỗi 10 phút (mất khoảng 90 phút), không phải canary hai bước.\n✗ Linear10PercentEvery1Minute cũng là tăng dần đều, không phải canary.\n✗ AllAtOnce chuyển 100% ngay, không có giai đoạn canary.",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-043",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-04-beanstalk",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Team muốn lưu lại toàn bộ cấu hình của một environment Beanstalk (instance type, env variables, option settings) để sau này tạo nhanh các environment mới giống hệt và đưa cấu hình vào source control. Tính năng nào phù hợp nhất?",
+    "options": [
+      "Saved configurations (lưu dưới dạng template cấu hình của application)",
+      "Snapshot EBS của các instances trong environment",
+      "CloudWatch Logs export định kỳ",
+      "Tạo một AMI từ instance hiện tại và clone bằng AMI đó"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cần lưu và tái sử dụng cấu hình environment, đưa vào source control.\n✓ Saved configurations: lưu option settings/cấu hình của environment thành template gắn với application, có thể tạo environment mới từ template và quản lý qua thư mục .elasticbeanstalk, phù hợp source control.\n✗ Snapshot EBS: chỉ sao lưu dữ liệu disk, không lưu cấu hình environment.\n✗ CloudWatch Logs export: chỉ lưu log, không phải cấu hình.\n✗ Tạo AMI và clone: lưu image hệ điều hành chứ không lưu option settings/env variables của Beanstalk một cách quản lý được.",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-044",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-01-packaging-iac",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Sau khi một stack được deploy, một kỹ sư đã sửa thủ công Security Group của một EC2 instance qua console. Team muốn phát hiện những thay đổi ngoài-template như vậy. CloudFormation cung cấp cơ chế nào?",
+    "options": [
+      "Drift detection để so sánh cấu hình thực tế với template",
+      "Change set so sánh trạng thái stack",
+      "Stack policy chặn mọi thay đổi thủ công",
+      "Fn::ImportValue kiểm tra tính toàn vẹn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Drift detection xác định resource đã bị thay đổi ngoài CloudFormation.\n✓ Drift detection báo cáo từng resource có cấu hình lệch (DRIFTED) so với template đã deploy\n✗ Change set dùng để xem trước thay đổi của một update, không phát hiện sửa đổi thủ công đã xảy ra\n✗ Stack policy giới hạn update qua CloudFormation, không ngăn được sửa trực tiếp trên resource và không phát hiện drift\n✗ Fn::ImportValue là hàm tham chiếu giá trị, không liên quan kiểm tra toàn vẹn",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-045",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-02-cicd",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Build của một ứng dụng Java mất nhiều thời gian vì CodeBuild tải lại toàn bộ Maven dependency mỗi lần. Cách tối ưu nhất để rút ngắn thời gian build mà chỉ thay đổi cấu hình CodeBuild là gì?",
+    "options": [
+      "Bật CodeBuild local/S3 caching và khai báo thư mục .m2 trong mục cache của buildspec.yml",
+      "Tăng compute type của CodeBuild lên loại lớn nhất để tải dependency nhanh hơn",
+      "Chuyển toàn bộ dependency vào Docker image custom rồi rebuild image mỗi lần build",
+      "Đặt dependency vào output artifact của stage trước và truyền sang stage build"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "CodeBuild hỗ trợ caching để tái sử dụng dependency giữa các lần build.\n✓ Bật caching (local hoặc S3) và khai báo path .m2 trong phần cache của buildspec giúp tái sử dụng dependency, giảm thời gian build\n✗ Tăng compute type tốn chi phí và không giải quyết việc tải lại dependency\n✗ Rebuild Docker image mỗi lần build vẫn tốn thời gian và phức tạp\n✗ Truyền dependency qua artifact giữa stage không phải cơ chế cache dependency tiêu chuẩn và dễ lỗi",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-046",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-03-deploy-strategies",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một Lambda function được gọi qua một alias tên PROD. Developer muốn chuyển dần 10% lưu lượng sang version mới mà KHÔNG cần đổi cấu hình ở phía client gọi function. Cách làm đúng là gì?",
+    "options": [
+      "Cấu hình weighted alias trên alias PROD, trỏ 90% sang version cũ và 10% sang version mới",
+      "Tạo một alias mới và yêu cầu client gọi cả hai alias",
+      "Publish version mới và cho client gọi trực tiếp số version mới với 10% request",
+      "Dùng $LATEST cho cả hai version và để client tự phân bổ traffic"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Weighted alias cho phép một alias chia traffic giữa hai version mà client không đổi gì.\n✓ Cấu hình tỷ trọng (additional version weight) trên alias PROD giúp shift 10% traffic mà client vẫn gọi cùng alias.\n✗ Tạo alias mới buộc client phải thay đổi cách gọi.\n✗ Gọi trực tiếp số version cũng buộc client thay đổi và không phải best practice.\n✗ $LATEST không thể gán weight và không nên dùng cho production.",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-047",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-03-deploy-strategies",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng EC2 trong Auto Scaling group triển khai qua CodeDeploy. Doanh nghiệp muốn quá trình deploy không bao giờ làm giảm số instance phục vụ traffic, đồng thời mỗi version mới chạy trên instance hoàn toàn mới để tránh trạng thái cũ tồn dư. Cấu hình CodeDeploy nào phù hợp?",
+    "options": [
+      "Blue/green deployment với CodeDeploy provisioning instance mới rồi chuyển traffic qua Load Balancer",
+      "In-place deployment với CodeDeployDefault.AllAtOnce",
+      "In-place deployment với OneAtATime trên chính các instance hiện có",
+      "All-at-once với hook tự dọn dẹp file cũ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Yêu cầu instance hoàn toàn mới và không giảm capacity hướng tới blue/green.\n✓ Blue/green của CodeDeploy tạo instance mới (môi trường green), kiểm tra rồi reroute traffic qua ELB, giữ capacity và loại bỏ trạng thái cũ.\n✗ In-place AllAtOnce cập nhật tại chỗ, có downtime và vẫn là instance cũ.\n✗ In-place OneAtATime vẫn deploy lên instance hiện có, không phải instance mới hoàn toàn.\n✗ All-at-once kèm dọn file không đảm bảo instance mới và không giữ capacity.",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-048",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-01-packaging-iac",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một team dùng AWS SAM. Họ muốn nhiều Lambda function trong cùng template đều có chung Runtime, Timeout=30 và một biến môi trường LOG_LEVEL=INFO mà không phải lặp lại cấu hình ở từng function. Cách TỐI ƯU nhất là gì?",
+    "options": [
+      "Khai báo các giá trị mặc định trong section Globals của template SAM",
+      "Tạo một CloudFormation nested stack riêng cho mỗi function",
+      "Dùng Fn::FindInMap để map cấu hình rồi GetAtt vào từng function",
+      "Định nghĩa một Lambda layer chứa cấu hình Runtime và Timeout"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SAM cung cấp section Globals để đặt thuộc tính chung cho tất cả resource cùng loại, tránh lặp lại.\n✓ Globals: Function: cho phép đặt Runtime, Timeout, Environment chung; từng function vẫn override được\n✗ Nested stack cho mỗi function làm phức tạp không cần thiết và không giải quyết việc dùng chung cấu hình\n✗ FindInMap chỉ tra giá trị tĩnh, vẫn phải khai báo lặp ở mỗi function\n✗ Layer dùng để chia sẻ code/thư viện, không đặt được Runtime hay Timeout của function",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-049",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-01-packaging-iac",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một ứng dụng cần bật/tắt tính năng mới (feature flag) cho người dùng mà KHÔNG cần deploy lại Lambda, và muốn cập nhật cấu hình được kiểm soát, có validation và khả năng rollback. Dịch vụ nào phù hợp nhất?",
+    "options": [
+      "AWS AppConfig với feature flags và deployment strategy",
+      "Đặt feature flag trong biến môi trường Lambda và cập nhật qua CloudFormation",
+      "Lưu cờ trong một CloudFormation parameter và update stack",
+      "Dùng Lambda layer để chứa file cấu hình cờ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "AppConfig quản lý cấu hình/feature flag tách rời khỏi vòng đời deploy code.\n✓ AppConfig hỗ trợ feature flags, validators, deployment strategy theo phần trăm và rollback dựa trên CloudWatch alarm, không cần deploy lại code\n✗ Biến môi trường Lambda thay đổi đòi hỏi update function (deploy lại cấu hình), thiếu validation/rollback tinh vi\n✗ CloudFormation parameter buộc update stack mỗi lần đổi cờ, không linh hoạt\n✗ Layer chứa file cờ vẫn cần publish version mới và cập nhật function",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-050",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-02-cicd",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Tổ chức muốn lưu trữ và chia sẻ các package npm và Maven nội bộ một cách an toàn, đồng thời proxy các public package. Dịch vụ AWS nào phù hợp nhất để tích hợp với CodeBuild?",
+    "options": [
+      "AWS CodeArtifact",
+      "AWS CodeCommit",
+      "Amazon ECR",
+      "AWS CodePipeline"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "CodeArtifact là dịch vụ quản lý artifact/package nội bộ.\n✓ CodeArtifact lưu trữ, chia sẻ package npm/Maven/PyPI và proxy public repository, tích hợp tốt với CodeBuild\n✗ CodeCommit là dịch vụ Git repository cho source code, không phải package manager\n✗ ECR dùng cho Docker container image, không phải npm/Maven package\n✗ CodePipeline là dịch vụ orchestration CI/CD, không lưu trữ package",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-051",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-03-deploy-strategies",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đội phát triển triển khai Lambda qua AWS CodeDeploy với deployment preset CodeDeployDefault.LambdaCanary10Percent5Minutes. Họ muốn tự động rollback nếu tỷ lệ lỗi tăng cao trong giai đoạn canary. Cấu hình nào đạt được điều này?",
+    "options": [
+      "Liên kết một CloudWatch alarm theo dõi error rate vào deployment group và bật automatic rollback khi alarm kích hoạt",
+      "Bật CloudTrail logging và viết Lambda thủ công để revert alias khi thấy log lỗi",
+      "Đặt reserved concurrency = 0 cho version mới khi có lỗi",
+      "Dựa vào API Gateway throttling để tự động chặn version lỗi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "CodeDeploy hỗ trợ automatic rollback dựa trên CloudWatch alarm.\n✓ Gắn CloudWatch alarm (ví dụ Errors hoặc error rate) vào deployment group và bật rollback giúp CodeDeploy tự dịch alias về version cũ khi alarm ALARM.\n✗ CloudTrail dùng để audit, không phải để giám sát metric lỗi thời gian thực và rollback.\n✗ Reserved concurrency = 0 chỉ chặn invoke chứ không rollback traffic shifting.\n✗ API Gateway throttling không liên quan tới rollback của CodeDeploy.",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-052",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-03-deploy-strategies",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Developer cấu hình DeploymentPreference cho Lambda trong SAM với Type là Canary10Percent5Minutes và một Alarm theo dõi lỗi. Trong giai đoạn 5 phút canary, alarm chuyển sang ALARM. Điều gì xảy ra?",
+    "options": [
+      "CodeDeploy tự động rollback, dịch alias về version cũ và đánh dấu deployment thất bại",
+      "Deployment tiếp tục shift 100% vì 5 phút canary đã được lên lịch cố định",
+      "Lambda tự xóa version mới và giữ nguyên 10% traffic",
+      "API Gateway tự chuyển toàn bộ traffic sang stage cũ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Alarm gắn vào DeploymentPreference kích hoạt automatic rollback của CodeDeploy.\n✓ Khi alarm vào trạng thái ALARM trong canary, CodeDeploy dừng và rollback alias về version cũ, deployment báo Failed.\n✗ Deployment KHÔNG tiếp tục shift khi alarm kích hoạt; rollback được ưu tiên.\n✗ Lambda không tự xóa version; CodeDeploy chỉ chuyển alias về version cũ.\n✗ API Gateway không tham gia cơ chế rollback của CodeDeploy Lambda.",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-053",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d3-04-beanstalk",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một environment đang dùng policy Rolling thỉnh thoảng để lại các instances ở trạng thái không nhất quán khi một batch deploy thất bại giữa chừng, khiến traffic vẫn vào instances lỗi. Team muốn một policy mà nếu deploy thất bại thì instances đang phục vụ KHÔNG bị ảnh hưởng và rollback chỉ là hủy instances mới. Nên đổi sang policy nào?",
+    "options": [
+      "Immutable",
+      "All at once",
+      "Rolling với batch size lớn hơn",
+      "Giữ Rolling nhưng tắt health check trong khi deploy"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Vấn đề: Rolling deploy in-place nên lỗi giữa chừng làm instances đang phục vụ bị ảnh hưởng.\n✓ Immutable: deploy lên instances hoàn toàn mới; nếu lỗi chỉ cần xóa instances mới, instances cũ đang phục vụ không bị đụng tới, rollback an toàn nhất.\n✗ All at once: thay thế đồng loạt, lỗi gây downtime toàn bộ.\n✗ Rolling batch lớn hơn: vẫn in-place, lỗi vẫn ảnh hưởng instances đang chạy và còn rủi ro hơn.\n✗ Tắt health check: che giấu lỗi và làm traffic vào instances hỏng, nguy hiểm hơn.",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-054",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-02-xray",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Một ứng dụng trên EC2 đã chạy X-Ray daemon và instrument đúng nhưng KHÔNG có trace nào xuất hiện. Những nguyên nhân nào sau đây có thể giải thích việc thiếu trace? (Chọn 2)",
+    "options": [
+      "IAM role của EC2 thiếu quyền xray:PutTraceSegments (và xray:PutTelemetryRecords)",
+      "Sampling rule đặt reservoir = 0 và fixed rate = 0 nên không request nào được trace",
+      "Annotation được khai báo bằng put_metadata thay vì put_annotation",
+      "Service map chưa được publish lên CloudWatch Logs",
+      "Subsegment được đặt tên trùng với tên segment cha"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Thiếu trace thường do thiếu IAM, daemon, hoặc sampling chặn hết.\n✓ Thiếu quyền xray:PutTraceSegments khiến daemon không gửi được segment lên X-Ray.\n✓ Sampling rule với reservoir=0 và rate=0 làm không request nào được lấy mẫu nên không có trace.\n✗ Dùng put_metadata chỉ làm dữ liệu không filter được, vẫn có trace.\n✗ Service map tự sinh từ trace, không cần publish lên Logs.\n✗ Trùng tên subsegment không ngăn trace xuất hiện.",
+    "domain": 4,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-055",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-01-observability",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một Lambda function chạy thành công (trả về kết quả đúng) nhưng team không thấy bất kỳ dòng log nào trong CloudWatch Logs. Nguyên nhân khả dĩ nhất là gì?",
+    "options": [
+      "Execution role của Lambda thiếu các quyền logs:CreateLogGroup, logs:CreateLogStream và logs:PutLogEvents",
+      "Log group /aws/lambda/<function-name> đã hết hạn retention nên log bị xóa ngay",
+      "Function chưa được bật detailed monitoring nên không ghi log",
+      "Cần cấu hình subscription filter thì Lambda mới ghi được log"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lambda tự ghi log qua console.log/print nhưng cần quyền IAM trong execution role.\n✓ Thiếu logs:CreateLogGroup/CreateLogStream/PutLogEvents khiến function chạy ok nhưng không ghi được log.\n✗ Retention chỉ quyết định thời gian giữ log đã ghi, không chặn việc ghi.\n✗ Detailed monitoring là khái niệm của metric EC2, không liên quan ghi log Lambda.\n✗ Subscription filter chỉ stream log đã có đi nơi khác, không phải điều kiện để ghi log.",
+    "domain": 4,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-056",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-01-observability",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một developer tạo metric filter với pattern ERROR trên một log group đã chạy nhiều tuần, rồi tạo alarm trên metric đó. Vài phút sau alarm ở trạng thái INSUFFICIENT_DATA và không thấy số liệu cho khoảng thời gian trước khi tạo filter. Giải thích đúng là gì?",
+    "options": [
+      "Metric filter chỉ áp dụng cho log event MỚI ghi sau khi tạo, không hồi tố log cũ",
+      "Metric filter cần bật detailed monitoring mới phát ra số liệu",
+      "Pattern ERROR phải viết dưới dạng JSON thì mới khớp được log",
+      "Alarm cần composite alarm thì mới đọc được metric từ metric filter"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Metric filter không hồi tố: chỉ xử lý log ghi vào sau khi filter được tạo.\n✓ Vì vậy không có data cho khoảng trước đó; muốn phân tích log cũ phải dùng Logs Insights.\n✗ Detailed monitoring không liên quan đến metric filter.\n✗ Pattern term như ERROR vẫn khớp được, không bắt buộc JSON.\n✗ Composite alarm không phải điều kiện để đọc metric từ metric filter.",
+    "domain": 4,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-057",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-02-xray",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Kiến trúc: API Gateway -> Lambda A (đã bật Active tracing) -> gửi message vào SQS -> Lambda B (đã bật Active tracing) xử lý. Trên service map, trace bị đứt giữa Lambda A và Lambda B dù cả hai đều có trace riêng. Cách đúng để nối liền trace qua SQS là gì?",
+    "options": [
+      "Truyền trace context của X-Ray qua message attribute của SQS để Lambda B tiếp tục cùng trace",
+      "Bật Active tracing trên SQS queue để SQS tự nối hai segment",
+      "Ghi cùng một annotation traceId thủ công ở Lambda A và Lambda B",
+      "Tăng sampling rate lên 100% để X-Ray tự liên kết hai Lambda"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Để trace liên tục qua message queue, trace header phải được truyền qua message; SQS hỗ trợ truyền trace context qua message system attribute.\n✓ Truyền X-Ray trace context qua message attribute giúp Lambda B kế thừa cùng trace ID.\n✗ SQS không có tùy chọn Active tracing để tự nối segment.\n✗ Ghi annotation trùng tay không tạo liên kết parent/child thật trong trace.\n✗ Tăng sampling không giải quyết việc đứt context qua queue.",
+    "domain": 4,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-058",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-03-optimization",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một website dùng CloudFront. Backend trả nội dung khác nhau tùy ngôn ngữ trong header Accept-Language và tham số ?currency. Hiện tại người dùng đôi khi nhận nội dung sai ngôn ngữ/tiền tệ do cache. Cần cấu hình gì để cache đúng mà vẫn giữ hit rate hợp lý?",
+    "options": [
+      "Dùng cache policy đưa Accept-Language và query string currency vào cache key",
+      "Đặt TTL = 0 để CloudFront luôn bỏ qua cache",
+      "Forward toàn bộ mọi header và mọi cookie vào origin",
+      "Tắt CloudFront và phục vụ trực tiếp từ origin"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "CloudFront phục vụ nội dung khác nhau theo cache key; nếu key không bao gồm yếu tố quyết định nội dung thì người dùng nhận bản cache sai.\n✓ Cache policy đưa header và query string cần thiết vào cache key — đúng, tách cache theo ngôn ngữ và tiền tệ mà vẫn cache hiệu quả.\n✗ TTL = 0 — vô hiệu hóa cache, mất lợi ích CDN và tăng tải origin.\n✗ Forward toàn bộ header/cookie — làm cache key quá phân mảnh, hit rate sụt giảm nghiêm trọng.\n✗ Tắt CloudFront — mất hoàn toàn lợi ích caching/CDN.",
+    "domain": 4,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-059",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-01-observability",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Team đang nhận quá nhiều cảnh báo lẻ và chỉ muốn được thông báo khi CẢ HAI điều kiện cùng đúng: CPU cao VÀ latency cao. Giải pháp tối ưu là gì?",
+    "options": [
+      "Tạo composite alarm kết hợp hai alarm bằng logic AND",
+      "Tăng evaluation periods của cả hai alarm để giảm noise",
+      "Gộp hai metric vào một metric filter duy nhất",
+      "Tạo một alarm trên metric math cộng CPU và latency lại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Composite alarm kết hợp nhiều alarm bằng logic AND/OR để giảm noise.\n✓ Composite alarm với ALARM(HighCPU) AND ALARM(HighLatency) chỉ báo khi cả hai cùng đúng.\n✗ Tăng evaluation periods chỉ làm chậm cảnh báo, không kết hợp điều kiện.\n✗ Metric filter tạo metric từ log, không kết hợp hai metric độc lập theo logic.\n✗ Cộng CPU và latency bằng metric math là vô nghĩa về đơn vị và không thể hiện logic AND.",
+    "domain": 4,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-060",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-02-xray",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong một service đã instrument, developer muốn bao một lời gọi tới database PostgreSQL thành một đơn vị thời gian riêng bên trong segment của request để biết câu query mất bao lâu. Cấu trúc X-Ray phù hợp là gì?",
+    "options": [
+      "Tạo một subsegment bao quanh lời gọi database bên trong segment hiện tại",
+      "Tạo một segment mới riêng cho mỗi câu query database",
+      "Ghi thời gian query vào một annotation và bỏ qua subsegment",
+      "Tạo một service map node thủ công cho PostgreSQL"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Segment đại diện cho công việc của toàn service; subsegment chia nhỏ công việc bên trong (vd downstream call).\n✓ Subsegment bao quanh lời gọi database cho phép đo riêng thời gian query trong segment.\n✗ Mỗi service tạo một segment cho request, không tạo segment mới cho từng query.\n✗ Annotation chỉ lưu giá trị filter được, không thay thế được việc đo thời gian như subsegment.\n✗ Node service map được tự sinh từ trace, không tạo thủ công.",
+    "domain": 4,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-061",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-03-optimization",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một ứng dụng đọc nhiều từ DynamoDB với các truy vấn key lặp lại và cần độ trễ microsecond cho read, đồng thời giữ nguyên DynamoDB API hiện có với thay đổi code tối thiểu. Giải pháp caching nào phù hợp nhất?",
+    "options": [
+      "Amazon DynamoDB Accelerator (DAX)",
+      "ElastiCache for Redis với lazy loading do ứng dụng tự quản lý",
+      "ElastiCache for Memcached đặt trước DynamoDB",
+      "Bật DynamoDB Global Tables ở một Region thứ hai"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cần cache microsecond, tích hợp sẵn với DynamoDB và ít sửa code.\n✓ DAX — đúng, là cache in-memory write-through chuyên cho DynamoDB, tương thích API DynamoDB nên hầu như không phải đổi code, độ trễ microsecond.\n✗ ElastiCache for Redis tự quản lý — chạy được nhưng phải tự viết logic cache, đổi nhiều code và đạt độ trễ millisecond chứ không microsecond cho mẫu này.\n✗ ElastiCache for Memcached — tương tự, phải tự quản lý cache và không tích hợp gốc với DynamoDB.\n✗ Global Tables — phục vụ multi-Region/độ sẵn sàng, không phải để giảm độ trễ đọc bằng cache.",
+    "domain": 4,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-062",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-01-observability",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng dùng PutMetricData và đặt dimension userId (giá trị duy nhất cho mỗi người dùng) với hàng triệu user. Hệ quả chính là gì và nên sửa thế nào?",
+    "options": [
+      "Mỗi tổ hợp dimension tạo một custom metric riêng tính phí riêng → chi phí nổ; nên dùng dimension cardinality thấp như Env/Region",
+      "Metric sẽ bị throttle vì vượt giới hạn 30 dimensions cho mỗi metric",
+      "Dữ liệu vẫn gộp chung thành một metric duy nhất, không ảnh hưởng chi phí",
+      "CloudWatch tự động bỏ qua các dimension cardinality cao nên không vấn đề gì"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mỗi tổ hợp dimension khác nhau là một time series/metric riêng và tính phí riêng.\n✓ userId cardinality cao tạo hàng triệu custom metric → chi phí lớn; nên chọn dimension cardinality thấp.\n✗ Giới hạn 30 là số dimension cho một metric, không phải số giá trị; vấn đề ở đây là cardinality.\n✗ Các dimension khác nhau KHÔNG gộp chung; mỗi tổ hợp là metric riêng.\n✗ CloudWatch không tự bỏ qua dimension cardinality cao.",
+    "domain": 4,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-063",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-02-xray",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một API có lưu lượng rất lớn. Đội ngũ muốn vẫn nhìn được bức tranh đại diện về hiệu năng trên X-Ray nhưng GIẢM chi phí và lượng dữ liệu trace thu thập. Giải pháp đúng nhất là gì?",
+    "options": [
+      "Cấu hình sampling rule để chỉ thu thập một phần request (vd 1 req/giây + 5% phần còn lại)",
+      "Tắt hoàn toàn X-Ray vào giờ cao điểm rồi bật lại lúc thấp điểm",
+      "Chuyển toàn bộ annotation sang metadata để giảm dung lượng trace",
+      "Tăng kích thước buffer của X-Ray daemon để gộp segment lại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Sampling rule kiểm soát tỉ lệ request được trace, là cách chuẩn để giảm chi phí mà vẫn có dữ liệu đại diện.\n✓ Đặt reservoir (vd 1 req/giây) cộng fixed rate (vd 5%) giảm khối lượng trace và chi phí.\n✗ Tắt/bật thủ công gây mất dữ liệu lúc cao điểm và khó vận hành.\n✗ Chuyển annotation sang metadata làm mất khả năng filter, không phải cách giảm số trace.\n✗ Buffer daemon không giảm số trace gửi lên X-Ray.",
+    "domain": 4,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-064",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-03-optimization",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng có 200 hàm Lambda dùng chung account concurrency limit là 1000. Một hàm xử lý thanh toán quan trọng thỉnh thoảng bị throttle vì các hàm khác chiếm hết concurrency. Developer muốn ĐẢM BẢO hàm thanh toán luôn có sẵn một lượng concurrency riêng mà không bị các hàm khác lấn át. Giải pháp nào phù hợp nhất?",
+    "options": [
+      "Cấu hình reserved concurrency cho hàm thanh toán",
+      "Cấu hình provisioned concurrency cho tất cả 200 hàm",
+      "Tăng memory của hàm thanh toán lên tối đa 10240 MB",
+      "Đặt một SQS queue trước hàm thanh toán với batch size lớn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Yêu cầu là dành riêng một phần concurrency để hàm quan trọng không bị các hàm khác chiếm hết.\n✓ Reserved concurrency — đúng, dành riêng một phần concurrency cho hàm đó, đồng thời giới hạn các hàm khác không vượt quá phần còn lại.\n✗ Provisioned concurrency cho tất cả — tốn kém và không giải quyết việc phân bổ riêng phần concurrency để chống tranh chấp.\n✗ Tăng memory — cải thiện CPU/tốc độ nhưng không đảm bảo concurrency riêng, không chống throttle.\n✗ SQS với batch lớn — chỉ đệm request, không đảm bảo concurrency riêng và còn làm tăng độ trễ thanh toán.",
+    "domain": 4,
+    "mock": 3
+  },
+  {
+    "id": "dva-m3-065",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d4-03-optimization",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một developer đặt provisioned concurrency = 50 cho một hàm Lambda nhưng vào giờ cao điểm hàm vẫn thỉnh thoảng có cold start trong CloudWatch. Nguyên nhân khả dĩ nhất và cách khắc phục đúng best practice là gì?",
+    "options": [
+      "Lưu lượng vượt quá 50 đồng thời nên phần dư dùng on-demand concurrency (có cold start); dùng Application Auto Scaling để mở rộng provisioned concurrency theo lịch/đo lường",
+      "Provisioned concurrency không bao giờ loại bỏ cold start; phải chuyển sang reserved concurrency",
+      "Cold start xảy ra vì memory quá cao; giảm memory để hết cold start",
+      "Provisioned concurrency chỉ áp dụng cho phiên bản $LATEST nên cần xóa mọi alias"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Provisioned concurrency chỉ làm ấm sẵn đúng số lượng đã đặt; khi vượt ngưỡng đó, các invocation dư sẽ chạy bằng on-demand và có cold start.\n✓ Vượt 50 đồng thời + Application Auto Scaling — đúng, cần scale provisioned concurrency theo lịch hoặc theo utilization để bao phủ giờ cao điểm.\n✗ Provisioned concurrency không loại bỏ cold start — sai, nó loại bỏ cold start trong phạm vi đã cấp; reserved concurrency không làm ấm môi trường.\n✗ Giảm memory để hết cold start — không liên quan, memory không phải nguyên nhân ở đây.\n✗ Chỉ áp dụng cho $LATEST — sai, provisioned concurrency cấu hình trên version/alias chứ không phải $LATEST.",
+    "domain": 4,
+    "mock": 3
+  },
+  {
+    "id": "dva-ext-001",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-05-app-integration",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Nền tảng analytics cần ingest clickstream real-time. Yêu cầu: nhiều ứng dụng độc lập phải đọc CÙNG luồng dữ liệu (một app tính metric, một app lưu vào S3, một app phát hiện gian lận), và phải có khả năng replay dữ liệu trong 7 ngày khi pipeline lỗi. Dịch vụ nào đáp ứng tốt nhất?",
+    "options": [
+      "Amazon Kinesis Data Streams với retention 7 ngày và nhiều consumer",
+      "Amazon SQS Standard với ba consumer group cùng poll",
+      "Amazon SNS + ba SQS queue fan-out",
+      "Amazon MQ với một topic JMS"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Nhiều ứng dụng đọc cùng luồng + replay được + streaming real-time → Kinesis Data Streams, không phải SQS.\n✓ Kinesis Data Streams: giữ dữ liệu (retention tới 365 ngày, đặt 7 ngày), nhiều consumer đọc lại cùng data, replay được, thứ tự theo shard.\n✗ SQS Standard: 1 message → 1 consumer, xóa sau khi xử lý, không replay, không cho nhiều app đọc cùng data.\n✗ SNS + SQS fan-out: mỗi queue có bản sao riêng và bị xóa sau xử lý → không replay được như stream.\n✗ Amazon MQ: message broker truyền thống, không tối ưu cho streaming analytics quy mô lớn với replay theo retention.",
+    "domain": 1
+  },
+  {
+    "id": "dva-ext-002",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-05-app-integration",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một ứng dụng ghi vào Kinesis Data Stream chế độ provisioned. Producer liên tục nhận lỗi ProvisionedThroughputExceededException trong khi tổng lượng ghi của cả stream vẫn dưới giới hạn lý thuyết. Nguyên nhân gốc khả dĩ nhất là gì?",
+    "options": [
+      "Partition key phân bố lệch khiến một shard bị nóng (hot shard); cần chọn partition key phân tán đều hơn hoặc tăng shard",
+      "Retention period quá ngắn khiến record bị hết hạn khi ghi",
+      "Consumer dùng enhanced fan-out chiếm hết băng thông ghi của producer",
+      "Stream đang ở chế độ on-demand nên throughput bị giới hạn cứng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mỗi shard có giới hạn riêng (1 MB/s hoặc 1000 record/s khi ghi). Partition key lệch dồn nhiều record vào một shard → hot shard → lỗi dù tổng stream chưa đầy.\n✓ Hot shard do partition key lệch: chọn partition key phân tán đều hoặc tăng số shard để giải nhiệt.\n✗ Retention ngắn: ảnh hưởng thời gian lưu/replay, không gây lỗi throughput khi ghi.\n✗ Enhanced fan-out: cấp băng thông đọc riêng cho consumer, không lấy băng thông ghi của producer.\n✗ On-demand: chế độ này tự scale, không gây ProvisionedThroughputExceeded; lỗi này thuộc về phân bố trên shard provisioned.",
+    "domain": 1
+  },
+  {
+    "id": "dva-ext-003",
+    "courseId": "DVA-C02",
+    "lesson": "dva-d1-05-app-integration",
+    "certifications": [
+      "DVA-C02"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một SQS Standard queue được tiêu thụ bởi Lambda qua event source mapping. Thỉnh thoảng có một message bị lỗi parse (poison pill) khiến function fail liên tục, làm message quay lại queue mãi và chặn tiến độ. Đội cần xử lý 'poison pill' và đảm bảo phần còn lại của batch vẫn chạy. Chọn HAI biện pháp đúng.",
+    "options": [
+      "Cấu hình redrive policy với DLQ và maxReceiveCount (ví dụ 5) để chuyển message lỗi sang DLQ điều tra",
+      "Bật ReportBatchItemFailures để Lambda chỉ trả lại message lỗi thay vì cả batch",
+      "Tăng visibility timeout lên 12 giờ để message lỗi không quay lại",
+      "Chuyển queue sang FIFO để tự động loại bỏ message lỗi",
+      "Tắt long polling để worker bỏ qua message lỗi nhanh hơn"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Poison pill cần DLQ (qua maxReceiveCount) để cô lập message lỗi, và ReportBatchItemFailures để không kéo cả batch fail theo.\n✓ DLQ + maxReceiveCount: sau N lần receive không xóa được, message bị đẩy sang DLQ, không chặn queue.\n✓ ReportBatchItemFailures: Lambda chỉ trả lại các message lỗi trong batch, các message thành công vẫn được xử lý/xóa.\n✗ Tăng visibility timeout 12 giờ: chỉ trì hoãn message hiện lại, không loại bỏ poison pill, vẫn quay lại sau đó.\n✗ Chuyển sang FIFO: FIFO không tự loại bỏ message lỗi parse; còn có thể chặn cả MessageGroup khi message đầu fail.\n✗ Tắt long polling: chỉ ảnh hưởng cách poll, không xử lý được message lỗi.",
+    "domain": 1
+  },
+  {
+    "id": "saa-m1-001",
     "courseId": "SAA-C03",
     "lesson": "ch3-01-iam-deep-dive",
     "certifications": [
@@ -8809,609 +13239,7 @@ export const generatedQuestions: Question[] = [
     "mock": 1
   },
   {
-    "id": "saa-m2-003",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-01-iam-deep-dive",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một công ty có hàng nghìn project, mỗi project cần một bộ tài nguyên EC2/S3 riêng. Họ muốn một mô hình phân quyền nơi mỗi engineer chỉ truy cập tài nguyên có tag Project khớp với tag Project gắn trên principal của họ, tránh phải viết policy riêng cho từng project. Cách tiếp cận nào tối ưu?",
-    "options": [
-      "Dùng ABAC: gắn tag cho principal và resource, viết một IAM policy dùng điều kiện aws:PrincipalTag khớp với aws:ResourceTag",
-      "Dùng RBAC: tạo một IAM role riêng cho mỗi project và viết policy liệt kê ARN cụ thể",
-      "Tạo một group cho mỗi project và gán user vào group tương ứng theo cách thủ công",
-      "Dùng SCP với điều kiện tag để giới hạn từng project"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "ABAC dùng tag trên principal và resource để cấp quyền động, cho phép một policy duy nhất phục vụ hàng nghìn project và scale tốt.\n✓ ABAC với PrincipalTag/ResourceTag: một policy duy nhất, tự động khớp quyền theo tag, scale tới hàng nghìn project, ít bảo trì.\n✗ RBAC với role/policy riêng từng project: bùng nổ số lượng policy/role, vận hành nặng khi có hàng nghìn project.\n✗ Group thủ công cho mỗi project: không scale, vẫn cần policy riêng cho từng group.\n✗ SCP theo tag: SCP là guardrail cấp account/OU, không phải cơ chế phân quyền chi tiết động cho engineer.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-003",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-01-iam-deep-dive",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một Lambda function cần ghi vào DynamoDB và đọc một secret từ Secrets Manager. Solutions Architect muốn cấp quyền theo least privilege và least operational overhead. Cách nào đúng nhất?",
-    "options": [
-      "Tạo một IAM execution role cho Lambda với policy chỉ cho phép các action cụ thể trên đúng bảng DynamoDB và đúng secret ARN",
-      "Tạo IAM user, sinh access key và lưu vào biến môi trường của Lambda",
-      "Gắn AdministratorAccess vào execution role để đảm bảo function chạy được",
-      "Dùng resource-based policy trên Lambda để cấp quyền truy cập DynamoDB"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Lambda execution role với policy giới hạn đúng action và đúng ARN tài nguyên là cách chuẩn theo least privilege.\n✓ Execution role với quyền cụ thể: temporary credentials tự động, chỉ đúng quyền cần thiết, ít vận hành.\n✗ IAM user + access key trong env: long-term credentials, rủi ro lộ key, sai best practice.\n✗ AdministratorAccess: vi phạm least privilege nghiêm trọng.\n✗ Resource-based policy trên Lambda: kiểm soát ai được gọi Lambda, không cấp quyền cho Lambda truy cập DynamoDB.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-005",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-01-iam-deep-dive",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Trong policy evaluation logic của IAM, một request có: identity-based policy ALLOW action, không có SCP nào liên quan, permission boundary của principal KHÔNG bao gồm action đó, và resource-based policy (cùng account) có explicit ALLOW cho principal. Kết quả cuối cùng đối với một IAM role principal là gì?",
-    "options": [
-      "Bị từ chối, vì permission boundary giới hạn quyền hiệu lực và action không nằm trong boundary",
-      "Được phép, vì resource-based policy explicit ALLOW luôn thắng permission boundary",
-      "Được phép, vì identity-based ALLOW kết hợp resource-based ALLOW là đủ",
-      "Bị từ chối, vì thiếu explicit ALLOW trong SCP"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Permission boundary đặt trần quyền hiệu lực của principal; trong cùng account, action phải được cả identity policy lẫn boundary cho phép.\n✓ Bị từ chối do permission boundary: quyền hiệu lực là giao của identity policy và boundary; action ngoài boundary nên không được phép trong cùng account.\n✗ Resource-based luôn thắng boundary: chỉ đúng trong cross-account; ở cùng account vẫn chịu giới hạn của boundary.\n✗ Identity + resource ALLOW là đủ: bỏ qua giới hạn của permission boundary trong cùng account.\n✗ Thiếu ALLOW trong SCP: đề nêu không có SCP liên quan, không phải nguyên nhân.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-004",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-01-iam-deep-dive",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một team có 15 developer cần cùng một bộ quyền truy cập vào môi trường dev. Quản trị viên muốn quản lý quyền cho cả nhóm một cách hiệu quả và dễ bảo trì khi có người vào/ra. Cách tổ chức IAM nào phù hợp nhất?",
-    "options": [
-      "Tạo một IAM group cho team dev, gắn policy vào group, và thêm/bớt user vào group",
-      "Gắn policy trực tiếp vào từng IAM user của 15 developer",
-      "Tạo một IAM user dùng chung cho cả 15 developer",
-      "Tạo 15 IAM role và yêu cầu mỗi developer assume role của mình"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "IAM group cho phép quản lý quyền tập trung cho nhiều user và dễ thêm/bớt thành viên.\n✓ IAM group + policy: quản lý quyền một nơi, thêm/bớt user đơn giản, dễ bảo trì.\n✗ Policy gắn trực tiếp từng user: trùng lặp, khó đồng bộ khi thay đổi quyền.\n✗ User dùng chung: mất khả năng truy vết hành động từng cá nhân, rủi ro bảo mật.\n✗ 15 role riêng: phức tạp không cần thiết cho nhóm có quyền giống nhau.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-004",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-01-iam-deep-dive",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng on-premises cần gọi AWS API để upload dữ liệu vào S3. Yêu cầu là không lưu long-term IAM credentials trên máy chủ on-premises. Hệ thống on-premises đã có một OIDC identity provider. Giải pháp nào tối ưu để cấp quyền tạm thời?",
-    "options": [
-      "Cấu hình IAM OIDC identity provider và để ứng dụng dùng web identity token gọi STS AssumeRoleWithWebIdentity lấy temporary credentials",
-      "Tạo IAM user, sinh access key và lưu trong file cấu hình trên máy chủ on-premises",
-      "Dùng IAM Roles Anywhere với access key tĩnh",
-      "Tạo một IAM role và chia sẻ secret key của role cho ứng dụng on-premises"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "OIDC federation cho phép workload bên ngoài đổi token sang temporary AWS credentials mà không cần lưu long-term key.\n✓ IAM OIDC provider + AssumeRoleWithWebIdentity: dùng token OIDC sẵn có, nhận temporary credentials, không lưu long-term key.\n✗ IAM user access key trong file: chính là long-term credentials cần tránh.\n✗ IAM Roles Anywhere với access key tĩnh: Roles Anywhere dùng X.509 certificate, không dùng access key tĩnh; mô tả sai.\n✗ Chia sẻ secret key của role: role không có long-term secret key để chia sẻ.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-006",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-01-iam-deep-dive",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Account Production (A) chứa role có quyền deploy. Một CI/CD pipeline chạy trong account Tooling (B) cần assume role này. Security team yêu cầu chỉ pipeline cụ thể được assume, ngăn 'confused deputy', kể cả khi role ARN bị lộ. Biện pháp bổ sung nào trong trust policy là phù hợp nhất?",
-    "options": [
-      "Thêm điều kiện sts:ExternalId (hoặc aws:PrincipalArn cụ thể) trong trust policy của role ở account A",
-      "Cấp quyền AdministratorAccess cho role ở account A để pipeline chạy trơn tru",
-      "Dùng access key của một IAM user trong account A và lưu trong pipeline",
-      "Mở trust policy cho phép Principal là * và lọc bằng bucket policy"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "ExternalId (hoặc giới hạn principal ARN cụ thể) trong trust policy chống confused deputy và giới hạn chính xác ai được assume.\n✓ sts:ExternalId / PrincipalArn cụ thể: chỉ caller biết đúng ExternalId hoặc đúng ARN mới assume được, chống confused deputy.\n✗ AdministratorAccess: không liên quan tới kiểm soát ai được assume, lại vi phạm least privilege.\n✗ Access key IAM user trong pipeline: long-term credentials, đi ngược best practice AssumeRole.\n✗ Principal * + bucket policy: trust policy quá mở, bucket policy không kiểm soát việc assume role.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-005",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-01-iam-deep-dive",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một công ty muốn áp dụng nguyên tắc least privilege khi tạo IAM policy mới cho một service team, nhưng không chắc team thực sự cần những action nào. Công cụ AWS nào giúp xác định quyền tối thiểu dựa trên hoạt động thực tế đã xảy ra?",
-    "options": [
-      "IAM Access Analyzer (policy generation dựa trên CloudTrail activity)",
-      "Amazon Inspector",
-      "AWS Trusted Advisor cost check",
-      "Amazon GuardDuty"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "IAM Access Analyzer có thể sinh policy least-privilege dựa trên hoạt động thực tế ghi trong CloudTrail.\n✓ IAM Access Analyzer: phân tích CloudTrail để gợi ý policy chỉ chứa action thực sự được dùng, hỗ trợ least privilege.\n✗ Amazon Inspector: quét lỗ hổng workload, không sinh IAM policy.\n✗ Trusted Advisor cost check: kiểm tra chi phí, không liên quan quyền.\n✗ GuardDuty: phát hiện mối đe dọa, không sinh policy least-privilege.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-005",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-01-iam-deep-dive",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một policy có một explicit Deny cho s3:DeleteObject với điều kiện aws:MultiFactorAuthPresent là false, và một policy khác Allow s3:DeleteObject. Một user không dùng MFA gọi s3:DeleteObject. Theo policy evaluation logic, kết quả là gì?",
-    "options": [
-      "Bị từ chối, vì explicit Deny luôn ưu tiên hơn mọi Allow khi điều kiện Deny khớp",
-      "Được phép, vì có một Allow rõ ràng cho action",
-      "Được phép, vì điều kiện MFA chỉ là cảnh báo chứ không chặn",
-      "Bị từ chối, vì thiếu resource-based policy"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Trong IAM, explicit Deny luôn thắng Allow; vì user không có MFA nên điều kiện Deny khớp và request bị chặn.\n✓ Bị từ chối do explicit Deny: điều kiện MFA-false khớp, explicit Deny override Allow.\n✗ Được phép vì có Allow: explicit Deny luôn ưu tiên hơn Allow.\n✗ Điều kiện MFA chỉ cảnh báo: sai, điều kiện trong Deny thực sự chặn request.\n✗ Thiếu resource-based policy: không liên quan; nguyên nhân là explicit Deny.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "saa-m2-006",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-01-iam-deep-dive",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "multi",
-    "question": "Một công ty triển khai AWS IAM Identity Center cho 50 account trong Organizations. Họ muốn quản lý quyền truy cập hiệu quả và an toàn. Những phát biểu nào về permission set là ĐÚNG? (Chọn 2)",
-    "options": [
-      "Một permission set có thể được gán cho nhiều account và nhóm user, giúp quản lý quyền tập trung",
-      "Khi user đăng nhập, Identity Center cấp temporary credentials qua role tương ứng trong account đích",
-      "Permission set chỉ áp dụng cho một account duy nhất và phải tạo lại cho mỗi account",
-      "Permission set cấp long-term access key cho mỗi user để dùng lâu dài",
-      "Permission set thay thế hoàn toàn nhu cầu dùng SCP làm guardrail"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Permission set là tập quyền tái sử dụng được gán cho nhiều account/nhóm và cấp temporary credentials khi đăng nhập.\n✓ Gán cho nhiều account/nhóm: permission set tái sử dụng, quản lý tập trung trên nhiều account.\n✓ Cấp temporary credentials qua role: Identity Center tạo IAM role trong account đích và cấp credentials tạm thời.\n✗ Chỉ cho một account: sai, permission set được thiết kế để dùng lại trên nhiều account.\n✗ Cấp long-term access key: sai, credentials là tạm thời.\n✗ Thay thế SCP: SCP và permission set bổ trợ nhau; SCP vẫn là guardrail cấp account/OU.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "saa-m1-007",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-01-iam-deep-dive",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng web chạy trên EC2 dùng IAM role qua instance profile. Developer phàn nàn rằng đôi khi ứng dụng nhận lỗi do credentials hết hạn vì code tự đọc và cache credentials. Solutions Architect nên hướng dẫn điều gì là đúng nhất về temporary credentials từ instance profile?",
-    "options": [
-      "AWS SDK tự động lấy và làm mới credentials từ Instance Metadata Service; ứng dụng nên dùng SDK thay vì cache credentials thủ công",
-      "Cần tạo IAM user và gắn access key cố định để tránh hết hạn",
-      "Phải tăng thời hạn session lên 1 năm trong instance profile",
-      "Phải gọi STS GetSessionToken thủ công mỗi giờ và lưu vào file"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Credentials từ instance profile là tạm thời và được xoay vòng tự động; AWS SDK lấy/làm mới chúng qua IMDS, ứng dụng không nên tự cache.\n✓ Dùng SDK để lấy/làm mới từ IMDS: SDK xử lý refresh tự động, tránh lỗi credentials hết hạn.\n✗ IAM user access key cố định: long-term credentials, sai best practice và không cần thiết.\n✗ Tăng thời hạn lên 1 năm: instance profile credentials không cấu hình kiểu đó; vấn đề là cache thủ công.\n✗ Gọi GetSessionToken thủ công lưu file: phức tạp không cần thiết, SDK đã tự xử lý.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-007",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-01-iam-deep-dive",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một tổ chức muốn các developer chỉ có thể thao tác trong region us-east-1 và ap-southeast-1, áp dụng cho TẤT CẢ principal trong một OU gồm 30 account, đồng thời vẫn cho phép một số global service hoạt động. Cách thiết kế guardrail nào hợp lý và ít vận hành nhất?",
-    "options": [
-      "Dùng SCP gắn ở OU với điều kiện aws:RequestedRegion để deny action ngoài hai region, kèm NotAction loại trừ các global service cần thiết",
-      "Viết IAM policy region-restriction và gắn thủ công vào từng role trong 30 account",
-      "Tạo permission boundary region-restriction cho từng user trong mỗi account",
-      "Dùng AWS Config rule để xóa tài nguyên tạo sai region sau khi phát hiện"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "SCP với điều kiện aws:RequestedRegion và NotAction loại trừ global service thực thi guardrail region tập trung cho cả OU với ít vận hành.\n✓ SCP với RequestedRegion + NotAction global service: áp dụng tự động cho mọi principal trong OU, loại trừ global service, tập trung và ít bảo trì.\n✗ IAM policy gắn thủ công từng role: vận hành cực lớn trên 30 account, dễ bỏ sót.\n✗ Permission boundary từng user: chỉ giới hạn user gắn boundary, không bao trùm mọi principal, vận hành nặng.\n✗ Config auto-delete: detective và phá hủy tài nguyên sau khi đã tạo, không phải guardrail phòng ngừa.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-006",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-01-iam-deep-dive",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một nhà thầu bên ngoài cần truy cập tạm thời vào một số tài nguyên trong account của bạn trong 2 tuần. Bạn muốn cấp quyền an toàn, có thể thu hồi dễ dàng, không tạo credentials lâu dài. Cách tiếp cận nào tối ưu?",
-    "options": [
-      "Tạo một IAM role với trust policy cho phép account của nhà thầu AssumeRole, gắn policy least-privilege, và xóa/điều chỉnh trust sau 2 tuần",
-      "Tạo IAM user cho nhà thầu với access key và xóa sau 2 tuần",
-      "Gắn AdministratorAccess cho một IAM user mới của nhà thầu",
-      "Chia sẻ mật khẩu root account cho nhà thầu trong thời gian làm việc"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "IAM role với cross-account trust cấp temporary credentials, dễ thu hồi bằng cách sửa/xóa trust policy, không tạo long-term credentials.\n✓ IAM role + cross-account AssumeRole: temporary credentials least-privilege, thu hồi dễ bằng cách chỉnh trust, an toàn cho truy cập tạm.\n✗ IAM user + access key: long-term credentials, rủi ro lộ và khó kiểm soát hơn.\n✗ AdministratorAccess cho user mới: vi phạm least privilege nghiêm trọng.\n✗ Chia sẻ root: cực kỳ nguy hiểm, không bao giờ làm.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-008",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-02-network-security",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một ứng dụng web chạy trên EC2 trong public subnet. Security group hiện cho phép inbound HTTPS (443) từ 0.0.0.0/0. Team muốn cho phép trả response về client mà không cần khai báo thêm rule outbound nào. Đặc tính nào của security group giải thích vì sao điều này hoạt động?",
-    "options": [
-      "Security group là stateful: traffic phản hồi của một kết nối inbound được tự động cho phép ra",
-      "Security group là stateless nên cần thêm outbound rule cho ephemeral ports",
-      "NACL stateful tự động cho phép response",
-      "Security group đánh giá rule theo thứ tự số như NACL"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Security group là stateful nên response của kết nối inbound được tự động cho qua, không cần outbound rule tương ứng.\n✓ Stateful, response tự động cho ra — đúng bản chất security group.\n✗ Stateless cần ephemeral ports — đó là đặc tính của NACL, không phải security group.\n✗ NACL stateful — sai, NACL là stateless.\n✗ Đánh giá theo thứ tự số — đó là NACL; security group đánh giá tất cả rule (allow-only).",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-008",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-02-network-security",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một công ty cần chặn một dải IP độc hại cụ thể (CIDR) ở cấp subnet, áp dụng cho mọi instance trong subnet đó, kể cả khi rule chặn cần đứng trước rule allow. Cơ chế nào phù hợp nhất?",
-    "options": [
-      "Network ACL với explicit deny rule có số thứ tự thấp",
-      "Security group với deny rule",
-      "AWS WAF web ACL gắn vào subnet",
-      "Route table với blackhole route cho CIDR đó"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "NACL hỗ trợ explicit deny và đánh giá theo thứ tự số, áp ở cấp subnet — phù hợp để chặn một CIDR.\n✓ NACL explicit deny rule số thấp — đúng, NACL có deny và xét theo thứ tự.\n✗ Security group deny rule — security group chỉ có allow, không có deny.\n✗ WAF gắn vào subnet — WAF gắn vào ALB/CloudFront/API Gateway, không gắn subnet.\n✗ Blackhole route — chỉ ảnh hưởng routing đích, không lọc theo source IP độc hại.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-007",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-02-network-security",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Các EC2 trong private subnet cần kéo OS patches từ Internet nhưng KHÔNG được nhận kết nối khởi tạo từ Internet. Giải pháp nào highly available và least operational overhead?",
-    "options": [
-      "Triển khai NAT gateway tại mỗi AZ và trỏ route private subnet ra NAT gateway cùng AZ",
-      "Gán Elastic IP cho từng instance để chúng tự ra Internet",
-      "Triển khai một NAT instance EC2 tự quản tại một AZ duy nhất",
-      "Dùng Internet gateway và đặt instance vào public subnet"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "NAT gateway là managed, HA trong AZ; đặt một NAT gateway mỗi AZ tránh single point of failure và phí cross-AZ.\n✓ NAT gateway mỗi AZ — đúng, HA và ít vận hành nhất (managed).\n✗ Elastic IP cho từng instance — biến instance thành public, nhận được kết nối từ Internet, vi phạm yêu cầu.\n✗ NAT instance một AZ — phải tự vá/scale, single point of failure, nhiều vận hành.\n✗ Public subnet + IGW — phơi bày instance ra Internet.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-009",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-02-network-security",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Admin cần truy cập shell quản trị các EC2 trong private subnet. Công ty muốn loại bỏ bastion host và không mở cổng 22 inbound nào, đồng thời ghi log mọi phiên. Giải pháp least operational overhead nào nên dùng?",
-    "options": [
-      "AWS Systems Manager Session Manager qua SSM Agent và VPC endpoints",
-      "Bastion host trong public subnet với security group giới hạn IP văn phòng",
-      "Client VPN endpoint cho phép SSH trực tiếp vào instance",
-      "Mở port 22 và dùng key pair luân phiên định kỳ"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Session Manager cho phép truy cập không cần mở inbound port, không cần bastion, và log phiên ra CloudWatch/S3.\n✓ SSM Session Manager — đúng, không mở cổng 22, không bastion, có log phiên.\n✗ Bastion host — vẫn cần host, vẫn mở port 22, nhiều vận hành hơn.\n✗ Client VPN + SSH — vẫn phải mở 22 và quản lý VPN, không loại bỏ inbound port.\n✗ Mở port 22 — trái yêu cầu không mở inbound port.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-009",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-02-network-security",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng EC2 trong private subnet cần đọc/ghi object trong Amazon S3 mà KHÔNG đi qua Internet và muốn tránh chi phí xử lý dữ liệu của NAT gateway. Giải pháp cost-effective nào phù hợp?",
-    "options": [
-      "Gateway VPC endpoint cho S3 và thêm route vào route table của private subnet",
-      "Interface VPC endpoint (PrivateLink) cho S3 với phí giờ và phí GB",
-      "NAT gateway cho instance ra Internet truy cập S3 public endpoint",
-      "VPC peering giữa VPC và một VPC do AWS quản lý chứa S3"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Gateway endpoint cho S3 không tính phí và định tuyến qua mạng AWS, tránh hoàn toàn NAT.\n✓ Gateway VPC endpoint cho S3 — đúng, miễn phí và không qua Internet/NAT.\n✗ Interface endpoint cho S3 — tốn phí giờ + GB, kém cost-effective hơn gateway endpoint cho cùng mục đích.\n✗ NAT gateway ra public endpoint — phát sinh phí xử lý GB qua NAT, kém cost-effective.\n✗ VPC peering tới VPC chứa S3 — S3 không nằm trong VPC khách, không peer được như vậy.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-008",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-02-network-security",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Các EC2 private cần gọi AWS Systems Manager, Secrets Manager và KMS API nhưng VPC không có NAT gateway hay Internet gateway và phải giữ traffic trong mạng AWS. Giải pháp nào đáp ứng?",
-    "options": [
-      "Tạo Interface VPC endpoints (PrivateLink) cho từng service đó",
-      "Tạo một Gateway VPC endpoint chung cho cả ba service",
-      "Thêm NAT gateway để instance gọi public API endpoints",
-      "Bật VPC peering tới VPC dịch vụ của AWS"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Các API như SSM/Secrets Manager/KMS chỉ hỗ trợ Interface endpoint (PrivateLink), giữ traffic riêng tư qua ENI trong VPC.\n✓ Interface VPC endpoints — đúng, PrivateLink cho các API service này, không cần Internet.\n✗ Gateway endpoint chung — gateway endpoint chỉ hỗ trợ S3 và DynamoDB.\n✗ NAT gateway — đưa traffic ra Internet, trái yêu cầu giữ trong mạng AWS.\n✗ VPC peering tới VPC AWS — không phải cách truy cập các API service này.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-010",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-02-network-security",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng web sau ALB hứng đợt tấn công SQL injection và HTTP flood ở Layer 7. Công ty muốn lọc request độc hại theo pattern và rate-limit theo IP với least operational overhead. Dịch vụ nào phù hợp nhất?",
-    "options": [
-      "AWS WAF với managed rule groups và rate-based rules gắn vào ALB",
-      "AWS Network Firewall đặt trước ALB",
-      "Security group thắt chặt trên các instance backend",
-      "AWS Shield Standard tự bảo vệ Layer 7"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "WAF hoạt động ở Layer 7, có managed rules cho SQLi và rate-based rules, gắn trực tiếp vào ALB.\n✓ AWS WAF + managed rules + rate-based — đúng cho SQLi và HTTP flood ở L7.\n✗ Network Firewall — lọc L3/L4 (và một số L7) ở cấp VPC, không tối ưu cho web exploits theo HTTP pattern như WAF.\n✗ Security group — chỉ lọc IP/port, không hiểu nội dung HTTP.\n✗ Shield Standard — chống DDoS L3/L4 cơ bản, không lọc SQLi L7.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-010",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-02-network-security",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một sàn giao dịch tài chính chạy ứng dụng quan trọng sau ALB và CloudFront. Họ cần bảo vệ DDoS nâng cao với cam kết phản hồi từ SRT (Shield Response Team) và bảo vệ chi phí scaling khi bị tấn công. Giải pháp nào?",
-    "options": [
-      "Đăng ký AWS Shield Advanced và bật bảo vệ cho ALB, CloudFront cùng WAF",
-      "Chỉ dựa vào AWS Shield Standard miễn phí cho mọi tài nguyên",
-      "Triển khai AWS Network Firewall để hấp thụ tấn công DDoS thể tích lớn",
-      "Dùng nhiều NACL rule để chặn IP tấn công thủ công"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Shield Advanced cung cấp bảo vệ DDoS nâng cao, hỗ trợ SRT và cost protection cho scaling do tấn công.\n✓ Shield Advanced — đúng, có SRT support và DDoS cost protection.\n✗ Shield Standard — chỉ bảo vệ cơ bản L3/L4, không có SRT hay cost protection.\n✗ Network Firewall — không phải dịch vụ chống DDoS thể tích và không có SRT.\n✗ NACL thủ công — không khả thi để chống DDoS quy mô lớn theo thời gian thực.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-009",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-02-network-security",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một tổ chức cần kiểm soát egress: cho phép EC2 chỉ gọi ra các domain được allowlist (vd *.example.com) và chặn mọi domain khác, áp dụng tập trung ở biên VPC với khả năng inspect TLS SNI. Giải pháp nào phù hợp nhất?",
-    "options": [
-      "AWS Network Firewall với stateful rule group lọc theo domain/SNI",
-      "Security group outbound rule liệt kê domain được phép",
-      "NACL outbound chặn theo domain name",
-      "NAT gateway với danh sách domain cho phép cấu hình sẵn"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Network Firewall hỗ trợ stateful domain filtering (HTTP host/TLS SNI) ở cấp VPC để kiểm soát egress tập trung.\n✓ Network Firewall domain/SNI filtering — đúng, lọc egress theo domain tập trung.\n✗ Security group theo domain — security group chỉ chấp nhận IP/CIDR/port, không phải domain.\n✗ NACL theo domain — NACL cũng chỉ làm việc với IP/port.\n✗ NAT gateway — không có chức năng lọc domain allowlist.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-011",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-02-network-security",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng RDS PostgreSQL dùng username/password được hardcode trong code. Team muốn lưu credential an toàn và tự động luân phiên password định kỳ với least operational overhead. Dịch vụ nào phù hợp nhất?",
-    "options": [
-      "AWS Secrets Manager với automatic rotation cho RDS",
-      "AWS Systems Manager Parameter Store SecureString tự viết Lambda rotation",
-      "Lưu credential trong S3 bucket được mã hóa bằng KMS",
-      "Lưu credential trong biến môi trường EC2 mã hóa bằng KMS"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Secrets Manager hỗ trợ tích hợp sẵn automatic rotation cho RDS, ít vận hành nhất.\n✓ Secrets Manager + auto rotation — đúng, rotation tích hợp sẵn cho RDS.\n✗ Parameter Store + tự viết Lambda rotation — Parameter Store không có rotation tích hợp, phải tự xây dựng, nhiều vận hành.\n✗ S3 mã hóa KMS — lưu được nhưng không có rotation tự động.\n✗ Biến môi trường — không có rotation và khó quản lý vòng đời bí mật.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-011",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-02-network-security",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một mobile/web app cần đăng ký, đăng nhập người dùng và phát hành token để gọi API Gateway, hỗ trợ cả social login (Google, Facebook) và MFA, với least operational overhead. Dịch vụ nào phù hợp nhất?",
-    "options": [
-      "Amazon Cognito user pools làm identity provider phát hành JWT cho API Gateway",
-      "IAM users tạo cho từng người dùng cuối của ứng dụng",
-      "AWS Directory Service với một AD tự quản",
-      "Lưu user/password trong DynamoDB và tự viết logic xác thực"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Cognito user pools cung cấp đăng ký/đăng nhập, federation social, MFA và phát hành JWT tích hợp với API Gateway.\n✓ Cognito user pools — đúng, quản lý user, social IdP, MFA, token cho API Gateway.\n✗ IAM users cho end users — IAM dành cho người/dịch vụ vận hành AWS, không scale cho end users app.\n✗ Directory Service tự quản — phức tạp, nặng vận hành cho app web/mobile công khai.\n✗ Tự viết auth trên DynamoDB — nhiều vận hành và rủi ro bảo mật cao.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-010",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-02-network-security",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một web app cần truy cập tạm thời vào S3 và DynamoDB từ người dùng đã đăng nhập qua Cognito. Kiến trúc nào cấp quyền AWS theo nguyên tắc least privilege mà không nhúng AWS credential dài hạn vào client?",
-    "options": [
-      "Cognito identity pools đổi token lấy temporary IAM credentials qua STS gắn IAM role",
-      "Tạo một IAM access key chung nhúng vào ứng dụng client",
-      "Dùng API key của API Gateway thay cho IAM credentials",
-      "Cấp cho mỗi user một IAM user với access key riêng"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Cognito identity pools đổi token (từ user pool/IdP) lấy temporary credentials qua STS với IAM role có quyền hạn chế.\n✓ Cognito identity pools + STS temporary credentials — đúng, không nhúng credential dài hạn, least privilege qua role.\n✗ Access key chung nhúng client — credential dài hạn lộ ra client, rất rủi ro.\n✗ API key của API Gateway — chỉ để định danh/throttle, không cấp quyền truy cập S3/DynamoDB.\n✗ IAM user mỗi end user — không scale và vẫn dùng credential dài hạn.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-012",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-02-network-security",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ALB phục vụ ứng dụng cần chỉ chấp nhận traffic từ CloudFront, không cho client truy cập trực tiếp ALB DNS. Giải pháp nào phù hợp và ít vận hành?",
-    "options": [
-      "Dùng AWS managed prefix list của CloudFront trong security group của ALB và header secret kiểm tra ở WAF",
-      "Đặt ALB vào private subnet và bỏ Internet gateway",
-      "Chặn mọi IP công khai bằng NACL trên subnet của ALB",
-      "Bật Shield Advanced để ẩn ALB khỏi Internet"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Security group dùng managed prefix list của CloudFront giới hạn nguồn, kết hợp custom header verify ở WAF chặn truy cập trực tiếp.\n✓ CloudFront prefix list + header check ở WAF — đúng, chỉ cho CloudFront tới ALB.\n✗ ALB private subnet bỏ IGW — CloudFront vẫn cần tới được origin; private-only phá vỡ kiến trúc CloudFront->ALB công khai.\n✗ NACL chặn mọi IP công khai — sẽ chặn luôn CloudFront, không phân biệt được nguồn hợp lệ.\n✗ Shield Advanced — bảo vệ DDoS, không ẩn ALB hay giới hạn nguồn truy cập.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "saa-m3-011",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-02-network-security",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Một kiến trúc 3-tier: web tier (public subnet) gọi app tier (private subnet) trên TCP 8080, app tier gọi RDS (private subnet) trên TCP 5432. Cần cấu hình security group theo least privilege. Hai cấu hình nào ĐÚNG? (Chọn 2)",
-    "options": [
-      "App tier SG cho phép inbound 8080 với source là security group của web tier",
-      "RDS SG cho phép inbound 5432 với source là security group của app tier",
-      "App tier SG cho phép inbound 8080 từ 0.0.0.0/0 để đơn giản hóa",
-      "RDS SG cho phép inbound 5432 từ CIDR của toàn VPC",
-      "Web tier SG cho phép inbound 5432 từ RDS security group"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Tham chiếu security group làm source giúp least privilege và tự co giãn theo instance.\n✓ App tier nhận 8080 từ SG web tier — đúng, chỉ web tier gọi được app tier.\n✓ RDS nhận 5432 từ SG app tier — đúng, chỉ app tier gọi được DB.\n✗ App tier mở 8080 từ 0.0.0.0/0 — quá rộng, vi phạm least privilege.\n✗ RDS mở 5432 cho toàn VPC CIDR — rộng hơn cần thiết, không least privilege.\n✗ Web tier nhận 5432 từ RDS SG — sai chiều luồng; web tier không nhận kết nối DB.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-013",
+    "id": "saa-m1-002",
     "courseId": "SAA-C03",
     "lesson": "ch3-02-network-security",
     "certifications": [
@@ -9436,30 +13264,145 @@ export const generatedQuestions: Question[] = [
     "mock": 1
   },
   {
-    "id": "saa-m2-012",
+    "id": "saa-m1-003",
     "courseId": "SAA-C03",
-    "lesson": "ch3-02-network-security",
+    "lesson": "ch3-01-iam-deep-dive",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một công ty có nhiều ứng dụng EC2 cần truy cập một S3 bucket để lưu log. Hiện tại developer đang nhúng access key vào code chạy trên các instance này. Là Solutions Architect, bạn cần loại bỏ long-term credentials mà vẫn cấp quyền truy cập S3 với least operational overhead. Giải pháp nào phù hợp nhất?",
+    "options": [
+      "Tạo IAM role với policy truy cập S3 và gán role đó vào instance profile của các EC2 instance",
+      "Tạo một IAM user dùng chung, gắn policy S3, rồi phân phối access key cho tất cả instance qua Systems Manager Parameter Store",
+      "Lưu access key trong Secrets Manager và để ứng dụng đọc key khi khởi động",
+      "Bật S3 bucket policy cho phép truy cập public và giới hạn bằng VPC endpoint"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "IAM role gắn qua instance profile cung cấp temporary credentials tự động xoay vòng, loại bỏ hoàn toàn long-term key.\n✓ IAM role + instance profile: EC2 nhận temporary credentials qua STS, không cần quản lý key, least operational overhead.\n✗ IAM user dùng chung + access key: vẫn là long-term credentials, vi phạm best practice và khó xoay vòng.\n✗ Lưu access key trong Secrets Manager: vẫn tồn tại long-term key, thêm phức tạp vận hành.\n✗ Bucket policy public: tạo lỗ hổng bảo mật, không giải quyết vấn đề credential.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-004",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-01-iam-deep-dive",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một IAM user có một identity-based policy ALLOW s3:GetObject trên bucket X. Account chứa user này nằm trong OU có SCP chỉ cho phép các action EC2 (không bao gồm S3). Đồng thời bucket X (cùng account) có bucket policy ALLOW user đó GetObject. Khi user gọi s3:GetObject, kết quả là gì?",
+    "options": [
+      "Bị từ chối, vì SCP không cho phép S3 nên permission tối đa của account đã loại trừ s3:GetObject",
+      "Được phép, vì cả identity-based policy lẫn resource-based policy đều ALLOW",
+      "Được phép, vì resource-based policy luôn ưu tiên hơn SCP",
+      "Bị từ chối, vì cần thêm một explicit allow trong permission boundary"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SCP đặt trần quyền tối đa; nếu action không nằm trong SCP allow thì coi như implicit deny, request bị chặn dù các policy khác allow.\n✓ Bị từ chối do SCP: SCP chỉ allow EC2, s3:GetObject nằm ngoài giới hạn nên bị implicit deny ở cấp account.\n✗ Được phép vì identity + resource policy allow: SCP được đánh giá và giới hạn permission tối đa, nên các allow này không có hiệu lực.\n✗ Resource-based policy ưu tiên hơn SCP: sai, SCP luôn giới hạn boundary của account trước.\n✗ Cần explicit allow trong permission boundary: tình huống không đề cập permission boundary; vấn đề nằm ở SCP.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-005",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-01-iam-deep-dive",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một nền tảng cho phép nhiều team tự tạo IAM role cho ứng dụng của họ. Security team lo ngại các team sẽ tự cấp quyền quá rộng (ví dụ AdministratorAccess). Yêu cầu: cho phép team tạo role nhưng đảm bảo các role họ tạo KHÔNG BAO GIỜ có quyền vượt quá một tập giới hạn cho trước. Cơ chế nào phù hợp nhất?",
+    "options": [
+      "Buộc các role do team tạo phải gắn một permission boundary do security team định nghĩa, và dùng IAM policy điều kiện để chỉ cho phép tạo role khi có boundary đó",
+      "Áp dụng SCP deny mọi action iam:CreateRole cho các team",
+      "Tạo sẵn tất cả role và không cho team quyền tạo role nào",
+      "Gắn AWS Config rule cảnh báo khi role có quyền quá rộng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Permission boundary đặt trần quyền tối đa cho một entity; bắt buộc gắn boundary khi tạo role cho phép delegation an toàn.\n✓ Permission boundary bắt buộc khi tạo role: role do team tạo không bao giờ vượt boundary, vẫn cho phép team tự tạo role, đúng yêu cầu delegation.\n✗ SCP deny CreateRole: chặn hoàn toàn việc tạo role, mâu thuẫn với yêu cầu cho team tự tạo.\n✗ Tạo sẵn mọi role: không scale, mất tính tự phục vụ, vận hành nặng.\n✗ Config rule cảnh báo: detective, role rộng quyền vẫn tồn tại đến khi được phát hiện và sửa.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-006",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-01-iam-deep-dive",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong policy evaluation logic của IAM, một request có: identity-based policy ALLOW action, không có SCP nào liên quan, permission boundary của principal KHÔNG bao gồm action đó, và resource-based policy (cùng account) có explicit ALLOW cho principal. Kết quả cuối cùng đối với một IAM role principal là gì?",
+    "options": [
+      "Bị từ chối, vì permission boundary giới hạn quyền hiệu lực và action không nằm trong boundary",
+      "Được phép, vì resource-based policy explicit ALLOW luôn thắng permission boundary",
+      "Được phép, vì identity-based ALLOW kết hợp resource-based ALLOW là đủ",
+      "Bị từ chối, vì thiếu explicit ALLOW trong SCP"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Permission boundary đặt trần quyền hiệu lực của principal; trong cùng account, action phải được cả identity policy lẫn boundary cho phép.\n✓ Bị từ chối do permission boundary: quyền hiệu lực là giao của identity policy và boundary; action ngoài boundary nên không được phép trong cùng account.\n✗ Resource-based luôn thắng boundary: chỉ đúng trong cross-account; ở cùng account vẫn chịu giới hạn của boundary.\n✗ Identity + resource ALLOW là đủ: bỏ qua giới hạn của permission boundary trong cùng account.\n✗ Thiếu ALLOW trong SCP: đề nêu không có SCP liên quan, không phải nguyên nhân.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-007",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-01-iam-deep-dive",
     "certifications": [
       "SAA-C03"
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty SaaS muốn cung cấp dịch vụ của mình cho khách hàng truy cập riêng tư từ VPC của khách hàng mà không đi qua Internet, không cần VPC peering và che giấu hạ tầng. Giải pháp nào phù hợp?",
+    "question": "Account Production (A) chứa role có quyền deploy. Một CI/CD pipeline chạy trong account Tooling (B) cần assume role này. Security team yêu cầu chỉ pipeline cụ thể được assume, ngăn 'confused deputy', kể cả khi role ARN bị lộ. Biện pháp bổ sung nào trong trust policy là phù hợp nhất?",
     "options": [
-      "Tạo VPC endpoint service (PrivateLink) sau một Network Load Balancer cho khách hàng tạo interface endpoint",
-      "Thiết lập VPC peering với từng VPC khách hàng",
-      "Phơi bày dịch vụ qua một public ALB và hạn chế bằng security group",
-      "Dùng Transit Gateway kết nối tất cả VPC khách hàng vào VPC của mình"
+      "Thêm điều kiện sts:ExternalId (hoặc aws:PrincipalArn cụ thể) trong trust policy của role ở account A",
+      "Cấp quyền AdministratorAccess cho role ở account A để pipeline chạy trơn tru",
+      "Dùng access key của một IAM user trong account A và lưu trong pipeline",
+      "Mở trust policy cho phép Principal là * và lọc bằng bucket policy"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "PrivateLink endpoint service sau NLB cho phép khách hàng truy cập riêng tư qua interface endpoint, không cần peering, ẩn hạ tầng.\n✓ Endpoint service (PrivateLink) sau NLB — đúng, truy cập riêng tư một chiều, không lộ mạng.\n✗ VPC peering từng khách hàng — lộ CIDR hai bên, không scale, dễ trùng IP.\n✗ Public ALB — đi qua Internet, không riêng tư theo yêu cầu.\n✗ Transit Gateway nối mọi VPC khách — kết nối mạng rộng, lộ hạ tầng và phức tạp quản trị.",
+    "explanation": "ExternalId (hoặc giới hạn principal ARN cụ thể) trong trust policy chống confused deputy và giới hạn chính xác ai được assume.\n✓ sts:ExternalId / PrincipalArn cụ thể: chỉ caller biết đúng ExternalId hoặc đúng ARN mới assume được, chống confused deputy.\n✗ AdministratorAccess: không liên quan tới kiểm soát ai được assume, lại vi phạm least privilege.\n✗ Access key IAM user trong pipeline: long-term credentials, đi ngược best practice AssumeRole.\n✗ Principal * + bucket policy: trust policy quá mở, bucket policy không kiểm soát việc assume role.",
     "domain": 1,
-    "mock": 2
+    "mock": 1
   },
   {
-    "id": "saa-m3-012",
+    "id": "saa-m1-008",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-01-iam-deep-dive",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng web chạy trên EC2 dùng IAM role qua instance profile. Developer phàn nàn rằng đôi khi ứng dụng nhận lỗi do credentials hết hạn vì code tự đọc và cache credentials. Solutions Architect nên hướng dẫn điều gì là đúng nhất về temporary credentials từ instance profile?",
+    "options": [
+      "AWS SDK tự động lấy và làm mới credentials từ Instance Metadata Service; ứng dụng nên dùng SDK thay vì cache credentials thủ công",
+      "Cần tạo IAM user và gắn access key cố định để tránh hết hạn",
+      "Phải tăng thời hạn session lên 1 năm trong instance profile",
+      "Phải gọi STS GetSessionToken thủ công mỗi giờ và lưu vào file"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Credentials từ instance profile là tạm thời và được xoay vòng tự động; AWS SDK lấy/làm mới chúng qua IMDS, ứng dụng không nên tự cache.\n✓ Dùng SDK để lấy/làm mới từ IMDS: SDK xử lý refresh tự động, tránh lỗi credentials hết hạn.\n✗ IAM user access key cố định: long-term credentials, sai best practice và không cần thiết.\n✗ Tăng thời hạn lên 1 năm: instance profile credentials không cấu hình kiểu đó; vấn đề là cache thủ công.\n✗ Gọi GetSessionToken thủ công lưu file: phức tạp không cần thiết, SDK đã tự xử lý.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-009",
     "courseId": "SAA-C03",
     "lesson": "ch3-02-network-security",
     "certifications": [
@@ -9467,19 +13410,111 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một subnet được coi là 'public' khi nào trong VPC design?",
+    "question": "Một ứng dụng web chạy trên EC2 trong public subnet. Security group hiện cho phép inbound HTTPS (443) từ 0.0.0.0/0. Team muốn cho phép trả response về client mà không cần khai báo thêm rule outbound nào. Đặc tính nào của security group giải thích vì sao điều này hoạt động?",
     "options": [
-      "Khi route table của subnet có route 0.0.0.0/0 trỏ tới Internet gateway",
-      "Khi subnet có NAT gateway trong cùng AZ",
-      "Khi instance trong subnet có private IP thuộc dải public",
-      "Khi NACL của subnet cho phép inbound từ 0.0.0.0/0"
+      "Security group là stateful: traffic phản hồi của một kết nối inbound được tự động cho phép ra",
+      "Security group là stateless nên cần thêm outbound rule cho ephemeral ports",
+      "NACL stateful tự động cho phép response",
+      "Security group đánh giá rule theo thứ tự số như NACL"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "Subnet là public khi route table của nó có default route ra Internet gateway.\n✓ Route 0.0.0.0/0 tới IGW — đúng định nghĩa public subnet.\n✗ Có NAT gateway cùng AZ — NAT phục vụ egress cho private subnet, không làm subnet thành public.\n✗ Private IP thuộc dải public — IP nội bộ không quyết định tính public của subnet.\n✗ NACL cho inbound 0.0.0.0/0 — chỉ là rule lọc, không tạo đường ra Internet.",
+    "explanation": "Security group là stateful nên response của kết nối inbound được tự động cho qua, không cần outbound rule tương ứng.\n✓ Stateful, response tự động cho ra — đúng bản chất security group.\n✗ Stateless cần ephemeral ports — đó là đặc tính của NACL, không phải security group.\n✗ NACL stateful — sai, NACL là stateless.\n✗ Đánh giá theo thứ tự số — đó là NACL; security group đánh giá tất cả rule (allow-only).",
     "domain": 1,
-    "mock": 3
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-010",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-02-network-security",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Admin cần truy cập shell quản trị các EC2 trong private subnet. Công ty muốn loại bỏ bastion host và không mở cổng 22 inbound nào, đồng thời ghi log mọi phiên. Giải pháp least operational overhead nào nên dùng?",
+    "options": [
+      "AWS Systems Manager Session Manager qua SSM Agent và VPC endpoints",
+      "Bastion host trong public subnet với security group giới hạn IP văn phòng",
+      "Client VPN endpoint cho phép SSH trực tiếp vào instance",
+      "Mở port 22 và dùng key pair luân phiên định kỳ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Session Manager cho phép truy cập không cần mở inbound port, không cần bastion, và log phiên ra CloudWatch/S3.\n✓ SSM Session Manager — đúng, không mở cổng 22, không bastion, có log phiên.\n✗ Bastion host — vẫn cần host, vẫn mở port 22, nhiều vận hành hơn.\n✗ Client VPN + SSH — vẫn phải mở 22 và quản lý VPN, không loại bỏ inbound port.\n✗ Mở port 22 — trái yêu cầu không mở inbound port.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-011",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-02-network-security",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng web sau ALB hứng đợt tấn công SQL injection và HTTP flood ở Layer 7. Công ty muốn lọc request độc hại theo pattern và rate-limit theo IP với least operational overhead. Dịch vụ nào phù hợp nhất?",
+    "options": [
+      "AWS WAF với managed rule groups và rate-based rules gắn vào ALB",
+      "AWS Network Firewall đặt trước ALB",
+      "Security group thắt chặt trên các instance backend",
+      "AWS Shield Standard tự bảo vệ Layer 7"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "WAF hoạt động ở Layer 7, có managed rules cho SQLi và rate-based rules, gắn trực tiếp vào ALB.\n✓ AWS WAF + managed rules + rate-based — đúng cho SQLi và HTTP flood ở L7.\n✗ Network Firewall — lọc L3/L4 (và một số L7) ở cấp VPC, không tối ưu cho web exploits theo HTTP pattern như WAF.\n✗ Security group — chỉ lọc IP/port, không hiểu nội dung HTTP.\n✗ Shield Standard — chống DDoS L3/L4 cơ bản, không lọc SQLi L7.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-012",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-02-network-security",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng RDS PostgreSQL dùng username/password được hardcode trong code. Team muốn lưu credential an toàn và tự động luân phiên password định kỳ với least operational overhead. Dịch vụ nào phù hợp nhất?",
+    "options": [
+      "AWS Secrets Manager với automatic rotation cho RDS",
+      "AWS Systems Manager Parameter Store SecureString tự viết Lambda rotation",
+      "Lưu credential trong S3 bucket được mã hóa bằng KMS",
+      "Lưu credential trong biến môi trường EC2 mã hóa bằng KMS"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Secrets Manager hỗ trợ tích hợp sẵn automatic rotation cho RDS, ít vận hành nhất.\n✓ Secrets Manager + auto rotation — đúng, rotation tích hợp sẵn cho RDS.\n✗ Parameter Store + tự viết Lambda rotation — Parameter Store không có rotation tích hợp, phải tự xây dựng, nhiều vận hành.\n✗ S3 mã hóa KMS — lưu được nhưng không có rotation tự động.\n✗ Biến môi trường — không có rotation và khó quản lý vòng đời bí mật.",
+    "domain": 1,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-013",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-02-network-security",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ALB phục vụ ứng dụng cần chỉ chấp nhận traffic từ CloudFront, không cho client truy cập trực tiếp ALB DNS. Giải pháp nào phù hợp và ít vận hành?",
+    "options": [
+      "Dùng AWS managed prefix list của CloudFront trong security group của ALB và header secret kiểm tra ở WAF",
+      "Đặt ALB vào private subnet và bỏ Internet gateway",
+      "Chặn mọi IP công khai bằng NACL trên subnet của ALB",
+      "Bật Shield Advanced để ẩn ALB khỏi Internet"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Security group dùng managed prefix list của CloudFront giới hạn nguồn, kết hợp custom header verify ở WAF chặn truy cập trực tiếp.\n✓ CloudFront prefix list + header check ở WAF — đúng, chỉ cho CloudFront tới ALB.\n✗ ALB private subnet bỏ IGW — CloudFront vẫn cần tới được origin; private-only phá vỡ kiến trúc CloudFront->ALB công khai.\n✗ NACL chặn mọi IP công khai — sẽ chặn luôn CloudFront, không phân biệt được nguồn hợp lệ.\n✗ Shield Advanced — bảo vệ DDoS, không ẩn ALB hay giới hạn nguồn truy cập.",
+    "domain": 1,
+    "mock": 1
   },
   {
     "id": "saa-m1-014",
@@ -9505,52 +13540,6 @@ export const generatedQuestions: Question[] = [
     "mock": 1
   },
   {
-    "id": "saa-m2-013",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-02-network-security",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một ứng dụng đa Region cần chống lại tấn công DDoS L3/L4 thể tích lớn và cũng cần lọc bot xấu ở L7 trên CloudFront. Giải pháp tích hợp nào tối ưu nhất?",
-    "options": [
-      "Shield Advanced cho bảo vệ DDoS L3/L4 kết hợp AWS WAF Bot Control trên CloudFront",
-      "Chỉ dùng AWS WAF với rate-based rules cho cả DDoS thể tích và bot",
-      "Chỉ dùng Network Firewall đặt trước CloudFront",
-      "Shield Standard kết hợp NACL chặn IP bot"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "DDoS L3/L4 thể tích lớn cần Shield Advanced, còn lọc bot L7 cần WAF Bot Control; kết hợp là tối ưu.\n✓ Shield Advanced + WAF Bot Control — đúng, mỗi lớp xử lý đúng loại tấn công.\n✗ Chỉ WAF rate-based — không thay thế bảo vệ DDoS thể tích L3/L4 của Shield Advanced.\n✗ Chỉ Network Firewall trước CloudFront — không đặt được trước CloudFront và không phải dịch vụ DDoS thể tích.\n✗ Shield Standard + NACL — không đủ chống DDoS quy mô lớn và bot L7.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-013",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-02-network-security",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một Lambda function cần đọc secret từ Secrets Manager và cần truy cập riêng tư không qua Internet. Lambda đã được cấu hình chạy trong VPC (private subnet). Cần thêm gì để Lambda lấy secret thành công mà không cần NAT?",
-    "options": [
-      "Tạo Interface VPC endpoint cho Secrets Manager trong VPC và cho phép SG của Lambda tới endpoint",
-      "Tạo Gateway VPC endpoint cho Secrets Manager",
-      "Gắn Internet gateway vào private subnet của Lambda",
-      "Bật public IP cho Lambda ENI"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Lambda trong VPC không có route Internet sẽ cần Interface endpoint (PrivateLink) cho Secrets Manager để gọi API riêng tư.\n✓ Interface endpoint cho Secrets Manager + SG cho phép — đúng, truy cập riêng tư không cần NAT.\n✗ Gateway endpoint cho Secrets Manager — gateway endpoint chỉ hỗ trợ S3/DynamoDB.\n✗ IGW vào private subnet — biến subnet thành public và không phải cách Lambda truy cập riêng tư API.\n✗ Public IP cho Lambda ENI — Lambda ENI trong VPC không hỗ trợ public IP theo cách này.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
     "id": "saa-m1-015",
     "courseId": "SAA-C03",
     "lesson": "ch3-03-data-protection",
@@ -9572,52 +13561,6 @@ export const generatedQuestions: Question[] = [
     "explanation": "SSE-S3 mã hoá at rest hoàn toàn do AWS quản lý, không cần thao tác key, đáp ứng least operational overhead.\n✓ SSE-S3: AWS quản lý toàn bộ key, bật một lần, đáp ứng compliance encryption at rest mà không cần vận hành key.\n✗ SSE-C: client phải tự lưu giữ và truyền key trong mỗi request, tăng overhead đáng kể.\n✗ Mã hoá phía client bằng OpenSSL: phải tự quản lý key và quy trình, nhiều thao tác thủ công.\n✗ CloudHSM: dùng cho yêu cầu HSM chuyên dụng/FIPS 140-2 Level 3, quá phức tạp và tốn kém cho nhu cầu này.",
     "domain": 1,
     "mock": 1
-  },
-  {
-    "id": "saa-m2-014",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-03-data-protection",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ngân hàng cần mã hoá dữ liệu trong S3 và yêu cầu kiểm soát chi tiết: có audit log mỗi lần key được dùng, tự định nghĩa key rotation policy, và giới hạn IAM principal nào được phép dùng key. Giải pháp nào đáp ứng tốt nhất?",
-    "options": [
-      "SSE-KMS với customer managed key (CMK) trong AWS KMS",
-      "SSE-S3 với Amazon S3 managed keys",
-      "SSE-KMS với AWS managed key (aws/s3)",
-      "SSE-C với key do ứng dụng cung cấp"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Customer managed key trong KMS cho phép tự định nghĩa key policy, rotation và audit chi tiết qua CloudTrail.\n✓ SSE-KMS với customer managed key: kiểm soát key policy, rotation tuỳ chỉnh, và mỗi lần dùng key được ghi vào CloudTrail.\n✗ SSE-S3: không cho phép kiểm soát key policy hay audit từng lần dùng key.\n✗ AWS managed key (aws/s3): không thể chỉnh sửa key policy hay rotation, audit hạn chế hơn.\n✗ SSE-C: client phải tự quản lý key, không có audit tập trung trong KMS/CloudTrail.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-014",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-03-data-protection",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng cần mã hoá khối lượng lớn dữ liệu (hàng terabyte) tại client trước khi gửi lên S3. Để tránh gọi KMS cho từng object nhỏ và giảm chi phí API, kiến trúc nào áp dụng đúng nguyên lý envelope encryption?",
-    "options": [
-      "Gọi KMS GenerateDataKey để lấy data key, dùng plaintext data key mã hoá dữ liệu local, lưu encrypted data key cùng object",
-      "Gửi toàn bộ terabyte dữ liệu trực tiếp tới KMS Encrypt API để mã hoá",
-      "Dùng một KMS key riêng cho mỗi object và gọi Encrypt cho từng file",
-      "Lưu plaintext data key trong S3 metadata để giải mã sau này"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Envelope encryption: KMS chỉ sinh/mã hoá data key, còn dữ liệu lớn được mã hoá local bằng data key, giảm tải KMS.\n✓ GenerateDataKey + mã hoá local: dùng data key để mã hoá khối lượng lớn, chỉ lưu encrypted data key, đúng envelope encryption và tiết kiệm gọi KMS.\n✗ Gửi terabyte tới KMS Encrypt: KMS giới hạn 4KB mỗi request, không thể mã hoá file lớn trực tiếp.\n✗ KMS key riêng mỗi object: tốn kém và không cần thiết, không phải nguyên lý envelope.\n✗ Lưu plaintext data key: phá vỡ bảo mật vì ai đọc được object cũng giải mã được.",
-    "domain": 1,
-    "mock": 3
   },
   {
     "id": "saa-m1-016",
@@ -9643,52 +13586,6 @@ export const generatedQuestions: Question[] = [
     "mock": 1
   },
   {
-    "id": "saa-m2-015",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-03-data-protection",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một public-facing web app cần đảm bảo encryption in transit cho người dùng cuối. Team muốn cung cấp và tự động gia hạn TLS certificate cho Application Load Balancer với least operational overhead. Giải pháp nào tốt nhất?",
-    "options": [
-      "Cấp certificate công khai từ AWS Certificate Manager (ACM) và gắn vào HTTPS listener của ALB",
-      "Mua certificate từ third-party CA và tự cài, đặt lịch nhắc gia hạn thủ công",
-      "Tự tạo self-signed certificate và phân phối cho client",
-      "Dùng CloudHSM để sinh certificate rồi import vào ALB"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "ACM cấp public certificate miễn phí và tự động gia hạn, tích hợp trực tiếp với ALB, least operational overhead.\n✓ ACM public certificate trên ALB: cấp miễn phí, auto-renew, tích hợp native với HTTPS listener.\n✗ Third-party CA tự cài: phải gia hạn thủ công, nhiều overhead và rủi ro hết hạn.\n✗ Self-signed certificate: trình duyệt người dùng cuối sẽ cảnh báo không tin cậy.\n✗ CloudHSM sinh certificate: phức tạp và không cần thiết, ACM đã giải quyết trọn vẹn.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-015",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-03-data-protection",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một S3 bucket vô tình bị cấu hình cho phép public read và đã làm lộ dữ liệu. Solutions Architect muốn ngăn chặn ở mức tổ chức để không bucket nào trong account có thể public, bất kể ACL hay bucket policy được đặt sai. Cách nào đảm bảo tốt nhất?",
-    "options": [
-      "Bật S3 Block Public Access ở cấp account",
-      "Thêm explicit deny vào từng bucket policy",
-      "Bật S3 Versioning trên toàn bộ bucket",
-      "Dùng Amazon Macie để phát hiện bucket public và cảnh báo"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Block Public Access ở cấp account override mọi ACL/policy cho phép public, ngăn chặn tập trung và chắc chắn.\n✓ Account-level Block Public Access: chặn mọi cấu hình public ở mọi bucket hiện tại và tương lai, bất kể ACL/policy.\n✗ Explicit deny từng bucket: phải làm thủ công cho mỗi bucket và dễ bỏ sót bucket mới.\n✗ S3 Versioning: chống ghi đè/xoá, không liên quan tới public access.\n✗ Macie: phát hiện và cảnh báo nhưng không chủ động chặn public access.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
     "id": "saa-m1-017",
     "courseId": "SAA-C03",
     "lesson": "ch3-03-data-protection",
@@ -9710,52 +13607,6 @@ export const generatedQuestions: Question[] = [
     "explanation": "S3 Bucket Keys tạo một bucket-level key giảm mạnh số lần gọi KMS GenerateDataKey/Decrypt, giảm chi phí và throttling.\n✓ S3 Bucket Keys: giảm tới ~99% số request tới KMS, hạ chi phí và tránh throttling mà vẫn dùng SSE-KMS.\n✗ SSE-C: chuyển gánh nặng quản lý key sang client và thay đổi toàn bộ ứng dụng, không phải giải pháp tối ưu.\n✗ Tăng quota: chỉ giải quyết throttling chứ không giảm chi phí, ngược lại còn tốn hơn.\n✗ One Zone-IA: thay đổi storage class/độ bền, không liên quan tới chi phí KMS.",
     "domain": 1,
     "mock": 1
-  },
-  {
-    "id": "saa-m2-016",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-03-data-protection",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một công ty có hàng petabyte dữ liệu trong S3 và lo ngại có thể chứa PII (số thẻ, số an sinh xã hội) chưa được phân loại. Họ cần một dịch vụ managed tự động khám phá và phân loại dữ liệu nhạy cảm. Dịch vụ nào phù hợp?",
-    "options": [
-      "Amazon Macie",
-      "AWS Config",
-      "Amazon Inspector",
-      "AWS Glue DataBrew"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Amazon Macie dùng ML/pattern matching để tự động khám phá và phân loại dữ liệu nhạy cảm (PII) trong S3.\n✓ Macie: managed service chuyên discover và classify PII/dữ liệu nhạy cảm trong S3, đúng nhu cầu.\n✗ AWS Config: theo dõi cấu hình resource và compliance, không phân loại nội dung dữ liệu.\n✗ Inspector: quét lỗ hổng bảo mật của EC2/ECR/Lambda, không phân loại dữ liệu S3.\n✗ Glue DataBrew: chuẩn bị/làm sạch dữ liệu cho analytics, không phải công cụ phát hiện PII compliance.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-016",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-03-data-protection",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một tổ chức cần bản sao dữ liệu S3 ở một region khác để đáp ứng yêu cầu compliance về data residency và disaster recovery. Dữ liệu được mã hoá bằng SSE-KMS với customer managed key. Cấu hình nào đảm bảo cross-region replication hoạt động đúng?",
-    "options": [
-      "Bật S3 Cross-Region Replication và cấu hình replica dùng một KMS key ở destination region",
-      "Bật S3 Cross-Region Replication; KMS key ở source region tự động dùng được ở destination",
-      "Dùng S3 Same-Region Replication rồi copy thủ công sang region khác",
-      "Tắt mã hoá ở destination bucket để replication không bị lỗi key"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "KMS key mang tính region-specific, nên replica ở destination cần một KMS key của chính region đó để mã hoá lại.\n✓ CRR với KMS key ở destination region: bắt buộc vì single-Region KMS key không dùng được cross-region; cấu hình replica key cho phép re-encrypt object tại destination.\n✗ Dùng lại source key ở destination: không hợp lệ vì single-Region KMS key bị giới hạn theo region.\n✗ Same-Region Replication + copy thủ công: tăng overhead và không phải giải pháp CRR tự động.\n✗ Tắt mã hoá ở destination: vi phạm yêu cầu compliance encryption at rest.",
-    "domain": 1,
-    "mock": 3
   },
   {
     "id": "saa-m1-018",
@@ -9781,77 +13632,6 @@ export const generatedQuestions: Question[] = [
     "mock": 1
   },
   {
-    "id": "saa-m2-017",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-03-data-protection",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một công ty đa quốc gia muốn dùng cùng một logical encryption key để mã hoá S3 object ở nhiều region (us-east-1, eu-west-1) nhằm đơn giản hoá quản lý key cho dữ liệu được replicate, tránh phải re-encrypt khi failover giữa region. Giải pháp KMS nào phù hợp nhất?",
-    "options": [
-      "AWS KMS multi-Region keys",
-      "AWS KMS customer managed key riêng cho từng region không liên quan nhau",
-      "CloudHSM cluster trải rộng nhiều region",
-      "Import cùng một key material thủ công vào các single-region key độc lập"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "KMS multi-Region keys là các replica có cùng key ID và key material, cho phép giải mã cross-region mà không cần re-encrypt.\n✓ Multi-Region keys: primary và replica chia sẻ key material, ciphertext mã hoá ở một region có thể giải mã ở region khác, lý tưởng cho DR/replication.\n✗ Customer managed key riêng từng region: key material khác nhau nên phải re-encrypt khi chuyển region.\n✗ CloudHSM nhiều region: không cung cấp khái niệm shared multi-Region key kiểu KMS và tăng độ phức tạp.\n✗ Import key material thủ công vào key độc lập: dễ lỗi và không được KMS quản lý như multi-Region keys.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-017",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-03-data-protection",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một team muốn đảm bảo dữ liệu trong Amazon EBS volume gắn vào EC2 instance được encrypted at rest với least operational overhead. Cách nào đơn giản nhất?",
-    "options": [
-      "Bật EBS encryption khi tạo volume, dùng KMS key để mã hoá",
-      "Tự cài đĩa mã hoá phần mềm bên trong OS cho mỗi instance",
-      "Mã hoá từng file trong ứng dụng trước khi ghi xuống đĩa",
-      "Dùng instance store và mã hoá thủ công bằng dm-crypt"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "EBS encryption tích hợp với KMS, mã hoá transparent at rest và in transit giữa instance và volume, gần như không cần thao tác.\n✓ EBS encryption với KMS: bật một lần khi tạo volume, mã hoá/giải mã transparent, least operational overhead.\n✗ Đĩa mã hoá phần mềm trong OS: phải tự quản lý cấu hình và key trên từng instance.\n✗ Mã hoá từng file trong app: thay đổi mã ứng dụng và tự quản lý key, nhiều overhead.\n✗ Instance store + dm-crypt: dữ liệu ephemeral và phải tự vận hành mã hoá, phức tạp.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "saa-m2-018",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-03-data-protection",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "multi",
-    "question": "Một công ty fintech cần thiết kế lớp data protection cho S3 bucket chứa hồ sơ khách hàng. Họ muốn: kiểm soát key, audit truy cập key, ngăn public access, và enforce mã hoá khi upload. Chọn HAI hành động giúp đạt mục tiêu này.",
-    "options": [
-      "Dùng SSE-KMS với customer managed key và bật key rotation",
-      "Bật S3 Block Public Access ở cấp account và bucket",
-      "Lưu trữ dữ liệu ở storage class S3 One Zone-IA",
-      "Tắt S3 Versioning để giảm số lượng object",
-      "Cho phép truy cập bucket qua ACL public-read cho tiện chia sẻ"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Customer managed KMS key cho kiểm soát+audit key, Block Public Access ngăn lộ dữ liệu công khai.\n✓ SSE-KMS customer managed key + rotation: kiểm soát key policy và audit qua CloudTrail.\n✓ Block Public Access ở account và bucket: chặn mọi cấu hình public, bảo vệ hồ sơ nhạy cảm.\n✗ One Zone-IA: liên quan độ bền/chi phí lưu trữ, không phải mục tiêu data protection.\n✗ Tắt Versioning: làm giảm khả năng phục hồi, không liên quan mục tiêu.\n✗ ACL public-read: trực tiếp gây lộ dữ liệu, sai hoàn toàn yêu cầu.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
     "id": "saa-m1-019",
     "courseId": "SAA-C03",
     "lesson": "ch3-03-data-protection",
@@ -9873,52 +13653,6 @@ export const generatedQuestions: Question[] = [
     "explanation": "Secrets Manager mã hoá secret bằng KMS và hỗ trợ automatic rotation tích hợp (đặc biệt với RDS) mà app chỉ cần fetch khi cần.\n✓ Secrets Manager: lưu credentials mã hoá bằng KMS, có built-in automatic rotation, app lấy giá trị mới mà không sửa code.\n✗ Parameter Store Standard: không có automatic rotation tích hợp sẵn cho database credentials.\n✗ KMS lưu credentials: KMS quản lý key chứ không lưu trữ secret payload.\n✗ File mã hoá trên EBS: phải tự xây cơ chế rotation và phân phối, nhiều overhead.",
     "domain": 1,
     "mock": 1
-  },
-  {
-    "id": "saa-m2-019",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-03-data-protection",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một bucket dùng SSE-KMS với customer managed key. Một IAM user có quyền s3:GetObject nhưng khi tải object lại bị AccessDenied. Nguyên nhân khả dĩ nhất và cách khắc phục là gì?",
-    "options": [
-      "User thiếu quyền kms:Decrypt trên KMS key; cần cấp quyền trong key policy/IAM",
-      "Bucket chưa bật Versioning nên object không đọc được",
-      "S3 Block Public Access đang chặn user nội bộ",
-      "Object đang ở Glacier Deep Archive nên cần restore"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Với SSE-KMS, để giải mã object user cần cả s3:GetObject lẫn kms:Decrypt trên key dùng để mã hoá.\n✓ Thiếu kms:Decrypt: dù có GetObject, không có quyền giải mã KMS key sẽ bị AccessDenied; cấp kms:Decrypt khắc phục.\n✗ Versioning: không ảnh hưởng quyền đọc object hiện tại.\n✗ Block Public Access: chỉ chặn truy cập public, không chặn IAM principal có quyền hợp lệ.\n✗ Glacier Deep Archive: sẽ báo lỗi InvalidObjectState, không phải AccessDenied.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-018",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-03-data-protection",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một công ty media phân phối nội dung qua CloudFront và cần đảm bảo encryption in transit từ viewer đến edge và từ edge đến origin (S3). Họ muốn least operational overhead cho certificate. Cấu hình nào đúng?",
-    "options": [
-      "Dùng ACM certificate (trong us-east-1) cho CloudFront, đặt Viewer Protocol Policy là Redirect HTTP to HTTPS và origin protocol là HTTPS",
-      "Dùng self-signed certificate trên CloudFront và cho phép HTTP cho viewer",
-      "Để CloudFront chỉ phục vụ HTTP để giảm độ trễ, mã hoá ở tầng ứng dụng",
-      "Mua certificate third-party và cài thủ công trên từng edge location"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "ACM certificate (us-east-1 cho CloudFront) cùng Redirect HTTP to HTTPS và HTTPS tới origin đảm bảo end-to-end TLS, auto-renew.\n✓ ACM + Redirect HTTPS + HTTPS origin: bảo đảm encryption in transit cả viewer-edge và edge-origin, certificate tự gia hạn.\n✗ Self-signed + cho phép HTTP: không an toàn và viewer không được bảo vệ TLS.\n✗ Chỉ HTTP: vi phạm yêu cầu encryption in transit.\n✗ Third-party cài thủ công trên edge: không khả thi và nhiều overhead; CloudFront dùng ACM.",
-    "domain": 1,
-    "mock": 3
   },
   {
     "id": "saa-m1-020",
@@ -9944,78 +13678,32 @@ export const generatedQuestions: Question[] = [
     "mock": 1
   },
   {
-    "id": "saa-m2-020",
+    "id": "saa-m1-021",
     "courseId": "SAA-C03",
-    "lesson": "ch3-03-data-protection",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một tổ chức cần đảm bảo rằng tất cả object upload vào một S3 bucket bắt buộc phải dùng SSE-KMS, từ chối bất kỳ upload nào không có header mã hoá đúng. Cách enforce hiệu quả nhất là gì?",
-    "options": [
-      "Bucket policy Deny PutObject khi s3:x-amz-server-side-encryption không phải aws:kms",
-      "Bật S3 default encryption và tin rằng client luôn gửi đúng header",
-      "Dùng Macie để phát hiện object chưa mã hoá sau khi upload",
-      "Bật S3 Versioning để giữ lịch sử object chưa mã hoá"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Bucket policy với điều kiện Deny dựa trên header server-side-encryption enforce bắt buộc SSE-KMS ngay tại thời điểm upload.\n✓ Deny PutObject khi không phải aws:kms: chủ động từ chối mọi upload không dùng SSE-KMS, enforce ở thời điểm ghi.\n✗ Default encryption đơn thuần: tự áp dụng mã hoá nhưng không từ chối các request cố tình chỉ định kiểu khác; bucket policy mạnh hơn để enforce KMS cụ thể.\n✗ Macie phát hiện sau: chỉ phát hiện chứ không ngăn upload không mã hoá.\n✗ Versioning: không liên quan tới enforce encryption.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-019",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-03-data-protection",
+    "lesson": "resilient-01-decoupling",
     "certifications": [
       "SAA-C03"
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Một công ty bị yêu cầu compliance: dữ liệu PII trong S3 phải được phân loại, mã hoá at rest bằng key có thể audit, và mọi truy cập object phải qua HTTPS. Chọn HAI biện pháp trực tiếp đáp ứng các yêu cầu này (ngoài việc bật mã hoá SSE-KMS đã có sẵn).",
+    "question": "Một kiến trúc sư đang thiết kế một tier xử lý đơn hàng bất đồng bộ resilient bằng SQS. Những thực hành nào sau đây giúp tier này highly available và fault tolerant? (Chọn 2)",
     "options": [
-      "Bật Amazon Macie để khám phá và phân loại dữ liệu PII",
-      "Thêm bucket policy Deny khi aws:SecureTransport là false",
-      "Chuyển dữ liệu sang S3 Standard-IA để giảm chi phí",
-      "Tắt CloudTrail để giảm log noise",
-      "Dùng SSE-C để client tự giữ key"
+      "Đặt consumer trong một Auto Scaling group trải trên nhiều Availability Zones",
+      "Cấu hình DLQ để cô lập các message liên tục xử lý thất bại",
+      "Đặt visibility timeout về 0 để message luôn sẵn sàng được nhận",
+      "Cho một consumer EC2 duy nhất xử lý toàn bộ queue để đảm bảo thứ tự",
+      "Tắt retry để tránh xử lý message nhiều lần"
     ],
     "correctIndices": [
       0,
       1
     ],
-    "explanation": "Macie xử lý yêu cầu phân loại PII; bucket policy chặn non-HTTPS enforce encryption in transit.\n✓ Macie: tự động khám phá và phân loại PII, đáp ứng yêu cầu data classification.\n✓ Deny khi aws:SecureTransport là false: bắt buộc mọi truy cập object qua HTTPS.\n✗ Standard-IA: liên quan chi phí lưu trữ, không đáp ứng yêu cầu compliance nêu ra.\n✗ Tắt CloudTrail: làm mất khả năng audit, đi ngược yêu cầu.\n✗ SSE-C: key do client giữ, không audit tập trung được như yêu cầu key auditable.",
-    "domain": 1,
-    "mock": 3
+    "explanation": "Consumer trải nhiều AZ trong Auto Scaling group đảm bảo HA, và DLQ cô lập poison message để hệ thống không nghẽn.\n✓ Auto Scaling consumer trên nhiều AZ — đúng, mất một AZ vẫn còn consumer khác xử lý, highly available.\n✓ DLQ cô lập message lỗi — đúng, tăng độ bền và ngăn message hỏng làm nghẽn xử lý.\n✗ Visibility timeout = 0 — sai, message bị nhiều worker nhận đồng thời, gây xử lý trùng nghiêm trọng.\n✗ Một consumer duy nhất — sai, single point of failure, không HA.\n✗ Tắt retry — sai, SQS không hoạt động theo cách đó; mất khả năng thử lại làm giảm độ bền.",
+    "domain": 2,
+    "mock": 1
   },
   {
-    "id": "saa-m3-020",
-    "courseId": "SAA-C03",
-    "lesson": "ch3-03-data-protection",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng analytics cần chia sẻ dataset đã được phân loại nhạy cảm chỉ với một số AWS account đối tác cụ thể, dữ liệu mã hoá bằng customer managed KMS key. Để đối tác đọc được object, cần cấu hình gì ngoài bucket policy cho phép?",
-    "options": [
-      "Cập nhật KMS key policy để cấp quyền kms:Decrypt cho các account đối tác",
-      "Bật S3 Block Public Access để dữ liệu tự động chia sẻ an toàn",
-      "Đổi sang SSE-S3 để bỏ qua yêu cầu quyền KMS",
-      "Bật cross-region replication tới bucket của đối tác"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Với SSE-KMS, đối tác cần quyền kms:Decrypt trên key; do đó key policy phải cấp quyền cho các account đó.\n✓ Cập nhật KMS key policy cấp kms:Decrypt cho account đối tác: bắt buộc để họ giải mã object ngoài quyền S3.\n✗ Block Public Access: ngăn public, không cấp quyền chia sẻ cho account cụ thể.\n✗ Đổi SSE-S3: thay đổi mô hình bảo mật và mất kiểm soát key, không đúng yêu cầu.\n✗ Cross-region replication: sao chép dữ liệu chứ không giải quyết quyền giải mã cho đối tác.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-021",
+    "id": "saa-m1-022",
     "courseId": "SAA-C03",
     "lesson": "resilient-01-decoupling",
     "certifications": [
@@ -10038,53 +13726,7 @@ export const generatedQuestions: Question[] = [
     "mock": 1
   },
   {
-    "id": "saa-m2-021",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-01-decoupling",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một hệ thống xử lý giao dịch tài chính yêu cầu các message phải được xử lý đúng MỘT lần và đúng THỨ TỰ chúng được gửi. Loại Amazon SQS queue nào đáp ứng yêu cầu này?",
-    "options": [
-      "FIFO queue",
-      "Standard queue",
-      "Standard queue với long polling",
-      "Standard queue có bật server-side encryption"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "FIFO queue đảm bảo thứ tự và exactly-once processing, đúng yêu cầu giao dịch tài chính.\n✓ FIFO queue — đúng, đảm bảo ordering và exactly-once processing.\n✗ Standard queue — chỉ best-effort ordering và at-least-once delivery (có thể trùng).\n✗ Standard + long polling — long polling chỉ giảm empty response, không đảm bảo thứ tự.\n✗ Standard + encryption — mã hóa không liên quan tới ordering hay duplication.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-021",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-01-decoupling",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một consumer đọc message từ Amazon SQS queue và mất tới 8 phút để xử lý mỗi message. Hiện một số message bị xử lý nhiều lần vì worker khác nhận lại chúng trước khi worker đầu tiên hoàn tất. Cách least operational overhead để khắc phục là gì?",
-    "options": [
-      "Tăng visibility timeout của queue lên lớn hơn thời gian xử lý tối đa",
-      "Chuyển sang FIFO queue để loại bỏ trùng lặp",
-      "Giảm số lượng consumer xuống còn một worker duy nhất",
-      "Bật long polling với WaitTimeSeconds là 20"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Message bị nhận lại do visibility timeout ngắn hơn thời gian xử lý; tăng timeout là cách trực tiếp và đơn giản nhất.\n✓ Tăng visibility timeout > thời gian xử lý — đúng, message ẩn đủ lâu để worker hoàn tất trước khi worker khác thấy lại.\n✗ Chuyển FIFO — FIFO chống trùng khi gửi, nhưng vấn đề ở đây là timeout xử lý, không phải duplicate khi produce; còn giới hạn throughput.\n✗ Giảm còn một worker — làm mất khả năng scale và không giải quyết gốc rễ.\n✗ Long polling — chỉ giảm empty receive, không liên quan tới việc message bị reprocess.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-022",
+    "id": "saa-m1-023",
     "courseId": "SAA-C03",
     "lesson": "resilient-01-decoupling",
     "certifications": [
@@ -10107,53 +13749,7 @@ export const generatedQuestions: Question[] = [
     "mock": 1
   },
   {
-    "id": "saa-m2-022",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-01-decoupling",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Khi một ảnh được tải lên, hệ thống cần kích hoạt đồng thời nhiều xử lý độc lập: tạo thumbnail, đánh chỉ mục tìm kiếm, và gửi thông báo. Mỗi xử lý có queue riêng. Kiến trúc decoupled fan-out nào phù hợp nhất?",
-    "options": [
-      "Publish một message tới Amazon SNS topic, subscribe nhiều SQS queue vào topic đó",
-      "Cho ứng dụng ghi tuần tự cùng một message vào ba SQS queue",
-      "Dùng một SQS queue duy nhất với ba consumer group khác nhau",
-      "Dùng Amazon Kinesis Data Streams với một shard cho mỗi xử lý"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "SNS fan-out cho phép một message được phát tới nhiều SQS queue subscriber cùng lúc, mỗi tier xử lý độc lập.\n✓ SNS topic + nhiều SQS subscriber — đúng, mẫu fan-out chuẩn, một publish tới nhiều queue, decoupled và resilient.\n✗ Ghi tuần tự vào ba queue — producer phải biết mọi consumer, coupling cao, lỗi giữa chừng gây thiếu sót.\n✗ Một queue, ba consumer group — SQS không có khái niệm consumer group; mỗi message chỉ được một consumer xử lý.\n✗ Kinesis một shard mỗi xử lý — Kinesis dùng cho streaming, không phải fan-out pub/sub tới các queue độc lập.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-022",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-01-decoupling",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một công ty muốn route các event giữa nhiều SaaS application và AWS service dựa trên nội dung event, với khả năng lọc và biến đổi event, mà không phải tự viết code routing. Dịch vụ nào phù hợp nhất?",
-    "options": [
-      "Amazon EventBridge với rule và event pattern",
-      "Amazon SQS với nhiều queue lọc thủ công",
-      "Amazon SNS với message filtering policy đơn giản",
-      "AWS Step Functions điều phối luồng giữa các service"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "EventBridge là event bus serverless hỗ trợ tích hợp SaaS partner và content-based routing qua rule/event pattern.\n✓ EventBridge với rule/event pattern — đúng, route theo nội dung, tích hợp sẵn SaaS partner, lọc và biến đổi event, ít code.\n✗ SQS lọc thủ công — SQS là hàng đợi point-to-point, không có routing theo nội dung và không tích hợp SaaS.\n✗ SNS filtering — lọc theo message attribute đơn giản, không có schema registry/SaaS integration mạnh như EventBridge.\n✗ Step Functions — điều phối workflow trạng thái, không phải event router giữa nhiều nguồn SaaS.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-023",
+    "id": "saa-m1-024",
     "courseId": "SAA-C03",
     "lesson": "resilient-01-decoupling",
     "certifications": [
@@ -10176,53 +13772,7 @@ export const generatedQuestions: Question[] = [
     "mock": 1
   },
   {
-    "id": "saa-m2-023",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-01-decoupling",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng cần một load balancer hoạt động ở tầng TCP/UDP (Layer 4), xử lý hàng triệu request mỗi giây với độ trễ cực thấp và hỗ trợ static IP. Loại load balancer nào phù hợp nhất?",
-    "options": [
-      "Network Load Balancer (NLB)",
-      "Application Load Balancer (ALB)",
-      "Gateway Load Balancer (GWLB)",
-      "Classic Load Balancer (CLB)"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "NLB hoạt động ở Layer 4, cung cấp throughput cực cao, độ trễ thấp và static IP per AZ.\n✓ NLB — đúng, Layer 4, ultra-low latency, hàng triệu request/giây, hỗ trợ static/Elastic IP.\n✗ ALB — Layer 7, định tuyến theo HTTP/HTTPS, không tối ưu cho TCP/UDP thuần và không có static IP gốc.\n✗ GWLB — dùng cho triển khai virtual appliance bảo mật (firewall), không phải cân bằng tải ứng dụng thông thường.\n✗ CLB — thế hệ cũ, không khuyến nghị cho thiết kế mới, thiếu nhiều tính năng.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-023",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-01-decoupling",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng cần route request tới các target group khác nhau dựa trên đường dẫn URL (ví dụ /api tới một nhóm, /images tới nhóm khác) và hostname. Loại load balancer nào phù hợp?",
-    "options": [
-      "Application Load Balancer (ALB)",
-      "Network Load Balancer (NLB)",
-      "Gateway Load Balancer (GWLB)",
-      "AWS Global Accelerator"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "ALB hỗ trợ content-based routing theo path và host header ở Layer 7.\n✓ ALB — đúng, định tuyến theo URL path và hostname, lý tưởng cho microservices HTTP/HTTPS.\n✗ NLB — Layer 4, không hiểu HTTP path/host nên không route theo nội dung được.\n✗ GWLB — dùng cho appliance bảo mật, không route theo URL path.\n✗ Global Accelerator — cải thiện routing toàn cầu qua AWS backbone, không phải path-based routing trong một region.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-024",
+    "id": "saa-m1-025",
     "courseId": "SAA-C03",
     "lesson": "resilient-01-decoupling",
     "certifications": [
@@ -10245,53 +13795,7 @@ export const generatedQuestions: Question[] = [
     "mock": 1
   },
   {
-    "id": "saa-m2-024",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-01-decoupling",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một worker tier xử lý job từ SQS queue. Đội ngũ muốn số lượng EC2 worker tự động tăng khi backlog message lớn và giảm khi backlog nhỏ, để cân bằng chi phí và tốc độ xử lý. Cách triển khai tốt nhất là gì?",
-    "options": [
-      "Auto Scaling group dùng target tracking dựa trên metric ApproximateNumberOfMessagesVisible (qua backlog per instance)",
-      "Auto Scaling theo lịch cố định mỗi giờ tăng giảm số instance",
-      "Scale thủ công dựa trên báo cáo backlog hằng ngày",
-      "Auto Scaling theo CPUUtilization trung bình của fleet"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Scaling theo độ sâu queue (backlog per instance) phản ánh đúng lượng công việc tồn đọng, là chỉ số chuẩn để scale worker tier.\n✓ Auto Scaling theo số message visible / backlog per instance — đúng, scale theo khối lượng công việc thực tế trong queue.\n✗ Scaling theo lịch — không phản ứng với biến động backlog thực tế.\n✗ Scale thủ công hằng ngày — chậm, nhiều vận hành, không kịp xử lý đột biến.\n✗ Scale theo CPU — CPU không nhất thiết tương quan với backlog; queue có thể đầy mà CPU vẫn thấp.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-024",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-01-decoupling",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một công ty đang chuyển một ứng dụng monolith sang microservices chạy trong container. Họ không muốn quản lý EC2 instance hay cluster của control plane container, chỉ muốn deploy container và để AWS lo phần hạ tầng. Lựa chọn nào ít operational overhead nhất?",
-    "options": [
-      "Amazon ECS với AWS Fargate launch type",
-      "Amazon ECS với EC2 launch type",
-      "Amazon EKS với self-managed node group EC2",
-      "Chạy container trực tiếp trên EC2 với Docker tự cài"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Fargate là compute serverless cho container, loại bỏ việc quản lý EC2 và scaling node.\n✓ ECS + Fargate — đúng, không quản lý server/node, chỉ định nghĩa task, AWS lo hạ tầng, ít vận hành nhất.\n✗ ECS + EC2 launch type — vẫn phải quản lý và patch các EC2 container instance.\n✗ EKS + self-managed node — phải tự quản lý và vận hành node group EC2.\n✗ Docker tự cài trên EC2 — vận hành nhiều nhất, không có orchestration được quản lý.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-025",
+    "id": "saa-m1-026",
     "courseId": "SAA-C03",
     "lesson": "resilient-01-decoupling",
     "certifications": [
@@ -10310,77 +13814,6 @@ export const generatedQuestions: Question[] = [
       0
     ],
     "explanation": "SNS subscription hỗ trợ DLQ (một SQS queue) để giữ các message giao không thành công sau khi hết retry.\n✓ DLQ cho SNS subscription — đúng, message giao thất bại được chuyển vào SQS DLQ, không bị mất.\n✗ Tăng retry — retry có giới hạn; nếu endpoint hỏng lâu thì message vẫn mất khi không có DLQ.\n✗ Chuyển hẳn sang SQS — mất khả năng fan-out pub/sub của SNS; không phải giải pháp cho nhu cầu này.\n✗ Message filtering — chỉ quyết định message nào được gửi, không cứu message giao thất bại.",
-    "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-025",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-01-decoupling",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một hệ thống đặt vé dùng SQS FIFO queue để đảm bảo thứ tự xử lý theo từng sự kiện. Hiện throughput bị giới hạn vì tất cả message dùng chung một MessageGroupId. Cách tăng throughput mà vẫn giữ thứ tự trong phạm vi mỗi sự kiện là gì?",
-    "options": [
-      "Dùng MessageGroupId riêng cho mỗi sự kiện để các nhóm được xử lý song song",
-      "Chuyển sang standard queue để có throughput không giới hạn",
-      "Tăng số consumer đọc cùng một message group",
-      "Bật high throughput mode nhưng giữ một MessageGroupId duy nhất"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "FIFO chỉ đảm bảo thứ tự trong cùng một MessageGroupId; tách nhóm theo sự kiện cho phép xử lý song song giữa các nhóm trong khi vẫn giữ thứ tự nội bộ mỗi nhóm.\n✓ MessageGroupId riêng mỗi sự kiện — đúng, các group được xử lý song song, tăng throughput, vẫn giữ ordering trong từng sự kiện.\n✗ Chuyển standard queue — mất đảm bảo thứ tự, vi phạm yêu cầu.\n✗ Nhiều consumer cùng một group — message trong một group vẫn được xử lý tuần tự, không tăng được throughput của group đó.\n✗ High throughput mode với một group duy nhất — vẫn nghẽn vì cùng một MessageGroupId xử lý tuần tự.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-025",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-01-decoupling",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một pipeline cần ingest và xử lý real-time hàng trăm nghìn clickstream event mỗi giây, cho phép nhiều consumer độc lập đọc lại cùng dữ liệu trong cửa sổ thời gian, và xử lý theo thứ tự trong từng partition. Dịch vụ nào phù hợp nhất?",
-    "options": [
-      "Amazon Kinesis Data Streams",
-      "Amazon SQS standard queue",
-      "Amazon SNS topic với nhiều subscriber",
-      "Amazon SQS FIFO queue"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Kinesis Data Streams được thiết kế cho ingestion real-time throughput cao, cho phép nhiều consumer đọc lại dữ liệu trong retention window và giữ thứ tự theo partition key (shard).\n✓ Kinesis Data Streams — đúng, throughput cao, replay được, nhiều consumer độc lập, ordering theo shard.\n✗ SQS standard — message bị xóa sau khi consume, không replay được, không nhiều consumer đọc lại cùng message.\n✗ SNS — fan-out push, không lưu trữ để replay theo cửa sổ thời gian.\n✗ SQS FIFO — giữ thứ tự nhưng throughput thấp hơn nhiều và không hỗ trợ replay/nhiều consumer đọc lại.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-026",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-01-decoupling",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Một kiến trúc sư đang thiết kế một tier xử lý đơn hàng bất đồng bộ resilient bằng SQS. Những thực hành nào sau đây giúp tier này highly available và fault tolerant? (Chọn 2)",
-    "options": [
-      "Đặt consumer trong một Auto Scaling group trải trên nhiều Availability Zones",
-      "Cấu hình DLQ để cô lập các message liên tục xử lý thất bại",
-      "Đặt visibility timeout về 0 để message luôn sẵn sàng được nhận",
-      "Cho một consumer EC2 duy nhất xử lý toàn bộ queue để đảm bảo thứ tự",
-      "Tắt retry để tránh xử lý message nhiều lần"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Consumer trải nhiều AZ trong Auto Scaling group đảm bảo HA, và DLQ cô lập poison message để hệ thống không nghẽn.\n✓ Auto Scaling consumer trên nhiều AZ — đúng, mất một AZ vẫn còn consumer khác xử lý, highly available.\n✓ DLQ cô lập message lỗi — đúng, tăng độ bền và ngăn message hỏng làm nghẽn xử lý.\n✗ Visibility timeout = 0 — sai, message bị nhiều worker nhận đồng thời, gây xử lý trùng nghiêm trọng.\n✗ Một consumer duy nhất — sai, single point of failure, không HA.\n✗ Tắt retry — sai, SQS không hoạt động theo cách đó; mất khả năng thử lại làm giảm độ bền.",
     "domain": 2,
     "mock": 1
   },
@@ -10408,52 +13841,6 @@ export const generatedQuestions: Question[] = [
     "mock": 1
   },
   {
-    "id": "saa-m2-026",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-01-decoupling",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một ứng dụng dùng SNS fan-out tới nhiều SQS queue. Một microservice mới chỉ quan tâm tới event có thuộc tính 'eventType' bằng 'order_created', không muốn nhận các loại event khác để tránh xử lý lãng phí. Cách tối ưu nhất để chỉ nhận đúng loại event này là gì?",
-    "options": [
-      "Áp dụng SNS subscription filter policy trên subscription của queue đó",
-      "Cho consumer đọc mọi message rồi tự lọc và xóa message không liên quan",
-      "Tạo một SNS topic riêng cho mỗi loại event",
-      "Dùng EventBridge thay thế toàn bộ kiến trúc SNS hiện có"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "SNS message filtering cho phép subscription chỉ nhận message khớp filter policy, giảm xử lý thừa mà không đổi kiến trúc.\n✓ SNS subscription filter policy — đúng, chỉ message khớp 'order_created' được đẩy vào queue, tối ưu và ít thay đổi nhất.\n✗ Đọc rồi tự lọc — vẫn nhận và xử lý mọi message, lãng phí tài nguyên và chi phí.\n✗ Topic riêng mỗi loại event — tăng phức tạp quản lý và producer phải biết route, kém linh hoạt.\n✗ Thay toàn bộ bằng EventBridge — over-engineering cho một nhu cầu lọc đơn giản đã có sẵn trong SNS.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-026",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-01-decoupling",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một công ty muốn lập lịch chạy một tác vụ làm sạch dữ liệu mỗi ngày lúc 2 giờ sáng bằng cách kích hoạt một Lambda function, theo cách serverless và ít vận hành. Dịch vụ nào phù hợp nhất để kích hoạt theo lịch?",
-    "options": [
-      "Amazon EventBridge Scheduler (rule theo cron)",
-      "Một EC2 instance chạy cron job gọi Lambda",
-      "Amazon SQS với delay queue đặt 24 giờ",
-      "AWS Step Functions polling liên tục cho tới 2 giờ sáng"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "EventBridge Scheduler kích hoạt target theo biểu thức cron/rate, serverless và không cần hạ tầng quản lý.\n✓ EventBridge Scheduler theo cron — đúng, serverless, kích hoạt Lambda đúng lịch, ít vận hành nhất.\n✗ EC2 chạy cron — phải duy trì và patch một instance chỉ để chạy lịch, vận hành nhiều.\n✗ SQS delay queue 24 giờ — delay tối đa của SQS là 15 phút, không dùng cho lịch hằng ngày được.\n✗ Step Functions polling — lãng phí và phức tạp, không phải công cụ lập lịch.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
     "id": "saa-m1-028",
     "courseId": "SAA-C03",
     "lesson": "resilient-01-decoupling",
@@ -10475,52 +13862,6 @@ export const generatedQuestions: Question[] = [
     "explanation": "SQS làm buffer trước Lambda; khi vượt concurrency, message vẫn nằm trong queue và được xử lý dần, không mất yêu cầu.\n✓ SQS làm buffer + Lambda đọc từ queue — đúng, queue hấp thụ đột biến, Lambda xử lý theo concurrency mà không mất event.\n✗ S3 gọi Lambda đồng bộ — S3 thực ra gọi Lambda bất đồng bộ, nhưng khi throttle kéo dài và hết retry vẫn có thể mất event nếu không có buffer/DLQ.\n✗ Tăng reserved concurrency — vẫn có trần account-level, đột biến lớn vẫn có thể throttle và mất.\n✗ API Gateway đồng bộ — gọi đồng bộ vẫn bị throttle khi vượt concurrency, không buffer.",
     "domain": 2,
     "mock": 1
-  },
-  {
-    "id": "saa-m2-027",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-01-decoupling",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một microservice cần gọi đồng bộ một service khác qua nhiều bước có điều kiện rẽ nhánh, retry, và xử lý lỗi rõ ràng, với khả năng quan sát từng bước. Đội muốn tránh nhồi logic điều phối vào trong code Lambda. Dịch vụ nào phù hợp nhất?",
-    "options": [
-      "AWS Step Functions để điều phối workflow",
-      "Amazon SQS chuỗi nhiều queue nối tiếp nhau",
-      "Amazon SNS fan-out tới các Lambda từng bước",
-      "Amazon EventBridge bus với nhiều rule nối tiếp"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Step Functions cung cấp workflow có state, rẽ nhánh, retry/catch tích hợp và observability từng bước, tách logic điều phối khỏi code.\n✓ Step Functions — đúng, điều phối có điều kiện, retry/error handling khai báo, theo dõi từng state.\n✗ Chuỗi SQS nối tiếp — phải tự viết logic rẽ nhánh/retry và khó quan sát toàn workflow.\n✗ SNS fan-out — phát song song, không phù hợp cho luồng tuần tự có điều kiện và state.\n✗ EventBridge nhiều rule nối tiếp — khó biểu diễn rẽ nhánh/retry phức tạp và theo dõi trạng thái từng bước.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-027",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-01-decoupling",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một công ty chạy microservices trên Amazon EKS và cần một load balancer phân phối lưu lượng HTTP tới các pod, hỗ trợ định tuyến theo path và tích hợp tự động với Kubernetes Ingress. Lựa chọn nào phù hợp nhất?",
-    "options": [
-      "Application Load Balancer (qua AWS Load Balancer Controller)",
-      "Network Load Balancer cho lưu lượng HTTP nội bộ",
-      "Classic Load Balancer cấu hình thủ công",
-      "Gateway Load Balancer đặt trước cluster"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "ALB qua AWS Load Balancer Controller tích hợp với Kubernetes Ingress, định tuyến HTTP theo path tới các pod.\n✓ ALB qua Load Balancer Controller — đúng, Layer 7, path-based routing, tích hợp Ingress chuẩn cho EKS.\n✗ NLB cho HTTP — NLB là Layer 4, không định tuyến theo path; thường dùng cho Service type LoadBalancer L4.\n✗ CLB thủ công — lỗi thời, không tích hợp Ingress hiện đại tốt.\n✗ GWLB — dành cho appliance bảo mật, không phải ingress ứng dụng.",
-    "domain": 2,
-    "mock": 3
   },
   {
     "id": "saa-m1-029",
@@ -10546,52 +13887,6 @@ export const generatedQuestions: Question[] = [
     "mock": 1
   },
   {
-    "id": "saa-m2-028",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-01-decoupling",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một ứng dụng đặt sau Application Load Balancer cần ALB ngừng gửi lưu lượng tới các instance không lành mạnh để duy trì độ sẵn sàng. Tính năng nào của ALB đảm nhiệm việc này?",
-    "options": [
-      "Health checks tới target group",
-      "Sticky sessions",
-      "Cross-zone load balancing",
-      "SSL/TLS termination"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Health check của ALB liên tục kiểm tra target và chỉ route tới các target lành mạnh.\n✓ Health checks — đúng, ALB tự động ngừng gửi traffic tới instance unhealthy, duy trì availability.\n✗ Sticky sessions — giữ người dùng ở cùng target, không liên quan loại bỏ target hỏng.\n✗ Cross-zone load balancing — phân phối đều giữa các AZ, không phải phát hiện target hỏng.\n✗ SSL/TLS termination — giải mã TLS tại LB, không liên quan health.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-028",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-01-decoupling",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một hệ thống IoT nhận hàng triệu message nhỏ mỗi phút từ thiết bị, cần buffer để load leveling trước khi xử lý bằng một fleet worker có thể scale, với chi phí thấp và không yêu cầu thứ tự nghiêm ngặt. Lựa chọn decoupling nào tối ưu nhất về chi phí và đơn giản?",
-    "options": [
-      "Amazon SQS standard queue làm buffer, worker tier scale theo độ sâu queue",
-      "Amazon SQS FIFO queue để đảm bảo thứ tự tuyệt đối",
-      "Amazon Kinesis Data Streams với hàng nghìn shard provisioned",
-      "Kết nối thiết bị trực tiếp tới worker EC2 qua TCP"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Không cần thứ tự nghiêm ngặt nên SQS standard là lựa chọn rẻ và đơn giản nhất để buffer và load-level, kết hợp worker scale theo độ sâu queue.\n✓ SQS standard + worker scale theo queue depth — đúng, throughput gần như không giới hạn, chi phí thấp, đơn giản, đúng nhu cầu.\n✗ FIFO queue — đắt hơn và giới hạn throughput hơn, không cần vì không yêu cầu thứ tự.\n✗ Kinesis nghìn shard provisioned — phức tạp và tốn kém hơn cho nhu cầu buffer đơn giản không cần replay.\n✗ Kết nối trực tiếp TCP tới worker — coupling chặt, không có buffer, mất message khi worker quá tải.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
     "id": "saa-m1-030",
     "courseId": "SAA-C03",
     "lesson": "resilient-02-ha-fault-tolerance",
@@ -10613,52 +13908,6 @@ export const generatedQuestions: Question[] = [
     "explanation": "Multi-AZ deployment của RDS cung cấp standby đồng bộ ở AZ khác và tự động failover qua DNS endpoint, không đổi connection string.\n✓ Bật Multi-AZ: AWS quản lý standby đồng bộ và failover tự động qua cùng một endpoint, ít vận hành nhất.\n✗ Read Replica là replication bất đồng bộ phục vụ scale đọc, không tự động failover và promote cần thao tác thủ công, có thể mất dữ liệu.\n✗ Snapshot khôi phục thủ công có RTO/RPO cao và nhiều thao tác.\n✗ Lambda tự đồng bộ là giải pháp tự xây dựng, nhiều vận hành và rủi ro.",
     "domain": 2,
     "mock": 1
-  },
-  {
-    "id": "saa-m2-029",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-02-ha-fault-tolerance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một công ty thương mại điện tử toàn cầu chạy ứng dụng trên hai Region: us-east-1 và eu-west-1, mỗi Region có một Application Load Balancer. Họ muốn người dùng được định tuyến tới Region có độ trễ thấp nhất, đồng thời tự động chuyển hướng khỏi Region nào không khỏe mạnh. Cấu hình Route 53 nào phù hợp nhất?",
-    "options": [
-      "Latency-based routing kết hợp với Route 53 health checks gắn vào từng record của hai Region",
-      "Geolocation routing dựa trên quốc gia người dùng mà không cần health checks",
-      "Weighted routing với trọng số bằng nhau cho hai Region",
-      "Simple routing trỏ tới cả hai ALB và để client tự chọn"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Latency-based routing chọn Region độ trễ thấp nhất, còn health checks loại bỏ endpoint không khỏe mạnh.\n✓ Latency-based + health checks: định tuyến theo độ trễ thấp nhất và tự động bỏ qua Region không khỏe mạnh.\n✗ Geolocation định tuyến theo vị trí địa lý chứ không theo độ trễ, và không có health checks thì không failover.\n✗ Weighted phân chia theo tỷ lệ cố định, không tối ưu độ trễ.\n✗ Simple routing không hỗ trợ health checks và trả nhiều giá trị ngẫu nhiên, không đảm bảo độ trễ thấp nhất.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-029",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-02-ha-fault-tolerance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng tài chính yêu cầu RPO gần bằng 0 và RTO chỉ vài phút cho database quan hệ, với khả năng đọc với độ trễ thấp ở nhiều Region và khả năng promote một Region thứ cấp lên primary trong dưới 1 phút khi xảy ra thảm họa Region. Giải pháp nào phù hợp nhất?",
-    "options": [
-      "Amazon Aurora Global Database với một primary Region và các secondary Region read-only",
-      "Amazon RDS Multi-AZ deployment trong một Region duy nhất",
-      "Amazon RDS cross-Region Read Replicas được promote thủ công khi cần",
-      "Sao chép EBS snapshots của database sang Region khác mỗi 15 phút"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Aurora Global Database replicate với độ trễ thường dưới 1 giây và cho phép promote secondary Region trong khoảng 1 phút.\n✓ Aurora Global Database: replication storage-level rất nhanh, RPO gần 0, RTO thấp, đọc low-latency ở secondary Region.\n✗ RDS Multi-AZ chỉ bảo vệ trong một Region, không chống thảm họa cấp Region.\n✗ RDS cross-Region Read Replica có độ trễ replication cao hơn và promote chậm hơn Aurora Global.\n✗ EBS snapshot mỗi 15 phút cho RPO tới 15 phút và RTO cao, không đạt yêu cầu.",
-    "domain": 2,
-    "mock": 3
   },
   {
     "id": "saa-m1-031",
@@ -10684,77 +13933,6 @@ export const generatedQuestions: Question[] = [
     "mock": 1
   },
   {
-    "id": "saa-m2-030",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-02-ha-fault-tolerance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng web stateless chạy sau Application Load Balancer với Auto Scaling group. Hiện tại tất cả EC2 instances nằm trong một Availability Zone duy nhất. Kiến trúc sư muốn tăng khả năng chịu lỗi (fault tolerance) để ứng dụng vẫn hoạt động khi một AZ gặp sự cố. Hành động nào đạt mục tiêu hiệu quả nhất?",
-    "options": [
-      "Cấu hình Auto Scaling group trải trên nhiều subnet thuộc các AZ khác nhau và bật cross-zone load balancing",
-      "Tăng kích thước instance type để mỗi instance chịu tải lớn hơn",
-      "Bật detailed CloudWatch monitoring cho các instance trong AZ hiện tại",
-      "Đặt một Network Load Balancer trước Application Load Balancer hiện tại"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Trải instances trên nhiều AZ là cách cơ bản để chịu được lỗi một AZ.\n✓ ASG đa AZ + cross-zone LB: nếu một AZ lỗi, các instance ở AZ khác vẫn phục vụ, đạt fault tolerance.\n✗ Tăng instance type không giúp gì khi cả AZ chứa toàn bộ instance bị mất.\n✗ Detailed monitoring chỉ tăng độ chi tiết metric, không tăng khả năng chịu lỗi.\n✗ Đặt NLB trước ALB không giải quyết vấn đề tập trung trong một AZ.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-030",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-02-ha-fault-tolerance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một công ty cần triển khai trang bảo trì (maintenance page) lưu trên S3 để hiển thị cho người dùng khi ứng dụng chính ở một Region không khỏe mạnh. Họ muốn Route 53 tự động chuyển traffic từ ứng dụng chính sang trang bảo trì. Cấu hình routing nào phù hợp nhất?",
-    "options": [
-      "Failover routing với primary record (ALB) gắn health check và secondary record trỏ tới S3 static website",
-      "Weighted routing chia 90% cho ALB và 10% cho S3 static website",
-      "Multivalue answer routing trả về cả ALB và S3 endpoint",
-      "Latency-based routing giữa ALB và S3 static website"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Failover routing được thiết kế đúng cho mô hình active-passive primary/secondary.\n✓ Failover routing với health check: khi primary ALB không khỏe mạnh, Route 53 trả về secondary trỏ S3, hiển thị trang bảo trì.\n✗ Weighted vẫn gửi 10% traffic sang S3 ngay cả khi ALB khỏe mạnh, không đúng mục tiêu.\n✗ Multivalue answer trả nhiều giá trị song song, không phải mô hình failover passive.\n✗ Latency-based không xét trạng thái active-passive.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "saa-m2-031",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-02-ha-fault-tolerance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Một ứng dụng global yêu cầu một database NoSQL có khả năng đọc-ghi với độ trễ thấp ở nhiều Region đồng thời (active-active), tự động sao chép giữa các Region, và chịu được lỗi toàn bộ một Region mà ứng dụng vẫn ghi được ở Region khác. Những phát biểu nào ĐÚNG về giải pháp phù hợp? (Chọn 2)",
-    "options": [
-      "Amazon DynamoDB Global Tables cung cấp replication active-active multi-Region, cho phép đọc-ghi ở mỗi Region tham gia",
-      "DynamoDB Global Tables sử dụng cơ chế last-writer-wins để giải quyết xung đột ghi đồng thời",
-      "Aurora Global Database cho phép ghi đồng thời ở mọi secondary Region với độ trễ thấp",
-      "Phải tự xây dựng một Lambda pipeline để sao chép dữ liệu giữa các bảng DynamoDB ở mỗi Region",
-      "DynamoDB Global Tables yêu cầu cấu hình thủ công cross-Region replication qua Kinesis cho mỗi item"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "DynamoDB Global Tables là giải pháp NoSQL multi-Region active-active được quản lý hoàn toàn, dùng last-writer-wins để xử lý xung đột.\n✓ Global Tables hỗ trợ đọc-ghi ở mọi Region tham gia, replication tự động.\n✓ Cơ chế giải quyết xung đột là last-writer-wins dựa trên timestamp.\n✗ Aurora Global Database chỉ có một writer Region; secondary là read-only, không phải active-active ghi.\n✗ Không cần tự xây Lambda pipeline vì replication là tính năng tích hợp.\n✗ Không cần cấu hình Kinesis thủ công; Global Tables tự sao chép.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
     "id": "saa-m1-032",
     "courseId": "SAA-C03",
     "lesson": "resilient-02-ha-fault-tolerance",
@@ -10776,52 +13954,6 @@ export const generatedQuestions: Question[] = [
     "explanation": "AWS Backup là dịch vụ quản lý backup tập trung cho nhiều dịch vụ với policy và cross-Region copy tích hợp.\n✓ AWS Backup: một backup plan duy nhất quản lý EBS, RDS, DynamoDB, EFS, áp retention thống nhất và copy cross-Region, ít vận hành nhất.\n✗ Script CLI tùy chỉnh nhiều vận hành và dễ lỗi.\n✗ Data Lifecycle Manager chỉ quản lý EBS/AMI snapshots, không bao phủ RDS/DynamoDB/EFS.\n✗ S3 versioning không tạo backup cho các dịch vụ trên.",
     "domain": 2,
     "mock": 1
-  },
-  {
-    "id": "saa-m2-032",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-02-ha-fault-tolerance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một công ty media lưu nội dung quan trọng trong một S3 bucket ở us-east-1. Để tuân thủ quy định, một bản sao của tất cả object phải tồn tại ở một Region khác và được cập nhật tự động khi có object mới. Giải pháp nào phù hợp nhất?",
-    "options": [
-      "Bật S3 Cross-Region Replication (CRR) tới một bucket đích ở Region khác",
-      "Bật S3 Versioning và chạy một AWS Lambda định kỳ để copy object sang Region khác",
-      "Dùng S3 Transfer Acceleration để tăng tốc tải object lên",
-      "Bật S3 Same-Region Replication (SRR) sang một bucket khác trong cùng Region"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "S3 Cross-Region Replication tự động sao chép object sang bucket ở Region khác khi có thay đổi.\n✓ CRR: sao chép tự động, bất đồng bộ object mới sang Region khác, đáp ứng tuân thủ multi-Region.\n✗ Lambda định kỳ copy là tự xây dựng, không tự động tức thì và nhiều vận hành.\n✗ Transfer Acceleration chỉ tăng tốc upload, không tạo bản sao Region khác.\n✗ SRR sao chép trong cùng Region, không đáp ứng yêu cầu Region khác.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-031",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-02-ha-fault-tolerance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một hệ thống thương mại điện tử dùng Warm Standby ở Region thứ cấp. Trong DR test, đội vận hành nhận thấy khi failover, ứng dụng cần xử lý lưu lượng production đầy đủ nhưng Region thứ cấp chỉ chạy số lượng instance tối thiểu. Cách nào giúp Region thứ cấp đáp ứng tải production nhanh nhất khi failover, đồng thời giữ chi phí thấp khi chưa failover?",
-    "options": [
-      "Giữ Auto Scaling group ở Region thứ cấp với số instance tối thiểu và cấu hình scaling policy để mở rộng nhanh khi traffic chuyển tới",
-      "Chạy sẵn toàn bộ số lượng instance production ở Region thứ cấp 24/7",
-      "Tắt hoàn toàn Region thứ cấp và chỉ tạo instance khi xảy ra thảm họa",
-      "Chuyển sang Multi-AZ trong một Region duy nhất thay vì dùng Region thứ cấp"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Warm Standby duy trì bản thu nhỏ luôn chạy và mở rộng (scale out) khi failover, cân bằng tốc độ và chi phí.\n✓ ASG tối thiểu + scaling policy: chạy nhỏ để tiết kiệm, tự mở rộng nhanh đáp ứng tải production khi failover.\n✗ Chạy full 24/7 biến nó thành active-active/hot, chi phí cao không cần thiết.\n✗ Tắt hoàn toàn là Backup and Restore/Pilot Light, RTO cao hơn, mâu thuẫn với Warm Standby.\n✗ Multi-AZ một Region không bảo vệ thảm họa cấp Region.",
-    "domain": 2,
-    "mock": 3
   },
   {
     "id": "saa-m1-033",
@@ -10847,52 +13979,6 @@ export const generatedQuestions: Question[] = [
     "mock": 1
   },
   {
-    "id": "saa-m2-033",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-02-ha-fault-tolerance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một dịch vụ API nhận traffic từ người dùng ở nhiều quốc gia. Vì lý do tuân thủ dữ liệu, người dùng ở Đức phải luôn được phục vụ bởi endpoint ở eu-central-1, người dùng ở Nhật bởi ap-northeast-1, còn lại đi tới us-east-1. Cấu hình Route 53 nào phù hợp nhất?",
-    "options": [
-      "Geolocation routing với record riêng cho Đức, Nhật và một default record cho phần còn lại",
-      "Latency-based routing giữa ba Region",
-      "Weighted routing chia đều cho ba Region",
-      "Failover routing với us-east-1 là primary"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Geolocation routing định tuyến dựa trên vị trí địa lý của người dùng, phù hợp yêu cầu tuân thủ dữ liệu theo quốc gia.\n✓ Geolocation routing: ánh xạ quốc gia tới Region cụ thể và có default record cho các vị trí khác, đáp ứng tuân thủ.\n✗ Latency-based chọn theo độ trễ, không đảm bảo người Đức luôn tới eu-central-1.\n✗ Weighted chia ngẫu nhiên theo tỷ lệ, vi phạm tuân thủ.\n✗ Failover là active-passive, không phục vụ theo địa lý.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-032",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-02-ha-fault-tolerance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một ngân hàng triển khai chiến lược Pilot Light. Database primary ở Region chính được sao chép liên tục sang Region dự phòng, nhưng application/web tier ở Region dự phòng KHÔNG chạy thường xuyên. Khi xảy ra thảm họa, điều gì PHẢI xảy ra để khôi phục dịch vụ, và đây là đặc trưng nào của Pilot Light?",
-    "options": [
-      "Khởi chạy (provision và scale up) application/web tier từ AMI/template ở Region dự phòng rồi điều hướng traffic; đặc trưng là core data luôn chạy còn app tier được dựng khi cần",
-      "Không cần làm gì vì toàn bộ tier đã chạy sẵn; đặc trưng là active-active",
-      "Phục hồi toàn bộ từ snapshot kể cả database; đặc trưng là Backup and Restore",
-      "Chỉ cần đổi DNS vì bản thu nhỏ của toàn hệ thống đã chạy liên tục; đặc trưng là Warm Standby"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Pilot Light giữ phần lõi dữ liệu luôn được replicate/chạy, còn app tier chỉ được dựng khi cần.\n✓ Khởi chạy app tier từ template + điều hướng traffic: đúng bản chất Pilot Light với data core luôn sẵn sàng.\n✗ Không phải active-active vì app tier không chạy sẵn đầy đủ.\n✗ Không phải Backup and Restore vì database đã được replicate liên tục, không khôi phục từ snapshot.\n✗ Không phải Warm Standby vì Warm Standby chạy bản thu nhỏ của toàn hệ thống liên tục, còn Pilot Light app tier thường tắt.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
     "id": "saa-m1-034",
     "courseId": "SAA-C03",
     "lesson": "resilient-02-ha-fault-tolerance",
@@ -10914,6 +14000,1492 @@ export const generatedQuestions: Question[] = [
     "explanation": "Multi-Site active-active đạt RTO/RPO gần 0 vì cả hai Region đều phục vụ traffic thật.\n✓ Multi-Site active-active: cả hai Region xử lý production đồng thời, mất một Region thì Region kia tiếp nhận ngay, RTO/RPO gần 0.\n✗ Warm Standby cần scale out khi failover nên RTO không bằng 0.\n✗ Pilot Light cần dựng app tier khi thảm họa, RTO cao hơn.\n✗ Backup and Restore có RTO/RPO cao nhất.",
     "domain": 2,
     "mock": 1
+  },
+  {
+    "id": "saa-m1-035",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-02-ha-fault-tolerance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một Application Load Balancer phân phối traffic tới các EC2 instance trong một target group. Kiến trúc sư muốn ALB tự động ngừng gửi request tới các instance không phản hồi đúng và chỉ gửi tới các instance khỏe mạnh. Tính năng nào của ALB thực hiện điều này?",
+    "options": [
+      "Health checks của target group",
+      "Sticky sessions",
+      "Cross-zone load balancing",
+      "SSL/TLS termination"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Health checks của target group xác định instance khỏe mạnh để định tuyến traffic.\n✓ Health checks: ALB ngừng gửi request tới target không qua health check và chỉ phục vụ instance khỏe mạnh.\n✗ Sticky sessions giữ phiên người dùng trên cùng target, không kiểm tra sức khỏe.\n✗ Cross-zone load balancing phân bố đều giữa các AZ, không kiểm tra sức khỏe.\n✗ SSL/TLS termination xử lý mã hóa, không liên quan tới sức khỏe target.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-036",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-02-ha-fault-tolerance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng yêu cầu shared file storage được nhiều EC2 instance ở các AZ khác nhau cùng mount, và phải vẫn sẵn sàng khi một AZ gặp sự cố. Giải pháp lưu trữ nào phù hợp nhất?",
+    "options": [
+      "Amazon EFS với mount target ở mỗi AZ",
+      "Một EBS volume gắn vào instance ở một AZ và chia sẻ qua NFS tự cấu hình",
+      "Instance store volume trên mỗi instance",
+      "Amazon S3 mount qua một single-AZ gateway tùy chỉnh"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "EFS là file system được chia sẻ, dữ liệu được lưu dư thừa trên nhiều AZ.\n✓ EFS với mount target mỗi AZ: nhiều instance đa AZ cùng truy cập, vẫn sẵn sàng khi một AZ lỗi.\n✗ EBS gắn một AZ là single point of failure và (theo chuẩn) chỉ gắn một instance.\n✗ Instance store là ephemeral, mất dữ liệu khi instance dừng và không chia sẻ.\n✗ S3 qua gateway single-AZ tạo điểm lỗi đơn và không phải POSIX file system tự nhiên.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-037",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-02-ha-fault-tolerance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một kiến trúc sư so sánh giữa triển khai Multi-AZ và Multi-Region cho một workload. Phát biểu nào mô tả ĐÚNG nhất sự khác biệt quan trọng giữa hai cách tiếp cận?",
+    "options": [
+      "Multi-AZ bảo vệ chống lỗi cấp data center/AZ với độ trễ thấp trong một Region; Multi-Region bảo vệ chống thảm họa cấp Region nhưng phức tạp và tốn kém hơn",
+      "Multi-AZ và Multi-Region cung cấp mức bảo vệ tương đương, chỉ khác tên gọi",
+      "Multi-Region luôn rẻ hơn Multi-AZ vì dùng ít tài nguyên hơn",
+      "Multi-AZ bảo vệ chống thảm họa toàn Region còn Multi-Region chỉ bảo vệ trong một AZ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Multi-AZ là HA trong một Region; Multi-Region là DR/khả năng chịu lỗi ở quy mô Region với chi phí và độ phức tạp cao hơn.\n✓ Multi-AZ chống lỗi AZ với độ trễ thấp; Multi-Region chống thảm họa Region nhưng phức tạp/tốn kém hơn.\n✗ Hai cách không tương đương về phạm vi bảo vệ.\n✗ Multi-Region thường tốn kém hơn, không rẻ hơn.\n✗ Mô tả đảo ngược vai trò là sai.",
+    "domain": 2,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-038",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-02-storage-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một ứng dụng cần scratch storage cho dữ liệu tạm trong quá trình xử lý: hiệu năng I/O cực cao, độ trễ thấp nhất, và chấp nhận mất dữ liệu khi instance dừng. Đồng thời cần kết quả cuối được lưu durable. Chọn HAI lựa chọn đúng cho kiến trúc này.",
+    "options": [
+      "Dùng instance store NVMe SSD làm vùng scratch tạm trong khi xử lý",
+      "Ghi kết quả cuối cùng ra Amazon S3 để lưu trữ durable",
+      "Dùng EBS sc1 làm vùng scratch để tiết kiệm chi phí",
+      "Lưu dữ liệu tạm trên Amazon S3 Glacier để truy xuất nhanh",
+      "Dùng EFS Infrequent Access cho dữ liệu scratch I/O cao"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Instance store cho I/O nhanh nhất và phù hợp dữ liệu ephemeral, còn S3 đảm bảo lưu trữ durable cho kết quả cuối.\n✓ Instance store NVMe cung cấp I/O cực cao, latency thấp, lý tưởng cho scratch chấp nhận mất khi instance dừng.\n✓ Amazon S3 lưu kết quả cuối với durability 11 số 9, đúng yêu cầu durable.\n✗ sc1 là HDD lạnh chi phí thấp nhưng hiệu năng rất thấp, không hợp scratch I/O cao.\n✗ S3 Glacier là lưu trữ lạnh truy xuất chậm, hoàn toàn sai cho dữ liệu tạm cần tốc độ.\n✗ EFS IA tối ưu chi phí dữ liệu ít truy cập, không phải scratch I/O cao.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-039",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-04-network-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một ứng dụng web toàn cầu dùng CloudFront trước ALB. Đội vận hành thấy cache hit ratio chỉ 35% và muốn tăng tỉ lệ cache hit cũng như giảm tải lên origin. Những hành động nào sẽ giúp đạt mục tiêu này? (Chọn 2)",
+    "options": [
+      "Cấu hình cache policy để KHÔNG đưa các cookie và query string không cần thiết vào cache key",
+      "Bật Origin Shield để thêm một lớp cache tập trung trước origin",
+      "Giảm TTL của tất cả object xuống 0 để luôn lấy bản mới nhất",
+      "Chuyển CloudFront price class sang chỉ dùng các edge location đắt nhất",
+      "Tắt compression Gzip/Brotli để giảm thời gian xử lý tại edge"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Tăng cache hit ratio bằng cách giảm số biến thể cache key và thêm lớp cache tập trung gom request tới origin.\n✓ Không đưa cookie/query string thừa vào cache key: giảm số biến thể cache key, nhiều request trúng cùng object nên hit ratio tăng.\n✓ Origin Shield: lớp cache trung tâm gom request từ nhiều POP, giảm origin request đáng kể và tăng hiệu quả cache.\n✗ Giảm TTL về 0: ép mọi request đi tới origin, hit ratio giảm và tải origin tăng — ngược mục tiêu.\n✗ Đổi price class sang edge đắt nhất: chỉ ảnh hưởng vùng phục vụ/chi phí, không cải thiện hit ratio.\n✗ Tắt compression: không liên quan cache hit và còn làm payload lớn hơn, chậm hơn.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-040",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-02-storage-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một hệ thống phân tích log ghi dữ liệu vào S3 với tốc độ rất cao và liên tục đạt giới hạn request. Mọi object hiện đều dùng cùng một prefix dạng logs/. Kiến trúc sư cần tăng throughput request mà không đổi sang dịch vụ khác. Cách nào hiệu quả nhất?",
+    "options": [
+      "Phân tán key object qua nhiều prefix (ví dụ logs/2026/01/, logs/2026/02/) để tăng số request song song",
+      "Bật S3 Versioning để mỗi version được xử lý bởi partition riêng",
+      "Chuyển bucket sang storage class S3 Intelligent-Tiering để tăng throughput",
+      "Gom nhiều log thành một object lớn duy nhất rồi ghi mỗi giờ một lần"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "S3 scale theo prefix: mỗi prefix hỗ trợ tới 3.500 PUT/COPY/POST/DELETE và 5.500 GET/HEAD mỗi giây, nên phân tán key qua nhiều prefix sẽ nhân throughput.\n✓ Nhiều prefix tạo nhiều partition song song, tăng tổng số request mỗi giây.\n✗ Versioning không liên quan đến giới hạn request rate theo prefix.\n✗ Intelligent-Tiering tối ưu chi phí lưu trữ, không thay đổi request rate.\n✗ Gom thành một object lớn ghi mỗi giờ làm mất tính real-time và không phải cách scale request rate.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-041",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-02-storage-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một cơ sở dữ liệu quan hệ self-managed trên EC2 cần volume EBS cung cấp IOPS và throughput ổn định ở mức cao, đồng thời cho phép điều chỉnh IOPS và throughput độc lập với dung lượng để tối ưu chi phí. Loại volume nào phù hợp nhất?",
+    "options": [
+      "EBS gp3",
+      "EBS gp2",
+      "EBS st1 (Throughput Optimized HDD)",
+      "EBS sc1 (Cold HDD)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "gp3 cho phép cấu hình IOPS và throughput độc lập với dung lượng, hiệu năng baseline ổn định và rẻ hơn gp2.\n✓ gp3 tách rời IOPS/throughput khỏi size, cost-effective cho database cần hiệu năng dự đoán được.\n✗ gp2 gắn IOPS theo dung lượng (3 IOPS/GB) và phụ thuộc burst credit, kém linh hoạt và đắt hơn gp3.\n✗ st1 là HDD throughput-optimized cho sequential, không phù hợp database transactional cần IOPS.\n✗ sc1 là HDD lạnh chi phí thấp cho dữ liệu ít truy cập, không đáp ứng hiệu năng database.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-042",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-02-storage-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một nhóm Linux developer cần một shared file system có thể tự động co giãn dung lượng, gắn đồng thời từ nhiều EC2 instance qua NFS trên nhiều Availability Zone, với least operational overhead. Dịch vụ nào phù hợp nhất?",
+    "options": [
+      "Amazon EFS",
+      "Amazon EBS Multi-Attach io2",
+      "Amazon FSx for Windows File Server",
+      "Amazon S3 mount như một ổ đĩa"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "EFS là file system NFS managed, tự động co giãn và truy cập đồng thời từ nhiều instance trên nhiều AZ với vận hành tối thiểu.\n✓ EFS hỗ trợ NFS, multi-AZ, elastic capacity và truy cập đồng thời, least operational overhead.\n✗ EBS Multi-Attach io2 chỉ trong một AZ và yêu cầu cluster-aware file system, phức tạp hơn nhiều.\n✗ FSx for Windows dùng SMB cho Windows, không phù hợp NFS trên Linux.\n✗ S3 là object storage, không phải file system POSIX để mount tự nhiên cho dev workflow.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-043",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-01-compute-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng web có lưu lượng dao động trong ngày. Đội vận hành muốn Auto Scaling group tự động giữ mức trung bình CPU utilization của các instance quanh 50% với cấu hình đơn giản, ít thao tác vận hành nhất. Chính sách scaling nào phù hợp nhất?",
+    "options": [
+      "Target tracking scaling policy với metric Average CPU Utilization = 50%",
+      "Simple scaling policy dựa trên CloudWatch alarm khi CPU > 80%",
+      "Step scaling policy với nhiều bậc điều chỉnh theo CPU",
+      "Scheduled scaling theo khung giờ cố định"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Target tracking tự điều chỉnh số instance để giữ metric quanh giá trị mục tiêu, ít cấu hình và ít vận hành nhất.\n✓ Target tracking với CPU = 50% — đúng, AWS tự tính số instance cần để giữ metric quanh mục tiêu, đơn giản nhất.\n✗ Simple scaling theo alarm — cần cooldown thủ công, phản ứng chậm và nhiều cấu hình hơn.\n✗ Step scaling nhiều bậc — linh hoạt nhưng phức tạp, cần định nghĩa từng bậc thủ công.\n✗ Scheduled scaling — chỉ tốt khi tải có lịch dự đoán trước cố định, không bám theo CPU thực tế.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-044",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-01-compute-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một workload HPC (mô phỏng tính toán) chạy trên một cụm nhiều EC2 instance cần băng thông cao và độ trễ network cực thấp GIỮA CÁC NODE trong cùng một AZ để trao đổi dữ liệu liên tục. Cấu hình nào tối ưu nhất cho hiệu năng giao tiếp giữa các node?",
+    "options": [
+      "Cluster placement group kết hợp Elastic Fabric Adapter (EFA)",
+      "Spread placement group để phân tán các node trên nhiều hardware",
+      "Partition placement group trên nhiều rack",
+      "Đặt các instance ở nhiều AZ và bật Enhanced Networking"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cluster placement group gom các instance gần nhau để có băng thông cao và độ trễ thấp, còn EFA cho phép giao tiếp HPC/MPI hiệu năng cao bỏ qua OS kernel.\n✓ Cluster placement group + EFA — đúng, gom node cùng AZ với độ trễ thấp, EFA tối ưu giao tiếp inter-node cho HPC.\n✗ Spread placement group — phân tán phần cứng để giảm rủi ro cùng lỗi, không tối ưu độ trễ giữa node.\n✗ Partition placement group — cho dữ liệu phân tán lớn (Hadoop/Kafka), không tối ưu low-latency inter-node.\n✗ Nhiều AZ + Enhanced Networking — đặt ở nhiều AZ làm tăng độ trễ giữa các node.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-045",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-01-compute-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng phân tích chạy theo lô lớn, có thể chịu được việc instance bị gián đoạn và tự khởi động lại task. Đội muốn giảm chi phí compute tối đa cho phần workload không khẩn cấp này. Phương án cost-effective nhất cho phần workload chịu gián đoạn?",
+    "options": [
+      "Dùng Spot Instances cho phần workload chịu gián đoạn",
+      "Dùng On-Demand Instances để đảm bảo không gián đoạn",
+      "Mua Reserved Instances 3 năm cho toàn bộ workload",
+      "Dùng Dedicated Hosts cho phần workload này"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Spot Instances rẻ nhất (tới ~90%) và phù hợp workload chịu được gián đoạn như batch/analytics có thể retry.\n✓ Spot Instances — đúng, rẻ nhất cho workload fault-tolerant chịu được interruption.\n✗ On-Demand — không gián đoạn nhưng đắt hơn nhiều, lãng phí cho workload chịu được gián đoạn.\n✗ RI 3 năm cho toàn bộ — cam kết dài hạn không hợp với phần tải biến động/không khẩn.\n✗ Dedicated Hosts — đắt nhất, dùng cho yêu cầu license/compliance, không tối ưu chi phí.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-046",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-03-database-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một nền tảng gaming dùng DynamoDB lưu bảng xếp hạng (leaderboard) với hàng triệu lượt đọc mỗi giây trong giờ cao điểm. Hồ sơ người chơi được đọc lặp lại liên tục và yêu cầu độ trễ ở mức microsecond. Hiện tại độ trễ single-digit millisecond của DynamoDB chưa đủ nhanh. Giải pháp nào đáp ứng yêu cầu với ít thay đổi ứng dụng nhất?",
+    "options": [
+      "Thêm DynamoDB Accelerator (DAX) làm in-memory cache trước DynamoDB",
+      "Đặt Amazon ElastiCache for Redis trước DynamoDB và tự quản lý logic cache",
+      "Bật DynamoDB Global Tables để giảm độ trễ đọc",
+      "Chuyển bảng sang chế độ provisioned capacity với auto scaling"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "DAX là in-memory cache được thiết kế riêng cho DynamoDB, cung cấp độ trễ microsecond với API tương thích nên gần như không phải sửa code.\n✓ DAX cho độ trễ microsecond cho read-heavy, tích hợp gốc với DynamoDB, ít thay đổi ứng dụng.\n✗ ElastiCache for Redis cũng cache được nhưng phải tự viết logic cache-aside, operational overhead cao hơn DAX.\n✗ Global Tables giải quyết replication đa region, không giảm độ trễ đọc xuống microsecond.\n✗ Provisioned capacity điều chỉnh throughput chứ không hạ độ trễ xuống mức microsecond.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-047",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-03-database-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một ứng dụng web dùng DynamoDB với primary key là CustomerId. Sản phẩm cần truy vấn đơn hàng theo OrderStatus và theo OrderDate, đây là các thuộc tính không phải key. Hiện tại ứng dụng đang Scan toàn bảng rồi lọc, gây tốn kém và chậm. Cách tối ưu nhất để hỗ trợ các truy vấn này?",
+    "options": [
+      "Tạo Global Secondary Index (GSI) với OrderStatus và OrderDate làm key để Query trực tiếp",
+      "Tạo Local Secondary Index (LSI) trên OrderStatus và OrderDate",
+      "Bật DynamoDB Streams và xây bảng phụ được denormalize theo OrderStatus",
+      "Tăng provisioned read capacity để các thao tác Scan chạy nhanh hơn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "GSI cho phép truy vấn theo các thuộc tính không phải primary key gốc với partition/sort key khác, thay thế Scan tốn kém bằng Query hiệu quả.\n✓ GSI tạo index với OrderStatus/OrderDate làm key, cho phép Query thay vì Scan toàn bảng — nhanh và rẻ hơn nhiều.\n✗ LSI phải dùng chung partition key với bảng gốc (CustomerId) và chỉ tạo được lúc tạo bảng — không hỗ trợ truy vấn theo OrderStatus độc lập.\n✗ DynamoDB Streams + bảng phụ giải quyết được nhưng phức tạp, tốn công maintain so với GSI native.\n✗ Tăng read capacity chỉ làm Scan tốn kém hơn về chi phí, không giải quyết bản chất kém hiệu quả của Scan.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-048",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-03-database-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một startup ra mắt ứng dụng mới và không thể dự đoán traffic; có thể tăng vọt bất ngờ rồi giảm về gần 0. Họ muốn dùng DynamoDB nhưng lo lắng về việc throttling khi chưa provisioned đủ capacity và lãng phí khi provisioned quá mức. Giải pháp nào phù hợp nhất mà LEAST operational overhead?",
+    "options": [
+      "Dùng DynamoDB on-demand capacity mode",
+      "Dùng provisioned capacity với auto scaling cấu hình thủ công",
+      "Provisioned capacity cao cố định để tránh throttling",
+      "Dùng provisioned capacity thấp kết hợp DynamoDB Accelerator (DAX)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "On-demand mode tự động phục vụ throughput theo lưu lượng thực tế, không cần dự đoán capacity, lý tưởng cho traffic không đoán trước.\n✓ On-demand tự scale tức thời theo traffic, chỉ trả tiền theo request thực dùng — không cần planning, ít vận hành nhất.\n✗ Provisioned + auto scaling cần cấu hình ngưỡng và có độ trễ scaling, không lý tưởng cho burst đột ngột không đoán trước.\n✗ Provisioned cao cố định lãng phí lớn khi traffic giảm về 0.\n✗ DAX là caching layer giảm độ trễ đọc, không giải quyết vấn đề capacity planning cho ghi/burst.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-049",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-04-network-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một nền tảng game multiplayer chạy trên EC2 fleet sau NLB, dùng giao thức UDP, triển khai ở hai region (us-east-1 và ap-southeast-1). Yêu cầu: client cần một địa chỉ IP cố định để whitelist, latency thấp ổn định, và failover giữa region trong vòng dưới một giây khi một region down. Giải pháp nào phù hợp nhất?",
+    "options": [
+      "AWS Global Accelerator với hai static anycast IP, endpoint trỏ tới NLB ở mỗi region",
+      "Amazon CloudFront với NLB làm origin và Origin Failover group giữa hai region",
+      "Route 53 failover routing với TTL 30 giây trỏ tới NLB của từng region",
+      "Route 53 latency-based routing kết hợp health check trên hai NLB"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Global Accelerator cung cấp static anycast IP, định tuyến UDP qua AWS backbone với latency thấp và failover dưới một giây — đúng mọi yêu cầu.\n✓ Global Accelerator: 2 static IP để whitelist, hỗ trợ UDP (L4), failover region dưới 1s không phụ thuộc DNS.\n✗ CloudFront: là CDN L7 HTTP/HTTPS, không hỗ trợ UDP game traffic và không cho static IP.\n✗ Route 53 failover TTL 30s: phụ thuộc DNS cache của client/resolver, failover thường chậm hơn nhiều giây, không cho static IP.\n✗ Route 53 latency-based: vẫn là DNS, không đảm bảo failover dưới 1s và không cấp static IP cho whitelist.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-050",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-04-network-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một doanh nghiệp tài chính cần kết nối data center on-premises với AWS để truyền dữ liệu liên tục 2 Gbps với latency thấp và ổn định, và yêu cầu compliance không cho phép traffic đi qua public internet. Giải pháp nào đáp ứng tốt nhất?",
+    "options": [
+      "AWS Direct Connect với dedicated connection 10 Gbps",
+      "Site-to-Site VPN với hai tunnel để tăng throughput tổng",
+      "Site-to-Site VPN qua AWS Global Accelerator để tối ưu route",
+      "Nhiều Site-to-Site VPN connection gộp lại bằng ECMP để đạt 2 Gbps"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Direct Connect cung cấp kết nối riêng với throughput, latency ổn định và không đi qua internet — đáp ứng cả hiệu năng lẫn compliance.\n✓ Direct Connect 10 Gbps: throughput trên 2 Gbps consistent, latency predictable, traffic không qua public internet, thỏa compliance.\n✗ VPN hai tunnel: mỗi tunnel khoảng 1.25 Gbps và đi qua public internet, không thỏa yêu cầu compliance.\n✗ VPN qua Global Accelerator: vẫn dựa trên internet ở chặng cuối tới on-prem, không thỏa yêu cầu no internet.\n✗ Nhiều VPN + ECMP: phức tạp, jitter cao, và vẫn đi qua public internet.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-051",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-04-network-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một công ty chạy hai bản sao của ứng dụng web ở us-east-1 và eu-west-1, mỗi bản sau một ALB riêng. Họ muốn user được tự động định tuyến tới region có độ trễ mạng thấp nhất từ vị trí của họ. Routing policy nào của Route 53 phù hợp nhất?",
+    "options": [
+      "Latency-based routing với health check trên mỗi ALB",
+      "Weighted routing chia 50/50 giữa hai region",
+      "Geolocation routing theo quốc gia của user",
+      "Simple routing trỏ tới cả hai ALB cùng lúc"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Latency-based routing định tuyến user tới region cho latency thấp nhất từ resolver của họ, kèm health check để bỏ qua region lỗi.\n✓ Latency-based routing: chọn region latency thấp nhất tự động, health check loại region down — đúng mục tiêu.\n✗ Weighted 50/50: chia theo tỉ lệ cố định, không tối ưu theo latency địa lý.\n✗ Geolocation: định tuyến theo ranh giới địa lý cố định, không phản ánh latency thực tế và dễ bỏ sót vùng chưa map.\n✗ Simple routing nhiều giá trị: trả về ngẫu nhiên không xét latency và không health check.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-052",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-03-database-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty lưu hàng terabyte log JSON thô trong S3. Đội data muốn chạy các truy vấn SQL ad-hoc không thường xuyên trực tiếp trên dữ liệu này mà không cần load vào database hay vận hành cluster, và chỉ trả tiền theo dung lượng quét. Giải pháp nào tối ưu nhất về cost-effective và least operational overhead?",
+    "options": [
+      "Amazon Athena truy vấn trực tiếp dữ liệu S3, dùng AWS Glue Data Catalog làm schema",
+      "Amazon Redshift provisioned cluster với COPY toàn bộ dữ liệu từ S3 vào rồi truy vấn",
+      "Amazon EMR với Hive chạy liên tục để phục vụ truy vấn ad-hoc",
+      "Amazon RDS for PostgreSQL với dữ liệu được import định kỳ từ S3"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Athena là serverless query engine query trực tiếp trên S3, tính phí theo dữ liệu quét, lý tưởng cho truy vấn ad-hoc không thường xuyên.\n✓ Athena serverless, không cần cluster, trả tiền theo lượng quét, dùng Glue Data Catalog cho schema.\n✗ Redshift provisioned cluster chạy liên tục tốn chi phí cố định, thừa cho truy vấn không thường xuyên.\n✗ EMR Hive chạy liên tục đòi hỏi quản lý cluster và chi phí cao khi truy vấn thưa thớt.\n✗ RDS cần import dữ liệu và không phù hợp để quét hàng terabyte log thô trong S3.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-053",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-03-database-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một pipeline streaming dùng Kinesis Data Streams cần biến đổi nhẹ từng record (làm sạch, enrich) ngay trước khi lưu vào S3 cho data lake. Lượng dữ liệu lớn nhưng transform đơn giản, và đội muốn tránh quản lý hạ tầng tối đa. Kiến trúc nào tối ưu nhất về least operational overhead?",
+    "options": [
+      "Kết nối Amazon Data Firehose vào stream và bật tích hợp Lambda transformation để biến đổi record trước khi ghi S3",
+      "Triển khai một consumer application Spark Streaming trên EMR đọc stream, transform và ghi S3",
+      "Dùng KCL consumer chạy trên một Auto Scaling group EC2 để transform và ghi S3",
+      "Ghi raw vào S3 bằng Firehose rồi chạy Glue ETL batch định kỳ để transform sau"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Firehose với Lambda transformation cho phép biến đổi từng record inline rồi tự ghi vào S3, fully managed cho transform nhẹ trên stream.\n✓ Firehose + Lambda transformation managed hoàn toàn, biến đổi record inline và tự ghi S3, ít vận hành nhất.\n✗ Spark Streaming trên EMR đòi hỏi quản lý cluster, quá nặng cho transform đơn giản.\n✗ KCL consumer trên EC2 ASG buộc tự viết và vận hành ứng dụng, nhiều operational overhead.\n✗ Ghi raw rồi Glue batch thêm độ trễ và một bước xử lý, không tối ưu khi transform có thể làm inline.",
+    "domain": 3,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-054",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-02-storage-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Một tổ chức có hàng nghìn EBS volume và muốn giảm chi phí cũng như rủi ro của việc quản lý EBS snapshot thủ công (tạo snapshot định kỳ, giữ lại theo policy, xóa snapshot cũ). Họ muốn least operational overhead. Chọn HAI hành động giúp đạt mục tiêu này.",
+    "options": [
+      "Dùng Amazon Data Lifecycle Manager (DLM) để tự động tạo, giữ và xóa EBS snapshot theo policy",
+      "Cấu hình DLM lưu trữ các snapshot ít dùng vào EBS Snapshots Archive tier để giảm chi phí lưu trữ snapshot dài hạn",
+      "Viết một cron job trên mỗi EC2 instance gọi AWS CLI để tạo snapshot",
+      "Copy thủ công snapshot sang một Region khác mỗi tuần để giảm chi phí",
+      "Bật EBS encryption để giảm chi phí lưu trữ snapshot"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "DLM tự động hóa vòng đời snapshot, và DLM có thể lưu trữ snapshot ít dùng vào EBS Snapshots Archive tier rẻ hơn cho dài hạn, cùng giảm chi phí lẫn vận hành.\n✓ Amazon Data Lifecycle Manager — đúng, tự động hóa toàn bộ vòng đời snapshot, giảm thao tác thủ công.\n✓ DLM lưu vào EBS Snapshots Archive tier — đúng, hạ chi phí lưu trữ snapshot giữ lâu mà ít truy cập.\n✗ Cron job trên mỗi instance — tăng operational overhead và dễ lỗi, trái mục tiêu.\n✗ Copy snapshot sang Region khác hằng tuần — phục vụ DR/độ bền chứ không giảm chi phí, còn tăng phí.\n✗ Bật EBS encryption — liên quan bảo mật, không ảnh hưởng chi phí lưu trữ snapshot.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-055",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-03-db-network-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Solutions Architect review một Amazon RDS for PostgreSQL Multi-AZ instance đang chạy db.r5.4xlarge. Báo cáo CloudWatch cho thấy CPU trung bình 12%, FreeableMemory cao liên tục, IOPS thấp suốt 60 ngày. Mục tiêu là cost-optimize database mà vẫn giữ tính sẵn sàng cho production. Những hành động nào hợp lý? (Chọn 2)",
+    "options": [
+      "Right-size xuống một instance class nhỏ hơn (ví dụ db.r5.large) dựa trên metric thực tế",
+      "Mua Reserved Instance cho instance class mới sau khi đã right-size và xác nhận ổn định",
+      "Tắt Multi-AZ để tiết kiệm một nửa chi phí compute",
+      "Bật thêm 3 read replicas để phân tán tải CPU 12%",
+      "Chuyển ngay sang db.r5.8xlarge để có headroom cho tương lai"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Metric thấp kéo dài cho thấy instance bị over-provisioned: nên right-size xuống rồi mới cam kết RI cho instance class mới để khóa chiết khấu lâu dài.\n✓ Right-size xuống instance nhỏ hơn — đúng, CPU/RAM/IOPS thấp suốt 60 ngày là dấu hiệu rõ ràng over-provisioned.\n✓ Mua RI sau khi right-size — đúng, cam kết RI cho size đúng để tối ưu chi phí dài hạn của production ổn định.\n✗ Tắt Multi-AZ — hy sinh tính sẵn sàng của production, vi phạm yêu cầu giữ HA.\n✗ Thêm read replicas — CPU mới 12%, không có tải để phân tán; chỉ làm tăng chi phí.\n✗ Lên db.r5.8xlarge — phóng to ngược lại khi đang dư thừa, càng lãng phí.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-056",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-02-storage-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty media lưu các bản ghi log truy cập vào S3. Log được phân tích nhiều trong 30 ngày đầu, sau đó hiếm khi cần nhưng vẫn phải truy xuất trong vài giờ nếu có yêu cầu audit, và phải giữ tổng cộng 7 năm vì lý do compliance. Giải pháp lifecycle nào TỐI ƯU CHI PHÍ nhất?",
+    "options": [
+      "Giữ ở S3 Standard 30 ngày, chuyển sang S3 Glacier Flexible Retrieval, rồi sang S3 Glacier Deep Archive, xóa sau 7 năm",
+      "Giữ ở S3 Standard 30 ngày rồi chuyển thẳng sang S3 Glacier Deep Archive, xóa sau 7 năm",
+      "Giữ ở S3 Standard-IA toàn bộ 7 năm",
+      "Giữ ở S3 Standard 30 ngày rồi chuyển sang S3 Standard-IA cho 7 năm còn lại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cần truy xuất trong vài giờ ở giai đoạn đầu sau 30 ngày (phù hợp Glacier Flexible Retrieval), rồi mới hạ xuống Deep Archive rẻ nhất cho phần đuôi dài.\n✓ Standard → Glacier Flexible Retrieval → Deep Archive — đúng, cân bằng giữa yêu cầu truy xuất vài giờ và chi phí thấp nhất về dài hạn.\n✗ Standard → thẳng Deep Archive — Deep Archive cần tới ~12 giờ để truy xuất, không đáp ứng được nhu cầu audit vài giờ trong giai đoạn đầu.\n✗ Standard-IA toàn bộ 7 năm — đắt hơn nhiều so với Glacier cho dữ liệu hầu như không truy cập.\n✗ Standard → Standard-IA cho 7 năm — vẫn đắt hơn nhiều so với tier archive cho dữ liệu lưu trữ dài hạn.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-057",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-02-storage-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một công ty dùng Amazon EFS để lưu file của ứng dụng. Phân tích cho thấy phần lớn file chỉ được truy cập trong vài ngày đầu rồi gần như không động đến nữa, nhưng đôi khi vẫn cần đọc lại với độ trễ chấp nhận được. Họ muốn giảm chi phí lưu trữ EFS mà KHÔNG thay đổi code ứng dụng. Cách TỐI ƯU CHI PHÍ nhất là gì?",
+    "options": [
+      "Bật EFS Lifecycle Management để tự động chuyển file ít truy cập sang EFS Infrequent Access (IA), và bật Intelligent-Tiering để tự đưa file trở lại khi được truy cập",
+      "Di chuyển toàn bộ file sang một EFS file system mới dùng One Zone storage class",
+      "Sao chép file ít dùng sang S3 Glacier bằng script tùy biến và xóa khỏi EFS",
+      "Tăng provisioned throughput của EFS để xử lý nhanh hơn rồi xóa file cũ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "EFS Lifecycle Management cùng Intelligent-Tiering tự chuyển file ít truy cập xuống tier IA rẻ hơn (và đưa lại Standard khi được truy cập), giảm chi phí mà không sửa code.\n✓ EFS Lifecycle Management + IA + Intelligent-Tiering — đúng, tự động dịch chuyển file theo mẫu truy cập, minh bạch với ứng dụng.\n✗ EFS One Zone — giảm chi phí nhưng hạ độ bền (một AZ) và đòi di chuyển dữ liệu, không phải giải pháp tier hóa theo truy cập.\n✗ Script copy sang Glacier rồi xóa khỏi EFS — tăng operational overhead lớn và thay đổi cách truy cập file, đòi sửa ứng dụng.\n✗ Tăng provisioned throughput — làm tăng chi phí, không liên quan tối ưu lưu trữ.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-058",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-01-compute-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một công ty chạy một workload phân tích batch trên EC2. Workload có thể bị gián đoạn bất cứ lúc nào, tự lưu checkpoint và chạy lại từ checkpoint khi cần. Công ty muốn giảm chi phí compute tối đa. Giải pháp nào là MOST cost-effective?",
+    "options": [
+      "Chạy workload trên EC2 Spot Instances",
+      "Mua Standard Reserved Instances kỳ hạn 1 năm",
+      "Chạy trên EC2 On-Demand Instances",
+      "Mua EC2 Instance Savings Plans kỳ hạn 3 năm"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Workload chịu được gián đoạn và có checkpoint là use case kinh điển cho Spot, vốn rẻ tới ~90% so với On-Demand.\n✓ Spot Instances tận dụng capacity dư thừa với giá thấp nhất, phù hợp workload fault-tolerant, có thể gián đoạn.\n✗ Reserved Instances cam kết 1 năm phù hợp workload chạy liên tục, không khai thác được tính fault-tolerant để giảm chi phí tối đa.\n✗ On-Demand đắt nhất, lãng phí khi workload chấp nhận được gián đoạn.\n✗ Savings Plans 3 năm cam kết chi tiêu cố định, không rẻ bằng Spot cho workload gián đoạn được.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-059",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-01-compute-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty chạy API REST có lưu lượng rất biến động: cao điểm ngắn vào giờ làm việc và gần như không có request vào ban đêm và cuối tuần. Hiện tại API chạy trên một EC2 Auto Scaling Group với mức tối thiểu luôn bật, dẫn đến trả tiền cho thời gian rỗi. Kiến trúc sư muốn giải pháp MOST cost-effective và serverless. Phương án nào tốt nhất?",
+    "options": [
+      "Tái kiến trúc API dùng Amazon API Gateway và AWS Lambda",
+      "Giảm minimum size của Auto Scaling Group xuống 1 và dùng Spot Instances",
+      "Chuyển sang AWS Fargate với một service luôn chạy 2 task",
+      "Mua Compute Savings Plans cho Auto Scaling Group hiện tại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Với lưu lượng spiky và nhiều thời gian rỗi, mô hình pay-per-request của Lambda + API Gateway loại bỏ hoàn toàn chi phí idle và là kiến trúc serverless.\n✓ API Gateway + Lambda chỉ tính tiền theo số request/thời gian chạy, không trả tiền khi không có traffic, tối ưu nhất cho tải biến động và đúng yêu cầu serverless.\n✗ Giảm min size + Spot vẫn phải trả tiền cho instance đang chạy và không phải serverless.\n✗ Fargate với 2 task luôn chạy vẫn tốn tiền suốt thời gian rỗi ban đêm và cuối tuần.\n✗ Savings Plans cam kết chi tiêu cố định, lãng phí khi tải gần như bằng 0 phần lớn thời gian.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-060",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-01-compute-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một công ty fintech chạy fleet EC2 stateless lớn cho fanout xử lý sự kiện. Họ muốn dùng Spot để tiết kiệm nhưng cần giảm thiểu khả năng cả fleet bị gián đoạn cùng lúc khi capacity một pool cạn. Cấu hình nào giúp đạt MOST resilient mà vẫn tối ưu chi phí Spot?",
+    "options": [
+      "Dùng EC2 Auto Scaling với allocation strategy price-capacity-optimized và đa dạng hóa qua nhiều instance type và Availability Zone",
+      "Dùng một Spot Fleet chỉ chọn instance type duy nhất rẻ nhất trong một AZ",
+      "Dùng allocation strategy lowest-price chỉ giới hạn ở hai instance type rẻ nhất",
+      "Đặt một maximum Spot price thật cao để không bao giờ bị gián đoạn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đa dạng hóa qua nhiều instance type/AZ với price-capacity-optimized giúp Auto Scaling rút từ các pool dồi dào nhất, giảm rủi ro gián đoạn đồng loạt.\n✓ price-capacity-optimized + đa dạng hóa instance type và AZ phân tán rủi ro qua nhiều Spot pool, vừa rẻ vừa bền vững nhất.\n✗ Một instance type trong một AZ tập trung rủi ro vào một pool duy nhất, dễ bị reclaim toàn bộ.\n✗ lowest-price giới hạn 2 type ưu tiên giá nhưng vẫn ít pool, dễ cạn capacity cùng lúc.\n✗ Đặt max price cao không ngăn được gián đoạn do thiếu capacity — Spot bị reclaim khi hết capacity, không chỉ vì giá.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-061",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-03-db-network-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng SaaS dùng Amazon Aurora MySQL. Lưu lượng database có pattern khó dự đoán: gần như không có tải vào ban đêm và cuối tuần, nhưng tăng vọt bất ngờ trong giờ làm việc. Hiện tại provisioned instance được cấu hình theo peak nên lãng phí lớn lúc thấp tải. Giải pháp cost-effective nhất với least operational overhead là gì?",
+    "options": [
+      "Chuyển sang Aurora Serverless v2, đặt Aurora Capacity Units min/max phù hợp",
+      "Giữ provisioned instance nhưng viết Lambda + scheduler để stop/start theo giờ",
+      "Tạo thêm Aurora read replicas và phân tải bằng Route 53 weighted routing",
+      "Right-size provisioned instance xuống bằng tải trung bình hàng ngày"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Aurora Serverless v2 tự scale ACU lên/xuống gần như tức thời theo tải biến động khó dự đoán, chỉ trả tiền cho capacity thực dùng, không cần tự quản lý lịch.\n✓ Aurora Serverless v2 — đúng, tự co giãn theo spike, scale gần 0 lúc nhàn rỗi, least operational overhead.\n✗ Lambda stop/start theo giờ — không xử lý được spike bất ngờ và thêm gánh nặng vận hành lịch.\n✗ Read replicas + Route 53 — tăng chi phí và chỉ giúp đọc, không giải quyết lãng phí lúc thấp tải.\n✗ Right-size xuống mức trung bình — sẽ không chịu nổi spike giờ làm việc, gây nghẽn hiệu năng.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-062",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-03-db-network-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng báo cáo dùng Amazon RDS for MySQL (Single-AZ). Phần lớn tải là các truy vấn analytics đọc nặng chạy ban ngày, làm primary instance quá tải, trong khi ghi rất ít. Team muốn giảm tải cho primary và tối ưu chi phí thay vì nâng cấp primary lên instance class lớn hơn nhiều. Giải pháp nào tốt nhất?",
+    "options": [
+      "Thêm một RDS read replica và định tuyến truy vấn analytics đọc sang replica",
+      "Bật Multi-AZ rồi đọc từ standby instance để giảm tải primary",
+      "Scale up primary lên instance class lớn gấp đôi để chịu tải đọc",
+      "Chuyển toàn bộ workload sang Aurora Serverless v2"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Read replica cho phép offload truy vấn đọc nặng khỏi primary với chi phí một instance bổ sung, rẻ và linh hoạt hơn nhiều so với phóng to primary.\n✓ Read replica + định tuyến đọc — đúng, giảm tải đọc cho primary đúng chỗ, chi phí tăng có kiểm soát.\n✗ Multi-AZ standby — standby trong RDS MySQL không phục vụ đọc; chỉ để failover.\n✗ Scale up primary gấp đôi — đắt và vẫn dùng một instance gánh cả đọc lẫn ghi, kém tối ưu chi phí.\n✗ Chuyển sang Aurora Serverless v2 — thay đổi engine/kiến trúc lớn, quá mức cho nhu cầu offload đọc.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-063",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-03-db-network-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một ứng dụng e-commerce dùng DynamoDB với traffic có baseline ổn định khá lớn suốt ngày, nhưng đột biến gấp 8-10 lần trong các đợt flash sale theo lịch định trước vài lần mỗi tháng. Họ muốn cost-effective cho phần baseline nhưng tránh throttling lúc flash sale. Cách tiếp cận nào tối ưu nhất?",
+    "options": [
+      "Provisioned capacity với auto scaling cho baseline, và lên lịch tăng target capacity trước mỗi flash sale",
+      "Để bảng ở On-demand capacity mode suốt thời gian để khỏi lo capacity",
+      "Provisioned capacity cố định ở mức peak flash sale để luôn đủ throughput",
+      "Provisioned capacity ở mức baseline và dựa hoàn toàn vào burst capacity lúc flash sale"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Baseline lớn và ổn định nên dùng Provisioned (rẻ hơn On-demand) với auto scaling; vì flash sale theo lịch, có thể scheduled scaling nâng capacity trước sự kiện để tránh throttling.\n✓ Provisioned + auto scaling + lên lịch tăng trước flash sale — đúng, rẻ cho baseline và chủ động đủ capacity cho spike đã biết lịch.\n✗ On-demand suốt thời gian — an toàn nhưng đắt hơn nhiều cho phần baseline lớn, ổn định.\n✗ Provisioned cố định ở peak — trả tiền cho 8-10x capacity cả lúc bình thường, cực lãng phí.\n✗ Dựa vào burst capacity — burst chỉ là dự trữ ngắn hạn nhỏ, không đủ cho spike 8-10x kéo dài.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-064",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-03-db-network-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một kiến trúc multi-tier có web tier và database tier (Amazon RDS) được triển khai trên cùng một Region. Để đạt high availability, đội kỹ thuật đặt EC2 web instances trải đều trên ba Availability Zones, còn RDS Multi-AZ với primary ở AZ-a. Họ nhận thấy chi phí data transfer giữa các tier khá cao. Cách nào giảm cross-AZ data transfer cost mà vẫn duy trì tính sẵn sàng cao?",
+    "options": [
+      "Sử dụng RDS Proxy và đặt read replica ở mỗi AZ để các web instances đọc từ replica cùng AZ, đồng thời giữ Multi-AZ cho failover",
+      "Gom tất cả EC2 web instances vào cùng một AZ với RDS primary để loại bỏ hoàn toàn cross-AZ traffic",
+      "Chuyển RDS sang Single-AZ deployment để tránh phí đồng bộ giữa primary và standby",
+      "Dùng một Cluster placement group cho các web instances để giảm độ trễ mạng giữa chúng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đặt read replica ở mỗi AZ cho phép phần lớn lưu lượng đọc diễn ra trong cùng AZ (không phát sinh cross-AZ cost) trong khi vẫn giữ Multi-AZ cho HA.\n✓ Read replica theo từng AZ giúp read traffic ở lại trong AZ, giảm cross-AZ cost mà vẫn giữ Multi-AZ failover cho tính sẵn sàng cao.\n✗ Gom hết web instances vào một AZ phá vỡ high availability — mất một AZ là sập toàn bộ web tier.\n✗ Single-AZ RDS loại bỏ HA của database, đi ngược yêu cầu.\n✗ Cluster placement group nằm trong một AZ và không phù hợp cho thiết kế HA đa AZ, không giải quyết cost giữa tier.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "saa-m1-065",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-03-db-network-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng phân tán có các microservices chạy trên EC2 ở hai Region khác nhau (us-east-1 và eu-west-1) để phục vụ người dùng địa phương. Các service gọi chéo Region khá thường xuyên qua public endpoints, làm chi phí inter-Region data transfer và độ trễ tăng cao. Cách nào giảm chi phí và độ trễ của giao tiếp cross-Region HIỆU QUẢ NHẤT?",
+    "options": [
+      "Thiết kế lại để mỗi Region tự chứa dữ liệu cần thiết (data locality) và chỉ đồng bộ không thường xuyên qua kết nối riêng, giảm thiểu các cuộc gọi đồng bộ cross-Region",
+      "Định tuyến toàn bộ traffic cross-Region qua một NAT Gateway trung tâm để tổng hợp chi phí",
+      "Tăng kích thước instance ở cả hai Region để xử lý độ trễ cross-Region nhanh hơn",
+      "Dùng S3 Cross-Region Replication cho mọi request giữa các service"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Giảm số lượng cuộc gọi đồng bộ cross-Region qua data locality là cách trực tiếp nhất để cắt cả chi phí inter-Region transfer lẫn độ trễ.\n✓ Đưa dữ liệu về local và hạn chế đồng bộ cross-Region loại bỏ phần lớn inter-Region data transfer đắt đỏ và độ trễ.\n✗ NAT Gateway không xử lý inter-Region traffic theo cách này và chỉ thêm chi phí data processing.\n✗ Tăng kích thước instance không thay đổi lượng dữ liệu truyền giữa các Region hay đơn giá transfer.\n✗ Cross-Region Replication cho mọi request không phù hợp với giao tiếp service synchronous và tăng chi phí replication.",
+    "domain": 4,
+    "mock": 1
+  },
+  {
+    "id": "saa-m2-001",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-01-iam-deep-dive",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Một công ty triển khai AWS IAM Identity Center cho 50 account trong Organizations. Họ muốn quản lý quyền truy cập hiệu quả và an toàn. Những phát biểu nào về permission set là ĐÚNG? (Chọn 2)",
+    "options": [
+      "Một permission set có thể được gán cho nhiều account và nhóm user, giúp quản lý quyền tập trung",
+      "Khi user đăng nhập, Identity Center cấp temporary credentials qua role tương ứng trong account đích",
+      "Permission set chỉ áp dụng cho một account duy nhất và phải tạo lại cho mỗi account",
+      "Permission set cấp long-term access key cho mỗi user để dùng lâu dài",
+      "Permission set thay thế hoàn toàn nhu cầu dùng SCP làm guardrail"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Permission set là tập quyền tái sử dụng được gán cho nhiều account/nhóm và cấp temporary credentials khi đăng nhập.\n✓ Gán cho nhiều account/nhóm: permission set tái sử dụng, quản lý tập trung trên nhiều account.\n✓ Cấp temporary credentials qua role: Identity Center tạo IAM role trong account đích và cấp credentials tạm thời.\n✗ Chỉ cho một account: sai, permission set được thiết kế để dùng lại trên nhiều account.\n✗ Cấp long-term access key: sai, credentials là tạm thời.\n✗ Thay thế SCP: SCP và permission set bổ trợ nhau; SCP vẫn là guardrail cấp account/OU.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-002",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-03-data-protection",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Một công ty fintech cần thiết kế lớp data protection cho S3 bucket chứa hồ sơ khách hàng. Họ muốn: kiểm soát key, audit truy cập key, ngăn public access, và enforce mã hoá khi upload. Chọn HAI hành động giúp đạt mục tiêu này.",
+    "options": [
+      "Dùng SSE-KMS với customer managed key và bật key rotation",
+      "Bật S3 Block Public Access ở cấp account và bucket",
+      "Lưu trữ dữ liệu ở storage class S3 One Zone-IA",
+      "Tắt S3 Versioning để giảm số lượng object",
+      "Cho phép truy cập bucket qua ACL public-read cho tiện chia sẻ"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Customer managed KMS key cho kiểm soát+audit key, Block Public Access ngăn lộ dữ liệu công khai.\n✓ SSE-KMS customer managed key + rotation: kiểm soát key policy và audit qua CloudTrail.\n✓ Block Public Access ở account và bucket: chặn mọi cấu hình public, bảo vệ hồ sơ nhạy cảm.\n✗ One Zone-IA: liên quan độ bền/chi phí lưu trữ, không phải mục tiêu data protection.\n✗ Tắt Versioning: làm giảm khả năng phục hồi, không liên quan mục tiêu.\n✗ ACL public-read: trực tiếp gây lộ dữ liệu, sai hoàn toàn yêu cầu.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-003",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-01-iam-deep-dive",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một tổ chức quản lý nhiều AWS account bằng AWS Organizations. Security team muốn đảm bảo rằng KHÔNG account thành viên nào, kể cả admin của account đó, có thể tắt CloudTrail hoặc tạo tài nguyên ngoài region eu-west-1. Giải pháp nào thực thi điều này một cách tập trung và hiệu quả nhất?",
+    "options": [
+      "Áp dụng Service Control Policy (SCP) ở cấp OU để deny các action cloudtrail:StopLogging và deny mọi action ngoài eu-west-1",
+      "Gắn IAM permission boundary cho mọi IAM user trong các account thành viên",
+      "Tạo IAM policy deny gắn trực tiếp vào từng role admin của mỗi account",
+      "Bật AWS Config rule để phát hiện và tự động bật lại CloudTrail khi bị tắt"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SCP đặt giới hạn quyền tối đa cho toàn bộ account thành viên, kể cả admin của account đó, và được quản lý tập trung.\n✓ SCP ở cấp OU: chặn được mọi IAM principal trong account (kể cả admin), thực thi tập trung, đúng mục tiêu phòng ngừa.\n✗ Permission boundary cho từng user: chỉ giới hạn user/role cụ thể, admin có thể bỏ qua bằng cách tạo entity khác, không tập trung.\n✗ IAM deny policy trên từng role: admin có thể chỉnh sửa hoặc gỡ policy, không ngăn chặn triệt để.\n✗ AWS Config auto-remediation: mang tính phản ứng (detective) chứ không phòng ngừa, CloudTrail vẫn bị tắt trong khoảng thời gian giữa.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-004",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-01-iam-deep-dive",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty dùng Active Directory on-premises và muốn cho phép nhân viên đăng nhập AWS Management Console bằng tài khoản AD hiện có, không tạo IAM user riêng cho từng người, và quản lý quyền tập trung trên nhiều account trong Organizations. Giải pháp nào phù hợp nhất với least operational overhead?",
+    "options": [
+      "Triển khai AWS IAM Identity Center, kết nối với AD qua AWS Managed Microsoft AD hoặc AD Connector, và gán permission set cho các account",
+      "Tạo IAM user cho từng nhân viên trong mỗi account và đồng bộ mật khẩu thủ công với AD",
+      "Thiết lập SAML federation trực tiếp giữa AD FS và từng IAM identity provider trong mỗi account",
+      "Dùng Amazon Cognito user pool để federate nhân viên vào console"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "IAM Identity Center tích hợp AD và quản lý quyền truy cập đa account tập trung qua permission set, giảm tối đa vận hành.\n✓ IAM Identity Center + AD: SSO tập trung, gán permission set cho nhiều account, không cần IAM user, least operational overhead.\n✗ IAM user từng account đồng bộ mật khẩu: vận hành cực lớn, không scale, không tập trung.\n✗ SAML federation riêng cho từng account: cấu hình IdP lặp lại ở mỗi account, vận hành nặng so với Identity Center.\n✗ Cognito user pool: dành cho ứng dụng web/mobile customer-facing, không tối ưu cho SSO console của nhân viên với AD.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-005",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-01-iam-deep-dive",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một công ty có hàng nghìn project, mỗi project cần một bộ tài nguyên EC2/S3 riêng. Họ muốn một mô hình phân quyền nơi mỗi engineer chỉ truy cập tài nguyên có tag Project khớp với tag Project gắn trên principal của họ, tránh phải viết policy riêng cho từng project. Cách tiếp cận nào tối ưu?",
+    "options": [
+      "Dùng ABAC: gắn tag cho principal và resource, viết một IAM policy dùng điều kiện aws:PrincipalTag khớp với aws:ResourceTag",
+      "Dùng RBAC: tạo một IAM role riêng cho mỗi project và viết policy liệt kê ARN cụ thể",
+      "Tạo một group cho mỗi project và gán user vào group tương ứng theo cách thủ công",
+      "Dùng SCP với điều kiện tag để giới hạn từng project"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "ABAC dùng tag trên principal và resource để cấp quyền động, cho phép một policy duy nhất phục vụ hàng nghìn project và scale tốt.\n✓ ABAC với PrincipalTag/ResourceTag: một policy duy nhất, tự động khớp quyền theo tag, scale tới hàng nghìn project, ít bảo trì.\n✗ RBAC với role/policy riêng từng project: bùng nổ số lượng policy/role, vận hành nặng khi có hàng nghìn project.\n✗ Group thủ công cho mỗi project: không scale, vẫn cần policy riêng cho từng group.\n✗ SCP theo tag: SCP là guardrail cấp account/OU, không phải cơ chế phân quyền chi tiết động cho engineer.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-006",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-01-iam-deep-dive",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một team có 15 developer cần cùng một bộ quyền truy cập vào môi trường dev. Quản trị viên muốn quản lý quyền cho cả nhóm một cách hiệu quả và dễ bảo trì khi có người vào/ra. Cách tổ chức IAM nào phù hợp nhất?",
+    "options": [
+      "Tạo một IAM group cho team dev, gắn policy vào group, và thêm/bớt user vào group",
+      "Gắn policy trực tiếp vào từng IAM user của 15 developer",
+      "Tạo một IAM user dùng chung cho cả 15 developer",
+      "Tạo 15 IAM role và yêu cầu mỗi developer assume role của mình"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "IAM group cho phép quản lý quyền tập trung cho nhiều user và dễ thêm/bớt thành viên.\n✓ IAM group + policy: quản lý quyền một nơi, thêm/bớt user đơn giản, dễ bảo trì.\n✗ Policy gắn trực tiếp từng user: trùng lặp, khó đồng bộ khi thay đổi quyền.\n✗ User dùng chung: mất khả năng truy vết hành động từng cá nhân, rủi ro bảo mật.\n✗ 15 role riêng: phức tạp không cần thiết cho nhóm có quyền giống nhau.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-007",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-01-iam-deep-dive",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một công ty muốn áp dụng nguyên tắc least privilege khi tạo IAM policy mới cho một service team, nhưng không chắc team thực sự cần những action nào. Công cụ AWS nào giúp xác định quyền tối thiểu dựa trên hoạt động thực tế đã xảy ra?",
+    "options": [
+      "IAM Access Analyzer (policy generation dựa trên CloudTrail activity)",
+      "Amazon Inspector",
+      "AWS Trusted Advisor cost check",
+      "Amazon GuardDuty"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "IAM Access Analyzer có thể sinh policy least-privilege dựa trên hoạt động thực tế ghi trong CloudTrail.\n✓ IAM Access Analyzer: phân tích CloudTrail để gợi ý policy chỉ chứa action thực sự được dùng, hỗ trợ least privilege.\n✗ Amazon Inspector: quét lỗ hổng workload, không sinh IAM policy.\n✗ Trusted Advisor cost check: kiểm tra chi phí, không liên quan quyền.\n✗ GuardDuty: phát hiện mối đe dọa, không sinh policy least-privilege.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-008",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-01-iam-deep-dive",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một tổ chức muốn các developer chỉ có thể thao tác trong region us-east-1 và ap-southeast-1, áp dụng cho TẤT CẢ principal trong một OU gồm 30 account, đồng thời vẫn cho phép một số global service hoạt động. Cách thiết kế guardrail nào hợp lý và ít vận hành nhất?",
+    "options": [
+      "Dùng SCP gắn ở OU với điều kiện aws:RequestedRegion để deny action ngoài hai region, kèm NotAction loại trừ các global service cần thiết",
+      "Viết IAM policy region-restriction và gắn thủ công vào từng role trong 30 account",
+      "Tạo permission boundary region-restriction cho từng user trong mỗi account",
+      "Dùng AWS Config rule để xóa tài nguyên tạo sai region sau khi phát hiện"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SCP với điều kiện aws:RequestedRegion và NotAction loại trừ global service thực thi guardrail region tập trung cho cả OU với ít vận hành.\n✓ SCP với RequestedRegion + NotAction global service: áp dụng tự động cho mọi principal trong OU, loại trừ global service, tập trung và ít bảo trì.\n✗ IAM policy gắn thủ công từng role: vận hành cực lớn trên 30 account, dễ bỏ sót.\n✗ Permission boundary từng user: chỉ giới hạn user gắn boundary, không bao trùm mọi principal, vận hành nặng.\n✗ Config auto-delete: detective và phá hủy tài nguyên sau khi đã tạo, không phải guardrail phòng ngừa.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-009",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-02-network-security",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một công ty cần chặn một dải IP độc hại cụ thể (CIDR) ở cấp subnet, áp dụng cho mọi instance trong subnet đó, kể cả khi rule chặn cần đứng trước rule allow. Cơ chế nào phù hợp nhất?",
+    "options": [
+      "Network ACL với explicit deny rule có số thứ tự thấp",
+      "Security group với deny rule",
+      "AWS WAF web ACL gắn vào subnet",
+      "Route table với blackhole route cho CIDR đó"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "NACL hỗ trợ explicit deny và đánh giá theo thứ tự số, áp ở cấp subnet — phù hợp để chặn một CIDR.\n✓ NACL explicit deny rule số thấp — đúng, NACL có deny và xét theo thứ tự.\n✗ Security group deny rule — security group chỉ có allow, không có deny.\n✗ WAF gắn vào subnet — WAF gắn vào ALB/CloudFront/API Gateway, không gắn subnet.\n✗ Blackhole route — chỉ ảnh hưởng routing đích, không lọc theo source IP độc hại.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-010",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-02-network-security",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng EC2 trong private subnet cần đọc/ghi object trong Amazon S3 mà KHÔNG đi qua Internet và muốn tránh chi phí xử lý dữ liệu của NAT gateway. Giải pháp cost-effective nào phù hợp?",
+    "options": [
+      "Gateway VPC endpoint cho S3 và thêm route vào route table của private subnet",
+      "Interface VPC endpoint (PrivateLink) cho S3 với phí giờ và phí GB",
+      "NAT gateway cho instance ra Internet truy cập S3 public endpoint",
+      "VPC peering giữa VPC và một VPC do AWS quản lý chứa S3"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Gateway endpoint cho S3 không tính phí và định tuyến qua mạng AWS, tránh hoàn toàn NAT.\n✓ Gateway VPC endpoint cho S3 — đúng, miễn phí và không qua Internet/NAT.\n✗ Interface endpoint cho S3 — tốn phí giờ + GB, kém cost-effective hơn gateway endpoint cho cùng mục đích.\n✗ NAT gateway ra public endpoint — phát sinh phí xử lý GB qua NAT, kém cost-effective.\n✗ VPC peering tới VPC chứa S3 — S3 không nằm trong VPC khách, không peer được như vậy.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-011",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-02-network-security",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một sàn giao dịch tài chính chạy ứng dụng quan trọng sau ALB và CloudFront. Họ cần bảo vệ DDoS nâng cao với cam kết phản hồi từ SRT (Shield Response Team) và bảo vệ chi phí scaling khi bị tấn công. Giải pháp nào?",
+    "options": [
+      "Đăng ký AWS Shield Advanced và bật bảo vệ cho ALB, CloudFront cùng WAF",
+      "Chỉ dựa vào AWS Shield Standard miễn phí cho mọi tài nguyên",
+      "Triển khai AWS Network Firewall để hấp thụ tấn công DDoS thể tích lớn",
+      "Dùng nhiều NACL rule để chặn IP tấn công thủ công"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Shield Advanced cung cấp bảo vệ DDoS nâng cao, hỗ trợ SRT và cost protection cho scaling do tấn công.\n✓ Shield Advanced — đúng, có SRT support và DDoS cost protection.\n✗ Shield Standard — chỉ bảo vệ cơ bản L3/L4, không có SRT hay cost protection.\n✗ Network Firewall — không phải dịch vụ chống DDoS thể tích và không có SRT.\n✗ NACL thủ công — không khả thi để chống DDoS quy mô lớn theo thời gian thực.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-012",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-02-network-security",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một mobile/web app cần đăng ký, đăng nhập người dùng và phát hành token để gọi API Gateway, hỗ trợ cả social login (Google, Facebook) và MFA, với least operational overhead. Dịch vụ nào phù hợp nhất?",
+    "options": [
+      "Amazon Cognito user pools làm identity provider phát hành JWT cho API Gateway",
+      "IAM users tạo cho từng người dùng cuối của ứng dụng",
+      "AWS Directory Service với một AD tự quản",
+      "Lưu user/password trong DynamoDB và tự viết logic xác thực"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cognito user pools cung cấp đăng ký/đăng nhập, federation social, MFA và phát hành JWT tích hợp với API Gateway.\n✓ Cognito user pools — đúng, quản lý user, social IdP, MFA, token cho API Gateway.\n✗ IAM users cho end users — IAM dành cho người/dịch vụ vận hành AWS, không scale cho end users app.\n✗ Directory Service tự quản — phức tạp, nặng vận hành cho app web/mobile công khai.\n✗ Tự viết auth trên DynamoDB — nhiều vận hành và rủi ro bảo mật cao.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-013",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-02-network-security",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty SaaS muốn cung cấp dịch vụ của mình cho khách hàng truy cập riêng tư từ VPC của khách hàng mà không đi qua Internet, không cần VPC peering và che giấu hạ tầng. Giải pháp nào phù hợp?",
+    "options": [
+      "Tạo VPC endpoint service (PrivateLink) sau một Network Load Balancer cho khách hàng tạo interface endpoint",
+      "Thiết lập VPC peering với từng VPC khách hàng",
+      "Phơi bày dịch vụ qua một public ALB và hạn chế bằng security group",
+      "Dùng Transit Gateway kết nối tất cả VPC khách hàng vào VPC của mình"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "PrivateLink endpoint service sau NLB cho phép khách hàng truy cập riêng tư qua interface endpoint, không cần peering, ẩn hạ tầng.\n✓ Endpoint service (PrivateLink) sau NLB — đúng, truy cập riêng tư một chiều, không lộ mạng.\n✗ VPC peering từng khách hàng — lộ CIDR hai bên, không scale, dễ trùng IP.\n✗ Public ALB — đi qua Internet, không riêng tư theo yêu cầu.\n✗ Transit Gateway nối mọi VPC khách — kết nối mạng rộng, lộ hạ tầng và phức tạp quản trị.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-014",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-02-network-security",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một ứng dụng đa Region cần chống lại tấn công DDoS L3/L4 thể tích lớn và cũng cần lọc bot xấu ở L7 trên CloudFront. Giải pháp tích hợp nào tối ưu nhất?",
+    "options": [
+      "Shield Advanced cho bảo vệ DDoS L3/L4 kết hợp AWS WAF Bot Control trên CloudFront",
+      "Chỉ dùng AWS WAF với rate-based rules cho cả DDoS thể tích và bot",
+      "Chỉ dùng Network Firewall đặt trước CloudFront",
+      "Shield Standard kết hợp NACL chặn IP bot"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "DDoS L3/L4 thể tích lớn cần Shield Advanced, còn lọc bot L7 cần WAF Bot Control; kết hợp là tối ưu.\n✓ Shield Advanced + WAF Bot Control — đúng, mỗi lớp xử lý đúng loại tấn công.\n✗ Chỉ WAF rate-based — không thay thế bảo vệ DDoS thể tích L3/L4 của Shield Advanced.\n✗ Chỉ Network Firewall trước CloudFront — không đặt được trước CloudFront và không phải dịch vụ DDoS thể tích.\n✗ Shield Standard + NACL — không đủ chống DDoS quy mô lớn và bot L7.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-015",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-03-data-protection",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ngân hàng cần mã hoá dữ liệu trong S3 và yêu cầu kiểm soát chi tiết: có audit log mỗi lần key được dùng, tự định nghĩa key rotation policy, và giới hạn IAM principal nào được phép dùng key. Giải pháp nào đáp ứng tốt nhất?",
+    "options": [
+      "SSE-KMS với customer managed key (CMK) trong AWS KMS",
+      "SSE-S3 với Amazon S3 managed keys",
+      "SSE-KMS với AWS managed key (aws/s3)",
+      "SSE-C với key do ứng dụng cung cấp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Customer managed key trong KMS cho phép tự định nghĩa key policy, rotation và audit chi tiết qua CloudTrail.\n✓ SSE-KMS với customer managed key: kiểm soát key policy, rotation tuỳ chỉnh, và mỗi lần dùng key được ghi vào CloudTrail.\n✗ SSE-S3: không cho phép kiểm soát key policy hay audit từng lần dùng key.\n✗ AWS managed key (aws/s3): không thể chỉnh sửa key policy hay rotation, audit hạn chế hơn.\n✗ SSE-C: client phải tự quản lý key, không có audit tập trung trong KMS/CloudTrail.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-016",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-03-data-protection",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một public-facing web app cần đảm bảo encryption in transit cho người dùng cuối. Team muốn cung cấp và tự động gia hạn TLS certificate cho Application Load Balancer với least operational overhead. Giải pháp nào tốt nhất?",
+    "options": [
+      "Cấp certificate công khai từ AWS Certificate Manager (ACM) và gắn vào HTTPS listener của ALB",
+      "Mua certificate từ third-party CA và tự cài, đặt lịch nhắc gia hạn thủ công",
+      "Tự tạo self-signed certificate và phân phối cho client",
+      "Dùng CloudHSM để sinh certificate rồi import vào ALB"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "ACM cấp public certificate miễn phí và tự động gia hạn, tích hợp trực tiếp với ALB, least operational overhead.\n✓ ACM public certificate trên ALB: cấp miễn phí, auto-renew, tích hợp native với HTTPS listener.\n✗ Third-party CA tự cài: phải gia hạn thủ công, nhiều overhead và rủi ro hết hạn.\n✗ Self-signed certificate: trình duyệt người dùng cuối sẽ cảnh báo không tin cậy.\n✗ CloudHSM sinh certificate: phức tạp và không cần thiết, ACM đã giải quyết trọn vẹn.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-017",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-03-data-protection",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty có hàng petabyte dữ liệu trong S3 và lo ngại có thể chứa PII (số thẻ, số an sinh xã hội) chưa được phân loại. Họ cần một dịch vụ managed tự động khám phá và phân loại dữ liệu nhạy cảm. Dịch vụ nào phù hợp?",
+    "options": [
+      "Amazon Macie",
+      "AWS Config",
+      "Amazon Inspector",
+      "AWS Glue DataBrew"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Amazon Macie dùng ML/pattern matching để tự động khám phá và phân loại dữ liệu nhạy cảm (PII) trong S3.\n✓ Macie: managed service chuyên discover và classify PII/dữ liệu nhạy cảm trong S3, đúng nhu cầu.\n✗ AWS Config: theo dõi cấu hình resource và compliance, không phân loại nội dung dữ liệu.\n✗ Inspector: quét lỗ hổng bảo mật của EC2/ECR/Lambda, không phân loại dữ liệu S3.\n✗ Glue DataBrew: chuẩn bị/làm sạch dữ liệu cho analytics, không phải công cụ phát hiện PII compliance.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-018",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-03-data-protection",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một công ty đa quốc gia muốn dùng cùng một logical encryption key để mã hoá S3 object ở nhiều region (us-east-1, eu-west-1) nhằm đơn giản hoá quản lý key cho dữ liệu được replicate, tránh phải re-encrypt khi failover giữa region. Giải pháp KMS nào phù hợp nhất?",
+    "options": [
+      "AWS KMS multi-Region keys",
+      "AWS KMS customer managed key riêng cho từng region không liên quan nhau",
+      "CloudHSM cluster trải rộng nhiều region",
+      "Import cùng một key material thủ công vào các single-region key độc lập"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "KMS multi-Region keys là các replica có cùng key ID và key material, cho phép giải mã cross-region mà không cần re-encrypt.\n✓ Multi-Region keys: primary và replica chia sẻ key material, ciphertext mã hoá ở một region có thể giải mã ở region khác, lý tưởng cho DR/replication.\n✗ Customer managed key riêng từng region: key material khác nhau nên phải re-encrypt khi chuyển region.\n✗ CloudHSM nhiều region: không cung cấp khái niệm shared multi-Region key kiểu KMS và tăng độ phức tạp.\n✗ Import key material thủ công vào key độc lập: dễ lỗi và không được KMS quản lý như multi-Region keys.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-019",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-03-data-protection",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một bucket dùng SSE-KMS với customer managed key. Một IAM user có quyền s3:GetObject nhưng khi tải object lại bị AccessDenied. Nguyên nhân khả dĩ nhất và cách khắc phục là gì?",
+    "options": [
+      "User thiếu quyền kms:Decrypt trên KMS key; cần cấp quyền trong key policy/IAM",
+      "Bucket chưa bật Versioning nên object không đọc được",
+      "S3 Block Public Access đang chặn user nội bộ",
+      "Object đang ở Glacier Deep Archive nên cần restore"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Với SSE-KMS, để giải mã object user cần cả s3:GetObject lẫn kms:Decrypt trên key dùng để mã hoá.\n✓ Thiếu kms:Decrypt: dù có GetObject, không có quyền giải mã KMS key sẽ bị AccessDenied; cấp kms:Decrypt khắc phục.\n✗ Versioning: không ảnh hưởng quyền đọc object hiện tại.\n✗ Block Public Access: chỉ chặn truy cập public, không chặn IAM principal có quyền hợp lệ.\n✗ Glacier Deep Archive: sẽ báo lỗi InvalidObjectState, không phải AccessDenied.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-020",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-03-data-protection",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một tổ chức cần đảm bảo rằng tất cả object upload vào một S3 bucket bắt buộc phải dùng SSE-KMS, từ chối bất kỳ upload nào không có header mã hoá đúng. Cách enforce hiệu quả nhất là gì?",
+    "options": [
+      "Bucket policy Deny PutObject khi s3:x-amz-server-side-encryption không phải aws:kms",
+      "Bật S3 default encryption và tin rằng client luôn gửi đúng header",
+      "Dùng Macie để phát hiện object chưa mã hoá sau khi upload",
+      "Bật S3 Versioning để giữ lịch sử object chưa mã hoá"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bucket policy với điều kiện Deny dựa trên header server-side-encryption enforce bắt buộc SSE-KMS ngay tại thời điểm upload.\n✓ Deny PutObject khi không phải aws:kms: chủ động từ chối mọi upload không dùng SSE-KMS, enforce ở thời điểm ghi.\n✗ Default encryption đơn thuần: tự áp dụng mã hoá nhưng không từ chối các request cố tình chỉ định kiểu khác; bucket policy mạnh hơn để enforce KMS cụ thể.\n✗ Macie phát hiện sau: chỉ phát hiện chứ không ngăn upload không mã hoá.\n✗ Versioning: không liên quan tới enforce encryption.",
+    "domain": 1,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-021",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-02-ha-fault-tolerance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một ứng dụng global yêu cầu một database NoSQL có khả năng đọc-ghi với độ trễ thấp ở nhiều Region đồng thời (active-active), tự động sao chép giữa các Region, và chịu được lỗi toàn bộ một Region mà ứng dụng vẫn ghi được ở Region khác. Những phát biểu nào ĐÚNG về giải pháp phù hợp? (Chọn 2)",
+    "options": [
+      "Amazon DynamoDB Global Tables cung cấp replication active-active multi-Region, cho phép đọc-ghi ở mỗi Region tham gia",
+      "DynamoDB Global Tables sử dụng cơ chế last-writer-wins để giải quyết xung đột ghi đồng thời",
+      "Aurora Global Database cho phép ghi đồng thời ở mọi secondary Region với độ trễ thấp",
+      "Phải tự xây dựng một Lambda pipeline để sao chép dữ liệu giữa các bảng DynamoDB ở mỗi Region",
+      "DynamoDB Global Tables yêu cầu cấu hình thủ công cross-Region replication qua Kinesis cho mỗi item"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "DynamoDB Global Tables là giải pháp NoSQL multi-Region active-active được quản lý hoàn toàn, dùng last-writer-wins để xử lý xung đột.\n✓ Global Tables hỗ trợ đọc-ghi ở mọi Region tham gia, replication tự động.\n✓ Cơ chế giải quyết xung đột là last-writer-wins dựa trên timestamp.\n✗ Aurora Global Database chỉ có một writer Region; secondary là read-only, không phải active-active ghi.\n✗ Không cần tự xây Lambda pipeline vì replication là tính năng tích hợp.\n✗ Không cần cấu hình Kinesis thủ công; Global Tables tự sao chép.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-022",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-01-decoupling",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một hệ thống xử lý giao dịch tài chính yêu cầu các message phải được xử lý đúng MỘT lần và đúng THỨ TỰ chúng được gửi. Loại Amazon SQS queue nào đáp ứng yêu cầu này?",
+    "options": [
+      "FIFO queue",
+      "Standard queue",
+      "Standard queue với long polling",
+      "Standard queue có bật server-side encryption"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "FIFO queue đảm bảo thứ tự và exactly-once processing, đúng yêu cầu giao dịch tài chính.\n✓ FIFO queue — đúng, đảm bảo ordering và exactly-once processing.\n✗ Standard queue — chỉ best-effort ordering và at-least-once delivery (có thể trùng).\n✗ Standard + long polling — long polling chỉ giảm empty response, không đảm bảo thứ tự.\n✗ Standard + encryption — mã hóa không liên quan tới ordering hay duplication.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-023",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-01-decoupling",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi một ảnh được tải lên, hệ thống cần kích hoạt đồng thời nhiều xử lý độc lập: tạo thumbnail, đánh chỉ mục tìm kiếm, và gửi thông báo. Mỗi xử lý có queue riêng. Kiến trúc decoupled fan-out nào phù hợp nhất?",
+    "options": [
+      "Publish một message tới Amazon SNS topic, subscribe nhiều SQS queue vào topic đó",
+      "Cho ứng dụng ghi tuần tự cùng một message vào ba SQS queue",
+      "Dùng một SQS queue duy nhất với ba consumer group khác nhau",
+      "Dùng Amazon Kinesis Data Streams với một shard cho mỗi xử lý"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SNS fan-out cho phép một message được phát tới nhiều SQS queue subscriber cùng lúc, mỗi tier xử lý độc lập.\n✓ SNS topic + nhiều SQS subscriber — đúng, mẫu fan-out chuẩn, một publish tới nhiều queue, decoupled và resilient.\n✗ Ghi tuần tự vào ba queue — producer phải biết mọi consumer, coupling cao, lỗi giữa chừng gây thiếu sót.\n✗ Một queue, ba consumer group — SQS không có khái niệm consumer group; mỗi message chỉ được một consumer xử lý.\n✗ Kinesis một shard mỗi xử lý — Kinesis dùng cho streaming, không phải fan-out pub/sub tới các queue độc lập.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-024",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-01-decoupling",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng cần một load balancer hoạt động ở tầng TCP/UDP (Layer 4), xử lý hàng triệu request mỗi giây với độ trễ cực thấp và hỗ trợ static IP. Loại load balancer nào phù hợp nhất?",
+    "options": [
+      "Network Load Balancer (NLB)",
+      "Application Load Balancer (ALB)",
+      "Gateway Load Balancer (GWLB)",
+      "Classic Load Balancer (CLB)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "NLB hoạt động ở Layer 4, cung cấp throughput cực cao, độ trễ thấp và static IP per AZ.\n✓ NLB — đúng, Layer 4, ultra-low latency, hàng triệu request/giây, hỗ trợ static/Elastic IP.\n✗ ALB — Layer 7, định tuyến theo HTTP/HTTPS, không tối ưu cho TCP/UDP thuần và không có static IP gốc.\n✗ GWLB — dùng cho triển khai virtual appliance bảo mật (firewall), không phải cân bằng tải ứng dụng thông thường.\n✗ CLB — thế hệ cũ, không khuyến nghị cho thiết kế mới, thiếu nhiều tính năng.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-025",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-01-decoupling",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một worker tier xử lý job từ SQS queue. Đội ngũ muốn số lượng EC2 worker tự động tăng khi backlog message lớn và giảm khi backlog nhỏ, để cân bằng chi phí và tốc độ xử lý. Cách triển khai tốt nhất là gì?",
+    "options": [
+      "Auto Scaling group dùng target tracking dựa trên metric ApproximateNumberOfMessagesVisible (qua backlog per instance)",
+      "Auto Scaling theo lịch cố định mỗi giờ tăng giảm số instance",
+      "Scale thủ công dựa trên báo cáo backlog hằng ngày",
+      "Auto Scaling theo CPUUtilization trung bình của fleet"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Scaling theo độ sâu queue (backlog per instance) phản ánh đúng lượng công việc tồn đọng, là chỉ số chuẩn để scale worker tier.\n✓ Auto Scaling theo số message visible / backlog per instance — đúng, scale theo khối lượng công việc thực tế trong queue.\n✗ Scaling theo lịch — không phản ứng với biến động backlog thực tế.\n✗ Scale thủ công hằng ngày — chậm, nhiều vận hành, không kịp xử lý đột biến.\n✗ Scale theo CPU — CPU không nhất thiết tương quan với backlog; queue có thể đầy mà CPU vẫn thấp.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-026",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-01-decoupling",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một hệ thống đặt vé dùng SQS FIFO queue để đảm bảo thứ tự xử lý theo từng sự kiện. Hiện throughput bị giới hạn vì tất cả message dùng chung một MessageGroupId. Cách tăng throughput mà vẫn giữ thứ tự trong phạm vi mỗi sự kiện là gì?",
+    "options": [
+      "Dùng MessageGroupId riêng cho mỗi sự kiện để các nhóm được xử lý song song",
+      "Chuyển sang standard queue để có throughput không giới hạn",
+      "Tăng số consumer đọc cùng một message group",
+      "Bật high throughput mode nhưng giữ một MessageGroupId duy nhất"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "FIFO chỉ đảm bảo thứ tự trong cùng một MessageGroupId; tách nhóm theo sự kiện cho phép xử lý song song giữa các nhóm trong khi vẫn giữ thứ tự nội bộ mỗi nhóm.\n✓ MessageGroupId riêng mỗi sự kiện — đúng, các group được xử lý song song, tăng throughput, vẫn giữ ordering trong từng sự kiện.\n✗ Chuyển standard queue — mất đảm bảo thứ tự, vi phạm yêu cầu.\n✗ Nhiều consumer cùng một group — message trong một group vẫn được xử lý tuần tự, không tăng được throughput của group đó.\n✗ High throughput mode với một group duy nhất — vẫn nghẽn vì cùng một MessageGroupId xử lý tuần tự.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-027",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-01-decoupling",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một ứng dụng dùng SNS fan-out tới nhiều SQS queue. Một microservice mới chỉ quan tâm tới event có thuộc tính 'eventType' bằng 'order_created', không muốn nhận các loại event khác để tránh xử lý lãng phí. Cách tối ưu nhất để chỉ nhận đúng loại event này là gì?",
+    "options": [
+      "Áp dụng SNS subscription filter policy trên subscription của queue đó",
+      "Cho consumer đọc mọi message rồi tự lọc và xóa message không liên quan",
+      "Tạo một SNS topic riêng cho mỗi loại event",
+      "Dùng EventBridge thay thế toàn bộ kiến trúc SNS hiện có"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SNS message filtering cho phép subscription chỉ nhận message khớp filter policy, giảm xử lý thừa mà không đổi kiến trúc.\n✓ SNS subscription filter policy — đúng, chỉ message khớp 'order_created' được đẩy vào queue, tối ưu và ít thay đổi nhất.\n✗ Đọc rồi tự lọc — vẫn nhận và xử lý mọi message, lãng phí tài nguyên và chi phí.\n✗ Topic riêng mỗi loại event — tăng phức tạp quản lý và producer phải biết route, kém linh hoạt.\n✗ Thay toàn bộ bằng EventBridge — over-engineering cho một nhu cầu lọc đơn giản đã có sẵn trong SNS.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-028",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-01-decoupling",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một microservice cần gọi đồng bộ một service khác qua nhiều bước có điều kiện rẽ nhánh, retry, và xử lý lỗi rõ ràng, với khả năng quan sát từng bước. Đội muốn tránh nhồi logic điều phối vào trong code Lambda. Dịch vụ nào phù hợp nhất?",
+    "options": [
+      "AWS Step Functions để điều phối workflow",
+      "Amazon SQS chuỗi nhiều queue nối tiếp nhau",
+      "Amazon SNS fan-out tới các Lambda từng bước",
+      "Amazon EventBridge bus với nhiều rule nối tiếp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Step Functions cung cấp workflow có state, rẽ nhánh, retry/catch tích hợp và observability từng bước, tách logic điều phối khỏi code.\n✓ Step Functions — đúng, điều phối có điều kiện, retry/error handling khai báo, theo dõi từng state.\n✗ Chuỗi SQS nối tiếp — phải tự viết logic rẽ nhánh/retry và khó quan sát toàn workflow.\n✗ SNS fan-out — phát song song, không phù hợp cho luồng tuần tự có điều kiện và state.\n✗ EventBridge nhiều rule nối tiếp — khó biểu diễn rẽ nhánh/retry phức tạp và theo dõi trạng thái từng bước.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-029",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-01-decoupling",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một ứng dụng đặt sau Application Load Balancer cần ALB ngừng gửi lưu lượng tới các instance không lành mạnh để duy trì độ sẵn sàng. Tính năng nào của ALB đảm nhiệm việc này?",
+    "options": [
+      "Health checks tới target group",
+      "Sticky sessions",
+      "Cross-zone load balancing",
+      "SSL/TLS termination"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Health check của ALB liên tục kiểm tra target và chỉ route tới các target lành mạnh.\n✓ Health checks — đúng, ALB tự động ngừng gửi traffic tới instance unhealthy, duy trì availability.\n✗ Sticky sessions — giữ người dùng ở cùng target, không liên quan loại bỏ target hỏng.\n✗ Cross-zone load balancing — phân phối đều giữa các AZ, không phải phát hiện target hỏng.\n✗ SSL/TLS termination — giải mã TLS tại LB, không liên quan health.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-030",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-02-ha-fault-tolerance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty thương mại điện tử toàn cầu chạy ứng dụng trên hai Region: us-east-1 và eu-west-1, mỗi Region có một Application Load Balancer. Họ muốn người dùng được định tuyến tới Region có độ trễ thấp nhất, đồng thời tự động chuyển hướng khỏi Region nào không khỏe mạnh. Cấu hình Route 53 nào phù hợp nhất?",
+    "options": [
+      "Latency-based routing kết hợp với Route 53 health checks gắn vào từng record của hai Region",
+      "Geolocation routing dựa trên quốc gia người dùng mà không cần health checks",
+      "Weighted routing với trọng số bằng nhau cho hai Region",
+      "Simple routing trỏ tới cả hai ALB và để client tự chọn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Latency-based routing chọn Region độ trễ thấp nhất, còn health checks loại bỏ endpoint không khỏe mạnh.\n✓ Latency-based + health checks: định tuyến theo độ trễ thấp nhất và tự động bỏ qua Region không khỏe mạnh.\n✗ Geolocation định tuyến theo vị trí địa lý chứ không theo độ trễ, và không có health checks thì không failover.\n✗ Weighted phân chia theo tỷ lệ cố định, không tối ưu độ trễ.\n✗ Simple routing không hỗ trợ health checks và trả nhiều giá trị ngẫu nhiên, không đảm bảo độ trễ thấp nhất.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-031",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-02-ha-fault-tolerance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng web stateless chạy sau Application Load Balancer với Auto Scaling group. Hiện tại tất cả EC2 instances nằm trong một Availability Zone duy nhất. Kiến trúc sư muốn tăng khả năng chịu lỗi (fault tolerance) để ứng dụng vẫn hoạt động khi một AZ gặp sự cố. Hành động nào đạt mục tiêu hiệu quả nhất?",
+    "options": [
+      "Cấu hình Auto Scaling group trải trên nhiều subnet thuộc các AZ khác nhau và bật cross-zone load balancing",
+      "Tăng kích thước instance type để mỗi instance chịu tải lớn hơn",
+      "Bật detailed CloudWatch monitoring cho các instance trong AZ hiện tại",
+      "Đặt một Network Load Balancer trước Application Load Balancer hiện tại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Trải instances trên nhiều AZ là cách cơ bản để chịu được lỗi một AZ.\n✓ ASG đa AZ + cross-zone LB: nếu một AZ lỗi, các instance ở AZ khác vẫn phục vụ, đạt fault tolerance.\n✗ Tăng instance type không giúp gì khi cả AZ chứa toàn bộ instance bị mất.\n✗ Detailed monitoring chỉ tăng độ chi tiết metric, không tăng khả năng chịu lỗi.\n✗ Đặt NLB trước ALB không giải quyết vấn đề tập trung trong một AZ.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-032",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-02-ha-fault-tolerance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty media lưu nội dung quan trọng trong một S3 bucket ở us-east-1. Để tuân thủ quy định, một bản sao của tất cả object phải tồn tại ở một Region khác và được cập nhật tự động khi có object mới. Giải pháp nào phù hợp nhất?",
+    "options": [
+      "Bật S3 Cross-Region Replication (CRR) tới một bucket đích ở Region khác",
+      "Bật S3 Versioning và chạy một AWS Lambda định kỳ để copy object sang Region khác",
+      "Dùng S3 Transfer Acceleration để tăng tốc tải object lên",
+      "Bật S3 Same-Region Replication (SRR) sang một bucket khác trong cùng Region"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "S3 Cross-Region Replication tự động sao chép object sang bucket ở Region khác khi có thay đổi.\n✓ CRR: sao chép tự động, bất đồng bộ object mới sang Region khác, đáp ứng tuân thủ multi-Region.\n✗ Lambda định kỳ copy là tự xây dựng, không tự động tức thì và nhiều vận hành.\n✗ Transfer Acceleration chỉ tăng tốc upload, không tạo bản sao Region khác.\n✗ SRR sao chép trong cùng Region, không đáp ứng yêu cầu Region khác.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-033",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-02-ha-fault-tolerance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một dịch vụ API nhận traffic từ người dùng ở nhiều quốc gia. Vì lý do tuân thủ dữ liệu, người dùng ở Đức phải luôn được phục vụ bởi endpoint ở eu-central-1, người dùng ở Nhật bởi ap-northeast-1, còn lại đi tới us-east-1. Cấu hình Route 53 nào phù hợp nhất?",
+    "options": [
+      "Geolocation routing với record riêng cho Đức, Nhật và một default record cho phần còn lại",
+      "Latency-based routing giữa ba Region",
+      "Weighted routing chia đều cho ba Region",
+      "Failover routing với us-east-1 là primary"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Geolocation routing định tuyến dựa trên vị trí địa lý của người dùng, phù hợp yêu cầu tuân thủ dữ liệu theo quốc gia.\n✓ Geolocation routing: ánh xạ quốc gia tới Region cụ thể và có default record cho các vị trí khác, đáp ứng tuân thủ.\n✗ Latency-based chọn theo độ trễ, không đảm bảo người Đức luôn tới eu-central-1.\n✗ Weighted chia ngẫu nhiên theo tỷ lệ, vi phạm tuân thủ.\n✗ Failover là active-passive, không phục vụ theo địa lý.",
+    "domain": 2,
+    "mock": 2
   },
   {
     "id": "saa-m2-034",
@@ -10939,7 +15511,1192 @@ export const generatedQuestions: Question[] = [
     "mock": 2
   },
   {
-    "id": "saa-m3-033",
+    "id": "saa-m2-035",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-02-ha-fault-tolerance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty đang chuyển dần traffic sang một phiên bản mới của ứng dụng đặt ở một nhóm server riêng. Họ muốn gửi 10% traffic tới phiên bản mới và 90% tới phiên bản cũ, sau đó tăng dần tỷ lệ. Cấu hình Route 53 nào phù hợp nhất?",
+    "options": [
+      "Weighted routing với trọng số 10 cho phiên bản mới và 90 cho phiên bản cũ",
+      "Latency-based routing giữa hai phiên bản",
+      "Failover routing với phiên bản mới là primary",
+      "Geolocation routing dựa trên quốc gia người dùng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Weighted routing cho phép chia traffic theo tỷ lệ tùy chỉnh, lý tưởng cho canary/blue-green dần dần.\n✓ Weighted routing 10/90: phân phối traffic theo tỷ lệ và tăng dần bằng cách đổi trọng số.\n✗ Latency-based định tuyến theo độ trễ, không kiểm soát tỷ lệ traffic.\n✗ Failover là active-passive, không chia tỷ lệ.\n✗ Geolocation chia theo vị trí, không theo tỷ lệ phần trăm.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-036",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-02-ha-fault-tolerance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một doanh nghiệp cần đảm bảo các backup do AWS Backup tạo ra được giữ ở một tài khoản riêng và một Region khác để chống lại việc xóa do lỗi hoặc tấn công ransomware vào tài khoản chính. Tính năng nào phù hợp nhất?",
+    "options": [
+      "Cross-account và cross-Region backup copy của AWS Backup vào một vault có Vault Lock",
+      "Bật S3 Versioning trên bucket chứa backup trong cùng tài khoản",
+      "Lên lịch snapshot EBS thủ công và copy bằng tay khi cần",
+      "Sử dụng RDS Multi-AZ để có thêm bản sao database"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "AWS Backup hỗ trợ copy backup sang Region và tài khoản khác, kết hợp Vault Lock chống xóa.\n✓ Cross-account + cross-Region copy với Vault Lock: cách ly backup khỏi tài khoản chính và bảo vệ bất biến (immutable).\n✗ S3 Versioning trong cùng tài khoản không cách ly khỏi tấn công vào tài khoản đó.\n✗ Snapshot thủ công nhiều vận hành và không tự bảo vệ cross-account.\n✗ Multi-AZ là HA trong Region, không phải cơ chế backup cách ly.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-037",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-02-ha-fault-tolerance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng web cần điểm vào (entry point) tĩnh, hiệu năng cao trên toàn cầu và tự động failover nhanh giữa các endpoint ở nhiều Region khi một Region không khỏe mạnh, với failover ở mức nhanh hơn DNS TTL của Route 53. Dịch vụ nào phù hợp nhất?",
+    "options": [
+      "AWS Global Accelerator với endpoint ở nhiều Region và health checks",
+      "Route 53 weighted routing giữa các Region",
+      "Amazon CloudFront với một origin duy nhất",
+      "Một Network Load Balancer duy nhất trong một Region"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Global Accelerator cung cấp anycast IP tĩnh và failover nhanh không phụ thuộc DNS TTL.\n✓ Global Accelerator: IP tĩnh toàn cầu, định tuyến qua mạng AWS, failover nhanh dựa trên health check, nhanh hơn DNS-based.\n✗ Route 53 weighted phụ thuộc DNS TTL nên failover chậm hơn và không cung cấp IP tĩnh anycast.\n✗ CloudFront với một origin không cung cấp failover multi-Region cho origin.\n✗ NLB một Region không bảo vệ thảm họa Region.",
+    "domain": 2,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-038",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-01-compute-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Một kiến trúc sư đang tối ưu chi phí và hiệu năng cho nhiều workload khác nhau. Hãy chọn HAI phát biểu ĐÚNG về việc lựa chọn EC2 instance family và compute.",
+    "options": [
+      "Compute optimized (họ C) phù hợp workload nặng CPU như batch processing và high-performance web servers",
+      "Memory optimized (họ R/X) phù hợp database in-memory và xử lý dữ liệu lớn trong RAM",
+      "General purpose (họ M/T) chỉ nên dùng cho workload cần GPU",
+      "Storage optimized (họ I/D) tối ưu cho workload cần thông lượng network giữa các node HPC",
+      "Burstable (họ T) không bao giờ phù hợp cho môi trường production"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Mỗi instance family được thiết kế cho một loại tài nguyên chủ đạo; chọn đúng họ giúp tối ưu hiệu năng/giá.\n✓ Compute optimized (C) cho workload nặng CPU — đúng, lý tưởng cho batch và web server hiệu năng cao.\n✓ Memory optimized (R/X) cho in-memory DB — đúng, nhiều RAM cho dữ liệu lớn trong bộ nhớ.\n✗ General purpose chỉ cho GPU — sai, GPU thuộc accelerated computing (họ P/G), không phải M/T.\n✗ Storage optimized cho HPC network — sai, I/D tối ưu I/O đĩa cao, không phải network HPC.\n✗ Burstable không bao giờ dùng production — sai, họ T hợp lý cho workload tải thấp/biến động trong production.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-039",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-03-database-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Một đội đang thiết kế ingestion layer cho data lake trên S3. Họ cần (1) nhận nhiều nguồn streaming với khả năng delivery vào S3 fully managed, và (2) tối ưu chi phí query về sau bằng cách lưu dữ liệu ở định dạng cột nén. Hãy chọn HAI hành động phù hợp nhất.",
+    "options": [
+      "Dùng Amazon Data Firehose để delivery streaming data vào S3 với buffering và retry tự động",
+      "Cấu hình Firehose chuyển đổi record format sang Apache Parquet trước khi ghi vào S3",
+      "Lưu toàn bộ dữ liệu dưới dạng raw JSON không nén để Athena dễ đọc nhất",
+      "Dùng Kinesis Data Streams và tự viết consumer EC2 để ghi từng record nhỏ riêng lẻ vào S3",
+      "Bật S3 Versioning trên bucket để tối ưu chi phí query Athena"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Firehose managed delivery cộng với chuyển sang Parquet là cặp giải pháp đúng cho ingestion fully managed và query tiết kiệm.\n✓ Firehose delivery streaming vào S3 fully managed với buffering/retry, đáp ứng yêu cầu ingestion.\n✓ Firehose convert sang Parquet (cột, nén) giảm dữ liệu Athena phải quét, tối ưu chi phí query.\n✗ JSON thô không nén làm tăng dung lượng quét và chi phí Athena, không tối ưu.\n✗ Tự viết consumer EC2 ghi file nhỏ tăng operational overhead và gây small-file problem.\n✗ S3 Versioning không liên quan đến tối ưu chi phí query Athena.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-040",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-02-storage-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một cụm HPC chạy mô phỏng khí động học cần đọc/ghi dataset hàng trăm TB với throughput hàng trăm GB/s và độ trễ submillisecond, dữ liệu nguồn đang nằm trên S3. Loại lưu trữ nào phù hợp nhất?",
+    "options": [
+      "Amazon FSx for Lustre liên kết với S3 bucket chứa dataset",
+      "Amazon EFS với throughput mode là Elastic",
+      "Amazon EBS gp3 volume gắn vào từng node tính toán",
+      "Amazon FSx for Windows File Server với SSD storage"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "FSx for Lustre là file system song song hiệu năng cao chuyên cho HPC, đạt throughput tới hàng trăm GB/s và độ trễ submillisecond, lại tích hợp trực tiếp với S3.\n✓ FSx for Lustre xử lý workload HPC dữ liệu lớn và lazy-load/đồng bộ dữ liệu từ S3.\n✗ EFS phù hợp file sharing NFS chung nhưng không đạt mức throughput/latency của Lustre cho HPC.\n✗ EBS gp3 gắn từng node là block storage không chia sẻ, không cung cấp file system song song dùng chung cho cả cụm.\n✗ FSx for Windows File Server phục vụ workload Windows/SMB, không phải HPC Linux hiệu năng cao.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-041",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-02-storage-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một cơ sở dữ liệu giao dịch quan trọng yêu cầu một EBS volume duy nhất cung cấp tới hàng trăm nghìn IOPS, sub-millisecond latency, và durability rất cao với SLA 99.999%. Workload đang chạy trên instance Nitro thế hệ mới. Loại lưu trữ nào đáp ứng tốt nhất?",
+    "options": [
+      "EBS io2 Block Express",
+      "EBS io1 với multi-attach",
+      "Instance store NVMe SSD",
+      "EBS gp3 cấu hình IOPS tối đa"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "io2 Block Express là EBS hiệu năng cao nhất, đạt tới 256.000 IOPS mỗi volume, sub-millisecond latency và durability 99.999% — đúng yêu cầu database giao dịch quan trọng.\n✓ io2 Block Express cung cấp IOPS rất cao (tới 256.000/volume), latency thấp và durability 99.999% trên instance Nitro.\n✗ io1 giới hạn 64.000 IOPS/volume, thấp hơn nhiều so với hàng trăm nghìn IOPS, và multi-attach không cần thiết khi chỉ cần một volume.\n✗ Instance store NVMe nhanh nhưng ephemeral, mất dữ liệu khi stop instance, không durable cho database quan trọng.\n✗ gp3 tối đa 80.000 IOPS/volume, không đủ cho yêu cầu hàng trăm nghìn IOPS.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-042",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-02-storage-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một workload phân tích đọc tuần tự (sequential) khối lượng lớn dữ liệu log lưu trên một EBS volume — như big data, MapReduce và data warehouse — và cần throughput cao trên mỗi đô la chứ không cần IOPS ngẫu nhiên cao. Loại EBS volume nào cost-effective nhất?",
+    "options": [
+      "EBS st1 (Throughput Optimized HDD)",
+      "EBS io2 (Provisioned IOPS SSD)",
+      "EBS gp3 (General Purpose SSD)",
+      "EBS sc1 (Cold HDD)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "st1 là HDD tối ưu throughput cho truy cập sequential khối lượng lớn với chi phí thấp, đúng cho big data/log analytics.\n✓ st1 cung cấp throughput cao chi phí thấp cho workload sequential như MapReduce, data warehouse.\n✗ io2 là SSD IOPS cao đắt tiền, lãng phí cho workload sequential không cần random IOPS.\n✗ gp3 là SSD đa dụng, đắt hơn st1 cho khối lượng lớn dữ liệu throughput-bound.\n✗ sc1 là Cold HDD throughput thấp hơn, dành cho dữ liệu ít truy cập, không tối ưu cho workload analytics thường xuyên.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-043",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-01-compute-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một sàn thương mại điện tử biết trước rằng lưu lượng tăng theo chu kỳ rõ rệt mỗi sáng và mỗi tối dựa trên dữ liệu lịch sử nhiều tuần. Họ thấy target tracking phản ứng hơi trễ khi tải tăng đột ngột đầu mỗi đợt, gây độ trễ tạm thời. Giải pháp nào giúp chuẩn bị capacity TRƯỚC khi nhu cầu tăng, dựa trên mẫu lịch sử?",
+    "options": [
+      "Bật predictive scaling cho Auto Scaling group",
+      "Giảm cooldown của simple scaling xuống mức tối thiểu",
+      "Tăng giá trị target của target tracking lên 80% CPU",
+      "Chuyển toàn bộ sang Spot Instances để có thêm capacity"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Predictive scaling dùng machine learning phân tích lịch sử để dự báo và cấp capacity trước khi nhu cầu đến, giải quyết độ trễ phản ứng.\n✓ Predictive scaling — đúng, dựa trên mẫu lịch sử dự báo và tăng capacity trước khi tải đến.\n✗ Giảm cooldown simple scaling — vẫn phản ứng sau khi tải đã tăng, không chủ động.\n✗ Tăng target lên 80% CPU — khiến hệ thống chịu tải cao hơn trước khi scale, làm trễ tệ hơn.\n✗ Chuyển sang Spot — về giá/sẵn capacity, không giải quyết việc chuẩn bị trước theo mẫu lịch sử.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-044",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-01-compute-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty container hóa các microservice và muốn chạy chúng mà KHÔNG phải quản lý hay vá EC2 instance bên dưới, trả tiền theo tài nguyên container sử dụng, với least operational overhead. Họ đã chuẩn hóa trên Amazon ECS. Compute option nào phù hợp nhất?",
+    "options": [
+      "AWS Fargate làm launch type cho ECS",
+      "ECS trên EC2 launch type với Auto Scaling group tự quản lý",
+      "Chạy container trực tiếp trên EC2 với Docker tự cài",
+      "AWS Batch trên EC2 managed compute environment"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Fargate là serverless compute cho container: không quản lý server, trả theo tài nguyên task, ít vận hành nhất.\n✓ Fargate launch type — đúng, không cần quản lý/vá EC2, trả theo vCPU/memory của task.\n✗ ECS trên EC2 tự quản lý — vẫn phải vá và scale EC2, nhiều vận hành hơn.\n✗ Docker tự cài trên EC2 — quản lý thủ công nhiều nhất.\n✗ AWS Batch trên EC2 — hợp cho batch job, vẫn dựa trên EC2 cần quản lý hơn Fargate.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-045",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-01-compute-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một đội muốn triển khai ứng dụng web đơn giản và chỉ cần upload mã nguồn, để AWS tự lo provisioning EC2, load balancer, Auto Scaling và health monitoring, với least operational overhead nhưng vẫn giữ quyền truy cập vào tài nguyên bên dưới khi cần. Dịch vụ nào phù hợp nhất?",
+    "options": [
+      "AWS Elastic Beanstalk",
+      "Tự dựng EC2 với Auto Scaling group và ALB thủ công",
+      "AWS Lambda với API Gateway",
+      "Amazon Lightsail với blueprint thủ công"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Elastic Beanstalk tự lo provisioning, load balancing, scaling và monitoring từ mã nguồn upload lên, nhưng vẫn cho truy cập tài nguyên EC2/ASG bên dưới.\n✓ Elastic Beanstalk — đúng, chỉ cần upload code, AWS tự dựng và quản lý nền tảng, vẫn truy cập được tài nguyên.\n✗ Tự dựng EC2/ASG/ALB — nhiều thao tác vận hành nhất.\n✗ Lambda + API Gateway — serverless nhưng đòi tái cấu trúc ứng dụng theo function, không phải web app truyền thống.\n✗ Lightsail — đơn giản nhưng hạn chế tích hợp và ít kiểm soát tài nguyên AWS bên dưới hơn.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-046",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-03-database-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng serverless dùng AWS Lambda kết nối tới Amazon RDS for PostgreSQL. Khi lưu lượng tăng đột biến, hàng nghìn Lambda concurrent mở quá nhiều kết nối database khiến RDS cạn connection và lỗi 'too many connections'. Giải pháp nào giải quyết vấn đề với LEAST operational overhead?",
+    "options": [
+      "Triển khai Amazon RDS Proxy để pool và chia sẻ các kết nối database",
+      "Tăng tham số max_connections trên RDS và scale up instance",
+      "Tự xây dựng connection pooler chạy trên EC2 trước RDS",
+      "Thêm Read Replica để phân tán kết nối qua nhiều endpoint"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "RDS Proxy là managed connection pooler được thiết kế riêng cho workload serverless/Lambda với nhiều kết nối ngắn.\n✓ RDS Proxy pool và tái sử dụng kết nối, hấp thụ burst của Lambda, fully managed nên ít vận hành.\n✗ Tăng max_connections và scale up chỉ trì hoãn vấn đề, mỗi kết nối vẫn tốn bộ nhớ và không bền vững.\n✗ Tự xây pooler trên EC2 thêm hạ tầng phải quản lý, vá lỗi, HA — operational overhead lớn.\n✗ Read Replica giúp offload đọc nhưng không giải quyết cạn kiệt kết nối, ghi vẫn dồn vào primary.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-047",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-03-database-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng cần cache session của người dùng. Yêu cầu: dữ liệu session phải tồn tại qua các lần khởi động lại node (persistence), hỗ trợ replication để high availability, và có thể dùng các cấu trúc dữ liệu phong phú như sorted set cho leaderboard. Engine ElastiCache nào phù hợp?",
+    "options": [
+      "Amazon ElastiCache for Redis",
+      "Amazon ElastiCache for Memcached",
+      "Amazon DynamoDB với TTL",
+      "Amazon RDS for PostgreSQL với in-memory tablespace"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Redis hỗ trợ persistence, replication/Multi-AZ với automatic failover và các kiểu dữ liệu nâng cao như sorted set — Memcached thì không.\n✓ ElastiCache for Redis có persistence, replication HA và cấu trúc dữ liệu phong phú (sorted set, hash) — đáp ứng mọi yêu cầu.\n✗ Memcached là cache đơn giản multi-threaded, KHÔNG có persistence, replication hay cấu trúc dữ liệu nâng cao.\n✗ DynamoDB với TTL lưu được session nhưng không phải in-memory cache, độ trễ cao hơn và không có sorted set native.\n✗ RDS PostgreSQL không phải caching layer in-memory, không phù hợp cho session caching tốc độ cao.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-048",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-03-database-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một database RDS for MySQL có một truy vấn báo cáo nặng chạy mỗi đêm trên Read Replica. Nhóm phân tích phàn nàn rằng đôi khi dữ liệu trên replica trễ vài giây so với primary. Để hiểu và xử lý đúng, kiến trúc sư nên nhận định điều gì về RDS Read Replicas?",
+    "options": [
+      "Read Replicas dùng asynchronous replication nên có thể có replica lag; phù hợp khi ứng dụng chấp nhận eventual consistency cho đọc",
+      "Read Replicas dùng synchronous replication nên dữ liệu luôn nhất quán tuyệt đối với primary",
+      "Replica lag chỉ xảy ra khi cấu hình sai và có thể loại bỏ hoàn toàn bằng cách bật Multi-AZ",
+      "Read Replicas đảm bảo strong consistency giống như đọc từ primary endpoint"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "RDS Read Replicas dùng asynchronous replication, nên replica lag là hành vi bình thường và phù hợp cho workload đọc chấp nhận eventual consistency.\n✓ Asynchronous replication vốn dĩ có thể gây lag — đúng bản chất, phù hợp báo cáo chấp nhận eventual consistency.\n✗ Read Replicas KHÔNG dùng synchronous replication; chỉ Multi-AZ standby mới synchronous.\n✗ Replica lag là vốn có của async replication, không thể loại bỏ hoàn toàn; Multi-AZ phục vụ HA chứ không loại bỏ lag của read replica.\n✗ Read Replicas cho eventual consistency, không đảm bảo strong consistency như primary.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-049",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-04-network-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "EC2 instance trong private subnet đang tải về và đẩy lên hàng terabyte dữ liệu mỗi tháng từ/đến Amazon S3 trong cùng region. Hóa đơn NAT Gateway tăng vọt do data processing charge. Giải pháp nào giảm chi phí này một cách cost-effective nhất mà không ảnh hưởng kết nối tới các dịch vụ khác?",
+    "options": [
+      "Tạo S3 Gateway VPC endpoint và thêm route tới endpoint trong route table của private subnet",
+      "Tạo Interface VPC endpoint (PrivateLink) cho S3 ở mỗi AZ",
+      "Di chuyển EC2 instance ra public subnet và gán Elastic IP",
+      "Thay NAT Gateway bằng NAT instance EC2 tự quản lý loại nhỏ hơn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "S3 Gateway endpoint miễn phí và định tuyến traffic S3 qua mạng AWS private, loại bỏ hoàn toàn data processing charge của NAT cho phần traffic này.\n✓ S3 Gateway endpoint: free, traffic S3 không đi qua NAT nữa, vẫn giữ NAT cho các dịch vụ khác — cost-effective nhất.\n✗ Interface endpoint cho S3: tính phí theo giờ per-AZ cộng phí data; Gateway endpoint cho S3 thì miễn phí nên rẻ hơn.\n✗ Đưa EC2 ra public subnet: phá vỡ mô hình bảo mật private và vẫn tính internet egress.\n✗ NAT instance tự quản lý: vẫn tốn data transfer, thêm operational overhead, không giải quyết gốc.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-050",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-04-network-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một ứng dụng HPC chạy MPI giữa hàng trăm EC2 instance đòi hỏi inter-node communication latency cực thấp và network throughput cao trong cùng một cluster. Kết hợp nào tối ưu nhất cho yêu cầu network performance này?",
+    "options": [
+      "Cluster placement group kết hợp Elastic Fabric Adapter (EFA) trên các instance hỗ trợ",
+      "Spread placement group kết hợp Elastic Network Adapter (ENA) tiêu chuẩn",
+      "Partition placement group trải trên nhiều AZ để tăng độ bền",
+      "Cluster placement group kết hợp jumbo frames qua NAT Gateway"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cluster placement group đặt instance gần nhau trong cùng AZ cho latency thấp nhất, còn EFA cho phép OS-bypass tối ưu MPI/HPC.\n✓ Cluster placement group + EFA: low latency intra-cluster, high throughput, EFA tối ưu cho MPI HPC — đúng nhất.\n✗ Spread placement group + ENA: spread đặt instance tách xa nhau để giảm tương quan lỗi, ngược mục tiêu low latency.\n✗ Partition group trải nhiều AZ: cross-AZ latency cao hơn, tối ưu cho big data/HA chứ không cho HPC latency thấp.\n✗ Jumbo frames qua NAT Gateway: jumbo frames không hoạt động ra internet/NAT, và NAT không liên quan inter-node MPI.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-051",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-03-database-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một công ty thu thập clickstream từ website thương mại điện tử và cần đẩy dữ liệu này vào một S3 data lake để phân tích batch hàng ngày. Họ không cần xử lý real-time, không muốn quản lý cluster, và muốn giải pháp có least operational overhead để load dữ liệu vào S3 với khả năng tự động buffer, nén và partition theo thời gian. Giải pháp nào phù hợp nhất?",
+    "options": [
+      "Amazon Data Firehose ghi trực tiếp vào S3 với buffering, nén (GZIP/Snappy) và dynamic partitioning theo thời gian",
+      "Amazon Kinesis Data Streams kết hợp consumer application chạy trên EC2 tự ghi dữ liệu vào S3",
+      "Amazon MSK với một custom Kafka Connect S3 sink connector tự vận hành",
+      "Amazon EMR cluster đọc dữ liệu từ một SQS queue rồi ghi xuống S3 theo lịch"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Firehose là dịch vụ fully managed để load streaming data vào S3 với buffering, nén và partition, đúng nhu cầu ingestion với least operational overhead.\n✓ Amazon Data Firehose fully managed, tự buffer/nén/partition và ghi vào S3, không cần quản lý hạ tầng.\n✗ Kinesis Data Streams cần tự viết và vận hành consumer trên EC2, tăng operational overhead.\n✗ MSK + Kafka Connect tự vận hành đòi hỏi quản lý cluster và connector, quá nặng cho nhu cầu này.\n✗ EMR cluster cho batch ETL là thừa thãi và tốn kém cho việc chỉ load dữ liệu vào S3.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-052",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-03-database-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một tổ chức cần chạy job ETL theo lịch để làm sạch, biến đổi và join nhiều nguồn dữ liệu trong S3 trước khi nạp vào data lake dạng Parquet. Họ muốn giải pháp serverless, tự động khám phá schema và sinh code transformation, với least operational overhead. Dịch vụ nào phù hợp nhất?",
+    "options": [
+      "AWS Glue (Crawler khám phá schema + ETL jobs trên Spark serverless) ghi output Parquet vào S3",
+      "Amazon EMR cluster với Spark được khởi tạo theo lịch để chạy job ETL",
+      "AWS Lambda functions được orchestrate bằng Step Functions để transform toàn bộ dữ liệu",
+      "Amazon Managed Service for Apache Flink xử lý dữ liệu rồi ghi vào S3"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Glue là dịch vụ ETL serverless với crawler khám phá schema và job Spark managed, lý tưởng cho batch ETL nạp data lake.\n✓ Glue serverless, crawler tự phát hiện schema, ETL job sinh code và ghi Parquet, least operational overhead.\n✗ EMR cần cấu hình và quản lý cluster Spark, nhiều operational overhead hơn Glue.\n✗ Lambda có giới hạn 15 phút và bộ nhớ, không hợp cho ETL nặng join nhiều nguồn TB dữ liệu.\n✗ Managed Service for Apache Flink dành cho streaming real-time, không phải batch ETL theo lịch.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-053",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-03-database-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một công ty cần xử lý batch khổng lồ (hàng petabyte) bằng các framework big data như Apache Spark, Hive và Presto, với các job chạy không liên tục. Họ muốn tối ưu chi phí bằng cách dùng Spot Instances cho compute và tách storage khỏi compute. Giải pháp nào phù hợp nhất?",
+    "options": [
+      "Amazon EMR với transient cluster đọc/ghi dữ liệu trên S3 (EMRFS) và dùng Spot Instances cho task nodes",
+      "AWS Glue ETL chạy tất cả job Spark petabyte-scale theo mô hình serverless",
+      "Amazon Athena chạy mọi job transformation big data trực tiếp trên S3",
+      "Amazon Redshift Spectrum xử lý toàn bộ workload Spark và Hive"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "EMR transient cluster với EMRFS tách storage (S3) khỏi compute và dùng Spot cho task nodes, tối ưu chi phí cho big data batch petabyte-scale.\n✓ EMR hỗ trợ Spark/Hive/Presto, dùng S3 làm storage tách rời, Spot Instances giảm chi phí cho job không liên tục.\n✗ Glue serverless tiện nhưng kém kinh tế và linh hoạt hơn EMR cho workload petabyte cần Spot và nhiều framework.\n✗ Athena là query engine SQL, không chạy được job Spark/Hive tùy biến petabyte-scale.\n✗ Redshift Spectrum chỉ query S3 từ Redshift, không phải nền tảng chạy Spark/Hive.",
+    "domain": 3,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-054",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-02-storage-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một data lake trên S3 dùng S3 Intelligent-Tiering. Kiến trúc sư muốn tối ưu thêm chi phí cho dữ liệu archive sâu nhưng vẫn giữ tính tự động của Intelligent-Tiering, đồng thời nắm rõ các đặc tính chi phí. Chọn HAI phát biểu ĐÚNG về cách tối ưu và đặc tính chi phí của S3 Intelligent-Tiering.",
+    "options": [
+      "Có thể bật Archive Access và Deep Archive Access tier (opt-in) trong Intelligent-Tiering để tự động chuyển object không truy cập lâu xuống tier archive rẻ hơn",
+      "S3 Intelligent-Tiering tính một khoản phí monitoring/automation nhỏ theo từng object, nên cần cân nhắc khi có rất nhiều object nhỏ",
+      "S3 Intelligent-Tiering áp dụng phí truy xuất (retrieval fee) cho mọi lần đọc object ở Frequent Access tier",
+      "Object nhỏ hơn 128 KB luôn bị tính phí truy xuất khi được tự động chuyển xuống Deep Archive Access tier",
+      "Khi bật Deep Archive Access tier, object được truy xuất tức thì (milliseconds) giống như ở Frequent Access tier"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Intelligent-Tiering hỗ trợ opt-in Archive/Deep Archive Access tier để tự động hạ chi phí sâu hơn, và nó tính một khoản phí monitoring/automation nhỏ theo object cần cân nhắc.\n✓ Bật Archive/Deep Archive Access tier (opt-in) — đúng, cho phép tự động chuyển object lạnh xuống tier archive rẻ hơn trong Intelligent-Tiering.\n✓ Có phí monitoring/automation nhỏ trên mỗi object — đúng, đây là chi phí ngầm cần cân nhắc, đặc biệt với rất nhiều object nhỏ.\n✗ Tính phí truy xuất cho mọi lần đọc ở Frequent Access tier — sai, Intelligent-Tiering không tính phí truy xuất khi truy cập object giữa các access tier thông thường.\n✗ Object nhỏ hơn 128 KB luôn bị tính phí truy xuất khi xuống Deep Archive — sai, object nhỏ hơn 128 KB không được tự động chuyển xuống tier archive mà giữ ở Frequent Access.\n✗ Deep Archive Access truy xuất tức thì — sai, object ở Deep Archive Access cần tới hàng giờ để khôi phục, không tức thì.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-055",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-03-db-network-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một fleet EC2 trong private subnets cần truy cập nhiều AWS service trong cùng Region: S3, DynamoDB, Amazon ECR (kéo container images), và CloudWatch Logs. Toàn bộ traffic hiện đi qua NAT Gateway, chi phí data processing rất cao. Đội kiến trúc muốn giảm tối đa traffic qua NAT Gateway. Những hành động nào nên thực hiện? (Chọn HAI)",
+    "options": [
+      "Tạo Gateway VPC endpoints cho S3 và DynamoDB",
+      "Tạo Interface VPC endpoints cho ECR (ecr.api, ecr.dkr) và CloudWatch Logs",
+      "Thay thế NAT Gateway bằng NAT instance trên một EC2 nhỏ để giảm chi phí",
+      "Tạo Interface VPC endpoint cho S3 và DynamoDB để dùng PrivateLink",
+      "Chuyển tất cả service calls qua một Internet Gateway gắn vào private subnet"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "S3 và DynamoDB hỗ trợ Gateway endpoint (miễn phí), còn ECR và CloudWatch Logs cần Interface endpoint; kết hợp cả hai loại bỏ phần lớn traffic qua NAT Gateway.\n✓ Gateway endpoints cho S3 và DynamoDB miễn phí và đưa traffic ra khỏi NAT Gateway.\n✓ Interface endpoints cho ECR (ecr.api, ecr.dkr) và CloudWatch Logs cho phép truy cập riêng tư các service này không qua NAT.\n✗ NAT instance phải tự quản lý, không có HA mặc định và vẫn xử lý cùng lượng traffic — không phải tối ưu.\n✗ S3 và DynamoDB dùng Gateway endpoint (miễn phí), dùng Interface endpoint sẽ phát sinh phí giờ và phí xử lý không cần thiết.\n✗ Không thể gắn Internet Gateway để định tuyến cho một private subnet theo cách đó; điều đó biến nó thành public subnet và phá vỡ thiết kế.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-056",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-02-storage-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng tạo ra hàng triệu object nhỏ (mỗi object khoảng 50 KB) trên S3. Dữ liệu được truy cập không thường xuyên sau 30 ngày nhưng cần truy xuất tức thì (milliseconds) khi cần. Kiến trúc sư muốn giảm chi phí nhưng lo ngại về phí tối thiểu. Lựa chọn TỐI ƯU CHI PHÍ nhất là gì?",
+    "options": [
+      "Giữ object ở S3 Standard vì S3 Standard-IA có kích thước object tối thiểu tính phí 128 KB",
+      "Chuyển object sang S3 Standard-IA sau 30 ngày bằng lifecycle policy",
+      "Chuyển object sang S3 One Zone-IA sau 30 ngày bằng lifecycle policy",
+      "Chuyển object sang S3 Glacier Instant Retrieval sau 30 ngày"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Với hàng triệu object 50 KB, các tier IA tính phí lưu trữ tối thiểu theo 128 KB/object nên thực tế đắt hơn Standard; truy xuất tức thì còn loại Glacier truyền thống.\n✓ Giữ ở S3 Standard — đúng, vì object dưới 128 KB bị tính phí như 128 KB ở tier IA, khiến IA đắt hơn cho object rất nhỏ và nhiều.\n✗ Standard-IA sau 30 ngày — phí tối thiểu 128 KB/object làm chi phí thực tế cao hơn với object 50 KB.\n✗ One Zone-IA sau 30 ngày — cũng bị phí tối thiểu 128 KB và giảm độ bền (một AZ).\n✗ Glacier Instant Retrieval — cũng có kích thước tối thiểu tính phí 128 KB và phí truy xuất, không tối ưu cho object nhỏ truy cập tức thì.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-057",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-02-storage-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một công ty lưu các bản backup database vào S3, chỉ truy cập lại khi cần khôi phục thảm họa (rất hiếm). Yêu cầu RTO cho phép vài giờ để truy xuất backup. Backup này KHÔNG cần độ bền multi-AZ vì đã có bản gốc ở nơi khác. Mục tiêu là chi phí lưu trữ thấp nhất có thể. Storage class nào phù hợp nhất?",
+    "options": [
+      "S3 Glacier Flexible Retrieval",
+      "S3 One Zone-IA",
+      "S3 Glacier Deep Archive",
+      "S3 Glacier Instant Retrieval"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Truy xuất hiếm với RTO vài giờ khớp đúng Glacier Flexible Retrieval (standard retrieval 3-5 giờ), rẻ hơn nhiều so với các tier truy cập nhanh trong khi vẫn đáp ứng RTO.\n✓ Glacier Flexible Retrieval — đúng, chi phí lưu trữ rất thấp và truy xuất trong vài giờ đáp ứng RTO.\n✗ One Zone-IA — chi phí lưu trữ cao hơn nhiều Glacier và phù hợp dữ liệu cần truy xuất tức thì hơn.\n✗ Deep Archive — rẻ hơn nữa nhưng truy xuất ~12 giờ có thể vượt RTO vài giờ.\n✗ Glacier Instant Retrieval — tối ưu cho truy cập tức thì nhưng đắt hơn Flexible Retrieval cho dữ liệu chỉ cần trong vài giờ.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-058",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-01-compute-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một ứng dụng web Java chạy ổn định 24/7 trên các EC2 instance họ m5 trong suốt 3 năm tới với mức sử dụng dự đoán được. Kiến trúc sư muốn giảm chi phí nhưng vẫn giữ linh hoạt thay đổi instance family, size và Region khi cần. Lựa chọn nào tối ưu nhất?",
+    "options": [
+      "Compute Savings Plans kỳ hạn 3 năm",
+      "Standard Reserved Instances kỳ hạn 3 năm gắn với họ m5",
+      "EC2 Spot Instances trong một Spot Fleet",
+      "On-Demand Capacity Reservations"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Compute Savings Plans cho giảm giá tương đương RI nhưng linh hoạt qua mọi instance family, size, OS, Region và cả Fargate/Lambda.\n✓ Compute Savings Plans áp dụng tự động khi bạn đổi family/size/Region, lý tưởng cho nhu cầu giữ linh hoạt với cam kết dài hạn.\n✗ Standard Reserved Instances 3 năm cho discount cao nhưng gắn cứng vào họ m5, khó đổi family/Region.\n✗ Spot không phù hợp cho web app cần chạy liên tục 24/7 ổn định.\n✗ On-Demand Capacity Reservations chỉ đảm bảo capacity, không tự giảm giá đáng kể.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-059",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-01-compute-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng backend chạy trên EC2 m5.4xlarge. Sau khi xem AWS Compute Optimizer và CloudWatch, đội nhận thấy CPU trung bình chỉ ~8% và memory ~15% trong nhiều tuần. Ứng dụng là Java thuần, đã được kiểm thử chạy tốt trên ARM. Hành động nào MOST cost-effective?",
+    "options": [
+      "Right-size xuống một instance dựa trên Graviton (ví dụ m7g) có kích thước nhỏ hơn theo khuyến nghị của Compute Optimizer",
+      "Mua Standard Reserved Instances 3 năm cho m5.4xlarge để khóa giá thấp",
+      "Bật EC2 Auto Scaling để thêm m5.4xlarge khi tải tăng",
+      "Chuyển ứng dụng sang Spot Instances cùng kích thước m5.4xlarge"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Instance over-provisioned nghiêm trọng; right-sizing xuống bậc nhỏ hơn và sang Graviton vừa giảm lãng phí vừa cải thiện price/performance.\n✓ Right-size theo khuyến nghị Compute Optimizer + chuyển sang Graviton (m7g) cắt giảm cả số core thừa lẫn đơn giá, tối ưu chi phí nhất cho app ARM-ready.\n✗ Reserved Instances 3 năm cho m5.4xlarge khóa giá cho một instance vốn đã quá lớn, cố định lãng phí.\n✗ Auto Scaling thêm instance không giải quyết được việc instance hiện tại đã quá khổ.\n✗ Spot cùng size m5.4xlarge giảm đơn giá nhưng vẫn trả cho tài nguyên thừa và thêm rủi ro gián đoạn.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-060",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-01-compute-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một nền tảng SaaS chạy hàng nghìn Lambda function được gọi liên tục với khối lượng rất lớn và ổn định mỗi tháng. Hóa đơn Lambda đang tăng nhanh. Các function là Node.js thuần, không phụ thuộc kiến trúc. Kiến trúc sư muốn giảm chi phí Lambda mà giữ kiến trúc serverless và LEAST operational overhead. Kết hợp nào hợp lý nhất?",
+    "options": [
+      "Mua Compute Savings Plans để phủ phần Lambda usage ổn định và chuyển function sang kiến trúc Graviton (arm64)",
+      "Tăng memory cấp cho mỗi function lên mức tối đa để chạy nhanh hơn",
+      "Di trú toàn bộ function sang EC2 On-Demand để có giá compute rẻ hơn",
+      "Bật Provisioned Concurrency tối đa cho mọi function để giảm chi phí mỗi lần gọi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Compute Savings Plans cũng áp dụng cho Lambda, và Graviton/arm64 cho Lambda rẻ hơn cùng price/performance tốt hơn — cả hai giữ nguyên serverless.\n✓ Compute Savings Plans phủ Lambda usage ổn định để giảm giá, cộng arm64 (Graviton) hạ thêm chi phí mỗi GB-giây với ít thay đổi vận hành.\n✗ Tăng memory tối đa làm tăng chi phí GB-giây trừ khi rút ngắn đáng kể thời gian chạy; bừa bãi sẽ đắt hơn.\n✗ Di trú sang EC2 đánh mất serverless và tăng mạnh operational overhead quản lý hạ tầng.\n✗ Provisioned Concurrency tối đa cho mọi function làm TĂNG chi phí vì trả tiền giữ sẵn capacity, không phải để giảm giá.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-061",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-03-db-network-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một bảng Amazon DynamoDB phục vụ cho tính năng mới vừa ra mắt. Lưu lượng hiện rất thấp và cực kỳ khó dự đoán vì chưa rõ tốc độ tăng trưởng người dùng. Team không muốn phải tự dự báo capacity và muốn tránh throttling khi traffic tăng đột ngột. Capacity mode nào phù hợp nhất?",
+    "options": [
+      "On-demand capacity mode",
+      "Provisioned capacity mode với auto scaling",
+      "Provisioned capacity mode với reserved capacity",
+      "On-demand capacity mode kèm DynamoDB Accelerator (DAX)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Với traffic mới, thấp và không dự đoán được, On-demand loại bỏ hoàn toàn việc dự báo capacity và tự xử lý spike, chỉ trả theo request thực tế.\n✓ On-demand — đúng, không cần dự báo, hấp thụ spike tức thì, lý tưởng cho workload mới/khó đoán.\n✗ Provisioned + auto scaling — auto scaling phản ứng chậm hơn với spike đột ngột và vẫn cần đặt min/max ban đầu.\n✗ Provisioned + reserved capacity — cam kết trước cho tải không dự đoán được là rủi ro lãng phí lớn.\n✗ On-demand + DAX — DAX là cache giải quyết latency đọc, không liên quan bài toán capacity/dự báo.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-062",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-03-db-network-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một công ty fintech chạy Aurora PostgreSQL cluster cho hệ thống giao dịch. Tải đọc tăng đều theo tăng trưởng và họ đã thêm 4 read replicas, nhưng nhiều replica chỉ đạt ~20% sử dụng vào ban đêm, gây lãng phí. Họ cần đảm bảo đủ capacity đọc lúc cao điểm nhưng cost-effective lúc thấp điểm, với least operational overhead. Giải pháp nào tốt nhất?",
+    "options": [
+      "Dùng Aurora Auto Scaling cho read replicas dựa trên CPU/connections để tự thêm bớt replica theo tải",
+      "Thay tất cả replica bằng một Aurora Serverless v2 reader duy nhất rồi tự scale ACU",
+      "Đặt CloudWatch alarm gửi SNS để DBA thủ công thêm/xóa replica theo ca",
+      "Chuyển toàn bộ replica sang Reserved Instances để giảm giá mỗi replica"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Aurora Auto Scaling tự động thêm/bớt read replicas theo metric tải, đảm bảo capacity lúc peak và cắt giảm replica thừa lúc nhàn rỗi mà không cần can thiệp thủ công.\n✓ Aurora Auto Scaling cho read replicas — đúng, tự co giãn số replica theo tải, tối ưu chi phí và least operational overhead.\n✗ Một Serverless v2 reader duy nhất — mất tính dự phòng nhiều replica và giới hạn khả năng phân tải đọc lớn lúc peak.\n✗ CloudWatch alarm + DBA thủ công — phụ thuộc thao tác tay, operational overhead cao, dễ phản ứng chậm.\n✗ Reserved Instances cho mọi replica — cam kết trước cho replica vốn lãng phí ban đêm chỉ khóa cứng sự lãng phí đó.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-063",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-03-db-network-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một công ty chạy nhiều EC2 instances trong private subnets. Các instances này thường xuyên đọc và ghi một lượng lớn dữ liệu vào một S3 bucket trong cùng Region. Hiện tại traffic đi qua NAT Gateway, và hóa đơn data processing của NAT Gateway đang rất cao. Giải pháp nào giảm chi phí HIỆU QUẢ NHẤT mà không ảnh hưởng đến khả năng truy cập S3?",
+    "options": [
+      "Tạo một Gateway VPC endpoint cho S3 và cập nhật route table của private subnets để định tuyến traffic tới S3 qua endpoint này",
+      "Tạo một Interface VPC endpoint (PrivateLink) cho S3 và tính phí theo giờ cộng phí xử lý dữ liệu",
+      "Di chuyển các EC2 instances sang public subnets và gán Elastic IP cho mỗi instance",
+      "Tăng số lượng NAT Gateway lên nhiều AZ để phân tải và giảm chi phí data processing"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Gateway VPC endpoint cho S3 hoàn toàn miễn phí và loại bỏ traffic S3 khỏi NAT Gateway, cắt giảm phí data processing.\n✓ Gateway VPC endpoint cho S3 không tính phí giờ hay phí xử lý dữ liệu, traffic tới S3 đi nội bộ trong AWS network thay vì qua NAT Gateway.\n✗ Interface endpoint cho S3 phát sinh phí giờ và phí xử lý dữ liệu — Gateway endpoint mới là lựa chọn miễn phí tối ưu.\n✗ Chuyển sang public subnets làm mất tính bảo mật và vẫn phát sinh chi phí internet egress.\n✗ Thêm nhiều NAT Gateway chỉ làm tăng chi phí, không loại bỏ phí data processing.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-064",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-03-db-network-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một doanh nghiệp có on-premises data center cần truyền 50 TB dữ liệu mỗi tháng lên AWS một cách ổn định và cần băng thông nhất quán cho ứng dụng nhạy cảm độ trễ. Hiện họ dùng Site-to-Site VPN qua internet và chi phí data transfer cùng độ trễ không ổn định là vấn đề. Giải pháp nào tối ưu chi phí dài hạn và đảm bảo băng thông ổn định?",
+    "options": [
+      "Thiết lập AWS Direct Connect với một dedicated connection từ on-premises tới AWS",
+      "Mở rộng Site-to-Site VPN thành nhiều tunnel để tăng băng thông tổng",
+      "Dùng AWS DataSync qua internet để tối ưu hóa tốc độ truyền dữ liệu",
+      "Sử dụng AWS Snowball để vận chuyển dữ liệu định kỳ mỗi tháng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Direct Connect cung cấp băng thông ổn định, độ trễ nhất quán và giá data transfer out thấp hơn đáng kể so với internet/VPN, tối ưu cho khối lượng lớn ổn định dài hạn.\n✓ Direct Connect đảm bảo dedicated bandwidth, độ trễ ổn định và data transfer rate rẻ hơn internet — lý tưởng cho 50 TB/tháng đều đặn.\n✗ Nhiều VPN tunnel vẫn đi qua internet công cộng, băng thông và độ trễ không đảm bảo.\n✗ DataSync qua internet không giải quyết được vấn đề độ trễ ổn định và vẫn chịu phí internet transfer.\n✗ Snowball phù hợp cho di chuyển một lần lượng cực lớn, không phù hợp cho luồng dữ liệu liên tục cần băng thông realtime.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "saa-m2-065",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-03-db-network-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một hệ thống xử lý dữ liệu lớn dùng EMR đọc dữ liệu từ S3. Các EMR cluster nằm trong private subnets và truy cập S3 cùng Region qua NAT Gateway. Khối lượng đọc rất lớn (hàng trăm TB mỗi ngày), khiến phí data processing của NAT Gateway chiếm phần lớn hóa đơn mạng. Ngoài chi phí, một vấn đề khác là NAT Gateway giới hạn throughput. Giải pháp nào giải quyết CẢ chi phí lẫn throughput tốt nhất?",
+    "options": [
+      "Triển khai Gateway VPC endpoint cho S3 để traffic đi trực tiếp tới S3 không qua NAT Gateway",
+      "Nâng cấp lên nhiều NAT Gateway và bật enhanced networking trên các EMR nodes",
+      "Bật S3 Transfer Acceleration để tăng throughput đọc dữ liệu từ S3",
+      "Đặt một Interface VPC endpoint cho S3 để giảm phụ thuộc vào NAT Gateway"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Gateway endpoint cho S3 miễn phí và không bị giới hạn throughput như NAT Gateway, giải quyết đồng thời cost và bottleneck.\n✓ Gateway endpoint loại bỏ phí data processing của NAT Gateway và không áp đặt giới hạn throughput của NAT, lý tưởng cho khối lượng đọc S3 cực lớn.\n✗ Nhiều NAT Gateway vẫn phát sinh phí data processing cao và tốn kém hơn nhiều so với Gateway endpoint miễn phí.\n✗ Transfer Acceleration phụ thu phí và hướng tới truyền qua internet, không giải quyết NAT cost nội Region.\n✗ Interface endpoint cho S3 phát sinh phí giờ và phí xử lý — Gateway endpoint mới là lựa chọn miễn phí và phù hợp throughput cao.",
+    "domain": 4,
+    "mock": 2
+  },
+  {
+    "id": "saa-m3-001",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-02-network-security",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một kiến trúc 3-tier: web tier (public subnet) gọi app tier (private subnet) trên TCP 8080, app tier gọi RDS (private subnet) trên TCP 5432. Cần cấu hình security group theo least privilege. Hai cấu hình nào ĐÚNG? (Chọn 2)",
+    "options": [
+      "App tier SG cho phép inbound 8080 với source là security group của web tier",
+      "RDS SG cho phép inbound 5432 với source là security group của app tier",
+      "App tier SG cho phép inbound 8080 từ 0.0.0.0/0 để đơn giản hóa",
+      "RDS SG cho phép inbound 5432 từ CIDR của toàn VPC",
+      "Web tier SG cho phép inbound 5432 từ RDS security group"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Tham chiếu security group làm source giúp least privilege và tự co giãn theo instance.\n✓ App tier nhận 8080 từ SG web tier — đúng, chỉ web tier gọi được app tier.\n✓ RDS nhận 5432 từ SG app tier — đúng, chỉ app tier gọi được DB.\n✗ App tier mở 8080 từ 0.0.0.0/0 — quá rộng, vi phạm least privilege.\n✗ RDS mở 5432 cho toàn VPC CIDR — rộng hơn cần thiết, không least privilege.\n✗ Web tier nhận 5432 từ RDS SG — sai chiều luồng; web tier không nhận kết nối DB.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-002",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-03-data-protection",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một công ty bị yêu cầu compliance: dữ liệu PII trong S3 phải được phân loại, mã hoá at rest bằng key có thể audit, và mọi truy cập object phải qua HTTPS. Chọn HAI biện pháp trực tiếp đáp ứng các yêu cầu này (ngoài việc bật mã hoá SSE-KMS đã có sẵn).",
+    "options": [
+      "Bật Amazon Macie để khám phá và phân loại dữ liệu PII",
+      "Thêm bucket policy Deny khi aws:SecureTransport là false",
+      "Chuyển dữ liệu sang S3 Standard-IA để giảm chi phí",
+      "Tắt CloudTrail để giảm log noise",
+      "Dùng SSE-C để client tự giữ key"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Macie xử lý yêu cầu phân loại PII; bucket policy chặn non-HTTPS enforce encryption in transit.\n✓ Macie: tự động khám phá và phân loại PII, đáp ứng yêu cầu data classification.\n✓ Deny khi aws:SecureTransport là false: bắt buộc mọi truy cập object qua HTTPS.\n✗ Standard-IA: liên quan chi phí lưu trữ, không đáp ứng yêu cầu compliance nêu ra.\n✗ Tắt CloudTrail: làm mất khả năng audit, đi ngược yêu cầu.\n✗ SSE-C: key do client giữ, không audit tập trung được như yêu cầu key auditable.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-003",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-01-iam-deep-dive",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Account A chứa một S3 bucket cần được account B truy cập đọc dữ liệu. Yêu cầu là account B chỉ được cấp quyền tạm thời và account A muốn kiểm soát chính xác principal nào ở account B được phép. Cách triển khai cross-account access nào là tối ưu và an toàn nhất?",
+    "options": [
+      "Tạo IAM role trong account A với trust policy cho phép account B AssumeRole, và account B dùng STS AssumeRole để lấy temporary credentials",
+      "Tạo IAM user trong account A và chia sẻ access key với account B",
+      "Gắn bucket policy trong account A cho phép Principal là toàn bộ account B (root)",
+      "Bật S3 Access Points và cấp quyền public-read cho bucket"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "IAM role với trust policy cung cấp cross-account access bằng temporary credentials và cho phép kiểm soát chi tiết principal được tin tưởng.\n✓ IAM role + STS AssumeRole: temporary credentials, trust policy kiểm soát chính xác ai được assume, best practice cho cross-account.\n✗ Chia sẻ access key của IAM user: long-term credentials, rủi ro cao, vi phạm least privilege.\n✗ Bucket policy cho toàn bộ root account B: cấp quyền quá rộng, mọi principal account B đều truy cập được, không kiểm soát chi tiết.\n✗ Public-read access point: lộ dữ liệu ra ngoài, không phù hợp yêu cầu cấp quyền có kiểm soát.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-004",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-01-iam-deep-dive",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một mobile app cần cho phép hàng triệu người dùng cuối upload ảnh lên S3. App dùng Google và Facebook để đăng nhập. Bạn cần cấp temporary AWS credentials cho từng người dùng với quyền giới hạn, không tạo IAM user cho mỗi người. Giải pháp nào tối ưu?",
+    "options": [
+      "Dùng Amazon Cognito identity pool để federate người dùng qua các OIDC provider và cấp temporary credentials qua STS",
+      "Tạo một IAM role chung và nhúng access key của role vào app",
+      "Tạo IAM user cho mỗi người dùng cuối thông qua API tự động",
+      "Dùng SCP để giới hạn quyền upload của từng người dùng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cognito identity pool được thiết kế để federate người dùng web/mobile qua social IdP và cấp temporary AWS credentials theo từng người với quyền giới hạn.\n✓ Cognito identity pool + OIDC: web identity federation, temporary credentials qua STS, scale tới hàng triệu user, không tạo IAM user.\n✗ Nhúng access key của role: role không có long-term key để nhúng; nhúng key tĩnh trong app là rủi ro nghiêm trọng.\n✗ IAM user cho mỗi người dùng: vượt quota IAM user và không scale tới hàng triệu người.\n✗ SCP: dùng cho account trong Organizations, không liên quan tới người dùng cuối của app.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-005",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-01-iam-deep-dive",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Lambda function cần ghi vào DynamoDB và đọc một secret từ Secrets Manager. Solutions Architect muốn cấp quyền theo least privilege và least operational overhead. Cách nào đúng nhất?",
+    "options": [
+      "Tạo một IAM execution role cho Lambda với policy chỉ cho phép các action cụ thể trên đúng bảng DynamoDB và đúng secret ARN",
+      "Tạo IAM user, sinh access key và lưu vào biến môi trường của Lambda",
+      "Gắn AdministratorAccess vào execution role để đảm bảo function chạy được",
+      "Dùng resource-based policy trên Lambda để cấp quyền truy cập DynamoDB"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lambda execution role với policy giới hạn đúng action và đúng ARN tài nguyên là cách chuẩn theo least privilege.\n✓ Execution role với quyền cụ thể: temporary credentials tự động, chỉ đúng quyền cần thiết, ít vận hành.\n✗ IAM user + access key trong env: long-term credentials, rủi ro lộ key, sai best practice.\n✗ AdministratorAccess: vi phạm least privilege nghiêm trọng.\n✗ Resource-based policy trên Lambda: kiểm soát ai được gọi Lambda, không cấp quyền cho Lambda truy cập DynamoDB.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-006",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-01-iam-deep-dive",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng on-premises cần gọi AWS API để upload dữ liệu vào S3. Yêu cầu là không lưu long-term IAM credentials trên máy chủ on-premises. Hệ thống on-premises đã có một OIDC identity provider. Giải pháp nào tối ưu để cấp quyền tạm thời?",
+    "options": [
+      "Cấu hình IAM OIDC identity provider và để ứng dụng dùng web identity token gọi STS AssumeRoleWithWebIdentity lấy temporary credentials",
+      "Tạo IAM user, sinh access key và lưu trong file cấu hình trên máy chủ on-premises",
+      "Dùng IAM Roles Anywhere với access key tĩnh",
+      "Tạo một IAM role và chia sẻ secret key của role cho ứng dụng on-premises"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "OIDC federation cho phép workload bên ngoài đổi token sang temporary AWS credentials mà không cần lưu long-term key.\n✓ IAM OIDC provider + AssumeRoleWithWebIdentity: dùng token OIDC sẵn có, nhận temporary credentials, không lưu long-term key.\n✗ IAM user access key trong file: chính là long-term credentials cần tránh.\n✗ IAM Roles Anywhere với access key tĩnh: Roles Anywhere dùng X.509 certificate, không dùng access key tĩnh; mô tả sai.\n✗ Chia sẻ secret key của role: role không có long-term secret key để chia sẻ.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-007",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-01-iam-deep-dive",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một policy có một explicit Deny cho s3:DeleteObject với điều kiện aws:MultiFactorAuthPresent là false, và một policy khác Allow s3:DeleteObject. Một user không dùng MFA gọi s3:DeleteObject. Theo policy evaluation logic, kết quả là gì?",
+    "options": [
+      "Bị từ chối, vì explicit Deny luôn ưu tiên hơn mọi Allow khi điều kiện Deny khớp",
+      "Được phép, vì có một Allow rõ ràng cho action",
+      "Được phép, vì điều kiện MFA chỉ là cảnh báo chứ không chặn",
+      "Bị từ chối, vì thiếu resource-based policy"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Trong IAM, explicit Deny luôn thắng Allow; vì user không có MFA nên điều kiện Deny khớp và request bị chặn.\n✓ Bị từ chối do explicit Deny: điều kiện MFA-false khớp, explicit Deny override Allow.\n✗ Được phép vì có Allow: explicit Deny luôn ưu tiên hơn Allow.\n✗ Điều kiện MFA chỉ cảnh báo: sai, điều kiện trong Deny thực sự chặn request.\n✗ Thiếu resource-based policy: không liên quan; nguyên nhân là explicit Deny.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-008",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-01-iam-deep-dive",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một nhà thầu bên ngoài cần truy cập tạm thời vào một số tài nguyên trong account của bạn trong 2 tuần. Bạn muốn cấp quyền an toàn, có thể thu hồi dễ dàng, không tạo credentials lâu dài. Cách tiếp cận nào tối ưu?",
+    "options": [
+      "Tạo một IAM role với trust policy cho phép account của nhà thầu AssumeRole, gắn policy least-privilege, và xóa/điều chỉnh trust sau 2 tuần",
+      "Tạo IAM user cho nhà thầu với access key và xóa sau 2 tuần",
+      "Gắn AdministratorAccess cho một IAM user mới của nhà thầu",
+      "Chia sẻ mật khẩu root account cho nhà thầu trong thời gian làm việc"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "IAM role với cross-account trust cấp temporary credentials, dễ thu hồi bằng cách sửa/xóa trust policy, không tạo long-term credentials.\n✓ IAM role + cross-account AssumeRole: temporary credentials least-privilege, thu hồi dễ bằng cách chỉnh trust, an toàn cho truy cập tạm.\n✗ IAM user + access key: long-term credentials, rủi ro lộ và khó kiểm soát hơn.\n✗ AdministratorAccess cho user mới: vi phạm least privilege nghiêm trọng.\n✗ Chia sẻ root: cực kỳ nguy hiểm, không bao giờ làm.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-009",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-02-network-security",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Các EC2 trong private subnet cần kéo OS patches từ Internet nhưng KHÔNG được nhận kết nối khởi tạo từ Internet. Giải pháp nào highly available và least operational overhead?",
+    "options": [
+      "Triển khai NAT gateway tại mỗi AZ và trỏ route private subnet ra NAT gateway cùng AZ",
+      "Gán Elastic IP cho từng instance để chúng tự ra Internet",
+      "Triển khai một NAT instance EC2 tự quản tại một AZ duy nhất",
+      "Dùng Internet gateway và đặt instance vào public subnet"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "NAT gateway là managed, HA trong AZ; đặt một NAT gateway mỗi AZ tránh single point of failure và phí cross-AZ.\n✓ NAT gateway mỗi AZ — đúng, HA và ít vận hành nhất (managed).\n✗ Elastic IP cho từng instance — biến instance thành public, nhận được kết nối từ Internet, vi phạm yêu cầu.\n✗ NAT instance một AZ — phải tự vá/scale, single point of failure, nhiều vận hành.\n✗ Public subnet + IGW — phơi bày instance ra Internet.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-010",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-02-network-security",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Các EC2 private cần gọi AWS Systems Manager, Secrets Manager và KMS API nhưng VPC không có NAT gateway hay Internet gateway và phải giữ traffic trong mạng AWS. Giải pháp nào đáp ứng?",
+    "options": [
+      "Tạo Interface VPC endpoints (PrivateLink) cho từng service đó",
+      "Tạo một Gateway VPC endpoint chung cho cả ba service",
+      "Thêm NAT gateway để instance gọi public API endpoints",
+      "Bật VPC peering tới VPC dịch vụ của AWS"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Các API như SSM/Secrets Manager/KMS chỉ hỗ trợ Interface endpoint (PrivateLink), giữ traffic riêng tư qua ENI trong VPC.\n✓ Interface VPC endpoints — đúng, PrivateLink cho các API service này, không cần Internet.\n✗ Gateway endpoint chung — gateway endpoint chỉ hỗ trợ S3 và DynamoDB.\n✗ NAT gateway — đưa traffic ra Internet, trái yêu cầu giữ trong mạng AWS.\n✗ VPC peering tới VPC AWS — không phải cách truy cập các API service này.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-011",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-02-network-security",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một tổ chức cần kiểm soát egress: cho phép EC2 chỉ gọi ra các domain được allowlist (vd *.example.com) và chặn mọi domain khác, áp dụng tập trung ở biên VPC với khả năng inspect TLS SNI. Giải pháp nào phù hợp nhất?",
+    "options": [
+      "AWS Network Firewall với stateful rule group lọc theo domain/SNI",
+      "Security group outbound rule liệt kê domain được phép",
+      "NACL outbound chặn theo domain name",
+      "NAT gateway với danh sách domain cho phép cấu hình sẵn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Network Firewall hỗ trợ stateful domain filtering (HTTP host/TLS SNI) ở cấp VPC để kiểm soát egress tập trung.\n✓ Network Firewall domain/SNI filtering — đúng, lọc egress theo domain tập trung.\n✗ Security group theo domain — security group chỉ chấp nhận IP/CIDR/port, không phải domain.\n✗ NACL theo domain — NACL cũng chỉ làm việc với IP/port.\n✗ NAT gateway — không có chức năng lọc domain allowlist.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-012",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-02-network-security",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một web app cần truy cập tạm thời vào S3 và DynamoDB từ người dùng đã đăng nhập qua Cognito. Kiến trúc nào cấp quyền AWS theo nguyên tắc least privilege mà không nhúng AWS credential dài hạn vào client?",
+    "options": [
+      "Cognito identity pools đổi token lấy temporary IAM credentials qua STS gắn IAM role",
+      "Tạo một IAM access key chung nhúng vào ứng dụng client",
+      "Dùng API key của API Gateway thay cho IAM credentials",
+      "Cấp cho mỗi user một IAM user với access key riêng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cognito identity pools đổi token (từ user pool/IdP) lấy temporary credentials qua STS với IAM role có quyền hạn chế.\n✓ Cognito identity pools + STS temporary credentials — đúng, không nhúng credential dài hạn, least privilege qua role.\n✗ Access key chung nhúng client — credential dài hạn lộ ra client, rất rủi ro.\n✗ API key của API Gateway — chỉ để định danh/throttle, không cấp quyền truy cập S3/DynamoDB.\n✗ IAM user mỗi end user — không scale và vẫn dùng credential dài hạn.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-013",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-02-network-security",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một subnet được coi là 'public' khi nào trong VPC design?",
+    "options": [
+      "Khi route table của subnet có route 0.0.0.0/0 trỏ tới Internet gateway",
+      "Khi subnet có NAT gateway trong cùng AZ",
+      "Khi instance trong subnet có private IP thuộc dải public",
+      "Khi NACL của subnet cho phép inbound từ 0.0.0.0/0"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Subnet là public khi route table của nó có default route ra Internet gateway.\n✓ Route 0.0.0.0/0 tới IGW — đúng định nghĩa public subnet.\n✗ Có NAT gateway cùng AZ — NAT phục vụ egress cho private subnet, không làm subnet thành public.\n✗ Private IP thuộc dải public — IP nội bộ không quyết định tính public của subnet.\n✗ NACL cho inbound 0.0.0.0/0 — chỉ là rule lọc, không tạo đường ra Internet.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-014",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-02-network-security",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Lambda function cần đọc secret từ Secrets Manager và cần truy cập riêng tư không qua Internet. Lambda đã được cấu hình chạy trong VPC (private subnet). Cần thêm gì để Lambda lấy secret thành công mà không cần NAT?",
+    "options": [
+      "Tạo Interface VPC endpoint cho Secrets Manager trong VPC và cho phép SG của Lambda tới endpoint",
+      "Tạo Gateway VPC endpoint cho Secrets Manager",
+      "Gắn Internet gateway vào private subnet của Lambda",
+      "Bật public IP cho Lambda ENI"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lambda trong VPC không có route Internet sẽ cần Interface endpoint (PrivateLink) cho Secrets Manager để gọi API riêng tư.\n✓ Interface endpoint cho Secrets Manager + SG cho phép — đúng, truy cập riêng tư không cần NAT.\n✗ Gateway endpoint cho Secrets Manager — gateway endpoint chỉ hỗ trợ S3/DynamoDB.\n✗ IGW vào private subnet — biến subnet thành public và không phải cách Lambda truy cập riêng tư API.\n✗ Public IP cho Lambda ENI — Lambda ENI trong VPC không hỗ trợ public IP theo cách này.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-015",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-03-data-protection",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng cần mã hoá khối lượng lớn dữ liệu (hàng terabyte) tại client trước khi gửi lên S3. Để tránh gọi KMS cho từng object nhỏ và giảm chi phí API, kiến trúc nào áp dụng đúng nguyên lý envelope encryption?",
+    "options": [
+      "Gọi KMS GenerateDataKey để lấy data key, dùng plaintext data key mã hoá dữ liệu local, lưu encrypted data key cùng object",
+      "Gửi toàn bộ terabyte dữ liệu trực tiếp tới KMS Encrypt API để mã hoá",
+      "Dùng một KMS key riêng cho mỗi object và gọi Encrypt cho từng file",
+      "Lưu plaintext data key trong S3 metadata để giải mã sau này"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Envelope encryption: KMS chỉ sinh/mã hoá data key, còn dữ liệu lớn được mã hoá local bằng data key, giảm tải KMS.\n✓ GenerateDataKey + mã hoá local: dùng data key để mã hoá khối lượng lớn, chỉ lưu encrypted data key, đúng envelope encryption và tiết kiệm gọi KMS.\n✗ Gửi terabyte tới KMS Encrypt: KMS giới hạn 4KB mỗi request, không thể mã hoá file lớn trực tiếp.\n✗ KMS key riêng mỗi object: tốn kém và không cần thiết, không phải nguyên lý envelope.\n✗ Lưu plaintext data key: phá vỡ bảo mật vì ai đọc được object cũng giải mã được.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-016",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-03-data-protection",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một S3 bucket vô tình bị cấu hình cho phép public read và đã làm lộ dữ liệu. Solutions Architect muốn ngăn chặn ở mức tổ chức để không bucket nào trong account có thể public, bất kể ACL hay bucket policy được đặt sai. Cách nào đảm bảo tốt nhất?",
+    "options": [
+      "Bật S3 Block Public Access ở cấp account",
+      "Thêm explicit deny vào từng bucket policy",
+      "Bật S3 Versioning trên toàn bộ bucket",
+      "Dùng Amazon Macie để phát hiện bucket public và cảnh báo"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Block Public Access ở cấp account override mọi ACL/policy cho phép public, ngăn chặn tập trung và chắc chắn.\n✓ Account-level Block Public Access: chặn mọi cấu hình public ở mọi bucket hiện tại và tương lai, bất kể ACL/policy.\n✗ Explicit deny từng bucket: phải làm thủ công cho mỗi bucket và dễ bỏ sót bucket mới.\n✗ S3 Versioning: chống ghi đè/xoá, không liên quan tới public access.\n✗ Macie: phát hiện và cảnh báo nhưng không chủ động chặn public access.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-017",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-03-data-protection",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một tổ chức cần bản sao dữ liệu S3 ở một region khác để đáp ứng yêu cầu compliance về data residency và disaster recovery. Dữ liệu được mã hoá bằng SSE-KMS với customer managed key. Cấu hình nào đảm bảo cross-region replication hoạt động đúng?",
+    "options": [
+      "Bật S3 Cross-Region Replication và cấu hình replica dùng một KMS key ở destination region",
+      "Bật S3 Cross-Region Replication; KMS key ở source region tự động dùng được ở destination",
+      "Dùng S3 Same-Region Replication rồi copy thủ công sang region khác",
+      "Tắt mã hoá ở destination bucket để replication không bị lỗi key"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "KMS key mang tính region-specific, nên replica ở destination cần một KMS key của chính region đó để mã hoá lại.\n✓ CRR với KMS key ở destination region: bắt buộc vì single-Region KMS key không dùng được cross-region; cấu hình replica key cho phép re-encrypt object tại destination.\n✗ Dùng lại source key ở destination: không hợp lệ vì single-Region KMS key bị giới hạn theo region.\n✗ Same-Region Replication + copy thủ công: tăng overhead và không phải giải pháp CRR tự động.\n✗ Tắt mã hoá ở destination: vi phạm yêu cầu compliance encryption at rest.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-018",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-03-data-protection",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một team muốn đảm bảo dữ liệu trong Amazon EBS volume gắn vào EC2 instance được encrypted at rest với least operational overhead. Cách nào đơn giản nhất?",
+    "options": [
+      "Bật EBS encryption khi tạo volume, dùng KMS key để mã hoá",
+      "Tự cài đĩa mã hoá phần mềm bên trong OS cho mỗi instance",
+      "Mã hoá từng file trong ứng dụng trước khi ghi xuống đĩa",
+      "Dùng instance store và mã hoá thủ công bằng dm-crypt"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "EBS encryption tích hợp với KMS, mã hoá transparent at rest và in transit giữa instance và volume, gần như không cần thao tác.\n✓ EBS encryption với KMS: bật một lần khi tạo volume, mã hoá/giải mã transparent, least operational overhead.\n✗ Đĩa mã hoá phần mềm trong OS: phải tự quản lý cấu hình và key trên từng instance.\n✗ Mã hoá từng file trong app: thay đổi mã ứng dụng và tự quản lý key, nhiều overhead.\n✗ Instance store + dm-crypt: dữ liệu ephemeral và phải tự vận hành mã hoá, phức tạp.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-019",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-03-data-protection",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty media phân phối nội dung qua CloudFront và cần đảm bảo encryption in transit từ viewer đến edge và từ edge đến origin (S3). Họ muốn least operational overhead cho certificate. Cấu hình nào đúng?",
+    "options": [
+      "Dùng ACM certificate (trong us-east-1) cho CloudFront, đặt Viewer Protocol Policy là Redirect HTTP to HTTPS và origin protocol là HTTPS",
+      "Dùng self-signed certificate trên CloudFront và cho phép HTTP cho viewer",
+      "Để CloudFront chỉ phục vụ HTTP để giảm độ trễ, mã hoá ở tầng ứng dụng",
+      "Mua certificate third-party và cài thủ công trên từng edge location"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "ACM certificate (us-east-1 cho CloudFront) cùng Redirect HTTP to HTTPS và HTTPS tới origin đảm bảo end-to-end TLS, auto-renew.\n✓ ACM + Redirect HTTPS + HTTPS origin: bảo đảm encryption in transit cả viewer-edge và edge-origin, certificate tự gia hạn.\n✗ Self-signed + cho phép HTTP: không an toàn và viewer không được bảo vệ TLS.\n✗ Chỉ HTTP: vi phạm yêu cầu encryption in transit.\n✗ Third-party cài thủ công trên edge: không khả thi và nhiều overhead; CloudFront dùng ACM.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-020",
+    "courseId": "SAA-C03",
+    "lesson": "ch3-03-data-protection",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng analytics cần chia sẻ dataset đã được phân loại nhạy cảm chỉ với một số AWS account đối tác cụ thể, dữ liệu mã hoá bằng customer managed KMS key. Để đối tác đọc được object, cần cấu hình gì ngoài bucket policy cho phép?",
+    "options": [
+      "Cập nhật KMS key policy để cấp quyền kms:Decrypt cho các account đối tác",
+      "Bật S3 Block Public Access để dữ liệu tự động chia sẻ an toàn",
+      "Đổi sang SSE-S3 để bỏ qua yêu cầu quyền KMS",
+      "Bật cross-region replication tới bucket của đối tác"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Với SSE-KMS, đối tác cần quyền kms:Decrypt trên key; do đó key policy phải cấp quyền cho các account đó.\n✓ Cập nhật KMS key policy cấp kms:Decrypt cho account đối tác: bắt buộc để họ giải mã object ngoài quyền S3.\n✗ Block Public Access: ngăn public, không cấp quyền chia sẻ cho account cụ thể.\n✗ Đổi SSE-S3: thay đổi mô hình bảo mật và mất kiểm soát key, không đúng yêu cầu.\n✗ Cross-region replication: sao chép dữ liệu chứ không giải quyết quyền giải mã cho đối tác.",
+    "domain": 1,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-021",
     "courseId": "SAA-C03",
     "lesson": "resilient-02-ha-fault-tolerance",
     "certifications": [
@@ -10960,6 +16717,282 @@ export const generatedQuestions: Question[] = [
       1
     ],
     "explanation": "Route 53 health checks giám sát endpoint qua nhiều giao thức và có thể tổng hợp qua calculated health check.\n✓ Health check hỗ trợ HTTP/HTTPS/TCP với failure threshold để xác định trạng thái.\n✓ Calculated (parent) health check kết hợp nhiều child health check.\n✗ Health check hỗ trợ cả endpoint ngoài AWS (on-premises có IP công khai).\n✗ Không bắt buộc gắn vào CloudFront; gắn vào DNS record.\n✗ Failover phản ứng với lỗi endpoint, không cần cả Region down.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-022",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-01-decoupling",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một consumer đọc message từ Amazon SQS queue và mất tới 8 phút để xử lý mỗi message. Hiện một số message bị xử lý nhiều lần vì worker khác nhận lại chúng trước khi worker đầu tiên hoàn tất. Cách least operational overhead để khắc phục là gì?",
+    "options": [
+      "Tăng visibility timeout của queue lên lớn hơn thời gian xử lý tối đa",
+      "Chuyển sang FIFO queue để loại bỏ trùng lặp",
+      "Giảm số lượng consumer xuống còn một worker duy nhất",
+      "Bật long polling với WaitTimeSeconds là 20"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Message bị nhận lại do visibility timeout ngắn hơn thời gian xử lý; tăng timeout là cách trực tiếp và đơn giản nhất.\n✓ Tăng visibility timeout > thời gian xử lý — đúng, message ẩn đủ lâu để worker hoàn tất trước khi worker khác thấy lại.\n✗ Chuyển FIFO — FIFO chống trùng khi gửi, nhưng vấn đề ở đây là timeout xử lý, không phải duplicate khi produce; còn giới hạn throughput.\n✗ Giảm còn một worker — làm mất khả năng scale và không giải quyết gốc rễ.\n✗ Long polling — chỉ giảm empty receive, không liên quan tới việc message bị reprocess.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-023",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-01-decoupling",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty muốn route các event giữa nhiều SaaS application và AWS service dựa trên nội dung event, với khả năng lọc và biến đổi event, mà không phải tự viết code routing. Dịch vụ nào phù hợp nhất?",
+    "options": [
+      "Amazon EventBridge với rule và event pattern",
+      "Amazon SQS với nhiều queue lọc thủ công",
+      "Amazon SNS với message filtering policy đơn giản",
+      "AWS Step Functions điều phối luồng giữa các service"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "EventBridge là event bus serverless hỗ trợ tích hợp SaaS partner và content-based routing qua rule/event pattern.\n✓ EventBridge với rule/event pattern — đúng, route theo nội dung, tích hợp sẵn SaaS partner, lọc và biến đổi event, ít code.\n✗ SQS lọc thủ công — SQS là hàng đợi point-to-point, không có routing theo nội dung và không tích hợp SaaS.\n✗ SNS filtering — lọc theo message attribute đơn giản, không có schema registry/SaaS integration mạnh như EventBridge.\n✗ Step Functions — điều phối workflow trạng thái, không phải event router giữa nhiều nguồn SaaS.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-024",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-01-decoupling",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng cần route request tới các target group khác nhau dựa trên đường dẫn URL (ví dụ /api tới một nhóm, /images tới nhóm khác) và hostname. Loại load balancer nào phù hợp?",
+    "options": [
+      "Application Load Balancer (ALB)",
+      "Network Load Balancer (NLB)",
+      "Gateway Load Balancer (GWLB)",
+      "AWS Global Accelerator"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "ALB hỗ trợ content-based routing theo path và host header ở Layer 7.\n✓ ALB — đúng, định tuyến theo URL path và hostname, lý tưởng cho microservices HTTP/HTTPS.\n✗ NLB — Layer 4, không hiểu HTTP path/host nên không route theo nội dung được.\n✗ GWLB — dùng cho appliance bảo mật, không route theo URL path.\n✗ Global Accelerator — cải thiện routing toàn cầu qua AWS backbone, không phải path-based routing trong một region.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-025",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-01-decoupling",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty đang chuyển một ứng dụng monolith sang microservices chạy trong container. Họ không muốn quản lý EC2 instance hay cluster của control plane container, chỉ muốn deploy container và để AWS lo phần hạ tầng. Lựa chọn nào ít operational overhead nhất?",
+    "options": [
+      "Amazon ECS với AWS Fargate launch type",
+      "Amazon ECS với EC2 launch type",
+      "Amazon EKS với self-managed node group EC2",
+      "Chạy container trực tiếp trên EC2 với Docker tự cài"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Fargate là compute serverless cho container, loại bỏ việc quản lý EC2 và scaling node.\n✓ ECS + Fargate — đúng, không quản lý server/node, chỉ định nghĩa task, AWS lo hạ tầng, ít vận hành nhất.\n✗ ECS + EC2 launch type — vẫn phải quản lý và patch các EC2 container instance.\n✗ EKS + self-managed node — phải tự quản lý và vận hành node group EC2.\n✗ Docker tự cài trên EC2 — vận hành nhiều nhất, không có orchestration được quản lý.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-026",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-01-decoupling",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một pipeline cần ingest và xử lý real-time hàng trăm nghìn clickstream event mỗi giây, cho phép nhiều consumer độc lập đọc lại cùng dữ liệu trong cửa sổ thời gian, và xử lý theo thứ tự trong từng partition. Dịch vụ nào phù hợp nhất?",
+    "options": [
+      "Amazon Kinesis Data Streams",
+      "Amazon SQS standard queue",
+      "Amazon SNS topic với nhiều subscriber",
+      "Amazon SQS FIFO queue"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Kinesis Data Streams được thiết kế cho ingestion real-time throughput cao, cho phép nhiều consumer đọc lại dữ liệu trong retention window và giữ thứ tự theo partition key (shard).\n✓ Kinesis Data Streams — đúng, throughput cao, replay được, nhiều consumer độc lập, ordering theo shard.\n✗ SQS standard — message bị xóa sau khi consume, không replay được, không nhiều consumer đọc lại cùng message.\n✗ SNS — fan-out push, không lưu trữ để replay theo cửa sổ thời gian.\n✗ SQS FIFO — giữ thứ tự nhưng throughput thấp hơn nhiều và không hỗ trợ replay/nhiều consumer đọc lại.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-027",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-01-decoupling",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty muốn lập lịch chạy một tác vụ làm sạch dữ liệu mỗi ngày lúc 2 giờ sáng bằng cách kích hoạt một Lambda function, theo cách serverless và ít vận hành. Dịch vụ nào phù hợp nhất để kích hoạt theo lịch?",
+    "options": [
+      "Amazon EventBridge Scheduler (rule theo cron)",
+      "Một EC2 instance chạy cron job gọi Lambda",
+      "Amazon SQS với delay queue đặt 24 giờ",
+      "AWS Step Functions polling liên tục cho tới 2 giờ sáng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "EventBridge Scheduler kích hoạt target theo biểu thức cron/rate, serverless và không cần hạ tầng quản lý.\n✓ EventBridge Scheduler theo cron — đúng, serverless, kích hoạt Lambda đúng lịch, ít vận hành nhất.\n✗ EC2 chạy cron — phải duy trì và patch một instance chỉ để chạy lịch, vận hành nhiều.\n✗ SQS delay queue 24 giờ — delay tối đa của SQS là 15 phút, không dùng cho lịch hằng ngày được.\n✗ Step Functions polling — lãng phí và phức tạp, không phải công cụ lập lịch.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-028",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-01-decoupling",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty chạy microservices trên Amazon EKS và cần một load balancer phân phối lưu lượng HTTP tới các pod, hỗ trợ định tuyến theo path và tích hợp tự động với Kubernetes Ingress. Lựa chọn nào phù hợp nhất?",
+    "options": [
+      "Application Load Balancer (qua AWS Load Balancer Controller)",
+      "Network Load Balancer cho lưu lượng HTTP nội bộ",
+      "Classic Load Balancer cấu hình thủ công",
+      "Gateway Load Balancer đặt trước cluster"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "ALB qua AWS Load Balancer Controller tích hợp với Kubernetes Ingress, định tuyến HTTP theo path tới các pod.\n✓ ALB qua Load Balancer Controller — đúng, Layer 7, path-based routing, tích hợp Ingress chuẩn cho EKS.\n✗ NLB cho HTTP — NLB là Layer 4, không định tuyến theo path; thường dùng cho Service type LoadBalancer L4.\n✗ CLB thủ công — lỗi thời, không tích hợp Ingress hiện đại tốt.\n✗ GWLB — dành cho appliance bảo mật, không phải ingress ứng dụng.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-029",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-01-decoupling",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một hệ thống IoT nhận hàng triệu message nhỏ mỗi phút từ thiết bị, cần buffer để load leveling trước khi xử lý bằng một fleet worker có thể scale, với chi phí thấp và không yêu cầu thứ tự nghiêm ngặt. Lựa chọn decoupling nào tối ưu nhất về chi phí và đơn giản?",
+    "options": [
+      "Amazon SQS standard queue làm buffer, worker tier scale theo độ sâu queue",
+      "Amazon SQS FIFO queue để đảm bảo thứ tự tuyệt đối",
+      "Amazon Kinesis Data Streams với hàng nghìn shard provisioned",
+      "Kết nối thiết bị trực tiếp tới worker EC2 qua TCP"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Không cần thứ tự nghiêm ngặt nên SQS standard là lựa chọn rẻ và đơn giản nhất để buffer và load-level, kết hợp worker scale theo độ sâu queue.\n✓ SQS standard + worker scale theo queue depth — đúng, throughput gần như không giới hạn, chi phí thấp, đơn giản, đúng nhu cầu.\n✗ FIFO queue — đắt hơn và giới hạn throughput hơn, không cần vì không yêu cầu thứ tự.\n✗ Kinesis nghìn shard provisioned — phức tạp và tốn kém hơn cho nhu cầu buffer đơn giản không cần replay.\n✗ Kết nối trực tiếp TCP tới worker — coupling chặt, không có buffer, mất message khi worker quá tải.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-030",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-02-ha-fault-tolerance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng dụng tài chính yêu cầu RPO gần bằng 0 và RTO chỉ vài phút cho database quan hệ, với khả năng đọc với độ trễ thấp ở nhiều Region và khả năng promote một Region thứ cấp lên primary trong dưới 1 phút khi xảy ra thảm họa Region. Giải pháp nào phù hợp nhất?",
+    "options": [
+      "Amazon Aurora Global Database với một primary Region và các secondary Region read-only",
+      "Amazon RDS Multi-AZ deployment trong một Region duy nhất",
+      "Amazon RDS cross-Region Read Replicas được promote thủ công khi cần",
+      "Sao chép EBS snapshots của database sang Region khác mỗi 15 phút"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Aurora Global Database replicate với độ trễ thường dưới 1 giây và cho phép promote secondary Region trong khoảng 1 phút.\n✓ Aurora Global Database: replication storage-level rất nhanh, RPO gần 0, RTO thấp, đọc low-latency ở secondary Region.\n✗ RDS Multi-AZ chỉ bảo vệ trong một Region, không chống thảm họa cấp Region.\n✗ RDS cross-Region Read Replica có độ trễ replication cao hơn và promote chậm hơn Aurora Global.\n✗ EBS snapshot mỗi 15 phút cho RPO tới 15 phút và RTO cao, không đạt yêu cầu.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-031",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-02-ha-fault-tolerance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty cần triển khai trang bảo trì (maintenance page) lưu trên S3 để hiển thị cho người dùng khi ứng dụng chính ở một Region không khỏe mạnh. Họ muốn Route 53 tự động chuyển traffic từ ứng dụng chính sang trang bảo trì. Cấu hình routing nào phù hợp nhất?",
+    "options": [
+      "Failover routing với primary record (ALB) gắn health check và secondary record trỏ tới S3 static website",
+      "Weighted routing chia 90% cho ALB và 10% cho S3 static website",
+      "Multivalue answer routing trả về cả ALB và S3 endpoint",
+      "Latency-based routing giữa ALB và S3 static website"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Failover routing được thiết kế đúng cho mô hình active-passive primary/secondary.\n✓ Failover routing với health check: khi primary ALB không khỏe mạnh, Route 53 trả về secondary trỏ S3, hiển thị trang bảo trì.\n✗ Weighted vẫn gửi 10% traffic sang S3 ngay cả khi ALB khỏe mạnh, không đúng mục tiêu.\n✗ Multivalue answer trả nhiều giá trị song song, không phải mô hình failover passive.\n✗ Latency-based không xét trạng thái active-passive.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-032",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-02-ha-fault-tolerance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một hệ thống thương mại điện tử dùng Warm Standby ở Region thứ cấp. Trong DR test, đội vận hành nhận thấy khi failover, ứng dụng cần xử lý lưu lượng production đầy đủ nhưng Region thứ cấp chỉ chạy số lượng instance tối thiểu. Cách nào giúp Region thứ cấp đáp ứng tải production nhanh nhất khi failover, đồng thời giữ chi phí thấp khi chưa failover?",
+    "options": [
+      "Giữ Auto Scaling group ở Region thứ cấp với số instance tối thiểu và cấu hình scaling policy để mở rộng nhanh khi traffic chuyển tới",
+      "Chạy sẵn toàn bộ số lượng instance production ở Region thứ cấp 24/7",
+      "Tắt hoàn toàn Region thứ cấp và chỉ tạo instance khi xảy ra thảm họa",
+      "Chuyển sang Multi-AZ trong một Region duy nhất thay vì dùng Region thứ cấp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Warm Standby duy trì bản thu nhỏ luôn chạy và mở rộng (scale out) khi failover, cân bằng tốc độ và chi phí.\n✓ ASG tối thiểu + scaling policy: chạy nhỏ để tiết kiệm, tự mở rộng nhanh đáp ứng tải production khi failover.\n✗ Chạy full 24/7 biến nó thành active-active/hot, chi phí cao không cần thiết.\n✗ Tắt hoàn toàn là Backup and Restore/Pilot Light, RTO cao hơn, mâu thuẫn với Warm Standby.\n✗ Multi-AZ một Region không bảo vệ thảm họa cấp Region.",
+    "domain": 2,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-033",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-02-ha-fault-tolerance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một ngân hàng triển khai chiến lược Pilot Light. Database primary ở Region chính được sao chép liên tục sang Region dự phòng, nhưng application/web tier ở Region dự phòng KHÔNG chạy thường xuyên. Khi xảy ra thảm họa, điều gì PHẢI xảy ra để khôi phục dịch vụ, và đây là đặc trưng nào của Pilot Light?",
+    "options": [
+      "Khởi chạy (provision và scale up) application/web tier từ AMI/template ở Region dự phòng rồi điều hướng traffic; đặc trưng là core data luôn chạy còn app tier được dựng khi cần",
+      "Không cần làm gì vì toàn bộ tier đã chạy sẵn; đặc trưng là active-active",
+      "Phục hồi toàn bộ từ snapshot kể cả database; đặc trưng là Backup and Restore",
+      "Chỉ cần đổi DNS vì bản thu nhỏ của toàn hệ thống đã chạy liên tục; đặc trưng là Warm Standby"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Pilot Light giữ phần lõi dữ liệu luôn được replicate/chạy, còn app tier chỉ được dựng khi cần.\n✓ Khởi chạy app tier từ template + điều hướng traffic: đúng bản chất Pilot Light với data core luôn sẵn sàng.\n✗ Không phải active-active vì app tier không chạy sẵn đầy đủ.\n✗ Không phải Backup and Restore vì database đã được replicate liên tục, không khôi phục từ snapshot.\n✗ Không phải Warm Standby vì Warm Standby chạy bản thu nhỏ của toàn hệ thống liên tục, còn Pilot Light app tier thường tắt.",
     "domain": 2,
     "mock": 3
   },
@@ -10987,52 +17020,6 @@ export const generatedQuestions: Question[] = [
     "mock": 3
   },
   {
-    "id": "saa-m1-035",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-02-ha-fault-tolerance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một Application Load Balancer phân phối traffic tới các EC2 instance trong một target group. Kiến trúc sư muốn ALB tự động ngừng gửi request tới các instance không phản hồi đúng và chỉ gửi tới các instance khỏe mạnh. Tính năng nào của ALB thực hiện điều này?",
-    "options": [
-      "Health checks của target group",
-      "Sticky sessions",
-      "Cross-zone load balancing",
-      "SSL/TLS termination"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Health checks của target group xác định instance khỏe mạnh để định tuyến traffic.\n✓ Health checks: ALB ngừng gửi request tới target không qua health check và chỉ phục vụ instance khỏe mạnh.\n✗ Sticky sessions giữ phiên người dùng trên cùng target, không kiểm tra sức khỏe.\n✗ Cross-zone load balancing phân bố đều giữa các AZ, không kiểm tra sức khỏe.\n✗ SSL/TLS termination xử lý mã hóa, không liên quan tới sức khỏe target.",
-    "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-035",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-02-ha-fault-tolerance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một công ty đang chuyển dần traffic sang một phiên bản mới của ứng dụng đặt ở một nhóm server riêng. Họ muốn gửi 10% traffic tới phiên bản mới và 90% tới phiên bản cũ, sau đó tăng dần tỷ lệ. Cấu hình Route 53 nào phù hợp nhất?",
-    "options": [
-      "Weighted routing với trọng số 10 cho phiên bản mới và 90 cho phiên bản cũ",
-      "Latency-based routing giữa hai phiên bản",
-      "Failover routing với phiên bản mới là primary",
-      "Geolocation routing dựa trên quốc gia người dùng"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Weighted routing cho phép chia traffic theo tỷ lệ tùy chỉnh, lý tưởng cho canary/blue-green dần dần.\n✓ Weighted routing 10/90: phân phối traffic theo tỷ lệ và tăng dần bằng cách đổi trọng số.\n✗ Latency-based định tuyến theo độ trễ, không kiểm soát tỷ lệ traffic.\n✗ Failover là active-passive, không chia tỷ lệ.\n✗ Geolocation chia theo vị trí, không theo tỷ lệ phần trăm.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
     "id": "saa-m3-035",
     "courseId": "SAA-C03",
     "lesson": "resilient-02-ha-fault-tolerance",
@@ -11054,52 +17041,6 @@ export const generatedQuestions: Question[] = [
     "explanation": "SQS đảm bảo không mất message nếu worker xóa message chỉ sau khi xử lý xong và visibility timeout đủ dài.\n✓ Xóa message sau xử lý + visibility timeout đúng: nếu worker chết giữa chừng, message trở lại queue và được xử lý lại, không mất đơn.\n✗ Thay SQS bằng RDS bỏ đi decoupling và không tự nhiên giải quyết retry.\n✗ Tăng instance type giảm tồn đọng nhưng không ngăn mất đơn khi instance bị terminate.\n✗ Cross-zone LB cải thiện cân bằng web tier, không liên quan tới mất message ở worker.",
     "domain": 2,
     "mock": 3
-  },
-  {
-    "id": "saa-m1-036",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-02-ha-fault-tolerance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng yêu cầu shared file storage được nhiều EC2 instance ở các AZ khác nhau cùng mount, và phải vẫn sẵn sàng khi một AZ gặp sự cố. Giải pháp lưu trữ nào phù hợp nhất?",
-    "options": [
-      "Amazon EFS với mount target ở mỗi AZ",
-      "Một EBS volume gắn vào instance ở một AZ và chia sẻ qua NFS tự cấu hình",
-      "Instance store volume trên mỗi instance",
-      "Amazon S3 mount qua một single-AZ gateway tùy chỉnh"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "EFS là file system được chia sẻ, dữ liệu được lưu dư thừa trên nhiều AZ.\n✓ EFS với mount target mỗi AZ: nhiều instance đa AZ cùng truy cập, vẫn sẵn sàng khi một AZ lỗi.\n✗ EBS gắn một AZ là single point of failure và (theo chuẩn) chỉ gắn một instance.\n✗ Instance store là ephemeral, mất dữ liệu khi instance dừng và không chia sẻ.\n✗ S3 qua gateway single-AZ tạo điểm lỗi đơn và không phải POSIX file system tự nhiên.",
-    "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-036",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-02-ha-fault-tolerance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một doanh nghiệp cần đảm bảo các backup do AWS Backup tạo ra được giữ ở một tài khoản riêng và một Region khác để chống lại việc xóa do lỗi hoặc tấn công ransomware vào tài khoản chính. Tính năng nào phù hợp nhất?",
-    "options": [
-      "Cross-account và cross-Region backup copy của AWS Backup vào một vault có Vault Lock",
-      "Bật S3 Versioning trên bucket chứa backup trong cùng tài khoản",
-      "Lên lịch snapshot EBS thủ công và copy bằng tay khi cần",
-      "Sử dụng RDS Multi-AZ để có thêm bản sao database"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "AWS Backup hỗ trợ copy backup sang Region và tài khoản khác, kết hợp Vault Lock chống xóa.\n✓ Cross-account + cross-Region copy với Vault Lock: cách ly backup khỏi tài khoản chính và bảo vệ bất biến (immutable).\n✗ S3 Versioning trong cùng tài khoản không cách ly khỏi tấn công vào tài khoản đó.\n✗ Snapshot thủ công nhiều vận hành và không tự bảo vệ cross-account.\n✗ Multi-AZ là HA trong Region, không phải cơ chế backup cách ly.",
-    "domain": 2,
-    "mock": 2
   },
   {
     "id": "saa-m3-036",
@@ -11125,7 +17066,6 @@ export const generatedQuestions: Question[] = [
     "mock": 3
   },
   {
-    "id": "saa-m1-037",
     "courseId": "SAA-C03",
     "lesson": "resilient-02-ha-fault-tolerance",
     "certifications": [
@@ -11133,670 +17073,23 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một kiến trúc sư so sánh giữa triển khai Multi-AZ và Multi-Region cho một workload. Phát biểu nào mô tả ĐÚNG nhất sự khác biệt quan trọng giữa hai cách tiếp cận?",
+    "question": "Một công ty chạy ứng dụng web quan trọng trên các EC2 instances phía sau một Application Load Balancer trong một Auto Scaling group, trải rộng trên hai Availability Zones tại Region us-east-1. Dữ liệu lưu trong Amazon RDS for PostgreSQL Single-AZ. Trong một sự cố mất điện AZ gần đây, cơ sở dữ liệu không thể truy cập trong nhiều giờ dù tầng web vẫn hoạt động. Yêu cầu RTO của doanh nghiệp là dưới 5 phút và không được thay đổi mã ứng dụng. Solutions Architect nên làm gì để cải thiện tính sẵn sàng của tầng cơ sở dữ liệu?",
     "options": [
-      "Multi-AZ bảo vệ chống lỗi cấp data center/AZ với độ trễ thấp trong một Region; Multi-Region bảo vệ chống thảm họa cấp Region nhưng phức tạp và tốn kém hơn",
-      "Multi-AZ và Multi-Region cung cấp mức bảo vệ tương đương, chỉ khác tên gọi",
-      "Multi-Region luôn rẻ hơn Multi-AZ vì dùng ít tài nguyên hơn",
-      "Multi-AZ bảo vệ chống thảm họa toàn Region còn Multi-Region chỉ bảo vệ trong một AZ"
+      "Chuyển đổi RDS instance sang triển khai Multi-AZ để AWS tự động failover sang standby ở AZ khác khi có sự cố",
+      "Tạo một read replica của RDS ở AZ thứ hai và cấu hình ứng dụng tự chuyển sang read replica khi primary lỗi",
+      "Bật automated backups và snapshot mỗi 5 phút, khôi phục thủ công khi xảy ra sự cố AZ",
+      "Triển khai một RDS instance dự phòng ở Region khác và dùng Route 53 failover routing để chuyển sang đó"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "Multi-AZ là HA trong một Region; Multi-Region là DR/khả năng chịu lỗi ở quy mô Region với chi phí và độ phức tạp cao hơn.\n✓ Multi-AZ chống lỗi AZ với độ trễ thấp; Multi-Region chống thảm họa Region nhưng phức tạp/tốn kém hơn.\n✗ Hai cách không tương đương về phạm vi bảo vệ.\n✗ Multi-Region thường tốn kém hơn, không rẻ hơn.\n✗ Mô tả đảo ngược vai trò là sai.",
+    "explanation": "Yêu cầu RTO < 5 phút, không đổi mã ứng dụng, và chống lỗi cấp AZ cho tầng database.\n✓ Multi-AZ tự động failover sang standby synchronous ở AZ khác trong vài phút, DNS endpoint giữ nguyên nên không cần đổi mã.\n✗ Read replica là asynchronous, không tự failover và việc chuyển kết nối sang replica đòi hỏi sửa logic ứng dụng, có rủi ro mất dữ liệu.\n✗ Khôi phục thủ công từ snapshot không thể đạt RTO 5 phút và là quy trình thủ công dễ lỗi.\n✗ Standby cross-Region với Route 53 là giải pháp DR cho lỗi cấp Region, quá mức cần thiết và phức tạp cho lỗi AZ.",
     "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-037",
-    "courseId": "SAA-C03",
-    "lesson": "resilient-02-ha-fault-tolerance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng web cần điểm vào (entry point) tĩnh, hiệu năng cao trên toàn cầu và tự động failover nhanh giữa các endpoint ở nhiều Region khi một Region không khỏe mạnh, với failover ở mức nhanh hơn DNS TTL của Route 53. Dịch vụ nào phù hợp nhất?",
-    "options": [
-      "AWS Global Accelerator với endpoint ở nhiều Region và health checks",
-      "Route 53 weighted routing giữa các Region",
-      "Amazon CloudFront với một origin duy nhất",
-      "Một Network Load Balancer duy nhất trong một Region"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Global Accelerator cung cấp anycast IP tĩnh và failover nhanh không phụ thuộc DNS TTL.\n✓ Global Accelerator: IP tĩnh toàn cầu, định tuyến qua mạng AWS, failover nhanh dựa trên health check, nhanh hơn DNS-based.\n✗ Route 53 weighted phụ thuộc DNS TTL nên failover chậm hơn và không cung cấp IP tĩnh anycast.\n✗ CloudFront với một origin không cung cấp failover multi-Region cho origin.\n✗ NLB một Region không bảo vệ thảm họa Region.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "saa-m1-038",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-02-storage-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một ứng dụng web lưu hàng triệu ảnh trên Amazon S3. Người dùng trên toàn cầu phàn nàn việc upload ảnh từ các châu lục xa region của bucket rất chậm. Giải pháp nào cải thiện tốc độ upload với least operational overhead?",
-    "options": [
-      "Bật S3 Transfer Acceleration trên bucket để upload qua edge location của CloudFront",
-      "Tạo bucket S3 ở mỗi region và dùng S3 Cross-Region Replication để đồng bộ",
-      "Đặt một CloudFront distribution phía trước bucket và cho người dùng upload qua CloudFront",
-      "Dùng AWS Global Accelerator để định tuyến traffic upload đến bucket"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "S3 Transfer Acceleration tận dụng mạng edge của CloudFront để tăng tốc upload xuyên lục địa chỉ bằng một thiết lập bật/tắt.\n✓ Transfer Acceleration định tuyến upload qua edge location gần người dùng rồi đi trên backbone AWS, least operational overhead.\n✗ Tạo bucket mỗi region kèm replication phức tạp và bản thân upload ban đầu vẫn phải đi xa.\n✗ CloudFront tối ưu cho phân phối (download/cache), không phải kênh tăng tốc upload trực tiếp như Transfer Acceleration.\n✗ Global Accelerator dùng cho endpoint như ALB/NLB/EC2, không hỗ trợ upload trực tiếp vào S3 bucket.",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-038",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-02-storage-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một hệ thống phân tích log ghi dữ liệu vào S3 với tốc độ rất cao và liên tục đạt giới hạn request. Mọi object hiện đều dùng cùng một prefix dạng logs/. Kiến trúc sư cần tăng throughput request mà không đổi sang dịch vụ khác. Cách nào hiệu quả nhất?",
-    "options": [
-      "Phân tán key object qua nhiều prefix (ví dụ logs/2026/01/, logs/2026/02/) để tăng số request song song",
-      "Bật S3 Versioning để mỗi version được xử lý bởi partition riêng",
-      "Chuyển bucket sang storage class S3 Intelligent-Tiering để tăng throughput",
-      "Gom nhiều log thành một object lớn duy nhất rồi ghi mỗi giờ một lần"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "S3 scale theo prefix: mỗi prefix hỗ trợ tới 3.500 PUT/COPY/POST/DELETE và 5.500 GET/HEAD mỗi giây, nên phân tán key qua nhiều prefix sẽ nhân throughput.\n✓ Nhiều prefix tạo nhiều partition song song, tăng tổng số request mỗi giây.\n✗ Versioning không liên quan đến giới hạn request rate theo prefix.\n✗ Intelligent-Tiering tối ưu chi phí lưu trữ, không thay đổi request rate.\n✗ Gom thành một object lớn ghi mỗi giờ làm mất tính real-time và không phải cách scale request rate.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-037",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-02-storage-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một cụm HPC chạy mô phỏng khí động học cần đọc/ghi dataset hàng trăm TB với throughput hàng trăm GB/s và độ trễ submillisecond, dữ liệu nguồn đang nằm trên S3. Loại lưu trữ nào phù hợp nhất?",
-    "options": [
-      "Amazon FSx for Lustre liên kết với S3 bucket chứa dataset",
-      "Amazon EFS với throughput mode là Elastic",
-      "Amazon EBS gp3 volume gắn vào từng node tính toán",
-      "Amazon FSx for Windows File Server với SSD storage"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "FSx for Lustre là file system song song hiệu năng cao chuyên cho HPC, đạt throughput tới hàng trăm GB/s và độ trễ submillisecond, lại tích hợp trực tiếp với S3.\n✓ FSx for Lustre xử lý workload HPC dữ liệu lớn và lazy-load/đồng bộ dữ liệu từ S3.\n✗ EFS phù hợp file sharing NFS chung nhưng không đạt mức throughput/latency của Lustre cho HPC.\n✗ EBS gp3 gắn từng node là block storage không chia sẻ, không cung cấp file system song song dùng chung cho cả cụm.\n✗ FSx for Windows File Server phục vụ workload Windows/SMB, không phải HPC Linux hiệu năng cao.",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-039",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-02-storage-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng .NET cũ chạy trên fleet EC2 Windows cần một shared file system hỗ trợ SMB, NTFS permissions và tích hợp Active Directory để nhiều instance cùng truy cập. Giải pháp managed nào phù hợp nhất?",
-    "options": [
-      "Amazon FSx for Windows File Server",
-      "Amazon EFS mount qua NFS trên các instance Windows",
-      "Amazon FSx for Lustre",
-      "Một EC2 Windows tự cấu hình làm file server chia sẻ EBS volume"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "FSx for Windows File Server là dịch vụ managed cung cấp SMB, NTFS và tích hợp AD đúng nhu cầu workload Windows.\n✓ FSx for Windows File Server hỗ trợ native SMB protocol, NTFS ACL và join Active Directory.\n✗ EFS chỉ hỗ trợ NFS, không phù hợp SMB/NTFS cho ứng dụng Windows.\n✗ FSx for Lustre dành cho HPC Linux, không cung cấp SMB cho Windows.\n✗ Tự dựng file server trên EC2 tăng operational overhead về vận hành, HA và backup.",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-039",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-02-storage-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một cơ sở dữ liệu quan hệ self-managed trên EC2 cần volume EBS cung cấp IOPS và throughput ổn định ở mức cao, đồng thời cho phép điều chỉnh IOPS và throughput độc lập với dung lượng để tối ưu chi phí. Loại volume nào phù hợp nhất?",
-    "options": [
-      "EBS gp3",
-      "EBS gp2",
-      "EBS st1 (Throughput Optimized HDD)",
-      "EBS sc1 (Cold HDD)"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "gp3 cho phép cấu hình IOPS và throughput độc lập với dung lượng, hiệu năng baseline ổn định và rẻ hơn gp2.\n✓ gp3 tách rời IOPS/throughput khỏi size, cost-effective cho database cần hiệu năng dự đoán được.\n✗ gp2 gắn IOPS theo dung lượng (3 IOPS/GB) và phụ thuộc burst credit, kém linh hoạt và đắt hơn gp3.\n✗ st1 là HDD throughput-optimized cho sequential, không phù hợp database transactional cần IOPS.\n✗ sc1 là HDD lạnh chi phí thấp cho dữ liệu ít truy cập, không đáp ứng hiệu năng database.",
-    "domain": 3,
-    "mock": 2
+    "mock": 3,
+    "id": "saa-m3-037"
   },
   {
     "id": "saa-m3-038",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-02-storage-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một cơ sở dữ liệu giao dịch quan trọng yêu cầu một EBS volume duy nhất cung cấp tới hàng trăm nghìn IOPS, sub-millisecond latency, và durability rất cao với SLA 99.999%. Workload đang chạy trên instance Nitro thế hệ mới. Loại lưu trữ nào đáp ứng tốt nhất?",
-    "options": [
-      "EBS io2 Block Express",
-      "EBS io1 với multi-attach",
-      "Instance store NVMe SSD",
-      "EBS gp3 cấu hình IOPS tối đa"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "io2 Block Express là EBS hiệu năng cao nhất, đạt tới 256.000 IOPS mỗi volume, sub-millisecond latency và durability 99.999% — đúng yêu cầu database giao dịch quan trọng.\n✓ io2 Block Express cung cấp IOPS rất cao (tới 256.000/volume), latency thấp và durability 99.999% trên instance Nitro.\n✗ io1 giới hạn 64.000 IOPS/volume, thấp hơn nhiều so với hàng trăm nghìn IOPS, và multi-attach không cần thiết khi chỉ cần một volume.\n✗ Instance store NVMe nhanh nhưng ephemeral, mất dữ liệu khi stop instance, không durable cho database quan trọng.\n✗ gp3 tối đa 80.000 IOPS/volume, không đủ cho yêu cầu hàng trăm nghìn IOPS.",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-040",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-02-storage-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Một ứng dụng cần scratch storage cho dữ liệu tạm trong quá trình xử lý: hiệu năng I/O cực cao, độ trễ thấp nhất, và chấp nhận mất dữ liệu khi instance dừng. Đồng thời cần kết quả cuối được lưu durable. Chọn HAI lựa chọn đúng cho kiến trúc này.",
-    "options": [
-      "Dùng instance store NVMe SSD làm vùng scratch tạm trong khi xử lý",
-      "Ghi kết quả cuối cùng ra Amazon S3 để lưu trữ durable",
-      "Dùng EBS sc1 làm vùng scratch để tiết kiệm chi phí",
-      "Lưu dữ liệu tạm trên Amazon S3 Glacier để truy xuất nhanh",
-      "Dùng EFS Infrequent Access cho dữ liệu scratch I/O cao"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Instance store cho I/O nhanh nhất và phù hợp dữ liệu ephemeral, còn S3 đảm bảo lưu trữ durable cho kết quả cuối.\n✓ Instance store NVMe cung cấp I/O cực cao, latency thấp, lý tưởng cho scratch chấp nhận mất khi instance dừng.\n✓ Amazon S3 lưu kết quả cuối với durability 11 số 9, đúng yêu cầu durable.\n✗ sc1 là HDD lạnh chi phí thấp nhưng hiệu năng rất thấp, không hợp scratch I/O cao.\n✗ S3 Glacier là lưu trữ lạnh truy xuất chậm, hoàn toàn sai cho dữ liệu tạm cần tốc độ.\n✗ EFS IA tối ưu chi phí dữ liệu ít truy cập, không phải scratch I/O cao.",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "saa-m1-041",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-02-storage-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một cụm máy học cần đọc dataset training khổng lồ từ S3 liên tục cho nhiều epoch. Yêu cầu throughput đọc cực cao chia sẻ giữa hàng trăm GPU instance, và sau khi train xong kết quả phải đồng bộ ngược về S3. Workload chỉ chạy theo đợt rồi xóa. Giải pháp tối ưu nhất?",
-    "options": [
-      "Amazon FSx for Lustre với S3 data repository association, dùng scratch file system",
-      "Tải toàn bộ dataset xuống EBS gp3 trên mỗi GPU instance",
-      "Mount S3 trực tiếp qua một gateway và đọc object từng lần",
-      "Amazon EFS với Max I/O performance mode dùng chung cho cả cụm"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "FSx for Lustre scratch tích hợp S3 cho throughput đọc cực cao chia sẻ, đồng bộ kết quả ngược S3, và chi phí thấp cho workload tạm thời.\n✓ FSx for Lustre scratch kèm S3 repository association cung cấp throughput cao, lazy-load dataset và export kết quả về S3, phù hợp ML chạy theo đợt.\n✗ Tải dataset về EBS mỗi instance tốn dung lượng, không chia sẻ và lặp lại tốn kém với hàng trăm GPU.\n✗ Đọc trực tiếp từng object qua gateway không đạt throughput tổng hợp cần cho training nhiều epoch.\n✗ EFS Max I/O có latency cao hơn và throughput không sánh được với Lustre cho HPC/ML quy mô lớn.",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-040",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-02-storage-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một nhóm Linux developer cần một shared file system có thể tự động co giãn dung lượng, gắn đồng thời từ nhiều EC2 instance qua NFS trên nhiều Availability Zone, với least operational overhead. Dịch vụ nào phù hợp nhất?",
-    "options": [
-      "Amazon EFS",
-      "Amazon EBS Multi-Attach io2",
-      "Amazon FSx for Windows File Server",
-      "Amazon S3 mount như một ổ đĩa"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "EFS là file system NFS managed, tự động co giãn và truy cập đồng thời từ nhiều instance trên nhiều AZ với vận hành tối thiểu.\n✓ EFS hỗ trợ NFS, multi-AZ, elastic capacity và truy cập đồng thời, least operational overhead.\n✗ EBS Multi-Attach io2 chỉ trong một AZ và yêu cầu cluster-aware file system, phức tạp hơn nhiều.\n✗ FSx for Windows dùng SMB cho Windows, không phù hợp NFS trên Linux.\n✗ S3 là object storage, không phải file system POSIX để mount tự nhiên cho dev workflow.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-039",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-02-storage-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một workload phân tích đọc tuần tự (sequential) khối lượng lớn dữ liệu log lưu trên một EBS volume — như big data, MapReduce và data warehouse — và cần throughput cao trên mỗi đô la chứ không cần IOPS ngẫu nhiên cao. Loại EBS volume nào cost-effective nhất?",
-    "options": [
-      "EBS st1 (Throughput Optimized HDD)",
-      "EBS io2 (Provisioned IOPS SSD)",
-      "EBS gp3 (General Purpose SSD)",
-      "EBS sc1 (Cold HDD)"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "st1 là HDD tối ưu throughput cho truy cập sequential khối lượng lớn với chi phí thấp, đúng cho big data/log analytics.\n✓ st1 cung cấp throughput cao chi phí thấp cho workload sequential như MapReduce, data warehouse.\n✗ io2 là SSD IOPS cao đắt tiền, lãng phí cho workload sequential không cần random IOPS.\n✗ gp3 là SSD đa dụng, đắt hơn st1 cho khối lượng lớn dữ liệu throughput-bound.\n✗ sc1 là Cold HDD throughput thấp hơn, dành cho dữ liệu ít truy cập, không tối ưu cho workload analytics thường xuyên.",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-042",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-01-compute-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một nhóm phát triển chạy workload Java backend trên EC2 với CPU sử dụng ổn định. Họ muốn giảm chi phí compute mà không phải viết lại ứng dụng phức tạp, và ứng dụng đã được biên dịch lại để hỗ trợ kiến trúc ARM. Lựa chọn nào giúp giảm chi phí và tăng hiệu năng/giá tốt nhất?",
-    "options": [
-      "Chuyển sang các EC2 instance dùng AWS Graviton (ví dụ họ m7g/c7g)",
-      "Chuyển sang các EC2 instance họ m5 với nhiều vCPU hơn",
-      "Bật EC2 Detailed Monitoring để tối ưu CPU",
-      "Chuyển sang EC2 instance họ x2idn tối ưu bộ nhớ"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Graviton (ARM) cho price/performance tốt hơn và ứng dụng đã hỗ trợ ARM nên chuyển sang là tối ưu.\n✓ Graviton instances (m7g/c7g) — đúng, ARM-based, hiệu năng/giá cao hơn, ứng dụng đã hỗ trợ ARM nên dễ chuyển.\n✗ m5 nhiều vCPU hơn — tăng chi phí mà không khai thác lợi thế giá của Graviton.\n✗ Detailed Monitoring — chỉ tăng độ chi tiết metric, không giảm chi phí compute.\n✗ x2idn tối ưu bộ nhớ — đắt và phù hợp workload nặng RAM, không phải mục tiêu price/performance ở đây.",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-041",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-01-compute-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng web có lưu lượng dao động trong ngày. Đội vận hành muốn Auto Scaling group tự động giữ mức trung bình CPU utilization của các instance quanh 50% với cấu hình đơn giản, ít thao tác vận hành nhất. Chính sách scaling nào phù hợp nhất?",
-    "options": [
-      "Target tracking scaling policy với metric Average CPU Utilization = 50%",
-      "Simple scaling policy dựa trên CloudWatch alarm khi CPU > 80%",
-      "Step scaling policy với nhiều bậc điều chỉnh theo CPU",
-      "Scheduled scaling theo khung giờ cố định"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Target tracking tự điều chỉnh số instance để giữ metric quanh giá trị mục tiêu, ít cấu hình và ít vận hành nhất.\n✓ Target tracking với CPU = 50% — đúng, AWS tự tính số instance cần để giữ metric quanh mục tiêu, đơn giản nhất.\n✗ Simple scaling theo alarm — cần cooldown thủ công, phản ứng chậm và nhiều cấu hình hơn.\n✗ Step scaling nhiều bậc — linh hoạt nhưng phức tạp, cần định nghĩa từng bậc thủ công.\n✗ Scheduled scaling — chỉ tốt khi tải có lịch dự đoán trước cố định, không bám theo CPU thực tế.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-040",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-01-compute-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một sàn thương mại điện tử biết trước rằng lưu lượng tăng theo chu kỳ rõ rệt mỗi sáng và mỗi tối dựa trên dữ liệu lịch sử nhiều tuần. Họ thấy target tracking phản ứng hơi trễ khi tải tăng đột ngột đầu mỗi đợt, gây độ trễ tạm thời. Giải pháp nào giúp chuẩn bị capacity TRƯỚC khi nhu cầu tăng, dựa trên mẫu lịch sử?",
-    "options": [
-      "Bật predictive scaling cho Auto Scaling group",
-      "Giảm cooldown của simple scaling xuống mức tối thiểu",
-      "Tăng giá trị target của target tracking lên 80% CPU",
-      "Chuyển toàn bộ sang Spot Instances để có thêm capacity"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Predictive scaling dùng machine learning phân tích lịch sử để dự báo và cấp capacity trước khi nhu cầu đến, giải quyết độ trễ phản ứng.\n✓ Predictive scaling — đúng, dựa trên mẫu lịch sử dự báo và tăng capacity trước khi tải đến.\n✗ Giảm cooldown simple scaling — vẫn phản ứng sau khi tải đã tăng, không chủ động.\n✗ Tăng target lên 80% CPU — khiến hệ thống chịu tải cao hơn trước khi scale, làm trễ tệ hơn.\n✗ Chuyển sang Spot — về giá/sẵn capacity, không giải quyết việc chuẩn bị trước theo mẫu lịch sử.",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-043",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-01-compute-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một API serverless chạy trên Lambda phục vụ người dùng tương tác. Đội phát triển nhận thấy một số request đầu tiên sau thời gian không hoạt động có độ trễ cao do cold start. Họ cần đảm bảo một số lượng môi trường thực thi luôn được khởi tạo sẵn để giảm cold start, với least operational overhead. Giải pháp nào phù hợp nhất?",
-    "options": [
-      "Cấu hình Provisioned Concurrency cho function/alias",
-      "Tăng memory của Lambda lên mức tối đa",
-      "Tăng Reserved Concurrency cho function",
-      "Đặt Lambda trong VPC để cải thiện thời gian khởi tạo"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Provisioned Concurrency giữ sẵn các execution environment đã khởi tạo, loại bỏ cold start cho lượng concurrency đã cấp.\n✓ Provisioned Concurrency — đúng, giữ môi trường sẵn sàng, loại bỏ cold start cho phần đã provision.\n✗ Tăng memory tối đa — có thể giảm nhẹ thời gian init nhưng không loại bỏ cold start và tốn chi phí.\n✗ Reserved Concurrency — chỉ giới hạn/đảm bảo số concurrency tối đa, không làm ấm sẵn môi trường.\n✗ Đặt trong VPC — thường làm init lâu hơn chứ không nhanh hơn.",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-042",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-01-compute-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một workload HPC (mô phỏng tính toán) chạy trên một cụm nhiều EC2 instance cần băng thông cao và độ trễ network cực thấp GIỮA CÁC NODE trong cùng một AZ để trao đổi dữ liệu liên tục. Cấu hình nào tối ưu nhất cho hiệu năng giao tiếp giữa các node?",
-    "options": [
-      "Cluster placement group kết hợp Elastic Fabric Adapter (EFA)",
-      "Spread placement group để phân tán các node trên nhiều hardware",
-      "Partition placement group trên nhiều rack",
-      "Đặt các instance ở nhiều AZ và bật Enhanced Networking"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Cluster placement group gom các instance gần nhau để có băng thông cao và độ trễ thấp, còn EFA cho phép giao tiếp HPC/MPI hiệu năng cao bỏ qua OS kernel.\n✓ Cluster placement group + EFA — đúng, gom node cùng AZ với độ trễ thấp, EFA tối ưu giao tiếp inter-node cho HPC.\n✗ Spread placement group — phân tán phần cứng để giảm rủi ro cùng lỗi, không tối ưu độ trễ giữa node.\n✗ Partition placement group — cho dữ liệu phân tán lớn (Hadoop/Kafka), không tối ưu low-latency inter-node.\n✗ Nhiều AZ + Enhanced Networking — đặt ở nhiều AZ làm tăng độ trễ giữa các node.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-041",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-01-compute-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một công ty container hóa các microservice và muốn chạy chúng mà KHÔNG phải quản lý hay vá EC2 instance bên dưới, trả tiền theo tài nguyên container sử dụng, với least operational overhead. Họ đã chuẩn hóa trên Amazon ECS. Compute option nào phù hợp nhất?",
-    "options": [
-      "AWS Fargate làm launch type cho ECS",
-      "ECS trên EC2 launch type với Auto Scaling group tự quản lý",
-      "Chạy container trực tiếp trên EC2 với Docker tự cài",
-      "AWS Batch trên EC2 managed compute environment"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Fargate là serverless compute cho container: không quản lý server, trả theo tài nguyên task, ít vận hành nhất.\n✓ Fargate launch type — đúng, không cần quản lý/vá EC2, trả theo vCPU/memory của task.\n✗ ECS trên EC2 tự quản lý — vẫn phải vá và scale EC2, nhiều vận hành hơn.\n✗ Docker tự cài trên EC2 — quản lý thủ công nhiều nhất.\n✗ AWS Batch trên EC2 — hợp cho batch job, vẫn dựa trên EC2 cần quản lý hơn Fargate.",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "saa-m2-043",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-01-compute-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "multi",
-    "question": "Một kiến trúc sư đang tối ưu chi phí và hiệu năng cho nhiều workload khác nhau. Hãy chọn HAI phát biểu ĐÚNG về việc lựa chọn EC2 instance family và compute.",
-    "options": [
-      "Compute optimized (họ C) phù hợp workload nặng CPU như batch processing và high-performance web servers",
-      "Memory optimized (họ R/X) phù hợp database in-memory và xử lý dữ liệu lớn trong RAM",
-      "General purpose (họ M/T) chỉ nên dùng cho workload cần GPU",
-      "Storage optimized (họ I/D) tối ưu cho workload cần thông lượng network giữa các node HPC",
-      "Burstable (họ T) không bao giờ phù hợp cho môi trường production"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Mỗi instance family được thiết kế cho một loại tài nguyên chủ đạo; chọn đúng họ giúp tối ưu hiệu năng/giá.\n✓ Compute optimized (C) cho workload nặng CPU — đúng, lý tưởng cho batch và web server hiệu năng cao.\n✓ Memory optimized (R/X) cho in-memory DB — đúng, nhiều RAM cho dữ liệu lớn trong bộ nhớ.\n✗ General purpose chỉ cho GPU — sai, GPU thuộc accelerated computing (họ P/G), không phải M/T.\n✗ Storage optimized cho HPC network — sai, I/D tối ưu I/O đĩa cao, không phải network HPC.\n✗ Burstable không bao giờ dùng production — sai, họ T hợp lý cho workload tải thấp/biến động trong production.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "saa-m1-044",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-01-compute-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một function Lambda gọi đồng thời rất nhiều và đôi khi làm cạn kiệt account concurrency, gây throttling cho các function khác trong cùng account. Đội kiến trúc muốn GIỚI HẠN số concurrency tối đa mà function 'gây ồn' này có thể dùng, để bảo vệ các function còn lại. Giải pháp nào đúng?",
-    "options": [
-      "Đặt Reserved Concurrency cho function gây ồn",
-      "Đặt Provisioned Concurrency cho function gây ồn",
-      "Tăng account-level concurrency limit qua support",
-      "Bật DLQ (dead-letter queue) cho function gây ồn"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Reserved Concurrency vừa đảm bảo vừa GIỚI HẠN concurrency tối đa của một function, ngăn nó chiếm hết pool chung của account.\n✓ Reserved Concurrency — đúng, đặt trần concurrency cho function đó nên không làm cạn pool chung.\n✗ Provisioned Concurrency — chỉ làm ấm môi trường sẵn, không đặt trần dùng tài nguyên.\n✗ Tăng account limit — chỉ tăng tổng quota, function ồn vẫn có thể chiếm hết.\n✗ DLQ — xử lý event thất bại, không liên quan giới hạn concurrency.",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-044",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-01-compute-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng phân tích chạy theo lô lớn, có thể chịu được việc instance bị gián đoạn và tự khởi động lại task. Đội muốn giảm chi phí compute tối đa cho phần workload không khẩn cấp này. Phương án cost-effective nhất cho phần workload chịu gián đoạn?",
-    "options": [
-      "Dùng Spot Instances cho phần workload chịu gián đoạn",
-      "Dùng On-Demand Instances để đảm bảo không gián đoạn",
-      "Mua Reserved Instances 3 năm cho toàn bộ workload",
-      "Dùng Dedicated Hosts cho phần workload này"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Spot Instances rẻ nhất (tới ~90%) và phù hợp workload chịu được gián đoạn như batch/analytics có thể retry.\n✓ Spot Instances — đúng, rẻ nhất cho workload fault-tolerant chịu được interruption.\n✗ On-Demand — không gián đoạn nhưng đắt hơn nhiều, lãng phí cho workload chịu được gián đoạn.\n✗ RI 3 năm cho toàn bộ — cam kết dài hạn không hợp với phần tải biến động/không khẩn.\n✗ Dedicated Hosts — đắt nhất, dùng cho yêu cầu license/compliance, không tối ưu chi phí.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-042",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-01-compute-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một đội muốn triển khai ứng dụng web đơn giản và chỉ cần upload mã nguồn, để AWS tự lo provisioning EC2, load balancer, Auto Scaling và health monitoring, với least operational overhead nhưng vẫn giữ quyền truy cập vào tài nguyên bên dưới khi cần. Dịch vụ nào phù hợp nhất?",
-    "options": [
-      "AWS Elastic Beanstalk",
-      "Tự dựng EC2 với Auto Scaling group và ALB thủ công",
-      "AWS Lambda với API Gateway",
-      "Amazon Lightsail với blueprint thủ công"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Elastic Beanstalk tự lo provisioning, load balancing, scaling và monitoring từ mã nguồn upload lên, nhưng vẫn cho truy cập tài nguyên EC2/ASG bên dưới.\n✓ Elastic Beanstalk — đúng, chỉ cần upload code, AWS tự dựng và quản lý nền tảng, vẫn truy cập được tài nguyên.\n✗ Tự dựng EC2/ASG/ALB — nhiều thao tác vận hành nhất.\n✗ Lambda + API Gateway — serverless nhưng đòi tái cấu trúc ứng dụng theo function, không phải web app truyền thống.\n✗ Lightsail — đơn giản nhưng hạn chế tích hợp và ít kiểm soát tài nguyên AWS bên dưới hơn.",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-045",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-03-database-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một ứng dụng thương mại điện tử chạy trên Amazon RDS for MySQL (Single-AZ). Trang dashboard báo cáo và các truy vấn analytics đọc nhiều dữ liệu đang làm CPU của database tăng cao, ảnh hưởng đến các giao dịch ghi của khách hàng. Lượng ghi vẫn ổn định, chỉ có lượng đọc tăng đột biến. Giải pháp nào giúp giảm tải đọc khỏi instance chính với LEAST operational overhead?",
-    "options": [
-      "Tạo một hoặc nhiều RDS Read Replicas và định tuyến các truy vấn báo cáo/analytics chỉ-đọc sang đó",
-      "Bật Multi-AZ deployment để standby instance phục vụ các truy vấn đọc",
-      "Tăng kích thước instance lên loại lớn hơn để xử lý cả đọc và ghi",
-      "Chuyển toàn bộ database sang Amazon Redshift để xử lý truy vấn báo cáo"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Read Replicas tách tải đọc khỏi primary, lý tưởng cho báo cáo chỉ-đọc mà không ảnh hưởng giao dịch ghi.\n✓ Read Replicas phục vụ truy vấn đọc song song, giảm CPU primary, đúng use case offload read.\n✗ Standby của Multi-AZ KHÔNG phục vụ đọc — chỉ dùng cho failover, không giảm tải.\n✗ Tăng kích thước instance tốn kém hơn và vẫn dồn đọc/ghi vào một instance.\n✗ Migrate sang Redshift là thay đổi lớn, OLAP riêng, operational overhead cao cho nhu cầu chỉ offload read.",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-045",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-03-database-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một nền tảng gaming dùng DynamoDB lưu bảng xếp hạng (leaderboard) với hàng triệu lượt đọc mỗi giây trong giờ cao điểm. Hồ sơ người chơi được đọc lặp lại liên tục và yêu cầu độ trễ ở mức microsecond. Hiện tại độ trễ single-digit millisecond của DynamoDB chưa đủ nhanh. Giải pháp nào đáp ứng yêu cầu với ít thay đổi ứng dụng nhất?",
-    "options": [
-      "Thêm DynamoDB Accelerator (DAX) làm in-memory cache trước DynamoDB",
-      "Đặt Amazon ElastiCache for Redis trước DynamoDB và tự quản lý logic cache",
-      "Bật DynamoDB Global Tables để giảm độ trễ đọc",
-      "Chuyển bảng sang chế độ provisioned capacity với auto scaling"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "DAX là in-memory cache được thiết kế riêng cho DynamoDB, cung cấp độ trễ microsecond với API tương thích nên gần như không phải sửa code.\n✓ DAX cho độ trễ microsecond cho read-heavy, tích hợp gốc với DynamoDB, ít thay đổi ứng dụng.\n✗ ElastiCache for Redis cũng cache được nhưng phải tự viết logic cache-aside, operational overhead cao hơn DAX.\n✗ Global Tables giải quyết replication đa region, không giảm độ trễ đọc xuống microsecond.\n✗ Provisioned capacity điều chỉnh throughput chứ không hạ độ trễ xuống mức microsecond.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-043",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-03-database-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng serverless dùng AWS Lambda kết nối tới Amazon RDS for PostgreSQL. Khi lưu lượng tăng đột biến, hàng nghìn Lambda concurrent mở quá nhiều kết nối database khiến RDS cạn connection và lỗi 'too many connections'. Giải pháp nào giải quyết vấn đề với LEAST operational overhead?",
-    "options": [
-      "Triển khai Amazon RDS Proxy để pool và chia sẻ các kết nối database",
-      "Tăng tham số max_connections trên RDS và scale up instance",
-      "Tự xây dựng connection pooler chạy trên EC2 trước RDS",
-      "Thêm Read Replica để phân tán kết nối qua nhiều endpoint"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "RDS Proxy là managed connection pooler được thiết kế riêng cho workload serverless/Lambda với nhiều kết nối ngắn.\n✓ RDS Proxy pool và tái sử dụng kết nối, hấp thụ burst của Lambda, fully managed nên ít vận hành.\n✗ Tăng max_connections và scale up chỉ trì hoãn vấn đề, mỗi kết nối vẫn tốn bộ nhớ và không bền vững.\n✗ Tự xây pooler trên EC2 thêm hạ tầng phải quản lý, vá lỗi, HA — operational overhead lớn.\n✗ Read Replica giúp offload đọc nhưng không giải quyết cạn kiệt kết nối, ghi vẫn dồn vào primary.",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-046",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-03-database-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một công ty cần lưu trữ và truy vấn dữ liệu quan hệ với throughput đọc cao, khả năng tự động phục hồi sau lỗi, và muốn database tự scale storage. Họ cần tương thích MySQL nhưng yêu cầu hiệu năng cao hơn RDS for MySQL tiêu chuẩn và khả năng có tới 15 read replica với độ trễ replication thấp. Lựa chọn nào phù hợp nhất?",
-    "options": [
-      "Amazon Aurora MySQL-Compatible Edition",
-      "Amazon RDS for MySQL với Multi-AZ và 5 read replica",
-      "Amazon DynamoDB với MySQL compatibility layer",
-      "Amazon Redshift với storage tự động mở rộng"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Aurora cung cấp throughput cao gấp nhiều lần RDS MySQL, tới 15 read replica với độ trễ thấp, storage tự scale và self-healing.\n✓ Aurora MySQL hỗ trợ tới 15 low-latency read replicas, storage tự mở rộng, tương thích MySQL — khớp mọi yêu cầu.\n✗ RDS for MySQL chỉ tối đa 5 read replicas và độ trễ replication cao hơn Aurora.\n✗ DynamoDB là NoSQL key-value, không phải database quan hệ tương thích MySQL.\n✗ Redshift là kho dữ liệu OLAP, không phù hợp workload giao dịch quan hệ throughput cao.",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-046",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-03-database-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một ứng dụng web dùng DynamoDB với primary key là CustomerId. Sản phẩm cần truy vấn đơn hàng theo OrderStatus và theo OrderDate, đây là các thuộc tính không phải key. Hiện tại ứng dụng đang Scan toàn bảng rồi lọc, gây tốn kém và chậm. Cách tối ưu nhất để hỗ trợ các truy vấn này?",
-    "options": [
-      "Tạo Global Secondary Index (GSI) với OrderStatus và OrderDate làm key để Query trực tiếp",
-      "Tạo Local Secondary Index (LSI) trên OrderStatus và OrderDate",
-      "Bật DynamoDB Streams và xây bảng phụ được denormalize theo OrderStatus",
-      "Tăng provisioned read capacity để các thao tác Scan chạy nhanh hơn"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "GSI cho phép truy vấn theo các thuộc tính không phải primary key gốc với partition/sort key khác, thay thế Scan tốn kém bằng Query hiệu quả.\n✓ GSI tạo index với OrderStatus/OrderDate làm key, cho phép Query thay vì Scan toàn bảng — nhanh và rẻ hơn nhiều.\n✗ LSI phải dùng chung partition key với bảng gốc (CustomerId) và chỉ tạo được lúc tạo bảng — không hỗ trợ truy vấn theo OrderStatus độc lập.\n✗ DynamoDB Streams + bảng phụ giải quyết được nhưng phức tạp, tốn công maintain so với GSI native.\n✗ Tăng read capacity chỉ làm Scan tốn kém hơn về chi phí, không giải quyết bản chất kém hiệu quả của Scan.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-044",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-03-database-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng cần cache session của người dùng. Yêu cầu: dữ liệu session phải tồn tại qua các lần khởi động lại node (persistence), hỗ trợ replication để high availability, và có thể dùng các cấu trúc dữ liệu phong phú như sorted set cho leaderboard. Engine ElastiCache nào phù hợp?",
-    "options": [
-      "Amazon ElastiCache for Redis",
-      "Amazon ElastiCache for Memcached",
-      "Amazon DynamoDB với TTL",
-      "Amazon RDS for PostgreSQL với in-memory tablespace"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Redis hỗ trợ persistence, replication/Multi-AZ với automatic failover và các kiểu dữ liệu nâng cao như sorted set — Memcached thì không.\n✓ ElastiCache for Redis có persistence, replication HA và cấu trúc dữ liệu phong phú (sorted set, hash) — đáp ứng mọi yêu cầu.\n✗ Memcached là cache đơn giản multi-threaded, KHÔNG có persistence, replication hay cấu trúc dữ liệu nâng cao.\n✗ DynamoDB với TTL lưu được session nhưng không phải in-memory cache, độ trễ cao hơn và không có sorted set native.\n✗ RDS PostgreSQL không phải caching layer in-memory, không phù hợp cho session caching tốc độ cao.",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-047",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-03-database-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một mạng xã hội cần lưu mối quan hệ giữa người dùng (bạn bè, theo dõi) và chạy các truy vấn duyệt nhiều bậc như 'bạn của bạn' hay đường nối ngắn nhất giữa hai người. Các truy vấn này liên kết sâu nhiều cấp. Database nào được tối ưu cho workload này?",
-    "options": [
-      "Amazon Neptune",
-      "Amazon Aurora PostgreSQL với nhiều bảng join",
-      "Amazon DynamoDB với adjacency list pattern",
-      "Amazon Timestream"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Neptune là graph database được tối ưu riêng cho dữ liệu quan hệ liên kết cao và các truy vấn duyệt đồ thị nhiều bậc.\n✓ Neptune là managed graph database, xử lý hiệu quả truy vấn 'bạn của bạn' và đường đi ngắn nhất bằng Gremlin/SPARQL.\n✗ Aurora PostgreSQL có thể join nhưng truy vấn duyệt nhiều bậc đệ quy trở nên rất chậm và phức tạp khi độ sâu tăng.\n✗ DynamoDB adjacency list mô phỏng được graph nhưng truy vấn duyệt nhiều bậc rất khó và kém hiệu quả.\n✗ Timestream là time-series database, không phù hợp với dữ liệu quan hệ đồ thị.",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "saa-m3-045",
     "courseId": "SAA-C03",
     "lesson": "ch2-03-database-performance",
     "certifications": [
@@ -11821,27 +17114,165 @@ export const generatedQuestions: Question[] = [
     "mock": 3
   },
   {
-    "id": "saa-m2-047",
+    "id": "saa-m3-039",
     "courseId": "SAA-C03",
-    "lesson": "ch2-03-database-performance",
+    "lesson": "ch2-02-storage-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một ứng dụng web lưu hàng triệu ảnh trên Amazon S3. Người dùng trên toàn cầu phàn nàn việc upload ảnh từ các châu lục xa region của bucket rất chậm. Giải pháp nào cải thiện tốc độ upload với least operational overhead?",
+    "options": [
+      "Bật S3 Transfer Acceleration trên bucket để upload qua edge location của CloudFront",
+      "Tạo bucket S3 ở mỗi region và dùng S3 Cross-Region Replication để đồng bộ",
+      "Đặt một CloudFront distribution phía trước bucket và cho người dùng upload qua CloudFront",
+      "Dùng AWS Global Accelerator để định tuyến traffic upload đến bucket"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "S3 Transfer Acceleration tận dụng mạng edge của CloudFront để tăng tốc upload xuyên lục địa chỉ bằng một thiết lập bật/tắt.\n✓ Transfer Acceleration định tuyến upload qua edge location gần người dùng rồi đi trên backbone AWS, least operational overhead.\n✗ Tạo bucket mỗi region kèm replication phức tạp và bản thân upload ban đầu vẫn phải đi xa.\n✗ CloudFront tối ưu cho phân phối (download/cache), không phải kênh tăng tốc upload trực tiếp như Transfer Acceleration.\n✗ Global Accelerator dùng cho endpoint như ALB/NLB/EC2, không hỗ trợ upload trực tiếp vào S3 bucket.",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-040",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-02-storage-performance",
     "certifications": [
       "SAA-C03"
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một startup ra mắt ứng dụng mới và không thể dự đoán traffic; có thể tăng vọt bất ngờ rồi giảm về gần 0. Họ muốn dùng DynamoDB nhưng lo lắng về việc throttling khi chưa provisioned đủ capacity và lãng phí khi provisioned quá mức. Giải pháp nào phù hợp nhất mà LEAST operational overhead?",
+    "question": "Một ứng dụng .NET cũ chạy trên fleet EC2 Windows cần một shared file system hỗ trợ SMB, NTFS permissions và tích hợp Active Directory để nhiều instance cùng truy cập. Giải pháp managed nào phù hợp nhất?",
     "options": [
-      "Dùng DynamoDB on-demand capacity mode",
-      "Dùng provisioned capacity với auto scaling cấu hình thủ công",
-      "Provisioned capacity cao cố định để tránh throttling",
-      "Dùng provisioned capacity thấp kết hợp DynamoDB Accelerator (DAX)"
+      "Amazon FSx for Windows File Server",
+      "Amazon EFS mount qua NFS trên các instance Windows",
+      "Amazon FSx for Lustre",
+      "Một EC2 Windows tự cấu hình làm file server chia sẻ EBS volume"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "On-demand mode tự động phục vụ throughput theo lưu lượng thực tế, không cần dự đoán capacity, lý tưởng cho traffic không đoán trước.\n✓ On-demand tự scale tức thời theo traffic, chỉ trả tiền theo request thực dùng — không cần planning, ít vận hành nhất.\n✗ Provisioned + auto scaling cần cấu hình ngưỡng và có độ trễ scaling, không lý tưởng cho burst đột ngột không đoán trước.\n✗ Provisioned cao cố định lãng phí lớn khi traffic giảm về 0.\n✗ DAX là caching layer giảm độ trễ đọc, không giải quyết vấn đề capacity planning cho ghi/burst.",
+    "explanation": "FSx for Windows File Server là dịch vụ managed cung cấp SMB, NTFS và tích hợp AD đúng nhu cầu workload Windows.\n✓ FSx for Windows File Server hỗ trợ native SMB protocol, NTFS ACL và join Active Directory.\n✗ EFS chỉ hỗ trợ NFS, không phù hợp SMB/NTFS cho ứng dụng Windows.\n✗ FSx for Lustre dành cho HPC Linux, không cung cấp SMB cho Windows.\n✗ Tự dựng file server trên EC2 tăng operational overhead về vận hành, HA và backup.",
     "domain": 3,
-    "mock": 2
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-041",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-02-storage-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một cụm máy học cần đọc dataset training khổng lồ từ S3 liên tục cho nhiều epoch. Yêu cầu throughput đọc cực cao chia sẻ giữa hàng trăm GPU instance, và sau khi train xong kết quả phải đồng bộ ngược về S3. Workload chỉ chạy theo đợt rồi xóa. Giải pháp tối ưu nhất?",
+    "options": [
+      "Amazon FSx for Lustre với S3 data repository association, dùng scratch file system",
+      "Tải toàn bộ dataset xuống EBS gp3 trên mỗi GPU instance",
+      "Mount S3 trực tiếp qua một gateway và đọc object từng lần",
+      "Amazon EFS với Max I/O performance mode dùng chung cho cả cụm"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "FSx for Lustre scratch tích hợp S3 cho throughput đọc cực cao chia sẻ, đồng bộ kết quả ngược S3, và chi phí thấp cho workload tạm thời.\n✓ FSx for Lustre scratch kèm S3 repository association cung cấp throughput cao, lazy-load dataset và export kết quả về S3, phù hợp ML chạy theo đợt.\n✗ Tải dataset về EBS mỗi instance tốn dung lượng, không chia sẻ và lặp lại tốn kém với hàng trăm GPU.\n✗ Đọc trực tiếp từng object qua gateway không đạt throughput tổng hợp cần cho training nhiều epoch.\n✗ EFS Max I/O có latency cao hơn và throughput không sánh được với Lustre cho HPC/ML quy mô lớn.",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-042",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-01-compute-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một nhóm phát triển chạy workload Java backend trên EC2 với CPU sử dụng ổn định. Họ muốn giảm chi phí compute mà không phải viết lại ứng dụng phức tạp, và ứng dụng đã được biên dịch lại để hỗ trợ kiến trúc ARM. Lựa chọn nào giúp giảm chi phí và tăng hiệu năng/giá tốt nhất?",
+    "options": [
+      "Chuyển sang các EC2 instance dùng AWS Graviton (ví dụ họ m7g/c7g)",
+      "Chuyển sang các EC2 instance họ m5 với nhiều vCPU hơn",
+      "Bật EC2 Detailed Monitoring để tối ưu CPU",
+      "Chuyển sang EC2 instance họ x2idn tối ưu bộ nhớ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Graviton (ARM) cho price/performance tốt hơn và ứng dụng đã hỗ trợ ARM nên chuyển sang là tối ưu.\n✓ Graviton instances (m7g/c7g) — đúng, ARM-based, hiệu năng/giá cao hơn, ứng dụng đã hỗ trợ ARM nên dễ chuyển.\n✗ m5 nhiều vCPU hơn — tăng chi phí mà không khai thác lợi thế giá của Graviton.\n✗ Detailed Monitoring — chỉ tăng độ chi tiết metric, không giảm chi phí compute.\n✗ x2idn tối ưu bộ nhớ — đắt và phù hợp workload nặng RAM, không phải mục tiêu price/performance ở đây.",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-043",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-01-compute-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một API serverless chạy trên Lambda phục vụ người dùng tương tác. Đội phát triển nhận thấy một số request đầu tiên sau thời gian không hoạt động có độ trễ cao do cold start. Họ cần đảm bảo một số lượng môi trường thực thi luôn được khởi tạo sẵn để giảm cold start, với least operational overhead. Giải pháp nào phù hợp nhất?",
+    "options": [
+      "Cấu hình Provisioned Concurrency cho function/alias",
+      "Tăng memory của Lambda lên mức tối đa",
+      "Tăng Reserved Concurrency cho function",
+      "Đặt Lambda trong VPC để cải thiện thời gian khởi tạo"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Provisioned Concurrency giữ sẵn các execution environment đã khởi tạo, loại bỏ cold start cho lượng concurrency đã cấp.\n✓ Provisioned Concurrency — đúng, giữ môi trường sẵn sàng, loại bỏ cold start cho phần đã provision.\n✗ Tăng memory tối đa — có thể giảm nhẹ thời gian init nhưng không loại bỏ cold start và tốn chi phí.\n✗ Reserved Concurrency — chỉ giới hạn/đảm bảo số concurrency tối đa, không làm ấm sẵn môi trường.\n✗ Đặt trong VPC — thường làm init lâu hơn chứ không nhanh hơn.",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-044",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-01-compute-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một function Lambda gọi đồng thời rất nhiều và đôi khi làm cạn kiệt account concurrency, gây throttling cho các function khác trong cùng account. Đội kiến trúc muốn GIỚI HẠN số concurrency tối đa mà function 'gây ồn' này có thể dùng, để bảo vệ các function còn lại. Giải pháp nào đúng?",
+    "options": [
+      "Đặt Reserved Concurrency cho function gây ồn",
+      "Đặt Provisioned Concurrency cho function gây ồn",
+      "Tăng account-level concurrency limit qua support",
+      "Bật DLQ (dead-letter queue) cho function gây ồn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Reserved Concurrency vừa đảm bảo vừa GIỚI HẠN concurrency tối đa của một function, ngăn nó chiếm hết pool chung của account.\n✓ Reserved Concurrency — đúng, đặt trần concurrency cho function đó nên không làm cạn pool chung.\n✗ Provisioned Concurrency — chỉ làm ấm môi trường sẵn, không đặt trần dùng tài nguyên.\n✗ Tăng account limit — chỉ tăng tổng quota, function ồn vẫn có thể chiếm hết.\n✗ DLQ — xử lý event thất bại, không liên quan giới hạn concurrency.",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-045",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-03-database-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một ứng dụng thương mại điện tử chạy trên Amazon RDS for MySQL (Single-AZ). Trang dashboard báo cáo và các truy vấn analytics đọc nhiều dữ liệu đang làm CPU của database tăng cao, ảnh hưởng đến các giao dịch ghi của khách hàng. Lượng ghi vẫn ổn định, chỉ có lượng đọc tăng đột biến. Giải pháp nào giúp giảm tải đọc khỏi instance chính với LEAST operational overhead?",
+    "options": [
+      "Tạo một hoặc nhiều RDS Read Replicas và định tuyến các truy vấn báo cáo/analytics chỉ-đọc sang đó",
+      "Bật Multi-AZ deployment để standby instance phục vụ các truy vấn đọc",
+      "Tăng kích thước instance lên loại lớn hơn để xử lý cả đọc và ghi",
+      "Chuyển toàn bộ database sang Amazon Redshift để xử lý truy vấn báo cáo"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Read Replicas tách tải đọc khỏi primary, lý tưởng cho báo cáo chỉ-đọc mà không ảnh hưởng giao dịch ghi.\n✓ Read Replicas phục vụ truy vấn đọc song song, giảm CPU primary, đúng use case offload read.\n✗ Standby của Multi-AZ KHÔNG phục vụ đọc — chỉ dùng cho failover, không giảm tải.\n✗ Tăng kích thước instance tốn kém hơn và vẫn dồn đọc/ghi vào một instance.\n✗ Migrate sang Redshift là thay đổi lớn, OLAP riêng, operational overhead cao cho nhu cầu chỉ offload read.",
+    "domain": 3,
+    "mock": 3
   },
   {
     "id": "saa-m3-046",
@@ -11852,22 +17283,45 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một database RDS for MySQL có một truy vấn báo cáo nặng chạy mỗi đêm trên Read Replica. Nhóm phân tích phàn nàn rằng đôi khi dữ liệu trên replica trễ vài giây so với primary. Để hiểu và xử lý đúng, kiến trúc sư nên nhận định điều gì về RDS Read Replicas?",
+    "question": "Một công ty cần lưu trữ và truy vấn dữ liệu quan hệ với throughput đọc cao, khả năng tự động phục hồi sau lỗi, và muốn database tự scale storage. Họ cần tương thích MySQL nhưng yêu cầu hiệu năng cao hơn RDS for MySQL tiêu chuẩn và khả năng có tới 15 read replica với độ trễ replication thấp. Lựa chọn nào phù hợp nhất?",
     "options": [
-      "Read Replicas dùng asynchronous replication nên có thể có replica lag; phù hợp khi ứng dụng chấp nhận eventual consistency cho đọc",
-      "Read Replicas dùng synchronous replication nên dữ liệu luôn nhất quán tuyệt đối với primary",
-      "Replica lag chỉ xảy ra khi cấu hình sai và có thể loại bỏ hoàn toàn bằng cách bật Multi-AZ",
-      "Read Replicas đảm bảo strong consistency giống như đọc từ primary endpoint"
+      "Amazon Aurora MySQL-Compatible Edition",
+      "Amazon RDS for MySQL với Multi-AZ và 5 read replica",
+      "Amazon DynamoDB với MySQL compatibility layer",
+      "Amazon Redshift với storage tự động mở rộng"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "RDS Read Replicas dùng asynchronous replication, nên replica lag là hành vi bình thường và phù hợp cho workload đọc chấp nhận eventual consistency.\n✓ Asynchronous replication vốn dĩ có thể gây lag — đúng bản chất, phù hợp báo cáo chấp nhận eventual consistency.\n✗ Read Replicas KHÔNG dùng synchronous replication; chỉ Multi-AZ standby mới synchronous.\n✗ Replica lag là vốn có của async replication, không thể loại bỏ hoàn toàn; Multi-AZ phục vụ HA chứ không loại bỏ lag của read replica.\n✗ Read Replicas cho eventual consistency, không đảm bảo strong consistency như primary.",
+    "explanation": "Aurora cung cấp throughput cao gấp nhiều lần RDS MySQL, tới 15 read replica với độ trễ thấp, storage tự scale và self-healing.\n✓ Aurora MySQL hỗ trợ tới 15 low-latency read replicas, storage tự mở rộng, tương thích MySQL — khớp mọi yêu cầu.\n✗ RDS for MySQL chỉ tối đa 5 read replicas và độ trễ replication cao hơn Aurora.\n✗ DynamoDB là NoSQL key-value, không phải database quan hệ tương thích MySQL.\n✗ Redshift là kho dữ liệu OLAP, không phù hợp workload giao dịch quan hệ throughput cao.",
     "domain": 3,
     "mock": 3
   },
   {
-    "id": "saa-m1-048",
+    "id": "saa-m3-047",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-03-database-performance",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một mạng xã hội cần lưu mối quan hệ giữa người dùng (bạn bè, theo dõi) và chạy các truy vấn duyệt nhiều bậc như 'bạn của bạn' hay đường nối ngắn nhất giữa hai người. Các truy vấn này liên kết sâu nhiều cấp. Database nào được tối ưu cho workload này?",
+    "options": [
+      "Amazon Neptune",
+      "Amazon Aurora PostgreSQL với nhiều bảng join",
+      "Amazon DynamoDB với adjacency list pattern",
+      "Amazon Timestream"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Neptune là graph database được tối ưu riêng cho dữ liệu quan hệ liên kết cao và các truy vấn duyệt đồ thị nhiều bậc.\n✓ Neptune là managed graph database, xử lý hiệu quả truy vấn 'bạn của bạn' và đường đi ngắn nhất bằng Gremlin/SPARQL.\n✗ Aurora PostgreSQL có thể join nhưng truy vấn duyệt nhiều bậc đệ quy trở nên rất chậm và phức tạp khi độ sâu tăng.\n✗ DynamoDB adjacency list mô phỏng được graph nhưng truy vấn duyệt nhiều bậc rất khó và kém hiệu quả.\n✗ Timestream là time-series database, không phù hợp với dữ liệu quan hệ đồ thị.",
+    "domain": 3,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-048",
     "courseId": "SAA-C03",
     "lesson": "ch2-04-network-performance",
     "certifications": [
@@ -11887,56 +17341,10 @@ export const generatedQuestions: Question[] = [
     ],
     "explanation": "CloudFront cache static content tại hàng trăm edge location gần user, giảm latency mà không cần vận hành nhiều bản sao.\n✓ CloudFront + S3 origin: cache static tại edge, OAC bảo mật origin, fully managed, ít overhead nhất.\n✗ Cross-Region Replication nhiều region: tốn storage, phức tạp, và user phải tự chọn region — không tự động tối ưu.\n✗ Global Accelerator: hoạt động ở L4 cho TCP/UDP và KHÔNG cache; static content nên dùng CDN.\n✗ Route 53 latency-based về cùng 1 bucket us-east-1: vẫn chỉ 1 origin ở US, không giảm khoảng cách vật lý.",
     "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-048",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-04-network-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một nền tảng game multiplayer chạy trên EC2 fleet sau NLB, dùng giao thức UDP, triển khai ở hai region (us-east-1 và ap-southeast-1). Yêu cầu: client cần một địa chỉ IP cố định để whitelist, latency thấp ổn định, và failover giữa region trong vòng dưới một giây khi một region down. Giải pháp nào phù hợp nhất?",
-    "options": [
-      "AWS Global Accelerator với hai static anycast IP, endpoint trỏ tới NLB ở mỗi region",
-      "Amazon CloudFront với NLB làm origin và Origin Failover group giữa hai region",
-      "Route 53 failover routing với TTL 30 giây trỏ tới NLB của từng region",
-      "Route 53 latency-based routing kết hợp health check trên hai NLB"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Global Accelerator cung cấp static anycast IP, định tuyến UDP qua AWS backbone với latency thấp và failover dưới một giây — đúng mọi yêu cầu.\n✓ Global Accelerator: 2 static IP để whitelist, hỗ trợ UDP (L4), failover region dưới 1s không phụ thuộc DNS.\n✗ CloudFront: là CDN L7 HTTP/HTTPS, không hỗ trợ UDP game traffic và không cho static IP.\n✗ Route 53 failover TTL 30s: phụ thuộc DNS cache của client/resolver, failover thường chậm hơn nhiều giây, không cho static IP.\n✗ Route 53 latency-based: vẫn là DNS, không đảm bảo failover dưới 1s và không cấp static IP cho whitelist.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-047",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-04-network-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "EC2 instance trong private subnet đang tải về và đẩy lên hàng terabyte dữ liệu mỗi tháng từ/đến Amazon S3 trong cùng region. Hóa đơn NAT Gateway tăng vọt do data processing charge. Giải pháp nào giảm chi phí này một cách cost-effective nhất mà không ảnh hưởng kết nối tới các dịch vụ khác?",
-    "options": [
-      "Tạo S3 Gateway VPC endpoint và thêm route tới endpoint trong route table của private subnet",
-      "Tạo Interface VPC endpoint (PrivateLink) cho S3 ở mỗi AZ",
-      "Di chuyển EC2 instance ra public subnet và gán Elastic IP",
-      "Thay NAT Gateway bằng NAT instance EC2 tự quản lý loại nhỏ hơn"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "S3 Gateway endpoint miễn phí và định tuyến traffic S3 qua mạng AWS private, loại bỏ hoàn toàn data processing charge của NAT cho phần traffic này.\n✓ S3 Gateway endpoint: free, traffic S3 không đi qua NAT nữa, vẫn giữ NAT cho các dịch vụ khác — cost-effective nhất.\n✗ Interface endpoint cho S3: tính phí theo giờ per-AZ cộng phí data; Gateway endpoint cho S3 thì miễn phí nên rẻ hơn.\n✗ Đưa EC2 ra public subnet: phá vỡ mô hình bảo mật private và vẫn tính internet egress.\n✗ NAT instance tự quản lý: vẫn tốn data transfer, thêm operational overhead, không giải quyết gốc.",
-    "domain": 3,
     "mock": 3
   },
   {
-    "id": "saa-m1-049",
+    "id": "saa-m3-049",
     "courseId": "SAA-C03",
     "lesson": "ch2-04-network-performance",
     "certifications": [
@@ -11956,81 +17364,10 @@ export const generatedQuestions: Question[] = [
     ],
     "explanation": "Transit Gateway là hub-and-spoke hỗ trợ transitive routing, scale tuyến tính thay vì bậc hai, và quản lý routing tập trung.\n✓ Transit Gateway + RAM: hub trung tâm, transitive routing, kết nối luôn on-prem, chia sẻ cross-account dễ dàng.\n✗ VPC peering full-mesh: 12 VPC cần 66 peering, không transitive, quản lý route bùng nổ — không scale.\n✗ PrivateLink: chỉ expose một service cụ thể một chiều, không phải kết nối mạng full-mesh hai chiều.\n✗ VPN giữa từng cặp VPC: cực kỳ phức tạp, tốn kém, không phải pattern kết nối nội bộ VPC.",
     "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-049",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-04-network-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một doanh nghiệp tài chính cần kết nối data center on-premises với AWS để truyền dữ liệu liên tục 2 Gbps với latency thấp và ổn định, và yêu cầu compliance không cho phép traffic đi qua public internet. Giải pháp nào đáp ứng tốt nhất?",
-    "options": [
-      "AWS Direct Connect với dedicated connection 10 Gbps",
-      "Site-to-Site VPN với hai tunnel để tăng throughput tổng",
-      "Site-to-Site VPN qua AWS Global Accelerator để tối ưu route",
-      "Nhiều Site-to-Site VPN connection gộp lại bằng ECMP để đạt 2 Gbps"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Direct Connect cung cấp kết nối riêng với throughput, latency ổn định và không đi qua internet — đáp ứng cả hiệu năng lẫn compliance.\n✓ Direct Connect 10 Gbps: throughput trên 2 Gbps consistent, latency predictable, traffic không qua public internet, thỏa compliance.\n✗ VPN hai tunnel: mỗi tunnel khoảng 1.25 Gbps và đi qua public internet, không thỏa yêu cầu compliance.\n✗ VPN qua Global Accelerator: vẫn dựa trên internet ở chặng cuối tới on-prem, không thỏa yêu cầu no internet.\n✗ Nhiều VPN + ECMP: phức tạp, jitter cao, và vẫn đi qua public internet.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-048",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-04-network-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một ứng dụng HPC chạy MPI giữa hàng trăm EC2 instance đòi hỏi inter-node communication latency cực thấp và network throughput cao trong cùng một cluster. Kết hợp nào tối ưu nhất cho yêu cầu network performance này?",
-    "options": [
-      "Cluster placement group kết hợp Elastic Fabric Adapter (EFA) trên các instance hỗ trợ",
-      "Spread placement group kết hợp Elastic Network Adapter (ENA) tiêu chuẩn",
-      "Partition placement group trải trên nhiều AZ để tăng độ bền",
-      "Cluster placement group kết hợp jumbo frames qua NAT Gateway"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Cluster placement group đặt instance gần nhau trong cùng AZ cho latency thấp nhất, còn EFA cho phép OS-bypass tối ưu MPI/HPC.\n✓ Cluster placement group + EFA: low latency intra-cluster, high throughput, EFA tối ưu cho MPI HPC — đúng nhất.\n✗ Spread placement group + ENA: spread đặt instance tách xa nhau để giảm tương quan lỗi, ngược mục tiêu low latency.\n✗ Partition group trải nhiều AZ: cross-AZ latency cao hơn, tối ưu cho big data/HA chứ không cho HPC latency thấp.\n✗ Jumbo frames qua NAT Gateway: jumbo frames không hoạt động ra internet/NAT, và NAT không liên quan inter-node MPI.",
-    "domain": 3,
     "mock": 3
   },
   {
-    "id": "saa-m1-050",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-04-network-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Một ứng dụng web toàn cầu dùng CloudFront trước ALB. Đội vận hành thấy cache hit ratio chỉ 35% và muốn tăng tỉ lệ cache hit cũng như giảm tải lên origin. Những hành động nào sẽ giúp đạt mục tiêu này? (Chọn 2)",
-    "options": [
-      "Cấu hình cache policy để KHÔNG đưa các cookie và query string không cần thiết vào cache key",
-      "Bật Origin Shield để thêm một lớp cache tập trung trước origin",
-      "Giảm TTL của tất cả object xuống 0 để luôn lấy bản mới nhất",
-      "Chuyển CloudFront price class sang chỉ dùng các edge location đắt nhất",
-      "Tắt compression Gzip/Brotli để giảm thời gian xử lý tại edge"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Tăng cache hit ratio bằng cách giảm số biến thể cache key và thêm lớp cache tập trung gom request tới origin.\n✓ Không đưa cookie/query string thừa vào cache key: giảm số biến thể cache key, nhiều request trúng cùng object nên hit ratio tăng.\n✓ Origin Shield: lớp cache trung tâm gom request từ nhiều POP, giảm origin request đáng kể và tăng hiệu quả cache.\n✗ Giảm TTL về 0: ép mọi request đi tới origin, hit ratio giảm và tải origin tăng — ngược mục tiêu.\n✗ Đổi price class sang edge đắt nhất: chỉ ảnh hưởng vùng phục vụ/chi phí, không cải thiện hit ratio.\n✗ Tắt compression: không liên quan cache hit và còn làm payload lớn hơn, chậm hơn.",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "saa-m1-051",
+    "id": "saa-m3-050",
     "courseId": "SAA-C03",
     "lesson": "ch2-04-network-performance",
     "certifications": [
@@ -12050,56 +17387,10 @@ export const generatedQuestions: Question[] = [
     ],
     "explanation": "PrivateLink expose dịch vụ một chiều qua interface endpoint, không cần route hay biết IP của provider và tránh xung đột CIDR.\n✓ PrivateLink endpoint service + interface endpoint: traffic private qua ENI, khách hàng không cần route/IP provider, không lo CIDR overlap — đúng cho SaaS multi-tenant.\n✗ VPC peering: cần route tới CIDR của nhau, không transitive, dễ xung đột CIDR với hàng trăm khách hàng.\n✗ Transit Gateway: kết nối mạng đầy đủ hai chiều, lộ topology provider và vẫn có nguy cơ CIDR overlap.\n✗ ALB public + security group: traffic đi qua internet, vi phạm yêu cầu private.",
     "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-050",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-04-network-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một công ty chạy hai bản sao của ứng dụng web ở us-east-1 và eu-west-1, mỗi bản sau một ALB riêng. Họ muốn user được tự động định tuyến tới region có độ trễ mạng thấp nhất từ vị trí của họ. Routing policy nào của Route 53 phù hợp nhất?",
-    "options": [
-      "Latency-based routing với health check trên mỗi ALB",
-      "Weighted routing chia 50/50 giữa hai region",
-      "Geolocation routing theo quốc gia của user",
-      "Simple routing trỏ tới cả hai ALB cùng lúc"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Latency-based routing định tuyến user tới region cho latency thấp nhất từ resolver của họ, kèm health check để bỏ qua region lỗi.\n✓ Latency-based routing: chọn region latency thấp nhất tự động, health check loại region down — đúng mục tiêu.\n✗ Weighted 50/50: chia theo tỉ lệ cố định, không tối ưu theo latency địa lý.\n✗ Geolocation: định tuyến theo ranh giới địa lý cố định, không phản ánh latency thực tế và dễ bỏ sót vùng chưa map.\n✗ Simple routing nhiều giá trị: trả về ngẫu nhiên không xét latency và không health check.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-049",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-03-database-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một công ty thu thập clickstream từ website thương mại điện tử và cần đẩy dữ liệu này vào một S3 data lake để phân tích batch hàng ngày. Họ không cần xử lý real-time, không muốn quản lý cluster, và muốn giải pháp có least operational overhead để load dữ liệu vào S3 với khả năng tự động buffer, nén và partition theo thời gian. Giải pháp nào phù hợp nhất?",
-    "options": [
-      "Amazon Data Firehose ghi trực tiếp vào S3 với buffering, nén (GZIP/Snappy) và dynamic partitioning theo thời gian",
-      "Amazon Kinesis Data Streams kết hợp consumer application chạy trên EC2 tự ghi dữ liệu vào S3",
-      "Amazon MSK với một custom Kafka Connect S3 sink connector tự vận hành",
-      "Amazon EMR cluster đọc dữ liệu từ một SQS queue rồi ghi xuống S3 theo lịch"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Firehose là dịch vụ fully managed để load streaming data vào S3 với buffering, nén và partition, đúng nhu cầu ingestion với least operational overhead.\n✓ Amazon Data Firehose fully managed, tự buffer/nén/partition và ghi vào S3, không cần quản lý hạ tầng.\n✗ Kinesis Data Streams cần tự viết và vận hành consumer trên EC2, tăng operational overhead.\n✗ MSK + Kafka Connect tự vận hành đòi hỏi quản lý cluster và connector, quá nặng cho nhu cầu này.\n✗ EMR cluster cho batch ETL là thừa thãi và tốn kém cho việc chỉ load dữ liệu vào S3.",
-    "domain": 3,
     "mock": 3
   },
   {
-    "id": "saa-m1-052",
+    "id": "saa-m3-051",
     "courseId": "SAA-C03",
     "lesson": "ch2-03-database-performance",
     "certifications": [
@@ -12119,56 +17410,10 @@ export const generatedQuestions: Question[] = [
     ],
     "explanation": "Kinesis Data Streams đảm bảo ordering theo shard (partition key), retention tới 7+ ngày và Enhanced Fan-Out cho nhiều consumer real-time với độ trễ thấp.\n✓ Kinesis Data Streams giữ thứ tự per-device qua partition key, hỗ trợ replay và nhiều consumer real-time với Enhanced Fan-Out.\n✗ Firehose chỉ ghi batch vào S3, không phải real-time sub-second và không hỗ trợ replay luồng theo thứ tự.\n✗ SQS Standard không đảm bảo ordering và không cho phép nhiều consumer độc lập đọc lại cùng message.\n✗ SNS+SQS Standard không giữ ordering nghiêm ngặt per device và không hỗ trợ replay dữ liệu lịch sử.",
     "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-051",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-03-database-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một công ty lưu hàng terabyte log JSON thô trong S3. Đội data muốn chạy các truy vấn SQL ad-hoc không thường xuyên trực tiếp trên dữ liệu này mà không cần load vào database hay vận hành cluster, và chỉ trả tiền theo dung lượng quét. Giải pháp nào tối ưu nhất về cost-effective và least operational overhead?",
-    "options": [
-      "Amazon Athena truy vấn trực tiếp dữ liệu S3, dùng AWS Glue Data Catalog làm schema",
-      "Amazon Redshift provisioned cluster với COPY toàn bộ dữ liệu từ S3 vào rồi truy vấn",
-      "Amazon EMR với Hive chạy liên tục để phục vụ truy vấn ad-hoc",
-      "Amazon RDS for PostgreSQL với dữ liệu được import định kỳ từ S3"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Athena là serverless query engine query trực tiếp trên S3, tính phí theo dữ liệu quét, lý tưởng cho truy vấn ad-hoc không thường xuyên.\n✓ Athena serverless, không cần cluster, trả tiền theo lượng quét, dùng Glue Data Catalog cho schema.\n✗ Redshift provisioned cluster chạy liên tục tốn chi phí cố định, thừa cho truy vấn không thường xuyên.\n✗ EMR Hive chạy liên tục đòi hỏi quản lý cluster và chi phí cao khi truy vấn thưa thớt.\n✗ RDS cần import dữ liệu và không phù hợp để quét hàng terabyte log thô trong S3.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-050",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-03-database-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một tổ chức cần chạy job ETL theo lịch để làm sạch, biến đổi và join nhiều nguồn dữ liệu trong S3 trước khi nạp vào data lake dạng Parquet. Họ muốn giải pháp serverless, tự động khám phá schema và sinh code transformation, với least operational overhead. Dịch vụ nào phù hợp nhất?",
-    "options": [
-      "AWS Glue (Crawler khám phá schema + ETL jobs trên Spark serverless) ghi output Parquet vào S3",
-      "Amazon EMR cluster với Spark được khởi tạo theo lịch để chạy job ETL",
-      "AWS Lambda functions được orchestrate bằng Step Functions để transform toàn bộ dữ liệu",
-      "Amazon Managed Service for Apache Flink xử lý dữ liệu rồi ghi vào S3"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Glue là dịch vụ ETL serverless với crawler khám phá schema và job Spark managed, lý tưởng cho batch ETL nạp data lake.\n✓ Glue serverless, crawler tự phát hiện schema, ETL job sinh code và ghi Parquet, least operational overhead.\n✗ EMR cần cấu hình và quản lý cluster Spark, nhiều operational overhead hơn Glue.\n✗ Lambda có giới hạn 15 phút và bộ nhớ, không hợp cho ETL nặng join nhiều nguồn TB dữ liệu.\n✗ Managed Service for Apache Flink dành cho streaming real-time, không phải batch ETL theo lịch.",
-    "domain": 3,
     "mock": 3
   },
   {
-    "id": "saa-m1-053",
+    "id": "saa-m3-052",
     "courseId": "SAA-C03",
     "lesson": "ch2-03-database-performance",
     "certifications": [
@@ -12188,81 +17433,10 @@ export const generatedQuestions: Question[] = [
     ],
     "explanation": "MSK là Kafka được AWS quản lý, giữ nguyên Kafka API và hệ sinh thái, cho phép migrate mà không viết lại ứng dụng.\n✓ MSK tương thích Kafka API, hỗ trợ Kafka Connect/Schema Registry, AWS quản lý broker, ít vận hành hơn self-managed.\n✗ Kinesis Data Streams không tương thích Kafka API, buộc viết lại toàn bộ producer/consumer.\n✗ Self-managed Kafka trên EC2 vẫn để công ty gánh patching, scaling và vận hành broker.\n✗ SQS FIFO không cung cấp Kafka API, không hỗ trợ Kafka Connect/Schema Registry và mô hình consumer group.",
     "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-052",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-03-database-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một pipeline streaming dùng Kinesis Data Streams cần biến đổi nhẹ từng record (làm sạch, enrich) ngay trước khi lưu vào S3 cho data lake. Lượng dữ liệu lớn nhưng transform đơn giản, và đội muốn tránh quản lý hạ tầng tối đa. Kiến trúc nào tối ưu nhất về least operational overhead?",
-    "options": [
-      "Kết nối Amazon Data Firehose vào stream và bật tích hợp Lambda transformation để biến đổi record trước khi ghi S3",
-      "Triển khai một consumer application Spark Streaming trên EMR đọc stream, transform và ghi S3",
-      "Dùng KCL consumer chạy trên một Auto Scaling group EC2 để transform và ghi S3",
-      "Ghi raw vào S3 bằng Firehose rồi chạy Glue ETL batch định kỳ để transform sau"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Firehose với Lambda transformation cho phép biến đổi từng record inline rồi tự ghi vào S3, fully managed cho transform nhẹ trên stream.\n✓ Firehose + Lambda transformation managed hoàn toàn, biến đổi record inline và tự ghi S3, ít vận hành nhất.\n✗ Spark Streaming trên EMR đòi hỏi quản lý cluster, quá nặng cho transform đơn giản.\n✗ KCL consumer trên EC2 ASG buộc tự viết và vận hành ứng dụng, nhiều operational overhead.\n✗ Ghi raw rồi Glue batch thêm độ trễ và một bước xử lý, không tối ưu khi transform có thể làm inline.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-051",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-03-database-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một công ty cần xử lý batch khổng lồ (hàng petabyte) bằng các framework big data như Apache Spark, Hive và Presto, với các job chạy không liên tục. Họ muốn tối ưu chi phí bằng cách dùng Spot Instances cho compute và tách storage khỏi compute. Giải pháp nào phù hợp nhất?",
-    "options": [
-      "Amazon EMR với transient cluster đọc/ghi dữ liệu trên S3 (EMRFS) và dùng Spot Instances cho task nodes",
-      "AWS Glue ETL chạy tất cả job Spark petabyte-scale theo mô hình serverless",
-      "Amazon Athena chạy mọi job transformation big data trực tiếp trên S3",
-      "Amazon Redshift Spectrum xử lý toàn bộ workload Spark và Hive"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "EMR transient cluster với EMRFS tách storage (S3) khỏi compute và dùng Spot cho task nodes, tối ưu chi phí cho big data batch petabyte-scale.\n✓ EMR hỗ trợ Spark/Hive/Presto, dùng S3 làm storage tách rời, Spot Instances giảm chi phí cho job không liên tục.\n✗ Glue serverless tiện nhưng kém kinh tế và linh hoạt hơn EMR cho workload petabyte cần Spot và nhiều framework.\n✗ Athena là query engine SQL, không chạy được job Spark/Hive tùy biến petabyte-scale.\n✗ Redshift Spectrum chỉ query S3 từ Redshift, không phải nền tảng chạy Spark/Hive.",
-    "domain": 3,
     "mock": 3
   },
   {
-    "id": "saa-m2-053",
-    "courseId": "SAA-C03",
-    "lesson": "ch2-03-database-performance",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "multi",
-    "question": "Một đội đang thiết kế ingestion layer cho data lake trên S3. Họ cần (1) nhận nhiều nguồn streaming với khả năng delivery vào S3 fully managed, và (2) tối ưu chi phí query về sau bằng cách lưu dữ liệu ở định dạng cột nén. Hãy chọn HAI hành động phù hợp nhất.",
-    "options": [
-      "Dùng Amazon Data Firehose để delivery streaming data vào S3 với buffering và retry tự động",
-      "Cấu hình Firehose chuyển đổi record format sang Apache Parquet trước khi ghi vào S3",
-      "Lưu toàn bộ dữ liệu dưới dạng raw JSON không nén để Athena dễ đọc nhất",
-      "Dùng Kinesis Data Streams và tự viết consumer EC2 để ghi từng record nhỏ riêng lẻ vào S3",
-      "Bật S3 Versioning trên bucket để tối ưu chi phí query Athena"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Firehose managed delivery cộng với chuyển sang Parquet là cặp giải pháp đúng cho ingestion fully managed và query tiết kiệm.\n✓ Firehose delivery streaming vào S3 fully managed với buffering/retry, đáp ứng yêu cầu ingestion.\n✓ Firehose convert sang Parquet (cột, nén) giảm dữ liệu Athena phải quét, tối ưu chi phí query.\n✗ JSON thô không nén làm tăng dung lượng quét và chi phí Athena, không tối ưu.\n✗ Tự viết consumer EC2 ghi file nhỏ tăng operational overhead và gây small-file problem.\n✗ S3 Versioning không liên quan đến tối ưu chi phí query Athena.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "saa-m1-054",
+    "id": "saa-m3-053",
     "courseId": "SAA-C03",
     "lesson": "ch2-03-database-performance",
     "certifications": [
@@ -12282,382 +17456,10 @@ export const generatedQuestions: Question[] = [
     ],
     "explanation": "S3 Event Notification + Lambda là kiến trúc event-driven serverless, chỉ chạy và tính phí khi có file mới upload.\n✓ S3 event trigger Lambda xử lý ngay khi có file, serverless, chỉ trả tiền theo lần chạy.\n✗ EMR cluster chạy liên tục tốn chi phí cố định và là overkill cho file nhỏ không thường xuyên.\n✗ Glue job theo lịch thêm độ trễ và chi phí khi không có file, kém hơn mô hình event-driven.\n✗ EC2 cron poll tốn chi phí thường trực và tăng operational overhead so với serverless.",
     "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "saa-m1-055",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-02-storage-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một công ty lưu trữ dữ liệu trên S3 với mẫu truy cập không thể dự đoán: một số object được truy cập thường xuyên, số khác hầu như không bao giờ, và mẫu này thay đổi theo thời gian. Họ muốn tối ưu chi phí lưu trữ một cách tự động mà KHÔNG cần phân tích thủ công hay viết lifecycle policy phức tạp. Giải pháp nào phù hợp nhất?",
-    "options": [
-      "Dùng S3 Intelligent-Tiering để tự động chuyển object giữa các access tier theo mẫu truy cập",
-      "Dùng S3 Standard cho mọi object để đảm bảo hiệu năng",
-      "Tạo lifecycle policy chuyển tất cả object sang S3 Standard-IA sau 30 ngày",
-      "Chuyển toàn bộ dữ liệu sang S3 Glacier Flexible Retrieval để giảm chi phí"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Mẫu truy cập không dự đoán được và hay thay đổi là đúng kịch bản của Intelligent-Tiering, vốn tự dịch chuyển object giữa các tier mà không có phí truy xuất.\n✓ S3 Intelligent-Tiering — đúng, tự động tối ưu chi phí theo mẫu truy cập thay đổi, không cần phân tích thủ công.\n✗ S3 Standard cho mọi object — không tối ưu chi phí cho dữ liệu ít truy cập.\n✗ Lifecycle sang Standard-IA sau 30 ngày — giả định cứng nhắc, có thể tính phí truy xuất nếu object lại được truy cập nhiều.\n✗ Glacier Flexible Retrieval — gây độ trễ truy xuất cho object đang được truy cập thường xuyên.",
-    "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-054",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-02-storage-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một công ty media lưu các bản ghi log truy cập vào S3. Log được phân tích nhiều trong 30 ngày đầu, sau đó hiếm khi cần nhưng vẫn phải truy xuất trong vài giờ nếu có yêu cầu audit, và phải giữ tổng cộng 7 năm vì lý do compliance. Giải pháp lifecycle nào TỐI ƯU CHI PHÍ nhất?",
-    "options": [
-      "Giữ ở S3 Standard 30 ngày, chuyển sang S3 Glacier Flexible Retrieval, rồi sang S3 Glacier Deep Archive, xóa sau 7 năm",
-      "Giữ ở S3 Standard 30 ngày rồi chuyển thẳng sang S3 Glacier Deep Archive, xóa sau 7 năm",
-      "Giữ ở S3 Standard-IA toàn bộ 7 năm",
-      "Giữ ở S3 Standard 30 ngày rồi chuyển sang S3 Standard-IA cho 7 năm còn lại"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Cần truy xuất trong vài giờ ở giai đoạn đầu sau 30 ngày (phù hợp Glacier Flexible Retrieval), rồi mới hạ xuống Deep Archive rẻ nhất cho phần đuôi dài.\n✓ Standard → Glacier Flexible Retrieval → Deep Archive — đúng, cân bằng giữa yêu cầu truy xuất vài giờ và chi phí thấp nhất về dài hạn.\n✗ Standard → thẳng Deep Archive — Deep Archive cần tới ~12 giờ để truy xuất, không đáp ứng được nhu cầu audit vài giờ trong giai đoạn đầu.\n✗ Standard-IA toàn bộ 7 năm — đắt hơn nhiều so với Glacier cho dữ liệu hầu như không truy cập.\n✗ Standard → Standard-IA cho 7 năm — vẫn đắt hơn nhiều so với tier archive cho dữ liệu lưu trữ dài hạn.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-052",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-02-storage-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng tạo ra hàng triệu object nhỏ (mỗi object khoảng 50 KB) trên S3. Dữ liệu được truy cập không thường xuyên sau 30 ngày nhưng cần truy xuất tức thì (milliseconds) khi cần. Kiến trúc sư muốn giảm chi phí nhưng lo ngại về phí tối thiểu. Lựa chọn TỐI ƯU CHI PHÍ nhất là gì?",
-    "options": [
-      "Giữ object ở S3 Standard vì S3 Standard-IA có kích thước object tối thiểu tính phí 128 KB",
-      "Chuyển object sang S3 Standard-IA sau 30 ngày bằng lifecycle policy",
-      "Chuyển object sang S3 One Zone-IA sau 30 ngày bằng lifecycle policy",
-      "Chuyển object sang S3 Glacier Instant Retrieval sau 30 ngày"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Với hàng triệu object 50 KB, các tier IA tính phí lưu trữ tối thiểu theo 128 KB/object nên thực tế đắt hơn Standard; truy xuất tức thì còn loại Glacier truyền thống.\n✓ Giữ ở S3 Standard — đúng, vì object dưới 128 KB bị tính phí như 128 KB ở tier IA, khiến IA đắt hơn cho object rất nhỏ và nhiều.\n✗ Standard-IA sau 30 ngày — phí tối thiểu 128 KB/object làm chi phí thực tế cao hơn với object 50 KB.\n✗ One Zone-IA sau 30 ngày — cũng bị phí tối thiểu 128 KB và giảm độ bền (một AZ).\n✗ Glacier Instant Retrieval — cũng có kích thước tối thiểu tính phí 128 KB và phí truy xuất, không tối ưu cho object nhỏ truy cập tức thì.",
-    "domain": 4,
     "mock": 3
-  },
-  {
-    "id": "saa-m1-056",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-02-storage-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "multi",
-    "question": "Một tổ chức có hàng nghìn EBS volume và muốn giảm chi phí cũng như rủi ro của việc quản lý EBS snapshot thủ công (tạo snapshot định kỳ, giữ lại theo policy, xóa snapshot cũ). Họ muốn least operational overhead. Chọn HAI hành động giúp đạt mục tiêu này.",
-    "options": [
-      "Dùng Amazon Data Lifecycle Manager (DLM) để tự động tạo, giữ và xóa EBS snapshot theo policy",
-      "Cấu hình DLM lưu trữ các snapshot ít dùng vào EBS Snapshots Archive tier để giảm chi phí lưu trữ snapshot dài hạn",
-      "Viết một cron job trên mỗi EC2 instance gọi AWS CLI để tạo snapshot",
-      "Copy thủ công snapshot sang một Region khác mỗi tuần để giảm chi phí",
-      "Bật EBS encryption để giảm chi phí lưu trữ snapshot"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "DLM tự động hóa vòng đời snapshot, và DLM có thể lưu trữ snapshot ít dùng vào EBS Snapshots Archive tier rẻ hơn cho dài hạn, cùng giảm chi phí lẫn vận hành.\n✓ Amazon Data Lifecycle Manager — đúng, tự động hóa toàn bộ vòng đời snapshot, giảm thao tác thủ công.\n✓ DLM lưu vào EBS Snapshots Archive tier — đúng, hạ chi phí lưu trữ snapshot giữ lâu mà ít truy cập.\n✗ Cron job trên mỗi instance — tăng operational overhead và dễ lỗi, trái mục tiêu.\n✗ Copy snapshot sang Region khác hằng tuần — phục vụ DR/độ bền chứ không giảm chi phí, còn tăng phí.\n✗ Bật EBS encryption — liên quan bảo mật, không ảnh hưởng chi phí lưu trữ snapshot.",
-    "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "saa-m1-057",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-02-storage-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một nhóm phân tích cần quản trị tập trung toàn bộ hàng trăm bucket S3 trên nhiều tài khoản trong AWS Organizations. Họ muốn hiểu xu hướng dung lượng lưu trữ, phát hiện bucket có nhiều object không được truy cập và tìm cơ hội tiết kiệm chi phí (ví dụ object nên chuyển tier). Công cụ AWS nào phù hợp nhất?",
-    "options": [
-      "S3 Storage Lens với dashboard nâng cao (advanced metrics) ở cấp organization",
-      "Amazon CloudWatch metrics cho từng bucket riêng lẻ",
-      "S3 Inventory report kết hợp Amazon Athena cho mỗi bucket",
-      "AWS Cost Explorer lọc theo dịch vụ S3"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "S3 Storage Lens cung cấp khả năng quan sát dung lượng và hoạt động trên toàn organization với khuyến nghị tối ưu chi phí, đúng nhu cầu tập trung đa tài khoản.\n✓ S3 Storage Lens advanced ở cấp organization — đúng, cung cấp insight toàn tổ chức và khuyến nghị tối ưu chi phí cho hàng trăm bucket.\n✗ CloudWatch metrics từng bucket — không tập trung, không có khuyến nghị tối ưu, tốn công gộp thủ công.\n✗ S3 Inventory + Athena mỗi bucket — cho danh sách object nhưng đòi nhiều thao tác phân tích thủ công, không có dashboard tổng hợp tổ chức.\n✗ Cost Explorer lọc S3 — cho biết chi phí tổng nhưng không phân tích chi tiết hành vi truy cập object để khuyến nghị chuyển tier.",
-    "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-055",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-02-storage-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một công ty dùng Amazon EFS để lưu file của ứng dụng. Phân tích cho thấy phần lớn file chỉ được truy cập trong vài ngày đầu rồi gần như không động đến nữa, nhưng đôi khi vẫn cần đọc lại với độ trễ chấp nhận được. Họ muốn giảm chi phí lưu trữ EFS mà KHÔNG thay đổi code ứng dụng. Cách TỐI ƯU CHI PHÍ nhất là gì?",
-    "options": [
-      "Bật EFS Lifecycle Management để tự động chuyển file ít truy cập sang EFS Infrequent Access (IA), và bật Intelligent-Tiering để tự đưa file trở lại khi được truy cập",
-      "Di chuyển toàn bộ file sang một EFS file system mới dùng One Zone storage class",
-      "Sao chép file ít dùng sang S3 Glacier bằng script tùy biến và xóa khỏi EFS",
-      "Tăng provisioned throughput của EFS để xử lý nhanh hơn rồi xóa file cũ"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "EFS Lifecycle Management cùng Intelligent-Tiering tự chuyển file ít truy cập xuống tier IA rẻ hơn (và đưa lại Standard khi được truy cập), giảm chi phí mà không sửa code.\n✓ EFS Lifecycle Management + IA + Intelligent-Tiering — đúng, tự động dịch chuyển file theo mẫu truy cập, minh bạch với ứng dụng.\n✗ EFS One Zone — giảm chi phí nhưng hạ độ bền (một AZ) và đòi di chuyển dữ liệu, không phải giải pháp tier hóa theo truy cập.\n✗ Script copy sang Glacier rồi xóa khỏi EFS — tăng operational overhead lớn và thay đổi cách truy cập file, đòi sửa ứng dụng.\n✗ Tăng provisioned throughput — làm tăng chi phí, không liên quan tối ưu lưu trữ.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-053",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-02-storage-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một công ty lưu các bản backup database vào S3, chỉ truy cập lại khi cần khôi phục thảm họa (rất hiếm). Yêu cầu RTO cho phép vài giờ để truy xuất backup. Backup này KHÔNG cần độ bền multi-AZ vì đã có bản gốc ở nơi khác. Mục tiêu là chi phí lưu trữ thấp nhất có thể. Storage class nào phù hợp nhất?",
-    "options": [
-      "S3 Glacier Flexible Retrieval",
-      "S3 One Zone-IA",
-      "S3 Glacier Deep Archive",
-      "S3 Glacier Instant Retrieval"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Truy xuất hiếm với RTO vài giờ khớp đúng Glacier Flexible Retrieval (standard retrieval 3-5 giờ), rẻ hơn nhiều so với các tier truy cập nhanh trong khi vẫn đáp ứng RTO.\n✓ Glacier Flexible Retrieval — đúng, chi phí lưu trữ rất thấp và truy xuất trong vài giờ đáp ứng RTO.\n✗ One Zone-IA — chi phí lưu trữ cao hơn nhiều Glacier và phù hợp dữ liệu cần truy xuất tức thì hơn.\n✗ Deep Archive — rẻ hơn nữa nhưng truy xuất ~12 giờ có thể vượt RTO vài giờ.\n✗ Glacier Instant Retrieval — tối ưu cho truy cập tức thì nhưng đắt hơn Flexible Retrieval cho dữ liệu chỉ cần trong vài giờ.",
-    "domain": 4,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-058",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-02-storage-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một bucket S3 bật versioning. Theo thời gian, các noncurrent (previous) version của object tích lũy và làm tăng chi phí lưu trữ đáng kể, dù chúng hiếm khi cần. Cách TỐI ƯU CHI PHÍ với least operational overhead để quản lý các version cũ này là gì?",
-    "options": [
-      "Cấu hình lifecycle rule chuyển noncurrent version sang Glacier sau X ngày và xóa (expire) chúng sau Y ngày",
-      "Tắt versioning trên bucket để ngừng tạo version mới",
-      "Viết một Lambda chạy hằng đêm liệt kê và xóa noncurrent version cũ",
-      "Bật S3 Replication để chuyển version cũ sang bucket rẻ hơn"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Lifecycle rule dành riêng cho noncurrent version cho phép tự động hạ tier rồi expire chúng, giảm chi phí mà không cần code.\n✓ Lifecycle rule cho noncurrent version (chuyển Glacier + expire) — đúng, tự động hóa hoàn toàn việc tier hóa và dọn dẹp version cũ.\n✗ Tắt versioning — không xóa version cũ đã tồn tại và làm mất khả năng bảo vệ dữ liệu.\n✗ Lambda xóa hằng đêm — tăng operational overhead và rủi ro lỗi so với lifecycle dựng sẵn.\n✗ S3 Replication — sao chép thêm dữ liệu làm tăng chi phí, không xử lý việc dọn version cũ.",
-    "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-056",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-02-storage-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Một data lake trên S3 dùng S3 Intelligent-Tiering. Kiến trúc sư muốn tối ưu thêm chi phí cho dữ liệu archive sâu nhưng vẫn giữ tính tự động của Intelligent-Tiering, đồng thời nắm rõ các đặc tính chi phí. Chọn HAI phát biểu ĐÚNG về cách tối ưu và đặc tính chi phí của S3 Intelligent-Tiering.",
-    "options": [
-      "Có thể bật Archive Access và Deep Archive Access tier (opt-in) trong Intelligent-Tiering để tự động chuyển object không truy cập lâu xuống tier archive rẻ hơn",
-      "S3 Intelligent-Tiering tính một khoản phí monitoring/automation nhỏ theo từng object, nên cần cân nhắc khi có rất nhiều object nhỏ",
-      "S3 Intelligent-Tiering áp dụng phí truy xuất (retrieval fee) cho mọi lần đọc object ở Frequent Access tier",
-      "Object nhỏ hơn 128 KB luôn bị tính phí truy xuất khi được tự động chuyển xuống Deep Archive Access tier",
-      "Khi bật Deep Archive Access tier, object được truy xuất tức thì (milliseconds) giống như ở Frequent Access tier"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Intelligent-Tiering hỗ trợ opt-in Archive/Deep Archive Access tier để tự động hạ chi phí sâu hơn, và nó tính một khoản phí monitoring/automation nhỏ theo object cần cân nhắc.\n✓ Bật Archive/Deep Archive Access tier (opt-in) — đúng, cho phép tự động chuyển object lạnh xuống tier archive rẻ hơn trong Intelligent-Tiering.\n✓ Có phí monitoring/automation nhỏ trên mỗi object — đúng, đây là chi phí ngầm cần cân nhắc, đặc biệt với rất nhiều object nhỏ.\n✗ Tính phí truy xuất cho mọi lần đọc ở Frequent Access tier — sai, Intelligent-Tiering không tính phí truy xuất khi truy cập object giữa các access tier thông thường.\n✗ Object nhỏ hơn 128 KB luôn bị tính phí truy xuất khi xuống Deep Archive — sai, object nhỏ hơn 128 KB không được tự động chuyển xuống tier archive mà giữ ở Frequent Access.\n✗ Deep Archive Access truy xuất tức thì — sai, object ở Deep Archive Access cần tới hàng giờ để khôi phục, không tức thì.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "saa-m2-057",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-01-compute-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một công ty chạy một workload phân tích batch trên EC2. Workload có thể bị gián đoạn bất cứ lúc nào, tự lưu checkpoint và chạy lại từ checkpoint khi cần. Công ty muốn giảm chi phí compute tối đa. Giải pháp nào là MOST cost-effective?",
-    "options": [
-      "Chạy workload trên EC2 Spot Instances",
-      "Mua Standard Reserved Instances kỳ hạn 1 năm",
-      "Chạy trên EC2 On-Demand Instances",
-      "Mua EC2 Instance Savings Plans kỳ hạn 3 năm"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Workload chịu được gián đoạn và có checkpoint là use case kinh điển cho Spot, vốn rẻ tới ~90% so với On-Demand.\n✓ Spot Instances tận dụng capacity dư thừa với giá thấp nhất, phù hợp workload fault-tolerant, có thể gián đoạn.\n✗ Reserved Instances cam kết 1 năm phù hợp workload chạy liên tục, không khai thác được tính fault-tolerant để giảm chi phí tối đa.\n✗ On-Demand đắt nhất, lãng phí khi workload chấp nhận được gián đoạn.\n✗ Savings Plans 3 năm cam kết chi tiêu cố định, không rẻ bằng Spot cho workload gián đoạn được.",
-    "domain": 4,
-    "mock": 2
   },
   {
     "id": "saa-m3-054",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-01-compute-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một ứng dụng web Java chạy ổn định 24/7 trên các EC2 instance họ m5 trong suốt 3 năm tới với mức sử dụng dự đoán được. Kiến trúc sư muốn giảm chi phí nhưng vẫn giữ linh hoạt thay đổi instance family, size và Region khi cần. Lựa chọn nào tối ưu nhất?",
-    "options": [
-      "Compute Savings Plans kỳ hạn 3 năm",
-      "Standard Reserved Instances kỳ hạn 3 năm gắn với họ m5",
-      "EC2 Spot Instances trong một Spot Fleet",
-      "On-Demand Capacity Reservations"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Compute Savings Plans cho giảm giá tương đương RI nhưng linh hoạt qua mọi instance family, size, OS, Region và cả Fargate/Lambda.\n✓ Compute Savings Plans áp dụng tự động khi bạn đổi family/size/Region, lý tưởng cho nhu cầu giữ linh hoạt với cam kết dài hạn.\n✗ Standard Reserved Instances 3 năm cho discount cao nhưng gắn cứng vào họ m5, khó đổi family/Region.\n✗ Spot không phù hợp cho web app cần chạy liên tục 24/7 ổn định.\n✗ On-Demand Capacity Reservations chỉ đảm bảo capacity, không tự giảm giá đáng kể.",
-    "domain": 4,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-059",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-01-compute-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một đội phát triển chạy ứng dụng microservices trên Amazon ECS với EC2 launch type. Họ phát hiện cluster thường xuyên có nhiều CPU và memory nhàn rỗi vào ban đêm, gây lãng phí chi phí. Họ muốn giảm chi phí với LEAST operational overhead. Giải pháp nào tốt nhất?",
-    "options": [
-      "Chuyển sang ECS với AWS Fargate và bật Fargate Spot cho các task không quan trọng",
-      "Cấu hình EC2 Auto Scaling với target tracking và ECS Cluster Auto Scaling (capacity provider) để tự động scale in các node nhàn rỗi vào ban đêm",
-      "Mua Reserved Instances cho toàn bộ EC2 trong cluster để giảm đơn giá",
-      "Tăng kích thước instance để gộp nhiều task hơn trên ít node hơn"
-    ],
-    "correctIndices": [
-      1
-    ],
-    "explanation": "Idle về đêm là vấn đề về capacity dư thừa; ECS Cluster Auto Scaling (capacity provider) phối hợp EC2 Auto Scaling tự động scale in để loại bỏ node nhàn rỗi.\n✓ ECS Cluster Auto Scaling qua capacity provider kết hợp EC2 Auto Scaling tự co giãn theo số task thực, loại bỏ node idle ban đêm với ít vận hành.\n✗ Chuyển toàn bộ sang Fargate là thay đổi launch type lớn, nhiều overhead di trú và không phải lúc nào cũng rẻ hơn cho tải ổn định.\n✗ Reserved Instances giảm đơn giá nhưng vẫn trả tiền cho node idle ban đêm, không giải quyết lãng phí.\n✗ Tăng instance size không tự giảm capacity khi tải thấp về đêm.",
-    "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-058",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-01-compute-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một công ty chạy API REST có lưu lượng rất biến động: cao điểm ngắn vào giờ làm việc và gần như không có request vào ban đêm và cuối tuần. Hiện tại API chạy trên một EC2 Auto Scaling Group với mức tối thiểu luôn bật, dẫn đến trả tiền cho thời gian rỗi. Kiến trúc sư muốn giải pháp MOST cost-effective và serverless. Phương án nào tốt nhất?",
-    "options": [
-      "Tái kiến trúc API dùng Amazon API Gateway và AWS Lambda",
-      "Giảm minimum size của Auto Scaling Group xuống 1 và dùng Spot Instances",
-      "Chuyển sang AWS Fargate với một service luôn chạy 2 task",
-      "Mua Compute Savings Plans cho Auto Scaling Group hiện tại"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Với lưu lượng spiky và nhiều thời gian rỗi, mô hình pay-per-request của Lambda + API Gateway loại bỏ hoàn toàn chi phí idle và là kiến trúc serverless.\n✓ API Gateway + Lambda chỉ tính tiền theo số request/thời gian chạy, không trả tiền khi không có traffic, tối ưu nhất cho tải biến động và đúng yêu cầu serverless.\n✗ Giảm min size + Spot vẫn phải trả tiền cho instance đang chạy và không phải serverless.\n✗ Fargate với 2 task luôn chạy vẫn tốn tiền suốt thời gian rỗi ban đêm và cuối tuần.\n✗ Savings Plans cam kết chi tiêu cố định, lãng phí khi tải gần như bằng 0 phần lớn thời gian.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-055",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-01-compute-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng backend chạy trên EC2 m5.4xlarge. Sau khi xem AWS Compute Optimizer và CloudWatch, đội nhận thấy CPU trung bình chỉ ~8% và memory ~15% trong nhiều tuần. Ứng dụng là Java thuần, đã được kiểm thử chạy tốt trên ARM. Hành động nào MOST cost-effective?",
-    "options": [
-      "Right-size xuống một instance dựa trên Graviton (ví dụ m7g) có kích thước nhỏ hơn theo khuyến nghị của Compute Optimizer",
-      "Mua Standard Reserved Instances 3 năm cho m5.4xlarge để khóa giá thấp",
-      "Bật EC2 Auto Scaling để thêm m5.4xlarge khi tải tăng",
-      "Chuyển ứng dụng sang Spot Instances cùng kích thước m5.4xlarge"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Instance over-provisioned nghiêm trọng; right-sizing xuống bậc nhỏ hơn và sang Graviton vừa giảm lãng phí vừa cải thiện price/performance.\n✓ Right-size theo khuyến nghị Compute Optimizer + chuyển sang Graviton (m7g) cắt giảm cả số core thừa lẫn đơn giá, tối ưu chi phí nhất cho app ARM-ready.\n✗ Reserved Instances 3 năm cho m5.4xlarge khóa giá cho một instance vốn đã quá lớn, cố định lãng phí.\n✗ Auto Scaling thêm instance không giải quyết được việc instance hiện tại đã quá khổ.\n✗ Spot cùng size m5.4xlarge giảm đơn giá nhưng vẫn trả cho tài nguyên thừa và thêm rủi ro gián đoạn.",
-    "domain": 4,
-    "mock": 3
-  },
-  {
-    "id": "saa-m1-060",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-01-compute-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một hệ thống xử lý hàng đợi đọc message từ Amazon SQS và xử lý ảnh. Tải nền (baseline) ổn định khoảng 10 instance suốt ngày đêm, nhưng có spike xử lý theo lô có thể chịu gián đoạn. Công ty muốn cấu trúc chi phí tối ưu cho cả baseline lẫn spike. Cách tiếp cận nào tốt nhất?",
-    "options": [
-      "Dùng Savings Plans (hoặc Reserved Instances) cho ~10 instance baseline và dùng Spot Instances cho phần spike fault-tolerant",
-      "Dùng On-Demand cho toàn bộ baseline và spike để đơn giản hóa vận hành",
-      "Mua Reserved Instances cho cả baseline lẫn công suất spike đỉnh",
-      "Dùng Spot Instances cho toàn bộ cả baseline lẫn spike để giá rẻ nhất"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Phối hợp commitment cho phần luôn chạy và Spot cho phần co giãn fault-tolerant là pattern tối ưu chi phí kinh điển.\n✓ Savings Plans/RI phủ baseline ổn định với discount, còn Spot phủ spike chịu gián đoạn được giá rẻ nhất — tối ưu cả hai phần.\n✗ On-Demand toàn bộ đơn giản nhưng đắt nhất, bỏ qua cơ hội discount cho baseline.\n✗ RI cho cả công suất spike đỉnh lãng phí vì spike không thường trực, cam kết phần ít dùng.\n✗ Spot cho toàn bộ rủi ro cho baseline cần độ ổn định, có thể bị reclaim đồng loạt.",
-    "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-059",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-01-compute-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một công ty fintech chạy fleet EC2 stateless lớn cho fanout xử lý sự kiện. Họ muốn dùng Spot để tiết kiệm nhưng cần giảm thiểu khả năng cả fleet bị gián đoạn cùng lúc khi capacity một pool cạn. Cấu hình nào giúp đạt MOST resilient mà vẫn tối ưu chi phí Spot?",
-    "options": [
-      "Dùng EC2 Auto Scaling với allocation strategy price-capacity-optimized và đa dạng hóa qua nhiều instance type và Availability Zone",
-      "Dùng một Spot Fleet chỉ chọn instance type duy nhất rẻ nhất trong một AZ",
-      "Dùng allocation strategy lowest-price chỉ giới hạn ở hai instance type rẻ nhất",
-      "Đặt một maximum Spot price thật cao để không bao giờ bị gián đoạn"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Đa dạng hóa qua nhiều instance type/AZ với price-capacity-optimized giúp Auto Scaling rút từ các pool dồi dào nhất, giảm rủi ro gián đoạn đồng loạt.\n✓ price-capacity-optimized + đa dạng hóa instance type và AZ phân tán rủi ro qua nhiều Spot pool, vừa rẻ vừa bền vững nhất.\n✗ Một instance type trong một AZ tập trung rủi ro vào một pool duy nhất, dễ bị reclaim toàn bộ.\n✗ lowest-price giới hạn 2 type ưu tiên giá nhưng vẫn ít pool, dễ cạn capacity cùng lúc.\n✗ Đặt max price cao không ngăn được gián đoạn do thiếu capacity — Spot bị reclaim khi hết capacity, không chỉ vì giá.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-056",
     "courseId": "SAA-C03",
     "lesson": "ch4-01-compute-cost",
     "certifications": [
@@ -12682,30 +17484,122 @@ export const generatedQuestions: Question[] = [
     "mock": 3
   },
   {
+    "id": "saa-m3-055",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-02-storage-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một công ty lưu trữ dữ liệu trên S3 với mẫu truy cập không thể dự đoán: một số object được truy cập thường xuyên, số khác hầu như không bao giờ, và mẫu này thay đổi theo thời gian. Họ muốn tối ưu chi phí lưu trữ một cách tự động mà KHÔNG cần phân tích thủ công hay viết lifecycle policy phức tạp. Giải pháp nào phù hợp nhất?",
+    "options": [
+      "Dùng S3 Intelligent-Tiering để tự động chuyển object giữa các access tier theo mẫu truy cập",
+      "Dùng S3 Standard cho mọi object để đảm bảo hiệu năng",
+      "Tạo lifecycle policy chuyển tất cả object sang S3 Standard-IA sau 30 ngày",
+      "Chuyển toàn bộ dữ liệu sang S3 Glacier Flexible Retrieval để giảm chi phí"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mẫu truy cập không dự đoán được và hay thay đổi là đúng kịch bản của Intelligent-Tiering, vốn tự dịch chuyển object giữa các tier mà không có phí truy xuất.\n✓ S3 Intelligent-Tiering — đúng, tự động tối ưu chi phí theo mẫu truy cập thay đổi, không cần phân tích thủ công.\n✗ S3 Standard cho mọi object — không tối ưu chi phí cho dữ liệu ít truy cập.\n✗ Lifecycle sang Standard-IA sau 30 ngày — giả định cứng nhắc, có thể tính phí truy xuất nếu object lại được truy cập nhiều.\n✗ Glacier Flexible Retrieval — gây độ trễ truy xuất cho object đang được truy cập thường xuyên.",
+    "domain": 4,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-056",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-02-storage-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một nhóm phân tích cần quản trị tập trung toàn bộ hàng trăm bucket S3 trên nhiều tài khoản trong AWS Organizations. Họ muốn hiểu xu hướng dung lượng lưu trữ, phát hiện bucket có nhiều object không được truy cập và tìm cơ hội tiết kiệm chi phí (ví dụ object nên chuyển tier). Công cụ AWS nào phù hợp nhất?",
+    "options": [
+      "S3 Storage Lens với dashboard nâng cao (advanced metrics) ở cấp organization",
+      "Amazon CloudWatch metrics cho từng bucket riêng lẻ",
+      "S3 Inventory report kết hợp Amazon Athena cho mỗi bucket",
+      "AWS Cost Explorer lọc theo dịch vụ S3"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "S3 Storage Lens cung cấp khả năng quan sát dung lượng và hoạt động trên toàn organization với khuyến nghị tối ưu chi phí, đúng nhu cầu tập trung đa tài khoản.\n✓ S3 Storage Lens advanced ở cấp organization — đúng, cung cấp insight toàn tổ chức và khuyến nghị tối ưu chi phí cho hàng trăm bucket.\n✗ CloudWatch metrics từng bucket — không tập trung, không có khuyến nghị tối ưu, tốn công gộp thủ công.\n✗ S3 Inventory + Athena mỗi bucket — cho danh sách object nhưng đòi nhiều thao tác phân tích thủ công, không có dashboard tổng hợp tổ chức.\n✗ Cost Explorer lọc S3 — cho biết chi phí tổng nhưng không phân tích chi tiết hành vi truy cập object để khuyến nghị chuyển tier.",
+    "domain": 4,
+    "mock": 3
+  },
+  {
     "id": "saa-m3-057",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-02-storage-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một bucket S3 bật versioning. Theo thời gian, các noncurrent (previous) version của object tích lũy và làm tăng chi phí lưu trữ đáng kể, dù chúng hiếm khi cần. Cách TỐI ƯU CHI PHÍ với least operational overhead để quản lý các version cũ này là gì?",
+    "options": [
+      "Cấu hình lifecycle rule chuyển noncurrent version sang Glacier sau X ngày và xóa (expire) chúng sau Y ngày",
+      "Tắt versioning trên bucket để ngừng tạo version mới",
+      "Viết một Lambda chạy hằng đêm liệt kê và xóa noncurrent version cũ",
+      "Bật S3 Replication để chuyển version cũ sang bucket rẻ hơn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lifecycle rule dành riêng cho noncurrent version cho phép tự động hạ tier rồi expire chúng, giảm chi phí mà không cần code.\n✓ Lifecycle rule cho noncurrent version (chuyển Glacier + expire) — đúng, tự động hóa hoàn toàn việc tier hóa và dọn dẹp version cũ.\n✗ Tắt versioning — không xóa version cũ đã tồn tại và làm mất khả năng bảo vệ dữ liệu.\n✗ Lambda xóa hằng đêm — tăng operational overhead và rủi ro lỗi so với lifecycle dựng sẵn.\n✗ S3 Replication — sao chép thêm dữ liệu làm tăng chi phí, không xử lý việc dọn version cũ.",
+    "domain": 4,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-058",
     "courseId": "SAA-C03",
     "lesson": "ch4-01-compute-cost",
     "certifications": [
       "SAA-C03"
     ],
-    "difficulty": "hard",
+    "difficulty": "medium",
     "type": "single",
-    "question": "Một nền tảng SaaS chạy hàng nghìn Lambda function được gọi liên tục với khối lượng rất lớn và ổn định mỗi tháng. Hóa đơn Lambda đang tăng nhanh. Các function là Node.js thuần, không phụ thuộc kiến trúc. Kiến trúc sư muốn giảm chi phí Lambda mà giữ kiến trúc serverless và LEAST operational overhead. Kết hợp nào hợp lý nhất?",
+    "question": "Một đội phát triển chạy ứng dụng microservices trên Amazon ECS với EC2 launch type. Họ phát hiện cluster thường xuyên có nhiều CPU và memory nhàn rỗi vào ban đêm, gây lãng phí chi phí. Họ muốn giảm chi phí với LEAST operational overhead. Giải pháp nào tốt nhất?",
     "options": [
-      "Mua Compute Savings Plans để phủ phần Lambda usage ổn định và chuyển function sang kiến trúc Graviton (arm64)",
-      "Tăng memory cấp cho mỗi function lên mức tối đa để chạy nhanh hơn",
-      "Di trú toàn bộ function sang EC2 On-Demand để có giá compute rẻ hơn",
-      "Bật Provisioned Concurrency tối đa cho mọi function để giảm chi phí mỗi lần gọi"
+      "Chuyển sang ECS với AWS Fargate và bật Fargate Spot cho các task không quan trọng",
+      "Cấu hình EC2 Auto Scaling với target tracking và ECS Cluster Auto Scaling (capacity provider) để tự động scale in các node nhàn rỗi vào ban đêm",
+      "Mua Reserved Instances cho toàn bộ EC2 trong cluster để giảm đơn giá",
+      "Tăng kích thước instance để gộp nhiều task hơn trên ít node hơn"
     ],
     "correctIndices": [
-      0
+      1
     ],
-    "explanation": "Compute Savings Plans cũng áp dụng cho Lambda, và Graviton/arm64 cho Lambda rẻ hơn cùng price/performance tốt hơn — cả hai giữ nguyên serverless.\n✓ Compute Savings Plans phủ Lambda usage ổn định để giảm giá, cộng arm64 (Graviton) hạ thêm chi phí mỗi GB-giây với ít thay đổi vận hành.\n✗ Tăng memory tối đa làm tăng chi phí GB-giây trừ khi rút ngắn đáng kể thời gian chạy; bừa bãi sẽ đắt hơn.\n✗ Di trú sang EC2 đánh mất serverless và tăng mạnh operational overhead quản lý hạ tầng.\n✗ Provisioned Concurrency tối đa cho mọi function làm TĂNG chi phí vì trả tiền giữ sẵn capacity, không phải để giảm giá.",
+    "explanation": "Idle về đêm là vấn đề về capacity dư thừa; ECS Cluster Auto Scaling (capacity provider) phối hợp EC2 Auto Scaling tự động scale in để loại bỏ node nhàn rỗi.\n✓ ECS Cluster Auto Scaling qua capacity provider kết hợp EC2 Auto Scaling tự co giãn theo số task thực, loại bỏ node idle ban đêm với ít vận hành.\n✗ Chuyển toàn bộ sang Fargate là thay đổi launch type lớn, nhiều overhead di trú và không phải lúc nào cũng rẻ hơn cho tải ổn định.\n✗ Reserved Instances giảm đơn giá nhưng vẫn trả tiền cho node idle ban đêm, không giải quyết lãng phí.\n✗ Tăng instance size không tự giảm capacity khi tải thấp về đêm.",
     "domain": 4,
     "mock": 3
   },
   {
-    "id": "saa-m1-061",
+    "id": "saa-m3-059",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-01-compute-cost",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một hệ thống xử lý hàng đợi đọc message từ Amazon SQS và xử lý ảnh. Tải nền (baseline) ổn định khoảng 10 instance suốt ngày đêm, nhưng có spike xử lý theo lô có thể chịu gián đoạn. Công ty muốn cấu trúc chi phí tối ưu cho cả baseline lẫn spike. Cách tiếp cận nào tốt nhất?",
+    "options": [
+      "Dùng Savings Plans (hoặc Reserved Instances) cho ~10 instance baseline và dùng Spot Instances cho phần spike fault-tolerant",
+      "Dùng On-Demand cho toàn bộ baseline và spike để đơn giản hóa vận hành",
+      "Mua Reserved Instances cho cả baseline lẫn công suất spike đỉnh",
+      "Dùng Spot Instances cho toàn bộ cả baseline lẫn spike để giá rẻ nhất"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Phối hợp commitment cho phần luôn chạy và Spot cho phần co giãn fault-tolerant là pattern tối ưu chi phí kinh điển.\n✓ Savings Plans/RI phủ baseline ổn định với discount, còn Spot phủ spike chịu gián đoạn được giá rẻ nhất — tối ưu cả hai phần.\n✗ On-Demand toàn bộ đơn giản nhưng đắt nhất, bỏ qua cơ hội discount cho baseline.\n✗ RI cho cả công suất spike đỉnh lãng phí vì spike không thường trực, cam kết phần ít dùng.\n✗ Spot cho toàn bộ rủi ro cho baseline cần độ ổn định, có thể bị reclaim đồng loạt.",
+    "domain": 4,
+    "mock": 3
+  },
+  {
+    "id": "saa-m3-060",
     "courseId": "SAA-C03",
     "lesson": "ch4-03-db-network-cost",
     "certifications": [
@@ -12725,56 +17619,10 @@ export const generatedQuestions: Question[] = [
     ],
     "explanation": "Tải ổn định, dự đoán được và cam kết dùng dài hạn là điều kiện lý tưởng cho RDS Reserved Instances, tiết kiệm tới ~60% so với On-Demand.\n✓ RDS Reserved Instances 3 năm — đúng, tải ổn định + cam kết dài hạn cho chiết khấu cao nhất mà không đổi kiến trúc.\n✗ Aurora Serverless v2 — tối ưu cho tải biến động, không tiết kiệm bằng RI khi tải đã ổn định và chạy liên tục.\n✗ Multi-AZ — tăng độ sẵn sàng nhưng tăng gấp đôi chi phí compute, không phải tối ưu chi phí.\n✗ DynamoDB on-demand — đổi hẳn mô hình dữ liệu (NoSQL) và On-Demand đắt hơn cho tải ổn định.",
     "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-060",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-03-db-network-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng SaaS dùng Amazon Aurora MySQL. Lưu lượng database có pattern khó dự đoán: gần như không có tải vào ban đêm và cuối tuần, nhưng tăng vọt bất ngờ trong giờ làm việc. Hiện tại provisioned instance được cấu hình theo peak nên lãng phí lớn lúc thấp tải. Giải pháp cost-effective nhất với least operational overhead là gì?",
-    "options": [
-      "Chuyển sang Aurora Serverless v2, đặt Aurora Capacity Units min/max phù hợp",
-      "Giữ provisioned instance nhưng viết Lambda + scheduler để stop/start theo giờ",
-      "Tạo thêm Aurora read replicas và phân tải bằng Route 53 weighted routing",
-      "Right-size provisioned instance xuống bằng tải trung bình hàng ngày"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Aurora Serverless v2 tự scale ACU lên/xuống gần như tức thời theo tải biến động khó dự đoán, chỉ trả tiền cho capacity thực dùng, không cần tự quản lý lịch.\n✓ Aurora Serverless v2 — đúng, tự co giãn theo spike, scale gần 0 lúc nhàn rỗi, least operational overhead.\n✗ Lambda stop/start theo giờ — không xử lý được spike bất ngờ và thêm gánh nặng vận hành lịch.\n✗ Read replicas + Route 53 — tăng chi phí và chỉ giúp đọc, không giải quyết lãng phí lúc thấp tải.\n✗ Right-size xuống mức trung bình — sẽ không chịu nổi spike giờ làm việc, gây nghẽn hiệu năng.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-058",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-03-db-network-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một bảng Amazon DynamoDB phục vụ cho tính năng mới vừa ra mắt. Lưu lượng hiện rất thấp và cực kỳ khó dự đoán vì chưa rõ tốc độ tăng trưởng người dùng. Team không muốn phải tự dự báo capacity và muốn tránh throttling khi traffic tăng đột ngột. Capacity mode nào phù hợp nhất?",
-    "options": [
-      "On-demand capacity mode",
-      "Provisioned capacity mode với auto scaling",
-      "Provisioned capacity mode với reserved capacity",
-      "On-demand capacity mode kèm DynamoDB Accelerator (DAX)"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Với traffic mới, thấp và không dự đoán được, On-demand loại bỏ hoàn toàn việc dự báo capacity và tự xử lý spike, chỉ trả theo request thực tế.\n✓ On-demand — đúng, không cần dự báo, hấp thụ spike tức thì, lý tưởng cho workload mới/khó đoán.\n✗ Provisioned + auto scaling — auto scaling phản ứng chậm hơn với spike đột ngột và vẫn cần đặt min/max ban đầu.\n✗ Provisioned + reserved capacity — cam kết trước cho tải không dự đoán được là rủi ro lãng phí lớn.\n✗ On-demand + DAX — DAX là cache giải quyết latency đọc, không liên quan bài toán capacity/dự báo.",
-    "domain": 4,
     "mock": 3
   },
   {
-    "id": "saa-m1-062",
+    "id": "saa-m3-061",
     "courseId": "SAA-C03",
     "lesson": "ch4-03-db-network-cost",
     "certifications": [
@@ -12794,56 +17642,10 @@ export const generatedQuestions: Question[] = [
     ],
     "explanation": "Throughput cao, đều và dự đoán được là điều kiện lý tưởng để rời On-demand sang Provisioned; reserved capacity còn giảm thêm chi phí cho phần baseline cam kết.\n✓ Provisioned + auto scaling + reserved capacity — đúng, rẻ hơn nhiều On-demand với tải đều đặn, dự đoán được.\n✗ Standard-IA table class — chỉ giảm chi phí storage cho dữ liệu ít truy cập, không giảm chi phí throughput cao.\n✗ Auto scaling trên On-demand — On-demand không dùng auto scaling capacity; tùy chọn này không hợp lệ về bản chất.\n✗ Chuyển sang Aurora Serverless v2 — di chuyển sang mô hình quan hệ là thay đổi lớn, không cần thiết khi DynamoDB đang phù hợp.",
     "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-061",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-03-db-network-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng báo cáo dùng Amazon RDS for MySQL (Single-AZ). Phần lớn tải là các truy vấn analytics đọc nặng chạy ban ngày, làm primary instance quá tải, trong khi ghi rất ít. Team muốn giảm tải cho primary và tối ưu chi phí thay vì nâng cấp primary lên instance class lớn hơn nhiều. Giải pháp nào tốt nhất?",
-    "options": [
-      "Thêm một RDS read replica và định tuyến truy vấn analytics đọc sang replica",
-      "Bật Multi-AZ rồi đọc từ standby instance để giảm tải primary",
-      "Scale up primary lên instance class lớn gấp đôi để chịu tải đọc",
-      "Chuyển toàn bộ workload sang Aurora Serverless v2"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Read replica cho phép offload truy vấn đọc nặng khỏi primary với chi phí một instance bổ sung, rẻ và linh hoạt hơn nhiều so với phóng to primary.\n✓ Read replica + định tuyến đọc — đúng, giảm tải đọc cho primary đúng chỗ, chi phí tăng có kiểm soát.\n✗ Multi-AZ standby — standby trong RDS MySQL không phục vụ đọc; chỉ để failover.\n✗ Scale up primary gấp đôi — đắt và vẫn dùng một instance gánh cả đọc lẫn ghi, kém tối ưu chi phí.\n✗ Chuyển sang Aurora Serverless v2 — thay đổi engine/kiến trúc lớn, quá mức cho nhu cầu offload đọc.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-059",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-03-db-network-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một công ty fintech chạy Aurora PostgreSQL cluster cho hệ thống giao dịch. Tải đọc tăng đều theo tăng trưởng và họ đã thêm 4 read replicas, nhưng nhiều replica chỉ đạt ~20% sử dụng vào ban đêm, gây lãng phí. Họ cần đảm bảo đủ capacity đọc lúc cao điểm nhưng cost-effective lúc thấp điểm, với least operational overhead. Giải pháp nào tốt nhất?",
-    "options": [
-      "Dùng Aurora Auto Scaling cho read replicas dựa trên CPU/connections để tự thêm bớt replica theo tải",
-      "Thay tất cả replica bằng một Aurora Serverless v2 reader duy nhất rồi tự scale ACU",
-      "Đặt CloudWatch alarm gửi SNS để DBA thủ công thêm/xóa replica theo ca",
-      "Chuyển toàn bộ replica sang Reserved Instances để giảm giá mỗi replica"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Aurora Auto Scaling tự động thêm/bớt read replicas theo metric tải, đảm bảo capacity lúc peak và cắt giảm replica thừa lúc nhàn rỗi mà không cần can thiệp thủ công.\n✓ Aurora Auto Scaling cho read replicas — đúng, tự co giãn số replica theo tải, tối ưu chi phí và least operational overhead.\n✗ Một Serverless v2 reader duy nhất — mất tính dự phòng nhiều replica và giới hạn khả năng phân tải đọc lớn lúc peak.\n✗ CloudWatch alarm + DBA thủ công — phụ thuộc thao tác tay, operational overhead cao, dễ phản ứng chậm.\n✗ Reserved Instances cho mọi replica — cam kết trước cho replica vốn lãng phí ban đêm chỉ khóa cứng sự lãng phí đó.",
-    "domain": 4,
     "mock": 3
   },
   {
-    "id": "saa-m1-063",
+    "id": "saa-m3-062",
     "courseId": "SAA-C03",
     "lesson": "ch4-03-db-network-cost",
     "certifications": [
@@ -12863,81 +17665,10 @@ export const generatedQuestions: Question[] = [
     ],
     "explanation": "Tải ổn định 24/7 hợp với provisioned + RI để chiết khấu tối đa, còn test/dev chạy không liên tục hợp với Serverless v2 vì tự scale về thấp khi nhàn rỗi.\n✓ Production RI + test/dev Serverless v2 — đúng, mỗi môi trường dùng mô hình giá tối ưu theo đặc tính tải.\n✗ Cả hai Serverless v2 — production tải ổn định sẽ bỏ lỡ chiết khấu RI, đắt hơn không cần thiết.\n✗ Cả hai mua RI — test/dev không liên tục mà cam kết RI sẽ trả tiền cả lúc không dùng, lãng phí.\n✗ Đảo ngược (prod Serverless, dev RI) — sai cả hai chiều: prod mất chiết khấu, dev bị khóa cam kết lãng phí.",
     "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "saa-m1-064",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-03-db-network-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "multi",
-    "question": "Solutions Architect review một Amazon RDS for PostgreSQL Multi-AZ instance đang chạy db.r5.4xlarge. Báo cáo CloudWatch cho thấy CPU trung bình 12%, FreeableMemory cao liên tục, IOPS thấp suốt 60 ngày. Mục tiêu là cost-optimize database mà vẫn giữ tính sẵn sàng cho production. Những hành động nào hợp lý? (Chọn 2)",
-    "options": [
-      "Right-size xuống một instance class nhỏ hơn (ví dụ db.r5.large) dựa trên metric thực tế",
-      "Mua Reserved Instance cho instance class mới sau khi đã right-size và xác nhận ổn định",
-      "Tắt Multi-AZ để tiết kiệm một nửa chi phí compute",
-      "Bật thêm 3 read replicas để phân tán tải CPU 12%",
-      "Chuyển ngay sang db.r5.8xlarge để có headroom cho tương lai"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Metric thấp kéo dài cho thấy instance bị over-provisioned: nên right-size xuống rồi mới cam kết RI cho instance class mới để khóa chiết khấu lâu dài.\n✓ Right-size xuống instance nhỏ hơn — đúng, CPU/RAM/IOPS thấp suốt 60 ngày là dấu hiệu rõ ràng over-provisioned.\n✓ Mua RI sau khi right-size — đúng, cam kết RI cho size đúng để tối ưu chi phí dài hạn của production ổn định.\n✗ Tắt Multi-AZ — hy sinh tính sẵn sàng của production, vi phạm yêu cầu giữ HA.\n✗ Thêm read replicas — CPU mới 12%, không có tải để phân tán; chỉ làm tăng chi phí.\n✗ Lên db.r5.8xlarge — phóng to ngược lại khi đang dư thừa, càng lãng phí.",
-    "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-062",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-03-db-network-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một ứng dụng e-commerce dùng DynamoDB với traffic có baseline ổn định khá lớn suốt ngày, nhưng đột biến gấp 8-10 lần trong các đợt flash sale theo lịch định trước vài lần mỗi tháng. Họ muốn cost-effective cho phần baseline nhưng tránh throttling lúc flash sale. Cách tiếp cận nào tối ưu nhất?",
-    "options": [
-      "Provisioned capacity với auto scaling cho baseline, và lên lịch tăng target capacity trước mỗi flash sale",
-      "Để bảng ở On-demand capacity mode suốt thời gian để khỏi lo capacity",
-      "Provisioned capacity cố định ở mức peak flash sale để luôn đủ throughput",
-      "Provisioned capacity ở mức baseline và dựa hoàn toàn vào burst capacity lúc flash sale"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Baseline lớn và ổn định nên dùng Provisioned (rẻ hơn On-demand) với auto scaling; vì flash sale theo lịch, có thể scheduled scaling nâng capacity trước sự kiện để tránh throttling.\n✓ Provisioned + auto scaling + lên lịch tăng trước flash sale — đúng, rẻ cho baseline và chủ động đủ capacity cho spike đã biết lịch.\n✗ On-demand suốt thời gian — an toàn nhưng đắt hơn nhiều cho phần baseline lớn, ổn định.\n✗ Provisioned cố định ở peak — trả tiền cho 8-10x capacity cả lúc bình thường, cực lãng phí.\n✗ Dựa vào burst capacity — burst chỉ là dự trữ ngắn hạn nhỏ, không đủ cho spike 8-10x kéo dài.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-060",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-03-db-network-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một công ty chạy nhiều EC2 instances trong private subnets. Các instances này thường xuyên đọc và ghi một lượng lớn dữ liệu vào một S3 bucket trong cùng Region. Hiện tại traffic đi qua NAT Gateway, và hóa đơn data processing của NAT Gateway đang rất cao. Giải pháp nào giảm chi phí HIỆU QUẢ NHẤT mà không ảnh hưởng đến khả năng truy cập S3?",
-    "options": [
-      "Tạo một Gateway VPC endpoint cho S3 và cập nhật route table của private subnets để định tuyến traffic tới S3 qua endpoint này",
-      "Tạo một Interface VPC endpoint (PrivateLink) cho S3 và tính phí theo giờ cộng phí xử lý dữ liệu",
-      "Di chuyển các EC2 instances sang public subnets và gán Elastic IP cho mỗi instance",
-      "Tăng số lượng NAT Gateway lên nhiều AZ để phân tải và giảm chi phí data processing"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Gateway VPC endpoint cho S3 hoàn toàn miễn phí và loại bỏ traffic S3 khỏi NAT Gateway, cắt giảm phí data processing.\n✓ Gateway VPC endpoint cho S3 không tính phí giờ hay phí xử lý dữ liệu, traffic tới S3 đi nội bộ trong AWS network thay vì qua NAT Gateway.\n✗ Interface endpoint cho S3 phát sinh phí giờ và phí xử lý dữ liệu — Gateway endpoint mới là lựa chọn miễn phí tối ưu.\n✗ Chuyển sang public subnets làm mất tính bảo mật và vẫn phát sinh chi phí internet egress.\n✗ Thêm nhiều NAT Gateway chỉ làm tăng chi phí, không loại bỏ phí data processing.",
-    "domain": 4,
     "mock": 3
   },
   {
-    "id": "saa-m1-065",
+    "id": "saa-m3-063",
     "courseId": "SAA-C03",
     "lesson": "ch4-03-db-network-cost",
     "certifications": [
@@ -12957,81 +17688,10 @@ export const generatedQuestions: Question[] = [
     ],
     "explanation": "CloudFront cache nội dung tại edge locations, giảm số request tới origin và data transfer từ S3 ra CloudFront rẻ hơn (thậm chí miễn phí), đồng thời phục vụ người dùng từ edge gần nhất.\n✓ CloudFront giảm origin egress nhờ caching và data transfer S3→CloudFront không tính phí, cải thiện độ trễ qua edge locations.\n✗ S3 Transfer Acceleration tối ưu cho upload và còn tính phí phụ thu, không giảm egress cost cho phân phối nội dung.\n✗ Cross-Region Replication tăng chi phí lưu trữ và replication, phức tạp hơn nhiều so với CloudFront.\n✗ Storage class chỉ ảnh hưởng phí lưu trữ, không giảm data transfer out ra internet.",
     "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-063",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-03-db-network-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một kiến trúc multi-tier có web tier và database tier (Amazon RDS) được triển khai trên cùng một Region. Để đạt high availability, đội kỹ thuật đặt EC2 web instances trải đều trên ba Availability Zones, còn RDS Multi-AZ với primary ở AZ-a. Họ nhận thấy chi phí data transfer giữa các tier khá cao. Cách nào giảm cross-AZ data transfer cost mà vẫn duy trì tính sẵn sàng cao?",
-    "options": [
-      "Sử dụng RDS Proxy và đặt read replica ở mỗi AZ để các web instances đọc từ replica cùng AZ, đồng thời giữ Multi-AZ cho failover",
-      "Gom tất cả EC2 web instances vào cùng một AZ với RDS primary để loại bỏ hoàn toàn cross-AZ traffic",
-      "Chuyển RDS sang Single-AZ deployment để tránh phí đồng bộ giữa primary và standby",
-      "Dùng một Cluster placement group cho các web instances để giảm độ trễ mạng giữa chúng"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Đặt read replica ở mỗi AZ cho phép phần lớn lưu lượng đọc diễn ra trong cùng AZ (không phát sinh cross-AZ cost) trong khi vẫn giữ Multi-AZ cho HA.\n✓ Read replica theo từng AZ giúp read traffic ở lại trong AZ, giảm cross-AZ cost mà vẫn giữ Multi-AZ failover cho tính sẵn sàng cao.\n✗ Gom hết web instances vào một AZ phá vỡ high availability — mất một AZ là sập toàn bộ web tier.\n✗ Single-AZ RDS loại bỏ HA của database, đi ngược yêu cầu.\n✗ Cluster placement group nằm trong một AZ và không phù hợp cho thiết kế HA đa AZ, không giải quyết cost giữa tier.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-061",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-03-db-network-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một doanh nghiệp có on-premises data center cần truyền 50 TB dữ liệu mỗi tháng lên AWS một cách ổn định và cần băng thông nhất quán cho ứng dụng nhạy cảm độ trễ. Hiện họ dùng Site-to-Site VPN qua internet và chi phí data transfer cùng độ trễ không ổn định là vấn đề. Giải pháp nào tối ưu chi phí dài hạn và đảm bảo băng thông ổn định?",
-    "options": [
-      "Thiết lập AWS Direct Connect với một dedicated connection từ on-premises tới AWS",
-      "Mở rộng Site-to-Site VPN thành nhiều tunnel để tăng băng thông tổng",
-      "Dùng AWS DataSync qua internet để tối ưu hóa tốc độ truyền dữ liệu",
-      "Sử dụng AWS Snowball để vận chuyển dữ liệu định kỳ mỗi tháng"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Direct Connect cung cấp băng thông ổn định, độ trễ nhất quán và giá data transfer out thấp hơn đáng kể so với internet/VPN, tối ưu cho khối lượng lớn ổn định dài hạn.\n✓ Direct Connect đảm bảo dedicated bandwidth, độ trễ ổn định và data transfer rate rẻ hơn internet — lý tưởng cho 50 TB/tháng đều đặn.\n✗ Nhiều VPN tunnel vẫn đi qua internet công cộng, băng thông và độ trễ không đảm bảo.\n✗ DataSync qua internet không giải quyết được vấn đề độ trễ ổn định và vẫn chịu phí internet transfer.\n✗ Snowball phù hợp cho di chuyển một lần lượng cực lớn, không phù hợp cho luồng dữ liệu liên tục cần băng thông realtime.",
-    "domain": 4,
     "mock": 3
   },
   {
-    "id": "saa-m2-064",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-03-db-network-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Một fleet EC2 trong private subnets cần truy cập nhiều AWS service trong cùng Region: S3, DynamoDB, Amazon ECR (kéo container images), và CloudWatch Logs. Toàn bộ traffic hiện đi qua NAT Gateway, chi phí data processing rất cao. Đội kiến trúc muốn giảm tối đa traffic qua NAT Gateway. Những hành động nào nên thực hiện? (Chọn HAI)",
-    "options": [
-      "Tạo Gateway VPC endpoints cho S3 và DynamoDB",
-      "Tạo Interface VPC endpoints cho ECR (ecr.api, ecr.dkr) và CloudWatch Logs",
-      "Thay thế NAT Gateway bằng NAT instance trên một EC2 nhỏ để giảm chi phí",
-      "Tạo Interface VPC endpoint cho S3 và DynamoDB để dùng PrivateLink",
-      "Chuyển tất cả service calls qua một Internet Gateway gắn vào private subnet"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "S3 và DynamoDB hỗ trợ Gateway endpoint (miễn phí), còn ECR và CloudWatch Logs cần Interface endpoint; kết hợp cả hai loại bỏ phần lớn traffic qua NAT Gateway.\n✓ Gateway endpoints cho S3 và DynamoDB miễn phí và đưa traffic ra khỏi NAT Gateway.\n✓ Interface endpoints cho ECR (ecr.api, ecr.dkr) và CloudWatch Logs cho phép truy cập riêng tư các service này không qua NAT.\n✗ NAT instance phải tự quản lý, không có HA mặc định và vẫn xử lý cùng lượng traffic — không phải tối ưu.\n✗ S3 và DynamoDB dùng Gateway endpoint (miễn phí), dùng Interface endpoint sẽ phát sinh phí giờ và phí xử lý không cần thiết.\n✗ Không thể gắn Internet Gateway để định tuyến cho một private subnet theo cách đó; điều đó biến nó thành public subnet và phá vỡ thiết kế.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "saa-m1-066",
+    "id": "saa-m3-064",
     "courseId": "SAA-C03",
     "lesson": "ch4-03-db-network-cost",
     "certifications": [
@@ -13051,56 +17711,10 @@ export const generatedQuestions: Question[] = [
     ],
     "explanation": "Price class giới hạn việc dùng các edge locations đắt tiền (cân bằng chi phí/độ phủ), và CloudFront Security Savings Bundle giảm đơn giá cho lưu lượng cam kết hàng tháng — cả hai trực tiếp giảm chi phí phân phối.\n✓ Giới hạn price class loại bỏ chi phí từ edge locations đắt nhất, còn Security Savings Bundle cam kết mức sử dụng hàng tháng để giảm giá tới 30% trên CloudFront usage gồm data transfer out.\n✗ Phục vụ trực tiếp từ S3 mất caching ở edge, làm tăng origin egress và độ trễ, không tiết kiệm.\n✗ Field-level encryption bảo vệ dữ liệu nhạy cảm, không giảm chi phí data transfer.\n✗ EC2 origin tự quản lý phức tạp hơn và không vốn dĩ rẻ hơn S3 cho việc phục vụ nội dung tĩnh qua CloudFront.",
     "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "saa-m2-065",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-03-db-network-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng phân tán có các microservices chạy trên EC2 ở hai Region khác nhau (us-east-1 và eu-west-1) để phục vụ người dùng địa phương. Các service gọi chéo Region khá thường xuyên qua public endpoints, làm chi phí inter-Region data transfer và độ trễ tăng cao. Cách nào giảm chi phí và độ trễ của giao tiếp cross-Region HIỆU QUẢ NHẤT?",
-    "options": [
-      "Thiết kế lại để mỗi Region tự chứa dữ liệu cần thiết (data locality) và chỉ đồng bộ không thường xuyên qua kết nối riêng, giảm thiểu các cuộc gọi đồng bộ cross-Region",
-      "Định tuyến toàn bộ traffic cross-Region qua một NAT Gateway trung tâm để tổng hợp chi phí",
-      "Tăng kích thước instance ở cả hai Region để xử lý độ trễ cross-Region nhanh hơn",
-      "Dùng S3 Cross-Region Replication cho mọi request giữa các service"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Giảm số lượng cuộc gọi đồng bộ cross-Region qua data locality là cách trực tiếp nhất để cắt cả chi phí inter-Region transfer lẫn độ trễ.\n✓ Đưa dữ liệu về local và hạn chế đồng bộ cross-Region loại bỏ phần lớn inter-Region data transfer đắt đỏ và độ trễ.\n✗ NAT Gateway không xử lý inter-Region traffic theo cách này và chỉ thêm chi phí data processing.\n✗ Tăng kích thước instance không thay đổi lượng dữ liệu truyền giữa các Region hay đơn giá transfer.\n✗ Cross-Region Replication cho mọi request không phù hợp với giao tiếp service synchronous và tăng chi phí replication.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "saa-m3-062",
-    "courseId": "SAA-C03",
-    "lesson": "ch4-03-db-network-cost",
-    "certifications": [
-      "SAA-C03"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một hệ thống xử lý dữ liệu lớn dùng EMR đọc dữ liệu từ S3. Các EMR cluster nằm trong private subnets và truy cập S3 cùng Region qua NAT Gateway. Khối lượng đọc rất lớn (hàng trăm TB mỗi ngày), khiến phí data processing của NAT Gateway chiếm phần lớn hóa đơn mạng. Ngoài chi phí, một vấn đề khác là NAT Gateway giới hạn throughput. Giải pháp nào giải quyết CẢ chi phí lẫn throughput tốt nhất?",
-    "options": [
-      "Triển khai Gateway VPC endpoint cho S3 để traffic đi trực tiếp tới S3 không qua NAT Gateway",
-      "Nâng cấp lên nhiều NAT Gateway và bật enhanced networking trên các EMR nodes",
-      "Bật S3 Transfer Acceleration để tăng throughput đọc dữ liệu từ S3",
-      "Đặt một Interface VPC endpoint cho S3 để giảm phụ thuộc vào NAT Gateway"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Gateway endpoint cho S3 miễn phí và không bị giới hạn throughput như NAT Gateway, giải quyết đồng thời cost và bottleneck.\n✓ Gateway endpoint loại bỏ phí data processing của NAT Gateway và không áp đặt giới hạn throughput của NAT, lý tưởng cho khối lượng đọc S3 cực lớn.\n✗ Nhiều NAT Gateway vẫn phát sinh phí data processing cao và tốn kém hơn nhiều so với Gateway endpoint miễn phí.\n✗ Transfer Acceleration phụ thu phí và hướng tới truyền qua internet, không giải quyết NAT cost nội Region.\n✗ Interface endpoint cho S3 phát sinh phí giờ và phí xử lý — Gateway endpoint mới là lựa chọn miễn phí và phù hợp throughput cao.",
-    "domain": 4,
     "mock": 3
   },
   {
-    "id": "saa-m1-067",
+    "id": "saa-m3-065",
     "courseId": "SAA-C03",
     "lesson": "ch4-03-db-network-cost",
     "certifications": [
@@ -13120,4600 +17734,116 @@ export const generatedQuestions: Question[] = [
     ],
     "explanation": "Với lưu lượng rất thấp và không liên tục, NAT instance trên một instance nhỏ có chi phí cố định thấp hơn NAT Gateway, dù phải tự quản lý.\n✓ NAT instance nhỏ tránh được phí theo giờ và phí data processing cao của NAT Gateway, phù hợp workload lưu lượng thấp với chi phí thấp hơn.\n✗ Thêm NAT Gateway ở mỗi AZ làm tăng tổng chi phí, không giảm.\n✗ Gán Elastic IP cho private instance không cho ra internet nếu không có Internet Gateway và route phù hợp — và làm vậy biến chúng thành public, kém an toàn.\n✗ VPC endpoint chỉ truy cập AWS services cụ thể, không cung cấp truy cập internet công cộng chung chung.",
     "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "dva-m1-001",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-01-sdk-api",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một developer chạy ứng dụng Python trên EC2 instance đã gắn instance profile có quyền truy cập S3. Tuy nhiên, trên instance này cũng có biến môi trường AWS_ACCESS_KEY_ID và AWS_SECRET_ACCESS_KEY (của một IAM user khác) được set sẵn. Khi code khởi tạo client mà KHÔNG truyền key, SDK sẽ dùng credentials nào?",
-    "options": [
-      "Credentials từ environment variables (IAM user)",
-      "Credentials từ instance profile (IMDS) vì code chạy trên EC2",
-      "SDK ném lỗi vì có hai nguồn credentials xung đột",
-      "Credentials trong file ~/.aws/credentials nếu tồn tại"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Credential provider chain dừng ngay khi tìm thấy nguồn đầu tiên; environment variables đứng TRƯỚC instance profile/IMDS nên thắng.\n✓ Environment variables được duyệt trước IMDS trong chain nên SDK dùng key của IAM user, bỏ qua instance role.\n✗ Instance profile (IMDS) đứng gần cuối chain, chỉ được dùng khi các nguồn trước không có.\n✗ Chain không báo lỗi xung đột; nó chỉ lấy nguồn đầu tiên tìm thấy.\n✗ Shared credentials file đứng sau env vars, không được ưu tiên ở đây.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-001",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-01-sdk-api",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một ứng dụng Lambda gọi DynamoDB và đôi khi nhận lỗi ProvisionedThroughputExceededException trong giai đoạn lưu lượng tăng đột biến ngắn. Cách xử lý ĐÚNG NHẤT theo best practice của AWS là gì?",
-    "options": [
-      "Retry request với exponential backoff cộng jitter",
-      "Tăng vĩnh viễn RCU/WCU của bảng lên mức tối đa ngay khi gặp lỗi đầu tiên",
-      "Bắt lỗi và bỏ qua (swallow) để ứng dụng không bị crash",
-      "Chuyển sang gọi API bằng raw HTTP và tự ký SigV4 để vượt rate limit"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "ProvisionedThroughputExceededException là lỗi throttling retryable; phản ứng chuẩn là retry với exponential backoff và jitter.\n✓ Exponential backoff + jitter giúp giãn các lần retry, tránh thundering herd và xử lý được spike ngắn.\n✗ Tăng capacity ngay lên tối đa gây tốn chi phí và không cần thiết cho spike ngắn; backoff thường đủ.\n✗ Bỏ qua lỗi làm mất dữ liệu/giao dịch, không phải xử lý đúng.\n✗ Tự ký SigV4 không vượt được rate limit; throttling do service áp đặt bất kể cách ký.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-001",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-01-sdk-api",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một developer dùng Boto3 để Scan một bảng DynamoDB lớn. Code chỉ đọc resp['Items'] một lần rồi dừng, nên thường thiếu nhiều bản ghi. Cần kiểm tra/đọc trường nào trong response để biết còn dữ liệu cần phân trang tiếp?",
-    "options": [
-      "LastEvaluatedKey trong response, truyền lại làm ExclusiveStartKey ở lần gọi kế tiếp",
-      "NextToken trong response, truyền lại làm NextToken ở lần gọi kế tiếp",
-      "NextContinuationToken trong response, truyền lại làm ContinuationToken",
-      "IsTruncated trong response, truyền lại làm Marker"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "DynamoDB Scan/Query dùng LastEvaluatedKey (response) và ExclusiveStartKey (request kế tiếp); khi LastEvaluatedKey vắng mặt là đã hết dữ liệu.\n✓ LastEvaluatedKey/ExclusiveStartKey là cặp phân trang đúng của DynamoDB.\n✗ NextToken là cơ chế của nhiều API generic, không phải của DynamoDB Scan/Query.\n✗ NextContinuationToken/ContinuationToken thuộc S3 ListObjectsV2.\n✗ IsTruncated/Marker thuộc các API kiểu cũ của S3 (ListObjects v1), không áp dụng cho DynamoDB.",
-    "domain": 1,
     "mock": 3
   },
   {
-    "id": "dva-m1-002",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-01-sdk-api",
+    "courseId": "SAA-C03",
+    "lesson": "resilient-02-ha-fault-tolerance",
     "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một script tự code vòng lặp retry cho lời gọi API bị throttle. Hiện tại tất cả các instance của ứng dụng retry sau đúng các mốc 1s, 2s, 4s, 8s. Vào giờ cao điểm, các retry vẫn dồn cục và tiếp tục bị throttle. Thay đổi nào khắc phục tốt nhất?",
-    "options": [
-      "Thêm jitter (nhiễu ngẫu nhiên) vào thời gian chờ exponential backoff",
-      "Tăng số lần retry tối đa từ 4 lên 50 để chắc chắn thành công",
-      "Giảm thời gian chờ về 0 để retry càng nhanh càng tốt",
-      "Bỏ exponential backoff, chuyển sang khoảng chờ cố định 1 giây"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Các client backoff theo cùng mốc thời gian cố định sẽ retry đồng loạt (thundering herd); jitter phân tán các lần retry.\n✓ Jitter ngẫu nhiên hóa thời điểm retry nên các client không dồn cục, giảm throttle.\n✗ Tăng số lần retry không giải quyết việc dồn cục; chỉ kéo dài và làm trầm trọng tải.\n✗ Chờ 0 giây khiến tất cả retry ngay lập tức, làm throttle nặng hơn.\n✗ Khoảng chờ cố định vẫn khiến các client đồng bộ thời điểm retry, không tốt bằng backoff + jitter.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-002",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-01-sdk-api",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng gọi ec2.run_instances trong một workflow có retry. Đôi khi do timeout mạng, request được gửi lại và tạo ra nhiều instance trùng nhau ngoài ý muốn. Cách khắc phục đúng và rẻ nhất là gì?",
-    "options": [
-      "Truyền cùng một ClientToken (idempotency token) cố định cho các lần retry của cùng thao tác",
-      "Sinh một ClientToken (UUID) mới cho mỗi lần retry để phân biệt request",
-      "Tắt toàn bộ retry của SDK để không bao giờ gọi lại RunInstances",
-      "Sau khi tạo, gọi DescribeInstances rồi terminate các instance dư thừa"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "RunInstances hỗ trợ ClientToken làm idempotency key; gọi lại với cùng token sẽ không tạo thêm instance.\n✓ Giữ cố định cùng ClientToken khi retry đảm bảo idempotent, không tạo trùng.\n✗ Sinh token mới mỗi lần retry khiến mỗi request bị coi là khác nhau, vẫn tạo trùng.\n✗ Tắt retry làm mất khả năng phục hồi khi lỗi tạm thời, không phải giải pháp tốt.\n✗ Tạo rồi dọn dẹp thủ công tốn kém, dễ race condition và lãng phí tài nguyên.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-002",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-01-sdk-api",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Boto3 client được cấu hình Config(retries={'max_attempts': 4, 'mode': 'standard'}). Với một request liên tục bị ThrottlingException, SDK sẽ thực hiện tổng cộng bao nhiêu lần gọi tới service trước khi ném lỗi ra ngoài?",
-    "options": [
-      "4 lần gọi (1 lần đầu + 3 lần retry)",
-      "5 lần gọi (1 lần đầu + 4 lần retry)",
-      "3 lần gọi vì standard mode luôn cố định 3",
-      "8 lần gọi do exponential nhân đôi số lần thử"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Trong Boto3, max_attempts là TỔNG số lần thử bao gồm cả lần gọi đầu tiên.\n✓ max_attempts=4 nghĩa là 1 lần gọi đầu cộng 3 lần retry, tổng 4 lần.\n✗ 5 lần là hiểu nhầm max_attempts là số retry thêm ngoài lần đầu.\n✗ standard mode không cố định 3; số lần do max_attempts quyết định.\n✗ Exponential backoff chỉ ảnh hưởng thời gian chờ, không nhân đôi số lần thử.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-003",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-01-sdk-api",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một developer gọi DynamoDB Query với FilterExpression và Limit. Ở lần gọi đầu, response trả về Items rỗng nhưng vẫn có LastEvaluatedKey. Code hiện tại dừng vòng lặp ngay khi Items rỗng. Vấn đề là gì?",
-    "options": [
-      "Một page có thể rỗng do filter/limit nhưng vẫn còn dữ liệu; phải tiếp tục đến khi không còn LastEvaluatedKey",
-      "Items rỗng nghĩa là bảng không có bản ghi nào khớp; dừng là đúng",
-      "LastEvaluatedKey rỗng là tín hiệu duy nhất để dừng; Items không liên quan",
-      "FilterExpression không bao giờ trả về page rỗng nên đây là lỗi của SDK"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "DynamoDB áp Limit trên số item đọc được trước khi áp FilterExpression nên một page có thể rỗng items mà vẫn còn LastEvaluatedKey; điều kiện dừng đúng là khi LastEvaluatedKey vắng mặt.\n✓ Page rỗng do filter/limit là bình thường; phải lặp tới khi không còn LastEvaluatedKey.\n✗ Items rỗng KHÔNG đồng nghĩa hết dữ liệu vì còn LastEvaluatedKey.\n✗ Việc dừng dựa trên LastEvaluatedKey là đúng, nhưng nói Items không liên quan là sai logic vì chính lỗi ở đây là code dừng theo Items rỗng.\n✗ FilterExpression hoàn toàn có thể tạo page rỗng; đây không phải lỗi SDK.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-003",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-01-sdk-api",
-    "certifications": [
-      "DVA-C02"
+      "SAA-C03"
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một ứng dụng .NET (SDK không bật adaptive mode) gọi nhiều API DynamoDB song song với mức concurrency rất cao và liên tục bị throttle dù đã có exponential backoff + jitter ở mỗi client. Cấu hình SDK nào giúp giảm throttle hiệu quả nhất ở phía client?",
+    "question": "Một hệ thống xử lý đơn hàng nhận các yêu cầu đột biến (spiky) từ một frontend. Các yêu cầu được gửi trực tiếp tới một Auto Scaling group EC2 để xử lý đồng bộ. Khi lưu lượng tăng đột ngột, các instances bị quá tải và nhiều đơn hàng bị mất vì frontend gọi synchronous và hết timeout. Công ty cần đảm bảo không mất đơn hàng ngay cả khi tầng xử lý tạm thời không theo kịp, và muốn tầng xử lý co giãn theo khối lượng công việc thực tế. Giải pháp nào TỐI ƯU nhất?",
     "options": [
-      "Bật retry mode adaptive để SDK tự áp client-side rate limiting, giảm tốc độ gửi khi bị throttle",
-      "Tăng read_timeout và connect_timeout để mỗi request chờ lâu hơn",
-      "Chuyển sang legacy retry mode để giảm số lần retry",
-      "Hard-code access key vào client để bỏ qua bước dò credential chain cho nhanh"
+      "Đặt một Amazon SQS queue giữa frontend và EC2; frontend ghi đơn vào queue, Auto Scaling group scale theo CloudWatch metric độ sâu queue",
+      "Tăng kích thước instance và đặt giá trị maximum của Auto Scaling group lên cao hơn để xử lý mọi đỉnh tải",
+      "Dùng Amazon SNS để publish mỗi đơn hàng và cho các EC2 instances subscribe nhận trực tiếp",
+      "Đặt một Application Load Balancer phía trước Auto Scaling group và bật connection draining để giữ kết nối"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "Khi concurrency cao gây throttle có hệ thống, adaptive mode bổ sung client-side rate limiting để tự bóp tốc độ gửi, vượt trội so với chỉ backoff đơn lẻ.\n✓ Adaptive mode kết hợp retry standard và rate limiting phía client, giảm áp lực gửi khi bị throttle nhiều.\n✗ Tăng timeout chỉ thay đổi thời gian chờ kết nối/đọc, không giảm tỉ lệ throttle.\n✗ Legacy mode retry ít loại lỗi hơn và yếu hơn standard/adaptive, không giúp với throttle quy mô lớn.\n✗ Hard-code key không liên quan tới throttle và còn vi phạm best practice bảo mật.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-003",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-01-sdk-api",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một request từ một thiết bị IoT tự ký SigV4 (không dùng SDK) tới một API liên tục thất bại với SignatureDoesNotMatch, dù access key, secret và region đều đúng và IAM policy cho phép. Nguyên nhân khả dĩ nhất là gì?",
-    "options": [
-      "Đồng hồ hệ thống của thiết bị bị lệch (clock skew) khiến timestamp trong chữ ký không hợp lệ",
-      "IAM policy thiếu quyền nên cần thêm Allow cho action tương ứng",
-      "Resource đích không tồn tại nên trả về lỗi chữ ký",
-      "Thiết bị thiếu AWS_SESSION_TOKEN nên không thể ký request"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "SignatureDoesNotMatch là lỗi chữ ký, thường do clock skew làm timestamp dùng để tính chữ ký bị sai; nó khác AccessDenied (vấn đề IAM).\n✓ Đồng hồ lệch khiến timestamp trong canonical request sai, dẫn tới chữ ký không khớp.\n✗ Thiếu quyền IAM sẽ trả về AccessDenied, không phải SignatureDoesNotMatch.\n✗ Resource không tồn tại sẽ trả về lỗi ResourceNotFound/404, không phải lỗi chữ ký.\n✗ Session token chỉ cần với credentials tạm thời; thiếu nó (khi dùng key thường) không gây SignatureDoesNotMatch.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-004",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-01-sdk-api",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một hàm Lambda gọi EC2 DescribeInstances và xử lý lỗi. Trong một burst, nó nhận lỗi RequestLimitExceeded. Đồng thời ở một nhánh khác, nó nhận ValidationException do tham số sai. Cách xử lý đúng cho từng loại lỗi là gì?",
-    "options": [
-      "RequestLimitExceeded: retry với exponential backoff + jitter; ValidationException: KHÔNG retry, sửa tham số",
-      "Cả hai đều retry với exponential backoff vì đều là lỗi tạm thời",
-      "Cả hai đều KHÔNG retry vì đều là lỗi 4xx phía client",
-      "RequestLimitExceeded: sửa code ngay; ValidationException: retry vì sẽ tự khỏi"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "RequestLimitExceeded là throttling (retryable) trong khi ValidationException là lỗi client non-retryable cần sửa request.\n✓ Throttling thì retry với backoff + jitter; lỗi validation thì sửa tham số chứ retry vô ích.\n✗ ValidationException không tự khỏi khi retry vì tham số vẫn sai.\n✗ Không phải mọi lỗi 4xx đều non-retryable; throttling là 4xx đặc thù nhưng retryable.\n✗ Đảo ngược cách xử lý hai loại lỗi là sai hoàn toàn.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-004",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-01-sdk-api",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Đội phát triển cần đảm bảo idempotency khi client có thể retry các thao tác. Với mỗi service, cơ chế NÀO là cách đúng để chống xử lý/tạo trùng? (Chọn 2)",
-    "options": [
-      "DynamoDB: dùng conditional write với ConditionExpression attribute_not_exists(orderId)",
-      "SQS FIFO: dùng MessageDeduplicationId để khử trùng message trong cửa sổ 5 phút",
-      "S3: dùng ContinuationToken để đảm bảo PutObject không tạo trùng object",
-      "EC2: tăng max_attempts trong retry config để đảm bảo RunInstances chỉ tạo một instance",
-      "Lambda: bật adaptive retry mode để invoke đồng bộ trở nên idempotent"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Idempotency đạt được bằng cơ chế dedup/điều kiện phù hợp từng service: conditional write cho DynamoDB và deduplication ID cho SQS FIFO.\n✓ ConditionExpression attribute_not_exists đảm bảo chỉ ghi khi item chưa tồn tại, chống tạo trùng trong DynamoDB.\n✓ MessageDeduplicationId của SQS FIFO loại bỏ message trùng trong cửa sổ 5 phút.\n✗ ContinuationToken là cơ chế phân trang của S3, không liên quan idempotency của PutObject.\n✗ Tăng max_attempts chỉ tăng số lần retry, càng dễ tạo trùng nếu không dùng ClientToken.\n✗ adaptive retry mode chỉ điều tiết tốc độ/retry, không làm invoke trở nên idempotent.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-004",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-01-sdk-api",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một script Boto3 chạy trong container ECS (đã có task role phù hợp) bị lỗi NoRegionError khi khởi tạo client DynamoDB. Cách khắc phục đúng và phù hợp best practice nhất là gì?",
-    "options": [
-      "Đặt region qua tham số region_name khi tạo client hoặc qua biến môi trường AWS_REGION/AWS_DEFAULT_REGION",
-      "Hard-code access key và secret vào code để SDK tự suy ra region",
-      "Gắn thêm một instance profile cho container vì task role không cung cấp region",
-      "Chuyển sang dùng raw HTTP API và tự ký SigV4 để bỏ qua yêu cầu region"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "NoRegionError xảy ra khi không xác định được region từ tham số, env var hay file config; cách đúng là cung cấp region.\n✓ Truyền region_name hoặc set AWS_REGION/AWS_DEFAULT_REGION là cách chuẩn để giải quyết.\n✗ Hard-code key không liên quan tới region và vi phạm best practice; credentials và region là hai khái niệm khác nhau.\n✗ Trên ECS dùng task role, không gắn instance profile để lấy region; region không đến từ role.\n✗ Tự ký SigV4 vẫn cần region trong canonical request nên không bỏ qua được yêu cầu region.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-005",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-02-lambda",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một Lambda function viết bằng Node.js mở một connection pool tới Amazon RDS. Developer muốn giảm latency của các invocation sau lần gọi đầu tiên bằng cách tái dùng connection. Cách triển khai nào là tối ưu?",
-    "options": [
-      "Khởi tạo connection pool BÊN NGOÀI hàm handler (ở phạm vi module/global) để tái dùng qua execution context được warm",
-      "Khởi tạo connection pool BÊN TRONG handler ở đầu mỗi invocation rồi đóng lại ở cuối",
-      "Lưu connection object vào /tmp dưới dạng file và đọc lại ở invocation sau",
-      "Bật Provisioned Concurrency để Lambda tự động chia sẻ connection giữa các function khác nhau"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Code khởi tạo nằm ngoài handler chỉ chạy một lần khi tạo execution context và được tái dùng ở các warm start.\n✓ Đặt connection pool ngoài handler giúp tái dùng giữa các invocation trên cùng execution context, giảm latency.\n✗ Khởi tạo trong handler tạo lại connection mỗi lần gọi, làm tăng latency và gây cạn connection ở RDS.\n✗ /tmp chỉ lưu được file/byte, không serialize được socket/connection object đang sống.\n✗ Provisioned Concurrency giữ ấm môi trường nhưng không chia sẻ connection giữa các function khác nhau; nó không phải cơ chế tái dùng connection ở đây.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-005",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-02-lambda",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một Lambda function CPU-bound xử lý ảnh hiện cấu hình 256 MB memory và chạy khá chậm. Đội phát triển muốn giảm thời gian thực thi mà KHÔNG viết lại code, đồng thời có thể rẻ hơn. Hành động nào phù hợp nhất?",
-    "options": [
-      "Tăng memory-size của function lên mức cao hơn (ví dụ 1024 MB) vì CPU được cấp tỉ lệ thuận với memory",
-      "Tăng timeout của function lên 900 giây",
-      "Giảm memory-size xuống 128 MB để tiết kiệm chi phí mỗi ms",
-      "Bật reserved concurrency để Lambda ưu tiên CPU cho function này"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Trong Lambda, CPU (và network) được cấp tỉ lệ thuận với memory; tăng memory làm function CPU-bound chạy nhanh hơn.\n✓ Tăng memory cấp nhiều CPU hơn, giảm thời gian chạy; với tác vụ CPU-bound, tổng chi phí có thể giảm dù giá mỗi ms tăng.\n✗ Tăng timeout chỉ cho phép chạy lâu hơn trước khi bị kill, không làm function nhanh hơn.\n✗ Giảm memory làm CPU ít đi, function chạy chậm hơn nữa.\n✗ Reserved concurrency chỉ giới hạn/đảm bảo số concurrency, không cấp thêm CPU.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-005",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-02-lambda",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một Lambda function cần truy cập một database trong VPC private subnet VÀ gọi một third-party API public trên Internet. Sau khi gắn function vào VPC, các call tới database thành công nhưng call ra Internet bị timeout. Giải pháp đúng để cả hai hoạt động là gì?",
-    "options": [
-      "Đặt Lambda ENI vào private subnet và thêm route tới NAT Gateway (nằm ở public subnet) để có Internet outbound",
-      "Gán một Elastic IP trực tiếp cho Lambda function để nó truy cập Internet",
-      "Đặt Lambda vào public subnet và gán public IP cho ENI của Lambda",
-      "Thêm Internet Gateway route trực tiếp vào private subnet nơi Lambda chạy"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Lambda trong VPC không có public IP; ra Internet phải đi qua NAT Gateway đặt ở public subnet.\n✓ Đặt ENI ở private subnet và route 0.0.0.0/0 tới NAT Gateway cho phép outbound Internet trong khi vẫn truy cập database nội bộ.\n✗ Lambda không nhận Elastic IP gán trực tiếp; ENI do Lambda quản lý không có public IP.\n✗ Đặt Lambda vào public subnet không cấp public IP cho ENI của Lambda, nên vẫn không ra được Internet.\n✗ Route IGW trong private subnet không giúp được vì ENI của Lambda không có public IP để IGW định tuyến.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-006",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-02-lambda",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng có Lambda function được gọi đột biến tới 3000 concurrent invocation, làm cạn account concurrency và khiến các function quan trọng khác bị throttle. Đội muốn giới hạn function này tối đa 500 concurrent và đảm bảo các function khác luôn còn capacity. Cấu hình nào đúng?",
-    "options": [
-      "Đặt reserved concurrency = 500 cho function này",
-      "Đặt provisioned concurrency = 500 cho function này",
-      "Tăng account-level concurrency limit lên 3000 qua Service Quotas",
-      "Bật Lambda Destinations để chuyển hướng các invocation vượt quá 500"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Reserved concurrency vừa đặt trần (cap) cho function vừa dành riêng phần concurrency đó khỏi pool chung.\n✓ Reserved concurrency = 500 giới hạn function ở 500 đồng thời và bảo vệ pool chung cho các function khác.\n✗ Provisioned concurrency giữ ấm môi trường (chống cold start) nhưng không phải là cơ chế đặt trần để bảo vệ function khác khỏi throttle.\n✗ Tăng account limit không ngăn function này tiếp tục ăn hết capacity.\n✗ Destinations định tuyến kết quả thành công/thất bại của async invocation, không phải để giới hạn concurrency.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-006",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-02-lambda",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một Lambda function có độ trễ p99 cao do cold start nghiêm trọng, ảnh hưởng tới API đồng bộ phục vụ người dùng. Yêu cầu là giảm cold start một cách đáng tin cậy cho lưu lượng dự đoán được, chấp nhận chi phí. Giải pháp tối ưu là gì?",
-    "options": [
-      "Cấu hình Provisioned Concurrency và dùng Application Auto Scaling để scale theo lịch lưu lượng",
-      "Tăng reserved concurrency của function lên mức tối đa",
-      "Tăng memory-size lên 10240 MB để loại bỏ cold start",
-      "Chuyển deployment package từ container image sang .zip để tránh cold start hoàn toàn"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Provisioned Concurrency giữ sẵn các execution environment đã khởi tạo, loại bỏ cold start cho số lượng đã cấu hình.\n✓ Provisioned Concurrency kết hợp Application Auto Scaling theo lịch xử lý lưu lượng dự đoán được, giảm cold start tin cậy.\n✗ Reserved concurrency chỉ giới hạn/dành chỗ concurrency, không giữ ấm môi trường nên không giảm cold start.\n✗ Tăng memory có thể rút ngắn init đôi chút nhưng không loại bỏ cold start.\n✗ Đổi sang .zip không loại bỏ cold start; cold start vẫn xảy ra với mọi định dạng package.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-006",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-02-lambda",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một Lambda function dùng environment variable chứa API key. Yêu cầu bảo mật là key phải được mã hóa at rest bằng customer managed KMS key và chỉ giải mã trong runtime khi cần, đồng thời kiểm soát được ai giải mã được. Cách nào đúng nhất?",
-    "options": [
-      "Bật encryption helper với customer managed CMK cho env var, giải mã bằng KMS Decrypt trong code khi khởi tạo",
-      "Để nguyên env var dạng plaintext vì Lambda đã tự mã hóa bằng AWS managed key mặc định",
-      "Lưu API key trực tiếp trong deployment package code",
-      "Đặt API key vào /tmp và mã hóa file bằng OpenSSL"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Lambda cho phép mã hóa env var bằng customer managed CMK và giải mã runtime qua KMS, kiểm soát qua key policy/IAM.\n✓ Encryption helper với CMK mã hóa giá trị, code gọi KMS Decrypt khi init; quyền decrypt được kiểm soát bằng KMS key policy/IAM.\n✗ AWS managed key mặc định mã hóa at rest nhưng giá trị hiển thị plaintext trong console và không kiểm soát decrypt theo CMK riêng.\n✗ Hardcode key trong code là anti-pattern, không mã hóa và khó xoay vòng.\n✗ /tmp là ephemeral và không cung cấp kiểm soát truy cập key tập trung.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-007",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-02-lambda",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Nhiều Lambda function trong một tổ chức cùng dùng chung một bộ thư viện chia sẻ nặng (~40 MB) và các binary phụ trợ. Đội muốn tránh đóng gói lặp lại trong từng deployment package và quản lý phiên bản tập trung. Giải pháp nào phù hợp nhất?",
-    "options": [
-      "Đóng gói thư viện thành một Lambda Layer và gắn layer đó vào các function",
-      "Dùng Lambda Extensions để inject thư viện vào runtime",
-      "Tải thư viện từ S3 vào /tmp ở mỗi cold start",
-      "Tăng ephemeral storage /tmp lên 10 GB và copy thư viện vào đó"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Lambda Layers cho phép chia sẻ code/dependency giữa nhiều function và quản lý phiên bản tập trung.\n✓ Layer chứa thư viện chung được nhiều function gắn vào, tránh đóng gói lặp và được versioned riêng.\n✗ Extensions dùng cho công cụ giám sát/observability/secrets, không phải để phân phối thư viện ứng dụng.\n✗ Tải từ S3 mỗi cold start làm tăng latency và phức tạp, không phải cách quản lý tập trung tốt nhất.\n✗ Tăng /tmp không giải quyết việc đóng gói và versioning thư viện chung.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-007",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-02-lambda",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một Lambda function được gọi ASYNCHRONOUSLY bởi S3 event. Khi function ném lỗi sau khi hết số lần retry, đội muốn ghi lại payload event thất bại để phân tích VÀ cũng muốn nhận kết quả thành công gửi tới một SQS queue khác. Cấu hình nào đáp ứng cả hai yêu cầu một cách hiện đại nhất?",
-    "options": [
-      "Dùng Lambda Destinations: on-failure tới một SQS queue và on-success tới SQS queue khác",
-      "Dùng DLQ (SQS) cho thất bại và poll function thủ công để gửi kết quả thành công",
-      "Bật X-Ray để capture cả event thành công lẫn thất bại",
-      "Tăng số lần Maximum Retry Attempts để event tự xử lý thành công"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Lambda Destinations cho async invocation hỗ trợ định tuyến cả on-success và on-failure, kèm context phong phú hơn DLQ.\n✓ Destinations cho phép cấu hình đích riêng cho on-failure và on-success, đáp ứng cả hai yêu cầu.\n✗ DLQ chỉ bắt được thất bại và chỉ chứa payload, không xử lý kết quả thành công.\n✗ X-Ray dùng để trace/quan sát, không lưu payload event để xử lý lại.\n✗ Tăng retry không đảm bảo thành công và không ghi lại thất bại hay định tuyến thành công.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-007",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-02-lambda",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một Lambda function được trigger bởi SQS standard queue qua event source mapping với batch size = 10. Khi xử lý một batch, message thứ 5 ném lỗi còn các message khác thành công. Mặc định, toàn bộ batch quay lại queue và bị xử lý lại, gây trùng lặp. Cách hiệu quả nhất để chỉ message lỗi được retry là gì?",
-    "options": [
-      "Bật ReportBatchItemFailures và trả về danh sách batchItemFailures chứa messageId của các message thất bại",
-      "Đặt batch size = 1 để mỗi message là một invocation riêng",
-      "Chuyển sang FIFO queue để Lambda tự bỏ qua message lỗi",
-      "Bật DLQ trên function để tự động loại các message lỗi khỏi batch"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Partial batch response (ReportBatchItemFailures) cho phép báo riêng các message lỗi để chỉ chúng được trả về queue.\n✓ Bật ReportBatchItemFailures và trả batchItemFailures giúp chỉ message thất bại được retry, tránh xử lý lại cả batch.\n✗ Batch size = 1 giải quyết trùng lặp nhưng kém hiệu quả và tốn kém hơn nhiều, không phải cách tối ưu.\n✗ FIFO không tự bỏ qua message lỗi; nó còn block xử lý theo message group.\n✗ DLQ trên function (async) không áp dụng cho event source mapping SQS theo cách này; redrive là cấu hình trên queue.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-008",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-02-lambda",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một Lambda function tiêu thụ một Kinesis Data Stream với 1 shard qua event source mapping. Khi một record gây lỗi, toàn bộ shard bị chặn (poison pill) vì Lambda retry vô hạn theo thứ tự. Đội cần tránh block shard nhưng không mất dữ liệu lỗi để điều tra. Cấu hình event source mapping nào phù hợp nhất?",
-    "options": [
-      "Đặt MaximumRetryAttempts hữu hạn, BisectBatchOnFunctionError = true và cấu hình on-failure destination (SQS/SNS)",
-      "Đặt ParallelizationFactor = 10 để xử lý song song nhiều record",
-      "Tăng batch size lên mức tối đa để xử lý nhanh hơn qua record lỗi",
-      "Chuyển trigger sang SQS DLQ trực tiếp từ Kinesis"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Với stream, cần giới hạn retry, chia nhỏ batch khi lỗi và gửi record lỗi tới destination để không mất dữ liệu và không block shard.\n✓ MaximumRetryAttempts hữu hạn + BisectBatchOnFunctionError + on-failure destination giúp cô lập record lỗi, gửi đi điều tra và bỏ qua để không block shard.\n✗ ParallelizationFactor tăng song song trong một shard nhưng không giải quyết poison pill block.\n✗ Tăng batch size không vượt qua được record lỗi; vẫn bị block.\n✗ Kinesis không gắn DLQ trực tiếp như vậy; on-failure destination mới là cơ chế đúng.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-008",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-02-lambda",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Một Lambda function trong VPC gặp tình trạng lúc cao điểm bị lỗi liên quan tới ENI và đôi khi cold start lâu hơn. Đội muốn tối ưu kiến trúc mạng và hiệu năng. Những phát biểu nào sau đây ĐÚNG về Lambda networking và performance? (Chọn 2)",
-    "options": [
-      "Lambda dùng Hyperplane ENI, được chia sẻ giữa các execution environment cùng function/subnet/security group, giúp giảm cold start so với mô hình ENI cũ",
-      "Để truy cập service AWS như S3/DynamoDB từ Lambda trong VPC mà không qua NAT Gateway, có thể dùng VPC Gateway/Interface Endpoint",
-      "Mỗi concurrent invocation của Lambda trong VPC luôn tạo một ENI mới riêng, nên cần nhiều IP private",
-      "Gán Provisioned Concurrency làm Lambda thoát khỏi VPC để giảm cold start",
-      "Đặt function vào một subnet duy nhất (single-AZ) làm tăng độ sẵn sàng và lượng IP khả dụng"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Câu hỏi kiểm tra hiểu biết về Hyperplane ENI và VPC endpoints.\n✓ Lambda dùng Hyperplane ENI chia sẻ theo bộ (function/subnet/SG), giảm đáng kể cold start liên quan ENI so với trước.\n✓ VPC Gateway Endpoint (S3, DynamoDB) hoặc Interface Endpoint cho phép truy cập service mà không cần NAT Gateway.\n✗ Mô hình hiện tại KHÔNG tạo ENI mới cho mỗi concurrent invocation; đó là hành vi cũ trước Hyperplane.\n✗ Provisioned Concurrency không làm function rời khỏi VPC; cấu hình VPC vẫn áp dụng.\n✗ Đặt function vào một subnet duy nhất (single-AZ) làm giảm độ sẵn sàng và pool IP; nên dùng nhiều subnet ở nhiều AZ.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-008",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-02-lambda",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một Lambda function tải một model ML (~200 MB) từ S3 để inference. Mỗi invocation lại tải lại model làm latency cao. Đội muốn tránh tải lại trong cùng execution environment được warm. Cách tối ưu nhất là gì?",
-    "options": [
-      "Tải model về /tmp (hoặc biến global) một lần ở cold start và tái dùng cho các warm invocation tiếp theo",
-      "Tăng batch size của event source mapping để tải model ít lần hơn",
-      "Lưu model vào environment variable đã mã hóa KMS",
-      "Đặt timeout lớn hơn để có thời gian tải model mỗi lần"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Nội dung /tmp và biến global tồn tại giữa các invocation trên cùng execution context được warm.\n✓ Tải model vào /tmp hoặc biến global một lần ở cold start rồi tái dùng giúp warm invocation không tải lại, giảm latency.\n✗ Tăng batch size không liên quan tới việc cache model trong môi trường.\n✗ Env var giới hạn 4 KB tổng, không thể chứa model 200 MB.\n✗ Tăng timeout không loại bỏ việc tải lại model mỗi lần.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-009",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-02-lambda",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Đội phát triển muốn tích hợp một công cụ giám sát của bên thứ ba để thu thập telemetry và đẩy log của Lambda function tới hệ thống quan sát riêng, chạy như tiến trình độc lập bên cạnh runtime mà không sửa code function. Cơ chế Lambda nào phù hợp nhất?",
-    "options": [
-      "Lambda Extension (external extension) chạy song song trong cùng execution environment",
-      "Lambda Layer chứa thư viện logging",
-      "Lambda Destinations on-success",
-      "Environment variable trỏ tới endpoint của hệ thống quan sát"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Lambda Extensions chạy như tiến trình riêng trong execution environment, dùng cho telemetry/observability mà không sửa code.\n✓ External Extension tích hợp công cụ giám sát/telemetry, chạy độc lập bên cạnh runtime, không cần sửa code function.\n✗ Layer chỉ chia sẻ code/dependency, không chạy như tiến trình song song.\n✗ Destinations định tuyến kết quả async invocation, không phải thu thập telemetry liên tục.\n✗ Env var chỉ là cấu hình, không phải cơ chế chạy agent giám sát.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-009",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-02-lambda",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một Lambda function được API Gateway gọi đồng bộ. Khi traffic tăng và Lambda bị throttle do vượt concurrency, đội muốn client thấy hành vi đúng và có khả năng tự retry hợp lý. Phát biểu nào mô tả đúng hành vi và best practice?",
-    "options": [
-      "Synchronous invocation trả về lỗi throttling 429 (TooManyRequestsException) và client nên áp dụng exponential backoff để retry",
-      "Lambda tự động đưa các invocation bị throttle vào DLQ để xử lý lại",
-      "Synchronous throttle khiến Lambda tự retry hai lần trước khi trả lỗi cho client",
-      "Lambda chuyển các request bị throttle sang chế độ async và xử lý sau"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Với invocation đồng bộ, throttling trả lỗi 429 ngay cho caller; caller chịu trách nhiệm retry với backoff.\n✓ Throttle đồng bộ trả 429/TooManyRequestsException; client áp dụng exponential backoff (và jitter) để retry là best practice.\n✗ DLQ và auto-retry chỉ áp dụng cho async invocation, không phải sync.\n✗ Lambda không tự retry cho sync invocation; trách nhiệm retry thuộc về caller.\n✗ Lambda không tự chuyển sync request bị throttle sang async.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-009",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-02-lambda",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một Lambda function async đôi khi thất bại do lỗi tạm thời (throttle downstream). Đội muốn function tự retry các lỗi này một số lần và sau khi hết retry thì payload thất bại được lưu lại để điều tra, với cấu hình đơn giản. Lựa chọn nào đúng?",
-    "options": [
-      "Cấu hình Maximum Retry Attempts cho async invocation và đặt một on-failure Destination (hoặc DLQ) để lưu event thất bại",
-      "Tăng reserved concurrency để loại bỏ mọi lỗi throttle",
-      "Bật Provisioned Concurrency để tránh thất bại",
-      "Đặt batch size nhỏ hơn để giảm lỗi"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Async invocation hỗ trợ cấu hình số lần retry và đích on-failure (Destination hoặc DLQ) để lưu event thất bại.\n✓ Maximum Retry Attempts xử lý lỗi tạm thời, on-failure Destination/DLQ lưu payload thất bại để điều tra.\n✗ Reserved concurrency không loại bỏ lỗi throttle ở downstream service.\n✗ Provisioned Concurrency chống cold start, không xử lý lỗi runtime.\n✗ Batch size không áp dụng cho async invocation đơn lẻ kiểu này.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-010",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-03-api-gateway",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một nhóm phát triển cần xây dựng một REST API đơn giản chỉ làm proxy chuyển tiếp HTTP request tới các hàm Lambda, với chi phí thấp nhất và độ trễ thấp. Họ KHÔNG cần các tính năng như request validation phức tạp, usage plans hay API keys. Loại API nào của API Gateway là phù hợp NHẤT?",
-    "options": [
-      "HTTP API",
-      "REST API",
-      "WebSocket API",
-      "GraphQL API qua AppSync"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "HTTP API được thiết kế cho proxy Lambda/HTTP đơn giản, rẻ hơn và độ trễ thấp hơn REST API.\n✓ HTTP API: chi phí thấp hơn (tới khoảng 70%), độ trễ thấp, hỗ trợ Lambda proxy và JWT authorizer, lý tưởng cho proxy đơn giản.\n✗ REST API: nhiều tính năng (API keys, usage plans, request validation, caching) nhưng đắt hơn và không cần thiết ở đây.\n✗ WebSocket API: dành cho kết nối hai chiều thời gian thực, không phù hợp mô hình request/response HTTP.\n✗ AppSync GraphQL: là dịch vụ khác, không phải API Gateway và không cần thiết cho proxy đơn giản.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-010",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-03-api-gateway",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một ứng dụng web chạy tại https://app.example.com gọi một REST API trên API Gateway tại một domain khác. Trình duyệt báo lỗi CORS khi gửi request POST với header Content-Type: application/json. Cách xử lý đúng tại API Gateway là gì?",
-    "options": [
-      "Bật CORS để API Gateway trả về header Access-Control-Allow-Origin và cấu hình method OPTIONS (preflight)",
-      "Thêm header X-Forwarded-For vào tất cả response của method POST",
-      "Chuyển integration từ Lambda proxy sang non-proxy để tự thêm header",
-      "Bật API caching trên stage để cache kết quả preflight"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "CORS yêu cầu API trả về các header Access-Control-Allow-* và xử lý preflight OPTIONS.\n✓ Bật CORS và OPTIONS: trình duyệt gửi preflight OPTIONS trước POST có Content-Type không phải dạng đơn giản; API Gateway cần trả Access-Control-Allow-Origin/Methods/Headers.\n✗ X-Forwarded-For: không liên quan tới CORS.\n✗ Đổi sang non-proxy: không bắt buộc; vấn đề là thiếu header CORS, không phải kiểu integration.\n✗ Caching: không giải quyết lỗi CORS.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-010",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-03-api-gateway",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Với Lambda proxy integration trên API Gateway REST API, hàm Lambda phải trả về kết quả như thế nào để client nhận HTTP 200 kèm body JSON đúng?",
-    "options": [
-      "Trả về object có dạng { \"statusCode\": 200, \"headers\": {...}, \"body\": \"<chuỗi JSON>\" }",
-      "Trả về trực tiếp object JSON nghiệp vụ; API Gateway tự bọc thành response",
-      "Trả về { \"status\": 200, \"payload\": {...} } và để mapping template chuyển đổi",
-      "Trả về chuỗi rỗng và đặt statusCode trong stage variable"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Lambda proxy yêu cầu output đúng cấu trúc statusCode/headers/body, với body là chuỗi (string).\n✓ { statusCode, headers, body }: đây là định dạng bắt buộc của proxy integration; body phải là chuỗi (thường dùng JSON.stringify).\n✗ Trả object nghiệp vụ trực tiếp: đó là hành vi của non-proxy; với proxy sẽ gây lỗi 502 Malformed Lambda proxy response.\n✗ { status, payload }: sai tên trường, không đúng contract của proxy.\n✗ Chuỗi rỗng và stage variable: stage variable không dùng để đặt statusCode.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-011",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-03-api-gateway",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một REST API cần biến đổi body request đến từ client (XML) sang JSON trước khi gửi tới một HTTP backend, và biến đổi ngược lại response. Backend KHÔNG nên thấy định dạng gốc. Giải pháp phù hợp nhất là gì?",
-    "options": [
-      "Dùng non-proxy integration với mapping templates (VTL) cho cả Integration Request và Integration Response",
-      "Dùng Lambda proxy integration và để client tự chuyển đổi",
-      "Bật request validation để API Gateway tự chuyển XML sang JSON",
-      "Dùng stage variables để chỉ định bộ chuyển đổi tại runtime"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Việc transform request/response cần non-proxy integration với mapping templates VTL.\n✓ Non-proxy và mapping templates: cho phép viết VTL để map/transform body ở Integration Request và Integration Response.\n✗ Lambda proxy: proxy chuyển nguyên payload, không cho phép mapping template biến đổi.\n✗ Request validation: chỉ kiểm tra schema/tham số bắt buộc, không chuyển đổi định dạng.\n✗ Stage variables: chỉ là biến cấu hình theo stage, không thực hiện transform.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-011",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-03-api-gateway",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một REST API cung cấp cho khách hàng bên thứ ba. Bạn cần giới hạn mỗi khách hàng tối đa 10.000 request/ngày và 50 request/giây, đồng thời nhận diện từng khách hàng. Cách triển khai đúng là gì?",
-    "options": [
-      "Tạo usage plan với throttling và quota, gắn API key cho mỗi khách hàng và liên kết với usage plan",
-      "Bật account-level throttling và cấp cùng một API key cho tất cả khách hàng",
-      "Dùng Lambda authorizer để tự đếm request trong DynamoDB cho từng khách hàng",
-      "Cấu hình WAF rate-based rule giới hạn 50 request/giây cho toàn API"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Usage plan và API key là cơ chế gốc của API Gateway để áp quota/throttle theo từng client.\n✓ Usage plan và API key: usage plan định nghĩa quota (10.000/ngày) và rate/burst (50 rps); mỗi API key gắn với plan để nhận diện và đo từng khách hàng.\n✗ Account-level throttle và key chung: không tách biệt theo khách hàng, không có quota riêng.\n✗ Lambda authorizer tự đếm: phức tạp, tốn kém, trùng lặp tính năng có sẵn.\n✗ WAF rate-based: áp cho IP/toàn API, không gắn quota theo khách hàng cụ thể.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-011",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-03-api-gateway",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Người dùng đã đăng nhập qua một Amazon Cognito user pool và nhận được ID token (JWT). Bạn muốn API Gateway REST API tự xác thực token này và từ chối request không hợp lệ mà không cần viết code authorizer. Lựa chọn nào phù hợp nhất?",
-    "options": [
-      "Cognito user pool authorizer",
-      "IAM authorizer (AWS_IAM) với SigV4",
-      "Lambda (TOKEN) authorizer tự viết để verify JWT",
-      "API key gắn với usage plan"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Cognito user pool authorizer xác thực JWT từ user pool một cách tự nhiên, không cần code.\n✓ Cognito user pool authorizer: client gửi ID/Access token trong header; API Gateway tự verify với user pool, không cần Lambda.\n✗ IAM (SigV4): dùng cho credential AWS/role, không hợp với JWT của người dùng đăng nhập qua Cognito.\n✗ Lambda authorizer tự viết: làm được nhưng phải tự code verify JWT, không tối ưu khi đã có sẵn Cognito authorizer.\n✗ API key: chỉ để định danh/đo lường, KHÔNG phải cơ chế xác thực người dùng.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-012",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-03-api-gateway",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Bạn cần một authorizer cho API Gateway dựa trên một header Authorization tùy chỉnh chứa token bên thứ ba (không phải Cognito), với logic xác thực riêng và muốn cache kết quả phân quyền để giảm số lần gọi. Cách nào phù hợp nhất?",
-    "options": [
-      "Lambda authorizer kiểu TOKEN, dùng Identity Source là header Authorization và bật TTL cache cho policy trả về",
-      "Cognito user pool authorizer trỏ tới một user pool trống",
-      "IAM authorizer và yêu cầu client ký SigV4",
-      "Resource policy chặn theo IP và bỏ qua token"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Token bên thứ ba với logic tùy chỉnh cần Lambda authorizer kiểu TOKEN, có thể cache theo identity source.\n✓ Lambda authorizer TOKEN và cache: nhận token từ header, chạy logic verify tùy chỉnh, trả về IAM policy; bật authorization caching (TTL) theo identity source để giảm số lần gọi.\n✗ Cognito authorizer: chỉ verify JWT của user pool, không xử lý token bên thứ ba.\n✗ IAM authorizer: yêu cầu credential AWS, không phù hợp token bên thứ ba.\n✗ Resource policy theo IP: không xác thực token, không đáp ứng yêu cầu.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-012",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-03-api-gateway",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một POST endpoint nhận JSON. Bạn muốn API Gateway từ chối sớm (HTTP 400) các request thiếu trường bắt buộc hoặc sai kiểu dữ liệu để tránh gọi Lambda lãng phí, mà không viết thêm code. Cách triển khai đúng là gì?",
-    "options": [
-      "Tạo Model (JSON Schema) cho request body và bật Request Validator kiểm tra body trên method",
-      "Dùng mapping template VTL để throw lỗi khi thiếu trường",
-      "Bật API caching để loại bỏ request không hợp lệ",
-      "Thêm Lambda authorizer kiểm tra schema của body"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Request validation bằng Model (JSON Schema) cho phép API Gateway tự reject body không hợp lệ trước khi gọi backend.\n✓ Model và Request Validator: định nghĩa JSON Schema (required/type), gắn validator kiểu 'validate body' để API Gateway trả 400 mà không gọi Lambda.\n✗ Mapping template VTL: có thể kiểm tra nhưng phức tạp và là cách thủ công, không phải cơ chế validation chuẩn.\n✗ API caching: không có vai trò xác thực dữ liệu đầu vào.\n✗ Lambda authorizer: dùng cho phân quyền, không nhận hay kiểm tra request body.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-012",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-03-api-gateway",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Trong non-proxy integration của một REST API, bạn cần đọc một path parameter tên 'orderId' và một query string 'status' rồi đưa chúng vào JSON body gửi tới backend qua mapping template. Biểu thức VTL nào lấy đúng các giá trị này?",
-    "options": [
-      "$input.params('orderId') cho path và $input.params('status') cho query string",
-      "$context.requestId cho path và $stageVariables.status cho query string",
-      "$input.body.orderId và $input.body.status",
-      "$util.escapeJavaScript($input.path) cho cả hai giá trị"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Trong VTL của API Gateway, $input.params('name') lấy được path, query và header parameter theo tên.\n✓ $input.params('orderId') / $input.params('status'): hàm params() truy xuất tham số từ path/query/header theo tên, đúng cho cả hai.\n✗ $context.requestId / $stageVariables: không phải tham số request của client; stageVariables là biến cấu hình stage.\n✗ $input.body.orderId: body không chứa path/query parameter.\n✗ $util.escapeJavaScript($input.path): escape là tiện ích chuỗi, không truy xuất tham số riêng lẻ.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-013",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-03-api-gateway",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một REST API có 3 stage: dev, test, prod, mỗi stage cần gọi một hàm Lambda khác nhau (myfunc-dev, myfunc-test, myfunc-prod) mà KHÔNG phải tạo lại integration cho từng stage. Cách làm tối ưu là gì?",
-    "options": [
-      "Dùng stage variable (ví dụ ${stageVariables.lambdaAlias}) trong cấu hình integration URI và đặt giá trị khác nhau cho mỗi stage",
-      "Tạo 3 REST API riêng biệt, mỗi API trỏ tới một Lambda",
-      "Hard-code ARN của prod và dùng resource policy để chuyển hướng theo stage",
-      "Dùng Lambda alias 'PROD' cho cả ba stage và phân biệt bằng API key"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Stage variables cho phép một integration trỏ động tới các target khác nhau theo stage.\n✓ Stage variable trong integration URI: tham chiếu ${stageVariables.xxx} để mỗi stage gọi Lambda/alias tương ứng, một định nghĩa dùng cho nhiều môi trường.\n✗ 3 API riêng: trùng lặp cấu hình, khó bảo trì, không tối ưu.\n✗ Hard-code prod và resource policy: resource policy không định tuyến tới Lambda khác nhau.\n✗ Cùng alias PROD và API key: API key không chọn backend; mọi stage sẽ gọi cùng một hàm.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-013",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-03-api-gateway",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Một GET endpoint trên REST API trả về danh mục sản phẩm ít thay đổi và đang chịu tải đọc rất cao gây độ trễ và chi phí backend. Bạn muốn giảm tải và tăng tốc bằng API Gateway caching. Những phát biểu nào ĐÚNG về caching này? (Chọn 2)",
-    "options": [
-      "Caching được bật ở cấp STAGE và có thể cấu hình TTL cho từng method",
-      "Có thể chọn các request parameter làm cache key để phân biệt các response khác nhau",
-      "Caching chỉ áp dụng cho method POST và PUT, không áp dụng cho GET",
-      "API Gateway cache là miễn phí và tự bật mặc định cho mọi stage",
-      "Cache được lưu phía client trình duyệt, không nằm ở API Gateway"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "API Gateway cache bật ở stage, có TTL và hỗ trợ cache key dựa trên parameter; cache này có tính phí.\n✓ Bật ở cấp stage và TTL theo method: caching cấu hình trên stage (kích thước cache) và TTL có thể override cho từng method.\n✓ Cache key theo parameter: chọn query string/header/path làm cache key để phân tách các kết quả khác nhau.\n✗ Chỉ cho POST/PUT: ngược lại, caching hữu ích nhất cho GET (đọc nhiều, ít đổi).\n✗ Miễn phí và mặc định: cache có tính phí theo dung lượng và phải bật thủ công.\n✗ Lưu ở trình duyệt: cache nằm tại API Gateway, không phải client.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-013",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-03-api-gateway",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một backend cần xây dựng kênh giao tiếp hai chiều thời gian thực để server có thể chủ động đẩy thông báo tới các client đang kết nối (ví dụ ứng dụng chat). Loại API Gateway nào phù hợp nhất?",
-    "options": [
-      "WebSocket API với các route $connect, $disconnect và route tùy chỉnh",
-      "REST API với long polling và API caching",
-      "HTTP API với JWT authorizer và CORS",
-      "REST API với Lambda proxy integration và usage plans"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "WebSocket API hỗ trợ kết nối hai chiều bền vững, cho phép server đẩy dữ liệu tới client.\n✓ WebSocket API: duy trì kết nối, dùng route $connect/$disconnect và route tùy chỉnh; server đẩy message qua @connections API, lý tưởng cho chat/real-time.\n✗ REST và long polling: mô phỏng được nhưng kém hiệu quả, tăng độ trễ và chi phí.\n✗ HTTP API: chỉ request/response, không có kết nối bền vững hai chiều.\n✗ REST và Lambda proxy: vẫn là mô hình request/response, không đẩy chủ động được.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-014",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-04-dynamodb",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một ứng dụng mới ra mắt có lưu lượng truy cập rất khó dự đoán, lúc tăng đột biến lúc gần như không có. Team không muốn dành thời gian tinh chỉnh capacity và muốn tránh throttling khi traffic spike. Chế độ capacity nào của DynamoDB phù hợp nhất?",
-    "options": [
-      "On-demand capacity mode",
-      "Provisioned capacity với giá trị RCU/WCU cố định cao",
-      "Provisioned capacity với Reserved Capacity dài hạn",
-      "Provisioned capacity với Auto Scaling target 70%"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Traffic spiky/khó đoán và không muốn quản lý capacity → On-demand tự scale gần như tức thì.\n✓ On-demand — đúng, tự động scale theo từng request, không cần tinh chỉnh, hạn chế throttling khi spike.\n✗ Provisioned RCU/WCU cố định cao — lãng phí tiền khi tải thấp và vẫn có thể throttle nếu spike vượt mức.\n✗ Reserved Capacity — cam kết dài hạn cho tải ổn định, không hợp ứng dụng mới khó đoán.\n✗ Provisioned + Auto Scaling — phản ứng chậm hơn on-demand với burst đột ngột nên dễ throttle lúc spike.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-014",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-04-dynamodb",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một developer cần truy xuất tất cả order của một customer cụ thể, biết trước customerId là partition key của bảng Orders. Thao tác nào hiệu quả và tiết kiệm chi phí nhất?",
-    "options": [
-      "Query với KeyConditionExpression theo customerId",
-      "Scan toàn bảng rồi filter theo customerId",
-      "Scan với FilterExpression theo customerId",
-      "BatchGetItem cho tất cả order của customer"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Biết partition key → Query chỉ đọc đúng partition, nhanh và rẻ hơn Scan.\n✓ Query theo customerId — đúng, chỉ tiêu thụ RCU cho dữ liệu khớp key, hiệu quả nhất.\n✗ Scan rồi filter client-side — đọc toàn bảng, tốn RCU cho mọi item kể cả không liên quan.\n✗ Scan + FilterExpression — Filter áp dụng SAU khi đọc, vẫn tính RCU trên toàn bộ item quét qua.\n✗ BatchGetItem — yêu cầu biết full primary key (PK+SK) của từng item, không lấy được \"tất cả\" theo một customerId.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-014",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-04-dynamodb",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Yêu cầu nghiệp vụ: sau khi một item được ghi, mọi lần đọc tiếp theo PHẢI thấy ngay giá trị mới nhất (không chấp nhận dữ liệu cũ). Khi gọi GetItem, developer cần cấu hình gì?",
-    "options": [
-      "Đặt ConsistentRead = true (strongly consistent read)",
-      "Để mặc định eventually consistent read cho nhanh",
-      "Đọc qua một Global Secondary Index",
-      "Đặt ReturnConsumedCapacity = TOTAL"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Cần thấy ngay dữ liệu mới nhất → strongly consistent read bằng ConsistentRead=true.\n✓ ConsistentRead=true — đúng, đảm bảo đọc phản ánh mọi write thành công trước đó.\n✗ Eventually consistent (mặc định) — có thể trả về bản cũ trong khoảng thời gian ngắn.\n✗ Đọc qua GSI — GSI KHÔNG hỗ trợ strongly consistent read, luôn eventually consistent.\n✗ ReturnConsumedCapacity — chỉ trả về thông tin capacity tiêu thụ, không ảnh hưởng consistency.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-015",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-04-dynamodb",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Bảng DynamoDB dùng partition key là 'status' với chỉ 3 giá trị (ACTIVE, PENDING, CLOSED). Đa số traffic dồn vào ACTIVE. Ứng dụng bị throttle dù tổng provisioned capacity vẫn còn dư nhiều. Nguyên nhân gốc và cách khắc phục tốt nhất là gì?",
-    "options": [
-      "Hot partition do partition key cardinality thấp; thiết kế lại key có cardinality cao, phân bố đều",
-      "Thiếu RCU/WCU; tăng provisioned capacity của bảng lên gấp đôi",
-      "Region quá tải; chuyển bảng sang Region khác",
-      "Thiếu index; thêm một LSI trên thuộc tính status"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Throttle dù còn capacity là dấu hiệu kinh điển của hot partition do key cardinality thấp.\n✓ Hot partition do cardinality thấp, redesign key phân bố đều — đúng, traffic dồn vào ít giá trị PK gây nóng một partition.\n✗ Tăng provisioned capacity — capacity tổng còn dư nên vấn đề không nằm ở thiếu RCU/WCU; tăng thêm vẫn nóng partition đó.\n✗ Chuyển Region — không liên quan, vấn đề là thiết kế key.\n✗ Thêm LSI trên status — LSI dùng chung PK với bảng, không giải quyết hot partition mà còn tệ hơn.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-015",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-04-dynamodb",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Bảng Products đã chạy production với partition key 'productId'. Team cần thêm một access pattern mới: truy vấn sản phẩm theo 'categoryId'. Họ cần một index tạo được trên bảng đang chạy, không cần strongly consistent read. Giải pháp nào đúng?",
-    "options": [
-      "Tạo Global Secondary Index (GSI) với partition key categoryId",
-      "Tạo Local Secondary Index (LSI) với sort key categoryId",
-      "Tạo lại bảng từ đầu để thêm LSI categoryId",
-      "Dùng Scan với FilterExpression theo categoryId"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "LSI chỉ tạo được lúc tạo bảng; thêm index sau khi bảng chạy → GSI.\n✓ GSI partition key categoryId — đúng, GSI tạo/xóa được bất kỳ lúc nào và hỗ trợ partition key khác bảng gốc.\n✗ LSI sort key categoryId — LSI phải được tạo cùng lúc với bảng, không thêm được vào bảng đang chạy.\n✗ Tạo lại bảng để thêm LSI — tốn kém, gây downtime/migration không cần thiết khi GSI giải quyết được.\n✗ Scan + Filter — đọc toàn bảng mỗi lần, tốn kém và chậm cho access pattern lặp lại.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-015",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-04-dynamodb",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng đọc nặng (read-heavy) cần giảm latency truy vấn DynamoDB từ vài mili giây xuống microsecond, và muốn thay đổi code tối thiểu vì API phải tương thích DynamoDB. Dữ liệu đọc chấp nhận eventually consistent. Giải pháp tối ưu là gì?",
-    "options": [
-      "Thêm DynamoDB Accelerator (DAX) trước bảng",
-      "Triển khai Amazon ElastiCache for Redis với cache-aside thủ công",
-      "Bật strongly consistent read trên mọi truy vấn",
-      "Tăng provisioned RCU và bật Auto Scaling"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Read microsecond + API tương thích + code tối thiểu → DAX là lựa chọn chuẩn cho DynamoDB.\n✓ DAX — đúng, in-memory cache quản lý sẵn, API tương thích DynamoDB, đưa read xuống microsecond với code thay đổi tối thiểu.\n✗ ElastiCache Redis — phải tự viết logic cache-aside, nhiều code hơn DAX.\n✗ Strongly consistent read — không giảm latency, thậm chí tốn RCU gấp đôi và không dùng được cache.\n✗ Tăng RCU + Auto Scaling — cải thiện throughput chứ không hạ latency xuống microsecond.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-016",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-04-dynamodb",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Nhiều client cùng cập nhật thuộc tính 'stock' của một item product, gây ra lost update (ghi đè lẫn nhau). Developer muốn đảm bảo chỉ ghi nếu item chưa bị thay đổi kể từ lúc đọc. Cách triển khai chuẩn trong DynamoDB là gì?",
-    "options": [
-      "Optimistic locking: thêm thuộc tính 'version', dùng ConditionExpression 'version = :v' và tăng version mỗi lần update",
-      "Dùng BatchWriteItem để gom các update thành một lần ghi",
-      "Bật strongly consistent read khi GetItem rồi PutItem bình thường",
-      "Tăng WCU của bảng để các write không tranh chấp"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Tránh lost update khi nhiều client sửa cùng item → optimistic locking với version + ConditionExpression.\n✓ Optimistic locking version + ConditionExpression — đúng, write chỉ thành công nếu version chưa đổi, nếu không thì fail để client retry.\n✗ BatchWriteItem — không atomic, không hỗ trợ điều kiện theo version, không ngăn lost update.\n✗ Strongly consistent read rồi PutItem — đọc mới vẫn không khóa ghi; giữa đọc và ghi client khác có thể chen vào.\n✗ Tăng WCU — giải quyết throttling chứ không phải tranh chấp logic/lost update.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-016",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-04-dynamodb",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Hệ thống ngân hàng cần chuyển tiền: trừ tiền tài khoản A và cộng tiền tài khoản B trên cùng một bảng DynamoDB. Hai thao tác phải cùng thành công hoặc cùng thất bại (all-or-nothing). API nào phù hợp?",
-    "options": [
-      "TransactWriteItems",
-      "BatchWriteItem",
-      "Hai lần UpdateItem riêng biệt có ConditionExpression",
-      "PutItem với ReturnValues = ALL_OLD"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Nhiều thao tác ghi all-or-nothing trên cùng region/account → TransactWriteItems (ACID).\n✓ TransactWriteItems — đúng, đảm bảo atomic all-or-nothing cho nhiều item/bảng.\n✗ BatchWriteItem — KHÔNG atomic, một item fail không rollback các item khác.\n✗ Hai UpdateItem riêng — nếu lệnh thứ hai fail, lệnh đầu đã commit, không rollback được.\n✗ PutItem ALL_OLD — chỉ ghi một item và trả giá trị cũ, không bao trùm hai thao tác nguyên tử.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-016",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-04-dynamodb",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Developer viết code Query và in ra số item nhận được, nhưng phát hiện chỉ nhận về một phần kết quả (khoảng 1MB dữ liệu) dù bảng có nhiều dữ liệu khớp hơn. Nguyên nhân và cách sửa là gì?",
-    "options": [
-      "Response giới hạn 1MB; phải lặp dùng LastEvaluatedKey truyền vào ExclusiveStartKey để lấy các trang tiếp",
-      "Bảng thiếu RCU; tăng provisioned read capacity",
-      "Phải dùng Scan thay vì Query để lấy đủ dữ liệu",
-      "Đặt Limit lớn hơn để DynamoDB trả tất cả trong một response"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Một response Query/Scan giới hạn 1MB; còn dữ liệu thì có LastEvaluatedKey cần phân trang.\n✓ Lặp với LastEvaluatedKey → ExclusiveStartKey — đúng, đây là pagination chuẩn để lấy hết các trang.\n✗ Tăng RCU — capacity không liên quan tới giới hạn 1MB mỗi response.\n✗ Đổi sang Scan — Scan cũng giới hạn 1MB mỗi response, vấn đề không được giải quyết.\n✗ Đặt Limit lớn hơn — Limit giới hạn số item tối đa mỗi trang, không vượt được trần 1MB/response.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-017",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-04-dynamodb",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một bảng session lưu các phiên đăng nhập tạm thời. Team muốn DynamoDB tự động xóa các item hết hạn để tiết kiệm chi phí lưu trữ, không tốn WCU cho việc xóa thủ công. Cách cấu hình đúng là gì?",
-    "options": [
-      "Bật TTL trên một thuộc tính chứa epoch timestamp tính bằng giây (Number)",
-      "Bật TTL trên một thuộc tính chứa ISO 8601 datetime string",
-      "Tạo một Lambda chạy theo lịch để Scan và DeleteItem các item cũ",
-      "Đặt một thuộc tính expiresAt bằng milliseconds và bật TTL"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "TTL yêu cầu attribute là epoch time tính bằng giây (Number) và xóa nền không tốn WCU.\n✓ TTL với epoch seconds (Number) — đúng, đây là format bắt buộc để TTL hoạt động và item được xóa tự động không tính WCU.\n✗ ISO 8601 string — sai format, TTL chỉ đọc Number epoch giây nên item sẽ không bị xóa.\n✗ Lambda Scan + DeleteItem định kỳ — tốn RCU/WCU và chi phí Lambda, không tối ưu so với TTL.\n✗ Milliseconds — TTL hiểu giá trị là giây; dùng milliseconds khiến thời điểm xóa sai lệch rất xa.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-017",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-04-dynamodb",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một bảng cần phản ứng real-time mỗi khi item thay đổi: khi giá sản phẩm cập nhật, một Lambda phải tính delta giữa giá cũ và giá mới rồi gửi notification. Cấu hình DynamoDB Streams nào phù hợp nhất?",
-    "options": [
-      "Bật Streams với StreamViewType = NEW_AND_OLD_IMAGES và gắn Lambda trigger",
-      "Bật Streams với StreamViewType = NEW_IMAGE và gắn Lambda trigger",
-      "Bật Streams với StreamViewType = KEYS_ONLY và để Lambda GetItem giá cũ",
-      "Dùng TTL để phát sinh sự kiện thay đổi giá"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Cần cả giá cũ lẫn mới để tính delta → StreamViewType NEW_AND_OLD_IMAGES.\n✓ NEW_AND_OLD_IMAGES + Lambda — đúng, stream record chứa cả image cũ và mới, Lambda tính delta trực tiếp.\n✗ NEW_IMAGE — chỉ có giá mới, không có giá cũ để tính delta.\n✗ KEYS_ONLY + GetItem giá cũ — stream chỉ có key; GetItem chỉ lấy được giá hiện tại (mới), không lấy lại được giá cũ đã bị ghi đè.\n✗ TTL — chỉ để xóa item hết hạn, không phải cơ chế bắt sự kiện thay đổi giá.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-017",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-04-dynamodb",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Bảng có item kích thước 8KB. Ứng dụng cần thực hiện 100 strongly consistent read mỗi giây trên các item này ở chế độ provisioned. Cần provision tối thiểu bao nhiêu RCU?",
-    "options": [
-      "200 RCU",
-      "100 RCU",
-      "400 RCU",
-      "50 RCU"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "1 RCU = 1 strongly consistent read item ≤4KB; item 8KB = 2 × 4KB → 2 RCU/read, ×100 = 200.\n✓ 200 RCU — đúng: 8KB làm tròn lên bội số 4KB = 2 block → 2 RCU mỗi strongly consistent read, ×100 read/s = 200 RCU.\n✗ 100 RCU — bỏ qua việc item 8KB cần 2 RCU mỗi read (chỉ đúng nếu item ≤4KB).\n✗ 400 RCU — gấp đôi không cần thiết; 400 ứng với item 16KB hoặc tính nhầm đơn vị.\n✗ 50 RCU — đó là con số cho eventually consistent (½ RCU/read), không phải strongly consistent.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-018",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-04-dynamodb",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Developer dùng BatchWriteItem để nạp dữ liệu hàng loạt vào DynamoDB. Những phát biểu nào về BatchWriteItem là ĐÚNG? (Chọn 2)",
-    "options": [
-      "Mỗi lệnh BatchWriteItem ghi tối đa 25 item (Put/Delete)",
-      "Response có thể chứa UnprocessedItems mà ứng dụng phải tự retry, nên dùng exponential backoff",
-      "BatchWriteItem là atomic: nếu một item fail thì toàn bộ batch rollback",
-      "BatchWriteItem hỗ trợ UpdateItem để cập nhật từng phần thuộc tính",
-      "BatchWriteItem tự động đảm bảo strongly consistent cho mọi write"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "BatchWriteItem giới hạn 25 item/lần, không atomic, và có thể trả về UnprocessedItems cần tự retry.\n✓ Tối đa 25 item mỗi lệnh — đúng (và ≤16MB).\n✓ UnprocessedItems phải tự retry với exponential backoff — đúng, một số item có thể chưa xử lý do throttle.\n✗ Atomic/rollback toàn batch — sai, BatchWriteItem KHÔNG atomic; muốn all-or-nothing dùng Transactions.\n✗ Hỗ trợ UpdateItem — sai, batch chỉ Put/Delete, không có UpdateItem.\n✗ Tự đảm bảo strongly consistent — sai, consistency là khái niệm của read; phát biểu này không hợp lệ cho write batch.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-018",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-04-dynamodb",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Bảng ở chế độ provisioned có một GSI để truy vấn theo một access pattern phụ. Trong giờ cao điểm, các write vào BẢNG GỐC bắt đầu bị throttle dù bảng gốc còn dư WCU. Nguyên nhân khả dĩ nhất là gì?",
-    "options": [
-      "GSI bị thiếu WCU, khiến write vào bảng gốc cũng bị throttle theo",
-      "Strongly consistent read trên GSI tiêu thụ hết WCU của bảng",
-      "GSI tự động dùng chung WCU với bảng nên không bao giờ throttle riêng",
-      "LSI trên bảng đã hết dung lượng 10GB cho partition"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Trong provisioned mode, nếu GSI thiếu WCU để cập nhật, write vào bảng gốc cũng bị throttle (back-pressure).\n✓ GSI thiếu WCU làm write bảng gốc throttle — đúng, GSI có capacity riêng; khi GSI không theo kịp, DynamoDB tạo back-pressure chặn write gốc.\n✗ Strongly consistent read trên GSI — GSI không hỗ trợ strongly consistent read, và read tiêu RCU chứ không tiêu WCU.\n✗ GSI dùng chung WCU, không throttle riêng — sai, GSI có capacity tách biệt và có thể throttle riêng.\n✗ LSI hết 10GB partition — đây nói về giới hạn LSI chứ không phải nguyên nhân throttle write do GSI; đề không có LSI.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-018",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-05-app-integration",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một service xử lý đơn hàng nhận traffic dạng burst: vào giờ khuyến mãi, lượng request tăng đột biến rồi giảm. Đội phát triển muốn tách rời (decouple) producer và consumer, hấp thụ (buffer) các đỉnh tải để worker xử lý dần, đảm bảo không mất message. Mỗi message chỉ cần một consumer xử lý. Dịch vụ nào phù hợp nhất?",
-    "options": [
-      "Amazon SQS Standard queue",
-      "Amazon SNS topic với nhiều email subscriber",
-      "Amazon Kinesis Data Streams với nhiều shard",
-      "AWS Step Functions Express workflow"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Use case kinh điển của SQS: decouple, buffer, hấp thụ burst, point-to-point (1 message → 1 consumer).\n✓ SQS Standard queue: hấp thụ đỉnh tải, worker kéo về xử lý dần, throughput gần như không giới hạn, đúng mô hình point-to-point.\n✗ SNS topic: là pub/sub fan-out (1 message → nhiều subscriber), không phải hàng đợi buffer cho 1 consumer.\n✗ Kinesis Data Streams: dành cho streaming real-time/replay nhiều consumer, phức tạp và đắt hơn cho nhu cầu buffer đơn thuần.\n✗ Step Functions Express: là orchestration workflow, không phải hàng đợi đệm message.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-019",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-05-app-integration",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một consumer poll SQS bằng short polling (WaitTimeSeconds=0) và đang phát sinh rất nhiều empty receive (phản hồi rỗng), làm tăng chi phí API call. Cách tối ưu nhất để giảm số empty response và giảm chi phí là gì?",
-    "options": [
-      "Bật long polling bằng cách đặt ReceiveMessageWaitTimeSeconds lên 20",
-      "Tăng visibility timeout của queue lên 12 giờ",
-      "Chuyển queue từ Standard sang FIFO",
-      "Giảm MaxNumberOfMessages mỗi lần receive xuống 1"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Long polling chờ tới khi có message hoặc hết thời gian (tối đa 20s) thay vì trả về ngay → giảm empty receive và chi phí.\n✓ Đặt ReceiveMessageWaitTimeSeconds=20: bật long polling, giảm số phản hồi rỗng, giảm chi phí polling và latency.\n✗ Tăng visibility timeout: chỉ ảnh hưởng thời gian message bị ẩn sau khi nhận, không liên quan tới empty receive.\n✗ Chuyển sang FIFO: thay đổi thứ tự/dedup chứ không giải quyết empty polling.\n✗ Giảm MaxNumberOfMessages: làm tệ hơn, vẫn poll rỗng và còn ít message mỗi lần.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-019",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-05-app-integration",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Lambda được trigger bởi SQS (event source mapping) với function timeout là 60 giây. Trong production, một số message bị xử lý lặp lại nhiều lần dù logic xử lý không lỗi. Nguyên nhân khả dĩ nhất và cách khắc phục là gì?",
-    "options": [
-      "Visibility timeout nhỏ hơn thời gian xử lý; đặt visibility timeout ít nhất bằng 6 lần function timeout (ví dụ 360 giây)",
-      "Queue đang là Standard; chuyển sang FIFO để bật exactly-once",
-      "Long polling đang tắt; bật ReceiveMessageWaitTimeSeconds=20",
-      "Thiếu DLQ; gắn DLQ vào Lambda function để chặn message lặp"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Nếu visibility timeout nhỏ hơn thời gian xử lý, message hiện lại trước khi consumer kịp DeleteMessage → bị xử lý lại.\n✓ Đặt visibility timeout ít nhất bằng 6 lần function timeout (360s): best practice cho SQS+Lambda, đủ thời gian xử lý và retry mà không bị hiện lại sớm.\n✗ Chuyển sang FIFO: FIFO có dedup nhưng vấn đề ở đây là cấu hình visibility timeout, không phải bản chất Standard.\n✗ Bật long polling: chỉ giảm empty receive, không liên quan message bị xử lý lặp.\n✗ DLQ trên Lambda: với SQS+Lambda, DLQ đặt trên SQS queue chứ không phải trên function; và DLQ không ngăn xử lý lặp.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-019",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-05-app-integration",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Khi một đơn hàng được tạo, hệ thống cần kích hoạt đồng thời ba xử lý độc lập: cập nhật kho, gửi email xác nhận, và đẩy dữ liệu sang analytics. Mỗi hệ thống cần buffer riêng, retry riêng và độ bền (không mất message nếu một consumer tạm down). Kiến trúc nào phù hợp nhất?",
-    "options": [
-      "SNS topic fan-out, mỗi hệ thống có một SQS queue riêng subscribe vào topic",
-      "Một SQS Standard queue duy nhất cho cả ba hệ thống cùng poll",
-      "SNS topic với ba Lambda subscriber trực tiếp, không có SQS",
-      "Kinesis Data Streams với ba consumer dùng enhanced fan-out"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Pattern SNS + SQS fan-out: 1 event → nhiều consumer độc lập, mỗi consumer có buffer/retry/DLQ riêng và độ bền cao.\n✓ SNS fan-out + SQS riêng mỗi hệ thống: mỗi service xử lý theo nhịp riêng, có buffer và độ bền, không mất message khi một consumer down.\n✗ Một SQS queue chung: 1 message chỉ 1 consumer lấy → không thể cả ba cùng xử lý độc lập.\n✗ SNS + Lambda trực tiếp không SQS: nếu subscriber down, message có thể mất, thiếu buffer/độ bền.\n✗ Kinesis enhanced fan-out: phù hợp streaming/replay analytics, nặng và phức tạp hơn nhu cầu fan-out sự kiện đơn giản này.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-020",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-05-app-integration",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một hệ thống thanh toán xử lý giao dịch tài khoản: các giao dịch trên cùng một tài khoản phải được xử lý đúng thứ tự và tuyệt đối không được xử lý trùng lặp. Throughput khoảng vài trăm message mỗi giây. Lựa chọn nào đúng nhất?",
-    "options": [
-      "SQS FIFO queue, dùng MessageGroupId theo accountId",
-      "SQS Standard queue và thiết kế consumer idempotent",
-      "SNS Standard topic với filter policy theo accountId",
-      "Kinesis Data Streams với partition key là accountId"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Yêu cầu thứ tự + không trùng lặp + throughput vừa phải → SQS FIFO, dùng MessageGroupId để giữ thứ tự trong từng tài khoản.\n✓ SQS FIFO với MessageGroupId=accountId: đảm bảo thứ tự trong từng nhóm và exactly-once (khử trùng lặp).\n✗ Standard + idempotent: idempotent tránh tác động trùng nhưng Standard là best-effort ordering, không đảm bảo thứ tự xử lý.\n✗ SNS topic: là pub/sub, không phải hàng đợi giữ thứ tự xử lý point-to-point.\n✗ Kinesis: giữ thứ tự theo shard nhưng không khử trùng lặp built-in; nặng hơn nhu cầu này.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-020",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-05-app-integration",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Đội DevOps cần chạy một Lambda dọn dẹp dữ liệu tạm mỗi ngày lúc 02:00 UTC, theo mô hình serverless không quản lý server cron. Cách triển khai đúng và tối ưu nhất là gì?",
-    "options": [
-      "EventBridge rule (hoặc EventBridge Scheduler) với biểu thức cron(0 2 * * ? *) target tới Lambda",
-      "SQS delay queue với DelaySeconds tính ra 24 giờ để kích hoạt Lambda",
-      "Step Functions Standard với một state Wait 24 giờ lặp vô hạn",
-      "SNS topic publish định kỳ bằng một CloudWatch alarm"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Chạy task theo lịch cron/rate serverless → EventBridge scheduled rule/Scheduler là cách chuẩn thay cho cron server.\n✓ EventBridge cron(0 2 * * ? *) target Lambda: đúng cú pháp lịch, serverless, không cần quản lý server.\n✗ SQS delay queue: DelaySeconds tối đa chỉ 15 phút, không thể lên lịch hằng ngày.\n✗ Step Functions Wait lặp: cồng kềnh, tốn state transition và không phải cách lên lịch chuẩn.\n✗ SNS + CloudWatch alarm: alarm dựa trên metric, không phải cơ chế lập lịch theo thời gian.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-020",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-05-app-integration",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một quy trình duyệt chi phí gồm nhiều bước có thứ tự, nhánh điều kiện, retry chi tiết, và có một bước cần con người phê duyệt (có thể mất vài giờ tới vài ngày) trước khi tiếp tục. Cần audit lịch sử từng bước. Giải pháp tối ưu nhất là gì?",
-    "options": [
-      "Step Functions Standard, dùng callback pattern waitForTaskToken cho bước human approval",
-      "Step Functions Express, dùng state Wait cho bước phê duyệt",
-      "Chuỗi Lambda gọi nhau trực tiếp, lưu trạng thái vào DynamoDB",
-      "EventBridge choreography: mỗi service tự phản ứng với event mà không có điều phối trung tâm"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Workflow dài, có audit chi tiết, có human approval → Step Functions Standard với waitForTaskToken để chờ phản hồi bên ngoài rồi tiếp tục.\n✓ Standard + waitForTaskToken: hỗ trợ workflow tới 1 năm, lịch sử thực thi chi tiết, callback chờ người phê duyệt rồi resume.\n✗ Express + Wait: Express tối đa 5 phút và không lưu lịch sử thực thi chi tiết, không hợp cho phê duyệt kéo dài nhiều giờ/ngày.\n✗ Lambda gọi nhau + DynamoDB: tự xây orchestration thủ công, khó retry/branching/audit, dễ lỗi và Lambda tối đa 15 phút.\n✗ EventBridge choreography: không có điều phối trung tâm, khó theo dõi thứ tự/trạng thái và bước phê duyệt tuần tự.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-021",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-05-app-integration",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Nền tảng analytics cần ingest clickstream real-time. Yêu cầu: nhiều ứng dụng độc lập phải đọc CÙNG luồng dữ liệu (một app tính metric, một app lưu vào S3, một app phát hiện gian lận), và phải có khả năng replay dữ liệu trong 7 ngày khi pipeline lỗi. Dịch vụ nào đáp ứng tốt nhất?",
-    "options": [
-      "Amazon Kinesis Data Streams với retention 7 ngày và nhiều consumer",
-      "Amazon SQS Standard với ba consumer group cùng poll",
-      "Amazon SNS + ba SQS queue fan-out",
-      "Amazon MQ với một topic JMS"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Nhiều ứng dụng đọc cùng luồng + replay được + streaming real-time → Kinesis Data Streams, không phải SQS.\n✓ Kinesis Data Streams: giữ dữ liệu (retention tới 365 ngày, đặt 7 ngày), nhiều consumer đọc lại cùng data, replay được, thứ tự theo shard.\n✗ SQS Standard: 1 message → 1 consumer, xóa sau khi xử lý, không replay, không cho nhiều app đọc cùng data.\n✗ SNS + SQS fan-out: mỗi queue có bản sao riêng và bị xóa sau xử lý → không replay được như stream.\n✗ Amazon MQ: message broker truyền thống, không tối ưu cho streaming analytics quy mô lớn với replay theo retention.",
-    "domain": 1,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-021",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-05-app-integration",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một ứng dụng ghi vào Kinesis Data Stream chế độ provisioned. Producer liên tục nhận lỗi ProvisionedThroughputExceededException trong khi tổng lượng ghi của cả stream vẫn dưới giới hạn lý thuyết. Nguyên nhân gốc khả dĩ nhất là gì?",
-    "options": [
-      "Partition key phân bố lệch khiến một shard bị nóng (hot shard); cần chọn partition key phân tán đều hơn hoặc tăng shard",
-      "Retention period quá ngắn khiến record bị hết hạn khi ghi",
-      "Consumer dùng enhanced fan-out chiếm hết băng thông ghi của producer",
-      "Stream đang ở chế độ on-demand nên throughput bị giới hạn cứng"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Mỗi shard có giới hạn riêng (1 MB/s hoặc 1000 record/s khi ghi). Partition key lệch dồn nhiều record vào một shard → hot shard → lỗi dù tổng stream chưa đầy.\n✓ Hot shard do partition key lệch: chọn partition key phân tán đều hoặc tăng số shard để giải nhiệt.\n✗ Retention ngắn: ảnh hưởng thời gian lưu/replay, không gây lỗi throughput khi ghi.\n✗ Enhanced fan-out: cấp băng thông đọc riêng cho consumer, không lấy băng thông ghi của producer.\n✗ On-demand: chế độ này tự scale, không gây ProvisionedThroughputExceeded; lỗi này thuộc về phân bố trên shard provisioned.",
-    "domain": 1,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-021",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d1-05-app-integration",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Một SQS Standard queue được tiêu thụ bởi Lambda qua event source mapping. Thỉnh thoảng có một message bị lỗi parse (poison pill) khiến function fail liên tục, làm message quay lại queue mãi và chặn tiến độ. Đội cần xử lý 'poison pill' và đảm bảo phần còn lại của batch vẫn chạy. Chọn HAI biện pháp đúng.",
-    "options": [
-      "Cấu hình redrive policy với DLQ và maxReceiveCount (ví dụ 5) để chuyển message lỗi sang DLQ điều tra",
-      "Bật ReportBatchItemFailures để Lambda chỉ trả lại message lỗi thay vì cả batch",
-      "Tăng visibility timeout lên 12 giờ để message lỗi không quay lại",
-      "Chuyển queue sang FIFO để tự động loại bỏ message lỗi",
-      "Tắt long polling để worker bỏ qua message lỗi nhanh hơn"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Poison pill cần DLQ (qua maxReceiveCount) để cô lập message lỗi, và ReportBatchItemFailures để không kéo cả batch fail theo.\n✓ DLQ + maxReceiveCount: sau N lần receive không xóa được, message bị đẩy sang DLQ, không chặn queue.\n✓ ReportBatchItemFailures: Lambda chỉ trả lại các message lỗi trong batch, các message thành công vẫn được xử lý/xóa.\n✗ Tăng visibility timeout 12 giờ: chỉ trì hoãn message hiện lại, không loại bỏ poison pill, vẫn quay lại sau đó.\n✗ Chuyển sang FIFO: FIFO không tự loại bỏ message lỗi parse; còn có thể chặn cả MessageGroup khi message đầu fail.\n✗ Tắt long polling: chỉ ảnh hưởng cách poll, không xử lý được message lỗi.",
-    "domain": 1,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-022",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-01-auth",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một ứng dụng web sử dụng Amazon Cognito User Pool để đăng nhập người dùng. Sau khi xác thực thành công, ứng dụng cần gọi một API backend và phải gửi kèm token để chứng minh danh tính người dùng đã đăng nhập, đồng thời chứa các claim như email và tên hiển thị. Loại token nào của Cognito User Pool phù hợp nhất để truyền thông tin danh tính người dùng?",
-    "options": [
-      "ID token (JWT) chứa các claim về danh tính người dùng",
-      "Access token (JWT) dùng để cấp quyền truy cập resource server scope",
-      "Refresh token dùng để lấy token mới khi token cũ hết hạn",
-      "Temporary AWS credentials do STS cấp"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "ID token là JWT chứa các claim về danh tính (email, name, sub...) dùng để xác thực ai là người dùng.\n✓ ID token — đúng, chứa thông tin danh tính người dùng dùng để authenticate.\n✗ Access token — chủ yếu chứa scope/quyền truy cập resource server, không tập trung vào claim danh tính.\n✗ Refresh token — chỉ để đổi lấy ID/access token mới, không truyền danh tính.\n✗ Temporary AWS credentials — đến từ Identity Pool/STS để gọi dịch vụ AWS, không phải để authenticate người dùng tới API thường.",
+    "explanation": "Cần decoupling để buffer các đỉnh tải, không mất đơn hàng, và scale theo khối lượng công việc thực tế.\n✓ SQS làm buffer giữ đơn hàng bền vững khi tầng xử lý chậm, biến cuộc gọi synchronous thành asynchronous; scale theo độ sâu queue khớp năng lực với tải thực tế.\n✗ Tăng instance và max chỉ trì hoãn vấn đề, vẫn synchronous nên đơn hàng vẫn mất khi vượt ngưỡng và lãng phí chi phí lúc nhàn rỗi.\n✗ SNS là pub/sub fan-out không bền bỉ lưu trữ để buffer; nếu consumer bận, thông điệp không được giữ lại để xử lý sau, vẫn mất đơn.\n✗ ALB chỉ phân phối tải và connection draining xử lý lúc scale-in, không buffer hay chống mất đơn khi toàn tầng quá tải.",
     "domain": 2,
-    "mock": 1
+    "id": "saa-ext-001"
   },
   {
-    "id": "dva-m2-022",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-01-auth",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-03-database-performance",
     "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một ứng dụng mobile cần cho phép người dùng đã đăng nhập qua Cognito User Pool truy cập trực tiếp các object trong Amazon S3 và ghi vào DynamoDB bằng AWS SDK. Thành phần nào của Cognito chịu trách nhiệm đổi token xác thực lấy temporary AWS credentials để gọi các dịch vụ AWS này?",
-    "options": [
-      "Cognito Identity Pool (Federated Identities)",
-      "Cognito User Pool app client",
-      "Cognito Hosted UI",
-      "Cognito Pre Token Generation Lambda trigger"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Identity Pool nhận token (từ User Pool hoặc IdP khác) và đổi lấy temporary AWS credentials qua STS.\n✓ Identity Pool — đúng, cấp temporary AWS credentials để gọi trực tiếp S3/DynamoDB.\n✗ User Pool app client — quản lý cấu hình OAuth/đăng nhập, không cấp AWS credentials.\n✗ Hosted UI — chỉ là giao diện đăng nhập, không cấp credentials.\n✗ Pre Token Generation Lambda — chỉ tùy biến claim trong token, không cấp AWS credentials.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-022",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-01-auth",
-    "certifications": [
-      "DVA-C02"
+      "SAA-C03"
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một developer cấu hình REST API trên Amazon API Gateway và muốn API tự động kiểm tra JWT do Cognito User Pool phát hành (kiểm tra chữ ký, issuer, hết hạn) mà không phải viết code xác thực thủ công. Họ muốn cấu hình đơn giản nhất, ít code nhất. Giải pháp nào phù hợp?",
+    "question": "Một ứng dụng game đọc bảng leaderboard từ DynamoDB với tần suất rất cao. Yêu cầu độ trễ ở mức microseconds cho các thao tác đọc các item phổ biến, trong khi DynamoDB hiện cho độ trễ single-digit milliseconds. Giải pháp nào TỐI ƯU nhất để giảm độ trễ đọc mà không phải thay đổi nhiều logic ứng dụng?",
     "options": [
-      "Dùng Cognito authorizer của API Gateway, trỏ tới User Pool",
-      "Viết Lambda authorizer tự tải JWKS và verify chữ ký JWT thủ công",
-      "Bật IAM authorization và ký request bằng SigV4",
-      "Dùng API key gắn vào usage plan để kiểm soát truy cập"
+      "Triển khai DynamoDB Accelerator (DAX) làm lớp cache in-memory cho DynamoDB",
+      "Đặt Amazon ElastiCache for Redis trước DynamoDB và tự quản lý logic cache",
+      "Bật DynamoDB Global Tables để sao chép dữ liệu sang nhiều Region",
+      "Tăng provisioned read capacity units (RCU) của bảng DynamoDB"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "Cognito authorizer tích hợp sẵn với User Pool và tự verify JWT, ít cấu hình và không cần code.\n✓ Cognito authorizer — đúng, tự kiểm tra token User Pool, đơn giản nhất.\n✗ Lambda authorizer thủ công — chạy được nhưng phải tự viết logic verify/JWKS, nhiều code không cần thiết.\n✗ IAM authorization/SigV4 — dùng cho danh tính IAM/credentials, không xác thực JWT người dùng cuối.\n✗ API key — chỉ để định danh client và throttling, không xác thực người dùng.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-023",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-01-auth",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một công ty muốn tự động thêm một custom claim 'department' vào ID token mà Cognito User Pool phát hành, dựa trên thuộc tính người dùng, để API backend đọc và phân quyền. Cơ chế nào của Cognito User Pool nên dùng?",
-    "options": [
-      "Pre Token Generation Lambda trigger",
-      "Pre Sign-up Lambda trigger",
-      "Post Confirmation Lambda trigger",
-      "Migrate User Lambda trigger"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Pre Token Generation trigger cho phép thêm/sửa claim trong token ngay trước khi phát hành.\n✓ Pre Token Generation — đúng, tùy biến claim trong ID/access token.\n✗ Pre Sign-up — chạy khi đăng ký, để tự xác nhận/validate, không sửa token.\n✗ Post Confirmation — chạy sau khi xác nhận tài khoản, không liên quan token claim.\n✗ Migrate User — dùng khi di trú người dùng từ directory cũ, không sửa claim token.",
-    "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-023",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-01-auth",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một SPA (single-page app) dùng Cognito Hosted UI với OAuth 2.0. Access token có hiệu lực 1 giờ và đã hết hạn, nhưng người dùng vẫn đang trong phiên làm việc dài. Ứng dụng cần lấy access token mới mà KHÔNG bắt người dùng đăng nhập lại. Cách đúng là gì?",
-    "options": [
-      "Dùng refresh token để yêu cầu access token và ID token mới",
-      "Dùng access token cũ để tự gia hạn chính nó",
-      "Gọi STS GetSessionToken để tạo access token mới",
-      "Tải lại JWKS endpoint để làm mới chữ ký token"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Refresh token được dùng để lấy access/ID token mới khi chúng hết hạn, tránh đăng nhập lại.\n✓ Refresh token — đúng, đổi lấy token mới trong thời gian refresh token còn hiệu lực.\n✗ Access token cũ tự gia hạn — token JWT đã hết hạn không thể tự làm mới.\n✗ STS GetSessionToken — cấp AWS credentials, không liên quan token User Pool.\n✗ Tải lại JWKS — JWKS chỉ là khóa public để verify chữ ký, không tạo token mới.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-023",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-01-auth",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một ứng dụng dùng Cognito Identity Pool với cả authenticated và unauthenticated (guest) access. Người dùng đăng nhập (authenticated) được phép ghi vào bucket S3, còn khách (guest) chỉ được đọc một số object công khai. Cách triển khai đúng theo best practice là gì?",
-    "options": [
-      "Gán hai IAM role riêng cho authenticated role và unauthenticated role với policy phù hợp",
-      "Dùng chung một IAM role cho cả hai và kiểm tra trong code ứng dụng",
-      "Gán policy trực tiếp lên Identity Pool thay vì dùng IAM role",
-      "Tắt unauthenticated access và cấp access key tĩnh cho khách"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Identity Pool hỗ trợ tách biệt authenticated role và unauthenticated role, mỗi role có quyền riêng.\n✓ Hai IAM role riêng — đúng, authenticated role có quyền ghi, unauthenticated role chỉ đọc.\n✗ Một role chung + kiểm tra trong code — kém an toàn, vi phạm least privilege và dễ bị lạm dụng.\n✗ Policy trực tiếp lên Identity Pool — Identity Pool ánh xạ tới IAM role, không gắn policy trực tiếp kiểu đó.\n✗ Access key tĩnh — chống lại nguyên tắc dùng temporary credentials, không an toàn.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-024",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-01-auth",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một Identity Pool cho phép người dùng đăng nhập truy cập DynamoDB, nhưng yêu cầu mỗi người dùng chỉ được đọc/ghi các item có partition key bằng chính Cognito identity ID của họ (fine-grained access). Cách cấu hình đúng là gì?",
-    "options": [
-      "Dùng IAM policy với điều kiện ${cognito-identity.amazonaws.com:sub} so khớp với leading key của DynamoDB",
-      "Viết Lambda authorizer kiểm tra identity ID trước mỗi request DynamoDB",
-      "Tạo một IAM role riêng cho mỗi người dùng khi họ đăng ký",
-      "Bật DynamoDB encryption at rest để cô lập dữ liệu từng người dùng"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Fine-grained access tới DynamoDB dùng IAM policy condition với biến cognito-identity sub khớp leading key.\n✓ Policy condition với cognito-identity sub — đúng, hạn chế truy cập theo identity ID ở partition key.\n✗ Lambda authorizer — dùng cho API Gateway, không kiểm soát truy cập trực tiếp item DynamoDB qua SDK.\n✗ Role riêng mỗi người dùng — không khả thi và không mở rộng được.\n✗ Encryption at rest — bảo vệ dữ liệu lúc lưu, không kiểm soát quyền truy cập theo người dùng.",
-    "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-024",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-01-auth",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một backend microservice nhận request kèm JWT từ Cognito User Pool và cần tự verify chữ ký của token trong code (không qua API Gateway). Developer cần lấy public key để kiểm tra chữ ký. Nguồn nào cung cấp các khóa này?",
-    "options": [
-      "JWKS endpoint của User Pool tại .../.well-known/jwks.json",
-      "AWS KMS customer managed key của tài khoản",
-      "AWS Secrets Manager nơi lưu khóa private của User Pool",
-      "STS endpoint trả về khóa công khai của session"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Cognito User Pool công bố public key tại JWKS endpoint để bên thứ ba verify chữ ký JWT.\n✓ JWKS endpoint — đúng, chứa các public key (kid) để kiểm tra chữ ký token.\n✗ KMS key — không lưu khóa ký JWT của User Pool.\n✗ Secrets Manager — User Pool quản lý khóa private nội bộ, không expose ra Secrets Manager.\n✗ STS endpoint — cấp credentials, không cung cấp khóa verify JWT.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-024",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-01-auth",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một công ty enterprise muốn nhân viên đăng nhập ứng dụng bằng tài khoản công ty (corporate directory) đã hỗ trợ SAML 2.0, sau đó nhận temporary AWS credentials để gọi dịch vụ AWS. Họ muốn dùng Cognito. Kiến trúc đúng là gì?",
-    "options": [
-      "Cấu hình SAML IdP làm identity provider cho Cognito, rồi dùng Identity Pool đổi lấy AWS credentials",
-      "Tạo IAM user cho mỗi nhân viên và phân phối access key",
-      "Dùng API key của API Gateway cho từng nhân viên",
-      "Lưu mật khẩu corporate vào Cognito User Pool và xác thực trực tiếp"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Federation SAML kết hợp Identity Pool cho phép đổi danh tính liên kết lấy temporary AWS credentials.\n✓ SAML IdP + Identity Pool — đúng, federate corporate directory rồi cấp AWS credentials tạm thời.\n✗ IAM user + access key — không mở rộng và dùng credentials tĩnh, kém an toàn.\n✗ API key — chỉ định danh client cho API Gateway, không phải xác thực nhân viên.\n✗ Lưu mật khẩu corporate vào User Pool — sao chép credentials, vi phạm bảo mật và mục tiêu federation.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-025",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-01-auth",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Khi Cognito Identity Pool cấp temporary AWS credentials cho người dùng đã federate qua một web identity provider (như Cognito User Pool hoặc Google), STS API nào được sử dụng phía sau để giả lập IAM role?",
-    "options": [
-      "AssumeRoleWithWebIdentity",
-      "AssumeRole",
-      "AssumeRoleWithSAML",
-      "GetFederationToken"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Với web/OIDC identity, Identity Pool dùng STS AssumeRoleWithWebIdentity để cấp credentials.\n✓ AssumeRoleWithWebIdentity — đúng, dùng cho danh tính web/OIDC như Cognito/Google.\n✗ AssumeRole — dùng giữa các IAM principal/role, không phải web identity.\n✗ AssumeRoleWithSAML — dùng cho federation SAML, không phải web identity provider.\n✗ GetFederationToken — federation kiểu cũ qua IAM user credentials, không dùng trong luồng này.",
-    "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-025",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-01-auth",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một API Gateway HTTP API cần ủy quyền request bằng JWT do một OIDC provider bên thứ ba (không phải Cognito) phát hành, kiểm tra issuer và audience. Developer muốn cấu hình native, ít code nhất. Loại authorizer nào nên dùng?",
-    "options": [
-      "JWT authorizer của HTTP API, cấu hình issuer và audience",
-      "Lambda authorizer dạng REQUEST gọi tới IdP để introspect token",
-      "Cognito authorizer trỏ tới một User Pool giả lập",
-      "IAM authorizer với SigV4"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "HTTP API hỗ trợ JWT authorizer native cho mọi OIDC provider, chỉ cần khai báo issuer/audience.\n✓ JWT authorizer — đúng, hỗ trợ OIDC bất kỳ, ít cấu hình, verify token tự động.\n✗ Lambda authorizer introspect — chạy được nhưng phải viết code, phức tạp hơn cần thiết.\n✗ Cognito authorizer — gắn với User Pool, không dùng được cho IdP bên thứ ba.\n✗ IAM authorizer/SigV4 — dành cho danh tính IAM, không verify JWT OIDC.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-025",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-01-auth",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Một team triển khai REST API trên API Gateway với Cognito authorizer (User Pool). Khi client gọi API, họ cần biết phải gửi token nào và xác thực diễn ra ra sao. Những phát biểu nào sau đây ĐÚNG? (Chọn 2)",
-    "options": [
-      "Client gửi ID token hoặc access token của User Pool trong header Authorization để authorizer verify",
-      "Cognito authorizer tự kiểm tra chữ ký, hết hạn và issuer của JWT mà không cần code",
-      "Client phải gửi temporary AWS credentials từ Identity Pool vào header để được phép gọi",
-      "Authorizer dùng refresh token để xác thực mỗi request đến API",
-      "API Gateway gọi STS AssumeRole để xác thực JWT của người dùng"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Cognito authorizer nhận JWT (ID/access token) trong Authorization header và tự verify mà không cần code.\n✓ Gửi ID/access token để verify — đúng, đây là token User Pool dùng cho authorizer.\n✓ Authorizer tự verify chữ ký/hết hạn/issuer — đúng, tích hợp sẵn, không cần code.\n✗ Gửi temporary AWS credentials — đó là cho gọi dịch vụ AWS qua Identity Pool, không phải Cognito authorizer.\n✗ Dùng refresh token mỗi request — refresh token chỉ để đổi token mới, không gửi để xác thực API.\n✗ API Gateway gọi STS AssumeRole — verify JWT không liên quan STS AssumeRole.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-026",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-01-auth",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một developer cần phân biệt rõ vai trò của Cognito User Pool và Identity Pool trong ứng dụng. Phát biểu nào mô tả ĐÚNG sự khác biệt cốt lõi?",
-    "options": [
-      "User Pool xử lý đăng nhập và phát hành JWT (authentication); Identity Pool đổi danh tính lấy temporary AWS credentials (authorization tới AWS)",
-      "User Pool cấp temporary AWS credentials; Identity Pool phát hành JWT",
-      "Cả hai đều phát hành JWT giống hệt nhau, chỉ khác tên",
-      "Identity Pool dùng để đăng ký người dùng, User Pool chỉ để gọi dịch vụ AWS"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Đây là bẫy kinh điển: User Pool = token/xác thực, Identity Pool = AWS credentials.\n✓ User Pool phát hành JWT, Identity Pool cấp AWS credentials — đúng, phân vai trò chuẩn.\n✗ User Pool cấp AWS credentials — sai, đó là việc của Identity Pool.\n✗ Cả hai phát hành JWT giống nhau — sai, chỉ User Pool phát hành JWT người dùng.\n✗ Đảo vai trò đăng ký/gọi dịch vụ — sai hoàn toàn về chức năng.",
-    "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-026",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-01-auth",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một ứng dụng cần cho phép người dùng dùng thử các tính năng cơ bản (ví dụ tải vài ảnh mẫu từ S3) mà KHÔNG cần đăng nhập, nhưng vẫn phải gọi dịch vụ AWS một cách an toàn bằng quyền hạn chế. Tính năng nào của Cognito hỗ trợ điều này?",
-    "options": [
-      "Unauthenticated (guest) access của Identity Pool với IAM role quyền tối thiểu",
-      "Hosted UI ở chế độ ẩn danh của User Pool",
-      "Refresh token vô thời hạn của User Pool",
-      "API key public của API Gateway"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Identity Pool có unauthenticated role cho phép guest gọi AWS với quyền hạn chế mà không cần đăng nhập.\n✓ Unauthenticated guest access — đúng, cấp temporary credentials hạn chế cho khách.\n✗ Hosted UI ẩn danh — Hosted UI dùng để đăng nhập, không có chế độ guest cấp AWS credentials.\n✗ Refresh token vô thời hạn — không liên quan và không phải cơ chế guest.\n✗ API key public — chỉ định danh client, không cấp quyền gọi dịch vụ AWS an toàn.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-026",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-01-auth",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng dùng Cognito User Pool. Developer thấy access token chứa scope như 'aws.cognito.signin.user.admin' và các custom scope của resource server, còn ID token thì chứa email, name. Khi gọi một resource server tự định nghĩa với OAuth scopes để phân quyền, token nào nên được gửi đi?",
-    "options": [
-      "Access token vì nó mang OAuth scopes dùng để authorize",
-      "ID token vì nó mang thông tin danh tính người dùng",
-      "Refresh token vì nó tồn tại lâu nhất",
-      "Bất kỳ token nào cũng được vì cả ba đều là JWT"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Access token mang scope để authorize truy cập resource server; ID token để authenticate danh tính.\n✓ Access token — đúng, chứa OAuth scopes dùng cho authorization tới resource server.\n✗ ID token — dùng để xác thực danh tính, không chứa scope authorize resource server theo chuẩn.\n✗ Refresh token — chỉ để đổi token mới, không gọi resource server.\n✗ Bất kỳ token nào — sai, mỗi loại token có mục đích riêng.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-027",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-01-auth",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một công ty cần người dùng đăng nhập bằng Facebook và Google, sau đó nhận temporary AWS credentials để upload ảnh lên S3. Họ KHÔNG cần quản lý directory người dùng riêng (không cần username/password riêng). Kiến trúc tối ưu nhất là gì?",
-    "options": [
-      "Dùng Cognito Identity Pool với Facebook và Google làm external providers, không cần User Pool",
-      "Bắt buộc tạo User Pool và liên kết mọi người dùng social vào đó trước",
-      "Tạo IAM user cho mỗi người dùng social và cấp access key",
-      "Dùng API Gateway Lambda authorizer để đổi social token lấy access key"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Identity Pool hỗ trợ trực tiếp social IdP để đổi token lấy AWS credentials, không bắt buộc User Pool.\n✓ Identity Pool với Facebook/Google trực tiếp — đúng, tối ưu khi chỉ cần AWS credentials, không cần directory.\n✗ Bắt buộc User Pool — không cần thiết khi không quản lý directory, thêm phức tạp.\n✗ IAM user + access key — credentials tĩnh, không mở rộng, kém an toàn.\n✗ Lambda authorizer đổi lấy access key — không phải cơ chế cấp AWS credentials, sai mô hình.",
-    "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-027",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-01-auth",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Trong khi gỡ lỗi, developer thấy API Gateway trả về 401 Unauthorized cho mọi request dù client gửi JWT hợp lệ trong header. Nguyên nhân phổ biến nào sau đây nên kiểm tra ĐẦU TIÊN với Cognito authorizer?",
-    "options": [
-      "Token được gửi sai header hoặc sai tên (mặc định authorizer mong đợi header Authorization)",
-      "User Pool đã bị xóa hoàn toàn khỏi Region",
-      "DynamoDB table thiếu encryption at rest",
-      "S3 bucket policy chặn API Gateway"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Lỗi 401 thường do token không gửi đúng header mà authorizer mong đợi (mặc định là Authorization).\n✓ Sai header/tên token — đúng, nguyên nhân phổ biến nhất gây 401 dù token hợp lệ.\n✗ User Pool bị xóa — sẽ gây lỗi cấu hình rõ ràng hơn, không phải nguyên nhân phổ biến nhất.\n✗ DynamoDB encryption — không liên quan xác thực API.\n✗ S3 bucket policy — không liên quan đến authorizer JWT của API Gateway.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-027",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-01-auth",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một ứng dụng dùng Cognito User Pool để đăng nhập, sau đó cần gọi cả (1) một REST API tùy biến của công ty và (2) ghi file trực tiếp lên S3 bằng SDK. Cách kết hợp đúng các thành phần Cognito là gì?",
-    "options": [
-      "Gửi JWT của User Pool tới REST API (qua Cognito authorizer); đồng thời đưa JWT vào Identity Pool để lấy AWS credentials gọi S3",
-      "Dùng access token của User Pool trực tiếp làm AWS credentials để gọi S3",
-      "Dùng temporary AWS credentials từ Identity Pool làm Bearer token cho REST API",
-      "Dùng refresh token cho cả gọi REST API và gọi S3"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "JWT dùng cho API (authentication); Identity Pool đổi JWT lấy AWS credentials để gọi S3.\n✓ JWT tới API + Identity Pool cho S3 — đúng, tách đúng hai luồng token và credentials.\n✗ Access token làm AWS credentials — sai, JWT không phải AWS credentials để gọi S3.\n✗ AWS credentials làm Bearer token — sai, credentials không phải JWT để gọi API qua Cognito authorizer.\n✗ Refresh token cho cả hai — refresh token chỉ để đổi token mới, không gọi API hay S3.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-028",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-02-encryption",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một developer cần mã hóa một file log 8 GB lưu trên EC2 trước khi upload lên S3, sử dụng KMS key của công ty. Cách tiếp cận đúng là gì?",
-    "options": [
-      "Gọi KMS Encrypt trực tiếp với toàn bộ 8 GB dữ liệu và KeyId của CMK",
-      "Dùng envelope encryption: gọi GenerateDataKey để lấy plaintext data key, mã hóa file tại EC2 bằng AES, lưu encrypted data key cạnh file",
-      "Chia file thành các block 4 KB rồi gọi Encrypt nhiều lần cho từng block",
-      "Gọi GenerateDataKeyWithoutPlaintext rồi dùng ciphertext blob để mã hóa trực tiếp 8 GB"
-    ],
-    "correctIndices": [
-      1
-    ],
-    "explanation": "KMS Encrypt chỉ xử lý tối đa 4 KB nên không dùng được cho file lớn.\n✓ Envelope encryption với GenerateDataKey: KMS trả plaintext data key (mã hóa data tại chỗ) và encrypted data key (lưu cạnh file).\n✗ Gọi Encrypt trực tiếp 8 GB vượt giới hạn 4 KB.\n✗ Chia 4 KB rồi Encrypt nhiều lần là kém tối ưu, tốn vô số request KMS và sai mô hình.\n✗ GenerateDataKeyWithoutPlaintext không trả plaintext key nên không thể mã hóa data ngay tại client.",
-    "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-028",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-02-encryption",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Ứng dụng cần lưu một API token nhỏ (khoảng 200 byte) đã được mã hóa bằng KMS trong bảng cấu hình. Developer nên gọi API nào để mã hóa trực tiếp?",
-    "options": [
-      "GenerateDataKey với KeySpec AES_256",
-      "Encrypt với KeyId của KMS key",
-      "CreateGrant rồi truyền token vào grant",
-      "GenerateDataKeyWithoutPlaintext"
-    ],
-    "correctIndices": [
-      1
-    ],
-    "explanation": "Dữ liệu nhỏ (≤ 4 KB) như token có thể mã hóa trực tiếp bằng KMS.\n✓ Encrypt phù hợp cho dữ liệu nhỏ ≤ 4 KB, KMS trả ciphertext trực tiếp, không cần tự quản data key.\n✗ GenerateDataKey dùng cho envelope encryption với dữ liệu lớn, dư thừa cho 200 byte.\n✗ CreateGrant chỉ cấp quyền dùng key, không mã hóa dữ liệu.\n✗ GenerateDataKeyWithoutPlaintext sinh data key chưa dùng ngay, không mã hóa token.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-028",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-02-encryption",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một website tĩnh phục vụ qua CloudFront cần HTTPS với chứng chỉ tự động gia hạn và miễn phí. Giải pháp nào phù hợp nhất?",
-    "options": [
-      "Tự mua chứng chỉ từ CA bên ngoài rồi import vào EC2",
-      "Dùng ACM public certificate ở Region us-east-1 và gắn vào CloudFront distribution",
-      "Dùng AWS Private CA để cấp chứng chỉ nội bộ cho CloudFront",
-      "Tạo self-signed certificate và import vào ACM"
-    ],
-    "correctIndices": [
-      1
-    ],
-    "explanation": "ACM cung cấp chứng chỉ public miễn phí, tự gia hạn, tích hợp CloudFront.\n✓ ACM public certificate miễn phí, tự renew; CloudFront yêu cầu chứng chỉ nằm ở us-east-1.\n✗ Mua chứng chỉ ngoài rồi import vào EC2 không liên quan CloudFront và không tự gia hạn.\n✗ Private CA dành cho chứng chỉ nội bộ, không được trình duyệt công cộng tin cậy.\n✗ Self-signed certificate không được trình duyệt tin cậy, gây cảnh báo bảo mật.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-029",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-02-encryption",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một IAM user đã có IAM policy cho phép kms:Decrypt trên một customer managed key, nhưng khi gọi Decrypt vẫn nhận AccessDenied. Nguyên nhân khả dĩ nhất là gì?",
-    "options": [
-      "User cần bật MFA mới gọi được KMS API",
-      "Key policy của KMS key chưa cấp quyền cho user/account đó nên IAM policy không có hiệu lực",
-      "KMS key chưa bật automatic rotation",
-      "User đang gọi sai Region nên KMS từ chối"
-    ],
-    "correctIndices": [
-      1
-    ],
-    "explanation": "Với KMS, key policy là cổng chính; nếu key policy không mở, IAM policy vô dụng.\n✓ Key policy phải cho phép account (thường qua dòng root) thì IAM policy mới có hiệu lực.\n✗ MFA không phải yêu cầu mặc định để gọi KMS API.\n✗ Rotation không liên quan tới quyền Decrypt; data cũ vẫn giải mã được.\n✗ Sai Region trả lỗi NotFound/khác, không phải AccessDenied do quyền, và đề nói user có policy đúng.",
-    "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-029",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-02-encryption",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Đội bảo mật yêu cầu mọi lần object trong S3 được giải mã phải được audit (ai, khi nào), đồng thời cần kiểm soát key policy và rotation. Lựa chọn mã hóa S3 nào đáp ứng tốt nhất?",
-    "options": [
-      "SSE-S3 với key aws/s3 do AWS quản lý",
-      "SSE-KMS với customer managed key",
-      "SSE-C với key do client cung cấp mỗi request",
-      "Client-side encryption với AWS Encryption SDK"
-    ],
-    "correctIndices": [
-      1
-    ],
-    "explanation": "Yêu cầu audit từng lần dùng key cộng kiểm soát key policy và rotation chỉ thỏa với SSE-KMS dùng customer managed key.\n✓ SSE-KMS với customer managed key ghi mọi lần Decrypt/GenerateDataKey vào CloudTrail, cho kiểm soát key policy và rotation.\n✗ SSE-S3 dùng key AWS quản lý, không cho kiểm soát key policy/rotation chi tiết.\n✗ SSE-C không liên quan KMS, không có audit qua CloudTrail cho việc dùng key.\n✗ Client-side encryption khả thi nhưng phức tạp hơn và không phải lựa chọn tối ưu khi chỉ cần audit phía S3/KMS.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-029",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-02-encryption",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Công ty muốn KMS key tự động đổi key material định kỳ mà không cần sửa code ứng dụng hay cập nhật alias. Cấu hình nào đáp ứng?",
-    "options": [
-      "Bật automatic key rotation trên một customer managed symmetric key",
-      "Thực hiện manual rotation: tạo key mới và cập nhật alias trỏ sang",
-      "Dùng AWS owned key vì nó tự rotate",
-      "Import key material mới mỗi năm vào cùng key"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Automatic rotation đổi key material nhưng giữ nguyên key ID/ARN nên ứng dụng không phải sửa gì.\n✓ Automatic rotation trên customer managed symmetric key: key ID không đổi, AWS tự sinh material mới, không cần sửa code/alias.\n✗ Manual rotation buộc cập nhật alias trỏ sang key mới, ứng dụng có thể cần điều chỉnh.\n✗ AWS owned key bạn không kiểm soát và thường không thấy trong account.\n✗ Import material thủ công không phải cách tự động và phức tạp.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-030",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-02-encryption",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Account A sở hữu một KMS key. Một Lambda function ở Account B cần dùng key này để giải mã dữ liệu. Cần cấu hình gì để hoạt động?",
-    "options": [
-      "Chỉ cần thêm IAM policy cho role Lambda ở Account B với kms:Decrypt",
-      "Chỉ cần sửa key policy ở Account A cho phép Account B",
-      "Key policy ở Account A cho phép principal của Account B, VÀ IAM policy của role Lambda ở Account B cho phép gọi kms:Decrypt trên ARN key đó",
-      "Tạo bản sao key trong Account B bằng GenerateDataKeyWithoutPlaintext"
-    ],
-    "correctIndices": [
-      2
-    ],
-    "explanation": "Cross-account KMS cần cả hai phía: key policy bên chủ key và IAM policy bên dùng key.\n✓ Account A mở quyền trong key policy cho Account B, và Account B cấp IAM policy gọi kms:Decrypt trên ARN đầy đủ của key.\n✗ Chỉ IAM policy bên B mà key policy A chưa mở vẫn AccessDenied.\n✗ Chỉ key policy A mà role B không có IAM cho phép cũng AccessDenied.\n✗ Không thể sao chép một KMS key sang account khác như vậy.",
-    "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-030",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-02-encryption",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Dữ liệu được mã hóa bằng KMS ở us-east-1 và lưu vào DynamoDB Global Table replicate sang eu-west-1. Ứng dụng ở eu-west-1 cần giải mã nhanh mà không gọi cross-Region tới us-east-1. Giải pháp nào đúng?",
-    "options": [
-      "Dùng single-Region KMS key bình thường, KMS tự xử lý cross-Region",
-      "Tạo multi-Region KMS key với replica ở cả us-east-1 và eu-west-1",
-      "Bật automatic rotation để key dùng được ở nhiều Region",
-      "Dùng SSE-C để client tự mang key qua các Region"
-    ],
-    "correctIndices": [
-      1
-    ],
-    "explanation": "Ciphertext của single-Region key không dùng được ở Region khác; cần multi-Region key.\n✓ Multi-Region key có cùng key ID và cùng material ở nhiều Region; ciphertext mã hóa ở us-east-1 decrypt được ở eu-west-1 không cần gọi lại Region gốc.\n✗ Single-Region key không cho decrypt ciphertext ở Region khác.\n✗ Rotation không biến key single-Region thành multi-Region.\n✗ SSE-C là phương án S3, không giải quyết bản chất multi-Region của KMS key.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-030",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-02-encryption",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng phân tích lưu lượng cao ghi hàng nghìn object/giây vào S3 với SSE-KMS và bắt đầu bị throttle vì quá nhiều lời gọi KMS. Cách giảm số lần gọi KMS hiệu quả nhất là gì?",
-    "options": [
-      "Chuyển toàn bộ sang SSE-C để không gọi KMS nữa",
-      "Bật S3 Bucket Keys để dùng một data key cấp bucket, giảm số lần gọi KMS",
-      "Tắt mã hóa cho bucket để loại bỏ KMS",
-      "Tăng giới hạn 4 KB của KMS Encrypt API"
-    ],
-    "correctIndices": [
-      1
-    ],
-    "explanation": "Mỗi PUT/GET SSE-KMS gọi KMS; S3 Bucket Keys giảm đáng kể số lần gọi.\n✓ S3 Bucket Keys tạo một data key cấp bucket, giảm số lần gọi GenerateDataKey/Decrypt tới KMS, hạ throttle và chi phí.\n✗ SSE-C tự giữ key mỗi request, đổi mô hình bảo mật và không phải giải pháp throttle KMS mong muốn.\n✗ Tắt mã hóa vi phạm yêu cầu bảo mật.\n✗ Giới hạn 4 KB là cố định, không tăng được và không liên quan throttle SSE-KMS.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-031",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-02-encryption",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một service cần được cấp quyền tạm thời, chi tiết để dùng một KMS key cho việc mã hóa, mà không muốn sửa key policy mỗi lần. Cơ chế KMS nào phù hợp nhất?",
-    "options": [
-      "Thêm dòng Allow vĩnh viễn vào key policy cho service",
-      "Tạo Grant bằng CreateGrant và thu hồi bằng RevokeGrant khi xong",
-      "Gắn IAM policy inline vào root account",
-      "Dùng AWS managed key vì nó tự cấp grant"
-    ],
-    "correctIndices": [
-      1
-    ],
-    "explanation": "Grant cấp quyền tạm thời, chi tiết cho một principal, thích hợp cho delegation ngắn hạn.\n✓ CreateGrant cấp quyền dùng key cho principal cụ thể trong thời gian ngắn, RevokeGrant thu hồi, không cần sửa key policy.\n✗ Thêm Allow vĩnh viễn vào key policy không phải tạm thời và phải sửa policy.\n✗ IAM policy gắn vào root không phải cơ chế delegation tạm thời của KMS.\n✗ AWS managed key không cho bạn tự cấp grant tùy ý và không sửa được policy.",
-    "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-031",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-02-encryption",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Khách hàng muốn S3 mã hóa object phía server nhưng KHÔNG muốn AWS giữ key mã hóa; thay vào đó client gửi kèm key trong mỗi request. Lựa chọn nào đúng và yêu cầu kèm theo là gì?",
-    "options": [
-      "SSE-S3, bắt buộc dùng HTTPS",
-      "SSE-KMS, key lưu trong KMS",
-      "SSE-C, bắt buộc dùng HTTPS vì key đi qua header",
-      "Client-side encryption, S3 chỉ thấy ciphertext"
-    ],
-    "correctIndices": [
-      2
-    ],
-    "explanation": "SSE-C để server (S3) mã hóa nhưng key do client cung cấp mỗi request.\n✓ SSE-C: client gửi key trong header mỗi request, S3 mã hóa rồi quên key; bắt buộc HTTPS vì key truyền qua header.\n✗ SSE-S3 dùng key AWS quản lý, không phải client cung cấp.\n✗ SSE-KMS lưu key trong KMS, không phải client mang theo.\n✗ Client-side là client tự mã hóa trước khi gửi, không phải server mã hóa.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-031",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-02-encryption",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Developer cần re-encrypt một ciphertext nhỏ (dưới 4 KB) từ KMS key cũ sang KMS key mới mà không để lộ plaintext ra ngoài KMS. API nào nên dùng?",
-    "options": [
-      "Decrypt bằng key cũ rồi Encrypt lại bằng key mới ở phía client",
-      "ReEncrypt để KMS đổi key trực tiếp mà plaintext không rời KMS",
-      "GenerateDataKey với key mới",
-      "CreateGrant trỏ ciphertext sang key mới"
-    ],
-    "correctIndices": [
-      1
-    ],
-    "explanation": "ReEncrypt đổi data từ key này sang key khác hoàn toàn bên trong KMS.\n✓ ReEncrypt: KMS giải mã rồi mã hóa lại bằng key mới mà plaintext không bao giờ rời KMS, áp dụng cho dữ liệu ≤ 4 KB.\n✗ Decrypt rồi Encrypt lại ở client làm plaintext lộ ra ngoài KMS, kém an toàn.\n✗ GenerateDataKey sinh data key mới, không re-encrypt ciphertext sẵn có.\n✗ CreateGrant chỉ cấp quyền, không chuyển đổi ciphertext.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-032",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-02-encryption",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ALB cần phục vụ HTTPS cho ứng dụng public và đội vận hành không muốn lo việc gia hạn chứng chỉ thủ công. Đồng thời backend microservice nội bộ (không expose internet) cần chứng chỉ TLS riêng. Cặp giải pháp nào đúng?",
-    "options": [
-      "ACM public certificate cho ALB; AWS Private CA cho microservice nội bộ",
-      "AWS Private CA cho ALB; ACM public certificate cho microservice nội bộ",
-      "Self-signed cert cho ALB; ACM public certificate cho microservice nội bộ",
-      "ACM public certificate cho cả hai vì nó miễn phí"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Public HTTPS dùng ACM public cert; chứng chỉ nội bộ dùng Private CA.\n✓ ACM public certificate cho ALB (miễn phí, tự gia hạn, được trình duyệt tin cậy); Private CA cấp chứng chỉ nội bộ cho microservice.\n✗ Đảo ngược: Private CA cho ALB public sẽ không được trình duyệt công cộng tin cậy.\n✗ Self-signed trên ALB gây cảnh báo bảo mật cho người dùng.\n✗ ACM public cert không phù hợp cho microservice nội bộ không expose internet; nên dùng Private CA.",
-    "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-032",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-02-encryption",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Trong luồng envelope encryption, sau khi gọi GenerateDataKey và dùng plaintext data key để mã hóa file, đâu là bước xử lý đúng với best practice?",
-    "options": [
-      "Lưu cả plaintext data key lẫn encrypted data key cạnh file để giải mã nhanh sau này",
-      "Xóa plaintext data key khỏi bộ nhớ ngay sau khi mã hóa xong, chỉ lưu encrypted data key (CiphertextBlob) cạnh file",
-      "Gửi plaintext data key lên KMS để KMS lưu hộ",
-      "Lưu plaintext data key vào file mã hóa rồi gửi cả lên S3"
-    ],
-    "correctIndices": [
-      1
-    ],
-    "explanation": "Bí quyết bảo mật của envelope encryption: không bao giờ lưu plaintext data key.\n✓ Xóa plaintext data key khỏi RAM ngay sau khi dùng, chỉ lưu encrypted data key cạnh file; khi cần thì gọi Decrypt để lấy lại plaintext key.\n✗ Lưu cả plaintext data key phá vỡ bảo mật vì lộ key thật.\n✗ KMS không lưu data key của bạn; KMS chỉ giữ CMK.\n✗ Nhúng plaintext data key vào dữ liệu rồi gửi đi làm lộ key hoàn toàn.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-032",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-02-encryption",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Đội DevOps cần share một snapshot EBS đã mã hóa (bằng customer managed KMS key) sang một AWS account khác để account đó khôi phục volume. Ngoài việc share snapshot, cần làm gì để account kia decrypt được?",
-    "options": [
-      "Không cần làm gì thêm, share snapshot là đủ",
-      "Cập nhật key policy của KMS key để cho phép account kia dùng key (kms:Decrypt, kms:CreateGrant...) và share snapshot",
-      "Chuyển snapshot sang SSE-S3 trước khi share",
-      "Bật automatic rotation cho KMS key"
-    ],
-    "correctIndices": [
-      1
-    ],
-    "explanation": "Snapshot mã hóa cần cả quyền dùng KMS key ở account đích.\n✓ Phải sửa key policy của KMS key cho phép account kia (kms:Decrypt, kms:CreateGrant...) ngoài việc share snapshot, nếu không account kia không decrypt được.\n✗ Chỉ share snapshot mà không share quyền key thì account kia không giải mã được.\n✗ SSE-S3 không liên quan tới snapshot EBS.\n✗ Rotation không cấp quyền cross-account.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-033",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-02-encryption",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một developer dùng AWS managed key (aws/s3) cho bucket nhưng sếp yêu cầu: (1) tự định nghĩa key policy chi tiết, (2) tự bật/tắt rotation, (3) cấp quyền cross-account. AWS managed key có đáp ứng được không, và nên làm gì?",
-    "options": [
-      "Có, AWS managed key cho phép sửa key policy và rotation tùy ý",
-      "Không, AWS managed key không cho sửa key policy và không tự bật/tắt rotation; cần chuyển sang customer managed key",
-      "Có, chỉ cần bật automatic rotation trên AWS managed key",
-      "Không, nhưng giải pháp là dùng AWS owned key thay thế"
-    ],
-    "correctIndices": [
-      1
-    ],
-    "explanation": "AWS managed key bị hạn chế: không sửa key policy, không tự điều khiển rotation.\n✓ Cần customer managed key để tự định nghĩa key policy, kiểm soát rotation và cấp quyền cross-account.\n✗ AWS managed key không cho sửa key policy và rotation cố định mỗi năm.\n✗ Không thể bật/tắt rotation tùy ý trên AWS managed key.\n✗ AWS owned key thậm chí không thấy được trong account, càng không kiểm soát được.",
-    "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-033",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-02-encryption",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Một developer xây dựng hệ thống lưu file lớn (lớn hơn 4 KB) đã mã hóa lên S3 và phải audit mọi lần dữ liệu được giải mã. Những phát biểu nào về KMS và mã hóa là ĐÚNG? (Chọn 2)",
-    "options": [
-      "KMS Encrypt/Decrypt API chỉ xử lý tối đa 4 KB, nên file lớn phải dùng envelope encryption với GenerateDataKey",
-      "Mọi lời gọi KMS được ghi vào CloudTrail, cho phép audit ai dùng key và lúc nào",
-      "GenerateDataKey chỉ trả về encrypted data key, không trả plaintext",
-      "SSE-C dùng KMS key để mã hóa và ghi audit qua CloudTrail",
-      "Automatic rotation của customer managed key đổi cả key ID lẫn ARN sau mỗi chu kỳ"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Câu hỏi kiểm tra giới hạn 4 KB, audit qua CloudTrail và vài bẫy phổ biến.\n✓ KMS Encrypt/Decrypt giới hạn 4 KB; file lớn dùng GenerateDataKey (envelope encryption).\n✓ Mọi lời gọi KMS ghi vào CloudTrail, phục vụ audit việc dùng key.\n✗ GenerateDataKey trả CẢ plaintext lẫn encrypted data key (chỉ GenerateDataKeyWithoutPlaintext mới bỏ plaintext).\n✗ SSE-C không liên quan KMS; key do client cung cấp mỗi request.\n✗ Automatic rotation giữ nguyên key ID/ARN, chỉ đổi key material bên trong.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-033",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-03-secrets",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một ứng dụng cần lưu connection string của database, gồm username và password, và yêu cầu password được tự động xoay (rotate) mỗi 30 ngày mà không cần viết code lập lịch. Dịch vụ AWS nào phù hợp nhất?",
-    "options": [
-      "AWS Secrets Manager với automatic rotation bật cho secret",
-      "SSM Parameter Store với SecureString và một CloudWatch Events rule tự viết",
-      "S3 bucket được mã hoá bằng SSE-KMS lưu file JSON chứa credential",
-      "DynamoDB table với encryption at rest lưu username và password"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Secrets Manager hỗ trợ tự động xoay credential bằng Lambda rotation function tích hợp sẵn, không cần tự viết lịch.\n✓ Secrets Manager có automatic rotation native, lý tưởng cho database credential cần xoay định kỳ.\n✗ Parameter Store không có auto-rotation native, phải tự xây dựng toàn bộ logic xoay.\n✗ S3 chỉ lưu trữ và mã hoá, không có cơ chế xoay credential tự động.\n✗ DynamoDB là database, không cung cấp tính năng quản lý hay xoay secret.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-034",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-03-secrets",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Đội phát triển cần lưu khoảng 500 cấu hình ứng dụng dạng plain text (không nhạy cảm) như feature flags và endpoint URL, ưu tiên CHI PHÍ THẤP NHẤT. Lựa chọn nào tối ưu?",
-    "options": [
-      "SSM Parameter Store standard tier với kiểu String (miễn phí)",
-      "AWS Secrets Manager, mỗi cấu hình một secret",
-      "AWS AppConfig với hosted configuration profile riêng cho từng giá trị",
-      "SSM Parameter Store advanced tier với kiểu SecureString"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Parameter Store standard tier String parameters miễn phí, phù hợp cho cấu hình không nhạy cảm.\n✓ Parameter Store standard tier String không tính phí lưu trữ, tối ưu chi phí cho dữ liệu không nhạy cảm.\n✗ Secrets Manager tính phí mỗi secret mỗi tháng, lãng phí cho dữ liệu không nhạy cảm.\n✗ AppConfig phục vụ quản lý cấu hình động/triển khai, dư thừa cho giá trị tĩnh đơn giản.\n✗ Advanced tier SecureString phát sinh phí, không cần thiết cho plain text không nhạy cảm.",
-    "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-034",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-03-secrets",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một developer lưu API key của bên thứ ba trong SSM Parameter Store dạng SecureString. Khi đọc qua AWS CLI bằng lệnh get-parameter, giá trị trả về vẫn ở dạng mã hoá (ciphertext). Cần làm gì để nhận giá trị plaintext?",
-    "options": [
-      "Thêm tham số --with-decryption vào lệnh get-parameter",
-      "Đổi parameter sang kiểu String thay vì SecureString",
-      "Cấp quyền kms:Encrypt cho IAM role đang dùng",
-      "Bật parameter policy với Expiration để buộc giải mã"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "SecureString chỉ được giải mã khi yêu cầu --with-decryption và caller có quyền kms:Decrypt.\n✓ Cờ --with-decryption yêu cầu Parameter Store giải mã giá trị bằng KMS trước khi trả về.\n✗ Đổi sang String làm mất tính bảo mật, không phải cách đúng để lấy plaintext an toàn.\n✗ Giải mã cần kms:Decrypt chứ không phải kms:Encrypt.\n✗ Parameter policy điều khiển vòng đời (expiration, notification), không liên quan đến giải mã.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-034",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-03-secrets",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Lambda function cần truy cập một database password. Yêu cầu: dùng Secrets Manager, giảm số lần gọi API tới Secrets Manager (tránh throttling và chi phí), nhưng vẫn lấy được giá trị mới sau khi rotate. Cách triển khai tối ưu?",
-    "options": [
-      "Dùng AWS Parameters and Secrets Lambda Extension để cache secret trong bộ nhớ với TTL",
-      "Lưu password vào environment variable lúc deploy bằng CloudFormation",
-      "Gọi GetSecretValue ở mỗi lần invoke không cache",
-      "Hardcode password trong code và rotate thủ công khi cần"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Lambda Extension cache secret với TTL, giảm gọi API mà vẫn refresh khi hết TTL.\n✓ Parameters and Secrets Lambda Extension cache cục bộ với TTL, giảm gọi API nhưng tự refresh để bắt giá trị sau rotation.\n✗ Lưu vào env var lúc deploy khiến giá trị cũ sau khi rotate, không tự cập nhật.\n✗ Gọi GetSecretValue mỗi invoke tốn API call và dễ bị throttle, không tối ưu.\n✗ Hardcode password vi phạm best practice bảo mật nghiêm trọng.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-035",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-03-secrets",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Tổ chức cần chia sẻ một secret (license key dùng chung) từ Account A cho ứng dụng chạy ở Account B. Cách đúng để cho phép cross-account access tới secret trong Secrets Manager?",
-    "options": [
-      "Gắn resource policy lên secret cho phép principal của Account B, và cấp quyền KMS key tương ứng cho Account B",
-      "Copy secret thành environment variable rồi gửi qua email cho team Account B",
-      "Bật public access cho secret để mọi account đọc được",
-      "Tạo IAM user trong Account A và chia sẻ access key cho Account B"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Cross-account secret cần resource-based policy trên secret và quyền dùng KMS key (phải là customer managed key, không dùng default AWS managed key).\n✓ Resource policy cho phép principal Account B kèm quyền dùng customer managed KMS key là cách chuẩn cho cross-account.\n✗ Gửi secret qua email là rò rỉ dữ liệu nhạy cảm, không phải giải pháp kỹ thuật.\n✗ Secrets Manager không có chế độ public access; phơi bày secret là sai hoàn toàn.\n✗ Chia sẻ access key của IAM user là anti-pattern, vi phạm least privilege và khó audit.",
-    "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-035",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-03-secrets",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Sau khi Secrets Manager rotate password, ứng dụng của bạn đôi khi vẫn nhận password CŨ trong vài giây đầu. Bạn muốn luôn lấy phiên bản đang hoạt động hiện tại. Tham số nào khi gọi GetSecretValue đảm bảo điều này?",
-    "options": [
-      "Dùng VersionStage = AWSCURRENT (giá trị mặc định)",
-      "Dùng VersionStage = AWSPREVIOUS",
-      "Dùng VersionStage = AWSPENDING",
-      "Truyền VersionId của phiên bản đầu tiên được tạo"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Secrets Manager dùng staging label để định danh phiên bản; AWSCURRENT là bản đang hoạt động.\n✓ AWSCURRENT trỏ tới phiên bản đang sử dụng hiện tại và là mặc định khi không chỉ định version.\n✗ AWSPREVIOUS là phiên bản cũ ngay trước, sẽ lấy password đã hết hiệu lực.\n✗ AWSPENDING là bản mới đang trong quá trình rotation, chưa được kích hoạt.\n✗ VersionId của bản đầu tiên trỏ tới giá trị cũ, không phải giá trị hiện hành.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-035",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-03-secrets",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một developer muốn mã hoá các environment variable của Lambda chứa thông tin nhạy cảm bằng customer managed KMS key, và giải mã ngay trong handler bằng encryption helper. Cấu hình nào đúng?",
-    "options": [
-      "Bật 'Enable helpers for encryption in transit' trên env var, dùng customer managed KMS key, và gọi kms:Decrypt trong code khi khởi tạo",
-      "Để Lambda dùng KMS key mặc định và đọc env var trực tiếp là đã được mã hoá in transit",
-      "Lưu giá trị nhạy cảm vào /tmp của Lambda rồi đọc lại",
-      "Đặt giá trị nhạy cảm vào Lambda layer và import lúc runtime"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Encryption helpers mã hoá env var bằng customer managed key; code dùng kms:Decrypt để giải mã in-memory lúc khởi tạo.\n✓ Bật encryption helper với customer managed key và gọi kms:Decrypt trong code là cách chuẩn để bảo vệ env var nhạy cảm.\n✗ Lambda mặc định đã mã hoá env var at rest, nhưng giá trị vẫn hiện plaintext trong console; cần helper và customer managed key để mã hoá in transit.\n✗ Ghi vào /tmp không mã hoá và không giải quyết vấn đề bảo mật env var.\n✗ Lambda layer lưu code/thư viện, không phải nơi an toàn để giấu secret.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-036",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-03-secrets",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Bạn đang chọn giữa Secrets Manager và SSM Parameter Store cho các tình huống khác nhau. Những phát biểu nào ĐÚNG? (Chọn 2)",
-    "options": [
-      "Secrets Manager hỗ trợ automatic rotation tích hợp sẵn còn Parameter Store thì không có native rotation",
-      "Parameter Store standard tier với String parameter không phát sinh phí lưu trữ, còn mỗi secret trong Secrets Manager bị tính phí hàng tháng",
-      "Parameter Store SecureString không hỗ trợ mã hoá bằng KMS, chỉ Secrets Manager mới mã hoá được",
-      "Secrets Manager không thể lưu giá trị tuỳ ý dạng key-value, chỉ lưu được database credential",
-      "Parameter Store không cho phép tổ chức tham số theo cấu trúc phân cấp (hierarchy)"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "So sánh cốt lõi: rotation và chi phí là hai khác biệt quan trọng nhất.\n✓ Secrets Manager có native rotation qua Lambda; Parameter Store không có rotation tích hợp sẵn.\n✓ Parameter Store standard String miễn phí lưu trữ; Secrets Manager tính phí mỗi secret mỗi tháng cộng phí API.\n✗ SecureString chính là kiểu được mã hoá bằng KMS, nên phát biểu này sai.\n✗ Secrets Manager lưu được cả JSON key-value tuỳ ý, không giới hạn ở database credential.\n✗ Parameter Store hỗ trợ hierarchy bằng đường dẫn như /app/prod/db, nên phát biểu này sai.",
-    "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-036",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-03-secrets",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một ứng dụng multi-tenant SaaS lưu dữ liệu của nhiều khách hàng trong cùng một DynamoDB table, mỗi item có thuộc tính tenantId làm partition key. Yêu cầu: mỗi tenant chỉ truy cập được dữ liệu của mình, dùng IAM một cách tối ưu nhất. Giải pháp đúng?",
-    "options": [
-      "Dùng IAM policy với điều kiện dynamodb:LeadingKeys ràng buộc theo tenantId (partition key) để giới hạn truy cập theo tenant",
-      "Tạo một IAM user riêng và một bảng DynamoDB riêng cho mỗi tenant",
-      "Cho tất cả tenant dùng chung một IAM role với quyền full access và lọc dữ liệu ở phía client",
-      "Mã hoá mỗi item bằng một KMS key riêng cho từng tenant và bỏ qua IAM"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Điều kiện dynamodb:LeadingKeys cho phép giới hạn truy cập theo partition key value, lý tưởng cho fine-grained multi-tenant.\n✓ dynamodb:LeadingKeys ràng buộc truy cập theo giá trị partition key (tenantId), thực thi cô lập tenant ở tầng IAM.\n✗ Tạo bảng và user riêng cho mỗi tenant không mở rộng được khi số tenant lớn.\n✗ Lọc ở client với quyền full access không an toàn vì IAM vẫn cho phép đọc dữ liệu tenant khác.\n✗ Mã hoá per-tenant không thay thế được kiểm soát truy cập IAM; vẫn cần authorization ở tầng API.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-036",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-03-secrets",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Ứng dụng lưu hồ sơ y tế (PHI) phải tuân thủ HIPAA. Logs ứng dụng vô tình ghi cả số bảo hiểm và chẩn đoán bệnh nhân ra CloudWatch Logs. Cách tốt nhất để giảm rủi ro lộ PHI trong logs?",
-    "options": [
-      "Áp dụng data masking/sanitization ở tầng ứng dụng trước khi ghi log, và bật CloudWatch Logs data protection policy để che dữ liệu nhạy cảm",
-      "Tắt hoàn toàn logging để không có dữ liệu nào bị ghi",
-      "Chuyển toàn bộ log sang S3 bucket public với versioning",
-      "Tăng retention của log group lên vô hạn để dễ audit về sau"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "PHI cần được mask trước khi ghi (application-level sanitization) kết hợp CloudWatch Logs data protection để phát hiện/che.\n✓ Mask ở tầng ứng dụng kết hợp CloudWatch Logs data protection policy là cách phòng thủ nhiều lớp đúng chuẩn.\n✗ Tắt logging làm mất khả năng quan sát và audit cần thiết cho vận hành/tuân thủ.\n✗ S3 public bucket khiến PHI bị phơi bày rộng, vi phạm HIPAA nghiêm trọng.\n✗ Tăng retention không giải quyết vấn đề lộ dữ liệu, chỉ kéo dài thời gian dữ liệu nhạy cảm tồn tại.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-037",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-03-secrets",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Bạn cần lưu một chuỗi cấu hình dài 8 KB trong SSM Parameter Store. Tier standard chỉ hỗ trợ tối đa 4 KB mỗi parameter. Cần làm gì?",
-    "options": [
-      "Dùng advanced tier của Parameter Store, hỗ trợ giá trị tới 8 KB",
-      "Tách chuỗi thành hai standard parameter và tự ghép lại trong code",
-      "Chuyển sang dùng environment variable của Lambda thay vì Parameter Store",
-      "Nén chuỗi rồi lưu base64 trong một standard String parameter"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Advanced tier hỗ trợ giá trị tới 8 KB và nhiều parameter hơn, có tính phí.\n✓ Advanced tier nâng giới hạn kích thước lên 8 KB, đúng nhu cầu, đổi lại phát sinh phí.\n✗ Tách parameter rồi tự ghép gây phức tạp và dễ lỗi không cần thiết.\n✗ Env var của Lambda có giới hạn riêng và không phù hợp lưu cấu hình chia sẻ.\n✗ Nén/base64 có thể vượt giới hạn 4 KB tuỳ dữ liệu và làm khó đọc/bảo trì.",
-    "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-037",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-03-secrets",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một RDS MySQL database được quản lý credential bằng Secrets Manager với rotation 30 ngày dùng rotation function 'single user'. Sau lần rotate đầu tiên, ứng dụng báo lỗi xác thực. Nguyên nhân khả năng cao nhất?",
-    "options": [
-      "Ứng dụng đang cache password cũ và không gọi lại GetSecretValue sau khi rotate",
-      "Rotation single user không được Secrets Manager hỗ trợ cho RDS MySQL",
-      "Secrets Manager đã xoá secret sau khi rotate nên không còn giá trị để đọc",
-      "RDS không cho phép thay đổi password qua Secrets Manager rotation function"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Sau rotation, password trong DB đã đổi; ứng dụng cache password cũ sẽ xác thực thất bại.\n✓ Ứng dụng cache password cũ và không refresh từ Secrets Manager là nguyên nhân phổ biến gây lỗi sau rotation.\n✗ Rotation single-user được hỗ trợ cho RDS; đây không phải nguyên nhân.\n✗ Secrets Manager không xoá secret sau rotation; nó cập nhật phiên bản AWSCURRENT.\n✗ Rotation function chính là cơ chế đổi password trên RDS, nên phát biểu này sai.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-037",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-03-secrets",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Team muốn tổ chức cấu hình theo môi trường: /myapp/dev/db-url, /myapp/prod/db-url. Họ cần một lệnh duy nhất lấy tất cả parameter dưới /myapp/prod/. API nào của Parameter Store phù hợp?",
-    "options": [
-      "GetParametersByPath với Path = /myapp/prod/ và Recursive = true",
-      "GetParameter gọi lần lượt cho từng tên parameter đầy đủ",
-      "DescribeParameters lọc theo prefix rồi đọc từng cái",
-      "PutParameter với Overwrite để gom các giá trị lại"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Hierarchy cho phép dùng GetParametersByPath để lấy hàng loạt theo đường dẫn.\n✓ GetParametersByPath với path prefix và Recursive trả về tất cả parameter trong nhánh chỉ với một lời gọi.\n✗ Gọi GetParameter từng cái không tận dụng hierarchy và tốn nhiều request.\n✗ DescribeParameters trả metadata chứ không trả giá trị, và lọc kém hiệu quả.\n✗ PutParameter dùng để ghi, không phải để đọc nhiều giá trị.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-038",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-03-secrets",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Khi phân loại dữ liệu (data classification) cho một ứng dụng, những hành động nào là best practice để bảo vệ PII/PHI? (Chọn 2)",
-    "options": [
-      "Dùng Amazon Macie để tự động phát hiện và phân loại dữ liệu nhạy cảm như PII trong S3",
-      "Áp dụng mã hoá at-rest và in-transit cho dữ liệu được phân loại là nhạy cảm",
-      "Lưu PII không mã hoá nhưng đặt tag 'sensitive' lên object để cảnh báo",
-      "Ghi đầy đủ PII vào application logs để dễ truy vết khi cần điều tra",
-      "Cấp quyền đọc PII cho mọi developer để tăng tốc độ phát triển"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Bảo vệ PII/PHI cần phát hiện tự động và mã hoá đầu cuối, kèm least privilege.\n✓ Macie tự động phát hiện và phân loại PII trong S3, hỗ trợ data classification ở quy mô lớn.\n✓ Mã hoá at-rest và in-transit là yêu cầu cơ bản để bảo vệ dữ liệu nhạy cảm.\n✗ Chỉ gắn tag mà không mã hoá vẫn để lộ PII ở dạng plaintext.\n✗ Ghi PII vào logs làm tăng bề mặt rò rỉ, cần mask thay vì ghi đầy đủ.\n✗ Cấp quyền PII rộng rãi vi phạm least privilege và quy định bảo mật.",
-    "domain": 2,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-038",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-03-secrets",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng cần password để kết nối tới database của bên thứ ba (không phải RDS, Redshift hay DocumentDB) và muốn rotation tự động. Cách triển khai đúng với Secrets Manager?",
-    "options": [
-      "Tạo Lambda rotation function tuỳ chỉnh theo bốn bước (createSecret, setSecret, testSecret, finishSecret) cho secret",
-      "Bật RDS-managed rotation vì nó hỗ trợ mọi loại database",
-      "Dùng SecureString của Parameter Store vì nó tự rotate mọi credential",
-      "Không thể rotate vì Secrets Manager chỉ hỗ trợ database AWS-native"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Với database không native, cần Lambda rotation function tuỳ chỉnh theo 4 bước chuẩn.\n✓ Lambda rotation function tuỳ chỉnh với bốn bước cho phép rotate credential của bất kỳ hệ thống nào.\n✗ RDS-managed rotation chỉ áp dụng cho các database AWS được hỗ trợ, không phải bên thứ ba bất kỳ.\n✗ SecureString của Parameter Store không có rotation tự động native.\n✗ Secrets Manager hỗ trợ rotate cả non-native qua custom Lambda, nên phát biểu này sai.",
-    "domain": 2,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-038",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d2-03-secrets",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Bạn muốn nhận thông báo và tự động hoá khi một secret trong Secrets Manager sắp tới hạn rotation hoặc khi rotation thất bại. Cách giám sát phù hợp nhất?",
-    "options": [
-      "Dùng EventBridge bắt sự kiện từ Secrets Manager/CloudTrail và CloudWatch Alarm để cảnh báo khi rotation thất bại",
-      "Bật S3 access logging trên bucket chứa secret",
-      "Dùng VPC Flow Logs để theo dõi truy cập vào secret",
-      "Tạo một cron job trên EC2 đọc secret mỗi phút để kiểm tra"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Giám sát rotation dùng EventBridge/CloudTrail events kết hợp CloudWatch để cảnh báo và tự động hoá.\n✓ EventBridge bắt sự kiện rotation và CloudWatch Alarm cảnh báo khi thất bại là cách giám sát chuẩn, không tốn polling.\n✗ Secrets không lưu trong S3 nên S3 access logging không liên quan.\n✗ VPC Flow Logs ghi lưu lượng mạng, không phản ánh trạng thái rotation của secret.\n✗ Cron đọc secret mỗi phút gây tốn API call và không phát hiện được lỗi rotation hiệu quả.",
-    "domain": 2,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-039",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-01-packaging-iac",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một developer viết file template SAM để định nghĩa một Lambda function (AWS::Serverless::Function) và một API Gateway. Khi chạy sam deploy, CloudFormation báo lỗi không nhận diện được resource type AWS::Serverless::Function. Nguyên nhân nào KHẢ DĨ NHẤT?",
-    "options": [
-      "Template thiếu dòng Transform: AWS::Serverless-2016-10-31 ở cấp cao nhất",
-      "Template thiếu section Resources",
-      "Region chưa bật service AWS SAM",
-      "Function thiếu thuộc tính Runtime"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "SAM template được CloudFormation xử lý qua macro Transform để chuyển các resource AWS::Serverless::* thành resource CloudFormation chuẩn.\n✓ Thiếu Transform: AWS::Serverless-2016-10-31 khiến CloudFormation không biết cách diễn giải AWS::Serverless::Function\n✗ Thiếu Resources sẽ báo lỗi khác (template phải có Resources) chứ không phải lỗi không nhận diện resource type\n✗ Không có khái niệm bật service SAM theo region; SAM chỉ là framework trên CloudFormation\n✗ Thiếu Runtime cũng gây lỗi nhưng là lỗi validate thuộc tính, không phải lỗi unknown resource type",
+    "explanation": "Cần độ trễ microseconds cho đọc DynamoDB với thay đổi logic tối thiểu.\n✓ DAX là cache in-memory tích hợp sẵn cho DynamoDB, cho độ trễ microseconds và tương thích API DynamoDB nên gần như không cần sửa logic.\n✗ ElastiCache for Redis đạt được độ trễ thấp nhưng phải tự viết logic cache-aside, phức tạp hơn nhiều so với DAX.\n✗ Global Tables giải quyết replication đa Region, không nhằm giảm độ trễ đọc cục bộ xuống microseconds.\n✗ Tăng RCU chỉ tăng throughput chứ vẫn giữ độ trễ ở mức milliseconds, không đạt microseconds.",
     "domain": 3,
-    "mock": 1
+    "id": "saa-ext-002"
   },
   {
-    "id": "dva-m2-039",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-01-packaging-iac",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-03-database-performance",
     "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Trong một CloudFormation template, developer cần truyền tên (resource name) của một S3 bucket vừa tạo vào biến môi trường của Lambda. Với AWS::S3::Bucket, hàm intrinsic nào trả về chính tên bucket?",
-    "options": [
-      "Ref đối với logical ID của bucket",
-      "Fn::GetAtt với thuộc tính Arn",
-      "Fn::ImportValue với tên bucket",
-      "Fn::FindInMap với mapping bucket"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Mỗi resource quy định giá trị mà Ref và GetAtt trả về; với AWS::S3::Bucket, Ref trả về tên bucket.\n✓ Ref logical ID của AWS::S3::Bucket trả về bucket name\n✗ GetAtt Arn trả về ARN đầy đủ (arn:aws:s3:::...) chứ không phải chỉ tên\n✗ ImportValue dùng để nhập giá trị đã export từ stack khác, không liên quan ở đây\n✗ FindInMap tra giá trị tĩnh trong section Mappings, không lấy thuộc tính runtime của resource",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-039",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-01-packaging-iac",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một team dùng AWS SAM. Họ muốn nhiều Lambda function trong cùng template đều có chung Runtime, Timeout=30 và một biến môi trường LOG_LEVEL=INFO mà không phải lặp lại cấu hình ở từng function. Cách TỐI ƯU nhất là gì?",
-    "options": [
-      "Khai báo các giá trị mặc định trong section Globals của template SAM",
-      "Tạo một CloudFormation nested stack riêng cho mỗi function",
-      "Dùng Fn::FindInMap để map cấu hình rồi GetAtt vào từng function",
-      "Định nghĩa một Lambda layer chứa cấu hình Runtime và Timeout"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "SAM cung cấp section Globals để đặt thuộc tính chung cho tất cả resource cùng loại, tránh lặp lại.\n✓ Globals: Function: cho phép đặt Runtime, Timeout, Environment chung; từng function vẫn override được\n✗ Nested stack cho mỗi function làm phức tạp không cần thiết và không giải quyết việc dùng chung cấu hình\n✗ FindInMap chỉ tra giá trị tĩnh, vẫn phải khai báo lặp ở mỗi function\n✗ Layer dùng để chia sẻ code/thư viện, không đặt được Runtime hay Timeout của function",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-040",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-01-packaging-iac",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Developer muốn test một Lambda function được định nghĩa trong SAM template ngay trên máy local, kích hoạt bằng một event JSON mẫu, trước khi deploy lên AWS. Lệnh nào phù hợp nhất?",
-    "options": [
-      "sam local invoke với tham số --event",
-      "sam deploy --guided rồi gọi từ console",
-      "aws lambda invoke trỏ tới function ARN",
-      "sam build --use-container"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "SAM CLI hỗ trợ chạy và test function cục bộ trong container Docker mô phỏng môi trường Lambda.\n✓ sam local invoke chạy function trên máy local với event JSON truyền qua --event\n✗ sam deploy --guided thực sự triển khai lên AWS, không phải test local\n✗ aws lambda invoke yêu cầu function đã được deploy lên AWS\n✗ sam build chỉ build artifact, không thực thi function với event",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-040",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-01-packaging-iac",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một Lambda function (SAM) cần quyền đọc/ghi vào một bảng DynamoDB tên Orders. Developer muốn cấp quyền theo least privilege mà không tự viết IAM policy JSON dài dòng. Cách tốt nhất trong SAM là gì?",
-    "options": [
-      "Dùng SAM policy template DynamoDBCrudPolicy với tham số TableName",
-      "Gắn managed policy AmazonDynamoDBFullAccess vào function role",
-      "Đặt AssumeRole tới một role có quyền admin DynamoDB",
-      "Thêm resource-based policy trên bảng DynamoDB cho function ARN"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "SAM cung cấp policy templates đã được giới hạn phạm vi theo tham số, giúp least privilege dễ dàng.\n✓ DynamoDBCrudPolicy với TableName giới hạn quyền CRUD đúng vào bảng Orders\n✗ AmazonDynamoDBFullAccess cấp quyền lên mọi bảng, vi phạm least privilege\n✗ AssumeRole tới role admin là quá rộng và không cần thiết\n✗ Resource-based policy không phải cách SAM cấp quyền theo policy template và không giải quyết yêu cầu least privilege qua cấu hình SAM ở đây",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-040",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-01-packaging-iac",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Stack A export tên của một VPC Subnet bằng Outputs với Export Name. Stack B (triển khai sau, độc lập) cần dùng subnet này. Trong template Stack B, cách đúng để tham chiếu giá trị đã export là gì?",
-    "options": [
-      "Fn::ImportValue với tên export do Stack A khai báo",
-      "Fn::GetAtt trỏ tới resource subnet của Stack A",
-      "Ref tới logical ID của subnet trong Stack A",
-      "Định nghĩa subnet là nested stack của Stack A bên trong Stack B"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Cross-stack reference dùng cơ chế Export (ở stack nguồn) và Fn::ImportValue (ở stack đích).\n✓ Fn::ImportValue lấy giá trị đã được export từ stack khác trong cùng region/account\n✗ GetAtt chỉ truy cập resource trong cùng template, không xuyên stack\n✗ Ref chỉ tham chiếu resource/parameter trong cùng template\n✗ Nested stack là quan hệ cha-con trong cùng deployment, khác hoàn toàn cross-stack export",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-041",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-01-packaging-iac",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Trước khi cập nhật một CloudFormation stack production quan trọng, team muốn xem CHÍNH XÁC những resource nào sẽ được thêm, sửa, hoặc XÓA/thay thế (replacement) mà chưa áp dụng thay đổi. Tính năng nào nên dùng?",
-    "options": [
-      "Tạo và review một change set trước khi execute",
-      "Bật termination protection rồi update trực tiếp",
-      "Chạy drift detection trên stack",
-      "Dùng update với rollback configuration"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Change set cho biết tác động dự kiến của một update trước khi thực thi.\n✓ Change set liệt kê các action Add/Modify/Remove và đánh dấu resource bị replacement, an toàn để review trước\n✗ Termination protection chỉ chống xóa stack, không xem trước thay đổi\n✗ Drift detection phát hiện cấu hình thực tế lệch khỏi template, không dự đoán tác động update sắp tới\n✗ Rollback configuration xử lý khi update lỗi, không hiển thị thay đổi trước",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-041",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-01-packaging-iac",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Sau khi một stack được deploy, một kỹ sư đã sửa thủ công Security Group của một EC2 instance qua console. Team muốn phát hiện những thay đổi ngoài-template như vậy. CloudFormation cung cấp cơ chế nào?",
-    "options": [
-      "Drift detection để so sánh cấu hình thực tế với template",
-      "Change set so sánh trạng thái stack",
-      "Stack policy chặn mọi thay đổi thủ công",
-      "Fn::ImportValue kiểm tra tính toàn vẹn"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Drift detection xác định resource đã bị thay đổi ngoài CloudFormation.\n✓ Drift detection báo cáo từng resource có cấu hình lệch (DRIFTED) so với template đã deploy\n✗ Change set dùng để xem trước thay đổi của một update, không phát hiện sửa đổi thủ công đã xảy ra\n✗ Stack policy giới hạn update qua CloudFormation, không ngăn được sửa trực tiếp trên resource và không phát hiện drift\n✗ Fn::ImportValue là hàm tham chiếu giá trị, không liên quan kiểm tra toàn vẹn",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-041",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-01-packaging-iac",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một Lambda function cần thư viện numpy/pandas dung lượng lớn được chia sẻ với nhiều function khác, đồng thời giữ kích thước gói deployment của mỗi function nhỏ. Cách đóng gói TỐI ƯU là gì?",
-    "options": [
-      "Đưa các thư viện chung vào một Lambda layer và attach cho các function",
-      "Tăng giới hạn package size bằng cách dùng S3 cho mỗi zip",
-      "Đóng gói mỗi function dưới dạng container image 10 GB",
-      "Dùng AppConfig để phân phối thư viện lúc runtime"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Lambda layer cho phép tách dependency dùng chung khỏi mã function.\n✓ Layer chứa numpy/pandas được nhiều function tái sử dụng, giữ gói code từng function nhỏ\n✗ Dùng S3 cho zip chỉ giúp upload package lớn, không chia sẻ và không giảm trùng lặp\n✗ Container image 10 GB cho mỗi function là khả thi nhưng kém tối ưu khi mục tiêu là chia sẻ thư viện và gói nhỏ\n✗ AppConfig phân phối cấu hình/feature flag chứ không phân phối thư viện code",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-042",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-01-packaging-iac",
-    "certifications": [
-      "DVA-C02"
+      "SAA-C03"
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Team có một dependency đặc thù cần kích thước lớn (>250 MB unzipped) và một runtime tùy biến không có sẵn. Họ muốn đóng gói Lambda function bằng công cụ container quen thuộc và đẩy lên ECR. Lựa chọn đóng gói nào phù hợp nhất?",
+    "question": "Một ứng dụng serverless dùng hàng nghìn hàm Lambda kết nối tới một Aurora MySQL DB instance. Khi tải tăng đột biến, số kết nối mở vượt giới hạn khiến database bị quá tải và xuất hiện lỗi 'too many connections'. Giải pháp nào TỐI ƯU nhất để xử lý vấn đề bùng nổ kết nối này?",
     "options": [
-      "Đóng gói function dưới dạng container image (tối đa 10 GB) lưu ở ECR",
-      "Tách dependency thành nhiều Lambda layer cộng dồn quá 250 MB",
-      "Dùng zip deployment package upload qua S3",
-      "Triển khai code lên EC2 và mô phỏng Lambda runtime"
+      "Sử dụng Amazon RDS Proxy để pool và chia sẻ kết nối database giữa các hàm Lambda",
+      "Thêm Aurora read replicas và phân tải các truy vấn đọc sang đó",
+      "Tăng kích thước Aurora DB instance lên loại lớn hơn để chịu nhiều kết nối hơn",
+      "Đặt Amazon ElastiCache trước Aurora để giảm số lần truy vấn database"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "Container image hỗ trợ artifact lớn và runtime tùy biến, vượt giới hạn của zip.\n✓ Container image cho Lambda hỗ trợ tới 10 GB và runtime tùy biến, lưu trên ECR, hợp nhu cầu\n✗ Layer cũng bị giới hạn tổng unzipped 250 MB cho cả function + layers nên không vượt được\n✗ Zip package bị giới hạn 250 MB unzipped, không đủ\n✗ Triển khai lên EC2 phá vỡ mô hình serverless và không phải đóng gói Lambda",
+    "explanation": "Vấn đề là bùng nổ số kết nối từ nhiều Lambda đồng thời tới Aurora.\n✓ RDS Proxy duy trì connection pool dùng chung, giảm số kết nối thực tế tới database và xử lý đúng tình huống Lambda mở nhiều kết nối.\n✗ Thêm read replicas giúp phân tải đọc nhưng không giải quyết gốc rễ tình trạng quá nhiều kết nối, vẫn có thể vượt giới hạn.\n✗ Tăng kích thước instance chỉ nâng giới hạn tạm thời, không bền vững khi Lambda scale lớn và tốn chi phí.\n✗ Đặt ElastiCache giảm truy vấn đọc nhưng các thao tác ghi và miss cache vẫn mở kết nối, không xử lý triệt để vấn đề kết nối.",
     "domain": 3,
-    "mock": 1
+    "id": "saa-ext-003"
   },
   {
-    "id": "dva-m2-042",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-01-packaging-iac",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-01-compute-cost",
     "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một developer dùng AWS CDK (TypeScript) để định nghĩa hạ tầng. Trong CI/CD, bước nào tạo ra CloudFormation template từ code CDK để sau đó có thể deploy?",
-    "options": [
-      "cdk synth biên dịch constructs thành CloudFormation template",
-      "cdk deploy trực tiếp gọi SAM Transform",
-      "cdk bootstrap sinh ra template ứng dụng",
-      "sam build chuyển CDK app thành template"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "CDK định nghĩa hạ tầng bằng code rồi tổng hợp ra CloudFormation.\n✓ cdk synth biên dịch các construct thành CloudFormation template (trong cdk.out)\n✗ cdk deploy thực hiện synth rồi triển khai, nhưng không dùng SAM Transform; bước sinh template là synth\n✗ cdk bootstrap chuẩn bị môi trường (S3/ECR/role) cho CDK, không sinh template ứng dụng\n✗ sam build dành cho SAM project, không xử lý CDK app",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-042",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-01-packaging-iac",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một ứng dụng cần bật/tắt tính năng mới (feature flag) cho người dùng mà KHÔNG cần deploy lại Lambda, và muốn cập nhật cấu hình được kiểm soát, có validation và khả năng rollback. Dịch vụ nào phù hợp nhất?",
-    "options": [
-      "AWS AppConfig với feature flags và deployment strategy",
-      "Đặt feature flag trong biến môi trường Lambda và cập nhật qua CloudFormation",
-      "Lưu cờ trong một CloudFormation parameter và update stack",
-      "Dùng Lambda layer để chứa file cấu hình cờ"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "AppConfig quản lý cấu hình/feature flag tách rời khỏi vòng đời deploy code.\n✓ AppConfig hỗ trợ feature flags, validators, deployment strategy theo phần trăm và rollback dựa trên CloudWatch alarm, không cần deploy lại code\n✗ Biến môi trường Lambda thay đổi đòi hỏi update function (deploy lại cấu hình), thiếu validation/rollback tinh vi\n✗ CloudFormation parameter buộc update stack mỗi lần đổi cờ, không linh hoạt\n✗ Layer chứa file cờ vẫn cần publish version mới và cập nhật function",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-043",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-01-packaging-iac",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Một developer cần truyền thông tin của một resource AWS::SQS::Queue (logical ID MyQueue) sang nơi khác trong CÙNG template. Những phát biểu nào về intrinsic functions là ĐÚNG? (Chọn 3)",
-    "options": [
-      "Ref MyQueue trả về URL của queue",
-      "Fn::GetAtt MyQueue.Arn trả về ARN của queue",
-      "Ref MyQueue trả về ARN của queue",
-      "Fn::GetAtt MyQueue.QueueName phải dùng Fn::ImportValue để hoạt động",
-      "Fn::Sub có thể nhúng ${MyQueue} để chèn giá trị Ref của queue vào chuỗi"
-    ],
-    "correctIndices": [
-      0,
-      1,
-      4
-    ],
-    "explanation": "Mỗi resource định nghĩa giá trị riêng cho Ref và các thuộc tính GetAtt; Fn::Sub có thể nội suy Ref.\n✓ Với AWS::SQS::Queue, Ref trả về queue URL\n✓ GetAtt MyQueue.Arn trả về ARN của queue\n✓ Fn::Sub cho phép nhúng ${MyQueue} tương đương Ref bên trong chuỗi\n✗ Ref của SQS queue trả về URL, không phải ARN\n✗ GetAtt trong cùng template không cần Fn::ImportValue; ImportValue chỉ dùng cho cross-stack export",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-043",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-01-packaging-iac",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "multi",
-    "question": "Team đang chọn cách tổ chức hạ tầng CloudFormation. Những phát biểu nào về nested stacks và cross-stack export là ĐÚNG? (Chọn 3)",
-    "options": [
-      "Nested stack được tham chiếu bằng resource AWS::CloudFormation::Stack trỏ tới template con trên S3",
-      "Cross-stack reference dùng Outputs với Export ở stack nguồn và Fn::ImportValue ở stack đích",
-      "Nested stack chỉ chia sẻ giá trị qua Fn::ImportValue giữa các cây stack độc lập",
-      "Cross-stack export cho phép import giá trị giữa các region khác nhau tự do",
-      "Không thể xóa stack nguồn khi giá trị export của nó đang được stack khác import"
-    ],
-    "correctIndices": [
-      0,
-      1,
-      4
-    ],
-    "explanation": "Nested stack và cross-stack export là hai mô hình tái sử dụng khác nhau với ràng buộc riêng.\n✓ Nested stack khai báo bằng AWS::CloudFormation::Stack với TemplateURL trỏ template con trên S3\n✓ Cross-stack dùng Export trong Outputs và Fn::ImportValue để nhập ở stack khác\n✓ CloudFormation chặn xóa/thay đổi export đang được stack khác import\n✗ Nested stack truyền giá trị qua Parameters/Outputs của stack con, không phải Fn::ImportValue\n✗ Export chỉ dùng được trong cùng region và account, không xuyên region tự do",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-043",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-02-cicd",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một developer cần định nghĩa các lệnh build chạy trong CodeBuild cho một ứng dụng Node.js (cài dependency, chạy test, đóng gói artifact). File cấu hình nào CodeBuild sử dụng và đặt mặc định ở đâu?",
-    "options": [
-      "buildspec.yml ở thư mục gốc của source repository",
-      "appspec.yml ở thư mục gốc của source repository",
-      "buildspec.json trong S3 bucket của pipeline",
-      "Dockerfile ở thư mục gốc của source repository"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "CodeBuild đọc buildspec để biết các lệnh build theo từng phase.\n✓ buildspec.yml đặt mặc định ở root của source là file CodeBuild dùng để định nghĩa phases và artifacts\n✗ appspec.yml là file của CodeDeploy, không phải CodeBuild\n✗ CodeBuild dùng định dạng YAML (buildspec.yml/.yaml), không phải buildspec.json\n✗ Dockerfile chỉ build image, không định nghĩa các phase build của CodeBuild",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-044",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-02-cicd",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Trong một CodePipeline, developer muốn output (mã nguồn đã được build) từ stage Build được dùng làm input cho stage Deploy. Cơ chế nào của CodePipeline cho phép truyền dữ liệu giữa các stage?",
-    "options": [
-      "Output artifacts và input artifacts được lưu trong artifact store (S3)",
-      "Biến môi trường được export trực tiếp giữa các action",
-      "CodePipeline tự sao chép file qua EFS được mount vào mọi stage",
-      "Truyền qua tham số SSM Parameter Store giữa các stage"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "CodePipeline dùng artifact store để chuyển dữ liệu giữa các stage.\n✓ Mỗi action có output artifact và input artifact; CodePipeline lưu chúng trong artifact store S3 và truyền giữa các stage\n✗ Env vars không phải cơ chế truyền artifact giữa các stage trong CodePipeline\n✗ CodePipeline không mount EFS để chia sẻ file giữa stage\n✗ SSM Parameter Store dùng cho cấu hình/tham số, không phải để truyền artifact build",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-044",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-02-cicd",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Đội phát triển muốn pipeline tự động chạy ngay khi có commit mới được push lên nhánh main của repository CodeCommit. Cách cấu hình được khuyến nghị (gần realtime, không polling) là gì?",
-    "options": [
-      "Dùng Amazon EventBridge (CloudWatch Events) rule bắt sự kiện commit của CodeCommit để khởi động pipeline",
-      "Bật periodic polling của CodePipeline kiểm tra repository mỗi vài phút",
-      "Tạo cron job trên EC2 gọi StartPipelineExecution mỗi phút",
-      "Cấu hình S3 event notification trên repository CodeCommit"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "EventBridge cho phép trigger pipeline gần realtime khi có commit.\n✓ EventBridge rule bắt sự kiện thay đổi reference của CodeCommit và khởi động pipeline là cách được khuyến nghị, nhanh và không tốn polling\n✗ Polling gây độ trễ và tốn API call, không phải lựa chọn tối ưu\n✗ Cron job trên EC2 phức tạp, tốn chi phí và không cần thiết\n✗ CodeCommit không phải S3, không tạo S3 event notification",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-044",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-02-cicd",
-    "certifications": [
-      "DVA-C02"
+      "SAA-C03"
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Trong buildspec.yml, developer cần chạy lệnh cài đặt runtime và dependency TRƯỚC khi biên dịch source. Sau khi build xong cần đẩy Docker image lên ECR. Các lệnh đó nên đặt vào những phase nào?",
+    "question": "Một công ty chạy ứng dụng web sản xuất trên một fleet Amazon EC2 với mức tải nền (baseline) ổn định 24/7 trong suốt 3 năm tới, cộng thêm các đợt tăng tải đột biến không thể đoán trước vào giờ cao điểm. Workload xử lý đợt tăng tải có thể chịu được việc instance bị thu hồi (fault-tolerant, stateless). Solutions Architect cần thiết kế giải pháp compute có CHI PHÍ THẤP NHẤT mà vẫn đảm bảo phần baseline luôn sẵn sàng. Phương án nào tối ưu nhất?",
     "options": [
-      "Cài runtime/dependency vào phase install, đẩy image lên ECR vào phase post_build",
-      "Cài runtime/dependency vào phase build, đẩy image lên ECR vào phase pre_build",
-      "Cài runtime/dependency vào phase pre_build, đẩy image lên ECR vào phase install",
-      "Đặt tất cả lệnh vào phase build vì các phase khác không chạy lệnh shell"
+      "Dùng Compute Savings Plans (cam kết 3 năm) cho phần baseline và Spot Instances cho phần tải đột biến fault-tolerant",
+      "Dùng On-Demand Instances cho toàn bộ fleet để đảm bảo tính sẵn sàng tối đa cho cả baseline và đợt tăng tải",
+      "Dùng Standard Reserved Instances (3 năm) cho toàn bộ fleet bao gồm cả phần tải đột biến",
+      "Dùng Spot Instances cho toàn bộ fleet và cấu hình Spot Fleet để xử lý cả baseline lẫn tải đột biến"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "Thứ tự phase của buildspec: install, pre_build, build, post_build.\n✓ install dùng để cài runtime/dependency, post_build chạy sau build để đẩy image lên ECR là đúng best practice\n✗ build là nơi biên dịch, không phải để cài runtime; pre_build chạy trước build nên không hợp để push image sau build\n✗ pre_build dùng cho việc chuẩn bị (như login ECR), không nên đặt cài runtime ở đó; install không chạy sau build\n✗ Mọi phase đều có thể chạy lệnh shell; gom hết vào build là kém tổ chức",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-045",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-02-cicd",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một CodeDeploy deployment lên EC2 in-place cần dừng web server cũ trước khi cài bản mới và chạy smoke test sau khi cài đặt. Developer cấu hình các script này ở đâu và theo lifecycle hook nào?",
-    "options": [
-      "Trong appspec.yml: dừng server ở hook ApplicationStop hoặc BeforeInstall, smoke test ở hook ValidateService",
-      "Trong buildspec.yml: dừng server ở phase pre_build, smoke test ở phase post_build",
-      "Trong appspec.yml: cả hai script đặt ở hook AfterInstall vì hook này chạy mọi script",
-      "Trong buildspec.yml phase install và trong appspec.yml hook BeforeAllowTraffic"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "CodeDeploy dùng appspec.yml và lifecycle hooks để chạy script triển khai.\n✓ appspec.yml định nghĩa hooks; ApplicationStop/BeforeInstall để dừng server cũ, ValidateService để smoke test sau khi cài là đúng vòng đời\n✗ buildspec.yml thuộc CodeBuild, không điều khiển lifecycle deploy của CodeDeploy\n✗ Đặt cả hai vào AfterInstall sai vì dừng server cần xảy ra trước khi cài, và validate cần ở cuối\n✗ Trộn buildspec với hook BeforeAllowTraffic không phù hợp; BeforeAllowTraffic là hook của blue/green, không cho EC2 in-place đơn giản này",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-045",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-02-cicd",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Build của một ứng dụng Java mất nhiều thời gian vì CodeBuild tải lại toàn bộ Maven dependency mỗi lần. Cách tối ưu nhất để rút ngắn thời gian build mà chỉ thay đổi cấu hình CodeBuild là gì?",
-    "options": [
-      "Bật CodeBuild local/S3 caching và khai báo thư mục .m2 trong mục cache của buildspec.yml",
-      "Tăng compute type của CodeBuild lên loại lớn nhất để tải dependency nhanh hơn",
-      "Chuyển toàn bộ dependency vào Docker image custom rồi rebuild image mỗi lần build",
-      "Đặt dependency vào output artifact của stage trước và truyền sang stage build"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "CodeBuild hỗ trợ caching để tái sử dụng dependency giữa các lần build.\n✓ Bật caching (local hoặc S3) và khai báo path .m2 trong phần cache của buildspec giúp tái sử dụng dependency, giảm thời gian build\n✗ Tăng compute type tốn chi phí và không giải quyết việc tải lại dependency\n✗ Rebuild Docker image mỗi lần build vẫn tốn thời gian và phức tạp\n✗ Truyền dependency qua artifact giữa stage không phải cơ chế cache dependency tiêu chuẩn và dễ lỗi",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-045",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-02-cicd",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Tổ chức muốn lưu trữ và chia sẻ các package npm và Maven nội bộ một cách an toàn, đồng thời proxy các public package. Dịch vụ AWS nào phù hợp nhất để tích hợp với CodeBuild?",
-    "options": [
-      "AWS CodeArtifact",
-      "AWS CodeCommit",
-      "Amazon ECR",
-      "AWS CodePipeline"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "CodeArtifact là dịch vụ quản lý artifact/package nội bộ.\n✓ CodeArtifact lưu trữ, chia sẻ package npm/Maven/PyPI và proxy public repository, tích hợp tốt với CodeBuild\n✗ CodeCommit là dịch vụ Git repository cho source code, không phải package manager\n✗ ECR dùng cho Docker container image, không phải npm/Maven package\n✗ CodePipeline là dịch vụ orchestration CI/CD, không lưu trữ package",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-046",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-02-cicd",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một developer triển khai một hàm Lambda qua CodeDeploy với canary deployment. Cần chạy một script kiểm tra phiên bản mới trước khi chuyển hoàn toàn traffic sang nó. Lifecycle hook nào của CodeDeploy (Lambda) nên dùng để validate trước khi shift traffic?",
-    "options": [
-      "BeforeAllowTraffic",
-      "AfterAllowTraffic",
-      "ApplicationStop",
-      "DownloadBundle"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Deployment Lambda của CodeDeploy chỉ có hai hook: BeforeAllowTraffic và AfterAllowTraffic.\n✓ BeforeAllowTraffic chạy trước khi traffic được chuyển sang version mới, phù hợp để validate\n✗ AfterAllowTraffic chạy sau khi đã chuyển traffic, không validate trước được\n✗ ApplicationStop là hook của deployment EC2/on-premises, không áp dụng cho Lambda\n✗ DownloadBundle là sự kiện nội bộ trên EC2 agent, không phải hook cho Lambda",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-046",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-02-cicd",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "CodeBuild của một dự án cần truy cập một mật khẩu database để chạy integration test, nhưng không được hardcode trong buildspec.yml. Cách bảo mật được khuyến nghị để inject giá trị này vào biến môi trường của build là gì?",
-    "options": [
-      "Tham chiếu Secrets Manager (hoặc SSM Parameter Store) qua mục env/secrets-manager hoặc env/parameter-store trong buildspec.yml",
-      "Ghi mật khẩu plaintext vào phần env/variables trong buildspec.yml",
-      "Lưu mật khẩu trong appspec.yml và để CodeBuild đọc",
-      "Đính kèm mật khẩu vào output artifact để stage sau đọc"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "CodeBuild có thể lấy secret runtime từ Secrets Manager/Parameter Store.\n✓ Khai báo trong env/secrets-manager hoặc env/parameter-store của buildspec để inject giá trị bí mật vào biến môi trường mà không hardcode\n✗ Ghi plaintext vào env/variables làm lộ secret trong source, không an toàn\n✗ appspec.yml thuộc CodeDeploy, không phải nơi CodeBuild đọc env var\n✗ Đưa secret vào artifact làm rò rỉ và sai mục đích của artifact",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-046",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-02-cicd",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một pipeline có stage Build (CodeBuild) tạo file đóng gói, và stage Deploy (CodeDeploy lên EC2). Deployment liên tục thất bại với lỗi không tìm thấy appspec.yml. Source code build ra một thư mục con 'dist/' chứa app và appspec.yml nằm trong dist/. Nguyên nhân và cách khắc phục đúng nhất là gì?",
-    "options": [
-      "appspec.yml phải nằm ở root của input artifact mà CodeDeploy nhận; cấu hình artifacts base-directory hoặc files trong buildspec để appspec.yml ở gốc artifact",
-      "CodeDeploy không hỗ trợ appspec.yml từ CodeBuild; phải tự upload thủ công lên S3",
-      "Phải đổi tên appspec.yml thành buildspec.yml để CodeDeploy nhận diện",
-      "Thêm hook DownloadBundle vào appspec.yml để chỉ định lại vị trí file"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "CodeDeploy yêu cầu appspec.yml ở root của bundle (artifact) nhận được.\n✓ Khi appspec.yml nằm trong dist/, nó không ở root artifact; dùng artifacts base-directory hoặc files trong buildspec để đưa appspec.yml ra gốc artifact là cách sửa đúng\n✗ CodeDeploy hỗ trợ nhận artifact từ pipeline; không cần upload thủ công\n✗ buildspec.yml và appspec.yml có vai trò khác nhau, đổi tên là sai hoàn toàn\n✗ DownloadBundle không phải hook bạn cấu hình để định vị appspec.yml",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-047",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-02-cicd",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Một developer cần một CodeBuild build (giai đoạn build) xuất ra HAI loại đầu ra: (1) các file ứng dụng đã đóng gói để CodeDeploy dùng, và (2) báo cáo kết quả unit test để hiển thị trong CodeBuild. Trong buildspec.yml, những phần nào được dùng đúng mục đích? (Chọn 2)",
-    "options": [
-      "Phần artifacts để khai báo các file output (gồm appspec.yml và app) chuyển sang stage sau",
-      "Phần reports để khai báo report group chứa kết quả test (ví dụ JUnit/Cucumber)",
-      "Phần hooks với BeforeInstall/AfterInstall để gắn kết quả test",
-      "Phần phases/post_build dùng để định nghĩa report group test",
-      "Phần cache để lưu báo cáo test giữa các lần build"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "buildspec có phần artifacts cho output và phần reports cho test report.\n✓ artifacts khai báo các file output (gồm appspec.yml, app) để truyền sang stage Deploy\n✓ reports khai báo report group chứa kết quả test theo định dạng như JUnit để CodeBuild hiển thị\n✗ hooks BeforeInstall/AfterInstall là khái niệm của appspec.yml CodeDeploy, không thuộc buildspec\n✗ post_build chạy lệnh, không phải nơi định nghĩa report group (report group khai báo ở phần reports)\n✗ cache dùng tái sử dụng dependency, không phải lưu báo cáo test",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-047",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-02-cicd",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Đội triển khai một dịch vụ chạy trên Amazon ECS dùng CodeDeploy blue/green. appspec.yml cho ECS khác với appspec cho EC2. Thành phần BẮT BUỘC nào phải khai báo trong appspec.yml cho deployment ECS?",
-    "options": [
-      "Resources trỏ tới TaskDefinition và LoadBalancerInfo (ContainerName, ContainerPort)",
-      "Danh sách file ánh xạ source/destination giống deployment EC2 in-place",
-      "Hook ApplicationStop và ApplicationStart để dừng/khởi động container",
-      "Đường dẫn tới buildspec.yml để CodeDeploy build lại task"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "appspec.yml cho ECS có cấu trúc riêng dựa trên TaskDefinition và container.\n✓ Phần Resources phải trỏ tới TaskDefinition và LoadBalancerInfo gồm ContainerName/ContainerPort cho deployment ECS\n✗ Ánh xạ file source/destination chỉ áp dụng cho deployment EC2/on-premises, không dùng cho ECS\n✗ ApplicationStop/ApplicationStart là hook cho EC2/on-premises, không phải cho ECS\n✗ CodeDeploy không build task qua buildspec; appspec không tham chiếu buildspec.yml",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-047",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-02-cicd",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một pipeline đa stage cần stage Deploy chỉ được thực thi sau khi có người quản lý phê duyệt thủ công ngay sau stage Build. Cách triển khai đúng trong CodePipeline là gì?",
-    "options": [
-      "Thêm một action loại Manual approval (action category Approval) trước stage Deploy, tùy chọn gửi thông báo qua SNS",
-      "Cấu hình một CodeBuild action chạy lệnh chờ input từ console",
-      "Đặt một Lambda action poll bảng DynamoDB cho đến khi có cờ approve",
-      "Bật chế độ pause của artifact store để dừng pipeline cho tới khi resume"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "CodePipeline có sẵn action loại Manual approval cho việc phê duyệt thủ công.\n✓ Thêm Approval action trước stage Deploy, có thể tích hợp SNS để thông báo người duyệt là cách chuẩn và tối ưu\n✗ CodeBuild chờ input từ console không phải cơ chế approval và sẽ timeout\n✗ Lambda poll DynamoDB là giải pháp tự chế phức tạp, không cần thiết khi đã có Manual approval\n✗ Artifact store không có chế độ pause/resume pipeline",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-048",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-03-deploy-strategies",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một developer cần triển khai phiên bản mới của ứng dụng lên môi trường staging nội bộ. Yêu cầu đơn giản: nhanh nhất có thể, chấp nhận downtime ngắn vì không có người dùng thật. Chiến lược deployment nào phù hợp nhất?",
-    "options": [
-      "All-at-once: cập nhật toàn bộ instance cùng lúc",
-      "Blue/green: tạo môi trường mới hoàn toàn rồi chuyển traffic",
-      "Canary 10% trong 10 phút rồi mới chuyển hết",
-      "Rolling with additional batch để giữ nguyên capacity"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Môi trường staging không người dùng thật, ưu tiên tốc độ và chấp nhận downtime.\n✓ All-at-once nhanh nhất, đơn giản nhất nhưng có downtime ngắn, phù hợp cho staging.\n✗ Blue/green tốn tài nguyên gấp đôi và phức tạp, không cần cho staging.\n✗ Canary kéo dài thời gian triển khai không cần thiết.\n✗ Rolling with additional batch giữ capacity nhưng chậm hơn và không cần khi chấp nhận downtime.",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-048",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-03-deploy-strategies",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một Lambda function được gọi qua một alias tên PROD. Developer muốn chuyển dần 10% lưu lượng sang version mới mà KHÔNG cần đổi cấu hình ở phía client gọi function. Cách làm đúng là gì?",
-    "options": [
-      "Cấu hình weighted alias trên alias PROD, trỏ 90% sang version cũ và 10% sang version mới",
-      "Tạo một alias mới và yêu cầu client gọi cả hai alias",
-      "Publish version mới và cho client gọi trực tiếp số version mới với 10% request",
-      "Dùng $LATEST cho cả hai version và để client tự phân bổ traffic"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Weighted alias cho phép một alias chia traffic giữa hai version mà client không đổi gì.\n✓ Cấu hình tỷ trọng (additional version weight) trên alias PROD giúp shift 10% traffic mà client vẫn gọi cùng alias.\n✗ Tạo alias mới buộc client phải thay đổi cách gọi.\n✗ Gọi trực tiếp số version cũng buộc client thay đổi và không phải best practice.\n✗ $LATEST không thể gán weight và không nên dùng cho production.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-048",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-03-deploy-strategies",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Đội phát triển triển khai Lambda qua AWS CodeDeploy với deployment preset CodeDeployDefault.LambdaCanary10Percent5Minutes. Họ muốn tự động rollback nếu tỷ lệ lỗi tăng cao trong giai đoạn canary. Cấu hình nào đạt được điều này?",
-    "options": [
-      "Liên kết một CloudWatch alarm theo dõi error rate vào deployment group và bật automatic rollback khi alarm kích hoạt",
-      "Bật CloudTrail logging và viết Lambda thủ công để revert alias khi thấy log lỗi",
-      "Đặt reserved concurrency = 0 cho version mới khi có lỗi",
-      "Dựa vào API Gateway throttling để tự động chặn version lỗi"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "CodeDeploy hỗ trợ automatic rollback dựa trên CloudWatch alarm.\n✓ Gắn CloudWatch alarm (ví dụ Errors hoặc error rate) vào deployment group và bật rollback giúp CodeDeploy tự dịch alias về version cũ khi alarm ALARM.\n✗ CloudTrail dùng để audit, không phải để giám sát metric lỗi thời gian thực và rollback.\n✗ Reserved concurrency = 0 chỉ chặn invoke chứ không rollback traffic shifting.\n✗ API Gateway throttling không liên quan tới rollback của CodeDeploy.",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-049",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-03-deploy-strategies",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng production chạy trên Elastic Beanstalk cần triển khai version mới với yêu cầu: KHÔNG được giảm capacity tổng dưới mức hiện tại trong suốt quá trình deploy, và muốn tránh chi phí duy trì hai môi trường đầy đủ. Chính sách deployment nào tối ưu?",
-    "options": [
-      "Rolling with additional batch",
-      "All-at-once",
-      "Blue/green",
-      "Immutable với toàn bộ instance mới rồi mới swap"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Yêu cầu giữ nguyên capacity nhưng không muốn nhân đôi toàn bộ môi trường.\n✓ Rolling with additional batch khởi tạo một batch phụ trước để duy trì full capacity trong khi cập nhật từng batch, chi phí tăng nhẹ chứ không gấp đôi.\n✗ All-at-once gây giảm capacity và downtime.\n✗ Blue/green nhân đôi môi trường, tốn kém hơn yêu cầu.\n✗ Immutable tạo toàn bộ instance mới song song, chi phí tạm thời cao hơn additional batch.",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-049",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-03-deploy-strategies",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một REST API trên API Gateway có stage PROD trỏ tới Lambda alias. Khi triển khai version mới, developer muốn dùng stage variable để dễ dàng trỏ stage tới một Lambda alias khác mà không phải sửa code integration. Cách cấu hình đúng là gì?",
-    "options": [
-      "Dùng stage variable trong ARN integration kiểu Function:${stageVariables.lambdaAlias} và đặt giá trị biến ở từng stage",
-      "Hard-code version number của Lambda trực tiếp trong integration request",
-      "Tạo một API Gateway riêng cho mỗi alias Lambda",
-      "Bật caching ở stage để tự động chuyển sang alias mới"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Stage variables giúp cùng một định nghĩa API trỏ tới các target khác nhau theo stage.\n✓ Tham chiếu ${stageVariables.lambdaAlias} trong ARN integration cho phép mỗi stage trỏ tới alias mong muốn mà không sửa code.\n✗ Hard-code version làm mất tính linh hoạt và phải redeploy khi đổi.\n✗ Tạo API riêng cho mỗi alias là dư thừa và khó quản lý.\n✗ Caching không liên quan tới việc chọn alias đích.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-049",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-03-deploy-strategies",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Đội DevOps muốn triển khai dịch vụ ECS với khả năng: chạy song song task set mới và cũ, kiểm thử bằng test listener trước khi chuyển production traffic, và có thể rollback tức thì. Giải pháp nào đúng?",
-    "options": [
-      "ECS blue/green deployment thông qua CodeDeploy với production và test listener trên Application Load Balancer",
-      "ECS rolling update (deployment type mặc định của ECS service)",
-      "Tự viết script đổi desired count của hai service ECS thủ công",
-      "Dùng AWS Batch để chạy task set mới song song"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Yêu cầu test listener và chuyển traffic tức thì là đặc trưng của blue/green qua CodeDeploy.\n✓ ECS blue/green với CodeDeploy tạo replacement task set, cho test qua test listener rồi reroute production listener, rollback nhanh.\n✗ ECS rolling update thay thế task tại chỗ, không có test listener riêng và không reroute tức thì.\n✗ Script thủ công dễ lỗi, không có cơ chế rollback tự động.\n✗ AWS Batch dùng cho batch jobs, không phải triển khai service.",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-050",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-03-deploy-strategies",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một fintech yêu cầu: khi deploy Lambda version mới, chuyển 10% traffic ngay lập tức, theo dõi trong 10 phút, rồi nếu ổn thì chuyển 100%. Đây là canary deployment qua CodeDeploy. Họ chọn preset nào?",
-    "options": [
-      "CodeDeployDefault.LambdaCanary10Percent10Minutes",
-      "CodeDeployDefault.LambdaLinear10PercentEvery10Minutes",
-      "CodeDeployDefault.LambdaLinear10PercentEvery1Minute",
-      "CodeDeployDefault.LambdaAllAtOnce"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Canary = chuyển một phần ngay, chờ rồi chuyển phần còn lại; linear = tăng đều theo bước.\n✓ LambdaCanary10Percent10Minutes shift 10% ngay, chờ 10 phút rồi shift nốt 90% — đúng mô tả.\n✗ Linear10PercentEvery10Minutes tăng dần 10% mỗi 10 phút (mất khoảng 90 phút), không phải canary hai bước.\n✗ Linear10PercentEvery1Minute cũng là tăng dần đều, không phải canary.\n✗ AllAtOnce chuyển 100% ngay, không có giai đoạn canary.",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-050",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-03-deploy-strategies",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Sau khi CodeDeploy hoàn tất chuyển 100% traffic sang Lambda version mới và deployment báo Succeeded, đội phát hiện lỗi nghiêm trọng 30 phút sau. CloudWatch alarm gắn trong deployment không còn kích hoạt rollback vì deployment đã kết thúc. Cách nhanh nhất để khôi phục là gì?",
-    "options": [
-      "Cập nhật weighted alias PROD trỏ 100% về version cũ ngay lập tức",
-      "Khởi động một deployment CodeDeploy mới và chờ canary chạy lại",
-      "Xóa version Lambda mới để traffic tự quay về version cũ",
-      "Tạo lại alias PROD từ đầu trỏ tới version cũ"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Sau khi deployment Succeeded, alarm-based rollback của CodeDeploy không còn tác dụng; cần hành động thủ công nhanh nhất.\n✓ Trỏ alias PROD 100% về version cũ là thao tác tức thì, không cần deploy lại.\n✗ Deployment CodeDeploy mới với canary tốn thời gian, không phải nhanh nhất khi đang sự cố.\n✗ Xóa version có thể làm alias trỏ tới version không tồn tại và gây lỗi invoke, không khôi phục đúng.\n✗ Tạo lại alias từ đầu phức tạp và rủi ro hơn so với chỉ cập nhật version trỏ tới.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-050",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-03-deploy-strategies",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Developer dùng AWS SAM để triển khai Lambda với traffic shifting. Trong mục DeploymentPreference, họ muốn tăng traffic đều đặn 10% mỗi 2 phút cho tới khi đạt 100%. Type nào cần khai báo?",
-    "options": [
-      "Linear10PercentEvery2Minutes",
-      "Canary10Percent2Minutes",
-      "AllAtOnce",
-      "Canary10Percent30Minutes"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Tăng đều theo bước cố định là linear.\n✓ Linear10PercentEvery2Minutes tăng 10% mỗi 2 phút cho đến 100% — đúng yêu cầu tăng đều.\n✗ Canary chỉ có hai bước (một phần ngay rồi phần còn lại), không tăng đều liên tục.\n✗ AllAtOnce chuyển toàn bộ một lần, không có shifting dần.\n✗ Canary10Percent30Minutes vẫn là canary hai bước, không phải tăng đều mỗi 2 phút.",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-051",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-03-deploy-strategies",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Một đội triển khai Lambda production dùng CodeDeploy canary và muốn cơ chế rollback an toàn cùng kiểm thử trước khi shift. Những thành phần/khái niệm nào sau đây ĐÚNG và nên áp dụng? (Chọn 2)",
-    "options": [
-      "Gắn CloudWatch alarm vào deployment group để CodeDeploy tự rollback khi alarm ALARM trong lúc canary",
-      "Dùng BeforeAllowTraffic và AfterAllowTraffic Lambda hooks để chạy validation trước/sau khi cho traffic",
-      "Để client gọi trực tiếp $LATEST nhằm luôn nhận version mới nhất trong production",
-      "Đặt traffic shifting trên chính số version thay vì alias để đơn giản hóa",
-      "Bật API Gateway request validation để tự động rollback Lambda khi có lỗi 5xx"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "CodeDeploy Lambda dựa vào alias, alarm và lifecycle hooks.\n✓ CloudWatch alarm gắn vào deployment group cho phép automatic rollback trong canary.\n✓ BeforeAllowTraffic/AfterAllowTraffic hooks chạy hàm validation trước và sau khi shift traffic.\n✗ Gọi $LATEST trong production là anti-pattern, không cho phép traffic shifting có kiểm soát.\n✗ Traffic shifting hoạt động trên alias chứ không phải số version cố định.\n✗ API Gateway request validation chỉ kiểm tra schema request, không rollback Lambda.",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-051",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-03-deploy-strategies",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng EC2 trong Auto Scaling group triển khai qua CodeDeploy. Doanh nghiệp muốn quá trình deploy không bao giờ làm giảm số instance phục vụ traffic, đồng thời mỗi version mới chạy trên instance hoàn toàn mới để tránh trạng thái cũ tồn dư. Cấu hình CodeDeploy nào phù hợp?",
-    "options": [
-      "Blue/green deployment với CodeDeploy provisioning instance mới rồi chuyển traffic qua Load Balancer",
-      "In-place deployment với CodeDeployDefault.AllAtOnce",
-      "In-place deployment với OneAtATime trên chính các instance hiện có",
-      "All-at-once với hook tự dọn dẹp file cũ"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Yêu cầu instance hoàn toàn mới và không giảm capacity hướng tới blue/green.\n✓ Blue/green của CodeDeploy tạo instance mới (môi trường green), kiểm tra rồi reroute traffic qua ELB, giữ capacity và loại bỏ trạng thái cũ.\n✗ In-place AllAtOnce cập nhật tại chỗ, có downtime và vẫn là instance cũ.\n✗ In-place OneAtATime vẫn deploy lên instance hiện có, không phải instance mới hoàn toàn.\n✗ All-at-once kèm dọn file không đảm bảo instance mới và không giữ capacity.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-051",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-03-deploy-strategies",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Developer cấu hình DeploymentPreference cho Lambda trong SAM với Type là Canary10Percent5Minutes và một Alarm theo dõi lỗi. Trong giai đoạn 5 phút canary, alarm chuyển sang ALARM. Điều gì xảy ra?",
-    "options": [
-      "CodeDeploy tự động rollback, dịch alias về version cũ và đánh dấu deployment thất bại",
-      "Deployment tiếp tục shift 100% vì 5 phút canary đã được lên lịch cố định",
-      "Lambda tự xóa version mới và giữ nguyên 10% traffic",
-      "API Gateway tự chuyển toàn bộ traffic sang stage cũ"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Alarm gắn vào DeploymentPreference kích hoạt automatic rollback của CodeDeploy.\n✓ Khi alarm vào trạng thái ALARM trong canary, CodeDeploy dừng và rollback alias về version cũ, deployment báo Failed.\n✗ Deployment KHÔNG tiếp tục shift khi alarm kích hoạt; rollback được ưu tiên.\n✗ Lambda không tự xóa version; CodeDeploy chỉ chuyển alias về version cũ.\n✗ API Gateway không tham gia cơ chế rollback của CodeDeploy Lambda.",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-052",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-04-beanstalk",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một developer triển khai ứng dụng web lên Elastic Beanstalk với 8 EC2 instances. Yêu cầu: trong suốt quá trình deploy version mới, ứng dụng phải LUÔN duy trì đủ 8 instances phục vụ (không được giảm capacity) và KHÔNG có downtime, đồng thời chi phí tăng thêm tạm thời được chấp nhận. Deployment policy nào phù hợp nhất nếu muốn chi phí thấp HƠN immutable nhưng vẫn không giảm capacity?",
-    "options": [
-      "Rolling with additional batch",
-      "Rolling",
-      "All at once",
-      "Immutable"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Cần duy trì đủ full capacity (không giảm) và zero-downtime, chi phí thấp hơn immutable.\n✓ Rolling with additional batch: thêm 1 batch instances mới trước, nên trong lúc deploy luôn giữ đủ capacity gốc, chi phí chỉ tăng 1 batch.\n✗ Rolling: deploy theo batch tại chỗ nên capacity bị GIẢM tạm thời trong mỗi batch.\n✗ All at once: deploy đồng loạt, gây downtime hoàn toàn.\n✗ Immutable: zero-downtime và giữ capacity nhưng nhân đôi instances nên chi phí cao hơn yêu cầu.",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-052",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-04-beanstalk",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Đội DevOps muốn mỗi lần deploy version mới lên Elastic Beanstalk được thực hiện trên một tập instances HOÀN TOÀN mới trong một Auto Scaling group tạm thời; nếu health check thất bại thì rollback cực nhanh bằng cách hủy group mới mà không ảnh hưởng instances đang chạy. Họ chấp nhận chi phí gấp đôi tạm thời. Policy nào đáp ứng đúng nhất?",
-    "options": [
-      "Immutable",
-      "Rolling with additional batch",
-      "All at once",
-      "Rolling"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Yêu cầu: instances hoàn toàn mới trong ASG tạm thời, rollback an toàn nhất, chấp nhận double capacity.\n✓ Immutable: tạo full set instances mới trong group tạm; lỗi thì chỉ cần xóa instances mới, instances cũ nguyên vẹn nên rollback an toàn nhất.\n✗ Rolling with additional batch: vẫn deploy in-place trên một phần instances cũ, không tạo full set mới.\n✗ All at once: thay thế tại chỗ, không an toàn, có downtime.\n✗ Rolling: deploy in-place trên instances hiện có, rollback phức tạp hơn.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-052",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-04-beanstalk",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng xử lý job nền đọc message từ Amazon SQS, không cần phục vụ HTTP request từ người dùng cuối. Team muốn dùng Elastic Beanstalk để quản lý. Cấu hình environment nào phù hợp?",
-    "options": [
-      "Worker environment tier (Beanstalk tự cài daemon đọc SQS và POST vào ứng dụng)",
-      "Web server environment tier với một Application Load Balancer public",
-      "Web server environment tier với CNAME swap",
-      "Tạo một environment tier tùy chỉnh tên là 'queue tier'"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Ứng dụng xử lý job nền từ SQS, không phục vụ HTTP trực tiếp cho user.\n✓ Worker environment tier: Beanstalk chạy một SQS daemon đọc message và POST tới đường dẫn cục bộ của ứng dụng, đúng cho workload xử lý nền.\n✗ Web server tier với ALB public: dành cho ứng dụng nhận HTTP request từ client, không tối ưu cho consumer SQS.\n✗ Web server tier với CNAME swap: CNAME swap là kỹ thuật blue/green cho web tier, không liên quan workload SQS.\n✗ 'queue tier' tùy chỉnh: Beanstalk chỉ có hai tier là web server và worker, không có tier tùy chỉnh này.",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-053",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-04-beanstalk",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Để đạt blue/green deployment với zero-downtime trên Elastic Beanstalk, developer clone environment hiện tại (blue) sang environment mới (green), deploy version mới lên green và test. Bước cuối cùng để chuyển traffic sang green với gián đoạn tối thiểu là gì?",
-    "options": [
-      "Thực hiện Swap Environment URLs giữa hai environments (đổi CNAME)",
-      "Terminate environment blue rồi trỏ DNS Route 53 thủ công sang green",
-      "Đổi deployment policy của blue sang immutable",
-      "Dùng all-at-once deploy lại trên blue với version của green"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Blue/green trên Beanstalk hoàn tất bằng việc hoán đổi CNAME giữa hai environments.\n✓ Swap Environment URLs: Beanstalk đổi CNAME của blue và green, traffic chuyển ngay sang green mà không downtime, dễ rollback bằng cách swap lại.\n✗ Terminate blue rồi sửa DNS thủ công: gây downtime và mất khả năng rollback nhanh.\n✗ Đổi policy blue sang immutable: deployment policy không thực hiện chuyển traffic giữa hai environments.\n✗ All-at-once deploy lại trên blue: phá vỡ mục đích blue/green và gây downtime trên blue.",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-053",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-04-beanstalk",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một environment Beanstalk được tạo với database RDS gắn kèm (coupled) qua console trong cùng environment. Team lo ngại rằng khi terminate environment sẽ mất dữ liệu. Giải pháp BEST practice cho production để bảo toàn dữ liệu là gì?",
-    "options": [
-      "Tạo RDS instance tách rời (decoupled) bên ngoài Beanstalk và truyền endpoint qua environment variables",
-      "Đặt deletion policy của RDS coupled thành Retain qua .ebextensions và giữ nguyên coupling",
-      "Bật Multi-AZ cho RDS coupled để tránh mất dữ liệu khi terminate",
-      "Chuyển environment sang worker tier để RDS không bị xóa"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "RDS coupled vào environment sẽ bị xóa cùng environment, rủi ro cho production.\n✓ Tạo RDS decoupled bên ngoài và truyền endpoint qua env variables: vòng đời database tách khỏi environment, terminate environment không xóa DB, đây là best practice production.\n✗ Đặt deletion policy Retain cho RDS coupled: chỉ giảm rủi ro xóa nhưng database vẫn nằm trong vòng đời environment và khó quản lý.\n✗ Bật Multi-AZ: tăng high availability chứ không ngăn việc database bị xóa khi terminate environment.\n✗ Chuyển sang worker tier: không liên quan tới coupling của RDS.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-053",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-04-beanstalk",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Developer cần cài thêm package OS, chạy lệnh khởi tạo và đặt option settings cho environment Beanstalk một cách khai báo trong source bundle. Cơ chế nào nên dùng?",
-    "options": [
-      "Thêm các file cấu hình YAML/JSON trong thư mục .ebextensions của application source bundle",
-      "Sửa trực tiếp user data của Launch Template sau khi environment chạy",
-      "Đặt mọi thứ vào Dockerrun.aws.json bất kể platform",
-      "Dùng AWS Systems Manager State Manager thủ công ngoài Beanstalk"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Beanstalk cho phép tùy biến environment khai báo qua .ebextensions.\n✓ .ebextensions với file YAML/JSON: cho phép khai báo packages, commands, container_commands, option_settings... được Beanstalk áp dụng khi deploy, đúng cơ chế chuẩn.\n✗ Sửa user data Launch Template thủ công: Beanstalk quản lý launch config, thay đổi thủ công sẽ bị ghi đè và không lặp lại được.\n✗ Dockerrun.aws.json cho mọi platform: chỉ dùng cho platform Docker, không phải cơ chế chung.\n✗ State Manager thủ công ngoài Beanstalk: không tích hợp vào source bundle và lệch khỏi quy trình Beanstalk.",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-054",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-04-beanstalk",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Team muốn lưu lại toàn bộ cấu hình của một environment Beanstalk (instance type, env variables, option settings) để sau này tạo nhanh các environment mới giống hệt và đưa cấu hình vào source control. Tính năng nào phù hợp nhất?",
-    "options": [
-      "Saved configurations (lưu dưới dạng template cấu hình của application)",
-      "Snapshot EBS của các instances trong environment",
-      "CloudWatch Logs export định kỳ",
-      "Tạo một AMI từ instance hiện tại và clone bằng AMI đó"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Cần lưu và tái sử dụng cấu hình environment, đưa vào source control.\n✓ Saved configurations: lưu option settings/cấu hình của environment thành template gắn với application, có thể tạo environment mới từ template và quản lý qua thư mục .elasticbeanstalk, phù hợp source control.\n✗ Snapshot EBS: chỉ sao lưu dữ liệu disk, không lưu cấu hình environment.\n✗ CloudWatch Logs export: chỉ lưu log, không phải cấu hình.\n✗ Tạo AMI và clone: lưu image hệ điều hành chứ không lưu option settings/env variables của Beanstalk một cách quản lý được.",
-    "domain": 3,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-054",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-04-beanstalk",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Trong một bài kiểm tra, developer cần CHỌN các deployment policy của Elastic Beanstalk vừa đảm bảo ZERO-DOWNTIME vừa KHÔNG làm GIẢM capacity sẵn sàng trong suốt quá trình deploy. Chọn TẤT CẢ đáp án đúng.",
-    "options": [
-      "Immutable",
-      "Rolling with additional batch",
-      "Rolling",
-      "All at once",
-      "Single instance recreate"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Cần đồng thời zero-downtime và không giảm capacity.\n✓ Immutable: tạo full set instances mới song song nên không giảm capacity và zero-downtime.\n✓ Rolling with additional batch: thêm 1 batch dư trước khi deploy nên luôn giữ đủ capacity gốc và zero-downtime.\n✗ Rolling: deploy in-place theo batch nên capacity bị giảm tạm thời trong mỗi batch.\n✗ All at once: thay thế đồng loạt gây downtime và giảm capacity.\n✗ Single instance recreate: không phải policy giữ capacity, gây gián đoạn.",
-    "domain": 3,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-054",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d3-04-beanstalk",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một environment đang dùng policy Rolling thỉnh thoảng để lại các instances ở trạng thái không nhất quán khi một batch deploy thất bại giữa chừng, khiến traffic vẫn vào instances lỗi. Team muốn một policy mà nếu deploy thất bại thì instances đang phục vụ KHÔNG bị ảnh hưởng và rollback chỉ là hủy instances mới. Nên đổi sang policy nào?",
-    "options": [
-      "Immutable",
-      "All at once",
-      "Rolling với batch size lớn hơn",
-      "Giữ Rolling nhưng tắt health check trong khi deploy"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Vấn đề: Rolling deploy in-place nên lỗi giữa chừng làm instances đang phục vụ bị ảnh hưởng.\n✓ Immutable: deploy lên instances hoàn toàn mới; nếu lỗi chỉ cần xóa instances mới, instances cũ đang phục vụ không bị đụng tới, rollback an toàn nhất.\n✗ All at once: thay thế đồng loạt, lỗi gây downtime toàn bộ.\n✗ Rolling batch lớn hơn: vẫn in-place, lỗi vẫn ảnh hưởng instances đang chạy và còn rủi ro hơn.\n✗ Tắt health check: che giấu lỗi và làm traffic vào instances hỏng, nguy hiểm hơn.",
-    "domain": 3,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-055",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-01-observability",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một Lambda function chạy thành công (trả về kết quả đúng) nhưng team không thấy bất kỳ dòng log nào trong CloudWatch Logs. Nguyên nhân khả dĩ nhất là gì?",
-    "options": [
-      "Execution role của Lambda thiếu các quyền logs:CreateLogGroup, logs:CreateLogStream và logs:PutLogEvents",
-      "Log group /aws/lambda/<function-name> đã hết hạn retention nên log bị xóa ngay",
-      "Function chưa được bật detailed monitoring nên không ghi log",
-      "Cần cấu hình subscription filter thì Lambda mới ghi được log"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Lambda tự ghi log qua console.log/print nhưng cần quyền IAM trong execution role.\n✓ Thiếu logs:CreateLogGroup/CreateLogStream/PutLogEvents khiến function chạy ok nhưng không ghi được log.\n✗ Retention chỉ quyết định thời gian giữ log đã ghi, không chặn việc ghi.\n✗ Detailed monitoring là khái niệm của metric EC2, không liên quan ghi log Lambda.\n✗ Subscription filter chỉ stream log đã có đi nơi khác, không phải điều kiện để ghi log.",
+    "explanation": "Baseline ổn định nên cam kết để giảm giá; phần đột biến fault-tolerant phù hợp Spot.\n✓ Compute Savings Plans 3 năm phủ baseline với giá thấp và linh hoạt, Spot phủ phần fault-tolerant với giá rẻ nhất.\n✗ On-Demand cho toàn bộ là đắt nhất, không tận dụng cam kết hay Spot cho phần ổn định/chịu lỗi.\n✗ Reserved 3 năm cho cả phần đột biến gây trả tiền cho capacity không dùng đến, lãng phí.\n✗ Spot cho cả baseline khiến phần production ổn định có nguy cơ bị thu hồi, không đảm bảo sẵn sàng.",
     "domain": 4,
-    "mock": 1
+    "id": "saa-ext-004"
   },
   {
-    "id": "dva-m2-055",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-01-observability",
+    "courseId": "SAA-C03",
+    "lesson": "ch4-01-compute-cost",
     "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Team phát hiện một log group đang lưu log vĩnh viễn (Never expire) và chi phí lưu trữ tăng dần. Cách xử lý tối ưu, ít tốn công nhất là gì?",
-    "options": [
-      "Đặt retention policy cho log group (ví dụ retention-in-days = 30)",
-      "Viết một Lambda chạy theo lịch để gọi API xóa các log event cũ",
-      "Tạo metric filter để tự động xóa log khi vượt ngưỡng dung lượng",
-      "Bật detailed monitoring để CloudWatch tự dọn log cũ"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Retention policy là cơ chế gốc để giới hạn thời gian giữ log.\n✓ Đặt retention-in-days giúp CloudWatch tự xóa log quá hạn, không cần code.\n✗ Tự viết Lambda xóa log là cách thủ công, kém tối ưu và dễ lỗi.\n✗ Metric filter chỉ phát sinh metric từ log, không xóa log.\n✗ Detailed monitoring không liên quan đến dọn dẹp log.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-055",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-01-observability",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng Lambda (Node.js) cần phát một custom business metric (ví dụ số đơn hàng đã xử lý) lên CloudWatch nhưng team muốn tránh tăng thời gian thực thi và tránh gọi API đồng bộ tới CloudWatch trong mỗi invocation. Giải pháp tối ưu là gì?",
-    "options": [
-      "Ghi metric theo Embedded Metric Format (EMF) ra log; CloudWatch tự trích metric từ log",
-      "Gọi cloudwatch.putMetricData() đồng bộ ở cuối mỗi invocation",
-      "Tạo metric filter trên log group để đếm số đơn hàng",
-      "Bật high-resolution metric trong cấu hình Lambda"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "EMF cho phép ghi metric kèm log JSON mà không tốn API call hay latency.\n✓ EMF chỉ ghi log ra stdout, CloudWatch trích metric, không thêm latency và không gọi API đồng bộ.\n✗ PutMetricData đồng bộ thêm một network call và latency vào mỗi invocation.\n✗ Metric filter chỉ đếm pattern có sẵn trong log, không phải cách phát business metric có cấu trúc với dimensions tùy ý hiệu quả như EMF, và phụ thuộc bạn đã log đúng định dạng.\n✗ High-resolution là độ phân giải metric, không giải quyết vấn đề latency/API.",
-    "domain": 4,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-056",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-01-observability",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Team muốn stream toàn bộ log của một log group gần real-time vào S3 để lưu trữ và phân tích sau, KHÔNG muốn viết code xử lý log. Lựa chọn nào phù hợp nhất?",
-    "options": [
-      "Subscription filter trỏ tới Kinesis Data Firehose delivery stream ghi vào S3",
-      "Subscription filter trỏ tới một Lambda function ghi từng batch vào S3",
-      "Metric filter trỏ tới S3",
-      "Logs Insights query xuất kết quả tự động vào S3"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Firehose là đường nạp dữ liệu vào S3/OpenSearch/Redshift mà không cần code.\n✓ Subscription filter → Firehose → S3 là cấu hình managed, không cần viết code xử lý.\n✗ Subscription filter → Lambda yêu cầu viết code xử lý batch.\n✗ Metric filter chỉ tạo metric, không stream log và không trỏ tới S3.\n✗ Logs Insights là công cụ query ad-hoc, không phải pipeline lưu trữ liên tục.",
-    "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-056",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-01-observability",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một developer cần điều tra một sự cố đã xảy ra hôm qua bằng cách phân tích các log event CŨ trong một log group (đếm số lỗi theo từng khoảng 5 phút). Công cụ nào phù hợp nhất?",
-    "options": [
-      "CloudWatch Logs Insights query trên log group",
-      "Tạo metric filter mới với pattern ERROR rồi xem metric",
-      "Subscription filter đẩy log sang Lambda để đếm",
-      "PutMetricData để ghi số lỗi vào CloudWatch"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Logs Insights phân tích được log đã có sẵn, kể cả log cũ.\n✓ Logs Insights query (filter + stats count by bin) phân tích log quá khứ tương tác.\n✗ Metric filter chỉ áp dụng cho log MỚI ghi sau khi tạo, không hồi tố log cũ.\n✗ Subscription filter chỉ xử lý log mới đến gần real-time, không phân tích log cũ.\n✗ PutMetricData chỉ ghi metric thủ công, không phân tích log có sẵn.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-056",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-01-observability",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng dùng PutMetricData và đặt dimension userId (giá trị duy nhất cho mỗi người dùng) với hàng triệu user. Hệ quả chính là gì và nên sửa thế nào?",
-    "options": [
-      "Mỗi tổ hợp dimension tạo một custom metric riêng tính phí riêng → chi phí nổ; nên dùng dimension cardinality thấp như Env/Region",
-      "Metric sẽ bị throttle vì vượt giới hạn 30 dimensions cho mỗi metric",
-      "Dữ liệu vẫn gộp chung thành một metric duy nhất, không ảnh hưởng chi phí",
-      "CloudWatch tự động bỏ qua các dimension cardinality cao nên không vấn đề gì"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Mỗi tổ hợp dimension khác nhau là một time series/metric riêng và tính phí riêng.\n✓ userId cardinality cao tạo hàng triệu custom metric → chi phí lớn; nên chọn dimension cardinality thấp.\n✗ Giới hạn 30 là số dimension cho một metric, không phải số giá trị; vấn đề ở đây là cardinality.\n✗ Các dimension khác nhau KHÔNG gộp chung; mỗi tổ hợp là metric riêng.\n✗ CloudWatch không tự bỏ qua dimension cardinality cao.",
-    "domain": 4,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-057",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-01-observability",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một dịch vụ cần alarm phản ứng trong vòng dưới 1 phút khi traffic burst đột ngột (period 10 giây). Cấu hình metric nào bắt buộc để alarm period 10s hợp lệ?",
-    "options": [
-      "Custom metric high-resolution (StorageResolution = 1)",
-      "Custom metric standard (StorageResolution = 60)",
-      "Bật detailed monitoring để metric về 1 giây",
-      "Standard metric với evaluation period nhiều data point hơn"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Alarm period 10s/30s chỉ dùng được với metric high-resolution.\n✓ High-resolution metric (StorageResolution = 1, granularity 1 giây) cho phép alarm period 10s/30s.\n✗ Standard metric (60s) chỉ cho alarm period tối thiểu 60s.\n✗ Detailed monitoring đưa metric EC2 về 1 phút, không phải 1 giây, không liên quan high-resolution.\n✗ Tăng số data point không thay đổi được period tối thiểu của metric standard.",
-    "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-057",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-01-observability",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Team đang nhận quá nhiều cảnh báo lẻ và chỉ muốn được thông báo khi CẢ HAI điều kiện cùng đúng: CPU cao VÀ latency cao. Giải pháp tối ưu là gì?",
-    "options": [
-      "Tạo composite alarm kết hợp hai alarm bằng logic AND",
-      "Tăng evaluation periods của cả hai alarm để giảm noise",
-      "Gộp hai metric vào một metric filter duy nhất",
-      "Tạo một alarm trên metric math cộng CPU và latency lại"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Composite alarm kết hợp nhiều alarm bằng logic AND/OR để giảm noise.\n✓ Composite alarm với ALARM(HighCPU) AND ALARM(HighLatency) chỉ báo khi cả hai cùng đúng.\n✗ Tăng evaluation periods chỉ làm chậm cảnh báo, không kết hợp điều kiện.\n✗ Metric filter tạo metric từ log, không kết hợp hai metric độc lập theo logic.\n✗ Cộng CPU và latency bằng metric math là vô nghĩa về đơn vị và không thể hiện logic AND.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-057",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-01-observability",
-    "certifications": [
-      "DVA-C02"
+      "SAA-C03"
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Team cần monitor memory utilization (% RAM đã dùng) của các EC2 instance và đẩy lên CloudWatch để dựng alarm. Cách đúng là gì?",
+    "question": "Một startup chạy backend microservices trên Amazon ECS dùng AWS Fargate và một cơ sở dữ liệu PostgreSQL trên Amazon RDS. Lưu lượng dao động mạnh: gần như bằng 0 vào ban đêm và tăng vọt vào ban ngày, đôi khi tăng gấp 10 lần trong vài phút. Đội ngũ muốn GIẢM CHI PHÍ database và compute mà không phải quản lý việc scale thủ công, đồng thời các service Java hiện tại đã được rebuild để chạy trên kiến trúc ARM. Kết hợp nào tối ưu nhất về chi phí?",
     "options": [
-      "Cài CloudWatch Agent (unified agent) trên instance để thu thập và đẩy memory metric",
-      "Bật detailed monitoring để CloudWatch lấy memory metric mỗi 1 phút",
-      "Dùng metric MemoryUtilization có sẵn trong namespace AWS/EC2",
-      "Tạo metric filter trên log group của instance để trích memory"
+      "Chuyển database sang Aurora Serverless v2 (PostgreSQL-compatible) tự co giãn theo tải, và chạy Fargate tasks trên Graviton (ARM)",
+      "Giữ RDS PostgreSQL với một instance lớn provisioned để chịu được peak, và chạy Fargate trên kiến trúc x86",
+      "Chuyển sang Aurora provisioned với một reader instance cố định luôn bật, và dùng Fargate Spot cho toàn bộ task production quan trọng",
+      "Dùng RDS Multi-AZ với Auto Scaling storage và chuyển Fargate tasks sang EC2 launch type x86 với cluster Auto Scaling"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "EC2 không tự gửi memory/disk usage vì hypervisor không nhìn thấy bên trong OS.\n✓ CloudWatch Agent thu thập memory/disk từ trong OS và đẩy lên CloudWatch.\n✗ Detailed monitoring chỉ đưa metric có sẵn (CPU, network...) về 1 phút, KHÔNG thêm memory.\n✗ Namespace AWS/EC2 không có MemoryUtilization mặc định.\n✗ Metric filter chỉ trích từ log đã có, instance không tự log memory.",
+    "explanation": "Tải dao động mạnh và về gần 0 ban đêm cần database tự co giãn; service ARM hợp Graviton.\n✓ Aurora Serverless v2 tự động co giãn capacity theo tải (kể cả xuống thấp ban đêm), Graviton Fargate rẻ hơn cho workload ARM đã rebuild.\n✗ RDS instance lớn provisioned trả tiền cho peak suốt 24/7 dù ban đêm gần như rảnh, lãng phí; x86 đắt hơn Graviton.\n✗ Aurora provisioned reader luôn bật vẫn tốn chi phí cố định; Fargate Spot cho task production quan trọng gây rủi ro bị gián đoạn.\n✗ RDS Multi-AZ cố định không giải quyết tải dao động về compute database; EC2 launch type thêm gánh nặng quản lý cluster và x86 đắt hơn.",
     "domain": 4,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-058",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-01-observability",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một developer tạo metric filter với pattern ERROR trên một log group đã chạy nhiều tuần, rồi tạo alarm trên metric đó. Vài phút sau alarm ở trạng thái INSUFFICIENT_DATA và không thấy số liệu cho khoảng thời gian trước khi tạo filter. Giải thích đúng là gì?",
-    "options": [
-      "Metric filter chỉ áp dụng cho log event MỚI ghi sau khi tạo, không hồi tố log cũ",
-      "Metric filter cần bật detailed monitoring mới phát ra số liệu",
-      "Pattern ERROR phải viết dưới dạng JSON thì mới khớp được log",
-      "Alarm cần composite alarm thì mới đọc được metric từ metric filter"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Metric filter không hồi tố: chỉ xử lý log ghi vào sau khi filter được tạo.\n✓ Vì vậy không có data cho khoảng trước đó; muốn phân tích log cũ phải dùng Logs Insights.\n✗ Detailed monitoring không liên quan đến metric filter.\n✗ Pattern term như ERROR vẫn khớp được, không bắt buộc JSON.\n✗ Composite alarm không phải điều kiện để đọc metric từ metric filter.",
-    "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-058",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-01-observability",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một pipeline cần stream log gần real-time với throughput rất cao, nhiều consumer độc lập đọc song song và cần khả năng replay/giữ thứ tự để xử lý phức tạp. Destination nào của subscription filter phù hợp nhất?",
-    "options": [
-      "Kinesis Data Streams",
-      "Kinesis Data Firehose",
-      "Một Lambda function duy nhất",
-      "S3 trực tiếp"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Kinesis Data Streams hợp với throughput cao, nhiều consumer, replay/ordering.\n✓ Kinesis Data Streams hỗ trợ nhiều consumer song song, replay theo shard và giữ thứ tự.\n✗ Firehose là delivery managed vào S3/OpenSearch, không cho nhiều consumer độc lập replay.\n✗ Một Lambda đơn không đáp ứng nhiều consumer độc lập và replay.\n✗ Subscription filter không trỏ trực tiếp tới S3; phải qua Firehose.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-058",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-01-observability",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "multi",
-    "question": "Khi so sánh Embedded Metric Format (EMF) và PutMetricData để phát custom metric trong môi trường Lambda, những phát biểu nào ĐÚNG? (Chọn 2)",
-    "options": [
-      "EMF không thêm network call/latency vì chỉ ghi log JSON, CloudWatch tự trích metric",
-      "PutMetricData gọi API trực tiếp tới CloudWatch nên thêm latency và có thể bị throttle",
-      "EMF tạo metric miễn phí còn PutMetricData luôn tính phí",
-      "PutMetricData giữ được context log đi kèm metric còn EMF thì không",
-      "Chỉ PutMetricData mới hỗ trợ dimensions, EMF không hỗ trợ dimensions"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Khác biệt cốt lõi nằm ở cách truyền và chi phí runtime/API, không phải giá metric.\n✓ EMF chỉ ghi log JSON nên không thêm network call/latency.\n✓ PutMetricData là API call đồng bộ, thêm latency và có thể bị throttle.\n✗ Cả hai đều tạo custom metric tính phí như nhau ở mức metric; EMF không miễn phí.\n✗ Ngược lại: EMF giữ context log đi kèm metric, PutMetricData chỉ có số.\n✗ Cả EMF và PutMetricData đều hỗ trợ dimensions.",
-    "domain": 4,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-059",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-01-observability",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Một team muốn: (1) đếm số dòng OutOfMemory trong log để dựng alarm, và (2) khi alarm kích hoạt thì gửi thông báo email cho on-call. Những thành phần nào cần dùng? (Chọn 2)",
-    "options": [
-      "Metric filter với pattern OutOfMemory để phát một CloudWatch metric",
-      "CloudWatch alarm với action trỏ tới một SNS topic (subscriber là email)",
-      "Subscription filter đẩy log sang Firehose để đếm OutOfMemory",
-      "Logs Insights query chạy theo lịch để tạo metric thường trực",
-      "Composite alarm bắt buộc để gửi được email qua SNS"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Đếm pattern trong log để alarm dùng metric filter; gửi email dùng alarm action tới SNS.\n✓ Metric filter biến số dòng OutOfMemory thành metric để alarm theo dõi.\n✓ Alarm action trỏ tới SNS topic có subscriber email gửi thông báo cho on-call.\n✗ Firehose dùng để nạp/lưu log, không phải để đếm pattern tạo metric.\n✗ Logs Insights là query ad-hoc, không tạo metric thường trực để alarm.\n✗ Composite alarm không bắt buộc; một metric alarm đơn đã đủ gửi SNS.",
-    "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-059",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-02-xray",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một developer bật tracing cho ứng dụng và muốn lọc (filter) các trace theo userId để nhanh chóng tìm request của một khách hàng cụ thể trong X-Ray console. Cách ghi dữ liệu nào cho phép lọc trực tiếp theo userId?",
-    "options": [
-      "Ghi userId dưới dạng annotation bằng put_annotation — annotation được index và filter được qua filter expression",
-      "Ghi userId dưới dạng metadata bằng put_metadata — metadata được index và search được",
-      "Ghi userId vào CloudWatch Logs rồi dùng Logs Insights để liên kết với trace",
-      "Ghi userId vào tên của subsegment để X-Ray tự động index"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "X-Ray có annotation (indexed, filter được) và metadata (không index).\n✓ Annotation được index và dùng được trong filter expression nên lọc theo userId nhanh.\n✗ Metadata KHÔNG được index, không filter được, chỉ để đính kèm dữ liệu chi tiết.\n✗ Logs Insights không phải cách filter trace gốc trong X-Ray và phức tạp hơn.\n✗ Tên subsegment không phải cơ chế index annotation và không filter theo giá trị tùy ý.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-059",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-02-xray",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Đội phát triển muốn bật X-Ray cho một Lambda function viết bằng Python để xem trace trong service map. Cách bật tracing đơn giản, được khuyến nghị nhất là gì?",
-    "options": [
-      "Bật Active tracing trên cấu hình Lambda function (kèm IAM permission cho X-Ray)",
-      "Cài và chạy X-Ray daemon như một process nền bên trong Lambda runtime",
-      "Tạo một EC2 instance riêng chạy X-Ray daemon để Lambda gửi UDP tới",
-      "Cấu hình CloudWatch Synthetics canary để sinh trace cho Lambda"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Với Lambda, dùng Active tracing thay vì tự chạy daemon.\n✓ Bật Active tracing là cách chuẩn; AWS quản lý daemon, chỉ cần thêm IAM permission cho X-Ray.\n✗ Không cần (và không nên) tự chạy X-Ray daemon trong Lambda runtime.\n✗ EC2 chạy daemon là mô hình cho EC2/ECS, không phù hợp Lambda và tốn kém.\n✗ Synthetics canary là để giám sát endpoint, không phải cách bật tracing cho function.",
-    "domain": 4,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-060",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-02-xray",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng chạy trên EC2 đã được instrument bằng X-Ray SDK. Code chạy bình thường nhưng không có trace nào xuất hiện trong X-Ray console. CloudWatch Logs cho thấy lỗi 'unable to send segments'. Nguyên nhân khả dĩ nhất là gì?",
-    "options": [
-      "X-Ray daemon không chạy trên EC2 nên SDK không có nơi gửi segment qua UDP",
-      "Sampling rule đang đặt fixed rate = 100% nên X-Ray từ chối nhận trace",
-      "Annotation chưa được khai báo nên X-Ray không tạo segment",
-      "Service map chưa được tạo thủ công trong console trước khi gửi trace"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Trên EC2, SDK gửi segment qua UDP tới X-Ray daemon; thiếu daemon là nguyên nhân phổ biến gây mất trace.\n✓ Không có daemon chạy thì SDK không gửi được segment, gây lỗi 'unable to send segments'.\n✗ Sampling 100% chỉ làm gửi nhiều hơn, không gây từ chối.\n✗ Annotation không liên quan tới việc tạo/gửi segment.\n✗ Service map được tự sinh từ trace, không cần tạo thủ công.",
-    "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-060",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-02-xray",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Trong một service đã instrument, developer muốn bao một lời gọi tới database PostgreSQL thành một đơn vị thời gian riêng bên trong segment của request để biết câu query mất bao lâu. Cấu trúc X-Ray phù hợp là gì?",
-    "options": [
-      "Tạo một subsegment bao quanh lời gọi database bên trong segment hiện tại",
-      "Tạo một segment mới riêng cho mỗi câu query database",
-      "Ghi thời gian query vào một annotation và bỏ qua subsegment",
-      "Tạo một service map node thủ công cho PostgreSQL"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Segment đại diện cho công việc của toàn service; subsegment chia nhỏ công việc bên trong (vd downstream call).\n✓ Subsegment bao quanh lời gọi database cho phép đo riêng thời gian query trong segment.\n✗ Mỗi service tạo một segment cho request, không tạo segment mới cho từng query.\n✗ Annotation chỉ lưu giá trị filter được, không thay thế được việc đo thời gian như subsegment.\n✗ Node service map được tự sinh từ trace, không tạo thủ công.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-060",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-02-xray",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một API có lưu lượng rất lớn. Đội ngũ muốn vẫn nhìn được bức tranh đại diện về hiệu năng trên X-Ray nhưng GIẢM chi phí và lượng dữ liệu trace thu thập. Giải pháp đúng nhất là gì?",
-    "options": [
-      "Cấu hình sampling rule để chỉ thu thập một phần request (vd 1 req/giây + 5% phần còn lại)",
-      "Tắt hoàn toàn X-Ray vào giờ cao điểm rồi bật lại lúc thấp điểm",
-      "Chuyển toàn bộ annotation sang metadata để giảm dung lượng trace",
-      "Tăng kích thước buffer của X-Ray daemon để gộp segment lại"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Sampling rule kiểm soát tỉ lệ request được trace, là cách chuẩn để giảm chi phí mà vẫn có dữ liệu đại diện.\n✓ Đặt reservoir (vd 1 req/giây) cộng fixed rate (vd 5%) giảm khối lượng trace và chi phí.\n✗ Tắt/bật thủ công gây mất dữ liệu lúc cao điểm và khó vận hành.\n✗ Chuyển annotation sang metadata làm mất khả năng filter, không phải cách giảm số trace.\n✗ Buffer daemon không giảm số trace gửi lên X-Ray.",
-    "domain": 4,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-061",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-02-xray",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một developer instrument ứng dụng ECS trên Fargate bằng X-Ray SDK. Họ muốn segment được gửi tới X-Ray. Thành phần nào cần được triển khai trong task để nhận segment từ SDK và chuyển tới X-Ray?",
-    "options": [
-      "Chạy X-Ray daemon như một sidecar container trong task definition",
-      "Bật Active tracing trong cấu hình task definition của Fargate",
-      "Gắn một X-Ray VPC endpoint vào ENI của task thay cho daemon",
-      "Cài CloudWatch agent để chuyển segment X-Ray"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Trên ECS/Fargate, SDK gửi segment qua UDP tới X-Ray daemon; daemon thường chạy dưới dạng sidecar.\n✓ X-Ray daemon dạng sidecar container nhận segment qua UDP và đẩy lên X-Ray.\n✗ Active tracing là tính năng của Lambda, không phải tùy chọn task definition cho SDK của ECS.\n✗ VPC endpoint chỉ giúp kết nối riêng, không thay thế vai trò gom segment của daemon.\n✗ CloudWatch agent không phải thành phần nhận segment X-Ray.",
-    "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-061",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-02-xray",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "multi",
-    "question": "Một ứng dụng trên EC2 đã chạy X-Ray daemon và instrument đúng nhưng KHÔNG có trace nào xuất hiện. Những nguyên nhân nào sau đây có thể giải thích việc thiếu trace? (Chọn 2)",
-    "options": [
-      "IAM role của EC2 thiếu quyền xray:PutTraceSegments (và xray:PutTelemetryRecords)",
-      "Sampling rule đặt reservoir = 0 và fixed rate = 0 nên không request nào được trace",
-      "Annotation được khai báo bằng put_metadata thay vì put_annotation",
-      "Service map chưa được publish lên CloudWatch Logs",
-      "Subsegment được đặt tên trùng với tên segment cha"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Thiếu trace thường do thiếu IAM, daemon, hoặc sampling chặn hết.\n✓ Thiếu quyền xray:PutTraceSegments khiến daemon không gửi được segment lên X-Ray.\n✓ Sampling rule với reservoir=0 và rate=0 làm không request nào được lấy mẫu nên không có trace.\n✗ Dùng put_metadata chỉ làm dữ liệu không filter được, vẫn có trace.\n✗ Service map tự sinh từ trace, không cần publish lên Logs.\n✗ Trùng tên subsegment không ngăn trace xuất hiện.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-061",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-02-xray",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Trong một trace, developer muốn đính kèm toàn bộ payload JSON của một request (object lớn, nhiều trường) để debug nhưng KHÔNG cần dùng để filter. Cách lưu phù hợp nhất là gì?",
-    "options": [
-      "Ghi payload dưới dạng metadata bằng put_metadata",
-      "Ghi payload dưới dạng annotation bằng put_annotation",
-      "Đặt toàn bộ payload làm trace ID",
-      "Lưu payload vào sampling rule để hiển thị kèm trace"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Metadata để đính kèm dữ liệu chi tiết không cần filter; annotation chỉ nên dùng cho giá trị filter được.\n✓ Metadata phù hợp lưu object JSON lớn dùng để debug, không bị index.\n✗ Annotation chỉ nhận kiểu giá trị đơn giản và để filter, không hợp cho payload lớn.\n✗ Trace ID là định danh, không dùng lưu payload.\n✗ Sampling rule kiểm soát lấy mẫu, không lưu dữ liệu hiển thị.",
-    "domain": 4,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-062",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-02-xray",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Kiến trúc: API Gateway -> Lambda A (đã bật Active tracing) -> gửi message vào SQS -> Lambda B (đã bật Active tracing) xử lý. Trên service map, trace bị đứt giữa Lambda A và Lambda B dù cả hai đều có trace riêng. Cách đúng để nối liền trace qua SQS là gì?",
-    "options": [
-      "Truyền trace context của X-Ray qua message attribute của SQS để Lambda B tiếp tục cùng trace",
-      "Bật Active tracing trên SQS queue để SQS tự nối hai segment",
-      "Ghi cùng một annotation traceId thủ công ở Lambda A và Lambda B",
-      "Tăng sampling rate lên 100% để X-Ray tự liên kết hai Lambda"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Để trace liên tục qua message queue, trace header phải được truyền qua message; SQS hỗ trợ truyền trace context qua message system attribute.\n✓ Truyền X-Ray trace context qua message attribute giúp Lambda B kế thừa cùng trace ID.\n✗ SQS không có tùy chọn Active tracing để tự nối segment.\n✗ Ghi annotation trùng tay không tạo liên kết parent/child thật trong trace.\n✗ Tăng sampling không giải quyết việc đứt context qua queue.",
-    "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-062",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-02-xray",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một developer thấy chi phí X-Ray tăng cao vì một endpoint health-check nội bộ tạo hàng triệu trace mỗi ngày, trong khi các endpoint nghiệp vụ khác cần giữ tỉ lệ lấy mẫu cao. Giải pháp tối ưu nhất là gì?",
-    "options": [
-      "Tạo sampling rule riêng cho path health-check với reservoir và fixed rate rất thấp (gần 0), giữ default rule cho phần còn lại",
-      "Tắt instrument X-Ray trên toàn bộ ứng dụng để loại trace health-check",
-      "Chuyển mọi annotation của health-check thành metadata để giảm chi phí",
-      "Định tuyến health-check qua một X-Ray daemon riêng với buffer nhỏ"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Sampling rule có thể match theo thuộc tính như URL path, cho phép lấy mẫu khác nhau theo endpoint.\n✓ Rule riêng match path health-check với rate gần 0 cắt phần lớn trace tốn kém, vẫn giữ rule mặc định cho nghiệp vụ.\n✗ Tắt toàn bộ instrument làm mất trace nghiệp vụ cần thiết.\n✗ Đổi annotation sang metadata không giảm số trace.\n✗ Daemon riêng không thay đổi tỉ lệ lấy mẫu theo endpoint.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-062",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-02-xray",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Sau khi bật Active tracing cho Lambda, trace của Lambda xuất hiện nhưng các lời gọi downstream tới DynamoDB và một HTTP API bên ngoài KHÔNG hiện thành subsegment trên service map. Code không có thay đổi gì khác. Nguyên nhân khả dĩ nhất là gì?",
-    "options": [
-      "AWS SDK client trong code chưa được patch/instrument bằng X-Ray SDK nên không sinh subsegment cho downstream call",
-      "IAM role Lambda thiếu quyền dynamodb:DescribeTable nên X-Ray ẩn subsegment",
-      "Active tracing chỉ tạo segment chứ không bao giờ tạo subsegment",
-      "Sampling rule mặc định loại bỏ mọi subsegment của downstream"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Active tracing tạo segment cho lần gọi Lambda, nhưng subsegment cho downstream cần SDK được instrument (patch AWS SDK / HTTP client).\n✓ Chưa patch AWS SDK / HTTP client bằng X-Ray SDK nên downstream call không sinh subsegment.\n✗ Thiếu dynamodb:DescribeTable không liên quan tới việc ẩn subsegment tracing.\n✗ Active tracing vẫn cho phép subsegment khi SDK được instrument.\n✗ Sampling không chọn lọc bỏ riêng subsegment downstream theo cách này.",
-    "domain": 4,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-063",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-02-xray",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "multi",
-    "question": "Đội ngũ chuẩn bị bật X-Ray cho ứng dụng container trên EC2 dùng X-Ray SDK. Họ cần đảm bảo segment được gửi và hiển thị thành công. Những điều kiện nào sau đây là cần thiết? (Chọn 2)",
-    "options": [
-      "IAM role gắn vào instance/task có quyền xray:PutTraceSegments và xray:PutTelemetryRecords",
-      "X-Ray daemon đang chạy và lắng nghe UDP cổng 2000 để nhận segment từ SDK",
-      "Mỗi downstream call phải được ghi thành annotation thì mới gửi được segment",
-      "Phải tắt sampling hoàn toàn để mọi request đều được gửi",
-      "Phải tạo trước service map trong console khớp với tên service"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "Trên EC2/ECS, gửi trace cần IAM permission đúng và một daemon nhận segment qua UDP.\n✓ IAM role cần xray:PutTraceSegments và xray:PutTelemetryRecords để daemon đẩy được trace.\n✓ X-Ray daemon phải chạy và nghe UDP 2000 để nhận segment từ SDK.\n✗ Downstream call không bắt buộc thành annotation để gửi segment.\n✗ Không cần tắt sampling; sampling giúp giảm chi phí, không chặn hiển thị.\n✗ Service map tự sinh từ trace, không cần tạo trước.",
-    "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-063",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-03-optimization",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "easy",
-    "type": "single",
-    "question": "Một developer chạy hàm Lambda được gọi liên tục và muốn loại bỏ độ trễ do cold start gây ra ngay cả khi không có request nào trong vài phút. Tính năng nào của Lambda giữ sẵn các execution environment đã được khởi tạo để phục vụ request ngay lập tức?",
-    "options": [
-      "Provisioned concurrency",
-      "Reserved concurrency",
-      "Tăng giá trị timeout của hàm",
-      "Bật Lambda SnapStart cho runtime Python"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Để loại bỏ cold start cần giữ sẵn các môi trường đã được khởi tạo (initialized) trước khi request đến.\n✓ Provisioned concurrency — đúng, khởi tạo sẵn một số môi trường để không có cold start.\n✗ Reserved concurrency — chỉ giới hạn/đảm bảo số concurrency tối đa cho hàm, không làm ấm sẵn môi trường.\n✗ Tăng timeout — chỉ cho phép hàm chạy lâu hơn, không ảnh hưởng cold start.\n✗ SnapStart — giảm cold start bằng snapshot nhưng không giữ sẵn môi trường đã khởi tạo theo kiểu warm như provisioned concurrency, và không phù hợp với mô tả 'giữ sẵn environment để phục vụ ngay'.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-063",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-03-optimization",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một ứng dụng có 200 hàm Lambda dùng chung account concurrency limit là 1000. Một hàm xử lý thanh toán quan trọng thỉnh thoảng bị throttle vì các hàm khác chiếm hết concurrency. Developer muốn ĐẢM BẢO hàm thanh toán luôn có sẵn một lượng concurrency riêng mà không bị các hàm khác lấn át. Giải pháp nào phù hợp nhất?",
-    "options": [
-      "Cấu hình reserved concurrency cho hàm thanh toán",
-      "Cấu hình provisioned concurrency cho tất cả 200 hàm",
-      "Tăng memory của hàm thanh toán lên tối đa 10240 MB",
-      "Đặt một SQS queue trước hàm thanh toán với batch size lớn"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Yêu cầu là dành riêng một phần concurrency để hàm quan trọng không bị các hàm khác chiếm hết.\n✓ Reserved concurrency — đúng, dành riêng một phần concurrency cho hàm đó, đồng thời giới hạn các hàm khác không vượt quá phần còn lại.\n✗ Provisioned concurrency cho tất cả — tốn kém và không giải quyết việc phân bổ riêng phần concurrency để chống tranh chấp.\n✗ Tăng memory — cải thiện CPU/tốc độ nhưng không đảm bảo concurrency riêng, không chống throttle.\n✗ SQS với batch lớn — chỉ đệm request, không đảm bảo concurrency riêng và còn làm tăng độ trễ thanh toán.",
-    "domain": 4,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-064",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-03-optimization",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một hàm Lambda xử lý ảnh đang chạy chậm và developer nghi ngờ bị giới hạn CPU. Trong Lambda, mối quan hệ giữa memory và CPU được cấu hình như thế nào, và công cụ nào giúp tìm cấu hình memory tối ưu về chi phí/hiệu năng?",
-    "options": [
-      "CPU được cấp tỉ lệ thuận theo memory; dùng AWS Lambda Power Tuning để tìm memory tối ưu",
-      "CPU cấu hình độc lập với memory qua tham số vCPU; dùng Compute Optimizer để chỉnh vCPU",
-      "Memory không ảnh hưởng CPU; chỉ tăng timeout để hàm có thêm thời gian CPU",
-      "CPU tỉ lệ nghịch với memory; giảm memory để được nhiều CPU hơn"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Trong Lambda bạn chỉ chọn memory, còn CPU (và network) được cấp tỉ lệ thuận theo lượng memory đó.\n✓ CPU tỉ lệ thuận memory + Power Tuning — đúng, tăng memory cũng tăng CPU; AWS Lambda Power Tuning dùng Step Functions để so sánh nhiều mức memory về chi phí và thời gian.\n✗ Cấu hình vCPU độc lập — Lambda không cho đặt vCPU riêng.\n✗ Memory không ảnh hưởng CPU — sai, CPU gắn liền với memory.\n✗ CPU tỉ lệ nghịch — sai hoàn toàn, giảm memory làm giảm CPU.",
-    "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-064",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-03-optimization",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một ứng dụng đọc nhiều từ DynamoDB với các truy vấn key lặp lại và cần độ trễ microsecond cho read, đồng thời giữ nguyên DynamoDB API hiện có với thay đổi code tối thiểu. Giải pháp caching nào phù hợp nhất?",
-    "options": [
-      "Amazon DynamoDB Accelerator (DAX)",
-      "ElastiCache for Redis với lazy loading do ứng dụng tự quản lý",
-      "ElastiCache for Memcached đặt trước DynamoDB",
-      "Bật DynamoDB Global Tables ở một Region thứ hai"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Cần cache microsecond, tích hợp sẵn với DynamoDB và ít sửa code.\n✓ DAX — đúng, là cache in-memory write-through chuyên cho DynamoDB, tương thích API DynamoDB nên hầu như không phải đổi code, độ trễ microsecond.\n✗ ElastiCache for Redis tự quản lý — chạy được nhưng phải tự viết logic cache, đổi nhiều code và đạt độ trễ millisecond chứ không microsecond cho mẫu này.\n✗ ElastiCache for Memcached — tương tự, phải tự quản lý cache và không tích hợp gốc với DynamoDB.\n✗ Global Tables — phục vụ multi-Region/độ sẵn sàng, không phải để giảm độ trễ đọc bằng cache.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-064",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-03-optimization",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một developer triển khai ElastiCache theo chiến lược lazy loading (cache-aside) cho dữ liệu sản phẩm. Vấn đề nào là nhược điểm CỐ HỮU của lazy loading mà developer cần lường trước?",
-    "options": [
-      "Dữ liệu trong cache có thể cũ (stale) vì cache chỉ cập nhật khi có cache miss",
-      "Mọi lần ghi đều phải ghi đồng thời vào cache làm tăng độ trễ ghi",
-      "Cache luôn chứa cả dữ liệu không bao giờ được đọc, gây lãng phí bộ nhớ",
-      "Không thể đặt TTL cho các key trong ElastiCache"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Lazy loading chỉ nạp dữ liệu vào cache khi xảy ra cache miss, nên không tự cập nhật khi dữ liệu nguồn thay đổi.\n✓ Dữ liệu có thể stale — đúng, vì cache chỉ refresh khi miss; thường kết hợp TTL để hạn chế.\n✗ Mọi lần ghi vào cache — đó là đặc điểm của write-through, không phải lazy loading.\n✗ Cache chứa dữ liệu không bao giờ đọc — đó là nhược điểm của write-through (ghi cả dữ liệu chưa được đọc).\n✗ Không thể đặt TTL — sai, ElastiCache hỗ trợ TTL.",
-    "domain": 4,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-065",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-03-optimization",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một ứng dụng dùng write-through cache với ElastiCache: mỗi lần ghi dữ liệu đều cập nhật cả database và cache. Nhược điểm chính của write-through là gì, và cách giảm thiểu phổ biến nào nên áp dụng?",
-    "options": [
-      "Cache có thể chứa nhiều dữ liệu không bao giờ được đọc; giảm thiểu bằng cách đặt TTL để loại bỏ key ít dùng",
-      "Cache luôn trả dữ liệu stale; giảm thiểu bằng cách tắt TTL hoàn toàn",
-      "Read luôn miss lần đầu; giảm thiểu bằng cách bật lazy loading thay thế",
-      "Ghi sẽ không bao giờ cập nhật cache; giảm thiểu bằng cách thêm DAX"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Write-through ghi mọi dữ liệu vào cache kể cả dữ liệu hiếm khi được đọc, làm phình cache.\n✓ Cache chứa dữ liệu không được đọc + TTL — đúng, đó là điểm yếu của write-through; đặt TTL để dọn các key ít dùng và tránh phình bộ nhớ.\n✗ Luôn trả stale + tắt TTL — sai, write-through giữ cache mới; tắt TTL không phải giảm thiểu.\n✗ Read luôn miss lần đầu — đó là đặc điểm của lazy loading, không phải write-through.\n✗ Ghi không cập nhật cache — sai, bản chất write-through là cập nhật cache khi ghi.",
-    "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-065",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-03-optimization",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một nhóm cần lớp caching in-memory hỗ trợ các kiểu dữ liệu phong phú (sorted set, list), replication, persistence và pub/sub cho một bảng xếp hạng (leaderboard) thời gian thực. Engine ElastiCache nào phù hợp nhất?",
-    "options": [
-      "ElastiCache for Redis",
-      "ElastiCache for Memcached",
-      "DynamoDB DAX",
-      "Amazon CloudFront"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Yêu cầu sorted set, replication, persistence, pub/sub là đặc trưng của Redis.\n✓ ElastiCache for Redis — đúng, hỗ trợ kiểu dữ liệu phong phú (sorted set lý tưởng cho leaderboard), replication, persistence và pub/sub.\n✗ Memcached — chỉ là cache key-value đơn giản, đa luồng, không có sorted set/persistence/replication/pub-sub.\n✗ DAX — chỉ là cache cho DynamoDB, không phải cache đa năng với các kiểu dữ liệu trên.\n✗ CloudFront — là CDN cache nội dung HTTP, không phải in-memory data store.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-065",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-03-optimization",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "single",
-    "question": "Một REST API trên API Gateway gọi backend tốn kém cho cùng các tham số được lặp lại nhiều lần. Developer muốn giảm tải backend bằng cách cache phản hồi và đảm bảo mỗi tổ hợp tham số/header có entry cache riêng. Cấu hình nào đúng?",
-    "options": [
-      "Bật API Gateway caching cho stage, đặt TTL và chọn các tham số làm cache key",
-      "Bật CloudFront trước API Gateway và để mặc định cache theo toàn bộ query string",
-      "Tăng provisioned concurrency của Lambda backend để phản hồi nhanh hơn",
-      "Bật lazy loading trong API Gateway integration request"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "API Gateway có caching ở mức stage với TTL và cho phép chọn method request parameter làm cache key để phân biệt entry per-key.\n✓ Bật caching ở stage + TTL + cache key — đúng, đáp ứng yêu cầu cache theo từng tổ hợp tham số.\n✗ CloudFront cache mặc định toàn bộ query string — có thể hỗ trợ nhưng không trực tiếp là tính năng per-key cache key của API Gateway và phức tạp hơn cho REST API nội bộ này.\n✗ Provisioned concurrency — chỉ giảm cold start, không cache kết quả nên backend vẫn bị gọi mỗi lần.\n✗ Lazy loading trong integration — không phải tính năng của API Gateway.",
-    "domain": 4,
-    "mock": 3
-  },
-  {
-    "id": "dva-m1-066",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-03-optimization",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một website dùng CloudFront. Backend trả nội dung khác nhau tùy ngôn ngữ trong header Accept-Language và tham số ?currency. Hiện tại người dùng đôi khi nhận nội dung sai ngôn ngữ/tiền tệ do cache. Cần cấu hình gì để cache đúng mà vẫn giữ hit rate hợp lý?",
-    "options": [
-      "Dùng cache policy đưa Accept-Language và query string currency vào cache key",
-      "Đặt TTL = 0 để CloudFront luôn bỏ qua cache",
-      "Forward toàn bộ mọi header và mọi cookie vào origin",
-      "Tắt CloudFront và phục vụ trực tiếp từ origin"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "CloudFront phục vụ nội dung khác nhau theo cache key; nếu key không bao gồm yếu tố quyết định nội dung thì người dùng nhận bản cache sai.\n✓ Cache policy đưa header và query string cần thiết vào cache key — đúng, tách cache theo ngôn ngữ và tiền tệ mà vẫn cache hiệu quả.\n✗ TTL = 0 — vô hiệu hóa cache, mất lợi ích CDN và tăng tải origin.\n✗ Forward toàn bộ header/cookie — làm cache key quá phân mảnh, hit rate sụt giảm nghiêm trọng.\n✗ Tắt CloudFront — mất hoàn toàn lợi ích caching/CDN.",
-    "domain": 4,
-    "mock": 1
-  },
-  {
-    "id": "dva-m2-066",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-03-optimization",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "medium",
-    "type": "multi",
-    "question": "Một SNS topic gửi mọi thông báo đơn hàng tới nhiều SQS queue, nhưng mỗi consumer chỉ quan tâm một loại sự kiện (ví dụ chỉ order_cancelled). Hiện consumer phải nhận tất cả rồi tự lọc, gây xử lý thừa và tốn chi phí. Những hành động nào giúp giảm xử lý thừa? (Chọn 2)",
-    "options": [
-      "Gắn subscription filter policy trên mỗi SQS subscription để chỉ nhận message khớp thuộc tính",
-      "Thêm message attributes vào message publish để filter policy đánh giá được",
-      "Tăng visibility timeout của các queue để consumer có thêm thời gian lọc",
-      "Bật long polling trên các queue để giảm số message nhận về",
-      "Chuyển sang FIFO topic để message tự động được phân loại theo nội dung"
-    ],
-    "correctIndices": [
-      0,
-      1
-    ],
-    "explanation": "SNS message filtering cho phép mỗi subscription chỉ nhận message khớp filter policy, loại bỏ xử lý thừa ngay tại nguồn.\n✓ Filter policy trên subscription — đúng, chỉ chuyển message phù hợp tới từng queue.\n✓ Thêm message attributes khi publish — đúng, filter policy mặc định đánh giá dựa trên message attributes nên cần đính kèm chúng.\n✗ Tăng visibility timeout — chỉ ảnh hưởng thời gian message bị ẩn khi đang xử lý, không giảm lượng message thừa.\n✗ Long polling — giảm empty receive/chi phí polling chứ không lọc bỏ message không liên quan.\n✗ FIFO topic — đảm bảo thứ tự/loại trùng, không tự phân loại theo nội dung.",
-    "domain": 4,
-    "mock": 2
-  },
-  {
-    "id": "dva-m3-066",
-    "courseId": "DVA-C02",
-    "lesson": "dva-d4-03-optimization",
-    "certifications": [
-      "DVA-C02"
-    ],
-    "difficulty": "hard",
-    "type": "single",
-    "question": "Một developer đặt provisioned concurrency = 50 cho một hàm Lambda nhưng vào giờ cao điểm hàm vẫn thỉnh thoảng có cold start trong CloudWatch. Nguyên nhân khả dĩ nhất và cách khắc phục đúng best practice là gì?",
-    "options": [
-      "Lưu lượng vượt quá 50 đồng thời nên phần dư dùng on-demand concurrency (có cold start); dùng Application Auto Scaling để mở rộng provisioned concurrency theo lịch/đo lường",
-      "Provisioned concurrency không bao giờ loại bỏ cold start; phải chuyển sang reserved concurrency",
-      "Cold start xảy ra vì memory quá cao; giảm memory để hết cold start",
-      "Provisioned concurrency chỉ áp dụng cho phiên bản $LATEST nên cần xóa mọi alias"
-    ],
-    "correctIndices": [
-      0
-    ],
-    "explanation": "Provisioned concurrency chỉ làm ấm sẵn đúng số lượng đã đặt; khi vượt ngưỡng đó, các invocation dư sẽ chạy bằng on-demand và có cold start.\n✓ Vượt 50 đồng thời + Application Auto Scaling — đúng, cần scale provisioned concurrency theo lịch hoặc theo utilization để bao phủ giờ cao điểm.\n✗ Provisioned concurrency không loại bỏ cold start — sai, nó loại bỏ cold start trong phạm vi đã cấp; reserved concurrency không làm ấm môi trường.\n✗ Giảm memory để hết cold start — không liên quan, memory không phải nguyên nhân ở đây.\n✗ Chỉ áp dụng cho $LATEST — sai, provisioned concurrency cấu hình trên version/alias chứ không phải $LATEST.",
-    "domain": 4,
-    "mock": 3
+    "id": "saa-ext-005"
   }
 ];

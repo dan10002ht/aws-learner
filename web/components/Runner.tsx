@@ -10,6 +10,7 @@ import { buildQuestions, isCorrect, type PreparedQuestion } from "@/lib/question
 import { addXp, getWrongIds, recordWrong, removeWrong, saveAttempt } from "@/lib/storage";
 import type { AttemptSummary, AnswerRecord, Mode } from "@/lib/types";
 import { getSet } from "@/data/sets";
+import { getCourse } from "@/data/courses";
 
 interface Props {
   setKey: string;
@@ -414,7 +415,10 @@ export default function Runner({ setKey, mode }: Props) {
   const score = prepared.length > 0 ? Math.round((correctCount / prepared.length) * 100) : 0;
   const durationMin = Math.floor((finishedAt - startedAt) / 60_000);
   const durationSec = Math.floor(((finishedAt - startedAt) % 60_000) / 1000);
-  const scoreColor = score >= 70 ? "text-success" : score >= 50 ? "text-warning" : "text-danger";
+  // Pass/fail against the course's real passing score (CLF 70, SAA/DVA 72...).
+  const passingScore = getCourse(set.courseId)?.passingScore ?? 70;
+  const passed = score >= passingScore;
+  const scoreColor = passed ? "text-success" : score >= passingScore - 15 ? "text-warning" : "text-danger";
 
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
@@ -424,6 +428,13 @@ export default function Runner({ setKey, mode }: Props) {
           {set.label} · {mode === "exam" ? "Exam" : "Practice"}
         </div>
         <div className={`text-6xl font-extrabold my-3 ${scoreColor}`}>{score}%</div>
+        <div
+          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-bold mb-1 ${
+            passed ? "bg-success/15 text-success" : "bg-danger/15 text-danger"
+          }`}
+        >
+          {passed ? "ĐẬU" : "TRƯỢT"} · ngưỡng {passingScore}%
+        </div>
         <div className="text-lg font-semibold">
           {correctCount} / {prepared.length} câu đúng
         </div>
