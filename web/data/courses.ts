@@ -52,7 +52,7 @@ export const courses: Course[] = [
     prerequisites: ["CLF-C02"],
     accentColor: "#22c55e",
     order: 3,
-    status: "coming-soon",
+    status: "available",
   },
   {
     id: "SOA-C02",

@@ -41,36 +41,36 @@
       "id": "Q-d1",
       "kind": "questions",
       "scope": "Domain1 questions ~63 câu (3 mock)",
-      "status": "pending",
-      "note": ""
+      "status": "done",
+      "note": "63 câu có dấu, 21/mock"
     },
     {
       "id": "Q-d2",
       "kind": "questions",
       "scope": "Domain2 questions ~51 câu",
-      "status": "pending",
+      "status": "done",
       "note": ""
     },
     {
       "id": "Q-d3",
       "kind": "questions",
       "scope": "Domain3 questions ~48 câu",
-      "status": "pending",
+      "status": "done",
       "note": ""
     },
     {
       "id": "Q-d4",
       "kind": "questions",
       "scope": "Domain4 questions ~36 câu",
-      "status": "pending",
+      "status": "done",
       "note": ""
     },
     {
       "id": "ENABLE",
       "kind": "finalize",
       "scope": "set status available + review gate + build + push",
-      "status": "pending",
-      "note": ""
+      "status": "done",
+      "note": "198 câu, gate pass, build pass, status available"
     }
   ]
 }
