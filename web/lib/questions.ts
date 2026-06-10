@@ -60,15 +60,19 @@ function interleaveByDomain(items: PreparedQuestion[]): PreparedQuestion[] {
   return result;
 }
 
-/** Official CLF-C02 domain weighting (fraction of scored content). */
-const CLF_DOMAIN_WEIGHTS: Record<number, number> = { 1: 0.24, 2: 0.30, 3: 0.34, 4: 0.12 };
+/** Official domain weighting per course (fraction of scored content). */
+const DOMAIN_WEIGHTS: Record<string, Record<number, number>> = {
+  "CLF-C02": { 1: 0.24, 2: 0.30, 3: 0.34, 4: 0.12 },
+  "SAA-C03": { 1: 0.30, 2: 0.26, 3: 0.24, 4: 0.20 },
+};
+const DEFAULT_WEIGHTS: Record<number, number> = { 1: 0.25, 2: 0.25, 3: 0.25, 4: 0.25 };
 
 /**
  * Sample `limit` questions from a pool following the exam blueprint domain
- * weighting (e.g. 65 → ~16 D1 / 19 D2 / 22 D3 / 8 D4), backfilling from
- * leftovers if a domain is short.
+ * weighting for the course, backfilling from leftovers if a domain is short.
  */
-function pickByBlueprint(pool: Question[], limit: number): Question[] {
+function pickByBlueprint(pool: Question[], limit: number, courseId: string): Question[] {
+  const weights = DOMAIN_WEIGHTS[courseId] ?? DEFAULT_WEIGHTS;
   const buckets: Record<number, Question[]> = { 1: [], 2: [], 3: [], 4: [] };
   const others: Question[] = [];
   for (const q of pool) {
@@ -79,7 +83,7 @@ function pickByBlueprint(pool: Question[], limit: number): Question[] {
 
   const picked: Question[] = [];
   for (const d of [1, 2, 3, 4]) {
-    const target = Math.round(limit * CLF_DOMAIN_WEIGHTS[d]);
+    const target = Math.round(limit * weights[d]);
     const n = Math.min(target, buckets[d].length);
     picked.push(...buckets[d].slice(0, n));
     buckets[d] = buckets[d].slice(n);
@@ -112,7 +116,7 @@ export function buildQuestions(opts: BuildOptions): PreparedQuestion[] {
   // Blueprint full exam: weighted sample across the whole pool, then interleave.
   if (opts.blueprintExam) {
     const limit = opts.limit && opts.limit > 0 ? opts.limit : pool.length;
-    const picked = pickByBlueprint(pool, limit);
+    const picked = pickByBlueprint(pool, limit, set.courseId);
     let prep = interleaveByDomain(picked.map((q) => ({ q, optionMap: q.options.map((_, i) => i) })));
     if (opts.shuffleOptions) {
       prep = prep.map(({ q, optionMap }) => ({ q, optionMap: shuffle(optionMap) }));
