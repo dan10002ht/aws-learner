@@ -36,11 +36,16 @@ const progLessons: Lesson[] = [
     description: "Tư duy debug, stack trace, debugger VS Code, dùng AI để học đúng cách.", file: "starter/prog-07-debugging.md" },
   { slug: "prog-08-mini-project", courseId: "PROGRAMMING", title: "Mini project: quản lý chi tiêu CLI", shortTitle: "Mini project", chapter: "prog-ch3", order: 8, available: true,
     description: "Ghép tất cả thành ứng dụng hoàn chỉnh chạy terminal, theo milestone.", file: "starter/prog-08-mini-project.md" },
+  { slug: "prog-09-modules-testing", courseId: "PROGRAMMING", title: "Module, package & viết test", shortTitle: "Module & Test", chapter: "prog-ch4", order: 9, available: true,
+    description: "Tách code thành module, import/export, package manager (pip/npm), viết unit test & assertion, vì sao test.", file: "starter/prog-09-modules-testing.md" },
+  { slug: "prog-10-files-data", courseId: "PROGRAMMING", title: "Làm việc với file & dữ liệu", shortTitle: "File & Data", chapter: "prog-ch4", order: 10, available: true,
+    description: "Đọc/ghi file, JSON & CSV, datetime, biến môi trường, tham số dòng lệnh (CLI args), xử lý dữ liệu thực tế.", file: "starter/prog-10-files-data.md" },
 ];
 const progChapters: Chapter[] = [
   { id: "prog-ch1", courseId: "PROGRAMMING", title: "Tư duy lập trình", lessonSlugs: ["prog-01-first-program", "prog-02-control-flow", "prog-03-functions"], category: "foundation" },
   { id: "prog-ch2", courseId: "PROGRAMMING", title: "Dữ liệu & cấu trúc", lessonSlugs: ["prog-04-collections", "prog-05-strings-errors", "prog-06-oop-basics"], category: "database" },
   { id: "prog-ch3", courseId: "PROGRAMMING", title: "Kỹ năng thực chiến", lessonSlugs: ["prog-07-debugging", "prog-08-mini-project"], category: "compute" },
+  { id: "prog-ch4", courseId: "PROGRAMMING", title: "Trung cấp", lessonSlugs: ["prog-09-modules-testing", "prog-10-files-data"], category: "security" },
 ];
 
 const gitLessons: Lesson[] = [
@@ -54,6 +59,14 @@ const gitLessons: Lesson[] = [
     description: "Branch → PR → review → merge, viết PR tốt, commit message tốt.", file: "starter/git-04-team-workflow.md" },
   { slug: "git-05-undo-rescue", courseId: "GIT", title: "Cứu hộ: hoàn tác & sửa sai", shortTitle: "Cứu hộ Git", chapter: "git-ch2", order: 5, available: true,
     description: "restore, amend, revert vs reset, stash, reflog — thoát mọi tình huống 'chết rồi'.", file: "starter/git-05-undo-rescue.md" },
+  { slug: "git-06-rebase-merge", courseId: "GIT", title: "Merge vs Rebase & lịch sử sạch", shortTitle: "Rebase", chapter: "git-ch3", order: 6, available: true,
+    description: "Fast-forward, merge vs rebase, interactive rebase (squash/reword/fixup), khi nào dùng cái nào, golden rule.", file: "starter/git-06-rebase-merge.md" },
+  { slug: "git-07-advanced-rescue", courseId: "GIT", title: "Cứu hộ nâng cao: reflog, bisect, cherry-pick", shortTitle: "Cứu hộ Pro", chapter: "git-ch3", order: 7, available: true,
+    description: "reflog tìm lại commit mất, git bisect truy bug, cherry-pick, stash, amend, restore/revert đúng cách.", file: "starter/git-07-advanced-rescue.md" },
+  { slug: "git-08-branching-conflict", courseId: "GIT", title: "Branching strategy & xử lý conflict", shortTitle: "Strategy & Conflict", chapter: "git-ch3", order: 8, available: true,
+    description: "Trunk-based vs GitFlow vs GitHub Flow, giải merge conflict phức tạp, rerere, commit convention, PR sạch.", file: "starter/git-08-branching-conflict.md" },
+  { slug: "git-09-internals-pro", courseId: "GIT", title: "Git internals & công cụ pro", shortTitle: "Internals", chapter: "git-ch3", order: 9, available: true,
+    description: "Object model (blob/tree/commit), refs/HEAD/detached, hooks, tag & release, submodule vs monorepo, LFS, GPG sign.", file: "starter/git-09-internals-pro.md" },
 ];
 const gitChapters: Chapter[] = [
   { id: "git-ch1", courseId: "GIT", title: "Làm chủ Git một mình", lessonSlugs: ["git-01-why-version-control", "git-02-branches", "git-03-github-remote"], category: "foundation" },
@@ -75,10 +88,15 @@ const webLessons: Lesson[] = [
     description: "JS trên trình duyệt, chọn & sửa DOM, event, sự kiện click/submit, async cơ bản.", file: "web/web-04-javascript-dom.md" },
   { slug: "web-05-apis-fetch", courseId: "WEB", title: "Gọi API: fetch, JSON & async", shortTitle: "API & fetch", chapter: "web-ch2", order: 5, available: true,
     description: "API là gì (góc người dùng), JSON, fetch/async-await, xử lý lỗi, CORS cơ bản.", file: "web/web-05-apis-fetch.md" },
+  { slug: "web-06-modern-js", courseId: "WEB", title: "JavaScript hiện đại (ES6+) & tooling", shortTitle: "Modern JS", chapter: "web-ch3", order: 6, available: true,
+    description: "let/const, arrow function, destructuring, spread, template literal, module ES6, npm, async/await sâu hơn.", file: "web/web-06-modern-js.md" },
+  { slug: "web-07-components-spa", courseId: "WEB", title: "Tư duy component & SPA", shortTitle: "Components & SPA", chapter: "web-ch3", order: 7, available: true,
+    description: "Component & tái sử dụng UI, state, vì sao SPA, virtual DOM ý tưởng, khi nào cần framework (React/Vue).", file: "web/web-07-components-spa.md" },
 ];
 const webChapters: Chapter[] = [
   { id: "web-ch1", courseId: "WEB", title: "Trang web tĩnh", lessonSlugs: ["web-01-how-web-works", "web-02-html", "web-03-css"], category: "foundation" },
   { id: "web-ch2", courseId: "WEB", title: "Trang web động & API", lessonSlugs: ["web-04-javascript-dom", "web-05-apis-fetch"], category: "compute" },
+  { id: "web-ch3", courseId: "WEB", title: "Web hiện đại", lessonSlugs: ["web-06-modern-js", "web-07-components-spa"], category: "security" },
 ];
 
 // =====================================================================
