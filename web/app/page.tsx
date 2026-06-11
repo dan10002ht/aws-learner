@@ -8,23 +8,28 @@ export default function HomePage() {
   return (
     <div className="space-y-12">
       <section className="pt-6 pb-2">
-        <p className="text-sm font-semibold tracking-widest text-brand-500 uppercase mb-2">AWS Learner</p>
+        <p className="text-sm font-semibold tracking-widest text-brand-500 uppercase mb-2">Tech Learner</p>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight max-w-2xl">
-          Học AWS từ <span className="text-brand-500">cơ bản</span> đến <span className="text-brand-500">pro</span>.
+          Từ <span className="text-brand-500">chưa biết gì</span> đến <span className="text-brand-500">pro</span>.
         </h1>
         <p className="text-[var(--text-dim)] mt-3 max-w-2xl">
-          Đi theo lộ trình rõ ràng: Cloud Practitioner → Associate → Professional. Mỗi khoá có sách lý thuyết,
-          luyện đề có giải thích, và mô phỏng kỳ thi.
+          Lộ trình đầy đủ: nhập môn lập trình → nền tảng hệ thống → backend engineering → chứng chỉ AWS → kiến trúc.
+          Khoá lý thuyết đọc hiểu sâu, khoá chứng chỉ có luyện đề và mô phỏng kỳ thi.
         </p>
       </section>
 
-      <section>
-        <div className="flex items-baseline justify-between mb-5">
-          <h2 className="text-xl font-bold">Các khoá học</h2>
-          <span className="text-sm text-[var(--text-dim)]">{courses.length} khoá học</span>
+      {CATEGORIES.map(({ key, title, blurb }) => {
+        const group = courses.filter((c) => c.category === key).sort((a, b) => a.order - b.order);
+        if (!group.length) return null;
+        return (
+      <section key={key}>
+        <div className="flex items-baseline justify-between mb-1">
+          <h2 className="text-xl font-bold">{title}</h2>
+          <span className="text-sm text-[var(--text-dim)]">{group.length} khoá</span>
         </div>
+        <p className="text-sm text-[var(--text-dim)] mb-4">{blurb}</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {courses.map((c) => {
+          {group.map((c) => {
             const isLocked = c.status === "coming-soon";
             const questionsCount = questionsInCourse(c.id).length;
             const lessonsCount = lessonsOfCourse(c.id).length;
@@ -91,6 +96,16 @@ export default function HomePage() {
           })}
         </div>
       </section>
+        );
+      })}
     </div>
   );
 }
+
+const CATEGORIES: { key: string; title: string; blurb: string }[] = [
+  { key: "starter", title: "🌱 Nhập môn", blurb: "Bắt đầu từ số 0 — chưa cần biết gì về tech." },
+  { key: "systems", title: "☁️ Nền tảng hệ thống & Cloud", blurb: "Hiểu bản chất hạ tầng, mạng, hệ phân tán và kỹ năng tay nghề kỹ sư." },
+  { key: "software", title: "🛠 Kỹ thuật phần mềm", blurb: "Tư duy thiết kế backend ở mức production." },
+  { key: "certification", title: "🎓 Chứng chỉ AWS", blurb: "Luyện đề bám blueprint chính thức + mô phỏng kỳ thi thật." },
+  { key: "architecture", title: "🏗 Kiến trúc & Nâng cao", blurb: "Cầu nối lên Solutions Architect cao cấp / CTO." },
+];

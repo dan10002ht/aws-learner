@@ -1,6 +1,67 @@
 import type { Lesson, Chapter, CourseId } from "@/lib/types";
 
 // =====================================================================
+// STARTER TIER — Tech 101, Lập trình nhập môn, Git & GitHub
+// =====================================================================
+const techLessons: Lesson[] = [
+  { slug: "pc-01-how-computers-work", courseId: "TECH-101", title: "Máy tính hoạt động thế nào", shortTitle: "Máy tính 101", chapter: "tech-ch1", order: 1, available: true,
+    description: "CPU, RAM vs ổ cứng, hệ điều hành, chương trình & tiến trình, bit/byte.", file: "starter/pc-01-how-computers-work.md" },
+  { slug: "pc-02-how-internet-works", courseId: "TECH-101", title: "Internet hoạt động thế nào", shortTitle: "Internet 101", chapter: "tech-ch1", order: 2, available: true,
+    description: "Gõ URL thì chuyện gì xảy ra, IP & DNS, client/server, HTTP, HTTPS.", file: "starter/pc-02-how-internet-works.md" },
+  { slug: "pc-03-software-types", courseId: "TECH-101", title: "Phần mềm: từ app điện thoại đến server", shortTitle: "Phần mềm 101", chapter: "tech-ch1", order: 3, available: true,
+    description: "Frontend vs backend, database, API là gì, cloud ở mức người thường.", file: "starter/pc-03-software-types.md" },
+  { slug: "pc-04-roles-in-tech", courseId: "TECH-101", title: "Ngành tech có những nghề gì", shortTitle: "Nghề trong tech", chapter: "tech-ch1", order: 4, available: true,
+    description: "Dev/DevOps/Data/QA/PM làm gì hằng ngày, lộ trình này hợp nghề nào.", file: "starter/pc-04-roles-in-tech.md" },
+  { slug: "pc-05-setup-tools", courseId: "TECH-101", title: "Chuẩn bị đồ nghề: cài môi trường học", shortTitle: "Cài đồ nghề", chapter: "tech-ch1", order: 5, available: true,
+    description: "VS Code, terminal đầu tiên, cài Python & Git, chạy chương trình đầu đời.", file: "starter/pc-05-setup-tools.md" },
+];
+const techChapters: Chapter[] = [
+  { id: "tech-ch1", courseId: "TECH-101", title: "Hiểu thế giới số", lessonSlugs: ["pc-01-how-computers-work", "pc-02-how-internet-works", "pc-03-software-types", "pc-04-roles-in-tech", "pc-05-setup-tools"], category: "foundation" },
+];
+
+const progLessons: Lesson[] = [
+  { slug: "prog-01-first-program", courseId: "PROGRAMMING", title: "Chương trình đầu tiên: biến & kiểu dữ liệu", shortTitle: "Biến & kiểu", chapter: "prog-ch1", order: 1, available: true,
+    description: "In ra màn hình, biến, số/chuỗi/boolean, nhập liệu, đọc lỗi syntax.", file: "starter/prog-01-first-program.md" },
+  { slug: "prog-02-control-flow", courseId: "PROGRAMMING", title: "Rẽ nhánh & vòng lặp", shortTitle: "If & vòng lặp", chapter: "prog-ch1", order: 2, available: true,
+    description: "if/else, and/or/not, for & while, break/continue, FizzBuzz.", file: "starter/prog-02-control-flow.md" },
+  { slug: "prog-03-functions", courseId: "PROGRAMMING", title: "Hàm: đóng gói logic", shortTitle: "Hàm", chapter: "prog-ch1", order: 3, available: true,
+    description: "Tham số, giá trị trả về, scope, DRY, refactor thành hàm.", file: "starter/prog-03-functions.md" },
+  { slug: "prog-04-collections", courseId: "PROGRAMMING", title: "Mảng, danh sách & từ điển", shortTitle: "Collections", chapter: "prog-ch2", order: 4, available: true,
+    description: "List/array, index từ 0, dictionary/map, set, đếm tần suất.", file: "starter/prog-04-collections.md" },
+  { slug: "prog-05-strings-errors", courseId: "PROGRAMMING", title: "Chuỗi & xử lý lỗi", shortTitle: "Chuỗi & lỗi", chapter: "prog-ch2", order: 5, available: true,
+    description: "Thao tác chuỗi, đọc/ghi file, try/catch, validate input.", file: "starter/prog-05-strings-errors.md" },
+  { slug: "prog-06-oop-basics", courseId: "PROGRAMMING", title: "Hướng đối tượng cơ bản", shortTitle: "OOP", chapter: "prog-ch2", order: 6, available: true,
+    description: "Class & object, thuộc tính/phương thức, constructor, kế thừa giới thiệu.", file: "starter/prog-06-oop-basics.md" },
+  { slug: "prog-07-debugging", courseId: "PROGRAMMING", title: "Debug & đọc code người khác", shortTitle: "Debug", chapter: "prog-ch3", order: 7, available: true,
+    description: "Tư duy debug, stack trace, debugger VS Code, dùng AI để học đúng cách.", file: "starter/prog-07-debugging.md" },
+  { slug: "prog-08-mini-project", courseId: "PROGRAMMING", title: "Mini project: quản lý chi tiêu CLI", shortTitle: "Mini project", chapter: "prog-ch3", order: 8, available: true,
+    description: "Ghép tất cả thành ứng dụng hoàn chỉnh chạy terminal, theo milestone.", file: "starter/prog-08-mini-project.md" },
+];
+const progChapters: Chapter[] = [
+  { id: "prog-ch1", courseId: "PROGRAMMING", title: "Tư duy lập trình", lessonSlugs: ["prog-01-first-program", "prog-02-control-flow", "prog-03-functions"], category: "foundation" },
+  { id: "prog-ch2", courseId: "PROGRAMMING", title: "Dữ liệu & cấu trúc", lessonSlugs: ["prog-04-collections", "prog-05-strings-errors", "prog-06-oop-basics"], category: "database" },
+  { id: "prog-ch3", courseId: "PROGRAMMING", title: "Kỹ năng thực chiến", lessonSlugs: ["prog-07-debugging", "prog-08-mini-project"], category: "compute" },
+];
+
+const gitLessons: Lesson[] = [
+  { slug: "git-01-why-version-control", courseId: "GIT", title: "Vì sao cần Git: quản lý phiên bản", shortTitle: "Git là gì", chapter: "git-ch1", order: 1, available: true,
+    description: "Snapshot & lịch sử, repo, init/status/add/commit, .gitignore.", file: "starter/git-01-why-version-control.md" },
+  { slug: "git-02-branches", courseId: "GIT", title: "Branch: làm việc song song", shortTitle: "Branch & merge", chapter: "git-ch1", order: 2, available: true,
+    description: "Tạo/chuyển branch, merge, giải conflict từng bước không hoảng.", file: "starter/git-02-branches.md" },
+  { slug: "git-03-github-remote", courseId: "GIT", title: "GitHub & remote: đưa code lên mây", shortTitle: "GitHub", chapter: "git-ch1", order: 3, available: true,
+    description: "Clone/push/pull, SSH key, README, fork, portfolio xin việc.", file: "starter/git-03-github-remote.md" },
+  { slug: "git-04-team-workflow", courseId: "GIT", title: "Làm việc nhóm: Pull Request & code review", shortTitle: "PR & review", chapter: "git-ch2", order: 4, available: true,
+    description: "Branch → PR → review → merge, viết PR tốt, commit message tốt.", file: "starter/git-04-team-workflow.md" },
+  { slug: "git-05-undo-rescue", courseId: "GIT", title: "Cứu hộ: hoàn tác & sửa sai", shortTitle: "Cứu hộ Git", chapter: "git-ch2", order: 5, available: true,
+    description: "restore, amend, revert vs reset, stash, reflog — thoát mọi tình huống 'chết rồi'.", file: "starter/git-05-undo-rescue.md" },
+];
+const gitChapters: Chapter[] = [
+  { id: "git-ch1", courseId: "GIT", title: "Làm chủ Git một mình", lessonSlugs: ["git-01-why-version-control", "git-02-branches", "git-03-github-remote"], category: "foundation" },
+  { id: "git-ch2", courseId: "GIT", title: "Git trong đội nhóm", lessonSlugs: ["git-04-team-workflow", "git-05-undo-rescue"], category: "security" },
+];
+
+
+// =====================================================================
 // FOUNDATIONS — Nền tảng Cloud & Hệ phân tán (knowledge track, không thi)
 // =====================================================================
 const foundLessons: Lesson[] = [
@@ -314,8 +375,8 @@ const sapChapters: Chapter[] = [
 // =====================================================================
 // Aggregate
 // =====================================================================
-export const lessons: Lesson[] = [...foundLessons, ...engLessons, ...beLessons, ...clfLessons, ...saaLessons, ...dvaLessons];
-export const chapters: Chapter[] = [...foundChapters, ...engChapters, ...beChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters];
+export const lessons: Lesson[] = [...techLessons, ...progLessons, ...gitLessons, ...foundLessons, ...engLessons, ...beLessons, ...clfLessons, ...saaLessons, ...dvaLessons];
+export const chapters: Chapter[] = [...techChapters, ...progChapters, ...gitChapters, ...foundChapters, ...engChapters, ...beChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters];
 
 export function lessonsOfCourse(courseId: CourseId): Lesson[] {
   return lessons.filter((l) => l.courseId === courseId).sort((a, b) => a.order - b.order);

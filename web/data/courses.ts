@@ -1,6 +1,50 @@
-import type { Course, CourseId } from "@/lib/types";
+import type { Course, CourseCategory, CourseId } from "@/lib/types";
 
 export const courses: Course[] = [
+  {
+    id: "TECH-101",
+    code: "TECH-101",
+    title: "Máy tính & Internet 101",
+    shortTitle: "Tech 101",
+    level: "Nhập môn",
+    description:
+      "Dành cho người chưa biết gì về tech: máy tính hoạt động thế nào, Internet là gì, phần mềm & các nghề trong ngành, và cài môi trường học đầu tiên.",
+    hint: "Điểm xuất phát tuyệt đối — không cần biết gì trước.",
+    durationHours: 8,
+    passingScore: 0, examMinutes: 0, examQuestions: 0,
+    accentColor: "#f59e0b",
+    order: 0, status: "available", kind: "knowledge", category: "starter",
+  },
+  {
+    id: "PROGRAMMING",
+    code: "PROGRAMMING",
+    title: "Lập trình nhập môn (đa ngôn ngữ)",
+    shortTitle: "Lập trình nhập môn",
+    level: "Nhập môn",
+    description:
+      "Học tư duy lập trình từ số 0 với ví dụ song song 4 ngôn ngữ Python · JavaScript · Java · Go: biến, vòng lặp, hàm, OOP, debug và một mini project hoàn chỉnh.",
+    hint: "Chọn ngôn ngữ bạn thích — mọi ví dụ có tab chuyển đổi.",
+    durationHours: 40,
+    passingScore: 0, examMinutes: 0, examQuestions: 0,
+    prerequisites: ["TECH-101"],
+    accentColor: "#3b82f6",
+    order: 1, status: "available", kind: "knowledge", category: "starter",
+  },
+  {
+    id: "GIT",
+    code: "GIT",
+    title: "Git & GitHub",
+    shortTitle: "Git & GitHub",
+    level: "Nhập môn",
+    description:
+      "Quản lý phiên bản từ số 0 đến quy trình làm việc nhóm thực tế: commit, branch, merge conflict, Pull Request, code review và cứu hộ khi lỡ tay.",
+    hint: "Kỹ năng ngày-1 ở mọi công ty phần mềm.",
+    durationHours: 12,
+    passingScore: 0, examMinutes: 0, examQuestions: 0,
+    prerequisites: ["TECH-101"],
+    accentColor: "#f97316",
+    order: 2, status: "available", kind: "knowledge", category: "starter",
+  },
   {
     id: "FOUNDATIONS",
     code: "FOUNDATIONS",
@@ -15,9 +59,10 @@ export const courses: Course[] = [
     examMinutes: 0,
     examQuestions: 0,
     accentColor: "#64748b",
-    order: 0,
+    order: 3,
     status: "available",
     kind: "knowledge",
+    category: "systems",
   },
   {
     id: "ENGINEER",
@@ -34,9 +79,10 @@ export const courses: Course[] = [
     examQuestions: 0,
     prerequisites: ["FOUNDATIONS"],
     accentColor: "#10b981",
-    order: 1,
+    order: 4,
     status: "available",
     kind: "knowledge",
+    category: "systems",
   },
   {
     id: "BACKEND",
@@ -53,9 +99,10 @@ export const courses: Course[] = [
     examQuestions: 0,
     prerequisites: ["FOUNDATIONS"],
     accentColor: "#6366f1",
-    order: 2,
+    order: 5,
     status: "available",
     kind: "knowledge",
+    category: "software",
   },
   {
     id: "CLF-C02",
@@ -71,8 +118,9 @@ export const courses: Course[] = [
     examMinutes: 90,
     examQuestions: 65,
     accentColor: "#06b6d4",
-    order: 3,
+    order: 6,
     status: "available",
+    category: "certification",
   },
   {
     id: "SAA-C03",
@@ -89,8 +137,9 @@ export const courses: Course[] = [
     examQuestions: 65,
     prerequisites: ["CLF-C02"],
     accentColor: "#a855f7",
-    order: 4,
+    order: 7,
     status: "available",
+    category: "certification",
   },
   {
     id: "DVA-C02",
@@ -107,8 +156,9 @@ export const courses: Course[] = [
     examQuestions: 65,
     prerequisites: ["CLF-C02"],
     accentColor: "#22c55e",
-    order: 5,
+    order: 8,
     status: "available",
+    category: "certification",
   },
   {
     id: "SOA-C02",
@@ -125,8 +175,9 @@ export const courses: Course[] = [
     examQuestions: 65,
     prerequisites: ["CLF-C02"],
     accentColor: "#eab308",
-    order: 6,
+    order: 9,
     status: "coming-soon",
+    category: "certification",
   },
   {
     id: "SAP-C02",
@@ -143,8 +194,9 @@ export const courses: Course[] = [
     examQuestions: 75,
     prerequisites: ["SAA-C03"],
     accentColor: "#ef4444",
-    order: 7,
+    order: 10,
     status: "coming-soon",
+    category: "certification",
   },
   {
     id: "SYSTEM-DESIGN",
@@ -161,9 +213,10 @@ export const courses: Course[] = [
     examQuestions: 0,
     prerequisites: ["SAA-C03"],
     accentColor: "#f43f5e",
-    order: 8,
+    order: 11,
     status: "coming-soon",
     kind: "knowledge",
+    category: "architecture",
   },
 ];
 

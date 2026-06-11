@@ -1,5 +1,12 @@
-export type CourseId = "FOUNDATIONS" | "ENGINEER" | "BACKEND" | "CLF-C02" | "SAA-C03" | "DVA-C02" | "SOA-C02" | "SAP-C02" | "SYSTEM-DESIGN";
-export type CourseLevel = "Nền tảng" | "Foundational" | "Associate" | "Professional";
+export type CourseId =
+  | "TECH-101" | "PROGRAMMING" | "GIT"
+  | "FOUNDATIONS" | "ENGINEER" | "BACKEND"
+  | "CLF-C02" | "SAA-C03" | "DVA-C02" | "SOA-C02" | "SAP-C02"
+  | "SYSTEM-DESIGN";
+
+/** Learning-path stage used to group courses on the home page. */
+export type CourseCategory = "starter" | "systems" | "software" | "certification" | "architecture";
+export type CourseLevel = "Nhập môn" | "Nền tảng" | "Foundational" | "Associate" | "Professional";
 
 // Backwards-compat alias for code that referenced Certification
 export type Certification = CourseId;
@@ -24,6 +31,7 @@ export interface Course {
   status: "available" | "coming-soon";
   /** "knowledge" = theory track with lessons only (no exam/practice). Default: certification. */
   kind?: "certification" | "knowledge";
+  category: CourseCategory;
 }
 
 export interface Question {

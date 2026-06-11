@@ -5,6 +5,8 @@ import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import rehypeRaw from "rehype-raw";
+import rehypeCodeTabs from "@/lib/rehypeCodeTabs";
+import CodeTabs from "@/components/CodeTabs";
 import { ChevronLeft, ChevronRight, ListChecks } from "lucide-react";
 import { courses, getCourse } from "@/data/courses";
 import { getLessonBySlug, lessonsOfCourse, chaptersOfCourse } from "@/data/lessons";
@@ -99,7 +101,11 @@ export default function LessonPage({ params }: { params: { courseId: string; slu
 
         {md ? (
           <div className="prose-article">
-            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw, rehypeSlug, rehypeHighlight]}>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeRaw, rehypeSlug, rehypeHighlight, rehypeCodeTabs]}
+              components={{ "code-tabs": CodeTabs } as never}
+            >
               {md}
             </ReactMarkdown>
           </div>
