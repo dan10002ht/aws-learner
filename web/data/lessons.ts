@@ -126,6 +126,102 @@ const sysdLessons: Lesson[] = [
 ];
 
 
+// ===== DSA / SECURITY / DEVOPS / SRE / AIML knowledge tracks =====
+const dsaLessons: Lesson[] = [
+  { slug: "dsa-01-complexity", courseId: "DSA", title: "Độ phức tạp Big-O", shortTitle: "Big-O", chapter: "dsa-ch1", order: 1, available: true,
+    description: "Đo thời gian/bộ nhớ, O(1)/O(n)/O(log n)/O(n^2), amortized, cách ước lượng nhanh.", file: "dsa/dsa-01-complexity.md" },
+  { slug: "dsa-02-arrays-strings", courseId: "DSA", title: "Array, String, Two-pointer & Sliding Window", shortTitle: "Array & String", chapter: "dsa-ch1", order: 2, available: true,
+    description: "Thao tác mảng/chuỗi, two-pointer, sliding window, prefix sum.", file: "dsa/dsa-02-arrays-strings.md" },
+  { slug: "dsa-03-hashing", courseId: "DSA", title: "Hash Map & Set", shortTitle: "Hash Map", chapter: "dsa-ch1", order: 3, available: true,
+    description: "Bảng băm O(1), đếm tần suất, dedup, lookup, collision, bài toán mẫu.", file: "dsa/dsa-03-hashing.md" },
+  { slug: "dsa-04-stack-queue", courseId: "DSA", title: "Stack, Queue & Monotonic", shortTitle: "Stack & Queue", chapter: "dsa-ch1", order: 4, available: true,
+    description: "LIFO/FIFO, ứng dụng (ngoặc, undo), deque, monotonic stack/queue.", file: "dsa/dsa-04-stack-queue.md" },
+  { slug: "dsa-05-linkedlist-tree", courseId: "DSA", title: "Linked List & Tree/BST", shortTitle: "List & Tree", chapter: "dsa-ch2", order: 5, available: true,
+    description: "Linked list thao tác, cây nhị phân, BST, duyệt DFS/BFS, độ cao.", file: "dsa/dsa-05-linkedlist-tree.md" },
+  { slug: "dsa-06-sorting-searching", courseId: "DSA", title: "Sorting & Binary Search", shortTitle: "Sort & Search", chapter: "dsa-ch2", order: 6, available: true,
+    description: "O(n log n) sort, ổn định, binary search & các biến thể (lower/upper bound).", file: "dsa/dsa-06-sorting-searching.md" },
+  { slug: "dsa-07-recursion-graph-dp", courseId: "DSA", title: "Recursion, Graph & DP cơ bản", shortTitle: "Recursion & DP", chapter: "dsa-ch2", order: 7, available: true,
+    description: "Đệ quy & backtracking, graph BFS/DFS, dynamic programming nhập môn.", file: "dsa/dsa-07-recursion-graph-dp.md" },
+];
+const dsaChapters: Chapter[] = [
+  { id: "dsa-ch1", courseId: "DSA", title: "Nền tảng & cấu trúc tuyến tính", lessonSlugs: ["dsa-01-complexity","dsa-02-arrays-strings","dsa-03-hashing","dsa-04-stack-queue"], category: "foundation" },
+  { id: "dsa-ch2", courseId: "DSA", title: "Cấu trúc phi tuyến & giải thuật", lessonSlugs: ["dsa-05-linkedlist-tree","dsa-06-sorting-searching","dsa-07-recursion-graph-dp"], category: "compute" },
+];
+const secLessons: Lesson[] = [
+  { slug: "sec-01-threat-modeling", courseId: "SECURITY", title: "Tư duy bảo mật & Threat Modeling", shortTitle: "Threat Modeling", chapter: "sec-ch1", order: 1, available: true,
+    description: "Attack surface, STRIDE, trust boundary, defense in depth, least privilege.", file: "security/sec-01-threat-modeling.md" },
+  { slug: "sec-02-owasp-top10-1", courseId: "SECURITY", title: "OWASP Top 10 (phần 1)", shortTitle: "OWASP #1", chapter: "sec-ch1", order: 2, available: true,
+    description: "Broken access control, injection (SQLi/XSS), cryptographic failures, auth failures.", file: "security/sec-02-owasp-top10-1.md" },
+  { slug: "sec-03-owasp-top10-2", courseId: "SECURITY", title: "OWASP Top 10 (phần 2)", shortTitle: "OWASP #2", chapter: "sec-ch1", order: 3, available: true,
+    description: "SSRF, security misconfig, vulnerable components, insecure design, logging failures.", file: "security/sec-03-owasp-top10-2.md" },
+  { slug: "sec-04-secure-coding", courseId: "SECURITY", title: "Secure Coding: input, output & data", shortTitle: "Secure Coding", chapter: "sec-ch2", order: 4, available: true,
+    description: "Validate input, output encoding, parameterized query, xử lý lỗi an toàn, PII.", file: "security/sec-04-secure-coding.md" },
+  { slug: "sec-05-authn-authz", courseId: "SECURITY", title: "Authentication & Authorization trong app", shortTitle: "AuthN/AuthZ", chapter: "sec-ch2", order: 5, available: true,
+    description: "Session vs token, OAuth/OIDC/JWT đúng, RBAC/ABAC, password & MFA, passkeys.", file: "security/sec-05-authn-authz.md" },
+  { slug: "sec-06-supply-chain", courseId: "SECURITY", title: "Supply Chain & Secrets Security", shortTitle: "Supply Chain", chapter: "sec-ch2", order: 6, available: true,
+    description: "Dependency scanning, SBOM, secrets management, CI/CD security, signing artifacts.", file: "security/sec-06-supply-chain.md" },
+  { slug: "sec-07-cloud-appsec-ops", courseId: "SECURITY", title: "Cloud AppSec & Incident Response", shortTitle: "AppSec Ops", chapter: "sec-ch2", order: 7, available: true,
+    description: "WAF, SAST/DAST, security logging, detection, incident response & postmortem cơ bản.", file: "security/sec-07-cloud-appsec-ops.md" },
+];
+const secChapters: Chapter[] = [
+  { id: "sec-ch1", courseId: "SECURITY", title: "Tư duy & lỗ hổng", lessonSlugs: ["sec-01-threat-modeling","sec-02-owasp-top10-1","sec-03-owasp-top10-2"], category: "security" },
+  { id: "sec-ch2", courseId: "SECURITY", title: "Phòng thủ & vận hành", lessonSlugs: ["sec-04-secure-coding","sec-05-authn-authz","sec-06-supply-chain","sec-07-cloud-appsec-ops"], category: "foundation" },
+];
+const devopsLessons: Lesson[] = [
+  { slug: "devops-01-cicd", courseId: "DEVOPS", title: "CI/CD: pipeline & mindset", shortTitle: "CI/CD", chapter: "devops-ch1", order: 1, available: true,
+    description: "Build/test/deploy tự động, pipeline stages, artifact, môi trường, trunk-based.", file: "devops/devops-01-cicd.md" },
+  { slug: "devops-02-terraform", courseId: "DEVOPS", title: "Terraform & Infrastructure as Code", shortTitle: "Terraform", chapter: "devops-ch1", order: 2, available: true,
+    description: "HCL, provider/resource, state & remote backend, module, plan/apply, drift, workspace.", file: "devops/devops-02-terraform.md" },
+  { slug: "devops-03-kubernetes-basics", courseId: "DEVOPS", title: "Kubernetes cơ bản", shortTitle: "K8s Basics", chapter: "devops-ch2", order: 3, available: true,
+    description: "Pod/Deployment/Service/Namespace, kubectl, ReplicaSet, scheduling, kiến trúc cluster.", file: "devops/devops-03-kubernetes-basics.md" },
+  { slug: "devops-04-kubernetes-ops", courseId: "DEVOPS", title: "Kubernetes vận hành", shortTitle: "K8s Ops", chapter: "devops-ch2", order: 4, available: true,
+    description: "ConfigMap/Secret, Ingress, HPA autoscaling, probes, resource limits, rollout/rollback.", file: "devops/devops-04-kubernetes-ops.md" },
+  { slug: "devops-05-gitops-deploy", courseId: "DEVOPS", title: "GitOps & Deployment Strategies", shortTitle: "GitOps", chapter: "devops-ch2", order: 5, available: true,
+    description: "GitOps (ArgoCD/Flux), blue-green/canary/rolling, progressive delivery, feature flags.", file: "devops/devops-05-gitops-deploy.md" },
+  { slug: "devops-06-container-security", courseId: "DEVOPS", title: "Container & Image Security", shortTitle: "Container Sec", chapter: "devops-ch1", order: 6, available: true,
+    description: "Image scanning, minimal/distroless, non-root, registry, secrets trong container, SBOM.", file: "devops/devops-06-container-security.md" },
+];
+const devopsChapters: Chapter[] = [
+  { id: "devops-ch1", courseId: "DEVOPS", title: "CI/CD & IaC", lessonSlugs: ["devops-01-cicd","devops-02-terraform","devops-06-container-security"], category: "foundation" },
+  { id: "devops-ch2", courseId: "DEVOPS", title: "Container Orchestration", lessonSlugs: ["devops-03-kubernetes-basics","devops-04-kubernetes-ops","devops-05-gitops-deploy"], category: "compute" },
+];
+const sreLessons: Lesson[] = [
+  { slug: "sre-01-principles-slo", courseId: "SRE", title: "Nguyên lý SRE: SLI/SLO/Error Budget", shortTitle: "SLO & SRE", chapter: "sre-ch1", order: 1, available: true,
+    description: "SRE là gì, SLI/SLO/SLA, error budget, toil, cân bằng tốc độ vs độ tin cậy.", file: "sre/sre-01-principles-slo.md" },
+  { slug: "sre-02-observability", courseId: "SRE", title: "Observability sâu", shortTitle: "Observability", chapter: "sre-ch1", order: 2, available: true,
+    description: "Metrics/logs/traces, RED & USE method, cardinality, dashboard, distributed tracing.", file: "sre/sre-02-observability.md" },
+  { slug: "sre-03-alerting-oncall", courseId: "SRE", title: "Alerting & On-call", shortTitle: "Alerting", chapter: "sre-ch1", order: 3, available: true,
+    description: "Symptom-based alert, runbook, alert fatigue, escalation, on-call bền vững.", file: "sre/sre-03-alerting-oncall.md" },
+  { slug: "sre-04-incident-postmortem", courseId: "SRE", title: "Incident Management & Postmortem", shortTitle: "Incidents", chapter: "sre-ch2", order: 4, available: true,
+    description: "Severity, incident commander, comms, blameless postmortem, action item.", file: "sre/sre-04-incident-postmortem.md" },
+  { slug: "sre-05-reliability-patterns", courseId: "SRE", title: "Reliability Patterns & Testing", shortTitle: "Reliability", chapter: "sre-ch2", order: 5, available: true,
+    description: "Capacity planning, load testing, chaos engineering, graceful degradation, DR drill.", file: "sre/sre-05-reliability-patterns.md" },
+  { slug: "sre-06-progressive-delivery", courseId: "SRE", title: "Deployment Safety & Progressive Delivery", shortTitle: "Safe Deploy", chapter: "sre-ch2", order: 6, available: true,
+    description: "Rollback nhanh, canary/automated rollback, feature flag, error-budget-based release.", file: "sre/sre-06-progressive-delivery.md" },
+];
+const sreChapters: Chapter[] = [
+  { id: "sre-ch1", courseId: "SRE", title: "Độ tin cậy & quan sát", lessonSlugs: ["sre-01-principles-slo","sre-02-observability","sre-03-alerting-oncall"], category: "foundation" },
+  { id: "sre-ch2", courseId: "SRE", title: "Sự cố & an toàn vận hành", lessonSlugs: ["sre-04-incident-postmortem","sre-05-reliability-patterns","sre-06-progressive-delivery"], category: "security" },
+];
+const aimlLessons: Lesson[] = [
+  { slug: "aiml-01-landscape", courseId: "AIML", title: "AI/ML landscape cho kỹ sư", shortTitle: "AI Landscape", chapter: "aiml-ch1", order: 1, available: true,
+    description: "ML/DL/LLM khác nhau, khi nào dùng ML vs rule, vai trò kỹ sư vs data scientist.", file: "aiml/aiml-01-landscape.md" },
+  { slug: "aiml-02-how-llms-work", courseId: "AIML", title: "LLM hoạt động thế nào", shortTitle: "LLM Internals", chapter: "aiml-ch1", order: 2, available: true,
+    description: "Token, context window, embedding, temperature, hallucination, model trade-off.", file: "aiml/aiml-02-how-llms-work.md" },
+  { slug: "aiml-03-prompt-engineering", courseId: "AIML", title: "Prompt Engineering & patterns", shortTitle: "Prompting", chapter: "aiml-ch1", order: 3, available: true,
+    description: "Zero/few-shot, system prompt, chain-of-thought, structured output, đánh giá prompt.", file: "aiml/aiml-03-prompt-engineering.md" },
+  { slug: "aiml-04-rag", courseId: "AIML", title: "RAG: Retrieval-Augmented Generation", shortTitle: "RAG", chapter: "aiml-ch2", order: 4, available: true,
+    description: "Vector embedding, chunking, vector DB, retrieval, grounding, đánh giá RAG.", file: "aiml/aiml-04-rag.md" },
+  { slug: "aiml-05-agents-tools", courseId: "AIML", title: "Agents, Tool Use & Function Calling", shortTitle: "Agents", chapter: "aiml-ch2", order: 5, available: true,
+    description: "Tool/function calling, agent loop, structured output, multi-step, MCP ý tưởng.", file: "aiml/aiml-05-agents-tools.md" },
+  { slug: "aiml-06-ai-in-production", courseId: "AIML", title: "Đưa AI vào Production", shortTitle: "AI in Prod", chapter: "aiml-ch2", order: 6, available: true,
+    description: "Eval & test, guardrails, cost & latency, caching, an toàn/PII, observability LLM, Bedrock.", file: "aiml/aiml-06-ai-in-production.md" },
+];
+const aimlChapters: Chapter[] = [
+  { id: "aiml-ch1", courseId: "AIML", title: "Nền tảng AI ứng dụng", lessonSlugs: ["aiml-01-landscape","aiml-02-how-llms-work","aiml-03-prompt-engineering"], category: "foundation" },
+  { id: "aiml-ch2", courseId: "AIML", title: "Xây sản phẩm AI", lessonSlugs: ["aiml-04-rag","aiml-05-agents-tools","aiml-06-ai-in-production"], category: "compute" },
+];
+
 // =====================================================================
 // FOUNDATIONS — Nền tảng Cloud & Hệ phân tán (knowledge track, không thi)
 // =====================================================================
@@ -440,8 +536,8 @@ const sapChapters: Chapter[] = [
 // =====================================================================
 // Aggregate
 // =====================================================================
-export const lessons: Lesson[] = [...techLessons, ...progLessons, ...webLessons, ...sqlLessons, ...gitLessons, ...sysdLessons, ...foundLessons, ...engLessons, ...beLessons, ...clfLessons, ...saaLessons, ...dvaLessons];
-export const chapters: Chapter[] = [...techChapters, ...progChapters, ...webChapters, ...sqlChapters, ...gitChapters, ...sysdChapters, ...foundChapters, ...engChapters, ...beChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters];
+export const lessons: Lesson[] = [...techLessons, ...progLessons, ...webLessons, ...sqlLessons, ...gitLessons, ...sysdLessons, ...foundLessons, ...engLessons, ...beLessons, ...dsaLessons, ...secLessons, ...devopsLessons, ...sreLessons, ...aimlLessons, ...clfLessons, ...saaLessons, ...dvaLessons];
+export const chapters: Chapter[] = [...techChapters, ...progChapters, ...webChapters, ...sqlChapters, ...gitChapters, ...sysdChapters, ...foundChapters, ...engChapters, ...beChapters, ...dsaChapters, ...secChapters, ...devopsChapters, ...sreChapters, ...aimlChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters];
 
 export function lessonsOfCourse(courseId: CourseId): Lesson[] {
   return lessons.filter((l) => l.courseId === courseId).sort((a, b) => a.order - b.order);
