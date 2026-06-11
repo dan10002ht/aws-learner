@@ -71,6 +71,7 @@ const gitLessons: Lesson[] = [
 const gitChapters: Chapter[] = [
   { id: "git-ch1", courseId: "GIT", title: "Làm chủ Git một mình", lessonSlugs: ["git-01-why-version-control", "git-02-branches", "git-03-github-remote"], category: "foundation" },
   { id: "git-ch2", courseId: "GIT", title: "Git trong đội nhóm", lessonSlugs: ["git-04-team-workflow", "git-05-undo-rescue"], category: "security" },
+  { id: "git-ch3", courseId: "GIT", title: "Git nâng cao", lessonSlugs: ["git-06-rebase-merge", "git-07-advanced-rescue", "git-08-branching-conflict", "git-09-internals-pro"], category: "compute" },
 ];
 
 
