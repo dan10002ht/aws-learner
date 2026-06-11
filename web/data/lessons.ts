@@ -60,12 +60,18 @@ const engLessons: Lesson[] = [
     description: "TCP vs UDP, HTTP/1.1→/3 (QUIC), TLS 1.3 handshake, certificate chain, SNI, mTLS, debug bằng curl/openssl.", file: "engineering/eng-03-tcp-tls.md" },
   { slug: "eng-04-identity-crypto", courseId: "ENGINEER", title: "Mật mã & Danh tính hiện đại", shortTitle: "Identity & Crypto", chapter: "eng-ch3", order: 4, available: true,
     description: "AES/RSA, hashing, PKI; OAuth 2.1 (Auth Code + PKCE), OIDC, JWT đúng cách, SAML, passkeys/WebAuthn.", file: "engineering/eng-04-identity-crypto.md" },
+  { slug: "eng-05-docker", courseId: "ENGINEER", title: "Docker thực hành cho kỹ sư Cloud", shortTitle: "Docker", chapter: "eng-ch4", order: 5, available: true,
+    description: "Dockerfile, layer & cache, multi-stage build, compose (LocalStack), healthcheck, best practices bảo mật image.", file: "engineering/eng-05-docker.md" },
+  { slug: "eng-06-automation", courseId: "ENGINEER", title: "Scripting & Automation: Bash + Python boto3", shortTitle: "Automation", chapter: "eng-ch4", order: 6, available: true,
+    description: "Bash nâng cao (set -euo pipefail, jq), AWS CLI --query, Python boto3 (paginator, waiter), cron vs EventBridge.", file: "engineering/eng-06-automation.md" },
 ];
+
 
 const engChapters: Chapter[] = [
   { id: "eng-ch1", courseId: "ENGINEER", title: "Hệ điều hành & Terminal", lessonSlugs: ["eng-01-linux-terminal"], category: "compute" },
   { id: "eng-ch2", courseId: "ENGINEER", title: "Mạng thực hành", lessonSlugs: ["eng-02-cidr-subnetting", "eng-03-tcp-tls"], category: "network" },
   { id: "eng-ch3", courseId: "ENGINEER", title: "Mật mã & Danh tính", lessonSlugs: ["eng-04-identity-crypto"], category: "security" },
+  { id: "eng-ch4", courseId: "ENGINEER", title: "Container & Tự động hoá", lessonSlugs: ["eng-05-docker", "eng-06-automation"], category: "compute" },
 ];
 
 // SYSTEM-DESIGN — outline (coming soon)
@@ -74,6 +80,35 @@ const sysdChapters: Chapter[] = [
   { id: "sysd-ch2", courseId: "SYSTEM-DESIGN", title: "Case Studies: Scale thực tế", lessonSlugs: [], category: "compute" },
   { id: "sysd-ch3", courseId: "SYSTEM-DESIGN", title: "Cost-aware & Multi-account Architecture", lessonSlugs: [], category: "billing" },
   { id: "sysd-ch4", courseId: "SYSTEM-DESIGN", title: "Build vs Buy & Technology Strategy", lessonSlugs: [], category: "security" },
+];
+
+
+// =====================================================================
+// BACKEND — Backend Engineering (knowledge track, không thi)
+// =====================================================================
+const beLessons: Lesson[] = [
+  { slug: "be-01-api-design", courseId: "BACKEND", title: "API Design: REST, gRPC, GraphQL & Webhooks", shortTitle: "API Design", chapter: "be-ch1", order: 1, available: true,
+    description: "REST đúng nghĩa, pagination, versioning, idempotency key, rate limit, gRPC vs GraphQL, webhooks, OpenAPI.", file: "backend/be-01-api-design.md" },
+  { slug: "be-02-database-engineering", courseId: "BACKEND", title: "Database Engineering: Index, Transaction & Migration", shortTitle: "Database Eng", chapter: "be-ch1", order: 2, available: true,
+    description: "B-tree index, composite/covering, EXPLAIN, isolation levels, deadlock, optimistic locking, migration expand-contract.", file: "backend/be-02-database-engineering.md" },
+  { slug: "be-03-caching", courseId: "BACKEND", title: "Caching Patterns trong thực tế", shortTitle: "Caching", chapter: "be-ch1", order: 3, available: true,
+    description: "Cache-aside/write-through, invalidation, stampede, hot key, negative caching, hit ratio.", file: "backend/be-03-caching.md" },
+  { slug: "be-04-async-jobs", courseId: "BACKEND", title: "Async Processing & Background Jobs", shortTitle: "Async & Jobs", chapter: "be-ch2", order: 4, available: true,
+    description: "Queue worker, at-least-once → idempotent consumer, outbox pattern, saga, DLQ, backpressure.", file: "backend/be-04-async-jobs.md" },
+  { slug: "be-07-resilience-code", courseId: "BACKEND", title: "Resilience trong code: Timeout, Retry, Circuit Breaker", shortTitle: "Resilience", chapter: "be-ch2", order: 5, available: true,
+    description: "Timeout budget, retry đúng cách, retry storm, circuit breaker, bulkhead, load shedding.", file: "backend/be-07-resilience-code.md" },
+  { slug: "be-05-testing", courseId: "BACKEND", title: "Testing Strategy cho Backend", shortTitle: "Testing", chapter: "be-ch3", order: 6, available: true,
+    description: "Test pyramid, mock ở ranh giới, integration với testcontainers/LocalStack, contract testing, flaky tests.", file: "backend/be-05-testing.md" },
+  { slug: "be-06-twelve-factor", courseId: "BACKEND", title: "12-Factor App & Configuration hiện đại", shortTitle: "12-Factor", chapter: "be-ch3", order: 7, available: true,
+    description: "Config qua env, secrets manager, graceful shutdown, liveness vs readiness, feature flags.", file: "backend/be-06-twelve-factor.md" },
+  { slug: "be-08-performance", courseId: "BACKEND", title: "Performance & Profiling", shortTitle: "Performance", chapter: "be-ch3", order: 8, available: true,
+    description: "p50/p95/p99, profiling, N+1, connection pool sizing, benchmark đúng cách, tail latency.", file: "backend/be-08-performance.md" },
+];
+
+const beChapters: Chapter[] = [
+  { id: "be-ch1", courseId: "BACKEND", title: "API & Dữ liệu", lessonSlugs: ["be-01-api-design", "be-02-database-engineering", "be-03-caching"], category: "database" },
+  { id: "be-ch2", courseId: "BACKEND", title: "Bất đồng bộ & Resilience", lessonSlugs: ["be-04-async-jobs", "be-07-resilience-code"], category: "network" },
+  { id: "be-ch3", courseId: "BACKEND", title: "Chất lượng & Vận hành code", lessonSlugs: ["be-05-testing", "be-06-twelve-factor", "be-08-performance"], category: "foundation" },
 ];
 
 
@@ -279,8 +314,8 @@ const sapChapters: Chapter[] = [
 // =====================================================================
 // Aggregate
 // =====================================================================
-export const lessons: Lesson[] = [...foundLessons, ...engLessons, ...clfLessons, ...saaLessons, ...dvaLessons];
-export const chapters: Chapter[] = [...foundChapters, ...engChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters];
+export const lessons: Lesson[] = [...foundLessons, ...engLessons, ...beLessons, ...clfLessons, ...saaLessons, ...dvaLessons];
+export const chapters: Chapter[] = [...foundChapters, ...engChapters, ...beChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters];
 
 export function lessonsOfCourse(courseId: CourseId): Lesson[] {
   return lessons.filter((l) => l.courseId === courseId).sort((a, b) => a.order - b.order);
