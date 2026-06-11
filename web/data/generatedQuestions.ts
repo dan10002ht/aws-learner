@@ -11950,7 +11950,7 @@ export const generatedQuestions: Question[] = [
     "certifications": [
       "DVA-C02"
     ],
-    "difficulty": "medium",
+    "difficulty": "hard",
     "type": "single",
     "question": "Boto3 client được cấu hình Config(retries={'max_attempts': 4, 'mode': 'standard'}). Với một request liên tục bị ThrottlingException, SDK sẽ thực hiện tổng cộng bao nhiêu lần gọi tới service trước khi ném lỗi ra ngoài?",
     "options": [
@@ -11960,9 +11960,9 @@ export const generatedQuestions: Question[] = [
       "8 lần gọi do exponential nhân đôi số lần thử"
     ],
     "correctIndices": [
-      0
+      1
     ],
-    "explanation": "Trong Boto3, max_attempts là TỔNG số lần thử bao gồm cả lần gọi đầu tiên.\n✓ max_attempts=4 nghĩa là 1 lần gọi đầu cộng 3 lần retry, tổng 4 lần.\n✗ 5 lần là hiểu nhầm max_attempts là số retry thêm ngoài lần đầu.\n✗ standard mode không cố định 3; số lần do max_attempts quyết định.\n✗ Exponential backoff chỉ ảnh hưởng thời gian chờ, không nhân đôi số lần thử.",
+    "explanation": "Trong boto3 Config, key retries[max_attempts] là số lần RETRY (chưa gồm lần gọi đầu) — tổng số lần gọi = max_attempts + 1. Chỉ retries[total_max_attempts] và biến môi trường AWS_MAX_ATTEMPTS mới tính cả lần gọi đầu.\n✓ 5 lần gọi (1 lần đầu + 4 retry) — đúng, vì max_attempts=4 trong dict retries nghĩa là 4 lần retry thêm.\n✗ 4 lần gọi — nhầm max_attempts với total_max_attempts/AWS_MAX_ATTEMPTS (các cấu hình đó mới gồm lần đầu).\n✗ standard mode không cố định 3; số lần do cấu hình quyết định.\n✗ Exponential backoff chỉ ảnh hưởng thời gian chờ giữa các lần thử, không nhân đôi số lần.",
     "domain": 1,
     "mock": 3
   },

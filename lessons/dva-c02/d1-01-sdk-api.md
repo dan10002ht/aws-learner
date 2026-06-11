@@ -139,7 +139,7 @@ from botocore.config import Config
 cfg = Config(retries={"max_attempts": 10, "mode": "standard"})
 ```
 
-> 💡 Mẹo thi: `max_attempts` là **tổng số lần thử** (gồm cả lần đầu), không phải số lần "retry thêm". `max_attempts=3` = 1 lần gọi + 2 lần retry.
+> ⚠️ Bẫy: trong dict `Config(retries={"max_attempts": N})`, `max_attempts` là số lần **retry thêm** (CHƯA gồm lần gọi đầu) → tổng = N + 1 lần gọi. Ngược lại, `total_max_attempts` và biến môi trường `AWS_MAX_ATTEMPTS` (hay `max_attempts` trong `~/.aws/config` của CLI) **tính cả lần gọi đầu**. Đề rất thích xoáy điểm khác biệt này.
 
 ### Exponential backoff + jitter
 
@@ -235,7 +235,7 @@ ddb.put_item(
 | Region | Lambda set `AWS_REGION`; thiếu region → `NoRegionError` |
 | Pagination | DynamoDB dùng `LastEvaluatedKey`/`ExclusiveStartKey`, không phải `NextToken`; page rỗng vẫn có thể còn data |
 | Throttling | Luôn chọn **exponential backoff + jitter**, không tăng capacity ngay |
-| `max_attempts` | Là tổng số lần thử, gồm lần đầu |
+| `retries["max_attempts"]` (boto3 Config) | Số lần retry thêm — tổng lần gọi = N + 1; chỉ `total_max_attempts`/`AWS_MAX_ATTEMPTS` mới gồm lần đầu |
 | Idempotency | `ClientToken` (EC2), dedup ID (SQS FIFO), conditional write (DynamoDB) |
 | Lỗi | `SignatureDoesNotMatch` = clock skew/region; khác với `AccessDenied` = IAM |
 
