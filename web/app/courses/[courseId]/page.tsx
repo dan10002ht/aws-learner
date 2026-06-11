@@ -5,6 +5,7 @@ import { courses, getCourse } from "@/data/courses";
 import { chaptersOfCourse, lessonsOfCourse } from "@/data/lessons";
 import { questionsInCourse } from "@/lib/questions";
 import type { CourseId } from "@/lib/types";
+import ChapterAccordion from "@/components/ChapterAccordion";
 
 export function generateStaticParams() {
   return courses.map((c) => ({ courseId: c.id }));
@@ -101,41 +102,16 @@ export default function CourseDashboardPage({ params }: { params: { courseId: st
       {!isComingSoon && (
         <section>
           <h2 className="text-xl font-bold mb-3">Lộ trình các chương</h2>
-          <div className="space-y-2">
-            {chapters.map((c, idx) => {
-              const lc = lessons.filter((l) => l.chapter === c.id);
-              const firstLesson = lc[0];
-              const inner = (
-                <>
-                  <div className="flex items-center gap-4 min-w-0">
-                    <span className="font-mono text-sm text-[var(--text-mute)] w-8">{String(idx + 1).padStart(2, "0")}</span>
-                    <div className="min-w-0">
-                      <div className="font-semibold truncate">{c.title}</div>
-                      <div className="text-xs text-[var(--text-dim)] mt-0.5">{lc.length} bài</div>
-                    </div>
-                  </div>
-                  {firstLesson && (
-                    <span className="text-sm text-brand-500 flex items-center gap-1 flex-shrink-0">
-                      Mở <ArrowRight size={14} />
-                    </span>
-                  )}
-                </>
-              );
-              return firstLesson ? (
-                <Link
-                  key={c.id}
-                  href={`/courses/${course.id}/learn/${firstLesson.slug}`}
-                  className="card card-hover p-4 flex items-center justify-between gap-3"
-                >
-                  {inner}
-                </Link>
-              ) : (
-                <div key={c.id} className="card p-4 flex items-center justify-between gap-3 opacity-70">
-                  {inner}
-                </div>
-              );
-            })}
-          </div>
+          <ChapterAccordion
+            courseId={course.id}
+            chapters={chapters.map((c) => ({
+              id: c.id,
+              title: c.title,
+              lessons: lessons
+                .filter((l) => l.chapter === c.id)
+                .map((l) => ({ slug: l.slug, order: l.order, shortTitle: l.shortTitle })),
+            }))}
+          />
         </section>
       )}
 
