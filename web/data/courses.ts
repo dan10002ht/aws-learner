@@ -115,6 +115,21 @@ export const courses: Course[] = [
     category: "systems",
   },
   {
+    id: "CS",
+    code: "CS",
+    title: "Khoa học máy tính nền tảng",
+    shortTitle: "CS Fundamentals",
+    level: "Nền tảng",
+    description:
+      "Phần CS thực dụng mọi kỹ sư nên có để không hổng kiến thức: biểu diễn dữ liệu (binary/float/UTF-8), kiến trúc máy tính & cache, cách code chạy (stack/heap/GC), hệ điều hành, concurrency, toán cho kỹ sư.",
+    hint: "Hiểu bản chất bên dưới — giúp debug, tối ưu và thiết kế tốt hơn.",
+    durationHours: 24,
+    passingScore: 0, examMinutes: 0, examQuestions: 0,
+    prerequisites: ["PROGRAMMING"],
+    accentColor: "#7c3aed",
+    order: 4, status: "available", kind: "knowledge", category: "software",
+  },
+  {
     id: "BACKEND",
     code: "BACKEND",
     title: "Backend Engineering",

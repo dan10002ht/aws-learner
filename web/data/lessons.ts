@@ -144,6 +144,25 @@ const sysdLessons: Lesson[] = [
 ];
 
 
+const csLessons: Lesson[] = [
+  { slug: "cs-01-data-representation", courseId: "CS", title: "Biểu diễn dữ liệu: binary, số & ký tự", shortTitle: "Data Representation", chapter: "cs-ch1", order: 1, available: true,
+    description: "Hệ nhị phân & hex, byte/bit, two's complement (số âm), số thực (float, vì sao 0.1+0.2 != 0.3), overflow, ASCII & Unicode/UTF-8.", file: "cs/cs-01-data-representation.md" },
+  { slug: "cs-02-architecture-memory", courseId: "CS", title: "Kiến trúc máy tính & Memory Hierarchy", shortTitle: "Architecture & Cache", chapter: "cs-ch1", order: 2, available: true,
+    description: "CPU instruction cycle, register, RAM, cache L1/L2/L3 & locality, vì sao cache quyết định hiệu năng, bus, I/O, latency numbers.", file: "cs/cs-02-architecture-memory.md" },
+  { slug: "cs-03-how-code-runs", courseId: "CS", title: "Cách code chạy: compile, stack/heap & GC", shortTitle: "How Code Runs", chapter: "cs-ch1", order: 3, available: true,
+    description: "Compiled vs interpreted vs bytecode/JIT, stack vs heap, pointer vs reference, value vs reference, garbage collection, stack overflow & memory leak.", file: "cs/cs-03-how-code-runs.md" },
+  { slug: "cs-04-operating-systems", courseId: "CS", title: "Hệ điều hành: process, thread & bộ nhớ", shortTitle: "Operating Systems", chapter: "cs-ch2", order: 4, available: true,
+    description: "Kernel & syscall, process vs thread, scheduling & context switch, virtual memory & paging, file system, vì sao OS quan trọng với cloud.", file: "cs/cs-04-operating-systems.md" },
+  { slug: "cs-05-concurrency", courseId: "CS", title: "Concurrency & Parallelism", shortTitle: "Concurrency", chapter: "cs-ch2", order: 5, available: true,
+    description: "Concurrency vs parallelism, race condition, mutex/lock, deadlock, atomic, async vs thread vs process, memory model, các bug khó nhất ở production.", file: "cs/cs-05-concurrency.md" },
+  { slug: "cs-06-math-for-engineers", courseId: "CS", title: "Toán cho kỹ sư (thực dụng)", shortTitle: "Math for Engineers", chapter: "cs-ch2", order: 6, available: true,
+    description: "Logic & boolean, set, modulo & hashing, graph cơ bản, tổ hợp đếm, xác suất ứng dụng (collision, load balancing, p99), log & growth.", file: "cs/cs-06-math-for-engineers.md" },
+];
+const csChapters: Chapter[] = [
+  { id: "cs-ch1", courseId: "CS", title: "Máy tính & bộ nhớ", lessonSlugs: ["cs-01-data-representation","cs-02-architecture-memory","cs-03-how-code-runs"], category: "compute" },
+  { id: "cs-ch2", courseId: "CS", title: "Hệ điều hành, concurrency & toán", lessonSlugs: ["cs-04-operating-systems","cs-05-concurrency","cs-06-math-for-engineers"], category: "foundation" },
+];
+
 // ===== DSA / SECURITY / DEVOPS / SRE / AIML knowledge tracks =====
 const dsaLessons: Lesson[] = [
   { slug: "dsa-01-complexity", courseId: "DSA", title: "Độ phức tạp Big-O", shortTitle: "Big-O", chapter: "dsa-ch1", order: 1, available: true,
@@ -554,8 +573,8 @@ const sapChapters: Chapter[] = [
 // =====================================================================
 // Aggregate
 // =====================================================================
-export const lessons: Lesson[] = [...techLessons, ...progLessons, ...webLessons, ...sqlLessons, ...gitLessons, ...sysdLessons, ...foundLessons, ...engLessons, ...beLessons, ...dsaLessons, ...secLessons, ...devopsLessons, ...sreLessons, ...aimlLessons, ...clfLessons, ...saaLessons, ...dvaLessons];
-export const chapters: Chapter[] = [...techChapters, ...progChapters, ...webChapters, ...sqlChapters, ...gitChapters, ...sysdChapters, ...foundChapters, ...engChapters, ...beChapters, ...dsaChapters, ...secChapters, ...devopsChapters, ...sreChapters, ...aimlChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters];
+export const lessons: Lesson[] = [...techLessons, ...progLessons, ...webLessons, ...sqlLessons, ...gitLessons, ...sysdLessons, ...foundLessons, ...engLessons, ...beLessons, ...csLessons, ...dsaLessons, ...secLessons, ...devopsLessons, ...sreLessons, ...aimlLessons, ...clfLessons, ...saaLessons, ...dvaLessons];
+export const chapters: Chapter[] = [...techChapters, ...progChapters, ...webChapters, ...sqlChapters, ...gitChapters, ...sysdChapters, ...foundChapters, ...engChapters, ...beChapters, ...csChapters, ...dsaChapters, ...secChapters, ...devopsChapters, ...sreChapters, ...aimlChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters];
 
 export function lessonsOfCourse(courseId: CourseId): Lesson[] {
   return lessons.filter((l) => l.courseId === courseId).sort((a, b) => a.order - b.order);
