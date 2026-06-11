@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "highlight.js/styles/github.css" layer(base);
 
 /* ----- Theme tokens ----- */
 :root {
@@ -190,6 +189,78 @@ html { scroll-behavior: smooth; }
   overflow-x: auto; margin: 1em 0;
 }
 .prose-article pre code { background: transparent; padding: 0; font-size: 0.875em; }
+
+/* Syntax highlighting (highlight.js token classes) — theme-aware, atom-one palette.
+   Scoped to .prose-article so it covers both normal code blocks and code-tabs. */
+.prose-article .hljs { color: var(--text); background: transparent; }
+.prose-article .hljs-comment,
+.prose-article .hljs-quote { color: #a0a1a7; font-style: italic; }
+.prose-article .hljs-keyword,
+.prose-article .hljs-selector-tag,
+.prose-article .hljs-literal,
+.prose-article .hljs-section,
+.prose-article .hljs-link { color: #a626a4; }
+.prose-article .hljs-string,
+.prose-article .hljs-meta .hljs-string,
+.prose-article .hljs-regexp,
+.prose-article .hljs-addition { color: #50a14f; }
+.prose-article .hljs-number,
+.prose-article .hljs-type,
+.prose-article .hljs-params,
+.prose-article .hljs-template-variable { color: #986801; }
+.prose-article .hljs-title,
+.prose-article .hljs-title.function_,
+.prose-article .hljs-built_in.function_ { color: #4078f2; }
+.prose-article .hljs-built_in,
+.prose-article .hljs-class .hljs-title,
+.prose-article .hljs-title.class_ { color: #c18401; }
+.prose-article .hljs-attr,
+.prose-article .hljs-attribute,
+.prose-article .hljs-variable,
+.prose-article .hljs-name,
+.prose-article .hljs-selector-id,
+.prose-article .hljs-selector-class,
+.prose-article .hljs-tag,
+.prose-article .hljs-deletion { color: #e45649; }
+.prose-article .hljs-symbol,
+.prose-article .hljs-bullet,
+.prose-article .hljs-meta { color: #0184bc; }
+.prose-article .hljs-emphasis { font-style: italic; }
+.prose-article .hljs-strong { font-weight: 700; }
+
+/* Dark mode — atom-one-dark palette */
+.dark .prose-article .hljs-comment,
+.dark .prose-article .hljs-quote { color: #7f848e; }
+.dark .prose-article .hljs-keyword,
+.dark .prose-article .hljs-selector-tag,
+.dark .prose-article .hljs-literal,
+.dark .prose-article .hljs-section,
+.dark .prose-article .hljs-link { color: #c678dd; }
+.dark .prose-article .hljs-string,
+.dark .prose-article .hljs-meta .hljs-string,
+.dark .prose-article .hljs-regexp,
+.dark .prose-article .hljs-addition { color: #98c379; }
+.dark .prose-article .hljs-number,
+.dark .prose-article .hljs-type,
+.dark .prose-article .hljs-params,
+.dark .prose-article .hljs-template-variable { color: #d19a66; }
+.dark .prose-article .hljs-title,
+.dark .prose-article .hljs-title.function_,
+.dark .prose-article .hljs-built_in.function_ { color: #61afef; }
+.dark .prose-article .hljs-built_in,
+.dark .prose-article .hljs-class .hljs-title,
+.dark .prose-article .hljs-title.class_ { color: #e5c07b; }
+.dark .prose-article .hljs-attr,
+.dark .prose-article .hljs-attribute,
+.dark .prose-article .hljs-variable,
+.dark .prose-article .hljs-name,
+.dark .prose-article .hljs-selector-id,
+.dark .prose-article .hljs-selector-class,
+.dark .prose-article .hljs-tag,
+.dark .prose-article .hljs-deletion { color: #e06c75; }
+.dark .prose-article .hljs-symbol,
+.dark .prose-article .hljs-bullet,
+.dark .prose-article .hljs-meta { color: #56b6c2; }
 .prose-article a { color: #ea580c; text-decoration: underline; text-underline-offset: 2px; }
 .prose-article blockquote {
   border-left: 3px solid #f97316;

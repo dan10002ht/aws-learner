@@ -75,7 +75,7 @@ export default function CodeTabs(props: { "data-langs"?: string; children?: Reac
   return (
     <div className="code-tabs not-prose my-4 rounded-xl border border-[var(--border)] overflow-hidden bg-[var(--surface-2)]">
       <div className="flex items-center justify-between gap-2 px-2 pt-1.5 border-b border-[var(--border)]">
-        <div className="flex items-center gap-1 overflow-x-auto">
+        <div className="flex items-center gap-1 flex-wrap">
           {langs.map((l, i) => (
             <button
               key={l}
