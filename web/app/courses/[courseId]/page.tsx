@@ -77,20 +77,24 @@ export default function CourseDashboardPage({ params }: { params: { courseId: st
             description={`${lessons.length} bài học theo lộ trình từ dễ tới khó.`}
             accent={course.accentColor}
           />
-          <ActionCard
-            href={`/courses/${course.id}/practice`}
-            icon={<ListChecks size={20} />}
-            title="Luyện đề"
-            description="Trả lời từng câu, xem giải thích ngay."
-            accent={course.accentColor}
-          />
-          <ActionCard
-            href={`/courses/${course.id}/exam`}
-            icon={<GraduationCap size={20} />}
-            title="Mô phỏng thi"
-            description={`${course.examQuestions} câu, ${course.examMinutes} phút, có timer.`}
-            accent={course.accentColor}
-          />
+          {course.kind !== "knowledge" && (
+            <>
+              <ActionCard
+                href={`/courses/${course.id}/practice`}
+                icon={<ListChecks size={20} />}
+                title="Luyện đề"
+                description="Trả lời từng câu, xem giải thích ngay."
+                accent={course.accentColor}
+              />
+              <ActionCard
+                href={`/courses/${course.id}/exam`}
+                icon={<GraduationCap size={20} />}
+                title="Mô phỏng thi"
+                description={`${course.examQuestions} câu, ${course.examMinutes} phút, có timer.`}
+                accent={course.accentColor}
+              />
+            </>
+          )}
         </div>
       )}
 
@@ -135,7 +139,7 @@ export default function CourseDashboardPage({ params }: { params: { courseId: st
         </section>
       )}
 
-      {!isComingSoon && (
+      {!isComingSoon && course.kind !== "knowledge" && (
         <section className="card p-5 flex items-center justify-between gap-3 flex-wrap">
           <div className="flex items-center gap-3">
             <RotateCcw size={20} className="text-brand-500" />

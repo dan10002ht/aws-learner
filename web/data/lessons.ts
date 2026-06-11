@@ -1,6 +1,54 @@
 import type { Lesson, Chapter, CourseId } from "@/lib/types";
 
 // =====================================================================
+// FOUNDATIONS — Nền tảng Cloud & Hệ phân tán (knowledge track, không thi)
+// =====================================================================
+const foundLessons: Lesson[] = [
+  // Chương 1 — Nhập môn Cloud
+  { slug: "intro-01-virtualization", courseId: "FOUNDATIONS", title: "Từ máy chủ vật lý đến ảo hoá & container", shortTitle: "Ảo hoá & Container", chapter: "found-ch1", order: 1, available: true,
+    description: "Datacenter, hypervisor, VM vs container, Docker, orchestration, serverless — và map sang EC2/ECS/Lambda.", file: "foundations/intro-01-virtualization.md" },
+  { slug: "intro-02-networking", courseId: "FOUNDATIONS", title: "Mạng cơ bản cho Cloud", shortTitle: "Networking 101", chapter: "found-ch1", order: 2, available: true,
+    description: "IP/CIDR, DNS, HTTP/TLS, firewall stateful vs stateless, load balancer L4/L7, CDN.", file: "foundations/intro-02-networking.md" },
+  { slug: "intro-03-cloud-101", courseId: "FOUNDATIONS", title: "Cloud Computing 101", shortTitle: "Cloud 101", chapter: "found-ch1", order: 3, available: true,
+    description: "IaaS/PaaS/SaaS, region & AZ, elasticity, pay-as-you-go, shared responsibility, multi-tenancy.", file: "foundations/intro-03-cloud-101.md" },
+  { slug: "intro-04-storage-db", courseId: "FOUNDATIONS", title: "Lưu trữ & Cơ sở dữ liệu 101", shortTitle: "Storage & DB 101", chapter: "found-ch1", order: 4, available: true,
+    description: "Block vs file vs object, durability, SQL vs NoSQL, index, cache, backup vs snapshot.", file: "foundations/intro-04-storage-db.md" },
+  // Chương 2 — Thiết kế hệ thống
+  { slug: "design-01-scaling", courseId: "FOUNDATIONS", title: "Scaling & Stateless Design", shortTitle: "Scaling", chapter: "found-ch2", order: 5, available: true,
+    description: "Vertical vs horizontal, stateless tier, caching layers, read replicas, auto scaling.", file: "foundations/design-01-scaling.md" },
+  { slug: "design-02-ha", courseId: "FOUNDATIONS", title: "High Availability & Redundancy", shortTitle: "HA & Redundancy", chapter: "found-ch2", order: 6, available: true,
+    description: "SPOF, active-passive vs active-active, health check, nines, RTO/RPO nhập môn.", file: "foundations/design-02-ha.md" },
+  { slug: "design-03-messaging", courseId: "FOUNDATIONS", title: "Async & Messaging Patterns", shortTitle: "Messaging", chapter: "found-ch2", order: 7, available: true,
+    description: "Queue vs pub/sub, event-driven, backpressure, idempotency, ordering.", file: "foundations/design-03-messaging.md" },
+  { slug: "design-04-observability", courseId: "FOUNDATIONS", title: "Observability cơ bản", shortTitle: "Observability", chapter: "found-ch2", order: 8, available: true,
+    description: "Logs/metrics/traces, percentile, alerting, SLI/SLO/SLA.", file: "foundations/design-04-observability.md" },
+  // Chương 3 — Hệ phân tán (advanced)
+  { slug: "foundations-01-cap-theorem", courseId: "FOUNDATIONS", title: "Định lý CAP & PACELC", shortTitle: "CAP Theorem", chapter: "found-ch3", order: 9, available: true,
+    description: "CAP, PACELC, map DynamoDB/Aurora/RDS vào CP/AP.", file: "foundations/01-cap-theorem.md" },
+  { slug: "foundations-02-consistency-models", courseId: "FOUNDATIONS", title: "Consistency Models", shortTitle: "Consistency", chapter: "found-ch3", order: 10, available: true,
+    description: "Strong / eventual / causal / read-your-writes — và mỗi AWS service rơi vào mức nào.", file: "foundations/02-consistency-models.md" },
+  { slug: "foundations-03-replication-and-quorum", courseId: "FOUNDATIONS", title: "Replication & Quorum", shortTitle: "Replication", chapter: "found-ch3", order: 11, available: true,
+    description: "Single-leader, multi-leader, quorum (W+R>N). Vì sao Aurora dùng 4/6, Raft/Paxos cơ bản.", file: "foundations/03-replication-and-quorum.md" },
+  { slug: "foundations-04-latency-vs-consistency", courseId: "FOUNDATIONS", title: "Latency vs Consistency", shortTitle: "Multi-Region", chapter: "found-ch3", order: 12, available: true,
+    description: "Vì sao Multi-Region khó: RTT vật lý, spectrum patterns, bẫy active-active.", file: "foundations/04-latency-vs-consistency.md" },
+  { slug: "foundations-05-partitioning-and-sharding", courseId: "FOUNDATIONS", title: "Partitioning & Sharding", shortTitle: "Partitioning", chapter: "found-ch3", order: 13, available: true,
+    description: "Range/hash/consistent hashing, DynamoDB partition key, hot partition, RDS sharding.", file: "foundations/05-partitioning-and-sharding.md" },
+  { slug: "foundations-06-failure-modes", courseId: "FOUNDATIONS", title: "Failure Modes & Cascading", shortTitle: "Failure Modes", chapter: "found-ch3", order: 14, available: true,
+    description: "Retry storm, thundering herd, circuit breaker, bulkhead, idempotency, chaos.", file: "foundations/06-failure-modes.md" },
+  // Phụ lục
+  { slug: "appendix-aws-vs-gcp", courseId: "FOUNDATIONS", title: "AWS ↔ GCP — Bảng đối chiếu", shortTitle: "AWS vs GCP", chapter: "found-ch4", order: 15, available: true,
+    description: "Map service AWS sang GCP cho người đã quen GCP — kèm các điểm khác căn bản.", file: "foundations/aws-vs-gcp.md" },
+];
+
+const foundChapters: Chapter[] = [
+  { id: "found-ch1", courseId: "FOUNDATIONS", title: "Chương 1 — Nhập môn Cloud", lessonSlugs: ["intro-01-virtualization", "intro-02-networking", "intro-03-cloud-101", "intro-04-storage-db"], category: "foundation" },
+  { id: "found-ch2", courseId: "FOUNDATIONS", title: "Chương 2 — Thiết kế hệ thống", lessonSlugs: ["design-01-scaling", "design-02-ha", "design-03-messaging", "design-04-observability"], category: "compute" },
+  { id: "found-ch3", courseId: "FOUNDATIONS", title: "Chương 3 — Hệ phân tán (nâng cao)", lessonSlugs: ["foundations-01-cap-theorem", "foundations-02-consistency-models", "foundations-03-replication-and-quorum", "foundations-04-latency-vs-consistency", "foundations-05-partitioning-and-sharding", "foundations-06-failure-modes"], category: "database" },
+  { id: "found-ch4", courseId: "FOUNDATIONS", title: "Phụ lục", lessonSlugs: ["appendix-aws-vs-gcp"], category: "foundation" },
+];
+
+
+// =====================================================================
 // CLF-C02 — Full content available
 // =====================================================================
 const clfLessons: Lesson[] = [
@@ -74,24 +122,6 @@ const clfChapters: Chapter[] = [
 // SAA-C03 — Placeholder outline (Coming soon)
 // =====================================================================
 const saaLessons: Lesson[] = [
-  { slug: "foundations-01-cap-theorem", courseId: "SAA-C03", title: "Định lý CAP & PACELC", shortTitle: "CAP Theorem", chapter: "saa-ch1", order: 17, available: true,
-    description: "Distributed systems foundations: CAP, PACELC, map DynamoDB/Aurora/RDS vào CP/AP.",
-    file: "foundations/01-cap-theorem.md" },
-  { slug: "foundations-02-consistency-models", courseId: "SAA-C03", title: "Consistency Models", shortTitle: "Consistency", chapter: "saa-ch1", order: 18, available: true,
-    description: "Strong / eventual / causal / read-your-writes — và mỗi AWS service rơi vào mức nào.",
-    file: "foundations/02-consistency-models.md" },
-  { slug: "foundations-03-replication-and-quorum", courseId: "SAA-C03", title: "Replication & Quorum", shortTitle: "Replication", chapter: "saa-ch1", order: 19, available: true,
-    description: "Single-leader, multi-leader, quorum (W+R>N). Vì sao Aurora dùng 4/6, Raft/Paxos cơ bản.",
-    file: "foundations/03-replication-and-quorum.md" },
-  { slug: "foundations-04-latency-vs-consistency", courseId: "SAA-C03", title: "Latency vs Consistency", shortTitle: "Multi-Region", chapter: "saa-ch1", order: 20, available: true,
-    description: "Vì sao Multi-Region khó: RTT vật lý, spectrum patterns, bẫy active-active.",
-    file: "foundations/04-latency-vs-consistency.md" },
-  { slug: "foundations-05-partitioning-and-sharding", courseId: "SAA-C03", title: "Partitioning & Sharding", shortTitle: "Partitioning", chapter: "saa-ch1", order: 21, available: true,
-    description: "Range/hash/consistent hashing, DynamoDB partition key, hot partition, RDS sharding.",
-    file: "foundations/05-partitioning-and-sharding.md" },
-  { slug: "foundations-06-failure-modes", courseId: "SAA-C03", title: "Failure Modes & Cascading", shortTitle: "Failure Modes", chapter: "saa-ch1", order: 22, available: true,
-    description: "Retry storm, thundering herd, circuit breaker, bulkhead, idempotency, chaos.",
-    file: "foundations/06-failure-modes.md" },
   // Domain 2 — Design Resilient Architectures (26%)
   { slug: "resilient-01-decoupling", courseId: "SAA-C03", title: "Decoupling & Loosely Coupled", shortTitle: "Decoupling", chapter: "saa-ch-res", order: 5, available: true,
     description: "SQS, SNS, EventBridge, queue-based load leveling, stateless — thiết kế tách rời, chống lỗi lan.",
@@ -153,7 +183,6 @@ const saaChapters: Chapter[] = [
   { id: "saa-ch-res", courseId: "SAA-C03", title: "Domain 2 — Design Resilient Architectures (26%)", lessonSlugs: ["resilient-01-decoupling", "resilient-02-ha-fault-tolerance", "resilient-03-dr-strategies", "resilient-04-scalability"], category: "network" },
   { id: "saa-ch2", courseId: "SAA-C03", title: "Domain 3 — Design High-Performing Architectures (24%)", lessonSlugs: ["ch2-01-compute-performance", "ch2-02-storage-performance", "ch2-03-database-performance", "ch2-04-network-performance"], category: "compute" },
   { id: "saa-ch4", courseId: "SAA-C03", title: "Domain 4 — Design Cost-Optimized Architectures (20%)", lessonSlugs: ["ch4-01-compute-cost", "ch4-02-storage-cost", "ch4-03-db-network-cost", "ch4-04-cost-visibility"], category: "billing" },
-  { id: "saa-ch1", courseId: "SAA-C03", title: "Phụ lục — Nền tảng hệ phân tán", lessonSlugs: ["foundations-01-cap-theorem", "foundations-02-consistency-models", "foundations-03-replication-and-quorum", "foundations-04-latency-vs-consistency", "foundations-05-partitioning-and-sharding", "foundations-06-failure-modes"], category: "foundation" },
 ];
 
 // DVA-C02 — Developer Associate. Chapters ordered by blueprint weight:
@@ -221,8 +250,8 @@ const sapChapters: Chapter[] = [
 // =====================================================================
 // Aggregate
 // =====================================================================
-export const lessons: Lesson[] = [...clfLessons, ...saaLessons, ...dvaLessons];
-export const chapters: Chapter[] = [...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters];
+export const lessons: Lesson[] = [...foundLessons, ...clfLessons, ...saaLessons, ...dvaLessons];
+export const chapters: Chapter[] = [...foundChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters];
 
 export function lessonsOfCourse(courseId: CourseId): Lesson[] {
   return lessons.filter((l) => l.courseId === courseId).sort((a, b) => a.order - b.order);

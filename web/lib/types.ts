@@ -1,5 +1,5 @@
-export type CourseId = "CLF-C02" | "SAA-C03" | "DVA-C02" | "SOA-C02" | "SAP-C02";
-export type CourseLevel = "Foundational" | "Associate" | "Professional";
+export type CourseId = "FOUNDATIONS" | "CLF-C02" | "SAA-C03" | "DVA-C02" | "SOA-C02" | "SAP-C02";
+export type CourseLevel = "Nền tảng" | "Foundational" | "Associate" | "Professional";
 
 // Backwards-compat alias for code that referenced Certification
 export type Certification = CourseId;
@@ -22,6 +22,8 @@ export interface Course {
   accentColor: string;   // hex
   order: number;
   status: "available" | "coming-soon";
+  /** "knowledge" = theory track with lessons only (no exam/practice). Default: certification. */
+  kind?: "certification" | "knowledge";
 }
 
 export interface Question {

@@ -7,7 +7,7 @@ import { questions } from "@/data/questions";
 import type { CourseId } from "@/lib/types";
 
 export function generateStaticParams() {
-  return courses.filter((c) => c.status === "available").map((c) => ({ courseId: c.id }));
+  return courses.filter((c) => c.status === "available" && c.kind !== "knowledge").map((c) => ({ courseId: c.id }));
 }
 
 export default function ExamListPage({ params }: { params: { courseId: string } }) {

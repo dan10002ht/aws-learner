@@ -2,6 +2,24 @@ import type { Course, CourseId } from "@/lib/types";
 
 export const courses: Course[] = [
   {
+    id: "FOUNDATIONS",
+    code: "FOUNDATIONS",
+    title: "Nền tảng Cloud & Hệ phân tán",
+    shortTitle: "Cloud Foundations",
+    level: "Nền tảng",
+    description:
+      "Khoá lý thuyết nhập môn → nâng cao: ảo hoá & container, mạng, cloud 101, thiết kế hệ thống (scaling, HA, messaging, observability) và hệ phân tán (CAP, consistency, quorum). Nên học trước khi vào các chứng chỉ.",
+    hint: "Bắt đầu từ đây nếu bạn muốn hiểu bản chất trước khi luyện chứng chỉ.",
+    durationHours: 25,
+    passingScore: 0,
+    examMinutes: 0,
+    examQuestions: 0,
+    accentColor: "#64748b",
+    order: 0,
+    status: "available",
+    kind: "knowledge",
+  },
+  {
     id: "CLF-C02",
     code: "CLF-C02",
     title: "AWS Certified Cloud Practitioner",

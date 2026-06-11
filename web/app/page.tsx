@@ -21,7 +21,7 @@ export default function HomePage() {
       <section>
         <div className="flex items-baseline justify-between mb-5">
           <h2 className="text-xl font-bold">Các khoá học</h2>
-          <span className="text-sm text-[var(--text-dim)]">{courses.length} chứng chỉ</span>
+          <span className="text-sm text-[var(--text-dim)]">{courses.length} khoá học</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {courses.map((c) => {
@@ -60,15 +60,21 @@ export default function HomePage() {
                 <div className="flex items-center gap-4 text-xs text-[var(--text-dim)] mt-auto">
                   <span>{c.durationHours}h học</span>
                   <span>·</span>
-                  <span>{c.examQuestions} câu thi</span>
-                  <span>·</span>
-                  <span>Pass {c.passingScore}%</span>
+                  {c.kind === "knowledge" ? (
+                    <span>Khoá lý thuyết · không thi</span>
+                  ) : (
+                    <>
+                      <span>{c.examQuestions} câu thi</span>
+                      <span>·</span>
+                      <span>Pass {c.passingScore}%</span>
+                    </>
+                  )}
                 </div>
 
                 {!isLocked && (
                   <div className="flex items-center justify-between pt-3 border-t border-[var(--border)]">
                     <span className="text-xs text-[var(--text-dim)]">
-                      {lessonsCount} bài · {questionsCount} câu hỏi
+                      {c.kind === "knowledge" ? `${lessonsCount} bài lý thuyết` : `${lessonsCount} bài · ${questionsCount} câu hỏi`}
                     </span>
                     <span className="text-sm font-semibold text-brand-500 flex items-center gap-1 group-hover:gap-2 transition-all">
                       Vào khoá <ArrowRight size={14} />
