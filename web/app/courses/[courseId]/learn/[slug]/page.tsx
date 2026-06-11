@@ -6,7 +6,9 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import rehypeRaw from "rehype-raw";
 import rehypeCodeTabs from "@/lib/rehypeCodeTabs";
+import rehypeCallouts from "@/lib/rehypeCallouts";
 import CodeTabs from "@/components/CodeTabs";
+import Callout from "@/components/Callout";
 import { ChevronLeft, ChevronRight, ListChecks } from "lucide-react";
 import { courses, getCourse } from "@/data/courses";
 import { getLessonBySlug, lessonsOfCourse, chaptersOfCourse } from "@/data/lessons";
@@ -103,8 +105,8 @@ export default function LessonPage({ params }: { params: { courseId: string; slu
           <div className="prose-article">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
-              rehypePlugins={[rehypeRaw, rehypeSlug, rehypeHighlight, rehypeCodeTabs]}
-              components={{ "code-tabs": CodeTabs } as never}
+              rehypePlugins={[rehypeRaw, rehypeSlug, rehypeHighlight, rehypeCodeTabs, rehypeCallouts]}
+              components={{ "code-tabs": CodeTabs, blockquote: Callout } as never}
             >
               {md}
             </ReactMarkdown>
