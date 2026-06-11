@@ -1,5 +1,5 @@
 export type CourseId =
-  | "TECH-101" | "PROGRAMMING" | "GIT"
+  | "TECH-101" | "PROGRAMMING" | "WEB" | "SQL" | "GIT"
   | "FOUNDATIONS" | "ENGINEER" | "BACKEND"
   | "CLF-C02" | "SAA-C03" | "DVA-C02" | "SOA-C02" | "SAP-C02"
   | "SYSTEM-DESIGN";

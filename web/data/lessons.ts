@@ -62,6 +62,71 @@ const gitChapters: Chapter[] = [
 
 
 // =====================================================================
+// WEB — Web Fundamentals (knowledge, starter)
+// =====================================================================
+const webLessons: Lesson[] = [
+  { slug: "web-01-how-web-works", courseId: "WEB", title: "Web hoạt động thế nào", shortTitle: "Web 101", chapter: "web-ch1", order: 1, available: true,
+    description: "Client/server, request/response, trình duyệt render, status code, frontend vs backend.", file: "web/web-01-how-web-works.md" },
+  { slug: "web-02-html", courseId: "WEB", title: "HTML: bộ khung trang web", shortTitle: "HTML", chapter: "web-ch1", order: 2, available: true,
+    description: "Thẻ, cấu trúc tài liệu, semantic HTML, form, link, ảnh, accessibility cơ bản.", file: "web/web-02-html.md" },
+  { slug: "web-03-css", courseId: "WEB", title: "CSS: tạo kiểu & bố cục", shortTitle: "CSS", chapter: "web-ch1", order: 3, available: true,
+    description: "Selector, box model, flexbox/grid, responsive, biến CSS, cách tổ chức style.", file: "web/web-03-css.md" },
+  { slug: "web-04-javascript-dom", courseId: "WEB", title: "JavaScript & DOM: làm trang động", shortTitle: "JS & DOM", chapter: "web-ch2", order: 4, available: true,
+    description: "JS trên trình duyệt, chọn & sửa DOM, event, sự kiện click/submit, async cơ bản.", file: "web/web-04-javascript-dom.md" },
+  { slug: "web-05-apis-fetch", courseId: "WEB", title: "Gọi API: fetch, JSON & async", shortTitle: "API & fetch", chapter: "web-ch2", order: 5, available: true,
+    description: "API là gì (góc người dùng), JSON, fetch/async-await, xử lý lỗi, CORS cơ bản.", file: "web/web-05-apis-fetch.md" },
+];
+const webChapters: Chapter[] = [
+  { id: "web-ch1", courseId: "WEB", title: "Trang web tĩnh", lessonSlugs: ["web-01-how-web-works", "web-02-html", "web-03-css"], category: "foundation" },
+  { id: "web-ch2", courseId: "WEB", title: "Trang web động & API", lessonSlugs: ["web-04-javascript-dom", "web-05-apis-fetch"], category: "compute" },
+];
+
+// =====================================================================
+// SQL — SQL & Databases hands-on (knowledge, starter)
+// =====================================================================
+const sqlLessons: Lesson[] = [
+  { slug: "sql-01-select-basics", courseId: "SQL", title: "SELECT cơ bản: lấy dữ liệu", shortTitle: "SELECT", chapter: "sql-ch1", order: 1, available: true,
+    description: "Bảng/cột/hàng, SELECT, WHERE, ORDER BY, LIMIT, toán tử, NULL, DISTINCT.", file: "sql/sql-01-select-basics.md" },
+  { slug: "sql-02-joins", courseId: "SQL", title: "JOIN: kết nối nhiều bảng", shortTitle: "JOIN", chapter: "sql-ch1", order: 2, available: true,
+    description: "Khoá chính/ngoại, INNER/LEFT/RIGHT/FULL JOIN, self join, bẫy fan-out.", file: "sql/sql-02-joins.md" },
+  { slug: "sql-03-aggregation", courseId: "SQL", title: "Tổng hợp: GROUP BY & subquery", shortTitle: "GROUP BY", chapter: "sql-ch1", order: 3, available: true,
+    description: "COUNT/SUM/AVG, GROUP BY, HAVING, subquery, CTE, window function giới thiệu.", file: "sql/sql-03-aggregation.md" },
+  { slug: "sql-04-schema-design", courseId: "SQL", title: "Thiết kế schema & chuẩn hoá", shortTitle: "Schema design", chapter: "sql-ch2", order: 4, available: true,
+    description: "Kiểu dữ liệu, khoá, quan hệ 1-n/n-n, normalization (1NF-3NF), khi nào denormalize.", file: "sql/sql-04-schema-design.md" },
+  { slug: "sql-05-indexes-performance", courseId: "SQL", title: "Index & hiệu năng truy vấn", shortTitle: "Index & EXPLAIN", chapter: "sql-ch2", order: 5, available: true,
+    description: "B-tree index, composite, EXPLAIN đọc query plan, N+1, khi nào index làm chậm.", file: "sql/sql-05-indexes-performance.md" },
+  { slug: "sql-06-transactions", courseId: "SQL", title: "Transaction & SQL nâng cao", shortTitle: "Transactions", chapter: "sql-ch2", order: 6, available: true,
+    description: "ACID, BEGIN/COMMIT/ROLLBACK, isolation levels, UPSERT, view, SQL vs NoSQL.", file: "sql/sql-06-transactions.md" },
+];
+const sqlChapters: Chapter[] = [
+  { id: "sql-ch1", courseId: "SQL", title: "Truy vấn dữ liệu", lessonSlugs: ["sql-01-select-basics", "sql-02-joins", "sql-03-aggregation"], category: "database" },
+  { id: "sql-ch2", courseId: "SQL", title: "Thiết kế & vận hành", lessonSlugs: ["sql-04-schema-design", "sql-05-indexes-performance", "sql-06-transactions"], category: "storage" },
+];
+
+// =====================================================================
+// SYSTEM-DESIGN — lessons (knowledge, architecture)
+// =====================================================================
+const sysdLessons: Lesson[] = [
+  { slug: "sd-01-requirements", courseId: "SYSTEM-DESIGN", title: "Tiếp cận bài toán & ước lượng quy mô", shortTitle: "Requirements & Estimation", chapter: "sysd-ch1", order: 1, available: true,
+    description: "Functional vs non-functional, làm rõ yêu cầu, back-of-envelope estimation (QPS, storage, bandwidth).", file: "system-design/sd-01-requirements.md" },
+  { slug: "sd-02-building-blocks", courseId: "SYSTEM-DESIGN", title: "Các khối xây dựng & trade-off", shortTitle: "Building Blocks", chapter: "sysd-ch1", order: 2, available: true,
+    description: "Load balancer, cache, queue, CDN, replication, sharding, CAP — ghép thành kiến trúc, mỗi lựa chọn đánh đổi gì.", file: "system-design/sd-02-building-blocks.md" },
+  { slug: "sd-03-url-shortener", courseId: "SYSTEM-DESIGN", title: "Case study: URL Shortener & Rate Limiter", shortTitle: "URL Shortener", chapter: "sysd-ch2", order: 3, available: true,
+    description: "Thiết kế từ A-Z: API, sinh mã, lưu trữ, cache, scale đọc, rate limiting algorithms.", file: "system-design/sd-03-url-shortener.md" },
+  { slug: "sd-04-news-feed", courseId: "SYSTEM-DESIGN", title: "Case study: News Feed / Timeline", shortTitle: "News Feed", chapter: "sysd-ch2", order: 4, available: true,
+    description: "Fan-out on write vs read, hot user, ranking, cache, pagination — đánh đổi của mỗi cách.", file: "system-design/sd-04-news-feed.md" },
+  { slug: "sd-05-chat", courseId: "SYSTEM-DESIGN", title: "Case study: Chat / Messaging realtime", shortTitle: "Chat System", chapter: "sysd-ch2", order: 5, available: true,
+    description: "WebSocket, presence, delivery & ordering, lưu lịch sử, group chat, scale connection.", file: "system-design/sd-05-chat.md" },
+  { slug: "sd-06-data-pipeline", courseId: "SYSTEM-DESIGN", title: "Hệ thống data-intensive: search & analytics", shortTitle: "Data-Intensive", chapter: "sysd-ch3", order: 6, available: true,
+    description: "Batch vs stream, search index, data lake/warehouse, lambda/kappa, eventual consistency.", file: "system-design/sd-06-data-pipeline.md" },
+  { slug: "sd-07-multi-account-cost", courseId: "SYSTEM-DESIGN", title: "Kiến trúc multi-account & tối ưu chi phí", shortTitle: "Multi-account & Cost", chapter: "sysd-ch3", order: 7, available: true,
+    description: "AWS Organizations, landing zone, blast radius, cost-aware design, FinOps, well-architected.", file: "system-design/sd-07-multi-account-cost.md" },
+  { slug: "sd-08-tradeoff-strategy", courseId: "SYSTEM-DESIGN", title: "Build vs Buy & Technology Strategy", shortTitle: "Strategy", chapter: "sysd-ch4", order: 8, available: true,
+    description: "Khung ra quyết định build vs buy, tech radar, nợ kỹ thuật, tư duy CTO về đánh đổi dài hạn.", file: "system-design/sd-08-tradeoff-strategy.md" },
+];
+
+
+// =====================================================================
 // FOUNDATIONS — Nền tảng Cloud & Hệ phân tán (knowledge track, không thi)
 // =====================================================================
 const foundLessons: Lesson[] = [
@@ -137,10 +202,10 @@ const engChapters: Chapter[] = [
 
 // SYSTEM-DESIGN — outline (coming soon)
 const sysdChapters: Chapter[] = [
-  { id: "sysd-ch1", courseId: "SYSTEM-DESIGN", title: "Tư duy thiết kế & Trade-off Analysis", lessonSlugs: [], category: "foundation" },
-  { id: "sysd-ch2", courseId: "SYSTEM-DESIGN", title: "Case Studies: Scale thực tế", lessonSlugs: [], category: "compute" },
-  { id: "sysd-ch3", courseId: "SYSTEM-DESIGN", title: "Cost-aware & Multi-account Architecture", lessonSlugs: [], category: "billing" },
-  { id: "sysd-ch4", courseId: "SYSTEM-DESIGN", title: "Build vs Buy & Technology Strategy", lessonSlugs: [], category: "security" },
+  { id: "sysd-ch1", courseId: "SYSTEM-DESIGN", title: "Tư duy thiết kế & Trade-off", lessonSlugs: ["sd-01-requirements", "sd-02-building-blocks"], category: "foundation" },
+  { id: "sysd-ch2", courseId: "SYSTEM-DESIGN", title: "Case Studies: Scale thực tế", lessonSlugs: ["sd-03-url-shortener", "sd-04-news-feed", "sd-05-chat"], category: "compute" },
+  { id: "sysd-ch3", courseId: "SYSTEM-DESIGN", title: "Data, Cost & Multi-account", lessonSlugs: ["sd-06-data-pipeline", "sd-07-multi-account-cost"], category: "billing" },
+  { id: "sysd-ch4", courseId: "SYSTEM-DESIGN", title: "Build vs Buy & Strategy", lessonSlugs: ["sd-08-tradeoff-strategy"], category: "security" },
 ];
 
 
@@ -375,8 +440,8 @@ const sapChapters: Chapter[] = [
 // =====================================================================
 // Aggregate
 // =====================================================================
-export const lessons: Lesson[] = [...techLessons, ...progLessons, ...gitLessons, ...foundLessons, ...engLessons, ...beLessons, ...clfLessons, ...saaLessons, ...dvaLessons];
-export const chapters: Chapter[] = [...techChapters, ...progChapters, ...gitChapters, ...foundChapters, ...engChapters, ...beChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters];
+export const lessons: Lesson[] = [...techLessons, ...progLessons, ...webLessons, ...sqlLessons, ...gitLessons, ...sysdLessons, ...foundLessons, ...engLessons, ...beLessons, ...clfLessons, ...saaLessons, ...dvaLessons];
+export const chapters: Chapter[] = [...techChapters, ...progChapters, ...webChapters, ...sqlChapters, ...gitChapters, ...sysdChapters, ...foundChapters, ...engChapters, ...beChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters];
 
 export function lessonsOfCourse(courseId: CourseId): Lesson[] {
   return lessons.filter((l) => l.courseId === courseId).sort((a, b) => a.order - b.order);
