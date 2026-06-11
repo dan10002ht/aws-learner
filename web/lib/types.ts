@@ -1,4 +1,4 @@
-export type CourseId = "FOUNDATIONS" | "CLF-C02" | "SAA-C03" | "DVA-C02" | "SOA-C02" | "SAP-C02";
+export type CourseId = "FOUNDATIONS" | "ENGINEER" | "CLF-C02" | "SAA-C03" | "DVA-C02" | "SOA-C02" | "SAP-C02" | "SYSTEM-DESIGN";
 export type CourseLevel = "Nền tảng" | "Foundational" | "Associate" | "Professional";
 
 // Backwards-compat alias for code that referenced Certification

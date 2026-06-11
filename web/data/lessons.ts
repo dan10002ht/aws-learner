@@ -49,6 +49,35 @@ const foundChapters: Chapter[] = [
 
 
 // =====================================================================
+// ENGINEER — Kỹ năng nền Kỹ sư Cloud (knowledge track, không thi)
+// =====================================================================
+const engLessons: Lesson[] = [
+  { slug: "eng-01-linux-terminal", courseId: "ENGINEER", title: "Linux & Terminal cho kỹ sư Cloud", shortTitle: "Linux & Terminal", chapter: "eng-ch1", order: 1, available: true,
+    description: "Filesystem, permissions, process, systemd, SSH, log & grep/awk, Bash scripting căn bản.", file: "engineering/eng-01-linux-terminal.md" },
+  { slug: "eng-02-cidr-subnetting", courseId: "ENGINEER", title: "CIDR & Subnetting thực hành", shortTitle: "CIDR & Subnetting", chapter: "eng-ch2", order: 2, available: true,
+    description: "Tính network/broadcast/hosts bằng tay, chia subnet VPC, overlap, longest-prefix match, IPv6 cơ bản.", file: "engineering/eng-02-cidr-subnetting.md" },
+  { slug: "eng-03-tcp-tls", courseId: "ENGINEER", title: "TCP/UDP & TLS — HTTPS thật sự hoạt động thế nào", shortTitle: "TCP & TLS", chapter: "eng-ch2", order: 3, available: true,
+    description: "TCP vs UDP, HTTP/1.1→/3 (QUIC), TLS 1.3 handshake, certificate chain, SNI, mTLS, debug bằng curl/openssl.", file: "engineering/eng-03-tcp-tls.md" },
+  { slug: "eng-04-identity-crypto", courseId: "ENGINEER", title: "Mật mã & Danh tính hiện đại", shortTitle: "Identity & Crypto", chapter: "eng-ch3", order: 4, available: true,
+    description: "AES/RSA, hashing, PKI; OAuth 2.1 (Auth Code + PKCE), OIDC, JWT đúng cách, SAML, passkeys/WebAuthn.", file: "engineering/eng-04-identity-crypto.md" },
+];
+
+const engChapters: Chapter[] = [
+  { id: "eng-ch1", courseId: "ENGINEER", title: "Hệ điều hành & Terminal", lessonSlugs: ["eng-01-linux-terminal"], category: "compute" },
+  { id: "eng-ch2", courseId: "ENGINEER", title: "Mạng thực hành", lessonSlugs: ["eng-02-cidr-subnetting", "eng-03-tcp-tls"], category: "network" },
+  { id: "eng-ch3", courseId: "ENGINEER", title: "Mật mã & Danh tính", lessonSlugs: ["eng-04-identity-crypto"], category: "security" },
+];
+
+// SYSTEM-DESIGN — outline (coming soon)
+const sysdChapters: Chapter[] = [
+  { id: "sysd-ch1", courseId: "SYSTEM-DESIGN", title: "Tư duy thiết kế & Trade-off Analysis", lessonSlugs: [], category: "foundation" },
+  { id: "sysd-ch2", courseId: "SYSTEM-DESIGN", title: "Case Studies: Scale thực tế", lessonSlugs: [], category: "compute" },
+  { id: "sysd-ch3", courseId: "SYSTEM-DESIGN", title: "Cost-aware & Multi-account Architecture", lessonSlugs: [], category: "billing" },
+  { id: "sysd-ch4", courseId: "SYSTEM-DESIGN", title: "Build vs Buy & Technology Strategy", lessonSlugs: [], category: "security" },
+];
+
+
+// =====================================================================
 // CLF-C02 — Full content available
 // =====================================================================
 const clfLessons: Lesson[] = [
@@ -250,8 +279,8 @@ const sapChapters: Chapter[] = [
 // =====================================================================
 // Aggregate
 // =====================================================================
-export const lessons: Lesson[] = [...foundLessons, ...clfLessons, ...saaLessons, ...dvaLessons];
-export const chapters: Chapter[] = [...foundChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters];
+export const lessons: Lesson[] = [...foundLessons, ...engLessons, ...clfLessons, ...saaLessons, ...dvaLessons];
+export const chapters: Chapter[] = [...foundChapters, ...engChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters];
 
 export function lessonsOfCourse(courseId: CourseId): Lesson[] {
   return lessons.filter((l) => l.courseId === courseId).sort((a, b) => a.order - b.order);
