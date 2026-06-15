@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkWikiLinks from "@/lib/remarkWikiLinks";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import rehypeRaw from "rehype-raw";
@@ -104,7 +105,7 @@ export default function LessonPage({ params }: { params: { courseId: string; slu
         {md ? (
           <div className="prose-article">
             <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
+              remarkPlugins={[remarkGfm, remarkWikiLinks]}
               rehypePlugins={[rehypeRaw, rehypeSlug, rehypeHighlight, rehypeCodeTabs, rehypeCallouts]}
               components={{ "code-tabs": CodeTabs, blockquote: Callout } as never}
             >
