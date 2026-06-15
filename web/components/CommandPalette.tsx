@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Command } from "cmdk";
 import { BookOpen, FileText, Hash, Search, CornerDownLeft, Loader2 } from "lucide-react";
+import { foldChar } from "@/lib/searchConfig";
 
 type SearchKind = "course" | "lesson" | "section";
 /** Stored fields returned by MiniSearch on each hit (see miniSearchOptions). */
@@ -13,7 +14,107 @@ interface Hit {
   title: string;
   breadcrumb: string[];
   url: string;
-  snippet: string;
+  content: string;
+  terms?: string[];
+}
+
+const SNIPPET_WINDOW = 150;
+
+/**
+ * Build a snippet centered on the first matched term, with highlighted ranges.
+ * Folding is length-preserving (foldChar) so folded offsets map 1:1 onto the
+ * original `content`, letting us slice + mark accented text accurately.
+ */
+function highlight(text: string, terms: string[] = [], windowed = false) {
+  const chars = Array.from(text);
+  const foldedStr = chars.map(foldChar).join("");
+  const needles = terms.filter((t) => t.length >= 2);
+
+  // For content, center a window on the first matched term; titles use the
+  // whole string.
+  let start = 0;
+  let end = chars.length;
+  if (windowed) {
+    let first = -1;
+    for (const t of needles) {
+      const i = foldedStr.indexOf(t);
+      if (i !== -1 && (first === -1 || i < first)) first = i;
+    }
+    if (first > SNIPPET_WINDOW * 0.4) start = first - Math.floor(SNIPPET_WINDOW * 0.35);
+    start = Math.max(0, start);
+    end = Math.min(chars.length, start + SNIPPET_WINDOW);
+  }
+
+  // All highlight ranges inside [start, end).
+  const ranges: [number, number][] = [];
+  for (const t of needles) {
+    let from = foldedStr.indexOf(t, start);
+    while (from !== -1 && from < end) {
+      ranges.push([from, from + t.length]);
+      from = foldedStr.indexOf(t, from + t.length);
+    }
+  }
+  ranges.sort((a, b) => a[0] - b[0]);
+  const merged: [number, number][] = [];
+  for (const r of ranges) {
+    const last = merged[merged.length - 1];
+    if (last && r[0] <= last[1]) last[1] = Math.max(last[1], r[1]);
+    else merged.push([...r]);
+  }
+
+  const segs: { text: string; hl: boolean }[] = [];
+  let cur = start;
+  for (const [s, e] of merged) {
+    const cs = Math.max(s, start);
+    const ce = Math.min(e, end);
+    if (ce <= cur) continue;
+    if (cs > cur) segs.push({ text: chars.slice(cur, cs).join(""), hl: false });
+    segs.push({ text: chars.slice(cs, ce).join(""), hl: true });
+    cur = ce;
+  }
+  if (cur < end) segs.push({ text: chars.slice(cur, end).join(""), hl: false });
+
+  return { segs, leading: start > 0, trailing: end < chars.length };
+}
+
+const MARK_CLASS = "rounded-[2px] bg-brand-500/25 px-0.5 text-[var(--text)]";
+
+function renderSegs(segs: { text: string; hl: boolean }[]) {
+  return segs.map((s, i) =>
+    s.hl ? (
+      <mark key={i} className={MARK_CLASS}>
+        {s.text}
+      </mark>
+    ) : (
+      <span key={i}>{s.text}</span>
+    )
+  );
+}
+
+/** Title with matched terms highlighted (whole string, single line). */
+function Title({ text, terms }: { text: string; terms?: string[] }) {
+  const { segs } = useMemo(() => highlight(text, terms, false), [text, terms]);
+  return (
+    <span className="block truncate text-sm font-medium text-[var(--text)]">
+      {renderSegs(segs)}
+    </span>
+  );
+}
+
+/** Content snippet centered on the first match, with highlights + ellipses. */
+function Snippet({ content, terms }: { content: string; terms?: string[] }) {
+  const { segs, leading, trailing } = useMemo(
+    () => highlight(content, terms, true),
+    [content, terms]
+  );
+  if (!segs.length) return null;
+  return (
+    <span className="line-clamp-2 text-xs text-[var(--text-dim)]">
+      {leading && "…"}
+      {renderSegs(segs)}
+      {trailing && "…"}
+    </span>
+  );
 }
 
 // Module-level singletons so the worker + index survive remounts and only
@@ -171,7 +272,6 @@ export default function CommandPalette() {
                     item.kind === "section" && item.breadcrumb[1]
                       ? item.breadcrumb[1]
                       : null;
-                  const snip = item.snippet;
                   return (
                     <Command.Item
                       key={item.id}
@@ -188,14 +288,8 @@ export default function CommandPalette() {
                             {sub}
                           </span>
                         )}
-                        <span className="block truncate text-sm font-medium text-[var(--text)]">
-                          {item.title}
-                        </span>
-                        {snip && (
-                          <span className="line-clamp-1 text-xs text-[var(--text-dim)]">
-                            {snip}
-                          </span>
-                        )}
+                        <Title text={item.title} terms={item.terms} />
+                        <Snippet content={item.content} terms={item.terms} />
                       </span>
                       <CornerDownLeft
                         size={14}

@@ -14,13 +14,26 @@ export function foldDiacritics(s: string): string {
 }
 
 /**
+ * Length-preserving fold: maps each character to exactly one folded character
+ * (lowercase, no diacritics, đ→d). Unlike foldDiacritics (NFD changes length),
+ * this keeps char indices aligned with the original string, so we can locate a
+ * matched term in folded text and slice/highlight the original at the same
+ * offsets.
+ */
+export function foldChar(ch: string): string {
+  if (ch === "đ" || ch === "Đ") return "d";
+  const base = ch.normalize("NFD").replace(/[̀-ͯ]/g, "");
+  return (base[0] || ch).toLowerCase();
+}
+
+/**
  * MiniSearch options — MUST be identical when building the index (server) and
  * when calling loadJSON (client), because processTerm/tokenize are functions
  * that aren't serialized into the index JSON.
  */
 export const miniSearchOptions: Options = {
   fields: ["title", "content", "keywords"], // tokenized into the inverted index
-  storeFields: ["kind", "title", "breadcrumb", "url", "snippet"], // returned on hits
+  storeFields: ["kind", "title", "breadcrumb", "url", "content"], // returned on hits
   processTerm: (term) => {
     const t = foldDiacritics(term.toLowerCase());
     return t.length >= 2 ? t : null; // drop 1-char noise

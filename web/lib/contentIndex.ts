@@ -15,16 +15,11 @@ export interface SearchRecord {
   breadcrumb: string[];
   /** Destination route (may include #anchor for sections). */
   url: string;
-  /** Full plain-text body — indexed for matching, NOT stored (keeps JSON small). */
+  /** Plain-text body — indexed for matching AND stored (for match snippet). */
   content: string;
-  /** Short preview shown under the result (stored). */
-  snippet: string;
   /** Extra terms to match against (codes, slugs). */
   keywords: string;
 }
-
-const SNIPPET_PREVIEW = 160;
-const preview = (s: string) => s.slice(0, SNIPPET_PREVIEW).trim();
 
 const courseTitle = (id: CourseId): string =>
   courses.find((c) => c.id === id)?.title ?? id;
@@ -90,7 +85,6 @@ export function buildContentIndex(): SearchRecord[] {
       breadcrumb: [c.shortTitle],
       url: `/courses/${c.id}`,
       content: c.description,
-      snippet: preview(c.description),
       keywords: `${c.code} ${c.shortTitle} ${c.level} ${c.hint}`,
     });
   }
@@ -110,7 +104,6 @@ export function buildContentIndex(): SearchRecord[] {
       breadcrumb: [ct, l.title],
       url: lessonUrl,
       content: `${l.description} ${intro}`.slice(0, SNIPPET_CAP).trim(),
-      snippet: preview(l.description || intro),
       keywords: `${l.shortTitle} ${l.slug}`,
     });
 
@@ -126,7 +119,6 @@ export function buildContentIndex(): SearchRecord[] {
           breadcrumb: [ct, l.title],
           url: `${lessonUrl}#${s.anchor}`,
           content: body.slice(0, SNIPPET_CAP),
-          snippet: preview(body),
           keywords: l.shortTitle,
         });
       }

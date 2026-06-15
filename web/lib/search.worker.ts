@@ -11,7 +11,9 @@ interface Hit {
   title: string;
   breadcrumb: string[];
   url: string;
-  snippet: string;
+  content: string;
+  /** Index terms that matched this hit (folded) — used for highlighting. */
+  terms?: string[];
 }
 
 type Incoming =
