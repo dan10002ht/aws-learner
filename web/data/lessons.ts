@@ -180,10 +180,23 @@ const dsaLessons: Lesson[] = [
     description: "O(n log n) sort, ổn định, binary search & các biến thể (lower/upper bound).", file: "dsa/dsa-06-sorting-searching.md" },
   { slug: "dsa-07-recursion-graph-dp", courseId: "DSA", title: "Recursion, Graph & DP cơ bản", shortTitle: "Recursion & DP", chapter: "dsa-ch2", order: 7, available: true,
     description: "Đệ quy & backtracking, graph BFS/DFS, dynamic programming nhập môn.", file: "dsa/dsa-07-recursion-graph-dp.md" },
+  { slug: "dsa-08-heap-priority-queue", courseId: "DSA", title: "Heap & Priority Queue", shortTitle: "Heap & PQ", chapter: "dsa-ch3", order: 8, available: true,
+    description: "Heap (min/max), priority queue; dạng Top-K, K frequent, merge K lists, median of stream; cách nhận diện & template.", file: "dsa/dsa-08-heap-priority-queue.md" },
+  { slug: "dsa-09-backtracking", courseId: "DSA", title: "Backtracking", shortTitle: "Backtracking", chapter: "dsa-ch3", order: 9, available: true,
+    description: "Template choose-explore-unchoose, pruning; dạng subset/permutation/combination, N-queens, word search, sudoku.", file: "dsa/dsa-09-backtracking.md" },
+  { slug: "dsa-10-graph-advanced", courseId: "DSA", title: "Graph nâng cao: Topo, Union-Find, Dijkstra", shortTitle: "Graph Pro", chapter: "dsa-ch3", order: 10, available: true,
+    description: "BFS/DFS recap, topological sort, Union-Find/DSU, Dijkstra shortest path; dạng connected components, cycle, scheduling, đường ngắn nhất.", file: "dsa/dsa-10-graph-advanced.md" },
+  { slug: "dsa-11-dynamic-programming-1", courseId: "DSA", title: "Dynamic Programming I: tư duy & 1D", shortTitle: "DP I", chapter: "dsa-ch3", order: 11, available: true,
+    description: "Cách nhận diện DP (state/transition/base), memoization vs tabulation, 1D DP (climbing stairs, house robber, coin change), knapsack 0/1.", file: "dsa/dsa-11-dynamic-programming-1.md" },
+  { slug: "dsa-12-dynamic-programming-2", courseId: "DSA", title: "Dynamic Programming II: 2D & string", shortTitle: "DP II", chapter: "dsa-ch3", order: 12, available: true,
+    description: "Grid/2D DP, string DP (LCS, edit distance), interval DP, bảng nhận diện pattern DP, tối ưu không gian.", file: "dsa/dsa-12-dynamic-programming-2.md" },
+  { slug: "dsa-13-patterns-strategy", courseId: "DSA", title: "Khung giải bài & chiến lược phỏng vấn", shortTitle: "Patterns & Strategy", chapter: "dsa-ch3", order: 13, available: true,
+    description: "Bảng thấy-gì-pattern-gì, quy trình clarify-bruteforce-optimize-code-test, độ phức tạp mục tiêu, lộ trình luyện tập.", file: "dsa/dsa-13-patterns-strategy.md" },
 ];
 const dsaChapters: Chapter[] = [
   { id: "dsa-ch1", courseId: "DSA", title: "Nền tảng & cấu trúc tuyến tính", lessonSlugs: ["dsa-01-complexity","dsa-02-arrays-strings","dsa-03-hashing","dsa-04-stack-queue"], category: "foundation" },
   { id: "dsa-ch2", courseId: "DSA", title: "Cấu trúc phi tuyến & giải thuật", lessonSlugs: ["dsa-05-linkedlist-tree","dsa-06-sorting-searching","dsa-07-recursion-graph-dp"], category: "compute" },
+  { id: "dsa-ch3", courseId: "DSA", title: "Giải thuật nâng cao (dạng bài & hướng làm)", lessonSlugs: ["dsa-08-heap-priority-queue","dsa-09-backtracking","dsa-10-graph-advanced","dsa-11-dynamic-programming-1","dsa-12-dynamic-programming-2","dsa-13-patterns-strategy"], category: "security" },
 ];
 const secLessons: Lesson[] = [
   { slug: "sec-01-threat-modeling", courseId: "SECURITY", title: "Tư duy bảo mật & Threat Modeling", shortTitle: "Threat Modeling", chapter: "sec-ch1", order: 1, available: true,
