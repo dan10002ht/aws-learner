@@ -150,6 +150,21 @@ export const courses: Course[] = [
     category: "software",
   },
   {
+    id: "FRONTEND",
+    code: "FRONTEND",
+    title: "Frontend Engineering",
+    shortTitle: "Frontend Engineering",
+    level: "Nền tảng",
+    description:
+      "Từ Web cơ bản lên frontend hiện đại đi làm: TypeScript, React (component/hooks/state), state management, routing & data fetching, forms, styling/design system, testing, build & deploy, performance & accessibility.",
+    hint: "Mảnh ghép frontend để trở thành full-stack thực thụ.",
+    durationHours: 40,
+    passingScore: 0, examMinutes: 0, examQuestions: 0,
+    prerequisites: ["WEB"],
+    accentColor: "#0d9488",
+    order: 6, status: "available", kind: "knowledge", category: "software",
+  },
+  {
     id: "CLF-C02",
     code: "CLF-C02",
     title: "AWS Certified Cloud Practitioner",
@@ -337,6 +352,21 @@ export const courses: Course[] = [
     status: "available",
     kind: "knowledge",
     category: "architecture",
+  },
+  {
+    id: "CAPSTONE",
+    code: "CAPSTONE",
+    title: "Full-stack Capstone Project",
+    shortTitle: "Full-stack Capstone",
+    level: "Professional",
+    description:
+      "Ghép mọi thứ đã học thành một sản phẩm thật: lên kế hoạch & kiến trúc, dựng Frontend (React) + Backend (API) + Database, rồi deploy với CI/CD. Biến kiến thức rời rạc thành năng lực làm sản phẩm.",
+    hint: "Đồ án tốt nghiệp — chứng minh bạn full-stack được end-to-end.",
+    durationHours: 30,
+    passingScore: 0, examMinutes: 0, examQuestions: 0,
+    prerequisites: ["FRONTEND", "BACKEND"],
+    accentColor: "#e11d48",
+    order: 13, status: "available", kind: "knowledge", category: "architecture",
   },
 ];
 

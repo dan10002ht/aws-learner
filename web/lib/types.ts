@@ -1,6 +1,6 @@
 export type CourseId =
   | "TECH-101" | "PROGRAMMING" | "WEB" | "SQL" | "GIT"
-  | "FOUNDATIONS" | "ENGINEER" | "BACKEND" | "CS" | "DSA" | "SECURITY" | "DEVOPS" | "SRE" | "AIML"
+  | "FOUNDATIONS" | "ENGINEER" | "BACKEND" | "CS" | "DSA" | "SECURITY" | "DEVOPS" | "SRE" | "AIML" | "FRONTEND" | "CAPSTONE"
   | "CLF-C02" | "SAA-C03" | "DVA-C02" | "SOA-C02" | "SAP-C02"
   | "SYSTEM-DESIGN";
 

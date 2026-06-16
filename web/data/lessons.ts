@@ -273,6 +273,44 @@ const aimlChapters: Chapter[] = [
   { id: "aiml-ch2", courseId: "AIML", title: "Xây sản phẩm AI", lessonSlugs: ["aiml-04-rag","aiml-05-agents-tools","aiml-06-ai-in-production"], category: "compute" },
 ];
 
+// ===== FRONTEND + CAPSTONE tracks =====
+const feLessons: Lesson[] = [
+  { slug: "fe-01-typescript", courseId: "FRONTEND", title: "TypeScript cho Frontend", shortTitle: "TypeScript", chapter: "fe-ch1", order: 1, available: true,
+    description: "Kiểu, interface/type, union/narrowing, generics, utility types, tsconfig — vì sao TS bắt buộc cho FE hiện đại.", file: "frontend/fe-01-typescript.md" },
+  { slug: "fe-02-react-basics", courseId: "FRONTEND", title: "React căn bản: component & JSX", shortTitle: "React Basics", chapter: "fe-ch1", order: 2, available: true,
+    description: "Component, JSX, props, render & re-render, list & key, conditional, từ DOM thủ công sang declarative.", file: "frontend/fe-02-react-basics.md" },
+  { slug: "fe-03-hooks-state", courseId: "FRONTEND", title: "React Hooks & State", shortTitle: "Hooks & State", chapter: "fe-ch1", order: 3, available: true,
+    description: "useState, useEffect (dependency, cleanup), useRef, useMemo/useCallback, custom hook, rules of hooks, bẫy stale closure.", file: "frontend/fe-03-hooks-state.md" },
+  { slug: "fe-04-state-management", courseId: "FRONTEND", title: "Quản lý state & data flow", shortTitle: "State Management", chapter: "fe-ch2", order: 4, available: true,
+    description: "Lifting state, prop drilling, Context API, khi nào cần Zustand/Redux, server state vs client state, immutability.", file: "frontend/fe-04-state-management.md" },
+  { slug: "fe-05-routing-data", courseId: "FRONTEND", title: "Routing & Data Fetching", shortTitle: "Routing & Data", chapter: "fe-ch2", order: 5, available: true,
+    description: "Client-side routing (React Router), data fetching với React Query/SWR (cache, loading/error, refetch, mutation), Suspense.", file: "frontend/fe-05-routing-data.md" },
+  { slug: "fe-06-forms", courseId: "FRONTEND", title: "Forms & Validation", shortTitle: "Forms", chapter: "fe-ch2", order: 6, available: true,
+    description: "Controlled vs uncontrolled, react-hook-form, validation với Zod, error UX, accessibility của form.", file: "frontend/fe-06-forms.md" },
+  { slug: "fe-07-styling", courseId: "FRONTEND", title: "Styling & Design System", shortTitle: "Styling", chapter: "fe-ch3", order: 7, available: true,
+    description: "CSS modules vs Tailwind vs CSS-in-JS, responsive & mobile-first, design tokens, component library, dark mode.", file: "frontend/fe-07-styling.md" },
+  { slug: "fe-08-testing", courseId: "FRONTEND", title: "Frontend Testing", shortTitle: "Testing", chapter: "fe-ch3", order: 8, available: true,
+    description: "Unit test component (Vitest/Jest + React Testing Library), test hành vi không test implementation, mock API, e2e với Playwright.", file: "frontend/fe-08-testing.md" },
+  { slug: "fe-09-build-deploy-perf", courseId: "FRONTEND", title: "Build, Deploy & Performance", shortTitle: "Build & Deploy", chapter: "fe-ch3", order: 9, available: true,
+    description: "Vite/bundler, env & code splitting, deploy (Vercel / S3+CloudFront), Core Web Vitals, lazy load, memo, accessibility (a11y).", file: "frontend/fe-09-build-deploy-perf.md" },
+];
+const feChapters: Chapter[] = [
+  { id: "fe-ch1", courseId: "FRONTEND", title: "React & TypeScript", lessonSlugs: ["fe-01-typescript","fe-02-react-basics","fe-03-hooks-state"], category: "compute" },
+  { id: "fe-ch2", courseId: "FRONTEND", title: "Ứng dụng thực tế", lessonSlugs: ["fe-04-state-management","fe-05-routing-data","fe-06-forms"], category: "foundation" },
+  { id: "fe-ch3", courseId: "FRONTEND", title: "Chất lượng & vận hành", lessonSlugs: ["fe-07-styling","fe-08-testing","fe-09-build-deploy-perf"], category: "security" },
+];
+const capLessons: Lesson[] = [
+  { slug: "cap-01-plan", courseId: "CAPSTONE", title: "Lên kế hoạch & kiến trúc dự án", shortTitle: "Plan & Design", chapter: "cap-ch1", order: 1, available: true,
+    description: "Chọn đề bài, yêu cầu, thiết kế kiến trúc full-stack, chọn stack, data model, API contract, chia milestone.", file: "capstone/cap-01-plan.md" },
+  { slug: "cap-02-build", courseId: "CAPSTONE", title: "Dựng app: Frontend + Backend + Database", shortTitle: "Build", chapter: "cap-ch1", order: 2, available: true,
+    description: "Dựng BE (API + DB), FE (React) gọi API, auth, kết nối end-to-end, từng bước có code.", file: "capstone/cap-02-build.md" },
+  { slug: "cap-03-deploy", courseId: "CAPSTONE", title: "Deploy, CI/CD & hoàn thiện", shortTitle: "Deploy & Ship", chapter: "cap-ch1", order: 3, available: true,
+    description: "Dockerize, CI/CD pipeline, deploy (Vercel + AWS), env/secrets, monitoring, polish, viết README & demo.", file: "capstone/cap-03-deploy.md" },
+];
+const capChapters: Chapter[] = [
+  { id: "cap-ch1", courseId: "CAPSTONE", title: "Đồ án full-stack end-to-end", lessonSlugs: ["cap-01-plan","cap-02-build","cap-03-deploy"], category: "compute" },
+];
+
 // =====================================================================
 // FOUNDATIONS — Nền tảng Cloud & Hệ phân tán (knowledge track, không thi)
 // =====================================================================
@@ -587,8 +625,8 @@ const sapChapters: Chapter[] = [
 // =====================================================================
 // Aggregate
 // =====================================================================
-export const lessons: Lesson[] = [...techLessons, ...progLessons, ...webLessons, ...sqlLessons, ...gitLessons, ...sysdLessons, ...foundLessons, ...engLessons, ...beLessons, ...csLessons, ...dsaLessons, ...secLessons, ...devopsLessons, ...sreLessons, ...aimlLessons, ...clfLessons, ...saaLessons, ...dvaLessons];
-export const chapters: Chapter[] = [...techChapters, ...progChapters, ...webChapters, ...sqlChapters, ...gitChapters, ...sysdChapters, ...foundChapters, ...engChapters, ...beChapters, ...csChapters, ...dsaChapters, ...secChapters, ...devopsChapters, ...sreChapters, ...aimlChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters];
+export const lessons: Lesson[] = [...techLessons, ...progLessons, ...webLessons, ...sqlLessons, ...gitLessons, ...sysdLessons, ...foundLessons, ...engLessons, ...beLessons, ...csLessons, ...dsaLessons, ...secLessons, ...devopsLessons, ...sreLessons, ...aimlLessons, ...feLessons, ...capLessons, ...clfLessons, ...saaLessons, ...dvaLessons];
+export const chapters: Chapter[] = [...techChapters, ...progChapters, ...webChapters, ...sqlChapters, ...gitChapters, ...sysdChapters, ...foundChapters, ...engChapters, ...beChapters, ...csChapters, ...dsaChapters, ...secChapters, ...devopsChapters, ...sreChapters, ...aimlChapters, ...feChapters, ...capChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters];
 
 export function lessonsOfCourse(courseId: CourseId): Lesson[] {
   return lessons.filter((l) => l.courseId === courseId).sort((a, b) => a.order - b.order);
