@@ -57,6 +57,16 @@ if tuoi >= 18 {
 }
 ```
 
+```cpp
+int tuoi = 20;
+
+if (tuoi >= 18) {
+    std::cout << "Bạn đủ tuổi bầu cử" << std::endl;
+} else {
+    std::cout << "Bạn chưa đủ tuổi" << std::endl;
+}
+```
+
 Vài khác biệt nhỏ giữa các ngôn ngữ: Python dùng dấu hai chấm `:` và **thụt lề** để đánh dấu khối lệnh; JavaScript và Java bắt buộc có ngoặc tròn `( )` quanh điều kiện và ngoặc nhọn `{ }` quanh khối lệnh; Go dùng ngoặc nhọn nhưng **không** cần ngoặc tròn quanh điều kiện.
 
 ### 1.3. Nhiều hơn hai nhánh: else if
@@ -112,6 +122,20 @@ if diem >= 8 {
     fmt.Println("Trung bình")
 } else {
     fmt.Println("Cần cố gắng")
+}
+```
+
+```cpp
+double diem = 7.5;
+
+if (diem >= 8) {
+    std::cout << "Giỏi" << std::endl;
+} else if (diem >= 6.5) {
+    std::cout << "Khá" << std::endl;
+} else if (diem >= 5) {
+    std::cout << "Trung bình" << std::endl;
+} else {
+    std::cout << "Cần cố gắng" << std::endl;
 }
 ```
 
@@ -208,6 +232,23 @@ if !coBangLai {
 }
 ```
 
+```cpp
+int tuoi = 25;
+bool coBangLai = true;
+
+if (tuoi >= 18 && coBangLai) {
+    std::cout << "Được thuê xe" << std::endl;
+}
+
+if (tuoi < 12 || tuoi >= 65) {
+    std::cout << "Được giảm giá vé" << std::endl;
+}
+
+if (!coBangLai) {
+    std::cout << "Vui lòng thi bằng lái trước" << std::endl;
+}
+```
+
 Python dùng chữ tiếng Anh dễ đọc: `and`, `or`, `not`. JavaScript, Java và Go dùng ký hiệu: `&&` (và), `||` (hoặc), `!` (phủ định). Ý nghĩa hoàn toàn giống nhau.
 
 > 💡 **Ghi nhớ**: `and` khó tính — chỉ cần một vế sai là cả câu sai. `or` dễ tính — chỉ cần một vế đúng là cả câu đúng.
@@ -244,6 +285,12 @@ for (int i = 1; i <= 5; i++) {
 ```go
 for i := 1; i <= 5; i++ {
     fmt.Println(i)
+}
+```
+
+```cpp
+for (int i = 1; i <= 5; i++) {
+    std::cout << i << std::endl;
 }
 ```
 
@@ -305,6 +352,18 @@ for tien >= 30 { // Go không có từ khoá while, dùng for với một điề
 fmt.Println("Tiêu được", ngay, "ngày, còn dư", tien)
 ```
 
+```cpp
+int tien = 100;
+int ngay = 0;
+
+while (tien >= 30) {
+    tien = tien - 30;
+    ngay = ngay + 1;
+}
+
+std::cout << "Tiêu được " << ngay << " ngày, còn dư " << tien << std::endl;
+```
+
 Điểm thú vị: Go **không có** từ khoá `while` — vòng `for` chỉ ghi mỗi điều kiện chính là "while phiên bản Go".
 
 > ⚠️ **Lỗi người mới hay gặp — VÒNG LẶP VÔ HẠN (infinite loop)**: Nếu trong thân vòng `while` bạn **quên thay đổi** thứ liên quan đến điều kiện (ví dụ quên dòng `tien = tien - 30`), điều kiện mãi mãi đúng → chương trình lặp **vĩnh viễn**, treo máy hoặc ngốn CPU. Quy tắc an toàn: mỗi khi viết `while`, tự hỏi ngay *"điều gì trong thân vòng sẽ khiến điều kiện này sai vào một lúc nào đó?"*. Nếu lỡ dính vòng vô hạn, nhấn `Ctrl + C` trong cửa sổ dòng lệnh để ngắt chương trình.
@@ -357,6 +416,18 @@ for i := 1; i <= 10; i++ {
         break      // thoát hẳn vòng lặp
     }
     fmt.Println(i) // in ra: 1, 3, 5, 7
+}
+```
+
+```cpp
+for (int i = 1; i <= 10; i++) {
+    if (i % 2 == 0) {   // i chia 2 dư 0 nghĩa là số chẵn
+        continue;       // bỏ qua, sang số tiếp theo
+    }
+    if (i == 9) {
+        break;          // thoát hẳn vòng lặp
+    }
+    std::cout << i << std::endl; // in ra: 1, 3, 5, 7
 }
 ```
 
@@ -421,6 +492,20 @@ for i := 1; i <= 15; i++ {
         fmt.Println("Buzz")
     } else {
         fmt.Println(i)
+    }
+}
+```
+
+```cpp
+for (int i = 1; i <= 15; i++) {
+    if (i % 3 == 0 && i % 5 == 0) {
+        std::cout << "FizzBuzz" << std::endl;
+    } else if (i % 3 == 0) {
+        std::cout << "Fizz" << std::endl;
+    } else if (i % 5 == 0) {
+        std::cout << "Buzz" << std::endl;
+    } else {
+        std::cout << i << std::endl;
     }
 }
 ```
@@ -515,6 +600,31 @@ func main() {
             break
         }
     }
+}
+```
+
+```cpp
+#include <iostream>
+
+int main() {
+    int soBiMat = 7;
+    int soLan = 0;
+
+    while (true) { // while(true) = lặp "mãi mãi", chỉ thoát bằng break
+        int doan;
+        std::cout << "Đoán một số từ 1 đến 10: ";
+        std::cin >> doan;
+        soLan = soLan + 1;
+        if (doan < soBiMat) {
+            std::cout << "Số bí mật LỚN hơn!" << std::endl;
+        } else if (doan > soBiMat) {
+            std::cout << "Số bí mật NHỎ hơn!" << std::endl;
+        } else {
+            std::cout << "Chính xác! Bạn đoán " << soLan << " lần." << std::endl;
+            break;
+        }
+    }
+    return 0;
 }
 ```
 

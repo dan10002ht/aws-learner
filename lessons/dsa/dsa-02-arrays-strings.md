@@ -76,6 +76,21 @@ for _, part := range parts {
 s := sb.String()
 ```
 
+```cpp
+// SAI: O(n^2)
+std::string s = "";
+for (const auto& part : parts) {
+    s += part;
+}
+
+// ĐÚNG: O(n)
+std::ostringstream oss;
+for (const auto& part : parts) {
+    oss << part;
+}
+std::string s = oss.str();
+```
+
 ## 2. Two-pointer (kỹ thuật hai con trỏ)
 
 ### Trực quan
@@ -141,6 +156,18 @@ func reverse(a []int) []int {
 }
 ```
 
+```cpp
+std::vector<int> reverse(std::vector<int>& a) {
+    int left = 0, right = (int)a.size() - 1;
+    while (left < right) {
+        std::swap(a[left], a[right]);
+        left++;
+        right--;
+    }
+    return a;
+}
+```
+
 ### Remove in-place (cùng chiều)
 
 Xoá mọi phần tử bằng `val`, trả về độ dài mới. `slow` đánh dấu vị trí ghi tiếp theo; `fast` quét toàn mảng.
@@ -188,6 +215,19 @@ func removeElement(a []int, val int) int {
         }
     }
     return slow
+}
+```
+
+```cpp
+int removeElement(std::vector<int>& a, int val) {
+    int slow = 0;
+    for (int fast = 0; fast < (int)a.size(); fast++) {
+        if (a[fast] != val) {
+            a[slow] = a[fast];
+            slow++;
+        }
+    }
+    return slow;
 }
 ```
 
@@ -253,6 +293,19 @@ func twoSumSorted(a []int, target int) []int {
         }
     }
     return []int{-1, -1}
+}
+```
+
+```cpp
+std::vector<int> twoSumSorted(const std::vector<int>& a, int target) {
+    int left = 0, right = (int)a.size() - 1;
+    while (left < right) {
+        int s = a[left] + a[right];
+        if (s == target) return {left, right};
+        else if (s < target) left++;
+        else right--;
+    }
+    return {-1, -1};
 }
 ```
 
@@ -343,6 +396,22 @@ func longestUnique(s string) int {
 }
 ```
 
+```cpp
+int longestUnique(const std::string& s) {
+    std::unordered_set<char> seen;
+    int left = 0, best = 0;
+    for (int right = 0; right < (int)s.size(); right++) {
+        while (seen.count(s[right])) {
+            seen.erase(s[left]);
+            left++;
+        }
+        seen.insert(s[right]);
+        best = std::max(best, right - left + 1);
+    }
+    return best;
+}
+```
+
 ## 4. Prefix Sum (tổng tiền tố)
 
 ### Trực quan
@@ -411,6 +480,20 @@ func rangeSum(pre []int, i, j int) int { // tong a[i..j]
 }
 ```
 
+```cpp
+std::vector<int> buildPrefix(const std::vector<int>& a) {
+    std::vector<int> pre(a.size() + 1, 0);
+    for (int i = 0; i < (int)a.size(); i++) {
+        pre[i + 1] = pre[i] + a[i];
+    }
+    return pre;
+}
+
+int rangeSum(const std::vector<int>& pre, int i, int j) { // tong a[i..j]
+    return pre[j + 1] - pre[i];
+}
+```
+
 > 💡 Ghi nhớ: dùng `pre` có **độ dài n+1** với `pre[0] = 0`. Quy ước này khử trường hợp đặc biệt khi đoạn bắt đầu từ index 0, giúp công thức `pre[j+1] - pre[i]` luôn đúng.
 
 ### Bài toán điển hình: Maximum Subarray (Kadane)
@@ -468,6 +551,17 @@ func maxSubarray(a []int) int {
         }
     }
     return best
+}
+```
+
+```cpp
+int maxSubarray(const std::vector<int>& a) {
+    int cur = a[0], best = a[0];
+    for (int i = 1; i < (int)a.size(); i++) {
+        cur = std::max(a[i], cur + a[i]);
+        best = std::max(best, cur);
+    }
+    return best;
 }
 ```
 

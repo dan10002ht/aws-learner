@@ -121,6 +121,32 @@ func merge(left, right []int) []int {
 }
 ```
 
+```cpp
+#include <vector>
+using namespace std;
+
+vector<int> merge(const vector<int>& left, const vector<int>& right) {
+    vector<int> result;
+    result.reserve(left.size() + right.size());
+    size_t i = 0, j = 0;
+    while (i < left.size() && j < right.size()) {
+        if (left[i] <= right[j]) result.push_back(left[i++]); // <= giữ stable
+        else result.push_back(right[j++]);
+    }
+    while (i < left.size()) result.push_back(left[i++]);
+    while (j < right.size()) result.push_back(right[j++]);
+    return result;
+}
+
+vector<int> mergeSort(const vector<int>& arr) {
+    if (arr.size() <= 1) return arr;
+    size_t mid = arr.size() / 2;
+    vector<int> left(arr.begin(), arr.begin() + mid);
+    vector<int> right(arr.begin() + mid, arr.end());
+    return merge(mergeSort(left), mergeSort(right));
+}
+```
+
 **Quick sort** — chọn một **pivot**, phân hoạch (partition) mảng thành "nhỏ hơn pivot" và "lớn hơn pivot", rồi đệ quy hai bên. Trung bình O(n log n), nhưng nếu pivot luôn chọn tệ (ví dụ mảng đã sắp xếp + luôn lấy phần tử cuối) thì thành O(n²). Thực tế người ta chọn pivot ngẫu nhiên hoặc "median of three" để tránh trường hợp xấu.
 
 > ⚠️ Bẫy: Đừng nói "quick sort luôn nhanh hơn merge sort". Quick sort không stable và có thể O(n²). Khi phỏng vấn hỏi "chọn sort nào", câu trả lời tốt là tuỳ ràng buộc: cần stable → merge/Timsort; cần in-place tiết kiệm bộ nhớ → heap/quick.
@@ -200,6 +226,35 @@ sort.Slice(people, func(i, j int) bool {
 })
 ```
 
+```cpp
+#include <algorithm>
+#include <string>
+#include <vector>
+using namespace std;
+
+struct Person {
+    string name;
+    int age;
+};
+vector<Person> people = {{"An", 30}, {"Binh", 25}, {"Cuong", 30}};
+
+// Sort theo age tang dan
+sort(people.begin(), people.end(),
+     [](const Person& a, const Person& b) { return a.age < b.age; });
+
+// Da tieu chi: age tang, roi name tang
+sort(people.begin(), people.end(), [](const Person& a, const Person& b) {
+    if (a.age != b.age) return a.age < b.age;
+    return a.name < b.name;
+});
+
+// Giam dan theo age, name tang dan
+sort(people.begin(), people.end(), [](const Person& a, const Person& b) {
+    if (a.age != b.age) return a.age > b.age;
+    return a.name < b.name;
+});
+```
+
 > ⚠️ Bẫy: Trong JS, `arr.sort()` mặc định so sánh theo **chuỗi**, nên `[10, 2, 1].sort()` ra `[1, 10, 2]`. Luôn truyền comparator khi sort số: `arr.sort((a, b) => a - b)`.
 
 ### Khi nào tự cài sort vs dùng built-in?
@@ -274,6 +329,22 @@ func binarySearch(arr []int, target int) int {
 		}
 	}
 	return -1
+}
+```
+
+```cpp
+#include <vector>
+using namespace std;
+
+int binarySearch(const vector<int>& arr, int target) {
+    int lo = 0, hi = arr.size(); // [lo, hi)
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (arr[mid] == target) return mid;
+        else if (arr[mid] < target) lo = mid + 1;
+        else hi = mid;
+    }
+    return -1; // khong tim thay
 }
 ```
 
@@ -397,6 +468,35 @@ func count(arr []int, target int) int {
 }
 ```
 
+```cpp
+#include <vector>
+using namespace std;
+
+int lowerBound(const vector<int>& arr, int target) { // dau tien arr[i] >= target
+    int lo = 0, hi = arr.size();
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (arr[mid] < target) lo = mid + 1;
+        else hi = mid;
+    }
+    return lo;
+}
+
+int upperBound(const vector<int>& arr, int target) { // dau tien arr[i] > target
+    int lo = 0, hi = arr.size();
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (arr[mid] <= target) lo = mid + 1;
+        else hi = mid;
+    }
+    return lo;
+}
+
+int count(const vector<int>& arr, int target) {
+    return upperBound(arr, target) - lowerBound(arr, target);
+}
+```
+
 > 💡 Ghi nhớ: Khác biệt duy nhất giữa lower và upper bound là dấu so sánh: lower dùng `arr[mid] < target`, upper dùng `arr[mid] <= target`. Hầu hết ngôn ngữ có sẵn: Python `bisect.bisect_left` / `bisect_right`, Java `Arrays.binarySearch` (nhưng vị trí phần tử trùng không xác định), Go `sort.SearchInts`.
 
 ---
@@ -478,6 +578,26 @@ func minEatingSpeed(piles []int, h int) int {
 		}
 	}
 	return lo
+}
+```
+
+```cpp
+#include <algorithm>
+#include <vector>
+using namespace std;
+
+int minEatingSpeed(const vector<int>& piles, int h) {
+    int hi = 0;
+    for (int p : piles) hi = max(hi, p);
+    int lo = 1;
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        long long hours = 0;
+        for (int p : piles) hours += (p + mid - 1) / mid; // ceil
+        if (hours <= h) hi = mid; // mid thoa -> thu nho hon
+        else lo = mid + 1;
+    }
+    return lo;
 }
 ```
 

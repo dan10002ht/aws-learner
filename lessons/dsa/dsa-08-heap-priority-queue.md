@@ -150,6 +150,28 @@ top := (*h)[0]              // peek O(1)
 x := heap.Pop(h).(int)     // pop O(log n)
 ```
 
+```cpp
+#include <queue>
+#include <vector>
+using namespace std;
+
+// Min-heap sẵn có: priority_queue mặc định là MAX-heap, nên truyền greater<>.
+priority_queue<int, vector<int>, greater<int>> minHeap;
+minHeap.push(5); minHeap.push(1); minHeap.push(3);  // push O(log n)
+int top = minHeap.top();        // peek O(1) -> 1
+minHeap.pop();                  // pop O(log n), pop() không trả giá trị
+
+// Max-heap: mặc định ">" => gốc là lớn nhất
+priority_queue<int> maxHeap;
+
+// Heapify O(n): nạp cả vector qua constructor
+vector<int> data = {5, 1, 3, 8, 2};
+priority_queue<int, vector<int>, greater<int>> h(data.begin(), data.end());
+
+// Priority + payload: dùng comparator trên trường priority (sắp theo .first=dist)
+priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
+```
+
 > ⚠️ Bẫy: `heapify` (xây heap từ mảng có sẵn) là **O(n)**, *không* phải O(n log n). Còn push từng phần tử một là O(n log n). Nếu đã có sẵn cả mảng, luôn dùng `heapify`/`heap.Init`/constructor — đừng push vòng lặp.
 
 ### 2.1. Vì sao push/pop là O(log n) và heapify là O(n)?
@@ -225,6 +247,17 @@ func findKthLargest(nums []int, k int) int {
 }
 ```
 
+```cpp
+int findKthLargest(vector<int>& nums, int k) {
+    priority_queue<int, vector<int>, greater<int>> heap; // min-heap
+    for (int x : nums) {
+        heap.push(x);
+        if ((int)heap.size() > k) heap.pop();  // bỏ cái nhỏ nhất
+    }
+    return heap.top();                         // gốc = lớn thứ k
+}
+```
+
 **Phân tích độ phức tạp.** Mỗi phần tử push/pop trên heap kích thước ≤ k tốn O(log k). Tổng **O(n log k)** thời gian, **O(k)** bộ nhớ. So với sort O(n log n) và bộ nhớ O(1)/O(n): khi `k ≪ n` (ví dụ tìm top-10 trong 10 triệu phần tử), heap thắng đậm.
 
 **Bẫy.** (1) Dùng nhầm max-heap size k → gốc thành cái *lớn* nhất, không phải thứ k. (2) Đề hỏi "lớn thứ k" (kth largest, tính cả trùng theo vị trí sắp) chứ không phải "phần tử distinct lớn thứ k" — đọc kỹ. (3) Nếu phỏng vấn ép O(n) trung bình, đáp án là **quickselect** (mục 6).
@@ -294,6 +327,25 @@ func topKFrequent(nums []int, k int) []int {
         res = append(res, p[1])
     }
     return res
+}
+```
+
+```cpp
+vector<int> topKFrequent(vector<int>& nums, int k) {
+    unordered_map<int, int> count;          // O(n) đếm tần suất
+    for (int x : nums) count[x]++;
+    // min-heap theo count: mỗi item {count, num}, gốc là count nhỏ nhất
+    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> heap;
+    for (auto& [num, c] : count) {
+        heap.push({c, num});
+        if ((int)heap.size() > k) heap.pop(); // bỏ phần tử ít frequent nhất
+    }
+    vector<int> res;
+    while (!heap.empty()) {
+        res.push_back(heap.top().second);
+        heap.pop();
+    }
+    return res;
 }
 ```
 
@@ -392,6 +444,25 @@ func (m *MedianFinder) FindMedian() float64 {
     }
     return float64((*m.small)[0]+(*m.large)[0]) / 2.0
 }
+```
+
+```cpp
+class MedianFinder {
+    priority_queue<int> small;                                   // max-heap: nửa nhỏ
+    priority_queue<int, vector<int>, greater<int>> large;        // min-heap: nửa lớn
+public:
+    void addNum(int x) {
+        small.push(x);                       // vào nửa nhỏ
+        large.push(small.top()); small.pop();// tràn gốc small sang large
+        if (large.size() > small.size()) {   // cân bằng lại
+            small.push(large.top()); large.pop();
+        }
+    }
+    double findMedian() {
+        if (small.size() > large.size()) return small.top();
+        return (small.top() + large.top()) / 2.0;
+    }
+};
 ```
 
 **Phân tích độ phức tạp.** `addNum` làm vài thao tác heap → **O(log n)**. `findMedian` chỉ đọc hai gốc → **O(1)**. Bộ nhớ O(n). Đây là lý do two heaps đánh bại mọi cách sort lại (O(n log n) mỗi lần hỏi).
@@ -508,6 +579,32 @@ func partition(a []int, lo, hi int) int {
     }
     a[i], a[hi] = a[hi], a[i]
     return i
+}
+```
+
+```cpp
+#include <random>
+
+int partition(vector<int>& a, int lo, int hi) {
+    static mt19937 gen(random_device{}());
+    int r = lo + (int)(gen() % (hi - lo + 1)); // pivot ngẫu nhiên -> tránh xấu nhất
+    swap(a[r], a[hi]);
+    int pivot = a[hi], i = lo;
+    for (int j = lo; j < hi; j++)
+        if (a[j] < pivot) swap(a[i++], a[j]);
+    swap(a[i], a[hi]);
+    return i;
+}
+
+int quickselectKthLargest(vector<int>& a, int k) {
+    int target = (int)a.size() - k;            // chỉ số khi sắp tăng dần
+    int lo = 0, hi = (int)a.size() - 1;
+    while (lo <= hi) {
+        int p = partition(a, lo, hi);
+        if (p == target) return a[p];
+        if (p < target) lo = p + 1; else hi = p - 1;
+    }
+    return -1;
 }
 ```
 

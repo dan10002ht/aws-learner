@@ -99,6 +99,24 @@ func dp2dTemplate(A, B string) int {
 }
 ```
 
+```cpp
+int dp2dTemplate(const string& A, const string& B) {
+    int n = A.size(), m = B.size();
+    // dp (n+1) x (m+1); hàng/cột 0 là base case (tiền tố rỗng)
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (A[i - 1] == B[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1] + 1;             // khớp
+            } else {
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]); // không khớp
+            }
+        }
+    }
+    return dp[n][m];
+}
+```
+
 > 💡 Ghi nhớ: Quy ước **chỉ số lệch 1** — `dp[i][j]` xét **`i` ký tự đầu** của A và **`j` ký tự đầu** của B, nên ký tự hiện tại là `A[i-1]`, `B[j-1]`. Hàng 0 và cột 0 ứng với "chuỗi rỗng". Quy ước này khử được phần lớn lỗi off-by-one của DP 2D.
 
 ## 3. Bảng DẠNG BÀI (problem patterns)
@@ -230,6 +248,23 @@ func longestCommonSubsequence(text1, text2 string) int {
 }
 ```
 
+```cpp
+int longestCommonSubsequence(const string& text1, const string& text2) {
+    int n = text1.size(), m = text2.size();
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (text1[i - 1] == text2[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+            } else {
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+    }
+    return dp[n][m];
+}
+```
+
 **Phân tích độ phức tạp.** Bảng có `(n+1)(m+1)` ô, mỗi ô O(1) → **thời gian O(n·m)**, **bộ nhớ O(n·m)**. Có thể giảm bộ nhớ xuống O(min(n, m)) bằng rolling array (xem phần 6).
 
 **Bẫy.** (1) Đừng nhầm **subsequence** (không cần liền) với **substring** (phải liền) — substring chung dài nhất là bài khác (`dp[i][j]` reset về 0 khi lệch). (2) Off-by-one: nhớ `text1[i-1]` chứ không phải `text1[i]`.
@@ -350,6 +385,27 @@ func minDistance(word1, word2 string) int {
 }
 ```
 
+```cpp
+int minDistance(const string& word1, const string& word2) {
+    int n = word1.size(), m = word2.size();
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+    for (int i = 0; i <= n; i++) dp[i][0] = i;   // base: xóa hết
+    for (int j = 0; j <= m; j++) dp[0][j] = j;   // base: chèn hết
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (word1[i - 1] == word2[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1];
+            } else {
+                dp[i][j] = 1 + min({dp[i - 1][j - 1],  // replace
+                                    dp[i - 1][j],      // delete
+                                    dp[i][j - 1]});    // insert
+            }
+        }
+    }
+    return dp[n][m];
+}
+```
+
 **Phân tích độ phức tạp.** **Thời gian O(n·m)**, **bộ nhớ O(n·m)** (giảm được xuống O(m) bằng rolling array). Mỗi ô chỉ nhìn 3 ô láng giềng → O(1).
 
 **Bẫy.** (1) **Quên base case** — nếu để hàng/cột 0 toàn 0 (như LCS) thì sai ngay, vì biến rỗng thành "abc" tốn 3 chứ không phải 0. (2) Lẫn lộn hướng insert/delete: nhớ delete = bỏ ký tự của `word1` (đi từ `dp[i-1][j]`), insert = thêm ký tự của `word2` (đi từ `dp[i][j-1]`).
@@ -445,6 +501,23 @@ func maximalSquare(matrix [][]byte) int {
 }
 ```
 
+```cpp
+int maximalSquare(vector<vector<char>>& matrix) {
+    if (matrix.empty()) return 0;
+    int n = matrix.size(), m = matrix[0].size(), best = 0;
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0)); // đệm 1 hàng/cột 0
+    for (int r = 1; r <= n; r++) {
+        for (int c = 1; c <= m; c++) {
+            if (matrix[r - 1][c - 1] == '1') {
+                dp[r][c] = 1 + min({dp[r - 1][c], dp[r][c - 1], dp[r - 1][c - 1]});
+                best = max(best, dp[r][c]);
+            }
+        }
+    }
+    return best * best;
+}
+```
+
 **Phân tích độ phức tạp.** **Thời gian O(n·m)**, **bộ nhớ O(n·m)** (giảm xuống O(m) bằng rolling array vì mỗi ô chỉ cần hàng trên + ô trái). **Bẫy:** trả về **diện tích** (`cạnh²`) chứ không phải cạnh; và đề dùng ký tự `'1'`/`'0'` (char), không phải số nguyên.
 
 ## 5. Sai lầm thường gặp & cách tránh
@@ -531,6 +604,23 @@ func lcsRolling(a, b string) int {
         prev = cur
     }
     return prev[m]
+}
+```
+
+```cpp
+int lcsRolling(string a, string b) {
+    if (b.size() > a.size()) swap(a, b); // đảm bảo b là chuỗi ngắn -> mảng nhỏ
+    int n = a.size(), m = b.size();
+    vector<int> prev(m + 1, 0);
+    for (int i = 1; i <= n; i++) {
+        vector<int> cur(m + 1, 0);
+        for (int j = 1; j <= m; j++) {
+            if (a[i - 1] == b[j - 1]) cur[j] = prev[j - 1] + 1; // chéo (hàng trước)
+            else cur[j] = max(prev[j], cur[j - 1]);             // trên / trái
+        }
+        prev = cur;
+    }
+    return prev[m];
 }
 ```
 

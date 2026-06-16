@@ -65,6 +65,18 @@ func total(items []int) int {
 }
 ```
 
+```cpp
+// Tổng số thao tác: 3n + 2  ->  Big-O: O(n)
+int total(const std::vector<int>& items) {
+    int s = 0;                     // 1
+    for (int x : items) {          // n vòng
+        s += x;                    // n
+        s += 1;                    // n
+    }
+    return s + 2;                  // 1
+}
+```
+
 ## Các lớp độ phức tạp thường gặp
 
 ### O(1) — hằng số
@@ -88,6 +100,12 @@ static int first(int[] arr) {
 ```go
 func first(arr []int) int {
     return arr[0]        // luôn 1 thao tác
+}
+```
+
+```cpp
+int first(const std::vector<int>& arr) {
+    return arr[0];       // luôn 1 thao tác
 }
 ```
 
@@ -149,6 +167,19 @@ func binarySearch(arr []int, target int) int {  // arr đã sắp xếp tăng d�
 }
 ```
 
+```cpp
+int binarySearch(const std::vector<int>& arr, int target) {  // arr đã sắp xếp tăng dần
+    int lo = 0, hi = (int)arr.size() - 1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (arr[mid] == target) return mid;
+        else if (arr[mid] < target) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return -1;
+}
+```
+
 > ⚠️ Bẫy: `binary search` chỉ đúng khi dữ liệu **đã sắp xếp**. Nếu phải sắp xếp trước rồi mới tìm, chi phí là `O(n log n)` cho lần sắp xếp — chỉ đáng nếu bạn tìm nhiều lần.
 
 ### O(n) — tuyến tính
@@ -201,6 +232,17 @@ func sortThenDedup(arr []int) []int {
 }
 ```
 
+```cpp
+std::vector<int> sortThenDedup(std::vector<int> arr) {
+    std::sort(arr.begin(), arr.end());      // O(n log n)
+    std::vector<int> out;
+    for (int x : arr) {                     // O(n)
+        if (out.empty() || out.back() != x) out.push_back(x);
+    }
+    return out;                             // tổng: O(n log n)
+}
+```
+
 ### O(n^2) — bậc hai
 
 Vòng lặp lồng vòng lặp, mỗi cái chạy `n` lần. So sánh mọi cặp phần tử. **Bắt đầu đau** ở `n` cỡ chục nghìn. Thường là dấu hiệu cần tối ưu bằng `hash map` hoặc sắp xếp.
@@ -243,6 +285,17 @@ func hasDupNaive(arr []int) bool {  // O(n^2)
         }
     }
     return false
+}
+```
+
+```cpp
+bool hasDupNaive(const std::vector<int>& arr) {   // O(n^2)
+    for (size_t i = 0; i < arr.size(); i++) {
+        for (size_t j = i + 1; j < arr.size(); j++) {
+            if (arr[i] == arr[j]) return true;
+        }
+    }
+    return false;
 }
 ```
 
@@ -297,6 +350,16 @@ func hasDupFast(arr []int) bool {   // time O(n), space O(n)
 }
 ```
 
+```cpp
+bool hasDupFast(const std::vector<int>& arr) {   // time O(n), space O(n)
+    std::unordered_set<int> seen;
+    for (int x : arr) {
+        if (!seen.insert(x).second) return true; // insert trả false nếu đã có
+    }
+    return false;
+}
+```
+
 > 💡 Ghi nhớ: Khi phỏng vấn nói độ phức tạp, **luôn nêu cả time lẫn space**. "Giải pháp này `O(n)` time, `O(n)` space" nghe chuyên nghiệp hơn nhiều so với chỉ nói một vế.
 
 ## Amortized — chi phí trung bình khấu hao
@@ -330,6 +393,14 @@ arr := []int{}
 for i := 0; i < n; i++ {
     arr = append(arr, i)   // đa số O(1); thỉnh thoảng O(n) khi resize
                            // -> amortized O(1) mỗi append
+}
+```
+
+```cpp
+std::vector<int> arr;
+for (int i = 0; i < n; i++) {
+    arr.push_back(i);   // đa số O(1); thỉnh thoảng O(n) khi resize
+                        // -> amortized O(1) mỗi push_back
 }
 ```
 
@@ -380,6 +451,17 @@ func linear(arr []int) {
     for _, x := range arr {        // n
         for k := 0; k < 10; k++ {  // hằng số 10, không phải n
             doWork(x)
+        }
+    }
+}
+```
+
+```cpp
+// Vòng trong KHÔNG phụ thuộc n -> đây là O(n), KHÔNG phải O(n^2)
+void linear(const std::vector<int>& arr) {
+    for (int x : arr) {            // n
+        for (int k = 0; k < 10; k++) {  // hằng số 10, không phải n
+            doWork(x);
         }
     }
 }
@@ -480,6 +562,19 @@ func twoSum(nums []int, target int) []int {   // O(n) time, O(n) space
 }
 ```
 
+```cpp
+std::vector<int> twoSum(const std::vector<int>& nums, int target) {  // O(n) time, O(n) space
+    std::unordered_map<int, int> seen;   // value -> index
+    for (int i = 0; i < (int)nums.size(); i++) {
+        int need = target - nums[i];
+        auto it = seen.find(need);
+        if (it != seen.end()) return {it->second, i};
+        seen[nums[i]] = i;
+    }
+    return {};
+}
+```
+
 **Hướng giải tổng quát:** Khi thấy "tìm cặp/bộ thoả điều kiện trong mảng" và cách ngây thơ là `O(n^2)`, hãy thử dùng `hash map`/`set` để tra "phần bù" trong `O(1)`, hạ xuống `O(n)`.
 
 ### Bài 2: Phân tích độ phức tạp một đoạn code
@@ -540,6 +635,22 @@ func f(matrix [][]int) int {            // matrix là n x n
         total += i
     }
     return total
+}
+```
+
+```cpp
+long long f(const std::vector<std::vector<int>>& matrix) {  // matrix là n x n
+    int n = (int)matrix.size();
+    long long total = 0;
+    for (int i = 0; i < n; i++) {       // n
+        for (int j = 0; j < n; j++) {   // n  -> n*n
+            total += matrix[i][j];
+        }
+    }
+    for (int i = 0; i < n; i++) {       // n (nối tiếp, không lồng)
+        total += i;
+    }
+    return total;
 }
 ```
 

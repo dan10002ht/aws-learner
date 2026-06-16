@@ -44,6 +44,13 @@ func factorial(n int) int {
 }
 ```
 
+```cpp
+long long factorial(int n) {
+    if (n <= 1) return 1;             // base case
+    return n * factorial(n - 1);      // recursive case
+}
+```
+
 ### 1.2. Call stack — vì sao đệ quy "ăn" bộ nhớ
 
 Mỗi lần một hàm được gọi, máy đẩy một **stack frame** (khung chứa tham số, biến cục bộ, vị trí quay về) lên **call stack**. Với `factorial(4)`, stack chồng lên: `factorial(4)` → `factorial(3)` → `factorial(2)` → `factorial(1)`. Khi chạm base case, các frame lần lượt được lấy ra (pop) và nhân ngược lại: `1 → 2 → 6 → 24`.
@@ -162,6 +169,28 @@ func permutations(nums []int) [][]int {
 }
 ```
 
+```cpp
+std::vector<std::vector<int>> permutations(const std::vector<int>& nums) {
+    std::vector<std::vector<int>> res;
+    std::vector<bool> used(nums.size(), false);
+    std::vector<int> path;
+    std::function<void()> backtrack = [&]() {
+        if (path.size() == nums.size()) {
+            res.push_back(path);                 // copy lời giải
+            return;
+        }
+        for (size_t i = 0; i < nums.size(); i++) {
+            if (used[i]) continue;
+            used[i] = true; path.push_back(nums[i]);     // chọn
+            backtrack();                                 // đi sâu
+            used[i] = false; path.pop_back();            // quay lui
+        }
+    };
+    backtrack();
+    return res;
+}
+```
+
 Số hoán vị là `n!`, nên độ phức tạp là **O(n × n!)** — backtracking vốn dĩ "đắt", chỉ dùng khi `n` nhỏ.
 
 > 💡 Ghi nhớ: **Tổ hợp (combinations)** chỉ khác hoán vị ở một chỗ — để tránh đếm lặp `{1,2}` và `{2,1}`, ta truyền thêm một chỉ số `start` và vòng lặp chỉ chạy từ `start` trở đi, không quay lại các phần tử đã xét.
@@ -213,6 +242,14 @@ addEdge := func(u, v int) {              // cạnh vô hướng
     graph[u] = append(graph[u], v)
     graph[v] = append(graph[v], u)
 }
+```
+
+```cpp
+std::unordered_map<int, std::vector<int>> graph;
+auto addEdge = [&](int u, int v) {       // cạnh vô hướng
+    graph[u].push_back(v);
+    graph[v].push_back(u);
+};
 ```
 
 ### 3.2. BFS — duyệt theo chiều rộng
@@ -282,6 +319,26 @@ func bfs(graph map[int][]int, start int) []int {
 }
 ```
 
+```cpp
+std::vector<int> bfs(std::unordered_map<int, std::vector<int>>& graph, int start) {
+    std::unordered_set<int> visited{start};
+    std::vector<int> order;
+    std::queue<int> q;
+    q.push(start);
+    while (!q.empty()) {
+        int node = q.front(); q.pop();
+        order.push_back(node);
+        for (int nb : graph[node]) {
+            if (!visited.count(nb)) {
+                visited.insert(nb);
+                q.push(nb);
+            }
+        }
+    }
+    return order;
+}
+```
+
 ### 3.3. DFS — duyệt theo chiều sâu
 
 DFS đi **sâu hết một nhánh** rồi mới quay lại. Viết tự nhiên bằng đệ quy (dùng call stack) hoặc bằng stack tường minh. DFS hợp cho: phát hiện chu trình, đếm thành phần liên thông, topological sort, "flood fill".
@@ -323,6 +380,17 @@ func dfs(graph map[int][]int, node int, visited map[int]bool, order *[]int) {
         if !visited[nb] {
             dfs(graph, nb, visited, order)
         }
+    }
+}
+```
+
+```cpp
+void dfs(std::unordered_map<int, std::vector<int>>& graph, int node,
+         std::unordered_set<int>& visited, std::vector<int>& order) {
+    visited.insert(node);
+    order.push_back(node);
+    for (int nb : graph[node]) {
+        if (!visited.count(nb)) dfs(graph, nb, visited, order);
     }
 }
 ```
@@ -425,6 +493,23 @@ func fibTab(n int) int {                        // tabulation
 }
 ```
 
+```cpp
+long long fibMemo(int n, std::unordered_map<int, long long>& cache) {  // memoization
+    if (n < 2) return n;
+    auto it = cache.find(n);
+    if (it != cache.end()) return it->second;
+    long long v = fibMemo(n - 1, cache) + fibMemo(n - 2, cache);
+    cache[n] = v;
+    return v;
+}
+long long fibTab(int n) {                        // tabulation
+    if (n < 2) return n;
+    long long a = 0, b = 1;
+    for (int i = 2; i <= n; i++) { long long t = a + b; a = b; b = t; }
+    return b;
+}
+```
+
 | Cách | Hướng | Bộ nhớ | Ưu điểm |
 | --- | --- | --- | --- |
 | Memoization | Top-down (đệ quy + cache) | O(n) + call stack | Viết nhanh, sát công thức truy hồi |
@@ -500,6 +585,20 @@ func coinChange(coins []int, amount int) int {
         return -1
     }
     return dp[amount]
+}
+```
+
+```cpp
+int coinChange(const std::vector<int>& coins, int amount) {
+    int INF = amount + 1;
+    std::vector<int> dp(amount + 1, INF);
+    dp[0] = 0;
+    for (int x = 1; x <= amount; x++) {
+        for (int c : coins) {
+            if (c <= x && dp[x - c] + 1 < dp[x]) dp[x] = dp[x - c] + 1;
+        }
+    }
+    return dp[amount] > amount ? -1 : dp[amount];
 }
 ```
 

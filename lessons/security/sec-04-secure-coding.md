@@ -92,6 +92,27 @@ cmd := exec.Command("convert", inputPath, "-resize", "100x100", outputPath)
 // ❌ exec.Command("sh", "-c", "convert "+inputPath+" ...")
 ```
 
+```cpp
+// C++17: tránh command injection — truyền args qua execvp, KHÔNG dùng "sh -c <chuỗi>"
+#include <unistd.h>
+#include <string>
+#include <vector>
+
+void resizeImage(const std::string& inputPath, const std::string& outputPath) {
+    // Mỗi tham số là một phần tử riêng — không bao giờ ghép thành chuỗi shell
+    std::vector<std::string> args = {"convert", inputPath, "-resize", "100x100", outputPath};
+    std::vector<char*> argv;
+    for (auto& a : args) argv.push_back(const_cast<char*>(a.c_str()));
+    argv.push_back(nullptr);
+
+    if (fork() == 0) {
+        execvp(argv[0], argv.data());  // không qua shell, không bị inject
+        _exit(127);
+    }
+    // ❌ system(("convert " + inputPath + " ...").c_str());  // qua /bin/sh → injectable
+}
+```
+
 > 💡 **Nguyên tắc**: Với mỗi interpreter (SQL, shell, LDAP, XPath, template engine), tìm cơ chế "data ≠ code" của nó (parameter binding, arg array) và dùng nó *mặc định*. Nội suy chuỗi vào ngôn ngữ khác là code smell cần review.
 
 ## 3. Output encoding theo context

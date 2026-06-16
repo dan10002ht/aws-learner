@@ -48,6 +48,22 @@ func main() {
 }
 ```
 
+```cpp
+#include <iostream>
+#include <vector>
+#include <string>
+
+int main() {
+    std::vector<std::string> traiCay = {"táo", "cam", "chuối"};
+    std::cout << "[";
+    for (size_t i = 0; i < traiCay.size(); i++) {
+        std::cout << traiCay[i];
+        if (i + 1 < traiCay.size()) std::cout << ", ";
+    }
+    std::cout << "]" << std::endl;
+}
+```
+
 Khác biệt nhỏ: Python và JavaScript có list/array "sẵn dùng" rất thoải mái. Java phân biệt mảng cố định (`String[]`) và `ArrayList` co giãn được — người mới thường dùng `ArrayList`. Go gọi dãy co giãn là **slice** (lát cắt), khai báo bằng `[]string{...}`.
 
 ### 2.1. Index — đánh số từ 0
@@ -79,6 +95,12 @@ System.out.println(traiCay.get(2));   // chuối
 traiCay := []string{"táo", "cam", "chuối"}
 fmt.Println(traiCay[0])   // táo
 fmt.Println(traiCay[2])   // chuối
+```
+
+```cpp
+std::vector<std::string> traiCay = {"táo", "cam", "chuối"};
+std::cout << traiCay[0] << std::endl;   // táo
+std::cout << traiCay[2] << std::endl;   // chuối
 ```
 
 > ⚠️ **Lỗi người mới hay gặp:** truy cập `trai_cay[3]` khi danh sách chỉ có 3 phần tử (index hợp lệ là 0, 1, 2). Chương trình sẽ báo lỗi "index out of range" (vượt quá phạm vi) hoặc trả về `undefined` (JavaScript). Quy tắc: danh sách có N phần tử thì index cuối cùng là **N − 1**.
@@ -117,6 +139,20 @@ gioHang = append(gioHang[:1], gioHang[2:]...) // xóa phần tử ở index 1
 fmt.Println(len(gioHang))             // 2
 ```
 
+```cpp
+#include <vector>
+#include <string>
+#include <algorithm>
+
+std::vector<std::string> gioHang = {"trứng"};
+gioHang.push_back("sữa");        // thêm vào cuối
+gioHang.push_back("bánh mì");
+// xóa theo giá trị: tìm vị trí rồi erase
+auto it = std::find(gioHang.begin(), gioHang.end(), "sữa");
+if (it != gioHang.end()) gioHang.erase(it);
+std::cout << gioHang.size() << std::endl;  // 2
+```
+
 Chú thích: Go không có hàm "xóa theo giá trị" sẵn — bạn ghép phần trước và phần sau vị trí cần xóa lại với nhau. Trong Go, `append` **phải gán lại** vào biến (`gioHang = append(...)`), quên gán là lỗi kinh điển.
 
 ### 2.3. Duyệt danh sách (đi qua từng phần tử)
@@ -153,6 +189,17 @@ for _, d := range diem {
     tong = tong + d
 }
 fmt.Println("Tổng điểm:", tong)   // 34
+```
+
+```cpp
+#include <vector>
+
+std::vector<int> diem = {8, 9, 7, 10};
+int tong = 0;
+for (int d : diem) {        // range-based for: duyệt từng giá trị
+    tong = tong + d;
+}
+std::cout << "Tổng điểm: " << tong << std::endl;   // 34
 ```
 
 Chú thích: Go dùng `range`, trả về cả index lẫn giá trị; dấu `_` nghĩa là "bỏ qua index, tôi không cần". JavaScript dùng `for...of` để lấy giá trị (đừng nhầm với `for...in` — cái đó lấy index).
@@ -205,6 +252,19 @@ _, ton_tai := danhBa["Lan"]       // kiểm tra khóa tồn tại
 fmt.Println(ton_tai)              // true
 ```
 
+```cpp
+#include <map>
+#include <string>
+
+std::map<std::string, std::string> danhBa = {
+    {"Lan", "0901234567"}, {"Minh", "0907654321"}};
+std::cout << danhBa["Lan"] << std::endl;   // 0901234567
+danhBa["Hoa"] = "0909999999";              // thêm cặp mới
+danhBa.erase("Minh");                      // xóa theo khóa
+bool tonTai = danhBa.count("Lan") > 0;     // kiểm tra khóa tồn tại
+std::cout << std::boolalpha << tonTai << std::endl;   // true
+```
+
 Chú thích: trong JavaScript, người ta cũng hay dùng object thường `{Lan: "090..."}` như một từ điển đơn giản — `Map` là phiên bản "chính quy" hơn. Go có cú pháp đặc biệt `gia_tri, ok := m[khoa]` để vừa lấy giá trị vừa biết khóa có tồn tại hay không.
 
 ### 3.1. Duyệt từ điển
@@ -232,6 +292,17 @@ for (Map.Entry<String, String> muc : danhBa.entrySet()) {
 danhBa := map[string]string{"Lan": "0901234567", "Hoa": "0909999999"}
 for ten, sdt := range danhBa {
     fmt.Println(ten, "->", sdt)
+}
+```
+
+```cpp
+#include <map>
+#include <string>
+
+std::map<std::string, std::string> danhBa = {
+    {"Lan", "0901234567"}, {"Hoa", "0909999999"}};
+for (const auto& [ten, sdt] : danhBa) {   // structured binding (C++17)
+    std::cout << ten << " -> " << sdt << std::endl;
 }
 ```
 
@@ -279,6 +350,19 @@ daDiemDanh["Minh"] = true
 daDiemDanh["Lan"] = true          // ghi đè — vẫn chỉ 1 "Lan"
 fmt.Println(len(daDiemDanh))      // 2
 fmt.Println(daDiemDanh["Lan"])    // true
+```
+
+```cpp
+#include <set>
+#include <string>
+
+std::set<std::string> daDiemDanh;
+daDiemDanh.insert("Lan");
+daDiemDanh.insert("Minh");
+daDiemDanh.insert("Lan");          // thêm lần 2 — không có tác dụng
+std::cout << daDiemDanh.size() << std::endl;          // 2
+std::cout << std::boolalpha
+          << (daDiemDanh.count("Lan") > 0) << std::endl;  // true
 ```
 
 Chú thích: Go không có kiểu set riêng — quy ước phổ biến là dùng `map[string]bool` (hoặc `map[string]struct{}` để tiết kiệm bộ nhớ hơn, nhưng người mới cứ dùng `bool` cho dễ hiểu).
@@ -376,6 +460,27 @@ func main() {
     }
     for tu, soLan := range dem {
         fmt.Println(tu, ":", soLan)
+    }
+    // mèo : 3, chó : 2, cá : 1
+}
+```
+
+```cpp
+#include <iostream>
+#include <map>
+#include <string>
+#include <sstream>
+
+int main() {
+    std::string cau = "mèo chó mèo cá chó mèo";
+    std::map<std::string, int> dem;
+    std::istringstream iss(cau);
+    std::string tu;
+    while (iss >> tu) {           // tách câu theo dấu cách
+        dem[tu] = dem[tu] + 1;    // khóa chưa có thì dem[tu] mặc định là 0
+    }
+    for (const auto& [tu, soLan] : dem) {
+        std::cout << tu << " : " << soLan << std::endl;
     }
     // mèo : 3, chó : 2, cá : 1
 }

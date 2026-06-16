@@ -67,6 +67,17 @@ empty := len(stack) == 0
 _ = top; _ = x; _ = empty
 ```
 
+```cpp
+#include <stack>
+std::stack<int> stack;
+stack.push(1);                   // push
+stack.push(2);
+int top = stack.top();           // peek -> 2
+int x = stack.top();             // pop ...
+stack.pop();                     // ... lấy phần tử đỉnh ra
+bool empty = stack.empty();
+```
+
 > ⚠️ **Bẫy**: Trong Java, đừng dùng class `java.util.Stack` cũ (nó kế thừa `Vector`, có khoá đồng bộ chậm). Hãy dùng `ArrayDeque` làm stack.
 
 ### Bài toán điển hình: Ngoặc hợp lệ (Valid Parentheses)
@@ -133,6 +144,25 @@ func isValid(s string) bool {
 }
 ```
 
+```cpp
+#include <string>
+#include <stack>
+#include <unordered_map>
+bool isValid(const std::string& s) {
+    std::unordered_map<char, char> pairs{{')', '('}, {']', '['}, {'}', '{'}};
+    std::stack<char> stack;
+    for (char c : s) {
+        if (pairs.count(c)) {
+            if (stack.empty() || stack.top() != pairs[c]) return false;
+            stack.pop();
+        } else {
+            stack.push(c);
+        }
+    }
+    return stack.empty();
+}
+```
+
 ## Queue (FIFO)
 
 `Queue` hoạt động theo nguyên tắc **FIFO** (First In, First Out): phần tử vào trước sẽ ra trước, đúng như xếp hàng mua vé. Người đến trước được phục vụ trước.
@@ -195,6 +225,17 @@ x := q[0]             // dequeue ...
 q = q[1:]             // ... dịch đầu hàng
 empty := len(q) == 0
 _ = front; _ = x; _ = empty
+```
+
+```cpp
+#include <queue>
+std::queue<int> q;
+q.push(1);            // enqueue
+q.push(2);
+int front = q.front(); // peek -> 1
+int x = q.front();    // dequeue ...
+q.pop();              // ... lấy phần tử đầu ra
+bool empty = q.empty();
 ```
 
 ### Bài toán điển hình: BFS trên lưới (số bước ngắn nhất)
@@ -297,6 +338,34 @@ func shortestPath(grid [][]int) int {
 }
 ```
 
+```cpp
+#include <vector>
+#include <queue>
+#include <array>
+int shortestPath(const std::vector<std::vector<int>>& grid) {
+    int n = grid.size(), m = grid[0].size();
+    std::queue<std::array<int, 3>> q;      // {row, col, dist}
+    q.push({0, 0, 0});
+    std::vector<std::vector<bool>> seen(n, std::vector<bool>(m, false));
+    seen[0][0] = true;
+    std::array<std::array<int, 2>, 4> dirs{{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}};
+    while (!q.empty()) {
+        auto [r, c, d] = q.front();
+        q.pop();
+        if (r == n - 1 && c == m - 1) return d;
+        for (auto& dd : dirs) {
+            int nr = r + dd[0], nc = c + dd[1];
+            if (nr >= 0 && nr < n && nc >= 0 && nc < m &&
+                grid[nr][nc] == 0 && !seen[nr][nc]) {
+                seen[nr][nc] = true;
+                q.push({nr, nc, d + 1});
+            }
+        }
+    }
+    return -1;
+}
+```
+
 > 💡 **Ghi nhớ**: `Stack` → `DFS`, `Queue` → `BFS`. BFS luôn cho đường ngắn nhất khi mỗi cạnh có trọng số bằng nhau (đếm theo số bước).
 
 ## Deque (Double-Ended Queue)
@@ -338,6 +407,15 @@ dq = append(dq, 1)              // thêm cuối
 dq = append([]int{0}, dq...)    // thêm đầu (O(n) khi copy)
 dq = dq[:len(dq)-1]             // xoá cuối
 dq = dq[1:]                     // xoá đầu
+```
+
+```cpp
+#include <deque>
+std::deque<int> dq;
+dq.push_back(1);    // thêm cuối
+dq.push_front(0);   // thêm đầu
+dq.pop_back();      // xoá cuối
+dq.pop_front();     // xoá đầu
 ```
 
 ## Monotonic Stack
@@ -412,6 +490,23 @@ func nextGreater(nums []int) []int {
         stack = append(stack, nums[i])
     }
     return res
+}
+```
+
+```cpp
+#include <vector>
+#include <stack>
+std::vector<int> nextGreater(const std::vector<int>& nums) {
+    std::vector<int> res(nums.size(), -1);
+    std::stack<int> stack;  // giảm dần
+    for (int i = (int)nums.size() - 1; i >= 0; i--) {
+        while (!stack.empty() && stack.top() <= nums[i]) {
+            stack.pop();
+        }
+        if (!stack.empty()) res[i] = stack.top();
+        stack.push(nums[i]);
+    }
+    return res;
 }
 ```
 
@@ -495,6 +590,24 @@ func maxSlidingWindow(nums []int, k int) []int {
         }
     }
     return res
+}
+```
+
+```cpp
+#include <vector>
+#include <deque>
+std::vector<int> maxSlidingWindow(const std::vector<int>& nums, int k) {
+    std::deque<int> dq;     // lưu index, giá trị giảm dần
+    std::vector<int> res;
+    for (int i = 0; i < (int)nums.size(); i++) {
+        while (!dq.empty() && nums[dq.back()] <= nums[i]) {
+            dq.pop_back();
+        }
+        dq.push_back(i);
+        if (dq.front() <= i - k) dq.pop_front();
+        if (i >= k - 1) res.push_back(nums[dq.front()]);
+    }
+    return res;
 }
 ```
 

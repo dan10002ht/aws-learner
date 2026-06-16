@@ -44,6 +44,14 @@ func main() {
 }
 ```
 
+```cpp
+#include <iostream>
+
+int main() {
+    std::cout << "Xin chào, thế giới!" << std::endl;
+}
+```
+
 Bạn sẽ thấy ngay sự khác biệt về "độ dài dòng": Python và JavaScript chỉ cần 1 dòng, còn Java bắt buộc phải bọc lệnh trong một `class` và hàm `main` (điểm bắt đầu của chương trình), Go cần khai báo `package main` và `import "fmt"` (gói chứa lệnh in). Từ giờ trở đi, với Java và Go, **bạn hiểu ngầm rằng code luôn nằm bên trong khung `main` đó** — các ví dụ sau sẽ chỉ viết phần lõi cho gọn.
 
 Mấy điểm cần để ý:
@@ -96,6 +104,13 @@ fmt.Println(ten)
 fmt.Println(tuoi)
 ```
 
+```cpp
+int tuoi = 18;
+std::string ten = "Lan";
+std::cout << ten << std::endl;
+std::cout << tuoi << std::endl;
+```
+
 Khác biệt đáng chú ý: Python chỉ cần `tên = giá_trị`. JavaScript thêm từ khoá `let` (báo "tôi tạo hộp mới"). Java bắt bạn **khai báo trước loại đồ** hộp sẽ chứa (`int` = số nguyên, `String` = chuỗi chữ). Go dùng `:=` khi tạo hộp mới và tự đoán loại đồ.
 
 ### 3.2. Thay đổi giá trị trong hộp
@@ -121,6 +136,12 @@ System.out.println(diem);  // in ra: 9
 diem := 7
 diem = 9   // bỏ 9 vào hộp, số 7 cũ biến mất
 fmt.Println(diem)  // in ra: 9
+```
+
+```cpp
+int diem = 7;
+diem = 9;   // bỏ 9 vào hộp, số 7 cũ biến mất
+std::cout << diem << std::endl;  // in ra: 9
 ```
 
 Để ý: phần chữ sau dấu `#` (Python) hoặc `//` (3 ngôn ngữ còn lại) là **chú thích** (comment) — ghi chú dành cho người đọc, máy tính bỏ qua hoàn toàn. Và ở Go, lần gán thứ hai dùng `=` chứ không phải `:=`, vì hộp đã tồn tại rồi.
@@ -169,6 +190,13 @@ chuoi := "Học lập trình"  // string
 dungSai := true           // bool
 ```
 
+```cpp
+int soNguyen = 42;                 // int
+double soThuc = 3.14;              // double
+std::string chuoi = "Học lập trình"; // string
+bool dungSai = true;               // bool
+```
+
 Chú thích nhanh: Python viết `True`/`False` viết hoa; ba ngôn ngữ kia viết thường `true`/`false`. JavaScript không phân biệt số nguyên và số thực — tất cả đều là `number`.
 
 ### 4.1. Vì sao kiểu lại quan trọng? Số `5` khác chuỗi `"5"`!
@@ -192,6 +220,13 @@ System.out.println("5" + "3");  // "53" (nối chuỗi!)
 ```go
 fmt.Println(5 + 3)      // 8  (cộng số)
 fmt.Println("5" + "3")  // "53" (nối chuỗi!)
+```
+
+```cpp
+#include <string>
+using namespace std::string_literals;
+std::cout << 5 + 3 << std::endl;        // 8  (cộng số)
+std::cout << ("5"s + "3"s) << std::endl; // "53" (nối chuỗi!)
 ```
 
 > ⚠️ Lỗi người mới hay gặp: Tưởng `"5" + "3"` ra `8`. Không! Hễ có ngoặc kép là **chữ**, và `+` với chữ là phép **ghép**. Đây là nguồn gốc của vô số bug (lỗi chương trình) ngoài đời thực.
@@ -223,6 +258,13 @@ chuoiTuoi := "25"
 tuoi, _ := strconv.Atoi(chuoiTuoi)  // chuỗi -> số nguyên (cần import "strconv")
 fmt.Println(tuoi + 5)               // 30
 nguocLai := strconv.Itoa(tuoi)      // số -> chuỗi: "25"
+```
+
+```cpp
+std::string chuoiTuoi = "25";
+int tuoi = std::stoi(chuoiTuoi);          // chuỗi -> số nguyên
+std::cout << tuoi + 5 << std::endl;       // 30
+std::string nguocLai = std::to_string(tuoi); // số -> chuỗi: "25"
 ```
 
 Chú thích: Go trả về **hai** kết quả khi chuyển kiểu (giá trị + lỗi nếu chuỗi không phải số); dấu `_` nghĩa là "tạm bỏ qua phần lỗi" — bài sau sẽ học cách xử lý tử tế. Java dùng `Integer.parseInt` cho số nguyên và `Double.parseDouble` cho số thực.
@@ -291,6 +333,22 @@ func main() {
 }
 ```
 
+```cpp
+#include <iostream>
+#include <string>
+
+int main() {
+    std::string ten;
+    int namSinh;
+    std::cout << "Bạn tên gì? ";
+    std::getline(std::cin, ten);
+    std::cout << "Năm sinh của bạn? ";
+    std::cin >> namSinh;
+    int tuoi = 2026 - namSinh;
+    std::cout << "Chào " << ten << ", năm nay bạn " << tuoi << " tuổi!" << std::endl;
+}
+```
+
 Chú thích: phần nhập liệu là chỗ 4 ngôn ngữ khác nhau nhiều nhất. Python gọn nhất với `input()`. Java dùng `Scanner` (máy quét bàn phím). Go phải đọc cả dòng rồi cắt bỏ ký tự xuống dòng bằng `TrimSpace`. JavaScript trong trình duyệt còn có cách siêu ngắn là `prompt("câu hỏi")`. Đừng cố thuộc lòng — cứ tra lại mẫu này khi cần, ai cũng vậy cả.
 
 > 💡 Ghi nhớ: Quy trình kinh điển của mọi chương trình: **Nhập (input) → Xử lý (process) → Xuất (output)**. Ví dụ trên có đủ cả ba: hỏi năm sinh → lấy 2026 trừ đi → in lời chào.
@@ -316,6 +374,11 @@ System.out.println("Xin chào);
 ```go
 fmt.Println("Xin chào)
 // syntax error: ... string literal not terminated
+```
+
+```cpp
+std::cout << "Xin chào;
+// error: missing terminating '"' character
 ```
 
 ### Cách đọc một thông báo lỗi (kỹ năng quan trọng nhất bài này!)

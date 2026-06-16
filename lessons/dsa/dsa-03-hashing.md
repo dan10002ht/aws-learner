@@ -158,6 +158,36 @@ func main() {
 }
 ```
 
+```cpp
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <unordered_set>
+#include <string>
+
+int main() {
+    std::vector<int> nums = {1, 2, 2, 3, 3, 3};
+
+    // Đếm tần suất
+    std::unordered_map<int, int> count;
+    for (int n : nums) count[n]++; // {1:1, 2:2, 3:3}
+
+    // Loại trùng
+    std::unordered_set<int> unique(nums.begin(), nums.end()); // {1, 2, 3}
+
+    // Lookup theo khoá
+    std::unordered_map<int, std::string> byId = {{7, "An"}, {9, "Bình"}};
+    std::cout << byId[7] << "\n"; // "An"  — O(1)
+
+    // Gom nhóm theo tính chẵn/lẻ
+    std::unordered_map<int, std::vector<int>> groups;
+    for (int n : nums) {
+        groups[n % 2].push_back(n);
+    }
+    return 0;
+}
+```
+
 > 💡 Ghi nhớ: hễ bài toán có cụm "đã thấy chưa", "bao nhiêu lần", "có cặp/nhóm nào", "loại trùng", "tìm theo id" — phản xạ đầu tiên là hash map/set. Nó thường biến O(n²) thành O(n).
 
 ## 6. Khi nào KHÔNG dùng hash map
@@ -227,6 +257,22 @@ func twoSum(nums []int, target int) []int {
 }
 ```
 
+```cpp
+#include <vector>
+#include <unordered_map>
+
+std::vector<int> twoSum(const std::vector<int>& nums, int target) {
+    std::unordered_map<int, int> seen; // giá trị -> chỉ số
+    for (int i = 0; i < (int)nums.size(); i++) {
+        int need = target - nums[i];
+        auto it = seen.find(need);
+        if (it != seen.end()) return {it->second, i};
+        seen[nums[i]] = i;
+    }
+    return {};
+}
+```
+
 Độ phức tạp: **O(n)** thời gian, **O(n)** bộ nhớ.
 
 ### 7.2 Group Anagrams — gom các từ đảo chữ
@@ -285,6 +331,27 @@ func groupAnagrams(words []string) [][]string {
 }
 ```
 
+```cpp
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <unordered_map>
+
+std::vector<std::vector<std::string>> groupAnagrams(const std::vector<std::string>& words) {
+    std::unordered_map<std::string, std::vector<std::string>> groups;
+    for (const std::string& w : words) {
+        std::string key = w;
+        std::sort(key.begin(), key.end()); // signature
+        groups[key].push_back(w);
+    }
+    std::vector<std::vector<std::string>> out;
+    for (auto& [key, g] : groups) {
+        out.push_back(g);
+    }
+    return out;
+}
+```
+
 Độ phức tạp: **O(n·k log k)** với n từ, mỗi từ dài k (chi phí sort signature). Có thể bỏ sort, dùng mảng đếm 26 chữ cái làm key → **O(n·k)**.
 
 ### 7.3 Đếm tần suất + Top-K phần tử hay gặp
@@ -339,6 +406,27 @@ func topK(nums []int, k int) []int {
 }
 ```
 
+```cpp
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+
+std::vector<int> topK(const std::vector<int>& nums, int k) {
+    std::unordered_map<int, int> count;
+    for (int n : nums) count[n]++;
+
+    std::vector<int> keys;
+    keys.reserve(count.size());
+    for (auto& [v, c] : count) keys.push_back(v);
+
+    std::sort(keys.begin(), keys.end(),
+              [&](int a, int b) { return count[a] > count[b]; });
+
+    if (k > (int)keys.size()) k = (int)keys.size();
+    return std::vector<int>(keys.begin(), keys.begin() + k);
+}
+```
+
 Độ phức tạp: **O(n)** để đếm, cộng **O(n log n)** để sort (hoặc O(n log K) với heap).
 
 ### 7.4 First Unique — ký tự không trùng đầu tiên
@@ -389,6 +477,20 @@ func firstUnique(s string) int {
         }
     }
     return -1
+}
+```
+
+```cpp
+#include <string>
+#include <unordered_map>
+
+int firstUnique(const std::string& s) {
+    std::unordered_map<char, int> count;
+    for (char ch : s) count[ch]++;
+    for (int i = 0; i < (int)s.size(); i++) { // theo thứ tự gốc của chuỗi
+        if (count[s[i]] == 1) return i;
+    }
+    return -1;
 }
 ```
 

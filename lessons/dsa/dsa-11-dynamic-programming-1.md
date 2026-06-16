@@ -139,6 +139,20 @@ func solve(n int) int {
 }
 ```
 
+```cpp
+vector<int> memo;
+function<int(int)> dp = [&](int i) -> int {
+    if (i <= 0) return 0;                       // BASE CASE
+    if (memo[i] != -1) return memo[i];          // trả cache
+    int v = min(dp(i - 1), dp(i - 2)) + cost(i); // TRANSITION
+    return memo[i] = v;
+};
+int solve(int n) {
+    memo.assign(n + 1, -1);                     // -1 = chưa tính
+    return dp(n);
+}
+```
+
 **Cách B — Tabulation (bottom-up):** bỏ đệ quy, điền bảng từ base case đi lên theo thứ tự bước 4.
 
 ```python
@@ -177,6 +191,16 @@ func solve(n int) int {
         dp[i] = min(dp[i-1], dp[prev2]) + cost(i)
     }
     return dp[n]
+}
+```
+
+```cpp
+int solve(int n) {
+    vector<int> dp(n + 1, 0);              // dp[0] = 0 = BASE CASE
+    for (int i = 1; i <= n; i++) {         // nhỏ → lớn
+        dp[i] = min(dp[i - 1], dp[max(i - 2, 0)]) + cost(i);
+    }
+    return dp[n];
 }
 ```
 
@@ -254,6 +278,13 @@ func climbBrute(n int) int {
 }
 ```
 
+```cpp
+int climbBrute(int n) {
+    if (n <= 1) return 1;
+    return climbBrute(n - 1) + climbBrute(n - 2);     // O(2^n)
+}
+```
+
 Cây gọi cho `n=5` cho thấy `climb(3)`, `climb(2)`... bị lặp lại nhiều lần → **overlapping subproblems** → thêm cache.
 
 **Bước 2 — memoization (top-down).**
@@ -314,6 +345,18 @@ func climbMemo(n int) int {
 }
 ```
 
+```cpp
+int climbMemo(int n) {
+    vector<int> memo(n + 1, -1);
+    function<int(int)> dp = [&](int i) -> int {
+        if (i <= 1) return 1;
+        if (memo[i] != -1) return memo[i];
+        return memo[i] = dp(i - 1) + dp(i - 2);
+    };
+    return dp(n);
+}
+```
+
 **Bước 3 — tabulation + tối ưu O(1) bộ nhớ.** Vì chỉ cần 2 state liền trước, ta cuộn bằng 2 biến:
 
 ```python
@@ -344,6 +387,14 @@ func climb(n int) int {
         a, b = b, a+b
     }
     return b
+}
+```
+
+```cpp
+int climb(int n) {
+    int a = 1, b = 1;          // ways(0), ways(1)
+    for (int i = 2; i <= n; i++) { int t = a + b; a = b; b = t; }
+    return b;
 }
 ```
 
@@ -405,6 +456,18 @@ func rob(nums []int) int {
         prev2, prev1 = prev1, cur
     }
     return prev1
+}
+```
+
+```cpp
+int rob(vector<int>& nums) {
+    int prev2 = 0, prev1 = 0;        // dp[i-2], dp[i-1]
+    for (int x : nums) {
+        int cur = max(prev1, prev2 + x);
+        prev2 = prev1;
+        prev1 = cur;
+    }
+    return prev1;
 }
 ```
 
@@ -473,6 +536,17 @@ func coinBrute(coins []int, amount int) int {
         best = min(best, 1+coinBrute(coins, amount-c))
     }
     return best
+}
+```
+
+```cpp
+int coinBrute(vector<int>& coins, int amount) {
+    const int INF = 1 << 30;
+    if (amount == 0) return 0;
+    if (amount < 0) return INF;
+    int best = INF;
+    for (int c : coins) best = min(best, 1 + coinBrute(coins, amount - c)); // rất nhiều nhánh lặp
+    return best;
 }
 ```
 
@@ -556,6 +630,23 @@ func coinMemo(coins []int, amount int) int {
 }
 ```
 
+```cpp
+int coinMemo(vector<int>& coins, int amount) {
+    const int INF = 1 << 29;
+    vector<int> memo(amount + 1, -2);      // -2 = chưa tính
+    function<int(int)> dp = [&](int rem) -> int {
+        if (rem == 0) return 0;
+        if (rem < 0) return INF;
+        if (memo[rem] != -2) return memo[rem];
+        int best = INF;
+        for (int c : coins) best = min(best, 1 + dp(rem - c));
+        return memo[rem] = best;
+    };
+    int res = dp(amount);
+    return res >= INF ? -1 : res;
+}
+```
+
 **Bước 3 — tabulation (bottom-up).** Điền `dp[0..amount]` tăng dần:
 
 ```python
@@ -617,6 +708,20 @@ func coinChange(coins []int, amount int) int {
 }
 ```
 
+```cpp
+int coinChange(vector<int>& coins, int amount) {
+    int INF = amount + 1;                  // "vô cực" an toàn
+    vector<int> dp(amount + 1, INF);
+    dp[0] = 0;
+    for (int x = 1; x <= amount; x++) {
+        for (int c : coins) {
+            if (c <= x) dp[x] = min(dp[x], dp[x - c] + 1);
+        }
+    }
+    return dp[amount] == INF ? -1 : dp[amount];
+}
+```
+
 **Phân tích độ phức tạp.** **O(amount × #coins)** thời gian, **O(amount)** bộ nhớ.
 
 > ⚠️ Bẫy: **Không greedy** chọn coin lớn nhất trước! Với `coins=[1,3,4], amount=6`: greedy ra `4+1+1=3 xu`, nhưng tối ưu là `3+3=2 xu`. Greedy chỉ đúng với vài hệ tiền tệ "canonical"; DP luôn đúng. Bẫy thứ hai: chọn giá trị "INF" sai (vd dùng số quá lớn rồi `+1` tràn `int`) — dùng `amount+1` là khôn ngoan vì không bao giờ cần quá `amount` xu.
@@ -670,6 +775,18 @@ func knapsack(wt, val []int, W int) int {
         }
     }
     return dp[W]
+}
+```
+
+```cpp
+int knapsack(vector<int>& wt, vector<int>& val, int W) {
+    vector<int> dp(W + 1, 0);
+    for (int i = 0; i < (int)wt.size(); i++) {
+        for (int w = W; w >= wt[i]; w--) {        // GIẢM DẦN
+            dp[w] = max(dp[w], dp[w - wt[i]] + val[i]);
+        }
+    }
+    return dp[W];
 }
 ```
 

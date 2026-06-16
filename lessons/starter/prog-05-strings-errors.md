@@ -46,6 +46,13 @@ hoten := ho + " " + ten
 fmt.Println(hoten)  // Nguyễn An
 ```
 
+```cpp
+std::string ho = "Nguyễn";
+std::string ten = "An";
+std::string hoten = ho + " " + ten;
+std::cout << hoten << "\n";  // Nguyễn An
+```
+
 ### 2.2. Độ dài chuỗi
 
 Đếm xem chuỗi có bao nhiêu ký tự:
@@ -65,6 +72,11 @@ System.out.println(s.length());  // 5
 ```go
 s := "hello"
 fmt.Println(len(s))  // 5
+```
+
+```cpp
+std::string s = "hello";
+std::cout << s.length() << "\n";  // 5
 ```
 
 *Chú thích:* trong Go, `len()` đếm **byte** chứ không phải ký tự — với tiếng Việt có dấu (chiếm nhiều byte), kết quả sẽ lớn hơn số chữ bạn nhìn thấy. Muốn đếm đúng ký tự tiếng Việt trong Go, dùng `len([]rune(s))`.
@@ -94,6 +106,12 @@ fmt.Println(s[0:5])  // Hello
 fmt.Println(s[6:])   // World
 ```
 
+```cpp
+std::string s = "Hello World";
+std::cout << s.substr(0, 5) << "\n";  // Hello (từ vị trí 0, lấy 5 ký tự)
+std::cout << s.substr(6) << "\n";     // World (từ vị trí 6 đến hết)
+```
+
 > ⚠️ Lỗi người mới hay gặp: nghĩ rằng `s[0:5]` lấy 6 ký tự (0,1,2,3,4,5). Sai! Nó lấy 5 ký tự, **dừng trước** vị trí 5. Mẹo nhớ: số ký tự lấy được = kết thúc − bắt đầu (5 − 0 = 5).
 
 ### 2.4. Tìm kiếm trong chuỗi
@@ -119,6 +137,12 @@ System.out.println(s.indexOf("World"));   // 6 (trả về -1 nếu không thấ
 s := "Hello World"
 fmt.Println(strings.Contains(s, "World"))  // true
 fmt.Println(strings.Index(s, "World"))     // 6 (trả về -1 nếu không thấy)
+```
+
+```cpp
+std::string s = "Hello World";
+std::cout << (s.find("World") != std::string::npos) << "\n";  // 1 (true: có chứa)
+std::cout << s.find("World") << "\n";  // 6 (trả về std::string::npos nếu không thấy)
 ```
 
 *Chú thích:* Go gom các hàm xử lý chuỗi vào gói `strings`, cần thêm `import "strings"` ở đầu file.
@@ -160,6 +184,12 @@ tuoi := 20
 fmt.Printf("Bạn %s năm nay %d tuổi\n", ten, tuoi)
 ```
 
+```cpp
+std::string ten = "An";
+int tuoi = 20;
+std::cout << "Bạn " << ten << " năm nay " << tuoi << " tuổi\n";
+```
+
 *Chú thích:* Python dùng `f"..."` (f-string), JavaScript dùng dấu **backtick** `` ` `` với `${...}` (template literal). Java và Go dùng kiểu "chỗ trống đánh dấu": `%s` cho chuỗi, `%d` cho số nguyên — biến được điền vào theo đúng thứ tự.
 
 ## 3. Đọc và ghi file text
@@ -187,6 +217,14 @@ Files.writeString(Path.of("chao.txt"), "Xin chào!\nDòng thứ hai.");
 import "os"
 
 os.WriteFile("chao.txt", []byte("Xin chào!\nDòng thứ hai."), 0644)
+```
+
+```cpp
+#include <fstream>
+
+std::ofstream f("chao.txt");
+f << "Xin chào!\nDòng thứ hai.";
+f.close();  // đóng file lại sau khi ghi
 ```
 
 *Chú thích:* `\n` là ký hiệu xuống dòng. Trong Go, số `0644` là "quyền truy cập file" (ai được đọc/ghi) — cứ dùng giá trị này là ổn. Java cần khai báo `throws IOException` hoặc try/catch (sẽ học ngay bên dưới).
@@ -218,6 +256,17 @@ if err != nil {
     return
 }
 fmt.Println(string(data))
+```
+
+```cpp
+#include <fstream>
+#include <sstream>
+
+std::ifstream f("chao.txt");
+std::stringstream buffer;
+buffer << f.rdbuf();           // đọc toàn bộ nội dung file
+std::string noidung = buffer.str();
+std::cout << noidung << "\n";
 ```
 
 > ⚠️ Lỗi người mới hay gặp: đọc một file **không tồn tại** → chương trình "văng" ngay lập tức. Đây chính là lý do ta cần học phần tiếp theo: xử lý lỗi.
@@ -283,6 +332,20 @@ if err != nil {
 fmt.Println("Chương trình vẫn chạy tiếp.")
 ```
 
+```cpp
+#include <string>
+#include <stdexcept>
+
+std::string chuoi = "abc";
+try {
+    int so = std::stoi(chuoi);
+    std::cout << "Số bạn nhập: " << so << "\n";
+} catch (const std::invalid_argument& e) {
+    std::cout << "Đó không phải là số hợp lệ!\n";
+}
+std::cout << "Chương trình vẫn chạy tiếp.\n";
+```
+
 *Chú thích quan trọng về triết lý mỗi ngôn ngữ:*
 - **Python** dùng `try` / `except`; **Java** và **JavaScript** dùng `try` / `catch` — cùng một ý tưởng, khác tên.
 - **JavaScript**: `parseInt("abc")` không văng mà trả về giá trị đặc biệt `NaN` (Not a Number), nên ta kiểm tra bằng `isNaN()`. JavaScript vẫn có `try/catch` đầy đủ cho các lỗi khác (ví dụ đọc file hỏng).
@@ -332,6 +395,26 @@ func docFile() {
     }
     fmt.Println(string(data))
 }
+```
+
+```cpp
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
+
+try {
+    std::ifstream f("data.txt");
+    if (!f) {
+        throw std::runtime_error("không mở được file");
+    }
+    std::stringstream buffer;
+    buffer << f.rdbuf();
+    std::cout << buffer.str() << "\n";
+} catch (const std::exception& e) {
+    std::cout << "Không tìm thấy file!\n";
+} 
+// C++ không có finally; phần dọn dẹp đặt sau khối try/catch
+std::cout << "Dọn dẹp xong.\n";  // luôn chạy
 ```
 
 *Chú thích:* Go không có `finally`; thay vào đó dùng `defer` — "hẹn" một lệnh chạy lúc hàm kết thúc, dù kết thúc kiểu gì.
@@ -421,6 +504,39 @@ func kiemTraTuoi(chuoi string) string {
         return "Tuổi phải từ 1 đến 120!"
     }
     return fmt.Sprintf("Hợp lệ: %d tuổi", tuoi)
+}
+
+// kiemTraTuoi("  25 ") → Hợp lệ: 25 tuổi
+// kiemTraTuoi("abc")   → Tuổi phải là một con số!
+// kiemTraTuoi("999")   → Tuổi phải từ 1 đến 120!
+```
+
+```cpp
+#include <string>
+#include <stdexcept>
+
+std::string kiemTraTuoi(std::string chuoi) {
+    // lớp 1: bỏ khoảng trắng thừa
+    size_t dau = chuoi.find_first_not_of(" \t\n\r");
+    size_t cuoi = chuoi.find_last_not_of(" \t\n\r");
+    chuoi = (dau == std::string::npos) ? "" : chuoi.substr(dau, cuoi - dau + 1);
+    if (chuoi.empty()) {
+        return "Bạn chưa nhập gì cả!";
+    }
+    int tuoi;
+    try {                              // lớp 2: lưới an toàn khi đổi sang số
+        size_t pos;
+        tuoi = std::stoi(chuoi, &pos);
+        if (pos != chuoi.size()) {     // còn ký tự thừa => không phải số thuần
+            return "Tuổi phải là một con số!";
+        }
+    } catch (const std::exception& e) {
+        return "Tuổi phải là một con số!";
+    }
+    if (tuoi < 1 || tuoi > 120) {
+        return "Tuổi phải từ 1 đến 120!";
+    }
+    return "Hợp lệ: " + std::to_string(tuoi) + " tuổi";
 }
 
 // kiemTraTuoi("  25 ") → Hợp lệ: 25 tuổi

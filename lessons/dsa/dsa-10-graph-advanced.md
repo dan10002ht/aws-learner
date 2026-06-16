@@ -78,6 +78,17 @@ addEdge := func(u, v int, directed bool) {
 }
 ```
 
+```cpp
+#include <unordered_map>
+#include <vector>
+std::unordered_map<int, std::vector<int>> graph;
+void addEdge(int u, int v, bool directed = false) {
+    graph[u].push_back(v);
+    if (!directed)
+        graph[v].push_back(u);          // vô hướng: cả hai chiều
+}
+```
+
 ### 1.2. BFS/DFS recap (nền của mọi thứ)
 
 BFS lan **theo từng lớp** bằng **queue (FIFO)** → tìm đường ngắn nhất (ít cạnh nhất) trên đồ thị không trọng số. DFS đi **sâu hết nhánh** bằng đệ quy/stack → hợp cho chu trình, liên thông, topo sort. Cả hai đều **O(V + E)** vì mỗi đỉnh/cạnh xét đúng một lần.
@@ -147,6 +158,33 @@ func dfs(graph map[int][]int, node int, visited map[int]bool) {
     for _, nb := range graph[node] {
         if !visited[nb] { dfs(graph, nb, visited) }
     }
+}
+```
+
+```cpp
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+#include <queue>
+void bfs(std::unordered_map<int, std::vector<int>>& graph, int start) {
+    std::unordered_set<int> visited{start};
+    std::queue<int> q;
+    q.push(start);
+    while (!q.empty()) {
+        int node = q.front(); q.pop();
+        for (int nb : graph[node]) {
+            if (!visited.count(nb)) {    // đánh dấu KHI ĐƯA VÀO queue
+                visited.insert(nb);
+                q.push(nb);
+            }
+        }
+    }
+}
+void dfs(std::unordered_map<int, std::vector<int>>& graph, int node,
+         std::unordered_set<int>& visited) {
+    visited.insert(node);
+    for (int nb : graph[node])
+        if (!visited.count(nb)) dfs(graph, nb, visited);
 }
 ```
 
@@ -241,6 +279,25 @@ func topoKahn(n int, edges [][]int) []int {   // edges: {u, v} nghĩa u -> v
         return order
     }
     return []int{} // có chu trình
+}
+```
+
+```cpp
+#include <vector>
+#include <queue>
+std::vector<int> topoKahn(int n, std::vector<std::vector<int>>& edges) { // edges: {u, v} nghĩa u -> v
+    std::vector<std::vector<int>> graph(n);
+    std::vector<int> indeg(n, 0);
+    for (auto& e : edges) { graph[e[0]].push_back(e[1]); indeg[e[1]]++; }
+    std::queue<int> q;
+    for (int i = 0; i < n; i++) if (indeg[i] == 0) q.push(i);
+    std::vector<int> order;
+    while (!q.empty()) {
+        int node = q.front(); q.pop();
+        order.push_back(node);
+        for (int nb : graph[node]) if (--indeg[nb] == 0) q.push(nb);
+    }
+    return (int)order.size() == n ? order : std::vector<int>{}; // rỗng => có chu trình
 }
 ```
 
@@ -376,6 +433,34 @@ func (d *DSU) Union(a, b int) bool {
 }
 ```
 
+```cpp
+#include <vector>
+#include <numeric>
+struct DSU {
+    std::vector<int> parent, rank;
+    int count;                              // số nhóm hiện tại
+    DSU(int n) : parent(n), rank(n, 0), count(n) {
+        std::iota(parent.begin(), parent.end(), 0);
+    }
+    int find(int x) {
+        while (parent[x] != x) {
+            parent[x] = parent[parent[x]];  // path compression
+            x = parent[x];
+        }
+        return x;
+    }
+    bool unite(int a, int b) {
+        int ra = find(a), rb = find(b);
+        if (ra == rb) return false;         // đã cùng nhóm => chu trình
+        if (rank[ra] < rank[rb]) std::swap(ra, rb);
+        parent[rb] = ra;
+        if (rank[ra] == rank[rb]) rank[ra]++;
+        count--;
+        return true;
+    }
+};
+```
+
 > 💡 Ghi nhớ: `union(a, b)` trả về `false` ⟺ a và b **đã** cùng nhóm ⟺ cạnh (a,b) **tạo chu trình** (đồ thị vô hướng). Đây là cách phát hiện chu trình vô hướng nhanh và sạch nhất.
 
 ## 4. Dijkstra (shortest path có trọng số dương)
@@ -475,6 +560,34 @@ func dijkstra(n int, graph [][][2]int, src int) []int { // graph[u]: {v, w}, w>=
         }
     }
     return dist
+}
+```
+
+```cpp
+#include <vector>
+#include <queue>
+#include <climits>
+// graph[u] = vector<pair<v, w>>, w >= 0
+std::vector<long long> dijkstra(int n, std::vector<std::vector<std::pair<int,int>>>& graph, int src) {
+    const long long INF = LLONG_MAX;
+    std::vector<long long> dist(n, INF);
+    dist[src] = 0;
+    // min-heap theo khoảng cách: {khoảng cách, đỉnh}
+    using P = std::pair<long long, int>;
+    std::priority_queue<P, std::vector<P>, std::greater<P>> pq;
+    pq.push({0, src});
+    while (!pq.empty()) {
+        auto [d, u] = pq.top(); pq.pop();
+        if (d > dist[u]) continue;     // bản cũ (stale) -> bỏ
+        for (auto& [v, w] : graph[u]) {
+            long long nd = d + w;
+            if (nd < dist[v]) {
+                dist[v] = nd;
+                pq.push({nd, v});
+            }
+        }
+    }
+    return dist;
 }
 ```
 
@@ -583,6 +696,28 @@ func findOrder(numCourses int, prerequisites [][]int) []int {
 }
 ```
 
+```cpp
+#include <vector>
+#include <queue>
+std::vector<int> findOrder(int numCourses, std::vector<std::vector<int>>& prerequisites) {
+    std::vector<std::vector<int>> graph(numCourses);
+    std::vector<int> indeg(numCourses, 0);
+    for (auto& p : prerequisites) {     // [a, b] => cạnh b -> a
+        graph[p[1]].push_back(p[0]);
+        indeg[p[0]]++;
+    }
+    std::queue<int> q;
+    for (int c = 0; c < numCourses; c++) if (indeg[c] == 0) q.push(c);
+    std::vector<int> order;
+    while (!q.empty()) {
+        int c = q.front(); q.pop();
+        order.push_back(c);
+        for (int nxt : graph[c]) if (--indeg[nxt] == 0) q.push(nxt);
+    }
+    return (int)order.size() == numCourses ? order : std::vector<int>{};
+}
+```
+
 **Độ phức tạp.** Thời gian **O(V + E)** (V = numCourses, E = số prerequisites), bộ nhớ **O(V + E)**.
 
 **Bẫy.** (1) Xác định **chiều cạnh** cho đúng: `[a, b]` là **b → a**, dễ vẽ ngược. (2) Đừng quên trường hợp khoá không có ràng buộc — chúng vào queue ngay từ đầu. (3) Course Schedule **I** chỉ hỏi có/không (so `len(order) == numCourses`); bản **II** cần trả cả thứ tự.
@@ -682,6 +817,28 @@ func findRedundantConnection(edges [][]int) []int {
         if rank[ra] == rank[rb] { rank[ra]++ }
     }
     return []int{}
+}
+```
+
+```cpp
+#include <vector>
+#include <numeric>
+std::vector<int> findRedundantConnection(std::vector<std::vector<int>>& edges) {
+    int n = edges.size();
+    std::vector<int> parent(n + 1), rank(n + 1, 0); // đỉnh đánh số 1..n
+    std::iota(parent.begin(), parent.end(), 0);
+    std::function<int(int)> find = [&](int x) {
+        while (parent[x] != x) { parent[x] = parent[parent[x]]; x = parent[x]; }
+        return x;
+    };
+    for (auto& e : edges) {
+        int ra = find(e[0]), rb = find(e[1]);
+        if (ra == rb) return e;             // đã cùng nhóm => cạnh thừa
+        if (rank[ra] < rank[rb]) std::swap(ra, rb);
+        parent[rb] = ra;
+        if (rank[ra] == rank[rb]) rank[ra]++;
+    }
+    return {};
 }
 ```
 
@@ -788,6 +945,37 @@ func networkDelayTime(times [][]int, n int, k int) int {
         if dist[i] > ans { ans = dist[i] }
     }
     return ans
+}
+```
+
+```cpp
+#include <vector>
+#include <queue>
+#include <unordered_map>
+#include <climits>
+int networkDelayTime(std::vector<std::vector<int>>& times, int n, int k) {
+    std::unordered_map<int, std::vector<std::pair<int,int>>> graph;
+    for (auto& t : times) graph[t[0]].push_back({t[1], t[2]});
+    const int INF = INT_MAX;
+    std::vector<int> dist(n + 1, INF);  // đỉnh đánh số 1..n
+    dist[k] = 0;
+    using P = std::pair<int,int>;       // {thời gian, đỉnh}
+    std::priority_queue<P, std::vector<P>, std::greater<P>> pq;
+    pq.push({0, k});
+    while (!pq.empty()) {
+        auto [d, u] = pq.top(); pq.pop();
+        if (d > dist[u]) continue;      // bản cũ -> bỏ
+        for (auto& [v, w] : graph[u]) {
+            int nd = d + w;
+            if (nd < dist[v]) { dist[v] = nd; pq.push({nd, v}); }
+        }
+    }
+    int ans = 0;
+    for (int i = 1; i <= n; i++) {
+        if (dist[i] == INF) return -1;
+        ans = std::max(ans, dist[i]);
+    }
+    return ans;
 }
 ```
 

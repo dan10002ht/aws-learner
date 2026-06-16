@@ -37,6 +37,15 @@ os.WriteFile("nhatky.txt", []byte(content), 0644)
 // 0644 là quyền truy cập file (chủ đọc/ghi, người khác đọc)
 ```
 
+```cpp
+#include <fstream>
+
+std::ofstream f("nhatky.txt");           // mở để ghi (ghi đè)
+f << "Dòng 1: Xin chào\n";
+f << "Dòng 2: Tạm biệt\n";
+// Ra khỏi scope, destructor của ofstream tự đóng file
+```
+
 Chế độ `"w"` (write) **ghi đè** toàn bộ nội dung cũ. Muốn **ghi nối thêm** vào cuối, dùng chế độ `"a"` (append).
 
 > ⚠️ Lỗi người mới hay gặp: Mở file bằng `"w"` để "thêm một dòng" — nó xoá sạch nội dung cũ rồi mới ghi! Muốn thêm vào cuối phải dùng `"a"` (append).
@@ -76,6 +85,18 @@ for _, dong := range strings.Split(string(data), "\n") {
     if dong != "" {
         fmt.Println(dong)
     }
+}
+```
+
+```cpp
+#include <fstream>
+#include <iostream>
+#include <string>
+
+std::ifstream f("nhatky.txt");
+std::string dong;
+while (std::getline(f, dong)) {           // đọc từng dòng, tiết kiệm bộ nhớ
+    std::cout << dong << '\n';            // getline đã bỏ ký tự xuống dòng
 }
 ```
 
@@ -146,6 +167,25 @@ json.Unmarshal(b, &lai)                   // JSON -> object
 fmt.Println(lai.Ten, lai.Thich[0])        // An code
 ```
 
+```cpp
+// Dùng thư viện nlohmann/json (#include <nlohmann/json.hpp>)
+#include <nlohmann/json.hpp>
+#include <iostream>
+using json = nlohmann::json;
+
+json nguoidung = {
+    {"ten", "An"}, {"tuoi", 25},
+    {"thich", {"code", "trà sữa"}}
+};
+
+// Object -> chuỗi JSON (số 2 = thụt lề 2 dấu cách)
+std::string chuoi = nguoidung.dump(2);
+
+// Chuỗi JSON -> object
+json lai = json::parse(chuoi);
+std::cout << lai["ten"] << " " << lai["thich"][0] << "\n";  // An code
+```
+
 ### 2.1. Đọc file cấu hình (config)
 
 Ứng dụng thực tế thường để các thiết lập (tên app, số kết nối, đường dẫn) trong một file `config.json` thay vì hard-code trong source. Cách làm: đọc file → parse JSON → dùng object kết quả.
@@ -173,6 +213,18 @@ data, _ := os.ReadFile("config.json")
 var config map[string]any
 json.Unmarshal(data, &config)
 fmt.Println(config["app_name"])
+```
+
+```cpp
+#include <nlohmann/json.hpp>
+#include <fstream>
+#include <iostream>
+using json = nlohmann::json;
+
+std::ifstream f("config.json");
+json config = json::parse(f);            // đọc file VÀ parse luôn
+std::cout << config["app_name"] << " "
+          << config["max_connections"] << "\n";
 ```
 
 > ⚠️ Lỗi người mới hay gặp: JSON **không cho phép** dấu phẩy thừa ở cuối (`{"a": 1,}`) và bắt buộc dùng nháy kép `"`, không phải nháy đơn `'`. Một dấu phẩy lạc chỗ là cả file parse lỗi. Khi gặp lỗi, dán file vào trình kiểm tra JSON để tìm vị trí sai.
@@ -233,6 +285,25 @@ for _, row := range rows[1:] {         // bỏ qua header
 }
 ```
 
+```cpp
+#include <fstream>
+#include <sstream>
+#include <iostream>
+#include <vector>
+#include <string>
+
+std::ifstream f("nguoidung.csv");
+std::string line;
+std::getline(f, line);                   // bỏ qua header
+while (std::getline(f, line)) {
+    std::vector<std::string> cols;
+    std::stringstream ss(line);
+    std::string cell;
+    while (std::getline(ss, cell, ',')) cols.push_back(cell);
+    std::cout << cols[0] << " " << cols[1] << "\n";
+}
+```
+
 > ⚠️ Lỗi người mới hay gặp: Tự `split(",")` bằng tay sẽ hỏng khi ô dữ liệu chứa dấu phẩy, ví dụ `"Hà Nội, Việt Nam"` được bọc trong nháy. **Hãy dùng thư viện CSV** (`csv` của Python, `encoding/csv` của Go) — chúng xử lý đúng dấu nháy, ký tự xuống dòng trong ô, và escape.
 
 ## 4. Datetime — ngày giờ
@@ -279,6 +350,26 @@ d, _ := time.Parse("2006-01-02", "2026-06-11")      // parse
 fmt.Println(d.Year())                               // 2026
 ```
 
+```cpp
+#include <chrono>
+#include <ctime>
+#include <iomanip>
+#include <sstream>
+#include <iostream>
+
+// Giờ hiện tại theo UTC
+std::time_t now = std::time(nullptr);
+std::tm bayGio = *std::gmtime(&now);
+std::ostringstream out;
+out << std::put_time(&bayGio, "%Y-%m-%d %H:%M");    // format -> "2026-06-11 09:30"
+
+// Parse: chuỗi -> tm
+std::tm d{};
+std::istringstream in("2026-06-11");
+in >> std::get_time(&d, "%Y-%m-%d");
+std::cout << d.tm_year + 1900 << "\n";              // 2026
+```
+
 **Ý tưởng về múi giờ (timezone):** một thời điểm duy nhất nhìn ra giá trị khác nhau tuỳ nơi — 12:00 trưa ở Hà Nội (UTC+7) là 05:00 sáng ở London (UTC+0). Quy tắc vàng trong thực tế:
 
 > 💡 Ghi nhớ: **Lưu trữ thời gian bằng UTC**, chỉ đổi sang giờ địa phương khi **hiển thị** cho người dùng. Nếu lưu giờ địa phương lẫn lộn, sớm muộn bạn cũng tính sai khoảng cách thời gian giữa hai sự kiện.
@@ -314,6 +405,17 @@ if dbURL == "" {
     dbURL = "sqlite:///local.db"
 }
 apiKey := os.Getenv("API_KEY")
+```
+
+```cpp
+#include <cstdlib>
+#include <string>
+#include <iostream>
+
+const char* env = std::getenv("DATABASE_URL");      // nullptr nếu chưa đặt
+std::string dbUrl = env ? env : "sqlite:///local.db";  // có giá trị mặc định
+const char* apiKey = std::getenv("API_KEY");         // nullptr nếu chưa đặt
+std::cout << dbUrl << "\n";
 ```
 
 Cách đặt biến môi trường khi chạy (terminal Linux/macOS):
@@ -363,6 +465,17 @@ fmt.Println(os.Args)
 duongDan := os.Args[1]
 ```
 
+```cpp
+#include <iostream>
+#include <string>
+
+int main(int argc, char* argv[]) {
+    // argv[0] là tên chương trình; tham số thật bắt đầu từ argv[1]
+    for (int i = 0; i < argc; i++) std::cout << argv[i] << " ";
+    std::string duongDan = argv[1];
+}
+```
+
 Đọc `argv` thô thì được, nhưng khi có nhiều tuỳ chọn (`--top`, `--output`, cờ `--verbose`), hãy dùng **thư viện phân tích tham số** — chúng tự xử lý giá trị mặc định, kiểu dữ liệu, và in **trợ giúp** (`--help`):
 
 | Ngôn ngữ | Thư viện chuẩn |
@@ -409,6 +522,23 @@ top := flag.Int("top", 5, "số dòng đầu")
 flag.Parse()
 file := flag.Arg(0)                 // tham số không phải cờ
 fmt.Println(file, *top)
+```
+
+```cpp
+// Dùng thư viện CLI11 (#include <CLI/CLI.hpp>)
+#include <CLI/CLI.hpp>
+#include <iostream>
+#include <string>
+
+int main(int argc, char** argv) {
+    CLI::App app{"Thống kê CSV"};
+    std::string file;
+    int top = 5;                                    // tuỳ chọn có mặc định
+    app.add_option("file", file, "đường dẫn CSV")->required();  // tham số bắt buộc
+    app.add_option("--top", top, "số dòng đầu");
+    CLI11_PARSE(app, argc, argv);
+    std::cout << file << " " << top << "\n";
+}
 ```
 
 ## 7. Ghép lại: công cụ thống kê CSV thực tế
@@ -478,6 +608,36 @@ for sp, v := range doanhThu {
     }
 }
 fmt.Printf("Tổng doanh thu: %.0f\nBán chạy nhất: %s\n", tong, banChay)
+```
+
+```cpp
+#include <fstream>
+#include <sstream>
+#include <iostream>
+#include <unordered_map>
+#include <string>
+#include <vector>
+
+std::ifstream f("donhang.csv");
+std::string line;
+std::getline(f, line);                              // bỏ qua header
+std::unordered_map<std::string, double> doanhThu;
+while (std::getline(f, line)) {
+    std::vector<std::string> c;
+    std::stringstream ss(line);
+    std::string cell;
+    while (std::getline(ss, cell, ',')) c.push_back(cell);
+    double tien = std::stoi(c[1]) * std::stod(c[2]);
+    doanhThu[c[0]] += tien;
+}
+double tong = 0;
+std::string banChay;
+for (const auto& [sp, v] : doanhThu) {
+    tong += v;
+    if (banChay.empty() || v > doanhThu[banChay]) banChay = sp;
+}
+std::cout << "Tổng doanh thu: " << (long)tong << "\n"
+          << "Bán chạy nhất: " << banChay << "\n";
 ```
 
 Mẫu hình ở đây rất phổ biến: **đọc → biến đổi từng dòng → gom nhóm/tổng hợp vào map → xuất kết quả**. Bạn sẽ gặp lại nó trong phân tích log, báo cáo bán hàng, xử lý dữ liệu khoa học.

@@ -99,6 +99,21 @@ func printList(head *ListNode) {
 }
 ```
 
+```cpp
+struct ListNode {
+    int val;
+    ListNode* next;
+    ListNode(int v = 0, ListNode* n = nullptr) : val(v), next(n) {}
+};
+
+void printList(ListNode* head) {
+    for (ListNode* cur = head; cur != nullptr; cur = cur->next) {
+        std::cout << cur->val << " -> ";
+    }
+    std::cout << "null" << std::endl;
+}
+```
+
 ## Đảo ngược linked list
 
 Bài toán "must-know" số một. Ý tưởng: đi qua từng node, **bẻ ngược con trỏ** `next` về node phía trước. Dùng ba biến: `prev`, `cur`, `nxt`.
@@ -157,6 +172,20 @@ func reverseList(head *ListNode) *ListNode {
         cur = nxt
     }
     return prev
+}
+```
+
+```cpp
+ListNode* reverseList(ListNode* head) {
+    ListNode* prev = nullptr;
+    ListNode* cur = head;
+    while (cur != nullptr) {
+        ListNode* nxt = cur->next;  // lưu lại trước khi bẻ
+        cur->next = prev;           // bẻ ngược
+        prev = cur;                 // dời prev
+        cur = nxt;                  // dời cur
+    }
+    return prev;                    // prev là head mới
 }
 ```
 
@@ -247,6 +276,29 @@ func middleNode(head *ListNode) *ListNode {
 }
 ```
 
+```cpp
+bool hasCycle(ListNode* head) {
+    ListNode* slow = head;
+    ListNode* fast = head;
+    while (fast != nullptr && fast->next != nullptr) {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast) return true;
+    }
+    return false;
+}
+
+ListNode* middleNode(ListNode* head) {
+    ListNode* slow = head;
+    ListNode* fast = head;
+    while (fast != nullptr && fast->next != nullptr) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    return slow;
+}
+```
+
 Thời gian `O(n)`, bộ nhớ `O(1)` — vượt trội so với cách dùng `set` lưu các node đã thăm (tốn `O(n)` bộ nhớ).
 
 > 💡 Ghi nhớ: thấy yêu cầu **tìm giữa / phát hiện vòng lặp / node thứ k từ cuối** trên linked list mà cấm dùng bộ nhớ phụ — phản xạ ngay là **fast–slow pointer**.
@@ -287,6 +339,16 @@ type TreeNode struct {
     Left  *TreeNode
     Right *TreeNode
 }
+```
+
+```cpp
+struct TreeNode {
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(int v = 0, TreeNode* l = nullptr, TreeNode* r = nullptr)
+        : val(v), left(l), right(r) {}
+};
 ```
 
 ### Duyệt cây DFS: preorder / inorder / postorder
@@ -386,6 +448,29 @@ func postorder(node *TreeNode, out *[]int) {
 }
 ```
 
+```cpp
+void preorder(TreeNode* node, std::vector<int>& out) {
+    if (node == nullptr) return;
+    out.push_back(node->val);
+    preorder(node->left, out);
+    preorder(node->right, out);
+}
+
+void inorder(TreeNode* node, std::vector<int>& out) {
+    if (node == nullptr) return;
+    inorder(node->left, out);
+    out.push_back(node->val);
+    inorder(node->right, out);
+}
+
+void postorder(TreeNode* node, std::vector<int>& out) {
+    if (node == nullptr) return;
+    postorder(node->left, out);
+    postorder(node->right, out);
+    out.push_back(node->val);
+}
+```
+
 Cả ba đều `O(n)` thời gian (thăm mỗi node một lần) và `O(h)` bộ nhớ cho stack đệ quy, với `h` là chiều cao cây.
 
 ### Duyệt BFS level-order
@@ -466,6 +551,28 @@ func levelOrder(root *TreeNode) [][]int {
         result = append(result, level)
     }
     return result
+}
+```
+
+```cpp
+std::vector<std::vector<int>> levelOrder(TreeNode* root) {
+    std::vector<std::vector<int>> result;
+    if (root == nullptr) return result;
+    std::queue<TreeNode*> q;
+    q.push(root);
+    while (!q.empty()) {
+        int size = q.size();              // cố định số node của tầng hiện tại
+        std::vector<int> level;
+        for (int i = 0; i < size; i++) {
+            TreeNode* node = q.front();
+            q.pop();
+            level.push_back(node->val);
+            if (node->left  != nullptr) q.push(node->left);
+            if (node->right != nullptr) q.push(node->right);
+        }
+        result.push_back(level);
+    }
+    return result;
 }
 ```
 
@@ -565,6 +672,24 @@ func insertBst(root *TreeNode, val int) *TreeNode {
 }
 ```
 
+```cpp
+TreeNode* searchBst(TreeNode* root, int target) {
+    TreeNode* cur = root;
+    while (cur != nullptr) {
+        if (target == cur->val) return cur;
+        cur = target < cur->val ? cur->left : cur->right;
+    }
+    return nullptr;
+}
+
+TreeNode* insertBst(TreeNode* root, int val) {
+    if (root == nullptr) return new TreeNode(val);
+    if (val < root->val) root->left = insertBst(root->left, val);
+    else root->right = insertBst(root->right, val);
+    return root;
+}
+```
+
 ### Xoá node
 
 Ba trường hợp khi xoá node `target`:
@@ -640,6 +765,25 @@ func deleteBst(root *TreeNode, key int) *TreeNode {
         root.Right = deleteBst(root.Right, succ.Val)
     }
     return root
+}
+```
+
+```cpp
+TreeNode* deleteBst(TreeNode* root, int key) {
+    if (root == nullptr) return nullptr;
+    if (key < root->val) {
+        root->left = deleteBst(root->left, key);
+    } else if (key > root->val) {
+        root->right = deleteBst(root->right, key);
+    } else {
+        if (root->left == nullptr)  return root->right;
+        if (root->right == nullptr) return root->left;
+        TreeNode* succ = root->right;          // node kế vị inorder
+        while (succ->left != nullptr) succ = succ->left;
+        root->val = succ->val;
+        root->right = deleteBst(root->right, succ->val);
+    }
+    return root;
 }
 ```
 

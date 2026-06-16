@@ -109,6 +109,25 @@ func main() {
 }
 ```
 
+```cpp
+#include <iostream>
+#include <vector>
+
+double diemTrungBinh(const std::vector<int>& cacDiem) {
+    int tong = 0;
+    for (int diem : cacDiem) {
+        tong += diem;
+        std::cout << "DEBUG: diem = " << diem << " | tong = " << tong << "\n"; // soi từng bước
+    }
+    std::cout << "DEBUG: so luong = " << cacDiem.size() << "\n";
+    return static_cast<double>(tong) / cacDiem.size();
+}
+
+int main() {
+    std::cout << diemTrungBinh({8, 9, 7}) << "\n";
+}
+```
+
 Chú ý nhỏ: ở Java và Go, vì `tong` là số nguyên nên phải đổi sang số thực (`(double)` / `float64`) trước khi chia — nếu quên, phép chia nguyên `24/3` thì đúng nhưng `25/3` sẽ ra `8` thay vì `8.33`. Đây chính là một bug logic kinh điển mà print debugging giúp bạn phát hiện!
 
 ### Mẹo in cho hiệu quả
@@ -210,6 +229,23 @@ func tinhToan() int {
 
 func main() {
     tinhToan()
+}
+```
+
+```cpp
+#include <stdexcept>
+
+int chia(int a, int b) {
+    if (b == 0) throw std::runtime_error("Chia cho 0!");
+    return a / b;
+}
+
+int tinhToan() {
+    return chia(10, 0);
+}
+
+int main() {
+    tinhToan();
 }
 ```
 

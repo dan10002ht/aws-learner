@@ -125,6 +125,23 @@ func subsets(nums []int) [][]int {
 }
 ```
 
+```cpp
+vector<vector<int>> subsets(vector<int>& nums) {
+    vector<vector<int>> res;
+    vector<int> path;
+    function<void(int)> backtrack = [&](int start) {
+        res.push_back(path);                    // mỗi node là một tập con hợp lệ
+        for (int i = start; i < (int)nums.size(); i++) {
+            path.push_back(nums[i]);            // choose
+            backtrack(i + 1);                   // explore
+            path.pop_back();                    // unchoose
+        }
+    };
+    backtrack(0);
+    return res;
+}
+```
+
 Ba "ổ cắm" cần điền cho mọi bài:
 
 1. **Điều kiện ghi nhận**: khi nào `path` là một lời giải đầy đủ? (đủ độ dài? `start == n`? tổng `== target`?). Với subsets thì *mọi* node đều là nghiệm; với permutations thì chỉ lá; với combination sum thì khi tổng đúng bằng target.
@@ -247,6 +264,28 @@ func permute(nums []int) [][]int {
 }
 ```
 
+```cpp
+vector<vector<int>> permute(vector<int>& nums) {
+    vector<vector<int>> res;
+    vector<bool> used(nums.size(), false);
+    vector<int> path;
+    function<void()> backtrack = [&]() {
+        if (path.size() == nums.size()) {
+            res.push_back(path);                // copy: path còn thay đổi
+            return;
+        }
+        for (int i = 0; i < (int)nums.size(); i++) {
+            if (used[i]) continue;              // phần tử đã dùng trong path
+            used[i] = true; path.push_back(nums[i]);    // choose
+            backtrack();                                // explore
+            used[i] = false; path.pop_back();           // unchoose
+        }
+    };
+    backtrack();
+    return res;
+}
+```
+
 **Phân tích độ phức tạp.** Cây có `n!` lá; để tạo mỗi lá ta đi qua `n` mức và mỗi mức copy `O(n)` khi ghi nhận → **thời gian `O(n · n!)`**. Bộ nhớ phụ (không tính output): `O(n)` cho `path`, `used` và độ sâu đệ quy.
 
 **Bẫy.** (1) Quên copy `path[:]` → tất cả phần tử trong `res` trỏ về cùng một list, cuối cùng rỗng hết. (2) Dùng `start` thay vì `used[]` → ra combinations chứ không phải permutations. (3) Với `nums` *có phần tử trùng* (bài 47), phải sort trước rồi thêm cắt nhánh `if i>0 and nums[i]==nums[i-1] and not used[i-1]: continue` để khử hoán vị trùng.
@@ -329,6 +368,25 @@ func combinationSum(candidates []int, target int) [][]int {
     }
     backtrack(0, target)
     return res
+}
+```
+
+```cpp
+vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+    sort(candidates.begin(), candidates.end());     // để break sớm khi vượt target
+    vector<vector<int>> res;
+    vector<int> path;
+    function<void(int, int)> backtrack = [&](int start, int remain) {
+        if (remain == 0) { res.push_back(path); return; }
+        for (int i = start; i < (int)candidates.size(); i++) {
+            if (candidates[i] > remain) break;          // cắt nhánh
+            path.push_back(candidates[i]);              // choose
+            backtrack(i, remain - candidates[i]);       // i: dùng lại được
+            path.pop_back();                            // unchoose
+        }
+    };
+    backtrack(0, target);
+    return res;
 }
 ```
 
@@ -422,6 +480,27 @@ func exist(board [][]byte, word string) bool {
         }
     }
     return false
+}
+```
+
+```cpp
+bool exist(vector<vector<char>>& board, string word) {
+    int m = board.size(), n = board[0].size();
+    function<bool(int, int, int)> dfs = [&](int r, int c, int k) -> bool {
+        if (k == (int)word.size()) return true;                 // khớp hết word
+        if (r < 0 || r >= m || c < 0 || c >= n || board[r][c] != word[k])
+            return false;                                       // ra ngoài / không khớp -> cắt
+        char tmp = board[r][c];
+        board[r][c] = '#';                                      // choose: đánh dấu đã thăm
+        bool found = dfs(r+1, c, k+1) || dfs(r-1, c, k+1) ||
+                     dfs(r, c+1, k+1) || dfs(r, c-1, k+1);
+        board[r][c] = tmp;                                      // unchoose: khôi phục
+        return found;
+    };
+    for (int r = 0; r < m; r++)
+        for (int c = 0; c < n; c++)
+            if (dfs(r, c, 0)) return true;
+    return false;
 }
 ```
 

@@ -80,6 +80,22 @@ func main() {
 }
 ```
 
+```cpp
+#include <iostream>
+
+class Cho {
+    // khuôn rỗng, chưa có gì
+};
+
+int main() {
+    Cho* cho1 = new Cho(); // đúc chiếc bánh thứ nhất
+    Cho* cho2 = new Cho(); // đúc chiếc bánh thứ hai
+    std::cout << std::boolalpha << (cho1 == cho2) << "\n"; // false — hai đối tượng khác nhau
+    delete cho1;
+    delete cho2;
+}
+```
+
 Chú thích khác biệt: Python tạo object bằng `Cho()`, JavaScript và Java dùng từ khoá `new`. Go không có từ khoá `class` — Go dùng `struct` (cấu trúc dữ liệu) đóng vai trò tương đương khuôn. Java bắt buộc mọi code chạy nằm trong một class có hàm `main`.
 
 ## 3. Thuộc tính và phương thức
@@ -187,6 +203,32 @@ func main() {
 	choAn.Sua()             // An: Gâu gâu!
 	choBinh.Sua()           // Bình: Gâu gâu!
 	fmt.Println(choAn.Tuoi) // 3
+}
+```
+
+```cpp
+#include <iostream>
+#include <string>
+
+class Cho {
+public:
+    std::string ten; // thuộc tính
+    int tuoi;
+
+    Cho(std::string ten, int tuoi) // constructor (trùng tên class)
+        : ten(ten), tuoi(tuoi) {}  // gán thuộc tính
+
+    void sua() { // phương thức
+        std::cout << ten << ": Gâu gâu!\n";
+    }
+};
+
+int main() {
+    Cho choAn("An", 3);
+    Cho choBinh("Bình", 5);
+    choAn.sua();                    // An: Gâu gâu!
+    choBinh.sua();                  // Bình: Gâu gâu!
+    std::cout << choAn.tuoi << "\n"; // 3
 }
 ```
 
@@ -325,6 +367,41 @@ func main() {
 }
 ```
 
+```cpp
+#include <iostream>
+#include <string>
+
+class TaiKhoanNganHang {
+public:
+    std::string chuTk;
+    int soDu;
+
+    TaiKhoanNganHang(std::string chuTk, int soDuBanDau)
+        : chuTk(chuTk), soDu(soDuBanDau) {}
+
+    void guiTien(int soTien) {
+        soDu += soTien;
+        std::cout << chuTk << " gửi " << soTien << ". Số dư: " << soDu << "\n";
+    }
+
+    void rutTien(int soTien) {
+        if (soTien > soDu) {
+            std::cout << chuTk << ": không đủ số dư!\n";
+        } else {
+            soDu -= soTien;
+            std::cout << chuTk << " rút " << soTien << ". Số dư: " << soDu << "\n";
+        }
+    }
+};
+
+int main() {
+    TaiKhoanNganHang tk("Lan", 100);
+    tk.guiTien(50);  // Lan gửi 50. Số dư: 150
+    tk.rutTien(200); // Lan: không đủ số dư!
+    tk.rutTien(120); // Lan rút 120. Số dư: 30
+}
+```
+
 Hãy để ý điều quan trọng: bên ngoài chỉ cần gọi `tk.rut_tien(200)` — **không cần biết** bên trong kiểm tra ra sao. Object tự bảo vệ dữ liệu của mình. Nguyên tắc "giấu chi tiết bên trong, chỉ phơi ra hành động" gọi là **encapsulation** (đóng gói) — một trong những trụ cột của OOP.
 
 > 💡 Ghi nhớ: mỗi object có **bản sao dữ liệu riêng**. Tạo `tk2 = TaiKhoanNganHang("Hùng", 999)` thì `tk2` rút tiền không ảnh hưởng gì đến số dư của `tk` — giống hai chiếc bánh, cắn bánh này không làm vơi bánh kia.
@@ -398,6 +475,29 @@ func main() {
 	tk := &TaiKhoanTietKiem{TaiKhoanNganHang{ChuTk: "Mai", SoDu: 1000}}
 	tk.RutTien(100) // thừa hưởng: Mai rút 100. Số dư: 900
 	tk.TinhLai()    // riêng có:   Mai gửi 45. Số dư: 945
+}
+```
+
+```cpp
+#include <iostream>
+#include <string>
+
+// C++ có kế thừa thật: kế thừa public từ class cha
+class TaiKhoanTietKiem : public TaiKhoanNganHang {
+public:
+    TaiKhoanTietKiem(std::string chuTk, int soDuBanDau)
+        : TaiKhoanNganHang(chuTk, soDuBanDau) {} // gọi constructor của "bố mẹ"
+
+    void tinhLai() {
+        int lai = (int)(soDu * 0.05);
+        guiTien(lai); // dùng lại phương thức của "bố mẹ"
+    }
+};
+
+int main() {
+    TaiKhoanTietKiem tk("Mai", 1000);
+    tk.rutTien(100); // thừa hưởng: Mai rút 100. Số dư: 900
+    tk.tinhLai();    // riêng có:   Mai gửi 45. Số dư: 945
 }
 ```
 

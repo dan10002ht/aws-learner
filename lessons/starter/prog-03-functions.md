@@ -29,6 +29,12 @@ fmt.Println("Xin chào Bình! Chúc một ngày tốt lành.")
 fmt.Println("Xin chào Chi! Chúc một ngày tốt lành.")
 ```
 
+```cpp
+std::cout << "Xin chào An! Chúc một ngày tốt lành.\n";
+std::cout << "Xin chào Bình! Chúc một ngày tốt lành.\n";
+std::cout << "Xin chào Chi! Chúc một ngày tốt lành.\n";
+```
+
 Trông không sao... cho đến khi sếp bảo: "Đổi câu chúc thành *Chúc buổi sáng vui vẻ* nhé". Bạn phải sửa **3 chỗ**. Nếu là 300 chỗ thì sao? Chỉ cần quên sửa 1 chỗ là chương trình hiển thị lung tung.
 
 Đây là lúc nguyên tắc **DRY** (Don't Repeat Yourself — "đừng lặp lại chính mình") ra đời: *mỗi mẩu logic chỉ nên được viết ở đúng một nơi*. Khi cần thay đổi, bạn sửa một nơi duy nhất, và mọi chỗ dùng nó tự động được cập nhật.
@@ -71,6 +77,17 @@ func chao(ten string) {
 chao("An")
 chao("Bình")
 chao("Chi")
+```
+
+```cpp
+void chao(const std::string& ten) {
+    std::cout << "Xin chào " << ten << "! Chúc một ngày tốt lành.\n";
+}
+
+// Trong main:
+chao("An");
+chao("Bình");
+chao("Chi");
 ```
 
 Khác biệt nhỏ giữa các ngôn ngữ: Python dùng từ khoá `def`, JavaScript dùng `function`, còn Java và Go bắt buộc khai báo **kiểu dữ liệu** của tham số (`String ten`, `ten string`). Trong Java, hàm luôn phải nằm trong một class; trong Go, hàm nằm trong một package và chương trình chạy từ hàm `main`.
@@ -117,6 +134,14 @@ func tinhTien(donGia int, soLuong int) {
 }
 
 tinhTien(30000, 2)   // in ra 60000
+```
+
+```cpp
+void tinhTien(int donGia, int soLuong) {
+    std::cout << donGia * soLuong << "\n";
+}
+
+tinhTien(30000, 2);   // in ra 60000
 ```
 
 > ⚠️ **Lỗi người mới hay gặp:** Truyền đối số **sai thứ tự**. Nếu gọi `tinhTien(2, 30000)` thì kết quả nhân vẫn đúng (vì phép nhân giao hoán), nhưng với hàm kiểu `chuyenTien(nguoiGui, nguoiNhan)` mà đảo thứ tự thì... tiền đi nhầm người! Thứ tự đối số phải khớp đúng thứ tự tham số.
@@ -167,6 +192,17 @@ tong := tienPho + tienTra
 fmt.Println(tong)   // 130000
 ```
 
+```cpp
+int tinhTien(int donGia, int soLuong) {
+    return donGia * soLuong;
+}
+
+int tienPho = tinhTien(50000, 2);
+int tienTra = tinhTien(30000, 1);
+int tong = tienPho + tienTra;
+std::cout << tong << "\n";   // 130000
+```
+
 Lưu ý: ở Java và Go, bạn phải khai báo **kiểu của giá trị trả về** (chữ `int` trước/sau tên hàm). Hàm không trả về gì thì Java ghi `void`, Go bỏ trống, còn Python/JavaScript không cần ghi gì.
 
 Hai điều quan trọng về `return`:
@@ -214,6 +250,16 @@ func tinhThue() {
 
 tinhThue()
 // fmt.Println(thue)  // LỖI BIÊN DỊCH! Không nhìn thấy 'thue'
+```
+
+```cpp
+void tinhThue() {
+    double thue = 0.1;  // biến cục bộ, chỉ sống trong hàm
+    std::cout << thue << "\n";
+}
+
+tinhThue();
+// std::cout << thue;  // LỖI BIÊN DỊCH! Không nhìn thấy 'thue'
 ```
 
 Biến tạo **bên trong hàm** gọi là **biến cục bộ** (local variable). Biến tạo **bên ngoài mọi hàm** gọi là **biến toàn cục** (global variable) — giống đồ đặt ở sảnh chung, phòng nào cũng nhìn thấy được.
@@ -294,6 +340,24 @@ func tinhHoaDon(donGia int, soLuong int) float64 {
 }
 
 fmt.Println(tinhHoaDon(50000, 2))   // 110000
+```
+
+```cpp
+int tinhTienHang(int donGia, int soLuong) {
+    return donGia * soLuong;
+}
+
+double tinhThue(int tien) {
+    return tien * 0.1;
+}
+
+double tinhHoaDon(int donGia, int soLuong) {
+    int tienHang = tinhTienHang(donGia, soLuong);
+    double thue = tinhThue(tienHang);
+    return tienHang + thue;
+}
+
+std::cout << tinhHoaDon(50000, 2) << "\n";   // 110000
 ```
 
 (Ở Java và Go, vì thuế là số thập phân nên kiểu trả về là `double`/`float64`; Go còn yêu cầu đổi kiểu tường minh bằng `float64(...)` — Go rất nghiêm khắc chuyện trộn kiểu số.)
@@ -397,6 +461,24 @@ if tb2 >= 8 {
 }
 ```
 
+```cpp
+// Học sinh 1
+double tb1 = (8 + 7 + 9) / 3.0;
+if (tb1 >= 8) {
+    std::cout << "An: Giỏi\n";
+} else {
+    std::cout << "An: Khá\n";
+}
+
+// Học sinh 2 — lặp y hệt!
+double tb2 = (6 + 9 + 10) / 3.0;
+if (tb2 >= 8) {
+    std::cout << "Bình: Giỏi\n";
+} else {
+    std::cout << "Bình: Khá\n";
+}
+```
+
 Quy trình refactor gồm 3 bước:
 
 1. **Tìm phần lặp**: cấu trúc "tính trung bình → so sánh → in" xuất hiện 2 lần.
@@ -474,6 +556,25 @@ func baoCao(ten string, d1, d2, d3 float64) {
 
 baoCao("An", 8, 7, 9)
 baoCao("Bình", 6, 9, 10)
+```
+
+```cpp
+double trungBinh(double d1, double d2, double d3) {
+    return (d1 + d2 + d3) / 3;
+}
+
+std::string xepLoai(double diemTb) {
+    if (diemTb >= 8) return "Giỏi";
+    return "Khá";
+}
+
+void baoCao(const std::string& ten, double d1, double d2, double d3) {
+    double tb = trungBinh(d1, d2, d3);
+    std::cout << ten << ": " << xepLoai(tb) << "\n";
+}
+
+baoCao("An", 8, 7, 9);
+baoCao("Bình", 6, 9, 10);
 ```
 
 Thêm học sinh thứ 100? Chỉ cần thêm **1 dòng** `baoCao(...)`. Muốn đổi tiêu chuẩn "Giỏi" từ 8 xuống 7.5? Sửa **1 con số** trong `xepLoai`. So với bản copy — dán phải sửa hàng trăm chỗ, bạn vừa tận mắt thấy DRY đáng giá thế nào.

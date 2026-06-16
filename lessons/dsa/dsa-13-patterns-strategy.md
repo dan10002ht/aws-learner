@@ -301,6 +301,23 @@ func longestSubarraySumK(nums []int, k int) int {
 }
 ```
 
+```cpp
+int longestSubarraySumK(const vector<int>& nums, int k) {
+    unordered_map<int, int> firstIndex{{0, -1}}; // prefix -> chi so som nhat
+    int prefix = 0, best = 0;
+    for (int j = 0; j < (int)nums.size(); j++) {
+        prefix += nums[j];
+        auto it = firstIndex.find(prefix - k);
+        if (it != firstIndex.end()) {
+            best = max(best, j - it->second);
+        }
+        // chi luu LAN DAU (de subarray dai nhat) -> khong ghi de
+        firstIndex.emplace(prefix, j);
+    }
+    return best;
+}
+```
+
 **R — Review**: Chạy `nums=[1,-1,5,-2,3], k=3`. prefix: 1,0,5,3,6. Tại j=3, prefix=3, tìm `3-3=0` → index -1 và 1 (lưu lần đầu là -1) → độ dài `3-(-1)=4`. Đúng (subarray `[1,-1,5,-2]`).
 
 **E — Evaluate**: Time O(n) một lượt, space O(n) hash map. Bẫy chính: phải lưu prefix sum **lần đầu** (early index) để subarray dài nhất, và khởi tạo `{0: -1}` để bắt subarray bắt đầu từ index 0.

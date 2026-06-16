@@ -130,6 +130,31 @@ func main() {
 }
 ```
 
+```cpp
+#include <iostream>
+#include <string>
+
+void showMenu() {
+    std::cout << "\n=== QUẢN LÝ CHI TIÊU ===\n";
+    std::cout << "1. Thêm khoản chi\n2. Xem danh sách\n3. Tổng chi tiêu\n4. Thoát\n";
+}
+
+int main() {
+    std::string choice;
+    while (true) {
+        showMenu();
+        std::cout << "Chọn (1-4): ";
+        std::getline(std::cin, choice);
+        if (choice == "4") { std::cout << "Tạm biệt!\n"; break; }
+        else if (choice == "1" || choice == "2" || choice == "3")
+            std::cout << "(sẽ làm ở milestone sau)\n";
+        else
+            std::cout << "Lựa chọn không hợp lệ.\n";
+    }
+    return 0;
+}
+```
+
 Khác biệt đáng chú ý: JavaScript (Node.js) đọc bàn phím qua `readline` và cần `async/await`; Java bắt buộc bọc code trong class và dùng `Scanner`; Go dùng `bufio.Reader` và phải `TrimSpace` để cắt ký tự xuống dòng.
 
 > ⚠️ Lỗi người mới hay gặp: quên lệnh `break` (thoát vòng lặp) ở lựa chọn "Thoát" → app lặp vô tận, phải bấm `Ctrl+C` để giết chương trình. Hãy luôn viết đường thoát **trước tiên** khi làm vòng lặp `while True`.
@@ -193,6 +218,27 @@ type Expense struct {
 func (e Expense) Display() string {
     return fmt.Sprintf("%-20s %12.0fđ  [%s]", e.Description, e.Amount, e.Category)
 }
+```
+
+```cpp
+// C++ có class thực thụ; dùng struct (mặc định public) cho gọn.
+#include <string>
+#include <iomanip>
+#include <sstream>
+
+struct Expense {
+    std::string description;
+    double amount;
+    std::string category;
+
+    std::string display() const {
+        std::ostringstream oss;
+        oss << std::left << std::setw(20) << description << " "
+            << std::right << std::setw(12) << std::fixed << std::setprecision(0)
+            << amount << "đ  [" << category << "]";
+        return oss.str();
+    }
+};
 ```
 
 Chú thích: Go không có khái niệm class, thay vào đó là **struct** (cấu trúc dữ liệu) với hàm gắn kèm — về bản chất dùng giống hệt nhau trong bài này.
@@ -276,6 +322,26 @@ func readAmount(reader *bufio.Reader) float64 {
 // Gợi ý: *expenses = append(*expenses, Expense{...})
 ```
 
+```cpp
+// Khung gợi ý: std::stod ném exception khi chuỗi không phải số.
+#include <string>
+#include <iostream>
+
+double readAmount() {
+    std::string raw;
+    while (true) {
+        std::getline(std::cin, raw);
+        try {
+            double a = std::stod(raw);
+            if (a > 0) return a;
+        } catch (const std::exception&) { }
+        std::cout << "Số không hợp lệ, nhập lại.\n";
+    }
+}
+// TODO: addExpense(std::vector<Expense>& expenses) và listExpenses(const std::vector<Expense>& expenses)
+// Gợi ý: expenses.push_back(Expense{...}); duyệt bằng vòng for chỉ số.
+```
+
 Giờ quay lại `main()`, tạo danh sách `expenses = []` trước vòng lặp và nối các hàm vào menu: lựa chọn 1 gọi `add_expense(expenses)`, lựa chọn 2 gọi `list_expenses(expenses)`.
 
 > ⚠️ Lỗi người mới hay gặp: tạo `expenses = []` **bên trong** vòng lặp `while` — mỗi vòng lặp danh sách bị xóa trắng, thêm bao nhiêu cũng "mất". Biến lưu trữ lâu dài phải khai báo **trước** vòng lặp.
@@ -330,6 +396,22 @@ func showSummary(expenses []Expense) {
         byCat[e.Category] += e.Amount
     }
     // TODO: in total và duyệt for cat, amt := range byCat
+}
+```
+
+```cpp
+// Khung gợi ý: std::map<std::string, double>, truy cập byCat[key] tự khởi tạo 0.
+#include <map>
+#include <vector>
+
+void showSummary(const std::vector<Expense>& expenses) {
+    double total = 0.0;
+    std::map<std::string, double> byCat;
+    for (const auto& e : expenses) {
+        total += e.amount;
+        byCat[e.category] += e.amount;
+    }
+    // TODO: in total và duyệt for (auto& [cat, amt] : byCat) kèm phần trăm
 }
 ```
 
@@ -405,6 +487,23 @@ func saveExpenses(expenses []Expense) {
 }
 // TODO loadExpenses(): data, err := os.ReadFile(filename); nếu err != nil
 // trả về slice rỗng; ngược lại strings.Split theo "\n" rồi theo "|".
+```
+
+```cpp
+// Khung gợi ý: std::ofstream để ghi, std::ifstream để đọc.
+#include <fstream>
+#include <sstream>
+#include <vector>
+
+const std::string FILENAME = "expenses.txt";
+
+void saveExpenses(const std::vector<Expense>& expenses) {
+    std::ofstream f(FILENAME);
+    for (const auto& e : expenses)
+        f << e.description << "|" << e.amount << "|" << e.category << "\n";
+}
+// TODO loadExpenses(): mở std::ifstream(FILENAME); nếu !f trả về vector rỗng;
+// đọc từng dòng bằng getline, tách theo '|' (dùng getline với delimiter), std::stod cột tiền.
 ```
 
 > ⚠️ Lỗi người mới hay gặp ở Java: `split("|")` không chạy như mong đợi vì tham số là **regex** (biểu thức chính quy) và `|` là ký tự đặc biệt — phải viết `split("\\|")`.
@@ -493,6 +592,26 @@ func main() {
             return
         }
     }
+}
+```
+
+```cpp
+// Khung main hoàn chỉnh — tất cả nằm trong một file .cpp, biên dịch g++ -std=c++17.
+int main() {
+    std::vector<Expense> expenses = loadExpenses();
+    std::cout << "Đã nạp " << expenses.size() << " khoản chi từ file.\n";
+    std::string choice;
+    while (true) {
+        showMenu();
+        std::cout << "Chọn (1-4): ";
+        std::getline(std::cin, choice);
+        if (choice == "1") { addExpense(expenses); saveExpenses(expenses); }
+        else if (choice == "2") listExpenses(expenses);
+        else if (choice == "3") showSummary(expenses);
+        else if (choice == "4") { saveExpenses(expenses); std::cout << "Đã lưu. Tạm biệt!\n"; break; }
+        else std::cout << "Lựa chọn không hợp lệ.\n";
+    }
+    return 0;
 }
 ```
 

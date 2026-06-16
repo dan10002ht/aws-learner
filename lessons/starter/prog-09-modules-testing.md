@@ -56,6 +56,20 @@ func Add(a, b int) int {
 }
 ```
 
+```cpp
+// mathutils.h
+#ifndef MATHUTILS_H
+#define MATHUTILS_H
+
+constexpr double PI = 3.14159;
+
+int add(int a, int b) {
+    return a + b;
+}
+
+#endif
+```
+
 Và file chính dùng lại nó:
 
 ```python
@@ -93,6 +107,17 @@ import (
 func main() {
     fmt.Println(mathutils.Add(2, 3)) // 5
     fmt.Println(mathutils.PI)        // 3.14159
+}
+```
+
+```cpp
+// main.cpp
+#include <iostream>
+#include "mathutils.h"
+
+int main() {
+    std::cout << add(2, 3) << "\n"; // 5
+    std::cout << PI << "\n";        // 3.14159
 }
 ```
 
@@ -137,6 +162,11 @@ mvn install
 go get github.com/google/uuid
 ```
 
+```cpp
+// vcpkg: cài thư viện tạo UUID "stduuid"
+vcpkg install stduuid
+```
+
 Mỗi package có **dependency** riêng — nó lại phụ thuộc các package khác. Đó là cây phụ thuộc (dependency tree). Bạn cài 1 gói, đôi khi kéo theo 20 gói con. Trình quản lý gói lo việc đó tự động.
 
 **Phiên bản (version)** rất quan trọng. Một dòng như `dayjs@^1.11.0` nghĩa là "chấp nhận bản 1.11.0 trở lên nhưng dưới 2.0". Ghim phiên bản giúp dự án của bạn chạy giống nhau trên mọi máy.
@@ -169,6 +199,11 @@ mvn install
 ```go
 // Go tải về module cache, khoá chính xác trong go.sum
 go mod tidy
+```
+
+```cpp
+// vcpkg cài package vào thư mục cục bộ và khoá version trong vcpkg.json
+vcpkg install
 ```
 
 > ⚠️ Lỗi người mới hay gặp: **Đừng bao giờ commit `node_modules/` hay thư mục `venv/`** lên git. Chúng nặng hàng trăm MB và tái tạo được từ file khai báo. Thêm chúng vào `.gitignore`.
@@ -204,6 +239,17 @@ assertEquals(0, MathUtils.add(-1, 1));
 if got := Add(2, 3); got != 5 {
     t.Errorf("Add(2,3) = %d; muốn 5", got)
 }
+```
+
+```cpp
+#include <cassert>
+
+int add(int a, int b) {
+    return a + b;
+}
+
+assert(add(2, 3) == 5);
+assert(add(-1, 1) == 0);
 ```
 
 ### Dùng test framework
@@ -265,6 +311,20 @@ func TestAddNegative(t *testing.T) {
     if got := Add(-1, -1); got != -2 {
         t.Errorf("Add(-1,-1) = %d; muốn -2", got)
     }
+}
+```
+
+```cpp
+// math_test.cpp  -> chạy bằng GoogleTest
+#include <gtest/gtest.h>
+#include "mathutils.h"
+
+TEST(MathUtils, AddPositive) {
+    EXPECT_EQ(add(2, 3), 5);
+}
+
+TEST(MathUtils, AddNegative) {
+    EXPECT_EQ(add(-1, -1), -2);
 }
 ```
 
@@ -336,6 +396,18 @@ func TestTotalWithTax(t *testing.T) {
     if result != 66 {
         t.Errorf("muốn 66, nhận %v", result)
     }
+}
+```
+
+```cpp
+TEST(Order, TotalWithTax) {
+    // Arrange
+    std::vector<int> cart = {10, 20, 30};
+    double taxRate = 0.1;
+    // Act
+    double result = totalWithTax(cart, taxRate);
+    // Assert
+    EXPECT_EQ(result, 66);
 }
 ```
 
