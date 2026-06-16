@@ -99,3 +99,18 @@ Fetch the AWS exam guide and extract domains + weights + task statements + in-sc
 - CLF-C02: `https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html` (+ `-domain1..4.md`)
 - SAA-C03 / others: `https://docs.aws.amazon.com/aws-certification/latest/examguides/solutions-architect-associate-03.html`
 - Also web-search current trends ("CLF-C02 commonly tested 2026", new services like Bedrock/Amazon Q, edge, cost emphasis).
+
+## Multi-language code tabs (Programming / DSA / CS)
+
+For lessons that teach language-agnostic concepts (Programming, DSA, some CS),
+code examples render as language **tabs** via `rehypeCodeTabs` + `CodeTabs.tsx`.
+To produce a tab group, emit **adjacent fenced code blocks of distinct
+programming languages** (separated only by blank lines — no prose between them).
+The plugin groups any run of 2+ distinct tabbable languages.
+
+- **Standard order: `python` → `javascript` → `java` → `go` → `cpp`** (all five).
+  C++ (`cpp` → label "C++") is part of the standard set — include it.
+- Tabbable langs: python, javascript, typescript, java, go, cpp, c, ruby, php,
+  kotlin, swift, rust. Shell/yaml/json/text blocks never group (safe for AWS lessons).
+- All language versions must be equivalent (same logic/output) with matching
+  Vietnamese comments.
