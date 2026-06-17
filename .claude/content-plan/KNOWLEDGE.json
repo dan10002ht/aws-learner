@@ -13,8 +13,8 @@
       "id": "TECH-101",
       "kind": "questions",
       "scope": "5 bài (prefix tech)",
-      "status": "pending",
-      "note": ""
+      "status": "done",
+      "note": "65 câu (13×5), 15% multi, build pass"
     },
     {
       "id": "PROGRAMMING",

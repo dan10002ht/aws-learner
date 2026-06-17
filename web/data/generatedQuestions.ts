@@ -19522,5 +19522,1402 @@ export const generatedQuestions: Question[] = [
       0
     ],
     "explanation": "Đọc được dữ liệu chưa COMMIT rồi bị ROLLBACK chính là dirty read, bị chặn từ READ COMMITTED.\n✓ Dirty read là đọc giá trị chưa COMMIT; từ READ COMMITTED trở lên đã chặn.\n✗ Phantom read là số hàng thoả điều kiện thay đổi, không phải tình huống này.\n✗ Non-repeatable read cần transaction khác đã COMMIT, còn đây T1 lại ROLLBACK.\n✗ Deadlock là hai bên chờ khoá nhau, không liên quan đến đọc bẩn."
+  },
+  {
+    "id": "tech-q-001",
+    "courseId": "TECH-101",
+    "lesson": "pc-01-how-computers-work",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn đang gõ một văn bản trong Word thì mất điện đột ngột mà chưa kịp bấm Lưu (Save). Phần vừa gõ thêm có còn không?",
+    "options": [
+      "Mất, vì nội dung mới chỉ nằm trên RAM (bàn làm việc) chứ chưa được chép vào ổ cứng",
+      "Còn, vì RAM giữ dữ liệu kể cả khi tắt máy",
+      "Còn, vì CPU đã ghi nhớ mọi phép tính",
+      "Mất, vì Word tự xóa file khi mất điện"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khi chưa Save, nội dung mới chỉ ở RAM; mà RAM tắt máy là mất sạch.\n✓ Nội dung mới chỉ nằm trên RAM nên mất khi cúp điện đột ngột — đúng theo cơ chế bàn làm việc bị quét sạch cuối ngày\n✗ RAM giữ dữ liệu khi tắt máy — sai, RAM mất hết khi mất điện\n✗ CPU ghi nhớ mọi phép tính — sai, CPU chỉ tính toán, không lưu trữ lâu dài\n✗ Word tự xóa file — sai, vấn đề là chưa cất vào tủ chứ không phải bị xóa"
+  },
+  {
+    "id": "tech-q-002",
+    "courseId": "TECH-101",
+    "lesson": "pc-01-how-computers-work",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một người nói: \"Máy em có 500 GB RAM.\" Khả năng cao họ đang nhầm với cái gì?",
+    "options": [
+      "Dung lượng ổ cứng",
+      "Tốc độ CPU",
+      "Số nhân của CPU",
+      "Tốc độ mạng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Con số hàng trăm GB gần như chắc chắn là ổ cứng, không phải RAM.\n✓ Dung lượng ổ cứng — đúng, RAM thường chỉ 4/8/16/32 GB, còn hàng trăm GB là tủ hồ sơ\n✗ Tốc độ CPU — sai, tốc độ CPU đo bằng GHz\n✗ Số nhân CPU — sai, số nhân chỉ vài đơn vị\n✗ Tốc độ mạng — sai, không liên quan đến đơn vị GB lưu trữ"
+  },
+  {
+    "id": "tech-q-003",
+    "courseId": "TECH-101",
+    "lesson": "pc-01-how-computers-work",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong hình ảnh \"máy tính là một văn phòng\", ai là người THỰC SỰ làm mọi phép tính?",
+    "options": [
+      "CPU (nhân viên)",
+      "RAM (bàn làm việc)",
+      "Ổ cứng (tủ hồ sơ)",
+      "Hệ điều hành (người quản lý)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "CPU là nhân viên duy nhất thực sự làm việc: cộng, so sánh, di chuyển dữ liệu.\n✓ CPU — đúng, mọi tính toán diễn ra ở đây\n✗ RAM — sai, chỉ là chỗ bày giấy tờ đang làm dở\n✗ Ổ cứng — sai, chỉ là nơi cất giữ lâu dài\n✗ Hệ điều hành — sai, chỉ điều phối chứ không tự làm phép tính"
+  },
+  {
+    "id": "tech-q-004",
+    "courseId": "TECH-101",
+    "lesson": "pc-01-how-computers-work",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn cần chọn nơi để cất giữ ảnh và tài liệu LÂU DÀI, không mất khi tắt máy. Đó là?",
+    "options": [
+      "Ổ cứng",
+      "RAM",
+      "CPU",
+      "Xung nhịp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Ổ cứng là nơi lưu trữ lâu dài, tắt máy không mất.\n✓ Ổ cứng — đúng, là tủ hồ sơ giữ nguyên khi tắt máy\n✗ RAM — sai, tắt máy là mất sạch\n✗ CPU — sai, là bộ xử lý chứ không lưu trữ\n✗ Xung nhịp — sai, chỉ là tốc độ làm việc của CPU"
+  },
+  {
+    "id": "tech-q-005",
+    "courseId": "TECH-101",
+    "lesson": "pc-01-how-computers-work",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Hai CPU: A là 2 nhân chạy 3.5 GHz, B là 8 nhân chạy 2.5 GHz. Theo bài học, nhận định nào ĐÚNG?",
+    "options": [
+      "GHz cao hơn không có nghĩa máy chắc chắn nhanh hơn; B nhiều nhân có thể mạnh hơn A",
+      "A chắc chắn nhanh hơn vì xung nhịp cao hơn",
+      "B chắc chắn chậm hơn vì mỗi nhịp ít hơn",
+      "Số nhân không ảnh hưởng gì đến tốc độ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài học cảnh báo: GHz cao chưa chắc nhanh hơn; nhiều nhân có thể bù lại.\n✓ GHz cao chưa chắc nhanh hơn, B nhiều nhân có thể mạnh hơn — đúng như ví dụ 8 nhân viên đều tay thắng 2 nhân viên nhanh hơn chút\n✗ A chắc chắn nhanh hơn vì GHz cao — sai, đây chính là lỗi người mới hay mắc\n✗ B chắc chắn chậm hơn — sai, không thể kết luận chắc chắn như vậy\n✗ Số nhân không ảnh hưởng — sai, số nhân quyết định số việc làm cùng lúc"
+  },
+  {
+    "id": "tech-q-006",
+    "courseId": "TECH-101",
+    "lesson": "pc-01-how-computers-work",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn nháy đúp vào biểu tượng Chrome. Thứ tự các bước xảy ra đúng là gì?",
+    "options": [
+      "OS tìm Chrome trong ổ cứng → nạp vào RAM → CPU thực hiện lệnh → Chrome thành tiến trình",
+      "CPU chạy Chrome thẳng từ ổ cứng mà không cần RAM",
+      "Chrome chạy trên ổ cứng rồi mới được CPU sao chép vào màn hình",
+      "RAM tìm Chrome rồi tự thực hiện các dòng lệnh"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Quy trình: OS lấy chương trình từ ổ cứng, nạp vào RAM, CPU thực hiện, lúc đó thành tiến trình.\n✓ OS tìm trong ổ cứng → nạp RAM → CPU thực hiện → thành tiến trình — đúng trình tự bài mô tả\n✗ CPU chạy thẳng từ ổ cứng không cần RAM — sai, phải nạp lên RAM trước\n✗ Chrome chạy trên ổ cứng — sai, chương trình phải được nạp vào RAM mới chạy\n✗ RAM tự thực hiện lệnh — sai, CPU mới là nơi thực hiện lệnh"
+  },
+  {
+    "id": "tech-q-007",
+    "courseId": "TECH-101",
+    "lesson": "pc-01-how-computers-work",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Sự khác nhau cốt lõi giữa \"chương trình\" và \"tiến trình\" là gì?",
+    "options": [
+      "Chương trình là phần mềm nằm yên trong ổ cứng; tiến trình là chương trình đang chạy",
+      "Chương trình chạy nhanh hơn tiến trình",
+      "Tiến trình nằm trong ổ cứng, chương trình nằm trong RAM",
+      "Chúng hoàn toàn giống nhau, chỉ khác cách gọi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chương trình = cuốn công thức nằm yên; tiến trình = lúc đang nấu (đang chạy).\n✓ Chương trình nằm yên trong ổ cứng, tiến trình là chương trình đang chạy — đúng định nghĩa\n✗ Chương trình chạy nhanh hơn — sai, chương trình chưa chạy gì cả\n✗ Tiến trình nằm trong ổ cứng — sai, tiến trình đã được nạp vào RAM và đang chạy\n✗ Hoàn toàn giống nhau — sai, đây là điểm khác biệt quan trọng"
+  },
+  {
+    "id": "tech-q-008",
+    "courseId": "TECH-101",
+    "lesson": "pc-01-how-computers-work",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn tải một bộ phim 4 GB qua gói mạng quảng cáo \"100 Mbps\". Vì sao không tải xong trong khoảng 40 giây như bạn tưởng?",
+    "options": [
+      "100 Mbps là 100 megabit/giây, chia 8 chỉ ~12,5 megabyte/giây, nên mất hơn 5 phút",
+      "Mạng luôn chậm hơn quảng cáo đúng một nửa",
+      "Bộ phim 4 GB thực ra là 4 megabit",
+      "Vì ổ cứng ghi dữ liệu quá nhanh gây nghẽn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mbps là megabit/giây; phải chia 8 để ra megabyte/giây nên tốc độ thực thấp hơn nhiều.\n✓ 100 megabit/giây ÷ 8 ≈ 12,5 megabyte/giây nên mất hơn 5 phút — đúng, đây là nhầm lẫn bit với byte\n✗ Mạng luôn chậm hơn đúng một nửa — sai, lý do là đơn vị bit/byte chứ không phải một nửa\n✗ Phim 4 GB là 4 megabit — sai, 4 GB là gigabyte, lớn hơn nhiều\n✗ Ổ cứng ghi quá nhanh gây nghẽn — sai, không liên quan"
+  },
+  {
+    "id": "tech-q-009",
+    "courseId": "TECH-101",
+    "lesson": "pc-01-how-computers-work",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi RAM đầy mà bạn vẫn mở thêm nhiều thứ, OS phải làm việc cực chậm nào khiến máy ì ạch?",
+    "options": [
+      "Swap — tạm cất bớt dữ liệu trên RAM vào ổ cứng rồi khi cần lại lôi ra",
+      "Tăng xung nhịp CPU lên gấp đôi",
+      "Xóa bớt file trong ổ cứng để lấy chỗ",
+      "Tự động thêm nhân cho CPU"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khi RAM đầy, OS dùng swap: cất bớt sang ổ cứng rồi lấy lại, rất chậm.\n✓ Swap — tạm cất dữ liệu từ RAM sang ổ cứng rồi lôi ra lại — đúng, đây là việc cực chậm gây ì ạch\n✗ Tăng xung nhịp CPU gấp đôi — sai, máy không tự làm vậy\n✗ Xóa bớt file ổ cứng — sai, OS không tự xóa file của bạn\n✗ Tự thêm nhân CPU — sai, số nhân là phần cứng cố định"
+  },
+  {
+    "id": "tech-q-010",
+    "courseId": "TECH-101",
+    "lesson": "pc-01-how-computers-work",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Máy bạn khựng khi mở nhiều tab trình duyệt, chuyển ứng dụng rất lâu, nhưng quạt KHÔNG kêu to và máy không nóng. Theo quy trình \"bắt bệnh\", thủ phạm khả năng nhất và cách xử lý đúng là?",
+    "options": [
+      "Thiếu RAM — đóng bớt tab/ứng dụng hoặc nâng cấp RAM",
+      "CPU 100% — quét virus ngay lập tức",
+      "Ổ cứng đầy — tăng xung nhịp CPU",
+      "Quá nhiều chương trình khởi động — thay màn hình"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khựng khi mở nhiều tab mà máy không nóng là dấu hiệu thiếu RAM, không phải CPU quá tải.\n✓ Thiếu RAM, đóng bớt tab hoặc nâng RAM — đúng, dấu hiệu khớp với bàn làm việc hết chỗ\n✗ CPU 100% — sai, CPU quá tải thường khiến quạt kêu to và máy nóng, không khớp\n✗ Ổ cứng đầy rồi tăng xung nhịp — sai, cách xử lý không liên quan đến triệu chứng\n✗ Khởi động quá nhiều rồi thay màn hình — sai, thay màn hình không giải quyết gì"
+  },
+  {
+    "id": "tech-q-011",
+    "courseId": "TECH-101",
+    "lesson": "pc-01-how-computers-work",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một máy laptop cũ chạy HDD rất chậm. Theo bài, cách \"hồi sinh\" hiệu quả nhất là gì?",
+    "options": [
+      "Nâng cấp từ HDD lên SSD",
+      "Đổi sang ổ HDD dung lượng lớn hơn",
+      "Giảm số nhân CPU để đỡ nóng",
+      "Tăng dung lượng RAM lên hàng trăm GB"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu rõ: nâng từ HDD lên SSD là cách hồi sinh máy cũ hiệu quả nhất.\n✓ Nâng HDD lên SSD — đúng, SSD nhanh gấp nhiều lần vì không có bộ phận chuyển động\n✗ Đổi HDD lớn hơn — sai, vẫn là HDD chậm, dung lượng không giải quyết tốc độ\n✗ Giảm nhân CPU — sai, làm máy yếu hơn\n✗ RAM hàng trăm GB — sai, RAM thường chỉ vài chục GB và không phải vấn đề ở đây"
+  },
+  {
+    "id": "tech-q-012",
+    "courseId": "TECH-101",
+    "lesson": "pc-01-how-computers-work",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những phát biểu nào về RAM là ĐÚNG theo bài học? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "RAM lấy dữ liệu rất nhanh vì là chỗ để dữ liệu đang dùng ngay lúc này",
+      "Tắt máy thì dữ liệu trên RAM mất hết",
+      "RAM thường có dung lượng nhỏ, khoảng 8–32 GB",
+      "RAM giữ dữ liệu lâu dài như tủ hồ sơ",
+      "RAM nhanh hơn nên thay thế hoàn toàn được ổ cứng"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "RAM là bàn làm việc: nhanh, nhỏ, mất khi tắt máy.\n✓ RAM lấy dữ liệu rất nhanh — đúng, giấy tờ ngay trước mặt\n✓ Tắt máy mất hết — đúng, như cuối ngày dọn bàn\n✓ Dung lượng nhỏ 8–32 GB — đúng theo bài\n✗ Giữ dữ liệu lâu dài như tủ hồ sơ — sai, đó là vai trò của ổ cứng\n✗ Thay thế hoàn toàn ổ cứng — sai, RAM mất dữ liệu khi tắt máy nên không thể thay tủ hồ sơ"
+  },
+  {
+    "id": "tech-q-013",
+    "courseId": "TECH-101",
+    "lesson": "pc-01-how-computers-work",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Hệ điều hành (OS) đảm nhận những vai trò nào trong bài? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Phân chia thời gian của CPU cho nhiều việc cùng lúc",
+      "Cấp cho mỗi chương trình một góc RAM riêng",
+      "Dùng driver để giao tiếp với bàn phím, chuột, máy in",
+      "Cung cấp giao diện desktop, cửa sổ, biểu tượng cho người dùng",
+      "Tự thực hiện trực tiếp các phép cộng và so sánh thay cho CPU"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "OS là người quản lý: điều phối CPU, RAM, thiết bị và cung cấp giao diện, nhưng không tự tính toán thay CPU.\n✓ Phân chia thời gian CPU cho nhiều việc — đúng, OS quyết việc nào làm trước, bao lâu\n✓ Cấp mỗi chương trình một góc RAM riêng — đúng theo bài\n✓ Dùng driver giao tiếp thiết bị — đúng, driver là phần mềm phiên dịch\n✓ Cung cấp giao diện desktop, cửa sổ — đúng, là bộ mặt của OS\n✗ Tự cộng và so sánh thay CPU — sai, mọi phép tính do CPU làm, OS chỉ điều phối"
+  },
+  {
+    "id": "tech-q-014",
+    "courseId": "TECH-101",
+    "lesson": "pc-02-how-internet-works",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo cách ví von trong bài, khi bạn mở Facebook trên điện thoại để xem bảng tin, điện thoại của bạn đóng vai trò gì?",
+    "options": [
+      "Client (máy khách) — bên yêu cầu thông tin",
+      "Server (máy chủ) — bên cung cấp thông tin",
+      "Router — bên định tuyến dữ liệu",
+      "DNS — bên tra cứu địa chỉ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Thiết bị yêu cầu thông tin là client, giống thực khách gọi món.\n✓ Điện thoại yêu cầu \"cho tôi xem bảng tin\" nên là client.\n✗ Server là bên cung cấp/nấu món, tức máy chủ Facebook chứ không phải điện thoại bạn.\n✗ Router chỉ chuyển tiếp dữ liệu trong nhà, không phải vai trò của điện thoại.\n✗ DNS là hệ thống tra địa chỉ IP, không phải thiết bị của bạn."
+  },
+  {
+    "id": "tech-q-015",
+    "courseId": "TECH-101",
+    "lesson": "pc-02-how-internet-works",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "DNS được ví như thứ gì trong đời thường, và nó làm nhiệm vụ gì?",
+    "options": [
+      "Danh bạ điện thoại — đổi tên miền dễ nhớ thành địa chỉ IP",
+      "Bưu cục gia đình — gom yêu cầu rồi gửi ra ngoài",
+      "Thẻ thành viên — giúp trang web nhớ bạn",
+      "Két sắt — mã hoá dữ liệu cho an toàn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "DNS giống danh bạ: bạn nhớ tên, nó tra ra số (IP).\n✓ DNS đổi tên miền như google.com thành địa chỉ IP, đúng vai \"danh bạ\".\n✗ Bưu cục gia đình là hình ảnh của router, không phải DNS.\n✗ Thẻ thành viên là cookie, dùng để trang web nhớ bạn.\n✗ Két sắt mã hoá là hình ảnh của HTTPS, không phải DNS."
+  },
+  {
+    "id": "tech-q-016",
+    "courseId": "TECH-101",
+    "lesson": "pc-02-how-internet-works",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn thấy trang báo lỗi \"404 Not Found\". Theo bài, điều này thường nghĩa là gì?",
+    "options": [
+      "Trang đó đã bị xoá hoặc bạn gõ sai địa chỉ",
+      "Server của trang đang bị lỗi nội bộ, nhà bếp \"cháy\"",
+      "Yêu cầu đã thành công, nội dung đang được gửi về",
+      "Wi-Fi nhà bạn đang yếu nên không tải được"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "404 = Not Found, tức không tìm thấy thứ bạn yêu cầu.\n✓ Trang bị xoá hoặc gõ sai địa chỉ đúng là ý nghĩa của 404.\n✗ Lỗi server nội bộ (\"nhà bếp cháy\") là mã 500, không phải 404.\n✗ Thành công và đang gửi nội dung là mã 200 OK.\n✗ 404 là phản hồi từ server, không liên quan trực tiếp đến Wi-Fi yếu."
+  },
+  {
+    "id": "tech-q-017",
+    "courseId": "TECH-101",
+    "lesson": "pc-02-how-internet-works",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Wi-Fi nhà bạn hiện đầy vạch nhưng không trang nào tải được. Theo bài, lời giải thích nào hợp lý nhất?",
+    "options": [
+      "Wi-Fi chỉ là chặng ngắn tới router; có thể đứt cáp của ISP ở chặng sau",
+      "Wi-Fi đầy vạch thì chắc chắn vào được mạng, nên là do trình duyệt hỏng",
+      "Cookie đã bị xoá nên không vào được bất kỳ trang nào",
+      "Tên miền đã hết hạn nên toàn bộ Internet ngừng hoạt động"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Wi-Fi không phải là Internet, chỉ là đoạn từ điện thoại tới router.\n✓ Sóng Wi-Fi mạnh nhưng chặng sau (cáp ISP) đứt thì vẫn không vào mạng được.\n✗ Đầy vạch không bảo đảm vào được mạng, đó chính là hiểu lầm bài cảnh báo.\n✗ Xoá cookie chỉ khiến bị đăng xuất, không làm mất kết nối mạng.\n✗ Một tên miền hết hạn không thể làm \"toàn bộ Internet\" ngừng chạy."
+  },
+  {
+    "id": "tech-q-018",
+    "courseId": "TECH-101",
+    "lesson": "pc-02-how-internet-works",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một người bạn dọn máy bằng cách \"xoá cookie\" rồi than rằng mọi trang web đều bắt đăng nhập lại. Vì sao?",
+    "options": [
+      "Xoá cookie giống vứt hết thẻ thành viên — mọi trang coi bạn là khách lạ",
+      "Xoá cookie làm hỏng DNS nên không tra được địa chỉ IP",
+      "Xoá cookie ngắt kết nối Wi-Fi với router",
+      "Xoá cookie xoá luôn mã HTTPS nên trang từ chối phục vụ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cookie là \"thẻ thành viên\" giúp trang nhớ bạn đã đăng nhập.\n✓ Vứt thẻ đi thì mọi quán coi bạn là khách lạ, phải đăng nhập lại từ đầu.\n✗ Cookie và DNS là hai thứ khác nhau, xoá cookie không hỏng việc tra IP.\n✗ Cookie không liên quan đến sóng Wi-Fi giữa điện thoại và router.\n✗ HTTPS là mã hoá đường truyền, không bị ảnh hưởng bởi việc xoá cookie."
+  },
+  {
+    "id": "tech-q-019",
+    "courseId": "TECH-101",
+    "lesson": "pc-02-how-internet-works",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn sắp gõ mật khẩu ngân hàng vào một trang. Theo bài, cách kiểm tra an toàn ĐÚNG là gì?",
+    "options": [
+      "Phải có HTTPS, RỒI kiểm tra tên miền có viết đúng từng chữ không",
+      "Chỉ cần thấy ổ khoá 🔒 là chắc chắn trang đáng tin tuyệt đối",
+      "Chỉ cần tên miền nghe quen là đủ, không cần để ý ổ khoá",
+      "Chỉ cần trang tải nhanh là an toàn để nhập mật khẩu"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Ổ khoá chỉ niêm phong đường truyền, không bảo chứng trang là thật.\n✓ Cần có HTTPS và sau đó soi kỹ tên miền có chính xác từng chữ không.\n✗ Trang lừa đảo vẫn có thể có ổ khoá, nên ổ khoá không đồng nghĩa đáng tin tuyệt đối.\n✗ Tên miền giả như vietc0mbank-xacthuc.xyz nghe quen nhưng vẫn là giả; phải soi kỹ.\n✗ Tốc độ tải nhanh không liên quan gì đến an toàn của trang."
+  },
+  {
+    "id": "tech-q-020",
+    "courseId": "TECH-101",
+    "lesson": "pc-02-how-internet-works",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn nhập mật khẩu trên một trang chỉ dùng HTTP thường (không có ổ khoá), khi đang ngồi quán cà phê chung Wi-Fi với nhiều người. Rủi ro lớn nhất là gì?",
+    "options": [
+      "Dữ liệu như bưu thiếp trần — kẻ xấu chung mạng có thể nhìn trộm mật khẩu",
+      "Dữ liệu được mã hoá nên không ai đọc được, hoàn toàn an toàn",
+      "Trang sẽ tự động chuyển sang HTTPS nên không cần lo",
+      "Router sẽ chặn không cho gửi mật khẩu đi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "HTTP thường giống bưu thiếp không phong bì, ai cũng đọc được nội dung.\n✓ Kẻ xấu chung Wi-Fi có thể nhìn trộm mật khẩu vì dữ liệu không được mã hoá.\n✗ Chỉ HTTPS mới mã hoá; HTTP thường thì không, nên không an toàn.\n✗ HTTP không tự biến thành HTTPS; phải là trang có hỗ trợ HTTPS.\n✗ Router không có nhiệm vụ chặn mật khẩu; nó chỉ chuyển tiếp dữ liệu."
+  },
+  {
+    "id": "tech-q-021",
+    "courseId": "TECH-101",
+    "lesson": "pc-02-how-internet-works",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong câu chuyện \"gõ URL rồi nhấn Enter\", bước nào diễn ra ĐẦU TIÊN?",
+    "options": [
+      "Trình duyệt hỏi DNS xem tên miền ứng với địa chỉ IP nào",
+      "Server đóng gói nội dung và gửi response về",
+      "Trình duyệt vẽ trang web lên màn hình",
+      "Server trả mã 200 OK kèm nội dung trang"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Thứ tự là: Tra (DNS) trước, rồi Gửi, Xử, Nhận, Vẽ.\n✓ Bước đầu là tra DNS để đổi tên miền thành IP rồi mới kết nối được.\n✗ Server đóng gói và gửi response xảy ra sau khi đã nhận được request.\n✗ Trình duyệt vẽ trang là bước cuối cùng, sau khi nhận đủ dữ liệu.\n✗ Mã 200 OK nằm trong response, tức ở giai đoạn sau, không phải đầu tiên."
+  },
+  {
+    "id": "tech-q-022",
+    "courseId": "TECH-101",
+    "lesson": "pc-02-how-internet-works",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một trang web cụ thể tải rất chậm, trong khi mọi trang khác trên máy bạn vẫn nhanh bình thường. Theo mẹo trong bài, nhiều khả năng lỗi nằm ở đâu?",
+    "options": [
+      "Ở server của chính trang đó (có thể đang quá tải)",
+      "Ở Wi-Fi nhà bạn quá yếu",
+      "Ở ISP đang đứt cáp quang biển",
+      "Ở DNS không tra được địa chỉ IP nào"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Nếu chỉ một trang chậm còn các trang khác vẫn nhanh thì lỗi ở trang đó.\n✓ Server của trang đó quá tải là nguyên nhân hợp lý vì máy bạn vẫn vào trang khác tốt.\n✗ Wi-Fi yếu sẽ làm MỌI trang chậm, không chỉ một trang.\n✗ ISP đứt cáp cũng ảnh hưởng toàn bộ kết nối, không riêng một trang.\n✗ DNS lỗi thường khiến không vào được trang chứ không phải chỉ riêng một trang chậm trong khi các trang khác bình thường."
+  },
+  {
+    "id": "tech-q-023",
+    "courseId": "TECH-101",
+    "lesson": "pc-02-how-internet-works",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bài giải thích vì sao server cần cookie. Lý do gốc rễ là gì?",
+    "options": [
+      "Sau mỗi lượt hỏi–đáp HTTP, server \"quên\" bạn ngay, nên cần cookie để nhớ lại",
+      "HTTP không thể gửi hình ảnh nên cần cookie để tải ảnh",
+      "Cookie giúp tăng tốc độ Wi-Fi giữa điện thoại và router",
+      "Cookie thay thế cho DNS khi tra cứu địa chỉ IP"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Server \"đãng trí\": xong mỗi lượt HTTP là quên bạn, cookie giúp nhận lại bạn.\n✓ Vì server quên sau mỗi lượt, cookie là mẩu ghi chú giúp nó nhớ bạn đã đăng nhập.\n✗ HTTP vẫn gửi được hình ảnh; cookie không liên quan đến việc tải ảnh.\n✗ Cookie không tác động đến tốc độ sóng Wi-Fi.\n✗ Cookie không thay thế DNS; hai thứ làm hai việc hoàn toàn khác nhau."
+  },
+  {
+    "id": "tech-q-024",
+    "courseId": "TECH-101",
+    "lesson": "pc-02-how-internet-works",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo bài, những phát biểu nào về HTTPS và ổ khoá 🔒 là ĐÚNG?",
+    "options": [
+      "HTTPS mã hoá dữ liệu nên kẻ chặn giữa đường chỉ thấy ký tự lộn xộn",
+      "HTTPS có chứng chỉ như \"căn cước\" xác nhận trang đúng là trang thật",
+      "Có ổ khoá nghĩa là trang chắc chắn không lừa đảo",
+      "Trang lừa đảo cũng có thể có ổ khoá",
+      "Chữ S trong HTTPS nghĩa là Speed (tốc độ)"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "HTTPS niêm phong đường truyền và xác thực danh tính, nhưng không bảo chứng trang là tử tế.\n✓ HTTPS mã hoá nên kẻ chặn giữa đường chỉ thấy chuỗi ký tự vô nghĩa.\n✓ Chứng chỉ HTTPS như căn cước, xác nhận trang đúng là trang thật.\n✓ Trang lừa đảo vẫn có thể có ổ khoá vì kẻ trộm cũng niêm phong được thư của hắn.\n✗ Có ổ khoá KHÔNG bảo đảm trang không lừa đảo; còn phải soi tên miền.\n✗ Chữ S là Secure (an toàn), không phải Speed."
+  },
+  {
+    "id": "tech-q-025",
+    "courseId": "TECH-101",
+    "lesson": "pc-02-how-internet-works",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Khi dữ liệu của một trang web được gửi về máy bạn (bước HTTP Response), những điều nào sau đây ĐÚNG theo bài?",
+    "options": [
+      "Dữ liệu được chia thành nhiều gói nhỏ",
+      "Các gói nhỏ có thể đi theo những đường khác nhau rồi được ráp lại ở máy bạn",
+      "Một trang web thường là kết quả của hàng chục, hàng trăm lượt hỏi–đáp",
+      "Toàn bộ trang luôn được gửi nguyên khối trong đúng một gói duy nhất",
+      "Trình duyệt chỉ hiển thị dữ liệu thô, không cần dựng lại thành trang"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Dữ liệu được chia gói, đi nhiều đường, ráp lại; mỗi trang gồm nhiều lượt hỏi–đáp.\n✓ Dữ liệu được chia thành hàng nghìn gói nhỏ khi gửi.\n✓ Mỗi gói có thể đi đường khác nhau rồi được ráp lại ở máy bạn.\n✓ Mỗi tấm hình, đoạn chữ là một lượt riêng nên một trang gồm rất nhiều lượt hỏi–đáp.\n✗ Trang không được gửi nguyên khối trong một gói; nó bị chia nhỏ.\n✗ Trình duyệt phải dựng (vẽ) dữ liệu thành trang, không chỉ hiển thị thô."
+  },
+  {
+    "id": "tech-q-026",
+    "courseId": "TECH-101",
+    "lesson": "pc-02-how-internet-works",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Kẻ lừa đảo lợi dụng sự khác nhau giữa thanh địa chỉ và ô tìm kiếm của Google như thế nào, theo bài?",
+    "options": [
+      "Ô tìm kiếm chỉ tìm trang \"nói về\" từ khoá, nên kẻ xấu chèn trang giả mạo vào kết quả để dụ bấm",
+      "Thanh địa chỉ luôn đưa bạn tới trang giả nên không nên dùng",
+      "Ô tìm kiếm tự động mã hoá nên kém an toàn hơn thanh địa chỉ",
+      "Thanh địa chỉ và ô tìm kiếm là hoàn toàn giống nhau, không có khác biệt"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Thanh địa chỉ đưa bạn thẳng đến trang; ô tìm kiếm chỉ liệt kê các trang nói về từ khoá.\n✓ Vì ô tìm kiếm chỉ trả về trang \"nói về\" từ khoá, kẻ xấu chèn trang giả vào kết quả để dụ bạn bấm.\n✗ Thanh địa chỉ đưa bạn THẲNG tới trang bạn gõ, không phải tới trang giả.\n✗ Sự khác biệt nằm ở cách hoạt động, không phải ở chuyện mã hoá.\n✗ Bài nhấn mạnh hai thứ này KHÁC nhau, không hề giống nhau."
+  },
+  {
+    "id": "tech-q-027",
+    "courseId": "TECH-101",
+    "lesson": "pc-03-software-types",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, nếu một chiếc điện thoại bị xóa hết toàn bộ phần mềm thì nó sẽ trở thành gì?",
+    "options": [
+      "Một thiết bị vẫn chạy bình thường vì phần cứng tự suy nghĩ được",
+      "Một cục kim loại đẹp đẽ nhưng vô dụng",
+      "Một chiếc máy chỉ chạy được app web",
+      "Một server phục vụ máy khác"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Phần cứng là cơ thể, phần mềm là suy nghĩ; không có phần mềm thì máy không biết làm gì.\n✓ Không có \"bản hướng dẫn\", máy chỉ là cục kim loại vô dụng.\n✗ Phần cứng không tự nghĩ được, nó chỉ làm đúng những gì được dặn.\n✗ App web vẫn cần phần mềm (trình duyệt, hệ điều hành) để chạy.\n✗ Server cũng phải có phần mềm mới phục vụ được."
+  },
+  {
+    "id": "tech-q-028",
+    "courseId": "TECH-101",
+    "lesson": "pc-03-software-types",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một người dùng muốn dùng cùng một dịch vụ trên nhiều máy lạ khác nhau (máy ở quán net, máy mượn bạn) mà không phải cài đặt gì. Loại app nào phù hợp nhất?",
+    "options": [
+      "App desktop",
+      "App web",
+      "App mobile",
+      "Phần mềm đóng"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "App web chạy trong trình duyệt, gõ địa chỉ là dùng được trên bất kỳ máy nào.\n✓ App web không cần cài đặt, dùng được trên mọi máy có trình duyệt.\n✗ App desktop phải tải về và cài, cài máy nào chỉ dùng máy đó.\n✗ App mobile phải cài lên điện thoại qua cửa hàng app.\n✗ \"Phần mềm đóng\" là cách phân phối mã nguồn, không phải kiểu app theo nơi chạy."
+  },
+  {
+    "id": "tech-q-029",
+    "courseId": "TECH-101",
+    "lesson": "pc-03-software-types",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn vào Facebook bằng Chrome trên máy tính, rồi mở app Facebook trên điện thoại. Vì sao bạn thấy CÙNG bạn bè và tin nhắn ở cả hai nơi?",
+    "options": [
+      "Vì Chrome và app tự đồng bộ dữ liệu trực tiếp với nhau",
+      "Vì dữ liệu nằm chung một nơi phía sau, trên server",
+      "Vì đó thực ra là hai dịch vụ khác nhau nhưng trùng tên",
+      "Vì điện thoại sao chép dữ liệu từ máy tính qua Bluetooth"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "App web và app mobile chỉ là \"cửa ra vào\" khác nhau của cùng một dịch vụ; dữ liệu nằm chung trên server.\n✓ Bạn bè, tin nhắn nằm ở một nơi chung phía sau (server), nên cửa nào vào cũng thấy.\n✗ Hai cửa vào không tự nói chuyện trực tiếp; chúng cùng lấy từ server.\n✗ Đây là cùng một dịch vụ, chỉ khác cách truy cập.\n✗ Không có chuyện chép qua Bluetooth; dữ liệu lấy từ server qua Internet."
+  },
+  {
+    "id": "tech-q-030",
+    "courseId": "TECH-101",
+    "lesson": "pc-03-software-types",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi bạn bấm \"Đăng nhập\" trên app ngân hàng, việc KIỂM TRA mật khẩu đúng hay sai và tra số dư diễn ra ở đâu?",
+    "options": [
+      "Ở frontend, ngay trên điện thoại của bạn",
+      "Ở backend, trên server của ngân hàng",
+      "Ở trình duyệt Chrome",
+      "Ở thẻ SIM của điện thoại"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Frontend gửi thông tin đi, còn backend trên server mới là nơi xử lý thật sự.\n✓ Backend (máy chủ ngân hàng) kiểm tra mật khẩu, tra số dư rồi trả kết quả về.\n✗ Frontend chỉ thu thập và hiển thị, không tự kiểm tra mật khẩu của ngân hàng.\n✗ Trình duyệt chỉ là nơi chạy giao diện, không giữ logic của ngân hàng.\n✗ Thẻ SIM dùng cho mạng di động, không xử lý đăng nhập ngân hàng."
+  },
+  {
+    "id": "tech-q-031",
+    "courseId": "TECH-101",
+    "lesson": "pc-03-software-types",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, \"server\" thực chất là gì?",
+    "options": [
+      "Một phần mềm đặc biệt lơ lửng trên Internet",
+      "Một chiếc máy tính bình thường nhưng khỏe hơn, chạy 24/7 để phục vụ nhiều máy khách",
+      "Một thiết bị chỉ có ở nhà người dùng",
+      "Một loại điện thoại không màn hình"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Server là máy tính khỏe, không màn hình, bật suốt ngày đêm, đặt trong data center để phục vụ máy khách.\n✓ Đúng định nghĩa server: máy khỏe hơn, bật 24/7, phục vụ triệu máy khách.\n✗ Server là phần cứng máy tính thật, không phải thứ lơ lửng.\n✗ Server đặt trong data center chuyên dụng, không phải ở nhà người dùng.\n✗ Server không phải điện thoại; nó là máy tính phục vụ."
+  },
+  {
+    "id": "tech-q-032",
+    "courseId": "TECH-101",
+    "lesson": "pc-03-software-types",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn chụp một tấm ảnh và lưu trong bộ nhớ điện thoại (không bật sao lưu cloud). Hôm sau mất điện thoại. Điều gì xảy ra với tấm ảnh, và vì sao?",
+    "options": [
+      "Vẫn còn, vì ảnh tự lưu trong database trên server",
+      "Mất luôn, vì ảnh lưu cục bộ trong máy chứ không nằm trên server",
+      "Vẫn còn, vì mọi ảnh đều tự lên cloud",
+      "Mất luôn, vì frontend đã xóa ảnh khi tắt máy"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Ảnh lưu trong bộ nhớ máy là lưu cục bộ; mất máy là mất ảnh, khác với dữ liệu nằm trong database trên server.\n✓ Ảnh lưu cục bộ trong máy nên mất máy là mất ảnh.\n✗ Ảnh chỉ vào database server nếu được sao lưu lên cloud, mà ở đây thì không.\n✗ Không phải mọi ảnh đều tự lên cloud; cần bật sao lưu.\n✗ Frontend không tự xóa ảnh khi tắt máy."
+  },
+  {
+    "id": "tech-q-033",
+    "courseId": "TECH-101",
+    "lesson": "pc-03-software-types",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "App thời tiết trên điện thoại bạn hiển thị \"Hà Nội 31 độ, có mưa rào\". Theo bài, app lấy con số này từ đâu?",
+    "options": [
+      "App tự đo nhiệt độ bằng cảm biến của điện thoại",
+      "App gọi API của một dịch vụ khí tượng để hỏi xin dữ liệu",
+      "App đoán dựa trên lịch sử thời tiết lưu trong máy",
+      "Người dùng phải tự nhập số liệu vào app"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "App không tự đo thời tiết; nó gọi API của một dịch vụ khí tượng để nhận dữ liệu.\n✓ App \"gọi món\" qua API của dịch vụ khí tượng và nhận về kết quả.\n✗ App không tự đo thời tiết bằng cảm biến điện thoại.\n✗ Không phải đoán từ lịch sử trong máy; dữ liệu đến từ dịch vụ ngoài.\n✗ Người dùng không phải tự nhập nhiệt độ."
+  },
+  {
+    "id": "tech-q-034",
+    "courseId": "TECH-101",
+    "lesson": "pc-03-software-types",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo analogy nhà hàng trong bài, API (người phục vụ) giúp được những điều nào sau đây? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Cho phép frontend gọi dịch vụ của backend mà không cần biết \"công thức trong bếp\"",
+      "Cho phép một phần mềm dùng dịch vụ của phần mềm khác theo mẫu chuẩn",
+      "Thay thế hoàn toàn database nên backend không cần lưu trữ gì",
+      "Là cách chuẩn để hai phần mềm nói chuyện với nhau",
+      "Tự nấu món ăn thay cho bếp khi bếp quá tải"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "API là người phục vụ + thực đơn chuẩn: nhận đơn theo mẫu và chuyển qua lại, không thay vai trò của bếp hay kho.\n✓ Khách không cần biết bếp nấu thế nào, chỉ gọi món qua API.\n✓ API cho phép phần mềm dùng dịch vụ của nhau theo mẫu chuẩn.\n✓ API chính là cách chuẩn để hai phần mềm nói chuyện.\n✗ API không thay thế database; backend vẫn lưu dữ liệu trong database.\n✗ API không tự nấu món; việc xử lý là của backend (bếp)."
+  },
+  {
+    "id": "tech-q-035",
+    "courseId": "TECH-101",
+    "lesson": "pc-03-software-types",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "\"Lưu ảnh lên iCloud / Google Photos\" thực ra có nghĩa là gì, theo nghĩa vật lý?",
+    "options": [
+      "Ảnh bay lơ lửng trên bầu trời",
+      "Ảnh nằm trên server thuê của Apple/Google trong data center thật",
+      "Ảnh được nén lại và giấu trong bộ nhớ điện thoại",
+      "Ảnh bị xóa khỏi mọi nơi để tiết kiệm chỗ"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cloud chỉ là máy tính của người khác; ảnh nằm trên server thật trong data center thật.\n✓ Ảnh nằm trên server thuê của Apple/Google, đặt trong data center thật.\n✗ \"Đám mây\" không phải thứ lơ lửng trên trời.\n✗ Ảnh lên cloud nằm trên server, không phải giấu trong máy.\n✗ Lưu cloud là giữ ảnh trên server, không phải xóa đi."
+  },
+  {
+    "id": "tech-q-036",
+    "courseId": "TECH-101",
+    "lesson": "pc-03-software-types",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một quán nhỏ mới mở app bán hàng, ngày thường rất ít khách nhưng ngày sale lượng truy cập tăng gấp 100 lần trong vài giờ. Vì sao dùng cloud là lựa chọn hợp lý hơn tự mua server?",
+    "options": [
+      "Vì cloud miễn phí hoàn toàn nên không tốn đồng nào",
+      "Vì cloud co giãn được: vặn vòi to lên khi đông, vặn nhỏ lại khi vắng, trả theo mức dùng",
+      "Vì tự mua server sẽ luôn nhanh hơn cloud trong mọi trường hợp",
+      "Vì cloud không cần Internet nên ổn định hơn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cloud là thuê máy trả theo mức dùng và co giãn nhanh, hợp với nhu cầu lên xuống thất thường.\n✓ Cloud co giãn trong vài phút và trả theo mức dùng, hợp với đợt sale tăng đột biến.\n✗ Cloud không miễn phí; bạn trả theo mức dùng (vài trăm nghìn/tháng khi nhỏ).\n✗ Tự mua server không phải lúc nào cũng nhanh hơn, và lãng phí khi vắng khách.\n✗ Cloud truy cập qua Internet, không phải không cần Internet."
+  },
+  {
+    "id": "tech-q-037",
+    "courseId": "TECH-101",
+    "lesson": "pc-03-software-types",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, những phát biểu nào về phần mềm open source là ĐÚNG? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Mã nguồn được công khai, ai cũng xem và đóng góp cải tiến được",
+      "Open source luôn kém chất lượng vì miễn phí",
+      "Linux (chạy đa số server) và nền của Android là ví dụ open source",
+      "Chỉ công ty sở hữu mới được sửa lỗi",
+      "Nhiều người cùng soi mã nguồn nên lỗi khó trốn"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      4
+    ],
+    "explanation": "Open source công khai mã nguồn, để cộng đồng cùng soi và cải tiến; nhiều phần mềm quan trọng nhất thế giới là open source.\n✓ Mã nguồn công khai, ai cũng xem và đóng góp được.\n✓ Linux và nền của Android đúng là ví dụ open source nổi tiếng.\n✓ Nhiều con mắt cùng soi thì lỗi khó trốn.\n✗ Open source không đồng nghĩa kém chất lượng; ngược lại là khác.\n✗ Việc \"chỉ công ty sở hữu được sửa\" là đặc điểm của phần mềm đóng."
+  },
+  {
+    "id": "tech-q-038",
+    "courseId": "TECH-101",
+    "lesson": "pc-03-software-types",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Ghép các vai trò: trong luồng bấm \"Đặt hàng\", phần nào ghi đơn hàng lại để mai mốt bạn tra \"lịch sử đơn hàng\" vẫn còn thấy?",
+    "options": [
+      "Frontend lưu vào màn hình xác nhận",
+      "API giữ lại bản sao đơn",
+      "Backend ghi đơn vào database",
+      "Trình duyệt lưu vào lịch sử web"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Database là nơi lưu trữ dữ liệu lâu dài, có tổ chức; backend ghi đơn vào đó.\n✓ Backend ghi đơn hàng vào database nên sau này tra lịch sử vẫn còn.\n✗ Frontend chỉ hiển thị màn hình xác nhận, không lưu lâu dài.\n✗ API chỉ chuyển lời qua lại, không phải nơi lưu trữ.\n✗ Lịch sử trình duyệt là chuyện riêng của máy bạn, không phải lịch sử đơn hàng của dịch vụ."
+  },
+  {
+    "id": "tech-q-039",
+    "courseId": "TECH-101",
+    "lesson": "pc-03-software-types",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một nhóm muốn làm app đặt lịch cần TẬN DỤNG camera để quét mã QR và GPS để xác định vị trí khách. Theo bài, kiểu app nào phù hợp nhất với yêu cầu này?",
+    "options": [
+      "App web, vì chạy trong trình duyệt nên dùng camera/GPS tốt nhất",
+      "App desktop, vì mạnh và chạy offline",
+      "App mobile, vì tận dụng tốt camera, GPS và thao tác chạm",
+      "Phần mềm open source, vì miễn phí"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "App mobile được tối ưu để tận dụng tính năng riêng của điện thoại như camera, GPS, thông báo đẩy.\n✓ App mobile dùng camera, GPS rất tốt, hợp yêu cầu quét QR và định vị.\n✗ App web bị hạn chế với camera/GPS, không phải lựa chọn tốt nhất.\n✗ App desktop mạnh nhưng dùng camera/GPS hạn chế và không tiện mang theo.\n✗ Open source là cách phân phối mã nguồn, không quyết định việc dùng camera/GPS."
+  },
+  {
+    "id": "tech-q-040",
+    "courseId": "TECH-101",
+    "lesson": "pc-04-roles-in-tech",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một thông điệp cốt lõi của bài học về ngành tech là gì?",
+    "options": [
+      "Muốn vào ngành tech thì bắt buộc phải biết viết code",
+      "Ngành tech chỉ dành cho người giỏi toán",
+      "Một sản phẩm tech là công sức của cả đội nhiều vai trò, không chỉ lập trình viên",
+      "Chỉ có một con đường duy nhất để vào ngành tech"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Bài ví ngành tech như một nhà hàng lớn, mỗi người một việc, và bạn có thể vào ngành qua nhiều cánh cửa khác nhau.\n✓ Một sản phẩm là công sức của cả đội nhiều vai trò: đúng tinh thần bài học.\n✗ Bắt buộc phải biết code: sai, có nhiều nghề như PM/BA, Designer gần như không viết code.\n✗ Chỉ dành cho người giỏi toán: sai, hầu hết nghề chỉ cần tư duy logic.\n✗ Chỉ có một con đường duy nhất: sai, có nhiều cánh cửa vào ngành."
+  },
+  {
+    "id": "tech-q-041",
+    "courseId": "TECH-101",
+    "lesson": "pc-04-roles-in-tech",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khi bạn bấm nút 'Đặt món' và đơn hàng được lưu lại, tiền được tính, mã giảm giá được kiểm tra — phần xử lý 'hậu trường' này thuộc về ai?",
+    "options": [
+      "Frontend Developer",
+      "Backend Developer",
+      "Designer",
+      "QA/Tester"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Backend là mọi thứ chạy phía sau mà người dùng không nhìn thấy: lưu đơn hàng, tính tiền, kiểm tra mã giảm giá.\n✓ Backend Developer: đúng, lo phần 'nhà bếp' hậu trường.\n✗ Frontend Developer: làm phần người dùng nhìn thấy và chạm vào, không lo lưu trữ tính toán.\n✗ Designer: chỉ vẽ giao diện, không viết code xử lý.\n✗ QA/Tester: kiểm tra phần mềm, không xây phần xử lý."
+  },
+  {
+    "id": "tech-q-042",
+    "courseId": "TECH-101",
+    "lesson": "pc-04-roles-in-tech",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Lộ trình của khoá học này được thiết kế chủ yếu cho hướng nghề nào?",
+    "options": [
+      "Frontend và Designer",
+      "Data Scientist và AI",
+      "Backend và Cloud/DevOps (AWS)",
+      "Mobile Developer"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Bài nói rõ lộ trình trang web đi theo hướng Backend và Cloud/DevOps, tiến tới AWS và các chứng chỉ AWS.\n✓ Backend và Cloud/DevOps (AWS): đúng hướng của khoá học.\n✗ Frontend và Designer: không phải hướng chính của khoá.\n✗ Data Scientist và AI: là nghề cần toán nhiều, không phải hướng khoá này.\n✗ Mobile Developer: không phải hướng của khoá học."
+  },
+  {
+    "id": "tech-q-043",
+    "courseId": "TECH-101",
+    "lesson": "pc-04-roles-in-tech",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một người bạn nói: 'Mình thích cái đẹp, tỉ mỉ về giao diện, và muốn thấy ngay kết quả công sức của mình hiện ra trên màn hình.' Nghề lập trình nào hợp nhất?",
+    "options": [
+      "Backend Developer",
+      "Frontend Developer",
+      "DevOps/Cloud Engineer",
+      "Data Engineer"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Frontend làm phần người dùng nhìn thấy, hợp người thích cái đẹp, tỉ mỉ giao diện, muốn thấy kết quả ngay trên màn hình.\n✓ Frontend Developer: đúng mô tả tính cách phù hợp.\n✗ Backend Developer: hợp người thích logic, giải đố, không quá quan tâm đẹp xấu.\n✗ DevOps/Cloud Engineer: không cần khiếu thẩm mỹ, không làm giao diện.\n✗ Data Engineer: làm đường ống dữ liệu, không liên quan giao diện."
+  },
+  {
+    "id": "tech-q-044",
+    "courseId": "TECH-101",
+    "lesson": "pc-04-roles-in-tech",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong app đặt đồ ăn, ai chịu trách nhiệm đảm bảo hệ thống chạy ổn định khi 1 triệu người cùng đặt món lúc 12h trưa?",
+    "options": [
+      "Data Analyst",
+      "DevOps/Cloud Engineer",
+      "PM/BA",
+      "Frontend Developer"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "DevOps/Cloud Engineer đảm bảo phần mềm chạy ổn định ngoài đời thật, lo việc nhà không sập khi đông khách kéo đến cùng lúc.\n✓ DevOps/Cloud Engineer: đúng, giữ hệ thống ổn định khi tải cao.\n✗ Data Analyst: phân tích số liệu, không vận hành hệ thống.\n✗ PM/BA: quyết định làm gì tiếp, không lo vận hành kỹ thuật.\n✗ Frontend Developer: làm giao diện, không lo chịu tải hệ thống."
+  },
+  {
+    "id": "tech-q-045",
+    "courseId": "TECH-101",
+    "lesson": "pc-04-roles-in-tech",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty thay vì tự mua máy chủ về đặt trong văn phòng thì thuê máy chủ qua Internet từ AWS, trả tiền theo lượng dùng. Cách làm này được gọi là gì?",
+    "options": [
+      "Dùng cloud (điện toán đám mây)",
+      "Viết automation test",
+      "Thiết kế UX",
+      "Xây pipeline tự động"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cloud là thuê máy chủ qua Internet từ AWS, Google Cloud, Azure, trả tiền theo lượng dùng — giống dùng nước máy thay vì tự đào giếng.\n✓ Dùng cloud: đúng mô tả thuê máy chủ trả theo lượng dùng.\n✗ Viết automation test: là việc kiểm thử tự động của QA.\n✗ Thiết kế UX: là trải nghiệm người dùng của Designer.\n✗ Xây pipeline tự động: là dây chuyền tự động đưa code lên, không phải định nghĩa thuê máy chủ."
+  },
+  {
+    "id": "tech-q-046",
+    "courseId": "TECH-101",
+    "lesson": "pc-04-roles-in-tech",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một người trái ngành giỏi giao tiếp, thích con số và đặt câu hỏi 'tại sao' nhưng ngại viết nhiều code. Đâu là hai cửa vào ngành tech được bài học gợi ý là 'mềm' / phổ biến cho người trái ngành?",
+    "options": [
+      "Backend Developer và Mobile Developer",
+      "Data Analyst và QA/Tester",
+      "Data Scientist và DevOps",
+      "Frontend Developer và Designer"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nói Data Analyst là cửa vào khá 'mềm' cho người trái ngành (ít code nhất), và QA/Tester cũng là cửa vào phổ biến cho người trái ngành.\n✓ Data Analyst và QA/Tester: đúng, cả hai đều được nêu là cửa vào cho người trái ngành.\n✗ Backend Developer và Mobile Developer: đều bắt buộc biết code.\n✗ Data Scientist và DevOps: Data Scientist cần toán nhiều nhất, không 'mềm'.\n✗ Frontend Developer và Designer: không được nêu là cửa vào cho người trái ngành theo cách này."
+  },
+  {
+    "id": "tech-q-047",
+    "courseId": "TECH-101",
+    "lesson": "pc-04-roles-in-tech",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bài học khuyên người mới điều gì về việc trở thành Fullstack Developer?",
+    "options": [
+      "Nên đặt mục tiêu fullstack ngay từ đầu vì nghe 'xịn'",
+      "Không nên đặt mục tiêu fullstack ngay; hãy giỏi một mảng trước",
+      "Fullstack chỉ cần biết frontend là đủ",
+      "Fullstack là nghề không cần viết code"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nói đa số fullstack dev mạnh một bên, biết đủ dùng bên còn lại; người mới nên giỏi một mảng trước.\n✓ Không nên fullstack ngay, giỏi một mảng trước: đúng lời khuyên của bài.\n✗ Đặt mục tiêu fullstack ngay từ đầu: sai, đi ngược lời khuyên.\n✗ Chỉ cần biết frontend: sai, fullstack là frontend + backend.\n✗ Không cần viết code: sai, fullstack vẫn là nghề lập trình."
+  },
+  {
+    "id": "tech-q-048",
+    "courseId": "TECH-101",
+    "lesson": "pc-04-roles-in-tech",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một bạn tâm sự: 'Em muốn học tech nhưng tiếng Anh em còn yếu, để em luyện tiếng Anh thật giỏi rồi mới bắt đầu học.' Theo bài học, phản hồi đúng nhất là gì?",
+    "options": [
+      "Đúng rồi, phải giỏi tiếng Anh nói trôi chảy trước đã",
+      "Sai thứ tự — cứ học tech bằng tiếng Việt trước, gặp thuật ngữ Anh thì nhặt dần",
+      "Tiếng Anh không cần thiết chút nào trong ngành tech",
+      "Phải học cả nghe nói trôi chảy ngay từ đầu mới làm được"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài cảnh báo lỗi người mới hay gặp là trì hoãn học tech 'chờ giỏi tiếng Anh đã' — đó là sai thứ tự; nên học tech trước, nhặt thuật ngữ Anh dần.\n✓ Sai thứ tự, học tech bằng tiếng Việt trước: đúng lời khuyên của bài.\n✗ Phải giỏi tiếng Anh nói trôi chảy trước: sai, nghe nói chưa cần ngay.\n✗ Tiếng Anh không cần thiết chút nào: sai, đọc hiểu là bắt buộc.\n✗ Phải học nghe nói trôi chảy ngay từ đầu: sai, chỉ cần đọc hiểu trước."
+  },
+  {
+    "id": "tech-q-049",
+    "courseId": "TECH-101",
+    "lesson": "pc-04-roles-in-tech",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một người lo lắng: 'Em sợ chọn sai nghề nên định học mỗi nghề một ít cho chắc.' Theo bài học, đây là vấn đề gì và nên làm sao?",
+    "options": [
+      "Cách làm đúng, nên học dàn trải để biết hết",
+      "Đây là lỗi hay gặp; nên chọn MỘT hướng, đi sâu 6-12 tháng rồi mới tính rẽ nhánh",
+      "Nên học cả 8 nghề cùng lúc trong 1 tháng",
+      "Sợ chọn sai là vô lý vì mọi nghề đều giống nhau"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nêu lỗi học dàn trải 'mỗi nghề một ít' dẫn tới biết mỗi thứ một chút, không đủ sâu để xin việc; nên chọn một hướng đi sâu 6-12 tháng.\n✓ Chọn MỘT hướng, đi sâu 6-12 tháng: đúng lời khuyên của bài.\n✗ Học dàn trải để biết hết: sai, đó chính là lỗi bài cảnh báo.\n✗ Học cả 8 nghề trong 1 tháng: sai, càng dàn trải hơn.\n✗ Mọi nghề đều giống nhau: sai, mỗi nghề có tính cách phù hợp khác nhau."
+  },
+  {
+    "id": "tech-q-050",
+    "courseId": "TECH-101",
+    "lesson": "pc-04-roles-in-tech",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong các nghề sau, nghề nào là nghề DUY NHẤT mà bài học nói cần 'toán thật sự' (xác suất thống kê, đại số tuyến tính)?",
+    "options": [
+      "Backend Developer",
+      "DevOps/Cloud Engineer",
+      "Data Scientist / AI",
+      "Frontend Developer"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Bài nói Data Scientist/AI mới là nghề cần toán thật: xác suất thống kê, đại số tuyến tính; các nghề còn lại chủ yếu cần logic.\n✓ Data Scientist / AI: đúng, nghề cần toán cao cấp.\n✗ Backend Developer: chỉ cần logic tốt và chút toán rời rạc, không cần giải tích.\n✗ DevOps/Cloud Engineer: chỉ cần toán ít.\n✗ Frontend Developer: toán cấp 2 là đủ."
+  },
+  {
+    "id": "tech-q-051",
+    "courseId": "TECH-101",
+    "lesson": "pc-04-roles-in-tech",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo bảng tổng kết của bài, những nghề nào KHÔNG bắt buộc biết code (ít nhất là khi mới bắt đầu)? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "PM/BA",
+      "Designer",
+      "QA/Tester (giai đoạn đầu)",
+      "Backend Developer",
+      "Mobile Developer"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bảng tổng kết: PM/BA và Designer cột 'cần code' là 'Không'; QA/Tester là 'Ban đầu không'.\n✓ PM/BA: gần như không viết code.\n✓ Designer: không cần code.\n✓ QA/Tester giai đoạn đầu: manual tester ban đầu không bắt buộc biết code.\n✗ Backend Developer: bắt buộc biết code.\n✗ Mobile Developer: bắt buộc biết code."
+  },
+  {
+    "id": "tech-q-052",
+    "courseId": "TECH-101",
+    "lesson": "pc-04-roles-in-tech",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Bài học đưa ra những lý do nào khiến hướng Backend/Cloud (AWS) đáng đi với người mới trái ngành? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Nhu cầu tuyển dụng lớn và bền vì công ty nào lên cloud cũng cần người",
+      "Có chứng chỉ AWS làm 'bằng chứng' năng lực thay cho bằng cấp IT",
+      "Không đòi hỏi khiếu thẩm mỹ, hợp người thích logic, hệ thống",
+      "Là nghề cần toán cao cấp nhất nên lương chắc chắn cao nhất",
+      "Kiến thức nền (máy tính, Internet, server) dùng được cho nhiều nghề"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Bài nêu 4 lý do: nhu cầu lớn và bền, có chứng chỉ làm bằng chứng, không cần khiếu thẩm mỹ, và kiến thức nền dùng chung cho nhiều nghề.\n✓ Nhu cầu tuyển dụng lớn và bền: đúng, lý do 1.\n✓ Có chứng chỉ AWS làm bằng chứng: đúng, lý do 2.\n✓ Không đòi hỏi khiếu thẩm mỹ: đúng, lý do 3.\n✓ Kiến thức nền dùng cho nhiều nghề: đúng, lý do 4.\n✗ Cần toán cao cấp nhất nên lương cao nhất: sai, Backend/Cloud chỉ cần toán ít, đây không phải lý do bài đưa ra."
+  },
+  {
+    "id": "tech-q-053",
+    "courseId": "TECH-101",
+    "lesson": "pc-05-setup-tools",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn cần một phần mềm để viết và chỉnh sửa code (giống Word nhưng dành cho lập trình). Theo bài, công cụ nào đúng vai trò này?",
+    "options": [
+      "VS Code",
+      "Terminal",
+      "Git",
+      "DevTools"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "VS Code là trình soạn thảo mã nguồn, được ví như cuốn sổ tay thông minh để viết code.\n✓ Trình soạn thảo mã nguồn dùng để soạn và chỉnh sửa code chính là công cụ đúng.\n✗ Cửa sổ ra lệnh cho máy bằng chữ dùng để điều khiển máy, không phải để viết code.\n✗ Cỗ máy thời gian cho file dùng để lưu lịch sử thay đổi, không phải để soạn thảo.\n✗ Kính hiển vi soi trang web dùng để xem bên trong trang web, không phải để viết code."
+  },
+  {
+    "id": "tech-q-054",
+    "courseId": "TECH-101",
+    "lesson": "pc-05-setup-tools",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khi cài VS Code, một bạn mới vô tình tải về phần mềm tên 'Visual Studio' (không có chữ 'Code') nặng cả chục GB. Điều gì đã xảy ra?",
+    "options": [
+      "Tải nhầm phần mềm khác, không phải trình soạn thảo VS Code cần dùng",
+      "Đó chính là VS Code, chỉ là bản đầy đủ hơn",
+      "Đó là bản VS Code dành cho máy yếu",
+      "Đó là bản VS Code đã kèm sẵn Python"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Visual Studio (không có 'Code') là một phần mềm hoàn toàn khác, nặng cả chục GB, dùng cho mục đích khác.\n✓ Đây là trường hợp tải nhầm; cần đảm bảo trang web là code.visualstudio.com và tên là Visual Studio Code.\n✗ Đây không phải cùng một phần mềm; chúng khác nhau hoàn toàn.\n✗ Bài không nói đây là bản cho máy yếu; nó chỉ là phần mềm khác.\n✗ Bài không nói nó kèm sẵn Python; Python được cài riêng."
+  },
+  {
+    "id": "tech-q-055",
+    "courseId": "TECH-101",
+    "lesson": "pc-05-setup-tools",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trên macOS, sau khi giải nén file VS Code, bạn nên làm gì với biểu tượng Visual Studio Code?",
+    "options": [
+      "Kéo nó vào thư mục Applications rồi mới mở",
+      "Chạy thẳng từ thư mục Downloads cho nhanh",
+      "Đổi tên nó thành 'Code' rồi chạy",
+      "Để nguyên trên Desktop và mở từ đó"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nhấn mạnh kéo biểu tượng vào thư mục Applications là bước quan trọng, đừng chạy thẳng từ Downloads.\n✓ Đưa ứng dụng vào thư mục Ứng dụng là cách cài đúng trên Mac.\n✗ Chạy thẳng từ thư mục tải về chính là điều bài dặn không nên làm.\n✗ Bài không yêu cầu đổi tên ứng dụng.\n✗ Bài không hướng dẫn để trên màn hình nền mà chạy; nơi đúng là thư mục Applications."
+  },
+  {
+    "id": "tech-q-056",
+    "courseId": "TECH-101",
+    "lesson": "pc-05-setup-tools",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn đang đứng trên Desktop trong terminal và muốn tạo một thư mục mới tên 'hoc-lap-trinh' rồi bước vào nó. Bộ lệnh nào đúng?",
+    "options": [
+      "mkdir hoc-lap-trinh rồi cd hoc-lap-trinh",
+      "cd hoc-lap-trinh rồi mkdir hoc-lap-trinh",
+      "ls hoc-lap-trinh rồi cd hoc-lap-trinh",
+      "mkdir hoc-lap-trinh rồi ls hoc-lap-trinh"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "mkdir tạo thư mục mới, sau đó cd bước vào thư mục đó.\n✓ Tạo thư mục trước rồi mới di chuyển vào là thứ tự đúng.\n✗ Di chuyển vào thư mục trước khi nó tồn tại sẽ lỗi vì chưa có thư mục để vào.\n✗ Lệnh liệt kê không tạo ra thư mục mới nên không thể bước vào.\n✗ Liệt kê sau khi tạo chỉ để xem, không đưa bạn 'bước vào' thư mục."
+  },
+  {
+    "id": "tech-q-057",
+    "courseId": "TECH-101",
+    "lesson": "pc-05-setup-tools",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cài Python trên Windows xong, mở terminal cũ đang mở sẵn và gõ 'python --version' thì gặp lỗi 'python' is not recognized. Nguyên nhân nào KHÔNG nằm trong các nguyên nhân bài nêu cho lỗi này?",
+    "options": [
+      "Python được cài đúng nhưng bản tiếng Việt nên đổi tên lệnh",
+      "Quên tick 'Add python.exe to PATH' khi cài",
+      "Chưa mở lại cửa sổ terminal mới sau khi cài",
+      "Cần gỡ ra cài lại và nhớ tick Add to PATH"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài quy lỗi này về việc quên tick Add to PATH hoặc chưa mở terminal mới; không hề có chuyện 'bản tiếng Việt đổi tên lệnh'.\n✓ Lý do bản tiếng Việt làm đổi tên lệnh là bịa, không có trong bài.\n✗ Quên tick Add to PATH đúng là nguyên nhân bài nêu.\n✗ Chưa mở terminal mới sau khi cài đúng là một nguyên nhân thường gặp.\n✗ Gỡ ra cài lại và nhớ tick là cách sửa bài đề xuất, nên đây là điều có trong bài."
+  },
+  {
+    "id": "tech-q-058",
+    "courseId": "TECH-101",
+    "lesson": "pc-05-setup-tools",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một bạn gõ trong file Python: Print(\"Xin chào\") và chạy thì gặp lỗi. Vì sao?",
+    "options": [
+      "Python phân biệt hoa thường, phải viết là print chứ không phải Print",
+      "Phải bỏ dấu ngoặc kép quanh câu chữ",
+      "File phải có đuôi .python chứ không phải .py",
+      "Phải gõ chữ Print viết hoa mới đúng chuẩn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu rõ Python phân biệt hoa thường nên phải là print, viết hoa Print sẽ gây lỗi.\n✓ Viết đúng chữ thường print mới chạy được vì Python phân biệt hoa/thường.\n✗ Bỏ dấu ngoặc kép sẽ làm câu chữ không còn là chuỗi, gây lỗi khác.\n✗ Đuôi file Python là .py, không phải .python.\n✗ Viết hoa Print chính là nguyên nhân gây lỗi, không phải cách đúng."
+  },
+  {
+    "id": "tech-q-059",
+    "courseId": "TECH-101",
+    "lesson": "pc-05-setup-tools",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn copy đoạn code print(\"Xin chào\") từ một file Word rồi dán vào VS Code và chạy thì bị SyntaxError dù nhìn 'giống y hệt'. Khả năng cao nhất theo bài là gì?",
+    "options": [
+      "Word đã đổi dấu nháy thẳng thành dấu nháy cong “ ”",
+      "VS Code không hỗ trợ dán văn bản",
+      "Phải lưu file dưới dạng .docx mới chạy được",
+      "Python không in được tiếng Việt có dấu"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài cảnh báo dấu nháy 'cong' do gõ trong Word rồi dán sang sẽ gây lỗi, nên luôn gõ code trực tiếp trong VS Code.\n✓ Dấu nháy cong thay cho nháy thẳng là nguyên nhân điển hình của lỗi này.\n✗ VS Code dán văn bản bình thường, không phải nguyên nhân.\n✗ File Python lưu đuôi .py, lưu .docx mới là sai.\n✗ Python in được tiếng Việt có dấu; ví dụ trong bài chính là lời chào tiếng Việt."
+  },
+  {
+    "id": "tech-q-060",
+    "courseId": "TECH-101",
+    "lesson": "pc-05-setup-tools",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong DevTools, bạn nháy đúp vào một dòng tiêu đề trên trang vnexpress.net và sửa thành chữ khác, tiêu đề đổi ngay. Điều này có ý nghĩa gì?",
+    "options": [
+      "Chỉ bản hiển thị trên máy bạn thay đổi, tải lại trang (F5) là về như cũ",
+      "Bạn đã sửa nội dung trang web thật cho mọi người",
+      "Trang web đã bị hỏng vĩnh viễn",
+      "Bạn vừa hack được trang vnexpress.net"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nói rõ bạn chỉ sửa bản hiển thị trên máy mình, bấm F5 là mọi thứ về như cũ, trang thật không hề hấn gì.\n✓ Thay đổi chỉ nằm trên máy bạn và mất khi tải lại trang.\n✗ Nội dung trang web thật cho mọi người không hề bị đổi.\n✗ Trang không bị hỏng vĩnh viễn; nó phục hồi khi tải lại.\n✗ Đây không phải hành vi hack; bạn không chạm được vào máy chủ của trang."
+  },
+  {
+    "id": "tech-q-061",
+    "courseId": "TECH-101",
+    "lesson": "pc-05-setup-tools",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Theo bài, đâu là sự khác nhau giữa Git và GitHub?",
+    "options": [
+      "Git là phần mềm trên máy bạn, GitHub là trang web lưu trữ dự án dùng Git",
+      "Git và GitHub là cùng một thứ, chỉ khác tên gọi",
+      "Git là trang web, GitHub là phần mềm cài trên máy",
+      "Git dùng cho Windows, GitHub dùng cho Mac"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài phân biệt Git là phần mềm trên máy còn GitHub là trang web lưu trữ dự án, ví như 'Google Drive cho code'.\n✓ Git ở trên máy bạn, GitHub là dịch vụ web lưu dự án là cách phân biệt đúng.\n✗ Hai thứ này không phải cùng một thứ.\n✗ Mô tả bị đảo ngược: Git không phải trang web, GitHub không phải phần mềm cài máy.\n✗ Sự khác nhau không liên quan tới hệ điều hành Windows hay Mac."
+  },
+  {
+    "id": "tech-q-062",
+    "courseId": "TECH-101",
+    "lesson": "pc-05-setup-tools",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Sau khi gõ hai lệnh git config --global user.name và user.email, terminal không hiện gì cả. Bạn nên hiểu thế nào?",
+    "options": [
+      "Im lặng trong terminal thường có nghĩa là thành công",
+      "Lệnh đã thất bại vì không có thông báo",
+      "Cần gõ lại cho tới khi hiện thông báo xác nhận",
+      "Máy bị treo, cần khởi động lại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu rõ hai lệnh này chạy xong không hiện gì, và trong thế giới terminal, im lặng thường có nghĩa là thành công.\n✓ Không có thông báo lỗi tức là lệnh đã chạy ổn.\n✗ Không hiện gì không có nghĩa là thất bại; lỗi thì terminal sẽ báo.\n✗ Không cần gõ lại; lệnh đã thành công ngay lần đầu.\n✗ Máy không hề treo; đây là hành vi bình thường của terminal."
+  },
+  {
+    "id": "tech-q-063",
+    "courseId": "TECH-101",
+    "lesson": "pc-05-setup-tools",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Khi google một thông báo lỗi để tìm cách sửa, đâu là cách làm ĐÚNG theo bài?",
+    "options": [
+      "Bỏ phần riêng tư như tên máy, đường dẫn C:\\Users\\TenBan rồi dán phần lỗi chung",
+      "Dán nguyên cả đường dẫn C:\\Users\\TenBan để Google tìm chính xác máy bạn",
+      "Tự viết lại lỗi bằng lời của mình cho ngắn gọn",
+      "Chỉ tìm bằng tiếng Việt vì kết quả luôn tốt hơn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài khuyên bỏ phần riêng tư (tên máy, tên thư mục) khỏi câu tìm vì người khác gặp lỗi giống nhưng đường dẫn khác.\n✓ Loại bỏ đường dẫn riêng và giữ phần lỗi chung giúp tìm trúng người cùng cảnh.\n✗ Giữ nguyên đường dẫn riêng làm câu tìm quá đặc thù, khó ra kết quả.\n✗ Bài khuyên copy nguyên văn lỗi, không tự viết lại theo ý mình.\n✗ Bài nói tìm bằng tiếng Anh thường ra kết quả tốt hơn, không phải tiếng Việt."
+  },
+  {
+    "id": "tech-q-064",
+    "courseId": "TECH-101",
+    "lesson": "pc-05-setup-tools",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, khi nhờ AI assistant (ChatGPT, Claude...) giúp gỡ lỗi, đâu là những cách dùng ĐÚNG? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Cung cấp ngữ cảnh đầy đủ: Windows hay Mac, lệnh đã gõ, lỗi nguyên văn",
+      "Nhờ AI giải thích lỗi từng bước cho người mới",
+      "Nhờ AI làm hộ toàn bộ rồi copy-paste mà không đọc",
+      "Tin tuyệt đối câu trả lời của AI, không cần chạy thử",
+      "Nhờ AI ra bài tập kiểm tra lại kiến thức vừa học"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "Cách dùng AI hiệu quả là cung cấp ngữ cảnh rõ, nhờ giải thích từng bước và nhờ ra bài tập ôn.\n✓ Cung cấp ngữ cảnh đầy đủ giúp câu trả lời trúng hơn.\n✓ Nhờ giải thích từng bước cho người mới là cách học tốt.\n✓ Nhờ AI ra bài tập kiểm tra là cách củng cố kiến thức bài đề xuất.\n✗ Nhờ làm hộ toàn bộ rồi dán mà không đọc là điều bài dặn không nên.\n✗ Tin AI tuyệt đối là sai vì AI có thể trả lời sai rất tự tin (ảo giác); phải chạy thử kiểm chứng."
+  },
+  {
+    "id": "tech-q-065",
+    "courseId": "TECH-101",
+    "lesson": "pc-05-setup-tools",
+    "certifications": [
+      "TECH-101"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Bài nói hầu hết lỗi khi cài môi trường chỉ thuộc 3 nhóm cần kiểm tra trước khi hoảng. Đâu là những nhóm đó? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Quên 'Add to PATH'",
+      "Chưa mở lại terminal sau khi cài",
+      "Gõ sai chính tả lệnh",
+      "Máy tính quá yếu nên không chạy được",
+      "Phải cài lại toàn bộ Windows"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bài liệt kê 3 nhóm lỗi thường gặp: quên Add to PATH, chưa mở lại terminal, và gõ sai chính tả lệnh.\n✓ Quên Add to PATH là nhóm lỗi số một.\n✓ Chưa mở lại terminal sau khi cài là nhóm lỗi thứ hai.\n✓ Gõ sai chính tả lệnh là nhóm lỗi thứ ba.\n✗ Máy quá yếu không nằm trong 3 nhóm bài nêu.\n✗ Cài lại toàn bộ Windows chính là phản ứng thái quá mà bài khuyên tránh."
   }
 ];
