@@ -48,8 +48,8 @@
       "id": "DSA",
       "kind": "questions",
       "scope": "13 bài (prefix dsa) — interview-style approach/tradeoff",
-      "status": "pending",
-      "note": ""
+      "status": "done",
+      "note": "169 câu (13×13), build pass"
     },
     {
       "id": "BACKEND",

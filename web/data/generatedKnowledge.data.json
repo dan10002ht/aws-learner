@@ -11989,5 +11989,3639 @@
       4
     ],
     "explanation": "Phân bổ ngẫu nhiên không đều tuyệt đối, và không gian ID lớn mới chống được collision.\n✓ Power of two choices chọn 2 ngẫu nhiên rồi đẩy vào server ít việc hơn, giảm lệch tải.\n✓ UUID v4 122 bit đủ lớn để gần như không trùng.\n✓ ~23 người đủ vượt 50% nhờ số cặp tăng nhanh.\n✗ Rải ngẫu nhiên KHÔNG cho tải đều tuyệt đối; có server bận hơn (~ln n / ln ln n).\n✗ Hash 32-bit KHÔNG an toàn ở quy mô lớn vì đụng sau vài chục nghìn item."
+  },
+  {
+    "id": "dsa-q-001",
+    "courseId": "DSA",
+    "lesson": "dsa-01-complexity",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn cần kiểm tra liên tục 'user X đã tồn tại chưa' hàng triệu lần trên tập user lớn. Cấu trúc nào cho mỗi lần kiểm tra rẻ nhất?",
+    "options": [
+      "Tra trong set/hash map — O(1) mỗi lần",
+      "Duyệt list user — O(n) mỗi lần",
+      "Sắp xếp list rồi duyệt tuyến tính",
+      "Duyệt list hai lần để chắc chắn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Tra hash map/set là O(1) mỗi lần, áp đảo cách duyệt tuyến tính khi gọi nhiều lần.\n✓ Tra set/hash map cho O(1) mỗi lần kiểm tra, tổng thể nhanh hơn nhiều bậc.\n✗ Duyệt list là O(n) mỗi lần, với triệu lần kiểm tra thành ~10^12 phép so sánh.\n✗ Sắp xếp rồi duyệt tuyến tính vẫn O(n) cho mỗi lần tìm và còn tốn O(n log n) sắp xếp.\n✗ Duyệt hai lần càng tệ hơn, không cải thiện bậc."
+  },
+  {
+    "id": "dsa-q-002",
+    "courseId": "DSA",
+    "lesson": "dsa-01-complexity",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo quy tắc rút gọn Big-O, biểu thức O(n^2 + n + 100) viết gọn thành gì?",
+    "options": [
+      "O(n^2)",
+      "O(n^2 + n)",
+      "O(n)",
+      "O(n^2 + 100)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Big-O giữ số hạng trội nhất và bỏ hằng số cùng số hạng bậc thấp.\n✓ Khi n lớn, n^2 áp đảo, nên giữ O(n^2).\n✗ Giữ thêm n là thừa vì n bị n^2 nuốt chửng.\n✗ O(n) sai vì số hạng trội là n^2, không phải n.\n✗ Hằng số 100 luôn bị bỏ trong Big-O."
+  },
+  {
+    "id": "dsa-q-003",
+    "courseId": "DSA",
+    "lesson": "dsa-01-complexity",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một thuật toán mỗi bước loại bỏ một nửa dữ liệu còn lại (như binary search). Độ phức tạp thời gian là gì?",
+    "options": [
+      "O(log n)",
+      "O(n)",
+      "O(n log n)",
+      "O(1)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chia đôi phạm vi mỗi bước cho độ phức tạp logarit.\n✓ Mỗi bước bỏ một nửa nên số bước là O(log n) — n=1 tỷ chỉ cần ~30 bước.\n✗ O(n) là duyệt toàn bộ một lượt, không phải chia đôi.\n✗ O(n log n) là bậc của sắp xếp tốt, có thêm vòng ngoài n.\n✗ O(1) là thời gian không đổi, nhưng ở đây số bước tăng theo log n."
+  },
+  {
+    "id": "dsa-q-004",
+    "courseId": "DSA",
+    "lesson": "dsa-01-complexity",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn code sau có độ phức tạp thời gian là gì?\n\nfor x in arr:        # n\n    for k in range(10):  # 10\n        do_work(x)",
+    "options": [
+      "O(n) — vòng trong là hằng số 10, không phụ thuộc n",
+      "O(n^2) — hai vòng lồng nhau",
+      "O(10n) — phải giữ lại hằng số 10",
+      "O(n log n)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Vòng trong chạy đúng 10 lần bất kể n, là hằng số nên không nâng bậc.\n✓ Vòng ngoài n nhân hằng số 10 cho 10n, rút gọn thành O(n).\n✗ Chỉ là O(n^2) nếu vòng trong cũng chạy theo n; ở đây nó cố định 10.\n✗ Big-O luôn bỏ hằng số nên không viết O(10n).\n✗ Không có bước chia đôi nào nên không có yếu tố log n."
+  },
+  {
+    "id": "dsa-q-005",
+    "courseId": "DSA",
+    "lesson": "dsa-01-complexity",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đề bài: 'Cho mảng số và target, tìm hai phần tử cộng lại bằng target.' Cách tiếp cận tối ưu và Big-O của nó là gì?",
+    "options": [
+      "Dùng hash map lưu phần tử đã gặp, tra phần bù (target - x) trong O(1) → O(n) time, O(n) space",
+      "Hai vòng lồng thử mọi cặp → O(n^2) time, O(1) space, đây là cách tốt nhất",
+      "Sắp xếp rồi binary search từng phần tử → O(log n) time",
+      "Duyệt một lượt không cần cấu trúc phụ → O(n) time, O(1) space"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Two Sum tối ưu dùng hash map tra phần bù trong O(1), hạ từ O(n^2) xuống O(n).\n✓ Với mỗi x kiểm tra target - x đã gặp chưa bằng hash map → O(n) time, O(n) space (space-time tradeoff).\n✗ Hai vòng lồng là cách ngây thơ O(n^2), không phải tối ưu.\n✗ Sắp xếp rồi binary search là O(n log n), không thể là O(log n), và còn làm mất index gốc.\n✗ Không thể giải O(1) space mà vẫn O(n) cho bài này một cách trực tiếp; cần map để nhớ phần đã gặp."
+  },
+  {
+    "id": "dsa-q-006",
+    "courseId": "DSA",
+    "lesson": "dsa-01-complexity",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Python, đoạn nào sau đây ẩn một chi phí O(n) khiến vòng lặp trở thành O(n^2)?",
+    "options": [
+      "if x in my_list (my_list là Python list) đặt bên trong vòng lặp n",
+      "if x in my_set (my_set là set) đặt bên trong vòng lặp n",
+      "arr[i] truy cập theo index bên trong vòng lặp n",
+      "my_dict[k] tra giá trị bên trong vòng lặp n"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Kiểm tra thành viên trong Python list là O(n) ẩn vì phải duyệt tuyến tính.\n✓ 'x in my_list' duyệt cả list (O(n)); đặt trong vòng n thành O(n^2).\n✗ 'x in my_set' là O(1) trung bình, nên chỉ O(n) tổng thể.\n✗ Truy cập arr[i] theo index là O(1).\n✗ Tra dict theo khoá là O(1) trung bình."
+  },
+  {
+    "id": "dsa-q-007",
+    "courseId": "DSA",
+    "lesson": "dsa-01-complexity",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi nói 'append vào dynamic array là amortized O(1)', điều này KHÔNG bảo đảm điều gì?",
+    "options": [
+      "Rằng mỗi lần append riêng lẻ luôn tốn O(1) — một lần cá biệt vẫn có thể O(n) khi resize",
+      "Rằng tổng chi phí thêm n phần tử là ~O(n)",
+      "Rằng trung bình mỗi append trải đều là O(1)",
+      "Rằng đa số các lần append là rẻ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Amortized O(1) nói về chi phí trung bình trải đều, không phải bảo đảm từng lần.\n✓ Một lần append cá biệt vẫn có thể tốn O(n) khi mảng đầy và phải copy sang vùng gấp đôi.\n✗ Tổng thêm n phần tử đúng là ~O(n) (khoảng 2n thao tác copy) — đây là điều amortized bảo đảm.\n✗ Trung bình trải đều mỗi append là O(1) — đúng theo định nghĩa amortized.\n✗ Đa số lần append rẻ là đúng; chỉ thưa thớt có lần resize đắt."
+  },
+  {
+    "id": "dsa-q-008",
+    "courseId": "DSA",
+    "lesson": "dsa-01-complexity",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Mặc định khi ai đó nói 'độ phức tạp của thuật toán' mà không nói rõ case nào, người ta hiểu là case nào?",
+    "options": [
+      "Worst case — bảo đảm an toàn nhất cho hệ thống",
+      "Best case — vì nó lạc quan nhất",
+      "Average case — vì gần thực tế nhất",
+      "Amortized case"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mặc định là worst case vì đó là bảo đảm an toàn nhất.\n✓ Worst case cho cận trên chắc chắn, dùng làm bảo đảm cho hệ thống.\n✗ Best case quá lạc quan, không phản ánh rủi ro thực.\n✗ Average case quan trọng nhưng không phải mặc định khi không nói rõ.\n✗ Amortized là phân tích khác (trung bình qua nhiều lần gọi liên tiếp), không phải mặc định khi nói chung."
+  },
+  {
+    "id": "dsa-q-009",
+    "courseId": "DSA",
+    "lesson": "dsa-01-complexity",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Đoạn code: vòng lồng n×n để cộng matrix, RỒI một vòng nối tiếp chạy n lần. Tổng độ phức tạp time và space là gì?",
+    "options": [
+      "O(n^2) time, O(1) space",
+      "O(n^2 + n) time, O(n) space",
+      "O(n^3) time, O(1) space",
+      "O(n^2) time, O(n^2) space"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Phần lồng là O(n^2), phần nối tiếp O(n); cộng rồi lấy trội còn O(n^2); chỉ dùng vài biến nên space O(1).\n✓ O(n^2 + n) rút gọn về O(n^2) time, và chỉ dùng biến total/i nên O(1) space.\n✗ Không viết O(n^2 + n) trong Big-O (phải lấy trội), và space không phải O(n) vì không cấp thêm cấu trúc theo n.\n✗ Không có ba tầng lồng nên không phải O(n^3).\n✗ Space O(n^2) là kích thước input matrix, không tính là bộ nhớ phụ của thuật toán."
+  },
+  {
+    "id": "dsa-q-010",
+    "courseId": "DSA",
+    "lesson": "dsa-01-complexity",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Với n ≈ 1.000.000 và giới hạn ~1 giây (~10^8 thao tác), bậc CHẬM NHẤT vẫn còn chấp nhận được là gì?",
+    "options": [
+      "O(n log n)",
+      "O(n^2)",
+      "O(n)",
+      "O(2^n)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Theo bảng cảm nhận quy mô, n ≤ 10^6 chấp nhận tới O(n log n).\n✓ O(n log n) ở n=10^6 cho ~2x10^7 thao tác, nằm trong ngân sách ~10^8.\n✗ O(n^2) ở n=10^6 là 10^12 thao tác, quá lớn, chỉ chấp nhận tới n≤5.000.\n✗ O(n) chấp nhận được nhưng không phải bậc 'chậm nhất' — câu hỏi tìm bậc chậm nhất còn ổn.\n✗ O(2^n) chỉ khả thi với n≤25, hoàn toàn bất khả thi ở triệu phần tử."
+  },
+  {
+    "id": "dsa-q-011",
+    "courseId": "DSA",
+    "lesson": "dsa-01-complexity",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn cần tìm một giá trị trong mảng CHƯA sắp xếp, và chỉ tìm ĐÚNG MỘT LẦN. Cách nào hợp lý nhất về tổng chi phí?",
+    "options": [
+      "Duyệt tuyến tính một lượt — O(n), không phải trả phí sắp xếp",
+      "Sắp xếp trước rồi binary search — O(n log n), nhanh hơn nhờ binary search",
+      "Sắp xếp trước vì binary search luôn tốt hơn duyệt tuyến tính",
+      "Dùng hai vòng lồng để chắc chắn — O(n^2)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Binary search cần dữ liệu đã sắp xếp; nếu chỉ tìm một lần, phí sắp xếp O(n log n) không đáng.\n✓ Duyệt tuyến tính O(n) rẻ hơn vì tránh được chi phí sắp xếp O(n log n) cho một lần tìm.\n✗ Sắp xếp rồi binary search tổng O(n log n), chậm hơn O(n) khi chỉ tìm một lần.\n✗ Binary search không 'luôn tốt hơn'; nó đòi hỏi sắp xếp trước, chỉ đáng khi tìm nhiều lần.\n✗ Hai vòng lồng O(n^2) hoàn toàn không cần thiết cho việc tìm một giá trị."
+  },
+  {
+    "id": "dsa-q-012",
+    "courseId": "DSA",
+    "lesson": "dsa-01-complexity",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những phát biểu nào sau đây về quick sort và hash map là ĐÚNG? (chọn tất cả phương án đúng)",
+    "options": [
+      "Quick sort trung bình O(n log n) nhưng worst case O(n^2) khi pivot chọn tệ",
+      "Hash map lookup trung bình O(1) nhưng worst case O(n) khi nhiều khoá đụng độ cùng bucket",
+      "Quick sort luôn O(n log n) trong mọi trường hợp",
+      "Hash map lookup luôn O(1) kể cả worst case",
+      "Khi phỏng vấn nên nêu worst case trước, bổ sung average nếu khác biệt đáng kể"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "Quick sort và hash map đều có average tốt nhưng worst case xấu hơn rõ rệt.\n✓ Quick sort average O(n log n), worst O(n^2) khi pivot luôn chọn tệ.\n✓ Hash map lookup average O(1), worst O(n) khi collision dồn vào một bucket.\n✓ Nên nêu worst case trước rồi bổ sung average khi nó khác biệt đáng kể — thể hiện hiểu sắc thái.\n✗ Quick sort KHÔNG luôn O(n log n); worst case là O(n^2).\n✗ Hash map KHÔNG luôn O(1); worst case là O(n) do đụng độ."
+  },
+  {
+    "id": "dsa-q-013",
+    "courseId": "DSA",
+    "lesson": "dsa-01-complexity",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những phát biểu nào về space-time tradeoff và space complexity là ĐÚNG? (chọn tất cả phương án đúng)",
+    "options": [
+      "Dùng set để phát hiện trùng đổi O(n^2) time thành O(n) time nhưng tốn thêm O(n) space",
+      "Tối ưu bậc tăng trưởng (O(n) → O(log n)) thường đáng giá hơn tối ưu hằng số",
+      "Khi trình bày độ phức tạp lúc phỏng vấn nên nêu cả time lẫn space",
+      "Space complexity tính cả bộ nhớ phụ tăng theo n, không chỉ tính time",
+      "Đổi từ O(n) time sang O(1) time bằng hash luôn miễn phí, không tốn thêm bộ nhớ"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Space-time tradeoff đổi bộ nhớ lấy tốc độ; cần nêu cả hai vế khi trình bày.\n✓ Dùng set hạ O(n^2) time xuống O(n) time nhưng tốn O(n) space — đúng bản chất tradeoff.\n✓ Tối ưu bậc tăng trưởng thường đáng giá hơn tối ưu hằng số vì hằng số bị n lớn nuốt chửng.\n✓ Nên nêu cả time lẫn space khi phỏng vấn để chuyên nghiệp và đầy đủ.\n✓ Space complexity là lượng bộ nhớ phụ tăng theo n, là một chiều Big-O độc lập với time.\n✗ Không 'miễn phí': đổi sang O(1) time bằng hash thường phải trả thêm O(n) space để lưu cấu trúc."
+  },
+  {
+    "id": "dsa-q-014",
+    "courseId": "DSA",
+    "lesson": "dsa-02-arrays-strings",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao truy cập phần tử theo index a[i] trong array là O(1)?",
+    "options": [
+      "Vì array luôn được sort sẵn nên tìm nhanh",
+      "Vì các phần tử nằm liên tục trong bộ nhớ nên địa chỉ tính được bằng base + i * size",
+      "Vì hệ điều hành cache mọi phần tử của array",
+      "Vì array tự động dùng hash để định vị phần tử"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Array là vùng nhớ liên tục, các phần tử cùng kích thước nên địa chỉ phần tử thứ i tính trực tiếp bằng một phép số học.\n✓ Vì các phần tử nằm liên tục trong bộ nhớ nên địa chỉ tính được bằng base + i * size: đây chính là lý do random access là O(1).\n✗ Vì array luôn được sort sẵn: array không bắt buộc đã sort, và sort không liên quan tới truy cập theo index.\n✗ Vì hệ điều hành cache mọi phần tử: không phải, đó không phải nguyên nhân O(1).\n✗ Vì array dùng hash: array định vị bằng phép tính địa chỉ, không phải hash."
+  },
+  {
+    "id": "dsa-q-015",
+    "courseId": "DSA",
+    "lesson": "dsa-02-arrays-strings",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Thao tác nào trên array động (dynamic array) có chi phí O(n)?",
+    "options": [
+      "Truy cập a[i]",
+      "Append vào cuối mảng",
+      "Chèn một phần tử vào đầu mảng",
+      "Cập nhật a[i] = x"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Chèn/xoá ở đầu hoặc giữa buộc phải dịch toàn bộ phần tử phía sau nên là O(n).\n✓ Chèn một phần tử vào đầu mảng: phải dịch mọi phần tử sang phải, O(n).\n✗ Truy cập a[i]: O(1) nhờ random access.\n✗ Append vào cuối mảng: O(1) amortized.\n✗ Cập nhật a[i] = x: O(1)."
+  },
+  {
+    "id": "dsa-q-016",
+    "courseId": "DSA",
+    "lesson": "dsa-02-arrays-strings",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong nhiều ngôn ngữ string là immutable. Vì sao nối chuỗi bằng s += part trong vòng lặp lại là O(n²)?",
+    "options": [
+      "Vì mỗi phép += tạo string mới và copy lại toàn bộ ký tự đã có",
+      "Vì string lưu trữ rời rạc nên truy cập chậm",
+      "Vì compiler không tối ưu được vòng lặp",
+      "Vì += phải sort lại các ký tự mỗi lần"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "String immutable không sửa tại chỗ, mỗi lần nối tạo bản sao mới của toàn bộ chuỗi cũ.\n✓ Vì mỗi phép += tạo string mới và copy lại toàn bộ ký tự đã có: tổng chi phí copy cộng dồn thành O(n²).\n✗ Vì string lưu trữ rời rạc: string vẫn là vùng ký tự liên tục, không phải nguyên nhân.\n✗ Vì compiler không tối ưu: nguyên nhân là bản chất immutable, không phải compiler.\n✗ Vì += phải sort lại: không hề có thao tác sort."
+  },
+  {
+    "id": "dsa-q-017",
+    "courseId": "DSA",
+    "lesson": "dsa-02-arrays-strings",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần ghép hàng nghìn mảnh chuỗi thành một chuỗi lớn. Cách nào cho O(n)?",
+    "options": [
+      "Dùng s += part trong vòng lặp",
+      "Gom các mảnh vào list/builder rồi join/append một lần",
+      "Tạo string mới sau mỗi 100 lần nối",
+      "Sort các mảnh trước khi nối"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Gom rồi join/builder chỉ copy mỗi ký tự một lần nên đạt O(n).\n✓ Gom các mảnh vào list/builder rồi join: đây là cách O(n) bài học khuyến nghị.\n✗ Dùng s += part trong vòng lặp: O(n²) do copy lặp lại.\n✗ Tạo string mới sau mỗi 100 lần nối: vẫn copy lặp lại, không khử được O(n²).\n✗ Sort các mảnh trước khi nối: không liên quan và làm chậm thêm."
+  },
+  {
+    "id": "dsa-q-018",
+    "courseId": "DSA",
+    "lesson": "dsa-02-arrays-strings",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đề: cho mảng đã sort tăng dần, tìm hai chỉ số có tổng bằng target. Kỹ thuật tối ưu nhất là gì?",
+    "options": [
+      "Hai vòng lặp lồng nhau O(n²)",
+      "Two-pointer hai đầu, O(n) thời gian O(1) bộ nhớ",
+      "Sliding window kích thước cố định",
+      "Xây prefix sum rồi truy vấn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mảng đã sort + tìm cặp theo tổng là dấu hiệu kinh điển của two-pointer hai đầu.\n✓ Two-pointer hai đầu, O(n) O(1): tận dụng tính sort để mỗi bước loại một ứng viên.\n✗ Hai vòng lặp lồng nhau: đúng nhưng O(n²), không tối ưu.\n✗ Sliding window kích thước cố định: dành cho dãy con liên tiếp, không hợp bài tìm cặp.\n✗ Xây prefix sum: prefix sum dùng cho tổng đoạn, không giải bài này."
+  },
+  {
+    "id": "dsa-q-019",
+    "courseId": "DSA",
+    "lesson": "dsa-02-arrays-strings",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Two Sum II (mảng sort tăng), khi sum = a[left] + a[right] < target thì nên làm gì?",
+    "options": [
+      "right-- để giảm tổng",
+      "left++ để tăng tổng",
+      "reset cả hai con trỏ về 0",
+      "left++ và right-- cùng lúc"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mảng tăng dần nên muốn tổng lớn hơn phải tăng phần tử trái.\n✓ left++ để tăng tổng: dịch left sang phải gặp giá trị lớn hơn, tăng tổng tiến tới target.\n✗ right-- để giảm tổng: làm tổng nhỏ hơn, đi sai hướng.\n✗ reset cả hai con trỏ về 0: phá vỡ tiến trình, sai.\n✗ left++ và right-- cùng lúc: có thể bỏ sót cặp đúng."
+  },
+  {
+    "id": "dsa-q-020",
+    "courseId": "DSA",
+    "lesson": "dsa-02-arrays-strings",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Hàm remove in-place xoá phần tử bằng val dùng hai con trỏ slow/fast. Vai trò của slow là gì?",
+    "options": [
+      "Đánh dấu vị trí ghi tiếp theo cho phần tử được giữ lại",
+      "Quét toàn bộ mảng để tìm val",
+      "Đếm số lần xuất hiện của val",
+      "Lưu giá trị lớn nhất đã gặp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đây là biến thể two-pointer cùng chiều: fast quét, slow là con trỏ ghi.\n✓ Đánh dấu vị trí ghi tiếp theo cho phần tử được giữ lại: slow chỉ tăng khi gặp phần tử khác val, trả về làm độ dài mới.\n✗ Quét toàn bộ mảng để tìm val: đó là việc của fast.\n✗ Đếm số lần xuất hiện của val: hàm không đếm val.\n✗ Lưu giá trị lớn nhất: không liên quan tới logic này."
+  },
+  {
+    "id": "dsa-q-021",
+    "courseId": "DSA",
+    "lesson": "dsa-02-arrays-strings",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Vì sao sliding window cho bài 'chuỗi con dài nhất không lặp ký tự' chạy O(n) dù bên trong có vòng while co cửa sổ?",
+    "options": [
+      "Vì vòng while chỉ chạy tối đa log n lần",
+      "Vì mỗi phần tử vào và ra cửa sổ tối đa một lần nên tổng số bước là O(n)",
+      "Vì set giúp mọi thao tác thành O(1) nên không có vòng lặp lồng",
+      "Vì chuỗi luôn ngắn hơn n"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cả left và right đều chỉ đi một chiều từ trái sang phải, không quay lui.\n✓ Vì mỗi phần tử vào và ra cửa sổ tối đa một lần nên tổng số bước là O(n): left tăng tổng cộng tối đa n lần dù nằm trong while.\n✗ Vì vòng while chỉ chạy tối đa log n lần: không đúng, không có yếu tố log ở đây.\n✗ Vì set giúp mọi thao tác O(1) nên không có vòng lặp lồng: set O(1) chỉ là một phần, lập luận về vòng lặp sai.\n✗ Vì chuỗi luôn ngắn hơn n: vô nghĩa."
+  },
+  {
+    "id": "dsa-q-022",
+    "courseId": "DSA",
+    "lesson": "dsa-02-arrays-strings",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Cho mảng pre độ dài n+1 với pre[0]=0. Tổng các phần tử a[i..j] (bao gồm cả hai đầu) tính bằng?",
+    "options": [
+      "pre[j] - pre[i]",
+      "pre[j+1] - pre[i]",
+      "pre[j] - pre[i-1]",
+      "pre[j+1] - pre[i+1]"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Với quy ước pre[k] = tổng a[0..k-1], tổng đoạn [i,j] là pre[j+1] - pre[i].\n✓ pre[j+1] - pre[i]: pre[j+1] gồm tới a[j], trừ phần đầu tới a[i-1] còn lại a[i..j].\n✗ pre[j] - pre[i]: thiếu phần tử a[j] và lệch một đơn vị.\n✗ pre[j] - pre[i-1]: sai chỉ số, không khớp quy ước n+1.\n✗ pre[j+1] - pre[i+1]: bỏ mất a[i]."
+  },
+  {
+    "id": "dsa-q-023",
+    "courseId": "DSA",
+    "lesson": "dsa-02-arrays-strings",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi cài Kadane cho Maximum Subarray với mảng có thể toàn số âm, lỗi phổ biến nào khiến kết quả sai?",
+    "options": [
+      "Khởi tạo best = 0 thay vì a[0]",
+      "Dùng cur = max(a[i], cur + a[i])",
+      "Duyệt từ index 1",
+      "Cập nhật best sau mỗi bước"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Nếu mọi phần tử đều âm, đáp án phải là số âm lớn nhất; best=0 sẽ trả 0 sai.\n✓ Khởi tạo best = 0 thay vì a[0]: chính là bẫy bài học cảnh báo.\n✗ Dùng cur = max(a[i], cur + a[i]): đây là công thức Kadane đúng.\n✗ Duyệt từ index 1: đúng, vì đã khởi tạo bằng a[0].\n✗ Cập nhật best sau mỗi bước: đúng và cần thiết."
+  },
+  {
+    "id": "dsa-q-024",
+    "courseId": "DSA",
+    "lesson": "dsa-02-arrays-strings",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Đề: 'tìm dãy con (cho phép chọn phần tử KHÔNG liền kề) có tổng lớn nhất, mảng có số âm'. Vì sao sliding window thường SAI ở đây?",
+    "options": [
+      "Vì sliding window cần mảng đã sort",
+      "Vì sliding window chỉ áp dụng cho dãy con liên tiếp, không cho subsequence không liền kề",
+      "Vì sliding window luôn là O(n²)",
+      "Vì set không lưu được số âm"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Sliding window dựa trên tính liên tiếp của cửa sổ; subsequence không liền kề phá vỡ giả định đó.\n✓ Vì sliding window chỉ áp dụng cho dãy con liên tiếp: bài cho chọn phần tử không liền kề nên cân nhắc DP.\n✗ Vì sliding window cần mảng đã sort: không bắt buộc sort, lý do sai.\n✗ Vì sliding window luôn là O(n²): nó thường là O(n).\n✗ Vì set không lưu được số âm: set hoàn toàn lưu được số âm."
+  },
+  {
+    "id": "dsa-q-025",
+    "courseId": "DSA",
+    "lesson": "dsa-02-arrays-strings",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những tình huống nào là dấu hiệu nên dùng TWO-POINTER (chọn tất cả phương án đúng)?",
+    "options": [
+      "Mảng đã sort, tìm cặp thoả tổng cho trước",
+      "Đảo ngược mảng hoặc kiểm tra palindrome tại chỗ",
+      "Nhiều truy vấn tổng của các đoạn con khác nhau trên mảng cố định",
+      "Xoá/lọc phần tử in-place không cấp thêm bộ nhớ",
+      "Tìm tổng subarray liên tiếp lớn nhất khi có số âm"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Two-pointer hợp với mảng sort tìm cặp, thao tác hai đầu, và lọc in-place cùng chiều.\n✓ Mảng đã sort, tìm cặp thoả tổng: two-pointer hai đầu kinh điển.\n✓ Đảo ngược/palindrome tại chỗ: dùng hai đầu tiến vào giữa.\n✓ Xoá/lọc in-place không thêm bộ nhớ: dùng fast/slow cùng chiều.\n✗ Nhiều truy vấn tổng đoạn trên mảng cố định: đó là prefix sum.\n✗ Tổng subarray liên tiếp lớn nhất có số âm: đó là Kadane."
+  },
+  {
+    "id": "dsa-q-026",
+    "courseId": "DSA",
+    "lesson": "dsa-02-arrays-strings",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Phát biểu nào ĐÚNG về prefix sum (chọn tất cả phương án đúng)?",
+    "options": [
+      "Sau tiền xử lý O(n), mỗi truy vấn tổng đoạn về O(1)",
+      "Nó đặc biệt hợp khi có nhiều truy vấn tổng đoạn trên mảng không đổi",
+      "Kết hợp prefix sum với hash map giúp đếm subarray có tổng bằng k",
+      "Nó yêu cầu mảng phải được sort trước",
+      "Dùng pre độ dài n+1 với pre[0]=0 giúp khử trường hợp đặc biệt đoạn bắt đầu từ index 0"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Prefix sum đánh đổi tiền xử lý O(n) lấy truy vấn đoạn O(1), không cần sort.\n✓ Sau tiền xử lý O(n), mỗi truy vấn tổng đoạn về O(1): đúng bản chất kỹ thuật.\n✓ Hợp khi nhiều truy vấn tổng đoạn trên mảng không đổi: đúng trường hợp dùng.\n✓ Kết hợp hash map đếm subarray tổng bằng k: đúng, là ứng dụng nêu trong bài.\n✓ Dùng pre độ dài n+1 với pre[0]=0: quy ước khử trường hợp đặc biệt.\n✗ Nó yêu cầu mảng phải được sort trước: hoàn toàn không cần sort."
+  },
+  {
+    "id": "dsa-q-027",
+    "courseId": "DSA",
+    "lesson": "dsa-03-hashing",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn cần kiểm tra nhanh \"phần tử này đã từng xuất hiện chưa\" và loại bỏ trùng lặp, KHÔNG cần lưu thông tin kèm theo mỗi phần tử. Cấu trúc nào phù hợp nhất?",
+    "options": [
+      "Set",
+      "Map / Dictionary",
+      "Mảng đã sắp xếp + binary search",
+      "Cây cân bằng (TreeMap)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chỉ cần biết \"có hay không\" và dedup thì Set là lựa chọn gọn nhất.\n✓ Set chỉ lưu key, trả lời câu \"phần tử này có tồn tại không?\" và dùng để loại trùng.\n✗ Map lưu cặp key->value, dư thừa khi không cần value kèm theo.\n✗ Mảng đã sắp xếp + binary search cho lookup O(log n), chậm hơn và phải duy trì thứ tự không cần thiết.\n✗ Cây cân bằng dùng khi cần thứ tự/range query, không cần ở đây."
+  },
+  {
+    "id": "dsa-q-028",
+    "courseId": "DSA",
+    "lesson": "dsa-03-hashing",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, độ phức tạp trung bình của thao tác insert/lookup/delete trên hash map là gì, và trường hợp xấu nhất là gì?",
+    "options": [
+      "Trung bình O(1), xấu nhất O(n)",
+      "Trung bình O(log n), xấu nhất O(n)",
+      "Luôn luôn O(1) trong mọi trường hợp",
+      "Trung bình O(n), xấu nhất O(n log n)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Hash map cho O(1) trung bình nhờ nhảy thẳng tới ô, nhưng xấu nhất là O(n).\n✓ Trung bình O(1), xấu nhất O(n) khi mọi key va chạm vào một ô hoặc đang resize.\n✗ O(log n) là của binary search/cây, không phải hash.\n✗ \"Luôn O(1)\" sai vì O(1) chỉ là trung bình, không đảm bảo từng lần.\n✗ O(n) trung bình mô tả quét tuyến tính, không phải hash."
+  },
+  {
+    "id": "dsa-q-029",
+    "courseId": "DSA",
+    "lesson": "dsa-03-hashing",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đề bài: \"Cho mảng nums và target, trả về chỉ số HAI phần tử cộng lại bằng target.\" Cách tiếp cận tối ưu là gì?",
+    "options": [
+      "Duyệt một lần, với mỗi x kiểm tra phần bù (target - x) trong map giá trị->chỉ số, rồi lưu x vào map",
+      "Hai vòng lặp lồng nhau thử mọi cặp",
+      "Sắp xếp mảng rồi dùng binary search tìm phần bù",
+      "Đưa toàn bộ vào set rồi đếm tần suất"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Map biến tìm cặp từ O(n^2) thành O(n) bằng cách tra phần bù.\n✓ Duyệt một lần, mỗi x cần target - x; lưu giá trị->chỉ số vào map để tra O(1). Đây là lời giải O(n).\n✗ Hai vòng lồng là cách ngây thơ O(n^2), không tối ưu.\n✗ Sắp xếp làm mất chỉ số gốc và tốn O(n log n), kém hơn map.\n✗ Set/đếm tần suất không giải được yêu cầu trả về chỉ số cặp."
+  },
+  {
+    "id": "dsa-q-030",
+    "courseId": "DSA",
+    "lesson": "dsa-03-hashing",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong giải pháp Two Sum bằng map, vì sao phải kiểm tra phần bù TRƯỚC rồi mới lưu x vào map (chứ không lưu trước)?",
+    "options": [
+      "Để tránh ghép một phần tử với chính nó khi chưa có phần tử khác cùng giá trị",
+      "Để tiết kiệm bộ nhớ, map nhỏ hơn",
+      "Vì lưu trước sẽ làm độ phức tạp thành O(n^2)",
+      "Vì map không cho phép ghi rồi đọc trong cùng vòng lặp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Thứ tự kiểm-tra-rồi-lưu đảm bảo không dùng lại chính phần tử hiện tại.\n✓ Nếu lưu x trước rồi mới tra, khi target = 2x ta có thể ghép phần tử với chính nó (cùng chỉ số) sai logic.\n✗ Không liên quan tiết kiệm bộ nhớ đáng kể.\n✗ Lưu trước không làm thành O(n^2); vẫn O(n).\n✗ Map hoàn toàn cho phép ghi rồi đọc trong vòng lặp; lý do là tính đúng đắn."
+  },
+  {
+    "id": "dsa-q-031",
+    "courseId": "DSA",
+    "lesson": "dsa-03-hashing",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bài Group Anagrams gom các từ cùng tập chữ cái. Khoá (key) của map nên là gì để gom đúng?",
+    "options": [
+      "Chuỗi chữ ký: các chữ cái của từ đã được sắp xếp (signature)",
+      "Chính bản thân từ gốc",
+      "Độ dài của từ",
+      "Chữ cái đầu tiên của từ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mọi anagram chia sẻ một signature chung khi sắp xếp chữ cái.\n✓ Sắp xếp chữ cái biến \"eat\",\"tea\",\"ate\" đều thành \"aet\", dùng làm key gom nhóm chính xác.\n✗ Từ gốc khác nhau nên không gom được các anagram lại.\n✗ Độ dài bằng nhau không có nghĩa là anagram (\"abc\" và \"xyz\").\n✗ Chữ cái đầu khác nhau giữa các anagram nên sai."
+  },
+  {
+    "id": "dsa-q-032",
+    "courseId": "DSA",
+    "lesson": "dsa-03-hashing",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Group Anagrams dùng cách sắp xếp signature có độ phức tạp O(n·k log k) với n từ dài k. Làm sao giảm xuống O(n·k)?",
+    "options": [
+      "Dùng mảng đếm 26 chữ cái làm key thay cho việc sort signature",
+      "Dùng set thay cho map",
+      "Sắp xếp toàn bộ danh sách từ trước",
+      "Dùng binary search trên mỗi từ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bỏ chi phí sort bằng cách tạo key từ vector đếm tần suất chữ cái.\n✓ Mảng đếm 26 chữ cái làm key bỏ được log k của sort, đưa về O(n·k).\n✗ Set không lưu được danh sách từ theo nhóm.\n✗ Sắp xếp toàn bộ danh sách không giúp gom anagram và vẫn tốn thời gian.\n✗ Binary search không liên quan tới việc tạo signature."
+  },
+  {
+    "id": "dsa-q-033",
+    "courseId": "DSA",
+    "lesson": "dsa-03-hashing",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bài First Unique tìm chỉ số ký tự đầu tiên không lặp lại. Vì sao lượt duyệt thứ hai phải đi theo chuỗi GỐC chứ không theo thứ tự của map?",
+    "options": [
+      "Vì thứ tự duyệt map không đáng tin, chỉ chuỗi gốc mới giữ đúng thứ tự \"đầu tiên\"",
+      "Vì map không cho phép duyệt nhiều lần",
+      "Vì duyệt map chậm hơn duyệt chuỗi",
+      "Vì map có thể chứa ký tự trùng lặp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Yêu cầu \"đầu tiên\" cần thứ tự xuất hiện, chỉ dữ liệu gốc đảm bảo điều đó.\n✓ Thứ tự duyệt map không được đảm bảo (Java/Go xáo trộn), nên phải lấy thứ tự từ chuỗi gốc để đúng nghĩa \"đầu tiên\".\n✗ Map vẫn duyệt được nhiều lần, không phải lý do.\n✗ Tốc độ không phải mấu chốt; tính đúng đắn của thứ tự mới là.\n✗ Map đếm tần suất không chứa ký tự trùng lặp làm key."
+  },
+  {
+    "id": "dsa-q-034",
+    "courseId": "DSA",
+    "lesson": "dsa-03-hashing",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Trong những tình huống nào sau đây NÊN tránh dùng hash map (chọn tất cả đáp án đúng)?",
+    "options": [
+      "Cần duyệt các phần tử theo thứ tự sắp xếp của key",
+      "Cần truy vấn theo khoảng, ví dụ \"mọi key trong [10, 50]\"",
+      "Cần đếm tần suất xuất hiện của từng phần tử",
+      "Dữ liệu chỉ 5-10 phần tử và đường nóng (hot path), nhạy cảm hiệu năng",
+      "Cần loại trùng một danh sách lớn"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Hash map mất thứ tự và range, lại có overhead băm nên thua trong vài trường hợp.\n✓ Cần thứ tự sắp xếp theo key: hash không đảm bảo thứ tự, nên dùng cây/sort.\n✓ Range query: hash không có khái niệm thứ tự nên vô dụng, dùng cây hoặc mảng sắp xếp.\n✓ Dữ liệu 5-10 phần tử hot: quét mảng tuyến tính thường nhanh hơn nhờ thân thiện cache.\n✗ Đếm tần suất chính là siêu năng lực của hash map.\n✗ Loại trùng danh sách lớn là việc set/hash làm tốt nhất."
+  },
+  {
+    "id": "dsa-q-035",
+    "courseId": "DSA",
+    "lesson": "dsa-03-hashing",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những phát biểu nào sau đây về load factor, resize và collision của hash table là ĐÚNG?",
+    "options": [
+      "Load factor = số phần tử / số ô (bucket)",
+      "Khi vượt ngưỡng (~0.75), hash table resize và rehash toàn bộ phần tử",
+      "Lần resize tốn O(n) nhưng được khấu hao nên mỗi thao tác vẫn O(1) amortized",
+      "Chaining xử lý va chạm bằng cách nhảy sang ô trống kế tiếp",
+      "Open addressing để mỗi ô chứa một danh sách nhỏ các phần tử"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Load factor điều khiển resize; resize tốn O(n) nhưng được trải mỏng.\n✓ Load factor đúng là số phần tử chia số ô.\n✓ Vượt ~0.75 thì cấp mảng lớn gấp đôi và rehash toàn bộ.\n✓ Resize O(n) hiếm, được trải ra nên mỗi thao tác vẫn O(1) amortized.\n✗ \"Nhảy sang ô trống kế tiếp\" là open addressing, không phải chaining.\n✗ \"Mỗi ô chứa danh sách nhỏ\" là chaining, không phải open addressing."
+  },
+  {
+    "id": "dsa-q-036",
+    "courseId": "DSA",
+    "lesson": "dsa-03-hashing",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đề bài: \"Cho mảng số, trả về K giá trị xuất hiện nhiều nhất.\" Bước đầu tiên tự nhiên nhất là gì?",
+    "options": [
+      "Đếm tần suất bằng map giá trị->số lần xuất hiện",
+      "Sắp xếp toàn bộ mảng tăng dần",
+      "Đưa mọi phần tử vào set để loại trùng",
+      "Dùng two-pointer quét từ hai đầu"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Top-K bắt đầu bằng pattern count để biết mỗi giá trị xuất hiện bao nhiêu lần.\n✓ Đếm tần suất bằng map là bước một O(n), sau đó mới chọn K khoá count lớn nhất.\n✗ Sắp xếp mảng không cho biết tần suất từng giá trị.\n✗ Set loại trùng làm mất thông tin số lần xuất hiện cần thiết.\n✗ Two-pointer không phù hợp bài đếm tần suất trên dữ liệu không sắp xếp."
+  },
+  {
+    "id": "dsa-q-037",
+    "courseId": "DSA",
+    "lesson": "dsa-03-hashing",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một lập trình viên dùng Java HashMap để đếm tần suất, rồi duyệt map và trả về \"phần tử đầu tiên\" thấy được làm kết quả. Code chạy đúng trên máy họ nhưng lỗi khi chạy nơi khác. Nguyên nhân gốc rễ là gì?",
+    "options": [
+      "HashMap không đảm bảo thứ tự duyệt, nên \"đầu tiên\" theo map là tình cờ và không ổn định",
+      "HashMap có bug khi đếm tần suất",
+      "Load factor quá cao gây mất phần tử",
+      "Phải dùng set thay vì map để đếm"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bug nằm ở việc giả định thứ tự duyệt của HashMap.\n✓ Java HashMap không giữ thứ tự chèn; \"đầu tiên\" theo thứ tự duyệt map là ngẫu nhiên và sẽ vỡ khi đổi môi trường/phiên bản. Phải lấy thứ tự từ dữ liệu gốc.\n✗ HashMap không có bug đếm; lỗi là do logic dựa vào thứ tự.\n✗ Load factor cao gây resize chứ không mất phần tử.\n✗ Set không lưu được count nên không thay được map ở đây."
+  },
+  {
+    "id": "dsa-q-038",
+    "courseId": "DSA",
+    "lesson": "dsa-03-hashing",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong Python, đoạn code nào sau đây sẽ gây lỗi liên quan tới yêu cầu key của map/set?",
+    "options": [
+      "seen = {}; seen[[1, 2]] = \"x\"  (dùng list làm key)",
+      "count = {}; count[\"abc\"] += 1 sau khi đã khởi tạo count[\"abc\"] = 0",
+      "s = set(); s.add((1, 2))  (thêm tuple vào set)",
+      "d = {}; d[7] = \"An\"  (dùng int làm key)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Key của map/set phải hashable/immutable; list thì không.\n✓ Dùng list [1, 2] làm key gây lỗi unhashable vì list có thể thay đổi (không hashable).\n✗ Tăng count cho key string đã khởi tạo là hợp lệ.\n✗ Tuple là immutable nên thêm vào set hợp lệ.\n✗ int là key hợp lệ, hashable bình thường."
+  },
+  {
+    "id": "dsa-q-039",
+    "courseId": "DSA",
+    "lesson": "dsa-03-hashing",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn cần cấu trúc cho phép \"tìm key nhỏ nhất lớn hơn x\" và liệt kê mọi key trong một khoảng. Vì sao hash map KHÔNG phù hợp, và nên chọn gì?",
+    "options": [
+      "Hash map không có khái niệm thứ tự nên vô dụng cho range query; nên dùng cây cân bằng hoặc mảng đã sắp xếp + binary search",
+      "Hash map chậm O(n) cho mọi thao tác nên nên dùng mảng thường",
+      "Hash map tốn bộ nhớ nên nên dùng set",
+      "Hash map không cho lưu số nên nên dùng map khác"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Range query và truy vấn thứ tự cần cấu trúc có thứ tự, điều hash thiếu.\n✓ Hash không lưu thứ tự key nên không trả lời được \"nhỏ nhất lớn hơn x\" hay khoảng; cây cân bằng (TreeMap/std::map) hoặc mảng sắp xếp + binary search mới làm được.\n✗ Hash map trung bình O(1) chứ không phải O(n) mọi thao tác; lý do là thiếu thứ tự.\n✗ Vấn đề là thứ tự, không phải bộ nhớ; set cũng không có thứ tự.\n✗ Hash map lưu được số bình thường; lý do nêu sai."
+  },
+  {
+    "id": "dsa-q-040",
+    "courseId": "DSA",
+    "lesson": "dsa-04-stack-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn cần triển khai chức năng Undo/Redo cho một editor: mỗi hành động được lưu lại, và khi nhấn Undo bạn muốn lấy ra hành động gần nhất. Cấu trúc dữ liệu nào phù hợp nhất?",
+    "options": [
+      "Stack (LIFO)",
+      "Queue (FIFO)",
+      "Mảng đã sắp xếp",
+      "Hash map"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Undo cần lấy ra hành động gần nhất trước → đặc trưng LIFO của Stack.\n✓ Stack (LIFO): push mỗi hành động, Undo thì pop hành động trên đỉnh — đúng yêu cầu \"nhớ thứ gần đây nhất\".\n✗ Queue (FIFO): lấy ra hành động cũ nhất trước, ngược với Undo.\n✗ Mảng đã sắp xếp: việc sắp xếp không liên quan tới thứ tự thời gian của hành động.\n✗ Hash map: không bảo toàn thứ tự lấy ra theo thời gian."
+  },
+  {
+    "id": "dsa-q-041",
+    "courseId": "DSA",
+    "lesson": "dsa-04-stack-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, cặp gợi nhớ nào là đúng giữa cấu trúc dữ liệu và thuật toán duyệt?",
+    "options": [
+      "Stack → DFS, Queue → BFS",
+      "Stack → BFS, Queue → DFS",
+      "Stack → BFS, Queue → BFS",
+      "Cả hai đều dùng Queue như nhau"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài học nhấn mạnh: Stack đi với DFS, Queue đi với BFS.\n✓ Stack → DFS, Queue → BFS: Stack mô phỏng call stack đệ quy (duyệt sâu), Queue mở rộng theo từng lớp (duyệt rộng).\n✗ Stack → BFS, Queue → DFS: đảo ngược, sai bản chất.\n✗ Stack → BFS, Queue → BFS: Stack không tự nhiên cho BFS.\n✗ Cả hai dùng Queue như nhau: Stack và Queue khác nhau ở thứ tự lấy phần tử."
+  },
+  {
+    "id": "dsa-q-042",
+    "courseId": "DSA",
+    "lesson": "dsa-04-stack-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong Python, vì sao bài học khuyên KHÔNG dùng list.pop(0) để làm thao tác dequeue?",
+    "options": [
+      "Vì pop(0) là O(n) do phải dịch chuyển toàn bộ phần tử còn lại",
+      "Vì pop(0) trả về sai phần tử (lấy từ cuối)",
+      "Vì pop(0) gây lỗi khi list rỗng còn deque thì không",
+      "Vì pop(0) tiêu tốn O(n) bộ nhớ phụ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "list.pop(0) chậm vì cấu trúc mảng động.\n✓ O(n) do dịch chuyển: xoá phần tử đầu của list buộc tất cả phần tử sau dịch lên một ô; dùng collections.deque cho O(1).\n✗ Lấy sai phần tử: pop(0) vẫn lấy đúng phần tử đầu, vấn đề chỉ là tốc độ.\n✗ Lỗi khi rỗng: cả hai đều báo lỗi khi rỗng, không phải lý do được nêu.\n✗ Tốn O(n) bộ nhớ phụ: vấn đề là thời gian, không phải bộ nhớ."
+  },
+  {
+    "id": "dsa-q-043",
+    "courseId": "DSA",
+    "lesson": "dsa-04-stack-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng viên dùng class java.util.Stack cũ để cài stack trong phỏng vấn. Lời khuyên của bài học là gì và vì sao?",
+    "options": [
+      "Dùng ArrayDeque vì java.util.Stack kế thừa Vector nên có khoá đồng bộ chậm",
+      "Dùng LinkedList vì java.util.Stack không có thao tác pop",
+      "Giữ java.util.Stack vì nó nhanh hơn ArrayDeque",
+      "Dùng PriorityQueue vì nó là stack hiệu năng cao"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài học cảnh báo cụ thể về java.util.Stack.\n✓ Dùng ArrayDeque: java.util.Stack kế thừa Vector vốn có khoá đồng bộ làm chậm; ArrayDeque làm stack tốt hơn.\n✗ LinkedList vì thiếu pop: java.util.Stack vẫn có pop, lý do sai.\n✗ Giữ java.util.Stack vì nhanh hơn: trái ngược, nó chậm hơn.\n✗ PriorityQueue: là heap theo độ ưu tiên, không phải stack LIFO."
+  },
+  {
+    "id": "dsa-q-044",
+    "courseId": "DSA",
+    "lesson": "dsa-04-stack-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần với mỗi phần tử trong mảng tìm phần tử LỚN HƠN gần nhất bên phải, trong O(n). Kỹ thuật và loại stack nào nên dùng?",
+    "options": [
+      "Monotonic stack giảm dần",
+      "Monotonic stack tăng dần",
+      "Sliding window với hash map",
+      "Binary search trên mảng đã sort"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài \"next greater element\" là dạng kinh điển của monotonic stack.\n✓ Monotonic stack giảm dần: hỏi \"phần tử lớn hơn gần nhất\" → giữ stack giảm dần, pop các phần tử nhỏ hơn/bằng; mỗi phần tử vào/ra một lần nên O(n).\n✗ Monotonic stack tăng dần: dùng cho \"phần tử nhỏ hơn gần nhất\", không khớp.\n✗ Sliding window với hash map: không giải bài next greater, đây không phải bài cửa sổ trượt.\n✗ Binary search trên mảng sort: sort làm mất vị trí gốc, không tìm được \"bên phải\"."
+  },
+  {
+    "id": "dsa-q-045",
+    "courseId": "DSA",
+    "lesson": "dsa-04-stack-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong bài Sliding Window Maximum dùng monotonic queue, vì sao deque nên lưu INDEX chứ không lưu giá trị?",
+    "options": [
+      "Vì cần biết phần tử nào đã trượt ra khỏi cửa sổ qua so sánh dq[0] <= i - k",
+      "Vì lưu index tốn ít bộ nhớ hơn lưu giá trị",
+      "Vì giá trị có thể trùng nhau còn index thì duy nhất",
+      "Vì deque không cho phép lưu số nguyên dạng giá trị"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mấu chốt là loại bỏ phần tử đã ra khỏi cửa sổ.\n✓ Cần biết phần tử nào đã trượt ra: chỉ có index mới so được dq[0] <= i - k để pop ở đầu khi phần tử rời cửa sổ.\n✗ Tốn ít bộ nhớ hơn: không phải lý do, kích thước tương đương.\n✗ Giá trị trùng nhau: tính duy nhất không phải vấn đề ở đây.\n✗ Deque không lưu được giá trị: sai, deque lưu được số bất kỳ."
+  },
+  {
+    "id": "dsa-q-046",
+    "courseId": "DSA",
+    "lesson": "dsa-04-stack-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với mảng nums = [2, 1, 2, 4, 3], hàm next_greater (tìm giá trị lớn hơn đầu tiên bên phải, không có thì -1) trả về kết quả nào?",
+    "options": [
+      "[4, 2, 4, -1, -1]",
+      "[4, 4, 4, -1, -1]",
+      "[-1, 2, 4, 3, -1]",
+      "[4, 2, 4, 3, -1]"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Xét từng phần tử tìm giá trị lớn hơn đầu tiên bên phải.\n✓ [4, 2, 4, -1, -1]: với 2 → 4; với 1 → 2; với 2 → 4; với 4 → không có lớn hơn → -1; với 3 → -1.\n✗ [4, 4, 4, -1, -1]: phần tử 1 phải là 2 (số đầu tiên lớn hơn ngay bên phải), không phải 4.\n✗ [-1, 2, 4, 3, -1]: phần tử đầu 2 có 4 ở bên phải nên không thể là -1.\n✗ [4, 2, 4, 3, -1]: phần tử 4 không có số lớn hơn bên phải nên phải là -1, không phải 3."
+  },
+  {
+    "id": "dsa-q-047",
+    "courseId": "DSA",
+    "lesson": "dsa-04-stack-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một bạn cài BFS tìm số bước ngắn nhất trên lưới nhưng quên đánh dấu seen ngay khi enqueue (chỉ đánh dấu khi dequeue). Hậu quả dễ gặp nhất là gì?",
+    "options": [
+      "Một ô có thể bị enqueue nhiều lần, làm queue phình to và có thể chậm/sai",
+      "Thuật toán trả về đường dài hơn đường ngắn nhất",
+      "BFS biến thành DFS",
+      "Không ảnh hưởng gì, kết quả luôn đúng và hiệu năng như nhau"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đánh dấu seen lúc enqueue là then chốt trong BFS.\n✓ Một ô bị enqueue nhiều lần: nếu chỉ đánh dấu khi dequeue, một ô có thể được thêm bởi nhiều hàng xóm trước khi bị xử lý, làm queue phình to và lãng phí, dễ sinh lỗi/chậm.\n✗ Trả về đường dài hơn: BFS vẫn theo lớp nên độ dài ngắn nhất thường vẫn đúng, vấn đề chính là hiệu năng/trùng lặp.\n✗ Biến thành DFS: vẫn dùng queue nên vẫn là BFS.\n✗ Không ảnh hưởng gì: sai, có ảnh hưởng rõ về hiệu năng và độ chính xác trạng thái thăm."
+  },
+  {
+    "id": "dsa-q-048",
+    "courseId": "DSA",
+    "lesson": "dsa-04-stack-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Cho nums = [1, 3, -1, -3, 5, 3, 6, 7] và k = 3, maxSlidingWindow trả về dãy max của mỗi cửa sổ là gì?",
+    "options": [
+      "[3, 3, 5, 5, 6, 7]",
+      "[3, 3, 5, 6, 6, 7]",
+      "[1, 3, 5, 5, 6, 7]",
+      "[3, 5, 5, 6, 7, 7]"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Trượt cửa sổ kích thước 3 và lấy max mỗi lần.\n✓ [3, 3, 5, 5, 6, 7]: các cửa sổ [1,3,-1]→3, [3,-1,-3]→3, [-1,-3,5]→5, [-3,5,3]→5, [5,3,6]→6, [3,6,7]→7.\n✗ [3, 3, 5, 6, 6, 7]: cửa sổ [-3,5,3] có max là 5, không phải 6.\n✗ [1, 3, 5, 5, 6, 7]: cửa sổ đầu [1,3,-1] có max 3, không phải 1.\n✗ [3, 5, 5, 6, 7, 7]: lệch chỉ số, cửa sổ thứ hai [3,-1,-3] có max 3."
+  },
+  {
+    "id": "dsa-q-049",
+    "courseId": "DSA",
+    "lesson": "dsa-04-stack-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong giải pháp JavaScript cho Queue, vì sao bài học dùng q[head++] thay vì q.shift() để dequeue?",
+    "options": [
+      "Vì shift() là O(n) (dịch toàn bộ mảng) còn dịch con trỏ head là O(1)",
+      "Vì shift() lấy sai phần tử ở cuối mảng",
+      "Vì head++ giải phóng bộ nhớ tốt hơn shift()",
+      "Vì shift() không hoạt động với số nguyên trong JS"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Hiệu năng dequeue là lý do dùng con trỏ.\n✓ shift() là O(n): xoá phần tử đầu mảng JS phải dịch toàn bộ phần tử còn lại; dùng con trỏ head++ chỉ O(1), tránh chi phí với dữ liệu lớn.\n✗ shift() lấy sai phần tử: shift lấy đúng phần tử đầu, vấn đề là tốc độ.\n✗ head++ giải phóng bộ nhớ tốt hơn: thực tế con trỏ không thu hồi vùng đã qua, lợi ích là tốc độ.\n✗ shift() không hoạt động với số nguyên: sai, shift dùng được cho mọi phần tử."
+  },
+  {
+    "id": "dsa-q-050",
+    "courseId": "DSA",
+    "lesson": "dsa-04-stack-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Hàm is_valid kiểm tra ngoặc hợp lệ. Với chuỗi đầu vào s = \"(]\", điều gì xảy ra và kết quả trả về là gì?",
+    "options": [
+      "Gặp ']', pop được '(' nhưng '(' != pairs[']'] = '[' nên trả về False",
+      "Trả về True vì có một ngoặc mở và một ngoặc đóng",
+      "Trả về False vì stack vẫn còn phần tử ở cuối",
+      "Gặp lỗi vì pop trên stack rỗng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cần khớp đúng loại ngoặc, không chỉ đếm số lượng.\n✓ pop được '(' nhưng khác '[': khi gặp ']', pairs[']'] là '[', nhưng đỉnh stack là '(' nên không khớp → trả về False.\n✗ True vì cân số lượng: hàm kiểm tra khớp LOẠI ngoặc chứ không chỉ đếm.\n✗ False vì stack còn phần tử: thực ra fail sớm tại bước so khớp, không tới bước kiểm tra stack cuối.\n✗ Lỗi pop trên stack rỗng: khi gặp ']' stack có '(' nên không rỗng."
+  },
+  {
+    "id": "dsa-q-051",
+    "courseId": "DSA",
+    "lesson": "dsa-04-stack-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những phát biểu nào sau đây ĐÚNG về Deque (double-ended queue) theo bài học?",
+    "options": [
+      "Có thể thêm/xoá ở cả đầu lẫn cuối trong O(1)",
+      "Là nền tảng để xây dựng monotonic queue",
+      "Có thể mô phỏng được cả Stack lẫn Queue",
+      "Truy cập ngẫu nhiên theo chỉ số là O(1) và là thế mạnh của nó",
+      "Trong Python dùng collections.deque với append/appendleft/pop/popleft"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Deque là cấu trúc hai đầu tổng quát, nhưng không mạnh ở truy cập ngẫu nhiên.\n✓ Thêm/xoá hai đầu O(1): đặc trưng cốt lõi của deque.\n✓ Nền tảng monotonic queue: bài học nêu rõ deque là nền cho sliding window max/min.\n✓ Mô phỏng Stack lẫn Queue: deque là cấu trúc tổng quát làm được cả hai.\n✓ Python collections.deque với append/appendleft/pop/popleft: đúng API trong code mẫu.\n✗ Truy cập ngẫu nhiên O(1) là thế mạnh: bài nêu truy cập ngẫu nhiên là O(n) và không phải thế mạnh."
+  },
+  {
+    "id": "dsa-q-052",
+    "courseId": "DSA",
+    "lesson": "dsa-04-stack-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Khi đứng trước một bài phỏng vấn, dấu hiệu nào gợi ý nên dùng monotonic stack hoặc monotonic queue?",
+    "options": [
+      "\"Với mỗi phần tử, tìm phần tử lân cận đầu tiên thoả điều kiện so sánh lớn/nhỏ hơn\" → monotonic stack",
+      "\"Tìm max/min của mọi cửa sổ trượt cố định kích thước k\" → monotonic queue",
+      "\"Daily Temperatures: chờ bao nhiêu ngày để có nhiệt độ cao hơn\" → monotonic stack",
+      "\"Kiểm tra ngoặc đóng/mở hợp lệ\" → monotonic queue",
+      "\"Sắp xếp lại mảng theo thứ tự tăng dần\" → monotonic stack"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Monotonic stack/queue dành cho bài so sánh lân cận và cửa sổ trượt, biến O(n²) thành O(n).\n✓ Tìm phần tử lân cận thoả so sánh → monotonic stack: đúng dấu hiệu nhận diện cốt lõi.\n✓ Max/min mọi cửa sổ trượt cố định → monotonic queue: đúng bài Sliding Window Maximum.\n✓ Daily Temperatures → monotonic stack: bài học liệt kê đây là ứng dụng tiêu biểu.\n✗ Kiểm tra ngoặc hợp lệ → monotonic queue: ngoặc dùng stack thường (LIFO), không phải monotonic queue.\n✗ Sắp xếp mảng tăng dần → monotonic stack: monotonic stack không phải thuật toán sắp xếp tổng quát."
+  },
+  {
+    "id": "dsa-q-053",
+    "courseId": "DSA",
+    "lesson": "dsa-05-linkedlist-tree",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn cần một cấu trúc cho phép chèn/xoá liên tục ở đầu danh sách mà không phải dịch chuyển dữ liệu, và không bao giờ cần lấy phần tử theo chỉ số. Cấu trúc nào phù hợp hơn?",
+    "options": [
+      "Linked list, vì chèn vào đầu là O(1)",
+      "Array, vì chèn vào đầu là O(1)",
+      "Array, vì truy cập theo index là O(1)",
+      "Hash map, vì mọi thao tác đều O(1)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Linked list thắng ở chèn/xoá tại vị trí đã biết (đặc biệt đầu list), và yêu cầu không cần index khớp đúng điểm yếu của nó.\n✓ Chèn vào đầu linked list chỉ đổi vài con trỏ nên là O(1).\n✗ Chèn vào đầu array là O(n) vì phải dịch toàn bộ phần tử, không phải O(1).\n✗ Truy cập theo index của array đúng là O(1) nhưng bài toán nói rõ không cần lấy theo index nên đây không phải lý do chọn.\n✗ Hash map không giữ thứ tự chèn và không phục vụ thao tác chèn vào đầu theo trình tự."
+  },
+  {
+    "id": "dsa-q-054",
+    "courseId": "DSA",
+    "lesson": "dsa-05-linkedlist-tree",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Với singly linked list, lấy phần tử thứ k (đếm từ đầu) có độ phức tạp là gì?",
+    "options": [
+      "O(k)",
+      "O(1)",
+      "O(log k)",
+      "O(n log n)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Linked list phải đi tuần tự từ head nên muốn tới phần tử thứ k phải bước qua k node.\n✓ Đi tuần tự k bước cho ra O(k).\n✗ O(1) là truy cập theo index của array, không áp dụng cho linked list.\n✗ Linked list không có cấu trúc cho phép nhảy logarit nên không phải O(log k).\n✗ O(n log n) là chi phí của các thuật toán sắp xếp, không liên quan tới việc truy cập một phần tử."
+  },
+  {
+    "id": "dsa-q-055",
+    "courseId": "DSA",
+    "lesson": "dsa-05-linkedlist-tree",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong vòng lặp đảo ngược linked list, một bạn viết: cur.next = prev; nxt = cur.next; prev = cur; cur = nxt. Hậu quả là gì?",
+    "options": [
+      "Mất đường đi tới phần còn lại của list vì cur.next đã bị bẻ trước khi lưu",
+      "Vẫn đúng, chỉ là thứ tự câu lệnh khác đi",
+      "List bị đảo hai lần nên trở về như cũ",
+      "Gây tràn stack do đệ quy vô hạn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Phải lưu nxt = cur.next TRƯỚC khi gán cur.next = prev, nếu không sẽ mất con trỏ tới phần sau.\n✓ Gán cur.next = prev trước khiến nxt sau đó lấy nhầm chính prev, mất luôn các node phía sau.\n✗ Không phải chỉ đổi thứ tự vô hại; thứ tự ở đây quyết định tính đúng đắn.\n✗ Không có chuyện đảo hai lần; vòng lặp chỉ chạy một lần và đã hỏng giữa chừng.\n✗ Đây là vòng lặp, không phải đệ quy, nên không liên quan tới tràn stack."
+  },
+  {
+    "id": "dsa-q-056",
+    "courseId": "DSA",
+    "lesson": "dsa-05-linkedlist-tree",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đề bài: phát hiện linked list có chu trình hay không, yêu cầu bộ nhớ phụ O(1). Cách tiếp cận tối ưu là gì?",
+    "options": [
+      "Fast–slow pointer (Floyd): slow đi 1 bước, fast đi 2 bước",
+      "Dùng set lưu các node đã thăm, gặp lại thì có cycle",
+      "Sắp xếp list rồi tìm phần tử trùng",
+      "Đệ quy duyệt toàn bộ và đếm số node"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Floyd dùng hai con trỏ khác tốc độ, không tốn bộ nhớ phụ, nếu có cycle thì fast đuổi kịp slow.\n✓ Fast–slow đạt O(n) thời gian và O(1) bộ nhớ, đúng ràng buộc đề.\n✗ Dùng set phát hiện được cycle nhưng tốn O(n) bộ nhớ, vi phạm yêu cầu O(1).\n✗ Sắp xếp linked list không khả thi/không liên quan để phát hiện vòng lặp con trỏ.\n✗ Đếm số node không chấm dứt được nếu có cycle và không giải quyết bài toán."
+  },
+  {
+    "id": "dsa-q-057",
+    "courseId": "DSA",
+    "lesson": "dsa-05-linkedlist-tree",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn cần in một BST ra dãy giá trị đã sắp xếp tăng dần. Kiểu duyệt DFS nào cho kết quả đó trực tiếp?",
+    "options": [
+      "Inorder (Left → Node → Right)",
+      "Preorder (Node → Left → Right)",
+      "Postorder (Left → Right → Node)",
+      "BFS level-order"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Inorder trên BST cho ra dãy tăng dần — đây là tính chất vàng của BST.\n✓ Left → Node → Right đi qua node theo đúng thứ tự giá trị tăng dần trong BST.\n✗ Node → Left → Right xử lý gốc trước nên không cho dãy sắp xếp.\n✗ Left → Right → Node xử lý con trước cha, hợp cho xoá cây/biểu thức, không ra dãy tăng.\n✗ Level-order in theo tầng, không phản ánh thứ tự giá trị sắp xếp."
+  },
+  {
+    "id": "dsa-q-058",
+    "courseId": "DSA",
+    "lesson": "dsa-05-linkedlist-tree",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những phát biểu nào ĐÚNG về độ phức tạp các thao tác trên cây theo nội dung bài?",
+    "options": [
+      "Cả ba kiểu DFS (pre/in/post) đều là O(n) thời gian",
+      "DFS đệ quy dùng O(h) bộ nhớ cho stack, với h là chiều cao cây",
+      "search/insert/delete trên BST cân bằng là O(log n)",
+      "search trên BST suy biến vẫn là O(log n)",
+      "Mọi thao tác BST luôn là O(1) bất kể hình dạng cây"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "DFS thăm mỗi node một lần (O(n)) và dùng stack O(h); BST cân bằng cho O(log n) còn suy biến tụt về O(n).\n✓ Cả ba kiểu DFS đều thăm mỗi node đúng một lần nên O(n).\n✓ Bộ nhớ stack đệ quy tỉ lệ với chiều cao h, tức O(h).\n✓ BST cân bằng có h ≈ log n nên search/insert/delete là O(log n).\n✗ BST suy biến biến thành danh sách dọc h = n nên search là O(n), không phải O(log n).\n✗ Thao tác BST phụ thuộc chiều cao, không phải luôn O(1)."
+  },
+  {
+    "id": "dsa-q-059",
+    "courseId": "DSA",
+    "lesson": "dsa-05-linkedlist-tree",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Để kiểm tra một cây có phải BST hợp lệ, cách nào ĐÚNG và tránh được cạm bẫy cháu vi phạm bất biến?",
+    "options": [
+      "DFS truyền xuống khoảng (low, high): node phải nằm trong khoảng, sang trái siết high, sang phải siết low",
+      "Chỉ so mỗi node với left và right trực tiếp của nó",
+      "Kiểm tra preorder có tăng nghiêm ngặt hay không",
+      "Đếm số node rồi so với 2^h - 1"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cách chuẩn là truyền khoảng hợp lệ xuống mỗi node, hoặc dùng inorder kiểm tra dãy tăng nghiêm ngặt.\n✓ Truyền (low, high) đảm bảo cả cháu cũng nằm trong khoảng hợp lệ, bắt được lỗi vi phạm sâu.\n✗ Chỉ so node với hai con trực tiếp sẽ bỏ sót trường hợp cháu vi phạm bất biến.\n✗ Tính chất tăng nghiêm ngặt áp dụng cho dãy INORDER, không phải preorder.\n✗ Đếm node so với 2^h - 1 chỉ kiểm tra cây đầy/hoàn chỉnh, không kiểm tra bất biến sắp xếp."
+  },
+  {
+    "id": "dsa-q-060",
+    "courseId": "DSA",
+    "lesson": "dsa-05-linkedlist-tree",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đề yêu cầu in cây theo từng tầng, hoặc tìm shortest path trên đồ thị không trọng số. Phản xạ nên là gì?",
+    "options": [
+      "BFS + queue",
+      "DFS đệ quy postorder",
+      "Fast–slow pointer",
+      "Binary search trên mảng sắp xếp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài theo tầng/theo level hoặc đường đi ngắn nhất không trọng số là dấu hiệu kinh điển của BFS.\n✓ BFS với queue xử lý từng tầng từ trên xuống, đúng yêu cầu in theo level và path ngắn nhất.\n✗ DFS postorder hợp cho xử lý con trước cha, không đảm bảo theo tầng hay path ngắn nhất.\n✗ Fast–slow pointer là kỹ thuật cho linked list, không phải duyệt cây/đồ thị theo tầng.\n✗ Binary search dành cho mảng đã sắp xếp, không liên quan tới duyệt theo tầng."
+  },
+  {
+    "id": "dsa-q-061",
+    "courseId": "DSA",
+    "lesson": "dsa-05-linkedlist-tree",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi xoá một node BST có ĐỦ HAI con, bài hướng dẫn xử lý thế nào?",
+    "options": [
+      "Tìm node kế vị inorder (nhỏ nhất của cây con phải), chép giá trị lên rồi xoá node kế vị đó",
+      "Xoá luôn cả cây con phải để giữ bất biến",
+      "Nối node cha thẳng tới con trái và bỏ con phải",
+      "Đổi node thành lá rồi trả null"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Với node hai con, ta thay bằng node kế vị inorder rồi xoá node kế vị (node này chắc chắn rơi vào case 0 hoặc 1 con).\n✓ Node kế vị là giá trị nhỏ nhất của cây con phải, chép lên giữ được bất biến BST.\n✗ Xoá cả cây con phải làm mất dữ liệu hợp lệ, không đúng.\n✗ Nối thẳng tới con trái và bỏ con phải sẽ làm mất nhánh phải.\n✗ Không thể tùy tiện biến node thành lá vì sẽ mất hai cây con của nó."
+  },
+  {
+    "id": "dsa-q-062",
+    "courseId": "DSA",
+    "lesson": "dsa-05-linkedlist-tree",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một dịch vụ thật cần map có thứ tự, dữ liệu nạp vào ĐÃ được sắp xếp sẵn. Nếu dùng BST thường (không tự cân bằng), điều gì xảy ra?",
+    "options": [
+      "Cây suy biến thành danh sách dọc, h = n, thao tác tụt về O(n)",
+      "Cây tự cân bằng nên vẫn O(log n)",
+      "Cây trở thành cây đầy hoàn hảo, O(1) mọi thao tác",
+      "Việc chèn thất bại vì BST không nhận dữ liệu sắp xếp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chèn dữ liệu đã sắp xếp vào BST thường khiến mỗi node chỉ có một nhánh, biến cây thành danh sách dọc.\n✓ Khi đó h = n và search/insert/delete tụt từ O(log n) về O(n).\n✗ BST thường KHÔNG tự cân bằng; muốn O(log n) phải dùng AVL/Red-Black.\n✗ Không hề trở thành cây đầy; ngược lại nó mất cân bằng hoàn toàn.\n✗ Chèn vẫn thành công về mặt logic, chỉ là hiệu năng kém, không phải thất bại."
+  },
+  {
+    "id": "dsa-q-063",
+    "courseId": "DSA",
+    "lesson": "dsa-05-linkedlist-tree",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Khung sườn depth(node) = 0 nếu rỗng, ngược lại 1 + max(depth(left), depth(right)) thuộc kiểu duyệt nào và vì sao tái dùng được cho nhiều bài?",
+    "options": [
+      "Postorder: xử lý hai cây con trước rồi kết hợp tại node, tái dùng cho đếm node, đường kính, kiểm tra cân bằng",
+      "Preorder: xử lý node trước rồi mới xuống con",
+      "BFS: vì duyệt theo tầng nên đo được độ sâu",
+      "Inorder: vì cho dãy sắp xếp nên suy ra độ sâu"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khung lấy kết quả từ left và right rồi kết hợp tại node chính là postorder, và là mẫu chung của đa số bài tree.\n✓ Xử lý hai cây con trước, kết hợp tại node (return f(left,right,node)) là postorder, dùng lại cho đếm node, diameter, kiểm tra cân bằng.\n✗ Preorder xử lý node trước khi có kết quả từ con nên không khớp công thức kết hợp này.\n✗ BFS đo độ sâu được nhưng không phải khung đệ quy đang mô tả.\n✗ Inorder cho dãy sắp xếp của BST, không phải khung tính độ sâu."
+  },
+  {
+    "id": "dsa-q-064",
+    "courseId": "DSA",
+    "lesson": "dsa-05-linkedlist-tree",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những trường hợp nào nên là phản xạ dùng fast–slow pointer trên linked list?",
+    "options": [
+      "Tìm node giữa của list khi cấm dùng bộ nhớ phụ",
+      "Phát hiện list có chu trình với bộ nhớ O(1)",
+      "Tìm node thứ k từ cuối",
+      "Truy cập phần tử thứ k từ đầu trong O(1)",
+      "Sắp xếp các giá trị trong list theo thứ tự tăng"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Fast–slow là phản xạ cho tìm giữa, phát hiện vòng lặp và node thứ k từ cuối với bộ nhớ O(1).\n✓ Khi fast tới cuối thì slow đang ở giữa, giải bài tìm node giữa.\n✓ Hai con trỏ khác tốc độ phát hiện cycle với O(1) bộ nhớ.\n✓ Cho fast chạy trước k bước rồi cùng đi, tìm được node thứ k từ cuối.\n✗ Truy cập phần tử thứ k từ đầu trên linked list là O(k), không phải bài của fast–slow và không thể O(1).\n✗ Sắp xếp giá trị là bài toán khác, fast–slow không sắp xếp."
+  },
+  {
+    "id": "dsa-q-065",
+    "courseId": "DSA",
+    "lesson": "dsa-05-linkedlist-tree",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, vì sao tìm/thêm/xoá trong BST chỉ cần O(h) thay vì O(n)?",
+    "options": [
+      "Nhờ bất biến sắp xếp, mỗi bước chỉ cần đi xuống một nhánh (trái hoặc phải)",
+      "Vì BST lưu các node liền nhau trong bộ nhớ như array",
+      "Vì mọi node đều được băm bằng hash",
+      "Vì BST luôn được giữ cân bằng tự động"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bất biến trái-nhỏ phải-lớn cho phép loại bỏ nửa còn lại ở mỗi bước, chỉ đi theo một nhánh xuống độ sâu h.\n✓ So sánh với node hiện tại rồi rẽ trái hoặc phải nên chi phí bằng chiều cao h.\n✗ BST gồm các node rời rạc nối bằng con trỏ, không liền nhau như array.\n✗ BST không dùng hash; nó dựa vào so sánh giá trị.\n✗ BST thường KHÔNG tự cân bằng; nếu suy biến thì h = n nên không thể nói luôn cân bằng."
+  },
+  {
+    "id": "dsa-q-066",
+    "courseId": "DSA",
+    "lesson": "dsa-06-sorting-searching",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Giới hạn lý thuyết về độ phức tạp xấu nhất của MỌI thuật toán sort dựa trên so sánh (comparison sort) là gì?",
+    "options": [
+      "O(n)",
+      "O(n log n)",
+      "O(n²)",
+      "O(log n)"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mọi comparison sort không thể nhanh hơn O(n log n) trong trường hợp xấu nhất — đây là giới hạn đã được chứng minh.\n✓ O(n log n) là trần của comparison sort; merge/quick/heap sort đều xoay quanh mốc này.\n✗ O(n) chỉ đạt được bằng counting/radix sort vốn KHÔNG dựa trên so sánh.\n✗ O(n²) là độ phức tạp của các sort kém như bubble/insertion, không phải giới hạn lý thuyết.\n✗ O(log n) là độ phức tạp của binary search, không liên quan đến sort."
+  },
+  {
+    "id": "dsa-q-067",
+    "courseId": "DSA",
+    "lesson": "dsa-06-sorting-searching",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong JavaScript, biểu thức [10, 2, 1].sort() (không truyền comparator) trả về kết quả nào?",
+    "options": [
+      "[1, 2, 10]",
+      "[1, 10, 2]",
+      "[10, 2, 1]",
+      "[2, 1, 10]"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "sort() mặc định của JS so sánh các phần tử theo CHUỖI, nên '10' < '2' vì ký tự '1' < '2'.\n✓ [1, 10, 2]: sắp theo thứ tự từ điển của chuỗi '1','10','2'.\n✗ [1, 2, 10] là kết quả nếu so sánh theo số — cần truyền comparator (a,b)=>a-b.\n✗ [10, 2, 1] là mảng gốc, nhưng sort() vẫn sắp xếp lại.\n✗ [2, 1, 10] không khớp với cả thứ tự chuỗi lẫn số."
+  },
+  {
+    "id": "dsa-q-068",
+    "courseId": "DSA",
+    "lesson": "dsa-06-sorting-searching",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Stable sort được định nghĩa là gì?",
+    "options": [
+      "Thuật toán sort luôn chạy đúng O(n log n) trong mọi trường hợp",
+      "Thuật toán sort không dùng bộ nhớ phụ (in-place)",
+      "Khi hai phần tử có cùng khoá sắp xếp, thứ tự tương đối của chúng được giữ nguyên như mảng gốc",
+      "Thuật toán sort không bao giờ rơi vào trường hợp xấu O(n²)"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Stable sort giữ nguyên thứ tự tương đối của các phần tử có cùng khoá.\n✓ Giữ thứ tự tương đối của phần tử bằng khoá chính là định nghĩa stable, cho phép sort đa tiêu chí bằng nhiều lần sort.\n✗ Chạy O(n log n) mọi trường hợp là tính chất hiệu năng (merge sort), không phải định nghĩa stable.\n✗ In-place là về bộ nhớ, độc lập với tính stable (heap sort in-place nhưng KHÔNG stable).\n✗ Tránh O(n²) là về hiệu năng, không phải định nghĩa stable."
+  },
+  {
+    "id": "dsa-q-069",
+    "courseId": "DSA",
+    "lesson": "dsa-06-sorting-searching",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn có mảng đã sort tăng dần có phần tử lặp. Bạn cần đếm số lần xuất hiện của target một cách hiệu quả O(log n). Cách đúng là gì?",
+    "options": [
+      "upper_bound(target) - lower_bound(target)",
+      "lower_bound(target) - upper_bound(target)",
+      "upper_bound(target) - 1",
+      "Duyệt tuyến tính đếm các phần tử bằng target"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Số lần xuất hiện = vị trí ngay sau lần cuối trừ vị trí lần đầu = upper_bound - lower_bound.\n✓ upper_bound(target) - lower_bound(target): upper là chỉ số đầu tiên >target, lower là chỉ số đầu tiên >=target; hiệu cho đúng số lần xuất hiện.\n✗ lower_bound - upper_bound cho giá trị âm vì upper >= lower.\n✗ upper_bound - 1 chỉ cho vị trí xuất hiện cuối, không phải số lượng.\n✗ Duyệt tuyến tính là O(n), không tận dụng được tính đã sort và O(log n)."
+  },
+  {
+    "id": "dsa-q-070",
+    "courseId": "DSA",
+    "lesson": "dsa-06-sorting-searching",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn binary search sau có lỗi gì? while lo < hi: mid = lo+(hi-lo)//2; if arr[mid] < target: lo = mid; else: hi = mid",
+    "options": [
+      "Thiếu tính mid tránh tràn số",
+      "Gán lo = mid (thiếu +1) gây vòng lặp vô hạn",
+      "Dùng nửa khoảng [lo, hi) là sai, phải dùng [lo, hi]",
+      "Điều kiện vòng lặp phải là lo <= hi"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Khi nhánh trái không tiến (lo = mid thay vì mid + 1), lo có thể đứng yên và vòng lặp lặp vô hạn.\n✓ Phải gán lo = mid + 1; quên +1 khiến lo không tiến lên khi hi = lo+1 → vòng lặp vô hạn.\n✗ mid = lo+(hi-lo)//2 đã đúng cách tránh tràn số rồi.\n✗ Nửa khoảng [lo, hi) với điều kiện lo < hi là quy ước an toàn được khuyến nghị trong bài.\n✗ Với nửa khoảng [lo, hi), điều kiện đúng là lo < hi, không phải lo <= hi."
+  },
+  {
+    "id": "dsa-q-071",
+    "courseId": "DSA",
+    "lesson": "dsa-06-sorting-searching",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bài toán: Cho danh sách khoảng [start, end], gộp các khoảng chồng lấn (Merge Intervals). Bước đầu tiên (chìa khoá) để giải hiệu quả là gì?",
+    "options": [
+      "Sort danh sách theo end giảm dần",
+      "Sort danh sách theo start tăng dần rồi duyệt một lượt",
+      "Dùng binary search tìm các khoảng chồng lấn",
+      "Dùng hash map để nhóm các khoảng theo start"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Sort theo start là chìa khoá: sau đó duyệt một lượt, nếu start hiện tại <= end của khoảng cuối thì mở rộng.\n✓ Sort theo start tăng dần rồi duyệt một lượt cho O(n log n), gộp khoảng khi start <= last.end.\n✗ Sort theo end giảm dần không giúp gộp tuần tự theo trục thời gian.\n✗ Binary search không phù hợp vì bài toán cần duyệt tuần tự sau khi sort, không tìm biên.\n✗ Hash map không tận dụng được tính thứ tự cần thiết để gộp khoảng chồng lấn."
+  },
+  {
+    "id": "dsa-q-072",
+    "courseId": "DSA",
+    "lesson": "dsa-06-sorting-searching",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Python, để sort danh sách object GIẢM dần theo age nhưng các tên TĂNG dần khi age bằng nhau, chỉ với MỘT lần sort, key nào đúng?",
+    "options": [
+      "key=lambda p: (p['age'], p['name'])",
+      "key=lambda p: (-p['age'], p['name'])",
+      "key=lambda p: (-p['age'], -p['name'])",
+      "key=lambda p: (p['age'], -p['name'])"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mẹo: muốn đảo chiều một trường số trong tuple key thì đặt dấu âm cho trường đó.\n✓ (-p['age'], p['name']): age âm cho thứ tự giảm dần, name giữ nguyên cho tăng dần.\n✗ (p['age'], p['name']) cho age tăng dần, sai yêu cầu.\n✗ (-p['age'], -p['name']) không hợp lệ vì không thể phủ định chuỗi name.\n✗ (p['age'], -p['name']) sai cả hai: age tăng và không thể phủ định chuỗi."
+  },
+  {
+    "id": "dsa-q-073",
+    "courseId": "DSA",
+    "lesson": "dsa-06-sorting-searching",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Điều kiện BẮT BUỘC để áp dụng kỹ thuật 'search on answer' (binary search trên khoảng đáp án) là gì?",
+    "options": [
+      "Mảng đầu vào phải đã được sort sẵn",
+      "Hàm feasible(x) phải có tính đơn điệu: khi tăng x, kết quả chuyển từ false sang true (hoặc ngược lại) đúng một lần",
+      "Khoảng đáp án phải nhỏ hơn O(log n)",
+      "Dữ liệu phải là số nguyên trong khoảng hẹp"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Search on answer cần tính đơn điệu của feasible để binary search trên khoảng đáp án.\n✓ Tính đơn điệu của feasible (chuyển false→true đúng một lần) là điều kiện cốt lõi để loại bỏ một nửa khoảng mỗi bước.\n✗ Mảng đã sort là điều kiện của binary search trên mảng, không phải trên khoảng đáp án.\n✗ Kích thước khoảng đáp án nhỏ hơn O(log n) là vô nghĩa.\n✗ Số nguyên khoảng hẹp là điều kiện của counting sort, không liên quan."
+  },
+  {
+    "id": "dsa-q-074",
+    "courseId": "DSA",
+    "lesson": "dsa-06-sorting-searching",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong bài Koko ăn chuối, feasible(k) = (tổng giờ ăn với tốc độ k) <= h. Khi binary search tìm k NHỎ NHẤT thoả, nhánh xử lý đúng khi feasible(mid) trả về true là gì?",
+    "options": [
+      "lo = mid + 1 (thử tốc độ lớn hơn)",
+      "hi = mid (thử tốc độ nhỏ hơn)",
+      "return mid ngay lập tức",
+      "hi = mid - 1 (thử tốc độ nhỏ hơn)"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Vì tốc độ càng lớn càng dễ thoả, khi mid đã thoả ta cố thu nhỏ về phía trái để tìm k nhỏ nhất, giữ mid là ứng viên.\n✓ hi = mid giữ mid trong khoảng ứng viên (nửa khoảng [lo, hi)) và tiếp tục thu nhỏ — đây là mẫu đúng trong bài.\n✗ lo = mid + 1 sẽ đi tìm tốc độ LỚN hơn, ngược với mục tiêu tìm nhỏ nhất.\n✗ return mid ngay có thể bỏ lỡ một k nhỏ hơn cũng thoả ở phía trái.\n✗ hi = mid - 1 loại bỏ mid khỏi ứng viên dù nó có thể chính là đáp án nhỏ nhất."
+  },
+  {
+    "id": "dsa-q-075",
+    "courseId": "DSA",
+    "lesson": "dsa-06-sorting-searching",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong code merge sort, để đảm bảo tính STABLE, phép so sánh khi trộn hai nửa phải viết thế nào (lấy phần tử trái trước khi bằng nhau)?",
+    "options": [
+      "if left[i] < right[j]: lấy left",
+      "if left[i] <= right[j]: lấy left",
+      "if left[i] > right[j]: lấy left",
+      "if left[i] >= right[j]: lấy left"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Khi hai phần tử bằng nhau, lấy phần tử bên trái trước để giữ thứ tự gốc → đảm bảo stable.\n✓ left[i] <= right[j] lấy left: khi bằng nhau vẫn ưu tiên trái, giữ thứ tự tương đối ban đầu.\n✗ left[i] < right[j]: khi bằng nhau sẽ lấy right trước, phá vỡ tính stable.\n✗ left[i] > right[j] lấy left là logic ngược, tạo thứ tự sai.\n✗ left[i] >= right[j] lấy left khi bằng nhưng dấu > cho trường hợp khác sẽ sai thứ tự sort."
+  },
+  {
+    "id": "dsa-q-076",
+    "courseId": "DSA",
+    "lesson": "dsa-06-sorting-searching",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Cho mảng đã sort xoay vòng [4,5,6,7,0,1,2], cần tìm target trong O(log n). Ý tưởng cốt lõi của binary search biến thể này là gì?",
+    "options": [
+      "Sort lại mảng rồi binary search bình thường",
+      "Tại mỗi mid, xác định nửa nào đang được sắp xếp đúng rồi quyết định đi nửa nào",
+      "Luôn đi nửa trái vì mảng bắt đầu lớn",
+      "Dùng linear search vì mảng đã bị xoay nên không binary search được"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mảng xoay vòng vẫn binary search được bằng cách nhận diện nửa nào đang sắp đúng tại mỗi mid.\n✓ Tại mỗi mid so arr[lo] với arr[mid] để biết nửa nào sắp xếp đúng, rồi kiểm tra target có nằm trong khoảng đó để chọn hướng — mỗi bước vẫn loại nửa, O(log n).\n✗ Sort lại mảng tốn O(n log n), phá vỡ yêu cầu O(log n).\n✗ Luôn đi nửa trái là sai logic, target có thể ở nửa phải.\n✗ Linear search là O(n), không đạt yêu cầu; mảng xoay VẪN binary search được."
+  },
+  {
+    "id": "dsa-q-077",
+    "courseId": "DSA",
+    "lesson": "dsa-06-sorting-searching",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những phát biểu nào sau đây về quick sort vs merge sort là ĐÚNG theo bài học?",
+    "options": [
+      "Quick sort trung bình O(n log n) nhưng xấu nhất có thể O(n²)",
+      "Merge sort luôn O(n log n) nhưng tốn O(n) bộ nhớ phụ",
+      "Quick sort là stable còn merge sort thì không",
+      "Merge sort stable; quick sort không stable",
+      "Quick sort luôn nhanh hơn merge sort trong mọi trường hợp"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Bài nhấn mạnh trade-off: quick nhanh trung bình nhưng có thể xấu O(n²) và không stable; merge ổn định và stable nhưng tốn bộ nhớ.\n✓ Quick sort trung bình O(n log n), xấu nhất O(n²) khi pivot chọn tệ.\n✓ Merge sort luôn O(n log n) nhưng cần O(n) bộ nhớ phụ.\n✓ Merge sort stable, quick sort không stable.\n✗ Quick sort KHÔNG stable, còn merge sort stable — phát biểu này đảo ngược.\n✗ 'Quick sort luôn nhanh hơn' là bẫy bị bài cảnh báo trực tiếp."
+  },
+  {
+    "id": "dsa-q-078",
+    "courseId": "DSA",
+    "lesson": "dsa-06-sorting-searching",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những tình huống nào KHIẾN bạn nên tự cài thuật toán sort thay vì dùng built-in?",
+    "options": [
+      "Cần counting sort / radix sort cho số nguyên trong khoảng hẹp để đạt O(n)",
+      "Phỏng vấn yêu cầu bạn tự viết",
+      "Đang sort danh sách object theo nhiều tiêu chí trong code production",
+      "Môi trường nhúng không có thư viện chuẩn",
+      "Cần sort stable một danh sách trong ứng dụng web thông thường"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Bài nêu rõ chỉ tự cài trong vài trường hợp đặc biệt; còn lại dùng built-in.\n✓ Counting/radix sort cho số nguyên khoảng hẹp để vượt giới hạn O(n log n).\n✓ Phỏng vấn yêu cầu tự viết.\n✓ Môi trường nhúng không có thư viện chuẩn.\n✗ Sort object đa tiêu chí ở production nên dùng built-in với hàm key/comparator.\n✗ Cần stable trong web thông thường thì dùng built-in (đa số đã stable), không cần tự cài."
+  },
+  {
+    "id": "dsa-q-079",
+    "courseId": "DSA",
+    "lesson": "dsa-07-recursion-graph-dp",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một hàm đệ quy đúng đắn bắt buộc phải có thành phần nào để không gọi mãi không ngừng?",
+    "options": [
+      "Một base case (trường hợp cơ sở) làm điều kiện dừng",
+      "Một cache để lưu kết quả trung gian",
+      "Một queue FIFO để quản lý thứ tự gọi",
+      "Một biến đếm toàn cục số lần gọi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Thiếu điều kiện dừng thì đệ quy chạy vô hạn và tràn stack.\n✓ Một base case là con búp bê nhỏ nhất, điểm để hàm ngừng tự gọi.\n✗ Cache chỉ giúp tăng tốc (DP/memoization), không phải điều kiện dừng bắt buộc.\n✗ Queue FIFO là cấu trúc của BFS, không liên quan tới việc dừng đệ quy.\n✗ Biến đếm số lần gọi không phải thành phần bắt buộc của đệ quy đúng đắn."
+  },
+  {
+    "id": "dsa-q-080",
+    "courseId": "DSA",
+    "lesson": "dsa-07-recursion-graph-dp",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trên đồ thị KHÔNG trọng số, muốn tìm đường đi NGẮN NHẤT (ít cạnh nhất) từ A tới B thì nên dùng thuật toán nào?",
+    "options": [
+      "BFS với queue",
+      "DFS đệ quy",
+      "Backtracking sinh mọi đường",
+      "Memoization Fibonacci"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "BFS lan theo từng lớp nên lần đầu chạm tới một node chính là đường ít cạnh nhất.\n✓ BFS với queue đảm bảo đường đi ngắn nhất trên đồ thị không trọng số.\n✗ DFS đi sâu một nhánh, không đảm bảo đường ngắn nhất.\n✗ Backtracking liệt kê mọi đường rất đắt, không cần thiết cho bài này.\n✗ Memoization Fibonacci là kỹ thuật DP, không phải duyệt đồ thị."
+  },
+  {
+    "id": "dsa-q-081",
+    "courseId": "DSA",
+    "lesson": "dsa-07-recursion-graph-dp",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Độ phức tạp thời gian của cả BFS lẫn DFS trên đồ thị (dùng adjacency list) là bao nhiêu?",
+    "options": [
+      "O(V + E)",
+      "O(V²)",
+      "O(2^V)",
+      "O(V × E)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mỗi đỉnh và mỗi cạnh được xét đúng một lần.\n✓ O(V + E) là đúng cho cả BFS và DFS với danh sách kề.\n✗ O(V²) là chi phí của adjacency matrix, không phải của duyệt với danh sách kề.\n✗ O(2^V) là kiểu phức tạp mũ của một số bài liệt kê, không phải duyệt đồ thị.\n✗ O(V × E) không phải độ phức tạp của BFS/DFS chuẩn."
+  },
+  {
+    "id": "dsa-q-082",
+    "courseId": "DSA",
+    "lesson": "dsa-07-recursion-graph-dp",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần duyệt một mảng tuyến tính 10^5 phần tử trong Python. Viết kiểu đệ quy đi qua từng phần tử thì điều gì xảy ra, và nên làm gì?",
+    "options": [
+      "Tràn stack (RecursionError) vì độ sâu vượt giới hạn ~1000; nên dùng vòng lặp",
+      "Chạy bình thường vì đệ quy luôn nhanh hơn vòng lặp",
+      "Tốn O(1) bộ nhớ stack nên hoàn toàn an toàn",
+      "Cần thêm cache memoization để tránh tràn stack"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đệ quy tuyến tính tạo độ sâu bằng kích thước mảng, vượt giới hạn ~1000 của Python.\n✓ Tràn stack là kết quả thực tế; duyệt tuyến tính nên dùng vòng lặp vừa nhanh vừa không lo tràn stack.\n✗ Đệ quy không nhanh hơn lặp cho duyệt tuyến tính, ngược lại còn lãng phí.\n✗ Đệ quy tốn O(độ sâu) bộ nhớ stack, không phải O(1).\n✗ Cache không giảm độ sâu đệ quy nên không cứu được tràn stack ở đây."
+  },
+  {
+    "id": "dsa-q-083",
+    "courseId": "DSA",
+    "lesson": "dsa-07-recursion-graph-dp",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong khung backtracking sinh hoán vị, sau dòng `backtrack()` (đi sâu) bắt buộc phải có bước nào?",
+    "options": [
+      "Gỡ lựa chọn vừa thêm (undo): bỏ đánh dấu used và pop khỏi path",
+      "Thêm lựa chọn mới vào path ngay lập tức",
+      "Xoá toàn bộ mảng kết quả res",
+      "Reset mảng used về toàn True"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bản chất backtracking là chọn – đi sâu – quay lui; thiếu quay lui thì trạng thái bị bẩn cho các nhánh sau.\n✓ Phải gỡ lựa chọn (used[i]=False và path.pop()) để khôi phục trạng thái trước khi thử lựa chọn khác.\n✗ Thêm lựa chọn mới ngay là việc của vòng lặp kế tiếp, không phải bước sau đi sâu.\n✗ Xoá res sẽ mất hết lời giải đã ghi nhận.\n✗ Reset used về toàn True làm sai logic đánh dấu phần tử đã dùng."
+  },
+  {
+    "id": "dsa-q-084",
+    "courseId": "DSA",
+    "lesson": "dsa-07-recursion-graph-dp",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với `coins = [1, 3, 4]` và `amount = 6`, vì sao chiến lược tham lam (greedy) chọn mệnh giá lớn nhất trước cho kết quả SAI?",
+    "options": [
+      "Greedy ra 4+1+1 = 3 xu nhưng đáp án tối ưu là 3+3 = 2 xu; chỉ DP mới luôn đúng",
+      "Greedy luôn đúng cho coin change nên không có lỗi",
+      "Greedy ra 2 xu còn DP ra 3 xu",
+      "Bài này không có lời giải nên cả hai đều sai"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Greedy chọn 4 trước rồi buộc dùng 1+1, kém tối ưu hơn cách 3+3.\n✓ Greedy cho 3 xu (4+1+1) còn DP cho 2 xu (3+3); DP mới luôn đúng cho mọi hệ tiền tệ.\n✗ Greedy không luôn đúng cho coin change, chính ví dụ này phản chứng.\n✗ Đảo ngược kết quả: greedy ra 3 xu, DP ra 2 xu chứ không phải ngược lại.\n✗ Bài có lời giải hợp lệ (2 xu), không phải vô nghiệm."
+  },
+  {
+    "id": "dsa-q-085",
+    "courseId": "DSA",
+    "lesson": "dsa-07-recursion-graph-dp",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đệ quy Fibonacci ngây thơ `fib(n)=fib(n-1)+fib(n-2)` chậm O(2^n). Dấu hiệu nào cho thấy nên áp dụng DP và nó hạ độ phức tạp xuống bao nhiêu?",
+    "options": [
+      "Overlapping subproblems (fib(n-2) bị tính lại nhiều lần); cache đưa về O(n)",
+      "Vì đệ quy quá sâu; cache đưa về O(log n)",
+      "Vì thiếu base case; cache đưa về O(1)",
+      "Vì đồ thị có chu trình; cache đưa về O(V+E)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "DP áp dụng khi có bài con trùng lặp và cấu trúc con tối ưu.\n✓ fib(n-2) bị tính đi tính lại là overlapping subproblems; lưu cache khiến mỗi giá trị tính một lần, còn O(n).\n✗ Vấn đề không phải độ sâu, và cache Fibonacci không cho O(log n).\n✗ Đệ quy ngây thơ vẫn có base case (n<2); thiếu base không phải lý do.\n✗ Fibonacci không liên quan tới chu trình đồ thị hay O(V+E)."
+  },
+  {
+    "id": "dsa-q-086",
+    "courseId": "DSA",
+    "lesson": "dsa-07-recursion-graph-dp",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một lập trình viên viết BFS nhưng chỉ đánh dấu `visited` lúc LẤY node ra khỏi queue. Hậu quả gì xảy ra trên đồ thị có chu trình?",
+    "options": [
+      "Cùng một node bị nhồi vào queue nhiều lần, gây dư thừa hoặc lặp vô hạn",
+      "Kết quả vẫn đúng và nhanh hơn",
+      "BFS biến thành DFS",
+      "Queue tự động thành stack LIFO"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Phải đánh dấu visited ngay khi ĐƯA node vào queue, không phải lúc lấy ra.\n✓ Đánh dấu lúc lấy ra khiến một node được đẩy vào queue nhiều lần trước khi xử lý, lãng phí và có thể lặp vô hạn.\n✗ Kết quả không nhanh hơn, ngược lại còn dư thừa và có nguy cơ sai.\n✗ Vị trí đánh dấu visited không biến BFS thành DFS.\n✗ Queue vẫn là FIFO, lỗi đánh dấu không đổi cấu trúc dữ liệu."
+  },
+  {
+    "id": "dsa-q-087",
+    "courseId": "DSA",
+    "lesson": "dsa-07-recursion-graph-dp",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong bài N-queens, mẹo dùng `set` cho `cols`, đường chéo `r-c` và `r+c` mang lại lợi ích gì so với quét cả bàn cờ?",
+    "options": [
+      "Kiểm tra xung đột trong O(1) thay vì O(N) mỗi lần đặt hậu",
+      "Cho phép đặt nhiều hậu trên cùng một hàng",
+      "Loại bỏ luôn nhu cầu quay lui",
+      "Biến độ phức tạp tổng thể thành O(1)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Hash set tra cứu thành viên trong O(1), thay vì duyệt bàn cờ.\n✓ Dùng set cho cols, r-c, r+c cho phép kiểm tra một cột có an toàn không trong O(1).\n✗ Cách tiếp cận vẫn đặt mỗi hàng đúng một hậu, không cho phép nhiều hậu cùng hàng.\n✗ Vẫn cần quay lui để thử các cấu hình khác; set chỉ tăng tốc kiểm tra.\n✗ Set không làm tổng thể thành O(1); không gian tìm kiếm vẫn lớn."
+  },
+  {
+    "id": "dsa-q-088",
+    "courseId": "DSA",
+    "lesson": "dsa-07-recursion-graph-dp",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bài 'leo n bậc thang, mỗi bước 1 hoặc 2 bậc, đếm số cách' rút ra công thức truy hồi nào, và vì sao nhận diện được là DP?",
+    "options": [
+      "ways(n)=ways(n-1)+ways(n-2) — chính là Fibonacci; là DP vì 'đếm số cách' + bài con trùng lặp",
+      "ways(n)=ways(n-1)×ways(n-2) — là graph vì có nhiều đường đi",
+      "ways(n)=n! — là backtracking vì liệt kê mọi cách",
+      "ways(n)=ways(n/2) — là binary search vì chia đôi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Tới bậc n chỉ từ bậc n-1 (bước 1) hoặc n-2 (bước 2), nên cộng hai cách.\n✓ ways(n)=ways(n-1)+ways(n-2) đúng là khung Fibonacci; bài 'đếm số cách' với bài con trùng lặp là dấu hiệu DP.\n✗ Phép nhân hai bài con là sai; bài này không phải đồ thị đường đi.\n✗ n! là số hoán vị, không phải số cách leo thang.\n✗ Không có việc chia đôi bài toán, đây không phải binary search."
+  },
+  {
+    "id": "dsa-q-089",
+    "courseId": "DSA",
+    "lesson": "dsa-07-recursion-graph-dp",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Cho đoạn coin change: `dp = [0] + [INF]*amount` rồi `dp[x] = 1 + min(dp[x-c])`. Vai trò của `dp[0] = 0` là gì và bỏ đi thì sao?",
+    "options": [
+      "Đó là base case: tạo ra 0 cần 0 xu; bỏ đi thì mọi dp[x] tính sai vì thiếu mốc nền",
+      "Đó là giá trị tạm, có thể đặt bất kỳ số nào cũng được",
+      "Đó là số loại coin, không ảnh hưởng kết quả",
+      "Đó chỉ là tối ưu bộ nhớ, không ảnh hưởng tính đúng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "dp[0]=0 là mốc nền để công thức truy hồi 1+dp[x-c] có điểm dừng đúng.\n✓ dp[0]=0 nghĩa tạo ra 0 cần 0 xu; thiếu nó thì các dp[x] dựa vào dp[x-c] sẽ sai hoặc luôn là INF.\n✗ Không thể đặt giá trị bất kỳ; phải đúng bằng 0 mới chính xác.\n✗ dp[0] không phải số loại coin.\n✗ Đây là base case ảnh hưởng tính đúng, không chỉ là tối ưu bộ nhớ."
+  },
+  {
+    "id": "dsa-q-090",
+    "courseId": "DSA",
+    "lesson": "dsa-07-recursion-graph-dp",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những đặc điểm/ưu điểm nào sau đây đúng với TABULATION (bottom-up) so với MEMOIZATION (top-down)?",
+    "options": [
+      "Không bị tràn call stack vì dùng vòng lặp",
+      "Thường có hằng số nhỏ hơn và đôi khi tối ưu bộ nhớ xuống O(1)",
+      "Viết sát công thức truy hồi đệ quy nhất, nhanh code nhất",
+      "Bắt buộc phải có cache map kiểu key-value",
+      "Điền dần bảng từ bài con nhỏ nhất lên"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "Tabulation bỏ đệ quy, điền bảng từ dưới lên bằng vòng lặp.\n✓ Dùng vòng lặp nên không tràn call stack.\n✓ Hằng số nhỏ hơn và thường tối ưu được bộ nhớ (ví dụ Fibonacci xuống O(1)).\n✓ Bản chất là điền dần bảng từ bài con nhỏ nhất lên.\n✗ Viết sát công thức truy hồi và code nhanh là ưu điểm của memoization top-down.\n✗ Tabulation dùng bảng/mảng theo chỉ số, không bắt buộc cache map key-value."
+  },
+  {
+    "id": "dsa-q-091",
+    "courseId": "DSA",
+    "lesson": "dsa-07-recursion-graph-dp",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Bạn được giao một bài: 'cho lưới 2D, đếm số vùng đất liền thông (island)'. Những nhận định nào đúng khi chọn cách giải?",
+    "options": [
+      "Có thể mô hình hoá như duyệt graph và dùng DFS/BFS với tập visited",
+      "DFS đệ quy (flood fill) là lựa chọn tự nhiên cho liên thông",
+      "Bắt buộc dùng dynamic programming vì có bài con trùng lặp",
+      "Phải đánh dấu ô đã thăm để tránh đếm lặp / lặp vô hạn",
+      "Backtracking sinh mọi hoán vị các ô là cách phù hợp nhất"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Đếm thành phần liên thông là bài graph kinh điển giải bằng DFS/BFS.\n✓ Lưới 2D là graph trá hình; mỗi ô là node, ô kề là cạnh, duyệt bằng DFS/BFS với visited.\n✓ DFS đệ quy kiểu flood fill rất tự nhiên cho việc đánh dấu một vùng liên thông.\n✓ Phải đánh dấu ô đã thăm để không đếm lặp và không lặp vô hạn.\n✗ Đây không phải bài tối ưu/đếm cách với bài con trùng lặp, nên DP không bắt buộc.\n✗ Sinh hoán vị các ô bằng backtracking là cực kỳ đắt và sai dạng bài."
+  },
+  {
+    "id": "dsa-q-092",
+    "courseId": "DSA",
+    "lesson": "dsa-08-heap-priority-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Heap đảm bảo điều gì về thứ tự các phần tử?",
+    "options": [
+      "Toàn bộ mảng được sắp xếp tăng dần",
+      "Chỉ đảm bảo phần tử cực trị (min hoặc max) luôn nằm ở gốc",
+      "Các node anh em (sibling) được sắp thứ tự với nhau",
+      "Lá luôn lớn hơn mọi node trong",
+      "Mỗi tầng được sắp xếp riêng"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Heap chỉ sắp đủ để biết cực trị, đó là 'sự lười biếng có chủ đích'.\n✓ Heap chỉ đảm bảo phần tử cực trị nằm ở gốc, lấy ra O(1), cập nhật O(log n).\n✗ Heap KHÔNG sắp xếp toàn bộ mảng.\n✗ Anh em ruột (sibling) không có thứ tự gì với nhau.\n✗ Không có ràng buộc lá lớn hơn node trong; ngược lại với min-heap thì cha nhỏ hơn con.\n✗ Heap không sắp xếp từng tầng riêng."
+  },
+  {
+    "id": "dsa-q-093",
+    "courseId": "DSA",
+    "lesson": "dsa-08-heap-priority-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Với một node ở chỉ số i trong mảng biểu diễn heap, công thức tìm cha và con là gì?",
+    "options": [
+      "cha = 2i, con trái = i/2, con phải = i/2+1",
+      "cha = (i-1)//2, con trái = 2i+1, con phải = 2i+2",
+      "cha = i+1, con trái = i-1, con phải = i-2",
+      "cha = i//2, con trái = 2i, con phải = 2i+1",
+      "cha = 2i+1, con trái = (i-1)//2, con phải = (i-2)//2"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Heap lưu phẳng trong mảng nên dùng số học chỉ số thay con trỏ.\n✓ cha = (i-1)//2, con trái = 2i+1, con phải = 2i+2.\n✗ cha = 2i là sai chiều (đó gần như công thức con).\n✗ Các công thức cộng/trừ cố định không phản ánh cấu trúc cây nhị phân.\n✗ Đảo ngược vai trò cha và con là sai."
+  },
+  {
+    "id": "dsa-q-094",
+    "courseId": "DSA",
+    "lesson": "dsa-08-heap-priority-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Độ phức tạp thời gian của thao tác xây heap từ một mảng có sẵn (heapify) là gì?",
+    "options": [
+      "O(n log n)",
+      "O(n)",
+      "O(log n)",
+      "O(n^2)"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Đa số phần tử nằm gần đáy với chiều cao nhỏ nên tổng công việc hội tụ về O(n).\n✓ heapify là O(n), không phải O(n log n).\n✗ O(n log n) là chi phí khi push từng phần tử một, không phải heapify.\n✗ O(log n) là chi phí một lần push/pop, không phải xây cả heap.\n✗ O(n^2) không liên quan."
+  },
+  {
+    "id": "dsa-q-095",
+    "courseId": "DSA",
+    "lesson": "dsa-08-heap-priority-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Để tìm 'k phần tử LỚN nhất' trong mảng lớn với k nhỏ, nên dùng heap loại nào và kích thước bao nhiêu?",
+    "options": [
+      "Max-heap kích thước k",
+      "Min-heap kích thước k",
+      "Max-heap kích thước n",
+      "Min-heap kích thước n"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Muốn k lớn nhất thì giữ min-heap size k để gốc là cái nhỏ nhất trong nhóm k, dễ vứt khi gặp phần tử lớn hơn.\n✓ Min-heap kích thước k: phần tử mới lớn hơn gốc thì đẩy gốc (cái nhỏ nhất) ra.\n✗ Max-heap size k là lỗi kinh điển: gốc thành cái lớn nhất, không loại bỏ đúng.\n✗ Heap size n mất lợi thế bộ nhớ O(k) và không tối ưu O(n log k).\n✗ Min-heap size n cũng phí so với chỉ giữ k."
+  },
+  {
+    "id": "dsa-q-096",
+    "courseId": "DSA",
+    "lesson": "dsa-08-heap-priority-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cho nums=[3,2,1,5,6,4], k=2, bài Kth Largest Element. Dùng min-heap size k duyệt hết mảng, kết quả heap[0] là gì?",
+    "options": [
+      "6",
+      "5",
+      "4",
+      "2"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Heap min size 2 luôn giữ 2 phần tử lớn nhất đã gặp; gốc là cái nhỏ nhất trong 2 cái lớn nhất = phần tử lớn thứ 2.\n✓ Lớn nhất là 6, lớn thứ hai là 5; gốc min-heap = 5.\n✗ 6 là lớn NHẤT, không phải lớn thứ k.\n✗ 4 và 2 không phải phần tử lớn thứ hai."
+  },
+  {
+    "id": "dsa-q-097",
+    "courseId": "DSA",
+    "lesson": "dsa-08-heap-priority-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đề: 'Thiết kế cấu trúc trả về median của một dòng số liên tục, addNum và findMedian gọi xen kẽ vô hạn'. Cách tiếp cận tối ưu là gì?",
+    "options": [
+      "Sort lại toàn bộ mảng mỗi lần findMedian",
+      "Two heaps: max-heap nửa nhỏ + min-heap nửa lớn, giữ cân bằng",
+      "Một min-heap duy nhất chứa tất cả số",
+      "Binary search chèn vào mảng đã sắp mỗi lần addNum"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Dữ liệu chảy vô hạn nên không thể sort lại; two heaps cho addNum O(log n) và median O(1).\n✓ Two heaps: hai gốc chính là hai phần tử sát giữa, median nằm gọn giữa.\n✗ Sort lại mỗi lần là O(n log n) mỗi truy vấn, chậm khủng khiếp.\n✗ Một min-heap chỉ cho min, không cho phần tử giữa.\n✗ Chèn vào mảng đã sắp tốn O(n) mỗi lần dịch phần tử."
+  },
+  {
+    "id": "dsa-q-098",
+    "courseId": "DSA",
+    "lesson": "dsa-08-heap-priority-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong bài Top K Frequent Elements, sau khi đếm tần suất bằng hash map, để giữ k phần tử frequent nhất ta dùng heap nào?",
+    "options": [
+      "Min-heap theo count, pop khi size > k",
+      "Max-heap theo count, pop khi size > k",
+      "Min-heap theo giá trị num",
+      "Max-heap theo num, giữ size n"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Muốn giữ k count CAO nhất thì loại cái thấp nhất, nên dùng min-heap theo count.\n✓ Min-heap theo count, pop khi size > k: gốc là count thấp nhất bị loại.\n✗ Max-heap theo count khiến gốc là count cao nhất, loại nhầm cái cần giữ.\n✗ So sánh theo num thay vì count là sai tiêu chí.\n✗ Giữ size n và sắp theo num đều sai."
+  },
+  {
+    "id": "dsa-q-099",
+    "courseId": "DSA",
+    "lesson": "dsa-08-heap-priority-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Python, một lập trình viên muốn dùng max-heap nhưng heapq chỉ có min-heap. Cách đúng là gì?",
+    "options": [
+      "Gọi heapq.heapify với tham số reverse=True",
+      "Phủ định giá trị (-x) khi push, đảo dấu lại khi đọc",
+      "Dùng heapq.heappushmax thay cho heappush",
+      "Sort heap giảm dần sau mỗi lần push"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "heapq không có max-heap nên mẹo là phủ định giá trị để biến min thành max.\n✓ Phủ định -x khi push và đảo dấu khi đọc cho ra hành vi max-heap.\n✗ heapq.heapify không có tham số reverse.\n✗ Không tồn tại hàm heappushmax.\n✗ Sort sau mỗi push phá vỡ độ phức tạp O(log n) của heap."
+  },
+  {
+    "id": "dsa-q-100",
+    "courseId": "DSA",
+    "lesson": "dsa-08-heap-priority-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Phỏng vấn hỏi Top-K khi 'có sẵn toàn bộ mảng trong RAM, chỉ cần top-k một lần, muốn nhanh nhất trung bình'. Đáp án ăn điểm là gì?",
+    "options": [
+      "Heap size k vì luôn O(n log k)",
+      "Quickselect: O(n) trung bình nhưng xấu nhất O(n^2), không stream được",
+      "Sort toàn bộ vì luôn ổn định nhất",
+      "Two heaps vì cho median O(1)"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Có sẵn cả mảng và cần nhanh nhất trung bình thì quickselect (Hoare's selection) thắng.\n✓ Quickselect cho O(n) kỳ vọng, đệ quy vào một nửa; trade-off là xấu nhất O(n^2) và không stream được.\n✗ Heap O(n log k) chậm hơn O(n) khi đã có cả mảng.\n✗ Sort O(n log n) chậm hơn quickselect cho nhu cầu một lần.\n✗ Two heaps là cho bài median streaming, không phải top-k một lần."
+  },
+  {
+    "id": "dsa-q-101",
+    "courseId": "DSA",
+    "lesson": "dsa-08-heap-priority-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một lời giải quickselect 'đúng logic' nhưng bị TLE trên mảng đã sắp xếp sẵn. Nguyên nhân nhiều khả năng nhất và cách sửa?",
+    "options": [
+      "Thiếu kiểm tra mảng rỗng; thêm guard đầu hàm",
+      "Pivot cố định (luôn lấy phần tử cuối) gây O(n^2); chọn pivot ngẫu nhiên",
+      "Dùng đệ quy thay vì vòng lặp; chuyển sang vòng lặp",
+      "So sánh sai dấu trong partition; đổi < thành >"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Pivot cố định gặp mảng đã sắp sẽ phân hoạch lệch tột độ, tụt xuống O(n^2).\n✓ Chọn pivot ngẫu nhiên (hoặc median-of-three) tránh xấu nhất, đây đúng là cạm bẫy gây TLE.\n✗ Mảng rỗng không phải nguyên nhân của TLE trên mảng đã sắp.\n✗ Đệ quy vs vòng lặp không thay đổi độ phức tạp tiệm cận tới mức gây TLE.\n✗ Đảo dấu so sánh chỉ đổi tiêu chí, không sửa được vấn đề pivot."
+  },
+  {
+    "id": "dsa-q-102",
+    "courseId": "DSA",
+    "lesson": "dsa-08-heap-priority-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bài 'Find Median from Data Stream' với số phần tử chẵn trả median sai vì bị cắt phần lẻ (ví dụ (4+5)/2 ra 4 thay vì 4.5). Lỗi và cách sửa là gì?",
+    "options": [
+      "Cân bằng heap sai; thêm bước tràn rồi cân bằng",
+      "Integer division khi tính median; chia kiểu float /2.0",
+      "Dùng nhầm min-heap cho nửa nhỏ; đổi thành max-heap",
+      "Quên peek gốc; dùng pop thay vì peek"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Khi chẵn phần tử median là trung bình hai gốc, nếu chia nguyên sẽ cắt phần lẻ.\n✓ Lỗi là integer division; sửa bằng chia float /2.0.\n✗ Cân bằng heap sai gây sai hai phần tử giữa, nhưng triệu chứng ở đây là cắt phần lẻ, đúng giá trị nguyên.\n✗ Đây không phải lỗi chọn nhầm chiều heap.\n✗ pop thay peek sẽ phá heap, không phải triệu chứng làm tròn xuống."
+  },
+  {
+    "id": "dsa-q-103",
+    "courseId": "DSA",
+    "lesson": "dsa-08-heap-priority-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "So với sort rồi cắt, heap size k cho bài Top-K có những ưu điểm nào? (chọn tất cả đúng)",
+    "options": [
+      "Phù hợp với dữ liệu streaming vì heap cập nhật được",
+      "Thời gian O(n log k), tốt hơn O(n log n) khi k nhỏ hơn nhiều so với n",
+      "Bộ nhớ thêm chỉ O(k)",
+      "Luôn trả về k phần tử đã được sắp xếp đầy đủ",
+      "Dễ code đúng hơn sort"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Heap size k thắng sort ở streaming, độ phức tạp khi k nhỏ, và bộ nhớ.\n✓ Heap cập nhật được nên hợp streaming, còn sort thì không.\n✓ O(n log k) nhanh hơn O(n log n) khi k nhỏ hơn nhiều so với n.\n✓ Bộ nhớ thêm chỉ O(k).\n✗ Heap chỉ cho k phần tử CHƯA sắp, không phải đã sắp đầy đủ.\n✗ Sort mới là cái rất dễ code đúng; heap khó hơn (độ khó trung bình)."
+  },
+  {
+    "id": "dsa-q-104",
+    "courseId": "DSA",
+    "lesson": "dsa-08-heap-priority-queue",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những dấu hiệu nào trong đề là 'cờ đỏ' gợi ý nên nghĩ tới heap? (chọn tất cả đúng)",
+    "options": [
+      "'k phần tử lớn nhất / nhỏ nhất'",
+      "'luôn lấy ra min/max khi dữ liệu thay đổi liên tục'",
+      "'median của một dòng dữ liệu (data stream)'",
+      "'sắp xếp toàn bộ mảng một lần rồi không đổi nữa'",
+      "'kiểm tra một phần tử có tồn tại trong tập hay không'"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Heap mạnh ở lấy cực trị liên tục và top-k, không phải sắp xếp tĩnh hay tra cứu tồn tại.\n✓ 'k lớn nhất/nhỏ nhất' là cờ đỏ kinh điển của heap (giữ heap size k).\n✓ 'luôn lấy min/max khi dữ liệu đang đổi' là dấu hiệu heap vì sort không kham nổi.\n✓ 'median của data stream' gợi ý two heaps cân bằng.\n✗ Sắp xếp toàn bộ một lần rồi cố định thì cứ dùng sort, không cần heap.\n✗ Kiểm tra tồn tại là việc của hash set, không phải heap."
+  },
+  {
+    "id": "dsa-q-105",
+    "courseId": "DSA",
+    "lesson": "dsa-09-backtracking",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đề bài: \"Liệt kê tất cả hoán vị của một mảng số phân biệt\". Đây là dấu hiệu rõ nhất cho kỹ thuật nào?",
+    "options": [
+      "Backtracking (vét cạn có tổ chức trên cây quyết định)",
+      "Quy hoạch động (DP) với cache theo khoá gọn",
+      "Sliding window",
+      "Binary search trên không gian nghiệm"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đề yêu cầu \"liệt kê TẤT CẢ\" các cấu hình -> phản xạ là backtracking.\n✓ Backtracking dùng đúng khi cần in ra chính các nghiệm, không gian nghiệm có dạng cây quyết định và n nhỏ.\n✗ DP hợp khi chỉ cần đếm số cách hoặc giá trị tối ưu, không cần liệt kê từng nghiệm.\n✗ Sliding window dành cho bài cửa sổ liên tiếp trên mảng/chuỗi, không sinh hoán vị.\n✗ Binary search dùng khi không gian đơn điệu, không liên quan tới liệt kê hoán vị."
+  },
+  {
+    "id": "dsa-q-106",
+    "courseId": "DSA",
+    "lesson": "dsa-09-backtracking",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong khung choose–explore–unchoose, vì sao bước \"unchoose\" (gỡ phần tử khỏi path) là BẮT BUỘC?",
+    "options": [
+      "Để khôi phục trạng thái path như cũ, tránh nhánh sau dính rác của nhánh trước",
+      "Để giảm độ phức tạp từ mũ xuống đa thức",
+      "Để sao chép path vào kết quả",
+      "Để sắp xếp lại các lựa chọn theo thứ tự tăng dần"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "path được dùng chung cho toàn cây nên sau khi đi sâu phải trả lại trạng thái cũ.\n✓ Mỗi choose (push) phải có một unchoose (pop) đối xứng để nhánh kế không bị dính rác.\n✗ unchoose không thay đổi bản chất mũ/giai thừa của thuật toán; chính pruning mới giảm chi phí.\n✗ Việc ghi nhận lời giải là một bước riêng (copy path), không phải vai trò của unchoose.\n✗ unchoose không sắp xếp gì cả, chỉ gỡ lựa chọn vừa thêm."
+  },
+  {
+    "id": "dsa-q-107",
+    "courseId": "DSA",
+    "lesson": "dsa-09-backtracking",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, yếu tố nào quyết định gần như hoàn toàn hiệu năng thực tế của một thuật toán backtracking?",
+    "options": [
+      "Pruning (cắt nhánh) đặt đúng chỗ",
+      "Vi tối ưu code như inline hàm hay đổi vòng lặp",
+      "Chọn ngôn ngữ lập trình biên dịch thay vì thông dịch",
+      "Dùng đệ quy đuôi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nhấn mạnh hiệu năng backtracking quyết định gần như hoàn toàn bởi pruning.\n✓ Một dòng cắt nhánh đúng chỗ (ví dụ if sum > target return) có thể cắt 99% cây.\n✗ Vi tối ưu code không thay đổi kích thước cây cần duyệt nên ảnh hưởng nhỏ.\n✗ Ngôn ngữ chỉ đổi hằng số, không cắt được nhánh vô vọng.\n✗ Đệ quy đuôi không phải trọng tâm và không cắt cây."
+  },
+  {
+    "id": "dsa-q-108",
+    "courseId": "DSA",
+    "lesson": "dsa-09-backtracking",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi nào nên chọn DP thay vì backtracking?",
+    "options": [
+      "Khi đề chỉ hỏi \"có bao nhiêu cách\" hoặc \"giá trị lớn nhất/nhỏ nhất\", không cần in ra từng nghiệm",
+      "Khi đề yêu cầu in ra tất cả các tổ hợp hợp lệ",
+      "Khi n rất nhỏ (n ≤ 20) và cần liệt kê mọi cấu hình",
+      "Khi không gian nghiệm có dạng cây quyết định và mỗi nghiệm là duy nhất"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "DP hợp khi chỉ cần con số tổng hợp và có bài con trùng lặp để cache.\n✓ Đếm số cách hoặc tìm max/min mà không cần liệt kê nghiệm thường là DP; backtracking dễ TLE.\n✗ Cần in ra tất cả tổ hợp là dấu hiệu backtracking, không phải DP.\n✗ n nhỏ và cần liệt kê mọi cấu hình chính là vùng của backtracking.\n✗ Cây quyết định với nghiệm duy nhất, ít cache được, là đặc trưng backtracking."
+  },
+  {
+    "id": "dsa-q-109",
+    "courseId": "DSA",
+    "lesson": "dsa-09-backtracking",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong bài Permutations, một lập trình viên viết res.append(path) thay vì res.append(path[:]). Kết quả sẽ là gì?",
+    "options": [
+      "Mọi phần tử trong res trỏ về cùng một list, cuối cùng thường rỗng hoặc giống nhau",
+      "Chương trình báo lỗi biên dịch ngay lập tức",
+      "Kết quả đúng nhưng chậm hơn do tốn bộ nhớ",
+      "Chỉ thiếu đúng một hoán vị cuối cùng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "path được sửa liên tục; lưu tham chiếu khiến mọi phần tử trong res cùng trỏ một list.\n✓ Khi backtracking pop hết, list dùng chung rỗng đi nên res toàn các list giống nhau/rỗng.\n✗ Đây là lỗi logic lúc chạy, không phải lỗi biên dịch.\n✗ Không phải \"đúng nhưng chậm\"; kết quả sai hoàn toàn.\n✗ Lỗi ảnh hưởng toàn bộ kết quả, không chỉ một hoán vị."
+  },
+  {
+    "id": "dsa-q-110",
+    "courseId": "DSA",
+    "lesson": "dsa-09-backtracking",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Combination Sum (LeetCode 39, mỗi số được dùng lại nhiều lần), khi đệ quy phải truyền chỉ số nào để cho phép chọn lại chính phần tử đó?",
+    "options": [
+      "Truyền lại i",
+      "Truyền i + 1",
+      "Truyền 0 mỗi lần",
+      "Truyền start + 1"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Vì được dùng lại số, đệ quy phải cho phép chọn lại chính nó.\n✓ Truyền lại i giữ phần tử hiện tại trong tập lựa chọn của lần đệ quy sau.\n✗ Truyền i + 1 khiến mỗi số chỉ dùng một lần (đó là bài Combination Sum II).\n✗ Truyền 0 mỗi lần làm mất vai trò start, sinh tổ hợp trùng như [2,2,3] và [2,3,2].\n✗ start + 1 cũng nhảy qua phần tử hiện tại, không cho dùng lại."
+  },
+  {
+    "id": "dsa-q-111",
+    "courseId": "DSA",
+    "lesson": "dsa-09-backtracking",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Word Search, đoạn kiểm tra biên được viết như sau và GÂY LỖI: dòng đầu là c = board[r][c]; rồi mới đến if (r<0 || r>=m || ...) return false. Vấn đề là gì?",
+    "options": [
+      "Truy cập board[r][c] TRƯỚC khi kiểm tra biên -> lỗi out-of-bounds",
+      "Thiếu bước copy path khi ghi nhận lời giải",
+      "Dùng i thay vì i+1 nên ô bị dùng lại",
+      "Quên sort lưới trước khi DFS"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Phải kiểm tra biên TRƯỚC khi truy cập ô.\n✓ Nếu truy cập board[r][c] trước khi kiểm tra r,c hợp lệ sẽ truy cập ngoài mảng.\n✗ Word Search trả true/false, không tích luỹ path nên không liên quan copy.\n✗ i vs i+1 là bẫy của Combination Sum, không phải bài lưới này.\n✗ Word Search không sort lưới."
+  },
+  {
+    "id": "dsa-q-112",
+    "courseId": "DSA",
+    "lesson": "dsa-09-backtracking",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Độ phức tạp thời gian điển hình của thuật toán sinh tất cả hoán vị (Permutations) là?",
+    "options": [
+      "O(n · n!)",
+      "O(2^n)",
+      "O(n^2)",
+      "O(n log n)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cây có n! lá; tạo mỗi lá đi qua n mức và copy O(n) khi ghi nhận.\n✓ Tổng lại là O(n · n!).\n✗ O(2^n) là độ phức tạp của subsets (lấy/bỏ mỗi phần tử), không phải hoán vị.\n✗ O(n^2) là đa thức, quá nhỏ cho bài giai thừa.\n✗ O(n log n) là chi phí sắp xếp, không phản ánh số hoán vị."
+  },
+  {
+    "id": "dsa-q-113",
+    "courseId": "DSA",
+    "lesson": "dsa-09-backtracking",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Đề: cho mảng CÓ phần tử trùng, yêu cầu liệt kê các tập con KHÔNG trùng nhau (Subsets II). Cách xử lý đúng để khử trùng là?",
+    "options": [
+      "Sort trước, rồi trong vòng for bỏ qua phần tử trùng cùng cấp: if i > start and a[i]==a[i-1]: continue",
+      "Dùng used[] thay cho start để cho phép quay lại phần tử trước",
+      "Bỏ hẳn bước unchoose để tránh sinh lặp",
+      "Truyền lại i (thay vì i+1) để dùng lại phần tử"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khử trùng khi input có phần tử lặp cần sort + bỏ qua trùng cùng cấp.\n✓ Sort trước rồi if i > start and a[i]==a[i-1]: continue loại các nhánh sinh tập con lặp.\n✗ Đổi sang used[] biến bài thành kiểu hoán vị, không giải quyết trùng của tập con.\n✗ Bỏ unchoose phá hỏng khôi phục trạng thái, cho kết quả sai.\n✗ Truyền lại i cho phép dùng lại phần tử (combination sum), không phải mục tiêu ở đây."
+  },
+  {
+    "id": "dsa-q-114",
+    "courseId": "DSA",
+    "lesson": "dsa-09-backtracking",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Với bài 212 (Word Search II) cần tìm NHIỀU từ trong cùng một lưới, cách tiếp cận tối ưu là gì thay vì chạy thuật toán bài 79 cho từng từ?",
+    "options": [
+      "Gộp tất cả các từ vào một Trie rồi DFS lưới một lần theo Trie",
+      "Sort danh sách từ rồi binary search trên lưới",
+      "Dùng sliding window trên từng hàng của lưới",
+      "Chuyển sang DP với bảng 2D theo độ dài từ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài chỉ rõ với 212 nên dùng Trie để gộp nhiều từ.\n✓ Trie cho phép DFS lưới một lần, chia sẻ tiền tố chung giữa các từ thay vì lặp lại bài 79 cho mỗi từ.\n✗ Binary search không áp dụng cho tìm đường trên lưới 2D.\n✗ Sliding window không phù hợp bài đi 4 hướng trên lưới.\n✗ Bài cần liệt kê đường tồn tại, không phải đếm/tối ưu nên DP không phải hướng chuẩn."
+  },
+  {
+    "id": "dsa-q-115",
+    "courseId": "DSA",
+    "lesson": "dsa-09-backtracking",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo bài học, các dấu hiệu nào trong đề bài gợi ý NÊN nghĩ tới backtracking? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Đề yêu cầu \"liệt kê tất cả\" tổ hợp/hoán vị/cách",
+      "Không gian nghiệm có dạng cây quyết định và n nhỏ (thường n ≤ 20)",
+      "Đề chỉ hỏi \"có bao nhiêu cách\" mà không cần in nghiệm",
+      "Đề yêu cầu sinh ra toàn bộ cấu hình hợp lệ",
+      "Đề hỏi giá trị lớn nhất/nhỏ nhất và có bài con trùng lặp"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Dấu hiệu backtracking: cần chính các nghiệm, cây quyết định, n nhỏ.\n✓ \"Liệt kê tất cả\" tổ hợp/hoán vị/cách là dấu hiệu kinh điển.\n✓ Không gian nghiệm dạng cây quyết định với n nhỏ phù hợp vét cạn có tổ chức.\n✓ \"Sinh ra toàn bộ cấu hình hợp lệ\" cũng là dấu hiệu backtracking.\n✗ Chỉ hỏi \"bao nhiêu cách\" không cần liệt kê nghiêng về DP.\n✗ Hỏi max/min kèm bài con trùng lặp là đặc trưng DP, dễ TLE nếu backtracking."
+  },
+  {
+    "id": "dsa-q-116",
+    "courseId": "DSA",
+    "lesson": "dsa-09-backtracking",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Khi nào dùng start và khi nào dùng used[] trong khung backtracking? (chọn tất cả phát biểu đúng)",
+    "options": [
+      "Dùng start cho tổ hợp/tập con khi thứ tự không quan trọng (chỉ tiến tới)",
+      "Dùng used[] cho hoán vị khi thứ tự quan trọng (được quay lại phần tử trước)",
+      "Nhầm start với used[] có thể làm thiếu nghiệm hoặc sinh nghiệm trùng",
+      "start luôn nhanh hơn used[] nên nên dùng start cho mọi bài",
+      "used[] chỉ dùng cho bài trên lưới 2D"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "start cho tổ hợp (chỉ tiến), used[] cho hoán vị (quay lại được).\n✓ Tổ hợp/tập con không quan tâm thứ tự nên dùng start để chỉ tiến tới.\n✓ Hoán vị quan tâm thứ tự, được quay lại phần tử trước miễn chưa dùng -> used[].\n✓ Lẫn lộn hai cái dẫn tới thiếu nghiệm hoặc sinh nghiệm trùng.\n✗ Không phải start luôn nhanh hơn; chọn theo bản chất bài, không theo tốc độ.\n✗ used[] dùng cho hoán vị nói chung, không riêng bài lưới 2D."
+  },
+  {
+    "id": "dsa-q-117",
+    "courseId": "DSA",
+    "lesson": "dsa-09-backtracking",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong Combination Sum đã sort candidates tăng dần, đặt dòng \"if candidates[i] > remain: break\" có tác dụng gì?",
+    "options": [
+      "Cắt nhánh sớm: các số sau còn lớn hơn nên chắc chắn vượt remain, khỏi xét",
+      "Đảm bảo kết quả không bị trùng lặp",
+      "Cho phép mỗi số được dùng lại nhiều lần",
+      "Khôi phục trạng thái path khi quay lui"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Sau khi sort, gặp số đầu tiên vượt remain thì mọi số sau cũng vượt.\n✓ break cắt cả nhánh còn lại ngay lập tức, một dạng bound pruning hiệu quả.\n✗ Khử trùng lặp là do dùng start, không phải dòng break này.\n✗ Việc dùng lại số là do truyền lại i khi đệ quy, không phải break.\n✗ Khôi phục trạng thái là vai trò của unchoose (path.pop), không phải break."
+  },
+  {
+    "id": "dsa-q-118",
+    "courseId": "DSA",
+    "lesson": "dsa-10-graph-advanced",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đề bài: \"tìm số bước biến đổi ít nhất từ chuỗi A sang chuỗi B, mỗi bước đổi 1 ký tự\". Mọi bước có chi phí như nhau. Kỹ thuật phù hợp nhất là gì?",
+    "options": [
+      "BFS trên không gian trạng thái (đếm số lớp)",
+      "Dijkstra với min-heap",
+      "Union-Find (DSU)",
+      "Topological sort (Kahn)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đường đi ngắn nhất khi mọi bước/cạnh có chi phí bằng nhau là bài toán của BFS.\n✓ Đếm số lớp BFS cho số bước ít nhất khi mọi bước như nhau, đúng dạng Word Ladder.\n✗ Dùng min-heap (Dijkstra) là thừa khi mọi cạnh bằng nhau — BFS đủ và nhanh hơn.\n✗ DSU dùng cho gộp nhóm/chu trình vô hướng, không tính số bước ngắn nhất.\n✗ Topological sort dùng cho thứ tự phụ thuộc, không phải tìm đường ngắn nhất."
+  },
+  {
+    "id": "dsa-q-119",
+    "courseId": "DSA",
+    "lesson": "dsa-10-graph-advanced",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Với đồ thị THƯA (E nhỏ so với V²) và đa số bài phỏng vấn, cách biểu diễn nên dùng mặc định là gì?",
+    "options": [
+      "Adjacency list (danh sách kề)",
+      "Adjacency matrix (ma trận kề)",
+      "Danh sách cạnh không sắp xếp duyệt tuyến tính mỗi lần",
+      "Cây nhị phân tìm kiếm các đỉnh"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Adjacency list tốn O(V+E) bộ nhớ, hợp đồ thị thưa nên là mặc định.\n✓ Danh sách kề tiết kiệm bộ nhớ và duyệt hàng xóm theo bậc, lý tưởng cho đồ thị thưa.\n✗ Ma trận kề tốn O(V²), chỉ hợp đồ thị dày, V nhỏ, cần tra (u,v) liên tục.\n✗ Duyệt danh sách cạnh tuyến tính mỗi lần là chậm, không phải template chuẩn.\n✗ BST các đỉnh không phải cách biểu diễn đồ thị được nhắc trong bài."
+  },
+  {
+    "id": "dsa-q-120",
+    "courseId": "DSA",
+    "lesson": "dsa-10-graph-advanced",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong BFS, thời điểm đúng để đánh dấu một node là visited là khi nào?",
+    "options": [
+      "Ngay khi đưa node vào queue",
+      "Khi lấy node ra khỏi queue",
+      "Sau khi đã duyệt hết toàn bộ đồ thị",
+      "Chỉ đánh dấu node nguồn, các node khác không cần"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đánh dấu visited ngay khi đưa vào queue để tránh node bị nhồi vào nhiều lần.\n✓ Đánh dấu lúc enqueue ngăn trùng lặp, giữ BFS O(V+E) và khoảng cách đúng.\n✗ Đánh dấu lúc lấy ra khiến một node bị thêm vào queue nhiều lần, chậm và sai khoảng cách.\n✗ Đánh dấu sau khi duyệt xong là vô nghĩa, không ngăn được lặp.\n✗ Mọi node đều cần đánh dấu, không chỉ riêng nguồn."
+  },
+  {
+    "id": "dsa-q-121",
+    "courseId": "DSA",
+    "lesson": "dsa-10-graph-advanced",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Chạy Kahn topo sort trên đồ thị n đỉnh. Kết thúc, mảng order chỉ có 4 phần tử trong khi n = 6. Kết luận đúng là gì?",
+    "options": [
+      "Đồ thị có chu trình nên không topo được",
+      "Đồ thị là DAG hợp lệ, chỉ là thứ tự ngắn",
+      "Thuật toán bị lỗi cài đặt chắc chắn",
+      "Đồ thị không liên thông nhưng vẫn topo được đầy đủ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Kahn xếp được ít hơn V đỉnh tương đương đồ thị có chu trình.\n✓ Khi len(order) < n, các đỉnh trong vòng lặp không bao giờ tụt in-degree về 0 → có chu trình.\n✗ Nếu là DAG hợp lệ thì order phải đủ đúng n đỉnh.\n✗ Kết quả thiếu đỉnh là hành vi đúng của Kahn khi gặp chu trình, không phải lỗi cài đặt.\n✗ Đồ thị không liên thông vẫn topo đủ V đỉnh; thiếu đỉnh là dấu hiệu chu trình."
+  },
+  {
+    "id": "dsa-q-122",
+    "courseId": "DSA",
+    "lesson": "dsa-10-graph-advanced",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Course Schedule II: prerequisites chứa [a, b] nghĩa \"muốn học a phải học b trước\". Khi dựng đồ thị cho Kahn, cạnh và in-degree đúng là gì?",
+    "options": [
+      "Cạnh b → a, tăng in-degree của a",
+      "Cạnh a → b, tăng in-degree của b",
+      "Cạnh b → a, tăng in-degree của b",
+      "Cạnh a → b, tăng in-degree của a"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "\"a cần b trước\" nghĩa b làm trước nên cạnh đi từ b sang a.\n✓ Cạnh b → a và in-degree của a tăng, đúng vì a phụ thuộc b.\n✗ Cạnh a → b vẽ ngược chiều phụ thuộc, là bẫy kinh điển.\n✗ Cạnh b → a đúng nhưng tăng in-degree của b là sai; phải tăng của đỉnh được trỏ tới là a.\n✗ Cả chiều cạnh lẫn đỉnh tăng in-degree đều sai."
+  },
+  {
+    "id": "dsa-q-123",
+    "courseId": "DSA",
+    "lesson": "dsa-10-graph-advanced",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đề: \"đồ thị VÔ HƯỚNG, thêm dần các cạnh, hỏi cạnh nào đầu tiên tạo ra chu trình\". Cấu trúc/cách tối ưu là gì?",
+    "options": [
+      "Union-Find: union(u,v) trả false ⟺ cạnh tạo chu trình",
+      "Dijkstra từ mỗi đỉnh để dò vòng",
+      "Topo sort Kahn đếm in-degree",
+      "DFS 3 màu white/gray/black"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chu trình trên đồ thị vô hướng + gộp dần là dạng kinh điển của DSU.\n✓ Nếu u,v đã cùng nhóm thì nối thêm tạo chu trình, union trả false đúng lúc đó.\n✗ Dijkstra giải đường ngắn nhất trọng số dương, không dò chu trình hiệu quả.\n✗ Topo sort/Kahn dùng cho đồ thị CÓ hướng, không phải vô hướng.\n✗ DFS 3 màu là cách phát hiện chu trình CÓ hướng, không phải lựa chọn tối ưu cho vô hướng gộp dần."
+  },
+  {
+    "id": "dsa-q-124",
+    "courseId": "DSA",
+    "lesson": "dsa-10-graph-advanced",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một đồ thị có cạnh trọng số ÂM và bạn cần đường đi ngắn nhất từ một nguồn. Áp dụng Dijkstra trực tiếp thì sao?",
+    "options": [
+      "Có thể cho kết quả SAI; nên dùng Bellman-Ford",
+      "Vẫn luôn đúng vì heap xử lý được mọi trọng số",
+      "Đúng nếu thêm path compression",
+      "Đúng miễn là đồ thị không có chu trình"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Dijkstra giả định \"đã lấy ra khỏi heap là tối ưu\", cạnh âm phá vỡ giả định này.\n✓ Cạnh âm khiến Dijkstra chốt sai khoảng cách; Bellman-Ford (O(V·E)) mới xử lý được trọng số âm.\n✗ Heap không cứu được — vấn đề là giả định tham lam, không phải cấu trúc dữ liệu.\n✗ Path compression thuộc về DSU, không liên quan Dijkstra.\n✗ Vắng chu trình cũng không cứu Dijkstra khi có cạnh âm."
+  },
+  {
+    "id": "dsa-q-125",
+    "courseId": "DSA",
+    "lesson": "dsa-10-graph-advanced",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong lazy Dijkstra, sau khi pop (d, u) khỏi heap, dòng kiểm tra `if d > dist[u]: continue` có vai trò gì?",
+    "options": [
+      "Bỏ qua bản cũ (stale) đã được cập nhật tốt hơn trước đó",
+      "Phát hiện chu trình trong đồ thị",
+      "Đảm bảo heap luôn rỗng sau mỗi vòng",
+      "Ngăn cạnh trọng số âm gây lỗi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lazy Dijkstra để phần tử cũ nằm lại heap; kiểm tra này loại chúng.\n✓ Nếu d lớn hơn dist[u] hiện tại thì đây là bản cũ đã bị thay bằng đường tốt hơn, bỏ qua.\n✗ Việc bỏ bản cũ không phải để phát hiện chu trình.\n✗ Nó không làm heap rỗng — heap vẫn còn phần tử khác.\n✗ Nó không xử lý được cạnh âm; cạnh âm cần Bellman-Ford."
+  },
+  {
+    "id": "dsa-q-126",
+    "courseId": "DSA",
+    "lesson": "dsa-10-graph-advanced",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Network Delay Time hỏi \"thời gian để TẤT CẢ n đỉnh nhận tín hiệu từ k\". Sau khi chạy Dijkstra ra mảng dist, đáp án được tính thế nào?",
+    "options": [
+      "max(dist); nếu còn đỉnh = ∞ thì trả -1",
+      "sum(dist); nếu có đỉnh = ∞ thì trả 0",
+      "min(dist) trên các đỉnh khác k",
+      "Số đỉnh có dist hữu hạn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "\"Tất cả nhận được\" là thời điểm muộn nhất, tức đỉnh xa nhất.\n✓ Lấy max(dist) vì cần đợi đỉnh xa nhất; nếu còn đỉnh không reachable (∞) thì trả -1.\n✗ Tổng các khoảng cách không phản ánh thời điểm tất cả nhận được.\n✗ min(dist) là đỉnh gần nhất, ngược với yêu cầu.\n✗ Đếm số đỉnh hữu hạn không phải thời gian cần tìm."
+  },
+  {
+    "id": "dsa-q-127",
+    "courseId": "DSA",
+    "lesson": "dsa-10-graph-advanced",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "DSU được cài đầy đủ (path compression + union by rank) thì độ phức tạp khấu hao mỗi thao tác find/union gần như là bao nhiêu?",
+    "options": [
+      "O(α(n)), ≤ 4 với mọi n thực tế",
+      "O(log n)",
+      "O(n)",
+      "O(V + E)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Hai tối ưu làm find/union gần như hằng số, chính xác là O(α(n)).\n✓ Với cả path compression lẫn union by rank, mỗi thao tác đạt O(α(n)) — α là Ackermann ngược, ≤ 4 thực tế.\n✗ O(log n) là khi chỉ có một trong hai tối ưu hoặc cây cân bằng thường.\n✗ O(n) là khi thiếu cả hai tối ưu, cây suy biến thành danh sách.\n✗ O(V+E) là chi phí duyệt toàn đồ thị, không phải một thao tác DSU."
+  },
+  {
+    "id": "dsa-q-128",
+    "courseId": "DSA",
+    "lesson": "dsa-10-graph-advanced",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn cần phát hiện chu trình trên đồ thị CÓ HƯỚNG bằng DFS. Cách đúng và tình huống báo \"có chu trình\" là gì?",
+    "options": [
+      "Dùng 3 màu white/gray/black; gặp cạnh tới đỉnh GRAY (back edge) ⟹ có chu trình",
+      "Dùng tập visited 1 trạng thái; gặp lại đỉnh đã visited ⟹ có chu trình",
+      "Dùng DSU union; trả false ⟹ có chu trình",
+      "Đếm số cạnh; nếu E ≥ V ⟹ có chu trình"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chu trình có hướng cần phân biệt đỉnh đang trong stack đệ quy với đỉnh đã xong.\n✓ Gặp lại đỉnh GRAY (đang trên đường hiện tại) là back edge ⟹ có chu trình.\n✗ Tập visited 1 trạng thái báo nhầm: gặp lại đỉnh đã xong (black) không phải chu trình trong đồ thị có hướng.\n✗ DSU chỉ đúng với đồ thị VÔ hướng, không dùng cho chu trình có hướng.\n✗ So E với V không xác định được chu trình có hướng."
+  },
+  {
+    "id": "dsa-q-129",
+    "courseId": "DSA",
+    "lesson": "dsa-10-graph-advanced",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Khi đếm số thành phần liên thông hoặc topo sort cho TOÀN BỘ đồ thị, những điều nào sau đây là cạm bẫy/đúng cần lưu ý? (Chọn tất cả phương án đúng)",
+    "options": [
+      "Phải lặp qua MỌI đỉnh làm điểm xuất phát, không chỉ từ một node",
+      "Trong JS, Array.shift() là O(n) nên BFS lớn có thể chậm; nên dùng con trỏ head",
+      "Một lần BFS/DFS từ một node luôn phủ hết mọi đỉnh kể cả đồ thị không liên thông",
+      "DSU đếm components nên khởi tạo count = n rồi giảm mỗi lần union thành công",
+      "Dijkstra là cách chuẩn để đếm số thành phần liên thông"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Đồ thị nhiều thành phần và chi phí thao tác queue là các điểm dễ sai.\n✓ Phải lặp qua mọi đỉnh làm điểm xuất phát để phủ hết các thành phần rời rạc.\n✓ Array.shift() O(n) làm BFS chậm với input lớn; dùng con trỏ head giữ O(V+E).\n✓ DSU khởi tạo count = n và giảm mỗi union thành công cho ra số nhóm.\n✗ Một lần BFS/DFS chỉ phủ thành phần chứa node đó, không phủ đồ thị không liên thông.\n✗ Dijkstra giải đường ngắn nhất, không phải công cụ đếm thành phần liên thông."
+  },
+  {
+    "id": "dsa-q-130",
+    "courseId": "DSA",
+    "lesson": "dsa-10-graph-advanced",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những phát biểu nào về việc CHỌN thuật toán graph theo đặc điểm đề là ĐÚNG? (Chọn tất cả phương án đúng)",
+    "options": [
+      "Ngắn nhất + KHÔNG trọng số ⟹ BFS",
+      "Ngắn nhất + trọng số dương ⟹ Dijkstra + min-heap",
+      "\"Có thể hoàn thành tất cả khoá học không?\" ⟹ phát hiện chu trình có hướng bằng topo sort",
+      "Mọi cạnh trọng số bằng nhau ⟹ bắt buộc phải dùng Dijkstra",
+      "\"Thêm cạnh nào tạo chu trình\" (vô hướng) ⟹ Topo sort Kahn"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Nhận diện dạng bài là kỹ năng cốt lõi trong bài học.\n✓ Ngắn nhất không trọng số là BFS theo lớp.\n✓ Ngắn nhất trọng số dương là Dijkstra với min-heap.\n✓ \"Hoàn thành tất cả khoá học?\" thực chất là kiểm tra DAG có chu trình qua topo sort.\n✗ Mọi cạnh bằng nhau thì BFS đủ và nhanh hơn, không bắt buộc Dijkstra.\n✗ Chu trình vô hướng/gộp nhóm dùng DSU, không phải topo sort."
+  },
+  {
+    "id": "dsa-q-131",
+    "courseId": "DSA",
+    "lesson": "dsa-11-dynamic-programming-1",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một bài toán cần thoả CẢ HAI tính chất nào thì mới đáng dùng DP?",
+    "options": [
+      "Optimal substructure và overlapping subproblems",
+      "Chia để trị và sắp xếp ổn định",
+      "Tham lam tại chỗ và bài con rời rạc",
+      "Đệ quy đuôi và không gian state nhỏ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "DP chỉ có ích khi bài toán vừa có cấu trúc con tối ưu vừa có bài con trùng lặp.\n✓ Cấu trúc con tối ưu (lời giải lớn ghép từ lời giải con tối ưu) và bài con trùng lặp (cùng bài con bị tính lại) là hai điều kiện cùng lúc.\n✗ Chia để trị/sắp xếp ổn định là đặc trưng D&C, không phải điều kiện DP.\n✗ Tham lam tại chỗ và bài con rời rạc lại đúng là dấu hiệu KHÔNG dùng DP (greedy/D&C).\n✗ Đệ quy đuôi và state nhỏ không phải hai tính chất bản chất của DP."
+  },
+  {
+    "id": "dsa-q-132",
+    "courseId": "DSA",
+    "lesson": "dsa-11-dynamic-programming-1",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đề bài: 'Có bao nhiêu cách leo n bậc thang khi mỗi bước đi 1 hoặc 2 bậc?'. Đây thuộc 'mùi' DP nào và transition điển hình ra sao?",
+    "options": [
+      "Đếm số cách → dp[i] = dp[i-1] + dp[i-2]",
+      "Tối ưu min → dp[i] = 1 + min(dp[i-c])",
+      "Boolean có thể hay không → dp[i] = dp[j] OR ...",
+      "Liệt kê mọi cấu hình → backtracking"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Từ khoá 'bao nhiêu cách' báo hiệu dạng đếm số cách, transition là cộng các nhánh.\n✓ Đếm số cách dùng phép cộng các nhánh, ở Climbing Stairs là dp[i]=dp[i-1]+dp[i-2].\n✗ Tối ưu min dùng cho 'ít nhất/nhiều nhất', không phải 'bao nhiêu cách'.\n✗ Boolean OR dùng cho 'có thể hay không'.\n✗ Backtracking dùng khi cần liệt kê mọi cấu hình, còn đây chỉ hỏi một con số."
+  },
+  {
+    "id": "dsa-q-133",
+    "courseId": "DSA",
+    "lesson": "dsa-11-dynamic-programming-1",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong quy trình 4 bước, bước nào mà nếu làm sai sẽ kéo cả bài sai theo?",
+    "options": [
+      "Bước định nghĩa state",
+      "Bước chọn ngôn ngữ lập trình",
+      "Bước viết test",
+      "Bước in kết quả ra màn hình"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nhấn mạnh định nghĩa state sai thì cả bài sai.\n✓ State phải đủ thông tin để tính đáp án cuối và suy từ state nhỏ hơn; sai ở đây kéo theo transition sai.\n✗ Ngôn ngữ lập trình không quyết định tính đúng của thuật toán DP.\n✗ Viết test và in kết quả không phải bước trong khung 4 bước của DP."
+  },
+  {
+    "id": "dsa-q-134",
+    "courseId": "DSA",
+    "lesson": "dsa-11-dynamic-programming-1",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với coins=[1,3,4], amount=6, vì sao chiến lược tham lam 'chọn coin lớn nhất trước' cho kết quả sai?",
+    "options": [
+      "Greedy ra 4+1+1=3 xu, còn tối ưu DP là 3+3=2 xu",
+      "Greedy ra 2 xu, còn DP ra 3 xu nên DP tệ hơn",
+      "Cả hai cùng ra 2 xu nên không khác biệt",
+      "Greedy luôn đúng với mọi hệ tiền tệ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Greedy chọn 4 trước rồi phải bù 1+1 thành 3 xu, trong khi DP tìm ra 3+3=2 xu.\n✓ Greedy cho 4+1+1=3 xu còn tối ưu là hai đồng 3 → 2 xu, nên greedy thua.\n✗ Không phải greedy ra 2 và DP ra 3; ngược lại DP mới tối ưu.\n✗ Hai cách không cho cùng kết quả ở ví dụ này.\n✗ Greedy chỉ đúng với vài hệ tiền 'canonical', không phải mọi hệ."
+  },
+  {
+    "id": "dsa-q-135",
+    "courseId": "DSA",
+    "lesson": "dsa-11-dynamic-programming-1",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong 0/1 knapsack cuộn 1D, vì sao phải duyệt sức chứa w theo thứ tự GIẢM dần?",
+    "options": [
+      "Để mỗi món chỉ được dùng đúng một lần",
+      "Để tiết kiệm bộ nhớ xuống O(1)",
+      "Để tránh tràn số nguyên khi cộng giá trị",
+      "Để dp[0] không bị ghi đè"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Duyệt giảm dần đảm bảo dp[w-wt] còn là trạng thái CHƯA xét món hiện tại, nên món chỉ dùng một lần.\n✓ Giảm dần giữ mỗi món lấy tối đa một lần; duyệt tăng dần biến thành unbounded (dùng vô hạn).\n✗ Chiều duyệt không liên quan tới mức bộ nhớ (vẫn O(W) dù tăng hay giảm).\n✗ Không nhằm tránh tràn số; đó là vấn đề chọn INF.\n✗ Không phải để bảo vệ dp[0]."
+  },
+  {
+    "id": "dsa-q-136",
+    "courseId": "DSA",
+    "lesson": "dsa-11-dynamic-programming-1",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Climbing Stairs, vì sao base case phải là ways(0)=1 chứ không phải 0?",
+    "options": [
+      "'Không bước nào' cũng là một cách hợp lệ để đứng yên ở đỉnh",
+      "Vì n luôn lớn hơn 0 nên giá trị này không quan trọng",
+      "Vì cần tránh chia cho 0 trong công thức",
+      "Vì mảng dp bắt buộc khởi tạo toàn số 1"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "ways(0)=1 vì việc 'không làm gì' để ở đỉnh được tính là một cách.\n✓ Đặt 1 vì 'không bước nào' là một cách hợp lệ; đặt 0 sẽ lệch toàn bộ kết quả.\n✗ n=0 vẫn được dùng làm nền cho ways(2)=ways(1)+ways(0), nên rất quan trọng.\n✗ Không có phép chia nào trong transition Fibonacci này.\n✗ Mảng dp không bắt buộc toàn số 1; chỉ riêng base mới là 1."
+  },
+  {
+    "id": "dsa-q-137",
+    "courseId": "DSA",
+    "lesson": "dsa-11-dynamic-programming-1",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đề: 'Tìm subarray (đoạn liên tục) có tổng lớn nhất'. Kỹ thuật và độ phức tạp phù hợp nhất là gì?",
+    "options": [
+      "Kadane với state cuộn O(1), O(n) thời gian",
+      "LIS dạng dp[i] dựa trên mọi j<i, O(n²)",
+      "0/1 knapsack duyệt giảm dần, O(n×W)",
+      "Backtracking liệt kê mọi đoạn, O(2^n)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "'Subarray' (liên tục) là dấu hiệu Kadane với state cuộn O(1).\n✓ Kadane: cur=max(a[i],cur+a[i]), best=max(best,cur) — O(n) thời gian, O(1) bộ nhớ.\n✗ LIS O(n²) dùng cho subsequence (không liên tục), không phải subarray.\n✗ Knapsack không phù hợp bài tổng đoạn liên tục.\n✗ Backtracking mũ là thừa cho bài có lời giải O(n)."
+  },
+  {
+    "id": "dsa-q-138",
+    "courseId": "DSA",
+    "lesson": "dsa-11-dynamic-programming-1",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "House Robber với nums=[2,7,9,3,1] có đáp án tối ưu là bao nhiêu?",
+    "options": [
+      "12 (chọn 2+9+1)",
+      "16 (chọn 7+9)",
+      "19 (chọn tất cả số lẻ vị trí)",
+      "9 (chỉ chọn nhà nhiều tiền nhất)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Áp dụng dp[i]=max(dp[i-1], nums[i]+dp[i-2]) cho [2,7,9,3,1] ra 12 = 2+9+1.\n✓ 2+9+1=12 là tổ hợp không kề nhau lớn nhất.\n✗ 7+9 vi phạm ràng buộc vì hai nhà này kề nhau (chỉ số 1 và 2).\n✗ 19 không phải tổng hợp lệ của các nhà không kề.\n✗ Chỉ lấy nhà 9 là tham lam, bỏ lỡ tổng lớn hơn."
+  },
+  {
+    "id": "dsa-q-139",
+    "courseId": "DSA",
+    "lesson": "dsa-11-dynamic-programming-1",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong tabulation Coin Change, vì sao chọn 'INF' = amount+1 thay vì một số rất lớn như Integer.MAX_VALUE?",
+    "options": [
+      "Vì cần nhiều nhất amount xu (loại 1), nên amount+1 đủ làm vô cực mà tránh tràn khi +1",
+      "Vì amount+1 giúp vòng lặp chạy nhanh hơn",
+      "Vì Integer.MAX_VALUE không so sánh được với số nguyên",
+      "Vì amount+1 luôn là số nguyên tố nên an toàn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đáp án tối đa là amount xu (toàn loại mệnh giá 1), nên amount+1 đủ lớn để báo 'vô nghiệm' và khi +1 không tràn int.\n✓ amount+1 vượt mọi đáp án hợp lệ và tránh lỗi tràn số khi cộng 1 vào MAX_VALUE.\n✗ Giá trị INF không ảnh hưởng tốc độ vòng lặp.\n✗ MAX_VALUE vẫn so sánh được; vấn đề là +1 gây tràn.\n✗ amount+1 không liên quan gì tới số nguyên tố."
+  },
+  {
+    "id": "dsa-q-140",
+    "courseId": "DSA",
+    "lesson": "dsa-11-dynamic-programming-1",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một đề yêu cầu LIỆT KÊ TẤT CẢ các subset thoả điều kiện (in ra từng cấu hình). Vì sao đây KHÔNG phải bài DP điển hình?",
+    "options": [
+      "Vì cần output mọi cấu hình → backtracking, không phải một con số tối ưu",
+      "Vì không có overlapping subproblems bao giờ",
+      "Vì subset luôn giải được bằng greedy",
+      "Vì luôn có cấu trúc con tối ưu nên thừa cache"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "DP trả về một giá trị/số tối ưu hoặc đếm, còn liệt kê mọi cấu hình là việc của backtracking.\n✓ Khi đề đòi output mọi cấu hình hợp lệ thì dùng backtracking, vì DP không sinh ra danh sách cấu hình.\n✗ Không phải vì 'không bao giờ có' bài con trùng; lý do chính là yêu cầu liệt kê.\n✗ Greedy không phải lời giải tổng quát cho liệt kê subset.\n✗ Có cấu trúc con tối ưu hay không cũng không xử lý được việc bắt buộc liệt kê."
+  },
+  {
+    "id": "dsa-q-141",
+    "courseId": "DSA",
+    "lesson": "dsa-11-dynamic-programming-1",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "House Robber II (nhà xếp thành vòng tròn, nhà đầu và cuối kề nhau) được giải bằng mẹo nào?",
+    "options": [
+      "Chạy House Robber hai lần — một lần bỏ nhà đầu, một lần bỏ nhà cuối — rồi lấy max",
+      "Đổi max thành tổng trong transition",
+      "Sắp xếp mảng giảm dần rồi lấy xen kẽ",
+      "Dùng binary search trên giá trị tiền"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Vòng tròn được 'phá' thành hai đoạn thẳng: bỏ nhà đầu hoặc bỏ nhà cuối, rồi lấy max hai kết quả.\n✓ Chạy bài tuyến tính hai lần (bỏ đầu / bỏ cuối) tránh việc chọn cả nhà đầu lẫn cuối (vốn kề nhau).\n✗ Đổi max thành tổng là biến nó thành bài đếm cách, sai mục tiêu tối ưu.\n✗ Sắp xếp rồi lấy xen kẽ là greedy, không đúng cho ràng buộc kề.\n✗ Binary search không áp dụng cho cấu trúc bài này."
+  },
+  {
+    "id": "dsa-q-142",
+    "courseId": "DSA",
+    "lesson": "dsa-11-dynamic-programming-1",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Khi nào nên ưu tiên Tabulation (bottom-up) hơn Memoization? Chọn các ý đúng theo bài.",
+    "options": [
+      "Khi state đơn giản, dày đặc",
+      "Khi muốn dễ tối ưu bộ nhớ xuống O(1)",
+      "Khi lo ngại tràn call stack với state sâu",
+      "Khi transition rất phức tạp và không gian state thưa",
+      "Khi muốn tốc độ thực tế nhanh hơn, cache-friendly"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Tabulation hợp với state đơn giản/dày, dễ tối ưu bộ nhớ, không có call stack và chạy nhanh hơn.\n✓ State đơn giản dày đặc là lúc tabulation dễ hơn.\n✓ Tabulation dễ cuộn xuống O(1) bộ nhớ.\n✓ Bottom-up không đệ quy nên tránh tràn stack khi state sâu.\n✓ Tốc độ thực tế nhanh hơn và cache-friendly là ưu điểm của tabulation.\n✗ Transition phức tạp, state thưa lại là lúc memoization dễ viết hơn, không phải tabulation."
+  },
+  {
+    "id": "dsa-q-143",
+    "courseId": "DSA",
+    "lesson": "dsa-11-dynamic-programming-1",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những điều nào sau đây là SAI LẦM thường gặp khi làm DP (theo bài)?",
+    "options": [
+      "Định nghĩa state mơ hồ rồi viết transition bừa",
+      "Knapsack 0/1 duyệt sức chứa tăng dần",
+      "Lẫn lộn subsequence và subarray",
+      "Viết state thành một câu tiếng người rõ ràng trước khi code",
+      "Dùng greedy cho bài thực chất cần DP"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Bài liệt kê các bẫy: state mơ hồ, knapsack 0/1 duyệt tăng dần, lẫn subsequence/subarray, dùng greedy nhầm.\n✓ State mơ hồ khiến transition viết bừa và sai bài.\n✓ Knapsack 0/1 duyệt tăng dần vô tình dùng item nhiều lần.\n✓ Lẫn subsequence (bỏ phần tử được) với subarray (liên tục) làm sai cả độ phức tạp lẫn kết quả.\n✓ Dùng greedy cho bài DP sẽ sai ở test có phản ví dụ.\n✗ Viết state thành câu tiếng người rõ ràng trước khi code là cách làm ĐÚNG, không phải sai lầm."
+  },
+  {
+    "id": "dsa-q-144",
+    "courseId": "DSA",
+    "lesson": "dsa-12-dynamic-programming-2",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Nguyên tắc cốt lõi để quyết định một bài DP cần bảng 1D hay 2D theo bài học là gì?",
+    "options": [
+      "Số lượng vòng lặp trong code",
+      "Số con số cần để định danh duy nhất một bài con",
+      "Độ dài của chuỗi đầu vào",
+      "Có dùng đệ quy hay không"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Trực giác về chiều bảng nằm ở số tham số định danh bài con.\n✓ Một con số đủ định danh bài con thì 1D, cần hai con số độc lập thì 2D.\n✗ Số vòng lặp là hệ quả của chiều bảng, không phải nguyên nhân quyết định.\n✗ Độ dài đầu vào ảnh hưởng kích thước bảng chứ không quyết định số chiều.\n✗ Đệ quy (top-down) hay tabulation chỉ là cách cài, không liên quan tới chiều state."
+  },
+  {
+    "id": "dsa-q-145",
+    "courseId": "DSA",
+    "lesson": "dsa-12-dynamic-programming-2",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong LCS, khi xét hai ký tự cuối text1[i-1] và text2[j-1] mà chúng KHỚP nhau, transition đúng là gì?",
+    "options": [
+      "dp[i][j] = dp[i-1][j-1] + 1",
+      "dp[i][j] = max(dp[i-1][j], dp[i][j-1])",
+      "dp[i][j] = dp[i-1][j-1]",
+      "dp[i][j] = dp[i-1][j] + dp[i][j-1]"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khi khớp, cặp ký tự chắc chắn nằm trong LCS nên lấy chéo cộng 1.\n✓ Bỏ cả hai ký tự ra, giải bài con dp[i-1][j-1] rồi + 1.\n✗ Lấy max của hai hướng là transition khi KHÔNG khớp.\n✗ Giữ nguyên chéo (không +1) là transition của edit distance khi khớp.\n✗ Cộng hai hướng là kiểu đếm số cách (đếm đường/đếm subsequence), không phải LCS."
+  },
+  {
+    "id": "dsa-q-146",
+    "courseId": "DSA",
+    "lesson": "dsa-12-dynamic-programming-2",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Độ phức tạp thời gian của LCS và Edit Distance với hai chuỗi dài n và m là bao nhiêu?",
+    "options": [
+      "O(n+m)",
+      "O(n·m)",
+      "O(n²·m)",
+      "O(n·m·log m)"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bảng có (n+1)(m+1) ô, mỗi ô tính trong O(1).\n✓ Tổng số ô nhân chi phí O(1) cho ra O(n·m).\n✗ O(n+m) quá nhỏ, không bao quát hết bảng 2D.\n✗ O(n²·m) là độ phức tạp cao hơn thực tế, không có vòng lặp k bên trong.\n✗ Không có thao tác log nào trong transition của hai bài này."
+  },
+  {
+    "id": "dsa-q-147",
+    "courseId": "DSA",
+    "lesson": "dsa-12-dynamic-programming-2",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng viên cài Edit Distance nhưng để cả hàng 0 và cột 0 toàn 0 (giống LCS). Hậu quả là gì?",
+    "options": [
+      "Code chạy lỗi runtime do truy cập ngoài mảng",
+      "Kết quả vẫn đúng vì base case 0 là an toàn",
+      "Cả bảng sai mà không có lỗi runtime, vì biến chuỗi rỗng thành j ký tự phải tốn j bước",
+      "Chỉ ô góc dưới-phải bị sai, các ô khác đúng"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Edit Distance bắt buộc base dp[0][j]=j và dp[i][0]=i.\n✓ Để base toàn 0 làm sai từ biên, lan ra cả bảng mà không hề có lỗi runtime nên rất khó debug.\n✗ Không gây truy cập ngoài mảng, chỉ số vẫn hợp lệ.\n✗ Base 0 KHÔNG an toàn ở bài này vì biến rỗng thành chuỗi cần số insert đúng bằng độ dài.\n✗ Sai biên lan truyền theo transition nên không chỉ ảnh hưởng một ô."
+  },
+  {
+    "id": "dsa-q-148",
+    "courseId": "DSA",
+    "lesson": "dsa-12-dynamic-programming-2",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần phân biệt String DP (hai chuỗi) với Interval DP (chia khoảng) khi cả hai đều dùng dp[i][j]. Dấu hiệu nhận diện Interval DP rõ nhất là gì?",
+    "options": [
+      "Bảng có kích thước (n+1)×(m+1)",
+      "Có một vòng lặp k bên trong cặp (i, j) để duyệt điểm chia/điểm cuối, thường O(n³)",
+      "Transition luôn dùng phép max",
+      "Luôn cần base case khác 0"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Interval DP có thêm vòng k duyệt điểm chia bên trong khoảng.\n✓ Ba vòng lồng nhau (i, j và k) là đặc trưng, kéo theo O(n³).\n✗ Kích thước (n+1)×(m+1) là quy ước chung của nhiều bài DP 2D, không phân biệt được.\n✗ Phép max không phải dấu hiệu riêng; interval DP có thể dùng min hoặc max.\n✗ Base khác 0 là chuyện của edit distance, không phải dấu hiệu interval DP."
+  },
+  {
+    "id": "dsa-q-149",
+    "courseId": "DSA",
+    "lesson": "dsa-12-dynamic-programming-2",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đề: 'Tìm hình vuông toàn số 1 lớn nhất trong ma trận nhị phân, trả về diện tích.' Đây là dạng nào và transition cốt lõi là gì?",
+    "options": [
+      "String DP; dp[r][c] = dp[r-1][c-1] + 1 khi ô = 1",
+      "Grid DP với ô là góc dưới-phải; dp[r][c] = 1 + min(trên, trái, chéo) khi ô = 1",
+      "Interval DP; dp[i][j] từ dp[i+1][j-1]",
+      "Grid DP đếm đường; dp[r][c] = dp[r-1][c] + dp[r][c-1]"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Maximal Square là grid DP với ô = góc dưới-phải, lấy min ba hướng rồi +1.\n✓ Hình vuông cạnh k+1 tồn tại khi cả ba láng giềng (trên, trái, chéo) cùng đỡ được cạnh k, nên lấy min.\n✗ Không phải string DP vì chỉ có một ma trận, không có hai chuỗi.\n✗ Không phải interval DP; không có khoảng [i..j] hay điểm chia.\n✗ Đếm đường dùng cộng hai hướng, không áp dụng cho bài hình vuông."
+  },
+  {
+    "id": "dsa-q-150",
+    "courseId": "DSA",
+    "lesson": "dsa-12-dynamic-programming-2",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với word1='horse', word2='ros', bảng Edit Distance cho kết quả ở góc dưới-phải dp[5][3] bằng bao nhiêu?",
+    "options": [
+      "2",
+      "3",
+      "5",
+      "8"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "horse -> ros cần 3 bước (thay h->r, xóa r, xóa e).\n✓ Bảng minh hoạ trong bài cho dp[5][3] = 3.\n✗ 2 là giá trị của một số ô trung gian, không phải đáp án cuối.\n✗ 5 là độ dài word1, không phải số phép biến đổi.\n✗ 8 không khớp với bất kỳ ô nào trong bảng."
+  },
+  {
+    "id": "dsa-q-151",
+    "courseId": "DSA",
+    "lesson": "dsa-12-dynamic-programming-2",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một ứng viên giải 'chuỗi con chung dài nhất' nhưng khi hai ký tự lệch nhau lại đặt dp[i][j] = 0 thay vì max(dp[i-1][j], dp[i][j-1]). Lỗi này biến bài thành gì?",
+    "options": [
+      "Vẫn là LCS, chỉ chậm hơn",
+      "Thành bài tìm SUBSTRING (chuỗi con LIÊN TIẾP) chung dài nhất",
+      "Thành Edit Distance",
+      "Thành bài đếm số subsequence chung"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Reset về 0 khi lệch là công thức của substring liên tục, không phải subsequence.\n✓ Substring chung dài nhất reset dp về 0 khi lệch; subsequence lấy max hai hướng (không reset).\n✗ Không còn là LCS đúng vì đáp án và transition đã khác hẳn.\n✗ Edit Distance dùng min ba hướng + 1, không liên quan reset 0.\n✗ Đếm subsequence dùng phép cộng, không phải gán 0."
+  },
+  {
+    "id": "dsa-q-152",
+    "courseId": "DSA",
+    "lesson": "dsa-12-dynamic-programming-2",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Khi nén LCS 2D xuống mảng 1D (rolling array), khó khăn chính nằm ở ô nào và cách xử lý đúng là gì?",
+    "options": [
+      "Ô dp[i][j-1]; phải duyệt j giảm dần",
+      "Ô chéo dp[i-1][j-1]; lưu nó vào một biến prev/diag trước khi ghi đè",
+      "Ô dp[i-1][j]; phải sao chép cả hàng trước",
+      "Không có ô nào khó, nén luôn an toàn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Ô chéo dp[i-1][j-1] dễ bị giá trị hàng mới đè khi duyệt j tăng dần.\n✓ Giải pháp là giữ giá trị chéo trong biến prev/diag ngay trước khi cập nhật vị trí j-1.\n✗ Ô bên trái cùng hàng dp[i][j-1] vốn đã là giá trị hàng mới, không phải vấn đề.\n✗ Ô trên dp[i-1][j] vẫn nằm ở vị trí j của mảng trước khi ghi đè, lấy bình thường được.\n✗ Nén không an toàn mặc nhiên; bỏ qua ô chéo sẽ sai."
+  },
+  {
+    "id": "dsa-q-153",
+    "courseId": "DSA",
+    "lesson": "dsa-12-dynamic-programming-2",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong Interval DP (ví dụ Longest Palindromic Substring), thứ tự điền bảng phải tuân theo điều gì để dp[i][j] luôn dùng được giá trị phụ thuộc?",
+    "options": [
+      "Điền theo i tăng dần rồi j tăng dần như string DP",
+      "Điền theo độ dài khoảng tăng dần (khoảng ngắn trước)",
+      "Điền từ góc dưới-phải lên",
+      "Thứ tự nào cũng được vì các ô độc lập"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "dp[i][j] cần dp[i+1][j-1] (khoảng ngắn hơn) đã sẵn sàng.\n✓ Phải lặp theo length tăng dần, rồi suy j = i + length - 1, để khoảng ngắn được tính trước.\n✗ Lặp i,j tăng dần kiểu string DP không đảm bảo dp[i+1][j-1] đã có.\n✗ 'Từ góc dưới-phải lên' không mô tả đúng quy tắc theo độ dài khoảng.\n✗ Các ô KHÔNG độc lập; sai thứ tự sẽ đọc phải ô chưa tính."
+  },
+  {
+    "id": "dsa-q-154",
+    "courseId": "DSA",
+    "lesson": "dsa-12-dynamic-programming-2",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Trong Edit Distance, khi hai ký tự cuối KHÔNG khớp, dp[i][j] là min của những lựa chọn nào (mỗi cái cộng 1)?",
+    "options": [
+      "dp[i-1][j-1] (replace)",
+      "dp[i-1][j] (delete ký tự của word1)",
+      "dp[i][j-1] (insert ký tự của word2)",
+      "dp[i-1][j-1] + dp[i-1][j] (đếm cách)",
+      "dp[i+1][j+1] (mở rộng khoảng)"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Khi lệch, lấy min ba hướng replace/delete/insert rồi + 1.\n✓ Replace đi từ chéo dp[i-1][j-1].\n✓ Delete bỏ ký tự của word1, đi từ dp[i-1][j].\n✓ Insert thêm ký tự của word2, đi từ dp[i][j-1].\n✗ Cộng hai hướng là kiểu đếm số cách, không phải min của edit distance.\n✗ dp[i+1][j+1] tham chiếu ô tương lai, không hợp lệ trong tabulation tăng dần."
+  },
+  {
+    "id": "dsa-q-155",
+    "courseId": "DSA",
+    "lesson": "dsa-12-dynamic-programming-2",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những đề bài nào dưới đây nên nhận diện là dạng Interval DP (chia khoảng) theo bảng pattern trong bài?",
+    "options": [
+      "Burst Balloons: nổ bóng theo thứ tự, chi phí phụ thuộc cách chọn",
+      "Longest Palindromic Substring trên một chuỗi",
+      "Unique Paths: đếm số đường đi trên lưới m×n",
+      "Edit Distance giữa hai chuỗi",
+      "Matrix Chain: gộp dãy, chi phí phụ thuộc cách chia"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "Interval DP đặc trưng bởi khoảng [i..j] của MỘT dãy và điểm chia/điểm cuối.\n✓ Burst Balloons duyệt quả nổ cuối cùng k trong khoảng -> interval DP O(n³).\n✓ Palindrome substring dùng dp[i][j] từ dp[i+1][j-1], điền theo độ dài khoảng -> interval DP.\n✓ Matrix Chain gộp dãy với chi phí phụ thuộc cách chia -> interval DP.\n✗ Unique Paths là grid DP (đi trên lưới), không phải chia khoảng.\n✗ Edit Distance là string DP hai chuỗi, i và j thuộc hai chuỗi khác nhau."
+  },
+  {
+    "id": "dsa-q-156",
+    "courseId": "DSA",
+    "lesson": "dsa-12-dynamic-programming-2",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo quy ước 'chỉ số lệch 1' trong bài, dp[i][j] xét i ký tự đầu của A và j ký tự đầu của B; vậy ký tự 'hiện tại' đang so là cặp nào?",
+    "options": [
+      "A[i] và B[j]",
+      "A[i-1] và B[j-1]",
+      "A[i+1] và B[j+1]",
+      "A[0] và B[0]"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Hàng 0 và cột 0 ứng với chuỗi rỗng nên có độ lệch 1.\n✓ dp[i][j] gồm i ký tự đầu nên ký tự hiện tại là A[i-1], B[j-1].\n✗ A[i], B[j] là lỗi off-by-one phổ biến, vượt ra ngoài tiền tố đang xét.\n✗ A[i+1], B[j+1] càng vượt xa, sai chỉ số.\n✗ A[0], B[0] cố định ở ký tự đầu, không phản ánh i, j đang chạy."
+  },
+  {
+    "id": "dsa-q-157",
+    "courseId": "DSA",
+    "lesson": "dsa-13-patterns-strategy",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đề cho mảng SỐ NGUYÊN DƯƠNG đã sort tăng dần, yêu cầu tìm hai phần tử có tổng bằng target. Pattern tối ưu và độ phức tạp nên là gì?",
+    "options": [
+      "Two-pointer hai đầu, O(n)",
+      "Hash map duyệt một lượt, O(n) nhưng tốn O(n) bộ nhớ thừa khi đã có sort",
+      "Binary search cho từng phần tử, O(n log n)",
+      "Backtracking liệt kê mọi cặp, O(2^n)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mảng đã sort + tìm cặp/tổng là tín hiệu kinh điển của two-pointer hai đầu, chạy O(n) và O(1) bộ nhớ.\n✓ Two-pointer hai đầu O(n): tận dụng tính sort, dịch trái/phải theo tổng so với target.\n✗ Hash map vẫn O(n) nhưng tốn O(n) bộ nhớ — lãng phí khi mảng đã sort cho phép O(1) bộ nhớ.\n✗ Binary search từng phần tử cho O(n log n), chậm hơn two-pointer.\n✗ Backtracking liệt kê mọi cặp là quá mức, không phù hợp bài tìm một cặp."
+  },
+  {
+    "id": "dsa-q-158",
+    "courseId": "DSA",
+    "lesson": "dsa-13-patterns-strategy",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đề: 'Tìm độ dài subarray LIÊN TỤC có tổng bằng k', và clarify cho biết mảng CÓ chứa số âm. Vì sao sliding window cổ điển KHÔNG dùng được, và nên thay bằng gì?",
+    "options": [
+      "Vì có số âm, cửa sổ không co/giãn đơn điệu; dùng prefix sum + hash map",
+      "Vì subarray phải liên tục nên bắt buộc dùng binary search trên answer",
+      "Sliding window vẫn dùng được bình thường, chỉ cần reset cửa sổ khi gặp số âm",
+      "Vì có số âm nên phải dùng DP knapsack O(n·sum)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Số âm phá vỡ tính đơn điệu của cửa sổ trượt, nên chuyển sang prefix sum kết hợp hash map tra pre[j]-k.\n✓ Có số âm → cửa sổ không đơn điệu → prefix sum + hash map là lựa chọn đúng, O(n).\n✗ Binary search on answer dùng cho 'min/max sao cho điều kiện đơn điệu', không phải bài này.\n✗ Sliding window không thể 'reset khi gặp số âm' — tính đơn điệu đã mất, kết quả sẽ sai.\n✗ DP knapsack không cần thiết và sai hướng cho bài tổng range với số âm."
+  },
+  {
+    "id": "dsa-q-159",
+    "courseId": "DSA",
+    "lesson": "dsa-13-patterns-strategy",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong phỏng vấn, đề cho ràng buộc n ≤ 20 và yêu cầu liệt kê đặc tính trên các tập con. Theo bảng suy độ phức tạp từ n, hướng nào là 'đáp án mong đợi' và sạch nhất?",
+    "options": [
+      "Backtracking / bitmask O(2^n)",
+      "Greedy O(n log n) ép cho nhanh",
+      "Binary search O(log n)",
+      "DP 2D O(n^2)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Với n ≤ 20, độ phức tạp chấp nhận được là O(2^n), tức subset/bitmask hoặc backtracking đầy đủ.\n✓ Backtracking/bitmask O(2^n) khớp đúng ngưỡng n ≤ 20 và sạch hơn việc ép thuật toán phức tạp.\n✗ Ép greedy O(n log n) khi n nhỏ chỉ tốn thời gian và dễ sai.\n✗ Binary search O(log n) không phù hợp bài liệt kê tập con.\n✗ DP 2D O(n^2) là quá mức và không cần với n nhỏ; bài đặt ra dạng liệt kê/subset."
+  },
+  {
+    "id": "dsa-q-160",
+    "courseId": "DSA",
+    "lesson": "dsa-13-patterns-strategy",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, hai tín hiệu MẠNH NHẤT để nhận diện pattern từ đề là gì?",
+    "options": [
+      "Hình dạng input và dạng kết quả cần",
+      "Tên công ty ra đề và độ khó LeetCode",
+      "Ngôn ngữ lập trình dùng và giới hạn bộ nhớ",
+      "Số dòng đề bài và có ví dụ minh hoạ không"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nhấn mạnh hai tín hiệu mạnh nhất loại được ~80% pattern không liên quan.\n✓ Hình dạng input (sort? cây? graph? chuỗi?) và dạng kết quả cần (đếm/min-max/tổ hợp/thứ k) là hai tín hiệu chủ lực.\n✗ Tên công ty và độ khó không phải tín hiệu nhận diện pattern.\n✗ Ngôn ngữ lập trình không quyết định pattern thuật toán.\n✗ Số dòng đề và có ví dụ hay không không liên quan tới việc map pattern."
+  },
+  {
+    "id": "dsa-q-161",
+    "courseId": "DSA",
+    "lesson": "dsa-13-patterns-strategy",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đề: 'Đếm SỐ CÁCH leo cầu thang khi mỗi bước đi 1 hoặc 2 bậc'. Từ khoá nào trong đề là tín hiệu mạnh nhất để nghĩ tới DP?",
+    "options": [
+      "'Đếm số cách' (count) + lựa chọn lặp lại với cấu trúc con chồng lấn",
+      "'Cầu thang' gợi cấu trúc cây nên dùng DFS",
+      "'Mỗi bước' nên dùng greedy chọn bước lớn nhất",
+      "'1 hoặc 2 bậc' nên dùng two-pointer"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Ba từ khoá DP là 'đếm số cách', 'min/max', 'có thể không'; ở đây 'đếm số cách' + cấu trúc con chồng lấn = DP.\n✓ 'Đếm số cách' kèm lựa chọn lặp lại có cấu trúc con chồng lấn gần như chắc chắn là DP.\n✗ 'Cầu thang' không phải cấu trúc cây; DFS không phải hướng tự nhiên ở đây.\n✗ Greedy chọn bước lớn nhất không cho đúng số cách.\n✗ Two-pointer không áp dụng cho bài đếm cách này."
+  },
+  {
+    "id": "dsa-q-162",
+    "courseId": "DSA",
+    "lesson": "dsa-13-patterns-strategy",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Với coin change [1,3,4] và amount=6, vì sao đây là phản ví dụ kinh điển cho thấy greedy SAI và nên dùng DP?",
+    "options": [
+      "Greedy chọn 4+1+1=3 đồng, nhưng tối ưu là 3+3=2 đồng — chọn tốt nhất mỗi bước không dẫn tới tối ưu toàn cục",
+      "Greedy và DP đều ra 2 đồng, phản ví dụ chỉ minh hoạ cho vui",
+      "Greedy ra 2 đồng còn DP ra 3 đồng nên DP tệ hơn",
+      "Vì amount chẵn nên greedy luôn sai với mọi bộ đồng xu"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Greedy lấy đồng lớn nhất trước (4) rồi 1+1, ra 3 đồng; còn 3+3 chỉ cần 2 đồng — greedy không tối ưu toàn cục.\n✓ Greedy 4+1+1=3 đồng còn tối ưu 3+3=2 đồng: 'chọn tốt nhất mỗi bước' không bảo đảm tối ưu toàn cục → cần DP.\n✗ Greedy và DP KHÔNG ra cùng kết quả ở đây — đó chính là điểm của phản ví dụ.\n✗ DP cho 2 đồng (tối ưu hơn), không phải 3.\n✗ Tính chẵn của amount không phải lý do; vấn đề là cấu trúc bộ đồng xu."
+  },
+  {
+    "id": "dsa-q-163",
+    "courseId": "DSA",
+    "lesson": "dsa-13-patterns-strategy",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Trong code ví dụ longest_subarray_sum_k (prefix sum + hash), những điểm nào là BẪY/chi tiết quan trọng phải đúng để kết quả chính xác? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Khởi tạo map {0: -1} để bắt subarray bắt đầu từ index 0",
+      "Chỉ lưu prefix sum LẦN ĐẦU (early index), không ghi đè, để subarray dài nhất",
+      "Phải sort mảng trước khi chạy để prefix sum hợp lệ",
+      "Tra cứu prefix - k trong hash map ở mỗi bước",
+      "Phải dùng sliding window thay cho hash map khi mảng có số âm"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Các chi tiết load-bearing: khởi tạo {0:-1}, lưu prefix lần đầu, và tra prefix-k trong hash.\n✓ {0:-1} bắt được subarray bắt đầu từ index 0.\n✓ Lưu prefix LẦN ĐẦU (không ghi đè) cho ra subarray DÀI nhất.\n✓ Tra prefix - k ở mỗi bước là cốt lõi của thuật toán O(n).\n✗ KHÔNG được sort — subarray phải liên tục theo thứ tự gốc, sort sẽ phá bài.\n✗ Có số âm chính là lý do KHÔNG dùng sliding window; hash map mới là cách đúng."
+  },
+  {
+    "id": "dsa-q-164",
+    "courseId": "DSA",
+    "lesson": "dsa-13-patterns-strategy",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đề: 'Tìm đường đi NGẮN NHẤT (theo số cạnh) trên grid không trọng số'. Theo bảng phân biệt BFS vs DFS, nên chọn gì?",
+    "options": [
+      "BFS — đường ngắn nhất không trọng số",
+      "DFS — vì grid là dạng đệ quy tự nhiên",
+      "Dijkstra với heap — vì luôn cần cho đường ngắn nhất",
+      "Backtracking + pruning — để thử mọi đường"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đường ngắn nhất theo số cạnh trên đồ thị không trọng số là tín hiệu kinh điển của BFS.\n✓ BFS lan theo từng tầng nên bảo đảm đường ngắn nhất khi các cạnh đều có trọng số 1.\n✗ DFS chỉ phù hợp khi cần 'tới được/đếm cụm', không bảo đảm ngắn nhất.\n✗ Dijkstra dành cho cạnh có trọng số khác nhau — thừa cho grid không trọng số.\n✗ Backtracking thử mọi đường là mũ, lãng phí cho bài shortest path."
+  },
+  {
+    "id": "dsa-q-165",
+    "courseId": "DSA",
+    "lesson": "dsa-13-patterns-strategy",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Còn 12 phút và bạn chưa nghĩ ra lời giải O(n) tối ưu, nhưng đã có brute force O(n^2) chạy được. Theo nguyên tắc quản lý thời gian của bài, nên làm gì?",
+    "options": [
+      "Code brute force chạy được + nêu rõ hướng tối ưu, hơn là theo đuổi lời giải tối ưu dở dang",
+      "Tiếp tục tìm cho ra O(n) tối ưu rồi mới viết, dù có thể không kịp code",
+      "Bỏ bài này, xin chuyển sang bài khác dễ hơn",
+      "Viết khung O(n) chưa hoàn chỉnh và để trống phần khó"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nhấn: brute force chạy được + nêu hướng tối ưu tốt hơn lời giải tối ưu dở dang.\n✓ Code brute force chạy được rồi trình bày hướng tối ưu thể hiện tiến độ và tư duy có hệ thống.\n✗ Theo đuổi O(n) tới mức không kịp code là cạm bẫy quản lý thời gian bài cảnh báo.\n✗ Bỏ bài là từ bỏ điểm chắc chắn đã có.\n✗ Để trống phần khó cho lời giải dở dang kém hơn một giải pháp hoàn chỉnh chạy được."
+  },
+  {
+    "id": "dsa-q-166",
+    "courseId": "DSA",
+    "lesson": "dsa-13-patterns-strategy",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong quy trình UMPIRE, bước nào BỊ BỎ QUA NHIỀU NHẤT và là lý do trượt phổ biến nhất?",
+    "options": [
+      "U — Understand (clarify trước khi viết một dòng code)",
+      "I — Implement (viết code)",
+      "E — Evaluate (phân tích time/space)",
+      "M — Match (map vào pattern)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài chỉ rõ Understand/clarify là bước bị bỏ qua nhiều nhất và là lý do trượt phổ biến.\n✓ Understand — hỏi clarify về phạm vi giá trị, output, ràng buộc — hay bị bỏ qua khi ứng viên lao vào code.\n✗ Implement là bước ai cũng làm, không phải bước bị bỏ.\n✗ Evaluate tuy hay bị quên nhưng bài chỉ định rõ Understand là số một.\n✗ Match thường được làm sau khi đã hiểu đề, không phải bước bị bỏ nhiều nhất."
+  },
+  {
+    "id": "dsa-q-167",
+    "courseId": "DSA",
+    "lesson": "dsa-13-patterns-strategy",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đề: 'Cho stream số rất lớn, tìm K phần tử có tần suất cao nhất'. Theo bảng phân biệt Heap vs Sort, vì sao heap tốt hơn sort toàn bộ?",
+    "options": [
+      "Chỉ cần top-k nên heap O(n log k) rẻ hơn sort toàn bộ O(n log n)",
+      "Sort luôn sai kết quả với top-k",
+      "Heap luôn O(n) nên luôn nhanh hơn mọi sort",
+      "Vì stream lớn nên bắt buộc dùng DP đếm"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khi chỉ cần top-k chứ không cần toàn bộ thứ tự, heap O(n log k) rẻ hơn sort O(n log n).\n✓ Top-k → heap O(n log k); k thường nhỏ hơn n nhiều nên rẻ hơn sort toàn bộ.\n✗ Sort vẫn ra kết quả đúng, chỉ là tốn công sort phần không cần.\n✗ Heap không phải O(n); với top-k là O(n log k).\n✗ DP đếm không liên quan tới bài top-k frequency."
+  },
+  {
+    "id": "dsa-q-168",
+    "courseId": "DSA",
+    "lesson": "dsa-13-patterns-strategy",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một ứng viên giải đúng 100% nhưng bị đánh giá thấp hơn người giải 80%. Theo bài, những hành vi nào của ứng viên 100% có thể là nguyên nhân? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Im lặng gõ code, không nói to tư duy",
+      "Lao vào code mà không hỏi clarify",
+      "Không test edge case và không phân tích time/space",
+      "Đặt tên biến rõ nghĩa như left/right, seen",
+      "Nêu brute force trước rồi mới tối ưu"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bài nhấn: giao tiếp kém và bỏ quy trình khiến người giỏi vẫn trượt, dù giải đúng.\n✓ Im lặng khi code khiến phỏng vấn viên mất dấu tư duy — red flag.\n✓ Bỏ clarify dễ giải sai đề và mất điểm giao tiếp — một nguyên nhân bị đánh giá thấp.\n✓ Không test edge case + không phân tích time/space thiếu chiều sâu kỹ sư.\n✗ Đặt tên biến rõ nghĩa là hành vi TỐT, không phải nguyên nhân bị đánh giá thấp.\n✗ Nêu brute force trước là hành vi TỐT theo quy trình, không gây mất điểm."
+  },
+  {
+    "id": "dsa-q-169",
+    "courseId": "DSA",
+    "lesson": "dsa-13-patterns-strategy",
+    "certifications": [
+      "DSA"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Theo nguyên tắc 'học theo pattern, không theo số lượng', cách luyện nào được bài đánh giá cao nhất?",
+    "options": [
+      "80 bài làm kỹ theo cụm pattern + spaced repetition + active recall",
+      "400 bài cày ngẫu nhiên một lần cho đủ số lượng",
+      "Đọc lời giải của 500 bài để nhớ mặt nhiều dạng",
+      "Làm mỗi pattern đúng 1 bài rồi chuyển pattern khác cho rộng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài khẳng định chất lượng hơn số lượng: 80 bài học kỹ theo pattern + ôn ngắt quãng đánh bại 400 bài cày quên.\n✓ Làm cụm bài cùng pattern + spaced repetition + active recall tạo phản xạ nhận diện bền vững.\n✗ Cày 400 bài ngẫu nhiên một lần rồi quên là cách luyện sai bài phê phán.\n✗ Đọc lời giải thụ động chỉ giúp 'nhận ra' chứ không 'nắm' — không bằng tự code lại.\n✗ Làm mỗi pattern 1 bài không đủ để não trừu tượng ra cái chung; cần cụm 5-8 bài."
   }
 ]
