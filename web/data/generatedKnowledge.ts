@@ -27932,6 +27932,1680 @@ const k4: Question[] = [
       1
     ],
     "explanation": "`flock` lấy lock độc quyền, lần chạy thứ hai không lấy được sẽ thoát.\n✓ \"flock trên file lock\" đúng — mục idempotency dùng `exec 9>...lock; flock -n 9 || exit 0`.\n✗ \"trap cleanup EXIT\" là cơ chế dọn dẹp (finally), không chống chạy chồng.\n✗ \"set -o pipefail\" chỉ ảnh hưởng exit code của pipe.\n✗ \"IFS=$'\\n\\t'\" chỉ điều chỉnh cách tách từ, không liên quan đến lock."
+  },
+  {
+    "id": "ops-q-001",
+    "courseId": "DEVOPS",
+    "lesson": "devops-01-cicd",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một đội nói: \"Mọi artifact xanh đều sẵn sàng lên prod, nhưng phải có người bấm nút approval trước khi deploy.\" Đây là mô hình gì?",
+    "options": [
+      "Continuous Deployment",
+      "Continuous Delivery",
+      "Continuous Integration",
+      "Continuous Testing"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Có manual approval gate trước prod nhưng luôn sẵn sàng deploy chính là Continuous Delivery.\n✓ Continuous Delivery: artifact nằm sẵn ở cửa prod, chờ một cú bấm nút.\n✗ Continuous Deployment: bỏ luôn cú bấm nút, xanh là tự động lên prod (ở đây vẫn cần người).\n✗ Continuous Integration: chỉ dừng ở build + test ra artifact xanh, chưa nói tới deploy.\n✗ Continuous Testing: không phải một trong ba khái niệm CI/CD/CD trong bài."
+  },
+  {
+    "id": "ops-q-002",
+    "courseId": "DEVOPS",
+    "lesson": "devops-01-cicd",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Sự khác biệt DUY NHẤT giữa Continuous Delivery và Continuous Deployment là gì?",
+    "options": [
+      "Delivery không chạy test còn Deployment thì có",
+      "Có hay không cái manual approval gate trước production",
+      "Delivery dùng git SHA còn Deployment dùng tag latest",
+      "Deployment chỉ deploy lên staging, Delivery deploy lên prod"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nói rõ khác biệt duy nhất là cái manual approval gate trước production.\n✓ Delivery cần người bấm nút, Deployment bỏ luôn cú bấm đó.\n✗ Cả hai đều phải qua test mới ra artifact xanh.\n✗ Việc dùng git SHA hay latest là chuyện versioning, không phân biệt hai mô hình.\n✗ Cả hai đều hướng tới prod; Deployment là tự động lên prod chứ không dừng ở staging."
+  },
+  {
+    "id": "ops-q-003",
+    "courseId": "DEVOPS",
+    "lesson": "devops-01-cicd",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn deploy lên prod bằng tag `latest`. Vài ngày sau cần rollback gấp nhưng không biết \"bản trước\" là image nào. Nguyên nhân gốc là gì?",
+    "options": [
+      "`latest` là tag di động, hôm nay trỏ image này mai trỏ image khác",
+      "Registry không lưu lịch sử image cũ",
+      "Bạn quên chạy stage Scan trước khi deploy",
+      "Staging và prod dùng hai registry khác nhau"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "`latest` không bất biến nên không truy vết được bản nào đã chạy.\n✓ Tag di động: nó trỏ image khác nhau theo thời gian, mất khả năng rollback chính xác.\n✗ Registry vẫn lưu image cũ; vấn đề là bạn không biết digest/tag nào ứng với bản trước.\n✗ Quên Scan là vấn đề bảo mật, không liên quan tới rollback không biết bản nào.\n✗ Dùng chung hay riêng registry không phải nguyên nhân; gốc rễ là tag không bất biến."
+  },
+  {
+    "id": "ops-q-004",
+    "courseId": "DEVOPS",
+    "lesson": "devops-01-cicd",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong pipeline của bạn, integration test (10 phút) đang chạy TRƯỚC lint và unit test (chục giây). Theo nguyên tắc trong bài, nên sửa thế nào và vì sao?",
+    "options": [
+      "Giữ nguyên, vì integration test quan trọng hơn nên phải chạy trước",
+      "Đưa lint và unit test lên trước để fail fast, tiết kiệm thời gian khi lỗi rẻ bị bắt sớm",
+      "Bỏ unit test vì integration test đã bao trùm",
+      "Chạy tất cả song song để không phải sắp xếp thứ tự"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Nguyên tắc là rẻ và nhanh chạy trước để fail fast.\n✓ Lint/unit test mất chục giây, bắt lỗi ở đó tiết kiệm 10 phút integration test cho cả đội.\n✗ Giữ nguyên đi ngược fail fast: tốn 10 phút mới phát hiện lỗi mà lẽ ra bắt được sau 30 giây.\n✗ Bỏ unit test là sai; unit test nhanh và bắt lớp lỗi khác.\n✗ Chạy song song không giải quyết được mục tiêu fail ở chỗ rẻ nhất, sớm nhất."
+  },
+  {
+    "id": "ops-q-005",
+    "courseId": "DEVOPS",
+    "lesson": "devops-01-cicd",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, vì sao phải tự động hoá quy trình deploy bằng pipeline (không phải vì lười)? Chọn TẤT CẢ lý do đúng.",
+    "options": [
+      "Loại bỏ lỗi con người trong quy trình nhiều bước lặp lại",
+      "Build lặp lại được trong môi trường sạch, ai chạy cũng ra kết quả như nhau",
+      "Phản hồi nhanh: bắt bug 3 phút sau push rẻ hơn để khách báo 3 tuần sau",
+      "Cho phép bỏ hẳn môi trường staging",
+      "Tự tin release nhỏ và thường xuyên thay vì dồn một cục lớn"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Bài nêu các lý do: loại bỏ lỗi con người, reproducible, fast feedback, release nhỏ thường xuyên.\n✓ Loại bỏ lỗi con người: máy không quên bước như người làm tay.\n✓ Reproducible: build trong môi trường sạch cho kết quả nhất quán.\n✓ Fast feedback: bắt bug sớm rẻ hơn bắt muộn nhiều.\n✓ Release nhỏ thường xuyên ít rủi ro hơn deploy 5000 dòng mỗi tháng.\n✗ Bỏ staging không phải lý do; bài còn nhấn mạnh staging phải càng giống prod càng tốt."
+  },
+  {
+    "id": "ops-q-006",
+    "courseId": "DEVOPS",
+    "lesson": "devops-01-cicd",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một đội build lại Docker image riêng cho dev, staging và prod. Họ gặp lỗi chỉ xuất hiện ở prod dù staging \"đã test kỹ\". Cách khắc phục theo nguyên tắc trong bài là gì?",
+    "options": [
+      "Build lại image ở prod cẩn thận hơn, thêm test sau mỗi lần build",
+      "Build once, deploy everywhere: tạo một artifact ở stage Package rồi promote cùng digest qua các môi trường",
+      "Dùng tag latest cho cả ba môi trường để đảm bảo giống nhau",
+      "Tăng số lần build mỗi môi trường để phát hiện khác biệt sớm"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Ba lần build có thể ra ba kết quả khác nhau; phải build một lần rồi promote cùng artifact.\n✓ Build once, deploy everywhere: cùng một digest đi qua dev → staging → prod, thứ test ở staging đúng là thứ chạy ở prod.\n✗ Build lại cẩn thận hơn vẫn là nhiều lần build, vẫn lệch nhau.\n✗ Dùng latest còn tệ hơn vì tag di động không truy vết được.\n✗ Tăng số lần build chỉ làm tăng khả năng khác biệt, không giảm."
+  },
+  {
+    "id": "ops-q-007",
+    "courseId": "DEVOPS",
+    "lesson": "devops-01-cicd",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Quy tắc \"staging phải càng giống prod càng tốt\" được tuân thủ đúng nhất khi nào?",
+    "options": [
+      "Staging build lại artifact riêng để tối ưu cho việc test",
+      "Khác biệt giữa staging và prod chỉ đến từ config/biến môi trường bên ngoài, cùng một artifact",
+      "Staging dùng version K8s mới hơn prod để thử tính năng mới",
+      "Staging dùng dữ liệu thật của khách hàng để giống prod tuyệt đối"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cùng artifact, khác config theo môi trường — tinh thần 12-Factor App.\n✓ Khác biệt đến từ biến môi trường/config bên ngoài, không từ việc build lại artifact.\n✗ Build lại artifact riêng cho staging vi phạm build once, deploy everywhere.\n✗ Dùng version K8s khác prod tạo ra chính khe hở để bug sống sót qua test.\n✗ Staging dùng dữ liệu giống prod đã ẩn danh, không phải dữ liệu thật."
+  },
+  {
+    "id": "ops-q-008",
+    "courseId": "DEVOPS",
+    "lesson": "devops-01-cicd",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Đội của bạn deploy nhiều lần mỗi ngày theo CI/CD liên tục, nhưng đang dùng GitFlow với các feature branch sống nhiều tuần. Triệu chứng \"merge hell\" và test một thứ khác với thứ chạy thật xuất hiện. Lựa chọn phù hợp nhất?",
+    "options": [
+      "Giữ GitFlow nhưng tăng tần suất release theo lịch cố định",
+      "Chuyển sang trunk-based: branch sống ngắn, merge thường xuyên vào main, giấu feature chưa xong sau feature flag",
+      "Tạo thêm nhánh develop trung gian để giảm xung đột",
+      "Khoá main lại, chỉ cho merge mỗi tuần một lần"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "GitFlow + deploy liên tục là kết hợp gây đau; trunk-based hợp với deploy nhiều lần/ngày.\n✓ Trunk-based: branch sống ngắn ít lệch khỏi main, merge conflict hiếm và nhỏ, feature flag giấu tính năng chưa xong.\n✗ Tăng release theo lịch cố định không khớp với nhu cầu deploy nhiều lần/ngày.\n✗ Thêm nhánh develop là đặc trưng GitFlow, càng làm branch sống lâu hơn.\n✗ Khoá main merge mỗi tuần làm code càng lệch, đúng cái gây merge hell."
+  },
+  {
+    "id": "ops-q-009",
+    "courseId": "DEVOPS",
+    "lesson": "devops-01-cicd",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong pipeline GitHub Actions ví dụ, job `build-push` có `if: github.ref == 'refs/heads/main'` và `needs: scan`. Điều gì xảy ra khi mở một pull request (chưa merge vào main)?",
+    "options": [
+      "Job test và scan chạy, nhưng build-push bị bỏ qua vì ref không phải main",
+      "Toàn bộ pipeline bị bỏ qua vì không phải push lên main",
+      "Image được build và push với tag SHA của nhánh PR",
+      "Deploy-prod chạy ngay nhưng chờ approval"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "`on: pull_request` kích hoạt pipeline, nhưng điều kiện `if` chặn build-push trên ref không phải main.\n✓ Test và scan vẫn chạy ở PR; build-push bị skip vì ref không phải refs/heads/main, nên không tạo artifact.\n✗ Pipeline không bị bỏ qua toàn bộ: trigger pull_request vẫn chạy test/scan.\n✗ Không có image nào được push vì điều kiện if chặn build-push.\n✗ Deploy-prod needs deploy-staging needs build-push; build-push bị skip nên chuỗi deploy không chạy."
+  },
+  {
+    "id": "ops-q-010",
+    "courseId": "DEVOPS",
+    "lesson": "devops-01-cicd",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong stage Scan dùng Trivy, bạn thấy CVE CRITICAL được in ra cảnh báo nhưng pipeline vẫn chuyển xanh và build-push vẫn chạy. Cấu hình nào còn thiếu để pipeline thực sự dừng?",
+    "options": [
+      "Thêm `severity: LOW` để quét nhiều lỗi hơn",
+      "Đặt `exit-code: \"1\"` để CVE nặng làm fail pipeline thay vì chỉ cảnh báo",
+      "Chuyển `scan-type` từ fs sang image",
+      "Bỏ `needs: test` để scan chạy độc lập"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Không có exit-code khác 0 thì scan chỉ in cảnh báo rồi cho qua, pipeline vẫn xanh.\n✓ `exit-code: \"1\"`: có CVE nặng thì stage fail, fail fast chặn build-push chạy tiếp.\n✗ Thêm severity LOW chỉ quét thêm lỗi nhẹ, không làm pipeline dừng khi có lỗi.\n✗ Đổi scan-type sang image không liên quan tới việc fail hay không.\n✗ Bỏ needs: test làm hỏng thứ tự, không khiến scan dừng pipeline khi có CVE."
+  },
+  {
+    "id": "ops-q-011",
+    "courseId": "DEVOPS",
+    "lesson": "devops-01-cicd",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong job `deploy-prod`, dòng `environment: production` đóng vai trò gì khi đã cấu hình \"Required reviewers\" cho environment đó trên GitHub?",
+    "options": [
+      "Tự động rollback nếu deploy thất bại",
+      "Là manual approval gate — ranh giới của Continuous Delivery",
+      "Build lại image riêng cho production",
+      "Quét bảo mật image lần cuối trước khi lên prod"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Required reviewers biến environment production thành manual approval gate, đúng ranh giới Continuous Delivery.\n✓ Manual approval gate: cần người duyệt mới deploy prod; bỏ reviewer đi thì thành Continuous Deployment.\n✗ Không tự động rollback; environment chỉ kiểm soát quyền duyệt deploy.\n✗ Không build lại image; cùng artifact github.sha được dùng cho staging và prod.\n✗ Quét bảo mật là việc của stage scan với Trivy, không phải của environment gate."
+  },
+  {
+    "id": "ops-q-012",
+    "courseId": "DEVOPS",
+    "lesson": "devops-01-cicd",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một đội AWS năm 2025-2026 muốn dùng GitHub Actions build/test/scan rồi deploy native lên ECS, theo các nguyên tắc trong bài. Những lựa chọn nào ĐÚNG? Chọn tất cả.",
+    "options": [
+      "Dùng OIDC role để assume vào AWS thay vì lưu AWS access key dài hạn trong CI",
+      "Đẩy image vào ECR với tag git SHA, không dùng latest",
+      "Bật image scanning trên ECR (tích hợp Trivy/Inspector) đúng vai trò stage Scan",
+      "Build lại image trong CodeBuild cho từng môi trường để chắc chắn cập nhật",
+      "Lưu access key dài hạn trong secret của repo cho tiện"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bài mô tả mẫu phổ biến: GitHub Actions + OIDC role, ECR tag SHA + image scanning, build once.\n✓ OIDC role: assume vào AWS mà không cần lưu access key dài hạn trong CI.\n✓ Tag git SHA vào ECR, không dùng latest, để truy vết và rollback.\n✓ Bật image scanning trên ECR đúng vai trò stage Scan.\n✗ Build lại image cho từng môi trường vi phạm build once, deploy everywhere.\n✗ Lưu access key dài hạn là điều OIDC sinh ra để tránh; làm vậy là phản mẫu bảo mật."
+  },
+  {
+    "id": "ops-q-013",
+    "courseId": "DEVOPS",
+    "lesson": "devops-01-cicd",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Câu nào phản ánh đúng nhất tinh thần \"fail fast\" và một pipeline tốt theo bài?",
+    "options": [
+      "Pipeline tốt là pipeline im lặng khi sai để không làm phiền đội",
+      "Stage fail thì pipeline dừng, không chạy tiếp các stage sau; pipeline ồn ào khi sai, im lặng khi đúng",
+      "Mọi cảnh báo đỏ nên được click bỏ qua để không chặn release",
+      "Nên chạy deploy trước rồi test sau để tiết kiệm thời gian"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Fail fast: dừng sớm ở chỗ rẻ nhất; pipeline tốt ồn ào khi sai và im lặng khi đúng.\n✓ Stage fail thì dừng ngay, không tốn công deploy build đã fail test.\n✗ Im lặng khi sai khiến lỗi lọt qua, ngược với mục tiêu của pipeline.\n✗ Quen click bỏ qua cảnh báo đỏ nghĩa là pipeline đã chết về mặt tác dụng.\n✗ Deploy trước test sau phá vỡ nguyên tắc fail ở chỗ rẻ nhất, sớm nhất."
+  },
+  {
+    "id": "ops-q-014",
+    "courseId": "DEVOPS",
+    "lesson": "devops-02-terraform",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một đồng nghiệp viết script bash gọi `aws ec2 run-instances` rồi chạy lại nhiều lần. Mỗi lần chạy lại tạo thêm 1 instance mới. Vì sao Terraform không bị vấn đề này?",
+    "options": [
+      "Vì Terraform là declarative: nó so trạng thái mong muốn với state hiện tại và không làm gì nếu đã khớp (idempotent)",
+      "Vì Terraform chạy chậm hơn nên ít khi tạo trùng",
+      "Vì Terraform luôn tự động xoá instance cũ trước khi chạy lại",
+      "Vì AWS CLI không hỗ trợ tạo nhiều instance"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Terraform là declarative, dựa vào state để chỉ thay đổi phần khác biệt nên chạy lại vẫn cho cùng kết quả.\n✓ So trạng thái mong muốn với state hiện tại, không làm gì nếu đã khớp — đây chính là idempotent\n✗ Tốc độ chạy không liên quan đến việc tránh tạo trùng\n✗ Terraform không mặc định xoá rồi tạo lại; nó chỉ replace khi thuộc tính buộc phải thay\n✗ AWS CLI vẫn tạo được instance; vấn đề là cách imperative không có state"
+  },
+  {
+    "id": "ops-q-015",
+    "courseId": "DEVOPS",
+    "lesson": "devops-02-terraform",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong `terraform plan` bạn thấy dòng `-/+ resource ... # forces replacement` cho một EC2 đang chạy production. Bạn nên hiểu điều gì?",
+    "options": [
+      "Terraform sẽ xoá instance cũ rồi tạo instance mới, gây downtime và mất dữ liệu trên ổ ephemeral",
+      "Terraform sẽ chỉ cập nhật tại chỗ, an toàn không gián đoạn",
+      "Đây là dấu hiệu đọc data source, không thay đổi gì",
+      "Terraform sẽ tạo thêm 1 instance song song và giữ cả hai"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Ký hiệu `-/+` nghĩa là replace: xoá rồi tạo lại, có downtime và rủi ro mất dữ liệu.\n✓ Xoá cũ tạo mới, gây downtime và mất dữ liệu ổ ephemeral — phải dừng đọc kỹ\n✗ Cập nhật tại chỗ là ký hiệu `~`, không phải `-/+`\n✗ Đọc data source là ký hiệu `<=`\n✗ Replace không giữ cả hai instance; instance cũ bị xoá"
+  },
+  {
+    "id": "ops-q-016",
+    "courseId": "DEVOPS",
+    "lesson": "devops-02-terraform",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao tuyệt đối không được commit `terraform.tfstate` vào Git?",
+    "options": [
+      "Vì state chứa secret dạng plaintext như password DB, private key",
+      "Vì file state quá lớn làm chậm repo",
+      "Vì Git không hỗ trợ định dạng JSON",
+      "Vì state thay đổi mỗi lần build nên gây conflict merge"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "State chứa secret plaintext nên commit lên Git là rò rỉ bảo mật.\n✓ State chứa password DB, private key dạng plaintext\n✗ Kích thước không phải lý do chính; vấn đề là bảo mật\n✗ Git hoàn toàn lưu được JSON\n✗ Conflict merge có thể xảy ra nhưng không phải lý do cốt lõi của lệnh cấm này"
+  },
+  {
+    "id": "ops-q-017",
+    "courseId": "DEVOPS",
+    "lesson": "devops-02-terraform",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Team 5 người dùng chung 1 codebase Terraform, state để local trên máy từng người. Triệu chứng nào KHÔNG phải do thiếu remote backend?",
+    "options": [
+      "`terraform plan` báo lỗi cú pháp HCL vì thiếu dấu ngoặc",
+      "Đồng nghiệp apply tạo trùng tài nguyên vì không có state của bạn",
+      "Hai người apply cùng lúc làm state corrupt vì không có lock",
+      "Một người mất laptop là mất luôn state"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lỗi cú pháp HCL do code sai, không liên quan tới backend local hay remote.\n✓ Lỗi cú pháp HCL là vấn đề code, không phải do thiếu remote backend\n✗ Tạo trùng vì không chia sẻ state đúng là hệ quả của state local\n✗ State corrupt khi apply đồng thời đúng là do thiếu lock\n✗ Mất laptop mất state đúng là do state không bền khi để local"
+  },
+  {
+    "id": "ops-q-018",
+    "courseId": "DEVOPS",
+    "lesson": "devops-02-terraform",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần lấy AMI Ubuntu mới nhất của Canonical mà không muốn Terraform tạo hay quản lý AMI đó. Cách đúng là gì?",
+    "options": [
+      "Dùng `data` source (vd `data \"aws_ami\" \"ubuntu\"`) để query, rồi tham chiếu `data.aws_ami.ubuntu.id`",
+      "Dùng `resource \"aws_ami\"` để Terraform tạo AMI",
+      "Hardcode AMI id vào variable và cập nhật tay mỗi lần",
+      "Dùng `output` để Terraform tự tìm AMI"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Data source chỉ query tài nguyên Terraform không quản lý, hợp để lấy AMI mới nhất.\n✓ `data` đọc thông tin có sẵn mà không tạo/quản lý, tham chiếu qua `data....id`\n✗ `resource \"aws_ami\"` sẽ khiến Terraform quản lý/tạo, không phải mục tiêu\n✗ Hardcode id phải cập nhật tay, không tự lấy bản mới nhất\n✗ `output` chỉ là đầu ra, không có chức năng query AMI"
+  },
+  {
+    "id": "ops-q-019",
+    "courseId": "DEVOPS",
+    "lesson": "devops-02-terraform",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn muốn tham số hoá tên bucket trong block `backend \"s3\"` bằng `variable`, nhưng Terraform báo lỗi. Cách xử lý đúng là gì?",
+    "options": [
+      "Backend không nhận variable; dùng partial configuration với `terraform init -backend-config=prod.hcl`",
+      "Đặt biến trong terraform.tfvars là backend sẽ nhận được",
+      "Dùng `TF_VAR_bucket` để truyền vào backend",
+      "Chuyển backend sang dùng `data` source để đọc biến"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Block backend chỉ nhận giá trị literal, không nhận variable; phải dùng partial configuration.\n✓ Dùng `terraform init -backend-config=prod.hcl` để tham số hoá backend\n✗ terraform.tfvars không áp dụng cho backend\n✗ Biến môi trường TF_VAR không tác động tới backend block\n✗ `data` source không dùng để cấu hình backend"
+  },
+  {
+    "id": "ops-q-020",
+    "courseId": "DEVOPS",
+    "lesson": "devops-02-terraform",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một dev sửa tay rule security group trên console để fix gấp, quên báo. Điều gì xảy ra ở lần `apply` tiếp theo của người khác?",
+    "options": [
+      "Terraform âm thầm xoá rule sửa tay đó vì code không có nó",
+      "Terraform tự cập nhật code để giữ lại rule mới",
+      "Terraform báo lỗi và từ chối apply cho tới khi đồng bộ",
+      "Terraform giữ nguyên rule vì console được ưu tiên hơn code"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đây là drift kinh điển: code là chân lý, apply kéo thực tế về đúng code nên rule thừa bị xoá.\n✓ Rule sửa tay bị xoá vì code không khai báo nó\n✗ Terraform không tự sửa code để giữ thay đổi tay\n✗ Apply không tự chặn; nó chỉ hiện diff rồi thực thi theo code\n✗ Console không được ưu tiên hơn code trong mô hình declarative"
+  },
+  {
+    "id": "ops-q-021",
+    "courseId": "DEVOPS",
+    "lesson": "devops-02-terraform",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong pipeline CI/CD, cách nào đảm bảo bước apply thực thi đúng những thay đổi đã được review trên PR?",
+    "options": [
+      "`terraform plan -out=tfplan` lưu plan, rồi `terraform apply tfplan` apply chính xác plan đã lưu",
+      "Chạy `terraform apply -auto-approve` trực tiếp trên mỗi PR",
+      "Chạy `terraform plan` rồi `terraform apply` riêng biệt, mỗi lệnh tự refresh",
+      "Dùng `terraform destroy` rồi `apply` lại để đảm bảo sạch"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lưu plan ra file rồi apply chính file đó đảm bảo apply đúng cái đã review, không hỏi lại.\n✓ `plan -out=tfplan` rồi `apply tfplan` apply chính xác plan đã duyệt\n✗ `apply -auto-approve` trực tiếp trên PR bỏ qua review, không an toàn\n✗ Chạy plan rồi apply riêng có thể apply khác plan đã xem vì refresh lại\n✗ Destroy rồi apply gây downtime, không phải cách review-safe"
+  },
+  {
+    "id": "ops-q-022",
+    "courseId": "DEVOPS",
+    "lesson": "devops-02-terraform",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn có 1 EC2 tạo tay bằng console, muốn đưa vào Terraform quản lý mà KHÔNG xoá đi tạo lại. Phát biểu nào đúng?",
+    "options": [
+      "Phải viết block `resource` khớp với instance thật rồi dùng import block (hoặc `terraform import`); import không tự sinh code đầy đủ",
+      "Chạy `terraform import` là Terraform tự sinh toàn bộ HCL hoàn chỉnh, không cần viết tay",
+      "Dùng `terraform apply` là Terraform tự nhận diện và quản lý instance có sẵn",
+      "Phải `terraform destroy` instance cũ trước rồi apply lại để Terraform quản lý"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Import đưa resource có sẵn vào state nhưng không tự sinh code; bạn phải viết block resource khớp.\n✓ Viết block resource khớp + import block/`terraform import`; import không tự sinh code đầy đủ\n✗ Import không sinh HCL hoàn chỉnh; cờ generate-config-out chỉ tạo khung cần dọn tay\n✗ `apply` thường không tự nhận diện resource tạo tay ngoài state\n✗ Destroy rồi tạo lại đi ngược mục tiêu giữ nguyên instance"
+  },
+  {
+    "id": "ops-q-023",
+    "courseId": "DEVOPS",
+    "lesson": "devops-02-terraform",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Team production muốn cô lập rõ ràng dev và prod, tránh nguy cơ bấm nhầm apply sai môi trường. Cách nào phù hợp nhất theo bài?",
+    "options": [
+      "Tách thư mục riêng cho mỗi env (`envs/dev`, `envs/prod`) với backend `key` khác nhau",
+      "Dùng workspace dev/staging/prod trên cùng thư mục cho mọi khác biệt lớn",
+      "Dùng `terraform.workspace` trong điều kiện ternary để chọn toàn bộ resource prod",
+      "Dùng chung 1 state cho mọi env và phân biệt bằng tag"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài khuyến nghị thư mục riêng mỗi env với backend key khác nhau để cô lập rõ, khó bấm nhầm.\n✓ Thư mục riêng mỗi env + backend key khác nhau cho cô lập rõ ràng\n✗ Workspace chỉ phù hợp khác biệt nhỏ; nhiều team tránh workspace cho prod vì dễ apply nhầm\n✗ Ternary theo workspace vẫn nằm chung codebase/state, dễ nhầm môi trường\n✗ Chung 1 state làm blast radius lớn, không cô lập được"
+  },
+  {
+    "id": "ops-q-024",
+    "courseId": "DEVOPS",
+    "lesson": "devops-02-terraform",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo bài, đâu là các cách hợp lệ để LOCK state khi làm việc nhóm trên AWS? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "S3 lưu state kèm DynamoDB table với partition key `LockID` làm lock",
+      "S3 lockfile với `use_lockfile = true` từ Terraform 1.10+ (nhờ S3 conditional writes)",
+      "Commit `terraform.tfstate` vào Git để mọi người cùng pull",
+      "Đặt biến môi trường `TF_LOCK=true` trước khi apply",
+      "Để state local rồi gửi file qua Slack cho nhau"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Bài nêu hai cách lock hợp lệ: DynamoDB truyền thống và S3 lockfile từ Terraform 1.10+.\n✓ S3 + DynamoDB với LockID là cách lock chuẩn lâu nay\n✓ S3 lockfile `use_lockfile = true` từ 1.10+ nhờ conditional writes, không bắt buộc DynamoDB\n✗ Commit state vào Git làm rò rỉ secret, không hề là cơ chế lock\n✗ Không có biến môi trường `TF_LOCK` như vậy\n✗ Gửi state qua Slack không phải cơ chế lock và rất rủi ro"
+  },
+  {
+    "id": "ops-q-025",
+    "courseId": "DEVOPS",
+    "lesson": "devops-02-terraform",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Trong code mục 10, security group mở SSH (cổng 22) theo `var.allowed_cidr`. Những thực hành nào dưới đây đúng theo best practices của bài? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Không để `cidr_blocks = [\"0.0.0.0/0\"]` cho cổng 22",
+      "Pin version provider và module registry",
+      "Thêm `prevent_destroy` cho resource sống còn như DB prod",
+      "Chạy `terraform apply -auto-approve` tay ở local cho prod để nhanh",
+      "Sửa tay resource trên console khi cần fix gấp rồi báo sau"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bảo mật cổng 22, pin version và prevent_destroy đều là best practices; hai mục còn lại bị bài cảnh báo.\n✓ Không mở SSH ra 0.0.0.0/0 vì bị scanner quét ngay\n✓ Pin version provider và module registry để tránh plan khác nhau\n✓ `prevent_destroy` bảo vệ resource sống còn khỏi bị xoá nhầm\n✗ `apply -auto-approve` tay ở local cho prod bị khuyến cáo tránh; để CI/CD apply từ plan đã lưu\n✗ Sửa tay console gây drift và bị apply ghi đè, vi phạm nguyên tắc mọi thay đổi qua Terraform"
+  },
+  {
+    "id": "ops-q-026",
+    "courseId": "DEVOPS",
+    "lesson": "devops-02-terraform",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn nghi ngờ có drift nhưng muốn CHỈ xem khác biệt giữa thực tế và state, tuyệt đối không để Terraform đề xuất thay đổi gì theo code. Lệnh nào đúng?",
+    "options": [
+      "`terraform plan -refresh-only`",
+      "`terraform plan -out=tfplan`",
+      "`terraform apply -auto-approve`",
+      "`terraform destroy -refresh-only`"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "`plan -refresh-only` chỉ so state với thực tế để xem drift, không đề xuất đổi theo code.\n✓ `plan -refresh-only` chỉ hiện drift, không đề xuất thay đổi từ code\n✗ `plan -out=tfplan` là plan đầy đủ và lưu plan, vẫn đề xuất thay đổi theo code\n✗ `apply -auto-approve` thực thi thay đổi chứ không phải chỉ xem\n✗ Không có chế độ destroy refresh-only như vậy; destroy là xoá resource"
+  },
+  {
+    "id": "ops-q-027",
+    "courseId": "DEVOPS",
+    "lesson": "devops-03-kubernetes-basics",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Tư duy cốt lõi của Kubernetes được mô tả là gì?",
+    "options": [
+      "Bạn viết một chuỗi script chạy một lần để dựng container theo từng bước",
+      "Bạn khai báo desired state, K8s liên tục reconcile để kéo trạng thái thực về khớp mong muốn",
+      "Bạn phải SSH vào từng node để khởi động lại container khi chúng chết",
+      "Bạn dùng docker run nhiều lần và tự viết logic load balance"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "K8s là vòng lặp điều chỉnh declarative, không phải script chạy một lần.\n✓ Khai báo desired state rồi K8s reconcile liên tục là đúng bản chất control loop.\n✗ Chuỗi script chạy một lần theo từng bước là tư duy imperative, trái với K8s.\n✗ SSH thủ công khởi động lại chính là việc orchestrator thay bạn làm.\n✗ Dùng docker run nhiều lần và tự viết load balance là cái mà K8s giải phóng bạn khỏi."
+  },
+  {
+    "id": "ops-q-028",
+    "courseId": "DEVOPS",
+    "lesson": "devops-03-kubernetes-basics",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Thành phần nào lưu toàn bộ state của cluster và được coi là 'nguồn sự thật', bắt buộc phải backup?",
+    "options": [
+      "kube-scheduler",
+      "etcd",
+      "kube-proxy",
+      "kubelet"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "etcd là database key-value lưu toàn bộ state cluster, mất nó là mất cluster.\n✓ etcd là nguồn sự thật, phải backup định kỳ.\n✗ Thành phần quyết định Pod chạy trên node nào không lưu state.\n✗ Thành phần lo network chuyển traffic tới Pod sau Service không lưu state.\n✗ Agent trên node ra lệnh container runtime chạy Pod không phải nơi lưu state."
+  },
+  {
+    "id": "ops-q-029",
+    "courseId": "DEVOPS",
+    "lesson": "devops-03-kubernetes-basics",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn apply một Deployment nhưng K8s từ chối với lỗi 'selector does not match template labels'. Nguyên nhân là gì?",
+    "options": [
+      "Image trong template không tồn tại trên registry",
+      "Giá trị trong selector.matchLabels không khớp với template.metadata.labels",
+      "Bạn quên đặt resources.requests và limits",
+      "Service không tìm thấy endpoint nào của Pod"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Selector là cách Deployment 'nhận con', phải khớp label của template.\n✓ matchLabels lệch với template.labels chính là nguyên nhân lỗi này.\n✗ Image không tồn tại gây ImagePullBackOff ở runtime, không phải lỗi validate selector.\n✗ Thiếu request/limit gây vấn đề scheduling/noisy neighbor, không gây lỗi selector.\n✗ Service rỗng endpoint là vấn đề của Service, không liên quan tới validate Deployment."
+  },
+  {
+    "id": "ops-q-030",
+    "courseId": "DEVOPS",
+    "lesson": "devops-03-kubernetes-basics",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao không nên hardcode IP của Pod khi một service gọi service khác?",
+    "options": [
+      "Pod IP quá dài nên khó nhớ",
+      "IP của Pod đổi mỗi lần Pod được tái tạo; nên dùng Service + DNS nội bộ ổn định",
+      "Pod không có IP riêng, chỉ node mới có IP",
+      "K8s chặn mọi kết nối trực tiếp tới Pod IP"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Pod là ephemeral, IP đổi khi tái tạo nên cần địa chỉ ổn định qua Service.\n✓ IP đổi mỗi lần tái tạo nên dùng Service + DNS nội bộ là đúng.\n✗ Độ dài IP không phải lý do; vấn đề là IP không ổn định.\n✗ Pod có IP riêng, mỗi Pod được cấp một IP.\n✗ K8s không chặn kết nối tới Pod IP; chỉ là IP không ổn định."
+  },
+  {
+    "id": "ops-q-031",
+    "courseId": "DEVOPS",
+    "lesson": "devops-03-kubernetes-basics",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Pod ở STATUS CrashLoopBackOff. Bước debug phù hợp nhất là gì?",
+    "options": [
+      "kubectl scale deploy để tăng số bản sao",
+      "kubectl logs --previous để xem app lỗi gì ở lần chạy trước (thường thiếu env/config)",
+      "kubectl get endpoints để kiểm tra Service",
+      "Tăng memory limit vì chắc chắn bị OOMKilled"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "CrashLoopBackOff là container start rồi chết liên tục, cần xem log lần crash trước.\n✓ logs --previous xem app lỗi gì là hướng xử lý đúng cho CrashLoopBackOff.\n✗ Tăng bản sao chỉ nhân thêm Pod cùng chết, không giải quyết nguyên nhân.\n✗ Kiểm tra endpoints là để debug Service không route, không phải crash.\n✗ Tăng memory limit chỉ đúng khi STATUS là OOMKilled, không phải mặc định cho crash."
+  },
+  {
+    "id": "ops-q-032",
+    "courseId": "DEVOPS",
+    "lesson": "devops-03-kubernetes-basics",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Service 'web' kiểu ClusterIP không route được traffic tới Pod nào. Lệnh và cách chẩn đoán nào đúng?",
+    "options": [
+      "kubectl logs web — nếu rỗng thì Service hỏng",
+      "kubectl get endpoints web — nếu danh sách rỗng thì selector lệch label hoặc targetPort sai",
+      "kubectl rollout undo — vì Service cần rollback",
+      "kubectl top pods — vì hết CPU làm Service ngừng route"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Endpoint rỗng cho biết Service không tìm thấy Pod nào khớp selector.\n✓ get endpoints, nếu rỗng kiểm tra label/targetPort là cách debug đúng.\n✗ logs xem log container, không cho biết Service có route tới Pod hay không.\n✗ rollout undo dùng cho Deployment, không sửa được vấn đề matching của Service.\n✗ top pods xem CPU/RAM, không phải nguyên nhân Service không có endpoint."
+  },
+  {
+    "id": "ops-q-033",
+    "courseId": "DEVOPS",
+    "lesson": "devops-03-kubernetes-basics",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần expose một web app ra Internet trên cloud. Loại Service nào phù hợp nhất?",
+    "options": [
+      "ClusterIP",
+      "NodePort",
+      "LoadBalancer",
+      "Không cần Service, dùng Pod IP trực tiếp"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "LoadBalancer cấp một load balancer bên ngoài, trên cloud tạo LB thật.\n✓ LoadBalancer là loại để expose service ra Internet trên cloud.\n✗ ClusterIP chỉ truy cập được trong cluster, không ra ngoài.\n✗ NodePort mở port trên mọi node, hiếm dùng trực tiếp ở prod, thường đứng sau LB.\n✗ Pod IP không ổn định và không phải cách expose dịch vụ."
+  },
+  {
+    "id": "ops-q-034",
+    "courseId": "DEVOPS",
+    "lesson": "devops-03-kubernetes-basics",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong manifest, sự khác biệt giữa 'spec' và 'status' là gì?",
+    "options": [
+      "spec do K8s ghi, status do bạn viết",
+      "spec là bạn khai báo (mong muốn), status do K8s ghi (thực tế); control loop kéo status về khớp spec",
+      "Cả hai đều do bạn viết và phải đồng bộ tay",
+      "status là cấu hình, spec là metadata về tên và label"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "spec là mong muốn bạn viết, status là thực tế do K8s ghi.\n✓ spec bạn viết, status K8s ghi, control loop kéo status về spec là chính xác.\n✗ Đảo vai trò spec/status là sai.\n✗ status không do bạn viết và không cần đồng bộ tay.\n✗ status không phải cấu hình; tên/label nằm ở metadata."
+  },
+  {
+    "id": "ops-q-035",
+    "courseId": "DEVOPS",
+    "lesson": "devops-03-kubernetes-basics",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khi nào nên chọn AWS ECS thay vì EKS theo bài học?",
+    "options": [
+      "Khi cần dùng hệ sinh thái K8s như Helm, ArgoCD, operator",
+      "Khi team nhỏ, ít workload, muốn đơn giản và gắn chặt AWS, không muốn gánh độ phức tạp của K8s",
+      "Khi cần triển khai đa-cloud",
+      "Khi cần dùng kubectl và manifest YAML chuẩn K8s"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "ECS đơn giản hơn, hợp team nhỏ không muốn độ phức tạp của K8s.\n✓ Team nhỏ, muốn đơn giản, gắn chặt AWS là khi chọn ECS.\n✗ Cần Helm/ArgoCD/operator là lý do chọn EKS.\n✗ Đa-cloud là lý do chọn EKS (chuẩn K8s).\n✗ ECS không có K8s API nên không dùng kubectl/manifest chuẩn K8s."
+  },
+  {
+    "id": "ops-q-036",
+    "courseId": "DEVOPS",
+    "lesson": "devops-03-kubernetes-basics",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một Pod ở STATUS Pending mãi không được schedule. Theo bài, nguyên nhân khả dĩ nhất là gì?",
+    "options": [
+      "Container start rồi chết liên tục",
+      "Hết CPU/RAM trên node, hoặc đang đợi PersistentVolume",
+      "Vượt memory limit nên bị kill",
+      "Readiness probe fail nên Service chưa route tới"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Pending nghĩa là Pod chưa được schedule lên node nào.\n✓ Hết tài nguyên trên node hoặc đợi PersistentVolume là nguyên nhân của Pending.\n✗ Start rồi chết liên tục là CrashLoopBackOff, không phải Pending.\n✗ Vượt memory limit là OOMKilled, xảy ra khi đã chạy.\n✗ Readiness probe fail là tình trạng 0/1 Running, Pod đã được schedule và chạy."
+  },
+  {
+    "id": "ops-q-037",
+    "courseId": "DEVOPS",
+    "lesson": "devops-03-kubernetes-basics",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Quan hệ phân cấp đúng giữa các object quản lý Pod trong một Deployment là gì?",
+    "options": [
+      "Deployment quản lý Pod trực tiếp, không qua ReplicaSet",
+      "ReplicaSet quản lý Deployment, Deployment quản lý Pod",
+      "Deployment quản lý ReplicaSet, ReplicaSet quản lý Pod; Deployment thêm rolling update và rollback",
+      "Pod quản lý ReplicaSet, ReplicaSet quản lý Deployment"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Deployment quản lý ReplicaSet, ReplicaSet đảm bảo đúng N Pod.\n✓ Deployment -> ReplicaSet -> Pod, kèm rolling update/rollback là chính xác.\n✗ Deployment không quản Pod trực tiếp; nó đi qua ReplicaSet.\n✗ ReplicaSet không quản Deployment; thứ tự bị đảo.\n✗ Pod là đơn vị nhỏ nhất, không quản object nào."
+  },
+  {
+    "id": "ops-q-038",
+    "courseId": "DEVOPS",
+    "lesson": "devops-03-kubernetes-basics",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những phát biểu nào sau đây về Pod và việc deploy trong K8s là ĐÚNG?",
+    "options": [
+      "Các container trong cùng một Pod chia sẻ một IP và localhost, có thể dùng chung volume",
+      "Một Pod 'trần' nếu chết sẽ tự được dựng lại mà không cần controller",
+      "Pod là ephemeral; khi chết nó được thay bằng một Pod mới với IP mới",
+      "99% trường hợp một Pod chạy một container chính, container phụ chỉ cho pattern sidecar",
+      "Nên deploy Pod trần cho production để đơn giản"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "Pod là đơn vị nhỏ nhất, ephemeral, thường một container chính và cần controller quản lý.\n✓ Container cùng Pod chia sẻ IP, localhost và volume là đúng.\n✓ Pod ephemeral, chết là thay bằng Pod mới với IP mới là đúng.\n✓ 99% một container chính, container phụ cho sidecar là đúng.\n✗ Pod trần chết là không ai dựng lại, cần controller mới tự khôi phục.\n✗ Không bao giờ deploy Pod trần cho production; luôn để Deployment quản lý."
+  },
+  {
+    "id": "ops-q-039",
+    "courseId": "DEVOPS",
+    "lesson": "devops-03-kubernetes-basics",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Khi dùng EKS thay vì tự dựng Kubernetes, những lợi ích/ánh xạ nào sau đây là ĐÚNG theo bài?",
+    "options": [
+      "AWS quản lý control plane đa-AZ và tự backup etcd",
+      "Service type LoadBalancer sẽ được AWS Load Balancer Controller tạo NLB/ALB thật",
+      "IRSA / EKS Pod Identity map ServiceAccount K8s sang IAM Role, không cần nhét access key",
+      "Bạn vẫn phải tự backup etcd hằng ngày như self-managed",
+      "Worker node chỉ có thể tự quản hoàn toàn, EKS không có lựa chọn serverless"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "EKS lo control plane và etcd, tích hợp sâu networking và quyền AWS.\n✓ AWS quản control plane đa-AZ và tự backup etcd là đúng.\n✓ LoadBalancer được AWS Load Balancer Controller tạo NLB/ALB thật là đúng.\n✓ IRSA/Pod Identity map ServiceAccount sang IAM Role không cần access key là đúng.\n✗ Trên EKS, AWS lo backup etcd nên bạn không phải tự làm như self-managed.\n✗ EKS có Fargate serverless ngoài Managed Node Groups, nên có lựa chọn không quản node."
+  },
+  {
+    "id": "ops-q-040",
+    "courseId": "DEVOPS",
+    "lesson": "devops-04-kubernetes-ops",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn sửa một key trong ConfigMap đang được tiêu thụ qua envFrom (env var). Pod sẽ thấy giá trị mới khi nào?",
+    "options": [
+      "Ngay lập tức, vì env var luôn được kubelet đồng bộ liên tục",
+      "Không tự thấy — env var chỉ nạp một lần lúc Pod khởi động, phải rollout lại Pod",
+      "Sau ~60s do kubelet sync cache, không cần làm gì thêm",
+      "Sau khi chạy kubectl rollout status mà không cần đổi gì"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Env var được nạp một lần duy nhất lúc container khởi động, sửa ConfigMap không tự cập nhật vào env.\n✓ Không tự thấy, phải tạo lại Pod (rollout) để nạp lại env var mới.\n✗ Env var không được kubelet đồng bộ liên tục; chỉ file mount dạng volume mới được cập nhật.\n✗ Trễ ~60s do sync cache là đặc tính của volume mount, không phải env var.\n✗ rollout status chỉ theo dõi tiến trình, không trigger thay đổi nào."
+  },
+  {
+    "id": "ops-q-041",
+    "courseId": "DEVOPS",
+    "lesson": "devops-04-kubernetes-ops",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "App của bạn boot rất chậm (~4 phút vì migrate DB lúc start). Bạn muốn liveness probe phát hiện treo nhanh khi đã chạy ổn định, nhưng không bị kill trong lúc boot. Cách đúng là gì?",
+    "options": [
+      "Nới initialDelaySeconds của liveness lên 300s",
+      "Dùng startupProbe với failureThreshold cao, để nó chặn liveness cho tới khi boot xong",
+      "Tắt liveness probe hoàn toàn để khỏi bị kill",
+      "Cho liveness probe gọi tới endpoint kiểm tra DB đã migrate xong chưa"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "startupProbe sinh ra để hoãn liveness/readiness cho app boot chậm mà vẫn giữ liveness nhạy khi đã chạy.\n✓ startupProbe chặn 2 probe kia cho tới khi pass, sau đó liveness chạy với chu kỳ ngắn để phát hiện treo nhanh.\n✗ Nới initialDelaySeconds quá tay khiến lúc treo thật cũng chậm phát hiện.\n✗ Tắt liveness làm mất khả năng tự phục hồi khi process treo.\n✗ Liveness gọi tới DB/dependency là thảm hoạ, dễ gây cascading restart."
+  },
+  {
+    "id": "ops-q-042",
+    "courseId": "DEVOPS",
+    "lesson": "devops-04-kubernetes-ops",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Container của bạn bị ghi exit 137 và STATUS OOMKilled. Nguyên nhân và hướng xử lý nào đúng?",
+    "options": [
+      "CPU vượt limit nên bị throttle; nên tăng CPU limit",
+      "Memory vượt limit; bộ nhớ không nén được nên container bị kill, cần tăng memory limit hoặc sửa leak",
+      "Readiness probe fail; cần sửa endpoint /ready",
+      "Node bị taint; cần thêm toleration cho Pod"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "OOMKilled (exit 137) là do container vượt memory limit; bộ nhớ không nén được nên bị kill thẳng.\n✓ Vượt memory limit khiến container bị OOMKilled, xử lý bằng tăng limit hợp lý hoặc sửa rò rỉ bộ nhớ.\n✗ Vượt CPU limit chỉ bị throttle (chậm lại), không bị kill.\n✗ Readiness fail làm Pod bị gỡ khỏi endpoints, không tạo exit 137.\n✗ Taint gây Pending khi thiếu toleration, không phải OOMKilled."
+  },
+  {
+    "id": "ops-q-043",
+    "courseId": "DEVOPS",
+    "lesson": "devops-04-kubernetes-ops",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Workload payment cần không bao giờ bị evict trước các Pod khác khi node thiếu tài nguyên. Cách cấu hình resources nào đạt QoS đúng?",
+    "options": [
+      "Chỉ set requests, bỏ trống limits",
+      "Đặt requests == limits cho mọi container để đạt Guaranteed",
+      "Không set gì cả để Pod nhẹ và linh hoạt",
+      "Set limits cao hơn requests nhiều lần để có dư địa burst"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "QoS Guaranteed (requests == limits mọi container) là class bị evict cuối cùng.\n✓ requests == limits cho mọi container đạt Guaranteed, được bảo vệ tối đa khi node thiếu tài nguyên.\n✗ Chỉ set requests khác limits rơi vào Burstable, bị evict ở giữa.\n✗ Không set gì là BestEffort, bị evict đầu tiên.\n✗ limits cao hơn requests vẫn là Burstable, không phải Guaranteed."
+  },
+  {
+    "id": "ops-q-044",
+    "courseId": "DEVOPS",
+    "lesson": "devops-04-kubernetes-ops",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "HPA cấu hình target CPU 70% nhưng không bao giờ scale, dù tải tăng. Nguyên nhân khả dĩ nhất theo bài là gì?",
+    "options": [
+      "Pod chưa set resource requests nên HPA không tính được % CPU",
+      "minReplicas đặt quá thấp",
+      "Deployment dùng RollingUpdate thay vì Recreate",
+      "revisionHistoryLimit quá nhỏ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "HPA cần resource requests trên Pod để tính phần trăm utilization; thiếu requests thì không scale theo CPU.\n✓ Không có requests, HPA không có mẫu số để tính % CPU nên không hoạt động.\n✗ minReplicas thấp không ngăn HPA scale lên khi tải cao.\n✗ Chiến lược rollout không liên quan tới việc HPA tính metric.\n✗ revisionHistoryLimit chỉ ảnh hưởng số revision lưu để rollback."
+  },
+  {
+    "id": "ops-q-045",
+    "courseId": "DEVOPS",
+    "lesson": "devops-04-kubernetes-ops",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Rolling update đẩy image mới, các Pod mới crash ngay. Sau khi progressDeadlineSeconds hết hạn, điều gì xảy ra?",
+    "options": [
+      "K8s tự động rollback về revision trước",
+      "Rollout dừng và Progressing=False; bạn phải kubectl rollout undo thủ công",
+      "Toàn bộ Pod cũ bị xoá ngay khi Pod mới được tạo",
+      "Service tự chuyển hết traffic sang Pod mới bất kể trạng thái"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Rolling update không tự rollback; khi quá deadline nó chỉ dừng và báo Progressing=False.\n✓ Rollout dừng lại, cần rollout undo thủ công (hoặc Argo Rollouts/Flagger để auto-rollback theo metric).\n✗ K8s không tự rollback khi Pod mới crash.\n✗ Với maxUnavailable hợp lý, Pod cũ không bị xoá ồ ạt ngay.\n✗ Service chỉ route tới Pod Ready, Pod crash không nhận traffic."
+  },
+  {
+    "id": "ops-q-046",
+    "courseId": "DEVOPS",
+    "lesson": "devops-04-kubernetes-ops",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn cấu hình maxSurge: 1, maxUnavailable: 0 để zero-downtime. Tuy nhiên sau rollout user vẫn gặp lỗi dù rollout báo 'thành công'. Nguyên nhân gốc thường gặp nhất?",
+    "options": [
+      "maxSurge: 1 luôn gây mất Pod trong lúc update",
+      "readiness probe không chuẩn nên K8s tưởng Pod lỗi đã Ready và đẩy traffic vào",
+      "minReadySeconds đặt quá cao làm rollout treo",
+      "revisionHistoryLimit hết chỗ nên Pod mới không lên được"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Zero-downtime phụ thuộc readiness probe chính xác; probe sai khiến Pod lỗi bị coi là Ready.\n✓ Readiness probe không chuẩn làm K8s đẩy traffic vào Pod thực ra đang lỗi, rollout 'thành công trên giấy'.\n✗ maxUnavailable: 0 đảm bảo không Pod nào thiếu, maxSurge: 1 không gây mất Pod.\n✗ minReadySeconds cao chỉ làm rollout chậm, không tạo lỗi cho user.\n✗ revisionHistoryLimit chỉ liên quan lưu lịch sử revision."
+  },
+  {
+    "id": "ops-q-047",
+    "courseId": "DEVOPS",
+    "lesson": "devops-04-kubernetes-ops",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Pod ở trạng thái CrashLoopBackOff, kubectl logs api-xxx trả về trống. Lệnh nào lấy được manh mối quan trọng nhất?",
+    "options": [
+      "kubectl logs api-xxx --previous",
+      "kubectl rollout status deployment/api",
+      "kubectl get events --field-selector type=Normal",
+      "kubectl label pod api-xxx debug=true"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Container hiện tại chưa kịp chạy nên log trống; bí mật nằm trong container đã chết trước đó.\n✓ logs --previous lấy log của container đã crash, cứu mạng cho CrashLoopBackOff.\n✗ rollout status chỉ theo dõi tiến trình rollout, không cho log lỗi.\n✗ Lọc events type=Normal bỏ qua chính các sự kiện lỗi.\n✗ Gắn label không tạo ra thông tin chẩn đoán."
+  },
+  {
+    "id": "ops-q-048",
+    "courseId": "DEVOPS",
+    "lesson": "devops-04-kubernetes-ops",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Service không định tuyến tới Pod nào (không có endpoint). Theo bài, cơ chế nào kết nối Service với Pod và đâu là chỗ cần kiểm tra?",
+    "options": [
+      "Ingress object; kiểm tra ingressClassName",
+      "label/selector; selector của Service phải khớp label trên Pod",
+      "taint/toleration; kiểm tra effect NoSchedule",
+      "resource requests; kiểm tra QoS class"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Service kết nối tới Pod qua selector khớp với label của Pod.\n✓ label/selector là cơ chế nối Service với Pod; selector sai/không khớp label thì không có endpoint.\n✗ Ingress định tuyến L7 vào Service, không phải nối Service với Pod.\n✗ taint/toleration chi phối schedule Pod lên node, không liên quan endpoint Service.\n✗ resource requests quyết định schedule/QoS, không nối Service với Pod."
+  },
+  {
+    "id": "ops-q-049",
+    "courseId": "DEVOPS",
+    "lesson": "devops-04-kubernetes-ops",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trên EKS, để cấp quyền truy cập AWS cho Pod, cách làm được khuyến nghị thay vì nhét access key vào Secret là gì?",
+    "options": [
+      "Hardcode access key vào ConfigMap cho dễ quản lý",
+      "Dùng IRSA / EKS Pod Identity để Pod nhận quyền IAM tạm thời, tự xoay vòng",
+      "Mount access key qua hostPath volume",
+      "Đặt access key vào biến môi trường của image lúc build"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "IRSA/Pod Identity cấp quyền IAM tạm thời, tự xoay vòng, an toàn hơn static key.\n✓ IRSA/EKS Pod Identity cho Pod quyền IAM tạm, không cần key tĩnh.\n✗ ConfigMap không mã hoá và không dành cho credential.\n✗ hostPath với access key vẫn là key tĩnh, rủi ro lộ.\n✗ Nhét key vào image vi phạm 12-factor và rất dễ lộ."
+  },
+  {
+    "id": "ops-q-050",
+    "courseId": "DEVOPS",
+    "lesson": "devops-04-kubernetes-ops",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, vì sao Ingress object một mình là 'vô dụng'?",
+    "options": [
+      "Vì Ingress chỉ hoạt động với Service type=LoadBalancer",
+      "Vì nó chỉ là cấu hình; cần một Ingress Controller đang chạy đọc và thực thi nó",
+      "Vì Ingress đã bị thay thế hoàn toàn bởi Gateway API",
+      "Vì nó chỉ route được L4 chứ không route theo host/path"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Ingress chỉ là khai báo cấu hình; phải có Ingress Controller (ingress-nginx, Traefik, ALB Controller) thực thi.\n✓ Không có controller đọc/thực thi thì Ingress object không làm gì.\n✗ Ingress hoạt động ở L7 trỏ tới Service ClusterIP, không bắt buộc LoadBalancer.\n✗ Gateway API đang dần thay thế nhưng Ingress vẫn phổ biến, chưa bị bỏ.\n✗ Ingress route L7 theo host/path, đó chính là điểm mạnh của nó."
+  },
+  {
+    "id": "ops-q-051",
+    "courseId": "DEVOPS",
+    "lesson": "devops-04-kubernetes-ops",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn các phát biểu ĐÚNG về probe và resource trong K8s theo bài.",
+    "options": [
+      "liveness probe fail sẽ kill và restart container",
+      "readiness probe fail sẽ gỡ Pod khỏi Service endpoints nhưng không kill",
+      "Vượt CPU limit khiến container bị OOMKilled",
+      "Để liveness probe gọi tới database là cách bảo vệ tốt khỏi outage",
+      "Bỏ trống memory limit cho app rò rỉ bộ nhớ có thể kéo cả node và Pod khác chết"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "Probe và resource hành xử khác nhau; câu này kiểm tra phân biệt các cơ chế.\n✓ liveness fail dẫn tới kill và restart container.\n✓ readiness fail gỡ khỏi endpoints, không kill.\n✓ Thiếu memory limit cho app leak có thể ăn hết RAM node, kéo node và Pod khác chết.\n✗ Vượt CPU limit chỉ bị throttle, OOMKilled là do vượt memory.\n✗ liveness gọi DB là thảm hoạ, DB chậm gây restart đồng loạt dẫn tới cascading outage."
+  },
+  {
+    "id": "ops-q-052",
+    "courseId": "DEVOPS",
+    "lesson": "devops-04-kubernetes-ops",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Chọn các phát biểu ĐÚNG về vận hành scaling, scheduling và GitOps/strategy theo bài.",
+    "options": [
+      "HPA scale số Pod ngang, Cluster Autoscaler/Karpenter scale số node",
+      "Nên dùng HPA và VPA cùng trên CPU cho một workload để hiệu quả hơn",
+      "taint/toleration là cơ chế 'đẩy ra', muốn 'kéo vào' node cụ thể dùng nodeSelector/nodeAffinity",
+      "Secret mặc định trong K8s là dữ liệu đã được mã hoá an toàn trong etcd",
+      "DB migration không tương thích ngược trong rolling update có thể làm Pod cũ chết, nên migrate theo expand/contract"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      4
+    ],
+    "explanation": "Câu này gom các nguyên tắc vận hành về scaling, scheduling, security và migration.\n✓ HPA scale Pod ngang; Cluster Autoscaler/Karpenter scale node.\n✓ taint/toleration đẩy ra; nodeSelector/nodeAffinity kéo Pod vào node mong muốn.\n✓ Migration không tương thích ngược làm Pod cũ chết, nên dùng expand/contract.\n✗ Không dùng HPA và VPA cùng trên CPU/memory một workload vì chúng đánh nhau.\n✗ Secret mặc định chỉ là base64, KHÔNG mã hoá; cần EncryptionConfiguration/KMS."
+  },
+  {
+    "id": "ops-q-053",
+    "courseId": "DEVOPS",
+    "lesson": "devops-05-gitops-deploy",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong mô hình GitOps, ai là người khởi động việc cập nhật trạng thái cluster?",
+    "options": [
+      "Agent reconcile chạy trong cluster tự pull manifest từ Git và áp dụng",
+      "CI pipeline cầm credential admin rồi chạy kubectl apply vào cluster",
+      "Kỹ sư trực tiếp kubectl edit trên prod khi có thay đổi",
+      "Registry image gửi webhook đẩy thẳng vào API server của cluster"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "GitOps dùng pull model: agent trong cluster liên tục so sánh và tự áp dụng.\n✓ Agent reconcile trong cluster tự pull từ Git là đúng bản chất pull model.\n✗ CI cầm credential admin chạy apply là push model truyền thống, không phải GitOps.\n✗ kubectl edit tay trên prod tạo drift, sẽ bị selfHeal ghi đè.\n✗ Registry đẩy thẳng vào cluster không phải cơ chế của GitOps."
+  },
+  {
+    "id": "ops-q-054",
+    "courseId": "DEVOPS",
+    "lesson": "devops-05-gitops-deploy",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao tài liệu khuyên TUYỆT ĐỐI không dùng tag :latest trong GitOps?",
+    "options": [
+      "Vì :latest khiến image đổi mà Git không đổi, làm reconcile loop mất nghĩa",
+      "Vì registry không hỗ trợ kéo tag :latest qua agent reconcile",
+      "Vì :latest luôn lớn hơn dung lượng image pin theo digest",
+      "Vì Argo CD chỉ chấp nhận tag dạng số phiên bản semver"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Desired state phải bất biến; :latest phá vỡ điều đó.\n✓ Image đổi nhưng Git không đổi làm reconcile loop vô nghĩa là lý do chính.\n✗ Registry vẫn kéo được :latest, không phải vấn đề kỹ thuật kéo.\n✗ Dung lượng image không liên quan đến tag.\n✗ Argo CD không yêu cầu semver, vấn đề là tính bất biến."
+  },
+  {
+    "id": "ops-q-055",
+    "courseId": "DEVOPS",
+    "lesson": "devops-05-gitops-deploy",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Deployment strategy nào BẮT BUỘC chấp nhận có downtime?",
+    "options": [
+      "Recreate",
+      "Rolling update",
+      "Blue-Green",
+      "Canary"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Recreate tắt hết pod cũ rồi mới bật pod mới nên có khoảng downtime.\n✓ Recreate có downtime vài giây đến phút theo bảng đánh đổi.\n✗ Rolling thay từ từ, giữ service nên không downtime.\n✗ Blue-Green chạy 2 bộ đầy đủ, đổi switch nên không downtime.\n✗ Canary đẩy dần theo % traffic nên không downtime."
+  },
+  {
+    "id": "ops-q-056",
+    "courseId": "DEVOPS",
+    "lesson": "devops-05-gitops-deploy",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn bật selfHeal: true trên Argo CD. Lúc 2h sáng có sự cố, bạn kubectl edit deployment để hotfix trực tiếp nhưng vài giây sau thay đổi biến mất. Nguyên nhân?",
+    "options": [
+      "Agent reconcile phát hiện drift so với Git và ghi đè lại theo desired state",
+      "kubectl edit không có quyền ghi vào deployment trong namespace prod",
+      "Service đang trỏ sai selector nên thay đổi không tới đúng pod",
+      "Readiness probe fail khiến deployment tự rollback về bản trước"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "selfHeal khiến mọi thay đổi tay bị coi là drift và bị revert.\n✓ Agent reconcile ghi đè drift về desired state trong Git là đúng cơ chế selfHeal.\n✗ Vấn đề không phải quyền ghi; edit thành công rồi mới bị revert.\n✗ Selector sai không gây ra việc thay đổi tự biến mất.\n✗ Readiness probe không revert manifest đã sửa tay."
+  },
+  {
+    "id": "ops-q-057",
+    "courseId": "DEVOPS",
+    "lesson": "devops-05-gitops-deploy",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một rolling update đẩy hết 10 pod version mới bị crashloop ra production. Cấu hình nào đúng là 'phanh an toàn' giúp ngăn việc này?",
+    "options": [
+      "Readiness probe đúng để pod lỗi không bị tính là Ready và rollout dừng lại",
+      "Tăng maxSurge lên cao để có nhiều pod mới thay nhanh hơn",
+      "Đổi strategy sang Recreate để tắt hết pod cũ trước",
+      "Đặt replicas thấp hơn để giảm số pod lỗi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Rolling update dựa vào readiness probe để biết khi nào tiếp tục thay pod.\n✓ Readiness probe đúng khiến pod lỗi không Ready, rollout không tiến tiếp là phanh an toàn.\n✗ Tăng maxSurge chỉ đẩy pod lỗi ra nhanh hơn, không phải phanh.\n✗ Recreate gây downtime và vẫn không phát hiện pod lỗi.\n✗ Giảm replicas không ngăn rollout đẩy version lỗi."
+  },
+  {
+    "id": "ops-q-058",
+    "courseId": "DEVOPS",
+    "lesson": "devops-05-gitops-deploy",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Team cần rollback TỨC THÌ về version cũ ngay khi version mới lỗi, chấp nhận tốn gấp đôi tài nguyên. Strategy phù hợp nhất?",
+    "options": [
+      "Blue-Green: chỉ đổi selector Service trỏ ngược về blue",
+      "Rolling update với maxUnavailable cao",
+      "Recreate rồi deploy lại bản cũ",
+      "Canary tăng dần 5% đến 100%"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Blue-Green giữ 2 bộ đầy đủ nên đổi switch là rollback tức thì.\n✓ Blue-Green đổi selector Service về blue cho rollback tức thì, đúng yêu cầu (chấp nhận 2x tài nguyên).\n✗ Rolling rollback chậm dần vì phải undo từng pod.\n✗ Recreate phải deploy lại bản cũ, có downtime, không tức thì.\n✗ Canary rollback nhanh nhưng không 'tức thì như switch' và đề bài chấp nhận 2x tài nguyên hợp với Blue-Green hơn."
+  },
+  {
+    "id": "ops-q-059",
+    "courseId": "DEVOPS",
+    "lesson": "devops-05-gitops-deploy",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao canary được mô tả là có 'blast radius nhỏ nhất' trong các strategy?",
+    "options": [
+      "Vì lỗi chỉ ảnh hưởng vài % user nhận traffic canary trước khi cắt sớm",
+      "Vì canary không bao giờ chạy 2 version cùng lúc",
+      "Vì canary không cần readiness probe nên triển khai nhanh",
+      "Vì canary luôn rẻ hơn rolling update về tài nguyên"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Canary đẩy version mới cho phần nhỏ traffic nên lỗi chỉ chạm ít user.\n✓ Lỗi chỉ ảnh hưởng vài % user và cắt sớm là lý do blast radius nhỏ nhất.\n✗ Canary thực tế chạy 2 version cùng lúc (stable + canary).\n✗ Canary vẫn cần probe và metric, không liên quan blast radius.\n✗ Chi phí canary ở mức trung bình, không phải rẻ nhất."
+  },
+  {
+    "id": "ops-q-060",
+    "courseId": "DEVOPS",
+    "lesson": "devops-05-gitops-deploy",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Sau deploy, một bug khiến nút 'Mua' lặng lẽ không gọi API thanh toán nhưng HTTP vẫn trả 200. Canary của bạn chỉ canh error rate 5xx nên pass và lên 100%, doanh thu rớt mới phát hiện. Cách sửa đúng?",
+    "options": [
+      "Thêm ít nhất một business metric (tỉ lệ thanh toán thành công) vào analysis",
+      "Giảm successCondition error rate xuống dưới 0.001 cho nhạy hơn",
+      "Tăng failureLimit để canary fail nhanh hơn",
+      "Chuyển từ canary sang blue-green để test green như thật"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lỗi logic mà HTTP vẫn 200 chỉ có business metric mới bắt được.\n✓ Thêm business metric như tỉ lệ thanh toán thành công bắt được lỗi mà error rate bỏ sót.\n✗ Hạ ngưỡng error rate vô ích vì error rate vẫn 0% với HTTP 200.\n✗ Tăng failureLimit làm fail chậm hơn chứ không bắt thêm loại lỗi.\n✗ Blue-Green test thủ công vẫn có thể bỏ sót lỗi logic im lặng nếu không đo business metric."
+  },
+  {
+    "id": "ops-q-061",
+    "courseId": "DEVOPS",
+    "lesson": "devops-05-gitops-deploy",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một tính năng mới trong release lỗi nặng nhưng các tính năng khác cùng release vẫn cần chạy. Cách xử lý nhanh nhất, ít ảnh hưởng nhất?",
+    "options": [
+      "Tắt feature flag của tính năng đó, không cần rollback cả deploy",
+      "git revert toàn bộ commit deploy rồi để Argo CD đồng bộ lại",
+      "kubectl rollout undo deployment về revision trước",
+      "Đổi selector Service blue-green về version cũ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Feature flag tách release khỏi deploy nên tắt một tính năng không đụng phần còn lại.\n✓ Tắt flag rollback đúng một tính năng lỗi trong mili-giây, giữ tính năng khác chạy.\n✗ git revert cả deploy gỡ luôn các tính năng tốt cùng release.\n✗ rollout undo đưa cả binary về cũ, ảnh hưởng mọi tính năng.\n✗ Đổi selector blue-green cũng rollback toàn bộ version, không chọn lọc được."
+  },
+  {
+    "id": "ops-q-062",
+    "courseId": "DEVOPS",
+    "lesson": "devops-05-gitops-deploy",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn cài Argo Rollouts với canary steps setWeight 10/50/100 nhưng không có service mesh hay ingress hỗ trợ weight. Hậu quả thực tế là gì?",
+    "options": [
+      "Controller chỉ chia traffic gần đúng theo tỉ lệ số pod, kém chính xác so với weight mong muốn",
+      "Rollout không khởi động được vì thiếu CRD bắt buộc",
+      "Traffic luôn 100% sang canary ngay bước đầu",
+      "AnalysisTemplate không query được Prometheus"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Progressive delivery cần traffic splitting ở tầng mạng; thiếu thì rơi về chia theo số pod.\n✓ Không có mesh/ingress weight thì controller chỉ chia theo tỉ lệ số pod, kém chính xác là đúng.\n✗ Rollout vẫn chạy được, không phải thiếu CRD.\n✗ Traffic không nhảy 100% ngay; nó xấp xỉ theo số pod.\n✗ AnalysisTemplate query Prometheus độc lập với traffic shaping."
+  },
+  {
+    "id": "ops-q-063",
+    "courseId": "DEVOPS",
+    "lesson": "devops-05-gitops-deploy",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Theo pattern hai repo của GitOps, sau khi app repo build image, bước tiếp theo để deploy được kích hoạt là gì?",
+    "options": [
+      "CI cập nhật tag image (commit/PR) trong config repo, agent thấy đổi rồi reconcile",
+      "CI chạy kubectl apply trực tiếp vào cluster với image vừa build",
+      "Agent đọc thẳng app repo và build lại image trong cluster",
+      "Registry tự sửa deployment.yaml trong config repo khi nhận image mới"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Config repo là source of truth; CI chỉ commit tag image vào đó.\n✓ CI cập nhật tag image trong config repo và agent reconcile là đúng luồng hai repo.\n✗ CI chạy kubectl apply là push model, trái với GitOps.\n✗ Agent không build image từ app repo; nó áp dụng manifest.\n✗ Registry không tự sửa file trong config repo."
+  },
+  {
+    "id": "ops-q-064",
+    "courseId": "DEVOPS",
+    "lesson": "devops-05-gitops-deploy",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn các phát biểu ĐÚNG về lợi ích bảo mật và vận hành của pull model (GitOps) so với push model. (Chọn nhiều)",
+    "options": [
+      "Không credential production nào rời khỏi cluster; CI chỉ cần quyền ghi vào Git",
+      "Drift do sửa tay được tự phát hiện và tự sửa",
+      "Dễ scale multi-cluster vì mỗi cluster tự kéo về",
+      "CI runner phải giữ quyền admin vào prod để deploy nhanh hơn",
+      "Cluster phải mở cổng vào cho CI để nhận lệnh apply"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Pull model giữ credential trong cluster và tự reconcile, giảm bề mặt tấn công.\n✓ Credential production ở lại trong cluster, CI chỉ ghi Git là ưu điểm chính.\n✓ Drift tự phát hiện và tự sửa là đặc tính continuously reconciled.\n✓ Multi-cluster dễ scale vì mỗi cluster tự kéo về.\n✗ CI giữ quyền admin vào prod là đặc điểm push model, làm tăng bề mặt tấn công.\n✗ Pull model không mở cổng vào cluster cho ai cả."
+  },
+  {
+    "id": "ops-q-065",
+    "courseId": "DEVOPS",
+    "lesson": "devops-05-gitops-deploy",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Chọn các phát biểu ĐÚNG phân biệt deployment strategy (canary...) và feature flag. (Chọn nhiều)",
+    "options": [
+      "Feature flag tách traffic theo logic ứng dụng (user/region/%), còn canary tách ở tầng hạ tầng mạng",
+      "Tắt một feature flag là rollback tức thì ở mức mili-giây, không cần deploy lại",
+      "Hai thứ bổ sung nhau: canary đảm bảo binary ổn định, feature flag làm kill switch theo tính năng",
+      "Feature flag và canary là cùng một cơ chế, chỉ khác tên gọi",
+      "Bật một tính năng qua feature flag bắt buộc phải deploy version mới"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Deploy đưa code lên, release bật tính năng; feature flag tách hai việc đó.\n✓ Feature flag tách theo logic ứng dụng, canary tách ở tầng mạng là đúng.\n✓ Tắt flag rollback tức thì mili-giây không cần deploy lại.\n✓ Hai thứ bổ sung nhau, canary lo binary còn flag làm kill switch.\n✗ Chúng không phải cùng một cơ chế; tách traffic ở tầng khác nhau.\n✗ Bật tính năng qua flag chỉ cần đổi cấu hình runtime, không cần deploy lại."
+  },
+  {
+    "id": "ops-q-066",
+    "courseId": "DEVOPS",
+    "lesson": "devops-06-container-security",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong CI, lệnh nào sau đây sẽ làm pipeline đỏ (fail) khi image có CVE nghiêm trọng đã có bản vá, nhưng KHÔNG chặn vì những CVE chưa hề có patch?",
+    "options": [
+      "trivy image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 myapp:1.4.2",
+      "trivy image --severity LOW myapp:1.4.2",
+      "trivy image myapp:1.4.2 (không cờ nào)",
+      "trivy image --severity HIGH,CRITICAL myapp:1.4.2 (không có --exit-code)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cần --exit-code 1 để fail pipeline và --ignore-unfixed để bỏ qua CVE chưa có patch.\n✓ Kết hợp --exit-code 1 (fail khi có CVE) với --ignore-unfixed (bỏ CVE chưa có bản vá) là đúng yêu cầu.\n✗ Chỉ quét LOW không bắt được CVE nghiêm trọng.\n✗ Không có cờ nào thì luôn exit 0, pipeline không bao giờ đỏ.\n✗ Thiếu --exit-code thì dù tìm thấy CVE pipeline vẫn xanh, không chặn được build."
+  },
+  {
+    "id": "ops-q-067",
+    "courseId": "DEVOPS",
+    "lesson": "devops-06-container-security",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao distroless được xem là an toàn hơn ubuntu cho production binary?",
+    "options": [
+      "Không có shell và package manager nên attacker RCE vào cũng khó chạy lệnh tiếp",
+      "Tự động vá mọi CVE khi chạy",
+      "Mã hoá toàn bộ filesystem của container",
+      "Chạy container ở chế độ máy ảo cách ly hoàn toàn với host"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Distroless chỉ có runtime tối thiểu (libc, CA cert, tzdata), không shell, không package manager.\n✓ Không có sh để chạy lệnh sau khi RCE nên bề mặt tấn công nhỏ.\n✗ Distroless không tự vá CVE.\n✗ Nó không mã hoá filesystem.\n✗ Container vẫn là tiến trình của host được cô lập bằng namespace/cgroup, không phải máy ảo."
+  },
+  {
+    "id": "ops-q-068",
+    "courseId": "DEVOPS",
+    "lesson": "devops-06-container-security",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Tại sao scan image một lần lúc build là không đủ?",
+    "options": [
+      "CVE mới được công bố mỗi ngày nên image sạch hôm nay có thể bẩn sau vài tuần dù không đổi code",
+      "Trivy chỉ chạy được trong CI một lần duy nhất",
+      "Scan lúc build làm hỏng layer của image",
+      "CVE chỉ xuất hiện sau khi image được pull về cluster"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cần scan lại định kỳ các image đang chạy trong registry, không chỉ lúc CI.\n✓ CVE mới công bố liên tục nên image không đổi vẫn có thể trở nên có lỗ hổng.\n✗ Trivy không giới hạn số lần chạy.\n✗ Scan không phá layer.\n✗ CVE liên quan tới thành phần trong image, không phụ thuộc việc đã pull hay chưa."
+  },
+  {
+    "id": "ops-q-069",
+    "courseId": "DEVOPS",
+    "lesson": "devops-06-container-security",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Dockerfile có 'COPY secrets.json /tmp/secrets.json' rồi sau đó 'RUN ./use-secret.sh && rm /tmp/secrets.json'. Kết quả về mặt bảo mật là gì?",
+    "options": [
+      "Secret vẫn lộ vĩnh viễn vì nó còn nằm trong layer COPY trước đó, dù đã rm ở layer sau",
+      "An toàn vì file đã bị xoá hẳn khỏi image",
+      "An toàn vì rm chạy trong cùng một layer với COPY",
+      "Secret chỉ lộ nếu image được push lên public registry"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Xoá ở layer sau KHÔNG xoá khỏi layer trước; docker history/docker save lôi ra mọi layer.\n✓ Secret từng COPY vào nằm trong một layer riêng và còn vĩnh viễn dù rm ở bước sau.\n✗ rm không xoá khỏi layer đã tạo.\n✗ COPY và RUN là hai layer khác nhau.\n✗ Ai pull được image (kể cả private) đều đọc được layer đó."
+  },
+  {
+    "id": "ops-q-070",
+    "courseId": "DEVOPS",
+    "lesson": "devops-06-container-security",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần truyền token để 'npm ci' kéo private dependency lúc build mà không để token lọt vào bất kỳ layer nào của image. Cách đúng là gì?",
+    "options": [
+      "Dùng BuildKit secret mount: RUN --mount=type=secret,id=npmtoken ... rồi docker build --secret",
+      "Đặt ENV NPM_TOKEN=... trong Dockerfile",
+      "COPY .npmtoken vào image rồi rm sau khi dùng",
+      "Hardcode token vào file npmrc và COPY vào image"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Build-time secret nên dùng BuildKit secret mount để không ghi vào layer.\n✓ secret mount cấp token qua /run/secrets lúc build mà không lưu vào layer.\n✗ ENV ghi giá trị vĩnh viễn vào lịch sử image.\n✗ COPY rồi rm vẫn để lại token trong layer COPY.\n✗ Hardcode vào file rồi COPY cũng lộ vĩnh viễn."
+  },
+  {
+    "id": "ops-q-071",
+    "courseId": "DEVOPS",
+    "lesson": "devops-06-container-security",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "App ghi log ra file và crash với lỗi 'read-only file system' sau khi bật readOnlyRootFilesystem: true. Cách xử lý đúng theo bài là gì?",
+    "options": [
+      "Tìm đúng path app cần ghi và mount emptyDir vào path đó, giữ nguyên cờ read-only",
+      "Tắt readOnlyRootFilesystem để app chạy lại",
+      "Chạy container bằng root để có quyền ghi",
+      "Đặt allowPrivilegeEscalation: true để app ghi được"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đừng tắt cờ; tìm đúng path app ghi và mount emptyDir vào đó.\n✓ Cấp volume ghi (emptyDir) đúng chỗ giữ được lớp bảo vệ read-only.\n✗ Tắt cờ read-only làm mất lớp phòng thủ.\n✗ Chạy root đi ngược nguyên tắc non-root.\n✗ allowPrivilegeEscalation không liên quan tới quyền ghi filesystem."
+  },
+  {
+    "id": "ops-q-072",
+    "courseId": "DEVOPS",
+    "lesson": "devops-06-container-security",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một app web cần bind cổng 80 (< 1024) nhưng vẫn muốn drop ALL capabilities và không chạy root. Giải pháp đúng là gì?",
+    "options": [
+      "Giữ drop: [\"ALL\"] và thêm capabilities.add: [\"NET_BIND_SERVICE\"]",
+      "Chạy container bằng root để bind được port thấp",
+      "Đặt allowPrivilegeEscalation: true",
+      "Bỏ securityContext để mọi capability được giữ lại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Nếu cần bind port < 1024, thêm add: [\"NET_BIND_SERVICE\"] thay vì chạy root.\n✓ Drop ALL rồi add đúng một capability cần thiết là cách tối thiểu quyền.\n✗ Chạy root phá nguyên tắc non-root.\n✗ allowPrivilegeEscalation không cấp quyền bind port thấp.\n✗ Bỏ securityContext giữ lại toàn bộ capability, ngược mục tiêu."
+  },
+  {
+    "id": "ops-q-073",
+    "courseId": "DEVOPS",
+    "lesson": "devops-06-container-security",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao bài học nhấn mạnh phải ký và verify image theo digest (@sha256:...) thay vì theo tag (myapp:1.4)?",
+    "options": [
+      "Tag là con trỏ có thể di chuyển trỏ tới image khác, ký tag là ký một cái tên chứ không phải ký nội dung",
+      "Digest ngắn hơn nên cluster pull nhanh hơn",
+      "Cosign chỉ hỗ trợ digest, không hỗ trợ tag",
+      "Tag không thể dùng trong securityContext"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Tag là con trỏ di chuyển được; ký tag là ký một cái tên, không phải ký nội dung.\n✓ Digest cố định theo nội dung nên đảm bảo image deploy đúng thứ đã ký.\n✗ Tốc độ pull không phải lý do.\n✗ Cosign vẫn ký được tag, vấn đề là không nên.\n✗ Tag không liên quan tới securityContext."
+  },
+  {
+    "id": "ops-q-074",
+    "courseId": "DEVOPS",
+    "lesson": "devops-06-container-security",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Lúc 2 giờ sáng một CVE kiểu Log4Shell nổ ra. Công cụ/artifact nào giúp trả lời nhanh 'image nào của mình chứa lib này' mà không phải grep mò?",
+    "options": [
+      "SBOM (sinh bằng Syft hoặc Trivy) rồi quét lại trên SBOM",
+      "Falco rule chặn shell trong container",
+      "readOnlyRootFilesystem trên mọi pod",
+      "cosign verify chữ ký image"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SBOM là bản kê khai mọi thành phần, cho phép trả lời trong vài phút image nào chứa lib bị lỗi.\n✓ SBOM (CycloneDX/SPDX) liệt kê package + version, quét lại trực tiếp trên SBOM không cần image.\n✗ Falco giám sát hành vi runtime, không liệt kê thành phần.\n✗ read-only fs hạn chế ghi, không truy vết thành phần.\n✗ cosign verify chứng minh nguồn gốc, không liệt kê lib."
+  },
+  {
+    "id": "ops-q-075",
+    "courseId": "DEVOPS",
+    "lesson": "devops-06-container-security",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trên EKS, nhóm bạn cần giải đúng bài toán 'image sạch hôm nay có thể bẩn ngày mai' bằng dịch vụ managed. Lựa chọn phù hợp nhất là gì?",
+    "options": [
+      "ECR Enhanced Scanning (Amazon Inspector) — quét lại tự động khi NVD công bố CVE mới",
+      "ECR Basic Scanning chạy đúng một lần lúc push",
+      "GuardDuty Runtime Monitoring giám sát hành vi lúc chạy",
+      "Kyverno verify cosign tại admission"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "ECR Enhanced Scanning chính là Inspector, quét lại tự động khi có CVE mới.\n✓ Quét lại liên tục trong registry giải đúng bài toán image cũ trở nên có lỗ hổng.\n✗ Basic Scanning chỉ quét lúc push, không quét lại liên tục.\n✗ GuardDuty Runtime canh hành vi runtime, không quét CVE thành phần image.\n✗ Kyverno verify chữ ký, không phát hiện CVE mới."
+  },
+  {
+    "id": "ops-q-076",
+    "courseId": "DEVOPS",
+    "lesson": "devops-06-container-security",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "securityContext có runAsNonRoot: true nhưng image lại cố chạy bằng UID 0. Điều gì xảy ra và vì sao đây là lớp phòng thủ mạnh hơn USER trong Dockerfile?",
+    "options": [
+      "Kubernetes từ chối khởi động pod; USER trong Dockerfile có thể bị override khi chạy còn cái chốt này nằm ở orchestrator",
+      "Pod vẫn chạy nhưng bị ghi cảnh báo, vì runAsNonRoot chỉ là gợi ý",
+      "Pod chạy và Kubernetes tự đổi user thành nonroot",
+      "Pod chạy bình thường vì USER trong Dockerfile luôn thắng securityContext"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "runAsNonRoot: true khiến K8s từ chối khởi động pod nếu image cố chạy root; đây là chốt cứng ở orchestrator.\n✓ USER trong Dockerfile có thể bị override khi chạy, còn securityContext ép buộc ở tầng cluster.\n✗ Không phải chỉ cảnh báo, pod bị từ chối.\n✗ K8s không tự đổi user, nó fail pod.\n✗ securityContext ở orchestrator mạnh hơn USER trong Dockerfile."
+  },
+  {
+    "id": "ops-q-077",
+    "courseId": "DEVOPS",
+    "lesson": "devops-06-container-security",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo mô hình mối đe doạ trong bài, vì sao cần CẢ scan, hạ quyền runtime, và signing+SBOM (không cái nào thay được cái nào)? Chọn các phát biểu ĐÚNG.",
+    "options": [
+      "Scan chỉ tìm lỗ hổng đã biết",
+      "Hạ quyền runtime giới hạn thiệt hại của lỗ hổng chưa biết",
+      "Signing + SBOM trả lời câu image này từ đâu ra, có đúng thứ tôi build không",
+      "Signing tự động vá mọi CVE trong image",
+      "Scan đảm bảo phát hiện cả zero-day chưa được công bố"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Ba lớp phòng thủ bổ sung cho nhau, không thay thế.\n✓ Scan chỉ bắt được lỗ hổng đã biết.\n✓ Hạ quyền runtime giới hạn thiệt hại của lỗ hổng chưa biết.\n✓ Signing + SBOM xác minh nguồn gốc và nội dung image.\n✗ Signing không vá CVE, chỉ chứng minh nguồn gốc.\n✗ Scan không phát hiện được zero-day chưa công bố."
+  },
+  {
+    "id": "ops-q-078",
+    "courseId": "DEVOPS",
+    "lesson": "devops-06-container-security",
+    "certifications": [
+      "DEVOPS"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Khi siết chuỗi cung ứng image theo bài, những thực hành nào sau đây là ĐÚNG? Chọn tất cả phương án phù hợp.",
+    "options": [
+      "Pin base image theo digest thay vì latest",
+      "Sinh SBOM rồi ký cả image lẫn SBOM (cosign), dùng admission control cho phép deploy image đã ký đúng digest",
+      "Build trong CI sạch thay vì build trên máy lập trình viên",
+      "Nhúng AWS key vào image để container luôn có quyền truy cập",
+      "Bỏ qua transitive dependency vì chúng do lib khác kéo vào, không phải rủi ro của mình"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Chuỗi cung ứng gồm pin digest, build CI sạch, scan, SBOM, ký, admission control, scan lại, runtime monitoring.\n✓ Pin base theo digest chống base bị đổi ngầm.\n✓ Sinh và ký SBOM + image, ép admission chỉ nhận image đã ký đúng digest.\n✓ Build trong CI sạch giảm rủi ro nhiễm bẩn từ máy cá nhân.\n✗ Nhúng AWS key vào image vi phạm nguyên tắc không nhúng secret; nên dùng IAM role (IRSA/task role).\n✗ Transitive dependency là mắt xích yếu nhất, phải dùng SBOM + scan để nhìn thấy chúng."
   }
 ];
 
