@@ -17870,6 +17870,2522 @@ const k3: Question[] = [
       0
     ],
     "explanation": "gRPC nội bộ cần nhanh, nhỏ, có schema với evolution tốt.\n✓ Protobuf nhanh, nhỏ (~3-10x so JSON), có schema evolution tốt — đúng cho gRPC nội bộ\n✗ JSON chậm và lớn, không có schema; hợp cho public API/debug\n✗ MessagePack nhỏ vừa nhưng không có schema; hợp làm cache value\n✗ CSV không phù hợp cho dữ liệu có cấu trúc lồng/schema của gRPC"
+  },
+  {
+    "id": "fe-q-001",
+    "courseId": "FRONTEND",
+    "lesson": "fe-01-typescript",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, type của TypeScript ảnh hưởng thế nào tới app lúc chạy (runtime) trên trình duyệt?",
+    "options": [
+      "Type bị xoá hoàn toàn khi build (type erasure), không tồn tại ở runtime",
+      "Type được giữ lại để trình duyệt kiểm tra kiểu lúc chạy",
+      "Type làm app chạy nhanh hơn nhờ tối ưu kiểu",
+      "Type tự động validate dữ liệu API lúc runtime"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "TS chỉ kiểm tra lúc compile rồi xoá hết type khi build ra JS thường.\n✓ Type bị xoá hoàn toàn (type erasure) nên không có gì ở runtime\n✗ Trình duyệt chỉ chạy JS thuần, không kiểm tra kiểu lúc chạy\n✗ TS không làm app chạy nhanh hơn hay an toàn hơn lúc runtime\n✗ Type không validate dữ liệu runtime — đó là việc của Zod"
+  },
+  {
+    "id": "fe-q-002",
+    "courseId": "FRONTEND",
+    "lesson": "fe-01-typescript",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo quy tắc thực dụng trong bài, cách annotate kiểu nào là hợp lý nhất?",
+    "options": [
+      "Annotate tham số hàm và ranh giới (props, API), để TS tự suy biến cục bộ",
+      "Annotate mọi biến, kể cả const x: number = 5",
+      "Không annotate gì cả, luôn để TS suy hết",
+      "Chỉ annotate biến cục bộ, bỏ qua tham số hàm"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu rõ: annotate ở ranh giới, để TS suy luận biến cục bộ.\n✓ Annotate tham số hàm và ranh giới, để TS tự suy biến cục bộ\n✗ const x: number = 5 là thừa vì TS đã suy được\n✗ Bỏ annotate hoàn toàn làm mất type ở ranh giới props/API\n✗ Tham số hàm và ranh giới mới là chỗ cần annotate nhất"
+  },
+  {
+    "id": "fe-q-003",
+    "courseId": "FRONTEND",
+    "lesson": "fe-01-typescript",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần định nghĩa: type Status = \"idle\" | \"loading\" | \"error\". Theo bài, công cụ nào phù hợp?",
+    "options": [
+      "type, vì interface không biểu diễn được union",
+      "interface, vì interface mạnh hơn type",
+      "interface, vì union là trường hợp dùng declaration merging",
+      "Cả hai đều biểu diễn union như nhau"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bảng so sánh ghi interface không làm được union, chỉ type làm được.\n✓ type biểu diễn union, interface thì không\n✗ interface không có khả năng union\n✗ Declaration merging không liên quan tới việc tạo union\n✗ Chỉ type biểu diễn được union, không phải cả hai"
+  },
+  {
+    "id": "fe-q-004",
+    "courseId": "FRONTEND",
+    "lesson": "fe-01-typescript",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao bài khuyên model state fetch bằng discriminated union thay vì { isLoading: boolean; isError: boolean }?",
+    "options": [
+      "Vì union đảm bảo chỉ một trạng thái tại một thời điểm, tránh trạng thái vô lý (vừa loading vừa error)",
+      "Vì boolean không được hỗ trợ trong TypeScript",
+      "Vì discriminated union chạy nhanh hơn lúc runtime",
+      "Vì boolean không thể dùng trong React state"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Hai boolean rời rạc có thể rơi vào trạng thái vô lý; union ép một trạng thái duy nhất.\n✓ Discriminated union loại bỏ tổ hợp vô lý như vừa loading vừa error\n✗ TS hỗ trợ boolean bình thường\n✗ Lợi ích là ở compile/model hoá, không phải tốc độ runtime\n✗ boolean dùng được trong React state"
+  },
+  {
+    "id": "fe-q-005",
+    "courseId": "FRONTEND",
+    "lesson": "fe-01-typescript",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "function format(value: string | number) { if (typeof value === \"string\") return value.toUpperCase(); return value.toFixed(2); } — kết quả với value là number?",
+    "options": [
+      "TS thu hẹp đúng: nhánh sau biết value là number nên .toFixed(2) hợp lệ",
+      "Lỗi compile vì .toFixed không tồn tại trên union",
+      "Phải dùng as number ở nhánh sau thì mới hết lỗi",
+      "Lỗi runtime vì value vẫn có thể là string"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Narrowing bằng typeof khiến nhánh còn lại chắc chắn là number.\n✓ Sau khi loại string, TS biết value là number nên .toFixed hợp lệ\n✗ Sau narrow, .toFixed có sẵn trên number, không lỗi\n✗ Bài nói sau khi narrow đừng ép as nữa, TS đã đúng\n✗ typeof là kiểm tra runtime nên nhánh sau không còn là string"
+  },
+  {
+    "id": "fe-q-006",
+    "courseId": "FRONTEND",
+    "lesson": "fe-01-typescript",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn có interface User { id; name; email; age }. Cần kiểu cho input tạo user mới (chưa có id). Dùng utility nào?",
+    "options": [
+      "Omit<User, \"id\">",
+      "Pick<User, \"id\">",
+      "Partial<User>",
+      "Record<\"id\", User>"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Tạo mới cần bỏ field id — đúng công dụng của Omit.\n✓ Omit<User, \"id\"> giữ các field còn lại, bỏ id\n✗ Pick<User, \"id\"> chỉ giữ mỗi id\n✗ Partial<User> làm mọi field optional, không bỏ id\n✗ Record dùng cho map key→value, không phù hợp"
+  },
+  {
+    "id": "fe-q-007",
+    "courseId": "FRONTEND",
+    "lesson": "fe-01-typescript",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "async function fetchJson<T>(url): Promise<T> { ... return res.json() as Promise<T>; } — rủi ro chính theo bài là gì?",
+    "options": [
+      "res.json() là any/unknown; TS tin shape đúng nhưng không kiểm tra runtime, API sai shape vẫn nổ",
+      "Generic T làm hàm không biên dịch được",
+      "Promise<T> không hợp lệ làm return type",
+      "as Promise<T> sẽ tự validate dữ liệu lúc chạy"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "TS chỉ tin lời hứa kiểu T, không kiểm tra dữ liệu thật.\n✓ res.json() trả any/unknown, ép as T không validate runtime nên sai shape vẫn nổ\n✗ Generic hoàn toàn biên dịch được\n✗ Promise<T> là return type hợp lệ\n✗ as không validate runtime; cần Zod để validate"
+  },
+  {
+    "id": "fe-q-008",
+    "courseId": "FRONTEND",
+    "lesson": "fe-01-typescript",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong React, handler được khai báo INLINE ngay trong JSX như onChange={(e) => setName(e.target.value)} thì cần annotate kiểu event không?",
+    "options": [
+      "Không cần — TS tự suy kiểu event cho handler inline",
+      "Bắt buộc annotate React.ChangeEvent<HTMLInputElement>",
+      "Phải ép as any vì TS không suy được",
+      "Phải tách hàm ra ngoài mới hợp lệ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu: handler inline thì TS tự suy kiểu event, chỉ annotate khi tách hàm ra.\n✓ Inline thì TS tự suy, không cần annotate\n✗ Annotate chỉ cần khi tách handler ra ngoài\n✗ Không cần as any\n✗ Không bắt buộc tách hàm ra ngoài"
+  },
+  {
+    "id": "fe-q-009",
+    "courseId": "FRONTEND",
+    "lesson": "fe-01-typescript",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Với strict (gồm strictNullChecks) bật, function greet(name: string){...}; greet(null); cho kết quả gì?",
+    "options": [
+      "Lỗi compile: 'null' không gán được cho 'string'",
+      "Chạy ra \"Hi null\" như khi strict tắt",
+      "Lỗi runtime nhưng compile vẫn qua",
+      "null tự được ép thành chuỗi rỗng nên không lỗi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "strictNullChecks chặn null gán vào kiểu string ngay lúc compile.\n✓ Báo lỗi compile null không gán được cho string\n✗ \"Hi null\" là hành vi khi strict TẮT\n✗ Lỗi xuất hiện lúc compile, không phải lọt xuống runtime\n✗ TS không tự ép null thành chuỗi rỗng"
+  },
+  {
+    "id": "fe-q-010",
+    "courseId": "FRONTEND",
+    "lesson": "fe-01-typescript",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "let u: unknown = JSON.parse(input); u.foo; — điều gì xảy ra, và vì sao bài ưu tiên unknown hơn any ở ranh giới dữ liệu?",
+    "options": [
+      "TS chặn u.foo: phải narrow trước; unknown buộc kiểm tra nên an toàn, any thì im lặng và lây type-unsafe",
+      "TS cho phép u.foo như any, hai cái tương đương",
+      "u.foo gây lỗi runtime ngay nhưng compile qua",
+      "unknown cho phép gọi method tự do giống any"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "unknown buộc narrow trước khi dùng, khác any vốn tắt type-check và lây ra xung quanh.\n✓ TS chặn truy cập trực tiếp, bắt narrow trước; an toàn hơn any\n✗ unknown không cho dùng trực tiếp như any\n✗ Đây là lỗi compile, không phải runtime\n✗ unknown KHÔNG cho gọi method tự do, phải narrow"
+  },
+  {
+    "id": "fe-q-011",
+    "courseId": "FRONTEND",
+    "lesson": "fe-01-typescript",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Vì sao bài khuyên chạy tsc --noEmit trong CI/CD như cổng chặn deploy lên S3 + CloudFront?",
+    "options": [
+      "Vì type bị xoá khi build; bug type bỏ sót chỉ lộ ở runtime trên trình duyệt, nên cần type-check chặn trước khi deploy",
+      "Vì tsc --noEmit tạo ra bundle JS tối ưu hơn để đẩy lên S3",
+      "Vì CloudFront yêu cầu file .ts để phục vụ",
+      "Vì type vẫn tồn tại ở production nên cần kiểm tra lại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Production chỉ có JS tĩnh, không còn type, nên type-check phải làm trong pipeline.\n✓ Type bị xoá, bug type sót sẽ chỉ lộ ở runtime nên cần cổng chặn type-check\n✗ --noEmit không sinh bundle, nó chỉ kiểm tra kiểu\n✗ CloudFront phục vụ JS tĩnh, không cần .ts\n✗ Type KHÔNG tồn tại ở production"
+  },
+  {
+    "id": "fe-q-012",
+    "courseId": "FRONTEND",
+    "lesson": "fe-01-typescript",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bảng so sánh, những điều nào CHỈ type làm được mà interface KHÔNG?",
+    "options": [
+      "Biểu diễn union (A | B)",
+      "Tuple và primitive alias",
+      "Mô tả hình dạng object",
+      "Declaration merging (khai báo trùng tên gộp lại)",
+      "Mapped type"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "Bảng ghi union, tuple/primitive alias, mapped type là độc quyền của type.\n✓ Union chỉ type làm được\n✓ Tuple và primitive alias chỉ type làm được\n✓ Mapped type chỉ type làm được\n✗ Mô tả object thì cả hai đều làm được\n✗ Declaration merging là độc quyền của interface, không phải type"
+  },
+  {
+    "id": "fe-q-013",
+    "courseId": "FRONTEND",
+    "lesson": "fe-01-typescript",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo bài, đâu là các công cụ narrowing (thu hẹp kiểu) hợp lệ?",
+    "options": [
+      "typeof",
+      "in (kiểm tra có property)",
+      "so sánh literal như state.status === \"success\"",
+      "instanceof",
+      "ép kiểu as sau khi đã narrow"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Bài liệt kê typeof, Array.isArray, in, so sánh literal, instanceof là công cụ narrow.\n✓ typeof là công cụ narrow phổ biến\n✓ in kiểm tra property để narrow\n✓ So sánh literal narrow discriminated union\n✓ instanceof là công cụ narrow\n✗ as không phải narrow; bài còn khuyên sau khi narrow đừng ép as nữa"
+  },
+  {
+    "id": "fe-q-014",
+    "courseId": "FRONTEND",
+    "lesson": "fe-02-react-basics",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Công thức cốt lõi mô tả tư tưởng của React là gì?",
+    "options": [
+      "UI = f(state): bạn cập nhật state, giao diện là kết quả của hàm",
+      "state = f(UI): bạn cập nhật DOM, React tự suy ra state",
+      "UI và state độc lập, phải đồng bộ thủ công",
+      "DOM = f(querySelector): React thao tác DOM trực tiếp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "React là declarative: bạn mô tả UI theo state, React lo việc cập nhật DOM.\n✓ UI = f(state) nghĩa là đổi state thì giao diện tự tính lại.\n✗ Hướng ngược lại (cập nhật DOM rồi suy ra state) là tư duy imperative cũ.\n✗ Việc tự đồng bộ giao diện với state bằng tay chính là điều React loại bỏ.\n✗ Trong React bạn gần như không thao tác DOM trực tiếp."
+  },
+  {
+    "id": "fe-q-015",
+    "courseId": "FRONTEND",
+    "lesson": "fe-02-react-basics",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong JSX, vì sao phải dùng className thay cho class?",
+    "options": [
+      "Vì class là từ khoá của JavaScript",
+      "Vì HTML không hỗ trợ thuộc tính class",
+      "Vì className nhanh hơn khi render",
+      "Vì class chỉ dùng cho component, không dùng cho thẻ HTML"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "JSX là JavaScript nên không dùng được các từ khoá JS làm tên thuộc tính.\n✓ class là từ khoá JS, nên JSX đổi thành className (tương tự for thành htmlFor).\n✗ HTML có hỗ trợ class bình thường; vấn đề nằm ở phía JS.\n✗ Đây không phải vì lý do hiệu năng.\n✗ class không liên quan đến phân biệt component với thẻ HTML."
+  },
+  {
+    "id": "fe-q-016",
+    "courseId": "FRONTEND",
+    "lesson": "fe-02-react-basics",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Component sau bị lỗi compile. Vì sao?\n\nfunction X() {\n  return (\n    <h1>Tiêu đề</h1>\n    <p>Nội dung</p>\n  );\n}",
+    "options": [
+      "JSX chỉ được trả về một phần tử gốc duy nhất",
+      "Thiếu thuộc tính key cho các phần tử",
+      "Phải dùng React.createElement thay vì JSX",
+      "Tên hàm phải viết thường"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Một component chỉ trả về một element gốc.\n✓ Trả về hai thẻ cạnh nhau gây lỗi; cần bọc bằng <div> hoặc Fragment <>...</>.\n✗ key chỉ cần khi render list bằng map, không liên quan ở đây.\n✗ Không bắt buộc gọi tay React.createElement; JSX vẫn hợp lệ.\n✗ Tên component phải viết HOA chữ đầu, viết thường mới sai (nhưng đây không phải nguyên nhân lỗi này)."
+  },
+  {
+    "id": "fe-q-017",
+    "courseId": "FRONTEND",
+    "lesson": "fe-02-react-basics",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn này hiển thị thừa số 0 trên màn hình khi giỏ hàng rỗng:\n\n{items.length && <List />}\n\nCách sửa đúng là gì?",
+    "options": [
+      "{items.length > 0 && <List />}",
+      "{items.length || <List />}",
+      "{!items.length && <List />}",
+      "{items.length & <List />}"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khi items.length === 0, toán tử && trả về chính số 0, mà 0 là giá trị render được nên hiện ra màn hình.\n✓ Ép vế trái thành boolean (length > 0) khiến vế trái là false, không render gì.\n✗ Dùng || sẽ render List khi length là 0 (falsy) — ngược ý muốn.\n✗ !items.length đảo điều kiện: hiện List khi rỗng, sai logic.\n✗ & là toán tử bitwise, không phải logic, gây kết quả sai."
+  },
+  {
+    "id": "fe-q-018",
+    "courseId": "FRONTEND",
+    "lesson": "fe-02-react-basics",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần truyền tham số id cho handler khi bấm nút. Cách viết nào ĐÚNG?",
+    "options": [
+      "onClick={() => handleClick(id)}",
+      "onClick={handleClick(id)}",
+      "onClick={handleClick(id)()}",
+      "onClick=\"handleClick(id)\""
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cần truyền một hàm cho onClick; muốn kèm tham số thì bọc trong arrow function.\n✓ Arrow function chỉ gọi handleClick(id) khi người dùng bấm.\n✗ handleClick(id) chạy NGAY lúc render rồi gán giá trị trả về làm handler — sai.\n✗ handleClick(id)() cũng gọi ngay lúc render, càng sai.\n✗ Chuỗi là cú pháp HTML thuần; React cần một hàm, không phải chuỗi."
+  },
+  {
+    "id": "fe-q-019",
+    "courseId": "FRONTEND",
+    "lesson": "fe-02-react-basics",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "State todos là mảng. Cách thêm phần tử nào sẽ kích hoạt re-render đúng cách?",
+    "options": [
+      "setTodos([...todos, newTodo])",
+      "todos.push(newTodo)",
+      "todos[todos.length] = newTodo",
+      "setTodos(todos.push(newTodo))"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "React so sánh tham chiếu nên phải tạo giá trị (mảng) MỚI thì mới re-render.\n✓ [...todos, newTodo] tạo mảng mới rồi đưa qua setTodos.\n✗ push sửa trực tiếp mảng cũ (cùng tham chiếu), không kích hoạt re-render.\n✗ Gán theo index cũng đột biến mảng cũ, không re-render.\n✗ todos.push trả về độ dài (một số), truyền số đó vào setTodos là sai kiểu và vẫn đột biến mảng cũ."
+  },
+  {
+    "id": "fe-q-020",
+    "courseId": "FRONTEND",
+    "lesson": "fe-02-react-basics",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Mỗi <li> trong danh sách có một <input> gõ dở. Khi xoá item đầu mà dùng key={i} (index), hiện tượng gì xảy ra?",
+    "options": [
+      "Nội dung gõ dở trong input bị trượt sang item khác do React tái dùng DOM theo index",
+      "Toàn bộ list biến mất",
+      "Các input bị xoá hết text về rỗng một cách an toàn",
+      "React báo lỗi và dừng render"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Index không gắn với dữ liệu; khi xoá/chèn, index của item đổi nên React nhận dạng nhầm.\n✓ React tái dùng DOM theo index khiến state nội bộ (text trong input) gắn nhầm sang item khác.\n✗ List không biến mất, chỉ bị gắn sai state.\n✗ Không phải reset an toàn — đây chính là bug khó chịu.\n✗ React không báo lỗi cứng; nó vẫn render nhưng sai."
+  },
+  {
+    "id": "fe-q-021",
+    "courseId": "FRONTEND",
+    "lesson": "fe-02-react-basics",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Component con muốn đọc giá trị key đã truyền: <Item key={todo.id} />. Điều gì đúng?",
+    "options": [
+      "Con không đọc được props.key; cần truyền thêm prop khác như id={todo.id}",
+      "Con đọc bằng props.key bình thường",
+      "key tự động trở thành props.id trong con",
+      "Con đọc bằng this.key"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "key là cơ chế nội bộ của React để nhận dạng item, không phải prop bình thường.\n✓ Component con không truy cập được props.key; muốn dùng giá trị đó phải truyền thêm một prop khác (ví dụ id).\n✗ props.key sẽ là undefined trong con.\n✗ key không tự đổi thành props.id.\n✗ this.key không tồn tại trong function component."
+  },
+  {
+    "id": "fe-q-022",
+    "courseId": "FRONTEND",
+    "lesson": "fe-02-react-basics",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong form có onSubmit, vì sao cần gọi e.preventDefault()?",
+    "options": [
+      "Để chặn trình duyệt reload trang như hành vi mặc định của form HTML",
+      "Để buộc React re-render component",
+      "Để xoá giá trị các input",
+      "Để chuyển SyntheticEvent thành event gốc"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Form HTML mặc định submit và tải lại trang; trong SPA ta không muốn điều đó.\n✓ e.preventDefault() chặn hành vi reload mặc định để xử lý submit bằng JS.\n✗ Nó không liên quan tới việc kích hoạt re-render.\n✗ Nó không tự xoá giá trị input.\n✗ Nó không chuyển đổi SyntheticEvent thành event gốc."
+  },
+  {
+    "id": "fe-q-023",
+    "courseId": "FRONTEND",
+    "lesson": "fe-02-react-basics",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Theo nguyên tắc 'component là hàm thuần với props', việc nào KHÔNG nên đặt thẳng trong thân hàm component lúc render?",
+    "options": [
+      "Gọi API hoặc thao tác DOM trực tiếp (side effect)",
+      "Tính một giá trị dẫn xuất từ props",
+      "Trả về JSX dựa trên props",
+      "Destructuring props ở tham số"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Component nên thuần: cùng props vào cho cùng UI ra, không side effect lúc render.\n✓ Gọi API / đụng DOM là side effect, phải đưa vào useEffect chứ không nằm thẳng trong thân render.\n✗ Tính giá trị dẫn xuất từ props là thuần, hoàn toàn ổn.\n✗ Trả về JSX theo props chính là việc của component.\n✗ Destructuring props là cách viết bình thường, không phải side effect."
+  },
+  {
+    "id": "fe-q-024",
+    "courseId": "FRONTEND",
+    "lesson": "fe-02-react-basics",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn cần render đúng một trong hai nút (Đăng nhập hoặc Đăng xuất) tuỳ user. Cách diễn đạt nào trong JSX phù hợp nhất?",
+    "options": [
+      "{user ? <button>Đăng xuất</button> : <button>Đăng nhập</button>}",
+      "{if (user) <button>Đăng xuất</button> else <button>Đăng nhập</button>}",
+      "{user && <button>Đăng xuất</button> && <button>Đăng nhập</button>}",
+      "{for (user) <button>Đăng xuất</button>}"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Trong { } chỉ đặt được biểu thức, và cần chọn 1 trong 2 nhánh.\n✓ Toán tử ba ngôi là biểu thức, chọn đúng một trong hai nút.\n✗ if/else là câu lệnh, không đặt được trong { } của JSX.\n✗ Chuỗi && không diễn đạt 'một trong hai'; còn dễ hiển thị sai.\n✗ for là câu lệnh vòng lặp, không hợp lệ trong { }."
+  },
+  {
+    "id": "fe-q-025",
+    "courseId": "FRONTEND",
+    "lesson": "fe-02-react-basics",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những trường hợp nào khiến một component RE-RENDER? (chọn tất cả đúng)",
+    "options": [
+      "State của component thay đổi qua setState",
+      "Component cha re-render",
+      "Props truyền vào component thay đổi",
+      "Một biến cục bộ thường (let) trong hàm bị gán lại",
+      "Gọi console.log trong thân component"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Re-render xảy ra do state đổi, cha re-render, hoặc props đổi.\n✓ setState đổi state là nguyên nhân kinh điển gây re-render.\n✓ Cha re-render kéo theo con render lại.\n✓ Props thay đổi cũng khiến con render lại.\n✗ Gán lại một biến let thường không phải state, không kích hoạt re-render.\n✗ console.log chỉ in log, không gây re-render."
+  },
+  {
+    "id": "fe-q-026",
+    "courseId": "FRONTEND",
+    "lesson": "fe-02-react-basics",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Về dịch tư duy từ DOM thủ công sang React, các cặp tương ứng nào ĐÚNG? (chọn tất cả đúng)",
+    "options": [
+      "el.textContent = x  →  {x} trong JSX",
+      "addEventListener('click', fn)  →  onClick={fn}",
+      "for loop tạo nhiều <li>  →  arr.map(...) kèm key",
+      "biến toàn cục giữ trạng thái  →  useState",
+      "innerHTML cập nhật UI  →  vẫn dùng innerHTML trong JSX"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Bảng dịch trong bài ánh xạ thao tác imperative sang khai báo trong React.\n✓ Hiển thị nội dung: textContent thành {x} trong JSX.\n✓ Gắn sự kiện: addEventListener thành onClick trong JSX.\n✓ Tạo danh sách: for loop thành map kèm key.\n✓ Lưu trạng thái: biến toàn cục thành useState.\n✗ Trong React bạn trả về JSX, không tiếp tục dùng innerHTML."
+  },
+  {
+    "id": "fe-q-027",
+    "courseId": "FRONTEND",
+    "lesson": "fe-03-hooks-state",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong React, điều gì \"sống sót\" giữa các lần render của một component?",
+    "options": [
+      "Mọi biến local khai báo bằng const/let trong thân hàm",
+      "Chỉ những giá trị được cất vào hook như useState, useRef",
+      "Tham số props nhưng không gồm state",
+      "Các hàm handler được định nghĩa trong component"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Render = gọi lại hàm component từ đầu, biến local sinh lại từ con số 0.\n✓ Chỉ giá trị cất vào hook (useState, useRef) mới tồn tại qua các render\n✗ Biến local const/let bị tạo lại mỗi render, không nhớ gì\n✗ Props do cha truyền xuống, không phải thứ component tự nhớ giữa render\n✗ Hàm handler cũng bị tạo lại mới mỗi render"
+  },
+  {
+    "id": "fe-q-028",
+    "courseId": "FRONTEND",
+    "lesson": "fe-03-hooks-state",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khi nào nên truyền MỘT HÀM vào useState, ví dụ useState(() => readFromLocalStorage())?",
+    "options": [
+      "Khi muốn giá trị khởi tạo được tính lại mỗi render",
+      "Khi việc khởi tạo nặng và chỉ nên chạy một lần lúc mount",
+      "Khi state là kiểu object để React copy sâu tự động",
+      "Khi cần setter chạy đồng bộ ngay lập tức"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Lazy init: truyền hàm để khởi tạo nặng chỉ chạy một lần ở lần mount đầu.\n✓ Đúng mục đích lazy init, tránh chạy lại mỗi render\n✗ Ngược lại: chính cách này để KHÔNG chạy lại mỗi render\n✗ React không copy sâu object dù khởi tạo kiểu gì\n✗ Lazy init không liên quan tới việc setter chạy đồng bộ"
+  },
+  {
+    "id": "fe-q-029",
+    "courseId": "FRONTEND",
+    "lesson": "fe-03-hooks-state",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn code sau bị lỗi gì? const [todos, setTodos] = useState<string[]>([]); todos.push(\"x\"); setTodos(todos);",
+    "options": [
+      "Lỗi cú pháp TypeScript do thiếu kiểu cho phần tử",
+      "UI không render lại vì tham chiếu mảng không đổi",
+      "setTodos sẽ ném lỗi runtime vì mảng đã bị mutate",
+      "Component render vô tận do gọi setter trong thân hàm"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "React so sánh bằng Object.is theo tham chiếu; push rồi set lại cùng mảng đó nên tham chiếu không đổi.\n✓ Mảng cũ bị mutate, tham chiếu giữ nguyên nên React coi như không thay đổi, không render lại\n✗ Không có lỗi TypeScript, kiểu đã khai báo đầy đủ\n✗ setTodos không ném lỗi, nó chỉ không gây render\n✗ Đoạn này nằm trong sự kiện ví dụ chứ không gây vòng lặp render"
+  },
+  {
+    "id": "fe-q-030",
+    "courseId": "FRONTEND",
+    "lesson": "fe-03-hooks-state",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong cùng một event handler, gọi liên tiếp setCount(count + 1) ba lần (với count đang là 0) cho kết quả là bao nhiêu?",
+    "options": [
+      "count thành 3",
+      "count thành 1",
+      "count thành 0",
+      "Component báo lỗi vì gọi setter nhiều lần"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cả ba lời gọi đọc cùng một count = 0 từ closure nên đều set thành 1.\n✓ Kết quả là 1 vì ba lần đều dùng count = 0\n✗ Muốn ra 3 phải dùng functional update setCount(c => c + 1)\n✗ count không giữ nguyên 0, nó tăng lên 1\n✗ Gọi setter nhiều lần là hợp lệ, không gây lỗi"
+  },
+  {
+    "id": "fe-q-031",
+    "courseId": "FRONTEND",
+    "lesson": "fe-03-hooks-state",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn có firstName và lastName trong state, và cần hiển thị fullName. Cách đúng theo bài là gì?",
+    "options": [
+      "Thêm useState fullName và cập nhật nó trong mỗi setter của first/last",
+      "Tính const fullName = `${firstName} ${lastName}` thẳng trong lúc render",
+      "Lưu fullName vào useRef để khỏi gây render",
+      "Dùng useEffect để đồng bộ fullName mỗi khi first/last đổi"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Derived state: thứ suy ra được thì tính trong render, đừng lưu vào state.\n✓ Tính thẳng trong render luôn đúng, không cần đồng bộ tay\n✗ Thêm useState fullName tạo nguồn sự thật thứ hai phải đồng bộ, dễ lệch\n✗ Dùng useRef cũng vẫn là lưu thừa giá trị suy ra được\n✗ Dùng useEffect đồng bộ là vòng vo không cần thiết cho giá trị tính được ngay"
+  },
+  {
+    "id": "fe-q-032",
+    "courseId": "FRONTEND",
+    "lesson": "fe-03-hooks-state",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Với useEffect, dependency array nào khiến effect chạy ĐÚNG MỘT LẦN sau lần mount đầu tiên?",
+    "options": [
+      "Không truyền mảng nào",
+      "[] (mảng rỗng)",
+      "[count]",
+      "[null]"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mảng rỗng nghĩa là không có dependency nào đổi nên effect chỉ chạy lúc mount.\n✓ [] cho effect chạy đúng một lần sau mount\n✗ Không truyền mảng khiến effect chạy sau mỗi render\n✗ [count] cho effect chạy lại mỗi khi count đổi\n✗ [null] vẫn là một dependency, không tương đương mảng rỗng theo ý nghĩa mong muốn"
+  },
+  {
+    "id": "fe-q-033",
+    "courseId": "FRONTEND",
+    "lesson": "fe-03-hooks-state",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong useEffect fetch theo userId, vì sao cần cờ let ignore = false và return () => { ignore = true }?",
+    "options": [
+      "Để tránh gọi fetch hai lần trong Strict Mode",
+      "Để chống race condition: bỏ kết quả của request cũ khi userId đã đổi",
+      "Để cache kết quả fetch giữa các lần userId lặp lại",
+      "Để buộc effect chạy lại sau mỗi render"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cleanup đặt ignore = true để kết quả request cũ về muộn không ghi đè UI của request mới.\n✓ Đây là cách thủ công chống race condition khi userId đổi nhanh\n✗ Strict Mode mount lại là chuyện khác, ignore không nhằm việc đó\n✗ Cờ ignore không làm caching; muốn cache thì dùng React Query/SWR\n✗ ignore không ép effect chạy thêm; dependency mới quyết định việc đó"
+  },
+  {
+    "id": "fe-q-034",
+    "courseId": "FRONTEND",
+    "lesson": "fe-03-hooks-state",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi nào nên chọn useRef thay vì useState để lưu một giá trị?",
+    "options": [
+      "Khi giá trị thay đổi cần phản ánh ngay lên UI",
+      "Khi chỉ cần ghi nhớ ngầm (id timer, giá trị trước đó) mà không muốn gây render",
+      "Khi muốn React so sánh giá trị bằng Object.is",
+      "Khi cần giá trị reset về 0 mỗi render"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Đổi .current của ref không trigger render, hợp cho giá trị ngầm không liên quan UI.\n✓ Ghi nhớ ngầm như id timer hay giá trị trước đó là đúng việc của useRef\n✗ Giá trị cần phản ánh lên UI thì phải dùng useState để gây render\n✗ Việc so sánh Object.is là cơ chế của state/deps, không phải lý do chọn ref\n✗ Ref tồn tại suốt vòng đời, không reset mỗi render như biến local"
+  },
+  {
+    "id": "fe-q-035",
+    "courseId": "FRONTEND",
+    "lesson": "fe-03-hooks-state",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Interval gọi setCount(count + 1) trong useEffect với deps [] khiến count kẹt ở 1. Cách sửa TỐT NHẤT theo bài là gì?",
+    "options": [
+      "Bỏ trống deps và thêm setInterval thứ hai",
+      "Dùng functional update setCount(c => c + 1)",
+      "Đọc count trực tiếp rồi ép kiểu number",
+      "Thay setInterval bằng setTimeout lồng nhau"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Stale closure: callback chụp count của render đầu (0). Functional update luôn nhận giá trị mới nhất nên miễn nhiễm.\n✓ setCount(c => c + 1) không phụ thuộc count bên ngoài, sửa gọn nhất mà không cần reset interval\n✗ Thêm interval thứ hai chỉ làm rối, không sửa closure cũ\n✗ Đọc count rồi ép kiểu vẫn là cùng giá trị cũ bị đóng băng\n✗ Đổi sang setTimeout không giải quyết gốc rễ stale closure"
+  },
+  {
+    "id": "fe-q-036",
+    "courseId": "FRONTEND",
+    "lesson": "fe-03-hooks-state",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Đoạn nào VI PHẠM Rules of Hooks?",
+    "options": [
+      "function C(){ const [x,setX]=useState(0); if(!show) return null; return <span>{x}</span>; }",
+      "function C({show}){ if(show){ const [x,setX]=useState(0); } }",
+      "function C(){ const [x,setX]=useState(0); useEffect(()=>{},[x]); }",
+      "function useThing(){ const [x,setX]=useState(0); return x; }"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Hook phải gọi ở top-level, không trong if/loop/hàm lồng, vì React nhận diện hook theo thứ tự gọi.\n✓ Gọi useState bên trong if làm thứ tự hook thay đổi giữa các render, vi phạm luật\n✗ Gọi hết hook ở top-level rồi mới return sớm là hợp lệ\n✗ Gọi useState và useEffect ở top-level với deps là đúng chuẩn\n✗ Custom hook tên bắt đầu bằng use, gọi hook bên trong là hợp lệ"
+  },
+  {
+    "id": "fe-q-037",
+    "courseId": "FRONTEND",
+    "lesson": "fe-03-hooks-state",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, hai component khác nhau cùng dùng custom hook useLocalStorage thì điều gì đúng?",
+    "options": [
+      "Chúng chia sẻ chung một giá trị state",
+      "Mỗi component nhận state riêng biệt; hook chỉ chia sẻ logic",
+      "Custom hook tự đồng bộ state giữa các component",
+      "Chỉ component mount trước mới giữ được state"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Custom hook chia sẻ logic chứ không chia sẻ dữ liệu; mỗi lần gọi tạo state độc lập.\n✓ Mỗi component có state riêng, hook tái dùng hành vi có state\n✗ Không chia sẻ chung state; muốn vậy cần Context hoặc store\n✗ Hook không tự đồng bộ state giữa các component\n✗ Không có chuyện chỉ component mount trước mới giữ state"
+  },
+  {
+    "id": "fe-q-038",
+    "courseId": "FRONTEND",
+    "lesson": "fe-03-hooks-state",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo bài, những trường hợp nào ĐÁNG dùng useMemo hoặc useCallback? (chọn nhiều)",
+    "options": [
+      "Tính toán thật sự nặng như sort/filter list lớn mỗi render",
+      "Bọc mọi hàm và biến \"cho chắc\" để code an toàn",
+      "Hàm/object truyền xuống component con đã bọc React.memo",
+      "Hàm/object là dependency của useEffect để tránh effect chạy thừa",
+      "Mọi biến chuỗi đơn giản trong render"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "Chỉ dùng khi thực sự cần: tính nặng, giữ tham chiếu cho React.memo, hoặc làm dependency ổn định cho effect.\n✓ Tính toán nặng mỗi render là lý do chính đáng dùng useMemo\n✓ Hàm/object xuống con đã React.memo cần tham chiếu ổn định để tránh render thừa\n✓ Làm dependency của useEffect ổn định giúp tránh effect chạy thừa\n✗ Bọc mọi thứ \"cho chắc\" là thừa, làm code chậm và rối\n✗ Memo hóa biến chuỗi đơn giản không đem lại lợi ích, chỉ tốn chi phí"
+  },
+  {
+    "id": "fe-q-039",
+    "courseId": "FRONTEND",
+    "lesson": "fe-03-hooks-state",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo phần \"Liên hệ thực tế\", những phát biểu nào ĐÚNG? (chọn nhiều)",
+    "options": [
+      "Dữ liệu fetch từ backend (server state) nên do React Query quản, đừng nhồi vào useState",
+      "Trạng thái UI như modal mở/đóng, ô input là client state hợp với hooks thuần",
+      "URL trong useEffect/useFetch nên hard-code thẳng để đơn giản",
+      "React Query thay được phần lớn đoạn useEffect + useState + ignore tự viết",
+      "App React build ra file tĩnh thường đẩy lên S3 + CloudFront"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3,
+      4
+    ],
+    "explanation": "Bài phân định server state vs client state và khuyến nghị React Query, cùng cách deploy lên AWS.\n✓ Server state nên do React Query quản, không nhồi vào useState\n✓ Modal, ô input là client state hợp với hooks thuần\n✓ React Query thay phần lớn pattern useEffect + useState + ignore\n✓ App build ra file tĩnh thường đẩy lên S3 + CloudFront\n✗ URL nên lấy từ biến môi trường, không nên hard-code"
+  },
+  {
+    "id": "fe-q-040",
+    "courseId": "FRONTEND",
+    "lesson": "fe-04-state-management",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong React, một component con muốn thay đổi state do component cha sở hữu thì cách đúng là gì?",
+    "options": [
+      "Con gọi callback do cha truyền xuống qua props",
+      "Con với tay sửa trực tiếp biến state của cha",
+      "Con import state của cha rồi gán lại giá trị",
+      "Con dùng useContext để ghi đè state của cha"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "React theo mô hình one-way data flow: cha truyền data xuống, con báo thay đổi qua callback.\n✓ Gọi callback do cha truyền xuống là cách chuẩn để con yêu cầu cha cập nhật state.\n✗ Với tay sửa trực tiếp state của cha vi phạm one-way data flow, không tồn tại trong React.\n✗ Import rồi gán lại giá trị state không làm React re-render và phá vỡ mô hình dữ liệu một chiều.\n✗ useContext chỉ để đọc/nhận giá trị context, không phải để con ghi đè state của cha."
+  },
+  {
+    "id": "fe-q-041",
+    "courseId": "FRONTEND",
+    "lesson": "fe-04-state-management",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo nguyên tắc đặt state đúng chỗ, state nên sống ở component nào?",
+    "options": [
+      "Component thấp nhất chứa tất cả những component cần dùng nó",
+      "Component gốc của cả ứng dụng cho tiện chia sẻ",
+      "Component hiển thị nó ra màn hình",
+      "Một store toàn cục như Redux ngay từ đầu"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "State thuộc về component thấp nhất chứa tất cả những ai cần nó.\n✓ Component thấp nhất chứa mọi consumer là vị trí đúng, tránh nâng state cao hơn mức cần thiết.\n✗ Đặt mọi state ở component gốc gây prop drilling và re-render thừa.\n✗ Component hiển thị không nhất thiết là nơi sở hữu state.\n✗ Dùng Redux ngay từ đầu là lạm dụng, phần lớn app không cần."
+  },
+  {
+    "id": "fe-q-042",
+    "courseId": "FRONTEND",
+    "lesson": "fe-04-state-management",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Hai component anh em SearchBox và ProductList cùng phụ thuộc vào từ khoá tìm kiếm. Cách xử lý đúng là gì?",
+    "options": [
+      "Nâng state query lên component cha chung rồi truyền xuống qua props",
+      "Mỗi component giữ một bản state query riêng",
+      "Đặt query vào một Context riêng dùng cho toàn app",
+      "Lưu query vào React Query vì đó là dữ liệu tìm kiếm"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Hai anh em dùng chung state thì nâng lên cha gần nhất làm single source of truth.\n✓ Nâng query lên cha chung và truyền xuống qua props là giải pháp lifting state up chuẩn.\n✗ Mỗi component giữ bản riêng sẽ khiến hai bản lệch nhau.\n✗ Dùng Context cho việc nâng 1 tầng là lạm dụng không cần thiết.\n✗ query là client state (ô tìm kiếm đang gõ), không phải server state nên không thuộc React Query."
+  },
+  {
+    "id": "fe-q-043",
+    "courseId": "FRONTEND",
+    "lesson": "fe-04-state-management",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi nào prop drilling thực sự đáng được \"chữa\" bằng Context?",
+    "options": [
+      "Khi nó vượt 3-4 tầng và lặp lại ở nhiều nơi",
+      "Ngay khi xuất hiện prop drilling 1 tầng",
+      "Bất cứ khi nào một component trung gian nhận prop",
+      "Chỉ khi dữ liệu là server state"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Prop drilling 1-2 tầng là bình thường, chỉ chữa khi sâu và lặp lại.\n✓ Vượt 3-4 tầng và lặp nhiều nơi mới là lúc nên cân nhắc Context.\n✗ Chữa ngay từ 1 tầng là lạm dụng Context, còn tệ hơn prop drilling.\n✗ Một component trung gian nhận prop chuyển tiếp 1-2 tầng vẫn hoàn toàn bình thường.\n✗ Server state liên quan tới React Query, không phải tiêu chí quyết định dùng Context cho prop drilling."
+  },
+  {
+    "id": "fe-q-044",
+    "courseId": "FRONTEND",
+    "lesson": "fe-04-state-management",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Đoạn code sau gây vấn đề gì?\n<ThemeContext.Provider value={{ theme, toggle: () => setTheme(...) }}>",
+    "options": [
+      "Mỗi lần Provider render tạo object value mới khiến mọi consumer re-render",
+      "Không có vấn đề gì, đây là cách viết chuẩn",
+      "Consumer sẽ không bao giờ nhận được giá trị mới",
+      "TypeScript sẽ báo lỗi vì thiếu kiểu cho value"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Object literal mới mỗi lần render đổi tham chiếu value, kích hoạt re-render mọi consumer.\n✓ Tạo object value mới mỗi lần render khiến mọi component useContext re-render liên tục dù phần chúng dùng không đổi.\n✗ Đây không phải cách chuẩn, nên dùng useMemo để giữ tham chiếu ổn định.\n✗ Consumer vẫn nhận giá trị mới, vấn đề là re-render thừa chứ không phải mất cập nhật.\n✗ TypeScript không báo lỗi ở đây; vấn đề là hiệu năng runtime."
+  },
+  {
+    "id": "fe-q-045",
+    "courseId": "FRONTEND",
+    "lesson": "fe-04-state-management",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Loại state nào KHÔNG nên đưa vào Context?",
+    "options": [
+      "State đổi liên tục tần suất cao như vị trí chuột hoặc ô input đang gõ",
+      "Theme sáng/tối của ứng dụng",
+      "Ngôn ngữ (locale) đã chọn",
+      "Thông tin user đã đăng nhập"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Context phù hợp dữ liệu toàn cục ít đổi; state đổi liên tục gây làn sóng re-render.\n✓ State đổi tần suất cao như vị trí chuột hay ô input đang gõ nên dùng local state hoặc Zustand có selector.\n✗ Theme đổi hiếm, rất hợp Context.\n✗ Locale là dữ liệu toàn cục ít đổi, hợp Context.\n✗ Thông tin user đăng nhập đổi rất hiếm, hợp Context."
+  },
+  {
+    "id": "fe-q-046",
+    "courseId": "FRONTEND",
+    "lesson": "fe-04-state-management",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Đâu là các đặc điểm của SERVER STATE (đối lập với client state)?",
+    "options": [
+      "Có thể trở nên cũ (stale) do người khác sửa",
+      "Cần lo loading, error, cache, refetch",
+      "Phù hợp quản lý bằng React Query / SWR",
+      "Nguồn sự thật nằm trong trình duyệt, do bạn sở hữu",
+      "Đồng bộ và luôn đúng ngay lập tức"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Server state là dữ liệu mượn từ server, bất đồng bộ và có thể stale.\n✓ Có thể stale do người khác sửa là đặc tính của server state.\n✓ Cần lo loading, error, cache, refetch đúng là các mối quan tâm của server state.\n✓ React Query / SWR là công cụ hợp cho server state.\n✗ Nguồn sự thật trong trình duyệt do bạn sở hữu là đặc điểm của client state.\n✗ Đồng bộ và luôn đúng ngay là tính chất của client state, không phải server state."
+  },
+  {
+    "id": "fe-q-047",
+    "courseId": "FRONTEND",
+    "lesson": "fe-04-state-management",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Sai lầm phổ biến nhất khi quản lý dữ liệu lấy từ API là gì?",
+    "options": [
+      "Nhét server state vào Redux/Zustand rồi tự viết loading, error, cache, refetch",
+      "Dùng React Query để quản lý nó",
+      "Phân biệt rõ server state và client state",
+      "Cache dữ liệu API trong trình duyệt"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Nhét server state vào store thủ công là tái phát minh React Query một cách tệ hơn.\n✓ Nhét server state vào Redux/Zustand rồi tự lo loading/error/cache/refetch là sai lầm phổ biến nhất.\n✗ Dùng React Query chính là cách đúng để quản lý server state.\n✗ Phân biệt server và client state là việc nên làm, không phải sai lầm.\n✗ Cache dữ liệu API trong trình duyệt chính là điều React Query làm tốt."
+  },
+  {
+    "id": "fe-q-048",
+    "courseId": "FRONTEND",
+    "lesson": "fe-04-state-management",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Theo cây quyết định của bài, một giỏ hàng truy cập từ nhiều trang, đọc/ghi ở nhiều nơi và đổi thường xuyên nên dùng gì (cho app vừa)?",
+    "options": [
+      "Zustand",
+      "Context API",
+      "React Query",
+      "useState ở component giỏ hàng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Client state toàn cục đổi thường xuyên, nhiều nơi đọc/ghi là vùng việc của Zustand.\n✓ Zustand là lựa chọn mặc định gọn nhẹ cho client state toàn cục đổi thường xuyên.\n✗ Context không hợp state đổi thường xuyên vì gây re-render toàn cây con.\n✗ React Query dành cho server state, không phải client state như giỏ hàng cục bộ.\n✗ useState ở một component không chia sẻ được cho nhiều trang."
+  },
+  {
+    "id": "fe-q-049",
+    "courseId": "FRONTEND",
+    "lesson": "fe-04-state-management",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Component CartBadge dưới đây có hành vi re-render thế nào?\nconst count = useCartStore((s) => s.items.length);",
+    "options": [
+      "Chỉ re-render khi số lượng item đổi",
+      "Re-render mỗi khi bất kỳ field nào trong store đổi",
+      "Không bao giờ re-render vì dùng selector",
+      "Re-render mỗi khi total() được gọi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Selector trong Zustand giúp component chỉ subscribe đúng mẩu state nó lấy.\n✓ Vì truyền selector lấy items.length, component chỉ re-render khi giá trị đó đổi.\n✗ Re-render khi bất kỳ field nào đổi là hành vi khi lấy cả store, không phải khi dùng selector.\n✗ Component vẫn re-render khi mẩu được chọn đổi, chứ không phải không bao giờ.\n✗ Việc gọi total() không liên quan tới subscription của CartBadge."
+  },
+  {
+    "id": "fe-q-050",
+    "courseId": "FRONTEND",
+    "lesson": "fe-04-state-management",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Vì sao đoạn code sau khiến \"đã setState rồi mà UI không cập nhật\"?\ntodos.push(t);\nsetTodos(todos);",
+    "options": [
+      "Mutate mảng cũ giữ nguyên tham chiếu nên React tưởng không có gì đổi",
+      "push là hàm bất đồng bộ nên chạy sau setTodos",
+      "setTodos chỉ nhận callback, không nhận giá trị trực tiếp",
+      "todos là biến read-only nên push bị bỏ qua"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "React so sánh tham chiếu; mutate tại chỗ không đổi tham chiếu nên bỏ qua re-render.\n✓ push mutate mảng cũ giữ nguyên tham chiếu, oldState === newState nên React không re-render.\n✗ push không bất đồng bộ, nó chạy đồng bộ ngay.\n✗ setTodos nhận được cả giá trị trực tiếp lẫn callback.\n✗ todos không phải read-only; vấn đề là tham chiếu không đổi chứ không phải push bị bỏ qua."
+  },
+  {
+    "id": "fe-q-051",
+    "courseId": "FRONTEND",
+    "lesson": "fe-04-state-management",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "multi",
+    "question": "Đâu là các cách cập nhật state ĐÚNG kiểu immutable?",
+    "options": [
+      "[...arr, item] để thêm phần tử",
+      "arr.filter((x) => x.id !== id) để xoá",
+      "{ ...obj, field: newValue } để sửa field",
+      "arr.push(item) rồi setState(arr)",
+      "arr.sort() ngay trên mảng state rồi setState(arr)"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Immutable nghĩa là tạo dữ liệu mới, không sửa tại chỗ.\n✓ [...arr, item] tạo mảng mới khi thêm phần tử.\n✓ filter trả về mảng mới khi xoá, không mutate.\n✓ { ...obj, field: newValue } tạo object mới khi sửa field.\n✗ push mutate mảng cũ tại chỗ, giữ nguyên tham chiếu.\n✗ sort mutate và sắp xếp ngay trên mảng state, cũng giữ nguyên tham chiếu."
+  },
+  {
+    "id": "fe-q-052",
+    "courseId": "FRONTEND",
+    "lesson": "fe-04-state-management",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Có user là { firstName, lastName } và cần hiển thị fullName. Cách đúng theo single source of truth là gì?",
+    "options": [
+      "Tính fullName khi render: `${user.firstName} ${user.lastName}`",
+      "Tạo thêm useState fullName và đồng bộ mỗi khi user đổi",
+      "Lưu fullName vào Context để mọi nơi dùng chung",
+      "Lưu cả user và fullName vào Zustand store"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Giá trị suy ra được từ state khác là derived state, nên tính lúc render chứ không lưu.\n✓ Tính fullName khi render giữ một nguồn sự thật duy nhất là user.\n✗ Tạo useState fullName rồi tự đồng bộ tạo hai nguồn sự thật, dễ lệch nhau.\n✗ Lưu fullName vào Context vẫn là lưu state dẫn xuất thừa.\n✗ Lưu cả user và fullName vào store cũng nhân đôi nguồn sự thật, sai nguyên tắc."
+  },
+  {
+    "id": "fe-q-053",
+    "courseId": "FRONTEND",
+    "lesson": "fe-05-routing-data",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong một SPA React dùng React Router, điều gì xảy ra khi người dùng bấm vào một <Link to=\"/products/42\">?",
+    "options": [
+      "Trình duyệt gửi request mới tới server, tải lại toàn bộ trang HTML",
+      "React Router chặn reload, đổi URL bằng History API và render component khác ngay trong trang",
+      "Toàn bộ bundle JS được tải lại từ đầu, state bị reset",
+      "Server trả về một file index.html mới cho đường dẫn /products/42"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "SPA routing đổi URL → đổi component, mọi thứ diễn ra trong trình duyệt mà không reload.\n✓ React Router chặn reload, dùng History API đổi URL và render component khác là đúng bản chất client-side routing.\n✗ Gửi request mới tải lại trang HTML là cách của MPA truyền thống, không phải SPA.\n✗ Tải lại bundle và reset state là điều xảy ra khi dùng <a href> sai cách, không phải <Link>.\n✗ Server trả index.html mới cho từng đường dẫn không đúng; server thường chỉ trả cùng một index.html."
+  },
+  {
+    "id": "fe-q-054",
+    "courseId": "FRONTEND",
+    "lesson": "fe-05-routing-data",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn cần đọc giá trị :id từ URL /products/42 trong component trang chi tiết. Dùng hook nào?",
+    "options": [
+      "useSearchParams",
+      "useNavigate",
+      "useParams",
+      "useLocation"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Route param (đoạn động trong path) được đọc bằng useParams.\n✓ useParams trả về object chứa các route param như id.\n✗ useSearchParams dùng để đọc query string (?sort=price), không phải route param.\n✗ useNavigate dùng để điều hướng bằng code, không đọc param.\n✗ useLocation cho thông tin location hiện tại nhưng không phải cách chuẩn để lấy route param :id."
+  },
+  {
+    "id": "fe-q-055",
+    "courseId": "FRONTEND",
+    "lesson": "fe-05-routing-data",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn code sau bị lỗi gì? const { id } = useParams(); const product = await fetchProduct(id); // backend cần number",
+    "options": [
+      "useParams chạy bất đồng bộ nên id luôn undefined",
+      "id từ useParams luôn là string nên cần Number(id) trước khi truyền cho backend cần number",
+      "useParams chỉ dùng được trong route con, không dùng được ở trang chi tiết",
+      "fetchProduct phải gọi trong useEffect mới đọc được id"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "useParams luôn trả về string kể cả khi giá trị nhìn như số.\n✓ id là string nên phải Number(id) khi backend cần number là đúng cái bẫy bài nêu.\n✗ useParams không bất đồng bộ và id không 'luôn undefined' (chỉ undefined khi thiếu).\n✗ useParams dùng được ở mọi component nằm dưới route, không giới hạn route con.\n✗ Không bắt buộc gọi fetch trong useEffect để đọc được id."
+  },
+  {
+    "id": "fe-q-056",
+    "courseId": "FRONTEND",
+    "lesson": "fe-05-routing-data",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong layout dùng nested route, <Outlet /> đóng vai trò gì?",
+    "options": [
+      "Là chỗ React Router cắm component của route con vào layout cha",
+      "Là thẻ thay thế cho <Link> trong nested route",
+      "Tự động fetch dữ liệu cho route con",
+      "Bắt mọi URL không khớp để hiện trang 404"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Outlet là 'chỗ cắm' cho route con, giống children cho component.\n✓ Outlet là nơi React Router render component của route con vào trong layout cha.\n✗ Outlet không thay thế Link; chúng phục vụ mục đích khác nhau.\n✗ Outlet không fetch dữ liệu, chỉ là điểm render.\n✗ Bắt URL không khớp để hiện 404 là vai trò của route path=\"*\", không phải Outlet."
+  },
+  {
+    "id": "fe-q-057",
+    "courseId": "FRONTEND",
+    "lesson": "fe-05-routing-data",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, đâu là những vấn đề của cách 'ngây thơ' useEffect + fetch mà React Query giải quyết? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Không có cache, rời trang rồi quay lại phải fetch lại từ đầu",
+      "Dễ gặp race condition khi param đổi nhanh",
+      "Không tự dedupe request trùng giữa các component",
+      "Tự động validate response bằng Zod",
+      "Bắt buộc phải dùng class component"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "useEffect + fetch thiếu cache, dễ race condition, không dedupe, và lặp code loading/error.\n✓ Không có cache nên phải fetch lại khi quay lại trang là nhược điểm bài nêu.\n✓ Race condition khi param đổi nhanh khiến response cũ đè response mới là vấn đề thật.\n✓ Không dedupe nên hai component cùng cần một API sẽ gửi hai request.\n✗ Validate bằng Zod là kỹ thuật riêng ở ranh giới fetch, không phải tính năng tự động của React Query.\n✗ React Query không yêu cầu class component."
+  },
+  {
+    "id": "fe-q-058",
+    "courseId": "FRONTEND",
+    "lesson": "fe-05-routing-data",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong useQuery cho trang chi tiết, vì sao queryKey lại là [\"products\", productId] thay vì chỉ [\"products\"]?",
+    "options": [
+      "Vì queryKey bắt buộc phải có ít nhất hai phần tử",
+      "Để mỗi sản phẩm có ô cache riêng; key đổi theo id → React Query coi là dữ liệu khác và fetch mới",
+      "Để tăng staleTime tự động cho từng sản phẩm",
+      "Vì nếu thiếu id, React Query sẽ retry vô hạn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "queryKey là định danh dữ liệu trong cache; mọi tham số ảnh hưởng kết quả phải nằm trong key.\n✓ Đưa productId vào key giúp mỗi sản phẩm có cache riêng và đổi id sẽ fetch dữ liệu mới là đúng.\n✗ queryKey không bắt buộc nhiều phần tử; [\"products\"] một phần tử vẫn hợp lệ.\n✗ Thêm id vào key không tự thay đổi staleTime.\n✗ Thiếu id không gây retry vô hạn; bài còn dùng enabled để chặn chạy khi id không hợp lệ."
+  },
+  {
+    "id": "fe-q-059",
+    "courseId": "FRONTEND",
+    "lesson": "fe-05-routing-data",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn có một danh mục sản phẩm gần như không đổi trong ngày và muốn giảm số request. Cấu hình nào hợp lý nhất?",
+    "options": [
+      "staleTime: 0 để luôn lấy bản mới nhất",
+      "staleTime cao (ví dụ nhiều phút) vì dữ liệu ít đổi",
+      "Bỏ queryKey để React Query không cache",
+      "Dùng useEffect + fetch thay vì React Query"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Dữ liệu ít đổi nên đặt staleTime cao để coi là tươi lâu, giảm refetch.\n✓ staleTime cao cho dữ liệu ít đổi giúp giảm request mà vẫn chấp nhận được độ mới là đúng khuyến nghị.\n✗ staleTime: 0 khiến dữ liệu stale ngay và refetch nhiều, ngược mục tiêu giảm request.\n✗ Không thể bỏ queryKey; nó là định danh bắt buộc của query.\n✗ Quay về useEffect + fetch mất hết cache/dedupe, không giúp giảm request."
+  },
+  {
+    "id": "fe-q-060",
+    "courseId": "FRONTEND",
+    "lesson": "fe-05-routing-data",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Sau khi tạo sản phẩm thành công bằng useMutation, cách chuẩn để danh sách products tự cập nhật là gì?",
+    "options": [
+      "Tự gọi setState để thêm sản phẩm mới vào mảng list",
+      "Gọi queryClient.invalidateQueries({ queryKey: [\"products\"] }) trong onSuccess",
+      "Reload toàn bộ trang bằng window.location.reload()",
+      "Tăng staleTime của query list lên rất cao"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mẫu chuẩn: useMutation để ghi, rồi invalidateQueries trong onSuccess để báo cache cũ và refetch.\n✓ invalidateQueries với key [\"products\"] trong onSuccess báo dữ liệu cũ và để React Query tự refetch là cách đúng.\n✗ Tự setState thủ công đi ngược triết lý React Query; bạn chỉ cần báo key cũ.\n✗ reload toàn trang phá trải nghiệm SPA và không cần thiết.\n✗ Tăng staleTime không làm list cập nhật sau khi ghi, còn khiến dữ liệu cũ lâu hơn."
+  },
+  {
+    "id": "fe-q-061",
+    "courseId": "FRONTEND",
+    "lesson": "fe-05-routing-data",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Khi triển khai optimistic update với useMutation, những callback/bước nào là cần thiết để làm đúng? (chọn tất cả đáp án đúng)",
+    "options": [
+      "onMutate: cập nhật cache ngay trước khi server trả lời và lưu snapshot cũ",
+      "onError: dùng snapshot để rollback về giá trị cũ khi request lỗi",
+      "onSettled: invalidate để đồng bộ lại với server dù thành công hay lỗi",
+      "Bỏ hẳn onError để UI luôn giữ trạng thái lạc quan",
+      "Gọi cancelQueries trong onMutate để tránh refetch ghi đè bản optimistic"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Optimistic update cần cập nhật ngay, lưu snapshot, hủy query đang chạy, rollback khi lỗi và đồng bộ lại.\n✓ onMutate cập nhật cache ngay và lưu previous để rollback là bước cốt lõi.\n✓ onError dùng snapshot rollback khi lỗi là bắt buộc để UI không kẹt ở trạng thái sai.\n✓ onSettled invalidate để đồng bộ lại với server dù thành công hay lỗi là đúng pattern.\n✓ cancelQueries trong onMutate ngăn refetch đang chạy ghi đè bản optimistic.\n✗ Bỏ onError là sai nghiêm trọng; thiếu rollback sẽ khiến UI kẹt ở trạng thái sai khi request lỗi."
+  },
+  {
+    "id": "fe-q-062",
+    "courseId": "FRONTEND",
+    "lesson": "fe-05-routing-data",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Người dùng F5 ngay tại URL /products/42 trên SPA deploy lên S3 + CloudFront và nhận 404. Nguyên nhân và cách sửa đúng là gì?",
+    "options": [
+      "Do React Router lỗi; phải đổi sang HashRouter là cách duy nhất",
+      "S3 tìm file products/42 không có nên trả 404; cấu hình rewrite mọi đường dẫn không tìm thấy về /index.html",
+      "Do CORS chưa bật; thêm header CORS sẽ hết 404",
+      "Do staleTime quá thấp khiến CloudFront trả bản cũ"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Routing nằm ở trình duyệt nên server chỉ có index.html; F5 tại /products/42 khiến S3 tìm file không tồn tại.\n✓ S3 không có file products/42 nên trả 404; rewrite mọi path không tìm thấy về /index.html để React Router lo phần còn lại là cách sửa chuẩn.\n✗ Không bắt buộc đổi sang HashRouter; rewrite về index.html là giải pháp thường dùng.\n✗ CORS gây fail request tới API khác domain, không phải nguyên nhân 404 khi F5 route nội bộ.\n✗ staleTime là cache trong trình duyệt của React Query, không liên quan tới 404 khi F5."
+  },
+  {
+    "id": "fe-q-063",
+    "courseId": "FRONTEND",
+    "lesson": "fe-05-routing-data",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đâu là loại state KHÔNG nên đưa vào React Query mà nên giữ ở useState/Zustand?",
+    "options": [
+      "Danh sách sản phẩm lấy từ GET /products",
+      "Chi tiết một sản phẩm từ GET /products/:id",
+      "Trạng thái form đang nhập và modal đang mở/đóng",
+      "Kết quả tìm kiếm trả về từ API"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "React Query dành cho server state; state thuần client không nên nhét vào.\n✓ Form đang nhập và modal mở/đóng là state thuần client, nên dùng useState/Zustand.\n✗ Danh sách sản phẩm từ API là server state, đúng việc của React Query.\n✗ Chi tiết sản phẩm từ API cũng là server state.\n✗ Kết quả tìm kiếm từ API là dữ liệu thuộc về server, hợp với React Query."
+  },
+  {
+    "id": "fe-q-064",
+    "courseId": "FRONTEND",
+    "lesson": "fe-05-routing-data",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Cơ chế stale-while-revalidate của React Query hoạt động thế nào khi bạn quay lại một trang có dữ liệu đã stale?",
+    "options": [
+      "Hiện spinner và chờ fetch xong mới render dữ liệu",
+      "Hiển thị ngay dữ liệu cũ từ cache, đồng thời âm thầm fetch lại ở nền rồi cập nhật khi xong",
+      "Xóa cache cũ trước, rồi fetch lại từ đầu",
+      "Không fetch lại vì dữ liệu đã có trong cache"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Stale-while-revalidate: hiện ngay dữ liệu cũ rồi revalidate ở nền để UI tức thì mà vẫn được làm mới.\n✓ Hiển thị ngay dữ liệu cũ rồi âm thầm fetch lại ở nền và cập nhật khi xong là đúng cơ chế.\n✗ Hiện spinner chờ fetch xong mất đi lợi ích 'giao diện tức thì' của cache.\n✗ Không xóa cache trước; dữ liệu cũ vẫn được hiển thị trong lúc revalidate.\n✗ Có fetch lại vì dữ liệu đã stale, không phải 'không fetch'."
+  },
+  {
+    "id": "fe-q-065",
+    "courseId": "FRONTEND",
+    "lesson": "fe-05-routing-data",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong chế độ Suspense, useSuspenseQuery khác useQuery ở điểm nào về xử lý loading?",
+    "options": [
+      "Phải tự kiểm tra isLoading trong component như useQuery",
+      "Treo component cho đến khi có data; loading do <Suspense fallback> lo, component chỉ render khi đã có data",
+      "Không bao giờ ném lỗi, kể cả khi queryFn thất bại",
+      "Yêu cầu bỏ queryKey để hoạt động"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "useSuspenseQuery treo component cho tới khi có data, tách trạng thái loading/error ra Suspense và ErrorBoundary.\n✓ Component được treo cho đến khi có data, loading để <Suspense fallback> lo nên component chỉ render khi đã có data là đúng.\n✗ Không cần tự kiểm tra isLoading; đó chính là điểm khác so với useQuery.\n✗ Lỗi vẫn xảy ra; khi queryFn ném lỗi nó nổi lên error boundary gần nhất.\n✗ Vẫn cần queryKey; nó là định danh bắt buộc của query."
+  },
+  {
+    "id": "fe-q-066",
+    "courseId": "FRONTEND",
+    "lesson": "fe-06-forms",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong React, sự khác biệt cốt lõi giữa controlled và uncontrolled input là gì?",
+    "options": [
+      "Controlled giữ giá trị trong React state (re-render mỗi lần gõ), uncontrolled để DOM tự giữ và React chỉ đọc khi cần",
+      "Controlled không cần onChange, uncontrolled bắt buộc có onChange",
+      "Controlled chỉ dùng cho file input, uncontrolled cho mọi input khác",
+      "Controlled không re-render khi gõ, uncontrolled re-render mỗi ký tự"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khác biệt nằm ở nguồn sự thật của giá trị input.\n✓ Controlled lưu giá trị trong React state nên mỗi lần gõ là một setState gây re-render; uncontrolled để DOM giữ giá trị, React đọc qua ref khi cần.\n✗ Controlled chính là loại cần value + onChange, không phải bỏ onChange.\n✗ File input bắt buộc uncontrolled, nhưng uncontrolled không chỉ dành cho file.\n✗ Mô tả ngược chiều re-render: chính controlled mới re-render mỗi ký tự."
+  },
+  {
+    "id": "fe-q-067",
+    "courseId": "FRONTEND",
+    "lesson": "fe-06-forms",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao một input file (<input type=\"file\">) bắt buộc phải là uncontrolled?",
+    "options": [
+      "Vì giá trị file input không thể bị JavaScript gán động vì lý do bảo mật, nên React không thể controlled nó",
+      "Vì file quá nặng để giữ trong state",
+      "Vì react-hook-form không hỗ trợ file",
+      "Vì file input không phát ra sự kiện onChange"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "File input là trường hợp đặc biệt buộc uncontrolled.\n✓ Trình duyệt không cho JS gán giá trị file động (bảo mật), nên không thể đặt value để controlled, phải đọc qua ref/DOM.\n✗ Lý do không phải kích thước file giữ trong state.\n✗ RHF hoàn toàn xử lý được file qua register/ref.\n✗ File input vẫn phát onChange khi người dùng chọn file."
+  },
+  {
+    "id": "fe-q-068",
+    "courseId": "FRONTEND",
+    "lesson": "fe-06-forms",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khi spread {...register(\"email\")} vào một <input> thông thường, react-hook-form làm gì để input gõ phím không khiến cả form re-render?",
+    "options": [
+      "Gắn ref vào input và chạy theo mô hình uncontrolled, không cần value/onChange thủ công",
+      "Tạo một useState riêng cho mỗi field nhưng debounce setState",
+      "Bọc input trong React.memo tự động",
+      "Chuyển input sang controlled nhưng tắt re-render"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "RHF mặc định uncontrolled để tối ưu hiệu năng.\n✓ register trả về { name, onChange, onBlur, ref } và gắn ref vào input theo mô hình uncontrolled nên gõ field A không re-render field B.\n✗ RHF tránh dùng một useState mỗi field — đó chính là cách thủ công nó muốn thay thế.\n✗ Không phải nhờ React.memo tự động.\n✗ Không phải controlled, mà là uncontrolled qua ref."
+  },
+  {
+    "id": "fe-q-069",
+    "courseId": "FRONTEND",
+    "lesson": "fe-06-forms",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn dùng một component MUI Select (component thư viện không nhận ref, cần value/onChange). Cách tích hợp đúng vào react-hook-form là gì?",
+    "options": [
+      "Dùng <Controller> với control để cầu nối field controlled vào RHF",
+      "Dùng register(\"country\") như input thường",
+      "Tự quản lý bằng useState rồi gán vào RHF lúc submit",
+      "Bọc Select trong forwardRef rồi register"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Component controlled cần Controller chứ không phải register.\n✓ Controller (kèm control) là cầu nối đưa field controlled như MUI Select/react-select/date picker vào RHF.\n✗ register cần ref nên không hợp với component không nhận ref.\n✗ Tự dùng useState riêng phá vỡ lợi ích quản lý tập trung của RHF.\n✗ forwardRef không giải quyết được vì component vẫn cần value/onChange, đúng việc của Controller."
+  },
+  {
+    "id": "fe-q-070",
+    "courseId": "FRONTEND",
+    "lesson": "fe-06-forms",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Lợi ích lớn nhất của việc viết schema bằng Zod thay vì khai báo TypeScript type riêng và rules của RHF riêng là gì?",
+    "options": [
+      "Schema là nguồn sự thật duy nhất: vừa validate runtime vừa suy ra type qua z.infer, không bao giờ lệch",
+      "Zod làm form re-render ít hơn",
+      "Zod bỏ được hoàn toàn việc validate ở backend",
+      "Zod tự động dịch message lỗi sang tiếng Việt"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Zod thống nhất type và validation về một chỗ.\n✓ Viết schema một lần: validate runtime và z.infer suy ra TS type, sửa schema thì type tự đổi, tránh hai chỗ lệch nhau.\n✗ Hiệu năng re-render là do mô hình uncontrolled của RHF, không phải Zod.\n✗ Bài nhấn mạnh backend vẫn bắt buộc validate lại; client validate không thay được.\n✗ Message tiếng Việt là do bạn tự viết trong schema, Zod không tự dịch."
+  },
+  {
+    "id": "fe-q-071",
+    "courseId": "FRONTEND",
+    "lesson": "fe-06-forms",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Input HTML cho field tuổi luôn trả về string \"18\". Trong Zod schema bạn muốn nhận được number 18. Cách đúng là?",
+    "options": [
+      "z.coerce.number().int().min(18) để ép string thành number",
+      "z.string().min(18) rồi tự parseInt sau",
+      "z.number().min(18) — Zod tự hiểu string là number",
+      "z.literal(18)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Input HTML trả string nên cần coerce.\n✓ z.coerce.number() ép \"18\" thành 18 trước khi validate, đúng khuyến nghị của bài.\n✗ Để type string rồi parseInt thủ công là cách bài khuyên tránh.\n✗ z.number() thuần sẽ fail vì giá trị vào là string, không tự ép.\n✗ z.literal(18) chỉ chấp nhận đúng giá trị 18, không phải cách xử lý field tuổi tổng quát."
+  },
+  {
+    "id": "fe-q-072",
+    "courseId": "FRONTEND",
+    "lesson": "fe-06-forms",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Người dùng phàn nàn form \"la mắng\" họ: field email bật đỏ ngay khi mới gõ được 2 ký tự. Bạn đang để mode nào, và nên đổi sang gì?",
+    "options": [
+      "Đang \"onChange\"; nên đổi sang \"onTouched\" để chỉ báo lỗi sau khi field blur lần đầu",
+      "Đang \"onSubmit\"; nên đổi sang \"onChange\"",
+      "Đang \"onBlur\"; nên đổi sang \"onChange\"",
+      "Đang \"onTouched\"; nên đổi sang \"onSubmit\""
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Báo lỗi khi đang gõ dở là dấu hiệu của onChange.\n✓ mode \"onChange\" validate mỗi ký tự nên bật đỏ quá sớm; \"onTouched\" (lỗi sau blur lần đầu rồi mới realtime) là điểm cân bằng được khuyên dùng.\n✗ onSubmit không bật đỏ khi đang gõ nên không phải nguyên nhân, và đổi sang onChange càng tệ.\n✗ onBlur cũng không báo lỗi khi đang gõ.\n✗ onTouched chính là lời giải, không phải vấn đề."
+  },
+  {
+    "id": "fe-q-073",
+    "courseId": "FRONTEND",
+    "lesson": "fe-06-forms",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong .refine() để kiểm tra password === confirmPassword, vì sao phải khai báo path: [\"confirmPassword\"]?",
+    "options": [
+      "Để gắn lỗi cross-field vào đúng field confirmPassword thay vì không thuộc field nào",
+      "Để Zod biết field nào cần validate trước",
+      "Để bật async validation cho field đó",
+      "Để RHF focus vào field password khi lỗi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "refine cross-field cần path để định vị lỗi.\n✓ Không có path, lỗi từ refine không gắn vào field cụ thể; path: [\"confirmPassword\"] đưa message vào đúng field để hiển thị dưới ô nhập lại.\n✗ path không quyết định thứ tự validate.\n✗ path không liên quan tới việc bật async.\n✗ path quyết định lỗi gắn vào confirmPassword, không phải focus vào password."
+  },
+  {
+    "id": "fe-q-074",
+    "courseId": "FRONTEND",
+    "lesson": "fe-06-forms",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn cần check-username \"as-you-type\" (kiểm tra username còn trống không trong lúc gõ). Theo bài, pattern tốt hơn so với async .refine() trong schema là gì?",
+    "options": [
+      "Tách riêng: dùng react-query (enabled + debounce) để check, rồi merge kết quả vào lỗi RHF bằng setError; schema-level async để dành cho lúc submit",
+      "Đặt async .refine() với mode onChange để validate mỗi ký tự",
+      "Gọi fetch trực tiếp trong onChange của input và setState lỗi",
+      "Dùng async .refine() nhưng bọc trong useEffect"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Async trong schema dễ race condition và spam, nên tách riêng cho check-as-you-type.\n✓ react-query với enabled + debounce kiểm soát caching/huỷ request, kết quả merge vào RHF qua setError; async schema chỉ dùng validate cuối lúc submit.\n✗ async refine + onChange validate mỗi ký tự chính là cái gây spam server và race condition cần tránh.\n✗ Gọi fetch thẳng trong onChange cũng spam và không debounce/cache.\n✗ Bọc refine trong useEffect không phải pattern bài đề xuất và không giải quyết race."
+  },
+  {
+    "id": "fe-q-075",
+    "courseId": "FRONTEND",
+    "lesson": "fe-06-forms",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Backend trả 409 khi email đã tồn tại. Trong onSubmit của RHF, cách hiển thị lỗi đúng chỗ là?",
+    "options": [
+      "setError(\"email\", { message: \"Email đã được đăng ký\" }) để gắn lỗi vào đúng field email",
+      "setError(\"root\", ...) để hiện trên đầu form",
+      "throw lỗi ra ngoài cho handleSubmit bắt",
+      "Gọi lại handleSubmit để re-validate schema"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lỗi nghiệp vụ theo field nên gắn đúng field.\n✓ 409 (email trùng) là lỗi cụ thể của field email, dùng setError(\"email\", ...) để hiện ngay dưới ô email.\n✗ setError(\"root\") dành cho lỗi tổng (network, 500), không phải lỗi gắn được vào field.\n✗ throw ra ngoài không tự map vào field nào.\n✗ Re-validate schema không phát hiện email trùng vì đó là thông tin chỉ server biết."
+  },
+  {
+    "id": "fe-q-076",
+    "courseId": "FRONTEND",
+    "lesson": "fe-06-forms",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một dev nói: \"Form đã validate đầy đủ bằng Zod ở client rồi nên backend khỏi validate.\" Phản biện đúng nhất là?",
+    "options": [
+      "Client validate chỉ phục vụ UX; ai cũng bypass được JS và gọi thẳng API, nên backend bắt buộc validate lại",
+      "Sai vì Zod không chạy được trên Node",
+      "Sai vì Zod không suy ra được type ở backend",
+      "Đúng, miễn là dùng mode onSubmit"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Client validate không phải lớp bảo mật.\n✓ Validate client chỉ cho phản hồi nhanh (UX); người dùng có thể bypass JS và gọi API trực tiếp nên backend phải validate lại để chặn data rác.\n✗ Zod chạy tốt trên Node, thậm chí có thể share schema FE/BE.\n✗ z.infer suy ra type được ở cả backend.\n✗ Không mode nào của client làm cho việc bỏ validate backend trở nên an toàn."
+  },
+  {
+    "id": "fe-q-077",
+    "courseId": "FRONTEND",
+    "lesson": "fe-06-forms",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, đâu là các thực hành đúng cho Error UX và accessibility của form? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Hiển thị lỗi ngay dưới field tương ứng, kèm icon + text chứ không chỉ màu đỏ",
+      "Vùng lỗi dùng role=\"alert\" (hoặc aria-live) để screen reader đọc ngay",
+      "Dùng placeholder thay cho <label> để gọn giao diện",
+      "Disable nút submit khi đang gửi (isSubmitting) và hiện spinner",
+      "Disable nút submit khi form chưa hợp lệ để người dùng không bấm nhầm"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Error UX và a11y có những nguyên tắc rõ ràng trong bài.\n✓ Lỗi đặt ngay dưới field, dùng đỏ + icon + text để người mù màu vẫn nhận biết.\n✓ role=\"alert\"/aria-live giúp screen reader đọc lỗi khi vừa xuất hiện.\n✓ Disable nút khi isSubmitting + spinner để chặn double-submit.\n✗ placeholder không thay được label (mất khi gõ, contrast kém, hỏng a11y).\n✗ Bài khuyên KHÔNG disable nút chỉ vì form chưa hợp lệ — để người dùng bấm và thấy lỗi ở đâu."
+  },
+  {
+    "id": "fe-q-078",
+    "courseId": "FRONTEND",
+    "lesson": "fe-06-forms",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Khi build form đăng ký hoàn chỉnh với RHF + Zod, những phát biểu nào đúng? (chọn tất cả đáp án đúng)",
+    "options": [
+      "noValidate trên <form> tắt validate mặc định của browser để tự kiểm soát message tiếng Việt",
+      "setError(\"root\", ...) dùng cho lỗi tổng (network, 500) hiển thị đầu form",
+      "handleSubmit chỉ gọi onSubmit khi toàn bộ field hợp lệ và tự preventDefault",
+      "z.literal(true) cho checkbox terms đảm bảo người dùng phải tích đồng ý",
+      "Mỗi field cần một useState riêng để RHF theo dõi giá trị"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Form hoàn chỉnh ghép nhiều mảnh đúng cách.\n✓ noValidate tắt validate native của browser để message Zod tiếng Việt nhất quán.\n✓ setError(\"root\") gom lỗi tổng (network/500) hiện trên đầu form.\n✓ handleSubmit validate trước, chỉ gọi onSubmit khi tất cả hợp lệ và tự chặn preventDefault.\n✓ z.literal(true) buộc terms phải là true, tức người dùng phải tích đồng ý.\n✗ RHF dùng ref/uncontrolled, không cần useState mỗi field — đó là cách thủ công bài muốn thay thế."
+  },
+  {
+    "id": "fe-q-079",
+    "courseId": "FRONTEND",
+    "lesson": "fe-07-styling",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vấn đề gốc khiến CSS \"thủ công\" sụp đổ trong dự án lớn (đụng tên class, sửa một chỗ vỡ ba chỗ) bắt nguồn từ đặc tính nào của CSS?",
+    "options": [
+      "CSS mặc định có scope toàn cục, mọi selector áp lên toàn trang",
+      "CSS không hỗ trợ biến nên không tái dùng được giá trị",
+      "CSS không có media query nên không responsive được",
+      "CSS chạy chậm hơn JavaScript khi render"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mọi giải pháp styling hiện đại đều xoay quanh việc giới hạn phạm vi (scope) style.\n✓ CSS mặc định global: hai file cùng có .title thì file load sau thắng, gây lỗi khó tìm.\n✗ CSS có biến (custom properties) — bài còn dùng chúng làm design token.\n✗ CSS có media query; đó không phải gốc của spaghetti.\n✗ Tốc độ render không phải nguyên nhân đụng tên class."
+  },
+  {
+    "id": "fe-q-080",
+    "courseId": "FRONTEND",
+    "lesson": "fe-07-styling",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Với CSS Modules, lúc build `styles.btn` trong `Button.module.css` sẽ trở thành dạng nào, và vì sao điều đó hữu ích?",
+    "options": [
+      "Một tên duy nhất như `Button_btn__a1b2c`, nhờ vậy không component nào khác đụng được",
+      "Vẫn là `.btn` nguyên gốc, nhưng được bọc trong media query",
+      "Một class utility của Tailwind tương ứng",
+      "Một biến CSS `--btn` để dùng lại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bundler tự đổi tên class thành duy nhất để cô lập scope.\n✓ `styles.btn` -> `Button_btn__a1b2c`, hết đụng tên dù bạn vẫn viết CSS thuần.\n✗ Nếu giữ nguyên `.btn` thì vẫn đụng tên — đúng vấn đề CSS Modules giải quyết.\n✗ CSS Modules không sinh ra class Tailwind.\n✗ Không chuyển thành biến CSS."
+  },
+  {
+    "id": "fe-q-081",
+    "courseId": "FRONTEND",
+    "lesson": "fe-07-styling",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn này có gì sai và hậu quả là gì? `<div className={`px-4 ${active && \"bg-blue-600\"}`} />`",
+    "options": [
+      "Khi `active` là `false`, chuỗi `\"false\"` bị nhét vào className; nên dùng `clsx`/`cn`",
+      "Template string không chèn được biến vào className, phải dùng `+`",
+      "`px-4` không hợp lệ trong Tailwind, phải viết `padding-4`",
+      "Phải bỏ dấu ngoặc nhọn vì className chỉ nhận chuỗi tĩnh"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "`false &&` trả về `false`, và `${false}` trong template string thành chuỗi \"false\".\n✓ Kết quả className chứa rác \"false\"; dùng `clsx`/`cn` để xử lý điều kiện sạch.\n✗ Template string chèn biến bình thường — vấn đề là giá trị `false`, không phải cú pháp.\n✗ `px-4` là class Tailwind hợp lệ.\n✗ className nhận được biểu thức động qua dấu ngoặc nhọn."
+  },
+  {
+    "id": "fe-q-082",
+    "courseId": "FRONTEND",
+    "lesson": "fe-07-styling",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một dev viết `md:flex` và tưởng nó \"chỉ áp dụng trên tablet\". Thực tế `md:flex` nghĩa là gì?",
+    "options": [
+      "Áp dụng từ 768px trở lên (ngưỡng min-width), không giới hạn dải trên",
+      "Chỉ áp dụng đúng trong khoảng 768px–1024px",
+      "Chỉ áp dụng trên màn hình dưới 768px",
+      "Áp dụng cho mọi kích thước màn hình"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Các prefix `sm: md: lg: xl:` là breakpoint ngưỡng tối thiểu (min-width).\n✓ `md:` áp từ 768px trở lên — là ngưỡng sàn, không phải một dải.\n✗ Nó không giới hạn ở khoảng 768–1024px.\n✗ Muốn chỉ mobile thì viết không prefix rồi ghi đè ở `md:`.\n✗ Class không prefix mới áp cho mọi kích thước."
+  },
+  {
+    "id": "fe-q-083",
+    "courseId": "FRONTEND",
+    "lesson": "fe-07-styling",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khác biệt then chốt giữa Tailwind utility class và inline style (`style={{}}`) là gì?",
+    "options": [
+      "Utility class có `hover:`, `md:`, `dark:` và lấy giá trị từ theme thống nhất; inline style thì không",
+      "Inline style nhanh hơn vì không cần build",
+      "Utility class chỉ là inline style được viết tắt, hành vi giống hệt",
+      "Inline style hỗ trợ dark mode tốt hơn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Utility class không phải inline style trá hình — nó mạnh hơn hẳn.\n✓ Có hover/responsive/dark và lấy màu, khoảng cách từ theme nên nhất quán toàn app.\n✗ Tốc độ không phải điểm phân biệt ở đây.\n✗ Inline style không có hover, không media query, không theme.\n✗ Inline style không hỗ trợ dark mode kiểu gán lại biến."
+  },
+  {
+    "id": "fe-q-084",
+    "courseId": "FRONTEND",
+    "lesson": "fe-07-styling",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao bài khuyên design token nên có 2 tầng (token nguyên thuỷ như `--blue-600` và token ngữ nghĩa như `--color-primary`)?",
+    "options": [
+      "Component chỉ dùng tầng ngữ nghĩa, nên đổi `--color-primary` là cả app theo mà không cần biết màu thật",
+      "Để giảm số biến CSS phải khai báo",
+      "Vì Tailwind v4 bắt buộc phải khai báo đúng 2 tầng",
+      "Để token nguyên thuỷ chạy nhanh hơn token ngữ nghĩa lúc runtime"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Token ngữ nghĩa tách ý định khỏi giá trị.\n✓ Component hỏi \"đây là màu primary\", đổi một chỗ là toàn app theo, không quan tâm màu thật.\n✗ Hai tầng làm tăng số biến, không giảm.\n✗ Đây là nguyên tắc thiết kế, không phải ràng buộc của Tailwind v4.\n✗ Không liên quan tới tốc độ runtime."
+  },
+  {
+    "id": "fe-q-085",
+    "courseId": "FRONTEND",
+    "lesson": "fe-07-styling",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Hook `useTheme` đọc `localStorage` trong `useEffect` rồi mới toggle class `dark`. Triệu chứng FOUC xuất hiện ra sao và cách xử lý đúng?",
+    "options": [
+      "Trang load ở chế độ sáng rồi mới nhảy sang tối; xử lý bằng script đặt class `dark` trước khi React render",
+      "Trang không bao giờ đổi sang tối; xử lý bằng thêm dependency vào useEffect",
+      "localStorage bị xoá mỗi lần reload; xử lý bằng dùng useState thay vì useEffect",
+      "Class `dark` áp hai lần gây nhấp nháy; xử lý bằng bỏ useEffect đi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "useEffect chạy sau khi render lần đầu, nên màu tối được áp trễ.\n✓ Trang hiện sáng rồi nháy sang tối; đặt script set class `dark` trong <head> trước khi React render (hoặc next-themes).\n✗ Trang vẫn đổi được sang tối — vấn đề chỉ là trễ một nhịp.\n✗ localStorage không bị xoá khi reload.\n✗ Không phải do áp class hai lần."
+  },
+  {
+    "id": "fe-q-086",
+    "courseId": "FRONTEND",
+    "lesson": "fe-07-styling",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong shadcn/ui, điều nào mô tả đúng bản chất của nó so với một thư viện cài qua `npm`?",
+    "options": [
+      "Nó copy code component (Radix + Tailwind) thẳng vào dự án, bạn sở hữu và sửa thoải mái",
+      "Nó là gói npm cập nhật tự động khi bạn chạy `npm update`",
+      "Nó là một runtime CSS-in-JS thay thế Tailwind",
+      "Nó cung cấp component headless không kèm style"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "shadcn/ui khác mô hình thư viện npm truyền thống.\n✓ Nó copy code (Radix + Tailwind) vào dự án — bạn sở hữu code, sửa tuỳ ý.\n✗ Không phải gói npm tự cập nhật.\n✗ Không phải runtime CSS-in-JS; nó dùng Tailwind.\n✗ \"Headless không kèm style\" là mô tả của Radix/React Aria, không phải shadcn."
+  },
+  {
+    "id": "fe-q-087",
+    "courseId": "FRONTEND",
+    "lesson": "fe-07-styling",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Cần `!important` để một style thắng được selector khác. Theo quy tắc tránh CSS spaghetti, đây là dấu hiệu gì và nên làm gì?",
+    "options": [
+      "Dấu hiệu scope đang rò rỉ — nên sửa gốc, đừng vá bằng `!important`",
+      "Dấu hiệu thiếu design token — nên thêm biến CSS mới",
+      "Bình thường trong dự án lớn — cứ dùng `!important` để đảm bảo thắng",
+      "Dấu hiệu thiếu breakpoint — nên thêm prefix responsive"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cần `!important` để thắng selector khác là triệu chứng scope rò rỉ.\n✓ Nên sửa tận gốc (cô lập scope), không vá bằng override.\n✗ Vấn đề là scope, không phải thiếu token.\n✗ Lạm dụng `!important` làm style khó ghi đè và dễ vỡ hơn.\n✗ Không liên quan tới breakpoint responsive."
+  },
+  {
+    "id": "fe-q-088",
+    "courseId": "FRONTEND",
+    "lesson": "fe-07-styling",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Xét lý do team quan tâm Core Web Vitals (LCP) khi deploy lên S3/CloudFront. Vì sao Tailwind/CSS Modules được ưu tiên hơn CSS-in-JS runtime ở khía cạnh này?",
+    "options": [
+      "Chúng tạo CSS tĩnh lúc build, trình duyệt có giao diện ngay không cần đợi JS chạy",
+      "Chúng tạo file CSS lớn hơn nên CloudFront cache hiệu quả hơn",
+      "Chúng tự động bật dark mode mà CSS-in-JS không làm được",
+      "Chúng không cần content hash nên tải nhanh hơn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "CSS-in-JS runtime tính style lúc chạy, làm tăng JS bundle và trì hoãn giao diện.\n✓ Tailwind/CSS Modules ra CSS tĩnh lúc build; style hiện ra không phải đợi JS, LCP tốt hơn.\n✗ File CSS nhỏ hơn (tĩnh, nén, băm tên) mới là lợi thế, không phải lớn hơn.\n✗ Cả hai cách đều có thể làm dark mode; đó không phải lý do LCP.\n✗ File tĩnh vẫn có content hash để cache an toàn 1 năm."
+  },
+  {
+    "id": "fe-q-089",
+    "courseId": "FRONTEND",
+    "lesson": "fe-07-styling",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn TẤT CẢ phát biểu ĐÚNG về việc chọn công cụ styling theo bài học.",
+    "options": [
+      "Dự án mới năm 2025–2026 nên mặc định chọn Tailwind vì là tiêu chuẩn thực tế và hợp React hiện đại",
+      "CSS Modules hợp khi đội đã quen CSS thuần và muốn tách CSS ra file riêng",
+      "CSS-in-JS runtime là lựa chọn nên ưu tiên cho dự án mới 2025 vì style động theo props",
+      "Trộn nhiều giải pháp styling trong cùng dự án giúp linh hoạt và nên được khuyến khích",
+      "Xu hướng 2025 đang rời xa CSS-in-JS runtime, hướng tới build-time hoặc Tailwind"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "Bài khuyên chọn một cách chủ đạo và mặc định là Tailwind cho dự án mới.\n✓ Dự án mới 2025–2026 mặc định Tailwind.\n✓ CSS Modules hợp đội quen CSS thuần, muốn file riêng.\n✓ Xu hướng rời xa CSS-in-JS runtime, sang build-time/Tailwind.\n✗ Không nên chọn mới CSS-in-JS runtime cho dự án 2025.\n✗ Trộn nhiều giải pháp tạo hỗn loạn tệ hơn spaghetti — nên chọn một cách và tuân thủ."
+  },
+  {
+    "id": "fe-q-090",
+    "courseId": "FRONTEND",
+    "lesson": "fe-07-styling",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo các quy tắc thực chiến tránh CSS spaghetti, những thực hành nào ĐƯỢC khuyến nghị?",
+    "options": [
+      "Style theo component, không theo trang (mỗi component tự chứa style)",
+      "Lấy giá trị từ thang token thay vì magic number như `margin-top: 13px`",
+      "Tránh selector lồng sâu kiểu `.card .body .title span`",
+      "Dùng `!important` rộng rãi để đảm bảo style luôn thắng",
+      "Mỗi component tự chế giá trị màu/khoảng cách riêng cho linh hoạt"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Mục tiêu là một nguồn sự thật và scope sạch.\n✓ Style theo component, tự chứa, không có file trang chỉnh lung tung.\n✓ Dùng token thay magic number để nhất quán.\n✓ Tránh selector lồng sâu vì càng cụ thể càng khó ghi đè, dễ vỡ.\n✗ Lạm dụng `!important` là dấu hiệu scope rò rỉ, không nên.\n✗ Token là nguồn duy nhất; component tiêu thụ token chứ không tự chế giá trị."
+  },
+  {
+    "id": "fe-q-091",
+    "courseId": "FRONTEND",
+    "lesson": "fe-07-styling",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong component `Button` của shadcn, `bg-primary` và `text-primary-foreground` là loại gì, và lợi ích là gì?",
+    "options": [
+      "Token ngữ nghĩa — nút tự đổi màu theo theme và dark mode mà không sửa dòng nào",
+      "Màu cứng (hex) — phải đổi tay khi sang dark mode",
+      "Inline style — không có hover hay responsive",
+      "Class CSS Modules được băm tên duy nhất"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "`bg-primary`, `text-primary-foreground` ánh xạ tới token ngữ nghĩa.\n✓ Nhờ đọc token, nút tự đổi màu theo theme và dark mode mà không sửa code.\n✗ Không phải màu cứng hex.\n✗ Không phải inline style.\n✗ Không phải class CSS Modules; đây là utility Tailwind trỏ token."
+  },
+  {
+    "id": "fe-q-092",
+    "courseId": "FRONTEND",
+    "lesson": "fe-08-testing",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, vì sao mô hình \"Testing Trophy\" cho frontend đặt tầng component test (RTL) là dày nhất (~50%)?",
+    "options": [
+      "Vì component test chạy nhanh hơn cả unit test",
+      "Vì phần lớn bug FE nằm ở chỗ wiring giữa state, event và DOM",
+      "Vì component test thay thế hoàn toàn nhu cầu dùng TypeScript",
+      "Vì E2E quá đắt nên phải gộp mọi thứ vào component test"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bug FE hiếm khi ở pure logic mà ở chỗ state gặp DOM, đúng loại bug component test bắt rẻ.\n✓ Phần lớn bug FE là wiring giữa state, event và DOM (handler không chạy, error không hiện) — component test bắt đúng loại này.\n✗ Component test không nhanh hơn unit test (unit chạy mili-giây, component ms–giây).\n✗ TypeScript vẫn là tầng đáy miễn phí, không bị thay thế.\n✗ Lý do không phải vì gộp E2E; ngược lại bài khuyên giữ E2E ít."
+  },
+  {
+    "id": "fe-q-093",
+    "courseId": "FRONTEND",
+    "lesson": "fe-08-testing",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn cần khẳng định một thông báo lỗi KHÔNG xuất hiện trên màn hình. Nên dùng query nào của RTL?",
+    "options": [
+      "getByText — sẽ throw nếu không thấy, đúng ý muốn",
+      "queryByText — trả về null khi không tìm thấy",
+      "findByText — đợi async rồi assert",
+      "getByRole với name lỗi"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Để assert một phần tử KHÔNG tồn tại phải dùng queryBy vì nó trả null thay vì throw.\n✓ queryByText trả null khi không thấy, kết hợp .not.toBeInTheDocument() là cách đúng.\n✗ getByText throw ngay khi không thấy → test fail sai lý do.\n✗ findByText throw sau timeout, dùng cho phần tử xuất hiện bất đồng bộ, không hợp để khẳng định vắng mặt.\n✗ getByRole cũng throw khi không thấy, cùng vấn đề như getBy."
+  },
+  {
+    "id": "fe-q-094",
+    "courseId": "FRONTEND",
+    "lesson": "fe-08-testing",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn test sau \"thỉnh thoảng pass\": `user.type(input, \"abc\"); expect(screen.getByText(/lỗi/i))...`. Nguyên nhân khả năng cao nhất là gì?",
+    "options": [
+      "Thiếu await trước user.type (user-event v14+ trả về Promise)",
+      "Dùng getByText thay vì getByRole",
+      "Quên gọi render(<Component/>)",
+      "jsdom không hỗ trợ sự kiện gõ phím"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "user-event v14+ trả về Promise; quên await khiến assertion chạy trước khi tương tác xong → flaky.\n✓ Thiếu await trước user.type là nguyên nhân kinh điển của test \"thỉnh thoảng pass\".\n✗ getByText vs getByRole là vấn đề về implementation detail, không gây flaky thời điểm.\n✗ Quên render sẽ làm test fail luôn, không phải lúc pass lúc fail.\n✗ jsdom có mô phỏng sự kiện gõ phím qua user-event; vấn đề ở chỗ thiếu await."
+  },
+  {
+    "id": "fe-q-095",
+    "courseId": "FRONTEND",
+    "lesson": "fe-08-testing",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một test cũ dùng `container.querySelector(\".btn-primary\")` và `wrapper.state(\"isOpen\")`. Theo bài, vấn đề cốt lõi là gì?",
+    "options": [
+      "Nó chậm hơn vì query bằng class CSS",
+      "Nó test implementation detail nên gãy khi refactor dù hành vi không đổi",
+      "Nó không tương thích với Vitest, chỉ chạy được trên Jest",
+      "Nó luôn cho coverage thấp"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Truy vấn class CSS và soi state nội bộ là test implementation, gãy khi đổi class hay refactor useState→useReducer dù hành vi giữ nguyên.\n✓ Test bị gắn chặt vào chi tiết triển khai, gãy khi refactor không đổi hành vi.\n✗ Vấn đề không phải tốc độ query.\n✗ Không liên quan tới việc tương thích Vitest/Jest.\n✗ Coverage không phải vấn đề ở đây; vấn đề là test giòn."
+  },
+  {
+    "id": "fe-q-096",
+    "courseId": "FRONTEND",
+    "lesson": "fe-08-testing",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Component gọi API sau khi submit và hiển thị \"Đã lưu\" khi thành công. Cách nào đúng để assert thông báo này xuất hiện?",
+    "options": [
+      "expect(screen.getByText(/đã lưu/i)).toBeInTheDocument()",
+      "expect(await screen.findByText(/đã lưu/i)).toBeInTheDocument()",
+      "expect(screen.queryByText(/đã lưu/i)).toBeNull()",
+      "Dùng sleep(1000) rồi getByText"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Phần tử xuất hiện bất đồng bộ sau fetch nên cần findBy để tự retry tới khi có hoặc timeout.\n✓ findByText (có await) đợi phần tử async hiện ra, là cách đúng.\n✗ getByText chạy đồng bộ ngay, sẽ throw vì \"Đã lưu\" chưa kịp render.\n✗ queryByText...toBeNull() lại khẳng định KHÔNG có, ngược ý muốn.\n✗ sleep cứng là kẻ thù gây flaky, bài khuyên tránh tuyệt đối."
+  },
+  {
+    "id": "fe-q-097",
+    "courseId": "FRONTEND",
+    "lesson": "fe-08-testing",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao bài học khuyên dùng MSW thay vì `vi.spyOn(global, \"fetch\")` khi test component có nhiều endpoint và luồng loading/error/retry?",
+    "options": [
+      "MSW chạy nhanh hơn fetch thật nên test xanh nhanh hơn",
+      "MSW chặn ở tầng network nên code gọi fetch thật, component không biết bị mock",
+      "MSW tự sinh type TypeScript từ component",
+      "MSW loại bỏ nhu cầu render component trong test"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "MSW đứng ở boundary network: code chạy fetch thật, MSW trả response — đúng tinh thần test giống cách dùng thật.\n✓ MSW chặn ở tầng network, component không biết mình bị mock, dễ test luồng error/retry từ server.\n✗ Lợi ích không phải tốc độ thuần.\n✗ MSW không sinh type từ component (việc sinh type là từ OpenAPI spec, ngữ cảnh khác).\n✗ Vẫn phải render component để test hành vi."
+  },
+  {
+    "id": "fe-q-098",
+    "courseId": "FRONTEND",
+    "lesson": "fe-08-testing",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong cấu hình MSW, bài học nhấn mạnh đặt `onUnhandledRequest: \"error\"`. Lý do là gì?",
+    "options": [
+      "Để MSW tự động retry request thất bại",
+      "Để request gõ sai URL hoặc thiếu handler fail ngay thay vì lọt qua âm thầm",
+      "Để tăng coverage của file test",
+      "Để bỏ qua mọi request không quan trọng"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "\"Fail loud\": request không được mock (vd gõ /api/singup) sẽ báo lỗi ngay thay vì trả kết quả khó đoán khiến debug nhầm cả buổi.\n✓ Một request gõ sai URL hoặc thiếu handler sẽ fail ngay, tránh debug nhầm.\n✗ MSW không tự retry vì cấu hình này.\n✗ Không liên quan coverage.\n✗ Ngược lại: nó bắt lỗi mọi request lạ chứ không bỏ qua chúng."
+  },
+  {
+    "id": "fe-q-099",
+    "courseId": "FRONTEND",
+    "lesson": "fe-08-testing",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Theo bài, vì sao snapshot test toàn bộ component (`toMatchSnapshot()`) dễ thoái hoá và nguy hiểm?",
+    "options": [
+      "Snapshot không chạy được trong jsdom",
+      "Đổi class/wrapper khiến diff lớn, dev bấm -u theo phản xạ nên bug thật lọt qua",
+      "Snapshot luôn chậm hơn E2E",
+      "Snapshot không lưu được cho component presentational nhỏ"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Thay đổi nhỏ về class/cấu trúc khiến snapshot fail; dev update mù bằng -u, từ đó snapshot chỉ ghi nhận thay đổi chứ không bảo vệ hành vi, bug thật bị update cho qua.\n✓ Diff lớn khó hiểu → update mù → bug thật (mất nút submit) lọt qua.\n✗ Snapshot vẫn chạy trong jsdom.\n✗ Tốc độ không phải vấn đề chính.\n✗ Output nhỏ ổn định là đúng nơi snapshot (inline) đáng dùng, không phải điểm yếu."
+  },
+  {
+    "id": "fe-q-100",
+    "courseId": "FRONTEND",
+    "lesson": "fe-08-testing",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn cần test ~12 nhánh validation form (sai email, password ngắn, field rỗng...). Theo bài, nên đặt phần lớn ở tầng nào và vì sao?",
+    "options": [
+      "E2E Playwright, vì chỉ browser thật mới validate đúng",
+      "Component (RTL), vì mỗi case E2E là một lần khởi động browser, chậm gấp trăm lần",
+      "Static (TypeScript), vì kiểu dữ liệu bắt hết lỗi validation",
+      "Snapshot test, để khoá lại mọi thông báo lỗi"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Test validation ở tầng component nhanh, để E2E lo vài luồng xuyên hệ thống quan trọng — đây là cách tránh ice cream cone.\n✓ Mỗi case validation ở E2E phải khởi động browser, chậm gấp trăm lần; nên đặt ở component.\n✗ Không cần browser thật để test logic validation UI.\n✗ TypeScript bắt sai kiểu, không bắt logic \"email không hợp lệ\" runtime của user.\n✗ Snapshot không phải công cụ kiểm hành vi validation."
+  },
+  {
+    "id": "fe-q-101",
+    "courseId": "FRONTEND",
+    "lesson": "fe-08-testing",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Theo bài, vì sao \"coverage 100%\" KHÔNG đảm bảo test tốt?",
+    "options": [
+      "Vì coverage chỉ tính cho file TypeScript, bỏ qua JSX",
+      "Vì một test render component mà không assert gì vẫn cho coverage cao",
+      "Vì coverage cao luôn đồng nghĩa test chậm",
+      "Vì Vitest tính coverage sai so với Jest"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Coverage đo dòng được chạy, không đo chất lượng assert; render mà không assert vẫn 100% coverage.\n✓ Một test render rồi không assert gì vẫn đạt coverage cao nhưng không bảo vệ gì.\n✗ Coverage không chỉ giới hạn ở file TS/bỏ JSX.\n✗ Coverage cao không liên quan tốc độ.\n✗ Không phải do Vitest tính sai; vấn đề là bản chất chỉ số coverage."
+  },
+  {
+    "id": "fe-q-102",
+    "courseId": "FRONTEND",
+    "lesson": "fe-08-testing",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong test thành công của SignupForm, vì sao dùng `await waitFor(() => expect(onSuccess).toHaveBeenCalledOnce())` thay vì kiểm tra ngay?",
+    "options": [
+      "Vì onSuccess được gọi sau khi fetch async hoàn tất, cần đợi",
+      "Vì waitFor làm test chạy nhanh hơn",
+      "Vì onSuccess là một state nội bộ của react-hook-form",
+      "Vì getByLabelText không hỗ trợ callback"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "onSubmit gọi fetch (async) rồi mới gọi onSuccess, nên phải đợi bằng waitFor.\n✓ onSuccess chỉ được gọi sau khi fetch async hoàn tất, cần đợi cho assertion ổn định.\n✗ waitFor không phải để tăng tốc; nó để đợi điều kiện.\n✗ onSuccess là prop callback, không phải state nội bộ form.\n✗ Không liên quan tới getByLabelText."
+  },
+  {
+    "id": "fe-q-103",
+    "courseId": "FRONTEND",
+    "lesson": "fe-08-testing",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn TẤT CẢ tình huống mà E2E (Playwright) phù hợp hơn component test (RTL/jsdom).",
+    "options": [
+      "Kiểm tra redirect tới /dashboard sau khi login thật",
+      "Kiểm tra một pure function format tiền",
+      "Kiểm tra cookie/session và auth xuyên backend thật",
+      "Kiểm tra vị trí render thực của tooltip cần layout engine",
+      "Kiểm tra component hiện thông báo lỗi khi email sai (1 nhánh validation)"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "E2E lo routing/auth/tích hợp đầu-cuối và những thứ cần browser thật (layout); jsdom giả lập không làm được.\n✓ Redirect sau login thật là routing thật — việc của E2E.\n✓ Cookie/session/auth xuyên backend thật cần browser thật.\n✓ Vị trí tooltip cần layout engine mà jsdom không có → để Playwright.\n✗ Pure function format tiền là unit test thuần, không cần browser.\n✗ Một nhánh validation nên test ở tầng component, không nhồi vào E2E."
+  },
+  {
+    "id": "fe-q-104",
+    "courseId": "FRONTEND",
+    "lesson": "fe-08-testing",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bảng chống flaky của bài, đâu là cách trị ĐÚNG cho các triệu chứng tương ứng?",
+    "options": [
+      "Test gãy sau refactor CSS → đổi sang getByRole/getByLabelText",
+      "E2E flaky vì sleep → thay bằng auto-wait của Playwright, bỏ sleep",
+      "act() warning → đợi đúng async bằng findBy/waitFor",
+      "Request lọt mock → tăng timeout của test",
+      "Test phụ thuộc nhau → gọi getByTestId thay cho getByRole"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Các cách trị bám đúng nguyên nhân: test hành vi, dùng auto-wait, đợi async đúng cách.\n✓ Gãy sau refactor CSS là dấu hiệu test implementation → chuyển sang getByRole/getByLabelText.\n✓ E2E flaky do sleep → dùng auto-wait của Playwright, bỏ sleep.\n✓ act() warning do cập nhật state sau khi test kết thúc → đợi async bằng findBy/waitFor.\n✗ Request lọt mock được trị bằng onUnhandledRequest:\"error\"/thêm handler, không phải tăng timeout.\n✗ Test phụ thuộc nhau trị bằng reset mock/state (resetHandlers/restoreAllMocks), không phải đổi sang getByTestId."
+  },
+  {
+    "id": "fe-q-105",
+    "courseId": "FRONTEND",
+    "lesson": "fe-09-build-deploy-perf",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn vừa chạy `npm run dev` và thấy server khởi động gần như tức thì, HMR mượt. Có thể kết luận gì về hiệu năng bản production?",
+    "options": [
+      "Không kết luận được gì; dev server phục vụ DX, phải đo trên bản `npm run build` + `npm run preview`",
+      "Production cũng sẽ nhanh tương đương vì cùng một codebase",
+      "Bundle production đã được minify nên chắc chắn còn nhanh hơn dev",
+      "Dev nhanh nghĩa là tree-shaking đã chạy tốt"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Dev và production là hai thế giới khác nhau; chỉ đo hiệu năng trên bản build.\n✓ Dev phục vụ vòng lặp sửa-xem nhanh; production mới là lúc bundle/minify/tree-shake, phải đo trên build + preview\n✗ Cùng codebase nhưng dev không bundle (ESM on-demand), tốc độ không nói lên gì về production\n✗ Minify diễn ra ở build, không phải dev; không suy ra được từ tốc độ dev\n✗ Tree-shaking là bước build production, không chạy ở dev server"
+  },
+  {
+    "id": "fe-q-106",
+    "courseId": "FRONTEND",
+    "lesson": "fe-09-build-deploy-perf",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong code: `const apiUrl = import.meta.env.VITE_API_URL;`. Biến này được Vite phơi ra client vì lý do gì?",
+    "options": [
+      "Vì nó có tiền tố `VITE_`; chỉ biến có tiền tố này mới lọt vào bundle, để tránh secret vô tình bị nhúng",
+      "Vì mọi biến trong `.env` đều tự động phơi ra client",
+      "Vì nó được đọc qua `import.meta.env` thay vì `process.env`",
+      "Vì nó đã được khai báo type trong `vite-env.d.ts`"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Vite chỉ phơi ra client các biến có tiền tố `VITE_` như một lớp bảo vệ secret.\n✓ Tiền tố `VITE_` là điều kiện để biến lọt vào bundle, ngăn secret không tiền tố rò rỉ\n✗ Biến không có tiền tố `VITE_` sẽ KHÔNG được phơi ra client\n✗ Cú pháp đọc không quyết định việc phơi ra; tiền tố mới quyết định\n✗ Khai báo type chỉ cho autocomplete/bắt lỗi, không liên quan tới việc phơi ra client"
+  },
+  {
+    "id": "fe-q-107",
+    "courseId": "FRONTEND",
+    "lesson": "fe-09-build-deploy-perf",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một bản `dist/` đã build với `VITE_API_URL=https://api.prod.com`. Team muốn dùng CHÍNH bản build đó cho cả staging với URL khác. Cách nào đúng?",
+    "options": [
+      "Nạp config lúc runtime, ví dụ fetch `/config.json` khi app khởi động",
+      "Sửa file `.env.production` rồi deploy lại bản `dist/` cũ",
+      "Đổi `import.meta.env.VITE_API_URL` trong DevTools lúc chạy",
+      "Đặt biến môi trường trên server CloudFront để override lúc chạy"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "`import.meta.env` bị thay bằng giá trị thật LÚC BUILD, không phải lúc chạy.\n✓ Muốn một bản build chạy nhiều môi trường phải nạp config runtime (fetch `/config.json` lúc khởi động)\n✗ Sửa `.env` đòi hỏi build lại; không thể đổi env của bản `dist/` đã build sẵn\n✗ Giá trị đã được nhúng cứng vào JS tĩnh, không phải biến đọc lúc chạy để đổi trong DevTools\n✗ CloudFront phục vụ file tĩnh đã nhúng giá trị, không inject env runtime cho client"
+  },
+  {
+    "id": "fe-q-108",
+    "courseId": "FRONTEND",
+    "lesson": "fe-09-build-deploy-perf",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn import nào kéo nguyên cả lodash (~70KB) vào bundle dù chỉ cần một hàm?",
+    "options": [
+      "`import _ from \"lodash\"; _.debounce(fn, 300);`",
+      "`import { debounce } from \"lodash-es\";`",
+      "`import { debounce } from \"lodash/debounce\";`",
+      "`import debounce from \"lodash-es/debounce\";`"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Import cả package theo kiểu default từ CommonJS khó tree-shake, kéo toàn bộ thư viện vào.\n✗ Default import cả `lodash` kéo TOÀN BỘ ~70KB vào bundle\n✓ Named import từ ESM `lodash-es` tree-shake được, chỉ lấy `debounce`\n✓ Import trực tiếp đường dẫn con chỉ lấy đúng hàm cần\n✓ Import lẻ từ bản ESM cũng chỉ lấy `debounce`"
+  },
+  {
+    "id": "fe-q-109",
+    "courseId": "FRONTEND",
+    "lesson": "fe-09-build-deploy-perf",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những điều kiện/thực hành nào giúp tree-shaking hoạt động hiệu quả? (chọn tất cả đúng)",
+    "options": [
+      "Dùng ESM (`import`/`export`) thay vì `require` CommonJS",
+      "Ưu tiên thư viện có named export và `\"sideEffects\": false`",
+      "Tránh import \"barrel\" kéo cả thư viện khi chỉ cần một hàm",
+      "Luôn dùng default import cả package để bundler tự nhận diện",
+      "Bật HMR ở dev server để loại bỏ code thừa"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Tree-shaking chỉ thấy code khi import đúng cách bằng ESM, named import, tránh barrel.\n✓ ESM tĩnh nên phân tích được; CommonJS khó tree-shake\n✓ Named export + `\"sideEffects\": false` báo bundler an toàn để loại code thừa\n✓ Tránh barrel import giúp không kéo cả thư viện chỉ vì một hàm\n✗ Default import cả package thường kéo toàn bộ vào, cản trở tree-shaking\n✗ HMR là tính năng dev server, không liên quan loại bỏ code thừa ở build"
+  },
+  {
+    "id": "fe-q-110",
+    "courseId": "FRONTEND",
+    "lesson": "fe-09-build-deploy-perf",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Theo bài, chiến lược cắt chunk (code splitting) nào nên ưu tiên TRƯỚC TIÊN vì hiệu quả nhất?",
+    "options": [
+      "Theo route — mỗi trang là một chunk riêng",
+      "Lazy load mọi component dù nhỏ để bundle ban đầu mỏng nhất",
+      "Tách từng nút bấm và icon thành chunk riêng",
+      "Gộp tất cả vào một bundle rồi nén brotli"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Quy tắc cắt chunk là theo route trước, rồi mới đến component nặng/hiếm.\n✓ Cắt theo route hiệu quả nhất: vào `/` chỉ tải chunk trang đó\n✗ Lazy load component nhỏ dùng ngay màn hình đầu là lỗ — thêm round-trip để tiết kiệm vài KB\n✗ Tách quá vụn (nút, icon) gây nhiều request nhỏ, phản tác dụng\n✗ Một bundle to vẫn buộc tải hết dù người dùng chỉ vào một trang"
+  },
+  {
+    "id": "fe-q-111",
+    "courseId": "FRONTEND",
+    "lesson": "fe-09-build-deploy-perf",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Người dùng gõ thẳng `myapp.com/reports` hoặc F5 tại đó thì bị 404, nhưng vào trang chủ rồi điều hướng nội bộ lại ổn. Nguyên nhân và cách sửa?",
+    "options": [
+      "Thiếu SPA fallback; cấu hình host trả `index.html` cho mọi route không khớp file tĩnh",
+      "React Router cấu hình sai path `/reports`",
+      "Thiếu invalidate CloudFront sau khi deploy",
+      "Content hash của file JS bị sai nên trình duyệt không tải được"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SPA chỉ có một `index.html`; server không có file `/reports` nên trả 404 khi truy cập trực tiếp.\n✓ Cần SPA fallback: host/CDN trả `index.html` cho mọi đường dẫn không phải file tĩnh, rồi React Router tự render\n✗ Điều hướng nội bộ vẫn đúng chứng tỏ route React Router không sai\n✗ Invalidate liên quan cache bản cũ, không gây 404 khi F5 trang con\n✗ Lỗi hash gây trang trắng/không tải JS, không phải 404 đặc trưng trang con"
+  },
+  {
+    "id": "fe-q-112",
+    "courseId": "FRONTEND",
+    "lesson": "fe-09-build-deploy-perf",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Khi host SPA trên S3 + CloudFront, đặt header cache nào là đúng để tránh lỗi trang trắng sau deploy?",
+    "options": [
+      "JS/CSS (có content hash): `max-age=31536000, immutable`; còn `index.html`: `no-cache`/`max-age=0`",
+      "Tất cả file kể cả `index.html`: `max-age=31536000, immutable`",
+      "`index.html` cache 1 năm, JS/CSS `no-cache`",
+      "Không đặt cache cho file nào để luôn lấy bản mới"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "File hash đổi tên khi nội dung đổi nên cache lâu an toàn; `index.html` là điểm vào nên không được cache lâu.\n✓ JS/CSS hash cache 1 năm immutable; `index.html` no-cache để luôn trỏ tới hash mới\n✗ Cache `index.html` 1 năm = nạp HTML cũ trỏ tới JS đã bị xoá → trang trắng\n✗ Đảo ngược: JS/CSS hash đáng cache lâu, không nên no-cache\n✗ Không cache file hash bỏ lỡ lợi ích CDN; điều cần là cache đúng theo loại file"
+  },
+  {
+    "id": "fe-q-113",
+    "courseId": "FRONTEND",
+    "lesson": "fe-09-build-deploy-perf",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Người dùng than nút bấm/gõ phản hồi giật, lag dù trang hiện nội dung nhanh. Chỉ số Core Web Vitals nào kém và hướng chữa hợp lý?",
+    "options": [
+      "INP kém — bớt re-render thừa, debounce, đẩy việc nặng ra Web Worker",
+      "LCP kém — tối ưu ảnh hero và preload font",
+      "CLS kém — đặt sẵn `width`/`height` cho ảnh",
+      "FID kém — giảm kích thước bundle JS"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Triệu chứng là tương tác (bấm/gõ) phản hồi chậm, đó là INP.\n✓ INP đo bấm/gõ xong bao lâu UI phản hồi; chữa bằng bớt re-render, debounce, Web Worker\n✗ LCP đo tốc độ thấy nội dung — nhưng trang đã hiện nhanh\n✗ CLS đo layout nhảy, không phải độ trễ phản hồi tương tác\n✗ INP đã chính thức thay FID từ 3/2024; nhắc FID là tài liệu cũ"
+  },
+  {
+    "id": "fe-q-114",
+    "courseId": "FRONTEND",
+    "lesson": "fe-09-build-deploy-perf",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn này dùng `memo(Row)` để chặn re-render nhưng vẫn re-render mỗi lần parent render. Lý do?\n\n```tsx\nconst Row = memo(RowImpl);\n<Row item={item} onSelect={() => doSelect(item.id)} style={{ color: \"red\" }} />\n```",
+    "options": [
+      "`onSelect` và `style` là function/object tạo mới mỗi render → reference luôn khác → memo luôn cho qua",
+      "`memo` không hỗ trợ component nhận prop `item`",
+      "Phải dùng `useMemo` thay cho `memo` để chặn re-render",
+      "React 19 Compiler đã vô hiệu hoá `memo`"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "`memo` so sánh nông props; prop là object/function inline luôn có reference mới nên memo vô dụng.\n✓ `onSelect` inline và `style={{...}}` tạo mới mỗi render → reference khác → memo cho qua; phải bọc `useCallback`/`useMemo`\n✗ `memo` hoạt động bình thường với prop `item`; vấn đề là các prop inline\n✗ `useMemo` dùng để nhớ giá trị, không thay vai trò của `memo` bọc component\n✗ React Compiler giảm nhu cầu memo tay nhưng không vô hiệu hoá `memo`"
+  },
+  {
+    "id": "fe-q-115",
+    "courseId": "FRONTEND",
+    "lesson": "fe-09-build-deploy-perf",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Ảnh hero (thường là phần tử LCP) nên cấu hình tải thế nào?",
+    "options": [
+      "KHÔNG đặt `loading=\"lazy\"`; nên `fetchpriority=\"high\"`/`preload` để hiện sớm",
+      "Đặt `loading=\"lazy\"` để tiết kiệm băng thông",
+      "Bỏ `width`/`height` để ảnh co giãn tự do",
+      "Tải qua một chunk lazy riêng bằng `React.lazy`"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Ảnh hero là phần tử LCP, cần hiện sớm nên không được lazy.\n✓ Đừng lazy ảnh hero; ưu tiên `fetchpriority=\"high\"`/`preload` để LCP tốt\n✗ `loading=\"lazy\"` chỉ dành cho ảnh dưới màn hình đầu, không phải hero\n✗ Bỏ `width`/`height` gây nhảy layout (CLS xấu)\n✗ `React.lazy` để tách chunk JS component, không phải cách tải ảnh"
+  },
+  {
+    "id": "fe-q-116",
+    "courseId": "FRONTEND",
+    "lesson": "fe-09-build-deploy-perf",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những thực hành a11y nào ĐÚNG theo checklist trong bài? (chọn tất cả đúng)",
+    "options": [
+      "Dùng `<button>` cho hành động thay vì `<div onClick>`",
+      "Nút chỉ có icon cần `aria-label` để screen reader hiểu",
+      "Form input gắn `<label>` qua `htmlFor`/`id`",
+      "Dùng `outline: none` cho mọi phần tử để giao diện gọn",
+      "Báo lỗi chỉ bằng màu đỏ là đủ cho mọi người dùng"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Ưu tiên HTML semantic, dùng được bằng bàn phím, gắn nhãn cho input và phần tử chỉ icon.\n✓ `<button>` cho hành động: có focus, phím Enter/Space, screen reader hiểu\n✓ Nút chỉ icon cần `aria-label` vì không có text mô tả\n✓ Gắn `<label>` qua `htmlFor`/`id` giúp input có nhãn liên kết\n✗ `outline: none` mà không thay thế làm mất viền focus, hỏng dùng bàn phím\n✗ Chỉ dựa vào màu khiến người mù màu không nhận ra lỗi; phải kèm chữ/icon"
+  },
+  {
+    "id": "fe-q-117",
+    "courseId": "FRONTEND",
+    "lesson": "fe-09-build-deploy-perf",
+    "certifications": [
+      "FRONTEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Lighthouse trên máy bạn cho điểm rất cao, nhưng người dùng thật vẫn than chậm. Nên tin số liệu nào và vì sao?",
+    "options": [
+      "Field data (CrUX / `web-vitals` từ user thật) vì lab data thường đẹp hơn thực tế",
+      "Lab data của Lighthouse vì nó chạy trong môi trường chuẩn",
+      "Trung bình cộng điểm Lighthouse qua nhiều lần chạy",
+      "Số liệu từ `npm run dev` vì gần với trải nghiệm dev nhất"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lighthouse là lab data, thường đẹp hơn thực tế; số thật là field data từ người dùng.\n✓ Field data (CrUX/`web-vitals` gửi về) phản ánh user thật ở mạng/máy yếu\n✗ Lab data Lighthouse chạy máy mạnh, không phản ánh điều kiện thật của user\n✗ Trung bình lab data vẫn là lab, không thay được field data\n✗ `npm run dev` không phản ánh production lẫn trải nghiệm user thật"
   }
 ];
 

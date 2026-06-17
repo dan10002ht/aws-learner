@@ -62,8 +62,8 @@
       "id": "FRONTEND",
       "kind": "questions",
       "scope": "9 bài (prefix fe)",
-      "status": "pending",
-      "note": ""
+      "status": "done",
+      "note": "117 câu (13×9), build pass"
     },
     {
       "id": "SECURITY",
