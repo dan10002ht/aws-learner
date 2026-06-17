@@ -69,7 +69,7 @@ export default function HomePage() {
                   <span>{c.durationHours}h học</span>
                   <span>·</span>
                   {c.kind === "knowledge" ? (
-                    <span>Khoá lý thuyết · không thi</span>
+                    <span>{questionsCount > 0 ? "Khoá lý thuyết · có luyện tập" : "Khoá lý thuyết · không thi"}</span>
                   ) : (
                     <>
                       <span>{c.examQuestions} câu thi</span>
@@ -82,7 +82,11 @@ export default function HomePage() {
                 {!isLocked && (
                   <div className="flex items-center justify-between pt-3 border-t border-[var(--border)]">
                     <span className="text-xs text-[var(--text-dim)]">
-                      {c.kind === "knowledge" ? `${lessonsCount} bài lý thuyết` : `${lessonsCount} bài · ${questionsCount} câu hỏi`}
+                      {c.kind === "knowledge"
+                        ? questionsCount > 0
+                          ? `${lessonsCount} bài · ${questionsCount} câu luyện tập`
+                          : `${lessonsCount} bài lý thuyết`
+                        : `${lessonsCount} bài · ${questionsCount} câu hỏi`}
                     </span>
                     <span className="text-sm font-semibold text-brand-500 flex items-center gap-1 group-hover:gap-2 transition-all">
                       Vào khoá <ArrowRight size={14} />

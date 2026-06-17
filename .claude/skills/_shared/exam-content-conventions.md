@@ -100,6 +100,40 @@ Fetch the AWS exam guide and extract domains + weights + task statements + in-sc
 - SAA-C03 / others: `https://docs.aws.amazon.com/aws-certification/latest/examguides/solutions-architect-associate-03.html`
 - Also web-search current trends ("CLF-C02 commonly tested 2026", new services like Bedrock/Amazon Q, edge, cost emphasis).
 
+## Knowledge-course practice quizzes (non-cert courses)
+
+The 17 `kind: "knowledge"` courses (Programming, DSA, Git, Web, SQL, CS, Backend,
+Frontend, Security, DevOps, SRE, AIML, System Design, Foundations, Engineer,
+Tech 101) have **practice quizzes only — no timed exam, no blueprint, no mocks**.
+Wired in: `app/courses/[courseId]/practice/page.tsx` (Exam button hidden when
+`kind === "knowledge"`), course dashboard shows a "Luyện tập" CTA once the course
+has ≥1 question. Plan/loop state: `.claude/content-plan/KNOWLEDGE.json` (one part
+per course).
+
+Differences from the cert question shape:
+- **Omit `domain` and `mock`** entirely. `setsForCourse` then yields per-chapter
+  and per-lesson sets only (no mock sets), which is exactly what we want.
+- `courseId` is the knowledge CourseId (e.g. `PROGRAMMING`, `DSA`, `SQL`).
+- `certifications: [<courseId>]` (reuse the field; it just scopes the question).
+- **id scheme:** `<prefix>-q-<seq3>` (no mock number) — unique per course.
+  Prefixes: tech (TECH-101), prog (PROGRAMMING), git, web, sql, fnd (FOUNDATIONS),
+  eng (ENGINEER), cs, be (BACKEND), fe (FRONTEND), dsa, sec (SECURITY),
+  ops (DEVOPS), sre, ai (AIML), sd (SYSTEM-DESIGN). CAPSTONE is project-based — no quiz.
+
+Quality targets for knowledge quizzes (the gate, adapted):
+- **~12–15 questions per lesson slug** (user-chosen depth), every lesson covered.
+- Difficulty spread ~ 30% easy / 50% medium / 20% hard.
+- Multi-response ratio 10–15%.
+- `lesson` must be a real slug for that course (check `lessons.ts`).
+- Explanations shuffle-safe (`✓`/`✗` by content, never A/B/C/D) — same renderer.
+- **Test understanding, not trivia:** scenario / "what happens" / "pick the right
+  approach / spot the bug" over bare definition recall. Tie each question to what
+  the lesson actually teaches. For DSA/Backend/System Design lean toward
+  approach-selection and trade-off questions (interview-style).
+- For language-agnostic courses (Programming/DSA/CS), keep code in questions
+  short and language-neutral (pseudocode or one common language) unless the
+  question is specifically about one language's behaviour.
+
 ## Multi-language code tabs (Programming / DSA / CS)
 
 For lessons that teach language-agnostic concepts (Programming, DSA, some CS),

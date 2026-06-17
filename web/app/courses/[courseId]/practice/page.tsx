@@ -4,10 +4,16 @@ import { ChevronRight } from "lucide-react";
 import { getCourse, courses } from "@/data/courses";
 import { setsForCourse } from "@/data/sets";
 import { questions } from "@/data/questions";
+import { questionsInCourse } from "@/lib/questions";
 import type { CourseId } from "@/lib/types";
 
 export function generateStaticParams() {
-  return courses.filter((c) => c.status === "available" && c.kind !== "knowledge").map((c) => ({ courseId: c.id }));
+  // Cert courses always have questions; knowledge courses only once their
+  // practice bank has been authored. Gate on "has any question" so we don't
+  // generate empty practice pages for courses still awaiting content.
+  return courses
+    .filter((c) => c.status === "available" && questionsInCourse(c.id).length > 0)
+    .map((c) => ({ courseId: c.id }));
 }
 
 function countQ(set: ReturnType<typeof setsForCourse>[number]): number {
@@ -30,6 +36,8 @@ export default function PracticeListPage({ params }: { params: { courseId: strin
   const mockSets = sets.filter((s) => s.kind === "course-mock");
   const chapterSets = sets.filter((s) => s.kind === "chapter");
   const lessonSets = sets.filter((s) => s.kind === "lesson");
+  // Knowledge courses have practice quizzes but no timed exam (no passing score).
+  const examEnabled = course.kind !== "knowledge";
 
   return (
     <div className="space-y-8">
@@ -38,9 +46,11 @@ export default function PracticeListPage({ params }: { params: { courseId: strin
       </Link>
 
       <header>
-        <h1 className="text-2xl sm:text-3xl font-extrabold">Luyện đề</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold">{examEnabled ? "Luyện đề" : "Luyện tập"}</h1>
         <p className="text-[var(--text-dim)] mt-2">
-          Practice = xem giải thích ngay sau mỗi câu. Exam = có timer, nộp bài cuối mới chấm điểm.
+          {examEnabled
+            ? "Practice = xem giải thích ngay sau mỗi câu. Exam = có timer, nộp bài cuối mới chấm điểm."
+            : "Trả lời từng câu và xem giải thích ngay — củng cố kiến thức sau mỗi bài học."}
         </p>
       </header>
 
@@ -52,7 +62,7 @@ export default function PracticeListPage({ params }: { params: { courseId: strin
           </p>
           <div className="space-y-2">
             {mockSets.map((s) => (
-              <SetRow key={s.key} setKey={s.key} courseId={course.id} label={s.label} description={s.description} count={countQ(s)} />
+              <SetRow key={s.key} setKey={s.key} courseId={course.id} label={s.label} description={s.description} count={countQ(s)} examEnabled={examEnabled} />
             ))}
           </div>
         </section>
@@ -62,7 +72,7 @@ export default function PracticeListPage({ params }: { params: { courseId: strin
         <h2 className="text-lg font-bold mb-3">Theo chương</h2>
         <div className="space-y-2">
           {chapterSets.map((s) => (
-            <SetRow key={s.key} setKey={s.key} courseId={course.id} label={s.label} description={s.description} count={countQ(s)} />
+            <SetRow key={s.key} setKey={s.key} courseId={course.id} label={s.label} description={s.description} count={countQ(s)} examEnabled={examEnabled} />
           ))}
         </div>
       </section>
@@ -71,7 +81,7 @@ export default function PracticeListPage({ params }: { params: { courseId: strin
         <h2 className="text-lg font-bold mb-3">Theo bài</h2>
         <div className="space-y-2">
           {lessonSets.map((s) => (
-            <SetRow key={s.key} setKey={s.key} courseId={course.id} label={s.label} description={s.description} count={countQ(s)} />
+            <SetRow key={s.key} setKey={s.key} courseId={course.id} label={s.label} description={s.description} count={countQ(s)} examEnabled={examEnabled} />
           ))}
         </div>
       </section>
@@ -79,8 +89,8 @@ export default function PracticeListPage({ params }: { params: { courseId: strin
   );
 }
 
-function SetRow({ setKey, courseId, label, description, count }: {
-  setKey: string; courseId: string; label: string; description: string; count: number;
+function SetRow({ setKey, courseId, label, description, count, examEnabled }: {
+  setKey: string; courseId: string; label: string; description: string; count: number; examEnabled: boolean;
 }) {
   const disabled = count === 0;
   return (
@@ -97,12 +107,14 @@ function SetRow({ setKey, courseId, label, description, count }: {
         >
           Practice <ChevronRight size={14} />
         </Link>
-        <Link
-          href={disabled ? "#" : `/courses/${courseId}/exam/${encodeURIComponent(setKey)}`}
-          className={`btn3d btn3d-secondary btn3d-sm flex-1 sm:flex-none ${disabled ? "pointer-events-none" : ""}`}
-        >
-          Exam <ChevronRight size={14} />
-        </Link>
+        {examEnabled && (
+          <Link
+            href={disabled ? "#" : `/courses/${courseId}/exam/${encodeURIComponent(setKey)}`}
+            className={`btn3d btn3d-secondary btn3d-sm flex-1 sm:flex-none ${disabled ? "pointer-events-none" : ""}`}
+          >
+            Exam <ChevronRight size={14} />
+          </Link>
+        )}
       </div>
     </div>
   );

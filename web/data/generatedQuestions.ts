@@ -17845,5 +17845,1682 @@ export const generatedQuestions: Question[] = [
     "explanation": "Tải dao động mạnh và về gần 0 ban đêm cần database tự co giãn; service ARM hợp Graviton.\n✓ Aurora Serverless v2 tự động co giãn capacity theo tải (kể cả xuống thấp ban đêm), Graviton Fargate rẻ hơn cho workload ARM đã rebuild.\n✗ RDS instance lớn provisioned trả tiền cho peak suốt 24/7 dù ban đêm gần như rảnh, lãng phí; x86 đắt hơn Graviton.\n✗ Aurora provisioned reader luôn bật vẫn tốn chi phí cố định; Fargate Spot cho task production quan trọng gây rủi ro bị gián đoạn.\n✗ RDS Multi-AZ cố định không giải quyết tải dao động về compute database; EC2 launch type thêm gánh nặng quản lý cluster và x86 đắt hơn.",
     "domain": 4,
     "id": "saa-ext-005"
+  },
+  {
+    "id": "sql-q-001",
+    "courseId": "SQL",
+    "lesson": "sql-01-select-basics",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong mô hình bảng dữ liệu, một 'hàng' (row) tương ứng với điều gì?",
+    "options": [
+      "Một thuộc tính của sự vật, ví dụ email",
+      "Một bản ghi cụ thể, ví dụ một khách hàng cụ thể",
+      "Toàn bộ cơ sở dữ liệu gồm nhiều bảng",
+      "Kiểu dữ liệu của một cột"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Hàng là một bản ghi cụ thể trong bảng.\n✓ Một bản ghi cụ thể như một khách hàng đúng với định nghĩa hàng.\n✗ Một thuộc tính như email chính là cột, không phải hàng.\n✗ Toàn bộ cơ sở dữ liệu nhiều bảng là database, không phải hàng.\n✗ Kiểu dữ liệu gắn với cột, không phải hàng."
+  },
+  {
+    "id": "sql-q-002",
+    "courseId": "SQL",
+    "lesson": "sql-01-select-basics",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Câu nào lấy ĐÚNG chỉ hai cột name và city từ bảng customers?",
+    "options": [
+      "SELECT * FROM customers;",
+      "SELECT name, city FROM customers;",
+      "SELECT customers FROM name, city;",
+      "GET name, city FROM customers;"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Liệt kê tên cột sau SELECT rồi FROM tên bảng.\n✓ Liệt kê name, city rồi FROM customers là cú pháp đúng.\n✗ Dùng dấu * lấy tất cả các cột chứ không phải chỉ hai cột.\n✗ Đảo vị trí bảng và cột là sai cú pháp.\n✗ GET không phải từ khoá SQL, phải dùng SELECT."
+  },
+  {
+    "id": "sql-q-003",
+    "courseId": "SQL",
+    "lesson": "sql-01-select-basics",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Tại sao trong code ứng dụng thật nên hạn chế dùng SELECT * ?",
+    "options": [
+      "SELECT * luôn bị database từ chối thực thi",
+      "Lấy hết cột gây lãng phí và dễ vỡ khi schema thay đổi",
+      "SELECT * không sắp xếp được kết quả",
+      "SELECT * chỉ chạy được trên SQLite"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Lấy mọi cột tốn tài nguyên và dễ hỏng khi cấu trúc bảng đổi.\n✓ Lãng phí và dễ vỡ khi schema đổi là lý do nên liệt kê đúng cột cần.\n✗ SELECT * vẫn chạy bình thường, không bị từ chối.\n✗ Việc sắp xếp do ORDER BY quyết định, không liên quan dấu *.\n✗ SELECT * là cú pháp chuẩn chạy trên mọi hệ quản trị."
+  },
+  {
+    "id": "sql-q-004",
+    "courseId": "SQL",
+    "lesson": "sql-01-select-basics",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Truy vấn sau trả về những khách nào? WHERE age BETWEEN 20 AND 35 (tuổi: Lan 28, Minh 35, Hoa 22, Tuấn 41, Bình 19, Chi 33)",
+    "options": [
+      "Lan, Minh, Hoa, Chi",
+      "Lan, Hoa, Chi (loại Minh vì đúng 35)",
+      "Lan, Minh, Tuấn, Chi",
+      "Tất cả 6 khách"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "BETWEEN bao gồm cả hai đầu mút.\n✓ Lan, Minh, Hoa, Chi đều nằm trong [20,35], Minh 35 vẫn được lấy.\n✗ Loại Minh là sai vì BETWEEN bao gồm cả giá trị 35.\n✗ Tuấn 41 vượt quá 35 nên không thuộc kết quả.\n✗ Bình 19 và Tuấn 41 nằm ngoài khoảng nên không phải tất cả 6 khách."
+  },
+  {
+    "id": "sql-q-005",
+    "courseId": "SQL",
+    "lesson": "sql-01-select-basics",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần tìm khách có city là 'Hà Nội' HOẶC 'Đà Nẵng'. Cách viết gọn và đúng nhất là gì?",
+    "options": [
+      "WHERE city = 'Hà Nội' AND city = 'Đà Nẵng'",
+      "WHERE city IN ('Hà Nội', 'Đà Nẵng')",
+      "WHERE city LIKE 'Hà Nội', 'Đà Nẵng'",
+      "WHERE city = ('Hà Nội' OR 'Đà Nẵng')"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "IN thay cho nhiều điều kiện OR bằng nhau, gọn hơn.\n✓ IN với danh sách hai thành phố đúng và gọn.\n✗ Dùng AND đòi city vừa là Hà Nội vừa là Đà Nẵng nên không hàng nào khớp.\n✗ LIKE không nhận danh sách phân cách bằng dấu phẩy như vậy.\n✗ So sánh = với một biểu thức OR là cú pháp sai."
+  },
+  {
+    "id": "sql-q-006",
+    "courseId": "SQL",
+    "lesson": "sql-01-select-basics",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Lỗi nào khiến truy vấn tìm khách chưa có email KHÔNG bao giờ trả về hàng nào?",
+    "options": [
+      "WHERE email IS NULL",
+      "WHERE email = NULL",
+      "WHERE email IS NOT NULL",
+      "WHERE email = ''"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "NULL nghĩa là không biết nên email = NULL không bao giờ TRUE.\n✗ email = NULL luôn không TRUE nên không trả về hàng nào, đây là lỗi.\n✓ email IS NULL mới là cách đúng để tìm ô trống.\n✓ email IS NOT NULL trả về khách đã có email, hoạt động bình thường.\n✓ email = '' so chuỗi rỗng, có thể trả hàng nhưng khác với NULL, vẫn chạy được."
+  },
+  {
+    "id": "sql-q-007",
+    "courseId": "SQL",
+    "lesson": "sql-01-select-basics",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Mẫu LIKE nào khớp các chuỗi email kết thúc bằng '@mail.com'?",
+    "options": [
+      "LIKE '@mail.com%'",
+      "LIKE '%@mail.com'",
+      "LIKE '_@mail.com'",
+      "LIKE '@mail.com'"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Dấu % thay cho bất kỳ số ký tự nào ở phần đầu.\n✓ '%@mail.com' khớp mọi chuỗi kết thúc bằng @mail.com.\n✗ '@mail.com%' đòi chuỗi bắt đầu bằng @mail.com, sai vị trí.\n✗ '_@mail.com' chỉ cho đúng một ký tự trước @, quá hạn chế.\n✗ '@mail.com' không có % nên chỉ khớp chuỗi y hệt vậy."
+  },
+  {
+    "id": "sql-q-008",
+    "courseId": "SQL",
+    "lesson": "sql-01-select-basics",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Truy vấn: WHERE (city = 'Đà Nẵng' OR city = 'TP HCM') AND NOT age < 20. Bình ở Đà Nẵng, 19 tuổi. Bình có trong kết quả không?",
+    "options": [
+      "Có, vì Bình ở Đà Nẵng thoả phần OR",
+      "Không, vì NOT age < 20 loại các khách dưới 20 tuổi",
+      "Có, vì NOT đảo điều kiện thành lấy người trẻ",
+      "Không, vì Đà Nẵng không nằm trong danh sách"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "NOT age < 20 nghĩa là chỉ giữ tuổi từ 20 trở lên.\n✓ Bình 19 tuổi bị NOT age < 20 loại ra dù thoả phần thành phố.\n✗ Thoả phần OR là chưa đủ vì còn điều kiện tuổi nối bằng AND.\n✗ NOT age < 20 giữ người từ 20 trở lên chứ không lấy người trẻ.\n✗ Đà Nẵng có trong phần OR, không phải lý do loại Bình."
+  },
+  {
+    "id": "sql-q-009",
+    "courseId": "SQL",
+    "lesson": "sql-01-select-basics",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Muốn lấy 3 khách lớn tuổi nhất, cần kết hợp những gì?",
+    "options": [
+      "Chỉ LIMIT 3 là đủ",
+      "ORDER BY age DESC rồi LIMIT 3",
+      "ORDER BY age ASC rồi LIMIT 3",
+      "DISTINCT age rồi LIMIT 3"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Sắp giảm dần theo tuổi rồi cắt 3 hàng đầu.\n✓ ORDER BY age DESC rồi LIMIT 3 cho 3 người già nhất.\n✗ Chỉ LIMIT 3 không sắp xếp nên lấy 3 hàng bất kỳ.\n✗ ORDER BY age ASC lấy 3 người trẻ nhất, ngược yêu cầu.\n✗ DISTINCT age loại trùng tuổi chứ không cho người lớn tuổi nhất."
+  },
+  {
+    "id": "sql-q-010",
+    "courseId": "SQL",
+    "lesson": "sql-01-select-basics",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "DISTINCT trong câu SELECT DISTINCT city FROM customers làm gì?",
+    "options": [
+      "Sắp xếp các thành phố theo bảng chữ cái",
+      "Chỉ giữ các giá trị city khác nhau, bỏ trùng",
+      "Đếm số khách ở mỗi thành phố",
+      "Lọc bỏ các hàng có city là NULL"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "DISTINCT loại bỏ các giá trị trùng lặp.\n✓ Giữ các city khác nhau và bỏ trùng đúng vai trò DISTINCT.\n✗ DISTINCT không sắp xếp; việc đó do ORDER BY.\n✗ Đếm số khách cần hàm tổng hợp như COUNT, không phải DISTINCT.\n✗ DISTINCT không chuyên lọc NULL; nó chỉ gộp giá trị giống nhau."
+  },
+  {
+    "id": "sql-q-011",
+    "courseId": "SQL",
+    "lesson": "sql-01-select-basics",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Để lấy 'trang 2' gồm 3 hàng tiếp theo sau khi đã sắp xếp, mệnh đề nào đúng?",
+    "options": [
+      "LIMIT 3 OFFSET 3",
+      "LIMIT 3 OFFSET 1",
+      "OFFSET 3 LIMIT 3 (đặt trước LIMIT)",
+      "LIMIT 6 OFFSET 3"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "OFFSET bỏ qua m hàng đầu rồi LIMIT lấy n hàng tiếp.\n✓ LIMIT 3 OFFSET 3 bỏ 3 hàng đầu rồi lấy 3 hàng kế, đúng trang 2.\n✗ OFFSET 1 chỉ bỏ 1 hàng nên không đúng ranh giới trang.\n✗ Đặt OFFSET trước LIMIT sai thứ tự cú pháp.\n✗ LIMIT 6 lấy tới 6 hàng, nhiều hơn một trang 3 hàng."
+  },
+  {
+    "id": "sql-q-012",
+    "courseId": "SQL",
+    "lesson": "sql-01-select-basics",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những phát biểu nào ĐÚNG về cú pháp WHERE và NULL trong SQL? (chọn nhiều)",
+    "options": [
+      "So sánh bằng dùng một dấu = , không phải ==",
+      "Chuỗi văn bản phải đặt trong dấu nháy đơn",
+      "Dùng IS NULL để tìm ô không có giá trị",
+      "email = NULL là cách đúng để tìm email trống",
+      "BETWEEN không bao gồm hai giá trị đầu mút"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "SQL dùng một dấu =, nháy đơn cho chuỗi, và IS NULL cho ô trống.\n✓ Một dấu = là toán tử so sánh bằng trong SQL.\n✓ Chuỗi như 'Hà Nội' phải nằm trong nháy đơn.\n✓ IS NULL là cách đúng để tìm ô không có giá trị.\n✗ email = NULL không bao giờ TRUE nên là cách sai.\n✗ BETWEEN bao gồm cả hai đầu mút, không loại trừ."
+  },
+  {
+    "id": "sql-q-013",
+    "courseId": "SQL",
+    "lesson": "sql-01-select-basics",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Về AWS và liên hệ với SQL trong bài, những phát biểu nào ĐÚNG? (chọn nhiều)",
+    "options": [
+      "Amazon RDS chạy các database quan hệ như PostgreSQL, MySQL và dùng SQL y hệt bài học",
+      "Amazon Aurora tương thích MySQL/PostgreSQL, gần như không phải sửa truy vấn khi chuyển từ RDS",
+      "Amazon DynamoDB là NoSQL, không hỗ trợ SELECT ... WHERE tự do",
+      "Trên RDS bạn phải tự lo backup và vá lỗi máy chủ",
+      "DynamoDB phù hợp khi cần JOIN và truy vấn quan hệ linh hoạt"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "RDS/Aurora là SQL quan hệ, DynamoDB là NoSQL.\n✓ RDS chạy các database quan hệ và dùng SQL y hệt bài học.\n✓ Aurora tương thích MySQL/PostgreSQL nên chuyển từ RDS gần như không sửa truy vấn.\n✓ DynamoDB là NoSQL, không có SELECT ... WHERE tự do.\n✗ RDS là dịch vụ được quản lý, AWS lo backup và vá lỗi giúp bạn.\n✗ Cần JOIN và truy vấn quan hệ linh hoạt thì chọn RDS/Aurora, không phải DynamoDB."
+  },
+  {
+    "id": "sql-q-014",
+    "courseId": "SQL",
+    "lesson": "sql-02-joins",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, vì sao việc lưu toàn bộ thông tin khách trong cùng một bảng đơn hàng (mỗi đơn lặp lại email, địa chỉ khách) là không tốt?",
+    "options": [
+      "Vì gây dư thừa dữ liệu: khi khách đổi email phải sửa nhiều dòng, sót một dòng là dữ liệu mâu thuẫn",
+      "Vì SQL không cho phép một bảng có quá 5 cột",
+      "Vì JOIN sẽ chạy nhanh hơn nếu mỗi bảng chỉ có một dòng",
+      "Vì khoá chính không thể là kiểu số khi có thông tin khách"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Vấn đề cốt lõi là dư thừa dữ liệu (data redundancy) dẫn tới mâu thuẫn khi cập nhật.\n✓ Lặp lại email/địa chỉ nhiều dòng khiến sửa một chỗ phải sửa tất cả, sót là sai lệch\n✗ SQL không có giới hạn 5 cột như vậy\n✗ Tách bảng để toàn vẹn dữ liệu chứ không phải để mỗi bảng một dòng\n✗ Khoá chính kiểu số hoàn toàn hợp lệ, không liên quan vấn đề này"
+  },
+  {
+    "id": "sql-q-015",
+    "courseId": "SQL",
+    "lesson": "sql-02-joins",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong schema của bài, cột nào ở bảng `orders` đóng vai trò khoá ngoại trỏ về `customers`?",
+    "options": [
+      "customer_id",
+      "order_id",
+      "product_id",
+      "quantity"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "`orders.customer_id` là khoá ngoại trỏ tới khoá chính `customers.customer_id`.\n✓ Cột trỏ về định danh khách chính là khoá ngoại nối hai bảng\n✗ Định danh duy nhất của chính đơn hàng là khoá chính của orders, không trỏ sang customers\n✗ Cột trỏ về sản phẩm là khoá ngoại tới products, không phải customers\n✗ Số lượng chỉ là dữ liệu thường, không phải khoá"
+  },
+  {
+    "id": "sql-q-016",
+    "courseId": "SQL",
+    "lesson": "sql-02-joins",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với dữ liệu mẫu, câu sau trả về bao nhiêu dòng?\n```sql\nSELECT o.order_id, c.name\nFROM orders AS o\nINNER JOIN customers AS c ON o.customer_id = c.customer_id;\n```",
+    "options": [
+      "3 dòng (đơn 1004 bị loại vì khách số 5 không tồn tại)",
+      "4 dòng (giữ cả đơn 1004 với name NULL)",
+      "5 dòng (mỗi khách một dòng)",
+      "6 dòng (tích Descartes của hai bảng)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "INNER JOIN chỉ giữ dòng khớp ở cả hai bên; đơn 1004 có customer_id=5 không khớp khách nào nên bị loại.\n✓ Còn lại 3 đơn khớp: 1001, 1002, 1003\n✗ Giữ đơn không khớp với NULL là hành vi của LEFT JOIN, không phải INNER\n✗ Mỗi khách một dòng không đúng vì An có 2 đơn và Châu/Dũng không có đơn\n✗ Có ON nên không tạo tích Descartes"
+  },
+  {
+    "id": "sql-q-017",
+    "courseId": "SQL",
+    "lesson": "sql-02-joins",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần liệt kê NHỮNG KHÁCH HÀNG CHƯA TỪNG ĐẶT ĐƠN NÀO. Câu nào đúng?",
+    "options": [
+      "customers LEFT JOIN orders ON ... WHERE o.order_id IS NULL",
+      "customers INNER JOIN orders ON ... WHERE o.order_id IS NULL",
+      "customers RIGHT JOIN orders ON ... WHERE c.name IS NULL",
+      "customers INNER JOIN orders ON ... GROUP BY c.name"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "LEFT JOIN giữ mọi khách; khách không có đơn sẽ có cột bên orders là NULL, lọc IS NULL ra đúng họ.\n✓ Giữ trọn khách rồi lọc dòng không khớp là cách tìm khách chưa đặt\n✗ INNER JOIN loại bỏ ngay những khách không khớp nên không thể có dòng order_id NULL\n✗ RIGHT JOIN giữ trọn orders chứ không giữ trọn customers, sai hướng\n✗ Chỉ GROUP BY không lọc ra khách thiếu đơn"
+  },
+  {
+    "id": "sql-q-018",
+    "courseId": "SQL",
+    "lesson": "sql-02-joins",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với dữ liệu mẫu, kết quả của câu sau bao gồm những ai?\n```sql\nSELECT c.name, o.order_id\nFROM orders AS o\nRIGHT JOIN customers AS c ON o.customer_id = c.customer_id;\n```",
+    "options": [
+      "An, An, Bình, Châu (NULL), Dũng (NULL) — đơn 1004 biến mất",
+      "An, An, Bình và đơn 1004 với name NULL",
+      "Chỉ An, An, Bình",
+      "Tất cả khách và tất cả đơn, kể cả đơn 1004"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "RIGHT JOIN giữ trọn bảng bên phải (customers) nên mọi khách đều xuất hiện, kể cả Châu và Dũng chưa mua (order_id NULL).\n✓ Đủ 4 khách; Châu/Dũng có order_id NULL vì chưa có đơn\n✗ Đơn 1004 (khách 5) biến mất vì khách 5 không nằm trong customers, không thể có name NULL\n✗ Bỏ Châu/Dũng là hành vi của INNER JOIN, không phải RIGHT\n✗ Giữ cả đơn mồ côi lẫn khách thiếu đơn là FULL OUTER JOIN"
+  },
+  {
+    "id": "sql-q-019",
+    "courseId": "SQL",
+    "lesson": "sql-02-joins",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, `A RIGHT JOIN B` luôn có thể viết lại thành cách nào, và thực tế người ta thường chuộng cách nào?",
+    "options": [
+      "Viết lại thành `B LEFT JOIN A`; thực tế đa số chuộng LEFT cho dễ đọc",
+      "Viết lại thành `A INNER JOIN B`; thực tế chuộng INNER",
+      "Viết lại thành `A FULL OUTER JOIN B`; thực tế chuộng FULL",
+      "Không thể viết lại; RIGHT là duy nhất cho trường hợp của nó"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu rõ `A RIGHT JOIN B` tương đương `B LEFT JOIN A`, và đa số người chỉ dùng LEFT, đặt bảng muốn giữ trọn ở bên trái.\n✓ Đổi vai trái/phải biến RIGHT thành LEFT, dễ đọc hơn\n✗ INNER loại bớt dòng không khớp nên không tương đương RIGHT\n✗ FULL giữ cả hai bên, khác với RIGHT chỉ giữ một bên\n✗ RIGHT hoàn toàn viết lại được nên không phải duy nhất"
+  },
+  {
+    "id": "sql-q-020",
+    "courseId": "SQL",
+    "lesson": "sql-02-joins",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một bạn chạy `FULL OUTER JOIN` trên MySQL và bị lỗi cú pháp. Đâu là giải thích đúng?",
+    "options": [
+      "MySQL không hỗ trợ FULL OUTER JOIN trực tiếp; phải mô phỏng bằng LEFT JOIN kết hợp UNION với RIGHT JOIN",
+      "FULL OUTER JOIN chỉ chạy được khi cả hai bảng cùng số dòng",
+      "Phải bỏ mệnh đề ON thì FULL OUTER JOIN mới chạy",
+      "FULL OUTER JOIN chỉ hợp lệ với đúng hai bảng, không quá"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài lưu ý MySQL không hỗ trợ FULL OUTER JOIN trực tiếp (PostgreSQL, SQL Server thì có), nên mô phỏng bằng LEFT JOIN UNION RIGHT JOIN.\n✓ Đây là hạn chế của engine MySQL, cách khắc phục là dùng UNION\n✗ Số dòng hai bảng không liên quan tới việc hỗ trợ cú pháp\n✗ Bỏ ON không sửa được lỗi engine không hỗ trợ\n✗ Số bảng không phải nguyên nhân lỗi này"
+  },
+  {
+    "id": "sql-q-021",
+    "courseId": "SQL",
+    "lesson": "sql-02-joins",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Mỗi khách có cột `credit = 100` ở bảng `customers`. Khách An có 2 đơn. Sau khi `customers INNER JOIN orders` rồi `SUM(c.credit) GROUP BY c.name`, An ra giá trị nào và vì sao?",
+    "options": [
+      "200, vì fan-out nhân dòng của An lên 2 nên credit bị cộng trùng",
+      "100, vì SUM tự nhận biết credit thuộc bảng một và chỉ cộng một lần",
+      "NULL, vì không thể SUM một cột của bảng bên trái",
+      "2, vì SUM đếm số đơn của An"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đây là bẫy fan-out: An khớp 2 đơn nên dòng của An bị nhân thành 2, khiến credit=100 bị cộng hai lần thành 200 (sai).\n✓ JOIN nhân dòng làm giá trị thuộc bảng một bị cộng trùng\n✗ SUM không tự biết tránh trùng; nó cộng theo từng dòng kết quả sau JOIN\n✗ SUM một cột bảng trái vẫn cho số chứ không NULL\n✗ SUM(credit) cộng giá trị 100, không phải đếm đơn"
+  },
+  {
+    "id": "sql-q-022",
+    "courseId": "SQL",
+    "lesson": "sql-02-joins",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bài 3 yêu cầu tính tổng tiền mỗi khách bằng `SUM(o.quantity * p.price)` sau khi JOIN 3 bảng. Vì sao ở đây fan-out KHÔNG gây sai dù dòng vẫn bị nhân?",
+    "options": [
+      "Vì biểu thức được tính trên TỪNG DÒNG đơn, nên mỗi đơn được cộng đúng một lần — nhân dòng chính là điều mong muốn",
+      "Vì INNER JOIN tự động khử trùng lặp trước khi SUM",
+      "Vì GROUP BY c.name xoá hết các dòng nhân thừa",
+      "Vì quantity và price luôn bằng nhau nên triệt tiêu lỗi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SUM ở đây cộng một biểu thức theo từng dòng đơn (quantity*price), nên việc mỗi đơn thành một dòng là đúng ý muốn; fan-out chỉ nguy hiểm khi SUM giá trị thuộc bảng một.\n✓ Mỗi đơn được cộng đúng một lần vì giá trị tính theo từng dòng đơn\n✗ INNER JOIN không khử trùng lặp, nó vẫn nhân dòng bình thường\n✗ GROUP BY gom nhóm để cộng chứ không xoá dòng thừa làm sai\n✗ quantity và price không hề bằng nhau, không có chuyện triệt tiêu"
+  },
+  {
+    "id": "sql-q-023",
+    "courseId": "SQL",
+    "lesson": "sql-02-joins",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Câu nào liệt kê MỌI sản phẩm kèm tổng số lượng đã bán, sản phẩm chưa bán phải hiện số 0?",
+    "options": [
+      "products LEFT JOIN orders ON ... GROUP BY p.name, dùng COALESCE(SUM(o.quantity), 0)",
+      "products INNER JOIN orders ON ... GROUP BY p.name, dùng SUM(o.quantity)",
+      "orders LEFT JOIN products ON ... GROUP BY p.name, dùng SUM(o.quantity)",
+      "products RIGHT JOIN orders ON ... GROUP BY p.name, dùng COALESCE(SUM(o.quantity), 0)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Phải LEFT JOIN từ products để giữ cả sản phẩm chưa có đơn; SUM của tập rỗng là NULL nên COALESCE đổi thành 0.\n✓ Giữ trọn products rồi đổi NULL thành 0 cho ra số 0 cho sản phẩm chưa bán\n✗ INNER JOIN loại mất sản phẩm chưa bán nên không thể hiện 0\n✗ Đặt orders bên trái không giữ trọn products, sản phẩm chưa bán bị mất\n✗ RIGHT JOIN với orders bên trái giữ trọn orders chứ không giữ trọn products"
+  },
+  {
+    "id": "sql-q-024",
+    "courseId": "SQL",
+    "lesson": "sql-02-joins",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong câu self join tìm sếp của mỗi nhân viên, vì sao phải dùng `LEFT JOIN employees AS m ON e.manager_id = m.emp_id` thay vì INNER JOIN?",
+    "options": [
+      "Để không loại mất An — người không có sếp (manager_id NULL) vẫn xuất hiện",
+      "Vì INNER JOIN không cho phép một bảng nối với chính nó",
+      "Vì self join bắt buộc luôn dùng LEFT JOIN",
+      "Vì LEFT JOIN chạy nhanh hơn INNER JOIN trên bảng nhỏ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "An là sếp cao nhất nên manager_id NULL; dùng LEFT JOIN để An không bị loại, sếp hiển thị NULL.\n✓ Giữ nhân viên không có sếp là lý do chọn LEFT thay vì INNER\n✗ INNER JOIN hoàn toàn nối được bảng với chính nó qua alias\n✗ Self join không bắt buộc LEFT; tuỳ yêu cầu có thể dùng INNER\n✗ Lựa chọn ở đây vì tính đúng đắn kết quả, không phải tốc độ"
+  },
+  {
+    "id": "sql-q-025",
+    "courseId": "SQL",
+    "lesson": "sql-02-joins",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài học, những phát biểu nào về ALIAS bảng là ĐÚNG? (chọn nhiều)",
+    "options": [
+      "Alias là tên gọi tắt, giúp viết o.customer_id ngắn hơn orders.customer_id",
+      "Alias bắt buộc khi hai bảng có cột trùng tên để tránh lỗi ambiguous column",
+      "Self join bắt buộc phải có alias để phân biệt hai bản sao của cùng một bảng",
+      "Từ khoá AS là bắt buộc, không thể bỏ khi đặt alias",
+      "Dùng alias làm câu truy vấn chạy chậm hơn vì SQL phải dịch tên"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Alias là bí danh giúp viết gọn, tránh nhập nhằng cột, và bắt buộc trong self join.\n✓ Viết o.customer_id gọn hơn là lợi ích cơ bản của alias\n✓ Khi hai bảng cùng có cột name, alias giúp SQL biết name của bảng nào\n✓ Self join cần alias khác nhau để phân biệt hai vai của cùng bảng\n✗ AS có thể bỏ: FROM orders o tương đương FROM orders AS o\n✗ Alias không làm chậm truy vấn, chỉ là tên gọi tắt"
+  },
+  {
+    "id": "sql-q-026",
+    "courseId": "SQL",
+    "lesson": "sql-02-joins",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Về phần liên hệ AWS trong bài, những phát biểu nào ĐÚNG? (chọn nhiều)",
+    "options": [
+      "Amazon RDS là database quan hệ được quản lý; câu INNER JOIN, LEFT JOIN chạy y hệt",
+      "Amazon DynamoDB là NoSQL và KHÔNG có JOIN; thường denormalize dữ liệu để đọc nhanh",
+      "Amazon Aurora là database quan hệ tương thích MySQL/PostgreSQL nên JOIN không đổi",
+      "Cần JOIN, quan hệ chặt chẽ, truy vấn linh hoạt thì nên chọn DynamoDB",
+      "DynamoDB phù hợp khi cần độ trễ cực thấp ở quy mô lớn và chấp nhận thiết kế quanh vài kiểu truy vấn cố định"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "RDS/Aurora là quan hệ giữ nguyên JOIN; DynamoDB là NoSQL không có JOIN, hợp với quy mô lớn độ trễ thấp.\n✓ RDS quản lý engine quan hệ nên JOIN chạy như thường\n✓ DynamoDB không có JOIN nên denormalize để đọc nhanh\n✓ Aurora tương thích MySQL/PostgreSQL nên JOIN không đổi\n✓ DynamoDB hợp với độ trễ thấp quy mô lớn quanh kiểu truy vấn cố định\n✗ Cần JOIN và truy vấn linh hoạt thì chọn RDS/Aurora, không phải DynamoDB"
+  },
+  {
+    "id": "sql-q-027",
+    "courseId": "SQL",
+    "lesson": "sql-03-aggregation",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Với bảng orders có 7 dòng, trong đó cột customer_id không có giá trị NULL nào, truy vấn nào trả về số khách hàng KHÁC NHAU đã từng mua hàng?",
+    "options": [
+      "SELECT COUNT(*) FROM orders;",
+      "SELECT COUNT(customer_id) FROM orders;",
+      "SELECT COUNT(DISTINCT customer_id) FROM orders;",
+      "SELECT DISTINCT customer_id FROM orders;"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Cần đếm số giá trị khác nhau, đúng việc của COUNT(DISTINCT cot).\n✓ COUNT(DISTINCT customer_id) đếm số giá trị customer_id phân biệt → đúng số khách đã mua.\n✗ COUNT(*) đếm tổng số dòng (7 đơn), không loại trùng.\n✗ COUNT(customer_id) chỉ đếm dòng khác NULL, ở đây vẫn ra 7 vì không có NULL.\n✗ SELECT DISTINCT customer_id liệt kê các giá trị, không trả về một con số đếm."
+  },
+  {
+    "id": "sql-q-028",
+    "courseId": "SQL",
+    "lesson": "sql-03-aggregation",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "AVG xử lý các dòng có giá trị NULL như thế nào?",
+    "options": [
+      "Coi NULL là 0 và cộng vào tổng",
+      "Bỏ qua dòng NULL, không tính vào cả tử số lẫn mẫu số",
+      "Trả về NULL cho toàn bộ kết quả nếu có một dòng NULL",
+      "Báo lỗi khi gặp NULL"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "AVG bỏ qua dòng NULL chứ không coi NULL là 0.\n✓ Bỏ qua dòng NULL: nếu 1 trong 4 giá trị NULL thì chia cho 3, không phải 4.\n✗ Coi NULL là 0 là hành vi sai; muốn vậy phải dùng AVG(COALESCE(cot,0)).\n✗ AVG không trả NULL toàn bộ chỉ vì có một dòng NULL.\n✗ AVG không báo lỗi khi gặp NULL."
+  },
+  {
+    "id": "sql-q-029",
+    "courseId": "SQL",
+    "lesson": "sql-03-aggregation",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo quy tắc vàng của GROUP BY, cột nào trong SELECT bắt buộc phải xuất hiện trong mệnh đề GROUP BY?",
+    "options": [
+      "Mọi cột nằm trong hàm tổng hợp",
+      "Mọi cột KHÔNG nằm trong hàm tổng hợp",
+      "Chỉ cột khoá chính",
+      "Mọi cột được dùng trong ORDER BY"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Quy tắc vàng: cột không nằm trong hàm tổng hợp thì bắt buộc phải có trong GROUP BY.\n✓ Mọi cột không-tổng-hợp phải vào GROUP BY, nếu không sẽ lỗi hoặc trả giá trị ngẫu nhiên.\n✗ Cột nằm trong hàm tổng hợp (SUM, COUNT...) thì không cần đưa vào GROUP BY.\n✗ Không liên quan riêng đến khoá chính.\n✗ ORDER BY không phải điều kiện của quy tắc này."
+  },
+  {
+    "id": "sql-q-030",
+    "courseId": "SQL",
+    "lesson": "sql-03-aggregation",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Thứ tự thực thi logic đúng của các mệnh đề trong một truy vấn là gì?",
+    "options": [
+      "SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY",
+      "FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY",
+      "FROM → GROUP BY → WHERE → SELECT → HAVING → ORDER BY",
+      "WHERE → FROM → GROUP BY → HAVING → ORDER BY → SELECT"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nêu rõ thứ tự thực thi logic.\n✓ FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY là thứ tự đúng.\n✗ SELECT không chạy trước FROM/WHERE.\n✗ WHERE chạy trước GROUP BY, không phải sau.\n✗ FROM luôn chạy trước WHERE, không phải ngược lại."
+  },
+  {
+    "id": "sql-q-031",
+    "courseId": "SQL",
+    "lesson": "sql-03-aggregation",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Câu hỏi: \"Khách nào có tổng doanh thu trên 10 triệu?\". Tại sao không thể dùng WHERE doanh_thu > 10000000 thay cho HAVING?",
+    "options": [
+      "Vì WHERE không hỗ trợ phép so sánh số",
+      "Vì lúc WHERE chạy thì SUM còn chưa được tính",
+      "Vì WHERE chỉ dùng được với cột khoá chính",
+      "Vì doanh_thu là bí danh nên phải đặt trong dấu nháy"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "WHERE lọc từng dòng trước khi gom nhóm, trước khi hàm tổng hợp được tính.\n✓ Lúc WHERE chạy, SUM chưa được tính nên không thể lọc theo doanh_thu tổng hợp → phải dùng HAVING.\n✗ WHERE hoàn toàn hỗ trợ so sánh số.\n✗ WHERE không bị giới hạn ở cột khoá chính.\n✗ Vấn đề là thời điểm thực thi, không phải chuyện dấu nháy bí danh."
+  },
+  {
+    "id": "sql-q-032",
+    "courseId": "SQL",
+    "lesson": "sql-03-aggregation",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cho truy vấn:\nSELECT customer_id, COUNT(*) AS so_don\nFROM orders\nWHERE ordered_at >= '2026-02-01'\nGROUP BY customer_id\nHAVING COUNT(*) >= 2;\nVới dữ liệu trong bài, kết quả là gì?",
+    "options": [
+      "customer_id=1, so_don=3",
+      "customer_id=3, so_don=2",
+      "customer_id=3, so_don=3",
+      "Không có dòng nào thoả"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "WHERE giữ các đơn từ 01/02/2026, rồi HAVING lọc nhóm có >= 2 đơn.\n✓ Chỉ khách 3 có 2 đơn (15/02 và 20/02) từ tháng 2 trở đi → customer_id=3, so_don=2.\n✗ Khách 1 có 3 đơn cả năm nhưng chỉ 1 đơn (01/03) từ tháng 2, không đạt >= 2.\n✗ Khách 3 chỉ có 2 đơn từ tháng 2, không phải 3.\n✗ Có một dòng thoả nên không phải rỗng."
+  },
+  {
+    "id": "sql-q-033",
+    "courseId": "SQL",
+    "lesson": "sql-03-aggregation",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn viết subquery trong FROM nhưng quên đặt bí danh, ví dụ:\nSELECT AVG(doanh_thu) FROM (SELECT customer_id, SUM(...) AS doanh_thu FROM ... GROUP BY customer_id);\nĐiều gì xảy ra?",
+    "options": [
+      "Chạy bình thường, bí danh là tuỳ chọn",
+      "Báo lỗi cú pháp vì subquery trong FROM bắt buộc phải có bí danh",
+      "Tự động lấy tên bảng gốc làm bí danh",
+      "Trả về NULL cho mọi dòng"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Subquery trong FROM bắt buộc phải có bí danh.\n✓ Quên đặt tên (AS ...) sẽ báo lỗi cú pháp ngay.\n✗ Bí danh không phải tuỳ chọn trong trường hợp này.\n✗ Không có cơ chế tự lấy tên bảng gốc làm bí danh.\n✗ Lỗi xảy ra trước khi có kết quả, không phải trả NULL."
+  },
+  {
+    "id": "sql-q-034",
+    "courseId": "SQL",
+    "lesson": "sql-03-aggregation",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Truy vấn nào tính ĐÚNG \"doanh thu trung bình của mỗi khách\" (tổng hợp hai tầng)?",
+    "options": [
+      "SELECT AVG(quantity * price) FROM orders o JOIN products p ON p.id=o.product_id;",
+      "SELECT AVG(doanh_thu) FROM (SELECT customer_id, SUM(o.quantity*p.price) AS doanh_thu FROM orders o JOIN products p ON p.id=o.product_id GROUP BY customer_id) AS t;",
+      "SELECT customer_id, AVG(quantity*price) FROM orders GROUP BY customer_id;",
+      "SELECT SUM(quantity*price)/COUNT(*) FROM orders;"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Phải gom doanh thu mỗi khách ở tầng trong rồi lấy AVG ở tầng ngoài.\n✓ Subquery gom SUM theo customer_id rồi AVG ở ngoài → đúng doanh thu trung bình mỗi khách.\n✗ AVG(quantity*price) chỉ ra trung bình mỗi DÒNG đơn, không phải mỗi khách.\n✗ Trả về một dòng cho mỗi khách, không phải một con số trung bình giữa các khách; lại thiếu JOIN lấy price.\n✗ SUM/COUNT(*) chia tổng doanh thu cho số ĐƠN, không phải số khách."
+  },
+  {
+    "id": "sql-q-035",
+    "courseId": "SQL",
+    "lesson": "sql-03-aggregation",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Subquery tương quan (correlated) như (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id) đặt trong SELECT có đặc điểm gì?",
+    "options": [
+      "Chỉ chạy một lần rồi dùng lại cho mọi dòng",
+      "Tham chiếu cột của dòng ngoài nên chạy lại cho mỗi dòng, dễ chậm trên dữ liệu lớn",
+      "Bắt buộc phải có bí danh mới chạy được",
+      "Không thể dùng hàm tổng hợp bên trong"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Subquery tương quan tham chiếu giá trị của dòng ngoài (c.id).\n✓ Vì phụ thuộc c.id của dòng ngoài, nó chạy lại cho mỗi dòng → tiện nhưng dễ chậm trên dữ liệu lớn.\n✗ Không phải chạy một lần; nó chạy lặp lại theo từng dòng.\n✗ Bí danh không phải điều kiện ở đây (đó là yêu cầu của subquery trong FROM).\n✗ Ví dụ này chính dùng COUNT(*) nên hoàn toàn dùng được hàm tổng hợp."
+  },
+  {
+    "id": "sql-q-036",
+    "courseId": "SQL",
+    "lesson": "sql-03-aggregation",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong cùng một danh mục có hai sản phẩm cùng giá xếp đầu, sau đó là một sản phẩm rẻ hơn. Khi dùng ROW_NUMBER và RANK với ORDER BY price DESC, kết quả số thứ tự khác nhau thế nào?",
+    "options": [
+      "Cả hai đều cho 1, 1, 3",
+      "ROW_NUMBER cho 1, 2, 3; RANK cho 1, 1, 3",
+      "ROW_NUMBER cho 1, 1, 3; RANK cho 1, 2, 3",
+      "Cả hai đều cho 1, 2, 3"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "ROW_NUMBER luôn đánh số liên tục không trùng; RANK cho dòng bằng nhau cùng hạng rồi nhảy số.\n✓ ROW_NUMBER cho 1,2,3 (không trùng) còn RANK cho 1,1,3 với hai dòng bằng nhau.\n✗ ROW_NUMBER không bao giờ lặp số nên không thể là 1,1,3.\n✗ Đảo ngược vai trò hai hàm là sai.\n✗ RANK gặp giá bằng nhau sẽ cho cùng hạng, không phải 1,2,3."
+  },
+  {
+    "id": "sql-q-037",
+    "courseId": "SQL",
+    "lesson": "sql-03-aggregation",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn muốn LỌC ra các dòng có giá trị từ một window function (ví dụ chỉ giữ dòng có RANK = 1). Cách làm đúng là gì?",
+    "options": [
+      "Đặt điều kiện trực tiếp trong WHERE: WHERE RANK() OVER (...) = 1",
+      "Đặt điều kiện trong HAVING",
+      "Bọc window function trong một CTE rồi lọc ở câu ngoài",
+      "Lồng window function bên trong COUNT()"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Window function không dùng được trong WHERE/HAVING và không lồng trong hàm tổng hợp.\n✓ Bọc trong CTE rồi lọc ở câu ngoài là cách đúng để lọc theo kết quả window.\n✗ Không dùng được window function trực tiếp trong WHERE.\n✗ HAVING cũng không cho dùng window function.\n✗ Không được lồng window function bên trong hàm tổng hợp như COUNT()."
+  },
+  {
+    "id": "sql-q-038",
+    "courseId": "SQL",
+    "lesson": "sql-03-aggregation",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Phát biểu nào ĐÚNG về sự khác biệt giữa GROUP BY và window function (HAM OVER (PARTITION BY ...))?",
+    "options": [
+      "GROUP BY gộp nhiều dòng thành một dòng kết quả cho mỗi nhóm",
+      "Window function tính toán tổng hợp nhưng vẫn giữ nguyên từng dòng",
+      "PARTITION BY chia dữ liệu thành nhóm nhưng KHÔNG gộp dòng",
+      "Window function chỉ chạy được khi có GROUP BY đi kèm",
+      "SUM(...) OVER (ORDER BY ...) dùng để tính running total (cộng dồn)"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Window function giữ nguyên số dòng còn GROUP BY thì gộp.\n✓ GROUP BY gộp nhiều dòng thành một dòng cho mỗi nhóm.\n✓ Window function tính tổng hợp nhưng vẫn giữ nguyên từng dòng.\n✓ PARTITION BY chia nhóm giống GROUP BY nhưng không gộp dòng.\n✓ SUM(...) OVER (ORDER BY ...) cộng dồn từ dòng đầu đến dòng hiện tại → running total.\n✗ Window function không yêu cầu phải có GROUP BY đi kèm."
+  },
+  {
+    "id": "sql-q-039",
+    "courseId": "SQL",
+    "lesson": "sql-03-aggregation",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Khi đưa các truy vấn GROUP BY/CTE/window function lên AWS, phát biểu nào ĐÚNG?",
+    "options": [
+      "Các truy vấn này chạy nguyên xi trên Amazon RDS PostgreSQL/MySQL",
+      "Amazon Aurora tương thích MySQL/PostgreSQL nên dùng cùng cú pháp WITH và window function",
+      "Amazon Redshift là kho dữ liệu tối ưu cho GROUP BY + window function trên dữ liệu lớn",
+      "Amazon DynamoDB là NoSQL, không dùng SQL và không có JOIN/GROUP BY kiểu này",
+      "Chuyển sang AWS thì phải viết lại toàn bộ cú pháp SQL vì mỗi dịch vụ khác nhau"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Kỹ năng SQL không phụ thuộc nhà cung cấp; chỉ phần vận hành khác nhau.\n✓ RDS chạy đúng các database SQL quen thuộc nên truy vấn chạy nguyên xi.\n✓ Aurora tương thích MySQL/PostgreSQL, cùng cú pháp WITH và window function.\n✓ Redshift là data warehouse tối ưu cho GROUP BY + window function trên dữ liệu lớn.\n✓ DynamoDB là NoSQL, không dùng SQL và không có JOIN/GROUP BY kiểu này.\n✗ Không phải viết lại toàn bộ cú pháp; SQL dùng được trên RDS, Aurora, Redshift, chỉ phần vận hành khác."
+  },
+  {
+    "id": "sql-q-040",
+    "courseId": "SQL",
+    "lesson": "sql-04-schema-design",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn cần lưu giá tiền sản phẩm sao cho không bị sai số làm tròn. Kiểu dữ liệu nào phù hợp nhất?",
+    "options": [
+      "FLOAT",
+      "DOUBLE",
+      "DECIMAL(10,2)",
+      "VARCHAR(10)"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Tiền phải dùng DECIMAL để giữ chính xác phần lẻ.\n✓ DECIMAL(10,2) lưu chính xác số có phần lẻ, đúng cho tiền.\n✗ Các kiểu dấu phẩy động làm tròn sai (0.1 + 0.2 ≠ 0.3), không nên dùng cho tiền.\n✗ Lưu tiền dưới dạng chuỗi khiến không tính toán/so sánh số được đúng cách."
+  },
+  {
+    "id": "sql-q-041",
+    "courseId": "SQL",
+    "lesson": "sql-04-schema-design",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "PRIMARY KEY tự động mang theo hai tính chất nào?",
+    "options": [
+      "NULL và UNIQUE",
+      "NOT NULL và UNIQUE",
+      "DEFAULT và CHECK",
+      "NOT NULL và FOREIGN KEY"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "PRIMARY KEY định danh duy nhất mỗi dòng nên buộc phải vừa không rỗng vừa không trùng.\n✓ NOT NULL và UNIQUE là hai tính chất PRIMARY KEY tự động có, kèm index tra cứu nhanh.\n✗ Khoá chính không thể NULL nên phương án có NULL sai.\n✗ DEFAULT, CHECK, FOREIGN KEY là ràng buộc khác, không phải tính chất mặc định của khoá chính."
+  },
+  {
+    "id": "sql-q-042",
+    "courseId": "SQL",
+    "lesson": "sql-04-schema-design",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Quan hệ giữa khách hàng và đơn hàng: một khách có nhiều đơn, mỗi đơn thuộc một khách. Đặt khoá ngoại ở đâu?",
+    "options": [
+      "Ở bảng customers, trỏ về orders",
+      "Ở bảng orders (phía nhiều), trỏ về customers",
+      "Ở cả hai bảng",
+      "Cần một bảng trung gian"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Trong quan hệ 1-n, khoá ngoại đặt ở phía nhiều.\n✓ orders là phía nhiều nên orders.customer_id trỏ về customers.id.\n✗ Đặt khoá ngoại ở phía một (customers) không biểu diễn được nhiều đơn cho một khách.\n✗ Bảng trung gian chỉ cần cho quan hệ n-n, không phải 1-n."
+  },
+  {
+    "id": "sql-q-043",
+    "courseId": "SQL",
+    "lesson": "sql-04-schema-design",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Ràng buộc nào dùng để đảm bảo cột email không có hai dòng trùng giá trị?",
+    "options": [
+      "NOT NULL",
+      "CHECK",
+      "UNIQUE",
+      "DEFAULT"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "UNIQUE chặn giá trị trùng trong cột.\n✓ UNIQUE không cho phép hai dòng có cùng email, tránh dữ liệu bẩn.\n✗ Ràng buộc bắt buộc có giá trị chỉ chặn rỗng, không chặn trùng.\n✗ Ràng buộc điều kiện và giá trị mặc định không liên quan tới việc chống trùng."
+  },
+  {
+    "id": "sql-q-044",
+    "courseId": "SQL",
+    "lesson": "sql-04-schema-design",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một đơn hàng chứa nhiều sản phẩm, một sản phẩm xuất hiện trong nhiều đơn. Cách thiết kế đúng là gì?",
+    "options": [
+      "Thêm cột danh sách product_id vào bảng orders",
+      "Tạo bảng trung gian order_items với khoá chính (order_id, product_id)",
+      "Thêm cột order_id vào bảng products",
+      "Gộp orders và products thành một bảng"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Hai phía đều 'nhiều' là quan hệ n-n, luôn cần bảng trung gian.\n✓ order_items với khoá chính tổ hợp (order_id, product_id) biểu diễn đúng n-n.\n✗ Nhồi danh sách product_id vào một cột vi phạm 1NF và không JOIN được.\n✗ Thêm order_id vào products hay gộp hai bảng đều biểu diễn sai quan hệ nhiều-nhiều."
+  },
+  {
+    "id": "sql-q-045",
+    "courseId": "SQL",
+    "lesson": "sql-04-schema-design",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bảng có cột products chứa giá trị \"Áo, Quần\" trong một ô. Bảng này vi phạm chuẩn nào?",
+    "options": [
+      "1NF",
+      "2NF",
+      "3NF",
+      "Không vi phạm chuẩn nào"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "1NF yêu cầu mỗi ô là một giá trị nguyên tử.\n✓ Vi phạm 1NF vì một ô đang chứa danh sách nhiều giá trị thay vì một giá trị.\n✗ 2NF nói về phụ thuộc một phần vào khoá tổ hợp, chưa phải vấn đề ở đây.\n✗ 3NF nói về phụ thuộc bắc cầu; và nói không vi phạm gì là sai."
+  },
+  {
+    "id": "sql-q-046",
+    "courseId": "SQL",
+    "lesson": "sql-04-schema-design",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bảng có khoá (order_id, product) nhưng cột customer_name chỉ phụ thuộc vào order_id. Đây là lỗi gì và sửa ra sao?",
+    "options": [
+      "Phụ thuộc một phần (2NF); tách customer_name sang bảng orders",
+      "Phụ thuộc bắc cầu (3NF); thêm UNIQUE cho customer_name",
+      "Vi phạm 1NF; gộp hai cột làm một",
+      "Không có lỗi; giữ nguyên"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "2NF buộc cột không-khoá phụ thuộc vào toàn bộ khoá tổ hợp.\n✓ customer_name chỉ phụ thuộc một phần khoá (order_id) nên vi phạm 2NF, tách sang bảng orders.\n✗ Đây không phải phụ thuộc bắc cầu (3NF), và thêm UNIQUE không giải quyết.\n✗ Không phải lỗi 1NF, và để nguyên thì vẫn còn dư thừa/mâu thuẫn."
+  },
+  {
+    "id": "sql-q-047",
+    "courseId": "SQL",
+    "lesson": "sql-04-schema-design",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bảng có id, customer_id, customer_city, city_zip; trong đó city_zip phụ thuộc vào customer_city. Vấn đề là gì?",
+    "options": [
+      "Vi phạm 1NF vì ô chứa danh sách",
+      "Phụ thuộc bắc cầu, vi phạm 3NF",
+      "Thiếu khoá ngoại nên vi phạm 2NF",
+      "Hoàn toàn đúng chuẩn 3NF"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "3NF cấm cột không-khoá phụ thuộc vào cột không-khoá khác.\n✓ city_zip phụ thuộc customer_city (cột không-khoá) tạo phụ thuộc bắc cầu id→city→zip, vi phạm 3NF.\n✗ Không có ô chứa danh sách nên không phải lỗi 1NF.\n✗ Vấn đề không phải thiếu khoá ngoại, và rõ ràng không đạt 3NF."
+  },
+  {
+    "id": "sql-q-048",
+    "courseId": "SQL",
+    "lesson": "sql-04-schema-design",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Khi tạo schema, vì sao order_items thường lưu cột unit_price riêng thay vì luôn tra products.price?",
+    "options": [
+      "Vì DECIMAL không JOIN được",
+      "Để đóng băng giá tại thời điểm mua, vì giá sản phẩm có thể đổi sau này",
+      "Vì FOREIGN KEY cấm tham chiếu cột price",
+      "Để bắt buộc đạt 3NF chặt chẽ hơn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Đây là denormalize có chủ đích cho dữ liệu lịch sử.\n✓ Lưu unit_price đóng băng giá lúc mua, vì products.price sẽ thay đổi về sau.\n✗ DECIMAL hoàn toàn dùng được trong JOIN và FOREIGN KEY không cấm tham chiếu cột giá.\n✗ Việc này là cố ý lặp dữ liệu (denormalize), không phải để đạt 3NF chặt hơn."
+  },
+  {
+    "id": "sql-q-049",
+    "courseId": "SQL",
+    "lesson": "sql-04-schema-design",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Đoạn lệnh tạo bảng theo thứ tự: orders (REFERENCES customers) trước, rồi customers. Điều gì xảy ra?",
+    "options": [
+      "Chạy bình thường, database tự sắp xếp",
+      "Lỗi vì bảng được tham chiếu (customers) phải tồn tại trước",
+      "Lỗi vì thiếu AUTO_INCREMENT",
+      "Tạo được nhưng khoá ngoại bị bỏ qua"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Phải tạo bảng cha trước, bảng con (tham chiếu) sau.\n✓ customers được orders REFERENCES nên phải tồn tại trước, nếu không sẽ lỗi.\n✗ Database không tự sắp xếp lại thứ tự CREATE TABLE.\n✗ Nguyên nhân không phải thiếu AUTO_INCREMENT, và khoá ngoại không bị âm thầm bỏ qua."
+  },
+  {
+    "id": "sql-q-050",
+    "courseId": "SQL",
+    "lesson": "sql-04-schema-design",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Hệ thống đọc nhiều, ghi ít, và một phép tính tổng đơn hàng bị gọi lặp lại tốn kém. Theo bài, hướng xử lý hợp lý nhất là gì?",
+    "options": [
+      "Luôn giữ chuẩn hoá tuyệt đối, không bao giờ lặp dữ liệu",
+      "Cân nhắc denormalize sau khi đã đo được vấn đề hiệu năng thật",
+      "Denormalize ngay từ đầu để phòng xa",
+      "Chuyển toàn bộ sang DynamoDB"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mặc định chuẩn hoá, chỉ denormalize khi đo được vấn đề thật.\n✓ Đọc nhiều/tính toán lặp lại tốn kém là tình huống cân nhắc denormalize, nhưng phải dựa trên đo lường.\n✗ Khăng khăng không bao giờ lặp dữ liệu bỏ qua trường hợp hiệu năng chính đáng.\n✗ Denormalize ngay từ đầu hay đổi hẳn công cụ là tối ưu sớm/quá đà khi chưa đo được vấn đề."
+  },
+  {
+    "id": "sql-q-051",
+    "courseId": "SQL",
+    "lesson": "sql-04-schema-design",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, những phát biểu nào về thiết kế schema là ĐÚNG?",
+    "options": [
+      "Nên dùng surrogate key (id vô nghĩa do hệ thống sinh) làm khoá chính thay vì email/số điện thoại",
+      "Quan hệ 1-1 có thể tạo bằng khoá ngoại đặt UNIQUE",
+      "Ràng buộc chỉ nên kiểm tra ở code ứng dụng, không cần ở database",
+      "VARCHAR(100) chỉ tốn chỗ theo độ dài thực tế, còn CHAR(100) luôn chiếm đủ 100 ký tự",
+      "FLOAT là lựa chọn tốt cho cột tiền"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Các nguyên tắc thiết kế đúng theo bài học.\n✓ Surrogate key ổn định hơn dữ liệu nghiệp vụ như email vốn có thể đổi.\n✓ Quan hệ 1-1 đảm bảo bằng khoá ngoại UNIQUE (hoặc khoá ngoại đồng thời là khoá chính).\n✓ VARCHAR tốn chỗ theo độ dài thực, CHAR luôn chiếm đủ kích thước khai báo.\n✗ Database là tuyến phòng thủ cuối; không thể chỉ dựa vào kiểm tra ở code.\n✗ FLOAT làm tròn sai, không dùng cho tiền."
+  },
+  {
+    "id": "sql-q-052",
+    "courseId": "SQL",
+    "lesson": "sql-04-schema-design",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Về việc chọn dịch vụ AWS theo đặc tính dữ liệu, những phát biểu nào ĐÚNG theo bài?",
+    "options": [
+      "RDS chạy đúng các engine SQL quan hệ, mọi PRIMARY KEY/FOREIGN KEY/CHECK hoạt động y hệt",
+      "DynamoDB khuyến khích denormalize và thường gộp nhiều thực thể vào một bảng",
+      "Aurora cần đọc nhiều có thể thêm read replica thay vì vội denormalize",
+      "DynamoDB hỗ trợ JOIN và FOREIGN KEY như SQL truyền thống",
+      "Dữ liệu quan hệ phức tạp cần toàn vẹn thì nên chọn DynamoDB thay vì RDS"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Hiểu chuẩn hoá giúp chọn đúng công cụ AWS.\n✓ RDS chạy các engine SQL quan hệ, ràng buộc hoạt động y hệt môi trường tự host.\n✓ DynamoDB khuyến khích denormalize và single-table design ở quy mô lớn.\n✓ Aurora có thể thêm read replica để tăng tốc đọc mà vẫn giữ schema sạch.\n✗ DynamoDB không có JOIN hay FOREIGN KEY, đánh đổi tính linh hoạt truy vấn lấy độ trễ thấp.\n✗ Dữ liệu quan hệ phức tạp cần toàn vẹn nên chọn RDS/Aurora, không phải DynamoDB."
+  },
+  {
+    "id": "sql-q-053",
+    "courseId": "SQL",
+    "lesson": "sql-05-indexes-performance",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Sau khi tạo INDEX trên cột email, điều gì thay đổi đối với câu `SELECT * FROM customers WHERE email = 'an@example.com'`?",
+    "options": [
+      "Kết quả trả về thay đổi, nhưng tốc độ giữ nguyên",
+      "Tốc độ tìm ra kết quả nhanh hơn, kết quả vẫn y hệt",
+      "Câu SQL phải viết lại khác đi mới chạy được",
+      "Bảng customers tự động bị sắp xếp lại vĩnh viễn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "INDEX chỉ tăng tốc, không đổi kết quả.\n✓ Index tăng tốc tìm kiếm nhưng kết quả truy vấn vẫn giống hệt, câu SQL viết y nguyên.\n✗ Index không làm thay đổi kết quả trả về.\n✗ Không cần viết lại câu SQL để tận dụng index.\n✗ Index là cấu trúc phụ riêng, không sắp xếp lại bảng gốc."
+  },
+  {
+    "id": "sql-q-054",
+    "courseId": "SQL",
+    "lesson": "sql-05-indexes-performance",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong PostgreSQL, kế hoạch truy vấn hiện 'Seq Scan' kèm 'Rows Removed by Filter: 1999999' trên bảng lớn có nghĩa là gì?",
+    "options": [
+      "Index đang được dùng hiệu quả",
+      "Database quét gần như toàn bảng rồi loại bỏ phần lớn dòng — dấu hiệu xấu",
+      "Truy vấn bị lỗi cú pháp",
+      "Bảng đã được tối ưu hoàn hảo"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Seq Scan + nhiều dòng bị loại là dấu hiệu thiếu index.\n✓ Quét tuần tự gần hết bảng rồi vứt bỏ hàng triệu dòng là lãng phí, cần thêm index.\n✗ Seq Scan nghĩa là index KHÔNG được dùng, không phải dùng hiệu quả.\n✗ Đây là kế hoạch hợp lệ, không phải lỗi cú pháp.\n✗ Đây là dấu hiệu chưa tối ưu chứ không phải hoàn hảo."
+  },
+  {
+    "id": "sql-q-055",
+    "courseId": "SQL",
+    "lesson": "sql-05-indexes-performance",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao B-tree giúp tìm kiếm nhanh hơn nhiều so với quét tuần tự?",
+    "options": [
+      "Vì nó nén dữ liệu nhỏ lại",
+      "Vì mỗi tầng loại bỏ một phần lớn nhánh, đạt độ phức tạp O(log n) thay vì O(n)",
+      "Vì nó lưu toàn bộ bảng vào RAM",
+      "Vì nó bỏ qua các dòng trùng lặp"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "B-tree giảm số bước so sánh theo log n.\n✓ Cây sắp xếp nhiều tầng loại bỏ một nửa (hoặc hơn) nhánh mỗi bước, cho O(log n) thay vì O(n).\n✗ B-tree không hoạt động nhờ nén dữ liệu.\n✗ Tốc độ không đến từ việc nạp cả bảng vào RAM.\n✗ B-tree không tăng tốc bằng cách bỏ qua dòng trùng."
+  },
+  {
+    "id": "sql-q-056",
+    "courseId": "SQL",
+    "lesson": "sql-05-indexes-performance",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Cột nào trong các bảng sau thường KHÔNG được database tự động đánh index?",
+    "options": [
+      "PRIMARY KEY customers.id",
+      "Cột UNIQUE",
+      "FOREIGN KEY orders.customer_id",
+      "Mọi cột trên đều tự động được index"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "FOREIGN KEY không tự động có index ở nhiều database.\n✓ Cột khóa ngoại như orders.customer_id thường không được PostgreSQL tự đánh index, phải tự tạo — đây là cái bẫy kinh điển.\n✗ PRIMARY KEY tự động có index.\n✗ Cột UNIQUE tự động có index.\n✗ Không phải mọi cột đều tự động được index, khóa ngoại là ngoại lệ."
+  },
+  {
+    "id": "sql-q-057",
+    "courseId": "SQL",
+    "lesson": "sql-05-indexes-performance",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Có index composite `(customer_id, status)` trên orders. Truy vấn nào KHÔNG tận dụng được index này hiệu quả?",
+    "options": [
+      "WHERE customer_id = 42 AND status = 'paid'",
+      "WHERE customer_id = 42",
+      "WHERE status = 'paid'",
+      "Cả ba truy vấn đều dùng index tốt như nhau"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Quy tắc leftmost prefix: phải dùng từ cột trái nhất.\n✓ Lọc chỉ theo status mà bỏ qua customer_id (cột trái nhất) khiến index gần như vô dụng.\n✗ Dùng cả hai cột là cách tận dụng tốt nhất.\n✗ Dùng đúng cột trái nhất vẫn tận dụng được index.\n✗ Ba truy vấn không tương đương; truy vấn bỏ cột đầu kém hiệu quả hẳn."
+  },
+  {
+    "id": "sql-q-058",
+    "courseId": "SQL",
+    "lesson": "sql-05-indexes-performance",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong kế hoạch EXPLAIN, sự khác biệt giữa 'Index Cond' và 'Filter' kèm 'Rows Removed by Filter' lớn là gì?",
+    "options": [
+      "Cả hai đều có nghĩa index đang gánh việc lọc",
+      "'Index Cond' nghĩa index giải quyết điều kiện; 'Filter' kèm nhiều dòng bị loại nghĩa database vẫn đọc rồi loại thủ công",
+      "'Filter' nhanh hơn 'Index Cond'",
+      "Hai khái niệm này hoàn toàn không liên quan đến index"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Index Cond tốt, Filter với nhiều dòng bị loại là xấu.\n✓ Index Cond cho thấy index xử lý điều kiện; còn Filter kèm Rows Removed by Filter lớn cho thấy database phải đọc rồi loại bỏ thủ công.\n✗ Chỉ Index Cond mới nghĩa index gánh việc lọc.\n✗ Filter (loại thủ công) thường chậm hơn, không nhanh hơn.\n✗ Cả hai đều liên quan trực tiếp đến việc index có giúp được không."
+  },
+  {
+    "id": "sql-q-059",
+    "courseId": "SQL",
+    "lesson": "sql-05-indexes-performance",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Có index trên email. Câu nào dưới đây làm index bị BỎ QUA và chuyển sang Seq Scan?",
+    "options": [
+      "WHERE email = 'an@example.com'",
+      "WHERE LOWER(email) = 'an@example.com'",
+      "WHERE email >= 'a' AND email < 'b'",
+      "WHERE email IS NOT NULL AND email = 'an@example.com'"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bọc cột trong hàm làm index vô hiệu.\n✓ LOWER(email) bọc cột trong hàm; index nằm trên giá trị gốc nên không dùng được, dẫn tới Seq Scan.\n✗ So sánh bằng trực tiếp trên cột dùng được index.\n✗ So sánh khoảng trên chính cột vẫn tận dụng được B-tree.\n✗ Điều kiện bằng trên cột gốc vẫn cho phép dùng index."
+  },
+  {
+    "id": "sql-q-060",
+    "courseId": "SQL",
+    "lesson": "sql-05-indexes-performance",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Câu LIKE nào dùng được Index Scan trên cột full_name có index B-tree?",
+    "options": [
+      "WHERE full_name LIKE '%Nam'",
+      "WHERE full_name LIKE '%Nam%'",
+      "WHERE full_name LIKE 'Nam%'",
+      "WHERE LOWER(full_name) LIKE 'nam%'"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "B-tree chỉ hỗ trợ tiền tố cố định.\n✓ 'Nam%' có tiền tố cố định nên database định vị được điểm bắt đầu trong cây sắp xếp.\n✗ '%Nam' có ký tự đại diện ở đầu, không có điểm bắt đầu để định vị.\n✗ '%Nam%' cũng bắt đầu bằng ký tự đại diện nên phải Seq Scan.\n✗ Bọc cột trong LOWER() làm index trên cột gốc bị bỏ qua."
+  },
+  {
+    "id": "sql-q-061",
+    "courseId": "SQL",
+    "lesson": "sql-05-indexes-performance",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao đánh index lên cột `status` (chỉ có 3 giá trị 'paid'/'pending'/'cancelled') thường là ý tưởng tồi?",
+    "options": [
+      "Vì cột VARCHAR không thể được đánh index",
+      "Vì tính chọn lọc thấp khiến database vẫn ưu tiên Seq Scan, index tốn chỗ và chi phí ghi mà ít được dùng",
+      "Vì index chỉ hoạt động trên cột số",
+      "Vì status là khóa ngoại"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cột ít giá trị phân biệt có tính chọn lọc thấp.\n✓ Cột chỉ vài giá trị có tính chọn lọc thấp, database thường vẫn chọn Seq Scan, nên index gần như vô dụng mà vẫn phạt ghi và tốn đĩa.\n✗ Cột VARCHAR hoàn toàn có thể đánh index.\n✗ Index hoạt động trên nhiều kiểu dữ liệu, không chỉ số.\n✗ status không phải khóa ngoại trong schema này."
+  },
+  {
+    "id": "sql-q-062",
+    "courseId": "SQL",
+    "lesson": "sql-05-indexes-performance",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Báo cáo lọc `WHERE customer_id = 42 AND status = 'paid' AND created_at >= '2026-01-01' ORDER BY created_at DESC`. Index composite nào tối ưu nhất?",
+    "options": [
+      "(created_at, customer_id, status)",
+      "(customer_id, status, created_at)",
+      "(status, customer_id, created_at)",
+      "(created_at, status, customer_id)"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cột so sánh bằng đặt trước, cột khoảng/sắp xếp đặt sau.\n✓ (customer_id, status, created_at) đặt hai cột lọc bằng lên đầu rồi cột khoảng/ORDER BY cuối, vừa nhảy chính xác vừa phục vụ sắp xếp miễn phí.\n✗ Đặt created_at (khoảng) làm cột đầu phá vỡ leftmost prefix, không nhảy chính xác tới customer_id.\n✗ Đặt status trước customer_id không tối ưu cho truy vấn lọc theo customer_id, và tính chọn lọc của status thấp.\n✗ Lại đặt created_at khoảng làm cột trái nhất nên hiệu quả kém."
+  },
+  {
+    "id": "sql-q-063",
+    "courseId": "SQL",
+    "lesson": "sql-05-indexes-performance",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Hiển thị 100 khách kèm đơn hàng bằng cách lặp 100 lần `SELECT * FROM orders WHERE customer_id = ?` chạy chậm dù mỗi câu đều có index. Nguyên nhân và cách sửa đúng là gì?",
+    "options": [
+      "Thiếu index trên customer_id; thêm index sẽ hết chậm",
+      "Đây là vấn đề N+1: nhiều lần đi-về database cộng dồn độ trễ; sửa bằng gộp thành 1 truy vấn JOIN hoặc IN",
+      "Bảng orders quá lớn; phải xóa bớt dữ liệu",
+      "Phải đánh index lên mọi cột của orders"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "N+1 là vấn đề số lượt đi-về, không phải thiếu index.\n✓ 1 query gốc cộng N query con tạo nhiều lượt round-trip cộng dồn độ trễ; gộp thành một query bằng JOIN hoặc IN giải quyết được.\n✗ Vấn đề không phải thiếu index — mỗi câu đã có index rồi.\n✗ Xóa dữ liệu không giải quyết bản chất nhiều round-trip.\n✗ Đánh index mọi cột vừa không liên quan vừa phạt ghi nặng."
+  },
+  {
+    "id": "sql-q-064",
+    "courseId": "SQL",
+    "lesson": "sql-05-indexes-performance",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những phát biểu nào ĐÚNG về cái giá phải trả khi tạo nhiều index?",
+    "options": [
+      "Mỗi INSERT phải cập nhật thêm mọi index liên quan, làm ghi chậm hơn",
+      "Index thừa làm phình dung lượng đĩa",
+      "Index luôn miễn phí, càng nhiều càng tốt",
+      "UPDATE cột có index có thể phải xóa mục cũ và thêm mục mới trong index",
+      "Index chỉ ảnh hưởng tới đọc, không bao giờ ảnh hưởng tới ghi"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Index là đánh đổi: đọc nhanh hơn, ghi chậm hơn và tốn chỗ.\n✓ Mỗi INSERT phải ghi vào bảng cộng mọi index nên ghi chậm hơn.\n✓ Index thừa chiếm thêm dung lượng đĩa.\n✓ UPDATE cột có index phải xóa mục cũ và thêm mục mới.\n✗ Index không miễn phí; nhiều quá sẽ phạt ghi và tốn bộ nhớ.\n✗ Index ảnh hưởng rõ rệt tới hiệu năng ghi, không chỉ đọc."
+  },
+  {
+    "id": "sql-q-065",
+    "courseId": "SQL",
+    "lesson": "sql-05-indexes-performance",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Khi chuyển database tự quản sang Amazon RDS/Aurora hoặc DynamoDB, những phát biểu nào ĐÚNG?",
+    "options": [
+      "Chuyển sang RDS/Aurora tự động làm truy vấn index kém trở nên nhanh",
+      "Trên RDS, CREATE INDEX và EXPLAIN hoạt động y hệt database thường",
+      "RDS Performance Insights giúp tìm truy vấn chậm để biết nên đánh index ở đâu",
+      "DynamoDB cho phép viết WHERE tùy ý rồi tự có index như SQL",
+      "Muốn truy vấn theo thuộc tính khác trong DynamoDB phải tạo Global Secondary Index trước"
+    ],
+    "correctIndices": [
+      1,
+      2,
+      4
+    ],
+    "explanation": "SQL trên RDS/Aurora giống hệt; DynamoDB bắt thiết kế index trước.\n✓ Trên RDS, CREATE INDEX và EXPLAIN dùng y như database thường.\n✓ Performance Insights giúp phát hiện truy vấn chậm để biết nơi cần index.\n✓ DynamoDB bắt buộc tạo GSI trước nếu muốn truy vấn theo thuộc tính khác.\n✗ Chuyển sang RDS/Aurora không tự sửa index kém; chậm vẫn chậm.\n✗ DynamoDB không cho viết WHERE tùy ý rồi mong có index như SQL."
+  },
+  {
+    "id": "sql-q-066",
+    "courseId": "SQL",
+    "lesson": "sql-06-transactions",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong tình huống chuyển tiền (trừ A, cộng B), tính chất nào của ACID đảm bảo \"hoặc cả hai bước cùng thành công, hoặc không bước nào xảy ra\"?",
+    "options": [
+      "Atomicity (nguyên tử)",
+      "Consistency (nhất quán)",
+      "Isolation (cô lập)",
+      "Durability (bền vững)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Tính chất \"tất cả-hoặc-không-gì\" chính là nguyên tử.\n✓ Tính nguyên tử đảm bảo các bước cùng sống cùng chết, không có nửa vời.\n✗ Tính nhất quán nói về dữ liệu trước/sau luôn hợp lệ, không vi phạm ràng buộc.\n✗ Tính cô lập nói về các transaction song song không giẫm chân nhau.\n✗ Tính bền vững đảm bảo dữ liệu còn sau khi đã COMMIT dù mất điện."
+  },
+  {
+    "id": "sql-q-067",
+    "courseId": "SQL",
+    "lesson": "sql-06-transactions",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn chạy BEGIN rồi UPDATE, SELECT thấy số đã đổi, nhưng kết nối bị đóng trước khi COMMIT. Chuyện gì xảy ra với thay đổi đó?",
+    "options": [
+      "Thay đổi bị ROLLBACK, coi như chưa từng xảy ra",
+      "Thay đổi được tự động COMMIT khi đóng kết nối",
+      "Thay đổi vẫn còn vì SELECT đã thấy giá trị mới",
+      "Thay đổi được lưu tạm và áp dụng ở lần kết nối sau"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chưa COMMIT thì khi kết nối đóng mọi thứ bị huỷ.\n✓ Kết nối đóng mà chưa COMMIT khiến toàn bộ thay đổi bị ROLLBACK.\n✗ Đóng kết nối không tự COMMIT mà ngược lại tự huỷ.\n✗ SELECT thấy giá trị mới chỉ vì đang trong transaction của chính bạn, không có nghĩa đã chốt.\n✗ Thay đổi tạm không được mang sang kết nối khác."
+  },
+  {
+    "id": "sql-q-068",
+    "courseId": "SQL",
+    "lesson": "sql-06-transactions",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Mức isolation mặc định của PostgreSQL là gì, và nó cho phép hiện tượng lỗi nào?",
+    "options": [
+      "READ COMMITTED — vẫn cho phép non-repeatable read và phantom read",
+      "SERIALIZABLE — không cho phép hiện tượng lỗi nào",
+      "READ UNCOMMITTED — cho phép cả dirty read",
+      "REPEATABLE READ — chỉ cho phép phantom read"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "PostgreSQL mặc định READ COMMITTED, chặn dirty read nhưng còn lọt non-repeatable và phantom.\n✓ READ COMMITTED là mặc định và vẫn cho phép non-repeatable read lẫn phantom read.\n✗ SERIALIZABLE chặn mọi hiện tượng nhưng không phải mặc định.\n✗ READ UNCOMMITTED cho dirty read và không phải mặc định của PostgreSQL.\n✗ REPEATABLE READ không phải mức mặc định."
+  },
+  {
+    "id": "sql-q-069",
+    "courseId": "SQL",
+    "lesson": "sql-06-transactions",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Hiện tượng \"trong cùng một transaction, đọc cùng một hàng hai lần ra hai giá trị khác nhau vì có transaction khác đã COMMIT\" tên là gì?",
+    "options": [
+      "Non-repeatable read",
+      "Dirty read",
+      "Phantom read",
+      "Deadlock"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đọc lại cùng một hàng ra khác nhau là non-repeatable read.\n✓ Non-repeatable read đúng là đọc lại cùng một hàng ra giá trị khác do transaction khác đã COMMIT.\n✗ Dirty read là đọc dữ liệu chưa COMMIT của transaction khác.\n✗ Phantom read là số lượng hàng thoả điều kiện thay đổi, không phải giá trị một hàng.\n✗ Deadlock là hai transaction chờ khoá của nhau, không phải hiện tượng đọc."
+  },
+  {
+    "id": "sql-q-070",
+    "courseId": "SQL",
+    "lesson": "sql-06-transactions",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "An mua 3 \"Chuột\" (id=11) nhưng tồn kho đang là 0. Cách nào an toàn nhất để tránh trừ kho thành số âm hoặc bán hàng không có?",
+    "options": [
+      "Dùng UPDATE ... WHERE stock >= 3 bên trong transaction rồi kiểm tra số hàng bị ảnh hưởng",
+      "SELECT stock trước khi BEGIN, nếu đủ thì BEGIN và trừ kho",
+      "Cứ trừ kho rồi nếu thấy âm thì UPDATE lại về 0",
+      "Tăng isolation lên SERIALIZABLE rồi SELECT bình thường"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Phải kiểm tra điều kiện ngay trong câu lệnh ghi để tránh race condition giữa lúc kiểm và lúc trừ.\n✓ UPDATE ... WHERE stock >= 3 trong transaction rồi xem số hàng bị ảnh hưởng là cách an toàn, tránh khoảng trống đua tranh.\n✗ SELECT trước khi BEGIN tạo khoảng trống để người khác mua hết giữa lúc kiểm tra và trừ.\n✗ Trừ rồi sửa lại về 0 vẫn đã bán hàng không có, sai logic.\n✗ Tăng SERIALIZABLE rồi SELECT thường không tự ngăn việc trừ kho âm."
+  },
+  {
+    "id": "sql-q-071",
+    "courseId": "SQL",
+    "lesson": "sql-06-transactions",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Câu lệnh UPSERT sau làm gì khi sản phẩm id=11 đã tồn tại với stock=20?\nINSERT INTO products (id, name, price, stock) VALUES (11, 'Chuột', 150, 20)\nON CONFLICT (id) DO UPDATE SET stock = products.stock + EXCLUDED.stock;",
+    "options": [
+      "stock của sản phẩm 11 trở thành 40",
+      "EXCLUDED tham chiếu hàng định chèn (giá trị 20)",
+      "products.stock tham chiếu hàng đang có sẵn trong bảng",
+      "Câu lệnh báo lỗi vì id đã tồn tại",
+      "Một hàng mới hoàn toàn được chèn thêm vào bảng"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Khi đụng khoá trùng, nhánh DO UPDATE cộng dồn stock cũ với stock định chèn.\n✓ stock 20 cũ cộng 20 định chèn thành 40.\n✓ EXCLUDED đúng là hàng định chèn với giá trị 20.\n✓ products.stock đúng là hàng đang có sẵn trong bảng.\n✗ Câu không báo lỗi vì ON CONFLICT xử lý trùng khoá êm đẹp.\n✗ Không có hàng mới được chèn vì đụng id trùng nên chuyển sang cập nhật."
+  },
+  {
+    "id": "sql-q-072",
+    "courseId": "SQL",
+    "lesson": "sql-06-transactions",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bài tập yêu cầu UPSERT id=12 'Tai nghe' giá 250 stock 10; nếu đã tồn tại thì GHI ĐÈ giá nhưng CỘNG DỒN stock. Mệnh đề DO UPDATE nào đúng?",
+    "options": [
+      "SET price = EXCLUDED.price, stock = products.stock + EXCLUDED.stock",
+      "SET price = products.price + EXCLUDED.price, stock = EXCLUDED.stock",
+      "SET price = products.price, stock = products.stock + EXCLUDED.stock",
+      "SET price = EXCLUDED.price, stock = EXCLUDED.stock"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Ghi đè giá = lấy thẳng EXCLUDED; cộng dồn stock = giá trị cũ cộng giá trị mới.\n✓ price = EXCLUDED.price ghi đè, stock = products.stock + EXCLUDED.stock cộng dồn, đúng yêu cầu.\n✗ Cộng dồn giá và ghi đè stock là ngược lại yêu cầu.\n✗ Giữ nguyên giá cũ không phải là ghi đè giá mới.\n✗ Ghi đè cả stock làm mất phần cộng dồn."
+  },
+  {
+    "id": "sql-q-073",
+    "courseId": "SQL",
+    "lesson": "sql-06-transactions",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Hai transaction chạy: T1 khoá hàng id=1 rồi cố update id=2; T2 khoá hàng id=2 rồi cố update id=1. Database phản ứng thế nào và cách phòng tránh tốt nhất?",
+    "options": [
+      "Database phát hiện deadlock, huỷ một transaction; phòng tránh bằng cách luôn khoá các hàng theo cùng một thứ tự",
+      "Database treo cả hai vĩnh viễn; phải khởi động lại server",
+      "Database tự gộp hai transaction thành một; không cần làm gì",
+      "Database hạ isolation xuống READ UNCOMMITTED để giải toả"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đây là deadlock kinh điển; DB tự phát hiện và huỷ một bên, còn ta phòng bằng thứ tự khoá nhất quán.\n✓ Database tự phát hiện deadlock và huỷ một transaction; chuẩn hoá thứ tự khoá (vd id nhỏ trước) ngăn vòng chờ.\n✗ Database không treo vĩnh viễn vì có cơ chế phát hiện deadlock.\n✗ Database không gộp hai transaction lại.\n✗ Hạ isolation là sai hướng, không giải quyết deadlock."
+  },
+  {
+    "id": "sql-q-074",
+    "courseId": "SQL",
+    "lesson": "sql-06-transactions",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đặc điểm nào đúng về VIEW trong SQL?",
+    "options": [
+      "View không lưu dữ liệu; mỗi lần đọc, database chạy lại câu SELECT bên dưới",
+      "View lưu sẵn dữ liệu kết quả và phải REFRESH thủ công",
+      "View thay thế hoàn toàn các bảng gốc, xoá bảng gốc đi",
+      "View chỉ tồn tại trong một transaction rồi biến mất"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "View là câu truy vấn có sẵn, không lưu dữ liệu.\n✓ View không lưu dữ liệu mà chạy lại câu SELECT mỗi lần đọc.\n✗ Lưu sẵn dữ liệu và cần REFRESH là đặc điểm của materialized view.\n✗ View không xoá hay thay thế bảng gốc.\n✗ View tồn tại lâu dài, không giới hạn trong một transaction."
+  },
+  {
+    "id": "sql-q-075",
+    "courseId": "SQL",
+    "lesson": "sql-06-transactions",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần một VIEW tên rich_customers liệt kê id, name của khách có balance >= 300. Câu nào đúng?",
+    "options": [
+      "CREATE VIEW rich_customers AS SELECT id, name FROM customers WHERE balance >= 300;",
+      "CREATE VIEW rich_customers AS SELECT * FROM customers HAVING balance >= 300;",
+      "CREATE TABLE rich_customers AS SELECT id, name WHERE balance >= 300;",
+      "CREATE VIEW rich_customers SELECT id, name FROM customers WHERE balance > 300;"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "View tạo bằng CREATE VIEW ... AS SELECT, lọc bằng WHERE với điều kiện >= 300.\n✓ Đúng cú pháp CREATE VIEW ... AS với WHERE balance >= 300 và chỉ chọn id, name.\n✗ HAVING dùng với GROUP BY, không thay được WHERE ở đây, và SELECT * không khớp yêu cầu cột.\n✗ CREATE TABLE tạo bảng lưu dữ liệu chứ không phải view, lại thiếu FROM.\n✗ Thiếu từ khoá AS và dùng > 300 sẽ loại nhầm khách có đúng 300."
+  },
+  {
+    "id": "sql-q-076",
+    "courseId": "SQL",
+    "lesson": "sql-06-transactions",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo bài, đâu là nguyên tắc đúng khi viết transaction ở tầng ứng dụng?",
+    "options": [
+      "Giữ transaction ngắn, không gọi API bên ngoài hay sleep khi đang mở",
+      "Luôn có nhánh COMMIT/ROLLBACK rõ ràng, không để transaction treo",
+      "Sẵn sàng retry khi gặp lỗi xung đột (SERIALIZABLE) hoặc deadlock",
+      "Mở transaction rồi gọi API thanh toán bên thứ ba 5 giây xong mới COMMIT",
+      "Tăng isolation lên SERIALIZABLE cho mọi transaction để chắc chắn an toàn"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Nguyên tắc vàng là giữ transaction ngắn, kết thúc rõ ràng, và sẵn sàng chạy lại khi xung đột.\n✓ Giữ transaction ngắn và tránh gọi API/sleep khi đang mở giúp không khoá hàng lâu.\n✓ Luôn có nhánh COMMIT/ROLLBACK rõ ràng để không treo transaction.\n✓ Retry khi gặp lỗi xung đột hay deadlock là cách xử lý đúng.\n✗ Gọi API thanh toán 5 giây trong transaction khoá hàng lâu, đúng là lỗi cần tránh.\n✗ Bài khuyên 99% dùng READ COMMITTED, không nên ép SERIALIZABLE cho mọi nơi vì càng chặt càng dễ phải retry."
+  },
+  {
+    "id": "sql-q-077",
+    "courseId": "SQL",
+    "lesson": "sql-06-transactions",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, dữ liệu nào nên đặt ở SQL (RDS/Aurora) thay vì NoSQL?",
+    "options": [
+      "customers, orders, products — cần ACID và JOIN, tính đúng tuyệt đối",
+      "Giỏ hàng tạm và phiên đăng nhập cần đọc/ghi cực nhanh",
+      "Log và bộ đếm lượt xem quy mô khổng lồ ít quan hệ",
+      "Cache tốc độ cao thay đổi cấu trúc liên tục"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Dữ liệu có quan hệ chặt và cần đúng tuyệt đối thuộc về SQL.\n✓ customers, orders, products cần ACID và JOIN nên hợp với SQL.\n✗ Giỏ hàng tạm và session cần nhanh, quy mô lớn hợp NoSQL.\n✗ Log và bộ đếm khổng lồ ít quan hệ hợp NoSQL.\n✗ Cache tốc độ cao đổi cấu trúc liên tục thuộc về NoSQL như Redis."
+  },
+  {
+    "id": "sql-q-078",
+    "courseId": "SQL",
+    "lesson": "sql-06-transactions",
+    "certifications": [
+      "SQL"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "T1 chạy: BEGIN; UPDATE customers SET balance = 0 WHERE id = 1; (chưa COMMIT). T2 chạy SELECT thấy balance = 0. Sau đó T1 ROLLBACK. T2 đã gặp hiện tượng gì, và mức isolation nào ngăn được?",
+    "options": [
+      "Dirty read — READ COMMITTED trở lên ngăn được",
+      "Phantom read — chỉ SERIALIZABLE ngăn được",
+      "Non-repeatable read — REPEATABLE READ trở lên ngăn được",
+      "Deadlock — chuẩn hoá thứ tự khoá ngăn được"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đọc được dữ liệu chưa COMMIT rồi bị ROLLBACK chính là dirty read, bị chặn từ READ COMMITTED.\n✓ Dirty read là đọc giá trị chưa COMMIT; từ READ COMMITTED trở lên đã chặn.\n✗ Phantom read là số hàng thoả điều kiện thay đổi, không phải tình huống này.\n✗ Non-repeatable read cần transaction khác đã COMMIT, còn đây T1 lại ROLLBACK.\n✗ Deadlock là hai bên chờ khoá nhau, không liên quan đến đọc bẩn."
   }
 ];

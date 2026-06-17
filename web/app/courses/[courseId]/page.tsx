@@ -19,6 +19,11 @@ export default function CourseDashboardPage({ params }: { params: { courseId: st
   const chapters = chaptersOfCourse(course.id);
   const totalQuestions = questionsInCourse(course.id).length;
   const isComingSoon = course.status === "coming-soon";
+  // Practice is available once a course has any questions (cert courses always
+  // do; knowledge courses once their quiz bank is authored). Exam stays
+  // cert-only (knowledge courses have no passing score / timed mock).
+  const hasPractice = totalQuestions > 0;
+  const hasExam = course.kind !== "knowledge";
 
   return (
     <div className="space-y-8">
@@ -78,23 +83,27 @@ export default function CourseDashboardPage({ params }: { params: { courseId: st
             description={`${lessons.length} bài học theo lộ trình từ dễ tới khó.`}
             accent={course.accentColor}
           />
-          {course.kind !== "knowledge" && (
-            <>
-              <ActionCard
-                href={`/courses/${course.id}/practice`}
-                icon={<ListChecks size={20} />}
-                title="Luyện đề"
-                description="Trả lời từng câu, xem giải thích ngay."
-                accent={course.accentColor}
-              />
-              <ActionCard
-                href={`/courses/${course.id}/exam`}
-                icon={<GraduationCap size={20} />}
-                title="Mô phỏng thi"
-                description={`${course.examQuestions} câu, ${course.examMinutes} phút, có timer.`}
-                accent={course.accentColor}
-              />
-            </>
+          {hasPractice && (
+            <ActionCard
+              href={`/courses/${course.id}/practice`}
+              icon={<ListChecks size={20} />}
+              title={hasExam ? "Luyện đề" : "Luyện tập"}
+              description={
+                hasExam
+                  ? "Trả lời từng câu, xem giải thích ngay."
+                  : `${totalQuestions} câu trắc nghiệm, xem giải thích ngay.`
+              }
+              accent={course.accentColor}
+            />
+          )}
+          {hasExam && (
+            <ActionCard
+              href={`/courses/${course.id}/exam`}
+              icon={<GraduationCap size={20} />}
+              title="Mô phỏng thi"
+              description={`${course.examQuestions} câu, ${course.examMinutes} phút, có timer.`}
+              accent={course.accentColor}
+            />
           )}
         </div>
       )}
@@ -115,7 +124,7 @@ export default function CourseDashboardPage({ params }: { params: { courseId: st
         </section>
       )}
 
-      {!isComingSoon && course.kind !== "knowledge" && (
+      {!isComingSoon && hasPractice && (
         <section className="card p-5 flex items-center justify-between gap-3 flex-wrap">
           <div className="flex items-center gap-3">
             <RotateCcw size={20} className="text-brand-500" />

@@ -1,0 +1,118 @@
+{
+  "course": "KNOWLEDGE",
+  "createdNote": "stamp after build",
+  "parts": [
+    {
+      "id": "SQL",
+      "kind": "questions",
+      "scope": "6 bài, ~12-15 câu/bài (prefix sql) — PILOT",
+      "status": "done",
+      "note": "78 câu (13/bài×6), 15% multi, build pass, practice route live"
+    },
+    {
+      "id": "TECH-101",
+      "kind": "questions",
+      "scope": "5 bài (prefix tech)",
+      "status": "pending",
+      "note": ""
+    },
+    {
+      "id": "PROGRAMMING",
+      "kind": "questions",
+      "scope": "10 bài (prefix prog)",
+      "status": "pending",
+      "note": ""
+    },
+    {
+      "id": "GIT",
+      "kind": "questions",
+      "scope": "9 bài (prefix git)",
+      "status": "pending",
+      "note": ""
+    },
+    {
+      "id": "WEB",
+      "kind": "questions",
+      "scope": "7 bài (prefix web)",
+      "status": "pending",
+      "note": ""
+    },
+    {
+      "id": "CS",
+      "kind": "questions",
+      "scope": "6 bài (prefix cs)",
+      "status": "pending",
+      "note": ""
+    },
+    {
+      "id": "DSA",
+      "kind": "questions",
+      "scope": "13 bài (prefix dsa) — interview-style approach/tradeoff",
+      "status": "pending",
+      "note": ""
+    },
+    {
+      "id": "BACKEND",
+      "kind": "questions",
+      "scope": "8 bài (prefix be)",
+      "status": "pending",
+      "note": ""
+    },
+    {
+      "id": "FRONTEND",
+      "kind": "questions",
+      "scope": "9 bài (prefix fe)",
+      "status": "pending",
+      "note": ""
+    },
+    {
+      "id": "SECURITY",
+      "kind": "questions",
+      "scope": "7 bài (prefix sec)",
+      "status": "pending",
+      "note": ""
+    },
+    {
+      "id": "AIML",
+      "kind": "questions",
+      "scope": "6 bài (prefix ai)",
+      "status": "pending",
+      "note": ""
+    },
+    {
+      "id": "FOUNDATIONS",
+      "kind": "questions",
+      "scope": "15 bài (prefix fnd)",
+      "status": "pending",
+      "note": ""
+    },
+    {
+      "id": "ENGINEER",
+      "kind": "questions",
+      "scope": "6 bài (prefix eng)",
+      "status": "pending",
+      "note": ""
+    },
+    {
+      "id": "DEVOPS",
+      "kind": "questions",
+      "scope": "6 bài (prefix ops)",
+      "status": "pending",
+      "note": ""
+    },
+    {
+      "id": "SRE",
+      "kind": "questions",
+      "scope": "6 bài (prefix sre)",
+      "status": "pending",
+      "note": ""
+    },
+    {
+      "id": "SYSTEM-DESIGN",
+      "kind": "questions",
+      "scope": "8 bài (prefix sd) — interview-style tradeoff",
+      "status": "pending",
+      "note": ""
+    }
+  ]
+}
