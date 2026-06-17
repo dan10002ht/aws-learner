@@ -20919,5 +20919,2801 @@ export const generatedQuestions: Question[] = [
       2
     ],
     "explanation": "Bài liệt kê 3 nhóm lỗi thường gặp: quên Add to PATH, chưa mở lại terminal, và gõ sai chính tả lệnh.\n✓ Quên Add to PATH là nhóm lỗi số một.\n✓ Chưa mở lại terminal sau khi cài là nhóm lỗi thứ hai.\n✓ Gõ sai chính tả lệnh là nhóm lỗi thứ ba.\n✗ Máy quá yếu không nằm trong 3 nhóm bài nêu.\n✗ Cài lại toàn bộ Windows chính là phản ứng thái quá mà bài khuyên tránh."
+  },
+  {
+    "id": "prog-q-001",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-01-first-program",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, một chương trình được máy tính thực hiện theo cách nào?",
+    "options": [
+      "Tuần tự từng dòng, từ trên xuống dưới",
+      "Máy tự chọn dòng nào quan trọng để chạy trước",
+      "Chạy tất cả các dòng cùng một lúc",
+      "Chạy ngược từ dưới lên trên"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chương trình là dãy lệnh được máy thực hiện tuần tự, từng dòng một, theo thứ tự từ trên xuống.\n✓ Tuần tự từng dòng từ trên xuống là đúng bản chất của chương trình.\n✗ Máy không 'đoán ý' hay tự chọn dòng quan trọng để ưu tiên.\n✗ Các dòng không chạy đồng thời ở mức cơ bản này.\n✗ Không có chuyện chạy ngược từ dưới lên."
+  },
+  {
+    "id": "prog-q-002",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-01-first-program",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong lập trình, dấu `=` mang ý nghĩa gì?",
+    "options": [
+      "Lấy giá trị bên phải, bỏ vào hộp (biến) bên trái",
+      "So sánh hai vế xem có bằng nhau không",
+      "Khẳng định hai vế luôn bằng nhau như toán học",
+      "Hoán đổi giá trị giữa hai biến"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Dấu `=` là phép gán: đọc từ phải sang trái, lấy thứ bên phải đổ vào hộp bên trái.\n✓ Lấy giá trị bên phải bỏ vào biến bên trái chính là phép gán.\n✗ So sánh bằng là việc của toán tử khác, không phải `=` trong gán.\n✗ `=` không mang nghĩa 'bằng nhau' như toán học.\n✗ Một mình `=` không hoán đổi giá trị hai biến."
+  },
+  {
+    "id": "prog-q-003",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-01-first-program",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đoạn nào sau đây là tên biến HỢP LỆ theo quy tắc đặt tên trong bài?",
+    "options": [
+      "tong_tien",
+      "2so",
+      "tong tien",
+      "tổng_tiền"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Tên biến dùng chữ cái, chữ số, dấu gạch dưới; không bắt đầu bằng số, không có dấu cách, và quy ước tránh tiếng Việt có dấu.\n✓ tong_tien dùng chữ và gạch dưới, hợp lệ và có nghĩa.\n✗ Bắt đầu bằng chữ số bị cấm.\n✗ Có dấu cách trong tên là không hợp lệ.\n✗ Tiếng Việt có dấu bị quy ước chung loại bỏ."
+  },
+  {
+    "id": "prog-q-004",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-01-first-program",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Kết quả khi in ra `\"5\" + \"3\"` là gì?",
+    "options": [
+      "\"53\"",
+      "8",
+      "\"8\"",
+      "Báo lỗi vì không cộng được chuỗi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Hễ có ngoặc kép là chuỗi, và `+` với chuỗi là phép nối, nên `\"5\" + \"3\"` cho ra chuỗi \"53\".\n✓ \"53\" là kết quả nối hai đoạn văn bản lại.\n✗ 8 chỉ đúng nếu là số `5 + 3`, không phải chuỗi.\n✗ Kết quả không phải chuỗi \"8\".\n✗ Nối hai chuỗi là hợp lệ, không báo lỗi."
+  },
+  {
+    "id": "prog-q-005",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-01-first-program",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Người dùng nhập năm sinh qua bàn phím (Python). Vì sao phải dùng `int()` trước khi tính tuổi?",
+    "options": [
+      "Vì dữ liệu nhập từ bàn phím được nhận về dạng chuỗi, cần đổi sang số để tính toán",
+      "Vì `int()` làm chương trình chạy nhanh hơn",
+      "Vì input() chỉ nhận được số âm nếu không chuyển kiểu",
+      "Vì nếu không, năm sinh sẽ tự thành số thực"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Thứ người dùng gõ vào luôn được nhận về dưới dạng chuỗi (Python/JS), nên muốn tính toán phải chuyển kiểu sang số.\n✓ Input trả về chuỗi, cần int() để có con số tính toán.\n✗ int() không liên quan đến tốc độ chạy.\n✗ Không có chuyện chỉ nhận số âm khi không chuyển kiểu.\n✗ Không có việc tự biến thành số thực."
+  },
+  {
+    "id": "prog-q-006",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-01-first-program",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn code sau in ra gì?\n\ndiem = 7\ndiem = 9\nprint(diem)",
+    "options": [
+      "9",
+      "7",
+      "79",
+      "16"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Biến có thể thay đổi: lần gán thứ hai bỏ 9 vào hộp, giá trị 7 cũ biến mất.\n✓ 9 là giá trị mới nhất trong hộp diem.\n✗ 7 đã bị thay thế nên không còn.\n✗ Gán không nối các giá trị thành 79.\n✗ Không có phép cộng nào tạo ra 16."
+  },
+  {
+    "id": "prog-q-007",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-01-first-program",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một người mới viết `int(\"hai mươi\")` để đổi sang số. Điều gì xảy ra?",
+    "options": [
+      "Chương trình báo lỗi và dừng vì chuỗi không phải con số",
+      "Trả về 20 vì máy hiểu chữ tiếng Việt",
+      "Trả về 0 mặc định",
+      "Trả về chuỗi \"20\""
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chỉ chuyển được chuỗi có nội dung đúng là con số; chuỗi chữ như 'hai mươi' khiến chương trình báo lỗi và dừng (ví dụ ValueError).\n✓ Báo lỗi và dừng là hành vi đúng khi chuỗi không phải số.\n✗ Máy không tự dịch chữ tiếng Việt thành số.\n✗ Không có giá trị mặc định 0.\n✗ int() trả về số, không trả về chuỗi, và ở đây còn lỗi."
+  },
+  {
+    "id": "prog-q-008",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-01-first-program",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Theo bài, cách đọc một thông báo lỗi hiệu quả nhất là gì?",
+    "options": [
+      "Đọc dòng cuối, tìm số dòng, nhìn kỹ dòng đó và dòng ngay phía trên",
+      "Đóng chương trình ngay khi thấy chữ đỏ",
+      "Bỏ qua loại lỗi, chỉ cần đọc tên file",
+      "Luôn sửa đúng dòng số 1 vì lỗi thường ở đó"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Thông báo lỗi là bản chỉ đường: đọc dòng cuối (thường dễ hiểu nhất), tìm số dòng, xem dòng đó và đôi khi cả dòng ngay phía trên.\n✓ Đọc dòng cuối và tìm đúng số dòng là cách sửa lỗi nhanh.\n✗ Hoảng và đóng chương trình là phản xạ sai cần tránh.\n✗ Loại lỗi (SyntaxError, NameError...) rất quan trọng, không bỏ qua.\n✗ Lỗi không cố định ở dòng 1; phải đọc số dòng thực tế."
+  },
+  {
+    "id": "prog-q-009",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-01-first-program",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong Go, sau khi đã tạo biến bằng `diem := 7`, muốn gán giá trị mới 9 cho biến này phải viết thế nào?",
+    "options": [
+      "diem = 9",
+      "diem := 9",
+      "let diem = 9",
+      "int diem = 9"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Ở Go, `:=` dùng khi TẠO hộp mới; hộp đã tồn tại thì gán lại bằng `=`.\n✓ diem = 9 là gán lại cho biến đã có, đúng cú pháp Go.\n✗ Dùng lại `:=` cho biến đã tồn tại là sai.\n✗ `let` là từ khoá của JavaScript, không phải Go.\n✗ `int diem = 9` là kiểu khai báo của Java/C++, không phải Go."
+  },
+  {
+    "id": "prog-q-010",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-01-first-program",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Người dùng nhập hai số rồi chương trình in `\"53\"` thay vì `8`. Nguyên nhân và cách sửa hợp lý nhất là gì?",
+    "options": [
+      "Hai giá trị vẫn là chuỗi nên `+` nối lại; cần chuyển kiểu sang số trước khi cộng",
+      "Máy bị lỗi phần cứng, cần khởi động lại",
+      "Phải đổi dấu `+` thành dấu khác để cộng",
+      "Cần thêm dấu ngoặc kép quanh phép cộng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Dữ liệu nhập về là chuỗi; `+` với chuỗi là nối, nên \"5\"+\"3\" ra \"53\". Phải chuyển kiểu sang số trước khi cộng.\n✓ Chuyển kiểu sang số rồi cộng sẽ cho ra 8.\n✗ Đây là lỗi logic kiểu dữ liệu, không phải lỗi phần cứng.\n✗ `+` với số vốn đã là phép cộng đúng; vấn đề là kiểu chứ không phải toán tử.\n✗ Thêm ngoặc kép chỉ biến thành chữ, càng sai."
+  },
+  {
+    "id": "prog-q-011",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-01-first-program",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong Python, dùng `print(tuoi)` trong khi chưa hề tạo biến `tuoi`. Loại lỗi nào xuất hiện?",
+    "options": [
+      "NameError — gọi tên biến chưa tồn tại",
+      "SyntaxError — sai ngữ pháp",
+      "TypeError — dùng sai kiểu dữ liệu",
+      "ValueError — giá trị không hợp lệ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Dùng hộp chưa tồn tại gây NameError (cannot find symbol / not defined).\n✓ NameError đúng với việc gọi biến chưa được tạo.\n✗ SyntaxError là khi viết sai ngữ pháp, không phải trường hợp này.\n✗ TypeError xảy ra khi dùng sai kiểu, ví dụ cộng chuỗi với số.\n✗ ValueError là khi chuyển kiểu chuỗi không phải số."
+  },
+  {
+    "id": "prog-q-012",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-01-first-program",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những phát biểu nào sau đây ĐÚNG theo bài học? (chọn nhiều)",
+    "options": [
+      "Trong JavaScript, số nguyên và số thực gộp chung một kiểu `number`",
+      "Python viết `True`/`False` viết hoa, còn Java/Go/JS viết thường `true`/`false`",
+      "Chú thích (comment) sau `#` hoặc `//` bị máy tính bỏ qua hoàn toàn",
+      "Máy tính không phân biệt chữ hoa thường, nên `Print` và `print` như nhau",
+      "Java cho phép tạo biến mà không cần khai báo kiểu trước"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Các phát biểu đúng phản ánh đặc điểm kiểu, cách viết boolean và vai trò của comment.\n✓ JavaScript gộp số nguyên và số thực vào một kiểu number.\n✓ Python viết hoa True/False, ba ngôn ngữ kia viết thường.\n✓ Comment là ghi chú cho người đọc, máy bỏ qua hoàn toàn.\n✗ Máy phân biệt hoa thường TUYỆT ĐỐI; Print khác print.\n✗ Java bắt buộc khai báo kiểu trước (int, String...)."
+  },
+  {
+    "id": "prog-q-013",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-01-first-program",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Quy trình kinh điển 'Nhập → Xử lý → Xuất' áp dụng cho chương trình hỏi năm sinh rồi tính tuổi. Việc nào thuộc bước XỬ LÝ hoặc XUẤT? (chọn nhiều)",
+    "options": [
+      "Lấy 2026 trừ đi năm sinh để ra tuổi (Xử lý)",
+      "In lời chào kèm tuổi ra màn hình (Xuất)",
+      "Chuyển chuỗi năm sinh sang số nguyên để tính được (Xử lý)",
+      "Hỏi và đọc năm sinh người dùng gõ vào (Nhập)",
+      "Hiển thị câu hỏi 'Năm sinh của bạn?' rồi chờ gõ (Nhập)"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Xử lý là biến đổi/tính toán dữ liệu; Xuất là in kết quả ra; Nhập là lấy dữ liệu vào.\n✓ Lấy 2026 trừ năm sinh là tính toán, thuộc Xử lý.\n✓ In lời chào kèm tuổi là Xuất.\n✓ Chuyển chuỗi sang số để tính được cũng là một bước Xử lý.\n✗ Hỏi và đọc năm sinh người dùng gõ là bước Nhập.\n✗ Hiển thị câu hỏi rồi chờ gõ thuộc khâu Nhập, không phải Xử lý/Xuất."
+  },
+  {
+    "id": "prog-q-014",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-02-control-flow",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khi nào nên dùng vòng lặp `while` thay vì `for`?",
+    "options": [
+      "Khi biết trước chính xác số lần lặp",
+      "Khi không biết trước số lần lặp, chỉ lặp chừng nào điều kiện còn đúng",
+      "Khi cần in một số cố định lần",
+      "Khi muốn duyệt từ 1 đến 10"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "`while` hợp với việc lặp khi chưa biết trước bao nhiêu lần, ví dụ \"khuấy đến khi sôi\".\n✓ Lặp chừng nào điều kiện còn đúng, không biết trước số lần là đúng bản chất của while.\n✗ Biết trước chính xác số lần lặp là tình huống của for.\n✗ In một số cố định lần cũng là biết trước số lần, hợp với for.\n✗ Duyệt từ 1 đến 10 là số lần xác định, dùng for tự nhiên hơn."
+  },
+  {
+    "id": "prog-q-015",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-02-control-flow",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Lỗi kinh điển của người mới khi viết điều kiện so sánh bằng là gì?",
+    "options": [
+      "Viết `if x == 5` thay vì `if x = 5`",
+      "Viết `if x = 5` (một dấu bằng) thay vì `if x == 5`",
+      "Dùng `>=` thay cho `<=`",
+      "Quên dấu ngoặc nhọn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Một dấu `=` là gán giá trị, hai dấu `==` mới là hỏi có bằng nhau không.\n✓ Viết `if x = 5` (một dấu bằng) là nhầm gán thành so sánh, lỗi kinh điển.\n✗ `if x == 5` mới là cách viết đúng, không phải lỗi.\n✗ Nhầm `>=` với `<=` là lỗi khác, không phải lỗi nhầm gán/so sánh.\n✗ Quên ngoặc nhọn là lỗi cú pháp khác, không liên quan dấu bằng."
+  },
+  {
+    "id": "prog-q-016",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-02-control-flow",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "`continue` trong vòng lặp có tác dụng gì?",
+    "options": [
+      "Thoát hẳn khỏi vòng lặp ngay lập tức",
+      "Bỏ qua phần còn lại của lượt hiện tại, nhảy sang lượt tiếp theo",
+      "Khởi động lại vòng lặp từ đầu",
+      "Tạm dừng chương trình"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "`continue` bỏ qua phần còn lại của lượt này và sang lượt kế tiếp.\n✓ Bỏ qua phần còn lại của lượt hiện tại, nhảy sang lượt tiếp theo là đúng định nghĩa continue.\n✗ Thoát hẳn khỏi vòng lặp ngay lập tức là tác dụng của break.\n✗ continue không khởi động lại vòng lặp từ đầu.\n✗ continue không tạm dừng chương trình."
+  },
+  {
+    "id": "prog-q-017",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-02-control-flow",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn Python sau in ra gì?\n```python\nfor i in range(1, 11):\n    if i % 2 == 0:\n        continue\n    if i == 9:\n        break\n    print(i)\n```",
+    "options": [
+      "1, 3, 5, 7",
+      "1, 2, 3, 4, 5, 6, 7, 8",
+      "1, 3, 5, 7, 9",
+      "1, 3, 5, 7, 9, 11"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Số chẵn bị continue bỏ qua; tới 9 thì break nên không in 9.\n✓ 1, 3, 5, 7 là kết quả: bỏ chẵn, dừng trước khi in 9.\n✗ 1..8 sai vì số chẵn bị bỏ qua bởi continue.\n✗ Có 9 là sai vì gặp 9 thì break trước khi print.\n✗ Có 11 sai vì range(1,11) chỉ tới 10, và đã break ở 9."
+  },
+  {
+    "id": "prog-q-018",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-02-control-flow",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với `diem = 7.5`, chuỗi if/elif xếp loại (>=8 Giỏi, >=6.5 Khá, >=5 Trung bình, else Cần cố gắng) in ra gì?",
+    "options": [
+      "Giỏi",
+      "Khá",
+      "Trung bình",
+      "Khá và Trung bình"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Máy xét từ trên xuống, chạy nhánh đầu tiên đúng rồi dừng.\n✓ Khá đúng vì 7.5>=8 sai, 7.5>=6.5 đúng nên in Khá và bỏ qua phần còn lại.\n✗ Giỏi sai vì 7.5 không >= 8.\n✗ Trung bình sai vì nhánh Khá đã khớp trước và dừng lại.\n✗ Khá và Trung bình sai vì chỉ chạy đúng một nhánh đầu tiên khớp."
+  },
+  {
+    "id": "prog-q-019",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-02-control-flow",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong FizzBuzz, vì sao nhánh kiểm tra \"chia hết cho cả 3 và 5\" phải đặt TRƯỚC nhánh \"chia hết cho 3\"?",
+    "options": [
+      "Vì điều kiện viết sau chạy nhanh hơn",
+      "Vì if/elif chỉ chạy nhánh đầu tiên đúng; nếu xét chia hết cho 3 trước thì số 15 in 'Fizz' rồi dừng, không bao giờ tới 'FizzBuzz'",
+      "Vì 'FizzBuzz' dài hơn nên ưu tiên",
+      "Vì số chia hết cho 5 phải xét cuối cùng"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "if/elif dừng ở nhánh đầu tiên đúng nên điều kiện cụ thể nhất phải đặt trước.\n✓ Số 15 chia hết cho 3 sẽ khớp nhánh 'Fizz' trước và dừng, không tới 'FizzBuzz' nếu đặt sai thứ tự.\n✗ Tốc độ không liên quan đến lý do thứ tự nhánh.\n✗ Độ dài chuỗi không quyết định thứ tự kiểm tra.\n✗ Lý do không phải vì chia hết cho 5 mà vì điều kiện kết hợp cụ thể hơn."
+  },
+  {
+    "id": "prog-q-020",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-02-control-flow",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn muốn in các số từ 1 đến 10 (gồm cả 10) trong Python. Cách nào ĐÚNG?",
+    "options": [
+      "range(1, 10)",
+      "range(1, 11)",
+      "range(0, 10)",
+      "range(1, 9)"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "range(a, b) không lấy số b, nên muốn tới 10 phải dùng 11.\n✓ range(1, 11) tạo dãy 1..10 vì không bao gồm số cuối 11.\n✗ range(1, 10) thiếu số 10, lỗi lệch 1.\n✗ range(0, 10) bắt đầu từ 0 và thiếu 10.\n✗ range(1, 9) chỉ tới 8, thiếu cả 9 và 10."
+  },
+  {
+    "id": "prog-q-021",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-02-control-flow",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn while sau bị lỗi gì?\n```python\ntien = 100\nngay = 0\nwhile tien >= 30:\n    ngay = ngay + 1\nprint(ngay)\n```",
+    "options": [
+      "Lỗi cú pháp thiếu dấu hai chấm",
+      "Vòng lặp vô hạn vì điều kiện không bao giờ trở thành sai",
+      "Lệch 1, in thiếu một ngày",
+      "Không in gì cả vì điều kiện sai ngay từ đầu"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Thân vòng không hề thay đổi `tien` nên `tien >= 30` mãi đúng.\n✓ Vòng lặp vô hạn vì thiếu dòng giảm tien, điều kiện không bao giờ sai.\n✗ Cú pháp vẫn hợp lệ, có đủ dấu hai chấm.\n✗ Không phải lệch 1 mà là vòng vô hạn.\n✗ Điều kiện 100>=30 đúng ngay từ đầu nên vòng vẫn chạy (và chạy mãi)."
+  },
+  {
+    "id": "prog-q-022",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-02-control-flow",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với `tuoi = 25` và `co_bang_lai = True`, biểu thức `tuoi < 12 or tuoi >= 65` cho kết quả gì?",
+    "options": [
+      "Đúng (true)",
+      "Sai (false)",
+      "Báo lỗi",
+      "Phụ thuộc vào co_bang_lai"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "`or` đúng khi ít nhất một vế đúng; ở đây cả hai vế đều sai.\n✓ Sai (false) vì 25<12 sai và 25>=65 cũng sai, or của hai vế sai là sai.\n✗ Đúng sai vì không có vế nào đúng.\n✗ Không báo lỗi, đây là so sánh hợp lệ.\n✗ Biểu thức không dùng co_bang_lai nên không phụ thuộc nó."
+  },
+  {
+    "id": "prog-q-023",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-02-control-flow",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn muốn lặp ĐÚNG 10 lần với biến đếm bắt đầu từ 0. Cách viết nào đúng (kiểu C: JS/Java/Go)?",
+    "options": [
+      "i = 0; i <= 10",
+      "i = 0; i < 10",
+      "i = 1; i < 10",
+      "i = 1; i <= 9"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bắt đầu từ 0, để chạy đúng 10 lần biến chạy qua 0..9, tức điều kiện i < 10.\n✓ i = 0; i < 10 cho các giá trị 0..9, đúng 10 lần.\n✗ i = 0; i <= 10 chạy 0..10 là 11 lần, thừa 1.\n✗ i = 1; i < 10 chạy 1..9 là 9 lần, thiếu 1.\n✗ i = 1; i <= 9 chạy 1..9 là 9 lần, thiếu 1."
+  },
+  {
+    "id": "prog-q-024",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-02-control-flow",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trò đoán số dùng `while True:` rồi thoát bằng `break` khi đoán trúng. Điều này khác gì với vòng lặp vô hạn do lỗi?",
+    "options": [
+      "Không khác gì, cả hai đều là lỗi",
+      "while True là vòng vô hạn CÓ CHỦ ĐÍCH, có lối thoát bằng break; còn vòng vô hạn do lỗi là quên làm điều kiện trở thành sai",
+      "while True luôn an toàn hơn while có điều kiện",
+      "while True chạy nhanh hơn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mẫu while True + break là vòng vô hạn có lối thoát chủ động, khác hẳn lỗi quên cập nhật điều kiện.\n✓ while True có chủ đích kèm break là lối thoát hợp lệ, khác vòng vô hạn do quên làm điều kiện sai.\n✗ Không phải cả hai đều là lỗi; một cái là kỹ thuật cố ý.\n✗ while True không tự động an toàn hơn; an toàn nhờ có break.\n✗ Tốc độ không phải điểm khác biệt ở đây."
+  },
+  {
+    "id": "prog-q-025",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-02-control-flow",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những phát biểu nào về toán tử logic `and` và `or` là ĐÚNG?",
+    "options": [
+      "`and` đúng khi cả hai vế cùng đúng",
+      "`or` đúng khi ít nhất một vế đúng",
+      "`and` chỉ cần một vế đúng là cả câu đúng",
+      "`or` cần cả hai vế đúng mới đúng",
+      "`5 < 12 or 5 >= 65` cho kết quả đúng vì có một vế đúng"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "`and` khó tính (cần cả hai đúng), `or` dễ tính (cần ít nhất một đúng).\n✓ and đúng khi cả hai vế cùng đúng là chính xác.\n✓ or đúng khi ít nhất một vế đúng là chính xác.\n✓ 5<12 đúng nên or cho kết quả đúng dù vế kia sai.\n✗ and chỉ cần một vế đúng là sai; and cần cả hai vế đúng.\n✗ or cần cả hai vế đúng là sai; chỉ cần một vế đúng."
+  },
+  {
+    "id": "prog-q-026",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-02-control-flow",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Đâu là những nguyên nhân/dấu hiệu phổ biến của lỗi lệch 1 (off-by-one)?",
+    "options": [
+      "Nhầm giữa `<` và `<=` trong điều kiện vòng lặp",
+      "Quên rằng `range(1, 10)` của Python không lấy số 10",
+      "Tính tổng 1..100 ra 5050 thay vì kết quả mong đợi khác",
+      "Vòng lặp cho kết quả 'gần đúng nhưng sai sai', thừa hoặc thiếu đúng 1 lần",
+      "Quên cập nhật điều kiện khiến vòng chạy mãi mãi"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Off-by-one là chạy thừa/thiếu đúng 1 lần, thường do nhầm </<= hoặc quên range không lấy số cuối.\n✓ Nhầm < với <= là nguyên nhân kinh điển của lệch 1.\n✓ range(1,10) không lấy 10 dễ gây thiếu một số.\n✓ Kết quả thừa/thiếu đúng 1 lần là dấu hiệu đặc trưng của off-by-one.\n✗ Tổng 1..100 ra 5050 là kết quả ĐÚNG; ra 4950 hay 5151 mới là lệch 1.\n✗ Quên cập nhật điều kiện gây vòng lặp vô hạn, không phải off-by-one."
+  },
+  {
+    "id": "prog-q-027",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-03-functions",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Nguyên tắc DRY (Don't Repeat Yourself) chủ yếu nhằm đạt được điều gì?",
+    "options": [
+      "Mỗi mẩu logic chỉ viết ở một nơi duy nhất, khi đổi chỉ sửa một chỗ",
+      "Làm chương trình chạy nhanh hơn nhờ ít dòng code hơn",
+      "Bắt buộc mọi biến phải là biến toàn cục để dùng chung",
+      "Giảm số lượng hàm xuống mức tối thiểu"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "DRY giúp logic tập trung một nơi nên khi thay đổi chỉ cần sửa duy nhất một chỗ.\n✓ Mỗi mẩu logic ở một nơi, sửa một chỗ là cập nhật mọi nơi dùng nó.\n✗ DRY không nói về tốc độ chạy; mục tiêu là dễ bảo trì, không phải hiệu năng.\n✗ DRY khuyến khích hạn chế biến toàn cục, không bắt mọi biến thành toàn cục.\n✗ DRY không nhằm giảm số hàm; thực tế thường tạo thêm hàm để gom phần lặp."
+  },
+  {
+    "id": "prog-q-028",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-03-functions",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Sau khi định nghĩa hàm chao(ten) như trong bài, điều gì xảy ra nếu bạn chỉ viết định nghĩa mà không có dòng nào gọi hàm?",
+    "options": [
+      "Không có gì xảy ra; code bên trong hàm chưa chạy",
+      "Code bên trong hàm tự động chạy một lần",
+      "Code bên trong hàm chạy lặp vô hạn",
+      "Chương trình báo lỗi vì thiếu đối số"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Định nghĩa hàm giống viết công thức: viết xong chưa có gì xảy ra, phải gọi hàm thì code mới chạy.\n✓ Chỉ định nghĩa mà không gọi thì thân hàm không được thực thi.\n✗ Hàm không tự chạy khi mới định nghĩa.\n✗ Không có vòng lặp nào được tạo ra chỉ vì định nghĩa hàm.\n✗ Thiếu lời gọi không gây lỗi đối số; đơn giản là hàm chưa được dùng."
+  },
+  {
+    "id": "prog-q-029",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-03-functions",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong lời gọi tinhTien(30000, 2) với định nghĩa tinhTien(donGia, soLuong), giá trị 30000 và 2 được gọi là gì?",
+    "options": [
+      "Đối số (argument) — giá trị thật truyền vào lúc gọi",
+      "Tham số (parameter) — biến giữ chỗ trong định nghĩa",
+      "Biến toàn cục dùng chung cho mọi hàm",
+      "Giá trị trả về của hàm"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Giá trị thật truyền vào lúc gọi là đối số; donGia/soLuong trong định nghĩa mới là tham số.\n✓ 30000 và 2 là đối số được điền vào ô trống lúc gọi.\n✗ Tham số là tên giữ chỗ donGia, soLuong, không phải con số thật.\n✗ Chúng không phải biến toàn cục mà chỉ là giá trị truyền vào.\n✗ Đó là đầu vào, không phải giá trị hàm trả về."
+  },
+  {
+    "id": "prog-q-030",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-03-functions",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cho hàm Python:\n\ndef f(x):\n    return x * 2\n    print(\"xong\")\n\nKhi gọi f(5), kết quả là gì?",
+    "options": [
+      "Trả về 10 và KHÔNG in 'xong'",
+      "Trả về 10 và in 'xong'",
+      "In 'xong' rồi trả về 10",
+      "Báo lỗi vì có code sau return"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "return kết thúc hàm ngay lập tức nên dòng print sau nó không bao giờ chạy.\n✓ Hàm trả về 10; lệnh print nằm sau return bị bỏ qua hoàn toàn.\n✗ 'xong' không được in vì nó đứng sau return trong cùng nhánh.\n✗ print không chạy trước return; return là dòng được thực thi.\n✗ Code sau return không gây lỗi, nó chỉ là code không bao giờ chạy."
+  },
+  {
+    "id": "prog-q-031",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-03-functions",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một lập trình viên viết hàm chỉ print kết quả thay vì return, rồi làm tong = tinhTien(...) + 5 trong Python. Vì sao bị lỗi?",
+    "options": [
+      "Hàm không return nên trả về None, cộng None + 5 gây lỗi",
+      "print nhanh hơn return nên gây lệch dữ liệu",
+      "Python không cho phép cộng số với kết quả hàm",
+      "Lỗi do truyền sai thứ tự đối số"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "print chỉ hiển thị; hàm không có return sẽ trả về None, và None + 5 là phép cộng không hợp lệ.\n✓ Hàm thiếu return trả về None nên cộng với 5 gây lỗi.\n✗ Vấn đề không phải tốc độ; print và return có mục đích khác nhau hoàn toàn.\n✗ Python cho cộng với giá trị trả về hợp lệ; vấn đề là giá trị ở đây là None.\n✗ Lỗi đến từ thiếu return, không liên quan thứ tự đối số."
+  },
+  {
+    "id": "prog-q-032",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-03-functions",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn code sau (mô tả chung):\n\nfunction tinhThue() {\n  thue = 0.1   // biến cục bộ\n}\ntinhThue()\nin(thue)   // dòng này\n\nVì sao dòng cuối gây lỗi 'không thấy thue'?",
+    "options": [
+      "thue là biến cục bộ, chỉ sống trong hàm; ngoài hàm không truy cập được",
+      "Phải gọi tinhThue() hai lần thì biến mới tồn tại",
+      "thue bị xoá vì giá trị 0.1 quá nhỏ",
+      "Vì hàm tinhThue không có tham số"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Biến tạo bên trong hàm là biến cục bộ, giống đồ trong phòng riêng, ra ngoài là biến mất.\n✓ thue chỉ tồn tại trong phạm vi hàm nên bên ngoài không nhìn thấy.\n✗ Gọi hàm nhiều lần không làm biến cục bộ rò ra ngoài.\n✗ Giá trị nhỏ không liên quan; vấn đề là scope.\n✗ Việc có hay không có tham số không quyết định scope của biến cục bộ."
+  },
+  {
+    "id": "prog-q-033",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-03-functions",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Theo bài, cách trao đổi dữ liệu 'lành mạnh' giữa các hàm là gì, và vì sao nên hạn chế biến toàn cục?",
+    "options": [
+      "Đưa vào qua tham số, lấy ra qua return; biến toàn cục dễ bị nơi khác vô tình sửa",
+      "Dùng biến toàn cục cho mọi thứ để các hàm khỏi cần tham số",
+      "Tránh return hoàn toàn và chỉ dùng print để truyền dữ liệu",
+      "Đặt mọi biến trong một hàm duy nhất rồi gọi từ đó"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Trao đổi dữ liệu lành mạnh là vào qua tham số, ra qua return; biến toàn cục ai cũng đụng được nên khó truy lỗi.\n✓ Tham số và return là kênh dữ liệu rõ ràng, biến toàn cục dễ bị sửa nhầm.\n✗ Lạm dụng biến toàn cục chính là điều bài khuyên nên tránh.\n✗ print chỉ để hiển thị, không phải kênh truyền dữ liệu giữa hàm.\n✗ Dồn mọi biến vào một hàm không phải nguyên tắc bài nêu."
+  },
+  {
+    "id": "prog-q-034",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-03-functions",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cho ba hàm: tinh_tien_hang(dg, sl) trả dg*sl; tinh_thue(t) trả t*0.1; tinh_hoa_don gọi cả hai rồi cộng lại. Gọi tinh_hoa_don(50000, 2) cho kết quả bao nhiêu?",
+    "options": [
+      "110000",
+      "100000",
+      "10000",
+      "55000"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Tiền hàng = 50000*2 = 100000; thuế = 100000*0.1 = 10000; tổng = 110000.\n✓ 100000 + 10000 = 110000 đúng như ví dụ trong bài.\n✗ 100000 mới chỉ là tiền hàng, còn thiếu phần thuế.\n✗ 10000 chỉ là riêng phần thuế.\n✗ 55000 không khớp với bất kỳ bước tính nào."
+  },
+  {
+    "id": "prog-q-035",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-03-functions",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một hàm hiện làm: tính tiền VÀ gửi email VÀ in hoá đơn. Theo nguyên tắc trong bài, điều này báo hiệu gì và nên xử lý ra sao?",
+    "options": [
+      "Hàm làm quá nhiều việc; nên tách thành nhiều hàm, mỗi hàm một việc",
+      "Hàm rất tốt vì gom được nhiều chức năng vào một chỗ",
+      "Nên đổi mọi biến trong hàm thành biến toàn cục",
+      "Nên đổi tên hàm thành ham1 để dễ nhớ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Một hàm tốt làm một việc duy nhất; phải dùng chữ 'và' để mô tả là dấu hiệu nên tách hàm.\n✓ Hàm ôm nhiều việc nên được tách thành các hàm nhỏ, mỗi hàm một nhiệm vụ.\n✗ Gom nhiều chức năng vào một hàm là điều bài cảnh báo, không phải khen.\n✗ Biến toàn cục không liên quan và còn bị bài khuyên tránh.\n✗ Tên kiểu ham1 là ví dụ đặt tên tệ mà bài phê phán."
+  },
+  {
+    "id": "prog-q-036",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-03-functions",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong quy trình refactor 3 bước của bài, sau khi đã 'tìm phần lặp', bước tiếp theo là gì?",
+    "options": [
+      "Tìm phần KHÁC NHAU giữa các lần lặp — đó chính là tham số",
+      "Đổi mọi biến cục bộ thành biến toàn cục",
+      "Xoá hết phần lặp rồi viết lại từ đầu",
+      "Đổi tên tất cả hàm sang camelCase trước"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bước 2 là tìm phần khác nhau giữa các lần lặp; chính phần đó trở thành tham số của hàm.\n✓ Phần khác nhau (tên, điểm số) được biến thành tham số của hàm gom lại.\n✗ Refactor không yêu cầu chuyển biến cục bộ thành toàn cục.\n✗ Refactor là sửa cách viết mà không đổi hành vi, không phải viết lại từ đầu.\n✗ Đổi kiểu tên không phải bước trong quy trình refactor này."
+  },
+  {
+    "id": "prog-q-037",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-03-functions",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, đâu là một tên hàm TỐT cho hàm kiểm tra một số có phải số chẵn không?",
+    "options": [
+      "laSoChan() — đọc như một câu hỏi đúng/sai",
+      "kiemTra() — chung chung",
+      "lam1() — ngắn gọn",
+      "x() — gõ nhanh"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Hàm trả về đúng/sai nên đọc như câu hỏi, ví dụ laSoChan(), isEmpty().\n✓ laSoChan() nói rõ hàm trả về đúng/sai và đọc như câu hỏi.\n✗ kiemTra() quá mơ hồ, không nói rõ kiểm tra cái gì.\n✗ lam1() là kiểu đặt tên vô nghĩa bài phê phán.\n✗ x() không cho biết hàm làm gì, là tên tệ."
+  },
+  {
+    "id": "prog-q-038",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-03-functions",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những phát biểu nào sau đây ĐÚNG theo nội dung bài về return và print?",
+    "options": [
+      "return đưa giá trị ra cho chương trình dùng tiếp",
+      "return kết thúc hàm ngay lập tức",
+      "print chỉ hiển thị chữ cho con người xem, không 'bắt' lại được để tính tiếp",
+      "print và return là hai cách hoàn toàn tương đương, dùng cái nào cũng như nhau",
+      "Ở JavaScript, dùng kết quả của hàm chỉ print (không return) trong phép cộng có thể ra NaN"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "return trả giá trị và kết thúc hàm; print chỉ để xem; dùng nhầm print thay return gây kết quả lạ như NaN ở JS.\n✓ return đưa giá trị ra để chương trình dùng tiếp.\n✓ return kết thúc hàm ngay, code sau nó không chạy.\n✓ print chỉ hiển thị, không lấy lại được giá trị để tính tiếp.\n✓ Ở JavaScript, cộng với kết quả của hàm chỉ print có thể ra NaN.\n✗ print và return KHÔNG tương đương; mục đích khác nhau hoàn toàn."
+  },
+  {
+    "id": "prog-q-039",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-03-functions",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo bài, những điều nào sau đây ĐÚNG về tham số, đối số và scope?",
+    "options": [
+      "Tham số cũng là biến cục bộ của hàm",
+      "Hai hàm khác nhau có thể cùng đặt tên tham số là x mà không đụng nhau",
+      "Thứ tự đối số phải khớp đúng thứ tự tham số",
+      "Biến tạo bên ngoài mọi hàm là biến toàn cục, phòng nào cũng thấy",
+      "Đối số là tên giữ chỗ trong định nghĩa hàm, còn tham số là giá trị thật lúc gọi"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Tham số là biến cục bộ nên các hàm có thể trùng tên tham số; thứ tự đối số phải khớp tham số; biến ngoài hàm là toàn cục.\n✓ Tham số là biến cục bộ của hàm.\n✓ Hai hàm có thể trùng tên tham số x mà không xung đột.\n✓ Thứ tự đối số phải khớp đúng thứ tự tham số, nếu không dễ gây sai như chuyển tiền nhầm người.\n✓ Biến ngoài mọi hàm là toàn cục, mọi hàm đều thấy.\n✗ Định nghĩa bị đảo ngược: tham số mới là tên giữ chỗ, còn đối số là giá trị thật lúc gọi."
+  },
+  {
+    "id": "prog-q-040",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-04-collections",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Cho danh sách trai_cay = [\"táo\", \"cam\", \"chuối\"]. Lệnh truy cập trai_cay[2] cho ra giá trị nào?",
+    "options": [
+      "\"chuối\"",
+      "\"cam\"",
+      "\"táo\"",
+      "Lỗi vượt phạm vi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Index bắt đầu từ 0, nên index 2 là phần tử thứ ba.\n✓ \"chuối\" nằm ở index 2 (táo=0, cam=1, chuối=2).\n✗ \"cam\" ở index 1, không phải 2.\n✗ \"táo\" ở index 0.\n✗ Danh sách có 3 phần tử nên index 2 hoàn toàn hợp lệ, không lỗi."
+  },
+  {
+    "id": "prog-q-041",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-04-collections",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một danh sách có 5 phần tử. Index hợp lệ cuối cùng là bao nhiêu?",
+    "options": [
+      "4",
+      "5",
+      "6",
+      "0"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Danh sách N phần tử có index chạy từ 0 đến N − 1.\n✓ Với N = 5, index cuối cùng là 5 − 1 = 4.\n✗ Index 5 sẽ vượt phạm vi vì đã vượt qua phần tử cuối.\n✗ Index 6 còn vượt xa hơn.\n✗ 0 là index của phần tử đầu, không phải cuối."
+  },
+  {
+    "id": "prog-q-042",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-04-collections",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đổ danh sách [3, 1, 3, 2, 3] vào một set thì set chứa bao nhiêu phần tử?",
+    "options": [
+      "3",
+      "5",
+      "1",
+      "2"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Set loại bỏ giá trị trùng lặp, chỉ giữ mỗi giá trị một lần.\n✓ Các giá trị khác nhau là {3, 1, 2} nên có 3 phần tử.\n✗ 5 là số phần tử của danh sách gốc, nhưng set khử trùng nên không giữ cả 5.\n✗ 1 và 2 đều quá ít so với số giá trị khác nhau."
+  },
+  {
+    "id": "prog-q-043",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-04-collections",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần lưu số điện thoại theo tên người để \"đưa tên vào, nhận ngay số ra\" mà không phải duyệt cả danh sách. Cấu trúc nào phù hợp nhất?",
+    "options": [
+      "Dictionary/Map (khóa → giá trị)",
+      "List/Array có thứ tự",
+      "Set (túi không trùng)",
+      "Một biến chuỗi nối tất cả số lại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Yêu cầu \"tra theo tên → ra thông tin\" đúng là mô hình khóa → giá trị.\n✓ Dictionary cho phép đưa khóa (tên) vào và lấy giá trị (số) ra cực nhanh.\n✗ List buộc phải duyệt từ đầu để tìm đúng người, chậm và bất tiện.\n✗ Set chỉ trả lời \"có hay không\", không gắn được thông tin số điện thoại.\n✗ Một chuỗi nối tất cả không cho phép tra cứu có cấu trúc."
+  },
+  {
+    "id": "prog-q-044",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-04-collections",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Chạy lần lượt: danh_ba = {\"Lan\": \"111\"}; rồi danh_ba[\"Lan\"] = \"999\". Sau đó danh_ba[\"Lan\"] cho ra gì?",
+    "options": [
+      "\"999\"",
+      "\"111\"",
+      "Cả \"111\" và \"999\"",
+      "Lỗi vì khóa \"Lan\" đã tồn tại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khóa trong từ điển là duy nhất; gán lại cùng khóa sẽ ghi đè giá trị cũ.\n✓ \"999\" là giá trị mới ghi đè, nên đó là kết quả.\n✗ \"111\" đã bị ghi đè và biến mất.\n✗ Từ điển không lưu hai giá trị cho cùng một khóa.\n✗ Gán lại khóa đã có không gây lỗi, chỉ đơn giản là ghi đè."
+  },
+  {
+    "id": "prog-q-045",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-04-collections",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn Python sau in ra số mấy?\n\ngio_hang = [\"trứng\"]\ngio_hang.append(\"sữa\")\ngio_hang.append(\"bánh mì\")\ngio_hang.remove(\"sữa\")\nprint(len(gio_hang))",
+    "options": [
+      "2",
+      "3",
+      "1",
+      "0"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bắt đầu 1 phần tử, thêm 2, rồi xóa 1.\n✓ 1 + 2 − 1 = 2, danh sách còn [\"trứng\", \"bánh mì\"].\n✗ 3 là số trước khi xóa \"sữa\".\n✗ 1 là số phần tử ban đầu, chưa tính các thao tác sau.\n✗ 0 sai vì danh sách vẫn còn phần tử."
+  },
+  {
+    "id": "prog-q-046",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-04-collections",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bài đếm tần suất với câu \"mèo chó mèo cá chó mèo\". Sau khi đếm, giá trị ứng với khóa \"chó\" là bao nhiêu?",
+    "options": [
+      "2",
+      "3",
+      "1",
+      "6"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đếm số lần mỗi từ xuất hiện trong câu.\n✓ \"chó\" xuất hiện 2 lần nên giá trị là 2.\n✗ 3 là số lần của \"mèo\".\n✗ 1 là số lần của \"cá\".\n✗ 6 là tổng số từ trong câu, không phải số lần của riêng \"chó\"."
+  },
+  {
+    "id": "prog-q-047",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-04-collections",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Go, viết gioHang := []string{\"a\"} rồi append(gioHang, \"b\") nhưng KHÔNG gán lại kết quả. Đây là lỗi gì theo bài học?",
+    "options": [
+      "Quên gán lại: append trả về slice mới nên gioHang vẫn không đổi",
+      "Không lỗi, slice tự cập nhật tại chỗ",
+      "Lỗi cú pháp khiến chương trình không biên dịch",
+      "append xóa mất phần tử cũ \"a\""
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài học nhấn mạnh trong Go append phải gán lại vào biến.\n✓ append trả về slice mới; quên gán lại là lỗi kinh điển khiến biến không thay đổi.\n✗ Slice không tự cập nhật tại chỗ theo cách đảm bảo, nên không gán lại là sai.\n✗ Câu lệnh vẫn biên dịch được, đây là lỗi logic chứ không phải cú pháp.\n✗ append không xóa phần tử cũ; nó tạo phiên bản mở rộng."
+  },
+  {
+    "id": "prog-q-048",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-04-collections",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần biết một email \"đã được gửi chưa\" để tránh gửi trùng, không quan tâm thứ tự cũng không cần đếm số lần. Cấu trúc nào hợp nhất?",
+    "options": [
+      "Set",
+      "List/Array",
+      "Dictionary/Map có giá trị là số đếm",
+      "Hai biến boolean riêng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Câu hỏi \"đã có chưa?\" và \"khử trùng lặp\" chính là việc của set.\n✓ Set kiểm tra tồn tại nhanh và tự loại bỏ trùng lặp.\n✗ List phải duyệt từ đầu để kiểm tra, chậm khi dữ liệu lớn.\n✗ Dictionary với số đếm là dư thừa vì ta không cần đếm số lần.\n✗ Vài biến boolean không thể mở rộng cho số lượng email tùy ý."
+  },
+  {
+    "id": "prog-q-049",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-04-collections",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong Go, danh_ba := map[string]string{...} chỉ có khóa \"Lan\". Khi tra danh_ba[\"Hoa\"] (khóa không tồn tại), điều gì xảy ra?",
+    "options": [
+      "Trả về giá trị rỗng \"\" một cách lặng lẽ, không báo lỗi",
+      "Ném lỗi KeyError dừng chương trình",
+      "Trả về undefined",
+      "Tự động tạo khóa \"Hoa\" với giá trị \"Hoa\""
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu rõ Go trả về \"giá trị rỗng\" khi tra khóa không tồn tại, dễ gây nhầm.\n✓ Với map giá trị chuỗi, khóa thiếu trả về \"\" lặng lẽ, không lỗi.\n✗ KeyError là hành vi của Python, không phải Go.\n✗ undefined là hành vi của JavaScript Map.get.\n✗ Việc tra cứu đơn thuần không tự tạo khóa mới với giá trị bằng tên khóa."
+  },
+  {
+    "id": "prog-q-050",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-04-collections",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Vì sao tìm một giá trị trong list lớn lại chậm hơn tra cứu trong dictionary/set?",
+    "options": [
+      "List phải duyệt từ đầu để tìm, còn dictionary/set tra cứu rất nhanh dù chứa hàng triệu phần tử",
+      "Dictionary luôn nhỏ hơn list nên nhanh hơn",
+      "List không cho phép phần tử trùng nên phải so sánh nhiều hơn",
+      "Dictionary giữ thứ tự nên tìm nhanh hơn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khác biệt nằm ở cách truy xuất: duyệt tuần tự so với tra cứu theo khóa.\n✓ List phải đi từ đầu để tìm giá trị, chậm dần khi list lớn; dictionary/set tra cứu nhanh kể cả với hàng triệu phần tử.\n✗ Tốc độ không phụ thuộc dictionary nhỏ hơn list; cả hai có thể rất lớn.\n✗ List thực ra cho phép trùng giá trị, nên lập luận này sai.\n✗ Thứ tự các cặp trong dictionary nói chung không quan trọng và không phải lý do nhanh."
+  },
+  {
+    "id": "prog-q-051",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-04-collections",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những phát biểu nào ĐÚNG về List/Array theo bài học? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Phần tử được xếp theo thứ tự, truy cập bằng index bắt đầu từ 0",
+      "Được phép chứa các giá trị trùng nhau",
+      "Truy cập index N với danh sách N phần tử là hợp lệ",
+      "Khóa phải duy nhất, gán lại sẽ ghi đè",
+      "Index cuối cùng của danh sách N phần tử là N − 1"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "List là dãy có thứ tự, cho trùng, index từ 0 đến N − 1.\n✓ Phần tử có thứ tự, truy cập bằng index bắt đầu từ 0.\n✓ List cho phép trùng giá trị (hai học sinh cùng điểm 8).\n✓ Index cuối là N − 1.\n✗ Truy cập index N với danh sách N phần tử vượt phạm vi (chỉ tới N − 1).\n✗ \"Khóa duy nhất, ghi đè\" là đặc tính của dictionary, không phải list."
+  },
+  {
+    "id": "prog-q-052",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-04-collections",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Khi tra một khóa KHÔNG tồn tại trong từ điển/map, hành vi nào sau đây khớp đúng với ngôn ngữ tương ứng theo bài? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Python ném lỗi KeyError",
+      "JavaScript Map.get trả về undefined",
+      "Java trả về null",
+      "Go ném lỗi NullPointerException",
+      "Go luôn tự thêm khóa mới với giá trị do người dùng nhập"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Mỗi ngôn ngữ phản ứng khác nhau khi tra khóa thiếu.\n✓ Python ném KeyError.\n✓ JavaScript Map.get trả về undefined.\n✓ Java trả về null.\n✗ Go không ném NullPointerException; nó trả về giá trị rỗng lặng lẽ.\n✗ Go không tự thêm khóa mới với giá trị người dùng nhập khi chỉ tra cứu."
+  },
+  {
+    "id": "prog-q-053",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-05-strings-errors",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Cho chuỗi s = \"HELLO\". Ký tự ở vị trí (index) số 0 là gì?",
+    "options": [
+      "'H'",
+      "'E'",
+      "'O'",
+      "Không có vị trí 0, index bắt đầu từ 1"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Index của chuỗi luôn bắt đầu từ 0, nên vị trí 0 là ký tự đầu tiên.\n✓ 'H' là ký tự đầu tiên, nằm ở vị trí 0\n✗ 'E' nằm ở vị trí 1, không phải 0\n✗ 'O' là ký tự cuối, nằm ở vị trí 4\n✗ Index bắt đầu từ 0 chứ không phải 1, nên vẫn có vị trí 0"
+  },
+  {
+    "id": "prog-q-054",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-05-strings-errors",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Với s = \"Hello World\", phép cắt s[0:5] trả về kết quả nào?",
+    "options": [
+      "\"Hello\"",
+      "\"HelloW\"",
+      "\"Hello \"",
+      "\"ello \""
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cắt [0:5] lấy từ vị trí 0 đến TRƯỚC vị trí 5, tức 5 ký tự ở vị trí 0,1,2,3,4.\n✓ \"Hello\" gồm đúng 5 ký tự ở các vị trí 0-4\n✗ \"HelloW\" lấy thêm ký tự vị trí 5, nhưng vị trí 5 không được bao gồm\n✗ \"Hello \" thêm dấu cách ở vị trí 5, vốn bị loại trừ\n✗ \"ello \" bắt đầu sai ở vị trí 1 thay vì 0"
+  },
+  {
+    "id": "prog-q-055",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-05-strings-errors",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn code sau in ra gì?\ns = \"hello\"\ns.upper()\nprint(s)",
+    "options": [
+      "hello",
+      "HELLO",
+      "Hello",
+      "Báo lỗi vì chuỗi bất biến"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chuỗi là bất biến: upper() trả về chuỗi MỚI nhưng không gán lại, nên s gốc không đổi.\n✓ \"hello\" vì kết quả của upper() bị vứt đi, s vẫn nguyên giá trị cũ\n✗ \"HELLO\" chỉ xảy ra nếu gán s = s.upper()\n✗ \"Hello\" không phải hành vi của upper()\n✗ Không báo lỗi: gọi upper() trên chuỗi bất biến hoàn toàn hợp lệ, chỉ là không sửa gốc"
+  },
+  {
+    "id": "prog-q-056",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-05-strings-errors",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Hàm tìm kiếm vị trí (find / indexOf / strings.Index) trả về giá trị gì khi KHÔNG tìm thấy chuỗi con?",
+    "options": [
+      "-1",
+      "0",
+      "Chuỗi rỗng",
+      "Văng exception"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Theo bài, các hàm tìm vị trí trả về -1 khi không tìm thấy.\n✓ -1 là quy ước báo \"không có\"\n✗ 0 là vị trí hợp lệ (vị trí đầu), không thể dùng để báo không tìm thấy\n✗ Chuỗi rỗng không phải giá trị trả về của hàm tìm vị trí\n✗ Không văng exception, hàm trả về -1 một cách bình thường"
+  },
+  {
+    "id": "prog-q-057",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-05-strings-errors",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần ghép tên và tuổi vào một câu thông báo, tránh quên dấu cách và dễ đọc. Cách nào phù hợp nhất theo bài học?",
+    "options": [
+      "Dùng định dạng chuỗi (f-string / template literal / %s %d)",
+      "Cộng từng mảnh bằng dấu + nhiều lần",
+      "Dùng hàm cắt chuỗi (substring)",
+      "Dùng hàm tìm kiếm indexOf"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài khuyên dùng \"khuôn mẫu có chỗ trống\" để trộn biến vào chữ, tránh nối + dài dòng dễ quên dấu cách.\n✓ Định dạng chuỗi là cách được khuyến nghị để trộn biến vào câu\n✗ Cộng + nhiều lần đúng là cách bài nói dài dòng, dễ quên dấu cách\n✗ Cắt chuỗi dùng để lấy đoạn con, không phải để ghép biến\n✗ indexOf dùng để tìm vị trí, không liên quan đến ghép câu"
+  },
+  {
+    "id": "prog-q-058",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-05-strings-errors",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong Go, với s = \"Hà\" (có dấu), len(s) cho kết quả thế nào?",
+    "options": [
+      "Lớn hơn 2 vì len đếm byte, ký tự có dấu chiếm nhiều byte",
+      "Đúng bằng 2 vì len đếm ký tự",
+      "Bằng 1",
+      "Văng lỗi vì Go không hỗ trợ tiếng Việt"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài lưu ý: trong Go len() đếm byte, ký tự tiếng Việt có dấu chiếm nhiều byte nên kết quả lớn hơn số chữ.\n✓ Lớn hơn 2 vì 'à' chiếm nhiều byte; muốn đếm đúng ký tự dùng len([]rune(s))\n✗ Không bằng 2 vì Go đếm byte chứ không đếm ký tự\n✗ Không bằng 1\n✗ Go vẫn xử lý được tiếng Việt, không văng lỗi"
+  },
+  {
+    "id": "prog-q-059",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-05-strings-errors",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Quy trình làm việc với file theo bài học gồm 3 bước nào?",
+    "options": [
+      "Mở → đọc/ghi → đóng",
+      "Đọc → mở → ghi",
+      "Ghi → đóng → mở",
+      "Mở → đóng → đọc"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu rõ quy trình luôn là mở → đọc/ghi → đóng, giống mở sổ, viết, gấp sổ.\n✓ Mở → đọc/ghi → đóng là thứ tự đúng\n✗ Đọc trước khi mở là vô lý, chưa mở thì chưa thể đọc\n✗ Ghi trước rồi mới mở sai thứ tự\n✗ Đóng trước khi đọc khiến không đọc được nội dung"
+  },
+  {
+    "id": "prog-q-060",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-05-strings-errors",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những tình huống nào sau đây có thể gây ra exception (ngoại lệ) lúc chạy, theo bài học? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Chia một số cho 0",
+      "Mở một file không tồn tại",
+      "Đổi chuỗi \"abc\" thành số nguyên",
+      "Lấy ký tự thứ 100 của chuỗi chỉ có 5 ký tự",
+      "Nối hai chuỗi bằng dấu +"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Bài liệt kê các nguồn lỗi kinh điển: chia 0, file không tồn tại, đổi chữ thành số thất bại, truy cập vị trí không có.\n✓ Chia cho 0 gây ZeroDivisionError / ArithmeticException\n✓ Mở file không tồn tại gây FileNotFoundError / IOException\n✓ Đổi \"abc\" thành số gây ValueError / NumberFormatException\n✓ Lấy vị trí 100 của chuỗi 5 ký tự gây IndexError / IndexOutOfBounds\n✗ Nối hai chuỗi bằng + là thao tác an toàn, không gây exception"
+  },
+  {
+    "id": "prog-q-061",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-05-strings-errors",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn code in ra gì?\nchuoi = \"abc\"\ntry:\n    so = int(chuoi)\n    print(\"Số:\", so)\nexcept ValueError:\n    print(\"Không hợp lệ!\")\nprint(\"Chạy tiếp.\")",
+    "options": [
+      "Không hợp lệ!\\nChạy tiếp.",
+      "Số: abc\\nChạy tiếp.",
+      "Không hợp lệ!",
+      "Chương trình văng, không in gì sau lỗi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "int(\"abc\") ném ValueError, khối except bắt và in \"Không hợp lệ!\", sau đó chương trình tiếp tục in \"Chạy tiếp.\".\n✓ In \"Không hợp lệ!\" rồi \"Chạy tiếp.\" vì try/catch đỡ lỗi, chương trình không văng\n✗ Không in \"Số:\" vì int(\"abc\") thất bại trước khi tới dòng print đó\n✗ Thiếu \"Chạy tiếp.\" là sai vì dòng đó nằm ngoài try, luôn chạy\n✗ Không văng vì đã có except bắt lỗi"
+  },
+  {
+    "id": "prog-q-062",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-05-strings-errors",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong JavaScript, parseInt(\"abc\") khác với int(\"abc\") của Python ở điểm nào?",
+    "options": [
+      "parseInt không văng mà trả về NaN, cần kiểm tra bằng isNaN()",
+      "parseInt văng exception giống Python",
+      "parseInt trả về 0",
+      "parseInt trả về chuỗi rỗng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu: parseInt(\"abc\") không văng mà trả về giá trị đặc biệt NaN, nên phải kiểm tra bằng isNaN().\n✓ Trả về NaN và dùng isNaN() để kiểm tra, không văng như Python\n✗ Không văng exception, đó là khác biệt chính so với int() của Python\n✗ Không trả về 0\n✗ Không trả về chuỗi rỗng, mà trả về NaN"
+  },
+  {
+    "id": "prog-q-063",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-05-strings-errors",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Go xử lý lỗi theo triết lý nào khác với try/catch?",
+    "options": [
+      "Hàm trả về thêm giá trị err, kiểm tra if err != nil",
+      "Dùng try/except giống Python",
+      "Tự động bỏ qua mọi lỗi",
+      "Dùng từ khóa catch để bắt lỗi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu Go đi con đường riêng: hàm trả về thêm err, kiểm tra if err != nil (nil = không có lỗi), gần như không dùng try/catch.\n✓ Trả về err và kiểm tra if err != nil là cách của Go\n✗ Go không dùng try/except\n✗ Go không tự bỏ qua lỗi; lập trình viên phải kiểm tra err\n✗ Go không dùng từ khóa catch"
+  },
+  {
+    "id": "prog-q-064",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-05-strings-errors",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, đâu là những thực hành tốt khi xử lý lỗi và validate input? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Chỉ bọc try/catch quanh những đoạn thật sự có thể lỗi",
+      "Trong catch luôn thông báo hoặc ghi lại lỗi",
+      "Thông báo lỗi nói rõ người dùng cần làm gì",
+      "Kiểm tra dữ liệu người dùng trước khi dùng",
+      "Bọc try/catch quanh toàn bộ chương trình và bỏ qua lỗi im lặng"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Bài cảnh báo không bọc try/catch quanh toàn bộ rồi catch im lặng, và khuyên validate sớm, thông báo lỗi rõ ràng.\n✓ Chỉ try đoạn thật sự có thể lỗi giúp tránh bug tàng hình\n✓ Trong catch luôn báo/ghi lỗi để không bỏ sót\n✓ Thông báo lỗi nên nói người dùng cần làm gì, tránh thuật ngữ máy móc\n✓ Validate dữ liệu trước khi dùng là nguyên tắc vàng\n✗ Bọc toàn bộ rồi catch im lặng là lỗi người mới hay gặp, tạo bug tàng hình"
+  },
+  {
+    "id": "prog-q-065",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-05-strings-errors",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Hàm kiem_tra_tuoi dùng chiến lược 2 lớp. Với đầu vào \"  150 \", thông báo trả về là gì?",
+    "options": [
+      "Tuổi phải từ 1 đến 120!",
+      "Bạn chưa nhập gì cả!",
+      "Tuổi phải là một con số!",
+      "Hợp lệ: 150 tuổi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "\"  150 \" sau khi cắt khoảng trắng thành \"150\", không rỗng, đổi sang số thành công (150), nhưng vượt khoảng 1-120.\n✓ \"Tuổi phải từ 1 đến 120!\" vì 150 lớn hơn 120\n✗ Không phải \"chưa nhập gì\" vì sau khi trim vẫn còn \"150\"\n✗ Không phải \"phải là con số\" vì 150 đổi sang số thành công\n✗ Không \"Hợp lệ\" vì 150 nằm ngoài khoảng cho phép"
+  },
+  {
+    "id": "prog-q-066",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-06-oop-basics",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo phép so sánh trong bài, mối quan hệ giữa class và object giống với cặp nào nhất?",
+    "options": [
+      "Khuôn bánh và chiếc bánh đúc ra từ khuôn",
+      "Hai chiếc bánh giống hệt nhau",
+      "Một chiếc bánh và miếng bánh cắt ra",
+      "Cái đĩa và cái nĩa"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Class là bản thiết kế, object là thực thể cụ thể được tạo ra từ nó.\n✓ Khuôn bánh (thiết kế) đúc ra chiếc bánh (thực thể) đúng với cặp class - object.\n✗ Hai chiếc bánh đều là object, không phải quan hệ class - object.\n✗ Bánh và miếng cắt ra là quan hệ bộ phận, không phải khuôn - sản phẩm.\n✗ Đĩa và nĩa là hai vật khác nhau, không liên quan khuôn - sản phẩm."
+  },
+  {
+    "id": "prog-q-067",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-06-oop-basics",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong OOP, \"hành động mà object làm được\" (ví dụ con chó biết sủa, tài khoản biết rút tiền) được gọi là gì?",
+    "options": [
+      "Phương thức (method)",
+      "Thuộc tính (attribute)",
+      "Constructor",
+      "Class cha"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Phương thức là hàm gắn vào class, biểu diễn hành động object làm được.\n✓ Phương thức đúng là hành động object thực hiện như sủa, rút tiền.\n✗ Thuộc tính là dữ liệu object có (tên, số dư), không phải hành động.\n✗ Constructor chỉ là hàm chạy lúc tạo object, không phải mọi hành động.\n✗ Class cha là khái niệm về kế thừa, không phải hành động."
+  },
+  {
+    "id": "prog-q-068",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-06-oop-basics",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Cú pháp gọi con chó số 1 sủa được viết đúng là?",
+    "options": [
+      "cho_1.sua()",
+      "sua(cho_1)",
+      "Cho.sua()",
+      "cho_1 = sua"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Gọi phương thức theo dạng đối_tượng.phương_thức(), dấu chấm đọc là \"của\".\n✓ cho_1.sua() nghĩa là gọi hành động sủa của con chó số 1, đúng cú pháp.\n✗ sua(cho_1) là gọi hàm rời, không phải gọi phương thức trên object.\n✗ Cho.sua() là gọi trên khuôn (class), không phải trên object cụ thể.\n✗ cho_1 = sua là phép gán, không phải lời gọi phương thức."
+  },
+  {
+    "id": "prog-q-069",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-06-oop-basics",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cho class TaiKhoanNganHang trong bài. Chạy: tk = TaiKhoanNganHang(\"Lan\", 100); tk.gui_tien(50); tk.rut_tien(200); tk.rut_tien(120). Số dư cuối cùng của tk là bao nhiêu?",
+    "options": [
+      "30",
+      "130",
+      "80",
+      "-20"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lần lượt: gửi 50 thành 150; rút 200 bị từ chối (không đủ), vẫn 150; rút 120 thành 30.\n✓ 30 đúng vì lệnh rút 200 bị chặn còn rút 120 thì thành công.\n✗ 130 sai vì coi như rút 200 thành công (100+50-200 không thể).\n✗ 80 sai vì tính nhầm các bước.\n✗ -20 sai vì rút 200 đã bị từ chối do kiểm tra số dư, không trừ."
+  },
+  {
+    "id": "prog-q-070",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-06-oop-basics",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một lập trình viên mới viết trong Python: def __init__(self, ten): ten = ten. Sau khi tạo object, họ thấy object không lưu được tên. Lỗi nằm ở đâu?",
+    "options": [
+      "Quên self.: phải viết self.ten = ten",
+      "Constructor phải tên là constructor",
+      "Thiếu từ khoá new khi gán",
+      "Phải khai báo kiểu dữ liệu cho ten"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Không có self. thì ten chỉ là biến cục bộ, mất đi khi hàm kết thúc, object không lưu gì.\n✓ Viết self.ten = ten mới gắn dữ liệu vào chính object đó.\n✗ Trong Python constructor có tên cố định __init__, không phải constructor.\n✗ new là từ khoá tạo object trong JS/Java, không liên quan gán trong Python.\n✗ Python không yêu cầu khai báo kiểu cho thuộc tính."
+  },
+  {
+    "id": "prog-q-071",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-06-oop-basics",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Sau khi tạo tk = TaiKhoanNganHang(\"Lan\", 100) và tk2 = TaiKhoanNganHang(\"Hùng\", 999), bạn gọi tk2.rut_tien(500). Số dư của tk thay đổi thế nào?",
+    "options": [
+      "Không đổi, vẫn 100 — mỗi object có dữ liệu riêng",
+      "Giảm xuống còn 100 - 500 = -400",
+      "Giảm còn 0 vì hai object dùng chung số dư",
+      "Tăng lên vì tiền của tk2 chuyển sang tk"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mỗi object giữ một bản sao dữ liệu riêng, nên thao tác trên object này không ảnh hưởng object kia.\n✓ tk vẫn 100 vì tk và tk2 có vùng dữ liệu so_du độc lập.\n✗ tk không bị trừ vì lệnh rút chỉ tác động lên tk2.\n✗ Hai object không dùng chung số dư; mỗi object riêng biệt.\n✗ Không có chuyện tự chuyển tiền giữa hai object."
+  },
+  {
+    "id": "prog-q-072",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-06-oop-basics",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Viết TaiKhoanNganHang.rut_tien(50) (gọi trực tiếp trên class) thay vì trên một object. Vì sao bài học nói cách này sai?",
+    "options": [
+      "Đang gọi hành động trên khuôn, chưa có object cụ thể để thao tác dữ liệu",
+      "Tên phương thức rut_tien không tồn tại",
+      "Phải truyền thêm tham số self bằng tay",
+      "Class không thể chứa phương thức"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Phương thức cần một object cụ thể để biết thao tác trên dữ liệu của ai; class chỉ là khuôn.\n✓ Gọi trên khuôn (class) là sai vì chưa có chiếc bánh nào để ăn — phải tạo object trước.\n✗ rut_tien có tồn tại trong class, lỗi không phải do thiếu tên.\n✗ Vấn đề không phải truyền self tay mà là thiếu object.\n✗ Class hoàn toàn có thể chứa phương thức; đó là bản chất của class."
+  },
+  {
+    "id": "prog-q-073",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-06-oop-basics",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần mô hình hoá quan hệ giữa XeHoi và BanhXe. Cách thiết kế đúng theo bài là?",
+    "options": [
+      "XeHoi CÓ BanhXe — để BanhXe làm thuộc tính của XeHoi",
+      "XeHoi kế thừa BanhXe vì cả hai đều có bánh",
+      "BanhXe kế thừa XeHoi vì bánh thuộc về xe",
+      "Gộp XeHoi và BanhXe thành một class duy nhất"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chỉ kế thừa khi quan hệ \"là một\" đúng; quan hệ \"có một\" thì dùng thuộc tính.\n✓ Xe hơi CÓ bánh xe nên BanhXe nên là thuộc tính của XeHoi.\n✗ XeHoi không LÀ BanhXe, nên kế thừa ở đây là lạm dụng.\n✗ BanhXe cũng không LÀ XeHoi, kế thừa ngược lại vẫn sai.\n✗ Gộp làm một class xoá mất ranh giới mô hình hoá hợp lý."
+  },
+  {
+    "id": "prog-q-074",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-06-oop-basics",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cho TaiKhoanTietKiem kế thừa TaiKhoanNganHang và có thêm tinh_lai() (cộng 5% số dư). Chạy: tk = TaiKhoanTietKiem(\"Mai\", 1000); tk.rut_tien(100); tk.tinh_lai(). Số dư cuối là?",
+    "options": [
+      "945",
+      "950",
+      "900",
+      "1050"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "rut_tien(100) thừa hưởng từ class cha đưa số dư về 900; tinh_lai cộng 5% của 900 = 45 thành 945.\n✓ 945 đúng: 900 + làm tròn(900 × 0.05) = 900 + 45.\n✗ 950 sai vì tính lãi trên 1000 thay vì trên 900 sau khi rút.\n✗ 900 sai vì bỏ qua bước tinh_lai cộng lãi.\n✗ 1050 sai vì bỏ qua bước rút 100 trước đó."
+  },
+  {
+    "id": "prog-q-075",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-06-oop-basics",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong TaiKhoanTietKiem, phương thức tinh_lai() gọi self.gui_tien(lai) dù class này KHÔNG hề định nghĩa gui_tien. Vì sao vẫn chạy được?",
+    "options": [
+      "Kế thừa: class con tự động nhận phương thức gui_tien từ class cha",
+      "Python tự sinh ra mọi phương thức bắt đầu bằng gui_",
+      "gui_tien là hàm toàn cục nên mọi class đều gọi được",
+      "Vì tinh_lai và gui_tien trùng tên tham số"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Class con thừa hưởng sẵn mọi thuộc tính và phương thức của class cha nên dùng lại được gui_tien.\n✓ Nhờ kế thừa, gui_tien của class cha có sẵn trong object con.\n✗ Python không tự sinh phương thức theo tiền tố tên.\n✗ gui_tien là phương thức của class cha, không phải hàm toàn cục.\n✗ Trùng tên tham số không liên quan đến việc gọi được phương thức."
+  },
+  {
+    "id": "prog-q-076",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-06-oop-basics",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bài nhấn mạnh bên ngoài chỉ gọi tk.rut_tien(200) mà không cần biết bên trong kiểm tra ra sao, và object tự bảo vệ dữ liệu. Đây là biểu hiện của trụ cột OOP nào?",
+    "options": [
+      "Encapsulation (đóng gói)",
+      "Inheritance (kế thừa)",
+      "Khởi tạo (instantiate)",
+      "So sánh đối tượng (is)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Giấu chi tiết bên trong và chỉ phơi ra hành động chính là encapsulation.\n✓ Encapsulation đúng: object tự bảo vệ dữ liệu, người dùng chỉ gọi hành động.\n✗ Inheritance nói về việc class con nhận đặc điểm class cha, khác vấn đề này.\n✗ Khởi tạo là hành động tạo object, không phải việc giấu chi tiết.\n✗ So sánh đối tượng chỉ là kiểm tra hai object có cùng một thực thể hay không."
+  },
+  {
+    "id": "prog-q-077",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-06-oop-basics",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo bài, những phát biểu nào về self / this là ĐÚNG?",
+    "options": [
+      "Nó trỏ tới chính object đang được xử lý, để phân biệt object này với object khác",
+      "Trong Python phải viết self tường minh làm tham số đầu của phương thức",
+      "Trong JavaScript/Java dùng this và this có sẵn, không cần khai báo",
+      "self là một class cha mặc định mà mọi object kế thừa",
+      "self chỉ tồn tại bên ngoài class, dùng để tạo object"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "self/this là cách object tự chỉ vào bản thân bên trong phương thức.\n✓ Nó trỏ tới object hiện tại (vd con An so với con Bình) là mô tả đúng.\n✓ Python yêu cầu viết self tường minh ở đầu mỗi phương thức.\n✓ JavaScript và Java dùng this và this có sẵn, không cần khai báo.\n✗ self không phải class cha mặc định; đó là cách hiểu sai về kế thừa.\n✗ self dùng bên trong phương thức của object, không phải bên ngoài để tạo object."
+  },
+  {
+    "id": "prog-q-078",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-06-oop-basics",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những phát biểu nào về constructor là ĐÚNG theo bài học?",
+    "options": [
+      "Là hàm đặc biệt tự chạy đúng một lần khi object được tạo",
+      "Thường dùng để nhận nguyên liệu và gán vào thuộc tính của object mới",
+      "Trong Java constructor trùng tên với class",
+      "Go có constructor riêng giống Python, viết là __init__",
+      "Phải gọi tay sau khi tạo object thì thuộc tính mới được gán"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Constructor là hàm khởi tạo tự chạy khi object ra đời để gán giá trị ban đầu.\n✓ Nó tự chạy đúng một lần khi object được tạo.\n✓ Nó nhận nguyên liệu (tên, tuổi...) và gán vào thuộc tính object mới.\n✓ Trong Java constructor trùng tên với class.\n✗ Go KHÔNG có constructor riêng; lập trình viên tự viết hàm NewXxx theo quy ước.\n✗ Constructor tự chạy khi tạo object, không cần gọi tay sau đó."
+  },
+  {
+    "id": "prog-q-079",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-07-debugging",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một chương trình chạy không báo lỗi gì, vẫn cho ra kết quả — nhưng kết quả lại sai so với ý muốn (định tính tổng nhưng lại ra tích). Đây là loại lỗi nào?",
+    "options": [
+      "Lỗi cú pháp (syntax error)",
+      "Lỗi khi chạy (runtime error)",
+      "Lỗi logic (logic error)",
+      "Không phải lỗi, vì chương trình vẫn chạy được"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Chương trình chạy êm nhưng ra kết quả sai ý muốn chính là dấu hiệu của lỗi logic.\n✓ Lỗi logic: đúng cú pháp, chạy được, nhưng làm sai ý — và là loại khó nhất vì máy không báo gì.\n✗ Lỗi cú pháp khiến máy không hiểu và báo ngay, chương trình không chạy được.\n✗ Lỗi khi chạy làm chương trình sập giữa chừng (vd chia cho 0), không phải cho ra kết quả sai êm ru.\n✗ Kết quả sai so với ý muốn vẫn là một bug, dù chương trình không sập."
+  },
+  {
+    "id": "prog-q-080",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-07-debugging",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, vì sao lỗi logic được coi là loại khó tìm nhất trong ba loại lỗi?",
+    "options": [
+      "Vì máy tính báo lỗi quá dài dòng khó đọc",
+      "Vì chương trình vẫn chạy bình thường, máy không báo gì, chỉ kết quả sai",
+      "Vì nó luôn làm chương trình sập ngay lập tức",
+      "Vì nó chỉ xuất hiện trong các ngôn ngữ biên dịch"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Lỗi logic khó nhất vì không có dấu hiệu cảnh báo từ máy.\n✓ Chương trình chạy êm ru, không báo lỗi, chỉ cho ra kết quả sai nên rất khó phát hiện nguyên nhân.\n✗ Lỗi logic thường không kèm thông báo lỗi nào cả, nói gì đến dài dòng.\n✗ Làm sập ngay là đặc điểm của lỗi khi chạy, không phải lỗi logic.\n✗ Lỗi logic xảy ra ở mọi ngôn ngữ, không riêng ngôn ngữ biên dịch."
+  },
+  {
+    "id": "prog-q-081",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-07-debugging",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Java/Go, hàm tính trung bình có biến `tong` kiểu số nguyên và viết `return tong / len`. Với dữ liệu [8, 8, 9] (tổng 25, 3 phần tử), kết quả trả về sẽ là gì?",
+    "options": [
+      "8.33",
+      "8 (do chia nguyên, mất phần thập phân)",
+      "9",
+      "Báo lỗi runtime vì kiểu không khớp"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "25 chia 3 trong phép chia nguyên cho ra 8, phần thập phân bị cắt bỏ.\n✓ Vì cả tử và mẫu đều là số nguyên, Java/Go làm phép chia nguyên: 25/3 = 8 (mất 0.33).\n✗ 8.33 chỉ ra được nếu ép một vế sang số thực (double/float64) TRƯỚC khi chia.\n✗ 9 không phải kết quả của bất kỳ phép chia nào ở đây.\n✗ Phép chia nguyên hai số int hoàn toàn hợp lệ, không gây lỗi runtime."
+  },
+  {
+    "id": "prog-q-082",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-07-debugging",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một biến trong vòng lặp có giá trị bất ngờ. Bạn muốn debug bằng print. Cách in nào hữu ích nhất theo lời khuyên của bài?",
+    "options": [
+      "print(x) — in mỗi giá trị trần trụi để gọn màn hình",
+      "print(\"x =\", x) — in kèm nhãn để biết số nào là số nào",
+      "Chỉ in một lần sau khi vòng lặp kết thúc",
+      "In toàn bộ 5–6 biến cùng lúc mà không nhãn để thấy hết"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "In kèm nhãn giúp bạn đọc được output, đây là mẹo cốt lõi của print debugging.\n✓ In kèm nhãn (\"x =\", x) cho biết con số thuộc về biến nào — quan sát nhiều dòng số mới không bị lẫn.\n✗ In số trần trụi khiến bạn không biết số nào là biến nào khi có nhiều dòng.\n✗ In một lần sau vòng lặp không cho thấy biến thay đổi qua từng bước — mất ý nghĩa soi từng bước.\n✗ In một loạt số không nhãn còn rối hơn, đi ngược lời khuyên in kèm nhãn."
+  },
+  {
+    "id": "prog-q-083",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-07-debugging",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đọc stack trace của Python dưới đây, nên bắt đầu đọc từ đâu để biết loại lỗi?\n\nTraceback (most recent call last):\n  File \"main.py\", line 7, in <module>\n  File \"main.py\", line 5, in tinh_toan\n  File \"main.py\", line 2, in chia\nZeroDivisionError: division by zero",
+    "options": [
+      "Dòng đầu tiên 'Traceback...'",
+      "Dòng cuối cùng: tên lỗi và mô tả (ZeroDivisionError)",
+      "Dòng giữa, vì nó nằm chính giữa chuỗi",
+      "Bất kỳ dòng nào có chữ 'main.py'"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Với Python, tên lỗi và mô tả nằm ở dòng cuối cùng của stack trace.\n✓ Đọc dòng cuối trước: ZeroDivisionError: division by zero cho biết ngay loại và bản chất lỗi.\n✗ Dòng 'Traceback...' chỉ là tiêu đề mở đầu, không cho biết lỗi gì.\n✗ Dòng giữa chỉ là một mắt xích trong chuỗi gọi hàm, không phải tên lỗi.\n✗ Nhiều dòng có 'main.py' nhưng chúng chỉ là vị trí các hàm, tên lỗi mới là thứ cần đọc đầu tiên."
+  },
+  {
+    "id": "prog-q-084",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-07-debugging",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Stack trace cho thấy chương trình sập tại hàm `chia` (nơi thực hiện `a / b`), nhưng `main` gọi `tinh_toan`, `tinh_toan` gọi `chia(10, 0)`. Số 0 gây lỗi đến từ đâu, và điều này dạy ta nguyên tắc gì?",
+    "options": [
+      "Lỗi gốc ở `chia`; nơi sập luôn là nơi có lỗi gốc",
+      "Số 0 truyền từ `tinh_toan`; nơi sập không phải lúc nào cũng là nơi có lỗi gốc",
+      "Lỗi gốc ở `main` vì nó chạy đầu tiên",
+      "Không thể biết nguyên nhân từ stack trace"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Domino đổ ở chia, nhưng số 0 được truyền vào từ tinh_toan.\n✓ Số 0 đến từ tinh_toan; bài nhấn mạnh nơi sập không nhất thiết là nơi chứa lỗi gốc.\n✗ chia là nơi đổ vỡ nhưng không phải nơi tạo ra giá trị 0 sai — đó mới là gốc.\n✗ main chỉ khởi động chuỗi gọi, không phải nơi sinh ra số 0.\n✗ Chính stack trace là bản đồ giúp lần ngược chuỗi gọi hàm để tìm nguyên nhân."
+  },
+  {
+    "id": "prog-q-085",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-07-debugging",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong VS Code, bạn nhấn F5 để debug nhưng chương trình chạy vù một cái rồi kết thúc, không dừng lại ở đâu. Nguyên nhân phổ biến nhất là gì?",
+    "options": [
+      "Cài sai extension ngôn ngữ",
+      "Quên đặt breakpoint trước khi nhấn F5",
+      "Dùng nhầm Step Over thay vì Step Into",
+      "Chương trình không có hàm main"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Không có breakpoint thì không có điểm nào để chương trình tạm dừng.\n✓ Quên đặt breakpoint: như không có barie trên đường, xe chạy thẳng về đích — đây là lỗi người mới hay gặp.\n✗ Sai extension thường khiến debug không khởi động được, không phải chạy vù rồi xong.\n✗ Step Over/Step Into chỉ dùng SAU khi đã dừng tại breakpoint.\n✗ Thiếu hàm main có thể gây lỗi khác, nhưng triệu chứng 'chạy vù rồi kết thúc' khi debug điển hình là do thiếu breakpoint."
+  },
+  {
+    "id": "prog-q-086",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-07-debugging",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn đang debug và đặt breakpoint tại dòng GỌI hàm `xu_ly_du_lieu()`. Khi chương trình dừng ở đó, bạn nghi lỗi nằm BÊN TRONG hàm này. Nên dùng nút nào?",
+    "options": [
+      "Step Over (F10)",
+      "Step Into (F11)",
+      "Step Out (Shift+F11)",
+      "Continue (F5)"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Muốn vào bên trong hàm đang được gọi thì dùng Step Into.\n✓ Step Into nhảy VÀO trong hàm tại dòng hiện tại — đúng nhu cầu xem bên trong xu_ly_du_lieu.\n✗ Step Over chạy hết hàm đó rồi dừng ở dòng kế — bỏ qua phần bên trong, không xem được.\n✗ Step Out dùng khi đang Ở TRONG một hàm và muốn chạy nốt để quay ra, không phải để đi vào.\n✗ Continue phóng tới breakpoint kế tiếp, bỏ qua việc quan sát từng bước trong hàm."
+  },
+  {
+    "id": "prog-q-087",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-07-debugging",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Bạn vừa được giao tham gia một dự án lớn có sẵn hàng nghìn dòng code lạ. Theo bài, những cách tiếp cận nào là ĐÚNG ĐẮN? (chọn nhiều)",
+    "options": [
+      "Đọc README, chạy thử chương trình xem nó LÀM GÌ trước khi hiểu nó làm NHƯ THẾ NÀO",
+      "Đọc tuần tự từ dòng 1 đến hết file như đọc tiểu thuyết",
+      "Chọn một tính năng và lần theo một luồng dữ liệu từ đầu đến cuối",
+      "Cố hiểu 100% toàn bộ codebase trước khi dám đụng vào bất cứ thứ gì",
+      "Dùng F12 (Go to Definition) và đặt breakpoint chạy debug để 'đọc' code sống động"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      4
+    ],
+    "explanation": "Chiến lược đúng là đi từ tổng quan xuống chi tiết và theo luồng thực thi.\n✓ Đọc README rồi chạy thử cho thấy bức tranh tổng quan trước khi đào chi tiết.\n✓ Lần theo MỘT luồng dữ liệu của một tính năng giúp hiểu dần mà không bị quá tải.\n✓ F12 và breakpoint là công cụ đọc code sống động, lần theo luồng thực thi thật.\n✗ Đọc tuần tự dòng 1 đến hết như tiểu thuyết là sai vì code không chạy theo thứ tự viết.\n✗ Cố hiểu 100% trước khi làm gì là sai — nên chấp nhận hiểu 70% rồi vừa làm vừa hiểu thêm."
+  },
+  {
+    "id": "prog-q-088",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-07-debugging",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn loay hoay 2 tiếng với một bug, đọc thầm code mãi không thấy. Đồng nghiệp gợi ý 'rubber duck debugging'. Tại sao kỹ thuật nói thành lời từng dòng lại hiệu quả?",
+    "options": [
+      "Vì nói to giúp máy tính nhận diện giọng và tự sửa lỗi",
+      "Vì khi đọc thầm não đọc cái bạn TƯỞNG đã viết; nói thành lời buộc xử lý từng chi tiết thật",
+      "Vì con vịt cao su có thuật toán phát hiện bug",
+      "Vì nói chậm làm chương trình chạy chậm lại để dễ quan sát"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Diễn đạt thành lời buộc bạn đối mặt với code thực tế thay vì phiên bản trong đầu.\n✓ Đọc thầm khiến não lướt qua cái bạn TƯỞNG mình viết; nói thành lời từng dòng buộc xử lý từng chi tiết, lộ ra điểm bất nhất.\n✗ Rubber duck không liên quan gì đến nhận diện giọng nói của máy.\n✗ Con vịt chỉ là vật vô tri để bạn giải thích, nó không có thuật toán nào cả.\n✗ Tốc độ nói không ảnh hưởng tốc độ chạy chương trình."
+  },
+  {
+    "id": "prog-q-089",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-07-debugging",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Bạn đang HỌC lập trình và muốn dùng AI assistant đúng cách để giỏi lên thật sự. Những hành vi nào phù hợp với tinh thần 'AI là gia sư, không phải người làm bài hộ'? (chọn nhiều)",
+    "options": [
+      "Khi gặp lỗi, nhờ AI giải thích vì sao lỗi xảy ra và gợi ý hướng sửa, không xin code hoàn chỉnh",
+      "Bảo AI 'làm bài này cho tôi' rồi copy-paste thẳng kết quả nộp",
+      "Tự thử ít nhất 15–30 phút trước khi hỏi AI",
+      "Khi AI đưa đoạn code có chỗ không hiểu, hỏi tiếp cho đến khi hiểu từng dòng",
+      "Luôn tin tưởng tuyệt đối code AI đưa mà không cần chạy thử kiểm chứng"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "Dùng AI như gia sư nghĩa là vẫn tự tư duy và hiểu mọi thứ nhận về.\n✓ Nhờ AI giải thích vì sao lỗi và gợi ý hướng, không xin code hoàn chỉnh, giúp bạn vẫn tự sửa được.\n✓ Tự thử 15–30 phút trước giữ lại khoảnh khắc não xây kết nối.\n✓ Hỏi đến khi hiểu từng dòng đảm bảo bạn thật sự học chứ không mượn tạm.\n✗ 'Làm bài cho tôi' rồi copy-paste là dùng AI như người làm bài hộ — điểm cao hôm nay, trắng tay ngày thi.\n✗ Tin tuyệt đối không kiểm chứng là sai vì AI có thể bịa (hallucination) rất tự tin."
+  },
+  {
+    "id": "prog-q-090",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-07-debugging",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn gặp một bug, sửa cùng lúc 4 chỗ rồi chạy lại — và lỗi biến mất. Theo bài, vấn đề của cách làm này là gì?",
+    "options": [
+      "Không có vấn đề gì, miễn lỗi hết là được",
+      "Bạn không biết chỗ nào trong 4 chỗ đã thực sự cứu bạn (và nếu thêm lỗi cũng không biết chỗ nào gây ra)",
+      "Chạy lại nhiều lần làm hỏng chương trình",
+      "Sửa nhiều chỗ luôn khiến chương trình chạy chậm hơn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Thay đổi nhiều thứ một lúc làm mất khả năng truy ra nguyên nhân.\n✓ Sửa 4 chỗ cùng lúc: hết lỗi thì không biết chỗ nào cứu, thêm lỗi thì không biết chỗ nào gây — nên mỗi lần chỉ thay đổi một thứ.\n✗ 'Miễn hết lỗi là được' sai vì bạn không học được gì và có thể vẫn còn lỗi ẩn.\n✗ Chạy lại chương trình nhiều lần không làm hỏng nó.\n✗ Số chỗ sửa không quyết định tốc độ chạy theo cách này."
+  },
+  {
+    "id": "prog-q-091",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-07-debugging",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Theo checklist debug của bài, khi bí một lỗi bạn nên hỏi AI/bạn bè vào THỜI ĐIỂM nào, và quan trọng là kèm theo gì?",
+    "options": [
+      "Ngay lập tức khi vừa thấy lỗi, chỉ cần dán code",
+      "Sau khi đã tự thử (khoảng 30 phút), kèm mô tả rõ: muốn gì, đã thử gì, lỗi gì",
+      "Chỉ sau khi đã sửa xong, để xác nhận lại",
+      "Bất cứ lúc nào, không cần mô tả vì AI tự hiểu hết"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Hỏi sau khi tự thử và kèm mô tả đầy đủ giúp nhận được trợ giúp hữu ích nhất.\n✓ Bí sau khoảng 30 phút mới hỏi, kèm mô tả rõ muốn gì, đã thử gì, lỗi gì, đúng như checklist.\n✗ Hỏi ngay lập tức cướp mất khoảnh khắc não tự xây kết nối khi đang bí.\n✗ Hỏi sau khi đã sửa xong thì đâu còn cần trợ giúp để vượt qua chỗ bí.\n✗ Không mô tả khiến người/AI khó nắm vấn đề; mô tả rõ ràng là yêu cầu trong checklist."
+  },
+  {
+    "id": "prog-q-092",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-08-mini-project",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong app CLI quản lý chi tiêu, \"vòng lặp chính\" (main loop) đóng vai trò gì?",
+    "options": [
+      "Liên tục hiện menu, đọc lựa chọn, xử lý rồi lặp lại cho đến khi người dùng chọn Thoát",
+      "Chỉ chạy đúng một lần rồi tự kết thúc chương trình",
+      "Đọc toàn bộ file dữ liệu vào bộ nhớ và dừng lại",
+      "Vẽ giao diện nút bấm cho người dùng tương tác"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Vòng lặp chính giống nhân viên thu ngân: chào - hỏi - phục vụ - lặp lại cho đến giờ đóng cửa.\n✓ Hiện menu, đọc lựa chọn, xử lý rồi lặp lại đến khi chọn Thoát đúng mô tả main loop.\n✗ Chạy một lần rồi kết thúc thì không phải vòng lặp.\n✗ Đọc file rồi dừng là việc của load, không phải main loop.\n✗ CLI không có nút bấm hay hình ảnh, chỉ gõ phím trong terminal."
+  },
+  {
+    "id": "prog-q-093",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-08-mini-project",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao bài học khuyên chia dự án thành 5 \"milestone\"?",
+    "options": [
+      "Mỗi cột mốc xong là app chạy được ngay, dễ kiểm tra từng giai đoạn",
+      "Để code chạy nhanh hơn khi biên dịch",
+      "Vì trình thông dịch yêu cầu chia file thành 5 phần",
+      "Để tránh phải dùng vòng lặp while"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Milestone chia dự án lớn thành bước nhỏ, mỗi bước xong là app chạy được, giống xây nhà từng giai đoạn.\n✓ Mỗi cột mốc cho ra app chạy được và kiểm tra được - đúng tinh thần milestone.\n✗ Chia milestone không liên quan tốc độ biên dịch.\n✗ Không có yêu cầu kỹ thuật nào bắt chia 5 phần.\n✗ Vòng lặp while vẫn được dùng (milestone 1 chính là menu vòng lặp)."
+  },
+  {
+    "id": "prog-q-094",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-08-mini-project",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Người mới hay viết while True cho menu nhưng quên đặt lệnh break ở lựa chọn \"Thoát\". Hậu quả là gì?",
+    "options": [
+      "App lặp vô tận, phải bấm Ctrl+C để giết chương trình",
+      "App tự thoát ngay sau vòng lặp đầu tiên",
+      "App in menu hai lần rồi dừng",
+      "App từ chối mọi lựa chọn khác ngoài Thoát"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Không có break thì điều kiện while True luôn đúng nên vòng lặp không bao giờ dừng.\n✓ Lặp vô tận, phải Ctrl+C - đúng hậu quả bài cảnh báo.\n✗ Tự thoát ngay là điều ngược lại với lỗi này.\n✗ In hai lần rồi dừng không xảy ra vì không có gì làm dừng vòng lặp.\n✗ Việc thiếu break không liên quan đến xử lý các lựa chọn khác."
+  },
+  {
+    "id": "prog-q-095",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-08-mini-project",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bài học khuyên gói mô tả, số tiền, danh mục vào một class Expense thay vì lưu trong 3 danh sách rời rạc. Lý do chính là gì?",
+    "options": [
+      "Tránh lệch pha dữ liệu (vd mô tả thứ 5 nhưng số tiền lại là thứ 6)",
+      "Class giúp chương trình chạy nhanh hơn nhiều lần",
+      "Danh sách không thể chứa số tiền dạng số thực",
+      "Mỗi ngôn ngữ chỉ cho phép tối đa 2 danh sách"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Ba mảnh thông tin dính liền nhau; lưu rời rạc dễ lệch pha giữa các danh sách.\n✓ Tránh lệch pha dữ liệu đúng là lý do gói vào một khối như tờ phiếu điền sẵn.\n✗ Lý do không phải tốc độ chạy.\n✗ Danh sách hoàn toàn chứa được số thực.\n✗ Không có giới hạn số lượng danh sách nào như vậy."
+  },
+  {
+    "id": "prog-q-096",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-08-mini-project",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Hàm read_amount dùng vòng lặp while True bao quanh việc nhập số. Khi người dùng gõ \"ba mươi\" rồi sau đó gõ \"30000\", chuyện gì xảy ra?",
+    "options": [
+      "Lần đầu báo lỗi và hỏi lại; lần sau nhận 30000 và trả về",
+      "Hàm trả về 0 vì lần đầu nhập sai",
+      "Hàm ném lỗi và làm app sập ngay lần đầu",
+      "Hàm bỏ qua cả hai lần nhập và trả về giá trị mặc định"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Quy tắc vàng của validate là lặp đến khi hợp lệ, cho người dùng cơ hội nhập lại ngay trong hàm.\n✓ Lần sai báo lỗi rồi hỏi lại, lần hợp lệ mới return - đúng hành vi read_amount.\n✗ Hàm không trả 0; số tiền phải lớn hơn 0 mới được nhận.\n✗ try/except bắt lỗi parse nên app không sập.\n✗ Không có giá trị mặc định; hàm chỉ thoát khi có số hợp lệ."
+  },
+  {
+    "id": "prog-q-097",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-08-mini-project",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một lập trình viên đặt dòng expenses = [] BÊN TRONG vòng lặp while của menu. Triệu chứng sẽ là gì?",
+    "options": [
+      "Thêm bao nhiêu khoản chi cũng \"mất\" vì danh sách bị xóa trắng mỗi vòng lặp",
+      "App báo lỗi cú pháp và không chạy được",
+      "Số tiền bị tính sai thành số âm",
+      "Menu chỉ hiện được đúng một lần"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Biến lưu trữ lâu dài phải khai báo TRƯỚC vòng lặp; đặt trong vòng lặp thì mỗi vòng gán lại danh sách rỗng.\n✓ Thêm rồi vẫn mất vì danh sách bị reset mỗi vòng - đúng triệu chứng bài cảnh báo.\n✗ Đây là lỗi logic, không phải lỗi cú pháp.\n✗ Vị trí khai báo danh sách không làm số tiền thành âm.\n✗ Menu vẫn hiện mỗi vòng lặp bình thường."
+  },
+  {
+    "id": "prog-q-098",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-08-mini-project",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Ở milestone 4, để thống kê tổng tiền theo từng danh mục, cấu trúc dữ liệu phù hợp nhất là gì?",
+    "options": [
+      "Dictionary/map với khóa là tên danh mục, giá trị là tổng tiền danh mục đó",
+      "Một danh sách phẳng chứa tất cả số tiền không kèm tên danh mục",
+      "Một biến số duy nhất cộng dồn toàn bộ",
+      "Một class Expense mới cho mỗi danh mục"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Map là bảng tra cứu khóa đến giá trị, lý tưởng để gom tổng theo tên danh mục.\n✓ Map khóa danh mục đến tổng tiền đúng cách thống kê theo danh mục.\n✗ Danh sách phẳng không gắn được tiền với danh mục.\n✗ Một biến cộng dồn chỉ cho tổng chung, không tách theo danh mục.\n✗ Tạo class mới cho mỗi danh mục là thừa và không giải quyết việc cộng dồn."
+  },
+  {
+    "id": "prog-q-099",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-08-mini-project",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong Java, viết line.split(\"|\") để tách dòng \"Ăn sáng|30000|Ăn uống\" lại không cho kết quả như mong đợi. Vì sao và sửa thế nào?",
+    "options": [
+      "split nhận regex và \"|\" là ký tự đặc biệt; phải viết split(\"\\\\|\")",
+      "Java không hỗ trợ tách chuỗi; phải dùng vòng lặp ký tự thủ công",
+      "Dấu | phải đổi thành dấu phẩy mới tách được",
+      "Phải gọi split hai lần liên tiếp mới đúng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Tham số của split trong Java là regex, mà | là ký tự đặc biệt trong regex nên cần escape.\n✓ Viết split(\"\\\\|\") để escape ký tự đặc biệt - đúng cách sửa bài nêu.\n✗ Java có split bình thường, không cần lặp ký tự thủ công.\n✗ Bài cố ý dùng | để mô tả chứa được dấu phẩy; không phải đổi sang phẩy.\n✗ Gọi split hai lần không sửa được vấn đề escape regex."
+  },
+  {
+    "id": "prog-q-100",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-08-mini-project",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bài học nói nên gọi save_expenses() sau MỖI lần thêm thay vì chỉ lưu một lần trước khi thoát. Lợi ích chính của lựa chọn này là gì?",
+    "options": [
+      "Lỡ app bị tắt đột ngột cũng không mất dữ liệu đã thêm",
+      "Giúp tính tổng theo danh mục chính xác hơn",
+      "Giảm số dòng trong file expenses.txt",
+      "Tránh phải gọi load_expenses lúc khởi động"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lưu sau mỗi lần thêm an toàn hơn vì dữ liệu đã được ghi xuống ổ cứng ngay.\n✓ App tắt đột ngột vẫn không mất gì - đúng lợi ích bài nêu.\n✗ Thời điểm lưu file không ảnh hưởng độ chính xác của phép tính tổng.\n✗ Lưu thường xuyên không làm giảm số dòng dữ liệu.\n✗ Vẫn cần load_expenses một lần lúc khởi động để nạp dữ liệu cũ."
+  },
+  {
+    "id": "prog-q-101",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-08-mini-project",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong load_expenses (Python), khi chạy app LẦN ĐẦU và file expenses.txt chưa tồn tại, điều gì xảy ra?",
+    "options": [
+      "FileNotFoundError bị bắt và bỏ qua, hàm trả về danh sách rỗng - bình thường",
+      "App sập vì không tìm thấy file",
+      "App tự tạo file rồi điền dữ liệu mẫu vào",
+      "Hàm trả về None khiến vòng lặp menu lỗi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khối try/except bắt FileNotFoundError và pass, coi đó là chuyện bình thường lần chạy đầu.\n✓ Bắt lỗi rồi trả danh sách rỗng - đúng thiết kế cho lần chạy đầu.\n✗ App không sập vì lỗi đã được bắt.\n✗ Hàm không tạo file hay điền dữ liệu mẫu; file chỉ được tạo khi save.\n✗ Hàm khởi tạo expenses = [] từ đầu nên trả danh sách rỗng, không phải None."
+  },
+  {
+    "id": "prog-q-102",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-08-mini-project",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bài học chọn dấu \"|\" thay vì dấu phẩy để ngăn cách các trường trong file. Lý do là gì?",
+    "options": [
+      "Để phần mô tả có thể chứa dấu phẩy thoải mái mà không làm sai cấu trúc dòng",
+      "Vì hệ điều hành cấm lưu dấu phẩy trong file",
+      "Vì dấu | chiếm ít dung lượng hơn dấu phẩy",
+      "Vì chỉ dấu | mới ghi được tiếng Việt có dấu"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Dùng | làm dấu ngăn để mô tả chứa được dấu phẩy mà không phá vỡ việc tách trường.\n✓ Mô tả chứa dấu phẩy thoải mái - đúng lý do bài nêu.\n✗ Hệ điều hành không cấm dấu phẩy trong file.\n✗ Hai ký tự cùng kích thước, không liên quan dung lượng.\n✗ Encoding utf-8 mới quyết định ghi tiếng Việt, không phải dấu ngăn cách."
+  },
+  {
+    "id": "prog-q-103",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-08-mini-project",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo bài học, những trường hợp nào hàm validate nhập số tiền (read_amount) PHẢI từ chối và yêu cầu nhập lại? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Người dùng gõ \"ba mươi nghìn\" thay vì chữ số",
+      "Người dùng gõ một số âm như -5000",
+      "Người dùng gõ số 0",
+      "Người dùng gõ 30000",
+      "Người dùng gõ 7000"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "read_amount chỉ trả về khi parse được số VÀ số đó lớn hơn 0.\n✓ \"ba mươi nghìn\" không parse được thành số nên bị từ chối.\n✓ Số âm -5000 không lớn hơn 0 nên bị từ chối.\n✓ Số 0 cũng không thỏa điều kiện lớn hơn 0 (amount <= 0 bị loại).\n✗ 30000 là số hợp lệ và dương nên được nhận.\n✗ 7000 cũng hợp lệ và dương nên được nhận."
+  },
+  {
+    "id": "prog-q-104",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-08-mini-project",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Checklist nghiệm thu liệt kê các bài test một tester chuyên nghiệp nên chạy. Những kỳ vọng nào dưới đây ĐÚNG theo bài? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Gõ lựa chọn lung tung (9, abc, Enter trống) thì app báo lỗi nhẹ nhàng, không sập",
+      "Tắt app rồi mở lại thì các khoản chi đã thêm vẫn còn",
+      "Xóa file expenses.txt rồi chạy thì app không sập, bắt đầu sổ mới",
+      "Nhập số tiền âm thì app tự đổi thành số dương rồi lưu",
+      "Xem tổng thì con số phải khớp khi tự cộng tay"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Checklist nhấn mạnh app phải bền bỉ với input xấu, dữ liệu sống sót, và tính toán đúng.\n✓ Input lung tung phải được báo lỗi nhẹ nhàng, không sập.\n✓ Tắt mở lại vẫn còn dữ liệu là bài test quan trọng nhất.\n✓ Xóa file rồi chạy thì app bắt đầu sổ mới chứ không sập.\n✓ Tổng phải khớp khi cộng tay - đúng tiêu chí kiểm thử.\n✗ App không tự đổi số âm thành dương; nó từ chối và yêu cầu nhập lại."
+  },
+  {
+    "id": "prog-q-105",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-09-modules-testing",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, nguyên tắc vàng khi tách code thành module là gì?",
+    "options": [
+      "Mỗi module nên có một trách nhiệm rõ ràng",
+      "Mỗi module nên gom càng nhiều hàm càng tốt để tiện import",
+      "Mỗi module phải có đúng một hàm duy nhất",
+      "Mỗi module nên trộn nhiều việc để giảm số file"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu rõ: một module nên có một trách nhiệm rõ ràng (file payment lo thanh toán, file email lo gửi mail).\n✓ Một trách nhiệm rõ ràng đúng tinh thần chia nhỏ để giới hạn vùng ảnh hưởng.\n✗ Gom càng nhiều càng tốt đi ngược mục tiêu dễ đọc, dễ test.\n✗ Đúng một hàm duy nhất quá cực đoan; module chứa code có liên quan, không giới hạn một hàm.\n✗ Trộn nhiều việc chính là điều bài khuyên tránh."
+  },
+  {
+    "id": "prog-q-106",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-09-modules-testing",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, đâu là điểm khác biệt giữa \"module\" và \"package\"?",
+    "options": [
+      "Module là một file (hoặc thư mục) chứa code liên quan; package là một nhóm module được đóng gói để chia sẻ",
+      "Module là code của người khác; package là code của bạn",
+      "Module chỉ có ở Python; package chỉ có ở JavaScript",
+      "Module và package là hai tên gọi y hệt nhau cho cùng một thứ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài định nghĩa module là một file/thư mục chứa code liên quan, package là nhóm module được đóng gói để chia sẻ.\n✓ File/thư mục code liên quan vs nhóm module đóng gói là đúng định nghĩa trong bài.\n✗ Của người khác vs của bạn không phải tiêu chí phân biệt.\n✗ Cả hai khái niệm tồn tại ở mọi ngôn ngữ trong bài, không riêng một ngôn ngữ.\n✗ Chúng không phải tên gọi y hệt; khác về phạm vi."
+  },
+  {
+    "id": "prog-q-107",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-09-modules-testing",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Go, bạn đặt hàm tên `add` (chữ thường) trong package mathutils rồi cố gọi `mathutils.add(2,3)` từ package khác. Chuyện gì xảy ra?",
+    "options": [
+      "Không gọi được vì tên viết thường không được export ra ngoài package",
+      "Gọi được bình thường vì cùng module thì mọi thứ đều thấy nhau",
+      "Gọi được nhưng luôn trả về 0",
+      "Báo lỗi cú pháp vì Go không cho phép hàm tên add"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Trong Go, quy ước tên viết HOA mới là export; tên viết thường chỉ thấy trong cùng package.\n✓ Không export được vì viết thường là đúng cảnh báo lỗi người mới trong bài.\n✗ Cùng module không tự thấy nhau; phải viết hoa mới export ra package khác.\n✗ Không phải trả về 0; vấn đề là không truy cập được, không phải sai giá trị.\n✗ Không phải lỗi cú pháp; add là tên hợp lệ, chỉ là không export."
+  },
+  {
+    "id": "prog-q-108",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-09-modules-testing",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong JavaScript ESM, bạn quên ghi `export` trước một hàm rồi `import` nó ở file khác. Triệu chứng điển hình theo bài là gì?",
+    "options": [
+      "Giá trị import được là `undefined`, không có thông báo lỗi rõ ràng",
+      "Trình biên dịch chặn lại với lỗi \"missing export\" ngay khi chạy",
+      "Hàm vẫn dùng được bình thường vì JS export tất cả mặc định",
+      "Toàn bộ file bị xoá khỏi node_modules"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nói trong JS ESM quên export thì import sẽ ra undefined, không báo lỗi rõ ràng nên rất khó chịu.\n✓ undefined không báo lỗi rõ đúng mô tả của bài.\n✗ Không có lỗi missing export rõ ràng; chính vì im lặng nên khó debug.\n✗ JS ESM phải ghi rõ export, không export tất cả mặc định (đó là Python).\n✗ Việc này không liên quan tới xoá file trong node_modules."
+  },
+  {
+    "id": "prog-q-109",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-09-modules-testing",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, những thứ nào BẠN NÊN làm khi quản lý phụ thuộc trong git? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Commit file khai báo phụ thuộc như requirements.txt, package.json, go.mod",
+      "Thêm node_modules/ và venv/ vào .gitignore",
+      "Commit cả thư mục node_modules/ để người khác khỏi cài lại",
+      "Ghim (pin) phiên bản thư viện để dự án chạy giống nhau trên mọi máy",
+      "Commit thư mục venv/ để chắc chắn ai cũng có cùng Python"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Bài khuyên commit file khai báo phụ thuộc, ghim version, và KHÔNG commit node_modules/venv.\n✓ Commit file khai báo phụ thuộc giúp người khác clone về cài đủ đồ bằng một lệnh.\n✓ Thêm node_modules/venv vào .gitignore là đúng khuyến nghị.\n✓ Ghim phiên bản giúp dự án chạy nhất quán trên mọi máy.\n✗ Commit node_modules nặng hàng trăm MB và tái tạo được từ file khai báo nên không nên.\n✗ Commit venv cũng bị bài cấm vì cùng lý do."
+  },
+  {
+    "id": "prog-q-110",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-09-modules-testing",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vấn đề: dự án A cần requests 2.20, dự án B cần 2.30. Theo bài, giải pháp nào tránh việc chúng đè nhau?",
+    "options": [
+      "Cách ly từng dự án bằng virtual env (venv) hoặc thư mục node_modules riêng",
+      "Cài cả hai phiên bản chung vào hệ thống và chọn lúc chạy",
+      "Xoá dự án A đi và chỉ giữ một phiên bản duy nhất",
+      "Đổi tên thư viện requests trong một dự án thành requests2"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu giải pháp là cách ly từng dự án: venv cho Python, node_modules trong dự án cho JS.\n✓ Cách ly từng dự án qua venv/node_modules đúng tinh thần bài.\n✗ Cài chung vào hệ thống chính là nguyên nhân gây đè nhau.\n✗ Xoá một dự án không giải quyết được nhu cầu hai phiên bản song song.\n✗ Đổi tên thư viện là cách chắp vá, không phải giải pháp cách ly mà bài dạy."
+  },
+  {
+    "id": "prog-q-111",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-09-modules-testing",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, lợi ích LỚN NHẤT của unit test là gì?",
+    "options": [
+      "Cho bạn sự tự tin sửa code ngày mai mà không sợ làm vỡ thứ đang chạy",
+      "Giúp chương trình chạy nhanh hơn khi triển khai",
+      "Thay thế hoàn toàn nhu cầu đọc lại code",
+      "Bắt được mọi bug có thể có ngay trong hôm nay"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nhấn mạnh giá trị thật của test là sự tự tin khi sửa code ngày mai, không phải bắt bug hôm nay.\n✓ Tự tin sửa code mà không làm vỡ cái cũ đúng thông điệp cốt lõi của bài.\n✗ Test không làm chương trình chạy nhanh hơn.\n✗ Test không thay thế việc đọc code.\n✗ Bài nói rõ lợi ích lớn nhất KHÔNG phải bắt bug hôm nay."
+  },
+  {
+    "id": "prog-q-112",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-09-modules-testing",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một bạn viết test cho hàm `add`: `assert add(2, 3) == add(2, 3)`. Vì sao đây là test vô dụng và sửa thế nào?",
+    "options": [
+      "Nó so kết quả hàm với chính nó nên luôn xanh mà không kiểm tra gì; phải so với giá trị mong đợi tự tính tay, ví dụ == 5",
+      "Nó gọi hàm hai lần nên chậm; chỉ cần gọi một lần là đủ",
+      "Nó thiếu từ khoá expect nên không phải test thật; thêm expect là xong",
+      "Nó dùng == thay vì ===; đổi sang === sẽ kiểm tra đúng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài cảnh báo so kết quả hàm với chính output của nó khiến test luôn xanh mà không kiểm tra gì; phải so với giá trị mong đợi tự tính tay.\n✓ So với chính nó nên vô nghĩa; sửa thành == 5 đúng lời khuyên của bài.\n✗ Vấn đề không phải tốc độ gọi hai lần.\n✗ assert thủ công vẫn là test hợp lệ; không bắt buộc dùng expect.\n✗ Đổi == sang === không giải quyết gốc rễ là so sai đối tượng."
+  },
+  {
+    "id": "prog-q-113",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-09-modules-testing",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Theo bố cục AAA, dòng `result = total_with_tax(cart, tax_rate)` thuộc bước nào, và đâu là thứ tự đúng của AAA?",
+    "options": [
+      "Act; thứ tự là Arrange - Act - Assert",
+      "Assert; thứ tự là Assert - Act - Arrange",
+      "Arrange; thứ tự là Act - Arrange - Assert",
+      "Act; thứ tự là Act - Assert - Arrange"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "AAA gồm Arrange (chuẩn bị), Act (gọi hàm cần kiểm tra), Assert (so sánh); dòng gọi hàm là bước Act.\n✓ Gọi hàm là Act và thứ tự Arrange - Act - Assert đúng như bài định nghĩa.\n✗ So sánh kết quả mới là Assert, không phải dòng gọi hàm.\n✗ Chuẩn bị dữ liệu mới là Arrange; thứ tự liệt kê cũng sai.\n✗ Thứ tự Act - Assert - Arrange không đúng trình tự bài nêu."
+  },
+  {
+    "id": "prog-q-114",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-09-modules-testing",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Với hàm `divide(a, b)`, theo phân loại trong bài, những test nào dưới đây là hợp lý nên viết? (chọn tất cả đáp án đúng)",
+    "options": [
+      "divide(10, 2) == 5 (trường hợp bình thường)",
+      "divide(0, 5) == 0 (trường hợp biên)",
+      "divide(10, 0) phải báo lỗi chia cho 0 (trường hợp lỗi)",
+      "Kiểm tra rằng 1 + 1 == 2 luôn đúng trong ngôn ngữ",
+      "Kiểm tra rằng divide là một hàm chứ không phải biến"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bài hướng dẫn test ba loại: bình thường, biên, lỗi; và khuyên đừng test những thứ hiển nhiên.\n✓ divide(10,2)==5 là trường hợp bình thường điển hình.\n✓ divide(0,5)==0 là trường hợp biên (số 0).\n✓ divide(10,0) báo lỗi là trường hợp lỗi cần kiểm tra.\n✗ 1+1==2 là thứ hiển nhiên của ngôn ngữ, bài bảo đừng test.\n✗ Kiểm tra divide là hàm không phải hành vi nghiệp vụ cần test."
+  },
+  {
+    "id": "prog-q-115",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-09-modules-testing",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Theo bài, một test tốt có ba đặc tính nào sau đây?",
+    "options": [
+      "Độc lập, lặp lại được, và kiểm tra đúng một thứ",
+      "Phụ thuộc test chạy trước, ngẫu nhiên, và kiểm tra nhiều thứ một lúc",
+      "Chạy thật nhanh, dùng tên ngắn như test1, và không cần assert",
+      "Luôn xanh, không bao giờ đỏ, và bao phủ 100% dòng code"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu test tốt là độc lập, lặp lại được và kiểm tra đúng một thứ; tên nên mô tả hành vi.\n✓ Độc lập, lặp lại được, kiểm tra một thứ đúng nguyên văn bài.\n✗ Phụ thuộc test khác và ngẫu nhiên là ngược lại đặc tính tốt.\n✗ Tên như test1 bị bài chê; assert là cốt lõi không thể bỏ.\n✗ Luôn xanh không phải tiêu chí; test phải đỏ khi code sai mới có giá trị."
+  },
+  {
+    "id": "prog-q-116",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-09-modules-testing",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Ghép đúng package manager với ngôn ngữ theo bảng trong bài?",
+    "options": [
+      "Python dùng pip, JavaScript dùng npm, Go dùng go modules",
+      "Python dùng npm, JavaScript dùng pip, Go dùng Maven",
+      "Python dùng Maven, JavaScript dùng go modules, Go dùng npm",
+      "Python dùng go modules, JavaScript dùng Maven, Go dùng pip"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bảng trong bài: Python - pip, JavaScript - npm, Java - Maven/Gradle, Go - go modules.\n✓ pip cho Python, npm cho JavaScript, go modules cho Go là đúng bảng.\n✗ Hoán đổi pip và npm giữa Python và JS là sai.\n✗ Maven là của Java, không phải Python hay JS.\n✗ Toàn bộ ghép sai chéo các trình quản lý gói."
+  },
+  {
+    "id": "prog-q-117",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-09-modules-testing",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Dòng `dayjs@^1.11.0` trong khai báo phụ thuộc nghĩa là gì theo bài?",
+    "options": [
+      "Chấp nhận bản 1.11.0 trở lên nhưng dưới 2.0",
+      "Chỉ chấp nhận đúng bản 1.11.0, không hơn không kém",
+      "Chấp nhận mọi bản từ 1.11.0 trở lên kể cả 2.x, 3.x",
+      "Luôn tải bản mới nhất hiện có dù là bản nào"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài giải thích ^1.11.0 nghĩa là chấp nhận từ 1.11.0 trở lên nhưng dưới 2.0.\n✓ Từ 1.11.0 trở lên và dưới 2.0 đúng ý nghĩa của dấu ^.\n✗ Chỉ đúng 1.11.0 là cách ghim cứng, không có dấu ^.\n✗ Bao gồm 2.x, 3.x là sai vì ^ chặn ở mốc major kế tiếp.\n✗ Luôn lấy bản mới nhất không phải ý nghĩa của ^1.11.0."
+  },
+  {
+    "id": "prog-q-118",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-10-files-data",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn có file nhatky.txt chứa sẵn 100 dòng. Bạn muốn THÊM một dòng mới vào cuối mà KHÔNG mất dữ liệu cũ. Nên mở file với chế độ nào?",
+    "options": [
+      "Chế độ \"a\" (append)",
+      "Chế độ \"w\" (write)",
+      "Chế độ \"r\" (read)",
+      "Phải xoá file rồi tạo lại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chế độ append ghi nối thêm vào cuối, giữ nguyên nội dung cũ.\n✓ \"a\" (append) ghi tiếp vào cuối file, không xoá dữ liệu sẵn có.\n✗ \"w\" (write) ghi đè, xoá sạch 100 dòng cũ trước khi ghi.\n✗ \"r\" chỉ để đọc, không ghi được.\n✗ Không cần xoá rồi tạo lại; append làm đúng việc này gọn gàng."
+  },
+  {
+    "id": "prog-q-119",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-10-files-data",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Định dạng nào được mô tả là cách phổ biến nhất để lưu dữ liệu CÓ CẤU TRÚC và trao đổi giữa các hệ thống (API, file cấu hình)?",
+    "options": [
+      "JSON",
+      "CSV",
+      "File văn bản thuần (.txt)",
+      "Biến môi trường"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "JSON là định dạng chuẩn cho dữ liệu có cấu trúc (object, mảng, lồng nhau).\n✓ JSON biểu diễn object {}, mảng [], chuỗi, số... rất hợp dữ liệu phân cấp.\n✗ CSV chỉ là bảng phẳng dòng-cột, khó biểu diễn cấu trúc lồng nhau.\n✗ File .txt là text tự do, không có quy tắc cấu trúc.\n✗ Biến môi trường chứa cấu hình/bí mật, không phải định dạng trao đổi dữ liệu lồng nhau."
+  },
+  {
+    "id": "prog-q-120",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-10-files-data",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, vì sao luôn nên chỉ định encoding=\"utf-8\" khi đọc/ghi text, đặc biệt với tiếng Việt?",
+    "options": [
+      "Nếu không, máy có thể dùng encoding mặc định của hệ điều hành khiến tiếng Việt thành ký tự lỗi",
+      "UTF-8 giúp file chạy nhanh hơn",
+      "UTF-8 tự động đóng file giúp bạn",
+      "Không chỉ định thì file không mở được"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Không khai báo encoding thì máy dùng mặc định của OS, gây lỗi dấu tiếng Việt (mojibake).\n✓ Encoding mặc định (vd Windows cp1252) khác UTF-8 sẽ biến tiếng Việt thành ký tự loằng ngoằng như Ã¢.\n✗ UTF-8 không liên quan tốc độ chạy.\n✗ Đóng file là cơ chế khác (with/try-with-resources), không phải do encoding.\n✗ File vẫn mở được nhưng nội dung có dấu sẽ bị hỏng."
+  },
+  {
+    "id": "prog-q-121",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-10-files-data",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cho object {ten: \"An\", thich: [\"code\", \"trà sữa\"]}. Sau khi stringify rồi parse lại thành biến lai, lệnh in lai.thich[0] cho kết quả gì?",
+    "options": [
+      "code",
+      "trà sữa",
+      "[\"code\", \"trà sữa\"]",
+      "An"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "thich là mảng, phần tử chỉ số 0 là \"code\".\n✓ thich[0] truy cập phần tử đầu của mảng, chính là \"code\".\n✗ \"trà sữa\" là phần tử chỉ số 1, không phải [0].\n✗ Cả mảng chỉ in khi viết lai.thich, không có [0].\n✗ \"An\" là giá trị của khoá ten, không liên quan thich[0]."
+  },
+  {
+    "id": "prog-q-122",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-10-files-data",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một bạn báo lỗi: file config.json parse thất bại. Nội dung file là: {\"a\": 1, \"b\": 2,}. Nguyên nhân là gì?",
+    "options": [
+      "JSON không cho phép dấu phẩy thừa ở cuối object",
+      "Thiếu encoding utf-8",
+      "Số phải để trong nháy kép",
+      "JSON không cho phép nhiều hơn một khoá"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Dấu phẩy sau giá trị cuối (trailing comma) khiến JSON parse lỗi.\n✓ JSON không cho phép dấu phẩy thừa ở cuối; phải bỏ dấu phẩy sau số 2.\n✗ Encoding không gây lỗi cú pháp parse kiểu này.\n✗ Số trong JSON viết trần, không cần nháy kép.\n✗ JSON cho phép nhiều khoá; đó không phải vấn đề."
+  },
+  {
+    "id": "prog-q-123",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-10-files-data",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "File CSV có ô địa chỉ \"Hà Nội, Việt Nam\" (bọc trong nháy vì chứa dấu phẩy). Cách xử lý nào ĐÚNG để không tách nhầm cột?",
+    "options": [
+      "Dùng thư viện CSV chuyên dụng (vd csv của Python, encoding/csv của Go)",
+      "Tự split(\",\") từng dòng",
+      "Thay tất cả dấu phẩy bằng dấu chấm phẩy trước khi split",
+      "Đọc cả file thành một chuỗi rồi bỏ qua header"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Thư viện CSV hiểu quy tắc nháy nên không tách nhầm ô chứa dấu phẩy.\n✓ Thư viện CSV xử lý đúng dấu nháy, ký tự xuống dòng trong ô và escape.\n✗ Tự split(\",\") sẽ cắt \"Hà Nội, Việt Nam\" thành hai cột sai.\n✗ Thay dấu phẩy làm hỏng dữ liệu gốc và vẫn không chuẩn.\n✗ Bỏ qua header không giải quyết việc tách ô có dấu phẩy."
+  },
+  {
+    "id": "prog-q-124",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-10-files-data",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Chạy lệnh: python thongke.py duong_dan.csv --top 5. Trong Python, sys.argv[1] có giá trị gì?",
+    "options": [
+      "duong_dan.csv",
+      "thongke.py",
+      "--top",
+      "5"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "argv[0] là tên script, tham số thật bắt đầu từ argv[1].\n✓ argv[1] là tham số đầu tiên sau tên script, tức \"duong_dan.csv\".\n✗ \"thongke.py\" là argv[0] (tên script).\n✗ \"--top\" là argv[2].\n✗ \"5\" là argv[3]."
+  },
+  {
+    "id": "prog-q-125",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-10-files-data",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Theo quy tắc vàng về múi giờ trong bài, nên lưu trữ thời gian như thế nào?",
+    "options": [
+      "Lưu bằng UTC, chỉ đổi sang giờ địa phương khi hiển thị",
+      "Lưu bằng giờ địa phương của máy chủ",
+      "Lưu cả UTC lẫn giờ địa phương trong cùng một trường",
+      "Lưu dạng \"11/06/2026\" cho dễ đọc"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lưu UTC thống nhất, chỉ chuyển sang giờ địa phương khi hiển thị cho người dùng.\n✓ Lưu UTC tránh tính sai khoảng cách thời gian giữa các sự kiện.\n✗ Lưu giờ địa phương lẫn lộn sớm muộn gây tính toán sai.\n✗ Trộn UTC và giờ địa phương trong một trường gây mơ hồ.\n✗ Kiểu \"11/06/2026\" dễ nhầm ngày với tháng; nên dùng ISO 8601."
+  },
+  {
+    "id": "prog-q-126",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-10-files-data",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong Python, os.environ.get(\"API_KEY\") và os.environ[\"API_KEY\"] khác nhau ra sao khi biến API_KEY CHƯA được đặt?",
+    "options": [
+      "get(...) trả về None (hoặc giá trị mặc định nếu truyền), còn [...] gây lỗi",
+      "Cả hai đều trả về None",
+      "Cả hai đều gây lỗi",
+      "get(...) gây lỗi, [...] trả về chuỗi rỗng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "get an toàn khi biến thiếu, còn truy cập bằng [] bắt buộc biến phải tồn tại.\n✓ environ.get cho phép giá trị mặc định, thiếu biến không gây lỗi; environ[...] thiếu biến sẽ lỗi.\n✗ Không phải cả hai đều trả None; [...] sẽ ném lỗi.\n✗ Không phải cả hai đều lỗi; get xử lý êm.\n✗ Ngược lại: get mới là cách an toàn, không phải [...]."
+  },
+  {
+    "id": "prog-q-127",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-10-files-data",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Chương trình đọc \"data.csv\" (đường dẫn tương đối) chạy tốt khi bạn ngồi trong thư mục dự án, nhưng đồng nghiệp chạy từ thư mục khác lại báo \"không tìm thấy file\". Nguyên nhân chính là gì?",
+    "options": [
+      "Đường dẫn tương đối được tính từ thư mục đang chạy lệnh, không phải thư mục chứa code",
+      "File CSV bị sai encoding",
+      "Quên đóng file sau khi đọc",
+      "JSON có dấu phẩy thừa"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đường dẫn tương đối phụ thuộc thư mục làm việc hiện tại, nên đổi chỗ chạy là không tìm thấy.\n✓ \"data.csv\" được tính từ thư mục bạn chạy lệnh, chạy từ chỗ khác sẽ không thấy file.\n✗ Encoding sai gây ký tự lỗi, không gây lỗi không tìm thấy file.\n✗ Quên đóng file gây rò rỉ tài nguyên, không phải lỗi này.\n✗ Dấu phẩy thừa là lỗi parse JSON, không liên quan."
+  },
+  {
+    "id": "prog-q-128",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-10-files-data",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Khi xử lý một file log vài GB, vì sao đọc TỪNG DÒNG được khuyến nghị hơn đọc cả file vào một chuỗi?",
+    "options": [
+      "Không cần nạp toàn bộ vào RAM một lúc, tiết kiệm bộ nhớ",
+      "Đọc từng dòng tự động dùng UTF-8",
+      "Đọc từng dòng tự đóng file giúp bạn",
+      "Đọc cả file vào RAM sẽ làm sai thứ tự dòng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đọc từng dòng chỉ giữ một dòng trong bộ nhớ, tránh nạp cả vài GB cùng lúc.\n✓ Lặp từng dòng không cần nạp toàn bộ file vào RAM, hợp với file rất lớn.\n✗ Encoding phải tự khai báo, không tự động vì đọc từng dòng.\n✗ Việc tự đóng file do cơ chế with/try, không phải do đọc từng dòng.\n✗ Đọc cả file không làm sai thứ tự; vấn đề là tốn bộ nhớ."
+  },
+  {
+    "id": "prog-q-129",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-10-files-data",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những phát biểu nào ĐÚNG về việc quản lý bí mật (API key, mật khẩu DB) theo bài học? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Nên đọc bí mật từ biến môi trường",
+      "Nên thêm file .env vào .gitignore",
+      "Có thể đặt biến môi trường ngay khi chạy lệnh trên terminal",
+      "Nên hard-code API key vào source để khỏi quên",
+      "Nên commit file .env lên Git để đồng đội có sẵn key"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bí mật nên nằm ngoài source: dùng biến môi trường và tránh đưa .env lên Git.\n✓ Đọc bí mật từ biến môi trường là nơi chuẩn để chứa key/mật khẩu.\n✓ Thêm .env vào .gitignore để không vô tình commit bí mật.\n✓ Có thể đặt biến môi trường ngay trước lệnh chạy (vd API_KEY=abc123 python app.py).\n✗ Hard-code key vào source rồi commit là lỗ hổng bảo mật nghiêm trọng.\n✗ Commit .env lên Git làm lộ bí mật, rất khó xoá khỏi lịch sử."
+  },
+  {
+    "id": "prog-q-130",
+    "courseId": "PROGRAMMING",
+    "lesson": "prog-10-files-data",
+    "certifications": [
+      "PROGRAMMING"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Trong mẫu công cụ thống kê CSV (đọc cột san_pham, so_luong, gia), những ý nào ĐÚNG? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Doanh thu mỗi dòng = so_luong * gia, rồi cộng dồn theo từng san_pham",
+      "Cần ép kiểu so_luong và gia từ chuỗi sang số trước khi nhân",
+      "Mẫu hình chung là: đọc → biến đổi từng dòng → gom nhóm vào map → xuất kết quả",
+      "Có thể cộng trực tiếp so_luong và gia dưới dạng chuỗi mà không cần ép kiểu",
+      "Sản phẩm bán chạy nhất là sản phẩm có tổng doanh thu lớn nhất trong map"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Quy trình: ép kiểu, tính tiền mỗi dòng, gom theo sản phẩm vào map, rồi tìm max.\n✓ Doanh thu mỗi dòng là so_luong * gia, cộng dồn theo từng san_pham vào map.\n✓ Giá trị đọc từ CSV là chuỗi nên phải ép sang số trước khi nhân.\n✓ Mẫu hình đọc → biến đổi → gom nhóm vào map → xuất kết quả rất phổ biến.\n✓ Sản phẩm bán chạy nhất được tìm bằng giá trị doanh thu lớn nhất trong map.\n✗ Không thể cộng/nhân chuỗi như số; thiếu ép kiểu sẽ sai hoặc lỗi."
   }
 ];

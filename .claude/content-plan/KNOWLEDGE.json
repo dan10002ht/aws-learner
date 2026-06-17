@@ -20,8 +20,8 @@
       "id": "PROGRAMMING",
       "kind": "questions",
       "scope": "10 bài (prefix prog)",
-      "status": "pending",
-      "note": ""
+      "status": "done",
+      "note": "130 câu (13×10), 15% multi, build pass"
     },
     {
       "id": "GIT",
