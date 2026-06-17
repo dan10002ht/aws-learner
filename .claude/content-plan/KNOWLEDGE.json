@@ -55,8 +55,8 @@
       "id": "BACKEND",
       "kind": "questions",
       "scope": "8 bài (prefix be)",
-      "status": "pending",
-      "note": ""
+      "status": "done",
+      "note": "104 câu (13×8), build pass"
     },
     {
       "id": "FRONTEND",

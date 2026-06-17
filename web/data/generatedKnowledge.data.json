@@ -15623,5 +15623,2240 @@
       0
     ],
     "explanation": "Bài khẳng định chất lượng hơn số lượng: 80 bài học kỹ theo pattern + ôn ngắt quãng đánh bại 400 bài cày quên.\n✓ Làm cụm bài cùng pattern + spaced repetition + active recall tạo phản xạ nhận diện bền vững.\n✗ Cày 400 bài ngẫu nhiên một lần rồi quên là cách luyện sai bài phê phán.\n✗ Đọc lời giải thụ động chỉ giúp 'nhận ra' chứ không 'nắm' — không bằng tự code lại.\n✗ Làm mỗi pattern 1 bài không đủ để não trừu tượng ra cái chung; cần cụm 5-8 bài."
+  },
+  {
+    "id": "be-q-001",
+    "courseId": "BACKEND",
+    "lesson": "be-01-api-design",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một API trả về HTTP 200 nhưng kèm body {\"error\": \"insufficient balance\"} mỗi khi nghiệp vụ thất bại. Theo bài học, hệ quả chính của cách làm này là gì?",
+    "options": [
+      "Phá vỡ caching và monitoring vì status code không phản ánh đúng kết quả",
+      "Tăng hiệu năng vì client không phải parse status code",
+      "Đảm bảo client luôn retry đúng cách",
+      "Tuân thủ đúng chuẩn RFC 9457"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Status code là một phần của hợp đồng; trả 200 cho lỗi làm cache/proxy/monitoring hiểu sai.\n✓ Phá cache và monitoring vì lớp hạ tầng dựa vào status code để phân loại response.\n✗ Không liên quan hiệu năng parse; vấn đề là ngữ nghĩa sai.\n✗ Client không có cách biết để retry vì 200 nghĩa là thành công.\n✗ RFC 9457 yêu cầu status code đúng (ví dụ 422), trái ngược cách làm này."
+  },
+  {
+    "id": "be-q-002",
+    "courseId": "BACKEND",
+    "lesson": "be-01-api-design",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Client gửi request với access token đã hết hạn. Theo bài học, server nên trả status code nào để client biết cần refresh token?",
+    "options": [
+      "401",
+      "403",
+      "404",
+      "422"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "401 nghĩa là chưa xác thực; token hết hạn thuộc nhóm này nên client biết phải refresh.\n✓ Trả mã chưa xác thực giúp client kích hoạt luồng refresh token.\n✗ Mã đã-xác-thực-nhưng-không-có-quyền khiến client tưởng thiếu quyền chứ không refresh.\n✗ Mã không tồn tại không phản ánh vấn đề xác thực.\n✗ Mã sai nghiệp vụ dùng cho request đúng cú pháp nhưng vi phạm rule nghiệp vụ, không phải vấn đề token."
+  },
+  {
+    "id": "be-q-003",
+    "courseId": "BACKEND",
+    "lesson": "be-01-api-design",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn thiết kế pagination cho một feed infinite-scroll với dữ liệu liên tục thêm mới. Lựa chọn nào phù hợp nhất và vì sao?",
+    "options": [
+      "Cursor (keyset) vì ổn định khi dữ liệu thay đổi và đi thẳng vào index",
+      "Offset vì cho phép nhảy tới trang bất kỳ",
+      "Offset vì đơn giản hơn khi implement",
+      "Cursor vì cho phép hiển thị 'trang 5/20'"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Feed/timeline/infinite-scroll nên dùng cursor: ổn định trước page drift và hiệu năng O(log n).\n✓ Cursor tránh trùng/sót bản ghi khi dữ liệu thay đổi và truy vấn đi thẳng vào index.\n✗ Khả năng nhảy trang bất kỳ là điểm mạnh của offset nhưng feed không cần.\n✗ Đơn giản hơn không bù được page drift và scan O(n) ở trang sâu.\n✗ Hiển thị 'trang X/Y' là đặc tính của offset, không phải cursor."
+  },
+  {
+    "id": "be-q-004",
+    "courseId": "BACKEND",
+    "lesson": "be-01-api-design",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một cursor pagination sắp xếp ORDER BY created_at DESC bị mất hoặc lặp bản ghi khi nhiều row có cùng timestamp. Cách sửa đúng là gì?",
+    "options": [
+      "Thêm tiebreak bằng khoá duy nhất, ví dụ ORDER BY created_at DESC, id DESC",
+      "Chuyển sang offset-based pagination",
+      "Tăng limit để giảm số lần phân trang",
+      "Bỏ encode cursor để client tự sửa thứ tự"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cursor cần sort key duy nhất và ổn định; tiebreak bằng id giải quyết trường hợp trùng timestamp.\n✓ Thêm id làm tiebreak tạo thứ tự duy nhất, không còn lặp/sót.\n✗ Chuyển sang offset đánh đổi sang page drift và scan O(n).\n✗ Tăng limit không sửa nguyên nhân gốc là sort key không duy nhất.\n✗ Bỏ encode còn mở lỗ hổng client tự chế cursor truy cập dữ liệu người khác."
+  },
+  {
+    "id": "be-q-005",
+    "courseId": "BACKEND",
+    "lesson": "be-01-api-design",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong pseudo-code idempotency key, nếu lưu key SAU khi xử lý nghiệp vụ và process crash ở giữa, điều gì xảy ra khi client retry cùng key?",
+    "options": [
+      "Vẫn double-charge vì key chưa được lưu nên retry xử lý lại từ đầu",
+      "Trả về response cũ đã lưu, an toàn",
+      "Trả 422 vì body khác nhau",
+      "Trả 409 vì request đang xử lý"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lưu key và xử lý nghiệp vụ phải atomic; lưu key sau khi xử lý mở khe cửa double-charge khi crash.\n✓ Key chưa kịp lưu nên store rỗng, retry coi như request mới và xử lý lại.\n✗ Không có response cũ để replay vì việc lưu chưa hoàn tất.\n✗ 422 chỉ xảy ra khi cùng key nhưng body hash khác.\n✗ 409 dành cho request đang xử lý dở, không phải sau crash đã mất state."
+  },
+  {
+    "id": "be-q-006",
+    "courseId": "BACKEND",
+    "lesson": "be-01-api-design",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một handler PUT (idempotent theo HTTP) gửi email xác nhận mỗi lần được gọi. Khi client retry PUT, khách nhận 2 email. Bài học khuyến nghị xử lý gốc rễ thế nào?",
+    "options": [
+      "Thiết kế idempotency ở tầng nghiệp vụ, không chỉ dựa vào ngữ nghĩa HTTP method",
+      "Đổi PUT thành GET vì GET là safe",
+      "Trả 503 để client ngừng retry",
+      "Bỏ retry hoàn toàn ở client"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Idempotent về giao thức không ngăn side effect nhân đôi; phải thiết kế idempotency ở tầng nghiệp vụ.\n✓ Kiểm soát side effect (email/event) ở tầng nghiệp vụ mới đảm bảo retry an toàn.\n✗ GET không phù hợp cho thao tác có side effect cập nhật trạng thái.\n✗ Trả 503 không giải quyết việc email đã gửi đôi.\n✗ Bỏ retry phá vỡ độ bền của hệ phân tán, retry là bắt buộc."
+  },
+  {
+    "id": "be-q-007",
+    "courseId": "BACKEND",
+    "lesson": "be-01-api-design",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khi rate limiter đếm số request in-memory tại từng instance và hệ thống scale ngang nhiều instance, điều gì xảy ra?",
+    "options": [
+      "Giới hạn bị sai vì mỗi instance đếm riêng, không chia sẻ state",
+      "Giới hạn vẫn chính xác vì tổng tự cộng dồn",
+      "Hiệu năng tốt hơn nên nên dùng cách này",
+      "Client tự động được giảm quota công bằng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "State phải tập trung (Redis với atomic op); đếm in-memory từng instance làm limit sai khi scale ngang.\n✓ Mỗi instance không thấy đếm của instance khác nên tổng limit thực tế vượt mong muốn.\n✗ Không có cộng dồn tự động giữa các instance độc lập.\n✗ Tốc độ không bù được kết quả sai về quota.\n✗ Quota công bằng cần state chung, không đạt được bằng đếm cục bộ."
+  },
+  {
+    "id": "be-q-008",
+    "courseId": "BACKEND",
+    "lesson": "be-01-api-design",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài học, đâu là các yếu tố ĐÚNG của định dạng lỗi RFC 9457 (problem+json)? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Trường type là mã lỗi máy đọc được (URI), client switch theo type",
+      "Content-Type là application/problem+json",
+      "Được phép thêm extension field như balance, trace_id, errors[]",
+      "Lỗi 5xx nên trả kèm stack trace và tên class để debug",
+      "Client nên parse string trong detail để phân loại lỗi"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "RFC 9457 dùng type làm mã máy đọc, cho phép extension field, và đặt Content-Type problem+json.\n✓ type là URI máy đọc được để client switch logic, không parse chuỗi.\n✓ Content-Type application/problem+json là yêu cầu của chuẩn.\n✓ Cho phép thêm extension field như balance, trace_id, mảng errors[].\n✗ Trả stack trace/tên class là leak nội bộ, là quà cho attacker.\n✗ Parse string detail là chống chỉ định; nên switch theo type."
+  },
+  {
+    "id": "be-q-009",
+    "courseId": "BACKEND",
+    "lesson": "be-01-api-design",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Hai team nội bộ gọi nhau service-to-service với RPS rất cao và cần streaming sự kiện hai chiều. Lựa chọn mặc định hợp lý nhất là gì?",
+    "options": [
+      "gRPC vì contract-first, streaming first-class và hiệu năng nội bộ tốt",
+      "REST/JSON vì curl debug dễ và browser hỗ trợ native",
+      "GraphQL BFF vì client cần data shape khác nhau",
+      "Webhooks vì thông báo sự kiện cho bên ngoài"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "gRPC mạnh cho east-west: contract-first, streaming first-class, binary đa kênh hiệu năng cao.\n✓ gRPC phù hợp service-to-service RPS cao và có streaming first-class.\n✗ REST/JSON thiếu streaming first-class, điểm mạnh debug/browser không phải yêu cầu ở đây.\n✗ GraphQL giải bài toán nhiều client cần data shape khác, không phải nội bộ RPS cao.\n✗ Webhooks là để thông báo ra hệ thống bên ngoài, không phải gọi nội bộ realtime."
+  },
+  {
+    "id": "be-q-010",
+    "courseId": "BACKEND",
+    "lesson": "be-01-api-design",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "gRPC chạy qua một L4 load balancer khiến toàn bộ traffic của một client dồn vào một backend. Nguyên nhân và cách khắc phục đúng là gì?",
+    "options": [
+      "HTTP/2 giữ connection lâu dài; dùng client-side LB, L7 proxy (Envoy) hoặc đặt MAX_CONNECTION_AGE",
+      "Protobuf quá nặng; chuyển sang JSON để cân tải",
+      "Do thiếu rate limiting; thêm token bucket ở backend",
+      "Do gRPC không hỗ trợ load balancing; phải chuyển sang REST"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "gRPC dùng HTTP/2 connection long-lived nên L4 LB không phân phối được từng RPC.\n✓ Cần LB client-side, L7 proxy như Envoy, hoặc ép re-balance bằng MAX_CONNECTION_AGE.\n✗ Kích thước Protobuf không liên quan đến phân bố tải connection.\n✗ Rate limiting không giải quyết việc connection dồn vào một backend.\n✗ gRPC vẫn LB được, chỉ cần lớp hiểu HTTP/2, không cần bỏ gRPC."
+  },
+  {
+    "id": "be-q-011",
+    "courseId": "BACKEND",
+    "lesson": "be-01-api-design",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Resolver GraphQL cho query { orders(first: 50) { customer { name } } } sinh ra 1 query orders + 50 query customer. Giải pháp chuẩn được nêu là gì?",
+    "options": [
+      "DataLoader gom các lời gọi trong cùng một tick thành một batch query",
+      "Tăng depth limit để cho phép query lồng sâu hơn",
+      "Chuyển toàn bộ sang persisted query",
+      "Cache mọi thứ qua CDN bằng POST /graphql"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "N+1 được giải bằng DataLoader batch các id trong cùng tick thành một query duy nhất.\n✓ DataLoader gom load thành whereIn(ids) một query, loại bỏ N+1.\n✗ Depth limit hạn chế độ sâu query chứ không gộp query.\n✗ Persisted query giải bài toán cache/cost, không gộp N+1.\n✗ POST /graphql vốn mất HTTP cache mặc định, không giải N+1."
+  },
+  {
+    "id": "be-q-012",
+    "courseId": "BACKEND",
+    "lesson": "be-01-api-design",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Bạn viết consumer nhận webhook từ một provider. Theo bài học, những điều nào là BẮT BUỘC để đúng và an toàn? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Verify HMAC trên raw body, trước khi parse JSON",
+      "Idempotent theo event_id vì at-least-once là mặc định",
+      "Trả 200 nhanh rồi xử lý async để tránh timeout gây retry",
+      "Chỉ kiểm tra IP của provider là đủ để xác thực",
+      "Tin tưởng thứ tự event đến đúng theo trình tự gửi"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Consumer phải verify HMAC trên raw body, idempotent theo event_id, và ACK nhanh xử lý async.\n✓ Verify HMAC trên raw body vì parse rồi re-serialize làm lệch byte gây fail chữ ký.\n✓ At-least-once là mặc định nên bắt buộc idempotent theo event_id.\n✓ Trả 200 ngay tránh handler chậm vượt timeout gây retry và duplicate.\n✗ Chỉ check IP là cửa SSRF/giả mạo, HMAC + timestamp mới là tối thiểu.\n✗ Ordering không được đảm bảo, consumer phải tự xử bằng created_at/sequence."
+  },
+  {
+    "id": "be-q-013",
+    "courseId": "BACKEND",
+    "lesson": "be-01-api-design",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, vì sao docs API nên được sinh từ OpenAPI spec được validate trong CI thay vì viết tay?",
+    "options": [
+      "Docs viết tay luôn lệch thực tế sau một thời gian; spec validate trong CI giữ hợp đồng trung thực",
+      "Docs viết tay nhanh hơn nên luôn chính xác hơn",
+      "Spec không thể dùng để codegen client SDK",
+      "OpenAPI không hỗ trợ chặn breaking change"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Spec là nguồn sự thật: codegen, validate trong CI giữ docs/hợp đồng đồng bộ với thực tế.\n✓ Docs viết tay trôi khỏi thực tế; spec validate CI giữ hợp đồng trung thực ở quy mô nhiều team.\n✗ Nhanh không đồng nghĩa chính xác; viết tay dễ lệch.\n✗ Spec chính là để codegen client SDK, server stub, mock.\n✗ OpenAPI cho phép diff spec (oasdiff/optic) chặn breaking change trong CI."
+  },
+  {
+    "id": "be-q-014",
+    "courseId": "BACKEND",
+    "lesson": "be-02-database-engineering",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn có composite index `(user_id, status, created_at)`. Query nào KHÔNG dùng được index này một cách hiệu quả?",
+    "options": [
+      "`WHERE user_id = 1 AND status = 'paid'`",
+      "`WHERE status = 'paid'`",
+      "`WHERE user_id = 1`",
+      "`WHERE user_id = 1 AND status = 'paid' AND created_at > X`"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Quy tắc leftmost prefix: query phải bắt đầu từ cột đầu tiên của composite index.\n✓ Lọc chỉ theo `status` bỏ qua cột đầu `user_id` nên không tận dụng được B-tree.\n✗ Lọc `user_id` cộng `status` khớp prefix (a, b) nên dùng được.\n✗ Lọc chỉ `user_id` khớp prefix (a) nên dùng được.\n✗ Lọc cả ba cột khớp toàn bộ index."
+  },
+  {
+    "id": "be-q-015",
+    "courseId": "BACKEND",
+    "lesson": "be-02-database-engineering",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, B-tree index hỗ trợ mẫu tìm kiếm chuỗi nào?",
+    "options": [
+      "`LIKE '%abc'`",
+      "`LIKE 'abc%'`",
+      "`LOWER(email) = 'a@b.com'` (không có functional index)",
+      "Mọi mẫu `LIKE` bất kỳ"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "B-tree lưu dữ liệu có thứ tự nên chỉ tận dụng được khi biết phần đầu của giá trị.\n✓ Prefix match `LIKE 'abc%'` duyệt được theo thứ tự key.\n✗ `LIKE '%abc'` (wildcard đầu) không xác định được điểm bắt đầu trong cây.\n✗ Bọc hàm quanh cột làm mất tính có thứ tự, trừ khi có functional index.\n✗ Không phải mọi mẫu đều dùng được; suffix/contains không dùng được."
+  },
+  {
+    "id": "be-q-016",
+    "courseId": "BACKEND",
+    "lesson": "be-02-database-engineering",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Hai request cùng làm `SELECT balance` rồi `UPDATE balance = X` ở mức Read Committed và một bên ghi đè bên kia. Đây là anomaly gì và cách sửa nào ĐÚNG?",
+    "options": [
+      "Phantom read; sửa bằng cách hạ xuống Read Uncommitted",
+      "Lost update; sửa bằng update nguyên tử `SET balance = balance - 100 WHERE balance >= 100`",
+      "Dirty read; sửa bằng cách bỏ transaction",
+      "Write skew; sửa bằng cách tăng pool size"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Read Committed không chặn lost update khi hai bên read-modify-write giẫm nhau.\n✓ Update nguyên tử (hoặc `SELECT ... FOR UPDATE`/optimistic locking) loại bỏ khoảng read-then-write.\n✗ Đây không phải phantom (dòng mới xuất hiện), và hạ isolation càng tệ.\n✗ Không phải dirty read (đọc dữ liệu chưa commit); bỏ transaction không giải quyết.\n✗ Write skew là ghi vào dòng khác nhau vi phạm bất biến; pool size không liên quan."
+  },
+  {
+    "id": "be-q-017",
+    "courseId": "BACKEND",
+    "lesson": "be-02-database-engineering",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn chạy Serializable ở Postgres và đôi khi gặp error `40001 (serialization_failure)`. Cách xử lý đúng theo bài là gì?",
+    "options": [
+      "Postgres lock nhiều hơn nên cần giảm tải, không cần làm gì ở app",
+      "Bắt buộc có retry loop ở ứng dụng để chạy lại transaction bị abort",
+      "Hạ xuống Read Committed vĩnh viễn để không bao giờ gặp lỗi",
+      "Tăng `lock_timeout` để Postgres chờ lâu hơn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Serializable ở Postgres dùng SSI: theo dõi dependency và abort transaction vi phạm thay vì lock thêm.\n✓ Vì transaction bị abort, ứng dụng phải có retry loop cho `40001`.\n✗ Postgres Serializable không lock nhiều hơn, nó abort; nên app vẫn phải xử lý.\n✗ Hạ isolation đánh đổi đúng đắn; không phải cách bài khuyến nghị cho yêu cầu cần serializable.\n✗ `lock_timeout` không liên quan tới serialization failure do SSI."
+  },
+  {
+    "id": "be-q-018",
+    "courseId": "BACKEND",
+    "lesson": "be-02-database-engineering",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một admin panel cho phép user mở form chỉnh sửa tài liệu và gõ trong nhiều phút trước khi submit. Cơ chế locking nào phù hợp?",
+    "options": [
+      "Pessimistic: `SELECT ... FOR UPDATE` giữ lock suốt thời gian user gõ",
+      "Optimistic: cột `version`, `UPDATE ... WHERE version = :expected`",
+      "Serializable cho mỗi keystroke",
+      "`SELECT ... FOR UPDATE SKIP LOCKED`"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Thao tác kéo dài qua nhiều request HTTP không nên giữ row lock của DB.\n✓ Optimistic locking gửi version về client và kiểm tra lúc submit, báo conflict nếu ai đó đã sửa.\n✗ Pessimistic giữ lock suốt thời gian gõ là điều không DB nào nên làm.\n✗ Serializable mỗi keystroke vô nghĩa và không giữ trạng thái qua request.\n✗ `SKIP LOCKED` dành cho pattern job queue, không phải edit form."
+  },
+  {
+    "id": "be-q-019",
+    "courseId": "BACKEND",
+    "lesson": "be-02-database-engineering",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đọc `EXPLAIN ANALYZE`, bạn thấy `rows=10` (ước lượng) nhưng `actual rows=2,000,000`. Nguyên nhân và hành động đúng là gì?",
+    "options": [
+      "Thiếu RAM; cần tăng `work_mem`",
+      "Thống kê sai; chạy `ANALYZE` để optimizer cập nhật và đổi plan",
+      "Deadlock; thêm retry loop",
+      "Connection pool quá nhỏ; tăng pool size"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Lệch lớn giữa ước lượng và thực tế là dấu hiệu thống kê (statistics) lỗi thời.\n✓ Chạy `ANALYZE` cập nhật thống kê, optimizer sẽ chọn plan đúng hơn.\n✗ `work_mem` chỉ liên quan khi sort tràn ra disk, không phải sai ước lượng số dòng.\n✗ Đây không phải vấn đề deadlock.\n✗ Pool size không ảnh hưởng tới ước lượng số dòng của optimizer."
+  },
+  {
+    "id": "be-q-020",
+    "courseId": "BACKEND",
+    "lesson": "be-02-database-engineering",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vòng lặp lấy 100 orders rồi gọi `o.getUser()` cho từng order. Vấn đề và cách sửa tốt nhất là gì?",
+    "options": [
+      "Deadlock; thêm `lock_timeout`",
+      "N+1 query; eager load bằng JOIN hoặc batch load (DataLoader)",
+      "Lost update; dùng optimistic locking",
+      "Write amplification; xoá bớt index"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "100 round-trip riêng lẻ cộng dồn latency dù mỗi query đều nhanh.\n✓ Đây là N+1; sửa bằng eager load/JOIN một query hoặc batch `WHERE id IN (...)` kiểu DataLoader.\n✗ Không liên quan deadlock hay lock_timeout.\n✗ Lost update là vấn đề ghi đè concurrent, không phải số lượng query.\n✗ Write amplification liên quan tới insert/update với nhiều index, không phải vòng lặp read."
+  },
+  {
+    "id": "be-q-021",
+    "courseId": "BACKEND",
+    "lesson": "be-02-database-engineering",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần thêm index trên bảng lớn đang phục vụ production (Postgres) mà không khoá bảng. Cách đúng là gì?",
+    "options": [
+      "`CREATE INDEX` bình thường trong giờ thấp điểm",
+      "`CREATE INDEX CONCURRENTLY` (chạy ngoài transaction)",
+      "`ALTER TABLE ... SET NOT NULL` trước rồi tạo index",
+      "Drop bảng rồi tạo lại với index"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "`CREATE INDEX` thường giữ lock chặn write trong suốt quá trình build.\n✓ `CREATE INDEX CONCURRENTLY` build index không chặn write và phải chạy ngoài transaction.\n✗ `CREATE INDEX` thường vẫn khoá, kể cả giờ thấp điểm vẫn rủi ro.\n✗ `SET NOT NULL` không liên quan tới việc thêm index.\n✗ Drop bảng là phá hủy dữ liệu, hoàn toàn sai."
+  },
+  {
+    "id": "be-q-022",
+    "courseId": "BACKEND",
+    "lesson": "be-02-database-engineering",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "DB có 8 vCPU. 50 pod, mỗi pod pool 20 → 1000 connection và latency tăng. Theo bài, hướng xử lý đúng là gì?",
+    "options": [
+      "Tăng pool mỗi pod lên 40 để giảm hàng đợi",
+      "Đặt connection pooler tầng giữa (PgBouncer transaction mode / RDS Proxy) và giữ pool nhỏ",
+      "Nâng isolation lên Serializable để giảm conflict",
+      "Thêm covering index cho mọi query nóng"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "DB chỉ hiệu quả với số connection xấp xỉ số core; 1000 connection làm Postgres ngộp (mỗi connection là một process).\n✓ Connection pooler tầng giữa dồn nhiều connection ảo về ít connection thật, và pool nên nhỏ.\n✗ Tăng pool khi latency tăng theo nghĩa là thiếu CPU/I-O ở DB, không phải thiếu connection.\n✗ Isolation không giải quyết vấn đề số lượng connection.\n✗ Covering index liên quan tới read pattern, không giải quyết bùng nổ connection."
+  },
+  {
+    "id": "be-q-023",
+    "courseId": "BACKEND",
+    "lesson": "be-02-database-engineering",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn cần đổi kiểu một cột trên bảng 500 triệu dòng với zero downtime (Postgres). Cách tiếp cận đúng là gì?",
+    "options": [
+      "`ALTER COLUMN TYPE` trực tiếp trong giờ thấp điểm",
+      "Expand-contract: thêm cột mới, dual-write, backfill theo batch, chuyển read, rồi xoá cột cũ",
+      "Khoá bảng bằng ACCESS EXCLUSIVE rồi cập nhật một lần",
+      "Tăng `statement_timeout` rồi chạy một `UPDATE` khổng lồ"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "`ALTER COLUMN TYPE` rewrite cả bảng và khoá — không khả thi với 500 triệu dòng zero downtime.\n✓ Expand-contract (thêm cột mới nullable, dual-write, backfill batch, chuyển read, contract) giữ schema tương thích cả code cũ và mới.\n✗ ALTER trực tiếp vẫn rewrite và khoá bảng dù giờ thấp điểm.\n✗ Khoá ACCESS EXCLUSIVE gây downtime, đi ngược yêu cầu.\n✗ Một UPDATE khổng lồ gây bloat, replication lag và giữ lock lâu."
+  },
+  {
+    "id": "be-q-024",
+    "courseId": "BACKEND",
+    "lesson": "be-02-database-engineering",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một `ALTER TABLE` được coi là 'nhanh' nhưng khi chạy lại làm toàn bộ bảng đứng hình. Nguyên nhân gốc theo bài là gì?",
+    "options": [
+      "ALTER luôn rewrite cả bảng dù nhanh hay chậm",
+      "ALTER cần ACCESS EXCLUSIVE lock; nếu có query dài đang chạy, ALTER xếp hàng sau nó và mọi query mới xếp hàng sau ALTER",
+      "Thiếu index nên ALTER phải Seq Scan",
+      "Pool đã cạn connection nên query mới bị từ chối"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Vấn đề là hàng đợi lock chứ không phải bản thân ALTER chậm.\n✓ ALTER cần ACCESS EXCLUSIVE; query dài chặn nó, rồi mọi query mới lại xếp sau ALTER khiến bảng đứng hình. Né bằng `lock_timeout` cộng retry.\n✗ ALTER nhanh (metadata-only) không rewrite bảng.\n✗ Đây không phải vấn đề thiếu index hay Seq Scan.\n✗ Triệu chứng là chờ lock chứ không phải pool cạn."
+  },
+  {
+    "id": "be-q-025",
+    "courseId": "BACKEND",
+    "lesson": "be-02-database-engineering",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, những cách nào giúp PHÒNG NGỪA hoặc xử lý đúng deadlock?",
+    "options": [
+      "Lock theo thứ tự nhất quán (ví dụ luôn lock ID nhỏ trước, `ORDER BY id`)",
+      "Giữ transaction ngắn, không gọi HTTP/API ngoài trong transaction",
+      "Coi deadlock là bug phải diệt về 0 bằng mọi giá",
+      "Đặt `lock_timeout` để fail nhanh thay vì xếp hàng vô hạn",
+      "Mọi write transaction đi qua wrapper có retry"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3,
+      4
+    ],
+    "explanation": "Deadlock ở mức thấp là chuyện bình thường của hệ concurrent; điều quan trọng là phòng và retry.\n✓ Lock theo thứ tự nhất quán tránh chờ chéo nhau.\n✓ Transaction ngắn, không gọi API ngoài giảm thời gian giữ lock.\n✓ `lock_timeout` giúp fail nhanh.\n✓ Wrapper có retry xử lý khi bị chọn làm nạn nhân.\n✗ Coi deadlock là bug phải về 0 là quan niệm sai; bug thật là không retry."
+  },
+  {
+    "id": "be-q-026",
+    "courseId": "BACKEND",
+    "lesson": "be-02-database-engineering",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những phát biểu nào về index là ĐÚNG theo bài học?",
+    "options": [
+      "Tạo `(user_id)` riêng khi đã có `(user_id, status)` là thừa",
+      "Index trên cột 'nóng' đổi liên tục như `last_seen_at` gây write amplification đáng kể",
+      "Covering index nên áp dụng cho mọi query để tối ưu toàn diện",
+      "Partial index (`... WHERE status = 'pending'`) hữu ích khi chỉ một phần dữ liệu hay được query",
+      "UUIDv4 làm PK insert rải rác gây page split; nên ưu tiên UUIDv7/ULID hoặc bigint"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3,
+      4
+    ],
+    "explanation": "Index đánh đổi write chậm hơn và tốn disk lấy read nhanh cho một pattern cụ thể.\n✓ `(user_id)` thừa vì composite `(user_id, status)` đã phục vụ query theo `user_id`.\n✓ Index trên cột thay đổi liên tục là sát thủ thầm lặng do write amplification.\n✓ Partial index giảm chi phí khi chỉ index phần dữ liệu hay query.\n✓ UUIDv4 ngẫu nhiên gây page split, cache miss; nên dùng UUIDv7/ULID/bigint.\n✗ Không nên cover mọi query: index phình to thì buffer pool chứa được ít hơn, mọi thứ cùng chậm."
+  },
+  {
+    "id": "be-q-027",
+    "courseId": "BACKEND",
+    "lesson": "be-03-caching",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, độ khó cốt lõi của caching nằm ở đâu?",
+    "options": [
+      "Chọn ngôn ngữ lập trình phù hợp để gọi Redis",
+      "Quản lý bản sao dữ liệu thứ hai: khi nào hai bản lệch nhau và lệch bao lâu thì chấp nhận được",
+      "Cài đặt và vận hành cluster Redis Multi-AZ",
+      "Tối ưu serializer để giảm kích thước payload"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cache đưa vào hệ thống một bản sao dữ liệu thứ hai, nên toàn bộ độ khó là câu hỏi về độ lệch và thời gian chấp nhận được.\n✓ Bản chất caching là trade-off consistency, xoay quanh việc hai bản sao lệch nhau bao lâu thì chấp nhận được.\n✗ Ngôn ngữ gọi Redis không phải nguồn gốc độ khó.\n✗ Vận hành cluster chỉ là độ phức tạp vận hành, không phải cốt lõi consistency.\n✗ Serializer là chi tiết kỹ thuật phụ, không phải bài toán khó của caching."
+  },
+  {
+    "id": "be-q-028",
+    "courseId": "BACKEND",
+    "lesson": "be-03-caching",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Pattern caching nào được bài học khuyên dùng làm mặc định cho 90% hệ thống?",
+    "options": [
+      "Write-behind với flush async",
+      "Cache-aside + TTL + xoá key khi update",
+      "Write-through đồng bộ cho mọi entity",
+      "Read-through qua DAX cho mọi truy vấn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nói 90% hệ thống dùng cache-aside + TTL + xoá key khi update, và chỉ đổi pattern khi có lý do đo đạc được.\n✓ Cache-aside kèm TTL và xoá key khi update là điểm khởi đầu mặc định.\n✗ Write-behind chỉ hợp cho counter/metrics chấp nhận mất dữ liệu.\n✗ Write-through cho mọi entity tốn RAM và tăng write latency không cần thiết.\n✗ Read-through qua DAX chỉ phù hợp khi đã có lớp DAO/proxy sẵn."
+  },
+  {
+    "id": "be-q-029",
+    "courseId": "BACKEND",
+    "lesson": "be-03-caching",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với cache-aside, thứ tự thao tác nào là ĐÚNG khi cập nhật dữ liệu?",
+    "options": [
+      "Xoá cache trước, rồi update DB",
+      "Update cache (ghi đè giá trị mới) thay vì xoá",
+      "Update DB trước, rồi xoá cache, kèm TTL làm lưới an toàn",
+      "Update DB và để TTL tự lo, không cần đụng đến cache"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Thứ tự đúng cho cache-aside là update DB trước, xoá cache sau, luôn kèm TTL làm lưới an toàn cho mọi race.\n✓ Update DB rồi xoá cache, kèm TTL, là quy tắc bài nêu rõ.\n✗ Xoá cache trước khi update DB sai vì reader chen vào giữa sẽ cache lại giá trị cũ.\n✗ Update cache thay vì xoá còn nguy hiểm hơn: hai writer có thể ghi cache ngược thứ tự với DB.\n✗ Chỉ dựa vào TTL khiến dữ liệu stale lâu không cần thiết khi đã có thể chủ động xoá."
+  },
+  {
+    "id": "be-q-030",
+    "courseId": "BACKEND",
+    "lesson": "be-03-caching",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một counter view-count nhận hàng nghìn write/giây, chấp nhận mất một phần dữ liệu khi sự cố. Pattern nào phù hợp nhất?",
+    "options": [
+      "Write-through để read-after-write luôn đúng",
+      "Write-behind: ghi cache, ack ngay, flush DB theo batch",
+      "Cache-aside với TTL rất ngắn",
+      "Read-through qua một lớp proxy"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Write-behind gom batch, write latency cực thấp, phù hợp counter/like/view/telemetry chấp nhận mất một phần.\n✓ Write-behind đúng cho counter ghi dày, chấp nhận rủi ro mất dữ liệu nếu cache chết trước flush.\n✗ Write-through tăng write latency vì ghi đồng bộ hai nơi, không hợp với ghi dày.\n✗ Cache-aside với TTL ngắn không giải quyết được tải write cao xuống DB.\n✗ Read-through tối ưu đường đọc, không phù hợp bài toán write dày."
+  },
+  {
+    "id": "be-q-031",
+    "courseId": "BACKEND",
+    "lesson": "be-03-caching",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong race condition kinh điển của cache-aside (reader miss đọc DB giá trị CŨ, writer update DB rồi DEL key, reader SET lại giá trị CŨ), hậu quả và giải pháp thực dụng là gì?",
+    "options": [
+      "Cache sai cho đến hết TTL; giảm thiểu bằng TTL làm lưới an toàn, versioning/CAS hoặc delayed double delete",
+      "Cache mất hoàn toàn dữ liệu; phải chuyển sang write-through",
+      "DB bị ghi đè giá trị cũ; phải khoá hàng (row lock) khi đọc",
+      "Không có hậu quả vì DEL luôn chạy sau cùng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Reader SET lại giá trị cũ sau khi writer đã DEL, nên cache sai cho tới hết TTL; cửa sổ này chắc chắn xảy ra ở traffic lớn.\n✓ TTL làm lưới an toàn, versioning/compare-and-set, hoặc delayed double delete là các giải pháp thực dụng bài nêu.\n✗ Dữ liệu không bị mất hẳn, cache chỉ giữ giá trị cũ tạm thời.\n✗ DB không bị ghi đè; vấn đề nằm ở cache, không phải row lock.\n✗ Có hậu quả thực: reader có thể SET sau DEL của writer, làm cache stale."
+  },
+  {
+    "id": "be-q-032",
+    "courseId": "BACKEND",
+    "lesson": "be-03-caching",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những kỹ thuật nào được bài học liệt kê để chống cache stampede (dogpile)?",
+    "options": [
+      "Lock / single-flight: chỉ một request đi tính lại",
+      "Early refresh / stale-while-revalidate",
+      "Thêm jitter ngẫu nhiên cho TTL",
+      "Bỏ TTL hoàn toàn để key không bao giờ hết hạn",
+      "Tăng số shard của Redis Cluster"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bài nêu ba kỹ thuật chống stampede, thường dùng kết hợp.\n✓ Lock/single-flight cho chỉ một request tính lại, số còn lại đợi hoặc dùng stale.\n✓ Early refresh và stale-while-revalidate refresh nền, tránh đồng loạt miss.\n✓ Jitter TTL dàn đều thời điểm expiry, tránh hàng loạt key chết cùng lúc.\n✗ Bỏ TTL không chống stampede và làm mất lưới an toàn cho consistency.\n✗ Tăng shard không giúp vì stampede là vấn đề đồng loạt miss một key, không phải phân bố tải."
+  },
+  {
+    "id": "be-q-033",
+    "courseId": "BACKEND",
+    "lesson": "be-03-caching",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một sản phẩm flash sale tạo hot key trong Redis Cluster. Vì sao thêm node vào cluster KHÔNG giúp, và cách xử lý phù hợp là gì?",
+    "options": [
+      "Vì cluster cần restart để nhận node; phải restart rồi mới cân bằng được",
+      "Vì một key chỉ nằm trên một shard nên một shard gánh toàn bộ; xử lý bằng local cache phía trước và/hoặc key replication",
+      "Vì TTL quá dài; chỉ cần giảm TTL xuống vài giây",
+      "Vì hit ratio thấp; cần tăng RAM cho node hot"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Trong Redis Cluster một key chỉ nằm trên một shard, nên một shard gánh toàn bộ tải hot key và thêm node không phân bổ được.\n✓ Local cache in-process phía trước (TTL 1-5s) và key replication ra nhiều bản dàn tải là cách bài nêu.\n✗ Vấn đề không phải restart cluster.\n✗ Giảm TTL không phân tán tải khỏi một shard duy nhất.\n✗ Hot key không phải do hit ratio thấp hay thiếu RAM, mà do tập trung trên một shard."
+  },
+  {
+    "id": "be-q-034",
+    "courseId": "BACKEND",
+    "lesson": "be-03-caching",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Negative caching giải quyết vấn đề gì, và lưu ý quan trọng về TTL của nó là gì?",
+    "options": [
+      "Chống cache penetration bằng cách cache câu trả lời 'không tồn tại'; TTL nên NGẮN để bản ghi mới tạo sớm xuất hiện",
+      "Tăng hit ratio cho key nóng; TTL nên DÀI hơn dữ liệu thật",
+      "Giảm write latency cho counter; TTL bằng 0",
+      "Đảm bảo read-after-write; TTL vô hạn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Negative caching cache cả câu trả lời 'không tồn tại' để chặn các request lookup ID không có, tránh cache penetration/attacker.\n✓ TTL của negative cache nên ngắn để bản ghi vừa tạo sớm xuất hiện.\n✗ Mục đích không phải tăng hit ratio cho hot key, và TTL không nên dài hơn dữ liệu thật.\n✗ Không liên quan write latency của counter.\n✗ TTL vô hạn sai vì user vừa tạo sẽ không bao giờ hiện ra."
+  },
+  {
+    "id": "be-q-035",
+    "courseId": "BACKEND",
+    "lesson": "be-03-caching",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một API cache response theo URL, nhưng response phụ thuộc header Authorization. Đây là lỗi gì và quy tắc đúng là gì?",
+    "options": [
+      "Lỗi hit ratio thấp; cần tăng max-age",
+      "Lỗi bảo mật (user A nhận dữ liệu user B); dữ liệu cá nhân hoá thì key phải chứa định danh user, hoặc đừng cache ở tầng dùng chung",
+      "Lỗi stampede; cần thêm lock single-flight",
+      "Lỗi eviction; cần thêm RAM cho cache"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cache theo URL mà bỏ qua Authorization khiến hai user thấy nhầm dữ liệu của nhau, đây là lỗi bảo mật xuất hiện đều đặn ở các công ty lớn.\n✓ Quy tắc đúng: dữ liệu cá nhân hoá thì key phải chứa định danh user, hoặc không cache ở tầng dùng chung.\n✗ Không phải vấn đề hit ratio hay max-age.\n✗ Không phải stampede.\n✗ Không phải eviction hay thiếu RAM; đây là thiếu tham số định danh trong key."
+  },
+  {
+    "id": "be-q-036",
+    "courseId": "BACKEND",
+    "lesson": "be-03-caching",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo nguyên tắc thiết kế cache key trong bài, những phát biểu nào ĐÚNG?",
+    "options": [
+      "Đưa schema version vào namespace để bump version là cách invalidate hàng loạt rẻ nhất",
+      "Mọi tham số ảnh hưởng kết quả (locale, currency, user tier...) phải nằm trong key",
+      "Phải chuẩn hoá query params (sort, lowercase, trim) trước khi tạo key",
+      "Nên nhét raw user input dài trực tiếp vào key để dễ debug",
+      "Key nên ngẫu nhiên, không đoán được, để tăng bảo mật"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Key tốt là key đoán được, có namespace và có version.\n✓ Bump schema version trong namespace là cách invalidate hàng loạt rẻ nhất vì key cũ tự bị bỏ qua.\n✓ Mọi tham số tạo biến thể phải nằm trong key, thiếu là lỗi bảo mật.\n✓ Chuẩn hoá query params đảm bảo ?a=1&b=2 và ?b=2&a=1 ra cùng key.\n✗ Raw user input dài nên được hash (sha256[:16]) chứ không nhét trực tiếp.\n✗ Key nên đoán được, có cấu trúc; ngẫu nhiên không phải nguyên tắc thiết kế."
+  },
+  {
+    "id": "be-q-037",
+    "courseId": "BACKEND",
+    "lesson": "be-03-caching",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "So sánh local cache (in-process) và distributed cache (Redis), phát biểu nào ĐÚNG?",
+    "options": [
+      "Local cache nhất quán hơn vì mỗi instance giữ cùng một bản",
+      "Local cache latency ~100ns nhưng mỗi instance một bản (lệch nhau) và mất khi deploy/restart",
+      "Distributed cache không bị mất khi restart nhưng latency thấp hơn local cache",
+      "Invalidation local cache đơn giản hơn, chỉ cần một lệnh DEL"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Local cache nhanh nhất (~100ns, không network) nhưng mỗi instance giữ một bản riêng nên lệch nhau và mất khi deploy.\n✓ Local cache ~100ns, mỗi instance một bản, cold mỗi lần deploy là đúng theo bảng so sánh.\n✗ Local cache KHÔNG nhất quán hơn: mỗi instance một bản, lệch nhau.\n✗ Distributed cache latency cao hơn (~0.5-1ms network hop) chứ không thấp hơn local.\n✗ Invalidation local cache khó hơn (phải pub/sub broadcast), còn distributed chỉ cần một DEL."
+  },
+  {
+    "id": "be-q-038",
+    "courseId": "BACKEND",
+    "lesson": "be-03-caching",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Với một thao tác 'kiểm tra số dư trước khi trừ tiền', cách tiếp cận đúng theo bài về consistency là gì?",
+    "options": [
+      "Luôn đọc từ cache để giảm latency, chấp nhận eventual consistency",
+      "Đọc thẳng DB (hoặc dùng conditional write tại DB); đường quyết định nghiệp vụ quan trọng không đi qua cache",
+      "Dùng write-behind để ghi nhanh rồi đối soát sau",
+      "Tăng TTL để cache luôn có sẵn số dư mới nhất"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cache cho eventual consistency; đường cần đúng tuyệt đối thì không nên đi qua cache.\n✓ Kiểm tra số dư trước khi trừ tiền nên đọc thẳng DB hoặc conditional write; cache phục vụ hiển thị, DB phục vụ quyết định.\n✗ Đọc cache cho thao tác tiền bạc rủi ro vì stale có thể dẫn tới trừ sai.\n✗ Write-behind giữ dữ liệu chưa có trong DB, càng không hợp cho quyết định tài chính.\n✗ Tăng TTL không đảm bảo số dư mới nhất, làm dữ liệu stale lâu hơn."
+  },
+  {
+    "id": "be-q-039",
+    "courseId": "BACKEND",
+    "lesson": "be-03-caching",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao bài học cảnh báo rằng 'hit ratio 99%' có thể vô nghĩa?",
+    "options": [
+      "Vì hit ratio luôn sai lệch do network",
+      "Vì 99% đó có thể là các key rẻ tiền còn 1% miss rơi đúng query nặng nhất; cần đo chi phí của miss, không chỉ đếm hit",
+      "Vì Redis không đo được hit ratio chính xác",
+      "Vì hit ratio cao luôn đồng nghĩa cache thừa RAM"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài cảnh báo phải đo chi phí của miss (DB time tiết kiệm được), không chỉ đếm hit.\n✓ 99% hit có thể là key rẻ trong khi 1% miss rơi vào query nặng nhất, nên con số đếm thuần có thể vô nghĩa.\n✗ Vấn đề không phải sai lệch do network.\n✗ Redis vẫn đo được hit ratio; vấn đề là cách diễn giải.\n✗ Hit ratio cao không đồng nghĩa thừa RAM."
+  },
+  {
+    "id": "be-q-040",
+    "courseId": "BACKEND",
+    "lesson": "be-04-async-jobs",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đội của bạn muốn tách logic 'kiểm tra tồn kho trước khi cho khách thanh toán' sang xử lý async qua queue để 'giảm latency'. Theo bài học, đánh giá nào đúng nhất?",
+    "options": [
+      "Không nên tách: người dùng cần kết quả ngay để đi tiếp, async chỉ đổi latency lấy bài toán polling/notification phức tạp hơn",
+      "Nên tách vì mọi việc gọi sang hệ thống khác đều phải async để bảo vệ p99",
+      "Nên tách vì queue luôn làm hệ thống nhanh hơn nhờ load leveling",
+      "Không nên tách vì queue không bao giờ áp dụng được cho việc đọc dữ liệu"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Việc mà người dùng cần kết quả để đi tiếp thì không nên đẩy sang async.\n✓ Kiểm tra tồn kho trước thanh toán cần kết quả ngay; async chỉ đổi latency lấy bài toán polling/notification phức tạp hơn\n✗ Không phải mọi việc gọi hệ thống khác đều phải async; bài chỉ khuyến nghị tách khi người dùng không cần kết quả ngay\n✗ Queue thêm độ trễ, hạ tầng và chế độ lỗi mới, không tự làm hệ thống nhanh hơn\n✗ Queue có thể áp dụng cho nhiều loại việc; lý do từ chối ở đây là yêu cầu kết quả tức thì, không phải vì là việc đọc"
+  },
+  {
+    "id": "be-q-041",
+    "courseId": "BACKEND",
+    "lesson": "be-04-async-jobs",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong vòng lặp worker kiểu SQS, vì sao message chỉ được gọi delete (ack) SAU khi handle() chạy xong?",
+    "options": [
+      "Để nếu worker chết giữa chừng, message tự hiện lại sau visibility timeout và được xử lý lại (không mất việc)",
+      "Để giảm số lần receive, tiết kiệm chi phí gọi API",
+      "Để đảm bảo exactly-once delivery ở tầng mạng",
+      "Để message luôn được xử lý theo đúng thứ tự enqueue"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Ack sau khi xử lý xong là cơ chế bảo đảm at-least-once.\n✓ Nếu worker chết trước khi ack, message không bị xoá mà hiện lại sau visibility timeout để worker khác xử lý, nên không mất việc\n✗ Mục đích không phải tiết kiệm chi phí receive mà là không mất message\n✗ Exactly-once delivery ở tầng mạng là bất khả thi (bài toán Two Generals)\n✗ Ack-sau-xử-lý không liên quan tới đảm bảo thứ tự; thứ tự là chuyện của FIFO/MessageGroupId"
+  },
+  {
+    "id": "be-q-042",
+    "courseId": "BACKEND",
+    "lesson": "be-04-async-jobs",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Triệu chứng: 'thỉnh thoảng email xác nhận bị gửi đôi, không tái hiện được'. Job xử lý mất ~90 giây, visibility timeout đang đặt 30 giây. Nguyên nhân gốc và cách sửa đúng là gì?",
+    "options": [
+      "Visibility timeout ngắn hơn thời gian xử lý → message hiện lại khi worker vẫn đang chạy → 2 worker xử lý song song; tăng timeout ≥ 2–6 lần p99 hoặc gia hạn heartbeat",
+      "maxReceiveCount quá thấp → message bị đẩy vào DLQ rồi gửi lại; tăng maxReceiveCount",
+      "Producer không gắn idempotency key nên SQS không dedup được; bật SQS FIFO",
+      "Thiếu exponential backoff khi retry; thêm jitter vào retry"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Visibility timeout ngắn hơn thời gian xử lý là nguyên nhân kinh điển của xử lý song song.\n✓ Job 90s nhưng timeout 30s → message hiện lại khi worker còn chạy → 2 worker xử lý cùng job; sửa bằng cách đặt timeout ≥ 2–6× p99 hoặc gia hạn heartbeat\n✗ maxReceiveCount/DLQ không gây ra gửi đôi kiểu này; DLQ là để chặn poison message\n✗ FIFO dedup chỉ trong cửa sổ 5 phút và không phải nguyên nhân ở đây\n✗ Backoff/jitter xử lý vấn đề retry đồng loạt, không phải song-song-do-timeout"
+  },
+  {
+    "id": "be-q-043",
+    "courseId": "BACKEND",
+    "lesson": "be-04-async-jobs",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Consumer cần cập nhật số dư khi nhận message thanh toán. Cách viết nào idempotent-an toàn nhất khi message có thể bị xử lý nhiều lần?",
+    "options": [
+      "Dùng conditional write UPDATE orders SET status='paid' WHERE id=$1 AND status='pending' (set tuyệt đối, kiểm tra điều kiện)",
+      "UPDATE balance = balance - 100 và tin rằng queue chỉ gửi 1 lần",
+      "Gọi external API trước rồi mới ghi DB để chắc chắn email đã gửi",
+      "Ack message ngay khi nhận rồi mới xử lý để tránh xử lý lại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Ưu tiên set tuyệt đối + conditional write thay vì delta tương đối.\n✓ UPDATE ... WHERE status='pending' chỉ áp dụng một lần; chạy lại thì affected_rows=0 nên vô hại\n✗ balance = balance - 100 chạy 2 lần là mất tiền; không thể tin queue chỉ gửi 1 lần (at-least-once)\n✗ Gọi external API trước rồi ghi DB không làm thao tác idempotent; còn rủi ro gửi đôi nếu crash\n✗ Ack-trước-xử-lý là at-most-once, crash thì mất message — không phải cách bảo đảm idempotency"
+  },
+  {
+    "id": "be-q-044",
+    "courseId": "BACKEND",
+    "lesson": "be-04-async-jobs",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Producer retry khi enqueue, mỗi lần sinh một message ID mới. Để dedup ở consumer, idempotency key nên gắn với cái gì?",
+    "options": [
+      "Ý định nghiệp vụ, ví dụ order_id + 'send_confirmation'",
+      "Message ID do hạ tầng queue sinh ra",
+      "Timestamp lúc consumer nhận message",
+      "Địa chỉ IP của worker đang xử lý"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Dedup key phải đại diện cho ý định nghiệp vụ.\n✓ Khoá kiểu order_id + 'send_confirmation' giữ nguyên qua mọi lần retry nên dedup đúng\n✗ Message ID đổi mỗi lần producer retry → 2 message khác ID nhưng cùng ý định → vẫn double-charge\n✗ Timestamp nhận message khác nhau mỗi lần nên không dedup được\n✗ IP worker không liên quan tới việc nhận diện trùng nghiệp vụ"
+  },
+  {
+    "id": "be-q-045",
+    "courseId": "BACKEND",
+    "lesson": "be-04-async-jobs",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Code: create_order ghi đơn vào DB ở bước 1, rồi queue.publish('OrderCreated') ở bước 2 (hai hệ thống độc lập). Vì sao mọi cách sắp xếp thứ tự đều sai và lời giải đúng là gì?",
+    "options": [
+      "Dual-write không có transaction chung → mất event hoặc event ma; lời giải là Outbox: ghi event vào bảng outbox cùng transaction với đơn, relay publish sau",
+      "Chỉ cần đảo publish lên trước insert là an toàn vì event luôn tới trước data",
+      "Bọc cả publish lẫn insert trong cùng transaction DB là đủ để atomic",
+      "Bật SQS FIFO để hạ tầng đảm bảo exactly-once, không cần đổi code"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đây là dual-write problem: hai hệ thống không chia sẻ transaction.\n✓ Outbox ghi event vào bảng outbox cùng transaction với đơn (atomic), relay publish sau; duplicate được consumer idempotent hấp thụ\n✗ Publish trước insert tệ hơn: consumer nhận event về đơn chưa tồn tại hoặc đã rollback (event ma)\n✗ Network call trong transaction kéo dài lock và queue ack thành công không có nghĩa transaction sẽ commit\n✗ FIFO/exactly-once của hạ tầng không giải quyết dual-write giữa DB và queue"
+  },
+  {
+    "id": "be-q-046",
+    "courseId": "BACKEND",
+    "lesson": "be-04-async-jobs",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Outbox pattern, relay process publish thành công lên queue nhưng crash TRƯỚC khi đánh dấu outbox row là 'đã gửi'. Hệ quả và vì sao chấp nhận được?",
+    "options": [
+      "Relay sẽ publish lại → duplicate event → nhưng consumer đã idempotent nên vô hại",
+      "Event bị mất vĩnh viễn vì đã publish nhưng chưa đánh dấu",
+      "Đơn hàng trong DB bị rollback theo",
+      "Queue tự xoá event để giữ exactly-once"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Outbox đảm bảo at-least-once publish, idempotent consumer hấp thụ duplicate.\n✓ Relay khởi động lại thấy row chưa đánh dấu → publish lại → duplicate, nhưng consumer idempotent nên không gây tác hại\n✗ Event không mất: nó vẫn nằm trong bảng outbox chưa được đánh dấu gửi\n✗ Đơn hàng đã commit cùng outbox row từ trước, không bị rollback vì relay crash\n✗ Queue không tự xoá event để tạo exactly-once; cơ chế là at-least-once + dedup ở consumer"
+  },
+  {
+    "id": "be-q-047",
+    "courseId": "BACKEND",
+    "lesson": "be-04-async-jobs",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Về Saga và compensation cho transaction xuyên service, những phát biểu nào ĐÚNG theo bài học? (chọn nhiều)",
+    "options": [
+      "Compensation không phải rollback: tiền đã trừ thì refund là một giao dịch mới, hệ thống đi qua trạng thái trung gian quan sát được",
+      "Nên thiết kế compensation trước khi viết happy path, và đẩy bước không hoàn tác được xuống cuối saga",
+      "Orchestration dùng state machine tập trung, dễ quan sát/reason, thường thắng khi flow > 3 bước hoặc có nhánh",
+      "Saga dùng distributed transaction 2PC để giữ atomicity toàn cục giữa các service",
+      "Choreography luôn dễ debug hơn vì flow được tập trung tại một nơi"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Saga là chuỗi local transaction có compensating action, không dùng lock toàn cục.\n✓ Compensation là giao dịch mới (refund), hệ thống chấp nhận trạng thái trung gian quan sát được\n✓ Thiết kế compensation trước, đẩy việc không hoàn tác được (gửi hàng) xuống cuối saga\n✓ Orchestration tập trung state machine, dễ quan sát, thường thắng khi flow > 3 bước hoặc có nhánh\n✗ Saga ra đời chính vì không có 2PC tử tế (chậm, fragile, managed service ít hỗ trợ)\n✗ Choreography phân tán flow ra nhiều service nên debug khó hơn, không phải tập trung"
+  },
+  {
+    "id": "be-q-048",
+    "courseId": "BACKEND",
+    "lesson": "be-04-async-jobs",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cần triển khai job 'gửi nhắc nhở sau 24h nếu khách chưa thanh toán'. Lựa chọn và lưu ý nào đúng?",
+    "options": [
+      "Ghi due_at vào DB và poller quét WHERE due_at<=now() AND status='pending' với SKIP LOCKED, đồng thời kiểm tra lại điều kiện lúc chạy",
+      "Dùng SQS delay (tối đa 15 phút) đặt 24h vì queue luôn hỗ trợ delay tuỳ ý",
+      "Lên lịch và gửi ngay khi tới giờ mà không cần kiểm tra lại trạng thái thanh toán",
+      "Chạy nhiều instance scheduler song song để chắc chắn không bỏ sót, không cần dedup"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Delay dài cần DB-poller hoặc EventBridge Scheduler, và phải kiểm tra lại điều kiện lúc chạy.\n✓ DB-poller với SKIP LOCKED phù hợp cho delay 24h, và job phải kiểm tra lại điều kiện vì khách có thể đã thanh toán\n✗ SQS delay tối đa 15 phút, không đủ cho 24h\n✗ Job là 'đến giờ thì xem xét', không phải 'đến giờ thì làm' — phải check lại trạng thái\n✗ Nhiều instance scheduler không dedup → job chạy đôi; cần leader election/lock"
+  },
+  {
+    "id": "be-q-049",
+    "courseId": "BACKEND",
+    "lesson": "be-04-async-jobs",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Về poison message và Dead Letter Queue (DLQ), những thực hành nào được bài học khuyến nghị? (chọn nhiều)",
+    "options": [
+      "Đặt maxReceiveCount (ví dụ 3–5): fail quá N lần thì tự chuyển message sang DLQ",
+      "Đặt alarm trên DLQ depth vì DLQ không có alarm là cái hố chôn lỗi trong im lặng",
+      "Phân biệt lỗi retryable (timeout, 503) và fatal (payload không parse được, đẩy thẳng DLQ)",
+      "Để worker retry poison message vô hạn để không bao giờ mất message",
+      "Tăng visibility timeout lên rất lớn để poison message không bao giờ hiện lại"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "DLQ + maxReceiveCount + phân loại lỗi là phòng tuyến chuẩn cho poison message.\n✓ maxReceiveCount 3–5 chuyển message hỏng sang DLQ tự động\n✓ DLQ phải có alarm trên depth, nếu không là hố chôn lỗi im lặng\n✓ Lỗi fatal (payload hỏng) nên đẩy thẳng DLQ, đừng phí 5 lần retry như lỗi retryable\n✗ Retry vô hạn tạo vòng lặp vĩnh cửu, message lành phía sau chết đói — chính là vấn đề DLQ giải quyết\n✗ Tăng visibility timeout không xử lý poison message; message vẫn fail và vẫn cần DLQ"
+  },
+  {
+    "id": "be-q-050",
+    "courseId": "BACKEND",
+    "lesson": "be-04-async-jobs",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Queue bị nghẽn, oldest-message-age tăng dần. Một kỹ sư đề xuất autoscale worker 10x theo queue depth. Khi nào hành động này là vòng lặp tự huỷ?",
+    "options": [
+      "Khi bottleneck thật nằm ở database: 10x worker → 10x connection/query đập vào DB đang nghẹt → DB sập → queue dài hơn → scale tiếp",
+      "Khi consumer là bottleneck còn downstream vẫn còn sức chịu tải",
+      "Khi side effect hỗ trợ batch insert nên có thể tăng throughput 10x",
+      "Khi dữ liệu chịu mất được như metrics/log nên có thể drop bớt"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Scale worker vô nghĩa và nguy hiểm khi bottleneck thật ở downstream.\n✓ Nếu DB là nút thắt, 10x worker tạo 10x query đập vào DB nghẹt → DB sập → queue dài hơn → vòng lặp tự huỷ; phải xác định bottleneck thật và đặt trần concurrency\n✗ Nếu consumer là bottleneck và downstream còn sức thì scale worker mới hợp lý — đó không phải tự huỷ\n✗ Hỗ trợ batch là lý do nên batching, không phải tình huống scale gây sập\n✗ Drop/sample chỉ cho dữ liệu chịu mất được, không liên quan tới vòng lặp scale-sập-DB"
+  },
+  {
+    "id": "be-q-051",
+    "courseId": "BACKEND",
+    "lesson": "be-04-async-jobs",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đồng nghiệp bảo 'cứ mua queue có exactly-once delivery là khỏi lo duplicate'. Theo bài học, lời khuyên đúng là gì?",
+    "options": [
+      "Exactly-once delivery qua mạng là bất khả thi; hãy xây idempotency vào consumer rồi dùng queue nào cũng được",
+      "Chọn SQS FIFO là đủ vì dedup của nó là vĩnh viễn, consumer không cần idempotent",
+      "Kafka EOS đảm bảo exactly-once xuyên suốt tới cả DB và API ngoài",
+      "Exactly-once processing là bất khả thi nên phải chấp nhận double-charge"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Exactly-once delivery là marketing; cách hiện thực luôn là at-least-once + idempotency.\n✓ Delivery exactly-once qua mạng bất khả thi (Two Generals); giải pháp nền là idempotent consumer dùng được với queue bất kỳ\n✗ SQS FIFO dedup chỉ trong cửa sổ 5 phút, vẫn nên idempotent ở consumer\n✗ Kafka EOS chỉ trọn vẹn Kafka→Kafka; bước ghi DB/gọi API ngoài vẫn là việc của bạn\n✗ Exactly-once processing semantics là khả thi (at-least-once + dedup), không buộc phải chấp nhận double-charge"
+  },
+  {
+    "id": "be-q-052",
+    "courseId": "BACKEND",
+    "lesson": "be-04-async-jobs",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Để theo dõi backpressure và quyết định khi nào hệ thống async thực sự đang trễ với người dùng, metric nào quan trọng nhất theo bài học?",
+    "options": [
+      "Tuổi của message cũ nhất (oldest message age) — đo trực tiếp điều người dùng cảm nhận",
+      "CPU của worker pool trên dashboard",
+      "Số message đã xử lý thành công mỗi giờ",
+      "Queue depth tuyệt đối tại một thời điểm"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Oldest message age đo trực tiếp độ trễ end-to-end mà người dùng cảm nhận.\n✓ Tuổi message cũ nhất cho biết email xác nhận đến sau bao lâu; AWS scale theo ApproximateAgeOfOldestMessage\n✗ CPU worker bình thường vẫn 'xanh' dù email trễ 4 tiếng — gây cảm giác sai\n✗ Số message xử lý/giờ là throughput, không phản ánh độ trễ tồn đọng\n✗ Queue depth tuyệt đối kém biểu cảm hơn tuổi message cũ nhất khi đo trải nghiệm người dùng"
+  },
+  {
+    "id": "be-q-053",
+    "courseId": "BACKEND",
+    "lesson": "be-07-resilience-code",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao một downstream \"chậm\" thường nguy hiểm hơn một downstream \"chết hẳn\" đối với service của bạn?",
+    "options": [
+      "Vì service chậm trả về dữ liệu sai, còn service chết trả lỗi rõ ràng",
+      "Vì service chậm giữ thread/connection/memory làm con tin, còn service chết trả lỗi ngay lập tức",
+      "Vì service chết tự động kích hoạt circuit breaker, còn service chậm thì không",
+      "Vì service chậm tốn nhiều băng thông hơn service chết"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cốt lõi: chậm giữ tài nguyên (thread/connection/pool) còn chết trả lỗi tức thì để bạn đi tiếp.\n✓ Service chậm giữ thread/connection/memory làm con tin, service chết trả lỗi ngay nên giải phóng tài nguyên\n✗ Vấn đề không nằm ở dữ liệu sai mà ở việc giữ tài nguyên\n✗ Bài không nói service chết tự kích hoạt breaker; breaker đếm cả lỗi lẫn slow call\n✗ Băng thông không phải lý do được nêu"
+  },
+  {
+    "id": "be-q-054",
+    "courseId": "BACKEND",
+    "lesson": "be-07-resilience-code",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, cách chọn giá trị timeout hợp lý cho một downstream là gì?",
+    "options": [
+      "Lấy một con số tròn cho chắc, ví dụ 5 giây",
+      "Dựa trên p99 latency của downstream cộng biên độ an toàn",
+      "Đặt vô hạn để không bao giờ false failure",
+      "Bằng đúng timeout của tầng ngoài cùng"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Chọn timeout theo dữ liệu, không theo cảm tính.\n✓ Lấy p99 latency của downstream cộng biên độ an toàn là cách dựa trên dữ liệu\n✗ \"5 giây cho chắc\" là chọn theo cảm tính, bài phê phán cách này\n✗ Default vô hạn chính là bug gây cạn pool\n✗ Timeout tầng trong phải nhỏ hơn tầng ngoài, không bằng nhau"
+  },
+  {
+    "id": "be-q-055",
+    "courseId": "BACKEND",
+    "lesson": "be-07-resilience-code",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Mục đích của \"deadline propagation\" trong gRPC là gì?",
+    "options": [
+      "Client gửi deadline trong metadata để server tự huỷ việc khi đã quá hạn",
+      "Server tăng timeout của client tự động khi thấy mạng chậm",
+      "Client retry tự động khi quá deadline",
+      "Đồng bộ đồng hồ giữa client và server"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Deadline propagation tránh việc callee làm việc cho caller đã bỏ đi.\n✓ Client gửi deadline trong metadata, server tự huỷ việc khi quá hạn để khỏi lãng phí tài nguyên\n✗ Server không tự tăng timeout của client\n✗ Đây không phải cơ chế retry\n✗ Không phải để đồng bộ đồng hồ; deadline được truyền theo từng request"
+  },
+  {
+    "id": "be-q-056",
+    "courseId": "BACKEND",
+    "lesson": "be-07-resilience-code",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một request POST /charge (tính tiền) gặp READ timeout. API không có idempotency key. Hành động đúng là gì?",
+    "options": [
+      "Retry ngay vì read timeout luôn là lỗi transient",
+      "Retry với exponential backoff để đảm bảo giao dịch thành công",
+      "KHÔNG retry, vì request có thể đã được xử lý → retry gây double charge",
+      "Retry nhưng đổi sang HTTP method GET"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Read timeout trên thao tác ghi không idempotent: request có thể đã thực thi.\n✗ Read timeout KHÔNG an toàn để retry với thao tác ghi vì server có thể đã xử lý\n✗ Backoff không giải quyết được nguy cơ double charge\n✓ Không retry vì charge có thể đã xảy ra, retry sẽ tính tiền hai lần\n✗ Đổi method không có ý nghĩa và làm sai ngữ nghĩa nghiệp vụ"
+  },
+  {
+    "id": "be-q-057",
+    "courseId": "BACKEND",
+    "lesson": "be-07-resilience-code",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những tình huống nào sau đây là retryable (nên/có thể retry một cách an toàn) theo bài?",
+    "options": [
+      "Connect timeout / connection refused",
+      "HTTP 503 hoặc 429 (tôn trọng Retry-After)",
+      "HTTP 400, 401, 403, 404",
+      "Lỗi nghiệp vụ: số dư không đủ",
+      "HTTP 500 trên request idempotent (GET, PUT có key)"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "Chỉ retry lỗi transient/hạ tầng và khi an toàn về idempotency.\n✓ Connect timeout/connection refused: request chưa tới nơi nên an toàn retry\n✓ 503/429 là server tự khai tạm thời quá tải\n✓ 500 trên request idempotent có thể transient, retry có điều kiện\n✗ 400/401/403/404 là lỗi phía bạn, gửi lại vẫn lỗi\n✗ Lỗi nghiệp vụ (số dư không đủ) không phải lỗi hạ tầng, retry vô nghĩa"
+  },
+  {
+    "id": "be-q-058",
+    "courseId": "BACKEND",
+    "lesson": "be-07-resilience-code",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao exponential backoff cần thêm \"jitter\"?",
+    "options": [
+      "Để tăng tổng số lần retry cho phép",
+      "Để các client thất bại cùng lúc không retry đồng pha, tránh thundering herd",
+      "Để giảm độ trễ trung bình của mỗi retry",
+      "Để đảm bảo retry luôn xảy ra đúng chu kỳ cố định"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Jitter phân tán thời điểm retry để tránh sóng tải dồn dập.\n✗ Jitter không liên quan tới số lần retry tối đa\n✓ Không jitter thì hàng nghìn client retry đồng pha tạo thundering herd theo chu kỳ\n✗ Jitter không nhằm giảm độ trễ trung bình mà để phân tán\n✗ Ngược lại: jitter cố tình phá vỡ chu kỳ cố định"
+  },
+  {
+    "id": "be-q-059",
+    "courseId": "BACKEND",
+    "lesson": "be-07-resilience-code",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Chuỗi 4 tầng Client → API → Service A → Service B → DB, mỗi tầng thử tổng 4 lần (1 gốc + 3 retry). Tải xấu nhất lên DB cho MỘT request gốc và bài học rút ra là gì?",
+    "options": [
+      "4 × 4 = 16 lần; nên tăng timeout ở mỗi tầng",
+      "4⁴ = 256 lần; nên retry ở ít tầng nhất có thể, lý tưởng một tầng duy nhất",
+      "4 + 4 + 4 + 4 = 16 lần; nên thêm retry ở mọi tầng cho an toàn",
+      "256 lần; nên tắt timeout để tránh false failure"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Retry nhân theo cấp số nhân qua các tầng (amplification).\n✗ 16 không đúng (đó là phép nhân/cộng sai); tăng timeout không giải quyết amplification\n✓ 4⁴ = 256 vì retry nhân qua từng tầng; phải retry ở ít tầng nhất, lý tưởng một tầng duy nhất\n✗ Phép cộng 16 sai về mô hình nhân; thêm retry mọi tầng làm tệ hơn\n✗ Tắt timeout không liên quan và còn gây cạn pool"
+  },
+  {
+    "id": "be-q-060",
+    "courseId": "BACKEND",
+    "lesson": "be-07-resilience-code",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một circuit breaker chỉ đếm exception (throw) làm failure mà bỏ qua các call quá chậm. Vấn đề chính là gì?",
+    "options": [
+      "Breaker sẽ mở mạch quá thường xuyên gây false open",
+      "Breaker gần như vô dụng vì chế độ hỏng phổ biến nhất là CHẬM chứ không phải throw",
+      "Breaker sẽ không bao giờ chuyển sang half-open",
+      "Breaker chiếm quá nhiều CPU khi đếm exception"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Slow call là chế độ hỏng phổ biến nhất, breaker bỏ qua nó là vô dụng.\n✗ Đây là vấn đề bỏ sót lỗi (under-trip), không phải mở mạch quá thường xuyên\n✓ Chế độ hỏng phổ biến nhất là chậm, không phải throw; vì vậy Resilience4j có slowCallRateThreshold\n✗ Half-open vẫn hoạt động theo open_duration, không liên quan\n✗ Vấn đề không phải CPU"
+  },
+  {
+    "id": "be-q-061",
+    "courseId": "BACKEND",
+    "lesson": "be-07-resilience-code",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Service gọi recommendation-svc (phụ) và order-svc (chính) qua MỘT pool 100 connection. Recommendation chậm khiến order call không lấy được connection. Cách khắc phục đúng theo bài là gì?",
+    "options": [
+      "Tách connection pool riêng cho từng dependency (bulkhead)",
+      "Dùng semaphore / giới hạn max-concurrent riêng cho từng dependency",
+      "Tăng pool chung lên 1000 connection",
+      "Bỏ luôn việc gọi recommendation-svc vĩnh viễn",
+      "Đặt circuit breaker tách riêng theo từng dependency"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "Cô lập tài nguyên theo dependency để một downstream chậm không nuốt hết tài nguyên chung.\n✓ Pool riêng per-dependency là bulkhead rẻ nhất, làm trước tiên\n✓ Semaphore/max-concurrent per-dependency cô lập số call đồng thời, overhead thấp\n✗ Tăng pool chung chỉ trì hoãn, recommendation chậm vẫn nuốt dần toàn bộ\n✗ Bỏ vĩnh viễn tính năng phụ là quá tay, mục tiêu là cô lập chứ không xoá\n✓ Breaker tách riêng theo dependency để recommendation hỏng không chặn nhầm order"
+  },
+  {
+    "id": "be-q-062",
+    "courseId": "BACKEND",
+    "lesson": "be-07-resilience-code",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Theo thứ tự ưu tiên fallback của bài, đâu là lựa chọn được ưu tiên nhất khi breaker mở cho trang sản phẩm?",
+    "options": [
+      "Trả lỗi 500 cho user để họ thử lại",
+      "Gọi sang một service khác qua mạng để lấy dữ liệu",
+      "Trả giá trị cache cũ (stale), ví dụ giá cache 5 phút trước",
+      "Chặn cả trang cho đến khi downstream hồi phục"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Stale cache là fallback ưu tiên: rẻ và gần như không thể hỏng.\n✗ Trả 500 là điều fallback muốn tránh\n✗ Gọi service khác qua mạng là đổi dependency lấy dependency, bài cảnh báo\n✓ Giá trị cache cũ đứng đầu thứ tự ưu tiên, tốt hơn trang lỗi 500\n✗ Chặn cả trang là không degrade có chủ đích"
+  },
+  {
+    "id": "be-q-063",
+    "courseId": "BACKEND",
+    "lesson": "be-07-resilience-code",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Đội bạn muốn cải thiện p99 latency của một read API idempotent. Kỹ thuật nào phù hợp và điều kiện bắt buộc là gì?",
+    "options": [
+      "Hedging: gửi request thứ hai song song khi request đầu vượt p95, và phải cancel được bản thua",
+      "Retry: gửi lại sau khi request đầu thất bại, không cần idempotent",
+      "Tăng timeout để chờ lâu hơn, p99 sẽ tự cải thiện",
+      "Load shedding: từ chối bớt request để giảm p99"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Hedging cứu tail latency cho thao tác idempotent, với điều kiện cancel được bản thua.\n✓ Hedging gửi bản sao khi vượt p95, lấy kết quả về trước và phải cancel bản thua, nếu không chỉ nhân đôi tải\n✗ Retry gửi lại SAU khi thất bại, không phải song song khi chậm\n✗ Tăng timeout không cải thiện p99, chỉ kéo dài chờ đợi\n✗ Load shedding là cơ chế phía server tự vệ, không nhằm cải thiện tail latency của caller"
+  },
+  {
+    "id": "be-q-064",
+    "courseId": "BACKEND",
+    "lesson": "be-07-resilience-code",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Server quá tải. Vì sao bài khuyên trả 503 + Retry-After ngay thay vì giữ request trong queue dài để xử lý sau?",
+    "options": [
+      "Vì queue dài chiếm nhiều RAM hơn so với trả lỗi",
+      "Vì queue dài tạo ra request mà khi xử lý xong thì caller đã timeout (goodput = 0), còn 503 + Retry-After cho client tín hiệu backoff đúng cách",
+      "Vì 503 nhanh hơn 429 về mặt mạng",
+      "Vì queue dài luôn gây mất dữ liệu"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Queue dài hủy hoại goodput; lỗi tường minh giúp client backoff đúng.\n✗ Lý do không phải RAM\n✓ Queue dài làm request xử lý xong khi caller đã timeout (goodput 0), 503 + Retry-After cho tín hiệu backoff rõ ràng\n✗ Bài không so sánh tốc độ mạng giữa 503 và 429\n✗ Queue dài không \"luôn gây mất dữ liệu\", vấn đề là goodput"
+  },
+  {
+    "id": "be-q-065",
+    "courseId": "BACKEND",
+    "lesson": "be-07-resilience-code",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Code gọi DynamoDB qua AWS SDK v3 và lập trình viên bọc thêm một vòng retry 3 lần trong application code. Theo bài, vấn đề là gì?",
+    "options": [
+      "AWS SDK không có retry nên cần bọc thêm là đúng",
+      "AWS SDK đã có sẵn retry + backoff + jitter (retry mode standard có retry quota); bọc thêm là retry chồng tầng kinh điển",
+      "Nên bọc retry 5 lần thay vì 3 để chắc chắn hơn",
+      "DynamoDB không bao giờ cần retry vì luôn highly available"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "SDK đã retry sẵn, bọc thêm gây amplification.\n✗ SDK v2/v3 đã có retry, không phải thiếu\n✓ SDK đã có retry + backoff + jitter, mode standard có retry quota (chính là retry budget); bọc thêm là retry chồng tầng\n✗ Tăng số lần retry chỉ làm amplification tệ hơn\n✗ Mọi downstream đều cần xử lý lỗi transient; lý do sai về mặt thiết kế"
+  },
+  {
+    "id": "be-q-066",
+    "courseId": "BACKEND",
+    "lesson": "be-05-testing",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, lý do tồn tại CHÍNH của test là gì?",
+    "options": [
+      "Để đạt coverage 80% và làm vừa lòng CI",
+      "Để cho phép thay đổi code mà không sợ",
+      "Để chứng minh code không có bug nào",
+      "Để thay thế hoàn toàn nhu cầu review code"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Test tồn tại để bạn dám refactor mà không sợ gãy hệ thống.\n✓ Cho phép thay đổi code mà không sợ — đúng tinh thần bài: hệ thống test tốt là nơi dev dám refactor 5h chiều thứ Sáu.\n✗ Đạt coverage/làm vừa lòng CI — bài bác bỏ ngay đầu, coverage chỉ là chỉ số phụ.\n✗ Chứng minh không có bug — test không thể chứng minh điều đó.\n✗ Thay thế review code — bài không hề nói vậy."
+  },
+  {
+    "id": "be-q-067",
+    "courseId": "BACKEND",
+    "lesson": "be-05-testing",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một service kiểu CRUD/glue: nhận request → validate → ghi DB → bắn event. Phần lớn bug nằm ở SQL, mapping, config. Chiến lược test nào hợp lý nhất?",
+    "options": [
+      "Tăng tỉ trọng unit test lên 90% vì chúng nhanh nhất",
+      "Tăng tỉ trọng integration test vì bug nằm ở wiring/IO",
+      "Phủ chủ yếu bằng E2E qua UI để bắt mọi lỗi",
+      "Mock toàn bộ DB rồi assert số lần gọi repository"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Test ở tầng thấp nhất bắt được loại bug đó; với CRUD/glue bug nằm ở IO nên integration test phải dày (testing trophy).\n✓ Tăng integration test — unit test gần như vô dụng với bug SQL/mapping/config.\n✗ Unit 90% — unit không bắt được lỗi SQL/wiring, sẽ an toàn giả.\n✗ E2E qua UI — chậm, flaky, ice cream cone cần tránh.\n✗ Mock DB rồi assert số lần gọi — chính là chỗ bug trốn, mock có thể nói dối."
+  },
+  {
+    "id": "be-q-068",
+    "courseId": "BACKEND",
+    "lesson": "be-05-testing",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Test `test_apply_discount_calls_strategy` dùng Mock rồi assert `strategy.compute.assert_called_once_with(...)`. Vấn đề lớn nhất của nó là gì?",
+    "options": [
+      "Nó chạy quá chậm vì khởi tạo Mock",
+      "Nó gãy khi đổi chữ ký hàm dù hành vi không đổi (test implementation)",
+      "Nó không thể chạy được trên CI",
+      "Nó cho coverage thấp hơn test hành vi"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Đây là test implementation: gắn vào CÁCH code được viết, không phải điều hệ thống cam kết.\n✓ Gãy khi đổi chữ ký dù hành vi không đổi — đúng triệu chứng test brittleness.\n✗ Chạy chậm — Mock nhanh, không phải vấn đề.\n✗ Không chạy được trên CI — vẫn chạy được, đó mới là nguy hiểm (xanh giả).\n✗ Coverage thấp hơn — coverage không liên quan tới khuyết điểm này."
+  },
+  {
+    "id": "be-q-069",
+    "courseId": "BACKEND",
+    "lesson": "be-05-testing",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Trong unit test, theo bảng ranh giới hệ thống, những dependency nào NÊN được mock/fake?",
+    "options": [
+      "Class/module nội bộ cùng service",
+      "Clock, random, UUID",
+      "HTTP call sang service khác",
+      "Một class helper thuần tuý bên trong module đang test",
+      "Payment gateway, email provider"
+    ],
+    "correctIndices": [
+      1,
+      2,
+      4
+    ],
+    "explanation": "Chỉ mock/fake ở RANH GIỚI hệ thống — nơi code chạm thế giới bên ngoài hoặc nguồn bất định.\n✓ Clock, random, UUID — inject để test deterministic.\n✓ HTTP call sang service khác — boundary, fake/stub.\n✓ Payment gateway, email provider — luôn mock, kèm contract/sandbox.\n✗ Class/module nội bộ cùng service — dùng object thật.\n✗ Helper thuần bên trong module — chi tiết nội bộ, test gián tiếp qua public API."
+  },
+  {
+    "id": "be-q-070",
+    "courseId": "BACKEND",
+    "lesson": "be-05-testing",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn thấy một unit test cần tới 5 mock để chạy được. Theo bài, phản ứng đúng là gì?",
+    "options": [
+      "Thêm mock thứ 6 cho đầy đủ dependency",
+      "Coi đó là tín hiệu thiết kế coupling cao, cân nhắc refactor tách pure logic",
+      "Chuyển sang dùng Mock thay vì Fake để gọn hơn",
+      "Bỏ test này vì không thể test được"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Số lượng mock tỉ lệ nghịch với giá trị của test; nhiều mock là triệu chứng thiết kế ép test implementation.\n✓ Tín hiệu coupling cao, refactor tách pure logic — đúng lời khuyên trong bài.\n✗ Thêm mock thứ 6 — đi sai hướng, làm test mong manh hơn.\n✗ Chuyển sang Mock — Mock bị bài khuyên hạn chế vì dễ dẫn tới test implementation.\n✗ Bỏ test — vấn đề ở thiết kế, không phải ở việc có nên test."
+  },
+  {
+    "id": "be-q-071",
+    "courseId": "BACKEND",
+    "lesson": "be-05-testing",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một team chạy integration test trên image H2 vì nó nhẹ và nhanh, trong khi production dùng Postgres. Rủi ro chính là gì?",
+    "options": [
+      "H2 không hỗ trợ transaction nên test luôn fail",
+      "Test xanh trên H2 nhưng nổ trên Postgres vì khác dialect",
+      "H2 chậm hơn Postgres thật trong container",
+      "Không thể chạy migration trên H2"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Dùng giả lập khác dialect là anti-pattern kinh điển; phải dùng đúng image version với production.\n✓ Xanh trên H2 nhưng nổ trên Postgres vì khác dialect — chính cảnh báo trong bài.\n✗ H2 không hỗ trợ transaction — không phải lý do bài nêu.\n✗ H2 chậm hơn — ngược lại, vấn đề không phải tốc độ.\n✗ Không chạy migration — không phải điểm chính, vấn đề là sai dialect."
+  },
+  {
+    "id": "be-q-072",
+    "courseId": "BACKEND",
+    "lesson": "be-05-testing",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Service A mock service B trong test của mình. B âm thầm đổi response format. Test của A vẫn xanh nhưng production đỏ. Cách giải quyết phù hợp nhất là gì?",
+    "options": [
+      "Dựng E2E test chạy cả A và B mỗi lần merge",
+      "Dùng consumer-driven contract test (Pact): provider phát lại contract và verify",
+      "Tăng coverage của A lên 100%",
+      "Cho A retry 3 lần khi gọi B thất bại"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mock có thể nói dối; contract test bắt mock lệch provider thật ngay tại CI của provider.\n✓ Consumer-driven contract test — B tải contract, phát lại request, verify; build B đỏ ngay khi đổi field.\n✗ E2E cả A và B — chậm và flaky, đúng thứ contract test né tránh.\n✗ Tăng coverage 100% — không phát hiện được lệch contract.\n✗ Retry 3 lần — che giấu lỗi, không phát hiện breaking change."
+  },
+  {
+    "id": "be-q-073",
+    "courseId": "BACKEND",
+    "lesson": "be-05-testing",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Test async dùng `publish(event); time.sleep(2); assert ...`. Cách thay thế đúng để hết flaky là gì?",
+    "options": [
+      "Tăng sleep lên 10 giây cho chắc",
+      "Poll với timeout (await_until), nhanh khi xong, chỉ fail khi thật sự quá hạn",
+      "Bỏ assert đi để test luôn xanh",
+      "Chạy lại test 3 lần và lấy kết quả tốt nhất"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "sleep là tội đồ số một của flaky test async; polling-with-timeout giải quyết gốc rễ.\n✓ Poll với timeout — nhanh khi điều kiện sớm đạt, chỉ fail khi quá hạn thật.\n✗ Tăng sleep lên 10s — vẫn flaky và lãng phí thời gian mỗi lần chạy.\n✗ Bỏ assert — test mất giá trị hoàn toàn.\n✗ Chạy lại 3 lần lấy tốt nhất — chính là che giấu flaky/race condition."
+  },
+  {
+    "id": "be-q-074",
+    "courseId": "BACKEND",
+    "lesson": "be-05-testing",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "SQS cung cấp at-least-once delivery. Theo bài, test QUAN TRỌNG NHẤT của một message handler là gì?",
+    "options": [
+      "Test handler trả về đúng HTTP 200",
+      "Test idempotency: deliver cùng message 2 lần, side effect chỉ xảy ra 1 lần",
+      "Test handler xử lý xong dưới 100ms",
+      "Test handler ghi log đầy đủ mọi message"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Vì at-least-once nghĩa là message có thể đến nhiều lần, handler phải idempotent.\n✓ Deliver 2 lần, side effect 1 lần — bài gọi đây là test quan trọng nhất của message handler.\n✗ Trả về HTTP 200 — handler SQS không theo mô hình request/response này.\n✗ Xử lý dưới 100ms — không phải trọng tâm.\n✗ Ghi log đầy đủ — không phải hành vi cam kết cốt lõi."
+  },
+  {
+    "id": "be-q-075",
+    "courseId": "BACKEND",
+    "lesson": "be-05-testing",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một codebase có 1.500 test, 92% coverage, nhưng có bug SQL sai và mapping thiếu field mà mọi test vẫn xanh. Kết luận đúng nhất về coverage là gì?",
+    "options": [
+      "Coverage cao là tín hiệu tốt đáng tin về chất lượng test",
+      "Coverage cao KHÔNG phải tín hiệu tốt đáng tin; nên dùng mutation testing để đo chất lượng",
+      "Phải nâng coverage lên 100% để hết bug",
+      "Coverage thấp mới đáng lo, 92% là an toàn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Coverage đo dòng được CHẠY QUA, không đo hành vi được KIỂM TRA; test toàn mock-verify cho coverage cao mà vẫn để lọt bug.\n✓ Coverage cao không đáng tin, dùng mutation testing — tool sửa code rồi xem test có đỏ không, đo chất lượng assert thật.\n✗ Coverage cao là tín hiệu tốt — bài bác bỏ rõ ràng.\n✗ Nâng lên 100% để hết bug — Goodhart's law, sinh test vô nghĩa.\n✗ 92% là an toàn — chính trường hợp an toàn giả."
+  },
+  {
+    "id": "be-q-076",
+    "courseId": "BACKEND",
+    "lesson": "be-05-testing",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, TDD thực sự đáng dùng trong những tình huống nào?",
+    "options": [
+      "Logic thuần phức tạp, requirement rõ (pricing, state machine, parser)",
+      "Bug fix: viết test tái hiện bug đỏ trước khi sửa",
+      "Prototype/khám phá khi chưa biết mình muốn gì",
+      "Glue code AWS đang vừa làm vừa đọc doc",
+      "Code khó chạy thủ công, edge case khó dựng bằng tay"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "TDD toả sáng với logic thuần phức tạp, bug fix và code khó chạy tay; kém hiệu quả với khám phá và wiring.\n✓ Logic thuần phức tạp, requirement rõ — đất diễn của TDD.\n✓ Bug fix viết test tái hiện trước — dạng TDD ai cũng nên làm.\n✓ Code khó chạy thủ công — TDD thay cho việc dựng tay edge case.\n✗ Prototype/khám phá — viết test cho thứ sẽ vứt đi là lãng phí, spike trước.\n✗ Glue code AWS đang đọc doc — giá trị nằm ở integration test, vòng TDD chậm."
+  },
+  {
+    "id": "be-q-077",
+    "courseId": "BACKEND",
+    "lesson": "be-05-testing",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Để chống test khó đọc do fixture JSON 200 dòng dùng chung, bài đề xuất kỹ thuật nào?",
+    "options": [
+      "Snapshot testing cho mọi object setup",
+      "Test data builder với default hợp lệ, mỗi test chỉ override field liên quan",
+      "Một fixture global duy nhất cho toàn suite",
+      "Tăng số dòng setup để rõ ràng hơn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Builder với default hợp lệ giúp test tự tài liệu hoá và chỉ sửa một chỗ khi schema đổi.\n✓ Test data builder, override field liên quan — như anOrder().withTier(\"gold\").build(), test nói rõ điều nó quan tâm.\n✗ Snapshot cho mọi setup — snapshot dễ thoái hoá khi bấm --update theo phản xạ.\n✗ Một fixture global — chính nguồn gốc fixture khổng lồ dùng chung gây khó đọc.\n✗ Tăng số dòng setup — đi ngược mục tiêu làm test gọn dễ đọc."
+  },
+  {
+    "id": "be-q-078",
+    "courseId": "BACKEND",
+    "lesson": "be-05-testing",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một team bật 'auto-retry failed tests 3 lần' ở CI như giải pháp lâu dài cho flaky test. Bài cảnh báo điều gì?",
+    "options": [
+      "Retry làm pipeline nhanh hơn nên luôn nên dùng",
+      "Retry che giấu cả flaky test lẫn race condition thật trong code production",
+      "Retry chỉ ảnh hưởng tới unit test",
+      "Retry là cách trị flaky tốt nhất theo bài"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Retry như giải pháp lâu dài là bẫy production: nó che luôn bug concurrency thật.\n✓ Che giấu cả flaky lẫn race condition thật — chính những bug chỉ lộ dưới concurrency mà test flaky đang cố báo.\n✗ Làm pipeline nhanh hơn — sai, và không phải lợi ích đáng theo.\n✗ Chỉ ảnh hưởng unit test — không đúng phạm vi.\n✗ Cách trị tốt nhất — bài khuyên quarantine + ticket có deadline, không phải retry."
+  },
+  {
+    "id": "be-q-079",
+    "courseId": "BACKEND",
+    "lesson": "be-06-twelve-factor",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, mục tiêu duy nhất mà cả 12 nguyên tắc đều phục vụ là gì?",
+    "options": [
+      "App phải là hàng hoá thay thế được (disposable, fungible) — chạy ở đâu cũng được, nhân bản và giết lúc nào cũng được",
+      "App phải dùng đúng ngôn ngữ và framework hiện đại nhất",
+      "App phải có test coverage trên 90%",
+      "App phải đóng gói trong Docker và chạy trên Kubernetes"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "12-Factor nhằm biến app thành thứ orchestrator có thể quản lý thay con người.\n✓ App thay thế được (disposable/fungible) là mục tiêu lõi, mở ra horizontal scaling, zero-downtime deploy, self-healing, spot instances.\n✗ Ngôn ngữ/framework hiện đại không phải mục tiêu — 12-Factor ra đời 2011, trước cả Docker.\n✗ Test coverage không phải nội dung của 12-Factor.\n✗ Docker/Kubernetes là công cụ tận dụng được khi app đạt 12-Factor, không phải mục tiêu bản thân."
+  },
+  {
+    "id": "be-q-080",
+    "courseId": "BACKEND",
+    "lesson": "be-06-twelve-factor",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo chuẩn 2025-2026 trong bài, DB password nên được lưu ở đâu?",
+    "options": [
+      "Secret manager — app fetch lúc runtime bằng IAM role",
+      "Env var, vì env var là giao diện chung nhỏ nhất",
+      "File config.prod.json commit cùng repo",
+      "Hardcode trong code để tránh lệ thuộc hạ tầng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nhấn mạnh secret KHÔNG còn nên ở env var khi đã có secret manager.\n✓ Secret manager + app fetch bằng IAM role cho phép rotation không restart, audit, blast radius nhỏ.\n✗ Env var chỉ hợp cho config thường không nhạy cảm; nó lộ qua crash dump, docker inspect, /proc/environ.\n✗ Commit file config chứa credential là vi phạm 'tách config khỏi code'.\n✗ Hardcode trong code là anti-pattern rõ ràng nhất, đổi môi trường phải rebuild và lộ credential."
+  },
+  {
+    "id": "be-q-081",
+    "courseId": "BACKEND",
+    "lesson": "be-06-twelve-factor",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "App nên xử lý logs như thế nào theo 12-Factor?",
+    "options": [
+      "Ghi ra stdout/stderr, để platform thu gom và lưu trữ",
+      "Tự ghi ra file và tự xoay (rotate) file log",
+      "Tự gửi log trực tiếp tới CloudWatch trong code app",
+      "Chỉ ghi log khi có lỗi để tiết kiệm dung lượng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Logs là event stream; app không nên tự quản lý đích đến của log.\n✓ Ghi stdout/stderr để platform (Docker log driver → CloudWatch/Loki/Datadog) lo thu gom — đổi đích chỉ sửa tầng platform, không sửa code.\n✗ Tự ghi/xoay file buộc app phải biết nó chạy ở đâu, phá tính thay thế được.\n✗ Tự gửi trực tiếp tới CloudWatch nướng đích log vào code, đổi sang Datadog phải sửa code.\n✗ Bỏ log lúc bình thường làm mất khả năng query/trace request."
+  },
+  {
+    "id": "be-q-082",
+    "courseId": "BACKEND",
+    "lesson": "be-06-twelve-factor",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "App lưu session trong RAM, sau đó scale từ 1 lên 3 instances phía sau load balancer. Triệu chứng nào sẽ xuất hiện?",
+    "options": [
+      "User bị đá ra ngẫu nhiên khi request kế tiếp rơi vào instance không giữ session",
+      "Mọi user đều không đăng nhập được ngay từ instance đầu tiên",
+      "Tất cả instance tự đồng bộ session cho nhau qua LB",
+      "Latency tăng nhưng login luôn ổn định"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Session trong RAM vi phạm stateless; request sau có thể rơi vào instance khác.\n✓ User login vào instance A, request kế rơi vào B không có session → bị đá ra, bug 'ngẫu nhiên' khó tái hiện.\n✗ Không phải mọi user đều fail — chỉ những request rơi vào instance khác instance đã login.\n✗ LB không tự đồng bộ session giữa các instance.\n✗ Vấn đề là lỗi logic (mất session), không phải chỉ latency; login KHÔNG ổn định."
+  },
+  {
+    "id": "be-q-083",
+    "courseId": "BACKEND",
+    "lesson": "be-06-twelve-factor",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao sticky session bị bài coi là 'thuốc giảm đau, không phải thuốc chữa'?",
+    "options": [
+      "Nó phá khả năng rolling deploy và autoscaling vì instance 'dính' user không thể giết để thay",
+      "Nó làm tăng chi phí LB lên gấp đôi",
+      "Nó khiến app không thể bind port",
+      "Nó buộc phải dùng JWT thay vì Redis"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Sticky session che bug stateless nhưng tạo ràng buộc instance-user.\n✓ Instance dính nhiều user không thể giết để thay → mất rolling deploy và autoscaling; deploy giết instance A là user trên A văng.\n✗ Vấn đề không phải chi phí LB.\n✗ Sticky session không liên quan tới việc bind port.\n✗ Bài đề xuất chuyển session sang Redis/DynamoDB HOẶC dùng JWT — không 'buộc' phải JWT."
+  },
+  {
+    "id": "be-q-084",
+    "courseId": "BACKEND",
+    "lesson": "be-06-twelve-factor",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Tách 'Release' (deploy code) khỏi 'Launch' (bật tính năng cho user) mang lại lợi ích quan trọng nhất nào theo bài?",
+    "options": [
+      "Kill switch: tắt tính năng lỗi trong 5 giây thay vì rollback deploy trong 15 phút",
+      "Giảm kích thước Docker image",
+      "Tự động viết test cho nhánh code mới",
+      "Loại bỏ hoàn toàn nhu cầu staging environment"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Feature flag tách release khỏi launch để đổi config theo thời gian thực, không deploy.\n✓ Kill switch là lợi ích 'quan trọng nhất' bài nêu: tắt flag 5 giây thay vì rollback 15 phút; ngoài ra còn dark launch và canary theo %.\n✗ Feature flag không liên quan kích thước image.\n✗ Flag không tự viết test; trái lại mỗi flag nhân đôi đường chạy code.\n✗ Bài không nói flag loại bỏ staging."
+  },
+  {
+    "id": "be-q-085",
+    "courseId": "BACKEND",
+    "lesson": "be-06-twelve-factor",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Docker, viết `CMD npm start` thay vì `CMD [\"node\", \"server.js\"]` gây ra hậu quả gì khi orchestrator gửi SIGTERM?",
+    "options": [
+      "PID 1 là npm/sh không forward SIGTERM cho node → app không nhận tín hiệu, đợi hết grace period rồi ăn SIGKILL",
+      "Container khởi động chậm hơn vài phút",
+      "App nhận SIGTERM hai lần gây double-drain",
+      "npm tự động bật graceful shutdown cho node"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đây là 'PID 1 problem' — một trong ba lỗi graceful shutdown kinh điển.\n✓ npm/sh làm PID 1 không forward SIGTERM, node không bao giờ nhận → đứng đợi đủ grace period rồi bị SIGKILL. Fix: exec form hoặc tini.\n✗ Vấn đề là shutdown chứ không phải startup chậm.\n✗ Không có chuyện nhận SIGTERM hai lần — vấn đề là KHÔNG nhận được.\n✗ npm không tự bật graceful shutdown; nó còn nuốt mất tín hiệu."
+  },
+  {
+    "id": "be-q-086",
+    "courseId": "BACKEND",
+    "lesson": "be-06-twelve-factor",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao nhét check DB vào liveness probe là 'lỗi chết người'?",
+    "options": [
+      "DB quá tải khiến liveness toàn fleet fail → orchestrator restart cả fleet → connection storm dồn vào DB yếu → sự cố 30 giây thành outage 30 phút",
+      "Liveness chạy chậm hơn readiness nên gây timeout",
+      "Check DB làm tăng chi phí truy vấn gấp đôi",
+      "Liveness không được phép trả về JSON"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Liveness fail = restart; readiness fail = rút khỏi LB.\n✓ Check DB trong liveness biến sự cố DB tạm thời thành cascading failure: cả fleet restart đồng loạt, mất cache, connection storm làm DB gục hẳn.\n✗ Vấn đề không phải tốc độ probe.\n✗ Không phải chuyện chi phí truy vấn.\n✗ Liveness vẫn trả JSON được; đó không phải lý do."
+  },
+  {
+    "id": "be-q-087",
+    "courseId": "BACKEND",
+    "lesson": "be-06-twelve-factor",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một SPA dùng `VITE_API_URL` bị nướng vào bundle lúc build, mỗi môi trường một bundle riêng. Cách sửa đúng theo bài là gì?",
+    "options": [
+      "Serve file /config.json hoặc inject window.__CONFIG__ lúc container khởi động để cùng một bundle chạy mọi môi trường",
+      "Build riêng bundle staging và bundle prod cho chắc chắn",
+      "Hardcode API URL prod vào source code",
+      "Đưa API URL vào file .env commit cùng repo"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mục tiêu là một artifact duy nhất, config tiêm lúc chạy.\n✓ Serve /config.json hoặc inject window.__CONFIG__ lúc khởi động giữ cùng một bundle chạy mọi môi trường.\n✗ Build riêng staging/prod chính là anti-pattern: thứ test ở staging không phải thứ chạy ở prod.\n✗ Hardcode URL prod phá dev/prod parity và phải rebuild khi đổi.\n✗ Commit .env chứa cấu hình môi trường vi phạm tách config khỏi code."
+  },
+  {
+    "id": "be-q-088",
+    "courseId": "BACKEND",
+    "lesson": "be-06-twelve-factor",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Đội rotate DB password trong khi connection pool đang giữ password cũ, cả fleet đồng loạt auth fail. Hai cách né được bài đề xuất là gì?",
+    "options": [
+      "Rotation kiểu two-user (luôn còn 1 user hiệu lực) và bắt auth error → refresh secret → reconnect",
+      "Tắt rotation hẳn và đổi password thủ công mỗi quý",
+      "Tăng connection pool size và bật sticky session",
+      "Lưu password vào env var để pool đọc lại mỗi request"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đây là bẫy rotation làm fleet auth fail đồng loạt.\n✓ Two-user rotation (xoay xen kẽ 2 user) đảm bảo luôn có 1 user hợp lệ; và bắt auth error rồi refresh secret + reconnect thay vì crash.\n✗ Tắt rotation đi ngược mục tiêu bảo mật và không giải quyết gốc.\n✗ Tăng pool size / sticky session không liên quan tới auth fail do password cũ.\n✗ Env var không xoay được khi process đang chạy — chính là điểm yếu bài chỉ ra."
+  },
+  {
+    "id": "be-q-089",
+    "courseId": "BACKEND",
+    "lesson": "be-06-twelve-factor",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Vì sao bài khuyên 'nhận SIGTERM xong đợi vài giây (sleep 5-10s) rồi mới đóng listener'?",
+    "options": [
+      "Vì deregistration ở LB là eventual — vài giây sau SIGTERM LB vẫn có thể đẩy request tới",
+      "Vì kernel cần thời gian giải phóng port",
+      "Vì cần chờ DB pool tự khởi tạo lại",
+      "Vì SIGTERM cần được xác nhận hai lần mới hợp lệ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đây là 'race giữa LB và app' — một trong ba lỗi shutdown kinh điển.\n✓ Deregistration là eventual: LB còn có thể gửi request vài giây sau SIGTERM, nên đợi rồi mới đóng listener để không từ chối request hợp lệ.\n✗ Không phải vấn đề kernel giải phóng port.\n✗ Khi shutdown ta đóng pool chứ không khởi tạo lại.\n✗ SIGTERM không cần xác nhận hai lần."
+  },
+  {
+    "id": "be-q-090",
+    "courseId": "BACKEND",
+    "lesson": "be-06-twelve-factor",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo bài, những điểm yếu thực tế nào của việc để SECRET trong env var (so với secret manager)? Chọn tất cả đáp án đúng.",
+    "options": [
+      "Bị lộ qua crash dump, docker inspect, /proc/PID/environ",
+      "Process con kế thừa toàn bộ env, child/thư viện bên thứ ba thấy hết secret",
+      "Không xoay (rotate) được khi process đang chạy — đổi password phải restart cả fleet",
+      "Không có audit log, không biết ai đọc secret lúc nào",
+      "Env var không được mọi ngôn ngữ/OS hỗ trợ nên khó tích hợp"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Bảng điểm yếu env var trong bài liệt kê đúng 4 vấn đề.\n✓ Lộ qua crash dump/docker inspect//proc/environ.\n✓ Process con kế thừa toàn bộ env nên child/thư viện thấy hết secret.\n✓ Không rotate được khi đang chạy, đổi password = restart fleet.\n✓ Không có audit log.\n✗ Ngược lại, env var được MỌI ngôn ngữ/OS hỗ trợ — đó là điểm MẠNH (giao diện chung nhỏ nhất), không phải điểm yếu."
+  },
+  {
+    "id": "be-q-091",
+    "courseId": "BACKEND",
+    "lesson": "be-06-twelve-factor",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Để 'deploy giữa giờ cao điểm mà error rate không nhúc nhích' trên ECS + ALB, bài yêu cầu cấu hình đúng những mắt xích nào? Chọn tất cả đáp án đúng.",
+    "options": [
+      "App bắt SIGTERM và drain connection/job đang dở trước khi exit 0",
+      "Readiness chủ động fail khi shutdown để LB ngừng gửi request (ALB deregistration)",
+      "Grace period (ECS stopTimeout) phải dài hơn thời gian drain của app",
+      "Bật sticky session trên ALB để giữ user ở instance cũ",
+      "Nhét check DB vào liveness để restart sớm khi DB chậm"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Graceful shutdown là hợp đồng 3 bên: LB ngừng gửi, app drain, orchestrator chờ đủ lâu.\n✓ App bắt SIGTERM, drain rồi exit 0 trước khi bị SIGKILL.\n✓ Readiness fail khi shutdown để ALB deregister và ngừng gửi request mới.\n✓ stopTimeout/grace period phải dài hơn thời gian drain (và deregistration delay).\n✗ Sticky session phá rolling deploy — instance dính user không giết được để thay.\n✗ Check DB trong liveness gây cascading failure (restart cả fleet khi DB chậm), trái với quy tắc liveness chỉ kiểm tra bản thân process."
+  },
+  {
+    "id": "be-q-092",
+    "courseId": "BACKEND",
+    "lesson": "be-08-performance",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một API có 100 request: 99 request mất 10ms, 1 request mất 5000ms. Vì sao chỉ nhìn average (≈60ms) là sai lầm khi đánh giá latency?",
+    "options": [
+      "Vì average bị outlier kéo lệch và che giấu phân phối bimodal, p99 thật sự là 5000ms",
+      "Vì average luôn thấp hơn p50 nên không phản ánh được tốc độ",
+      "Vì average chỉ đúng khi tất cả request mất đúng 10ms",
+      "Vì latency luôn là phân phối chuẩn nên phải dùng standard deviation"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Average bị 1 outlier 5000ms kéo lên ≈60ms, trong khi 1% user thực sự thấy hệ thống 'chết' ở p99=5000ms.\n✓ Average bị outlier kéo lệch, che giấu phân phối bimodal (cache hit/miss) và giấu mất tail thật\n✗ Average không 'luôn thấp hơn p50'; ở đây nó cao hơn p50 (10ms)\n✗ Average không chỉ đúng khi mọi request bằng nhau; đó không phải lý do nó nói dối\n✗ Latency thực tế gần như không bao giờ là phân phối chuẩn, nên mean/std đều vô nghĩa"
+  },
+  {
+    "id": "be-q-093",
+    "courseId": "BACKEND",
+    "lesson": "be-08-performance",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một trang gọi 100 service con, mỗi service có p99 = 1s. Xác suất toàn bộ trang nhanh (không chạm tail nào) xấp xỉ bao nhiêu?",
+    "options": [
+      "≈ 37%, tức 63% request của user chạm tail",
+      "≈ 99%, vì mỗi service chỉ 1% chậm",
+      "≈ 1%, vì 100 service nhân lên",
+      "≈ 50%, vì tail và non-tail cân bằng nhau"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đây là insight 'The Tail at Scale': tail latency khuếch đại theo fan-out.\n✓ 0.99^100 ≈ 0.37, nên ~63% request của user chạm tail dù mỗi service chỉ 1% chậm\n✗ 99% là p99 của một service đơn lẻ, không phải của toàn bộ trang fan-out\n✗ 1% là tỷ lệ chậm của một service, không phải xác suất toàn trang nhanh\n✗ 50% không có cơ sở toán học cho phép nhân xác suất độc lập này"
+  },
+  {
+    "id": "be-q-094",
+    "courseId": "BACKEND",
+    "lesson": "be-08-performance",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn có p99 latency của 10 instance và muốn biết p99 toàn cụm. Cách làm đúng là gì?",
+    "options": [
+      "Merge histogram (HDR Histogram, t-digest) từ phân phối gộp rồi mới tính percentile",
+      "Lấy avg(p99 của 10 instance)",
+      "Lấy max(p99 của 10 instance) để an toàn",
+      "Cộng tổng 10 p99 rồi chia cho số request"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Percentile không cộng/trung bình được; phải tính từ phân phối gộp.\n✓ Dùng histogram (HDR Histogram, t-digest) merge phân phối rồi tính percentile mới đúng về toán học\n✗ avg(p99) là con số vô nghĩa về mặt toán học\n✗ max(p99) chỉ là một xấp xỉ thô, không phải p99 thật của phân phối gộp\n✗ Cộng p99 rồi chia không phải phép toán hợp lệ trên percentile"
+  },
+  {
+    "id": "be-q-095",
+    "courseId": "BACKEND",
+    "lesson": "be-08-performance",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một backend service có CPU thấp nhưng latency cao, nhiều thread đang chờ. Đây là loại bound nào và nên dùng công cụ gì?",
+    "options": [
+      "I/O-bound — dùng distributed tracing, iostat, off-CPU flame graph",
+      "CPU-bound — dùng CPU profiler / flame graph on-CPU",
+      "Memory-bound — dùng heap profiler, allocation tracking",
+      "Lock contention — dùng mutex profiling là đủ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "CPU thấp nhưng latency cao và thread chờ là dấu hiệu kinh điển của I/O-bound.\n✓ I/O-bound: dùng distributed tracing, iostat, off-CPU flame graph để thấy thread đang chờ gì\n✗ CPU-bound có triệu chứng CPU 100% và latency tăng tuyến tính theo load\n✗ Memory-bound biểu hiện qua GC pause, OOM, RSS tăng dần\n✗ Lock contention làm throughput không tăng khi thêm thread; ở đây mô tả thread chờ I/O chung chung"
+  },
+  {
+    "id": "be-q-096",
+    "courseId": "BACKEND",
+    "lesson": "be-08-performance",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Hệ backend đa số I/O-bound. Nếu bạn chỉ nhìn on-CPU flame graph, hậu quả là gì?",
+    "options": [
+      "Bạn tối ưu nhầm chỗ, vì on-CPU không cho thấy thread đang chờ lock/disk/network",
+      "Bạn thấy chính xác mọi điểm chờ I/O",
+      "On-CPU flame graph đã bao gồm cả thời gian off-CPU",
+      "Không sao, vì I/O-bound vẫn hiện rõ trên on-CPU"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "On-CPU trả lời 'CPU đang làm gì'; off-CPU trả lời 'thread đang chờ gì'.\n✓ Chỉ nhìn on-CPU sẽ tối ưu nhầm vì phần lớn thời gian backend là chờ I/O (off-CPU)\n✗ On-CPU không cho thấy điểm chờ I/O; đó là việc của off-CPU profiling\n✗ On-CPU không bao gồm thời gian off-CPU theo định nghĩa\n✗ I/O-bound chính là phần KHÔNG hiện trên on-CPU flame graph"
+  },
+  {
+    "id": "be-q-097",
+    "courseId": "BACKEND",
+    "lesson": "be-08-performance",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đoạn code sau gây vấn đề gì với 100 order?\norders = db.query(\"SELECT * FROM orders WHERE user_id = ?\", uid)\nfor o in orders:\n    o.items = db.query(\"SELECT * FROM items WHERE order_id = ?\", o.id)",
+    "options": [
+      "N+1 query — 101 round-trip; nên JOIN, batch IN-clause hoặc DataLoader",
+      "Race condition giữa các query trong vòng lặp",
+      "SQL injection vì dùng tham số ?",
+      "Deadlock do giữ nhiều connection cùng lúc"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "1 query cha + N query con trong vòng lặp là N+1 kinh điển.\n✓ 100 order = 101 round-trip; sửa bằng JOIN, batch IN-clause hoặc DataLoader pattern\n✗ Không phải race condition; các query chạy tuần tự trong vòng lặp\n✗ Dùng tham số ? là cách chống SQL injection, không phải lỗi\n✗ Không có deadlock ở đây; vấn đề là số round-trip"
+  },
+  {
+    "id": "be-q-098",
+    "courseId": "BACKEND",
+    "lesson": "be-08-performance",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Hệ thống 500 req/s, mỗi request giữ DB connection 20ms. Theo Little's Law, pool size hợp lý khoảng bao nhiêu?",
+    "options": [
+      "~15-20 (L = 10 connection đồng thời + headroom)",
+      "~200, để chắc chắn không thiếu connection",
+      "~500, bằng số req/s",
+      "~2-3, vì mỗi request rất nhanh"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "L = λ × W = 500 × 0.02 = 10 connection đồng thời.\n✓ Pool ~15-20 (10 + headroom) là đủ theo Little's Law\n✗ 200 quá to: context switch, lock contention trong DB, tốn RAM, throughput giảm\n✗ 500 (bằng req/s) hiểu sai công thức; số đồng thời mới quan trọng\n✗ 2-3 quá nhỏ so với L=10, request sẽ xếp hàng chờ connection"
+  },
+  {
+    "id": "be-q-099",
+    "courseId": "BACKEND",
+    "lesson": "be-08-performance",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "DB đang quá tải. Tại sao GIẢM pool size lại thường giúp throughput tăng?",
+    "options": [
+      "Vì hàng đợi nên nằm ở tầng app (rẻ, kiểm soát, timeout được) thay vì nghẽn trong DB",
+      "Vì pool nhỏ buộc DB chạy nhiều core hơn",
+      "Vì connection ít làm query chạy nhanh hơn về mặt thuật toán",
+      "Vì pool nhỏ tự động bật caching trong DB"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "DB chỉ thực thi song song hiệu quả bằng số core; pool to gây context switch và lock contention.\n✓ Giảm pool đẩy hàng đợi về app (rẻ, kiểm soát được, timeout được) thay vì nghẽn ở DB\n✗ Pool nhỏ không làm DB có thêm core\n✗ Bản thân query không chạy nhanh hơn về thuật toán; chỉ giảm tranh chấp\n✗ Pool size không bật caching trong DB"
+  },
+  {
+    "id": "be-q-100",
+    "courseId": "BACKEND",
+    "lesson": "be-08-performance",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Chọn các phát biểu ĐÚNG về benchmark và coordinated omission.",
+    "options": [
+      "Tool closed-loop chờ response rồi mới gửi tiếp nên tự ngừng gửi khi server chậm, làm p99 đẹp giả tạo",
+      "Cần warmup vì JIT/connection pool/cache cần thời gian để vào trạng thái nóng",
+      "Nên đo nhiều lần và báo cáo phân phối (p50/p99, variance), không báo 'best of N'",
+      "Benchmark trên laptop với turbo boost cho kết quả đáng tin cậy nhất",
+      "User thật là closed-loop nên tool closed-loop phản ánh đúng thực tế"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Coordinated omission là lỗi kinh điển của load test closed-loop.\n✓ Closed-loop ngừng gửi khi server stall, chỉ ghi 1 request chậm thay vì hàng trăm → p99 đẹp giả\n✓ Warmup cần thiết vì JIT, pool fill, cache ấm\n✓ Đo ≥5 lần, báo phân phối thay vì một con số/'best of N'\n✗ Laptop có turbo boost, thermal throttle, background process nên gần như vô nghĩa\n✗ User thật là open-loop (đến theo nhịp của họ), không phải closed-loop"
+  },
+  {
+    "id": "be-q-101",
+    "courseId": "BACKEND",
+    "lesson": "be-08-performance",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Lambda của bạn CPU-bound, đang để memory 256MB. Vì sao tăng lên 1024MB có thể giảm CẢ latency lẫn chi phí?",
+    "options": [
+      "Vì Lambda ghép cặp memory với CPU; nhiều CPU chạy nhanh hơn, billing GB-giây bù lại nhờ thời gian ngắn hơn",
+      "Vì memory lớn tự động bật cache kết quả",
+      "Vì tăng memory làm giảm số cold start",
+      "Vì billing chỉ tính theo số invocation, không theo thời gian"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Trong Lambda, memory và CPU bị ghép cặp (1769MB ≈ 1 vCPU).\n✓ Tăng memory tăng CPU → hàm CPU-bound chạy nhanh hơn; billing GB-giây có thể rẻ hơn vì thời gian ngắn lại\n✗ Memory lớn không tự bật cache kết quả\n✗ Vấn đề là CPU-bound, không liên quan trực tiếp đến số cold start\n✗ Billing Lambda tính theo GB-giây (memory × thời gian), không chỉ theo số invocation"
+  },
+  {
+    "id": "be-q-102",
+    "courseId": "BACKEND",
+    "lesson": "be-08-performance",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Node.js/Python asyncio, một hàm sync chậm (parse JSON 50MB) chạy trên event loop sẽ gây triệu chứng gì?",
+    "options": [
+      "p99 tăng vọt trên TOÀN BỘ endpoint dù chỉ một endpoint có lỗi, vì nó đóng băng cả event loop",
+      "Chỉ endpoint đó chậm, các endpoint khác không bị ảnh hưởng",
+      "Tăng số thread tự động để bù",
+      "Giảm throughput nhưng latency vẫn ổn định"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Một đoạn CPU-bound sync block cả event loop, đóng băng mọi request đang phục vụ.\n✓ p99 tăng vọt toàn bộ endpoint dù chỉ một endpoint lỗi; nên theo dõi event loop lag như metric hạng nhất\n✗ Không chỉ riêng endpoint đó; cả event loop bị đóng băng\n✗ Event loop là một thread, không tự tăng thread; phải đẩy sang worker pool/process\n✗ Latency không ổn định; nó tăng vọt"
+  },
+  {
+    "id": "be-q-103",
+    "courseId": "BACKEND",
+    "lesson": "be-08-performance",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn các phát biểu ĐÚNG về batching, streaming và capacity planning.",
+    "options": [
+      "Batch chia chi phí cố định (round-trip, fsync) cho N item nhưng tăng latency của item đầu tiên",
+      "Pattern chuẩn là batch theo size HOẶC time, cái nào đến trước",
+      "Streaming giúp memory chỉ tỷ lệ với chunk size, không tỷ lệ với kích thước dữ liệu",
+      "Nên chạy hệ thống ở 90% utilization tại peak để tiết kiệm tài nguyên",
+      "Autoscaling thay thế hoàn toàn capacity planning vì nó scale tức thì"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Batch amortize chi phí cố định; streaming giữ memory phẳng; capacity cần headroom.\n✓ Batch chia chi phí cố định cho N item nhưng làm item đầu phải chờ gom đủ batch\n✓ Pattern chuẩn: batch theo size HOẶC time, cái nào đến trước (như Kafka linger.ms + batch.size)\n✓ Streaming giữ memory tỷ lệ với chunk size, không với kích thước dữ liệu\n✗ Trên 70-80% utilization latency tăng phi tuyến (W ~ 1/(1−ρ)); nên chạy ~50-70%\n✗ Autoscale mất 1-5 phút (boot, warmup), không thay thế capacity planning"
+  },
+  {
+    "id": "be-q-104",
+    "courseId": "BACKEND",
+    "lesson": "be-08-performance",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Hai microservice giao tiếp nội bộ qua gRPC, cần serialization nhanh và payload nhỏ với schema evolution. Format nào phù hợp nhất?",
+    "options": [
+      "Protobuf",
+      "JSON",
+      "MessagePack",
+      "CSV"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "gRPC nội bộ cần nhanh, nhỏ, có schema với evolution tốt.\n✓ Protobuf nhanh, nhỏ (~3-10x so JSON), có schema evolution tốt — đúng cho gRPC nội bộ\n✗ JSON chậm và lớn, không có schema; hợp cho public API/debug\n✗ MessagePack nhỏ vừa nhưng không có schema; hợp làm cache value\n✗ CSV không phù hợp cho dữ liệu có cấu trúc lồng/schema của gRPC"
   }
 ]
