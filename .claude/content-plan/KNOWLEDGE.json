@@ -41,8 +41,8 @@
       "id": "CS",
       "kind": "questions",
       "scope": "6 bài (prefix cs)",
-      "status": "pending",
-      "note": ""
+      "status": "done",
+      "note": "77 câu, build pass"
     },
     {
       "id": "DSA",

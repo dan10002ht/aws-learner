@@ -1,10 +1,4 @@
-import type { Question } from "@/lib/types";
-
-// AUTO-GENERATED from generatedKnowledge.data.json — do not edit by hand.
-// Chunked into arrays so a single huge literal does not overflow
-// TypeScript's union-complexity limit. See append-questions.mjs.
-
-const k1: Question[] = [
+[
   {
     "id": "sql-q-001",
     "courseId": "SQL",
@@ -8595,10 +8589,7 @@ const k1: Question[] = [
       1
     ],
     "explanation": "DNS như \"danh bạ\" của Internet, đổi tên miền dễ nhớ thành địa chỉ IP để máy tìm được nhau.\n✓ Đổi tên miền thành địa chỉ IP: đúng vai trò của DNS.\n✗ Mã hoá dữ liệu...: đó là việc của giao thức https, không phải DNS.\n✗ Vẽ HTML ra màn hình: đó là bước render/paint của browser.\n✗ Quyết định HTTP method: method do request quy định, không liên quan DNS."
-  }
-];
-
-const k2: Question[] = [
+  },
   {
     "id": "web-q-011",
     "courseId": "WEB",
@@ -11999,6 +11990,4 @@ const k2: Question[] = [
     ],
     "explanation": "Phân bổ ngẫu nhiên không đều tuyệt đối, và không gian ID lớn mới chống được collision.\n✓ Power of two choices chọn 2 ngẫu nhiên rồi đẩy vào server ít việc hơn, giảm lệch tải.\n✓ UUID v4 122 bit đủ lớn để gần như không trùng.\n✓ ~23 người đủ vượt 50% nhờ số cặp tăng nhanh.\n✗ Rải ngẫu nhiên KHÔNG cho tải đều tuyệt đối; có server bận hơn (~ln n / ln ln n).\n✗ Hash 32-bit KHÔNG an toàn ở quy mô lớn vì đụng sau vài chục nghìn item."
   }
-];
-
-export const generatedKnowledge: Question[] = [...k1, ...k2];
+]

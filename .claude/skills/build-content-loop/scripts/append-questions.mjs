@@ -1,19 +1,69 @@
 #!/usr/bin/env node
-// Append knowledge-quiz workflow output to web/data/generatedKnowledge.ts.
+// Append knowledge-quiz workflow output to the knowledge question bank.
 // Usage: node append-questions.mjs <workflow-output-file>
 //
-// generatedKnowledge.ts holds chunked arrays (const k1, k2, ... spread into the
-// export) because one giant literal overflows TypeScript's union-complexity
-// limit. This script parses the existing chunks, adds the new questions, repacks
-// into chunks of <= MAX, and rewrites the file. Validates the gate first.
+// Source of truth = generatedKnowledge.data.json (pure JSON, robust to parse).
+// generatedKnowledge.ts is REGENERATED from it as chunked const arrays (one
+// giant literal overflows TypeScript's union-complexity limit). The .ts is what
+// questions.ts imports.
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(__dirname, "..", "..", "..", "..");
-const GEN = path.join(REPO, "web", "data", "generatedKnowledge.ts");
+const DATA = path.join(REPO, "web", "data", "generatedKnowledge.data.json");
+const TS = path.join(REPO, "web", "data", "generatedKnowledge.ts");
 const MAX = 400;
+
+// Bracket-match the array after each `= [`, respecting JS string literals, so
+// a `]` inside a question string never ends the match early.
+function extractArrays(text) {
+  const out = [];
+  let i = 0;
+  while ((i = text.indexOf("= [", i)) !== -1) {
+    let j = i + 2; // at '['
+    let depth = 0, inStr = false, esc = false;
+    const start = j;
+    for (; j < text.length; j++) {
+      const c = text[j];
+      if (inStr) {
+        if (esc) esc = false;
+        else if (c === "\\") esc = true;
+        else if (c === '"') inStr = false;
+      } else if (c === '"') inStr = true;
+      else if (c === "[") depth++;
+      else if (c === "]") { depth--; if (depth === 0) { j++; break; } }
+    }
+    try { out.push(JSON.parse(text.slice(start, j))); } catch { /* spread/export array, skip */ }
+    i = j;
+  }
+  return out;
+}
+
+function loadExisting() {
+  if (fs.existsSync(DATA)) return JSON.parse(fs.readFileSync(DATA, "utf8"));
+  // One-time migration from the .ts chunk arrays.
+  if (fs.existsSync(TS)) {
+    const arrays = extractArrays(fs.readFileSync(TS, "utf8"));
+    return arrays.flat();
+  }
+  return [];
+}
+
+function writeBank(all) {
+  fs.writeFileSync(DATA, JSON.stringify(all, null, 2) + "\n");
+  const chunks = [];
+  for (let i = 0; i < all.length; i += MAX) chunks.push(all.slice(i, i + MAX));
+  let out = 'import type { Question } from "@/lib/types";\n\n';
+  out += "// AUTO-GENERATED from generatedKnowledge.data.json — do not edit by hand.\n";
+  out += "// Chunked into arrays so a single huge literal does not overflow\n";
+  out += "// TypeScript's union-complexity limit. See append-questions.mjs.\n\n";
+  chunks.forEach((c, i) => { out += `const k${i + 1}: Question[] = ${JSON.stringify(c, null, 2)};\n\n`; });
+  out += `export const generatedKnowledge: Question[] = [${chunks.map((_, i) => "...k" + (i + 1)).join(", ")}];\n`;
+  fs.writeFileSync(TS, out);
+  return chunks.length;
+}
 
 const outFile = process.argv[2];
 if (!outFile) { console.error("Usage: append-questions.mjs <workflow-output-file>"); process.exit(1); }
@@ -37,17 +87,9 @@ qs = qs.map((q) => ({
   correctIndices: q.correctIndices, explanation: dec(q.explanation),
 }));
 
-// Load existing knowledge questions (parse all chunk arrays from the file).
-let existing = [];
-if (fs.existsSync(GEN)) {
-  const t = fs.readFileSync(GEN, "utf8");
-  const re = /const k\d+: Question\[\] = (\[[\s\S]*?\]);/g;
-  let m;
-  while ((m = re.exec(t))) existing = existing.concat(JSON.parse(m[1]));
-}
+const existing = loadExisting();
 const existingIds = new Set(existing.map((q) => q.id));
 
-// Validate the batch (gate).
 let err = 0;
 const seen = new Set();
 for (const q of qs) {
@@ -68,16 +110,6 @@ console.log(`${res.courseId}: ${qs.length} q | errors:${err} | multi:${multi} ($
 console.log("per-lesson:", JSON.stringify(per));
 if (err > 0) { console.log("ABORT — fix errors first"); process.exit(1); }
 
-// Repack all questions into chunks of <= MAX and rewrite the file.
 const all = existing.concat(qs);
-const chunks = [];
-for (let i = 0; i < all.length; i += MAX) chunks.push(all.slice(i, i + MAX));
-
-let out = 'import type { Question } from "@/lib/types";\n\n';
-out += "// Auto-generated practice quizzes for knowledge courses. Chunked into arrays\n";
-out += "// so TypeScript can type-check the literal (a single huge array overflows\n";
-out += "// the union-complexity limit). Managed by build-content-loop/scripts/append-questions.mjs.\n\n";
-chunks.forEach((c, i) => { out += `const k${i + 1}: Question[] = ${JSON.stringify(c, null, 2)};\n\n`; });
-out += `export const generatedKnowledge: Question[] = [${chunks.map((_, i) => "...k" + (i + 1)).join(", ")}];\n`;
-fs.writeFileSync(GEN, out);
-console.log(`Appended ${qs.length} ${res.courseId} questions; total knowledge now ${all.length} in ${chunks.length} chunk(s).`);
+const nChunks = writeBank(all);
+console.log(`Appended ${qs.length} ${res.courseId}; total knowledge now ${all.length} in ${nChunks} chunk(s).`);
