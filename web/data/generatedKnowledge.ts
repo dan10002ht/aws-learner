@@ -26259,6 +26259,1679 @@ const k4: Question[] = [
       2
     ],
     "explanation": "Các khác biệt đúng theo bài: VPC AWS regional vs GCP global, EKS control plane có phí, EBS gắn 1 EC2 trừ Multi-Attach.\n✓ VPC AWS regional, VPC GCP global là khác biệt network lớn nhất\n✓ EKS control plane tính phí $0.10/h/cluster\n✓ EBS chỉ gắn 1 EC2, trừ io1/io2 Multi-Attach\n✗ ALB/NLB là regional, không phải global anycast; muốn global cần CloudFront/Global Accelerator\n✗ VPC Peering AWS KHÔNG transitive, muốn transit phải dùng Transit Gateway"
+  },
+  {
+    "id": "eng-q-001",
+    "courseId": "ENGINEER",
+    "lesson": "eng-01-linux-terminal",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn debug một EC2 instance và muốn xem nhanh log hệ thống cùng các log ứng dụng (như cloud-init, nginx). Thư mục nào nên xem ĐẦU TIÊN?",
+    "options": [
+      "/var/log",
+      "/etc/log",
+      "/proc/log",
+      "/tmp/log"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Log hệ thống và ứng dụng nằm tập trung ở thư mục log của dữ liệu thay đổi.\n✓ Nơi chứa cloud-init.log, messages, nginx/access.log — chỗ đầu tiên cần xem khi debug.\n✗ Thư mục cấu hình hệ thống chứa file config như sshd_config, không phải log.\n✗ Filesystem ảo nhìn vào kernel/process, không lưu file log ứng dụng.\n✗ Thư mục file tạm, thường bị xoá khi reboot, không phải nơi tập trung log."
+  },
+  {
+    "id": "eng-q-002",
+    "courseId": "ENGINEER",
+    "lesson": "eng-01-linux-terminal",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Tính số octal cho quyền hiển thị là -rwxr-x---. Kết quả là?",
+    "options": [
+      "750",
+      "755",
+      "740",
+      "700"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Quy tắc r=4, w=2, x=1 cộng theo từng nhóm u/g/o.\n✓ u=rwx=7, g=r-x=5, o=---=0 → 750.\n✗ Giá trị này tương ứng o=r-x=5, nhưng nhóm other ở đây không có quyền nào.\n✗ Giá trị này tương ứng g=r--=4, nhưng nhóm group ở đây có cả x.\n✗ Giá trị này cho group và other đều bằng 0, nhưng group có r-x."
+  },
+  {
+    "id": "eng-q-003",
+    "courseId": "ENGINEER",
+    "lesson": "eng-01-linux-terminal",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn SSH vào EC2 và nhận lỗi 'WARNING: UNPROTECTED PRIVATE KEY FILE!'. Lệnh nào sửa đúng nhất?",
+    "options": [
+      "chmod 400 my-key.pem",
+      "chmod 777 my-key.pem",
+      "chmod +x my-key.pem",
+      "chown root my-key.pem"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SSH từ chối hoạt động khi private key có quyền quá rộng; key cần chỉ chủ sở hữu đọc.\n✓ Đặt quyền r-------- (chỉ chủ đọc) đúng chuẩn bắt buộc cho file .pem.\n✗ Mở toàn quyền cho mọi người càng khiến key kém an toàn, SSH vẫn từ chối.\n✗ Thêm quyền execute không liên quan, không giải quyết quyền quá rộng.\n✗ Đổi chủ sở hữu không thu hẹp quyền group/other gây ra cảnh báo."
+  },
+  {
+    "id": "eng-q-004",
+    "courseId": "ENGINEER",
+    "lesson": "eng-01-linux-terminal",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một process treo trên port 8080. Theo bài, thứ tự xử lý ĐÚNG khi muốn dừng nó an toàn là gì?",
+    "options": [
+      "Gửi SIGTERM (kill PID) trước; chỉ dùng kill -9 (SIGKILL) khi process không chịu thoát",
+      "Luôn dùng kill -9 ngay để chắc chắn process chết",
+      "Gửi SIGHUP để giết process",
+      "Dùng Ctrl+C vì nó tương đương SIGKILL"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SIGTERM yêu cầu thoát êm để process dọn dẹp; SIGKILL là phương án cuối.\n✓ Thử SIGTERM trước, để SIGKILL khi cần là đúng quy trình an toàn.\n✗ Dùng SIGKILL ngay không cho ứng dụng flush dữ liệu, đóng connection, dễ hỏng dữ liệu.\n✗ SIGHUP thường được daemon hiểu là reload config, không phải để giết.\n✗ Ctrl+C là SIGINT ngắt process foreground, không phải SIGKILL."
+  },
+  {
+    "id": "eng-q-005",
+    "courseId": "ENGINEER",
+    "lesson": "eng-01-linux-terminal",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong user data của một instance thuộc Auto Scaling group, bạn cài nginx và chạy 'systemctl start nginx' nhưng QUÊN 'systemctl enable'. Hệ quả là gì?",
+    "options": [
+      "Nginx chạy ngay lúc này nhưng instance mới được thay thế trong ASG sẽ không tự chạy nginx khi boot",
+      "Nginx không chạy ngay nhưng sẽ chạy khi boot lần sau",
+      "Cả enable và start đều thừa vì systemd tự chạy mọi service",
+      "Nginx chạy ngay và luôn tự chạy khi boot"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "start chạy ngay còn enable mới đăng ký chạy khi boot.\n✓ start làm nginx chạy lúc này, nhưng thiếu enable nên instance mới lên sẽ không tự khởi động nginx.\n✗ start chính là để chạy ngay, không phải chỉ chạy lần boot sau.\n✗ systemd không tự chạy service nếu chưa được enable.\n✗ Thiếu enable thì không có việc tự chạy khi boot."
+  },
+  {
+    "id": "eng-q-006",
+    "courseId": "ENGINEER",
+    "lesson": "eng-01-linux-terminal",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Pipeline: awk '{print $1}' access.log | sort | uniq -c | sort -rn | head -5. Kết quả là gì?",
+    "options": [
+      "5 địa chỉ IP client gọi nhiều nhất, kèm số lần xuất hiện, sắp giảm dần",
+      "5 dòng đầu của file log nguyên gốc",
+      "5 URL bị lỗi 500 nhiều nhất",
+      "Danh sách toàn bộ IP đã loại trùng, không có số đếm"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đọc từ phải sang trái: lấy 5 dòng đầu sau khi sort giảm dần theo số đếm của các IP đã được đếm.\n✓ Lấy cột IP, sort, đếm số lần, sort giảm dần, lấy 5 đầu → top 5 IP gọi nhiều nhất kèm số đếm.\n✗ Pipeline đã biến đổi dữ liệu, không in nguyên 5 dòng gốc.\n✗ Lọc URL lỗi 500 cần điều kiện trên cột mã trạng thái, pipeline này chỉ lấy cột đầu.\n✗ uniq -c kèm số đếm và đã sort giảm dần, không phải chỉ danh sách loại trùng."
+  },
+  {
+    "id": "eng-q-007",
+    "courseId": "ENGINEER",
+    "lesson": "eng-01-linux-terminal",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn muốn chạy ./deploy.sh và gom CẢ stdout LẪN stderr vào cùng file deploy.log. Cách nào đúng?",
+    "options": [
+      "./deploy.sh > deploy.log 2>&1",
+      "./deploy.sh 2>/dev/null",
+      "./deploy.sh >> deploy.log",
+      "./deploy.sh > deploy.log < 2"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "2>&1 chuyển stderr vào cùng đích đã đặt cho stdout.\n✓ Đổi hướng stdout vào file rồi gửi stderr theo stdout, gom cả hai vào một file.\n✗ Cách này vứt bỏ stderr chứ không gom vào file.\n✗ Chỉ ghi nối stdout, stderr vẫn ra màn hình.\n✗ Cú pháp redirect input sai, không gom stderr."
+  },
+  {
+    "id": "eng-q-008",
+    "courseId": "ENGINEER",
+    "lesson": "eng-01-linux-terminal",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong script, vì sao 'sort' luôn phải đứng TRƯỚC 'uniq' khi đếm các dòng trùng?",
+    "options": [
+      "uniq chỉ gộp các dòng giống nhau LIỀN KỀ, nên cần sort để gom chúng cạnh nhau trước",
+      "uniq tự sort sẵn nên sort chỉ để cho đẹp",
+      "sort xoá dòng trùng còn uniq sắp xếp",
+      "uniq cần file đã được index"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "uniq hoạt động trên các dòng kề nhau.\n✓ uniq chỉ gộp dòng trùng liền kề, nên phải sort để các dòng giống nhau nằm cạnh nhau.\n✗ uniq không tự sort dữ liệu đầu vào.\n✗ sort không xoá trùng theo cách của uniq, và uniq không làm nhiệm vụ sắp xếp.\n✗ uniq làm việc theo dòng liền kề, không cần index."
+  },
+  {
+    "id": "eng-q-009",
+    "courseId": "ENGINEER",
+    "lesson": "eng-01-linux-terminal",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một thư mục có quyền r nhưng KHÔNG có x cho user của bạn. Bạn làm được gì với nó?",
+    "options": [
+      "Liệt kê được tên các file trong thư mục nhưng không mở (truy cập nội dung) được file",
+      "Mở được file nhưng không xem được danh sách tên file",
+      "Vào (cd) được thư mục và mở mọi file",
+      "Không làm được gì cả vì thiếu x là mất hết quyền"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Với thư mục, x nghĩa là được đi vào (cd) chứ không phải execute.\n✓ Có r cho phép liệt kê tên file, nhưng thiếu x nên không đi vào để mở nội dung file.\n✗ Ngược lại: r cho liệt kê tên, thiếu x mới chặn truy cập file.\n✗ Thiếu x đúng nghĩa là không cd vào được thư mục.\n✗ Vẫn còn r nên liệt kê tên được, không phải mất hết."
+  },
+  {
+    "id": "eng-q-010",
+    "courseId": "ENGINEER",
+    "lesson": "eng-01-linux-terminal",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Vì sao bài khuyên dùng 'rm -rf \"${APP_DIR:?}/\"' thay vì 'rm -rf $APP_DIR/' trong script?",
+    "options": [
+      "Nếu APP_DIR rỗng, cú pháp :? làm bash báo lỗi và dừng, tránh biến thành rm -rf /",
+      "Cú pháp :? giúp xoá nhanh hơn nhờ bỏ qua xác nhận",
+      "Nháy kép làm rm bỏ qua file ẩn",
+      "${APP_DIR:?} tự tạo lại thư mục nếu thiếu"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Biến chưa gán/rỗng có thể khiến lệnh xoá nhầm gốc hệ thống.\n✓ Khi biến rỗng, :? khiến bash báo lỗi và dừng, ngăn lệnh trở thành rm -rf /.\n✗ Cú pháp này không liên quan đến tốc độ hay bỏ qua xác nhận.\n✗ Nháy kép chỉ tránh vỡ khi giá trị có dấu cách, không liên quan file ẩn.\n✗ :? để báo lỗi khi biến rỗng, không tạo lại thư mục."
+  },
+  {
+    "id": "eng-q-011",
+    "courseId": "ENGINEER",
+    "lesson": "eng-01-linux-terminal",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Đề SAA: cần truy cập một instance trong private subnet, KHÔNG có bastion và KHÔNG mở inbound port 22. Cách đúng theo bài?",
+    "options": [
+      "Dùng SSM Session Manager: instance có SSM Agent và IAM role với AmazonSSMManagedInstanceCore",
+      "Mở tạm port 22 trong security group rồi SSH bằng key",
+      "Gán Elastic IP cho instance rồi SSH trực tiếp",
+      "Tạo NAT Gateway để SSH vào từ internet"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Best practice là vào shell không cần mở port hay quản lý key.\n✓ Session Manager cho vào shell qua SSM Agent và IAM role, không cần mở inbound port 22 hay bastion.\n✗ Mở port 22 vi phạm yêu cầu không mở inbound port.\n✗ Elastic IP vẫn cần mở port 22 và phơi instance ra ngoài.\n✗ NAT Gateway dành cho lưu lượng outbound, không cho SSH inbound vào private subnet."
+  },
+  {
+    "id": "eng-q-012",
+    "courseId": "ENGINEER",
+    "lesson": "eng-01-linux-terminal",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn TẤT CẢ phát biểu ĐÚNG về EC2 user data theo bài học.",
+    "options": [
+      "Mặc định chỉ chạy ở lần boot đầu tiên của instance",
+      "Chạy với quyền root nên không cần sudo bên trong",
+      "Debug thất bại bằng cách đọc /var/log/cloud-init-output.log",
+      "Trong script tự động nên bỏ -y để được xác nhận từng bước",
+      "Phải có người đăng nhập SSH thì user data mới bắt đầu chạy"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "User data là bash script root chạy lúc instance khởi động lần đầu.\n✓ Mặc định chỉ chạy ở lần boot đầu tiên.\n✓ Chạy với quyền root nên bên trong không cần sudo.\n✓ Khi thất bại, đọc cloud-init-output.log để debug.\n✗ Trong script tự động phải thêm -y để không bị treo chờ xác nhận.\n✗ User data chạy tự động khi boot, không cần ai đăng nhập SSH."
+  },
+  {
+    "id": "eng-q-013",
+    "courseId": "ENGINEER",
+    "lesson": "eng-01-linux-terminal",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Bạn cần xem log REALTIME của một service tên nginx do systemd quản lý. Cách nào phù hợp?",
+    "options": [
+      "journalctl -u nginx -f",
+      "tail -f /var/log/nginx/access.log",
+      "journalctl -u nginx --since \"1 hour ago\"",
+      "cat /var/log/nginx/access.log",
+      "journalctl -u nginx -p err"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Theo dõi realtime cần chế độ follow.\n✓ journalctl của unit với cờ -f theo dõi realtime log của service.\n✓ tail -f trên file log của nginx cũng theo dõi realtime, là lệnh debug số 1.\n✗ --since chỉ in log trong khoảng thời gian quá khứ, không theo dõi liên tục.\n✗ cat in toàn bộ một lần rồi kết thúc, không cập nhật realtime.\n✗ -p err chỉ lọc mức error trở lên, không phải theo dõi realtime."
+  },
+  {
+    "id": "eng-q-014",
+    "courseId": "ENGINEER",
+    "lesson": "eng-02-cidr-subnetting",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một subnet có prefix /26. Theo công thức số địa chỉ trong block, tổng số địa chỉ là bao nhiêu?",
+    "options": [
+      "32",
+      "64",
+      "128",
+      "16"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Số địa chỉ = 2^(32 − prefix) = 2^(32 − 26) = 2^6 = 64.\n✓ 64 đúng vì 2^6 = 64.\n✗ 32 ứng với /27 (2^5), không phải /26.\n✗ 128 ứng với /25 (2^7).\n✗ 16 ứng với /28 (2^4)."
+  },
+  {
+    "id": "eng-q-015",
+    "courseId": "ENGINEER",
+    "lesson": "eng-02-cidr-subnetting",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo quy tắc AWS, một subnet /28 chạy được tối đa bao nhiêu instance?",
+    "options": [
+      "16",
+      "14",
+      "11",
+      "13"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "AWS giữ riêng 5 IP mỗi subnet, nên usable = 2^(32−28) − 5 = 16 − 5 = 11.\n✓ 11 đúng vì 16 − 5 = 11.\n✗ 16 là tổng địa chỉ, chưa trừ IP dành riêng.\n✗ 14 là kết quả mạng truyền thống (trừ 2: network + broadcast), không áp dụng cho AWS.\n✗ 13 không khớp công thức nào."
+  },
+  {
+    "id": "eng-q-016",
+    "courseId": "ENGINEER",
+    "lesson": "eng-02-cidr-subnetting",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Địa chỉ nào sau đây KHÔNG thuộc dải private theo RFC 1918?",
+    "options": [
+      "10.200.5.1",
+      "172.20.0.1",
+      "172.32.0.1",
+      "192.168.50.1"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Dải 172 chỉ private từ 172.16 đến 172.31 (172.16.0.0/12), nên 172.32 nằm ngoài.\n✓ 172.32.0.1 không private vì vượt quá 172.31.\n✗ 10.200.5.1 thuộc 10.0.0.0/8 (private).\n✗ 172.20.0.1 nằm trong 172.16–172.31 (private).\n✗ 192.168.50.1 thuộc 192.168.0.0/16 (private)."
+  },
+  {
+    "id": "eng-q-017",
+    "courseId": "ENGINEER",
+    "lesson": "eng-02-cidr-subnetting",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Lệnh sau in ra gì?\npython3 -c \"import ipaddress; n=ipaddress.ip_network('172.16.37.14/20', strict=False); print(n)\"",
+    "options": [
+      "172.16.37.0/20",
+      "172.16.32.0/20",
+      "172.16.0.0/20",
+      "172.16.16.0/20"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "/20 cắt octet 3, block size = 2^4 = 16, các block 0,16,32,48; giá trị 37 rơi giữa 32 và 48 → network = 172.16.32.0/20.\n✓ 172.16.32.0/20 đúng vì 37 nằm trong block bắt đầu tại 32.\n✗ 172.16.37.0/20 sai vì 37 không phải bội số của 16.\n✗ 172.16.0.0/20 là block đầu (0–15), không chứa 37.\n✗ 172.16.16.0/20 chứa 16–31, không chứa 37."
+  },
+  {
+    "id": "eng-q-018",
+    "courseId": "ENGINEER",
+    "lesson": "eng-02-cidr-subnetting",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Địa chỉ 10.0.77.200/26 thuộc network nào và broadcast là bao nhiêu?",
+    "options": [
+      "network 10.0.77.128, broadcast 10.0.77.191",
+      "network 10.0.77.192, broadcast 10.0.77.255",
+      "network 10.0.77.200, broadcast 10.0.77.255",
+      "network 10.0.77.0, broadcast 10.0.77.63"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "/26 → octet 4, block size = 2^(8−2) = 64, các block 0,64,128,192; 200 rơi giữa 192 và 256 → network 10.0.77.192, broadcast = 256 − 1 = .255.\n✓ network 192 / broadcast 255 đúng theo block size 64.\n✗ network 128/broadcast 191 là block trước (128–191), không chứa 200.\n✗ network 200 sai vì 200 không phải bội số của 64.\n✗ network 0/broadcast 63 là block đầu tiên."
+  },
+  {
+    "id": "eng-q-019",
+    "courseId": "ENGINEER",
+    "lesson": "eng-02-cidr-subnetting",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cần một subnet AWS chứa 50 EC2 instance, chọn prefix nhỏ nhất (tiết kiệm IP nhất). Đáp án đúng?",
+    "options": [
+      "/27",
+      "/26",
+      "/25",
+      "/24"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cần ≥ 50 usable; AWS trừ 5: /27 cho 32−5=27 (thiếu), /26 cho 64−5=59 (đủ và khít nhất).\n✓ /26 đúng vì 59 usable ≥ 50 và là prefix nhỏ nhất đủ.\n✗ /27 chỉ 27 usable, không đủ 50.\n✗ /25 (123 usable) đủ nhưng lãng phí, không phải nhỏ nhất.\n✗ /24 (251 usable) càng lãng phí hơn."
+  },
+  {
+    "id": "eng-q-020",
+    "courseId": "ENGINEER",
+    "lesson": "eng-02-cidr-subnetting",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "VPC 10.50.0.0/16 cần chia thành đúng 8 subnet bằng nhau. Prefix của mỗi subnet và CIDR của subnet thứ 3 là gì?",
+    "options": [
+      "/19, subnet thứ 3 = 10.50.64.0/19",
+      "/19, subnet thứ 3 = 10.50.32.0/19",
+      "/20, subnet thứ 3 = 10.50.32.0/20",
+      "/18, subnet thứ 3 = 10.50.64.0/18"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "8 subnet = mượn 3 bit → /19; block size octet 3 = 32; các block 0,32,64,... → subnet thứ 3 (chỉ số 1→0, 2→32, 3→64) = 10.50.64.0/19.\n✓ /19 và 10.50.64.0/19 đúng: subnet 1=0, 2=32, 3=64.\n✗ /19 với 10.50.32.0/19 là subnet thứ 2.\n✗ /20 sai vì chia 8 chỉ cần mượn 3 bit, không phải 4.\n✗ /18 chỉ tạo 4 subnet, không phải 8."
+  },
+  {
+    "id": "eng-q-021",
+    "courseId": "ENGINEER",
+    "lesson": "eng-02-cidr-subnetting",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Route table chứa: 10.0.0.0/16 → local, 10.1.0.0/16 → pcx (peering), 10.1.5.0/24 → tgw (Transit Gateway), 0.0.0.0/0 → nat. Packet tới 10.1.5.40 đi đâu?",
+    "options": [
+      "pcx (peering) vì là route /16 khớp đầu tiên",
+      "tgw (Transit Gateway) vì prefix dài nhất khớp",
+      "nat vì 0.0.0.0/0 khớp mọi địa chỉ",
+      "local vì luôn ưu tiên route nội bộ VPC"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Router chọn prefix dài nhất khớp; 10.1.5.40 khớp cả /16 (peering) lẫn /24 (tgw), /24 cụ thể hơn nên thắng.\n✓ tgw đúng vì /24 là prefix dài nhất khớp.\n✗ peering sai: thứ tự dòng không quyết định, /16 ngắn hơn /24.\n✗ nat sai: /0 là prefix ngắn nhất, luôn cuối cùng.\n✗ local sai: 10.1.5.40 không khớp 10.0.0.0/16."
+  },
+  {
+    "id": "eng-q-022",
+    "courseId": "ENGINEER",
+    "lesson": "eng-02-cidr-subnetting",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "VPC nhận block IPv6 2600:1f18:1234:5600::/56, mỗi subnet là /64. Tối đa bao nhiêu subnet và subnet thứ hai là gì?",
+    "options": [
+      "64 subnet, subnet thứ hai 2600:1f18:1234:5602::/64",
+      "256 subnet, subnet thứ hai 2600:1f18:1234:5601::/64",
+      "256 subnet, subnet thứ hai 2600:1f18:1234:5700::/64",
+      "128 subnet, subnet thứ hai 2600:1f18:1234:5601::/64"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "/56 → /64 là 8 bit subnet ID → 2^8 = 256 subnet; subnet ID nằm ở 2 hex cuối nhóm thứ 4, subnet thứ hai tăng 1 → ...5601::/64.\n✓ 256 subnet, ...5601::/64 đúng.\n✗ 64 subnet sai (2^8 = 256, không 2^6).\n✗ ...5700 sai: chỉ tăng phần subnet ID, không nhảy sang nhóm khác.\n✗ 128 subnet sai về số bit mượn."
+  },
+  {
+    "id": "eng-q-023",
+    "courseId": "ENGINEER",
+    "lesson": "eng-02-cidr-subnetting",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Đề SAA cho 2 VPC đều dùng 10.0.0.0/16 và hỏi cách kết nối để gọi service giữa chúng. Lựa chọn ĐÚNG là gì?",
+    "options": [
+      "Tạo VPC peering giữa hai VPC",
+      "Dùng AWS PrivateLink (interface endpoint)",
+      "Bật route propagation qua Transit Gateway",
+      "Thêm route 0.0.0.0/0 trỏ sang VPC kia"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "VPC peering và TGW propagation không hoạt động giữa hai CIDR trùng dải; PrivateLink không quan tâm overlap nên là đáp án đúng.\n✓ PrivateLink đúng vì hoạt động được dù CIDR trùng.\n✗ VPC peering sai: không kết nối được hai dải trùng nhau (distractor kinh điển).\n✗ TGW propagation cũng không hoạt động khi CIDR overlap.\n✗ Route 0.0.0.0/0 sang VPC kia không giải quyết overlap và không định tuyến được."
+  },
+  {
+    "id": "eng-q-024",
+    "courseId": "ENGINEER",
+    "lesson": "eng-02-cidr-subnetting",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Cần subnet AWS chứa 500 instance mỗi subnet. Prefix khít nhất là gì?",
+    "options": [
+      "/24 vì cho 251 usable",
+      "/23 vì cho 507 usable",
+      "/22 vì cho 1019 usable",
+      "/25 vì cho 123 usable"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "500 instance + 5 IP AWS giữ = cần ≥ 505 usable; /23 cho 512 − 5 = 507, khít nhất.\n✓ /23 (507 usable) đúng vì vừa đủ ≥ 500.\n✗ /24 chỉ 251 usable, không đủ.\n✗ /22 (1019) đủ nhưng lãng phí, không khít nhất.\n✗ /25 chỉ 123 usable, không đủ."
+  },
+  {
+    "id": "eng-q-025",
+    "courseId": "ENGINEER",
+    "lesson": "eng-02-cidr-subnetting",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những phát biểu nào sau đây về IPv6/NAT và outbound trên AWS là ĐÚNG?",
+    "options": [
+      "IPv6 trên AWS là global unicast, public và unique toàn cầu",
+      "Subnet IPv6 cần outbound-only dùng egress-only internet gateway",
+      "NAT gateway xử lý outbound cho IPv6 giống như IPv4",
+      "Mỗi VPC nhận /56 và mỗi subnet IPv6 nhận /64",
+      "IPv6 cần tính usable hosts trừ 5 IP giống IPv4"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "IPv6 AWS là GUA public toàn cầu; outbound-only dùng egress-only IGW; VPC /56 → subnet /64.\n✓ IPv6 global unicast public unique đúng theo bài.\n✓ Egress-only internet gateway đúng cho IPv6 outbound-only.\n✓ VPC /56, subnet /64 đúng (256 subnet mỗi VPC).\n✗ NAT gateway cho IPv6 sai: NAT gateway chủ yếu cho IPv4.\n✗ IPv6 không tính usable kiểu trừ 5 như IPv4; một /64 có 2^64 địa chỉ."
+  },
+  {
+    "id": "eng-q-026",
+    "courseId": "ENGINEER",
+    "lesson": "eng-02-cidr-subnetting",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Cho VPC A = 172.16.0.0/16. Những CIDR nào sau đây OVERLAP với A (không peering được)?",
+    "options": [
+      "172.16.200.0/24",
+      "172.17.0.0/16",
+      "172.16.128.0/17",
+      "172.0.0.0/16",
+      "172.16.0.0/20"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      4
+    ],
+    "explanation": "A trải 172.16.0.0–172.16.255.255; mọi CIDR nằm trong dải này đều overlap.\n✓ 172.16.200.0/24 nằm trong range A → overlap.\n✓ 172.16.128.0/17 (172.16.128.0–172.16.255.255) nằm trong A → overlap.\n✓ 172.16.0.0/20 (172.16.0.0–172.16.15.255) nằm trong A → overlap.\n✗ 172.17.0.0/16 ngoài range A (octet 2 khác) → không overlap.\n✗ 172.0.0.0/16 là 172.0.x, không trùng 172.16.x → không overlap."
+  },
+  {
+    "id": "eng-q-027",
+    "courseId": "ENGINEER",
+    "lesson": "eng-03-tcp-tls",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một ứng dụng video call realtime (như Zoom/WebRTC) ưu tiên độ trễ thấp, chấp nhận mất một vài frame. Giao thức vận chuyển nào phù hợp nhất và vì sao?",
+    "options": [
+      "UDP — frame đến trễ là vô dụng, thà bỏ qua còn hơn chờ truyền lại",
+      "TCP — vì đảm bảo mọi frame đến đủ và đúng thứ tự",
+      "TCP — vì handshake 3 bước giúp ổn định băng thông",
+      "UDP — vì UDP tự động sắp xếp lại thứ tự gói nhanh hơn TCP"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Với realtime, frame trễ là vô dụng nên bỏ qua tốt hơn chờ truyền lại.\n✓ UDP không truyền lại, độ trễ thấp, hợp realtime\n✗ Đảm bảo đủ và đúng thứ tự là TCP, nhưng việc chờ truyền lại làm trễ frame, không hợp realtime\n✗ Handshake TCP làm chậm thiết lập, không phải lợi thế ở đây\n✗ UDP không sắp xếp lại thứ tự gói — đó là việc của TCP"
+  },
+  {
+    "id": "eng-q-028",
+    "courseId": "ENGINEER",
+    "lesson": "eng-03-tcp-tls",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một server web chỉ nghe duy nhất port 443 nhưng vẫn phục vụ được hàng trăm nghìn client cùng lúc. Điều gì cho phép điều đó?",
+    "options": [
+      "Mỗi kết nối được phân biệt bằng bộ (client IP, client port) khác nhau, không phải bằng port server",
+      "Server tự động mở thêm nhiều port server ngẫu nhiên cho mỗi client",
+      "UDP cho phép nhiều client dùng chung một socket",
+      "Port 443 là port đặc biệt cho phép vô hạn kết nối song song"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Socket định danh bằng bộ 5 thành phần; server giữ nguyên port 443, client khác nhau ở IP/port.\n✓ Mỗi kết nối phân biệt bởi (client IP, client port) khác nhau\n✗ Server không cần mở thêm port khác cho mỗi client\n✗ HTTPS dùng TCP, không phải UDP, và socket không dùng chung\n✗ 443 chỉ là well-known port, không có tính chất vô hạn đặc biệt"
+  },
+  {
+    "id": "eng-q-029",
+    "courseId": "ENGINEER",
+    "lesson": "eng-03-tcp-tls",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Với RTT là 35ms, thiết lập kết nối MỚI lần đầu cho HTTP/2 (TCP + TLS 1.3) tốn khoảng bao lâu trước khi gửi được byte dữ liệu đầu tiên?",
+    "options": [
+      "70ms (TCP 1 RTT + TLS 1 RTT)",
+      "35ms (gộp transport và TLS)",
+      "105ms (TCP 1 RTT + TLS 2 RTT)",
+      "0ms (0-RTT)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "HTTP/2 dùng TCP (1 RTT) cộng TLS 1.3 (1 RTT) = 2 RTT = 70ms.\n✓ 2 RTT × 35ms = 70ms\n✗ 35ms là của HTTP/3 (QUIC gộp transport + TLS thành 1 RTT)\n✗ TLS 1.3 chỉ tốn 1 RTT, không phải 2\n✗ 0ms là trường hợp 0-RTT khi quay lại, không phải lần đầu"
+  },
+  {
+    "id": "eng-q-030",
+    "courseId": "ENGINEER",
+    "lesson": "eng-03-tcp-tls",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Backend của bạn mở kết nối mới đến database cho MỖI request rồi đóng ngay, dẫn đến tích luỹ hàng chục nghìn socket TIME_WAIT và lỗi 'Cannot assign requested address'. Cách sửa đúng nhất là gì?",
+    "options": [
+      "Dùng connection pooling / keep-alive để tái sử dụng kết nối",
+      "Tăng giới hạn ephemeral port của hệ điều hành",
+      "Chuyển database sang UDP để tránh TIME_WAIT",
+      "Giảm thời gian 2×MSL của hệ điều hành xuống 0"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Nguyên nhân gốc là mở/đóng kết nối liên tục; giải pháp là tái sử dụng kết nối.\n✓ Connection pooling / keep-alive loại bỏ việc tạo kết nối mới mỗi request\n✗ Tăng giới hạn port chỉ trì hoãn, không sửa gốc\n✗ Database dùng TCP, không thể chuyển sang UDP\n✗ Hạ 2×MSL về 0 phá vỡ cơ chế bảo vệ chống gói trễ lẫn vào kết nối mới"
+  },
+  {
+    "id": "eng-q-031",
+    "courseId": "ENGINEER",
+    "lesson": "eng-03-tcp-tls",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "HTTP/2 đã loại bỏ head-of-line blocking ở tầng HTTP nhờ multiplexing, nhưng HTTP/3 vẫn được coi là tốt hơn. Lý do cốt lõi là gì?",
+    "options": [
+      "HTTP/2 còn head-of-line blocking ở tầng TCP (1 gói TCP mất chặn mọi stream), HTTP/3 chạy trên QUIC nên mất gói chỉ chặn stream đó",
+      "HTTP/3 dùng header dạng text thuần nên dễ debug hơn",
+      "HTTP/3 chạy trên TCP nên ổn định hơn QUIC",
+      "HTTP/2 chỉ cho phép 1 request mỗi connection"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "HTTP/2 vẫn bị TCP head-of-line blocking vì mọi stream chung 1 kết nối TCP.\n✓ QUIC làm các stream độc lập nên mất gói chỉ chặn stream đó\n✗ HTTP/3 dùng nén QPACK binary, không phải text thuần\n✗ HTTP/3 chạy trên QUIC (UDP), không phải TCP\n✗ Multiplexing nhiều stream/connection là đặc trưng của HTTP/2, không phải 1 request/connection"
+  },
+  {
+    "id": "eng-q-032",
+    "courseId": "ENGINEER",
+    "lesson": "eng-03-tcp-tls",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, TLS 1.3 nhanh hơn và an toàn hơn TLS 1.2 nhờ những thay đổi nào? (Chọn tất cả đúng)",
+    "options": [
+      "Client gửi sẵn key_share trong ClientHello để bắt tay chỉ còn 1-RTT",
+      "Cắt bỏ thuật toán yếu: bỏ RSA key exchange, RC4, SHA-1, CBC mode",
+      "Certificate được gửi đã mã hoá, bên nghe lén không thấy server cert",
+      "Bắt buộc dùng RSA key exchange để đảm bảo forward secrecy",
+      "Tăng handshake lên 3-RTT để xác thực kỹ hơn"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "TLS 1.3 đạt 1-RTT, cắt thuật toán yếu, mã hoá cert sớm.\n✓ key_share gửi sẵn trong ClientHello giúp đạt 1-RTT\n✓ Loại bỏ RSA key exchange, RC4, SHA-1, CBC, chỉ còn AEAD\n✓ Certificate được mã hoá nên bên nghe lén không thấy\n✗ TLS 1.3 BỎ RSA key exchange và bắt buộc forward secrecy qua ECDHE\n✗ TLS 1.3 giảm xuống 1-RTT, không tăng lên 3-RTT"
+  },
+  {
+    "id": "eng-q-033",
+    "courseId": "ENGINEER",
+    "lesson": "eng-03-tcp-tls",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Lệnh `openssl s_client -connect example.com:443 -showcerts` chỉ thấy DUY NHẤT một cert (leaf), và client báo lỗi 'unable to get local issuer certificate'. Nguyên nhân phổ biến nhất là gì?",
+    "options": [
+      "Server quên gửi intermediate certificate",
+      "Cert đã hết hạn",
+      "Hostname không nằm trong SAN",
+      "Cert là self-signed (issuer = subject)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Server gửi leaf + intermediate; chỉ thấy 1 cert nghĩa là thiếu intermediate.\n✓ Thiếu intermediate khiến client không xác minh được chuỗi đến root\n✗ Hết hạn báo lỗi 'certificate has expired', kiểm tra bằng -dates\n✗ Hostname mismatch báo lỗi về SAN, không phải local issuer\n✗ Self-signed thì issuer = subject, là lỗi khác"
+  },
+  {
+    "id": "eng-q-034",
+    "courseId": "ENGINEER",
+    "lesson": "eng-03-tcp-tls",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi gặp lỗi cert trong lúc debug, lập trình viên định thêm `curl -k` / `verify=False` vào code production cho 'xong nhanh'. Vì sao đây là lựa chọn tệ?",
+    "options": [
+      "Nó tắt hoàn toàn xác minh cert, mở đường cho tấn công man-in-the-middle",
+      "Nó làm cert hết hạn nhanh hơn",
+      "Nó buộc kết nối hạ xuống UDP",
+      "Nó vô hiệu hoá multiplexing của HTTP/2"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "-k / verify=False tắt xác minh, kẻ MITM có thể giả mạo server.\n✓ Tắt xác minh cert là mời gọi tấn công man-in-the-middle\n✗ Nó không ảnh hưởng đến hạn của cert\n✗ Không liên quan đến việc chuyển sang UDP\n✗ Không liên quan đến multiplexing HTTP/2"
+  },
+  {
+    "id": "eng-q-035",
+    "courseId": "ENGINEER",
+    "lesson": "eng-03-tcp-tls",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một đối tác B2B phải xác thực với API của bạn bằng client certificate. Trên AWS, giải pháp đúng theo bài là gì?",
+    "options": [
+      "API Gateway mTLS với truststore (PEM chứa CA cert) upload lên S3",
+      "API key của API Gateway để xác thực đối tác",
+      "ALB path-based routing kèm WAF rule",
+      "NLB passthrough TLS để backend tự kiểm tra API key"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Yêu cầu client certificate hai chiều chính là mTLS.\n✓ API Gateway mTLS xác minh client cert theo truststore trên S3\n✗ API key chỉ để đo lường/throttle, không phải cơ chế xác thực\n✗ Path-based routing/WAF không thực hiện xác thực bằng client cert\n✗ NLB passthrough không cung cấp xác thực client cert, và API key không phải xác thực"
+  },
+  {
+    "id": "eng-q-036",
+    "courseId": "ENGINEER",
+    "lesson": "eng-03-tcp-tls",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Yêu cầu: load balancer cho giao thức game dùng UDP, cần giữ client IP thật và hiệu năng cực cao, không cần routing theo path. Chọn dịch vụ nào?",
+    "options": [
+      "NLB",
+      "ALB",
+      "CloudFront",
+      "API Gateway"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "UDP listener + client IP thật + hiệu năng cao + không cần routing L7 → NLB.\n✓ NLB hoạt động ở L4, hỗ trợ UDP listener và giữ client IP\n✗ ALB chỉ xử lý HTTP/HTTPS (L7), không có UDP listener\n✗ CloudFront là CDN cho nội dung HTTP/HTTPS, không phải LB cho UDP game\n✗ API Gateway dành cho API HTTP/REST, không phải traffic UDP thuần"
+  },
+  {
+    "id": "eng-q-037",
+    "courseId": "ENGINEER",
+    "lesson": "eng-03-tcp-tls",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "So sánh ALB (TLS termination, L7) với NLB (TCP passthrough, L4) theo bài. Những phát biểu nào ĐÚNG? (Chọn tất cả đúng)",
+    "options": [
+      "ALB kết thúc TLS nên đọc được HTTP header/path để host-based/path-based routing và cho WAF hoạt động",
+      "NLB có thể passthrough TLS nguyên vẹn đến backend để giữ end-to-end encryption",
+      "Cần listener UDP thì chỉ NLB làm được, ALB không",
+      "ALB hỗ trợ định tuyến theo nội dung HTTP vì nó hoạt động ở tầng TCP thuần",
+      "NLB luôn giải mã TLS để đọc HTTP path rồi mới chuyển tiếp"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "ALB là L7 terminate TLS, NLB là L4 passthrough/terminate, chỉ NLB có UDP.\n✓ ALB terminate TLS nên thấy HTTP, làm routing L7 và WAF\n✓ NLB có thể passthrough TLS để giữ end-to-end encryption\n✓ UDP listener chỉ có ở NLB\n✗ ALB hoạt động ở L7, không phải TCP thuần\n✗ NLB ở L4, không giải mã để đọc HTTP path khi passthrough"
+  },
+  {
+    "id": "eng-q-038",
+    "courseId": "ENGINEER",
+    "lesson": "eng-03-tcp-tls",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn dùng cert ACM cho CloudFront nhưng tạo cert ở region ap-southeast-1 và gặp lỗi không gắn được. Vấn đề là gì?",
+    "options": [
+      "Cert cho CloudFront bắt buộc nằm ở us-east-1",
+      "Cert ACM phải cùng region với người dùng cuối",
+      "CloudFront không hỗ trợ cert ACM, phải dùng Let's Encrypt",
+      "Phải export private key của cert ACM trước khi gắn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bẫy đề thi: cert cho CloudFront phải ở us-east-1.\n✓ CloudFront yêu cầu cert ACM ở us-east-1\n✗ Không liên quan đến region của người dùng cuối\n✗ CloudFront tích hợp trực tiếp cert ACM\n✗ Cert ACM public không export private key được"
+  },
+  {
+    "id": "eng-q-039",
+    "courseId": "ENGINEER",
+    "lesson": "eng-03-tcp-tls",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "HTTPS qua CloudFront bị lỗi 502. Theo bài, nguồn 502 kinh điển ở chặng CloudFront → origin thường là gì?",
+    "options": [
+      "Origin trả cert sai hostname (hostname mismatch ở origin)",
+      "Viewer dùng TLS 1.3 còn CloudFront chỉ hỗ trợ TLS 1.2",
+      "Cert viewer đặt ở us-east-1 thay vì region của origin",
+      "CloudFront không hỗ trợ HTTP/3 cho origin"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "TLS có hai chặng riêng; lỗi hostname mismatch ở origin gây 502 kinh điển.\n✓ Origin có cert sai hostname làm chặng CloudFront → origin thất bại, sinh 502\n✗ CloudFront hỗ trợ TLS 1.3 phía viewer, không phải nguyên nhân\n✗ Cert viewer ở us-east-1 là đúng quy định, không gây 502\n✗ HTTP/3 là chuyện chặng viewer, không liên quan 502 ở origin"
+  },
+  {
+    "id": "eng-q-040",
+    "courseId": "ENGINEER",
+    "lesson": "eng-04-identity-crypto",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một dịch vụ cần mã hoá một file 1 GB lưu trên S3 bằng AWS KMS theo mô hình envelope encryption. Cách làm đúng là gì?",
+    "options": [
+      "Gọi GenerateDataKey để lấy data key plaintext, dùng AES-256 mã hoá file local, rồi lưu file cùng data key đã mã hoá",
+      "Gọi Encrypt của KMS trực tiếp với toàn bộ 1 GB dữ liệu",
+      "Tải master key (KMS key) về máy rồi mã hoá file bằng master key đó",
+      "Dùng public key của KMS để mã hoá toàn bộ file"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "KMS chỉ mã hoá tối đa 4 KB mỗi lần gọi nên file lớn phải dùng envelope encryption.\n✓ Gọi GenerateDataKey lấy data key plaintext, mã hoá file local bằng AES rồi lưu kèm data key đã mã hoá là đúng mô hình.\n✗ Gọi Encrypt trực tiếp 1 GB là bất khả thi vì giới hạn 4 KB.\n✗ Master key không bao giờ rời khỏi KMS, không tải về được.\n✗ KMS không hoạt động theo kiểu đưa public key cho client mã hoá cả file."
+  },
+  {
+    "id": "eng-q-041",
+    "courseId": "ENGINEER",
+    "lesson": "eng-04-identity-crypto",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn cần mã hoá một khối dữ liệu rất lớn (data at rest) sao cho nhanh nhất. Lựa chọn phù hợp là gì?",
+    "options": [
+      "AES-256-GCM (mã hoá đối xứng)",
+      "RSA-4096",
+      "Trao đổi khoá Diffie-Hellman rồi không mã hoá",
+      "EC P-384 ký từng khối"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đối xứng cực nhanh nhờ phần cứng AES-NI, hợp với dữ liệu lớn.\n✓ AES-256-GCM là chuẩn cho mã hoá dữ liệu lớn at rest, lại có authenticated encryption.\n✗ RSA chậm hơn đối xứng 100–1000 lần, không dùng mã trực tiếp dữ liệu lớn.\n✗ Trao đổi khoá rồi không mã hoá thì dữ liệu vẫn rõ.\n✗ EC dùng để ký/trao đổi khoá, không phải mã hoá khối dữ liệu lớn trực tiếp."
+  },
+  {
+    "id": "eng-q-042",
+    "courseId": "ENGINEER",
+    "lesson": "eng-04-identity-crypto",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Lệnh sau làm gì?\n\necho -n \"GET /orders\" | openssl dgst -sha256 -hmac \"my-secret-key\"",
+    "options": [
+      "Tạo HMAC-SHA256 của chuỗi bằng secret key, để xác thực nguồn gửi và toàn vẹn",
+      "Mã hoá đối xứng chuỗi bằng AES với khoá my-secret-key",
+      "Tạo chữ ký số dùng private key RSA",
+      "Tạo cặp khoá public/private cho TLS"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "HMAC = hash kết hợp secret key, vừa kiểm tra toàn vẹn vừa xác thực nguồn gửi.\n✓ Lệnh tạo HMAC-SHA256 mà chỉ ai giữ key mới tạo lại được — đúng mô hình SigV4.\n✗ Đây không phải AES, không mã hoá để giải lại được dữ liệu.\n✗ HMAC dùng shared secret, không phải private key như chữ ký số.\n✗ Lệnh không sinh cặp khoá nào."
+  },
+  {
+    "id": "eng-q-043",
+    "courseId": "ENGINEER",
+    "lesson": "eng-04-identity-crypto",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một SPA năm 2026 cần cho người dùng đăng nhập. Đề xuất nào KHÔNG được phép theo OAuth 2.1?",
+    "options": [
+      "Implicit flow (response_type=token) để đỡ một bước gọi token endpoint",
+      "Authorization Code + PKCE với code_challenge_method=S256",
+      "OIDC trên OAuth 2.1 để nhận thêm ID token",
+      "Refresh token rotation cho public client"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "OAuth 2.1 đã loại bỏ Implicit flow vì token lộ trên URL fragment và không có PKCE.\n✗ Implicit flow bị loại khỏi chuẩn, không được dùng cho SPA.\n✓ Authorization Code + PKCE S256 là luồng chuẩn duy nhất cho SPA.\n✓ OIDC trên OAuth 2.1 là cách hợp lệ để lấy danh tính user.\n✓ Refresh token rotation cho public client đúng yêu cầu OAuth 2.1."
+  },
+  {
+    "id": "eng-q-044",
+    "courseId": "ENGINEER",
+    "lesson": "eng-04-identity-crypto",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong luồng Authorization Code + PKCE, PKCE bảo vệ điều gì khi kẻ tấn công chặn được AUTH_CODE?",
+    "options": [
+      "Kẻ tấn công không đổi được code lấy token vì không có code_verifier gốc",
+      "AUTH_CODE được mã hoá AES nên không đọc được",
+      "Token được gửi thẳng trên URL fragment nên an toàn",
+      "Server từ chối mọi request không có client_secret"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "PKCE ràng code với code_verifier mà chỉ app gốc biết.\n✓ Kẻ chặn AUTH_CODE không có code_verifier nên server hash không khớp code_challenge, không cấp token.\n✗ PKCE không mã hoá AUTH_CODE.\n✗ Đẩy token lên URL fragment chính là Implicit flow đã bị loại bỏ.\n✗ PKCE bảo vệ cả public client không có secret, cơ chế không dựa vào client_secret."
+  },
+  {
+    "id": "eng-q-045",
+    "courseId": "ENGINEER",
+    "lesson": "eng-04-identity-crypto",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một API resource server nhận token từ client để authorize. Nó nên dùng loại token nào và đọc claim nào?",
+    "options": [
+      "Access token, kiểm tra scope và aud trỏ tới API của mình",
+      "ID token, đọc email và name để biết user là ai",
+      "ID token, vì luôn là JWT nên đáng tin hơn",
+      "Refresh token, vì sống lâu nhất"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Access token dành cho resource server (API) đọc, chứa scope và aud.\n✓ API phải dùng access token và kiểm tra scope cùng aud trỏ đúng API của mình.\n✗ Dùng ID token để authorize ở API là sai lầm điển hình — ID token dành cho client app.\n✗ ID token luôn là JWT nhưng mục đích là cho client biết user là ai, không phải để API authorize.\n✗ Refresh token chỉ để gia hạn, không gửi tới API để authorize."
+  },
+  {
+    "id": "eng-q-046",
+    "courseId": "ENGINEER",
+    "lesson": "eng-04-identity-crypto",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn payload JWT giải mã ra:\n{\"sub\":\"user-42\",\"iss\":\"https://idp.example.com\",\"aud\":\"orders-api\",\"exp\":1780000000}\nResource server của bạn là \"billing-api\". Điều gì đúng?",
+    "options": [
+      "Phải từ chối vì aud là orders-api, không phải API của mình",
+      "Chấp nhận vì payload decode được nên token hợp lệ",
+      "Chấp nhận vì có sub và iss là đủ",
+      "Chỉ cần kiểm tra exp còn hạn là chấp nhận"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Checklist validate yêu cầu aud phải trỏ tới API của chính mình.\n✓ aud là orders-api khác billing-api nên phải từ chối.\n✗ Base64 decode được không có nghĩa token hợp lệ — giá trị nằm ở chữ ký và các claim.\n✗ Có sub và iss vẫn chưa đủ, thiếu kiểm tra aud và chữ ký.\n✗ exp còn hạn chỉ là một trong nhiều bước, không thay được kiểm tra aud."
+  },
+  {
+    "id": "eng-q-047",
+    "courseId": "ENGINEER",
+    "lesson": "eng-04-identity-crypto",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Tại sao lưu password người dùng bằng SHA-256 trần là sai, và nên dùng gì thay thế?",
+    "options": [
+      "SHA-256 quá nhanh nên brute-force nhanh; nên dùng Argon2id/bcrypt/scrypt có salt",
+      "SHA-256 đã bị phá hoàn toàn nên chuyển sang MD5",
+      "SHA-256 không một chiều nên dễ đảo ngược; nên dùng AES",
+      "SHA-256 không có salt sẵn nên thêm Base64 là đủ an toàn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Hash nhanh giúp kẻ tấn công thử brute-force rất nhanh.\n✓ Cần hàm chậm có salt như Argon2id (khuyến nghị), bcrypt hoặc scrypt.\n✗ SHA-256 chưa bị phá; MD5 mới là loại đã bị phá, không dùng cho bảo mật.\n✗ SHA-256 vẫn là một chiều, vấn đề là nó quá nhanh chứ không phải đảo ngược được.\n✗ Base64 chỉ là mã hoá biểu diễn, không thêm bảo mật gì."
+  },
+  {
+    "id": "eng-q-048",
+    "courseId": "ENGINEER",
+    "lesson": "eng-04-identity-crypto",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Khi validate JWT, attacker gửi token có header alg đổi từ RS256 sang HS256 và ký bằng chính public key của bạn làm \"secret\". Cách phòng chống đúng là gì?",
+    "options": [
+      "Chỉ chấp nhận thuật toán cố định mong đợi (RS256/ES256), từ chối alg none và alg bất ngờ",
+      "Tin theo trường alg trong header rồi verify tương ứng",
+      "Bỏ qua chữ ký nếu exp còn hạn",
+      "Chuyển sang HS256 cho mọi token để đồng nhất"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đây là tấn công algorithm confusion RS256→HS256, lợi dụng public key bị dùng làm HMAC secret.\n✓ Phải cố định thuật toán cho phép và từ chối alg none cùng alg đổi bất ngờ.\n✗ Tin theo alg trong header chính là lỗ hổng cho phép tấn công này.\n✗ Bỏ qua chữ ký triệt tiêu toàn bộ bảo mật của JWT.\n✗ Chuyển toàn bộ sang HS256 không liên quan và càng dễ bị confusion với public key."
+  },
+  {
+    "id": "eng-q-049",
+    "courseId": "ENGINEER",
+    "lesson": "eng-04-identity-crypto",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Vì sao passkey (WebAuthn/FIDO2) chống phishing tốt hơn cả password kèm TOTP?",
+    "options": [
+      "Credential gắn chặt với origin nên trang giả không kích hoạt được passkey của trang thật",
+      "Passkey dùng password dài hơn nên khó đoán hơn",
+      "TOTP không có thời hạn còn passkey thì có",
+      "Passkey gửi private key lên server mỗi lần đăng nhập để đối chiếu"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Passkey ràng credential với domain/origin, người dùng muốn bị lừa cũng không kích hoạt nhầm được.\n✓ Trang giả arnazon.com không bao giờ kích hoạt passkey của amazon.com — đó là điểm phishing-resistant.\n✗ Passkey không phải password dài, nó là cặp khoá bất đối xứng.\n✗ TOTP có vòng đời ngắn nhưng vẫn bị lừa gõ vào trang giả, đó mới là điểm yếu so với passkey.\n✗ Private key không bao giờ rời thiết bị; chỉ chữ ký challenge mới gửi lên server."
+  },
+  {
+    "id": "eng-q-050",
+    "courseId": "ENGINEER",
+    "lesson": "eng-04-identity-crypto",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một công ty đã dùng Entra ID/Okta và muốn nhân viên đăng nhập vào AWS accounts mà không tạo IAM user. Giải pháp AWS chuẩn là gì?",
+    "options": [
+      "IAM Identity Center nhận IdP ngoài qua SAML 2.0 và đồng bộ user bằng SCIM",
+      "Cognito Identity Pool đổi password lấy IAM user vĩnh viễn",
+      "Tạo IAM user cho từng nhân viên rồi chia sẻ access key",
+      "Dùng KMS GenerateDataKey để cấp quyền đăng nhập"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "IAM Identity Center là SSO cho workforce, nhận IdP doanh nghiệp qua SAML 2.0 và SCIM.\n✓ IAM Identity Center + SAML 2.0 + SCIM là đáp án chuẩn cho federation workforce.\n✗ Identity Pool đổi token lấy AWS credentials tạm thời, không tạo IAM user vĩnh viễn.\n✗ Tạo IAM user từng người đi ngược yêu cầu không tạo IAM user và không an toàn.\n✗ KMS GenerateDataKey thuộc mật mã, không liên quan đăng nhập."
+  },
+  {
+    "id": "eng-q-051",
+    "courseId": "ENGINEER",
+    "lesson": "eng-04-identity-crypto",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những phát biểu nào về certificate và PKI là ĐÚNG theo bài học?",
+    "options": [
+      "Self-signed cert vẫn mã hoá được nhưng không xác thực được danh tính server",
+      "Vòng đời cert public đang rút ngắn nên tự động hoá gia hạn (ACME/ACM) là bắt buộc",
+      "Root CA tự ký và được cài sẵn trong OS/browser; leaf cert do Intermediate ký",
+      "Certificate ràng buộc public key với danh tính và được CA ký bằng public key của CA",
+      "Cert cho CloudFront có thể nằm ở bất kỳ region nào trong ACM"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "PKI dùng chuỗi tin cậy và CA ký bằng private key để xác thực danh tính.\n✓ Self-signed cert mã hoá được nhưng không xác thực danh tính, dễ bị man-in-the-middle.\n✓ Vòng đời cert ngắn dần nên tự động gia hạn là bắt buộc.\n✓ Root CA tự ký cài sẵn, leaf do Intermediate ký — đúng chuỗi tin cậy.\n✗ CA ký cert bằng private key của CA, không phải public key.\n✗ Cert cho CloudFront phải nằm ở us-east-1, không phải bất kỳ region nào."
+  },
+  {
+    "id": "eng-q-052",
+    "courseId": "ENGINEER",
+    "lesson": "eng-04-identity-crypto",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những thực hành nào ĐÚNG khi thiết kế việc dùng JWT cho API?",
+    "options": [
+      "Access token nên ngắn hạn (5–15 phút), dùng refresh token kèm rotation để gia hạn",
+      "Để claim tối thiểu, quyền chi tiết tra ở backend thay vì nhét hết vào token",
+      "SPA nên lưu JWT trong localStorage cho tiện truy cập",
+      "Nếu cần thu hồi tức thì phải thêm denylist/introspection, chấp nhận mất tính stateless",
+      "Coi Base64 payload là đã mã hoá nên có thể nhét secret vào payload"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "JWT là stateless, đã ký thì không thu hồi được tới khi hết hạn.\n✓ Access token ngắn hạn kèm refresh token rotation là pattern đúng.\n✓ Claim tối thiểu giúp tránh token phình to và quyền cũ tồn tại lâu.\n✓ Muốn thu hồi tức thì phải dùng denylist/introspection và chấp nhận mất stateless.\n✗ Lưu JWT trong localStorage dễ mất sạch khi bị XSS; nên dùng HttpOnly cookie hoặc BFF.\n✗ Base64 không phải mã hoá, ai cũng đọc được payload nên không được nhét secret."
+  },
+  {
+    "id": "eng-q-053",
+    "courseId": "ENGINEER",
+    "lesson": "eng-05-docker",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn chạy `docker run -d --name web nginx:1.27-alpine` rồi `docker rm -f web`. Sau khi lệnh thứ hai chạy xong, điều gì đúng?",
+    "options": [
+      "Container `web` bị xoá nhưng image `nginx:1.27-alpine` vẫn còn trên máy",
+      "Cả container lẫn image đều bị xoá khỏi máy",
+      "Image bị xoá nhưng container vẫn chạy nền",
+      "Lệnh báo lỗi vì không thể xoá container đang chạy nếu thiếu cờ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Xoá container không xoá image; một image sinh ra được nhiều container độc lập.\n✓ Chỉ container bị gỡ, bản mẫu chỉ-đọc (image) vẫn nằm trong `docker images`.\n✗ Việc cả hai bị xoá là sai — image tồn tại độc lập với container.\n✗ Image không bị xoá khi xoá container.\n✗ Cờ `-f` cho phép xoá cả container đang chạy nên không có lỗi."
+  },
+  {
+    "id": "eng-q-054",
+    "courseId": "ENGINEER",
+    "lesson": "eng-05-docker",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Dockerfile có `ENTRYPOINT [\"python\", \"app.py\"]` và `CMD [\"--port\", \"8080\"]`. Bạn chạy `docker run myapp --port 9090`. Lệnh nào thực sự được thực thi trong container?",
+    "options": [
+      "python app.py --port 9090",
+      "python app.py --port 8080 --port 9090",
+      "python app.py --port 8080",
+      "--port 9090"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Argument truyền sau tên image sẽ ghi đè toàn bộ CMD, còn ENTRYPOINT giữ cố định.\n✓ ENTRYPOINT `python app.py` cố định, `--port 9090` thay thế CMD mặc định.\n✗ Hai cờ port không được nối lại — CMD bị ghi đè chứ không cộng dồn.\n✗ `--port 8080` chỉ là mặc định khi không truyền gì sau image.\n✗ Phần ENTRYPOINT không bị bỏ qua, nó luôn chạy trước."
+  },
+  {
+    "id": "eng-q-055",
+    "courseId": "ENGINEER",
+    "lesson": "eng-05-docker",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Dockerfile Node.js dùng `CMD node server.js` (shell form) thay vì `CMD [\"node\", \"server.js\"]`. Hệ quả thực tế khi container bị yêu cầu dừng là gì?",
+    "options": [
+      "Tiến trình bọc trong /bin/sh -c không nhận SIGTERM, container không shutdown gọn và bị kill cứng sau khi hết thời gian chờ",
+      "Container khởi động chậm hơn vì phải biên dịch lại server.js",
+      "Docker từ chối build vì CMD bắt buộc phải dùng exec form",
+      "Biến môi trường NODE_ENV bị mất nên app chạy ở chế độ dev"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Shell form bọc lệnh trong `/bin/sh -c`, chặn tín hiệu truyền tới tiến trình app.\n✓ Không nhận SIGTERM nên container không thoát gọn, ECS phải chờ hết `stopTimeout` rồi kill cứng.\n✗ Không liên quan tới tốc độ khởi động hay biên dịch.\n✗ Docker vẫn build được shell form, chỉ là không khuyến nghị.\n✗ Shell form không làm mất biến môi trường."
+  },
+  {
+    "id": "eng-q-056",
+    "courseId": "ENGINEER",
+    "lesson": "eng-05-docker",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Dockerfile đang theo thứ tự: `COPY . .` rồi `RUN npm ci`. Bạn chỉ sửa một dòng trong source code (không đổi package.json) và build lại. Vì sao build vẫn chậm, và cách sửa đúng là gì?",
+    "options": [
+      "Vì `COPY . .` đứng trước nên thay đổi code làm vỡ cache, buộc `npm ci` chạy lại; sửa bằng cách COPY package*.json và chạy npm ci trước, rồi mới COPY . .",
+      "Vì npm ci luôn bỏ qua cache; sửa bằng cách thêm cờ --no-cache vào docker build",
+      "Vì thiếu .dockerignore nên node_modules bị copy; thêm .dockerignore là đủ để npm ci trúng cache",
+      "Vì image base quá lớn; đổi sang multi-stage build sẽ giúp npm ci trúng cache"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Layer thay đổi và mọi layer phía sau phải build lại; COPY . . đứng trước npm ci làm vỡ cache mỗi khi đổi code.\n✓ Đặt COPY package*.json và npm ci trước COPY . . để npm ci trúng cache khi chỉ sửa code.\n✗ --no-cache làm ngược lại, tắt cache hoàn toàn.\n✗ .dockerignore giúp giảm context nhưng không cứu được cache khi thứ tự lệnh sai.\n✗ Multi-stage giảm kích thước image nhưng không tự sửa thứ tự gây vỡ cache."
+  },
+  {
+    "id": "eng-q-057",
+    "courseId": "ENGINEER",
+    "lesson": "eng-05-docker",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "So với image golang:1.23-alpine (~250MB), một multi-stage build dùng distroless cho image ~12MB mang lại lợi ích nào? Chọn tất cả đáp án đúng.",
+    "options": [
+      "Pull image nhanh hơn trên ECS/Fargate",
+      "Cold start của Lambda container image ngắn hơn",
+      "Ít CVE hơn khi ECR scan vì bề mặt tấn công nhỏ",
+      "Tự động khiến app chạy nhanh hơn ở runtime nhờ binary được tối ưu",
+      "Cho phép bỏ qua bước đăng nhập ECR khi push"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Image nhỏ kéo theo nhiều lợi ích về tốc độ phân phối và bảo mật.\n✓ Image nhỏ pull nhanh hơn trên ECS/Fargate.\n✓ Lambda container image cold start ngắn hơn.\n✓ Ít gói thừa nên ít CVE khi ECR scan, bề mặt tấn công nhỏ.\n✗ Kích thước image không làm code chạy nhanh hơn lúc runtime.\n✗ Push lên ECR vẫn cần đăng nhập bất kể image lớn hay nhỏ."
+  },
+  {
+    "id": "eng-q-058",
+    "courseId": "ENGINEER",
+    "lesson": "eng-05-docker",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao file `.dockerignore` quan trọng khi Dockerfile dùng `COPY . .`?",
+    "options": [
+      "Nó loại trừ node_modules, .git, .env... khỏi build context, tránh context phình to và tránh nướng secret vào image",
+      "Nó nén toàn bộ source code để image nhỏ hơn",
+      "Nó thay thế cho .gitignore nên không cần khai báo .git nữa",
+      "Nó bắt buộc Docker dùng cache cho mọi layer"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": ".dockerignore quyết định những gì KHÔNG được đưa vào build context.\n✓ Loại trừ node_modules, .git, .env giúp context gọn và tránh credential bị nướng vào image rồi đẩy lên registry.\n✗ Nó không nén source, chỉ loại trừ file.\n✗ Nó độc lập với .gitignore, không thay thế nhau.\n✗ Nó không liên quan tới việc ép dùng cache."
+  },
+  {
+    "id": "eng-q-059",
+    "courseId": "ENGINEER",
+    "lesson": "eng-05-docker",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong `docker run`, hai cách mount nào phù hợp cho mục đích nào? `-v pgdata:/var/lib/postgresql/data` so với `-v \"$(pwd)/config:/app/config:ro\"`.",
+    "options": [
+      "Named volume cho dữ liệu bền do Docker quản lý; bind mount chỉ-đọc map thư mục host (hợp cho cấu hình/dev)",
+      "Cả hai đều là bind mount, chỉ khác nhau ở quyền ghi",
+      "Named volume map thư mục host hiện tại; bind mount do Docker tự quản lý ổ đĩa",
+      "Cả hai đều mất dữ liệu ngay khi container dừng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Named volume và bind mount khác nhau về nơi lưu và ai quản lý.\n✓ Named volume (pgdata) do Docker quản lý, dữ liệu sống qua đời container; bind mount map thư mục host, `:ro` là chỉ-đọc.\n✗ Chỉ cái thứ hai là bind mount, cái đầu là named volume.\n✗ Mô tả bị đảo ngược vai trò hai loại mount.\n✗ Dữ liệu trong volume/bind mount không mất khi container dừng."
+  },
+  {
+    "id": "eng-q-060",
+    "courseId": "ENGINEER",
+    "lesson": "eng-05-docker",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "`docker ps -a` cho thấy container có STATUS `Exited (137)`. Nguyên nhân hay gặp nhất là gì?",
+    "options": [
+      "Bị kill vì hết memory (OOM) hoặc bị docker stop quá hạn",
+      "Tiến trình chính chạy xong và thoát bình thường",
+      "Lệnh trong CMD không tồn tại nên không thực thi được",
+      "App crash do exception trong code"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Exit code 137 tương ứng với việc tiến trình bị tín hiệu kill (SIGKILL).\n✓ 137 thường do OOM hoặc bị `docker stop` vượt quá thời gian chờ rồi kill cứng.\n✗ Thoát bình thường là exit code 0.\n✗ Lệnh không tồn tại cho exit code 126/127.\n✗ App crash do code thường là exit code 1."
+  },
+  {
+    "id": "eng-q-061",
+    "courseId": "ENGINEER",
+    "lesson": "eng-05-docker",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong compose, service `app` có `depends_on: db: condition: service_started`. App thường crash lúc khởi động vì connect Postgres thất bại. Khắc phục đúng nhất là gì?",
+    "options": [
+      "Đổi sang condition: service_healthy kèm healthcheck pg_isready trên db, và app vẫn nên có retry logic",
+      "Thêm sleep 30 vào CMD của app để chờ db",
+      "Đổi depends_on thành liệt kê db trước localstack để Docker tự sắp xếp thứ tự",
+      "Map cùng một volume pgdata cho cả app và db để chúng đồng bộ trạng thái"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "service_started chỉ chờ container khởi động, không chờ Postgres bên trong thật sự sẵn sàng.\n✓ Dùng service_healthy + healthcheck (pg_isready) để chờ db sẵn sàng thật, app vẫn nên có retry.\n✗ sleep cứng là cách chắp vá, không đáng tin theo môi trường.\n✗ Thứ tự liệt kê không đảm bảo app chờ db sẵn sàng.\n✗ Chia sẻ volume dữ liệu Postgres cho app là sai và nguy hiểm."
+  },
+  {
+    "id": "eng-q-062",
+    "courseId": "ENGINEER",
+    "lesson": "eng-05-docker",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong compose, các service gọi nhau qua `db`, `localstack` thay vì IP. Cơ chế nào khiến điều này hoạt động, và nó tương ứng với gì trên AWS?",
+    "options": [
+      "Compose tạo network riêng và phân giải tên service qua DNS nội bộ; tương ứng ECS Service Connect / Cloud Map",
+      "Mỗi service phải khai báo IP tĩnh thủ công; tương ứng Elastic IP",
+      "Docker ghi tên service vào /etc/hosts của host; tương ứng Route 53 public",
+      "Các service dùng chung localhost; tương ứng VPC peering"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Compose tự tạo network và cung cấp service discovery bằng DNS nội bộ.\n✓ Gọi nhau bằng tên service nhờ DNS nội bộ trên network của Compose, đúng mô hình ECS Service Connect / Cloud Map.\n✗ Không cần khai báo IP tĩnh thủ công.\n✗ Không phải qua /etc/hosts của host hay Route 53 public.\n✗ Các service không dùng chung localhost; mỗi container có network namespace riêng."
+  },
+  {
+    "id": "eng-q-063",
+    "courseId": "ENGINEER",
+    "lesson": "eng-05-docker",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo checklist bảo mật image trong bài, những thực hành nào là ĐÚNG? Chọn tất cả đáp án đúng.",
+    "options": [
+      "Thêm USER không đặc quyền thay vì chạy root",
+      "Pin version base image (vd node:22-alpine, distroless) thay vì FROM node trống",
+      "Inject secret lúc runtime qua Secrets Manager / SSM thay vì ENV API_KEY=...",
+      "Nướng .env vào image để app luôn có sẵn cấu hình",
+      "Dùng FROM node (không tag) để luôn lấy bản mới nhất tự động"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bảo mật image xoay quanh non-root, base image pin version và không nhúng secret.\n✓ Thêm USER không đặc quyền vì ECS/EKS có policy chặn root.\n✓ Pin version base image, tránh latest ngầm.\n✓ Inject secret lúc runtime qua Secrets Manager / SSM, không dùng ENV.\n✗ Nướng .env vào image làm lộ credential khi đẩy lên registry.\n✗ FROM node không tag nghĩa là latest, gây bản dựng không tái lập và rủi ro bảo mật."
+  },
+  {
+    "id": "eng-q-064",
+    "courseId": "ENGINEER",
+    "lesson": "eng-05-docker",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao bài học khuyên app trong container nên log ra stdout/stderr thay vì ghi file?",
+    "options": [
+      "Vì awslogs driver của ECS gom stdout/stderr vào CloudWatch Logs mà không cần agent",
+      "Vì ghi file luôn gây lỗi permission denied trong container",
+      "Vì stdout nhanh hơn ghi đĩa nên app chạy mượt hơn",
+      "Vì CloudWatch chỉ đọc được file có đuôi .log"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Log ra luồng chuẩn là hợp đồng để hạ tầng thu thập log dễ dàng.\n✓ awslogs driver của ECS gom stdout/stderr vào CloudWatch Logs mà không cần cài agent.\n✗ Ghi file không phải lúc nào cũng lỗi permission.\n✗ Lý do chính là khả năng thu thập log, không phải tốc độ I/O.\n✗ CloudWatch không bị giới hạn theo đuôi file."
+  },
+  {
+    "id": "eng-q-065",
+    "courseId": "ENGINEER",
+    "lesson": "eng-05-docker",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Container của bạn dùng bind mount và báo `EACCES: permission denied, open '/data/app.log'`. Đâu là cách xử lý phù hợp khi đang dev?",
+    "options": [
+      "Chạy docker run --user \"$(id -u):$(id -g)\" để UID khớp quyền thư mục host, hoặc chown thư mục host, hoặc dùng named volume",
+      "Thêm USER root vĩnh viễn vào Dockerfile để bỏ qua kiểm tra quyền",
+      "Xoá bind mount và để app ghi vào writable layer là an toàn nhất",
+      "Đổi CMD sang shell form để app có quyền ghi cao hơn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lỗi do UID user trong container không khớp quyền thư mục host của bind mount.\n✓ Khớp UID bằng --user \"$(id -u):$(id -g)\", hoặc chown thư mục host, hoặc chuyển sang named volume cho dữ liệu app.\n✗ Đặt USER root vĩnh viễn đi ngược best practice non-root.\n✗ Ghi vào writable layer làm mất dữ liệu khi xoá container, không giải quyết yêu cầu lưu bền.\n✗ Shell form không cấp quyền ghi cao hơn, không liên quan đến lỗi này."
+  },
+  {
+    "id": "eng-q-066",
+    "courseId": "ENGINEER",
+    "lesson": "eng-06-automation",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong dòng `set -euo pipefail`, tác dụng cụ thể của phần `pipefail` là gì?",
+    "options": [
+      "Pipe `a | b` chỉ fail khi lệnh cuối cùng (`b`) fail",
+      "Pipe `a | b` fail nếu bất kỳ lệnh nào trong pipe fail, không chỉ lệnh cuối",
+      "Tự động retry pipe khi có lệnh fail",
+      "Báo lỗi khi dùng biến chưa khai báo trong pipe"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "`pipefail` làm exit code của pipe phản ánh lỗi của bất kỳ lệnh nào trong chuỗi.\n✓ \"Pipe fail nếu bất kỳ lệnh nào trong pipe fail\" đúng theo định nghĩa của `set -o pipefail`.\n✗ \"Chỉ fail khi lệnh cuối fail\" là hành vi MẶC ĐỊNH khi KHÔNG có pipefail — đây chính là cái nguy hiểm bài cảnh báo.\n✗ \"Tự động retry\" không phải chức năng của pipefail.\n✗ \"Báo lỗi khi dùng biến chưa khai báo\" là tác dụng của `set -u`, không phải pipefail."
+  },
+  {
+    "id": "eng-q-067",
+    "courseId": "ENGINEER",
+    "lesson": "eng-06-automation",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cho `file=\"bao cao thang 6.txt\"`. Lệnh `rm $file` (không có nháy kép) sẽ làm gì?",
+    "options": [
+      "Xoá đúng một file tên \"bao cao thang 6.txt\"",
+      "Báo lỗi cú pháp vì tên file có dấu cách",
+      "Chạy `rm \"bao\" \"cao\" \"thang\" \"6.txt\"` — cố xoá 4 file khác nhau",
+      "Tự động thêm nháy kép và xoá đúng file"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Không có nháy kép, Bash thực hiện word-splitting theo dấu cách.\n✓ \"Chạy rm với 4 tham số riêng\" đúng: mỗi từ tách bởi dấu cách thành một đối số của rm.\n✗ \"Xoá đúng một file\" chỉ xảy ra khi dùng `rm \"$file\"` (có nháy kép).\n✗ \"Báo lỗi cú pháp\" sai — Bash không báo lỗi, nó âm thầm tách từ và xoá nhầm.\n✗ \"Tự động thêm nháy kép\" không phải hành vi của Bash."
+  },
+  {
+    "id": "eng-q-068",
+    "courseId": "ENGINEER",
+    "lesson": "eng-06-automation",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Cú pháp `\"${bucket:?cần tên bucket}\"` trong hàm có tác dụng gì khi biến `bucket` chưa được set?",
+    "options": [
+      "Gán giá trị \"cần tên bucket\" cho bucket rồi tiếp tục",
+      "Thoát script kèm thông báo lỗi \"cần tên bucket\"",
+      "Bỏ qua dòng đó và chạy tiếp",
+      "In cảnh báo nhưng vẫn chạy với biến rỗng"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Dạng `${var:?msg}` thoát kèm thông báo nếu var chưa set/rỗng.\n✓ \"Thoát script kèm thông báo\" đúng với cú pháp `:?`.\n✗ \"Gán giá trị mặc định\" là cú pháp `${var:-default}`, không phải `:?`.\n✗ \"Bỏ qua và chạy tiếp\" và \"in cảnh báo nhưng vẫn chạy\" đều sai — `:?` dừng hẳn việc thực thi."
+  },
+  {
+    "id": "eng-q-069",
+    "courseId": "ENGINEER",
+    "lesson": "eng-06-automation",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần xoá nhiều object S3 từ một danh sách key, chạy 8 luồng song song và mỗi dòng input thay vào vị trí `{}` trong lệnh. Lệnh nào đúng?",
+    "options": [
+      "`xargs -P 8 -I {} aws s3 rm \"s3://my-bucket/{}\"`",
+      "`xargs -n 8 aws s3 rm s3://my-bucket/`",
+      "`xargs -0 -I {} aws s3 rm \"s3://my-bucket/{}\"`",
+      "`xargs --parallel aws s3 rm {}`"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "`-P 8` đặt số process song song, `-I {}` thay từng dòng input vào `{}`.\n✓ \"-P 8 -I {}\" kết hợp đúng yêu cầu chạy song song và thay thế từng dòng.\n✗ \"-n 8\" gom 8 đối số mỗi lần gọi, không phải chạy 8 luồng song song.\n✗ \"-0\" dùng để đọc input phân tách bằng NUL (đi với find -print0), không liên quan đến song song.\n✗ \"--parallel\" không phải flag chuẩn của xargs cho việc này và thiếu kiểm soát số luồng."
+  },
+  {
+    "id": "eng-q-070",
+    "courseId": "ENGINEER",
+    "lesson": "eng-06-automation",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong biểu thức jq `(.Tags[]? | select(.Key==\"Name\") | .Value) // \"no-name\"`, ý nghĩa của `?` và `//` lần lượt là gì?",
+    "options": [
+      "`?` lọc theo điều kiện; `//` chia giá trị",
+      "`?` không báo lỗi nếu Tags là null; `//` cung cấp giá trị mặc định khi null",
+      "`?` raw output; `//` ghép chuỗi",
+      "`?` đếm phần tử; `//` so sánh bằng"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "`?` tránh lỗi khi field null, `//` đặt giá trị mặc định.\n✓ \"? không báo lỗi nếu Tags null; // mặc định khi null\" khớp bảng tra jq trong bài.\n✗ \"? lọc theo điều kiện\" sai — lọc là `select(...)`.\n✗ \"? raw output\" sai — raw output là flag `-r`.\n✗ \"? đếm phần tử / // so sánh bằng\" đều không đúng với ngữ nghĩa jq."
+  },
+  {
+    "id": "eng-q-071",
+    "courseId": "ENGINEER",
+    "lesson": "eng-06-automation",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Bài học khuyên những điều nào sau đây về chạy script định kỳ bằng cron? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Luôn dùng đường dẫn tuyệt đối hoặc set PATH đầu script vì PATH của cron rất tối giản",
+      "Chỉ rõ AWS_PROFILE hoặc dùng instance role vì cron không có biến môi trường AWS",
+      "Redirect output (stdout/stderr) ra file log để lỗi không biến mất không dấu vết",
+      "Tin tưởng hoàn toàn vào `set -e` để bắt mọi lỗi nên không cần redirect log",
+      "Cron tự động kế thừa toàn bộ biến môi trường của shell đăng nhập nên không cần cấu hình gì"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bài liệt kê ba lỗi cron thường gặp và cách phòng tránh.\n✓ \"Dùng đường dẫn tuyệt đối / set PATH\" đúng vì PATH cron tối giản.\n✓ \"Chỉ rõ AWS_PROFILE / instance role\" đúng vì cron không có biến môi trường AWS.\n✓ \"Redirect output ra log\" đúng — quên redirect làm lỗi biến mất.\n✗ \"Tin tưởng hoàn toàn set -e\" sai — bài nhấn mạnh `set -e` không có hiệu lực trong if/while/&&/||.\n✗ \"Cron tự kế thừa môi trường shell đăng nhập\" sai — đó chính là nguyên nhân của nhiều lỗi cron."
+  },
+  {
+    "id": "eng-q-072",
+    "courseId": "ENGINEER",
+    "lesson": "eng-06-automation",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn muốn giảm lượng dữ liệu AWS trả về NGAY tại server (giảm tải mạng), nên ưu tiên dùng cơ chế nào trước?",
+    "options": [
+      "`jq` xử lý phía client",
+      "`--query` (JMESPath) phía client",
+      "`--filters` phía server",
+      "`--page-size` để chỉnh phân trang"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "`--filters` chạy server-side nên giảm dữ liệu trả về ngay từ nguồn.\n✓ \"--filters phía server\" đúng — bài khuyên luôn ưu tiên dùng trước để giảm dữ liệu.\n✗ \"jq\" và \"--query (JMESPath)\" đều chạy client-side, dữ liệu đã được tải về rồi mới cắt gọt.\n✗ \"--page-size\" chỉ chỉnh kích thước mỗi API call (tránh timeout), không giảm tổng dữ liệu trả về."
+  },
+  {
+    "id": "eng-q-073",
+    "courseId": "ENGINEER",
+    "lesson": "eng-06-automation",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Sự khác biệt cốt lõi giữa `--page-size` và `--max-items` trong AWS CLI là gì?",
+    "options": [
+      "`--page-size` giới hạn tổng kết quả; `--max-items` chỉnh kích thước mỗi API call",
+      "`--page-size` chỉnh kích thước từng API call (tránh timeout); `--max-items` giới hạn tổng kết quả",
+      "Cả hai đều giới hạn tổng số kết quả trả về, chỉ khác tên",
+      "`--page-size` tắt auto-pagination; `--max-items` bật lại"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Hai flag điều khiển hai thứ khác nhau.\n✓ \"--page-size chỉnh kích thước mỗi API call; --max-items giới hạn tổng\" khớp ghi nhớ trong bài — nhầm lẫn hai cái này gây kết quả 'thiếu bí ẩn'.\n✗ \"--page-size giới hạn tổng kết quả\" đảo ngược vai trò.\n✗ \"Cả hai đều giới hạn tổng\" sai vì page-size không giới hạn tổng.\n✗ \"page-size tắt / max-items bật auto-pagination\" sai — không flag nào làm việc đó."
+  },
+  {
+    "id": "eng-q-074",
+    "courseId": "ENGINEER",
+    "lesson": "eng-06-automation",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, vì sao nên mặc định dùng `boto3.client(...)` thay vì `boto3.resource(...)`?",
+    "options": [
+      "`client` nhanh hơn `resource` hàng chục lần",
+      "`resource` đã bị xoá khỏi boto3 từ 2023",
+      "`resource` đã feature-freeze (không thêm service mới); `client` đầy đủ API và khớp tài liệu API reference",
+      "`client` không cần credential còn `resource` thì cần"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "`client` ánh xạ 1-1 với API và vẫn được phát triển.\n✓ \"resource feature-freeze, client đầy đủ API và khớp tài liệu\" đúng với ghi nhớ trong bài.\n✗ \"client nhanh hơn hàng chục lần\" — bài không nói về hiệu năng kiểu này.\n✗ \"resource đã bị xoá\" sai — vẫn dùng được, chỉ ngừng phát triển.\n✗ \"client không cần credential\" sai — cả hai đều cần credential."
+  },
+  {
+    "id": "eng-q-075",
+    "courseId": "ENGINEER",
+    "lesson": "eng-06-automation",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Trong script dọn EBS snapshot ở mục 3.5, những thiết kế nào giúp nó AN TOÀN và idempotent? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Chỉ đụng snapshot có tag `ManagedBy=backup-script`, không xoá theo 'tất cả những gì cũ'",
+      "Mặc định dry-run, phải truyền `--apply` mới thực sự xoá",
+      "Bắt riêng `InvalidSnapshot.InUse` để bỏ qua snapshot đang được AMI dùng thay vì fail",
+      "Dùng `except Exception: pass` để script không bao giờ bị dừng giữa chừng",
+      "Xoá toàn bộ snapshot cũ hơn N ngày bất kể tag để đảm bảo dọn sạch"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Script thể hiện các nguyên tắc idempotency và an toàn của bài.\n✓ \"Chỉ đụng snapshot có tag ManagedBy\" — chọn theo định danh, không theo 'tất cả'.\n✓ \"Mặc định dry-run, --apply mới xoá\" — nguyên tắc dry-run mặc định.\n✓ \"Bắt riêng InvalidSnapshot.InUse để bỏ qua\" — chỉ catch mã lỗi cụ thể đã hiểu.\n✗ \"except Exception: pass\" chính là phản mẫu bài cảnh báo — nuốt cả AccessDenied.\n✗ \"Xoá toàn bộ bất kể tag\" trái ngược nguyên tắc 'chọn theo tag, không theo tất cả'."
+  },
+  {
+    "id": "eng-q-076",
+    "courseId": "ENGINEER",
+    "lesson": "eng-06-automation",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn error handling sau làm gì khi `s3.get_object` ném ClientError với code `NoSuchKey`?\n\n```python\nexcept ClientError as e:\n    code = e.response[\"Error\"][\"Code\"]\n    if code == \"NoSuchKey\":\n        return None\n    if code in (\"AccessDenied\", \"ExpiredToken\"):\n        raise SystemExit(...)\n    raise\n```",
+    "options": [
+      "Ném lại lỗi để caller xử lý",
+      "Thoát chương trình bằng SystemExit",
+      "Trả về None — xử lý êm vì là trường hợp dự kiến",
+      "In thông báo lỗi rồi tiếp tục vòng lặp"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "`NoSuchKey` được coi là trường hợp dự kiến.\n✓ \"Trả về None\" đúng — nhánh `if code == \"NoSuchKey\": return None` chạy.\n✗ \"Thoát bằng SystemExit\" chỉ xảy ra với AccessDenied/ExpiredToken.\n✗ \"Ném lại lỗi\" (`raise`) chỉ xảy ra với mã lỗi lạ không khớp nhánh nào trước đó.\n✗ \"In thông báo rồi tiếp tục\" không có trong đoạn code này."
+  },
+  {
+    "id": "eng-q-077",
+    "courseId": "ENGINEER",
+    "lesson": "eng-06-automation",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Script của bạn đã có 'bước 1 xong mới đến bước 2, fail thì retry 3 lần', logic if/else lồng sâu và cần state giữa các bước. Theo bài, đây là tín hiệu nên dùng gì?",
+    "options": [
+      "Tiếp tục Bash nhưng thêm nhiều `jq` nối nhau",
+      "Chuyển sang Python boto3 (và cân nhắc Step Functions cho state machine)",
+      "Dùng `xargs -P` để chạy song song các bước",
+      "Chuyển toàn bộ sang `--query` JMESPath"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Khi cần phân nhánh, retry, state, đó là lúc rời Bash.\n✓ \"Chuyển sang Python boto3 (và Step Functions)\" đúng — bài nói retry/branch/state là tín hiệu chuyển Python, và 'bước 1 xong mới đến bước 2, retry' chính là state machine của Step Functions.\n✗ \"Tiếp tục Bash thêm jq nối nhau\" trái với khuyến nghị — nối nhiều jq là dấu hiệu nên rời Bash.\n✗ \"xargs -P\" chỉ giải quyết song song, không giải quyết state/retry/branch.\n✗ \"--query JMESPath\" chỉ cắt gọt output, không xử lý logic nhiều bước."
+  },
+  {
+    "id": "eng-q-078",
+    "courseId": "ENGINEER",
+    "lesson": "eng-06-automation",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Để chống hai instance của cùng script chạy chồng nhau khi gọi bằng cron, bài học gợi ý dùng cơ chế nào trong Bash?",
+    "options": [
+      "`trap cleanup EXIT`",
+      "`flock` trên một file lock (ví dụ `flock -n 9`)",
+      "`set -o pipefail`",
+      "`IFS=$'\\n\\t'`"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "`flock` lấy lock độc quyền, lần chạy thứ hai không lấy được sẽ thoát.\n✓ \"flock trên file lock\" đúng — mục idempotency dùng `exec 9>...lock; flock -n 9 || exit 0`.\n✗ \"trap cleanup EXIT\" là cơ chế dọn dẹp (finally), không chống chạy chồng.\n✗ \"set -o pipefail\" chỉ ảnh hưởng exit code của pipe.\n✗ \"IFS=$'\\n\\t'\" chỉ điều chỉnh cách tách từ, không liên quan đến lock."
   }
 ];
 

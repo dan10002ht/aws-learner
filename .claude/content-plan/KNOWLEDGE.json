@@ -90,8 +90,8 @@
       "id": "ENGINEER",
       "kind": "questions",
       "scope": "6 bài (prefix eng)",
-      "status": "pending",
-      "note": ""
+      "status": "done",
+      "note": "78 câu (13×6), build pass (re-run sau stall)"
     },
     {
       "id": "DEVOPS",
