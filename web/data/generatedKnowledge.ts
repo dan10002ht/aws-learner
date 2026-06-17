@@ -29606,6 +29606,1682 @@ const k4: Question[] = [
       2
     ],
     "explanation": "Chuỗi cung ứng gồm pin digest, build CI sạch, scan, SBOM, ký, admission control, scan lại, runtime monitoring.\n✓ Pin base theo digest chống base bị đổi ngầm.\n✓ Sinh và ký SBOM + image, ép admission chỉ nhận image đã ký đúng digest.\n✓ Build trong CI sạch giảm rủi ro nhiễm bẩn từ máy cá nhân.\n✗ Nhúng AWS key vào image vi phạm nguyên tắc không nhúng secret; nên dùng IAM role (IRSA/task role).\n✗ Transitive dependency là mắt xích yếu nhất, phải dùng SBOM + scan để nhìn thấy chúng."
+  },
+  {
+    "id": "sre-q-001",
+    "courseId": "SRE",
+    "lesson": "sre-01-principles-slo",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một dịch vụ đặt SLO availability 99.9% trong cửa sổ 28 ngày. Error budget tính theo thời gian downtime cho phép là bao nhiêu?",
+    "options": [
+      "Khoảng 40 phút downtime / 28 ngày",
+      "Khoảng 4 phút downtime / 28 ngày",
+      "Khoảng 7 giờ downtime / 28 ngày",
+      "Khoảng 26 giây downtime / 28 ngày"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Error budget = 100% − 99.9% = 0.1%; nhân với tổng thời gian 28 ngày (40,320 phút) × 0.001 = 40.32 phút.\n✓ Khoảng 40 phút khớp với 28 × 24 × 60 × 0.001 ≈ 40.32 phút.\n✗ Khoảng 4 phút là downtime/tháng của SLO 99.99%, không phải 99.9%.\n✗ Khoảng 7 giờ là downtime của SLO 99% (2 nines).\n✗ Khoảng 26 giây là downtime/tháng của SLO 99.999% (5 nines)."
+  },
+  {
+    "id": "sre-q-002",
+    "courseId": "SRE",
+    "lesson": "sre-01-principles-slo",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo nguyên tắc trong bài, vì sao SLO tối ưu KHÔNG nên đặt là 100%?",
+    "options": [
+      "Vì 100% nghĩa là không bao giờ được deploy/bảo trì và chi phí dự phòng vô hạn",
+      "Vì các công cụ monitoring không thể đo được mức 100%",
+      "Vì SLA luôn cao hơn SLO nên 100% sẽ vi phạm SLA",
+      "Vì người dùng luôn yêu cầu đúng 99.9%, không hơn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "100% loại bỏ mọi error budget, đồng nghĩa không được deploy, không bảo trì, chi phí dự phòng tăng vô hạn.\n✓ Không còn budget để deploy/bảo trì và chi phí dự phòng vô hạn là lý do cốt lõi.\n✗ Monitoring vẫn đo được, không phải vấn đề kỹ thuật đo lường.\n✗ SLA luôn LỎNG hơn (thấp hơn) SLO, không phải cao hơn.\n✗ Kỳ vọng người dùng tùy hệ thống, không cố định ở 99.9%."
+  },
+  {
+    "id": "sre-q-003",
+    "courseId": "SRE",
+    "lesson": "sre-01-principles-slo",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một dev đề xuất đo availability bằng cách ping endpoint /healthz mỗi 30 giây. Vấn đề lớn nhất của cách này là gì?",
+    "options": [
+      "Health-check thường chỉ kiểm tra process còn sống, có thể báo xanh khi user thật nhận lỗi 500",
+      "Ping 30 giây quá thưa, cần ping mỗi giây mới chính xác",
+      "Endpoint /healthz tiêu tốn quá nhiều CPU của server",
+      "Health-check không trả về percentile latency nên không tính được p99"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Health-check thường không gọi database/business logic nên không phản ánh trải nghiệm thật của user.\n✓ Báo xanh trong khi user nhận 500 là đúng cái bẫy bài học cảnh báo; phải đo trên traffic thật.\n✗ Tần suất ping không phải vấn đề cốt lõi; bản chất phép đo mới sai.\n✗ Chi phí CPU của /healthz không phải lý do bài nêu.\n✗ Dù health-check không có percentile, vấn đề chính là nó không đại diện cho user thật."
+  },
+  {
+    "id": "sre-q-004",
+    "courseId": "SRE",
+    "lesson": "sre-01-principles-slo",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "API có trung bình latency 100ms nhưng p99 là 4s. Vì sao chỉ nhìn trung bình lại nguy hiểm khi đặt SLI latency?",
+    "options": [
+      "Trung bình che giấu đuôi (tail); 1% người dùng — có thể là khách lớn nhất — đang chịu 4s",
+      "Trung bình luôn cao hơn percentile nên đánh giá quá lạc quan",
+      "p99 chỉ dùng cho throughput, không dùng cho latency",
+      "Trung bình 100ms đã vi phạm SLO nên không cần xét p99"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Latency phải dùng percentile vì trung bình giấu phần đuôi chậm.\n✓ Che giấu tail và 1% user (có thể là khách hàng lớn nhất) đang khổ là đúng nguyên tắc bài.\n✗ Trung bình KHÔNG luôn cao hơn percentile; ở đây nó thấp hơn nhiều so với p99.\n✗ Percentile chính là cách bài khuyên dùng cho latency.\n✗ 100ms trung bình không vi phạm gì; vấn đề nằm ở đuôi p99."
+  },
+  {
+    "id": "sre-q-005",
+    "courseId": "SRE",
+    "lesson": "sre-01-principles-slo",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn bán cho khách hàng SLA 99.9%. Theo nguyên tắc trong bài, SLO nội bộ nên đặt ở mức nào và vì sao?",
+    "options": [
+      "Cao hơn, ví dụ 99.95%, để có khoảng đệm phát hiện và sửa trước khi chạm ngưỡng phải bồi thường",
+      "Bằng đúng 99.9% để Dev và khách hàng cùng một con số",
+      "Thấp hơn, ví dụ 99.5%, để dễ đạt và tiết kiệm chi phí",
+      "100% vì SLA là cam kết pháp lý không được phép vi phạm"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SLA luôn lỏng hơn SLO; SLO chặt hơn tạo khoảng đệm.\n✓ Đặt SLO 99.95% > SLA 99.9% cho thời gian phát hiện/sửa trước khi phải trả tiền cho khách.\n✗ SLO = SLA khiến bạn phải bồi thường ngay khi báo động đầu tiên kêu.\n✗ SLO thấp hơn SLA sẽ vi phạm hợp đồng thường xuyên.\n✗ 100% là bất khả thi và không phải nguyên tắc bài đưa ra."
+  },
+  {
+    "id": "sre-q-006",
+    "courseId": "SRE",
+    "lesson": "sre-01-principles-slo",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "API xử lý 43,200,000 request trong 28 ngày với SLO 99.9%. Một incident gây 32,400 request lỗi đã đốt bao nhiêu phần trăm error budget?",
+    "options": [
+      "75%",
+      "32.4%",
+      "0.1%",
+      "43.2%"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Budget = 43,200,000 × 0.001 = 43,200 request lỗi cho cả chu kỳ; 32,400 / 43,200 = 75%.\n✓ 75% là tỉ lệ 32,400 trên tổng budget 43,200 request.\n✗ 32.4% nhầm lấy số nghìn lỗi làm phần trăm, không chia cho budget.\n✗ 0.1% là chính error budget tổng, không phải phần đã tiêu.\n✗ 43.2% không phản ánh phép chia 32,400/43,200."
+  },
+  {
+    "id": "sre-q-007",
+    "courseId": "SRE",
+    "lesson": "sre-01-principles-slo",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Team đặt alert kêu ngay khi 'tỉ lệ lỗi > 0.1%' trên cửa sổ 1 phút và liên tục bị page lúc nửa đêm vì các spike 30 giây vô hại. Cách sửa đúng theo bài là gì?",
+    "options": [
+      "Dùng alert burn-rate kết hợp nhiều cửa sổ (vd vi phạm cả 5m lẫn 1h) để vừa nhạy sự cố thật vừa lọc nhiễu",
+      "Tăng ngưỡng lên tỉ lệ lỗi > 1% để giảm số lần page",
+      "Chỉ page khi CPU server vượt 80% thay vì dựa trên tỉ lệ lỗi",
+      "Tắt page ban đêm và chỉ tạo ticket xử lý vào giờ hành chính"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cảnh báo trực tiếp trên tỉ lệ lỗi tức thời gây alert fatigue; multi-window burn-rate là giải pháp bài đề xuất.\n✓ Kết hợp nhiều cửa sổ (5m và 1h) vừa nhạy với sự cố thật vừa không page vì spike nhiễu.\n✗ Tăng ngưỡng lên 1% vẫn là cảnh báo tức thời, vẫn dễ kêu vì spike và còn bỏ sót sự cố nhỏ kéo dài.\n✗ CPU là góc nhìn server, không phải SLI phản ánh trải nghiệm user.\n✗ Tắt page ban đêm có thể bỏ lỡ sự cố nghiêm trọng thật, không giải quyết gốc rễ."
+  },
+  {
+    "id": "sre-q-008",
+    "courseId": "SRE",
+    "lesson": "sre-01-principles-slo",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Burn rate = 14.4 có ý nghĩa gì đối với một SLO cửa sổ 28 ngày?",
+    "options": [
+      "Đang đốt budget nhanh gấp 14.4 lần mức đều, sẽ cháy sạch budget 28 ngày chỉ trong ~2 ngày",
+      "Còn lại đúng 14.4% error budget trong chu kỳ",
+      "Hệ thống đang đạt 14.4 lần SLO mục tiêu, rất an toàn",
+      "Có 14.4 phút downtime đã xảy ra trong cửa sổ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Burn rate là tốc độ đốt budget so với 'tiêu đều'; 14.4 nghĩa là nhanh gấp 14.4 lần.\n✓ Gấp 14.4x sẽ cháy sạch budget 28 ngày trong ~2 ngày, nên cần page ngay.\n✗ 14.4% budget còn lại là hiểu nhầm; burn rate là tốc độ, không phải lượng còn lại.\n✗ Burn rate cao là tín hiệu xấu, không phải an toàn.\n✗ 14.4 không phải số phút downtime; nó là hệ số tốc độ."
+  },
+  {
+    "id": "sre-q-009",
+    "courseId": "SRE",
+    "lesson": "sre-01-principles-slo",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Cuối chu kỳ, team thấy budget gần như nguyên vẹn (đốt rất ít) suốt cả tháng. Theo error budget policy, đây là tín hiệu gì và nên làm gì?",
+    "options": [
+      "Đang quá thận trọng (over-provisioned); có thể tăng nhịp deploy và hạ chi phí hạ tầng",
+      "Đang vi phạm SLO; cần feature freeze ngay lập tức",
+      "Cần hạ SLO xuống 99% để tiết kiệm chi phí bồi thường SLA",
+      "Cần tắt monitoring vì hệ thống đã hoàn hảo"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Budget gần như nguyên vẹn nghĩa là rủi ro được chấp nhận chưa dùng hết, cho thấy over-provisioned.\n✓ Quá thận trọng nên có thể tăng nhịp deploy và hạ chi phí hạ tầng đúng tinh thần policy.\n✗ Feature freeze là khi HẾT budget, không phải khi còn nhiều.\n✗ Hạ SLO xuống 99% không liên quan; vấn đề là tận dụng budget dư, không phải nới mục tiêu.\n✗ Tắt monitoring là sai hoàn toàn với tinh thần SRE."
+  },
+  {
+    "id": "sre-q-010",
+    "courseId": "SRE",
+    "lesson": "sre-01-principles-slo",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, những đặc điểm nào dưới đây cho thấy một công việc là TOIL?",
+    "options": [
+      "Thủ công, lặp đi lặp lại",
+      "Scale tuyến tính theo traffic / số host",
+      "Có thể script hoá / tự động hoá được",
+      "Là dự án thiết kế kiến trúc dài hạn tạo giá trị bền vững",
+      "Mang tính phản ứng (reactive), không có giá trị bền vững"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Toil là công việc thủ công, lặp lại, tự động hoá được, reactive, không tạo giá trị bền vững và scale tuyến tính.\n✓ Thủ công và lặp lại là đặc điểm cốt lõi của toil.\n✓ Scale tuyến tính theo traffic/host là dấu hiệu nhận biết quan trọng.\n✓ Có thể script hoá/tự động hoá được chính là điều kiện để gọi là toil.\n✓ Reactive và không có giá trị bền vững nằm trong định nghĩa.\n✗ Dự án thiết kế kiến trúc dài hạn tạo giá trị bền vững là công việc engineering, ngược với toil."
+  },
+  {
+    "id": "sre-q-011",
+    "courseId": "SRE",
+    "lesson": "sre-01-principles-slo",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo error budget policy trong bài, những phát biểu nào ĐÚNG?",
+    "options": [
+      "Còn budget thì Dev được tự do deploy feature, thử nghiệm, chấp nhận rủi ro",
+      "Hết budget thì đóng băng feature và dồn nỗ lực vào reliability",
+      "Budget cạn là cơ chế khách quan để ra quyết định, không phải để trừng phạt",
+      "Hết budget thì phải tăng tốc ship feature để bù lại doanh thu",
+      "Policy tạo động lực để Dev tự đầu tư vào canary, automated rollback, feature flag"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Error budget policy: còn budget thì tự do ship, hết budget thì freeze và tập trung reliability, dựa trên con số khách quan.\n✓ Còn budget thì Dev được tự do deploy và chấp nhận rủi ro.\n✓ Hết budget thì feature freeze và dồn vào sửa bug, test, rollback.\n✓ Budget cạn là tín hiệu khách quan, không nhằm trừng phạt ai.\n✓ Policy tạo động lực cho canary, automated rollback, feature flag để bảo vệ budget.\n✗ Hết budget mà tăng tốc ship feature là trái ngược hoàn toàn với policy (phải freeze)."
+  },
+  {
+    "id": "sre-q-012",
+    "courseId": "SRE",
+    "lesson": "sre-01-principles-slo",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đặt SLO 99.999% cho một dashboard nội bộ chỉ dùng trong giờ hành chính là quyết định thế nào theo bài?",
+    "options": [
+      "Lãng phí, vì SLO phải bám vào kỳ vọng người dùng; user không phân biệt nổi các con 9 thừa",
+      "Hợp lý, vì SLO càng cao luôn càng tốt cho mọi hệ thống",
+      "Bắt buộc, vì mọi dịch vụ nội bộ phải đạt 5 nines",
+      "Sai vì dashboard nội bộ không cần SLO nào cả"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SLO phải bám kỳ vọng người dùng; con 9 thừa cho dashboard nội bộ là chi phí vô ích.\n✓ Lãng phí vì user không phân biệt nổi 99.9% và 99.999% cho dashboard nội bộ.\n✗ SLO càng cao càng tốt là quan niệm sai; chi phí tăng phi tuyến.\n✗ Không có quy định mọi dịch vụ nội bộ phải đạt 5 nines.\n✗ Bài không nói dashboard nội bộ không cần SLO; chỉ là không nên đặt quá cao."
+  },
+  {
+    "id": "sre-q-013",
+    "courseId": "SRE",
+    "lesson": "sre-01-principles-slo",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi cần định nghĩa SLI chính thức và để CloudWatch tự tính error budget cùng burn rate, dịch vụ/tính năng AWS nào được bài gợi ý dùng?",
+    "options": [
+      "CloudWatch Application Signals (Service Level Objectives)",
+      "AWS Health Dashboard (Personal Health)",
+      "AWS X-Ray service map",
+      "Systems Manager Automation"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài ánh xạ SLI/SLO chính thức sang CloudWatch Application Signals, nơi định nghĩa SLO và theo dõi attainment & error budget burn.\n✓ Application Signals (SLO) cho phép khai báo SLO và tự tính error budget burn.\n✗ AWS Health Dashboard dùng để xem sự cố từ phía AWS, không định nghĩa SLO.\n✗ X-Ray dùng để truy vết request và tìm bottleneck p99, không quản lý error budget.\n✗ Systems Manager Automation dùng để giảm toil/runbook automation, không phải định nghĩa SLO."
+  },
+  {
+    "id": "sre-q-014",
+    "courseId": "SRE",
+    "lesson": "sre-02-observability",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo định nghĩa trong bài, dấu hiệu rõ nhất cho thấy hệ thống của bạn CHƯA observable là gì?",
+    "options": [
+      "Để debug một sự cố mới, bạn phải thêm log rồi deploy lại và chờ tái hiện",
+      "Bạn đang dùng một SaaS đắt tiền có nhãn 'observability platform'",
+      "Dashboard hiển thị cả CPU lẫn RAM của mọi host",
+      "Alert kêu khi error rate vượt 1%"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Observability là khả năng hiểu trạng thái bên trong chỉ từ output bên ngoài, không cần ship code mới.\n✓ Phải thêm log rồi deploy lại để điều tra nghĩa là dữ liệu phát ra chưa đủ giàu để suy luận.\n✗ Có công cụ đắt tiền không tạo ra observability; độ giàu dữ liệu mới tạo ra nó.\n✗ Hiển thị CPU/RAM chỉ là monitoring cơ bản, không liên quan tiêu chí 'không cần ship code'.\n✗ Alert error rate là monitoring known-unknowns, không phải dấu hiệu thiếu observability."
+  },
+  {
+    "id": "sre-q-015",
+    "courseId": "SRE",
+    "lesson": "sre-02-observability",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "On-call nhận alert 'error rate checkout 5%' nhưng dashboard không cho manh mối nào về nguyên nhân. Theo bài, đây là biểu hiện của vấn đề gì?",
+    "options": [
+      "Hệ thống có monitoring nhưng thiếu observability để đào sâu nguyên nhân",
+      "SLO đặt sai vì dùng error rate thay vì latency",
+      "Thiếu USE method nên không đo được tài nguyên",
+      "Cardinality của metric quá cao gây nhiễu"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Monitoring cho biết CÓ chuyện sai (alert kêu); observability cho biết sai Ở ĐÂU (đào sâu).\n✓ Alert kêu được nhưng không truy được nguyên nhân chính là hệ thống chỉ có monitoring, thiếu dữ liệu giàu chiều để điều tra.\n✗ Error rate là một SLI hợp lệ; vấn đề không nằm ở việc chọn error rate.\n✗ Thiếu USE không phải nguyên nhân cốt lõi ở đây; vấn đề là không slice/dice được dữ liệu.\n✗ Cardinality cao là vấn đề của metrics chứ không phải lý do thiếu manh mối điều tra."
+  },
+  {
+    "id": "sre-q-016",
+    "courseId": "SRE",
+    "lesson": "sre-02-observability",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần trả lời câu hỏi 'request cụ thể này đi qua những service nào và chậm ở chặng nào?'. Trụ cột observability nào phù hợp nhất?",
+    "options": [
+      "Traces",
+      "Metrics",
+      "Logs",
+      "Dashboard tổng quan"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mỗi trụ cột trả lời một loại câu hỏi khác nhau.\n✓ Traces ghép các span thành cây xuyên service, chỉ ra request đi qua đâu và chặng nào chậm.\n✗ Metrics chỉ trả lời 'có sai không, bao nhiêu' bằng số tổng hợp, không theo từng request qua nhiều chặng.\n✗ Logs trả lời 'chuyện gì xảy ra với request này' nhưng là sự kiện rời rạc, không vẽ ra hành trình qua các service.\n✗ Dashboard tổng quan chỉ trình bày metric, không truy vết đường đi của một request."
+  },
+  {
+    "id": "sre-q-017",
+    "courseId": "SRE",
+    "lesson": "sre-02-observability",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một host có CPU utilization 40% nhưng latency p99 nổ tung. Theo USE method, tín hiệu nào nhiều khả năng là thủ phạm và nên alert?",
+    "options": [
+      "Saturation của connection pool (request xếp hàng chờ slot)",
+      "Utilization CPU vì 40% là quá cao cho prod",
+      "Errors về ECC memory",
+      "Rate request giảm đột ngột"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Saturation (mức xếp hàng chờ vượt năng lực) mới là tín hiệu đau, không phải Utilization.\n✓ Connection pool saturated khiến request chờ slot làm p99 nổ tung dù CPU chỉ 40%.\n✗ CPU 40% là thấp, hơn nữa Utilization cao chưa chắc là vấn đề nếu không ai phải chờ.\n✗ ECC error là sự kiện lỗi phần cứng hiếm, không khớp triệu chứng latency tăng do xếp hàng.\n✗ Rate là metric của RED về tải, không giải thích vì sao latency tăng khi tài nguyên bị nghẽn hàng đợi."
+  },
+  {
+    "id": "sre-q-018",
+    "courseId": "SRE",
+    "lesson": "sre-02-observability",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một SLO: '99% request checkout < 300ms và không 5xx trên cửa sổ rolling 30 ngày'. Trong 100 request, có 99 request 50ms và 1 request 5000ms. Cách đo nào phản ánh ĐÚNG trải nghiệm tệ này và vì sao?",
+    "options": [
+      "p99 = 5000ms, vì percentile phơi bày tail latency mà average che giấu",
+      "average = 99.5ms, vì nó gộp toàn bộ request nên chính xác nhất",
+      "p50 = 50ms, vì median là chuẩn vàng cho SLO",
+      "avg(p99 của các host), vì gộp nhiều host cho cái nhìn toàn cục"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Average bị số đông che, còn percentile nói thật về đuôi.\n✓ p99 = 5000ms phơi bày đúng request 5 giây mà người dùng phải chịu.\n✗ average 99.5ms trông 'ổn' nhưng che giấu người chờ 5 giây, đúng kiểu 'average nói dối'.\n✗ p50 = 50ms chỉ phản ánh trải nghiệm điển hình, bỏ qua hoàn toàn tail.\n✗ Lấy trung bình của percentile (avg các p99) là vô nghĩa toán học; phải gộp histogram bucket rồi mới tính quantile."
+  },
+  {
+    "id": "sre-q-019",
+    "courseId": "SRE",
+    "lesson": "sre-02-observability",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một trang gọi 100 microservice song song (fan-out), trang chỉ trả về khi service chậm nhất xong, mỗi service có p99 = 1s. Xác suất một lần load trang chạm tail latency ~1s xấp xỉ bao nhiêu, và bài học rút ra?",
+    "options": [
+      "≈63%, nên ở quy mô fan-out đuôi của một service trở thành trải nghiệm điển hình",
+      "≈1%, vì mỗi service chỉ 1% chậm nên ảnh hưởng không đáng kể",
+      "≈99%, vì 100 service nhân lên gần như chắc chắn luôn chậm",
+      "≈50%, vì xác suất chậm và nhanh là cân bằng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Công thức 1 - (0.99)^100 ≈ 63%.\n✓ Khoảng 63% số lần load trang chạm tail 1s, nên ở fan-out lớn đuôi p99 thành trải nghiệm điển hình (lý do ám ảnh p99.9).\n✗ 1% là xác suất của một service đơn lẻ, không phải của trang gọi 100 service song song.\n✗ 99% là phóng đại; phép tính cho ~63%.\n✗ 50% không xuất phát từ công thức xác suất nào trong bài."
+  },
+  {
+    "id": "sre-q-020",
+    "courseId": "SRE",
+    "lesson": "sre-02-observability",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn muốn truy vết '0.3% lỗi đến từ build Android 4.2.1, ở region ap-southeast-1'. Nên đặt các chiều như build_version và customer_id ở đâu, và vì sao?",
+    "options": [
+      "Trong logs/traces, vì cardinality cao truy vấn ad-hoc được mà không nhân bản time series",
+      "Làm label của metric Prometheus, vì như vậy alert nhanh hơn",
+      "Trong cả metric lẫn log để dự phòng",
+      "Không lưu ở đâu, vì cardinality cao luôn có hại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cardinality cao là bạn của observability nhưng là kẻ thù của metrics.\n✓ Đặt build_version/customer_id vào logs/traces cho phép lọc ad-hoc mà không tạo thêm time series.\n✗ Nhúng id vào label metric gây cardinality explosion (mỗi tổ hợp = một series), có thể sập Prometheus.\n✗ Đưa vào cả metric để 'dự phòng' vẫn dính nổ series ở phía metric.\n✗ Cardinality cao không 'luôn có hại'; nó là sức mạnh đúng nơi (logs/traces)."
+  },
+  {
+    "id": "sre-q-021",
+    "courseId": "SRE",
+    "lesson": "sre-02-observability",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn TẤT CẢ phát biểu ĐÚNG về percentile và cách lưu trữ latency theo bài.",
+    "options": [
+      "Không nên đặt SLO hay alert trên average latency",
+      "avg(p99 của 5 host) là vô nghĩa toán học",
+      "Nên lưu latency dạng histogram để gộp bucket rồi tính quantile khi cần",
+      "p99 luôn nhỏ hơn hoặc bằng p50 nên ít quan trọng hơn",
+      "Để có p99 toàn cục đúng, hãy lấy giá trị p99 lớn nhất trong các host"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bài nhấn mạnh dùng percentile thay average và cách gộp đúng về mặt toán học.\n✓ Không alert/đặt SLO trên average vì nó bị số đông che giấu tail.\n✓ Lấy trung bình của các p99 là vô nghĩa toán học.\n✓ Lưu histogram để gộp bucket từ mọi host rồi mới histogram_quantile là cách đúng.\n✗ p99 luôn >= p50 và là tail latency quan trọng, không hề kém quan trọng hơn.\n✗ Lấy p99 max của các host không phải cách gộp đúng; phải gộp bucket trước rồi tính quantile."
+  },
+  {
+    "id": "sre-q-022",
+    "courseId": "SRE",
+    "lesson": "sre-02-observability",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đoạn log nào sau đây tuân thủ nguyên tắc structured logging của bài để có thể lọc/đếm/nhóm ở quy mô lớn?",
+    "options": [
+      "logger.info(\"checkout_failed\", extra={\"user_id\":uid,\"trace_id\":ctx.trace_id,\"error\":\"payment_declined\"})",
+      "logger.info(f\"checkout failed for user {uid} amount {amt} in {ms}ms\")",
+      "print(\"=== ERROR ===\"); print(f\"user {uid} failed\")",
+      "logger.debug(f\"User {id} bought {item}\")"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Log như thể bạn sẽ truy vấn nó, không phải đọc nó: structured JSON với field ổn định và trace_id.\n✓ Bản ghi structured với user_id, trace_id, error là field query được, đúng nguyên tắc.\n✗ Chuỗi text tự do phải viết regex để tách field, không filter/aggregate được.\n✗ In nhiều dòng cho một event vi phạm quy tắc 'một sự kiện = một dòng JSON'.\n✗ Log text tự do dạng f-string không có field cấu trúc, lại đặt ở DEBUG (nên tắt ở prod)."
+  },
+  {
+    "id": "sre-q-023",
+    "courseId": "SRE",
+    "lesson": "sre-02-observability",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một background job lấy việc từ message queue và bạn phát hiện trace bị 'đứt' giữa producer và consumer. Nguyên nhân và cách sửa đúng là gì?",
+    "options": [
+      "Quên propagate context qua biên bất đồng bộ; nhét trace_id vào message metadata",
+      "Sampling rate quá thấp; tăng lên 100% mọi trace",
+      "Thiếu metric RED ở consumer; thêm Rate/Errors/Duration",
+      "Histogram bucket sai; cấu hình lại le bucket"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Context propagation qua biên async (queue, background job) là cái bẫy kinh điển làm đứt trace.\n✓ Phải nhét trace_id vào message metadata để consumer nối tiếp được trace từ producer.\n✗ Tăng sampling lên 100% không nối lại được trace đã đứt vì thiếu context truyền qua.\n✗ Thêm metric RED giúp đo lường nhưng không hàn lại liên kết trace bị đứt.\n✗ Bucket histogram liên quan latency metric, không liên quan tới context propagation của trace."
+  },
+  {
+    "id": "sre-q-024",
+    "courseId": "SRE",
+    "lesson": "sre-02-observability",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, RED method gồm ba metric nào và áp dụng cho loại thành phần nào?",
+    "options": [
+      "Rate, Errors, Duration — cho service hướng request (HTTP API, gRPC, consumer)",
+      "Utilization, Saturation, Errors — cho tài nguyên như CPU/pool",
+      "Read, Edit, Delete — cho thao tác CRUD",
+      "Rate, Errors, Disk — cho lưu trữ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "RED (Tom Wilkie) là bộ ba metric tối thiểu cho service nhận request.\n✓ Rate, Errors, Duration đo tải, lỗi và phân phối latency cho service hướng request.\n✗ Utilization/Saturation/Errors là USE method, dùng cho tài nguyên chứ không phải RED.\n✗ Read/Edit/Delete không phải khái niệm trong bài.\n✗ 'Disk' không nằm trong RED; D là Duration (latency)."
+  },
+  {
+    "id": "sre-q-025",
+    "courseId": "SRE",
+    "lesson": "sre-02-observability",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Chọn TẤT CẢ nguyên tắc của một dashboard TỐT theo bài.",
+    "options": [
+      "Đặt RED (Rate/Errors/Duration) của service ở trên cùng",
+      "Nhìn vào phải biết khỏe/ốm trong khoảng 10 giây",
+      "Vẽ đường ngưỡng SLO và annotation các mốc deploy",
+      "Hiển thị p50/p95/p99, không dùng average",
+      "Nhồi 60 panel đủ màu để bao phủ mọi khả năng"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Dashboard tốt rút ngắn thời gian từ alert đến giả thuyết, mỗi panel gắn một quyết định.\n✓ RED đặt trên cùng vì là câu hỏi đầu tiên của on-call.\n✓ Phải trả lời 'có sao không' trong ~10 giây cho người mới on-call.\n✓ Vạch ngưỡng SLO và annotation deploy giúp thấy còn cách giới hạn bao xa và sự cố theo sau thay đổi nào.\n✓ Dùng percentile chồng lên nhau thay vì average.\n✗ 'Wall of graphs' 60 panel không câu hỏi rõ ràng là nơi tín hiệu đi chết, phản nguyên tắc."
+  },
+  {
+    "id": "sre-q-026",
+    "courseId": "SRE",
+    "lesson": "sre-02-observability",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trên AWS, theo bài bạn nên đặt id cardinality cao (user_id, request_id) ở đâu để vừa truy vấn được vừa khống chế chi phí?",
+    "options": [
+      "Vào CloudWatch Logs fields (query bằng Logs Insights), vì custom metric tính phí theo từng metric",
+      "Làm dimension của CloudWatch custom metric, vì rẻ hơn lưu log",
+      "Vào X-Ray annotation 100% trace, tắt sampling để không mất dữ liệu",
+      "Vào CloudWatch Alarms để alert theo từng user"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Custom metric tính theo từng metric (mỗi tổ hợp dimension = 1 custom metric), nên id cardinality cao thuộc về log fields.\n✓ Đặt vào CloudWatch Logs fields rồi query bằng Logs Insights, đúng nguyên tắc cardinality và tiết kiệm chi phí.\n✗ Làm dimension của custom metric gây bùng nổ số metric và tốn phí, không hề rẻ hơn.\n✗ Tắt sampling giữ 100% trace ở traffic lớn rất tốn; nên bật sampling rule (giữ 100% lỗi, tỉ lệ nhỏ với thành công).\n✗ Alarms là để cảnh báo trên metric, không phải nơi lưu id cardinality cao để truy vấn."
+  },
+  {
+    "id": "sre-q-027",
+    "courseId": "SRE",
+    "lesson": "sre-03-alerting-oncall",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo nguyên tắc nền tảng của bài, alert page tốt nhất nên dựa trên điều gì?",
+    "options": [
+      "Triệu chứng (symptom) mô tả nỗi đau của người dùng",
+      "Nguyên nhân kỹ thuật như CPU, memory, replica lag",
+      "Số lượng deploy diễn ra trong ngày",
+      "Mức sử dụng license của các công cụ monitoring"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Nguyên tắc cốt lõi: alert mô tả nỗi đau của người dùng, không mô tả nguyên nhân kỹ thuật.\n✓ Triệu chứng map thẳng vào SLO và gom được vô số nguyên nhân bằng một rule.\n✗ Nguyên nhân kỹ thuật như CPU/memory không suy ra được tác động nên page theo chúng là đoán mò; chúng chỉ để chẩn đoán trên dashboard.\n✗ Số deploy không phản ánh người dùng có bị ảnh hưởng hay không.\n✗ Mức sử dụng license không liên quan tới nỗi đau của user."
+  },
+  {
+    "id": "sre-q-028",
+    "courseId": "SRE",
+    "lesson": "sre-03-alerting-oncall",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Mục tiêu lý tưởng về số page mỗi ca trực mà bài đưa ra là gì?",
+    "options": [
+      "Dưới 2 page mỗi ca",
+      "Khoảng 10 page mỗi ca",
+      "Đúng 5 page mỗi ca",
+      "Không giới hạn, miễn là đều actionable"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu mục tiêu < 2 page mỗi ca; trên 5 là báo động đỏ.\n✓ Dưới 2 page mỗi ca là dấu hiệu hệ thống alert lành mạnh.\n✗ 10 page mỗi ca vượt xa ngưỡng báo động đỏ, gây alert fatigue.\n✗ 5 page mỗi ca đã chạm mức báo động đỏ.\n✗ Ngay cả page actionable cũng cần giới hạn để tránh kiệt sức con người."
+  },
+  {
+    "id": "sre-q-029",
+    "courseId": "SRE",
+    "lesson": "sre-03-alerting-oncall",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Quy tắc cứng của bài về quan hệ giữa alert page và runbook là gì?",
+    "options": [
+      "Không alert page nào được tồn tại nếu không có runbook",
+      "Runbook chỉ cần cho alert SEV1",
+      "Runbook là tuỳ chọn, chỉ viết khi có thời gian rảnh",
+      "Một runbook chung cho toàn bộ hệ thống là đủ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu quy tắc cứng: không alert page nào được tồn tại nếu không có runbook.\n✓ Người on-call lúc 3h sáng (có thể không phải tác giả) cần tài liệu trả lời ngay phải làm gì.\n✗ Mọi page đều cần runbook, không chỉ riêng mức nghiêm trọng nhất.\n✗ Runbook không phải tuỳ chọn mà là bắt buộc cho mỗi page.\n✗ Mỗi alert cần runbook riêng nói rõ ý nghĩa, mitigation, khi nào escalate cho chính nó."
+  },
+  {
+    "id": "sre-q-030",
+    "courseId": "SRE",
+    "lesson": "sre-03-alerting-oncall",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong runbook, bài khuyên ưu tiên việc gì trước khi tìm root cause?",
+    "options": [
+      "Mitigation (cầm máu) như rollback, failover, scale up, tắt feature flag",
+      "Viết postmortem chi tiết",
+      "Gọi toàn bộ team họp khẩn",
+      "Tìm cho ra dòng code gây lỗi rồi mới hành động"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Runbook ưu tiên cầm máu (mitigation) trước khi tìm root cause.\n✓ Rollback/failover/scale up/tắt feature flag giảm thiệt hại cho user ngay lập tức.\n✗ Postmortem làm sau khi sự cố đã được kiểm soát, không phải lúc đang cháy.\n✗ Họp khẩn toàn team không giúp giảm tác động tức thì cho user.\n✗ Truy tìm dòng code gây lỗi trước khi mitigation kéo dài thời gian user chịu thiệt hại."
+  },
+  {
+    "id": "sre-q-031",
+    "courseId": "SRE",
+    "lesson": "sre-03-alerting-oncall",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một dịch vụ có SLO 99.9% (cho phép 0.1% lỗi trong 30 ngày). Hiện tại tỷ lệ lỗi đo được là 1.44%. Burn rate xấp xỉ bao nhiêu và hành động đúng theo bảng multi-burn-rate?",
+    "options": [
+      "14.4x → Page ngay",
+      "6x → Page",
+      "3x → Ticket",
+      "1x → Không alert"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Burn rate = tỷ lệ lỗi thực / tỷ lệ lỗi cho phép = 0.0144 / 0.001 = 14.4.\n✓ Burn rate 14.4x đốt hết budget tháng trong ~2 ngày, theo bảng phải page ngay.\n✗ 6x ứng với tỷ lệ lỗi 0.6%, không khớp 1.44%.\n✗ 3x ứng với tỷ lệ lỗi 0.3% và chỉ tạo ticket, quá nhẹ cho tình huống này.\n✗ 1x là tốc độ bình thường (0.1%), không cần alert, sai hoàn toàn với 1.44%."
+  },
+  {
+    "id": "sre-q-032",
+    "courseId": "SRE",
+    "lesson": "sre-03-alerting-oncall",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao bài khuyến nghị dùng multi-window (ví dụ cả 5m lẫn 1h cùng vượt ngưỡng) thay vì chỉ một cửa sổ?",
+    "options": [
+      "Để vừa nhạy với sự cố nghiêm trọng vừa không page vì một blip 30 giây thoáng qua",
+      "Để tiết kiệm chi phí lưu trữ metric trong Prometheus",
+      "Để alert chỉ nổ vào ban ngày, tránh đánh thức ban đêm",
+      "Để thay thế hoàn toàn nhu cầu có runbook"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Hai window kết hợp cho phép alert vừa nhạy vừa không bị kích bởi blip ngắn.\n✓ Window dài đảm bảo tình huống thật sự đốt budget, window ngắn xác nhận đang xảy ra ngay, lọc spike 30 giây.\n✗ Multi-window không nhằm tiết kiệm lưu trữ metric.\n✗ Burn-rate alert không phân biệt ngày/đêm; mục tiêu là độ chính xác chứ không phải khung giờ.\n✗ Multi-window không thay thế runbook; runbook vẫn bắt buộc cho mọi page."
+  },
+  {
+    "id": "sre-q-033",
+    "courseId": "SRE",
+    "lesson": "sre-03-alerting-oncall",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một alert nổ mỗi đêm, on-call luôn phản ứng bằng đúng một thao tác: restart pod, sau đó mọi thứ ổn lại. Theo bài, cách xử lý đúng nhất là gì?",
+    "options": [
+      "Tự động hoá thao tác restart và xoá alert page đó",
+      "Tăng severity của alert lên SEV1 để được chú ý hơn",
+      "Giữ nguyên alert vì nó vẫn 'cần con người'",
+      "Đặt for: dài hơn để on-call ngủ thêm rồi mới restart"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Nếu phản ứng luôn là cùng một thao tác máy móc thì hãy tự động hoá nó và xoá alert.\n✓ Khi hệ thống tự restart được, không cần con người nên không cần page; on-call phải phản ứng bằng trí tuệ chứ không phải phản xạ.\n✗ Tăng severity càng làm tăng noise cho một việc lặp lại có thể tự động hoá.\n✗ Vì việc này tự động hoá được nên thực chất không còn 'cần con người'.\n✗ Kéo dài for: chỉ trì hoãn, không loại bỏ page vô ích."
+  },
+  {
+    "id": "sre-q-034",
+    "courseId": "SRE",
+    "lesson": "sre-03-alerting-oncall",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi 50 pod trong một cluster cùng chết, kỹ thuật Alertmanager nào giúp gửi MỘT page thay vì 50 page?",
+    "options": [
+      "Grouping (gom theo alertname/cluster)",
+      "Tăng repeat_interval lên 24h",
+      "Đặt severity về log thay vì page",
+      "Xoá toàn bộ label khỏi alert"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Grouping gom các alert cùng nhóm thành một thông báo.\n✓ group_by theo alertname/cluster gộp 50 pod chết thành một page duy nhất cho cluster.\n✗ repeat_interval chỉ kiểm soát tần suất nhắc lại một page đã ack, không gộp 50 alert đồng thời.\n✗ Hạ về log sẽ bỏ sót một sự cố thật sự cần page.\n✗ Xoá hết label phá vỡ routing và không giải quyết việc gộp."
+  },
+  {
+    "id": "sre-q-035",
+    "courseId": "SRE",
+    "lesson": "sre-03-alerting-oncall",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Tình huống: site đang outage toàn phần, checkout 0%. Theo bảng severity, đây là mức nào và phản hồi mong đợi ra sao?",
+    "options": [
+      "SEV1 — Ack < 5 phút, mở incident bridge, page primary + leadership",
+      "SEV2 — Ack < 15 phút, page primary",
+      "SEV3 — xử lý trong giờ làm, ticket",
+      "SEV4 — theo dõi, ticket"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Outage toàn phần / checkout 0% là định nghĩa SEV1.\n✓ SEV1 yêu cầu ack < 5 phút, mở incident bridge và page cả primary lẫn leadership.\n✗ SEV2 là suy giảm nghiêm trọng một phần (như p99 8s hoặc 1 region down), nhẹ hơn outage toàn phần.\n✗ SEV3 là suy giảm hạn chế có workaround, không phù hợp toàn site down.\n✗ SEV4 là bất thường chưa ảnh hưởng user, hoàn toàn sai cho checkout 0%."
+  },
+  {
+    "id": "sre-q-036",
+    "courseId": "SRE",
+    "lesson": "sre-03-alerting-oncall",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một team đề xuất nâng SLO của một dịch vụ nội bộ ít quan trọng từ 99.9% lên 99.999% 'cho oai'. Theo bài, hệ quả chính là gì?",
+    "options": [
+      "Mỗi số 9 thêm vào làm alert nhạy hơn theo cấp số nhân, biến đêm của on-call thành địa ngục",
+      "On-call sẽ được page ít hơn vì hệ thống ổn định hơn",
+      "Error budget tăng lên nên có nhiều dư địa lỗi hơn",
+      "Không ảnh hưởng gì tới tần suất alert"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đặt SLO quá nghiêm cho dịch vụ không cần là một cái bẫy.\n✓ Mỗi số 9 thêm vào làm alert nhạy hơn theo cấp số nhân và bào mòn on-call; SLO phải phản ánh kỳ vọng thực của user.\n✗ SLO chặt hơn khiến page nhiều hơn chứ không ít hơn.\n✗ SLO cao hơn nghĩa là error budget nhỏ hơn, ít dư địa lỗi hơn.\n✗ Tần suất alert tăng mạnh, không thể nói là không ảnh hưởng."
+  },
+  {
+    "id": "sre-q-037",
+    "courseId": "SRE",
+    "lesson": "sre-03-alerting-oncall",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong một incident lớn, vì sao bài khuyên tách vai Incident Commander khỏi người operator?",
+    "options": [
+      "Một người không thể vừa gõ lệnh khắc phục vừa điều phối và cập nhật cho 20 người đang hỏi",
+      "Vì Incident Commander phải là người viết code dịch vụ đó",
+      "Vì operator không được phép giao tiếp với ai trong lúc sự cố",
+      "Để giảm số người cần được page xuống còn đúng một"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu rõ một người không thể vừa sửa vừa cập nhật cho hàng chục người hỏi.\n✓ Incident Commander điều phối/ra quyết định/giao tiếp, operator tập trung gõ lệnh khắc phục — tách vai giúp cả hai làm tốt việc của mình.\n✗ IC là vai điều phối, không nhất thiết là tác giả code dịch vụ.\n✗ Operator vẫn cần phối hợp với IC, không phải bị cấm giao tiếp.\n✗ Mục tiêu là phân chia trách nhiệm, không phải giảm số người được page."
+  },
+  {
+    "id": "sre-q-038",
+    "courseId": "SRE",
+    "lesson": "sre-03-alerting-oncall",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo bài, những tình huống nào sau đây thuộc nhóm 'KHÔNG nên page primary'? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Retry thành công sau lần fail đầu, hệ thống tự phục hồi",
+      "CPU node cao nhưng không kèm tác động tới user",
+      "Third-party down mà on-call không có hành động khả thi nào ngoài chờ",
+      "Checkout success rate tụt xuống 90%, đang đốt budget 14.4x",
+      "Một region production down khiến phần lớn user chịu ảnh hưởng"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Mục 'Khi nào KHÔNG alert' liệt kê: hệ thống tự phục hồi, cause-based không kèm tác động, và không có hành động khả thi.\n✓ Retry thành công là tự phục hồi — chỉ log, không page.\n✓ CPU cao không kèm tác động user là cause-based, đưa lên dashboard chứ không page.\n✓ Third-party down không có hành động khả thi thì không page primary (chỉ notify kênh thông tin).\n✗ Checkout tụt 90% đốt budget 14.4x là symptom nghiêm trọng, đúng kiểu phải page ngay.\n✗ Một region down ảnh hưởng phần lớn user là SEV2, cần page primary."
+  },
+  {
+    "id": "sre-q-039",
+    "courseId": "SRE",
+    "lesson": "sre-03-alerting-oncall",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những thực hành nào sau đây giúp xây dựng on-call bền vững theo bài? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Rotation tối thiểu khoảng 6–8 người để mỗi người không trực quá thường xuyên",
+      "Mọi silence alert phải có thời hạn hết hạn và lý do",
+      "Đền bù on-call bằng tiền hoặc nghỉ bù để biến noise thành chi phí nhìn thấy được",
+      "Để rotation 2–3 người trực luân phiên cho gọn nhẹ",
+      "Bỏ handoff bằng tài liệu, chỉ truyền miệng giữa các ca cho nhanh"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "On-call bền vững dựa trên đủ người, silence có kỷ luật và compensation.\n✓ Rotation 6–8 người giúp mỗi người không trực quá ~1 tuần mỗi 6–8 tuần.\n✓ Mọi silence phải có thời hạn hết hạn và lý do để ca sau không bị mất context, không có silence vĩnh viễn.\n✓ Đền bù biến độ ồn của on-call thành chi phí nhìn thấy được, tạo áp lực lành mạnh để dọn alert.\n✗ Rotation 2–3 người là công thức burnout, bài cảnh báo tránh.\n✗ Handoff cần bản ghi ngắn gọn (tài liệu/thread), không chỉ truyền miệng để tránh rơi context."
+  },
+  {
+    "id": "sre-q-040",
+    "courseId": "SRE",
+    "lesson": "sre-04-incident-postmortem",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Lúc 3 giờ sáng, error rate của Checkout đang ở mức 40%. Theo nguyên tắc trong bài, mục tiêu SỐ MỘT của đội on-call ngay lúc này là gì?",
+    "options": [
+      "Khôi phục dịch vụ (restore service) càng nhanh càng tốt",
+      "Tìm cho ra commit nào gây ra lỗi trước khi làm bất cứ điều gì",
+      "Viết postmortem để ghi lại sự cố",
+      "Họp toàn đội để phân tích nguyên nhân gốc"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khi đang có sự cố, ưu tiên là khôi phục dịch vụ, không phải tìm nguyên nhân gốc.\n✓ Khôi phục dịch vụ là mục tiêu số một lúc đang cháy — \"stop the bleeding first\".\n✗ Tìm root cause là việc của postmortem, làm trên bản copy trong giờ làm việc với cái đầu tỉnh táo, không phải lúc 3 giờ sáng.\n✗ Viết postmortem chỉ diễn ra sau khi dịch vụ đã phục hồi.\n✗ Họp phân tích nguyên nhân lúc đang cháy chỉ kéo dài downtime."
+  },
+  {
+    "id": "sre-q-041",
+    "courseId": "SRE",
+    "lesson": "sre-04-incident-postmortem",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một sự cố đang đốt hết error budget của 30 ngày trong vòng dưới 1 giờ, nhưng \"cảm giác\" của đội là nó không quá nghiêm trọng. Theo quy tắc định lượng trong bài, nên phân loại severity thế nào?",
+    "options": [
+      "SEV1, bất kể cảm giác chủ quan",
+      "SEV3, vì có thể chờ tới giờ làm việc",
+      "SEV4, vì chỉ là vấn đề budget",
+      "Để IC quyết định dựa trên cảm giác đội ngũ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài đưa quy tắc định lượng: gắn severity với error budget burn rate.\n✓ Đốt error budget 30 ngày trong dưới 1 giờ thì tự động là SEV1, bất kể cảm giác nghiêm trọng đến đâu.\n✗ Hạ xuống SEV3 chờ giờ làm việc là \"severity deflation\", biến sự cố ngắn thành sự cố dài.\n✗ SEV4 dành cho lỗi cosmetic không ảnh hưởng người dùng, không phải burn rate cao.\n✗ Quy tắc định lượng tồn tại chính để không phụ thuộc cảm giác chủ quan."
+  },
+  {
+    "id": "sre-q-042",
+    "courseId": "SRE",
+    "lesson": "sre-04-incident-postmortem",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong một SEV1, một engineer phàn nàn rằng Incident Commander \"chẳng gõ lệnh hay debug gì cả\". Cách hiểu nào về vai trò IC là ĐÚNG?",
+    "options": [
+      "IC điều phối, ra quyết định và giữ tổng quan, không tự debug sâu",
+      "IC phải là người trực tiếp chạy lệnh mitigation",
+      "IC chịu trách nhiệm cập nhật status page cho khách hàng",
+      "IC ghi lại timeline real-time của sự cố"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "IC sở hữu quyết định và điều phối tổng thể, không sở hữu giải pháp.\n✓ IC điều phối, ra quyết định, phân công và giữ tổng quan; nếu tự debug sâu sẽ mất tầm nhìn tổng thể.\n✗ Chạy lệnh mitigation là việc của Operations/Ops Lead.\n✗ Cập nhật status page là việc của Communications Lead.\n✗ Ghi timeline real-time là việc của Scribe."
+  },
+  {
+    "id": "sre-q-043",
+    "courseId": "SRE",
+    "lesson": "sre-04-incident-postmortem",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Lúc 02:14 alert CheckoutHighErrorRate bắn. Ops thấy sự cố bắt đầu lúc 02:11, đúng 3 phút sau khi deploy v2.4.1. Hành động tốt nhất NGAY lúc này là gì?",
+    "options": [
+      "Rollback v2.4.1 ngay, dù chưa biết dòng code nào sai",
+      "Đọc kỹ diff của v2.4.1 tìm bug rồi mới quyết định",
+      "Tăng pool size DB rồi chờ xem có đỡ không",
+      "Mở ticket điều tra và để sự cố tự ổn định"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Correlation về thời gian giữa deploy và onset đã đủ để mitigate, không cần biết chính xác commit.\n✓ Rollback ngay là đòn mitigate nhanh nhất (2-5 phút) cho sự cố bắt đầu ngay sau deploy; trong tình huống thực tế bài nêu, rollback đưa error rate về 0.3% sau 7 phút.\n✗ Đọc diff tìm bug là hành vi \"hiểu trước khi sửa\" giết chết SLA.\n✗ Tăng pool size là phỏng đoán cause chưa được xác nhận, chậm hơn rollback.\n✗ Để sự cố tự ổn định kéo dài downtime vô lý."
+  },
+  {
+    "id": "sre-q-044",
+    "courseId": "SRE",
+    "lesson": "sre-04-incident-postmortem",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Timeline ghi: 02:11 onset error rate bắt đầu tăng; 02:14 alert bắn và on-call được paged; 02:18 rollback hoàn tất, error rate phục hồi. TTD (time to detect) và TTM (time to mitigate) lần lượt là bao nhiêu?",
+    "options": [
+      "TTD = 3 phút, TTM = 7 phút",
+      "TTD = 7 phút, TTM = 3 phút",
+      "TTD = 4 phút, TTM = 4 phút",
+      "TTD = 3 phút, TTM = 4 phút"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "TTD tính từ onset đến phát hiện; TTM tính từ onset đến khi khôi phục theo timeline trong bài.\n✓ TTD = 02:14 − 02:11 = 3 phút; TTM = 02:18 − 02:11 = 7 phút, đúng như timeline ví dụ.\n✗ Đảo ngược 7 và 3 là sai chiều tính.\n✗ 4 và 4 phút không khớp các mốc thời gian.\n✗ TTM 4 phút bỏ sót khoảng từ onset đến phát hiện."
+  },
+  {
+    "id": "sre-q-045",
+    "courseId": "SRE",
+    "lesson": "sre-04-incident-postmortem",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong một postmortem, câu trả lời cuối cùng của chuỗi 5 Whys là \"vì kỹ sư X viết code sai\". Đây là dấu hiệu của điều gì, và nên làm gì tiếp?",
+    "options": [
+      "5 Whys đang bị lệch thành đổ lỗi; hãy hỏi tiếp tại sao hệ thống cho phép lỗi đó lọt qua",
+      "5 Whys đã hoàn tất đúng vì đã tìm ra người gây lỗi",
+      "Nên ghi tên kỹ sư X vào action item để chịu trách nhiệm",
+      "Nên dừng postmortem vì đã có nguyên nhân rõ ràng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "5 Whys làm đúng phải dẫn tới lỗ hổng quy trình/công cụ, không phải một con người.\n✓ Câu trả lời chỉ về một người là dấu hiệu 5 Whys bị lạm dụng để đổ lỗi; phải hỏi tiếp tại sao hệ thống cho phép lỗi lọt qua, chuyển trọng tâm về quy trình.\n✗ Tìm ra người không phải là hoàn tất đúng — đó là dừng ở triệu chứng.\n✗ Ghi tên người để chịu trách nhiệm vi phạm nguyên tắc blameless.\n✗ Dừng postmortem ở mức một con người bỏ lỡ lỗ hổng hệ thống thực sự."
+  },
+  {
+    "id": "sre-q-046",
+    "courseId": "SRE",
+    "lesson": "sre-04-incident-postmortem",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Sau khi rollback, metric đã khỏe trở lại được vài chục giây. Comms Lead muốn tuyên bố \"Resolved\" ngay trên status page. Quyết định đúng là gì?",
+    "options": [
+      "Chờ ít nhất 2x chu kỳ alert (vd 10 phút) với metric khỏe rồi mới tuyên bố Resolved",
+      "Tuyên bố Resolved ngay để khách hàng yên tâm sớm",
+      "Tuyên bố Resolved nhưng kèm ghi chú có thể tái phát",
+      "Bỏ qua status page, chỉ thông báo Resolved cho stakeholder"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Tuyên bố Resolved rồi tái phát làm xói mòn niềm tin nặng hơn cả sự cố ban đầu.\n✓ Quy tắc trong bài: chờ ít nhất 2x chu kỳ alert (vd 10 phút) với metric khỏe mạnh rồi mới tuyên bố Resolved; timeline ví dụ tuyên bố lúc 02:28 sau 10 phút.\n✗ Tuyên bố ngay khi mới khỏe vài chục giây có nguy cơ tái phát.\n✗ Kèm ghi chú \"có thể tái phát\" vẫn là cam kết sửa xong khi chưa đủ dữ liệu xác nhận.\n✗ Bỏ qua status page là im lặng với khách hàng — thứ họ không tha thứ."
+  },
+  {
+    "id": "sre-q-047",
+    "courseId": "SRE",
+    "lesson": "sre-04-incident-postmortem",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một postmortem được nộp với các đặc điểm sau. Theo bài, đâu là những DẤU HIỆU CẢNH BÁO cho thấy nó đang trở thành thủ tục hành chính kém giá trị? (chọn nhiều)",
+    "options": [
+      "Có 15 action item nhưng không cái nào có owner thật",
+      "Tất cả action item đều là \"cập nhật tài liệu\"",
+      "Mỗi action item có owner, deadline và mức ưu tiên rõ ràng",
+      "Action item P0/P1 từ SEV1 được đặt deadline trong 30 ngày",
+      "Có 3 action item ít nhưng tất cả được thực thi thật"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Bài cảnh báo việc biến postmortem thành thủ tục đóng ticket.\n✓ 15 action item không có owner thật là dấu hiệu điển hình của postmortem chết.\n✓ Tất cả đều là \"cập nhật tài liệu\" cũng là dấu hiệu hình thức, né tránh sửa hệ thống.\n✗ Mỗi action item có owner, deadline, priority rõ ràng chính là yêu cầu của một postmortem tốt.\n✗ Đặt deadline 30 ngày cho P0/P1 từ SEV1 là đúng chuẩn Google SRE.\n✗ 3 action item được thực thi thật giá trị hơn 15 cái nằm chết trong backlog."
+  },
+  {
+    "id": "sre-q-048",
+    "courseId": "SRE",
+    "lesson": "sre-04-incident-postmortem",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Search bị down hoàn toàn nhưng người dùng vẫn browse được; ngoài ra p99 latency lên 8s trong khi SLO là 500ms. Đây phù hợp nhất với severity nào?",
+    "options": [
+      "SEV2",
+      "SEV1",
+      "SEV3",
+      "SEV4"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SEV2 là mất một phần lớn chức năng, có workaround hạn chế.\n✓ Search down nhưng browse vẫn chạy, p99 8s so với SLO 500ms khớp đúng định nghĩa và ví dụ SEV2 trong bài.\n✗ SEV1 là mất dịch vụ toàn phần/mất dữ liệu/rò rỉ bảo mật — ở đây browse vẫn hoạt động.\n✗ SEV3 là suy giảm chức năng phụ không ảnh hưởng đường dẫn tiền, nhẹ hơn nhiều.\n✗ SEV4 chỉ là lỗi cosmetic không ảnh hưởng người dùng."
+  },
+  {
+    "id": "sre-q-049",
+    "courseId": "SRE",
+    "lesson": "sre-04-incident-postmortem",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một feature mới gây lỗi cô lập trong chính nó, còn phần còn lại của hệ thống vẫn ổn. Theo bảng mitigation, đòn nào nhanh nhất và phù hợp nhất?",
+    "options": [
+      "Tắt feature bằng feature flag (< 1 phút)",
+      "Failover sang region khác (5-15 phút)",
+      "Scale out thêm instance (3-10 phút)",
+      "Rollback toàn bộ deploy (2-5 phút)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Feature flag dành cho lỗi cô lập trong một feature và là đòn nhanh nhất.\n✓ Tắt feature flag (< 1 phút) cô lập đúng lỗi mà không động tới phần còn lại đang chạy tốt.\n✗ Failover sang region dùng khi hỏng tầng hạ tầng (AZ, DB), không phải lỗi feature.\n✗ Scale out dùng khi quá tải do traffic.\n✗ Rollback toàn bộ deploy chậm hơn và ảnh hưởng cả các thay đổi khác không liên quan."
+  },
+  {
+    "id": "sre-q-050",
+    "courseId": "SRE",
+    "lesson": "sre-04-incident-postmortem",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao văn hóa blameless không chỉ là \"tử tế\" mà còn HIỆU QUẢ hơn về mặt vận hành?",
+    "options": [
+      "Vì khi không sợ bị đổ lỗi, người ta nói thật, giúp thực sự hiểu chuyện gì đã xảy ra",
+      "Vì nó giúp tránh phải sa thải nhân viên",
+      "Vì nó làm postmortem ngắn gọn hơn",
+      "Vì nó giúp giấu sự cố khỏi lãnh đạo"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Blameless mua được sự trung thực — thứ duy nhất giúp hiểu đúng sự cố.\n✓ Khi sợ bị đổ lỗi, người ta giấu thông tin và tô hồng timeline; blameless đổi lấy sự thật để sửa hệ thống đúng chỗ.\n✗ Tránh sa thải không phải lý do hiệu quả vận hành mà bài nhấn mạnh.\n✗ Mục tiêu không phải làm postmortem ngắn hơn.\n✗ Blameless nhằm minh bạch, không phải giấu sự cố khỏi lãnh đạo."
+  },
+  {
+    "id": "sre-q-051",
+    "courseId": "SRE",
+    "lesson": "sre-04-incident-postmortem",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Đội muốn đo \"sức khỏe\" của quy trình incident. Những phát biểu nào về các metric trong bài là ĐÚNG? (chọn nhiều)",
+    "options": [
+      "MTTD là thời gian từ onset đến phát hiện, kéo xuống bằng cải thiện alert",
+      "MTTR là thời gian từ phát hiện đến khôi phục, kéo xuống bằng runbook tốt và mitigation nhanh",
+      "Recurrence rate cao là dấu hiệu postmortem không hiệu quả",
+      "Mục tiêu action item completion rate cho P0/P1 là dưới 50%",
+      "MTTD đo từ thời điểm tuyên bố Resolved trở về sau"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bài liệt kê rõ định nghĩa và mục tiêu của từng metric.\n✓ MTTD đo từ onset đến phát hiện, cải thiện bằng alert tốt hơn.\n✓ MTTR đo từ phát hiện đến khôi phục, kéo xuống bằng runbook và mitigation nhanh.\n✓ Recurrence rate cao nghĩa là sự cố lặp lại — postmortem không hiệu quả.\n✗ Mục tiêu action item completion rate P0/P1 là trên 90%, không phải dưới 50%.\n✗ MTTD không liên quan tới mốc Resolved; nó nằm ở đầu sự cố (onset đến phát hiện)."
+  },
+  {
+    "id": "sre-q-052",
+    "courseId": "SRE",
+    "lesson": "sre-04-incident-postmortem",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong lúc điều tra một SEV1, bạn cần biết liệu sự cố có đến từ phía AWS (một AZ hay một service) hay từ deploy của chính đội. Công cụ AWS nào phù hợp nhất để trả lời câu hỏi này?",
+    "options": [
+      "AWS Health Dashboard (Personal Health Dashboard)",
+      "AWS X-Ray service map",
+      "CloudWatch Logs Insights",
+      "AWS Systems Manager Incident Manager"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài ánh xạ rõ từng công cụ AWS sang vai trò cụ thể.\n✓ AWS Health Dashboard cho biết sự cố có đến từ phía AWS hay không, giúp quyết định giữa failover sang AZ khác và rollback deploy của ta.\n✗ X-Ray service map dùng cho root-cause analysis xác định service nào chậm/lỗi, không phải xác định nguồn từ AWS.\n✗ CloudWatch Logs Insights để truy vấn log khi điều tra.\n✗ Incident Manager là dịch vụ ICS điều phối vai trò và timeline, không trả lời câu hỏi nguồn gốc AWS."
+  },
+  {
+    "id": "sre-q-053",
+    "courseId": "SRE",
+    "lesson": "sre-05-reliability-patterns",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo nguyên tắc của bài, vì sao một cơ chế failover \"đã cấu hình nhưng chưa từng kích hoạt có chủ đích\" lại phải bị coi là chưa hoạt động?",
+    "options": [
+      "Vì failover luôn chậm hơn redundancy",
+      "Vì mọi cơ chế chống lỗi chưa được test thực tế phải coi như chưa hoạt động (untested failover = no failover)",
+      "Vì failover chỉ dùng cho DR cross-region",
+      "Vì standby luôn rẻ hơn active-active"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nhấn mạnh \"Hope is not a strategy\": cơ chế chưa từng kích hoạt có chủ đích phải coi là chưa hoạt động.\n✓ Untested failover = no failover, đó là lý do phải chủ động kiểm chứng.\n✗ Tốc độ failover so với redundancy không phải lý do.\n✗ Failover không chỉ dành cho DR cross-region.\n✗ Chi phí standby không liên quan tới việc coi nó là chưa hoạt động."
+  },
+  {
+    "id": "sre-q-054",
+    "courseId": "SRE",
+    "lesson": "sre-05-reliability-patterns",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một service cần 12 instance để xử lý peak, triển khai trên 3 AZ với 4 instance/AZ (tổng 12). Khi mất trọn 1 AZ thì điều gì xảy ra?",
+    "options": [
+      "Còn 8 instance, thiếu khoảng 33% so với nhu cầu peak",
+      "Còn 12 instance, vẫn vừa đủ peak",
+      "Còn 16 instance, dư headroom",
+      "Autoscaler tự bù ngay lập tức nên không ảnh hưởng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mất 1 trong 3 AZ làm mất 4 instance, còn lại 8 trong khi peak cần 12.\n✓ Còn 8/12 nghĩa là thiếu khoảng 33%, đúng như bảng trong bài (cấu hình không headroom).\n✗ Còn 12 chỉ đúng nếu provision 6/AZ (18 tổng).\n✗ Còn 16 ứng với cấu hình 8/AZ (24 tổng), không phải 4/AZ.\n✗ Headroom phải có sẵn để survive AZ outage; không thể trông cậy autoscaler bù tức thì."
+  },
+  {
+    "id": "sre-q-055",
+    "courseId": "SRE",
+    "lesson": "sre-05-reliability-patterns",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đội bạn muốn biết hệ thống \"sập ở đâu và sập như thế nào\" khi bị đẩy vượt giới hạn. Loại test nào phù hợp nhất?",
+    "options": [
+      "Load test",
+      "Soak test",
+      "Stress test",
+      "Spike test"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Câu hỏi \"sập ở đâu và sập như thế nào\" chính là mục tiêu của stress test.\n✓ Stress test đẩy quá giới hạn để tìm điểm gãy và cách gãy.\n✗ Load test chỉ kiểm tra tải peak dự kiến có đạt SLO không.\n✗ Soak test chạy tải vừa nhiều giờ để tìm memory/fd leak, disk fill.\n✗ Spike test kiểm tra autoscaling có kịp khi tăng đột ngột không."
+  },
+  {
+    "id": "sre-q-056",
+    "courseId": "SRE",
+    "lesson": "sre-05-reliability-patterns",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong load test, một kỹ sư dùng closed-loop (N user cố định, gửi request kế tiếp khi nhận response) và thấy p99 rất đẹp. Vấn đề tiềm ẩn là gì?",
+    "options": [
+      "Closed-loop tạo quá nhiều tải nên p99 bị thổi phồng xấu đi",
+      "Closed-loop tự giới hạn tải khi hệ thống chậm lại và gây coordinated omission, làm p99 đẹp giả tạo",
+      "Closed-loop không thể đo p99, chỉ đo trung bình",
+      "Closed-loop luôn bỏ qua warm-up nên số liệu vô nghĩa"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Closed-loop chờ response trước khi gửi tiếp nên khi server chậm, nó tự giảm tải.\n✓ Việc tự giới hạn này che giấu vấn đề và gây coordinated omission khiến p99 đẹp giả tạo; nên dùng open-loop arrival-rate.\n✗ Closed-loop không thổi phồng tải lên mà ngược lại, giảm tải khi server chậm.\n✗ Closed-loop vẫn đo được p99, vấn đề là số liệu bị lệch.\n✗ Warm-up là yếu tố riêng, không phải bản chất của closed-loop."
+  },
+  {
+    "id": "sre-q-057",
+    "courseId": "SRE",
+    "lesson": "sre-05-reliability-patterns",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Để load test phản ánh đúng thực tế production, những thực hành nào sau đây là ĐÚNG theo bài?",
+    "options": [
+      "Bỏ qua số đo đầu tiên, cho hệ thống warm-up 5-10 phút trước khi đo",
+      "Lặp gọi cùng một endpoint với cùng payload để dễ so sánh",
+      "Phân bố endpoint và cardinality dữ liệu theo tỷ lệ production thật, có think time",
+      "Đẩy tải qua load balancer/DNS thật thay vì gọi thẳng instance",
+      "Test trên môi trường nhỏ hơn rồi nhân tỷ lệ để tiết kiệm"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "Bài liệt kê warm-up, realistic traffic và test từ ngoài vào là các nguyên tắc làm đúng.\n✓ Warm-up 5-10 phút trước khi đo vì JIT/cache/pool còn lạnh.\n✓ Phân bố endpoint, cardinality thật và think time để không trúng cache 100%.\n✓ Đẩy qua LB/DNS thật để test cả LB, TLS, autoscaling.\n✗ Lặp cùng endpoint cùng payload làm mọi thứ trúng cache, kết quả vô nghĩa.\n✗ Test môi trường nhỏ rồi nhân tỷ lệ là sai vì bottleneck thường phi tuyến."
+  },
+  {
+    "id": "sre-q-058",
+    "courseId": "SRE",
+    "lesson": "sre-05-reliability-patterns",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bước ĐẦU TIÊN trong quy trình chaos engineering theo bài là gì?",
+    "options": [
+      "Tiêm lỗi với blast radius lớn nhất để tiết kiệm thời gian",
+      "Định nghĩa steady state bằng một metric kinh doanh đo được",
+      "Tắt toàn bộ một region",
+      "Viết postmortem trước khi thử nghiệm"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Quy trình chaos bắt đầu bằng việc định nghĩa steady state.\n✓ Steady state là một metric kinh doanh đo được (vd checkout success rate ≥ 99.5%) làm cơ sở so sánh.\n✗ Phải bắt đầu blast radius nhỏ nhất (1 instance, 1% traffic), không phải lớn nhất.\n✗ Tắt cả region là mở rộng cực đoan, không phải bước đầu.\n✗ Postmortem là sau sự cố, không phải bước khởi đầu chaos."
+  },
+  {
+    "id": "sre-q-059",
+    "courseId": "SRE",
+    "lesson": "sre-05-reliability-patterns",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Khi hệ thống quá tải, cách load shedding ĐÚNG là gì?",
+    "options": [
+      "Giữ request trong queue càng lâu càng tốt để không mất request nào",
+      "Drop trước traffic doanh thu, ưu tiên giữ health-check probe của bot",
+      "Trả nhanh 503 với Retry-After và shed theo priority, drop request ít quan trọng trước",
+      "Chờ đến khi OOM rồi mới bắt đầu từ chối request"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Load shedding chủ động từ chối một phần request để bảo vệ phần còn lại.\n✓ Trả nhanh 503 kèm Retry-After và shed theo priority (drop request ít quan trọng trước) là đúng.\n✗ Giữ request lâu trong queue gây client timeout + retry, tệ hơn.\n✗ Phải drop bot/batch trước, giữ lại traffic doanh thu — không ngược lại.\n✗ Phải shed trước khi cạn tài nguyên, không đợi tới OOM."
+  },
+  {
+    "id": "sre-q-060",
+    "courseId": "SRE",
+    "lesson": "sre-05-reliability-patterns",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Client gặp lỗi → retry ngay → tăng tải → nhiều lỗi hơn → retry nhiều hơn. Đây là hiện tượng gì và biện pháp bắt buộc?",
+    "options": [
+      "Coordinated omission; khắc phục bằng warm-up",
+      "Retry storm; bắt buộc exponential backoff + jitter, retry budget và circuit breaker",
+      "Split-brain; khắc phục bằng quorum/leader election",
+      "Flapping; khắc phục bằng hysteresis"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Vòng lặp lỗi-retry-tăng tải là retry storm.\n✓ Biện pháp bắt buộc gồm exponential backoff + jitter, retry budget (vd ≤10% request), và circuit breaker.\n✗ Coordinated omission là vấn đề của load tool che giấu latency, khắc phục bằng arrival-rate executor.\n✗ Split-brain là hai node cùng nghĩ mình primary, dùng quorum.\n✗ Flapping là dao động failover/failback, dùng hysteresis — không liên quan retry."
+  },
+  {
+    "id": "sre-q-061",
+    "courseId": "SRE",
+    "lesson": "sre-05-reliability-patterns",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một search service và payment service dùng chung pool 100 connection tới cùng DB proxy. Search bị chậm và ăn hết 100 connection nên payment cũng timeout. Những cách nào giúp cô lập lỗi này?",
+    "options": [
+      "Áp dụng bulkhead: pool riêng cho từng dependency/criticality",
+      "Tăng pool chung lên 1000 connection",
+      "Đặt timeout aggressive cho mọi network call thay vì default-infinite",
+      "Dùng circuit breaker để ngừng gọi dependency đang chết",
+      "Gộp thêm analytics service vào cùng pool để dùng chung tài nguyên"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "Đây là vấn đề shared connection pool, cần các kỹ thuật cô lập dependency.\n✓ Bulkhead tách pool riêng theo dependency/criticality nên một dep treo không nuốt hết tài nguyên của dep khác.\n✓ Timeout aggressive ngăn call treo vô hạn giữ connection.\n✓ Circuit breaker ngừng gọi dep đang chết để fail nhanh và cho dep hồi phục.\n✗ Tăng pool chung chỉ trì hoãn vấn đề, search chậm vẫn có thể ăn hết toàn bộ.\n✗ Gộp thêm service vào cùng pool làm tệ hơn, càng dễ exhaustion lan rộng."
+  },
+  {
+    "id": "sre-q-062",
+    "courseId": "SRE",
+    "lesson": "sre-05-reliability-patterns",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một DR plan yêu cầu \"mất tối đa 5 phút dữ liệu\" và \"khôi phục dịch vụ trong vòng vài phút\". Cặp con số này tương ứng với khái niệm nào?",
+    "options": [
+      "RPO ~5 phút và RTO ~vài phút",
+      "RTO ~5 phút và RPO ~vài phút",
+      "Cả hai đều là RTO",
+      "Cả hai đều là RPO"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "RPO đo lượng dữ liệu được phép mất, RTO đo thời gian khôi phục dịch vụ.\n✓ \"Mất tối đa 5 phút dữ liệu\" là RPO ~5 phút; \"khôi phục trong vài phút\" là RTO ~vài phút.\n✗ Đảo ngược RTO/RPO là sai vì dữ liệu mất thuộc RPO chứ không phải RTO.\n✗ Hai con số đo hai thứ khác nhau, không thể cùng là RTO.\n✗ Cũng không thể cùng là RPO."
+  },
+  {
+    "id": "sre-q-063",
+    "courseId": "SRE",
+    "lesson": "sre-05-reliability-patterns",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Tài liệu ghi RPO ~0 nhờ replication \"real-time\", nhưng trong DR drill bạn đo được dữ liệu region DR thiếu 45 giây so với thời điểm mất. Bài học rút ra là gì?",
+    "options": [
+      "RPO trên giấy có thể sai vì replication lag thực tế tăng dưới tải cao; phải đo RPO dưới tải",
+      "Drill đã thất bại nên phải bỏ region DR",
+      "Replication real-time luôn cho RPO = 0 nên số đo bị lỗi dụng cụ",
+      "RTO mới quan trọng, RPO không cần đo"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bẫy được nêu trong bài: RPO đẹp trên giấy nhưng replication lag thực tế cao dưới tải.\n✓ Phải đo RPO dưới tải, không phải lúc rảnh, vì lag thực tế (vd 45s) phơi bày sự thật.\n✗ Drill phơi bày sai lệch là thành công của drill, không phải lý do bỏ region DR.\n✗ Replication real-time không đảm bảo RPO=0; lag là có thật.\n✗ RPO vẫn rất quan trọng và chính là thứ cần đo ở đây."
+  },
+  {
+    "id": "sre-q-064",
+    "courseId": "SRE",
+    "lesson": "sre-05-reliability-patterns",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao bài cảnh báo về \"cold standby chưa từng nhận traffic\" trong mô hình active-passive?",
+    "options": [
+      "Vì standby luôn đắt hơn active-active",
+      "Vì khi failover thật, standby có thể có config cũ, cache lạnh, thiếu IAM permission → failover thất bại đúng lúc cần nhất",
+      "Vì standby tự động trở thành primary mọi lúc",
+      "Vì cold standby gây split-brain"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cold standby chưa được chứng minh nên tiềm ẩn lỗi lúc failover.\n✓ Khi cần failover, standby có thể config cũ/cache lạnh/thiếu IAM permission khiến failover thất bại; nên rotate traffic để giữ nó ấm.\n✗ Active-passive thực ra rẻ hơn về tận dụng tài nguyên, không phải lý do.\n✗ Standby chỉ promote khi failover, không tự thành primary mọi lúc.\n✗ Split-brain là vấn đề riêng, được xử lý bằng quorum/leader election."
+  },
+  {
+    "id": "sre-q-065",
+    "courseId": "SRE",
+    "lesson": "sre-05-reliability-patterns",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Health check kiểu \"process còn sống\" (shallow check) báo healthy nhưng service không kết nối được DB. Cách khắc phục đúng là gì?",
+    "options": [
+      "Dùng deep health check kiểm tra khả năng phục vụ thật như DB connectivity",
+      "Giảm tần suất health check để tránh nhiễu",
+      "Tắt health check và dựa vào alert thủ công",
+      "Tăng timeout của health check lên vô hạn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Shallow check chỉ kiểm process còn sống nên không phản ánh khả năng phục vụ thật.\n✓ Deep health check kiểm DB connectivity phản ánh đúng khả năng phục vụ, tránh báo healthy giả.\n✗ Giảm tần suất không sửa được bản chất check nông.\n✗ Tắt health check loại bỏ cơ chế tự động phát hiện lỗi.\n✗ Timeout vô hạn đi ngược nguyên tắc timeout aggressive và không giải quyết vấn đề."
+  },
+  {
+    "id": "sre-q-066",
+    "courseId": "SRE",
+    "lesson": "sre-06-progressive-delivery",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, vì sao phần lớn (60-80%) sự cố production bắt nguồn từ deploy/config/flag chứ không phải hệ thống tự hỏng?",
+    "options": [
+      "Vì hạ tầng cloud không bao giờ gặp sự cố phần cứng",
+      "Vì production đang chạy ổn định là bằng chứng phiên bản hiện tại 'đủ tốt', nên biến số chủ động thay đổi duy nhất là deploy",
+      "Vì các công ty SaaS không giám sát hệ thống ở trạng thái nghỉ",
+      "Vì code mới luôn có nhiều bug hơn code cũ về bản chất"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Hệ thống ở steady state hiếm khi tự hỏng; thay đổi do con người đưa vào mới là rủi ro chính.\n✓ Production ổn định chứng minh bản hiện tại đủ tốt, nên deploy là biến số chủ động duy nhất\n✗ Hạ tầng vẫn có thể hỏng, nhưng đó không phải lý do mẫu hình 60-80% được nêu\n✗ Việc không giám sát steady state không phải lập luận của bài\n✗ Bài không nói code mới 'về bản chất' nhiều bug hơn; vấn đề là thay đổi là biến số được đưa vào"
+  },
+  {
+    "id": "sre-q-067",
+    "courseId": "SRE",
+    "lesson": "sre-06-progressive-delivery",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Phân biệt 'Deploy' và 'Release' theo bài học, đâu là mô tả đúng?",
+    "options": [
+      "Deploy = bật tính năng cho người dùng thấy; Release = đưa binary lên production",
+      "Deploy = đưa binary/code lên production (kỹ thuật); Release = bật tính năng cho người dùng nhìn thấy (sản phẩm)",
+      "Deploy và Release là hai từ đồng nghĩa hoàn toàn",
+      "Deploy chỉ áp dụng cho canary, Release chỉ áp dụng cho feature flag"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài định nghĩa rõ deploy là kỹ thuật, release là quyết định sản phẩm.\n✓ Deploy đưa code lên production; Release bật tính năng cho người dùng\n✗ Mô tả đảo ngược hai khái niệm\n✗ Chúng không đồng nghĩa; tách chúng là điểm quan trọng nhất của feature flag\n✗ Cả hai không bị giới hạn theo kỹ thuật canary/flag như vậy"
+  },
+  {
+    "id": "sre-q-068",
+    "courseId": "SRE",
+    "lesson": "sre-06-progressive-delivery",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khi metric chuyển đỏ ngay sau một lần deploy do code, nguyên tắc mặc định của bài là gì?",
+    "options": [
+      "Forward fix: sửa nhanh một dòng rồi đẩy bản mới lên ngay",
+      "Rollback trước, điều tra sau",
+      "Chờ thêm 30 phút xem metric có tự hồi không",
+      "Tắt toàn bộ alert để giảm nhiễu rồi mới xử lý"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Khôi phục dịch vụ là ưu tiên số một; root cause để hậu sự cố.\n✓ Rollback trước, điều tra sau là nguyên tắc mặc định\n✗ Forward fix là code viết vội dưới áp lực, rủi ro cao, chưa qua canary\n✗ Chờ metric tự hồi kéo dài thời gian ảnh hưởng người dùng\n✗ Tắt alert che giấu vấn đề, không khôi phục dịch vụ"
+  },
+  {
+    "id": "sre-q-069",
+    "courseId": "SRE",
+    "lesson": "sre-06-progressive-delivery",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "SLO availability là 99.9%/tháng. Error budget xấp xỉ bao nhiêu downtime mỗi tháng?",
+    "options": [
+      "Khoảng 4.3 phút/tháng",
+      "Khoảng 43 phút/tháng",
+      "Khoảng 7 giờ/tháng",
+      "Khoảng 0.1 giây/tháng"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Error budget = 0.1% của một tháng ≈ 43 phút.\n✓ 0.1% thời gian trong tháng tương đương khoảng 43 phút downtime\n✗ 4.3 phút tương ứng SLO 99.99%, không phải 99.9%\n✗ 7 giờ là mức của SLO khoảng 99%\n✗ 0.1 giây sai về bậc độ lớn"
+  },
+  {
+    "id": "sre-q-070",
+    "courseId": "SRE",
+    "lesson": "sre-06-progressive-delivery",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một team đẩy canary 1% nhưng SLI error rate được tính tổng hợp trên 100% traffic. Hậu quả là gì?",
+    "options": [
+      "Alert sẽ kêu sớm hơn vì có thêm dữ liệu canary",
+      "1% xấu bị 99% tốt làm loãng nên alert gần như không bao giờ kêu; canary chỉ là trang trí",
+      "Canary tự động được promote lên 100% nhanh hơn",
+      "Latency baseline bị tính sai thành cao hơn thực tế"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Phải tách label version=canary để đánh giá riêng nhóm canary.\n✓ Lỗi của 1% canary bị 99% bản ổn định pha loãng, alert không bao giờ kích hoạt\n✗ Việc trộn dữ liệu làm alert kém nhạy chứ không kêu sớm hơn\n✗ Không có cơ chế tự promote nhanh hơn từ việc trộn metric\n✗ Vấn đề là tín hiệu canary bị che, không phải baseline bị tính sai"
+  },
+  {
+    "id": "sre-q-071",
+    "courseId": "SRE",
+    "lesson": "sre-06-progressive-delivery",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một migration đổi tên cột user_name -> username rồi deploy code dùng tên mới, khiến rollback bất khả thi. Cách thiết kế đúng theo bài là gì?",
+    "options": [
+      "Deploy gộp cả migration và code trong một bước để giảm số lần deploy",
+      "Expand/contract migration nhiều pha: thêm cột mới ghi cả hai, backfill rồi chuyển đọc, cuối cùng mới xóa cột cũ",
+      "Forward fix ngay khi phát hiện lỗi vì rollback không thể",
+      "Khóa bảng trong suốt quá trình deploy để tránh ghi sai"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Rollback bất khả thi là dấu hiệu thiết kế cần sửa bằng multi-phase migration.\n✓ Expand/contract: thêm cột, ghi cả hai, backfill, đổi đọc, rồi mới contract giúp mọi bước rollback an toàn\n✗ Gộp migration và code làm chính là nguyên nhân rollback bất khả thi\n✗ Forward fix chỉ chữa triệu chứng, không giải quyết thiết kế không quay lui được\n✗ Khóa bảng không giúp bản cũ chạy lại sau khi cột đã bị đổi tên"
+  },
+  {
+    "id": "sre-q-072",
+    "courseId": "SRE",
+    "lesson": "sre-06-progressive-delivery",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bài khuyến nghị gate canary bằng cả ngưỡng tuyệt đối lẫn ngưỡng so sánh với baseline. Vì sao cần ngưỡng so sánh?",
+    "options": [
+      "Vì ngưỡng tuyệt đối không thể viết bằng PromQL",
+      "Để bắt regression tinh vi mà ngưỡng cố định bỏ sót khi baseline vốn đã có chút lỗi nền",
+      "Vì ngưỡng so sánh luôn rẻ hơn về chi phí tính toán",
+      "Để loại bỏ hoàn toàn nhu cầu theo dõi error rate tuyệt đối"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Hai loại ngưỡng bổ sung nhau; so sánh bắt regression tương đối.\n✓ Ngưỡng so sánh phát hiện canary tệ hơn baseline 20% kể cả khi vẫn dưới ngưỡng tuyệt đối\n✗ Ngưỡng tuyệt đối hoàn toàn viết được bằng PromQL (ví dụ >0.01)\n✗ Lý do là độ nhạy phát hiện regression, không phải chi phí tính toán\n✗ Ngưỡng tuyệt đối vẫn cần để bắt lỗi nghiêm trọng, không bị loại bỏ"
+  },
+  {
+    "id": "sre-q-073",
+    "courseId": "SRE",
+    "lesson": "sre-06-progressive-delivery",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Theo policy error-budget-based release freeze, khi error budget đã cháy hết (≤ 0%) thì hành động đúng là gì?",
+    "options": [
+      "Tiếp tục release feature mới nhưng tăng bake time",
+      "Freeze: chỉ cho phép thay đổi giảm rủi ro (P0 fix, reliability work), dừng feature mới",
+      "Tăng SLO mục tiêu lên để có thêm budget",
+      "Chuyển toàn bộ deploy sang thứ Sáu để dồn rủi ro"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Budget cạn thì freeze tự động theo policy.\n✓ Khi budget ≤ 0% chỉ cho phép thay đổi giảm rủi ro và dừng feature mới\n✗ Tăng bake time là hành động ở mức budget cạn dần (10-50%), không phải khi đã cháy hết\n✗ Tăng SLO không tạo thêm budget thực, chỉ là tự lừa dối\n✗ Dồn deploy vào thứ Sáu là anti-pattern bài đã cảnh báo"
+  },
+  {
+    "id": "sre-q-074",
+    "courseId": "SRE",
+    "lesson": "sre-06-progressive-delivery",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Với SLO 99.9% (ngưỡng lỗi nền 0.001), một burn-rate alert dùng hệ số 14.4x trong cửa sổ 1h mang ý nghĩa gì?",
+    "options": [
+      "Budget tháng sẽ bị đốt hết trong khoảng 2 ngày nếu giữ nhịp đốt này",
+      "Dịch vụ đã downtime đúng 14.4 phút",
+      "Error budget còn lại đúng 14.4%",
+      "Cần 14.4 tháng mới đốt hết budget"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Burn rate 14.4x là tốc độ đốt nhanh gấp 14.4 lần, đủ thiêu hết budget tháng trong ~2 ngày.\n✓ Hệ số 14.4x trong 1h tương ứng đốt hết budget tháng trong khoảng 2 ngày\n✗ Burn rate là tốc độ tương đối, không phải số phút downtime cụ thể\n✗ Nó không trực tiếp cho biết phần trăm budget còn lại\n✗ 14.4x là đốt rất nhanh, không phải kéo dài 14.4 tháng"
+  },
+  {
+    "id": "sre-q-075",
+    "courseId": "SRE",
+    "lesson": "sre-06-progressive-delivery",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một dòng 'global config' (ví dụ timeout=0) được đẩy đồng thời mọi region trong 1 giây gây sự cố toàn cầu. Bài rút ra bài học nào?",
+    "options": [
+      "Config không phải code nên không cần qua quy trình rollout",
+      "Config cũng phải đi qua progressive rollout như code vì blast radius của nó có thể toàn cầu tức thì",
+      "Chỉ cần test config trên staging là đủ an toàn",
+      "Timeout luôn phải đặt bằng 0 để fail nhanh"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Config push thường bị coi nhẹ nhưng có thể có blast radius toàn cầu.\n✓ Config phải qua progressive rollout như code vì một dòng sai ảnh hưởng toàn cầu tức thì\n✗ Coi config 'không phải code nên bỏ qua rollout' chính là cái bẫy bài cảnh báo\n✗ Staging không có traffic thật thường không bắt được lỗi thật\n✗ timeout=0 ở đây là ví dụ config sai gây sự cố, không phải khuyến nghị"
+  },
+  {
+    "id": "sre-q-076",
+    "courseId": "SRE",
+    "lesson": "sre-06-progressive-delivery",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn các phát biểu ĐÚNG khi so sánh Canary và Feature Flag theo bảng trong bài.",
+    "options": [
+      "Feature flag có thể tắt tức thì mà không cần deploy, còn canary phải shift traffic hoặc redeploy",
+      "Canary kiểm soát theo phiên bản binary, feature flag kiểm soát theo tính năng/segment người dùng",
+      "Feature flag có rủi ro nợ kỹ thuật cao hơn nếu flag chết không được dọn",
+      "Canary cho phép bật từng tính năng độc lập, còn feature flag bắt toàn bộ release đi cùng nhau",
+      "Cả canary lẫn feature flag đều bắt buộc phải redeploy để tắt"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bảng so sánh nêu rõ đơn vị kiểm soát, tốc độ tắt, phạm vi và nợ kỹ thuật.\n✓ Feature flag tắt tức thì không cần deploy, canary phải shift traffic/redeploy\n✓ Canary theo phiên bản binary, feature flag theo tính năng/segment\n✓ Feature flag dễ phát sinh flag debt nếu không dọn\n✗ Chính feature flag mới bật từng tính năng độc lập; canary đưa cả release đi cùng nhau\n✗ Feature flag tắt tức thì không cần redeploy, nên không phải cả hai đều bắt buộc redeploy"
+  },
+  {
+    "id": "sre-q-077",
+    "courseId": "SRE",
+    "lesson": "sre-06-progressive-delivery",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Đội của bạn muốn thu nhỏ blast radius cho một release rủi ro. Theo bài, đâu là cách làm đúng?",
+    "options": [
+      "Deploy nơi rẻ nhất trước nhưng vẫn đủ traffic thật để SLI có ý nghĩa thống kê",
+      "Phân vùng theo cell/shard và deploy lần lượt từng cell",
+      "Đẩy 100% mọi region cùng lúc để rút ngắn thời gian rollout",
+      "Staged rollout theo region: region nhỏ/ít quan trọng trước, bake, rồi tới region lớn",
+      "Chỉ test trên staging không có traffic thật rồi go-live toàn cầu"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Nguyên tắc cốt lõi là không để một thay đổi chạm 100% cùng lúc.\n✓ Deploy nơi rẻ nhất trước nhưng vẫn đủ traffic thật để SLI có ý nghĩa\n✓ Phân vùng cell/shard và deploy lần lượt giới hạn ảnh hưởng\n✓ Staged rollout theo region từ nhỏ tới lớn với bake time\n✗ Đẩy 100% mọi region cùng lúc tạo blast radius tối đa, đi ngược nguyên tắc\n✗ Staging không traffic thật thường không bắt được lỗi thật"
+  },
+  {
+    "id": "sre-q-078",
+    "courseId": "SRE",
+    "lesson": "sre-06-progressive-delivery",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao bài nhấn mạnh 'nếu một bước trong checklist không tự động hóa được thì đó là nợ kỹ thuật'?",
+    "options": [
+      "Vì checklist thủ công sẽ bị bỏ qua lúc 2 giờ sáng khi đang vội; chỉ gate được pipeline ép buộc mới thực sự bảo vệ",
+      "Vì tự động hóa luôn rẻ hơn làm thủ công về tiền bạc",
+      "Vì checklist thủ công vi phạm chính sách tuân thủ",
+      "Vì on-call không được phép đọc checklist trong sự cố"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chỉ những gate được pipeline ép buộc mới thực sự bảo vệ bạn.\n✓ Checklist thủ công bị bỏ qua khi vội lúc nửa đêm, gate tự động mới đáng tin\n✗ Lý do là độ tin cậy con người, không phải so sánh chi phí tiền bạc\n✗ Bài không viện dẫn chính sách tuân thủ\n✗ Không có quy định cấm on-call đọc checklist"
   }
 ];
 

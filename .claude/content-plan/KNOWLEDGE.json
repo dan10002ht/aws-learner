@@ -104,8 +104,8 @@
       "id": "SRE",
       "kind": "questions",
       "scope": "6 bài (prefix sre)",
-      "status": "pending",
-      "note": ""
+      "status": "done",
+      "note": "78 câu (13×6), build pass"
     },
     {
       "id": "SYSTEM-DESIGN",
