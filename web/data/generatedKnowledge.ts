@@ -8385,7 +8385,1964 @@ const k1: Question[] = [
       3
     ],
     "explanation": "Ký commit xác thực danh tính; .gitattributes điều khiển cách xử lý file.\n✓ Ký chỉ xác thực danh tính, chống mạo danh, và GitHub hiện nhãn Verified.\n✓ author là text tự khai → ai cũng đặt được tên/email người khác, vì thế cần ký.\n✓ `* text=auto` chuẩn hoá line ending, dẹp bệnh diff báo 'cả file thay đổi' giữa các OS.\n✗ Ký commit KHÔNG mã hoá code.\n✗ Git chặn checkout một nhánh ở hai worktree cùng lúc để tránh giẫm chân nhau."
+  },
+  {
+    "id": "web-q-001",
+    "courseId": "WEB",
+    "lesson": "web-01-how-web-works",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn mở trình duyệt và gõ một địa chỉ web rồi nhấn Enter. Trong mô hình client/server, vai trò của trình duyệt là gì?",
+    "options": [
+      "Là client — phía chủ động gửi yêu cầu trước",
+      "Là server — phía phục vụ và chờ yêu cầu",
+      "Vừa là client vừa là server cùng lúc",
+      "Không phải client cũng không phải server, chỉ là cầu nối DNS"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Trình duyệt là client, luôn chủ động mở lời và gửi request trước; server chỉ trả lời khi được hỏi.\n✓ Là client — phía chủ động gửi yêu cầu trước: đúng vai trò của browser.\n✗ Là server — phía phục vụ và chờ yêu cầu: server là máy ở xa chứa dữ liệu, không phải trình duyệt.\n✗ Vừa là client vừa là server cùng lúc: trong tình huống tải trang này browser chỉ đóng vai client.\n✗ Không phải client cũng không phải server, chỉ là cầu nối DNS: browser chính là client; DNS chỉ là một bước phân giải tên miền."
+  },
+  {
+    "id": "web-q-002",
+    "courseId": "WEB",
+    "lesson": "web-01-how-web-works",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Người dùng gõ sai đường dẫn và truy cập một trang không tồn tại trên server. Status code nào server thường trả về?",
+    "options": [
+      "200 OK",
+      "404 Not Found",
+      "500 Internal Server Error",
+      "301 Moved Permanently"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "404 nghĩa là địa chỉ đúng cú pháp nhưng server không tìm thấy tài nguyên đó — đây là lỗi phía client.\n✓ 404 Not Found: đúng, server không tìm thấy thứ được yêu cầu.\n✗ 200 OK: là thành công, không phải lỗi.\n✗ 500 Internal Server Error: là lỗi phía server bị crash, không phải do gõ sai địa chỉ.\n✗ 301 Moved Permanently: là chuyển hướng, không phải không tìm thấy."
+  },
+  {
+    "id": "web-q-003",
+    "courseId": "WEB",
+    "lesson": "web-01-how-web-works",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong URL https://shop.example.com:443/products/ao-thun?size=M#reviews, phần nào là query (tham số gửi kèm)?",
+    "options": [
+      "shop.example.com",
+      "/products/ao-thun",
+      "?size=M",
+      "#reviews"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Query là phần bắt đầu bằng dấu ? mang thông tin thêm gửi kèm.\n✓ ?size=M: đúng, đây là query.\n✗ shop.example.com: đây là host (tên miền).\n✗ /products/ao-thun: đây là path (đường dẫn tới tài nguyên).\n✗ #reviews: đây là fragment, vị trí trong trang do browser tự xử lý."
+  },
+  {
+    "id": "web-q-004",
+    "courseId": "WEB",
+    "lesson": "web-01-how-web-works",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một form đăng ký tài khoản gửi dữ liệu mới (email, mật khẩu) lên server để tạo tài khoản. HTTP method phù hợp nhất là gì?",
+    "options": [
+      "GET",
+      "POST",
+      "DELETE",
+      "PATCH"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Gửi dữ liệu mới lên server để tạo/thay đổi thường dùng POST; GET chỉ để đọc.\n✓ POST: đúng, dùng khi gửi dữ liệu mới lên (đăng ký, gửi form).\n✗ GET: chỉ để xem/đọc, không nên dùng để gửi dữ liệu thay đổi.\n✗ DELETE: dùng để xoá tài nguyên.\n✗ PATCH: dùng để cập nhật một phần tài nguyên đã có."
+  },
+  {
+    "id": "web-q-005",
+    "courseId": "WEB",
+    "lesson": "web-01-how-web-works",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Mở tab Network trong DevTools sau khi tải lại một trang tin tức, bạn thấy gần 90 dòng. Điều này phản ánh đúng nhất điều gì?",
+    "options": [
+      "Trang bị lỗi nên thử lại 90 lần",
+      "Một lần tải trang gồm nhiều request riêng cho HTML, ảnh, CSS, JS...",
+      "Server gửi 90 trang HTML khác nhau",
+      "DNS phải tra cứu 90 địa chỉ IP cho một trang"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Một lần tải trang không phải một request; HTML tham chiếu thêm ảnh, CSS, JS... mỗi thứ là một request riêng.\n✓ Một lần tải trang gồm nhiều request riêng...: đúng, đó là lý do có hàng chục dòng.\n✗ Trang bị lỗi nên thử lại 90 lần: số dòng nhiều là bình thường, không phải lỗi.\n✗ Server gửi 90 trang HTML khác nhau: hầu hết là tài nguyên phụ (ảnh, CSS, JS), không phải 90 trang HTML.\n✗ DNS phải tra cứu 90 địa chỉ IP: DNS chỉ đổi tên miền sang IP, không liên quan số request tài nguyên."
+  },
+  {
+    "id": "web-q-006",
+    "courseId": "WEB",
+    "lesson": "web-01-how-web-works",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn JS sau đặt trong <head>, trước khi <button id=\"nut\"> được dựng: const b = document.getElementById(\"nut\"); b.addEventListener(\"click\", ...). Kết quả là gì?",
+    "options": [
+      "Hoạt động bình thường vì JS luôn chạy sau cùng",
+      "Lỗi: getElementById trả về null vì phần tử chưa tồn tại khi JS chạy",
+      "CSS sẽ không được áp dụng cho nút",
+      "Trang tự động chuyển hướng sang 404"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Browser đọc từ trên xuống; nếu JS chạy trước khi nút được dựng thì getElementById trả về null và gây lỗi.\n✓ Lỗi: getElementById trả về null...: đúng, phần tử chưa tồn tại khi script ở <head> chạy.\n✗ Hoạt động bình thường vì JS luôn chạy sau cùng: không đúng, JS chạy đúng vị trí nó được đặt, từ trên xuống.\n✗ CSS sẽ không được áp dụng: vấn đề ở đây là JS chạy quá sớm, không liên quan CSS.\n✗ Trang tự động chuyển hướng sang 404: lỗi JS không gây chuyển hướng."
+  },
+  {
+    "id": "web-q-007",
+    "courseId": "WEB",
+    "lesson": "web-01-how-web-works",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Backend kiểm tra mật khẩu trong database thấy sai. Theo luồng đăng nhập trong bài, server trả về status code nào và frontend hiển thị gì?",
+    "options": [
+      "200 — hiện \"Chào mừng\"",
+      "401 — hiện \"Sai mật khẩu\"",
+      "404 — hiện \"Không tìm thấy trang\"",
+      "500 — hiện \"Chào mừng\""
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Khi mật khẩu sai, backend trả 401 và frontend hiện thông báo sai mật khẩu; 200 mới là đăng nhập đúng.\n✓ 401 — hiện \"Sai mật khẩu\": đúng theo ví dụ trong bài.\n✗ 200 — hiện \"Chào mừng\": 200 là trường hợp mật khẩu đúng.\n✗ 404 — hiện \"Không tìm thấy trang\": 404 là không tìm thấy tài nguyên, không phải sai mật khẩu.\n✗ 500 — hiện \"Chào mừng\": 500 là lỗi server, và \"Chào mừng\" chỉ hiện khi thành công."
+  },
+  {
+    "id": "web-q-008",
+    "courseId": "WEB",
+    "lesson": "web-01-how-web-works",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một trang tải được HTML nhưng bố cục vỡ và màu sắc biến mất, trong tab Network bạn thấy một file .css trả về 404. Nguyên nhân hợp lý nhất là gì?",
+    "options": [
+      "JavaScript bị tắt trong trình duyệt",
+      "File CSS bị thiếu/sai đường dẫn nên không tải được, khiến phần \"ngoại hình\" không áp dụng",
+      "Server gặp lỗi 5xx nên không trả HTML",
+      "DNS phân giải sai IP của tên miền"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "CSS quy định ngoại hình; file CSS trả 404 nghĩa là nó bị thiếu/sai đường dẫn nên style không áp dụng, gây vỡ bố cục.\n✓ File CSS bị thiếu/sai đường dẫn...: đúng, 404 trên file css giải thích đúng triệu chứng mất style.\n✗ JavaScript bị tắt: JS lo hành động/tương tác, không quyết định màu sắc và bố cục tĩnh.\n✗ Server gặp lỗi 5xx nên không trả HTML: HTML đã tải được, và lỗi là 404 chứ không phải 5xx.\n✗ DNS phân giải sai IP: nếu DNS sai thì cả trang không tải được, nhưng HTML vẫn về bình thường."
+  },
+  {
+    "id": "web-q-009",
+    "courseId": "WEB",
+    "lesson": "web-01-how-web-works",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Theo bài, vì sao JavaScript có thể thay đổi nội dung trang sau khi đã hiển thị, còn HTML thì không tự thay đổi?",
+    "options": [
+      "Vì HTML chạy nhanh hơn JavaScript",
+      "Vì browser biến HTML thành DOM — một cấu trúc sống mà JS đọc và sửa được",
+      "Vì HTML được lưu trên server còn JS chạy trên client",
+      "Vì CSS chặn HTML thay đổi sau khi paint"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "HTML là văn bản tĩnh; sau khi parse, browser tạo DOM — cấu trúc sống mà JavaScript có thể đọc và sửa.\n✓ Vì browser biến HTML thành DOM...: đúng, DOM là cầu nối để JS thay đổi trang.\n✗ Vì HTML chạy nhanh hơn JavaScript: HTML không \"chạy\", nó chỉ mô tả nội dung, không có logic.\n✗ Vì HTML lưu trên server còn JS chạy trên client: cả HTML lẫn JS đều về client; lý do thật là DOM.\n✗ Vì CSS chặn HTML thay đổi: CSS chỉ lo ngoại hình, không liên quan khả năng sửa nội dung."
+  },
+  {
+    "id": "web-q-010",
+    "courseId": "WEB",
+    "lesson": "web-01-how-web-works",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "DNS đóng vai trò gì trong quá trình tải một trang web?",
+    "options": [
+      "Mã hoá dữ liệu giữa client và server",
+      "Đổi tên miền (như example.com) thành địa chỉ IP",
+      "Vẽ HTML ra màn hình thành điểm ảnh",
+      "Quyết định HTTP method của request"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "DNS như \"danh bạ\" của Internet, đổi tên miền dễ nhớ thành địa chỉ IP để máy tìm được nhau.\n✓ Đổi tên miền thành địa chỉ IP: đúng vai trò của DNS.\n✗ Mã hoá dữ liệu...: đó là việc của giao thức https, không phải DNS.\n✗ Vẽ HTML ra màn hình: đó là bước render/paint của browser.\n✗ Quyết định HTTP method: method do request quy định, không liên quan DNS."
   }
 ];
 
-export const generatedKnowledge: Question[] = [...k1];
+const k2: Question[] = [
+  {
+    "id": "web-q-011",
+    "courseId": "WEB",
+    "lesson": "web-01-how-web-works",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những phát biểu nào sau đây ĐÚNG về client/server và luồng request/response trong bài?",
+    "options": [
+      "Server có thể tự gửi trang web cho client mà không cần client yêu cầu trước",
+      "Client luôn là phía mở lời, gửi request trước",
+      "Status code thuộc nhóm 5xx báo lỗi từ phía server",
+      "HTTP method GET dùng để đọc, còn POST thường làm thay đổi trên server",
+      "Fragment (#reviews) được gửi lên server để server xử lý"
+    ],
+    "correctIndices": [
+      1,
+      2,
+      3
+    ],
+    "explanation": "Client luôn hỏi trước; 5xx là lỗi server; GET đọc và POST thường thay đổi.\n✓ Client luôn là phía mở lời, gửi request trước: đúng, đặc điểm cốt lõi.\n✓ Status code 5xx báo lỗi từ phía server: đúng theo bảng phân nhóm.\n✓ GET dùng để đọc, POST thường thay đổi: đúng cách phân biệt trong bài.\n✗ Server tự gửi trang mà không cần yêu cầu: sai, server chỉ trả lời khi được hỏi.\n✗ Fragment được gửi lên server xử lý: sai, fragment do browser tự xử lý ở phía client."
+  },
+  {
+    "id": "web-q-012",
+    "courseId": "WEB",
+    "lesson": "web-01-how-web-works",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Khi nói về vai trò của HTML, CSS, JavaScript, những phát biểu nào ĐÚNG?",
+    "options": [
+      "HTML quy định nội dung và cấu trúc của trang",
+      "CSS quy định màu sắc, font, bố cục — phần ngoại hình",
+      "HTML có if/else và vòng lặp để xử lý logic",
+      "JavaScript xử lý hành động khi người dùng tương tác",
+      "Biết HTML là đã biết lập trình web đầy đủ"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "HTML là cấu trúc, CSS là ngoại hình, JavaScript là hành động; HTML không có logic.\n✓ HTML quy định nội dung và cấu trúc: đúng, HTML là \"bộ xương\".\n✓ CSS quy định màu sắc, font, bố cục: đúng, CSS là \"quần áo\".\n✓ JavaScript xử lý hành động khi tương tác: đúng, JS là \"cơ bắp\".\n✗ HTML có if/else và vòng lặp: sai, HTML chỉ mô tả nội dung, không có logic.\n✗ Biết HTML là đã biết lập trình web đầy đủ: sai, phần \"suy nghĩ\" thuộc về JavaScript."
+  },
+  {
+    "id": "web-q-013",
+    "courseId": "WEB",
+    "lesson": "web-01-how-web-works",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Sắp xếp đúng thứ tự browser xử lý sau khi nhận HTML để hiển thị trang?",
+    "options": [
+      "Paint → Layout → parse HTML thành DOM → chạy JS",
+      "Parse HTML thành DOM → phân tích CSS → Layout → Paint",
+      "Layout → Paint → parse HTML thành DOM → phân tích CSS",
+      "Chạy JS → Paint → Layout → parse HTML thành DOM"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Browser parse HTML thành DOM trước, rồi phân tích CSS, tính Layout (vị trí/kích thước), rồi Paint (vẽ ra điểm ảnh).\n✓ Parse HTML thành DOM → phân tích CSS → Layout → Paint: đúng thứ tự trong bài.\n✗ Paint → Layout → parse HTML...: sai, không thể vẽ trước khi dựng DOM và tính layout.\n✗ Layout → Paint → parse HTML...: sai, phải có DOM trước mới layout được.\n✗ Chạy JS → Paint → Layout...: sai, DOM phải được dựng trước khi mọi bước khác diễn ra."
+  },
+  {
+    "id": "web-q-014",
+    "courseId": "WEB",
+    "lesson": "web-02-html",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, vai trò chính của HTML đối với một trang web là gì?",
+    "options": [
+      "Mô tả cấu trúc và ý nghĩa của nội dung",
+      "Quyết định màu sắc và cỡ chữ",
+      "Tạo hiệu ứng động và xử lý sự kiện",
+      "Lưu trữ dữ liệu người dùng trên máy chủ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "HTML là bộ khung mô tả trang web có những gì và sắp xếp ra sao.\n✓ Mô tả cấu trúc và ý nghĩa là đúng việc của HTML\n✗ Màu sắc, cỡ chữ là việc của CSS\n✗ Hiệu ứng động, xử lý sự kiện là việc của JavaScript\n✗ Lưu trữ dữ liệu trên máy chủ không phải vai trò của HTML"
+  },
+  {
+    "id": "web-q-015",
+    "courseId": "WEB",
+    "lesson": "web-02-html",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đoạn tiếng Việt hiển thị loạn thành \"Tiáº¿ng Viá»‡t\". Nguyên nhân thường gặp nhất là gì?",
+    "options": [
+      "Thiếu <meta charset=\"UTF-8\"> trong <head>",
+      "Quên đặt thẻ <title>",
+      "Đặt nội dung trong <head> thay vì <body>",
+      "Thiếu thuộc tính lang trên thẻ <html>"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài học nói nguyên nhân hầu như luôn là thiếu meta charset UTF-8.\n✓ Thiếu meta charset UTF-8 gây lỗi hiển thị ký tự có dấu\n✗ Thiếu title chỉ làm tab không có tên, không gây lỗi mã ký tự\n✗ Đặt nhầm head/body không gây hiện tượng mã hoá sai này\n✗ Thiếu lang không làm hỏng việc hiển thị ký tự"
+  },
+  {
+    "id": "web-q-016",
+    "courseId": "WEB",
+    "lesson": "web-02-html",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Thẻ nào dưới đây là thẻ rỗng (void), không cần thẻ đóng?",
+    "options": [
+      "<img>",
+      "<p>",
+      "<a>",
+      "<ul>"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Thẻ rỗng không có nội dung nên không cần thẻ đóng.\n✓ Thẻ ảnh là thẻ rỗng, không có thẻ đóng\n✗ Đoạn văn cần thẻ đóng tương ứng\n✗ Liên kết bao bọc nội dung nên cần thẻ đóng\n✗ Danh sách không thứ tự cần thẻ đóng và chứa các mục bên trong"
+  },
+  {
+    "id": "web-q-017",
+    "courseId": "WEB",
+    "lesson": "web-02-html",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cách lồng thẻ nào dưới đây là ĐÚNG?",
+    "options": [
+      "<b><i>chữ</i></b>",
+      "<b><i>chữ</b></i>",
+      "<i><b>chữ</i>",
+      "<b>chữ</i></b>"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Quy tắc: mở sau thì phải đóng trước, giống ngoặc lồng nhau.\n✓ Mở b rồi i, đóng i trước rồi b sau là lồng đúng\n✗ Đóng b trước khi đóng i là lồng sai thứ tự\n✗ Thiếu thẻ đóng b và đóng sai loại\n✗ Thẻ mở và thẻ đóng không khớp loại"
+  },
+  {
+    "id": "web-q-018",
+    "courseId": "WEB",
+    "lesson": "web-02-html",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn muốn một liên kết mở trong tab trình duyệt MỚI khi người dùng click. Cần thêm gì?",
+    "options": [
+      "target=\"_blank\"",
+      "href=\"#\"",
+      "rel=\"new\"",
+      "type=\"blank\""
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Thuộc tính target=\"_blank\" mở liên kết trong tab mới.\n✓ target=\"_blank\" là cách mở tab mới\n✗ href=\"#\" chỉ trỏ neo trong cùng trang\n✗ rel=\"new\" không phải thuộc tính điều khiển tab\n✗ type không áp dụng cho hành vi mở tab của thẻ liên kết"
+  },
+  {
+    "id": "web-q-019",
+    "courseId": "WEB",
+    "lesson": "web-02-html",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong form, để khi click vào chữ nhãn thì con trỏ tự nhảy vào ô nhập email, cần làm gì?",
+    "options": [
+      "Đặt for của <label> trùng với id của <input>",
+      "Đặt for của <label> trùng với name của <input>",
+      "Đặt placeholder của <input> giống nội dung <label>",
+      "Đặt type=\"email\" cho cả <label> và <input>"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Thuộc tính for của label phải trùng id của input để liên kết.\n✓ for của label trùng id của input là cách liên kết đúng\n✗ Liên kết dựa vào id chứ không phải name\n✗ placeholder chỉ là chữ gợi ý, không tạo liên kết\n✗ type không tạo liên kết label-input và label không có type"
+  },
+  {
+    "id": "web-q-020",
+    "courseId": "WEB",
+    "lesson": "web-02-html",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần một danh sách CÁC BƯỚC nấu ăn theo đúng thứ tự (1, 2, 3). Nên dùng thẻ nào bao ngoài?",
+    "options": [
+      "<ol>",
+      "<ul>",
+      "<p>",
+      "<section>"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Danh sách có thứ tự dùng ol để hiển thị số.\n✓ ol là danh sách có thứ tự, hiển thị số phù hợp các bước\n✗ ul là danh sách không thứ tự, hiển thị dấu chấm tròn\n✗ p là đoạn văn, không phải danh sách\n✗ section là một mục/phần của trang, không phải danh sách"
+  },
+  {
+    "id": "web-q-021",
+    "courseId": "WEB",
+    "lesson": "web-02-html",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một bạn dùng <h1> cho mọi tiêu đề chỉ vì muốn chữ to. Nhận định nào đúng theo bài học?",
+    "options": [
+      "Cấp tiêu đề phản ánh ý nghĩa; muốn chữ to thì dùng CSS, mỗi trang nên có một <h1>",
+      "Đúng cách, vì <h1> sinh ra để làm chữ to nhất",
+      "Nên dùng nhiều <h1> để Google đánh giá cao trang",
+      "<h1> và <p> có thể thay thế nhau tuỳ thích"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cấp tiêu đề thể hiện ý nghĩa, không phải kích cỡ.\n✓ Dùng CSS để chỉnh cỡ và một trang nên có đúng một h1\n✗ Dùng h1 chỉ để chữ to là sai mục đích cấp tiêu đề\n✗ Nhiều h1 không phải cách làm đúng cho ý nghĩa cấu trúc\n✗ h1 và p khác vai trò, không thay thế tuỳ thích"
+  },
+  {
+    "id": "web-q-022",
+    "courseId": "WEB",
+    "lesson": "web-02-html",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong trang mẫu, <nav> chứa <a href=\"#menu\">. Khi người dùng click vào liên kết này thì điều gì xảy ra?",
+    "options": [
+      "Cuộn tới phần tử có id=\"menu\" trong cùng trang",
+      "Mở một file tên menu.html",
+      "Tải lại toàn bộ trang từ máy chủ",
+      "Mở liên kết trong tab mới"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Dấu # trỏ tới id của phần tử trong cùng trang, gọi là liên kết neo.\n✓ Cuộn tới phần tử có id menu trong cùng trang là đúng\n✗ Không mở file menu.html vì # là neo nội trang chứ không phải tên file\n✗ Không tải lại trang từ máy chủ\n✗ Không mở tab mới vì không có target _blank"
+  },
+  {
+    "id": "web-q-023",
+    "courseId": "WEB",
+    "lesson": "web-02-html",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trang dùng ảnh <img src=\"banh-su-kem.jpg\" alt=\"Đĩa bánh su kem\" />. Ảnh không hiện, hộp ảnh trống và hiện chữ \"Đĩa bánh su kem\". Nguyên nhân khả dĩ nhất?",
+    "options": [
+      "src sai đường dẫn, file ảnh không nằm đúng chỗ được trỏ tới",
+      "Thiếu thuộc tính alt nên ảnh bị chặn",
+      "Quên đóng thẻ <img>",
+      "Thiếu <meta charset=\"UTF-8\">"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khi src sai đường dẫn, ảnh không tải được và chữ alt hiện ra thay thế.\n✓ src sai đường dẫn là nguyên nhân phổ biến nhất khiến ảnh không hiện\n✗ alt đang có sẵn (chính nó đang hiển thị) nên không thiếu\n✗ img là thẻ rỗng, không cần đóng nên không gây lỗi này\n✗ meta charset liên quan hiển thị ký tự, không liên quan tải ảnh"
+  },
+  {
+    "id": "web-q-024",
+    "courseId": "WEB",
+    "lesson": "web-02-html",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "So với việc dùng toàn <div>, lợi ích chính của semantic HTML như <header>, <nav>, <main> là gì?",
+    "options": [
+      "Giúp Google hiểu trang tốt hơn (SEO) và giúp trình đọc màn hình điều hướng dễ",
+      "Làm các phần tự động có màu sắc và bố cục đẹp",
+      "Tăng tốc độ tải trang vì file nhẹ hơn",
+      "Bắt buộc trình duyệt mã hoá tiếng Việt đúng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Semantic HTML đặt biển tên cho từng phần, tốt cho SEO và accessibility.\n✓ Tốt cho SEO và giúp trình đọc màn hình điều hướng là lợi ích chính\n✗ Về vẻ ngoài header và div trông y hệt, không tự đẹp\n✗ Semantic không nhằm giảm kích thước file hay tăng tốc tải\n✗ Mã hoá tiếng Việt do meta charset quyết định"
+  },
+  {
+    "id": "web-q-025",
+    "courseId": "WEB",
+    "lesson": "web-02-html",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài học, những phát biểu nào về phần <head> và <body> là ĐÚNG?",
+    "options": [
+      "Mọi thứ người dùng nhìn thấy nằm trong <body>",
+      "<title> hiển thị tên trên tab trình duyệt và đặt trong <head>",
+      "<meta charset> đặt trong <head>",
+      "Nội dung trong <head> hiển thị trực tiếp cho người dùng",
+      "<body> chứa thông tin mô tả về trang mà người dùng không thấy"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "head chứa thông tin mô tả trang (ẩn), body chứa nội dung nhìn thấy.\n✓ Mọi thứ thấy được nằm trong body\n✓ title nằm trong head và hiện trên tab\n✓ meta charset nằm trong head\n✗ Nội dung head không hiển thị trực tiếp cho người dùng\n✗ body chứa nội dung thấy được chứ không phải thông tin mô tả ẩn"
+  },
+  {
+    "id": "web-q-026",
+    "courseId": "WEB",
+    "lesson": "web-02-html",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những thói quen accessibility nào được bài học khuyến nghị và mang lại lợi ích kèm theo?",
+    "options": [
+      "Luôn viết alt cho ảnh để trình đọc màn hình mô tả được",
+      "Gắn <label> cho mỗi <input>",
+      "alt còn được Google index và hiện ra khi ảnh tải lỗi",
+      "Với ảnh chỉ để trang trí thì để alt rỗng",
+      "Bỏ alt để trang tải nhanh hơn"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Bài nhấn mạnh viết alt và gắn label, kèm các lợi ích phụ.\n✓ Viết alt giúp trình đọc màn hình mô tả ảnh\n✓ Gắn label cho mỗi input là thói quen quan trọng\n✓ alt được index và hiện khi ảnh lỗi, lợi cho tất cả\n✓ Ảnh trang trí nên để alt rỗng\n✗ Bỏ alt không được khuyến nghị và không phải để tải nhanh"
+  },
+  {
+    "id": "web-q-027",
+    "courseId": "WEB",
+    "lesson": "web-03-css",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Cách gắn CSS nào được khuyên dùng nhất cho một website nhiều trang, dễ bảo trì?",
+    "options": [
+      "Inline: viết CSS trong thuộc tính style của từng thẻ",
+      "Internal: đặt trong thẻ <style> ở <head>",
+      "External: tạo file .css riêng rồi gọi bằng <link>",
+      "Viết CSS trực tiếp trong file JavaScript"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Bài học khuyên dùng file .css riêng vì nhiều trang HTML dùng chung được, sửa một chỗ là cả website đổi.\n✓ File .css riêng gọi bằng <link> giúp tái sử dụng và bảo trì dễ.\n✗ Viết trong thuộc tính style của từng thẻ thì rối, khó tái sử dụng, nên tránh.\n✗ Đặt trong <style> chỉ ổn cho trang nhỏ, một file.\n✗ CSS không viết trong file JavaScript; đó không phải cách gắn CSS."
+  },
+  {
+    "id": "web-q-028",
+    "courseId": "WEB",
+    "lesson": "web-03-css",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Muốn chọn tất cả các thẻ có class=\"canhbao\" trong CSS, ta viết selector nào?",
+    "options": [
+      ".canhbao",
+      "#canhbao",
+      "canhbao",
+      "*canhbao"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Class selector bắt đầu bằng dấu chấm.\n✓ Dấu chấm trước tên class là cú pháp đúng để chọn theo class.\n✗ Dấu thăng dùng cho id, không phải class.\n✗ Viết trống tên (không dấu) khiến CSS đi tìm thẻ <canhbao> không tồn tại.\n✗ Dấu sao là selector chọn mọi phần tử, không phải chọn theo class."
+  },
+  {
+    "id": "web-q-029",
+    "courseId": "WEB",
+    "lesson": "web-03-css",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một thẻ có width: 200px và padding: 20px, KHÔNG đặt box-sizing. Chiều rộng thực tế của hộp là bao nhiêu?",
+    "options": [
+      "160px",
+      "200px",
+      "220px",
+      "240px"
+    ],
+    "correctIndices": [
+      3
+    ],
+    "explanation": "Mặc định (content-box), padding cộng thêm vào width: 200 + 20 (trái) + 20 (phải) = 240px.\n✓ 240px vì padding hai bên phình hộp ra ngoài width.\n✗ 200px chỉ đúng khi đặt box-sizing: border-box.\n✗ 220px chỉ cộng padding một phía là sai.\n✗ 160px là trừ đi padding, ngược với cơ chế mặc định."
+  },
+  {
+    "id": "web-q-030",
+    "courseId": "WEB",
+    "lesson": "web-03-css",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đặt * { box-sizing: border-box; } thì điều gì xảy ra khi width: 200px và thêm padding?",
+    "options": [
+      "Hộp phình thành 240px vì padding cộng thêm",
+      "Hộp vẫn đúng 200px, padding ăn vào trong",
+      "Padding bị bỏ qua hoàn toàn",
+      "width tự động tăng để chứa padding"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Với border-box, width đã bao gồm padding nên hộp luôn đúng 200px, padding ăn vào trong.\n✓ Hộp giữ nguyên 200px, padding tính vào bên trong width.\n✗ Phình thành 240px là hành vi của content-box mặc định, không phải border-box.\n✗ Padding vẫn có tác dụng, không bị bỏ qua; nó chỉ ăn vào trong.\n✗ width không tự tăng; chính việc giữ nguyên width là điểm lợi của border-box."
+  },
+  {
+    "id": "web-q-031",
+    "courseId": "WEB",
+    "lesson": "web-03-css",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Thứ tự 4 lớp của Box Model tính từ TRONG ra NGOÀI là gì?",
+    "options": [
+      "margin → border → padding → content",
+      "content → padding → border → margin",
+      "content → margin → border → padding",
+      "padding → content → border → margin"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Từ trong ra ngoài: nội dung, rồi lề trong, viền, lề ngoài.\n✓ content → padding → border → margin là đúng thứ tự từ trong ra ngoài.\n✗ Bắt đầu bằng margin là từ ngoài vào trong, ngược yêu cầu.\n✗ Đặt margin ngay sau content sai vì border và padding nằm giữa.\n✗ Đặt padding trước content sai vì content là lớp trong cùng."
+  },
+  {
+    "id": "web-q-032",
+    "courseId": "WEB",
+    "lesson": "web-03-css",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần xếp 3 mục menu nằm ngang trên một hàng và dàn đều có khoảng trống giữa hai mép. Cách đúng nhất là gì?",
+    "options": [
+      "display: grid; grid-template-columns: 1fr;",
+      "display: flex; justify-content: space-between;",
+      "display: flex; align-items: space-between;",
+      "text-align: center;"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Xếp một hàng dùng Flexbox; justify-content lo trục ngang, space-between dàn đều ra hai mép.\n✓ display: flex với justify-content: space-between dàn các mục theo chiều ngang.\n✗ align-items điều khiển trục dọc, và space-between không phải giá trị của nó.\n✗ Grid một cột (1fr) sẽ xếp các mục chồng dọc, không thành một hàng ngang.\n✗ text-align: center chỉ căn nội dung văn bản, không sắp xếp các hộp con."
+  },
+  {
+    "id": "web-q-033",
+    "courseId": "WEB",
+    "lesson": "web-03-css",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Flexbox, thuộc tính nào điều khiển việc căn các phần tử con theo TRỤC DỌC (trên-dưới)?",
+    "options": [
+      "justify-content",
+      "align-items",
+      "flex-direction",
+      "gap"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "align-items lo trục dọc (cao thấp) trong Flexbox.\n✓ align-items căn theo trục dọc trên-dưới.\n✗ justify-content lo trục ngang trái-phải.\n✗ flex-direction đổi chiều xếp (hàng hay cột), không phải căn chỉnh.\n✗ gap chỉ tạo khoảng cách giữa các con, không căn chỉnh."
+  },
+  {
+    "id": "web-q-034",
+    "courseId": "WEB",
+    "lesson": "web-03-css",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi nào nên dùng CSS Grid thay vì Flexbox?",
+    "options": [
+      "Khi chỉ cần xếp các phần tử trên một hàng ngang",
+      "Khi cần bố cục hai chiều: nhiều hàng và nhiều cột cùng lúc",
+      "Khi muốn đổi màu chữ theo điều kiện màn hình",
+      "Khi cần thêm khoảng cách giữa hai phần tử"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Flexbox giỏi một chiều; Grid dùng cho bố cục hai chiều hàng và cột cùng lúc.\n✓ Grid hợp khi cần lưới nhiều hàng nhiều cột (hai chiều).\n✗ Xếp một hàng ngang là việc của Flexbox.\n✗ Đổi màu theo màn hình là việc của media query, không liên quan Grid/Flex.\n✗ Khoảng cách giữa phần tử dùng gap, có ở cả Flex lẫn Grid, không phải lý do chọn Grid."
+  },
+  {
+    "id": "web-q-035",
+    "courseId": "WEB",
+    "lesson": "web-03-css",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Với @media (min-width: 768px) { .cot { width: 50%; } } và mặc định .cot { width: 100%; }, trên màn hình rộng 500px thì .cot rộng bao nhiêu?",
+    "options": [
+      "50% vì media query luôn áp dụng",
+      "100% vì màn hình chưa đạt 768px nên media query không kích hoạt",
+      "75% là trung bình của hai giá trị",
+      "Không xác định, phụ thuộc viewport"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "min-width: 768px nghĩa là chỉ áp dụng từ 768px trở lên; 500px chưa đạt nên dùng giá trị mặc định 100%.\n✓ 100% vì 500px nhỏ hơn 768px, khối media query không kích hoạt.\n✗ 50% chỉ áp dụng khi màn hình từ 768px trở lên.\n✗ CSS không lấy trung bình hai giá trị width.\n✗ Kết quả xác định rõ là 100% theo quy tắc mặc định."
+  },
+  {
+    "id": "web-q-036",
+    "courseId": "WEB",
+    "lesson": "web-03-css",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khai báo và sử dụng một biến CSS đúng cú pháp là cặp nào?",
+    "options": [
+      "Khai báo color-chinh: #3498db; dùng color: color-chinh;",
+      "Khai báo --mau-chinh: #3498db; dùng color: var(--mau-chinh);",
+      "Khai báo $mau-chinh: #3498db; dùng color: $mau-chinh;",
+      "Khai báo @mau-chinh: #3498db; dùng color: @mau-chinh;"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Tên biến CSS bắt đầu bằng hai gạch ngang, lấy giá trị bằng var().\n✓ --mau-chinh kèm var(--mau-chinh) là cú pháp biến CSS chuẩn.\n✗ Tên không có hai gạch ngang và dùng trực tiếp không qua var() là sai.\n✗ Tiền tố $ là của Sass, không phải biến CSS thuần.\n✗ Tiền tố @ không phải cách khai báo biến CSS."
+  },
+  {
+    "id": "web-q-037",
+    "courseId": "WEB",
+    "lesson": "web-03-css",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn viết canhbao { color: orange; } (không có dấu chấm) nhưng thẻ <p class=\"canhbao\"> không đổi màu. Vì sao?",
+    "options": [
+      "Vì thiếu dấu chấm nên CSS đi tìm thẻ tên <canhbao> không tồn tại",
+      "Vì màu orange không hợp lệ trong CSS",
+      "Vì class chỉ dùng được với thẻ <div>",
+      "Vì cần thêm dấu thăng # trước tên class"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Thiếu dấu chấm khiến CSS hiểu canhbao là tên thẻ (element selector), tìm thẻ <canhbao> không có nên không áp dụng.\n✓ Không có chấm thì CSS tìm thẻ <canhbao> không tồn tại nên không tô màu.\n✗ orange là tên màu hợp lệ.\n✗ Class dùng được cho mọi thẻ, không riêng <div>.\n✗ Dấu thăng dành cho id; class cần dấu chấm chứ không phải thăng."
+  },
+  {
+    "id": "web-q-038",
+    "courseId": "WEB",
+    "lesson": "web-03-css",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những phát biểu nào về Class và ID selector là ĐÚNG theo bài học?",
+    "options": [
+      "Class bắt đầu bằng dấu chấm và dùng lại được trên nhiều thẻ",
+      "ID bắt đầu bằng dấu thăng và phải duy nhất trong trang",
+      "Một id có thể gắn cho nhiều thẻ khác nhau trong cùng trang",
+      "Class là selector bạn sẽ dùng nhiều nhất",
+      "ID bắt đầu bằng dấu chấm còn class bắt đầu bằng dấu thăng"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Bài nêu: class dùng dấu chấm, tái sử dụng nhiều, dùng nhiều nhất; id dùng dấu thăng và phải duy nhất.\n✓ Class có dấu chấm và dùng lại nhiều lần trên nhiều thẻ.\n✓ ID có dấu thăng và phải duy nhất trong trang.\n✓ Class là selector dùng nhiều nhất theo bài.\n✗ Một id chỉ được gắn cho đúng một thẻ, không gắn cho nhiều thẻ.\n✗ Ký hiệu bị đảo: class là dấu chấm, id là dấu thăng."
+  },
+  {
+    "id": "web-q-039",
+    "courseId": "WEB",
+    "lesson": "web-03-css",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những nguyên tắc nào giúp tổ chức CSS không bị rối theo bài học?",
+    "options": [
+      "Ưu tiên dùng class, hạn chế id và inline style",
+      "Đặt tên class theo ý nghĩa (.nut-canh-bao) thay vì theo hình dáng (.chu-do)",
+      "Lạm dụng inline style cho mọi thứ để viết nhanh",
+      "Gom giá trị lặp lại (màu, khoảng cách) vào biến CSS",
+      "Dùng selector thật dài kiểu div .a .b .c span cho rõ ràng"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Bài khuyên dùng class, đặt tên theo ý nghĩa, gom giá trị lặp vào biến CSS, và tránh selector dài lẫn inline style.\n✓ Ưu tiên class, hạn chế id và inline style.\n✓ Đặt tên class theo ý nghĩa vì màu có thể đổi sau này.\n✓ Gom giá trị lặp lại vào biến CSS để dễ bảo trì.\n✗ Lạm dụng inline style là lỗi người mới hay gặp, không nên.\n✗ Selector quá dài vừa khó đọc vừa khó sửa, nên tránh."
+  },
+  {
+    "id": "web-q-040",
+    "courseId": "WEB",
+    "lesson": "web-04-javascript-dom",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "JavaScript trong bài này chạy ở đâu khi người dùng mở trang web?",
+    "options": [
+      "Trên máy chủ (server) trước khi gửi HTML về",
+      "Bên trong trình duyệt, trên máy của người dùng",
+      "Trong cơ sở dữ liệu của trang",
+      "Trên một máy chủ JS riêng tách khỏi trình duyệt"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "JS được nhúng qua thẻ <script> và mỗi trình duyệt có bộ máy chạy JS ngay trên máy người dùng.\n✓ Bên trong trình duyệt, trên máy người dùng: đúng như bài mô tả.\n✗ Trên máy chủ trước khi gửi HTML: đó là xử lý phía server, không phải JS trình duyệt trong bài này.\n✗ Trong cơ sở dữ liệu: không phải nơi JS chạy.\n✗ Máy chủ JS riêng tách khỏi trình duyệt: sai, JS chạy trong chính trình duyệt."
+  },
+  {
+    "id": "web-q-041",
+    "courseId": "WEB",
+    "lesson": "web-04-javascript-dom",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "DOM (Document Object Model) là gì?",
+    "options": [
+      "Văn bản HTML thô mà trình duyệt lưu nguyên dạng",
+      "Cây các đối tượng (node) trong bộ nhớ được trình duyệt dựng từ HTML",
+      "Một file CSS định nghĩa giao diện",
+      "Một thư viện JavaScript bên ngoài"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Khi đọc HTML, trình duyệt dựng một cây đối tượng trong bộ nhớ; mỗi thẻ là một node.\n✓ Cây các đối tượng trong bộ nhớ dựng từ HTML: đúng định nghĩa DOM.\n✗ Văn bản HTML thô: trình duyệt KHÔNG giữ HTML dạng văn bản thô.\n✗ File CSS: CSS lo giao diện, không phải DOM.\n✗ Thư viện JS bên ngoài: DOM là mô hình của trang, không phải thư viện."
+  },
+  {
+    "id": "web-q-042",
+    "courseId": "WEB",
+    "lesson": "web-04-javascript-dom",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Để đổi chữ hiển thị của một phần tử đã chọn, bạn dùng thuộc tính nào?",
+    "options": [
+      "element.style",
+      "element.classList",
+      "element.textContent",
+      "element.value"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "textContent đặt/đọc nội dung văn bản hiển thị của phần tử.\n✓ textContent: đúng, ví dụ tieuDe.textContent = \"...\".\n✗ style: dùng để đổi CSS trực tiếp, không phải nội dung chữ.\n✗ classList: dùng để thêm/bớt class.\n✗ value: dùng cho giá trị ô nhập <input>, không phải nội dung văn bản chung."
+  },
+  {
+    "id": "web-q-043",
+    "courseId": "WEB",
+    "lesson": "web-04-javascript-dom",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn JS sau cho kết quả gì khi không có phần tử nào trùng selector? const x = document.querySelector(\"#khong-co\"); x.textContent = \"hi\";",
+    "options": [
+      "Tạo mới một phần tử có id đó rồi đặt chữ \"hi\"",
+      "Không làm gì cả, im lặng bỏ qua",
+      "Báo lỗi Cannot read properties of null",
+      "Đặt chữ \"hi\" vào thẻ <body>"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "querySelector trả về null khi không khớp, nên thao tác tiếp theo trên null sẽ báo lỗi.\n✓ Báo lỗi Cannot read properties of null: đúng, vì x là null.\n✗ Tạo mới phần tử: querySelector không tạo gì cả.\n✗ Im lặng bỏ qua: không, nó ném lỗi.\n✗ Đặt chữ vào <body>: sai, không có chuyện đó."
+  },
+  {
+    "id": "web-q-044",
+    "courseId": "WEB",
+    "lesson": "web-04-javascript-dom",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong JS, thuộc tính CSS background-color được viết thế nào khi gán qua element.style?",
+    "options": [
+      "element.style[\"background-color\"] chỉ là cách duy nhất, không có camelCase",
+      "element.style.backgroundColor",
+      "element.style.background_color",
+      "element.style.BackgroundColor"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Tên thuộc tính CSS trong style viết theo camelCase: background-color thành backgroundColor.\n✓ backgroundColor: đúng quy ước camelCase.\n✗ \"không có camelCase\": sai, bài dạy chính camelCase.\n✗ background_color: không phải kiểu đặt tên trong JS.\n✗ BackgroundColor (viết hoa chữ đầu): sai, camelCase bắt đầu bằng chữ thường."
+  },
+  {
+    "id": "web-q-045",
+    "courseId": "WEB",
+    "lesson": "web-04-javascript-dom",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn muốn bật/tắt một class \"active\": nếu phần tử đang có thì bỏ, chưa có thì thêm. Dùng phương thức nào?",
+    "options": [
+      "classList.add(\"active\")",
+      "classList.remove(\"active\")",
+      "classList.toggle(\"active\")",
+      "classList.contains(\"active\")"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "toggle bật/tắt class: có thì bỏ, không có thì thêm.\n✓ toggle: đúng hành vi bật/tắt.\n✗ add: chỉ thêm, không bỏ khi đã có.\n✗ remove: chỉ bỏ, không thêm khi chưa có.\n✗ contains: chỉ kiểm tra true/false, không thay đổi class."
+  },
+  {
+    "id": "web-q-046",
+    "courseId": "WEB",
+    "lesson": "web-04-javascript-dom",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi xử lý sự kiện submit của <form> bằng JS, vì sao thường phải gọi event.preventDefault()?",
+    "options": [
+      "Để gửi form lên server nhanh hơn",
+      "Để chặn hành vi mặc định là tải lại trang khiến JS bị mất",
+      "Để buộc trình duyệt validate dữ liệu",
+      "Để ngăn sự kiện click lan ra phần tử cha"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mặc định submit làm trình duyệt reload trang, xoá sạch những gì JS vừa làm.\n✓ Chặn tải lại trang: đúng, đây là lý do dùng preventDefault trong submit.\n✗ Gửi form nhanh hơn: không liên quan.\n✗ Buộc validate: không phải vai trò của hàm này.\n✗ Ngăn lan ra phần tử cha: đó là stopPropagation, không phải preventDefault."
+  },
+  {
+    "id": "web-q-047",
+    "courseId": "WEB",
+    "lesson": "web-04-javascript-dom",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Đoạn code này báo lỗi null. Cách sửa nào KHÔNG đúng? <head><script> const nut = document.querySelector(\"#nut\"); nut.addEventListener(\"click\", f); </script></head><body><button id=\"nut\">Bấm</button></body>",
+    "options": [
+      "Chuyển thẻ <script> xuống ngay trước </body>",
+      "Bọc code trong document.addEventListener(\"DOMContentLoaded\", ...)",
+      "Đổi querySelector thành querySelectorAll để chắc chắn tìm thấy",
+      "Để script ở cuối body để nút đã được dựng trước khi chạy"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Lỗi do script chạy trước khi <button> được dựng nên querySelector trả về null; cần đảm bảo DOM đã load.\n✗ Đổi sang querySelectorAll: KHÔNG sửa được, lúc đó vẫn chưa có phần tử nào (đây là đáp án cần chọn).\n✓ Chuyển script xuống cuối body: cách sửa đúng trong bài.\n✓ Bọc trong DOMContentLoaded: cách sửa đúng trong bài.\n✓ Để script cuối body: chính là cách 1, đúng."
+  },
+  {
+    "id": "web-q-048",
+    "courseId": "WEB",
+    "lesson": "web-04-javascript-dom",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong handler input, để đọc nội dung người dùng đang gõ trong ô <input>, biểu thức nào đúng? o.addEventListener(\"input\", function (event) { ... });",
+    "options": [
+      "event.value",
+      "event.target.value",
+      "event.textContent",
+      "o.classList.value"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "event.target là phần tử gây sự kiện, .value là nội dung hiện tại của ô nhập.\n✓ event.target.value: đúng như bài dạy.\n✗ event.value: event không có .value trực tiếp.\n✗ event.textContent: ô nhập dùng .value chứ không phải textContent.\n✗ o.classList.value: classList không chứa nội dung gõ."
+  },
+  {
+    "id": "web-q-049",
+    "courseId": "WEB",
+    "lesson": "web-04-javascript-dom",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong mini todo, mỗi <li> có sự kiện click để gạch ngang, và nút Xoá bên trong li gọi li.remove(). Vì sao handler của nút Xoá cần event.stopPropagation()?",
+    "options": [
+      "Để chặn form reload trang",
+      "Để ngăn click trên nút Xoá lan lên kích hoạt luôn click của <li>",
+      "Để nút Xoá xoá được phần tử khỏi DOM",
+      "Để cập nhật event.target.value"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Nút nằm trong li, nên click nút sẽ lan (bubble) lên li; stopPropagation chặn việc đó.\n✓ Ngăn click lan lên click của <li>: đúng vai trò stopPropagation ở đây.\n✗ Chặn form reload: đó là preventDefault, không liên quan tới li.\n✗ Để xoá được phần tử: việc xoá do li.remove() làm, không phải stopPropagation.\n✗ Cập nhật value: không liên quan."
+  },
+  {
+    "id": "web-q-050",
+    "courseId": "WEB",
+    "lesson": "web-04-javascript-dom",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khi nào nên ưu tiên dùng classList thay vì sửa element.style trực tiếp?",
+    "options": [
+      "Khi muốn code sạch, để CSS lo giao diện còn JS chỉ bật/tắt class",
+      "Khi cần đọc giá trị ô nhập",
+      "Khi muốn chặn reload form",
+      "Khi cần xoá phần tử khỏi DOM"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài khuyên ưu tiên classList: CSS lo \"trông thế nào\", JS lo \"khi nào bật class\", dễ bảo trì hơn.\n✓ Để CSS lo giao diện, JS bật/tắt class: đúng tinh thần bài học.\n✗ Đọc giá trị ô nhập: dùng .value, không liên quan classList.\n✗ Chặn reload form: dùng preventDefault.\n✗ Xoá phần tử: dùng .remove()."
+  },
+  {
+    "id": "web-q-051",
+    "courseId": "WEB",
+    "lesson": "web-04-javascript-dom",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, ba bước đúng để tạo một phần tử mới và làm nó hiện trên trang gồm những việc nào? (Chọn tất cả)",
+    "options": [
+      "document.createElement(\"li\") để tạo phần tử",
+      "Đặt nội dung, ví dụ li.textContent = \"Mục mới\"",
+      "Gắn vào cha đang có trên trang, ví dụ parent.appendChild(li)",
+      "Gọi li.remove() để hiển thị nó",
+      "Phải gọi event.preventDefault() trước khi phần tử hiện ra"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Quy trình là create → set content → append; thiếu appendChild thì phần tử không hiện.\n✓ createElement: bước tạo.\n✓ Đặt textContent: bước set content.\n✓ appendChild vào cha: bước gắn vào DOM để hiện.\n✗ li.remove(): xoá phần tử, không phải để hiển thị.\n✗ preventDefault: dùng cho sự kiện submit, không liên quan tới tạo phần tử."
+  },
+  {
+    "id": "web-q-052",
+    "courseId": "WEB",
+    "lesson": "web-04-javascript-dom",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những cặp sự kiện - mô tả nào sau đây ĐÚNG theo bài? (Chọn tất cả)",
+    "options": [
+      "click: người dùng bấm vào phần tử",
+      "submit: một <form> được gửi đi",
+      "input: giá trị ô nhập (<input>, <textarea>) thay đổi",
+      "keydown: trang vừa được tải xong hoàn toàn",
+      "DOMContentLoaded: bắn ra khi DOM đã dựng xong"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Bài mô tả rõ click, submit, input và DOMContentLoaded; keydown là khi một phím được nhấn xuống.\n✓ click khi bấm vào phần tử: đúng.\n✓ submit khi form được gửi: đúng.\n✓ input khi giá trị ô nhập thay đổi: đúng.\n✓ DOMContentLoaded khi DOM đã dựng xong: đúng, dùng để chạy code an toàn.\n✗ keydown gắn với 'trang tải xong': sai, keydown là khi một phím được nhấn xuống."
+  },
+  {
+    "id": "web-q-053",
+    "courseId": "WEB",
+    "lesson": "web-05-apis-fetch",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, API được mô tả ngắn gọn nhất là gì?",
+    "options": [
+      "Một địa chỉ (URL) mà bạn gửi yêu cầu tới, và nó trả về dữ liệu cho bạn",
+      "Một ngôn ngữ lập trình chạy trên trình duyệt",
+      "Một file HTML chứa sẵn toàn bộ dữ liệu",
+      "Một thư viện CSS để làm trang web đẹp hơn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài định nghĩa API như người phục vụ: gửi yêu cầu tới URL và nhận dữ liệu.\n✓ Gửi yêu cầu tới URL và nhận dữ liệu là đúng cách bài mô tả API.\n✗ Ngôn ngữ lập trình chạy trên trình duyệt là JavaScript, không phải API.\n✗ File HTML chứa sẵn dữ liệu mâu thuẫn với việc API lấy dữ liệu từ server.\n✗ Thư viện CSS chỉ liên quan tới trình bày, không phải API."
+  },
+  {
+    "id": "web-q-054",
+    "courseId": "WEB",
+    "lesson": "web-05-apis-fetch",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Điểm khác biệt quan trọng giữa JSON và object JavaScript được bài nhấn mạnh là gì?",
+    "options": [
+      "Tên thuộc tính (key) trong JSON luôn phải có nháy kép",
+      "JSON không thể chứa mảng",
+      "JSON chỉ chứa được số, không chứa chuỗi",
+      "JSON bắt buộc phải có dấu phẩy ở cuối phần tử cuối cùng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu rõ key trong JSON luôn phải có nháy kép và không được có dấu phẩy thừa cuối.\n✓ Key luôn trong nháy kép là khác biệt then chốt với object JS.\n✗ JSON có thể chứa mảng, ví dụ hobbies trong bài.\n✗ JSON chứa được cả số lẫn chuỗi.\n✗ JSON không được có dấu phẩy thừa ở cuối, ngược với phương án này."
+  },
+  {
+    "id": "web-q-055",
+    "courseId": "WEB",
+    "lesson": "web-05-apis-fetch",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao JSON trở thành 'ngôn ngữ chung' cho mọi API?",
+    "options": [
+      "Vì nó chỉ là văn bản (text) nên máy nào cũng đọc được, dù server viết bằng Java, Python hay PHP",
+      "Vì nó chỉ chạy được trên trình duyệt Chrome",
+      "Vì nó nhanh hơn mọi định dạng nhị phân",
+      "Vì nó là một phần bắt buộc của HTML"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài ví JSON như tiếng Anh sân bay: là text nên ngôn ngữ server nào cũng đọc được.\n✓ Là văn bản nên mọi máy/ngôn ngữ đọc được là lý do bài đưa ra.\n✗ JSON không bị giới hạn ở một trình duyệt cụ thể.\n✗ Tốc độ so với định dạng nhị phân không phải lý do bài nêu.\n✗ JSON không phải thành phần bắt buộc của HTML."
+  },
+  {
+    "id": "web-q-056",
+    "courseId": "WEB",
+    "lesson": "web-05-apis-fetch",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Tại sao fetch() trả về một Promise ngay lập tức thay vì trả về dữ liệu luôn?",
+    "options": [
+      "Vì gọi server mất thời gian, JS không thể đóng băng cả trang để đứng đợi",
+      "Vì Promise nhẹ hơn dữ liệu thật nên tải nhanh hơn",
+      "Vì trình duyệt cấm hàm trả về object",
+      "Vì JSON quá lớn nên phải chia nhỏ thành nhiều Promise"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài giải thích fetch trả Promise vì gọi server mất thời gian và không thể đóng băng trang.\n✓ Tránh đóng băng trang trong lúc chờ server là lý do đúng.\n✗ 'Promise nhẹ hơn' không phải lý do bài nêu.\n✗ Trình duyệt không cấm hàm trả về object.\n✗ Kích thước JSON không liên quan tới việc trả Promise."
+  },
+  {
+    "id": "web-q-057",
+    "courseId": "WEB",
+    "lesson": "web-05-apis-fetch",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cho đoạn code:\n\nasync function f() {\n  const res = await fetch(url);\n  const data = res.json();\n  console.log(data.name);\n}\n\nCâu lệnh console.log sẽ in ra gì?",
+    "options": [
+      "Không in ra tên đúng, vì thiếu await trước res.json() nên data là một Promise chứ không phải object",
+      "Tên người dùng bình thường",
+      "Một mảng các tên",
+      "Báo lỗi 404 ngay lập tức"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Thiếu await trước res.json() khiến data là Promise, nên data.name không phải tên thật.\n✓ Thiếu await làm data là Promise nên không lấy được .name đúng.\n✗ In ra tên bình thường chỉ đúng nếu có await trước json().\n✗ Không có mảng tên ở đây vì data còn chưa được giải Promise.\n✗ Việc thiếu await không gây ra lỗi 404."
+  },
+  {
+    "id": "web-q-058",
+    "courseId": "WEB",
+    "lesson": "web-05-apis-fetch",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trang gọi API tới một URL sai đường dẫn, server trả về mã 404. Với code chỉ dùng fetch + await + .json() (không kiểm tra response.ok), điều gì xảy ra?",
+    "options": [
+      "fetch coi đó là 'thành công', code chạy tiếp với dữ liệu rỗng/sai và có thể sinh lỗi khó hiểu ở dòng khác",
+      "fetch tự động ném lỗi và nhảy vào catch ngay lập tức",
+      "Trình duyệt tự hiển thị trang lỗi 404 thay cho trang web",
+      "fetch tự thử lại URL khác cho tới khi thành công"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nhấn mạnh fetch KHÔNG tự coi 404/500 là lỗi, nên code chạy tiếp với dữ liệu sai.\n✓ fetch coi 404 là thành công và tiếp tục với dữ liệu rỗng/sai là đúng.\n✗ fetch không tự ném lỗi khi gặp 404.\n✗ Trình duyệt không thay trang web bằng trang 404 trong trường hợp này.\n✗ fetch không tự thử lại URL."
+  },
+  {
+    "id": "web-q-059",
+    "courseId": "WEB",
+    "lesson": "web-05-apis-fetch",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Để fetch báo lỗi đúng khi server trả về 404 hoặc 500, bạn nên thêm dòng nào?",
+    "options": [
+      "if (!response.ok) throw new Error(`Server trả về lỗi ${response.status}`);",
+      "if (response.json()) return;",
+      "fetch.disableErrors(false);",
+      "response.catch(404);"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài hướng dẫn tự kiểm tra response.ok rồi throw để try/catch bắt được.\n✓ Kiểm tra !response.ok rồi throw là cách đúng bài dạy.\n✗ Kiểm tra response.json() không liên quan tới status và json() trả Promise.\n✗ Không tồn tại hàm fetch.disableErrors.\n✗ response.catch(404) không phải cú pháp hợp lệ."
+  },
+  {
+    "id": "web-q-060",
+    "courseId": "WEB",
+    "lesson": "web-05-apis-fetch",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong ví dụ hiển thị danh sách người dùng, vì sao code dùng danhSach.map(...).join('') trước khi gán vào innerHTML?",
+    "options": [
+      "Vì API trả về một mảng; .map() biến mỗi phần tử thành đoạn HTML, .join('') nối tất cả thành một chuỗi",
+      "Vì .map() gọi lại fetch cho từng người dùng",
+      "Vì .join('') sắp xếp danh sách theo thứ tự bảng chữ cái",
+      "Vì innerHTML chỉ nhận được số, nên phải chuyển mảng thành số"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài giải thích API trả mảng, map tạo HTML mỗi phần tử rồi join nối thành chuỗi gán innerHTML.\n✓ map tạo HTML từng phần tử và join nối thành chuỗi là đúng mục đích.\n✗ map không gọi lại fetch cho từng người dùng.\n✗ join('') chỉ nối chuỗi, không sắp xếp.\n✗ innerHTML nhận chuỗi HTML, không phải chỉ nhận số."
+  },
+  {
+    "id": "web-q-061",
+    "courseId": "WEB",
+    "lesson": "web-05-apis-fetch",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn gọi một API của bên thứ ba và Console hiện lỗi 'blocked by CORS policy'. Cách xử lý đúng theo bài là gì?",
+    "options": [
+      "CORS do server bên kia quyết định; đổi sang API hỗ trợ CORS hoặc dùng server trung gian (proxy) gọi hộ",
+      "Thêm một dòng JS để 'tắt CORS' trong code của bạn",
+      "Sửa lại try/catch cho đúng để CORS biến mất",
+      "Đổi response.json() thành response.text() để vượt qua CORS"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nói CORS do server kiểm soát, không sửa được từ JS phía bạn; phải đổi API hoặc dùng proxy.\n✓ Đổi API hỗ trợ CORS hoặc dùng proxy là hướng đúng bài đưa ra.\n✗ Không có dòng JS nào tắt được CORS.\n✗ try/catch không liên quan tới việc trình duyệt chặn CORS.\n✗ Đổi sang text() không vượt qua được rào CORS."
+  },
+  {
+    "id": "web-q-062",
+    "courseId": "WEB",
+    "lesson": "web-05-apis-fetch",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong ví dụ, dòng box.innerHTML = '<p class=\"loading\">Đang tải...</p>' đặt ở ĐẦU hàm taiDuLieu nhằm mục đích gì?",
+    "options": [
+      "Hiển thị loading state để người dùng biết đang chờ, tránh tưởng nút hỏng và bấm liên tục",
+      "Xóa toàn bộ JavaScript để tăng tốc",
+      "Chuyển JSON thành object trước khi fetch",
+      "Kiểm tra response.ok thay cho try/catch"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nói vì gọi API mất thời gian, nếu màn hình không đổi người dùng tưởng nút hỏng.\n✓ Báo đang chờ để tránh người dùng bấm liên tục là đúng vai trò loading state.\n✗ Nó không xóa JavaScript.\n✗ Việc chuyển JSON thành object do response.json() làm, không phải dòng này.\n✗ Loading state không thay thế cho việc kiểm tra response.ok."
+  },
+  {
+    "id": "web-q-063",
+    "courseId": "WEB",
+    "lesson": "web-05-apis-fetch",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo bài, một lần gọi API thật nên có đủ những thứ nào dưới đây?",
+    "options": [
+      "Loading state (báo đang chờ)",
+      "Kiểm tra response.ok / status",
+      "Bọc trong try/catch để bắt lỗi mạng",
+      "Một dòng JS để tắt CORS",
+      "Xóa hết HTML hiện có trên trang vĩnh viễn"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bài nêu 3 thứ cần đủ: loading state, kiểm tra status, và try/catch.\n✓ Loading state là một trong ba thứ bài khuyến nghị.\n✓ Kiểm tra response.ok/status là cần thiết vì fetch không tự báo 404/500.\n✓ try/catch để bắt lỗi mạng là phần thứ ba bài nêu.\n✗ Không có dòng JS nào tắt được CORS.\n✗ Xóa vĩnh viễn HTML không phải yêu cầu của lời gọi API."
+  },
+  {
+    "id": "web-q-064",
+    "courseId": "WEB",
+    "lesson": "web-05-apis-fetch",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Khi gọi fetch trong một hàm async, những phát biểu nào sau đây ĐÚNG theo bài?",
+    "options": [
+      "await chỉ dùng được bên trong hàm có async",
+      "Có hai chỗ cần await: một cho fetch() và một cho .json()",
+      "response trả về chưa phải là dữ liệu, mà là 'cái phong bì' chứa thông tin phản hồi",
+      "fetch() trả về dữ liệu JSON đã được parse sẵn thành object",
+      "response.status luôn bằng true khi thành công"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bài nêu await cần async, có hai chỗ await, và response là 'phong bì' chứ chưa phải dữ liệu.\n✓ await chỉ dùng trong hàm async là quy tắc bài nêu.\n✓ Cần await cho cả fetch() lẫn .json() là đúng.\n✓ response là phong bì chứa thông tin, phải gọi .json() mới lấy nội dung.\n✗ fetch không tự parse JSON; phải gọi response.json().\n✗ response.status là con số (như 200), còn response.ok mới là true/false."
+  },
+  {
+    "id": "web-q-065",
+    "courseId": "WEB",
+    "lesson": "web-05-apis-fetch",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Mã trạng thái HTTP nào có nghĩa là 'OK — thành công' theo bảng trong bài?",
+    "options": [
+      "200",
+      "404",
+      "401",
+      "500"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bảng trong bài ghi 200 là OK — thành công.\n✓ 200 nghĩa là thành công.\n✗ 404 là không tìm thấy (Not Found).\n✗ 401 là chưa đăng nhập/thiếu quyền (Unauthorized).\n✗ 500 là lỗi server (Server Error)."
+  },
+  {
+    "id": "web-q-066",
+    "courseId": "WEB",
+    "lesson": "web-06-modern-js",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo quy tắc thực dụng trong bài, khi khai báo biến trong JavaScript hiện đại bạn nên ưu tiên thứ tự nào?",
+    "options": [
+      "Mặc định dùng const, khi cần gán lại thì dùng let, không bao giờ dùng var",
+      "Mặc định dùng var cho mọi trường hợp vì ngắn gọn",
+      "Mặc định dùng let, chỉ dùng const cho số",
+      "Dùng var khi cần block-scope, let khi cần function-scope"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài khuyến nghị mặc định const, đổi sang let khi cần gán lại, và bỏ hẳn var.\n✓ Mặc định const, cần gán lại thì let, bỏ var là đúng quy tắc bài đưa ra.\n✗ Dùng var cho mọi trường hợp bị bài khuyên tránh vì hoisting gây bug.\n✗ Mặc định let chỉ const cho số là không đúng tinh thần bài.\n✗ var không phải block-scope mà là function-scope, mô tả này sai bản chất."
+  },
+  {
+    "id": "web-q-067",
+    "courseId": "WEB",
+    "lesson": "web-06-modern-js",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đoạn code sau in ra gì?\n\nconst count = 0;\nconsole.log(count ?? 10);",
+    "options": [
+      "0",
+      "10",
+      "undefined",
+      "null"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "?? chỉ trả vế phải khi vế trái là null hoặc undefined; 0 không phải null/undefined nên giữ nguyên 0.\n✓ 0 đúng vì nullish coalescing không coi 0 là rỗng.\n✗ 10 là kết quả của ||, không phải ??.\n✗ undefined sai vì count có giá trị 0.\n✗ null sai vì count không phải null."
+  },
+  {
+    "id": "web-q-068",
+    "courseId": "WEB",
+    "lesson": "web-06-modern-js",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao trong ví dụ timer, callback của setInterval dùng arrow function thay vì function thường?",
+    "options": [
+      "Vì arrow function không có this riêng mà mượn this từ ngoài, nên this vẫn trỏ tới timer",
+      "Vì arrow function chạy nhanh hơn function thường",
+      "Vì function thường không dùng được trong setInterval",
+      "Vì arrow function tạo this mới trỏ tới window"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Arrow function dùng lexical this, mượn this từ ngữ cảnh bao quanh nên this.seconds vẫn là của timer.\n✓ Arrow không có this riêng, mượn this từ ngoài là lý do đúng.\n✗ Tốc độ không phải lý do; bài không nói arrow nhanh hơn.\n✗ function thường vẫn dùng được trong setInterval, chỉ là this sẽ sai.\n✗ Ngược lại: dùng function thường mới khiến this trỏ window."
+  },
+  {
+    "id": "web-q-069",
+    "courseId": "WEB",
+    "lesson": "web-06-modern-js",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần đặt giá trị mặc định 100 cho biến price, nhưng price = 0 phải được giữ nguyên là 0. Nên viết thế nào?",
+    "options": [
+      "price ?? 100",
+      "price || 100",
+      "price && 100",
+      "price = 100"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "?? chỉ thay thế khi giá trị là null/undefined, nên price = 0 được giữ nguyên.\n✓ price ?? 100 giữ 0 và chỉ thay khi null/undefined, đúng yêu cầu.\n✗ price || 100 biến 0 thành 100 vì 0 là falsy, sai yêu cầu.\n✗ price && 100 trả về 0 khi price là 0 nhưng trả 100 khi price có giá trị, sai logic mặc định.\n✗ price = 100 gán đè vô điều kiện, mất giá trị gốc."
+  },
+  {
+    "id": "web-q-070",
+    "courseId": "WEB",
+    "lesson": "web-06-modern-js",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn code sau in ra gì?\n\nconst [head, ...tail] = [10, 20, 30];\nconsole.log(tail);",
+    "options": [
+      "[20, 30]",
+      "[10, 20, 30]",
+      "20",
+      "[10, 20]"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Rest gom các phần tử còn lại sau head thành mảng, nên tail = [20, 30].\n✓ [20, 30] đúng vì head lấy 10, phần còn lại gom vào tail.\n✗ [10, 20, 30] sai vì 10 đã được gán cho head.\n✗ 20 sai vì tail là mảng, không phải một phần tử.\n✗ [10, 20] sai về cả nội dung lẫn vị trí phần tử được gom."
+  },
+  {
+    "id": "web-q-071",
+    "courseId": "WEB",
+    "lesson": "web-06-modern-js",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với mảng products gồm 3 phần tử, products.map((p) => p.name) trả về gì?",
+    "options": [
+      "Một mảng mới gồm 3 tên, cùng độ dài với mảng gốc",
+      "Một phần tử đầu tiên thoả điều kiện",
+      "Một mảng đã lọc, ngắn hơn mảng gốc",
+      "Một giá trị duy nhất gộp từ cả mảng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "map biến đổi từng phần tử và trả mảng mới cùng độ dài với mảng gốc.\n✓ Mảng mới 3 tên cùng độ dài là đặc trưng của map.\n✗ Lấy một phần tử đầu tiên là hành vi của find.\n✗ Mảng lọc ngắn hơn là hành vi của filter.\n✗ Một giá trị gộp là hành vi của reduce."
+  },
+  {
+    "id": "web-q-072",
+    "courseId": "WEB",
+    "lesson": "web-06-modern-js",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi gọi fetch tới một URL trả về HTTP 404, điều gì xảy ra và phải xử lý ra sao?",
+    "options": [
+      "fetch không reject; phải tự kiểm tra res.ok rồi throw nếu cần",
+      "fetch tự động throw lỗi, không cần kiểm tra gì thêm",
+      "fetch reject ngay vì 404 là lỗi mạng",
+      "res.json() sẽ ném lỗi 404 cho bạn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "fetch chỉ reject khi mất mạng; 404/500 vẫn coi là thành công nên phải tự kiểm tra res.ok.\n✓ Kiểm tra res.ok rồi throw là cách xử lý đúng theo bài.\n✗ fetch không tự throw với 404, nên phải tự kiểm tra.\n✗ 404 không phải lỗi mạng nên fetch không reject vì lý do đó.\n✗ res.json() không chịu trách nhiệm báo lỗi HTTP status."
+  },
+  {
+    "id": "web-q-073",
+    "courseId": "WEB",
+    "lesson": "web-06-modern-js",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong package.json, file nào PHẢI commit lên Git để mọi người cài đặt cùng phiên bản?",
+    "options": [
+      "package-lock.json",
+      "node_modules/",
+      "Cả node_modules/ và package-lock.json đều không commit",
+      "Chỉ commit thư mục dist/"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "package-lock.json ghim đúng phiên bản nên phải commit; node_modules thì cho vào gitignore.\n✓ package-lock.json phải commit để mọi người cài giống nhau.\n✗ node_modules/ không commit, cho vào .gitignore.\n✗ Nói cả hai đều không commit là sai vì lock file cần commit.\n✗ Bài không nói gì về việc chỉ commit dist/."
+  },
+  {
+    "id": "web-q-074",
+    "courseId": "WEB",
+    "lesson": "web-06-modern-js",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn cần tải /api/users và /api/posts, hai request độc lập nhau, sao cho nhanh nhất. Cách nào đúng?",
+    "options": [
+      "Dùng Promise.all để await cả hai fetch song song",
+      "await fetch users xong rồi mới await fetch posts",
+      "Dùng for...of và await từng cái bên trong vòng lặp",
+      "Bỏ async/await, gọi fetch không await"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Các việc độc lập nên gom vào Promise.all để chạy song song, nhanh hơn await tuần tự.\n✓ Promise.all chạy song song hai request độc lập, nhanh nhất.\n✗ await lần lượt từng cái khiến chúng chạy tuần tự, chậm.\n✗ await trong vòng for cũng chạy tuần tự, đúng cái bẫy bài cảnh báo.\n✗ Bỏ await khiến bạn không lấy được kết quả đúng cách."
+  },
+  {
+    "id": "web-q-075",
+    "courseId": "WEB",
+    "lesson": "web-06-modern-js",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn mở trực tiếp file index.html chứa <script type=\"module\"> bằng đường dẫn file:// và module không chạy. Nguyên nhân và cách sửa?",
+    "options": [
+      "Module ES6 chỉ chạy qua HTTP(S); chạy một server tĩnh như npx serve để test",
+      "Phải đổi sang type=\"text/javascript\" thì module mới chạy được",
+      "Trình duyệt không hỗ trợ ES module, phải transpile thủ công",
+      "Thiếu thuộc tính defer trên thẻ script"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Module ES6 không chạy với giao thức file://, cần phục vụ qua HTTP(S) bằng server tĩnh.\n✓ Chạy server tĩnh như npx serve khắc phục đúng vấn đề file://.\n✗ Đổi sang text/javascript làm mất tính năng module, không phải cách sửa.\n✗ Trình duyệt hiện đại có hỗ trợ ES module; vấn đề ở giao thức file://.\n✗ Thiếu defer không phải nguyên nhân khiến module không chạy qua file://."
+  },
+  {
+    "id": "web-q-076",
+    "courseId": "WEB",
+    "lesson": "web-06-modern-js",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Cho res = { data: { user: { profile: null } } }. Giá trị của res?.data?.user?.profile?.city là gì?",
+    "options": [
+      "undefined, không gây lỗi",
+      "Ném TypeError vì profile là null",
+      "null",
+      "Chuỗi rỗng \"\""
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Optional chaining gặp null/undefined sẽ dừng và trả về undefined thay vì ném lỗi.\n✓ undefined không gây lỗi là đúng vì ?. ngắn mạch tại profile null.\n✗ Không ném TypeError vì ?. chính là để tránh crash khi gặp null.\n✗ null sai vì chuỗi ngắn mạch trả về undefined chứ không phải giá trị profile.\n✗ Chuỗi rỗng không liên quan tới optional chaining ở đây."
+  },
+  {
+    "id": "web-q-077",
+    "courseId": "WEB",
+    "lesson": "web-06-modern-js",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những phát biểu nào sau đây ĐÚNG về spread/rest và const? (chọn nhiều)",
+    "options": [
+      "const arr = []; arr.push(1) hợp lệ vì const chỉ cấm gán lại biến, không cấm sửa nội dung",
+      "Spread tạo bản sao nông (shallow copy), ví dụ const copy = [...arr]",
+      "Rest gom nhiều đối số vào một mảng, ví dụ function total(...nums)",
+      "const luôn khiến giá trị bất biến hoàn toàn, không sửa được object bên trong",
+      "Spread và rest dùng hai ký hiệu khác nhau"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "const cấm gán lại biến chứ không cấm sửa nội dung; spread tạo shallow copy; rest gom đối số vào mảng.\n✓ arr.push hợp lệ vì const chỉ cấm gán lại, đúng.\n✓ Spread tạo bản sao nông như const copy = [...arr], đúng.\n✓ Rest gom đối số vào mảng nums, đúng.\n✗ const không làm giá trị bất biến hoàn toàn; object bên trong vẫn sửa được.\n✗ Spread và rest dùng cùng ký hiệu ... chứ không khác nhau."
+  },
+  {
+    "id": "web-q-078",
+    "courseId": "WEB",
+    "lesson": "web-06-modern-js",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Cho file math.js: export const PI = 3.14; export function area(r){...}; export default function greet(name){...}. Những cách import nào ĐÚNG? (chọn nhiều)",
+    "options": [
+      "import greet, { PI, area } from \"./math.js\"",
+      "import * as math from \"./math.js\" rồi dùng math.PI, math.area",
+      "import { greet, PI } from \"./math.js\"",
+      "import greet, area from \"./math.js\"",
+      "import default greet from \"./math.js\""
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "default export import không cần ngoặc, named export phải đặt đúng tên trong { }; import * gom tất cả vào một object.\n✓ import greet, { PI, area } lấy default greet và named PI, area, đúng cú pháp.\n✓ import * as math gom mọi export vào object math, đúng.\n✗ Đặt greet trong { } sai vì greet là default export, không phải named.\n✗ area là named export nên phải nằm trong { }, viết trần là sai cú pháp.\n✗ Không có cú pháp import default greet; default import chỉ viết tên trực tiếp."
+  },
+  {
+    "id": "web-q-079",
+    "courseId": "WEB",
+    "lesson": "web-07-components-spa",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, có thể coi một component như một hàm với mô hình nào?",
+    "options": [
+      "UI = f(props, state)",
+      "DOM = f(server)",
+      "props = f(UI)",
+      "state = f(HTML, CSS)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Component được ví như hàm: đầu vào là props/state, đầu ra là UI.\n✓ Mô tả UI là kết quả của props và state khớp đúng tinh thần component.\n✗ Coi UI là hàm của server bỏ qua bản chất component nhận dữ liệu trả giao diện.\n✗ Đảo ngược thành props là hàm của UI là sai chiều dữ liệu.\n✗ Coi state là hàm của HTML/CSS không phản ánh mô hình hàm của component."
+  },
+  {
+    "id": "web-q-080",
+    "courseId": "WEB",
+    "lesson": "web-07-components-spa",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Sự khác biệt cốt lõi giữa cách viết imperative và declarative khi dựng UI là gì?",
+    "options": [
+      "Imperative ra lệnh thao tác DOM từng bước; declarative mô tả UI trông thế nào theo dữ liệu",
+      "Imperative chỉ chạy trên server; declarative chỉ chạy trên client",
+      "Declarative bắt buộc phải dùng React, imperative thì không",
+      "Imperative nhanh hơn vì không cần dữ liệu"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Imperative là ra lệnh từng bước, declarative là mô tả UI theo dữ liệu rồi để hệ thống cập nhật DOM.\n✓ Phân biệt ra lệnh từng bước với mô tả UI theo dữ liệu là đúng định nghĩa trong bài.\n✗ Cả hai đều chạy trên client trong ngữ cảnh DOM, không phân theo server/client.\n✗ Declarative là tư duy, có thể viết bằng vanilla JS, không bắt buộc React.\n✗ Bài không nói imperative nhanh hơn; ngược lại nó dễ rối khi UI phức tạp."
+  },
+  {
+    "id": "web-q-081",
+    "courseId": "WEB",
+    "lesson": "web-07-components-spa",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, đâu là khác biệt giữa props và state?",
+    "options": [
+      "Props truyền từ ngoài vào và component không tự sửa; state là dữ liệu nội bộ component sở hữu và có thể thay đổi",
+      "Props là dữ liệu nội bộ; state luôn đến từ server",
+      "Props và state giống hệt nhau, chỉ khác tên gọi",
+      "State truyền từ cha xuống con; props thay đổi theo thời gian"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Props đến từ bên ngoài (cha → con) và component không tự sửa; state là dữ liệu nội bộ thay đổi theo thời gian.\n✓ Props từ ngoài vào và state nội bộ có thể đổi là đúng định nghĩa.\n✗ Coi props là nội bộ và state từ server đảo ngược khái niệm.\n✗ Props và state không giống nhau về nguồn gốc và quyền sửa.\n✗ Mô tả state truyền từ cha xuống là nhầm vai trò của props."
+  },
+  {
+    "id": "web-q-082",
+    "courseId": "WEB",
+    "lesson": "web-07-components-spa",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong component createCounter, sau khi gọi setState({ count: state.count + 1 }), điều gì xảy ra để giao diện cập nhật?",
+    "options": [
+      "setState gộp state mới rồi gọi render(), render lại toàn bộ HTML để khớp state",
+      "Hàm tự tìm thẻ <span> rồi gán span.textContent trực tiếp",
+      "Trình duyệt tự reload trang để hiển thị số mới",
+      "fetch được gọi để lấy số đếm mới từ server"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "setState cập nhật state rồi gọi render() để vẽ lại theo mẫu hình đổi state → render lại.\n✓ Gộp state rồi render lại toàn bộ đúng với cài đặt của createCounter.\n✗ Bài nhấn mạnh không bao giờ viết span.textContent = ...; việc cập nhật node là tự động qua render.\n✗ Không có reload trang; SPA/component đổi nội dung mà không reload.\n✗ Số đếm là state nội bộ, không cần fetch từ server."
+  },
+  {
+    "id": "web-q-083",
+    "courseId": "WEB",
+    "lesson": "web-07-components-spa",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bài chỉ ra nhược điểm gì của cách render bằng innerHTML = ... mỗi lần state đổi?",
+    "options": [
+      "Xoá và dựng lại toàn bộ, làm mất focus input/vị trí cuộn và chậm với danh sách lớn",
+      "Không bao giờ cập nhật được DOM khi state đổi",
+      "Khiến state không thể thay đổi được nữa",
+      "Buộc trình duyệt phải gọi lại server mỗi lần render"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "innerHTML = ... xoá và dựng lại toàn bộ nên mất state DOM (focus, cuộn) và chậm với danh sách lớn.\n✓ Mất focus/vị trí cuộn và chậm với danh sách lớn đúng là cảnh báo trong bài.\n✗ Cách này vẫn cập nhật DOM được, chỉ là kém hiệu quả.\n✗ State vẫn thay đổi bình thường; vấn đề nằm ở chi phí dựng lại DOM.\n✗ Render lại bằng innerHTML không gọi server."
+  },
+  {
+    "id": "web-q-084",
+    "courseId": "WEB",
+    "lesson": "web-07-components-spa",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Virtual DOM hoạt động như thế nào để vẫn cho phép viết kiểu \"vẽ lại tất cả\" mà nhanh?",
+    "options": [
+      "Tạo cây object JS mới, so sánh (diff) với cây cũ, rồi chỉ patch những node DOM thật thực sự đổi",
+      "Lưu toàn bộ DOM thật vào localStorage rồi khôi phục khi cần",
+      "Gọi server để server tính phần khác biệt rồi trả HTML mới",
+      "Tắt JavaScript để trình duyệt tự tối ưu việc vẽ lại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Virtual DOM dựng cây object JS mới, diff với cây cũ và chỉ patch phần DOM thật khác biệt.\n✓ Diff cây object rồi patch tối thiểu lên DOM thật đúng quy trình Virtual DOM.\n✗ Virtual DOM không liên quan localStorage.\n✗ Việc diffing diễn ra ở client bằng JS, không nhờ server.\n✗ Không tắt JS; chính JS tính toán phần khác biệt."
+  },
+  {
+    "id": "web-q-085",
+    "courseId": "WEB",
+    "lesson": "web-07-components-spa",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Điểm khác biệt khi chuyển trang giữa MPA và SPA là gì?",
+    "options": [
+      "MPA tải HTML mới từ server và reload; SPA dùng JS đổi nội dung trên trình duyệt không reload",
+      "MPA không reload còn SPA luôn reload toàn trang",
+      "Cả hai đều tải một HTML duy nhất rồi không bao giờ gọi server nữa",
+      "SPA luôn tải nhẹ hơn MPA ở mọi giai đoạn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "MPA tải trang HTML mới và vẽ lại toàn bộ; SPA tải một trang đầu rồi JS đổi nội dung không reload.\n✓ MPA reload với HTML mới còn SPA đổi nội dung bằng JS đúng bảng so sánh.\n✗ Đảo ngược: chính MPA reload còn SPA không reload khi chuyển trang.\n✗ MPA tải HTML mới mỗi lần click, không phải một HTML duy nhất.\n✗ Bài nói SPA tải lần đầu nặng hơn (bundle JS), không nhẹ hơn ở mọi giai đoạn."
+  },
+  {
+    "id": "web-q-086",
+    "courseId": "WEB",
+    "lesson": "web-07-components-spa",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Khi deploy SPA, gõ thẳng tên-miền/about rồi Enter làm server trả 404. Cách sửa đúng là gì?",
+    "options": [
+      "Cấu hình server fallback mọi đường dẫn về index.html để SPA tự xử lý route",
+      "Tạo một file about.html riêng trên server cho mỗi route",
+      "Bỏ History API và dùng reload toàn trang cho mỗi link",
+      "Thêm thẻ <meta> 404 vào index.html"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Server không biết route phía client nên cần fallback mọi đường dẫn về index.html để JS tự xử lý route.\n✓ Fallback mọi path về index.html đúng cách sửa lỗi deploy SPA kinh điển.\n✗ Tạo file HTML riêng cho mỗi route là tư duy MPA, mất ý nghĩa SPA và không khả thi với route động.\n✗ Bỏ History API và reload mỗi link phá bỏ trải nghiệm SPA.\n✗ Thẻ <meta> không giải quyết việc server trả 404 cho path client."
+  },
+  {
+    "id": "web-q-087",
+    "courseId": "WEB",
+    "lesson": "web-07-components-spa",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong đoạn client-side routing, dòng e.preventDefault() bên trong listener click có vai trò gì?",
+    "options": [
+      "Ngăn trình duyệt điều hướng mặc định tới href để JS tự pushState và render",
+      "Ngăn người dùng bấm chuột vào link",
+      "Xoá nội dung của #app trước khi render",
+      "Gọi fetch tới server lấy view tương ứng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "e.preventDefault() chặn hành vi mặc định của thẻ <a> để tránh server reload, nhường cho pushState + render.\n✓ Ngăn điều hướng mặc định để JS tự đổi URL và render đúng mục đích của preventDefault ở đây.\n✗ Nó không vô hiệu hoá việc bấm chuột; sự kiện click vẫn chạy.\n✗ Việc xoá/đổi nội dung #app do render() làm qua innerHTML, không phải preventDefault.\n✗ preventDefault không gọi fetch; routing này render từ object routes."
+  },
+  {
+    "id": "web-q-088",
+    "courseId": "WEB",
+    "lesson": "web-07-components-spa",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Đâu là dấu hiệu rõ ràng nhất (theo bài) cho thấy nên chuyển từ vanilla JS sang framework thật?",
+    "options": [
+      "Bạn thấy mình đang tự viết lại hệ thống re-render, routing, quản lý state — tức một \"mini framework\" tự chế",
+      "Trang chỉ có một form đăng ký tĩnh",
+      "Bạn muốn bundle JS càng nhẹ càng tốt",
+      "Trang chủ yếu là nội dung tĩnh, ít tương tác"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khi vanilla bắt đầu chứa mini framework tự chế (re-render, router, state) là tín hiệu nên dùng framework thật.\n✓ Tự viết lại re-render/routing/state đúng là tín hiệu chuyển sang framework trong bài.\n✗ Một form tĩnh là trường hợp nên dùng vanilla.\n✗ Muốn bundle cực nhẹ là lý do chọn vanilla, không phải framework.\n✗ Nội dung tĩnh ít tương tác cũng nghiêng về vanilla."
+  },
+  {
+    "id": "web-q-089",
+    "courseId": "WEB",
+    "lesson": "web-07-components-spa",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, những trường hợp nào nên ưu tiên dùng framework (React/Vue) thay vì vanilla JS? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "UI phức tạp, nhiều state thay đổi liên tục (dashboard, app realtime)",
+      "Nhiều component tái sử dụng và lồng nhau sâu",
+      "Một landing page tĩnh chỉ có nội dung giới thiệu",
+      "Nhiều người cùng làm, cần cấu trúc và quy ước chung",
+      "Chỉ cần một slider nhỏ rời rạc trên trang"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Framework hợp khi UI phức tạp, nhiều component lồng nhau, hoặc nhiều người cần cấu trúc chung.\n✓ UI phức tạp nhiều state là lý do điển hình dùng framework.\n✓ Nhiều component tái sử dụng và lồng sâu phù hợp framework.\n✓ Nhiều người cùng làm cần cấu trúc/quy ước chung nên dùng framework.\n✗ Landing page tĩnh nên dùng vanilla cho nhẹ.\n✗ Một slider nhỏ rời rạc là widget nhỏ, nên dùng vanilla."
+  },
+  {
+    "id": "web-q-090",
+    "courseId": "WEB",
+    "lesson": "web-07-components-spa",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Đối chiếu vanilla JS và React cho component đếm số, những việc nào React tự động hoá thay cho bạn? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Render lại khi state đổi (vanilla phải tự gọi render())",
+      "Cập nhật DOM tối thiểu qua Virtual DOM (vanilla tự tay hoặc không làm)",
+      "Gắn lại sự kiện sau mỗi lần render (vanilla tự onclick lại)",
+      "Thay đổi hoàn toàn tư duy UI = f(state) thành mô hình khác",
+      "Loại bỏ nhu cầu khai báo state nội bộ trong component"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "React tự động hoá việc re-render, cập nhật DOM tối thiểu và gắn sự kiện; tư duy UI = f(state) vẫn giữ nguyên.\n✓ React tự render lại khi state đổi thay vì bạn tự gọi render().\n✓ Virtual DOM lo cập nhật DOM tối thiểu thay cho bạn.\n✓ Gắn sự kiện qua onClick trong JSX, không phải tự onclick sau mỗi render.\n✗ Tư duy UI = f(state) là giống nhau, React không thay bằng mô hình khác.\n✗ React vẫn cần khai báo state nội bộ (useState), chỉ là cú pháp gọn hơn."
+  },
+  {
+    "id": "web-q-091",
+    "courseId": "WEB",
+    "lesson": "web-07-components-spa",
+    "certifications": [
+      "WEB"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong SPA, khi cần dữ liệu mới để dựng lại phần UI, dữ liệu thường được lấy về bằng cách nào?",
+    "options": [
+      "Gọi fetch tới API rồi JS dựng lại phần UI cần thiết",
+      "Server tự động reload toàn trang và trả HTML mới",
+      "Đọc trực tiếp từ file HTML tĩnh ban đầu, không cần API",
+      "Dùng history.pushState để tải dữ liệu từ server"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SPA lấy dữ liệu mới qua fetch (API) rồi JS dựng lại UI mà không reload.\n✓ Gọi fetch tới API rồi dựng lại UI đúng cách SPA lấy dữ liệu.\n✗ SPA không reload toàn trang khi đổi nội dung; đó là kiểu MPA.\n✗ HTML tĩnh ban đầu không chứa dữ liệu mới; cần API để cập nhật.\n✗ pushState chỉ đổi URL, không tải dữ liệu từ server."
+  }
+];
+
+export const generatedKnowledge: Question[] = [...k1, ...k2];

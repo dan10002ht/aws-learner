@@ -34,8 +34,8 @@
       "id": "WEB",
       "kind": "questions",
       "scope": "7 bài (prefix web)",
-      "status": "pending",
-      "note": ""
+      "status": "done",
+      "note": "91 câu (13×7), build pass"
     },
     {
       "id": "CS",
