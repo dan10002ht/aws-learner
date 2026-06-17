@@ -31282,6 +31282,2242 @@ const k4: Question[] = [
       0
     ],
     "explanation": "Chỉ những gate được pipeline ép buộc mới thực sự bảo vệ bạn.\n✓ Checklist thủ công bị bỏ qua khi vội lúc nửa đêm, gate tự động mới đáng tin\n✗ Lý do là độ tin cậy con người, không phải so sánh chi phí tiền bạc\n✗ Bài không viện dẫn chính sách tuân thủ\n✗ Không có quy định cấm on-call đọc checklist"
+  },
+  {
+    "id": "sd-q-001",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-01-requirements",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong một buổi phỏng vấn system design, theo bài học, con số nào nên được hỏi sớm nhất vì nó định hình toàn bộ hình dạng kiến trúc?",
+    "options": [
+      "Số lượng functional requirements MVP",
+      "Read/write ratio (tỷ lệ đọc/ghi)",
+      "Ngôn ngữ lập trình của team",
+      "Số lượng kỹ sư trong team"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nhấn mạnh read/write ratio là con số quan trọng nhất hỏi được sớm vì nó quyết định toàn bộ hình dạng kiến trúc.\n✓ Read/write ratio: đọc-nhiều thì cache+replica giải quyết 90%, ghi-nhiều thì cache vô dụng, chuyển sang write throughput.\n✗ Số functional requirements: blog và Twitter có functional gần giống nhau, không quyết định kiến trúc.\n✗ Ngôn ngữ lập trình và số kỹ sư: không phải đại lượng ước lượng quy mô của bài."
+  },
+  {
+    "id": "sd-q-002",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-01-requirements",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, khoảng 1 ngày được làm tròn thành bao nhiêu giây để tính QPS nhanh trong đầu?",
+    "options": [
+      "≈ 10^4 giây",
+      "≈ 10^5 giây",
+      "≈ 10^6 giây",
+      "≈ 10^7 giây"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài chốt 86.400 giây/ngày ≈ 10^5 giây, sai ~15% nhưng không đổi bậc độ lớn.\n✓ 10^5: làm tròn từ 86.400, dùng để chia số ghi/ngày ra Write QPS.\n✗ 10^4 và 10^6: lệch một bậc độ lớn, làm sai kết quả 10 lần.\n✗ 10^7: đây xấp xỉ số giây trong một năm (3,15×10^7), không phải một ngày."
+  },
+  {
+    "id": "sd-q-003",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-01-requirements",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, đâu là phân biệt đúng giữa functional và non-functional requirements?",
+    "options": [
+      "Functional là 'hệ thống làm gì', non-functional là 'làm tốt đến mức nào'",
+      "Functional là về latency, non-functional là về tính năng",
+      "Functional quyết định kiến trúc, non-functional thì không",
+      "Cả hai đều chỉ liên quan đến scale"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Functional = hệ thống làm gì (động từ nghiệp vụ), non-functional = làm điều đó tốt đến mức nào.\n✓ 'Làm gì' vs 'làm tốt đến mức nào': đúng định nghĩa của bài.\n✗ Đảo ngược latency/tính năng: latency thuộc non-functional, tính năng thuộc functional.\n✗ Nói functional quyết định kiến trúc: ngược lại, NFR mới là nơi kiến trúc được sinh ra.\n✗ Cả hai chỉ về scale: sai, NFR còn gồm latency, availability, consistency, durability."
+  },
+  {
+    "id": "sd-q-004",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-01-requirements",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một hệ thống ingest metric/log ghi rất nhiều, đọc rất ít. Theo bài, đâu là quyết định phù hợp nhất?",
+    "options": [
+      "Thêm cache lớn vì cache luôn giúp giảm tải",
+      "Tập trung vào write throughput và partition; cache gần như vô dụng",
+      "Thêm read replica để chịu tải đọc",
+      "Dùng CDN để cache ở edge"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nói rõ hệ thống ghi-nhiều thì cache vô dụng, vấn đề chuyển sang write throughput và partition.\n✓ Tập trung write throughput + partition: đúng cho hệ thống ghi-nhiều như ingest metric/log.\n✗ Thêm cache lớn: cache vô dụng khi đọc ít, không có gì để cache hiệu quả.\n✗ Read replica và CDN: đều là giải pháp cho đường đọc, không giúp hệ thống ghi-nhiều."
+  },
+  {
+    "id": "sd-q-005",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-01-requirements",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một bạn ước lượng được hệ thống chịu khoảng 500 QPS và đề xuất ngay dùng Cassandra để 'cho chắc'. Theo bài, đây là dấu hiệu gì?",
+    "options": [
+      "Tư duy đúng đắn về khả năng mở rộng",
+      "Over-engineering, không phải năng lực",
+      "Bắt buộc vì SQL không chịu nổi 500 QPS",
+      "Quyết định tối ưu chi phí"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nói 'Cần Cassandra' cho hệ thống 500 QPS là dấu hiệu over-engineering, không phải năng lực.\n✓ Over-engineering: 500 QPS một Postgres tuned (~5–10k QPS) thừa sức, chưa cần store phân tán.\n✗ Tư duy đúng đắn: architect giỏi biết khi nào KHÔNG scale.\n✗ SQL không chịu nổi 500 QPS: sai, một primary là quá đủ.\n✗ Tối ưu chi phí: ngược lại, làm tăng độ phức tạp và chi phí không cần thiết."
+  },
+  {
+    "id": "sd-q-006",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-01-requirements",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Hệ thống đang read-heavy, p99 cao và dataset vẫn vừa với một node. Theo thứ tự nâng cấp bài khuyến nghị, bước nào nên làm TRƯỚC?",
+    "options": [
+      "Sharding/scale out ngay",
+      "Thêm cache trước khi nghĩ tới sharding",
+      "Chuyển sang LSM store",
+      "Multi-region và edge"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Thứ tự nâng cấp bài đưa ra: scale up → cache → read replica → sharding. Cache hit cứu p99 cho read-heavy.\n✓ Thêm cache trước: rẻ và giải quyết p99 cho read-heavy mà chưa cần phức tạp hoá.\n✗ Sharding/scale out: bước đắt nhất về độ phức tạp, đừng nhảy tới khi cache còn giải quyết được.\n✗ LSM store: dành cho write-heavy vượt một node, không phải bài toán read-heavy này.\n✗ Multi-region/edge: dành cho yêu cầu global low-latency, không phải dataset một node."
+  },
+  {
+    "id": "sd-q-007",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-01-requirements",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với Twitter rút gọn: 200M DAU, mỗi user 2 tweet/ngày. Write QPS trung bình xấp xỉ bao nhiêu (dùng làm tròn của bài)?",
+    "options": [
+      "≈ 400 QPS",
+      "≈ 4.000 QPS",
+      "≈ 40.000 QPS",
+      "≈ 400.000 QPS"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "400M tweet/ngày chia cho 10^5 giây ≈ 4.000 QPS.\n✓ 4.000 QPS: 200M×2 = 400M tweet/ngày, /86.400 ≈ /10^5 = 4.000.\n✗ 400 QPS: thiếu một bậc, như thể chia cho 10^6.\n✗ 40.000 QPS: thừa một bậc.\n✗ 400.000 QPS: đây chính là Read QPS (Write × ratio 100), không phải Write QPS."
+  },
+  {
+    "id": "sd-q-008",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-01-requirements",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong ví dụ Twitter, peak read đạt ~800k QPS còn peak write ~8k QPS. Hệ quả thiết kế chính rút ra là gì?",
+    "options": [
+      "Hệ thống write-heavy, cần shard ghi mạnh tay",
+      "Hệ thống read-heavy, dồn sức vào đường đọc: cache, fan-out, read replica",
+      "Cân bằng đọc/ghi, không cần tối ưu riêng",
+      "Cần dùng strong consistency cho mọi đường ghi"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Chênh 100 lần giữa read và write nói thẳng đây là read-heavy, kiến trúc dồn vào đường đọc.\n✓ Read-heavy, dồn vào đường đọc: cache feed, fan-out, read replica là kết luận của ví dụ.\n✗ Write-heavy: 8k write một cụm DB sharded vừa phải là làm được, không phải điểm nóng.\n✗ Cân bằng đọc/ghi: chênh 100 lần, hoàn toàn không cân bằng.\n✗ Strong consistency mọi đường ghi: bài không rút ra điều này từ các con số."
+  },
+  {
+    "id": "sd-q-009",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-01-requirements",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một ứng viên tính storage/năm là 73 TB rồi dừng và chốt cần ~73 TB dung lượng. Theo bài, lỗi ở đây là gì?",
+    "options": [
+      "Đã quên nhân replication factor (và overhead index/metadata)",
+      "Đã nhân thừa replication factor",
+      "Số 73 TB sai bậc độ lớn ngay từ đầu",
+      "Không cần lưu cả năm nên 73 TB là thừa"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Storage thực = Storage/năm × replication × (1 + overhead). Quên replication làm thiếu vài lần dung lượng.\n✓ Quên replication factor: với factor 3, 73 TB/năm thực tế thành ~219 TB, chưa kể overhead.\n✗ Nhân thừa replication: lỗi ở đây là thiếu, không phải thừa.\n✗ Sai bậc độ lớn từ đầu: 73 TB/năm là con số đúng của ví dụ trước khi nhân replication.\n✗ Không cần lưu cả năm: bài giữ tweet 5 năm, lưu lâu hơn chứ không ít hơn."
+  },
+  {
+    "id": "sd-q-010",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-01-requirements",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bán vé concert/flash sale: traffic phẳng trung bình nhưng có đỉnh ghi cực nhọn. Theo bài, lựa chọn nào hợp lý để hấp thụ spike ghi và hệ số đỉnh nên dùng?",
+    "options": [
+      "Hệ số đỉnh ~1,5×, scale up một DB lớn",
+      "Hệ số đỉnh có thể tới ~50×, dùng queue (SQS/Kinesis) làm buffer tách producer khỏi consumer",
+      "Hệ số đỉnh ~3×, thêm CDN",
+      "Hệ số đỉnh ~2×, thêm read replica"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nêu flash sale có thể 50×, và SQS/Kinesis làm buffer hấp thụ spike ghi, tách producer khỏi consumer.\n✓ ~50× + queue buffer: đúng đặc thù flash sale và đúng vai trò queue trong bảng AWS.\n✗ ~1,5× scale up: 1,5× là hệ thống nội bộ phẳng, không phải flash sale nhọn.\n✗ ~3× + CDN: 3× là mạng xã hội giờ vàng; CDN giúp đường đọc, không hấp thụ spike ghi.\n✗ ~2× + read replica: 2× quá thấp cho flash sale, replica giúp đọc không phải spike ghi."
+  },
+  {
+    "id": "sd-q-011",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-01-requirements",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Cùng functional requirement 'lưu dữ liệu', nhưng số liệu khác nhau. Theo bài, cặp ánh xạ nào đúng?",
+    "options": [
+      "'73 TB/năm read-heavy' → Aurora; '5 GB query phức tạp' → DynamoDB + DAX",
+      "'73 TB/năm read-heavy' → DynamoDB + DAX; '5 GB query phức tạp' → Aurora",
+      "Cả hai đều → S3 vì rẻ nhất",
+      "Cả hai đều → RDS vì cần SQL"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài: '73 TB/năm read-heavy' dẫn tới DynamoDB + DAX, còn '5 GB query phức tạp' dẫn tới Aurora.\n✓ 73 TB read-heavy → DynamoDB+DAX; 5 GB query phức tạp → Aurora: đúng nguyên văn bài.\n✗ Đảo ngược hai vế: query phức tạp cần SQL của Aurora, không phải DynamoDB.\n✗ Cả hai → S3: S3 hợp cho storage lớn ít query nóng (ảnh/video), không cho query phức tạp.\n✗ Cả hai → RDS: con số mới chọn service, không phải mặc định mọi thứ về SQL."
+  },
+  {
+    "id": "sd-q-012",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-01-requirements",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo ba hệ quả thực dụng của bảng latency, những phát biểu nào ĐÚNG?",
+    "options": [
+      "Memory nhanh hơn disk khoảng 1000 lần nên cache đáng giá",
+      "Round-trip xuyên lục địa (~150ms) có thể tối ưu xuống dưới datacenter nếu code tốt",
+      "Network round-trip đắt nên nên gộp request, tránh N+1, dùng batch",
+      "Cùng datacenter nhanh hơn xuyên lục địa nên đặt data gần user, dùng CDN",
+      "HDD seek nhanh hơn SSD random read"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "Ba hệ quả của bài: memory~1000x disk, cùng-DC~300x nhanh hơn xuyên lục địa, round-trip đắt.\n✓ Memory ~1000x disk → cache đáng giá: đúng hệ quả 1.\n✓ Round-trip đắt → gộp request, tránh N+1, batch: đúng hệ quả 3.\n✓ Cùng DC nhanh hơn → đặt data gần user, CDN: đúng hệ quả 2.\n✗ Xuyên lục địa tối ưu được: bài ghi 'tốc độ ánh sáng, không tối ưu được'.\n✗ HDD nhanh hơn SSD: ngược lại, HDD chậm hơn SSD ~100x."
+  },
+  {
+    "id": "sd-q-013",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-01-requirements",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo bài, đâu là cách tiếp cận đúng trong 3–5 phút đầu khi nhận một đề mơ hồ như 'Thiết kế Twitter'?",
+    "options": [
+      "Hỏi 4–5 câu có ảnh hưởng tới con số rồi tự đưa giả định cho phần còn lại",
+      "Vẽ ngay load balancer, microservice, Kafka để thể hiện kiến thức",
+      "Nói to các giả định mình chốt (ví dụ mỗi URL ~500 bytes)",
+      "Cắt scope tàn nhẫn, chốt tính năng MVP",
+      "Hỏi cho đủ 20 câu để có thông tin đầy đủ rồi mới làm"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "Bài: hỏi 4–5 câu ảnh hưởng con số, tự giả định phần còn lại và nói to, cắt scope tàn nhẫn; đừng vẽ hộp khi chưa có số.\n✓ Hỏi 4–5 câu + tự giả định phần còn lại: người phỏng vấn đánh giá khả năng ra quyết định khi thiếu thông tin.\n✓ Nói to giả định: bài khuyến khích phát biểu giả định ra để xác nhận.\n✓ Cắt scope tàn nhẫn, chốt MVP: đúng bước SCOPE trong khung clarifying.\n✗ Vẽ ngay load balancer/microservice/Kafka: tự bắn vào chân vì chưa biết 50 hay 50k QPS.\n✗ Hỏi đủ 20 câu rồi mới làm: bài cảnh báo đây là cái bẫy, không phải năng lực moi thông tin."
+  },
+  {
+    "id": "sd-q-014",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-02-building-blocks",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn cần một load balancer định tuyến request /api tới service A và /img tới service B, đồng thời terminate TLS. Nên chọn loại nào?",
+    "options": [
+      "L7 (Application/HTTP) vì đọc được URL, header để route theo path và terminate TLS",
+      "L4 (Transport/TCP-UDP) vì nhanh hơn",
+      "L4 vì nó terminate TLS tốt hơn",
+      "Bất kỳ loại nào cũng được vì path routing là tính năng chung"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Path-based routing và TLS termination cần hiểu nội dung HTTP, là đặc quyền của tầng ứng dụng.\n✓ L7 đọc được URL/header/cookie nên route theo path và terminate TLS được\n✗ L4 chỉ nhìn IP+port, không mở payload nên không route theo path được\n✗ L4 không terminate TLS theo logic HTTP (hoặc chỉ passthrough)\n✗ Không phải loại nào cũng làm được; chỉ L7 có khả năng này"
+  },
+  {
+    "id": "sd-q-015",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-02-building-blocks",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Dùng sticky session để 'giữ state' trên một node bị xem là bẫy thiết kế. Lý do chính là gì?",
+    "options": [
+      "Nó phá vỡ tính stateless: node chết là mất session, scale-in mất dữ liệu, tải lệch",
+      "Nó làm load balancer chậm hơn vì phải đọc cookie",
+      "Nó chỉ hoạt động với thuật toán Round Robin",
+      "Nó khiến TLS termination không thể thực hiện"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Sticky gắn user vào một node, nên số phận session phụ thuộc vào node đó.\n✓ Node chết mất session, scale-in mất dữ liệu, tải bị lệch — nên đẩy state ra Redis\n✗ Vấn đề không nằm ở tốc độ đọc cookie\n✗ Sticky thường dùng với hash/affinity chứ không phải bị giới hạn ở Round Robin\n✗ Sticky session không liên quan đến khả năng terminate TLS"
+  },
+  {
+    "id": "sd-q-016",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-02-building-blocks",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong hệ microservices, đâu là dấu hiệu API Gateway bị lạm dụng và sẽ thành 'monolith mới' khó bảo trì?",
+    "options": [
+      "Logic nghiệp vụ đặc thù của từng service bị nhét vào gateway",
+      "Gateway thực hiện authentication và rate limiting cho mọi service",
+      "Gateway làm request routing tới các service",
+      "Gateway gom logging và observability tập trung"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Gateway chỉ nên chứa logic cross-cutting đúng cho mọi service.\n✓ Nhét logic nghiệp vụ đặc thù vào gateway là vi phạm ranh giới, biến nó thành nút thắt\n✗ Auth và rate limiting là cross-cutting concern hợp lệ của gateway\n✗ Request routing là trách nhiệm điển hình của gateway\n✗ Observability tập trung là đúng vai trò của gateway"
+  },
+  {
+    "id": "sd-q-017",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-02-building-blocks",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một key cache 'siêu nóng' vừa hết hạn và hàng nghìn request đồng thời miss, cùng dồn xuống DB. Đây là hiện tượng gì và những điều nào sau đây đúng?",
+    "options": [
+      "Đây là cache stampede, thường gặp ở chiến lược cache-aside khi key nóng hết hạn",
+      "LFU phù hợp khi có key 'siêu nóng' lâu dài cần giữ lại",
+      "Write-back là chiến lược ghi gây ra hiện tượng này",
+      "Cache-aside khiến dữ liệu lần đầu luôn miss",
+      "Chuyển sang L4 load balancer sẽ giải quyết vấn đề này"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Hiện tượng là cache stampede, gắn với đặc tính của cache-aside.\n✓ Cache stampede xảy ra khi key nóng hết hạn trong mô hình cache-aside\n✓ LFU hợp khi có key siêu nóng lâu dài, giúp giữ key nóng không bị bỏ\n✓ Cache-aside khiến dữ liệu lần đầu luôn miss (lazy load)\n✗ Write-back là chiến lược ghi nhanh/rủi ro mất dữ liệu, không phải nguyên nhân stampede\n✗ Tầng load balancer không liên quan tới hiện tượng cache miss này"
+  },
+  {
+    "id": "sd-q-018",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-02-building-blocks",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần cache luôn tươi (không stale) và chấp nhận mỗi lần write chậm hơn. Nên chọn chiến lược ghi nào?",
+    "options": [
+      "Write-through: ghi cache và DB đồng thời",
+      "Cache-aside: chỉ nạp cache khi miss",
+      "Write-back: ghi cache trước, flush DB sau",
+      "Versioned key với TTL dài"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Write-through đánh đổi tốc độ write lấy độ tươi của cache.\n✓ Write-through ghi cache + DB đồng thời nên cache luôn tươi, đổi lại write chậm hơn\n✗ Cache-aside có thể stale và lần đầu luôn miss\n✗ Write-back ghi cache trước, flush DB sau — nhanh nhưng rủi ro mất dữ liệu\n✗ Versioned key giải quyết invalidation chứ không phải mô hình ghi đồng bộ tới DB"
+  },
+  {
+    "id": "sd-q-019",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-02-building-blocks",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Luồng gửi email xác nhận sau khi đặt hàng: được phép xử lý sau, nhưng phải đảm bảo cuối cùng gửi thành công. Cách tiếp cận đúng là gì?",
+    "options": [
+      "Dùng message queue để xử lý bất đồng bộ, có retry và độ bền",
+      "Gọi đồng bộ trong request đặt hàng để user chờ email gửi xong",
+      "Dùng pub/sub để mỗi email được mọi subscriber gửi lại nhiều lần",
+      "Dùng sticky session để giữ trạng thái gửi email"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Queue hợp khi câu trả lời có thể đến sau và việc gửi phải thành công cuối cùng.\n✓ Message queue cho xử lý bất đồng bộ, retry và durability — đúng yêu cầu\n✗ Gọi đồng bộ buộc user chờ và làm luồng đặt hàng phụ thuộc vào email\n✗ Pub/sub broadcast tới mọi subscriber, không phù hợp task gửi một email\n✗ Sticky session không liên quan tới đảm bảo gửi email thành công"
+  },
+  {
+    "id": "sd-q-020",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-02-building-blocks",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Hệ dùng queue với at-least-once delivery để trừ tiền khách. Consumer có thể nhận cùng message hai lần. Cách đúng để tránh trừ tiền hai lần là gì?",
+    "options": [
+      "Làm consumer idempotent bằng idempotency key + dedup store",
+      "Chuyển queue sang pub/sub để giảm số lần giao",
+      "Tăng số consumer để xử lý nhanh hơn",
+      "Dùng synchronous replication ở DB"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "At-least-once nghĩa là message có thể lặp, nên consumer phải xử lý lặp an toàn.\n✓ Idempotent + idempotency key/dedup store đảm bảo xử lý lặp cho cùng kết quả\n✗ Pub/sub không làm giảm số lần một message bị giao lặp\n✗ Tăng consumer không giải quyết vấn đề trùng lặp, thậm chí dễ xử lý song song trùng\n✗ Synchronous replication là về độ bền/nhất quán DB, không chống message lặp"
+  },
+  {
+    "id": "sd-q-021",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-02-building-blocks",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đội bạn thêm nhiều read replica nhưng tải write vẫn nghẽn ở một máy. Vì sao replication không giúp, và cần gì?",
+    "options": [
+      "Replication chỉ giải quyết read scaling; write vẫn dồn vào một leader, cần sharding",
+      "Cần thêm replica đồng bộ thì write sẽ nhanh hơn",
+      "Cần đổi sang L7 load balancer cho tầng DB",
+      "Replication tự động chia write ra các follower"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mọi write trong leader-follower vẫn đi qua một leader duy nhất.\n✓ Replication scale read, không scale write; vượt sức một máy thì cần sharding\n✗ Replica đồng bộ làm write chậm hơn, không nhanh hơn\n✗ Load balancer không giải quyết giới hạn write của một leader\n✗ Follower chỉ phục vụ read, không nhận write"
+  },
+  {
+    "id": "sd-q-022",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-02-building-blocks",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "User cập nhật profile rồi reload nhưng thấy dữ liệu cũ do read trúng follower đang lag (async replication). Cách khắc phục đúng là gì?",
+    "options": [
+      "Route read-after-write của chính user đó về leader trong vài giây, hoặc theo dõi LSN per-user",
+      "Chuyển toàn bộ read về leader vĩnh viễn",
+      "Bỏ hết follower và chỉ dùng leader",
+      "Dùng sharding theo user_id để loại bỏ lag"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Vấn đề là read-your-writes bị vi phạm do replication lag.\n✓ Route read-after-write của chính user về leader vài giây (hoặc theo dõi LSN) giữ read-your-writes\n✗ Đưa toàn bộ read về leader vĩnh viễn phá mục đích read scaling\n✗ Bỏ follower mất khả năng scale đọc và HA\n✗ Sharding giải quyết write scaling, không xử lý replication lag"
+  },
+  {
+    "id": "sd-q-023",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-02-building-blocks",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Đang dùng 'hash(key) % N' để phân shard và chuẩn bị thêm node. Vấn đề lớn nhất là gì, và giải pháp?",
+    "options": [
+      "Đổi N làm gần như mọi key đổi chỗ → đại di trú dữ liệu, cache cháy; dùng consistent hashing để chỉ dời ~1/N",
+      "Range query sẽ nhanh hơn nên không cần lo",
+      "Directory-based sharding là cách duy nhất tránh hotspot",
+      "Synchronous replication sẽ ngăn việc rehash"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "hash % N gắn chặt vị trí key vào số node, nên đổi N gây xáo trộn toàn cục.\n✓ Thêm node làm gần như mọi key đổi chỗ; consistent hashing giới hạn dịch chuyển còn ~1/N (dùng virtual node để cân tải)\n✗ Hash thực ra làm range query phải scatter, không nhanh hơn\n✗ Directory cho linh hoạt nhưng bảng tra cứu dễ thành SPOF, không phải 'duy nhất'\n✗ Replication không liên quan tới việc rehash khi đổi N"
+  },
+  {
+    "id": "sd-q-024",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-02-building-blocks",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo nguyên tắc CAP/PACELC trong bài, những phát biểu nào sau đây đúng?",
+    "options": [
+      "CAP là quyết định per-operation: có thể CP cho thanh toán và AP cho số lượt like",
+      "Khi có Partition, CP nghĩa là từ chối phục vụ phần bị chia cắt để không trả dữ liệu sai",
+      "PACELC nói rằng kể cả khi không có Partition, vẫn đánh đổi Latency lấy Consistency",
+      "AP nghĩa là luôn đảm bảo strong consistency",
+      "Strong/linearizable consistency là rẻ và scale tốt nhất"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "CAP/PACELC là chuỗi đánh đổi theo từng luồng và cả lúc bình thường.\n✓ CAP là quyết định per-operation, có thể CP chỗ này AP chỗ kia\n✓ CP từ chối phục vụ phần bị chia cắt để tránh trả dữ liệu sai\n✓ PACELC: kể cả Else (không partition) vẫn đánh đổi Latency lấy Consistency\n✗ AP chấp nhận tạm thời không nhất quán, không đảm bảo strong consistency\n✗ Strong/linearizable có độ trễ cao và kén availability, không phải rẻ nhất"
+  },
+  {
+    "id": "sd-q-025",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-02-building-blocks",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khẩu hiệu 'Treat servers as cattle, not pets' cho tầng stateless nghĩa là gì?",
+    "options": [
+      "State được đẩy xuống tầng được thiết kế để giữ nó (DB/cache/object store), còn app node thay thế/vứt đi được",
+      "App node hoàn toàn không có và không cần state ở bất cứ đâu",
+      "Mỗi app node phải được chăm sóc và cấu hình riêng biệt",
+      "Phải giữ session cục bộ trên từng node để đảm bảo hiệu năng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Stateless không phải phi-state mà là đẩy state xuống tầng lưu trữ chuyên dụng.\n✓ State sống ở DB/cache/object store; app node thay thế và vứt đi được\n✗ State vẫn phải sống đâu đó, không phải biến mất hoàn toàn\n✗ 'Cattle' nghĩa là không chăm sóc riêng từng node (đó mới là 'pets')\n✗ Giữ session cục bộ là sticky session — đi ngược tinh thần stateless"
+  },
+  {
+    "id": "sd-q-026",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-02-building-blocks",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi phỏng vấn system design, đâu là bẫy phổ biến nhất theo bài học?",
+    "options": [
+      "Vẽ kiến trúc đầy box ngay từ đầu mà không hỏi requirement (quy mô, tỷ lệ read/write, yêu cầu nhất quán)",
+      "Hỏi quá nhiều về quy mô và tỷ lệ read/write trước khi vẽ",
+      "Định lượng QPS và storage bằng con số cụ thể",
+      "Nói thành tiếng đánh đổi mỗi khi thêm một khối"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài cảnh báo over-engineering sớm khi chưa rõ yêu cầu.\n✓ Vẽ đầy box trước khi hỏi requirement là bẫy; over-engineered xấu ngang không chịu tải\n✗ Hỏi quy mô và tỷ lệ read/write trước là hành vi đúng, không phải bẫy\n✗ Định lượng bằng con số là điểm cộng, biến ý kiến thành phân tích\n✗ Nói thành tiếng đánh đổi là điều người phỏng vấn senior đánh giá cao"
+  },
+  {
+    "id": "sd-q-027",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-03-url-shortener",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong bài URL Shortener, đặc tính phi chức năng nào được coi là 'trục chi phối' định hướng mọi đánh đổi (cache, CDN, denormalize)?",
+    "options": [
+      "Tính nhất quán mạnh (strong consistency) cho mọi thao tác ghi",
+      "Read-heavy: tỉ lệ đọc/ghi rất lệch (mốc 100:1)",
+      "Bảo mật xác thực user khi tạo link",
+      "Khả năng mở rộng theo chiều dọc của một DB SQL đơn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài xác định read-heavy là quyết định kiến trúc quan trọng nhất, làm kim chỉ nam cho mọi đánh đổi.\n✓ Tỉ lệ đọc/ghi lệch 100:1 khiến mọi thiết kế phải tối ưu cho redirect (cache, CDN).\n✗ Consistency mạnh không phải trục chi phối; ghi chấp nhận eventual consistency một chút.\n✗ Auth chỉ áp cho write API, không phải đường nóng chiếm 99% traffic.\n✗ Scale dọc của SQL đơn chính là thứ bài tránh, không phải nguyên tắc dẫn dắt."
+  },
+  {
+    "id": "sd-q-028",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-03-url-shortener",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Với ~180 tỉ URL trong 5 năm và bảng mã Base62, độ dài short code tối thiểu cần dùng là bao nhiêu ký tự?",
+    "options": [
+      "5 ký tự",
+      "6 ký tự",
+      "7 ký tự",
+      "8 ký tự"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "62^6 ≈ 56.8 tỉ không đủ cho 180 tỉ URL, nên cần 7 ký tự (62^7 ≈ 3,521 tỉ).\n✓ 7 ký tự cho không gian ~3,521 tỉ, dư cho 180 tỉ URL.\n✗ 5 ký tự chỉ ~916 triệu, quá nhỏ.\n✗ 6 ký tự ~56.8 tỉ vẫn nhỏ hơn 180 tỉ.\n✗ 8 ký tự dư thừa, dài hơn cần thiết khi 7 đã đủ."
+  },
+  {
+    "id": "sd-q-029",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-03-url-shortener",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khi vượt quá giới hạn, Rate Limiter nên trả về mã trạng thái HTTP nào kèm header nào?",
+    "options": [
+      "503 Service Unavailable kèm Cache-Control",
+      "429 Too Many Requests kèm Retry-After",
+      "403 Forbidden kèm WWW-Authenticate",
+      "302 Found kèm Location"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nêu rõ khi quá hạn trả 429 Too Many Requests kèm header Retry-After.\n✓ 429 + Retry-After là chuẩn cho rate limiting, báo client khi nào thử lại.\n✗ 503 dành cho service không khả dụng, không phải vượt giới hạn.\n✗ 403 là từ chối quyền truy cập, không phải vượt tốc độ.\n✗ 302 + Location là redirect, dùng cho đường đọc short URL."
+  },
+  {
+    "id": "sd-q-030",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-03-url-shortener",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Yêu cầu: hai user khác nhau rút gọn CÙNG một longURL muốn có HAI link riêng để analytics tách biệt, đồng thời tuyệt đối không được đoán tuần tự. Cách sinh code nào phù hợp nhất?",
+    "options": [
+      "Hash(longURL) lấy 7 ký tự đầu base62",
+      "Counter tự tăng rồi base62(id) không trộn",
+      "KGS sinh sẵn key ngẫu nhiên, pop và đánh dấu used",
+      "Dùng chính longURL làm khoá lưu trữ"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Cần KHÔNG dedup (mỗi lần ra link riêng) và KHÔNG đoán tuần tự, KGS thoả cả hai.\n✓ KGS cho code ngẫu nhiên không đoán được, mỗi lần pop một key mới nên cùng URL vẫn ra link khác nhau.\n✗ Hash(longURL) tạo dedup tự nhiên (cùng URL ra cùng code), sai yêu cầu tách analytics.\n✗ Counter base62 không trộn thì đoán tuần tự được, vi phạm yêu cầu bảo mật.\n✗ Lấy longURL làm khoá cũng gộp hai user vào một bản ghi, không tách được."
+  },
+  {
+    "id": "sd-q-031",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-03-url-shortener",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao bài khuyến nghị DynamoDB (KV store) hơn SQL cho bảng url_mapping ở quy mô này?",
+    "options": [
+      "Vì cần nhiều join phức tạp giữa các bảng",
+      "Vì access pattern chính là point-lookup theo short_code và phải scale tới 100 TB / 200K rps với sharding tự động",
+      "Vì SQL không hỗ trợ chỉ mục trên cột chuỗi",
+      "Vì KV store luôn cung cấp consistency mạnh hơn SQL"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Truy cập duy nhất quan trọng là point-query theo short_code, cộng nhu cầu scale ngang lớn, đúng sở trường KV.\n✓ Point-lookup theo key + sharding tự động theo partition key xử lý 100 TB / 200K rps gọn gàng.\n✗ Bài nói dữ liệu gần như không có relation, không cần join.\n✗ SQL hoàn toàn hỗ trợ index chuỗi, đó không phải lý do.\n✗ KV mặc định là eventual consistency, không mạnh hơn SQL."
+  },
+  {
+    "id": "sd-q-032",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-03-url-shortener",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một dịch vụ rút gọn link thương mại muốn ĐẾM CHÍNH XÁC mọi click và có thể đổi đích về sau. Nên dùng mã redirect nào và vì sao?",
+    "options": [
+      "301, vì browser cache mạnh giúp giảm tải server",
+      "302, vì browser không cache nên mọi click đều chạm server, đếm đủ và đổi đích dễ",
+      "301, vì nó cho phép đổi đích linh hoạt hơn 302",
+      "302, vì nó giảm read QPS thật xuống mức thấp nhất"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "302 không cache nên mỗi click gọi lại server, cho phép đếm đủ click và đổi đích dễ.\n✓ 302 đảm bảo mọi click chạm hệ thống, đếm chính xác và luôn hỏi lại server nên đổi đích dễ.\n✗ 301 cache mạnh nên mất click sau lần đầu, không đếm đủ.\n✗ 301 khiến đổi đích KHÓ vì client đã cache đích cũ.\n✗ 302 làm TĂNG tải/read QPS thật chứ không giảm; giảm tải là ưu điểm của 301."
+  },
+  {
+    "id": "sd-q-033",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-03-url-shortener",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Back-of-envelope trong bài cho read ~200K rps lúc peak. Vì sao chỉ riêng DynamoDB là chưa đủ và cần thêm lớp cache/CDN?",
+    "options": [
+      "Vì DynamoDB không lưu được 100 TB dữ liệu",
+      "Vì mỗi lần đọc xuống DB vừa tốn tiền vừa thêm latency; cache hit ~80–90% giúp DB chỉ còn gánh ~10–20K rps",
+      "Vì DynamoDB không hỗ trợ partition key dạng chuỗi",
+      "Vì cache giúp tăng độ chính xác consistency của redirect"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cache đứng trước DB để giảm chi phí và latency, với 80/20 hit ~80–90% kéo tải DB xuống còn ~10–20K rps.\n✓ Tránh mọi đọc xuống DB; hit ratio cao khiến DB chỉ còn gánh phần nhỏ.\n✗ DynamoDB hoàn toàn lưu được 100 TB nhờ partition tự động.\n✗ DynamoDB hỗ trợ partition key chuỗi (short_code chính là vậy).\n✗ Cache không phải để tăng consistency; nó tối ưu đọc, thậm chí cần lo invalidation."
+  },
+  {
+    "id": "sd-q-034",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-03-url-shortener",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Khi triển khai Rate Limiter trên NHIỀU app server, những phát biểu nào đúng?",
+    "options": [
+      "Đếm trong memory riêng từng server làm limit thực bị nhân lên N lần",
+      "State (counter/token) nên tập trung ở Redis dùng chung giữa các server",
+      "Phải đảm bảo thao tác atomic (Lua script hoặc INCR+EXPIRE) để tránh race cho lọt quá limit",
+      "Gọi Redis mỗi request là miễn phí, không thêm round-trip nào",
+      "Khi Redis chết, fail-open hay fail-closed là một đánh đổi nghiệp vụ phải nêu rõ"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "State tập trung + atomic là cốt lõi của distributed rate limiting, kèm đánh đổi khi Redis chết.\n✓ Đếm cục bộ mỗi server khiến limit thực = limit × N server.\n✓ Đưa counter/token về Redis dùng chung mới đếm đúng dù request rơi vào server nào.\n✓ Atomic (Lua hoặc INCR+EXPIRE) tránh race condition cho lọt quá limit.\n✓ Redis chết buộc chọn fail-open (ưu tiên availability) hay fail-closed (ưu tiên bảo vệ).\n✗ Gọi Redis mỗi request thêm ~1 ms round-trip trên đường nóng, không miễn phí."
+  },
+  {
+    "id": "sd-q-035",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-03-url-shortener",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cách đếm click nào được khuyến nghị để không làm chậm đường redirect và tránh hot-key?",
+    "options": [
+      "Ghi counter +1 trực tiếp vào DB chính mỗi click, đồng bộ trước khi trả 302",
+      "Trả 302 ngay, đồng thời emit event bất đồng bộ qua queue (Kafka/Kinesis) rồi aggregate",
+      "Chỉ đếm khi user gọi API stats để tiết kiệm",
+      "Lưu mọi click vào cache Redis và dùng làm nguồn analytics chính"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Analytics phải bất đồng bộ (fire-and-forget) để không chậm redirect và tránh hot-key ghi.\n✓ Trả 302 ngay rồi emit event qua queue, stream processor aggregate ngoài đường nóng.\n✗ Ghi +1 trực tiếp vào DB chính mỗi click là hot-key, sẽ nghẽn và làm chậm user.\n✗ Chỉ đếm khi gọi stats thì không có dữ liệu để tổng hợp, sai bản chất.\n✗ Redis là cache, không phải analytics store; mất event là chấp nhận được nên không làm nguồn chính."
+  },
+  {
+    "id": "sd-q-036",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-03-url-shortener",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Đội bạn chọn 'hash MD5 longURL rồi lấy 7 ký tự đầu'. Lỗi/điểm thiếu chín nào cần chỉ ra trước tiên?",
+    "options": [
+      "Hash MD5 luôn cho code đoán tuần tự được",
+      "Cắt 7 ký tự gây collision, phải check DB trước khi ghi + salt/retry, thêm một round-trip đọc trên đường ghi",
+      "Hash không thể tạo dedup cho cùng một URL",
+      "MD5 không thể mã hoá thành Base62"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bẫy thiết kế kinh điển: cắt hash sẽ đụng, phải check + retry, thêm đọc DB trên đường ghi.\n✓ Hai URL khác nhau có thể đụng khi cắt 7 ký tự, buộc đọc kiểm tra trùng và salt/retry, thêm round-trip.\n✗ Hash cho code ngẫu nhiên không đoán tuần tự, đó là ưu điểm chứ không phải lỗi.\n✗ Hash thuần TẠO dedup tự nhiên (cùng URL ra cùng code), không phải không thể.\n✗ Hoàn toàn có thể biểu diễn hash sang Base62, không phải vấn đề."
+  },
+  {
+    "id": "sd-q-037",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-03-url-shortener",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Với Fixed Window Counter (vd reset mỗi phút), nhược điểm nghiêm trọng nhất là gì?",
+    "options": [
+      "Tốn rất nhiều bộ nhớ vì lưu mọi timestamp",
+      "Lỗi biên cửa sổ: 100 req cuối phút này + 100 req đầu phút sau = 200 req trong ~1 giây, vượt gấp đôi limit",
+      "Không bao giờ cho phép burst",
+      "Cần Lua script phức tạp mới chạy được"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Fixed window rẻ nhưng kém chính xác ở biên cửa sổ, có thể cho lọt gấp đôi limit.\n✓ Dồn cuối window này + đầu window sau tạo burst 200 req trong ~1 giây thực, vượt gấp đôi.\n✗ Fixed window chỉ dùng 1 counter/key/window, bộ nhớ thấp; lưu mọi timestamp là Sliding Log.\n✗ Fixed window vẫn cho burst (kèm lỗi biên); 'không cho burst' là Leaky Bucket.\n✗ Nó là thuật toán đơn giản nhất, không cần Lua phức tạp riêng."
+  },
+  {
+    "id": "sd-q-038",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-03-url-shortener",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Về thuật toán rate limiting, những phát biểu nào ĐÚNG theo bài?",
+    "options": [
+      "Token Bucket cho phép burst tới mức capacity và chỉ cần ít state (token còn lại + timestamp refill)",
+      "Leaky Bucket làm mượt output với tốc độ ra ổn định nhưng không cho burst",
+      "Sliding Window Log chính xác cao nhất nhưng tốn bộ nhớ vì lưu mọi timestamp",
+      "Sliding Window Counter (hybrid) nội suy giữa hai window, gần chính xác mà rẻ",
+      "Fixed Window là thuật toán chính xác nhất nhờ reset định kỳ"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Bốn phát biểu khớp đặc tính trade-off từng thuật toán; chỉ có nhận định về Fixed Window là sai.\n✓ Token Bucket: burst tới capacity, ít state, đơn giản.\n✓ Leaky Bucket: ra đều, mượt output, không cho burst.\n✓ Sliding Log: chính xác nhất nhưng tốn bộ nhớ do lưu mọi timestamp.\n✓ Sliding Counter hybrid: nội suy theo trọng số, gần chính xác mà rẻ, thường cân bằng nhất.\n✗ Fixed Window kém chính xác ở biên, không phải chính xác nhất."
+  },
+  {
+    "id": "sd-q-039",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-03-url-shortener",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi user DELETE một link, bẫy thiết kế nào dễ bị bỏ sót ở lớp cache?",
+    "options": [
+      "Quên tăng TTL của cache khiến link bị xoá quá sớm",
+      "Quên invalidate cache: link đã xoá nhưng cache còn nên redirect vẫn về đích cũ",
+      "Quên ghi đồng bộ click event trước khi xoá",
+      "Quên chuyển 302 thành 301 sau khi xoá"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bẫy là quên cache invalidation khi xoá/đổi link, dẫn tới redirect sai về đích cũ.\n✓ Nếu cache vẫn giữ bản ghi sau khi xoá, user vẫn bị redirect tới đích cũ; phải xoá cache hoặc set tombstone.\n✗ Vấn đề không phải TTL quá ngắn mà là cache còn dữ liệu cũ.\n✗ Click event là async fire-and-forget, không liên quan đến lỗi redirect sai sau xoá.\n✗ Đổi mã 301/302 không khắc phục việc cache còn bản ghi đã xoá."
+  },
+  {
+    "id": "sd-q-040",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-04-news-feed",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đặc tính nào của News Feed được coi là 'quyết định kiến trúc' và mở đường cho precompute + cache mạnh tay?",
+    "options": [
+      "Đọc nặng hơn ghi rất nhiều (read-heavy) và chấp nhận eventual consistency",
+      "Ghi nặng hơn đọc, cần strong consistency tuyệt đối",
+      "Mọi user đều có số follower bằng nhau",
+      "Feed bắt buộc phải ranked bằng ML ngay từ đầu"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "News Feed đọc gấp nhiều lần ghi và chỉ cần consistency yếu, nên có thể tính trước (precompute) và cache mạnh.\n✓ Read-heavy + eventual consistency là hai câu hỏi quyết định 80% kiến trúc, cho phép precompute.\n✗ Đây không phải hệ ghi nặng cần strong consistency; ngược lại consistency yếu được chấp nhận có chủ đích.\n✗ Phân bố follower rất lệch (có celebrity), không bằng nhau.\n✗ Ranked ML là tùy chọn nâng cao, không phải đặc tính bắt buộc ban đầu."
+  },
+  {
+    "id": "sd-q-041",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-04-news-feed",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Với phân trang feed, vì sao bài học khuyên dùng cursor thay vì offset/limit?",
+    "options": [
+      "Cursor ổn định khi có post mới chèn vào đầu, tránh trùng/nhảy post và là O(1)",
+      "Offset luôn nhanh hơn cursor trong mọi trường hợp",
+      "Cursor cho phép strong consistency tuyệt đối",
+      "Offset là chuẩn duy nhất REST chấp nhận"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khi post mới chèn vào đầu feed, offset bị lệch gây trùng hoặc mất post; cursor trỏ tới vị trí cuối đã đọc nên ổn định.\n✓ Cursor ổn định và O(1), tránh lệch trang.\n✗ OFFSET lớn buộc DB quét bỏ nhiều dòng, chậm chứ không nhanh hơn.\n✗ Cursor không liên quan tới việc bảo đảm strong consistency.\n✗ REST không bắt buộc offset; cả hai đều hợp lệ."
+  },
+  {
+    "id": "sd-q-042",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-04-news-feed",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo nguyên tắc lưu trữ, ảnh và video trong post nên được xử lý thế nào?",
+    "options": [
+      "Đẩy sang object storage (S3) + CDN, không nhét vào DB",
+      "Lưu trực tiếp dưới dạng blob trong Post DB cho gọn",
+      "Nhân bản đầy đủ vào feed cache của từng follower",
+      "Để app server stream trực tiếp cho mọi client"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Media nặng nên đưa ra object storage và phục vụ qua CDN ở biên, không qua DB hay app server.\n✓ S3 + CDN đúng nguyên tắc 'media không đi qua app'.\n✗ Nhét blob vào DB làm phình DB và tốn băng thông app.\n✗ Nhân bản nội dung đầy đủ vào feed cache gây nổ RAM.\n✗ App server stream media gây nghẽn băng thông, sai nguyên tắc."
+  },
+  {
+    "id": "sd-q-043",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-04-news-feed",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với workload read:write ≈ 20:1 và yêu cầu p99 đọc < 200ms cho đa số user thường, mô hình fan-out nào nên chọn làm mặc định?",
+    "options": [
+      "Fan-out on write (push): precompute feed, đẩy việc nặng sang lúc ghi",
+      "Fan-out on read (pull): gom và merge lúc đọc",
+      "Không cache gì, query DB trực tiếp mỗi lần đọc",
+      "Strong-consistent two-phase commit cho mỗi feed"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Vì đọc gấp ~20 lần ghi, nên tối ưu đường đọc kể cả phải làm đường ghi nặng hơn; push cho đọc O(1) từ cache.\n✓ Push precompute feed nên đọc rất nhanh, phù hợp read-heavy.\n✗ Pull gom + merge runtime làm đọc chậm, tệ với tỉ lệ 20:1.\n✗ Query DB trực tiếp không gánh nổi ~70k read QPS.\n✗ Hệ cố tình eventual consistency, không cần two-phase commit nặng nề."
+  },
+  {
+    "id": "sd-q-044",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-04-news-feed",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một celebrity 50 triệu follower đăng post. Vấn đề cụ thể của push model thuần ở đây là gì?",
+    "options": [
+      "1 post sinh ~50 triệu lần ghi cache, gây fan-out storm: queue ngập, worker quá tải, hot shard",
+      "Đọc feed của celebrity bị O(N) chậm hẳn",
+      "Post của celebrity không thể lưu vào Post store",
+      "Cursor pagination ngừng hoạt động khi follower quá đông"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Push nhân bản post vào feed của từng follower; với F khổng lồ thì số thao tác ghi bùng nổ.\n✓ 50tr lần ghi gây fan-out storm, hot shard Redis, feed trễ phút.\n✗ Vấn đề nằm ở đường ghi (fan-out), không phải đọc feed của chính celebrity.\n✗ Post vẫn ghi bình thường vào Post store; vấn đề là nhân bản feed.\n✗ Cursor pagination không liên quan tới số follower của tác giả."
+  },
+  {
+    "id": "sd-q-045",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-04-news-feed",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong giải pháp hybrid, lúc ĐỌC feed của một user được xử lý ra sao?",
+    "options": [
+      "Đọc base_feed đã push sẵn từ cache, rồi pull post mới của các celebrity mình follow, merge và sort",
+      "Luôn pull toàn bộ post của mọi người mình follow rồi merge",
+      "Chỉ đọc feed cache, bỏ qua hoàn toàn post của celebrity",
+      "Push lại toàn bộ feed ngay tại thời điểm đọc"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Hybrid lấy phần tốt của cả hai: tác giả thường được push sẵn, celebrity được pull lúc đọc vì số celebrity mỗi người follow thường nhỏ.\n✓ Đọc cache push sẵn + pull riêng celebrity rồi merge/sort là cơ chế hybrid.\n✗ Pull toàn bộ mọi người là pull thuần, mất lợi ích push.\n✗ Bỏ qua celebrity sẽ thiếu post của họ trong feed.\n✗ Push lúc đọc là vô nghĩa, push xảy ra lúc ghi."
+  },
+  {
+    "id": "sd-q-046",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-04-news-feed",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao feed cache chỉ nên lưu post_id chứ không lưu nội dung post đầy đủ cho từng follower?",
+    "options": [
+      "Vì nhân bản nội dung đầy đủ qua hàng chục triệu follower sẽ nổ RAM; lưu con trỏ rồi hydrate lúc đọc",
+      "Vì Redis không hỗ trợ lưu chuỗi văn bản",
+      "Vì post_id thay đổi liên tục nên rẻ hơn",
+      "Vì lưu nội dung đầy đủ sẽ phá vỡ cursor pagination"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Tách 'danh sách feed' (id) khỏi 'nội dung post'; nhân bản nội dung đầy đủ làm phình RAM khủng khiếp.\n✓ Chỉ lưu post_id rồi hydrate nội dung từ Post store/cache post riêng để tiết kiệm RAM.\n✗ Redis hoàn toàn lưu được chuỗi; vấn đề là chi phí nhân bản.\n✗ post_id ổn định, không thay đổi liên tục.\n✗ Việc lưu nội dung không phá cursor; lý do thực là RAM."
+  },
+  {
+    "id": "sd-q-047",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-04-news-feed",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Để truy vấn social graph hiệu quả, bài học đề xuất cách lưu nào và đánh đổi đi kèm?",
+    "options": [
+      "Lưu cả hai chiều followers_of và following_of (denormalize): O(1) mỗi truy vấn, đổi lại tốn gấp đôi storage và ghi 2 bản khi follow",
+      "Chỉ lưu một chiều following_of để tiết kiệm tối đa",
+      "Lưu graph trong Redis sorted-set và xóa sau mỗi đọc",
+      "Tính lại quan hệ follow bằng JOIN mỗi lần fan-out"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Fan-out push cần followers_of, build feed pull cần following_of; lưu cả hai chiều cho truy vấn O(1).\n✓ Denormalize 2 chiều: nhanh nhưng tốn gấp đôi storage và phải ghi 2 bản khi follow/unfollow.\n✗ Chỉ một chiều sẽ thiếu truy vấn cần cho chiều còn lại.\n✗ Graph là dữ liệu bền, không xóa sau mỗi đọc.\n✗ JOIN runtime mỗi lần fan-out quá đắt ở quy mô này."
+  },
+  {
+    "id": "sd-q-048",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-04-news-feed",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Khi ranking feed phức tạp (ML, score thay đổi liên tục), bài học khuyên cách kiến trúc nào để vẫn cache hiệu quả?",
+    "options": [
+      "Cache candidate set ổn định (push/pull ra vài trăm post), rồi rank tại read-time bằng model nhẹ",
+      "Cache feed cuối cùng đã rank để đọc tức thì",
+      "Bỏ cache hoàn toàn vì score luôn đổi",
+      "Rank trước toàn bộ post của hệ thống mỗi phút rồi cache"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Nguyên tắc: cache cái ít thay đổi (candidate), tính cái hay thay đổi (score) ở tầng đọc.\n✓ Tách 'lấy ứng viên' (rẻ, cache được) khỏi 'chấm điểm' (cá nhân hóa, tươi) là cách đúng.\n✗ Cache feed cuối đã rank thất bại vì score đổi liên tục, khó invalidate.\n✗ Bỏ cache hoàn toàn làm đường đọc quá tải.\n✗ Rank toàn bộ post mỗi phút là lãng phí khổng lồ và không cá nhân hóa lúc đọc."
+  },
+  {
+    "id": "sd-q-049",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-04-news-feed",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Ranh giới eventual consistency: trường hợp nào KHÔNG được phép trễ và phải xử lý đặc biệt?",
+    "options": [
+      "Read-your-own-write: chính bạn vừa đăng phải thấy post của mình ngay",
+      "Post của bạn bè hiển thị sau 5-10 giây",
+      "Counter like/comment hiển thị xấp xỉ",
+      "Feed còn vài post cũ của người vừa unfollow"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Eventual consistency là lựa chọn kiến trúc, nhưng phải nói rõ ranh giới: cái của người khác được trễ, cái của chính mình thì không.\n✓ Read-your-own-write phải tức thì, thường chèn post của chính mình vào feed ngay ở client/đọc.\n✗ Post của bạn bè trễ vài giây là chấp nhận được.\n✗ Counter xấp xỉ là chấp nhận được có chủ đích.\n✗ Post cũ của người vừa unfollow lọc lúc đọc hoặc để tự rơi, được phép trễ."
+  },
+  {
+    "id": "sd-q-050",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-04-news-feed",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trên AWS, khi quăng celebrity fan-out vào DynamoDB không suy nghĩ thì hậu quả kỹ thuật là gì, và nó phản chiếu trade-off nào ở tầng thiết kế?",
+    "options": [
+      "Hot partition theo author bị throttle — phản chiếu lý do tách celebrity sang nhánh pull",
+      "Tự động scale hoàn hảo, không có vấn đề gì",
+      "Mất dữ liệu post vĩnh viễn do thiếu replay",
+      "Buộc phải dùng strong consistency làm chậm toàn hệ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "50tr lần ghi dồn vào partition theo author gây hot partition và throttle; đây chính là lý do hạ tầng để chọn pull cho celebrity.\n✓ Hot partition/throttle ở DynamoDB phản chiếu trade-off push vs pull ở tầng thiết kế.\n✗ DynamoDB không tự xử lý hot partition của celebrity một cách vô hại.\n✗ Vấn đề là throttle/ghi nóng, không phải mất dữ liệu do thiếu replay.\n✗ Không liên quan tới việc ép strong consistency."
+  },
+  {
+    "id": "sd-q-051",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-04-news-feed",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Chọn các kỹ thuật bài học nêu để giảm tải fan-out push (chọn nhiều).",
+    "options": [
+      "Chỉ push cho user active gần đây, backfill (pull bù) khi họ quay lại",
+      "Async qua queue + batching (pipeline Redis) để giảm round-trip",
+      "Rate-limit/throttle fan-out của tài khoản đăng quá nhanh",
+      "Lưu nội dung post đầy đủ vào feed cache của từng follower",
+      "Bỏ cursor pagination, chuyển sang offset/limit"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Các kỹ thuật giảm tải push: chỉ push cho active user, async + batching, và throttle tài khoản đăng nhanh.\n✓ Chỉ push cho active user tránh ghi cho người không đọc.\n✓ Async qua queue + batching giảm round-trip.\n✓ Rate-limit tài khoản đăng dồn dập chống fan-out storm.\n✗ Lưu nội dung đầy đủ vào feed cache gây nổ RAM, đi ngược nguyên tắc.\n✗ Offset/limit gây lệch trang, không liên quan giảm tải fan-out."
+  },
+  {
+    "id": "sd-q-052",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-04-news-feed",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "So sánh SQS và Kinesis cho fan-out. Những phát biểu nào ĐÚNG (chọn nhiều)?",
+    "options": [
+      "Kinesis hỗ trợ replay (giữ tới 365 ngày), SQS đã xử lý là mất",
+      "Kinesis cho nhiều consumer độc lập đọc cùng một stream; SQS cần nhiều queue",
+      "Kinesis đảm bảo thứ tự theo shard; SQS không đảm bảo (trừ FIFO, throughput thấp hơn)",
+      "SQS chọn khi cần thêm pipeline ranking/analytics đọc lại cùng dòng sự kiện",
+      "SQS không bao giờ có cơ chế ordering nào cả"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Kinesis mạnh ở replay, ordering theo shard, và nhiều consumer cùng stream; SQS đơn giản cho fan-out worker thuần.\n✓ Kinesis replay tới 365 ngày, SQS xử lý xong là mất.\n✓ Kinesis nhiều consumer độc lập trên một stream; SQS phải dùng nhiều queue.\n✓ Kinesis ordered theo shard; SQS standard không đảm bảo thứ tự.\n✗ Cần pipeline ranking/analytics đọc lại cùng dòng sự kiện thì chọn Kinesis, không phải SQS.\n✗ SQS có FIFO cho phép ordering (đổi lại throughput thấp hơn), nên 'không bao giờ' là sai."
+  },
+  {
+    "id": "sd-q-053",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-05-chat",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Tại sao bài học khuyến nghị KHÔNG dùng SSE (Server-Sent Events) làm transport chính cho ứng dụng chat?",
+    "options": [
+      "SSE có độ trễ rất cao, ngang với short polling",
+      "SSE chỉ đẩy một chiều (server → client), trong khi chat cần kênh gửi 2 chiều",
+      "SSE không hoạt động trên mạng doanh nghiệp có proxy",
+      "SSE tốn server hơn cả WebSocket vì giữ kết nối stateful"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Chat cần client vừa gửi vừa nhận realtime, mà SSE chỉ đẩy một chiều từ server.\n✓ SSE đẩy 1 chiều server→client nên không đủ cho nhu cầu gửi tin 2 chiều của chat\n✗ SSE thực tế có độ trễ thấp, không cao như short polling\n✗ Việc bị proxy chặn là vấn đề của WebSocket, không phải lý do loại SSE\n✗ SSE nhẹ về tải; nó bị loại vì một chiều, không phải vì tốn hơn WebSocket"
+  },
+  {
+    "id": "sd-q-054",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-05-chat",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với 50 triệu DAU, mỗi user gửi 40 tin/ngày, ước lượng số tin/giây TRUNG BÌNH gần nhất là bao nhiêu?",
+    "options": [
+      "~700 msg/s",
+      "~23,000 msg/s",
+      "~70,000 msg/s",
+      "~600,000 msg/s"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "50e6 × 40 = 2e9 tin/ngày; chia cho 86400 giây ≈ 23,000 msg/s.\n✓ 2 tỷ tin/ngày / 86400 ≈ 23,000 msg/s là throughput trung bình\n✗ ~700 thấp hơn nhiều, sai bậc độ lớn\n✗ ~70,000 là con số PEAK (nhân x3), không phải trung bình\n✗ ~600,000 không khớp phép tính nào trong bài"
+  },
+  {
+    "id": "sd-q-055",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-05-chat",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong luồng gửi tin 1-1 từ A đến B, node giữ kết nối của A làm thế nào để biết đẩy tin tới đúng node đang giữ B?",
+    "options": [
+      "Các connection node kết nối mesh trực tiếp với nhau và hỏi vòng quanh",
+      "Tra Connection Registry (Redis) để biết userId của B đang ở nodeId nào, rồi publish qua pub/sub",
+      "Load balancer tự định tuyến tin trực tiếp tới node của B",
+      "Gửi broadcast tin lên tất cả các node, node nào giữ B sẽ nhận"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Vì WebSocket là stateful, hệ thống dùng registry ánh xạ userId→nodeId rồi định tuyến qua pub/sub.\n✓ Registry (Redis) cho biết B ở node nào, sau đó publish lên pub/sub để node đó đẩy xuống B\n✗ Mesh trực tiếp gây nổ N² kết nối — bài học cảnh báo tránh điều này\n✗ LB chỉ định tuyến lúc thiết lập WS, không định tuyến từng tin xuyên node\n✗ Broadcast tới mọi node lãng phí và không scale; pub/sub có kênh theo node đích"
+  },
+  {
+    "id": "sd-q-056",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-05-chat",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Vì sao bài học chọn sắp xếp tin nhắn theo per-conversation sequence number thay vì theo wall-clock timestamp?",
+    "options": [
+      "Timestamp tốn nhiều byte lưu trữ hơn seq",
+      "Đồng hồ các server lệch nhau nên timestamp không cho thứ tự ổn định trong cuộc hội thoại",
+      "Seq cho phép đạt exactly-once delivery còn timestamp thì không",
+      "Client không có khả năng đọc timestamp"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Chỉ cần thứ tự nhất quán trong một conversation, mà đồng hồ server bị lệch khiến timestamp không đáng tin để sort.\n✓ Đồng hồ các server lệch nhau → timestamp cho thứ tự không ổn định; seq tăng dần do server gán giải quyết điều này\n✗ Lý do không phải tiết kiệm byte lưu trữ\n✗ Seq không liên quan tới việc đạt exactly-once; bài học chọn at-least-once + idempotency\n✗ Client hoàn toàn đọc được timestamp; đó không phải vấn đề"
+  },
+  {
+    "id": "sd-q-057",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-05-chat",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Hệ thống chọn delivery semantics 'at-least-once + idempotency'. Những phát biểu nào sau đây ĐÚNG với lựa chọn này?",
+    "options": [
+      "Tin có thể được giao trùng, và được khử trùng bằng idempotency key như clientMsgId",
+      "Exactly-once bị loại vì rất đắt/khó (cần 2-phase commit, consensus) trong hệ phân tán",
+      "At-most-once được chọn để đơn giản hóa, chấp nhận đôi khi mất tin",
+      "Server khử trùng khi ghi bằng unique index trên (convId, clientMsgId)",
+      "Idempotency yêu cầu mọi tin phải được gửi đúng một lần ở tầng mạng"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "At-least-once nghĩa là thà giao trùng còn hơn mất, rồi dùng idempotency key để dọn trùng.\n✓ Có thể giao trùng và khử trùng bằng clientMsgId\n✓ Exactly-once bị loại vì quá đắt/khó (2PC, consensus)\n✓ Server dedupe khi ghi bằng unique index trên (convId, clientMsgId)\n✗ At-most-once chấp nhận mất tin — KHÔNG được phép với chat\n✗ Idempotency không đảm bảo mạng gửi đúng một lần; nó cho phép retry trùng rồi khử"
+  },
+  {
+    "id": "sd-q-058",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-05-chat",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Presence (online status) nên được lưu ở đâu và theo cơ chế nào?",
+    "options": [
+      "Trong DB quan hệ durable, cập nhật mỗi lần đổi trạng thái",
+      "Trong Redis với TTL, client gửi heartbeat định kỳ để refresh; hết hạn = offline",
+      "Trong history store cùng với tin nhắn để truy vết last seen",
+      "Trong object storage S3 để lưu trữ rẻ và lâu dài"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Presence to và nhiễu, không nên coi là dữ liệu durable; Redis + TTL + heartbeat là cách phù hợp.\n✓ Redis với TTL (vd 30s), heartbeat refresh, hết hạn coi như offline\n✗ DB quan hệ durable quá nặng và sai bản chất cho dữ liệu nhiễu, đổi liên tục\n✗ History store dành cho tin nhắn durable, không phải presence tạm thời\n✗ S3 dành cho archive tin nguội, không phù hợp dữ liệu realtime đổi từng giây"
+  },
+  {
+    "id": "sd-q-059",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-05-chat",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một nhóm 'channel' broadcast rất lớn (hàng chục nghìn member) cần nhận tin. Chiến lược fan-out nào phù hợp nhất?",
+    "options": [
+      "Write fan-out: đẩy realtime tới tất cả member qua pub/sub mỗi khi có tin",
+      "Read fan-out: ghi 1 lần, client chủ động pull khi mở app",
+      "Sticky session để mọi member ghim vào cùng một node",
+      "Tăng TTL presence để giảm số lần fan-out"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Với group cực lớn, đẩy N lần delivery cho mỗi tin sẽ vỡ, nên dùng read fan-out cho client tự pull.\n✓ Read fan-out (ghi 1 lần, client pull) hợp với group rất lớn / broadcast channel\n✗ Write fan-out chỉ hợp group nhỏ–vừa (N ≤ vài trăm); với chục nghìn member sẽ nổ delivery\n✗ Sticky session không giải quyết vấn đề fan-out N lần delivery\n✗ TTL presence không liên quan tới fan-out tin nhắn của group lớn"
+  },
+  {
+    "id": "sd-q-060",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-05-chat",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao bài học chọn shard history store theo conversationId thay vì userId?",
+    "options": [
+      "userId luôn tạo hot shard còn conversationId thì không bao giờ",
+      "Truy vấn chính là 'lấy 50 tin gần nhất của 1 conversation', nên để cùng conversation trên một shard giúp đọc lịch sử trong một truy vấn",
+      "Sharding theo userId làm tin nhắn dễ bị mất hơn",
+      "conversationId luôn phân bố đều tuyệt đối nên không bao giờ lệch tải"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mẫu truy cập quyết định partition key; đọc lịch sử là theo conversation nên shard theo conversationId.\n✓ Mọi tin của một cuộc hội thoại nằm cùng shard → đọc lịch sử trong một truy vấn\n✗ Ngược lại, chính conversationId mới có thể gây hot shard với group siêu active\n✗ Sharding theo userId không làm tin dễ mất, chỉ khiến đọc lịch sử phải gather nhiều shard\n✗ conversationId vẫn có thể tạo hot shard; bài học nêu cần sub-partition để xử lý"
+  },
+  {
+    "id": "sd-q-061",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-05-chat",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một thiết kế cho phép các connection node kết nối trực tiếp với nhau (mesh) để forward tin. Vấn đề lớn nhất là gì?",
+    "options": [
+      "Vi phạm sticky session nên LB không định tuyến được",
+      "Số kết nối bùng nổ theo N² khi tăng số node, không scale được",
+      "Làm tin nhắn không còn idempotent",
+      "Buộc phải dùng wall-clock timestamp để sắp xếp"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mesh trực tiếp khiến N node tạo N² kết nối; pub/sub là tầng gián tiếp để tránh điều này.\n✓ N node kết nối mesh → N² kết nối, không scale\n✗ Vấn đề không phải sticky session hay LB định tuyến\n✗ Mesh không liên quan tới idempotency của tin nhắn\n✗ Cách sắp xếp tin vẫn dùng per-conversation seq, không liên quan mesh"
+  },
+  {
+    "id": "sd-q-062",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-05-chat",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Khi ánh xạ thiết kế chat sang AWS, những lựa chọn nào sau đây ĐÚNG kèm đánh đổi như bài học mô tả?",
+    "options": [
+      "API Gateway WebSocket API quản lý sẵn handshake/connectionId nhưng có giới hạn idle timeout ~10 phút và message ≤ 128KB",
+      "ElastiCache (Redis) làm connection registry và presence với TTL, latency thấp, cần thiết kế HA",
+      "DynamoDB làm history store với PK=convId, SK=seq, nhưng coi chừng hot partition với group lớn",
+      "Lambda là lựa chọn lý tưởng cho kết nối WebSocket dài vì nó stateful",
+      "S3 nên làm history store nóng vì truy vấn 50 tin gần nhất rất nhanh"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Mỗi managed service lấp một vai trò kèm giới hạn riêng cần nắm để bàn 'managed vs self-hosted'.\n✓ API Gateway WebSocket quản lý handshake/connectionId nhưng có idle timeout ~10 phút và message ≤ 128KB\n✓ ElastiCache (Redis) làm registry + presence TTL, latency thấp, cần HA\n✓ DynamoDB làm history (PK=convId, SK=seq) nhưng dễ hot partition với group lớn\n✗ Lambda kém stateful và có cold start, không hợp giữ kết nối dài — Fargate mới hợp\n✗ S3 dùng để archive tin nguội cho rẻ, không phải history store nóng"
+  },
+  {
+    "id": "sd-q-063",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-05-chat",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "clientMsgId (UUID do client sinh) phục vụ mục đích chính nào?",
+    "options": [
+      "Sắp xếp thứ tự tin nhắn trong một conversation",
+      "Idempotency: client retry gửi lại cùng clientMsgId, server nhận ra trùng và không tạo tin nhân đôi",
+      "Định tuyến tin tới đúng connection node của người nhận",
+      "Mã hóa đầu cuối nội dung tin nhắn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "clientMsgId là chìa khóa idempotency để chống tạo tin trùng khi client retry.\n✓ Client retry với cùng clientMsgId, server dedupe, không tạo tin nhân đôi\n✗ Việc sắp xếp dùng per-conversation seq do server gán, không phải clientMsgId\n✗ Định tuyến tới node người nhận dựa vào registry userId→nodeId\n✗ clientMsgId không liên quan tới E2EE"
+  },
+  {
+    "id": "sd-q-064",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-05-chat",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong một group 1000 người, vì sao read receipt được coi là 'đắt gấp bội' và nên xử lý thế nào?",
+    "options": [
+      "Vì mỗi tin sinh số receipt theo số member; nên gộp/đếm ('đã xem bởi 87 người') thay vì hiển thị từng người",
+      "Vì receipt phải lưu durable mãi mãi; nên xóa toàn bộ receipt",
+      "Vì receipt cần exactly-once; nên dùng 2-phase commit cho mỗi receipt",
+      "Vì receipt phá vỡ thứ tự seq; nên tắt hẳn ordering trong group"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Receipt nhân theo số member nên fan-out của riêng receipt phình to; gộp/đếm để cắt chi phí.\n✓ Mỗi tin sinh nhiều receipt theo member → gộp/đếm ('đã xem bởi 87 người') để cắt fan-out\n✗ Giải pháp không phải xóa toàn bộ receipt\n✗ Không cần exactly-once/2PC cho receipt\n✗ Receipt không phá vỡ ordering; không liên quan tới việc tắt seq"
+  },
+  {
+    "id": "sd-q-065",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-05-chat",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Khi pub/sub bắt đầu thành nghẽn cổ chai (latency tăng khi nhiều fan-out), hướng scale nào phù hợp theo bài học?",
+    "options": [
+      "Chuyển toàn bộ sang sticky session để bỏ pub/sub",
+      "Partition pub/sub theo conversation; khi cần durable + throughput cao thì nâng từ Redis pub/sub lên Kafka",
+      "Tăng TTL presence và debounce heartbeat",
+      "Gộp connection tier và business logic vào cùng một node để giảm hop"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bottleneck pub/sub được giải bằng partition theo conversation và nâng cấp công nghệ khi cần durable/throughput.\n✓ Partition theo conversation, nâng từ Redis pub/sub lên Kafka khi cần durable + throughput cao\n✗ Bỏ pub/sub để mesh/sticky sẽ gây nổ N² và mất tầng gián tiếp\n✗ TTL presence/debounce là cách giải presence fan-out, không phải nghẽn pub/sub tin nhắn\n✗ Gộp connection tier với logic đi ngược nguyên tắc tách tier để scale độc lập"
+  },
+  {
+    "id": "sd-q-066",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-06-data-pipeline",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Người dùng chỉ xem báo cáo doanh thu một lần mỗi sáng, dữ liệu cũ vài giờ vẫn chấp nhận được. Theo bài, nên chọn cách xử lý nào?",
+    "options": [
+      "Batch job chạy lúc 4h sáng vì rẻ hơn nhiều và ít sự cố vận hành",
+      "Stream processing với Flink để có 'real-time' cho sang",
+      "Lambda architecture để vừa real-time vừa chính xác",
+      "Hai pipeline song song batch và stream để dự phòng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Real-time là yêu cầu, không phải mặc định; khi freshness chỉ cần daily thì batch rẻ và ổn định hơn.\n✓ Batch lúc 4h sáng phù hợp khi báo cáo xem mỗi sáng, rẻ hơn 5-10 lần và ít sự cố.\n✗ Chọn stream chỉ vì nghe 'real-time' sang là bẫy thiết kế khi không có yêu cầu freshness thấp.\n✗ Lambda phức tạp, viết logic hai lần, thừa cho bài toán báo cáo định kỳ.\n✗ Hai pipeline song song là over-engineer không cần thiết."
+  },
+  {
+    "id": "sd-q-067",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-06-data-pipeline",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, vai trò đúng của search index (Elasticsearch/OpenSearch) trong kiến trúc là gì?",
+    "options": [
+      "Read model, không phải source of truth; rebuild được từ DB chính",
+      "Source of truth duy nhất, thay thế hoàn toàn OLTP DB",
+      "Nơi chạy transaction tài chính cần ACID mạnh",
+      "Kho lưu dữ liệu thô để khám phá ad-hoc"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Search index là read model được sync từ DB chính, nên được phép eventually consistent vì có thể rebuild.\n✓ Là read model, có DB chính làm chân lý, index hỏng thì rebuild lại được.\n✗ Không phải source of truth: không có transaction mạnh, không relational integrity.\n✗ Không hợp transaction tài chính ACID.\n✗ Kho dữ liệu thô khám phá ad-hoc là vai trò của data lake."
+  },
+  {
+    "id": "sd-q-068",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-06-data-pipeline",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Truy vấn 'doanh thu theo vùng trong tháng 3' (tổng hợp triệu dòng) phù hợp nhất với hệ nào?",
+    "options": [
+      "OLAP / data warehouse",
+      "OLTP DB như Postgres hoặc DynamoDB",
+      "Search index full-text",
+      "Queue/log như Kafka"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Truy vấn tổng hợp/phân tích là việc của OLAP/data warehouse.\n✓ OLAP/data warehouse tối ưu cho tổng hợp triệu dòng theo SQL.\n✗ OLTP DB rất tệ ở tổng hợp triệu dòng, hợp tra cứu theo key.\n✗ Search index hợp full-text/fuzzy, không phải aggregate doanh thu.\n✗ Queue/log là hạ tầng truyền event, không phải nơi truy vấn phân tích."
+  },
+  {
+    "id": "sd-q-069",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-06-data-pipeline",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần đồng bộ thay đổi từ Postgres sang lake/warehouse/search gần real-time mà KHÔNG bắt app double-write và KHÔNG bỏ sót DELETE. Cách nào đúng?",
+    "options": [
+      "CDC đọc transaction log (WAL/binlog) và phát ra từng thay đổi",
+      "Cron query 'SELECT * WHERE updated_at > ?' mỗi phút",
+      "App ghi đồng thời vào cả DB và search index",
+      "Snapshot toàn bộ bảng mỗi đêm rồi so sánh diff"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "CDC đọc WAL/binlog bắt được mọi thay đổi gồm DELETE, gần real-time, không tải lên DB nguồn.\n✓ CDC đọc transaction log phát INSERT/UPDATE/DELETE, không cần double-write.\n✗ Query updated_at nặng cho DB và bỏ sót DELETE (dòng đã xóa không còn để quét).\n✗ Double-write chính là thứ cần tránh, dễ lệch giữa hai hệ.\n✗ Snapshot diff mỗi đêm không gần real-time và tốn kém."
+  },
+  {
+    "id": "sd-q-070",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-06-data-pipeline",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Pipeline analytics của bạn là at-least-once: message có thể bị gửi lại khi consumer crash. Cách thực tế nhất để 'trông như exactly-once'?",
+    "options": [
+      "Thiết kế xử lý idempotent: dedupe theo event_id hoặc UPSERT theo key",
+      "Bật two-phase commit phân tán cho mọi event",
+      "Chuyển sang fire-and-forget, chấp nhận mất message",
+      "Tăng timeout mạng để consumer không bao giờ crash"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "At-least-once + xử lý idempotent là combo khả thi và đơn giản hơn two-phase commit phân tán.\n✓ Dedupe theo event_id hoặc UPSERT ON CONFLICT khiến xử lý lại vẫn cho cùng kết quả.\n✗ Two-phase commit phân tán phức tạp, bài khuyên tránh.\n✗ Fire-and-forget gây mất message, ngược nguyên tắc 'thà trùng còn hơn mất'.\n✗ Tăng timeout không loại bỏ được crash hay gửi lại."
+  },
+  {
+    "id": "sd-q-071",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-06-data-pipeline",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong analytics trên data lake, theo bài 'chi phí ≈ ...'. Đâu là phát biểu đúng và hệ quả thiết kế?",
+    "options": [
+      "Chi phí ≈ lượng dữ liệu bị quét; partition + Parquet + nén cắt query từ quét 60 TB xuống 200 MB",
+      "Chi phí ≈ lượng dữ liệu được lưu; nên xóa bớt file để tiết kiệm",
+      "Chi phí ≈ số lượng query chạy; nên gộp nhiều query thành một",
+      "Chi phí ≈ số người dùng truy cập; nên giới hạn số analyst"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Với engine tính tiền theo TB scan (như Athena), chi phí gắn với lượng dữ liệu quét, không phải lượng lưu.\n✓ Partition theo ngày + cột Parquet + nén giảm dữ liệu quét hàng nghìn lần.\n✗ Storage rẻ; cái đắt là compute quét, không phải dung lượng lưu.\n✗ Chi phí không tính theo số query mà theo dữ liệu mỗi query đọc.\n✗ Chi phí không gắn với số người dùng."
+  },
+  {
+    "id": "sd-q-072",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-06-data-pipeline",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Yêu cầu: logic transform của batch và stream về cơ bản GIỐNG NHAU, team muốn ít code và recompute lịch sử bằng cách replay. Nên chọn kiến trúc nào?",
+    "options": [
+      "Kappa: một codebase stream, replay log khi cần tính lại lịch sử",
+      "Lambda: tách batch layer và speed layer, gộp ở serving",
+      "ETL cổ điển transform trước khi nạp warehouse",
+      "Dùng cả Lambda và Kappa để an toàn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khi logic giống nhau và muốn ít code, Kappa với một đường stream + replay là lựa chọn đúng.\n✓ Kappa chỉ một codebase, recompute bằng replay log, loại bug do hai nhánh lệch.\n✗ Lambda buộc viết logic hai lần, hợp khi batch và stream khác hẳn nhau.\n✗ ETL nói về thứ tự transform, không giải bài toán real-time + lịch sử.\n✗ Dùng cả hai là over-engineer."
+  },
+  {
+    "id": "sd-q-073",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-06-data-pipeline",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một công ty phải LỌC/ẨN dữ liệu PII TRƯỚC khi nó chạm warehouse vì lý do compliance. Theo bài nên chọn gì?",
+    "options": [
+      "ETL: transform ở engine trung gian trước khi load, dữ liệu nhạy cảm bị lọc sớm",
+      "ELT: nạp thô vào warehouse rồi mới transform bằng SQL",
+      "Đổ hết vào S3 rồi tính sau",
+      "Kappa để replay khi cần"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "ETL transform trước khi nạp, hợp khi phải lọc/ẩn PII trước khi dữ liệu chạm warehouse.\n✓ ETL lọc sớm dữ liệu nhạy cảm trước khi load, đúng yêu cầu compliance.\n✗ ELT nạp thô trước nghĩa là PII đã vào warehouse rồi mới xử lý, vi phạm yêu cầu.\n✗ 'Đổ hết vào S3 rồi tính sau' không liên quan kiểm soát PII và dễ thành data swamp.\n✗ Kappa là kiến trúc xử lý real-time/lịch sử, không giải bài toán lọc PII sớm."
+  },
+  {
+    "id": "sd-q-074",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-06-data-pipeline",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Pipeline cần xử lý peak ~20.000 records/giây, mỗi shard gánh ~1.000 rec/s. Theo cách ước lượng trong bài, cần khoảng bao nhiêu shard?",
+    "options": [
+      "Khoảng 20-24 shard",
+      "Khoảng 2 shard",
+      "Khoảng 200 shard",
+      "Khoảng 1.000 shard"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "20.000 rec/s chia cho 1.000 rec/s mỗi shard ra 20, chọn dư ~20-24 shard.\n✓ 20.000 / 1.000 = 20 shard, làm tròn lên ~20-24 để có biên.\n✗ 2 shard tính nhầm chia cho 10.000.\n✗ 200 shard sai một bậc, chia cho 100.\n✗ 1.000 shard nhầm lấy con số rec/s mỗi shard làm số shard."
+  },
+  {
+    "id": "sd-q-075",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-06-data-pipeline",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong lúc backfill, ai đó chạy UPDATE rồi DELETE trên cùng một bản ghi, nhưng downstream xử lý DELETE trước UPDATE. Hậu quả và biện pháp đúng là gì?",
+    "options": [
+      "Read model sai vĩnh viễn; phải giữ ordering theo key để event cùng key đúng thứ tự",
+      "Không sao vì at-least-once tự sửa khi gửi lại",
+      "Tăng số shard sẽ tự khắc phục thứ tự",
+      "Chuyển sang ETL để tránh hoàn toàn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "CDC tạo lũ event khi backfill; nếu UPDATE và DELETE bị xử lý ngược thứ tự, read model sai vĩnh viễn.\n✓ Phải giữ ordering theo key để các thay đổi cùng key được áp đúng trình tự.\n✗ At-least-once chỉ chống mất, không tự sửa sai thứ tự.\n✗ Tăng shard có thể làm tệ hơn nếu cùng key rải sang shard khác, không đảm bảo thứ tự.\n✗ Đổi ETL không giải quyết vấn đề ordering của các thay đổi."
+  },
+  {
+    "id": "sd-q-076",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-06-data-pipeline",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một startup nhỏ cần phân tích dữ liệu nhưng chưa có vấn đề về quy mô. Theo tinh thần bài, hướng đi đúng là gì?",
+    "options": [
+      "app → S3 (lake) → query engine SQL; chỉ dựng thêm hộp khi có vấn đề cần giải",
+      "Dựng đủ cả 7 hộp trong kiến trúc tham chiếu ngay từ đầu",
+      "Bắt đầu bằng Kafka + Spark + Snowflake cho chắc",
+      "Stream toàn bộ với Lambda architecture để không phải sửa sau"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Kiến trúc tham chiếu là bộ khung để rút bớt; đừng dựng hộp khi chưa có vấn đề chúng giải quyết.\n✓ Startup nhỏ chỉ cần app → S3 → query engine SQL, thêm dần theo nhu cầu.\n✗ Dựng cả 7 hộp ngay là over-engineer khi chưa có vấn đề.\n✗ Kafka+Spark+Snowflake từ đầu là nhảy vào công cụ trước khi hỏi yêu cầu.\n✗ Lambda với hai nhánh là phức tạp thừa cho startup nhỏ."
+  },
+  {
+    "id": "sd-q-077",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-06-data-pipeline",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Đâu là những nhược điểm/giới hạn ĐÚNG của việc dùng search index (OpenSearch) làm database chính? (chọn nhiều)",
+    "options": [
+      "Không có transaction mạnh và relational integrity",
+      "Eventual consistency: index trễ so với DB chính",
+      "Reindex tốn kém khi đổi mapping",
+      "Là source of truth tuyệt đối cho mọi dữ liệu",
+      "Cho transaction tài chính ACID nhanh hơn OLTP DB"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Search index là read model nên có các giới hạn về consistency, transaction và reindex.\n✓ Không có transaction mạnh, không relational integrity.\n✓ Eventual consistency: index trễ so với DB.\n✓ Reindex tốn kém khi đổi mapping.\n✗ Nó KHÔNG phải source of truth, cần một DB chính làm chân lý.\n✗ Nó không hợp transaction tài chính ACID, đó là việc của OLTP DB."
+  },
+  {
+    "id": "sd-q-078",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-06-data-pipeline",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Đâu là những đòn bẩy giảm chi phí data được nêu trong bài? (chọn nhiều)",
+    "options": [
+      "Storage tiering: đẩy data lạnh xuống tier rẻ/archive bằng lifecycle policy",
+      "Partition + format cột (Parquet/ORC) + nén để query chỉ quét phần liên quan",
+      "Tách storage và compute: bật compute khi cần, tắt khi xong",
+      "Giữ warehouse luôn chạy 24/7 cho tiện",
+      "Lưu hết mọi data mãi mãi vì 'biết đâu cần'"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bốn đòn bẩy chính là tiering, partition/format, tách storage-compute và vòng đời dữ liệu.\n✓ Storage tiering với lifecycle đẩy data lạnh xuống tier rẻ.\n✓ Partition + Parquet/ORC + nén giảm dữ liệu quét nên giảm tiền.\n✓ Tách storage khỏi compute để chỉ trả compute khi cần.\n✗ Để warehouse 24/7 khi chỉ query buổi sáng là lãng phí, bài khuyên tránh.\n✗ 'Lưu hết biết đâu cần' là bẫy data hoarding, cái đắt là compute quét đống đó."
+  },
+  {
+    "id": "sd-q-079",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-07-multi-account-cost",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, ranh giới cô lập mạnh nhất mà AWS cung cấp để chặn blast radius là gì?",
+    "options": [
+      "IAM policy gắn vào từng role",
+      "Ranh giới account",
+      "Phân vùng bằng VPC riêng",
+      "Tag chuẩn hoá trên resource"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Account là đơn vị cô lập mạnh nhất, mạnh hơn IAM, VPC hay tag, và đồng thời là ranh giới billing.\n✓ Ranh giới account chặn cháy lan triệt để hơn mọi cơ chế khác.\n✗ IAM policy yếu hơn account và vẫn nằm trong cùng một account dễ bị compromise lan.\n✗ VPC chỉ cô lập mạng, không cô lập quota/billing/quyền root.\n✗ Tag chỉ để phân loại, hoàn toàn không phải cơ chế cô lập."
+  },
+  {
+    "id": "sd-q-080",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-07-multi-account-cost",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo lời khuyên trong bài, management account của AWS Organizations nên dùng để làm gì?",
+    "options": [
+      "Chạy các workload prod quan trọng nhất vì nó an toàn nhất",
+      "Chỉ làm billing và quản lý Organizations, không chạy workload",
+      "Làm nơi tập trung CI/CD và golden AMI cho cả org",
+      "Chứa toàn bộ log CloudTrail và Config write-once"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Management account nắm quyền tối thượng trên cả org nên phải giữ trống, chỉ billing và quản lý Organizations.\n✓ Để trống giảm rủi ro: compromise ở đây là game over.\n✗ Chạy workload prod ở đây là bẫy thiết kế bài cảnh báo rõ.\n✗ CI/CD và golden AMI thuộc Shared Services account.\n✗ Log tập trung thuộc Log Archive account trong OU Security."
+  },
+  {
+    "id": "sd-q-081",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-07-multi-account-cost",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một dev đặt IAM policy cho phép EC2 ở mọi region, nhưng OU lại có SCP Deny RunInstances ngoài ap-southeast-1 và us-east-1. Dev cố tạo instance ở eu-west-1. Kết quả?",
+    "options": [
+      "Được phép, vì IAM cấp quyền thắng SCP",
+      "Bị từ chối, vì quyền thực tế là giao của IAM và SCP",
+      "Được phép, vì SCP chỉ áp dụng cho root user",
+      "Bị từ chối, vì SCP cũng cấp quyền và ghi đè IAM"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Quyền thực tế = (IAM cho phép) ∩ (SCP cho phép); SCP Deny ở region đó nên bị chặn.\n✓ Giao của hai tập: IAM nói được nhưng SCP nói không thì kết quả là không.\n✗ IAM không thắng được SCP Deny.\n✗ SCP áp cho mọi principal kể cả root, không chỉ root.\n✗ SCP không bao giờ cấp quyền, nó chỉ giới hạn."
+  },
+  {
+    "id": "sd-q-082",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-07-multi-account-cost",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Hai service chỉ cần gọi nhau qua một API duy nhất giữa hai account, không cần nối phẳng cả hai mạng. Cách kết nối hợp lý nhất về chi phí và cô lập?",
+    "options": [
+      "Transit Gateway để định tuyến tập trung",
+      "VPC Peering full mesh giữa mọi VPC",
+      "PrivateLink expose đúng một service qua endpoint",
+      "Đặt cả hai service vào chung một VPC"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Chỉ cần một dịch vụ thì PrivateLink cho cô lập tốt nhất và rẻ hơn nối phẳng cả mạng.\n✓ PrivateLink expose đúng một service per-endpoint, không mở toàn mạng.\n✗ TGW tính attachment-hour cộng phí/GB, thừa thãi cho một API.\n✗ Peering nối phẳng cả mạng, kém cô lập và bùng nổ link.\n✗ Gộp chung VPC phá vỡ ranh giới account/isolation."
+  },
+  {
+    "id": "sd-q-083",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-07-multi-account-cost",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một API có 500 req/s trung bình, payload 2 KB. Ước lượng bandwidth egress xấp xỉ bao nhiêu?",
+    "options": [
+      "Khoảng 1 MB/s, tức ~86 GB/ngày",
+      "Khoảng 100 KB/s, tức ~8 GB/ngày",
+      "Khoảng 10 MB/s, tức ~860 GB/ngày",
+      "Khoảng 1 GB/s, tức ~86 TB/ngày"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "500 req/s × 2 KB = 1000 KB/s ≈ 1 MB/s, nhân 86400 s ≈ 86 GB/ngày.\n✓ Con số khớp phép tính back-of-envelope trong bài.\n✗ 100 KB/s thấp hơn 10 lần, sai bậc độ lớn.\n✗ 10 MB/s cao hơn 10 lần payload thực.\n✗ 1 GB/s lệch ba bậc, phi thực tế cho 500 req/s payload 2 KB."
+  },
+  {
+    "id": "sd-q-084",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-07-multi-account-cost",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một API có traffic bursty, không đoán trước, nhiều khoảng idle. Theo bài nên chọn compute nào và vì sao?",
+    "options": [
+      "EC2/ECS reserved vì rẻ hơn khi utilization cao",
+      "Lambda serverless vì idle ~0 và thắng ở traffic bursty",
+      "EC2 on-demand 24/7 để đảm bảo độ trễ thấp",
+      "TGW để định tuyến traffic burst"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Traffic bursty/không đoán được thì serverless thắng vì chi phí idle gần 0, chỉ trả theo request.\n✓ Lambda hợp traffic thấp/bursty, auto-scale built-in, ship nhanh.\n✗ EC2 reserved chỉ rẻ khi traffic cao, đều, utilization cao.\n✗ EC2 24/7 trả full kể cả lúc không ai gọi, lãng phí với traffic bursty.\n✗ TGW là networking, không liên quan lựa chọn compute."
+  },
+  {
+    "id": "sd-q-085",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-07-multi-account-cost",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một kiến trúc microservice 'chuẩn HA' trải đều 3 AZ, các service gọi nhau hàng triệu lần/ngày khác AZ. Bill cao bất thường nhưng compute & storage bình thường. Nguyên nhân & hướng xử lý?",
+    "options": [
+      "Do egress Internet; bật CloudFront để cache",
+      "Do cross-AZ transfer; cân nhắc AZ-affinity giữ cặp service cùng AZ",
+      "Do storage IA; chuyển S3 lifecycle sang Glacier",
+      "Do thiếu Reserved Instances; mua RI ngay"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Gọi chéo AZ liên tục bị tính cross-AZ transfer cả hai chiều, nguồn rò tiền vô hình.\n✓ AZ-affinity giữ cặp service cùng AZ, đổi chút reliability lấy cắt mạnh transfer cost.\n✗ Egress Internet không phải vấn đề khi gọi nội bộ giữa các service.\n✗ S3 lifecycle/Glacier xử lý storage, không liên quan transfer giữa service.\n✗ RI giảm giá compute, không chạm tới data transfer cross-AZ."
+  },
+  {
+    "id": "sd-q-086",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-07-multi-account-cost",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Để traffic từ VPC tới S3/DynamoDB không phải trả phí qua NAT Gateway, bài khuyên dùng gì?",
+    "options": [
+      "Transit Gateway attachment cho S3",
+      "VPC Gateway Endpoint cho S3/DynamoDB (miễn phí)",
+      "PrivateLink interface endpoint tính phí/giờ",
+      "CloudFront distribution trước S3"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "VPC Gateway Endpoint cho S3/DynamoDB miễn phí, tránh trả NAT cho traffic tới S3.\n✓ Gateway Endpoint định tuyến thẳng tới S3/DynamoDB, không qua NAT.\n✗ TGW không phải cách kết nối tới S3 và còn tính phí/GB.\n✗ Interface endpoint (PrivateLink) tính phí, không phải lựa chọn miễn phí ở đây.\n✗ CloudFront giảm egress origin nhưng không thay được Gateway Endpoint cho traffic VPC→S3."
+  },
+  {
+    "id": "sd-q-087",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-07-multi-account-cost",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, đâu là cách hiệu quả để tránh nợ tag tích luỹ không thể truy ngược chủ sở hữu?",
+    "options": [
+      "Chạy job dọn tag thủ công mỗi cuối tháng",
+      "Ép tag ngay từ provisioning (SCP/IaC từ chối resource thiếu tag)",
+      "Chỉ tag các resource prod, bỏ qua dev",
+      "Để tagging làm sau khi hệ thống ổn định"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Untagged resource gần như không bao giờ được dọn nên phải ép tag ngay lúc tạo.\n✓ SCP/IaC từ chối resource thiếu tag chặn nợ tag từ gốc.\n✗ Dọn thủ công cuối tháng không theo kịp tốc độ tạo resource.\n✗ Bỏ qua dev vẫn để lại vùng mù chi phí và resource vô chủ.\n✗ 'Làm sau' chính là bẫy bài cảnh báo."
+  },
+  {
+    "id": "sd-q-088",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-07-multi-account-cost",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một service tự nhiên đắt gấp đôi trong tuần này so với baseline. Theo tinh thần FinOps của bài, nên coi đây là gì?",
+    "options": [
+      "Chuyện bình thường, chờ báo cáo cuối tháng phân tích",
+      "Một incident cần xử lý ngay (có thể là leak hoặc bị tấn công)",
+      "Tín hiệu nên mua thêm Reserved Instances",
+      "Vấn đề của riêng phòng finance"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cost là signal real-time; vọt chi phí bất thường thường là leak hoặc bị tấn công và phải xử lý như incident.\n✓ Cost Anomaly Detection sinh ra để bắt đúng loại vọt này.\n✗ Chờ cuối tháng đi ngược nguyên tắc cost là tín hiệu real-time.\n✗ Mua RI không giải quyết nguyên nhân vọt bất thường.\n✗ FinOps coi cost là trách nhiệm chung của engineering, không riêng finance."
+  },
+  {
+    "id": "sd-q-089",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-07-multi-account-cost",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi nào nên chọn Control Tower thay vì tự build landing zone bằng Terraform/CDK?",
+    "options": [
+      "Khi team platform rất mạnh và có yêu cầu hạ tầng đặc thù",
+      "Khi đa số tổ chức muốn dựng chuẩn nhanh, vài click",
+      "Khi cần linh hoạt tối đa, tuỳ biến mọi thứ",
+      "Khi muốn AWS không can thiệp vào phần lõi"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Control Tower hợp đa số tổ chức muốn khởi động nhanh và đúng, đánh đổi linh hoạt.\n✓ Vài click có cây OU mẫu, guardrail, Account Factory sẵn.\n✗ Team platform mạnh với yêu cầu đặc thù hợp tự build IaC hơn.\n✗ Linh hoạt tối đa là điểm mạnh của tự build, không phải Control Tower.\n✗ Control Tower nghĩa là AWS quản phần lõi, ngược với mong muốn AWS không can thiệp."
+  },
+  {
+    "id": "sd-q-090",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-07-multi-account-cost",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, những đâu là 'ranh giới tính tiền' mà data transfer bị tính phí cần chú ý? (chọn tất cả đúng)",
+    "options": [
+      "Egress ra Internet",
+      "Inbound (traffic vào AWS)",
+      "Cross-AZ trong VPC (cả hai chiều)",
+      "NAT Gateway processing",
+      "TGW processing"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      3,
+      4
+    ],
+    "explanation": "Egress, cross-AZ, NAT processing và TGW processing đều tính phí/GB; inbound thường miễn phí.\n✓ Egress ra Internet tính tiền/GB và đắt.\n✓ Cross-AZ tính phí cả hai chiều, nguồn rò tiền vô hình.\n✓ NAT Gateway tính phí/GB qua NAT.\n✓ TGW tính phí/GB qua hub.\n✗ Inbound vào AWS thường miễn phí, không phải ranh giới tính tiền."
+  },
+  {
+    "id": "sd-q-091",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-07-multi-account-cost",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo bài, những phát biểu nào đúng về SCP? (chọn tất cả đúng)",
+    "options": [
+      "SCP đặt trần quyền tối đa cho mọi principal trong OU/account, kể cả root account con",
+      "SCP có thể cấp quyền mới mà IAM chưa có",
+      "Management account không bị SCP ràng buộc",
+      "Nên test SCP trên OU sandbox trước để tránh tự khoá mình",
+      "SCP là nơi nên nhồi mọi logic phân quyền chi tiết hằng ngày"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "SCP là hàng rào trần quyền, không cấp quyền, không ràng buộc management account, và nên test sandbox trước.\n✓ SCP đặt trần cho mọi principal kể cả root của account con.\n✓ Management account không bị SCP ràng buộc nên đừng dựa vào nó để tự bảo vệ.\n✓ Test trên OU sandbox tránh đặt Deny * tự khoá mình ra ngoài.\n✗ SCP không cấp quyền, chỉ giới hạn quyền IAM có thể cấp.\n✗ Logic phân quyền chi tiết hằng ngày là việc của IAM, SCP chỉ là hàng rào."
+  },
+  {
+    "id": "sd-q-092",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-08-tradeoff-strategy",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo nguyên tắc Core vs Context của bài, một startup fintech nên ưu tiên tự xây (build) hệ thống nào và mua (buy) hệ thống nào?",
+    "options": [
+      "Build hệ thống gửi email, buy risk-engine",
+      "Build risk-engine, buy hệ thống gửi email",
+      "Build cả risk-engine lẫn hệ thống gửi email",
+      "Buy cả hai vì startup luôn nên buy mọi thứ"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Nguyên tắc là 'Build cái Core, Buy cái Context': risk-engine là core tạo lợi thế cạnh tranh, email là context không khác biệt hoá.\n✓ Build risk-engine (core), buy email (context) đúng với khung Core vs Context.\n✗ Build email và buy risk-engine làm ngược lại: đốt người giỏi vào thứ không ai trả tiền.\n✗ Build cả hai lãng phí nguồn lực vào context không tạo doanh thu.\n✗ Buy mọi thứ bỏ qua việc core đáng để tự sở hữu và đầu tư."
+  },
+  {
+    "id": "sd-q-093",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-08-tradeoff-strategy",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khi so sánh 'SaaS $2.000/tháng' với 'tự host miễn phí', sai lầm kinh điển mà bài chỉ ra là gì?",
+    "options": [
+      "Quên rằng SaaS có thể tăng giá theo thời gian",
+      "Chỉ nhìn giá license mà bỏ qua TCO (tổng chi phí sở hữu)",
+      "Đánh giá quá cao chi phí hạ tầng của SaaS",
+      "Bỏ qua chi phí lock-in của giải pháp tự host"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nhấn mạnh phải so theo TCO chứ không phải giá license: tự host gồm lương kỹ sư, bảo trì mãi mãi, hạ tầng, chi phí cơ hội, rủi ro bảo mật.\n✓ Chỉ nhìn giá license mà bỏ qua TCO là sai lầm kinh điển được nêu.\n✗ Việc SaaS tăng giá không phải trọng tâm so sánh này.\n✗ Hạ tầng SaaS đã gộp trong giá, không phải bị đánh giá quá cao.\n✗ Lock-in là trục riêng (trục 4), không phải sai lầm khi so giá license với tự host."
+  },
+  {
+    "id": "sd-q-094",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-08-tradeoff-strategy",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với ước lượng trong bài (SaaS search $30k/năm so với tự xây $140k năm 1 và $56k/năm sau đó), khi nào tự xây mới thực sự rẻ/đáng hơn?",
+    "options": [
+      "Khi đội kỹ sư rảnh và thích viết code mới",
+      "Khi search là core, HOẶC quy mô lớn đến mức license SaaS vượt ~$250k/năm",
+      "Luôn rẻ hơn vì không tốn phí license",
+      "Khi công ty cần triển khai nhanh trong vài ngày"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài kết luận tự xây chỉ rẻ/đáng hơn khi search là core (giá trị > tiền) hoặc quy mô lớn tới mức license vượt ngưỡng ~$250k/năm.\n✓ Search là core hoặc license SaaS vượt ngưỡng lớn là hai điều kiện được nêu chính xác.\n✗ Đội rảnh và thích viết code là chính cái bẫy 'resume/vui tay' bài cảnh báo.\n✗ Tự xây không 'luôn rẻ hơn' — ước lượng cho thấy đắt gấp ~2.8 lần trong 3 năm.\n✗ Triển khai nhanh vài ngày là lợi thế của Buy, không phải lý do tự xây."
+  },
+  {
+    "id": "sd-q-095",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-08-tradeoff-strategy",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một startup đang đua giành thị trường tranh luận build vs buy cho hệ thống search. Theo logic time-to-market của bài, lựa chọn hợp lý giai đoạn đầu là gì?",
+    "options": [
+      "Build ngay để tiết kiệm phí license dài hạn",
+      "Buy để đi nhanh, kiểm chứng product-market fit, build lại sau nếu thành core",
+      "Tự host open-source vì miễn phí license",
+      "Build microservices từ ngày một để dễ scale sau"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nói sớm thì Buy để đi nhanh và kiểm chứng PMF; khi đã chứng minh giá trị và quy mô tăng mới build lại phần thành core — thứ tự ngược lại là cái chết của startup.\n✓ Buy để đi nhanh rồi build lại phần core sau là đúng nguyên tắc time-to-market.\n✗ Build ngay để tiết kiệm license bỏ qua rủi ro 6 tháng chậm có thể là phá sản.\n✗ Tự host open-source 'miễn phí' là ảo tưởng vì TCO vận hành rất cao.\n✗ Microservices từ ngày một với startup nhỏ là bẫy giết startup thầm lặng."
+  },
+  {
+    "id": "sd-q-096",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-08-tradeoff-strategy",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đội 6 người chọn 'microservices từ ngày một'. Theo Luật Conway và lập luận của bài, vấn đề cốt lõi là gì?",
+    "options": [
+      "Microservices không bao giờ scale tốt bằng monolith",
+      "Họ gánh toàn bộ chi phí phân tán mà không có lợi ích chính là tách nhiều team độc lập",
+      "Microservices yêu cầu công nghệ mới chưa chín muồi",
+      "Monolith không thể tách module bên trong"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Microservices về bản chất là quyết định tổ chức: tách để nhiều team độc lập ship không giẫm chân nhau. Một team nhỏ nhận hết chi phí (mạng, vận hành phân tán, eventual consistency) mà không có lợi ích tách team.\n✓ Gánh chi phí phân tán mà không có lợi ích tách nhiều team là vấn đề cốt lõi.\n✗ Microservices thực ra scale từng phần dễ hơn — không phải nhược điểm ở đây.\n✗ Vấn đề không phải công nghệ chưa chín mà là sai quy mô tổ chức.\n✗ Modular monolith có thể tách module rõ ràng bên trong một deploy unit."
+  },
+  {
+    "id": "sd-q-097",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-08-tradeoff-strategy",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đội chưa có kinh nghiệm vận hành Kafka, cần một message queue/streaming. Theo bài, lựa chọn nào hợp lý nhất và vì sao?",
+    "options": [
+      "Self-host Kafka trên EC2 vì không tốn phí license",
+      "Managed Kafka (MSK): đắt hơn về license nhưng rẻ hơn về TCO và giảm rủi ro vận hành",
+      "Tự viết một queue đơn giản để toàn quyền kiểm soát",
+      "Tránh dùng queue vì nó tạo lock-in cao"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nêu rõ self-host Kafka không có phí license nhưng cần đội chuyên trách; với hầu hết công ty managed Kafka (MSK) đắt hơn về license nhưng rẻ hơn về TCO, và giảm rủi ro vận hành cho đội thiếu kinh nghiệm.\n✓ MSK đắt license nhưng rẻ TCO và giảm rủi ro vận hành là đúng cho đội thiếu kinh nghiệm.\n✗ Self-host 'miễn phí license' là ảo tưởng vì cần đội chuyên trách on-call 3 giờ sáng.\n✗ Tự viết queue là build cái context, đốt người giỏi vào thứ không tạo lợi thế.\n✗ Lock-in của queue không phải lý do để tránh hoàn toàn một capability cần thiết."
+  },
+  {
+    "id": "sd-q-098",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-08-tradeoff-strategy",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Theo khung One-way vs Two-way Door của Bezos, cặp quyết định nào dưới đây nên được xử lý với hai tốc độ KHÁC nhau (một nhanh, một chậm)?",
+    "options": [
+      "Chọn thư viện UI (nhanh) và chọn database chính / public API contract (chậm)",
+      "Chọn ngôn ngữ lõi (nhanh) và đổi managed service chuẩn (chậm)",
+      "Đặt tên endpoint nội bộ (chậm) và bật/tắt feature flag (chậm)",
+      "Chọn cloud provider sâu (nhanh) và đổi thư viện UI (chậm)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Two-way door (đảo ngược dễ) thì quyết nhanh; one-way door (khó đảo ngược) thì quyết chậm, soi kỹ.\n✓ Thư viện UI là two-way (quyết nhanh), database chính và public API contract là one-way (quyết chậm).\n✗ Ngôn ngữ lõi là one-way nên phải quyết chậm, không phải nhanh.\n✗ Đặt tên endpoint nội bộ và feature flag đều là two-way, nên quyết nhanh, không phải chậm.\n✗ Chọn cloud provider sâu là one-way (quyết chậm), không phải nhanh."
+  },
+  {
+    "id": "sd-q-099",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-08-tradeoff-strategy",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn phải thiết kế public API và database chính (đều là one-way door). Mẹo thực dụng nào trong bài giúp 'biến one-way thành two-way' để vẫn quyết được nhanh hơn?",
+    "options": [
+      "Trì hoãn quyết định cho tới khi có đủ dữ liệu tuyệt đối",
+      "Thêm một lớp trừu tượng: façade/adapter trước API, repository pattern trước database",
+      "Chọn luôn giải pháp phổ biến nhất để khỏi phải đổi",
+      "Build microservices để mỗi phần đổi độc lập"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nêu mẹo thêm lớp trừu tượng: façade/adapter cho public API để đổi backend sau, repository pattern trước DB để đổi ít đau hơn — đầu tư vào tính đảo-ngược-được chính là mua quyền quyết nhanh.\n✓ Thêm façade/adapter và repository pattern là đúng mẹo biến one-way thành two-way.\n✗ Trì hoãn vô hạn là analysis paralysis, không phải giải pháp.\n✗ Chọn giải pháp phổ biến không tự động làm quyết định đảo ngược được.\n✗ Microservices là quyết định tổ chức, không phải mẹo tăng tính đảo-ngược của API/DB."
+  },
+  {
+    "id": "sd-q-100",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-08-tradeoff-strategy",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một CTO muốn áp dụng công nghệ AI đang ở 'đỉnh kỳ vọng phồng' của Gartner Hype Cycle vào production lõi. Lời khuyên của bài là gì?",
+    "options": [
+      "Áp dụng ngay vì công nghệ ở đỉnh là chín muồi nhất",
+      "Đợi nó qua 'vực thẳm vỡ mộng' lên 'dốc khai sáng', trừ khi cố tình đặt cược sớm có chủ đích",
+      "Bỏ hẳn vì mọi công nghệ ở đỉnh đều thất bại",
+      "Chỉ dùng nếu nó nằm trong vòng Hold của Tech Radar"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài khuyên không đưa công nghệ vào sản xuất khi ở đỉnh hype (thiếu best practice, công cụ non); đợi nó lên dốc khai sáng khi pattern đã chín, trừ khi cố tình bet sớm có chủ đích biết rủi ro.\n✓ Đợi qua vực thẳm lên dốc khai sáng, hoặc bet sớm có chủ đích là lời khuyên đúng.\n✗ Đỉnh hype KHÔNG phải chín muồi nhất — đó là lúc kỳ vọng phồng, công cụ non.\n✗ Không phải mọi công nghệ ở đỉnh đều thất bại — nhiều thứ leo lên cao nguyên năng suất.\n✗ Vòng Hold nghĩa là tránh dùng cho cái mới, ngược lại với việc áp dụng."
+  },
+  {
+    "id": "sd-q-101",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-08-tradeoff-strategy",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo ma trận nợ kỹ thuật Fowler và chiến lược trả nợ trong bài, những phát biểu nào ĐÚNG?",
+    "options": [
+      "Nợ ở góc 'Cố ý + Thận trọng' (ship trước, refactor sprint sau) là công cụ kinh doanh hợp lệ",
+      "Mục tiêu là đạt trạng thái không còn nợ kỹ thuật nào",
+      "Chỉ nên refactor phần code thay đổi thường xuyên; code xấu nhưng ổn định, không ai đụng thì để yên",
+      "Nên dồn nợ lại làm một 'dự án refactor lớn' thay vì trả tăng dần",
+      "Làm nợ hữu hình bằng tickets có nhãn, nếu không nó sẽ không bao giờ được ưu tiên"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      4
+    ],
+    "explanation": "Mục tiêu là nợ trong tầm kiểm soát và minh bạch, không phải zero nợ; trả nợ tăng dần và đúng chỗ đau.\n✓ Nợ Cố ý + Thận trọng là công cụ kinh doanh hợp lệ.\n✓ Chỉ refactor code thay đổi thường xuyên, để yên code ổn định không ai đụng.\n✓ Làm nợ hữu hình bằng tickets để được ưu tiên — nợ vô hình bị bỏ quên.\n✗ Không còn nợ nào là bất khả thi và không kinh tế; mục tiêu là nợ minh bạch, kiểm soát được.\n✗ Dự án refactor lớn gần như luôn thất bại; nên trả tăng dần theo Boy Scout Rule."
+  },
+  {
+    "id": "sd-q-102",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-08-tradeoff-strategy",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Trong phỏng vấn Staff/Principal về một quyết định build vs buy, cách trình bày nào GHI ĐIỂM theo bài?",
+    "options": [
+      "Đặt tên trade-off hai chiều thay vì phán xét tuyệt đối 'nên dùng X'",
+      "Phân loại trước đây là one-way hay two-way door",
+      "Đưa ra một đáp án dứt khoát duy nhất và bảo vệ tới cùng",
+      "Đưa ước lượng TCO 3 năm thô và nêu điều kiện sẽ đổi ý",
+      "Thừa nhận chi phí con người, ví dụ team chưa quen Kafka nên MSK đắt hơn vẫn hợp lý"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3,
+      4
+    ],
+    "explanation": "Người chấm đánh giá chất lượng tư duy đánh đổi, không phải 'đáp án đúng' duy nhất.\n✓ Đặt tên trade-off hai chiều thay vì phán xét tuyệt đối được nêu là cách ghi điểm.\n✓ Phân loại one-way/two-way cho thấy tư duy như leader.\n✓ Đưa TCO 3 năm và nêu điều kiện đổi ý cho thấy tư duy định lượng và động.\n✓ Thừa nhận chi phí con người cho thấy độ chín, rất ít ứng viên nói.\n✗ Một đáp án tuyệt đối, dứt khoát là thứ người nghe cấp cao dị ứng; câu trả lời 'đúng' là 'còn tuỳ'."
+  },
+  {
+    "id": "sd-q-103",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-08-tradeoff-strategy",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong ba 'tầng' lựa chọn (SaaS hoàn toàn / Managed service / Self-hosted open-source), tầng nào bài coi là 'cân bằng tốt nhất cho đa số'?",
+    "options": [
+      "SaaS hoàn toàn (Stripe, Auth0) vì vận hành = 0",
+      "Managed service trên cloud (RDS, SQS, OpenSearch)",
+      "Self-hosted open-source (Postgres trên EC2, Kafka tự quản)",
+      "Tự viết hoàn toàn từ đầu để toàn quyền kiểm soát"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài mô tả managed service trên cloud là 'bạn quản cấu hình nhưng không quản máy' và là cân bằng tốt nhất cho đa số.\n✓ Managed service trên cloud là cân bằng tốt nhất cho đa số theo bài.\n✗ SaaS hoàn toàn vận hành = 0 nhưng lock-in và chi phí cao nhất, không phải cân bằng tốt nhất.\n✗ Self-hosted open-source rẻ license nhưng nhận toàn bộ gánh nặng vận hành.\n✗ Tự viết hoàn toàn không phải một trong ba tầng và thường chỉ hợp lý khi là core."
+  },
+  {
+    "id": "sd-q-104",
+    "courseId": "SYSTEM-DESIGN",
+    "lesson": "sd-08-tradeoff-strategy",
+    "certifications": [
+      "SYSTEM-DESIGN"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo phần liên hệ AWS, vì sao Lambda được mô tả là 'one-way door hơn' so với container (ECS/EKS)?",
+    "options": [
+      "Vì Lambda chậm hơn container ở mọi tải",
+      "Vì Lambda lock-in vào model của AWS nên khó đảo ngược, dù vận hành ~0",
+      "Vì container không thể chạy trên AWS",
+      "Vì Lambda đắt hơn container về license"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nói Lambda là one-way-door hơn vì lock-in vào model của AWS (khó đảo ngược) nhưng đổi lại vận hành ~0; container dùng image chuẩn giữ tính đảo-ngược cao hơn.\n✓ Lambda lock-in vào model AWS nên khó đảo ngược, vận hành ~0 là lý do đúng.\n✗ Tốc độ không phải lý do bài đưa ra cho 'one-way door'.\n✗ Container chạy được trên AWS qua ECS/EKS — đó chính là lựa chọn so sánh.\n✗ Vấn đề là portability/lock-in, không phải giá license."
   }
 ];
 

@@ -111,8 +111,8 @@
       "id": "SYSTEM-DESIGN",
       "kind": "questions",
       "scope": "8 bài (prefix sd) — interview-style tradeoff",
-      "status": "pending",
-      "note": ""
+      "status": "done",
+      "note": "104 câu (13×8), build pass"
     }
   ]
 }

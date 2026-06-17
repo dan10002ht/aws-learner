@@ -3,6 +3,49 @@
 import { Check, X } from "lucide-react";
 import type { Question } from "@/lib/types";
 
+/**
+ * Render question/option/explanation text that may contain code. Handles:
+ *  - fenced blocks ```lang\n…\n``` → <pre> code block
+ *  - inline `code` → <code>
+ *  - newlines in plain text are preserved (whitespace-pre-wrap)
+ * Everything is plain React text (auto-escaped), so `<`, `>` in code show literally.
+ */
+function RichText({ text }: { text: string }) {
+  const parts = text.split(/(```[\s\S]*?```)/g).filter(Boolean);
+  return (
+    <>
+      {parts.map((part, i) => {
+        const fence = part.match(/^```(\w*)\n?([\s\S]*?)\n?```$/);
+        if (fence) {
+          return (
+            <pre
+              key={i}
+              className="my-2 overflow-x-auto rounded-lg bg-[var(--surface-2)] border border-[var(--border)] p-3 text-[0.8em] font-mono leading-relaxed whitespace-pre"
+            >
+              <code>{fence[2]}</code>
+            </pre>
+          );
+        }
+        // Inline `code` within a plain (newline-preserving) segment.
+        const inline = part.split(/(`[^`]+`)/g).filter(Boolean);
+        return (
+          <span key={i} className="whitespace-pre-wrap">
+            {inline.map((seg, j) =>
+              seg.startsWith("`") && seg.endsWith("`") && seg.length > 1 ? (
+                <code key={j} className="rounded bg-[var(--surface-2)] px-1 py-0.5 text-[0.85em] font-mono">
+                  {seg.slice(1, -1)}
+                </code>
+              ) : (
+                <span key={j}>{seg}</span>
+              )
+            )}
+          </span>
+        );
+      })}
+    </>
+  );
+}
+
 interface Props {
   question: Question;
   optionMap: number[];
@@ -58,7 +101,7 @@ export default function QuestionCard({
         <span>{question.difficulty} · {isMulti ? "Multi" : "Single"}</span>
       </div>
 
-      <h2 className="text-base sm:text-lg md:text-xl font-bold mb-5 leading-snug">{question.question}</h2>
+      <h2 className="text-base sm:text-lg md:text-xl font-bold mb-5 leading-snug"><RichText text={question.question} /></h2>
 
       <div className="space-y-2.5">
         {optionMap.map((origIdx, displayedIdx) => {
@@ -100,7 +143,7 @@ export default function QuestionCard({
               </div>
               <div className="flex-1 leading-relaxed">
                 <span className="font-mono text-xs text-[var(--text-mute)] mr-2">{String.fromCharCode(65 + displayedIdx)}</span>
-                {question.options[origIdx]}
+                <RichText text={question.options[origIdx]} />
                 {revealed && isCorrectOrig && !isSelected && (
                   <span className="ml-2 inline-block text-[0.7rem] font-semibold uppercase tracking-wide text-success/90 align-middle">· bạn bỏ lỡ</span>
                 )}
@@ -141,14 +184,14 @@ export default function QuestionCard({
                   {lines.map((line, i) => {
                     const mark = line.startsWith("✓") ? "ok" : line.startsWith("✗") ? "bad" : null;
                     if (!mark) {
-                      return <p key={i} className="text-sm leading-relaxed">{line}</p>;
+                      return <p key={i} className="text-sm leading-relaxed"><RichText text={line} /></p>;
                     }
                     return (
                       <div key={i} className="text-sm leading-relaxed flex gap-2">
                         <span className={mark === "bad" ? "text-danger font-bold" : "text-success font-bold"}>
                           {mark === "bad" ? "✗" : "✓"}
                         </span>
-                        <span>{line.replace(/^[✓✗]\s*/, "")}</span>
+                        <span><RichText text={line.replace(/^[✓✗]\s*/, "")} /></span>
                       </div>
                     );
                   })}
@@ -164,7 +207,7 @@ export default function QuestionCard({
             const perOption =
               clauses.length > 1 && clauses.every((c) => /^[A-E]\s+(?:đúng|SAI|sai)\b/.test(c));
             if (!perOption) {
-              return <p className="text-sm leading-relaxed">{raw}</p>;
+              return <p className="text-sm leading-relaxed"><RichText text={raw} /></p>;
             }
             return (
               <ul className="space-y-1.5">
