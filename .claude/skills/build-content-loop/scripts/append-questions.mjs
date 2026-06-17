@@ -1,16 +1,19 @@
 #!/usr/bin/env node
-// Append knowledge-quiz workflow output to web/data/generatedQuestions.ts.
+// Append knowledge-quiz workflow output to web/data/generatedKnowledge.ts.
 // Usage: node append-questions.mjs <workflow-output-file>
-// Reads {result:{questions:[...]}}, decodes HTML entities, validates the gate
-// (id unique, indices in range, single=1/multi>=2, no leftover entities),
-// then inserts before the final "];" of generatedQuestions.ts.
+//
+// generatedKnowledge.ts holds chunked arrays (const k1, k2, ... spread into the
+// export) because one giant literal overflows TypeScript's union-complexity
+// limit. This script parses the existing chunks, adds the new questions, repacks
+// into chunks of <= MAX, and rewrites the file. Validates the gate first.
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(__dirname, "..", "..", "..", "..");
-const GEN = path.join(REPO, "web", "data", "generatedQuestions.ts");
+const GEN = path.join(REPO, "web", "data", "generatedKnowledge.ts");
+const MAX = 400;
 
 const outFile = process.argv[2];
 if (!outFile) { console.error("Usage: append-questions.mjs <workflow-output-file>"); process.exit(1); }
@@ -34,14 +37,23 @@ qs = qs.map((q) => ({
   correctIndices: q.correctIndices, explanation: dec(q.explanation),
 }));
 
-// validate against existing ids too
-const existing = fs.readFileSync(GEN, "utf8");
+// Load existing knowledge questions (parse all chunk arrays from the file).
+let existing = [];
+if (fs.existsSync(GEN)) {
+  const t = fs.readFileSync(GEN, "utf8");
+  const re = /const k\d+: Question\[\] = (\[[\s\S]*?\]);/g;
+  let m;
+  while ((m = re.exec(t))) existing = existing.concat(JSON.parse(m[1]));
+}
+const existingIds = new Set(existing.map((q) => q.id));
+
+// Validate the batch (gate).
 let err = 0;
-const ids = new Set();
+const seen = new Set();
 for (const q of qs) {
-  if (ids.has(q.id)) { console.log("DUP in batch", q.id); err++; }
-  ids.add(q.id);
-  if (existing.includes(`"${q.id}"`)) { console.log("DUP vs file", q.id); err++; }
+  if (seen.has(q.id)) { console.log("DUP in batch", q.id); err++; }
+  seen.add(q.id);
+  if (existingIds.has(q.id)) { console.log("DUP vs file", q.id); err++; }
   const n = q.options.length;
   if (!q.correctIndices.length) { console.log("nocorrect", q.id); err++; }
   for (const c of q.correctIndices) if (c < 0 || c >= n) { console.log("OOR", q.id); err++; }
@@ -56,8 +68,16 @@ console.log(`${res.courseId}: ${qs.length} q | errors:${err} | multi:${multi} ($
 console.log("per-lesson:", JSON.stringify(per));
 if (err > 0) { console.log("ABORT — fix errors first"); process.exit(1); }
 
-const blocks = qs.map((q) => "  " + JSON.stringify(q, null, 2).split("\n").join("\n  "));
-const ins = ",\n" + blocks.join(",\n") + "\n];";
-const idx = existing.lastIndexOf("\n];");
-fs.writeFileSync(GEN, existing.slice(0, idx) + ins + existing.slice(idx + 3));
-console.log(`Appended ${qs.length} ${res.courseId} questions -> ${GEN}`);
+// Repack all questions into chunks of <= MAX and rewrite the file.
+const all = existing.concat(qs);
+const chunks = [];
+for (let i = 0; i < all.length; i += MAX) chunks.push(all.slice(i, i + MAX));
+
+let out = 'import type { Question } from "@/lib/types";\n\n';
+out += "// Auto-generated practice quizzes for knowledge courses. Chunked into arrays\n";
+out += "// so TypeScript can type-check the literal (a single huge array overflows\n";
+out += "// the union-complexity limit). Managed by build-content-loop/scripts/append-questions.mjs.\n\n";
+chunks.forEach((c, i) => { out += `const k${i + 1}: Question[] = ${JSON.stringify(c, null, 2)};\n\n`; });
+out += `export const generatedKnowledge: Question[] = [${chunks.map((_, i) => "...k" + (i + 1)).join(", ")}];\n`;
+fs.writeFileSync(GEN, out);
+console.log(`Appended ${qs.length} ${res.courseId} questions; total knowledge now ${all.length} in ${chunks.length} chunk(s).`);

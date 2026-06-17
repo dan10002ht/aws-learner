@@ -1,5 +1,6 @@
 import type { Question } from "@/lib/types";
 import { generatedQuestions } from "./generatedQuestions";
+import { generatedKnowledge } from "./generatedKnowledge";
 
 const curatedQuestions: Question[] = [
   // ============================================================
@@ -833,7 +834,7 @@ const curatedQuestions: Question[] = [
   },
 ];
 
-export const questions: Question[] = [...curatedQuestions, ...generatedQuestions];
+export const questions: Question[] = [...curatedQuestions, ...generatedQuestions, ...generatedKnowledge];
 
 export function getQuestionById(id: string): Question | undefined {
   return questions.find((q) => q.id === id);
