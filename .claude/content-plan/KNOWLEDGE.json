@@ -76,8 +76,8 @@
       "id": "AIML",
       "kind": "questions",
       "scope": "6 bài (prefix ai)",
-      "status": "pending",
-      "note": ""
+      "status": "done",
+      "note": "78 câu (13×6), build pass"
     },
     {
       "id": "FOUNDATIONS",
