@@ -12,6 +12,32 @@ Trước khi sửa, phải biết đang sửa cái gì. Một image production c
 | **Quyền lúc chạy (runtime)** | Chạy `root`, ghi đè filesystem, có `CAP_SYS_ADMIN`, mount Docker socket | non-root, read-only fs, drop capabilities, seccomp |
 | **Chuỗi cung ứng (supply chain)** | Pull nhầm image giả, base image bị poison, không truy vết được build | Image signing (cosign), SBOM, pin digest, provenance |
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 290" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Ba lớp rủi ro của image container và vũ khí phòng thủ tương ứng</title>
+  <desc>Ba lớp rủi ro chồng lên nhau: Nội dung image (CVE, secret), Quyền lúc chạy (root, capabilities), Chuỗi cung ứng (image giả, poison); mỗi lớp kèm các công cụ phòng thủ tương ứng.</desc>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Ba lớp rủi ro của một image production</text>
+  <text x="704" y="26" font-size="11.5" text-anchor="end" fill="currentColor" opacity="0.6">Rủi ro → Phòng thủ</text>
+  <g>
+    <rect x="16" y="42" width="688" height="68" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="32" y="66" font-size="13.5" font-weight="700" fill="currentColor">Nội dung image</text>
+    <text x="32" y="86" font-size="11" fill="currentColor" opacity="0.72">Rủi ro: CVE trong OS/lib · secret bị nhúng · package thừa</text>
+    <text x="32" y="103" font-size="11" fill="currentColor" opacity="0.72">Phòng thủ: image scan (Trivy) · minimal base · multi-stage · không nhúng secret</text>
+  </g>
+  <g>
+    <rect x="16" y="118" width="688" height="68" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="32" y="142" font-size="13.5" font-weight="700" fill="currentColor">Quyền lúc chạy (runtime)</text>
+    <text x="32" y="162" font-size="11" fill="currentColor" opacity="0.72">Rủi ro: chạy root · ghi đè fs · CAP_SYS_ADMIN · mount Docker socket</text>
+    <text x="32" y="179" font-size="11" fill="currentColor" opacity="0.72">Phòng thủ: non-root · read-only fs · drop capabilities · seccomp</text>
+  </g>
+  <g>
+    <rect x="16" y="194" width="688" height="68" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="32" y="218" font-size="13.5" font-weight="700" fill="currentColor">Chuỗi cung ứng (supply chain)</text>
+    <text x="32" y="238" font-size="11" fill="currentColor" opacity="0.72">Rủi ro: pull nhầm image giả · base bị poison · không truy vết được build</text>
+    <text x="32" y="255" font-size="11" fill="currentColor" opacity="0.72">Phòng thủ: signing (cosign) · SBOM · pin digest · provenance</text>
+  </g>
+  <text x="360" y="282" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">Ba lớp chồng nhau — cần cả ba, không lớp nào thay được lớp nào</text>
+</svg>
+
 > 💡 Ghi nhớ: Scan chỉ tìm lỗ hổng **đã biết**. Hạ quyền runtime giới hạn thiệt hại của lỗ hổng **chưa biết**. Signing + SBOM trả lời câu "image này từ đâu ra, có đúng thứ tôi build không". Cần cả ba, không thay thế nhau.
 
 ## 1. Image scanning: tìm CVE trước khi attacker tìm
@@ -80,6 +106,48 @@ ENTRYPOINT ["/app"]
 ```
 
 Image cuối chỉ có đúng một binary tĩnh + tag `:nonroot` đã sẵn user không phải root. Không Go toolchain, không source, không shell.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Multi-stage build tách stage build khỏi stage runtime</title>
+  <desc>Stage build chứa toolchain, source code và dev dependency để biên dịch ra binary; chỉ binary được copy sang stage runtime gọn nhẹ dùng distroless non-root, các thứ còn lại bị bỏ lại nên image cuối nhỏ và sạch.</desc>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Multi-stage build: chỉ binary đi sang image cuối</text>
+  <g>
+    <rect x="16" y="44" width="300" height="206" rx="11" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="32" y="68" font-size="13" font-weight="700" fill="currentColor">Stage build</text>
+    <text x="32" y="85" font-size="10.5" fill="currentColor" opacity="0.6">FROM golang:1.23 AS build</text>
+    <g font-size="11.5" fill="currentColor">
+      <rect x="32" y="98" width="268" height="30" rx="7" fill="currentColor" fill-opacity="0.07"/>
+      <text x="46" y="117">Go toolchain / compiler</text>
+      <rect x="32" y="134" width="268" height="30" rx="7" fill="currentColor" fill-opacity="0.07"/>
+      <text x="46" y="153">Source code</text>
+      <rect x="32" y="170" width="268" height="30" rx="7" fill="currentColor" fill-opacity="0.07"/>
+      <text x="46" y="189">Dev dependency, go.mod cache</text>
+      <rect x="32" y="206" width="268" height="30" rx="7" fill="#10b981" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.25"/>
+      <text x="46" y="225" font-weight="700">/app  (binary tĩnh)</text>
+    </g>
+  </g>
+  <g>
+    <line x1="318" y1="221" x2="404" y2="221" stroke="currentColor" stroke-opacity="0.7" stroke-width="2"/>
+    <path d="M404 221 l-9 -5 v10 z" fill="currentColor" fill-opacity="0.8"/>
+    <text x="361" y="214" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">COPY --from=build</text>
+    <text x="361" y="241" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.55">chỉ binary</text>
+  </g>
+  <g>
+    <rect x="404" y="44" width="300" height="206" rx="11" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="420" y="68" font-size="13" font-weight="700" fill="currentColor">Stage runtime (image cuối)</text>
+    <text x="420" y="85" font-size="10.5" fill="currentColor" opacity="0.6">FROM distroless/static:nonroot</text>
+    <g font-size="11.5" fill="currentColor">
+      <rect x="420" y="98" width="268" height="34" rx="7" fill="#10b981" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.25"/>
+      <text x="434" y="120" font-weight="700">/app  (binary tĩnh)</text>
+      <rect x="420" y="138" width="268" height="26" rx="7" fill="currentColor" fill-opacity="0.07"/>
+      <text x="434" y="155" font-size="11">libc + CA cert + tzdata</text>
+      <rect x="420" y="170" width="268" height="26" rx="7" fill="currentColor" fill-opacity="0.07"/>
+      <text x="434" y="187" font-size="11">USER nonroot</text>
+    </g>
+    <text x="420" y="222" font-size="11" fill="currentColor" opacity="0.7">Không toolchain · không source · không shell</text>
+    <text x="420" y="240" font-size="11" fill="currentColor" opacity="0.7">→ nhỏ &amp; sạch, bề mặt tấn công tối thiểu</text>
+  </g>
+</svg>
 
 > 💡 Ghi nhớ: `alpine` dùng `musl` libc thay vì `glibc`. Vài binary biên dịch sẵn cho `glibc` sẽ lỗi khó hiểu trên alpine (DNS resolution, một số lib native). Nếu gặp lỗi lạ kiểu "not found" với một binary rõ ràng tồn tại, nghĩ tới musl vs glibc ngay.
 
@@ -271,6 +339,67 @@ Ráp tất cả thành một chuỗi liền mạch từ source tới chạy:
 6. **Admission control** (Kyverno/Cosign policy) chỉ cho deploy image đã ký, đúng digest.
 7. **Scan lại định kỳ** image đang chạy trong registry để bắt CVE mới công bố.
 8. **Runtime monitoring** (Falco) canh hành vi lúc chạy.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Pipeline supply chain defense-in-depth từ base image tới runtime</title>
+  <desc>Chuỗi tám mắt xích nối tiếp: pin base theo digest, build CI sạch, scan Trivy, sinh SBOM Syft, ký cosign, admission control Kyverno, scan lại định kỳ, runtime monitoring Falco; mỗi mắt xích chú thích loại tấn công nó chặn.</desc>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Chuỗi cung ứng: mỗi mắt xích chặn một loại tấn công</text>
+  <defs>
+    <marker id="arrcs" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor" fill-opacity="0.8"/></marker>
+  </defs>
+  <g font-size="11.5">
+    <g>
+      <rect x="16" y="44" width="210" height="58" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+      <text x="30" y="66" font-weight="700" fill="currentColor">1. Pin base @digest</text>
+      <text x="30" y="86" font-size="10.5" fill="currentColor" opacity="0.65">chặn: base bị poison / đổi ngầm</text>
+    </g>
+    <g>
+      <rect x="255" y="44" width="210" height="58" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+      <text x="269" y="66" font-weight="700" fill="currentColor">2. Build CI sạch</text>
+      <text x="269" y="86" font-size="10.5" fill="currentColor" opacity="0.65">chặn: máy dev nhiễm / không reproducible</text>
+    </g>
+    <g>
+      <rect x="494" y="44" width="210" height="58" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+      <text x="508" y="66" font-weight="700" fill="currentColor">3. Scan (Trivy)</text>
+      <text x="508" y="86" font-size="10.5" fill="currentColor" opacity="0.65">chặn: CVE đã biết trong OS/lib</text>
+    </g>
+    <g>
+      <rect x="494" y="123" width="210" height="58" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+      <text x="508" y="145" font-weight="700" fill="currentColor">4. SBOM (Syft)</text>
+      <text x="508" y="165" font-size="10.5" fill="currentColor" opacity="0.65">chặn: transitive dep / typosquat ẩn</text>
+    </g>
+    <g>
+      <rect x="255" y="123" width="210" height="58" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+      <text x="269" y="145" font-weight="700" fill="currentColor">5. Ký (cosign)</text>
+      <text x="269" y="165" font-size="10.5" fill="currentColor" opacity="0.65">chặn: tráo image / MITM ở registry</text>
+    </g>
+    <g>
+      <rect x="16" y="123" width="210" height="58" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+      <text x="30" y="145" font-weight="700" fill="currentColor">6. Admission (Kyverno)</text>
+      <text x="30" y="165" font-size="10.5" fill="currentColor" opacity="0.65">chặn: deploy image chưa ký / sai digest</text>
+    </g>
+    <g>
+      <rect x="16" y="202" width="210" height="58" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+      <text x="30" y="224" font-weight="700" fill="currentColor">7. Scan lại định kỳ</text>
+      <text x="30" y="244" font-size="10.5" fill="currentColor" opacity="0.65">chặn: CVE mới công bố sau khi push</text>
+    </g>
+    <g>
+      <rect x="255" y="202" width="210" height="58" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+      <text x="269" y="224" font-weight="700" fill="currentColor">8. Runtime (Falco)</text>
+      <text x="269" y="244" font-size="10.5" fill="currentColor" opacity="0.65">chặn: zero-day / hành vi bất thường</text>
+    </g>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.7" stroke-width="2" fill="none" marker-end="url(#arrcs)">
+    <line x1="226" y1="73" x2="251" y2="73"/>
+    <line x1="465" y1="73" x2="490" y2="73"/>
+    <path d="M599 102 v17"/>
+    <line x1="494" y1="152" x2="469" y2="152"/>
+    <line x1="255" y1="152" x2="230" y2="152"/>
+    <path d="M121 181 v17"/>
+    <line x1="226" y1="231" x2="251" y2="231"/>
+  </g>
+  <text x="360" y="300" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">source → build → registry → cluster → runtime: mỗi tầng giả định tầng trước có thể thủng</text>
+</svg>
 
 > ⚠️ Bẫy production: Mắt xích yếu nhất thường là **dependency của dependency**. App của bạn import lib A, lib A kéo theo 200 transitive dependency bạn chưa từng đọc tên. SBOM + scan trên SBOM là cách duy nhất nhìn thấy chúng. Một typosquat package (tên gần giống package thật) lọt vào là cả chuỗi sụp.
 

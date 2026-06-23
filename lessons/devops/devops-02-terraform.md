@@ -153,6 +153,50 @@ data "aws_ami" "ubuntu" {
 
 Sau `apply`, Terraform ghi ra `terraform.tfstate` — một file JSON ánh xạ **resource trong code ↔ resource thật trên AWS** (kèm ID, thuộc tính). Đây là "trí nhớ" của Terraform: nhờ state nó biết `aws_instance.web` ứng với instance `i-0abc123` nào để sửa/xoá.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>State là cầu nối giữa code HCL và resource thật trên AWS</title>
+  <desc>Code HCL mô tả trạng thái mong muốn nối với terraform.tfstate; state lại nối tới resource thật trên AWS. State là trí nhớ ánh xạ tên local trong code với ID resource thật để Terraform biết cái nào sửa hay xoá.</desc>
+  <defs>
+    <marker id="ar-state" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">State — cầu nối code ↔ AWS</text>
+  <g>
+    <rect x="16" y="56" width="190" height="150" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="111" y="80" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Code HCL</text>
+    <text x="111" y="98" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">trạng thái mong muốn</text>
+    <rect x="34" y="116" width="154" height="74" rx="7" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="46" y="138" font-size="11" fill="currentColor" opacity="0.85">resource "aws_instance"</text>
+    <text x="46" y="156" font-size="11" fill="currentColor" opacity="0.85">  "web" { ... }</text>
+    <text x="46" y="178" font-size="10.5" fill="currentColor" opacity="0.55">tên local: web</text>
+  </g>
+  <g>
+    <rect x="265" y="56" width="190" height="150" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="360" y="80" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">terraform.tfstate</text>
+    <text x="360" y="98" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">trí nhớ / bản đồ</text>
+    <rect x="283" y="116" width="154" height="74" rx="7" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="295" y="140" font-size="11" fill="currentColor" opacity="0.85">web  ⇄  i-0abc123</text>
+    <text x="295" y="160" font-size="10.5" fill="currentColor" opacity="0.55">+ thuộc tính, ID</text>
+    <text x="295" y="180" font-size="10.5" fill="currentColor" opacity="0.55">(JSON)</text>
+  </g>
+  <g>
+    <rect x="514" y="56" width="190" height="150" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="609" y="80" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Resource thật</text>
+    <text x="609" y="98" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">trên AWS</text>
+    <rect x="532" y="116" width="154" height="74" rx="7" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="609" y="148" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.9">EC2 i-0abc123</text>
+    <text x="609" y="170" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.55">đang chạy</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.6" fill="none" stroke-width="1.6">
+    <line x1="206" y1="131" x2="263" y2="131" marker-start="url(#ar-state)" marker-end="url(#ar-state)"/>
+    <line x1="455" y1="131" x2="512" y2="131" marker-start="url(#ar-state)" marker-end="url(#ar-state)"/>
+  </g>
+  <text x="234" y="120" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">ánh xạ</text>
+  <text x="483" y="120" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">khớp ID</text>
+  <text x="360" y="232" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">State giúp Terraform biết resource nào để sửa / xoá</text>
+</svg>
+
 > ⚠️ Bẫy production: **KHÔNG BAO GIỜ commit `terraform.tfstate` vào Git.** State chứa secret dạng plaintext (password DB, private key). Thêm vào `.gitignore`: `*.tfstate`, `*.tfstate.*`, `.terraform/`.
 
 ### 4.2 Vì sao cần remote backend
@@ -178,6 +222,55 @@ terraform {
 
 DynamoDB table cho lock chỉ cần partition key `LockID` (kiểu String). Khi ai đó đang `apply`, Terraform ghi 1 record lock; người thứ hai sẽ bị chặn với lỗi `Error acquiring the state lock`.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 290" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Remote backend trên S3 và cơ chế lock chống apply đồng thời</title>
+  <desc>Hai engineer cùng chạy terraform apply. Người thứ nhất lấy được lock từ DynamoDB hoặc S3 lockfile và ghi state vào S3. Người thứ hai bị chặn với lỗi acquiring the state lock vì lock đang giữ.</desc>
+  <defs>
+    <marker id="ar-lock" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Remote backend + lock — chống apply đồng thời</text>
+  <g>
+    <rect x="16" y="52" width="180" height="56" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="106" y="76" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Engineer A</text>
+    <text x="106" y="94" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.65">terraform apply</text>
+  </g>
+  <g>
+    <rect x="16" y="186" width="180" height="56" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="106" y="210" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Engineer B</text>
+    <text x="106" y="228" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.65">terraform apply</text>
+  </g>
+  <g>
+    <rect x="300" y="50" width="180" height="86" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="390" y="76" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Lock</text>
+    <text x="390" y="96" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">DynamoDB LockID</text>
+    <text x="390" y="113" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">hoặc S3 lockfile</text>
+    <rect x="332" y="120" width="116" height="0" />
+  </g>
+  <g>
+    <rect x="540" y="50" width="164" height="86" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="622" y="80" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">S3 bucket</text>
+    <text x="622" y="100" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.65">terraform.tfstate</text>
+    <text x="622" y="118" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.55">encrypt = true</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.65" fill="none" stroke-width="1.6">
+    <path d="M196 80 L298 82" marker-end="url(#ar-lock)"/>
+    <path d="M480 96 L538 95" marker-end="url(#ar-lock)"/>
+  </g>
+  <text x="245" y="66" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">① lấy lock OK</text>
+  <text x="508" y="84" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">② ghi state</text>
+  <g stroke="#ef4444" stroke-opacity="0.7" fill="none" stroke-width="1.6" stroke-dasharray="5 4">
+    <path d="M196 210 L298 124" marker-end="url(#ar-lock)"/>
+  </g>
+  <g>
+    <rect x="300" y="200" width="300" height="56" rx="9" fill="#ef4444" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="450" y="222" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Bị chặn — lock đang giữ</text>
+    <text x="450" y="241" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Error acquiring the state lock</text>
+  </g>
+  <text x="250" y="168" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">lock đã bận → block</text>
+</svg>
+
 > 💡 Ghi nhớ: Từ khi S3 hỗ trợ **conditional writes** (cuối 2024), Terraform 1.10+ có thể lock state bằng chính S3 với tham số `use_lockfile = true`, **không còn bắt buộc DynamoDB**. Nhưng rất nhiều codebase hiện tại vẫn dùng DynamoDB — bạn cần biết cả hai.
 
 > ⚠️ Bẫy production: Backend **không nhận biến** (`variable`) — block `backend` phải là giá trị literal. Cần tham số hoá thì dùng `terraform init -backend-config=prod.hcl` với partial configuration.
@@ -187,6 +280,48 @@ DynamoDB table cho lock chỉ cần partition key `LockID` (kiểu String). Khi 
 ## 5. Module — tái sử dụng
 
 Module = một thư mục chứa `.tf`, đóng gói thành khối tái dùng được. Code bạn viết ở mục 3 thực ra đã là **root module**. Tách logic chung (vd: "1 VPC chuẩn", "1 web server") ra module con để dùng lại cho dev/staging/prod.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Phân cấp module: root module gọi module con qua source và input, nhận lại output</title>
+  <desc>Root module dùng block module với source trỏ tới module vpc và truyền vào input variables như cidr và az_count. Module con tạo resource và trả về outputs. Các resource khác trong root dùng lại output đó.</desc>
+  <defs>
+    <marker id="ar-mod" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Phân cấp module — root gọi module con</text>
+  <g>
+    <rect x="220" y="44" width="280" height="74" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="360" y="68" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Root module</text>
+    <text x="360" y="88" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">module "network" { source = "./modules/vpc" }</text>
+    <text x="360" y="106" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.55">+ resource khác trong root</text>
+  </g>
+  <g>
+    <rect x="180" y="210" width="360" height="84" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="360" y="234" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Module con: vpc</text>
+    <text x="360" y="254" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">main.tf · variables.tf · outputs.tf</text>
+    <text x="360" y="276" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">tạo aws_vpc, aws_subnet…</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.65" fill="none" stroke-width="1.6">
+    <path d="M300 118 L260 208" marker-end="url(#ar-mod)"/>
+    <path d="M420 208 L460 120" marker-end="url(#ar-mod)"/>
+  </g>
+  <g>
+    <rect x="40" y="142" width="190" height="44" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="135" y="160" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">input variables ↓</text>
+    <text x="135" y="177" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">cidr, az_count</text>
+  </g>
+  <g>
+    <rect x="490" y="142" width="190" height="44" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="585" y="160" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">outputs ↑</text>
+    <text x="585" y="177" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">public_subnet_ids</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none" stroke-width="1.3" stroke-dasharray="4 4">
+    <path d="M135 186 L135 252 L178 252"/>
+    <path d="M542 252 L585 252 L585 186"/>
+  </g>
+  <text x="360" y="314" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">module.network.public_subnet_ids[0] → dùng cho aws_instance.web</text>
+</svg>
 
 ```
 modules/
@@ -227,6 +362,51 @@ module "vpc" {
 ---
 
 ## 6. Vòng đời: plan / apply / destroy
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Vòng đời plan và apply: so trạng thái mong muốn với state để tính diff rồi hội tụ</title>
+  <desc>Terraform so trạng thái mong muốn trong code với state hiện tại, plan tính ra diff gồm tạo, sửa, xoá và replace, sau đó apply thực thi để thực tế hội tụ về đúng trạng thái mong muốn.</desc>
+  <defs>
+    <marker id="ar-life" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">plan so sánh → apply hội tụ</text>
+  <g>
+    <rect x="16" y="52" width="170" height="58" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="101" y="76" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Trạng thái mong muốn</text>
+    <text x="101" y="95" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.65">code HCL</text>
+  </g>
+  <g>
+    <rect x="16" y="160" width="170" height="58" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="101" y="184" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">State hiện tại</text>
+    <text x="101" y="203" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.65">terraform.tfstate</text>
+  </g>
+  <g>
+    <rect x="276" y="86" width="148" height="98" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="350" y="110" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">plan</text>
+    <text x="350" y="128" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">tính diff</text>
+    <text x="296" y="150" font-size="11" fill="currentColor" opacity="0.85">+ create   ~ update</text>
+    <text x="296" y="168" font-size="11" fill="currentColor" opacity="0.85">- destroy  -/+ replace</text>
+  </g>
+  <g>
+    <rect x="514" y="86" width="190" height="98" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="609" y="116" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">apply</text>
+    <text x="609" y="138" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">thực thi diff</text>
+    <text x="609" y="158" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">→ thực tế hội tụ về</text>
+    <text x="609" y="174" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">trạng thái mong muốn</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.6" fill="none" stroke-width="1.6">
+    <path d="M186 84 L240 110 L274 116" marker-end="url(#ar-life)"/>
+    <path d="M186 186 L240 160 L274 154" marker-end="url(#ar-life)"/>
+    <path d="M424 135 L512 135" marker-end="url(#ar-life)"/>
+  </g>
+  <text x="234" y="100" font-size="10" fill="currentColor" opacity="0.6">so sánh</text>
+  <g stroke="currentColor" stroke-opacity="0.45" fill="none" stroke-width="1.4" stroke-dasharray="5 4">
+    <path d="M609 184 L609 240 L101 240 L101 218" marker-end="url(#ar-life)"/>
+  </g>
+  <text x="355" y="256" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">apply cập nhật lại state → lần plan sau không còn diff (idempotent)</text>
+</svg>
 
 ```bash
 terraform init      # tải provider + cấu hình backend (chạy 1 lần / khi đổi provider)

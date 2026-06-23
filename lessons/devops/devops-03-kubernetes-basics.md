@@ -21,6 +21,38 @@ Bài này không dạy lý thuyết suông. Bạn sẽ viết manifest YAML ch�
 
 K8s đặt ra một **trạng thái mong muốn (desired state)** dạng khai báo (declarative): "tôi muốn 5 bản sao của app này luôn chạy". K8s liên tục **reconcile** — so trạng thái thực với mong muốn, và tự sửa cho khớp. Đây là tư duy cốt lõi: bạn mô tả *cái muốn có*, không phải *các bước để làm*.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Vòng lặp điều chỉnh (control loop) của Kubernetes</title>
+  <desc>Controller liên tục so sánh desired state (spec bạn khai báo) với actual state (status thực tế). Nếu lệch, controller hành động để kéo actual về khớp desired, rồi lặp lại mãi mãi.</desc>
+  <rect x="40" y="110" width="200" height="80" rx="12" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="140" y="142" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">DESIRED (spec)</text>
+  <text x="140" y="164" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.75">bạn khai báo: replicas=5</text>
+
+  <rect x="480" y="110" width="200" height="80" rx="12" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="580" y="142" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">ACTUAL (status)</text>
+  <text x="580" y="164" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.75">thực tế: đang có 4 Pod</text>
+
+  <rect x="290" y="20" width="140" height="46" rx="10" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="360" y="42" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">controller</text>
+  <text x="360" y="58" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">so sánh + hành động</text>
+
+  <defs>
+    <marker id="ar4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.6">
+    <path d="M240 130 C280 90 270 70 290 55" marker-end="url(#ar4)"/>
+    <path d="M480 130 C440 90 450 70 430 55" marker-end="url(#ar4)"/>
+    <path d="M360 66 C360 110 430 150 478 150" marker-end="url(#ar4)"/>
+  </g>
+  <text x="240" y="90" font-size="10.5" fill="currentColor" opacity="0.7">đọc spec</text>
+  <text x="420" y="90" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.7">đọc status</text>
+  <text x="360" y="240" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">lệch? → tạo thêm 1 Pod để khớp</text>
+  <text x="360" y="262" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">rồi lặp lại — mãi mãi</text>
+  <path d="M360 200 v30" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.6" fill="none" stroke-dasharray="4 3"/>
+</svg>
+
 > 💡 Ghi nhớ: Kubernetes là một **vòng lặp điều chỉnh (control loop)**, không phải bộ script chạy một lần. Bạn khai báo desired state, K8s lo phần còn lại — mãi mãi.
 
 ---
@@ -29,17 +61,51 @@ K8s đặt ra một **trạng thái mong muốn (desired state)** dạng khai b�
 
 Một cluster gồm 2 nhóm máy: **control plane** (bộ não, ra quyết định) và **worker node** (cơ bắp, chạy workload thật).
 
-```
-        CONTROL PLANE                          WORKER NODE
- ┌─────────────────────────┐         ┌──────────────────────────┐
- │  kube-apiserver  ◄───────┼─ kubectl│  kubelet                 │
- │       │                  │         │    │                     │
- │     etcd (state store)   │         │  container runtime       │
- │  scheduler               │         │    (containerd)          │
- │  controller-manager      │         │  kube-proxy              │
- └─────────────────────────┘         │  [ Pod ] [ Pod ] [ Pod ] │
-                                      └──────────────────────────┘
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Kiến trúc cluster Kubernetes — control plane và worker node</title>
+  <desc>kubectl gọi vào kube-apiserver. Control plane gồm kube-apiserver, etcd, scheduler, controller-manager. Worker node gồm kubelet, container runtime, kube-proxy và các Pod. apiserver điều khiển kubelet trên worker node.</desc>
+  <rect x="14" y="50" width="320" height="300" rx="12" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="174" y="74" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">CONTROL PLANE (bộ não)</text>
+  <rect x="386" y="50" width="320" height="300" rx="12" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="546" y="74" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">WORKER NODE (cơ bắp)</text>
+
+  <rect x="300" y="14" width="120" height="30" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="360" y="34" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">kubectl</text>
+
+  <rect x="44" y="92" width="260" height="40" rx="9" fill="#3b82f6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="174" y="117" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">kube-apiserver — cửa ngõ duy nhất</text>
+  <rect x="44" y="148" width="260" height="38" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="174" y="172" font-size="12.5" text-anchor="middle" fill="currentColor">etcd — kho state (nguồn sự thật)</text>
+  <rect x="44" y="200" width="260" height="38" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="174" y="224" font-size="12.5" text-anchor="middle" fill="currentColor">kube-scheduler — chọn node cho Pod</text>
+  <rect x="44" y="252" width="260" height="38" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="174" y="276" font-size="12.5" text-anchor="middle" fill="currentColor">controller-manager — control loop</text>
+
+  <rect x="416" y="92" width="260" height="36" rx="9" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="546" y="115" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">kubelet — agent của node</text>
+  <rect x="416" y="138" width="260" height="36" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="546" y="161" font-size="12.5" text-anchor="middle" fill="currentColor">container runtime (containerd)</text>
+  <rect x="416" y="184" width="260" height="36" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="546" y="207" font-size="12.5" text-anchor="middle" fill="currentColor">kube-proxy — định tuyến mạng</text>
+  <rect x="416" y="234" width="260" height="56" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <rect x="430" y="248" width="68" height="28" rx="6" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="464" y="267" font-size="11.5" text-anchor="middle" fill="currentColor">Pod</text>
+  <rect x="512" y="248" width="68" height="28" rx="6" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="546" y="267" font-size="11.5" text-anchor="middle" fill="currentColor">Pod</text>
+  <rect x="594" y="248" width="68" height="28" rx="6" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="628" y="267" font-size="11.5" text-anchor="middle" fill="currentColor">Pod</text>
+
+  <defs>
+    <marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.6">
+    <path d="M340 38 C300 48 230 70 200 90" marker-end="url(#ar1)"/>
+    <path d="M304 112 C350 112 372 110 414 110" marker-end="url(#ar1)"/>
+  </g>
+  <text x="358" y="100" font-size="10.5" fill="currentColor" opacity="0.7">qua REST API</text>
+</svg>
 
 ### 2.1 Control plane
 
@@ -103,6 +169,55 @@ kubectl get pod nginx -o wide   # xem IP + node nó nằm
 ### 4.2 Deployment
 Là thứ bạn dùng thật. **Deployment quản lý ReplicaSet, ReplicaSet quản lý Pod.** Deployment thêm khả năng **rolling update** và **rollback** — nâng cấp version dần dần, không downtime.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Phân cấp Deployment, ReplicaSet, Pod và rolling update</title>
+  <desc>Deployment quản lý ReplicaSet, ReplicaSet quản lý N Pod replica. Khi rolling update, Deployment tạo một ReplicaSet mới (version mới) bên cạnh ReplicaSet cũ, chuyển dần Pod sang.</desc>
+  <defs>
+    <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <rect x="270" y="14" width="180" height="46" rx="10" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="360" y="36" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Deployment: web</text>
+  <text x="360" y="52" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">replicas: 3 + rolling update</text>
+
+  <rect x="70" y="116" width="220" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.32"/>
+  <text x="180" y="137" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">ReplicaSet (cũ)</text>
+  <text x="180" y="153" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">nginx:1.27 — đang co lại</text>
+
+  <rect x="430" y="116" width="220" height="44" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="540" y="137" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">ReplicaSet (mới)</text>
+  <text x="540" y="153" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">nginx:1.28 — đang dâng lên</text>
+
+  <g>
+    <rect x="78" y="210" width="62" height="40" rx="7" fill="#8b5cf6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="109" y="234" font-size="11" text-anchor="middle" fill="currentColor">Pod</text>
+    <rect x="150" y="210" width="62" height="40" rx="7" fill="#8b5cf6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="181" y="234" font-size="11" text-anchor="middle" fill="currentColor">Pod</text>
+  </g>
+  <g>
+    <rect x="438" y="210" width="62" height="40" rx="7" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="469" y="234" font-size="11" text-anchor="middle" fill="currentColor">Pod</text>
+    <rect x="510" y="210" width="62" height="40" rx="7" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="541" y="234" font-size="11" text-anchor="middle" fill="currentColor">Pod</text>
+    <rect x="582" y="210" width="62" height="40" rx="7" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="613" y="234" font-size="11" text-anchor="middle" fill="currentColor">Pod</text>
+  </g>
+
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none" stroke-width="1.5">
+    <path d="M330 60 C260 80 200 95 180 114" marker-end="url(#ar2)"/>
+    <path d="M390 60 C460 80 520 95 540 114" marker-end="url(#ar2)"/>
+    <path d="M180 160 L109 208" marker-end="url(#ar2)"/>
+    <path d="M180 160 L181 208" marker-end="url(#ar2)"/>
+    <path d="M540 160 L469 208" marker-end="url(#ar2)"/>
+    <path d="M540 160 L541 208" marker-end="url(#ar2)"/>
+    <path d="M540 160 L613 208" marker-end="url(#ar2)"/>
+  </g>
+
+  <text x="360" y="300" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Rolling update: tạo ReplicaSet mới, dời Pod dần — không downtime</text>
+  <text x="360" y="322" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">rollback = quay lại ReplicaSet cũ</text>
+</svg>
+
 ```yaml
 # deployment.yaml
 apiVersion: apps/v1
@@ -151,6 +266,46 @@ kubectl rollout undo deploy/web               # rollback version trước
 ## 5. Service — địa chỉ ổn định cho Pod
 
 Pod có IP nhưng IP **đổi mỗi lần Pod tái tạo**. Không thể hardcode. **Service** cho một IP ảo + tên DNS **ổn định**, tự load-balance tới các Pod khớp `selector`.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Service làm địa chỉ ổn định đứng trước nhiều Pod phù du</title>
+  <desc>Client gọi Service qua tên DNS và ClusterIP ổn định. Service load-balance tới các Pod khớp selector app=web. Pod là phù du, IP đổi mỗi lần tái tạo, nhưng ClusterIP và DNS của Service không đổi.</desc>
+  <defs>
+    <marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <rect x="20" y="120" width="150" height="70" rx="11" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="95" y="150" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Client / Pod khác</text>
+  <text x="95" y="170" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">gọi http://web</text>
+
+  <rect x="250" y="110" width="190" height="90" rx="12" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.38"/>
+  <text x="345" y="138" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Service: web</text>
+  <text x="345" y="160" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">ClusterIP ổn định</text>
+  <text x="345" y="178" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">DNS: web.default.svc</text>
+  <text x="345" y="194" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">selector: app=web</text>
+
+  <g>
+    <rect x="540" y="30" width="160" height="58" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="620" y="54" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Pod (app=web)</text>
+    <text x="620" y="72" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">IP 10.1.0.7 — phù du</text>
+    <rect x="540" y="126" width="160" height="58" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="620" y="150" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Pod (app=web)</text>
+    <text x="620" y="168" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">IP 10.1.0.9 — phù du</text>
+    <rect x="540" y="222" width="160" height="58" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="620" y="246" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Pod (app=web)</text>
+    <text x="620" y="264" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">IP đổi khi tái tạo</text>
+  </g>
+
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.6">
+    <path d="M170 155 L246 155" marker-end="url(#ar3)"/>
+    <path d="M440 140 C490 110 500 80 538 62" marker-end="url(#ar3)"/>
+    <path d="M440 155 L536 155" marker-end="url(#ar3)"/>
+    <path d="M440 170 C490 200 500 230 538 248" marker-end="url(#ar3)"/>
+  </g>
+  <text x="470" y="120" font-size="10" fill="currentColor" opacity="0.7">load-balance</text>
+  <text x="345" y="300" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">IP Pod đổi liên tục — ClusterIP &amp; DNS của Service không đổi</text>
+</svg>
 
 ```yaml
 # service.yaml

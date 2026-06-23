@@ -8,12 +8,58 @@ Hai chủ đề ghép lại: **GitOps** (Git là source of truth, có máy tự 
 
 Ý tưởng cốt lõi: **trạng thái mong muốn (desired state) của hệ thống được khai báo trong Git**, và một agent chạy trong cluster liên tục so sánh trạng thái thật với Git rồi tự sửa cho khớp. Đây là **reconcile loop**.
 
-```
-observe   → đọc trạng thái thật trong cluster
-diff      → so với manifest trong Git (desired state)
-act       → apply phần khác biệt để hội tụ về desired
-(lặp lại liên tục)
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Reconcile loop của GitOps theo mô hình pull</title>
+  <desc>Git giữ desired state; agent trong cluster pull về rồi lặp observe, diff, act để hội tụ cluster về đúng Git. Credential không rời cluster vì agent chủ động kéo, không ai push vào cluster.</desc>
+  <defs>
+    <marker id="ar1" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="currentColor"/></marker>
+  </defs>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Reconcile loop — pull model</text>
+
+  <!-- Git: desired state -->
+  <rect x="16" y="48" width="190" height="84" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="111" y="76" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Git repo</text>
+  <text x="111" y="96" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.72">desired state (YAML)</text>
+  <text x="111" y="114" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.72">source of truth</text>
+
+  <!-- pull arrow from cluster to git -->
+  <path d="M300 70 C 250 70 250 70 210 80" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar1)"/>
+  <text x="252" y="58" font-size="11" text-anchor="middle" fill="currentColor" font-weight="700">pull ↤</text>
+
+  <!-- Cluster boundary -->
+  <rect x="296" y="44" width="408" height="296" rx="12" fill="#3b82f6" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.22" stroke-dasharray="5 4"/>
+  <text x="500" y="64" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.85">Cluster (credential ở lại trong đây)</text>
+
+  <!-- Agent box -->
+  <rect x="316" y="76" width="150" height="52" rx="9" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="391" y="98" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Agent</text>
+  <text x="391" y="115" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Argo CD / Flux</text>
+
+  <!-- cycle: observe -> diff -> act -->
+  <rect x="332" y="156" width="120" height="48" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="392" y="178" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">observe</text>
+  <text x="392" y="194" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">đọc trạng thái thật</text>
+
+  <rect x="548" y="156" width="120" height="48" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="608" y="178" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">diff</text>
+  <text x="608" y="194" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">so với Git</text>
+
+  <rect x="548" y="252" width="120" height="48" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="608" y="274" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">act</text>
+  <text x="608" y="290" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">apply phần khác biệt</text>
+
+  <!-- cluster state box -->
+  <rect x="332" y="252" width="120" height="48" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="392" y="274" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">cluster</text>
+  <text x="392" y="290" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">hội tụ về desired</text>
+
+  <!-- loop arrows -->
+  <path d="M452 180 L 548 180" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar1)"/>
+  <path d="M608 204 L 608 252" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar1)"/>
+  <path d="M548 276 L 452 276" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar1)"/>
+  <path d="M392 252 L 392 204" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar1)"/>
+  <text x="500" y="332" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">lặp lại liên tục → tự sửa drift</text>
+</svg>
 
 So với cách làm cũ (chạy `kubectl apply` từ máy CI hoặc laptop), GitOps có 4 đặc tính:
 
@@ -111,17 +157,50 @@ Pattern chuẩn là **app repo** (code, Dockerfile) tách khỏi **config repo**
 - CI cập nhật tag image trong **config repo** (một commit nhỏ).
 - Argo CD/Flux thấy config repo đổi → deploy.
 
-```
-app-repo:    code → build → image:abc1234 → registry
-                                     │
-                              CI mở PR / commit
-                                     ▼
-config-repo: deployment.yaml: image: registry/payment:abc1234
-                                     │
-                              Argo CD reconcile
-                                     ▼
-                                 cluster
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Pattern hai repo: app-repo, config-repo và reconcile vào cluster</title>
+  <desc>App-repo build image gắn tag SHA rồi push lên registry. CI commit cập nhật tag image vào config-repo. Argo CD hoặc Flux reconcile config-repo và deploy vào cluster.</desc>
+  <defs>
+    <marker id="ar2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="currentColor"/></marker>
+  </defs>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Hai repo: tách code khỏi config</text>
+
+  <!-- Row 1: app-repo flow -->
+  <rect x="16" y="48" width="150" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="91" y="72" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">app-repo</text>
+  <text x="91" y="90" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">code · Dockerfile</text>
+
+  <path d="M166 76 L 214 76" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar2)"/>
+  <text x="190" y="68" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">build</text>
+
+  <rect x="216" y="48" width="170" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="301" y="72" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">image:abc1234</text>
+  <text x="301" y="90" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">tag = commit SHA</text>
+
+  <path d="M386 76 L 434 76" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar2)"/>
+  <text x="410" y="68" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">push</text>
+
+  <rect x="436" y="48" width="150" height="56" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="511" y="72" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">registry</text>
+  <text x="511" y="90" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">ECR / Docker Hub</text>
+
+  <!-- CI commits to config-repo -->
+  <path d="M91 104 L 91 168" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar2)"/>
+  <rect x="120" y="118" width="200" height="34" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="220" y="140" font-size="11" text-anchor="middle" fill="currentColor" font-weight="700">CI commit: cập nhật tag</text>
+
+  <!-- Row 2: config-repo -->
+  <rect x="16" y="172" width="688" height="62" rx="10" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="40" y="198" font-size="12.5" font-weight="700" fill="currentColor">config-repo</text>
+  <text x="40" y="218" font-size="11" fill="currentColor" opacity="0.78">deployment.yaml → image: registry/payment:abc1234</text>
+
+  <!-- reconcile to cluster -->
+  <path d="M360 234 L 360 274" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar2)"/>
+  <text x="360" y="259" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.78" font-weight="700">Argo CD / Flux reconcile</text>
+
+  <rect x="260" y="278" width="200" height="48" rx="10" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="307" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">cluster</text>
+</svg>
 
 > 💡 Ghi nhớ: **Không bao giờ dùng tag `:latest` trong GitOps.** Desired state phải bất biến — image phải pin theo digest hoặc commit SHA, nếu không reconcile loop mất nghĩa (Git không đổi nhưng image lại đổi).
 
@@ -135,6 +214,64 @@ Khi version mới sẵn sàng, có nhiều cách đưa nó thay version cũ. Đ�
 | Rolling | Không | Có (tạm thời) | Thấp | Rollout undo (chậm dần) |
 | Blue-Green | Không | Có (full 2 bộ) | Cao (2x) | Đổi switch tức thì |
 | Canary | Không | Có (vài %) | Trung bình | Cắt traffic canary |
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Bốn deployment strategy đặt cạnh nhau</title>
+  <desc>So sánh Recreate, Rolling, Blue-Green và Canary qua phân bố replica và traffic. Recreate tắt hết rồi bật lại có downtime. Rolling thay dần từng pod. Blue-Green chạy hai bộ đầy đủ rồi đổi switch. Canary đẩy vài phần trăm traffic sang version mới nên blast radius nhỏ nhất.</desc>
+  <!-- legend -->
+  <rect x="16" y="14" width="14" height="14" rx="3" fill="#3b82f6" fill-opacity="0.55"/>
+  <text x="36" y="26" font-size="11" fill="currentColor">version cũ (stable)</text>
+  <rect x="186" y="14" width="14" height="14" rx="3" fill="#10b981" fill-opacity="0.7"/>
+  <text x="206" y="26" font-size="11" fill="currentColor">version mới</text>
+  <rect x="320" y="14" width="14" height="14" rx="3" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="340" y="26" font-size="11" fill="currentColor">đang tắt (downtime)</text>
+
+  <!-- ===== Recreate ===== -->
+  <text x="92" y="58" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Recreate</text>
+  <text x="92" y="74" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">tắt hết → bật mới</text>
+  <rect x="34" y="84" width="116" height="180" rx="9" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.18"/>
+  <!-- empty / down -->
+  <rect x="46" y="158" width="92" height="36" rx="6" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3"/>
+  <text x="92" y="181" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">cũ DOWN</text>
+  <rect x="46" y="200" width="92" height="0" />
+  <text x="92" y="222" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">↓ rồi mới UP</text>
+  <text x="92" y="282" font-size="10" text-anchor="middle" fill="#f59e0b">có downtime</text>
+
+  <!-- ===== Rolling ===== -->
+  <text x="246" y="58" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Rolling</text>
+  <text x="246" y="74" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">thay dần từng pod</text>
+  <rect x="188" y="84" width="116" height="180" rx="9" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.18"/>
+  <rect x="200" y="96"  width="92" height="20" rx="4" fill="#10b981" fill-opacity="0.7"/>
+  <rect x="200" y="120" width="92" height="20" rx="4" fill="#10b981" fill-opacity="0.7"/>
+  <rect x="200" y="144" width="92" height="20" rx="4" fill="#3b82f6" fill-opacity="0.55"/>
+  <rect x="200" y="168" width="92" height="20" rx="4" fill="#3b82f6" fill-opacity="0.55"/>
+  <rect x="200" y="192" width="92" height="20" rx="4" fill="#3b82f6" fill-opacity="0.55"/>
+  <text x="246" y="234" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">1 bộ, đổi từ từ</text>
+  <text x="246" y="282" font-size="10" text-anchor="middle" fill="#10b981">không downtime</text>
+
+  <!-- ===== Blue-Green ===== -->
+  <text x="416" y="58" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Blue-Green</text>
+  <text x="416" y="74" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">2 bộ đầy đủ + switch</text>
+  <rect x="358" y="84" width="116" height="180" rx="9" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.18"/>
+  <text x="385" y="104" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">blue</text>
+  <rect x="368" y="108" width="38" height="100" rx="5" fill="#3b82f6" fill-opacity="0.45" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="447" y="104" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">green</text>
+  <rect x="428" y="108" width="38" height="100" rx="5" fill="#10b981" fill-opacity="0.6" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="416" y="230" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">switch → green</text>
+  <text x="416" y="282" font-size="10" text-anchor="middle" fill="#f59e0b">chi phí 2x</text>
+
+  <!-- ===== Canary ===== -->
+  <text x="586" y="58" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Canary</text>
+  <text x="586" y="74" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">vài % traffic</text>
+  <rect x="528" y="84" width="116" height="180" rx="9" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.18"/>
+  <!-- traffic split bar -->
+  <rect x="540" y="100" width="92" height="108" rx="6" fill="#3b82f6" fill-opacity="0.45" stroke="currentColor" stroke-opacity="0.2"/>
+  <rect x="540" y="100" width="92" height="14" rx="6" fill="#10b981" fill-opacity="0.7"/>
+  <text x="586" y="111" font-size="9" text-anchor="middle" fill="#fff">~10%</text>
+  <text x="586" y="165" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">90% stable</text>
+  <text x="586" y="230" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">tăng dần nếu OK</text>
+  <text x="586" y="282" font-size="10" text-anchor="middle" fill="#10b981">blast radius nhỏ nhất</text>
+</svg>
 
 ### Recreate
 
@@ -192,6 +329,74 @@ Làm tay với 2 Deployment + tỉ lệ replica là cách thô sơ. Cách đúng
 ## Progressive delivery: tự động hoá canary theo metric
 
 Canary thủ công có vấn đề: ai ngồi canh metric, ai bấm "tăng 25%", ai bấm rollback lúc 2h sáng? **Progressive delivery** tự động hoá việc này: controller tự tăng traffic theo từng bước và **tự rollback nếu metric vượt ngưỡng**.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Canary progressive delivery với auto-rollback theo metric</title>
+  <desc>Controller tăng traffic canary theo bước 10%, 50%, 100%. Sau mỗi bước có analysis truy vấn metric error rate, latency và business metric. Nếu vượt ngưỡng thì tự cắt traffic canary về 100% stable và đánh dấu rollout thất bại.</desc>
+  <defs>
+    <marker id="ar4" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="currentColor"/></marker>
+    <marker id="ar4r" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="#ef4444"/></marker>
+  </defs>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Progressive delivery + auto-rollback</text>
+  <text x="16" y="44" font-size="11" fill="currentColor" opacity="0.65">thời gian →</text>
+
+  <!-- baseline track -->
+  <line x1="16" y1="118" x2="704" y2="118" stroke="currentColor" stroke-opacity="0.25" stroke-width="1"/>
+
+  <!-- Step 10% -->
+  <rect x="28" y="78" width="110" height="56" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="83" y="102" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">10%</text>
+  <text x="83" y="120" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">traffic canary</text>
+
+  <path d="M138 106 L 176 106" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar4)"/>
+
+  <!-- Analysis gate 1 -->
+  <rect x="178" y="80" width="96" height="52" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="226" y="101" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">analysis</text>
+  <text x="226" y="118" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">đo metric</text>
+
+  <path d="M274 106 L 312 106" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar4)"/>
+  <text x="293" y="98" font-size="9.5" text-anchor="middle" fill="#10b981">OK</text>
+
+  <!-- Step 50% -->
+  <rect x="314" y="78" width="110" height="56" rx="9" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="369" y="102" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">50%</text>
+  <text x="369" y="120" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">traffic canary</text>
+
+  <path d="M424 106 L 462 106" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar4)"/>
+
+  <!-- Analysis gate 2 -->
+  <rect x="464" y="80" width="96" height="52" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="512" y="101" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">analysis</text>
+  <text x="512" y="118" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">đo metric</text>
+
+  <path d="M560 106 L 598 106" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar4)"/>
+  <text x="579" y="98" font-size="9.5" text-anchor="middle" fill="#10b981">OK</text>
+
+  <!-- Step 100% -->
+  <rect x="600" y="78" width="104" height="56" rx="9" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="652" y="102" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">100%</text>
+  <text x="652" y="120" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">promote</text>
+
+  <!-- metric legend under analysis -->
+  <text x="16" y="170" font-size="11.5" font-weight="700" fill="currentColor">Mỗi analysis truy vấn:</text>
+  <rect x="160" y="158" width="150" height="22" rx="11" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.18"/>
+  <text x="235" y="173" font-size="10.5" text-anchor="middle" fill="currentColor">error rate (5xx)</text>
+  <rect x="322" y="158" width="150" height="22" rx="11" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.18"/>
+  <text x="397" y="173" font-size="10.5" text-anchor="middle" fill="currentColor">latency p95/p99</text>
+  <rect x="484" y="158" width="170" height="22" rx="11" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.18"/>
+  <text x="569" y="173" font-size="10.5" text-anchor="middle" fill="currentColor">business metric</text>
+
+  <!-- rollback branch -->
+  <path d="M226 132 L 226 232" fill="none" stroke="#ef4444" stroke-width="1.8" marker-end="url(#ar4r)"/>
+  <path d="M512 132 L 512 200 L 360 200 L 360 232" fill="none" stroke="#ef4444" stroke-width="1.8" marker-end="url(#ar4r)"/>
+  <text x="250" y="216" font-size="10.5" fill="#ef4444" font-weight="700">vượt ngưỡng</text>
+
+  <!-- rollback box -->
+  <rect x="120" y="236" width="480" height="64" rx="10" fill="#ef4444" fill-opacity="0.1" stroke="#ef4444" stroke-opacity="0.5"/>
+  <text x="360" y="262" font-size="13" font-weight="700" text-anchor="middle" fill="#ef4444">Auto-rollback</text>
+  <text x="360" y="284" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.82">cắt traffic canary → 100% về stable, đánh dấu rollout failed</text>
+</svg>
 
 ### Argo Rollouts
 

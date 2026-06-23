@@ -60,6 +60,57 @@ spec:
 
 Quan trọng: **Ingress object chỉ là cấu hình, vô dụng nếu không có Ingress Controller** (ingress-nginx, Traefik, hoặc AWS Load Balancer Controller) đang chạy để đọc và thực thi nó.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>So sánh: một LoadBalancer mỗi Service vs Ingress L7 dùng chung một entrypoint</title>
+  <desc>Bên trái: mỗi Service có một LoadBalancer riêng nên nhiều LB tốn kém. Bên phải: một Ingress Controller (ALB) làm entrypoint duy nhất, route theo host/path — /api tới api-svc, / tới web-svc.</desc>
+  <text x="180" y="24" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Service type=LoadBalancer</text>
+  <text x="180" y="42" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">1 LB / mỗi service — tốn kém, không route L7</text>
+  <line x1="360" y1="16" x2="360" y2="344" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 4"/>
+  <text x="540" y="24" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Ingress (L7)</text>
+  <text x="540" y="42" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">1 entrypoint chung, route theo host/path</text>
+  <g font-size="11.5">
+    <rect x="36" y="60" width="120" height="34" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="96" y="81" text-anchor="middle" fill="currentColor">LB #1</text>
+    <rect x="204" y="60" width="120" height="34" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="264" y="81" text-anchor="middle" fill="currentColor">LB #2</text>
+    <rect x="36" y="150" width="120" height="40" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="96" y="166" text-anchor="middle" fill="currentColor">api-svc</text>
+    <text x="96" y="182" text-anchor="middle" fill="currentColor" opacity="0.6" font-size="10">Service</text>
+    <rect x="204" y="150" width="120" height="40" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="264" y="166" text-anchor="middle" fill="currentColor">web-svc</text>
+    <text x="264" y="182" text-anchor="middle" fill="currentColor" opacity="0.6" font-size="10">Service</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <path d="M96 94 V150" marker-end="url(#aH)"/>
+    <path d="M264 94 V150" marker-end="url(#aH)"/>
+  </g>
+  <g font-size="11.5">
+    <rect x="450" y="60" width="180" height="40" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="540" y="78" text-anchor="middle" fill="currentColor" font-weight="700">Ingress Controller</text>
+    <text x="540" y="93" text-anchor="middle" fill="currentColor" opacity="0.7" font-size="10">ALB / nginx — 1 LB duy nhất</text>
+    <rect x="430" y="150" width="120" height="40" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="490" y="166" text-anchor="middle" fill="currentColor">api-svc</text>
+    <text x="490" y="182" text-anchor="middle" fill="currentColor" opacity="0.6" font-size="10">Service</text>
+    <rect x="566" y="150" width="120" height="40" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="626" y="166" text-anchor="middle" fill="currentColor">web-svc</text>
+    <text x="626" y="182" text-anchor="middle" fill="currentColor" opacity="0.6" font-size="10">Service</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <path d="M512 100 L490 150" marker-end="url(#aH)"/>
+    <path d="M568 100 L626 150" marker-end="url(#aH)"/>
+  </g>
+  <g font-size="10.5" fill="currentColor" opacity="0.85">
+    <text x="448" y="128" text-anchor="middle">path /api</text>
+    <text x="630" y="128" text-anchor="middle">path /</text>
+  </g>
+  <text x="540" y="218" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">phân luồng theo host shop.example.com + path</text>
+  <defs>
+    <marker id="aH" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor" fill-opacity="0.5"/>
+    </marker>
+  </defs>
+</svg>
+
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -122,6 +173,49 @@ containers:
 | readiness | Gỡ Pod khỏi load balancing (không kill) | Chờ DB/cache nóng, hết kết nối |
 | liveness | Kill và restart container | Deadlock, treo không tự thoát |
 | startup | Hoãn 2 probe kia | App boot chậm (JVM, migrate DB) |
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Ba probe: startup chặn readiness và liveness, hậu quả khi mỗi probe fail</title>
+  <desc>startupProbe chạy trước và hoãn hai probe kia tới khi pass. Sau đó readinessProbe fail thì gỡ Pod khỏi Service endpoints, livenessProbe fail thì kill và restart container.</desc>
+  <g font-size="12">
+    <rect x="24" y="120" width="150" height="70" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="99" y="150" text-anchor="middle" fill="currentColor" font-weight="700">startupProbe</text>
+    <text x="99" y="169" text-anchor="middle" fill="currentColor" opacity="0.7" font-size="10.5">App boot xong chưa?</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <path d="M174 145 C230 145 230 100 280 100" marker-end="url(#pH)"/>
+    <path d="M174 165 C230 165 230 210 280 210" marker-end="url(#pH)"/>
+  </g>
+  <text x="208" y="92" font-size="10.5" fill="currentColor" opacity="0.75">pass → mở khoá</text>
+  <text x="208" y="248" font-size="10" fill="currentColor" opacity="0.6">(chặn cho tới khi pass)</text>
+  <g font-size="12">
+    <rect x="280" y="68" width="170" height="64" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="365" y="94" text-anchor="middle" fill="currentColor" font-weight="700">readinessProbe</text>
+    <text x="365" y="112" text-anchor="middle" fill="currentColor" opacity="0.7" font-size="10.5">Sẵn sàng nhận traffic?</text>
+    <rect x="280" y="178" width="170" height="64" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="365" y="204" text-anchor="middle" fill="currentColor" font-weight="700">livenessProbe</text>
+    <text x="365" y="222" text-anchor="middle" fill="currentColor" opacity="0.7" font-size="10.5">Process còn sống?</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <path d="M450 100 H560" marker-end="url(#pH)"/>
+    <path d="M450 210 H560" marker-end="url(#pH)"/>
+  </g>
+  <g font-size="11">
+    <rect x="560" y="74" width="148" height="52" rx="9" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="634" y="95" text-anchor="middle" fill="currentColor">fail → gỡ khỏi</text>
+    <text x="634" y="112" text-anchor="middle" fill="currentColor">Service endpoints</text>
+    <rect x="560" y="184" width="148" height="52" rx="9" fill="#8b5cf6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="634" y="205" text-anchor="middle" fill="currentColor">fail → KILL &amp;</text>
+    <text x="634" y="222" text-anchor="middle" fill="currentColor">restart container</text>
+  </g>
+  <text x="475" y="64" font-size="10" fill="currentColor" opacity="0.6">không kill</text>
+  <text x="475" y="174" font-size="10" fill="currentColor" opacity="0.6">khắc nghiệt nhất</text>
+  <defs>
+    <marker id="pH" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor" fill-opacity="0.5"/>
+    </marker>
+  </defs>
+</svg>
 
 > ⚠️ **Bẫy production**: **liveness probe gọi tới dependency** (database, downstream) là thảm hoạ — DB chậm một nhịp → liveness fail → toàn bộ Pod bị restart đồng loạt → cascading outage. Liveness chỉ kiểm tra **chính process còn phản hồi không**. Việc "phụ thuộc còn khoẻ không" để cho readiness. Và nếu app boot chậm, dùng `startupProbe` thay vì nới `initialDelaySeconds` của liveness (nới quá tay thì lúc treo thật cũng chậm phát hiện).
 
@@ -192,6 +286,54 @@ spec:
 
 Công thức cốt lõi: `desiredReplicas = ceil(currentReplicas × currentMetric / targetMetric)`.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Vòng điều khiển HPA và phân biệt HPA, Cluster Autoscaler, VPA</title>
+  <desc>metrics-server cấp số liệu cho HPA, HPA so currentMetric với target rồi điều chỉnh số replica của Deployment trong khoảng min-max; vòng lặp lặp lại. HPA scale Pod theo chiều ngang, Cluster Autoscaler scale node, VPA scale request/limit theo chiều dọc.</desc>
+  <g font-size="11.5">
+    <rect x="40" y="40" width="150" height="50" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="115" y="62" text-anchor="middle" fill="currentColor" font-weight="700">metrics-server</text>
+    <text x="115" y="79" text-anchor="middle" fill="currentColor" opacity="0.7" font-size="10">CPU/mem mỗi Pod</text>
+    <rect x="285" y="40" width="170" height="50" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="370" y="62" text-anchor="middle" fill="currentColor" font-weight="700">HPA</text>
+    <text x="370" y="79" text-anchor="middle" fill="currentColor" opacity="0.7" font-size="10">so currentMetric vs target 70%</text>
+    <rect x="540" y="40" width="150" height="50" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="615" y="58" text-anchor="middle" fill="currentColor" font-weight="700">Deployment</text>
+    <text x="615" y="76" text-anchor="middle" fill="currentColor" opacity="0.7" font-size="10">replicas (min 3 — max 20)</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <path d="M190 65 H285" marker-end="url(#hH)"/>
+    <path d="M455 65 H540" marker-end="url(#hH)"/>
+    <path d="M615 90 C615 150 115 150 115 90" marker-end="url(#hH)"/>
+  </g>
+  <text x="237" y="56" font-size="10" fill="currentColor" opacity="0.7" text-anchor="middle">metrics</text>
+  <text x="497" y="56" font-size="10" fill="currentColor" opacity="0.7" text-anchor="middle">scale ±</text>
+  <text x="365" y="166" font-size="10" fill="currentColor" opacity="0.7" text-anchor="middle">Pod mới phát số liệu → lặp lại vòng</text>
+  <line x1="40" y1="196" x2="690" y2="196" stroke="currentColor" stroke-opacity="0.18"/>
+  <text x="40" y="222" font-size="12" font-weight="700" fill="currentColor">Ba kiểu autoscale — đừng nhầm</text>
+  <g font-size="11">
+    <rect x="40" y="236" width="206" height="120" rx="9" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="143" y="258" text-anchor="middle" fill="currentColor" font-weight="700">HPA</text>
+    <text x="143" y="278" text-anchor="middle" fill="currentColor" opacity="0.8">scale NGANG</text>
+    <text x="143" y="296" text-anchor="middle" fill="currentColor" opacity="0.7" font-size="10">thêm/bớt số Pod</text>
+    <text x="143" y="330" text-anchor="middle" fill="currentColor" font-size="14">▢ ▢ ▢ → ▢ ▢ ▢ ▢ ▢</text>
+    <rect x="258" y="236" width="206" height="120" rx="9" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="361" y="258" text-anchor="middle" fill="currentColor" font-weight="700">Cluster Autoscaler</text>
+    <text x="361" y="278" text-anchor="middle" fill="currentColor" opacity="0.8">scale NODE</text>
+    <text x="361" y="296" text-anchor="middle" fill="currentColor" opacity="0.7" font-size="10">thêm/bớt máy (EC2)</text>
+    <text x="361" y="330" text-anchor="middle" fill="currentColor" font-size="14">▣ → ▣ ▣</text>
+    <rect x="476" y="236" width="214" height="120" rx="9" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="583" y="258" text-anchor="middle" fill="currentColor" font-weight="700">VPA</text>
+    <text x="583" y="278" text-anchor="middle" fill="currentColor" opacity="0.8">scale DỌC</text>
+    <text x="583" y="296" text-anchor="middle" fill="currentColor" opacity="0.7" font-size="10">đổi request/limit 1 Pod</text>
+    <text x="583" y="330" text-anchor="middle" fill="currentColor" font-size="14">▯ → ▮</text>
+  </g>
+  <defs>
+    <marker id="hH" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor" fill-opacity="0.5"/>
+    </marker>
+  </defs>
+</svg>
+
 > 💡 **Ghi nhớ**: HPA scale **số Pod ngang**, Cluster Autoscaler/Karpenter scale **số node**, VPA scale **request/limit dọc**. Đừng dùng HPA và VPA cùng trên CPU/memory cho một workload — chúng đánh nhau. Muốn scale theo queue depth/RPS, dùng **KEDA** (event-driven, scale-to-zero).
 
 > ⚠️ **Bẫy production**: HPA flapping (lên xuống liên tục) thường do thiếu `stabilizationWindowSeconds` hoặc target quá sát baseline. Và HPA vô dụng nếu cluster không còn chỗ — Pod mới sẽ `Pending`; cần Cluster Autoscaler đi kèm.
@@ -223,6 +365,58 @@ kubectl rollout undo deployment/api --to-revision=7       # về revision cụ t
 kubectl rollout pause deployment/api                      # tạm dừng giữa chừng (canary thủ công)
 kubectl rollout resume deployment/api
 ```
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Timeline rolling update với maxSurge=1, maxUnavailable=0 — zero downtime</title>
+  <desc>Deployment 3 replica thay từng Pod v1 bằng v2: mỗi bước tạo thêm 1 Pod v2 (maxSurge=1), chờ Ready rồi mới xoá 1 Pod v1 (maxUnavailable=0), nên luôn còn đủ Pod phục vụ traffic không downtime.</desc>
+  <text x="16" y="24" font-size="13" font-weight="700" fill="currentColor">Rolling update 3 replica — maxSurge 1, maxUnavailable 0</text>
+  <g font-size="10.5" fill="currentColor" opacity="0.7">
+    <text x="80" y="262" text-anchor="middle">Bắt đầu</text>
+    <text x="240" y="262" text-anchor="middle">+1 Pod v2</text>
+    <text x="400" y="262" text-anchor="middle">v2 Ready → xoá 1 v1</text>
+    <text x="560" y="262" text-anchor="middle">lặp lại...</text>
+    <text x="660" y="262" text-anchor="middle">Xong</text>
+  </g>
+  <line x1="40" y1="240" x2="700" y2="240" stroke="currentColor" stroke-opacity="0.4"/>
+  <g stroke="currentColor" stroke-opacity="0.4">
+    <line x1="80" y1="236" x2="80" y2="244"/>
+    <line x1="240" y1="236" x2="240" y2="244"/>
+    <line x1="400" y1="236" x2="400" y2="244"/>
+    <line x1="560" y1="236" x2="560" y2="244"/>
+    <line x1="660" y1="236" x2="660" y2="244"/>
+  </g>
+  <path d="M695 240 l-8 -4 v8 z" fill="currentColor" fill-opacity="0.4"/>
+  <text x="40" y="100" font-size="11" fill="currentColor" opacity="0.7" text-anchor="middle" transform="rotate(-90 40 130)">Pods</text>
+  <g font-size="10" text-anchor="middle">
+    <g>
+      <rect x="60" y="60" width="40" height="26" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="80" y="77" fill="currentColor">v1</text>
+      <rect x="60" y="92" width="40" height="26" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="80" y="109" fill="currentColor">v1</text>
+      <rect x="60" y="124" width="40" height="26" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="80" y="141" fill="currentColor">v1</text>
+    </g>
+    <g>
+      <rect x="220" y="60" width="40" height="26" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="240" y="77" fill="currentColor">v1</text>
+      <rect x="220" y="92" width="40" height="26" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="240" y="109" fill="currentColor">v1</text>
+      <rect x="220" y="124" width="40" height="26" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="240" y="141" fill="currentColor">v1</text>
+      <rect x="220" y="156" width="40" height="26" rx="5" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="3 2"/><text x="240" y="173" fill="currentColor">v2*</text>
+    </g>
+    <g>
+      <rect x="380" y="60" width="40" height="26" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="400" y="77" fill="currentColor">v1</text>
+      <rect x="380" y="92" width="40" height="26" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="400" y="109" fill="currentColor">v1</text>
+      <rect x="380" y="124" width="40" height="26" rx="5" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.4"/><text x="400" y="141" fill="currentColor">v2</text>
+    </g>
+    <g>
+      <rect x="540" y="60" width="40" height="26" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="560" y="77" fill="currentColor">v1</text>
+      <rect x="540" y="92" width="40" height="26" rx="5" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.4"/><text x="560" y="109" fill="currentColor">v2</text>
+      <rect x="540" y="124" width="40" height="26" rx="5" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.4"/><text x="560" y="141" fill="currentColor">v2</text>
+    </g>
+    <g>
+      <rect x="640" y="60" width="40" height="26" rx="5" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.4"/><text x="660" y="77" fill="currentColor">v2</text>
+      <rect x="640" y="92" width="40" height="26" rx="5" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.4"/><text x="660" y="109" fill="currentColor">v2</text>
+      <rect x="640" y="124" width="40" height="26" rx="5" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.4"/><text x="660" y="141" fill="currentColor">v2</text>
+    </g>
+  </g>
+  <text x="16" y="216" font-size="10.5" fill="currentColor" opacity="0.7">v2* = Pod mới đang chờ Ready · luôn ≥ 3 Pod phục vụ → không downtime</text>
+</svg>
 
 > 💡 **Ghi nhớ**: `maxUnavailable: 0` + `maxSurge: 1` = zero-downtime nhưng rollout chậm hơn. Để rollback hoạt động đúng, **readiness probe phải chuẩn** — nếu không, K8s tưởng Pod lỗi đã "Ready" và đẩy traffic vào, rolling update vẫn "thành công" trên giấy nhưng user gặp lỗi.
 
