@@ -113,6 +113,40 @@ int first(const std::vector<int>& arr) {
 
 Mỗi bước **loại bỏ một nửa** dữ liệu còn lại. Kinh điển là `binary search`. Với `n = 1 tỷ`, chỉ cần ~30 bước. Cực nhanh, gần như "miễn phí".
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Binary search loại bỏ một nửa mỗi bước</title>
+  <desc>Phạm vi tìm kiếm thu nhỏ một nửa qua từng bước: 16 phần tử còn 8, rồi 4, rồi 2, rồi 1 — chỉ tốn 4 bước, minh hoạ vì sao binary search là O(log n).</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Binary search: mỗi bước bỏ một nửa → O(log n)</text>
+  <g font-size="11">
+    <rect x="16" y="40" width="416" height="30" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="224" y="60" text-anchor="middle" fill="currentColor" font-weight="700">n = 16 phần tử</text>
+    <text x="448" y="60" fill="currentColor" opacity="0.7">bước 0</text>
+
+    <rect x="16" y="78" width="208" height="30" rx="6" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <rect x="224" y="78" width="208" height="30" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12" stroke-dasharray="3 3"/>
+    <text x="120" y="98" text-anchor="middle" fill="currentColor" font-weight="700">8</text>
+    <text x="328" y="98" text-anchor="middle" fill="currentColor" opacity="0.45">đã loại</text>
+    <text x="448" y="98" fill="currentColor" opacity="0.7">bước 1</text>
+
+    <rect x="16" y="116" width="104" height="30" rx="6" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <rect x="120" y="116" width="312" height="30" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12" stroke-dasharray="3 3"/>
+    <text x="68" y="136" text-anchor="middle" fill="currentColor" font-weight="700">4</text>
+    <text x="448" y="136" fill="currentColor" opacity="0.7">bước 2</text>
+
+    <rect x="16" y="154" width="52" height="30" rx="6" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <rect x="68" y="154" width="364" height="30" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12" stroke-dasharray="3 3"/>
+    <text x="42" y="174" text-anchor="middle" fill="currentColor" font-weight="700">2</text>
+    <text x="448" y="174" fill="currentColor" opacity="0.7">bước 3</text>
+
+    <rect x="16" y="192" width="26" height="30" rx="6" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="42" y="192" width="390" height="30" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12" stroke-dasharray="3 3"/>
+    <text x="29" y="212" text-anchor="middle" fill="currentColor" font-weight="700">1</text>
+    <text x="448" y="212" fill="currentColor" opacity="0.7">bước 4 → tìm thấy</text>
+  </g>
+  <text x="540" y="130" font-size="12" fill="currentColor" opacity="0.85">16 → 8 → 4 → 2 → 1</text>
+  <text x="540" y="150" font-size="12" fill="currentColor" opacity="0.85">log₂16 = 4 bước</text>
+</svg>
+
 ```python
 def binary_search(arr, target):     # arr đã sắp xếp tăng dần
     lo, hi = 0, len(arr) - 1
@@ -484,6 +518,39 @@ Ví dụ nổi tiếng: `quick sort` trung bình `O(n log n)` nhưng worst case 
 > 💡 Ghi nhớ: Khi phỏng vấn hỏi độ phức tạp, hãy nêu **worst case** trước, rồi bổ sung average nếu nó khác biệt đáng kể (như quick sort hay hash map). Điều đó cho thấy bạn hiểu sắc thái, không học vẹt.
 
 ## Bảng so sánh các bậc tăng trưởng
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>So sánh đường cong các bậc tăng trưởng Big-O</title>
+  <desc>Biểu đồ đường cong số thao tác theo n cho O(1), O(log n), O(n), O(n log n), O(n^2) và O(2^n). Khi n tăng, O(2^n) và O(n^2) vọt lên dốc đứng trong khi O(1) và O(log n) gần như nằm ngang.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Số thao tác tăng vọt thế nào khi n lớn</text>
+  <g stroke="currentColor" stroke-opacity="0.4">
+    <line x1="70" y1="40" x2="70" y2="320"/>
+    <line x1="70" y1="320" x2="660" y2="320"/>
+  </g>
+  <text x="70" y="345" font-size="11" fill="currentColor" opacity="0.7">n nhỏ</text>
+  <text x="660" y="345" font-size="11" text-anchor="end" fill="currentColor" opacity="0.7">n lớn →</text>
+  <text x="24" y="48" font-size="11" fill="currentColor" opacity="0.7">nhiều</text>
+  <text x="24" y="316" font-size="11" fill="currentColor" opacity="0.7">ít</text>
+  <text x="42" y="185" font-size="11" fill="currentColor" opacity="0.7" transform="rotate(-90 42 185)">số thao tác</text>
+
+  <path d="M70 312 L660 308" fill="none" stroke="#10b981" stroke-width="2.5"/>
+  <text x="664" y="306" font-size="11" fill="#10b981" font-weight="700">O(1)</text>
+
+  <path d="M70 308 C 220 290, 420 280, 660 272" fill="none" stroke="#3b82f6" stroke-width="2.5"/>
+  <text x="664" y="272" font-size="11" fill="#3b82f6" font-weight="700">O(log n)</text>
+
+  <path d="M70 312 L660 168" fill="none" stroke="#8b5cf6" stroke-width="2.5"/>
+  <text x="664" y="166" font-size="11" fill="#8b5cf6" font-weight="700">O(n)</text>
+
+  <path d="M70 312 C 300 250, 480 150, 600 60" fill="none" stroke="#f59e0b" stroke-width="2.5"/>
+  <text x="556" y="52" font-size="11" fill="#f59e0b" font-weight="700">O(n log n)</text>
+
+  <path d="M70 314 C 230 300, 360 230, 470 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-opacity="0.85"/>
+  <text x="476" y="50" font-size="11" fill="currentColor" font-weight="700">O(n²)</text>
+
+  <path d="M70 316 C 180 312, 250 300, 300 48" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+  <text x="306" y="50" font-size="11" fill="#ef4444" font-weight="700">O(2ⁿ)</text>
+</svg>
 
 Số thao tác xấp xỉ theo `n` (bậc tăng từ nhanh đến chậm):
 

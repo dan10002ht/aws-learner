@@ -242,6 +242,51 @@ int removeElement(std::vector<int>& a, int val) {
 
 Mỗi bước loại bỏ một ứng viên → **O(n)** thời gian, **O(1)** bộ nhớ. (Lưu ý: nếu mảng *chưa* sort, dùng hash map sẽ tốt hơn — xem mục prefix sum/hash.)
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Two-pointer hai đầu trên mảng đã sort</title>
+  <desc>Con trỏ left ở đầu và right ở cuối mảng đã sort cùng tiến vào giữa; nếu tổng a[left]+a[right] nhỏ hơn target thì left tăng, nếu lớn hơn target thì right giảm, bằng target là tìm thấy.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Two-pointer hai đầu (mảng đã sort) — tiến vào giữa</text>
+
+  <g font-size="14" fill="currentColor">
+    <rect x="40" y="48" width="58" height="48" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="106" y="48" width="58" height="48" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="172" y="48" width="58" height="48" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="238" y="48" width="58" height="48" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="304" y="48" width="58" height="48" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="370" y="48" width="58" height="48" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="69" y="78" text-anchor="middle">1</text>
+    <text x="135" y="78" text-anchor="middle">3</text>
+    <text x="201" y="78" text-anchor="middle">5</text>
+    <text x="267" y="78" text-anchor="middle">8</text>
+    <text x="333" y="78" text-anchor="middle">11</text>
+    <text x="399" y="78" text-anchor="middle">15</text>
+  </g>
+
+  <text x="69" y="118" font-size="12" font-weight="700" text-anchor="middle" fill="#3b82f6">left</text>
+  <text x="399" y="118" font-size="12" font-weight="700" text-anchor="middle" fill="#10b981">right</text>
+  <g stroke="currentColor" stroke-opacity="0.45" stroke-width="1.6" fill="none">
+    <path d="M75 130 h120" marker-end="url(#tparr)"/>
+    <path d="M393 130 h-120" marker-end="url(#tparr)"/>
+  </g>
+  <text x="234" y="126" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">cùng tiến vào giữa</text>
+
+  <text x="40" y="172" font-size="12.5" font-weight="700" fill="currentColor">Quyết định theo sum = a[left] + a[right] so với target:</text>
+  <g font-size="12">
+    <rect x="40" y="184" width="200" height="46" rx="7" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="52" y="204" fill="currentColor" font-weight="700">sum &lt; target</text>
+    <text x="52" y="222" fill="currentColor">cần lớn hơn → left++</text>
+    <rect x="256" y="184" width="200" height="46" rx="7" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="268" y="204" fill="currentColor" font-weight="700">sum &gt; target</text>
+    <text x="268" y="222" fill="currentColor">cần nhỏ hơn → right--</text>
+    <rect x="472" y="184" width="200" height="46" rx="7" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="484" y="204" fill="currentColor" font-weight="700">sum == target</text>
+    <text x="484" y="222" fill="currentColor">tìm thấy cặp</text>
+  </g>
+  <defs>
+    <marker id="tparr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 Z" fill="currentColor" fill-opacity="0.55"/></marker>
+  </defs>
+</svg>
+
 ```python
 def two_sum_sorted(a, target):
     left, right = 0, len(a) - 1
@@ -321,6 +366,64 @@ Sliding window là two-pointer áp dụng cho bài toán **dãy con liên tiếp
 - Khi cửa sổ vi phạm điều kiện, **co lại** bằng cách tăng `left`.
 
 Vì mỗi con trỏ chỉ đi một chiều và mỗi phần tử vào/ra cửa sổ tối đa một lần → tổng cộng **O(n)**, dù trông như hai vòng lồng nhau.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Sliding window co và giãn trên một dãy</title>
+  <desc>Cửa sổ [left, right] mở rộng khi tăng right để thu nạp phần tử mới, và co lại khi tăng left lúc vi phạm điều kiện; mỗi phần tử vào và ra cửa sổ tối đa một lần.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Sliding window — mở rộng (right++) rồi co lại (left++)</text>
+
+  <text x="16" y="58" font-size="12" font-weight="700" fill="currentColor">1. Mở rộng: tăng right thu nạp phần tử mới</text>
+  <g font-size="13" fill="currentColor">
+    <rect x="16" y="70" width="48" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="72" y="70" width="48" height="44" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="128" y="70" width="48" height="44" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="184" y="70" width="48" height="44" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="240" y="70" width="48" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="296" y="70" width="48" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="40" y="98" text-anchor="middle">a</text>
+    <text x="96" y="98" text-anchor="middle">b</text>
+    <text x="152" y="98" text-anchor="middle">c</text>
+    <text x="208" y="98" text-anchor="middle">d</text>
+    <text x="264" y="98" text-anchor="middle">e</text>
+    <text x="320" y="98" text-anchor="middle">f</text>
+  </g>
+  <text x="96" y="134" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">left</text>
+  <text x="208" y="134" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">right</text>
+  <g stroke="#10b981" stroke-width="2" fill="none">
+    <path d="M232 92 h44" marker-end="url(#swarr)"/>
+  </g>
+  <text x="296" y="88" font-size="11" fill="#10b981">right++</text>
+
+  <text x="16" y="178" font-size="12" font-weight="700" fill="currentColor">2. Vi phạm điều kiện → co lại: tăng left bỏ phần tử trái</text>
+  <g font-size="13" fill="currentColor">
+    <rect x="16" y="190" width="48" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="72" y="190" width="48" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="128" y="190" width="48" height="44" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="184" y="190" width="48" height="44" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="240" y="190" width="48" height="44" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="296" y="190" width="48" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="40" y="218" text-anchor="middle">a</text>
+    <text x="96" y="218" text-anchor="middle">b</text>
+    <text x="152" y="218" text-anchor="middle">c</text>
+    <text x="208" y="218" text-anchor="middle">d</text>
+    <text x="264" y="218" text-anchor="middle">e</text>
+    <text x="320" y="218" text-anchor="middle">f</text>
+  </g>
+  <text x="152" y="254" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">left</text>
+  <text x="264" y="254" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">right</text>
+  <g stroke="#f59e0b" stroke-width="2" fill="none">
+    <path d="M120 212 h44" marker-end="url(#swarr2)"/>
+  </g>
+  <text x="76" y="208" font-size="11" fill="#f59e0b">left++</text>
+
+  <text x="380" y="148" font-size="11.5" fill="currentColor" opacity="0.85">Mỗi phần tử vào (right++)</text>
+  <text x="380" y="166" font-size="11.5" fill="currentColor" opacity="0.85">và ra (left++) cửa sổ</text>
+  <text x="380" y="184" font-size="11.5" fill="currentColor" opacity="0.85">tối đa một lần → O(n).</text>
+  <defs>
+    <marker id="swarr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 Z" fill="#10b981"/></marker>
+    <marker id="swarr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 Z" fill="#f59e0b"/></marker>
+  </defs>
+</svg>
 
 ### Khi nào dùng
 
@@ -421,6 +524,68 @@ Prefix sum là mảng `pre` trong đó `pre[i]` = tổng các phần tử từ �
 ```
 sum(i..j) = pre[j + 1] - pre[i]
 ```
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Prefix sum và công thức tổng đoạn</title>
+  <desc>Mảng gốc a có 6 phần tử và mảng prefix pre dài 7 với pre[0]=0, mỗi pre[k] là tổng các phần tử a[0..k-1]; tổng đoạn a[1..3] bằng pre[4] trừ pre[1].</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Prefix sum: pre dài n+1, pre[0]=0, sum(i..j) = pre[j+1] − pre[i]</text>
+
+  <text x="16" y="58" font-size="12" font-weight="700" fill="currentColor">Mảng gốc a (n = 6) — tô đoạn cần tính: a[1..3]</text>
+  <g font-size="13" fill="currentColor">
+    <rect x="40" y="68" width="56" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="98" y="68" width="56" height="44" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="156" y="68" width="56" height="44" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="214" y="68" width="56" height="44" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="272" y="68" width="56" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="330" y="68" width="56" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="68" y="96" text-anchor="middle">2</text>
+    <text x="126" y="96" text-anchor="middle">4</text>
+    <text x="184" y="96" text-anchor="middle">1</text>
+    <text x="242" y="96" text-anchor="middle">7</text>
+    <text x="300" y="96" text-anchor="middle">3</text>
+    <text x="358" y="96" text-anchor="middle">5</text>
+  </g>
+  <g font-size="10.5" fill="currentColor" opacity="0.6">
+    <text x="68" y="128" text-anchor="middle">0</text>
+    <text x="126" y="128" text-anchor="middle">1</text>
+    <text x="184" y="128" text-anchor="middle">2</text>
+    <text x="242" y="128" text-anchor="middle">3</text>
+    <text x="300" y="128" text-anchor="middle">4</text>
+    <text x="358" y="128" text-anchor="middle">5</text>
+  </g>
+
+  <text x="16" y="168" font-size="12" font-weight="700" fill="currentColor">Mảng prefix pre (n+1 = 7) — pre[k] = tổng a[0..k-1]</text>
+  <g font-size="13" fill="currentColor">
+    <rect x="40" y="178" width="56" height="44" rx="6" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="98" y="178" width="56" height="44" rx="6" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="156" y="178" width="56" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="214" y="178" width="56" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="272" y="178" width="56" height="44" rx="6" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="330" y="178" width="56" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="388" y="178" width="56" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="68" y="206" text-anchor="middle">0</text>
+    <text x="126" y="206" text-anchor="middle">2</text>
+    <text x="184" y="206" text-anchor="middle">6</text>
+    <text x="242" y="206" text-anchor="middle">7</text>
+    <text x="300" y="206" text-anchor="middle">14</text>
+    <text x="358" y="206" text-anchor="middle">17</text>
+    <text x="416" y="206" text-anchor="middle">22</text>
+  </g>
+  <g font-size="10.5" fill="currentColor" opacity="0.6">
+    <text x="68" y="238" text-anchor="middle">pre[0]</text>
+    <text x="126" y="238" text-anchor="middle">pre[1]</text>
+    <text x="184" y="238" text-anchor="middle">pre[2]</text>
+    <text x="242" y="238" text-anchor="middle">pre[3]</text>
+    <text x="300" y="238" text-anchor="middle">pre[4]</text>
+    <text x="358" y="238" text-anchor="middle">pre[5]</text>
+    <text x="416" y="238" text-anchor="middle">pre[6]</text>
+  </g>
+
+  <g font-size="13" fill="currentColor">
+    <text x="40" y="282" font-weight="700">sum(1..3) = pre[4] − pre[1] = 14 − 2 = 12</text>
+    <text x="40" y="304" opacity="0.75" font-size="12">(kiểm chứng: a[1]+a[2]+a[3] = 4 + 1 + 7 = 12)</text>
+  </g>
+</svg>
 
 Ta đánh đổi một lần tiền xử lý O(n) và O(n) bộ nhớ để mỗi truy vấn đoạn về O(1), thay vì O(n) mỗi lần cộng lại.
 

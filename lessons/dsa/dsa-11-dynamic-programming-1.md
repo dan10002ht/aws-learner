@@ -10,19 +10,30 @@ Sau bài này, khi đọc một đề lạ bạn sẽ (1) **nhận ra** nó có 
 
 DP **không** phải một thuật toán cụ thể, nó là một **kỹ thuật**: *chia bài lớn thành các bài con, giải mỗi bài con đúng một lần, lưu kết quả lại để tái sử dụng*. Bản chất là **đệ quy + cache** (brute-force thông minh) — vẫn duyệt mọi khả năng nhưng không tính lại cái đã tính. DP có ích **chỉ khi** bài toán có hai tính chất sau cùng lúc.
 
-```
-                  ┌─────────────────────────────────┐
-                  │   Bài toán có dùng DP được?      │
-                  └─────────────────────────────────┘
-                       │                     │
-        Optimal substructure?       Overlapping subproblems?
-        (lời giải lớn ghép từ        (cùng 1 bài con bị
-         lời giải con tối ưu)         tính lại nhiều lần)
-                       │                     │
-                       └────── CẢ HAI? ──────┘
-                                  │
-                            ✅ Dùng DP
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Hai điều kiện cần để dùng Dynamic Programming</title>
+  <desc>Sơ đồ Venn: chỉ khi giao của optimal substructure và overlapping subproblems thì mới dùng DP; thiếu một bên rơi về divide and conquer hoặc greedy.</desc>
+  <text x="360" y="28" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Khi nào dùng DP? — phải có CẢ HAI điều kiện</text>
+  <circle cx="270" cy="170" r="135" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <circle cx="450" cy="170" r="135" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="188" y="118" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Optimal</text>
+  <text x="188" y="135" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">substructure</text>
+  <text x="188" y="158" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">lời giải lớn ghép</text>
+  <text x="188" y="172" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">từ lời giải con tối ưu</text>
+  <text x="188" y="210" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.55">thiếu vế phải →</text>
+  <text x="188" y="224" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.75">Greedy / D&amp;C</text>
+  <text x="532" y="118" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Overlapping</text>
+  <text x="532" y="135" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">subproblems</text>
+  <text x="532" y="158" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">cùng 1 bài con bị</text>
+  <text x="532" y="172" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">tính lại nhiều lần</text>
+  <text x="532" y="210" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.55">thiếu vế trái →</text>
+  <text x="532" y="224" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.75">duyệt thường</text>
+  <rect x="318" y="150" width="84" height="40" rx="20" fill="#10b981" fill-opacity="0.9"/>
+  <text x="360" y="167" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">CẢ HAI</text>
+  <text x="360" y="182" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">→ DP</text>
+</svg>
+
+> DP có ích **chỉ khi giao** của hai vòng tròn cùng đúng: thiếu *overlapping subproblems* thì không cần cache (đó là **divide & conquer** như merge sort); còn nếu lựa chọn tốt tại chỗ luôn tối ưu thì dùng **greedy** là đủ.
 
 - **Optimal substructure (cấu trúc con tối ưu)**: lời giải tối ưu của bài lớn được **ghép từ** lời giải tối ưu của các bài con. Ví dụ: số xu ít nhất tạo ra `11` = `1 +` (số xu ít nhất tạo ra `11 - c`) với coin `c` tốt nhất nào đó.
 - **Overlapping subproblems (bài con trùng lặp)**: cùng một bài con bị tính đi tính lại. Đây là điểm phân biệt DP với **divide & conquer** (như merge sort) — D&C cũng chia nhỏ nhưng các bài con *không* trùng nhau nên không cần cache.
@@ -245,6 +256,40 @@ ways(n) = ways(n-1) + ways(n-2)        ← TRANSITION (chính là Fibonacci)
 ways(0) = 1   (đã ở đỉnh: 1 cách "không làm gì")
 ways(1) = 1
 ```
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Truy hồi Climbing Stairs: tới bậc n từ bậc n-1 hoặc n-2</title>
+  <desc>Sơ đồ node-edge: bậc n nhận được từ bậc n-1 bằng một bước 1 bậc, hoặc từ bậc n-2 bằng một bước 2 bậc, nên ways(n) = ways(n-1) + ways(n-2), chính là Fibonacci.</desc>
+  <text x="360" y="28" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Tới bậc n bằng đúng 2 con đường rời rạc</text>
+  <defs>
+    <marker id="csArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g>
+    <rect x="60" y="70" width="120" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="120" y="95" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">bậc n-2</text>
+    <text x="120" y="114" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">ways(n-2)</text>
+  </g>
+  <g>
+    <rect x="300" y="70" width="120" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="360" y="95" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">bậc n-1</text>
+    <text x="360" y="114" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">ways(n-1)</text>
+  </g>
+  <g>
+    <rect x="540" y="70" width="120" height="56" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="600" y="95" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">bậc n</text>
+    <text x="600" y="114" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">đỉnh</text>
+  </g>
+  <path d="M180 98 L300 98" stroke="currentColor" fill="none" marker-end="url(#csArrow)"/>
+  <text x="240" y="88" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">bước 1 bậc</text>
+  <path d="M420 98 L540 98" stroke="currentColor" fill="none" marker-end="url(#csArrow)"/>
+  <text x="480" y="88" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">bước 1 bậc</text>
+  <path d="M170 126 Q360 200 552 126" stroke="currentColor" fill="none" stroke-dasharray="5 4" marker-end="url(#csArrow)"/>
+  <text x="360" y="190" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">bước 2 bậc (từ n-2 nhảy thẳng tới n)</text>
+  <text x="360" y="222" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">ways(n) = ways(n-1) + ways(n-2)  — chính là Fibonacci</text>
+</svg>
+
 - **State:** `ways(i)` = số cách leo tới bậc `i`.
 - **Base:** `ways(0)=1, ways(1)=1`.
 - **Thứ tự:** `i` tăng dần.
@@ -791,6 +836,47 @@ int knapsack(vector<int>& wt, vector<int>& val, int W) {
 ```
 
 **Độ phức tạp.** **O(n × W)** thời gian, **O(W)** bộ nhớ.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>0/1 knapsack vs unbounded: hướng duyệt sức chứa trên mảng 1D cuộn</title>
+  <desc>So sánh hai cột: 0/1 knapsack duyệt sức chứa w giảm dần nên mỗi món dùng đúng 1 lần; unbounded knapsack duyệt w tăng dần nên một món có thể dùng vô hạn lần.</desc>
+  <text x="360" y="26" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Cùng mảng dp[w] 1D — chỉ khác CHIỀU duyệt sức chứa w</text>
+  <defs>
+    <marker id="kpArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g>
+    <rect x="24" y="44" width="328" height="216" rx="10" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="188" y="70" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">0/1 — mỗi món 1 lần</text>
+    <text x="188" y="90" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">duyệt w GIẢM dần: W → wt[i]</text>
+    <g font-size="11" text-anchor="middle">
+      <rect x="48" y="108" width="40" height="34" rx="6" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3"/><text x="68" y="130" fill="currentColor">…</text>
+      <rect x="92" y="108" width="40" height="34" rx="6" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3"/><text x="112" y="130" fill="currentColor">w-wt</text>
+      <rect x="244" y="108" width="40" height="34" rx="6" fill="#3b82f6" fill-opacity="0.85" stroke="currentColor" stroke-opacity="0.3"/><text x="264" y="130" fill="#fff" font-weight="700">w</text>
+      <rect x="288" y="108" width="40" height="34" rx="6" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3"/><text x="308" y="130" fill="currentColor">W</text>
+    </g>
+    <path d="M312 162 L92 162" stroke="currentColor" fill="none" marker-end="url(#kpArrow)"/>
+    <text x="188" y="180" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">w mới đọc dp[w-wt] CHƯA cập nhật</text>
+    <text x="188" y="200" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">(giá trị của vòng món trước)</text>
+    <text x="188" y="234" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">→ món i không thể tự cộng lại</text>
+  </g>
+  <g>
+    <rect x="368" y="44" width="328" height="216" rx="10" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="532" y="70" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Unbounded — vô hạn lần</text>
+    <text x="532" y="90" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">duyệt w TĂNG dần: wt[i] → W</text>
+    <g font-size="11" text-anchor="middle">
+      <rect x="392" y="108" width="40" height="34" rx="6" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3"/><text x="412" y="130" fill="currentColor">…</text>
+      <rect x="436" y="108" width="40" height="34" rx="6" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3"/><text x="456" y="130" fill="currentColor">w-wt</text>
+      <rect x="588" y="108" width="40" height="34" rx="6" fill="#10b981" fill-opacity="0.9" stroke="currentColor" stroke-opacity="0.3"/><text x="608" y="130" fill="#fff" font-weight="700">w</text>
+      <rect x="632" y="108" width="40" height="34" rx="6" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3"/><text x="652" y="130" fill="currentColor">W</text>
+    </g>
+    <path d="M412 162 L632 162" stroke="currentColor" fill="none" marker-end="url(#kpArrow)"/>
+    <text x="532" y="180" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">w mới đọc dp[w-wt] ĐÃ cập nhật</text>
+    <text x="532" y="200" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">(đã gồm món i ở vòng này)</text>
+    <text x="532" y="234" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">→ món i cộng lại được nhiều lần</text>
+  </g>
+</svg>
 
 > 💡 Ghi nhớ — quy tắc vàng phân biệt hai loại knapsack: **0/1 (mỗi món 1 lần) → duyệt sức chứa GIẢM dần**; **unbounded (dùng vô hạn, như coin change) → duyệt TĂNG dần**. Đảo chiều là đổi hẳn bài toán. Đây là một trong những bẫy "kinh điển" của phỏng vấn.
 

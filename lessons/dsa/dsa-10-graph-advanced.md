@@ -25,14 +25,60 @@ Rất nhiều bài "thực tế" là graph **trá hình**. Hãy tự hỏi: *bà
 
 Hai cách chính: **adjacency list** (danh sách kề) và **adjacency matrix** (ma trận kề).
 
-```text
-Đồ thị:   0 — 1            Adjacency list          Adjacency matrix
-          |   |            0: [1, 2]                  0 1 2 3
-          2 — 3            1: [0, 3]                0[ 0 1 1 0 ]
-                           2: [0, 3]                1[ 1 0 0 1 ]
-                           3: [1, 2]                2[ 1 0 0 1 ]
-                                                    3[ 0 1 1 0 ]
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Adjacency list so với adjacency matrix cho cùng một đồ thị 4 đỉnh</title>
+  <desc>Đồ thị vô hướng 4 đỉnh 0-1-2-3 thành hình vuông. Bên trái biểu diễn bằng adjacency list tốn O(V+E) bộ nhớ. Bên phải bằng adjacency matrix tốn O(V^2). Matrix tra cạnh O(1), list tra cạnh theo bậc đỉnh.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Cùng một đồ thị, hai cách biểu diễn</text>
+
+  <text x="100" y="58" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Đồ thị (vô hướng)</text>
+  <g stroke="currentColor" stroke-width="1.5">
+    <line x1="60" y1="92" x2="140" y2="92"/>
+    <line x1="60" y1="92" x2="60" y2="168"/>
+    <line x1="140" y1="92" x2="140" y2="168"/>
+    <line x1="60" y1="168" x2="140" y2="168"/>
+  </g>
+  <g>
+    <circle cx="60" cy="92" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="60" y="97" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">0</text>
+    <circle cx="140" cy="92" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="140" y="97" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">1</text>
+    <circle cx="60" cy="168" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="60" y="173" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">2</text>
+    <circle cx="140" cy="168" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="140" y="173" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">3</text>
+  </g>
+
+  <g>
+    <rect x="216" y="44" width="216" height="216" rx="10" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="324" y="68" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Adjacency list</text>
+    <text x="324" y="86" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">hash/array of list</text>
+    <g font-size="12.5" fill="currentColor">
+      <text x="240" y="120">0 → [1, 2]</text>
+      <text x="240" y="148">1 → [0, 3]</text>
+      <text x="240" y="176">2 → [0, 3]</text>
+      <text x="240" y="204">3 → [1, 2]</text>
+    </g>
+    <text x="324" y="234" font-size="11.5" font-weight="700" text-anchor="middle" fill="#10b981">Bộ nhớ O(V + E)</text>
+    <text x="324" y="251" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">tra cạnh: O(bậc của u)</text>
+  </g>
+
+  <g>
+    <rect x="456" y="44" width="248" height="216" rx="10" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="580" y="68" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Adjacency matrix</text>
+    <text x="580" y="86" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">bảng V×V số 0/1</text>
+    <g font-size="12" font-family="ui-monospace, monospace" fill="currentColor">
+      <text x="520" y="112" opacity="0.7">  0 1 2 3</text>
+      <text x="500" y="134">0  0 1 1 0</text>
+      <text x="500" y="156">1  1 0 0 1</text>
+      <text x="500" y="178">2  1 0 0 1</text>
+      <text x="500" y="200">3  0 1 1 0</text>
+    </g>
+    <text x="580" y="234" font-size="11.5" font-weight="700" text-anchor="middle" fill="#f59e0b">Bộ nhớ O(V²)</text>
+    <text x="580" y="251" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">tra cạnh (u,v): O(1)</text>
+  </g>
+
+  <text x="360" y="290" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">Đồ thị thưa → list gọn hơn nhiều; matrix chỉ thắng khi cần tra cạnh liên tục và V nhỏ.</text>
+</svg>
 
 | Tiêu chí | Adjacency list | Adjacency matrix |
 | --- | --- | --- |
@@ -202,6 +248,86 @@ Có hai cách: **Kahn (BFS theo in-degree)** và **DFS + post-order đảo ngư�
 
 Ý tưởng: đỉnh nào **in-degree = 0** (không ai cần nó trước) thì làm được ngay → bỏ vào queue. Lấy ra, "xoá" nó, giảm in-degree các đỉnh nó trỏ tới; đỉnh nào tụt về 0 thì đến lượt. Nếu xếp được **đủ V đỉnh** → DAG; nếu thiếu → **có chu trình**.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Kahn topological sort theo in-degree với 3 bước lan dần</title>
+  <desc>DAG có cạnh A→B, A→C, B→D, C→D. In-degree ban đầu A=0, B=1, C=1, D=2. Bước 1 lấy A in-degree 0 vào queue rồi xoá, giảm in-degree B và C về 0. Bước 2 lấy B và C, xoá, giảm in-degree D về 0. Bước 3 lấy D. Thứ tự hợp lệ A, B, C, D.</desc>
+  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Kahn: xoá đỉnh in-degree 0, lan dần ra thứ tự</text>
+
+  <defs>
+    <marker id="kahnArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <g font-size="12.5" fill="currentColor">
+    <text x="120" y="52" font-weight="700" text-anchor="middle">Bước 1</text>
+    <text x="360" y="52" font-weight="700" text-anchor="middle">Bước 2</text>
+    <text x="600" y="52" font-weight="700" text-anchor="middle">Bước 3</text>
+  </g>
+
+  <g stroke="currentColor" stroke-width="1.4" fill="none" marker-end="url(#kahnArrow)" opacity="0.55">
+    <path d="M120 80 L80 120"/>
+    <path d="M120 80 L160 120"/>
+    <path d="M80 152 L120 192"/>
+    <path d="M160 152 L120 192"/>
+  </g>
+  <g>
+    <circle cx="120" cy="72" r="18" fill="#10b981" fill-opacity="0.9" stroke="currentColor"/>
+    <text x="120" y="77" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">A</text>
+    <text x="120" y="58" font-size="9.5" text-anchor="middle" fill="#10b981" font-weight="700">in=0</text>
+    <circle cx="72" cy="136" r="18" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="72" y="141" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">B</text>
+    <text x="46" y="141" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">1</text>
+    <circle cx="168" cy="136" r="18" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="168" y="141" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">C</text>
+    <text x="194" y="141" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">1</text>
+    <circle cx="120" cy="200" r="18" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="120" y="205" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">D</text>
+    <text x="120" y="232" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">in=2</text>
+  </g>
+  <text x="120" y="270" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">A in-degree 0 → queue,</text>
+  <text x="120" y="285" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">xoá A → B, C tụt về 0</text>
+
+  <g stroke="currentColor" stroke-width="1.4" fill="none" marker-end="url(#kahnArrow)" opacity="0.55">
+    <path d="M312 152 L352 192"/>
+    <path d="M408 152 L368 192"/>
+  </g>
+  <g>
+    <circle cx="360" cy="72" r="18" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-dasharray="3 3" opacity="0.4"/>
+    <text x="360" y="77" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.4">A</text>
+    <circle cx="312" cy="136" r="18" fill="#10b981" fill-opacity="0.9" stroke="currentColor"/>
+    <text x="312" y="141" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">B</text>
+    <text x="286" y="141" font-size="9.5" text-anchor="middle" fill="#10b981" font-weight="700">0</text>
+    <circle cx="408" cy="136" r="18" fill="#10b981" fill-opacity="0.9" stroke="currentColor"/>
+    <text x="408" y="141" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">C</text>
+    <text x="434" y="141" font-size="9.5" text-anchor="middle" fill="#10b981" font-weight="700">0</text>
+    <circle cx="360" cy="200" r="18" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="360" y="205" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">D</text>
+    <text x="360" y="232" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">in=0</text>
+  </g>
+  <text x="360" y="270" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">lấy B, C → queue,</text>
+  <text x="360" y="285" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">xoá cả hai → D tụt về 0</text>
+
+  <g>
+    <circle cx="600" cy="72" r="18" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-dasharray="3 3" opacity="0.4"/>
+    <text x="600" y="77" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.4">A</text>
+    <circle cx="552" cy="136" r="18" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-dasharray="3 3" opacity="0.4"/>
+    <text x="552" y="141" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.4">B</text>
+    <circle cx="648" cy="136" r="18" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-dasharray="3 3" opacity="0.4"/>
+    <text x="648" y="141" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.4">C</text>
+    <circle cx="600" cy="200" r="18" fill="#10b981" fill-opacity="0.9" stroke="currentColor"/>
+    <text x="600" y="205" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">D</text>
+    <text x="600" y="232" font-size="9.5" text-anchor="middle" fill="#10b981" font-weight="700">0</text>
+  </g>
+  <text x="600" y="270" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">lấy D → xong</text>
+  <text x="600" y="285" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">đủ 4 đỉnh ⇒ là DAG</text>
+
+  <rect x="16" y="312" width="688" height="34" rx="8" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="40" y="334" font-size="12.5" font-weight="700" fill="currentColor">Thứ tự topo:</text>
+  <text x="140" y="334" font-size="13" font-weight="700" fill="#10b981">A → B → C → D</text>
+  <text x="360" y="334" font-size="11" fill="currentColor" opacity="0.75">(mọi cạnh u→v: u luôn đứng trước v)</text>
+</svg>
+
 ```python
 from collections import deque, defaultdict
 def topo_kahn(n, edges):              # edges: list [u, v] nghĩa u -> v
@@ -331,6 +457,93 @@ Hai tối ưu làm `find`/`union` gần như **O(1)** (chính xác là O(α(n)) 
 
 - **Path compression**: khi `find`, trỏ thẳng mọi nút trên đường về gốc.
 - **Union by rank/size**: gắn cây thấp vào cây cao để cây không bị "cao lêu nghêu".
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Union-Find: rừng các cây, union gộp hai cây, path compression làm phẳng cây</title>
+  <desc>DSU là rừng các cây, mỗi cây một gốc đại diện. Hàng trên: union gộp cây gốc 0 và cây gốc 3 bằng cách gắn gốc thấp dưới gốc cao. Hàng dưới: trước path compression đỉnh 5 nằm sâu qua 4 và 3, sau find đỉnh 5 và 4 trỏ thẳng về gốc 3.</desc>
+
+  <line x1="360" y1="20" x2="360" y2="320" stroke="currentColor" stroke-opacity="0.18" stroke-dasharray="4 4"/>
+
+  <text x="180" y="26" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">union(0, 3): gộp hai cây</text>
+  <g stroke="currentColor" stroke-width="1.4">
+    <line x1="120" y1="78" x2="90" y2="128"/>
+    <line x1="120" y1="78" x2="150" y2="128"/>
+    <line x1="250" y1="78" x2="250" y2="128"/>
+  </g>
+  <g>
+    <circle cx="120" cy="72" r="16" fill="#8b5cf6" fill-opacity="0.9" stroke="currentColor"/>
+    <text x="120" y="77" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">0</text>
+    <text x="120" y="56" font-size="9" text-anchor="middle" fill="#8b5cf6" font-weight="700">gốc</text>
+    <circle cx="90" cy="134" r="15" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="90" y="139" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">1</text>
+    <circle cx="150" cy="134" r="15" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="150" y="139" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">2</text>
+    <circle cx="250" cy="72" r="16" fill="#3b82f6" fill-opacity="0.9" stroke="currentColor"/>
+    <text x="250" y="77" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">3</text>
+    <text x="250" y="56" font-size="9" text-anchor="middle" fill="#3b82f6" font-weight="700">gốc</text>
+    <circle cx="250" cy="134" r="15" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="250" y="139" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">4</text>
+  </g>
+  <text x="180" y="172" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">union by rank: gắn gốc cây thấp (0) dưới gốc cây cao (3)</text>
+
+  <g stroke="currentColor" stroke-width="1.4">
+    <line x1="180" y1="222" x2="120" y2="270"/>
+    <line x1="180" y1="222" x2="240" y2="270"/>
+    <line x1="120" y1="282" x2="90" y2="312"/>
+    <line x1="120" y1="282" x2="150" y2="312"/>
+  </g>
+  <g>
+    <circle cx="180" cy="216" r="16" fill="#3b82f6" fill-opacity="0.9" stroke="currentColor"/>
+    <text x="180" y="221" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">3</text>
+    <text x="180" y="200" font-size="9" text-anchor="middle" fill="#3b82f6" font-weight="700">gốc chung</text>
+    <circle cx="120" cy="276" r="15" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="120" y="281" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">0</text>
+    <circle cx="240" cy="276" r="15" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="240" y="281" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">4</text>
+    <circle cx="90" cy="318" r="14" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="90" y="323" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">1</text>
+    <circle cx="150" cy="318" r="14" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="150" y="323" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">2</text>
+  </g>
+
+  <text x="540" y="26" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">path compression khi find(5)</text>
+  <text x="450" y="60" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.85">TRƯỚC</text>
+  <g stroke="currentColor" stroke-width="1.4">
+    <line x1="450" y1="84" x2="450" y2="130"/>
+    <line x1="450" y1="140" x2="450" y2="186"/>
+    <line x1="450" y1="196" x2="450" y2="242"/>
+  </g>
+  <g>
+    <circle cx="450" cy="78" r="15" fill="#3b82f6" fill-opacity="0.9" stroke="currentColor"/>
+    <text x="450" y="83" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">3</text>
+    <circle cx="450" cy="136" r="14" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="450" y="141" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">4</text>
+    <circle cx="450" cy="192" r="14" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="450" y="197" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">5</text>
+    <circle cx="450" cy="248" r="14" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="450" y="253" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">6</text>
+  </g>
+  <text x="450" y="280" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">cây "cao lêu nghêu"</text>
+
+  <text x="624" y="60" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.85">SAU</text>
+  <g stroke="currentColor" stroke-width="1.4">
+    <line x1="624" y1="92" x2="588" y2="150"/>
+    <line x1="624" y1="92" x2="624" y2="150"/>
+    <line x1="624" y1="92" x2="660" y2="150"/>
+  </g>
+  <g>
+    <circle cx="624" cy="78" r="15" fill="#10b981" fill-opacity="0.9" stroke="currentColor"/>
+    <text x="624" y="83" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">3</text>
+    <circle cx="588" cy="156" r="14" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="588" y="161" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">4</text>
+    <circle cx="624" cy="156" r="14" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="624" y="161" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">5</text>
+    <circle cx="660" cy="156" r="14" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="660" y="161" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">6</text>
+  </g>
+  <text x="624" y="190" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">trỏ thẳng về gốc</text>
+  <text x="624" y="204" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">→ cây phẳng, find sau O(1)</text>
+</svg>
 
 ```python
 class DSU:
@@ -470,6 +683,76 @@ struct DSU {
 Dijkstra tìm đường **ngắn nhất từ một nguồn** tới mọi đỉnh, khi cạnh có **trọng số KHÔNG ÂM**. Ý tưởng: BFS "tham lam" có ưu tiên — luôn mở rộng đỉnh **gần nguồn nhất chưa chốt**, dùng **min-heap (priority queue)** theo khoảng cách. Khi một đỉnh được lấy ra khỏi heap lần đầu, khoảng cách của nó đã là tối ưu (chốt được).
 
 Tại sao BFS thường không đủ? Vì BFS đếm **số cạnh**, không cộng **trọng số**. Đường ít cạnh chưa chắc nhẹ nhất. Heap giúp ta luôn "đi tiếp theo hướng rẻ nhất".
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Dijkstra lan theo trọng số bằng min-heap, chốt đỉnh gần nguồn nhất từng bước</title>
+  <desc>Đồ thị 5 đỉnh A B C D E với trọng số dương, có hướng. Nguồn A. Cạnh A→B=2, A→C=5, B→C=1, B→D=7, C→E=3, E→D=1. Min-heap luôn lấy đỉnh gần nguồn nhất chưa chốt rồi relax các cạnh kề. Khoảng cách cuối: A=0, B=2, C=3, E=6, D=7. Lưu ý đường ít cạnh A→C=5 thua đường nhiều cạnh A→B→C=3.</desc>
+  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Dijkstra: chốt đỉnh rẻ nhất, relax cạnh, lan theo trọng số</text>
+
+  <defs>
+    <marker id="dijArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <g stroke="currentColor" stroke-width="1.5" opacity="0.55" fill="none" marker-end="url(#dijArrow)">
+    <line x1="138" y1="108" x2="282" y2="92"/>
+    <line x1="138" y1="132" x2="282" y2="228"/>
+    <line x1="300" y1="102" x2="300" y2="218"/>
+    <line x1="320" y1="92" x2="480" y2="108"/>
+    <line x1="320" y1="252" x2="520" y2="268"/>
+    <line x1="528" y1="260" x2="512" y2="142"/>
+  </g>
+  <g font-size="12" font-weight="700" fill="currentColor">
+    <rect x="195" y="86" width="22" height="18" rx="5" fill="#f59e0b" fill-opacity="0.2"/>
+    <text x="206" y="99" text-anchor="middle">2</text>
+    <rect x="195" y="178" width="22" height="18" rx="5" fill="#f59e0b" fill-opacity="0.2"/>
+    <text x="206" y="191" text-anchor="middle">5</text>
+    <rect x="288" y="151" width="22" height="18" rx="5" fill="#f59e0b" fill-opacity="0.2"/>
+    <text x="299" y="164" text-anchor="middle">1</text>
+    <rect x="388" y="86" width="22" height="18" rx="5" fill="#f59e0b" fill-opacity="0.2"/>
+    <text x="399" y="99" text-anchor="middle">7</text>
+    <rect x="408" y="252" width="22" height="18" rx="5" fill="#f59e0b" fill-opacity="0.2"/>
+    <text x="419" y="265" text-anchor="middle">3</text>
+    <rect x="518" y="196" width="22" height="18" rx="5" fill="#f59e0b" fill-opacity="0.2"/>
+    <text x="529" y="209" text-anchor="middle">1</text>
+  </g>
+
+  <g>
+    <circle cx="120" cy="120" r="22" fill="#10b981" fill-opacity="0.9" stroke="currentColor"/>
+    <text x="120" y="118" font-size="14" font-weight="700" text-anchor="middle" fill="#fff">A</text>
+    <text x="120" y="132" font-size="10" text-anchor="middle" fill="#fff">d=0</text>
+    <text x="120" y="160" font-size="9.5" text-anchor="middle" fill="#10b981" font-weight="700">nguồn</text>
+
+    <circle cx="300" cy="80" r="22" fill="#10b981" fill-opacity="0.9" stroke="currentColor"/>
+    <text x="300" y="78" font-size="14" font-weight="700" text-anchor="middle" fill="#fff">B</text>
+    <text x="300" y="92" font-size="10" text-anchor="middle" fill="#fff">d=2</text>
+
+    <circle cx="300" cy="240" r="22" fill="#10b981" fill-opacity="0.9" stroke="currentColor"/>
+    <text x="300" y="238" font-size="14" font-weight="700" text-anchor="middle" fill="#fff">C</text>
+    <text x="300" y="252" font-size="10" text-anchor="middle" fill="#fff">d=3</text>
+
+    <circle cx="500" cy="120" r="22" fill="#10b981" fill-opacity="0.9" stroke="currentColor"/>
+    <text x="500" y="118" font-size="14" font-weight="700" text-anchor="middle" fill="#fff">D</text>
+    <text x="500" y="132" font-size="10" text-anchor="middle" fill="#fff">d=7</text>
+
+    <circle cx="540" cy="280" r="22" fill="#10b981" fill-opacity="0.9" stroke="currentColor"/>
+    <text x="540" y="278" font-size="14" font-weight="700" text-anchor="middle" fill="#fff">E</text>
+    <text x="540" y="292" font-size="10" text-anchor="middle" fill="#fff">d=6</text>
+  </g>
+
+  <g font-size="11">
+    <rect x="22" y="200" width="18" height="14" rx="4" fill="#10b981" fill-opacity="0.9"/>
+    <text x="48" y="211" fill="currentColor">đã chốt (lấy khỏi heap, d tối ưu)</text>
+    <rect x="22" y="222" width="18" height="14" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+    <text x="48" y="233" fill="currentColor">chưa chốt</text>
+  </g>
+
+  <rect x="16" y="304" width="688" height="62" rx="9" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="32" y="326" font-size="11.5" font-weight="700" fill="currentColor">Thứ tự chốt theo min-heap:</text>
+  <text x="230" y="326" font-size="11.5" font-weight="700" fill="#10b981">A(0) → B(2) → C(3) → E(6) → D(7)</text>
+  <text x="32" y="350" font-size="11" fill="currentColor" opacity="0.85">Đường ít cạnh A→C = 5 THUA đường nhiều cạnh A→B→C = 3 → BFS đếm cạnh sẽ sai; heap cộng trọng số mới đúng.</text>
+</svg>
 
 ### 4.2. Template Dijkstra (heap)
 

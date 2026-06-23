@@ -14,15 +14,61 @@ Hãy hình dung bài toán như một **cây quyết định (decision tree)**: 
 
 Ví dụ sinh tập con của `[1, 2, 3]`. Tại mỗi phần tử ta có 2 lựa chọn: *lấy* hoặc *không lấy*. Cây nhị phân:
 
-```text
-                       []                       <- chưa quyết định gì
-            lấy 1 /          \ bỏ 1
-              [1]              []
-        lấy2/    \bỏ2     lấy2/   \bỏ2
-       [1,2]     [1]      [2]      []
-     l3/  \b3  l3/ \b3  l3/ \b3  l3/ \b3
-  [1,2,3][1,2][1,3][1][2,3][2][3] []   <- 8 lá = 2^3 tập con
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Cây quyết định sinh tập con của [1,2,3]</title>
+  <desc>Cây nhị phân ba tầng: tại mỗi phần tử rẽ hai nhánh lấy hoặc bỏ. Gốc rỗng, ba mức cho phần tử 1, 2, 3, tổng cộng tám lá tương ứng tám tập con (2 mũ 3). Backtracking là duyệt DFS trên cây này.</desc>
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none">
+    <path d="M360 44 L180 104"/>
+    <path d="M360 44 L540 104"/>
+    <path d="M180 116 L96 176"/>
+    <path d="M180 116 L264 176"/>
+    <path d="M540 116 L456 176"/>
+    <path d="M540 116 L624 176"/>
+    <path d="M96 188 L54 252"/>
+    <path d="M96 188 L138 252"/>
+    <path d="M264 188 L222 252"/>
+    <path d="M264 188 L306 252"/>
+    <path d="M456 188 L414 252"/>
+    <path d="M456 188 L498 252"/>
+    <path d="M624 188 L582 252"/>
+    <path d="M624 188 L666 252"/>
+  </g>
+  <g font-size="10" fill="currentColor" opacity="0.7">
+    <text x="252" y="78">lấy 1</text>
+    <text x="430" y="78">bỏ 1</text>
+    <text x="118" y="150">lấy 2</text>
+    <text x="218" y="150">bỏ 2</text>
+    <text x="478" y="150">lấy 2</text>
+    <text x="578" y="150">bỏ 2</text>
+  </g>
+  <g font-size="9" fill="currentColor" opacity="0.55">
+    <text x="58" y="226">l3</text><text x="116" y="226">b3</text>
+    <text x="226" y="226">l3</text><text x="284" y="226">b3</text>
+    <text x="418" y="226">l3</text><text x="476" y="226">b3</text>
+    <text x="586" y="226">l3</text><text x="644" y="226">b3</text>
+  </g>
+  <g font-size="11" text-anchor="middle">
+    <g><rect x="338" y="30" width="44" height="24" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="360" y="46" fill="currentColor">[ ]</text></g>
+    <g><rect x="158" y="102" width="44" height="24" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="180" y="118" fill="currentColor">[1]</text></g>
+    <g><rect x="518" y="102" width="44" height="24" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="540" y="118" fill="currentColor">[ ]</text></g>
+    <g><rect x="70" y="174" width="52" height="24" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="96" y="190" fill="currentColor">[1,2]</text></g>
+    <g><rect x="242" y="174" width="44" height="24" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="264" y="190" fill="currentColor">[1]</text></g>
+    <g><rect x="434" y="174" width="44" height="24" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="456" y="190" fill="currentColor">[2]</text></g>
+    <g><rect x="602" y="174" width="44" height="24" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="624" y="190" fill="currentColor">[ ]</text></g>
+  </g>
+  <g font-size="10.5" text-anchor="middle">
+    <g><rect x="22" y="250" width="64" height="24" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="54" y="266" fill="currentColor">[1,2,3]</text></g>
+    <g><rect x="106" y="250" width="56" height="24" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="134" y="266" fill="currentColor">[1,2]</text></g>
+    <g><rect x="190" y="250" width="56" height="24" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="218" y="266" fill="currentColor">[1,3]</text></g>
+    <g><rect x="282" y="250" width="44" height="24" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="304" y="266" fill="currentColor">[1]</text></g>
+    <g><rect x="382" y="250" width="56" height="24" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="410" y="266" fill="currentColor">[2,3]</text></g>
+    <g><rect x="474" y="250" width="44" height="24" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="496" y="266" fill="currentColor">[2]</text></g>
+    <g><rect x="558" y="250" width="44" height="24" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="580" y="266" fill="currentColor">[3]</text></g>
+    <g><rect x="642" y="250" width="44" height="24" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="664" y="266" fill="currentColor">[ ]</text></g>
+  </g>
+  <text x="360" y="306" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.85">8 lá = 2³ tập con — backtracking là DFS đi hết các nhánh, mỗi lá ghi nhận đúng một lần</text>
+  <text x="360" y="330" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">mỗi tầng = một phần tử · rẽ trái = lấy · rẽ phải = bỏ</text>
+</svg>
 
 Mỗi đường đi từ gốc xuống lá là một tập con. Backtracking đi hết các đường đó *mà không bao giờ sinh thừa* — đi xong nhánh trái lại quay lui đúng một bước rồi rẽ phải.
 
@@ -30,11 +76,45 @@ Mỗi đường đi từ gốc xuống lá là một tập con. Backtracking đi
 
 Cốt lõi là ta **dùng chung một biến trạng thái** `path` (đường đi hiện tại) cho toàn bộ cây thay vì copy ở mỗi node — nhờ vậy tiết kiệm bộ nhớ. Nhưng dùng chung thì sau khi đi sâu xong phải **trả lại trạng thái như cũ**, nếu không nhánh sau sẽ "dính" rác của nhánh trước. Đó là lý do mọi `choose` (thêm vào path) đều phải có một `unchoose` (gỡ ra) đối xứng.
 
-```text
-chọn (push vào path)
-    đi sâu (đệ quy)
-gỡ (pop khỏi path)   <- BẮT BUỘC, để khôi phục trạng thái
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Vòng choose – explore – unchoose trên một nhánh</title>
+  <desc>Trên một nhánh, path được thêm phần tử (choose), đi sâu đệ quy (explore), rồi gỡ chính phần tử đó ra (unchoose) để khôi phục trạng thái cho nhánh kế. Choose và unchoose phải đối xứng.</desc>
+  <defs>
+    <marker id="bkArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g font-size="12.5" text-anchor="middle">
+    <g>
+      <rect x="40" y="40" width="180" height="56" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+      <text x="130" y="64" font-weight="700" fill="currentColor">1. choose</text>
+      <text x="130" y="82" font-size="11" fill="currentColor" opacity="0.7">path.push(x)</text>
+    </g>
+    <g>
+      <rect x="270" y="40" width="180" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+      <text x="360" y="64" font-weight="700" fill="currentColor">2. explore</text>
+      <text x="360" y="82" font-size="11" fill="currentColor" opacity="0.7">backtrack(...) đệ quy</text>
+    </g>
+    <g>
+      <rect x="500" y="40" width="180" height="56" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+      <text x="590" y="64" font-weight="700" fill="currentColor">3. unchoose</text>
+      <text x="590" y="82" font-size="11" fill="currentColor" opacity="0.7">path.pop()</text>
+    </g>
+  </g>
+  <g stroke="currentColor" fill="none" stroke-width="1.5">
+    <path d="M220 68 L264 68" marker-end="url(#bkArr)"/>
+    <path d="M450 68 L494 68" marker-end="url(#bkArr)"/>
+    <path d="M590 100 L590 150 L130 150 L130 102" marker-end="url(#bkArr)"/>
+  </g>
+  <text x="360" y="170" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">quay lại trạng thái như trước khi vào nhánh → sẵn sàng cho lựa chọn kế tiếp</text>
+  <line x1="40" y1="196" x2="680" y2="196" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="40" y="222" font-size="12" font-weight="700" fill="currentColor">Vì sao BẮT BUỘC unchoose? path dùng chung cho cả cây:</text>
+  <g font-size="11.5" font-family="ui-monospace, monospace">
+    <text x="40" y="248" fill="currentColor" opacity="0.85">path=[1]   → choose 2 → path=[1,2]  → đi sâu nhánh "2"</text>
+    <text x="40" y="270" fill="#10b981">path=[1]   ← unchoose 2  (khôi phục, ĐÚNG)  → choose 3 → [1,3]</text>
+    <text x="40" y="292" fill="#f59e0b">path=[1,2] ✗ quên unchoose → choose 3 → [1,2,3]  (rác của nhánh trước → SAI)</text>
+  </g>
+</svg>
 
 ### 1.3. Pruning — cắt nhánh, thứ làm backtracking "sống được"
 
@@ -166,7 +246,62 @@ Ba "ổ cắm" cần điền cho mọi bài:
 
 > 💡 Ghi nhớ: 90% bài backtracking phỏng vấn rơi vào 3 nhóm gốc — **subsets / permutations / combinations**. N-queens, sudoku, word search là biến thể "constraint" của cùng khung, chỉ khác phần kiểm tra hợp lệ và pruning.
 
-### 3.1. Sơ đồ chọn nhanh
+### 3.1. Ý tưởng N-queens — kiểm tra an toàn O(1) & pruning
+
+Bài N-queens là đại diện kinh điển của nhóm **constraint**: đặt `n` quân hậu lên bàn `n×n` sao cho không hai quân nào ăn nhau. Ta đặt **mỗi hàng đúng một quân** (nên không cần lo trùng hàng), rồi với mỗi hàng thử lần lượt từng **cột**. Mấu chốt là kiểm tra một ô có an toàn không thật nhanh: một quân hậu khống chế **cột** của nó, đường chéo **`\`** (mọi ô cùng `r - c`) và đường chéo **`/`** (mọi ô cùng `r + c`). Lưu ba `set` — cột đã chiếm, `r-c` đã chiếm, `r+c` đã chiếm — thì kiểm tra an toàn chỉ còn **O(1)**, và nếu ô không an toàn ta **cắt nhánh ngay** thay vì đặt rồi mới phát hiện xung đột.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Bàn cờ N-queens: cột, chéo r-c và r+c bị một quân hậu khống chế</title>
+  <desc>Bàn cờ 5 nhân 5 với một quân hậu ở hàng 1 cột 2. Các ô bị khống chế gồm cả cột (c=2), đường chéo xuôi r-c và đường chéo ngược r+c. Lưu ba tập cột, r-c, r+c giúp kiểm tra an toàn trong O(1).</desc>
+  <g font-size="11" fill="currentColor" opacity="0.7" text-anchor="middle">
+    <text x="60" y="32">c=0</text><text x="120" y="32">c=1</text><text x="180" y="32">c=2</text><text x="240" y="32">c=3</text><text x="300" y="32">c=4</text>
+  </g>
+  <g font-size="11" fill="currentColor" opacity="0.7" text-anchor="end">
+    <text x="26" y="68">r=0</text><text x="26" y="128">r=1</text><text x="26" y="188">r=2</text><text x="26" y="248">r=3</text><text x="26" y="308">r=4</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.25">
+    <rect x="30" y="42" width="300" height="300" fill="none"/>
+    <line x1="90" y1="42" x2="90" y2="342"/><line x1="150" y1="42" x2="150" y2="342"/><line x1="210" y1="42" x2="210" y2="342"/><line x1="270" y1="42" x2="270" y2="342"/>
+    <line x1="30" y1="102" x2="330" y2="102"/><line x1="30" y1="162" x2="330" y2="162"/><line x1="30" y1="222" x2="330" y2="222"/><line x1="30" y1="282" x2="330" y2="282"/>
+  </g>
+  <g>
+    <rect x="150" y="102" width="60" height="60" fill="#8b5cf6" fill-opacity="0.14"/>
+    <rect x="150" y="162" width="60" height="60" fill="#8b5cf6" fill-opacity="0.14"/>
+    <rect x="150" y="222" width="60" height="60" fill="#8b5cf6" fill-opacity="0.14"/>
+    <rect x="150" y="282" width="60" height="60" fill="#8b5cf6" fill-opacity="0.14"/>
+    <rect x="210" y="102" width="60" height="60" fill="#3b82f6" fill-opacity="0.14"/>
+    <rect x="270" y="162" width="60" height="60" fill="#3b82f6" fill-opacity="0.14"/>
+    <rect x="90" y="102" width="60" height="60" fill="#f59e0b" fill-opacity="0.14"/>
+    <rect x="30" y="162" width="60" height="60" fill="#f59e0b" fill-opacity="0.14"/>
+  </g>
+  <g>
+    <rect x="150" y="42" width="60" height="60" fill="#10b981" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="180" y="80" font-size="26" text-anchor="middle" fill="currentColor">♛</text>
+  </g>
+  <g font-size="12" fill="currentColor">
+    <rect x="378" y="60" width="20" height="14" rx="3" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="406" y="71">cột (c = 2) → set cols</text>
+    <rect x="378" y="92" width="20" height="14" rx="3" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="406" y="103">chéo \ (r − c không đổi) → set diag1</text>
+    <rect x="378" y="124" width="20" height="14" rx="3" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="406" y="135">chéo / (r + c không đổi) → set diag2</text>
+    <rect x="378" y="156" width="20" height="14" rx="3" fill="#10b981" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="406" y="167">quân hậu vừa đặt (r=0, c=2)</text>
+  </g>
+  <g font-size="11.5" fill="currentColor">
+    <text x="378" y="210" font-weight="700">An toàn? — kiểm tra O(1):</text>
+    <text x="378" y="232" font-family="ui-monospace, monospace" opacity="0.85">c ∉ cols  và  (r−c) ∉ diag1  và  (r+c) ∉ diag2</text>
+    <text x="378" y="262" font-weight="700">Pruning:</text>
+    <text x="378" y="284" opacity="0.85">ô bị khống chế → bỏ qua ngay,</text>
+    <text x="378" y="302" opacity="0.85">không đặt, không đệ quy xuống hàng kế.</text>
+    <text x="378" y="324" opacity="0.85">Đặt mỗi hàng 1 quân → tự khỏi lo</text>
+    <text x="378" y="342" opacity="0.85">trùng hàng; cây thu còn O(n!) đã prune.</text>
+  </g>
+</svg>
+
+Khi đặt xong một quân ở `(r, c)`, ta thêm `c`, `r-c`, `r+c` vào ba set (choose), đệ quy sang hàng `r+1`, rồi **gỡ cả ba ra** (unchoose) trước khi thử cột kế — đúng khung choose–explore–unchoose. Nhờ pruning bằng ba set, cây từ `n^n` ô co lại còn cỡ `O(n!)` và thực tế nhỏ hơn nhiều.
+
+### 3.2. Sơ đồ chọn nhanh
 
 ```text
 Đề muốn "liệt kê tất cả ..."?

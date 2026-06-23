@@ -34,6 +34,62 @@ Bạn không cần thuộc lòng code, nhưng cần hiểu ý tưởng để tr�
 
 **Merge sort** — chia để trị (divide and conquer): chia mảng làm đôi, sort từng nửa (đệ quy), rồi **trộn (merge)** hai nửa đã sắp xếp lại. Merge là chỗ tốn O(n) mỗi tầng, có log n tầng → O(n log n). Nó stable vì khi merge, nếu hai phần tử bằng nhau ta luôn lấy phần tử bên trái trước.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Merge sort chia để trị: cây chia đôi mảng rồi trộn ngược lên</title>
+  <desc>Mảng [5,2,4,1] được chia đôi đệ quy thành các phần tử đơn lẻ qua các tầng (chia xuống), rồi trộn ngược lên thành mảng đã sắp xếp [1,2,4,5]. Mỗi tầng tốn O(n), có log n tầng.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Merge sort — chia để trị</text>
+  <text x="704" y="24" font-size="11" text-anchor="end" fill="currentColor" opacity="0.6">log n tầng · mỗi tầng O(n)</text>
+  <g font-size="11" fill="currentColor" opacity="0.55">
+    <text x="700" y="70" text-anchor="end">chia ↓</text>
+    <text x="700" y="330" text-anchor="end">trộn ↑</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none">
+    <path d="M360 84 L210 132"/>
+    <path d="M360 84 L510 132"/>
+    <path d="M210 156 L150 204"/>
+    <path d="M210 156 L270 204"/>
+    <path d="M510 156 L450 204"/>
+    <path d="M510 156 L570 204"/>
+  </g>
+  <g>
+    <rect x="300" y="60" width="120" height="28" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="360" y="79" font-size="12.5" text-anchor="middle" fill="currentColor">[5, 2, 4, 1]</text>
+    <rect x="170" y="132" width="80" height="28" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="210" y="151" font-size="12.5" text-anchor="middle" fill="currentColor">[5, 2]</text>
+    <rect x="470" y="132" width="80" height="28" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="510" y="151" font-size="12.5" text-anchor="middle" fill="currentColor">[4, 1]</text>
+    <rect x="124" y="204" width="52" height="28" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="150" y="223" font-size="12.5" text-anchor="middle" fill="currentColor">[5]</text>
+    <rect x="244" y="204" width="52" height="28" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="270" y="223" font-size="12.5" text-anchor="middle" fill="currentColor">[2]</text>
+    <rect x="424" y="204" width="52" height="28" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="450" y="223" font-size="12.5" text-anchor="middle" fill="currentColor">[4]</text>
+    <rect x="544" y="204" width="52" height="28" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="570" y="223" font-size="12.5" text-anchor="middle" fill="currentColor">[1]</text>
+  </g>
+  <g stroke="#10b981" stroke-opacity="0.7" fill="none" stroke-width="1.5">
+    <path d="M150 264 L210 288" marker-end="url(#ar)"/>
+    <path d="M270 264 L210 288" marker-end="url(#ar)"/>
+    <path d="M450 264 L510 288" marker-end="url(#ar)"/>
+    <path d="M570 264 L510 288" marker-end="url(#ar)"/>
+    <path d="M210 316 L360 340" marker-end="url(#ar)"/>
+    <path d="M510 316 L360 340" marker-end="url(#ar)"/>
+  </g>
+  <defs>
+    <marker id="ar" markerWidth="7" markerHeight="7" refX="5.5" refY="3" orient="auto">
+      <path d="M0 0 L6 3 L0 6 z" fill="#10b981"/>
+    </marker>
+  </defs>
+  <g>
+    <rect x="184" y="288" width="52" height="28" rx="7" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="210" y="307" font-size="12" text-anchor="middle" fill="currentColor">[2,5]</text>
+    <rect x="484" y="288" width="52" height="28" rx="7" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="510" y="307" font-size="12" text-anchor="middle" fill="currentColor">[1,4]</text>
+    <rect x="300" y="340" width="120" height="28" rx="7" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="360" y="359" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">[1, 2, 4, 5]</text>
+  </g>
+</svg>
+
 ```python
 def merge_sort(arr):
     if len(arr) <= 1:
@@ -278,6 +334,56 @@ Binary search tìm phần tử trong **mảng ĐÃ sắp xếp** với O(log n):
 
 Quy ước an toàn: dùng nửa khoảng `[lo, hi)` với `hi = len(arr)` và điều kiện vòng lặp `lo < hi`, tính `mid = lo + (hi - lo) // 2` để tránh tràn số.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Binary search thu hẹp khoảng [lo, hi) tìm target 23</title>
+  <desc>Trên dãy đã sort [3,9,14,23,31,42,55,68], mỗi bước tính mid và loại nửa không chứa target. Bước 1 loại nửa phải, bước 2 loại nửa trái, bước 3 tìm thấy target 23. Khoảng [lo, hi) thu nhỏ một nửa mỗi bước.</desc>
+  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Binary search — mỗi bước loại một nửa (target = 23)</text>
+  <g font-size="12" fill="currentColor" text-anchor="middle">
+    <g transform="translate(0,44)">
+      <text x="14" y="40" font-size="11" text-anchor="start" fill="currentColor" opacity="0.6">B1</text>
+      <g>
+        <rect x="80" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+        <rect x="148" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+        <rect x="216" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+        <rect x="284" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+        <rect x="352" y="22" width="68" height="36" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.35"/>
+        <rect x="420" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+        <rect x="488" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+        <rect x="556" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+      </g>
+      <g fill="currentColor"><text x="114" y="45">3</text><text x="182" y="45">9</text><text x="250" y="45">14</text><text x="318" y="45">23</text><text x="386" y="45">31</text><text x="454" y="45">42</text><text x="522" y="45">55</text><text x="590" y="45">68</text></g>
+      <text x="386" y="14" font-size="10" fill="#f59e0b">mid=31 &gt; 23 → bỏ phải</text>
+      <text x="640" y="45" font-size="10" text-anchor="start" fill="currentColor" opacity="0.6">[0,8)</text>
+    </g>
+    <g transform="translate(0,124)">
+      <text x="14" y="40" font-size="11" text-anchor="start" fill="currentColor" opacity="0.6">B2</text>
+      <g>
+        <rect x="80" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+        <rect x="148" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+        <rect x="216" y="22" width="68" height="36" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.35"/>
+        <rect x="284" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+        <rect x="352" y="22" width="68" height="36" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.12"/>
+        <rect x="420" y="22" width="204" height="36" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.12"/>
+      </g>
+      <g fill="currentColor"><text x="114" y="45">3</text><text x="182" y="45">9</text><text x="250" y="45">14</text><text x="318" y="45">23</text></g>
+      <g fill="currentColor" opacity="0.35"><text x="386" y="45">31</text><text x="522" y="45">loại bỏ</text></g>
+      <text x="250" y="14" font-size="10" fill="#f59e0b">mid=14 &lt; 23 → bỏ trái</text>
+      <text x="640" y="45" font-size="10" text-anchor="start" fill="currentColor" opacity="0.6">[0,4)</text>
+    </g>
+    <g transform="translate(0,204)">
+      <text x="14" y="40" font-size="11" text-anchor="start" fill="currentColor" opacity="0.6">B3</text>
+      <g>
+        <rect x="80" y="22" width="204" height="36" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.12"/>
+        <rect x="284" y="22" width="68" height="36" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.4"/>
+      </g>
+      <g fill="currentColor" opacity="0.35"><text x="182" y="45">loại bỏ</text></g>
+      <text x="318" y="45" font-size="12" font-weight="700" fill="currentColor">23</text>
+      <text x="318" y="14" font-size="10" fill="#10b981">mid=23 == target → tìm thấy!</text>
+      <text x="640" y="45" font-size="10" text-anchor="start" fill="currentColor" opacity="0.6">[3,4)</text>
+    </g>
+  </g>
+</svg>
+
 ```python
 def binary_search(arr, target):
     lo, hi = 0, len(arr)          # [lo, hi)
@@ -360,6 +466,47 @@ int binarySearch(const vector<int>& arr, int target) {
 - **upper_bound(target)**: chỉ số đầu tiên có `arr[i] > target` (vị trí ngay sau lần xuất hiện cuối của target).
 
 Từ hai hàm này bạn suy ra mọi thứ: số lần xuất hiện của `target` = `upper_bound - lower_bound`; vị trí xuất hiện đầu/cuối; đếm số phần tử trong khoảng `[a, b]`.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Lower bound vs upper bound trên dãy có phần tử lặp</title>
+  <desc>Trên dãy đã sort [1,3,3,3,5,8] với target=3, lower_bound chỉ vào vị trí 1 (phần tử 3 đầu tiên), upper_bound chỉ vào vị trí 4 (phần tử đầu tiên lớn hơn 3). Số lần xuất hiện = upper - lower = 4 - 1 = 3.</desc>
+  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Lower bound &amp; upper bound (target = 3)</text>
+  <g font-size="11" fill="currentColor" opacity="0.6" text-anchor="middle">
+    <text x="120" y="60">0</text><text x="200" y="60">1</text><text x="280" y="60">2</text><text x="360" y="60">3</text><text x="440" y="60">4</text><text x="520" y="60">5</text>
+  </g>
+  <g>
+    <rect x="80" y="68" width="80" height="44" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="160" y="68" width="80" height="44" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="240" y="68" width="80" height="44" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="320" y="68" width="80" height="44" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="400" y="68" width="80" height="44" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="480" y="68" width="80" height="44" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
+  </g>
+  <g font-size="15" fill="currentColor" text-anchor="middle" font-weight="600">
+    <text x="120" y="97">1</text><text x="200" y="97">3</text><text x="240" y="97" opacity="0"> </text>
+    <text x="280" y="97">3</text><text x="360" y="97">3</text><text x="440" y="97">5</text><text x="520" y="97">8</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none" stroke-width="1.5">
+    <path d="M160 150 L160 114"/>
+    <path d="M400 150 L400 114"/>
+  </g>
+  <g>
+    <rect x="110" y="150" width="100" height="24" rx="6" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="160" y="167" font-size="11.5" text-anchor="middle" fill="currentColor">lower = 1</text>
+    <rect x="350" y="150" width="100" height="24" rx="6" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="400" y="167" font-size="11.5" text-anchor="middle" fill="currentColor">upper = 4</text>
+  </g>
+  <g font-size="11" fill="currentColor" opacity="0.7" text-anchor="middle">
+    <text x="160" y="190">3 đầu tiên (arr[i] ≥ 3)</text>
+    <text x="400" y="190">đầu tiên &gt; 3</text>
+  </g>
+  <g stroke="#10b981" stroke-opacity="0.7" fill="none" stroke-width="1.5">
+    <path d="M160 210 L400 210"/>
+    <path d="M160 205 L160 215"/>
+    <path d="M400 205 L400 215"/>
+  </g>
+  <text x="280" y="238" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">số lần xuất hiện = upper − lower = 4 − 1 = 3</text>
+</svg>
 
 ```python
 def lower_bound(arr, target):     # dau tien arr[i] >= target

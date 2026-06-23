@@ -17,6 +17,67 @@ Mục tiêu bài này rất thực dụng: giúp bạn **nhận diện** một b
 
 Vì là complete binary tree, heap được lưu **phẳng trong một mảng**, không cần con trỏ:
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 350" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Ánh xạ complete binary tree sang mảng phẳng trong min-heap</title>
+  <desc>Cây nhị phân gần đầy đủ với gốc 1, các node 3, 2, 7, 4, 5 được lưu phẳng vào mảng theo chỉ số 0 đến 5; node chỉ số i có con trái 2i+1, con phải 2i+2, cha (i-1)/2.</desc>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Complete binary tree ↔ mảng phẳng</text>
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none">
+    <path d="M120 78 L60 132"/>
+    <path d="M120 78 L180 132"/>
+    <path d="M60 144 L24 198"/>
+    <path d="M60 144 L96 198"/>
+    <path d="M180 144 L216 198"/>
+  </g>
+  <g>
+    <circle cx="120" cy="68" r="20" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/>
+    <text x="120" y="73" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">1</text>
+    <text x="120" y="50" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">i=0 (gốc)</text>
+    <circle cx="60" cy="134" r="20" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.45"/>
+    <text x="60" y="139" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">3</text>
+    <text x="60" y="116" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">i=1</text>
+    <circle cx="180" cy="134" r="20" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.45"/>
+    <text x="180" y="139" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">2</text>
+    <text x="180" y="116" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">i=2</text>
+    <circle cx="24" cy="200" r="20" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.45"/>
+    <text x="24" y="205" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">7</text>
+    <text x="24" y="234" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">i=3</text>
+    <circle cx="96" cy="200" r="20" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.45"/>
+    <text x="96" y="205" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">4</text>
+    <text x="96" y="234" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">i=4</text>
+    <circle cx="216" cy="200" r="20" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.45"/>
+    <text x="216" y="205" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">5</text>
+    <text x="216" y="234" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">i=5</text>
+  </g>
+  <text x="380" y="68" font-size="12" fill="currentColor" opacity="0.85">Lưu phẳng theo thứ tự duyệt từng tầng:</text>
+  <g>
+    <rect x="380" y="84" width="48" height="40" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="404" y="109" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">1</text>
+    <text x="404" y="138" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">0</text>
+    <rect x="428" y="84" width="48" height="40" rx="6" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="452" y="109" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">3</text>
+    <text x="452" y="138" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">1</text>
+    <rect x="476" y="84" width="48" height="40" rx="6" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="500" y="109" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">2</text>
+    <text x="500" y="138" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">2</text>
+    <rect x="524" y="84" width="48" height="40" rx="6" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="548" y="109" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">7</text>
+    <text x="548" y="138" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">3</text>
+    <rect x="572" y="84" width="48" height="40" rx="6" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="596" y="109" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">4</text>
+    <text x="596" y="138" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">4</text>
+    <rect x="620" y="84" width="48" height="40" rx="6" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="644" y="109" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">5</text>
+    <text x="644" y="138" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">5</text>
+  </g>
+  <text x="380" y="160" font-size="11" fill="currentColor" opacity="0.6">(hàng dưới = chỉ số trong mảng)</text>
+  <g>
+    <rect x="16" y="262" width="688" height="72" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="32" y="288" font-size="12.5" font-weight="700" fill="currentColor">Công thức điều hướng từ chỉ số i (không cần con trỏ):</text>
+    <text x="32" y="310" font-size="12" fill="currentColor" opacity="0.9">con trái = 2i + 1     con phải = 2i + 2     cha = (i − 1) / 2 (chia lấy nguyên)</text>
+    <text x="32" y="328" font-size="11" fill="currentColor" opacity="0.7">Gốc (i=0) là phần tử cực trị: min-heap → nhỏ nhất; max-heap → lớn nhất.</text>
+  </g>
+</svg>
+
 ```text
         1               index:  0   1   2   3   4   5
        / \              mảng:  [1,  3,  2,  7,  4,  5]
@@ -175,6 +236,69 @@ priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
 > ⚠️ Bẫy: `heapify` (xây heap từ mảng có sẵn) là **O(n)**, *không* phải O(n log n). Còn push từng phần tử một là O(n log n). Nếu đã có sẵn cả mảng, luôn dùng `heapify`/`heap.Init`/constructor — đừng push vòng lặp.
 
 ### 2.1. Vì sao push/pop là O(log n) và heapify là O(n)?
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Sift up khi push và sift down khi pop trên cây heap</title>
+  <desc>Bên trái: push thêm phần tử vào cuối rồi đẩy lên (sift up) dọc theo một đường tới gốc. Bên phải: pop lấy gốc, đưa phần tử cuối lên gốc rồi dìm xuống (sift down). Mỗi thao tác tối đa log n bước bằng chiều cao cây.</desc>
+  <text x="180" y="24" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">push → SIFT UP (đẩy lên)</text>
+  <text x="540" y="24" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">pop → SIFT DOWN (dìm xuống)</text>
+  <line x1="360" y1="40" x2="360" y2="300" stroke="currentColor" stroke-opacity="0.2"/>
+  <g stroke="currentColor" stroke-opacity="0.35" fill="none">
+    <path d="M180 64 L110 118"/>
+    <path d="M180 64 L250 118"/>
+    <path d="M110 130 L70 184"/>
+    <path d="M110 130 L150 184"/>
+  </g>
+  <g>
+    <circle cx="180" cy="56" r="18" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="180" y="61" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">5</text>
+    <circle cx="110" cy="120" r="18" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="110" y="125" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">8</text>
+    <circle cx="250" cy="120" r="18" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="250" y="125" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">9</text>
+    <circle cx="70" cy="186" r="18" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="70" y="191" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">10</text>
+    <circle cx="150" cy="186" r="18" fill="#f59e0b" fill-opacity="0.9" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="150" y="191" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">2</text>
+  </g>
+  <g stroke="#f59e0b" stroke-width="2" fill="none" marker-end="url(#arrUp)">
+    <path d="M150 168 Q132 150 122 138"/>
+    <path d="M108 102 Q140 84 168 70"/>
+  </g>
+  <text x="40" y="226" font-size="10.5" fill="currentColor" opacity="0.7">phần tử mới (2) thêm ở cuối,</text>
+  <text x="40" y="240" font-size="10.5" fill="currentColor" opacity="0.7">đổi chỗ với cha khi nhỏ hơn cha,</text>
+  <text x="40" y="254" font-size="10.5" fill="currentColor" opacity="0.7">leo dần tới khi ≥ cha hoặc thành gốc.</text>
+  <g stroke="currentColor" stroke-opacity="0.35" fill="none">
+    <path d="M540 64 L470 118"/>
+    <path d="M540 64 L610 118"/>
+    <path d="M470 130 L430 184"/>
+    <path d="M470 130 L510 184"/>
+  </g>
+  <g>
+    <circle cx="540" cy="56" r="18" fill="#8b5cf6" fill-opacity="0.9" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="540" y="61" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">10</text>
+    <circle cx="470" cy="120" r="18" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="470" y="125" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">3</text>
+    <circle cx="610" cy="120" r="18" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="610" y="125" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">4</text>
+    <circle cx="430" cy="186" r="18" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="430" y="191" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">6</text>
+    <circle cx="510" cy="186" r="18" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="510" y="191" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">7</text>
+  </g>
+  <g stroke="#8b5cf6" stroke-width="2" fill="none" marker-end="url(#arrDn)">
+    <path d="M540 76 Q522 96 482 108"/>
+    <path d="M468 138 Q448 158 438 168"/>
+  </g>
+  <text x="400" y="226" font-size="10.5" fill="currentColor" opacity="0.7">gốc cũ bị lấy ra, phần tử cuối (10) lên gốc,</text>
+  <text x="400" y="240" font-size="10.5" fill="currentColor" opacity="0.7">đổi chỗ với con nhỏ hơn,</text>
+  <text x="400" y="254" font-size="10.5" fill="currentColor" opacity="0.7">chìm dần tới khi ≤ mọi con hoặc thành lá.</text>
+  <text x="360" y="290" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Đường đi tối đa = chiều cao cây = log n bước → O(log n)</text>
+  <defs>
+    <marker id="arrUp" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#f59e0b"/></marker>
+    <marker id="arrDn" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#8b5cf6"/></marker>
+  </defs>
+</svg>
 
 - **push** ("sift up"): thêm vào cuối mảng rồi đẩy lên cho tới khi đúng chỗ. Chiều cao cây là `log n` → tối đa `log n` lần đổi chỗ → **O(log n)**.
 - **pop** ("sift down"): lấy gốc, đưa phần tử cuối lên gốc, dìm xuống dần. Cũng tối đa `log n` bước → **O(log n)**.
@@ -363,6 +487,59 @@ vector<int> topKFrequent(vector<int>& nums, int k) {
 - **`large`** = một **min-heap** chứa nửa **lớn** → gốc là *nhỏ nhất của nửa lớn*.
 
 Hai gốc này chính là hai phần tử sát giữa. Median nằm gọn giữa hai gốc.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Two heaps tìm median: max-heap nửa nhỏ và min-heap nửa lớn</title>
+  <desc>Dòng số chia làm hai nửa cân bằng: max-heap chứa nửa nhỏ với gốc là số lớn nhất nửa nhỏ (4), min-heap chứa nửa lớn với gốc là số nhỏ nhất nửa lớn (5). Hai gốc gặp nhau ở giữa là hai phần tử giữa của dòng, median tính từ chúng.</desc>
+  <text x="180" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">small — MAX-heap (nửa nhỏ)</text>
+  <text x="540" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">large — MIN-heap (nửa lớn)</text>
+  <g stroke="currentColor" stroke-opacity="0.35" fill="none">
+    <path d="M260 64 L200 122"/>
+    <path d="M260 64 L320 122"/>
+    <path d="M200 134 L150 186"/>
+    <path d="M200 134 L240 186"/>
+  </g>
+  <g>
+    <circle cx="260" cy="56" r="20" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5"/>
+    <text x="260" y="61" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">4</text>
+    <text x="260" y="34" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">gốc = max nửa nhỏ</text>
+    <circle cx="200" cy="136" r="18" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="200" y="141" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">2</text>
+    <circle cx="320" cy="136" r="18" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="320" y="141" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">3</text>
+    <circle cx="150" cy="188" r="18" fill="#f59e0b" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="150" y="193" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">1</text>
+    <circle cx="240" cy="188" r="18" fill="#f59e0b" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="240" y="193" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">2</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.35" fill="none">
+    <path d="M460 64 L400 122"/>
+    <path d="M460 64 L520 122"/>
+    <path d="M520 134 L480 186"/>
+    <path d="M520 134 L560 186"/>
+  </g>
+  <g>
+    <circle cx="460" cy="56" r="20" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5"/>
+    <text x="460" y="61" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">5</text>
+    <text x="460" y="34" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">gốc = min nửa lớn</text>
+    <circle cx="400" cy="136" r="18" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="400" y="141" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">6</text>
+    <circle cx="520" cy="136" r="18" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="520" y="141" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">7</text>
+    <circle cx="480" cy="188" r="18" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="480" y="193" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">8</text>
+    <circle cx="560" cy="188" r="18" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="560" y="193" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">9</text>
+  </g>
+  <line x1="280" y1="56" x2="440" y2="56" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="4 4"/>
+  <text x="360" y="50" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">hai phần tử giữa</text>
+  <g>
+    <rect x="100" y="236" width="520" height="68" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="360" y="262" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Invariant: |small| == |large| hoặc |small| == |large| + 1</text>
+    <text x="360" y="282" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.9">chẵn phần tử → median = (4 + 5) / 2 = 4.5</text>
+    <text x="360" y="298" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.9">lẻ phần tử (small dư 1) → median = gốc small = 4</text>
+  </g>
+</svg>
 
 ```text
        small (max-heap)          large (min-heap)

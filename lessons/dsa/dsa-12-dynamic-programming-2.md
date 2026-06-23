@@ -169,16 +169,75 @@ Base case: nếu một chuỗi rỗng thì LCS = 0 → hàng 0 và cột 0 toàn
 
 **Bảng DP minh họa** với `text1 = "abcde"` (hàng), `text2 = "ace"` (cột). Ô tô đậm là nơi ký tự khớp (lấy chéo + 1):
 
-```text
-          ""   a    c    e        <- text2
-     ""   0    0    0    0
-     a    0   [1]   1    1
-     b    0    1    1    1
-     c    0    1   [2]   2
-     d    0    1    2    2
-     e    0    1    2   [3]
-     ^ text1
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 400" role="img" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Bảng DP của LCS giữa "abcde" và "ace"</title>
+  <desc>Bảng quy hoạch động 6x4 cho longest common subsequence: ô khớp ký tự lấy giá trị chéo trên-trái cộng 1, ô lệch lấy max của ô trên và ô trái; đáp án 3 nằm ở góc dưới-phải.</desc>
+  <text x="260" y="22" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">LCS: "abcde" × "ace"</text>
+  <text x="60" y="54" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">text1 ↓ / text2 →</text>
+  <g font-size="13" font-weight="700" fill="currentColor">
+    <text x="148" y="78" text-anchor="middle">""</text>
+    <text x="228" y="78" text-anchor="middle">a</text>
+    <text x="308" y="78" text-anchor="middle">c</text>
+    <text x="388" y="78" text-anchor="middle">e</text>
+    <text x="100" y="116" text-anchor="middle">""</text>
+    <text x="100" y="166" text-anchor="middle">a</text>
+    <text x="100" y="216" text-anchor="middle">b</text>
+    <text x="100" y="266" text-anchor="middle">c</text>
+    <text x="100" y="316" text-anchor="middle">d</text>
+    <text x="100" y="366" text-anchor="middle">e</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.18" fill="none">
+    <rect x="120" y="90" width="320" height="300" rx="6"/>
+    <line x1="200" y1="90" x2="200" y2="390"/>
+    <line x1="280" y1="90" x2="280" y2="390"/>
+    <line x1="360" y1="90" x2="360" y2="390"/>
+    <line x1="120" y1="140" x2="440" y2="140"/>
+    <line x1="120" y1="190" x2="440" y2="190"/>
+    <line x1="120" y1="240" x2="440" y2="240"/>
+    <line x1="120" y1="290" x2="440" y2="290"/>
+    <line x1="120" y1="340" x2="440" y2="340"/>
+  </g>
+  <g font-size="13" fill="currentColor">
+    <text x="160" y="120" text-anchor="middle" opacity="0.45">0</text>
+    <text x="240" y="120" text-anchor="middle" opacity="0.45">0</text>
+    <text x="320" y="120" text-anchor="middle" opacity="0.45">0</text>
+    <text x="400" y="120" text-anchor="middle" opacity="0.45">0</text>
+    <text x="160" y="170" text-anchor="middle" opacity="0.45">0</text>
+    <text x="320" y="170" text-anchor="middle">1</text>
+    <text x="400" y="170" text-anchor="middle">1</text>
+    <text x="160" y="220" text-anchor="middle" opacity="0.45">0</text>
+    <text x="240" y="220" text-anchor="middle">1</text>
+    <text x="320" y="220" text-anchor="middle">1</text>
+    <text x="400" y="220" text-anchor="middle">1</text>
+    <text x="160" y="270" text-anchor="middle" opacity="0.45">0</text>
+    <text x="240" y="270" text-anchor="middle">1</text>
+    <text x="400" y="270" text-anchor="middle">2</text>
+    <text x="160" y="320" text-anchor="middle" opacity="0.45">0</text>
+    <text x="240" y="320" text-anchor="middle">1</text>
+    <text x="320" y="320" text-anchor="middle">2</text>
+    <text x="400" y="320" text-anchor="middle">2</text>
+    <text x="160" y="370" text-anchor="middle" opacity="0.45">0</text>
+    <text x="240" y="370" text-anchor="middle">1</text>
+    <text x="320" y="370" text-anchor="middle">2</text>
+  </g>
+  <g>
+    <rect x="201" y="141" width="78" height="48" fill="#10b981" fill-opacity="0.16"/>
+    <text x="240" y="170" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">1</text>
+    <rect x="281" y="241" width="78" height="48" fill="#10b981" fill-opacity="0.16"/>
+    <text x="320" y="270" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">2</text>
+    <rect x="361" y="341" width="78" height="48" fill="#f59e0b" fill-opacity="0.16"/>
+    <text x="400" y="370" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">3</text>
+  </g>
+  <defs>
+    <marker id="lcsArrow" markerWidth="7" markerHeight="7" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#10b981"/></marker>
+  </defs>
+  <g stroke="#10b981" stroke-width="1.6" fill="none" marker-end="url(#lcsArrow)">
+    <line x1="170" y1="130" x2="222" y2="160"/>
+    <line x1="250" y1="230" x2="302" y2="260"/>
+    <line x1="330" y1="330" x2="382" y2="360"/>
+  </g>
+  <text x="260" y="396" font-size="10.5" text-anchor="middle" fill="#10b981" opacity="0.9">khớp → lấy chéo + 1; góc dưới-phải = đáp án</text>
+</svg>
 
 Đọc bảng: ô `(a, a)` khớp → lấy chéo `0 + 1 = 1`. Ô `(c, c)` khớp → chéo `1 + 1 = 2`. Ô `(e, e)` khớp → chéo `2 + 1 = 3`. Các ô không khớp lấy max(trên, trái). Đáp án nằm ở góc dưới-phải: `dp[5][3] = 3`.
 
@@ -289,18 +348,85 @@ Base case (rất quan trọng ở bài này, **không** mặc định 0): biến
 
 **Bảng DP minh họa** với `word1 = "horse"` (hàng), `word2 = "ros"` (cột). Lưu ý hàng 0 = `0,1,2,3` và cột 0 = `0,1,2,3,4,5` (chính là base case):
 
-```text
-          ""   r    o    s        <- word2
-     ""    0   1    2    3
-     h     1   1    2    3
-     o     2   2   [1]   2
-     r     3  [2]   2    2
-     s     4   3    3   [2]
-     e     5   4    4    3
-     ^ word1
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 420" role="img" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Bảng DP của edit distance giữa "horse" và "ros"</title>
+  <desc>Bảng quy hoạch động cho khoảng cách chỉnh sửa: hàng 0 và cột 0 là base case 0..n; mỗi ô lệch lấy min của ba ô láng giềng (chéo = replace, trên = delete, trái = insert) rồi cộng 1; đáp án 3 ở góc dưới-phải.</desc>
+  <text x="260" y="22" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Edit Distance: "horse" → "ros"</text>
+  <text x="60" y="54" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">word1 ↓ / word2 →</text>
+  <g font-size="13" font-weight="700" fill="currentColor">
+    <text x="160" y="78" text-anchor="middle">""</text>
+    <text x="240" y="78" text-anchor="middle">r</text>
+    <text x="320" y="78" text-anchor="middle">o</text>
+    <text x="400" y="78" text-anchor="middle">s</text>
+    <text x="110" y="116" text-anchor="middle">""</text>
+    <text x="110" y="166" text-anchor="middle">h</text>
+    <text x="110" y="216" text-anchor="middle">o</text>
+    <text x="110" y="266" text-anchor="middle">r</text>
+    <text x="110" y="316" text-anchor="middle">s</text>
+    <text x="110" y="366" text-anchor="middle">e</text>
+  </g>
+  <g>
+    <rect x="120" y="90" width="80" height="300" fill="#3b82f6" fill-opacity="0.10"/>
+    <rect x="120" y="90" width="320" height="50" fill="#3b82f6" fill-opacity="0.10"/>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.18" fill="none">
+    <rect x="120" y="90" width="320" height="300" rx="6"/>
+    <line x1="200" y1="90" x2="200" y2="390"/>
+    <line x1="280" y1="90" x2="280" y2="390"/>
+    <line x1="360" y1="90" x2="360" y2="390"/>
+    <line x1="120" y1="140" x2="440" y2="140"/>
+    <line x1="120" y1="190" x2="440" y2="190"/>
+    <line x1="120" y1="240" x2="440" y2="240"/>
+    <line x1="120" y1="290" x2="440" y2="290"/>
+    <line x1="120" y1="340" x2="440" y2="340"/>
+  </g>
+  <g font-size="13" fill="currentColor">
+    <text x="160" y="120" text-anchor="middle" font-weight="700">0</text>
+    <text x="240" y="120" text-anchor="middle" font-weight="700">1</text>
+    <text x="320" y="120" text-anchor="middle" font-weight="700">2</text>
+    <text x="400" y="120" text-anchor="middle" font-weight="700">3</text>
+    <text x="160" y="170" text-anchor="middle" font-weight="700">1</text>
+    <text x="240" y="170" text-anchor="middle">1</text>
+    <text x="320" y="170" text-anchor="middle">2</text>
+    <text x="400" y="170" text-anchor="middle">3</text>
+    <text x="160" y="220" text-anchor="middle" font-weight="700">2</text>
+    <text x="240" y="220" text-anchor="middle">2</text>
+    <text x="320" y="220" text-anchor="middle">1</text>
+    <text x="400" y="220" text-anchor="middle">2</text>
+    <text x="160" y="270" text-anchor="middle" font-weight="700">3</text>
+    <text x="320" y="270" text-anchor="middle">2</text>
+    <text x="400" y="270" text-anchor="middle">2</text>
+    <text x="160" y="320" text-anchor="middle" font-weight="700">4</text>
+    <text x="240" y="320" text-anchor="middle">3</text>
+    <text x="320" y="320" text-anchor="middle">3</text>
+    <text x="400" y="320" text-anchor="middle">2</text>
+    <text x="160" y="370" text-anchor="middle" font-weight="700">5</text>
+    <text x="240" y="370" text-anchor="middle">4</text>
+    <text x="320" y="370" text-anchor="middle">4</text>
+  </g>
+  <g>
+    <rect x="201" y="241" width="78" height="48" fill="#8b5cf6" fill-opacity="0.16"/>
+    <text x="240" y="270" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">2</text>
+    <rect x="361" y="341" width="78" height="48" fill="#f59e0b" fill-opacity="0.16"/>
+    <text x="400" y="370" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">3</text>
+  </g>
+  <defs>
+    <marker id="edArrow" markerWidth="7" markerHeight="7" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#8b5cf6"/></marker>
+  </defs>
+  <g stroke="#8b5cf6" stroke-width="1.6" fill="none" marker-end="url(#edArrow)">
+    <line x1="232" y1="262" x2="190" y2="232"/>
+    <line x1="255" y1="256" x2="255" y2="230"/>
+    <line x1="230" y1="270" x2="186" y2="270"/>
+  </g>
+  <g font-size="9.5" fill="#8b5cf6" font-weight="700">
+    <text x="176" y="232" text-anchor="end">replace (chéo)</text>
+    <text x="255" y="206">delete (trên)</text>
+    <text x="176" y="285" text-anchor="end">insert (trái)</text>
+  </g>
+  <text x="260" y="412" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">ô lệch = 1 + min(3 láng giềng); biên xanh = base case</text>
+</svg>
 
-Đọc vài ô: `(o, o)` khớp → lấy chéo `dp[1][1]=1`, giữ nguyên `1`. `(r, r)` khớp → chéo `dp[2][0]=2`. Ô không khớp như `(s, s)` cuối: `s==s` khớp → chéo `dp[4][2]=2`. Góc dưới-phải `dp[5][3] = 3` chính là đáp án.
+Đọc vài ô: `(o, o)` khớp → lấy chéo `dp[1][1]=1`, giữ nguyên `1`. `(r, r)` khớp → chéo `dp[2][0]=2`. Ô `(s, s)`: `s==s` khớp → chéo `dp[3][2]=2`, nên `dp[4][3]=2`. Hàng cuối là `e` (ký tự cuối của `horse`); góc dưới-phải `dp[5][3] = 3` (ô màu cam) chính là đáp án.
 
 **Code.**
 
@@ -426,6 +552,64 @@ dp[r][c] = 0                                               nếu matrix[r][c] ==
 ```
 
 Trực giác `min`: một hình vuông cạnh `k+1` kết thúc tại `(r,c)` tồn tại khi và chỉ khi cả ba hướng đều đỡ được hình vuông cạnh `k`. Đáp án là `(max ô)²`.
+
+So sánh hai kiểu phụ thuộc ô trên lưới — grid DP thường (unique paths / min path sum) chỉ cần **ô trên + ô trái**, còn maximal square cần thêm **ô chéo trên-trái** (lấy min cả 3):
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 280" role="img" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Hướng phụ thuộc của ô (r,c) trong grid DP và maximal square</title>
+  <desc>Bên trái: ô (r,c) trong unique paths và min path sum phụ thuộc ô trên và ô trái. Bên phải: maximal square phụ thuộc thêm ô chéo trên-trái, lấy min của ba láng giềng rồi cộng 1.</desc>
+  <text x="160" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Grid DP: trên + trái</text>
+  <text x="500" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Maximal Square: min 3 láng giềng</text>
+  <defs>
+    <marker id="gridArrow" markerWidth="7" markerHeight="7" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#3b82f6"/></marker>
+    <marker id="sqArrow" markerWidth="7" markerHeight="7" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#10b981"/></marker>
+  </defs>
+  <g stroke="currentColor" stroke-opacity="0.18" fill="none">
+    <rect x="80" y="50" width="160" height="160" rx="6"/>
+    <line x1="133" y1="50" x2="133" y2="210"/>
+    <line x1="186" y1="50" x2="186" y2="210"/>
+    <line x1="80" y1="103" x2="240" y2="103"/>
+    <line x1="80" y1="156" x2="240" y2="156"/>
+  </g>
+  <rect x="134" y="104" width="51" height="51" fill="#3b82f6" fill-opacity="0.10"/>
+  <rect x="134" y="51" width="51" height="51" fill="#3b82f6" fill-opacity="0.16"/>
+  <rect x="81" y="104" width="51" height="51" fill="#3b82f6" fill-opacity="0.16"/>
+  <g font-size="11" fill="currentColor">
+    <text x="159" y="83" text-anchor="middle" opacity="0.8">trên</text>
+    <text x="106" y="134" text-anchor="middle" opacity="0.8">trái</text>
+    <text x="159" y="134" text-anchor="middle" font-weight="700">(r,c)</text>
+  </g>
+  <g stroke="#3b82f6" stroke-width="1.6" fill="none" marker-end="url(#gridArrow)">
+    <line x1="159" y1="98" x2="159" y2="122"/>
+    <line x1="127" y1="130" x2="151" y2="130"/>
+  </g>
+  <text x="160" y="234" font-size="10.5" text-anchor="middle" fill="#3b82f6">dp[r][c] = dp[r-1][c] + dp[r][c-1]</text>
+  <text x="160" y="250" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">(min path sum: thay + bằng min)</text>
+  <g stroke="currentColor" stroke-opacity="0.18" fill="none">
+    <rect x="420" y="50" width="160" height="160" rx="6"/>
+    <line x1="473" y1="50" x2="473" y2="210"/>
+    <line x1="526" y1="50" x2="526" y2="210"/>
+    <line x1="420" y1="103" x2="580" y2="103"/>
+    <line x1="420" y1="156" x2="580" y2="156"/>
+  </g>
+  <rect x="474" y="104" width="51" height="51" fill="#10b981" fill-opacity="0.10"/>
+  <rect x="474" y="51" width="51" height="51" fill="#10b981" fill-opacity="0.16"/>
+  <rect x="421" y="104" width="51" height="51" fill="#10b981" fill-opacity="0.16"/>
+  <rect x="421" y="51" width="51" height="51" fill="#10b981" fill-opacity="0.16"/>
+  <g font-size="10.5" fill="currentColor">
+    <text x="446" y="80" text-anchor="middle" opacity="0.8">chéo</text>
+    <text x="499" y="83" text-anchor="middle" opacity="0.8">trên</text>
+    <text x="446" y="134" text-anchor="middle" opacity="0.8">trái</text>
+    <text x="499" y="134" text-anchor="middle" font-weight="700">(r,c)</text>
+  </g>
+  <g stroke="#10b981" stroke-width="1.6" fill="none" marker-end="url(#sqArrow)">
+    <line x1="467" y1="98" x2="491" y2="122"/>
+    <line x1="499" y1="98" x2="499" y2="122"/>
+    <line x1="467" y1="130" x2="491" y2="130"/>
+  </g>
+  <text x="500" y="234" font-size="10.5" text-anchor="middle" fill="#10b981">dp[r][c] = 1 + min(trên, trái, chéo)</text>
+  <text x="500" y="250" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">(chỉ khi matrix[r][c] == 1)</text>
+</svg>
 
 **Code.**
 

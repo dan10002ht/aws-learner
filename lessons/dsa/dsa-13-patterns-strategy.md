@@ -14,24 +14,47 @@ Một sự thật giải phóng tâm lý: **phỏng vấn DSA không vô hạn**
 
 Quá trình giải một bài lạ luôn đi theo cùng một mạch:
 
-```
-Đọc đề
-  │
-  ▼
-Trích "tín hiệu" (signals):  cấu trúc input? kết quả cần? ràng buộc n?
-  │
-  ▼
-Map tín hiệu → pattern  ────────────►  (dùng BẢNG TRA mục 3)
-  │
-  ▼
-Suy ra: cấu trúc dữ liệu + độ phức tạp mục tiêu
-  │
-  ▼
-Dựng khung code của pattern → điền chi tiết bài
-  │
-  ▼
-Test edge case → phân tích time/space
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 480" role="img" style="width:100%;max-width:420px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Phễu giải một bài DSA lạ: từ đọc đề tới test</title>
+  <desc>Quy trình sáu bước theo chiều dọc: đọc đề, trích tín hiệu (hình dạng input, dạng kết quả, ràng buộc n), map sang pattern bằng bảng tra mục 3, suy ra cấu trúc dữ liệu và độ phức tạp mục tiêu, dựng khung code, rồi test edge case và phân tích time/space.</desc>
+  <defs>
+    <marker id="fnl-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g text-anchor="middle">
+    <rect x="110" y="14" width="200" height="44" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="210" y="41" font-size="13.5" font-weight="700" fill="currentColor">Đọc đề</text>
+
+    <rect x="40" y="86" width="340" height="62" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="210" y="108" font-size="13" font-weight="700" fill="currentColor">Trích "tín hiệu" (signals)</text>
+    <text x="210" y="127" font-size="10.5" fill="currentColor" opacity="0.75">hình dạng input · dạng kết quả cần</text>
+    <text x="210" y="141" font-size="10.5" fill="currentColor" opacity="0.75">ràng buộc n</text>
+
+    <rect x="40" y="176" width="340" height="48" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="210" y="200" font-size="13" font-weight="700" fill="currentColor">Map tín hiệu → pattern</text>
+    <text x="210" y="216" font-size="10.5" fill="currentColor" opacity="0.75">dùng BẢNG TRA mục 3</text>
+
+    <rect x="40" y="252" width="340" height="48" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="210" y="276" font-size="13" font-weight="700" fill="currentColor">Suy ra cấu trúc dữ liệu</text>
+    <text x="210" y="292" font-size="10.5" fill="currentColor" opacity="0.75">+ độ phức tạp mục tiêu</text>
+
+    <rect x="40" y="328" width="340" height="48" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="210" y="352" font-size="13" font-weight="700" fill="currentColor">Dựng khung code của pattern</text>
+    <text x="210" y="368" font-size="10.5" fill="currentColor" opacity="0.75">→ điền chi tiết bài</text>
+
+    <rect x="40" y="404" width="340" height="48" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="210" y="428" font-size="13" font-weight="700" fill="currentColor">Test edge case</text>
+    <text x="210" y="444" font-size="10.5" fill="currentColor" opacity="0.75">→ phân tích time/space</text>
+  </g>
+  <g stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#fnl-arrow)" stroke-opacity="0.7">
+    <path d="M210 58 V84"/>
+    <path d="M210 148 V174"/>
+    <path d="M210 224 V250"/>
+    <path d="M210 300 V326"/>
+    <path d="M210 376 V402"/>
+  </g>
+</svg>
 
 > 💡 Ghi nhớ: Hai tín hiệu mạnh nhất luôn là (1) **hình dạng input** (mảng đã sort? cây? đồ thị? chuỗi?) và (2) **dạng kết quả cần** (một số đếm? min/max? tất cả tổ hợp? có/không? phần tử thứ k?). Chỉ riêng hai cái này đã loại được 80% pattern không liên quan.
 
@@ -174,14 +197,79 @@ Nếu sau khi tra bảng vẫn không thấy pattern, thử các đòn bẩy sau
 
 Bảng tra giúp bạn *biết hướng*. Nhưng trong phòng phỏng vấn, **cách bạn trình bày** quan trọng ngang với lời giải. Phỏng vấn viên đánh giá tư duy có hệ thống, giao tiếp, và xử lý edge case — không chỉ "có chạy đúng không". Dùng quy trình 7 bước này (mẹo nhớ: **UMPIRE**):
 
-```
-U - Understand    Hiểu đề: đọc lại, hỏi clarify, xác nhận input/output
-M - Match         Map vào pattern (dùng bảng mục 3)
-P - Plan          Vạch kế hoạch: brute force trước, rồi tối ưu
-I - Implement     Viết code sạch, vừa viết vừa nói
-R - Review        Đọc lại code, chạy thử bằng tay với ví dụ
-E - Evaluate      Phân tích time/space + edge case
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Quy trình UMPIRE 6 bước và phân bổ thời gian 25/50/25</title>
+  <desc>Sáu bước nối tiếp từ trái sang phải: Understand (hiểu đề, clarify, xác nhận input/output), Match (map vào pattern), Plan (brute force trước rồi tối ưu), Implement (viết code sạch, vừa viết vừa nói), Review (đọc lại code, chạy thử bằng tay), Evaluate (phân tích time/space và edge case). Hai bước đầu chiếm khoảng 25% thời gian, Implement khoảng 50%, hai bước cuối khoảng 25%.</desc>
+  <defs>
+    <marker id="ump-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <g text-anchor="middle">
+    <circle cx="60" cy="70" r="26" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="60" y="78" font-size="20" font-weight="800" fill="#fff">U</text>
+    <text x="60" y="118" font-size="12" font-weight="700" fill="currentColor">Understand</text>
+    <text x="60" y="135" font-size="9.5" fill="currentColor" opacity="0.75">hiểu đề · clarify</text>
+    <text x="60" y="148" font-size="9.5" fill="currentColor" opacity="0.75">xác nhận in/out</text>
+
+    <circle cx="190" cy="70" r="26" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="190" y="78" font-size="20" font-weight="800" fill="#fff">M</text>
+    <text x="190" y="118" font-size="12" font-weight="700" fill="currentColor">Match</text>
+    <text x="190" y="135" font-size="9.5" fill="currentColor" opacity="0.75">map vào pattern</text>
+    <text x="190" y="148" font-size="9.5" fill="currentColor" opacity="0.75">(bảng mục 3)</text>
+
+    <circle cx="320" cy="70" r="26" fill="#10b981" fill-opacity="0.95"/>
+    <text x="320" y="78" font-size="20" font-weight="800" fill="#fff">P</text>
+    <text x="320" y="118" font-size="12" font-weight="700" fill="currentColor">Plan</text>
+    <text x="320" y="135" font-size="9.5" fill="currentColor" opacity="0.75">brute force trước</text>
+    <text x="320" y="148" font-size="9.5" fill="currentColor" opacity="0.75">rồi tối ưu</text>
+
+    <circle cx="450" cy="70" r="26" fill="#10b981" fill-opacity="0.95"/>
+    <text x="450" y="78" font-size="20" font-weight="800" fill="#fff">I</text>
+    <text x="450" y="118" font-size="12" font-weight="700" fill="currentColor">Implement</text>
+    <text x="450" y="135" font-size="9.5" fill="currentColor" opacity="0.75">code sạch</text>
+    <text x="450" y="148" font-size="9.5" fill="currentColor" opacity="0.75">vừa viết vừa nói</text>
+
+    <circle cx="580" cy="70" r="26" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="580" y="78" font-size="20" font-weight="800" fill="#fff">R</text>
+    <text x="580" y="118" font-size="12" font-weight="700" fill="currentColor">Review</text>
+    <text x="580" y="135" font-size="9.5" fill="currentColor" opacity="0.75">đọc lại code</text>
+    <text x="580" y="148" font-size="9.5" fill="currentColor" opacity="0.75">chạy thử tay</text>
+
+    <circle cx="680" cy="70" r="26" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="680" y="78" font-size="20" font-weight="800" fill="#fff">E</text>
+    <text x="680" y="118" font-size="12" font-weight="700" fill="currentColor">Evaluate</text>
+    <text x="680" y="135" font-size="9.5" fill="currentColor" opacity="0.75">time/space</text>
+    <text x="680" y="148" font-size="9.5" fill="currentColor" opacity="0.75">+ edge case</text>
+  </g>
+
+  <g stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#ump-arrow)" stroke-opacity="0.7">
+    <path d="M86 70 H160"/>
+    <path d="M216 70 H290"/>
+    <path d="M346 70 H420"/>
+    <path d="M476 70 H550"/>
+    <path d="M606 70 H650"/>
+  </g>
+
+  <text x="360" y="222" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Phân bổ thời gian một vòng (~35–45 phút)</text>
+
+  <g>
+    <rect x="34" y="238" width="252" height="44" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <rect x="294" y="238" width="172" height="44" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <rect x="474" y="238" width="212" height="44" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="160" y="258" font-size="13" font-weight="800" fill="currentColor">~25%</text>
+    <text x="160" y="274" font-size="10" fill="currentColor" opacity="0.78">clarify + plan (U·M·P)</text>
+    <text x="380" y="258" font-size="13" font-weight="800" fill="currentColor">~50%</text>
+    <text x="380" y="274" font-size="10" fill="currentColor" opacity="0.78">code (I)</text>
+    <text x="580" y="258" font-size="13" font-weight="800" fill="currentColor">~25%</text>
+    <text x="580" y="274" font-size="10" fill="currentColor" opacity="0.78">test + phân tích (R·E)</text>
+  </g>
+
+  <text x="360" y="318" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Đừng dồn 30 phút tìm lời giải hoàn hảo rồi không kịp code — brute force chạy được hơn lời giải tối ưu dở dang.</text>
+</svg>
 
 ### Bước 1 — Understand: CLARIFY trước khi viết một dòng nào
 

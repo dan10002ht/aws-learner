@@ -55,6 +55,55 @@ long long factorial(int n) {
 
 Mỗi lần một hàm được gọi, máy đẩy một **stack frame** (khung chứa tham số, biến cục bộ, vị trí quay về) lên **call stack**. Với `factorial(4)`, stack chồng lên: `factorial(4)` → `factorial(3)` → `factorial(2)` → `factorial(1)`. Khi chạm base case, các frame lần lượt được lấy ra (pop) và nhân ngược lại: `1 → 2 → 6 → 24`.
 
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Call stack của factorial(4): đẩy frame xuống base case rồi pop nhân ngược</title>
+  <desc>Bên trái các stack frame chồng lên nhau từ factorial(4) tới factorial(1); chạm base case rồi lần lượt pop và nhân ngược 1, 2, 6, 24. Độ sâu 4 frame minh hoạ O(d) bộ nhớ.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Call stack của factorial(4)</text>
+
+  <text x="120" y="48" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">PUSH (đi xuống base case)</text>
+  <rect x="40" y="58" width="160" height="38" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="120" y="82" font-size="12.5" text-anchor="middle" fill="currentColor">factorial(4)</text>
+  <rect x="40" y="100" width="160" height="38" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="120" y="124" font-size="12.5" text-anchor="middle" fill="currentColor">factorial(3)</text>
+  <rect x="40" y="142" width="160" height="38" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="120" y="166" font-size="12.5" text-anchor="middle" fill="currentColor">factorial(2)</text>
+  <rect x="40" y="184" width="160" height="38" rx="7" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="120" y="203" font-size="12.5" text-anchor="middle" fill="currentColor">factorial(1)</text>
+  <text x="120" y="217" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">base case → 1</text>
+  <line x1="40" y1="234" x2="200" y2="234" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="120" y="250" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">độ sâu d=4 → O(d) bộ nhớ</text>
+
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <path d="M232 77 h60" marker-end="url(#arr1)"/>
+    <path d="M232 119 h60" marker-end="url(#arr1)"/>
+    <path d="M232 161 h60" marker-end="url(#arr1)"/>
+  </g>
+  <defs>
+    <marker id="arr1" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+
+  <text x="540" y="48" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">POP (nhân ngược)</text>
+  <rect x="460" y="58" width="160" height="34" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="540" y="80" font-size="12" text-anchor="middle" fill="currentColor">4 × 6 = 24</text>
+  <rect x="460" y="100" width="160" height="34" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="540" y="122" font-size="12" text-anchor="middle" fill="currentColor">3 × 2 = 6</text>
+  <rect x="460" y="142" width="160" height="34" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="540" y="164" font-size="12" text-anchor="middle" fill="currentColor">2 × 1 = 2</text>
+  <rect x="460" y="184" width="160" height="34" rx="7" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="540" y="206" font-size="12" text-anchor="middle" fill="currentColor">1 (base case)</text>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <path d="M636 184 v-8 q0 -8 -8 -8" marker-end="url(#arr2)"/>
+    <path d="M636 142 v-8 q0 -8 -8 -8" marker-end="url(#arr2)"/>
+    <path d="M636 100 v-8 q0 -8 -8 -8" marker-end="url(#arr2)"/>
+    <path d="M636 184 v-126" stroke-opacity="0.28"/>
+  </g>
+  <defs>
+    <marker id="arr2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+  <text x="540" y="250" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">kết quả: 24</text>
+</svg>
+
 Vì mỗi lần gọi tốn một frame, độ sâu đệ quy `d` tiêu tốn **O(d) bộ nhớ stack**. Đệ quy quá sâu (vài chục nghìn lần) sẽ tràn stack — `RecursionError` / `StackOverflowError`.
 
 > ⚠️ Bẫy: Python mặc định giới hạn đệ quy ~1000 lần. Một vòng lặp đơn giản trên mảng 10^5 phần tử nếu viết kiểu đệ quy sẽ crash. Khi độ sâu có thể lớn, hãy chuyển sang **vòng lặp** hoặc dùng stack tường minh.
@@ -397,6 +446,60 @@ void dfs(std::unordered_map<int, std::vector<int>>& graph, int node,
 
 Cả BFS và DFS đều chạy **O(V + E)** vì mỗi đỉnh và mỗi cạnh được xét đúng một lần.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>BFS so với DFS trên cùng một đồ thị, đánh số thứ tự thăm</title>
+  <desc>Cùng một đồ thị bắt đầu từ A. BFS dùng queue lan theo lớp nên thứ tự thăm là A, B, C, D, E, F. DFS dùng stack hoặc đệ quy đi sâu hết nhánh nên thứ tự là A, B, D, E, C, F.</desc>
+  <text x="180" y="22" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">BFS — queue, lan theo lớp</text>
+  <text x="540" y="22" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">DFS — stack/đệ quy, đi sâu hết nhánh</text>
+  <line x1="360" y1="36" x2="360" y2="300" stroke="currentColor" stroke-opacity="0.18"/>
+
+  <g stroke="currentColor" stroke-opacity="0.35" fill="none">
+    <path d="M180 70 L100 140"/><path d="M180 70 L260 140"/>
+    <path d="M100 140 L70 220"/><path d="M100 140 L160 220"/>
+    <path d="M260 140 L280 220"/>
+  </g>
+  <g font-size="13" text-anchor="middle">
+    <circle cx="180" cy="70" r="20" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="180" y="75" fill="currentColor" font-weight="700">A</text>
+    <circle cx="100" cy="140" r="20" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="100" y="145" fill="currentColor" font-weight="700">B</text>
+    <circle cx="260" cy="140" r="20" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="260" y="145" fill="currentColor" font-weight="700">C</text>
+    <circle cx="70" cy="220" r="20" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="70" y="225" fill="currentColor" font-weight="700">D</text>
+    <circle cx="160" cy="220" r="20" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="160" y="225" fill="currentColor" font-weight="700">E</text>
+    <circle cx="280" cy="220" r="20" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="280" y="225" fill="currentColor" font-weight="700">F</text>
+  </g>
+  <g font-size="11" font-weight="700">
+    <circle cx="204" cy="52" r="10" fill="#3b82f6"/><text x="204" y="56" text-anchor="middle" fill="#fff">1</text>
+    <circle cx="78" cy="124" r="10" fill="#3b82f6"/><text x="78" y="128" text-anchor="middle" fill="#fff">2</text>
+    <circle cx="282" cy="124" r="10" fill="#3b82f6"/><text x="282" y="128" text-anchor="middle" fill="#fff">3</text>
+    <circle cx="48" cy="204" r="10" fill="#3b82f6"/><text x="48" y="208" text-anchor="middle" fill="#fff">4</text>
+    <circle cx="160" cy="196" r="10" fill="#3b82f6"/><text x="160" y="200" text-anchor="middle" fill="#fff">5</text>
+    <circle cx="302" cy="204" r="10" fill="#3b82f6"/><text x="302" y="208" text-anchor="middle" fill="#fff">6</text>
+  </g>
+  <text x="180" y="296" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">thứ tự thăm: A → B → C → D → E → F</text>
+
+  <g stroke="currentColor" stroke-opacity="0.35" fill="none">
+    <path d="M540 70 L460 140"/><path d="M540 70 L620 140"/>
+    <path d="M460 140 L430 220"/><path d="M460 140 L520 220"/>
+    <path d="M620 140 L640 220"/>
+  </g>
+  <g font-size="13" text-anchor="middle">
+    <circle cx="540" cy="70" r="20" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="540" y="75" fill="currentColor" font-weight="700">A</text>
+    <circle cx="460" cy="140" r="20" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="460" y="145" fill="currentColor" font-weight="700">B</text>
+    <circle cx="620" cy="140" r="20" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="620" y="145" fill="currentColor" font-weight="700">C</text>
+    <circle cx="430" cy="220" r="20" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="430" y="225" fill="currentColor" font-weight="700">D</text>
+    <circle cx="520" cy="220" r="20" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="520" y="225" fill="currentColor" font-weight="700">E</text>
+    <circle cx="640" cy="220" r="20" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="640" y="225" fill="currentColor" font-weight="700">F</text>
+  </g>
+  <g font-size="11" font-weight="700">
+    <circle cx="564" cy="52" r="10" fill="#10b981"/><text x="564" y="56" text-anchor="middle" fill="#fff">1</text>
+    <circle cx="438" cy="124" r="10" fill="#10b981"/><text x="438" y="128" text-anchor="middle" fill="#fff">2</text>
+    <circle cx="408" cy="204" r="10" fill="#10b981"/><text x="408" y="208" text-anchor="middle" fill="#fff">3</text>
+    <circle cx="520" cy="196" r="10" fill="#10b981"/><text x="520" y="200" text-anchor="middle" fill="#fff">4</text>
+    <circle cx="642" cy="124" r="10" fill="#10b981"/><text x="642" y="128" text-anchor="middle" fill="#fff">5</text>
+    <circle cx="662" cy="204" r="10" fill="#10b981"/><text x="662" y="208" text-anchor="middle" fill="#fff">6</text>
+  </g>
+  <text x="540" y="296" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">thứ tự thăm: A → B → D → E → C → F</text>
+</svg>
+
 | Thuật toán | Cấu trúc | Đường ngắn nhất (không trọng số)? | Hợp cho |
 | --- | --- | --- | --- |
 | BFS | Queue (FIFO) | Có | Khoảng cách ngắn nhất, lan theo lớp |
@@ -421,6 +524,46 @@ DP áp dụng khi bài toán có **hai dấu hiệu**:
 ### 4.2. Fibonacci — minh hoạ sức mạnh của cache
 
 `fib(n) = fib(n-1) + fib(n-2)`. Đệ quy ngây thơ là **O(2^n)** vì `fib(n-2)` bị tính lại vô số lần. Thêm cache → **O(n)**.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Cây gọi fib(5) chưa cache với các bài con trùng lặp</title>
+  <desc>Cây đệ quy của fib(5) phân nhánh thành fib(4) và fib(3). Nhiều nút lặp lại: fib(3) tính 2 lần, fib(2) tính 3 lần, fib(1) và fib(0) nhiều lần. Đây là overlapping subproblems, động lực của memoization.</desc>
+  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Cây gọi fib(5) chưa cache</text>
+  <text x="704" y="22" font-size="11" text-anchor="end" fill="#f59e0b">■ nút bị tính lại (trùng lặp)</text>
+
+  <g stroke="currentColor" stroke-opacity="0.35" fill="none">
+    <path d="M360 56 L200 106"/><path d="M360 56 L540 106"/>
+    <path d="M200 106 L120 166"/><path d="M200 106 L300 166"/>
+    <path d="M540 106 L460 166"/><path d="M540 106 L620 166"/>
+    <path d="M120 166 L70 226"/><path d="M120 166 L180 226"/>
+    <path d="M300 166 L260 226"/><path d="M300 166 L360 226"/>
+    <path d="M460 166 L420 226"/><path d="M460 166 L500 226"/>
+    <path d="M70 226 L40 286"/><path d="M70 226 L110 286"/>
+  </g>
+
+  <g font-size="11.5" text-anchor="middle">
+    <g><rect x="334" y="40" width="52" height="30" rx="7" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/><text x="360" y="60" fill="currentColor" font-weight="700">fib(5)</text></g>
+    <g><rect x="174" y="90" width="52" height="30" rx="7" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/><text x="200" y="110" fill="currentColor" font-weight="700">fib(4)</text></g>
+    <g><rect x="514" y="90" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="540" y="110" fill="currentColor" font-weight="700">fib(3)</text></g>
+
+    <g><rect x="94" y="150" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="120" y="170" fill="currentColor" font-weight="700">fib(3)</text></g>
+    <g><rect x="274" y="150" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="300" y="170" fill="currentColor" font-weight="700">fib(2)</text></g>
+    <g><rect x="434" y="150" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="460" y="170" fill="currentColor" font-weight="700">fib(2)</text></g>
+    <g><rect x="594" y="150" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="620" y="170" fill="currentColor" font-weight="700">fib(1)</text></g>
+
+    <g><rect x="44" y="210" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="70" y="230" fill="currentColor" font-weight="700">fib(2)</text></g>
+    <g><rect x="154" y="210" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="180" y="230" fill="currentColor" font-weight="700">fib(1)</text></g>
+    <g><rect x="234" y="210" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="260" y="230" fill="currentColor" font-weight="700">fib(1)</text></g>
+    <g><rect x="334" y="210" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="360" y="230" fill="currentColor" font-weight="700">fib(0)</text></g>
+    <g><rect x="394" y="210" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="420" y="230" fill="currentColor" font-weight="700">fib(1)</text></g>
+    <g><rect x="474" y="210" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="500" y="230" fill="currentColor" font-weight="700">fib(0)</text></g>
+
+    <g><rect x="14" y="270" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="40" y="290" fill="currentColor" font-weight="700">fib(1)</text></g>
+    <g><rect x="84" y="270" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="110" y="290" fill="currentColor" font-weight="700">fib(0)</text></g>
+  </g>
+
+  <text x="360" y="332" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85">fib(3) tính 2 lần, fib(2) tính 3 lần — overlapping subproblems → động lực của memoization</text>
+</svg>
 
 ```python
 from functools import lru_cache

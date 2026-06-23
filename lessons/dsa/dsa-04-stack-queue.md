@@ -2,6 +2,49 @@
 
 `Stack` và `Queue` là hai cấu trúc dữ liệu tuyến tính cơ bản nhất nhưng cũng hữu dụng nhất trong công việc thực tế lẫn phỏng vấn. Điểm khác biệt duy nhất nằm ở **thứ tự lấy phần tử ra**. Khi nắm vững chúng, bạn sẽ mở khoá được hàng loạt kỹ thuật mạnh hơn như `DFS`, `BFS`, và đặc biệt là `monotonic stack/queue` — vũ khí giải các bài toán "next greater element" hay "sliding window maximum" trong thời gian tuyến tính.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>So sánh Stack (LIFO) và Queue (FIFO)</title>
+  <desc>Hai cột: Stack vào và ra cùng một đỉnh theo nguyên tắc LIFO; Queue thêm ở cuối và lấy ra ở đầu theo nguyên tắc FIFO.</desc>
+  <text x="180" y="28" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Stack — LIFO</text>
+  <text x="540" y="28" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Queue — FIFO</text>
+  <text x="180" y="46" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">vào/ra cùng một đỉnh</text>
+  <text x="540" y="46" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">vào cuối, ra đầu</text>
+  <defs>
+    <marker id="sqarrow" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker>
+  </defs>
+  <g>
+    <rect x="120" y="120" width="120" height="160" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="132" y="244" width="96" height="28" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="180" y="263" font-size="13" text-anchor="middle" fill="currentColor">10</text>
+    <rect x="132" y="208" width="96" height="28" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="180" y="227" font-size="13" text-anchor="middle" fill="currentColor">20</text>
+    <rect x="132" y="172" width="96" height="28" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="180" y="191" font-size="13" text-anchor="middle" fill="currentColor">30</text>
+    <text x="252" y="160" font-size="11" fill="currentColor" opacity="0.7">đỉnh (top)</text>
+    <path d="M180 100 v54" stroke="currentColor" fill="none" marker-end="url(#sqarrow)"/>
+    <text x="98" y="92" font-size="11.5" font-weight="600" fill="currentColor">push</text>
+    <path d="M132 154 q-40 -20 -40 -54" stroke="currentColor" fill="none" marker-end="url(#sqarrow)"/>
+    <text x="222" y="92" font-size="11.5" font-weight="600" fill="currentColor">pop</text>
+  </g>
+  <g>
+    <rect x="420" y="160" width="240" height="48" rx="8" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="432" y="170" width="48" height="28" rx="5" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="456" y="189" font-size="13" text-anchor="middle" fill="currentColor">10</text>
+    <rect x="492" y="170" width="48" height="28" rx="5" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="516" y="189" font-size="13" text-anchor="middle" fill="currentColor">20</text>
+    <rect x="552" y="170" width="48" height="28" rx="5" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="576" y="189" font-size="13" text-anchor="middle" fill="currentColor">30</text>
+    <text x="456" y="232" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">đầu (front)</text>
+    <text x="624" y="232" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">cuối (back)</text>
+    <path d="M690 184 h-22" stroke="currentColor" fill="none" marker-end="url(#sqarrow)"/>
+    <text x="640" y="150" font-size="11.5" font-weight="600" fill="currentColor">enqueue</text>
+    <path d="M432 184 h-22" stroke="currentColor" fill="none" marker-end="url(#sqarrow)"/>
+    <text x="394" y="150" font-size="11.5" font-weight="600" fill="currentColor">dequeue</text>
+  </g>
+  <text x="180" y="305" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">phần tử vào sau cùng (30) ra trước</text>
+  <text x="540" y="305" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">phần tử vào trước (10) ra trước</text>
+</svg>
+
 ## Stack (LIFO)
 
 `Stack` hoạt động theo nguyên tắc **LIFO** (Last In, First Out): phần tử vào sau cùng sẽ ra trước tiên. Hãy hình dung một chồng đĩa: bạn đặt đĩa lên trên cùng và cũng lấy đĩa từ trên cùng.
@@ -510,6 +553,54 @@ std::vector<int> nextGreater(const std::vector<int>& nums) {
 }
 ```
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Monotonic stack tìm Next Greater Element</title>
+  <desc>Duyệt mảng [2, 1, 5, 3] từ phải sang trái; stack giữ thứ tự giảm dần, pop các phần tử nhỏ hơn hoặc bằng phần tử hiện tại rồi đọc đỉnh làm đáp án.</desc>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Next Greater Element: nums = [2, 1, 5, 3]</text>
+  <text x="16" y="46" font-size="11.5" fill="currentColor" opacity="0.7">Duyệt phải → trái · stack giảm dần (đỉnh ở trên) · đáp án = đỉnh sau khi pop</text>
+  <defs>
+    <marker id="msarrow" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker>
+  </defs>
+  <g font-size="12">
+    <text x="80" y="92" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">i=3, x=3</text>
+    <rect x="40" y="104" width="80" height="30" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="80" y="124" text-anchor="middle" fill="currentColor">[3]</text>
+    <text x="80" y="156" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">stack rỗng</text>
+    <text x="80" y="172" font-size="11.5" text-anchor="middle" fill="currentColor">res[3] = -1</text>
+  </g>
+  <g font-size="12">
+    <text x="240" y="92" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">i=2, x=5</text>
+    <rect x="200" y="104" width="80" height="30" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="240" y="124" text-anchor="middle" fill="currentColor">[5]</text>
+    <text x="240" y="156" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">pop 3 (≤ 5)</text>
+    <text x="240" y="172" font-size="11.5" text-anchor="middle" fill="currentColor">res[2] = -1</text>
+  </g>
+  <g font-size="12">
+    <text x="400" y="92" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">i=1, x=1</text>
+    <rect x="360" y="104" width="80" height="30" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="400" y="124" text-anchor="middle" fill="currentColor">[5, 1]</text>
+    <text x="400" y="156" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">5 &gt; 1 → giữ</text>
+    <text x="400" y="172" font-size="11.5" font-weight="600" text-anchor="middle" fill="currentColor">res[1] = 5</text>
+  </g>
+  <g font-size="12">
+    <text x="560" y="92" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">i=0, x=2</text>
+    <rect x="520" y="104" width="80" height="30" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="560" y="124" text-anchor="middle" fill="currentColor">[5, 2]</text>
+    <text x="560" y="156" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">pop 1 (≤ 2)</text>
+    <text x="560" y="172" font-size="11.5" font-weight="600" text-anchor="middle" fill="currentColor">res[0] = 5</text>
+  </g>
+  <path d="M620 119 h60" stroke="currentColor" fill="none" marker-end="url(#msarrow)" stroke-opacity="0.6"/>
+  <text x="650" y="111" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">thời gian</text>
+  <g>
+    <rect x="40" y="210" width="640" height="120" rx="9" fill="#10b981" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="60" y="236" font-size="12.5" font-weight="700" fill="currentColor">Ý tưởng</text>
+    <text x="60" y="260" font-size="11.5" fill="currentColor" opacity="0.85">1. Trước khi xét nums[i], pop hết phần tử ≤ nums[i] — chúng bị che, không còn là next greater.</text>
+    <text x="60" y="282" font-size="11.5" fill="currentColor" opacity="0.85">2. Đỉnh stack còn lại (nếu có) chính là phần tử lớn hơn gần nhất bên phải → res[i].</text>
+    <text x="60" y="304" font-size="11.5" fill="currentColor" opacity="0.85">3. Push nums[i] vào để làm ứng viên cho các phần tử bên trái.</text>
+    <text x="60" y="324" font-size="11.5" font-weight="600" fill="currentColor">Mỗi phần tử push/pop đúng 1 lần → O(n). Kết quả: [5, 5, -1, -1].</text>
+  </g>
+</svg>
+
 > 💡 **Ghi nhớ**: Hỏi "phần tử lớn hơn gần nhất" → stack giảm dần. Hỏi "phần tử nhỏ hơn gần nhất" → stack tăng dần. Thường lưu **index** thay vì giá trị để tính được khoảng cách.
 
 ## Monotonic Queue (Sliding Window Maximum)
@@ -526,6 +617,49 @@ Cho mảng `nums` và cửa sổ kích thước `k`, trả về giá trị lớn
 3. Đầu deque luôn là index của max hiện tại.
 
 Mỗi index vào/ra deque một lần → O(n) time, O(k) space.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Sliding Window Maximum bằng monotonic deque</title>
+  <desc>Mảng [1, 3, -1, -3, 5] với cửa sổ k=3 trượt từ trái sang phải; deque giữ index có giá trị giảm dần, pop cuối khi giá trị nhỏ hơn, pop đầu khi index ra khỏi cửa sổ, đầu deque là max.</desc>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Sliding Window Maximum: nums = [1, 3, -1, -3, 5], k = 3</text>
+  <g font-size="13">
+    <rect x="40" y="44" width="56" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="68" y="69" text-anchor="middle" fill="currentColor">1</text>
+    <rect x="100" y="44" width="56" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="128" y="69" text-anchor="middle" fill="currentColor">3</text>
+    <rect x="160" y="44" width="56" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="188" y="69" text-anchor="middle" fill="currentColor">-1</text>
+    <rect x="220" y="44" width="56" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="248" y="69" text-anchor="middle" fill="currentColor">-3</text>
+    <rect x="280" y="44" width="56" height="40" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="308" y="69" text-anchor="middle" fill="currentColor">5</text>
+    <text x="68" y="100" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">i=0</text>
+    <text x="128" y="100" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">i=1</text>
+    <text x="188" y="100" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">i=2</text>
+    <text x="248" y="100" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">i=3</text>
+    <text x="308" y="100" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">i=4</text>
+  </g>
+  <g stroke="currentColor" fill="none" stroke-opacity="0.5">
+    <rect x="36" y="40" width="184" height="48" rx="8" stroke="#f59e0b" stroke-opacity="0.9" stroke-width="2"/>
+    <rect x="156" y="118" width="184" height="0"/>
+  </g>
+  <text x="380" y="68" font-size="11" fill="#f59e0b" opacity="0.95">cửa sổ đầu</text>
+  <g font-size="11.5">
+    <text x="16" y="150" font-size="12.5" font-weight="700" fill="currentColor">Trạng thái deque (lưu index, giá trị giảm dần):</text>
+    <text x="40" y="178" fill="currentColor"><tspan font-weight="600">i=0</tspan>  deque=[0]            (val 1)</text>
+    <text x="40" y="200" fill="currentColor"><tspan font-weight="600">i=1</tspan>  pop 0 (1≤3) → [1]   (val 3)</text>
+    <text x="40" y="222" fill="currentColor"><tspan font-weight="600">i=2</tspan>  -1&lt;3 → [1, 2]      → cửa sổ [1,3,-1], max = nums[1] = 3</text>
+    <text x="40" y="244" fill="currentColor"><tspan font-weight="600">i=3</tspan>  -3&lt;-1 → [1, 2, 3]  → cửa sổ [3,-1,-3], max = nums[1] = 3</text>
+    <text x="40" y="266" fill="currentColor"><tspan font-weight="600">i=4</tspan>  pop 3,2 (≤5); pop đầu 1 (ra cửa sổ) → [4]</text>
+    <text x="76" y="287" fill="currentColor">→ cửa sổ [-1,-3,5], max = nums[4] = 5</text>
+  </g>
+  <g>
+    <rect x="40" y="306" width="640" height="78" rx="9" fill="#f59e0b" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="60" y="330" font-size="11.5" fill="currentColor" opacity="0.9">• Pop <tspan font-weight="600">cuối</tspan> deque khi giá trị ≤ nums[i] (phần tử cũ không bao giờ là max nữa).</text>
+    <text x="60" y="352" font-size="11.5" fill="currentColor" opacity="0.9">• Pop <tspan font-weight="600">đầu</tspan> deque khi index trượt ra khỏi cửa sổ (index ≤ i − k).</text>
+    <text x="60" y="374" font-size="11.5" font-weight="600" fill="currentColor">• <tspan font-weight="700">Đầu deque luôn = index của max hiện tại.</tspan>  Kết quả: [3, 3, 5].</text>
+  </g>
+</svg>
 
 ```python
 from collections import deque
