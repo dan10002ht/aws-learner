@@ -327,6 +327,82 @@ Mỗi query có một vòng đời cache. Hai mốc thời gian cần nắm:
 
 Cơ chế **stale-while-revalidate**: khi dữ liệu đã stale và bạn quay lại trang, React Query **hiển thị ngay dữ liệu cũ từ cache** (không spinner) **rồi âm thầm fetch lại** ở nền, cập nhật khi xong. Người dùng thấy giao diện tức thì, dữ liệu vẫn được làm mới.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Vòng đời cache của một query trong React Query</title>
+  <desc>Sơ đồ trạng thái theo thời gian: fetch xong dữ liệu fresh trong staleTime, hết staleTime chuyển sang stale, khi remount hoặc focus thì hiển thị ngay cache cũ và âm thầm refetch ở nền rồi cập nhật; khi không còn component nào dùng, sau gcTime cache bị dọn; mutation thành công gọi invalidateQueries để đánh dấu stale và refetch.</desc>
+
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Vòng đời cache của một query (stale-while-revalidate)</text>
+
+  <defs>
+    <marker id="rqArrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <!-- FRESH -->
+  <rect x="16" y="52" width="200" height="78" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+  <rect x="28" y="64" width="64" height="20" rx="10" fill="#10b981" fill-opacity="0.95"/>
+  <text x="60" y="78" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">FRESH</text>
+  <text x="28" y="104" font-size="12" font-weight="700" fill="currentColor">Còn tươi</text>
+  <text x="28" y="121" font-size="11" fill="currentColor" opacity="0.65">Trong staleTime → KHÔNG refetch</text>
+
+  <!-- STALE -->
+  <rect x="262" y="52" width="200" height="78" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+  <rect x="274" y="64" width="64" height="20" rx="10" fill="#f59e0b" fill-opacity="0.95"/>
+  <text x="306" y="78" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">STALE</text>
+  <text x="274" y="104" font-size="12" font-weight="700" fill="currentColor">Đã cũ</text>
+  <text x="274" y="121" font-size="11" fill="currentColor" opacity="0.65">Cache vẫn giữ, chờ dịp refetch</text>
+
+  <!-- REFETCH (revalidate) -->
+  <rect x="508" y="52" width="196" height="78" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+  <rect x="520" y="64" width="92" height="20" rx="10" fill="#3b82f6" fill-opacity="0.95"/>
+  <text x="566" y="78" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">REFETCHING</text>
+  <text x="520" y="104" font-size="11.5" font-weight="700" fill="currentColor">Hiện cache cũ ngay</text>
+  <text x="520" y="121" font-size="11" fill="currentColor" opacity="0.65">đồng thời fetch lại ở nền</text>
+
+  <!-- arrows top row -->
+  <line x1="216" y1="91" x2="258" y2="91" stroke="currentColor" stroke-opacity="0.75" marker-end="url(#rqArrow)"/>
+  <text x="237" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">hết</text>
+  <text x="237" y="46" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">staleTime</text>
+
+  <line x1="462" y1="91" x2="504" y2="91" stroke="currentColor" stroke-opacity="0.75" marker-end="url(#rqArrow)"/>
+  <text x="483" y="40" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">remount /</text>
+  <text x="483" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">focus</text>
+
+  <!-- refetch -> fresh loop (data mới về) -->
+  <path d="M606 130 v40 H116 v-40" fill="none" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#rqArrow)"/>
+  <text x="360" y="186" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">fetch xong → data mới ghi vào cache, quay lại FRESH (UI cập nhật)</text>
+
+  <!-- gcTime / garbage collection -->
+  <rect x="262" y="214" width="200" height="62" rx="10" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+  <rect x="274" y="224" width="62" height="20" rx="10" fill="#8b5cf6" fill-opacity="0.95"/>
+  <text x="305" y="238" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">GC</text>
+  <text x="274" y="262" font-size="11" fill="currentColor" opacity="0.7">Hết gcTime → xoá khỏi cache</text>
+  <line x1="306" y1="130" x2="306" y2="210" stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="4 3" marker-end="url(#rqArrow)"/>
+  <text x="316" y="172" font-size="9.5" fill="currentColor" opacity="0.7">không component nào dùng</text>
+
+  <!-- mutation -> invalidate -->
+  <rect x="16" y="320" width="688" height="94" rx="10" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/>
+  <text x="32" y="344" font-size="12.5" font-weight="700" fill="currentColor">Ghi dữ liệu (mutation) → đồng bộ lại cache</text>
+
+  <rect x="32" y="356" width="150" height="42" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="107" y="375" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">useMutation</text>
+  <text x="107" y="390" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">POST / PUT / DELETE</text>
+
+  <rect x="248" y="356" width="170" height="42" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="333" y="375" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">invalidateQueries</text>
+  <text x="333" y="390" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">trong onSuccess → đánh dấu STALE</text>
+
+  <rect x="484" y="356" width="196" height="42" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="582" y="375" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">refetch → FRESH lại</text>
+  <text x="582" y="390" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">danh sách tự cập nhật</text>
+
+  <line x1="182" y1="377" x2="244" y2="377" stroke="currentColor" stroke-opacity="0.75" marker-end="url(#rqArrow)"/>
+  <text x="213" y="370" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">onSuccess</text>
+  <line x1="418" y1="377" x2="480" y2="377" stroke="currentColor" stroke-opacity="0.75" marker-end="url(#rqArrow)"/>
+</svg>
+
+
 React Query tự refetch khi: component mount lại (mà data đã stale), **cửa sổ được focus lại** (`refetchOnWindowFocus`), mạng kết nối lại. Đây là lý do app cảm giác "luôn cập nhật" mà bạn không viết dòng nào.
 
 ```tsx

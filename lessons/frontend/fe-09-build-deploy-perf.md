@@ -179,6 +179,64 @@ vercel        # lần đầu hỏi cấu hình; sau đó mỗi push tự deploy
 - **Amazon S3**: kho chứa file tĩnh (object storage) — đẩy `dist/` lên đây.
 - **CloudFront**: CDN của AWS — cache file ở edge location gần người dùng (giảm latency), terminate HTTPS, nén gzip/brotli.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Kiến trúc deploy SPA: build → S3 → CloudFront → người dùng</title>
+  <desc>Luồng triển khai một SPA: npm run build tạo thư mục dist gồm file tĩnh, đẩy lên S3 (object storage), CloudFront cache ở edge gần người dùng rồi phân phối tới trình duyệt.</desc>
+  <defs>
+    <marker id="ah-dep" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Từ máy dev ra tới người dùng</text>
+
+  <g>
+    <rect x="16" y="60" width="150" height="110" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="91" y="86" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">npm run build</text>
+    <text x="91" y="108" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.72">tạo thư mục</text>
+    <rect x="44" y="118" width="94" height="38" rx="7" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="91" y="134" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">dist/</text>
+    <text x="91" y="149" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">index.html · .js · .css</text>
+  </g>
+
+  <g>
+    <rect x="200" y="60" width="150" height="110" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="248" y="74" width="54" height="22" rx="11" fill="#10b981" fill-opacity="0.95"/>
+    <text x="275" y="89" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">S3</text>
+    <text x="275" y="118" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Object storage</text>
+    <text x="275" y="138" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.72">bucket chứa</text>
+    <text x="275" y="153" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.72">file tĩnh</text>
+  </g>
+
+  <g>
+    <rect x="384" y="60" width="160" height="110" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="436" y="74" width="84" height="22" rx="11" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="478" y="89" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">CloudFront</text>
+    <text x="464" y="118" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">CDN edge</text>
+    <text x="464" y="138" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.72">cache gần user</text>
+    <text x="464" y="153" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.72">HTTPS · nén</text>
+  </g>
+
+  <g>
+    <rect x="578" y="60" width="126" height="110" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <circle cx="641" cy="92" r="13" fill="none" stroke="currentColor" stroke-width="2"/>
+    <path d="M641 105 c-15 0 -22 10 -22 22 h44 c0 -12 -7 -22 -22 -22 z" fill="none" stroke="currentColor" stroke-width="2"/>
+    <text x="641" y="152" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Người dùng</text>
+    <text x="641" y="167" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">trình duyệt</text>
+  </g>
+
+  <g stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#ah-dep)" stroke-opacity="0.75">
+    <path d="M166 115 H198"/>
+    <path d="M350 115 H382"/>
+    <path d="M544 115 H576"/>
+  </g>
+  <text x="182" y="50" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">aws s3 sync</text>
+  <text x="367" y="50" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">origin</text>
+  <text x="560" y="50" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">HTTPS</text>
+
+  <text x="360" y="208" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.78">JS/CSS có content hash → cache 1 năm (immutable) · index.html → no-cache</text>
+  <text x="360" y="232" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.78">Mỗi lần deploy: aws s3 sync + cloudfront create-invalidation</text>
+</svg>
+
 ```bash
 npm run build
 # Đẩy file lên bucket S3
@@ -194,6 +252,55 @@ aws cloudfront create-invalidation --distribution-id E123ABC --paths "/*"
 SPA chỉ có **một** file `index.html` thật. Routing do React Router xử lý **phía client**. Khi người dùng gõ thẳng `myapp.com/reports` hoặc F5 tại đó, trình duyệt hỏi server file `/reports` — server **không có** file đó → **404**.
 
 Cách sửa: cấu hình host **trả về `index.html` cho mọi đường dẫn không khớp file tĩnh**. Khi đó React Router nạp lên rồi tự render đúng route.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Luồng SPA fallback: request /reports không có file → trả index.html 200 → React Router render</title>
+  <desc>Khi người dùng F5 tại /reports, CloudFront không tìm thấy file đó nên dùng Custom Error Response trả về index.html với mã 200, trình duyệt nạp app và React Router render đúng trang Reports.</desc>
+  <defs>
+    <marker id="ah-spa" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">F5 tại /reports — vì sao không bị 404</text>
+
+  <g>
+    <rect x="16" y="50" width="160" height="74" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="96" y="78" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Trình duyệt</text>
+    <text x="96" y="100" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.74">GET /reports</text>
+  </g>
+
+  <g>
+    <rect x="280" y="50" width="180" height="74" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="370" y="76" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">CloudFront</text>
+    <text x="370" y="98" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.74">không có file /reports</text>
+    <text x="370" y="113" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">(S3 trả 403/404)</text>
+  </g>
+
+  <g>
+    <rect x="540" y="50" width="164" height="74" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="622" y="72" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Custom Error</text>
+    <text x="622" y="88" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Response</text>
+    <text x="622" y="110" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.74">403/404 → /index.html</text>
+  </g>
+
+  <g stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#ah-spa)" stroke-opacity="0.75">
+    <path d="M176 87 H278"/>
+    <path d="M460 87 H538"/>
+  </g>
+
+  <g>
+    <rect x="280" y="168" width="180" height="84" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="318" y="180" width="104" height="22" rx="11" fill="#10b981" fill-opacity="0.95"/>
+    <text x="370" y="195" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">index.html · 200</text>
+    <text x="370" y="222" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.78">trình duyệt nạp app</text>
+    <text x="370" y="239" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.78">React Router render /reports</text>
+  </g>
+
+  <g stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#ah-spa)" stroke-opacity="0.75">
+    <path d="M622 124 V210 H462"/>
+  </g>
+  <text x="640" y="170" font-size="10" fill="currentColor" opacity="0.7">trả về</text>
+</svg>
 
 - **Vercel/Netlify**: tự xử lý (Vercel nhận diện SPA, hoặc thêm rewrite về `/index.html`).
 - **CloudFront**: tạo **Custom Error Response** — lỗi 403/404 trả về `/index.html` với mã `200`. (CloudFront Functions hoặc cấu hình error pages.)

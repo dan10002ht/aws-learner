@@ -21,6 +21,51 @@ Vì sao component test là tầng dày nhất với FE? Vì phần lớn bug FE 
 
 Hình dạng cần tránh: **ice cream cone** — vài unit test, còn lại nhồi hết vào E2E qua browser. Triệu chứng: CI 30 phút, "re-run vì flaky" mỗi ngày, không ai tin màu đỏ nữa.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Ba hình dạng chiến lược test: Pyramid, Testing Trophy và anti-pattern Ice cream cone</title>
+  <desc>So sánh tỉ trọng các tầng test. Pyramid: đáy unit rộng, lên cao hẹp dần, E2E đỉnh nhỏ. Testing Trophy: tầng component ở giữa phình to nhất, có nền static. Ice cream cone là anti-pattern lật ngược: ít unit ở đáy, E2E phình to ở trên.</desc>
+  <g>
+    <text x="120" y="24" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Pyramid</text>
+    <text x="120" y="40" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">kinh điển</text>
+    <polygon points="120,58 158,108 82,108" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="120" y="92" font-size="10" text-anchor="middle" fill="currentColor">E2E</text>
+    <polygon points="82,112 158,112 188,176 52,176" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="120" y="150" font-size="10.5" text-anchor="middle" fill="currentColor">Component</text>
+    <polygon points="52,180 188,180 224,250 16,250" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="120" y="221" font-size="10.5" text-anchor="middle" fill="currentColor">Unit</text>
+    <text x="120" y="290" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">nhiều unit,</text>
+    <text x="120" y="304" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">ít E2E</text>
+  </g>
+  <g>
+    <text x="360" y="24" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Testing Trophy</text>
+    <text x="360" y="40" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">ưu tiên cho frontend</text>
+    <polygon points="338,58 382,58 372,98 348,98" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="83" font-size="9.5" text-anchor="middle" fill="currentColor">E2E ~15%</text>
+    <path d="M300 102 q-14 36 24 44 h72 q38 -8 24 -44 z" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.28"/>
+    <text x="360" y="132" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Component</text>
+    <text x="360" y="147" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">~50% (dày nhất)</text>
+    <rect x="338" y="152" width="44" height="40" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="176" font-size="9.5" text-anchor="middle" fill="currentColor">Unit ~25%</text>
+    <rect x="316" y="196" width="88" height="22" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="211" font-size="10" text-anchor="middle" fill="currentColor">Static (TS/ESLint)</text>
+    <text x="360" y="290" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">component giữa</text>
+    <text x="360" y="304" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">phình to nhất</text>
+  </g>
+  <g>
+    <text x="600" y="24" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Ice cream cone</text>
+    <text x="600" y="40" font-size="10.5" text-anchor="middle" fill="#f59e0b" opacity="0.95">anti-pattern, cần tránh</text>
+    <ellipse cx="600" cy="70" rx="60" ry="16" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="600" y="74" font-size="10" text-anchor="middle" fill="currentColor">E2E (nhiều)</text>
+    <polygon points="540,76 660,76 632,140 568,140" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="600" y="112" font-size="10" text-anchor="middle" fill="currentColor">Component</text>
+    <polygon points="568,144 632,144 600,250" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="600" y="180" font-size="9.5" text-anchor="middle" fill="currentColor">Unit</text>
+    <text x="600" y="200" font-size="8.5" text-anchor="middle" fill="currentColor" opacity="0.6">(ít)</text>
+    <text x="600" y="290" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">lật ngược: nhồi E2E,</text>
+    <text x="600" y="304" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">CI chậm, flaky</text>
+  </g>
+</svg>
+
 ## 2. Dựng môi trường: Vitest + React Testing Library
 
 Năm 2025, với dự án Vite, **Vitest** là lựa chọn mặc định: cùng config với Vite (không cần Babel riêng), nhanh, API gần như tương thích Jest (`describe/it/expect`). Jest vẫn phổ biến ở dự án Next.js/CRA cũ; mọi nguyên tắc trong bài áp dụng được cho cả hai.

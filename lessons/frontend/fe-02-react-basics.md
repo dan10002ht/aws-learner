@@ -112,6 +112,61 @@ Vài điểm quan trọng về props:
 - Destructuring ngay ở tham số (`{ label, onClick }`) là cách viết phổ biến, gọn và rõ kiểu.
 - Đặt giá trị mặc định ngay khi destructure (`variant = "primary"`).
 
+UI React là một **cây component**: một gốc (`App`) phân nhánh xuống các con, mỗi con lại có con của nó. Dữ liệu (`props`) chỉ chảy **một chiều — từ cha xuống con** (one-way data flow); con không bao giờ đẩy ngược dữ liệu lên cha bằng cách sửa props. Khi con cần báo cho cha (vd: bấm nút), cha truyền **một hàm callback** xuống làm prop, con gọi hàm đó — luồng điều khiển đi lên, nhưng dữ liệu vẫn chỉ đi xuống.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Cây component và luồng dữ liệu một chiều trong React</title>
+  <desc>Component App ở gốc truyền props xuống các con TodoList, Header, Footer; TodoList truyền tiếp xuống từng TodoItem. Props chảy một chiều từ cha xuống con, còn callback onToggle đi từ con gọi ngược lên cha.</desc>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Cây component &amp; luồng dữ liệu một chiều</text>
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none" stroke-width="1.5">
+    <path d="M360 78 L180 138"/>
+    <path d="M360 78 L360 138"/>
+    <path d="M360 78 L540 138"/>
+    <path d="M180 188 L100 248"/>
+    <path d="M180 188 L260 248"/>
+  </g>
+  <g>
+    <rect x="300" y="44" width="120" height="34" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="65" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">App (gốc)</text>
+  </g>
+  <g>
+    <rect x="120" y="138" width="120" height="50" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="180" y="158" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">TodoList</text>
+    <text x="180" y="175" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">props: todos</text>
+    <rect x="300" y="138" width="120" height="50" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="158" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Header</text>
+    <text x="360" y="175" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">props: title</text>
+    <rect x="480" y="138" width="120" height="50" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="540" y="158" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Footer</text>
+    <text x="540" y="175" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">props: remaining</text>
+  </g>
+  <g>
+    <rect x="40" y="248" width="120" height="50" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="100" y="268" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">TodoItem</text>
+    <text x="100" y="285" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">props: todo, onToggle</text>
+    <rect x="200" y="248" width="120" height="50" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="260" y="268" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">TodoItem</text>
+    <text x="260" y="285" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">props: todo, onToggle</text>
+  </g>
+  <defs>
+    <marker id="arrDown" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrUp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#f59e0b"/>
+    </marker>
+  </defs>
+  <g>
+    <path d="M636 70 L636 300" stroke="#3b82f6" stroke-width="2.5" fill="none" marker-end="url(#arrDown)"/>
+    <text x="648" y="180" font-size="11" fill="currentColor" transform="rotate(90 648 180)" text-anchor="middle">props chảy xuống (dữ liệu)</text>
+    <path d="M674 300 L674 70" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="5 4" fill="none" marker-end="url(#arrUp)"/>
+    <text x="690" y="185" font-size="11" fill="currentColor" transform="rotate(90 690 185)" text-anchor="middle">callback gọi lên (sự kiện)</text>
+  </g>
+  <text x="100" y="330" font-size="10.5" fill="currentColor" opacity="0.7">Tên component viết hoa chữ đầu · props là read-only ở con</text>
+</svg>
+
+> 💡 Ghi nhớ: One-way data flow giúp bạn luôn biết dữ liệu **đến từ đâu** — cứ lần ngược lên cha là tìm ra nguồn. Đây là lý do bug "UI lệch state" hiếm hơn hẳn so với DOM thủ công, nơi bất kỳ đoạn code nào cũng có thể sửa bất kỳ phần tử nào.
+
 Việc khai báo kiểu props là lý do TypeScript gần như bắt buộc cho frontend hiện đại — nó bắt lỗi ngay khi bạn truyền sai prop. Xem lại [[fe-01-typescript]] nếu cần nền tảng về `type`, union và optional.
 
 > 💡 Ghi nhớ: Một component tốt là một hàm thuần (pure) đối với props: cùng props vào → cùng UI ra, không side effect lúc render. Side effect (gọi API, đụng DOM) thuộc về hook `useEffect`, không nằm thẳng trong thân hàm.
@@ -127,6 +182,67 @@ Lần đầu component xuất hiện gọi là **render** (mount). React gọi s
 3. **Props thay đổi**.
 
 Mỗi lần re-render, React gọi **lại** hàm component từ đầu, tạo virtual DOM mới, so sánh (diff) với cây cũ, rồi chỉ vá phần khác biệt vào DOM thật. Đây là lý do bạn cảm thấy "vẽ lại tất cả" nhưng performance vẫn ổn.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Vòng render và re-render với diff Virtual DOM</title>
+  <desc>State đổi kích hoạt re-render: React gọi lại hàm component tạo Virtual DOM mới, so sánh với Virtual DOM cũ để tìm khác biệt, rồi chỉ vá đúng phần thay đổi vào DOM thật. Quá trình lặp lại theo công thức UI bằng f của state.</desc>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Vòng render / re-render → diff Virtual DOM</text>
+  <defs>
+    <marker id="flowArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g>
+    <rect x="20" y="60" width="150" height="58" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="95" y="84" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">State đổi</text>
+    <text x="95" y="103" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">setCount(...) / props mới</text>
+  </g>
+  <g>
+    <rect x="200" y="60" width="150" height="58" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="275" y="84" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Gọi lại hàm</text>
+    <text x="275" y="103" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">tạo Virtual DOM mới</text>
+  </g>
+  <g>
+    <rect x="380" y="60" width="150" height="58" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="455" y="84" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Diff</text>
+    <text x="455" y="103" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">so VDOM mới ↔ cũ</text>
+  </g>
+  <g>
+    <rect x="560" y="60" width="150" height="58" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="635" y="84" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Vá DOM thật</text>
+    <text x="635" y="103" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">chỉ phần khác biệt</text>
+  </g>
+  <g stroke="currentColor" stroke-width="2" fill="none">
+    <path d="M170 89 L196 89" marker-end="url(#flowArr)"/>
+    <path d="M350 89 L376 89" marker-end="url(#flowArr)"/>
+    <path d="M530 89 L556 89" marker-end="url(#flowArr)"/>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.5" stroke-width="1.8" stroke-dasharray="6 4" fill="none">
+    <path d="M635 122 L635 150 L95 150 L95 122" marker-end="url(#flowArr)"/>
+  </g>
+  <text x="365" y="168" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">state đổi lần nữa → lặp lại vòng</text>
+  <g>
+    <rect x="120" y="196" width="220" height="110" rx="10" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="230" y="216" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">VDOM cũ (count = 0)</text>
+    <text x="230" y="240" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">&lt;button&gt;</text>
+    <rect x="160" y="252" width="140" height="24" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="230" y="269" font-size="11" text-anchor="middle" fill="currentColor">"Đã bấm 0 lần"</text>
+    <text x="230" y="296" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">&lt;/button&gt;</text>
+  </g>
+  <g>
+    <rect x="380" y="196" width="220" height="110" rx="10" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="490" y="216" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">VDOM mới (count = 1)</text>
+    <text x="490" y="240" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">&lt;button&gt;</text>
+    <rect x="420" y="252" width="140" height="24" rx="6" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="490" y="269" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">"Đã bấm 1 lần"</text>
+    <text x="490" y="296" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">&lt;/button&gt;</text>
+  </g>
+  <text x="635" y="222" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">chỉ ô tô đậm</text>
+  <text x="635" y="238" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">được cập nhật</text>
+  <path d="M610 250 L300 264" stroke="#f59e0b" stroke-width="1.8" fill="none" stroke-dasharray="4 3"/>
+</svg>
+
+> 💡 Ghi nhớ: Công thức **UI = f(state)** chính là vòng này: state đổi → React chạy lại `f` → so sánh kết quả với lần trước → vá tối thiểu vào DOM. Bạn chỉ lo đổi state, không bao giờ tự đụng vào DOM.
 
 ```tsx
 function Counter() {

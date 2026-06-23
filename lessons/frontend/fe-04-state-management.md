@@ -71,6 +71,62 @@ Lifting state lên cha là tốt, nhưng nếu component cần dữ liệu nằm
         <Avatar user={user} />
 ```
 
+So sánh trực quan hai cách đưa `user` xuống `Avatar` nằm sâu trong cây component:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Prop drilling qua nhiều tầng so với Context phát sóng</title>
+  <desc>Bên trái: user phải truyền props lần lượt qua Page, Layout, Sidebar, Menu rồi mới tới Avatar dù các tầng giữa không dùng tới. Bên phải: Provider phát sóng giá trị thẳng tới Avatar qua useContext, các tầng giữa không cần đụng vào.</desc>
+  <text x="180" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Prop drilling — truyền tay qua từng tầng</text>
+  <text x="540" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Context — phát sóng thẳng tới nơi cần</text>
+  <line x1="360" y1="36" x2="360" y2="350" stroke="currentColor" stroke-opacity="0.15"/>
+  <g font-size="11.5">
+    <rect x="116" y="42" width="128" height="34" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="180" y="64" text-anchor="middle" fill="currentColor">Page · giữ user</text>
+    <rect x="116" y="100" width="128" height="34" rx="8" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="180" y="122" text-anchor="middle" fill="currentColor" opacity="0.75">Layout</text>
+    <rect x="116" y="158" width="128" height="34" rx="8" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="180" y="180" text-anchor="middle" fill="currentColor" opacity="0.75">Sidebar</text>
+    <rect x="116" y="216" width="128" height="34" rx="8" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="180" y="238" text-anchor="middle" fill="currentColor" opacity="0.75">Menu</text>
+    <rect x="116" y="274" width="128" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="180" y="296" text-anchor="middle" fill="currentColor">Avatar · cần user</text>
+  </g>
+  <g stroke="#f59e0b" stroke-width="2" fill="none" marker-end="url(#dot)">
+    <line x1="180" y1="76" x2="180" y2="100"/>
+    <line x1="180" y1="134" x2="180" y2="158"/>
+    <line x1="180" y1="192" x2="180" y2="216"/>
+    <line x1="180" y1="250" x2="180" y2="274"/>
+  </g>
+  <g font-size="9.5" fill="#f59e0b" font-style="italic">
+    <text x="190" y="92">user ↓</text>
+    <text x="190" y="150">user ↓ (không dùng)</text>
+    <text x="190" y="208">user ↓ (không dùng)</text>
+    <text x="190" y="266">user ↓ (không dùng)</text>
+  </g>
+  <g font-size="11.5">
+    <rect x="476" y="42" width="128" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="540" y="64" text-anchor="middle" fill="currentColor">Provider · giữ user</text>
+    <rect x="476" y="100" width="128" height="34" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="540" y="122" text-anchor="middle" fill="currentColor" opacity="0.6">Layout</text>
+    <rect x="476" y="158" width="128" height="34" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="540" y="180" text-anchor="middle" fill="currentColor" opacity="0.6">Sidebar · Menu</text>
+    <rect x="476" y="274" width="128" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="540" y="296" text-anchor="middle" fill="currentColor">Avatar · useContext</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.25" fill="none">
+    <line x1="540" y1="76" x2="540" y2="100"/>
+    <line x1="540" y1="134" x2="540" y2="158"/>
+    <line x1="540" y1="192" x2="540" y2="274"/>
+  </g>
+  <path d="M608 59 C 680 59 680 291 608 291" stroke="#8b5cf6" stroke-width="2.5" fill="none" marker-end="url(#dot)"/>
+  <text x="688" y="178" font-size="9.5" fill="#8b5cf6" font-style="italic" text-anchor="middle" transform="rotate(90 688 178)">phát sóng thẳng</text>
+  <defs>
+    <marker id="dot" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="5" markerHeight="5">
+      <circle cx="4" cy="4" r="3.5" fill="currentColor"/>
+    </marker>
+  </defs>
+</svg>
+
 Vấn đề của prop drilling:
 
 | Triệu chứng | Hậu quả |
@@ -345,6 +401,65 @@ Quy tắc đi kèm: **state dẫn xuất (derived state) thì tính khi render, 
 ## 9. Tổng kết: bản đồ ra quyết định
 
 Quy trình suy nghĩ khi gặp một mẩu state mới, theo thứ tự:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Cây quyết định đặt state trong React</title>
+  <desc>Bốn câu hỏi nối tiếp: dữ liệu từ API thì dùng React Query; chỉ một component dùng thì useState; vài component anh em dùng chung thì lifting state up; toàn cục ít đổi thì Context; còn lại toàn cục đổi thường xuyên thì Zustand hoặc Redux Toolkit.</desc>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g font-size="11.5" text-anchor="middle">
+    <rect x="244" y="20" width="232" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="44" fill="currentColor" font-weight="700">Dữ liệu này từ API?</text>
+    <rect x="244" y="118" width="232" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="142" fill="currentColor" font-weight="700">Chỉ MỘT component dùng?</text>
+    <rect x="244" y="216" width="232" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="234" fill="currentColor" font-weight="700">Vài component anh em</text>
+    <text x="360" y="249" fill="currentColor" font-weight="700">dùng chung?</text>
+    <rect x="244" y="314" width="232" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="332" fill="currentColor" font-weight="700">Toàn cục, ÍT đổi?</text>
+    <text x="360" y="347" fill="currentColor" opacity="0.7" font-size="10">(theme · user · locale)</text>
+    <rect x="244" y="412" width="232" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="431" fill="currentColor">Toàn cục, đổi thường xuyên,</text>
+    <text x="360" y="446" fill="currentColor">nhiều nơi đọc/ghi</text>
+  </g>
+  <g font-size="11.5">
+    <rect x="516" y="22" width="188" height="36" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="610" y="44" text-anchor="middle" fill="currentColor" font-weight="700">React Query / SWR</text>
+    <rect x="516" y="120" width="188" height="36" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="610" y="142" text-anchor="middle" fill="currentColor" font-weight="700">useState</text>
+    <rect x="516" y="218" width="188" height="36" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="610" y="240" text-anchor="middle" fill="currentColor" font-weight="700">Lifting state up</text>
+    <rect x="516" y="316" width="188" height="36" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="610" y="338" text-anchor="middle" fill="currentColor" font-weight="700">Context API</text>
+    <rect x="516" y="414" width="188" height="40" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="610" y="431" text-anchor="middle" fill="currentColor" font-weight="700">Zustand</text>
+    <text x="610" y="446" text-anchor="middle" fill="currentColor" opacity="0.7" font-size="10">(app lớn: Redux Toolkit)</text>
+  </g>
+  <g stroke="currentColor" fill="none" stroke-width="1.6">
+    <path d="M476 40 H516" marker-end="url(#arr)"/>
+    <path d="M476 138 H516" marker-end="url(#arr)"/>
+    <path d="M476 236 H516" marker-end="url(#arr)"/>
+    <path d="M476 334 H516" marker-end="url(#arr)"/>
+    <path d="M476 434 H516" marker-end="url(#arr)"/>
+    <path d="M360 60 V118" marker-end="url(#arr)"/>
+    <path d="M360 158 V216" marker-end="url(#arr)"/>
+    <path d="M360 256 V314" marker-end="url(#arr)"/>
+    <path d="M360 354 V412" marker-end="url(#arr)"/>
+  </g>
+  <g font-size="10" font-weight="700">
+    <text x="492" y="34" fill="#10b981">Có → dừng</text>
+    <text x="492" y="132" fill="#10b981">Có → dừng</text>
+    <text x="492" y="230" fill="#10b981">Có → dừng</text>
+    <text x="492" y="328" fill="#10b981">Có → dừng</text>
+    <text x="372" y="92" fill="currentColor" opacity="0.7">Không</text>
+    <text x="372" y="190" fill="currentColor" opacity="0.7">Không</text>
+    <text x="372" y="288" fill="currentColor" opacity="0.7">Không</text>
+    <text x="372" y="386" fill="currentColor" opacity="0.7">Không</text>
+  </g>
+</svg>
 
 1. **Dữ liệu này từ API?** → server state → React Query/SWR. Dừng.
 2. **Chỉ một component dùng?** → `useState`. Dừng.
