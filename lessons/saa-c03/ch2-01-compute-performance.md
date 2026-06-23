@@ -142,6 +142,58 @@ Chuỗi thời gian khi ASG launch instance mới:
 4. User-data, app bootstrap, warm cache — **30-300s**.
 5. Health check pass, vào target group — **30-90s**.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Timeline scale-out của Auto Scaling Group — vì sao mất 3-10 phút</title>
+  <desc>Chuỗi thời gian từ trái sang phải khi ASG thêm instance mới: alarm fire khoảng 60 giây, gọi RunInstances vài giây, boot OS 30 đến 90 giây, bootstrap app 30 đến 300 giây, health check vào target group 30 đến 90 giây — tổng cộng 3 đến 10 phút.</desc>
+  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Scale-out ASG: traffic tăng → có capacity = 3-10 phút</text>
+
+  <line x1="24" y1="120" x2="700" y2="120" stroke="currentColor" stroke-opacity="0.45"/>
+  <text x="24" y="146" font-size="10.5" fill="currentColor" opacity="0.65">0s</text>
+  <text x="690" y="146" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.65">~10 phút →</text>
+
+  <g>
+    <rect x="24" y="64" width="92" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <circle cx="35" cy="120" r="5" fill="#3b82f6"/>
+    <line x1="70" y1="104" x2="70" y2="120" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="70" y="80" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Alarm fire</text>
+    <text x="70" y="95" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">~60s</text>
+  </g>
+
+  <g>
+    <rect x="124" y="64" width="86" height="40" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <line x1="167" y1="104" x2="167" y2="120" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="167" y="80" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">RunInstances</text>
+    <text x="167" y="95" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">vài giây</text>
+  </g>
+
+  <g>
+    <rect x="218" y="64" width="120" height="40" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <line x1="278" y1="104" x2="278" y2="120" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="278" y="80" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Boot OS</text>
+    <text x="278" y="95" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">30-90s</text>
+  </g>
+
+  <g>
+    <rect x="346" y="64" width="200" height="40" rx="8" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <line x1="446" y1="104" x2="446" y2="120" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="446" y="80" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Bootstrap app · warm cache</text>
+    <text x="446" y="95" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">30-300s (lâu nhất)</text>
+  </g>
+
+  <g>
+    <rect x="554" y="64" width="146" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <line x1="627" y1="104" x2="627" y2="120" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="627" y="80" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Health check → TG</text>
+    <text x="627" y="95" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">30-90s</text>
+  </g>
+
+  <g>
+    <rect x="24" y="172" width="676" height="48" rx="9" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="40" y="192" font-size="11.5" font-weight="700" fill="currentColor">Trong suốt 3-10 phút này, instance hiện có "chịu trận"</text>
+    <text x="40" y="209" font-size="10.5" fill="currentColor" opacity="0.72">→ Pre-warm / warm pool / AMI baked sẵn / container-Lambda để cắt thời gian (mục 5.4).</text>
+  </g>
+</svg>
+
 **Tổng: 3-10 phút** từ lúc traffic tăng đến lúc có capacity. Trong khi đó các instance hiện có chịu trận.
 
 ### 5.4 Mitigation
@@ -177,6 +229,85 @@ Chuỗi thời gian khi ASG launch instance mới:
 | **Cluster** | Cùng rack, low latency | HPC, MPI |
 | **Spread** | Khác rack/AZ, max 7/AZ | High availability cho ít instance critical |
 | **Partition** | Group thành partition, mỗi partition khác rack | Distributed (Hadoop, Kafka, Cassandra) |
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Bố trí vật lý ba loại Placement Group: Cluster, Spread, Partition</title>
+  <desc>So sánh ba loại placement group theo cách instance nằm trên rack. Cluster: mọi instance cùng một rack để latency thấp. Spread: mỗi instance trên một rack riêng để tránh cùng điểm hỏng. Partition: instance gom thành các partition, mỗi partition nằm trên rack khác nhau cho hệ phân tán.</desc>
+  <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">Placement Groups — bố trí vật lý trên rack</text>
+
+  <!-- CLUSTER -->
+  <text x="120" y="50" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Cluster</text>
+  <text x="120" y="65" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">cùng rack · low latency</text>
+  <rect x="36" y="76" width="168" height="150" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="48" y="94" font-size="10" font-weight="700" fill="currentColor" opacity="0.8">Rack 1</text>
+  <g fill="#3b82f6" fill-opacity="0.9">
+    <rect x="56" y="104" width="56" height="26" rx="5"/>
+    <rect x="128" y="104" width="56" height="26" rx="5"/>
+    <rect x="56" y="140" width="56" height="26" rx="5"/>
+    <rect x="128" y="140" width="56" height="26" rx="5"/>
+    <rect x="56" y="176" width="56" height="26" rx="5"/>
+    <rect x="128" y="176" width="56" height="26" rx="5"/>
+  </g>
+  <g fill="#fff" font-size="10" text-anchor="middle" font-weight="700">
+    <text x="84" y="121">EC2</text><text x="156" y="121">EC2</text>
+    <text x="84" y="157">EC2</text><text x="156" y="157">EC2</text>
+    <text x="84" y="193">EC2</text><text x="156" y="193">EC2</text>
+  </g>
+  <text x="120" y="246" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">HPC, MPI — đổi HA lấy tốc độ</text>
+
+  <!-- SPREAD -->
+  <text x="360" y="50" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Spread</text>
+  <text x="360" y="65" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">mỗi instance 1 rack/AZ</text>
+  <g>
+    <rect x="262" y="76" width="196" height="42" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="272" y="92" font-size="9.5" font-weight="700" fill="currentColor" opacity="0.8">Rack A</text>
+    <rect x="384" y="84" width="60" height="26" rx="5" fill="#10b981" fill-opacity="0.95"/>
+    <text x="414" y="101" font-size="10" text-anchor="middle" font-weight="700" fill="#fff">EC2</text>
+  </g>
+  <g>
+    <rect x="262" y="126" width="196" height="42" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="272" y="142" font-size="9.5" font-weight="700" fill="currentColor" opacity="0.8">Rack B</text>
+    <rect x="384" y="134" width="60" height="26" rx="5" fill="#10b981" fill-opacity="0.95"/>
+    <text x="414" y="151" font-size="10" text-anchor="middle" font-weight="700" fill="#fff">EC2</text>
+  </g>
+  <g>
+    <rect x="262" y="176" width="196" height="42" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="272" y="192" font-size="9.5" font-weight="700" fill="currentColor" opacity="0.8">Rack C</text>
+    <rect x="384" y="184" width="60" height="26" rx="5" fill="#10b981" fill-opacity="0.95"/>
+    <text x="414" y="201" font-size="10" text-anchor="middle" font-weight="700" fill="#fff">EC2</text>
+  </g>
+  <text x="360" y="246" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">ít instance critical · max 7/AZ</text>
+
+  <!-- PARTITION -->
+  <text x="600" y="50" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Partition</text>
+  <text x="600" y="65" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">mỗi partition 1 rack</text>
+  <g>
+    <rect x="502" y="76" width="196" height="46" rx="7" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="512" y="92" font-size="9.5" font-weight="700" fill="currentColor" opacity="0.8">Partition 1 · Rack X</text>
+    <rect x="560" y="96" width="40" height="20" rx="4" fill="#8b5cf6" fill-opacity="0.95"/>
+    <rect x="608" y="96" width="40" height="20" rx="4" fill="#8b5cf6" fill-opacity="0.95"/>
+    <rect x="656" y="96" width="34" height="20" rx="4" fill="#8b5cf6" fill-opacity="0.95"/>
+  </g>
+  <g>
+    <rect x="502" y="130" width="196" height="46" rx="7" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="512" y="146" font-size="9.5" font-weight="700" fill="currentColor" opacity="0.8">Partition 2 · Rack Y</text>
+    <rect x="560" y="150" width="40" height="20" rx="4" fill="#8b5cf6" fill-opacity="0.95"/>
+    <rect x="608" y="150" width="40" height="20" rx="4" fill="#8b5cf6" fill-opacity="0.95"/>
+    <rect x="656" y="150" width="34" height="20" rx="4" fill="#8b5cf6" fill-opacity="0.95"/>
+  </g>
+  <g>
+    <rect x="502" y="184" width="196" height="46" rx="7" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="512" y="200" font-size="9.5" font-weight="700" fill="currentColor" opacity="0.8">Partition 3 · Rack Z</text>
+    <rect x="560" y="204" width="40" height="20" rx="4" fill="#8b5cf6" fill-opacity="0.95"/>
+    <rect x="608" y="204" width="40" height="20" rx="4" fill="#8b5cf6" fill-opacity="0.95"/>
+    <rect x="656" y="204" width="34" height="20" rx="4" fill="#8b5cf6" fill-opacity="0.95"/>
+  </g>
+  <text x="600" y="246" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">Hadoop, Kafka, Cassandra</text>
+
+  <rect x="36" y="264" width="662" height="50" rx="9" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.15"/>
+  <text x="48" y="282" font-size="10.5" fill="currentColor" opacity="0.78">Đánh đổi: Cluster = nhanh nhưng cùng điểm hỏng · Spread = an toàn nhất, ít máy.</text>
+  <text x="48" y="300" font-size="10.5" fill="currentColor" opacity="0.78">Partition = phân tán có kiểm soát, biết rack từng nhóm.</text>
+</svg>
 
 ### 6.3 NUMA, hyperthreading
 - Instance to (vd `r6i.32xlarge`) có nhiều NUMA node → cần app aware.

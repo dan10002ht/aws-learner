@@ -26,6 +26,58 @@ Các SPOF kinh điển trong đề:
 
 > ⚠️ Bẫy: NAT Gateway **bản thân nó đã redundant trong AZ đó**, nhưng nó vẫn nằm trong MỘT AZ. Nếu cả AZ đó chết, NAT Gateway chết theo. Kiến trúc HA thật sự cần **một NAT Gateway cho mỗi AZ**, và route table của mỗi private subnet trỏ về NAT Gateway cùng AZ.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 410" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Kiến trúc khử SPOF — VPC trải 2 AZ, NAT Gateway riêng mỗi AZ</title>
+  <desc>Một VPC gồm hai Availability Zone. Mỗi AZ có một public subnet chứa NAT Gateway riêng và một private subnet; route table của private subnet trỏ về NAT Gateway cùng AZ. Auto Scaling Group trải instance qua cả hai AZ. Nếu một AZ chết, AZ còn lại vẫn phục vụ — không còn điểm lỗi đơn.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Khử SPOF: NAT Gateway riêng mỗi AZ + ASG trải đa AZ</text>
+  <rect x="14" y="38" width="692" height="356" rx="12" fill="#3b82f6" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 4"/>
+  <text x="28" y="58" font-size="11.5" font-weight="700" fill="currentColor" opacity="0.75">VPC</text>
+
+  <g>
+    <rect x="32" y="70" width="316" height="312" rx="10" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="48" y="90" font-size="12" font-weight="700" fill="currentColor">Availability Zone A</text>
+    <rect x="48" y="102" width="284" height="78" rx="8" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="62" y="120" font-size="10.5" fill="currentColor" opacity="0.7">Public subnet A</text>
+    <rect x="62" y="128" width="120" height="40" rx="7" fill="#f59e0b" fill-opacity="0.9"/>
+    <text x="122" y="145" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">NAT GW A</text>
+    <text x="122" y="160" font-size="9.5" text-anchor="middle" fill="#fff" opacity="0.9">(trong AZ A)</text>
+    <rect x="48" y="196" width="284" height="170" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="62" y="214" font-size="10.5" fill="currentColor" opacity="0.7">Private subnet A — RT → NAT GW A</text>
+    <rect x="68" y="226" width="116" height="36" rx="7" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="126" y="249" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">EC2</text>
+    <rect x="196" y="226" width="116" height="36" rx="7" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="254" y="249" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">EC2</text>
+  </g>
+
+  <g>
+    <rect x="372" y="70" width="316" height="312" rx="10" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="388" y="90" font-size="12" font-weight="700" fill="currentColor">Availability Zone B</text>
+    <rect x="388" y="102" width="284" height="78" rx="8" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="402" y="120" font-size="10.5" fill="currentColor" opacity="0.7">Public subnet B</text>
+    <rect x="402" y="128" width="120" height="40" rx="7" fill="#f59e0b" fill-opacity="0.9"/>
+    <text x="462" y="145" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">NAT GW B</text>
+    <text x="462" y="160" font-size="9.5" text-anchor="middle" fill="#fff" opacity="0.9">(trong AZ B)</text>
+    <rect x="388" y="196" width="284" height="170" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="402" y="214" font-size="10.5" fill="currentColor" opacity="0.7">Private subnet B — RT → NAT GW B</text>
+    <rect x="408" y="226" width="116" height="36" rx="7" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="466" y="249" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">EC2</text>
+    <rect x="536" y="226" width="116" height="36" rx="7" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="594" y="249" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">EC2</text>
+  </g>
+
+  <defs>
+    <marker id="spofArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
+  </defs>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <path d="M126 226 V190 H122 V172" marker-end="url(#spofArr)"/>
+    <path d="M466 226 V190 H462 V172" marker-end="url(#spofArr)"/>
+  </g>
+
+  <rect x="32" y="330" width="656" height="44" rx="8" fill="#10b981" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="360" y="349" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Auto Scaling Group — trải instance qua AZ A và AZ B</text>
+  <text x="360" y="366" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">AZ A chết → ASG launch bù ở AZ B, NAT GW B vẫn sống → không còn SPOF</text>
+</svg>
+
 ## 2. Multi-AZ: nền tảng của HA trong một Region
 
 ### RDS Multi-AZ
@@ -45,6 +97,82 @@ Các SPOF kinh điển trong đề:
 | Tự động failover? | Có | Không (phải promote thủ công) |
 
 \* *RDS có tùy chọn Multi-AZ DB cluster (3 instance: 1 writer + 2 readable standby) — readable standby có thể phục vụ đọc, nhưng đây không phải mặc định.*
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>RDS Multi-AZ (standby im lặng) so với Read Replica (phục vụ đọc)</title>
+  <desc>Bên trái: Multi-AZ — primary sao chép đồng bộ sang standby ở AZ khác; standby không nhận traffic, chỉ chờ failover. Bên phải: Read Replica — primary sao chép bất đồng bộ sang replica; ứng dụng đọc trực tiếp từ replica để giảm tải đọc.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Multi-AZ (HA) vs Read Replica (scale đọc)</text>
+
+  <g>
+    <rect x="14" y="38" width="338" height="262" rx="11" fill="#3b82f6" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="30" y="60" font-size="12.5" font-weight="700" fill="currentColor">RDS Multi-AZ — High Availability</text>
+
+    <rect x="40" y="76" width="120" height="50" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="100" y="98" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Primary</text>
+    <text x="100" y="114" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">AZ A · read+write</text>
+
+    <rect x="206" y="76" width="120" height="50" rx="8" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3"/>
+    <text x="266" y="98" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Standby</text>
+    <text x="266" y="114" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">AZ B · IM LẶNG</text>
+
+    <g stroke="currentColor" stroke-opacity="0.55" fill="none">
+      <path d="M160 101 H200" marker-end="url(#rdsArr)"/>
+    </g>
+    <text x="183" y="92" font-size="9" text-anchor="middle" fill="#10b981" opacity="0.95" font-weight="700">sync</text>
+
+    <rect x="40" y="150" width="76" height="30" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="78" y="170" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">App</text>
+    <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+      <path d="M100 150 V130" marker-end="url(#rdsArr)"/>
+    </g>
+    <line x1="266" y1="150" x2="266" y2="135" stroke="#ef4444" stroke-opacity="0.6" stroke-width="2"/>
+    <line x1="258" y1="140" x2="274" y2="148" stroke="#ef4444" stroke-opacity="0.7" stroke-width="2"/>
+    <line x1="274" y1="140" x2="258" y2="148" stroke="#ef4444" stroke-opacity="0.7" stroke-width="2"/>
+    <text x="266" y="170" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.65">không đọc</text>
+
+    <rect x="30" y="206" width="308" height="80" rx="8" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="44" y="226" font-size="10.5" fill="currentColor" opacity="0.85">• Sao chép ĐỒNG BỘ (synchronous)</text>
+    <text x="44" y="244" font-size="10.5" fill="currentColor" opacity="0.85">• Standby chỉ chờ failover (60–120s)</text>
+    <text x="44" y="262" font-size="10.5" fill="currentColor" opacity="0.85">• Failover qua DNS CNAME, tự động</text>
+    <text x="44" y="280" font-size="10.5" fill="currentColor" opacity="0.85">• Mục đích: chống mất AZ, KHÔNG scale đọc</text>
+  </g>
+
+  <g>
+    <rect x="368" y="38" width="338" height="262" rx="11" fill="#10b981" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="384" y="60" font-size="12.5" font-weight="700" fill="currentColor">Read Replica — Scale đọc</text>
+
+    <rect x="394" y="76" width="120" height="50" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="454" y="98" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Primary</text>
+    <text x="454" y="114" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">read+write</text>
+
+    <rect x="560" y="76" width="120" height="50" rx="8" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="620" y="98" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Read Replica</text>
+    <text x="620" y="114" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">read-only</text>
+
+    <g stroke="currentColor" stroke-opacity="0.55" fill="none">
+      <path d="M514 101 H554" marker-end="url(#rdsArr)"/>
+    </g>
+    <text x="537" y="92" font-size="9" text-anchor="middle" fill="#f59e0b" opacity="0.95" font-weight="700">async</text>
+
+    <rect x="394" y="150" width="76" height="30" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="432" y="170" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">App</text>
+    <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+      <path d="M454 150 V130" marker-end="url(#rdsArr)"/>
+      <path d="M470 165 H560 V130" marker-end="url(#rdsArr)"/>
+    </g>
+    <text x="540" y="160" font-size="9" text-anchor="middle" fill="#10b981" opacity="0.95" font-weight="700">đọc</text>
+
+    <rect x="384" y="206" width="308" height="80" rx="8" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="398" y="226" font-size="10.5" fill="currentColor" opacity="0.85">• Sao chép BẤT ĐỒNG BỘ (asynchronous)</text>
+    <text x="398" y="244" font-size="10.5" fill="currentColor" opacity="0.85">• Replica PHỤC VỤ đọc (offload truy vấn)</text>
+    <text x="398" y="262" font-size="10.5" fill="currentColor" opacity="0.85">• Không tự failover (promote thủ công)</text>
+    <text x="398" y="280" font-size="10.5" fill="currentColor" opacity="0.85">• Có thể cross-region</text>
+  </g>
+
+  <defs>
+    <marker id="rdsArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+</svg>
 
 > ⚠️ Bẫy phổ biến: "Tăng khả năng đọc + đảm bảo HA" → cần **CẢ HAI**: Multi-AZ (cho HA) và Read Replica (cho scale read). Đề hay cho đáp án chỉ một trong hai để bẫy.
 
@@ -163,6 +291,60 @@ Cách chọn nhanh:
 | Chi phí/độ phức tạp | Vừa phải | Cao |
 | Ví dụ service | RDS Multi-AZ, ASG đa AZ | Aurora Global DB, S3 CRR, Route 53 failover |
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Phạm vi bảo vệ: Multi-AZ (chống lỗi 1 AZ) vs Multi-Region (chống lỗi cả region)</title>
+  <desc>Bên trái: Multi-AZ nằm trong một Region, gồm nhiều AZ — chịu được lỗi của một AZ, nhưng nếu cả Region chết thì sập. Bên phải: Multi-Region trải qua hai Region — chịu được lỗi của toàn bộ một Region.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Phạm vi bảo vệ khác nhau</text>
+
+  <g>
+    <text x="30" y="56" font-size="12.5" font-weight="700" fill="currentColor">Multi-AZ — phạm vi 1 Region</text>
+    <rect x="14" y="66" width="338" height="180" rx="11" fill="#3b82f6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="30" y="86" font-size="11" font-weight="700" fill="currentColor" opacity="0.75">Region (vd us-east-1)</text>
+    <rect x="32" y="98" width="142" height="130" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="103" y="118" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">AZ A</text>
+    <rect x="48" y="130" width="110" height="34" rx="7" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="103" y="152" font-size="10" text-anchor="middle" fill="currentColor">app + DB</text>
+    <rect x="192" y="98" width="142" height="130" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="263" y="118" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">AZ B</text>
+    <rect x="208" y="130" width="110" height="34" rx="7" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="263" y="152" font-size="10" text-anchor="middle" fill="currentColor">standby</text>
+    <text x="183" y="244" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">✔ AZ A chết → AZ B gánh</text>
+  </g>
+  <rect x="14" y="262" width="338" height="56" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="183" y="285" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">✘ Cả Region chết → toàn bộ sập</text>
+  <text x="183" y="303" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">Multi-AZ không bảo vệ được cấp Region</text>
+
+  <g>
+    <text x="384" y="56" font-size="12.5" font-weight="700" fill="currentColor">Multi-Region — phạm vi nhiều Region</text>
+    <rect x="368" y="66" width="160" height="180" rx="11" fill="#3b82f6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="384" y="86" font-size="10.5" font-weight="700" fill="currentColor" opacity="0.75">Region 1</text>
+    <rect x="384" y="96" width="128" height="60" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="448" y="120" font-size="10" text-anchor="middle" fill="currentColor">AZ A · AZ B</text>
+    <text x="448" y="138" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">app + DB (primary)</text>
+    <text x="448" y="174" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">site chính</text>
+
+    <rect x="546" y="66" width="160" height="180" rx="11" fill="#3b82f6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="562" y="86" font-size="10.5" font-weight="700" fill="currentColor" opacity="0.75">Region 2</text>
+    <rect x="562" y="96" width="128" height="60" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="626" y="120" font-size="10" text-anchor="middle" fill="currentColor">AZ A · AZ B</text>
+    <text x="626" y="138" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">app + DB (DR)</text>
+    <text x="626" y="174" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">site dự phòng</text>
+
+    <g stroke="currentColor" stroke-opacity="0.55" fill="none">
+      <path d="M512 126 H544" marker-end="url(#mrArr)"/>
+    </g>
+    <text x="528" y="118" font-size="8.5" text-anchor="middle" fill="#f59e0b" opacity="0.95" font-weight="700">replicate</text>
+    <text x="537" y="218" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">Route 53 failover giữa region</text>
+  </g>
+  <rect x="368" y="262" width="338" height="56" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="537" y="285" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">✔ Cả Region 1 chết → Region 2 gánh</text>
+  <text x="537" y="303" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">Chống thảm họa diện rộng — đắt &amp; phức tạp hơn</text>
+
+  <defs>
+    <marker id="mrArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+</svg>
+
 > ⚠️ Bẫy: Nếu đề chỉ yêu cầu "chịu được lỗi của một datacenter / một AZ" → **Multi-AZ là đủ**, đừng chọn Multi-Region (thừa, đắt, sai). Multi-Region chỉ khi đề nói rõ "survive an entire region outage", "global users", hoặc "regulatory DR requirement".
 
 ## 8. RTO & RPO (gắn với DR strategies)
@@ -170,11 +352,48 @@ Cách chọn nhanh:
 - **RTO (Recovery Time Objective)**: thời gian tối đa chấp nhận được để **khôi phục dịch vụ** sau sự cố. RTO thấp = phục hồi nhanh.
 - **RPO (Recovery Point Objective)**: lượng **dữ liệu** tối đa chấp nhận mất, đo bằng thời gian. RPO thấp = mất ít dữ liệu (cần replicate thường xuyên/liên tục).
 
-```
-   <---- RPO ---->  sự cố   <------ RTO ------>
-[last good backup]  [crash]            [service restored]
-   mất dữ liệu                  thời gian downtime
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>RTO vs RPO trên trục thời gian</title>
+  <desc>Trục thời gian đi từ trái sang phải. Mốc 1: backup tốt cuối cùng. Mốc 2: sự cố (crash). Mốc 3: dịch vụ phục hồi. Khoảng từ backup tới sự cố là RPO — lượng dữ liệu bị mất. Khoảng từ sự cố tới phục hồi là RTO — thời gian downtime.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">RTO vs RPO trên trục thời gian</text>
+
+  <line x1="40" y1="120" x2="700" y2="120" stroke="currentColor" stroke-opacity="0.5" stroke-width="2"/>
+  <defs>
+    <marker id="tlArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
+  </defs>
+  <line x1="690" y1="120" x2="704" y2="120" stroke="currentColor" stroke-opacity="0.55" stroke-width="2" marker-end="url(#tlArr)"/>
+  <text x="700" y="140" font-size="10" text-anchor="end" fill="currentColor" opacity="0.6">thời gian →</text>
+
+  <g>
+    <circle cx="150" cy="120" r="7" fill="#10b981" fill-opacity="0.9"/>
+    <line x1="150" y1="120" x2="150" y2="92" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="150" y="84" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Backup tốt cuối</text>
+    <text x="150" y="68" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">last good backup</text>
+  </g>
+  <g>
+    <circle cx="370" cy="120" r="7" fill="#ef4444" fill-opacity="0.85"/>
+    <line x1="370" y1="120" x2="370" y2="92" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="370" y="84" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">SỰ CỐ</text>
+    <text x="370" y="68" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">crash</text>
+  </g>
+  <g>
+    <circle cx="620" cy="120" r="7" fill="#3b82f6" fill-opacity="0.9"/>
+    <line x1="620" y1="120" x2="620" y2="92" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="620" y="84" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Dịch vụ phục hồi</text>
+    <text x="620" y="68" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">service restored</text>
+  </g>
+
+  <g>
+    <rect x="150" y="150" width="220" height="30" rx="7" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="260" y="170" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">RPO — dữ liệu bị mất</text>
+    <text x="260" y="200" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">replicate càng dày → RPO càng nhỏ</text>
+  </g>
+  <g>
+    <rect x="370" y="150" width="250" height="30" rx="7" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="495" y="170" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">RTO — thời gian downtime</text>
+    <text x="495" y="200" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">phục hồi càng nhanh → RTO càng nhỏ</text>
+  </g>
+</svg>
 
 Bốn chiến lược DR (RTO/RPO giảm dần, chi phí tăng dần):
 

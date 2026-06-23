@@ -44,15 +44,64 @@ Junior dev nhận task: Lambda cần đọc S3 bucket cụ thể. Mất 30 phút
 
 Khi 1 request đến (vd `s3:GetObject`), AWS đánh giá theo trình tự:
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 520" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Luồng đánh giá policy của IAM — explicit DENY luôn thắng</title>
+  <desc>Trình tự đánh giá một request: bắt đầu từ default DENY, qua SCP deny, resource-based allow, identity allow, permission boundary, session policy rồi ALLOW. Bất kỳ tầng nào có explicit DENY đều rẽ thẳng sang kết quả DENY.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Policy evaluation logic — request s3:GetObject</text>
+  <defs>
+    <marker id="peArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
+  </defs>
+
+  <rect x="40" y="40" width="360" height="38" rx="9" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="220" y="64" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">0. Mặc định DENY (chưa có allow nào)</text>
+  <line x1="220" y1="78" x2="220" y2="96" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#peArr)"/>
+
+  <rect x="40" y="98" width="360" height="40" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="220" y="123" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">1. SCP có deny? (kể cả admin)</text>
+  <line x1="220" y1="138" x2="220" y2="156" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#peArr)"/>
+
+  <rect x="40" y="158" width="360" height="40" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="220" y="183" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">2. Resource policy allow explicit? → ALLOW</text>
+  <line x1="220" y1="198" x2="220" y2="216" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#peArr)"/>
+
+  <rect x="40" y="218" width="360" height="40" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="220" y="243" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">3. Identity policy có allow? Không → DENY</text>
+  <line x1="220" y1="258" x2="220" y2="276" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#peArr)"/>
+
+  <rect x="40" y="278" width="360" height="40" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="220" y="303" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">4. Permission Boundary có allow? Không → DENY</text>
+  <line x1="220" y1="318" x2="220" y2="336" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#peArr)"/>
+
+  <rect x="40" y="338" width="360" height="40" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="220" y="363" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">5. Session policy có allow? Không → DENY</text>
+  <line x1="220" y1="378" x2="220" y2="396" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#peArr)"/>
+
+  <rect x="100" y="398" width="240" height="42" rx="11" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="220" y="424" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">✓ ALLOW</text>
+
+  <rect x="470" y="200" width="210" height="64" rx="12" fill="#ef4444" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="575" y="228" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">✗ DENY</text>
+  <text x="575" y="248" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">explicit DENY luôn thắng</text>
+
+  <g stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="5 3" fill="none">
+    <path d="M400 118 H575 V200" marker-end="url(#peArr)"/>
+    <path d="M400 238 H470" marker-end="url(#peArr)"/>
+    <path d="M400 298 C440 298 575 290 575 264" marker-end="url(#peArr)"/>
+    <path d="M400 358 C440 358 595 300 595 264" marker-end="url(#peArr)"/>
+  </g>
+  <text x="412" y="112" font-size="10" font-weight="700" fill="#ef4444" opacity="0.95">DENY</text>
+  <text x="412" y="232" font-size="10" font-weight="700" fill="#ef4444" opacity="0.95">DENY</text>
+</svg>
+
 ```
-1. Default DENY (deny mặc định nếu không có allow)
-2. Có SCP? Nếu SCP deny → DENY (kể cả admin)
-3. Resource-based policy có allow explicit cho principal? → ALLOW (skip identity check)
-4. Identity-based policy có allow? Không → DENY
-5. Có explicit DENY ở bất kỳ policy? → DENY
-6. Có Permission Boundary? Boundary có allow? Không → DENY
-7. Có session policy? Session policy có allow? Không → DENY
-8. → ALLOW
+0. Default DENY (deny mặc định nếu không có allow)
+1. Có SCP? Nếu SCP deny → DENY (kể cả admin)
+2. Resource-based policy có allow explicit cho principal? → ALLOW (skip identity check)
+3. Identity-based policy có allow? Không → DENY
+4. Có explicit DENY ở bất kỳ policy? → DENY (luôn thắng)
+5. Có Permission Boundary? Boundary có allow? Không → DENY
+6. Có session policy? Session policy có allow? Không → DENY
+7. → ALLOW
 ```
 
 ### Quy tắc vàng (nhớ thuộc lòng)
@@ -86,6 +135,48 @@ User A có `AdministratorAccess`. Bucket policy có:
 2. Role R có **Trust Policy** quyết định ai được assume.
 3. Nếu trust policy allow A + A có `sts:AssumeRole` permission → STS trả credential.
 4. A dùng credential này gọi AWS API.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Luồng AssumeRole theo thời gian — Principal A nhận temporary credentials từ STS</title>
+  <desc>Sơ đồ tuần tự ba cột: Principal A, STS, và Role R. A gọi sts:AssumeRole với Role ARN; STS kiểm tra Trust Policy của Role R xem ai được assume; nếu hợp lệ STS trả temporary credentials cho A; A dùng credential này gọi AWS API với danh nghĩa Role R. Thời gian đi từ trên xuống.</desc>
+  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">AssumeRole flow — thời gian đi xuống</text>
+  <defs>
+    <marker id="arSeq" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+
+  <rect x="40" y="38" width="150" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="115" y="63" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Principal A</text>
+  <rect x="295" y="38" width="130" height="40" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="63" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">STS</text>
+  <rect x="540" y="38" width="150" height="40" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="615" y="58" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Role R</text>
+  <text x="615" y="73" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">+ Trust Policy</text>
+
+  <g stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 4">
+    <line x1="115" y1="78" x2="115" y2="340"/>
+    <line x1="360" y1="78" x2="360" y2="340"/>
+    <line x1="615" y1="78" x2="615" y2="340"/>
+  </g>
+
+  <line x1="115" y1="108" x2="358" y2="108" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#arSeq)"/>
+  <text x="118" y="102" font-size="11" fill="currentColor">1. sts:AssumeRole (Role R ARN)</text>
+
+  <line x1="360" y1="150" x2="613" y2="150" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#arSeq)"/>
+  <text x="365" y="144" font-size="11" fill="currentColor">2. Trust Policy cho phép A?</text>
+
+  <line x1="615" y1="192" x2="362" y2="192" stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="5 3" marker-end="url(#arSeq)"/>
+  <text x="372" y="186" font-size="11" fill="currentColor">OK — A được assume</text>
+
+  <line x1="358" y1="234" x2="117" y2="234" stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="5 3" marker-end="url(#arSeq)"/>
+  <text x="120" y="228" font-size="11" fill="currentColor">3. temporary credentials</text>
+
+  <rect x="40" y="262" width="150" height="56" rx="9" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="115" y="284" font-size="10.5" text-anchor="middle" fill="currentColor">A cầm cred</text>
+  <text x="115" y="300" font-size="10.5" text-anchor="middle" fill="currentColor">tạm thời của R</text>
+
+  <line x1="190" y1="290" x2="613" y2="290" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#arSeq)"/>
+  <text x="210" y="284" font-size="11" fill="currentColor">4. gọi AWS API với danh nghĩa Role R</text>
+</svg>
 
 ### 4.3 Trust policy vs Permission policy
 
@@ -201,6 +292,32 @@ Account A user còn cần identity policy allow `s3:GetObject` trên `bucket-b`.
 1. Tạo **Permission Boundary policy** P (quyền tối đa cho phép).
 2. Cho Dev quyền tạo role/user **chỉ nếu** đính kèm boundary P.
 3. Khi role/user mới ra đời, **quyền hiệu lực = intersection(identity policy, P)**.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:560px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Permission Boundary là giao của identity policy và boundary policy</title>
+  <desc>Biểu đồ Venn hai vòng tròn: vòng trái là Identity policy (quyền được cấp), vòng phải là Permission Boundary (trần quyền tối đa). Phần giao nhau ở giữa tô đậm là quyền hiệu lực thật sự — chỉ những quyền nằm trong CẢ HAI vòng mới có tác dụng.</desc>
+  <text x="360" y="30" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Quyền hiệu lực = giao của 2 vòng</text>
+
+  <circle cx="270" cy="200" r="150" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <circle cx="450" cy="200" r="150" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+
+  <path d="M360 80 A150 150 0 0 0 360 320 A150 150 0 0 0 360 80 Z" fill="#10b981" fill-opacity="0.28" stroke="none"/>
+
+  <text x="195" y="120" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Identity policy</text>
+  <text x="195" y="138" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">quyền được cấp</text>
+  <text x="525" y="120" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Permission</text>
+  <text x="525" y="138" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Boundary</text>
+  <text x="525" y="156" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">trần tối đa</text>
+
+  <text x="360" y="196" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">QUYỀN</text>
+  <text x="360" y="214" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">HIỆU LỰC</text>
+  <text x="360" y="234" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">(giao)</text>
+
+  <text x="170" y="270" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">cấp nhưng vượt</text>
+  <text x="170" y="284" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">trần → bị chặn</text>
+  <text x="552" y="270" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">trần cho phép</text>
+  <text x="552" y="284" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">nhưng chưa cấp</text>
+</svg>
 
 ```json
 // Condition cho Dev khi tạo user/role

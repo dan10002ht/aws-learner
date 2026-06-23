@@ -43,6 +43,69 @@ Profile thực tế: **80% query time đang dùng cho 5 query thiếu index**. S
 - Storage shared → reader không replay binlog, chỉ invalidate cache page.
 - Lag writer→reader thường < 100ms.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Kiến trúc Aurora — compute tách khỏi shared storage 6 bản / 3 AZ</title>
+  <desc>Tầng compute gồm 1 writer và các reader nối xuống một shared storage layer dùng chung; storage giữ 6 bản sao trải trên 3 vùng sẵn sàng. Writer ghi xuống storage; reader chỉ invalidate cache page thay vì replay binlog.</desc>
+  <defs>
+    <marker id="auArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
+  </defs>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Aurora — compute tách khỏi shared storage</text>
+
+  <text x="16" y="50" font-size="11.5" font-weight="700" fill="currentColor" opacity="0.7">Tầng COMPUTE</text>
+  <g>
+    <rect x="40" y="58" width="150" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <rect x="52" y="68" width="56" height="18" rx="9" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="80" y="81" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">WRITER</text>
+    <text x="52" y="103" font-size="10.5" fill="currentColor" opacity="0.75">read + write</text>
+  </g>
+  <g>
+    <rect x="270" y="58" width="130" height="56" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <rect x="282" y="68" width="62" height="18" rx="9" fill="#10b981" fill-opacity="0.95"/>
+    <text x="313" y="81" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">READER 1</text>
+    <text x="282" y="103" font-size="10.5" fill="currentColor" opacity="0.75">read-only</text>
+  </g>
+  <g>
+    <rect x="420" y="58" width="130" height="56" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <rect x="432" y="68" width="62" height="18" rx="9" fill="#10b981" fill-opacity="0.95"/>
+    <text x="463" y="81" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">READER N</text>
+    <text x="432" y="103" font-size="10.5" fill="currentColor" opacity="0.75">tới 15 reader</text>
+  </g>
+
+  <line x1="115" y1="114" x2="115" y2="176" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#auArr)"/>
+  <text x="122" y="150" font-size="10" fill="currentColor" opacity="0.8">ghi</text>
+  <line x1="335" y1="114" x2="200" y2="176" stroke="currentColor" stroke-opacity="0.45" marker-end="url(#auArr)"/>
+  <line x1="485" y1="114" x2="240" y2="176" stroke="currentColor" stroke-opacity="0.45" marker-end="url(#auArr)"/>
+  <text x="360" y="150" font-size="10" fill="currentColor" opacity="0.8">đọc · invalidate cache page</text>
+
+  <text x="16" y="200" font-size="11.5" font-weight="700" fill="currentColor" opacity="0.7">SHARED STORAGE LAYER — 6 bản / 3 AZ</text>
+  <rect x="40" y="210" width="640" height="120" rx="12" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <g>
+    <rect x="60" y="232" width="180" height="86" rx="9" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="150" y="251" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">AZ-a</text>
+    <rect x="76" y="262" width="66" height="44" rx="7" fill="#f59e0b" fill-opacity="0.5"/>
+    <text x="109" y="288" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">copy 1</text>
+    <rect x="156" y="262" width="66" height="44" rx="7" fill="#f59e0b" fill-opacity="0.5"/>
+    <text x="189" y="288" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">copy 2</text>
+  </g>
+  <g>
+    <rect x="270" y="232" width="180" height="86" rx="9" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="360" y="251" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">AZ-b</text>
+    <rect x="286" y="262" width="66" height="44" rx="7" fill="#f59e0b" fill-opacity="0.5"/>
+    <text x="319" y="288" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">copy 3</text>
+    <rect x="366" y="262" width="66" height="44" rx="7" fill="#f59e0b" fill-opacity="0.5"/>
+    <text x="399" y="288" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">copy 4</text>
+  </g>
+  <g>
+    <rect x="480" y="232" width="180" height="86" rx="9" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="570" y="251" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">AZ-c</text>
+    <rect x="496" y="262" width="66" height="44" rx="7" fill="#f59e0b" fill-opacity="0.5"/>
+    <text x="529" y="288" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">copy 5</text>
+    <rect x="576" y="262" width="66" height="44" rx="7" fill="#f59e0b" fill-opacity="0.5"/>
+    <text x="609" y="288" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">copy 6</text>
+  </g>
+  <text x="40" y="352" font-size="10.5" fill="currentColor" opacity="0.7">Storage dùng chung cho mọi node → reader không replay binlog, lag writer→reader thường dưới 100ms.</text>
+</svg>
+
 ### 3.2 Performance levers
 
 | Lever | Tác động |
@@ -148,6 +211,55 @@ Switching: 1 lần per 24h.
 - **Ưu**: cache luôn fresh.
 - **Nhược**: cache nhiều data không bao giờ đọc lại.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Cache-aside (lazy loading) so với Write-through — luồng đọc/ghi giữa App, Cache, DB</title>
+  <desc>Hai chiến lược cạnh nhau. Cache-aside khi đọc: App hỏi Cache, nếu miss thì đọc DB rồi ghi ngược vào Cache. Write-through khi ghi: App ghi cả Cache và DB cùng lúc nên cache luôn fresh.</desc>
+  <defs>
+    <marker id="caArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+
+  <text x="180" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Cache-aside (lazy loading) — khi ĐỌC</text>
+  <text x="540" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Write-through — khi GHI</text>
+  <line x1="360" y1="36" x2="360" y2="340" stroke="currentColor" stroke-opacity="0.18"/>
+
+  <g>
+    <rect x="30" y="56" width="110" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="85" y="81" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">App</text>
+    <rect x="225" y="56" width="110" height="40" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="280" y="81" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Cache</text>
+    <rect x="125" y="270" width="110" height="40" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="180" y="295" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">DB</text>
+
+    <line x1="140" y1="70" x2="221" y2="70" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#caArr)"/>
+    <text x="180" y="64" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">1. đọc</text>
+    <line x1="221" y1="84" x2="142" y2="84" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="4 3" marker-end="url(#caArr)"/>
+    <text x="182" y="110" font-size="10" text-anchor="middle" fill="#10b981" opacity="0.95" font-weight="700">HIT → trả ngay</text>
+
+    <line x1="100" y1="96" x2="165" y2="266" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#caArr)"/>
+    <text x="78" y="200" font-size="10" fill="currentColor" opacity="0.85">2. MISS → đọc DB</text>
+    <line x1="232" y1="270" x2="276" y2="100" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#caArr)"/>
+    <text x="262" y="200" font-size="10" fill="currentColor" opacity="0.85">3. ghi lại cache</text>
+  </g>
+
+  <g>
+    <rect x="385" y="56" width="110" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="440" y="81" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">App</text>
+    <rect x="585" y="56" width="110" height="40" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="640" y="81" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Cache</text>
+    <rect x="485" y="270" width="110" height="40" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="540" y="295" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">DB</text>
+
+    <line x1="495" y1="74" x2="581" y2="74" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#caArr)"/>
+    <text x="538" y="68" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">1a. ghi cache</text>
+    <line x1="460" y1="96" x2="525" y2="266" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#caArr)"/>
+    <text x="408" y="200" font-size="10" fill="currentColor" opacity="0.85">1b. ghi DB (cùng lúc)</text>
+    <text x="640" y="120" font-size="10" text-anchor="middle" fill="#10b981" opacity="0.95" font-weight="700">cache luôn fresh</text>
+  </g>
+
+  <text x="30" y="338" font-size="10" fill="currentColor" opacity="0.7">Chỉ data được hỏi mới vào cache; lần miss đầu tốn 3 bước.</text>
+  <text x="385" y="338" font-size="10" fill="currentColor" opacity="0.7">Mọi write đều vào cache, kể cả data ít khi đọc lại.</text>
+</svg>
+
 ### 5.3 Write-behind / write-back
 - App ghi cache, cache flush DB async.
 - **Ưu**: write nhanh.
@@ -224,10 +336,59 @@ Switching: 1 lần per 24h.
 ## 9. Patterns kết hợp
 
 ### 9.1 Web stack điển hình
-```
-Client → CloudFront → ALB → ECS/EC2 → ElastiCache → RDS/Aurora
-                                         (cache-aside)
-```
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Web stack nhiều tầng cache — Client tới CloudFront, ALB, ECS/EC2, ElastiCache, RDS/Aurora</title>
+  <desc>Luồng request trái sang phải: Client tới CloudFront (cache edge) tới ALB tới ECS/EC2 (app tier) tới ElastiCache theo cache-aside, miss thì xuống RDS/Aurora. CloudFront và ElastiCache là hai tầng cache giảm tải.</desc>
+  <defs>
+    <marker id="wsArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Web stack điển hình — request đi trái sang phải</text>
+
+  <g>
+    <rect x="14" y="70" width="92" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="60" y="96" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
+    <text x="60" y="114" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">trình duyệt</text>
+  </g>
+  <g>
+    <rect x="132" y="70" width="100" height="56" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="182" y="92" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">CloudFront</text>
+    <rect x="146" y="100" width="72" height="18" rx="9" fill="#10b981" fill-opacity="0.9"/>
+    <text x="182" y="113" font-size="9.5" font-weight="700" text-anchor="middle" fill="#fff">cache edge</text>
+  </g>
+  <g>
+    <rect x="258" y="70" width="84" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="300" y="96" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">ALB</text>
+    <text x="300" y="114" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">L7 LB</text>
+  </g>
+  <g>
+    <rect x="368" y="70" width="96" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="416" y="92" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">ECS/EC2</text>
+    <text x="416" y="114" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">app tier</text>
+  </g>
+  <g>
+    <rect x="490" y="70" width="104" height="56" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="542" y="92" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">ElastiCache</text>
+    <rect x="502" y="100" width="80" height="18" rx="9" fill="#10b981" fill-opacity="0.9"/>
+    <text x="542" y="113" font-size="9.5" font-weight="700" text-anchor="middle" fill="#fff">cache-aside</text>
+  </g>
+  <g>
+    <rect x="620" y="70" width="86" height="56" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="663" y="92" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">RDS/</text>
+    <text x="663" y="108" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Aurora</text>
+  </g>
+
+  <g stroke="currentColor" stroke-opacity="0.6">
+    <line x1="106" y1="98" x2="128" y2="98" marker-end="url(#wsArr)"/>
+    <line x1="232" y1="98" x2="254" y2="98" marker-end="url(#wsArr)"/>
+    <line x1="342" y1="98" x2="364" y2="98" marker-end="url(#wsArr)"/>
+    <line x1="464" y1="98" x2="486" y2="98" marker-end="url(#wsArr)"/>
+    <line x1="594" y1="98" x2="616" y2="98" marker-end="url(#wsArr)"/>
+  </g>
+  <text x="542" y="150" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">miss → đọc DB</text>
+
+  <text x="16" y="186" font-size="10.5" fill="currentColor" opacity="0.72">Hai tầng cache giảm tải: CloudFront chặn ở edge cho nội dung tĩnh; ElastiCache (cache-aside) đỡ DB cho app tier.</text>
+</svg>
 
 ### 9.2 DynamoDB heavy read
 ```

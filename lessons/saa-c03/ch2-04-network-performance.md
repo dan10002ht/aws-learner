@@ -24,17 +24,59 @@ Web app deploy ở `us-east-1`. User ở Việt Nam complain trang load 8 giây.
 
 ## 2. Tầng tối ưu network
 
-```
-User
-  ↓ DNS resolution
-[Route 53 / CloudFront / Global Accelerator]
-  ↓ Edge (POP gần user)
-[CloudFront cache / Lambda@Edge / GA endpoint]
-  ↓ AWS backbone (private fiber giữa region)
-[VPC / ALB / API Gateway]
-  ↓ ENI / VPC endpoint
-[EC2 / Lambda / DB]
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Các tầng tối ưu network — từ user xuống service</title>
+  <desc>Luồng đi xuống qua các tầng: User, DNS Route 53, Edge POP CloudFront hoặc Global Accelerator, AWS backbone, VPC ALB hoặc API Gateway, ENI hoặc VPC endpoint, rồi tới EC2 Lambda DB. Mỗi hop là một cơ hội tối ưu.</desc>
+  <defs>
+    <marker id="np1Arr" markerWidth="11" markerHeight="11" refX="5" refY="8" orient="auto"><path d="M0 0 L5 8 L10 0" fill="none" stroke="currentColor" stroke-opacity="0.6"/></marker>
+  </defs>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Các tầng tối ưu network — mỗi hop một cơ hội</text>
+
+  <rect x="180" y="38" width="360" height="42" rx="10" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="60" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">User</text>
+  <text x="360" y="74" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">trình duyệt / client app</text>
+  <line x1="360" y1="80" x2="360" y2="98" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#np1Arr)"/>
+  <text x="372" y="94" font-size="10" fill="currentColor" opacity="0.6">DNS resolution</text>
+
+  <rect x="120" y="100" width="480" height="46" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+  <rect x="132" y="112" width="84" height="22" rx="11" fill="#3b82f6" fill-opacity="0.9"/>
+  <text x="174" y="127" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">DNS</text>
+  <text x="232" y="121" font-size="12.5" font-weight="700" fill="currentColor">Route 53</text>
+  <text x="232" y="138" font-size="10.5" fill="currentColor" opacity="0.62">latency / geo / failover routing</text>
+  <line x1="360" y1="146" x2="360" y2="164" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#np1Arr)"/>
+  <text x="372" y="160" font-size="10" fill="currentColor" opacity="0.6">Edge (POP gần user)</text>
+
+  <rect x="120" y="166" width="480" height="46" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+  <rect x="132" y="178" width="84" height="22" rx="11" fill="#10b981" fill-opacity="0.92"/>
+  <text x="174" y="193" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">Edge POP</text>
+  <text x="232" y="187" font-size="12.5" font-weight="700" fill="currentColor">CloudFront cache · Lambda@Edge · GA</text>
+  <text x="232" y="204" font-size="10.5" fill="currentColor" opacity="0.62">TLS terminate, cache, anycast IP</text>
+  <line x1="360" y1="212" x2="360" y2="230" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#np1Arr)"/>
+  <text x="372" y="226" font-size="10" fill="currentColor" opacity="0.6">AWS backbone (private fiber)</text>
+
+  <rect x="120" y="232" width="480" height="42" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+  <rect x="132" y="242" width="84" height="22" rx="11" fill="#f59e0b" fill-opacity="0.92"/>
+  <text x="174" y="257" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">Backbone</text>
+  <text x="232" y="259" font-size="11.5" fill="currentColor" opacity="0.85">private fiber giữa edge và region — ít jitter/loss</text>
+  <line x1="360" y1="274" x2="360" y2="292" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#np1Arr)"/>
+
+  <rect x="120" y="294" width="480" height="46" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+  <rect x="132" y="306" width="84" height="22" rx="11" fill="#8b5cf6" fill-opacity="0.92"/>
+  <text x="174" y="321" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">VPC</text>
+  <text x="232" y="315" font-size="12.5" font-weight="700" fill="currentColor">ALB / API Gateway</text>
+  <text x="232" y="332" font-size="10.5" fill="currentColor" opacity="0.62">entry point vào region</text>
+  <line x1="360" y1="340" x2="360" y2="358" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#np1Arr)"/>
+  <text x="372" y="354" font-size="10" fill="currentColor" opacity="0.6">ENI / VPC endpoint</text>
+
+  <rect x="120" y="360" width="480" height="42" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+  <rect x="132" y="370" width="84" height="22" rx="11" fill="#3b82f6" fill-opacity="0.9"/>
+  <text x="174" y="385" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">ENI</text>
+  <text x="232" y="387" font-size="11.5" fill="currentColor" opacity="0.85">ENI / VPC endpoint — private path tới service</text>
+  <line x1="360" y1="402" x2="360" y2="420" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#np1Arr)"/>
+
+  <rect x="180" y="422" width="360" height="40" rx="10" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="447" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">EC2 · Lambda · DB</text>
+</svg>
 
 Mỗi hop là cơ hội tối ưu.
 
@@ -170,6 +212,53 @@ Mỗi hop là cơ hội tối ưu.
 - **1 NAT GW per AZ** cho HA.
 - Nếu chỉ cần access S3/DynamoDB → dùng **Gateway endpoint** (free), không cần NAT cho traffic đó.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Truy cập S3/DynamoDB: Gateway endpoint so với đi qua NAT Gateway</title>
+  <desc>So sánh hai đường tới S3 hoặc DynamoDB. Đường trên qua NAT Gateway rồi Internet Gateway ra internet, tính phí data và đi qua mạng công cộng. Đường dưới qua VPC Gateway endpoint đi thẳng trên mạng riêng AWS, miễn phí và bảo mật hơn.</desc>
+  <defs>
+    <marker id="ge1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">EC2 (private subnet) → S3 / DynamoDB: hai đường</text>
+
+  <rect x="14" y="38" width="80" height="56" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="54" y="62" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">EC2</text>
+  <text x="54" y="79" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.62">private</text>
+
+  <rect x="690" y="120" width="16" height="0" fill="none"/>
+  <rect x="600" y="118" width="104" height="56" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="652" y="142" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">S3 / DynamoDB</text>
+  <text x="652" y="159" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.62">AWS service</text>
+
+  <text x="16" y="46" font-size="10.5" fill="#f59e0b" opacity="0.95" font-weight="700">CÁCH CŨ</text>
+  <rect x="150" y="40" width="120" height="46" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="210" y="60" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">NAT Gateway</text>
+  <text x="210" y="76" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.65">$/h + $/GB</text>
+  <rect x="320" y="40" width="120" height="46" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="380" y="60" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Internet GW</text>
+  <text x="380" y="76" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.65">ra public internet</text>
+  <rect x="478" y="40" width="120" height="46" rx="9" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 3"/>
+  <text x="538" y="60" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Internet</text>
+  <text x="538" y="76" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.65">mạng công cộng</text>
+
+  <line x1="94" y1="58" x2="146" y2="60" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ge1)"/>
+  <line x1="270" y1="63" x2="316" y2="63" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ge1)"/>
+  <line x1="440" y1="63" x2="474" y2="63" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ge1)"/>
+  <path d="M598 60 C 640 60 652 90 652 116" fill="none" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ge1)"/>
+  <text x="300" y="104" font-size="10" fill="#f59e0b" opacity="0.95">tính phí data · đi qua internet</text>
+
+  <text x="16" y="200" font-size="10.5" fill="#10b981" opacity="0.95" font-weight="700">CÁCH ĐÚNG</text>
+  <rect x="240" y="194" width="220" height="50" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <rect x="252" y="206" width="120" height="22" rx="11" fill="#10b981" fill-opacity="0.92"/>
+  <text x="312" y="221" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">Gateway endpoint</text>
+  <text x="386" y="222" font-size="10.5" font-weight="700" fill="currentColor">FREE</text>
+  <text x="350" y="240" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.62">route table → endpoint, không cần NAT</text>
+
+  <path d="M70 94 C 70 220 130 219 236 219" fill="none" stroke="#10b981" stroke-opacity="0.65" marker-end="url(#ge1)"/>
+  <path d="M460 219 C 560 219 600 200 642 176" fill="none" stroke="#10b981" stroke-opacity="0.65" marker-end="url(#ge1)"/>
+  <text x="250" y="270" font-size="10" fill="#10b981" opacity="0.95">private AWS network · miễn phí · không qua internet</text>
+  <text x="250" y="286" font-size="9.5" fill="currentColor" opacity="0.6">(data through endpoint $0.01/GB; gateway endpoint không tính phí endpoint)</text>
+</svg>
+
 ### 6.3 Enhanced Networking
 
 - **ENA**: tới 100 Gbps. Default cho modern instance.
@@ -190,6 +279,57 @@ Mỗi hop là cơ hội tối ưu.
 | Cross-region | Có (inter-region peering) | Có (peering attachment) |
 | Số VPC | Pairwise → O(n²) | O(n) |
 | Cost | Data transfer | $0.05/h per attachment + data |
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>VPC Peering (full mesh) so với Transit Gateway (hub-and-spoke)</title>
+  <desc>Bên trái: bốn VPC nối peering từng cặp 1-1 tạo full mesh với 6 kết nối, không transitive routing, số kết nối tăng O(n bình phương). Bên phải: bốn VPC cùng gắn vào một Transit Gateway ở giữa theo hub-and-spoke, có transitive routing, chỉ 4 kết nối, tăng tuyến tính O(n).</desc>
+  <text x="180" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">VPC Peering — full mesh</text>
+  <text x="540" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Transit Gateway — hub-and-spoke</text>
+  <line x1="360" y1="40" x2="360" y2="300" stroke="currentColor" stroke-opacity="0.15"/>
+
+  <g stroke="#3b82f6" stroke-opacity="0.55" fill="none" stroke-width="1.5">
+    <line x1="90" y1="90" x2="270" y2="90"/>
+    <line x1="90" y1="230" x2="270" y2="230"/>
+    <line x1="90" y1="90" x2="90" y2="230"/>
+    <line x1="270" y1="90" x2="270" y2="230"/>
+    <line x1="90" y1="90" x2="270" y2="230"/>
+    <line x1="270" y1="90" x2="90" y2="230"/>
+  </g>
+  <g>
+    <circle cx="90" cy="90" r="26" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="90" y="94" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">VPC A</text>
+    <circle cx="270" cy="90" r="26" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="270" y="94" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">VPC B</text>
+    <circle cx="90" cy="230" r="26" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="90" y="234" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">VPC C</text>
+    <circle cx="270" cy="230" r="26" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="270" y="234" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">VPC D</text>
+  </g>
+  <text x="180" y="288" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.78">4 VPC → 6 kết nối · O(n²)</text>
+  <text x="180" y="306" font-size="10.5" text-anchor="middle" fill="#f59e0b" opacity="0.95">không transitive (A↛C qua B)</text>
+
+  <g stroke="#10b981" stroke-opacity="0.6" fill="none" stroke-width="1.5">
+    <line x1="450" y1="100" x2="540" y2="160"/>
+    <line x1="630" y1="100" x2="540" y2="160"/>
+    <line x1="450" y1="220" x2="540" y2="160"/>
+    <line x1="630" y1="220" x2="540" y2="160"/>
+  </g>
+  <rect x="498" y="138" width="84" height="44" rx="10" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.32"/>
+  <text x="540" y="158" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Transit GW</text>
+  <text x="540" y="173" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.65">hub</text>
+  <g>
+    <circle cx="450" cy="100" r="24" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="450" y="104" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">VPC A</text>
+    <circle cx="630" cy="100" r="24" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="630" y="104" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">VPC B</text>
+    <circle cx="450" cy="220" r="24" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="450" y="224" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">VPC C</text>
+    <circle cx="630" cy="220" r="24" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="630" y="224" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">VPC D</text>
+  </g>
+  <text x="540" y="288" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.78">4 VPC → 4 attachment · O(n)</text>
+  <text x="540" y="306" font-size="10.5" text-anchor="middle" fill="#10b981" opacity="0.95">transitive routing (A↔C qua hub)</text>
+</svg>
 
 > Quy tắc: ≤ 5 VPC dùng peering. ≥ 10 VPC dùng TGW.
 

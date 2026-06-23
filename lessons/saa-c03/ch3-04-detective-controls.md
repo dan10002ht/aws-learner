@@ -21,20 +21,72 @@ Tiền đề: [[ch3-01-iam-deep-dive]], [[ch3-02-network-security]], [[ch3-03-da
 
 ## 2. Spectrum detective services
 
-```
-Activity log → CloudTrail
-Resource state → AWS Config
-Threat detection → GuardDuty
-Vulnerability scan → Inspector
-Sensitive data discovery → Macie
-Aggregate findings → Security Hub
-Investigation tool → Detective
-VPC traffic → VPC Flow Logs
-DNS query → Route 53 Resolver Query Logs
-WAF events → WAF Logs
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 460" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Mapping detective service theo câu hỏi cần trả lời</title>
+  <desc>Mỗi service trả lời một câu hỏi: CloudTrail (ai làm gì), Config (trạng thái resource), GuardDuty (threat), Inspector (vulnerability), Macie (sensitive data), Security Hub (aggregate findings), Detective (investigate), VPC Flow Logs (network traffic).</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Mỗi service = 1 câu hỏi</text>
+  <text x="232" y="24" font-size="11.5" fill="currentColor" opacity="0.6">Câu hỏi cần trả lời</text>
+  <text x="540" y="24" font-size="11.5" fill="currentColor" opacity="0.6">Service</text>
 
-Mỗi cái 1 layer / 1 question.
+  <g>
+    <rect x="16" y="38" width="500" height="44" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="30" y="65" font-size="12.5" fill="currentColor">"Ai đã làm gì, khi nào?" (API call)</text>
+    <line x1="520" y1="60" x2="540" y2="60" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="540" y="46" width="164" height="28" rx="14" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="622" y="65" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">CloudTrail</text>
+  </g>
+  <g>
+    <rect x="16" y="90" width="500" height="44" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="30" y="117" font-size="12.5" fill="currentColor">"Resource cấu hình ra sao, đổi khi nào?"</text>
+    <line x1="520" y1="112" x2="540" y2="112" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="540" y="98" width="164" height="28" rx="14" fill="#10b981" fill-opacity="0.95"/>
+    <text x="622" y="117" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">AWS Config</text>
+  </g>
+  <g>
+    <rect x="16" y="142" width="500" height="44" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="30" y="169" font-size="12.5" fill="currentColor">"Có hành vi đe doạ / bị xâm nhập không?"</text>
+    <line x1="520" y1="164" x2="540" y2="164" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="540" y="150" width="164" height="28" rx="14" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="622" y="169" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">GuardDuty</text>
+  </g>
+  <g>
+    <rect x="16" y="194" width="500" height="44" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="30" y="221" font-size="12.5" fill="currentColor">"Có lỗ hổng (CVE) trên EC2/ECR/Lambda?"</text>
+    <line x1="520" y1="216" x2="540" y2="216" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="540" y="202" width="164" height="28" rx="14" fill="#8b5cf6" fill-opacity="0.95"/>
+    <text x="622" y="221" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">Inspector</text>
+  </g>
+  <g>
+    <rect x="16" y="246" width="500" height="44" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="30" y="273" font-size="12.5" fill="currentColor">"S3 có chứa dữ liệu nhạy cảm (PII)?"</text>
+    <line x1="520" y1="268" x2="540" y2="268" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="540" y="254" width="164" height="28" rx="14" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="622" y="273" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">Macie</text>
+  </g>
+  <g>
+    <rect x="16" y="298" width="500" height="44" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="30" y="325" font-size="12.5" fill="currentColor">"Gom mọi finding về 1 chỗ để xem?"</text>
+    <line x1="520" y1="320" x2="540" y2="320" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="540" y="306" width="164" height="28" rx="14" fill="#10b981" fill-opacity="0.95"/>
+    <text x="622" y="325" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">Security Hub</text>
+  </g>
+  <g>
+    <rect x="16" y="350" width="500" height="44" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="30" y="377" font-size="12.5" fill="currentColor">"Đào sâu: entity nào liên quan nhau?"</text>
+    <line x1="520" y1="372" x2="540" y2="372" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="540" y="358" width="164" height="28" rx="14" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="622" y="377" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">Detective</text>
+  </g>
+  <g>
+    <rect x="16" y="402" width="500" height="44" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="30" y="429" font-size="12.5" fill="currentColor">"Traffic mạng vào/ra (ACCEPT/REJECT)?"</text>
+    <line x1="520" y1="424" x2="540" y2="424" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="540" y="410" width="164" height="28" rx="14" fill="#8b5cf6" fill-opacity="0.95"/>
+    <text x="622" y="429" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">VPC Flow Logs</text>
+  </g>
+</svg>
+
+Mỗi cái 1 layer / 1 question. Ngoài ra: DNS query → Route 53 Resolver Query Logs; WAF events → WAF Logs.
 
 ---
 
@@ -235,6 +287,70 @@ AWS có **AWS Artifact** — repository chứa compliance report của AWS, down
 ## 14. Incident response patterns
 
 ### 14.1 Playbook cơ bản
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Luồng incident response playbook 7 bước</title>
+  <desc>Chuỗi xử lý sự cố từ trái qua phải: Detect, Triage, Investigate, Contain, Eradicate, Recover, Post-mortem; mỗi bước kèm service AWS tương ứng.</desc>
+  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Playbook ứng cứu sự cố — chuỗi 7 bước</text>
+
+  <defs>
+    <marker id="irArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
+  </defs>
+
+  <g>
+    <rect x="16" y="40" width="150" height="56" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="28" y="62" font-size="13" font-weight="700" fill="currentColor">1. Detect</text>
+    <text x="28" y="80" font-size="10" fill="currentColor" opacity="0.7">GuardDuty / Config</text>
+    <text x="28" y="92" font-size="10" fill="currentColor" opacity="0.7">CloudWatch alarm</text>
+  </g>
+  <line x1="166" y1="68" x2="190" y2="68" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#irArr)"/>
+  <g>
+    <rect x="194" y="40" width="150" height="56" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="206" y="62" font-size="13" font-weight="700" fill="currentColor">2. Triage</text>
+    <text x="206" y="80" font-size="10" fill="currentColor" opacity="0.7">Security Hub</text>
+    <text x="206" y="92" font-size="10" fill="currentColor" opacity="0.7">đánh giá severity</text>
+  </g>
+  <line x1="344" y1="68" x2="368" y2="68" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#irArr)"/>
+  <g>
+    <rect x="372" y="40" width="150" height="56" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="384" y="62" font-size="13" font-weight="700" fill="currentColor">3. Investigate</text>
+    <text x="384" y="80" font-size="10" fill="currentColor" opacity="0.7">Detective + CloudTrail</text>
+    <text x="384" y="92" font-size="10" fill="currentColor" opacity="0.7">+ VPC Flow Logs</text>
+  </g>
+  <line x1="522" y1="68" x2="546" y2="68" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#irArr)"/>
+  <g>
+    <rect x="550" y="40" width="154" height="56" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="562" y="62" font-size="13" font-weight="700" fill="currentColor">4. Contain</text>
+    <text x="562" y="80" font-size="10" fill="currentColor" opacity="0.7">isolate SG, revoke</text>
+    <text x="562" y="92" font-size="10" fill="currentColor" opacity="0.7">cred, snapshot</text>
+  </g>
+
+  <line x1="627" y1="96" x2="627" y2="120" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#irArr)"/>
+
+  <g>
+    <rect x="550" y="124" width="154" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="562" y="146" font-size="13" font-weight="700" fill="currentColor">5. Eradicate</text>
+    <text x="562" y="164" font-size="10" fill="currentColor" opacity="0.7">terminate resource</text>
+    <text x="562" y="176" font-size="10" fill="currentColor" opacity="0.7">bị xâm nhập, patch</text>
+  </g>
+  <line x1="550" y1="152" x2="526" y2="152" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#irArr)"/>
+  <g>
+    <rect x="372" y="124" width="150" height="56" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="384" y="146" font-size="13" font-weight="700" fill="currentColor">6. Recover</text>
+    <text x="384" y="164" font-size="10" fill="currentColor" opacity="0.7">restore từ backup</text>
+    <text x="384" y="176" font-size="10" fill="currentColor" opacity="0.7">rotate secret</text>
+  </g>
+  <line x1="372" y1="152" x2="348" y2="152" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#irArr)"/>
+  <g>
+    <rect x="194" y="124" width="150" height="56" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="206" y="146" font-size="13" font-weight="700" fill="currentColor">7. Post-mortem</text>
+    <text x="206" y="164" font-size="10" fill="currentColor" opacity="0.7">root cause +</text>
+    <text x="206" y="176" font-size="10" fill="currentColor" opacity="0.7">cải thiện</text>
+  </g>
+
+  <text x="16" y="216" font-size="11" fill="currentColor" opacity="0.65">Detect → Triage → Investigate → Contain (chứa thiệt hại) → Eradicate → Recover → học từ sự cố.</text>
+</svg>
+
 1. **Detect**: GuardDuty / Config / CloudWatch alarm.
 2. **Triage**: Security Hub aggregate, severity.
 3. **Investigate**: Detective + CloudTrail + Flow Logs.

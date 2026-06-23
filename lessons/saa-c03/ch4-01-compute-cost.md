@@ -35,6 +35,51 @@ Tổng: **$40k/tháng = $480k/năm**. Effort: ~2 tuần. ROI: vô cùng cao.
 | **Dedicated Host** | — | — | Compliance, BYOL |
 | **Capacity Reservation** | 0% (giá on-demand) | — | Đảm bảo capacity, không discount |
 
+Bốn lựa chọn chính nằm trên một trục **đánh đổi**: càng cam kết (commitment) thì discount càng cao nhưng càng kém linh hoạt; ngược lại càng linh hoạt thì discount càng thấp (hoặc chấp nhận bị ngắt).
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Phổ EC2 purchase options theo trục discount và độ linh hoạt</title>
+  <desc>Bốn lựa chọn mua EC2 đặt trên đồ thị: trục dọc là mức discount, trục ngang là độ linh hoạt giảm dần (ràng buộc tăng dần). On-demand discount 0% nhưng linh hoạt nhất; Savings Plan tới 66% (cam kết $/h); Reserved Instance tới 72% (cố định family/region); Spot tới 90% nhưng đánh đổi bằng rủi ro bị ngắt 2 phút thông báo, không phải bằng cam kết.</desc>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Phổ EC2 purchase options</text>
+
+  <line x1="70" y1="56" x2="70" y2="320" stroke="currentColor" stroke-opacity="0.45"/>
+  <line x1="70" y1="320" x2="690" y2="320" stroke="currentColor" stroke-opacity="0.45"/>
+  <text x="60" y="64" font-size="11" text-anchor="end" fill="currentColor" opacity="0.7">Discount</text>
+  <text x="60" y="320" font-size="11" text-anchor="end" fill="currentColor" opacity="0.7">0%</text>
+  <text x="60" y="200" font-size="11" text-anchor="end" fill="currentColor" opacity="0.7">~70%</text>
+  <text x="60" y="100" font-size="11" text-anchor="end" fill="currentColor" opacity="0.7">90%</text>
+  <text x="380" y="350" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.75">Linh hoạt giảm → (độ ràng buộc / rủi ro bị ngắt tăng)</text>
+
+  <g stroke="currentColor" stroke-opacity="0.18" stroke-dasharray="3 4">
+    <line x1="70" y1="200" x2="690" y2="200"/>
+    <line x1="70" y1="100" x2="690" y2="100"/>
+  </g>
+
+  <g>
+    <circle cx="150" cy="300" r="9" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="150" y="284" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">On-demand</text>
+    <text x="150" y="270" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">0% · linh hoạt nhất</text>
+  </g>
+  <g>
+    <circle cx="320" cy="218" r="9" fill="#10b981" fill-opacity="0.95"/>
+    <text x="320" y="202" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Savings Plan</text>
+    <text x="320" y="188" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">≤66% · cam kết $/h 1–3 năm</text>
+  </g>
+  <g>
+    <circle cx="490" cy="196" r="9" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="490" y="180" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Reserved Instance</text>
+    <text x="490" y="166" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">≤72% · family/region cố định</text>
+  </g>
+  <g>
+    <circle cx="630" cy="108" r="9" fill="#8b5cf6" fill-opacity="0.95"/>
+    <text x="630" y="92" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Spot</text>
+    <text x="684" y="132" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.65">≤90% · interrupt 2-min</text>
+    <text x="684" y="146" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.65">cam kết = Không · discount do rủi ro</text>
+  </g>
+
+  <path d="M150 300 Q235 250 320 218 T490 196" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 4"/>
+</svg>
+
 ### 2.2 Payment options
 - **All Upfront**: discount max.
 - **Partial Upfront**: cân bằng.
@@ -200,11 +245,38 @@ Tổng: **$40k/tháng = $480k/năm**. Effort: ~2 tuần. ROI: vô cùng cao.
 - Save 60-70% cho dev/test environment.
 
 ### 9.3 Spot + On-demand mix
-```
-ASG Mixed Instances Policy:
-- 2 On-demand baseline (guaranteed)
-- 8 Spot scale-out (4 instance types, capacity-optimized)
-```
+
+ASG Mixed Instances Policy mua theo **lớp**: một **baseline** chạy On-demand / Savings Plan luôn được đảm bảo capacity, còn phần **scale-out** dùng Spot diversified (nhiều instance type, allocation **capacity-optimized**) để cắt cost mà vẫn chịu được khi một pool Spot bị ngắt.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Layered purchase trong ASG Mixed Instances Policy</title>
+  <desc>Lớp dưới là baseline đảm bảo: On-demand hoặc Savings Plan, ví dụ 2 instance. Lớp trên là scale-out dùng Spot diversified qua nhiều instance type với chiến lược capacity-optimized, ví dụ 8 instance. Baseline luôn chạy, Spot co giãn theo tải.</desc>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">ASG Mixed Instances — mua theo lớp</text>
+
+  <rect x="40" y="46" width="640" height="118" rx="10" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="56" y="70" font-size="13" font-weight="700" fill="currentColor">Scale-out — 8 × Spot diversified (co giãn theo tải)</text>
+  <text x="56" y="88" font-size="11" fill="currentColor" opacity="0.7">≤90% rẻ · 4+ instance type · capacity-optimized · nhiều AZ · ngắt 1 pool → ASG bù pool khác</text>
+  <g>
+    <rect x="56" y="100" width="68" height="48" rx="7" fill="#8b5cf6" fill-opacity="0.9"/>
+    <rect x="136" y="100" width="68" height="48" rx="7" fill="#8b5cf6" fill-opacity="0.9"/>
+    <rect x="216" y="100" width="68" height="48" rx="7" fill="#8b5cf6" fill-opacity="0.9"/>
+    <rect x="296" y="100" width="68" height="48" rx="7" fill="#8b5cf6" fill-opacity="0.9"/>
+    <rect x="376" y="100" width="68" height="48" rx="7" fill="#8b5cf6" fill-opacity="0.9"/>
+    <rect x="456" y="100" width="68" height="48" rx="7" fill="#8b5cf6" fill-opacity="0.9"/>
+    <rect x="536" y="100" width="68" height="48" rx="7" fill="#8b5cf6" fill-opacity="0.9"/>
+    <rect x="616" y="100" width="48" height="48" rx="7" fill="#8b5cf6" fill-opacity="0.9"/>
+  </g>
+
+  <rect x="40" y="178" width="640" height="96" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="56" y="202" font-size="13" font-weight="700" fill="currentColor">Baseline — 2 × On-demand / Savings Plan (luôn đảm bảo)</text>
+  <text x="56" y="220" font-size="11" fill="currentColor" opacity="0.7">capacity guaranteed · cover bằng Savings Plan để có discount</text>
+  <g>
+    <rect x="56" y="232" width="120" height="30" rx="7" fill="#10b981" fill-opacity="0.95"/>
+    <rect x="188" y="232" width="120" height="30" rx="7" fill="#10b981" fill-opacity="0.95"/>
+  </g>
+
+  <text x="360" y="300" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">Tổng 10 instance: 2 chắc chắn (baseline) + 8 rẻ, co giãn (Spot)</text>
+</svg>
 
 ### 9.4 Hibernate
 - EC2 hibernate (RAM saved to EBS, restore nhanh).
