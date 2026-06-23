@@ -32,6 +32,46 @@ Từ **một** khuôn bánh, bạn đúc được **nhiều** chiếc bánh. Cá
 
 Hành động tạo object từ class gọi là **khởi tạo** (instantiate — "đúc bánh từ khuôn").
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Một class KhachHang đúc ra nhiều object, mỗi object có bản sao dữ liệu riêng</title>
+  <desc>Khuôn class KhachHang ở bên trái với các ô thuộc tính ten và so_du; hai mũi tên khởi tạo trỏ sang hai object khach_a (An, 500k) và khach_b (Bình, 2 triệu), mỗi object giữ dữ liệu riêng độc lập.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Một khuôn class → nhiều object, mỗi object dữ liệu riêng</text>
+
+  <rect x="16" y="52" width="220" height="180" rx="12" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <rect x="32" y="68" width="120" height="22" rx="11" fill="#8b5cf6" fill-opacity="0.9"/>
+  <text x="92" y="83" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">class (khuôn)</text>
+  <text x="32" y="116" font-size="14" font-weight="700" fill="currentColor">KhachHang</text>
+  <text x="32" y="142" font-size="11.5" fill="currentColor" opacity="0.75">Bản thiết kế:</text>
+  <rect x="32" y="152" width="188" height="26" rx="7" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="42" y="169" font-size="11.5" fill="currentColor">ten · so_du (mọi KH đều có)</text>
+  <rect x="32" y="184" width="188" height="26" rx="7" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="42" y="201" font-size="11.5" fill="currentColor">gui_tien() · rut_tien()</text>
+
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none">
+    <path d="M236 110 C 290 110, 300 96, 348 96" marker-end="url(#oopArr1)"/>
+    <path d="M236 174 C 290 174, 300 196, 348 196" marker-end="url(#oopArr1)"/>
+  </g>
+  <defs>
+    <marker id="oopArr1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+  <text x="266" y="84" font-size="10.5" fill="currentColor" opacity="0.7">khởi tạo</text>
+  <text x="266" y="224" font-size="10.5" fill="currentColor" opacity="0.7">khởi tạo</text>
+
+  <rect x="350" y="60" width="354" height="78" rx="11" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.28"/>
+  <rect x="364" y="72" width="92" height="20" rx="10" fill="#10b981" fill-opacity="0.9"/>
+  <text x="410" y="86" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">object khach_a</text>
+  <text x="364" y="114" font-size="12" fill="currentColor">ten = "An"</text>
+  <text x="364" y="131" font-size="12" fill="currentColor">so_du = 500.000đ</text>
+
+  <rect x="350" y="160" width="354" height="78" rx="11" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.28"/>
+  <rect x="364" y="172" width="92" height="20" rx="10" fill="#3b82f6" fill-opacity="0.9"/>
+  <text x="410" y="186" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">object khach_b</text>
+  <text x="364" y="214" font-size="12" fill="currentColor">ten = "Bình"</text>
+  <text x="364" y="231" font-size="12" fill="currentColor">so_du = 2.000.000đ</text>
+
+  <text x="16" y="262" font-size="11" fill="currentColor" opacity="0.72">Hai object cùng khuôn nhưng dữ liệu tách biệt: sửa khach_a không đụng khach_b.</text>
+</svg>
+
 Hãy xem class đơn giản nhất có thể — một khuôn `Cho` (chó) và đúc ra hai chú chó:
 
 ```python
@@ -404,6 +444,45 @@ int main() {
 
 Hãy để ý điều quan trọng: bên ngoài chỉ cần gọi `tk.rut_tien(200)` — **không cần biết** bên trong kiểm tra ra sao. Object tự bảo vệ dữ liệu của mình. Nguyên tắc "giấu chi tiết bên trong, chỉ phơi ra hành động" gọi là **encapsulation** (đóng gói) — một trong những trụ cột của OOP.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Cấu tạo một object và nguyên tắc encapsulation</title>
+  <desc>Một hộp object gồm hai phần: phần thuộc tính chứa dữ liệu ten và so_du được bọc bên trong, phần phương thức gui_tien và rut_tien là lớp vỏ hành động. Bên ngoài chỉ gọi được phương thức; dữ liệu được object tự bảo vệ.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Cấu tạo một object: dữ liệu được bọc, chỉ hành động lộ ra</text>
+
+  <rect x="120" y="44" width="480" height="236" rx="16" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.32"/>
+  <rect x="136" y="56" width="216" height="22" rx="11" fill="#10b981" fill-opacity="0.9"/>
+  <text x="244" y="71" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">object: tk (TaiKhoanNganHang)</text>
+
+  <text x="142" y="104" font-size="11.5" font-weight="700" fill="currentColor">Phương thức — hành động (lớp vỏ công khai)</text>
+  <rect x="142" y="112" width="200" height="30" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.28"/>
+  <text x="242" y="131" font-size="12" text-anchor="middle" fill="currentColor">gui_tien(so_tien)</text>
+  <rect x="358" y="112" width="200" height="30" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.28"/>
+  <text x="458" y="131" font-size="12" text-anchor="middle" fill="currentColor">rut_tien(so_tien)</text>
+
+  <rect x="142" y="158" width="416" height="100" rx="12" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="156" y="180" font-size="11.5" font-weight="700" fill="currentColor">Thuộc tính — dữ liệu (được giấu bên trong)</text>
+  <rect x="156" y="190" width="180" height="28" rx="7" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="166" y="209" font-size="12" fill="currentColor">ten = "Lan"</text>
+  <rect x="156" y="224" width="180" height="28" rx="7" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="166" y="243" font-size="12" fill="currentColor">so_du = 30</text>
+  <text x="352" y="210" font-size="11" fill="currentColor" opacity="0.75">rut_tien tự kiểm tra</text>
+  <text x="352" y="226" font-size="11" fill="currentColor" opacity="0.75">đủ số dư trước khi</text>
+  <text x="352" y="242" font-size="11" fill="currentColor" opacity="0.75">đụng vào so_du.</text>
+
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none">
+    <path d="M40 127 H 138" marker-end="url(#encOk)"/>
+    <path d="M40 204 H 138" stroke-dasharray="5 4"/>
+  </g>
+  <defs>
+    <marker id="encOk" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+  <text x="16" y="115" font-size="11" fill="currentColor" opacity="0.85">Bên ngoài</text>
+  <text x="16" y="131" font-size="10.5" fill="#10b981" font-weight="700">gọi được ✓</text>
+  <text x="44" y="222" font-size="10.5" fill="#f59e0b" font-weight="700">chạm thẳng dữ liệu ✗</text>
+
+  <text x="120" y="306" font-size="11" fill="currentColor" opacity="0.72">Encapsulation = bên ngoài chỉ đi qua phương thức; dữ liệu được object tự bảo vệ.</text>
+</svg>
+
 > 💡 Ghi nhớ: mỗi object có **bản sao dữ liệu riêng**. Tạo `tk2 = TaiKhoanNganHang("Hùng", 999)` thì `tk2` rút tiền không ảnh hưởng gì đến số dư của `tk` — giống hai chiếc bánh, cắn bánh này không làm vơi bánh kia.
 
 > ⚠️ Lỗi người mới hay gặp: nhầm class với object. Viết `TaiKhoanNganHang.rut_tien(50)` (gọi trên **khuôn**) sẽ lỗi — khuôn bánh không ăn được! Phải tạo object trước (`tk = TaiKhoanNganHang(...)`) rồi gọi trên object: `tk.rut_tien(50)`.
@@ -504,6 +583,56 @@ int main() {
 Chú thích khác biệt: Python ghi class cha trong ngoặc `(TaiKhoanNganHang)`; JavaScript và Java dùng từ khoá `extends` (Java còn cần `super(...)` để gọi constructor cha). Go **không có kế thừa** thực sự — thay vào đó dùng **embedding** (nhúng struct này vào struct kia), kết quả sử dụng gần giống nhau.
 
 Thuật ngữ: class gốc gọi là **class cha** (parent / superclass), class kế thừa gọi là **class con** (child / subclass). Quan hệ kế thừa đọc là "**là một**" (is-a): tài khoản tiết kiệm *là một* tài khoản ngân hàng.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 350" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Cây kế thừa và phân biệt quan hệ là-một với có-một</title>
+  <desc>Bên trái: class cha TaiKhoanNganHang với gui_tien và rut_tien, mũi tên là-một đi từ class con TaiKhoanTietKiem lên cha; con thừa hưởng gui_tien rut_tien và thêm tinh_lai. Bên phải so sánh: Xe là một PhuongTien dùng kế thừa, còn XeHoi có BanhXe là quan hệ có-một dùng thuộc tính.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Kế thừa: cây cha → con, và "là một" khác "có một"</text>
+
+  <rect x="60" y="44" width="260" height="62" rx="11" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <rect x="74" y="54" width="80" height="20" rx="10" fill="#8b5cf6" fill-opacity="0.9"/>
+  <text x="114" y="68" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">class cha</text>
+  <text x="74" y="92" font-size="13" font-weight="700" fill="currentColor">TaiKhoanNganHang</text>
+  <text x="166" y="68" font-size="10.5" fill="currentColor" opacity="0.7">gui_tien() · rut_tien()</text>
+
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none">
+    <path d="M190 220 V 106" marker-end="url(#inhArr)"/>
+  </g>
+  <defs>
+    <marker id="inhArr" markerWidth="12" markerHeight="12" refX="5" refY="2" orient="auto"><path d="M0 8 L5 0 L10 8 z" fill="none" stroke="currentColor" stroke-opacity="0.6"/></marker>
+  </defs>
+  <text x="200" y="168" font-size="11" font-weight="700" fill="currentColor">là một (is-a)</text>
+
+  <rect x="60" y="220" width="260" height="86" rx="11" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+  <rect x="74" y="230" width="80" height="20" rx="10" fill="#10b981" fill-opacity="0.9"/>
+  <text x="114" y="244" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">class con</text>
+  <text x="74" y="268" font-size="13" font-weight="700" fill="currentColor">TaiKhoanTietKiem</text>
+  <text x="74" y="288" font-size="10.5" fill="currentColor" opacity="0.7">thừa hưởng: gui_tien() · rut_tien()</text>
+  <text x="74" y="302" font-size="10.5" fill="currentColor" opacity="0.9">thêm riêng: tinh_lai()</text>
+
+  <line x1="360" y1="44" x2="360" y2="320" stroke="currentColor" stroke-opacity="0.2"/>
+
+  <text x="392" y="60" font-size="12" font-weight="700" fill="#10b981">"là một" → kế thừa ✓</text>
+  <rect x="392" y="72" width="120" height="34" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="452" y="93" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">PhuongTien</text>
+  <path d="M452 150 V 106" fill="none" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#inhArr)"/>
+  <text x="462" y="132" font-size="10.5" fill="currentColor" opacity="0.8">là một</text>
+  <rect x="392" y="150" width="120" height="34" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="452" y="171" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Xe</text>
+
+  <text x="392" y="218" font-size="12" font-weight="700" fill="#f59e0b">"có một" → thuộc tính ✗ kế thừa</text>
+  <rect x="392" y="230" width="120" height="34" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="452" y="251" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">XeHoi</text>
+  <path d="M512 247 H 580" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="5 4" marker-end="url(#inhArr2)"/>
+  <defs>
+    <marker id="inhArr2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+  <text x="520" y="240" font-size="10.5" fill="currentColor" opacity="0.8">có một</text>
+  <rect x="582" y="230" width="120" height="34" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="642" y="251" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">BanhXe</text>
+  <text x="392" y="292" font-size="10.5" fill="currentColor" opacity="0.72">XeHoi không *là* BanhXe — nó *có* BanhXe,</text>
+  <text x="392" y="307" font-size="10.5" fill="currentColor" opacity="0.72">nên BanhXe là thuộc tính, không phải class cha.</text>
+</svg>
 
 > ⚠️ Lỗi người mới hay gặp: lạm dụng kế thừa cho mọi thứ. Chỉ kế thừa khi quan hệ "là một" đúng nghĩa. `Xe là một PhuongTien` ✓; nhưng `XeHoi kế thừa BanhXe` ✗ — xe hơi không *là* bánh xe, xe hơi *có* bánh xe (quan hệ "có một" thì dùng thuộc tính).
 

@@ -76,6 +76,40 @@ Mỗi ô trong danh sách có một **index** (chỉ số — số thứ tự c�
 
 Analogy: index giống như "bạn đứng cách đầu hàng bao nhiêu bước". Người đầu hàng cách đầu hàng **0 bước**, nên mang số 0.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>List là dãy ô liền nhau, index đánh số từ 0</title>
+  <desc>Danh sách trai_cay gồm ba ô liền nhau: ô index 0 chứa táo, ô index 1 chứa cam, ô index 2 chứa chuối. Index đánh số từ 0 nên index cuối cùng là N trừ 1. Truy cập index 3 là lỗi vì danh sách chỉ có 3 phần tử.</desc>
+  <text x="16" y="26" font-size="14" font-weight="700" fill="currentColor">trai_cay = ["táo", "cam", "chuối"]</text>
+
+  <g>
+    <rect x="40" y="50" width="150" height="62" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="115" y="89" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">táo</text>
+    <text x="115" y="135" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">index 0</text>
+  </g>
+  <g>
+    <rect x="190" y="50" width="150" height="62" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="265" y="89" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">cam</text>
+    <text x="265" y="135" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">index 1</text>
+  </g>
+  <g>
+    <rect x="340" y="50" width="150" height="62" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="415" y="89" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">chuối</text>
+    <text x="415" y="135" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">index 2</text>
+  </g>
+
+  <g>
+    <rect x="510" y="50" width="150" height="62" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="6 4"/>
+    <text x="585" y="78" font-size="22" font-weight="700" text-anchor="middle" fill="#f59e0b">✕</text>
+    <text x="585" y="100" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">không tồn tại</text>
+    <text x="585" y="135" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">index 3</text>
+  </g>
+
+  <text x="265" y="172" font-size="12.5" text-anchor="middle" fill="currentColor" opacity="0.85">3 phần tử → index cuối = N − 1 = <tspan font-weight="700">2</tspan></text>
+  <text x="585" y="172" font-size="12" text-anchor="middle" fill="#f59e0b" font-weight="700">trai_cay[3] → lỗi!</text>
+  <text x="265" y="196" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">index hợp lệ: 0, 1, 2</text>
+  <text x="585" y="196" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">index out of range</text>
+</svg>
+
 ```python
 trai_cay = ["táo", "cam", "chuối"]
 print(trai_cay[0])   # táo
@@ -216,6 +250,36 @@ Bây giờ thử bài toán khác: lưu **số điện thoại của bạn bè**
 |------------|-----------------|
 | "Lan"      | "0901234567"    |
 | "Minh"     | "0907654321"    |
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Dictionary là bảng tra cứu khóa đến giá trị</title>
+  <desc>Từ điển danh_ba ánh xạ khóa sang giá trị: khóa Lan trỏ thẳng tới giá trị 0901234567, khóa Minh trỏ thẳng tới giá trị 0907654321. Đưa khóa vào nhận ngay giá trị ra, không phải duyệt cả danh sách như list.</desc>
+  <text x="16" y="26" font-size="14" font-weight="700" fill="currentColor">danh_ba — đưa khóa vào, nhận giá trị ra ngay</text>
+
+  <text x="120" y="58" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.7">KHÓA (key)</text>
+  <text x="560" y="58" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.7">GIÁ TRỊ (value)</text>
+
+  <g>
+    <rect x="40" y="74" width="160" height="48" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="120" y="104" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">"Lan"</text>
+    <rect x="480" y="74" width="200" height="48" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="580" y="104" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">"0901234567"</text>
+    <line x1="204" y1="98" x2="472" y2="98" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#dictArr)"/>
+  </g>
+  <g>
+    <rect x="40" y="142" width="160" height="48" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="120" y="172" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">"Minh"</text>
+    <rect x="480" y="142" width="200" height="48" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="580" y="172" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">"0907654321"</text>
+    <line x1="204" y1="166" x2="472" y2="166" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#dictArr)"/>
+  </g>
+
+  <text x="338" y="214" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.75">tra thẳng tới giá trị — khác list phải duyệt từng phần tử</text>
+
+  <defs>
+    <marker id="dictArr" markerWidth="11" markerHeight="11" refX="8" refY="4" orient="auto"><path d="M0 0 L9 4 L0 8 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+</svg>
 
 ```python
 danh_ba = {"Lan": "0901234567", "Minh": "0907654321"}
@@ -374,6 +438,70 @@ Chú thích: Go không có kiểu set riêng — quy ước phổ biến là dù
 | "Thứ tự quan trọng, tôi cần phần tử thứ N" | **List/Array** | Danh sách bài hát phát theo thứ tự |
 | "Cho tôi tra X, trả về thông tin của X" | **Dictionary/Map** | Danh bạ điện thoại, bảng giá |
 | "X đã xuất hiện chưa? Loại bỏ trùng lặp" | **Set** | Danh sách email đã gửi, khách đã điểm danh |
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 290" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>So sánh ba cấu trúc: List, Dictionary và Set</title>
+  <desc>Ba cột song song. List là dãy có thứ tự, cho phép trùng, hỏi phần tử thứ N. Dictionary là cặp khóa trỏ giá trị, hỏi tra X ra gì. Set là túi không trùng không thứ tự, hỏi X đã có chưa.</desc>
+
+  <g>
+    <rect x="16" y="20" width="216" height="252" rx="11" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="124" y="46" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">List</text>
+    <text x="124" y="65" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">dãy CÓ THỨ TỰ, cho trùng</text>
+    <rect x="40" y="82" width="48" height="40" rx="6" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="64" y="107" font-size="12" text-anchor="middle" fill="currentColor">8</text>
+    <rect x="88" y="82" width="48" height="40" rx="6" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="112" y="107" font-size="12" text-anchor="middle" fill="currentColor">9</text>
+    <rect x="136" y="82" width="48" height="40" rx="6" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="160" y="107" font-size="12" text-anchor="middle" fill="currentColor">8</text>
+    <text x="64" y="138" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">0</text>
+    <text x="112" y="138" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">1</text>
+    <text x="160" y="138" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">2</text>
+    <text x="124" y="166" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">(số 8 lặp lại — OK)</text>
+    <line x1="40" y1="186" x2="208" y2="186" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="124" y="212" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">Câu hỏi đặc trưng:</text>
+    <text x="124" y="240" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">"Phần tử</text>
+    <text x="124" y="258" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">thứ N là gì?"</text>
+  </g>
+
+  <g>
+    <rect x="252" y="20" width="216" height="252" rx="11" fill="#8b5cf6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="46" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Dictionary</text>
+    <text x="360" y="65" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">cặp KHÓA → GIÁ TRỊ</text>
+    <rect x="272" y="82" width="78" height="34" rx="6" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="311" y="104" font-size="12" text-anchor="middle" fill="currentColor">"Lan"</text>
+    <rect x="386" y="82" width="62" height="34" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="417" y="104" font-size="11" text-anchor="middle" fill="currentColor">090...</text>
+    <line x1="350" y1="99" x2="382" y2="99" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#cmpArr)"/>
+    <rect x="272" y="124" width="78" height="34" rx="6" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="311" y="146" font-size="12" text-anchor="middle" fill="currentColor">"Minh"</text>
+    <rect x="386" y="124" width="62" height="34" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="417" y="146" font-size="11" text-anchor="middle" fill="currentColor">090...</text>
+    <line x1="350" y1="141" x2="382" y2="141" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#cmpArr)"/>
+    <line x1="276" y1="186" x2="444" y2="186" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="360" y="212" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">Câu hỏi đặc trưng:</text>
+    <text x="360" y="240" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">"Tra X ra</text>
+    <text x="360" y="258" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">thông tin gì?"</text>
+  </g>
+
+  <g>
+    <rect x="488" y="20" width="216" height="252" rx="11" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="596" y="46" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Set</text>
+    <text x="596" y="65" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">túi KHÔNG TRÙNG, không thứ tự</text>
+    <ellipse cx="596" cy="125" rx="92" ry="56" fill="#10b981" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 4"/>
+    <text x="560" y="112" font-size="12" text-anchor="middle" fill="currentColor">"Lan"</text>
+    <text x="630" y="135" font-size="12" text-anchor="middle" fill="currentColor">"Minh"</text>
+    <text x="585" y="158" font-size="12" text-anchor="middle" fill="currentColor">"Hoa"</text>
+    <text x="596" y="200" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">(thêm "Lan" lần 2 — bỏ qua)</text>
+    <line x1="512" y1="186" x2="680" y2="186" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="596" y="212" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">Câu hỏi đặc trưng:</text>
+    <text x="596" y="240" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">"X đã có</text>
+    <text x="596" y="258" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">chưa?"</text>
+  </g>
+
+  <defs>
+    <marker id="cmpArr" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+</svg>
 
 Vài quy tắc ngón tay cái:
 

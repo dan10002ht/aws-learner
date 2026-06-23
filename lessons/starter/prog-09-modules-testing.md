@@ -121,6 +121,38 @@ int main() {
 }
 ```
 
+Hình dung quan hệ giữa hai file: `mathutils` **export** ra `add` và `PI`; `main` **import** chúng về để dùng lại — mũi tên đi từ nơi dùng (main) sang nơi cung cấp (mathutils), đúng hướng "đi xin để dùng lại":
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Quan hệ import/export giữa main và mathutils</title>
+  <desc>Hai hộp file: main bên trái import add và PI; mathutils bên phải export add và PI. Mũi tên đi từ main sang mathutils thể hiện main dùng lại thứ mathutils cung cấp.</desc>
+  <defs>
+    <marker id="impArr" markerWidth="11" markerHeight="11" refX="9" refY="3.5" orient="auto"><path d="M0 0 L9 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+
+  <g>
+    <rect x="28" y="48" width="248" height="120" rx="12" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+    <rect x="44" y="62" width="92" height="22" rx="11" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="90" y="77" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">main</text>
+    <text x="44" y="108" font-size="12.5" font-weight="700" fill="currentColor">import add, PI</text>
+    <text x="44" y="132" font-size="11" fill="currentColor" opacity="0.7">add(2, 3)  → 5</text>
+    <text x="44" y="150" font-size="11" fill="currentColor" opacity="0.7">print(PI)  → 3.14159</text>
+  </g>
+
+  <g>
+    <rect x="444" y="48" width="248" height="120" rx="12" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <rect x="460" y="62" width="118" height="22" rx="11" fill="#10b981" fill-opacity="0.95"/>
+    <text x="519" y="77" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">mathutils</text>
+    <text x="460" y="108" font-size="12.5" font-weight="700" fill="currentColor">export add, PI</text>
+    <text x="460" y="132" font-size="11" fill="currentColor" opacity="0.7">def add(a, b): ...</text>
+    <text x="460" y="150" font-size="11" fill="currentColor" opacity="0.7">PI = 3.14159</text>
+  </g>
+
+  <line x1="276" y1="108" x2="440" y2="108" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#impArr)"/>
+  <text x="358" y="98" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.85">dùng lại</text>
+  <text x="358" y="128" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">main import, mathutils export</text>
+</svg>
+
 Điểm cần nhớ về cách mỗi ngôn ngữ "phơi bày" thứ ra ngoài:
 
 | Ngôn ngữ | Cách export | Cách import |
@@ -168,6 +200,64 @@ vcpkg install stduuid
 ```
 
 Mỗi package có **dependency** riêng — nó lại phụ thuộc các package khác. Đó là cây phụ thuộc (dependency tree). Bạn cài 1 gói, đôi khi kéo theo 20 gói con. Trình quản lý gói lo việc đó tự động.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Cây phụ thuộc — cài 1 gói kéo theo nhiều gói con</title>
+  <desc>Dự án của bạn cài 1 package trực tiếp; package đó kéo theo nhiều package con, các con lại có con cháu của riêng chúng, tạo thành một cây nhiều tầng. Tổng cộng cài 1 gói kéo theo khoảng 20 gói.</desc>
+
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none" stroke-width="1.3">
+    <path d="M360 52 V92"/>
+    <path d="M360 134 V143 M280 143 H440 M280 143 V152 M360 143 V152 M440 143 V152"/>
+    <path d="M280 178 V196 M220 196 H340 M220 196 V214 M280 196 V214 M340 196 V214"/>
+    <path d="M440 178 V196 M400 196 H520 M400 196 V214 M460 196 V214 M520 196 V214"/>
+    <path d="M280 238 V257 M250 257 H310 M250 257 V276 M310 257 V276"/>
+  </g>
+
+  <g>
+    <rect x="288" y="22" width="144" height="30" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="42" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">dự án của bạn</text>
+  </g>
+
+  <g>
+    <rect x="296" y="92" width="128" height="42" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="111" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">1 package</text>
+    <text x="360" y="127" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">bạn cài trực tiếp</text>
+  </g>
+
+  <g font-size="10.5" text-anchor="middle" fill="currentColor">
+    <rect x="244" y="152" width="72" height="26" rx="7" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="280" y="169">con A</text>
+    <rect x="324" y="152" width="72" height="26" rx="7" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="360" y="169">con B</text>
+    <rect x="404" y="152" width="72" height="26" rx="7" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="440" y="169">con C</text>
+  </g>
+
+  <g font-size="10" text-anchor="middle" fill="currentColor">
+    <rect x="190" y="214" width="60" height="24" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="220" y="230">cháu</text>
+    <rect x="250" y="214" width="60" height="24" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="280" y="230">cháu</text>
+    <rect x="310" y="214" width="60" height="24" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="340" y="230">cháu</text>
+    <rect x="370" y="214" width="60" height="24" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="400" y="230">cháu</text>
+    <rect x="430" y="214" width="60" height="24" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="460" y="230">cháu</text>
+    <rect x="490" y="214" width="60" height="24" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="520" y="230">cháu</text>
+  </g>
+
+  <g font-size="9.5" text-anchor="middle" fill="currentColor">
+    <rect x="222" y="276" width="56" height="22" rx="6" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="250" y="291">...</text>
+    <rect x="282" y="276" width="56" height="22" rx="6" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="310" y="291">...</text>
+  </g>
+
+  <text x="600" y="170" font-size="11.5" font-weight="700" fill="currentColor" opacity="0.85">≈ 20 gói</text>
+  <text x="600" y="188" font-size="10" fill="currentColor" opacity="0.6">từ 1 lệnh cài</text>
+</svg>
 
 **Phiên bản (version)** rất quan trọng. Một dòng như `dayjs@^1.11.0` nghĩa là "chấp nhận bản 1.11.0 trở lên nhưng dưới 2.0". Ghim phiên bản giúp dự án của bạn chạy giống nhau trên mọi máy.
 

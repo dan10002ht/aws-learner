@@ -79,6 +79,48 @@ Tưởng tượng bạn có nhiều **chiếc hộp**, mỗi hộp dán một **
 
 Lưu ý quan trọng: trong lập trình, dấu `=` **không** có nghĩa "bằng nhau" như toán học, mà nghĩa là **"lấy thứ bên phải, bỏ vào hộp bên trái"**.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 270" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Biến là chiếc hộp có nhãn tên chứa giá trị</title>
+  <desc>Ba chiếc hộp xếp ngang, mỗi hộp có nhãn tên ở trên và giá trị bên trong: ten chứa "Lan", tuoi chứa 18, diem chứa 9. Phía dưới mỗi hộp là một mũi tên đổ giá trị từ bên phải vào hộp, minh hoạ phép gán bằng dấu bằng đọc từ phải sang trái.</desc>
+  <text x="16" y="26" font-size="14" font-weight="700" fill="currentColor">Biến = chiếc hộp có nhãn tên, gán = đổ giá trị vào hộp</text>
+
+  <g>
+    <text x="120" y="66" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">nhãn: ten</text>
+    <rect x="76" y="76" width="88" height="64" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="120" y="115" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">"Lan"</text>
+    <text x="120" y="172" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">đổ vào</text>
+    <path d="M120 182 L120 144" fill="none" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#boxArr)"/>
+    <rect x="89" y="188" width="62" height="24" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="120" y="205" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">"Lan"</text>
+  </g>
+
+  <g transform="translate(240,0)">
+    <text x="120" y="66" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">nhãn: tuoi</text>
+    <rect x="76" y="76" width="88" height="64" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="120" y="117" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">18</text>
+    <text x="120" y="172" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">đổ vào</text>
+    <path d="M120 182 L120 144" fill="none" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#boxArr)"/>
+    <rect x="89" y="188" width="62" height="24" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="120" y="205" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">18</text>
+  </g>
+
+  <g transform="translate(480,0)">
+    <text x="120" y="66" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">nhãn: diem</text>
+    <rect x="76" y="76" width="88" height="64" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="120" y="117" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">9</text>
+    <text x="120" y="172" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">đổ vào</text>
+    <path d="M120 182 L120 144" fill="none" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#boxArr)"/>
+    <rect x="89" y="188" width="62" height="24" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="120" y="205" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">9</text>
+  </g>
+
+  <text x="16" y="252" font-size="11.5" fill="currentColor" opacity="0.75">diem = 9 nghĩa là: lấy giá trị 9 (vế phải dấu =) đổ vào hộp tên diem (vế trái) — đọc phải → trái.</text>
+
+  <defs>
+    <marker id="boxArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+</svg>
+
 ```python
 tuoi = 18
 ten = "Lan"
@@ -204,6 +246,42 @@ Chú thích nhanh: Python viết `True`/`False` viết hoa; ba ngôn ngữ kia v
 Đây là cú "vỡ lẽ" đầu tiên của mọi người mới học: `5` (con số) và `"5"` (ký tự số năm viết trong ngoặc kép) là **hai thứ hoàn toàn khác nhau**. Giống như **tờ tiền 50.000đ** và **tấm ảnh chụp tờ tiền 50.000đ** — trông giống nhau nhưng chỉ một cái tiêu được.
 
 Với số, dấu `+` là **phép cộng**. Với chuỗi, dấu `+` là **nối chữ** (ghép hai đoạn văn bản lại):
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Số 5 khác chuỗi "5" — cộng được vs nối được</title>
+  <desc>Hai cột so sánh. Bên trái: ô số 5 là kiểu số, dấu cộng là phép cộng nên 5 + 3 bằng 8. Bên phải: ô chuỗi "5" là kiểu chữ, dấu cộng là nối chuỗi nên "5" + "3" bằng "53".</desc>
+  <text x="16" y="26" font-size="14" font-weight="700" fill="currentColor">Số 5 và chuỗi "5" là hai thứ khác nhau</text>
+
+  <g>
+    <rect x="16" y="42" width="330" height="180" rx="10" fill="#10b981" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="32" y="66" font-size="13" font-weight="700" fill="currentColor">Số  5  — kiểu SỐ</text>
+    <text x="32" y="86" font-size="11.5" fill="currentColor" opacity="0.7">cộng được (đếm, tính toán)</text>
+    <rect x="48" y="104" width="46" height="46" rx="8" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="71" y="135" font-size="20" font-weight="700" text-anchor="middle" fill="currentColor">5</text>
+    <text x="112" y="135" font-size="18" font-weight="700" text-anchor="middle" fill="currentColor">+</text>
+    <rect x="130" y="104" width="46" height="46" rx="8" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="153" y="135" font-size="20" font-weight="700" text-anchor="middle" fill="currentColor">3</text>
+    <text x="196" y="135" font-size="18" font-weight="700" text-anchor="middle" fill="currentColor">=</text>
+    <rect x="216" y="104" width="46" height="46" rx="8" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="239" y="135" font-size="20" font-weight="700" text-anchor="middle" fill="currentColor">8</text>
+    <text x="32" y="196" font-size="12" fill="currentColor" opacity="0.85">5 + 3 = 8  (phép cộng)</text>
+  </g>
+
+  <g>
+    <rect x="374" y="42" width="330" height="180" rx="10" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="390" y="66" font-size="13" font-weight="700" fill="currentColor">Chuỗi  "5"  — kiểu CHỮ</text>
+    <text x="390" y="86" font-size="11.5" fill="currentColor" opacity="0.7">nối được (ghép văn bản)</text>
+    <rect x="406" y="104" width="46" height="46" rx="8" fill="#3b82f6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="429" y="135" font-size="18" font-weight="700" text-anchor="middle" fill="currentColor">"5"</text>
+    <text x="470" y="135" font-size="18" font-weight="700" text-anchor="middle" fill="currentColor">+</text>
+    <rect x="488" y="104" width="46" height="46" rx="8" fill="#3b82f6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="511" y="135" font-size="18" font-weight="700" text-anchor="middle" fill="currentColor">"3"</text>
+    <text x="554" y="135" font-size="18" font-weight="700" text-anchor="middle" fill="currentColor">=</text>
+    <rect x="574" y="104" width="60" height="46" rx="8" fill="#3b82f6" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="604" y="135" font-size="18" font-weight="700" text-anchor="middle" fill="currentColor">"53"</text>
+    <text x="390" y="196" font-size="12" fill="currentColor" opacity="0.85">"5" + "3" = "53"  (nối chuỗi)</text>
+  </g>
+</svg>
 
 ```python
 print(5 + 3)      # 8  (cộng số)
@@ -350,6 +428,39 @@ int main() {
 ```
 
 Chú thích: phần nhập liệu là chỗ 4 ngôn ngữ khác nhau nhiều nhất. Python gọn nhất với `input()`. Java dùng `Scanner` (máy quét bàn phím). Go phải đọc cả dòng rồi cắt bỏ ký tự xuống dòng bằng `TrimSpace`. JavaScript trong trình duyệt còn có cách siêu ngắn là `prompt("câu hỏi")`. Đừng cố thuộc lòng — cứ tra lại mẫu này khi cần, ai cũng vậy cả.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Luồng Nhập → Xử lý → Xuất với ví dụ tính tuổi</title>
+  <desc>Pipeline ba bước từ trái sang phải: Nhập là hỏi năm sinh người dùng gõ vào, Xử lý là lấy 2026 trừ năm sinh ra tuổi, Xuất là in lời chào kèm tuổi ra màn hình.</desc>
+  <text x="16" y="26" font-size="14" font-weight="700" fill="currentColor">Nhập → Xử lý → Xuất (ví dụ tính tuổi)</text>
+
+  <defs>
+    <marker id="flowArr" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0 0 L8 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+
+  <g>
+    <rect x="16" y="56" width="200" height="92" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="116" y="82" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">1. NHẬP (input)</text>
+    <text x="116" y="106" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">Hỏi "Năm sinh?"</text>
+    <text x="116" y="126" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">người dùng gõ: 2008</text>
+  </g>
+  <line x1="220" y1="102" x2="256" y2="102" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#flowArr)"/>
+
+  <g>
+    <rect x="260" y="56" width="200" height="92" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="82" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">2. XỬ LÝ (process)</text>
+    <text x="360" y="106" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">tuoi = 2026 − năm sinh</text>
+    <text x="360" y="126" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">2026 − 2008 = 18</text>
+  </g>
+  <line x1="464" y1="102" x2="500" y2="102" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#flowArr)"/>
+
+  <g>
+    <rect x="504" y="56" width="200" height="92" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="604" y="82" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">3. XUẤT (output)</text>
+    <text x="604" y="106" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">In lời chào ra màn hình:</text>
+    <text x="604" y="126" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">"… năm nay bạn 18 tuổi!"</text>
+  </g>
+</svg>
 
 > 💡 Ghi nhớ: Quy trình kinh điển của mọi chương trình: **Nhập (input) → Xử lý (process) → Xuất (output)**. Ví dụ trên có đủ cả ba: hỏi năm sinh → lấy 2026 trừ đi → in lời chào.
 

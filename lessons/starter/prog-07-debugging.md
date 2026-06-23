@@ -264,6 +264,62 @@ Traceback (most recent call last):
 ZeroDivisionError: division by zero
 ```
 
+Mỗi dòng trong stack trace ánh xạ tới một mắt xích trong chuỗi gọi hàm. Đọc nó như chuỗi domino: `main` gọi `tinh_toan`, `tinh_toan` gọi `chia` — domino đổ ở `chia` (chia cho 0), nhưng số 0 lại được `tinh_toan` truyền vào:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Ánh xạ stack trace sang chuỗi gọi hàm domino</title>
+  <desc>Ba khung gọi hàm xếp chồng: main gọi tinh_toan, tinh_toan gọi chia. Mỗi dòng trong stack trace Python được nối tới đúng hàm tương ứng. Domino đổ ở chia vì chia cho 0, nhưng số 0 được tinh_toan truyền vào nên đó là nơi có lỗi gốc.</desc>
+  <text x="16" y="24" font-size="13" font-weight="700" fill="currentColor">Stack trace (dòng)</text>
+  <text x="430" y="24" font-size="13" font-weight="700" fill="currentColor">Chuỗi gọi hàm (domino)</text>
+
+  <g font-size="11">
+    <rect x="16" y="40" width="372" height="30" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="28" y="59" fill="currentColor">line 7, in &#60;module&#62; → tinh_toan()</text>
+    <rect x="16" y="78" width="372" height="30" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="28" y="97" fill="currentColor">line 5, in tinh_toan → return chia(10, 0)</text>
+    <rect x="16" y="116" width="372" height="30" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="28" y="135" fill="currentColor">line 2, in chia → return a / b</text>
+    <rect x="16" y="158" width="372" height="30" rx="6" fill="#ef4444" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="28" y="177" font-weight="700" fill="currentColor">ZeroDivisionError: division by zero</text>
+  </g>
+
+  <g stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="4 3">
+    <line x1="388" y1="55" x2="470" y2="76"/>
+    <line x1="388" y1="93" x2="470" y2="146"/>
+    <line x1="388" y1="131" x2="470" y2="216"/>
+  </g>
+
+  <g>
+    <rect x="470" y="60" width="234" height="48" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="484" y="80" font-size="13" font-weight="700" fill="currentColor">main()</text>
+    <text x="484" y="98" font-size="10.5" fill="currentColor" opacity="0.7">điểm bắt đầu — gọi tinh_toan</text>
+
+    <rect x="470" y="130" width="234" height="60" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="484" y="150" font-size="13" font-weight="700" fill="currentColor">tinh_toan()</text>
+    <text x="484" y="168" font-size="10.5" fill="currentColor" opacity="0.75">truyền số 0 → chia(10, 0)</text>
+    <text x="484" y="183" font-size="10.5" font-weight="700" fill="#f59e0b">⚠ nguồn của lỗi gốc</text>
+
+    <rect x="470" y="212" width="234" height="60" rx="8" fill="#ef4444" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="484" y="232" font-size="13" font-weight="700" fill="currentColor">chia()</text>
+    <text x="484" y="250" font-size="10.5" fill="currentColor" opacity="0.75">a / b với b = 0</text>
+    <text x="484" y="265" font-size="10.5" font-weight="700" fill="#ef4444">💥 nơi chương trình sập</text>
+  </g>
+
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <defs>
+      <marker id="arrChia" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+        <path d="M0,0 L8,4 L0,8 Z" fill="currentColor" fill-opacity="0.6"/>
+      </marker>
+    </defs>
+    <line x1="587" y1="108" x2="587" y2="128" marker-end="url(#arrChia)"/>
+    <line x1="587" y1="190" x2="587" y2="210" marker-end="url(#arrChia)"/>
+  </g>
+  <text x="600" y="122" font-size="10" fill="currentColor" opacity="0.65">gọi</text>
+  <text x="600" y="204" font-size="10" fill="currentColor" opacity="0.65">gọi</text>
+
+  <text x="16" y="312" font-size="11" fill="currentColor" opacity="0.8">Domino đổ ở chia (nơi sập), nhưng số 0 đến từ tinh_toan — nơi sập KHÔNG luôn là nơi có lỗi gốc.</text>
+</svg>
+
 ### Cách đọc — 3 quy tắc vàng
 
 1. **Đọc dòng cuối cùng trước** (với Python) — đó là TÊN LỖI và mô tả: `ZeroDivisionError: division by zero` (lỗi chia cho 0). Với Java/JavaScript/Go thì tên lỗi nằm ở **dòng đầu**, các hàm liệt kê bên dưới.

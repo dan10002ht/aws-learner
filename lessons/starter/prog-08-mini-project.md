@@ -34,6 +34,72 @@ Mọi app CLI đều có chung một "trái tim": **vòng lặp chính** (main l
 
 Logic: in menu → đọc lựa chọn → xử lý → lặp lại; nếu chọn "Thoát" thì dừng vòng lặp.
 
+Sơ đồ dưới đây ghép cả vòng đời dữ liệu (load lúc mở, save khi thay đổi — hoàn thiện ở Milestone 5) với nhịp vòng lặp chính, để bạn thấy bức tranh tổng của cả dự án:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 560" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Vòng lặp chính của app CLI và vòng đời dữ liệu load/save</title>
+  <desc>Sơ đồ luồng: lúc mở app load dữ liệu từ file, rồi vào vòng lặp in menu, đọc lựa chọn, rẽ nhánh theo 1 thêm, 2 xem, 3 tổng rồi save và quay lại; lựa chọn 4 thì save và thoát.</desc>
+  <defs>
+    <marker id="mlArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
+  </defs>
+
+  <text x="360" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Vòng lặp chính + vòng đời dữ liệu</text>
+
+  <!-- Start: load -->
+  <rect x="276" y="40" width="168" height="46" rx="23" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="360" y="62" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Mở app</text>
+  <text x="360" y="78" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">load dữ liệu từ file</text>
+  <line x1="360" y1="86" x2="360" y2="106" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#mlArr)"/>
+
+  <!-- In menu -->
+  <rect x="276" y="108" width="168" height="44" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="360" y="135" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">In menu (1-4)</text>
+  <line x1="360" y1="152" x2="360" y2="172" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#mlArr)"/>
+
+  <!-- Doc lua chon -->
+  <rect x="276" y="174" width="168" height="44" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="360" y="201" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Đọc lựa chọn</text>
+  <line x1="360" y1="218" x2="360" y2="238" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#mlArr)"/>
+
+  <!-- Decision -->
+  <path d="M360 240 L452 286 L360 332 L268 286 Z" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="360" y="282" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Rẽ nhánh</text>
+  <text x="360" y="298" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">theo lựa chọn</text>
+
+  <!-- Branch 1/2/3 to the left column -->
+  <line x1="268" y1="286" x2="150" y2="286" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#mlArr)"/>
+  <text x="208" y="278" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">1 / 2 / 3</text>
+
+  <rect x="16" y="252" width="134" height="68" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="83" y="274" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Xử lý</text>
+  <text x="83" y="291" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">1 thêm khoản chi</text>
+  <text x="83" y="305" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">2 xem · 3 tổng</text>
+
+  <!-- 1/2/3 -> save -->
+  <line x1="83" y1="320" x2="83" y2="356" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#mlArr)"/>
+  <rect x="16" y="358" width="134" height="44" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="83" y="380" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">save file</text>
+  <text x="83" y="394" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">(sau khi thay đổi)</text>
+
+  <!-- save -> lap lai (back up to In menu) -->
+  <path d="M83 402 V452 H360 V152" fill="none" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#mlArr)"/>
+  <text x="220" y="446" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">lặp lại</text>
+
+  <!-- Branch 4 to the right -->
+  <line x1="452" y1="286" x2="570" y2="286" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#mlArr)"/>
+  <text x="511" y="278" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">4 Thoát</text>
+
+  <rect x="572" y="264" width="132" height="44" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="638" y="291" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">save file</text>
+  <line x1="638" y1="308" x2="638" y2="344" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#mlArr)"/>
+
+  <rect x="572" y="346" width="132" height="46" rx="23" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="638" y="374" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Thoát</text>
+
+  <!-- else label note -->
+  <text x="360" y="500" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">Lựa chọn không hợp lệ → báo lỗi rồi quay lại in menu.</text>
+</svg>
+
 ```python
 def show_menu():
     print("\n=== QUẢN LÝ CHI TIÊU ===")

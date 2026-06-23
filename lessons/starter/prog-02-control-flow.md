@@ -141,6 +141,72 @@ if (diem >= 8) {
 
 Lưu ý: Python viết gọn `elif`, ba ngôn ngữ còn lại viết đầy đủ `else if`.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 0 740 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Flowchart rẽ nhánh if/else và bậc thang xếp loại điểm</title>
+  <desc>Bên trái: ô điều kiện hình thoi tuoi lớn hơn hoặc bằng 18 rẽ hai nhánh Đúng và Sai. Bên phải: chuỗi if/elif/else xếp loại điểm kiểm tra lần lượt từ trên xuống diem lớn hơn hoặc bằng 8 Giỏi, lớn hơn hoặc bằng 6.5 Khá, lớn hơn hoặc bằng 5 Trung bình, ngược lại Cần cố gắng, dừng ở nhánh đầu tiên đúng.</desc>
+  <defs>
+    <marker id="cfArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+
+  <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">if / else — chọn một trong hai nhánh</text>
+
+  <ellipse cx="120" cy="52" rx="54" ry="17" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="120" y="56" font-size="11.5" text-anchor="middle" fill="currentColor">Bắt đầu</text>
+  <line x1="120" y1="69" x2="120" y2="88" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#cfArr)"/>
+
+  <polygon points="120,92 196,134 120,176 44,134" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="120" y="131" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">tuoi &gt;= 18 ?</text>
+  <text x="120" y="148" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">điều kiện</text>
+
+  <line x1="44" y1="134" x2="22" y2="134" stroke="currentColor" stroke-opacity="0.5"/>
+  <line x1="22" y1="134" x2="22" y2="210" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#cfArr)"/>
+  <text x="30" y="200" font-size="10.5" fill="#ef4444" opacity="0.95" font-weight="700">Sai</text>
+  <line x1="196" y1="134" x2="218" y2="134" stroke="currentColor" stroke-opacity="0.5"/>
+  <line x1="218" y1="134" x2="218" y2="210" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#cfArr)"/>
+  <text x="200" y="200" font-size="10.5" fill="#10b981" opacity="0.95" font-weight="700">Đúng</text>
+
+  <rect x="-12" y="214" width="68" height="40" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="22" y="238" font-size="10.5" text-anchor="middle" fill="currentColor">chưa đủ tuổi</text>
+  <rect x="184" y="214" width="68" height="40" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="218" y="238" font-size="10.5" text-anchor="middle" fill="currentColor">đủ tuổi bầu cử</text>
+
+  <text x="300" y="22" font-size="13.5" font-weight="700" fill="currentColor">if / elif / else — bậc thang xếp loại điểm</text>
+  <text x="300" y="40" font-size="10.5" fill="currentColor" opacity="0.7">kiểm tra từ trên xuống, dừng ở nhánh ĐÚNG đầu tiên</text>
+
+  <g>
+    <polygon points="360,52 432,76 360,100 288,76" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="360" y="80" font-size="11" text-anchor="middle" fill="currentColor">diem &gt;= 8 ?</text>
+    <line x1="432" y1="76" x2="556" y2="76" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#cfArr)"/>
+    <text x="470" y="69" font-size="10" fill="#10b981" font-weight="700">Đúng</text>
+    <rect x="560" y="60" width="140" height="32" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="630" y="80" font-size="11" text-anchor="middle" fill="currentColor">in "Giỏi" → dừng</text>
+    <line x1="360" y1="100" x2="360" y2="124" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#cfArr)"/>
+    <text x="368" y="116" font-size="10" fill="#ef4444" font-weight="700">Sai</text>
+  </g>
+  <g>
+    <polygon points="360,128 432,152 360,176 288,152" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="360" y="156" font-size="11" text-anchor="middle" fill="currentColor">diem &gt;= 6.5 ?</text>
+    <line x1="432" y1="152" x2="556" y2="152" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#cfArr)"/>
+    <text x="470" y="145" font-size="10" fill="#10b981" font-weight="700">Đúng</text>
+    <rect x="560" y="136" width="140" height="32" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="630" y="156" font-size="11" text-anchor="middle" fill="currentColor">in "Khá" → dừng</text>
+    <line x1="360" y1="176" x2="360" y2="200" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#cfArr)"/>
+    <text x="368" y="192" font-size="10" fill="#ef4444" font-weight="700">Sai</text>
+  </g>
+  <g>
+    <polygon points="360,204 432,228 360,252 288,228" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="360" y="232" font-size="11" text-anchor="middle" fill="currentColor">diem &gt;= 5 ?</text>
+    <line x1="432" y1="228" x2="556" y2="228" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#cfArr)"/>
+    <text x="470" y="221" font-size="10" fill="#10b981" font-weight="700">Đúng</text>
+    <rect x="560" y="212" width="140" height="32" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="630" y="232" font-size="11" text-anchor="middle" fill="currentColor">in "Trung bình" → dừng</text>
+    <line x1="360" y1="252" x2="360" y2="276" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#cfArr)"/>
+    <text x="368" y="268" font-size="10" fill="#ef4444" font-weight="700">Sai</text>
+  </g>
+  <rect x="290" y="280" width="140" height="34" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="301" font-size="11" text-anchor="middle" fill="currentColor">else: in "Cần cố gắng"</text>
+</svg>
+
 > 💡 **Ghi nhớ**: Máy tính kiểm tra các điều kiện **từ trên xuống dưới** và chỉ chạy **nhánh đầu tiên đúng**, rồi bỏ qua tất cả nhánh còn lại. Với điểm 7.5, máy thấy `7.5 >= 8` sai, sang `7.5 >= 6.5` đúng → in "Khá" và dừng, không xét tiếp.
 
 ## 2. So sánh và logic — ngôn ngữ của điều kiện
@@ -302,6 +368,45 @@ Giải phẫu vòng for "kiểu C" (JavaScript/Java/Go) gồm 3 phần, ngăn c�
 
 Python đi đường khác: `range(1, 6)` tạo sẵn dãy số rồi `for` duyệt qua từng số. Chú ý `range(1, 6)` **không bao gồm số 6** — tính từ 1 đến *trước* 6.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-12 0 732 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Vòng đời của vòng lặp for — khởi tạo, điều kiện, thân, bước nhảy</title>
+  <desc>Vòng tròn các bước của for: khởi tạo i bằng 1 chạy một lần, rồi kiểm tra điều kiện i nhỏ hơn hoặc bằng 5; nếu đúng thì chạy thân vòng và tăng i lên 1 rồi quay lại kiểm tra; nếu sai thì thoát vòng lặp.</desc>
+  <defs>
+    <marker id="forArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+
+  <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">Vòng đời của for: 3 phần — khởi tạo · điều kiện · bước nhảy</text>
+
+  <rect x="40" y="48" width="150" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="115" y="70" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">1. Khởi tạo</text>
+  <text x="115" y="86" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">i = 1 (chỉ một lần)</text>
+  <line x1="115" y1="92" x2="115" y2="128" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#forArr)"/>
+
+  <polygon points="115,132 235,182 115,232 -5,182" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="115" y="178" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">2. Điều kiện</text>
+  <text x="115" y="195" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">i &lt;= 5 ?</text>
+
+  <line x1="235" y1="182" x2="300" y2="182" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#forArr)"/>
+  <text x="248" y="174" font-size="10.5" fill="#10b981" font-weight="700">Đúng</text>
+
+  <rect x="304" y="138" width="170" height="44" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="389" y="160" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Thân vòng lặp</text>
+  <text x="389" y="176" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">print(i)</text>
+  <line x1="389" y1="182" x2="389" y2="218" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#forArr)"/>
+
+  <rect x="304" y="222" width="170" height="44" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="389" y="244" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">3. Bước nhảy</text>
+  <text x="389" y="260" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">i = i + 1 (i++)</text>
+
+  <path d="M304 244 H115 V236" fill="none" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#forArr)"/>
+  <text x="150" y="262" font-size="10.5" fill="currentColor" opacity="0.7">quay lại kiểm tra</text>
+
+  <line x1="115" y1="232" x2="115" y2="300" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#forArr)"/>
+  <text x="124" y="290" font-size="10.5" fill="#ef4444" font-weight="700">Sai</text>
+  <rect x="40" y="304" width="150" height="40" rx="9" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="115" y="328" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Thoát vòng lặp</text>
+</svg>
+
 ### 3.2. Vòng lặp while — lặp đến khi điều kiện sai
 
 `while` (nghĩa là "trong khi") giống việc khuấy nồi súp: bạn không biết trước cần khuấy bao nhiêu lần, chỉ biết "trong khi súp chưa sôi thì còn khuấy".
@@ -374,6 +479,46 @@ std::cout << "Tiêu được " << ngay << " ngày, còn dư " << tien << std::en
 
 - **break** ("bẻ gãy"): **thoát hẳn** vòng lặp ngay lập tức. Như đang tìm chìa khoá trong từng túi áo — tìm thấy rồi thì dừng luôn, không cần lục túi còn lại.
 - **continue** ("tiếp tục"): **bỏ qua phần còn lại của lượt này**, nhảy ngay sang lượt kế tiếp. Như đang phát quà cho từng người trong hàng — gặp người đã có quà thì bỏ qua, sang người tiếp theo.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>break và continue trên cùng một vòng lặp</title>
+  <desc>Một vòng lặp với các bước đầu vòng, lệnh continue và lệnh break trong thân. continue nhảy về đầu vòng để sang lượt tiếp theo, bỏ phần còn lại của lượt. break nhảy ra ngoài vòng lặp, kết thúc hẳn.</desc>
+  <defs>
+    <marker id="bcArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+
+  <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">break vs continue — hai kiểu nhảy trong vòng lặp</text>
+
+  <rect x="150" y="44" width="300" height="232" rx="14" fill="#3b82f6" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.22" stroke-dasharray="6 4"/>
+  <text x="166" y="64" font-size="11" fill="currentColor" opacity="0.7">vòng lặp for / while</text>
+
+  <rect x="190" y="76" width="220" height="34" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="300" y="97" font-size="11.5" text-anchor="middle" fill="currentColor">đầu vòng (kiểm tra điều kiện)</text>
+  <line x1="300" y1="110" x2="300" y2="132" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#bcArr)"/>
+
+  <rect x="190" y="136" width="220" height="34" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="300" y="157" font-size="11.5" text-anchor="middle" fill="currentColor">if số chẵn → continue</text>
+  <line x1="300" y1="170" x2="300" y2="192" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#bcArr)"/>
+
+  <rect x="190" y="196" width="220" height="34" rx="8" fill="#ef4444" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="300" y="217" font-size="11.5" text-anchor="middle" fill="currentColor">if i == 9 → break</text>
+  <line x1="300" y1="230" x2="300" y2="252" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#bcArr)"/>
+
+  <rect x="210" y="252" width="180" height="20" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="300" y="266" font-size="11" text-anchor="middle" fill="currentColor">phần còn lại: print(i)</text>
+
+  <path d="M190 153 H110 V93 H186" fill="none" stroke="#f59e0b" stroke-opacity="0.9" stroke-width="1.6" marker-end="url(#bcArr)"/>
+  <text x="40" y="120" font-size="11.5" font-weight="700" fill="#f59e0b">continue</text>
+  <text x="40" y="136" font-size="10" fill="currentColor" opacity="0.7">về đầu vòng,</text>
+  <text x="40" y="149" font-size="10" fill="currentColor" opacity="0.7">bỏ phần còn lại</text>
+
+  <path d="M410 213 H540 V296 H300" fill="none" stroke="#ef4444" stroke-opacity="0.9" stroke-width="1.6" marker-end="url(#bcArr)"/>
+  <text x="556" y="200" font-size="11.5" font-weight="700" fill="#ef4444">break</text>
+  <text x="556" y="216" font-size="10" fill="currentColor" opacity="0.7">nhảy ra ngoài,</text>
+  <text x="556" y="229" font-size="10" fill="currentColor" opacity="0.7">kết thúc vòng lặp</text>
+  <rect x="200" y="288" width="200" height="22" rx="7" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="300" y="303" font-size="11" text-anchor="middle" fill="currentColor">lệnh sau vòng lặp</text>
+</svg>
 
 Ví dụ: duyệt số 1 → 10, bỏ qua số chẵn, và dừng hẳn khi gặp số 9.
 

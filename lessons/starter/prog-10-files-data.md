@@ -372,6 +372,28 @@ std::cout << d.tm_year + 1900 << "\n";              // 2026
 
 **Ý tưởng về múi giờ (timezone):** một thời điểm duy nhất nhìn ra giá trị khác nhau tuỳ nơi — 12:00 trưa ở Hà Nội (UTC+7) là 05:00 sáng ở London (UTC+0). Quy tắc vàng trong thực tế:
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Một mốc thời gian duy nhất nhìn khác nhau theo múi giờ</title>
+  <desc>Cùng một thời điểm tuyệt đối (UTC 05:00) hiển thị thành 12:00 ở Hà Nội (UTC+7) và 05:00 ở London (UTC+0). Quy tắc: lưu UTC, đổi giờ địa phương khi hiển thị.</desc>
+  <text x="360" y="26" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Một mốc thời gian, nhiều cách hiển thị</text>
+  <rect x="252" y="48" width="216" height="56" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="360" y="72" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.7">Mốc thời gian tuyệt đối (UTC)</text>
+  <text x="360" y="93" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">2026-06-11T05:00:00Z</text>
+  <line x1="320" y1="104" x2="200" y2="152" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.5"/>
+  <line x1="400" y1="104" x2="520" y2="152" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.5"/>
+  <text x="252" y="138" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">+7 giờ</text>
+  <text x="468" y="138" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">+0 giờ</text>
+  <rect x="48" y="156" width="280" height="104" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="188" y="182" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Hà Nội — UTC+7</text>
+  <text x="188" y="222" font-size="26" font-weight="700" text-anchor="middle" fill="currentColor">12:00</text>
+  <text x="188" y="245" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">trưa</text>
+  <rect x="392" y="156" width="280" height="104" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="532" y="182" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">London — UTC+0</text>
+  <text x="532" y="222" font-size="26" font-weight="700" text-anchor="middle" fill="currentColor">05:00</text>
+  <text x="532" y="245" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">sáng</text>
+  <text x="360" y="286" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.78">Lưu UTC · đổi sang giờ địa phương chỉ khi hiển thị</text>
+</svg>
+
 > 💡 Ghi nhớ: **Lưu trữ thời gian bằng UTC**, chỉ đổi sang giờ địa phương khi **hiển thị** cho người dùng. Nếu lưu giờ địa phương lẫn lộn, sớm muộn bạn cũng tính sai khoảng cách thời gian giữa hai sự kiện.
 
 Định dạng chuẩn để trao đổi giữa hệ thống là **ISO 8601**: `2026-06-11T09:30:00Z` (chữ `Z` nghĩa là UTC). Hãy ưu tiên định dạng này thay vì kiểu "11/06/2026" dễ nhầm ngày với tháng.
@@ -641,6 +663,43 @@ std::cout << "Tổng doanh thu: " << (long)tong << "\n"
 ```
 
 Mẫu hình ở đây rất phổ biến: **đọc → biến đổi từng dòng → gom nhóm/tổng hợp vào map → xuất kết quả**. Bạn sẽ gặp lại nó trong phân tích log, báo cáo bán hàng, xử lý dữ liệu khoa học.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Pipeline xử lý dữ liệu CSV: đọc, biến đổi, gom nhóm, xuất</title>
+  <desc>Luồng từ trái sang phải: file CSV được đọc từng dòng, biến đổi (so_luong nhân gia), gom nhóm vào map theo san_pham, rồi xuất tổng doanh thu và sản phẩm bán chạy nhất.</desc>
+  <defs>
+    <marker id="dataArrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 Z" fill="currentColor" opacity="0.55"/>
+    </marker>
+  </defs>
+  <text x="360" y="24" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Pipeline thống kê CSV</text>
+  <rect x="14" y="80" width="116" height="78" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="72" y="106" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">File CSV</text>
+  <text x="72" y="126" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">san_pham,</text>
+  <text x="72" y="140" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">so_luong, gia</text>
+  <line x1="132" y1="119" x2="160" y2="119" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.6" marker-end="url(#dataArrow)"/>
+  <rect x="162" y="80" width="116" height="78" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="220" y="106" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Đọc dòng</text>
+  <text x="220" y="126" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">bỏ header,</text>
+  <text x="220" y="140" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">tách theo dấu phẩy</text>
+  <line x1="280" y1="119" x2="308" y2="119" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.6" marker-end="url(#dataArrow)"/>
+  <rect x="310" y="80" width="116" height="78" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="368" y="106" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Biến đổi</text>
+  <text x="368" y="129" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">so_luong × gia</text>
+  <text x="368" y="145" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">= tiền mỗi dòng</text>
+  <line x1="428" y1="119" x2="456" y2="119" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.6" marker-end="url(#dataArrow)"/>
+  <rect x="458" y="80" width="116" height="78" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="516" y="106" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Gom nhóm</text>
+  <text x="516" y="129" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">map[san_pham]</text>
+  <text x="516" y="145" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">+= tiền</text>
+  <line x1="576" y1="119" x2="604" y2="119" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.6" marker-end="url(#dataArrow)"/>
+  <rect x="606" y="80" width="100" height="78" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="656" y="106" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Xuất</text>
+  <text x="656" y="129" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">tổng doanh thu</text>
+  <text x="656" y="145" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">bán chạy nhất</text>
+  <text x="220" y="196" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">lặp lại cho từng dòng</text>
+  <path d="M308 178 Q220 230 172 162" fill="none" stroke="currentColor" stroke-opacity="0.4" stroke-width="1.4" stroke-dasharray="4 4" marker-end="url(#dataArrow)"/>
+</svg>
 
 ## 8. Ba lỗi kinh điển về file & dữ liệu
 

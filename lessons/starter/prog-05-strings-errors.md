@@ -114,6 +114,64 @@ std::cout << s.substr(6) << "\n";     // World (từ vị trí 6 đến hết)
 
 > ⚠️ Lỗi người mới hay gặp: nghĩ rằng `s[0:5]` lấy 6 ký tự (0,1,2,3,4,5). Sai! Nó lấy 5 ký tự, **dừng trước** vị trí 5. Mẹo nhớ: số ký tự lấy được = kết thúc − bắt đầu (5 − 0 = 5).
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Cắt chuỗi 'Hello World' với chỉ số ký tự</title>
+  <desc>Dãy 11 ô ký tự của 'Hello World' đánh số từ 0 đến 10. Vùng [0:5] tô xanh gồm các ký tự H-e-l-l-o ('Hello'), vùng [6:] tô lục gồm W-o-r-l-d ('World'). Mỗi lần cắt dừng TRƯỚC vị trí kết thúc; số ký tự lấy được bằng vị trí kết thúc trừ vị trí bắt đầu.</desc>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Cắt chuỗi: "Hello World"</text>
+  <g font-size="13" font-weight="700" text-anchor="middle">
+    <rect x="16" y="44" width="56" height="48" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="72" y="44" width="56" height="48" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="128" y="44" width="56" height="48" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="184" y="44" width="56" height="48" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="240" y="44" width="56" height="48" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="296" y="44" width="56" height="48" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="352" y="44" width="56" height="48" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="408" y="44" width="56" height="48" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="464" y="44" width="56" height="48" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="520" y="44" width="56" height="48" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="576" y="44" width="56" height="48" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="44" y="76" fill="currentColor">H</text>
+    <text x="100" y="76" fill="currentColor">e</text>
+    <text x="156" y="76" fill="currentColor">l</text>
+    <text x="212" y="76" fill="currentColor">l</text>
+    <text x="268" y="76" fill="currentColor">o</text>
+    <text x="324" y="76" fill="currentColor" opacity="0.55">␣</text>
+    <text x="380" y="76" fill="currentColor">W</text>
+    <text x="436" y="76" fill="currentColor">o</text>
+    <text x="492" y="76" fill="currentColor">r</text>
+    <text x="548" y="76" fill="currentColor">l</text>
+    <text x="604" y="76" fill="currentColor">d</text>
+  </g>
+  <g font-size="12" text-anchor="middle" fill="currentColor" opacity="0.75">
+    <text x="44" y="110">0</text>
+    <text x="100" y="110">1</text>
+    <text x="156" y="110">2</text>
+    <text x="212" y="110">3</text>
+    <text x="268" y="110">4</text>
+    <text x="324" y="110">5</text>
+    <text x="380" y="110">6</text>
+    <text x="436" y="110">7</text>
+    <text x="492" y="110">8</text>
+    <text x="548" y="110">9</text>
+    <text x="604" y="110">10</text>
+  </g>
+  <g>
+    <line x1="16" y1="132" x2="296" y2="132" stroke="#3b82f6" stroke-width="3"/>
+    <text x="156" y="152" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">s[0:5] = "Hello"  → 5 ký tự (5 − 0)</text>
+  </g>
+  <g>
+    <line x1="352" y1="132" x2="632" y2="132" stroke="#10b981" stroke-width="3"/>
+    <text x="492" y="152" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">s[6:] = "World" → từ 6 đến hết</text>
+  </g>
+  <g>
+    <line x1="296" y1="40" x2="296" y2="118" stroke="#ef4444" stroke-width="2" stroke-dasharray="4 3"/>
+    <text x="360" y="186" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Dừng TRƯỚC vị trí kết thúc</text>
+    <text x="360" y="204" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">vị trí 5 KHÔNG được lấy</text>
+  </g>
+  <rect x="16" y="218" width="616" height="24" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="324" y="234" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Số ký tự lấy được = vị trí kết thúc − vị trí bắt đầu</text>
+</svg>
+
 ### 2.4. Tìm kiếm trong chuỗi
 
 Hai câu hỏi thường gặp: "chuỗi này có chứa từ kia không?" và "từ kia nằm ở vị trí nào?":
@@ -289,6 +347,46 @@ Khi exception xảy ra mà không ai "đỡ", chương trình **dừng đột ng
 ## 5. try/catch — tấm lưới an toàn
 
 Cơ chế: "**Thử (try)** làm việc này; nếu có sự cố thì **bắt (catch)** lấy và xử lý nhẹ nhàng thay vì văng". Giống diễn viên xiếc đi trên dây có lưới bên dưới — ngã thì rơi vào lưới chứ không rơi xuống đất.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Luồng try / catch / finally như diễn viên xiếc có lưới an toàn</title>
+  <desc>Code trong khối try chạy bình thường (diễn viên đi trên dây). Nếu không có lỗi thì đi thẳng tới finally. Nếu có exception thì rơi vào khối catch — tấm lưới an toàn bên dưới — rồi cũng tới finally. Khối finally LUÔN chạy dù có lỗi hay không.</desc>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">try / catch / finally — tấm lưới an toàn</text>
+
+  <rect x="40" y="48" width="280" height="62" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="180" y="74" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">try { ... }</text>
+  <text x="180" y="94" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.72">đi trên dây — code chạy bình thường</text>
+
+  <line x1="180" y1="110" x2="180" y2="156" stroke="currentColor" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="196" y="136" font-size="11.5" font-weight="700" fill="#10b981">không lỗi</text>
+
+  <line x1="320" y1="79" x2="470" y2="79" stroke="#ef4444" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#ar)"/>
+  <text x="395" y="70" font-size="11.5" font-weight="700" text-anchor="middle" fill="#ef4444">có exception → "ngã"</text>
+
+  <rect x="470" y="48" width="240" height="62" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="590" y="74" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">catch (e) { ... }</text>
+  <text x="590" y="94" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.72">tấm lưới — bắt và xử lý nhẹ nhàng</text>
+
+  <line x1="590" y1="110" x2="590" y2="180" stroke="currentColor" stroke-width="2"/>
+  <line x1="590" y1="180" x2="364" y2="180" stroke="currentColor" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="40" y="156" width="280" height="58" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="180" y="181" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">finally { ... }</text>
+  <text x="180" y="200" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.72">LUÔN chạy — dù lỗi hay không</text>
+
+  <line x1="180" y1="214" x2="180" y2="248" stroke="currentColor" stroke-width="2" marker-end="url(#ar)"/>
+  <rect x="60" y="248" width="240" height="34" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="180" y="270" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Chương trình chạy tiếp — không văng</text>
+
+  <text x="395" y="232" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.75">Không có lưới: ngã là rơi xuống đất → chương trình "văng" (crash)</text>
+  <line x1="120" y1="298" x2="640" y2="298" stroke="#10b981" stroke-width="2.5" stroke-dasharray="3 4"/>
+  <text x="380" y="316" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">lưới = catch: rơi vào lưới chứ không rơi xuống đất</text>
+</svg>
 
 Ví dụ: đổi chuỗi người dùng nhập thành số — việc rất dễ thất bại nếu họ gõ chữ:
 
