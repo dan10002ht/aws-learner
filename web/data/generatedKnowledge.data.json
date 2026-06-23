@@ -35457,5 +35457,305 @@
       0
     ],
     "explanation": "Hàng loạt deny/403 từ cùng một user là dấu hiệu đang thử truy cập tài nguyên không thuộc về mình.\n✓ Lượng lớn deny theo user_id trong thời gian ngắn là dấu hiệu dò IDOR/Broken Access Control\n✗ Đăng nhập thành công có outcome allow, không phải deny\n✗ DDoS layer-3 ở tầng mạng, không sinh ra log deny authz theo user\n✗ Backup định kỳ không tạo ra loạt từ chối quyền"
+  },
+  {
+    "id": "eng-q-079",
+    "courseId": "ENGINEER",
+    "lesson": "eng-osi-model",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một frame Ethernet đến switch với địa chỉ MAC đích chưa có trong MAC address table của nó. Switch sẽ làm gì với frame này?",
+    "options": [
+      "Phát frame ra mọi cổng (trừ cổng nhận) giống như với frame broadcast",
+      "Loại bỏ frame vì không biết cổng đích",
+      "Gửi frame ngược lại đúng cổng vừa nhận",
+      "Hỏi router (L3) để biết phải gửi đi đâu"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Switch học MAC↔cổng từ MAC nguồn; khi đích chưa biết (hoặc là broadcast) nó mới phát ra mọi cổng để tìm máy đích.\n✓ Frame tới MAC chưa biết hoặc địa chỉ broadcast thì switch phát ra mọi cổng — đúng theo cách switch xử lý đích lạ.\n✗ Switch không drop frame chỉ vì chưa biết cổng đích; nó flood để học.\n✗ Gửi ngược lại đúng cổng vừa nhận là vô nghĩa, không giúp tới đích.\n✗ Switch là thiết bị tầng 2, không hỏi router để quyết định chuyển frame trong LAN."
+  },
+  {
+    "id": "eng-q-080",
+    "courseId": "ENGINEER",
+    "lesson": "eng-osi-model",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khi dữ liệu đi XUỐNG chồng tầng ở bên gửi (encapsulation), tên PDU thay đổi theo thứ tự nào?",
+    "options": [
+      "Data → Segment → Packet → Frame → Bits",
+      "Bits → Frame → Packet → Segment → Data",
+      "Packet → Segment → Frame → Data → Bits",
+      "Data → Packet → Segment → Frame → Bits"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đi xuống bọc thêm header mỗi tầng, và tên PDU đổi: Data (L7) → Segment (L4) → Packet (L3) → Frame (L2) → Bits (L1).\n✓ Data → Segment → Packet → Frame → Bits đúng thứ tự đi xuống từ tầng cao đến tầng thấp.\n✗ Thứ tự ngược lại là quá trình đi lên (decapsulation) ở bên nhận, không phải bên gửi.\n✗ Bắt đầu bằng Packet rồi Segment là sai vì Segment (L4) ở trên Packet (L3).\n✗ Đặt Packet trước Segment là sai trật tự tầng — Segment (L4) phải đến trước Packet (L3) khi đi xuống."
+  },
+  {
+    "id": "eng-q-081",
+    "courseId": "ENGINEER",
+    "lesson": "eng-osi-model",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bảng OSI trong bài, port (cổng) là khái niệm thuộc tầng nào?",
+    "options": [
+      "Tầng 4 — Transport",
+      "Tầng 3 — Network",
+      "Tầng 7 — Application",
+      "Tầng 2 — Data Link"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Port giúp giao dữ liệu tới đúng tiến trình trên host, là đặc trưng của tầng vận chuyển.\n✓ Tầng 4 — Transport (TCP/UDP) dùng port để đưa dữ liệu đúng tiến trình.\n✗ Tầng 3 dùng địa chỉ IP để định tuyến giữa các mạng, không dùng port.\n✗ Tầng 7 là giao thức app như HTTP/DNS, không phải nơi định nghĩa port.\n✗ Tầng 2 định danh bằng MAC trong LAN, không có khái niệm port."
+  },
+  {
+    "id": "eng-q-082",
+    "courseId": "ENGINEER",
+    "lesson": "eng-osi-model",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Mô hình TCP/IP gộp ba tầng nào của OSI thành một tầng 'Application' duy nhất?",
+    "options": [
+      "Tầng 5 (Session) + Tầng 6 (Presentation) + Tầng 7 (Application)",
+      "Tầng 4 (Transport) + Tầng 5 (Session) + Tầng 6 (Presentation)",
+      "Tầng 1 (Physical) + Tầng 2 (Data Link) + Tầng 3 (Network)",
+      "Tầng 3 (Network) + Tầng 4 (Transport) + Tầng 7 (Application)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "TCP/IP gộp ba tầng trên cùng của OSI vì thực tế HTTP, TLS, JSON... thường do cùng một ứng dụng xử lý.\n✓ Session (5) + Presentation (6) + Application (7) được gộp thành 'Application' trong TCP/IP.\n✗ Transport (4) là tầng riêng trong TCP/IP, không bị gộp vào Application.\n✗ Physical + Data Link mới được gộp thành 'Link', còn Network thành 'Internet' — không liên quan tới Application.\n✗ Network (3) và Transport (4) là các tầng riêng (Internet, Transport), không gộp với Application."
+  },
+  {
+    "id": "eng-q-083",
+    "courseId": "ENGINEER",
+    "lesson": "eng-osi-model",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn chạy `nc -zv host 443` và nhận về 'connection refused'. Theo lăng kính 7 tầng, kết luận chính xác nhất là gì?",
+    "options": [
+      "Gói đã tới được host (L3 ổn) nhưng tại L4 cổng đang đóng / không có gì nghe",
+      "Không có đường định tuyến tới host — nghẽn ngay ở tầng 3",
+      "Tên miền không phân giải được — lỗi DNS tầng 7",
+      "Card mạng (L1) đang ở trạng thái DOWN"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "'Connection refused' nghĩa là tới được host nhưng L4 chủ động từ chối vì cổng đóng/không ai nghe.\n✓ Tới được L3 nhưng L4 đóng port — đúng định nghĩa 'connection refused' trong bài.\n✗ 'No route to host'/timeout mới là dấu hiệu nghẽn ở L3; 'refused' khác với không có route.\n✗ Lỗi DNS sẽ là NXDOMAIN ở L7, không phải 'connection refused' từ một port cụ thể.\n✗ NIC DOWN là tín hiệu hỏng L1 (`ip link` báo state DOWN), không trả về 'connection refused'."
+  },
+  {
+    "id": "eng-q-084",
+    "courseId": "ENGINEER",
+    "lesson": "eng-osi-model",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Triệu chứng 'ping gói nhỏ thì được, nhưng tải file lớn thì treo' — đặc biệt qua VPN/tunnel — gốc rễ nằm ở đâu theo bài?",
+    "options": [
+      "MTU/MSS mismatch ở tầng 2: gói lớn hơn MTU phải phân mảnh hoặc bị từ chối",
+      "Cổng 443 bị firewall stateful chặn ở tầng 4",
+      "ARP cache cũ khiến không dịch được IP→MAC",
+      "Cert TLS hết hạn nên handshake L6 thất bại với gói lớn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Ethernet (L2) giới hạn payload ~1500 byte (MTU); gói lớn hơn phải phân mảnh hoặc bị từ chối — đó là gốc của lỗi 'nhỏ được, lớn treo'.\n✓ MTU/MSS mismatch ở L2 đúng là nguyên nhân điển hình, hay gặp trong VPN/tunnel theo bài.\n✗ Firewall chặn cổng sẽ làm mọi kết nối hỏng, không phân biệt gói nhỏ/lớn.\n✗ ARP cache cũ gây 'ping được IP này không được IP kia', không phải 'nhỏ được lớn treo'.\n✗ Cert hết hạn làm handshake hỏng với mọi gói, không liên quan kích thước payload."
+  },
+  {
+    "id": "eng-q-085",
+    "courseId": "ENGINEER",
+    "lesson": "eng-osi-model",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một máy A muốn gửi cho 192.168.1.20 trong cùng LAN nhưng chưa biết MAC của nó. Cơ chế nào dịch IP→MAC, và nó hoạt động ra sao?",
+    "options": [
+      "ARP: A gửi broadcast hỏi 'Ai là 192.168.1.20?', máy đó trả riêng MAC, A lưu vào ARP cache",
+      "DNS: A hỏi resolver để đổi địa chỉ IP thành MAC tương ứng",
+      "Router (L3) tra routing table để tìm MAC của máy đích trong LAN",
+      "Switch tự gán MAC mới cho IP đó rồi báo lại cho A"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "ARP là cầu nối L3↔L2: A broadcast ARP request hỏi MAC, máy đích trả ARP reply, A lưu vào ARP cache để lần sau khỏi hỏi.\n✓ ARP với broadcast hỏi/đáp riêng và lưu cache đúng như mô tả trong bài.\n✗ DNS đổi tên miền → IP (L7), không dịch IP → MAC.\n✗ Router định tuyến IP giữa các mạng; trong cùng LAN việc dịch IP→MAC là của ARP, không phải routing table.\n✗ Switch học MAC↔cổng từ frame, không 'gán MAC mới' cho một IP."
+  },
+  {
+    "id": "eng-q-086",
+    "courseId": "ENGINEER",
+    "lesson": "eng-osi-model",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn vừa cập nhật nội dung HTML trên origin, nhưng người dùng vẫn thấy bản cũ. Theo quy trình tư duy 'data cũ' trong bài, nên kiểm tra theo thứ tự nào?",
+    "options": [
+      "Từ gần người dùng xuống: cache trình duyệt (Ctrl+F5) → CDN (x-cache/invalidate) → TTL DNS → object/DB cache",
+      "Từ hạ tầng lên: xoá DB cache → Redis → DNS → CDN → cuối cùng mới tới trình duyệt",
+      "Xoá ARP cache trước tiên vì đó là nơi giữ bản HTML cũ",
+      "Chỉ cần restart server, mọi cache ở mọi tầng sẽ tự xoá theo"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cache nằm rải ở nhiều tầng; bài hướng dẫn đi từ gần người dùng xuống để loại trừ tuần tự từng tầng.\n✓ Trình duyệt → CDN → DNS → object/DB cache đúng thứ tự 'từ gần người dùng xuống' trong bài.\n✗ Đi từ hạ tầng lên là ngược với quy trình bài khuyến nghị, dễ tốn công xoá nhầm.\n✗ ARP cache giữ IP→MAC, không hề giữ nội dung HTML.\n✗ Restart server không xoá cache trình duyệt, CDN edge hay DNS phía client."
+  },
+  {
+    "id": "eng-q-087",
+    "courseId": "ENGINEER",
+    "lesson": "eng-osi-model",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Dịch vụ ALB và AWS WAF thường được gắn nhãn 'L7'. Lý do cốt lõi khiến chúng khác với NLB/Security Group là gì?",
+    "options": [
+      "Chúng đọc được nội dung HTTP (L7) nên xử lý theo request/response; NLB và SG chỉ thấy IP/port (L3/L4)",
+      "Chúng chạy ở tầng vật lý nên nhanh hơn các thiết bị L3/L4",
+      "Chúng dịch IP→MAC bằng ARP nên hoạt động trong LAN",
+      "Chúng định tuyến gói giữa các mạng nên thay thế được router"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "ALB/WAF là L7 vì đọc được nội dung HTTP, trong khi NLB (L4) và Security Group (L3/L4) chỉ lọc theo IP/port và mù với nội dung HTTP.\n✓ Đọc được nội dung HTTP là điểm phân biệt L7 với các thiết bị L3/L4 — đúng theo bài.\n✗ Chúng không chạy ở tầng vật lý; L7 là tầng ứng dụng, cao nhất.\n✗ Dịch IP→MAC là việc của ARP ở L2, không phải ALB/WAF.\n✗ Định tuyến gói giữa các mạng là việc của router (L3), không phải ALB/WAF."
+  },
+  {
+    "id": "eng-q-088",
+    "courseId": "ENGINEER",
+    "lesson": "eng-osi-model",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Tại một switch vật lý, hai máy ở VLAN 10 và VLAN 20 không thấy broadcast của nhau. Muốn hai máy này liên lạc thì phải đi qua đâu?",
+    "options": [
+      "Router (tầng 3), vì VLAN tạo các broadcast domain logic riêng biệt",
+      "Hub (tầng 1), vì hub phát lại ra mọi cổng nên nối được hai VLAN",
+      "ARP (tầng 2), bằng cách broadcast xuyên qua mọi VLAN",
+      "Một cáp quang trực tiếp giữa hai máy ở tầng vật lý"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "VLAN chia switch thành nhiều broadcast domain logic; lưu lượng giữa hai VLAN khác nhau phải đi qua router (L3).\n✓ Router (L3) là nơi định tuyến giữa các VLAN/broadcast domain khác nhau — đúng theo bài.\n✗ Hub không hiểu VLAN và đã lỗi thời; nó không vượt qua ranh giới broadcast domain logic.\n✗ ARP là broadcast và bị giới hạn trong một broadcast domain, không tự xuyên VLAN.\n✗ Cáp trực tiếp L1 không giải quyết việc định tuyến giữa hai mạng logic khác nhau."
+  },
+  {
+    "id": "eng-q-089",
+    "courseId": "ENGINEER",
+    "lesson": "eng-osi-model",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một dịch vụ đang bị 'SYN flood'. Theo bản đồ bảo mật theo tầng, đây là tấn công tầng nào và công cụ AWS nào phù hợp để phòng thủ?",
+    "options": [
+      "L4 (Transport): firewall stateful / Security Group, SYN cookies, rate-limit, Shield",
+      "L7 (Application): AWS WAF với rule chặn SQLi/XSS",
+      "L2 (Data Link): Dynamic ARP Inspection và port security",
+      "L6 (Presentation): nâng TLS 1.3 và bật HSTS"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SYN flood lạm dụng bắt tay TCP nên thuộc L4; phòng thủ là firewall stateful/SG, SYN cookies, rate-limit và Shield.\n✓ L4 với SG/SYN cookies/rate-limit/Shield đúng là tầng và phòng thủ cho SYN flood theo bảng bài.\n✗ WAF (L7) đọc nội dung HTTP, chặn SQLi/XSS nhưng không phải lá chắn cho SYN flood ở L4.\n✗ Dynamic ARP Inspection/port security phòng tấn công L2 như ARP spoofing, không phải SYN flood.\n✗ TLS 1.3/HSTS chống tấn công L5/L6 như TLS downgrade, không liên quan SYN flood."
+  },
+  {
+    "id": "eng-q-090",
+    "courseId": "ENGINEER",
+    "lesson": "eng-osi-model",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trang web 'trắng' không hiển thị. Để khoanh đúng tầng theo bài, cách suy luận nào hợp lý nhất?",
+    "options": [
+      "Tự hỏi tầng nào trong L5–L7: phiên rớt (L5), lỗi giải nén/charset (L6), hay app trả 500 (L7)",
+      "Chắc chắn là lỗi L1: kiểm tra cáp và NIC trước tiên",
+      "Là lỗi L4 vì port 443 chắc chắn đã đóng",
+      "Là lỗi ARP (L2) vì IP→MAC không dịch được nên không tải nổi trang"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Ba tầng trên cùng tách bạch về khái niệm giúp định vị: 'trang trắng' có thể do phiên rớt (5), lỗi giải nén/charset (6), hoặc status 500 từ app (7).\n✓ Phân biệt L5/L6/L7 cho 'trang trắng' đúng tinh thần 'tách ra để định vị' trong bài.\n✗ 'Chắc chắn L1' là đoán mò; nếu link DOWN thì còn không tải được gì, không chỉ 'trang trắng'.\n✗ Khẳng định port 443 đóng là vội vàng; trang trắng vẫn có thể do nội dung L5–L7.\n✗ ARP hỏng sẽ làm không ping/không kết nối được, biểu hiện khác 'trang trắng' do nội dung."
+  },
+  {
+    "id": "eng-q-091",
+    "courseId": "ENGINEER",
+    "lesson": "eng-osi-model",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo bảng debug & latency theo tầng trong bài, những phát biểu nào ĐÚNG? (Chọn tất cả phương án đúng)",
+    "options": [
+      "Quy tắc debug là đi từ dưới lên (link → ARP → route → port → app), dừng ở tầng đầu tiên fail",
+      "TLS handshake (1 RTT) đóng góp latency ở L6, giảm bằng TLS 1.3 / session resumption / HTTP/3",
+      "Độ trễ propagation (tốc độ ánh sáng × khoảng cách) là L1, giảm bằng đặt server gần người dùng",
+      "Đặt server gần người dùng làm tăng số chặng router nên tăng latency L3",
+      "Số chặng router × RTT mỗi chặng là đóng góp latency ở tầng 7"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bài nêu rõ: debug từ dưới lên dừng ở tầng fail; latency là tổng theo tầng với propagation ở L1 và TLS handshake ở L6.\n✓ Debug từ dưới lên và dừng ở tầng đầu tiên fail đúng quy tắc trong bài.\n✓ TLS handshake (1 RTT) ở L6, giảm bằng TLS 1.3/resumption/HTTP/3 — đúng bảng latency.\n✓ Propagation (ánh sáng × khoảng cách) ở L1, giảm bằng đặt server gần (region/edge) — đúng bài.\n✗ Đặt server gần người dùng làm GIẢM khoảng cách/latency, không tăng số chặng.\n✗ Số chặng router × RTT là đóng góp latency ở L3, không phải L7."
+  },
+  {
+    "id": "eng-q-092",
+    "courseId": "ENGINEER",
+    "lesson": "eng-osi-model",
+    "certifications": [
+      "ENGINEER"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Về quan hệ giữa AWS WAF và Security Group trong defense in depth, những phát biểu nào ĐÚNG theo bài? (Chọn tất cả phương án đúng)",
+    "options": [
+      "WAF đọc nội dung HTTP (L7) nên chặn được SQLi/XSS",
+      "Security Group lọc theo IP/port (L3/L4) nhưng mù với nội dung HTTP",
+      "WAF một mình không chặn nổi DDoS thể tích L3/L4",
+      "Security Group có thể thay thế hoàn toàn WAF vì cũng đọc được HTTP request",
+      "Một mình WAF là đủ, không cần xếp chồng với Security Group"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bài nhấn mạnh WAF (L7) và Security Group (L3/L4) bù trừ cho nhau; xếp chồng cả hai mới là defense in depth.\n✓ WAF đọc nội dung HTTP (L7) nên chặn SQLi/XSS — đúng theo bài.\n✓ Security Group lọc IP/port (L3/L4) và mù với nội dung HTTP — đúng theo bài.\n✓ WAF không chặn nổi DDoS thể tích L3/L4 — đúng giới hạn của WAF trong bài.\n✗ Security Group không đọc được nội dung HTTP nên không thay thế được WAF.\n✗ Không lớp đơn lẻ nào đủ; phải xếp chồng WAF và Security Group mới là defense in depth."
   }
 ]

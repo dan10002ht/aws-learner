@@ -365,22 +365,24 @@ const foundChapters: Chapter[] = [
 const engLessons: Lesson[] = [
   { slug: "eng-01-linux-terminal", courseId: "ENGINEER", title: "Linux & Terminal cho kỹ sư Cloud", shortTitle: "Linux & Terminal", chapter: "eng-ch1", order: 1, available: true,
     description: "Filesystem, permissions, process, systemd, SSH, log & grep/awk, Bash scripting căn bản.", file: "engineering/eng-01-linux-terminal.md" },
-  { slug: "eng-02-cidr-subnetting", courseId: "ENGINEER", title: "CIDR & Subnetting thực hành", shortTitle: "CIDR & Subnetting", chapter: "eng-ch2", order: 2, available: true,
+  { slug: "eng-osi-model", courseId: "ENGINEER", title: "Mô hình 7 tầng (OSI) — bản đồ mạng & các vấn đề xuyên tầng", shortTitle: "Mô hình 7 tầng", chapter: "eng-ch2", order: 2, available: true,
+    description: "Bản đồ OSI 7 tầng & TCP/IP; bù tầng L1/L2 (Ethernet/MAC/ARP/switch/VLAN); encapsulation; bản đồ xuyên tầng caching / security (defense-in-depth) / debug & performance theo từng tầng; ví dụ end-to-end gõ URL.", file: "engineering/eng-osi-model.md" },
+  { slug: "eng-02-cidr-subnetting", courseId: "ENGINEER", title: "CIDR & Subnetting thực hành", shortTitle: "CIDR & Subnetting", chapter: "eng-ch2", order: 3, available: true,
     description: "Tính network/broadcast/hosts bằng tay, chia subnet VPC, overlap, longest-prefix match, IPv6 cơ bản.", file: "engineering/eng-02-cidr-subnetting.md" },
-  { slug: "eng-03-tcp-tls", courseId: "ENGINEER", title: "TCP/UDP & TLS — HTTPS thật sự hoạt động thế nào", shortTitle: "TCP & TLS", chapter: "eng-ch2", order: 3, available: true,
+  { slug: "eng-03-tcp-tls", courseId: "ENGINEER", title: "TCP/UDP & TLS — HTTPS thật sự hoạt động thế nào", shortTitle: "TCP & TLS", chapter: "eng-ch2", order: 4, available: true,
     description: "TCP vs UDP, HTTP/1.1→/3 (QUIC), TLS 1.3 handshake, certificate chain, SNI, mTLS, debug bằng curl/openssl.", file: "engineering/eng-03-tcp-tls.md" },
-  { slug: "eng-04-identity-crypto", courseId: "ENGINEER", title: "Mật mã & Danh tính hiện đại", shortTitle: "Identity & Crypto", chapter: "eng-ch3", order: 4, available: true,
+  { slug: "eng-04-identity-crypto", courseId: "ENGINEER", title: "Mật mã & Danh tính hiện đại", shortTitle: "Identity & Crypto", chapter: "eng-ch3", order: 5, available: true,
     description: "AES/RSA, hashing, PKI; OAuth 2.1 (Auth Code + PKCE), OIDC, JWT đúng cách, SAML, passkeys/WebAuthn.", file: "engineering/eng-04-identity-crypto.md" },
-  { slug: "eng-05-docker", courseId: "ENGINEER", title: "Docker thực hành cho kỹ sư Cloud", shortTitle: "Docker", chapter: "eng-ch4", order: 5, available: true,
+  { slug: "eng-05-docker", courseId: "ENGINEER", title: "Docker thực hành cho kỹ sư Cloud", shortTitle: "Docker", chapter: "eng-ch4", order: 6, available: true,
     description: "Dockerfile, layer & cache, multi-stage build, compose (LocalStack), healthcheck, best practices bảo mật image.", file: "engineering/eng-05-docker.md" },
-  { slug: "eng-06-automation", courseId: "ENGINEER", title: "Scripting & Automation: Bash + Python boto3", shortTitle: "Automation", chapter: "eng-ch4", order: 6, available: true,
+  { slug: "eng-06-automation", courseId: "ENGINEER", title: "Scripting & Automation: Bash + Python boto3", shortTitle: "Automation", chapter: "eng-ch4", order: 7, available: true,
     description: "Bash nâng cao (set -euo pipefail, jq), AWS CLI --query, Python boto3 (paginator, waiter), cron vs EventBridge.", file: "engineering/eng-06-automation.md" },
 ];
 
 
 const engChapters: Chapter[] = [
   { id: "eng-ch1", courseId: "ENGINEER", title: "Hệ điều hành & Terminal", lessonSlugs: ["eng-01-linux-terminal"], category: "compute" },
-  { id: "eng-ch2", courseId: "ENGINEER", title: "Mạng thực hành", lessonSlugs: ["eng-02-cidr-subnetting", "eng-03-tcp-tls"], category: "network" },
+  { id: "eng-ch2", courseId: "ENGINEER", title: "Mạng thực hành", lessonSlugs: ["eng-osi-model", "eng-02-cidr-subnetting", "eng-03-tcp-tls"], category: "network" },
   { id: "eng-ch3", courseId: "ENGINEER", title: "Mật mã & Danh tính", lessonSlugs: ["eng-04-identity-crypto"], category: "security" },
   { id: "eng-ch4", courseId: "ENGINEER", title: "Container & Tự động hoá", lessonSlugs: ["eng-05-docker", "eng-06-automation"], category: "compute" },
 ];

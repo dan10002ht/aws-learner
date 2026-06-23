@@ -1,0 +1,55 @@
+{
+  "course": "OSI",
+  "createdNote": "stamp after build",
+  "parts": [
+    {
+      "id": "P1-outline",
+      "kind": "research",
+      "scope": "Research + outline + lock design (slug eng-osi-model, order 1.5, ch eng-ch2)",
+      "status": "done",
+      "note": "Outline + design locked in OSI-OUTLINE.md; slug eng-osi-model, order 1.5, quiz starts eng-q-079"
+    },
+    {
+      "id": "P2-draft-A",
+      "kind": "lesson",
+      "scope": "Sections 1-5: intro, OSI table, TCP/IP map, encapsulation, L1-L2 deep (fill gap)",
+      "status": "done",
+      "note": "Sections 1-5 written in eng-osi-model.md; gate passed (voice, L1-L2 accurate, links, diacritics)"
+    },
+    {
+      "id": "P3-draft-B",
+      "kind": "lesson",
+      "scope": "Sections 6-9: L3-4 summary+links, L5-7, caching map, security/attack map",
+      "status": "done",
+      "note": "Sections 6-9 appended; caching map + security map done; links verified"
+    },
+    {
+      "id": "P4-draft-C",
+      "kind": "lesson",
+      "scope": "Sections 10-13: debug/perf map, end-to-end walkthrough, AWS map, summary+cheatsheet; assemble file",
+      "status": "done",
+      "note": "Sections 10-13 + summary + cheatsheet; body complete"
+    },
+    {
+      "id": "P5-polish-register",
+      "kind": "lesson",
+      "scope": "Self-review gate; register lessons.ts + eng-ch2; verify order/prev-next; build",
+      "status": "done",
+      "note": "Registered (order 1-7 integers), course desc updated, build pass 232 pages, prev/next OK, links OK"
+    },
+    {
+      "id": "P6-quiz-gen",
+      "kind": "questions",
+      "scope": "Run knowledge-quiz workflow for eng-osi-model (~13 q), gen+verify pipeline",
+      "status": "in-progress",
+      "note": "launching knowledge-quiz workflow for eng-osi-model"
+    },
+    {
+      "id": "P7-quiz-gate-ship",
+      "kind": "questions",
+      "scope": "Re-id offset from eng-q-079; append gate 0-err; build; commit & push; update memory",
+      "status": "in-progress",
+      "note": "re-id + gate + ship"
+    }
+  ]
+}

@@ -101,7 +101,7 @@ export const courses: Course[] = [
     shortTitle: "Engineer Core Skills",
     level: "Nền tảng",
     description:
-      "Kỹ năng thực hành bắt buộc trước khi lên Solutions Architect: Linux & terminal, CIDR/subnetting tính tay, TCP/TLS & HTTPS, mật mã & danh tính hiện đại (PKI, OAuth 2.1, JWT, passkeys).",
+      "Kỹ năng thực hành bắt buộc trước khi lên Solutions Architect: Linux & terminal, mô hình 7 tầng (OSI) & bản đồ xuyên tầng, CIDR/subnetting tính tay, TCP/TLS & HTTPS, mật mã & danh tính hiện đại (PKI, OAuth 2.1, JWT, passkeys).",
     hint: "Học song song với chứng chỉ — đâm thẳng vào chỗ yếu khi làm đề SAA/DVA.",
     durationHours: 20,
     passingScore: 0,
