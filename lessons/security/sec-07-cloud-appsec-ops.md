@@ -4,6 +4,26 @@ Bài này dành cho kỹ sư xây hệ thống, không phải pentester. Mục t
 
 > 💡 Nguyên tắc: An ninh không phải là một bức tường, mà là nhiều lớp (defense in depth). Một lớp bị xuyên thủng không được phép biến thành "game over".
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Defense in depth — các lớp phòng thủ từ rìa vào lõi</title>
+  <desc>Các lớp đồng tâm bao quanh dữ liệu: ngoài cùng là Internet, rồi WAF và Shield, App với secure code, IAM least privilege, trong cùng là Data được mã hóa; lớp Detection (GuardDuty, CloudTrail) bao quanh toàn bộ. Một lớp bị thủng vẫn còn các lớp trong chặn.</desc>
+  <text x="360" y="26" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Defense in depth — từ rìa vào lõi</text>
+  <rect x="20" y="40" width="680" height="412" rx="14" fill="#10b981" fill-opacity="0.10" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="6 4"/>
+  <text x="360" y="60" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.85">Detection bao quanh tất cả — GuardDuty · CloudTrail</text>
+  <rect x="48" y="74" width="624" height="362" rx="12" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="94" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Internet (không tin cậy)</text>
+  <rect x="84" y="104" width="552" height="306" rx="11" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="124" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">WAF / Shield — rate limit · virtual patch</text>
+  <rect x="120" y="134" width="480" height="246" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="154" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">App — secure code (validate, parameterized)</text>
+  <rect x="156" y="164" width="408" height="186" rx="9" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="184" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">IAM least privilege</text>
+  <rect x="196" y="196" width="328" height="122" rx="9" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="360" y="252" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Data</text>
+  <text x="360" y="272" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">mã hóa at-rest + in-transit</text>
+  <text x="360" y="430" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8" font-style="italic">Một lớp thủng ≠ game over — còn các lớp trong chặn tiếp</text>
+</svg>
+
 ---
 
 ## 1. WAF & Rate Limiting — lớp phòng thủ ở rìa
@@ -66,6 +86,57 @@ Mục tiêu của "shift left" là tìm lỗ hổng càng sớm càng rẻ. Có 
 | **IAST** | Agent bên trong app khi chạy test | Chính xác cao, ít false positive | Cần instrument runtime, chỉ thấy code được test chạy qua |
 
 Bổ sung không thể thiếu: **SCA (Software Composition Analysis)** quét dependency tìm CVE đã biết (A06: Vulnerable and Outdated Components), và **secret scanning** tìm credential lỡ commit.
+
+Mỗi công cụ bắt loại lỗi khác nhau ở một giai đoạn khác nhau của pipeline — đặt đúng chỗ là phần lớn giá trị của "shift left":
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Vị trí SAST, SCA, secret-scan, IAST, DAST trong pipeline</title>
+  <desc>Timeline pipeline trái sang phải: ở Pull Request chạy SAST, SCA và secret-scan (shift left, chặn merge); khi chạy test có IAST instrument trong runtime; ở staging hoặc nightly có DAST tấn công app đang chạy. Mỗi công cụ ghi rõ bắt loại lỗi nào.</desc>
+  <text x="360" y="24" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Công cụ bảo mật theo giai đoạn pipeline</text>
+  <line x1="40" y1="70" x2="700" y2="70" stroke="currentColor" stroke-opacity="0.4"/>
+  <polygon points="700,70 690,65 690,75" fill="currentColor" fill-opacity="0.6"/>
+  <text x="690" y="58" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.7">thời gian →</text>
+  <g>
+    <circle cx="150" cy="70" r="5" fill="#3b82f6"/>
+    <text x="150" y="52" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Pull Request</text>
+    <text x="150" y="92" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">shift left · chặn merge</text>
+  </g>
+  <g>
+    <circle cx="390" cy="70" r="5" fill="#8b5cf6"/>
+    <text x="390" y="52" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Chạy test (CI)</text>
+    <text x="390" y="92" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">app chạy + instrument</text>
+  </g>
+  <g>
+    <circle cx="600" cy="70" r="5" fill="#f59e0b"/>
+    <text x="600" y="52" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Staging / nightly</text>
+    <text x="600" y="92" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">app đang chạy thật</text>
+  </g>
+  <g>
+    <rect x="46" y="120" width="208" height="46" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="58" y="140" font-size="12" font-weight="700" fill="currentColor">SAST</text>
+    <text x="58" y="158" font-size="10" fill="currentColor" opacity="0.75">code tĩnh: injection, crypto sai</text>
+  </g>
+  <g>
+    <rect x="46" y="174" width="208" height="46" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="58" y="194" font-size="12" font-weight="700" fill="currentColor">SCA</text>
+    <text x="58" y="212" font-size="10" fill="currentColor" opacity="0.75">dependency: CVE đã biết (A06)</text>
+  </g>
+  <g>
+    <rect x="46" y="228" width="208" height="46" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="58" y="248" font-size="12" font-weight="700" fill="currentColor">Secret scan</text>
+    <text x="58" y="266" font-size="10" fill="currentColor" opacity="0.75">credential lỡ commit</text>
+  </g>
+  <g>
+    <rect x="286" y="120" width="208" height="46" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="298" y="140" font-size="12" font-weight="700" fill="currentColor">IAST</text>
+    <text x="298" y="158" font-size="10" fill="currentColor" opacity="0.75">agent trong runtime khi test</text>
+  </g>
+  <g>
+    <rect x="496" y="120" width="208" height="46" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="508" y="140" font-size="12" font-weight="700" fill="currentColor">DAST</text>
+    <text x="508" y="158" font-size="10" fill="currentColor" opacity="0.75">tấn công app từ ngoài: authz, config</text>
+  </g>
+</svg>
 
 ```yaml
 # .github/workflows/security.yml — gate bảo mật trong CI
@@ -195,6 +266,52 @@ Một microservice xử lý ảnh thumbnail bị RCE qua một thư viện image
 }
 ```
 
+Cùng một lỗ RCE, hai role khác nhau cho ra blast radius khác hẳn:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Lateral movement và blast radius — role rộng vs least privilege</title>
+  <desc>Hai kịch bản. Bên trái: service thumbnail bị RCE chạy với role star-star lan tới toàn bộ DB prod và S3 khách hàng, blast radius lớn. Bên phải: cùng service nhưng role chỉ có s3 GetObject và PutObject trên một bucket, thiệt hại bị giới hạn ở bucket đó.</desc>
+  <text x="360" y="24" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Cùng một lỗ RCE — blast radius theo quyền của role</text>
+  <text x="180" y="52" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Role "*:*" — thảm họa</text>
+  <text x="540" y="52" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Least privilege — giới hạn</text>
+  <line x1="360" y1="64" x2="360" y2="360" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="5 5"/>
+  <g>
+    <rect x="120" y="74" width="120" height="44" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="180" y="93" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">thumbnail svc</text>
+    <text x="180" y="109" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">RCE · role *:*</text>
+    <g stroke="#ef4444" stroke-opacity="0.75" fill="none" stroke-width="1.5">
+      <path d="M150 118 L70 180"/><polygon points="70,180 79,176 76,184" fill="#ef4444" fill-opacity="0.75" stroke="none"/>
+      <path d="M180 118 L180 180"/><polygon points="180,180 176,172 184,172" fill="#ef4444" fill-opacity="0.75" stroke="none"/>
+      <path d="M210 118 L290 180"/><polygon points="290,180 281,176 284,184" fill="#ef4444" fill-opacity="0.75" stroke="none"/>
+    </g>
+    <rect x="24" y="182" width="92" height="40" rx="8" fill="#ef4444" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="70" y="206" font-size="10" text-anchor="middle" fill="currentColor">DB prod</text>
+    <rect x="134" y="182" width="92" height="40" rx="8" fill="#ef4444" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="180" y="206" font-size="10" text-anchor="middle" fill="currentColor">S3 khách hàng</text>
+    <rect x="244" y="182" width="92" height="40" rx="8" fill="#ef4444" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="290" y="201" font-size="10" text-anchor="middle" fill="currentColor">mọi service</text>
+    <text x="290" y="214" font-size="10" text-anchor="middle" fill="currentColor">khác</text>
+    <text x="180" y="252" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Blast radius LỚN — lan toàn account</text>
+  </g>
+  <g>
+    <rect x="480" y="74" width="120" height="44" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="540" y="93" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">thumbnail svc</text>
+    <text x="540" y="109" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">RCE · role hẹp</text>
+    <g stroke="#10b981" stroke-opacity="0.85" fill="none" stroke-width="1.5">
+      <path d="M540 118 L540 180"/><polygon points="540,180 536,172 544,172" fill="#10b981" fill-opacity="0.85" stroke="none"/>
+    </g>
+    <rect x="474" y="182" width="132" height="40" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="540" y="201" font-size="10" text-anchor="middle" fill="currentColor">thumbnails-prod</text>
+    <text x="540" y="214" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">chỉ Get/PutObject</text>
+    <g stroke="currentColor" stroke-opacity="0.25" fill="none" stroke-dasharray="4 4">
+      <path d="M474 202 L420 240"/><path d="M606 202 L660 240"/>
+    </g>
+    <text x="420" y="256" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.5">DB prod ✕</text>
+    <text x="660" y="256" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.5">S3 khác ✕</text>
+    <text x="540" y="292" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Thiệt hại bị giới hạn ở 1 bucket</text>
+  </g>
+</svg>
+
 Checklist least-privilege:
 
 - [ ] Mỗi service có **role riêng**, không dùng chung một "god role".
@@ -233,13 +350,41 @@ deny[msg] {
 
 Giả định không phải "nếu" mà "khi nào" sẽ có sự cố. Một quy trình rõ ràng giúp đội không hoảng loạn và không vô tình phá hủy bằng chứng. Vòng đời (theo NIST) gồm bốn pha chính:
 
-```
-   ┌──────────┐   ┌──────────┐   ┌────────────┐   ┌─────────┐
-   │  DETECT  │──▶│ CONTAIN  │──▶│  ERADICATE │──▶│ RECOVER │
-   └──────────┘   └──────────┘   └────────────┘   └─────────┘
-        ▲                                              │
-        └──────────── Post-incident learning ◀─────────┘
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Vòng đời Incident Response theo NIST</title>
+  <desc>Vòng lặp bốn pha: Detect, Contain, Eradicate, Recover nối tiếp nhau bằng mũi tên; sau Recover, vòng Post-incident learning quay ngược về Detect để khép vòng và cải thiện.</desc>
+  <text x="360" y="26" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Incident Response Cycle (NIST)</text>
+  <g>
+    <rect x="40" y="70" width="140" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="110" y="96" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Detect</text>
+    <text x="110" y="114" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">phát hiện · phân loại</text>
+  </g>
+  <g>
+    <rect x="218" y="70" width="140" height="56" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="288" y="96" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Contain</text>
+    <text x="288" y="114" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">cô lập · giữ bằng chứng</text>
+  </g>
+  <g>
+    <rect x="396" y="70" width="140" height="56" rx="10" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="466" y="96" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Eradicate</text>
+    <text x="466" y="114" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">diệt nguyên nhân gốc</text>
+  </g>
+  <g>
+    <rect x="574" y="70" width="140" height="56" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="644" y="96" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Recover</text>
+    <text x="644" y="114" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">phục hồi có kiểm soát</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.6">
+    <path d="M180 98 L212 98"/><polygon points="212,98 203,93 203,103" fill="currentColor" fill-opacity="0.6" stroke="none"/>
+    <path d="M358 98 L390 98"/><polygon points="390,98 381,93 381,103" fill="currentColor" fill-opacity="0.6" stroke="none"/>
+    <path d="M536 98 L568 98"/><polygon points="568,98 559,93 559,103" fill="currentColor" fill-opacity="0.6" stroke="none"/>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none" stroke-width="1.6" stroke-dasharray="6 4">
+    <path d="M644 126 L644 220 L110 220 L110 130"/>
+    <polygon points="110,130 105,140 115,140" fill="currentColor" fill-opacity="0.6" stroke="none"/>
+  </g>
+  <text x="377" y="214" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Post-incident learning → quay về Detect</text>
+</svg>
 
 **1. Detect (phát hiện & phân loại).** Alert nổ, một người gọi điện, hoặc khách báo. Việc đầu tiên: xác nhận đây có phải sự cố thật không, và gán mức độ (severity). Chỉ định một **Incident Commander (IC)** — một người điều phối, ra quyết định; những người khác báo cáo về IC. Mở một kênh chat riêng và một tài liệu timeline.
 

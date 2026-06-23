@@ -4,6 +4,56 @@ Phần lớn lỗ hổng nghiêm trọng không nằm ở thuật toán phức t
 
 > 💡 **Nguyên tắc**: Mọi dữ liệu từ bên ngoài process của bạn (HTTP request, file upload, message queue, response của service khác, biến môi trường người dùng kiểm soát) đều là *untrusted* cho đến khi được validate. "Bên ngoài" gồm cả service nội bộ — zero trust không dừng ở mạng.
 
+Cả bài là một dòng chảy: dữ liệu không tin được đi qua từng biên, mỗi biên có **một rào chắn** đặt đúng chỗ. Đây là bản đồ tổng thể:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Vòng đời dữ liệu với rào chắn tại mỗi biên</title>
+  <desc>Dữ liệu không tin được đi qua các bước: validate bằng allowlist, xử lý, parameterize hoặc encode theo context, output, rồi encrypt at rest khi lưu trữ; mỗi mũi tên giữa hai bước là một biện pháp phòng thủ.</desc>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Dòng đời dữ liệu — rào chắn tại mỗi biên</text>
+  <g font-size="11.5">
+    <rect x="16" y="44" width="120" height="54" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="76" y="68" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Untrusted</text>
+    <text x="76" y="84" text-anchor="middle" fill="currentColor" opacity="0.7">input</text>
+
+    <rect x="216" y="44" width="120" height="54" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="276" y="76" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Xử lý</text>
+
+    <rect x="416" y="44" width="120" height="54" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="476" y="76" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Output</text>
+
+    <rect x="584" y="44" width="120" height="54" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="644" y="76" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Lưu trữ</text>
+  </g>
+  <g stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#ah)">
+    <path d="M136 71 H214"/>
+    <path d="M336 71 H414"/>
+    <path d="M536 71 H582"/>
+  </g>
+  <g font-size="11">
+    <rect x="138" y="118" width="76" height="40" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="176" y="135" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Validate</text>
+    <text x="176" y="149" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">allowlist</text>
+    <path d="M176 116 V99" stroke="currentColor" stroke-width="1.4" fill="none" marker-end="url(#ah)"/>
+
+    <rect x="324" y="118" width="104" height="40" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="376" y="135" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Parameterize</text>
+    <text x="376" y="149" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">/ encode theo context</text>
+    <path d="M376 116 V99" stroke="currentColor" stroke-width="1.4" fill="none" marker-end="url(#ah)"/>
+
+    <rect x="510" y="118" width="98" height="40" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="559" y="135" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Encrypt</text>
+    <text x="559" y="149" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">at rest</text>
+    <path d="M559 116 V99" stroke="currentColor" stroke-width="1.4" fill="none" marker-end="url(#ah)"/>
+  </g>
+  <text x="16" y="196" font-size="11.5" fill="currentColor" opacity="0.8">Mỗi mũi tên = một biên tin cậy; mỗi rào (lục) là biện pháp phòng thủ đặt đúng tại biên đó.</text>
+  <text x="16" y="216" font-size="11.5" fill="currentColor" opacity="0.8">Validate (mục 1) · tách data khỏi code (mục 2) · encode theo đích (mục 3) · encrypt (mục 7).</text>
+</svg>
+
 ## 1. Validate input: allowlist, không phải blocklist
 
 Sai lầm kinh điển là cố liệt kê những thứ *xấu* để chặn (blocklist). Attacker chỉ cần một biến thể bạn chưa nghĩ ra. Hãy định nghĩa cái *được phép* (allowlist) và từ chối phần còn lại.
@@ -128,6 +178,52 @@ Ví dụ tấn công (Stored XSS): user đặt display name là `<script>fetch('
 | Bên trong `<script>` / JS | JS string encode (hoặc `JSON.stringify`) | `</`, `'`, newline |
 | URL query/path component | URL/percent encode | space → `%20` |
 | CSS value | CSS encode | escape `\` |
+
+Cùng một giá trị toả ra nhiều đích, mỗi đích đòi một bộ encode khác nhau — chọn encode theo *nơi dữ liệu được đặt vào*, không theo nguồn:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Output encoding theo context — một giá trị, nhiều đích, nhiều bộ encode</title>
+  <desc>Một chuỗi nguy hiểm đặt vào năm context khác nhau (HTML body, HTML attribute, trong script JS, URL, CSS) cần năm cách encode khác nhau; encode phải theo đích đến chứ không theo nguồn.</desc>
+  <defs>
+    <marker id="ah2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Encode theo đích đến, không theo nguồn</text>
+  <g>
+    <rect x="16" y="116" width="150" height="64" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="91" y="142" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Một giá trị</text>
+    <text x="91" y="162" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">vd. &quot;&lt;b&gt;...&quot;</text>
+  </g>
+  <g stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#ah2)">
+    <path d="M166 130 C 240 70, 280 60, 356 56"/>
+    <path d="M166 140 C 240 110, 280 108, 356 110"/>
+    <path d="M166 150 C 240 150, 280 160, 356 164"/>
+    <path d="M166 160 C 240 195, 280 210, 356 218"/>
+    <path d="M166 168 C 240 235, 280 264, 356 272"/>
+  </g>
+  <g font-size="11">
+    <rect x="356" y="36" width="348" height="40" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="368" y="53" font-size="11.5" font-weight="700" fill="currentColor">HTML body / text</text>
+    <text x="368" y="69" fill="currentColor" opacity="0.78">→ HTML entity encode</text>
+
+    <rect x="356" y="90" width="348" height="40" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="368" y="107" font-size="11.5" font-weight="700" fill="currentColor">HTML attribute (quote)</text>
+    <text x="368" y="123" fill="currentColor" opacity="0.78">→ attribute encode + luôn quote</text>
+
+    <rect x="356" y="144" width="348" height="40" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="368" y="161" font-size="11.5" font-weight="700" fill="currentColor">Trong &lt;script&gt; / JS</text>
+    <text x="368" y="177" fill="currentColor" opacity="0.78">→ JS string encode (JSON.stringify)</text>
+
+    <rect x="356" y="198" width="348" height="40" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="368" y="215" font-size="11.5" font-weight="700" fill="currentColor">URL query / path</text>
+    <text x="368" y="231" fill="currentColor" opacity="0.78">→ URL / percent encode</text>
+
+    <rect x="356" y="252" width="348" height="40" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="368" y="269" font-size="11.5" font-weight="700" fill="currentColor">CSS value</text>
+    <text x="368" y="285" fill="currentColor" opacity="0.78">→ CSS encode</text>
+  </g>
+</svg>
 
 ```jsx
 // ✅ React mặc định HTML-encode mọi {biểu thức} trong JSX
@@ -274,6 +370,50 @@ plaintext_dek = get_data_key_from_kms()              # KMS sinh & bọc key
 token = Fernet(plaintext_dek).encrypt(ssn.encode())  # lưu `token` vào DB
 # Khi đọc: xin KMS giải mã wrapped DEK → giải mã field.
 ```
+
+Envelope encryption tách *key* khỏi *dữ liệu*: KMS giữ key gốc, DEK chỉ tồn tại dạng plaintext trong RAM lúc dùng, còn trên đĩa luôn nằm ở dạng đã bọc cạnh ciphertext:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 366" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Envelope encryption — bảo vệ dữ liệu là bảo vệ key</title>
+  <desc>DEK plaintext mã hoá field nhạy cảm, sau đó chính DEK lại được bọc bên trong lớp bảo vệ của CMK (KMS) thành wrapped DEK. Trên đĩa chỉ lưu ciphertext của field cạnh wrapped DEK. Khi đọc, KMS giải wrapped DEK ra DEK plaintext rồi giải field.</desc>
+  <defs>
+    <marker id="ah3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Envelope encryption — bảo vệ dữ liệu = bảo vệ key</text>
+
+  <text x="16" y="56" font-size="11.5" font-weight="700" fill="currentColor" opacity="0.85">Khi ghi: bọc dữ liệu bằng DEK, rồi bọc DEK trong CMK</text>
+
+  <rect x="16" y="68" width="318" height="92" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="175" y="90" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Field nhạy cảm (plaintext)</text>
+  <text x="175" y="107" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">vd. số bảo hiểm</text>
+  <rect x="40" y="116" width="270" height="34" rx="7" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="175" y="137" font-size="10.5" text-anchor="middle" fill="currentColor">DEK plaintext mã hoá → ciphertext field</text>
+
+  <path d="M338 114 H378" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#ah3)"/>
+
+  <rect x="382" y="68" width="322" height="92" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="543" y="90" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">CMK (master key, trong KMS)</text>
+  <text x="543" y="106" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">lồng DEK vào trong lớp bảo vệ của CMK</text>
+  <rect x="408" y="116" width="270" height="34" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="543" y="137" font-size="10.5" text-anchor="middle" fill="currentColor">DEK (bọc trong CMK) = wrapped DEK</text>
+
+  <text x="16" y="190" font-size="11.5" font-weight="700" fill="currentColor" opacity="0.85">Trên đĩa (DB) chỉ còn 2 thứ cạnh nhau — đều vô dụng nếu thiếu KMS</text>
+
+  <rect x="16" y="200" width="688" height="64" rx="10" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+  <rect x="36" y="216" width="312" height="34" rx="7" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="192" y="237" font-size="10.5" text-anchor="middle" fill="currentColor">ciphertext của field</text>
+  <rect x="372" y="216" width="312" height="34" rx="7" fill="#8b5cf6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="528" y="237" font-size="10.5" text-anchor="middle" fill="currentColor">wrapped DEK (DEK bọc trong CMK)</text>
+
+  <path d="M672 160 V198" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#ah3)"/>
+
+  <rect x="16" y="280" width="688" height="40" rx="9" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="28" y="305" font-size="10.5" fill="currentColor"><tspan font-weight="700">Khi đọc:</tspan> gửi wrapped DEK cho KMS → KMS giải ra DEK plaintext → dùng DEK giải ciphertext field.</text>
+
+  <text x="16" y="344" font-size="11" fill="currentColor" opacity="0.78">Mất DB nhưng không có quyền KMS → chỉ có ciphertext + DEK đã bọc, vô dụng. Mất key = mất tất cả.</text>
+</svg>
 
 > 💡 **Nguyên tắc**: Encryption chuyển bài toán "bảo vệ dữ liệu" thành "bảo vệ key". Nếu key nằm cạnh dữ liệu (hardcode, cùng repo, cùng quyền truy cập), bạn chưa bảo vệ được gì.
 

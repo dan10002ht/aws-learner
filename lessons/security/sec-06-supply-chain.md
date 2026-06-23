@@ -81,6 +81,47 @@ Khác typosquat: đây là package _đúng_ tên nhưng bị chiếm. Các vecto
 //npm.internal.acme.com/:_authToken=${NPM_INTERNAL_TOKEN}
 ```
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Dependency confusion — resolver bị lừa kéo bản public version cao hơn</title>
+  <desc>Cùng tên @acme/utils tồn tại ở registry nội bộ (1.2.0) và public registry do attacker publish (9.9.9). Resolver mặc định so version chọn 9.9.9 độc hại. Khóa scope về registry nội bộ chặn việc đi ra public.</desc>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Dependency confusion</text>
+  <g>
+    <rect x="280" y="40" width="160" height="56" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="360" y="64" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">resolver (npm install)</text>
+    <text x="360" y="82" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">cần @acme/utils</text>
+  </g>
+  <g>
+    <rect x="16" y="170" width="300" height="92" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="32" y="194" font-size="12" font-weight="700" fill="currentColor">Registry nội bộ</text>
+    <text x="32" y="214" font-size="10.5" fill="currentColor" opacity="0.7">npm.internal.acme.com</text>
+    <text x="32" y="236" font-size="11.5" font-weight="700" fill="currentColor">@acme/utils 1.2.0</text>
+    <text x="32" y="253" font-size="10.5" fill="currentColor" opacity="0.62">bản thật, private</text>
+  </g>
+  <g>
+    <rect x="404" y="170" width="300" height="92" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="420" y="194" font-size="12" font-weight="700" fill="currentColor">Public registry</text>
+    <text x="420" y="214" font-size="10.5" fill="currentColor" opacity="0.7">registry.npmjs.org</text>
+    <text x="420" y="236" font-size="11.5" font-weight="700" fill="currentColor">@acme/utils 9.9.9</text>
+    <text x="420" y="253" font-size="10.5" fill="currentColor" opacity="0.62">attacker publish, version cao hơn</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none" stroke-width="1.5" stroke-dasharray="5 4">
+    <path d="M320 96 L200 164" marker-end="url(#dch)"/>
+  </g>
+  <g stroke="#f59e0b" fill="none" stroke-width="2.2">
+    <path d="M400 96 L516 161" marker-end="url(#dchr)"/>
+  </g>
+  <text x="232" y="138" font-size="10.5" fill="currentColor" opacity="0.7" transform="rotate(-29 232 138)">1.2.0</text>
+  <text x="442" y="108" font-size="11" font-weight="700" fill="#f59e0b" transform="rotate(29 442 108)">chọn 9.9.9 (cao hơn)</text>
+  <rect x="404" y="276" width="300" height="34" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/>
+  <text x="554" y="297" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">kéo về bản độc hại</text>
+  <rect x="16" y="276" width="300" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/>
+  <text x="166" y="297" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Chặn: khóa scope @acme về nội bộ</text>
+  <defs>
+    <marker id="dch" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="currentColor" fill-opacity="0.5"/></marker>
+    <marker id="dchr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#f59e0b"/></marker>
+  </defs>
+</svg>
+
 ---
 
 ## 2. SCA scanning — biết bạn đang dùng gì có lỗ hổng
@@ -300,6 +341,58 @@ cosign verify \
 
 > 💡 **Nguyên tắc**: Mục tiêu của signing + provenance là một chuỗi verify được: _"image này đến từ commit X, build bởi pipeline Y, gồm các thành phần trong SBOM Z"_. Không có chuỗi đó, "artifact tin cậy" chỉ là niềm tin.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Chuỗi ký &amp; provenance với cosign / SLSA</title>
+  <desc>Commit X được CI pipeline Y build thành artifact và SBOM Z; CI ký keyless bằng OIDC identity; phía deploy verify chữ ký và provenance trước khi cho chạy — toàn bộ tạo thành một chuỗi verify được.</desc>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Chuỗi ký + provenance (cosign / SLSA)</text>
+  <g>
+    <rect x="16" y="44" width="150" height="60" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="91" y="68" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Commit X</text>
+    <text x="91" y="86" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">source · git SHA</text>
+  </g>
+  <g>
+    <rect x="226" y="44" width="160" height="60" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="306" y="68" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">CI pipeline Y</text>
+    <text x="306" y="86" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">build trên service host</text>
+  </g>
+  <g>
+    <rect x="446" y="34" width="160" height="80" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="526" y="58" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Artifact + SBOM Z</text>
+    <text x="526" y="76" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">image 1.4.2</text>
+    <text x="526" y="92" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">+ provenance</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.5">
+    <path d="M166 74 H222" marker-end="url(#scah)"/>
+    <path d="M386 74 H442" marker-end="url(#scah)"/>
+  </g>
+  <text x="194" y="68" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">build</text>
+  <text x="414" y="68" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">sinh</text>
+  <g>
+    <rect x="226" y="146" width="160" height="56" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="306" y="170" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">cosign sign keyless</text>
+    <text x="306" y="187" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">danh tính = OIDC của CI</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.5">
+    <path d="M306 104 V142" marker-end="url(#scah)"/>
+    <path d="M386 174 H446 V120" marker-end="url(#scah)"/>
+  </g>
+  <text x="466" y="150" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">đính chữ ký</text>
+  <g>
+    <rect x="16" y="244" width="688" height="96" rx="10" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="32" y="270" font-size="12.5" font-weight="700" fill="currentColor">Phía deploy — verify trước khi cho chạy</text>
+    <text x="32" y="292" font-size="11" fill="currentColor" opacity="0.78">cosign verify: chữ ký hợp lệ? OIDC issuer + identity đúng pipeline?</text>
+    <text x="32" y="310" font-size="11" fill="currentColor" opacity="0.78">provenance: build từ commit X, bởi Y, gồm SBOM Z?</text>
+    <text x="32" y="328" font-size="11" font-weight="700" fill="currentColor">→ khớp hết: cho chạy. Lệch một điểm: chặn (admission policy).</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.5">
+    <path d="M526 114 V210 H360 V240" marker-end="url(#scah)"/>
+  </g>
+  <text x="538" y="232" font-size="10" fill="currentColor" opacity="0.7">artifact đã ký</text>
+  <defs>
+    <marker id="scah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+</svg>
+
 ### Container image trust
 
 ```dockerfile
@@ -361,3 +454,78 @@ Cách các nguyên tắc trên ánh xạ vào AWS:
 - **Quản trị tập trung** → bật **Inspector + GuardDuty + Config** qua **AWS Organizations** để policy áp cho mọi account, không sót.
 
 > 💡 **Nguyên tắc cuối**: Supply chain security là một **pipeline**, không phải một công cụ. Mỗi lớp (dependency → SCA → SBOM → pin → secrets → CI → artifact → image) lọc bớt một loại rủi ro; tự động hóa toàn bộ trong CI để chúng chạy mỗi lần build, vì con người sẽ quên còn pipeline thì không.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 502" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Pipeline phòng thủ supply chain — 8 lớp lọc rủi ro</title>
+  <desc>Tám lớp xếp dọc ngang hàng nhau từ trên xuống: Dependency, SCA, SBOM, Pin/lockfile, Secrets, CI/CD, Artifact, Image. Mũi tên hướng xuống nối các lớp theo trình tự pipeline; cột bên phải ghi loại rủi ro mỗi lớp lọc được.</desc>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Pipeline phòng thủ supply chain</text>
+  <text x="16" y="42" font-size="11" fill="currentColor" opacity="0.6">Mỗi lớp lọc bớt một loại rủi ro — chạy tự động mỗi lần build</text>
+  <text x="490" y="42" font-size="11" font-weight="700" fill="currentColor" opacity="0.6">Rủi ro lọc được</text>
+  <g>
+    <rect x="16" y="54" width="436" height="44" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="26" y="64" width="24" height="24" rx="7" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="38" y="81" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">1</text>
+    <text x="60" y="73" font-size="12.5" font-weight="700" fill="currentColor">Dependency — ignore-scripts + allowlist</text>
+    <text x="60" y="90" font-size="10.5" fill="currentColor" opacity="0.62">khóa scope registry</text>
+    <text x="490" y="80" font-size="10.5" fill="currentColor" opacity="0.8">postinstall độc · dep. confusion</text>
+  </g>
+  <path d="M243 98 V108" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" fill="none" marker-end="url(#pdh)"/>
+  <g>
+    <rect x="16" y="110" width="436" height="44" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="26" y="120" width="24" height="24" rx="7" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="38" y="137" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">2</text>
+    <text x="60" y="137" font-size="12.5" font-weight="700" fill="currentColor">SCA — quét CVE, fail build</text>
+    <text x="490" y="137" font-size="10.5" fill="currentColor" opacity="0.8">lỗ hổng đã biết (Log4Shell…)</text>
+  </g>
+  <path d="M243 154 V164" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" fill="none" marker-end="url(#pdh)"/>
+  <g>
+    <rect x="16" y="166" width="436" height="44" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="26" y="176" width="24" height="24" rx="7" fill="#10b981" fill-opacity="0.95"/>
+    <text x="38" y="193" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">3</text>
+    <text x="60" y="193" font-size="12.5" font-weight="700" fill="currentColor">SBOM — kê khai &amp; lưu kèm release</text>
+    <text x="490" y="193" font-size="10.5" fill="currentColor" opacity="0.8">"có dùng ở đâu?" trả lời được</text>
+  </g>
+  <path d="M243 210 V220" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" fill="none" marker-end="url(#pdh)"/>
+  <g>
+    <rect x="16" y="222" width="436" height="44" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="26" y="232" width="24" height="24" rx="7" fill="#10b981" fill-opacity="0.95"/>
+    <text x="38" y="249" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">4</text>
+    <text x="60" y="249" font-size="12.5" font-weight="700" fill="currentColor">Pin / lockfile — npm ci, digest</text>
+    <text x="490" y="249" font-size="10.5" fill="currentColor" opacity="0.8">tag di động · build không tái lập</text>
+  </g>
+  <path d="M243 266 V276" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" fill="none" marker-end="url(#pdh)"/>
+  <g>
+    <rect x="16" y="278" width="436" height="44" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="26" y="288" width="24" height="24" rx="7" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="38" y="305" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">5</text>
+    <text x="60" y="305" font-size="12.5" font-weight="700" fill="currentColor">Secrets — gitleaks, Vault, short-lived</text>
+    <text x="490" y="305" font-size="10.5" fill="currentColor" opacity="0.8">secret lọt git · key sống lâu</text>
+  </g>
+  <path d="M243 322 V332" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" fill="none" marker-end="url(#pdh)"/>
+  <g>
+    <rect x="16" y="334" width="436" height="44" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="26" y="344" width="24" height="24" rx="7" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="38" y="361" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">6</text>
+    <text x="60" y="361" font-size="12.5" font-weight="700" fill="currentColor">CI/CD — OIDC, least privilege</text>
+    <text x="490" y="361" font-size="10.5" fill="currentColor" opacity="0.8">runner bị chiếm · token quá rộng</text>
+  </g>
+  <path d="M243 378 V388" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" fill="none" marker-end="url(#pdh)"/>
+  <g>
+    <rect x="16" y="390" width="436" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="26" y="400" width="24" height="24" rx="7" fill="#8b5cf6" fill-opacity="0.95"/>
+    <text x="38" y="417" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">7</text>
+    <text x="60" y="417" font-size="12.5" font-weight="700" fill="currentColor">Artifact — cosign sign + verify</text>
+    <text x="490" y="417" font-size="10.5" fill="currentColor" opacity="0.8">artifact bị tráo · không rõ xuất xứ</text>
+  </g>
+  <path d="M243 434 V444" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" fill="none" marker-end="url(#pdh)"/>
+  <g>
+    <rect x="16" y="446" width="436" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="26" y="456" width="24" height="24" rx="7" fill="#8b5cf6" fill-opacity="0.95"/>
+    <text x="38" y="473" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">8</text>
+    <text x="60" y="473" font-size="12.5" font-weight="700" fill="currentColor">Image — distroless, verify trước khi chạy</text>
+    <text x="490" y="473" font-size="10.5" fill="currentColor" opacity="0.8">CVE OS · chạy root · chưa ký</text>
+  </g>
+  <defs>
+    <marker id="pdh" markerWidth="9" markerHeight="9" refX="4.5" refY="7" orient="auto"><path d="M0 0 L4.5 9 L9 0 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+</svg>

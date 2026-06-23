@@ -331,6 +331,77 @@ http://169.254.169.254/latest/meta-data/iam/security-credentials/<role>
 ```
 Server (trong cloud) gọi tới **metadata endpoint** và trả về credential tạm thời của IAM role — attacker chiếm quyền hệ thống. Họ cũng có thể quét cổng nội bộ (`http://10.0.0.5:6379/`), gọi admin API nội bộ, hay đọc file qua `file://`.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Luồng tấn công SSRF đánh cắp credential qua metadata endpoint và các lớp phòng thủ</title>
+  <desc>Attacker gửi URL trỏ tới 169.254.169.254 vào endpoint fetch-from-URL; server trong VPC gọi metadata endpoint thay attacker và trả credential IAM tạm về cho attacker. Bốn lớp chặn: allowlist scheme và domain, kiểm tra IP sau khi resolve DNS, cấm redirect, bắt buộc IMDSv2.</desc>
+  <defs>
+    <marker id="ssrfArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+    <marker id="ssrfArrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#f59e0b"/>
+    </marker>
+  </defs>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">SSRF: đánh cắp credential qua metadata</text>
+
+  <g>
+    <rect x="16" y="48" width="150" height="62" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="91" y="74" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Attacker</text>
+    <text x="91" y="93" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">ngoài Internet</text>
+  </g>
+
+  <g>
+    <rect x="285" y="40" width="170" height="78" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="370" y="66" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Server (trong VPC)</text>
+    <text x="370" y="85" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">endpoint "fetch from URL"</text>
+    <text x="370" y="101" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">gọi URL thay attacker</text>
+  </g>
+
+  <g>
+    <rect x="558" y="40" width="146" height="78" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="631" y="64" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Metadata</text>
+    <text x="631" y="81" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">169.254.169.254</text>
+    <text x="631" y="99" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">credential IAM tạm</text>
+  </g>
+
+  <g stroke="currentColor" fill="none" stroke-width="1.6">
+    <path d="M166 70 H283" marker-end="url(#ssrfArrow)"/>
+    <path d="M455 70 H556" marker-end="url(#ssrfArrow)"/>
+  </g>
+  <text x="224" y="62" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">(1) URL=.../security-credentials</text>
+  <text x="505" y="62" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">(2) GET metadata</text>
+
+  <g stroke="#f59e0b" fill="none" stroke-width="1.8">
+    <path d="M556 100 H457" marker-end="url(#ssrfArrowRed)"/>
+    <path d="M283 100 H168" marker-end="url(#ssrfArrowRed)"/>
+  </g>
+  <text x="505" y="115" font-size="9.5" text-anchor="middle" fill="#f59e0b">(3) credential</text>
+  <text x="224" y="115" font-size="9.5" text-anchor="middle" fill="#f59e0b">(4) credential lọt ra ngoài</text>
+
+  <text x="16" y="168" font-size="13" font-weight="700" fill="currentColor">Các lớp chặn (defense in depth)</text>
+  <g>
+    <rect x="16" y="182" width="334" height="52" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="30" y="204" font-size="11.5" font-weight="700" fill="currentColor">Allowlist scheme + domain</text>
+    <text x="30" y="222" font-size="10" fill="currentColor" opacity="0.72">chỉ http/https + domain biết trước; chặn file://</text>
+  </g>
+  <g>
+    <rect x="370" y="182" width="334" height="52" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="384" y="204" font-size="11.5" font-weight="700" fill="currentColor">Kiểm IP sau khi resolve DNS</text>
+    <text x="384" y="222" font-size="10" fill="currentColor" opacity="0.72">chặn private/loopback/link-local (169.254.x)</text>
+  </g>
+  <g>
+    <rect x="16" y="244" width="334" height="52" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="30" y="266" font-size="11.5" font-weight="700" fill="currentColor">Cấm redirect</text>
+    <text x="30" y="284" font-size="10" fill="currentColor" opacity="0.72">allow_redirects=False — redirect né allowlist</text>
+  </g>
+  <g>
+    <rect x="370" y="244" width="334" height="52" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="384" y="266" font-size="11.5" font-weight="700" fill="currentColor">Bắt buộc IMDSv2</text>
+    <text x="384" y="284" font-size="10" fill="currentColor" opacity="0.72">cần token PUT — vô hiệu SSRF kiểu cũ tới metadata</text>
+  </g>
+  <text x="16" y="324" font-size="10.5" fill="currentColor" opacity="0.7">Mỗi lớp cắt một mắt xích của luồng (1)→(4); bỏ một lớp vẫn còn lớp khác đỡ.</text>
+</svg>
+
 ### Phòng chống nhiều lớp
 
 ```python

