@@ -2,7 +2,7 @@
 
 > Mục tiêu: Hiểu **làm sao** một hệ phân tán giữ nhiều bản sao của dữ liệu mà vẫn đảm bảo consistency. Sau bài này bạn sẽ giải thích được vì sao Aurora dùng **quorum 4/6**, vì sao Multi-AZ failover mất 60-120s, và Paxos/Raft khác nhau ở đâu (mức "đủ để đi thi SAA và không bị lừa").
 
-Tiền đề: [[01-cap-theorem]], [[02-consistency-models]]. Bài này trả lời "đánh đổi C/A xảy ra **trong code** thế nào".
+Tiền đề: [[foundations-01-cap-theorem]], [[foundations-02-consistency-models]]. Bài này trả lời "đánh đổi C/A xảy ra **trong code** thế nào".
 
 ---
 
@@ -215,4 +215,4 @@ Khi bầu leader, hoặc khi nhiều node phải đồng ý "giá trị X là cu
 
 ---
 
-**Bài tiếp theo**: [[04-latency-vs-consistency]] — vì sao Multi-Region active-active "trên giấy" đẹp mà thực tế đầy bẫy.
+**Bài tiếp theo**: [[foundations-04-latency-vs-consistency]] — vì sao Multi-Region active-active "trên giấy" đẹp mà thực tế đầy bẫy.

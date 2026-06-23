@@ -1,6 +1,6 @@
 # Bài 17 — Route 53 + CloudFront + Global Accelerator
 
-**Foundation:** [[04-latency-consistency]] — vì sao multi-region khó.
+**Foundation:** [[foundations-04-latency-vs-consistency]] — vì sao multi-region khó.
 
 ## 1. Mục tiêu
 - Thiết kế **edge layer** global low-latency.
@@ -275,7 +275,7 @@ Player → Global Accelerator (2 anycast IP) → Region gần nhất
 - ❌ Lambda@Edge dùng cho 1 line JS → Functions rẻ hơn 6x.
 
 ## 10. Foundations
-- [[04-latency-consistency]] — multi-region tradeoff. Edge cache reduce latency nhưng staleness là consistency loss.
+- [[foundations-04-latency-vs-consistency]] — multi-region tradeoff. Edge cache reduce latency nhưng staleness là consistency loss.
 
 ## 11. Flashcard
 

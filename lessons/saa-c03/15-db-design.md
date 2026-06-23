@@ -1,6 +1,6 @@
 # Bài 15 — Database Design
 
-**Prerequisite foundations:** [[01-cap-theorem]], [[02-consistency-models]], [[05-partitioning-sharding]].
+**Prerequisite foundations:** [[foundations-01-cap-theorem]], [[foundations-02-consistency-models]], [[foundations-05-partitioning-and-sharding]].
 
 ## 1. Mục tiêu
 - Áp dụng CAP/consistency vào chọn DB AWS.
@@ -23,7 +23,7 @@
 | **DynamoDB Global Tables** | AP | **Eventual**, last-writer-wins | Multi-region active-active |
 | **ElastiCache Redis cluster** | CP (with replication) | Strong primary, eventual replica | Cache |
 
-→ Đọc kỹ [[01-cap-theorem]] để hiểu trade-off.
+→ Đọc kỹ [[foundations-01-cap-theorem]] để hiểu trade-off.
 
 ---
 
@@ -68,7 +68,7 @@
 ### 4.1 Đặc điểm
 - **5x MySQL, 3x PostgreSQL** performance.
 - Storage: auto-scale 10GB → 128TB, **6 replica 3 AZ** built-in.
-- **Quorum**: write 4/6, read 3/6 (foundation [[03-replication-quorum]]).
+- **Quorum**: write 4/6, read 3/6 (foundation [[foundations-03-replication-and-quorum]]).
 - Failover < 30s.
 
 ### 4.2 Cluster endpoints
@@ -140,7 +140,7 @@
 
 **Nhược**: phải biết access pattern trước, khó migrate, cognitive complexity cao.
 
-### 5.5 Hot partition (foundation [[05-partitioning-sharding]])
+### 5.5 Hot partition (foundation [[foundations-05-partitioning-and-sharding]])
 - **DDB chia data theo hash(PK) → partition**. Mỗi partition limit 3000 RCU + 1000 WCU.
 - PK low cardinality (status, country) → hot.
 - Solution: **suffix PK** với random shard `USER#u1#${random(0,9)}` → write fan-out.
@@ -277,7 +277,7 @@
 2. **Firestore vs DynamoDB** — Firestore document + real-time listener; DDB cần Streams + Lambda. Mindset query khác.
 3. **BigQuery storage native**, Athena chỉ query S3. Migrate BQ → Athena cần move data sang S3 Parquet.
 
-→ Đọc [[01-cap-theorem]] phần PACELC để hiểu vì sao Spanner và Aurora Global khác nhau căn bản.
+→ Đọc [[foundations-01-cap-theorem]] phần PACELC để hiểu vì sao Spanner và Aurora Global khác nhau căn bản.
 
 ---
 
@@ -325,11 +325,11 @@
 - ❌ RDS unencrypted prod.
 
 ## 11. Foundations
-- [[01-cap-theorem]] — RDS Multi-AZ là CP, DDB default AP.
-- [[02-consistency-models]] — strong vs eventual ở DDB read option.
-- [[03-replication-quorum]] — Aurora 4/6 quorum.
-- [[04-latency-consistency]] — Aurora Global vs Spanner.
-- [[05-partitioning-sharding]] — DDB hot partition.
+- [[foundations-01-cap-theorem]] — RDS Multi-AZ là CP, DDB default AP.
+- [[foundations-02-consistency-models]] — strong vs eventual ở DDB read option.
+- [[foundations-03-replication-and-quorum]] — Aurora 4/6 quorum.
+- [[foundations-04-latency-vs-consistency]] — Aurora Global vs Spanner.
+- [[foundations-05-partitioning-and-sharding]] — DDB hot partition.
 
 ## 12. Flashcard
 

@@ -87,7 +87,7 @@ CAP/PACELC dẫn tới các "mức độ" consistency mà AWS hay nhắc:
 - **Read-your-writes** — bạn luôn đọc được write của chính mình, nhưng user khác có thể chưa thấy. (DynamoDB session consistency, RDS read replica với sticky session)
 - **Monotonic reads** — đọc lần sau không "lùi" so với lần trước.
 
-Chi tiết sẽ ở bài [[02-consistency-models]].
+Chi tiết sẽ ở bài [[foundations-02-consistency-models]].
 
 ---
 
@@ -133,7 +133,7 @@ Chi tiết sẽ ở bài [[02-consistency-models]].
 4. Một hệ thống claim "CA, không P" — đánh giá claim này.
 5. Vì sao Kafka mặc định `acks=all` được xếp vào CP, dù producer vẫn có thể retry?
 
-(Đáp án ở [[01-cap-theorem-answers]] — sẽ viết sau.)
+(Đáp án ở 01-cap-theorem-answers — sẽ viết sau.)
 
 ---
 
@@ -146,4 +146,4 @@ Chi tiết sẽ ở bài [[02-consistency-models]].
 
 ---
 
-**Bài tiếp theo**: [[02-consistency-models]] — đi sâu vào strong / eventual / causal / read-your-writes và map vào từng AWS service.
+**Bài tiếp theo**: [[foundations-02-consistency-models]] — đi sâu vào strong / eventual / causal / read-your-writes và map vào từng AWS service.

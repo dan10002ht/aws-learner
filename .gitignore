@@ -32,3 +32,6 @@ __pycache__/
 .pytest_cache/
 tmp/
 *.log
+
+# Workflow run output (per-run artifacts + manifest)
+.claude/thorough-out/

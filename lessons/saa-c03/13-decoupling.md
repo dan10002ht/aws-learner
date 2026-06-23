@@ -1,6 +1,6 @@
 # Bài 13 — Decoupling: SQS, SNS, EventBridge, Kinesis, Step Functions
 
-**Prerequisite foundations:** [[03-replication-quorum]], idempotency.
+**Prerequisite foundations:** [[foundations-03-replication-and-quorum]], idempotency.
 
 ## 1. Mục tiêu
 - Chọn đúng service decouple cho từng pattern: queue / pub-sub / event bus / stream / workflow.
@@ -335,7 +335,7 @@ DDB Streams → Lambda → EventBridge → consumer services
 - ❌ Kinesis 1 shard cho 100k records/s → throttle. Tăng shard hoặc dùng Firehose.
 
 ## 13. Foundations
-- **At-least-once + idempotency** là chủ đề của replication. Đọc [[03-replication-quorum]] nếu chưa.
+- **At-least-once + idempotency** là chủ đề của replication. Đọc [[foundations-03-replication-and-quorum]] nếu chưa.
 - **Exactly-once là illusion** — FIFO chỉ exactly-once trong 5-min dedup window, không phải end-to-end.
 
 ## 14. Flashcard

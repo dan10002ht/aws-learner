@@ -2,7 +2,7 @@
 
 > Mục tiêu: Hiểu vì sao **một bảng quá to phải bị chia nhỏ**, các chiến lược chia, và **hot partition** — kẻ giết hệ thống thầm lặng nhất. Sau bài này, bạn sẽ design DynamoDB partition key đủ chuẩn và biết khi nào RDS phải sharding.
 
-Tiền đề: [[01-cap-theorem]], [[03-replication-and-quorum]].
+Tiền đề: [[foundations-01-cap-theorem]], [[foundations-03-replication-and-quorum]].
 
 > **Thuật ngữ**: "Partition" và "Shard" thường dùng thay nhau. Trong bài này: **partition** = đơn vị chia của DynamoDB / Kafka / Aurora; **shard** = đơn vị chia khi tự làm trên RDS. Ý niệm giống nhau.
 
@@ -239,4 +239,4 @@ Khi dataset tăng → cần thêm partition. Có 2 cách:
 
 ---
 
-**Bài tiếp theo**: [[06-failure-modes]] — cascading failure, retry storm, circuit breaker. Vì sao Multi-AZ có thể vẫn down toàn bộ.
+**Bài tiếp theo**: [[foundations-06-failure-modes]] — cascading failure, retry storm, circuit breaker. Vì sao Multi-AZ có thể vẫn down toàn bộ.

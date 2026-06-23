@@ -2,7 +2,7 @@
 
 > Mục tiêu: Hiểu các "mức độ đúng" của dữ liệu trong hệ phân tán — từ **strong** xuống **eventual** — và biết từng AWS service rơi vào mức nào, để khi đi thi SAA bạn không phải đoán.
 
-Tiền đề: bạn đã đọc [[01-cap-theorem]] và hiểu tại sao phải đánh đổi C vs A khi có partition, và L vs C ngay cả khi mạng bình thường (PACELC). Bài này zoom vào câu hỏi: **"đánh đổi C nghĩa là cụ thể như thế nào?"**
+Tiền đề: bạn đã đọc [[foundations-01-cap-theorem]] và hiểu tại sao phải đánh đổi C vs A khi có partition, và L vs C ngay cả khi mạng bình thường (PACELC). Bài này zoom vào câu hỏi: **"đánh đổi C nghĩa là cụ thể như thế nào?"**
 
 ---
 
@@ -173,4 +173,4 @@ Eventual không miễn phí — bạn phải xử lý conflict khi 2 region cùn
 
 ---
 
-**Bài tiếp theo**: [[03-replication-and-quorum]] — leader/follower, Paxos/Raft cơ bản, vì sao Aurora dùng quorum 4/6.
+**Bài tiếp theo**: [[foundations-03-replication-and-quorum]] — leader/follower, Paxos/Raft cơ bản, vì sao Aurora dùng quorum 4/6.

@@ -323,7 +323,7 @@ Pattern hybrid: DX cho data hằng ngày + VPN backup (failover khi DX down) + I
 - ❌ Public RDS với SG `0.0.0.0/0`.
 
 ## 12. Foundations
-- [[06-failure-modes]] — network partition là chủ đề CAP.
+- [[foundations-06-failure-modes]] — network partition là chủ đề CAP.
 
 ## 13. Flashcard
 

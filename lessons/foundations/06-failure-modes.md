@@ -2,7 +2,7 @@
 
 > Mục tiêu: Hiểu **các kiểu chết** của hệ phân tán mà naive design không xử lý được — retry storm, thundering herd, cascading failure — và các pattern phòng vệ (circuit breaker, backoff, bulkhead, load shedding). Đây là kiến thức tách biệt một "junior cloud engineer" khỏi "senior architect".
 
-Tiền đề: [[01-cap-theorem]], [[03-replication-and-quorum]], [[04-latency-vs-consistency]].
+Tiền đề: [[foundations-01-cap-theorem]], [[foundations-03-replication-and-quorum]], [[foundations-04-latency-vs-consistency]].
 
 ---
 
@@ -251,7 +251,7 @@ Mỗi 5s, 100 instance, mỗi check 1 query → 2000 QPS chỉ cho healthcheck. 
 | Warm standby | Giây | Phút | $$$ |
 | Active-active | ~0 | ~0 | $$$$ |
 
-(Bài [[04-latency-vs-consistency]] đã đi sâu trade-off này.)
+(Bài [[foundations-04-latency-vs-consistency]] đã đi sâu trade-off này.)
 
 ---
 

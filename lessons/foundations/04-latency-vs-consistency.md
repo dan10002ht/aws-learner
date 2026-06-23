@@ -2,7 +2,7 @@
 
 > Mục tiêu: Hiểu **tại sao** "active-active global, strong consistency" gần như không tồn tại, và đọc đề SAA về Multi-Region đủ tinh để không sa bẫy "deploy mọi thứ ở mọi region".
 
-Tiền đề: [[01-cap-theorem]] (PACELC), [[02-consistency-models]], [[03-replication-and-quorum]] (quorum cost).
+Tiền đề: [[foundations-01-cap-theorem]] (PACELC), [[foundations-02-consistency-models]], [[foundations-03-replication-and-quorum]] (quorum cost).
 
 ---
 
@@ -234,4 +234,4 @@ Bài này là về **vế Else**. Ngay cả khi mạng hoàn hảo, bạn vẫn 
 
 ---
 
-**Bài tiếp theo**: [[05-partitioning-and-sharding]] — partition key DynamoDB, sharding RDS, hot partition và cách tránh.
+**Bài tiếp theo**: [[foundations-05-partitioning-and-sharding]] — partition key DynamoDB, sharding RDS, hot partition và cách tránh.

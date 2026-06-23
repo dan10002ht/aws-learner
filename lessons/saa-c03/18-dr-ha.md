@@ -1,6 +1,6 @@
 # Bài 18 — DR & HA Strategies
 
-**Foundation:** [[06-failure-modes]] — cascading failure, partition.
+**Foundation:** [[foundations-06-failure-modes]] — cascading failure, partition.
 
 ## 1. Mục tiêu
 - Hiểu **RPO/RTO** và 4 DR strategy.
@@ -82,7 +82,7 @@
 - **Compute**: full capacity both region.
 - **Routing**: Route 53 latency + health check, hoặc Global Accelerator.
 - RTO ~0.
-- Phức tạp: conflict resolution, eventual consistency cross-region (foundation [[04-latency-consistency]]).
+- Phức tạp: conflict resolution, eventual consistency cross-region (foundation [[foundations-04-latency-vs-consistency]]).
 
 ---
 
@@ -135,7 +135,7 @@
 ### 6.5 Graceful degradation
 - Fallback response khi downstream fail (e.g. cached version, default page).
 
-→ Foundation [[06-failure-modes]] đi sâu các pattern này.
+→ Foundation [[foundations-06-failure-modes]] đi sâu các pattern này.
 
 ---
 
@@ -262,9 +262,9 @@
 - ❌ Đo RPO/RTO theo lý thuyết, không test thực tế.
 
 ## 13. Foundations
-- [[06-failure-modes]] — cascading, retry storm, partial failure.
-- [[03-replication-quorum]] — Aurora 4/6 quorum cho failover.
-- [[04-latency-consistency]] — multi-region tradeoff.
+- [[foundations-06-failure-modes]] — cascading, retry storm, partial failure.
+- [[foundations-03-replication-and-quorum]] — Aurora 4/6 quorum cho failover.
+- [[foundations-04-latency-vs-consistency]] — multi-region tradeoff.
 
 ## 14. Flashcard
 
