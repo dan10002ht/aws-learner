@@ -113,6 +113,74 @@ git push --force-with-lease   # bắt buộc, vì lịch sử đã đổi
 
 ## Merge hay Rebase — khi nào dùng cái nào?
 
+Hai cách gộp, hai hình hài lịch sử khác hẳn nhau. Nhìn cạnh nhau sẽ rõ: merge giữ nguyên hai dòng rồi nối lại bằng commit `M`; rebase phát lại các commit của bạn thành chuỗi thẳng (đổi hash).
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>So sánh Merge và Rebase — lịch sử rẽ nhánh với merge commit M, so với lịch sử tuyến tính phát lại A'B'C'</title>
+  <desc>Bên trái Merge: nhánh feature A-B-C và nhánh main o-D-E gặp nhau ở merge commit M có hai cha (E và C), lịch sử rẽ nhánh, hash giữ nguyên. Bên phải Rebase: các commit A'B'C' được phát lại lên đỉnh main sau E thành một chuỗi thẳng, hash đổi vì cha mới.</desc>
+  <defs>
+    <marker id="rmArr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
+  </defs>
+
+  <line x1="360" y1="40" x2="360" y2="300" stroke="currentColor" stroke-opacity="0.18" stroke-dasharray="4 4"/>
+
+  <!-- MERGE -->
+  <rect x="16" y="36" width="120" height="24" rx="12" fill="#8b5cf6" fill-opacity="0.9"/>
+  <text x="76" y="53" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">git merge</text>
+  <text x="16" y="80" font-size="11" fill="currentColor" opacity="0.7">Tạo merge commit M (2 cha) — lịch sử rẽ nhánh, hash GIỮ NGUYÊN.</text>
+
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <line x1="50" y1="220" x2="100" y2="220" marker-end="url(#rmArr)"/>
+    <line x1="120" y1="220" x2="170" y2="220" marker-end="url(#rmArr)"/>
+    <line x1="190" y1="220" x2="240" y2="220" marker-end="url(#rmArr)"/>
+    <line x1="100" y1="208" x2="120" y2="135" marker-end="url(#rmArr)"/>
+    <line x1="125" y1="120" x2="175" y2="120" marker-end="url(#rmArr)"/>
+    <line x1="195" y1="120" x2="245" y2="120" marker-end="url(#rmArr)"/>
+    <line x1="270" y1="132" x2="295" y2="205" marker-end="url(#rmArr)"/>
+    <line x1="260" y1="220" x2="290" y2="220" marker-end="url(#rmArr)"/>
+  </g>
+  <!-- main row -->
+  <g font-size="11" font-weight="700" text-anchor="middle">
+    <circle cx="40" cy="220" r="14" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.4"/><text x="40" y="224" fill="currentColor">o</text>
+    <circle cx="110" cy="220" r="14" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="110" y="224" fill="currentColor">D</text>
+    <circle cx="180" cy="220" r="14" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="180" y="224" fill="currentColor">E</text>
+    <circle cx="305" cy="220" r="15" fill="#f59e0b" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.5"/><text x="305" y="224" fill="currentColor">M</text>
+  </g>
+  <!-- feature row -->
+  <g font-size="11" font-weight="700" text-anchor="middle">
+    <circle cx="110" cy="120" r="14" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="110" y="124" fill="currentColor">A</text>
+    <circle cx="185" cy="120" r="14" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="185" y="124" fill="currentColor">B</text>
+    <circle cx="260" cy="120" r="14" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="260" y="124" fill="currentColor">C</text>
+  </g>
+  <text x="40" y="262" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">main</text>
+  <text x="92" y="100" font-size="10.5" fill="currentColor" opacity="0.7">feature</text>
+  <text x="305" y="262" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">M: cha E + C</text>
+
+  <!-- REBASE -->
+  <rect x="396" y="36" width="120" height="24" rx="12" fill="#3b82f6" fill-opacity="0.9"/>
+  <text x="456" y="53" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">git rebase</text>
+  <text x="396" y="80" font-size="11" fill="currentColor" opacity="0.7">Phát lại A'B'C' lên đỉnh main — lịch sử THẲNG, hash ĐỔI.</text>
+
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <line x1="430" y1="220" x2="475" y2="220" marker-end="url(#rmArr)"/>
+    <line x1="495" y1="220" x2="540" y2="220" marker-end="url(#rmArr)"/>
+    <line x1="560" y1="220" x2="600" y2="220" marker-end="url(#rmArr)"/>
+    <line x1="625" y1="220" x2="660" y2="220" marker-end="url(#rmArr)"/>
+  </g>
+  <g font-size="11" font-weight="700" text-anchor="middle">
+    <circle cx="420" cy="220" r="14" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.4"/><text x="420" y="224" fill="currentColor">o</text>
+    <circle cx="485" cy="220" r="14" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="485" y="224" fill="currentColor">D</text>
+    <circle cx="550" cy="220" r="14" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="550" y="224" fill="currentColor">E</text>
+    <circle cx="613" cy="220" r="14" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.45"/><text x="613" y="224" font-size="10" fill="currentColor">A'</text>
+    <circle cx="676" cy="220" r="14" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.45"/><text x="676" y="224" font-size="10" fill="currentColor">B'</text>
+  </g>
+  <circle cx="676" cy="155" r="14" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.45"/><text x="676" y="159" font-size="10" font-weight="700" text-anchor="middle" fill="currentColor">C'</text>
+  <line x1="676" y1="206" x2="676" y2="170" stroke="currentColor" stroke-opacity="0.5" fill="none" marker-end="url(#rmArr)"/>
+  <text x="420" y="262" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">main</text>
+  <text x="644" y="262" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">A'B'C' = hash mới</text>
+  <text x="456" y="290" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">feature nối thẳng sau main</text>
+</svg>
+
 Không có cái nào "đúng tuyệt đối". Đây là kim chỉ nam thực tế:
 
 | Tình huống | Nên dùng | Vì sao |
@@ -197,12 +265,58 @@ git log --oneline
 f9a0b1c (HEAD -> feature) Add login form
 ```
 
-```text
-Trước:                          Sau:
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Interactive rebase squash/fixup — bốn commit lộn xộn gộp thành một commit sạch</title>
+  <desc>Trước: bốn commit a1b2 (Add login form), b2c3 (wip add validation), c3d4 (asdf), d4e5 (fix typo again). Ba commit sau dùng fixup gộp vào commit đầu, vứt message. Sau: còn một commit f9a0 với message sạch "Add login form".</desc>
+  <defs>
+    <marker id="sqArr" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0 0 L9 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
 
-a1b2 --- b2c3 --- c3d4 --- d4e5   →   f9a0   (1 commit gộp, message sạch)
-"login" "wip"   "asdf"  "typo"        "Add login form"
-```
+  <text x="16" y="26" font-size="13" font-weight="700" fill="currentColor">TRƯỚC — 4 commit lộn xộn</text>
+
+  <!-- before commits -->
+  <g>
+    <rect x="16" y="44" width="150" height="44" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+    <rect x="26" y="54" width="58" height="18" rx="9" fill="currentColor" fill-opacity="0.1"/><text x="55" y="67" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">pick a1b2</text>
+    <text x="26" y="83" font-size="10.5" fill="currentColor">Add login form</text>
+  </g>
+  <g>
+    <rect x="16" y="96" width="150" height="44" rx="9" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="26" y="106" width="68" height="18" rx="9" fill="#f59e0b" fill-opacity="0.85"/><text x="60" y="119" font-size="10" text-anchor="middle" fill="#fff">fixup b2c3</text>
+    <text x="26" y="135" font-size="10.5" fill="currentColor" opacity="0.6">wip add validation</text>
+  </g>
+  <g>
+    <rect x="16" y="148" width="150" height="44" rx="9" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="26" y="158" width="68" height="18" rx="9" fill="#f59e0b" fill-opacity="0.85"/><text x="60" y="171" font-size="10" text-anchor="middle" fill="#fff">fixup c3d4</text>
+    <text x="26" y="187" font-size="10.5" fill="currentColor" opacity="0.6">asdf</text>
+  </g>
+  <g>
+    <rect x="16" y="200" width="150" height="44" rx="9" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="26" y="210" width="68" height="18" rx="9" fill="#f59e0b" fill-opacity="0.85"/><text x="60" y="223" font-size="10" text-anchor="middle" fill="#fff">fixup d4e5</text>
+    <text x="26" y="239" font-size="10.5" fill="currentColor" opacity="0.6">fix typo again</text>
+  </g>
+
+  <!-- fixup absorb arrows: 3 lower commits fold up into the first -->
+  <g stroke="currentColor" stroke-opacity="0.45" fill="none" stroke-dasharray="3 3">
+    <path d="M176 118 q40 -20 0 -42" marker-end="url(#sqArr)"/>
+    <path d="M176 170 q70 -55 0 -94" marker-end="url(#sqArr)"/>
+    <path d="M176 222 q100 -90 0 -146" marker-end="url(#sqArr)"/>
+  </g>
+  <text x="250" y="96" font-size="10" fill="#f59e0b" opacity="0.95" font-weight="700">fixup: gộp lên,</text>
+  <text x="250" y="110" font-size="10" fill="#f59e0b" opacity="0.95" font-weight="700">vứt message</text>
+
+  <!-- big arrow to after -->
+  <line x1="370" y1="130" x2="450" y2="130" stroke="currentColor" stroke-opacity="0.5" stroke-width="2" marker-end="url(#sqArr)"/>
+  <text x="410" y="120" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">rebase -i</text>
+
+  <text x="490" y="26" font-size="13" font-weight="700" fill="currentColor">SAU — 1 commit sạch</text>
+  <g>
+    <rect x="490" y="100" width="214" height="60" rx="10" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="502" y="112" width="58" height="20" rx="10" fill="#3b82f6" fill-opacity="0.9"/><text x="531" y="126" font-size="10.5" text-anchor="middle" fill="#fff">f9a0</text>
+    <text x="502" y="151" font-size="12" font-weight="700" fill="currentColor">Add login form</text>
+  </g>
+  <text x="490" y="186" font-size="10.5" fill="currentColor" opacity="0.7">HEAD → feature · lịch sử kể chuyện được</text>
+</svg>
 
 Bốn commit lộn xộn giờ thành **một commit gọn gàng**, reviewer của bạn sẽ cảm ơn.
 

@@ -30,6 +30,64 @@ Bài này sẽ đi qua từng bước của quy trình đó, đúng như cách b
 
 Giờ đi vào chi tiết từng bước.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 270" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Quy trình 5 bước Pull Request: Branch → Push → PR → Review → Merge với vòng lặp sửa lại</title>
+  <desc>Năm bước nối tiếp từ trái sang phải: Tạo branch (git switch -c), Push (git push), mở Pull Request, Review (approve hoặc request changes), Merge (squash hoặc merge commit). Có vòng lặp quay từ Review về Push: khi bị yêu cầu sửa thì sửa code rồi push lại lên cùng nhánh, PR tự cập nhật.</desc>
+  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Quy trình Pull Request — 5 bước</text>
+
+  <defs>
+    <marker id="prArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
+    <marker id="prArrLoop" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#f59e0b" fill-opacity="0.9"/></marker>
+  </defs>
+
+  <g>
+    <rect x="14" y="62" width="124" height="60" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="24" y="80" font-size="11" font-weight="700" fill="#3b82f6">1 · Branch</text>
+    <text x="24" y="98" font-size="12" font-weight="700" fill="currentColor">Tạo nhánh</text>
+    <text x="24" y="114" font-size="10" fill="currentColor" opacity="0.7">git switch -c</text>
+  </g>
+  <line x1="138" y1="92" x2="156" y2="92" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#prArr)"/>
+
+  <g>
+    <rect x="158" y="62" width="124" height="60" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="168" y="80" font-size="11" font-weight="700" fill="#10b981">2 · Push</text>
+    <text x="168" y="98" font-size="12" font-weight="700" fill="currentColor">Đẩy lên GitHub</text>
+    <text x="168" y="114" font-size="10" fill="currentColor" opacity="0.7">git push</text>
+  </g>
+  <line x1="282" y1="92" x2="300" y2="92" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#prArr)"/>
+
+  <g>
+    <rect x="302" y="62" width="124" height="60" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="312" y="80" font-size="11" font-weight="700" fill="#8b5cf6">3 · PR</text>
+    <text x="312" y="98" font-size="12" font-weight="700" fill="currentColor">Pull Request</text>
+    <text x="312" y="114" font-size="10" fill="currentColor" opacity="0.7">mô tả Why/What</text>
+  </g>
+  <line x1="426" y1="92" x2="444" y2="92" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#prArr)"/>
+
+  <g>
+    <rect x="446" y="62" width="124" height="60" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="456" y="80" font-size="11" font-weight="700" fill="#f59e0b">4 · Review</text>
+    <text x="456" y="98" font-size="12" font-weight="700" fill="currentColor">Xem xét</text>
+    <text x="456" y="114" font-size="10" fill="currentColor" opacity="0.7">approve / sửa</text>
+  </g>
+  <line x1="570" y1="92" x2="588" y2="92" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#prArr)"/>
+
+  <g>
+    <rect x="590" y="62" width="116" height="60" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="600" y="80" font-size="11" font-weight="700" fill="#3b82f6">5 · Merge</text>
+    <text x="600" y="98" font-size="12" font-weight="700" fill="currentColor">Gộp vào main</text>
+    <text x="600" y="114" font-size="10" fill="currentColor" opacity="0.7">squash / merge</text>
+  </g>
+
+  <text x="528" y="56" font-size="10" fill="#10b981" opacity="0.95" font-weight="700" text-anchor="middle">approve →</text>
+
+  <g fill="none" stroke="#f59e0b" stroke-opacity="0.8" stroke-dasharray="5 4">
+    <path d="M508 122 v58 H220 v-50" marker-end="url(#prArrLoop)"/>
+  </g>
+  <text x="360" y="200" font-size="11" font-weight="700" text-anchor="middle" fill="#f59e0b">Request changes: sửa code → push lại → PR tự cập nhật</text>
+  <text x="360" y="218" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">(lặp đến khi được approve — không cần mở PR mới)</text>
+</svg>
+
 ---
 
 ## Bước 1 — Tạo branch: làm việc trên "bản nháp riêng"

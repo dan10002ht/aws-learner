@@ -44,13 +44,34 @@ Kho code trên máy bạn gọi là **local repository** (kho cục bộ). Bản
 
 Hai kho này là hai bản sao **độc lập**. Bạn sửa code trên máy thì bản trên GitHub **không tự cập nhật** — bạn phải chủ động "đẩy" lên. Ngược lại, nếu trên GitHub có thay đổi mới (do đồng nghiệp đẩy lên), máy bạn cũng không tự biết — bạn phải "kéo" về.
 
-```
-   Máy của bạn (local)              GitHub (remote)
-  ┌─────────────────┐    push →   ┌─────────────────┐
-  │   Kho Git của   │ ──────────→ │   Bản sao kho   │
-  │      bạn        │ ←────────── │    trên mây     │
-  └─────────────────┘   ← pull    └─────────────────┘
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Hai kho độc lập: Local và Remote với ba lệnh clone, push, pull</title>
+  <desc>Kho Local trên máy bạn và kho Remote trên GitHub là hai bản sao độc lập. Lần đầu dùng clone để sao chép từ remote về local; push đẩy thay đổi từ local lên remote; pull kéo thay đổi từ remote về local.</desc>
+  <rect x="40" y="92" width="240" height="96" rx="12" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="160" y="124" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Local</text>
+  <text x="160" y="146" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">Kho Git trên máy của bạn</text>
+  <text x="160" y="166" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.55">commit ở đây</text>
+  <rect x="440" y="92" width="240" height="96" rx="12" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="560" y="124" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Remote</text>
+  <text x="560" y="146" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">Bản sao kho trên GitHub</text>
+  <text x="560" y="166" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.55">lưu trên mây</text>
+  <defs>
+    <marker id="ghArrR" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+    <marker id="ghArrL" markerWidth="10" markerHeight="10" refX="2" refY="3" orient="auto"><path d="M8 0 L0 3 L8 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+  <line x1="284" y1="50" x2="436" y2="50" stroke="currentColor" stroke-opacity="0.45" marker-start="url(#ghArrL)"/>
+  <text x="360" y="42" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">clone</text>
+  <text x="360" y="68" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">remote → local (lần đầu)</text>
+  <line x1="284" y1="120" x2="436" y2="120" stroke="#3b82f6" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#ghArrR)"/>
+  <text x="360" y="113" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">push</text>
+  <text x="360" y="136" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">local → remote</text>
+  <line x1="436" y1="170" x2="284" y2="170" stroke="#10b981" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#ghArrL)"/>
+  <text x="360" y="194" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">pull</text>
+  <text x="360" y="210" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">remote → local</text>
+  <text x="160" y="232" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.65">máy của bạn</text>
+  <text x="560" y="232" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.65">GitHub (trên mây)</text>
+  <text x="360" y="262" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.55">Hai kho độc lập — không tự đồng bộ; bạn phải push/pull thủ công</text>
+</svg>
 
 ---
 
@@ -275,6 +296,37 @@ Ví von: bạn thấy một công thức nấu ăn hay trên mạng nhưng khôn
 | Sao chép từ đâu đến đâu | Repo người khác → **tài khoản GitHub của bạn** (vẫn trên mây) | Repo trên GitHub → **máy tính của bạn** |
 | Thao tác ở đâu | Bấm nút **Fork** trên trang web GitHub | Gõ lệnh `git clone` trong Terminal |
 | Dùng khi nào | Muốn sửa/đóng góp vào dự án không phải của mình | Muốn tải code về máy để làm việc |
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Fork và Clone có điểm đến khác nhau</title>
+  <desc>Từ repo gốc của người khác trên GitHub, lệnh Fork tạo một bản sao trong tài khoản GitHub của bạn (vẫn trên mây). Từ bản sao đó, lệnh Clone tải về máy tính của bạn. Fork đi tới tài khoản trên mây, Clone đi tới máy bạn.</desc>
+  <text x="16" y="22" font-size="13" font-weight="700" fill="currentColor">Trên mây (GitHub)</text>
+  <text x="616" y="22" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Máy bạn</text>
+  <rect x="16" y="64" width="190" height="84" rx="12" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="111" y="98" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Repo gốc</text>
+  <text x="111" y="118" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">của người khác</text>
+  <text x="111" y="135" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.55">bạn không có quyền sửa</text>
+  <rect x="266" y="64" width="190" height="84" rx="12" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="361" y="98" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Bản sao của bạn</text>
+  <text x="361" y="118" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">trong tài khoản bạn</text>
+  <text x="361" y="135" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.55">vẫn trên mây</text>
+  <rect x="516" y="64" width="190" height="84" rx="12" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="611" y="98" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Kho trên máy</text>
+  <text x="611" y="118" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">trên máy tính bạn</text>
+  <text x="611" y="135" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.55">sửa code ở đây</text>
+  <defs>
+    <marker id="fcArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+  <line x1="206" y1="106" x2="262" y2="106" stroke="#8b5cf6" stroke-opacity="0.8" stroke-width="1.5" marker-end="url(#fcArr)"/>
+  <text x="234" y="96" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Fork</text>
+  <line x1="456" y1="106" x2="512" y2="106" stroke="#10b981" stroke-opacity="0.8" stroke-width="1.5" marker-end="url(#fcArr)"/>
+  <text x="484" y="96" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Clone</text>
+  <line x1="206" y1="40" x2="456" y2="40" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 4"/>
+  <line x1="516" y1="40" x2="706" y2="40" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 4"/>
+  <text x="234" y="180" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">điểm đến: tài khoản bạn</text>
+  <text x="484" y="180" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">điểm đến: máy bạn</text>
+  <text x="360" y="216" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.65">Fork chép sang tài khoản bạn (vẫn trên mây); Clone tải xuống máy bạn — điểm đến khác nhau</text>
+</svg>
 
 ### Quy trình đóng góp mã nguồn mở (open source)
 

@@ -57,16 +57,73 @@ git cat-file -p 9f1c2a7b
 
 ### Sơ đồ: một commit móc nối ra sao
 
-```
-commit  ──trỏ tới──►  tree (root)
-  │                     ├── blob   index.html
-  │ parent              ├── blob   build.sh
-  ▼                     └── tree   src
-commit (cha)                  ├── blob  app.js
-  │                           └── blob  style.css
-  ▼
-commit (ông) ...
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Object model của Git — commit trỏ tới tree, tree trỏ tới blob/sub-tree, và chuỗi commit cha bất biến</title>
+  <desc>Một commit trỏ tới một tree gốc; tree gốc liệt kê hai blob (index.html, build.sh) và một sub-tree src; sub-tree src chứa hai blob app.js và style.css. Bên trái, commit hiện tại trỏ về commit cha, cha trỏ về ông, tạo thành chuỗi liên kết bất biến.</desc>
+  <defs>
+    <marker id="omArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+
+  <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">Một commit móc nối ra sao (commit → tree → blob)</text>
+
+  <g>
+    <rect x="16" y="44" width="150" height="48" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="91" y="64" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">commit (HEAD)</text>
+    <text x="91" y="82" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">ảnh chụp hiện tại</text>
+  </g>
+  <g>
+    <rect x="16" y="150" width="150" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="91" y="177" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">commit (cha)</text>
+  </g>
+  <g>
+    <rect x="16" y="248" width="150" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="91" y="275" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">commit (ông) …</text>
+  </g>
+  <line x1="91" y1="92" x2="91" y2="148" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#omArr)"/>
+  <line x1="91" y1="194" x2="91" y2="246" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#omArr)"/>
+  <text x="100" y="124" font-size="10" fill="currentColor" opacity="0.7">parent</text>
+  <text x="100" y="224" font-size="10" fill="currentColor" opacity="0.7">parent</text>
+
+  <g>
+    <rect x="232" y="44" width="150" height="48" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="307" y="64" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">tree (root)</text>
+    <text x="307" y="82" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">bảng kê thư mục</text>
+  </g>
+  <line x1="166" y1="68" x2="230" y2="68" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#omArr)"/>
+  <text x="172" y="60" font-size="10" fill="currentColor" opacity="0.75">trỏ tới</text>
+
+  <g>
+    <rect x="448" y="32" width="160" height="36" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="528" y="55" font-size="11.5" text-anchor="middle" fill="currentColor">blob  index.html</text>
+  </g>
+  <g>
+    <rect x="448" y="78" width="160" height="36" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="528" y="101" font-size="11.5" text-anchor="middle" fill="currentColor">blob  build.sh</text>
+  </g>
+  <g>
+    <rect x="448" y="124" width="160" height="40" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="528" y="149" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">tree  src</text>
+  </g>
+  <line x1="382" y1="62" x2="446" y2="50" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#omArr)"/>
+  <line x1="382" y1="70" x2="446" y2="94" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#omArr)"/>
+  <line x1="382" y1="80" x2="446" y2="142" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#omArr)"/>
+
+  <g>
+    <rect x="448" y="210" width="160" height="36" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="528" y="233" font-size="11.5" text-anchor="middle" fill="currentColor">blob  app.js</text>
+  </g>
+  <g>
+    <rect x="448" y="256" width="160" height="36" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="528" y="279" font-size="11.5" text-anchor="middle" fill="currentColor">blob  style.css</text>
+  </g>
+  <line x1="500" y1="164" x2="500" y2="228" stroke="currentColor" stroke-opacity="0.5"/>
+  <line x1="500" y1="228" x2="446" y2="228" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#omArr)"/>
+  <line x1="500" y1="228" x2="500" y2="274" stroke="currentColor" stroke-opacity="0.5"/>
+  <line x1="500" y1="274" x2="446" y2="274" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#omArr)"/>
+
+  <text x="232" y="324" font-size="11" fill="currentColor" opacity="0.72">Đổi 1 byte trong blob → đổi SHA blob → đổi SHA tree → đổi SHA mọi commit về sau.</text>
+  <text x="232" y="342" font-size="11" fill="currentColor" opacity="0.72">Vì thế chuỗi commit là một liên kết bất biến, không sửa lén được.</text>
+</svg>
 
 Mỗi commit trỏ về commit cha → cả lịch sử là một **chuỗi liên kết bất biến**. Đổi một byte ở file cũ → đổi SHA của blob → đổi SHA của tree → đổi SHA của mọi commit từ đó về sau. Đây chính là cơ chế khiến lịch sử Git **không thể bị sửa lén** mà không ai biết.
 
@@ -91,13 +148,54 @@ cat .git/HEAD
 
 ### Sơ đồ: HEAD → branch → commit
 
-```
-HEAD ──► main ──►  C3 ──► C2 ──► C1
-                   (commit mới nhất)
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>HEAD trỏ tới branch main, main trỏ tới commit mới nhất; khi commit thì chỉ dời con trỏ main</title>
+  <desc>Bình thường HEAD trỏ tới branch main, main trỏ tới commit mới nhất C3, C3 trỏ về C2 rồi C1. Khi tạo commit mới C4, chỉ cần dời con trỏ main sang C4, C4 trỏ về C3.</desc>
+  <defs>
+    <marker id="rfArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
 
-# Khi bạn commit: tạo C4, rồi CHỈ cần dời con trỏ main sang C4.
-HEAD ──► main ──►  C4 ──► C3 ──► C2 ──► C1
-```
+  <text x="16" y="20" font-size="12.5" font-weight="700" fill="currentColor">Bình thường — HEAD → main → commit mới nhất</text>
+
+  <rect x="16" y="34" width="62" height="34" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="47" y="56" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">HEAD</text>
+  <rect x="118" y="34" width="62" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="149" y="56" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">main</text>
+  <line x1="78" y1="51" x2="116" y2="51" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#rfArr)"/>
+
+  <g>
+    <rect x="240" y="34" width="58" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="269" y="56" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">C3</text>
+    <rect x="358" y="34" width="58" height="34" rx="8" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="387" y="56" font-size="12" text-anchor="middle" fill="currentColor">C2</text>
+    <rect x="476" y="34" width="58" height="34" rx="8" fill="#10b981" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="505" y="56" font-size="12" text-anchor="middle" fill="currentColor">C1</text>
+  </g>
+  <line x1="180" y1="51" x2="238" y2="51" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#rfArr)"/>
+  <line x1="298" y1="51" x2="356" y2="51" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#rfArr)"/>
+  <line x1="416" y1="51" x2="474" y2="51" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#rfArr)"/>
+  <text x="540" y="55" font-size="10.5" fill="currentColor" opacity="0.65">mới → cũ (parent)</text>
+
+  <text x="16" y="110" font-size="12.5" font-weight="700" fill="currentColor">Sau khi commit — chỉ DỜI con trỏ main sang C4 mới</text>
+
+  <rect x="16" y="124" width="62" height="34" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="47" y="146" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">HEAD</text>
+  <rect x="118" y="124" width="62" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="149" y="146" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">main</text>
+  <line x1="78" y1="141" x2="116" y2="141" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#rfArr)"/>
+
+  <rect x="240" y="124" width="58" height="34" rx="8" fill="#3b82f6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="269" y="146" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">C4</text>
+  <rect x="358" y="124" width="58" height="34" rx="8" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="387" y="146" font-size="12" text-anchor="middle" fill="currentColor">C3</text>
+  <rect x="476" y="124" width="58" height="34" rx="8" fill="#10b981" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="505" y="146" font-size="12" text-anchor="middle" fill="currentColor">C2 …</text>
+  <line x1="180" y1="141" x2="238" y2="141" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#rfArr)"/>
+  <line x1="298" y1="141" x2="356" y2="141" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#rfArr)"/>
+  <line x1="416" y1="141" x2="474" y2="141" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#rfArr)"/>
+
+  <text x="16" y="194" font-size="11" fill="currentColor" opacity="0.72">Branch chỉ là một file 41 byte chứa SHA → tạo nhánh = ghi thêm một file, gần như miễn phí.</text>
+</svg>
 
 Tạo branch mới chỉ là **ghi thêm một file 41 byte** → đó là lý do branch trong Git nhanh và rẻ đến mức "vô hạn", khác hẳn các hệ cũ phải copy cả thư mục.
 
@@ -111,11 +209,38 @@ git checkout 3e4d5c6
 # You are in 'detached HEAD' state...
 ```
 
-```
-# Bình thường:        HEAD ──► main ──► C3
-# Detached HEAD:       HEAD ──────────► C2     (không qua branch nào)
-                              main ──► C3
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Detached HEAD — HEAD trỏ thẳng vào một commit, không đi qua branch nào</title>
+  <desc>Bình thường HEAD trỏ tới branch main, main trỏ tới commit C3. Ở trạng thái detached HEAD, HEAD trỏ thẳng vào commit C2 không qua branch nào, trong khi branch main vẫn trỏ tới C3.</desc>
+  <defs>
+    <marker id="dhArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+
+  <text x="16" y="20" font-size="12.5" font-weight="700" fill="currentColor">Bình thường — HEAD đi QUA branch</text>
+  <rect x="16" y="32" width="62" height="32" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="47" y="53" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">HEAD</text>
+  <rect x="120" y="32" width="62" height="32" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="151" y="53" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">main</text>
+  <rect x="240" y="32" width="58" height="32" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="269" y="53" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">C3</text>
+  <line x1="78" y1="48" x2="118" y2="48" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#dhArr)"/>
+  <line x1="182" y1="48" x2="238" y2="48" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#dhArr)"/>
+
+  <text x="16" y="106" font-size="12.5" font-weight="700" fill="currentColor">Detached HEAD — HEAD trỏ THẲNG commit, bỏ qua branch</text>
+  <rect x="16" y="118" width="62" height="32" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="47" y="139" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">HEAD</text>
+  <rect x="358" y="118" width="58" height="32" rx="8" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="387" y="139" font-size="12" text-anchor="middle" fill="currentColor">C2</text>
+  <line x1="78" y1="134" x2="356" y2="134" stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="5 3" marker-end="url(#dhArr)"/>
+  <text x="150" y="127" font-size="10.5" fill="currentColor" opacity="0.7">trỏ thẳng — không qua branch</text>
+
+  <rect x="120" y="160" width="62" height="30" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="151" y="180" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">main</text>
+  <rect x="358" y="160" width="58" height="30" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="387" y="180" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">C3</text>
+  <line x1="182" y1="175" x2="356" y2="175" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#dhArr)"/>
+  <text x="430" y="179" font-size="10.5" fill="currentColor" opacity="0.7">main vẫn trỏ C3 như cũ</text>
+</svg>
 
 Detached HEAD **không phải lỗi** — nó hữu ích để xem lại code cũ, thử nghiệm. Nguy hiểm duy nhất: nếu bạn **commit** trong trạng thái này rồi `switch` sang nhánh khác, các commit mới *không có nhánh nào trỏ tới* → dễ bị "lạc" (nhưng vẫn cứu được bằng `reflog`, đã học ở bài trước).
 
@@ -328,11 +453,41 @@ git worktree remove ../duan-hotfix        # xong thì dọn
 git worktree list                         # xem các worktree đang có
 ```
 
-```
-my-repo/            (worktree chính, nhánh feature — code đang dở yên nguyên)
-duan-hotfix/        (worktree phụ, nhánh hotfix — sửa song song)
-        └── cả hai dùng chung MỘT .git, không clone lại, không tốn dung lượng nhân đôi
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Git worktree — hai thư mục checkout hai nhánh khác nhau, dùng chung một kho .git</title>
+  <desc>Một object database .git dùng chung ở giữa, nối tới hai thư mục checkout: my-repo checkout nhánh feature đang code dở, và duan-hotfix checkout nhánh hotfix sửa song song. Không clone lại, không nhân đôi dung lượng.</desc>
+  <defs>
+    <marker id="wtArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
+  </defs>
+
+  <text x="360" y="22" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Một .git dùng chung — hai thư mục, hai nhánh song song</text>
+
+  <!-- kho .git dùng chung ở giữa -->
+  <rect x="270" y="44" width="180" height="62" rx="11" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="360" y="72" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">.git (chung)</text>
+  <text x="360" y="92" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">object database duy nhất</text>
+
+  <!-- worktree chính bên trái -->
+  <rect x="24" y="170" width="296" height="86" rx="11" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.28"/>
+  <text x="40" y="196" font-size="12.5" font-weight="700" fill="currentColor">my-repo/  (worktree chính)</text>
+  <rect x="40" y="208" width="120" height="24" rx="12" fill="#8b5cf6" fill-opacity="0.9"/>
+  <text x="100" y="225" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">nhánh feature</text>
+  <text x="40" y="248" font-size="10.5" fill="currentColor" opacity="0.72">code đang dở — yên nguyên</text>
+
+  <!-- worktree phụ bên phải -->
+  <rect x="400" y="170" width="296" height="86" rx="11" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.28"/>
+  <text x="416" y="196" font-size="12.5" font-weight="700" fill="currentColor">duan-hotfix/  (worktree phụ)</text>
+  <rect x="416" y="208" width="120" height="24" rx="12" fill="#f59e0b" fill-opacity="0.95"/>
+  <text x="476" y="225" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">nhánh hotfix</text>
+  <text x="416" y="248" font-size="10.5" fill="currentColor" opacity="0.72">sửa song song, không đụng feature</text>
+
+  <line x1="320" y1="100" x2="150" y2="168" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#wtArr)"/>
+  <line x1="400" y1="100" x2="560" y2="168" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#wtArr)"/>
+  <text x="200" y="138" font-size="10.5" fill="currentColor" opacity="0.7">checkout</text>
+  <text x="470" y="138" font-size="10.5" fill="currentColor" opacity="0.7">checkout</text>
+</svg>
+
+> Cả hai thư mục dùng chung **một** `.git` — không clone lại, không tốn dung lượng nhân đôi.
 
 So với clone lần hai: worktree **dùng chung object database** nên nhẹ hơn nhiều, và các nhánh đồng bộ tức thì.
 

@@ -36,6 +36,40 @@ A --- B --- C          ← main (vẫn đứng yên ở C)
                 D --- E   ← thu-nghiem
 ```
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Branch là nhãn trỏ commit — lịch sử rẽ đôi sau khi commit trên nhánh phụ</title>
+  <desc>Các commit A, B, C nối nhau; từ C lịch sử rẽ đôi thành D rồi E. Nhãn main vẫn trỏ vào commit C, còn nhãn thu-nghiem trỏ vào commit E ở nhánh mới.</desc>
+  <text x="16" y="26" font-size="13.5" font-weight="700" fill="currentColor">Branch chỉ là cái nhãn trỏ vào một commit</text>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none" stroke-width="2">
+    <line x1="78" y1="120" x2="150" y2="120"/>
+    <line x1="202" y1="120" x2="274" y2="120"/>
+    <line x1="326" y1="120" x2="398" y2="98"/>
+    <line x1="450" y1="86" x2="522" y2="86"/>
+  </g>
+  <g>
+    <circle cx="52" cy="120" r="22" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="52" y="125" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">A</text>
+    <circle cx="176" cy="120" r="22" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="176" y="125" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">B</text>
+    <circle cx="300" cy="120" r="22" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="300" y="125" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">C</text>
+    <circle cx="424" cy="86" r="22" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="424" y="91" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">D</text>
+    <circle cx="548" cy="86" r="22" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="548" y="91" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">E</text>
+  </g>
+  <g>
+    <rect x="262" y="158" width="76" height="24" rx="12" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="300" y="174" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">main</text>
+    <line x1="300" y1="158" x2="300" y2="146" stroke="currentColor" stroke-opacity="0.5"/>
+    <rect x="500" y="36" width="96" height="24" rx="12" fill="#10b981" fill-opacity="0.95"/>
+    <text x="548" y="52" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">thu-nghiem</text>
+    <line x1="548" y1="60" x2="548" y2="64" stroke="currentColor" stroke-opacity="0.5"/>
+  </g>
+  <text x="300" y="212" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">main đứng yên ở C — không bị ảnh hưởng</text>
+  <text x="548" y="212" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">thu-nghiem đã đi tới E</text>
+</svg>
+
 Ai đang làm việc trên `main` vẫn thấy dự án y như ở commit C. Còn bạn, trên `thu-nghiem`, đã đi xa hơn 2 bước. Hai vũ trụ song song, không ai làm phiền ai.
 
 ### Vì sao branch lại quan trọng đến vậy?
@@ -137,6 +171,50 @@ A --- B --- C            ← main
 A --- B --- C --- D --- E   ← main, them-trang-gioi-thieu
 ```
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Fast-forward merge — nhãn main trượt lên đỉnh E, không tạo commit mới</title>
+  <desc>Năm commit A B C D E nằm trên một đường thẳng. main đang ở C; sau khi fast-forward, nhãn main trượt từ C lên tới E nằm cùng chỗ với nhãn them-trang-gioi-thieu. Không có commit mới nào được tạo.</desc>
+  <text x="16" y="26" font-size="13.5" font-weight="700" fill="currentColor">Fast-forward: nhãn main chỉ trượt lên, không tạo commit</text>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none" stroke-width="2">
+    <line x1="68" y1="110" x2="124" y2="110"/>
+    <line x1="172" y1="110" x2="228" y2="110"/>
+    <line x1="276" y1="110" x2="332" y2="110"/>
+    <line x1="380" y1="110" x2="436" y2="110"/>
+  </g>
+  <g>
+    <circle cx="48" cy="110" r="20" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="48" y="115" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">A</text>
+    <circle cx="152" cy="110" r="20" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="152" y="115" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">B</text>
+    <circle cx="256" cy="110" r="20" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="256" y="115" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">C</text>
+    <circle cx="360" cy="110" r="20" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="360" y="115" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">D</text>
+    <circle cx="464" cy="110" r="20" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="464" y="115" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">E</text>
+  </g>
+  <g>
+    <rect x="218" y="150" width="76" height="22" rx="11" fill="#3b82f6" fill-opacity="0.45" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="4 3"/>
+    <text x="256" y="165" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">main (cũ)</text>
+    <line x1="256" y1="150" x2="256" y2="132" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="4 3"/>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none">
+    <path d="M300 161 C 360 161 410 161 452 161" marker-end="url(#ffArr)"/>
+  </g>
+  <defs>
+    <marker id="ffArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+  <g>
+    <rect x="426" y="150" width="76" height="22" rx="11" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="464" y="165" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">main</text>
+    <line x1="464" y1="150" x2="464" y2="132" stroke="currentColor" stroke-opacity="0.5"/>
+    <rect x="524" y="100" width="172" height="22" rx="11" fill="#10b981" fill-opacity="0.95"/>
+    <text x="610" y="115" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">them-trang-gioi-thieu</text>
+    <line x1="524" y1="111" x2="486" y2="111" stroke="currentColor" stroke-opacity="0.5"/>
+  </g>
+  <text x="380" y="200" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">main trượt từ C lên E — hai nhãn cùng trỏ E</text>
+</svg>
+
 Đây gọi là **fast-forward** (tua nhanh — như bấm nút tua trên máy phát video). Git sẽ in dòng chữ `Fast-forward` cho bạn biết. Không tạo commit mới, không thể có xung đột, êm đẹp tuyệt đối.
 
 ### Trường hợp 2: Merge thật sự — hai nhánh đều có commit mới
@@ -156,6 +234,46 @@ A --- B --- C --- F --------- M    ← main
                \             /
                 D --- E ----       ← them-trang-gioi-thieu
 ```
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>3-way merge — merge commit M có hai cha, nối hai nhánh đều đã tiến</title>
+  <desc>Lịch sử A-B-C đi chung; từ commit C tách đôi: nhánh main đi tiếp tới F, nhánh phụ đi tới D rồi E. Một merge commit M có hai đường cha nối liền tới cả F và E, hợp nhất hai nhánh. Nhãn main giờ trỏ vào M.</desc>
+  <text x="16" y="26" font-size="13.5" font-weight="700" fill="currentColor">Merge thật sự: tạo merge commit M có hai cha</text>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none" stroke-width="2">
+    <line x1="72" y1="86" x2="130" y2="86"/>
+    <line x1="170" y1="86" x2="228" y2="86"/>
+    <line x1="268" y1="86" x2="326" y2="86"/>
+    <path d="M262 99 C 320 150 372 168 420 175"/>
+    <line x1="460" y1="182" x2="518" y2="182"/>
+    <path d="M366 86 C 470 86 560 92 614 110"/>
+    <path d="M554 171 C 596 156 614 146 624 136"/>
+  </g>
+  <g>
+    <circle cx="52" cy="86" r="20" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="52" y="91" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">A</text>
+    <circle cx="150" cy="86" r="20" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="150" y="91" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">B</text>
+    <circle cx="248" cy="86" r="20" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="248" y="91" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">C</text>
+    <circle cx="346" cy="86" r="20" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="346" y="91" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">F</text>
+    <circle cx="440" cy="182" r="20" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="440" y="187" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">D</text>
+    <circle cx="538" cy="182" r="20" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="538" y="187" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">E</text>
+    <circle cx="636" cy="120" r="24" fill="#8b5cf6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.5" stroke-width="2"/>
+    <text x="636" y="125" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">M</text>
+  </g>
+  <g>
+    <rect x="598" y="58" width="76" height="22" rx="11" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="636" y="73" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">main</text>
+    <line x1="636" y1="80" x2="636" y2="96" stroke="currentColor" stroke-opacity="0.5"/>
+    <rect x="452" y="218" width="172" height="22" rx="11" fill="#10b981" fill-opacity="0.95"/>
+    <text x="538" y="233" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">them-trang-gioi-thieu</text>
+    <line x1="538" y1="218" x2="538" y2="202" stroke="currentColor" stroke-opacity="0.5"/>
+  </g>
+  <text x="430" y="60" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">M = 2 cha (F và E)</text>
+</svg>
 
 Git sẽ mở trình soạn thảo cho bạn ghi lời nhắn commit (thường để nguyên dòng mặc định `Merge branch '...'` rồi lưu là xong). Trong đa số trường hợp, Git trộn **tự động và chính xác** — vì hai bên sửa các file khác nhau, hoặc các phần khác nhau của cùng file.
 

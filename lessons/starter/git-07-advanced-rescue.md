@@ -142,15 +142,58 @@ node dist/check.js
 
 Sơ đồ binary search trên 8 commit:
 
-```
-good                                            bad
- A---B---C---D---E---F---G---H
-                 ^ test E -> bad   => bug trong A..E
- A---B---C---D---E
-         ^ test C -> good          => bug trong C..E
- A---B---C---D---E
-             ^ test D -> bad       => D la thu pham
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>git bisect — binary search thu hẹp một nửa mỗi vòng tới khi tìm thủ phạm</title>
+  <desc>Dải 8 commit từ A (good) đến H (bad). Vòng 1 test E ra bad nên bug nằm trong A đến E. Vòng 2 test C ra good nên bug nằm trong C đến E. Vòng 3 test D ra bad nên D là thủ phạm. Mỗi vòng số commit cần xét giảm một nửa.</desc>
+  <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">git bisect — chia đôi liên tục tới khi bắt được commit lỗi</text>
+
+  <g font-size="11.5" fill="currentColor">
+    <text x="16" y="62" font-weight="700">Vòng 1</text>
+    <text x="16" y="78" font-size="10" opacity="0.7">test E → bad</text>
+    <g font-size="12.5" font-weight="700">
+      <rect x="92" y="46" width="40" height="30" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="112" y="66" text-anchor="middle" fill="currentColor">A</text>
+      <rect x="138" y="46" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/><text x="158" y="66" text-anchor="middle" fill="currentColor">B</text>
+      <rect x="184" y="46" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/><text x="204" y="66" text-anchor="middle" fill="currentColor">C</text>
+      <rect x="230" y="46" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/><text x="250" y="66" text-anchor="middle" fill="currentColor">D</text>
+      <rect x="276" y="46" width="40" height="30" rx="6" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/><text x="296" y="66" text-anchor="middle" fill="currentColor">E</text>
+      <rect x="322" y="46" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/><text x="342" y="66" text-anchor="middle" fill="currentColor">F</text>
+      <rect x="368" y="46" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/><text x="388" y="66" text-anchor="middle" fill="currentColor">G</text>
+      <rect x="414" y="46" width="40" height="30" rx="6" fill="#ef4444" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/><text x="434" y="66" text-anchor="middle" fill="currentColor">H</text>
+    </g>
+    <text x="112" y="38" font-size="9.5" text-anchor="middle" fill="#10b981" font-weight="700">good</text>
+    <text x="434" y="38" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8" font-weight="700">bad</text>
+    <text x="296" y="92" font-size="9" text-anchor="middle" fill="#f59e0b" font-weight="700">↑ giữa</text>
+    <text x="478" y="66" font-size="10.5" fill="currentColor" opacity="0.8">⇒ bug trong A…E</text>
+  </g>
+
+  <g font-size="11.5" fill="currentColor">
+    <text x="16" y="156" font-weight="700">Vòng 2</text>
+    <text x="16" y="172" font-size="10" opacity="0.7">test C → good</text>
+    <g font-size="12.5" font-weight="700">
+      <rect x="92" y="140" width="40" height="30" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="112" y="160" text-anchor="middle" fill="currentColor">A</text>
+      <rect x="138" y="140" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/><text x="158" y="160" text-anchor="middle" fill="currentColor">B</text>
+      <rect x="184" y="140" width="40" height="30" rx="6" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/><text x="204" y="160" text-anchor="middle" fill="currentColor">C</text>
+      <rect x="230" y="140" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/><text x="250" y="160" text-anchor="middle" fill="currentColor">D</text>
+      <rect x="276" y="140" width="40" height="30" rx="6" fill="#ef4444" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/><text x="296" y="160" text-anchor="middle" fill="currentColor">E</text>
+    </g>
+    <text x="204" y="186" font-size="9" text-anchor="middle" fill="#f59e0b" font-weight="700">↑ giữa</text>
+    <text x="340" y="160" font-size="10.5" fill="currentColor" opacity="0.8">⇒ bug trong C…E</text>
+  </g>
+
+  <g font-size="11.5" fill="currentColor">
+    <text x="16" y="250" font-weight="700">Vòng 3</text>
+    <text x="16" y="266" font-size="10" opacity="0.7">test D → bad</text>
+    <g font-size="12.5" font-weight="700">
+      <rect x="92" y="234" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12"/><text x="112" y="254" text-anchor="middle" fill="currentColor" opacity="0.45">A</text>
+      <rect x="138" y="234" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12"/><text x="158" y="254" text-anchor="middle" fill="currentColor" opacity="0.45">B</text>
+      <rect x="184" y="234" width="40" height="30" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="204" y="254" text-anchor="middle" fill="currentColor">C</text>
+      <rect x="230" y="234" width="40" height="30" rx="7" fill="#ef4444" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.4"/><text x="250" y="254" text-anchor="middle" fill="currentColor">D</text>
+      <rect x="276" y="234" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/><text x="296" y="254" text-anchor="middle" fill="currentColor">E</text>
+    </g>
+    <text x="250" y="280" font-size="9" text-anchor="middle" fill="#ef4444" font-weight="700">↑ thủ phạm</text>
+    <text x="340" y="254" font-size="10.5" fill="currentColor" opacity="0.85" font-weight="700">⇒ D là first bad commit</text>
+  </g>
+</svg>
 
 > 💡 Ghi nhớ: exit code `125` trong `bisect run` nghĩa "commit này không kiểm tra được, bỏ qua" (ví dụ build lỗi vì lý do khác). Đừng dùng nó cho kết quả good/bad.
 
@@ -169,13 +212,53 @@ git cherry-pick a1b2c3d^..f4e5d6c  # ap mot khoang commit
 
 Sơ đồ:
 
-```
-       D---E---F   (feature)
-      /
-A---B---C          (main, HEAD)
-       cherry-pick E
-A---B---C---E'     (main, HEAD)   E' co noi dung cua E, hash khac
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>git cherry-pick — sao chép commit E của nhánh feature thành E' áp lên main</title>
+  <desc>Nhánh feature có chuỗi commit D, E, F tách ra từ B. Nhánh main có A, B, C. cherry-pick E tạo một commit mới E' nội dung giống E nhưng hash khác, nối thêm sau C trên main.</desc>
+  <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">git cherry-pick — bê đúng commit E sang main (thành E', hash khác)</text>
+
+  <defs>
+    <marker id="cpArr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0 0 L7.5 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
+    <marker id="cpCopy" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#8b5cf6"/></marker>
+  </defs>
+
+  <!-- feature branch (top) -->
+  <text x="40" y="68" font-size="11.5" font-weight="700" fill="currentColor" opacity="0.85">feature</text>
+  <g stroke="currentColor" stroke-opacity="0.4" stroke-width="2" fill="none">
+    <line x1="372" y1="84" x2="430" y2="84" marker-end="url(#cpArr)"/>
+    <line x1="476" y1="84" x2="534" y2="84" marker-end="url(#cpArr)"/>
+  </g>
+  <g font-size="13" font-weight="700">
+    <circle cx="352" cy="84" r="20" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/><text x="352" y="89" text-anchor="middle" fill="currentColor">D</text>
+    <circle cx="456" cy="84" r="20" fill="#8b5cf6" fill-opacity="0.22" stroke="#8b5cf6" stroke-opacity="0.7"/><text x="456" y="89" text-anchor="middle" fill="currentColor">E</text>
+    <circle cx="556" cy="84" r="20" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/><text x="556" y="89" text-anchor="middle" fill="currentColor">F</text>
+  </g>
+
+  <!-- main branch (bottom) -->
+  <text x="40" y="205" font-size="11.5" font-weight="700" fill="currentColor" opacity="0.85">main</text>
+  <g stroke="currentColor" stroke-opacity="0.4" stroke-width="2" fill="none">
+    <line x1="120" y1="192" x2="178" y2="192" marker-end="url(#cpArr)"/>
+    <line x1="224" y1="192" x2="282" y2="192" marker-end="url(#cpArr)"/>
+    <line x1="320" y1="192" x2="430" y2="192" marker-end="url(#cpArr)"/>
+  </g>
+  <g font-size="13" font-weight="700">
+    <circle cx="100" cy="192" r="20" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/><text x="100" y="197" text-anchor="middle" fill="currentColor">A</text>
+    <circle cx="200" cy="192" r="20" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/><text x="200" y="197" text-anchor="middle" fill="currentColor">B</text>
+    <circle cx="300" cy="192" r="20" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/><text x="300" y="197" text-anchor="middle" fill="currentColor">C</text>
+    <circle cx="456" cy="192" r="21" fill="#8b5cf6" fill-opacity="0.22" stroke="#8b5cf6" stroke-opacity="0.7"/><text x="456" y="197" text-anchor="middle" fill="currentColor">E'</text>
+  </g>
+
+  <!-- branch point B -> D -->
+  <line x1="214" y1="180" x2="332" y2="96" stroke="currentColor" stroke-opacity="0.4" stroke-width="2" fill="none" marker-end="url(#cpArr)"/>
+
+  <!-- copy arrow E -> E' -->
+  <path d="M456 106 v62" stroke="#8b5cf6" stroke-width="2.2" stroke-dasharray="5 4" fill="none" marker-end="url(#cpCopy)"/>
+  <text x="466" y="142" font-size="10.5" fill="#8b5cf6" font-weight="700">cherry-pick E</text>
+
+  <text x="456" y="240" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">E' = nội dung của E, hash MỚI · D và F không theo sang</text>
+  <text x="556" y="56" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">(HEAD feature)</text>
+  <text x="456" y="222" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">(HEAD main)</text>
+</svg>
 
 ### Tình huống thật: hotfix nằm nhầm branch
 

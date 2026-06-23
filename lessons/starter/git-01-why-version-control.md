@@ -40,6 +40,49 @@ Tưởng tượng dự án của bạn là một căn phòng. Mỗi lần bạn 
 
 Mỗi "tấm ảnh" như vậy trong Git gọi là một **snapshot** (ảnh chụp nhanh trạng thái toàn bộ dự án tại một thời điểm). Hành động chụp và dán vào album gọi là **commit** (cam kết lưu một phiên bản). Cuốn album chính là **lịch sử** (history) của dự án.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Chuỗi commit nối tiếp như các trang album ảnh</title>
+  <desc>So sánh: mớ file final_v2 lộn xộn ở trên, thay bằng một chuỗi commit A đến B đến C nối tiếp nhau như các trang album, mỗi node ghi commit message và hash ngắn, theo thứ tự thời gian từ trái sang phải.</desc>
+  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Mớ file lộn xộn</text>
+  <g font-size="11" fill="currentColor" opacity="0.55">
+    <text x="16" y="46" text-decoration="line-through">bao_cao_final_v2.docx</text>
+    <text x="200" y="46" text-decoration="line-through">bao_cao_final_v2_THAT.docx</text>
+    <text x="430" y="46" text-decoration="line-through">..._nop_lan_cuoi.docx</text>
+  </g>
+  <line x1="16" y1="60" x2="704" y2="60" stroke="currentColor" stroke-opacity="0.18"/>
+  <text x="16" y="86" font-size="13.5" font-weight="700" fill="currentColor">Một chuỗi commit nối tiếp — như các trang album</text>
+  <defs>
+    <marker id="commitArr" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0 0 L8 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+  <g>
+    <rect x="20" y="108" width="200" height="92" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="32" y="120" width="56" height="22" rx="11" fill="#8b5cf6" fill-opacity="0.9"/>
+    <text x="60" y="135" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">9b21d05</text>
+    <text x="120" y="135" font-size="11.5" fill="currentColor" opacity="0.85">commit A</text>
+    <text x="32" y="162" font-size="11.5" fill="currentColor">"Khoi tao du an"</text>
+    <text x="32" y="184" font-size="10.5" fill="currentColor" opacity="0.6">📷 snapshot toàn dự án</text>
+  </g>
+  <line x1="222" y1="154" x2="258" y2="154" stroke="currentColor" stroke-opacity="0.55" stroke-width="2" marker-end="url(#commitArr)"/>
+  <g>
+    <rect x="260" y="108" width="200" height="92" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="272" y="120" width="56" height="22" rx="11" fill="#8b5cf6" fill-opacity="0.9"/>
+    <text x="300" y="135" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">a3f9c12</text>
+    <text x="360" y="135" font-size="11.5" fill="currentColor" opacity="0.85">commit B</text>
+    <text x="272" y="162" font-size="11.5" fill="currentColor">"Them file README"</text>
+    <text x="272" y="184" font-size="10.5" fill="currentColor" opacity="0.6">📷 snapshot toàn dự án</text>
+  </g>
+  <line x1="462" y1="154" x2="498" y2="154" stroke="currentColor" stroke-opacity="0.55" stroke-width="2" marker-end="url(#commitArr)"/>
+  <g>
+    <rect x="500" y="108" width="200" height="92" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="512" y="120" width="56" height="22" rx="11" fill="#10b981" fill-opacity="0.92"/>
+    <text x="540" y="135" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">c7e44af</text>
+    <text x="600" y="135" font-size="11.5" fill="currentColor" opacity="0.85">commit C</text>
+    <text x="512" y="162" font-size="11.5" fill="currentColor">"Them gitignore"</text>
+    <text x="512" y="184" font-size="10.5" fill="currentColor" opacity="0.6">📷 bản mới nhất (HEAD)</text>
+  </g>
+  <text x="20" y="228" font-size="11" fill="currentColor" opacity="0.6">Thời gian →   mỗi commit = một tấm ảnh + message + hash duy nhất; quay về trang nào cũng được.</text>
+</svg>
+
 ### So sánh với cách đặt tên file thủ công
 
 | | Đặt tên file thủ công | Git |
@@ -153,6 +196,49 @@ Trong Git, một file thay đổi phải đi qua 3 "khu vực":
 | Repository (kho lịch sử) | **Đã thanh toán, có hoá đơn** | Thay đổi được chốt vĩnh viễn thành một commit |
 
 Tại sao cần "giỏ hàng" trung gian? Vì không phải lúc nào bạn cũng muốn lưu *tất cả* những gì vừa sửa. Giống như đi siêu thị: bạn cầm lên 5 món, nhưng chỉ bỏ 3 món vào giỏ để thanh toán đợt này. **Staging area** (vùng chờ trước khi commit) cho bạn quyền chọn lọc: "lần commit này tôi chỉ lưu thay đổi của file A và B, file C để lần sau".
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Luồng ba khu vực của Git: working directory, staging area, repository</title>
+  <desc>Thay đổi đi từ Working Directory (kệ hàng) qua lệnh git add vào Staging Area (giỏ hàng), rồi qua lệnh git commit vào Repository (kho lịch sử, có hoá đơn). Mũi tên giữa mỗi khu vực ghi đúng tên lệnh.</desc>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Ba khu vực của Git — thay đổi đi từ trái sang phải</text>
+  <g>
+    <rect x="16" y="56" width="190" height="96" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="111" y="82" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Working Directory</text>
+    <text x="111" y="101" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">thư mục làm việc</text>
+    <text x="111" y="122" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85">🛒 Kệ hàng</text>
+    <text x="111" y="140" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">file bạn đang sửa</text>
+  </g>
+  <g>
+    <rect x="265" y="56" width="190" height="96" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="360" y="82" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Staging Area</text>
+    <text x="360" y="101" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">vùng chờ / index</text>
+    <text x="360" y="122" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85">🧺 Giỏ hàng</text>
+    <text x="360" y="140" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">chọn vào lần này</text>
+  </g>
+  <g>
+    <rect x="514" y="56" width="190" height="96" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="609" y="82" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Repository</text>
+    <text x="609" y="101" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">kho lịch sử (.git)</text>
+    <text x="609" y="122" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85">🧾 Hoá đơn</text>
+    <text x="609" y="140" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">commit vĩnh viễn</text>
+  </g>
+  <defs>
+    <marker id="gitFlowArr" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0 0 L8 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+  <g>
+    <line x1="208" y1="104" x2="261" y2="104" stroke="currentColor" stroke-opacity="0.55" stroke-width="2" marker-end="url(#gitFlowArr)"/>
+    <rect x="196" y="172" width="78" height="24" rx="12" fill="#f59e0b" fill-opacity="0.9"/>
+    <text x="235" y="188" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">git add</text>
+    <line x1="234" y1="170" x2="234" y2="112" stroke="currentColor" stroke-opacity="0.35"/>
+  </g>
+  <g>
+    <line x1="457" y1="104" x2="510" y2="104" stroke="currentColor" stroke-opacity="0.55" stroke-width="2" marker-end="url(#gitFlowArr)"/>
+    <rect x="442" y="172" width="92" height="24" rx="12" fill="#10b981" fill-opacity="0.92"/>
+    <text x="488" y="188" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">git commit</text>
+    <line x1="487" y1="170" x2="487" y2="112" stroke="currentColor" stroke-opacity="0.35"/>
+  </g>
+  <text x="360" y="218" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">git status xem được tình hình ở mọi khu vực (không thay đổi gì)</text>
+</svg>
 
 ### Bước 1 — `git status`: nhìn quanh xem tình hình
 

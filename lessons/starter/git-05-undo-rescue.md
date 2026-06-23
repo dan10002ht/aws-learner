@@ -75,6 +75,52 @@ git commit --amend --no-edit
 - `git revert` = ghi thêm một **bút toán đảo ngược** ("hôm qua ghi nhầm +5 triệu, hôm nay ghi -5 triệu"). Sổ vẫn đầy đủ, minh bạch, ai cũng thấy.
 - `git reset` = **xé trang sổ**. Sạch sẽ, nhưng nếu người khác đã photo trang đó thì rắc rối to.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>revert so với reset trên dòng lịch sử commit</title>
+  <desc>Cùng một lịch sử A-B-C. revert thêm một commit C' đảo ngược ở cuối nên lịch sử dài ra và an toàn khi đã push. reset kéo con trỏ HEAD lùi về B nên commit C bị gỡ khỏi nhánh.</desc>
+  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">revert vs reset trên dòng lịch sử</text>
+
+  <defs>
+    <marker id="hArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
+  </defs>
+
+  <text x="16" y="58" font-size="12" font-weight="700" fill="#10b981">git revert C — thêm commit đảo ngược (lịch sử DÀI ra)</text>
+  <g>
+    <line x1="64" y1="92" x2="556" y2="92" stroke="currentColor" stroke-opacity="0.4" marker-end="url(#hArr)"/>
+    <circle cx="80" cy="92" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="80" y="96" font-size="12" text-anchor="middle" fill="currentColor">A</text>
+    <circle cx="200" cy="92" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="200" y="96" font-size="12" text-anchor="middle" fill="currentColor">B</text>
+    <circle cx="320" cy="92" r="16" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="320" y="96" font-size="12" text-anchor="middle" fill="currentColor">C</text>
+    <circle cx="460" cy="92" r="18" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.45"/>
+    <text x="460" y="96" font-size="11" text-anchor="middle" fill="currentColor">C'</text>
+    <rect x="430" y="118" width="120" height="20" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="490" y="132" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">đảo ngược C</text>
+    <rect x="580" y="82" width="124" height="22" rx="11" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="642" y="97" font-size="10.5" text-anchor="middle" fill="#10b981">An toàn khi đã push</text>
+  </g>
+
+  <line x1="16" y1="168" x2="704" y2="168" stroke="currentColor" stroke-opacity="0.15"/>
+
+  <text x="16" y="200" font-size="12" font-weight="700" fill="#ef4444">git reset --hard B — kéo HEAD lùi (C bị GỠ khỏi nhánh)</text>
+  <g>
+    <line x1="64" y1="240" x2="240" y2="240" stroke="currentColor" stroke-opacity="0.4" marker-end="url(#hArr)"/>
+    <circle cx="80" cy="240" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="80" y="244" font-size="12" text-anchor="middle" fill="currentColor">A</text>
+    <circle cx="200" cy="240" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="200" y="244" font-size="12" text-anchor="middle" fill="currentColor">B</text>
+    <rect x="172" y="266" width="56" height="20" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="200" y="280" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">HEAD</text>
+    <line x1="240" y1="240" x2="296" y2="240" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+    <circle cx="320" cy="240" r="16" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3"/>
+    <text x="320" y="244" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.45">C</text>
+    <line x1="306" y1="226" x2="334" y2="254" stroke="#ef4444" stroke-opacity="0.7"/>
+    <line x1="334" y1="226" x2="306" y2="254" stroke="#ef4444" stroke-opacity="0.7"/>
+    <text x="360" y="244" font-size="10.5" fill="currentColor" opacity="0.7">không còn nhãn trỏ tới (vẫn trong reflog)</text>
+  </g>
+</svg>
+
 ### `git revert` — hoàn tác an toàn
 
 ```bash
@@ -92,6 +138,55 @@ git reset --hard HEAD~1    # bỏ commit cuối, XOÁ SẠCH thay đổi — ngu
 ```
 
 Giải nghĩa: `HEAD` là "vị trí hiện tại" (commit mới nhất bạn đang đứng), `HEAD~1` là "lùi 1 commit". Ba mức độ giống 3 cách dọn bàn:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Ba mức git reset HEAD~1 ảnh hưởng tới những khu vực nào</title>
+  <desc>Sau khi gỡ commit cuối, ba mức reset khác nhau ở chỗ chúng giữ hay xoá hai khu vực: --soft giữ cả khu chờ và bàn làm việc; --mixed xoá khu chờ nhưng giữ bàn làm việc; --hard xoá cả hai. Ô tô lục là giữ thay đổi, ô gạch chéo đỏ là xoá thay đổi.</desc>
+  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">git reset HEAD~1 — ba mức tác động tới đâu</text>
+
+  <text x="16" y="60" font-size="11" font-weight="700" fill="currentColor" opacity="0.8">Mức</text>
+  <text x="206" y="60" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.8">Commit cuối</text>
+  <text x="396" y="60" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.8">Khu chờ (staging)</text>
+  <text x="586" y="60" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.8">Bàn làm việc</text>
+
+  <g font-size="11">
+    <text x="16" y="98" font-size="12" font-weight="700" fill="currentColor">--soft</text>
+    <rect x="126" y="80" width="160" height="32" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="206" y="100" text-anchor="middle" fill="currentColor">Bị gỡ</text>
+    <rect x="316" y="80" width="160" height="32" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="396" y="100" text-anchor="middle" fill="currentColor">Giữ nguyên</text>
+    <rect x="506" y="80" width="160" height="32" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="586" y="100" text-anchor="middle" fill="currentColor">Giữ nguyên</text>
+  </g>
+
+  <g font-size="11">
+    <text x="16" y="148" font-size="12" font-weight="700" fill="currentColor">--mixed</text>
+    <text x="16" y="162" font-size="9.5" fill="currentColor" opacity="0.6">(mặc định)</text>
+    <rect x="126" y="130" width="160" height="32" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="206" y="150" text-anchor="middle" fill="currentColor">Bị gỡ</text>
+    <rect x="316" y="130" width="160" height="32" rx="7" fill="#ef4444" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="396" y="150" text-anchor="middle" fill="currentColor">Dọn trống</text>
+    <rect x="506" y="130" width="160" height="32" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="586" y="150" text-anchor="middle" fill="currentColor">Giữ nguyên</text>
+  </g>
+
+  <g font-size="11">
+    <text x="16" y="198" font-size="12" font-weight="700" fill="#ef4444">--hard</text>
+    <rect x="126" y="180" width="160" height="32" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="206" y="200" text-anchor="middle" fill="currentColor">Bị gỡ</text>
+    <rect x="316" y="180" width="160" height="32" rx="7" fill="#ef4444" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="396" y="200" text-anchor="middle" fill="currentColor">Dọn trống</text>
+    <rect x="506" y="180" width="160" height="32" rx="7" fill="#ef4444" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="586" y="200" text-anchor="middle" font-weight="700" fill="#ef4444">XOÁ SẠCH</text>
+  </g>
+
+  <g font-size="10.5" fill="currentColor" opacity="0.8">
+    <rect x="126" y="244" width="16" height="16" rx="4" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="150" y="256">Giữ thay đổi (cứu được)</text>
+    <rect x="356" y="244" width="16" height="16" rx="4" fill="#ef4444" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="380" y="256">Xoá thay đổi — càng sang phải càng nguy hiểm</text>
+  </g>
+</svg>
 
 | Mức | Commit cuối | Khu chờ (staging) | Bàn làm việc | Ví von |
 |---|---|---|---|---|
