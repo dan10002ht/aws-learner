@@ -41,15 +41,15 @@
       "id": "P6-quiz-gen",
       "kind": "questions",
       "scope": "Run knowledge-quiz workflow for eng-osi-model (~13 q), gen+verify pipeline",
-      "status": "in-progress",
-      "note": "launching knowledge-quiz workflow for eng-osi-model"
+      "status": "done",
+      "note": "Workflow wjg1pqca3 done: 14 q, 2 agents, gen+verify, on-content"
     },
     {
       "id": "P7-quiz-gate-ship",
       "kind": "questions",
       "scope": "Re-id offset from eng-q-079; append gate 0-err; build; commit & push; update memory",
-      "status": "in-progress",
-      "note": "re-id + gate + ship"
+      "status": "done",
+      "note": "14 q re-id'd eng-q-079..092, gate 0-err, build pass, pushed 1c0efe3, memory updated"
     }
   ]
 }
