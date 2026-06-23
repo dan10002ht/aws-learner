@@ -34,6 +34,21 @@ const STYLE = `QUY CHUẨN SVG (BẮT BUỘC — đọc bài mẫu ${STYLE_REF} 
 - Chèn ngay cạnh đoạn/khái niệm liên quan; chừa 1 dòng trống trước & sau <svg>. Có thể thay sơ đồ ASCII cũ bằng SVG nếu rõ hơn, nhưng GIỮ nguyên mọi nội dung chữ khác.
 - KHÔNG dùng <img>/ảnh ngoài, KHÔNG \\n thừa làm vỡ markdown, KHÔNG HTML entity (&lt; &gt;).`
 
+// ── Catalog idiom: CHỌN ĐÚNG LOẠI sơ đồ theo bản chất quan hệ (chống "bê 1 kiểu") ──
+const IDIOM = `CHỌN LOẠI SƠ ĐỒ theo cách giới chuyên môn THƯỜNG vẽ khái niệm đó (đừng mặc định thanh ngang cho mọi thứ):
+- Tầng/lớp NGANG HÀNG (OSI, network stack) → stacked layers (KHÔNG phải pyramid — pyramid chỉ cho thứ bậc độ lớn).
+- Bọc/đóng gói (encapsulation, header lồng) → hộp LỒNG NHAU.
+- Handshake/giao thức theo thời gian (TCP 3-way, TLS, OAuth flow) → SEQUENCE diagram (hai cột, mũi tên qua lại, thời gian đi xuống).
+- Topology/kiến trúc/thành phần nối nhau (VPC, microservices, LB→servers) → NODE–EDGE graph.
+- Trade-off 3 chiều (CAP) → TAM GIÁC; tập hợp giao nhau → VENN.
+- Phân cấp/cha-con (DOM, IAM, thư mục) → CÂY (tree).
+- Vòng đời/trạng thái (message, TCP states, pod) → STATE MACHINE (node trạng thái + mũi tên có nhãn).
+- Chuỗi theo thời gian (failover, request timeline, CI/CD) → TIMELINE ngang.
+- Tốt vs xấu / trước vs sau → BEFORE/AFTER hai cột.
+- Pipeline/luồng xử lý → FLOW trái→phải có mũi tên.
+- So sánh N phương án → các cột song song cùng cấu trúc.
+Nếu một bài có nhiều khái niệm khác loại → mỗi cái một sơ đồ ĐÚNG idiom của nó, đừng ép chung một khuôn.`
+
 const SURVEY = {
   type: 'object',
   properties: {
@@ -95,7 +110,7 @@ phase('Author')
 const authored = await pipeline(
   todo,
   (l) => agent(
-    `Thêm sơ đồ minh hoạ cho bài "${l.slug}" (file: lessons/${l.file}).\n\nCần vẽ:\n${(l.diagrams || []).map((d, i) => `${i + 1}. ${d.concept}${d.placement ? ' — chèn: ' + d.placement : ''}`).join('\n')}\n\n${STYLE}\n\nQuy trình: Read bài + Read ${STYLE_REF} (mẫu) → soạn inline SVG đúng nội dung bài → Edit chèn vào đúng chỗ. Mỗi sơ đồ phải render được (xmlns đúng, đóng thẻ đủ) và có <title>. Trả {slug, file, added (số svg đã thêm), summary, status}. KHÔNG dán toàn bộ SVG vào kết quả.`,
+    `Thêm sơ đồ minh hoạ cho bài "${l.slug}" (file: lessons/${l.file}).\n\nCần vẽ:\n${(l.diagrams || []).map((d, i) => `${i + 1}. ${d.concept}${d.placement ? ' — chèn: ' + d.placement : ''}`).join('\n')}\n\n${IDIOM}\n\n${STYLE}\n\nQuy trình: Read bài + Read ${STYLE_REF} (mẫu) → với MỖI concept, CHỌN idiom đúng (xem catalog trên) rồi soạn inline SVG đúng nội dung bài → Edit chèn vào đúng chỗ. Mỗi sơ đồ phải render được (xmlns đúng, đóng thẻ đủ) và có <title>. Trả {slug, file, added (số svg đã thêm), summary, status}. KHÔNG dán toàn bộ SVG vào kết quả.`,
     { label: `draw:${l.slug}`, phase: 'Author', schema: AUTHORED, effort: 'high' }
   ),
   async (prod, l) => {
@@ -103,7 +118,7 @@ const authored = await pipeline(
     let cur = prod
     for (let attempt = 0; attempt <= REPAIR; attempt++) {
       const v = await agent(
-        `Kiểm sơ đồ vừa thêm vào bài "${l.slug}" (Read lessons/${l.file}; có thể render thử: trích <svg>..</svg> ra /tmp rồi \`rsvg-convert\`). Tiêu chí:\n- Mỗi <svg> render được, có <title>, dùng currentColor cho chữ/viền (không có thuộc tính color trên <svg>), tint mờ cho nền.\n- Nội dung sơ đồ ĐÚNG với bài, nhãn tiếng Việt có dấu, không vỡ markdown.\nTrả {ok, issues}.`,
+        `Bạn là DESIGN-CRITIC khó tính. Kiểm sơ đồ vừa thêm vào bài "${l.slug}" (Read lessons/${l.file}; nên render thử: trích <svg>..</svg> ra /tmp rồi \`rsvg-convert\`). Tiêu chí:\n- ĐÚNG IDIOM: loại sơ đồ có khớp bản chất khái niệm theo cách giới chuyên môn thường vẽ không? (handshake/giao thức → SEQUENCE chứ KHÔNG phải bars; topology → node-edge; vòng đời → state machine; trade-off 3 chiều → tam giác; phân cấp → cây; bọc gói → hộp lồng; tầng ngang hàng → stacked, KHÔNG pyramid). Sai loại = FAIL.\n- Mỗi <svg> render được, có <title>, dùng currentColor cho chữ/viền (không có thuộc tính color trên <svg>), tint mờ cho nền.\n- Nội dung ĐÚNG với bài, nhãn tiếng Việt có dấu, không chữ chồng/tràn, không vỡ markdown.\nTrả {ok, issues}. Nếu sai idiom hoặc rối, ok=false và nêu loại sơ đồ ĐÚNG nên dùng.`,
         { label: `chk:${l.slug}#${attempt}`, phase: 'Author', schema: VERDICT }
       )
       if (!v || v.ok) return { ...cur, status: cur.status === 'needs-attention' ? 'needs-attention' : 'done' }
