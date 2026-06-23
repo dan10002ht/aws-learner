@@ -103,6 +103,44 @@ FROM products;
 
 `SELECT` chọn cột; `WHERE` chọn **hàng**. Chỉ những hàng làm điều kiện đúng (TRUE) mới được trả về.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" role="img" style="width:100%;max-width:640px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>SELECT chọn cột, WHERE chọn hàng</title>
+  <desc>Một bảng customers: SELECT giữ lại các cột name và city (tô xanh), WHERE city='HCM' giữ lại các hàng khớp (tô lục); ô giao nhau (đậm) chính là kết quả trả về.</desc>
+  <text x="320" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">SELECT name, city FROM customers WHERE city = 'HCM'</text>
+  <!-- highlight bands -->
+  <rect x="216" y="60" width="184" height="170" fill="#3b82f6" fill-opacity="0.13"/>
+  <rect x="120" y="94" width="400" height="34" fill="#10b981" fill-opacity="0.16"/>
+  <rect x="120" y="162" width="400" height="34" fill="#10b981" fill-opacity="0.16"/>
+  <!-- column header -->
+  <g font-size="12" font-weight="700" fill="currentColor">
+    <text x="168" y="82" text-anchor="middle">id</text>
+    <text x="262" y="82" text-anchor="middle">name</text>
+    <text x="354" y="82" text-anchor="middle">city</text>
+    <text x="448" y="82" text-anchor="middle">age</text>
+  </g>
+  <!-- rows -->
+  <g font-size="12" fill="currentColor" opacity="0.85">
+    <text x="168" y="116" text-anchor="middle">1</text><text x="262" y="116" text-anchor="middle">An</text><text x="354" y="116" text-anchor="middle">HCM</text><text x="448" y="116" text-anchor="middle">25</text>
+    <text x="168" y="150" text-anchor="middle">2</text><text x="262" y="150" text-anchor="middle">Bình</text><text x="354" y="150" text-anchor="middle">HN</text><text x="448" y="150" text-anchor="middle">30</text>
+    <text x="168" y="184" text-anchor="middle">3</text><text x="262" y="184" text-anchor="middle">Cường</text><text x="354" y="184" text-anchor="middle">HCM</text><text x="448" y="184" text-anchor="middle">28</text>
+    <text x="168" y="218" text-anchor="middle">4</text><text x="262" y="218" text-anchor="middle">Dung</text><text x="354" y="218" text-anchor="middle">HN</text><text x="448" y="218" text-anchor="middle">22</text>
+  </g>
+  <!-- grid lines -->
+  <g stroke="currentColor" stroke-opacity="0.18">
+    <line x1="120" y1="94" x2="520" y2="94"/>
+    <line x1="120" y1="128" x2="520" y2="128"/><line x1="120" y1="162" x2="520" y2="162"/>
+    <line x1="120" y1="196" x2="520" y2="196"/><line x1="120" y1="230" x2="520" y2="230"/>
+    <line x1="120" y1="60" x2="120" y2="230"/><line x1="216" y1="60" x2="216" y2="230"/>
+    <line x1="400" y1="60" x2="400" y2="230"/><line x1="520" y1="60" x2="520" y2="230"/>
+  </g>
+  <!-- labels -->
+  <text x="308" y="50" font-size="11" font-weight="700" text-anchor="middle" fill="#3b82f6">SELECT → cột</text>
+  <text x="112" y="148" font-size="11" font-weight="700" text-anchor="end" fill="#10b981">WHERE</text>
+  <text x="112" y="162" font-size="9.5" text-anchor="end" fill="currentColor" opacity="0.6">→ hàng</text>
+  <text x="320" y="262" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Ô giao nhau (xanh × lục, đậm hơn) = đúng dữ liệu trả về</text>
+  <text x="320" y="280" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.55">→ (An, HCM) và (Cường, HCM)</text>
+</svg>
+
 ### So sánh bằng (=)
 
 ```sql

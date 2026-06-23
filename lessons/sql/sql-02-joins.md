@@ -54,6 +54,61 @@ CREATE TABLE orders (
 );
 ```
 
+Hình dung quan hệ giữa ba bảng: `orders` ở giữa, mỗi đơn "trỏ" về một khách và một sản phẩm bằng hai khoá ngoại.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Sơ đồ quan hệ PK/FK giữa customers, orders, products</title>
+  <desc>Bảng orders ở giữa có hai khoá ngoại: customer_id trỏ về khoá chính customer_id của bảng customers bên trái, và product_id trỏ về khoá chính product_id của bảng products bên phải.</desc>
+  <defs>
+    <marker id="fkArr" markerWidth="11" markerHeight="11" refX="9" refY="3.5" orient="auto"><path d="M0 0 L9 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+
+  <g>
+    <rect x="16" y="80" width="176" height="120" rx="10" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="104" y="102" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">customers</text>
+    <line x1="16" y1="112" x2="192" y2="112" stroke="currentColor" stroke-opacity="0.25"/>
+    <rect x="26" y="122" width="34" height="18" rx="9" fill="#10b981" fill-opacity="0.9"/>
+    <text x="43" y="135" font-size="9.5" font-weight="700" text-anchor="middle" fill="#fff">PK</text>
+    <text x="68" y="135" font-size="11.5" font-weight="700" fill="currentColor">customer_id</text>
+    <text x="26" y="160" font-size="11" fill="currentColor" opacity="0.7">name</text>
+    <text x="26" y="182" font-size="11" fill="currentColor" opacity="0.7">city</text>
+  </g>
+
+  <g>
+    <rect x="272" y="60" width="176" height="160" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="360" y="82" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">orders</text>
+    <line x1="272" y1="92" x2="448" y2="92" stroke="currentColor" stroke-opacity="0.25"/>
+    <rect x="282" y="102" width="34" height="18" rx="9" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="299" y="115" font-size="9.5" font-weight="700" text-anchor="middle" fill="#fff">PK</text>
+    <text x="324" y="115" font-size="11.5" font-weight="700" fill="currentColor">order_id</text>
+    <rect x="282" y="128" width="34" height="18" rx="9" fill="#f59e0b" fill-opacity="0.9"/>
+    <text x="299" y="141" font-size="9.5" font-weight="700" text-anchor="middle" fill="#fff">FK</text>
+    <text x="324" y="141" font-size="11.5" fill="currentColor">customer_id</text>
+    <rect x="282" y="154" width="34" height="18" rx="9" fill="#f59e0b" fill-opacity="0.9"/>
+    <text x="299" y="167" font-size="9.5" font-weight="700" text-anchor="middle" fill="#fff">FK</text>
+    <text x="324" y="167" font-size="11.5" fill="currentColor">product_id</text>
+    <text x="282" y="194" font-size="11" fill="currentColor" opacity="0.7">quantity</text>
+  </g>
+
+  <g>
+    <rect x="528" y="80" width="176" height="120" rx="10" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="616" y="102" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">products</text>
+    <line x1="528" y1="112" x2="704" y2="112" stroke="currentColor" stroke-opacity="0.25"/>
+    <rect x="538" y="122" width="34" height="18" rx="9" fill="#8b5cf6" fill-opacity="0.9"/>
+    <text x="555" y="135" font-size="9.5" font-weight="700" text-anchor="middle" fill="#fff">PK</text>
+    <text x="580" y="135" font-size="11.5" font-weight="700" fill="currentColor">product_id</text>
+    <text x="538" y="160" font-size="11" fill="currentColor" opacity="0.7">name</text>
+    <text x="538" y="182" font-size="11" fill="currentColor" opacity="0.7">price</text>
+  </g>
+
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none">
+    <path d="M282 137 C248 137 224 133 200 131" marker-end="url(#fkArr)"/>
+    <path d="M448 163 C486 163 504 134 520 131" marker-end="url(#fkArr)"/>
+  </g>
+  <text x="232" y="252" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">orders.customer_id → customers.customer_id</text>
+  <text x="500" y="252" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">orders.product_id → products.product_id</text>
+</svg>
+
 Dữ liệu mẫu (hãy nhớ kỹ vì ta dùng lại liên tục):
 
 **customers**
@@ -109,16 +164,57 @@ Mệnh đề `ON` cho biết **ghép theo cột nào** — ở đây là cặp k
 
 ## 4. LEFT / RIGHT / FULL OUTER JOIN
 
-Đôi khi ta muốn **giữ lại cả những dòng không khớp**. Đó là việc của OUTER JOIN. Hình dung bằng sơ đồ Venn với bảng `orders` (trái) và `customers` (phải):
+Đôi khi ta muốn **giữ lại cả những dòng không khớp**. Đó là việc của OUTER JOIN. Hình dung bằng sơ đồ Venn — vòng trái là bảng `orders`, vòng phải là `customers`; **vùng tô đậm là phần được giữ lại** ở mỗi loại JOIN:
 
-```
-        orders        customers
-       ┌────────┐    ┌────────┐
-       │  ███████████████      │
-       │  ██│ vùng khớp │██    │
-       └────████████████┴──────┘
-        chỉ trái   giao   chỉ phải
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Bốn sơ đồ Venn so sánh INNER, LEFT, RIGHT và FULL OUTER JOIN</title>
+  <desc>Bốn cặp vòng tròn giao nhau, vòng trái là orders và vòng phải là customers. INNER tô đậm phần giao ở giữa. LEFT tô đậm toàn vòng trái. RIGHT tô đậm toàn vòng phải. FULL OUTER tô đậm cả hai vòng.</desc>
+  <defs>
+    <clipPath id="vL"><circle cx="0" cy="70" r="42"/></clipPath>
+    <clipPath id="vR"><circle cx="44" cy="70" r="42"/></clipPath>
+  </defs>
+
+  <g transform="translate(38,10)">
+    <text x="58" y="14" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">INNER JOIN</text>
+    <g transform="translate(16,18)">
+      <g clip-path="url(#vL)"><circle cx="44" cy="70" r="42" fill="#3b82f6" fill-opacity="0.55"/></g>
+      <circle cx="0" cy="70" r="42" fill="none" stroke="currentColor" stroke-opacity="0.5"/>
+      <circle cx="44" cy="70" r="42" fill="none" stroke="currentColor" stroke-opacity="0.5"/>
+    </g>
+    <text x="20" y="124" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">orders</text>
+    <text x="96" y="124" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">customers</text>
+  </g>
+
+  <g transform="translate(206,10)">
+    <text x="58" y="14" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">LEFT JOIN</text>
+    <g transform="translate(16,18)">
+      <circle cx="0" cy="70" r="42" fill="#3b82f6" fill-opacity="0.55" stroke="currentColor" stroke-opacity="0.5"/>
+      <circle cx="44" cy="70" r="42" fill="none" stroke="currentColor" stroke-opacity="0.5"/>
+    </g>
+    <text x="20" y="124" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">orders</text>
+    <text x="96" y="124" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">customers</text>
+  </g>
+
+  <g transform="translate(374,10)">
+    <text x="58" y="14" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">RIGHT JOIN</text>
+    <g transform="translate(16,18)">
+      <circle cx="0" cy="70" r="42" fill="none" stroke="currentColor" stroke-opacity="0.5"/>
+      <circle cx="44" cy="70" r="42" fill="#3b82f6" fill-opacity="0.55" stroke="currentColor" stroke-opacity="0.5"/>
+    </g>
+    <text x="20" y="124" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">orders</text>
+    <text x="96" y="124" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">customers</text>
+  </g>
+
+  <g transform="translate(542,10)">
+    <text x="58" y="14" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">FULL OUTER</text>
+    <g transform="translate(16,18)">
+      <circle cx="0" cy="70" r="42" fill="#3b82f6" fill-opacity="0.55" stroke="currentColor" stroke-opacity="0.5"/>
+      <circle cx="44" cy="70" r="42" fill="#3b82f6" fill-opacity="0.55" stroke="currentColor" stroke-opacity="0.5"/>
+    </g>
+    <text x="20" y="124" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">orders</text>
+    <text x="96" y="124" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">customers</text>
+  </g>
+</svg>
 
 ### 4.1. LEFT JOIN — giữ TẤT CẢ bảng bên trái
 
@@ -260,6 +356,39 @@ An là sếp lớn nhất nên không có sếp (`NULL`) — đó là lý do dù
 ## 8. Bẫy fan-out — JOIN làm nhân dòng
 
 Đây là cái bẫy khiến người mới đếm sai, cộng sai số tiền. Khi một dòng ở bảng A khớp với **nhiều** dòng ở bảng B, dòng của A sẽ bị **nhân lên**.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Bẫy fan-out — một dòng customers khớp hai dòng orders bị nhân thành hai dòng kết quả</title>
+  <desc>Một dòng khách An ở bảng customers khớp hai dòng đơn 1001 và 1002 ở bảng orders, nên sau khi JOIN dòng của An bị nhân thành hai dòng kết quả.</desc>
+  <text x="80" y="24" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">customers</text>
+  <text x="320" y="24" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">orders</text>
+  <text x="600" y="24" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">kết quả JOIN</text>
+
+  <rect x="16" y="100" width="128" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="80" y="122" font-size="11.5" text-anchor="middle" fill="currentColor">An (id 1)</text>
+
+  <rect x="256" y="56" width="128" height="34" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="320" y="78" font-size="11.5" text-anchor="middle" fill="currentColor">đơn 1001 (id 1)</text>
+  <rect x="256" y="144" width="128" height="34" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="320" y="166" font-size="11.5" text-anchor="middle" fill="currentColor">đơn 1002 (id 1)</text>
+
+  <rect x="496" y="56" width="208" height="34" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="600" y="78" font-size="11.5" text-anchor="middle" fill="currentColor">An — 1001</text>
+  <rect x="496" y="144" width="208" height="34" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="600" y="166" font-size="11.5" text-anchor="middle" fill="currentColor">An — 1002</text>
+
+  <defs>
+    <marker id="foArr" markerWidth="11" markerHeight="11" refX="9" refY="3.5" orient="auto"><path d="M0 0 L9 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none">
+    <path d="M144 112 C200 100 210 78 252 73" marker-end="url(#foArr)"/>
+    <path d="M144 122 C200 140 210 160 252 161" marker-end="url(#foArr)"/>
+    <path d="M384 73 H492" marker-end="url(#foArr)"/>
+    <path d="M384 161 H492" marker-end="url(#foArr)"/>
+  </g>
+  <text x="200" y="210" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">1 dòng khách khớp 2 đơn → nhân dòng</text>
+  <text x="600" y="210" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">thành 2 dòng kết quả</text>
+</svg>
 
 Ví dụ: khách `An` (id 1) có **2 đơn** (1001, 1002). Bây giờ JOIN rồi đếm:
 

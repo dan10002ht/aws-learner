@@ -122,16 +122,71 @@ CREATE TABLE customers (
 
 ## 4. Quan hệ giữa các bảng
 
+Ba kiểu quan hệ cơ bản giữa các bảng — đọc ký hiệu: vạch đơn `┼` là phía "một", chân quạ `<` là phía "nhiều":
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Ba kiểu quan hệ giữa các bảng: 1-n, 1-1 và n-n</title>
+  <desc>Sơ đồ ER minh hoạ: customers một-nhiều orders (khoá ngoại customer_id phía nhiều), customers một-một customer_profiles (khoá ngoại UNIQUE), và orders nhiều-nhiều products qua bảng trung gian order_items.</desc>
+
+  <text x="16" y="22" font-size="13" font-weight="700" fill="currentColor">1-n (một-nhiều)</text>
+  <g>
+    <rect x="16" y="36" width="120" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="76" y="54" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">customers</text>
+    <text x="76" y="69" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">id (PK)</text>
+    <rect x="236" y="36" width="120" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="296" y="54" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">orders</text>
+    <text x="296" y="69" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">customer_id (FK)</text>
+    <line x1="136" y1="56" x2="236" y2="56" stroke="currentColor" stroke-opacity="0.55"/>
+    <line x1="150" y1="48" x2="150" y2="64" stroke="currentColor" stroke-opacity="0.55"/>
+    <path d="M236 56 L222 48 M236 56 L222 64" fill="none" stroke="currentColor" stroke-opacity="0.55"/>
+    <text x="186" y="50" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">1 : n</text>
+    <text x="378" y="60" font-size="10.5" fill="currentColor" opacity="0.7">Một khách → nhiều đơn.</text>
+  </g>
+
+  <text x="16" y="124" font-size="13" font-weight="700" fill="currentColor">1-1 (một-một)</text>
+  <g>
+    <rect x="16" y="138" width="120" height="40" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="76" y="156" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">customers</text>
+    <text x="76" y="171" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">id (PK)</text>
+    <rect x="236" y="138" width="150" height="40" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="311" y="156" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">customer_profiles</text>
+    <text x="311" y="171" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">customer_id (PK, FK)</text>
+    <line x1="136" y1="158" x2="236" y2="158" stroke="currentColor" stroke-opacity="0.55"/>
+    <line x1="150" y1="150" x2="150" y2="166" stroke="currentColor" stroke-opacity="0.55"/>
+    <line x1="222" y1="150" x2="222" y2="166" stroke="currentColor" stroke-opacity="0.55"/>
+    <text x="186" y="152" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">1 : 1</text>
+    <text x="408" y="162" font-size="10.5" fill="currentColor" opacity="0.7">FK là UNIQUE → đúng 1 hồ sơ.</text>
+  </g>
+
+  <text x="16" y="226" font-size="13" font-weight="700" fill="currentColor">n-n (nhiều-nhiều) — cần bảng trung gian</text>
+  <g>
+    <rect x="16" y="244" width="110" height="40" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="71" y="262" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">orders</text>
+    <text x="71" y="277" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">id (PK)</text>
+    <rect x="290" y="244" width="160" height="40" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="370" y="262" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">order_items</text>
+    <text x="370" y="277" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">(order_id, product_id) PK</text>
+    <rect x="600" y="244" width="110" height="40" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="655" y="262" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">products</text>
+    <text x="655" y="277" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">id (PK)</text>
+    <line x1="126" y1="264" x2="290" y2="264" stroke="currentColor" stroke-opacity="0.55"/>
+    <line x1="140" y1="256" x2="140" y2="272" stroke="currentColor" stroke-opacity="0.55"/>
+    <path d="M290 264 L276 256 M290 264 L276 272" fill="none" stroke="currentColor" stroke-opacity="0.55"/>
+    <line x1="450" y1="264" x2="600" y2="264" stroke="currentColor" stroke-opacity="0.55"/>
+    <line x1="586" y1="256" x2="586" y2="272" stroke="currentColor" stroke-opacity="0.55"/>
+    <path d="M450 264 L464 256 M450 264 L464 272" fill="none" stroke="currentColor" stroke-opacity="0.55"/>
+    <text x="208" y="258" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">1 : n</text>
+    <text x="525" y="258" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">n : 1</text>
+  </g>
+  <text x="16" y="312" font-size="10.5" fill="currentColor" opacity="0.7">n-n được tách thành hai quan hệ 1-n nối qua bảng trung gian order_items.</text>
+</svg>
+
 ### Quan hệ 1-n (một-nhiều)
 
 Phổ biến nhất. Một khách có **nhiều** đơn hàng; mỗi đơn hàng thuộc về **một** khách. Ta đặt khoá ngoại ở phía "nhiều" (bảng `orders`).
 
 ```sql
 -- orders.customer_id trỏ về customers.id (đã làm ở mục 3)
-```
-
-```
-customers (1) ────< orders (n)
 ```
 
 ### Quan hệ 1-1 (một-một)
@@ -177,6 +232,63 @@ Dữ liệu mẫu — đơn hàng 1 gồm 2 sản phẩm:
 ## 5. Chuẩn hoá (Normalization): 1NF, 2NF, 3NF
 
 Chuẩn hoá là quá trình tách bảng để **mỗi sự thật chỉ lưu một chỗ**, tránh lặp và mâu thuẫn. Hãy bắt đầu từ một bảng "xấu" rồi sửa dần.
+
+Hành trình từ bảng "xấu" nhồi mọi thứ → schema sạch đạt 3NF:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Chuẩn hoá: tách bảng xấu qua 1NF, 2NF, 3NF thành customers, orders, order_items</title>
+  <desc>Bảng xấu nhồi order_id, customer_name và danh sách products. Qua 1NF tách ô danh sách thành nhiều dòng, qua 2NF và 3NF tách thành ba bảng: customers giữ tên khách, orders giữ thông tin đơn, order_items giữ từng dòng hàng. Mũi tên thể hiện cột nào chuyển sang bảng nào.</desc>
+
+  <text x="16" y="22" font-size="13" font-weight="700" fill="currentColor">Bảng "xấu" (chưa chuẩn hoá)</text>
+  <rect x="16" y="32" width="420" height="56" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="28" y="52" font-size="11.5" font-weight="700" fill="currentColor">order_id · customer_name · products = "Áo, Quần"</text>
+  <text x="28" y="72" font-size="10.5" fill="currentColor" opacity="0.72">Lặp tên khách + ô chứa danh sách → khó sửa, dễ lệch.</text>
+
+  <line x1="226" y1="88" x2="226" y2="112" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#nfArr)"/>
+  <text x="236" y="106" font-size="10" fill="#3b82f6" opacity="0.95" font-weight="700">1NF: tách ô danh sách thành nhiều dòng</text>
+
+  <rect x="16" y="118" width="420" height="34" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="28" y="139" font-size="11" fill="currentColor">order_id · customer_name · product (mỗi ô 1 giá trị)</text>
+
+  <line x1="226" y1="152" x2="226" y2="176" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#nfArr)"/>
+  <text x="236" y="170" font-size="10" fill="#3b82f6" opacity="0.95" font-weight="700">2NF + 3NF: tách theo cột phụ thuộc vào khoá nào</text>
+
+  <text x="16" y="208" font-size="13" font-weight="700" fill="currentColor">Schema đạt 3NF — ba bảng tách bạch</text>
+
+  <g font-size="10" fill="currentColor" opacity="0.9" font-weight="700">
+    <text x="28" y="232">customer_name →</text>
+    <text x="300" y="232">order_id →</text>
+    <text x="512" y="232">product, quantity →</text>
+  </g>
+
+  <g fill="none" stroke="#10b981" stroke-opacity="0.7">
+    <path d="M120 238 C120 268, 116 282, 116 304" marker-end="url(#nfArr2)"/>
+    <path d="M340 238 C340 268, 360 282, 360 304" marker-end="url(#nfArr2)"/>
+    <path d="M576 238 C576 268, 604 282, 604 304" marker-end="url(#nfArr2)"/>
+  </g>
+
+  <rect x="16" y="306" width="200" height="64" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="116" y="328" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">customers</text>
+  <text x="116" y="346" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">id (PK)</text>
+  <text x="116" y="361" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">name</text>
+
+  <rect x="260" y="306" width="200" height="64" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="328" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">orders</text>
+  <text x="360" y="346" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">id (PK)</text>
+  <text x="360" y="361" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">customer_id (FK)</text>
+
+  <rect x="504" y="306" width="200" height="64" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="604" y="328" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">order_items</text>
+  <text x="604" y="346" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">(order_id, product_id) PK</text>
+  <text x="604" y="361" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">quantity</text>
+
+  <text x="16" y="406" font-size="10.5" fill="currentColor" opacity="0.72">customer_name chỉ phụ thuộc order_id → ra orders/customers; product+quantity phụ thuộc cả khoá → ra order_items.</text>
+
+  <defs>
+    <marker id="nfArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
+    <marker id="nfArr2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="#10b981" fill-opacity="0.7"/></marker>
+  </defs>
+</svg>
 
 Bảng `orders` ban đầu nhồi mọi thứ vào một chỗ:
 
@@ -246,6 +358,71 @@ ALTER TABLE order_items ADD COLUMN unit_price DECIMAL(10,2) NOT NULL;
 > 💡 Ghi nhớ: mặc định hãy chuẩn hoá. Chỉ denormalize khi đã đo được vấn đề hiệu năng thật, chứ không phỏng đoán. "Premature optimization" cũng đúng với database.
 
 ## 7. Ghép lại: CREATE TABLE toàn schema
+
+Sơ đồ ER hoàn chỉnh của schema cuối — bốn bảng với khoá chính (PK), khoá ngoại (FK) và khoá tổ hợp ở bảng trung gian:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Sơ đồ ER hoàn chỉnh: customers, products, orders, order_items với PK, FK và khoá tổ hợp</title>
+  <desc>customers một-nhiều orders qua customer_id; orders một-nhiều order_items qua order_id; products một-nhiều order_items qua product_id. order_items có khoá chính tổ hợp (order_id, product_id) và là bảng trung gian cho quan hệ nhiều-nhiều giữa orders và products.</desc>
+
+  <g>
+    <rect x="16" y="40" width="170" height="92" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.28"/>
+    <text x="101" y="60" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">customers</text>
+    <line x1="16" y1="68" x2="186" y2="68" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="28" y="86" font-size="10.5" font-weight="700" fill="currentColor">PK id</text>
+    <text x="28" y="104" font-size="10.5" fill="currentColor" opacity="0.78">name</text>
+    <text x="28" y="121" font-size="10.5" fill="currentColor" opacity="0.78">email (UNIQUE)</text>
+  </g>
+
+  <g>
+    <rect x="534" y="40" width="170" height="92" rx="9" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.28"/>
+    <text x="619" y="60" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">products</text>
+    <line x1="534" y1="68" x2="704" y2="68" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="546" y="86" font-size="10.5" font-weight="700" fill="currentColor">PK id</text>
+    <text x="546" y="104" font-size="10.5" fill="currentColor" opacity="0.78">name</text>
+    <text x="546" y="121" font-size="10.5" fill="currentColor" opacity="0.78">price</text>
+  </g>
+
+  <g>
+    <rect x="16" y="226" width="170" height="92" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.28"/>
+    <text x="101" y="246" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">orders</text>
+    <line x1="16" y1="254" x2="186" y2="254" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="28" y="272" font-size="10.5" font-weight="700" fill="currentColor">PK id</text>
+    <text x="28" y="290" font-size="10.5" fill="currentColor" opacity="0.78">FK customer_id</text>
+    <text x="28" y="307" font-size="10.5" fill="currentColor" opacity="0.78">ordered_at</text>
+  </g>
+
+  <g>
+    <rect x="500" y="222" width="204" height="104" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.28"/>
+    <text x="602" y="242" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">order_items</text>
+    <line x1="500" y1="250" x2="704" y2="250" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="512" y="268" font-size="10" font-weight="700" fill="currentColor">PK,FK order_id</text>
+    <text x="512" y="285" font-size="10" font-weight="700" fill="currentColor">PK,FK product_id</text>
+    <text x="512" y="302" font-size="10" fill="currentColor" opacity="0.78">quantity</text>
+    <text x="512" y="318" font-size="10" fill="currentColor" opacity="0.78">unit_price</text>
+  </g>
+
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none">
+    <path d="M101 132 L101 226"/>
+    <line x1="93" y1="148" x2="109" y2="148"/>
+    <path d="M101 226 L93 212 M101 226 L109 212"/>
+
+    <path d="M186 280 L500 280"/>
+    <line x1="200" y1="272" x2="200" y2="288"/>
+    <path d="M500 280 L486 272 M500 280 L486 288"/>
+
+    <path d="M619 132 L619 222"/>
+    <line x1="611" y1="148" x2="627" y2="148"/>
+    <path d="M619 222 L611 208 M619 222 L627 208"/>
+  </g>
+
+  <g font-size="10" fill="currentColor" opacity="0.72">
+    <text x="111" y="184">1 : n</text>
+    <text x="330" y="274">1 : n</text>
+    <text x="629" y="184">1 : n</text>
+  </g>
+  <text x="220" y="356" font-size="10.5" fill="currentColor" opacity="0.72">order_items là bảng trung gian: khoá tổ hợp (order_id, product_id) đồng thời là hai FK.</text>
+</svg>
 
 ```sql
 CREATE TABLE customers (
