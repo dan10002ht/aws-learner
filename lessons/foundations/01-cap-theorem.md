@@ -15,6 +15,42 @@ Một buổi sáng, **đường truyền giữa HN ↔ SG đứt** (network part
 
 **Bạn không có lựa chọn thứ ba**. Đó chính là CAP.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Hai chi nhánh ngân hàng mất liên lạc và hai lựa chọn A hay C</title>
+  <desc>Chi nhánh Hà Nội và TP.HCM bị đứt đường truyền (partition). Khi khách rút tiền tại Hà Nội, ngân hàng phải rẽ nhánh: chọn A là cho rút ngay nhưng lệch sổ, hoặc chọn C là từ chối phục vụ để giữ nhất quán.</desc>
+  <rect x="20" y="36" width="180" height="74" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="110" y="66" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Chi nhánh HN</text>
+  <text x="110" y="88" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">sổ: số dư = 10tr</text>
+  <rect x="520" y="36" width="180" height="74" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="610" y="66" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Chi nhánh SG</text>
+  <text x="610" y="88" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">sổ: số dư = 10tr</text>
+  <g stroke="currentColor" stroke-width="2" stroke-dasharray="7 6" stroke-opacity="0.5">
+    <line x1="200" y1="73" x2="340" y2="73"/>
+    <line x1="380" y1="73" x2="520" y2="73"/>
+  </g>
+  <g stroke="#ef4444" stroke-width="3" stroke-opacity="0.85">
+    <line x1="345" y1="58" x2="375" y2="88"/>
+    <line x1="375" y1="58" x2="345" y2="88"/>
+  </g>
+  <text x="360" y="108" font-size="11" font-weight="700" text-anchor="middle" fill="#ef4444">đứt (partition)</text>
+  <text x="360" y="138" font-size="11.5" text-anchor="middle" fill="currentColor">Khách rút 10tr tại HN — không hỏi được SG</text>
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none" stroke-width="1.5">
+    <path d="M360 146 L360 168 L185 168 L185 186"/>
+    <path d="M360 168 L535 168 L535 186"/>
+  </g>
+  <rect x="120" y="188" width="360" height="0" fill="none"/>
+  <rect x="40" y="188" width="290" height="104" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="185" y="212" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">(A) Cho rút ngay</text>
+  <text x="185" y="234" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">ghi sổ HN, SG lệch tới khi nối lại</text>
+  <rect x="120" y="248" width="130" height="26" rx="13" fill="#10b981" fill-opacity="0.9"/>
+  <text x="185" y="265" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">Available, mất C</text>
+  <rect x="390" y="188" width="290" height="104" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="535" y="212" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">(C) Từ chối phục vụ</text>
+  <text x="535" y="234" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">chờ xác nhận số dư với SG</text>
+  <rect x="470" y="248" width="130" height="26" rx="13" fill="#3b82f6" fill-opacity="0.9"/>
+  <text x="535" y="265" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">Consistent, mất A</text>
+</svg>
+
 ---
 
 ## 2. Định nghĩa chính xác
@@ -26,6 +62,29 @@ CAP nói rằng một **distributed system** chỉ có thể đảm bảo **2 tr
 | **C** — Consistency | Mọi node đọc ra cùng dữ liệu mới nhất | Linearizability: sau khi write thành công, mọi read tiếp theo phải thấy giá trị đó |
 | **A** — Availability | Mọi request đều nhận được response (không lỗi) | Node còn sống phải trả lời, không được "im lặng" hay từ chối |
 | **P** — Partition tolerance | Hệ thống vẫn hoạt động khi mạng giữa các node bị chia cắt | Không sập toàn cục chỉ vì một link đứt |
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Tam giác CAP — trong hệ phân tán P bắt buộc nên chỉ chọn được CP hoặc AP</title>
+  <desc>Tam giác ba đỉnh Consistency, Availability, Partition tolerance. Vì network partition là chắc chắn xảy ra nên P bắt buộc; lựa chọn thực tế chỉ còn cạnh CP (giữ C, bỏ A) hoặc cạnh AP (giữ A, bỏ C).</desc>
+  <line x1="360" y1="50" x2="120" y2="290" stroke="#3b82f6" stroke-width="6" stroke-opacity="0.55"/>
+  <line x1="360" y1="50" x2="600" y2="290" stroke="#10b981" stroke-width="6" stroke-opacity="0.55"/>
+  <line x1="120" y1="290" x2="600" y2="290" stroke="currentColor" stroke-width="2" stroke-dasharray="6 6" stroke-opacity="0.35"/>
+  <circle cx="360" cy="50" r="30" fill="#f59e0b" fill-opacity="0.9"/>
+  <text x="360" y="58" font-size="20" font-weight="700" text-anchor="middle" fill="#fff">P</text>
+  <text x="360" y="108" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">Partition tolerance (BẮT BUỘC)</text>
+  <circle cx="120" cy="290" r="30" fill="#3b82f6" fill-opacity="0.9"/>
+  <text x="120" y="298" font-size="20" font-weight="700" text-anchor="middle" fill="#fff">C</text>
+  <text x="120" y="338" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">Consistency</text>
+  <circle cx="600" cy="290" r="30" fill="#10b981" fill-opacity="0.9"/>
+  <text x="600" y="298" font-size="20" font-weight="700" text-anchor="middle" fill="#fff">A</text>
+  <text x="600" y="338" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">Availability</text>
+  <rect x="170" y="150" width="84" height="26" rx="13" fill="#3b82f6" fill-opacity="0.9" transform="rotate(45 212 163)"/>
+  <text x="212" y="167" font-size="13" font-weight="700" text-anchor="middle" fill="#fff" transform="rotate(45 212 163)">CP</text>
+  <rect x="466" y="150" width="84" height="26" rx="13" fill="#10b981" fill-opacity="0.9" transform="rotate(-45 508 163)"/>
+  <text x="508" y="167" font-size="13" font-weight="700" text-anchor="middle" fill="#fff" transform="rotate(-45 508 163)">AP</text>
+  <text x="360" y="220" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Lựa chọn thực tế chỉ còn hai cạnh nối với P</text>
+  <text x="360" y="312" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.55">cạnh CA (không có P) — không tồn tại trong hệ phân tán</text>
+</svg>
 
 ### Hiểu lầm phổ biến
 
@@ -66,6 +125,52 @@ Vậy CAP thực chất chỉ là lựa chọn giữa **CP** và **AP**.
 CAP chỉ nói về **khi có partition (P)**. Nhưng phần lớn thời gian mạng **bình thường**, hệ thống vẫn phải đánh đổi giữa **Latency** và **Consistency**:
 
 > **PACELC**: nếu **P**artition → chọn **A** hay **C**; **E**lse → chọn **L**atency hay **C**onsistency.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Cây quyết định PACELC với vị trí DynamoDB và Aurora</title>
+  <desc>Cây quyết định PACELC: nếu có Partition thì chọn Availability hay Consistency; nếu không (Else) thì chọn Latency hay Consistency. DynamoDB nằm ở nhánh PA và EL, Aurora nằm ở nhánh PC và EC.</desc>
+  <rect x="280" y="24" width="160" height="48" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="46" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Mạng hiện thế nào?</text>
+  <text x="360" y="63" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">PACELC: P ? A/C : E ? L/C</text>
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none" stroke-width="1.5">
+    <path d="M360 72 L360 92 L180 92 L180 112"/>
+    <path d="M360 92 L540 92 L540 112"/>
+  </g>
+  <text x="250" y="86" font-size="11" font-weight="700" text-anchor="middle" fill="#ef4444">if Partition</text>
+  <text x="470" y="86" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.75">Else (bình thường)</text>
+  <rect x="100" y="112" width="160" height="42" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="180" y="138" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">chọn A hay C ?</text>
+  <rect x="460" y="112" width="160" height="42" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="540" y="138" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">chọn L hay C ?</text>
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none" stroke-width="1.5">
+    <path d="M180 154 L180 172 L110 172 L110 192"/>
+    <path d="M180 172 L250 172 L250 192"/>
+    <path d="M540 154 L540 172 L470 172 L470 192"/>
+    <path d="M540 172 L610 172 L610 192"/>
+  </g>
+  <rect x="60" y="192" width="100" height="40" rx="20" fill="#10b981" fill-opacity="0.9"/>
+  <text x="110" y="217" font-size="14" font-weight="700" text-anchor="middle" fill="#fff">PA</text>
+  <rect x="200" y="192" width="100" height="40" rx="20" fill="#3b82f6" fill-opacity="0.9"/>
+  <text x="250" y="217" font-size="14" font-weight="700" text-anchor="middle" fill="#fff">PC</text>
+  <rect x="420" y="192" width="100" height="40" rx="20" fill="#10b981" fill-opacity="0.9"/>
+  <text x="470" y="217" font-size="14" font-weight="700" text-anchor="middle" fill="#fff">EL</text>
+  <rect x="560" y="192" width="100" height="40" rx="20" fill="#3b82f6" fill-opacity="0.9"/>
+  <text x="610" y="217" font-size="14" font-weight="700" text-anchor="middle" fill="#fff">EC</text>
+  <rect x="60" y="262" width="240" height="84" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="180" y="288" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">DynamoDB → PA / EL</text>
+  <text x="180" y="310" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">khi partition: ưu tiên Available</text>
+  <text x="180" y="328" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">bình thường: ưu tiên Latency thấp</text>
+  <rect x="420" y="262" width="240" height="84" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="540" y="288" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Aurora → PC / EC</text>
+  <text x="540" y="310" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">khi partition: ưu tiên Consistency</text>
+  <text x="540" y="328" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">bình thường: vẫn ưu tiên Consistency</text>
+  <g stroke="currentColor" stroke-opacity="0.3" fill="none" stroke-width="1.2" stroke-dasharray="4 4">
+    <path d="M110 232 L150 262"/>
+    <path d="M250 232 L480 262"/>
+    <path d="M470 232 L240 262"/>
+    <path d="M610 232 L580 262"/>
+  </g>
+</svg>
 
 | Service | PACELC |
 |---------|--------|

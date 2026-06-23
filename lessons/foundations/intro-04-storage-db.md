@@ -51,6 +51,82 @@ Object storage bỏ hẳn khái niệm thư mục và block. Mỗi mẩu dữ li
 
 > 💡 Ghi nhớ: Block = ngăn kéo cho **một máy** (nhanh nhất). File = tủ hồ sơ **dùng chung** theo đường dẫn. Object = quầy ký gửi **vô hạn** truy cập bằng key qua API.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>So sánh ba kiểu lưu trữ: block, file, object và ánh xạ sang AWS</title>
+  <desc>Block storage là dãy block đánh số gắn vào một máy (EBS); File storage là cây thư mục nhiều máy cùng mount (EFS); Object storage là key trỏ tới object truy cập qua API HTTP (S3).</desc>
+  <text x="360" y="26" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Ba kiểu lưu trữ: Block · File · Object</text>
+
+  <g>
+    <rect x="16" y="44" width="222" height="232" rx="11" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="127" y="68" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Block storage</text>
+    <text x="127" y="86" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">Đĩa gắn vào 1 máy</text>
+    <g>
+      <rect x="44" y="118" width="60" height="34" rx="5" fill="#3b82f6" fill-opacity="0.9"/>
+      <text x="74" y="139" font-size="11" text-anchor="middle" fill="#fff">máy chủ</text>
+      <path d="M104 135 h22" stroke="currentColor" stroke-opacity="0.5" fill="none"/>
+    </g>
+    <g stroke="currentColor" stroke-opacity="0.3" fill="none">
+      <rect x="128" y="116" width="26" height="38" rx="3"/>
+      <rect x="154" y="116" width="26" height="38" rx="3"/>
+      <rect x="180" y="116" width="26" height="38" rx="3"/>
+    </g>
+    <text x="141" y="140" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">0</text>
+    <text x="167" y="140" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">1</text>
+    <text x="193" y="140" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">2</text>
+    <text x="127" y="178" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">Block đánh số · OS tự quản</text>
+    <text x="127" y="196" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">độ trễ thấp nhất</text>
+    <rect x="74" y="232" width="106" height="26" rx="13" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="127" y="249" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">Amazon EBS</text>
+  </g>
+
+  <g>
+    <rect x="249" y="44" width="222" height="232" rx="11" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="360" y="68" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">File storage</text>
+    <text x="360" y="86" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">Cây thư mục, nhiều máy mount</text>
+    <g stroke="currentColor" stroke-opacity="0.4" fill="none">
+      <path d="M300 112 v60 M300 132 h16 M300 152 h16 M300 172 h16"/>
+    </g>
+    <text x="300" y="116" font-size="11" fill="currentColor" opacity="0.85">/home</text>
+    <text x="320" y="136" font-size="11" fill="currentColor" opacity="0.7">an/</text>
+    <text x="320" y="156" font-size="11" fill="currentColor" opacity="0.7">baocao/</text>
+    <text x="320" y="176" font-size="11" fill="currentColor" opacity="0.7">quy1.docx</text>
+    <g>
+      <rect x="408" y="116" width="50" height="22" rx="4" fill="#10b981" fill-opacity="0.85"/>
+      <rect x="408" y="144" width="50" height="22" rx="4" fill="#10b981" fill-opacity="0.85"/>
+      <text x="433" y="131" font-size="10" text-anchor="middle" fill="#fff">máy A</text>
+      <text x="433" y="159" font-size="10" text-anchor="middle" fill="#fff">máy B</text>
+    </g>
+    <text x="360" y="196" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">mount chung qua NFS/SMB</text>
+    <rect x="307" y="232" width="106" height="26" rx="13" fill="#10b981" fill-opacity="0.9"/>
+    <text x="360" y="249" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">Amazon EFS</text>
+  </g>
+
+  <g>
+    <rect x="482" y="44" width="222" height="232" rx="11" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="593" y="68" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Object storage</text>
+    <text x="593" y="86" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">key → object qua API HTTP</text>
+    <g>
+      <rect x="506" y="116" width="80" height="26" rx="5" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.25"/>
+      <text x="546" y="133" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">GET key</text>
+      <path d="M586 129 h22" stroke="currentColor" stroke-opacity="0.5" fill="none" marker-end="url(#arrO)"/>
+    </g>
+    <defs>
+      <marker id="arrO" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M0 0 L10 5 L0 10 z" fill="currentColor" fill-opacity="0.5"/>
+      </marker>
+    </defs>
+    <g>
+      <rect x="612" y="112" width="36" height="36" rx="6" fill="#f59e0b" fill-opacity="0.9"/>
+      <rect x="652" y="112" width="36" height="36" rx="6" fill="#f59e0b" fill-opacity="0.55"/>
+      <text x="630" y="135" font-size="11" text-anchor="middle" fill="#fff">obj</text>
+    </g>
+    <text x="593" y="176" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">ghi đè cả object · không sửa giữa chừng</text>
+    <text x="593" y="196" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">quy mô gần như vô hạn</text>
+    <rect x="540" y="232" width="106" height="26" rx="13" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="593" y="249" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">Amazon S3</text>
+  </g>
+</svg>
+
 ## 2. Durability vs Availability — bền và sẵn sàng là hai chuyện khác nhau
 
 Hai từ này hay bị dùng lẫn, nhưng chúng trả lời hai câu hỏi khác nhau:
@@ -91,12 +167,51 @@ RAID (Redundant Array of Independent Disks) kết hợp nhiều ổ vật lý th
 
 RAID chỉ cứu bạn khỏi hỏng **ổ đĩa**; nếu cả máy chủ cháy, cả tòa data center mất điện thì sao? **Replication** sao chép dữ liệu sang máy khác, phòng máy khác, thậm chí thành phố khác.
 
-```
-        Ghi vào
-          ↓
-     [Primary] ──sao chép──▶ [Replica 1]  (cùng data center)
-          └─────sao chép──▶ [Replica 2]  (data center khác)
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Replication: Primary sao chép tới Replica cùng và khác data center, đồng bộ vs bất đồng bộ</title>
+  <desc>Client ghi vào Primary; Primary sao chép tới Replica 1 trong cùng data center theo kiểu đồng bộ (chờ ghi xong mới báo thành công) và tới Replica 2 ở data center khác theo kiểu bất đồng bộ (báo thành công ngay, sao chép sau).</desc>
+  <text x="360" y="26" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Replication — bản sao giữa nhiều máy, nhiều nơi</text>
+  <defs>
+    <marker id="arrR" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor" fill-opacity="0.6"/>
+    </marker>
+  </defs>
+
+  <g>
+    <rect x="24" y="118" width="84" height="44" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="66" y="138" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
+    <text x="66" y="154" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">ghi (write)</text>
+  </g>
+  <path d="M108 140 h44" stroke="currentColor" stroke-opacity="0.6" fill="none" marker-end="url(#arrR)"/>
+
+  <g>
+    <rect x="158" y="110" width="120" height="60" rx="11" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="218" y="135" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Primary</text>
+    <text x="218" y="153" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">nhận mọi write</text>
+  </g>
+
+  <g>
+    <rect x="470" y="44" width="234" height="80" rx="11" fill="#10b981" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.18" stroke-dasharray="4 3"/>
+    <text x="486" y="64" font-size="10.5" fill="currentColor" opacity="0.6">Cùng data center</text>
+    <rect x="498" y="74" width="120" height="40" rx="9" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="558" y="98" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Replica 1</text>
+  </g>
+
+  <g>
+    <rect x="470" y="160" width="234" height="80" rx="11" fill="#f59e0b" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.18" stroke-dasharray="4 3"/>
+    <text x="486" y="180" font-size="10.5" fill="currentColor" opacity="0.6">Data center khác</text>
+    <rect x="498" y="190" width="120" height="40" rx="9" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="558" y="214" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Replica 2</text>
+  </g>
+
+  <path d="M278 128 C 360 100, 410 90, 496 94" stroke="#10b981" stroke-opacity="0.85" stroke-width="2" fill="none" marker-end="url(#arrR)"/>
+  <text x="360" y="90" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">đồng bộ (synchronous)</text>
+  <text x="360" y="106" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">chờ ghi xong rồi mới báo thành công</text>
+
+  <path d="M278 152 C 360 190, 410 200, 496 210" stroke="#f59e0b" stroke-opacity="0.9" stroke-width="2" fill="none" stroke-dasharray="6 4" marker-end="url(#arrR)"/>
+  <text x="360" y="240" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">bất đồng bộ (asynchronous)</text>
+  <text x="360" y="256" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">báo thành công ngay, sao chép sau</text>
+</svg>
 
 Hai chế độ chính:
 

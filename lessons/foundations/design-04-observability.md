@@ -136,20 +136,105 @@ Cơ chế đơn giản đến bất ngờ:
 
 Ghép tất cả span cùng trace ID lại, ta được biểu đồ "thác nước" (waterfall):
 
-```
-trace_id: abc-789                 Tổng: 5.020ms
-─────────────────────────────────────────────────────
-API Gateway      ████████████████████████████  5.020ms
- Order Service    ███████████████████████████  4.950ms
-  Inventory        ██                             120ms
-  Payment          ████████████████████████     4.500ms  ← THỦ PHẠM!
-   Bank API         ███████████████████████     4.400ms  ← gốc rễ
-  Notification                              █     90ms
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 336" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Biểu đồ thác nước (waterfall) của một distributed trace</title>
+  <desc>Một trace_id abc-789 đi qua API Gateway rồi Order Service, rẽ sang Inventory, Payment đến Bank API, và Notification. Mỗi span là một thanh ngang dài theo thời lượng; span Payment gọi Bank API chiếm gần như toàn bộ 5.020ms và được đánh dấu là gốc rễ gây chậm.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">trace_id: abc-789</text>
+  <text x="704" y="24" font-size="12" text-anchor="end" fill="currentColor" opacity="0.65">Tổng: 5.020ms</text>
+  <line x1="16" y1="34" x2="704" y2="34" stroke="currentColor" stroke-opacity="0.25"/>
+  <g font-size="11.5" fill="currentColor">
+    <text x="16" y="58" font-weight="700">API Gateway</text>
+    <text x="32" y="98" font-weight="700">Order Service</text>
+    <text x="48" y="138">Inventory</text>
+    <text x="48" y="178" font-weight="700">Payment</text>
+    <text x="64" y="218" font-weight="700">Bank API</text>
+    <text x="48" y="258">Notification</text>
+  </g>
+  <g>
+    <rect x="160" y="46" width="540" height="18" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="704" y="59" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.7">5.020ms</text>
+  </g>
+  <g>
+    <rect x="167" y="86" width="533" height="18" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="694" y="99" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.7">4.950ms</text>
+  </g>
+  <g>
+    <rect x="174" y="126" width="13" height="18" rx="3" fill="#10b981" fill-opacity="0.5" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="195" y="139" font-size="10.5" fill="currentColor" opacity="0.7">120ms</text>
+  </g>
+  <g>
+    <rect x="174" y="166" width="486" height="18" rx="4" fill="#f59e0b" fill-opacity="0.5" stroke="currentColor" stroke-opacity="0.25"/>
+    <rect x="666" y="166" width="34" height="18" rx="4" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="683" y="179" font-size="9.5" font-weight="700" text-anchor="middle" fill="#fff">chậm</text>
+    <text x="654" y="179" font-size="10.5" text-anchor="end" fill="#fff" font-weight="700">4.500ms (bao Bank API)</text>
+  </g>
+  <g>
+    <rect x="182" y="206" width="475" height="18" rx="4" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="649" y="219" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.85" font-weight="700">4.400ms ← GỐC RỄ (thủ phạm)</text>
+  </g>
+  <g>
+    <rect x="174" y="246" width="10" height="18" rx="3" fill="#8b5cf6" fill-opacity="0.5" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="192" y="259" font-size="10.5" fill="currentColor" opacity="0.7">90ms</text>
+  </g>
+  <line x1="160" y1="284" x2="704" y2="284" stroke="currentColor" stroke-opacity="0.25"/>
+  <g font-size="10" fill="currentColor" opacity="0.55">
+    <text x="160" y="300">0ms</text>
+    <text x="704" y="300" text-anchor="end">~5.000ms</text>
+  </g>
+  <text x="16" y="324" font-size="10.5" fill="currentColor" opacity="0.7" font-weight="700">90% thời gian nằm ở Bank API</text>
+</svg>
 
 Nhìn một phát ra ngay: 90% thời gian nằm ở Bank API. Không cần đoán, không cần họp 3 team đổ lỗi cho nhau.
 
 Trace cũng cho thấy **cấu trúc** lời gọi: cái gì chạy tuần tự (có thể song song hóa?), cái gì bị gọi lặp N lần (bug N+1 query?).
+
+Ba trụ cột không thay thế nhau — chúng nối tiếp thành một quy trình điều tra: số liệu báo động, trace khoanh vùng, log kể chi tiết.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Ba trụ observability phối hợp: metric, trace, log</title>
+  <desc>Quy trình điều tra sự cố ba bước: metric phát hiện có gì đó chậm, trace chỉ ra service hay bước nào chậm, log lọc theo trace ID kể chính xác chuyện gì đã xảy ra. Ba khối nối với nhau bằng mũi tên từ trái qua phải.</desc>
+  <text x="360" y="26" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Ba trụ phối hợp khi điều tra sự cố</text>
+  <g>
+    <rect x="16" y="50" width="200" height="150" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="32" y="66" width="56" height="22" rx="11" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="60" y="81" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">METRIC</text>
+    <text x="32" y="116" font-size="12.5" font-weight="700" fill="currentColor">"Có gì đó chậm"</text>
+    <text x="32" y="138" font-size="11" fill="currentColor" opacity="0.7">Dashboard &amp; alert:</text>
+    <text x="32" y="156" font-size="11" fill="currentColor" opacity="0.7">p99 latency vọt lên,</text>
+    <text x="32" y="174" font-size="11" fill="currentColor" opacity="0.7">error rate tăng.</text>
+    <text x="32" y="192" font-size="10.5" fill="currentColor" opacity="0.55">→ phát hiện</text>
+  </g>
+  <g>
+    <rect x="260" y="50" width="200" height="150" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="276" y="66" width="50" height="22" rx="11" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="301" y="81" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">TRACE</text>
+    <text x="276" y="116" font-size="12.5" font-weight="700" fill="currentColor">"Service/bước nào?"</text>
+    <text x="276" y="138" font-size="11" fill="currentColor" opacity="0.7">Waterfall theo trace ID:</text>
+    <text x="276" y="156" font-size="11" fill="currentColor" opacity="0.7">span Payment → Bank API</text>
+    <text x="276" y="174" font-size="11" fill="currentColor" opacity="0.7">ăn 90% thời gian.</text>
+    <text x="276" y="192" font-size="10.5" fill="currentColor" opacity="0.55">→ khoanh vùng</text>
+  </g>
+  <g>
+    <rect x="504" y="50" width="200" height="150" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="520" y="66" width="42" height="22" rx="11" fill="#10b981" fill-opacity="0.95"/>
+    <text x="541" y="81" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">LOG</text>
+    <text x="520" y="116" font-size="12.5" font-weight="700" fill="currentColor">"Chuyện gì xảy ra"</text>
+    <text x="520" y="138" font-size="11" fill="currentColor" opacity="0.7">Lọc log theo trace ID:</text>
+    <text x="520" y="156" font-size="11" fill="currentColor" opacity="0.7">"Bank API timeout sau</text>
+    <text x="520" y="174" font-size="11" fill="currentColor" opacity="0.7">3 lần retry, status 504".</text>
+    <text x="520" y="192" font-size="10.5" fill="currentColor" opacity="0.55">→ tìm gốc rễ</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.45" fill="none" stroke-width="1.5">
+    <path d="M222 125 h32" marker-end="url(#o11y-arrow)"/>
+    <path d="M466 125 h32" marker-end="url(#o11y-arrow)"/>
+  </g>
+  <defs>
+    <marker id="o11y-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor" fill-opacity="0.55"/>
+    </marker>
+  </defs>
+  <text x="360" y="232" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.65">trace ID là sợi chỉ nối cả ba trụ lại với nhau</text>
+</svg>
 
 > 💡 Ghi nhớ: Bộ ba hoạt động cùng nhau: **metric** báo "có gì đó chậm" → **trace** chỉ ra "chậm ở service nào, bước nào" → **log** (lọc theo trace ID) kể "chính xác chuyện gì xảy ra ở bước đó". Đó là quy trình điều tra sự cố chuẩn.
 

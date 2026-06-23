@@ -113,19 +113,70 @@ VM giải quyết được lãng phí phần cứng, nhưng vẫn nặng nề:
 
 **Container** đóng gói ứng dụng **cùng toàn bộ những thứ nó cần để chạy** (thư viện, runtime, file cấu hình) — nhưng **không đóng gói cả hệ điều hành**. Tất cả container trên một máy **dùng chung kernel** (nhân hệ điều hành) của máy đó.
 
-```
-        VM                              CONTAINER
-+------+ +------+              +------+ +------+ +------+
-| App  | | App  |              | App  | | App  | | App  |
-| Libs | | Libs |              | Libs | | Libs | | Libs |
-| OS!  | | OS!  |  ← nặng      +------+-+------+-+------+
-+------+-+------+              |   Container Engine     |  ← Docker
-|   Hypervisor  |              +------------------------+
-+---------------+              |     HỆ ĐIỀU HÀNH       |  ← dùng chung 1 kernel
-|  Phần cứng    |              +------------------------+
-+---------------+              |       Phần cứng        |
-                               +------------------------+
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>So sánh phân tầng VM và Container</title>
+  <desc>VM xếp chồng App, Libs và một OS riêng cho mỗi máy ảo bên trên Hypervisor; Container chỉ có App và Libs, dùng chung một kernel qua Container Engine — nên container nhẹ và khởi động nhanh hơn.</desc>
+  <text x="172" y="22" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">VM (máy ảo)</text>
+  <text x="546" y="22" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Container</text>
+  <g>
+    <rect x="24" y="34" width="140" height="74" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="36" y="44" width="116" height="18" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.15"/>
+    <text x="94" y="57" font-size="11" text-anchor="middle" fill="currentColor">App</text>
+    <rect x="36" y="64" width="116" height="16" rx="4" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.15"/>
+    <text x="94" y="76" font-size="10.5" text-anchor="middle" fill="currentColor">Libs</text>
+    <rect x="36" y="82" width="116" height="20" rx="4" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="94" y="96" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">OS riêng</text>
+  </g>
+  <g>
+    <rect x="180" y="34" width="140" height="74" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="192" y="44" width="116" height="18" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.15"/>
+    <text x="250" y="57" font-size="11" text-anchor="middle" fill="currentColor">App</text>
+    <rect x="192" y="64" width="116" height="16" rx="4" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.15"/>
+    <text x="250" y="76" font-size="10.5" text-anchor="middle" fill="currentColor">Libs</text>
+    <rect x="192" y="82" width="116" height="20" rx="4" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="250" y="96" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">OS riêng</text>
+  </g>
+  <g>
+    <rect x="24" y="114" width="296" height="32" rx="8" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="172" y="134" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Hypervisor</text>
+  </g>
+  <g>
+    <rect x="24" y="152" width="296" height="32" rx="8" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="172" y="172" font-size="12" text-anchor="middle" fill="currentColor">Phần cứng</text>
+  </g>
+  <text x="172" y="204" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">Mỗi VM kèm 1 OS đầy đủ → nặng GB, boot chậm</text>
+  <g>
+    <rect x="392" y="34" width="92" height="56" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="402" y="44" width="72" height="18" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.15"/>
+    <text x="438" y="57" font-size="11" text-anchor="middle" fill="currentColor">App</text>
+    <rect x="402" y="64" width="72" height="18" rx="4" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.15"/>
+    <text x="438" y="77" font-size="10.5" text-anchor="middle" fill="currentColor">Libs</text>
+  </g>
+  <g>
+    <rect x="500" y="34" width="92" height="56" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="510" y="44" width="72" height="18" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.15"/>
+    <text x="546" y="57" font-size="11" text-anchor="middle" fill="currentColor">App</text>
+    <rect x="510" y="64" width="72" height="18" rx="4" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.15"/>
+    <text x="546" y="77" font-size="10.5" text-anchor="middle" fill="currentColor">Libs</text>
+  </g>
+  <g>
+    <rect x="608" y="34" width="92" height="56" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="618" y="44" width="72" height="18" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.15"/>
+    <text x="654" y="57" font-size="11" text-anchor="middle" fill="currentColor">App</text>
+    <rect x="618" y="64" width="72" height="18" rx="4" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.15"/>
+    <text x="654" y="77" font-size="10.5" text-anchor="middle" fill="currentColor">Libs</text>
+  </g>
+  <g>
+    <rect x="392" y="114" width="308" height="32" rx="8" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="546" y="134" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Container Engine (Docker)</text>
+  </g>
+  <g>
+    <rect x="392" y="152" width="308" height="32" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="546" y="172" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Hệ điều hành — dùng chung 1 kernel</text>
+  </g>
+  <text x="546" y="204" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">Không có OS riêng → nhẹ MB, khởi động giây</text>
+  <line x1="356" y1="34" x2="356" y2="190" stroke="currentColor" stroke-opacity="0.18" stroke-dasharray="4 4"/>
+</svg>
 
 Analogy: nếu VM là **căn hộ** (mỗi căn có hệ thống điện nước riêng hoàn chỉnh), thì container là **phòng trong ký túc xá chất lượng cao**: mỗi phòng có khoá riêng, đồ đạc riêng, nhưng dùng chung hệ thống điện nước của toà nhà → xây nhanh hơn, rẻ hơn, nhồi được nhiều phòng hơn.
 
@@ -236,12 +287,61 @@ Toàn bộ khái niệm trong bài đều map trực tiếp sang các service b�
 
 Bậc thang "mức độ tự quản lý" trên AWS — sẽ xuất hiện rất nhiều trong đề thi:
 
-```
-Quản lý nhiều  ←──────────────────────────→  Quản lý ít
-   EC2      →   ECS/EKS trên EC2  →  Fargate  →  Lambda
-  (thuê VM)    (tự quản máy chạy     (AWS quản    (chỉ viết
-                 container)           máy hộ)       hàm)
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Bậc thang mức độ tự quản lý trên AWS: EC2, ECS/EKS trên EC2, Fargate, Lambda</title>
+  <desc>Bốn bậc thang đi xuống theo trục từ trái (quản lý nhiều) sang phải (quản lý ít): EC2 ánh xạ máy ảo, ECS hoặc EKS trên EC2 ánh xạ container tự quản máy, Fargate ánh xạ container không quản máy, Lambda ánh xạ serverless chỉ viết hàm.</desc>
+
+  <text x="20" y="26" font-size="13" font-weight="700" fill="currentColor">Quản lý nhiều</text>
+  <text x="700" y="26" font-size="13" font-weight="700" text-anchor="end" fill="currentColor">Quản lý ít</text>
+  <line x1="20" y1="36" x2="700" y2="36" stroke="currentColor" stroke-opacity="0.3"/>
+  <path d="M700 36 l-8 -4 v8 z" fill="currentColor" fill-opacity="0.6"/>
+  <text x="360" y="51" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">Máy vật lý → VM → Container → Serverless</text>
+
+  <!-- Step 1: EC2 (tallest, highest) -->
+  <g>
+    <rect x="20" y="78" width="160" height="150" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="32" y="90" width="56" height="20" rx="10" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="60" y="104" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">VM</text>
+    <text x="100" y="120" font-size="15" font-weight="700" fill="currentColor">EC2</text>
+    <text x="32" y="146" font-size="11" fill="currentColor" opacity="0.8">Thuê VM</text>
+    <text x="32" y="164" font-size="10.5" fill="currentColor" opacity="0.62">Bạn quản:</text>
+    <text x="32" y="180" font-size="10.5" fill="currentColor" opacity="0.62">OS, vá lỗi,</text>
+    <text x="32" y="196" font-size="10.5" fill="currentColor" opacity="0.62">scaling, runtime</text>
+    <text x="32" y="218" font-size="10.5" font-weight="700" fill="currentColor" opacity="0.75">Toàn quyền OS</text>
+  </g>
+
+  <!-- Step 2: ECS/EKS on EC2 -->
+  <g>
+    <rect x="190" y="110" width="160" height="118" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="202" y="122" width="92" height="20" rx="10" fill="#10b981" fill-opacity="0.95"/>
+    <text x="248" y="136" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">Container</text>
+    <text x="202" y="160" font-size="13.5" font-weight="700" fill="currentColor">ECS/EKS</text>
+    <text x="202" y="176" font-size="13.5" font-weight="700" fill="currentColor">trên EC2</text>
+    <text x="202" y="198" font-size="10.5" fill="currentColor" opacity="0.62">Tự quản máy (EC2)</text>
+    <text x="202" y="214" font-size="10.5" fill="currentColor" opacity="0.62">chạy container</text>
+  </g>
+
+  <!-- Step 3: Fargate -->
+  <g>
+    <rect x="360" y="148" width="160" height="80" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="372" y="160" width="92" height="20" rx="10" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="418" y="174" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">Container</text>
+    <text x="372" y="198" font-size="14" font-weight="700" fill="currentColor">Fargate</text>
+    <text x="372" y="216" font-size="10.5" fill="currentColor" opacity="0.62">AWS quản máy hộ</text>
+  </g>
+
+  <!-- Step 4: Lambda (lowest, smallest) -->
+  <g>
+    <rect x="530" y="186" width="170" height="42" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="542" y="195" width="84" height="18" rx="9" fill="#8b5cf6" fill-opacity="0.95"/>
+    <text x="584" y="208" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">Serverless</text>
+    <text x="636" y="210" font-size="13.5" font-weight="700" fill="currentColor">Lambda</text>
+  </g>
+  <text x="615" y="246" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">Chỉ viết hàm</text>
+
+  <text x="20" y="278" font-size="10.5" fill="currentColor" opacity="0.6">"Ít vận hành nhất" → phía phải (Fargate, Lambda)</text>
+  <text x="700" y="278" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.6">"Toàn quyền OS" → phía trái (EC2)</text>
+</svg>
 
 > 💡 **Ghi nhớ**: Khi đề thi AWS hỏi *"ít công sức vận hành nhất (least operational overhead)"*, câu trả lời thường nằm về **phía phải** của bậc thang trên (Fargate, Lambda). Khi hỏi *"toàn quyền kiểm soát OS"*, đáp án nằm về **phía trái** (EC2).
 

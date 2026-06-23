@@ -70,23 +70,58 @@ Thuốc giải cho SPOF là **redundancy**: có **nhiều hơn một** bản c�
 
 Một bản **active** phục vụ toàn bộ traffic; bản **passive** (standby) đứng chờ, chỉ tiếp quản khi bản chính chết.
 
-```
-            bình thường                    khi sự cố
-   Users ──► [Server A] (active)    Users ──X [Server A] (chết)
-             [Server B] (ngủ chờ)   Users ──► [Server B] (tiếp quản)
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Active-Passive so với Active-Active</title>
+  <desc>Active-passive: server A phục vụ, server B đứng chờ và chỉ tiếp quản sau độ trễ failover khi A chết. Active-active: cả A và B cùng phục vụ traffic sau một load balancer.</desc>
+  <text x="180" y="22" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Active-Passive</text>
+  <text x="540" y="22" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Active-Active</text>
+  <line x1="360" y1="36" x2="360" y2="232" stroke="currentColor" stroke-opacity="0.18"/>
+  <g>
+    <text x="36" y="62" font-size="11" fill="currentColor">Users</text>
+    <line x1="78" y1="58" x2="118" y2="58" stroke="#10b981" stroke-width="2" marker-end="url(#ah-g)"/>
+    <rect x="122" y="42" width="120" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="182" y="58" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Server A</text>
+    <text x="182" y="71" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">active — phục vụ</text>
+    <rect x="122" y="92" width="120" height="34" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 3"/>
+    <text x="182" y="108" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.65">Server B</text>
+    <text x="182" y="121" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.55">passive — ngủ chờ</text>
+    <text x="36" y="170" font-size="11" fill="currentColor">Users</text>
+    <line x1="78" y1="166" x2="118" y2="166" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3 3" marker-end="url(#ah-a)"/>
+    <rect x="122" y="150" width="120" height="34" rx="8" fill="#ef4444" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="182" y="166" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.6">Server A ✖</text>
+    <text x="182" y="179" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.55">chết</text>
+    <rect x="122" y="194" width="120" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="182" y="210" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Server B</text>
+    <text x="182" y="223" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">tiếp quản (failover)</text>
+    <text x="300" y="166" font-size="9.5" fill="#f59e0b" font-weight="700">độ trễ</text>
+    <text x="300" y="178" font-size="9.5" fill="#f59e0b" font-weight="700">failover</text>
+  </g>
+  <g>
+    <text x="406" y="135" font-size="11" fill="currentColor">Users</text>
+    <line x1="448" y1="131" x2="486" y2="131" stroke="#3b82f6" stroke-width="2" marker-end="url(#ah-b)"/>
+    <rect x="490" y="114" width="60" height="34" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="520" y="135" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">LB</text>
+    <path d="M550 131 H580 V72" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#ah-g)"/>
+    <path d="M550 131 H580 V190" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#ah-g)"/>
+    <rect x="592" y="55" width="116" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="650" y="71" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Server A</text>
+    <text x="650" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">đang phục vụ</text>
+    <rect x="592" y="173" width="116" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="650" y="189" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Server B</text>
+    <text x="650" y="202" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">đang phục vụ</text>
+  </g>
+  <defs>
+    <marker id="ah-g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#10b981"/></marker>
+    <marker id="ah-a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#f59e0b"/></marker>
+    <marker id="ah-b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#3b82f6"/></marker>
+  </defs>
+</svg>
 
 Analogy: **lốp dự phòng** trong cốp xe. Bình thường nó nằm im, không giúp xe chạy nhanh hơn; nhưng khi thủng lốp, bạn thay vào và đi tiếp (mất vài phút thay lốp = thời gian failover).
 
 ### 3.2 Active-Active (cùng chạy song song)
 
-Cả hai (hoặc nhiều) bản **cùng phục vụ traffic** đồng thời, thường đứng sau một load balancer. Một bản chết thì các bản còn lại gánh phần việc của nó.
-
-```
-                ┌──► [Server A] (đang phục vụ)
-   Users ──► [LB]
-                └──► [Server B] (đang phục vụ)
-```
+Cả hai (hoặc nhiều) bản **cùng phục vụ traffic** đồng thời, thường đứng sau một load balancer. Một bản chết thì các bản còn lại gánh phần việc của nó. (Xem sơ đồ so sánh ở mục 3.1.)
 
 Analogy: quán phở có **hai đầu bếp cùng nấu** mỗi ngày. Một người nghỉ, người kia nấu chậm hơn một chút nhưng quán không đóng cửa — và ngày thường thì quán phục vụ được gấp đôi khách.
 
@@ -193,12 +228,38 @@ Khi sự cố lớn xảy ra (mất cả database, cháy data center), có hai c
 
 Hình dung trên trục thời gian:
 
-```
- ──────●───────────────✖───────────────●──────► thời gian
-   backup cuối       SỰ CỐ         chạy lại
-       │◄─── RPO ─────►│◄──── RTO ────►│
-       (dữ liệu bị mất)  (thời gian chết)
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Trục thời gian RPO và RTO</title>
+  <desc>Trên trục thời gian: từ lần backup cuối tới thời điểm sự cố là RPO (lượng dữ liệu bị mất); từ thời điểm sự cố tới khi hệ thống chạy lại là RTO (thời gian chết).</desc>
+  <line x1="40" y1="110" x2="700" y2="110" stroke="currentColor" stroke-width="1.5" marker-end="url(#tl)"/>
+  <text x="690" y="132" font-size="11" text-anchor="end" fill="currentColor" opacity="0.7">thời gian</text>
+  <circle cx="160" cy="110" r="7" fill="#10b981"/>
+  <text x="160" y="92" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">backup cuối</text>
+  <g stroke="currentColor" stroke-width="2.5">
+    <line x1="354" y1="98" x2="366" y2="122"/>
+    <line x1="366" y1="98" x2="354" y2="122"/>
+  </g>
+  <text x="360" y="88" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ef4444">SỰ CỐ</text>
+  <circle cx="560" cy="110" r="7" fill="#3b82f6"/>
+  <text x="560" y="92" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">chạy lại</text>
+  <g>
+    <rect x="160" y="138" width="200" height="24" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <line x1="166" y1="150" x2="354" y2="150" stroke="#f59e0b" stroke-width="1.5" marker-start="url(#aS)" marker-end="url(#aE)"/>
+    <text x="260" y="154" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">RPO</text>
+    <text x="260" y="180" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">dữ liệu bị mất</text>
+  </g>
+  <g>
+    <rect x="360" y="138" width="200" height="24" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <line x1="366" y1="150" x2="554" y2="150" stroke="#3b82f6" stroke-width="1.5" marker-start="url(#aS)" marker-end="url(#aE)"/>
+    <text x="460" y="154" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">RTO</text>
+    <text x="460" y="180" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">thời gian chết</text>
+  </g>
+  <defs>
+    <marker id="tl" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 z" fill="currentColor"/></marker>
+    <marker id="aS" markerWidth="8" markerHeight="8" refX="2" refY="3" orient="auto"><path d="M6 0 L0 3 L6 6 z" fill="currentColor" opacity="0.7"/></marker>
+    <marker id="aE" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="currentColor" opacity="0.7"/></marker>
+  </defs>
+</svg>
 
 Analogy: bạn đang viết luận văn và máy tính cháy.
 
@@ -250,16 +311,38 @@ Analogy: tàu thuỷ được chia thành nhiều **khoang kín nước** (bulkh
 
 Nguyên tắc: **chia hệ thống thành các ngăn độc lập, để lỗi ở ngăn này không lan sang ngăn khác**.
 
-```
-  Không isolation:                Có isolation:
-  ┌──────────────────┐            ┌─────┐ ┌─────┐ ┌─────┐
-  │  TẤT CẢ user     │            │ ô 1 │ │ ô 2 │ │ ô 3 │
-  │  trên 1 cụm      │            │ 33% │ │ 33% │ │ 33% │
-  │  → lỗi = 100%    │            │users│ │users│ │users│
-  │    user bị ảnh   │            └──✖──┘ └─────┘ └─────┘
-  │    hưởng         │             lỗi ô 1 → chỉ 33% bị
-  └──────────────────┘             ảnh hưởng
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Blast radius: một cụm gộp so với chia cell</title>
+  <desc>Không isolation: tất cả user trên một cụm, lỗi ảnh hưởng 100 phần trăm user. Có isolation: chia thành 3 cell độc lập, lỗi một cell chỉ ảnh hưởng khoảng 33 phần trăm user.</desc>
+  <text x="180" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Không isolation</text>
+  <text x="540" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Có isolation (cell)</text>
+  <line x1="360" y1="38" x2="360" y2="222" stroke="currentColor" stroke-opacity="0.18"/>
+  <g>
+    <rect x="60" y="50" width="240" height="120" rx="12" fill="#ef4444" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="180" y="100" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">TẤT CẢ user · 1 cụm</text>
+    <g stroke="#ef4444" stroke-width="3">
+      <line x1="168" y1="116" x2="192" y2="140"/>
+      <line x1="192" y1="116" x2="168" y2="140"/>
+    </g>
+    <text x="180" y="200" font-size="12" font-weight="700" text-anchor="middle" fill="#ef4444">lỗi → 100% user bị ảnh hưởng</text>
+  </g>
+  <g>
+    <rect x="404" y="60" width="90" height="90" rx="10" fill="#ef4444" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="449" y="100" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">cell 1</text>
+    <text x="449" y="118" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">33% users</text>
+    <g stroke="#ef4444" stroke-width="2.5">
+      <line x1="438" y1="128" x2="460" y2="146"/>
+      <line x1="460" y1="128" x2="438" y2="146"/>
+    </g>
+    <rect x="504" y="60" width="90" height="90" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="549" y="100" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">cell 2</text>
+    <text x="549" y="118" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">33% users</text>
+    <rect x="604" y="60" width="90" height="90" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="649" y="100" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">cell 3</text>
+    <text x="649" y="118" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">33% users</text>
+    <text x="549" y="200" font-size="12" font-weight="700" text-anchor="middle" fill="#10b981">lỗi cell 1 → chỉ ~33% bị ảnh hưởng</text>
+  </g>
+</svg>
 
 Các hình thức isolation thường gặp:
 
@@ -274,20 +357,54 @@ Lưu ý sự đánh đổi: isolation và tận dụng tài nguyên kéo nhau ng
 
 ## 9. Ghép tất cả lại: một kiến trúc HA mẫu
 
-```
-                    Users
-                      │
-              [ DNS + health check ]      ← failover giữa các site
-                      │
-              [ Load Balancer ]           ← bản thân LB cũng phải dự phòng!
-               ┌──────┴──────┐
-        ╔══════▼═════╗ ╔═════▼══════╗
-        ║  Khoang A  ║ ║  Khoang B  ║    ← 2 vị trí vật lý tách biệt
-        ║ [Web x2]   ║ ║ [Web x2]   ║      (isolation, active-active)
-        ║     │      ║ ║     │      ║
-        ║ [DB primary]◄──►[DB standby]    ← active-passive + replication
-        ╚════════════╝ ╚════════════╝      (RPO nhỏ nhờ đồng bộ liên tục)
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Kiến trúc HA mẫu không còn SPOF</title>
+  <desc>Users đi qua DNS có health check (failover giữa các site), tới load balancer dự phòng, rồi tới hai khoang vật lý tách biệt. Mỗi khoang có web tier active-active; database primary ở khoang A đồng bộ replication sang standby ở khoang B (active-passive).</desc>
+  <rect x="320" y="14" width="80" height="30" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="34" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Users</text>
+  <line x1="360" y1="44" x2="360" y2="62" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar)"/>
+  <rect x="250" y="64" width="220" height="38" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="80" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">DNS + health check</text>
+  <text x="360" y="95" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">failover giữa các site</text>
+  <line x1="360" y1="102" x2="360" y2="120" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar)"/>
+  <rect x="250" y="122" width="220" height="38" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="138" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Load Balancer (dự phòng)</text>
+  <text x="360" y="153" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">bản thân LB cũng có dự phòng</text>
+  <path d="M300 160 V178 H180 V196" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar)"/>
+  <path d="M420 160 V178 H540 V196" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar)"/>
+  <g>
+    <rect x="30" y="198" width="300" height="210" rx="12" fill="#10b981" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="6 4"/>
+    <text x="180" y="220" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Khoang A (vị trí vật lý 1)</text>
+    <rect x="60" y="232" width="110" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="115" y="253" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Web (active)</text>
+    <rect x="190" y="232" width="110" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="245" y="253" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Web (active)</text>
+    <text x="180" y="288" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">active-active</text>
+    <rect x="80" y="300" width="200" height="40" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="180" y="318" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">DB primary</text>
+    <text x="180" y="332" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">nhận ghi</text>
+  </g>
+  <g>
+    <rect x="390" y="198" width="300" height="210" rx="12" fill="#3b82f6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="6 4"/>
+    <text x="540" y="220" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Khoang B (vị trí vật lý 2)</text>
+    <rect x="420" y="232" width="110" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="475" y="253" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Web (active)</text>
+    <rect x="550" y="232" width="110" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="605" y="253" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Web (active)</text>
+    <text x="540" y="288" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">active-active</text>
+    <rect x="440" y="300" width="200" height="40" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="540" y="318" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">DB standby</text>
+    <text x="540" y="332" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">chờ promote (passive)</text>
+  </g>
+  <line x1="280" y1="320" x2="440" y2="320" stroke="#f59e0b" stroke-width="2" marker-end="url(#arA)"/>
+  <text x="360" y="313" font-size="9.5" font-weight="700" text-anchor="middle" fill="#f59e0b">replication</text>
+  <text x="360" y="362" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">đồng bộ liên tục → RPO nhỏ</text>
+  <text x="360" y="398" font-size="11.5" font-weight="700" text-anchor="middle" fill="#10b981">Mọi tầng ≥ 2 bản → không còn SPOF</text>
+  <defs>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 z" fill="currentColor"/></marker>
+    <marker id="arA" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#f59e0b"/></marker>
+  </defs>
+</svg>
 
 Đối chiếu với các khái niệm đã học:
 

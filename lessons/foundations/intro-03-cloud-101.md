@@ -52,19 +52,70 @@ Cloud không chỉ là "server của người khác". Điểm cách mạng là *
 
 Nhìn theo "tầng trách nhiệm":
 
-```
-            On-prem    IaaS       PaaS       SaaS
- Ứng dụng    [Bạn]     [Bạn]      [Bạn]      [NCC]
- Data        [Bạn]     [Bạn]      [Bạn]      [NCC]*
- Runtime     [Bạn]     [Bạn]      [NCC]      [NCC]
- OS          [Bạn]     [Bạn]      [NCC]      [NCC]
- Máy ảo      [Bạn]     [NCC]      [NCC]      [NCC]
- Phần cứng   [Bạn]     [NCC]      [NCC]      [NCC]
- Tòa nhà     [Bạn]     [NCC]      [NCC]      [NCC]
-
- NCC = nhà cung cấp cloud   (*data trong SaaS vẫn là của bạn,
-                              nhưng NCC vận hành nơi lưu trữ)
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 440" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Ma trận tầng trách nhiệm: On-prem vs IaaS vs PaaS vs SaaS</title>
+  <desc>Bảy tầng từ trên xuống — Ứng dụng, Data, Runtime, OS, Máy ảo, Phần cứng, Tòa nhà — qua bốn mô hình On-prem, IaaS, PaaS, SaaS. Ô xanh là Bạn tự lo, ô lục là nhà cung cấp lo. Càng sang phải, nhà cung cấp lo càng nhiều.</desc>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Ai lo tầng nào? — bạn lo ít dần khi đi sang phải</text>
+  <g font-size="12.5" font-weight="700" fill="currentColor" text-anchor="middle">
+    <text x="300" y="58">On-prem</text>
+    <text x="408" y="58">IaaS</text>
+    <text x="516" y="58">PaaS</text>
+    <text x="624" y="58">SaaS</text>
+  </g>
+  <g font-size="12" fill="currentColor" text-anchor="end">
+    <text x="184" y="92">Ứng dụng</text>
+    <text x="184" y="136">Data</text>
+    <text x="184" y="180">Runtime</text>
+    <text x="184" y="224">OS</text>
+    <text x="184" y="268">Máy ảo</text>
+    <text x="184" y="312">Phần cứng</text>
+    <text x="184" y="356">Tòa nhà</text>
+  </g>
+  <g font-size="11.5" font-weight="700" text-anchor="middle">
+    <!-- Hàng Ứng dụng -->
+    <rect x="200" y="74" width="100" height="32" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/><text x="250" y="95" fill="currentColor">Bạn</text>
+    <rect x="308" y="74" width="100" height="32" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/><text x="358" y="95" fill="currentColor">Bạn</text>
+    <rect x="416" y="74" width="100" height="32" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/><text x="466" y="95" fill="currentColor">Bạn</text>
+    <rect x="524" y="74" width="100" height="32" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/><text x="574" y="95" fill="currentColor">NCC</text>
+    <!-- Hàng Data -->
+    <rect x="200" y="118" width="100" height="32" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/><text x="250" y="139" fill="currentColor">Bạn</text>
+    <rect x="308" y="118" width="100" height="32" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/><text x="358" y="139" fill="currentColor">Bạn</text>
+    <rect x="416" y="118" width="100" height="32" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/><text x="466" y="139" fill="currentColor">Bạn</text>
+    <rect x="524" y="118" width="100" height="32" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/><text x="574" y="139" fill="currentColor">NCC*</text>
+    <!-- Hàng Runtime -->
+    <rect x="200" y="162" width="100" height="32" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/><text x="250" y="183" fill="currentColor">Bạn</text>
+    <rect x="308" y="162" width="100" height="32" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/><text x="358" y="183" fill="currentColor">Bạn</text>
+    <rect x="416" y="162" width="100" height="32" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/><text x="466" y="183" fill="currentColor">NCC</text>
+    <rect x="524" y="162" width="100" height="32" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/><text x="574" y="183" fill="currentColor">NCC</text>
+    <!-- Hàng OS -->
+    <rect x="200" y="206" width="100" height="32" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/><text x="250" y="227" fill="currentColor">Bạn</text>
+    <rect x="308" y="206" width="100" height="32" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/><text x="358" y="227" fill="currentColor">Bạn</text>
+    <rect x="416" y="206" width="100" height="32" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/><text x="466" y="227" fill="currentColor">NCC</text>
+    <rect x="524" y="206" width="100" height="32" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/><text x="574" y="227" fill="currentColor">NCC</text>
+    <!-- Hàng Máy ảo -->
+    <rect x="200" y="250" width="100" height="32" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/><text x="250" y="271" fill="currentColor">Bạn</text>
+    <rect x="308" y="250" width="100" height="32" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/><text x="358" y="271" fill="currentColor">NCC</text>
+    <rect x="416" y="250" width="100" height="32" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/><text x="466" y="271" fill="currentColor">NCC</text>
+    <rect x="524" y="250" width="100" height="32" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/><text x="574" y="271" fill="currentColor">NCC</text>
+    <!-- Hàng Phần cứng -->
+    <rect x="200" y="294" width="100" height="32" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/><text x="250" y="315" fill="currentColor">Bạn</text>
+    <rect x="308" y="294" width="100" height="32" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/><text x="358" y="315" fill="currentColor">NCC</text>
+    <rect x="416" y="294" width="100" height="32" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/><text x="466" y="315" fill="currentColor">NCC</text>
+    <rect x="524" y="294" width="100" height="32" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/><text x="574" y="315" fill="currentColor">NCC</text>
+    <!-- Hàng Tòa nhà -->
+    <rect x="200" y="338" width="100" height="32" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/><text x="250" y="359" fill="currentColor">Bạn</text>
+    <rect x="308" y="338" width="100" height="32" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/><text x="358" y="359" fill="currentColor">NCC</text>
+    <rect x="416" y="338" width="100" height="32" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/><text x="466" y="359" fill="currentColor">NCC</text>
+    <rect x="524" y="338" width="100" height="32" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/><text x="574" y="359" fill="currentColor">NCC</text>
+  </g>
+  <g font-size="11" fill="currentColor">
+    <rect x="200" y="392" width="16" height="16" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="224" y="404" opacity="0.85">Bạn tự lo</text>
+    <rect x="308" y="392" width="16" height="16" rx="4" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="332" y="404" opacity="0.85">NCC = nhà cung cấp cloud lo</text>
+  </g>
+  <text x="16" y="428" font-size="10.5" fill="currentColor" opacity="0.6">*Data trong SaaS vẫn là của bạn, nhưng NCC vận hành nơi lưu trữ.</text>
+</svg>
 
 - **IaaS (Infrastructure as a Service)**: thuê máy ảo, ổ đĩa, mạng "thô". Linh hoạt nhất, nhưng bạn phải tự vá OS, tự cấu hình. Ví dụ: thuê một máy ảo Linux.
 - **PaaS (Platform as a Service)**: bạn chỉ đưa code, nền tảng tự lo deploy, scale, vá lỗi hệ thống. Nhanh, đỡ việc, nhưng ít quyền kiểm soát hơn.
@@ -91,17 +142,51 @@ Cloud không phải đám mây lơ lửng — nó là **các data center vật l
 - **Region**: một khu vực địa lý (ví dụ Singapore, Tokyo, Frankfurt). Mỗi region độc lập với nhau.
 - **Availability Zone (AZ)**: bên trong mỗi region có nhiều "cụm data center" tách biệt — khác tòa nhà, khác nguồn điện, khác đường mạng — nhưng nối với nhau bằng cáp tốc độ cao.
 
-```
-        REGION "Singapore"
-   ┌───────────────────────────────┐
-   │  ┌───────┐ ┌───────┐ ┌───────┐│
-   │  │ AZ-1  │ │ AZ-2  │ │ AZ-3  ││
-   │  │ 🏢🏢  │ │ 🏢🏢  │ │ 🏢🏢  ││
-   │  └───┬───┘ └───┬───┘ └───┬───┘│
-   │      └─────────┼─────────┘    │   ← cáp riêng, độ trễ cực thấp
-   └────────────────┼──────────────┘
-                 Internet
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Một Region chứa nhiều Availability Zone độc lập</title>
+  <desc>Region Singapore bao gồm ba Availability Zone (AZ-1, AZ-2, AZ-3), mỗi AZ là một cụm data center độc lập, khác tòa nhà, khác nguồn điện. Ba AZ nối với nhau bằng cáp riêng độ trễ cực thấp. Nếu một AZ gặp sự cố, ứng dụng trải trên các AZ còn lại vẫn sống — đó là nền tảng của high availability.</desc>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Region chứa nhiều AZ — vì sao Multi-AZ chống sự cố</text>
+  <!-- Khung Region -->
+  <rect x="16" y="40" width="688" height="216" rx="12" fill="#3b82f6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="36" y="64" font-size="13" font-weight="700" fill="currentColor">Region "Singapore" — một khu vực địa lý</text>
+  <!-- AZ-1 -->
+  <g>
+    <rect x="48" y="86" width="180" height="146" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="138" y="108" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">AZ-1</text>
+    <rect x="72" y="124" width="60" height="44" rx="5" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.22"/>
+    <rect x="144" y="124" width="60" height="44" rx="5" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="138" y="194" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">cụm data center</text>
+    <text x="138" y="210" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">điện + mạng riêng</text>
+  </g>
+  <!-- AZ-2 -->
+  <g>
+    <rect x="270" y="86" width="180" height="146" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="360" y="108" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">AZ-2</text>
+    <rect x="294" y="124" width="60" height="44" rx="5" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.22"/>
+    <rect x="366" y="124" width="60" height="44" rx="5" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="360" y="194" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">cụm data center</text>
+    <text x="360" y="210" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">điện + mạng riêng</text>
+  </g>
+  <!-- AZ-3 -->
+  <g>
+    <rect x="492" y="86" width="180" height="146" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="582" y="108" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">AZ-3</text>
+    <rect x="516" y="124" width="60" height="44" rx="5" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.22"/>
+    <rect x="588" y="124" width="60" height="44" rx="5" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="582" y="194" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">cụm data center</text>
+    <text x="582" y="210" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">điện + mạng riêng</text>
+  </g>
+  <!-- Cáp nối giữa các AZ -->
+  <g stroke="#f59e0b" stroke-width="3" stroke-opacity="0.8" fill="none">
+    <line x1="228" y1="155" x2="270" y2="155"/>
+    <line x1="450" y1="155" x2="492" y2="155"/>
+  </g>
+  <text x="360" y="250" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">cáp riêng, độ trễ cực thấp — các AZ đồng bộ dữ liệu cho nhau</text>
+  <!-- Internet bên ngoài -->
+  <line x1="360" y1="256" x2="360" y2="300" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.5"/>
+  <rect x="288" y="300" width="144" height="36" rx="18" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="323" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Internet</text>
+</svg>
 
 Vì sao thiết kế như vậy? **Để chống sự cố.** Nếu một tòa nhà mất điện hay cháy, ứng dụng đặt ở 2 AZ trở lên vẫn sống. Đây là nền tảng của khái niệm **high availability** (tính sẵn sàng cao) mà bạn sẽ gặp suốt hành trình học cloud.
 

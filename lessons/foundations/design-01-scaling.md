@@ -71,14 +71,44 @@ Hệ quả:
 
 Giải pháp: server **không giữ state nào của user** giữa các request. Mọi state được **đẩy ra ngoài (externalize)** vào một nơi lưu trữ chung — thường là một in-memory store như Redis, hoặc database.
 
-```
-              ┌──────────────┐
-User Lan ──▶  │ Server 1/2/3 │ ── đọc/ghi session ──▶ ┌─────────────┐
- (request     │ (bất kỳ máy  │                        │ Redis / DB  │
-  nào cũng    │  nào cũng    │                        │ (sổ chung)  │
-  được)       │  xử lý được) │                        └─────────────┘
-              └──────────────┘
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Externalize session: nhiều app server stateless dùng chung một store</title>
+  <desc>Một request từ user có thể rơi vào bất kỳ app server nào trong số ba server stateless; cả ba cùng đọc và ghi session vào một store chung là Redis hoặc database, nên máy nào cũng phục vụ được request.</desc>
+  <text x="50" y="150" font-size="12" text-anchor="middle" fill="currentColor" font-weight="700">User Lan</text>
+  <text x="50" y="168" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.62">request bất kỳ</text>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none" stroke-width="1.4">
+    <path d="M92 140 L210 70" marker-end="url(#ar2)"/>
+    <path d="M92 145 L210 145" marker-end="url(#ar2)"/>
+    <path d="M92 150 L210 220" marker-end="url(#ar2)"/>
+  </g>
+  <defs>
+    <marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g>
+    <rect x="214" y="48" width="200" height="44" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="314" y="68" font-size="12.5" text-anchor="middle" font-weight="700" fill="currentColor">App server 1 (stateless)</text>
+    <text x="314" y="84" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.62">không giữ state</text>
+    <rect x="214" y="123" width="200" height="44" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="314" y="143" font-size="12.5" text-anchor="middle" font-weight="700" fill="currentColor">App server 2 (stateless)</text>
+    <text x="314" y="159" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.62">không giữ state</text>
+    <rect x="214" y="198" width="200" height="44" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="314" y="218" font-size="12.5" text-anchor="middle" font-weight="700" fill="currentColor">App server 3 (stateless)</text>
+    <text x="314" y="234" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.62">không giữ state</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none" stroke-width="1.4">
+    <path d="M414 70 L560 130" marker-end="url(#ar2)"/>
+    <path d="M414 145 L560 145" marker-end="url(#ar2)"/>
+    <path d="M414 220 L560 160" marker-end="url(#ar2)"/>
+  </g>
+  <text x="487" y="108" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">đọc/ghi session</text>
+  <g>
+    <rect x="560" y="115" width="148" height="60" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="634" y="140" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">Redis / DB</text>
+    <text x="634" y="159" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">store chung (sổ chung)</text>
+  </g>
+</svg>
 
 Khi server stateless:
 - **Máy nào cũng thay thế được nhau** → load balancer chia tải tự do.
@@ -199,14 +229,48 @@ Quan sát then chốt: đa số ứng dụng **đọc nhiều hơn ghi rất nhi
 - **Primary** (bản chính): nhận toàn bộ lệnh **ghi** (INSERT/UPDATE/DELETE).
 - **Read replica** (bản sao chỉ đọc): nhận các lệnh **đọc** (SELECT). Dữ liệu được sao chép (replicate) từ primary sang, thường là **bất đồng bộ**.
 
-```
-            ghi (write)
-  App ────────────────────▶ [ PRIMARY ]
-   │                             │ replication (trễ vài ms~s)
-   │        đọc (read)           ▼
-   ├──────────────────────▶ [ Replica 1 ]
-   └──────────────────────▶ [ Replica 2 ]   ← muốn thêm sức đọc? thêm replica
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 290" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Tách read/write bằng read replica</title>
+  <desc>App ghi toàn bộ lệnh write vào DB Primary; Primary sao chép dữ liệu bất đồng bộ sang nhiều read replica với độ trễ replication lag; App phân tán các lệnh đọc qua nhiều replica, muốn thêm sức đọc thì thêm replica.</desc>
+  <g>
+    <rect x="20" y="115" width="120" height="56" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="80" y="148" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">App</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.6">
+    <path d="M140 132 L300 60" marker-end="url(#ar3)"/>
+    <path d="M140 152 L300 152" marker-end="url(#ar3)"/>
+    <path d="M140 158 L300 230" marker-end="url(#ar3)"/>
+  </g>
+  <defs>
+    <marker id="ar3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="205" y="86" font-size="11" text-anchor="middle" fill="currentColor" font-weight="700">ghi (write)</text>
+  <text x="200" y="143" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">đọc (read)</text>
+  <text x="200" y="217" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">đọc (read)</text>
+  <g>
+    <rect x="300" y="34" width="180" height="56" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="390" y="58" font-size="13.5" text-anchor="middle" font-weight="700" fill="currentColor">PRIMARY</text>
+    <text x="390" y="76" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">nhận mọi lệnh ghi</text>
+  </g>
+  <g>
+    <rect x="540" y="120" width="160" height="50" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="620" y="150" font-size="12.5" text-anchor="middle" font-weight="700" fill="currentColor">Read Replica 1</text>
+    <rect x="540" y="206" width="160" height="50" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="620" y="236" font-size="12.5" text-anchor="middle" font-weight="700" fill="currentColor">Read Replica 2</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.45" fill="none" stroke-width="1.4" stroke-dasharray="5 4">
+    <path d="M430 90 L600 120" marker-end="url(#ar3)"/>
+    <path d="M430 90 L600 206" marker-end="url(#ar3)"/>
+  </g>
+  <text x="525" y="108" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">replication (trễ vài ms~s)</text>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.6">
+    <path d="M300 152 L540 145" marker-end="url(#ar3)"/>
+    <path d="M300 226 L540 231" marker-end="url(#ar3)"/>
+  </g>
+  <text x="620" y="278" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.62">muốn thêm sức đọc? thêm replica</text>
+</svg>
 
 Lợi ích: tải đọc được chia ra nhiều máy — đọc scale gần như app tier. Ngoài ra replica còn là bản dự phòng nóng khi primary gặp sự cố.
 
@@ -220,15 +284,68 @@ Read replica không giúp gì cho **write** — mọi lệnh ghi vẫn dồn và
 
 ## 7. Ghép tất cả lại — kiến trúc web co giãn kinh điển
 
-```
-User ──▶ CDN ──▶ Load Balancer ──▶ App servers (stateless, auto scaling)
-                                        │
-                            ┌───────────┼───────────────┐
-                            ▼           ▼               ▼
-                       Cache (Redis)  DB Primary ──▶ Read Replicas
-                       session +      (write)        (read)
-                       hot data
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Kiến trúc web co giãn end-to-end</title>
+  <desc>Luồng từ User qua CDN, Load Balancer, tới cụm app server stateless trong auto scaling; app server đọc/ghi session và dữ liệu nóng vào Cache Redis, ghi vào DB Primary, và DB Primary sao chép sang các Read Replica để chia tải đọc.</desc>
+  <defs>
+    <marker id="ar1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g>
+    <rect x="20" y="34" width="110" height="46" rx="10" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="75" y="62" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">User</text>
+    <rect x="170" y="34" width="110" height="46" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="225" y="56" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">CDN</text>
+    <text x="225" y="71" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">cache gần user</text>
+    <rect x="320" y="34" width="130" height="46" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="385" y="56" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">Load Balancer</text>
+    <text x="385" y="71" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">chia tải + health check</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.6">
+    <path d="M130 57 L168 57" marker-end="url(#ar1)"/>
+    <path d="M280 57 L318 57" marker-end="url(#ar1)"/>
+    <path d="M385 80 L385 118" marker-end="url(#ar1)"/>
+  </g>
+  <g>
+    <rect x="250" y="120" width="270" height="78" rx="11" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="385" y="140" font-size="12.5" text-anchor="middle" font-weight="700" fill="currentColor">App servers (stateless)</text>
+    <text x="385" y="156" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.62">auto scaling: thêm/bớt máy theo tải</text>
+    <rect x="268" y="164" width="68" height="24" rx="6" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="302" y="180" font-size="10.5" text-anchor="middle" fill="currentColor">app 1</text>
+    <rect x="351" y="164" width="68" height="24" rx="6" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="385" y="180" font-size="10.5" text-anchor="middle" fill="currentColor">app 2</text>
+    <rect x="434" y="164" width="68" height="24" rx="6" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="468" y="180" font-size="10.5" text-anchor="middle" fill="currentColor">app 3</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.6">
+    <path d="M330 198 L150 250" marker-end="url(#ar1)"/>
+    <path d="M440 198 L470 250" marker-end="url(#ar1)"/>
+  </g>
+  <text x="205" y="232" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">session + hot data</text>
+  <text x="500" y="232" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">ghi (write)</text>
+  <g>
+    <rect x="40" y="254" width="190" height="60" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="135" y="280" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">Cache (Redis)</text>
+    <text x="135" y="298" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.62">session + dữ liệu nóng</text>
+    <rect x="370" y="254" width="170" height="60" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="455" y="280" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">DB Primary</text>
+    <text x="455" y="298" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.62">nhận mọi lệnh ghi</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.45" fill="none" stroke-width="1.4" stroke-dasharray="5 4">
+    <path d="M540 290 L600 340" marker-end="url(#ar1)"/>
+  </g>
+  <text x="600" y="300" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">replication</text>
+  <g>
+    <rect x="500" y="344" width="200" height="46" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="600" y="366" font-size="12.5" text-anchor="middle" font-weight="700" fill="currentColor">Read Replicas</text>
+    <text x="600" y="382" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.62">chia tải đọc (read)</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.6">
+    <path d="M455 314 L390 344 L398 366 L498 366" marker-end="url(#ar1)"/>
+  </g>
+  <text x="360" y="362" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">đọc (read)</text>
+</svg>
 
 Đọc sơ đồ này từ trái sang phải, bạn sẽ thấy đủ cả bài: CDN cache nội dung gần user; LB chia tải và loại máy hỏng; app tier stateless nên auto scaling tự do thêm bớt; session và dữ liệu nóng nằm trong cache chung; database tách đọc/ghi bằng read replica. Đây gần như là "bộ khung mẫu" mà mọi câu hỏi thiết kế hệ thống — và mọi kiến trúc tham chiếu của AWS — xoay quanh.
 

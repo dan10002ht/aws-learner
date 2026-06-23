@@ -35,6 +35,57 @@ Tiền đề: [[foundations-01-cap-theorem]], [[foundations-03-replication-and-q
 
 → **Single instance failure → site down 10 phút.** Đây là **cascading failure**, và nó **bình thường** trong mọi hệ phân tán không thiết kế chống.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Anatomy của cascading failure theo timeline Black Friday</title>
+  <desc>Chuỗi sự kiện từ 12h00 đến 12h05: một EC2 chết, dồn tải, latency tăng, user retry tạo retry storm, instance còn lại OOM, ASG bootstrap chậm, DB connection exhausted, cuối cùng site down.</desc>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Cascading failure — chuỗi domino 12h00 → 12h05</text>
+  <line x1="40" y1="52" x2="40" y2="402" stroke="currentColor" stroke-opacity="0.3" stroke-width="2"/>
+  <g>
+    <circle cx="40" cy="72" r="5" fill="#10b981" fill-opacity="0.95"/>
+    <text x="56" y="68" font-size="11" font-weight="700" fill="currentColor">12h00m30s</text>
+    <rect x="150" y="56" width="554" height="28" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="164" y="74" font-size="12" fill="currentColor">1 trong 3 EC2 chết → ALB dồn traffic sang 2 EC2 còn lại (load 90%), latency 100ms → 500ms</text>
+  </g>
+  <g>
+    <circle cx="40" cy="116" r="5" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="56" y="112" font-size="11" font-weight="700" fill="currentColor">12h01m00s</text>
+    <rect x="150" y="100" width="554" height="28" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="164" y="118" font-size="12" fill="currentColor">User refresh vì chậm → QPS x2 → request queue, latency 5s → ALB đánh 1 EC2 unhealthy</text>
+  </g>
+  <g>
+    <circle cx="40" cy="160" r="5" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="56" y="156" font-size="11" font-weight="700" fill="currentColor">12h01m30s</text>
+    <rect x="150" y="144" width="554" height="28" rx="7" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="164" y="162" font-size="12" fill="currentColor">1 EC2 còn lại nhận toàn bộ traffic → CPU 100%, OOM, restart → client retry storm (x10)</text>
+  </g>
+  <g>
+    <circle cx="40" cy="204" r="5" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="56" y="200" font-size="11" font-weight="700" fill="currentColor">12h02m00s</text>
+    <rect x="150" y="188" width="554" height="28" rx="7" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="164" y="206" font-size="12" fill="currentColor">ASG launch instance mới (3 phút bootstrap) → 3 phút không capacity → site down</text>
+  </g>
+  <g>
+    <circle cx="40" cy="248" r="5" fill="#8b5cf6" fill-opacity="0.95"/>
+    <text x="56" y="244" font-size="11" font-weight="700" fill="currentColor">12h05m00s</text>
+    <rect x="150" y="232" width="554" height="44" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="164" y="250" font-size="12" fill="currentColor">Instance mới lên, nhưng RDS connection pool exhausted (old instance không close sạch)</text>
+    <text x="164" y="268" font-size="12" fill="currentColor">→ DB CPU 100% → Lambda timeout → SQS DLQ tràn → pager loạn</text>
+  </g>
+  <g>
+    <rect x="40" y="300" width="664" height="40" rx="9" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="60" y="318" font-size="12.5" font-weight="700" fill="currentColor">Kết quả: 1 instance chết → site down 10 phút.</text>
+    <text x="60" y="334" font-size="11.5" fill="currentColor" opacity="0.8">Mỗi bước tạo điều kiện cho bước sau — snowball, không tự thoát ra.</text>
+  </g>
+  <g font-size="11" fill="currentColor" opacity="0.75">
+    <circle cx="56" cy="368" r="5" fill="#10b981" fill-opacity="0.95"/>
+    <text x="68" y="372">bình thường</text>
+    <circle cx="178" cy="368" r="5" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="190" y="372">quá tải lan rộng</text>
+    <circle cx="330" cy="368" r="5" fill="#8b5cf6" fill-opacity="0.95"/>
+    <text x="342" y="372">cạn tài nguyên tầng sâu</text>
+  </g>
+</svg>
+
 ---
 
 ## 2. Các kiểu failure cơ bản
@@ -61,6 +112,52 @@ Cascading failure xảy ra khi 1 failure → tạo điều kiện cho failure ti
 - Service A timeout → retry.
 - Mỗi user request giờ thành 3 backend request → B chịu 3x tải → càng chậm.
 - A retry tiếp → B chết hẳn.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Retry storm — vòng xoáy feedback so với backoff + jitter làm phẳng</title>
+  <desc>Bên trái: B chậm khiến A timeout rồi retry ngay, tải B nhân lên, B chậm hơn, tạo vòng xoáy. Bên phải: thêm exponential backoff và jitter làm phẳng tải, B kịp hồi phục.</desc>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Retry storm vs. backoff + jitter</text>
+  <defs>
+    <marker id="fmArrowRed" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="fmArrowGreen" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#10b981"/>
+    </marker>
+  </defs>
+  <text x="180" y="50" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">❌ Retry ngay — vòng xoáy</text>
+  <g fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#fmArrowRed)">
+    <path d="M180 88 C 300 78, 300 130, 192 138"/>
+    <path d="M168 158 C 60 168, 60 118, 168 102"/>
+  </g>
+  <g>
+    <rect x="96" y="68" width="168" height="28" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="180" y="86" font-size="11.5" text-anchor="middle" fill="currentColor">B chậm → A timeout</text>
+    <rect x="96" y="128" width="168" height="28" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="180" y="146" font-size="11.5" text-anchor="middle" fill="currentColor">A retry ngay lập tức</text>
+    <rect x="96" y="188" width="168" height="28" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="180" y="206" font-size="11.5" text-anchor="middle" fill="currentColor">tải B nhân lên (x3)</text>
+  </g>
+  <path d="M180 156 V 188" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#fmArrowRed)"/>
+  <text x="180" y="244" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">→ B chết hẳn</text>
+  <path d="M180 216 V 232" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#fmArrowRed)"/>
+  <line x1="370" y1="44" x2="370" y2="300" stroke="currentColor" stroke-opacity="0.2" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <text x="545" y="50" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">✅ Backoff + jitter — phẳng</text>
+  <g>
+    <rect x="461" y="68" width="168" height="28" rx="7" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="545" y="86" font-size="11.5" text-anchor="middle" fill="currentColor">B chậm → A timeout</text>
+    <rect x="461" y="128" width="168" height="28" rx="7" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="545" y="146" font-size="11.5" text-anchor="middle" fill="currentColor">chờ 2ⁿ + random rồi mới thử</text>
+    <rect x="461" y="188" width="168" height="28" rx="7" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="545" y="206" font-size="11.5" text-anchor="middle" fill="currentColor">tải trải đều, không trùng đỉnh</text>
+  </g>
+  <g fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#fmArrowGreen)">
+    <path d="M545 96 V 128"/>
+    <path d="M545 156 V 188"/>
+    <path d="M545 216 V 232"/>
+  </g>
+  <text x="545" y="244" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">→ B kịp hồi phục</text>
+</svg>
 
 ### 3.2 Thundering herd
 - Cache key TTL expire cùng lúc.
@@ -105,6 +202,43 @@ AWS SDK mặc định có exponential backoff cho hầu hết service.
 - **Open**: ngắt mạch, fail-fast ngay (không gọi downstream). Sau N giây → half-open.
 - **Half-open**: cho 1-2 request thử. Thành công → close. Fail → open lại.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Circuit breaker — máy trạng thái Closed, Open, Half-open</title>
+  <desc>Closed cho request đi qua; lỗi vượt ngưỡng chuyển sang Open fail-fast; sau N giây sang Half-open thử vài request; thử thành công quay về Closed, thử fail quay lại Open.</desc>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Circuit breaker — máy trạng thái</text>
+  <defs>
+    <marker id="cbArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g>
+    <rect x="40" y="120" width="160" height="70" rx="12" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="120" y="150" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Closed</text>
+    <text x="120" y="170" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">request đi qua bình thường</text>
+  </g>
+  <g>
+    <rect x="520" y="120" width="160" height="70" rx="12" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="600" y="150" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Open</text>
+    <text x="600" y="170" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">fail-fast, không gọi downstream</text>
+  </g>
+  <g>
+    <rect x="280" y="120" width="160" height="70" rx="12" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="150" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Half-open</text>
+    <text x="360" y="170" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">cho 1-2 request thử</text>
+  </g>
+  <g fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="2" marker-end="url(#cbArrow)">
+    <path d="M200 138 H 516"/>
+    <path d="M520 172 H 444"/>
+    <path d="M280 138 H 204"/>
+  </g>
+  <text x="358" y="112" font-size="11" font-weight="600" text-anchor="middle" fill="currentColor">lỗi vượt ngưỡng</text>
+  <text x="482" y="190" font-size="11" font-weight="600" text-anchor="middle" fill="currentColor">sau N giây</text>
+  <text x="242" y="112" font-size="11" font-weight="600" text-anchor="middle" fill="currentColor">thử thành công → Closed</text>
+  <path d="M340 190 C 320 250, 540 250, 580 192" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="2" marker-end="url(#cbArrow)"/>
+  <text x="455" y="262" font-size="11" font-weight="600" text-anchor="middle" fill="currentColor">thử fail → Open lại</text>
+  <text x="40" y="290" font-size="11" fill="currentColor" opacity="0.7">Open = ngăn cascading failure: B chết thì A fail nhanh, không phí thread/timeout.</text>
+</svg>
+
 → Ngăn cascading failure: nếu B chết, A không phí thời gian gọi nữa, fail nhanh, free up resource.
 
 **AWS**: không có service "circuit breaker" sẵn (trừ App Mesh, Istio nếu dùng service mesh). Thường implement trong code (Hystrix kiểu cũ, resilience4j, AWS SDK retry config).
@@ -123,6 +257,41 @@ Tên gọi từ tàu thủy: chia khoang để 1 khoang ngập không chìm cả
 - Tách thread pool / connection pool theo loại request.
 - Vd: critical path (checkout) dùng pool riêng; non-critical (recommend) pool khác. Recommend chết không kéo checkout chết.
 - **AWS**: tách Lambda, tách ASG, tách DB read replica theo workload.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Bulkhead — tách thread/connection pool theo loại request</title>
+  <desc>So sánh: pool chung khiến recommend quá tải nuốt hết thread làm checkout chết theo; còn tách pool riêng cho checkout và recommend thì recommend chết không kéo checkout chết.</desc>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Bulkhead — chia khoang thread/connection pool</text>
+  <text x="180" y="54" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">❌ Pool chung</text>
+  <rect x="40" y="68" width="280" height="180" rx="12" fill="#f59e0b" fill-opacity="0.10" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="180" y="90" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">1 thread pool dùng chung</text>
+  <g>
+    <rect x="62" y="104" width="110" height="50" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="117" y="125" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">checkout</text>
+    <text x="117" y="142" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">(critical)</text>
+    <rect x="188" y="104" width="110" height="50" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="243" y="125" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">recommend</text>
+    <text x="243" y="142" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">quá tải 🔥</text>
+  </g>
+  <text x="180" y="186" font-size="11.5" text-anchor="middle" fill="currentColor">recommend nuốt hết thread</text>
+  <text x="180" y="222" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">→ checkout cũng chết theo</text>
+  <text x="540" y="54" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">✅ Pool tách riêng</text>
+  <rect x="400" y="68" width="280" height="180" rx="12" fill="#10b981" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.22"/>
+  <g>
+    <rect x="420" y="100" width="115" height="120" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="477" y="124" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">checkout</text>
+    <text x="477" y="142" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">pool riêng</text>
+    <text x="477" y="200" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">vẫn sống ✅</text>
+  </g>
+  <g>
+    <rect x="545" y="100" width="115" height="120" rx="10" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="602" y="124" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">recommend</text>
+    <text x="602" y="142" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">pool riêng</text>
+    <text x="602" y="200" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">chết 🔥</text>
+  </g>
+  <text x="540" y="240" font-size="11.5" text-anchor="middle" fill="currentColor">khoang ngập không chìm cả tàu</text>
+  <text x="40" y="296" font-size="11" fill="currentColor" opacity="0.7">Tên từ tàu thủy: chia khoang để một khoang ngập không kéo chìm cả con tàu.</text>
+</svg>
 
 ### 4.5 Load shedding
 

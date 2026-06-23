@@ -88,15 +88,42 @@ Con người nhớ tên (`google.com`), máy tính cần số (`142.250.4.100`).
 
 Khi bạn gõ `shop.example.com`, trình duyệt (qua một **DNS resolver**, thường của ISP hoặc 8.8.8.8) hỏi lần lượt như hỏi đường:
 
-```
-Bạn → Resolver: "shop.example.com là IP nào?"
-        │
-        ├─1→ Root server:      "Tôi không biết, nhưng .com hỏi anh kia"
-        ├─2→ TLD server (.com):"example.com do name server X quản"
-        ├─3→ Name server X:    "shop.example.com = 93.184.216.34"
-        │
-Bạn ← Resolver: "93.184.216.34" (và cache lại để lần sau khỏi hỏi)
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Hành trình một truy vấn DNS phân cấp</title>
+  <desc>Trình duyệt hỏi DNS resolver tên shop.example.com; resolver hỏi lần lượt Root server, TLD server .com, rồi Authoritative name server để lấy IP 93.184.216.34, sau đó cache lại theo TTL.</desc>
+  <defs>
+    <marker id="dnsArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <rect x="16" y="120" width="150" height="70" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="91" y="148" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">DNS Resolver</text>
+  <text x="91" y="167" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">(ISP hoặc 8.8.8.8)</text>
+  <text x="91" y="182" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">có cache + TTL</text>
+  <rect x="554" y="20" width="150" height="56" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="629" y="43" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Root server</text>
+  <text x="629" y="61" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">"hỏi .com kìa"</text>
+  <rect x="554" y="132" width="150" height="56" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="629" y="155" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">TLD server (.com)</text>
+  <text x="629" y="173" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">"name server X quản"</text>
+  <rect x="554" y="244" width="150" height="56" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="629" y="266" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Authoritative NS</text>
+  <text x="629" y="284" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">= 93.184.216.34</text>
+  <g stroke="currentColor" fill="none" stroke-width="1.4" marker-end="url(#dnsArrow)">
+    <path d="M166 138 C 360 90, 420 60, 554 50"/>
+    <path d="M166 155 C 360 158, 420 160, 554 160"/>
+    <path d="M166 172 C 360 230, 420 260, 554 272"/>
+  </g>
+  <g font-size="10.5" fill="currentColor" opacity="0.85">
+    <text x="300" y="78">1. .com ở đâu?</text>
+    <text x="300" y="150">2. ai quản example.com?</text>
+    <text x="300" y="250">3. shop.example.com = ?</text>
+  </g>
+  <text x="16" y="232" font-size="11" fill="currentColor" opacity="0.85">Trình duyệt → "shop.example.com?"</text>
+  <text x="16" y="262" font-size="11" fill="currentColor" opacity="0.85">← "93.184.216.34"</text>
+  <text x="16" y="290" font-size="10.5" fill="currentColor" opacity="0.65">Resolver cache kết quả trong</text>
+  <text x="16" y="305" font-size="10.5" fill="currentColor" opacity="0.65">thời gian TTL → lần sau khỏi hỏi</text>
+</svg>
 
 - **Phân cấp**: root → TLD (`.com`, `.vn`) → domain (`example.com`) → bản ghi cụ thể.
 - **Cache + TTL**: mỗi câu trả lời có "hạn dùng" (TTL — time to live). Resolver nhớ kết quả trong thời gian đó, nên đa số truy vấn không phải đi hết vòng.
@@ -136,17 +163,41 @@ HTTP thuần là **bưu thiếp** — ai cầm trên đường đều đọc đ�
 
 ### TLS handshake — màn "bắt tay" mức ý tưởng
 
-```
-Client                                      Server
-  │── "Chào! Tôi hỗ trợ các thuật toán A,B,C" →│   (ClientHello)
-  │←─ "Chọn B. Đây là certificate của tôi" ────│   (ServerHello + cert)
-  │   [Client kiểm tra cert: đúng tên miền?
-  │    do CA uy tín ký? còn hạn?]
-  │── trao đổi "nguyên liệu" tạo khoá ─────────→│
-  │   [Hai bên cùng tính ra một KHOÁ PHIÊN
-  │    chung mà kẻ nghe lén không tính được]
-  │══ từ đây mọi dữ liệu mã hoá bằng khoá phiên ══│
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Trình tự bắt tay TLS giữa client và server</title>
+  <desc>Client gửi ClientHello; server trả ServerHello kèm certificate; client kiểm tra cert; hai bên trao đổi nguyên liệu tính ra khoá phiên chung; từ đó mọi dữ liệu được mã hoá bằng session key.</desc>
+  <defs>
+    <marker id="tlsArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <rect x="40" y="16" width="140" height="38" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="110" y="40" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
+  <rect x="540" y="16" width="140" height="38" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="610" y="40" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Server</text>
+  <g stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4">
+    <line x1="110" y1="54" x2="110" y2="344"/>
+    <line x1="610" y1="54" x2="610" y2="344"/>
+  </g>
+  <g stroke="currentColor" fill="none" stroke-width="1.4" marker-end="url(#tlsArrow)">
+    <line x1="110" y1="82" x2="608" y2="82"/>
+    <line x1="610" y1="128" x2="112" y2="128"/>
+    <line x1="110" y1="220" x2="608" y2="220"/>
+  </g>
+  <text x="120" y="76" font-size="11" fill="currentColor">ClientHello — "tôi hỗ trợ thuật toán A, B, C"</text>
+  <text x="600" y="122" font-size="11" text-anchor="end" fill="currentColor">ServerHello — "chọn B" + certificate</text>
+  <rect x="40" y="142" width="220" height="50" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="52" y="161" font-size="10.5" fill="currentColor">Client kiểm tra cert:</text>
+  <text x="52" y="177" font-size="10.5" fill="currentColor" opacity="0.8">đúng tên miền? CA uy tín ký? còn hạn?</text>
+  <text x="120" y="214" font-size="11" fill="currentColor">Trao đổi "nguyên liệu" tạo khoá</text>
+  <rect x="180" y="238" width="360" height="46" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="360" y="257" font-size="10.5" text-anchor="middle" fill="currentColor">Hai bên cùng tính ra KHOÁ PHIÊN chung</text>
+  <text x="360" y="273" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">mà kẻ nghe lén không tính được</text>
+  <g stroke="#10b981" stroke-width="3" stroke-opacity="0.7">
+    <line x1="110" y1="312" x2="610" y2="312"/>
+  </g>
+  <text x="360" y="334" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Kênh mã hoá: mọi dữ liệu dùng session key</text>
+</svg>
 
 Điểm tinh tế đáng nhớ: TLS dùng mã hoá **bất đối xứng** (chậm, dùng để bắt tay an toàn và xác thực) để thống nhất một **khoá đối xứng** (nhanh, dùng cho toàn bộ dữ liệu sau đó). Giống như dùng két sắt nặng nề chỉ để trao nhau chiếc chìa khoá nhà, rồi sau đó ra vào bằng chìa cho nhanh.
 
@@ -216,6 +267,58 @@ Tên gọi đến từ mô hình OSI: Layer 4 là tầng transport (TCP/UDP), La
 | Tốc độ / độ trễ | Rất nhanh | Chậm hơn một chút |
 | Phù hợp | game, IoT, TCP/UDP thô, cần hiệu năng cực cao | web app, API, microservices |
 | Trên AWS | **Network Load Balancer (NLB)** | **Application Load Balancer (ALB)** |
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>So sánh load balancer tầng 4 và tầng 7</title>
+  <desc>L4 load balancer (NLB) chỉ nhìn IP và port rồi chuyển tiếp tới các server. L7 load balancer (ALB) đọc HTTP path, host, header rồi route tới target group khác nhau theo nội dung.</desc>
+  <defs>
+    <marker id="lbArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="180" y="22" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">L4 — NLB (nhìn IP/port)</text>
+  <rect x="16" y="60" width="78" height="40" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="55" y="84" font-size="11" text-anchor="middle" fill="currentColor">Client</text>
+  <rect x="128" y="48" width="104" height="64" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="180" y="74" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">NLB</text>
+  <text x="180" y="92" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">chỉ thấy IP+port</text>
+  <text x="180" y="104" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">không mở phong bì</text>
+  <g stroke="currentColor" fill="none" stroke-width="1.4" marker-end="url(#lbArrow)">
+    <line x1="94" y1="80" x2="126" y2="80"/>
+    <path d="M232 70 C 270 50, 290 42, 320 42"/>
+    <line x1="232" y1="80" x2="318" y2="80"/>
+    <path d="M232 90 C 270 110, 290 118, 320 118"/>
+  </g>
+  <g>
+    <rect x="320" y="26" width="100" height="32" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="370" y="46" font-size="10.5" text-anchor="middle" fill="currentColor">Server 1</text>
+    <rect x="320" y="64" width="100" height="32" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="370" y="84" font-size="10.5" text-anchor="middle" fill="currentColor">Server 2</text>
+    <rect x="320" y="102" width="100" height="32" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="370" y="122" font-size="10.5" text-anchor="middle" fill="currentColor">Server 3</text>
+  </g>
+  <line x1="16" y1="168" x2="704" y2="168" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="200" y="206" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">L7 — ALB (đọc HTTP path/host/header)</text>
+  <rect x="16" y="248" width="78" height="40" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="55" y="272" font-size="11" text-anchor="middle" fill="currentColor">Client</text>
+  <rect x="128" y="236" width="116" height="64" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="186" y="262" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">ALB</text>
+  <text x="186" y="280" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">đọc URL/host/header</text>
+  <text x="186" y="292" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">route theo nội dung</text>
+  <g stroke="currentColor" fill="none" stroke-width="1.4" marker-end="url(#lbArrow)">
+    <line x1="94" y1="268" x2="126" y2="268"/>
+    <path d="M244 256 C 300 232, 340 226, 396 226"/>
+    <path d="M244 282 C 300 306, 340 312, 396 312"/>
+  </g>
+  <text x="262" y="226" font-size="9.5" fill="currentColor" opacity="0.85">/api → </text>
+  <text x="262" y="328" font-size="9.5" fill="currentColor" opacity="0.85">/img → </text>
+  <rect x="396" y="206" width="150" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="471" y="225" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Target group A</text>
+  <text x="471" y="240" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">server API</text>
+  <rect x="396" y="290" width="150" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="471" y="309" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Target group B</text>
+  <text x="471" y="324" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">server ảnh tĩnh</text>
+</svg>
 
 > 💡 Ghi nhớ: L4 nhìn "bì thư" (IP/port), L7 đọc "lá thư" (HTTP). Cần route theo path/host/header → L7 (ALB). Cần hiệu năng thô, giao thức TCP/UDP bất kỳ, IP tĩnh → L4 (NLB).
 

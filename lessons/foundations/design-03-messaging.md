@@ -95,6 +95,39 @@ Cách đúng: consumer nhận message, xử lý xong, rồi gửi **acknowledgem
     → M hiện lại trong queue → consumer khác lấy xử lý (REDELIVERY)
 ```
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Vòng đời message: lấy ra, ẩn tạm, ack hoặc redelivery, và DLQ</title>
+  <desc>Máy trạng thái của một message: trong queue, được lấy ra thành ẩn tạm trong visibility timeout, ack thì xoá; crash hoặc hết timeout thì hiện lại để giao lại; quá N lần thất bại thì chuyển sang Dead Letter Queue.</desc>
+  <text x="16" y="26" font-size="14" font-weight="700" fill="currentColor">Vòng đời một message (ack · visibility timeout · redelivery · DLQ)</text>
+  <g>
+    <rect x="24" y="120" width="120" height="50" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="84" y="142" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Trong queue</text>
+    <text x="84" y="159" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">chờ được lấy</text>
+    <rect x="284" y="120" width="150" height="50" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="359" y="139" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Ẩn tạm (invisible)</text>
+    <text x="359" y="156" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">đang xử lý, đếm X giây</text>
+    <rect x="560" y="50" width="140" height="46" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="630" y="71" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Đã xoá</text>
+    <text x="630" y="87" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">hoàn tất</text>
+    <rect x="560" y="244" width="140" height="50" rx="9" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="630" y="265" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">DLQ</text>
+    <text x="630" y="281" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">nghĩa địa thư chết</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.3">
+    <path d="M144 145 L280 145"/>
+    <path d="M434 138 L556 80"/>
+    <path d="M359 170 C 359 215, 150 215, 100 172"/>
+    <path d="M84 230 C 84 270, 560 275, 558 270"/>
+  </g>
+  <g font-size="10.5" fill="currentColor">
+    <text x="212" y="138" text-anchor="middle">lấy ra</text>
+    <text x="490" y="100" text-anchor="middle">ack → xoá</text>
+    <text x="232" y="210" text-anchor="middle" fill="currentColor" opacity="0.85">crash / quá X giây → hiện lại (REDELIVERY)</text>
+    <text x="320" y="266" text-anchor="middle" fill="currentColor" opacity="0.85">quá N lần thất bại → DLQ</text>
+  </g>
+  <text x="16" y="318" font-size="10" fill="currentColor" opacity="0.65">ack chống mất message · redelivery chống worker chết · DLQ chống message độc làm nghẽn hệ thống</text>
+</svg>
+
 ### 2.3 Redelivery — giao lại
 
 Redelivery (giao lại message) là **tính năng**, không phải lỗi: nó bảo đảm message không bị mất chỉ vì một worker chết. Đây là nền tảng của bảo đảm **at-least-once delivery** — mỗi message được giao **ít nhất một lần**, nhưng có thể nhiều hơn một lần.
@@ -134,6 +167,56 @@ Publisher ──> [ TOPIC ] ─┼──> Subscriber: Kho hàng       (trừ t�
  #123 mới"
 ```
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Queue (chia việc) so với Pub/Sub (phát thanh)</title>
+  <desc>Bên trái: queue đưa mỗi message tới đúng một consumer để chia việc. Bên phải: topic nhân bản mỗi message tới mọi subscriber như đài phát thanh.</desc>
+  <text x="180" y="26" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Queue — chia việc</text>
+  <text x="180" y="44" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.65">1 message → đúng 1 consumer</text>
+  <text x="540" y="26" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Pub/Sub — phát thanh</text>
+  <text x="540" y="44" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.65">1 message → nhân bản tới mọi subscriber</text>
+  <line x1="360" y1="60" x2="360" y2="290" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 4"/>
+  <g>
+    <rect x="20" y="120" width="60" height="34" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="50" y="142" font-size="11" text-anchor="middle" fill="currentColor">Producer</text>
+    <rect x="100" y="112" width="118" height="50" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="159" y="132" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">QUEUE</text>
+    <text x="159" y="150" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">M3 M2 M1</text>
+    <line x1="80" y1="137" x2="100" y2="137" stroke="currentColor" stroke-opacity="0.5"/>
+    <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+      <path d="M218 122 L246 88"/>
+      <path d="M218 137 L246 137"/>
+      <path d="M218 152 L246 186"/>
+    </g>
+    <rect x="248" y="74" width="92" height="28" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="294" y="92" font-size="10.5" text-anchor="middle" fill="currentColor">Consumer 1 ← M1</text>
+    <rect x="248" y="123" width="92" height="28" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="294" y="141" font-size="10.5" text-anchor="middle" fill="currentColor">Consumer 2 ← M2</text>
+    <rect x="248" y="172" width="92" height="28" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="294" y="190" font-size="10.5" text-anchor="middle" fill="currentColor">Consumer 3 ← M3</text>
+    <text x="180" y="232" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">3 consumer chia nhau xấp việc</text>
+  </g>
+  <g>
+    <rect x="382" y="120" width="62" height="34" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="413" y="142" font-size="11" text-anchor="middle" fill="currentColor">Publisher</text>
+    <rect x="462" y="112" width="96" height="50" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="510" y="133" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">TOPIC</text>
+    <text x="510" y="151" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">"đơn mới"</text>
+    <line x1="444" y1="137" x2="462" y2="137" stroke="currentColor" stroke-opacity="0.5"/>
+    <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+      <path d="M558 122 L588 88"/>
+      <path d="M558 137 L588 137"/>
+      <path d="M558 152 L588 186"/>
+    </g>
+    <rect x="590" y="74" width="118" height="28" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="649" y="92" font-size="10" text-anchor="middle" fill="currentColor">Email ← bản sao</text>
+    <rect x="590" y="123" width="118" height="28" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="649" y="141" font-size="10" text-anchor="middle" fill="currentColor">Kho hàng ← bản sao</text>
+    <rect x="590" y="172" width="118" height="28" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="649" y="190" font-size="10" text-anchor="middle" fill="currentColor">Analytics ← bản sao</text>
+    <text x="540" y="232" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">mỗi subscriber nhận một bản sao riêng</text>
+  </g>
+</svg>
+
 Giống đài phát thanh: ai bật đúng kênh đều nghe được, và phát thanh viên không cần biết có bao nhiêu người đang nghe. Thêm subscriber mới (ví dụ service chống gian lận) **không cần sửa publisher** — đây là sức mạnh decouple lớn nhất của pub/sub.
 
 ### 3.2 So sánh
@@ -150,11 +233,43 @@ Giống đài phát thanh: ai bật đúng kênh đều nghe được, và phát
 
 Pattern phổ biến nhất thực tế là **topic phát vào nhiều queue** — mỗi nhóm consumer có queue riêng để vừa nhận đủ sự kiện, vừa có ack/retry/DLQ:
 
-```
-                  ┌──> Queue email  ──> các worker email
-Topic "đơn mới" ──┼──> Queue kho    ──> các worker kho
-                  └──> Queue ship   ──> các worker giao hàng
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Fan-out: một topic phát vào nhiều queue độc lập</title>
+  <desc>Topic đơn mới phát bản sao vào ba queue: email, kho, ship. Mỗi queue có nhóm worker riêng. Nhánh kho nghẽn không ảnh hưởng nhánh email hay ship.</desc>
+  <text x="16" y="26" font-size="14" font-weight="700" fill="currentColor">Fan-out — một sự kiện toả ra nhiều nhánh xử lý độc lập</text>
+  <g>
+    <rect x="20" y="105" width="110" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="75" y="129" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">TOPIC</text>
+    <text x="75" y="146" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">"đơn mới"</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <path d="M130 120 C 200 120, 210 70, 268 70"/>
+    <path d="M130 133 L268 133"/>
+    <path d="M130 146 C 200 146, 210 196, 268 196"/>
+  </g>
+  <g>
+    <rect x="270" y="52" width="120" height="36" rx="7" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="330" y="75" font-size="11" text-anchor="middle" fill="currentColor">Queue email</text>
+    <rect x="270" y="115" width="120" height="36" rx="7" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="330" y="138" font-size="11" text-anchor="middle" fill="currentColor">Queue kho</text>
+    <rect x="270" y="178" width="120" height="36" rx="7" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="330" y="201" font-size="11" text-anchor="middle" fill="currentColor">Queue ship</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <path d="M390 70 L468 70"/>
+    <path d="M390 133 L468 133"/>
+    <path d="M390 196 L468 196"/>
+  </g>
+  <g>
+    <rect x="470" y="52" width="234" height="36" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="587" y="75" font-size="11" text-anchor="middle" fill="currentColor">Nhóm worker email (ack/retry/DLQ riêng)</text>
+    <rect x="470" y="115" width="234" height="36" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="587" y="138" font-size="11" text-anchor="middle" fill="currentColor">Nhóm worker kho (ack/retry/DLQ riêng)</text>
+    <rect x="470" y="178" width="234" height="36" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="587" y="201" font-size="11" text-anchor="middle" fill="currentColor">Nhóm worker giao hàng (riêng)</text>
+  </g>
+  <text x="16" y="258" font-size="10.5" fill="currentColor" opacity="0.7">Nhánh kho nghẽn → message dồn ở Queue kho thôi; nhánh email và ship vẫn chạy bình thường.</text>
+</svg>
 
 Đây gọi là **fan-out**: một sự kiện toả ra nhiều nhánh xử lý độc lập. Nhánh kho chậm không ảnh hưởng nhánh email.
 
@@ -191,13 +306,37 @@ Hệ thống bán vé concert: bình thường 50 đơn/giây, lúc mở bán v�
 
 Đặt queue vào giữa, hệ thống thành cái **hồ điều hoà** (như hồ chứa chống lũ):
 
-```
-Tải vào (gồ ghề):  ▂▂▂█████▂▂▂▂█▂▂      5.000/s lúc đỉnh
-                        |
-                   [ QUEUE phình ra rồi xẹp dần ]
-                        |
-Tải ra (phẳng):    ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃      500/s đều đặn — đúng sức backend
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Queue-based load leveling: queue làm hồ điều hoà cho tải gồ ghề</title>
+  <desc>Tải vào gồ ghề với các đỉnh tới 5000 mỗi giây đi vào queue đóng vai trò hồ điều hoà; tải ra phẳng đều khoảng 500 mỗi giây đúng sức backend.</desc>
+  <text x="16" y="26" font-size="14" font-weight="700" fill="currentColor">Queue-based load leveling — queue làm hồ điều hoà</text>
+  <text x="16" y="60" font-size="11.5" font-weight="700" fill="currentColor">Tải vào (gồ ghề) — 5.000/s lúc đỉnh</text>
+  <g fill="#3b82f6" fill-opacity="0.5" stroke="currentColor" stroke-opacity="0.2">
+    <rect x="16" y="92" width="20" height="14" /><rect x="40" y="88" width="20" height="18" /><rect x="64" y="74" width="20" height="32" />
+    <rect x="88" y="44" width="20" height="62" /><rect x="112" y="40" width="20" height="66" /><rect x="136" y="48" width="20" height="58" />
+    <rect x="160" y="80" width="20" height="26" /><rect x="184" y="90" width="20" height="16" /><rect x="208" y="70" width="20" height="36" />
+    <rect x="232" y="50" width="20" height="56" /><rect x="256" y="86" width="20" height="20" /><rect x="280" y="94" width="20" height="12" />
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.3">
+    <path d="M158 112 L158 134"/>
+  </g>
+  <g>
+    <rect x="60" y="138" width="600" height="48" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="160" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">QUEUE — phình ra lúc đỉnh, xẹp dần khi backend đuổi kịp</text>
+    <text x="360" y="178" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">hấp thụ đỉnh tải, biến nó thành độ trễ tạm thời thay vì sập hệ thống</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.3">
+    <path d="M360 186 L360 208"/>
+  </g>
+  <text x="16" y="230" font-size="11.5" font-weight="700" fill="currentColor">Tải ra (phẳng đều) — 500/s đúng sức backend</text>
+  <g fill="#10b981" fill-opacity="0.5" stroke="currentColor" stroke-opacity="0.2">
+    <rect x="16" y="244" width="20" height="34" /><rect x="40" y="246" width="20" height="32" /><rect x="64" y="244" width="20" height="34" />
+    <rect x="88" y="246" width="20" height="32" /><rect x="112" y="244" width="20" height="34" /><rect x="136" y="246" width="20" height="32" />
+    <rect x="160" y="244" width="20" height="34" /><rect x="184" y="246" width="20" height="32" /><rect x="208" y="244" width="20" height="34" />
+    <rect x="232" y="246" width="20" height="32" /><rect x="256" y="244" width="20" height="34" /><rect x="280" y="246" width="20" height="32" />
+  </g>
+  <text x="320" y="266" font-size="10.5" fill="currentColor" opacity="0.7">Backend luôn chạy ở nhịp nó chịu được — không quá tải, không sập.</text>
+</svg>
 
 Backend luôn chạy ở nhịp nó chịu được. Đỉnh tải biến thành **độ trễ tạm thời** (đơn của bạn xử lý sau 30 giây thay vì 1 giây) thay vì **sự cố sập hệ thống**. Pattern này gọi là **queue-based load leveling**.
 
