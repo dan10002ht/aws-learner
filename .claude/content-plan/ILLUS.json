@@ -1,0 +1,139 @@
+{
+  "course": "ILLUS",
+  "createdNote": "stamp after build",
+  "parts": [
+    {
+      "id": "SYSTEM-DESIGN",
+      "kind": "illustrate",
+      "scope": "diagram-heavy",
+      "status": "done",
+      "note": "8 bài, node-edge architecture verified, gate pass"
+    },
+    {
+      "id": "CS",
+      "kind": "illustrate",
+      "scope": "",
+      "status": "done",
+      "note": "6 bài, concurrency/parallelism idiom verified, gate pass"
+    },
+    {
+      "id": "WEB",
+      "kind": "illustrate",
+      "scope": "",
+      "status": "done",
+      "note": "7 bài, gate pass"
+    },
+    {
+      "id": "DSA",
+      "kind": "illustrate",
+      "scope": "",
+      "status": "done",
+      "note": "13 bài, gate pass"
+    },
+    {
+      "id": "BACKEND",
+      "kind": "illustrate",
+      "scope": "",
+      "status": "done",
+      "note": "8 bài (5 có svg), gate pass"
+    },
+    {
+      "id": "DEVOPS",
+      "kind": "illustrate",
+      "scope": "",
+      "status": "done",
+      "note": "6 bài, gate pass"
+    },
+    {
+      "id": "SRE",
+      "kind": "illustrate",
+      "scope": "",
+      "status": "done",
+      "note": "6 bài, gate pass"
+    },
+    {
+      "id": "SECURITY",
+      "kind": "illustrate",
+      "scope": "",
+      "status": "done",
+      "note": "7 bài, gate pass (sec-04 needs-attention là báo nhầm, đã có 3 svg)"
+    },
+    {
+      "id": "AIML",
+      "kind": "illustrate",
+      "scope": "",
+      "status": "done",
+      "note": "6 bài, gate pass"
+    },
+    {
+      "id": "ENGINEER",
+      "kind": "illustrate",
+      "scope": "5 bài còn lại",
+      "status": "done",
+      "note": "6 bài, gate pass"
+    },
+    {
+      "id": "CLF-C02",
+      "kind": "illustrate",
+      "scope": "",
+      "status": "done",
+      "note": "15+ bài, +6-pillar WAF thủ công, gate pass"
+    },
+    {
+      "id": "SAA-C03",
+      "kind": "illustrate",
+      "scope": "",
+      "status": "done",
+      "note": "gate pass, không bài 0-svg đáng vá"
+    },
+    {
+      "id": "DVA-C02",
+      "kind": "illustrate",
+      "scope": "",
+      "status": "done",
+      "note": "gate pass"
+    },
+    {
+      "id": "SQL",
+      "kind": "illustrate",
+      "scope": "",
+      "status": "done",
+      "note": "6 bài, +sql-01 thủ công, gate pass"
+    },
+    {
+      "id": "FRONTEND",
+      "kind": "illustrate",
+      "scope": "",
+      "status": "done",
+      "note": "9 bài, gate pass"
+    },
+    {
+      "id": "PROGRAMMING",
+      "kind": "illustrate",
+      "scope": "",
+      "status": "done",
+      "note": "gate pass"
+    },
+    {
+      "id": "GIT",
+      "kind": "illustrate",
+      "scope": "",
+      "status": "done",
+      "note": "9 bài, gate pass"
+    },
+    {
+      "id": "TECH-101",
+      "kind": "illustrate",
+      "scope": "",
+      "status": "done",
+      "note": "pc-01..04 phủ, pc-05 setup bỏ qua, gate pass"
+    },
+    {
+      "id": "CAPSTONE",
+      "kind": "illustrate",
+      "scope": "",
+      "status": "done",
+      "note": "3 bài, gate pass"
+    }
+  ]
+}
