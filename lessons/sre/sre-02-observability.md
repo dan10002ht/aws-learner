@@ -24,6 +24,49 @@ Thực tế: bạn dùng **monitoring để biết có chuyện gì đó sai** (
 
 Đây là ba dạng tín hiệu (telemetry) bù trừ nhau. Mỗi loại trả lời một câu hỏi khác.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Ba trụ cột observability: Metrics, Logs, Traces liên kết bằng trace_id</title>
+  <desc>Ba cột song song. Metrics trả lời "Có sai không?", Logs trả lời "Chuyện gì xảy ra với request này?", Traces trả lời "Đi qua đâu, chậm ở đâu?". Cả ba được nối với nhau bằng khóa chung trace_id ở đáy.</desc>
+  <text x="360" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Ba trụ cột — mỗi cột một câu hỏi</text>
+  <g>
+    <rect x="20" y="44" width="210" height="190" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="125" y="74" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Metrics</text>
+    <text x="125" y="100" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.85">"Có sai không?</text>
+    <text x="125" y="116" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.85">Bao nhiêu?"</text>
+    <text x="125" y="146" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">Số tổng hợp theo</text>
+    <text x="125" y="162" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">thời gian</text>
+    <text x="125" y="184" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">cardinality thấp</text>
+    <text x="125" y="206" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">rẻ — vài byte/điểm</text>
+  </g>
+  <g>
+    <rect x="255" y="44" width="210" height="190" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="360" y="74" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Logs</text>
+    <text x="360" y="100" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.85">"Chuyện gì xảy ra</text>
+    <text x="360" y="116" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.85">với request này?"</text>
+    <text x="360" y="146" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">Sự kiện rời rạc</text>
+    <text x="360" y="162" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">giàu context</text>
+    <text x="360" y="184" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">cardinality cao OK</text>
+    <text x="360" y="206" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">đắt — full text</text>
+  </g>
+  <g>
+    <rect x="490" y="44" width="210" height="190" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="595" y="74" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Traces</text>
+    <text x="595" y="100" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.85">"Đi qua đâu,</text>
+    <text x="595" y="116" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.85">chậm ở đâu?"</text>
+    <text x="595" y="146" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">Cây span nối</text>
+    <text x="595" y="162" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">các service</text>
+    <text x="595" y="184" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">thường sample</text>
+    <text x="595" y="206" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">trung bình</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.3" fill="none" stroke-dasharray="4 3">
+    <path d="M125 234 v34"/>
+    <path d="M360 234 v34"/>
+    <path d="M595 234 v34"/>
+  </g>
+  <rect x="20" y="268" width="680" height="36" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="291" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">trace_id — khóa chung liên kết xuyên suốt cả ba trụ cột</text>
+</svg>
+
 | Trụ cột | Trả lời | Đặc tính | Chi phí lưu trữ |
 |---|---|---|---|
 | **Metrics** | "Có sai không? Bao nhiêu?" | Số đã tổng hợp theo thời gian, cardinality thấp | Rẻ (vài byte/điểm) |
@@ -34,14 +77,48 @@ Thực tế: bạn dùng **monitoring để biết có chuyện gì đó sai** (
 
 Luồng điều tra điển hình:
 
-```
-Metric (p99 latency tăng vọt lúc 14:02)
-   → khoanh vùng thời gian + service
-Trace (1 request mẫu: 90% thời gian nằm ở span gọi DB)
-   → biết chặng nào chậm
-Log (dòng log của span đó: "slow query: SELECT ... WHERE status IN (...)")
-   → biết chính xác query nào, vì sao
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Luồng điều tra: Metric phát hiện bất thường, Trace khoanh vùng span chậm, Log chỉ ra nguyên nhân</title>
+  <desc>Ba bước nối bằng mũi tên trái sang phải: Metric phát hiện p99 tăng vọt, Trace khoanh vùng span gọi DB chậm, Log chỉ ra slow query. Tất cả liên kết bằng trace_id xuyên suốt.</desc>
+  <defs>
+    <marker id="arrFlow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="360" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Luồng điều tra một sự cố</text>
+  <g>
+    <rect x="14" y="50" width="200" height="110" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="114" y="76" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">1. Metric</text>
+    <text x="114" y="98" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.78">phát hiện bất thường</text>
+    <text x="114" y="124" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">p99 latency tăng vọt</text>
+    <text x="114" y="140" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">lúc 14:02</text>
+  </g>
+  <g>
+    <rect x="260" y="50" width="200" height="110" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="360" y="76" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">2. Trace</text>
+    <text x="360" y="98" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.78">khoanh vùng span chậm</text>
+    <text x="360" y="124" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">90% thời gian nằm ở</text>
+    <text x="360" y="140" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">span gọi DB</text>
+  </g>
+  <g>
+    <rect x="506" y="50" width="200" height="110" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="606" y="76" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">3. Log</text>
+    <text x="606" y="98" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.78">chi tiết nguyên nhân</text>
+    <text x="606" y="124" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">"slow query: SELECT</text>
+    <text x="606" y="140" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">WHERE status IN (...)"</text>
+  </g>
+  <g stroke="currentColor" stroke-width="2" marker-end="url(#arrFlow)">
+    <line x1="216" y1="105" x2="256" y2="105"/>
+    <line x1="462" y1="105" x2="502" y2="105"/>
+  </g>
+  <line x1="14" y1="190" x2="706" y2="190" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3"/>
+  <rect x="250" y="178" width="220" height="26" rx="13" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="195" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">trace_id nối ba bước xuyên suốt</text>
+  <g stroke="currentColor" stroke-opacity="0.3" fill="none" stroke-dasharray="3 3">
+    <path d="M114 160 v18 h136"/>
+    <path d="M606 160 v18 h-136"/>
+  </g>
+</svg>
 
 Ba trụ cột phải **liên kết được với nhau**: từ một điểm metric bất thường, click sang exemplar trace, từ trace nhảy sang log của đúng span đó. Nếu chúng nằm ở ba hệ thống rời rạc không có khóa chung, bạn mất nửa giờ copy-paste timestamp mỗi lần điều tra.
 
@@ -148,6 +225,46 @@ Nghĩa là **63% số lần load trang** sẽ chạm tail latency 1s, dù mỗi 
 
 Cardinality cao là **bạn của observability** nhưng là **kẻ thù của metrics**.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Đánh đổi cardinality: cao là bạn của logs/traces nhưng là kẻ thù của metrics</title>
+  <desc>Hai phía đối lập. Bên an toàn: gắn customer_id vào logs và traces cho phép lọc ad-hoc, label metric vẫn cardinality thấp. Bên thảm họa: nhúng id vào label metric, mỗi tổ hợp label thành một time series riêng khiến số series nổ tung và sập Prometheus.</desc>
+  <text x="360" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Cardinality cao — cùng một thứ, hai số phận</text>
+  <g>
+    <rect x="16" y="44" width="334" height="236" rx="12" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="183" y="72" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">AN TOÀN — bạn của logs/traces</text>
+    <text x="183" y="96" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">id cardinality cao → vào logs/traces</text>
+    <rect x="40" y="112" width="286" height="44" rx="7" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="56" y="131" font-size="10.5" fill="currentColor" opacity="0.78">log: customer_id, build, feature_flag</text>
+    <text x="56" y="148" font-size="10.5" fill="currentColor" opacity="0.78">trace: gắn thoải mái — lọc ad-hoc</text>
+    <text x="183" y="182" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">label metric vẫn cardinality thấp:</text>
+    <rect x="40" y="194" width="286" height="26" rx="7" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="183" y="211" font-size="10.5" text-anchor="middle" fill="currentColor">method, route, code → ít series</text>
+    <text x="183" y="248" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">→ lọc "0.3% lỗi từ build Android"</text>
+    <text x="183" y="268" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">+ Prometheus khỏe</text>
+  </g>
+  <g>
+    <rect x="370" y="44" width="334" height="236" rx="12" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="537" y="72" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">THẢM HỌA — kẻ thù của metrics</text>
+    <text x="537" y="96" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">id nhúng vào label của metric</text>
+    <rect x="394" y="112" width="286" height="44" rx="7" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="410" y="131" font-size="10.5" fill="currentColor" opacity="0.78">http_requests_total{user_id="...",</text>
+    <text x="410" y="148" font-size="10.5" fill="currentColor" opacity="0.78">request_id="..."}</text>
+    <text x="537" y="182" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">mỗi tổ hợp label = 1 time series:</text>
+    <g>
+      <rect x="408" y="192" width="10" height="30" rx="2" fill="#f59e0b" fill-opacity="0.8"/>
+      <rect x="424" y="192" width="10" height="30" rx="2" fill="#f59e0b" fill-opacity="0.8"/>
+      <rect x="440" y="192" width="10" height="30" rx="2" fill="#f59e0b" fill-opacity="0.8"/>
+      <rect x="456" y="192" width="10" height="30" rx="2" fill="#f59e0b" fill-opacity="0.8"/>
+      <rect x="472" y="192" width="10" height="30" rx="2" fill="#f59e0b" fill-opacity="0.8"/>
+      <rect x="488" y="192" width="10" height="30" rx="2" fill="#f59e0b" fill-opacity="0.8"/>
+      <rect x="504" y="192" width="10" height="30" rx="2" fill="#f59e0b" fill-opacity="0.8"/>
+      <text x="600" y="212" font-size="13" font-weight="700" fill="currentColor">1 triệu series</text>
+    </g>
+    <text x="537" y="248" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">→ cardinality explosion</text>
+    <text x="537" y="268" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">sập Prometheus</text>
+  </g>
+</svg>
+
 - Trong **logs/traces**: gắn `customer_id`, `build_version`, `feature_flag` thoải mái — đó chính là thứ cho phép bạn lọc "0.3% lỗi đến từ build Android 4.2.1". Đây là điều mà metric không làm được.
 - Trong **metrics (Prometheus)**: mỗi tổ hợp label là **một time series riêng** tốn RAM/đĩa. Thêm `customer_id` (1 triệu giá trị) vào một metric = 1 triệu series → **cardinality explosion**, sập Prometheus.
 
@@ -201,15 +318,58 @@ Giờ bạn truy vấn được: *`error="payment_declined" AND build="android-4
 
 Trong kiến trúc microservice, một request người dùng đi qua 5–20 service. Trace ghép tất cả thành **một cây span** với context truyền xuyên qua các lời gọi.
 
-```
-Trace 7be2f1a9c0  (tổng 842ms)
-└─ api-gateway              [ 12ms]
-   └─ checkout-svc          [820ms]   ← thủ phạm nằm trong đây
-      ├─ inventory-svc      [ 30ms]
-      ├─ payment-svc        [780ms]   ← chặng chậm
-      │  └─ db: SELECT...   [760ms]   ← gốc rễ: query chậm
-      └─ email-svc (async)  [  5ms]
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 290" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Cây span distributed tracing kiểu Gantt: payment-svc và DB là thủ phạm</title>
+  <desc>Trace 7be2f1a9c0 tổng 842ms. Span api-gateway 12ms, checkout-svc 820ms bọc inventory-svc 30ms, payment-svc 780ms chứa db SELECT 760ms (chặng dài nhất, thủ phạm), và email-svc async 5ms. Độ dài thanh tỉ lệ với thời gian.</desc>
+  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Trace 7be2f1a9c0 — tổng 842ms</text>
+  <g font-size="11" fill="currentColor" opacity="0.5">
+    <text x="190" y="46">0ms</text>
+    <text x="690" y="46" text-anchor="end">842ms</text>
+  </g>
+  <line x1="190" y1="52" x2="690" y2="52" stroke="currentColor" stroke-opacity="0.25"/>
+  <g font-size="11.5">
+    <text x="16" y="74" fill="currentColor">api-gateway</text>
+    <rect x="190" y="64" width="7" height="14" rx="3" fill="#3b82f6" fill-opacity="0.85"/>
+    <text x="205" y="74" font-size="10.5" fill="currentColor" opacity="0.6">12ms</text>
+  </g>
+  <g font-size="11.5">
+    <text x="28" y="100" fill="currentColor">checkout-svc</text>
+    <rect x="197" y="90" width="487" height="14" rx="3" fill="#3b82f6" fill-opacity="0.55"/>
+    <text x="688" y="100" font-size="10.5" text-anchor="end" fill="#fff">820ms</text>
+  </g>
+  <g font-size="11.5">
+    <text x="40" y="126" fill="currentColor">inventory-svc</text>
+    <rect x="201" y="116" width="18" height="14" rx="3" fill="#10b981" fill-opacity="0.85"/>
+    <text x="227" y="126" font-size="10.5" fill="currentColor" opacity="0.6">30ms</text>
+  </g>
+  <g font-size="11.5">
+    <text x="40" y="152" font-weight="700" fill="currentColor">payment-svc</text>
+    <rect x="225" y="142" width="463" height="14" rx="3" fill="#f59e0b" fill-opacity="0.55"/>
+    <text x="684" y="152" font-size="10.5" text-anchor="end" fill="#fff">780ms — chặng chậm</text>
+  </g>
+  <g font-size="11.5">
+    <text x="52" y="178" font-weight="700" fill="currentColor">db: SELECT...</text>
+    <rect x="237" y="168" width="451" height="14" rx="3" fill="#f59e0b" fill-opacity="0.9"/>
+    <text x="684" y="178" font-size="10.5" text-anchor="end" fill="#fff">760ms — gốc rễ</text>
+  </g>
+  <g font-size="11.5">
+    <text x="40" y="204" fill="currentColor">email-svc (async)</text>
+    <rect x="201" y="194" width="5" height="14" rx="2" fill="#8b5cf6" fill-opacity="0.85"/>
+    <text x="214" y="204" font-size="10.5" fill="currentColor" opacity="0.6">5ms</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.3" fill="none">
+    <path d="M22 78 v18 h4"/>
+    <path d="M34 104 v14 h4"/>
+    <path d="M34 104 v36 h4"/>
+    <path d="M34 104 v92 h4"/>
+    <path d="M46 156 v14 h4"/>
+  </g>
+  <g>
+    <path d="M236 220 q160 26 320 0" fill="none" stroke="#f59e0b" stroke-opacity="0.7" stroke-width="1.5"/>
+    <text x="396" y="252" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">payment-svc → db chiếm gần trọn 842ms — thủ phạm</text>
+    <text x="396" y="272" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">độ dài thanh tỉ lệ với thời gian span</text>
+  </g>
+</svg>
 
 Khái niệm cốt lõi:
 

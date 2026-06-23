@@ -34,11 +34,117 @@ Khi metric bắt đầu đỏ sau một lần deploy, bạn có hai lựa chọn
 
 Nhờ vậy mọi bước đều có thể quay lui mà không mất dữ liệu.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Expand / Contract migration 3 pha backward-compatible</title>
+  <desc>Vòng đời migration ba pha: Expand thêm cột username và ghi cả hai cột; Migrate backfill dữ liệu và đọc cột mới; Contract xóa cột cũ user_name. Mỗi pha đều rollback an toàn vì luôn tương thích ngược.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Expand / Contract — mỗi pha đều rollback an toàn</text>
+
+  <g>
+    <rect x="14" y="44" width="218" height="120" rx="11" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="30" y="68" font-size="13" font-weight="700" fill="currentColor">1 · Expand</text>
+    <text x="30" y="90" font-size="11" fill="currentColor" opacity="0.85">Thêm cột username</text>
+    <text x="30" y="108" font-size="11" fill="currentColor" opacity="0.85">Ghi cả user_name + username</text>
+    <text x="30" y="126" font-size="11" fill="currentColor" opacity="0.85">Đọc từ cột cũ user_name</text>
+    <text x="30" y="151" font-size="10.5" font-weight="700" fill="#10b981">✓ rollback an toàn</text>
+  </g>
+
+  <g>
+    <rect x="251" y="44" width="218" height="120" rx="11" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="267" y="68" font-size="13" font-weight="700" fill="currentColor">2 · Migrate</text>
+    <text x="267" y="90" font-size="11" fill="currentColor" opacity="0.85">Backfill dữ liệu sang username</text>
+    <text x="267" y="108" font-size="11" fill="currentColor" opacity="0.85">Vẫn ghi cả hai cột</text>
+    <text x="267" y="126" font-size="11" fill="currentColor" opacity="0.85">Đổi code sang đọc username</text>
+    <text x="267" y="151" font-size="10.5" font-weight="700" fill="#10b981">✓ rollback an toàn</text>
+  </g>
+
+  <g>
+    <rect x="488" y="44" width="218" height="120" rx="11" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="504" y="68" font-size="13" font-weight="700" fill="currentColor">3 · Contract</text>
+    <text x="504" y="90" font-size="11" fill="currentColor" opacity="0.85">Xóa cột cũ user_name</text>
+    <text x="504" y="108" font-size="11" fill="currentColor" opacity="0.85">Chỉ sau khi ổn định nhiều ngày</text>
+    <text x="504" y="126" font-size="11" fill="currentColor" opacity="0.85">Dọn code ghi cột cũ</text>
+    <text x="504" y="151" font-size="10.5" font-weight="700" fill="currentColor" opacity="0.7">điểm không quay lui</text>
+  </g>
+
+  <defs>
+    <marker id="sreMig" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0 0 L6 3 L0 6 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.5">
+    <path d="M232 104 H251" marker-end="url(#sreMig)"/>
+    <path d="M469 104 H488" marker-end="url(#sreMig)"/>
+  </g>
+
+  <text x="360" y="200" text-anchor="middle" font-size="11.5" font-weight="700" fill="currentColor">Luôn backward-compatible: bản cũ và bản mới chạy song song được</text>
+  <text x="360" y="222" text-anchor="middle" font-size="10.5" fill="currentColor" opacity="0.75">Không bao giờ "đổi tên cột rồi deploy code mới" trong một bước — đó là cái bẫy khiến rollback bất khả thi</text>
+</svg>
+
 ## Canary & Automated Rollback theo SLO/Metric
 
 Canary deployment: đẩy phiên bản mới ra một phần nhỏ traffic trước, **so sánh metric của canary với baseline (bản đang chạy)**, chỉ mở rộng khi tốt.
 
 Tiến trình điển hình theo phần trăm traffic: `1% -> 5% -> 25% -> 50% -> 100%`, mỗi bước "bake" (theo dõi) đủ lâu để metric ổn định — thường 10–30 phút mỗi giai đoạn tùy lưu lượng.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 290" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Canary tăng dần traffic qua các cổng automated gate</title>
+  <desc>Chuỗi bước canary 1%, 5%, 25%, 50%, 100%; giữa mỗi bước là bake time và một automated gate so sánh canary với baseline về error rate và p99; nếu gate fail thì rollback ngay về baseline.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Canary là chuỗi bước có cổng — không bật ngay 100%</text>
+
+  <g font-size="12.5" font-weight="700">
+    <rect x="14" y="44" width="84" height="46" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="56" y="66" text-anchor="middle" fill="currentColor">1%</text>
+    <text x="56" y="82" text-anchor="middle" font-size="10" font-weight="400" fill="currentColor" opacity="0.7">canary</text>
+
+    <rect x="172" y="44" width="84" height="46" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="214" y="66" text-anchor="middle" fill="currentColor">5%</text>
+    <text x="214" y="82" text-anchor="middle" font-size="10" font-weight="400" fill="currentColor" opacity="0.7">canary</text>
+
+    <rect x="330" y="44" width="84" height="46" rx="9" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="372" y="66" text-anchor="middle" fill="currentColor">25%</text>
+    <text x="372" y="82" text-anchor="middle" font-size="10" font-weight="400" fill="currentColor" opacity="0.7">canary</text>
+
+    <rect x="488" y="44" width="84" height="46" rx="9" fill="#3b82f6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="530" y="66" text-anchor="middle" fill="currentColor">50%</text>
+    <text x="530" y="82" text-anchor="middle" font-size="10" font-weight="400" fill="currentColor" opacity="0.7">canary</text>
+
+    <rect x="620" y="44" width="86" height="46" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="663" y="66" text-anchor="middle" fill="currentColor">100%</text>
+    <text x="663" y="82" text-anchor="middle" font-size="10" font-weight="400" fill="currentColor" opacity="0.7">promote</text>
+  </g>
+
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.5">
+    <path d="M98 67 H172" marker-end="url(#sreArrow)"/>
+    <path d="M256 67 H330" marker-end="url(#sreArrow)"/>
+    <path d="M414 67 H488" marker-end="url(#sreArrow)"/>
+    <path d="M572 67 H620" marker-end="url(#sreArrow)"/>
+  </g>
+  <defs>
+    <marker id="sreArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0 0 L6 3 L0 6 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <g font-size="9.5" fill="currentColor" opacity="0.75" text-anchor="middle">
+    <text x="135" y="106">bake + gate</text>
+    <text x="293" y="106">bake + gate</text>
+    <text x="451" y="106">bake + gate</text>
+    <text x="596" y="106">bake + gate</text>
+  </g>
+
+  <rect x="14" y="132" width="692" height="86" rx="11" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="28" y="153" font-size="12" font-weight="700" fill="currentColor">Automated gate ở mỗi bước (máy quyết định, không nhìn dashboard bằng mắt)</text>
+  <text x="28" y="175" font-size="11" fill="currentColor" opacity="0.85">So sánh canary vs baseline: error rate (5xx) · latency p99</text>
+  <text x="28" y="194" font-size="11" fill="currentColor" opacity="0.85">PASS → tăng % sang bước kế</text>
+  <text x="28" y="211" font-size="11" fill="currentColor" opacity="0.85">FAIL → abort ngay</text>
+
+  <g>
+    <rect x="470" y="234" width="236" height="42" rx="10" fill="#ef4444" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="588" y="260" text-anchor="middle" font-size="12.5" font-weight="700" fill="currentColor">ROLLBACK về baseline tức thì</text>
+  </g>
+  <path d="M120 218 V250 H470" stroke="#ef4444" stroke-opacity="0.7" stroke-width="1.5" fill="none" stroke-dasharray="5 4" marker-end="url(#sreArrow)"/>
+  <text x="150" y="245" font-size="9.5" fill="currentColor" opacity="0.75">gate FAIL bất kỳ bước nào</text>
+</svg>
 
 Điều khiến canary thực sự an toàn không phải là việc chia traffic, mà là **automated rollback dựa trên SLI**. Quyết định promote/rollback phải do máy ra, không phải do con người căng mắt nhìn dashboard.
 
@@ -138,10 +244,52 @@ Các đòn bẩy thu nhỏ blast radius:
 
 Ví dụ thứ tự rollout theo region với "bake time":
 
-```
-us-staging   ->  bake 30m  ->  ap-southeast-1 (nhỏ)  ->  bake 1h
-            ->  eu-west-1 (vừa)  ->  bake 1h  ->  us-east-1 (lớn nhất, cuối cùng)
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Staged rollout theo region giảm blast radius</title>
+  <desc>Pipeline rollout theo region với bake time tăng dần và kích cỡ region tăng dần: us-staging, bake 30 phút, ap-southeast-1 nhỏ, bake 1 giờ, eu-west-1 vừa, bake 1 giờ, us-east-1 lớn nhất ở cuối cùng.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Deploy nơi rẻ nhất trước — region lớn nhất ở cuối</text>
+  <text x="16" y="44" font-size="10.5" fill="currentColor" opacity="0.7">Cột càng cao = region càng lớn = blast radius càng to nếu hỏng</text>
+
+  <defs>
+    <marker id="sreReg" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0 0 L6 3 L0 6 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <g>
+    <rect x="14" y="146" width="118" height="40" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="73" y="164" text-anchor="middle" font-size="11.5" font-weight="700" fill="currentColor">us-staging</text>
+    <text x="73" y="179" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.7">đầu tiên</text>
+  </g>
+  <g>
+    <rect x="186" y="116" width="118" height="70" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="245" y="142" text-anchor="middle" font-size="11.5" font-weight="700" fill="currentColor">ap-southeast-1</text>
+    <text x="245" y="159" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.7">nhỏ</text>
+  </g>
+  <g>
+    <rect x="358" y="86" width="118" height="100" rx="9" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="417" y="112" text-anchor="middle" font-size="11.5" font-weight="700" fill="currentColor">eu-west-1</text>
+    <text x="417" y="129" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.7">vừa</text>
+  </g>
+  <g>
+    <rect x="530" y="60" width="118" height="126" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="589" y="86" text-anchor="middle" font-size="11.5" font-weight="700" fill="currentColor">us-east-1</text>
+    <text x="589" y="103" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.7">lớn nhất · cuối</text>
+  </g>
+
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.5">
+    <path d="M132 166 H186" marker-end="url(#sreReg)"/>
+    <path d="M304 151 H358" marker-end="url(#sreReg)"/>
+    <path d="M476 136 H530" marker-end="url(#sreReg)"/>
+  </g>
+  <g font-size="9.5" fill="currentColor" opacity="0.78" text-anchor="middle">
+    <text x="159" y="160">bake 30m</text>
+    <text x="331" y="145">bake 1h</text>
+    <text x="503" y="130">bake 1h</text>
+  </g>
+  <line x1="14" y1="198" x2="648" y2="198" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="14" y="214" font-size="10" fill="currentColor" opacity="0.7">thời gian →  (bake time tăng dần khi region lớn dần)</text>
+</svg>
 
 > 💡 Nguyên tắc: **Deploy nơi rẻ nhất trước.** Region/cell đầu tiên nên là nơi mà nếu hỏng thì thiệt hại thấp nhất, nhưng vẫn đủ traffic thật để SLI có ý nghĩa thống kê. Staging không có traffic thật thường không bắt được lỗi thật.
 
@@ -158,6 +306,57 @@ Cơ chế policy điển hình:
 | Còn dồi dào (> 50%) | Release thoải mái, ưu tiên tốc độ, chạy thử nghiệm rủi ro hơn |
 | Cạn dần (10–50%) | Vẫn release nhưng siết canary, tăng bake time, review kỹ hơn |
 | Cháy hết (≤ 0%) | **Freeze**: chỉ cho phép thay đổi giảm rủi ro (P0 fix, reliability work). Dừng feature mới |
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Error budget như đèn giao thông tự điều chỉnh tốc độ release</title>
+  <desc>Thanh error budget chia ba vùng: trên 50 phần trăm release thoải mái, 10 đến 50 phần trăm siết canary và tăng bake time, nhỏ hơn hoặc bằng 0 thì freeze. Bên dưới minh hoạ Deploy tách rời Release qua feature flag.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Error budget là "đèn giao thông" tự điều chỉnh tốc độ release</text>
+
+  <g>
+    <rect x="14" y="44" width="690" height="44" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+    <circle cx="40" cy="66" r="9" fill="#10b981"/>
+    <text x="62" y="63" font-size="12.5" font-weight="700" fill="currentColor">Budget &gt; 50% — GO</text>
+    <text x="62" y="80" font-size="10.5" fill="currentColor" opacity="0.82">Release thoải mái, ưu tiên tốc độ, dám chạy thử nghiệm rủi ro hơn</text>
+  </g>
+  <g>
+    <rect x="14" y="96" width="690" height="44" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+    <circle cx="40" cy="118" r="9" fill="#f59e0b"/>
+    <text x="62" y="115" font-size="12.5" font-weight="700" fill="currentColor">Budget 10–50% — CAUTION</text>
+    <text x="62" y="132" font-size="10.5" fill="currentColor" opacity="0.82">Vẫn release nhưng siết canary, tăng bake time, review kỹ hơn</text>
+  </g>
+  <g>
+    <rect x="14" y="148" width="690" height="44" rx="9" fill="#ef4444" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+    <circle cx="40" cy="170" r="9" fill="#ef4444"/>
+    <text x="62" y="167" font-size="12.5" font-weight="700" fill="currentColor">Budget ≤ 0% — STOP (freeze)</text>
+    <text x="62" y="184" font-size="10.5" fill="currentColor" opacity="0.82">Chỉ thay đổi giảm rủi ro (P0 fix, reliability). Dừng feature mới — tự động theo policy</text>
+  </g>
+
+  <line x1="14" y1="208" x2="704" y2="208" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="16" y="228" font-size="12" font-weight="700" fill="currentColor">Feature flag tách Deploy khỏi Release</text>
+
+  <defs>
+    <marker id="sreBud" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0 0 L6 3 L0 6 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g>
+    <rect x="16" y="238" width="150" height="34" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="91" y="259" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">Deploy (code lên prod)</text>
+  </g>
+  <path d="M166 255 H214" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" fill="none" marker-end="url(#sreBud)"/>
+  <g>
+    <rect x="216" y="238" width="150" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="291" y="254" text-anchor="middle" font-size="10.5" font-weight="700" fill="currentColor">Feature flag</text>
+    <text x="291" y="267" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.75">đèn budget điều khiển</text>
+  </g>
+  <path d="M366 255 H414" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" fill="none" marker-end="url(#sreBud)"/>
+  <g>
+    <rect x="416" y="238" width="150" height="34" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="491" y="259" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">Release (bật cho user)</text>
+  </g>
+  <text x="582" y="252" font-size="9.5" fill="currentColor" opacity="0.75">Code có thể đã deploy</text>
+  <text x="582" y="265" font-size="9.5" fill="currentColor" opacity="0.75">mà chưa release nếu freeze</text>
+</svg>
 
 Lợi ích lớn nhất: nó **biến độ tin cậy thành một cuộc đối thoại dựa trên dữ liệu**, không phải tranh cãi cảm tính giữa dev (muốn ship) và SRE (muốn chậm). Khi budget cháy, freeze là tự động theo policy, không ai phải "làm người xấu".
 

@@ -45,6 +45,44 @@ Khi một SEV1 nổ ra, vấn đề lớn nhất thường không phải kỹ th
 | **Communications Lead** | Cập nhật status page, stakeholder, khách hàng theo nhịp | Không can thiệp vào kỹ thuật |
 | **Scribe** | Ghi timeline real-time: ai làm gì, lúc nào, kết quả ra sao | Không tham gia debug |
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Sơ đồ Incident Command System: IC điều phối trung tâm và ba vai trò xung quanh</title>
+  <desc>Incident Commander ở trung tâm điều phối, nối tới ba vai trò xung quanh: Operations/Ops Lead, Communications Lead, và Scribe. Mỗi vai trò ghi rõ trách nhiệm và ranh giới KHÔNG làm. IC sở hữu quyết định, không sở hữu giải pháp.</desc>
+  <g stroke="currentColor" stroke-opacity="0.4" stroke-width="1.5">
+    <line x1="360" y1="150" x2="170" y2="300"/>
+    <line x1="360" y1="150" x2="360" y2="300"/>
+    <line x1="360" y1="150" x2="550" y2="300"/>
+  </g>
+  <g>
+    <rect x="240" y="62" width="240" height="78" rx="12" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3" stroke-width="1.5"/>
+    <text x="360" y="86" font-size="14.5" font-weight="700" text-anchor="middle" fill="currentColor">Incident Commander (IC)</text>
+    <text x="360" y="105" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">Điều phối · ra quyết định · single source of truth</text>
+    <text x="360" y="123" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">KHÔNG tự debug sâu — sẽ mất tầm nhìn tổng thể</text>
+  </g>
+  <g>
+    <rect x="30" y="300" width="218" height="100" rx="12" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="139" y="324" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Operations / Ops Lead</text>
+    <text x="139" y="343" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">Thao tác hệ thống · chạy lệnh</text>
+    <text x="139" y="358" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">đề xuất mitigation</text>
+    <text x="139" y="383" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.58">KHÔNG tự broadcast ra ngoài</text>
+  </g>
+  <g>
+    <rect x="251" y="300" width="218" height="100" rx="12" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="324" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Communications Lead</text>
+    <text x="360" y="343" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">Cập nhật status page,</text>
+    <text x="360" y="358" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">stakeholder, khách hàng</text>
+    <text x="360" y="383" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.58">KHÔNG can thiệp kỹ thuật</text>
+  </g>
+  <g>
+    <rect x="472" y="300" width="218" height="100" rx="12" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="581" y="324" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Scribe</text>
+    <text x="581" y="343" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">Ghi timeline real-time:</text>
+    <text x="581" y="358" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">ai làm gì, lúc nào, kết quả</text>
+    <text x="581" y="383" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.58">KHÔNG tham gia debug</text>
+  </g>
+  <text x="360" y="420" font-size="11.5" font-weight="600" text-anchor="middle" fill="currentColor" opacity="0.85">IC sở hữu QUYẾT ĐỊNH, không sở hữu GIẢI PHÁP</text>
+</svg>
+
 > 💡 **Nguyên tắc**: IC sở hữu **quyết định**, không sở hữu **giải pháp**. Khi có bất đồng về cách xử lý, IC nói "ta thử cách A trong 10 phút, nếu burn rate không giảm thì chuyển cách B" — ra quyết định có ràng buộc thời gian, thay vì tranh luận vô tận.
 
 Trong sự cố nhỏ (SEV3), một người có thể kiêm cả IC, Ops và Comms. Nhưng với SEV1, **phải tách**. Quy tắc thực dụng: nếu sự cố kéo dài quá 30 phút hoặc có hơn 3 người tham gia, hãy chỉ định IC rõ ràng ngay lập tức — "Tôi là IC cho sự cố này" được nói thành lời trong kênh.
@@ -127,6 +165,57 @@ Dòng thời gian khách quan, dùng giờ tuyệt đối, lấy từ ghi chép 
 | 02:16 | IC xác nhận SEV1, nghi deploy |
 | 02:18 | Rollback hoàn tất, error rate phục hồi (TTM = 7 phút) |
 | 02:28 | Tuyên bố Resolved sau 10 phút metric khỏe |
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Timeline vòng đời sự cố trên trục thời gian với metric TTD và TTM</title>
+  <desc>Trục thời gian ngang: Deploy lúc 02:08, Onset 02:11, Detection 02:14 (TTD = 3 phút từ onset), Rollback/Mitigate hoàn tất 02:18 (TTM = 7 phút từ onset), Resolved 02:28. TTD và TTM được đánh dấu là các metric sức khỏe.</desc>
+  <line x1="40" y1="170" x2="690" y2="170" stroke="currentColor" stroke-opacity="0.45" stroke-width="2"/>
+  <polygon points="690,170 680,165 680,175" fill="currentColor" fill-opacity="0.45"/>
+  <g text-anchor="middle">
+    <g>
+      <circle cx="70" cy="170" r="7" fill="#3b82f6" fill-opacity="0.9"/>
+      <text x="70" y="150" font-size="11.5" font-weight="700" fill="currentColor">02:08</text>
+      <text x="70" y="200" font-size="11" fill="currentColor" opacity="0.8">Deploy</text>
+      <text x="70" y="215" font-size="9.5" fill="currentColor" opacity="0.55">v2.4.1</text>
+    </g>
+    <g>
+      <circle cx="220" cy="170" r="7" fill="#f59e0b" fill-opacity="0.95"/>
+      <text x="220" y="150" font-size="11.5" font-weight="700" fill="currentColor">02:11</text>
+      <text x="220" y="200" font-size="11" fill="currentColor" opacity="0.8">Onset</text>
+      <text x="220" y="215" font-size="9.5" fill="currentColor" opacity="0.55">error rate tăng</text>
+    </g>
+    <g>
+      <circle cx="370" cy="170" r="7" fill="#f59e0b" fill-opacity="0.95"/>
+      <text x="370" y="150" font-size="11.5" font-weight="700" fill="currentColor">02:14</text>
+      <text x="370" y="200" font-size="11" fill="currentColor" opacity="0.8">Detection</text>
+      <text x="370" y="215" font-size="9.5" fill="currentColor" opacity="0.55">alert, paged</text>
+    </g>
+    <g>
+      <circle cx="520" cy="170" r="7" fill="#10b981" fill-opacity="0.95"/>
+      <text x="520" y="150" font-size="11.5" font-weight="700" fill="currentColor">02:18</text>
+      <text x="520" y="200" font-size="11" fill="currentColor" opacity="0.8">Rollback / Mitigate</text>
+      <text x="520" y="215" font-size="9.5" fill="currentColor" opacity="0.55">error rate phục hồi</text>
+    </g>
+    <g>
+      <circle cx="660" cy="170" r="7" fill="#10b981" fill-opacity="0.95"/>
+      <text x="660" y="150" font-size="11.5" font-weight="700" fill="currentColor">02:28</text>
+      <text x="660" y="200" font-size="11" fill="currentColor" opacity="0.8">Resolved</text>
+    </g>
+  </g>
+  <g>
+    <rect x="220" y="95" width="150" height="26" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="295" y="112" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">TTD = 3 phút</text>
+    <line x1="220" y1="121" x2="220" y2="163" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="3 3"/>
+    <line x1="370" y1="121" x2="370" y2="163" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="3 3"/>
+  </g>
+  <g>
+    <rect x="220" y="252" width="300" height="26" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="370" y="269" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">TTM / MTTR = 7 phút</text>
+    <line x1="220" y1="177" x2="220" y2="252" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+    <line x1="520" y1="177" x2="520" y2="252" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+  </g>
+  <text x="40" y="30" font-size="13" font-weight="700" fill="currentColor">Vòng đời sự cố — TTD và TTM là metric sức khỏe</text>
+</svg>
 
 ### 3. Root cause & contributing factors
 Phân biệt **root cause** (nguyên nhân trực tiếp) với **contributing factors** (yếu tố góp phần). Một sự cố hiếm khi có một nguyên nhân duy nhất — đó là sự hội tụ của nhiều lỗ hổng.

@@ -92,6 +92,69 @@ Bài kiểm tra ba câu hỏi cho mọi alert page:
 
 Nếu **bất kỳ** câu nào trả lời "không" → hạ xuống ticket hoặc bỏ.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Cây quyết định phân loại alert thành Page, Ticket hoặc Log</title>
+  <desc>Từ một alert đi qua ba câu hỏi nối tiếp: Có khẩn cấp không? Có hành động không? Có cần con người không? Trả lời có ở cả ba thì Page; bất kỳ câu nào trả lời không thì hạ cấp xuống Ticket hoặc Log.</desc>
+  <text x="360" y="24" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Một alert nổ — phân loại thế nào?</text>
+  <defs>
+    <marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#ar1)">
+    <path d="M120 70 V104"/>
+    <path d="M120 154 V188"/>
+    <path d="M120 238 V272"/>
+    <path d="M210 54 H300"/>
+    <path d="M210 138 H300"/>
+    <path d="M210 222 H300"/>
+  </g>
+  <g>
+    <rect x="40" y="40" width="160" height="34" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="120" y="62" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Alert đầu vào</text>
+  </g>
+  <g>
+    <rect x="30" y="104" width="180" height="50" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="120" y="124" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">1. Có khẩn cấp không?</text>
+    <text x="120" y="141" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">hại nếu chờ quá 30 phút?</text>
+  </g>
+  <g>
+    <rect x="30" y="188" width="180" height="50" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="120" y="208" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">2. Có hành động không?</text>
+    <text x="120" y="225" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">có việc cụ thể để làm?</text>
+  </g>
+  <g>
+    <rect x="30" y="272" width="180" height="50" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="120" y="292" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">3. Có cần con người?</text>
+    <text x="120" y="309" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">hệ thống tự heal được?</text>
+  </g>
+  <g font-size="10.5" font-weight="700" fill="#10b981">
+    <text x="155" y="98">CÓ</text>
+    <text x="155" y="182">CÓ</text>
+    <text x="155" y="266">CÓ</text>
+  </g>
+  <g font-size="10.5" font-weight="700" fill="#f59e0b">
+    <text x="250" y="49" text-anchor="middle">KHÔNG</text>
+    <text x="250" y="133" text-anchor="middle">KHÔNG</text>
+    <text x="250" y="217" text-anchor="middle">KHÔNG</text>
+  </g>
+  <g>
+    <rect x="300" y="38" width="220" height="32" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="410" y="59" font-size="11.5" text-anchor="middle" fill="currentColor">Hạ cấp → Ticket / Log</text>
+    <rect x="300" y="122" width="220" height="32" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="410" y="143" font-size="11.5" text-anchor="middle" fill="currentColor">Không actionable → bỏ / Log</text>
+    <rect x="300" y="206" width="220" height="32" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="410" y="227" font-size="11.5" text-anchor="middle" fill="currentColor">Tự heal → chỉ Log</text>
+  </g>
+  <g>
+    <rect x="540" y="278" width="160" height="50" rx="11" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="620" y="299" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">PAGE</text>
+    <text x="620" y="316" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">đánh thức người on-call</text>
+  </g>
+  <path d="M210 297 H540" stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#ar1)"/>
+  <text x="375" y="290" font-size="10.5" font-weight="700" text-anchor="middle" fill="#10b981">cả 3 đều CÓ</text>
+</svg>
+
 > 💡 Nguyên tắc: "Mỗi lần bị page, on-call phải phản ứng bằng trí tuệ, không phải phản xạ máy móc." Nếu phản ứng luôn là cùng một thao tác (restart pod), hãy tự động hoá thao tác đó và xoá alert.
 
 ---
@@ -128,6 +191,48 @@ inhibit_rules:
     target_matchers: [severity="page"]
     equal: ['cluster']     # cluster down -> nuốt mọi page con cùng cluster
 ```
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Grouping và inhibition giảm noise: trước và sau</title>
+  <desc>Bên trái không gom: 50 pod cùng chết và một cluster-down sinh ra rất nhiều page lẻ làm on-call quá tải. Bên phải có gom và ức chế: 50 pod gộp thành một page, và cluster-down nuốt mọi page con cùng cluster, còn lại một page duy nhất.</desc>
+  <text x="360" y="22" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Grouping và inhibition giảm noise</text>
+  <defs>
+    <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="175" y="48" font-size="12.5" font-weight="700" text-anchor="middle" fill="#f59e0b">TRƯỚC — không gom</text>
+  <g font-size="9" text-anchor="middle">
+    <rect x="40" y="60" width="60" height="22" rx="5" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/><text x="70" y="75" fill="currentColor">pod-1 chết</text>
+    <rect x="110" y="60" width="60" height="22" rx="5" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/><text x="140" y="75" fill="currentColor">pod-2 chết</text>
+    <rect x="180" y="60" width="60" height="22" rx="5" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/><text x="210" y="75" fill="currentColor">pod-3 chết</text>
+    <rect x="250" y="60" width="60" height="22" rx="5" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/><text x="280" y="75" fill="currentColor">…</text>
+    <rect x="40" y="90" width="60" height="22" rx="5" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/><text x="70" y="105" fill="currentColor">pod-49 chết</text>
+    <rect x="110" y="90" width="60" height="22" rx="5" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/><text x="140" y="105" fill="currentColor">pod-50 chết</text>
+    <rect x="180" y="90" width="130" height="22" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/><text x="245" y="105" fill="currentColor">cluster-A down</text>
+  </g>
+  <text x="175" y="138" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">↓ mỗi alert một page</text>
+  <g>
+    <rect x="55" y="150" width="240" height="44" rx="9" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="175" y="170" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">52 page</text>
+    <text x="175" y="186" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">on-call quá tải → fatigue</text>
+  </g>
+  <line x1="360" y1="44" x2="360" y2="296" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+  <text x="545" y="48" font-size="12.5" font-weight="700" text-anchor="middle" fill="#10b981">SAU — gom + ức chế</text>
+  <g font-size="9.5" fill="currentColor">
+    <rect x="410" y="62" width="270" height="24" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="420" y="78">group_by [alertname, cluster] → 50 pod = 1 nhóm</text>
+    <rect x="410" y="94" width="270" height="24" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="420" y="110">inhibit: cluster-down nuốt mọi page con</text>
+  </g>
+  <path d="M545 122 V150" stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#ar2)"/>
+  <g>
+    <rect x="425" y="150" width="240" height="44" rx="9" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="545" y="170" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">1 page</text>
+    <text x="545" y="186" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">"cluster-A down" — actionable</text>
+  </g>
+  <text x="360" y="240" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">Cùng một sự cố, một lần đánh thức thay vì 52 lần</text>
+</svg>
 
 > ⚠️ Bẫy: "Để đó cho chắc, biết đâu cần." Mỗi alert giữ lại 'cho chắc' đều cộng vào noise và bào mòn sự tin tưởng vào toàn bộ hệ thống alert. Alert là nợ kỹ thuật; mặc định nên là xoá.
 
@@ -183,6 +288,56 @@ escalation:
     notify: engineering_manager
   # SEV1: song song notify incident_commander ngay từ đầu
 ```
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Thang escalation theo thời gian khi page không được ack</title>
+  <desc>Page tới primary on-call; nếu không ack trong 5 phút thì leo lên secondary on-call; nếu không ack trong 10 phút nữa thì leo lên engineering manager. Với SEV1, song song notify Incident Commander ngay từ đầu.</desc>
+  <text x="360" y="24" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Thang escalation theo thời gian (không ack → leo cấp)</text>
+  <defs>
+    <marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g>
+    <rect x="40" y="56" width="190" height="56" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <rect x="52" y="70" width="44" height="20" rx="6" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="74" y="84" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">L1</text>
+    <text x="106" y="80" font-size="12.5" font-weight="700" fill="currentColor">primary_oncall</text>
+    <text x="106" y="98" font-size="10.5" fill="currentColor" opacity="0.65">nhận page đầu tiên</text>
+  </g>
+  <g>
+    <rect x="40" y="142" width="190" height="56" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <rect x="52" y="156" width="44" height="20" rx="6" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="74" y="170" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">L2</text>
+    <text x="106" y="166" font-size="12.5" font-weight="700" fill="currentColor">secondary_oncall</text>
+    <text x="106" y="184" font-size="10.5" fill="currentColor" opacity="0.65">backup nhận escalation</text>
+  </g>
+  <g>
+    <rect x="40" y="228" width="190" height="56" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <rect x="52" y="242" width="44" height="20" rx="6" fill="#8b5cf6" fill-opacity="0.95"/>
+    <text x="74" y="256" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">L3</text>
+    <text x="106" y="252" font-size="12.5" font-weight="700" fill="currentColor">engineering_manager</text>
+    <text x="106" y="270" font-size="10.5" fill="currentColor" opacity="0.65">chốt chặn cuối</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#ar3)">
+    <path d="M135 112 V142"/>
+    <path d="M135 198 V228"/>
+  </g>
+  <g font-size="10.5" font-weight="700" fill="#f59e0b">
+    <text x="148" y="131">không ack 5m</text>
+    <text x="148" y="217">không ack 10m</text>
+  </g>
+  <line x1="300" y1="56" x2="300" y2="284" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+  <text x="300" y="48" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">thời gian ↓</text>
+  <g>
+    <rect x="430" y="120" width="240" height="64" rx="11" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="550" y="146" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Incident Commander</text>
+    <text x="550" y="165" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">chỉ SEV1 — notify song song</text>
+    <text x="550" y="179" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">ngay từ đầu, không chờ leo cấp</text>
+  </g>
+  <path d="M230 84 C330 84 360 152 430 152" stroke="#10b981" stroke-opacity="0.7" stroke-dasharray="5 4" fill="none" marker-end="url(#ar3)"/>
+  <text x="360" y="104" font-size="10" font-weight="700" text-anchor="middle" fill="#10b981">SEV1</text>
+</svg>
 
 Hai chiều escalation cần phân biệt:
 - **Theo thời gian (không ack)**: primary không phản hồi → tự động sang secondary → manager. Đây là an toàn cơ bản.

@@ -20,6 +20,49 @@ Khác biệt cốt lõi so với mô hình sysadmin truyền thống:
 
 SRE đứng trên ba khái niệm liên kết với nhau: **SLI → SLO → Error Budget**. Hiểu sai một cái là sai cả chuỗi.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Chuỗi suy dẫn SLI → SLO → Error Budget → Burn rate</title>
+  <desc>Bốn lớp suy ra lần lượt: SLI là phép đo thực tế, SLO là mục tiêu đặt ra, Error Budget bằng 100% trừ SLO là phần còn lại được phép hỏng, burn rate là tốc độ đốt budget.</desc>
+  <text x="360" y="26" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Mỗi lớp suy ra từ lớp ngay trên</text>
+  <g>
+    <rect x="120" y="44" width="480" height="58" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="140" y="70" font-size="14" font-weight="700" fill="currentColor">SLI — phép đo thực tế</text>
+    <text x="140" y="90" font-size="11.5" fill="currentColor" opacity="0.66">số đo trực tiếp: % request "tốt" / tổng request</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <path d="M360 102 v18" marker-end="url(#sliArrow)"/>
+  </g>
+  <text x="372" y="116" font-size="10.5" fill="currentColor" opacity="0.6">đặt mục tiêu cho SLI</text>
+  <g>
+    <rect x="120" y="122" width="480" height="58" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="140" y="148" font-size="14" font-weight="700" fill="currentColor">SLO — mục tiêu đặt ra</text>
+    <text x="140" y="168" font-size="11.5" fill="currentColor" opacity="0.66">cam kết nội bộ, vd 99.9% trong 28 ngày</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <path d="M360 180 v18" marker-end="url(#sliArrow)"/>
+  </g>
+  <text x="372" y="194" font-size="10.5" fill="currentColor" opacity="0.6">phần còn lại = 100% − SLO</text>
+  <g>
+    <rect x="120" y="200" width="480" height="58" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="140" y="226" font-size="14" font-weight="700" fill="currentColor">Error Budget — phần được phép hỏng</text>
+    <text x="140" y="246" font-size="11.5" fill="currentColor" opacity="0.66">100% − SLO = 0.1% → ngân sách để "tiêu"</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <path d="M360 258 v18" marker-end="url(#sliArrow)"/>
+  </g>
+  <text x="372" y="272" font-size="10.5" fill="currentColor" opacity="0.6">tốc độ đốt budget</text>
+  <g>
+    <rect x="120" y="278" width="480" height="58" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="140" y="304" font-size="14" font-weight="700" fill="currentColor">Burn rate — tốc độ đốt</text>
+    <text x="140" y="324" font-size="11.5" fill="currentColor" opacity="0.66">1x = hết đúng window · 14.4x = cháy sạch trong ~2 ngày</text>
+  </g>
+  <defs>
+    <marker id="sliArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor" fill-opacity="0.6"/>
+    </marker>
+  </defs>
+</svg>
+
 ## SLI — Service Level Indicator
 
 SLI là **một con số đo trực tiếp mức độ tốt của dịch vụ tại một thời điểm**, thường biểu diễn dưới dạng tỉ lệ "sự kiện tốt / tổng sự kiện".
@@ -107,6 +150,45 @@ SLA là **cam kết với khách hàng kèm hậu quả tài chính/pháp lý n�
 
 > 💡 Nguyên tắc: **SLA luôn lỏng hơn SLO.** Nếu bạn bán SLA 99.9% thì nội bộ nên đặt SLO 99.95%. Khoảng đệm đó cho bạn thời gian phát hiện và sửa trước khi chạm ngưỡng phải trả tiền cho khách. Nếu SLO = SLA, bạn sẽ phải bồi thường ngay khi báo động đầu tiên kêu.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 290" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Khoảng đệm giữa SLA, SLO và SLI thực tế</title>
+  <desc>Ba thanh ngang xếp chồng theo mức tin cậy: SLA bán 99.5% lỏng nhất, SLO nội bộ 99.9% chặt hơn, SLI thực tế 99.95% cao nhất. Vùng đệm giữa SLI và SLA là thời gian phát hiện trước khi phải bồi thường.</desc>
+  <text x="360" y="26" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">SLA luôn lỏng hơn SLO — vùng đệm là thời gian phản ứng</text>
+  <!-- trục mức tin cậy: trái = lỏng, phải = chặt -->
+  <text x="120" y="56" font-size="10.5" fill="currentColor" opacity="0.6">lỏng hơn</text>
+  <text x="600" y="56" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.6">chặt hơn →</text>
+  <!-- SLA 99.5% -->
+  <text x="20" y="89" font-size="12.5" font-weight="700" fill="currentColor">SLA</text>
+  <text x="20" y="105" font-size="10.5" fill="currentColor" opacity="0.6">cam kết bán</text>
+  <rect x="120" y="74" width="320" height="34" rx="7" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="430" y="96" font-size="12.5" font-weight="700" text-anchor="end" fill="currentColor">99.5%</text>
+  <!-- SLO 99.9% -->
+  <text x="20" y="143" font-size="12.5" font-weight="700" fill="currentColor">SLO</text>
+  <text x="20" y="159" font-size="10.5" fill="currentColor" opacity="0.6">mục tiêu nội bộ</text>
+  <rect x="120" y="128" width="420" height="34" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="530" y="150" font-size="12.5" font-weight="700" text-anchor="end" fill="currentColor">99.9%</text>
+  <!-- SLI 99.95% -->
+  <text x="20" y="197" font-size="12.5" font-weight="700" fill="currentColor">SLI</text>
+  <text x="20" y="213" font-size="10.5" fill="currentColor" opacity="0.6">đo được thực tế</text>
+  <rect x="120" y="182" width="470" height="34" rx="7" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="580" y="204" font-size="12.5" font-weight="700" text-anchor="end" fill="currentColor">99.95%</text>
+  <!-- vùng đệm SLA -> SLO -->
+  <g stroke="currentColor" stroke-opacity="0.45" fill="none" stroke-dasharray="4 3">
+    <path d="M440 70 v152"/>
+    <path d="M540 124 v98"/>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none" marker-start="url(#bufA)" marker-end="url(#bufA)">
+    <path d="M442 244 H538"/>
+  </g>
+  <text x="490" y="262" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">đệm SLO→SLA</text>
+  <text x="490" y="277" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">thời gian phát hiện trước khi phải bồi thường</text>
+  <defs>
+    <marker id="bufA" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor" fill-opacity="0.55"/>
+    </marker>
+  </defs>
+</svg>
+
 Ví dụ thực tế: AWS Compute SLA cam kết 99.99% cho EC2 ở cấp Region; nếu xuống dưới, khách nhận service credit theo bậc (10% / 30% / 100% hoá đơn tháng tuỳ mức vi phạm) — chứ không phải hoàn toàn bộ.
 
 ## Error Budget — trái tim của SRE
@@ -116,6 +198,36 @@ Error budget là **phần "được phép hỏng" còn lại**, suy ra trực ti
 ```
 Error Budget = 100% − SLO
 ```
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>100% chia thành SLO và Error Budget, kèm tốc độ đốt theo burn rate</title>
+  <desc>Trục ngang 100% chia làm phần SLO 99.9% và Error Budget 0.1% là phần được phép hỏng. Bên dưới minh hoạ burn rate: 1x ăn mòn budget hết đúng window 28 ngày, 14.4x chạy sạch trong khoảng 2 ngày.</desc>
+  <text x="360" y="26" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">100% = SLO + Error Budget</text>
+  <!-- thanh 100% (Error budget phóng đại để nhìn thấy) -->
+  <text x="20" y="64" font-size="11.5" fill="currentColor" opacity="0.7">tổng 100% request</text>
+  <rect x="120" y="74" width="492" height="40" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="366" y="99" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">SLO = 99.9% (phải đạt)</text>
+  <rect x="540" y="74" width="72" height="40" rx="7" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="576" y="93" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">0.1%</text>
+  <text x="576" y="107" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">budget</text>
+  <text x="612" y="134" font-size="10" text-anchor="end" fill="currentColor" opacity="0.6">("được phép hỏng" — phóng đại để thấy)</text>
+  <!-- burn rate: ăn mòn budget theo thời gian -->
+  <text x="360" y="172" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Burn rate — tốc độ ăn mòn 0.1% budget</text>
+  <!-- khung budget còn lại cho 2 dòng -->
+  <text x="20" y="214" font-size="11.5" font-weight="700" fill="currentColor">1×</text>
+  <text x="20" y="229" font-size="9.5" fill="currentColor" opacity="0.6">tiêu đều</text>
+  <text x="612" y="194" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.75">hết đúng window 28 ngày</text>
+  <rect x="120" y="200" width="492" height="24" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.18"/>
+  <rect x="120" y="200" width="100" height="24" rx="5" fill="#10b981" fill-opacity="0.35"/>
+  <text x="20" y="270" font-size="11.5" font-weight="700" fill="currentColor">14.4×</text>
+  <text x="20" y="285" font-size="9.5" fill="currentColor" opacity="0.6">đốt nhanh</text>
+  <text x="612" y="250" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.75">cháy sạch trong ~2 ngày</text>
+  <rect x="120" y="256" width="492" height="24" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.18"/>
+  <rect x="120" y="256" width="466" height="24" rx="5" fill="#f59e0b" fill-opacity="0.45"/>
+  <!-- trục thời gian -->
+  <text x="120" y="304" font-size="10" fill="currentColor" opacity="0.55">đầu chu kỳ</text>
+  <text x="612" y="304" font-size="10" text-anchor="end" fill="currentColor" opacity="0.55">budget = 0 → dừng deploy</text>
+</svg>
 
 Nó biến reliability từ cuộc tranh cãi cảm tính ("hệ thống có ổn định không?") thành một con số ngân sách mà cả Dev và SRE đều nhìn vào.
 

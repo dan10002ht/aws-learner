@@ -36,6 +36,67 @@ Ví dụ cụ thể: service cần 12 instance để xử lý peak 30k RPS. Tri�
 
 Chi phí của cột thứ 3 cao hơn, nhưng đó là cái giá của việc survive một AZ outage mà không degrade.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Headroom đa-AZ: ba cấu hình khi mất trọn 1 AZ</title>
+  <desc>So sánh ba cấu hình triển khai trên 3 AZ. Cần 12 instance cho peak. Không headroom (4/AZ) khi mất 1 AZ chỉ còn 8 instance, thiếu so với 12. N+ (6/AZ) còn 12, vừa khít. Buffer 20% (8/AZ) còn 16, dư.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Mất trọn 1 AZ → tải dồn sang 2 AZ còn lại (cần 12 instance cho peak)</text>
+  <g>
+    <text x="135" y="52" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Không headroom · 4/AZ</text>
+    <rect x="30" y="62" width="62" height="86" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="61" y="80" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">AZ-a</text>
+    <text x="61" y="112" font-size="17" font-weight="700" text-anchor="middle" fill="currentColor">4</text>
+    <rect x="104" y="62" width="62" height="86" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="135" y="80" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">AZ-b</text>
+    <text x="135" y="112" font-size="17" font-weight="700" text-anchor="middle" fill="currentColor">4</text>
+    <rect x="178" y="62" width="62" height="86" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="209" y="80" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">AZ-c</text>
+    <text x="209" y="112" font-size="17" font-weight="700" text-anchor="middle" fill="currentColor">4</text>
+    <line x1="34" y1="68" x2="88" y2="142" stroke="#ef4444" stroke-width="2.5" stroke-opacity="0.8"/>
+    <line x1="88" y1="68" x2="34" y2="142" stroke="#ef4444" stroke-width="2.5" stroke-opacity="0.8"/>
+    <text x="135" y="170" font-size="12" text-anchor="middle" fill="currentColor">Còn lại: <tspan font-weight="700">8</tspan> / cần 12</text>
+    <rect x="58" y="180" width="154" height="22" rx="11" fill="#ef4444" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="135" y="195" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">thiếu 33% → degrade</text>
+  </g>
+  <g>
+    <text x="135" y="232" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">N+ chịu lỗi · 6/AZ</text>
+    <rect x="30" y="242" width="62" height="60" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="61" y="278" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">6</text>
+    <rect x="104" y="242" width="62" height="60" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="135" y="278" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">6</text>
+    <rect x="178" y="242" width="62" height="60" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="209" y="278" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">6</text>
+    <line x1="34" y1="248" x2="88" y2="296" stroke="#ef4444" stroke-width="2.5" stroke-opacity="0.8"/>
+    <line x1="88" y1="248" x2="34" y2="296" stroke="#ef4444" stroke-width="2.5" stroke-opacity="0.8"/>
+    <rect x="58" y="316" width="154" height="22" rx="11" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="135" y="331" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">còn 12 → vừa khít ✅</text>
+  </g>
+  <g>
+    <text x="540" y="232" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Buffer 20% · 8/AZ</text>
+    <rect x="435" y="242" width="62" height="60" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="466" y="278" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">8</text>
+    <rect x="509" y="242" width="62" height="60" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="540" y="278" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">8</text>
+    <rect x="583" y="242" width="62" height="60" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="614" y="278" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">8</text>
+    <line x1="439" y1="248" x2="493" y2="296" stroke="#ef4444" stroke-width="2.5" stroke-opacity="0.8"/>
+    <line x1="493" y1="248" x2="439" y2="296" stroke="#ef4444" stroke-width="2.5" stroke-opacity="0.8"/>
+    <rect x="463" y="316" width="154" height="22" rx="11" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="540" y="331" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">còn 16 → dư 33% ✅</text>
+  </g>
+  <g>
+    <text x="540" y="52" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Chú thích</text>
+    <rect x="435" y="64" width="20" height="20" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="463" y="79" font-size="11" fill="currentColor">AZ bị mất (hổ phách)</text>
+    <rect x="435" y="92" width="20" height="20" rx="5" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="463" y="107" font-size="11" fill="currentColor">AZ còn nhận tải</text>
+    <line x1="435" y1="124" x2="455" y2="140" stroke="#ef4444" stroke-width="2.5" stroke-opacity="0.8"/>
+    <line x1="455" y1="124" x2="435" y2="140" stroke="#ef4444" stroke-width="2.5" stroke-opacity="0.8"/>
+    <text x="463" y="137" font-size="11" fill="currentColor">AZ outage</text>
+    <text x="435" y="168" font-size="10.5" fill="currentColor" opacity="0.75">Headroom = dư đủ để</text>
+    <text x="435" y="183" font-size="10.5" fill="currentColor" opacity="0.75">2 AZ còn lại gánh hết peak.</text>
+  </g>
+</svg>
+
 ### Headroom mục tiêu theo loại tài nguyên
 
 | Tài nguyên | Ngưỡng cảnh báo | Lý do |
@@ -240,6 +301,49 @@ Disaster Recovery xử lý sự cố thảm họa: mất cả region, mất data
 | Warm Standby | Phút | Giây → phút | Cao |
 | Active-Active (Multi-Region) | ~Giây | ~0 | Rất cao |
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Tradeoff RTO/RPO theo 4 chiến lược DR</title>
+  <desc>Mặt phẳng RTO (trục ngang, thời gian khôi phục) và RPO (trục dọc, dữ liệu mất). Bốn chiến lược từ góc trên-phải xuống góc dưới-trái: Backup và Restore RTO và RPO lớn chi phí thấp; Pilot Light; Warm Standby; Active-Active RTO và RPO gần 0 chi phí rất cao. RTO và RPO giảm dần thì chi phí tăng dần.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">RTO/RPO giảm dần ↔ chi phí tăng dần</text>
+  <line x1="90" y1="350" x2="660" y2="350" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5"/>
+  <line x1="90" y1="350" x2="90" y2="60" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5"/>
+  <polygon points="660,350 650,345 650,355" fill="currentColor" fill-opacity="0.55"/>
+  <polygon points="90,60 85,70 95,70" fill="currentColor" fill-opacity="0.55"/>
+  <text x="375" y="385" font-size="12" text-anchor="middle" fill="currentColor">RTO — thời gian khôi phục (giảm ←)</text>
+  <text x="660" y="340" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.7">nhanh ←</text>
+  <text x="100" y="345" font-size="10.5" fill="currentColor" opacity="0.7">→ chậm</text>
+  <g transform="rotate(-90 30 205)">
+    <text x="30" y="205" font-size="12" text-anchor="middle" fill="currentColor">RPO — dữ liệu mất (giảm ↓)</text>
+  </g>
+  <text x="74" y="80" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.7">nhiều</text>
+  <text x="74" y="345" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.7">~0</text>
+  <line x1="170" y1="120" x2="560" y2="320" stroke="currentColor" stroke-opacity="0.18" stroke-width="10" stroke-linecap="round"/>
+  <g>
+    <circle cx="560" cy="120" r="13" fill="#3b82f6" fill-opacity="0.85"/>
+    <text x="560" y="124" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">1</text>
+    <text x="560" y="98" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Backup &amp; Restore</text>
+    <text x="560" y="146" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">RTO giờ→ngày · RPO giờ · chi phí thấp</text>
+  </g>
+  <g>
+    <circle cx="420" cy="190" r="13" fill="#10b981" fill-opacity="0.9"/>
+    <text x="420" y="194" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">2</text>
+    <text x="420" y="168" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Pilot Light</text>
+    <text x="420" y="216" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">RTO chục phút→giờ · RPO phút · TB</text>
+  </g>
+  <g>
+    <circle cx="270" cy="255" r="13" fill="#f59e0b" fill-opacity="0.9"/>
+    <text x="270" y="259" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">3</text>
+    <text x="270" y="233" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Warm Standby</text>
+    <text x="270" y="281" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">RTO phút · RPO giây→phút · cao</text>
+  </g>
+  <g>
+    <circle cx="150" cy="315" r="13" fill="#8b5cf6" fill-opacity="0.9"/>
+    <text x="150" y="319" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">4</text>
+    <text x="150" y="305" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Active-Active</text>
+    <text x="200" y="335" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">RTO~giây · RPO~0 · rất cao</text>
+  </g>
+</svg>
+
 ### DR drill — diễn tập thật
 
 Một DR plan trong tài liệu mà chưa từng diễn tập thì RTO/RPO chỉ là *con số ước mơ*.
@@ -286,6 +390,51 @@ Mục tiêu: **một soft dependency chết không bao giờ được kéo theo 
 
 > ⚠️ Bẫy
 > **Shared connection pool**: search service và payment service dùng chung một pool 100 connection tới cùng một DB proxy. Search bị chậm → ăn hết 100 connection → payment cũng timeout. Cô lập pool theo dependency/criticality.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Bulkhead: shared pool vs pool riêng cho từng dependency</title>
+  <desc>Bên trái shared pool: search và payment dùng chung 100 connection; search chậm ăn hết pool nên payment cũng timeout. Bên phải bulkhead: mỗi dependency có pool riêng nên search treo không kéo theo payment.</desc>
+  <text x="180" y="24" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Shared pool — 1 dep treo kéo cả hệ thống</text>
+  <text x="540" y="24" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Bulkhead — pool riêng, lỗi bị cô lập</text>
+  <line x1="360" y1="40" x2="360" y2="310" stroke="currentColor" stroke-opacity="0.2" stroke-width="1" stroke-dasharray="4 4"/>
+  <g>
+    <rect x="30" y="48" width="120" height="44" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="90" y="68" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Search 🐌</text>
+    <text x="90" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">chậm</text>
+    <rect x="210" y="48" width="120" height="44" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="270" y="68" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Payment 💳</text>
+    <text x="270" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">critical</text>
+    <rect x="40" y="150" width="280" height="80" rx="10" fill="#ef4444" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="180" y="170" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Shared pool · 100 conn</text>
+    <text x="180" y="188" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">Search nuốt cả 100 → 0 còn trống</text>
+    <rect x="60" y="200" width="240" height="14" rx="7" fill="#f59e0b" fill-opacity="0.7"/>
+    <text x="180" y="246" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">▮ = connection do Search chiếm hết</text>
+    <line x1="90" y1="92" x2="150" y2="148" stroke="currentColor" stroke-opacity="0.4"/>
+    <line x1="270" y1="92" x2="210" y2="148" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="3 3"/>
+    <rect x="60" y="270" width="240" height="30" rx="8" fill="#ef4444" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="180" y="290" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Payment cũng timeout ❌</text>
+  </g>
+  <g>
+    <rect x="390" y="48" width="120" height="44" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="450" y="68" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Search 🐌</text>
+    <text x="450" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">chậm</text>
+    <rect x="570" y="48" width="120" height="44" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="630" y="68" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Payment 💳</text>
+    <text x="630" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">critical</text>
+    <line x1="450" y1="92" x2="450" y2="148" stroke="currentColor" stroke-opacity="0.4"/>
+    <line x1="630" y1="92" x2="630" y2="148" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="390" y="150" width="120" height="80" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="450" y="170" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Pool Search</text>
+    <text x="450" y="186" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">50 conn · cạn</text>
+    <rect x="404" y="198" width="92" height="12" rx="6" fill="#f59e0b" fill-opacity="0.7"/>
+    <rect x="570" y="150" width="120" height="80" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="630" y="170" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Pool Payment</text>
+    <text x="630" y="186" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">50 conn · rảnh</text>
+    <rect x="584" y="198" width="30" height="12" rx="6" fill="#10b981" fill-opacity="0.7"/>
+    <rect x="420" y="270" width="240" height="30" rx="8" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="540" y="290" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Payment vẫn chạy ✅</text>
+  </g>
+</svg>
 
 > 💡 Nguyên tắc
 > Test dependency failure như một kịch bản first-class trong CI/chaos: tiêm timeout/500 từ mỗi dependency và assert rằng SLO của bạn (cho phần critical) vẫn giữ.
