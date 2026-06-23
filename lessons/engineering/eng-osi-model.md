@@ -22,6 +22,88 @@ Nguyên tắc vàng: **mỗi tầng chỉ nói chuyện với tầng ngay trên 
 
 Mô hình **OSI** (Open Systems Interconnection) chia truyền thông mạng thành 7 tầng, đánh số từ **dưới lên** (tầng 1 là vật lý, tầng 7 sát người dùng nhất):
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Mô hình OSI 7 tầng và ánh xạ sang TCP/IP</title>
+  <desc>Bảy tầng OSI từ trên xuống: Application, Presentation, Session, Transport, Network, Data Link, Physical — kèm PDU và ánh xạ nhóm TCP/IP.</desc>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Mô hình OSI 7 tầng</text>
+  <text x="704" y="26" font-size="12" text-anchor="end" fill="currentColor" opacity="0.6">TCP/IP</text>
+  <g>
+    <rect x="16" y="44" width="544" height="50" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="24" y="56" width="26" height="26" rx="7" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="37" y="74" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">7</text>
+    <text x="62" y="66" font-size="13.5" font-weight="700" fill="currentColor">Application — Ứng dụng</text>
+    <text x="62" y="83" font-size="11" fill="currentColor" opacity="0.62">HTTP · DNS · SSH · gRPC</text>
+    <rect x="476" y="58" width="76" height="22" rx="11" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="514" y="73" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Data</text>
+  </g>
+  <g>
+    <rect x="16" y="102" width="544" height="50" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="24" y="114" width="26" height="26" rx="7" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="37" y="132" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">6</text>
+    <text x="62" y="124" font-size="13.5" font-weight="700" fill="currentColor">Presentation — Trình bày</text>
+    <text x="62" y="141" font-size="11" fill="currentColor" opacity="0.62">TLS · gzip · UTF-8 · JSON · Base64</text>
+    <rect x="476" y="116" width="76" height="22" rx="11" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="514" y="131" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Data</text>
+  </g>
+  <g>
+    <rect x="16" y="160" width="544" height="50" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="24" y="172" width="26" height="26" rx="7" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="37" y="190" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">5</text>
+    <text x="62" y="182" font-size="13.5" font-weight="700" fill="currentColor">Session — Phiên</text>
+    <text x="62" y="199" font-size="11" fill="currentColor" opacity="0.62">cookie · TLS resumption · WebSocket</text>
+    <rect x="476" y="174" width="76" height="22" rx="11" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="514" y="189" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Data</text>
+  </g>
+  <g>
+    <rect x="16" y="218" width="544" height="50" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="24" y="230" width="26" height="26" rx="7" fill="#10b981" fill-opacity="0.95"/>
+    <text x="37" y="248" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">4</text>
+    <text x="62" y="240" font-size="13.5" font-weight="700" fill="currentColor">Transport — Vận chuyển</text>
+    <text x="62" y="257" font-size="11" fill="currentColor" opacity="0.62">TCP · UDP · QUIC · port</text>
+    <rect x="470" y="232" width="82" height="22" rx="11" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="511" y="247" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Segment</text>
+  </g>
+  <g>
+    <rect x="16" y="276" width="544" height="50" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="24" y="288" width="26" height="26" rx="7" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="37" y="306" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">3</text>
+    <text x="62" y="298" font-size="13.5" font-weight="700" fill="currentColor">Network — Mạng</text>
+    <text x="62" y="315" font-size="11" fill="currentColor" opacity="0.62">IP · ICMP · NAT · router</text>
+    <rect x="476" y="290" width="76" height="22" rx="11" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="514" y="305" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Packet</text>
+  </g>
+  <g>
+    <rect x="16" y="334" width="544" height="50" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="24" y="346" width="26" height="26" rx="7" fill="#8b5cf6" fill-opacity="0.95"/>
+    <text x="37" y="364" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">2</text>
+    <text x="62" y="356" font-size="13.5" font-weight="700" fill="currentColor">Data Link — Liên kết</text>
+    <text x="62" y="373" font-size="11" fill="currentColor" opacity="0.62">Ethernet · MAC · switch · ARP</text>
+    <rect x="476" y="348" width="76" height="22" rx="11" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="514" y="363" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Frame</text>
+  </g>
+  <g>
+    <rect x="16" y="392" width="544" height="50" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="24" y="404" width="26" height="26" rx="7" fill="#8b5cf6" fill-opacity="0.95"/>
+    <text x="37" y="422" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">1</text>
+    <text x="62" y="414" font-size="13.5" font-weight="700" fill="currentColor">Physical — Vật lý</text>
+    <text x="62" y="431" font-size="11" fill="currentColor" opacity="0.62">cáp · sóng · NIC · hub</text>
+    <rect x="476" y="406" width="76" height="22" rx="11" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="514" y="421" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Bit</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.35" fill="none">
+    <path d="M576 46 h10 v160 h-10"/>
+    <path d="M576 220 h10 v46 h-10"/>
+    <path d="M576 278 h10 v46 h-10"/>
+    <path d="M576 336 h10 v104 h-10"/>
+  </g>
+  <g font-size="11" fill="currentColor" opacity="0.8">
+    <text x="592" y="130">Application</text>
+    <text x="592" y="247">Transport</text>
+    <text x="592" y="305">Internet</text>
+    <text x="592" y="392">Link</text>
+  </g>
+</svg>
+
 | # | Tầng (EN) | Tên Việt | PDU* | Nhiệm vụ một câu | Ví dụ giao thức / thiết bị |
 |---|---|---|---|---|---|
 | 7 | Application | Ứng dụng | Data | Giao thức mà app dùng trực tiếp | HTTP, DNS, SMTP, SSH, gRPC |
