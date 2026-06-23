@@ -58,6 +58,57 @@ Sau một invocation, Lambda "đóng băng" (freeze) execution context và có t
 - **Không** dựa vào việc context luôn được tái dùng — có thể bị tạo mới bất cứ lúc nào. Đừng lưu trạng thái business quan trọng ở đây.
 - Background thread/process bị freeze khi invocation kết thúc, "rã đông" ở lần sau (đừng dựa vào nó chạy nền).
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Vòng đời execution context của Lambda — cold start, warm, freeze và thaw</title>
+  <desc>Sơ đồ trạng thái: cold start khởi tạo runtime và chạy code ngoài handler, sang trạng thái warm tái dùng context (biến global, /tmp, connection vẫn còn); sau invocation context bị freeze rồi thaw lại cho lần gọi sau; hoặc context cũ bị huỷ và một environment mới được tạo (cold start lại).</desc>
+  <defs>
+    <marker id="lcArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Vòng đời execution context</text>
+
+  <g>
+    <rect x="16" y="44" width="220" height="78" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="30" y="66" font-size="12.5" font-weight="700" fill="currentColor">COLD START</text>
+    <text x="30" y="86" font-size="10.5" fill="currentColor" opacity="0.75">Init runtime + tải code</text>
+    <text x="30" y="102" font-size="10.5" fill="currentColor" opacity="0.75">Chạy code NGOÀI handler</text>
+    <text x="30" y="116" font-size="10.5" fill="currentColor" opacity="0.6">(tạo conn, SDK client...)</text>
+  </g>
+
+  <g>
+    <rect x="336" y="44" width="240" height="78" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="350" y="66" font-size="12.5" font-weight="700" fill="currentColor">WARM — chạy handler</text>
+    <text x="350" y="86" font-size="10.5" fill="currentColor" opacity="0.75">Tái dùng context:</text>
+    <text x="350" y="102" font-size="10.5" fill="currentColor" opacity="0.75">biến global · /tmp · connection</text>
+    <text x="350" y="116" font-size="10.5" fill="currentColor" opacity="0.6">vẫn còn → latency thấp</text>
+  </g>
+  <line x1="236" y1="83" x2="330" y2="83" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#lcArr)"/>
+  <text x="248" y="78" font-size="10" fill="currentColor" opacity="0.7">gọi handler</text>
+
+  <g>
+    <rect x="336" y="166" width="240" height="66" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="350" y="188" font-size="12.5" font-weight="700" fill="currentColor">FREEZE</text>
+    <text x="350" y="208" font-size="10.5" fill="currentColor" opacity="0.75">Sau invocation: đóng băng</text>
+    <text x="350" y="223" font-size="10.5" fill="currentColor" opacity="0.6">background thread tạm dừng</text>
+  </g>
+  <line x1="456" y1="122" x2="456" y2="160" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#lcArr)"/>
+  <text x="466" y="146" font-size="10" fill="currentColor" opacity="0.7">xong</text>
+
+  <path d="M336 199 H300 V95 H332" fill="none" stroke="#10b981" stroke-opacity="0.7" stroke-width="1.4" marker-end="url(#lcArr)"/>
+  <text x="262" y="150" font-size="10" fill="#10b981" opacity="0.95" font-weight="700">THAW — gọi lại</text>
+  <text x="262" y="164" font-size="9.5" fill="currentColor" opacity="0.65">(cùng env, về WARM)</text>
+
+  <g>
+    <rect x="16" y="248" width="560" height="80" rx="10" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="5 4"/>
+    <text x="30" y="272" font-size="12.5" font-weight="700" fill="currentColor">ENVIRONMENT MỚI được tạo</text>
+    <text x="30" y="292" font-size="10.5" fill="currentColor" opacity="0.75">Khi scale-up, context cũ hết hạn, hoặc bị huỷ bất cứ lúc nào</text>
+    <text x="30" y="310" font-size="10.5" fill="currentColor" opacity="0.6">→ context cũ KHÔNG còn → cold start lại từ đầu (đừng dựa vào việc luôn tái dùng)</text>
+  </g>
+  <path d="M456 232 V240 H300 V244" fill="none" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="4 3" marker-end="url(#lcArr)"/>
+  <path d="M120 248 V140 V122" fill="none" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="4 3" marker-end="url(#lcArr)"/>
+  <text x="126" y="200" font-size="9.5" fill="#f59e0b" opacity="0.95" font-weight="700">tạo mới →</text>
+  <text x="126" y="214" font-size="9.5" fill="#f59e0b" opacity="0.95" font-weight="700">cold start</text>
+</svg>
+
 > ⚠️ Bẫy: `/tmp` là **ephemeral và cục bộ theo từng execution environment**, KHÔNG chia sẻ giữa các concurrent instance. Cần state chia sẻ → dùng S3, EFS, DynamoDB, ElastiCache. Cần dung lượng > 512MB → tăng `ephemeral-storage`, KHÔNG phải tăng memory.
 
 ## 4. Environment Variables & Encryption
@@ -120,6 +171,47 @@ aws lambda publish-layer-version \
 | **Reserved concurrency** | Giới hạn *trần* số instance đồng thời 1 function được dùng | Bảo vệ downstream / giới hạn / cô lập | Không |
 | **Provisioned concurrency** | Số instance được **khởi tạo trước, giữ ấm** | Loại bỏ cold start | **Có** |
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Phân chia concurrency pool của account — unreserved, reserved và provisioned</title>
+  <desc>Pool concurrency của account (mặc định 1000 cho mỗi region) chia thành hai phần: phần reserved cấp riêng và đảm bảo cho từng function (vừa là trần vừa là phần giữ riêng), và phần unreserved dùng chung cho mọi function khác. Provisioned concurrency là các instance pre-warmed nằm bên trong phần cấp cho một function.</desc>
+  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Account concurrency pool (mặc định 1000 / region)</text>
+
+  <rect x="16" y="40" width="688" height="200" rx="12" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+
+  <g>
+    <rect x="32" y="64" width="210" height="160" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="44" y="86" font-size="12" font-weight="700" fill="currentColor">RESERVED — Func A</text>
+    <text x="44" y="104" font-size="10" fill="currentColor" opacity="0.7">Trần + đảm bảo riêng</text>
+    <rect x="46" y="116" width="182" height="92" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="58" y="136" font-size="11" font-weight="700" fill="currentColor">PROVISIONED</text>
+    <text x="58" y="153" font-size="10" fill="currentColor" opacity="0.72">instance pre-warmed</text>
+    <text x="58" y="168" font-size="10" fill="currentColor" opacity="0.72">(giữ ấm, hết cold start)</text>
+    <text x="58" y="190" font-size="9.5" fill="currentColor" opacity="0.55">nằm TRONG phần cấp</text>
+    <text x="58" y="203" font-size="9.5" fill="currentColor" opacity="0.55">của function</text>
+  </g>
+
+  <g>
+    <rect x="256" y="64" width="120" height="160" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="268" y="86" font-size="12" font-weight="700" fill="currentColor">RESERVED</text>
+    <text x="268" y="104" font-size="11" font-weight="700" fill="currentColor">Func B</text>
+    <text x="268" y="128" font-size="10" fill="currentColor" opacity="0.7">slice riêng,</text>
+    <text x="268" y="143" font-size="10" fill="currentColor" opacity="0.7">capped</text>
+  </g>
+
+  <g>
+    <rect x="390" y="64" width="298" height="160" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="404" y="86" font-size="12" font-weight="700" fill="currentColor">UNRESERVED — pool chung</text>
+    <text x="404" y="106" font-size="10.5" fill="currentColor" opacity="0.72">Mọi function khác chia nhau phần còn lại</text>
+    <text x="404" y="124" font-size="10.5" fill="currentColor" opacity="0.72">(1000 − tổng reserved)</text>
+    <text x="404" y="150" font-size="10" fill="currentColor" opacity="0.55">Func C, D, E... tranh nhau ở đây</text>
+    <text x="404" y="170" font-size="10" fill="currentColor" opacity="0.55">→ không function nào được đảm bảo</text>
+    <text x="404" y="200" font-size="9.5" fill="currentColor" opacity="0.5">AWS giữ tối thiểu 100 cho unreserved</text>
+  </g>
+
+  <text x="16" y="266" font-size="11" fill="currentColor" opacity="0.78">Reserved = vừa trần (function không vượt) vừa đảm bảo (account giữ riêng) — miễn phí.</text>
+  <text x="16" y="286" font-size="11" fill="currentColor" opacity="0.78">Provisioned = sub-set đã init sẵn của phần cấp, chống cold start — tốn tiền, gắn alias/version.</text>
+</svg>
+
 Điểm mấu chốt:
 
 - **Reserved** vừa là *trần* (function không vượt được) vừa *đảm bảo* (account giữ riêng chừng đó cho nó). Đặt reserved = 0 → **vô hiệu hóa function** (kill switch).
@@ -177,6 +269,75 @@ Cơ chế & bẫy quan trọng:
 - Phải dùng **private subnet** + route qua NAT. KHÔNG gán public IP cho Lambda ENI được.
 - IAM cần quyền tạo/xóa ENI (`ec2:CreateNetworkInterface`, ...) — managed policy `AWSLambdaVPCAccessExecutionRole`.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Lambda trong VPC — đường mạng tới resource private và ra ngoài VPC</title>
+  <desc>Lambda service kết nối qua Hyperplane ENI đặt trong private subnet. Từ đó tới thẳng RDS và ElastiCache trong VPC. Để gọi S3 hoặc DynamoDB dùng VPC Gateway Endpoint miễn phí. Để ra Internet công cộng phải qua NAT Gateway đặt ở public subnet rồi qua Internet Gateway.</desc>
+  <defs>
+    <marker id="vpcArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+  <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">Lambda trong VPC — định tuyến</text>
+
+  <g>
+    <rect x="16" y="40" width="120" height="58" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="76" y="66" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Lambda</text>
+    <text x="76" y="84" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">service</text>
+  </g>
+
+  <rect x="172" y="32" width="532" height="266" rx="12" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="186" y="52" font-size="11.5" font-weight="700" fill="currentColor" opacity="0.85">VPC</text>
+
+  <rect x="186" y="62" width="280" height="170" rx="10" fill="#8b5cf6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.22" stroke-dasharray="5 4"/>
+  <text x="200" y="80" font-size="10.5" font-weight="700" fill="currentColor" opacity="0.8">Private subnet</text>
+
+  <g>
+    <rect x="200" y="92" width="120" height="50" rx="9" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="260" y="112" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Hyperplane</text>
+    <text x="260" y="128" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">ENI</text>
+  </g>
+  <line x1="136" y1="69" x2="196" y2="105" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#vpcArr)"/>
+
+  <g>
+    <rect x="346" y="86" width="106" height="40" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="399" y="111" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">RDS</text>
+    <rect x="346" y="134" width="106" height="40" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="399" y="159" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">ElastiCache</text>
+  </g>
+  <line x1="320" y1="111" x2="342" y2="106" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#vpcArr)"/>
+  <line x1="320" y1="125" x2="342" y2="150" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#vpcArr)"/>
+  <text x="324" y="98" font-size="9" fill="#10b981" opacity="0.95" font-weight="700">trực tiếp</text>
+
+  <g>
+    <rect x="200" y="158" width="120" height="62" rx="9" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="260" y="180" font-size="10" font-weight="700" text-anchor="middle" fill="currentColor">VPC Gateway</text>
+    <text x="260" y="194" font-size="10" font-weight="700" text-anchor="middle" fill="currentColor">Endpoint</text>
+    <text x="260" y="210" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.65">S3 / DynamoDB (free)</text>
+  </g>
+  <line x1="260" y1="142" x2="260" y2="154" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#vpcArr)"/>
+  <g>
+    <rect x="346" y="186" width="106" height="34" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="399" y="208" font-size="10" font-weight="700" text-anchor="middle" fill="currentColor">S3 / DynamoDB</text>
+  </g>
+  <line x1="320" y1="190" x2="342" y2="197" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#vpcArr)"/>
+
+  <rect x="486" y="62" width="200" height="170" rx="10" fill="#f59e0b" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.22" stroke-dasharray="5 4"/>
+  <text x="500" y="80" font-size="10.5" font-weight="700" fill="currentColor" opacity="0.8">Public subnet</text>
+  <g>
+    <rect x="500" y="92" width="170" height="48" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="585" y="113" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">NAT Gateway</text>
+    <text x="585" y="130" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.65">cho API public ra ngoài</text>
+  </g>
+  <g>
+    <rect x="500" y="152" width="170" height="44" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="585" y="178" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Internet Gateway</text>
+  </g>
+  <path d="M320 135 H336 V252 H496 V116" fill="none" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#vpcArr)"/>
+  <text x="344" y="248" font-size="9" fill="#f59e0b" opacity="0.95" font-weight="700">ENI → ra Internet công cộng</text>
+  <line x1="585" y1="140" x2="585" y2="148" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#vpcArr)"/>
+
+  <text x="16" y="324" font-size="11" fill="currentColor" opacity="0.78">ENI → RDS/ElastiCache: đi thẳng trong VPC. → S3/DynamoDB: Gateway Endpoint (miễn phí).</text>
+  <text x="16" y="344" font-size="11" fill="currentColor" opacity="0.78">→ Internet công cộng: bắt buộc NAT Gateway (public subnet) → IGW. Đặt Lambda vào VPC = mất internet mặc định.</text>
+</svg>
+
 > ⚠️ Bẫy kinh điển: "Lambda trong VPC gọi DynamoDB/S3 bị timeout" → không có route ra internet. Sửa: thêm **VPC Gateway Endpoint** cho S3/DynamoDB (miễn phí), hoặc NAT Gateway. Đề rất hay hỏi câu này.
 > ⚠️ Bẫy: "Connection pool tới RDS cạn (too many connections)" khi concurrency cao → mỗi instance mở connection riêng. Giải pháp: **RDS Proxy** (pool connection), không phải tăng memory.
 
@@ -193,6 +354,60 @@ Hai cách Lambda được gọi:
 | SNS | Async | retry tự động |
 | EventBridge | Async | scheduled / pattern |
 | Cognito, Lex | Sync | |
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Ba mô hình invoke Lambda — push sync, push async và poll</title>
+  <desc>Ba luồng song song. Push-sync: caller gọi thẳng Lambda và chờ response. Push-async: caller bỏ event vào hàng đợi nội bộ của Lambda, Lambda chạy và tự retry, thất bại đi vào DLQ hoặc Destinations. Poll: event source mapping của Lambda chủ động poll SQS, Kinesis hoặc DynamoDB Streams rồi gọi function theo batch.</desc>
+  <defs>
+    <marker id="invArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+  <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">Ba mô hình invoke</text>
+
+  <g>
+    <text x="120" y="48" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">1 · PUSH — SYNC</text>
+    <rect x="40" y="60" width="160" height="38" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="120" y="84" font-size="10.5" text-anchor="middle" fill="currentColor">Caller (API GW/ALB)</text>
+    <line x1="120" y1="98" x2="120" y2="124" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#invArr)"/>
+    <text x="128" y="116" font-size="9" fill="currentColor" opacity="0.7">gọi + CHỜ</text>
+    <rect x="40" y="126" width="160" height="38" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="120" y="150" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Lambda</text>
+    <line x1="120" y1="164" x2="120" y2="190" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#invArr)"/>
+    <text x="120" y="208" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">response về caller</text>
+    <text x="120" y="226" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.55">lỗi → caller tự xử lý</text>
+  </g>
+
+  <g>
+    <text x="360" y="48" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">2 · PUSH — ASYNC</text>
+    <rect x="280" y="60" width="160" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="82" font-size="10.5" text-anchor="middle" fill="currentColor">Caller (S3/SNS/EB)</text>
+    <line x1="360" y1="94" x2="360" y2="114" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#invArr)"/>
+    <rect x="280" y="116" width="160" height="34" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="138" font-size="10" text-anchor="middle" fill="currentColor">Lambda internal queue</text>
+    <line x1="360" y1="150" x2="360" y2="170" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#invArr)"/>
+    <rect x="280" y="172" width="160" height="38" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="190" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Lambda</text>
+    <text x="360" y="204" font-size="8.5" text-anchor="middle" fill="currentColor" opacity="0.6">retry 2 lần</text>
+    <line x1="360" y1="210" x2="360" y2="232" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#invArr)"/>
+    <rect x="280" y="234" width="160" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="256" font-size="10" text-anchor="middle" fill="currentColor">DLQ / Destinations</text>
+  </g>
+
+  <g>
+    <text x="600" y="48" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">3 · POLL</text>
+    <rect x="520" y="60" width="160" height="38" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="600" y="78" font-size="10" text-anchor="middle" fill="currentColor">SQS / Kinesis /</text>
+    <text x="600" y="91" font-size="10" text-anchor="middle" fill="currentColor">DDB Streams</text>
+    <path d="M600 126 V102" fill="none" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#invArr)"/>
+    <text x="612" y="116" font-size="9" fill="currentColor" opacity="0.7">poll</text>
+    <rect x="520" y="128" width="160" height="42" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="600" y="146" font-size="10" font-weight="700" text-anchor="middle" fill="currentColor">Event Source Mapping</text>
+    <text x="600" y="161" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.65">(Lambda chủ động poll)</text>
+    <line x1="600" y1="170" x2="600" y2="190" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#invArr)"/>
+    <rect x="520" y="192" width="160" height="38" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="600" y="211" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Lambda</text>
+    <text x="600" y="224" font-size="8.5" text-anchor="middle" fill="currentColor" opacity="0.6">invoke theo batch</text>
+  </g>
+</svg>
 
 **Poll (Event Source Mapping)** — Lambda service tự *poll* nguồn rồi gọi function:
 

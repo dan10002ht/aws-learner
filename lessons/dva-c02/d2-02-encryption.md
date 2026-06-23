@@ -44,6 +44,67 @@ Khi cần giải mã:
 1. Gọi `Decrypt` gửi encrypted data key (nhỏ, < 4KB) → KMS trả về plaintext data key.
 2. Dùng plaintext data key giải mã dữ liệu.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Luồng envelope encryption với KMS GenerateDataKey và Decrypt</title>
+  <desc>Mã hóa: GenerateDataKey trả về plaintext data key và encrypted data key; dùng plaintext key mã hóa dữ liệu lớn tại client, xóa plaintext khỏi RAM, lưu encrypted key cạnh ciphertext. Giải mã: gửi encrypted key nhỏ dưới 4KB lên KMS Decrypt để lấy lại plaintext key rồi giải mã.</desc>
+
+  <defs>
+    <marker id="envArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+
+  <text x="16" y="22" font-size="13.5" font-weight="700" fill="#10b981" fill-opacity="0.95">MÃ HÓA — đi xuống, bọc data lớn bằng data key</text>
+
+  <rect x="16" y="36" width="150" height="56" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="91" y="60" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">KMS</text>
+  <text x="91" y="78" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">GenerateDataKey</text>
+
+  <line x1="166" y1="64" x2="206" y2="64" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#envArr)"/>
+  <text x="186" y="56" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">trả 2 thứ</text>
+
+  <rect x="212" y="36" width="200" height="26" rx="7" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="312" y="54" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Plaintext data key (key thật)</text>
+
+  <rect x="212" y="66" width="200" height="26" rx="7" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="312" y="84" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Encrypted data key (CiphertextBlob)</text>
+
+  <line x1="412" y1="49" x2="452" y2="49" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#envArr)"/>
+  <rect x="458" y="34" width="246" height="58" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="581" y="54" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Mã hóa data lớn (AES) tại client</text>
+  <text x="581" y="72" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">rồi XÓA plaintext key khỏi RAM</text>
+  <text x="581" y="87" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">(file 1 GB không gửi lên KMS)</text>
+
+  <line x1="312" y1="92" x2="312" y2="120" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#envArr)"/>
+  <text x="322" y="110" font-size="9.5" fill="currentColor" opacity="0.7">lưu cạnh ciphertext</text>
+
+  <rect x="458" y="120" width="246" height="40" rx="9" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="581" y="144" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">Ciphertext (data đã mã hóa)</text>
+  <rect x="212" y="120" width="200" height="40" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="312" y="144" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">Encrypted data key (lưu kèm)</text>
+
+  <line x1="16" y1="186" x2="704" y2="186" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 4"/>
+  <text x="16" y="214" font-size="13.5" font-weight="700" fill="#3b82f6" fill-opacity="0.95">GIẢI MÃ — gửi encrypted key nhỏ lên KMS</text>
+
+  <rect x="16" y="228" width="200" height="40" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="116" y="248" font-size="10.5" text-anchor="middle" fill="currentColor">Encrypted data key</text>
+  <text x="116" y="262" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">(nhỏ, dưới 4 KB)</text>
+
+  <line x1="216" y1="248" x2="256" y2="248" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#envArr)"/>
+
+  <rect x="262" y="226" width="150" height="44" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="337" y="246" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">KMS</text>
+  <text x="337" y="262" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">Decrypt</text>
+
+  <line x1="412" y1="248" x2="452" y2="248" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#envArr)"/>
+
+  <rect x="458" y="226" width="200" height="44" rx="9" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="558" y="246" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Plaintext data key</text>
+  <text x="558" y="261" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">(lấy lại trong RAM)</text>
+
+  <line x1="558" y1="270" x2="558" y2="296" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#envArr)"/>
+  <rect x="458" y="296" width="200" height="40" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="558" y="320" font-size="10.5" text-anchor="middle" fill="currentColor">Giải mã data tại client</text>
+</svg>
+
 ```
 GenerateDataKey  ──►  { Plaintext, CiphertextBlob }
    Plaintext  ──► mã hóa data tại chỗ ──► xóa khỏi RAM
@@ -128,6 +189,42 @@ KMS có cơ chế phân quyền hơi khác các service khác. Có **3 lớp**:
 - Tạo bằng `CreateGrant`, thu hồi bằng `RevokeGrant`.
 - Hữu ích khi cần cấp quyền "dùng key để mã hóa/giải mã" trong thời gian ngắn mà không sửa key policy.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Ba lớp phân quyền KMS — key policy là cổng chính</title>
+  <desc>Key policy là cổng ngoài cùng bao quanh tất cả; chỉ khi key policy mở quyền cho account qua dòng root thì IAM policy mới có hiệu lực; grants nằm bên trong cho phép ủy quyền tạm thời. Bên phải minh họa rằng IAM kms:Decrypt một mình sẽ AccessDenied nếu key policy im lặng.</desc>
+
+  <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">3 lớp quyền KMS — key policy bọc ngoài cùng (cổng)</text>
+
+  <rect x="16" y="36" width="420" height="290" rx="12" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="30" y="60" font-size="12.5" font-weight="700" fill="currentColor">Key policy — CỔNG CHÍNH (gắn vào key)</text>
+  <text x="30" y="78" font-size="10" fill="currentColor" opacity="0.7">Phải mở quyền cho account qua dòng "root" thì lớp trong mới có hiệu lực</text>
+
+  <rect x="40" y="92" width="372" height="172" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.28"/>
+  <text x="54" y="116" font-size="12" font-weight="700" fill="currentColor">IAM policy</text>
+  <text x="54" y="134" font-size="10" fill="currentColor" opacity="0.7">Chỉ hiệu lực NẾU key policy đã "mở cửa" cho account</text>
+
+  <rect x="60" y="148" width="332" height="96" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.28"/>
+  <text x="74" y="172" font-size="12" font-weight="700" fill="currentColor">Grants</text>
+  <text x="74" y="190" font-size="10" fill="currentColor" opacity="0.7">Ủy quyền TẠM THỜI, chi tiết cho một principal</text>
+  <text x="74" y="206" font-size="10" fill="currentColor" opacity="0.7">CreateGrant / RevokeGrant — không cần sửa key policy</text>
+  <text x="74" y="226" font-size="10" fill="currentColor" opacity="0.7">Hay dùng cho delegation giữa các service</text>
+
+  <text x="226" y="294" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">Lớp ngoài đóng → lớp trong vô dụng</text>
+  <text x="226" y="312" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">(ngược với S3 bucket policy)</text>
+
+  <text x="468" y="60" font-size="12.5" font-weight="700" fill="currentColor">Đối chiếu</text>
+
+  <rect x="468" y="76" width="236" height="108" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.28"/>
+  <text x="586" y="100" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Key policy MỞ + IAM cho phép</text>
+  <text x="586" y="122" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">kms:Decrypt được chấp nhận</text>
+  <text x="586" y="148" font-size="22" font-weight="700" text-anchor="middle" fill="#10b981">ALLOW</text>
+
+  <rect x="468" y="200" width="236" height="108" rx="10" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.28"/>
+  <text x="586" y="224" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">IAM kms:Decrypt một mình</text>
+  <text x="586" y="246" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">nhưng key policy IM LẶNG</text>
+  <text x="586" y="272" font-size="20" font-weight="700" text-anchor="middle" fill="#f59e0b">AccessDenied</text>
+</svg>
+
 > ⚠️ Bẫy: Đề hay hỏi "User đã có IAM policy `kms:Decrypt` nhưng vẫn bị AccessDenied". Nguyên nhân: **key policy chưa cho phép**. Ngược với hầu hết service khác — với KMS bạn phải nghĩ tới key policy trước.
 
 | Cơ chế | Phạm vi | Tồn tại lâu? | Khi nào dùng |
@@ -202,6 +299,42 @@ Best practice: **mã hóa cả hai**. In transit dùng TLS (qua ACM), at rest d�
 | **SSE-KMS** | KMS key (bạn chọn) | S3 (server) | `x-amz-server-side-encryption: aws:kms` | Audit qua CloudTrail, kiểm soát key policy |
 | **SSE-C** | **Bạn** (gửi key theo mỗi request) | S3 (server) | Truyền key trong header mỗi request | S3 không lưu key của bạn; PHẢI dùng HTTPS |
 | **Client-side** | Bạn | **Client** (trước khi gửi) | — | S3 chỉ thấy ciphertext; dùng AWS Encryption SDK |
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>So sánh hai trục mã hóa S3 — ai mã hóa và ai giữ key</title>
+  <desc>Trục dọc: ai thực hiện mã hóa (server S3 ở trên, client ở dưới). Trục ngang: ai giữ key (AWS quản lý bên trái, bạn giữ bên phải). SSE-S3 và SSE-KMS là server mã hóa AWS hoặc KMS giữ key; SSE-C là server mã hóa nhưng bạn gửi key mỗi request; Client-side là client mã hóa và bạn giữ key, S3 chỉ thấy ciphertext.</desc>
+
+  <text x="360" y="22" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Hai trục: AI mã hóa × AI giữ key</text>
+
+  <line x1="120" y1="56" x2="120" y2="340" stroke="currentColor" stroke-opacity="0.35"/>
+  <line x1="120" y1="340" x2="700" y2="340" stroke="currentColor" stroke-opacity="0.35"/>
+
+  <text x="60" y="120" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor" transform="rotate(-90 60 120)">SERVER (S3) mã hóa</text>
+  <text x="60" y="275" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor" transform="rotate(-90 60 275)">CLIENT mã hóa</text>
+
+  <text x="280" y="365" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">AWS quản lý key</text>
+  <text x="560" y="365" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">BẠN giữ key</text>
+
+  <rect x="140" y="64" width="250" height="96" rx="10" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="265" y="88" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">SSE-S3</text>
+  <text x="265" y="108" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">S3 mã hóa · key aws/s3</text>
+  <text x="265" y="124" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">AES256 · đơn giản nhất</text>
+
+  <rect x="140" y="168" width="250" height="80" rx="10" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="265" y="194" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">SSE-KMS</text>
+  <text x="265" y="214" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">S3 mã hóa · KMS giữ key bạn chọn</text>
+  <text x="265" y="230" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">audit CloudTrail · key policy</text>
+
+  <rect x="430" y="64" width="270" height="96" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="565" y="88" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">SSE-C</text>
+  <text x="565" y="108" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">S3 mã hóa · BẠN gửi key mỗi request</text>
+  <text x="565" y="124" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">S3 không lưu key · BẮT BUỘC HTTPS</text>
+
+  <rect x="430" y="256" width="270" height="80" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="565" y="282" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Client-side</text>
+  <text x="565" y="302" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">CLIENT mã hóa trước khi gửi</text>
+  <text x="565" y="318" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">S3 chỉ thấy ciphertext · Encryption SDK</text>
+</svg>
 
 Cách chọn nhanh:
 - Muốn đơn giản, không quan tâm key → **SSE-S3**.

@@ -14,16 +14,47 @@ Hiểu đúng 3 khái niệm này là nền tảng cho mọi câu hỏi X-Ray.
 | **Segment** | Dữ liệu một **service/resource** đóng góp vào trace. Mỗi compute component tạo 1 segment. | Lambda function tạo một segment |
 | **Subsegment** | Chia nhỏ bên trong một segment — đo từng phần việc con. | Trong Lambda segment: subsegment "call DynamoDB", subsegment "call HTTP API" |
 
-Hình dung:
+Hình dung — một **trace** bọc các **segment**, mỗi segment bọc các **subsegment** (hộp lồng nhau), kèm latency từng phần:
 
-```
-Trace (Trace ID: 1-5f...-abc)
-└── Segment: API Gateway
-    └── Segment: Lambda "ProcessOrder"
-        ├── Subsegment: DynamoDB GetItem  (12ms)
-        ├── Subsegment: HTTP GET payment-api  (340ms) ← thủ phạm latency
-        └── Subsegment: SQS SendMessage  (8ms)
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Cấu trúc lồng nhau Trace → Segment → Subsegment trong X-Ray</title>
+  <desc>Một trace có Trace ID duy nhất bọc segment API Gateway, bên trong bọc segment Lambda ProcessOrder; segment Lambda chứa ba subsegment: DynamoDB GetItem 12ms, HTTP GET payment-api 340ms là thủ phạm latency, và SQS SendMessage 8ms.</desc>
+  <rect x="12" y="34" width="696" height="272" rx="11" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <rect x="24" y="12" width="290" height="24" rx="12" fill="#8b5cf6" fill-opacity="0.9"/>
+  <text x="36" y="29" font-size="11.5" font-weight="700" fill="#fff">Trace · Trace ID 1-5f…-abc</text>
+
+  <rect x="30" y="58" width="660" height="236" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <rect x="42" y="48" width="180" height="22" rx="11" fill="#f59e0b" fill-opacity="0.92"/>
+  <text x="54" y="64" font-size="11" font-weight="700" fill="#fff">Segment · API Gateway</text>
+
+  <rect x="48" y="86" width="624" height="196" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <rect x="60" y="76" width="232" height="22" rx="11" fill="#3b82f6" fill-opacity="0.92"/>
+  <text x="72" y="92" font-size="11" font-weight="700" fill="#fff">Segment · Lambda "ProcessOrder"</text>
+
+  <g>
+    <rect x="66" y="112" width="588" height="44" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="80" y="130" font-size="12" font-weight="700" fill="currentColor">Subsegment · DynamoDB GetItem</text>
+    <text x="80" y="147" font-size="10.5" fill="currentColor" opacity="0.7">lời gọi AWS SDK</text>
+    <rect x="582" y="122" width="60" height="24" rx="12" fill="#10b981" fill-opacity="0.9"/>
+    <text x="612" y="139" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">12 ms</text>
+  </g>
+
+  <g>
+    <rect x="66" y="164" width="588" height="50" rx="8" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.5"/>
+    <text x="80" y="183" font-size="12" font-weight="700" fill="currentColor">Subsegment · HTTP GET payment-api</text>
+    <text x="80" y="200" font-size="10.5" fill="currentColor" opacity="0.8">thủ phạm latency — chiếm phần lớn thời gian</text>
+    <rect x="576" y="176" width="66" height="26" rx="13" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="609" y="194" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">340 ms</text>
+  </g>
+
+  <g>
+    <rect x="66" y="222" width="588" height="44" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="80" y="240" font-size="12" font-weight="700" fill="currentColor">Subsegment · SQS SendMessage</text>
+    <text x="80" y="257" font-size="10.5" fill="currentColor" opacity="0.7">lời gọi AWS SDK</text>
+    <rect x="588" y="232" width="54" height="24" rx="12" fill="#10b981" fill-opacity="0.9"/>
+    <text x="615" y="249" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">8 ms</text>
+  </g>
+</svg>
 
 **Trace ID** được truyền giữa các service qua HTTP header `X-Amzn-Trace-Id`. Đây là cách X-Ray "nối" các segment của các service khác nhau thành một trace.
 
@@ -149,6 +180,58 @@ Resources:
 | Bật tracing | Chạy daemon + SDK | `Mode=Active` (1 setting) |
 | Cổng giao tiếp SDK→daemon | UDP **2000** | nội bộ, không lo |
 | IAM | Cần `xray:PutTraceSegments` | Cần (qua execution role) |
+
+Hai đường đi của segment — tự chạy daemon (trái) so với daemon do AWS quản lý trên Lambda (phải):
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Đường gửi segment: X-Ray daemon tự chạy (EC2/ECS/on-prem) so với Lambda Active Tracing</title>
+  <desc>Bên trái, trên EC2 ECS hoặc on-prem, SDK gửi segment qua UDP cổng 2000 tới X-Ray daemon do bạn tự chạy, daemon gom batch rồi đẩy lên X-Ray API. Bên phải, trên Lambda, SDK gửi tới X-Ray daemon do AWS quản lý sẵn trong execution environment, chỉ cần bật Mode Active và có IAM; daemon batch lên X-Ray API.</desc>
+  <defs>
+    <marker id="xrArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+
+  <text x="186" y="26" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">EC2 / ECS / on-prem</text>
+  <text x="534" y="26" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Lambda (Active Tracing)</text>
+  <line x1="360" y1="40" x2="360" y2="344" stroke="currentColor" stroke-opacity="0.18" stroke-dasharray="5 4"/>
+
+  <!-- LEFT column -->
+  <rect x="32" y="44" width="308" height="50" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="186" y="66" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">App + X-Ray SDK</text>
+  <text x="186" y="83" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">trên instance/container của bạn</text>
+
+  <line x1="186" y1="94" x2="186" y2="128" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#xrArr)"/>
+  <rect x="118" y="100" width="136" height="22" rx="11" fill="#f59e0b" fill-opacity="0.92"/>
+  <text x="186" y="116" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">UDP cổng 2000</text>
+
+  <rect x="32" y="132" width="308" height="58" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3" stroke-width="1.5"/>
+  <text x="186" y="156" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">X-Ray daemon — BẠN tự chạy</text>
+  <text x="186" y="174" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">gom (buffer) rồi đẩy batch</text>
+
+  <line x1="186" y1="190" x2="186" y2="224" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#xrArr)"/>
+
+  <!-- RIGHT column -->
+  <rect x="380" y="44" width="308" height="50" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="534" y="66" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">App + X-Ray SDK</text>
+  <text x="534" y="83" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Mode=Active + IAM role</text>
+
+  <line x1="534" y1="94" x2="534" y2="128" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#xrArr)"/>
+  <rect x="466" y="100" width="136" height="22" rx="11" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="534" y="116" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.85">nội bộ, không lo</text>
+
+  <rect x="380" y="132" width="308" height="58" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3" stroke-width="1.5"/>
+  <text x="534" y="156" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">X-Ray daemon — AWS quản lý sẵn</text>
+  <text x="534" y="174" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">có sẵn trong execution env</text>
+
+  <line x1="534" y1="190" x2="534" y2="224" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#xrArr)"/>
+
+  <!-- shared destination -->
+  <rect x="180" y="228" width="360" height="56" rx="10" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.28"/>
+  <text x="360" y="252" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">AWS X-Ray API</text>
+  <text x="360" y="270" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">trace · service map · phân tích latency</text>
+
+  <text x="186" y="308" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">Không có daemon = SDK gửi UDP vào hư vô → KHÔNG có trace</text>
+  <text x="534" y="308" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">Không cài daemon thủ công — chỉ bật Active + IAM</text>
+</svg>
 
 > ⚠️ Bẫy 1: Câu hỏi "Lambda đã bật code instrument bằng SDK nhưng **không thấy trace** — thiếu gì?" → thường là **chưa bật Active tracing** (`Mode=Active`) hoặc **thiếu IAM permission**. KHÔNG phải "cài daemon" — Lambda không cần cài daemon thủ công.
 

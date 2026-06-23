@@ -22,6 +22,60 @@ PK = CustomerId, SK = OrderDate
 
 Query "tất cả order của customer X trong tháng 3" → siêu nhanh vì cùng partition, SK cho phép `between`.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Bố cục vật lý của Partition Key và Sort Key trong DynamoDB</title>
+  <desc>Partition Key được hash để chọn partition vật lý; các item cùng PK nằm chung một partition và sắp xếp theo Sort Key. Một PK bị dồn quá nhiều traffic trở thành hot partition gây throttle dù tổng capacity còn dư.</desc>
+  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Partition Key hash → partition vật lý; cùng PK sắp theo Sort Key</text>
+
+  <defs>
+    <marker id="pkArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
+  </defs>
+
+  <rect x="16" y="44" width="150" height="120" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="91" y="64" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Items (PK, SK)</text>
+  <text x="28" y="86" font-size="10.5" fill="currentColor" opacity="0.8">C1 · 2026-03-01</text>
+  <text x="28" y="104" font-size="10.5" fill="currentColor" opacity="0.8">C1 · 2026-03-05</text>
+  <text x="28" y="122" font-size="10.5" fill="currentColor" opacity="0.8">C2 · 2026-03-02</text>
+  <text x="28" y="140" font-size="10.5" fill="currentColor" opacity="0.8">C3 · 2026-03-03</text>
+  <text x="28" y="158" font-size="10.5" fill="currentColor" opacity="0.8">C3 · 2026-03-09</text>
+
+  <rect x="196" y="86" width="96" height="36" rx="9" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="244" y="102" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">hash(PK)</text>
+  <text x="244" y="116" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">chọn partition</text>
+  <line x1="166" y1="104" x2="194" y2="104" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#pkArr)"/>
+
+  <g>
+    <rect x="322" y="44" width="180" height="92" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="412" y="62" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Partition P1 — PK=C1</text>
+    <text x="334" y="84" font-size="10.5" fill="currentColor" opacity="0.85">SK 2026-03-01</text>
+    <text x="334" y="102" font-size="10.5" fill="currentColor" opacity="0.85">SK 2026-03-05</text>
+    <text x="334" y="124" font-size="9.5" fill="currentColor" opacity="0.6">↑ sắp theo Sort Key</text>
+  </g>
+  <line x1="292" y1="100" x2="320" y2="86" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#pkArr)"/>
+
+  <g>
+    <rect x="322" y="146" width="180" height="56" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="412" y="164" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Partition P2 — PK=C2/C3</text>
+    <text x="334" y="186" font-size="10.5" fill="currentColor" opacity="0.85">C2 · C3 · ... cùng SK order</text>
+  </g>
+  <line x1="292" y1="108" x2="320" y2="160" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#pkArr)"/>
+
+  <g>
+    <rect x="322" y="236" width="382" height="104" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="334" y="248" width="120" height="20" rx="10" fill="#f59e0b" fill-opacity="0.9"/>
+    <text x="394" y="262" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">HOT partition</text>
+    <text x="334" y="288" font-size="11" font-weight="700" fill="currentColor">Một PK bị dồn quá nhiều request</text>
+    <text x="334" y="308" font-size="10.5" fill="currentColor" opacity="0.82">→ throttle ngay tại partition đó</text>
+    <text x="334" y="326" font-size="10.5" fill="currentColor" opacity="0.82">dù tổng RCU/WCU của bảng vẫn còn dư</text>
+  </g>
+
+  <rect x="16" y="236" width="290" height="104" rx="9" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/>
+  <text x="28" y="258" font-size="11" font-weight="700" fill="currentColor">Cùng PK = cùng 1 partition</text>
+  <text x="28" y="280" font-size="10.5" fill="currentColor" opacity="0.82">PK quyết định partition nào.</text>
+  <text x="28" y="298" font-size="10.5" fill="currentColor" opacity="0.82">SK quyết định thứ tự trong partition</text>
+  <text x="28" y="316" font-size="10.5" fill="currentColor" opacity="0.82">→ query range theo SK rất nhanh.</text>
+</svg>
+
 ### High-cardinality keys & hot partition
 
 DynamoDB chia dữ liệu thành các partition vật lý. Nếu PK có **cardinality thấp** (ít giá trị khác nhau) hoặc traffic dồn vào vài giá trị PK, ta gặp **hot partition** → throttling dù tổng capacity còn dư.
@@ -48,6 +102,48 @@ Mặc định bạn chỉ query được theo primary key. Muốn query theo att
 | Capacity | Dùng chung RCU/WCU với bảng gốc | Có RCU/WCU **riêng** |
 | Giới hạn | 5 LSI/bảng | 20 GSI/bảng (mặc định) |
 | Kích thước item collection | Giới hạn 10GB/partition key | Không giới hạn |
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Quan hệ giữa LSI, GSI và bảng gốc trong DynamoDB</title>
+  <desc>LSI dùng chung Partition Key của bảng gốc, nằm cùng partition, dùng chung capacity và hỗ trợ strongly consistent read. GSI có Partition Key và Sort Key riêng, capacity riêng và chỉ eventually consistent.</desc>
+  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">LSI bám PK bảng gốc · GSI là bảng phụ độc lập</text>
+
+  <defs>
+    <marker id="idxArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
+  </defs>
+
+  <rect x="270" y="44" width="180" height="96" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="66" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Bảng gốc</text>
+  <text x="360" y="86" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">PK + SK</text>
+  <text x="360" y="106" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">RCU/WCU của bảng</text>
+  <text x="360" y="126" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">strong + eventual read</text>
+
+  <g>
+    <rect x="16" y="180" width="290" height="120" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <rect x="28" y="192" width="60" height="20" rx="10" fill="#10b981" fill-opacity="0.9"/>
+    <text x="58" y="206" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">LSI</text>
+    <text x="98" y="207" font-size="10.5" font-weight="700" fill="currentColor">Local Secondary Index</text>
+    <text x="28" y="232" font-size="10.5" fill="currentColor" opacity="0.85">• CÙNG PK với bảng gốc, SK khác</text>
+    <text x="28" y="252" font-size="10.5" fill="currentColor" opacity="0.85">• Nằm CÙNG partition, dùng chung capacity</text>
+    <text x="28" y="272" font-size="10.5" fill="currentColor" opacity="0.85">• Hỗ trợ STRONGLY consistent read</text>
+    <text x="28" y="292" font-size="10.5" fill="currentColor" opacity="0.85">• Chỉ tạo lúc tạo bảng (≤5)</text>
+  </g>
+  <line x1="300" y1="120" x2="180" y2="178" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#idxArr)"/>
+  <text x="206" y="158" font-size="10" fill="currentColor" opacity="0.7">chia sẻ PK</text>
+
+  <g>
+    <rect x="414" y="180" width="290" height="120" rx="10" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <rect x="426" y="192" width="60" height="20" rx="10" fill="#8b5cf6" fill-opacity="0.9"/>
+    <text x="456" y="206" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">GSI</text>
+    <text x="496" y="207" font-size="10.5" font-weight="700" fill="currentColor">Global Secondary Index</text>
+    <text x="426" y="232" font-size="10.5" fill="currentColor" opacity="0.85">• PK + SK RIÊNG (như bảng riêng)</text>
+    <text x="426" y="252" font-size="10.5" fill="currentColor" opacity="0.85">• RCU/WCU RIÊNG, throttle độc lập</text>
+    <text x="426" y="272" font-size="10.5" fill="currentColor" opacity="0.85">• CHỈ eventually consistent</text>
+    <text x="426" y="292" font-size="10.5" fill="currentColor" opacity="0.85">• Thêm/xóa bất kỳ lúc nào (≤20)</text>
+  </g>
+  <line x1="420" y1="120" x2="540" y2="178" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="5 3" marker-end="url(#idxArr)"/>
+  <text x="500" y="158" font-size="10" fill="currentColor" opacity="0.7">tách riêng</text>
+</svg>
 
 Cách nhớ: **L**ocal = cùng partition key, **L**ocked vào lúc create table. **G**lobal = tự do PK mới, nhưng chỉ **G**uess được (eventually consistent).
 

@@ -4,18 +4,67 @@ Domain 3 (Deployment) chiếm ~24% đề DVA-C02, và đây là nhóm dịch v�
 
 ## Bức tranh tổng thể: một commit chạy qua đâu
 
-```
-Developer push code
-   │
-   ▼
-[Source]  CodeConnections → GitHub/Bitbucket  (hoặc S3, CodeCommit)
-   │  (output artifact: SourceOutput)
-   ▼
-[Build]   CodeBuild  ← đọc buildspec.yml, build + test, kéo package từ CodeArtifact
-   │  (output artifact: BuildOutput)
-   ▼
-[Deploy]  CodeDeploy ← đọc appspec.yml, deploy lên EC2 / Lambda / ECS
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Luồng CodePipeline: Source → Build → Deploy với artifact lưu ở S3</title>
+  <desc>CodePipeline điều phối ba stage trái sang phải. Source dùng CodeConnections kéo từ Git, xuất SourceArtifact. Build dùng CodeBuild đọc buildspec.yml và kéo package từ CodeArtifact, xuất BuildArtifact. Deploy dùng CodeDeploy đọc appspec.yml triển khai lên EC2, Lambda hoặc ECS. Artifact giữa các stage lưu trong S3 artifact store.</desc>
+  <defs>
+    <marker id="cpArr" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0 0 L8 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">CodePipeline — nhạc trưởng điều phối các stage</text>
+
+  <rect x="16" y="40" width="688" height="120" rx="11" fill="#8b5cf6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="5 4"/>
+  <text x="30" y="58" font-size="11" font-weight="700" fill="currentColor" opacity="0.75">CodePipeline</text>
+
+  <g>
+    <rect x="34" y="68" width="190" height="80" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="48" y="88" font-size="12.5" font-weight="700" fill="currentColor">Source</text>
+    <text x="48" y="106" font-size="10.5" fill="currentColor" opacity="0.72">CodeConnections → Git</text>
+    <text x="48" y="121" font-size="10.5" fill="currentColor" opacity="0.72">(GitHub/Bitbucket/S3)</text>
+    <text x="48" y="138" font-size="10" fill="currentColor" opacity="0.55">webhook khi push</text>
+  </g>
+
+  <g>
+    <rect x="265" y="68" width="190" height="80" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="279" y="88" font-size="12.5" font-weight="700" fill="currentColor">Build</text>
+    <text x="279" y="106" font-size="10.5" fill="currentColor" opacity="0.72">CodeBuild · buildspec.yml</text>
+    <text x="279" y="121" font-size="10.5" fill="currentColor" opacity="0.72">compile + test</text>
+    <text x="279" y="138" font-size="10" fill="currentColor" opacity="0.55">kéo package ← CodeArtifact</text>
+  </g>
+
+  <g>
+    <rect x="496" y="68" width="190" height="80" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="510" y="88" font-size="12.5" font-weight="700" fill="currentColor">Deploy</text>
+    <text x="510" y="106" font-size="10.5" fill="currentColor" opacity="0.72">CodeDeploy · appspec.yml</text>
+    <text x="510" y="123" font-size="10.5" fill="currentColor" opacity="0.72">→ EC2 / Lambda / ECS</text>
+  </g>
+
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none">
+    <path d="M224 108 H263" marker-end="url(#cpArr)"/>
+    <path d="M455 108 H494" marker-end="url(#cpArr)"/>
+  </g>
+  <text x="243" y="100" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">Source</text>
+  <text x="243" y="123" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">Artifact</text>
+  <text x="474" y="100" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">Build</text>
+  <text x="474" y="123" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">Artifact</text>
+
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none" stroke-dasharray="4 3">
+    <path d="M129 148 V216" marker-end="url(#cpArr)"/>
+    <path d="M360 148 V216" marker-end="url(#cpArr)"/>
+  </g>
+  <rect x="34" y="222" width="440" height="56" rx="9" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="254" y="244" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">S3 artifact store</text>
+  <text x="254" y="262" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">artifact giữa các stage lưu/đọc ở đây (mã hoá KMS nếu cross-account)</text>
+
+  <rect x="496" y="222" width="190" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="591" y="244" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">CodeArtifact</text>
+  <text x="591" y="262" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">kho package (npm/pip/maven)</text>
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none" stroke-dasharray="4 3">
+    <path d="M600 220 C 600 175, 520 150, 456 132" marker-end="url(#cpArr)"/>
+  </g>
+  <text x="612" y="200" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">pull</text>
+
+  <text x="16" y="308" font-size="10.5" fill="currentColor" opacity="0.6">Artifact store (S3) ≠ CodeArtifact: S3 giữ build output của pipeline; CodeArtifact giữ dependency package.</text>
+</svg>
 
 CodePipeline là **nhạc trưởng** (orchestrator) nối các trạm. CodeBuild/CodeDeploy là **công nhân** thực thi. CodeArtifact là **kho package** (npm/pip/maven). Đừng nhầm vai trò — đề rất hay đánh tráo.
 
@@ -230,6 +279,82 @@ hooks:
 | | `AfterAllowTraffic` |
 
 Với Lambda/ECS, hook trỏ tới **một Lambda function** (để validate), không phải shell script.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>So sánh lifecycle hook của CodeDeploy: EC2/on-prem vs Lambda vs ECS</title>
+  <desc>Ba cột song song theo thứ tự thời gian đi xuống. Cột EC2/on-prem có chuỗi hook đầy đủ gồm copy file: ApplicationStop, BeforeInstall, Install, AfterInstall, ApplicationStart, ValidateService. Cột Lambda chỉ có BeforeAllowTraffic và AfterAllowTraffic. Cột ECS có BeforeInstall, AfterInstall, AfterAllowTestTraffic, BeforeAllowTraffic, AfterAllowTraffic. Điểm nhấn: Lambda và ECS KHÔNG có bước Install/copy file như EC2.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Hook lifecycle theo nền tảng — đọc từ trên xuống (thứ tự thời gian)</text>
+
+  <text x="120" y="48" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">EC2 / on-prem</text>
+  <text x="120" y="64" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">script trên host</text>
+  <text x="360" y="48" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Lambda</text>
+  <text x="360" y="64" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">hook = Lambda validate</text>
+  <text x="600" y="48" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">ECS</text>
+  <text x="600" y="64" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">hook = Lambda validate</text>
+
+  <defs>
+    <marker id="hkArr" markerWidth="9" markerHeight="9" refX="4.5" refY="7" orient="auto"><path d="M0 0 L4.5 7 L9 0" fill="none" stroke="currentColor" stroke-opacity="0.5"/></marker>
+  </defs>
+
+  <g font-size="10.5">
+    <rect x="30" y="78" width="180" height="30" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="120" y="97" text-anchor="middle" fill="currentColor">ApplicationStop</text>
+    <rect x="30" y="116" width="180" height="30" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="120" y="135" text-anchor="middle" fill="currentColor">BeforeInstall</text>
+    <rect x="30" y="154" width="180" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="120" y="173" text-anchor="middle" font-weight="700" fill="currentColor">Install (copy file)*</text>
+    <rect x="30" y="192" width="180" height="30" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="120" y="211" text-anchor="middle" fill="currentColor">AfterInstall</text>
+    <rect x="30" y="230" width="180" height="30" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="120" y="249" text-anchor="middle" fill="currentColor">ApplicationStart</text>
+    <rect x="30" y="268" width="180" height="30" rx="7" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="120" y="287" text-anchor="middle" font-weight="700" fill="currentColor">ValidateService</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none">
+    <path d="M120 108 V114" marker-end="url(#hkArr)"/>
+    <path d="M120 146 V152" marker-end="url(#hkArr)"/>
+    <path d="M120 184 V190" marker-end="url(#hkArr)"/>
+    <path d="M120 222 V228" marker-end="url(#hkArr)"/>
+    <path d="M120 260 V266" marker-end="url(#hkArr)"/>
+  </g>
+
+  <g font-size="10.5">
+    <rect x="270" y="116" width="180" height="30" rx="7" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="360" y="135" text-anchor="middle" fill="currentColor">BeforeAllowTraffic</text>
+    <rect x="270" y="192" width="180" height="30" rx="7" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="360" y="211" text-anchor="middle" fill="currentColor">AfterAllowTraffic</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.35" fill="none" stroke-dasharray="3 3">
+    <path d="M360 146 V190" marker-end="url(#hkArr)"/>
+  </g>
+  <text x="360" y="170" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.65">↓ chuyển traffic</text>
+
+  <g font-size="10.5">
+    <rect x="510" y="78" width="180" height="30" rx="7" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="600" y="97" text-anchor="middle" fill="currentColor">BeforeInstall</text>
+    <rect x="510" y="116" width="180" height="30" rx="7" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="600" y="135" text-anchor="middle" fill="currentColor">AfterInstall</text>
+    <rect x="510" y="154" width="180" height="30" rx="7" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="600" y="173" text-anchor="middle" fill="currentColor">AfterAllowTestTraffic</text>
+    <rect x="510" y="192" width="180" height="30" rx="7" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="600" y="211" text-anchor="middle" fill="currentColor">BeforeAllowTraffic</text>
+    <rect x="510" y="230" width="180" height="30" rx="7" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="600" y="249" text-anchor="middle" fill="currentColor">AfterAllowTraffic</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none">
+    <path d="M600 108 V114" marker-end="url(#hkArr)"/>
+    <path d="M600 146 V152" marker-end="url(#hkArr)"/>
+    <path d="M600 184 V190" marker-end="url(#hkArr)"/>
+    <path d="M600 222 V228" marker-end="url(#hkArr)"/>
+  </g>
+
+  <rect x="30" y="320" width="660" height="56" rx="9" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="46" y="343" font-size="11.5" font-weight="700" fill="currentColor">Khác biệt then chốt</text>
+  <text x="46" y="362" font-size="10.5" fill="currentColor" opacity="0.78">Chỉ EC2/on-prem có bước Install + copy file (ô hổ phách). Lambda/ECS KHÔNG có Install — chỉ xoay quanh *AllowTraffic.</text>
+
+  <text x="30" y="398" font-size="10" fill="currentColor" opacity="0.6">* Install và DownloadBundle do CodeDeploy agent tự làm — không gắn script được.</text>
+  <text x="30" y="416" font-size="10" fill="currentColor" opacity="0.6">EC2/on-prem: hook = shell script trên host. Lambda/ECS: hook = một Lambda function để validate.</text>
+</svg>
 
 > ⚠️ Bẫy CỰC HAY GẶP: Hook EC2 (`ApplicationStop`, `BeforeInstall`, `ApplicationStart`, `ValidateService`) **khác hoàn toàn** hook Lambda (`BeforeAllowTraffic`, `AfterAllowTraffic`). Đề cho 1 đáp án trộn lẫn để gài. Lambda/ECS chỉ có *AllowTraffic* hooks, KHÔNG có Install hook.
 

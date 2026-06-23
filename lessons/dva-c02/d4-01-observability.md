@@ -12,6 +12,56 @@ CloudWatch là "trung tâm quan sát" của AWS: thu thập **logs**, **metrics*
 - **Log stream**: chuỗi log từ **một nguồn** (1 container, 1 instance, 1 Lambda execution environment). Ví dụ Lambda: mỗi execution environment tạo một stream `YYYY/MM/DD/[$LATEST]xxxx`.
 - **Log event**: 1 dòng log + timestamp.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Phân cấp CloudWatch Logs: Log Group chứa nhiều Log Stream, mỗi stream chứa Log Event</title>
+  <desc>Cây phân cấp: một Log Group (đặt retention, encryption, metric filter, subscription filter) chứa nhiều Log Stream, mỗi stream ứng với một nguồn (container, instance, Lambda environment), và mỗi stream chứa các Log Event là dòng log kèm timestamp.</desc>
+  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Log Group → Log Stream → Log Event</text>
+
+  <rect x="16" y="40" width="280" height="64" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="32" y="62" font-size="13" font-weight="700" fill="currentColor">Log Group</text>
+  <text x="32" y="80" font-size="10.5" fill="currentColor" opacity="0.72">1 app/service · /aws/lambda/my-func</text>
+  <text x="32" y="96" font-size="10.5" fill="currentColor" opacity="0.72">retention · encryption · metric/subscription filter</text>
+
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none">
+    <path d="M48 104 v22 h360 v18"/>
+    <path d="M48 104 v22"/>
+    <path d="M408 126 h-180 v18"/>
+  </g>
+
+  <g>
+    <rect x="60" y="144" width="180" height="52" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="72" y="164" font-size="11.5" font-weight="700" fill="currentColor">Log Stream</text>
+    <text x="72" y="182" font-size="10" fill="currentColor" opacity="0.72">nguồn: 1 container</text>
+  </g>
+  <g>
+    <rect x="320" y="144" width="180" height="52" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="332" y="164" font-size="11.5" font-weight="700" fill="currentColor">Log Stream</text>
+    <text x="332" y="182" font-size="10" fill="currentColor" opacity="0.72">nguồn: 1 instance</text>
+  </g>
+  <g>
+    <rect x="560" y="144" width="150" height="52" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="572" y="164" font-size="11.5" font-weight="700" fill="currentColor">Log Stream</text>
+    <text x="572" y="182" font-size="10" fill="currentColor" opacity="0.72">1 Lambda env</text>
+  </g>
+
+  <line x1="408" y1="144" x2="408" y2="126" stroke="currentColor" stroke-opacity="0.4"/>
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none">
+    <path d="M408 126 h227"/>
+    <line x1="635" y1="126" x2="635" y2="144"/>
+    <line x1="150" y1="196" x2="150" y2="222"/>
+  </g>
+
+  <g>
+    <rect x="60" y="222" width="440" height="118" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="72" y="242" font-size="11.5" font-weight="700" fill="currentColor">Log Event (trong một stream)</text>
+    <rect x="72" y="252" width="416" height="24" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="82" y="268" font-size="10.5" fill="currentColor" opacity="0.85">2026-06-23T10:00:01Z  START RequestId: abc-123</text>
+    <rect x="72" y="282" width="416" height="24" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="82" y="298" font-size="10.5" fill="currentColor" opacity="0.85">2026-06-23T10:00:01Z  ERROR connect timeout</text>
+    <text x="82" y="328" font-size="10" fill="currentColor" opacity="0.7">mỗi event = 1 dòng log + timestamp</text>
+  </g>
+</svg>
+
 > 💡 Mẹo thi: Lambda tự động ghi log vào group `/aws/lambda/<function-name>`. Để ghi được, **execution role** phải có quyền `logs:CreateLogGroup`, `logs:CreateLogStream`, `logs:PutLogEvents`. Nếu function "chạy ok nhưng không thấy log" → gần như chắc chắn là thiếu các quyền này trong IAM role.
 
 ### Retention
@@ -69,6 +119,54 @@ aws logs put-subscription-filter \
 > - **Metric filter** → ra **số (metric)** để alarm. Đích là CloudWatch Metrics.
 > - **Subscription filter** → ra **luồng log** đi tới Lambda/Kinesis/Firehose để xử lý/lưu trữ.
 > - "Real-time analytics / archive log sang OpenSearch hoặc S3" → subscription filter → **Firehose** (không cần code) hoặc → **Kinesis** (cần xử lý phức tạp/nhiều consumer).
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Hai lối ra khỏi một Log Group: metric filter ra metric, subscription filter ra luồng log</title>
+  <desc>Từ một Log Group có hai nhánh. Nhánh trên là metric filter: khớp pattern rồi phát ra CloudWatch Metric dùng cho alarm. Nhánh dưới là subscription filter: stream log gần real-time tới Lambda, Kinesis Data Streams, hoặc Firehose dẫn tới S3/OpenSearch.</desc>
+  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Metric filter vs Subscription filter — hai lối ra từ Log Group</text>
+
+  <defs>
+    <marker id="rtArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+
+  <rect x="16" y="140" width="150" height="70" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="91" y="170" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Log Group</text>
+  <text x="91" y="188" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">log event</text>
+
+  <!-- metric filter branch -->
+  <path d="M166 158 C 210 110, 240 70, 290 70" stroke="currentColor" stroke-opacity="0.5" fill="none" marker-end="url(#rtArr)"/>
+  <g>
+    <rect x="298" y="48" width="160" height="46" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="378" y="68" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">metric filter</text>
+    <text x="378" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.72">khớp pattern "ERROR"</text>
+  </g>
+  <line x1="458" y1="71" x2="500" y2="71" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#rtArr)"/>
+  <g>
+    <rect x="508" y="48" width="196" height="46" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="606" y="68" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">CloudWatch Metric</text>
+    <text x="606" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.72">→ Alarm</text>
+  </g>
+
+  <!-- subscription filter branch -->
+  <path d="M166 192 C 210 240, 240 280, 290 280" stroke="currentColor" stroke-opacity="0.5" fill="none" marker-end="url(#rtArr)"/>
+  <g>
+    <rect x="298" y="178" width="160" height="160" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="378" y="200" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">subscription filter</text>
+    <text x="378" y="216" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.72">stream gần real-time</text>
+    <rect x="312" y="226" width="132" height="28" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="378" y="244" font-size="10.5" text-anchor="middle" fill="currentColor">Lambda</text>
+    <rect x="312" y="258" width="132" height="28" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="378" y="276" font-size="10.5" text-anchor="middle" fill="currentColor">Kinesis Data Streams</text>
+    <rect x="312" y="290" width="132" height="28" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="378" y="308" font-size="10.5" text-anchor="middle" fill="currentColor">Firehose</text>
+  </g>
+  <line x1="444" y1="304" x2="500" y2="304" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#rtArr)"/>
+  <g>
+    <rect x="508" y="282" width="196" height="46" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="606" y="302" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">S3 / OpenSearch</text>
+    <text x="606" y="318" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.72">lưu trữ / phân tích</text>
+  </g>
+</svg>
 
 ---
 
@@ -153,6 +251,58 @@ Chỉ cần **ghi JSON này ra stdout/CloudWatch Logs** (Lambda log tự động
 | Hợp với Lambda? | **Rất hợp** — không block, không cần SDK call | Thêm latency vào hàm, tốn thời gian thực thi |
 | Giữ context log | Có (metric + log đi cùng nhau) | Không (chỉ có số) |
 | Thư viện | `aws-embedded-metrics` | `boto3`/SDK |
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>EMF vs PutMetricData: ghi log JSON ra stdout so với gọi API trực tiếp</title>
+  <desc>Hai con đường đẩy custom metric. Đường EMF: app ghi JSON có cấu trúc ra stdout vào CloudWatch Logs, CloudWatch tự trích metric, không có network call và giữ nguyên context log. Đường PutMetricData: app gọi API đồng bộ thẳng tới CloudWatch, thêm latency và không có context log.</desc>
+  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">EMF vs PutMetricData — hai cách đẩy custom metric</text>
+
+  <defs>
+    <marker id="emfArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+
+  <!-- EMF row -->
+  <rect x="16" y="44" width="80" height="44" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="56" y="64" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">App</text>
+  <text x="56" y="80" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">(Lambda)</text>
+  <text x="120" y="50" font-size="11" font-weight="700" fill="#10b981" opacity="0.95">EMF</text>
+  <line x1="96" y1="66" x2="150" y2="66" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#emfArr)"/>
+  <text x="123" y="84" font-size="8.5" text-anchor="middle" fill="currentColor" opacity="0.65">ghi JSON</text>
+
+  <rect x="158" y="44" width="150" height="44" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="233" y="62" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">stdout → CW Logs</text>
+  <text x="233" y="79" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">không network call</text>
+  <line x1="308" y1="66" x2="362" y2="66" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#emfArr)"/>
+  <text x="335" y="84" font-size="8.5" text-anchor="middle" fill="currentColor" opacity="0.65">CW trích</text>
+
+  <rect x="370" y="44" width="150" height="44" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="445" y="62" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">CloudWatch Metric</text>
+  <text x="445" y="79" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">+ giữ context log</text>
+
+  <rect x="538" y="44" width="166" height="44" rx="8" fill="#10b981" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="621" y="62" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.85">+ không thêm latency</text>
+  <text x="621" y="78" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.85">+ metric đi cùng log</text>
+
+  <line x1="16" y1="120" x2="704" y2="120" stroke="currentColor" stroke-opacity="0.15"/>
+
+  <!-- PutMetricData row -->
+  <rect x="16" y="160" width="80" height="44" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="56" y="180" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">App</text>
+  <text x="56" y="196" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">(SDK)</text>
+  <text x="180" y="150" font-size="11" font-weight="700" fill="#f59e0b" opacity="0.95">PutMetricData</text>
+  <line x1="96" y1="182" x2="368" y2="182" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#emfArr)"/>
+  <text x="232" y="174" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">API call đồng bộ (network)</text>
+
+  <rect x="376" y="160" width="150" height="44" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="451" y="180" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">CloudWatch Metric</text>
+  <text x="451" y="197" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">chỉ có số</text>
+
+  <rect x="544" y="160" width="160" height="44" rx="8" fill="#f59e0b" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="624" y="178" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.85">− thêm latency/throttle</text>
+  <text x="624" y="194" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.85">− không context log</text>
+
+  <text x="16" y="240" font-size="10.5" fill="currentColor" opacity="0.75">EMF: không gọi API, metric sinh ra từ chính log → hợp Lambda. PutMetricData: gọi thẳng CloudWatch → thêm chi phí runtime.</text>
+</svg>
 
 > 💡 Mẹo thi: Trong **Lambda** muốn ghi custom metric mà **không thêm latency / không gọi API đồng bộ** → dùng **EMF**. Nếu đề nhấn "tránh API call thừa, tránh tăng duration, metric đi kèm log" → EMF. Nếu đề chỉ nói "đẩy 1 metric từ ứng dụng on-prem/script" → **PutMetricData** vẫn ổn.
 
