@@ -61,6 +61,58 @@ Vì sao? Hãy theo dấu một bug kinh điển:
 
 > ⚠️ **Bẫy production**: sticky session là thuốc giảm đau, không phải thuốc chữa. Nó phá luôn khả năng rolling deploy và autoscaling — instance "dính" nhiều user không thể giết để thay thế. Chuyển session sang Redis/DynamoDB (hoặc dùng JWT stateless) rồi tắt sticky session đi.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Bug stateless: session trong RAM một instance so với session dùng chung qua Redis/DynamoDB</title>
+  <desc>Bên trái: session lưu trong RAM của một instance, scale lên 3 instance sau load balancer khiến request rơi vào instance khác không có session nên user bị đá. Bên phải: session đẩy ra Redis/DynamoDB dùng chung nên instance nào cũng đọc được.</desc>
+  <text x="180" y="24" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">❌ Session trong RAM (vỡ khi scale)</text>
+  <text x="540" y="24" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">✅ Session dùng chung</text>
+  <line x1="360" y1="36" x2="360" y2="344" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+  <g>
+    <rect x="150" y="44" width="60" height="30" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="180" y="63" font-size="11" text-anchor="middle" fill="currentColor">LB</text>
+    <line x1="180" y1="74" x2="92" y2="104" stroke="currentColor" stroke-opacity="0.45"/>
+    <line x1="180" y1="74" x2="196" y2="104" stroke="currentColor" stroke-opacity="0.45"/>
+    <line x1="180" y1="74" x2="300" y2="104" stroke="currentColor" stroke-opacity="0.45"/>
+    <rect x="44" y="104" width="96" height="58" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="92" y="122" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Instance A</text>
+    <text x="92" y="139" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">RAM: ✓ session</text>
+    <text x="92" y="153" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">(login ở đây)</text>
+    <rect x="148" y="104" width="96" height="58" rx="9" fill="#ef4444" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="196" y="122" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Instance B</text>
+    <text x="196" y="139" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">RAM: ✗ trống</text>
+    <text x="196" y="153" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">← request kế</text>
+    <rect x="252" y="104" width="96" height="58" rx="9" fill="#ef4444" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="300" y="122" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Instance C</text>
+    <text x="300" y="139" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">RAM: ✗ trống</text>
+    <rect x="44" y="180" width="304" height="34" rx="8" fill="#ef4444" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="196" y="201" font-size="11" text-anchor="middle" fill="currentColor">B không có session → user bị đá ra (401)</text>
+  </g>
+  <g>
+    <rect x="510" y="44" width="60" height="30" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="540" y="63" font-size="11" text-anchor="middle" fill="currentColor">LB</text>
+    <line x1="540" y1="74" x2="452" y2="104" stroke="currentColor" stroke-opacity="0.45"/>
+    <line x1="540" y1="74" x2="540" y2="104" stroke="currentColor" stroke-opacity="0.45"/>
+    <line x1="540" y1="74" x2="628" y2="104" stroke="currentColor" stroke-opacity="0.45"/>
+    <rect x="404" y="104" width="96" height="48" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="452" y="123" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Instance A</text>
+    <text x="452" y="140" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">stateless</text>
+    <rect x="508" y="104" width="96" height="48" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="556" y="123" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Instance B</text>
+    <text x="556" y="140" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">stateless</text>
+    <rect x="612" y="104" width="96" height="48" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="660" y="123" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Instance C</text>
+    <text x="660" y="140" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">stateless</text>
+    <line x1="452" y1="152" x2="540" y2="186" stroke="currentColor" stroke-opacity="0.45"/>
+    <line x1="556" y1="152" x2="540" y2="186" stroke="currentColor" stroke-opacity="0.45"/>
+    <line x1="660" y1="152" x2="540" y2="186" stroke="currentColor" stroke-opacity="0.45"/>
+    <rect x="446" y="186" width="188" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="540" y="205" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Redis / DynamoDB</text>
+    <text x="540" y="221" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">session dùng chung — instance nào cũng đọc</text>
+  </g>
+  <text x="180" y="252" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Bug "ngẫu nhiên": chỉ lộ sau khi scale lên nhiều instance</text>
+  <text x="540" y="252" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Giết/thêm instance tùy ý, không sticky session</text>
+</svg>
+
 Lưu ý sắc thái: cache trong RAM **được phép** — miễn là mất nó chỉ làm chậm chứ không làm sai. Tiêu chí: *"Nếu instance này bốc hơi ngay bây giờ, có dữ liệu nào mất vĩnh viễn / user nào bị lỗi logic không?"* Nếu có → vi phạm stateless.
 
 ### 2.3. Port binding & Backing services — app là thứ tự đứng
@@ -111,6 +163,53 @@ logger.info("order_created", extra={
 Pipeline đúng: **build một lần** ra một image bất biến (immutable, có version) → **release** = image + config của môi trường → **run**. Cùng một image đi từ staging lên prod; chỉ config thay đổi.
 
 Anti-pattern: build riêng `app:staging` và `app:prod` (vd: `npm run build:prod` nướng API URL vào bundle). Hệ quả: thứ bạn test ở staging **không phải** là thứ chạy ở prod — mọi lời hứa của QA vô nghĩa. Đây chính là chủ đề "cấu hình theo môi trường không cần rebuild" ở mục 6.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 290" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Build, release, run: một image bất biến kết hợp config từng môi trường thành release rồi run</title>
+  <desc>Build một lần ra một image bất biến có version. Image đó kết hợp với config riêng của staging và của prod tạo thành hai release, rồi run. Cùng một artifact đi từ staging lên prod, không build lại.</desc>
+  <defs>
+    <marker id="bf-arrow" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Build → Release → Run</text>
+  <rect x="16" y="40" width="160" height="84" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="96" y="62" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">BUILD (1 lần)</text>
+  <text x="96" y="82" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">image bất biến</text>
+  <text x="96" y="99" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">app:v1.4.2 (digest)</text>
+  <text x="96" y="114" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">không chứa config</text>
+  <path d="M176 82 L208 70" stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#bf-arrow)"/>
+  <path d="M176 96 L208 182" stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#bf-arrow)"/>
+  <rect x="216" y="40" width="44" height="44" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="238" y="58" font-size="10" text-anchor="middle" fill="currentColor">config</text>
+  <text x="238" y="72" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">staging</text>
+  <text x="262" y="65" font-size="14" fill="currentColor">+</text>
+  <rect x="216" y="160" width="44" height="44" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="238" y="178" font-size="10" text-anchor="middle" fill="currentColor">config</text>
+  <text x="238" y="192" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">prod</text>
+  <text x="262" y="185" font-size="14" fill="currentColor">+</text>
+  <rect x="284" y="36" width="150" height="56" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="359" y="58" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">RELEASE staging</text>
+  <text x="359" y="76" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">image v1.4.2 + cfg</text>
+  <rect x="284" y="156" width="150" height="56" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="359" y="178" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">RELEASE prod</text>
+  <text x="359" y="196" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">image v1.4.2 + cfg</text>
+  <path d="M434 64 L470 64" stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#bf-arrow)"/>
+  <path d="M434 184 L470 184" stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#bf-arrow)"/>
+  <rect x="478" y="36" width="120" height="56" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="538" y="62" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">RUN staging</text>
+  <text x="538" y="80" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">QA test ở đây</text>
+  <rect x="478" y="156" width="120" height="56" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="538" y="182" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">RUN prod</text>
+  <text x="538" y="200" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">cùng artifact</text>
+  <path d="M538 92 L538 156" stroke="currentColor" stroke-opacity="0.55" stroke-dasharray="5 4" fill="none" marker-end="url(#bf-arrow)"/>
+  <text x="616" y="120" font-size="10.5" fill="currentColor" opacity="0.85">cùng một</text>
+  <text x="616" y="135" font-size="10.5" fill="currentColor" opacity="0.85">digest đi</text>
+  <text x="616" y="150" font-size="10.5" fill="currentColor" opacity="0.85">lên prod</text>
+  <rect x="16" y="234" width="688" height="40" rx="9" fill="#ef4444" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="30" y="251" font-size="11" font-weight="700" fill="currentColor">Anti-pattern:</text>
+  <text x="30" y="267" font-size="10.5" fill="currentColor" opacity="0.85">build riêng app:staging và app:prod → thứ test ở staging KHÁC thứ chạy ở prod, QA vô nghĩa.</text>
+</svg>
 
 ## 3. Secrets: KHÔNG ở env var khi đã có secret manager
 
@@ -190,6 +289,52 @@ process.on("SIGTERM", async () => {
 });
 ```
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Chuỗi graceful shutdown 3 bên theo timeline: orchestrator, load balancer và app</title>
+  <desc>Sequence diagram ba cột (orchestrator, load balancer, app) với thời gian đi xuống. Orchestrator quyết định tắt, deregister khỏi LB, gửi SIGTERM. App set readiness false, drain request đang chạy, đóng pool, exit 0. Nếu quá grace period thì orchestrator gửi SIGKILL.</desc>
+  <defs>
+    <marker id="gs-arrow" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="110" y="26" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Orchestrator</text>
+  <text x="110" y="42" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">ECS / K8s</text>
+  <text x="360" y="26" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Load Balancer</text>
+  <text x="610" y="26" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">App (process)</text>
+  <line x1="110" y1="52" x2="110" y2="400" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4"/>
+  <line x1="360" y1="52" x2="360" y2="400" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4"/>
+  <line x1="610" y1="52" x2="610" y2="400" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4"/>
+  <text x="22" y="86" font-size="13" fill="currentColor" opacity="0.4" text-anchor="middle">▼</text>
+  <text x="22" y="100" font-size="9" fill="currentColor" opacity="0.4" text-anchor="middle">thời</text>
+  <text x="22" y="110" font-size="9" fill="currentColor" opacity="0.4" text-anchor="middle">gian</text>
+  <rect x="72" y="62" width="76" height="34" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="110" y="78" font-size="10" text-anchor="middle" fill="currentColor">quyết định</text>
+  <text x="110" y="90" font-size="10" text-anchor="middle" fill="currentColor">tắt instance</text>
+  <path d="M110 100 L356 112" stroke="currentColor" stroke-opacity="0.6" fill="none" marker-end="url(#gs-arrow)"/>
+  <text x="232" y="107" font-size="10.5" text-anchor="middle" fill="currentColor">deregister</text>
+  <rect x="300" y="118" width="120" height="28" rx="7" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="360" y="136" font-size="10" text-anchor="middle" fill="currentColor">ngừng đẩy request mới</text>
+  <path d="M110 162 L606 178" stroke="currentColor" stroke-opacity="0.6" fill="none" marker-end="url(#gs-arrow)"/>
+  <text x="300" y="160" font-size="10.5" text-anchor="middle" fill="currentColor">SIGTERM</text>
+  <rect x="510" y="184" width="200" height="116" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="610" y="202" font-size="10.5" text-anchor="middle" fill="currentColor">1. readiness = false</text>
+  <text x="610" y="220" font-size="10.5" text-anchor="middle" fill="currentColor">2. drain request đang chạy</text>
+  <text x="610" y="238" font-size="10.5" text-anchor="middle" fill="currentColor">3. đóng connection pool</text>
+  <text x="610" y="256" font-size="10.5" text-anchor="middle" fill="currentColor" font-weight="700">4. exit 0 (chủ động)</text>
+  <text x="610" y="280" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">app chết sạch sẽ,</text>
+  <text x="610" y="292" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">không request nào trả lỗi</text>
+  <line x1="110" y1="162" x2="110" y2="348" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="2 3"/>
+  <text x="120" y="324" font-size="10" fill="currentColor" opacity="0.75">⏱ chờ grace period (ECS stopTimeout)</text>
+  <path d="M606 310 L114 338" stroke="#10b981" stroke-opacity="0.8" fill="none" marker-end="url(#gs-arrow)"/>
+  <text x="362" y="306" font-size="10.5" text-anchor="middle" fill="currentColor">exit 0 trước hạn → orchestrator thay instance</text>
+  <line x1="40" y1="360" x2="700" y2="360" stroke="currentColor" stroke-opacity="0.2"/>
+  <rect x="72" y="370" width="120" height="30" rx="7" fill="#ef4444" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="132" y="384" font-size="10" text-anchor="middle" fill="currentColor">nếu QUÁ grace period</text>
+  <text x="132" y="396" font-size="10" text-anchor="middle" fill="currentColor">và app chưa thoát</text>
+  <path d="M192 392 L606 414" stroke="#ef4444" stroke-opacity="0.85" fill="none" marker-end="url(#gs-arrow)"/>
+  <text x="400" y="409" font-size="10.5" text-anchor="middle" fill="currentColor" font-weight="700">SIGKILL (không đỡ được — request dở dang đứt)</text>
+</svg>
+
 Ba lỗi kinh điển:
 
 1. **Không bắt SIGTERM** → process chết giữa chừng, request đang xử lý trả lỗi 502/đứt kết nối, transaction dở dang. Triệu chứng: *cứ mỗi lần deploy là có một nhịp error rate*.
@@ -220,6 +365,64 @@ Lỗi chết người: **nhét check DB vào liveness**. Kịch bản thảm ho�
 ```
 
 Quy tắc: liveness chỉ kiểm tra *bản thân process*; sự cố dependency là việc của readiness (rút khỏi LB, chờ dependency hồi phục) và của circuit breaker — không phải lý do để tự sát.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Liveness so với readiness: hai probe khác nhau dẫn tới hai hành động khác nhau, và cảnh báo nhét DB-check vào liveness gây cascading restart</title>
+  <desc>Liveness fail dẫn tới restart container. Readiness fail dẫn tới rút khỏi load balancer mà không restart. Cảnh báo: nhét check DB vào liveness khiến cả fleet cùng restart khi DB quá tải, gây cascading failure.</desc>
+  <defs>
+    <marker id="lr-arrow" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <rect x="16" y="36" width="190" height="40" rx="9" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="111" y="55" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Liveness probe</text>
+  <text x="111" y="70" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">"Process còn sống chứ?"</text>
+  <text x="111" y="100" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">kiểm tra: chỉ bản thân process</text>
+  <text x="111" y="115" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">(event loop trả lời được)</text>
+  <path d="M111 124 L111 156" stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#lr-arrow)"/>
+  <text x="150" y="144" font-size="10" fill="currentColor" opacity="0.7">fail →</text>
+  <rect x="16" y="160" width="190" height="46" rx="9" fill="#ef4444" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="111" y="181" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">RESTART container</text>
+  <text x="111" y="197" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">giết và tạo lại</text>
+  <rect x="514" y="36" width="190" height="40" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="609" y="55" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Readiness probe</text>
+  <text x="609" y="70" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">"Có nên gửi traffic không?"</text>
+  <text x="609" y="100" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">kiểm tra: dependency thiết yếu</text>
+  <text x="609" y="115" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">(DB pool, cache, warm-up)</text>
+  <path d="M609 124 L609 156" stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#lr-arrow)"/>
+  <text x="648" y="144" font-size="10" fill="currentColor" opacity="0.7">fail →</text>
+  <rect x="514" y="160" width="190" height="46" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="609" y="181" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">RÚT khỏi LB</text>
+  <text x="609" y="197" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">KHÔNG restart — chờ hồi phục</text>
+  <text x="360" y="125" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.6">≠</text>
+  <line x1="16" y1="226" x2="704" y2="226" stroke="currentColor" stroke-opacity="0.18"/>
+  <text x="20" y="248" font-size="12" font-weight="700" fill="currentColor">⚠ Cảnh báo: nhét DB-check vào liveness → cascading restart</text>
+  <rect x="20" y="258" width="118" height="80" rx="8" fill="#ef4444" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="79" y="277" font-size="10" text-anchor="middle" fill="currentColor">DB quá tải 30s</text>
+  <text x="79" y="295" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">liveness check DB</text>
+  <text x="79" y="309" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">→ fail cùng lúc</text>
+  <text x="79" y="326" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">trên CẢ fleet</text>
+  <path d="M138 298 L168 298" stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#lr-arrow)"/>
+  <rect x="172" y="258" width="118" height="80" rx="8" fill="#ef4444" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="231" y="284" font-size="10" text-anchor="middle" fill="currentColor">orchestrator</text>
+  <text x="231" y="300" font-size="10" text-anchor="middle" fill="currentColor">restart cả fleet</text>
+  <text x="231" y="320" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">cùng một lúc</text>
+  <path d="M290 298 L320 298" stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#lr-arrow)"/>
+  <rect x="324" y="258" width="118" height="80" rx="8" fill="#ef4444" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="383" y="284" font-size="10" text-anchor="middle" fill="currentColor">mất cache +</text>
+  <text x="383" y="300" font-size="10" text-anchor="middle" fill="currentColor">connection storm</text>
+  <text x="383" y="320" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">dồn vào DB yếu</text>
+  <path d="M442 298 L472 298" stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#lr-arrow)"/>
+  <rect x="476" y="258" width="118" height="80" rx="8" fill="#ef4444" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.28"/>
+  <text x="535" y="284" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">DB gục hẳn</text>
+  <text x="535" y="304" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.85">sự cố 30 giây</text>
+  <text x="535" y="319" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.85">→ outage 30 phút</text>
+  <rect x="606" y="258" width="98" height="80" rx="8" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="655" y="280" font-size="10" font-weight="700" text-anchor="middle" fill="currentColor">Đúng:</text>
+  <text x="655" y="297" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.85">DB-check ở</text>
+  <text x="655" y="311" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.85">readiness,</text>
+  <text x="655" y="326" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.85">liveness sạch</text>
+</svg>
 
 ```python
 @app.get("/livez")

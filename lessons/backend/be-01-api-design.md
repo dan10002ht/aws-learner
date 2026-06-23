@@ -45,6 +45,44 @@ GET /orders?cursor=eyJpZCI6OTk4fQ&limit=20   -- cursor-based
 
 Quy tắc thực dụng: **feed/timeline/infinite scroll → cursor; admin table có "trang 5/20" → offset** (và giới hạn `max_offset` để tránh ai đó query trang 50.000).
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Offset vs cursor pagination trên cùng một danh sách có thứ tự theo index</title>
+  <desc>Offset phải quét và bỏ qua N row đầu (O(n)) rồi mới lấy trang; cursor (keyset) dùng index nhảy thẳng vào vị trí sau cursor (O log n) rồi lấy trang kế tiếp.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Cùng một index có thứ tự (created_at, id) — hai cách lấy trang</text>
+  <g font-size="11" fill="currentColor">
+    <rect x="16" y="40" width="688" height="44" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="28" y="56" font-size="12" font-weight="700" fill="currentColor">OFFSET=10000 &amp; LIMIT=20</text>
+    <text x="28" y="74" fill="currentColor" opacity="0.7">DB phải duyệt qua từng row từ đầu, đếm và BỎ QUA 10000 row → O(n)</text>
+  </g>
+  <g>
+    <rect x="16" y="92" width="688" height="34" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12"/>
+    <rect x="22" y="98" width="430" height="22" rx="4" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.15"/>
+    <text x="237" y="113" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">quét &amp; bỏ qua 10000 row (lãng phí)</text>
+    <rect x="458" y="98" width="120" height="22" rx="4" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="518" y="113" font-size="10.5" text-anchor="middle" fill="currentColor">20 row trả về</text>
+    <text x="618" y="113" font-size="10.5" fill="currentColor" opacity="0.55">... còn lại</text>
+  </g>
+  <text x="16" y="150" font-size="11" fill="currentColor" opacity="0.6">↑ con trỏ offset đi từ đầu, chậm dần khi trang càng sâu</text>
+
+  <g font-size="11" fill="currentColor">
+    <rect x="16" y="178" width="688" height="44" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="28" y="194" font-size="12" font-weight="700" fill="currentColor">CURSOR (keyset): WHERE (created_at, id) sau (?, ?) — LIMIT 20</text>
+    <text x="28" y="212" fill="currentColor" opacity="0.7">Dùng B-tree index nhảy THẲNG tới vị trí sau cursor → O(log n), không quét phần đầu</text>
+  </g>
+  <g>
+    <rect x="16" y="230" width="688" height="34" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12"/>
+    <line x1="22" y1="247" x2="452" y2="247" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 4"/>
+    <text x="237" y="244" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.45">(bỏ qua không cần duyệt)</text>
+    <rect x="458" y="236" width="120" height="22" rx="4" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="518" y="251" font-size="10.5" text-anchor="middle" fill="currentColor">20 row trả về</text>
+    <text x="618" y="251" font-size="10.5" fill="currentColor" opacity="0.55">... còn lại</text>
+  </g>
+  <g stroke="currentColor" fill="currentColor">
+    <path d="M452 282 L458 270 L464 282 Z" fill-opacity="0.9"/>
+  </g>
+  <text x="360" y="300" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">↑ index seek nhảy thẳng vào đây — không phụ thuộc trang sâu hay nông</text>
+</svg>
+
 > ⚠️ Bẫy production: cursor phải dựa trên **sort key duy nhất và ổn định**. Sort theo `created_at` đơn thuần sẽ vỡ khi 2 row cùng timestamp — luôn tiebreak bằng `id`: `ORDER BY created_at DESC, id DESC`. Và encode cursor (base64 + ký nếu cần) để client không tự chế cursor truy cập dữ liệu người khác.
 
 ## 3. Versioning: URL vs header
@@ -82,6 +120,65 @@ def handle(key, request):
     idem_store.save(key, hash(request.body), response)
     return response
 ```
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Luồng xử lý Idempotency-Key phía server</title>
+  <desc>Server lookup key trong store: nếu hit thì so request_hash, khớp thì replay response cũ, khác thì trả 422; nếu miss thì lock, process, lưu key cùng response rồi trả về.</desc>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g font-size="11.5" fill="currentColor" stroke="currentColor">
+    <rect x="280" y="16" width="160" height="38" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke-opacity="0.2"/>
+    <text x="360" y="40" text-anchor="middle" stroke="none">POST + Idempotency-Key</text>
+
+    <path d="M360 76 L440 110 L360 144 L280 110 Z" fill="#f59e0b" fill-opacity="0.15" stroke-opacity="0.2"/>
+    <text x="360" y="106" text-anchor="middle" stroke="none" font-size="11">store.get(key)</text>
+    <text x="360" y="121" text-anchor="middle" stroke="none" font-size="11">có entry?</text>
+
+    <line x1="360" y1="54" x2="360" y2="74" stroke-opacity="0.5" marker-end="url(#ah)"/>
+  </g>
+
+  <g font-size="11" fill="currentColor" stroke="currentColor">
+    <text x="470" y="104" stroke="none" fill="currentColor" opacity="0.7" font-weight="700">HIT</text>
+    <line x1="440" y1="110" x2="500" y2="110" stroke-opacity="0.5" marker-end="url(#ah)"/>
+    <path d="M580 76 L660 110 L580 144 L500 110 Z" fill="#f59e0b" fill-opacity="0.15" stroke-opacity="0.2"/>
+    <text x="580" y="106" text-anchor="middle" stroke="none">request_hash</text>
+    <text x="580" y="121" text-anchor="middle" stroke="none">khớp?</text>
+
+    <line x1="580" y1="144" x2="580" y2="178" stroke-opacity="0.5" marker-end="url(#ah)"/>
+    <text x="592" y="166" stroke="none" fill="currentColor" opacity="0.7">khớp</text>
+    <rect x="500" y="180" width="160" height="36" rx="8" fill="#10b981" fill-opacity="0.16" stroke-opacity="0.2"/>
+    <text x="580" y="203" text-anchor="middle" stroke="none">replay response cũ</text>
+
+    <line x1="660" y1="110" x2="690" y2="110" stroke-opacity="0.5"/>
+    <path d="M690 110 L690 250 L662 250" stroke-opacity="0.5" fill="none" marker-end="url(#ah)"/>
+    <text x="676" y="104" stroke="none" fill="currentColor" opacity="0.7">khác</text>
+    <rect x="500" y="232" width="160" height="36" rx="8" fill="#ef4444" fill-opacity="0.14" stroke-opacity="0.2"/>
+    <text x="580" y="255" text-anchor="middle" stroke="none">422 (client bug)</text>
+  </g>
+
+  <g font-size="11" fill="currentColor" stroke="currentColor">
+    <text x="250" y="104" text-anchor="end" stroke="none" fill="currentColor" opacity="0.7" font-weight="700">MISS</text>
+    <line x1="280" y1="110" x2="242" y2="110" stroke-opacity="0.5" marker-end="url(#ah)"/>
+    <line x1="160" y1="128" x2="160" y2="160" stroke-opacity="0.5" marker-end="url(#ah)"/>
+    <rect x="80" y="92" width="160" height="36" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke-opacity="0.2"/>
+    <text x="160" y="115" text-anchor="middle" stroke="none">lock(key) — chống đua</text>
+
+    <rect x="80" y="162" width="160" height="36" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke-opacity="0.2"/>
+    <text x="160" y="185" text-anchor="middle" stroke="none">process(request)</text>
+    <line x1="160" y1="198" x2="160" y2="230" stroke-opacity="0.5" marker-end="url(#ah)"/>
+
+    <rect x="68" y="232" width="184" height="48" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke-opacity="0.2"/>
+    <text x="160" y="251" text-anchor="middle" stroke="none" font-size="10.5">save(key, hash, response)</text>
+    <text x="160" y="267" text-anchor="middle" stroke="none" font-size="10" opacity="0.7">ATOMIC với xử lý nghiệp vụ</text>
+    <line x1="160" y1="280" x2="160" y2="312" stroke-opacity="0.5" marker-end="url(#ah)"/>
+
+    <rect x="80" y="314" width="160" height="36" rx="8" fill="#10b981" fill-opacity="0.16" stroke-opacity="0.2"/>
+    <text x="160" y="337" text-anchor="middle" stroke="none">trả response mới</text>
+  </g>
+</svg>
 
 Các điểm chết người hay bị bỏ qua:
 
@@ -166,6 +263,49 @@ Quy tắc tiến hoá schema: field có số thứ tự, **không bao giờ tái
 
 Vị trí hợp lý nhất: **gRPC cho east-west (nội bộ), REST/GraphQL cho north-south (edge)**.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>North-south (REST/GraphQL ở edge) vs east-west (gRPC giữa các service nội bộ)</title>
+  <desc>Client ngoài gọi vào BFF/API Gateway ở edge bằng REST hoặc GraphQL theo chiều north-south; bên trong các microservice gọi lẫn nhau bằng gRPC theo chiều east-west.</desc>
+  <defs>
+    <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g font-size="11.5" fill="currentColor" stroke="currentColor">
+    <rect x="270" y="14" width="180" height="40" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke-opacity="0.2"/>
+    <text x="360" y="32" text-anchor="middle" stroke="none">Browser · Mobile · 3rd-party</text>
+    <text x="360" y="47" text-anchor="middle" stroke="none" font-size="10" opacity="0.65">client ngoài</text>
+
+    <line x1="360" y1="54" x2="360" y2="86" stroke-opacity="0.6" marker-end="url(#ah2)"/>
+    <text x="372" y="74" stroke="none" fill="currentColor" opacity="0.85" font-weight="700">north-south</text>
+    <text x="372" y="88" stroke="none" fill="currentColor" font-size="10" opacity="0.65">REST / GraphQL (HTTP/JSON)</text>
+
+    <rect x="250" y="92" width="220" height="44" rx="9" fill="#10b981" fill-opacity="0.15" stroke-opacity="0.2"/>
+    <text x="360" y="112" text-anchor="middle" stroke="none" font-weight="700">BFF / API Gateway (edge)</text>
+    <text x="360" y="127" text-anchor="middle" stroke="none" font-size="10" opacity="0.65">GraphQL BFF · REST + OpenAPI</text>
+  </g>
+
+  <line x1="40" y1="160" x2="680" y2="160" stroke="currentColor" stroke-opacity="0.18" stroke-dasharray="5 5"/>
+  <text x="48" y="155" font-size="10" fill="currentColor" opacity="0.5">— biên hệ thống —</text>
+
+  <g font-size="11" fill="currentColor" stroke="currentColor">
+    <rect x="70" y="200" width="150" height="52" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke-opacity="0.2"/>
+    <text x="145" y="222" text-anchor="middle" stroke="none">Order Service</text>
+    <rect x="285" y="200" width="150" height="52" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke-opacity="0.2"/>
+    <text x="360" y="222" text-anchor="middle" stroke="none">Payment Service</text>
+    <rect x="500" y="200" width="150" height="52" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke-opacity="0.2"/>
+    <text x="575" y="222" text-anchor="middle" stroke="none">Inventory Service</text>
+
+    <line x1="360" y1="136" x2="360" y2="198" stroke-opacity="0.6" marker-end="url(#ah2)"/>
+
+    <line x1="220" y1="226" x2="283" y2="226" stroke-opacity="0.6" marker-end="url(#ah2)" marker-start="url(#ah2)"/>
+    <line x1="435" y1="226" x2="498" y2="226" stroke-opacity="0.6" marker-end="url(#ah2)" marker-start="url(#ah2)"/>
+    <path d="M145 252 L145 290 L575 290 L575 252" fill="none" stroke-opacity="0.6" marker-end="url(#ah2)" marker-start="url(#ah2)"/>
+  </g>
+  <text x="360" y="312" font-size="11" text-anchor="middle" stroke="none" fill="currentColor" font-weight="700">east-west</text>
+  <text x="360" y="328" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">gRPC (HTTP/2 · Protobuf · contract-first) giữa các service nội bộ</text>
+</svg>
+
 > ⚠️ Bẫy production: gRPC giữ connection HTTP/2 lâu dài — qua L4 load balancer, toàn bộ traffic của 1 client dồn vào 1 backend. Cần client-side LB, hoặc L7 proxy (Envoy), hoặc đặt `MAX_CONNECTION_AGE` để ép re-balance.
 
 ## 8. GraphQL: khi nào và cái giá phải trả
@@ -226,6 +366,60 @@ def webhook_handler(request):
     queue.publish(event)                                           # ACK nhanh, xử lý async
     return 200
 ```
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Vòng đời delivery webhook: provider gửi, consumer verify rồi ACK nhanh, xử lý async qua queue, retry với backoff khi non-2xx</title>
+  <desc>Provider POST event đã ký HMAC tới consumer; consumer verify HMAC trên raw body, chống replay theo timestamp, kiểm idempotent theo event_id, publish vào queue rồi trả 200 nhanh; worker xử lý async. Nếu phản hồi không phải 2xx hoặc timeout, provider retry với exponential backoff cộng jitter.</desc>
+  <defs>
+    <marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g font-size="11.5" fill="currentColor" stroke="currentColor">
+    <rect x="24" y="120" width="150" height="56" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke-opacity="0.2"/>
+    <text x="99" y="143" text-anchor="middle" stroke="none" font-weight="700">Provider</text>
+    <text x="99" y="160" text-anchor="middle" stroke="none" font-size="10" opacity="0.7">ký HMAC + timestamp</text>
+
+    <line x1="174" y1="138" x2="262" y2="138" stroke-opacity="0.6" marker-end="url(#ah3)"/>
+    <text x="218" y="130" text-anchor="middle" stroke="none" font-size="10" opacity="0.8">POST event</text>
+  </g>
+
+  <g font-size="11" fill="currentColor" stroke="currentColor">
+    <rect x="264" y="48" width="220" height="180" rx="10" fill="#10b981" fill-opacity="0.10" stroke-opacity="0.2"/>
+    <text x="374" y="68" text-anchor="middle" stroke="none" font-weight="700" fill="currentColor">Consumer</text>
+
+    <rect x="280" y="80" width="188" height="26" rx="6" fill="#10b981" fill-opacity="0.16" stroke-opacity="0.18"/>
+    <text x="374" y="97" text-anchor="middle" stroke="none" font-size="10.5">1. verify HMAC (raw body)</text>
+    <rect x="280" y="112" width="188" height="26" rx="6" fill="#10b981" fill-opacity="0.16" stroke-opacity="0.18"/>
+    <text x="374" y="129" text-anchor="middle" stroke="none" font-size="10.5">2. chống replay (timestamp)</text>
+    <rect x="280" y="144" width="188" height="26" rx="6" fill="#10b981" fill-opacity="0.16" stroke-opacity="0.18"/>
+    <text x="374" y="161" text-anchor="middle" stroke="none" font-size="10.5">3. idempotent theo event_id</text>
+    <rect x="280" y="176" width="188" height="26" rx="6" fill="#3b82f6" fill-opacity="0.16" stroke-opacity="0.18"/>
+    <text x="374" y="193" text-anchor="middle" stroke="none" font-size="10.5">4. publish vào queue</text>
+
+    <line x1="262" y1="150" x2="178" y2="150" stroke-opacity="0.6" marker-end="url(#ah3)"/>
+    <text x="218" y="170" text-anchor="middle" stroke="none" font-size="10" opacity="0.8">200 nhanh</text>
+  </g>
+
+  <g font-size="11" fill="currentColor" stroke="currentColor">
+    <line x1="484" y1="189" x2="556" y2="189" stroke-opacity="0.6" marker-end="url(#ah3)"/>
+    <rect x="558" y="100" width="138" height="40" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke-opacity="0.2"/>
+    <text x="627" y="124" text-anchor="middle" stroke="none">Queue (SQS)</text>
+    <line x1="627" y1="142" x2="627" y2="174" stroke-opacity="0.6" marker-end="url(#ah3)"/>
+    <text x="642" y="162" stroke="none" font-size="10" opacity="0.75">consume</text>
+    <rect x="558" y="176" width="138" height="40" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke-opacity="0.2"/>
+    <text x="627" y="200" text-anchor="middle" stroke="none">Worker (async)</text>
+  </g>
+
+  <g font-size="11" fill="currentColor" stroke="currentColor">
+    <path d="M99 176 L99 300 L198 300" fill="none" stroke-opacity="0.55" stroke-dasharray="5 4" marker-end="url(#ah3)"/>
+    <rect x="200" y="272" width="280" height="56" rx="9" fill="#ef4444" fill-opacity="0.12" stroke-opacity="0.2"/>
+    <text x="340" y="292" text-anchor="middle" stroke="none" font-weight="700">non-2xx hoặc timeout → RETRY</text>
+    <text x="340" y="310" text-anchor="middle" stroke="none" font-size="10" opacity="0.75">exponential backoff + jitter (ngay → 5p → 30p → 2h ...)</text>
+    <text x="340" y="324" text-anchor="middle" stroke="none" font-size="10" opacity="0.6">at-least-once → consumer phải idempotent</text>
+    <path d="M374 272 L374 234" fill="none" stroke-opacity="0.55" stroke-dasharray="5 4" marker-end="url(#ah3)"/>
+  </g>
+</svg>
 
 - **Trả 200 ngay, xử lý sau**: handler chậm > timeout của provider → bị coi là fail → retry → duplicate càng nhiều.
 - **At-least-once là mặc định** → consumer bắt buộc idempotent theo `event_id`.

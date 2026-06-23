@@ -39,6 +39,48 @@ Vòng đời một message (mô hình kiểu SQS):
 
 Bước 4 chính là nguồn gốc của mọi rắc rối thú vị: nó đảm bảo không mất message (at-least-once), nhưng đồng nghĩa message **có thể được xử lý nhiều lần**.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Vòng đời một message kiểu SQS</title>
+  <desc>Máy trạng thái của message: từ Visible khi enqueue, sang In-flight (ẩn trong visibility timeout) khi worker receive, rồi Deleted khi ack. Nếu worker chết hoặc quá lâu thì hết timeout, message quay về Visible để worker khác nhận lại — đây là nguồn gốc của at-least-once và duplicate.</desc>
+  <defs>
+    <marker id="ah-life" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Vòng đời message (mô hình SQS)</text>
+  <g stroke="currentColor" fill="none" marker-end="url(#ah-life)" stroke-width="1.4">
+    <path d="M150 92 H300"/>
+    <path d="M450 92 H560"/>
+    <path d="M375 168 C 300 230, 180 200, 130 120"/>
+  </g>
+  <g font-size="11" fill="currentColor">
+    <text x="225" y="84" text-anchor="middle">receive (worker nhận)</text>
+    <text x="505" y="84" text-anchor="middle">ack / delete</text>
+    <text x="245" y="222" text-anchor="middle" fill="#f59e0b">hết visibility timeout → hiện lại</text>
+  </g>
+  <g>
+    <rect x="30" y="72" width="120" height="44" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="90" y="92" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Visible</text>
+    <text x="90" y="108" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">chờ trong queue</text>
+  </g>
+  <g>
+    <rect x="300" y="72" width="150" height="44" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="375" y="92" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">In-flight (ẩn)</text>
+    <text x="375" y="108" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">trong visibility timeout</text>
+  </g>
+  <g>
+    <rect x="560" y="72" width="130" height="44" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="625" y="92" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Deleted</text>
+    <text x="625" y="108" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">xử lý xong</text>
+  </g>
+  <g>
+    <text x="375" y="150" font-size="11.5" font-weight="700" text-anchor="middle" fill="#f59e0b">worker chết / xử lý quá lâu</text>
+    <rect x="40" y="270" width="650" height="58" rx="10" fill="#8b5cf6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="56" y="293" font-size="11.5" font-weight="700" fill="currentColor">Hệ quả at-least-once:</text>
+    <text x="56" y="312" font-size="11" fill="currentColor" opacity="0.8">message hiện lại → worker khác nhận lại cùng job → có thể xử lý nhiều lần → DUPLICATE. Mọi consumer phải idempotent.</text>
+  </g>
+</svg>
+
 ```python
 # Vòng lặp worker điển hình
 while True:
@@ -121,6 +163,53 @@ COMMIT;  -- atomic: đơn hàng và "lời hứa publish" sống chết cùng nh
 
 Một **relay process** (poller hoặc CDC như Debezium đọc WAL/binlog) đọc bảng outbox, publish lên queue, đánh dấu đã gửi. Relay crash sau publish nhưng trước khi đánh dấu? Publish lại → duplicate → nhưng consumer của bạn đã idempotent (mục 3) nên vô hại. Mọi mảnh ghép khớp vào nhau: **outbox đảm bảo at-least-once publish, idempotent consumer hấp thụ duplicate**.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Transactional Outbox và relay process</title>
+  <desc>Một transaction duy nhất ghi atomic cả bảng orders lẫn bảng outbox vào cùng database. Một relay (poller hoặc CDC) đọc outbox, publish event lên queue, rồi đánh dấu đã gửi. Vì chỉ ghi vào một nơi nên không còn dual-write làm mất event.</desc>
+  <defs>
+    <marker id="ah-ob" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Outbox + relay — chỉ ghi vào MỘT nơi</text>
+  <g>
+    <rect x="20" y="48" width="250" height="160" rx="12" fill="#3b82f6" fill-opacity="0.10" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="36" y="70" font-size="12" font-weight="700" fill="currentColor">1 TRANSACTION (atomic)</text>
+    <rect x="40" y="84" width="210" height="44" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="145" y="104" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">INSERT orders</text>
+    <text x="145" y="120" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">dữ liệu nghiệp vụ</text>
+    <rect x="40" y="140" width="210" height="44" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="145" y="160" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">INSERT outbox</text>
+    <text x="145" y="176" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">"lời hứa publish"</text>
+    <text x="145" y="200" font-size="10.5" font-style="italic" text-anchor="middle" fill="currentColor" opacity="0.8">COMMIT — cùng sống chết</text>
+  </g>
+  <g>
+    <rect x="320" y="98" width="150" height="60" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="395" y="124" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Relay / CDC</text>
+    <text x="395" y="142" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">poller · Debezium</text>
+  </g>
+  <g>
+    <rect x="520" y="98" width="180" height="60" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="610" y="124" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Queue</text>
+    <text x="610" y="142" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">event đã publish</text>
+  </g>
+  <g stroke="currentColor" fill="none" marker-end="url(#ah-ob)" stroke-width="1.4">
+    <path d="M270 162 C 290 175, 300 150, 318 135"/>
+    <path d="M470 128 H516"/>
+    <path d="M395 158 C 360 215, 320 215, 300 178"/>
+  </g>
+  <g font-size="10.5" fill="currentColor">
+    <text x="293" y="195" text-anchor="middle">đọc outbox</text>
+    <text x="493" y="118" text-anchor="middle">publish</text>
+    <text x="340" y="222" fill="#10b981">đánh dấu sent</text>
+  </g>
+  <g>
+    <rect x="20" y="248" width="680" height="52" rx="10" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="36" y="270" font-size="11.5" font-weight="700" fill="currentColor">Vì sao tránh dual-write:</text>
+    <text x="36" y="288" font-size="11" fill="currentColor" opacity="0.8">"ghi DB rồi publish" = 2 hệ thống không transaction chung → crash giữa chừng làm MẤT event. Outbox gộp về 1 commit.</text>
+  </g>
+</svg>
+
 | | Dual-write ngây thơ | Outbox + relay |
 |---|---|---|
 | Mất event | Có thể (crash giữa 2 bước) | Không (event commit cùng data) |
@@ -132,10 +221,45 @@ Một **relay process** (poller hoặc CDC như Debezium đọc WAL/binlog) đ�
 
 Khi một nghiệp vụ trải qua nhiều service (đặt vé = trừ tiền + giữ ghế + xuất vé), bạn không có distributed transaction tử tế (2PC chậm, fragile, hầu hết managed service không hỗ trợ). **Saga** = chuỗi local transaction, mỗi bước có một **compensating action** để "hoàn tác nghiệp vụ" nếu bước sau thất bại:
 
-```
-ĐặtVé:    charge_payment → reserve_seat → issue_ticket
-Bù trừ:   refund_payment ← release_seat ←  (fail ở đây)
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Saga: chuỗi forward và đường compensation</title>
+  <desc>Hàng trên là chuỗi local transaction tiến tới: charge_payment, reserve_seat, issue_ticket. Khi issue_ticket fail, saga chạy ngược đường compensation: release_seat rồi refund_payment để hoàn tác nghiệp vụ các bước đã thành công.</desc>
+  <defs>
+    <marker id="ah-fwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#10b981"/>
+    </marker>
+    <marker id="ah-cmp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#f59e0b"/>
+    </marker>
+  </defs>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Saga — forward và compensation</text>
+  <text x="16" y="58" font-size="11.5" font-weight="700" fill="#10b981">Forward (chuỗi local transaction)</text>
+  <g>
+    <rect x="20" y="68" width="160" height="46" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="100" y="96" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">charge_payment</text>
+    <rect x="280" y="68" width="160" height="46" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="360" y="96" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">reserve_seat</text>
+    <rect x="540" y="68" width="160" height="46" rx="10" fill="#ef4444" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="620" y="92" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">issue_ticket</text>
+    <text x="620" y="107" font-size="10" font-weight="700" text-anchor="middle" fill="#ef4444">✗ FAIL</text>
+  </g>
+  <g stroke="#10b981" fill="none" marker-end="url(#ah-fwd)" stroke-width="1.6">
+    <path d="M180 91 H276"/>
+    <path d="M440 91 H536"/>
+  </g>
+  <text x="16" y="166" font-size="11.5" font-weight="700" fill="#f59e0b">Compensation (chạy ngược — KHÔNG phải rollback)</text>
+  <g>
+    <rect x="20" y="176" width="160" height="46" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="100" y="204" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">refund_payment</text>
+    <rect x="280" y="176" width="160" height="46" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="360" y="204" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">release_seat</text>
+  </g>
+  <g stroke="#f59e0b" fill="none" marker-end="url(#ah-cmp)" stroke-width="1.6">
+    <path d="M620 114 V199 H444"/>
+    <path d="M280 199 H184"/>
+  </g>
+  <text x="232" y="246" font-size="10.5" fill="currentColor" opacity="0.75">mỗi bước thành công có một hành động bù trừ; refund là giao dịch MỚI, không xoá lịch sử</text>
+</svg>
 
 Điểm cần khắc cốt: compensation **không phải rollback**. Tiền đã trừ thì refund là một giao dịch mới (khách có thể đã thấy SMS trừ tiền); email đã gửi thì chỉ có thể gửi email "xin lỗi". Saga chấp nhận hệ thống đi qua các trạng thái trung gian quan sát được — đó là cái giá của việc bỏ lock toàn cục.
 
@@ -158,6 +282,56 @@ Hai nhu cầu khác nhau, đừng nhập nhằng:
 ## 7. Poison message & Dead Letter Queue
 
 Poison message = message mà worker xử lý kiểu gì cũng fail (payload hỏng, bug ở consumer, dữ liệu tham chiếu đã bị xoá). Không có DLQ, nó tạo vòng lặp vĩnh cửu: receive → throw → quay lại queue → receive... Worker pool của bạn dành 100% năng lực nhai đi nhai lại vài message hỏng, message lành mạnh phía sau **chết đói** — một message hỏng đánh sập throughput cả hệ thống.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Poison message và Dead Letter Queue</title>
+  <desc>Message fail được retry và quay lại queue. Khi vượt maxReceiveCount, thay vì lặp vô hạn làm nghẽn worker pool, message bị chuyển sang DLQ. DLQ có alarm khi depth lớn hơn 0 và có quy trình redrive đẩy message về queue chính sau khi fix.</desc>
+  <defs>
+    <marker id="ah-dlq" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Poison message → DLQ (chặn vòng lặp vĩnh cửu)</text>
+  <g>
+    <rect x="30" y="56" width="150" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="105" y="80" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Queue chính</text>
+    <text x="105" y="98" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">message</text>
+    <rect x="290" y="56" width="150" height="56" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="365" y="80" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Worker</text>
+    <text x="365" y="98" font-size="10" text-anchor="middle" fill="#ef4444">xử lý → FAIL</text>
+  </g>
+  <g stroke="currentColor" fill="none" marker-end="url(#ah-dlq)" stroke-width="1.4">
+    <path d="M180 84 H286"/>
+    <path d="M365 112 C 320 165, 180 150, 105 116"/>
+  </g>
+  <g font-size="10.5" fill="currentColor">
+    <text x="233" y="76" text-anchor="middle">receive</text>
+    <text x="225" y="160" text-anchor="middle" fill="#f59e0b">quay lại (receiveCount++)</text>
+  </g>
+  <g>
+    <rect x="540" y="56" width="160" height="56" rx="10" fill="#ef4444" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="620" y="80" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">DLQ</text>
+    <text x="620" y="98" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">message hỏng</text>
+  </g>
+  <g stroke="currentColor" fill="none" marker-end="url(#ah-dlq)" stroke-width="1.6">
+    <path d="M440 84 H536"/>
+  </g>
+  <text x="488" y="76" font-size="10.5" font-weight="700" text-anchor="middle" fill="#ef4444">&gt; maxReceiveCount</text>
+  <g>
+    <rect x="540" y="150" width="160" height="44" rx="9" fill="#ef4444" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="620" y="170" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Alarm</text>
+    <text x="620" y="186" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">DLQ depth &gt; 0</text>
+  </g>
+  <g stroke="currentColor" fill="none" marker-end="url(#ah-dlq)" stroke-width="1.4" stroke-dasharray="5 4">
+    <path d="M620 112 V146"/>
+    <path d="M540 172 C 300 250, 160 200, 105 118"/>
+  </g>
+  <text x="300" y="240" font-size="10.5" font-weight="700" fill="#10b981">redrive sau khi fix bug/data (consumer idempotent → an toàn)</text>
+  <g>
+    <rect x="30" y="262" width="670" height="48" rx="10" fill="#8b5cf6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="46" y="291" font-size="11" fill="currentColor" opacity="0.85">Không có DLQ: receive → throw → quay lại → receive… vô hạn → worker pool nghẽn, message lành chết đói.</text>
+  </g>
+</svg>
 
 Phòng tuyến chuẩn:
 

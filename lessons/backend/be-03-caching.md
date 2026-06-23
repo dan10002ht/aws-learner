@@ -55,6 +55,86 @@ Ghi vào cache, **ack ngay**, rồi cache flush xuống DB bất đồng bộ (t
 - **Ưu**: write latency cực thấp, gom batch giảm tải DB — phù hợp counter, like, view count, telemetry.
 - **Nhược**: **rủi ro mất dữ liệu** nếu cache chết trước khi flush. Đây là pattern duy nhất trong 4 pattern mà cache giữ dữ liệu *chưa tồn tại* trong DB — chỉ dùng cho dữ liệu chấp nhận mất một phần.
 
+### Bốn pattern cạnh nhau
+
+Bốn pattern khác nhau ở hai chỗ: **ai đi load khi miss** và **write đi đường nào**. Đọc theo từng cột:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 360" role="img" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Bốn cache pattern: cache-aside, read-through, write-through, write-behind</title>
+  <desc>So sánh luồng read và write của bốn pattern giữa App, Cache và DB. Cache-aside: app tự đọc cache rồi load DB khi miss. Read-through: cache layer tự load DB khi miss. Write-through: app ghi cache và DB đồng bộ. Write-behind: app ghi cache, ack ngay, cache flush DB async.</desc>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g font-size="11" text-anchor="middle">
+    <text x="55" y="22" font-size="11" fill="currentColor" opacity="0.7">read ──</text>
+    <text x="120" y="22" font-size="11" fill="currentColor" opacity="0.7">write - - -</text>
+  </g>
+  <g>
+    <text x="95" y="48" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Cache-aside</text>
+    <text x="285" y="48" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Read-through</text>
+    <text x="475" y="48" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Write-through</text>
+    <text x="665" y="48" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Write-behind</text>
+  </g>
+  <g font-size="10.5" text-anchor="middle" fill="currentColor">
+    <rect x="50" y="62" width="90" height="30" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="95" y="81">App</text>
+    <rect x="50" y="175" width="90" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="95" y="194">Cache</text>
+    <rect x="50" y="288" width="90" height="30" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="95" y="307">DB</text>
+    <rect x="240" y="62" width="90" height="30" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="285" y="81">App</text>
+    <rect x="240" y="175" width="90" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="285" y="194">Cache</text>
+    <rect x="240" y="288" width="90" height="30" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="285" y="307">DB</text>
+    <rect x="430" y="62" width="90" height="30" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="475" y="81">App</text>
+    <rect x="430" y="175" width="90" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="475" y="194">Cache</text>
+    <rect x="430" y="288" width="90" height="30" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="475" y="307">DB</text>
+    <rect x="620" y="62" width="90" height="30" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="665" y="81">App</text>
+    <rect x="620" y="175" width="90" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="665" y="194">Cache</text>
+    <rect x="620" y="288" width="90" height="30" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="665" y="307">DB</text>
+  </g>
+  <g stroke="currentColor" fill="none" marker-end="url(#ar)">
+    <path d="M75 92 V173"/>
+    <path d="M280 92 V173"/>
+    <path d="M285 205 V286"/>
+    <path d="M460 92 V173"/>
+    <path d="M490 205 V286"/>
+    <path d="M665 92 V173"/>
+    <path d="M665 205 V286" stroke-dasharray="5 4" stroke-opacity="0.7"/>
+  </g>
+  <g stroke="currentColor" fill="none" marker-end="url(#ar)" stroke-dasharray="5 4">
+    <path d="M115 92 V286"/>
+    <path d="M315 92 V286"/>
+    <path d="M495 92 V173"/>
+  </g>
+  <g stroke="currentColor" fill="none" marker-end="url(#ar)" stroke-opacity="0.6">
+    <path d="M105 173 V96"/>
+    <path d="M295 173 V96"/>
+  </g>
+  <g font-size="9.5" fill="currentColor" opacity="0.7" text-anchor="middle">
+    <text x="155" y="140">read: miss</text>
+    <text x="155" y="155">→ load DB,</text>
+    <text x="155" y="245">app set lại</text>
+    <text x="350" y="140">cache tự</text>
+    <text x="350" y="245">load khi miss</text>
+    <text x="540" y="140">ghi cache</text>
+    <text x="540" y="155">+ DB</text>
+    <text x="540" y="245">đồng bộ</text>
+    <text x="700" y="140">ack ngay</text>
+    <text x="700" y="245">flush async</text>
+  </g>
+</svg>
+
 ### Bảng so sánh
 
 | Pattern | Ai load khi miss | Write path | Stale risk | Mất data nếu cache chết | Use case điển hình |
@@ -88,6 +168,46 @@ T2 (writer): update DB → DEL cache key
 T1 (reader): SET cache = giá trị CŨ   ← cache giờ sai cho đến hết TTL!
 ```
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 360" role="img" style="width:100%;max-width:700px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Race condition kinh điển của cache-aside theo timeline</title>
+  <desc>Sequence theo thời gian đi xuống với hai tác nhân T1 reader và T2 writer cùng tác động lên Cache và DB. T1 đọc DB được giá trị cũ, T2 update DB rồi DEL cache, sau đó T1 SET lại giá trị cũ khiến cache sai đến hết TTL.</desc>
+  <defs>
+    <marker id="ra2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">
+    <text x="100" y="26">T1 (reader)</text>
+    <text x="300" y="26">Cache</text>
+    <text x="480" y="26">DB</text>
+    <text x="630" y="26">T2 (writer)</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4">
+    <path d="M100 36 V340"/>
+    <path d="M300 36 V340"/>
+    <path d="M480 36 V340"/>
+    <path d="M630 36 V340"/>
+  </g>
+  <text x="16" y="50" font-size="10" fill="currentColor" opacity="0.55">thời gian</text>
+  <path d="M24 58 V330" stroke="currentColor" stroke-opacity="0.4" marker-end="url(#ra2)" fill="none"/>
+  <g stroke="currentColor" fill="none" marker-end="url(#ra2)">
+    <path d="M100 78 H296"/>
+    <path d="M100 130 H476"/>
+    <path d="M630 200 H484"/>
+    <path d="M630 250 H304"/>
+    <path d="M100 308 H296"/>
+  </g>
+  <g font-size="10.5" fill="currentColor">
+    <text x="120" y="72">① đọc cache → MISS</text>
+    <text x="120" y="124">② đọc DB → nhận giá trị CŨ (v1)</text>
+    <text x="350" y="194" text-anchor="end">③ UPDATE DB → v2</text>
+    <text x="350" y="244" text-anchor="end">④ DEL cache key</text>
+    <text x="120" y="302" fill="#f59e0b">⑤ SET cache = v1 (CŨ!)</text>
+  </g>
+  <rect x="44" y="318" width="612" height="30" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="350" y="337" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Cache giữ v1 (sai) đến khi hết TTL — dù DB đã là v2</text>
+</svg>
+
 Cửa sổ race này nhỏ nhưng ở traffic lớn thì *chắc chắn* xảy ra. Giải pháp thực dụng: luôn đặt TTL làm lưới an toàn (stale tối đa = TTL), hoặc dùng versioning/compare-and-set, hoặc "delayed double delete" (xoá lần 2 sau vài trăm ms).
 
 2. **DB commit và cache delete không atomic**: nếu ghi DB thành công nhưng xoá cache fail (network blip), cache sai vô thời hạn nếu không có TTL. Hệ thống lớn hay dùng **CDC (Change Data Capture)** — đọc binlog/WAL của DB rồi invalidate cache — để tách invalidation khỏi code application.
@@ -99,6 +219,58 @@ Cửa sổ race này nhỏ nhưng ở traffic lớn thì *chắc chắn* xảy r
 ## Cache stampede (dogpile) và cách chống
 
 Kịch bản: key `homepage:feed` được 5.000 request/giây đọc. Đúng lúc TTL hết, **cả nghìn request cùng miss và cùng lao vào DB** chạy một query nặng. DB nghẽn → request chậm → càng nhiều request dồn lại → sập dây chuyền. Đây là stampede.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Cache stampede so với single-flight</title>
+  <desc>Hai cột. Bên trái: TTL hết, hàng nghìn request cùng miss cùng lao vào DB gây nghẽn. Bên phải single-flight: chỉ một request đi tính lại và ghi cache, các request còn lại chờ hoặc dùng giá trị stale, DB nhẹ tải.</desc>
+  <defs>
+    <marker id="st1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="180" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Stampede (dogpile)</text>
+  <text x="540" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Single-flight</text>
+  <line x1="360" y1="14" x2="360" y2="316" stroke="currentColor" stroke-opacity="0.2"/>
+  <g font-size="10" text-anchor="middle" fill="currentColor">
+    <rect x="30" y="44" width="50" height="26" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/><text x="55" y="61">req</text>
+    <rect x="90" y="44" width="50" height="26" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/><text x="115" y="61">req</text>
+    <rect x="150" y="44" width="50" height="26" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/><text x="175" y="61">req</text>
+    <rect x="210" y="44" width="50" height="26" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/><text x="235" y="61">req</text>
+    <rect x="270" y="44" width="60" height="26" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/><text x="300" y="61">×1000</text>
+  </g>
+  <text x="180" y="98" font-size="10.5" text-anchor="middle" fill="#f59e0b">TTL hết → tất cả cùng MISS</text>
+  <g stroke="currentColor" fill="none" marker-end="url(#st1)" stroke-opacity="0.7">
+    <path d="M55 106 L170 158"/>
+    <path d="M115 106 L178 158"/>
+    <path d="M175 106 L182 158"/>
+    <path d="M235 106 L188 158"/>
+    <path d="M300 106 L195 158"/>
+  </g>
+  <rect x="120" y="162" width="120" height="40" rx="8" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="180" y="180" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">DB</text>
+  <text x="180" y="195" font-size="9.5" text-anchor="middle" fill="currentColor">query nặng ×1000</text>
+  <text x="180" y="230" font-size="11" font-weight="700" text-anchor="middle" fill="#f59e0b">DB nghẽn → sập dây chuyền</text>
+  <g font-size="10" text-anchor="middle" fill="currentColor">
+    <rect x="390" y="44" width="50" height="26" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/><text x="415" y="61">req</text>
+    <rect x="450" y="44" width="50" height="26" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/><text x="475" y="61">req</text>
+    <rect x="510" y="44" width="50" height="26" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/><text x="535" y="61">req</text>
+    <rect x="570" y="44" width="50" height="26" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/><text x="595" y="61">req</text>
+    <rect x="630" y="44" width="60" height="26" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/><text x="660" y="61">×1000</text>
+  </g>
+  <rect x="400" y="92" width="280" height="26" rx="7" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="540" y="109" font-size="10" text-anchor="middle" fill="currentColor">lock / single-flight — chỉ 1 request qua</text>
+  <g stroke="currentColor" fill="none" marker-end="url(#st1)">
+    <path d="M415 118 L495 158"/>
+  </g>
+  <g stroke="currentColor" fill="none" stroke-dasharray="4 4" stroke-opacity="0.6">
+    <path d="M475 118 V140"/><path d="M535 118 V140"/><path d="M595 118 V140"/><path d="M660 118 V140"/>
+  </g>
+  <text x="600" y="135" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">chờ / serve stale</text>
+  <rect x="480" y="162" width="120" height="40" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="540" y="180" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">DB</text>
+  <text x="540" y="195" font-size="9.5" text-anchor="middle" fill="currentColor">1 query duy nhất</text>
+  <text x="540" y="230" font-size="11" font-weight="700" text-anchor="middle" fill="#10b981">DB nhẹ tải → ổn định</text>
+</svg>
 
 Ba kỹ thuật chống, thường dùng kết hợp:
 
@@ -194,6 +366,57 @@ Nguyên tắc:
 | Chi phí vận hành | Gần như 0 | Một hệ thống phải quản lý, monitor, failover |
 
 Kiến trúc thực dụng là **multi-tier (L1/L2)**: local cache TTL rất ngắn (1–10s) chặn hot path, Redis phía sau TTL dài hơn làm nguồn dùng chung, DB cuối cùng. L1 hấp thụ hot key và spike; L2 giữ hit ratio cao và nhất quán giữa các instance. Nếu cần invalidate L1 chủ động, dùng Redis pub/sub hoặc client-side caching (Redis 6+ có `CLIENT TRACKING` push invalidation về client).
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Kiến trúc multi-tier read path: CDN → L1 → L2 → read replica → DB</title>
+  <desc>Chuỗi tầng đọc từ user xuống nguồn dữ liệu. Mỗi tầng hấp thụ phần lớn request và chỉ để lọt phần miss cho tầng sau: CDN edge, local cache L1, distributed cache L2 Redis, read replica, cuối cùng là DB chính. Số request giảm dần qua từng tầng.</desc>
+  <defs>
+    <marker id="mt1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="24" font-size="12.5" font-weight="700" fill="currentColor">Read path — mỗi tầng chặn bớt request cho tầng sau</text>
+  <g text-anchor="middle">
+    <rect x="20" y="80" width="100" height="56" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="70" y="105" font-size="12" font-weight="700" fill="currentColor">CDN / edge</text>
+    <text x="70" y="123" font-size="9.5" fill="currentColor" opacity="0.7">gần user nhất</text>
+    <rect x="158" y="80" width="100" height="56" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="208" y="101" font-size="12" font-weight="700" fill="currentColor">Local L1</text>
+    <text x="208" y="118" font-size="9.5" fill="currentColor" opacity="0.7">in-process</text>
+    <text x="208" y="130" font-size="9.5" fill="currentColor" opacity="0.7">TTL 1–10s</text>
+    <rect x="296" y="80" width="110" height="56" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="351" y="101" font-size="12" font-weight="700" fill="currentColor">Distributed L2</text>
+    <text x="351" y="118" font-size="9.5" fill="currentColor" opacity="0.7">Redis dùng chung</text>
+    <text x="351" y="130" font-size="9.5" fill="currentColor" opacity="0.7">TTL dài hơn</text>
+    <rect x="444" y="80" width="110" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="499" y="105" font-size="12" font-weight="700" fill="currentColor">Read replica</text>
+    <text x="499" y="123" font-size="9.5" fill="currentColor" opacity="0.7">đọc scale-out</text>
+    <rect x="592" y="80" width="108" height="56" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="646" y="105" font-size="12" font-weight="700" fill="currentColor">DB chính</text>
+    <text x="646" y="123" font-size="9.5" fill="currentColor" opacity="0.7">nguồn sự thật</text>
+  </g>
+  <g stroke="currentColor" fill="none" marker-end="url(#mt1)">
+    <path d="M120 108 H156"/>
+    <path d="M258 108 H294"/>
+    <path d="M406 108 H442"/>
+    <path d="M554 108 H590"/>
+  </g>
+  <g font-size="9" fill="currentColor" opacity="0.7" text-anchor="middle">
+    <text x="138" y="100">miss</text>
+    <text x="276" y="100">miss</text>
+    <text x="424" y="100">miss</text>
+    <text x="572" y="100">miss</text>
+  </g>
+  <text x="20" y="180" font-size="10" fill="currentColor" opacity="0.7">Lượng request lọt xuống tầng sau (giảm dần):</text>
+  <g>
+    <rect x="20" y="190" width="100" height="20" rx="4" fill="#3b82f6" fill-opacity="0.5"/>
+    <rect x="158" y="190" width="70" height="20" rx="4" fill="#10b981" fill-opacity="0.5"/>
+    <rect x="296" y="190" width="44" height="20" rx="4" fill="#10b981" fill-opacity="0.5"/>
+    <rect x="444" y="190" width="26" height="20" rx="4" fill="#8b5cf6" fill-opacity="0.5"/>
+    <rect x="592" y="190" width="14" height="20" rx="4" fill="#f59e0b" fill-opacity="0.6"/>
+  </g>
+  <text x="360" y="248" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Đẩy cache càng gần user càng tốt — với điều kiện dữ liệu chịu được stale</text>
+</svg>
 
 ## CDN cache cho API
 

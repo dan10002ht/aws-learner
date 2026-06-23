@@ -33,13 +33,41 @@ Xét chuỗi: `API Gateway (30s) → Service A (?) → Service B (?) → DB (?)`
 
 Nếu mỗi tầng tự đặt timeout độc lập và đều retry, tổng thời gian xấu nhất bùng nổ. Cách đúng là **budget giảm dần**: tầng ngoài cấp một deadline tổng, mỗi tầng trong tiêu một phần và truyền phần còn lại xuống.
 
-```
-Edge nhận request, budget tổng = 3000ms
-  ├─ Service A: tự dùng 100ms xử lý, truyền xuống budget còn ~2800ms
-  │    ├─ gọi Service B với timeout = min(local_max, remaining - reserve)
-  │    │    └─ B gọi DB với timeout = remaining_của_B - reserve
-  │    └─ luôn chừa "reserve" (~100-200ms) để kịp trả lỗi/fallback có kiểm soát
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Timeout budget giảm dần xuyên call chain</title>
+  <desc>Edge cấp deadline tổng 3000ms. Mỗi tầng tiêu một phần và chừa reserve, truyền phần còn lại xuống tầng trong; tầng trong luôn có budget nhỏ hơn tầng ngoài: Edge 3000ms, Service A còn 2800ms, Service B còn 2600ms, DB còn 2400ms.</desc>
+  <g font-size="11.5">
+    <rect x="20" y="24" width="380" height="44" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="36" y="44" font-size="13" font-weight="700" fill="currentColor">Edge</text>
+    <text x="36" y="60" fill="currentColor" opacity="0.75">nhận request, budget tổng = 3000ms</text>
+    <rect x="408" y="32" width="120" height="28" rx="14" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="468" y="51" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">3000ms</text>
+
+    <rect x="64" y="94" width="380" height="44" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="80" y="114" font-size="13" font-weight="700" fill="currentColor">Service A</text>
+    <text x="80" y="130" fill="currentColor" opacity="0.75">tiêu ~100ms + reserve → truyền xuống</text>
+    <rect x="452" y="102" width="120" height="28" rx="14" fill="#10b981" fill-opacity="0.9"/>
+    <text x="512" y="121" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">~2800ms</text>
+
+    <rect x="108" y="164" width="380" height="44" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="124" y="184" font-size="13" font-weight="700" fill="currentColor">Service B</text>
+    <text x="124" y="200" fill="currentColor" opacity="0.75">timeout = min(local_max, remaining − reserve)</text>
+    <rect x="496" y="172" width="120" height="28" rx="14" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="556" y="191" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">~2600ms</text>
+
+    <rect x="152" y="234" width="380" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="168" y="254" font-size="13" font-weight="700" fill="currentColor">DB</text>
+    <text x="168" y="270" fill="currentColor" opacity="0.75">timeout = remaining_của_B − reserve</text>
+    <rect x="540" y="242" width="120" height="28" rx="14" fill="#8b5cf6" fill-opacity="0.95"/>
+    <text x="600" y="261" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">~2400ms</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.45" fill="none" stroke-width="1.4">
+    <path d="M40 68 V112 H64"/>
+    <path d="M84 138 V182 H108"/>
+    <path d="M128 208 V252 H152"/>
+  </g>
+  <text x="690" y="150" font-size="11" text-anchor="end" fill="currentColor" opacity="0.7" transform="rotate(90 690 150)">tầng trong nhỏ hơn tầng ngoài · luôn chừa reserve</text>
+</svg>
 
 Triển khai thực tế: truyền header `x-request-deadline` (epoch ms) hoặc dùng `context.WithDeadline` (Go) / gRPC deadline / `AbortSignal.timeout()` (Node) xuyên suốt.
 
@@ -100,10 +128,81 @@ class RetryBudget:
 
 Đây là lỗi kiến trúc, không phải lỗi code. Xét chuỗi 4 tầng, **mỗi tầng đều retry 3 lần** (1 gốc + 3 retry = 4 lần thử):
 
-```
-Client(×4) → API(×4) → Service A(×4) → Service B(×4) → DB
-Tải lên DB trong tình huống xấu nhất: 4⁴ = 256 lần cho MỘT request gốc.
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Retry storm và amplification qua 4 tầng</title>
+  <desc>Khi mỗi tầng trong chuỗi Client, API, Service A, Service B đều retry 4 lần, một request gốc nhân thành 4 lũy thừa 4 bằng 256 lần gọi DB. So với retry chỉ một tầng thì DB chỉ nhận 4 lần.</desc>
+  <defs>
+    <marker id="rsArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="24" font-size="13" font-weight="700" fill="#ef4444">SAI — retry chồng ở mọi tầng</text>
+  <g font-size="12">
+    <g>
+      <rect x="20" y="40" width="96" height="40" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.4"/>
+      <text x="68" y="60" text-anchor="middle" font-weight="700" fill="currentColor">Client</text>
+      <text x="68" y="74" text-anchor="middle" font-size="10" fill="#ef4444">×4</text>
+    </g>
+    <g>
+      <rect x="172" y="40" width="96" height="40" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.4"/>
+      <text x="220" y="60" text-anchor="middle" font-weight="700" fill="currentColor">API</text>
+      <text x="220" y="74" text-anchor="middle" font-size="10" fill="#ef4444">×4</text>
+    </g>
+    <g>
+      <rect x="324" y="40" width="96" height="40" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.4"/>
+      <text x="372" y="58" text-anchor="middle" font-weight="700" fill="currentColor">Service A</text>
+      <text x="372" y="74" text-anchor="middle" font-size="10" fill="#ef4444">×4</text>
+    </g>
+    <g>
+      <rect x="476" y="40" width="96" height="40" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.4"/>
+      <text x="524" y="58" text-anchor="middle" font-weight="700" fill="currentColor">Service B</text>
+      <text x="524" y="74" text-anchor="middle" font-size="10" fill="#ef4444">×4</text>
+    </g>
+    <g>
+      <rect x="624" y="36" width="80" height="48" rx="9" fill="#ef4444" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5"/>
+      <text x="664" y="64" text-anchor="middle" font-weight="700" fill="currentColor">DB</text>
+    </g>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.6" fill="none" stroke-width="1.6">
+    <path d="M116 60 H172" marker-end="url(#rsArrow)"/>
+    <path d="M268 60 H324" marker-end="url(#rsArrow)"/>
+    <path d="M420 60 H476" marker-end="url(#rsArrow)"/>
+    <path d="M572 60 H624" marker-end="url(#rsArrow)"/>
+  </g>
+  <g font-size="10.5" fill="currentColor" opacity="0.7" text-anchor="middle">
+    <text x="144" y="100">×4</text>
+    <text x="296" y="100">×16</text>
+    <text x="448" y="100">×64</text>
+    <text x="598" y="100">×256</text>
+  </g>
+  <rect x="20" y="124" width="684" height="40" rx="9" fill="#ef4444" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="362" y="149" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Tải lên DB xấu nhất = 4 × 4 × 4 × 4 = 4⁴ = 256 lần cho MỘT request gốc</text>
+
+  <text x="16" y="208" font-size="13" font-weight="700" fill="#10b981">ĐÚNG — chỉ một tầng retry, các tầng giữa fail-fast</text>
+  <g font-size="12">
+    <rect x="20" y="224" width="96" height="40" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="68" y="244" text-anchor="middle" font-weight="700" fill="currentColor">Client</text>
+    <text x="68" y="258" text-anchor="middle" font-size="10" fill="#10b981">×4</text>
+    <rect x="172" y="224" width="96" height="40" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="220" y="244" text-anchor="middle" font-weight="700" fill="currentColor">API</text>
+    <text x="220" y="258" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.6">×1</text>
+    <rect x="324" y="224" width="96" height="40" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="372" y="242" text-anchor="middle" font-weight="700" fill="currentColor">Service A</text>
+    <text x="372" y="258" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.6">×1</text>
+    <rect x="476" y="224" width="96" height="40" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="524" y="242" text-anchor="middle" font-weight="700" fill="currentColor">Service B</text>
+    <text x="524" y="258" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.6">×1</text>
+    <rect x="624" y="220" width="80" height="48" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5"/>
+    <text x="664" y="248" text-anchor="middle" font-weight="700" fill="currentColor">DB</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.6" fill="none" stroke-width="1.6">
+    <path d="M116 244 H172" marker-end="url(#rsArrow)"/>
+    <path d="M268 244 H324" marker-end="url(#rsArrow)"/>
+    <path d="M420 244 H476" marker-end="url(#rsArrow)"/>
+    <path d="M572 244 H624" marker-end="url(#rsArrow)"/>
+  </g>
+  <text x="362" y="294" font-size="12.5" font-weight="700" text-anchor="middle" fill="#10b981">Tải lên DB = 4 lần — không bùng nổ</text>
+</svg>
 
 Khi DB chậm vì quá tải, amplification này đảm bảo nó **không bao giờ hồi phục được** cho tới khi ai đó tắt bớt traffic bằng tay. Đây là kịch bản đứng sau rất nhiều outage lớn (kể cả các sự cố của chính AWS).
 
@@ -115,14 +214,41 @@ Retry trả lời câu hỏi "lỗi *này* có thử lại không?". Circuit bre
 
 ### Ba trạng thái
 
-```
-            lỗi vượt ngưỡng                hết open_duration
- CLOSED ───────────────────────► OPEN ───────────────────────► HALF-OPEN
- (gọi bình thường,               (chặn ngay, trả lỗi/           (cho qua N request thử)
-  đếm tỷ lệ lỗi)                  fallback, không gọi thật)        │ thành công → CLOSED
-    ▲                                                              │ thất bại  → OPEN
-    └──────────────────────────────────────────────────────────────┘
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Máy trạng thái Circuit Breaker: CLOSED, OPEN, HALF-OPEN</title>
+  <desc>Ba trạng thái: CLOSED gọi bình thường và đếm tỷ lệ lỗi; lỗi vượt ngưỡng chuyển sang OPEN chặn ngay fail-fast; hết open_duration chuyển sang HALF-OPEN cho qua vài request thử; thử thành công về CLOSED, thử thất bại quay lại OPEN.</desc>
+  <defs>
+    <marker id="cbArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <rect x="24" y="120" width="180" height="76" rx="12" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/>
+  <text x="114" y="150" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">CLOSED</text>
+  <text x="114" y="170" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">gọi bình thường</text>
+  <text x="114" y="184" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">đếm tỷ lệ lỗi</text>
+
+  <rect x="516" y="120" width="180" height="76" rx="12" fill="#ef4444" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/>
+  <text x="606" y="150" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">OPEN</text>
+  <text x="606" y="170" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">fail-fast: chặn ngay (~0ms)</text>
+  <text x="606" y="184" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">trả lỗi/fallback, không gọi thật</text>
+
+  <rect x="270" y="244" width="180" height="60" rx="12" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/>
+  <text x="360" y="270" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">HALF-OPEN</text>
+  <text x="360" y="290" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">cho qua N request thử</text>
+
+  <g stroke="currentColor" stroke-opacity="0.6" fill="none" stroke-width="1.6">
+    <path d="M204 150 H516" marker-end="url(#cbArrow)"/>
+    <path d="M516 178 Q360 178 360 244" marker-end="url(#cbArrow)"/>
+    <path d="M270 274 Q114 274 114 196" marker-end="url(#cbArrow)"/>
+    <path d="M450 256 Q580 240 600 196" marker-end="url(#cbArrow)"/>
+  </g>
+  <g font-size="11" fill="currentColor">
+    <text x="360" y="142" text-anchor="middle" font-weight="600">lỗi vượt ngưỡng</text>
+    <text x="448" y="220" text-anchor="middle" opacity="0.85">hết open_duration</text>
+    <text x="150" y="232" text-anchor="middle" fill="#10b981" font-weight="600">thử thành công → CLOSED</text>
+    <text x="560" y="232" text-anchor="middle" fill="#ef4444" font-weight="600">thử thất bại → OPEN</text>
+  </g>
+</svg>
 
 - **Closed**: trạng thái bình thường. Theo dõi tỷ lệ lỗi trên cửa sổ trượt (ví dụ: ≥50% lỗi trong 10s, tối thiểu 20 request — ngưỡng tối thiểu tránh việc 1 lỗi / 1 request = "100% error" làm mở mạch oan).
 - **Open**: từ chối ngay lập tức (fail fast), không tốn timeout. Caller nhận lỗi sau ~0ms thay vì sau 2s timeout — chính điểm này cứu thread pool của bạn.
@@ -160,11 +286,38 @@ Tên lấy từ vách ngăn khoang tàu: thủng một khoang, tàu không chìm
 
 Tình huống kinh điển: service của bạn gọi cả `recommendation-svc` (phụ) và `order-svc` (chính) qua **một** HTTP connection pool 100 connection. Recommendation chậm → 100 connection dần bị giữ hết bởi các call recommendation đang chờ → order call không lấy được connection → **tính năng phụ giết tính năng chính**.
 
-```
-SAI:  [ shared pool: 100 ] ← order + recommendation + email tranh nhau
-ĐÚNG: [ order: 60 ] [ recommendation: 20 ] [ email: 10 ] [ dự phòng: 10 ]
-       → recommendation hỏng chỉ "đầy" đúng khoang 20 của nó
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 290" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Bulkhead — cô lập connection pool theo dependency</title>
+  <desc>Cách SAI: một shared pool 100 connection dùng chung, recommendation chậm nuốt hết, order và email không lấy được connection. Cách ĐÚNG: phân khoang riêng order 60, recommendation 20, email 10, dự phòng 10, nên recommendation hỏng chỉ làm đầy đúng khoang 20 của nó.</desc>
+  <text x="16" y="24" font-size="13" font-weight="700" fill="#ef4444">SAI — shared pool 100, mọi dependency tranh nhau</text>
+  <rect x="20" y="36" width="680" height="56" rx="10" fill="#ef4444" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.4"/>
+  <text x="36" y="68" font-size="12" font-weight="700" fill="currentColor">shared pool: 100</text>
+  <rect x="220" y="48" width="380" height="32" rx="7" fill="#ef4444" fill-opacity="0.55"/>
+  <text x="410" y="69" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">recommendation chậm nuốt hết 100 connection</text>
+  <text x="624" y="60" font-size="10.5" fill="#ef4444">order/email</text>
+  <text x="624" y="74" font-size="10.5" fill="#ef4444">bị đói → chết theo</text>
+
+  <text x="16" y="142" font-size="13" font-weight="700" fill="#10b981">ĐÚNG — phân khoang riêng, hỏng chỉ đầy khoang của nó</text>
+  <g font-size="12">
+    <rect x="20" y="156" width="378" height="64" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/>
+    <text x="209" y="180" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">order: 60</text>
+    <text x="209" y="200" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">critical — luôn có chỗ</text>
+
+    <rect x="406" y="156" width="120" height="64" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/>
+    <text x="466" y="180" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">reco: 20</text>
+    <rect x="414" y="190" width="104" height="22" rx="5" fill="#ef4444" fill-opacity="0.55"/>
+    <text x="466" y="206" font-size="9.5" font-weight="700" text-anchor="middle" fill="#fff">đầy → chỉ kẹt 20</text>
+
+    <rect x="534" y="156" width="80" height="64" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/>
+    <text x="574" y="186" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">email: 10</text>
+    <text x="574" y="202" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">vẫn chạy</text>
+
+    <rect x="622" y="156" width="78" height="64" rx="10" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="661" y="186" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">dự phòng</text>
+    <text x="661" y="202" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">10</text>
+  </g>
+  <text x="20" y="248" font-size="11.5" fill="currentColor" opacity="0.8">recommendation hỏng chỉ làm đầy đúng khoang 20 của nó — order (60) và email (10) không hề bị ảnh hưởng.</text>
+</svg>
 
 Các dạng bulkhead thường dùng:
 
@@ -195,11 +348,48 @@ Hai cảnh báo:
 
 Khác retry (gửi lại **sau khi** thất bại), hedging gửi request **thứ hai song song khi request đầu chậm quá ngưỡng** (thường là p95), lấy kết quả nào về trước, huỷ cái còn lại.
 
-```
-t=0     gửi request → instance A
-t=p95   A chưa trả lời → gửi bản sao → instance B
-        nhận kết quả đầu tiên, cancel cái kia
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Hedging theo timeline — gửi bản sao khi request đầu vượt p95</title>
+  <desc>Thời gian chạy từ trái sang phải. t=0 gửi request tới instance A. Tới t=p95 mà A chưa trả lời thì gửi bản sao tới instance B. Lấy kết quả nào về trước (ở đây là B), rồi cancel cái còn lại (A). Chỉ khoảng 5% request vượt p95 nên bị hedge.</desc>
+  <defs>
+    <marker id="hgArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <line x1="60" y1="210" x2="700" y2="210" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.4" marker-end="url(#hgArrow)"/>
+  <text x="700" y="232" font-size="11" text-anchor="end" fill="currentColor" opacity="0.7">thời gian</text>
+
+  <g stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="3 4">
+    <line x1="100" y1="40" x2="100" y2="210"/>
+    <line x1="360" y1="40" x2="360" y2="210"/>
+    <line x1="560" y1="40" x2="560" y2="210"/>
+  </g>
+  <g font-size="11" fill="currentColor">
+    <text x="100" y="228" text-anchor="middle" font-weight="700">t=0</text>
+    <text x="360" y="228" text-anchor="middle" font-weight="700">t=p95</text>
+    <text x="560" y="228" text-anchor="middle" opacity="0.8">kết quả về</text>
+  </g>
+
+  <text x="20" y="84" font-size="12" font-weight="700" fill="currentColor">instance A</text>
+  <rect x="100" y="68" width="500" height="22" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+  <rect x="100" y="68" width="460" height="22" rx="6" fill="#94a3b8" fill-opacity="0.25"/>
+  <text x="240" y="84" font-size="10.5" fill="currentColor" opacity="0.75">A xử lý — vẫn chậm, chưa trả lời...</text>
+
+  <text x="20" y="148" font-size="12" font-weight="700" fill="currentColor">instance B</text>
+  <rect x="360" y="132" width="200" height="22" rx="6" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.4"/>
+  <text x="460" y="148" font-size="10.5" font-weight="600" text-anchor="middle" fill="currentColor">B trả kết quả trước</text>
+
+  <line x1="360" y1="79" x2="360" y2="132" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.4" marker-end="url(#hgArrow)"/>
+  <text x="372" y="116" font-size="10.5" fill="currentColor">gửi bản sao → B</text>
+
+  <line x1="560" y1="79" x2="560" y2="68" stroke="#ef4444" stroke-opacity="0.7" stroke-width="1.6"/>
+  <circle cx="560" cy="79" r="9" fill="#ef4444" fill-opacity="0.85"/>
+  <text x="560" y="83" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">✕</text>
+  <text x="572" y="58" font-size="10.5" fill="#ef4444" font-weight="600">cancel A (cái thua)</text>
+
+  <text x="100" y="36" font-size="11" fill="currentColor" opacity="0.8">gửi request → A</text>
+  <text x="660" y="178" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.7">chỉ ~5% request vượt p95 → bị hedge, tải tăng ~5%</text>
+</svg>
 
 - Chi phí: chỉ ~5% request bị hedge (những request vượt p95) → tải tăng ~5%, nhưng p99 cải thiện mạnh — kỹ thuật "The Tail at Scale" (Dean & Barroso) mà Google, gRPC, và DynamoDB dùng nội bộ.
 - Điều kiện: request **idempotent** tuyệt đối, và phải **cancel** được bản thua — không cancel thì hedging chỉ là nhân đôi tải. Tuyệt đối tắt hedging khi hệ thống đang quá tải (kết hợp với retry budget).

@@ -23,6 +23,45 @@ Nhưng tỉ lệ **phụ thuộc vào bản chất service**:
 
 Một hình dạng cần tránh: **ice cream cone** (kem ốc quế ngược) — vài unit test, rất nhiều E2E chạy qua UI/staging. Triệu chứng: pipeline 45 phút, mỗi tuần "re-run vì flaky" chục lần, không ai tin kết quả đỏ.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Ba hình dạng test suite: pyramid, testing trophy, ice-cream-cone</title>
+  <desc>So sánh ba hình dạng phân bổ test. Pyramid: nhiều unit ở đáy, ít E2E trên đỉnh. Testing trophy: integration là tầng dày nhất. Ice-cream-cone: ngược lại, rất nhiều E2E, ít unit — anti-pattern.</desc>
+  <text x="120" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Pyramid</text>
+  <text x="120" y="42" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">nhiều unit, ít E2E</text>
+  <g stroke="currentColor" stroke-opacity="0.22">
+    <polygon points="120,58 158,98 82,98" fill="#f59e0b" fill-opacity="0.16"/>
+    <polygon points="82,100 158,100 178,140 62,140" fill="#10b981" fill-opacity="0.15"/>
+    <polygon points="62,142 178,142 200,182 40,182" fill="#3b82f6" fill-opacity="0.14"/>
+  </g>
+  <text x="120" y="83" font-size="9.5" text-anchor="middle" fill="currentColor">E2E</text>
+  <text x="120" y="125" font-size="10" text-anchor="middle" fill="currentColor">Integration</text>
+  <text x="120" y="167" font-size="11" font-weight="600" text-anchor="middle" fill="currentColor">Unit</text>
+  <text x="360" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Testing trophy</text>
+  <text x="360" y="42" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">integration dày nhất</text>
+  <g stroke="currentColor" stroke-opacity="0.22">
+    <rect x="338" y="56" width="44" height="14" rx="3" fill="#3b82f6" fill-opacity="0.14"/>
+    <rect x="332" y="72" width="56" height="20" rx="3" fill="#f59e0b" fill-opacity="0.16"/>
+    <rect x="308" y="94" width="104" height="56" rx="4" fill="#10b981" fill-opacity="0.16"/>
+    <rect x="336" y="152" width="48" height="22" rx="3" fill="#8b5cf6" fill-opacity="0.14"/>
+    <path d="M348 174 q12 14 24 0 z" fill="#8b5cf6" fill-opacity="0.14"/>
+  </g>
+  <text x="360" y="67" font-size="8.5" text-anchor="middle" fill="currentColor">E2E</text>
+  <text x="360" y="86" font-size="9" text-anchor="middle" fill="currentColor">Unit</text>
+  <text x="360" y="127" font-size="11" font-weight="600" text-anchor="middle" fill="currentColor">Integration</text>
+  <text x="360" y="167" font-size="8.5" text-anchor="middle" fill="currentColor" opacity="0.7">Static</text>
+  <text x="600" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Ice-cream-cone</text>
+  <text x="600" y="42" font-size="10.5" text-anchor="middle" fill="#f59e0b">anti-pattern: nhiều E2E</text>
+  <g stroke="currentColor" stroke-opacity="0.22">
+    <polygon points="520,58 680,58 658,98 542,98" fill="#f59e0b" fill-opacity="0.18"/>
+    <polygon points="542,100 658,100 638,140 562,140" fill="#10b981" fill-opacity="0.13"/>
+    <polygon points="562,142 638,142 600,182" fill="#3b82f6" fill-opacity="0.12"/>
+  </g>
+  <text x="600" y="83" font-size="11" font-weight="600" text-anchor="middle" fill="currentColor">E2E</text>
+  <text x="600" y="125" font-size="9.5" text-anchor="middle" fill="currentColor">Integration</text>
+  <text x="600" y="165" font-size="8.5" text-anchor="middle" fill="currentColor">Unit</text>
+  <text x="360" y="208" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Lên cao = chậm hơn, đắt hơn, flaky hơn → đáy nên rộng (pyramid/trophy), không nên hẹp (cone)</text>
+</svg>
+
 ## 2. Unit test tốt: test hành vi, không test implementation
 
 Đây là kỹ năng quan trọng nhất và bị làm sai nhiều nhất. So sánh:
@@ -138,6 +177,47 @@ Bài toán: service A (consumer) gọi service B (provider). E2E test cả hai c
 2. **Phía provider**: CI của B tải contract về, **phát lại** từng request vào B thật và verify response khớp với điều consumer kỳ vọng.
 
 Kết quả: B muốn đổi/bỏ một field → build của B **đỏ ngay tại CI của B**, trước khi deploy, kèm thông tin "consumer nào đang phụ thuộc field này". Đây là cách phát hiện breaking change mà không cần dựng cả hệ thống lên.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Luồng consumer-driven contract testing với Pact</title>
+  <desc>Phía consumer (A) test với mock B, sinh ra pact file rồi publish lên Pact Broker. Phía provider (B) tải pact về, phát lại từng request vào B thật và verify. Nếu B đổi field gây breaking change thì verification đỏ ngay tại CI của provider.</desc>
+  <defs>
+    <marker id="ctArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="130" y="22" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Phía Consumer (A)</text>
+  <text x="590" y="22" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Phía Provider (B)</text>
+  <g stroke="currentColor" stroke-opacity="0.22">
+    <rect x="36" y="40" width="188" height="62" rx="9" fill="#3b82f6" fill-opacity="0.13"/>
+    <rect x="36" y="142" width="188" height="56" rx="9" fill="#3b82f6" fill-opacity="0.13"/>
+    <rect x="262" y="92" width="196" height="58" rx="9" fill="#8b5cf6" fill-opacity="0.15"/>
+    <rect x="496" y="40" width="188" height="62" rx="9" fill="#10b981" fill-opacity="0.15"/>
+    <rect x="496" y="142" width="188" height="56" rx="9" fill="#10b981" fill-opacity="0.15"/>
+  </g>
+  <text x="130" y="65" font-size="12" font-weight="600" text-anchor="middle" fill="currentColor">Test A với mock B</text>
+  <text x="130" y="84" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">ghi lại request/response</text>
+  <text x="130" y="167" font-size="11.5" font-weight="600" text-anchor="middle" fill="currentColor">Sinh pact file</text>
+  <text x="130" y="185" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">contract A↔B</text>
+  <text x="360" y="116" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Pact Broker</text>
+  <text x="360" y="135" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">lưu &amp; chia sẻ contract</text>
+  <text x="590" y="65" font-size="12" font-weight="600" text-anchor="middle" fill="currentColor">Phát lại request</text>
+  <text x="590" y="84" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">vào B THẬT &amp; verify</text>
+  <text x="590" y="170" font-size="11.5" font-weight="700" text-anchor="middle" fill="#f59e0b">Breaking change</text>
+  <text x="590" y="187" font-size="10" text-anchor="middle" fill="#f59e0b">→ CI của B ĐỎ ngay</text>
+  <g stroke="currentColor" fill="none" stroke-width="1.5" marker-end="url(#ctArrow)">
+    <path d="M130 102 v36"/>
+    <path d="M224 170 H262 q12 0 12 -12 v-2"/>
+    <path d="M446 121 q12 0 12 -12 v-40 H500"/>
+    <path d="M590 102 v36"/>
+  </g>
+  <text x="135" y="124" font-size="9.5" fill="currentColor" opacity="0.75">①</text>
+  <text x="238" y="160" font-size="9.5" fill="currentColor" opacity="0.75">② publish</text>
+  <text x="408" y="60" font-size="9.5" fill="currentColor" opacity="0.75">③ tải về</text>
+  <text x="595" y="124" font-size="9.5" fill="currentColor" opacity="0.75">④ verify</text>
+  <text x="360" y="232" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Hai phía test độc lập — không cần dựng cả A và B cùng lúc</text>
+  <text x="360" y="252" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Mock của A không thể "nói dối": provider verification bắt mọi lệch với B thật</text>
+</svg>
 
 | | Mock thường | Contract test |
 |---|---|---|
