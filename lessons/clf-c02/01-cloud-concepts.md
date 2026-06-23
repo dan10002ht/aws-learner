@@ -145,6 +145,70 @@ Cùng một việc "build 1 web app to-do list", 4 cách:
 | **FaaS** (serverless) | + scaling, idle management | Chỉ code function | Lambda, Step Functions | Event-driven, traffic không đều. |
 | **SaaS** | Tất cả | Chỉ cấu hình sử dụng | WorkMail, Chime, QuickSight, Connect | Không phải core competency. |
 
+Càng đi từ IaaS sang SaaS, **phần AWS quản tăng dần** còn **phần bạn quản giảm dần** — đổi lại bạn mất dần quyền kiểm soát (control) nhưng cũng giảm công vận hành (operational effort):
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Thang trách nhiệm 4 mô hình dịch vụ IaaS, PaaS, FaaS, SaaS</title>
+  <desc>Bốn cột IaaS, PaaS, FaaS, SaaS. Từ trái sang phải phần do AWS quản lý (màu lục) tăng dần, phần do bạn quản lý (màu xanh) giảm dần. Bên dưới là hai mũi tên: quyền kiểm soát giảm dần, công vận hành giảm dần khi đi sang SaaS.</desc>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Thang trách nhiệm: IaaS → PaaS → FaaS → SaaS</text>
+  <g font-size="11">
+    <rect x="540" y="36" width="14" height="14" rx="3" fill="#3b82f6" fill-opacity="0.85"/>
+    <text x="560" y="47" fill="currentColor">Bạn quản</text>
+    <rect x="640" y="36" width="14" height="14" rx="3" fill="#10b981" fill-opacity="0.9"/>
+    <text x="660" y="47" fill="currentColor">AWS quản</text>
+  </g>
+  <g>
+    <text x="89" y="76" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">IaaS</text>
+    <rect x="24" y="84" width="130" height="180" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="24" y="270" width="130" height="84" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="89" y="170" font-size="11.5" text-anchor="middle" fill="currentColor">OS · runtime</text>
+    <text x="89" y="188" font-size="11.5" text-anchor="middle" fill="currentColor">app · data</text>
+    <text x="89" y="206" font-size="11.5" text-anchor="middle" fill="currentColor">scaling</text>
+    <text x="89" y="315" font-size="11.5" text-anchor="middle" fill="currentColor">HW · ảo hoá</text>
+    <text x="89" y="333" font-size="11.5" text-anchor="middle" fill="currentColor">network</text>
+    <text x="89" y="372" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">EC2 · EBS · VPC</text>
+  </g>
+  <g>
+    <text x="247" y="76" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">PaaS</text>
+    <rect x="182" y="84" width="130" height="118" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="182" y="208" width="130" height="146" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="247" y="138" font-size="11.5" text-anchor="middle" fill="currentColor">app · data</text>
+    <text x="247" y="156" font-size="11.5" text-anchor="middle" fill="currentColor">config</text>
+    <text x="247" y="278" font-size="11.5" text-anchor="middle" fill="currentColor">+ OS · runtime</text>
+    <text x="247" y="296" font-size="11.5" text-anchor="middle" fill="currentColor">middleware</text>
+    <text x="247" y="372" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">Beanstalk · RDS · Fargate</text>
+  </g>
+  <g>
+    <text x="405" y="76" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">FaaS</text>
+    <rect x="340" y="84" width="130" height="74" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="340" y="164" width="130" height="190" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="405" y="126" font-size="11.5" text-anchor="middle" fill="currentColor">chỉ code</text>
+    <text x="405" y="144" font-size="11.5" text-anchor="middle" fill="currentColor">function</text>
+    <text x="405" y="254" font-size="11.5" text-anchor="middle" fill="currentColor">+ scaling</text>
+    <text x="405" y="272" font-size="11.5" text-anchor="middle" fill="currentColor">idle mgmt</text>
+    <text x="405" y="372" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">Lambda · Step Functions</text>
+  </g>
+  <g>
+    <text x="563" y="76" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">SaaS</text>
+    <rect x="498" y="84" width="130" height="40" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
+    <rect x="498" y="130" width="130" height="224" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="563" y="109" font-size="11.5" text-anchor="middle" fill="currentColor">chỉ cấu hình</text>
+    <text x="563" y="238" font-size="11.5" text-anchor="middle" fill="currentColor">+ tất cả</text>
+    <text x="563" y="256" font-size="11.5" text-anchor="middle" fill="currentColor">phần còn lại</text>
+    <text x="563" y="372" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">WorkMail · QuickSight</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <path d="M40 400 H612" marker-end="url(#clfArrow)"/>
+  </g>
+  <defs>
+    <marker id="clfArrow" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 z" fill="currentColor" fill-opacity="0.5"/>
+    </marker>
+  </defs>
+  <text x="40" y="416" font-size="11" fill="currentColor" opacity="0.75">← kiểm soát (control) nhiều hơn</text>
+  <text x="612" y="416" font-size="11" text-anchor="end" fill="currentColor" opacity="0.75">công vận hành ít hơn →</text>
+</svg>
+
 ### 2.4 Deployment models
 
 - **Public cloud** — AWS / Azure / GCP. Multi-tenant, share hardware (vẫn isolate logical). Đa số use case.
@@ -164,20 +228,89 @@ Cùng một việc "build 1 web app to-do list", 4 cách:
 | **Wavelength Zone** | Compute nhúng vào mạng 5G của telco | ~30 | Verizon Boston, KDDI Tokyo |
 | **Outposts** | AWS rack đặt tại văn phòng bạn | Tuỳ đặt | Datacenter của ngân hàng |
 
-**Quan hệ**:
-```
-                            ┌─────────────────────────────────┐
-                            │ Region: ap-southeast-1 (SG)     │
-                            │                                 │
-   User in TPHCM ──► Edge   │   ┌─────┐  ┌─────┐  ┌─────┐    │
-   (~10ms tới Edge)   PoP   │   │ AZ-a│  │ AZ-b│  │ AZ-c│    │
-   TPHCM              ──────│──►│ DC1 │  │ DC2 │  │ DC3 │    │
-                            │   │ DC2 │  │ DC2 │  │ DC2 │    │
-                            │   └──┬──┘  └──┬──┘  └──┬──┘    │
-                            │      └────────┼────────┘        │
-                            │       fiber <2ms inter-AZ       │
-                            └─────────────────────────────────┘
-```
+**Quan hệ**: Region **bọc** nhiều AZ, mỗi AZ **bọc** nhiều datacenter (nối fiber inter-AZ < 2ms). Edge/PoP đặt sát user, còn Local Zone / Wavelength / Outposts là các biến thể đẩy compute ra **ngoài** region để gần điểm tiêu thụ hơn:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Phân tầng AWS Global Infrastructure: Region bọc AZ bọc datacenter, kèm Edge và các biến thể ngoài region</title>
+  <desc>Khối lớn là Region ap-southeast-1 chứa ba Availability Zone; mỗi AZ chứa nhiều datacenter; các AZ nối nhau bằng fiber dưới 2ms. Bên trái user qua Edge Location/PoP cache gần người dùng đi vào Region. Bên dưới ba biến thể ngoài region: Local Zone gần metro, Wavelength trong mạng 5G, Outposts đặt on-premises.</desc>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">AWS Global Infrastructure — quan hệ chứa &amp; khoảng cách</text>
+
+  <g>
+    <rect x="20" y="92" width="92" height="64" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="66" y="118" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">User</text>
+    <text x="66" y="136" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">TPHCM</text>
+    <rect x="128" y="92" width="96" height="64" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="176" y="114" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Edge / PoP</text>
+    <text x="176" y="130" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">CloudFront</text>
+    <text x="176" y="143" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">cache ~10ms</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.5">
+    <path d="M112 124 H126" marker-end="url(#clfA2)"/>
+    <path d="M224 124 H252" marker-end="url(#clfA2)"/>
+  </g>
+  <defs>
+    <marker id="clfA2" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 z" fill="currentColor" fill-opacity="0.55"/>
+    </marker>
+  </defs>
+
+  <rect x="256" y="60" width="448" height="200" rx="12" fill="#3b82f6" fill-opacity="0.10" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="272" y="82" font-size="12.5" font-weight="700" fill="currentColor">Region — ap-southeast-1 (Singapore)</text>
+
+  <g>
+    <rect x="272" y="96" width="132" height="118" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="338" y="116" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">AZ-a</text>
+    <rect x="286" y="126" width="104" height="30" rx="6" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="338" y="146" font-size="10" text-anchor="middle" fill="currentColor">datacenter</text>
+    <rect x="286" y="162" width="104" height="30" rx="6" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="338" y="182" font-size="10" text-anchor="middle" fill="currentColor">datacenter</text>
+  </g>
+  <g>
+    <rect x="414" y="96" width="132" height="118" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="480" y="116" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">AZ-b</text>
+    <rect x="428" y="126" width="104" height="30" rx="6" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="480" y="146" font-size="10" text-anchor="middle" fill="currentColor">datacenter</text>
+    <rect x="428" y="162" width="104" height="30" rx="6" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="480" y="182" font-size="10" text-anchor="middle" fill="currentColor">datacenter</text>
+  </g>
+  <g>
+    <rect x="556" y="96" width="132" height="118" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="622" y="116" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">AZ-c</text>
+    <rect x="570" y="126" width="104" height="30" rx="6" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="622" y="146" font-size="10" text-anchor="middle" fill="currentColor">datacenter</text>
+    <rect x="570" y="162" width="104" height="30" rx="6" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="622" y="182" font-size="10" text-anchor="middle" fill="currentColor">datacenter</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.45" fill="none" stroke-dasharray="4 3">
+    <path d="M404 232 H546"/>
+    <path d="M546 232 H688"/>
+    <path d="M338 214 V232 H622 V214"/>
+  </g>
+  <text x="480" y="250" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">fiber inter-AZ &lt; 2ms</text>
+
+  <text x="16" y="298" font-size="12.5" font-weight="700" fill="currentColor">Biến thể đẩy compute ra ngoài Region (gần điểm tiêu thụ hơn)</text>
+  <g>
+    <rect x="20" y="312" width="218" height="118" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="129" y="338" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Local Zone</text>
+    <text x="129" y="362" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">mini-region gần metro</text>
+    <text x="129" y="380" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">latency thấp cho thành phố</text>
+    <text x="129" y="404" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">vd: Los Angeles, Boston</text>
+  </g>
+  <g>
+    <rect x="251" y="312" width="218" height="118" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="360" y="338" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Wavelength</text>
+    <text x="360" y="362" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">compute nhúng trong</text>
+    <text x="360" y="380" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">mạng 5G của telco</text>
+    <text x="360" y="404" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">vd: Verizon, KDDI</text>
+  </g>
+  <g>
+    <rect x="482" y="312" width="218" height="118" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="591" y="338" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Outposts</text>
+    <text x="591" y="362" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">rack AWS đặt</text>
+    <text x="591" y="380" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">on-premises tại văn phòng</text>
+    <text x="591" y="404" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">vd: datacenter ngân hàng</text>
+  </g>
+</svg>
 
 ### 2.6 Cách chọn Region (4 tiêu chí)
 

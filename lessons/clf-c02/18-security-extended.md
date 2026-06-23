@@ -14,23 +14,50 @@ Sau bài này bạn có thể:
 
 ## 2. Lý thuyết
 
-### 2.0 Sơ đồ tổng — security stack 5 layer
+### 2.0 Sơ đồ tổng — security stack 6 nhóm dịch vụ
 
-```
-┌─────────────────────────────────────────┐
-│ Layer 6: Audit / Compliance             │ Artifact, Audit Manager
-├─────────────────────────────────────────┤
-│ Layer 5: Detect / Respond               │ GuardDuty, Inspector, Macie, Detective, Security Hub
-├─────────────────────────────────────────┤
-│ Layer 4: Data Protection                │ KMS, CloudHSM, Secrets Manager, ACM, Macie
-├─────────────────────────────────────────┤
-│ Layer 3: Identity                       │ IAM, IAM Identity Center, Cognito, Directory Service
-├─────────────────────────────────────────┤
-│ Layer 2: Network                        │ VPC, SG, NACL, Network Firewall, Firewall Manager
-├─────────────────────────────────────────┤
-│ Layer 1: Edge                           │ WAF, Shield, CloudFront, Route 53
-└─────────────────────────────────────────┘
-```
+Defense in depth là **bọc nhiều lớp quanh dữ liệu**: 4 vòng phòng thủ lồng nhau từ ngoài vào lõi — Edge → Network → Identity → Data (kẻ tấn công phải xuyên hết vòng ngoài mới chạm lõi). Riêng **Detect** (phát hiện) và **Audit** (kiểm toán) không phải một vòng phải đi xuyên qua, mà là **dải cắt ngang** quan sát/quản trị bao trùm mọi vòng.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Defense in depth trên AWS — 4 vòng phòng thủ lồng nhau cùng Detect và Audit cắt ngang</title>
+  <desc>Bốn vòng phòng thủ lồng nhau từ ngoài vào lõi: Edge (WAF, Shield, CloudFront, Route 53) bọc Network (VPC, SG, NACL, Network Firewall, Firewall Manager) bọc Identity (IAM, IAM Identity Center, Cognito, Directory Service) bọc lõi trong cùng Data (KMS, CloudHSM, Secrets Manager, ACM, Macie). Hai dải dọc cắt ngang mọi vòng: Detect (GuardDuty, Inspector, Detective, Security Hub) phát hiện và phản ứng; Audit (Artifact, Audit Manager) kiểm toán và tuân thủ.</desc>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Defense in depth — 4 vòng bọc lõi + Detect &amp; Audit cắt ngang</text>
+
+  <g stroke="currentColor" fill="none">
+    <rect x="40" y="44" width="492" height="340" rx="16" fill="#3b82f6" fill-opacity="0.13" stroke-opacity="0.22"/>
+    <rect x="80" y="84" width="412" height="260" rx="14" fill="#8b5cf6" fill-opacity="0.14" stroke-opacity="0.22"/>
+    <rect x="120" y="124" width="332" height="180" rx="12" fill="#f59e0b" fill-opacity="0.15" stroke-opacity="0.22"/>
+    <rect x="170" y="174" width="232" height="80" rx="10" fill="#10b981" fill-opacity="0.18" stroke-opacity="0.3"/>
+  </g>
+
+  <text x="52" y="62" font-size="12.5" font-weight="700" fill="currentColor">Edge — Biên (vòng ngoài cùng)</text>
+  <text x="52" y="78" font-size="10.5" fill="currentColor" opacity="0.7">WAF · Shield · CloudFront · Route 53</text>
+
+  <text x="92" y="102" font-size="12.5" font-weight="700" fill="currentColor">Network — Mạng</text>
+  <text x="92" y="118" font-size="10.5" fill="currentColor" opacity="0.7">VPC · SG · NACL · Network Firewall · Firewall Manager</text>
+
+  <text x="132" y="142" font-size="12.5" font-weight="700" fill="currentColor">Identity — Danh tính</text>
+  <text x="132" y="158" font-size="10.5" fill="currentColor" opacity="0.7">IAM · IAM Identity Center · Cognito · Directory Service</text>
+
+  <text x="286" y="207" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Data — Lõi dữ liệu</text>
+  <text x="286" y="223" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.78">KMS · CloudHSM · Secrets</text>
+  <text x="286" y="237" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.78">Manager · ACM · Macie</text>
+
+  <g>
+    <rect x="548" y="44" width="74" height="340" rx="12" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="5 4"/>
+    <text x="585" y="206" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor" transform="rotate(-90 585 206)">Detect — Phát hiện</text>
+    <text x="585" y="370" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.72">GuardDuty</text>
+  </g>
+  <g>
+    <rect x="630" y="44" width="74" height="340" rx="12" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="5 4"/>
+    <text x="667" y="206" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor" transform="rotate(-90 667 206)">Audit — Kiểm toán</text>
+    <text x="667" y="370" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.72">Artifact</text>
+  </g>
+
+  <text x="585" y="400" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">Inspector · Detective · Security Hub</text>
+  <text x="667" y="414" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">Audit Manager</text>
+  <text x="40" y="408" font-size="10" fill="currentColor" opacity="0.6">Tấn công phải xuyên Edge → Network → Identity mới chạm lõi Data.</text>
+</svg>
 
 ---
 

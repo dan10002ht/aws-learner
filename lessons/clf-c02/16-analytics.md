@@ -30,14 +30,75 @@ Sau bài này bạn có thể:
 
 ### 2.1 Pattern data lake chuẩn AWS
 
-```
-   Source            Ingest           Lake/Storage         Catalog/ETL          Query                 Visualize
-  ┌──────┐        ┌──────────┐       ┌────────┐         ┌──────────┐       ┌─────────────┐         ┌──────────┐
-  │ Apps │───────▶│ Kinesis  │──────▶│   S3   │────────▶│   Glue   │──────▶│ Athena /    │────────▶│QuickSight│
-  │ DB   │───────▶│ DMS      │──────▶│        │         │ Crawler  │       │ Redshift /  │         │          │
-  │ IoT  │───────▶│ MSK      │──────▶│        │         │ ETL Job  │       │ EMR         │         │          │
-  └──────┘        └──────────┘       └────────┘         └──────────┘       └─────────────┘         └──────────┘
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Pipeline data lake chuẩn trên AWS</title>
+  <desc>Luồng xử lý từ trái sang phải: Nguồn (Apps, DB, IoT) đi vào lớp Ingest (Kinesis, DMS, MSK), đổ vào S3 làm data lake, qua Glue để Crawler, Catalog và ETL, rồi được truy vấn bằng Athena, Redshift hoặc EMR, cuối cùng trực quan hoá bằng QuickSight.</desc>
+  <defs>
+    <marker id="al-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <text x="12" y="20" font-size="13" font-weight="700" fill="currentColor">Pipeline data lake chuẩn AWS</text>
+
+  <text x="60" y="48" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">Source</text>
+  <text x="186" y="48" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">Ingest</text>
+  <text x="312" y="48" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">Lake</text>
+  <text x="430" y="48" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">Catalog / ETL</text>
+  <text x="556" y="48" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">Query</text>
+  <text x="672" y="48" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">Visualize</text>
+
+  <g>
+    <rect x="14" y="60" width="92" height="92" rx="9" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="60" y="90" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Apps</text>
+    <text x="60" y="112" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">DB</text>
+    <text x="60" y="134" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">IoT</text>
+  </g>
+
+  <g>
+    <rect x="140" y="60" width="92" height="92" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="186" y="90" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Kinesis</text>
+    <text x="186" y="112" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">DMS</text>
+    <text x="186" y="134" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">MSK</text>
+  </g>
+
+  <g>
+    <rect x="266" y="60" width="92" height="92" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="312" y="105" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">S3</text>
+    <text x="312" y="124" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">data lake</text>
+  </g>
+
+  <g>
+    <rect x="384" y="60" width="92" height="92" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="430" y="88" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Glue</text>
+    <text x="430" y="108" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Crawler</text>
+    <text x="430" y="124" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Catalog</text>
+    <text x="430" y="140" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">ETL Job</text>
+  </g>
+
+  <g>
+    <rect x="510" y="60" width="92" height="92" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="556" y="90" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Athena</text>
+    <text x="556" y="112" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Redshift</text>
+    <text x="556" y="134" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">EMR</text>
+  </g>
+
+  <g>
+    <rect x="626" y="60" width="80" height="92" rx="9" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="666" y="102" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Quick</text>
+    <text x="666" y="118" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Sight</text>
+  </g>
+
+  <g stroke="currentColor" stroke-width="2" fill="none">
+    <line x1="106" y1="106" x2="138" y2="106" marker-end="url(#al-arrow)"/>
+    <line x1="232" y1="106" x2="264" y2="106" marker-end="url(#al-arrow)"/>
+    <line x1="358" y1="106" x2="382" y2="106" marker-end="url(#al-arrow)"/>
+    <line x1="476" y1="106" x2="508" y2="106" marker-end="url(#al-arrow)"/>
+    <line x1="602" y1="106" x2="624" y2="106" marker-end="url(#al-arrow)"/>
+  </g>
+
+  <text x="360" y="190" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">Nguồn dữ liệu → thu nạp → hồ lưu trữ → lập danh mục/biến đổi → truy vấn → trực quan hoá</text>
+</svg>
 
 ---
 

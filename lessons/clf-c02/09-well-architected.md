@@ -47,6 +47,51 @@ WAF không phải "luật bắt buộc" — nó là **checklist khuyến nghị*
 
 ### 2.1 6 pillars — định nghĩa 1 câu (thuộc lòng)
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 716 300" role="img" style="width:100%;max-width:716px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>6 trụ cột của AWS Well-Architected Framework</title>
+  <desc>Sáu trụ cột đỡ một hệ thống well-architected: Operational Excellence (Vận hành), Security (Bảo mật), Reliability (Tin cậy), Performance Efficiency (Hiệu năng), Cost Optimization (Chi phí), Sustainability (Bền vững).</desc>
+  <rect x="16" y="36" width="684" height="26" rx="6" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="358" y="53" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Hệ thống Well-Architected</text>
+  <g>
+    <rect x="16" y="74" width="104" height="150" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.16"/>
+    <text x="68" y="158" font-size="34" font-weight="700" text-anchor="middle" fill="#3b82f6" opacity="0.55">1</text>
+    <text x="68" y="244" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Vận hành</text>
+    <text x="68" y="259" font-size="8.5" text-anchor="middle" fill="currentColor" opacity="0.6">Operational Exc.</text>
+  </g>
+  <g>
+    <rect x="132" y="74" width="104" height="150" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.16"/>
+    <text x="184" y="158" font-size="34" font-weight="700" text-anchor="middle" fill="#10b981" opacity="0.55">2</text>
+    <text x="184" y="244" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Bảo mật</text>
+    <text x="184" y="259" font-size="8.5" text-anchor="middle" fill="currentColor" opacity="0.6">Security</text>
+  </g>
+  <g>
+    <rect x="248" y="74" width="104" height="150" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.16"/>
+    <text x="300" y="158" font-size="34" font-weight="700" text-anchor="middle" fill="#f59e0b" opacity="0.6">3</text>
+    <text x="300" y="244" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Tin cậy</text>
+    <text x="300" y="259" font-size="8.5" text-anchor="middle" fill="currentColor" opacity="0.6">Reliability</text>
+  </g>
+  <g>
+    <rect x="364" y="74" width="104" height="150" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.16"/>
+    <text x="416" y="158" font-size="34" font-weight="700" text-anchor="middle" fill="#8b5cf6" opacity="0.55">4</text>
+    <text x="416" y="244" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Hiệu năng</text>
+    <text x="416" y="259" font-size="8.5" text-anchor="middle" fill="currentColor" opacity="0.6">Performance</text>
+  </g>
+  <g>
+    <rect x="480" y="74" width="104" height="150" rx="8" fill="#14b8a6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.16"/>
+    <text x="532" y="158" font-size="34" font-weight="700" text-anchor="middle" fill="#14b8a6" opacity="0.6">5</text>
+    <text x="532" y="244" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Chi phí</text>
+    <text x="532" y="259" font-size="8.5" text-anchor="middle" fill="currentColor" opacity="0.6">Cost Opt.</text>
+  </g>
+  <g>
+    <rect x="596" y="74" width="104" height="150" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.16"/>
+    <text x="648" y="158" font-size="34" font-weight="700" text-anchor="middle" fill="#f43f5e" opacity="0.55">6</text>
+    <text x="648" y="244" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Bền vững</text>
+    <text x="648" y="259" font-size="8.5" text-anchor="middle" fill="currentColor" opacity="0.6">Sustainability</text>
+  </g>
+  <rect x="8" y="228" width="700" height="10" rx="3" fill="currentColor" fill-opacity="0.12"/>
+  <text x="358" y="284" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">Không trụ nào "quan trọng nhất" — cốt lõi là trade-off giữa chúng</text>
+</svg>
+
 | # | Pillar | Định nghĩa 1 câu | Exam keyword |
 |---|--------|------------------|---------------|
 | 1 | **Operational Excellence** | Chạy + monitor + cải tiến hệ thống và quy trình | Runbook, automation, IaC, observability, learn from failure |

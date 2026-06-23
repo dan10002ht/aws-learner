@@ -155,6 +155,55 @@ Truy cập AWS service từ private subnet **không qua Internet/NAT**.
 
 → **Saving:** route S3/DDB qua Gateway Endpoint thay vì NAT GW → giảm $0.045/GB.
 
+So sánh đường đi data từ private subnet để gọi S3/DynamoDB — cùng một request, hai chi phí khác hẳn nhau:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Đường đi traffic và chi phí — NAT Gateway so với S3/DynamoDB Gateway Endpoint</title>
+  <desc>Hai luồng song song từ app trong private subnet gọi S3 hoặc DynamoDB. Luồng trên đi qua NAT Gateway rồi ra Internet, tốn 0.045 đô la mỗi GB data processing cộng phí giờ. Luồng dưới đi qua Gateway Endpoint, chỉ là một entry trong route table, không qua NAT, không qua Internet, hoàn toàn miễn phí.</desc>
+  <defs>
+    <marker id="costArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+
+  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Private subnet gọi S3/DynamoDB — hai đường, hai chi phí</text>
+
+  <!-- App node (shared start) -->
+  <rect x="16" y="120" width="120" height="58" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="76" y="144" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">App</text>
+  <text x="76" y="162" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">private subnet</text>
+
+  <!-- TOP path: via NAT GW (expensive, amber/red) -->
+  <line x1="136" y1="135" x2="178" y2="92" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#costArr)"/>
+  <rect x="182" y="60" width="150" height="56" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.28"/>
+  <text x="257" y="82" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">NAT Gateway</text>
+  <text x="257" y="100" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">$0.045/GB + $/giờ</text>
+
+  <line x1="332" y1="88" x2="374" y2="88" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#costArr)"/>
+  <rect x="378" y="60" width="120" height="56" rx="9" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.28"/>
+  <text x="438" y="92" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Internet</text>
+
+  <line x1="498" y1="88" x2="540" y2="88" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#costArr)"/>
+  <rect x="544" y="60" width="160" height="56" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="624" y="92" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">S3 / DynamoDB</text>
+
+  <rect x="182" y="124" width="316" height="22" rx="11" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="340" y="139" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">50 TB/tháng × $0.045 = ~$2,250 data processing</text>
+
+  <!-- BOTTOM path: via Gateway Endpoint (free, green) -->
+  <line x1="136" y1="163" x2="178" y2="218" stroke="#10b981" stroke-opacity="0.7" marker-end="url(#costArr)"/>
+  <rect x="182" y="206" width="190" height="56" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.28"/>
+  <text x="277" y="228" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">S3/DDB Gateway Endpoint</text>
+  <text x="277" y="246" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">chỉ là route table entry</text>
+
+  <line x1="372" y1="234" x2="540" y2="234" stroke="#10b981" stroke-opacity="0.7" marker-end="url(#costArr)"/>
+  <rect x="544" y="206" width="160" height="56" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="624" y="238" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">S3 / DynamoDB</text>
+
+  <rect x="182" y="272" width="316" height="22" rx="11" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="340" y="287" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">không qua NAT · không qua Internet · FREE ($0)</text>
+
+  <text x="438" y="190" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.8">cùng request → khác đường → khác tiền</text>
+</svg>
+
 ### 2.8 VPC Peering
 - 1-1 connection giữa 2 VPC (same/diff region/account).
 - **Không transitive** (A↔B, B↔C → A KHÔNG đến C).
@@ -211,6 +260,138 @@ Truy cập AWS service từ private subnet **không qua Internet/NAT**.
 | Use case | Web, microservice | Game, IoT, high perf | Third-party firewall (Palo Alto, Fortinet) |
 
 ### 2.14 Pattern thiết kế VPC chuẩn (3-tier)
+
+Kiến trúc 3-tier multi-AZ chuẩn: 1 VPC `/16`, 3 AZ, mỗi AZ có 3 tầng subnet (public → private → db). IGW dùng chung cho cả VPC; **mỗi AZ 1 NAT GW** để HA; S3 truy cập qua **Gateway Endpoint** (free) thay vì đi NAT.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 560" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Kiến trúc VPC 3-tier multi-AZ với IGW, NAT GW mỗi AZ và S3 Gateway Endpoint</title>
+  <desc>VPC CIDR 10.0.0.0/16 gồm 3 AZ. Internet kết nối qua Internet Gateway dùng chung. Mỗi AZ có public subnet (ALB và NAT Gateway), private subnet (app tier) route ra Internet qua NAT GW của chính AZ đó, và db subnet (RDS) không có route Internet. S3 Gateway Endpoint cho phép cả ba AZ truy cập S3 miễn phí không qua NAT. Route public đi IGW, route private đi NAT.</desc>
+  <defs>
+    <marker id="vpcArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
+  </defs>
+
+  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">VPC 10.0.0.0/16  ·  ap-southeast-1  ·  3-tier multi-AZ</text>
+
+  <!-- Internet + IGW -->
+  <rect x="300" y="34" width="120" height="30" rx="15" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="360" y="53" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Internet</text>
+  <line x1="360" y1="64" x2="360" y2="80" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#vpcArr)"/>
+  <rect x="296" y="82" width="128" height="30" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="360" y="101" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">IGW (1/VPC, free)</text>
+
+  <!-- VPC boundary -->
+  <rect x="12" y="124" width="696" height="392" rx="12" fill="#3b82f6" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="6 4"/>
+
+  <!-- S3 Gateway Endpoint badge (top-right inside VPC) -->
+  <rect x="500" y="82" width="208" height="30" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="604" y="101" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">S3 Gateway Endpoint (free)</text>
+
+  <!-- 3 AZ columns -->
+  <g font-size="11" fill="currentColor">
+    <!-- column geometry: x starts 28, 256, 484 ; width 208 -->
+    <!-- AZ-a -->
+    <rect x="28" y="138" width="208" height="366" rx="9" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="132" y="156" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">AZ-a</text>
+    <!-- AZ-b -->
+    <rect x="256" y="138" width="208" height="366" rx="9" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="360" y="156" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">AZ-b</text>
+    <!-- AZ-c -->
+    <rect x="484" y="138" width="208" height="366" rx="9" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="588" y="156" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">AZ-c</text>
+  </g>
+
+  <!-- Public subnets (blue) -->
+  <g>
+    <rect x="40" y="166" width="184" height="62" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="132" y="182" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Public 10.0.0.0/24</text>
+    <text x="132" y="200" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">ALB</text>
+    <text x="132" y="218" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">NAT GW</text>
+
+    <rect x="268" y="166" width="184" height="62" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="360" y="182" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Public 10.0.1.0/24</text>
+    <text x="360" y="200" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">ALB</text>
+    <text x="360" y="218" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">NAT GW</text>
+
+    <rect x="496" y="166" width="184" height="62" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="588" y="182" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Public 10.0.2.0/24</text>
+    <text x="588" y="200" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">ALB</text>
+    <text x="588" y="218" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">NAT GW</text>
+  </g>
+
+  <!-- Private subnets (green) -->
+  <g>
+    <rect x="40" y="284" width="184" height="54" rx="7" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="132" y="300" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Private 10.0.10.0/24</text>
+    <text x="132" y="320" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">App (EC2/Fargate)</text>
+
+    <rect x="268" y="284" width="184" height="54" rx="7" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="360" y="300" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Private 10.0.11.0/24</text>
+    <text x="360" y="320" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">App (EC2/Fargate)</text>
+
+    <rect x="496" y="284" width="184" height="54" rx="7" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="588" y="300" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Private 10.0.12.0/24</text>
+    <text x="588" y="320" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">App (EC2/Fargate)</text>
+  </g>
+
+  <!-- DB subnets (purple) -->
+  <g>
+    <rect x="40" y="430" width="184" height="54" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="132" y="446" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">DB 10.0.20.0/24</text>
+    <text x="132" y="466" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">RDS (no Internet)</text>
+
+    <rect x="268" y="430" width="184" height="54" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="360" y="446" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">DB 10.0.21.0/24</text>
+    <text x="360" y="466" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">RDS (no Internet)</text>
+
+    <rect x="496" y="430" width="184" height="54" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="588" y="446" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">DB 10.0.22.0/24</text>
+    <text x="588" y="466" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">RDS (no Internet)</text>
+  </g>
+
+  <!-- IGW <-> public ALB edges -->
+  <g stroke="currentColor" stroke-opacity="0.45" fill="none">
+    <path d="M320 100 H132 V166" marker-end="url(#vpcArr)"/>
+    <path d="M360 112 V166" marker-end="url(#vpcArr)"/>
+    <path d="M420 100 H478 V152 H520 V166" marker-end="url(#vpcArr)"/>
+  </g>
+
+  <!-- private -> NAT (up) edges, labelled -->
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none" stroke-dasharray="5 3">
+    <path d="M100 284 V228" marker-end="url(#vpcArr)"/>
+    <path d="M328 284 V228" marker-end="url(#vpcArr)"/>
+    <path d="M556 284 V228" marker-end="url(#vpcArr)"/>
+  </g>
+  <g font-size="9" fill="currentColor" opacity="0.75">
+    <text x="60" y="262">0.0.0.0/0</text>
+    <text x="68" y="274">→ NAT</text>
+    <text x="288" y="262">0.0.0.0/0</text>
+    <text x="296" y="274">→ NAT</text>
+    <text x="516" y="262">0.0.0.0/0</text>
+    <text x="524" y="274">→ NAT</text>
+  </g>
+
+  <!-- app -> RDS edges -->
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none">
+    <path d="M164 338 V430" marker-end="url(#vpcArr)"/>
+    <path d="M392 338 V430" marker-end="url(#vpcArr)"/>
+    <path d="M620 338 V430" marker-end="url(#vpcArr)"/>
+  </g>
+
+  <!-- private/db -> S3 Gateway Endpoint (free path) cho cả 3 AZ -->
+  <g stroke="#10b981" stroke-opacity="0.7" fill="none">
+    <path d="M224 312 H244 V132 H540 V112" marker-end="url(#vpcArr)"/>
+    <path d="M452 312 H472 V124 H604 V112" marker-end="url(#vpcArr)"/>
+    <path d="M680 312 H692 V116 H668 V112" marker-end="url(#vpcArr)"/>
+  </g>
+  <text x="588" y="78" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.8">S3 (free) ×3</text>
+
+  <!-- legend -->
+  <g font-size="9.5" fill="currentColor" opacity="0.85">
+    <rect x="28" y="498" width="664" height="0" />
+  </g>
+  <text x="16" y="538" font-size="10.5" fill="currentColor" opacity="0.75">Public RT: 0.0.0.0/0 → IGW  ·  Private RT (per AZ): 0.0.0.0/0 → NAT GW của AZ đó  ·  DB RT: chỉ local + S3/DDB Gateway Endpoint</text>
+</svg>
+
 ```
 VPC 10.0.0.0/16 (ap-southeast-1)
 ├── Public subnets       (ALB, NAT GW, Bastion)

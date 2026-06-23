@@ -144,17 +144,85 @@ Sau bài này bạn có thể:
 
 ### 2.8 AWS Organizations (multi-account governance)
 
-**Cấu trúc**:
-```
-Root (Management Account)
-├── OU: Production
-│   ├── Account A
-│   ├── Account B
-├── OU: Development
-│   ├── Account C
-└── OU: Sandbox
-    └── Account D
-```
+**Cấu trúc**: cây phân cấp — Root (Management Account) chứa các OU, mỗi OU chứa các account. SCP gắn ở root/OU/account và **chảy xuống dưới** (chỉ hạ trần quyền, không cấp quyền); billing thì **gộp ngược lên** management account.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Cấu trúc AWS Organizations — cây Root/OU/Account với SCP và consolidated billing</title>
+  <desc>Cây phân cấp: Root (Management Account) ở trên, ba OU bên dưới (Production, Development, Sandbox), mỗi OU chứa các account. SCP gắn ở root/OU/account và chảy xuống dưới chỉ giới hạn trần quyền không cấp quyền. Consolidated billing gộp hoá đơn mọi account về management account.</desc>
+
+  <defs>
+    <marker id="orgDown" markerWidth="10" markerHeight="10" refX="5" refY="8" orient="auto"><path d="M0 0 L5 8 L10 0" fill="none" stroke="#f59e0b" stroke-width="1.4"/></marker>
+    <marker id="orgUp" markerWidth="10" markerHeight="10" refX="5" refY="2" orient="auto"><path d="M0 10 L5 2 L10 10" fill="none" stroke="#10b981" stroke-width="1.4"/></marker>
+  </defs>
+
+  <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">Cấu trúc AWS Organizations</text>
+
+  <g stroke="currentColor" stroke-opacity="0.35" fill="none">
+    <path d="M360 78 V100 H140 V120"/>
+    <path d="M360 100 H360 V120"/>
+    <path d="M360 100 H584 V120"/>
+    <path d="M140 188 V206 H92 V222"/>
+    <path d="M140 206 H188 V222"/>
+    <path d="M360 188 V222"/>
+    <path d="M584 188 V222"/>
+  </g>
+
+  <rect x="232" y="40" width="256" height="38" rx="9" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="58" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Root</text>
+  <text x="360" y="72" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">Management Account (payer)</text>
+
+  <g>
+    <rect x="56" y="120" width="168" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="140" y="138" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">OU: Production</text>
+    <text x="140" y="153" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">Organizational Unit</text>
+  </g>
+  <g>
+    <rect x="276" y="120" width="168" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="138" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">OU: Development</text>
+    <text x="360" y="153" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">Organizational Unit</text>
+  </g>
+  <g>
+    <rect x="500" y="120" width="168" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="584" y="138" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">OU: Sandbox</text>
+    <text x="584" y="153" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">Organizational Unit</text>
+  </g>
+
+  <g>
+    <rect x="36" y="222" width="100" height="36" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="86" y="244" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Account A</text>
+    <rect x="144" y="222" width="100" height="36" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="194" y="244" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Account B</text>
+    <rect x="310" y="222" width="100" height="36" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="244" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Account C</text>
+    <rect x="534" y="222" width="100" height="36" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="584" y="244" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Account D</text>
+  </g>
+
+  <g>
+    <line x1="694" y1="50" x2="694" y2="248" stroke="#f59e0b" stroke-opacity="0.65" stroke-width="2" marker-end="url(#orgDown)"/>
+    <text x="700" y="120" font-size="11" font-weight="700" fill="#f59e0b" transform="rotate(90 700 120)" text-anchor="middle">SCP chảy XUỐNG</text>
+  </g>
+  <g>
+    <line x1="26" y1="248" x2="26" y2="62" stroke="#10b981" stroke-opacity="0.65" stroke-width="2" marker-end="url(#orgUp)"/>
+    <text x="20" y="150" font-size="11" font-weight="700" fill="#10b981" transform="rotate(-90 20 150)" text-anchor="middle">Billing gộp LÊN</text>
+  </g>
+
+  <rect x="16" y="288" width="336" height="120" rx="9" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="32" y="310" font-size="12" font-weight="700" fill="#f59e0b">SCP (Service Control Policy)</text>
+  <text x="32" y="330" font-size="11" fill="currentColor" opacity="0.85">Gắn ở Root / OU / Account.</text>
+  <text x="32" y="348" font-size="11" fill="currentColor" opacity="0.85">Đặt **trần** quyền tối đa cho mọi account dưới.</text>
+  <text x="32" y="366" font-size="11" fill="currentColor" opacity="0.85">Chỉ DENY/giới hạn — KHÔNG grant permission.</text>
+  <text x="32" y="384" font-size="11" fill="currentColor" opacity="0.85">IAM policy trong account vẫn cần để cấp quyền.</text>
+  <text x="32" y="402" font-size="10.5" fill="currentColor" opacity="0.62">Quyền thực tế = SCP (trần) ∩ IAM policy.</text>
+
+  <rect x="368" y="288" width="336" height="120" rx="9" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="384" y="310" font-size="12" font-weight="700" fill="#10b981">Consolidated billing</text>
+  <text x="384" y="330" font-size="11" fill="currentColor" opacity="0.85">1 hoá đơn duy nhất cho cả tổ chức.</text>
+  <text x="384" y="348" font-size="11" fill="currentColor" opacity="0.85">Management account = payer trả tiền.</text>
+  <text x="384" y="366" font-size="11" fill="currentColor" opacity="0.85">Gộp usage → share volume discount.</text>
+  <text x="384" y="384" font-size="11" fill="currentColor" opacity="0.85">Chia sẻ RI / Savings Plan toàn org.</text>
+  <text x="384" y="402" font-size="10.5" fill="currentColor" opacity="0.62">Mỗi account vẫn xem được chi phí riêng.</text>
+</svg>
 
 **Tính năng**:
 - **Consolidated billing** — 1 bill cho cả org, share volume discount + RI/Savings Plan.
