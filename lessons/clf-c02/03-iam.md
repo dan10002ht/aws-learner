@@ -305,6 +305,67 @@ IAM trả lời 2 câu hỏi:
 
 ### 2.2 Các entity cốt lõi
 
+Trước khi đi từng entity, hãy nhìn quan hệ giữa chúng: **User** nằm trong **Group** (policy gắn vào group, áp cho mọi user); còn **Role** không có credential cố định — bất kỳ **principal** nào (EC2, Lambda, user) muốn dùng role phải **AssumeRole qua STS** và nhận về **temporary credential** có thời hạn. Role được canh bởi 2 policy: **Trust Policy** (ai được assume) và **Permissions Policy** (assume xong làm được gì).
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Quan hệ các entity IAM — User/Group/Policy và Role assume qua STS</title>
+  <desc>User thuộc Group, Group được gắn Policy. Role có Trust Policy và Permissions Policy. Principal như EC2, Lambda hoặc User gọi AssumeRole qua STS để nhận temporary credential có thời hạn.</desc>
+  <defs>
+    <marker id="iamArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Hai nhánh: gán quyền trực tiếp (trái) vs assume role tạm (phải)</text>
+
+  <text x="120" y="52" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.75">Identity thường trực</text>
+
+  <rect x="36" y="62" width="168" height="46" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="120" y="82" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">IAM Group</text>
+  <text x="120" y="99" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">tập hợp user, không nested</text>
+
+  <rect x="36" y="142" width="168" height="46" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="120" y="162" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">IAM User</text>
+  <text x="120" y="179" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">password + access key</text>
+
+  <rect x="36" y="222" width="168" height="42" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="120" y="248" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Policy (Allow/Deny)</text>
+
+  <line x1="120" y1="108" x2="120" y2="142" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#iamArr)"/>
+  <text x="128" y="130" font-size="10" fill="currentColor" opacity="0.7">chứa</text>
+  <line x1="120" y1="188" x2="120" y2="222" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#iamArr)"/>
+  <text x="128" y="210" font-size="10" fill="currentColor" opacity="0.7">gắn vào group</text>
+
+  <text x="375" y="52" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.75">Quyền tạm qua STS</text>
+
+  <rect x="300" y="62" width="150" height="42" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="375" y="80" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Principal</text>
+  <text x="375" y="96" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">EC2 · Lambda · User</text>
+
+  <rect x="492" y="48" width="200" height="120" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="592" y="70" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">IAM Role</text>
+  <rect x="506" y="82" width="172" height="34" rx="7" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="592" y="98" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Trust Policy</text>
+  <text x="592" y="111" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">ai được assume?</text>
+  <rect x="506" y="122" width="172" height="34" rx="7" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="592" y="138" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Permissions Policy</text>
+  <text x="592" y="151" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">assume xong làm gì?</text>
+
+  <line x1="375" y1="104" x2="375" y2="218" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#iamArr)"/>
+  <rect x="306" y="222" width="138" height="42" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="375" y="240" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">AWS STS</text>
+  <text x="375" y="256" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">sts:AssumeRole</text>
+
+  <line x1="450" y1="83" x2="486" y2="83" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="4 3" marker-end="url(#iamArr)"/>
+  <text x="455" y="76" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">trust</text>
+  <line x1="444" y1="240" x2="540" y2="240" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#iamArr)"/>
+
+  <rect x="540" y="218" width="152" height="62" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="616" y="238" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Temp Credential</text>
+  <text x="616" y="254" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.72">AccessKey + SecretKey</text>
+  <text x="616" y="268" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.72">+ SessionToken (hết hạn)</text>
+
+  <text x="16" y="312" font-size="11" fill="currentColor" opacity="0.75">Best practice: gắn policy vào GROUP (không gắn trực tiếp user); dùng ROLE + STS thay cho access key dài hạn.</text>
+  <text x="16" y="332" font-size="11" fill="currentColor" opacity="0.75">Root user đứng ngoài sơ đồ này: full quyền cố định, chỉ dùng cho vài tác vụ đặc biệt.</text>
+</svg>
+
 #### a) Root user
 - Là email bạn đăng ký account. **Full quyền**, không thu hồi được.
 - **Best practice:** Bật MFA hardware, cất password vào vault, **KHÔNG dùng hàng ngày**.
@@ -395,6 +456,70 @@ Khi 1 principal gọi API, AWS duyệt theo thứ tự:
 7. Nếu không Allow nào → DENY.
 8. Có Allow mà không Deny chồng → ALLOW.
 ```
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:560px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Flowchart logic đánh giá policy của IAM</title>
+  <desc>Luồng quyết định khi một request đến: bắt đầu mặc định Deny, kiểm tra SCP, explicit Deny, có Allow nào không, permission boundary; bất kỳ Deny nào hoặc thiếu Allow đều cho kết quả DENY, chỉ khi qua hết mới ALLOW. Explicit deny luôn thắng.</desc>
+  <defs>
+    <marker id="evNo" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#ef4444" fill-opacity="0.7"/></marker>
+    <marker id="evYes" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+
+  <rect x="220" y="14" width="200" height="38" rx="19" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="320" y="38" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Request đến (default DENY)</text>
+
+  <text x="640" y="38" font-size="11" text-anchor="end" fill="currentColor" opacity="0.75">DENY ⟶</text>
+
+  <g>
+    <rect x="200" y="70" width="240" height="46" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="320" y="89" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">SCP cho phép action?</text>
+    <text x="320" y="106" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">(Organizations — giới hạn trần)</text>
+  </g>
+  <g>
+    <rect x="200" y="140" width="240" height="46" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="320" y="159" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Có Explicit Deny?</text>
+    <text x="320" y="176" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">identity / resource / session policy</text>
+  </g>
+  <g>
+    <rect x="200" y="210" width="240" height="46" rx="9" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="320" y="229" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Có Allow nào khớp?</text>
+    <text x="320" y="246" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">identity hoặc resource-based</text>
+  </g>
+  <g>
+    <rect x="200" y="280" width="240" height="46" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="320" y="299" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Trong Permission Boundary?</text>
+    <text x="320" y="316" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">(+ session policy nếu có)</text>
+  </g>
+
+  <line x1="320" y1="52" x2="320" y2="70" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#evYes)"/>
+  <line x1="320" y1="116" x2="320" y2="140" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#evYes)"/>
+  <text x="330" y="132" font-size="10" fill="currentColor" opacity="0.7">có</text>
+  <line x1="320" y1="186" x2="320" y2="210" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#evYes)"/>
+  <text x="330" y="202" font-size="10" fill="currentColor" opacity="0.7">không</text>
+  <line x1="320" y1="256" x2="320" y2="280" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#evYes)"/>
+  <text x="330" y="272" font-size="10" fill="currentColor" opacity="0.7">có</text>
+
+  <rect x="510" y="74" width="120" height="262" rx="9" fill="#ef4444" fill-opacity="0.13" stroke="#ef4444" stroke-opacity="0.4"/>
+  <text x="570" y="208" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">DENY</text>
+  <text x="570" y="226" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">(từ chối)</text>
+
+  <line x1="440" y1="93" x2="510" y2="120" stroke="#ef4444" stroke-opacity="0.55" marker-end="url(#evNo)"/>
+  <text x="452" y="86" font-size="9.5" fill="#ef4444" opacity="0.9">SCP không allow</text>
+  <line x1="440" y1="163" x2="510" y2="170" stroke="#ef4444" stroke-opacity="0.55" marker-end="url(#evNo)"/>
+  <text x="452" y="156" font-size="9.5" fill="#ef4444" opacity="0.9">có deny ⇒ thắng</text>
+  <line x1="440" y1="236" x2="508" y2="228" stroke="#ef4444" stroke-opacity="0.55" marker-end="url(#evNo)"/>
+  <text x="450" y="220" font-size="9.5" fill="#ef4444" opacity="0.9">không Allow</text>
+  <line x1="444" y1="306" x2="508" y2="290" stroke="#ef4444" stroke-opacity="0.55" marker-end="url(#evNo)"/>
+  <text x="450" y="285" font-size="9.5" fill="#ef4444" opacity="0.9">ngoài boundary</text>
+
+  <rect x="220" y="356" width="200" height="44" rx="9" fill="#10b981" fill-opacity="0.18" stroke="#10b981" stroke-opacity="0.45"/>
+  <text x="320" y="383" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">ALLOW</text>
+  <line x1="320" y1="326" x2="320" y2="356" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#evYes)"/>
+  <text x="330" y="346" font-size="10" fill="currentColor" opacity="0.7">trong boundary</text>
+
+  <text x="16" y="432" font-size="11.5" font-weight="700" fill="currentColor">Hai luật bất biến:</text>
+  <text x="16" y="450" font-size="11" fill="currentColor" opacity="0.8">• Explicit Deny LUÔN thắng mọi Allow.   • Mặc định là DENY — không có Allow = bị từ chối.</text>
+</svg>
 
 **Quy tắc vàng:**
 - **Explicit Deny luôn thắng.**
