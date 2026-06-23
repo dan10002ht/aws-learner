@@ -6,24 +6,23 @@ Bạn là kỹ sư phần mềm, không phải data scientist. Mục tiêu của
 
 Mấy từ này hay bị dùng lẫn lộn. Chúng là các vòng tròn lồng nhau, không phải đồng nghĩa.
 
-```
-┌─────────────────────────────────────────────┐
-│ AI (Artificial Intelligence)                │
-│  máy làm việc "thông minh" — gồm cả rule-based│
-│  ┌─────────────────────────────────────────┐ │
-│  │ ML (Machine Learning)                   │ │
-│  │  học pattern từ data, không hardcode rule│ │
-│  │  ┌─────────────────────────────────────┐ │ │
-│  │  │ DL (Deep Learning)                  │ │ │
-│  │  │  ML dùng neural network nhiều lớp   │ │ │
-│  │  │  ┌───────────────────────────────┐  │ │ │
-│  │  │  │ GenAI / LLM                   │  │ │ │
-│  │  │  │  DL sinh ra nội dung mới      │  │ │ │
-│  │  │  └───────────────────────────────┘  │ │ │
-│  │  └─────────────────────────────────────┘ │ │
-│  └─────────────────────────────────────────┘ │
-└─────────────────────────────────────────────┘
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 380" role="img" style="width:100%;max-width:560px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>AI bao trùm ML, ML bao trùm DL, DL bao trùm GenAI/LLM</title>
+  <desc>Bốn vòng tròn lồng nhau: vòng ngoài cùng AI gồm cả rule-based; bên trong là ML học từ data; bên trong nữa là DL dùng neural network nhiều lớp; trong cùng là GenAI/LLM sinh nội dung mới. Mỗi tầng kèm một ví dụ ngắn.</desc>
+  <rect x="10" y="10" width="540" height="360" rx="14" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="30" y="38" font-size="14" font-weight="700" fill="currentColor">AI — máy làm việc "thông minh" (gồm cả rule-based)</text>
+  <text x="30" y="56" font-size="11" fill="currentColor" opacity="0.65">VD: bot cờ vua minimax, hệ chống gian lận bằng luật</text>
+  <rect x="40" y="74" width="480" height="282" rx="12" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="60" y="100" font-size="14" font-weight="700" fill="currentColor">ML — học pattern từ data, không hardcode luật</text>
+  <text x="60" y="118" font-size="11" fill="currentColor" opacity="0.65">VD: lọc spam, gợi ý sản phẩm, dự báo churn</text>
+  <rect x="70" y="136" width="420" height="206" rx="11" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="90" y="162" font-size="14" font-weight="700" fill="currentColor">DL — ML dùng neural network nhiều lớp</text>
+  <text x="90" y="180" font-size="11" fill="currentColor" opacity="0.65">VD: nhận diện ảnh, speech-to-text</text>
+  <rect x="100" y="198" width="360" height="130" rx="10" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="120" y="234" font-size="14" font-weight="700" fill="currentColor">GenAI / LLM — DL sinh nội dung mới</text>
+  <text x="120" y="254" font-size="11" fill="currentColor" opacity="0.65">VD: ChatGPT, Claude, Midjourney, Copilot</text>
+  <text x="120" y="296" font-size="11" fill="currentColor" opacity="0.55">"AI" trong marketing 2025 thường là tầng này</text>
+</svg>
 
 | Tầng | Là gì | Ví dụ thực tế |
 |------|-------|----------------|
@@ -69,22 +68,42 @@ Ví dụ: "dự đoán khách nào sắp hủy gói" với 50 cột số liệu 
 
 Đây là cây quyết định bạn nên dán lên tường:
 
-```
-Bài toán có thể viết thành luật rõ ràng, ổn định không?
-│
-├─ CÓ  → Rule-based (if/else, regex, lookup table)
-│        VD: validate email, tính thuế, quy tắc giảm giá
-│
-└─ KHÔNG → Input là gì?
-           │
-           ├─ Số liệu/feature có cấu trúc, có data lịch sử có nhãn
-           │   → Traditional ML
-           │     VD: fraud detection, dự báo nhu cầu, recommend
-           │
-           └─ Ngôn ngữ tự nhiên / ảnh / cần "hiểu" & sinh nội dung
-               → LLM / GenAI
-                 VD: chatbot, tóm tắt, trích xuất, sinh code
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Cây quyết định chọn Rule-based, Traditional ML hay LLM</title>
+  <desc>Cây quyết định: nếu viết được luật rõ ràng ổn định thì dùng Rule-based; nếu không, hỏi input là gì — số liệu có cấu trúc kèm data có nhãn thì dùng Traditional ML, còn ngôn ngữ tự nhiên hoặc ảnh cần hiểu và sinh nội dung thì dùng LLM/GenAI.</desc>
+  <rect x="190" y="16" width="340" height="54" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="360" y="40" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Viết được thành luật rõ ràng,</text>
+  <text x="360" y="58" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">ổn định không?</text>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none" stroke-width="1.5">
+    <path d="M360 70 V94 H150 V120"/>
+    <path d="M360 70 V94 H530 V120"/>
+  </g>
+  <rect x="118" y="98" width="40" height="20" rx="10" fill="#10b981" fill-opacity="0.9"/>
+  <text x="138" y="112" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">CÓ</text>
+  <rect x="500" y="98" width="60" height="20" rx="10" fill="#f59e0b" fill-opacity="0.9"/>
+  <text x="530" y="112" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">KHÔNG</text>
+  <rect x="30" y="120" width="240" height="74" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="150" y="144" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Rule-based</text>
+  <text x="150" y="162" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">if/else, regex, lookup table</text>
+  <text x="150" y="180" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.55">VD: validate email, tính thuế, giảm giá</text>
+  <rect x="410" y="120" width="280" height="48" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="550" y="149" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Input là gì?</text>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none" stroke-width="1.5">
+    <path d="M550 168 V190 H300 V230"/>
+    <path d="M550 168 V190 H560 V230"/>
+  </g>
+  <rect x="170" y="232" width="260" height="86" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="300" y="200" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">số liệu có cấu trúc + data có nhãn</text>
+  <text x="300" y="258" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Traditional ML</text>
+  <text x="300" y="278" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">XGBoost, regression, classification</text>
+  <text x="300" y="298" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.55">VD: fraud, dự báo nhu cầu, recommend</text>
+  <rect x="450" y="232" width="240" height="86" rx="10" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="570" y="200" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">ngôn ngữ tự nhiên / ảnh, cần hiểu &amp; sinh</text>
+  <text x="570" y="258" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">LLM / GenAI</text>
+  <text x="570" y="278" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">qua API: prompt / few-shot / RAG</text>
+  <text x="570" y="298" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.55">VD: chatbot, tóm tắt, trích xuất, sinh code</text>
+  <text x="360" y="360" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">Thứ tự thử nhanh: rule-based → LLM (chứng minh giá trị) → traditional ML / fine-tune (khi cần rẻ/nhanh ở scale lớn)</text>
+</svg>
 
 Quy tắc ngón tay cái:
 

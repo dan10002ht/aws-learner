@@ -19,6 +19,52 @@ Một prompt production thường gồm các "khối" rõ ràng, không trộn l
 | **Format** | Cấu trúc output | "Trả về JSON đúng schema dưới đây." |
 | **Examples** | Mẫu vào/ra (few-shot) | Cặp input → output |
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Anatomy của một prompt: sáu khối xếp chồng</title>
+  <desc>Sáu khối Role, Task, Context, Constraints, Format, Examples xếp chồng lên nhau ghép thành một prompt hoàn chỉnh gửi cho LLM.</desc>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Các khối ghép thành một prompt</text>
+  <g>
+    <rect x="16" y="44" width="540" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="26" y="54" width="92" height="24" rx="6" fill="#8b5cf6" fill-opacity="0.9"/>
+    <text x="72" y="71" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">Role</text>
+    <text x="128" y="71" font-size="12" fill="currentColor" opacity="0.78">Đặt model vào vai trò / persona</text>
+  </g>
+  <g>
+    <rect x="16" y="94" width="540" height="44" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="26" y="104" width="92" height="24" rx="6" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="72" y="121" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">Task</text>
+    <text x="128" y="121" font-size="12" fill="currentColor" opacity="0.78">Việc cần làm — đúng 1 mục tiêu</text>
+  </g>
+  <g>
+    <rect x="16" y="144" width="540" height="44" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="26" y="154" width="92" height="24" rx="6" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="72" y="171" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">Context</text>
+    <text x="128" y="171" font-size="12" fill="currentColor" opacity="0.78">Dữ liệu để model dùng</text>
+  </g>
+  <g>
+    <rect x="16" y="194" width="540" height="44" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="26" y="204" width="92" height="24" rx="6" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="72" y="221" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">Constraints</text>
+    <text x="128" y="221" font-size="12" fill="currentColor" opacity="0.78">Giới hạn, luật, "khi không biết thì làm gì"</text>
+  </g>
+  <g>
+    <rect x="16" y="244" width="540" height="44" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="26" y="254" width="92" height="24" rx="6" fill="#10b981" fill-opacity="0.95"/>
+    <text x="72" y="271" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">Format</text>
+    <text x="128" y="271" font-size="12" fill="currentColor" opacity="0.78">Cấu trúc output (vd JSON đúng schema)</text>
+  </g>
+  <g>
+    <rect x="16" y="294" width="540" height="44" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="26" y="304" width="92" height="24" rx="6" fill="#10b981" fill-opacity="0.95"/>
+    <text x="72" y="321" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">Examples</text>
+    <text x="128" y="321" font-size="12" fill="currentColor" opacity="0.78">Cặp vào → ra (few-shot, tuỳ chọn)</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none">
+    <path d="M572 60 h26 v262 h-26"/>
+  </g>
+  <text x="612" y="186" font-size="12.5" font-weight="700" fill="currentColor" transform="rotate(90 612 186)" text-anchor="middle">= 1 prompt</text>
+</svg>
+
 Nguyên tắc vàng: **rõ ràng > thông minh**. Model không đọc được suy nghĩ của bạn. Mơ hồ = model tự đoán = output dao động.
 
 ```text
@@ -166,13 +212,50 @@ Nếu thông tin không có trong tài liệu được cung cấp, trả về
 
 Đừng nhồi mọi thứ vào 1 prompt khổng lồ. Chia task phức tạp thành chuỗi prompt nhỏ, mỗi prompt làm 1 việc, output của bước này là input bước sau.
 
-```text
-[Bước 1] Trích xuất thông tin → JSON các sự kiện trong tài liệu.
-            ↓
-[Bước 2] Lọc & xếp hạng sự kiện theo độ liên quan với câu hỏi.
-            ↓
-[Bước 3] Viết câu trả lời chỉ dựa trên các sự kiện đã lọc.
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Prompt chaining: ba bước nối tiếp extract → rank → answer</title>
+  <desc>Ba prompt nối tiếp nhau: bước 1 trích xuất sự kiện, output là input bước 2 lọc và xếp hạng, output là input bước 3 viết câu trả lời.</desc>
+  <defs>
+    <marker id="ch-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Chuỗi 3 prompt — output bước trước là input bước sau</text>
+  <g>
+    <rect x="16" y="56" width="196" height="120" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="28" y="68" width="78" height="22" rx="11" fill="#3b82f6" fill-opacity="0.9"/>
+    <text x="67" y="83" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">Bước 1</text>
+    <text x="28" y="112" font-size="13" font-weight="700" fill="currentColor">extract</text>
+    <text x="28" y="133" font-size="11" fill="currentColor" opacity="0.78">Trích xuất sự kiện</text>
+    <text x="28" y="150" font-size="11" fill="currentColor" opacity="0.78">từ tài liệu</text>
+    <text x="28" y="167" font-size="10.5" fill="currentColor" opacity="0.6">in: document</text>
+  </g>
+  <g>
+    <rect x="262" y="56" width="196" height="120" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="274" y="68" width="78" height="22" rx="11" fill="#f59e0b" fill-opacity="0.95"/>
+    <text x="313" y="83" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">Bước 2</text>
+    <text x="274" y="112" font-size="13" font-weight="700" fill="currentColor">rank</text>
+    <text x="274" y="133" font-size="11" fill="currentColor" opacity="0.78">Lọc &amp; xếp hạng</text>
+    <text x="274" y="150" font-size="11" fill="currentColor" opacity="0.78">theo câu hỏi</text>
+    <text x="274" y="167" font-size="10.5" fill="currentColor" opacity="0.6">in: facts + question</text>
+  </g>
+  <g>
+    <rect x="508" y="56" width="196" height="120" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="520" y="68" width="78" height="22" rx="11" fill="#10b981" fill-opacity="0.95"/>
+    <text x="559" y="83" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">Bước 3</text>
+    <text x="520" y="112" font-size="13" font-weight="700" fill="currentColor">answer</text>
+    <text x="520" y="133" font-size="11" fill="currentColor" opacity="0.78">Viết câu trả lời</text>
+    <text x="520" y="150" font-size="11" fill="currentColor" opacity="0.78">từ sự kiện đã lọc</text>
+    <text x="520" y="167" font-size="10.5" fill="currentColor" opacity="0.6">in: ranked + question</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.6" fill="none" stroke-width="1.6">
+    <line x1="214" y1="116" x2="258" y2="116" marker-end="url(#ch-arrow)"/>
+    <line x1="460" y1="116" x2="504" y2="116" marker-end="url(#ch-arrow)"/>
+  </g>
+  <text x="236" y="106" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">facts</text>
+  <text x="482" y="106" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">ranked</text>
+  <text x="16" y="214" font-size="11.5" fill="currentColor" opacity="0.72">Mỗi bước làm 1 việc → dễ test, dễ debug, dễ thay model rẻ hơn cho bước đơn giản.</text>
+</svg>
 
 Lợi ích: mỗi bước dễ test, dễ debug, dễ thay model rẻ hơn cho bước đơn giản, và giảm lỗi "model làm tốt phần đầu, ẩu phần sau".
 

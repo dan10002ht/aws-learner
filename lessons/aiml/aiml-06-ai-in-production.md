@@ -91,21 +91,63 @@ Offline chỉ là phòng thí nghiệm. Trên production cần đo: tỉ lệ us
 
 Guardrails là lớp lọc **trước** và **sau** lời gọi model. Sơ đồ luồng:
 
-```
-User input
-   │
-   ▼
-[ INPUT GUARDRAIL ]  ── chặn ──►  trả lời từ chối an toàn
-   │  (PII? jailbreak? off-topic? quá dài?)
-   ▼
-[  LLM / RAG / Agent  ]
-   │
-   ▼
-[ OUTPUT GUARDRAIL ] ── chặn ──►  câu trả lời thay thế / lọc lại
-   │  (PII rò rỉ? toxic? sai chính sách? bịa? lộ system prompt?)
-   ▼
-User
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Luồng guardrail đầu vào và đầu ra quanh lời gọi model</title>
+  <desc>User input đi qua INPUT guardrail (kiểm PII, jailbreak, off-topic) tới LLM/RAG/Agent rồi qua OUTPUT guardrail (kiểm PII rò rỉ, toxic, hallucination) trả về User; mỗi guardrail có nhánh chặn rẽ ra câu trả lời an toàn.</desc>
+  <defs>
+    <marker id="ga" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Guardrails: chặn cái xấu vào và cái xấu ra</text>
+
+  <!-- hàng chính -->
+  <g>
+    <rect x="16" y="56" width="120" height="52" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="76" y="80" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">User input</text>
+    <text x="76" y="97" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">câu hỏi vào</text>
+
+    <rect x="172" y="50" width="148" height="64" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="246" y="72" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">INPUT guardrail</text>
+    <text x="246" y="89" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">PII · jailbreak</text>
+    <text x="246" y="103" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">off-topic · quá dài</text>
+
+    <rect x="356" y="50" width="148" height="64" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="430" y="78" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">LLM / RAG</text>
+    <text x="430" y="95" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Agent</text>
+
+    <rect x="540" y="50" width="164" height="64" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="622" y="72" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">OUTPUT guardrail</text>
+    <text x="622" y="89" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">PII rò rỉ · toxic</text>
+    <text x="622" y="103" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">bịa · lộ system prompt</text>
+  </g>
+
+  <!-- mũi tên hàng chính -->
+  <g stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#ga)">
+    <path d="M136 82 H170"/>
+    <path d="M320 82 H354"/>
+    <path d="M504 82 H538"/>
+  </g>
+
+  <!-- User cuối -->
+  <rect x="296" y="160" width="128" height="46" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="188" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">User (trả lời)</text>
+  <g stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#ga)">
+    <path d="M622 114 V140 H360 V158"/>
+  </g>
+
+  <!-- nhánh chặn -->
+  <rect x="160" y="244" width="400" height="52" rx="9" fill="#ef4444" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="268" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Trả lời an toàn (từ chối / lọc lại / câu thay thế)</text>
+  <text x="360" y="285" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">không gọi model hoặc không trả output gốc</text>
+
+  <g stroke="currentColor" stroke-width="1.4" stroke-dasharray="5 4" fill="none" marker-end="url(#ga)">
+    <path d="M246 114 V236"/>
+    <path d="M622 114 V128 H660 V236 H560"/>
+  </g>
+  <text x="252" y="160" font-size="10.5" font-weight="700" fill="currentColor">chặn</text>
+  <text x="666" y="160" font-size="10.5" font-weight="700" fill="currentColor">chặn</text>
+</svg>
 
 ### 3.1 Input filtering
 
@@ -142,16 +184,43 @@ Token là tiền. Bốn đòn bẩy chính:
 
 Không phải request nào cũng cần model to nhất. Dùng model **nhỏ/rẻ/nhanh** cho việc dễ (phân loại, trích xuất, trả lời FAQ), chỉ leo thang lên model **lớn** cho việc khó.
 
-```
-       query
-         │
-   [ classifier nhỏ ]
-     /          \
- "đơn giản"   "phức tạp"
-     │             │
- model nhỏ     model lớn
- (rẻ, nhanh)   (đắt, giỏi)
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" role="img" style="width:100%;max-width:600px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Model routing: classifier nhỏ rẽ query sang model nhỏ hoặc model lớn</title>
+  <desc>Query đi vào một classifier nhỏ; nhánh "đơn giản" đi tới model nhỏ rẻ và nhanh, nhánh "phức tạp" đi tới model lớn đắt nhưng giỏi.</desc>
+  <defs>
+    <marker id="mr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Model routing</text>
+
+  <!-- query -->
+  <rect x="240" y="44" width="120" height="42" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="300" y="70" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">query</text>
+
+  <!-- classifier -->
+  <rect x="222" y="116" width="156" height="48" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="300" y="138" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">classifier nhỏ</text>
+  <text x="300" y="154" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">phân loại độ khó</text>
+
+  <!-- model nhỏ -->
+  <rect x="56" y="218" width="180" height="58" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="146" y="242" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">model nhỏ</text>
+  <text x="146" y="259" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">rẻ, nhanh</text>
+
+  <!-- model lớn -->
+  <rect x="364" y="218" width="180" height="58" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="454" y="242" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">model lớn</text>
+  <text x="454" y="259" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">đắt, giỏi</text>
+
+  <g stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#mr)">
+    <path d="M300 86 V114"/>
+    <path d="M260 164 C220 188 180 192 146 216"/>
+    <path d="M340 164 C380 188 420 192 454 216"/>
+  </g>
+  <text x="158" y="196" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">"đơn giản"</text>
+  <text x="442" y="196" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">"phức tạp"</text>
+</svg>
 
 ### 4.2 Caching
 
@@ -292,5 +361,70 @@ Trên AWS, các lớp bọc production ở trên ánh xạ khá gọn vào dịc
 | Lưu prompt/response & redact PII trong pipeline | **Amazon Comprehend** (PII detection) trước khi ghi log |
 
 Một kiến trúc production điển hình trên AWS: API Gateway → Lambda → **Bedrock Guardrails (input)** → **Knowledge Base / Agent** trên Bedrock (vector ở OpenSearch) → **Guardrails (output)** → stream qua response, đồng thời log token/cost/latency vào **CloudWatch** và chạy **Bedrock Evaluation** trên mẫu traffic. Cùng tư duy bài này — chỉ là phần hạ tầng nặng đã được AWS lo hộ.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Kiến trúc AI production điển hình trên AWS</title>
+  <desc>API Gateway tới Lambda, qua Bedrock Guardrails input, tới Knowledge Base hoặc Agent trên Bedrock có vector store OpenSearch, qua Guardrails output rồi stream về client; Lambda đồng thời log token, cost, latency ra CloudWatch.</desc>
+  <defs>
+    <marker id="aw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Kiến trúc production trên AWS</text>
+
+  <!-- hàng chính -->
+  <rect x="14" y="56" width="104" height="50" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="66" y="78" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">API Gateway</text>
+  <text x="66" y="94" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">request vào</text>
+
+  <rect x="142" y="56" width="104" height="50" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="194" y="86" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Lambda</text>
+
+  <rect x="270" y="50" width="120" height="62" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="330" y="76" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Guardrails</text>
+  <text x="330" y="93" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">input</text>
+
+  <rect x="414" y="50" width="140" height="62" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="484" y="74" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Knowledge Base</text>
+  <text x="484" y="90" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">/ Agent</text>
+  <text x="484" y="105" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">trên Bedrock</text>
+
+  <rect x="578" y="50" width="126" height="62" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="641" y="76" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Guardrails</text>
+  <text x="641" y="93" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">output</text>
+
+  <g stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#aw)">
+    <path d="M118 81 H140"/>
+    <path d="M246 81 H268"/>
+    <path d="M390 81 H412"/>
+    <path d="M554 81 H576"/>
+  </g>
+
+  <!-- OpenSearch vector -->
+  <rect x="424" y="158" width="120" height="50" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="484" y="180" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">OpenSearch</text>
+  <text x="484" y="196" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">vector store</text>
+  <g stroke="currentColor" stroke-width="1.4" fill="none" marker-end="url(#aw)">
+    <path d="M484 112 V156"/>
+  </g>
+
+  <!-- stream về client -->
+  <rect x="578" y="158" width="126" height="50" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="641" y="180" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
+  <text x="641" y="196" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">stream response</text>
+  <g stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#aw)">
+    <path d="M641 112 V156"/>
+  </g>
+  <text x="650" y="138" font-size="10" font-weight="700" fill="currentColor">stream</text>
+
+  <!-- CloudWatch -->
+  <rect x="118" y="270" width="200" height="56" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="218" y="294" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">CloudWatch</text>
+  <text x="218" y="311" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">log token · cost · latency</text>
+  <g stroke="currentColor" stroke-width="1.4" stroke-dasharray="5 4" fill="none" marker-end="url(#aw)">
+    <path d="M194 106 V248 H218 V268"/>
+  </g>
+  <text x="200" y="200" font-size="10" font-weight="700" fill="currentColor">observability</text>
+</svg>
 
 > 💡 Ghi nhớ: Điểm hấp dẫn nhất của Bedrock Guardrails là **tách rời khỏi model** — bạn đổi model bên dưới, đổi provider, mà policy an toàn/PII/grounding vẫn giữ nguyên. Đúng tinh thần "guardrails là một lớp, không phải vài dòng if trong prompt".

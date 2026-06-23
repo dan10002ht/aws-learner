@@ -30,14 +30,98 @@ So sánh nhanh các cách đưa kiến thức riêng vào:
 
 Có hai giai đoạn: **Indexing (offline)** làm trước, và **Query (online)** chạy mỗi lần user hỏi.
 
-```
-INDEXING (chạy 1 lần / khi tài liệu đổi):
-  Docs ──► Chunking ──► Embedding ──► Vector DB (lưu vector + text + metadata)
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Pipeline RAG end-to-end: pha Indexing offline và pha Query online</title>
+  <desc>Hai luồng trái sang phải. Pha Indexing offline: Tài liệu, Chunking, Embedding, Vector DB. Pha Query online: Câu hỏi, Embedding, Similarity search top-k, Re-rank, Inject context, LLM generate, Trả lời kèm nguồn. Vector DB nối xuống bước Similarity search của pha online.</desc>
+  <defs>
+    <marker id="rag-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
 
-QUERY (mỗi request):
-  Câu hỏi ──► Embedding ──► Similarity search (top-k)
-          ──► Re-rank ──► Inject context vào prompt ──► LLM generate ──► Trả lời + nguồn
-```
+  <rect x="8" y="34" width="704" height="132" rx="12" fill="#3b82f6" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.18"/>
+  <text x="24" y="56" font-size="13" font-weight="700" fill="currentColor">INDEXING — offline</text>
+  <text x="24" y="72" font-size="10.5" fill="currentColor" opacity="0.6">chạy 1 lần / khi tài liệu thay đổi</text>
+
+  <g>
+    <rect x="24" y="92" width="120" height="52" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="84" y="116" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Tài liệu</text>
+    <text x="84" y="132" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">PDF · wiki · code</text>
+  </g>
+  <g>
+    <rect x="194" y="92" width="120" height="52" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="254" y="116" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Chunking</text>
+    <text x="254" y="132" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">cắt mảnh nhỏ</text>
+  </g>
+  <g>
+    <rect x="364" y="92" width="120" height="52" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="424" y="116" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Embedding</text>
+    <text x="424" y="132" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">text → vector</text>
+  </g>
+  <g>
+    <rect x="534" y="92" width="154" height="52" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="611" y="114" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Vector DB</text>
+    <text x="611" y="131" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">vector + text + metadata</text>
+  </g>
+  <g stroke="currentColor" fill="none" marker-end="url(#rag-arrow)">
+    <line x1="144" y1="118" x2="190" y2="118"/>
+    <line x1="314" y1="118" x2="360" y2="118"/>
+    <line x1="484" y1="118" x2="530" y2="118"/>
+  </g>
+
+  <rect x="8" y="190" width="704" height="232" rx="12" fill="#f59e0b" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.18"/>
+  <text x="24" y="212" font-size="13" font-weight="700" fill="currentColor">QUERY — online</text>
+  <text x="24" y="228" font-size="10.5" fill="currentColor" opacity="0.6">chạy mỗi lần user hỏi</text>
+
+  <g>
+    <rect x="24" y="248" width="120" height="48" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="84" y="277" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Câu hỏi</text>
+  </g>
+  <g>
+    <rect x="180" y="248" width="120" height="48" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="240" y="277" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Embedding</text>
+  </g>
+  <g>
+    <rect x="336" y="240" width="150" height="64" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="411" y="266" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Similarity search</text>
+    <text x="411" y="284" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">lấy top-k (k≈20–50)</text>
+  </g>
+  <g>
+    <rect x="522" y="248" width="166" height="48" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="605" y="270" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Re-rank</text>
+    <text x="605" y="286" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">lọc còn top 3–6</text>
+  </g>
+  <g stroke="currentColor" fill="none" marker-end="url(#rag-arrow)">
+    <line x1="144" y1="272" x2="176" y2="272"/>
+    <line x1="300" y1="272" x2="332" y2="272"/>
+    <line x1="486" y1="272" x2="518" y2="272"/>
+  </g>
+
+  <g>
+    <rect x="378" y="344" width="166" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="461" y="368" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Inject context</text>
+    <text x="461" y="385" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">ghép chunk vào prompt</text>
+  </g>
+  <g>
+    <rect x="192" y="344" width="150" height="56" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="267" y="368" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">LLM generate</text>
+  </g>
+  <g>
+    <rect x="24" y="344" width="130" height="56" rx="9" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="89" y="368" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Trả lời</text>
+    <text x="89" y="385" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">+ trích dẫn nguồn</text>
+  </g>
+  <g stroke="currentColor" fill="none" marker-end="url(#rag-arrow)">
+    <path d="M605 296 V322 H461 V340"/>
+    <line x1="378" y1="372" x2="346" y2="372"/>
+    <line x1="192" y1="372" x2="158" y2="372"/>
+  </g>
+
+  <g stroke="currentColor" stroke-opacity="0.55" stroke-dasharray="5 4" fill="none" marker-end="url(#rag-arrow)">
+    <path d="M611 144 V200 H411 V236"/>
+  </g>
+  <text x="430" y="194" font-size="9.5" fill="currentColor" opacity="0.7">DB đã dựng offline phục vụ truy vấn online</text>
+</svg>
 
 Đi qua từng bước.
 
@@ -161,6 +245,65 @@ merged   = reciprocal_rank_fusion(sem_hits, kw_hits)  # RRF trộn 2 bảng xế
 ```
 
 RRF (Reciprocal Rank Fusion) là cách trộn đơn giản và mạnh: ưu tiên item xuất hiện hạng cao ở cả hai danh sách. Trong thực tế hybrid + re-rank gần như luôn thắng vector-only.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 290" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Hybrid search: hai nhánh vector và keyword chạy song song, RRF trộn ra danh sách cuối</title>
+  <desc>Từ câu hỏi tách ra hai nhánh chạy song song. Nhánh trên: Vector search hiểu ngữ nghĩa cho ra bảng xếp hạng A. Nhánh dưới: Keyword BM25 khớp từ khoá chính xác cho ra bảng xếp hạng B. Cả hai đổ vào RRF Reciprocal Rank Fusion, trộn thành một danh sách kết quả cuối.</desc>
+  <defs>
+    <marker id="hyb-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <g>
+    <rect x="16" y="116" width="118" height="56" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="75" y="142" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Câu hỏi</text>
+    <text x="75" y="159" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">query của user</text>
+  </g>
+
+  <g>
+    <rect x="214" y="32" width="200" height="64" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="314" y="58" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Vector search</text>
+    <text x="314" y="76" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">semantic — hiểu ngữ nghĩa</text>
+    <text x="314" y="89" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.55">"thanh toán" ≈ "billing"</text>
+  </g>
+  <g>
+    <rect x="214" y="192" width="200" height="64" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="314" y="218" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Keyword / BM25</text>
+    <text x="314" y="236" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">full-text — khớp từ khoá</text>
+    <text x="314" y="249" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.55">SKU-7741 · getUserToken</text>
+  </g>
+
+  <g>
+    <rect x="446" y="44" width="92" height="40" rx="7" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="492" y="60" font-size="10" font-weight="700" text-anchor="middle" fill="currentColor">Xếp hạng A</text>
+    <text x="492" y="74" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.6">top-k ngữ nghĩa</text>
+  </g>
+  <g>
+    <rect x="446" y="204" width="92" height="40" rx="7" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="492" y="220" font-size="10" font-weight="700" text-anchor="middle" fill="currentColor">Xếp hạng B</text>
+    <text x="492" y="234" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.6">top-k từ khoá</text>
+  </g>
+
+  <g>
+    <rect x="566" y="104" width="138" height="80" rx="10" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="635" y="132" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">RRF</text>
+    <text x="635" y="149" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">Reciprocal Rank</text>
+    <text x="635" y="161" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">Fusion</text>
+    <text x="635" y="176" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.55">trộn → danh sách cuối</text>
+  </g>
+
+  <g stroke="currentColor" fill="none" marker-end="url(#hyb-arrow)">
+    <path d="M134 134 C175 124 175 70 210 66"/>
+    <path d="M134 154 C175 164 175 222 210 222"/>
+    <line x1="414" y1="64" x2="442" y2="64"/>
+    <line x1="414" y1="224" x2="442" y2="224"/>
+    <path d="M538 64 C556 64 558 120 562 132"/>
+    <path d="M538 224 C556 224 558 168 562 156"/>
+  </g>
+
+  <text x="160" y="24" font-size="10" fill="currentColor" opacity="0.7">chạy song song →</text>
+</svg>
 
 ---
 

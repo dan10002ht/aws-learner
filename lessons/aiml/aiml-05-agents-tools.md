@@ -29,20 +29,37 @@ Một LLM thuần tuý chỉ biết **đoán token tiếp theo** dựa trên d�
 
 Điểm dễ hiểu lầm nhất: **model KHÔNG tự chạy hàm**. Model chỉ **đề nghị** "hãy gọi hàm `get_weather` với `city='Hanoi'`". **Code của bạn** mới thực sự chạy hàm đó.
 
-```
-┌──────────┐  1. prompt + danh sách tools   ┌──────────┐
-│   Code    │ ─────────────────────────────▶│   LLM     │
-│  của bạn  │                                │           │
-│           │  2. "gọi get_weather(Hanoi)"  │           │
-│           │ ◀─────────────────────────────│           │
-│           │                                └──────────┘
-│  3. CHẠY get_weather thật → "28°C"
-│           │  4. gửi kết quả tool trở lại   ┌──────────┐
-│           │ ─────────────────────────────▶│   LLM     │
-│           │  5. "Hà Nội hôm nay 28°C"     │           │
-│           │ ◀─────────────────────────────└──────────┘
-└──────────┘
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Sequence function calling giữa Code và LLM</title>
+  <desc>Code gửi prompt kèm tools cho LLM; LLM đề nghị gọi tool; Code mới thực sự chạy tool thật và lấy kết quả; Code gửi tool_result lại; LLM trả lời cuối. Model chỉ đề nghị, code mới chạy.</desc>
+  <defs>
+    <marker id="fc-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <rect x="60" y="16" width="180" height="38" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="150" y="40" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Code của bạn</text>
+  <rect x="480" y="16" width="180" height="38" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="570" y="40" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">LLM</text>
+  <line x1="150" y1="54" x2="150" y2="340" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+  <line x1="570" y1="54" x2="570" y2="340" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+  <g stroke="currentColor" marker-end="url(#fc-arrow)">
+    <line x1="150" y1="86" x2="568" y2="86"/>
+    <line x1="570" y1="138" x2="152" y2="138"/>
+    <line x1="150" y1="250" x2="568" y2="250"/>
+    <line x1="570" y1="302" x2="152" y2="302"/>
+  </g>
+  <g font-size="11.5" fill="currentColor" text-anchor="middle">
+    <text x="360" y="80">1. prompt + danh sách tools</text>
+    <text x="360" y="132">2. đề nghị: gọi get_weather(Hanoi)</text>
+    <text x="360" y="244">4. gửi tool_result: "28°C"</text>
+    <text x="360" y="296">5. trả lời: "Hà Nội hôm nay 28°C"</text>
+  </g>
+  <rect x="40" y="158" width="220" height="62" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="150" y="180" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">3. CODE chạy tool thật</text>
+  <text x="150" y="200" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">get_weather(Hanoi) → "28°C"</text>
+  <text x="150" y="214" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">(model KHÔNG tự chạy hàm)</text>
+</svg>
 
 ### 3.1 Khai báo tool (tool definition)
 
@@ -130,18 +147,44 @@ So sánh các cách lấy structured output:
 
 **Agent** = LLM trong một **vòng lặp**, được phép gọi tool nhiều lần cho tới khi xong việc. Khác function-call một phát ở chỗ: model **tự quyết bao nhiêu bước** và **bước nào**.
 
-```
-            ┌──────────────────────────────────────────┐
-            ▼                                          │
-   ┌─────────────────┐    tool_use    ┌──────────────┐ │
-   │  LLM suy luận     │ ─────────────▶ │ Chạy tool     │ │
-   │  (reason)         │                │ (act)         │ │
-   └─────────────────┘                └──────────────┘ │
-            ▲                                  │         │
-            │       tool_result (observe)      │         │
-            └──────────────────────────────────┘─────────┘
-            (lặp tới khi stop_reason != tool_use)
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Vòng lặp agent: reason → act → observe</title>
+  <desc>Agent lặp ba bước theo vòng tròn: LLM suy luận (reason), chạy tool (act), quan sát kết quả (observe), rồi quay lại suy luận. Lặp tới khi stop_reason khác tool_use, có chốt max_steps để dừng an toàn.</desc>
+  <defs>
+    <marker id="al-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#al-arrow)">
+    <path d="M474 108 A150 150 0 0 1 530 240"/>
+    <path d="M462 300 A150 150 0 0 1 258 300"/>
+    <path d="M190 240 A150 150 0 0 1 318 108"/>
+  </g>
+  <g>
+    <rect x="250" y="44" width="220" height="58" rx="12" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="360" y="70" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">LLM suy luận</text>
+    <text x="360" y="89" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">reason — quyết bước kế</text>
+  </g>
+  <g>
+    <rect x="452" y="246" width="190" height="58" rx="12" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="547" y="272" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Chạy tool</text>
+    <text x="547" y="291" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">act — code thực thi</text>
+  </g>
+  <g>
+    <rect x="78" y="246" width="190" height="58" rx="12" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="173" y="272" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Quan sát kết quả</text>
+    <text x="173" y="291" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">observe — tool_result</text>
+  </g>
+  <g font-size="11.5" fill="currentColor" opacity="0.85" text-anchor="middle">
+    <text x="470" y="150">tool_use</text>
+    <text x="360" y="334">gửi kết quả về</text>
+    <text x="250" y="150">vòng kế</text>
+  </g>
+  <text x="360" y="200" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">lặp tới khi</text>
+  <text x="360" y="218" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">stop_reason != tool_use</text>
+  <rect x="262" y="354" width="196" height="22" rx="11" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="360" y="369" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">chốt an toàn: max_steps</text>
+</svg>
 
 Pseudo của agent loop:
 
@@ -254,16 +297,36 @@ Vấn đề: mỗi app tự viết tool theo kiểu riêng. Bạn có một tool
 
 Đôi khi một agent ôm quá nhiều tool/việc → prompt phình to, model lẫn lộn. Giải pháp: chia thành nhiều agent chuyên biệt, một **orchestrator** điều phối.
 
-```
-        ┌──────────────┐
-        │ Orchestrator  │  (phân việc, gom kết quả)
-        └──────┬───────┘
-        ┌──────┼─────────┐
-        ▼      ▼         ▼
-   ┌────────┐┌────────┐┌────────┐
-   │Research││ Coder  ││Reviewer│   ← mỗi agent: prompt + tools riêng
-   └────────┘└────────┘└────────┘
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Kiến trúc multi-agent: orchestrator điều phối các agent chuyên biệt</title>
+  <desc>Một orchestrator ở trên phân việc và gom kết quả, điều phối xuống ba agent chuyên biệt: Research, Coder, Reviewer. Mỗi agent có prompt và tools riêng.</desc>
+  <g stroke="currentColor" stroke-opacity="0.45" fill="none" stroke-width="1.5">
+    <path d="M360 80 V112 H152 V148"/>
+    <path d="M360 112 V148"/>
+    <path d="M360 80 V112 H568 V148"/>
+  </g>
+  <rect x="250" y="32" width="220" height="48" rx="11" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="360" y="54" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Orchestrator</text>
+  <text x="360" y="72" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">phân việc, gom kết quả</text>
+  <g>
+    <rect x="64" y="148" width="176" height="72" rx="11" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="152" y="174" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Research</text>
+    <text x="152" y="194" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">tìm/đọc nhiều nguồn</text>
+    <text x="152" y="210" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">prompt + tools riêng</text>
+  </g>
+  <g>
+    <rect x="272" y="148" width="176" height="72" rx="11" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="360" y="174" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Coder</text>
+    <text x="360" y="194" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">viết/sửa code</text>
+    <text x="360" y="210" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">prompt + tools riêng</text>
+  </g>
+  <g>
+    <rect x="480" y="148" width="176" height="72" rx="11" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="568" y="174" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Reviewer</text>
+    <text x="568" y="194" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">kiểm tra/đánh giá</text>
+    <text x="568" y="210" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">prompt + tools riêng</text>
+  </g>
+</svg>
 
 Khi nào dùng:
 - Tác vụ tách được thành **subtask song song/độc lập** (research nhiều nguồn cùng lúc).
