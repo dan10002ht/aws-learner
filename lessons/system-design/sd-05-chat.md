@@ -71,13 +71,70 @@ Vấn đề cốt lõi: HTTP là client-hỏi-server-trả. Chat cần server **
 
 **Kết luận:** dùng **WebSocket** làm chính, **long polling làm fallback** (mạng doanh nghiệp / proxy đôi khi chặn WS). SSE không đủ vì chat cần gửi 2 chiều.
 
-```
-Long polling:                       WebSocket:
-client --req--> server              client <===handshake===> server
-       (server giữ...)                       (1 kết nối, 2 chiều)
-client <--resp-- server             client <----msg-------- server
-client --req--> server (lặp lại)    client ----msg--------> server
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>So sánh cơ chế Long polling và WebSocket</title>
+  <desc>Hai sơ đồ tuần tự cạnh nhau: Long polling thì client hỏi đi hỏi lại, server giữ rồi trả; WebSocket bắt tay một lần rồi giữ một kết nối hai chiều persistent để đẩy tin tự do.</desc>
+  <text x="180" y="22" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Long polling</text>
+  <text x="540" y="22" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">WebSocket</text>
+  <!-- LONG POLLING -->
+  <g>
+    <rect x="70" y="36" width="80" height="26" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="110" y="53" font-size="11.5" text-anchor="middle" fill="currentColor">client</text>
+    <rect x="210" y="36" width="80" height="26" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="250" y="53" font-size="11.5" text-anchor="middle" fill="currentColor">server</text>
+    <line x1="110" y1="62" x2="110" y2="320" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+    <line x1="250" y1="62" x2="250" y2="320" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+  </g>
+  <g stroke="currentColor" fill="currentColor" font-size="10.5">
+    <line x1="110" y1="86" x2="246" y2="86" stroke-width="1.3"/>
+    <polygon points="250,86 242,82 242,90"/>
+    <text x="178" y="80" text-anchor="middle">request</text>
+    <text x="250" y="106" text-anchor="middle" fill="currentColor" opacity="0.7" font-style="italic">server GIỮ…</text>
+    <line x1="250" y1="124" x2="114" y2="124" stroke-width="1.3"/>
+    <polygon points="110,124 118,120 118,128"/>
+    <text x="178" y="118" text-anchor="middle">response (khi có data)</text>
+    <line x1="110" y1="164" x2="246" y2="164" stroke-width="1.3"/>
+    <polygon points="250,164 242,160 242,168"/>
+    <text x="178" y="158" text-anchor="middle">request (lặp lại)</text>
+    <text x="250" y="184" text-anchor="middle" fill="currentColor" opacity="0.7" font-style="italic">giữ tiếp…</text>
+    <line x1="250" y1="202" x2="114" y2="202" stroke-width="1.3"/>
+    <polygon points="110,202 118,198 118,206"/>
+    <text x="178" y="196" text-anchor="middle">response</text>
+  </g>
+  <text x="180" y="244" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">mở/đóng liên tục → tốn,</text>
+  <text x="180" y="259" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">độ trễ trung bình</text>
+  <!-- divider -->
+  <line x1="360" y1="36" x2="360" y2="320" stroke="currentColor" stroke-opacity="0.18"/>
+  <!-- WEBSOCKET -->
+  <g>
+    <rect x="430" y="36" width="80" height="26" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="470" y="53" font-size="11.5" text-anchor="middle" fill="currentColor">client</text>
+    <rect x="570" y="36" width="80" height="26" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="610" y="53" font-size="11.5" text-anchor="middle" fill="currentColor">server</text>
+    <line x1="470" y1="62" x2="470" y2="320" stroke="currentColor" stroke-opacity="0.3"/>
+    <line x1="610" y1="62" x2="610" y2="320" stroke="currentColor" stroke-opacity="0.3"/>
+  </g>
+  <g stroke="currentColor" fill="currentColor" font-size="10.5">
+    <line x1="470" y1="86" x2="606" y2="86" stroke-width="1.3"/>
+    <polygon points="610,86 602,82 602,90"/>
+    <line x1="610" y1="100" x2="474" y2="100" stroke-width="1.3"/>
+    <polygon points="470,100 478,96 478,104"/>
+    <text x="540" y="80" text-anchor="middle">handshake (1 lần)</text>
+    <rect x="466" y="112" width="148" height="18" rx="9" fill="#10b981" fill-opacity="0.16"/>
+    <text x="540" y="125" text-anchor="middle" fill="currentColor">1 kết nối 2 chiều, persistent</text>
+    <line x1="610" y1="156" x2="474" y2="156" stroke-width="1.3"/>
+    <polygon points="470,156 478,152 478,160"/>
+    <text x="540" y="150" text-anchor="middle">msg (server đẩy)</text>
+    <line x1="470" y1="184" x2="606" y2="184" stroke-width="1.3"/>
+    <polygon points="610,184 602,180 602,188"/>
+    <text x="540" y="178" text-anchor="middle">msg (client gửi)</text>
+    <line x1="610" y1="212" x2="474" y2="212" stroke-width="1.3"/>
+    <polygon points="470,212 478,208 478,216"/>
+    <text x="540" y="206" text-anchor="middle">msg (bất cứ lúc nào)</text>
+  </g>
+  <text x="540" y="244" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">giữ kết nối → đẩy tức thì,</text>
+  <text x="540" y="259" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">nhưng server stateful</text>
+</svg>
 
 > ⚠️ Bẫy thiết kế: WebSocket biến server thành **stateful** — kết nối "thuộc về" một node cụ thể. Đây là gốc rễ của mọi khó khăn scale phía dưới. Long polling thì stateless hơn nhưng tốn CPU vì đóng/mở liên tục.
 
@@ -115,29 +172,70 @@ GET  /v1/users/{id}/presence           # lấy presence
 
 ## 5. High-level design
 
-```
-                          ┌─────────────────────────┐
-   client (WS) ───────────┤   Load Balancer (L4/L7)  │
-   client (WS) ───────────┤   (route theo userId)    │
-                          └────────────┬─────────────┘
-                                       │
-                     ┌─────────────────┴──────────────────┐
-                     │        CONNECTION / GATEWAY tier    │
-                     │  (chỉ giữ WS, không chứa logic)     │
-                     │  node-1   node-2   ...   node-N     │
-                     └───┬─────────────┬──────────────┬────┘
-                         │             │              │
-        ┌────────────────┼─────────────┼──────────────┼─────────┐
-        │           Pub/Sub bus (Redis pub/sub / Kafka)         │
-        └────┬───────────────┬───────────────┬─────────────┬────┘
-             │               │               │             │
-       ┌─────┴────┐   ┌──────┴─────┐  ┌──────┴─────┐  ┌─────┴──────┐
-       │  Chat    │   │ Presence   │  │  History   │  │   Push     │
-       │  service │   │  service   │  │  store     │  │  (offline) │
-       └────┬─────┘   └─────┬──────┘  └──────┬─────┘  └─────┬──────┘
-            │               │                │              │
-      message queue    Redis (TTL)      DB (sharded)    APNs / FCM
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 480" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Kiến trúc high-level hệ thống chat realtime</title>
+  <desc>Client WS đi qua Load Balancer tới tầng Connection/Gateway chỉ giữ WebSocket; tầng này nối với pub/sub bus, từ đó tới các service Chat, Presence, History, Push, mỗi service gắn với message queue, Redis TTL, DB sharded và APNs/FCM.</desc>
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none" stroke-width="1.3">
+    <line x1="120" y1="58" x2="280" y2="58"/>
+    <line x1="120" y1="82" x2="280" y2="82"/>
+    <line x1="360" y1="96" x2="360" y2="120"/>
+    <line x1="200" y1="172" x2="200" y2="210"/>
+    <line x1="360" y1="172" x2="360" y2="210"/>
+    <line x1="520" y1="172" x2="520" y2="210"/>
+    <line x1="150" y1="262" x2="150" y2="300"/>
+    <line x1="290" y1="262" x2="290" y2="300"/>
+    <line x1="430" y1="262" x2="430" y2="300"/>
+    <line x1="570" y1="262" x2="570" y2="300"/>
+    <line x1="150" y1="350" x2="150" y2="388"/>
+    <line x1="290" y1="350" x2="290" y2="388"/>
+    <line x1="430" y1="350" x2="430" y2="388"/>
+    <line x1="570" y1="350" x2="570" y2="388"/>
+  </g>
+  <!-- clients -->
+  <rect x="24" y="46" width="96" height="24" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="72" y="62" font-size="11" text-anchor="middle" fill="currentColor">client (WS)</text>
+  <rect x="24" y="70" width="96" height="24" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="72" y="86" font-size="11" text-anchor="middle" fill="currentColor">client (WS)</text>
+  <!-- LB -->
+  <rect x="280" y="46" width="160" height="50" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="360" y="66" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Load Balancer (L4/L7)</text>
+  <text x="360" y="83" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">route theo userId</text>
+  <!-- gateway tier -->
+  <rect x="120" y="120" width="480" height="52" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="360" y="139" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">CONNECTION / GATEWAY tier — chỉ giữ WS, không logic</text>
+  <g font-size="10.5" fill="currentColor">
+    <rect x="150" y="147" width="60" height="18" rx="5" fill="#10b981" fill-opacity="0.18"/><text x="180" y="160" text-anchor="middle">node-1</text>
+    <rect x="222" y="147" width="60" height="18" rx="5" fill="#10b981" fill-opacity="0.18"/><text x="252" y="160" text-anchor="middle">node-2</text>
+    <text x="320" y="160" text-anchor="middle" opacity="0.7">…</text>
+    <rect x="350" y="147" width="60" height="18" rx="5" fill="#10b981" fill-opacity="0.18"/><text x="380" y="160" text-anchor="middle">node-N</text>
+  </g>
+  <!-- pub/sub bus -->
+  <rect x="120" y="210" width="480" height="52" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="360" y="234" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Pub/Sub bus</text>
+  <text x="360" y="251" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Redis pub/sub / Kafka</text>
+  <!-- services -->
+  <g font-size="11" fill="currentColor">
+    <rect x="98" y="300" width="104" height="50" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="150" y="322" font-weight="700" text-anchor="middle">Chat</text><text x="150" y="338" text-anchor="middle">service</text>
+    <rect x="238" y="300" width="104" height="50" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="290" y="322" font-weight="700" text-anchor="middle">Presence</text><text x="290" y="338" text-anchor="middle">service</text>
+    <rect x="378" y="300" width="104" height="50" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="430" y="322" font-weight="700" text-anchor="middle">History</text><text x="430" y="338" text-anchor="middle">store</text>
+    <rect x="518" y="300" width="104" height="50" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="570" y="322" font-weight="700" text-anchor="middle">Push</text><text x="570" y="338" text-anchor="middle">(offline)</text>
+  </g>
+  <!-- backends -->
+  <g font-size="10.5" fill="currentColor">
+    <rect x="96" y="388" width="108" height="42" rx="7" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="150" y="405" text-anchor="middle">message</text><text x="150" y="420" text-anchor="middle">queue</text>
+    <rect x="236" y="388" width="108" height="42" rx="7" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="290" y="405" text-anchor="middle">Redis</text><text x="290" y="420" text-anchor="middle">(TTL)</text>
+    <rect x="376" y="388" width="108" height="42" rx="7" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="430" y="405" text-anchor="middle">DB</text><text x="430" y="420" text-anchor="middle">(sharded)</text>
+    <rect x="516" y="388" width="108" height="42" rx="7" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="570" y="405" text-anchor="middle">APNs</text><text x="570" y="420" text-anchor="middle">/ FCM</text>
+  </g>
+</svg>
 
 Luồng gửi một tin 1-1 (A → B):
 1. A gửi frame `SEND` qua WS tới **node giữ kết nối của A**.
@@ -165,11 +263,56 @@ Vì WS stateful, một tin gửi cho B phải tới **đúng node đang giữ B*
 
 **Lựa chọn thực tế:** gateway giữ WS + một **Connection Registry** (Redis) ánh xạ `userId -> nodeId`, và một **pub/sub** để node-của-A nói chuyện với node-của-B mà không cần biết nhau trực tiếp.
 
-```
-A ở node-1, B ở node-7. node-1 KHÔNG kết nối trực tiếp node-7.
-node-1 --publish(channel: node-7)--> [pub/sub] --> node-7 --push--> B
-        (tra registry: B -> node-7)
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Định tuyến tin qua pub/sub tránh mesh N²</title>
+  <desc>A nối node-1, B nối node-7. node-1 không kết nối trực tiếp node-7; nó tra registry biết B ở node-7, publish lên pub/sub, node-7 subscribe rồi push frame xuống B.</desc>
+  <!-- A and node-1 -->
+  <circle cx="70" cy="150" r="22" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="70" y="155" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">A</text>
+  <rect x="140" y="124" width="92" height="52" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="186" y="155" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">node-1</text>
+  <!-- pub/sub -->
+  <rect x="290" y="116" width="140" height="68" rx="12" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="360" y="146" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">pub/sub</text>
+  <text x="360" y="164" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">channel: node-7</text>
+  <!-- node-7 and B -->
+  <rect x="488" y="124" width="92" height="52" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="534" y="155" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">node-7</text>
+  <circle cx="650" cy="150" r="22" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="650" y="155" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">B</text>
+  <!-- registry -->
+  <rect x="140" y="232" width="160" height="44" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="220" y="251" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Connection Registry</text>
+  <text x="220" y="266" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">B → node-7</text>
+  <!-- edges -->
+  <g stroke="currentColor" fill="currentColor" font-size="10.5">
+    <line x1="92" y1="150" x2="138" y2="150" stroke-width="1.4"/>
+    <text x="115" y="142" text-anchor="middle">WS</text>
+    <!-- node-1 tra registry -->
+    <line x1="186" y1="176" x2="200" y2="230" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <polygon points="186,176 195,182 200,174" stroke="none"/>
+    <text x="214" y="208" font-size="9.5" text-anchor="middle" opacity="0.8">tra: B?</text>
+    <!-- publish -->
+    <line x1="234" y1="150" x2="286" y2="150" stroke-width="1.6"/>
+    <polygon points="290,150 282,146 282,154" stroke="none"/>
+    <text x="262" y="142" text-anchor="middle">publish</text>
+    <!-- deliver -->
+    <line x1="432" y1="150" x2="484" y2="150" stroke-width="1.6"/>
+    <polygon points="488,150 480,146 480,154" stroke="none"/>
+    <text x="460" y="142" text-anchor="middle">subscribe</text>
+    <!-- push to B -->
+    <line x1="582" y1="150" x2="616" y2="150" stroke-width="1.4"/>
+    <polygon points="626,150 616,145 616,155" stroke="none"/>
+    <text x="604" y="142" text-anchor="middle">push</text>
+  </g>
+  <!-- no direct mesh -->
+  <g>
+    <path d="M210 110 Q360 60 560 110" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="6 5"/>
+    <line x1="375" y1="76" x2="397" y2="98" stroke="#ef4444" stroke-width="2.2"/>
+    <line x1="397" y1="76" x2="375" y2="98" stroke="#ef4444" stroke-width="2.2"/>
+    <text x="386" y="50" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">KHÔNG nối trực tiếp node↔node (tránh N²)</text>
+  </g>
+</svg>
 
 > ⚠️ Bẫy thiết kế: Đừng cho các connection node **kết nối mesh trực tiếp** với nhau (N node → N² kết nối). Pub/sub là tầng gián tiếp giúp tránh nổ N². Nhưng nhớ: registry và pub/sub trở thành điểm phụ thuộc nóng — phải HA.
 
@@ -240,12 +383,70 @@ Nếu B offline (không có WS), tin phải tới qua hệ điều hành:
 
 Với group N người: một tin sinh ra **N lần delivery**. Group 1000 người, một tin = 1000 lần đẩy + 1000 receipt. Đây là lý do phải đặt **giới hạn N** (vd group thường ≤ 256, "channel" lớn hơn thì chuyển sang mô hình pull/broadcast khác).
 
-```
-A gửi vào group G (1000 member):
-  ghi 1 tin (seq) -> tra ai đang online -> publish tới các node giữ họ
-  -> mỗi node đẩy xuống các member của mình
-  member offline -> đẩy vào inbox + push
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Luồng fan-out tin nhắn trong group</title>
+  <desc>A gửi vào group: ghi một tin có seq, tra ai online, publish tới các node đang giữ member; mỗi node đẩy xuống member của mình; member offline thì đưa vào inbox và gửi push.</desc>
+  <g stroke="currentColor" fill="currentColor">
+    <!-- step boxes flow left to right -->
+    <rect x="16" y="40" width="120" height="56" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="76" y="62" font-size="11" font-weight="700" text-anchor="middle">A gửi vào</text>
+    <text x="76" y="78" font-size="11" text-anchor="middle">group G</text>
+    <rect x="172" y="40" width="120" height="56" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="232" y="62" font-size="11" font-weight="700" text-anchor="middle">ghi 1 tin</text>
+    <text x="232" y="78" font-size="11" text-anchor="middle">(gán seq)</text>
+    <rect x="328" y="40" width="120" height="56" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="388" y="62" font-size="11" font-weight="700" text-anchor="middle">tra ai</text>
+    <text x="388" y="78" font-size="11" text-anchor="middle">đang online</text>
+    <rect x="484" y="40" width="130" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="549" y="62" font-size="11" font-weight="700" text-anchor="middle">publish tới các</text>
+    <text x="549" y="78" font-size="11" text-anchor="middle">node giữ member</text>
+  </g>
+  <g stroke="currentColor" fill="currentColor" stroke-width="1.5">
+    <line x1="136" y1="68" x2="168" y2="68"/><polygon points="172,68 164,64 164,72" stroke="none"/>
+    <line x1="292" y1="68" x2="324" y2="68"/><polygon points="328,68 320,64 320,72" stroke="none"/>
+    <line x1="448" y1="68" x2="480" y2="68"/><polygon points="484,68 476,64 476,72" stroke="none"/>
+  </g>
+  <!-- fan-out down to nodes -->
+  <g stroke="currentColor" stroke-width="1.4" fill="currentColor">
+    <line x1="549" y1="96" x2="162" y2="148"/><polygon points="160,150 169,148 165,141" stroke="none"/>
+    <line x1="549" y1="96" x2="361" y2="148"/><polygon points="360,150 368,145 362,140" stroke="none"/>
+    <line x1="549" y1="96" x2="560" y2="148"/><polygon points="560,150 556,141 565,143" stroke="none"/>
+  </g>
+  <!-- nodes -->
+  <g font-size="11" fill="currentColor">
+    <rect x="108" y="150" width="104" height="38" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="160" y="173" font-weight="700" text-anchor="middle">node-a</text>
+    <rect x="308" y="150" width="104" height="38" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="360" y="173" font-weight="700" text-anchor="middle">node-b</text>
+    <rect x="508" y="150" width="104" height="38" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="560" y="173" font-weight="700" text-anchor="middle">node-c</text>
+  </g>
+  <!-- members from each node -->
+  <g stroke="currentColor" stroke-width="1.2" fill="currentColor">
+    <line x1="160" y1="188" x2="135" y2="232"/><polygon points="135,232 142,226 136,222" stroke="none"/>
+    <line x1="160" y1="188" x2="185" y2="232"/><polygon points="185,232 184,224 178,228" stroke="none"/>
+    <line x1="360" y1="188" x2="335" y2="232"/><polygon points="335,232 342,226 336,222" stroke="none"/>
+    <line x1="360" y1="188" x2="385" y2="232"/><polygon points="385,232 384,224 378,228" stroke="none"/>
+    <line x1="560" y1="188" x2="560" y2="232"/><polygon points="560,232 556,224 564,224" stroke="none"/>
+  </g>
+  <g font-size="10.5" fill="currentColor">
+    <circle cx="135" cy="248" r="14" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/><text x="135" y="252" text-anchor="middle">m1</text>
+    <circle cx="185" cy="248" r="14" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/><text x="185" y="252" text-anchor="middle">m2</text>
+    <circle cx="335" cy="248" r="14" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/><text x="335" y="252" text-anchor="middle">m3</text>
+    <circle cx="385" cy="248" r="14" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/><text x="385" y="252" text-anchor="middle">m4</text>
+    <circle cx="560" cy="248" r="14" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/><text x="560" y="252" text-anchor="middle">m5</text>
+  </g>
+  <!-- caption đặt ở vùng trống trái, không cắt đường fan-out -->
+  <text x="16" y="128" font-size="10.5" text-anchor="start" fill="currentColor" opacity="0.78">mỗi node đẩy</text>
+  <text x="16" y="143" font-size="10.5" text-anchor="start" fill="currentColor" opacity="0.78">xuống member</text>
+  <text x="16" y="158" font-size="10.5" text-anchor="start" fill="currentColor" opacity="0.78">của mình</text>
+  <!-- offline branch: m5 offline -> inbox + push (tách riêng, không xuyên node) -->
+  <rect x="436" y="298" width="248" height="46" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="560" y="318" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">member offline (m5)</text>
+  <text x="560" y="334" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">→ đưa vào inbox + gửi push</text>
+  <line x1="560" y1="262" x2="560" y2="294" stroke="currentColor" stroke-width="1.3" stroke-dasharray="4 3"/>
+  <polygon points="560,298 556,289 564,289" fill="currentColor" stroke="none"/>
+</svg>
 
 > 💡 Nguyên tắc: Read receipt trong group **đắt gấp bội** số tin. Thường gộp/đếm thay vì hiển thị từng người ("đã xem bởi 87 người") để cắt fan-out của riêng receipt.
 

@@ -156,6 +156,61 @@ App server: POP 1 key  ----->  chuyển sang [ used_keys ]
 
 > ⚠️ **Bẫy thiết kế**: Chọn "hash MD5 rồi lấy 7 ký tự" mà không nói tới collision là dấu hiệu thiếu chín. Luôn nêu: *"cắt hash sẽ đụng, nên cần check + retry, và điều đó thêm một lần đọc DB trên đường ghi."*
 
+Ba cơ chế nhìn cạnh nhau — mỗi cột là một luồng sinh code khác nhau:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 350" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Ba chiến lược sinh short code</title>
+  <desc>Ba luồng cạnh nhau: A Counter-block lấy block ID từ ZooKeeper hoặc counter table rồi base62; B Hash longURL cắt 7 ký tự, kiểm trùng trong DB và retry nếu đụng; C KGS pop một key từ bảng unused_keys chuyển sang used_keys.</desc>
+  <defs>
+    <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="120" y="24" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">A · Counter-block</text>
+  <text x="360" y="24" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">B · Hash(longURL)</text>
+  <text x="600" y="24" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">C · KGS</text>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#ah2)">
+    <path d="M120 70 V104"/>
+    <path d="M120 142 V176"/>
+    <path d="M360 70 V104"/>
+    <path d="M360 142 V176"/>
+    <path d="M360 214 V248"/>
+    <path d="M600 70 V104"/>
+    <path d="M600 142 V176"/>
+  </g>
+  <path d="M280 195 H252 V123 H276" stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#ah2)"/>
+  <text x="252" y="160" font-size="9.5" fill="currentColor" opacity="0.7" text-anchor="middle">đụng →</text>
+  <text x="252" y="172" font-size="9.5" fill="currentColor" opacity="0.7" text-anchor="middle">retry+salt</text>
+  <g font-size="10.5" fill="currentColor">
+    <rect x="40" y="40" width="160" height="30" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="120" y="59" text-anchor="middle" font-weight="700">ZK / counter table</text>
+    <rect x="40" y="104" width="160" height="38" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="120" y="120" text-anchor="middle">cấp block 1.000 ID</text>
+    <text x="120" y="134" text-anchor="middle" opacity="0.65">app dùng cục bộ</text>
+    <rect x="40" y="176" width="160" height="30" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="120" y="195" text-anchor="middle" font-weight="700">base62(id) → code</text>
+
+    <rect x="280" y="40" width="160" height="30" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="360" y="59" text-anchor="middle" font-weight="700">MD5/SHA(longURL)</text>
+    <rect x="280" y="104" width="160" height="38" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="360" y="120" text-anchor="middle">cắt 7 ký tự base62</text>
+    <text x="360" y="134" text-anchor="middle" opacity="0.65">code ứng viên</text>
+    <rect x="280" y="176" width="160" height="38" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="360" y="192" text-anchor="middle">check trùng trong DB</text>
+    <text x="360" y="206" text-anchor="middle" opacity="0.65">đọc trước khi ghi</text>
+    <rect x="280" y="248" width="160" height="30" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="360" y="267" text-anchor="middle" font-weight="700">không đụng → dùng</text>
+
+    <rect x="520" y="40" width="160" height="30" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="600" y="59" text-anchor="middle" font-weight="700">unused_keys</text>
+    <rect x="520" y="104" width="160" height="38" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="600" y="120" text-anchor="middle">POP 1 key có sẵn</text>
+    <text x="600" y="134" text-anchor="middle" opacity="0.65">app: rất nhanh</text>
+    <rect x="520" y="176" width="160" height="30" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="600" y="195" text-anchor="middle" font-weight="700">→ used_keys</text>
+  </g>
+</svg>
+
 **Khuyến nghị** cho bài này (đoán tuần tự là điều cấm, write 2K nhỏ): **KGS** là lời giải sạch nhất; **Counter phân tán theo block** là phương án thay thế tốt nếu muốn code ngắn nhất và chấp nhận trộn ID.
 
 ---
@@ -195,15 +250,37 @@ Vì không cần join, ghi đơn giản, và phải scale ngang tới 100 TB / 2
 
 100K–200K rps đọc mà mỗi lần đều xuống DynamoDB thì vừa tốn tiền vừa thêm latency. Đặt một lớp cache (Redis/ElastiCache) trước DB:
 
-```
-GET /aXf3Qz
-   |
-   v
- [Cache?] --hit (80%)--> trả long_url ngay  (sub-ms)
-   | miss
-   v
- [DynamoDB] -> long_url -> điền cache (TTL) -> trả về
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Luồng cache-aside cho redirect</title>
+  <desc>GET theo short_code hỏi cache: hit (80-90%) trả long_url ngay dưới mili-giây; miss xuống DynamoDB lấy long_url, nạp lại cache kèm TTL rồi trả về. Hit ratio cao gánh phần lớn tải khỏi DB.</desc>
+  <defs>
+    <marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#ah3)">
+    <path d="M150 50 H230"/>
+    <path d="M340 50 H470"/>
+    <path d="M285 68 V150 H430"/>
+    <path d="M505 184 V218 H320 V68"/>
+  </g>
+  <g font-size="11" fill="currentColor">
+    <text x="405" y="42" opacity="0.7">hit, sub-ms</text>
+    <text x="300" y="110" opacity="0.7">miss</text>
+    <text x="355" y="205" opacity="0.7" text-anchor="middle">nạp cache + TTL</text>
+  </g>
+  <g>
+    <rect x="30" y="32" width="120" height="36" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="90" y="55" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">GET /code</text>
+    <rect x="230" y="32" width="110" height="36" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="285" y="55" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Cache?</text>
+    <rect x="470" y="32" width="220" height="36" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="580" y="55" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">trả long_url ngay</text>
+    <rect x="430" y="144" width="150" height="40" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="505" y="162" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">DynamoDB</text>
+    <text x="505" y="176" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.62">chỉ còn ~10–20K rps</text>
+  </g>
+</svg>
 
 - **Pattern**: cache-aside (lazy loading). Miss thì đọc DB rồi nạp cache.
 - **Eviction**: LRU — link nóng tự ở lại, link nguội bị đẩy ra.
@@ -260,29 +337,69 @@ GET /aXf3Qz
 
 ### Bước 10: Bottleneck & Scale (High-level đầy đủ)
 
-```
-                         ┌─────────────┐
-   User ───302 cache───▶ │  CloudFront  │ (CDN, cache redirect ở edge)
-                         └──────┬──────┘
-                                │ miss
-                         ┌──────▼──────┐
-                         │ API Gateway  │ (auth, rate limit, route)
-                         └──────┬──────┘
-              ┌─────────────────┼───────────────────┐
-              │ WRITE                                │ READ
-        ┌─────▼─────┐                          ┌─────▼─────┐
-        │ Write svc │◀── KGS (cấp key)         │ Read svc  │
-        └─────┬─────┘                          └─────┬─────┘
-              │                          hit   ┌─────▼─────┐
-              │                         ◀──────│ ElastiCache│
-              ▼                                └─────┬─────┘ miss
-        ┌───────────┐  ◀── đọc/ghi ──────────────────┘
-        │ DynamoDB   │ (url_mapping, sharded by short_code)
-        └───────────┘
-              │ click event (async)
-              ▼
-        Kinesis ─▶ stream proc ─▶ analytics store
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Kiến trúc high-level URL Shortener</title>
+  <desc>User qua CloudFront (cache edge) tới API Gateway, tách hai nhánh: WRITE gồm Write service và KGS, READ gồm Read service rồi ElastiCache hit hoặc miss xuống DynamoDB; click event bắn async qua Kinesis tới analytics store.</desc>
+  <defs>
+    <marker id="ah1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#ah1)">
+    <path d="M120 56 H300"/>
+    <path d="M390 74 V108"/>
+    <path d="M340 144 V165 H120 V190"/>
+    <path d="M440 144 V165 H560 V190"/>
+    <path d="M302 211 H180"/>
+    <path d="M548 232 V270"/>
+    <path d="M572 270 V232"/>
+    <path d="M560 312 V322 H265"/>
+    <path d="M510 232 V245 H280 V348"/>
+    <path d="M330 365 H400"/>
+    <path d="M500 365 H560"/>
+  </g>
+  <g font-size="11">
+    <text x="210" y="48" text-anchor="middle" fill="currentColor" opacity="0.7">302 cache</text>
+    <text x="396" y="98" fill="currentColor" opacity="0.7">miss</text>
+    <text x="92" y="180" fill="currentColor" opacity="0.7" text-anchor="middle">WRITE</text>
+    <text x="525" y="180" fill="currentColor" opacity="0.7" text-anchor="middle">READ</text>
+    <text x="536" y="258" fill="currentColor" opacity="0.7" text-anchor="end">đọc</text>
+    <text x="582" y="258" fill="currentColor" opacity="0.7">hit</text>
+    <text x="400" y="316" fill="currentColor" opacity="0.7" text-anchor="middle">miss → DynamoDB</text>
+    <text x="200" y="262" fill="currentColor" opacity="0.7" text-anchor="middle">click (async)</text>
+  </g>
+  <g>
+    <rect x="30" y="38" width="90" height="36" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="75" y="61" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">User</text>
+    <rect x="300" y="38" width="180" height="36" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="390" y="56" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">CloudFront</text>
+    <text x="390" y="69" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.62">CDN, cache redirect ở edge</text>
+    <rect x="300" y="108" width="180" height="36" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="390" y="126" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">API Gateway</text>
+    <text x="390" y="139" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.62">auth · rate limit · route</text>
+    <rect x="60" y="190" width="120" height="42" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="120" y="216" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Write svc</text>
+    <rect x="222" y="194" width="80" height="34" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="262" y="214" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">KGS</text>
+    <text x="262" y="226" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.62">cấp key</text>
+    <rect x="500" y="190" width="120" height="42" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="560" y="216" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Read svc</text>
+    <rect x="500" y="270" width="120" height="42" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="560" y="288" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">ElastiCache</text>
+    <text x="560" y="302" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.62">Redis (cache đọc)</text>
+    <rect x="45" y="300" width="220" height="44" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="155" y="320" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">DynamoDB</text>
+    <text x="155" y="335" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.62">url_mapping · shard theo short_code</text>
+    <rect x="230" y="348" width="100" height="34" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="280" y="369" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Kinesis</text>
+    <rect x="400" y="348" width="100" height="34" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="450" y="364" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">stream</text>
+    <text x="450" y="376" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">proc</text>
+    <rect x="560" y="348" width="120" height="34" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="620" y="364" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">analytics</text>
+    <text x="620" y="376" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">store</text>
+  </g>
+</svg>
 
 | Bottleneck tiềm ẩn | Triệu chứng | Cách gỡ |
 |---|---|---|
@@ -309,10 +426,50 @@ Vì sao ghép vào đây? URL Shortener mở public → bị abuse (spam tạo l
 #### Token Bucket
 Mỗi key có một "xô" chứa token, được nạp đầy với tốc độ cố định (vd 100 token/phút), tối đa = dung lượng xô. Mỗi request tiêu 1 token; hết token → từ chối.
 
-```
-[ ●●●●●  ] capacity=5, refill 1 token/s
-request -> lấy 1 token; nếu xô rỗng -> 429
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Token Bucket cho rate limiter</title>
+  <desc>Một xô có dung lượng cố định được nạp token đều theo thời gian. Mỗi request tiêu 1 token; còn token thì cho qua, xô rỗng thì trả 429. Vì xô có thể đầy tới capacity nên cho phép burst bằng đúng dung lượng.</desc>
+  <defs>
+    <marker id="ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="305" y="26" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75" font-weight="700">nạp đều: refill ~1 token/s</text>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#ah4)">
+    <path d="M260 34 V64"/>
+    <path d="M310 34 V64"/>
+    <path d="M360 34 V64"/>
+  </g>
+  <rect x="225" y="70" width="160" height="110" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="305" y="200" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">xô · capacity = 5 (cho burst)</text>
+  <g fill="#f59e0b" fill-opacity="0.9">
+    <circle cx="258" cy="150" r="11"/>
+    <circle cx="288" cy="150" r="11"/>
+    <circle cx="318" cy="150" r="11"/>
+    <circle cx="273" cy="120" r="11"/>
+    <circle cx="303" cy="120" r="11"/>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#ah4)">
+    <path d="M120 120 H225"/>
+    <path d="M385 120 H470"/>
+    <path d="M385 120 C470 120 470 200 540 200"/>
+  </g>
+  <g font-size="11" fill="currentColor">
+    <text x="170" y="110" text-anchor="middle" opacity="0.7">request</text>
+    <text x="170" y="135" text-anchor="middle" opacity="0.7">tiêu 1 token</text>
+    <text x="427" y="110" text-anchor="middle" opacity="0.7">còn token</text>
+    <text x="470" y="186" opacity="0.7">xô rỗng</text>
+  </g>
+  <g>
+    <rect x="40" y="102" width="80" height="36" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="80" y="125" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">request</text>
+    <rect x="470" y="102" width="120" height="36" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="530" y="125" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">cho qua</text>
+    <rect x="540" y="182" width="120" height="36" rx="9" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="600" y="205" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">429</text>
+  </g>
+</svg>
+
 - ✅ Cho phép **burst** tới mức capacity (thân thiện traffic thật).
 - ✅ Ít state: chỉ cần (token còn lại, timestamp lần refill).
 - ⚠️ Chọn capacity vs refill rate cần cân nhắc.

@@ -19,20 +19,42 @@ Khái niệm từ Geoffrey Moore. Phân loại mọi capability của công ty:
 - **Core**: thứ khách hàng trả tiền vì nó, thứ tạo ra **lợi thế cạnh tranh khác biệt**. Đối thủ làm giống là bạn mất giá trị.
 - **Context**: cần-thiết-để-vận-hành nhưng **không khác biệt hoá**. Khách hàng không trả thêm một đồng nào vì bạn làm nó tốt hơn đối thủ.
 
-```
-                       LÀM TỐT CÓ TẠO LỢI THẾ?
-                         CÓ            KHÔNG
-                   ┌──────────────┬──────────────┐
-   QUAN     CAO    │   CORE       │   CONTEXT     │
-   TRỌNG          │   → BUILD    │  quan trọng   │
-   VỚI            │   (tự xây,    │  → BUY tốt   │
-   VẬN            │    đầu tư)    │  (SaaS xịn)   │
-   HÀNH?   ├──────────────┼──────────────┤
-           THẤP   │  hiếm gặp     │   CONTEXT     │
-                   │  (cân nhắc    │  → BUY rẻ /  │
-                   │   bỏ hẳn)     │   open-source │
-                   └──────────────┴──────────────┘
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Ma trận Core vs Context 2x2</title>
+  <desc>Hai trục: hàng ngang "Làm tốt có tạo lợi thế?" (Có / Không), hàng dọc "Quan trọng với vận hành?" (Cao / Thấp). Bốn ô: Core thì Build; Context quan trọng thì Buy SaaS xịn; góc hiếm gặp thì cân nhắc bỏ; Context thấp thì Buy rẻ hoặc open-source.</desc>
+  <text x="360" y="26" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">LÀM TỐT CÓ TẠO LỢI THẾ?</text>
+  <text x="320" y="56" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">CÓ</text>
+  <text x="540" y="56" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">KHÔNG</text>
+  <text x="22" y="234" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor" transform="rotate(-90 22 234)">QUAN TRỌNG VỚI VẬN HÀNH?</text>
+  <text x="56" y="155" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">CAO</text>
+  <text x="56" y="320" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">THẤP</text>
+  <g>
+    <rect x="80" y="70" width="270" height="160" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="215" y="120" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">CORE</text>
+    <text x="215" y="148" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">→ BUILD</text>
+    <text x="215" y="174" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.75">tự xây, đầu tư</text>
+    <text x="215" y="192" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.75">tạo khác biệt cạnh tranh</text>
+  </g>
+  <g>
+    <rect x="358" y="70" width="270" height="160" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="493" y="116" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">CONTEXT quan trọng</text>
+    <text x="493" y="144" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">→ BUY tốt</text>
+    <text x="493" y="170" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.75">SaaS xịn, ổn định</text>
+    <text x="493" y="188" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.75">vd Stripe, Auth0</text>
+  </g>
+  <g>
+    <rect x="80" y="238" width="270" height="160" rx="10" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="215" y="296" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">hiếm gặp</text>
+    <text x="215" y="324" font-size="12.5" text-anchor="middle" fill="currentColor" opacity="0.8">cân nhắc bỏ hẳn</text>
+    <text x="215" y="344" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">tốn công mà không lợi</text>
+  </g>
+  <g>
+    <rect x="358" y="238" width="270" height="160" rx="10" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="493" y="290" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">CONTEXT thấp</text>
+    <text x="493" y="318" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">→ BUY rẻ</text>
+    <text x="493" y="344" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.75">hoặc open-source</text>
+  </g>
+</svg>
 
 > 💡 **Nguyên tắc**: **Build cái Core, Buy cái Context.** Netflix tự xây recommendation engine (core) nhưng dùng AWS cho hạ tầng (context). Một startup fintech build risk-engine (core) nhưng *không bao giờ* tự viết hệ thống gửi email (context).
 
@@ -128,18 +150,35 @@ CTO bị dội bom công nghệ mới mỗi tuần (giờ là AI, hôm qua là b
 
 ### Gartner Hype Cycle — biết mình đang ở đâu
 
-```
- Kỳ vọng
-   ▲         Đỉnh kỳ vọng phồng (Peak of Inflated Expectations)
-   │            ╱╲   ← "công nghệ này thay đổi tất cả!!!"
-   │           ╱  ╲
-   │          ╱    ╲___        Dốc khai sáng    Cao nguyên
-   │         ╱        ╲___    (Slope of         năng suất
-   │        ╱  Vực thẳm    ╲__  Enlightenment) ____________
-   │   ____╱   vỡ mộng        ╲╱              ╱
-   │ ╱  Khởi phát   (Trough of Disillusionment)
-   └────────────────────────────────────────────────► Thời gian
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Gartner Hype Cycle — đường cong kỳ vọng theo thời gian</title>
+  <desc>Đường cong kỳ vọng qua năm giai đoạn: Khởi phát, Đỉnh kỳ vọng phồng, Vực thẳm vỡ mộng, Dốc khai sáng, Cao nguyên năng suất. Đánh dấu cảnh báo đừng đưa vào sản xuất ở đỉnh hype.</desc>
+  <line x1="60" y1="40" x2="60" y2="320" stroke="currentColor" stroke-opacity="0.4"/>
+  <line x1="60" y1="320" x2="700" y2="320" stroke="currentColor" stroke-opacity="0.4"/>
+  <text x="60" y="30" font-size="12" font-weight="700" fill="currentColor">Kỳ vọng</text>
+  <text x="700" y="345" font-size="12" font-weight="700" text-anchor="end" fill="currentColor">Thời gian →</text>
+  <path d="M75 300 C 130 280, 150 90, 220 80 C 270 73, 285 250, 340 268 C 400 285, 410 255, 470 215 C 560 158, 620 150, 690 148" fill="none" stroke="#3b82f6" stroke-width="3" stroke-opacity="0.85"/>
+  <circle cx="220" cy="80" r="6" fill="#f59e0b"/>
+  <circle cx="338" cy="268" r="6" fill="#8b5cf6" fill-opacity="0.9"/>
+  <text x="78" y="285" font-size="11" fill="currentColor" opacity="0.85">Khởi phát</text>
+  <text x="220" y="62" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Đỉnh kỳ vọng phồng</text>
+  <text x="338" y="296" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Vực thẳm vỡ mộng</text>
+  <text x="470" y="200" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Dốc khai sáng</text>
+  <text x="630" y="135" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Cao nguyên</text>
+  <text x="630" y="150" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">năng suất</text>
+  <g>
+    <rect x="250" y="96" width="200" height="40" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="350" y="113" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">⚠ ĐỪNG đưa vào sản xuất</text>
+    <text x="350" y="128" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">khi ở đỉnh hype</text>
+    <line x1="280" y1="96" x2="226" y2="86" stroke="currentColor" stroke-opacity="0.4"/>
+  </g>
+  <g>
+    <rect x="500" y="230" width="200" height="40" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="600" y="247" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">✔ An toàn hơn để adopt</text>
+    <text x="600" y="262" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">pattern đã chín</text>
+    <line x1="540" y1="230" x2="480" y2="210" stroke="currentColor" stroke-opacity="0.4"/>
+  </g>
+</svg>
 
 > 💡 **Nguyên tắc**: Đừng đưa công nghệ vào sản xuất khi nó ở **đỉnh hype** — thiếu best practice, tài liệu sai, công cụ non. Hãy đợi nó leo qua "vực thẳm vỡ mộng" lên **dốc khai sáng**, lúc đó pattern đã chín và rủi ro thấp hơn nhiều. Trừ khi bạn cố tình đặt cược sớm cho lợi thế tiên phong (bet có chủ đích, biết rủi ro).
 
@@ -166,18 +205,41 @@ Nợ kỹ thuật (technical debt) không phải lúc nào cũng xấu — giố
 
 ### Phân loại để quản (ma trận Fowler)
 
-```
-                  CỐ Ý                    VÔ TÌNH
-        ┌──────────────────────┬──────────────────────┐
-THẬN    │ "Ship trước, refactor │ "Giờ ta biết lẽ ra   │
-TRỌNG   │  sprint sau" — nợ      │  nên thiết kế thế này"│
-        │  CHIẾN LƯỢC, OK        │  — học hỏi, OK        │
-        ├──────────────────────┼──────────────────────┤
-LIỀU    │ "Không có thời gian   │ "Design pattern là   │
-LĨNH    │  cho thiết kế tử tế"  │  cái gì?" — nợ NGUY  │
-        │  — nguy hiểm          │  HIỂM, phải đào tạo   │
-        └──────────────────────┴──────────────────────┘
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 410" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Ma trận nợ kỹ thuật của Martin Fowler 2x2</title>
+  <desc>Hai trục: ngang Cố ý / Vô tình, dọc Thận trọng / Liều lĩnh. Bốn ô: Cố ý + Thận trọng là nợ chiến lược OK; Vô tình + Thận trọng là học hỏi OK; Cố ý + Liều lĩnh là nguy hiểm; Vô tình + Liều lĩnh là nợ nguy hiểm phải đào tạo.</desc>
+  <text x="215" y="42" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">CỐ Ý</text>
+  <text x="493" y="42" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">VÔ TÌNH</text>
+  <text x="40" y="155" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor" transform="rotate(-90 40 150)">THẬN TRỌNG</text>
+  <text x="40" y="320" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor" transform="rotate(-90 40 320)">LIỀU LĨNH</text>
+  <g>
+    <rect x="80" y="56" width="270" height="160" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="215" y="98" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85" font-style="italic">"Ship trước, refactor</text>
+    <text x="215" y="115" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85" font-style="italic">sprint sau"</text>
+    <text x="215" y="148" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Nợ CHIẾN LƯỢC</text>
+    <text x="215" y="172" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">✔ OK</text>
+  </g>
+  <g>
+    <rect x="358" y="56" width="270" height="160" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="493" y="98" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85" font-style="italic">"Giờ ta biết lẽ ra</text>
+    <text x="493" y="115" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85" font-style="italic">nên thiết kế thế này"</text>
+    <text x="493" y="148" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Học hỏi</text>
+    <text x="493" y="172" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">✔ OK</text>
+  </g>
+  <g>
+    <rect x="80" y="224" width="270" height="160" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="215" y="266" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85" font-style="italic">"Không có thời gian</text>
+    <text x="215" y="283" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85" font-style="italic">cho thiết kế tử tế"</text>
+    <text x="215" y="320" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">⚠ Nguy hiểm</text>
+  </g>
+  <g>
+    <rect x="358" y="224" width="270" height="160" rx="10" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="493" y="266" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85" font-style="italic">"Design pattern là</text>
+    <text x="493" y="283" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85" font-style="italic">cái gì?"</text>
+    <text x="493" y="318" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Nợ NGUY HIỂM</text>
+    <text x="493" y="340" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.85">→ phải đào tạo</text>
+  </g>
+</svg>
 
 Nợ ở góc **Cố ý + Thận trọng** là công cụ kinh doanh hợp lệ. Nợ ở góc **Liều lĩnh** là dấu hiệu đội thiếu kỷ luật hoặc kỹ năng.
 
@@ -220,19 +282,27 @@ Microservices về bản chất là một quyết định **về tổ chức con
 
 Kỹ sư tối ưu cho cái *đẹp về kỹ thuật*. CTO tối ưu cho cái *thắng cho công ty*, mà công ty là giao của ba lực:
 
-```
-            KỸ THUẬT
-          (đúng đắn,
-        bền vững, scale)
-              ╱  ╲
-             ╱    ╲
-            ╱  ✔   ╲     ← quyết định tốt
-           ╱ vùng   ╲       nằm ở giao cả ba
-          ╱  cân bằng ╲
-   KINH DOANH ────── CON NGƯỜI
-  (doanh thu,        (kỹ năng đội,
-   tốc độ, chi phí)   tuyển dụng, tinh thần)
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 440" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Tam giác CTO — giao của Kỹ thuật, Kinh doanh và Con người</title>
+  <desc>Một tam giác với ba đỉnh: Kỹ thuật (đúng đắn, bền vững, scale), Kinh doanh (doanh thu, tốc độ, chi phí) và Con người (kỹ năng đội, tuyển dụng, tinh thần). Vùng cân bằng — quyết định tốt — nằm ở giao điểm cả ba lực, tại trung tâm tam giác.</desc>
+  <polygon points="360,60 110,380 610,380" fill="#3b82f6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3" stroke-width="1.5"/>
+  <circle cx="360" cy="277" r="62" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="360" y="270" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">✔ vùng</text>
+  <text x="360" y="288" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">cân bằng</text>
+  <text x="360" y="308" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">giao cả ba</text>
+  <g>
+    <text x="360" y="40" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">KỸ THUẬT</text>
+    <text x="360" y="55" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">đúng đắn, bền vững, scale</text>
+  </g>
+  <g>
+    <text x="110" y="405" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">KINH DOANH</text>
+    <text x="110" y="420" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">doanh thu, tốc độ, chi phí</text>
+  </g>
+  <g>
+    <text x="610" y="405" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">CON NGƯỜI</text>
+    <text x="610" y="420" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">kỹ năng đội, tuyển dụng, tinh thần</text>
+  </g>
+</svg>
 
 Một giải pháp **hoàn hảo về kỹ thuật** nhưng team không đủ kỹ năng vận hành, hoặc mất 1 năm trong khi đối thủ ship trong 2 tháng, là một giải pháp **tệ**. Vài câu hỏi CTO luôn hỏi mà kỹ sư hay quên:
 
@@ -252,21 +322,39 @@ Khung của Jeff Bezos, công cụ ra quyết định mạnh nhất của bài n
 - **Two-way door** (cửa hai chiều): quyết định **đảo ngược được**. Nếu sai, bước trở lại dễ. → **Quyết nhanh, phân quyền**, không cần họp nhiều. Tốc độ quan trọng hơn sự hoàn hảo.
 - **One-way door** (cửa một chiều): quyết định **khó/không thể đảo ngược**. Sai thì rất tốn. → **Quyết chậm, cẩn trọng**, thu thập dữ liệu, nhiều người soi.
 
-```
-   ĐẢO NGƯỢC ĐƯỢC?
-   ┌───────────────────────────┬───────────────────────────┐
-   │  TWO-WAY DOOR             │   ONE-WAY DOOR            │
-   │  (cửa hai chiều)          │   (cửa một chiều)         │
-   ├───────────────────────────┼───────────────────────────┤
-   │ • Chọn thư viện UI        │ • Chọn ngôn ngữ lõi        │
-   │ • Tên endpoint nội bộ     │ • Mô hình dữ liệu công khai│
-   │ • Feature flag bật/tắt    │ • Public API contract     │
-   │ • Đổi managed service     │ • Single vs multi-tenant   │
-   │   ranh giới chuẩn         │ • Chọn cloud provider sâu  │
-   │                           │ • Database chính           │
-   │ → QUYẾT NHANH, thử & học  │ → QUYẾT CHẬM, đo & soi kỹ │
-   └───────────────────────────┴───────────────────────────┘
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Quyết định cửa hai chiều vs cửa một chiều</title>
+  <desc>Hai cột phân loại quyết định. Cột trái Two-way door (cửa hai chiều) đảo ngược được, quyết nhanh và phân quyền, ví dụ chọn thư viện UI, tên endpoint nội bộ, feature flag, đổi managed service chuẩn. Cột phải One-way door (cửa một chiều) khó đảo ngược, quyết chậm và soi kỹ, ví dụ chọn ngôn ngữ lõi, mô hình dữ liệu công khai, public API contract, single vs multi-tenant, chọn cloud provider sâu, database chính.</desc>
+  <g>
+    <rect x="30" y="30" width="320" height="370" rx="12" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="190" y="62" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">TWO-WAY DOOR</text>
+    <text x="190" y="82" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.75">cửa hai chiều · đảo ngược được</text>
+    <line x1="60" y1="98" x2="320" y2="98" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="56" y="132" font-size="12" fill="currentColor">• Chọn thư viện UI</text>
+    <text x="56" y="160" font-size="12" fill="currentColor">• Tên endpoint nội bộ</text>
+    <text x="56" y="188" font-size="12" fill="currentColor">• Feature flag bật/tắt</text>
+    <text x="56" y="216" font-size="12" fill="currentColor">• Đổi managed service</text>
+    <text x="68" y="234" font-size="12" fill="currentColor">ranh giới chuẩn</text>
+    <rect x="60" y="320" width="260" height="56" rx="9" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="190" y="345" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">→ QUYẾT NHANH</text>
+    <text x="190" y="365" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85">phân quyền · thử &amp; học</text>
+  </g>
+  <g>
+    <rect x="370" y="30" width="320" height="370" rx="12" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="530" y="62" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">ONE-WAY DOOR</text>
+    <text x="530" y="82" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.75">cửa một chiều · khó đảo ngược</text>
+    <line x1="400" y1="98" x2="660" y2="98" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="396" y="128" font-size="12" fill="currentColor">• Chọn ngôn ngữ lõi</text>
+    <text x="396" y="152" font-size="12" fill="currentColor">• Mô hình dữ liệu công khai</text>
+    <text x="396" y="176" font-size="12" fill="currentColor">• Public API contract</text>
+    <text x="396" y="200" font-size="12" fill="currentColor">• Single vs multi-tenant</text>
+    <text x="396" y="224" font-size="12" fill="currentColor">• Chọn cloud provider sâu</text>
+    <text x="396" y="248" font-size="12" fill="currentColor">• Database chính</text>
+    <rect x="400" y="320" width="260" height="56" rx="9" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="530" y="345" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">→ QUYẾT CHẬM</text>
+    <text x="530" y="365" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85">đo &amp; soi kỹ · nhiều người</text>
+  </g>
+</svg>
 
 > ⚠️ **Bẫy thiết kế**: Hai sai lầm đối xứng. (1) Đối xử **two-way door như one-way** → tê liệt phân tích (analysis paralysis), họp 6 tuần để chọn thứ đổi lại trong 1 ngày. (2) Đối xử **one-way door như two-way** → "cứ làm rồi tính", rồi mắc kẹt với public API hay schema sai trong 5 năm vì hàng nghìn client đã phụ thuộc.
 

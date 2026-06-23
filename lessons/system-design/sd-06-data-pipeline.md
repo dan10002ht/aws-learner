@@ -71,21 +71,63 @@ OLTP DB tìm `WHERE name LIKE '%cotton%'` phải quét toàn bảng — O(n), kh
 
 Ý tưởng: thay vì map *document → từ*, ta map *từ → danh sách document*.
 
-```
-Documents:
-  doc1: "áo thun cotton nam"
-  doc2: "quần jean nam"
-  doc3: "áo khoác cotton"
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 410" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Inverted index: documents thành bảng term→postings, rồi giao postings để trả kết quả query</title>
+  <desc>Ba document được lập chỉ mục ngược thành bảng term→postings (áo→doc1,doc3; cotton→doc1,doc3; nam→doc1,doc2; jean→doc2). Query "cotton nam" giao hai danh sách postings ra doc1, rồi xếp hạng bằng BM25.</desc>
+  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Inverted index: từ → danh sách document</text>
 
-Inverted index (term → postings):
-  áo     → [doc1, doc3]
-  cotton → [doc1, doc3]
-  nam    → [doc1, doc2]
-  jean   → [doc2]
+  <text x="16" y="50" font-size="12" font-weight="700" fill="currentColor" opacity="0.8">Documents</text>
+  <g>
+    <rect x="16" y="60" width="200" height="34" rx="7" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="26" y="81" font-size="11.5" fill="currentColor"><tspan font-weight="700">doc1:</tspan> áo thun cotton nam</text>
+    <rect x="16" y="100" width="200" height="34" rx="7" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="26" y="121" font-size="11.5" fill="currentColor"><tspan font-weight="700">doc2:</tspan> quần jean nam</text>
+    <rect x="16" y="140" width="200" height="34" rx="7" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="26" y="161" font-size="11.5" fill="currentColor"><tspan font-weight="700">doc3:</tspan> áo khoác cotton</text>
+  </g>
 
-Query "cotton nam"  →  (doc1,doc3) ∩ (doc1,doc2) = doc1
-                       + ranking theo TF-IDF / BM25
-```
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <path d="M222 117 h36" marker-end="url(#ar3)"/>
+  </g>
+  <text x="240" y="110" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">index</text>
+
+  <text x="270" y="50" font-size="12" font-weight="700" fill="currentColor" opacity="0.8">Inverted index (term → postings)</text>
+  <g>
+    <rect x="270" y="60" width="230" height="114" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="284" y="82" font-size="12" fill="currentColor"><tspan font-weight="700">áo</tspan>      → [doc1, doc3]</text>
+    <text x="284" y="104" font-size="12" fill="currentColor"><tspan font-weight="700">cotton</tspan> → [doc1, doc3]</text>
+    <text x="284" y="126" font-size="12" fill="currentColor"><tspan font-weight="700">nam</tspan>    → [doc1, doc2]</text>
+    <text x="284" y="148" font-size="12" fill="currentColor"><tspan font-weight="700">jean</tspan>   → [doc2]</text>
+    <text x="284" y="167" font-size="10" fill="currentColor" opacity="0.6">lookup O(1) → danh sách doc</text>
+  </g>
+
+  <g>
+    <rect x="16" y="206" width="484" height="40" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="28" y="231" font-size="12.5" fill="currentColor">Query <tspan font-weight="700">"cotton nam"</tspan> → tách từ → tra 2 posting list</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <path d="M258 246 v18" marker-end="url(#ar3)"/>
+  </g>
+
+  <g>
+    <rect x="120" y="276" width="290" height="44" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="265" y="296" font-size="12" text-anchor="middle" fill="currentColor">[doc1, doc3] ∩ [doc1, doc2]  =  <tspan font-weight="700">doc1</tspan></text>
+    <text x="265" y="312" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">giao các posting list</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <path d="M265 322 v16" marker-end="url(#ar3)"/>
+  </g>
+
+  <g>
+    <rect x="120" y="350" width="290" height="42" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="265" y="370" font-size="12" text-anchor="middle" fill="currentColor"><tspan font-weight="700">Ranking</tspan> theo TF-IDF / BM25</text>
+    <text x="265" y="385" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">xếp kết quả theo độ liên quan</text>
+  </g>
+
+  <defs>
+    <marker id="ar3" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+</svg>
 
 Tìm từ → ra ngay danh sách doc trong O(1) lookup, rồi giao/hợp các danh sách. Cộng thêm analyzer (tách từ, lowercase, bỏ dấu, stemming) và scoring (BM25) để rank theo độ liên quan.
 
@@ -149,23 +191,71 @@ ELT thắng thế trong cloud vì storage rẻ và compute warehouse co giãn: c
 
 Vấn đề kinh điển: bạn cần **vừa real-time vừa chính xác lịch sử**. Hai trường phái.
 
-### Lambda architecture — hai nhánh
-```
-            ┌──► Batch layer  ──► (bảng tổng hợp chính xác, trễ)
-  Events ───┤                                    ┐
-            └──► Speed layer  ──► (kết quả gần đúng, real-time) │
-                                                  ▼
-                              Serving layer (gộp batch + speed)
-```
-Batch layer cho con số *đúng* nhưng trễ; speed layer "vá" khoảng trống gần đây. Nhược điểm chí mạng: **viết logic hai lần** (một cho batch, một cho stream) → dễ lệch, tốn công bảo trì.
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>So sánh kiến trúc Lambda (hai nhánh batch + speed) và Kappa (một nhánh stream replay được)</title>
+  <desc>Lambda: events tách vào batch layer (chính xác, trễ) và speed layer (gần đúng, real-time), serving layer gộp hai kết quả — hai codebase. Kappa: events vào log bền replay được, qua một stream processor duy nhất tới serving; tính lại lịch sử thì replay log.</desc>
 
-### Kappa architecture — một nhánh
-```
-  Events ──► [Log bền, replay được] ──► Stream processor ──► Serving
-                  (Kinesis/Kafka)         (chỉ MỘT codebase)
-  Cần tính lại lịch sử? → REPLAY log từ đầu qua cùng processor.
-```
-Chỉ một đường stream. Muốn recompute lịch sử thì *replay* lại log. Đơn giản hơn về code, nhưng đòi hỏi log **giữ đủ lâu** và stream processor **đủ mạnh để gánh cả batch khi replay**.
+  <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">Lambda — hai nhánh (batch + speed)</text>
+  <g>
+    <rect x="16" y="36" width="86" height="42" rx="8" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="59" y="62" font-size="12" text-anchor="middle" fill="currentColor">Events</text>
+
+    <rect x="170" y="32" width="200" height="40" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="270" y="49" font-size="12" text-anchor="middle" fill="currentColor"><tspan font-weight="700">Batch layer</tspan></text>
+    <text x="270" y="65" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">chính xác, trễ</text>
+
+    <rect x="170" y="86" width="200" height="40" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="270" y="103" font-size="12" text-anchor="middle" fill="currentColor"><tspan font-weight="700">Speed layer</tspan></text>
+    <text x="270" y="119" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">gần đúng, real-time</text>
+
+    <rect x="440" y="59" width="200" height="42" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="540" y="77" font-size="12" text-anchor="middle" fill="currentColor"><tspan font-weight="700">Serving layer</tspan></text>
+    <text x="540" y="93" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">gộp batch + speed</text>
+
+    <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+      <path d="M102 52 C135 52 137 52 170 52" marker-end="url(#arL)"/>
+      <path d="M102 62 C135 62 137 106 170 106" marker-end="url(#arL)"/>
+      <path d="M370 52 C410 52 410 72 440 75" marker-end="url(#arL)"/>
+      <path d="M370 106 C410 106 410 88 440 85" marker-end="url(#arL)"/>
+    </g>
+  </g>
+  <text x="16" y="150" font-size="10.5" fill="currentColor" opacity="0.7">Nhược điểm: viết logic 2 lần (batch + stream) → dễ lệch, tốn bảo trì.</text>
+
+  <line x1="16" y1="172" x2="704" y2="172" stroke="currentColor" stroke-opacity="0.15"/>
+
+  <text x="16" y="206" font-size="13.5" font-weight="700" fill="currentColor">Kappa — một nhánh (stream replay được)</text>
+  <g>
+    <rect x="16" y="226" width="86" height="42" rx="8" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="59" y="252" font-size="12" text-anchor="middle" fill="currentColor">Events</text>
+
+    <rect x="150" y="222" width="180" height="50" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="240" y="242" font-size="12" text-anchor="middle" fill="currentColor"><tspan font-weight="700">Log bền, replay được</tspan></text>
+    <text x="240" y="259" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">Kinesis / Kafka</text>
+
+    <rect x="378" y="222" width="170" height="50" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="463" y="242" font-size="12" text-anchor="middle" fill="currentColor"><tspan font-weight="700">Stream processor</tspan></text>
+    <text x="463" y="259" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">chỉ MỘT codebase</text>
+
+    <rect x="596" y="226" width="108" height="42" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="650" y="252" font-size="12" text-anchor="middle" fill="currentColor"><tspan font-weight="700">Serving</tspan></text>
+
+    <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+      <path d="M102 247 h44" marker-end="url(#arL)"/>
+      <path d="M330 247 h44" marker-end="url(#arL)"/>
+      <path d="M548 247 h44" marker-end="url(#arL)"/>
+      <path d="M463 272 v34 h-223 v-30" marker-end="url(#arL)"/>
+    </g>
+    <text x="352" y="324" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">REPLAY log từ đầu qua cùng processor để tính lại lịch sử</text>
+  </g>
+
+  <defs>
+    <marker id="arL" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+</svg>
+
+Lambda: batch layer cho con số *đúng* nhưng trễ; speed layer "vá" khoảng trống gần đây. Nhược điểm chí mạng: **viết logic hai lần** (một cho batch, một cho stream) → dễ lệch, tốn công bảo trì.
+
+Kappa: chỉ một đường stream. Muốn recompute lịch sử thì *replay* lại log. Đơn giản hơn về code, nhưng đòi hỏi log **giữ đủ lâu** và stream processor **đủ mạnh để gánh cả batch khi replay**.
 
 | | Lambda | Kappa |
 |---|---|---|
@@ -184,14 +274,52 @@ Câu hỏi: làm sao đưa thay đổi từ OLTP DB sang lake/warehouse/search *
 
 CDC đọc thẳng **transaction log** của database (WAL/binlog) và phát ra từng thay đổi dưới dạng event.
 
-```
-   App  ──writes──►  Postgres
-                        │ WAL (transaction log)
-                        ▼
-                   CDC connector  ──► [Stream/Log] ──┬──► Warehouse
-                   (đọc WAL, ra                       ├──► Search index
-                    INSERT/UPDATE/DELETE)             └──► Data lake
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 290" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Change Data Capture: App ghi vào Postgres, CDC connector đọc WAL phát event INSERT/UPDATE/DELETE, stream fan ra Warehouse, Search index và Data lake</title>
+  <desc>App writes vào Postgres; Postgres ghi WAL (transaction log); CDC connector đọc WAL và phát các event INSERT/UPDATE/DELETE vào một stream log; stream fan-out tới ba đích downstream: Warehouse, Search index và Data lake.</desc>
+  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">CDC — đọc WAL, fan ra các read model</text>
+
+  <g>
+    <rect x="16" y="44" width="92" height="42" rx="8" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="62" y="70" font-size="12" text-anchor="middle" fill="currentColor">App</text>
+
+    <rect x="156" y="38" width="130" height="54" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="221" y="58" font-size="12.5" text-anchor="middle" fill="currentColor"><tspan font-weight="700">Postgres</tspan></text>
+    <text x="221" y="75" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">WAL (transaction log)</text>
+
+    <rect x="156" y="124" width="180" height="58" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="246" y="145" font-size="12.5" text-anchor="middle" fill="currentColor"><tspan font-weight="700">CDC connector</tspan></text>
+    <text x="246" y="162" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">đọc WAL → phát event</text>
+    <text x="246" y="176" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">INSERT / UPDATE / DELETE</text>
+
+    <rect x="392" y="128" width="120" height="50" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="452" y="150" font-size="12" text-anchor="middle" fill="currentColor"><tspan font-weight="700">Stream / Log</tspan></text>
+    <text x="452" y="166" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">fan-out</text>
+  </g>
+
+  <g>
+    <rect x="566" y="40" width="138" height="38" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="635" y="64" font-size="12" text-anchor="middle" fill="currentColor">Warehouse</text>
+    <rect x="566" y="134" width="138" height="38" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="635" y="158" font-size="12" text-anchor="middle" fill="currentColor">Search index</text>
+    <rect x="566" y="228" width="138" height="38" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="635" y="252" font-size="12" text-anchor="middle" fill="currentColor">Data lake</text>
+  </g>
+
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <path d="M108 65 h44" marker-end="url(#arC)"/>
+    <text x="130" y="58" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">writes</text>
+    <path d="M221 92 v28" marker-end="url(#arC)"/>
+    <path d="M336 153 h52" marker-end="url(#arC)"/>
+    <path d="M512 153 C536 153 540 60 566 60" marker-end="url(#arC)"/>
+    <path d="M512 153 h54" marker-end="url(#arC)"/>
+    <path d="M512 153 C536 153 540 246 566 246" marker-end="url(#arC)"/>
+  </g>
+
+  <defs>
+    <marker id="arC" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+</svg>
 
 Lợi ích: gần real-time, không tải lên DB nguồn (đọc log, không query), bắt được cả `DELETE`, và là cách "sạch" để xây *read models* downstream. CDC là xương sống của kiến trúc event-driven và đồng bộ lake/warehouse hiện đại.
 
@@ -267,23 +395,64 @@ Data là nơi hoá đơn cloud âm thầm phình to. Bốn đòn bẩy chính:
 
 ## 11. Ghép lại: kiến trúc tham chiếu
 
-```
-                      ┌──────────► OLTP DB (source of truth, key lookup)
-   Apps / Services ───┤
-                      └── CDC ─┐
-                               ▼
-   Events / Clickstream ──► [Stream log] ──► Stream proc ──► (alert, dashboard live)
-                               │  (Kinesis/Kafka)              ▲ at-least-once + idempotent
-                               ▼
-                          [DATA LAKE: object store, Parquet, partition]   ◄── source phân tích
-                               │            │
-                  ELT / batch  │            │  ad-hoc SQL trên dữ liệu thô
-                               ▼            ▼
-                       [WAREHOUSE]     [Query engine SQL trực tiếp lên lake]
-                        (BI, report)         │
-                               │             ▼
-                               └──► Sync ──► [SEARCH INDEX] (full-text, log, facet)
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 440" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Kiến trúc tham chiếu data pipeline: Apps tới OLTP DB và qua CDC vào stream log, stream processor đổ vào data lake, ELT lên warehouse và query engine, sync sang search index</title>
+  <desc>Apps/Services ghi vào OLTP DB (source of truth) và qua CDC vào stream log; events/clickstream cũng vào stream log; stream processor ra alert/dashboard live; data lake (Parquet, partition) là source phân tích; ELT/batch nạp vào Warehouse; query engine SQL chạy trực tiếp trên lake; warehouse sync sang Search index.</desc>
+  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Kiến trúc tham chiếu (bộ khung, rút bớt theo nhu cầu)</text>
+
+  <g>
+    <rect x="16" y="40" width="150" height="46" rx="8" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="91" y="60" font-size="12" text-anchor="middle" fill="currentColor"><tspan font-weight="700">Apps / Services</tspan></text>
+    <text x="91" y="76" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">+ Events / Clickstream</text>
+
+    <rect x="240" y="36" width="180" height="46" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="330" y="56" font-size="12" text-anchor="middle" fill="currentColor"><tspan font-weight="700">OLTP DB</tspan></text>
+    <text x="330" y="72" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">source of truth, key lookup</text>
+
+    <rect x="240" y="118" width="180" height="48" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="330" y="139" font-size="12" text-anchor="middle" fill="currentColor"><tspan font-weight="700">Stream log</tspan></text>
+    <text x="330" y="155" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">Kinesis / Kafka</text>
+
+    <rect x="476" y="118" width="228" height="48" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="590" y="139" font-size="12" text-anchor="middle" fill="currentColor"><tspan font-weight="700">Stream proc</tspan> → alert, dashboard live</text>
+    <text x="590" y="155" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">at-least-once + idempotent</text>
+
+    <rect x="120" y="206" width="420" height="50" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="330" y="227" font-size="12.5" text-anchor="middle" fill="currentColor"><tspan font-weight="700">DATA LAKE</tspan> — object store, Parquet, partition</text>
+    <text x="330" y="244" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">source phân tích</text>
+
+    <rect x="86" y="300" width="200" height="50" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="186" y="321" font-size="12" text-anchor="middle" fill="currentColor"><tspan font-weight="700">WAREHOUSE</tspan></text>
+    <text x="186" y="337" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">BI, report</text>
+
+    <rect x="370" y="300" width="240" height="50" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="490" y="321" font-size="12" text-anchor="middle" fill="currentColor"><tspan font-weight="700">Query engine SQL</tspan></text>
+    <text x="490" y="337" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">ad-hoc trực tiếp lên lake</text>
+
+    <rect x="86" y="382" width="240" height="46" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="206" y="403" font-size="12" text-anchor="middle" fill="currentColor"><tspan font-weight="700">SEARCH INDEX</tspan></text>
+    <text x="206" y="419" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">full-text, log, facet</text>
+  </g>
+
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
+    <path d="M166 56 h70" marker-end="url(#arR)"/>
+    <path d="M166 72 C200 72 200 142 236 142" marker-end="url(#arR)"/>
+    <text x="200" y="108" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">CDC</text>
+    <path d="M330 82 C330 96 330 100 330 116" marker-end="url(#arR)"/>
+    <text x="350" y="103" font-size="9.5" fill="currentColor" opacity="0.75">CDC</text>
+    <path d="M420 142 h52" marker-end="url(#arR)"/>
+    <path d="M330 166 v36" marker-end="url(#arR)"/>
+    <path d="M260 256 C220 268 200 280 188 298" marker-end="url(#arR)"/>
+    <text x="180" y="282" font-size="9.5" text-anchor="end" fill="currentColor" opacity="0.75">ELT / batch</text>
+    <path d="M420 256 C460 268 480 280 490 298" marker-end="url(#arR)"/>
+    <path d="M186 350 v32" marker-end="url(#arR)"/>
+    <text x="206" y="370" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">sync</text>
+  </g>
+
+  <defs>
+    <marker id="arR" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+</svg>
 
 Không có sơ đồ này là "đúng cho mọi nhà" — đây là *bộ khung* để bạn rút bớt theo nhu cầu. Startup nhỏ có thể chỉ cần: app → S3 (lake) → query engine SQL. Đừng dựng cả 7 hộp khi bạn chưa có vấn đề mà chúng giải quyết.
 

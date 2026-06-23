@@ -16,15 +16,38 @@ Một startup khởi đầu với 1 account, mọi thứ chung nhau. Nó hoạt 
 
 **Billing & ownership.** Đây là lý do bị xem nhẹ nhưng quan trọng nhất với người ra quyết định. Một account = một đường kẻ chi phí rõ ràng. Muốn biết team Search tốn bao nhiêu? Cho họ account riêng, đọc bill. Không cần tag chuẩn chỉnh, không cần cost allocation phức tạp.
 
-```
-       SINGLE ACCOUNT                      MULTI-ACCOUNT
-  ┌───────────────────────┐      ┌─────────┐ ┌─────────┐ ┌─────────┐
-  │ dev  staging  prod     │      │  Prod   │ │ Staging │ │   Dev   │
-  │  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓       │      │ ▓▓▓▓▓▓  │ │ ▓▓▓▓    │ │ ▓▓▓     │
-  │  một lỗ → cháy hết      │      └────┬────┘ └────┬────┘ └────┬────┘
-  └───────────────────────┘           cháy ở đây ↑ dừng ở ranh giới account
-   billing: 1 cục mờ mịt              billing: 3 dòng rõ ràng
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Single account vs Multi-account: blast radius và billing</title>
+  <desc>Single account: một lỗ làm cháy toàn bộ, billing là một cục mờ. Multi-account: sự cố dừng ở ranh giới mỗi account, billing là nhiều dòng rõ ràng.</desc>
+  <text x="170" y="28" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">SINGLE ACCOUNT</text>
+  <text x="540" y="28" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">MULTI-ACCOUNT</text>
+  <rect x="40" y="48" width="260" height="150" rx="11" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="170" y="74" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">dev · staging · prod chung nhau</text>
+  <circle cx="170" cy="125" r="34" fill="#f59e0b" fill-opacity="0.55"/>
+  <circle cx="170" cy="125" r="60" fill="none" stroke="#f59e0b" stroke-opacity="0.5" stroke-dasharray="4 4"/>
+  <text x="170" y="129" font-size="11" text-anchor="middle" font-weight="700" fill="#fff">CHÁY HẾT</text>
+  <text x="170" y="186" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">một lỗ → lan ra toàn bộ</text>
+  <rect x="380" y="48" width="100" height="150" rx="11" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+  <rect x="490" y="48" width="100" height="150" rx="11" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+  <rect x="600" y="48" width="100" height="150" rx="11" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+  <text x="430" y="74" font-size="12" text-anchor="middle" font-weight="700" fill="currentColor">Prod</text>
+  <text x="540" y="74" font-size="12" text-anchor="middle" font-weight="700" fill="currentColor">Staging</text>
+  <text x="650" y="74" font-size="12" text-anchor="middle" font-weight="700" fill="currentColor">Dev</text>
+  <circle cx="430" cy="130" r="26" fill="#f59e0b" fill-opacity="0.55"/>
+  <text x="430" y="134" font-size="9.5" text-anchor="middle" font-weight="700" fill="#fff">cháy</text>
+  <text x="430" y="184" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">dừng ở ranh giới</text>
+  <text x="540" y="134" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">an toàn</text>
+  <text x="650" y="134" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">an toàn</text>
+  <rect x="40" y="226" width="260" height="64" rx="10" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="56" y="250" font-size="11.5" font-weight="700" fill="currentColor">Billing:</text>
+  <rect x="56" y="262" width="228" height="14" rx="3" fill="#f59e0b" fill-opacity="0.4"/>
+  <text x="170" y="273" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">1 cục mờ mịt — không tách được</text>
+  <rect x="380" y="226" width="320" height="64" rx="10" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="396" y="246" font-size="11.5" font-weight="700" fill="currentColor">Billing:</text>
+  <text x="396" y="264" font-size="10.5" fill="currentColor" opacity="0.85">Prod  ........ $$$$</text>
+  <text x="396" y="278" font-size="10.5" fill="currentColor" opacity="0.85">Staging ...... $$   ·   Dev ...... $</text>
+  <text x="560" y="246" font-size="10" fill="currentColor" opacity="0.7">3 dòng rõ ràng</text>
+</svg>
 
 > 💡 Nguyên tắc: Account là đơn vị cô lập VÀ đơn vị tính tiền. Hãy vẽ ranh giới account theo *blast radius bạn muốn chặn* và *chi phí bạn muốn đo riêng* — thường hai cái này trùng nhau.
 
@@ -38,19 +61,42 @@ Một startup khởi đầu với 1 account, mọi thứ chung nhau. Nó hoạt 
 
 **OU (Organizational Unit)** là thư mục để nhóm account và áp policy theo nhóm. Cây OU nên phản ánh *cách bạn muốn quản trị*, không phải sơ đồ phòng ban.
 
-```
-Root
-├── Management account            ← chỉ billing + Organizations, KHÔNG chạy workload
-├── OU: Security
-│   ├── Log Archive account       ← gom CloudTrail/Config logs, write-once
-│   └── Audit account             ← read-only cross-account cho security team
-├── OU: Infrastructure
-│   └── Shared Services account   ← DNS, AD, CI/CD, golden AMI, TGW
-├── OU: Workloads
-│   ├── OU: Prod   → prod-app-a, prod-app-b
-│   └── OU: NonProd→ dev-app-a, staging-app-a
-└── OU: Sandbox                   ← account thử nghiệm, SCP siết chặt, auto-clean
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Cây OU của AWS Organizations</title>
+  <desc>Root phân nhánh xuống Management account và bốn OU: Security (Log Archive, Audit), Infrastructure (Shared Services), Workloads (Prod, NonProd), và Sandbox.</desc>
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none">
+    <path d="M120 56 V94 H120 M120 56 V300 M120 130 H164 M120 188 H164 M120 246 H164 M120 300 H164"/>
+    <path d="M250 130 V160 H294 M250 130 V218 H294"/>
+    <path d="M250 246 V276 H294 M250 246 V334 H294"/>
+  </g>
+  <rect x="48" y="36" width="144" height="40" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="120" y="61" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Root</text>
+  <rect x="164" y="110" width="220" height="40" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="176" y="127" font-size="12.5" font-weight="700" fill="currentColor">Management account</text>
+  <text x="176" y="143" font-size="10.5" fill="currentColor" opacity="0.62">chỉ billing — KHÔNG chạy workload</text>
+  <rect x="164" y="168" width="100" height="40" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="214" y="186" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">OU: Security</text>
+  <text x="214" y="201" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.62">guardrail siết</text>
+  <rect x="294" y="146" width="170" height="34" rx="8" fill="#10b981" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="304" y="167" font-size="11" fill="currentColor">Log Archive · CloudTrail/Config</text>
+  <rect x="294" y="204" width="170" height="34" rx="8" fill="#10b981" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="304" y="225" font-size="11" fill="currentColor">Audit · read-only cross-account</text>
+  <rect x="164" y="226" width="100" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="214" y="251" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">OU: Infra</text>
+  <rect x="294" y="262" width="190" height="34" rx="8" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="304" y="283" font-size="11" fill="currentColor">Shared Services · DNS/CI-CD/TGW</text>
+  <rect x="164" y="284" width="100" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="214" y="309" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">OU: Workloads</text>
+  <rect x="294" y="320" width="190" height="34" rx="8" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="304" y="335" font-size="10.5" fill="currentColor">OU Prod → prod-app-a/b</text>
+  <text x="304" y="349" font-size="10.5" fill="currentColor">OU NonProd → dev/staging</text>
+  <rect x="164" y="362" width="220" height="40" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="176" y="379" font-size="12.5" font-weight="700" fill="currentColor">OU: Sandbox</text>
+  <text x="176" y="395" font-size="10.5" fill="currentColor" opacity="0.62">thử nghiệm, SCP siết chặt, auto-clean</text>
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none">
+    <path d="M120 300 V382 H164"/>
+  </g>
+</svg>
 
 > ⚠️ Bẫy thiết kế: Chạy workload trong management account. Đừng. Account này nắm quyền tối thượng trên cả org; mọi compromise ở đây là game over. Giữ nó trống, chỉ làm billing và quản lý Organizations.
 
@@ -135,14 +181,46 @@ Nhiều account = nhiều VPC. Kết nối chúng thế nào?
 | **Transit Gateway (TGW)** | Hub-and-spoke | Nhiều VPC/account, cần định tuyến tập trung | Hub trung tâm, dễ quản route; **tốn phí/giờ + phí/GB** |
 | **PrivateLink** | Expose 1 service qua endpoint | Chỉ cần *một dịch vụ*, không cần nối cả mạng | Cô lập tốt nhất, nhưng per-service |
 
-```
-   PEERING (mesh)            TRANSIT GATEWAY (hub)
-   A───B                        A   B   C
-   │ ╳ │                         \  │  /
-   C───D                          ┌─▼─┐
-   4 VPC = 6 link                 │TGW│ ← 1 attachment/VPC, route bảng trung tâm
-   thêm 1 VPC = +4 link           └───┘
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>VPC Peering full-mesh vs Transit Gateway hub-and-spoke</title>
+  <desc>Peering full-mesh: 4 VPC cần 6 link điểm-điểm, không bắc cầu, thêm 1 VPC là thêm 4 link. Transit Gateway: mỗi VPC chỉ một attachment vào hub trung tâm với route table chung.</desc>
+  <text x="170" y="28" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">VPC PEERING (full-mesh)</text>
+  <text x="540" y="28" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">TRANSIT GATEWAY (hub)</text>
+  <g stroke="#3b82f6" stroke-opacity="0.7" stroke-width="1.6">
+    <line x1="95" y1="90" x2="245" y2="90"/>
+    <line x1="95" y1="200" x2="245" y2="200"/>
+    <line x1="95" y1="90" x2="95" y2="200"/>
+    <line x1="245" y1="90" x2="245" y2="200"/>
+    <line x1="95" y1="90" x2="245" y2="200"/>
+    <line x1="245" y1="90" x2="95" y2="200"/>
+  </g>
+  <g font-size="13" font-weight="700" text-anchor="middle">
+    <circle cx="95" cy="90" r="22" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="95" y="95" fill="currentColor">A</text>
+    <circle cx="245" cy="90" r="22" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="245" y="95" fill="currentColor">B</text>
+    <circle cx="95" cy="200" r="22" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="95" y="205" fill="currentColor">C</text>
+    <circle cx="245" cy="200" r="22" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="245" y="205" fill="currentColor">D</text>
+  </g>
+  <text x="170" y="252" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85">4 VPC = 6 link · không bắc cầu</text>
+  <text x="170" y="270" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.65">thêm 1 VPC = +4 link → bùng nổ</text>
+  <g stroke="#10b981" stroke-opacity="0.7" stroke-width="1.6">
+    <line x1="450" y1="90" x2="540" y2="150"/>
+    <line x1="540" y1="80" x2="540" y2="125"/>
+    <line x1="630" y1="90" x2="540" y2="150"/>
+    <line x1="450" y1="210" x2="540" y2="170"/>
+    <line x1="630" y1="210" x2="540" y2="170"/>
+  </g>
+  <g font-size="13" font-weight="700" text-anchor="middle">
+    <circle cx="450" cy="90" r="20" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/><text x="450" y="95" fill="currentColor">A</text>
+    <circle cx="540" cy="70" r="20" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/><text x="540" y="75" fill="currentColor">B</text>
+    <circle cx="630" cy="90" r="20" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/><text x="630" y="95" fill="currentColor">C</text>
+    <circle cx="450" cy="210" r="20" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/><text x="450" y="215" fill="currentColor">D</text>
+    <circle cx="630" cy="210" r="20" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/><text x="630" y="215" fill="currentColor">E</text>
+  </g>
+  <rect x="500" y="138" width="80" height="44" rx="9" fill="#10b981" fill-opacity="0.5" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="540" y="164" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">TGW</text>
+  <text x="540" y="252" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85">1 attachment/VPC</text>
+  <text x="540" y="270" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.65">route table trung tâm · phí/giờ + phí/GB</text>
+</svg>
 
 > ⚠️ Bẫy thiết kế: Dùng TGW như default cho mọi thứ. TGW tính tiền theo *attachment-hour* **và** *GB xử lý*. Nếu hai service chỉ cần gọi nhau một API, **PrivateLink** rẻ và an toàn hơn nhiều việc nối phẳng cả hai mạng.
 
@@ -176,14 +254,42 @@ Quy tắc thô: **traffic bursty/không đoán được → serverless**; **traf
 
 Hầu hết engineer định giá theo compute & storage, rồi sốc khi đọc bill. **Data transfer** là sát thủ thầm lặng:
 
-```
-Egress ra Internet              : tính tiền/GB (đắt)
-Cross-AZ trong VPC              : tính tiền/GB CẢ HAI CHIỀU
-Cross-Region                   : tính tiền/GB (đắt hơn cross-AZ)
-NAT Gateway processing         : tính tiền/GB qua NAT
-TGW processing                 : tính tiền/GB qua hub
-Inbound (vào AWS)              : thường miễn phí
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Ranh giới tính tiền của data transfer</title>
+  <desc>Một byte rời tiến trình đi qua các ranh giới: inbound vào AWS miễn phí; cross-AZ tính cả hai chiều; NAT và TGW tính theo GB xử lý; egress Internet tính theo GB đắt; cross-region đắt hơn cross-AZ.</desc>
+  <text x="360" y="26" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Byte này đi qua ranh giới tính tiền nào?</text>
+  <rect x="40" y="160" width="120" height="64" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="100" y="190" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Service</text>
+  <text x="100" y="207" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">AZ-a, VPC</text>
+  <g stroke="currentColor" stroke-opacity="0.45" fill="none" marker-end="url(#ar)">
+    <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 Z" fill="currentColor"/></marker></defs>
+    <path d="M40 120 H100 V154"/>
+    <path d="M160 175 H300"/>
+    <path d="M160 200 H205 V300 H300"/>
+    <path d="M160 210 H225 V370 H300"/>
+  </g>
+  <rect x="300" y="78" width="160" height="44" rx="9" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="380" y="98" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Inbound vào AWS</text>
+  <text x="380" y="114" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">thường MIỄN PHÍ</text>
+  <rect x="300" y="153" width="170" height="44" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="385" y="173" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Cross-AZ (AZ-a↔AZ-b)</text>
+  <text x="385" y="189" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">tính/GB CẢ HAI CHIỀU</text>
+  <rect x="300" y="278" width="170" height="44" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="385" y="298" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">NAT / TGW processing</text>
+  <text x="385" y="314" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">tính/GB qua hub/NAT</text>
+  <rect x="300" y="348" width="170" height="44" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="385" y="368" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Cross-Region</text>
+  <text x="385" y="384" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">tính/GB — đắt hơn cross-AZ</text>
+  <g stroke="currentColor" stroke-opacity="0.45" fill="none" marker-end="url(#ar)">
+    <path d="M470 175 H560"/>
+    <path d="M470 300 H525 V230 H560"/>
+  </g>
+  <rect x="560" y="153" width="130" height="64" rx="10" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="625" y="180" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Egress</text>
+  <text x="625" y="196" font-size="11" text-anchor="middle" fill="currentColor">Internet</text>
+  <text x="625" y="211" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">tính/GB (đắt)</text>
+  <text x="625" y="240" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">đích cuối</text>
+</svg>
 
 Một kiến trúc microservice "chuẩn HA" trải đều 3 AZ, gọi nhau chéo AZ liên tục, có thể đốt một khoản cross-AZ transfer mà không ai nhìn thấy trong sơ đồ.
 
@@ -231,16 +337,22 @@ Owner       = email / team
 
 Điểm mấu chốt: **các pillar mâu thuẫn nhau, và đó là điều bình thường**. Reliability tối đa (multi-region active-active) đánh nhau trực diện với Cost. Speed (ship nhanh, dùng managed) đôi khi hy sinh Cost hoặc Performance tuning. Well-Architected không bảo bạn tối đa hoá cả 6 — nó bắt bạn *làm rõ trade-off và quyết định có chủ đích*.
 
-```
-            RELIABILITY
-                 ▲
-                 │   bạn không ở đỉnh
-   bạn ở đâu đó →●   một góc nào đó
-                ╱ ╲
-               ╱   ╲
-          COST◄─────►SPEED
-   kéo về một góc = hy sinh hai góc kia
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:560px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Tam giác đánh đổi Well-Architected: Reliability, Cost, Speed</title>
+  <desc>Ba góc Reliability, Cost, Speed. Bạn nằm đâu đó bên trong tam giác; kéo về một góc nghĩa là hy sinh hai góc kia, không thể ở cả ba đỉnh cùng lúc.</desc>
+  <polygon points="360,50 160,290 560,290" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.6"/>
+  <circle cx="360" cy="50" r="7" fill="#10b981"/>
+  <circle cx="160" cy="290" r="7" fill="#f59e0b"/>
+  <circle cx="560" cy="290" r="7" fill="#8b5cf6"/>
+  <text x="360" y="38" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">RELIABILITY</text>
+  <text x="150" y="312" font-size="14" font-weight="700" text-anchor="end" fill="currentColor">COST</text>
+  <text x="570" y="312" font-size="14" font-weight="700" text-anchor="start" fill="currentColor">SPEED</text>
+  <circle cx="335" cy="195" r="9" fill="#ef4444" fill-opacity="0.9"/>
+  <circle cx="335" cy="195" r="16" fill="none" stroke="#ef4444" stroke-opacity="0.5" stroke-dasharray="3 3"/>
+  <text x="335" y="232" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">bạn ở đâu đó</text>
+  <text x="335" y="249" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">một góc nào đó, không ở đỉnh</text>
+  <text x="360" y="330" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">kéo về một góc = hy sinh hai góc kia</text>
+</svg>
 
 ---
 

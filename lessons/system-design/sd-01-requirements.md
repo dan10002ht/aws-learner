@@ -86,6 +86,74 @@ Không ước lượng được nếu không nhớ các bậc độ lớn. Đây
 | Đọc 1MB từ network | ~10 ms | |
 | Round-trip giữa các châu lục | ~150 ms | tốc độ ánh sáng, không tối ưu được |
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Thang latency theo bậc độ lớn trên trục log</title>
+  <desc>Trục log thời gian từ 1ns đến 150ms, đánh dấu L1 cache, RAM, SSD, đĩa HDD seek, round-trip trong datacenter và xuyên lục địa; nhấn mạnh RAM nhanh hơn disk khoảng 1000 lần và xuyên lục địa chậm hơn cùng datacenter khoảng 300 lần.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Thang latency (trục log — mỗi nấc ×10)</text>
+  <line x1="40" y1="210" x2="700" y2="210" stroke="currentColor" stroke-opacity="0.4"/>
+  <g font-size="10" fill="currentColor" opacity="0.55" text-anchor="middle">
+    <text x="40" y="228">1ns</text>
+    <text x="120" y="228">10ns</text>
+    <text x="200" y="228">100ns</text>
+    <text x="280" y="228">1µs</text>
+    <text x="360" y="228">10µs</text>
+    <text x="440" y="228">100µs</text>
+    <text x="520" y="228">1ms</text>
+    <text x="600" y="228">10ms</text>
+    <text x="680" y="228">100ms</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.18">
+    <line x1="120" y1="60" x2="120" y2="210"/>
+    <line x1="200" y1="60" x2="200" y2="210"/>
+    <line x1="280" y1="60" x2="280" y2="210"/>
+    <line x1="360" y1="60" x2="360" y2="210"/>
+    <line x1="440" y1="60" x2="440" y2="210"/>
+    <line x1="520" y1="60" x2="520" y2="210"/>
+    <line x1="600" y1="60" x2="600" y2="210"/>
+    <line x1="680" y1="60" x2="680" y2="210"/>
+  </g>
+  <g>
+    <circle cx="40" cy="210" r="5" fill="#10b981" fill-opacity="0.95"/>
+    <line x1="40" y1="205" x2="40" y2="180" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="44" y="176" font-size="11" font-weight="700" fill="currentColor">L1 cache ~1ns</text>
+  </g>
+  <g>
+    <circle cx="200" cy="210" r="5" fill="#10b981" fill-opacity="0.95"/>
+    <line x1="200" y1="205" x2="200" y2="150" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="204" y="146" font-size="11" font-weight="700" fill="currentColor">RAM ~100ns</text>
+  </g>
+  <g>
+    <circle cx="440" cy="210" r="5" fill="#3b82f6" fill-opacity="0.95"/>
+    <line x1="440" y1="205" x2="440" y2="100" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="444" y="96" font-size="11" font-weight="700" fill="currentColor">SSD read ~100µs</text>
+  </g>
+  <g>
+    <circle cx="500" cy="210" r="5" fill="#3b82f6" fill-opacity="0.95"/>
+    <line x1="500" y1="205" x2="500" y2="190" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="504" y="186" font-size="10.5" fill="currentColor" opacity="0.8">DC RTT ~0,5ms</text>
+  </g>
+  <g>
+    <circle cx="600" cy="210" r="5" fill="#f59e0b" fill-opacity="0.95"/>
+    <line x1="600" y1="205" x2="600" y2="150" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="540" y="146" font-size="11" font-weight="700" fill="currentColor">HDD seek ~10ms</text>
+  </g>
+  <g>
+    <circle cx="680" cy="210" r="5" fill="#8b5cf6" fill-opacity="0.95"/>
+    <line x1="680" y1="205" x2="680" y2="120" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="640" y="116" font-size="11" font-weight="700" text-anchor="end" fill="currentColor">Xuyên lục địa ~150ms</text>
+  </g>
+  <g stroke="#f59e0b" stroke-opacity="0.7" fill="none">
+    <path d="M200 252 H600" stroke-width="1.5"/>
+    <path d="M200 248 v8 M600 248 v8"/>
+  </g>
+  <text x="400" y="270" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">RAM → disk: ~1000× (3 nấc) → cache đáng giá</text>
+  <g stroke="#8b5cf6" stroke-opacity="0.7" fill="none">
+    <path d="M500 286 H680" stroke-width="1.5"/>
+    <path d="M500 282 v8 M680 282 v8"/>
+  </g>
+  <text x="590" y="298" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">DC → xuyên lục địa: ~300× → CDN, gộp request</text>
+</svg>
+
 > 💡 Nguyên tắc: Hệ quả thực dụng của bảng này: (1) *Memory nhanh hơn disk ~1000 lần* → cache đáng giá. (2) *Cùng datacenter nhanh hơn xuyên lục địa ~300 lần* → đặt data gần user, dùng CDN. (3) *Network round-trip đắt* → gộp request, tránh N+1, dùng batch. Mọi tối ưu kiến trúc đều là hệ quả của ba dòng này.
 
 ## 4. Back-of-envelope estimation — công thức
@@ -188,6 +256,52 @@ Cache feed nóng — 80/20: 20% user active sinh ra phần lớn read.
 | Read-heavy & latency | Cache hit cứu được p99 | Thêm cache *trước* khi nghĩ tới sharding |
 | Write-heavy vượt 1 node | Single primary nghẽn write | Lúc này mới shard / chuyển sang LSM store |
 | Cần global low-latency | User nhiều châu lục | Multi-region, CDN, edge |
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Thang bậc nâng cấp scale theo độ phức tạp tăng dần</title>
+  <desc>Bốn bậc thang tăng dần: scale up máy to hơn, thêm cache, thêm read replica, cuối cùng là sharding/scale out. Sharding là bậc cao nhất và đắt nhất về độ phức tạp, không nên nhảy cóc tới.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Thứ tự nâng cấp — leo từng bậc, đừng nhảy cóc</text>
+  <g font-size="10" fill="currentColor" opacity="0.55">
+    <text x="24" y="170" transform="rotate(-90 24 170)">Độ phức tạp ↑</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.35" fill="none">
+    <path d="M40 290 H700"/>
+    <path d="M40 290 V60"/>
+  </g>
+  <g>
+    <rect x="60" y="240" width="140" height="44" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="130" y="260" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">1. Scale up</text>
+    <text x="130" y="276" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">máy to hơn</text>
+  </g>
+  <g>
+    <rect x="215" y="196" width="140" height="88" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="285" y="216" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">2. Cache</text>
+    <text x="285" y="232" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">cứu p99, rẻ</text>
+  </g>
+  <g>
+    <rect x="370" y="148" width="140" height="136" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="440" y="168" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">3. Read replica</text>
+    <text x="440" y="184" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">gánh đường đọc</text>
+  </g>
+  <g>
+    <rect x="525" y="84" width="155" height="200" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="602" y="104" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">4. Sharding</text>
+    <text x="602" y="120" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">/ scale out</text>
+    <rect x="540" y="132" width="124" height="20" rx="10" fill="#8b5cf6" fill-opacity="0.9"/>
+    <text x="602" y="146" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">ĐẮT NHẤT</text>
+    <text x="602" y="170" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">cross-shard query,</text>
+    <text x="602" y="183" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">rebalance, txn phân tán</text>
+  </g>
+  <g stroke="currentColor" stroke-opacity="0.5" fill="none" stroke-width="1.5">
+    <path d="M200 250 L213 234" marker-end="url(#ar1)"/>
+    <path d="M355 206 L368 190" marker-end="url(#ar1)"/>
+    <path d="M510 158 L523 142" marker-end="url(#ar1)"/>
+  </g>
+  <defs>
+    <marker id="ar1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 Z" fill="currentColor" fill-opacity="0.6"/></marker>
+  </defs>
+  <text x="370" y="312" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Cache hoặc 1 replica thường đã đủ — đừng vội shard</text>
+</svg>
 
 > 💡 Nguyên tắc: Thứ tự nâng cấp gần như luôn là: **scale up (máy to hơn) → cache → read replica → sharding/scale out**. Sharding là bước đắt nhất về độ phức tạp (cross-shard query, rebalancing, transaction phân tán) — đừng nhảy tới nó khi cache hoặc một replica đã giải quyết được. "Cần Cassandra" cho hệ thống 500 QPS là dấu hiệu over-engineering, không phải năng lực.
 
