@@ -82,6 +82,54 @@ ss -tan | awk '{print $1}' | sort | uniq -c | sort -rn
 
 ## 4. HTTP/1.1 vs HTTP/2 vs HTTP/3
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Head-of-line blocking: HTTP/2 trên TCP so với HTTP/3 trên QUIC</title>
+  <desc>Bên trái HTTP/2: nhiều stream chung một dòng byte TCP, một gói mất chặn toàn bộ stream. Bên phải HTTP/3 QUIC: mỗi stream độc lập, gói mất chỉ chặn đúng stream của nó, các stream khác vẫn chạy.</desc>
+  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Head-of-line blocking — mất 1 gói thì ai bị chặn?</text>
+  <g>
+    <text x="180" y="48" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">HTTP/2 trên TCP</text>
+    <text x="180" y="66" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">3 stream gộp vào 1 dòng byte TCP có thứ tự</text>
+    <rect x="30" y="80" width="300" height="80" rx="9" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="44" y="96" font-size="9.5" fill="currentColor" opacity="0.75">1 connection TCP</text>
+    <g>
+      <rect x="44" y="104" width="40" height="20" rx="4" fill="#3b82f6" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.25"/>
+      <text x="64" y="118" font-size="9" text-anchor="middle" fill="currentColor">S1</text>
+      <rect x="90" y="104" width="40" height="20" rx="4" fill="#ef4444" fill-opacity="0.35" stroke="currentColor" stroke-opacity="0.4"/>
+      <text x="110" y="118" font-size="9" text-anchor="middle" fill="currentColor">mất</text>
+      <rect x="136" y="104" width="40" height="20" rx="4" fill="#3b82f6" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.25"/>
+      <text x="156" y="118" font-size="9" text-anchor="middle" fill="currentColor">S2</text>
+      <rect x="182" y="104" width="40" height="20" rx="4" fill="#3b82f6" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.25"/>
+      <text x="202" y="118" font-size="9" text-anchor="middle" fill="currentColor">S3</text>
+      <rect x="228" y="104" width="40" height="20" rx="4" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="3 2"/>
+      <text x="248" y="118" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.6">chờ</text>
+      <rect x="274" y="104" width="40" height="20" rx="4" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="3 2"/>
+      <text x="294" y="118" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.6">chờ</text>
+    </g>
+    <text x="180" y="148" font-size="9.5" text-anchor="middle" fill="#ef4444">1 gói TCP mất → S2, S3 cũng bị chặn (chờ truyền lại)</text>
+    <rect x="30" y="172" width="300" height="22" rx="8" fill="#ef4444" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="180" y="187" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Cả connection đứng lại</text>
+  </g>
+  <g>
+    <text x="540" y="48" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">HTTP/3 trên QUIC</text>
+    <text x="540" y="66" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">mỗi stream có thứ tự riêng, độc lập</text>
+    <rect x="390" y="80" width="300" height="80" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="404" y="96" font-size="9.5" fill="currentColor" opacity="0.75">1 connection QUIC (UDP)</text>
+    <g>
+      <rect x="404" y="104" width="84" height="20" rx="4" fill="#ef4444" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.35"/>
+      <text x="446" y="118" font-size="9" text-anchor="middle" fill="currentColor">S1 — gói mất, chờ</text>
+      <rect x="496" y="104" width="84" height="20" rx="4" fill="#10b981" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.25"/>
+      <text x="538" y="118" font-size="9" text-anchor="middle" fill="currentColor">S2 — chạy tiếp</text>
+      <rect x="588" y="104" width="88" height="20" rx="4" fill="#10b981" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.25"/>
+      <text x="632" y="118" font-size="9" text-anchor="middle" fill="currentColor">S3 — chạy tiếp</text>
+    </g>
+    <text x="540" y="148" font-size="9.5" text-anchor="middle" fill="#10b981">Gói mất chỉ chặn S1; S2, S3 không liên quan</text>
+    <rect x="390" y="172" width="300" height="22" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="540" y="187" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Chỉ đúng stream đó bị chặn</text>
+  </g>
+  <text x="360" y="232" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">TCP coi cả connection là một dòng byte → mọi stream phụ thuộc nhau.</text>
+  <text x="360" y="250" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">QUIC quản thứ tự ở từng stream → cô lập mất gói, đây là khác biệt cốt lõi của HTTP/3.</text>
+</svg>
+
 | | HTTP/1.1 | HTTP/2 | HTTP/3 |
 |---|---|---|---|
 | Năm | 1997 | 2015 | 2022 (RFC 9114) |
@@ -96,6 +144,64 @@ Tính tay với RTT 35ms, kết nối mới lần đầu:
 
 - HTTP/2: TCP (1 RTT) + TLS 1.3 (1 RTT) = **70ms** trước byte đầu tiên.
 - HTTP/3: QUIC handshake gộp luôn TLS = **35ms**. Quay lại lần sau với 0-RTT: **~0ms** chờ.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>So sánh thiết lập kết nối TCP+TLS1.3 (HTTP/2) với QUIC (HTTP/3)</title>
+  <desc>Sơ đồ trình tự client–server: bên trái TCP 3-way handshake cộng TLS 1.3 tốn 2 RTT (70ms) trước byte đầu; bên phải QUIC gộp transport và TLS chỉ 1 RTT (35ms), quay lại 0-RTT gần 0ms với RTT 35ms.</desc>
+  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Chi phí bắt tay (RTT = 35ms)</text>
+  <g>
+    <text x="180" y="46" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">TCP + TLS 1.3 (HTTP/2)</text>
+    <text x="80" y="66" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">Client</text>
+    <text x="280" y="66" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">Server</text>
+    <line x1="80" y1="74" x2="80" y2="392" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+    <line x1="280" y1="74" x2="280" y2="392" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+    <g stroke="currentColor" stroke-width="1.4" fill="none">
+      <path d="M80 92 L274 110" marker-end="url(#a1)"/>
+      <path d="M280 130 L86 148" marker-end="url(#a1)"/>
+      <path d="M80 168 L274 186" marker-end="url(#a1)"/>
+      <path d="M280 206 L86 224" marker-end="url(#a1)"/>
+      <path d="M80 244 L274 262" marker-end="url(#a1)"/>
+    </g>
+    <text x="180" y="100" font-size="9.5" text-anchor="middle" fill="currentColor">SYN</text>
+    <text x="180" y="140" font-size="9.5" text-anchor="middle" fill="currentColor">SYN-ACK</text>
+    <text x="180" y="176" font-size="9.5" text-anchor="middle" fill="currentColor">ACK + ClientHello</text>
+    <text x="180" y="216" font-size="9.5" text-anchor="middle" fill="currentColor">ServerHello + Cert</text>
+    <text x="180" y="254" font-size="9.5" text-anchor="middle" fill="currentColor">Finished + GET</text>
+    <rect x="40" y="116" width="40" height="16" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="60" y="128" font-size="9" text-anchor="middle" fill="currentColor">RTT 1</text>
+    <rect x="40" y="232" width="40" height="16" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="60" y="244" font-size="9" text-anchor="middle" fill="currentColor">RTT 2</text>
+    <rect x="60" y="280" width="240" height="26" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="180" y="297" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">≈ 2 RTT = 70ms</text>
+  </g>
+  <g>
+    <text x="540" y="46" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">QUIC (HTTP/3)</text>
+    <text x="440" y="66" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">Client</text>
+    <text x="640" y="66" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">Server</text>
+    <line x1="440" y1="74" x2="440" y2="392" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+    <line x1="640" y1="74" x2="640" y2="392" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+    <g stroke="currentColor" stroke-width="1.4" fill="none">
+      <path d="M440 92 L634 110" marker-end="url(#a1)"/>
+      <path d="M640 130 L446 148" marker-end="url(#a1)"/>
+    </g>
+    <text x="540" y="100" font-size="9.5" text-anchor="middle" fill="currentColor">Initial: ClientHello + key_share</text>
+    <text x="540" y="140" font-size="9.5" text-anchor="middle" fill="currentColor">ServerHello + Cert + Finished</text>
+    <rect x="400" y="116" width="40" height="16" rx="8" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="420" y="128" font-size="9" text-anchor="middle" fill="currentColor">RTT 1</text>
+    <rect x="420" y="160" width="240" height="26" rx="8" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="540" y="177" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">≈ 1 RTT = 35ms (lần đầu)</text>
+    <g stroke="currentColor" stroke-width="1.4" fill="none">
+      <path d="M440 232 L634 250" marker-end="url(#a1)"/>
+    </g>
+    <text x="540" y="240" font-size="9.5" text-anchor="middle" fill="currentColor">0-RTT: GET gửi ngay (phiên cũ)</text>
+    <rect x="420" y="280" width="240" height="26" rx="8" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="540" y="297" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">≈ 0 RTT ≈ 0ms (quay lại)</text>
+  </g>
+  <text x="360" y="420" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Thời gian đi xuống — QUIC gộp transport + TLS nên rút mất 1 RTT chờ.</text>
+  <defs>
+    <marker id="a1" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker>
+  </defs>
+</svg>
 
 Đến 2025, khoảng **~30–35% website** đã bật HTTP/3 (Cloudflare, Google, các CDN lớn bật mặc định), HTTP/2 vẫn là mặt bằng chung.
 
@@ -154,11 +260,56 @@ openssl s_client -connect example.com:443 -tls1_2 </dev/null 2>/dev/null | grep 
 
 Trình duyệt tin server vì **chuỗi chữ ký số**:
 
-```text
-Root CA  (cài sẵn trong OS/browser, tự ký)
-   └── ký cho → Intermediate CA
-                    └── ký cho → Leaf cert (example.com)
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Certificate chain of trust: Root CA ký Intermediate CA ký Leaf cert</title>
+  <desc>Chuỗi tin cậy chứng chỉ: Root CA tự ký nằm trong trust store của OS/trình duyệt, ký cho Intermediate CA, Intermediate ký cho Leaf cert của example.com. Server gửi leaf và intermediate, client xác minh ngược lên tới root trong trust store.</desc>
+  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Chain of trust — ai ký cho ai</text>
+  <g>
+    <rect x="250" y="40" width="220" height="58" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="62" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Root CA</text>
+    <text x="360" y="80" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">tự ký · nằm trong trust store</text>
+    <text x="360" y="93" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">(cài sẵn OS / trình duyệt)</text>
+  </g>
+  <g stroke="currentColor" stroke-width="1.4" fill="none">
+    <path d="M360 98 L360 130" marker-end="url(#c1)"/>
+  </g>
+  <text x="372" y="120" font-size="10" fill="currentColor" opacity="0.85">ký cho ↓</text>
+  <g>
+    <rect x="250" y="132" width="220" height="54" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="154" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Intermediate CA</text>
+    <text x="360" y="172" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">do Root ký · server gửi kèm</text>
+  </g>
+  <g stroke="currentColor" stroke-width="1.4" fill="none">
+    <path d="M360 186 L360 218" marker-end="url(#c1)"/>
+  </g>
+  <text x="372" y="208" font-size="10" fill="currentColor" opacity="0.85">ký cho ↓</text>
+  <g>
+    <rect x="250" y="220" width="220" height="54" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="360" y="242" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Leaf cert — example.com</text>
+    <text x="360" y="260" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">do Intermediate ký · server gửi</text>
+  </g>
+  <g>
+    <rect x="500" y="132" width="200" height="142" rx="10" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22" stroke-dasharray="4 3"/>
+    <text x="600" y="152" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Server gửi xuống client</text>
+    <rect x="516" y="164" width="168" height="22" rx="6" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="600" y="179" font-size="10" text-anchor="middle" fill="currentColor">Leaf cert</text>
+    <rect x="516" y="192" width="168" height="22" rx="6" fill="#3b82f6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="600" y="207" font-size="10" text-anchor="middle" fill="currentColor">Intermediate cert</text>
+    <text x="600" y="234" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">KHÔNG gửi Root</text>
+    <text x="600" y="248" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">(client đã có sẵn)</text>
+  </g>
+  <g stroke="currentColor" stroke-width="1.4" fill="none">
+    <path d="M250 247 L150 247 L150 70 L250 70" marker-end="url(#c1)"/>
+  </g>
+  <g>
+    <rect x="20" y="284" width="680" height="44" rx="9" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.18"/>
+    <text x="36" y="303" font-size="10.5" font-weight="700" fill="currentColor">Client xác minh ngược lên:</text>
+    <text x="36" y="319" font-size="10.5" fill="currentColor" opacity="0.85">chữ ký Leaf hợp lệ theo Intermediate → Intermediate hợp lệ theo Root → Root nằm trong trust store ⇒ tin.</text>
+  </g>
+  <defs>
+    <marker id="c1" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker>
+  </defs>
+</svg>
 
 Server gửi **leaf + intermediate** (không gửi root). Client xác minh: chữ ký leaf hợp lệ theo intermediate → chữ ký intermediate hợp lệ theo root → root nằm trong trust store → tin.
 
@@ -266,6 +417,56 @@ Total:       %{time_total}s\n'
 ### NLB — TCP passthrough (Layer 4)
 - NLB hoạt động ở tầng TCP/UDP: có thể **passthrough** TLS nguyên vẹn đến backend (backend tự terminate, giữ end-to-end encryption), hoặc terminate TLS tại NLB với cert ACM.
 - **Bẫy đề thi**: cần client IP thật + hiệu năng cực cao + giao thức không phải HTTP (game UDP, MQTT, database) → chọn **NLB**. Cần routing theo path/header → **ALB**. UDP listener → chỉ NLB.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>ALB terminate TLS (L7) so với NLB passthrough TLS (L4)</title>
+  <desc>Trên: ALB tầng 7 giải mã TLS để đọc HTTP và routing rồi mã hoá lại tới target — TLS đứt làm hai chặng. Dưới: NLB tầng 4 passthrough TLS nguyên vẹn, backend tự giải mã — mã hoá end-to-end client tới target.</desc>
+  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Điểm mã hoá / giải mã: ALB vs NLB</text>
+  <g>
+    <text x="16" y="48" font-size="12" font-weight="700" fill="currentColor">ALB (L7) — terminate TLS</text>
+    <rect x="20" y="58" width="120" height="50" rx="9" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="80" y="80" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
+    <text x="80" y="96" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">gửi HTTPS</text>
+    <rect x="300" y="52" width="150" height="62" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="375" y="73" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">ALB</text>
+    <text x="375" y="89" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.78">giải mã → đọc HTTP</text>
+    <text x="375" y="102" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.78">routing path/host → mã hoá lại</text>
+    <rect x="600" y="58" width="100" height="50" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="650" y="80" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Target</text>
+    <text x="650" y="96" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">backend</text>
+    <g stroke="currentColor" stroke-width="1.6" fill="none">
+      <path d="M140 83 L296 83" marker-end="url(#l1)"/>
+      <path d="M450 83 L596 83" marker-end="url(#l1)"/>
+    </g>
+    <text x="218" y="76" font-size="9" text-anchor="middle" fill="currentColor">TLS chặng 1</text>
+    <text x="218" y="129" font-size="9" text-anchor="middle" fill="#f59e0b">cert ACM ở ALB</text>
+    <text x="523" y="76" font-size="9" text-anchor="middle" fill="currentColor">TLS chặng 2 (re-encrypt)</text>
+    <text x="375" y="132" font-size="9" text-anchor="middle" fill="#ef4444">⬤ TLS đứt tại ALB → ALB thấy nội dung HTTP</text>
+  </g>
+  <line x1="20" y1="158" x2="700" y2="158" stroke="currentColor" stroke-opacity="0.18"/>
+  <g>
+    <text x="16" y="186" font-size="12" font-weight="700" fill="currentColor">NLB (L4) — passthrough TLS</text>
+    <rect x="20" y="198" width="120" height="50" rx="9" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="80" y="220" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
+    <text x="80" y="236" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">gửi HTTPS</text>
+    <rect x="300" y="198" width="150" height="50" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="375" y="219" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">NLB</text>
+    <text x="375" y="235" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.78">chuyển byte L4, KHÔNG giải mã</text>
+    <rect x="600" y="198" width="100" height="50" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+    <text x="650" y="216" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Target</text>
+    <text x="650" y="232" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">tự terminate TLS</text>
+    <g stroke="#10b981" stroke-width="2.2" fill="none">
+      <path d="M140 223 L296 223" marker-end="url(#l2)"/>
+      <path d="M450 223 L596 223" marker-end="url(#l2)"/>
+    </g>
+    <text x="375" y="268" font-size="9.5" text-anchor="middle" fill="#10b981">⬤ TLS nguyên vẹn end-to-end: client → target, NLB không đọc được nội dung</text>
+  </g>
+  <text x="360" y="300" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">Terminate = đọc được HTTP (routing/WAF) nhưng đứt mã hoá; passthrough = end-to-end nhưng LB mù nội dung.</text>
+  <defs>
+    <marker id="l1" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker>
+    <marker id="l2" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#10b981"/></marker>
+  </defs>
+</svg>
 
 ### CloudFront + TLS
 - Edge của CloudFront hỗ trợ **TLS 1.3 và HTTP/3 (QUIC)** — bật HTTP/3 chỉ là một checkbox, giảm độ trễ kết nối cho user xa (đúng bài toán 1-RTT/0-RTT ở phần 4–5).
