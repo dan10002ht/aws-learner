@@ -11,15 +11,42 @@ Hai từ này hay bị dùng lẫn, nhưng chúng trả lời hai câu hỏi kh�
 
 Analogy: một **đầu bếp** nấu 3 món. Anh ta xào món A một lúc, để đó, đi luộc món B, quay lại đảo món A... — đó là **concurrency**: một người, nhiều việc, xen kẽ. Còn nếu có **3 đầu bếp** mỗi người một món — đó là **parallelism**: nhiều người, chạy thật sự song song.
 
-```
-Concurrency (1 core, xen kẽ):
-core 1: [A][B][A][C][B][A][C][B] ...   <- nhảy qua lại rất nhanh
-
-Parallelism (3 core, đồng thời):
-core 1: [AAAAAAAAAAAA]
-core 2: [BBBBBBBBBBBB]
-core 3: [CCCCCCCCCCCC]
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Concurrency so với Parallelism trên timeline</title>
+  <desc>Concurrency: một core nhảy xen kẽ giữa task A, B, C theo thời gian. Parallelism: ba core, mỗi core chạy liền một task song song cùng lúc.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Concurrency — 1 core, xen kẽ</text>
+  <text x="16" y="42" font-size="11" fill="currentColor" opacity="0.65">một core nhảy qua lại giữa các task, mỗi task một chút</text>
+  <text x="16" y="78" font-size="12" font-weight="700" fill="currentColor">core 1</text>
+  <g stroke="currentColor" stroke-opacity="0.5">
+    <line x1="70" y1="100" x2="690" y2="100"/>
+    <line x1="70" y1="56" x2="70" y2="100"/>
+  </g>
+  <g font-size="12" font-weight="700" text-anchor="middle">
+    <rect x="70" y="62" width="78" height="30" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="109" y="82" fill="currentColor">A</text>
+    <rect x="148" y="62" width="78" height="30" rx="5" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="187" y="82" fill="currentColor">B</text>
+    <rect x="226" y="62" width="78" height="30" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="265" y="82" fill="currentColor">A</text>
+    <rect x="304" y="62" width="78" height="30" rx="5" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="343" y="82" fill="currentColor">C</text>
+    <rect x="382" y="62" width="78" height="30" rx="5" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="421" y="82" fill="currentColor">B</text>
+    <rect x="460" y="62" width="78" height="30" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="499" y="82" fill="currentColor">A</text>
+    <rect x="538" y="62" width="78" height="30" rx="5" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="577" y="82" fill="currentColor">C</text>
+    <rect x="616" y="62" width="74" height="30" rx="5" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="653" y="82" fill="currentColor">B</text>
+  </g>
+  <text x="690" y="116" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.6">thời gian →</text>
+  <text x="16" y="172" font-size="14" font-weight="700" fill="currentColor">Parallelism — 3 core, đồng thời</text>
+  <text x="16" y="190" font-size="11" fill="currentColor" opacity="0.65">mỗi core chạy liền một task, thật sự song song cùng thời điểm</text>
+  <g font-size="12" font-weight="700">
+    <text x="16" y="225" fill="currentColor">core 1</text>
+    <rect x="70" y="210" width="620" height="22" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="380" y="225" text-anchor="middle" fill="currentColor">task A</text>
+    <text x="16" y="255" fill="currentColor">core 2</text>
+    <rect x="70" y="240" width="620" height="22" rx="5" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="380" y="255" text-anchor="middle" fill="currentColor">task B</text>
+    <text x="16" y="285" fill="currentColor">core 3</text>
+    <rect x="70" y="270" width="620" height="22" rx="5" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="380" y="285" text-anchor="middle" fill="currentColor">task C</text>
+  </g>
+  <text x="690" y="308" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.6">thời gian →</text>
+</svg>
 
 > 💡 Ghi nhớ: "Concurrency là *cách bạn tổ chức* công việc; parallelism là *cách phần cứng chạy* nó." Một chương trình có thể concurrent mà không parallel (1 core), và bạn viết code concurrent trước, rồi runtime/OS quyết định có chạy parallel hay không.
 
@@ -75,15 +102,40 @@ Vấn đề: `counter += 1` **không phải** một thao tác nguyên tử. CPU 
 
 Giờ tưởng tượng hai thread bị xen kẽ đúng lúc xấu (`counter` đang là 41):
 
-```
-Thread A           Thread B           counter
-READ tmp=41                            41
-                   READ tmp=41         41    <- B đọc trước khi A ghi!
-ADD  tmp=42                            41
-                   ADD  tmp=42         41
-WRITE counter=42                       42
-                   WRITE counter=42    42    <- mất 1 lần tăng!
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Race condition: hai thread xen kẽ làm mất một lần tăng counter</title>
+  <desc>Thread A và Thread B xen kẽ các bước READ, ADD, WRITE theo thời gian đi xuống. B đọc giá trị 41 trước khi A kịp ghi, nên hai lần tăng chỉ làm counter từ 41 lên 42 thay vì 43.</desc>
+  <text x="120" y="26" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Thread A</text>
+  <text x="360" y="26" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Thread B</text>
+  <text x="630" y="26" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">counter</text>
+  <g stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4">
+    <line x1="120" y1="36" x2="120" y2="330"/>
+    <line x1="360" y1="36" x2="360" y2="330"/>
+    <line x1="630" y1="36" x2="630" y2="330"/>
+  </g>
+  <g font-size="12" font-weight="700" text-anchor="middle">
+    <rect x="44" y="52" width="152" height="28" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="120" y="71" fill="currentColor">READ tmp=41</text>
+    <text x="630" y="71" fill="currentColor">41</text>
+
+    <rect x="284" y="96" width="152" height="28" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="360" y="115" fill="currentColor">READ tmp=41</text>
+    <text x="630" y="115" fill="currentColor">41</text>
+    <text x="630" y="135" font-size="10" font-weight="400" fill="#f59e0b">B đọc trước khi A ghi!</text>
+
+    <rect x="44" y="148" width="152" height="28" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="120" y="167" fill="currentColor">ADD tmp=42</text>
+    <text x="630" y="167" fill="currentColor">41</text>
+
+    <rect x="284" y="192" width="152" height="28" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="360" y="211" fill="currentColor">ADD tmp=42</text>
+    <text x="630" y="211" fill="currentColor">41</text>
+
+    <rect x="44" y="236" width="152" height="28" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="120" y="255" fill="currentColor">WRITE counter=42</text>
+    <text x="630" y="255" fill="currentColor">42</text>
+
+    <rect x="284" y="280" width="152" height="28" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="360" y="299" fill="currentColor">WRITE counter=42</text>
+    <text x="630" y="299" fill="#f59e0b">42</text>
+    <text x="630" y="320" font-size="10" font-weight="400" fill="#f59e0b">mất 1 lần tăng (43→42)</text>
+  </g>
+  <text x="16" y="200" font-size="10.5" fill="currentColor" opacity="0.6" transform="rotate(-90 16 200)" text-anchor="middle">thời gian ↓</text>
+</svg>
 
 Hai lần `+1` mà `counter` chỉ tăng 1. Mỗi lần chạy, OS lập lịch thread khác nhau → mất số lượng khác nhau → **bug không tái hiện ổn định**. Đoạn code đọc-sửa-ghi chung này gọi là **critical section** (vùng tới hạn): vùng mà tại một thời điểm **chỉ được phép một thread** vào.
 
@@ -137,11 +189,60 @@ def thread_2():
             ...
 ```
 
-```
-Thread 1: giữ A, chờ B ─┐
-                        ├─ vòng chờ khép kín -> kẹt vĩnh viễn
-Thread 2: giữ B, chờ A ─┘
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Deadlock vòng chờ khép kín và cách phá vòng bằng thứ tự lock cố định</title>
+  <desc>Bên trái: Thread 1 giữ lock A chờ lock B, Thread 2 giữ lock B chờ lock A, tạo vòng tròn khép kín nên kẹt vĩnh viễn. Bên phải: cả hai thread luôn lấy lock theo cùng thứ tự A rồi B nên không tạo được vòng tròn, hết deadlock.</desc>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker>
+  </defs>
+  <text x="180" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Vòng chờ khép kín → DEADLOCK</text>
+  <text x="540" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Thứ tự lock cố định → an toàn</text>
+  <line x1="360" y1="44" x2="360" y2="300" stroke="currentColor" stroke-opacity="0.2"/>
+
+  <g font-size="12" text-anchor="middle">
+    <rect x="40" y="70" width="120" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="100" y="88" font-weight="700" fill="currentColor">Thread 1</text>
+    <text x="100" y="103" font-size="10.5" fill="currentColor" opacity="0.7">giữ A</text>
+    <rect x="200" y="70" width="120" height="40" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="260" y="88" font-weight="700" fill="currentColor">lock B</text>
+    <rect x="40" y="230" width="120" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="100" y="248" font-weight="700" fill="currentColor">lock A</text>
+    <rect x="200" y="230" width="120" height="40" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="260" y="248" font-weight="700" fill="currentColor">Thread 2</text>
+    <text x="260" y="263" font-size="10.5" fill="currentColor" opacity="0.7">giữ B</text>
+  </g>
+  <g stroke="currentColor" fill="none" marker-end="url(#ah)" stroke-width="1.6">
+    <path d="M160 86 H196"/>
+    <path d="M196 254 H164"/>
+  </g>
+  <g stroke="currentColor" fill="none" marker-end="url(#ah)" stroke-width="1.6" stroke-dasharray="5 4">
+    <path d="M260 110 V226"/>
+    <path d="M100 230 V114"/>
+  </g>
+  <text x="180" y="135" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">T1 chờ B</text>
+  <text x="178" y="207" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">T2 chờ A</text>
+
+  <g font-size="12" text-anchor="middle">
+    <rect x="420" y="64" width="120" height="36" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="480" y="86" font-weight="700" fill="currentColor">Thread 1</text>
+    <rect x="600" y="64" width="120" height="36" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="660" y="86" font-weight="700" fill="currentColor">Thread 2</text>
+    <rect x="440" y="150" width="100" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="490" y="172" font-weight="700" fill="currentColor">lock A</text>
+    <rect x="440" y="220" width="100" height="34" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="490" y="242" font-weight="700" fill="currentColor">lock B</text>
+  </g>
+  <g stroke="currentColor" fill="none" marker-end="url(#ah)" stroke-width="1.6">
+    <path d="M474 100 V146"/>
+    <path d="M648 100 C620 124 540 130 526 148"/>
+  </g>
+  <g stroke="currentColor" fill="none" marker-end="url(#ah)" stroke-width="1.6">
+    <path d="M490 184 V216"/>
+  </g>
+  <text x="660" y="200" font-size="11" text-anchor="middle" fill="currentColor">cả hai lấy</text>
+  <text x="660" y="216" font-size="11" text-anchor="middle" fill="currentColor" font-weight="700">A trước, B sau</text>
+  <text x="612" y="278" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">không có vòng tròn → không kẹt</text>
+</svg>
 
 Deadlock chỉ xảy ra khi **cả 4 điều kiện Coffman** đồng thời đúng. Phá vỡ **bất kỳ một** điều kiện là hết deadlock:
 
@@ -188,13 +289,45 @@ Có ba cách phổ biến để làm nhiều việc cùng lúc, mỗi cách hợ
 
 Node.js chạy code JS của bạn trên **một thread duy nhất** với một **event loop** — một vòng lặp liên tục hỏi: "có việc I/O nào xong chưa? Có thì chạy callback của nó." Khi bạn `await fetch(...)`, hàm **nhường quyền** lại cho event loop để nó đi làm việc khác trong lúc chờ mạng — chứ không block cả thread.
 
-```
-Event loop (1 thread):
-  -> chạy code đến chỗ await fetch  (đăng ký "khi xong gọi tôi")
-  -> đi làm task khác trong lúc chờ
-  -> mạng trả lời  -> đặt callback vào hàng đợi
-  -> event loop nhặt callback, chạy tiếp
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Event loop một thread với async/await</title>
+  <desc>Event loop chạy code đến chỗ await fetch thì đăng ký callback và đi làm task khác trong lúc chờ. Khi mạng trả lời, callback được đẩy vào hàng đợi callback. Event loop nhặt callback từ hàng đợi và chạy tiếp.</desc>
+  <defs>
+    <marker id="ev" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker>
+  </defs>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Event loop — 1 thread duy nhất</text>
+
+  <circle cx="180" cy="170" r="78" fill="#8b5cf6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="180" y="166" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">event loop</text>
+  <text x="180" y="184" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">vòng lặp mãi</text>
+
+  <g font-size="11.5" text-anchor="middle">
+    <rect x="340" y="60" width="200" height="48" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="440" y="80" font-weight="700" fill="currentColor">chạy code → gặp await fetch</text>
+    <text x="440" y="97" font-size="10" fill="currentColor" opacity="0.7">đăng ký "khi xong gọi tôi"</text>
+
+    <rect x="560" y="146" width="148" height="48" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="634" y="166" font-weight="700" fill="currentColor">mạng / I/O</text>
+    <text x="634" y="183" font-size="10" fill="currentColor" opacity="0.7">đang chờ trả lời</text>
+
+    <rect x="340" y="248" width="200" height="56" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="440" y="270" font-weight="700" fill="currentColor">hàng đợi callback</text>
+    <text x="440" y="288" font-size="10" fill="currentColor" opacity="0.7">mạng trả lời → đẩy callback vào</text>
+  </g>
+
+  <g stroke="currentColor" fill="none" marker-end="url(#ev)" stroke-width="1.6">
+    <path d="M256 130 C300 110 320 96 338 88"/>
+    <path d="M540 100 C580 116 600 130 612 144"/>
+    <path d="M560 188 C500 230 480 240 466 248"/>
+    <path d="M338 280 C300 270 280 230 250 200"/>
+  </g>
+  <text x="300" y="96" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">① chạy task</text>
+  <text x="595" y="120" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">② chờ</text>
+  <text x="565" y="232" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">③ xong</text>
+  <text x="262" y="246" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">④ nhặt callback, chạy tiếp</text>
+  <text x="180" y="270" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">trong lúc ② chờ:</text>
+  <text x="180" y="286" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">loop đi làm task khác</text>
+</svg>
 
 Vì chỉ một thread chạy code JS, bạn **không gặp race kiểu hai thread ghi chung biến**. Đổi lại: một vòng lặp tính toán nặng (CPU bound) sẽ **chặn cả event loop** → cả server đứng hình. Đó là lý do trong Node, việc nặng CPU phải đẩy sang worker/process khác.
 
@@ -261,16 +394,46 @@ new_config = {**config, "timeout": 30}
 
 Triết lý nổi tiếng của Go: *"Đừng giao tiếp bằng cách chia sẻ bộ nhớ; hãy chia sẻ bộ nhớ bằng cách giao tiếp."* Thay vì nhiều thread cùng đụng một biến (cần lock), mỗi worker giữ dữ liệu **riêng** của nó và **gửi message** cho nhau qua một hàng đợi (channel/queue). Chỉ một chủ sở hữu một dữ liệu tại một thời điểm → không race, không lock.
 
-```
-Chia sẻ bộ nhớ (cần lock, dễ race):
-  T1 ─┐
-  T2 ─┼─> [biến chung] <- ai cũng ghi -> phải khoá
-  T3 ─┘
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Shared memory so với Message passing</title>
+  <desc>Bên trái: ba thread cùng ghi vào một biến chung nên cần lock và dễ race. Bên phải: Producer gửi message qua queue tới Consumer, mỗi worker giữ dữ liệu riêng nên không race, không cần lock.</desc>
+  <defs>
+    <marker id="mp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker>
+  </defs>
+  <text x="180" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Shared memory</text>
+  <text x="180" y="42" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">cần lock, dễ race</text>
+  <text x="540" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Message passing</text>
+  <text x="540" y="42" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">mỗi worker giữ dữ liệu riêng</text>
+  <line x1="360" y1="56" x2="360" y2="285" stroke="currentColor" stroke-opacity="0.2"/>
 
-Message passing (mỗi worker riêng, gửi tin):
-  Producer ──msg──> [queue] ──msg──> Consumer
-                    (1 chủ sở hữu tại 1 thời điểm)
-```
+  <g font-size="12" text-anchor="middle" font-weight="700">
+    <rect x="30" y="80" width="86" height="34" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/><text x="73" y="102" fill="currentColor">T1</text>
+    <rect x="30" y="138" width="86" height="34" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/><text x="73" y="160" fill="currentColor">T2</text>
+    <rect x="30" y="196" width="86" height="34" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/><text x="73" y="218" fill="currentColor">T3</text>
+    <rect x="206" y="124" width="120" height="62" rx="9" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="266" y="150" fill="currentColor">biến chung</text>
+    <text x="266" y="170" font-size="9.5" font-weight="400" fill="currentColor" opacity="0.75">ai cũng ghi</text>
+  </g>
+  <g stroke="currentColor" fill="none" marker-end="url(#mp)" stroke-width="1.6">
+    <path d="M116 97 C160 110 175 130 204 145"/>
+    <path d="M116 155 H202"/>
+    <path d="M116 213 C160 200 175 180 204 165"/>
+  </g>
+  <text x="266" y="210" font-size="10.5" text-anchor="middle" fill="#f59e0b" font-weight="700">→ phải khoá (lock)</text>
+
+  <g font-size="12" text-anchor="middle" font-weight="700">
+    <rect x="402" y="128" width="104" height="44" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="454" y="155" fill="currentColor">Producer</text>
+    <rect x="542" y="128" width="70" height="44" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/><text x="577" y="155" fill="currentColor">queue</text>
+    <rect x="640" y="128" width="60" height="44" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="670" y="150" fill="currentColor" font-size="11">Consu</text><text x="670" y="164" fill="currentColor" font-size="11">mer</text>
+  </g>
+  <g stroke="currentColor" fill="none" marker-end="url(#mp)" stroke-width="1.6">
+    <path d="M506 150 H538"/>
+    <path d="M612 150 H636"/>
+  </g>
+  <text x="522" y="120" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">msg</text>
+  <text x="624" y="120" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">msg</text>
+  <text x="540" y="208" font-size="10.5" text-anchor="middle" fill="#10b981" font-weight="700">1 chủ sở hữu tại 1 thời điểm → không race</text>
+</svg>
 
 Mô hình này không chỉ tránh bug — nó còn **scale ra nhiều máy**: "message qua queue" trên một máy và "message qua queue qua mạng" giữa nhiều máy là **cùng một mô hình tư duy**.
 

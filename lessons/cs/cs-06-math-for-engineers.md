@@ -75,16 +75,38 @@ intersection (A ∩ B) = {2, 3}         phần chung
 difference (A − B)   = {1}            có trong A, không trong B
 ```
 
-Sơ đồ Venn dạng ASCII:
+Sơ đồ Venn hai tập A, B — ba vùng map thẳng sang SQL:
 
-```
-        A                 B
-   ┌─────────┐      ┌─────────┐
-   │   1     │ 2  3 │    4    │
-   │         │      │         │
-   └─────────┘      └─────────┘
-     A−B      A∩B       B−A
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Sơ đồ Venn hai tập A và B với ba vùng A−B, A∩B, B−A</title>
+  <desc>Hai vòng tròn A và B giao nhau. Vùng chỉ thuộc A (A−B) tô xanh ứng với EXCEPT, vùng giao A∩B tô lục ứng với INNER JOIN, vùng chỉ thuộc B (B−A) tô hổ phách; toàn bộ hai vòng là UNION.</desc>
+  <text x="360" y="28" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Venn hai tập → phép quan hệ SQL</text>
+  <defs>
+    <clipPath id="clipA"><circle cx="290" cy="155" r="115"/></clipPath>
+    <clipPath id="clipB"><circle cx="430" cy="155" r="115"/></clipPath>
+  </defs>
+  <circle cx="290" cy="155" r="115" fill="#3b82f6" fill-opacity="0.14"/>
+  <circle cx="430" cy="155" r="115" fill="#f59e0b" fill-opacity="0.14"/>
+  <g clip-path="url(#clipA)"><circle cx="430" cy="155" r="115" fill="#10b981" fill-opacity="0.30"/></g>
+  <circle cx="290" cy="155" r="115" fill="none" stroke="currentColor" stroke-opacity="0.5"/>
+  <circle cx="430" cy="155" r="115" fill="none" stroke="currentColor" stroke-opacity="0.5"/>
+  <text x="218" y="92" font-size="15" font-weight="700" fill="currentColor">A</text>
+  <text x="502" y="92" font-size="15" font-weight="700" fill="currentColor">B</text>
+  <text x="225" y="150" font-size="17" font-weight="700" text-anchor="middle" fill="currentColor">1</text>
+  <text x="360" y="150" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">2 · 3</text>
+  <text x="495" y="150" font-size="17" font-weight="700" text-anchor="middle" fill="currentColor">4</text>
+  <text x="225" y="175" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">A−B</text>
+  <text x="360" y="175" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">A∩B</text>
+  <text x="495" y="175" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">B−A</text>
+  <g font-size="11.5">
+    <rect x="40" y="288" width="14" height="14" rx="3" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="60" y="299" fill="currentColor">A−B = EXCEPT</text>
+    <rect x="250" y="288" width="14" height="14" rx="3" fill="#10b981" fill-opacity="0.30" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="270" y="299" fill="currentColor">A∩B = INNER JOIN</text>
+    <rect x="480" y="288" width="14" height="14" rx="3" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="500" y="299" fill="currentColor">cả hai vòng = UNION</text>
+  </g>
+</svg>
 
 **Liên hệ SQL** — đây chính xác là các phép JOIN/set operation:
 
@@ -138,10 +160,46 @@ index = hash(key) % bucket_count
 
 > ⚠️ Bẫy — modulo sharding & việc thêm node: Nếu bạn shard bằng `hash(key) % N` rồi tăng N từ 4 lên 5 node, thì **gần như mọi key đổi shard** (vì số dư đổi). Hậu quả: cache miss hàng loạt, phải di chuyển gần hết dữ liệu. Đây là lý do hệ thống thật dùng **consistent hashing** (thứ DynamoDB, Cassandra, nhiều CDN dùng) thay vì modulo thuần — thêm/bớt node chỉ ảnh hưởng một phần nhỏ key.
 
-```
-% N thường:          thêm 1 node → ~100% key phải di chuyển
-consistent hashing:  thêm 1 node → ~1/N key phải di chuyển
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>So sánh modulo sharding và consistent hashing khi thêm node</title>
+  <desc>Bên trái: shard bằng hash % N, thêm 1 node từ 4 lên 5 làm gần như 100% key đổi shard. Bên phải: consistent hashing trên vòng tròn, thêm node chỉ làm khoảng 1 trên N key phải di chuyển.</desc>
+  <text x="180" y="26" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Modulo % N — thêm node</text>
+  <text x="540" y="26" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Consistent hashing — thêm node</text>
+  <line x1="360" y1="44" x2="360" y2="320" stroke="currentColor" stroke-opacity="0.25"/>
+
+  <text x="40" y="62" font-size="11" fill="currentColor" opacity="0.7">Trước: hash(key) % 4</text>
+  <g font-size="11">
+    <rect x="40" y="72" width="28" height="22" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="54" y="87" text-anchor="middle" fill="currentColor">0</text>
+    <rect x="78" y="72" width="28" height="22" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="92" y="87" text-anchor="middle" fill="currentColor">1</text>
+    <rect x="116" y="72" width="28" height="22" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="130" y="87" text-anchor="middle" fill="currentColor">2</text>
+    <rect x="154" y="72" width="28" height="22" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="168" y="87" text-anchor="middle" fill="currentColor">3</text>
+  </g>
+  <text x="40" y="128" font-size="11" fill="currentColor" opacity="0.7">Sau: hash(key) % 5 → số dư đổi hết</text>
+  <g font-size="11">
+    <rect x="40" y="138" width="28" height="22" rx="4" fill="#ef4444" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="54" y="153" text-anchor="middle" fill="currentColor">0</text>
+    <rect x="78" y="138" width="28" height="22" rx="4" fill="#ef4444" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="92" y="153" text-anchor="middle" fill="currentColor">1</text>
+    <rect x="116" y="138" width="28" height="22" rx="4" fill="#ef4444" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="130" y="153" text-anchor="middle" fill="currentColor">2</text>
+    <rect x="154" y="138" width="28" height="22" rx="4" fill="#ef4444" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="168" y="153" text-anchor="middle" fill="currentColor">3</text>
+    <rect x="192" y="138" width="28" height="22" rx="4" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.4"/><text x="206" y="153" text-anchor="middle" fill="currentColor">4</text>
+  </g>
+  <text x="40" y="205" font-size="13" font-weight="700" fill="currentColor">~100% key phải di chuyển</text>
+  <text x="40" y="226" font-size="11" fill="currentColor" opacity="0.7">→ bão cache miss, dời gần hết dữ liệu</text>
+
+  <circle cx="540" cy="170" r="95" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-width="2"/>
+  <g>
+    <circle cx="540" cy="75" r="11" fill="#3b82f6" fill-opacity="0.85"/><text x="540" y="79" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">N1</text>
+    <circle cx="630" cy="200" r="11" fill="#3b82f6" fill-opacity="0.85"/><text x="630" y="204" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">N2</text>
+    <circle cx="450" cy="200" r="11" fill="#3b82f6" fill-opacity="0.85"/><text x="450" y="204" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">N3</text>
+    <circle cx="612" cy="100" r="11" fill="#10b981" fill-opacity="0.9"/><text x="612" y="104" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">N4</text>
+  </g>
+  <circle cx="500" cy="86" r="4" fill="currentColor"/>
+  <circle cx="588" cy="240" r="4" fill="currentColor"/>
+  <circle cx="465" cy="135" r="4" fill="currentColor"/>
+  <text x="612" y="135" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">N4 mới</text>
+  <path d="M583 118 a95 95 0 0 1 12 28" fill="none" stroke="#10b981" stroke-width="3" stroke-opacity="0.7"/>
+  <text x="540" y="305" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">chỉ ~1/N key đổi node</text>
+  <text x="540" y="324" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">→ DynamoDB, Cassandra, CDN dùng cách này</text>
+</svg>
 
 Một bẫy nhỏ về dấu: trong nhiều ngôn ngữ (Python an toàn, nhưng JS/Java/C++ thì không) `-7 % 3` có thể ra số **âm**. Nếu dùng kết quả làm chỉ số mảng → crash. Phòng thủ: `((a % n) + n) % n`.
 
@@ -149,12 +207,48 @@ Một bẫy nhỏ về dấu: trong nhiều ngôn ngữ (Python an toàn, nhưng
 
 Graph chỉ gồm **node** (đỉnh) và **edge** (cạnh nối hai node). Nghe trừu tượng nhưng bạn gặp graph mỗi ngày:
 
-```
-   [A]─────[B]          A: bạn của B và C
-    │  ╲     │          edge = quan hệ "bạn bè", "follow",
-    │   ╲    │               "import module", "gọi service"
-   [C]────[D]
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Graph node và edge — directed graph và DAG</title>
+  <desc>Bên trái là directed graph có chu trình: A theo B, B theo C, C theo A. Bên phải là DAG đồ thị phụ thuộc package không có chu trình. Edge biểu diễn quan hệ như follow, import module, gọi service.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="180" y="26" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Directed graph (có chu trình)</text>
+  <text x="540" y="26" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">DAG (không chu trình)</text>
+  <line x1="360" y1="44" x2="360" y2="300" stroke="currentColor" stroke-opacity="0.25"/>
+
+  <g stroke="currentColor" stroke-opacity="0.6" stroke-width="1.6" fill="none" marker-end="url(#arrow)">
+    <path d="M115 95 L245 95"/>
+    <path d="M255 120 L150 215"/>
+    <path d="M110 215 L100 120"/>
+  </g>
+  <g>
+    <circle cx="100" cy="95" r="22" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5"/><text x="100" y="100" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">A</text>
+    <circle cx="260" cy="95" r="22" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5"/><text x="260" y="100" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">B</text>
+    <circle cx="130" cy="225" r="22" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5"/><text x="130" y="230" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">C</text>
+  </g>
+  <text x="180" y="92" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">follow</text>
+  <text x="270" y="290" font-size="10.5" text-anchor="middle" fill="#ef4444">A→B→C→A: cycle!</text>
+
+  <g stroke="currentColor" stroke-opacity="0.6" stroke-width="1.6" fill="none" marker-end="url(#arrow)">
+    <path d="M540 117 L470 165"/>
+    <path d="M540 117 L610 165"/>
+    <path d="M468 192 L535 240"/>
+    <path d="M612 192 L545 240"/>
+  </g>
+  <g>
+    <circle cx="540" cy="95" r="22" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.5"/><text x="540" y="100" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">app</text>
+    <circle cx="455" cy="180" r="22" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.5"/><text x="455" y="185" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">libA</text>
+    <circle cx="625" cy="180" r="22" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.5"/><text x="625" y="185" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">libB</text>
+    <circle cx="540" cy="262" r="22" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.5"/><text x="540" y="267" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">util</text>
+  </g>
+  <text x="478" y="138" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">import</text>
+  <text x="540" y="305" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">topological sort chạy được</text>
+
+  <text x="360" y="318" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">edge = quan hệ: bạn bè · follow · import module · gọi service · foreign key</text>
+</svg>
 
 | Bài toán thực tế | Là graph gì |
 |---|---|
@@ -215,16 +309,53 @@ p99          = 800ms  → 99% nhanh hơn 800ms; 1% chậm hơn
 p99.9        = 3s     → đuôi xa
 ```
 
-```
-phân phối latency:
- số request
-   │█
-   │██
-   │███
-   │████▁▁▁____________________ ← đuôi dài: ít request nhưng RẤT chậm
-   └────────────────────────────► latency
-   p50          p99      p99.9
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Phân phối latency long-tail với p50, p99, p99.9</title>
+  <desc>Histogram lệch phải: đa số request rất nhanh tạo cột cao quanh p50 ở 20ms, đuôi dài bên phải gồm rất ít request nhưng cực chậm tại p99 800ms và p99.9 3 giây.</desc>
+  <text x="360" y="26" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Phân phối latency — đuôi dài (long tail)</text>
+  <text x="20" y="50" font-size="11" fill="currentColor" opacity="0.7">số request</text>
+  <line x1="70" y1="60" x2="70" y2="270" stroke="currentColor" stroke-opacity="0.4"/>
+  <line x1="70" y1="270" x2="700" y2="270" stroke="currentColor" stroke-opacity="0.4"/>
+  <text x="700" y="290" font-size="11" text-anchor="end" fill="currentColor" opacity="0.7">latency →</text>
+  <g fill="#3b82f6" fill-opacity="0.6" stroke="currentColor" stroke-opacity="0.25">
+    <rect x="78" y="200" width="22" height="70"/>
+    <rect x="102" y="120" width="22" height="150"/>
+    <rect x="126" y="80" width="22" height="190"/>
+    <rect x="150" y="100" width="22" height="170"/>
+    <rect x="174" y="150" width="22" height="120"/>
+    <rect x="198" y="195" width="22" height="75"/>
+    <rect x="222" y="225" width="22" height="45"/>
+    <rect x="246" y="240" width="22" height="30"/>
+    <rect x="270" y="248" width="22" height="22"/>
+    <rect x="294" y="253" width="22" height="17"/>
+    <rect x="318" y="257" width="22" height="13"/>
+    <rect x="342" y="259" width="22" height="11"/>
+    <rect x="366" y="261" width="22" height="9"/>
+    <rect x="390" y="262" width="22" height="8"/>
+    <rect x="438" y="263" width="22" height="7"/>
+    <rect x="486" y="264" width="22" height="6"/>
+    <rect x="540" y="265" width="22" height="5"/>
+    <rect x="600" y="265" width="22" height="5"/>
+    <rect x="660" y="266" width="22" height="4"/>
+  </g>
+  <text x="300" y="170" font-size="11.5" fill="currentColor" opacity="0.75">đuôi dài: ít request nhưng RẤT chậm</text>
+  <path d="M430 175 q120 5 240 85" fill="none" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="4 3"/>
+  <g stroke="currentColor" stroke-opacity="0.55" stroke-dasharray="3 3">
+    <line x1="137" y1="60" x2="137" y2="270"/>
+    <line x1="449" y1="90" x2="449" y2="270"/>
+    <line x1="671" y1="120" x2="671" y2="270"/>
+  </g>
+  <g font-size="11.5" font-weight="700" text-anchor="middle">
+    <text x="137" y="300" fill="#10b981">p50</text>
+    <text x="449" y="300" fill="#f59e0b">p99</text>
+    <text x="671" y="300" fill="#ef4444">p99.9</text>
+  </g>
+  <g font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">
+    <text x="137" y="316">20ms</text>
+    <text x="449" y="316">800ms</text>
+    <text x="671" y="316">3s</text>
+  </g>
+</svg>
 
 Tại sao p99 là con số quan trọng nhất:
 
@@ -259,17 +390,25 @@ Bảng so sánh số bước khi `n` tăng:
 | 1.000 | ~10 | 1.000 | ~10.000 | 1 triệu |
 | 1.000.000 | ~20 | 1 triệu | ~20 triệu | 10^12 (treo máy) |
 
-Đường tăng trưởng dạng ASCII:
+Đường tăng trưởng — cùng một trục, khác nhau một trời một vực:
 
-```
-số bước
-  │                                   ╱ O(n²)
-  │                              ╱
-  │                        ╱       ╱ O(n)
-  │                  ╱  ╱╱
-  │            ╱ ╱╱╱──────────────── O(log n) gần như phẳng
-  └────────────────────────────────► n
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>So sánh đường tăng trưởng O(log n), O(n), O(n log n), O(n²)</title>
+  <desc>Bốn đường cùng một trục số bước theo n. O(log n) gần như phẳng, O(n) tuyến tính, O(n log n) cong nhẹ trên tuyến tính, O(n bình phương) bùng nổ dốc đứng lên trên.</desc>
+  <text x="360" y="26" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Tốc độ tăng theo n</text>
+  <text x="20" y="48" font-size="11" fill="currentColor" opacity="0.7">số bước</text>
+  <line x1="70" y1="56" x2="70" y2="300" stroke="currentColor" stroke-opacity="0.4"/>
+  <line x1="70" y1="300" x2="690" y2="300" stroke="currentColor" stroke-opacity="0.4"/>
+  <text x="690" y="320" font-size="11" text-anchor="end" fill="currentColor" opacity="0.7">n →</text>
+  <path d="M70 300 Q160 70 280 60" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+  <text x="288" y="66" font-size="12" font-weight="700" fill="#ef4444">O(n²)</text>
+  <path d="M70 300 Q330 150 560 70" fill="none" stroke="#8b5cf6" stroke-width="2.5"/>
+  <text x="566" y="74" font-size="12" font-weight="700" fill="#8b5cf6">O(n log n)</text>
+  <path d="M70 300 L640 150" fill="none" stroke="#3b82f6" stroke-width="2.5"/>
+  <text x="646" y="150" font-size="12" font-weight="700" fill="#3b82f6">O(n)</text>
+  <path d="M70 300 Q150 270 250 268 T640 262" fill="none" stroke="#10b981" stroke-width="2.5"/>
+  <text x="500" y="282" font-size="12" font-weight="700" fill="#10b981">O(log n) gần như phẳng</text>
+</svg>
 
 **Liên hệ thực tế** — đây chính là lý do **database index** đáng giá:
 

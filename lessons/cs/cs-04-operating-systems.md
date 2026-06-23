@@ -21,14 +21,35 @@ Bốn nhiệm vụ cốt lõi:
 
 Đây là ranh giới quan trọng nhất. CPU chạy ở hai "chế độ đặc quyền" khác nhau:
 
-```
-   USER SPACE (đặc quyền thấp)          KERNEL SPACE (đặc quyền tối cao)
- ┌─────────────────────────────┐      ┌──────────────────────────────────┐
- │  App của bạn (Node, JVM…)    │      │  Kernel: scheduler, driver,       │
- │  thư viện, runtime           │ ───► │  quản lý memory, file system      │
- │  KHÔNG được đụng phần cứng    │ gọi  │  ĐƯỢC đụng trực tiếp phần cứng     │
- └─────────────────────────────┘syscall└──────────────────────────────────┘
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>User space vs kernel space và cánh cửa syscall</title>
+  <desc>App chạy ở user space đặc quyền thấp, không đụng được phần cứng; muốn ra ngoài phải đi qua một mũi tên syscall duy nhất xuống kernel space đặc quyền cao rồi trả kết quả về.</desc>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Kernel space vs user space</text>
+
+  <rect x="16" y="44" width="688" height="92" rx="10" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="32" y="66" font-size="12.5" font-weight="700" fill="currentColor">USER SPACE — đặc quyền thấp</text>
+  <text x="32" y="88" font-size="12" fill="currentColor" opacity="0.85">App của bạn (Node, JVM…), thư viện, runtime</text>
+  <rect x="32" y="100" width="320" height="26" rx="7" fill="#ef4444" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/>
+  <text x="44" y="117" font-size="11" fill="currentColor" opacity="0.9">KHÔNG được đụng trực tiếp phần cứng</text>
+
+  <rect x="16" y="216" width="688" height="92" rx="10" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="32" y="238" font-size="12.5" font-weight="700" fill="currentColor">KERNEL SPACE — đặc quyền tối cao</text>
+  <text x="32" y="260" font-size="12" fill="currentColor" opacity="0.85">Kernel: scheduler, driver, quản lý memory, file system</text>
+  <rect x="32" y="272" width="300" height="26" rx="7" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.18"/>
+  <text x="44" y="289" font-size="11" fill="currentColor" opacity="0.9">ĐƯỢC đụng trực tiếp CPU · RAM · đĩa · mạng</text>
+
+  <g stroke="currentColor" stroke-opacity="0.7" fill="none">
+    <path d="M520 136 v74" marker-end="url(#osArrowDn)"/>
+    <path d="M600 210 v-74" marker-end="url(#osArrowUp)"/>
+  </g>
+  <defs>
+    <marker id="osArrowDn" markerWidth="9" markerHeight="9" refX="4.5" refY="7" orient="auto"><path d="M0 0 L4.5 7 L9 0" fill="currentColor"/></marker>
+    <marker id="osArrowUp" markerWidth="9" markerHeight="9" refX="4.5" refY="2" orient="auto"><path d="M0 9 L4.5 2 L9 9" fill="currentColor"/></marker>
+  </defs>
+  <rect x="408" y="162" width="120" height="24" rx="12" fill="#3b82f6" fill-opacity="0.9"/>
+  <text x="468" y="178" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">syscall (gọi)</text>
+  <text x="600" y="178" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">trả kết quả</text>
+</svg>
 
 Code của bạn chạy ở **user space** — bị cấm truy cập trực tiếp ổ đĩa, card mạng, hay RAM của process khác. Muốn làm những việc đó, nó phải **xin phép kernel** qua một cơ chế gọi là **syscall (system call)**.
 
@@ -51,14 +72,50 @@ Mỗi lần chuyển user → kernel → user là một lần **mode switch**, t
 
 **Process** = một bản chạy của chương trình, có **không gian địa chỉ (address space) riêng biệt** do OS cấp. Hai process khác nhau giống hai căn hộ có khoá riêng: process A không thể đọc/ghi RAM của process B (trừ khi cố tình chia sẻ qua cơ chế đặc biệt).
 
-```
-        Process A                         Process B
- ┌──────────────────────┐         ┌──────────────────────┐
- │ Code | Data | Heap   │         │ Code | Data | Heap   │
- │ Stack | file descr.  │   ⛔     │ Stack | file descr.  │
- └──────────────────────┘  cách ly └──────────────────────┘
-   địa chỉ 0x...riêng              địa chỉ 0x...riêng
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Process cách ly vs Thread chia sẻ bộ nhớ</title>
+  <desc>Bên trái: hai process có address space riêng, có tường cách ly không đụng vào nhau. Bên phải: một process với heap và globals chia sẻ giữa các thread, mỗi thread chỉ có stack riêng.</desc>
+  <text x="16" y="26" font-size="14" font-weight="700" fill="currentColor">Process: cách ly</text>
+  <text x="392" y="26" font-size="14" font-weight="700" fill="currentColor">Thread: chia sẻ trong 1 process</text>
+
+  <rect x="16" y="40" width="150" height="160" rx="10" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="91" y="62" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Process A</text>
+  <text x="91" y="86" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Code · Data · Heap</text>
+  <text x="91" y="106" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Stack · file descr.</text>
+  <text x="91" y="180" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">address space riêng</text>
+
+  <rect x="218" y="40" width="150" height="160" rx="10" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="293" y="62" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Process B</text>
+  <text x="293" y="86" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Code · Data · Heap</text>
+  <text x="293" y="106" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Stack · file descr.</text>
+  <text x="293" y="180" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">address space riêng</text>
+
+  <g>
+    <line x1="192" y1="40" x2="192" y2="200" stroke="#ef4444" stroke-opacity="0.6" stroke-width="3" stroke-dasharray="6 5"/>
+    <text x="192" y="222" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.8">⛔ tường cách ly</text>
+  </g>
+
+  <rect x="392" y="40" width="312" height="160" rx="10" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <rect x="404" y="52" width="288" height="30" rx="7" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.18"/>
+  <text x="548" y="72" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Heap + Globals (CHIA SẺ)</text>
+  <g>
+    <rect x="404" y="96" width="88" height="78" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="448" y="118" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Thread 1</text>
+    <text x="448" y="138" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">stack</text>
+    <text x="448" y="151" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">riêng</text>
+
+    <rect x="504" y="96" width="88" height="78" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="548" y="118" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Thread 2</text>
+    <text x="548" y="138" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">stack</text>
+    <text x="548" y="151" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">riêng</text>
+
+    <rect x="604" y="96" width="88" height="78" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="648" y="118" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Thread 3</text>
+    <text x="648" y="138" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">stack</text>
+    <text x="648" y="151" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">riêng</text>
+  </g>
+  <text x="548" y="192" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">1 address space — chung heap, chỉ stack riêng</text>
+</svg>
 
 Mỗi process sở hữu:
 
@@ -70,18 +127,7 @@ Cách ly này là tính năng an toàn tuyệt vời: nếu process A bị crash
 
 ## Thread: nhiều luồng chia sẻ chung bộ nhớ
 
-**Thread** = một luồng thực thi *bên trong* một process. Nhiều thread của cùng process **chia sẻ chung address space, heap, và file descriptor** — chỉ mỗi thread có **stack riêng**.
-
-```
-            PROCESS (1 address space)
- ┌────────────────────────────────────────────┐
- │  Heap (CHIA SẺ)  |  Globals (CHIA SẺ)        │
- │ ┌─────────┐ ┌─────────┐ ┌─────────┐         │
- │ │Thread 1 │ │Thread 2 │ │Thread 3 │         │
- │ │ stack   │ │ stack   │ │ stack   │ ← riêng │
- │ └─────────┘ └─────────┘ └─────────┘         │
- └────────────────────────────────────────────┘
-```
+**Thread** = một luồng thực thi *bên trong* một process. Nhiều thread của cùng process **chia sẻ chung address space, heap, và file descriptor** — chỉ mỗi thread có **stack riêng** (xem minh hoạ cạnh mục Process ở trên).
 
 | | Process | Thread |
 |---|---|---|
@@ -115,11 +161,37 @@ Context switch **không miễn phí**:
 
 Process/thread không phải lúc nào cũng "chạy". Trạng thái điển hình:
 
-```
-  RUNNING ──(hết time slice)──► READY ──(scheduler chọn)──► RUNNING
-     │                                                        ▲
-     └──(chờ I/O: đọc đĩa/mạng)──► BLOCKED ──(I/O xong)───────┘
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Máy trạng thái của thread: RUNNING, READY, BLOCKED</title>
+  <desc>RUNNING và READY chuyển qua lại theo scheduler chọn hoặc hết time slice; RUNNING chờ I/O thì sang BLOCKED, khi I/O xong quay lại READY.</desc>
+  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Vòng trạng thái của thread</text>
+  <defs>
+    <marker id="stArrow" markerWidth="10" markerHeight="10" refX="8" refY="3.2" orient="auto"><path d="M0 0 L8 3.2 L0 6.4 Z" fill="currentColor"/></marker>
+  </defs>
+
+  <rect x="280" y="56" width="160" height="56" rx="12" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="360" y="90" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">RUNNING</text>
+
+  <rect x="40" y="56" width="160" height="56" rx="12" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="120" y="90" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">READY</text>
+
+  <rect x="520" y="56" width="160" height="56" rx="12" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="600" y="90" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">BLOCKED</text>
+
+  <g stroke="currentColor" stroke-opacity="0.65" fill="none" stroke-width="1.5">
+    <path d="M200 74 H274" marker-end="url(#stArrow)"/>
+    <path d="M280 96 H206" marker-end="url(#stArrow)"/>
+    <path d="M440 80 H514" marker-end="url(#stArrow)"/>
+  </g>
+  <text x="237" y="64" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">scheduler chọn</text>
+  <text x="243" y="118" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">hết time slice</text>
+  <text x="477" y="70" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">chờ I/O (đĩa/mạng)</text>
+
+  <g stroke="currentColor" stroke-opacity="0.65" fill="none" stroke-width="1.5">
+    <path d="M600 112 V180 H120 V112" marker-end="url(#stArrow)"/>
+  </g>
+  <text x="360" y="200" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">I/O xong → quay lại READY</text>
+</svg>
 
 Khi một thread gọi `read()` từ mạng, nó chuyển sang **BLOCKED**, nhường CPU cho thread khác. Đây là điều khiến concurrency có ý nghĩa: trong lúc A chờ I/O, B làm việc — CPU không ngồi không.
 
@@ -129,15 +201,62 @@ Khi một thread gọi `read()` từ mạng, nó chuyển sang **BLOCKED**, như
 
 Cơ chế: OS + phần cứng (MMU) dịch **địa chỉ ảo (virtual address)** mà code dùng → **địa chỉ vật lý (physical address)** thật trong RAM. Việc dịch làm theo từng khối nhỏ gọi là **page** (thường 4 KB).
 
-```
-  Process A virtual         Page Table          RAM vật lý
-  [page 0] ───────────────────────────────────► frame 7
-  [page 1] ───────────────────────────────────► frame 2
-  [page 2] ──────────► (chưa nạp) ──► trên ổ SWAP
-  ...
-  Process B virtual
-  [page 0] ───────────────────────────────────► frame 9
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Virtual memory và paging: page table dịch virtual page sang physical frame</title>
+  <desc>Page table dịch virtual page của hai process sang physical frame trong RAM; một số page nằm trên swap; hai process cùng map vào RAM mà không đụng nhau.</desc>
+  <text x="16" y="22" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor" transform="translate(80,0)">Virtual (process)</text>
+  <text x="360" y="22" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Page table</text>
+  <text x="630" y="22" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">RAM vật lý</text>
+  <defs>
+    <marker id="pgArrow" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0 0 L7.5 3 L0 6 Z" fill="currentColor"/></marker>
+  </defs>
+
+  <!-- Process A -->
+  <rect x="16" y="40" width="150" height="120" rx="10" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="91" y="60" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Process A</text>
+  <text x="32" y="84" font-size="11" fill="currentColor" opacity="0.9">page 0</text>
+  <text x="32" y="110" font-size="11" fill="currentColor" opacity="0.9">page 1</text>
+  <text x="32" y="136" font-size="11" fill="currentColor" opacity="0.9">page 2</text>
+
+  <!-- Process B -->
+  <rect x="16" y="220" width="150" height="90" rx="10" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="91" y="240" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Process B</text>
+  <text x="32" y="266" font-size="11" fill="currentColor" opacity="0.9">page 0</text>
+
+  <!-- Page table -->
+  <rect x="296" y="40" width="128" height="270" rx="10" fill="#8b5cf6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="62" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">dịch địa chỉ (MMU)</text>
+
+  <!-- RAM -->
+  <rect x="560" y="40" width="144" height="200" rx="10" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <rect x="572" y="56" width="120" height="26" rx="6" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.18"/>
+  <text x="632" y="73" font-size="11" text-anchor="middle" fill="currentColor">frame 2</text>
+  <rect x="572" y="92" width="120" height="26" rx="6" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.18"/>
+  <text x="632" y="109" font-size="11" text-anchor="middle" fill="currentColor">frame 7</text>
+  <rect x="572" y="170" width="120" height="26" rx="6" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.18"/>
+  <text x="632" y="187" font-size="11" text-anchor="middle" fill="currentColor">frame 9</text>
+
+  <!-- Swap -->
+  <rect x="560" y="276" width="144" height="48" rx="10" fill="#ef4444" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="632" y="296" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">ổ SWAP (đĩa)</text>
+  <text x="632" y="313" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">page chưa nạp</text>
+
+  <!-- arrows virtual -> page table -->
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none">
+    <path d="M166 80 H290" marker-end="url(#pgArrow)"/>
+    <path d="M166 106 H290" marker-end="url(#pgArrow)"/>
+    <path d="M166 132 H290" marker-end="url(#pgArrow)"/>
+    <path d="M166 262 H290" marker-end="url(#pgArrow)"/>
+  </g>
+  <!-- arrows page table -> RAM / swap -->
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none">
+    <path d="M424 80 C500 80 500 69 554 69" marker-end="url(#pgArrow)"/>
+    <path d="M424 106 C500 106 500 105 554 105" marker-end="url(#pgArrow)"/>
+    <path d="M424 132 C500 132 500 300 554 300" marker-end="url(#pgArrow)"/>
+    <path d="M424 262 C500 262 500 183 554 183" marker-end="url(#pgArrow)"/>
+  </g>
+  <text x="360" y="346" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">A và B map vào RAM chung mà không đụng nhau (cách ly)</text>
+</svg>
 
 Lợi ích:
 
