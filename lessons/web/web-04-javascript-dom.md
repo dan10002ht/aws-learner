@@ -45,16 +45,60 @@ Ví dụ đoạn HTML sau:
 
 Sẽ tạo ra cây DOM như sau:
 
-```
-body
-├── h1
-│   └── "Tiêu đề"
-└── p
-    ├── "Một "
-    ├── strong
-    │   └── "đoạn"
-    └── " văn."
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Cây DOM dựng từ đoạn HTML body, h1 và p</title>
+  <desc>Cấu trúc cây cha-con: node gốc body có hai con là h1 và p; h1 chứa text node "Tiêu đề"; p chứa text node "Một ", phần tử strong (chứa text "đoạn") và text node " văn.". HTML là bản vẽ, DOM là bản dựng sống trong bộ nhớ.</desc>
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none">
+    <path d="M360 64 V96 H180 V120"/>
+    <path d="M360 64 V96 H540 V120"/>
+    <path d="M180 158 V190 H120 V214"/>
+    <path d="M540 158 V184 H300 V214"/>
+    <path d="M540 158 V184 H540 V214"/>
+    <path d="M540 158 V184 H660 V214"/>
+    <path d="M540 252 V284 H540 V308"/>
+  </g>
+  <g>
+    <rect x="312" y="30" width="96" height="34" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="360" y="52" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">body</text>
+  </g>
+  <g>
+    <rect x="136" y="120" width="88" height="38" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="180" y="138" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">h1</text>
+    <text x="180" y="152" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">phần tử</text>
+  </g>
+  <g>
+    <rect x="496" y="120" width="88" height="38" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="540" y="138" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">p</text>
+    <text x="540" y="152" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">phần tử</text>
+  </g>
+  <g>
+    <rect x="64" y="214" width="112" height="36" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 3"/>
+    <text x="120" y="231" font-size="11.5" text-anchor="middle" fill="currentColor">"Tiêu đề"</text>
+    <text x="120" y="245" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.6">text node</text>
+  </g>
+  <g>
+    <rect x="246" y="214" width="108" height="36" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 3"/>
+    <text x="300" y="231" font-size="11.5" text-anchor="middle" fill="currentColor">"Một "</text>
+    <text x="300" y="245" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.6">text node</text>
+  </g>
+  <g>
+    <rect x="486" y="214" width="108" height="38" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="540" y="232" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">strong</text>
+    <text x="540" y="246" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">phần tử</text>
+  </g>
+  <g>
+    <rect x="606" y="214" width="108" height="36" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 3"/>
+    <text x="660" y="231" font-size="11.5" text-anchor="middle" fill="currentColor">" văn."</text>
+    <text x="660" y="245" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.6">text node</text>
+  </g>
+  <g>
+    <rect x="484" y="308" width="112" height="36" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 3"/>
+    <text x="540" y="325" font-size="11.5" text-anchor="middle" fill="currentColor">"đoạn"</text>
+    <text x="540" y="339" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.6">text node</text>
+  </g>
+</svg>
+
+> 💡 Mỗi thẻ HTML thành một **node phần tử** (viền liền), còn chữ bên trong thành **text node** (viền nét đứt). HTML là **bản vẽ**, DOM là **bản dựng sống** trong bộ nhớ.
 
 JavaScript truy cập cây này qua một đối tượng toàn cục tên là `document`. Từ `document`, bạn có thể tìm bất kỳ phần tử nào, đọc nó, sửa nó, hay tạo node mới.
 
@@ -207,6 +251,54 @@ li.textContent = "Mục mới";
 const danhSach = document.querySelector("#ds");
 danhSach.appendChild(li);
 ```
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Vòng đời tạo và gắn phần tử: create, set content, append</title>
+  <desc>Ba bước: createElement tạo node li rời nằm ngoài DOM (chưa hiện), set textContent đặt nội dung, appendChild gắn node vào phần tử cha trong cây DOM và lúc đó node mới hiện trên trang.</desc>
+  <defs>
+    <marker id="domArrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g font-size="11.5" fill="currentColor">
+    <text x="80" y="26" font-size="12.5" font-weight="700" text-anchor="middle">1. createElement</text>
+    <text x="300" y="26" font-size="12.5" font-weight="700" text-anchor="middle">2. set textContent</text>
+    <text x="560" y="26" font-size="12.5" font-weight="700" text-anchor="middle">3. appendChild</text>
+  </g>
+  <rect x="14" y="46" width="206" height="234" rx="10" fill="#f59e0b" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="5 4"/>
+  <text x="117" y="270" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">node RỜI — ngoài DOM, chưa hiện</text>
+  <g>
+    <rect x="40" y="74" width="74" height="40" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="77" y="92" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">li</text>
+    <text x="77" y="107" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.6">rỗng</text>
+  </g>
+  <line x1="120" y1="94" x2="172" y2="94" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#domArrow)"/>
+  <g>
+    <rect x="178" y="74" width="120" height="40" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="238" y="92" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">li</text>
+    <text x="238" y="107" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">"Mục mới"</text>
+  </g>
+  <line x1="232" y1="160" x2="232" y2="74" stroke="currentColor" stroke-opacity="0" />
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none">
+    <path d="M306 94 H420" marker-end="url(#domArrow)"/>
+  </g>
+  <text x="363" y="86" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">gắn vào cha</text>
+  <rect x="432" y="46" width="274" height="234" rx="10" fill="#10b981" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.22"/>
+  <text x="569" y="64" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">Cây DOM — đang trên trang</text>
+  <g>
+    <rect x="500" y="80" width="138" height="34" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="569" y="102" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">ul #ds (cha)</text>
+  </g>
+  <line x1="569" y1="114" x2="569" y2="146" stroke="currentColor" stroke-opacity="0.4"/>
+  <g>
+    <rect x="500" y="146" width="138" height="40" rx="8" fill="#8b5cf6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/>
+    <text x="569" y="164" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">li</text>
+    <text x="569" y="179" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">"Mục mới" ✓ hiện</text>
+  </g>
+  <text x="569" y="218" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">được gắn vào cây → hiện trên trang</text>
+</svg>
+
+> 💡 Vòng đời gọn trong ba bước **create → set content → append**. Trước bước `appendChild`, node chỉ là một mảnh rời trong bộ nhớ — chỉ khi gắn vào cây DOM nó mới hiện ra.
 
 Để **xoá** một phần tử:
 

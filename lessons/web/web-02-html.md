@@ -59,6 +59,63 @@ Mọi trang web đều có bộ khung chuẩn giống nhau. Đây là "bộ xư�
 </html>
 ```
 
+Cấu trúc này là một **cây lồng nhau**: `<html>` là gốc, bọc hai nhánh `<head>` (ẩn) và `<body>` (thấy được); mỗi nhánh lại bọc các thẻ con bên trong nó.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Cây cấu trúc tài liệu HTML</title>
+  <desc>Thẻ html là gốc, bọc hai nhánh con: head chứa meta và title (phần ẩn), và body chứa h1 và p (phần người dùng thấy được).</desc>
+  <g stroke="currentColor" stroke-opacity="0.4" fill="none" stroke-width="1.5">
+    <path d="M360 70 V100 H190 V120"/>
+    <path d="M360 70 V100 H530 V120"/>
+    <path d="M190 170 V196 H72 V216"/>
+    <path d="M190 170 V196 H190 V216"/>
+    <path d="M190 170 V196 H290 V216"/>
+    <path d="M530 170 V196 H458 V216"/>
+    <path d="M530 170 V196 H600 V216"/>
+  </g>
+  <g>
+    <rect x="288" y="34" width="144" height="36" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="360" y="52" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">&lt;html&gt;</text>
+    <text x="360" y="66" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">thẻ gốc — bọc cả trang</text>
+  </g>
+  <g>
+    <rect x="118" y="120" width="144" height="50" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="190" y="140" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">&lt;head&gt;</text>
+    <text x="190" y="156" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">thông tin về trang</text>
+    <text x="190" y="166" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">(người dùng KHÔNG thấy)</text>
+  </g>
+  <g>
+    <rect x="458" y="120" width="144" height="50" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="530" y="140" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">&lt;body&gt;</text>
+    <text x="530" y="156" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">nội dung trang</text>
+    <text x="530" y="166" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">(người dùng THẤY)</text>
+  </g>
+  <g>
+    <rect x="20" y="216" width="104" height="34" rx="7" fill="#8b5cf6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.28"/>
+    <text x="72" y="231" font-size="9.5" font-weight="600" text-anchor="middle" fill="currentColor">meta charset</text>
+    <text x="72" y="244" font-size="8.5" text-anchor="middle" fill="currentColor" opacity="0.6">bảng mã ký tự</text>
+    <rect x="132" y="216" width="116" height="34" rx="7" fill="#8b5cf6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.28"/>
+    <text x="190" y="231" font-size="9.5" font-weight="600" text-anchor="middle" fill="currentColor">meta viewport</text>
+    <text x="190" y="244" font-size="8.5" text-anchor="middle" fill="currentColor" opacity="0.6">hợp điện thoại</text>
+    <rect x="256" y="216" width="68" height="34" rx="7" fill="#8b5cf6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.28"/>
+    <text x="290" y="231" font-size="9.5" font-weight="600" text-anchor="middle" fill="currentColor">&lt;title&gt;</text>
+    <text x="290" y="244" font-size="8.5" text-anchor="middle" fill="currentColor" opacity="0.6">tên tab</text>
+  </g>
+  <g>
+    <rect x="416" y="216" width="84" height="34" rx="7" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.28"/>
+    <text x="458" y="232" font-size="11.5" font-weight="600" text-anchor="middle" fill="currentColor">&lt;h1&gt;</text>
+    <text x="458" y="245" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.6">tiêu đề lớn</text>
+    <rect x="558" y="216" width="84" height="34" rx="7" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.28"/>
+    <text x="600" y="232" font-size="11.5" font-weight="600" text-anchor="middle" fill="currentColor">&lt;p&gt;</text>
+    <text x="600" y="245" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.6">đoạn văn</text>
+  </g>
+  <g font-size="10.5" fill="currentColor" opacity="0.7">
+    <text x="44" y="300" font-weight="700" opacity="1">Đọc cây:</text>
+    <text x="44" y="318">thẻ cha bọc thẻ con (mũi tên đi xuống) — y như bộ xương lồng vào nhau.</text>
+    <text x="44" y="336">Nhánh &lt;head&gt; là phần ẩn; nhánh &lt;body&gt; là tất cả những gì hiện trên màn hình.</text>
+  </g>
+</svg>
+
 Giải thích từng phần:
 
 | Phần | Vai trò | Analogy |
@@ -158,6 +215,42 @@ Các thẻ semantic giúp "dán biển tên" cho từng khu vực:
 | `<footer>` | Phần chân trang | Bản quyền, liên hệ |
 | `<article>` | Một bài viết độc lập | Một bài blog |
 | `<section>` | Một mục/phần của trang | Khu "Về chúng tôi" |
+
+Đặt các thẻ này lên trang, ta được một **bố cục** quen thuộc: `<header>` trên cùng, `<nav>` ngay dưới, `<main>` (chứa `<article>`/`<section>`) ở giữa, và `<footer>` dưới đáy — mỗi vùng như một căn phòng có biển tên:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 440" role="img" style="width:100%;max-width:640px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Bố cục các vùng semantic trên một trang web</title>
+  <desc>Wireframe trang: header trên cùng, nav phía dưới, main ở giữa chứa article và section, footer dưới cùng — mỗi vùng được gán nhãn tên thẻ semantic.</desc>
+  <rect x="40" y="20" width="640" height="400" rx="12" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.5"/>
+  <g>
+    <rect x="56" y="36" width="608" height="56" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="72" y="60" font-size="13.5" font-weight="700" fill="currentColor">&lt;header&gt;</text>
+    <text x="72" y="78" font-size="10.5" fill="currentColor" opacity="0.65">Phần đầu trang — logo, tên trang</text>
+  </g>
+  <g>
+    <rect x="56" y="100" width="608" height="44" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="72" y="120" font-size="13.5" font-weight="700" fill="currentColor">&lt;nav&gt;</text>
+    <text x="72" y="136" font-size="10.5" fill="currentColor" opacity="0.65">Khu điều hướng — thanh menu các link</text>
+  </g>
+  <g>
+    <rect x="56" y="152" width="608" height="196" rx="8" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="72" y="174" font-size="13.5" font-weight="700" fill="currentColor">&lt;main&gt;</text>
+    <text x="150" y="174" font-size="10.5" fill="currentColor" opacity="0.65">Nội dung chính của trang</text>
+    <rect x="76" y="188" width="568" height="86" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="92" y="208" font-size="12.5" font-weight="700" fill="currentColor">&lt;article&gt;</text>
+    <text x="92" y="225" font-size="10" fill="currentColor" opacity="0.65">Một bài viết độc lập (vd: một bài blog)</text>
+    <line x1="92" y1="240" x2="628" y2="240" stroke="currentColor" stroke-opacity="0.2"/>
+    <line x1="92" y1="254" x2="560" y2="254" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="76" y="284" width="568" height="50" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="92" y="304" font-size="12.5" font-weight="700" fill="currentColor">&lt;section&gt;</text>
+    <text x="92" y="321" font-size="10" fill="currentColor" opacity="0.65">Một mục/phần của trang (vd: khu "Về chúng tôi")</text>
+  </g>
+  <g>
+    <rect x="56" y="356" width="608" height="48" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="72" y="378" font-size="13.5" font-weight="700" fill="currentColor">&lt;footer&gt;</text>
+    <text x="72" y="395" font-size="10.5" fill="currentColor" opacity="0.65">Phần chân trang — bản quyền, liên hệ</text>
+  </g>
+</svg>
 
 ```html
 <header>

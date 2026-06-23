@@ -110,6 +110,20 @@ ID phải **duy nhất** trong trang - mỗi `id` chỉ được gắn cho đún
 
 Đây là khái niệm quan trọng nhất để hiểu bố cục. Trong CSS, **mỗi phần tử HTML đều là một cái hộp chữ nhật**. Mỗi hộp có 4 lớp, từ trong ra ngoài:
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 340" role="img" style="width:100%;max-width:560px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Box Model: bốn lớp lồng nhau content, padding, border, margin</title>
+  <desc>Mỗi phần tử HTML là một hộp gồm bốn lớp lồng từ trong ra ngoài: content (nội dung) ở giữa, bao quanh là padding (lề trong), rồi border (viền), ngoài cùng là margin (lề ngoài). Ví như bức tranh treo tường: tranh là content, passe-partout là padding, khung gỗ là border, khoảng cách tới tranh kế bên là margin.</desc>
+  <rect x="14" y="14" width="532" height="312" rx="6" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 4"/>
+  <text x="24" y="32" font-size="12" font-weight="700" fill="currentColor">margin — lề ngoài (khoảng tới khung tranh kế bên)</text>
+  <rect x="80" y="48" width="400" height="244" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5" stroke-width="3"/>
+  <text x="92" y="66" font-size="12" font-weight="700" fill="currentColor">border — viền (cái khung gỗ)</text>
+  <rect x="120" y="82" width="320" height="176" rx="4" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+  <text x="132" y="100" font-size="12" font-weight="700" fill="currentColor">padding — lề trong (passe-partout)</text>
+  <rect x="170" y="120" width="220" height="118" rx="4" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+  <text x="280" y="175" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">content</text>
+  <text x="280" y="196" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">nội dung (bức tranh)</text>
+</svg>
+
 ```
 ┌─────────────────────────────┐  ← margin (lề ngoài)
 │  ┌───────────────────────┐  │  ← border (viền)
@@ -230,6 +244,28 @@ Hai "công tắc" quan trọng nhất của Flexbox:
 
 > 💡 Ghi nhớ: Cách nhớ nhanh: muốn xếp đồ thành **một hàng và căn chỉnh chúng**, dùng Flexbox. `justify-content` lo bên trái-phải, `align-items` lo trên-dưới. Cần đổi sang hàng dọc thì thêm `flex-direction: column;`.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" role="img" style="width:100%;max-width:640px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Hai trục của Flexbox: main axis (justify-content) và cross axis (align-items)</title>
+  <desc>Một hộp cha flex xếp các con theo hàng ngang. Main axis (trục chính) chạy ngang, do justify-content điều khiển khoảng cách trái-phải giữa các con. Cross axis (trục chéo) chạy dọc, do align-items điều khiển căn các con trên-dưới.</desc>
+  <rect x="40" y="60" width="520" height="170" rx="10" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="6 4"/>
+  <text x="48" y="52" font-size="12.5" font-weight="700" fill="currentColor">display: flex (hộp cha)</text>
+  <g>
+    <rect x="120" y="120" width="90" height="50" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="165" y="150" font-size="12" text-anchor="middle" fill="currentColor">con 1</text>
+    <rect x="255" y="120" width="90" height="50" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="300" y="150" font-size="12" text-anchor="middle" fill="currentColor">con 2</text>
+    <rect x="390" y="120" width="90" height="50" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="435" y="150" font-size="12" text-anchor="middle" fill="currentColor">con 3</text>
+  </g>
+  <defs>
+    <marker id="ahx" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker>
+  </defs>
+  <line x1="60" y1="95" x2="540" y2="95" stroke="currentColor" stroke-opacity="0.85" stroke-width="2" marker-end="url(#ahx)"/>
+  <text x="300" y="88" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">main axis → justify-content (căn ngang, trái-phải)</text>
+  <line x1="595" y1="70" x2="595" y2="222" stroke="currentColor" stroke-opacity="0.85" stroke-width="2" marker-end="url(#ahx)"/>
+  <text x="612" y="150" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor" transform="rotate(90 612 150)">cross axis → align-items (căn dọc, trên-dưới)</text>
+</svg>
+
 **Thử ngay:** Đổi `justify-content` lần lượt thành `center`, `space-between`, `flex-end` và xem 3 ô menu nhảy chỗ.
 
 ## 6. Grid - bố cục dạng lưới (giới thiệu)
@@ -254,6 +290,40 @@ Flexbox giỏi xếp **một chiều** (một hàng hoặc một cột). Khi c�
 ```
 
 Đơn vị `fr` (fraction - "phần") chia không gian theo tỉ lệ. `1fr 1fr 1fr` nghĩa là 3 cột chia đều. Còn `2fr 1fr` thì cột đầu rộng gấp đôi cột sau.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 320" role="img" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Flexbox một chiều so với CSS Grid hai chiều</title>
+  <desc>So sánh: Flexbox xếp các con thành một chiều, một hàng nối tiếp nhau. CSS Grid xếp hai chiều thành lưới nhiều hàng nhiều cột. Bên dưới minh hoạ grid-template-columns: ba cột bằng nhau 1fr 1fr 1fr so với 2fr 1fr (cột đầu rộng gấp đôi).</desc>
+  <text x="20" y="26" font-size="13" font-weight="700" fill="currentColor">Flexbox — một chiều (1 hàng)</text>
+  <g>
+    <rect x="20" y="38" width="80" height="44" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="110" y="38" width="80" height="44" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="200" y="38" width="80" height="44" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="290" y="38" width="80" height="44" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+  </g>
+  <text x="400" y="64" font-size="11.5" fill="currentColor" opacity="0.7">chỉ xếp theo một trục</text>
+  <text x="20" y="124" font-size="13" font-weight="700" fill="currentColor">CSS Grid — hai chiều (hàng × cột)</text>
+  <text x="360" y="124" font-size="12" font-weight="700" fill="currentColor">2fr 1fr</text>
+  <g>
+    <text x="20" y="146" font-size="11" fill="currentColor" opacity="0.7">grid-template-columns: 1fr 1fr 1fr</text>
+    <rect x="20" y="154" width="100" height="46" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="128" y="154" width="100" height="46" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="236" y="154" width="100" height="46" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="20" y="208" width="100" height="46" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="128" y="208" width="100" height="46" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="236" y="208" width="100" height="46" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="178" y="285" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">3 cột bằng nhau × 2 hàng</text>
+  </g>
+  <g>
+    <rect x="380" y="154" width="180" height="46" rx="5" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="470" y="182" font-size="11.5" text-anchor="middle" fill="currentColor">2fr</text>
+    <rect x="568" y="154" width="72" height="46" rx="5" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="604" y="182" font-size="11.5" text-anchor="middle" fill="currentColor">1fr</text>
+    <rect x="380" y="208" width="180" height="46" rx="5" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+    <rect x="568" y="208" width="72" height="46" rx="5" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+    <text x="510" y="285" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">cột đầu rộng gấp đôi</text>
+  </g>
+</svg>
 
 > 💡 Ghi nhớ: Quy tắc đơn giản: **xếp thành một hàng → Flexbox**, **xếp thành lưới nhiều hàng nhiều cột → Grid**. Người mới chưa cần thạo Grid ngay, chỉ cần biết nó tồn tại để dùng khi gặp bố cục lưới.
 

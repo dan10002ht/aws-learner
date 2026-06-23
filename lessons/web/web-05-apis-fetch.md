@@ -102,6 +102,39 @@ layNguoiDung();
 
 Đọc đoạn trên gần giống văn xuôi: "Đợi gọi URL → đợi chuyển thành object → in ra tên". Rất tự nhiên.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Luồng gọi API bất đồng bộ trên trục thời gian</title>
+  <desc>Client gửi fetch và nhận ngay một Promise để làm việc khác; server xử lý rồi trả response sau; client await response.json() để có data. Ví như đặt đồ ăn: bấm đặt nhận mã đơn, làm việc khác, lát sau shipper giao món.</desc>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Gọi API bất đồng bộ — theo trục thời gian</text>
+  <line x1="120" y1="60" x2="120" y2="270" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+  <line x1="600" y1="60" x2="600" y2="270" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+  <text x="120" y="52" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Client (JS)</text>
+  <text x="600" y="52" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Server (API)</text>
+  <text x="700" y="78" font-size="11" text-anchor="end" fill="currentColor" opacity="0.55">thời gian ↓</text>
+  <g stroke="currentColor" fill="currentColor">
+    <line x1="120" y1="90" x2="592" y2="90" stroke-width="1.6"/>
+    <path d="M600 90 l-10 -5 v10 z"/>
+  </g>
+  <text x="356" y="84" font-size="11.5" text-anchor="middle" fill="currentColor">fetch(url) — gửi yêu cầu</text>
+  <rect x="40" y="104" width="170" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="125" y="121" font-size="11" text-anchor="middle" fill="currentColor">nhận NGAY một Promise</text>
+  <text x="125" y="136" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">(= mã đơn hàng)</text>
+  <rect x="36" y="152" width="178" height="40" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="125" y="169" font-size="11" text-anchor="middle" fill="currentColor">JS đi làm việc khác</text>
+  <text x="125" y="184" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">không đứng đợi, không treo</text>
+  <rect x="510" y="108" width="180" height="40" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="600" y="125" font-size="11" text-anchor="middle" fill="currentColor">server xử lý</text>
+  <text x="600" y="140" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">(bếp pha món)</text>
+  <g stroke="currentColor" fill="currentColor">
+    <line x1="600" y1="210" x2="128" y2="210" stroke-width="1.6"/>
+    <path d="M120 210 l10 -5 v10 z"/>
+  </g>
+  <text x="356" y="204" font-size="11.5" text-anchor="middle" fill="currentColor">response về (shipper giao món)</text>
+  <rect x="40" y="224" width="200" height="44" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+  <text x="140" y="241" font-size="11" text-anchor="middle" fill="currentColor">await response.json()</text>
+  <text x="140" y="256" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">→ có data, dùng được</text>
+</svg>
+
 > 💡 Ghi nhớ: `await` chỉ dùng được **bên trong** hàm có `async`. Có hai chỗ cần `await` khi gọi API: một cho `fetch()` (chờ server trả lời), một cho `.json()` (chờ đọc xong dữ liệu).
 
 ## Đọc response: status và dữ liệu
@@ -227,6 +260,35 @@ Vòng đời chuẩn của một lần gọi API gồm 3 trạng thái:
 2. **Thành công** → hiện dữ liệu.
 3. **Lỗi** → hiện thông báo lỗi rõ ràng.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Vòng đời 3 trạng thái của một lần gọi API</title>
+  <desc>Bắt đầu ở trạng thái Đang tải (loading); từ đó rẽ nhánh thành Thành công (hiện dữ liệu) nếu nhận được dữ liệu hợp lệ, hoặc Lỗi (hiện thông báo) nếu mạng rớt, sai URL hay status không ok.</desc>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Vòng đời một lần gọi API — 3 trạng thái</text>
+  <circle cx="80" cy="135" r="9" fill="currentColor" fill-opacity="0.55" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="80" y="165" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">bấm gọi</text>
+  <g stroke="currentColor" fill="currentColor">
+    <line x1="89" y1="135" x2="158" y2="135" stroke-width="1.6"/>
+    <path d="M166 135 l-10 -5 v10 z"/>
+  </g>
+  <rect x="166" y="108" width="156" height="54" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="244" y="132" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Đang tải (loading)</text>
+  <text x="244" y="150" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">hiện "Đang tải..." / spinner</text>
+  <g stroke="currentColor" fill="currentColor">
+    <path d="M322 122 C 400 88, 430 70, 488 70" fill="none" stroke-width="1.6"/>
+    <path d="M496 70 l-11 -4 v9 z"/>
+    <path d="M322 148 C 400 182, 430 200, 488 200" fill="none" stroke-width="1.6"/>
+    <path d="M496 200 l-11 -4 v9 z"/>
+  </g>
+  <text x="404" y="92" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">nhận được dữ liệu</text>
+  <text x="404" y="178" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">mạng rớt / !response.ok</text>
+  <rect x="500" y="44" width="200" height="54" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="600" y="68" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Thành công</text>
+  <text x="600" y="86" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">hiện dữ liệu lên trang</text>
+  <rect x="500" y="174" width="200" height="54" rx="10" fill="#ef4444" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="600" y="198" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Lỗi</text>
+  <text x="600" y="216" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">hiện thông báo lỗi rõ ràng</text>
+</svg>
+
 Hãy luôn nghĩ đủ cả 3 trạng thái này mỗi khi gọi API. Đó là khác biệt giữa một trang "demo cho vui" và một trang "dùng thật được".
 
 ## CORS — con lỗi bạn chắc chắn sẽ gặp
@@ -242,6 +304,48 @@ CORS (Cross-Origin Resource Sharing — chia sẻ tài nguyên giữa các ngu�
 > Trình duyệt **không cho** trang web của bạn (ví dụ ở `my-site.com`) tự do lấy dữ liệu từ một server khác (`api-khac.com`), **trừ khi server đó cho phép** một cách rõ ràng.
 
 Analogy: bạn (trang web) muốn vào nhà hàng xóm (server khác) lấy đồ. Bảo vệ (trình duyệt) chặn lại: "Chủ nhà kia có ghi tên anh vào danh sách khách mời không?". Nếu server không "ghi tên" trang của bạn vào danh sách cho phép, trình duyệt sẽ chặn.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>CORS như người gác cổng giữa trang web, trình duyệt và server khác</title>
+  <desc>Trang my-site.com xin dữ liệu từ api-khac.com. Trình duyệt đóng vai bảo vệ: gửi yêu cầu sang server kia, nếu response có header cho phép nguồn của bạn thì trả dữ liệu, nếu không có thì trình duyệt chặn. Quyết định cho phép do server kia, JavaScript không tắt được.</desc>
+  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">CORS — người gác cổng giữa các nguồn</text>
+  <rect x="20" y="44" width="170" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="105" y="62" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">my-site.com</text>
+  <text x="105" y="77" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">trang web (JS)</text>
+  <rect x="275" y="44" width="170" height="40" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="62" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Trình duyệt</text>
+  <text x="360" y="77" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">(bảo vệ / gác cổng)</text>
+  <rect x="530" y="44" width="170" height="40" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="615" y="62" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">api-khac.com</text>
+  <text x="615" y="77" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">server khác</text>
+  <g stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4">
+    <line x1="105" y1="84" x2="105" y2="320"/>
+    <line x1="360" y1="84" x2="360" y2="320"/>
+    <line x1="615" y1="84" x2="615" y2="320"/>
+  </g>
+  <g stroke="currentColor" fill="currentColor">
+    <line x1="105" y1="112" x2="352" y2="112" stroke-width="1.6"/>
+    <path d="M360 112 l-10 -5 v10 z"/>
+  </g>
+  <text x="232" y="106" font-size="11" text-anchor="middle" fill="currentColor">fetch("api-khac.com")</text>
+  <g stroke="currentColor" fill="currentColor">
+    <line x1="360" y1="142" x2="607" y2="142" stroke-width="1.6"/>
+    <path d="M615 142 l-10 -5 v10 z"/>
+  </g>
+  <text x="488" y="136" font-size="11" text-anchor="middle" fill="currentColor">xin dữ liệu (kèm Origin)</text>
+  <g stroke="currentColor" fill="currentColor">
+    <line x1="615" y1="172" x2="368" y2="172" stroke-width="1.6"/>
+    <path d="M360 172 l10 -5 v10 z"/>
+  </g>
+  <text x="488" y="166" font-size="11" text-anchor="middle" fill="currentColor">response + header cho phép?</text>
+  <rect x="250" y="190" width="220" height="46" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="208" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">CÓ ghi tên nguồn vào DS</text>
+  <text x="360" y="224" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">→ trình duyệt cho qua, JS có data</text>
+  <rect x="250" y="246" width="220" height="46" rx="8" fill="#ef4444" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="360" y="264" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">KHÔNG có header cho phép</text>
+  <text x="360" y="280" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">→ trình duyệt CHẶN (blocked by CORS)</text>
+  <text x="16" y="318" font-size="10.5" fill="currentColor" opacity="0.7">Do server kia quyết định cho phép — JavaScript phía bạn không tắt được CORS.</text>
+</svg>
 
 Điều quan trọng cần nhớ với người mới:
 

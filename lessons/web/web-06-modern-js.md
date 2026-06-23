@@ -259,6 +259,50 @@ console.log(area(2));   // 12.56
 import * as math from "./math.js"; // gom tất cả vào 1 object
 ```
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Quan hệ export/import giữa math.js và main.js</title>
+  <desc>math.js có named export PI và area, cùng default export greet. main.js import default greet nằm ngoài cặp ngoặc nhọn, còn PI và area là named import nằm trong cặp ngoặc nhọn; mỗi mũi tên nối đúng export với chỗ import tương ứng.</desc>
+  <defs>
+    <marker id="mjarrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="120" y="26" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">math.js — xuất ra</text>
+  <text x="600" y="26" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">main.js — nhập vào</text>
+
+  <rect x="16" y="44" width="208" height="244" rx="10" fill="#3b82f6" fill-opacity="0.10" stroke="currentColor" stroke-opacity="0.18"/>
+  <rect x="496" y="44" width="208" height="244" rx="10" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.18"/>
+
+  <rect x="36" y="68" width="168" height="44" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="120" y="86" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">default export</text>
+  <text x="120" y="103" font-size="12" text-anchor="middle" fill="currentColor">greet</text>
+
+  <rect x="36" y="146" width="168" height="44" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="120" y="164" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">named export</text>
+  <text x="120" y="181" font-size="12" text-anchor="middle" fill="currentColor">PI</text>
+
+  <rect x="36" y="218" width="168" height="44" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="120" y="236" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">named export</text>
+  <text x="120" y="253" font-size="12" text-anchor="middle" fill="currentColor">area</text>
+
+  <rect x="516" y="68" width="168" height="44" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="600" y="86" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">default (ngoài { })</text>
+  <text x="600" y="103" font-size="12" text-anchor="middle" fill="currentColor">greet</text>
+
+  <rect x="516" y="146" width="168" height="116" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="600" y="166" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">named (trong { })</text>
+  <text x="600" y="190" font-size="12" text-anchor="middle" fill="currentColor">{ PI,</text>
+  <text x="600" y="212" font-size="12" text-anchor="middle" fill="currentColor">area }</text>
+
+  <text x="360" y="60" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">import greet, { PI, area }</text>
+
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#mjarrow)">
+    <path d="M204 90 H516"/>
+    <path d="M204 168 C 360 168, 380 184, 516 188"/>
+    <path d="M204 240 C 360 240, 380 210, 516 206"/>
+  </g>
+</svg>
+
 Trong trình duyệt, dùng module bằng cách thêm `type="module"`:
 
 ```html
@@ -333,6 +377,49 @@ Trình duyệt không tự gộp hàng trăm file module, và chưa chắc hiể
 
 - **Bundler** (Vite, webpack): gom nhiều file JS/CSS/ảnh thành vài file tối ưu, nén nhỏ, để trang tải nhanh. Vite còn cho **hot reload** — sửa code là trình duyệt cập nhật ngay không cần F5.
 - **Transpile** (Babel, esbuild): "dịch" cú pháp JS hiện đại (và JSX/TypeScript) về dạng JS cũ mà **trình duyệt cũ** cũng hiểu. "Transpile" = dịch từ ngôn ngữ này sang phiên bản khác *cùng cấp độ* (JS mới → JS cũ), khác với "compile" thường được hiểu là dịch xuống mã máy.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Pipeline tooling: từ code nguồn đến file chạy được trên mọi trình duyệt</title>
+  <desc>Luồng trái sang phải: nhiều file code nguồn ES6+/JSX qua bước Transpile (Babel/esbuild dịch JS mới sang JS cũ), rồi qua bước Bundle (Vite/webpack gom và nén), cho ra vài file tối ưu chạy được trên mọi trình duyệt.</desc>
+  <defs>
+    <marker id="tlarrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <g>
+    <rect x="18" y="60" width="132" height="42" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
+    <rect x="26" y="68" width="132" height="42" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
+    <rect x="34" y="76" width="132" height="42" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="100" y="94" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Code nguồn</text>
+    <text x="100" y="110" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">nhiều file ES6+/JSX</text>
+  </g>
+
+  <rect x="218" y="58" width="138" height="78" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="287" y="84" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Transpile</text>
+  <text x="287" y="102" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Babel / esbuild</text>
+  <text x="287" y="118" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">JS mới → JS cũ</text>
+
+  <rect x="402" y="58" width="138" height="78" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="471" y="84" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Bundle</text>
+  <text x="471" y="102" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Vite / webpack</text>
+  <text x="471" y="118" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">gom + nén nhỏ</text>
+
+  <g>
+    <rect x="588" y="64" width="118" height="38" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <rect x="592" y="106" width="110" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+    <text x="647" y="87" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Vài file tối ưu</text>
+    <text x="647" y="127" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">mọi trình duyệt chạy</text>
+  </g>
+
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#tlarrow)" stroke-width="1.5">
+    <path d="M174 97 H214"/>
+    <path d="M360 97 H398"/>
+    <path d="M544 97 H584"/>
+  </g>
+
+  <text x="360" y="178" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">Bạn viết code sạch, hiện đại — tooling lo phần "chạy được khắp nơi + tải nhanh"</text>
+</svg>
 
 Khởi tạo một dự án hiện đại chỉ mất một lệnh:
 

@@ -13,6 +13,37 @@ Mọi thứ trên web đều là cuộc trò chuyện giữa hai bên: **client*
 
 Điểm mấu chốt: **client luôn chủ động mở lời**. Server không tự nhiên gửi trang web cho bạn — nó đợi đến khi bạn (client) yêu cầu.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Mô hình Client–Server: client gửi request, server trả response</title>
+  <desc>Browser bên trái (client, ví như khách) gửi request sang server bên phải (ví như bếp); server xử lý rồi trả response về. Client luôn chủ động hỏi trước.</desc>
+  <defs>
+    <marker id="cs-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g>
+    <rect x="24" y="60" width="220" height="130" rx="12" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="134" y="92" font-size="14.5" font-weight="700" text-anchor="middle" fill="currentColor">Client (Browser)</text>
+    <text x="134" y="114" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">Chrome · Firefox · Safari</text>
+    <rect x="74" y="132" width="120" height="34" rx="17" fill="#3b82f6" fill-opacity="0.85"/>
+    <text x="134" y="154" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">ví như: KHÁCH</text>
+  </g>
+  <g>
+    <rect x="476" y="60" width="220" height="130" rx="12" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="586" y="92" font-size="14.5" font-weight="700" text-anchor="middle" fill="currentColor">Server (Máy chủ)</text>
+    <text x="586" y="114" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">luôn bật · chứa dữ liệu</text>
+    <rect x="526" y="132" width="120" height="34" rx="17" fill="#10b981" fill-opacity="0.9"/>
+    <text x="586" y="154" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">ví như: BẾP</text>
+  </g>
+  <g stroke="currentColor" fill="none">
+    <path d="M248 100 L470 100" stroke-width="2" marker-end="url(#cs-arrow)"/>
+    <path d="M472 150 L250 150" stroke-width="2" stroke-opacity="0.55" stroke-dasharray="6 5" marker-end="url(#cs-arrow)"/>
+  </g>
+  <text x="360" y="92" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">① request — "cho tôi xem"</text>
+  <text x="360" y="170" font-size="12.5" text-anchor="middle" fill="currentColor" opacity="0.8">② response — nội dung trả về</text>
+  <text x="360" y="222" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.7">Client luôn hỏi trước; server chỉ trả lời khi được yêu cầu</text>
+</svg>
+
 ## URL: địa chỉ của thứ bạn muốn
 
 **URL** (Uniform Resource Locator) là "địa chỉ nhà" của một tài nguyên trên web. Hãy mổ xẻ một URL:
@@ -35,6 +66,44 @@ https://shop.example.com:443/products/ao-thun?size=M#reviews
 ## URL → Request → Response: từng bước
 
 Khi bạn nhấn Enter trên một URL, đây là chuỗi sự kiện:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Sơ đồ tuần tự 6 bước: từ URL tới khi browser render trang</title>
+  <desc>Thời gian đi xuống. Browser bên trái, DNS và Server bên phải. Sáu bước: DNS lookup, mở kết nối, gửi HTTP request, server xử lý và truy vấn database, trả HTTP response, browser render.</desc>
+  <defs>
+    <marker id="sq-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <text x="120" y="26" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Browser (client)</text>
+  <text x="600" y="26" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">DNS / Server</text>
+  <g stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 5">
+    <line x1="120" y1="38" x2="120" y2="448"/>
+    <line x1="600" y1="38" x2="600" y2="448"/>
+  </g>
+  <g stroke="currentColor" fill="none" stroke-width="2">
+    <path d="M124 80 L596 80" marker-end="url(#sq-arrow)"/>
+    <path d="M596 118 L124 118" stroke-opacity="0.55" stroke-dasharray="6 5" marker-end="url(#sq-arrow)"/>
+    <path d="M124 168 L596 168" marker-end="url(#sq-arrow)"/>
+    <path d="M124 226 L596 226" marker-end="url(#sq-arrow)"/>
+    <path d="M596 350 L124 350" stroke-opacity="0.55" stroke-dasharray="6 5" marker-end="url(#sq-arrow)"/>
+  </g>
+  <g font-size="12" fill="currentColor">
+    <text x="360" y="73" font-weight="700" text-anchor="middle">① DNS lookup: "example.com là IP nào?"</text>
+    <text x="360" y="111" text-anchor="middle" opacity="0.8">→ trả về 93.184.216.34</text>
+    <text x="360" y="161" font-weight="700" text-anchor="middle">② Mở kết nối (port 443 cho https)</text>
+    <text x="360" y="219" font-weight="700" text-anchor="middle">③ Gửi HTTP request — GET /products/ao-thun</text>
+  </g>
+  <rect x="486" y="252" width="228" height="78" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="600" y="278" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">④ Server xử lý</text>
+  <text x="600" y="298" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">đọc request · truy vấn DB</text>
+  <text x="600" y="316" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">tạo nội dung trả về</text>
+  <text x="360" y="343" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">⑤ Trả HTTP response — 200 OK + body (HTML)</text>
+  <rect x="22" y="378" width="196" height="74" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+  <text x="120" y="404" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">⑥ Browser render</text>
+  <text x="120" y="424" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">đọc HTML, vẽ ra</text>
+  <text x="120" y="441" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">màn hình</text>
+</svg>
 
 1. **Phân giải tên miền (DNS lookup).** Browser hỏi hệ thống **DNS** (Domain Name System — như "danh bạ điện thoại của Internet"): `example.com` ứng với địa chỉ **IP** nào? DNS trả về ví dụ `93.184.216.34`. Máy tính giao tiếp bằng số IP, con người dùng tên cho dễ nhớ.
 
@@ -180,6 +249,49 @@ Ví dụ đăng nhập: bạn gõ email + mật khẩu (frontend) → browser g�
 ## Browser render trang ra sao
 
 Khi HTML về tới browser, nó không hiện ra ngay tức thì mà qua mấy bước:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Pipeline render của browser: HTML đến DOM, CSS, Layout, Paint và vòng lặp JS sửa DOM</title>
+  <desc>HTML được parse thành DOM, kết hợp với CSS đã parse, rồi Layout, Paint ra màn hình. JavaScript có thể sửa DOM khiến browser vẽ lại — một vòng lặp quay về DOM.</desc>
+  <defs>
+    <marker id="rp-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g font-size="12.5" font-weight="700" text-anchor="middle">
+    <rect x="16" y="84" width="96" height="48" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="64" y="106" fill="currentColor">HTML</text>
+    <text x="64" y="123" font-size="10" font-weight="400" fill="currentColor" opacity="0.7">văn bản</text>
+    <rect x="160" y="84" width="96" height="48" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="208" y="106" fill="currentColor">DOM</text>
+    <text x="208" y="123" font-size="10" font-weight="400" fill="currentColor" opacity="0.7">cây cấu trúc</text>
+    <rect x="160" y="12" width="96" height="48" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="208" y="34" fill="currentColor">CSS</text>
+    <text x="208" y="51" font-size="10" font-weight="400" fill="currentColor" opacity="0.7">quy tắc style</text>
+    <rect x="304" y="84" width="96" height="48" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="352" y="106" fill="currentColor">Layout</text>
+    <text x="352" y="123" font-size="10" font-weight="400" fill="currentColor" opacity="0.7">vị trí · kích thước</text>
+    <rect x="448" y="84" width="96" height="48" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="496" y="106" fill="currentColor">Paint</text>
+    <text x="496" y="123" font-size="10" font-weight="400" fill="currentColor" opacity="0.7">vẽ điểm ảnh</text>
+    <rect x="592" y="84" width="112" height="48" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="648" y="106" fill="currentColor">Màn hình</text>
+    <text x="648" y="123" font-size="10" font-weight="400" fill="currentColor" opacity="0.7">trang hiện ra</text>
+    <rect x="304" y="208" width="240" height="48" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+    <text x="424" y="230" fill="currentColor">JavaScript sửa DOM</text>
+    <text x="424" y="247" font-size="10" font-weight="400" fill="currentColor" opacity="0.7">thêm/đổi phần tử → vẽ lại</text>
+  </g>
+  <g stroke="currentColor" fill="none" stroke-width="2">
+    <path d="M112 108 L156 108" marker-end="url(#rp-arrow)"/>
+    <path d="M208 60 L208 82" marker-end="url(#rp-arrow)"/>
+    <path d="M256 108 L300 108" marker-end="url(#rp-arrow)"/>
+    <path d="M400 108 L444 108" marker-end="url(#rp-arrow)"/>
+    <path d="M544 108 L588 108" marker-end="url(#rp-arrow)"/>
+    <path d="M496 132 L496 200 L546 200" stroke-opacity="0.6" stroke-dasharray="6 5" marker-end="url(#rp-arrow)"/>
+    <path d="M304 232 L208 232 L208 134" stroke-opacity="0.6" stroke-dasharray="6 5" marker-end="url(#rp-arrow)"/>
+  </g>
+  <text x="240" y="190" font-size="11" fill="currentColor" opacity="0.75">vòng lặp: sửa DOM → Layout → Paint lại</text>
+</svg>
 
 1. **Phân tích HTML (parse).** Browser đọc HTML từ trên xuống, dựng một cây cấu trúc gọi là **DOM** (Document Object Model) — bản đồ mọi phần tử trên trang dưới dạng cây cha-con.
 2. **Phân tích CSS.** Browser đọc các quy tắc CSS, tính ra mỗi phần tử trông thế nào.
