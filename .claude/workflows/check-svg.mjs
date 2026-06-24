@@ -33,6 +33,9 @@ for (const file of walk(LESSONS)) {
     total++;
     const id = `${rel}#${i + 1}`;
     if (!/<title[>\s]/.test(svg)) problems.push(`${id}: thiếu <title> (accessibility)`);
+    // Dòng trống bên trong <svg> KHÔNG phá rsvg nhưng phá react-markdown:
+    // CommonMark kết thúc khối HTML tại dòng trống -> SVG bị cắt, các shape lọt ra ngoài <svg> -> không hiển thị.
+    if (/\n[ \t]*\n/.test(svg)) problems.push(`${id}: có DÒNG TRỐNG bên trong <svg> — vỡ render trong react-markdown (xoá hết dòng trống trong khối svg)`);
     const f = path.join(tmp, `s${total}.svg`);
     fs.writeFileSync(f, svg);
     try {

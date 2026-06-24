@@ -105,50 +105,41 @@ Tóm lại đường đi:
   <defs>
     <marker id="netArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <g>
     <rect x="14" y="64" width="104" height="56" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="66" y="88" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Điện thoại</text>
     <text x="66" y="106" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">Client</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.55" fill="none">
     <path d="M120 92 H188" marker-end="url(#netArr)"/>
   </g>
   <text x="156" y="80" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">sóng Wi-Fi</text>
-
   <g>
     <rect x="192" y="64" width="104" height="56" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="244" y="88" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Router</text>
     <text x="244" y="106" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">Bưu cục nhà</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.55" fill="none">
     <path d="M298 92 H366" marker-end="url(#netArr)"/>
   </g>
   <text x="334" y="80" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">cáp</text>
-
   <g>
     <rect x="370" y="64" width="104" height="56" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="422" y="88" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">ISP</text>
     <text x="422" y="106" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">VNPT, FPT...</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.55" fill="none">
     <path d="M476 92 H544" marker-end="url(#netArr)"/>
   </g>
   <text x="510" y="80" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">cáp quang</text>
-
   <g>
     <ellipse cx="600" cy="92" rx="56" ry="34" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="600" y="89" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Internet</text>
     <text x="600" y="105" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">toàn cầu</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.55" fill="none">
     <path d="M600 126 V164 H520" marker-end="url(#netArr)"/>
   </g>
-
   <g>
     <rect x="414" y="150" width="104" height="56" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="466" y="174" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Server</text>
@@ -214,9 +205,7 @@ Giờ bạn đã hiểu vì sao thỉnh thoảng thấy trang báo **"404 Not Fo
   <defs>
     <marker id="urlArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.7"/></marker>
   </defs>
-
   <text x="360" y="22" font-size="12.5" text-anchor="middle" fill="currentColor" opacity="0.75">Gõ URL → nhấn Enter (đối thoại hai chiều, đọc từ trên xuống = thời gian)</text>
-
   <!-- Đầu mỗi lifeline -->
   <g>
     <rect x="40" y="40" width="150" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
@@ -233,41 +222,33 @@ Giờ bạn đã hiểu vì sao thỉnh thoảng thấy trang báo **"404 Not Fo
     <text x="605" y="58" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Server</text>
     <text x="605" y="73" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">(VnExpress)</text>
   </g>
-
   <!-- Lifelines dọc -->
   <line x1="115" y1="80" x2="115" y2="396" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
   <line x1="360" y1="80" x2="360" y2="396" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
   <line x1="605" y1="80" x2="605" y2="396" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-
   <!-- 1: Trình duyệt → DNS -->
   <text x="116" y="106" font-size="11" font-weight="700" fill="currentColor">1</text>
   <text x="237" y="106" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">"vnexpress.net ở IP nào?"</text>
   <line x1="115" y1="114" x2="360" y2="114" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#urlArr)"/>
-
   <!-- DNS → Trình duyệt (đáp) -->
   <text x="237" y="138" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">"IP = 111.65.250.x"</text>
   <line x1="360" y1="146" x2="115" y2="146" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="5 4" marker-end="url(#urlArr)"/>
-
   <!-- 2: Trình duyệt → Server: HTTP request -->
   <text x="116" y="178" font-size="11" font-weight="700" fill="currentColor">2</text>
   <text x="360" y="178" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">HTTP request: "cho tôi trang chủ"</text>
   <line x1="115" y1="186" x2="605" y2="186" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#urlArr)"/>
-
   <!-- 3: ô xử lý (activation) trên lifeline Server -->
   <rect x="595" y="196" width="20" height="56" rx="4" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="606" y="224" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">3</text>
   <text x="582" y="246" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.75">Server "vào bếp" gom nội dung</text>
-
   <!-- 4: Server → Trình duyệt: response -->
   <text x="360" y="282" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">HTTP response: 200 OK + dữ liệu</text>
   <text x="116" y="282" font-size="11" font-weight="700" fill="currentColor">4</text>
   <line x1="605" y1="290" x2="115" y2="290" stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="5 4" marker-end="url(#urlArr)"/>
-
   <!-- 5: tự-xử lý trên lifeline Trình duyệt -->
   <rect x="105" y="300" width="20" height="56" rx="4" fill="#3b82f6" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="116" y="328" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">5</text>
   <text x="134" y="332" font-size="10.5" fill="currentColor" opacity="0.75">Trình duyệt "vẽ" trang — ráp dữ liệu thành trang bạn thấy</text>
-
   <text x="360" y="384" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">Nét liền = lượt hỏi (đi ra) · nét đứt = lượt đáp (quay về)</text>
 </svg>
 

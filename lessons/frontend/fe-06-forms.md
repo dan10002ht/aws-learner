@@ -45,48 +45,37 @@ function UncontrolledInput() {
   <defs>
     <marker id="fmArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <text x="180" y="24" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Controlled</text>
   <text x="180" y="40" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">React state = nguồn sự thật · re-render mỗi ký tự</text>
   <rect x="16" y="48" width="328" height="244" rx="12" fill="#3b82f6" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.18"/>
-
   <rect x="44" y="64" width="120" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="104" y="82" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">input</text>
   <text x="104" y="97" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">gõ phím</text>
-
   <rect x="196" y="64" width="120" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="256" y="82" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">onChange</text>
   <text x="256" y="97" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">setState</text>
-
   <rect x="196" y="148" width="120" height="44" rx="9" fill="#3b82f6" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="256" y="167" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">React state</text>
   <text x="256" y="182" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">nguồn sự thật</text>
-
   <rect x="44" y="148" width="120" height="44" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="104" y="167" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">re-render</text>
   <text x="104" y="182" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">value đổ về input</text>
-
   <line x1="164" y1="84" x2="192" y2="84" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#fmArr)"/>
   <line x1="256" y1="104" x2="256" y2="144" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#fmArr)"/>
   <line x1="196" y1="170" x2="168" y2="170" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#fmArr)"/>
   <line x1="104" y1="148" x2="104" y2="108" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#fmArr)"/>
   <text x="180" y="232" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">vòng tròn: 1 ký tự = 1 re-render</text>
-
   <text x="540" y="24" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Uncontrolled</text>
   <text x="540" y="40" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">DOM = nguồn sự thật · không re-render khi gõ</text>
   <rect x="376" y="48" width="328" height="244" rx="12" fill="#10b981" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.18"/>
-
   <rect x="420" y="80" width="240" height="48" rx="9" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.28"/>
   <text x="540" y="100" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">DOM giữ value</text>
   <text x="540" y="116" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">nguồn sự thật · gõ không re-render</text>
-
   <rect x="420" y="206" width="240" height="48" rx="9" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="540" y="226" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">React đọc qua ref</text>
   <text x="540" y="242" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">chỉ lúc submit</text>
-
   <line x1="540" y1="206" x2="540" y2="132" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#fmArr)"/>
   <text x="556" y="172" font-size="10" fill="currentColor" opacity="0.7">read on submit</text>
-
   <rect x="92" y="308" width="536" height="38" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.24"/>
   <text x="360" y="331" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">react-hook-form = hiệu năng uncontrolled + tiện ích controlled</text>
 </svg>
@@ -221,57 +210,45 @@ const {
   <defs>
     <marker id="zArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <rect x="16" y="56" width="120" height="56" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="76" y="80" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">inputs</text>
   <text x="76" y="96" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">register / ref</text>
-
   <rect x="172" y="48" width="148" height="72" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.24"/>
   <text x="246" y="72" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">handleSubmit()</text>
   <text x="246" y="89" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">chặn preventDefault</text>
   <text x="246" y="103" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">chạy validate</text>
-
   <rect x="356" y="48" width="160" height="72" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.24"/>
   <text x="436" y="72" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">zodResolver</text>
   <text x="436" y="89" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">schema.parse</text>
   <text x="436" y="103" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">(dữ liệu form)</text>
-
   <line x1="136" y1="84" x2="168" y2="84" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#zArr)"/>
   <line x1="320" y1="84" x2="352" y2="84" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#zArr)"/>
-
   <rect x="540" y="32" width="164" height="48" rx="9" fill="#ef4444" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.24"/>
   <text x="622" y="52" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">SAI → errors</text>
   <text x="622" y="68" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">gắn vào từng field</text>
-
   <rect x="540" y="92" width="164" height="48" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.26"/>
   <text x="622" y="112" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">ĐÚNG → onSubmit(data)</text>
   <text x="622" y="128" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">data có kiểu FormValues</text>
-
   <line x1="516" y1="74" x2="536" y2="58" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#zArr)"/>
   <line x1="516" y1="94" x2="536" y2="112" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#zArr)"/>
-
   <rect x="540" y="168" width="164" height="40" rx="9" fill="#ef4444" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="622" y="185" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">hiện dưới input</text>
   <text x="622" y="199" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">role="alert"</text>
   <path d="M540 56 L524 56 L524 188 L536 188" fill="none" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#zArr)"/>
-
   <rect x="356" y="168" width="160" height="40" rx="9" fill="#8b5cf6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="436" y="185" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">setError("email")</text>
   <text x="436" y="199" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">lỗi server → đúng field</text>
   <line x1="516" y1="188" x2="536" y2="188" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="4 3" marker-end="url(#zArr)"/>
-
   <rect x="356" y="280" width="160" height="56" rx="9" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="436" y="304" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Zod schema</text>
   <text x="436" y="321" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">một nguồn sự thật</text>
   <line x1="436" y1="280" x2="436" y2="124" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="4 3" marker-end="url(#zArr)"/>
   <text x="445" y="252" font-size="9.5" fill="currentColor" opacity="0.6">dùng để validate</text>
-
   <rect x="172" y="280" width="148" height="56" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="246" y="304" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">type FormValues</text>
   <text x="246" y="321" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">compile-time</text>
   <line x1="356" y1="308" x2="324" y2="308" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#zArr)"/>
   <text x="340" y="298" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">z.infer</text>
-
   <text x="436" y="362" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">một schema → validate runtime + type compile-time, không bao giờ lệch</text>
 </svg>
 

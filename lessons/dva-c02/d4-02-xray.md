@@ -22,15 +22,12 @@ Hình dung — một **trace** bọc các **segment**, mỗi segment bọc các 
   <rect x="12" y="34" width="696" height="272" rx="11" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <rect x="24" y="12" width="290" height="24" rx="12" fill="#8b5cf6" fill-opacity="0.9"/>
   <text x="36" y="29" font-size="11.5" font-weight="700" fill="#fff">Trace · Trace ID 1-5f…-abc</text>
-
   <rect x="30" y="58" width="660" height="236" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <rect x="42" y="48" width="180" height="22" rx="11" fill="#f59e0b" fill-opacity="0.92"/>
   <text x="54" y="64" font-size="11" font-weight="700" fill="#fff">Segment · API Gateway</text>
-
   <rect x="48" y="86" width="624" height="196" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <rect x="60" y="76" width="232" height="22" rx="11" fill="#3b82f6" fill-opacity="0.92"/>
   <text x="72" y="92" font-size="11" font-weight="700" fill="#fff">Segment · Lambda "ProcessOrder"</text>
-
   <g>
     <rect x="66" y="112" width="588" height="44" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="80" y="130" font-size="12" font-weight="700" fill="currentColor">Subsegment · DynamoDB GetItem</text>
@@ -38,7 +35,6 @@ Hình dung — một **trace** bọc các **segment**, mỗi segment bọc các 
     <rect x="582" y="122" width="60" height="24" rx="12" fill="#10b981" fill-opacity="0.9"/>
     <text x="612" y="139" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">12 ms</text>
   </g>
-
   <g>
     <rect x="66" y="164" width="588" height="50" rx="8" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.5"/>
     <text x="80" y="183" font-size="12" font-weight="700" fill="currentColor">Subsegment · HTTP GET payment-api</text>
@@ -46,7 +42,6 @@ Hình dung — một **trace** bọc các **segment**, mỗi segment bọc các 
     <rect x="576" y="176" width="66" height="26" rx="13" fill="#f59e0b" fill-opacity="0.95"/>
     <text x="609" y="194" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">340 ms</text>
   </g>
-
   <g>
     <rect x="66" y="222" width="588" height="44" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="80" y="240" font-size="12" font-weight="700" fill="currentColor">Subsegment · SQS SendMessage</text>
@@ -189,46 +184,35 @@ Hai đường đi của segment — tự chạy daemon (trái) so với daemon d
   <defs>
     <marker id="xrArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <text x="186" y="26" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">EC2 / ECS / on-prem</text>
   <text x="534" y="26" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Lambda (Active Tracing)</text>
   <line x1="360" y1="40" x2="360" y2="344" stroke="currentColor" stroke-opacity="0.18" stroke-dasharray="5 4"/>
-
   <!-- LEFT column -->
   <rect x="32" y="44" width="308" height="50" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="186" y="66" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">App + X-Ray SDK</text>
   <text x="186" y="83" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">trên instance/container của bạn</text>
-
   <line x1="186" y1="94" x2="186" y2="128" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#xrArr)"/>
   <rect x="118" y="100" width="136" height="22" rx="11" fill="#f59e0b" fill-opacity="0.92"/>
   <text x="186" y="116" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">UDP cổng 2000</text>
-
   <rect x="32" y="132" width="308" height="58" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3" stroke-width="1.5"/>
   <text x="186" y="156" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">X-Ray daemon — BẠN tự chạy</text>
   <text x="186" y="174" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">gom (buffer) rồi đẩy batch</text>
-
   <line x1="186" y1="190" x2="186" y2="224" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#xrArr)"/>
-
   <!-- RIGHT column -->
   <rect x="380" y="44" width="308" height="50" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="534" y="66" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">App + X-Ray SDK</text>
   <text x="534" y="83" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Mode=Active + IAM role</text>
-
   <line x1="534" y1="94" x2="534" y2="128" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#xrArr)"/>
   <rect x="466" y="100" width="136" height="22" rx="11" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="534" y="116" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.85">nội bộ, không lo</text>
-
   <rect x="380" y="132" width="308" height="58" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3" stroke-width="1.5"/>
   <text x="534" y="156" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">X-Ray daemon — AWS quản lý sẵn</text>
   <text x="534" y="174" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">có sẵn trong execution env</text>
-
   <line x1="534" y1="190" x2="534" y2="224" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#xrArr)"/>
-
   <!-- shared destination -->
   <rect x="180" y="228" width="360" height="56" rx="10" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.28"/>
   <text x="360" y="252" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">AWS X-Ray API</text>
   <text x="360" y="270" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">trace · service map · phân tích latency</text>
-
   <text x="186" y="308" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">Không có daemon = SDK gửi UDP vào hư vô → KHÔNG có trace</text>
   <text x="534" y="308" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">Không cài daemon thủ công — chỉ bật Active + IAM</text>
 </svg>

@@ -42,19 +42,16 @@ Nếu mỗi tầng tự đặt timeout độc lập và đều retry, tổng th�
     <text x="36" y="60" fill="currentColor" opacity="0.75">nhận request, budget tổng = 3000ms</text>
     <rect x="408" y="32" width="120" height="28" rx="14" fill="#3b82f6" fill-opacity="0.9"/>
     <text x="468" y="51" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">3000ms</text>
-
     <rect x="64" y="94" width="380" height="44" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
     <text x="80" y="114" font-size="13" font-weight="700" fill="currentColor">Service A</text>
     <text x="80" y="130" fill="currentColor" opacity="0.75">tiêu ~100ms + reserve → truyền xuống</text>
     <rect x="452" y="102" width="120" height="28" rx="14" fill="#10b981" fill-opacity="0.9"/>
     <text x="512" y="121" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">~2800ms</text>
-
     <rect x="108" y="164" width="380" height="44" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
     <text x="124" y="184" font-size="13" font-weight="700" fill="currentColor">Service B</text>
     <text x="124" y="200" fill="currentColor" opacity="0.75">timeout = min(local_max, remaining − reserve)</text>
     <rect x="496" y="172" width="120" height="28" rx="14" fill="#f59e0b" fill-opacity="0.95"/>
     <text x="556" y="191" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">~2600ms</text>
-
     <rect x="152" y="234" width="380" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
     <text x="168" y="254" font-size="13" font-weight="700" fill="currentColor">DB</text>
     <text x="168" y="270" fill="currentColor" opacity="0.75">timeout = remaining_của_B − reserve</text>
@@ -177,7 +174,6 @@ class RetryBudget:
   </g>
   <rect x="20" y="124" width="684" height="40" rx="9" fill="#ef4444" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="362" y="149" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Tải lên DB xấu nhất = 4 × 4 × 4 × 4 = 4⁴ = 256 lần cho MỘT request gốc</text>
-
   <text x="16" y="208" font-size="13" font-weight="700" fill="#10b981">ĐÚNG — chỉ một tầng retry, các tầng giữa fail-fast</text>
   <g font-size="12">
     <rect x="20" y="224" width="96" height="40" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.4"/>
@@ -226,16 +222,13 @@ Retry trả lời câu hỏi "lỗi *này* có thử lại không?". Circuit bre
   <text x="114" y="150" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">CLOSED</text>
   <text x="114" y="170" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">gọi bình thường</text>
   <text x="114" y="184" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">đếm tỷ lệ lỗi</text>
-
   <rect x="516" y="120" width="180" height="76" rx="12" fill="#ef4444" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/>
   <text x="606" y="150" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">OPEN</text>
   <text x="606" y="170" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">fail-fast: chặn ngay (~0ms)</text>
   <text x="606" y="184" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">trả lỗi/fallback, không gọi thật</text>
-
   <rect x="270" y="244" width="180" height="60" rx="12" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/>
   <text x="360" y="270" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">HALF-OPEN</text>
   <text x="360" y="290" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">cho qua N request thử</text>
-
   <g stroke="currentColor" stroke-opacity="0.6" fill="none" stroke-width="1.6">
     <path d="M204 150 H516" marker-end="url(#cbArrow)"/>
     <path d="M516 178 Q360 178 360 244" marker-end="url(#cbArrow)"/>
@@ -296,22 +289,18 @@ Tình huống kinh điển: service của bạn gọi cả `recommendation-svc` 
   <text x="410" y="69" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">recommendation chậm nuốt hết 100 connection</text>
   <text x="624" y="60" font-size="10.5" fill="#ef4444">order/email</text>
   <text x="624" y="74" font-size="10.5" fill="#ef4444">bị đói → chết theo</text>
-
   <text x="16" y="142" font-size="13" font-weight="700" fill="#10b981">ĐÚNG — phân khoang riêng, hỏng chỉ đầy khoang của nó</text>
   <g font-size="12">
     <rect x="20" y="156" width="378" height="64" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/>
     <text x="209" y="180" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">order: 60</text>
     <text x="209" y="200" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">critical — luôn có chỗ</text>
-
     <rect x="406" y="156" width="120" height="64" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/>
     <text x="466" y="180" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">reco: 20</text>
     <rect x="414" y="190" width="104" height="22" rx="5" fill="#ef4444" fill-opacity="0.55"/>
     <text x="466" y="206" font-size="9.5" font-weight="700" text-anchor="middle" fill="#fff">đầy → chỉ kẹt 20</text>
-
     <rect x="534" y="156" width="80" height="64" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/>
     <text x="574" y="186" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">email: 10</text>
     <text x="574" y="202" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">vẫn chạy</text>
-
     <rect x="622" y="156" width="78" height="64" rx="10" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.35"/>
     <text x="661" y="186" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">dự phòng</text>
     <text x="661" y="202" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">10</text>
@@ -358,7 +347,6 @@ Khác retry (gửi lại **sau khi** thất bại), hedging gửi request **th�
   </defs>
   <line x1="60" y1="210" x2="700" y2="210" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.4" marker-end="url(#hgArrow)"/>
   <text x="700" y="232" font-size="11" text-anchor="end" fill="currentColor" opacity="0.7">thời gian</text>
-
   <g stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="3 4">
     <line x1="100" y1="40" x2="100" y2="210"/>
     <line x1="360" y1="40" x2="360" y2="210"/>
@@ -369,24 +357,19 @@ Khác retry (gửi lại **sau khi** thất bại), hedging gửi request **th�
     <text x="360" y="228" text-anchor="middle" font-weight="700">t=p95</text>
     <text x="560" y="228" text-anchor="middle" opacity="0.8">kết quả về</text>
   </g>
-
   <text x="20" y="84" font-size="12" font-weight="700" fill="currentColor">instance A</text>
   <rect x="100" y="68" width="500" height="22" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
   <rect x="100" y="68" width="460" height="22" rx="6" fill="#94a3b8" fill-opacity="0.25"/>
   <text x="240" y="84" font-size="10.5" fill="currentColor" opacity="0.75">A xử lý — vẫn chậm, chưa trả lời...</text>
-
   <text x="20" y="148" font-size="12" font-weight="700" fill="currentColor">instance B</text>
   <rect x="360" y="132" width="200" height="22" rx="6" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.4"/>
   <text x="460" y="148" font-size="10.5" font-weight="600" text-anchor="middle" fill="currentColor">B trả kết quả trước</text>
-
   <line x1="360" y1="79" x2="360" y2="132" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.4" marker-end="url(#hgArrow)"/>
   <text x="372" y="116" font-size="10.5" fill="currentColor">gửi bản sao → B</text>
-
   <line x1="560" y1="79" x2="560" y2="68" stroke="#ef4444" stroke-opacity="0.7" stroke-width="1.6"/>
   <circle cx="560" cy="79" r="9" fill="#ef4444" fill-opacity="0.85"/>
   <text x="560" y="83" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">✕</text>
   <text x="572" y="58" font-size="10.5" fill="#ef4444" font-weight="600">cancel A (cái thua)</text>
-
   <text x="100" y="36" font-size="11" fill="currentColor" opacity="0.8">gửi request → A</text>
   <text x="660" y="178" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.7">chỉ ~5% request vượt p95 → bị hedge, tải tăng ~5%</text>
 </svg>

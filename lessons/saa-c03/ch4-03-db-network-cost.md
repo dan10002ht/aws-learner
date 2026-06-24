@@ -181,40 +181,33 @@ After:
   <title>Bản đồ chi phí data transfer theo đường đi của gói tin</title>
   <desc>Từ một EC2/Lambda nguồn, dữ liệu đi tới các đích khác nhau với giá khác nhau: same-AZ private IP miễn phí, cross-AZ 0.01 USD mỗi chiều, cross-region 0.02 USD trở lên, ra Internet 0.09 USD mỗi GB; và ba cách ra ngoài: qua NAT 0.045 USD/GB, qua VPC Gateway endpoint miễn phí, qua CloudFront rẻ hơn egress trực tiếp.</desc>
   <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Bản đồ chi phí data transfer (theo đường đi)</text>
-
   <!-- Source node -->
   <rect x="20" y="60" width="120" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="80" y="84" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">EC2 / Lambda</text>
   <text x="80" y="102" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">nguồn (AZ-a)</text>
-
   <!-- Edges + destinations: same-AZ (free) -->
   <line x1="140" y1="74" x2="500" y2="44" stroke="#10b981" stroke-width="2" stroke-opacity="0.7"/>
   <rect x="500" y="26" width="200" height="36" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="510" y="42" font-size="11.5" font-weight="700" fill="currentColor">Same-AZ · private IP</text>
   <text x="510" y="56" font-size="10.5" fill="currentColor" opacity="0.7">Free</text>
-
   <!-- cross-AZ -->
   <line x1="140" y1="84" x2="500" y2="92" stroke="#f59e0b" stroke-width="2" stroke-opacity="0.7"/>
   <rect x="500" y="74" width="200" height="36" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="510" y="90" font-size="11.5" font-weight="700" fill="currentColor">Cross-AZ (cùng region)</text>
   <text x="510" y="104" font-size="10.5" fill="currentColor" opacity="0.7">$0.01/GB mỗi chiều</text>
-
   <!-- cross-region -->
   <line x1="140" y1="92" x2="500" y2="140" stroke="#f59e0b" stroke-width="2" stroke-opacity="0.7"/>
   <rect x="500" y="122" width="200" height="36" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="510" y="138" font-size="11.5" font-weight="700" fill="currentColor">Cross-region</text>
   <text x="510" y="152" font-size="10.5" fill="currentColor" opacity="0.7">$0.02/GB trở lên</text>
-
   <!-- internet egress -->
   <line x1="140" y1="100" x2="500" y2="188" stroke="#ef4444" stroke-width="2.5" stroke-opacity="0.75"/>
   <rect x="500" y="170" width="200" height="36" rx="8" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="510" y="186" font-size="11.5" font-weight="700" fill="currentColor">Internet egress (trực tiếp)</text>
   <text x="510" y="200" font-size="10.5" fill="currentColor" opacity="0.7">$0.09/GB — đắt nhất</text>
-
   <!-- Divider -->
   <line x1="16" y1="238" x2="704" y2="238" stroke="currentColor" stroke-opacity="0.18" stroke-dasharray="4 4"/>
   <text x="16" y="262" font-size="12.5" font-weight="700" fill="currentColor">Ra S3 / ra ngoài: chọn đường nào?</text>
-
   <!-- Three paths comparison -->
   <rect x="16" y="276" width="218" height="120" rx="10" fill="#ef4444" fill-opacity="0.10" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="125" y="298" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Qua NAT Gateway</text>
@@ -222,14 +215,12 @@ After:
   <rect x="60" y="334" width="130" height="26" rx="13" fill="#ef4444" fill-opacity="0.85"/>
   <text x="125" y="351" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">$0.045/GB</text>
   <text x="125" y="382" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">bill nổ nếu đọc S3 nhiều</text>
-
   <rect x="251" y="276" width="218" height="120" rx="10" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="360" y="298" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">VPC Gateway endpoint</text>
   <text x="360" y="320" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">EC2 → endpoint → S3/DynamoDB</text>
   <rect x="305" y="334" width="110" height="26" rx="13" fill="#10b981" fill-opacity="0.9"/>
   <text x="360" y="351" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">Free</text>
   <text x="360" y="382" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">không qua NAT, không tốn traffic</text>
-
   <rect x="486" y="276" width="218" height="120" rx="10" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="595" y="298" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Qua CloudFront</text>
   <text x="595" y="320" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">origin → CDN → user</text>

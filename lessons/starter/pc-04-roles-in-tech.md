@@ -26,58 +26,46 @@ Sơ đồ dưới đây vẽ các vai trò vây quanh một sản phẩm (app đ
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Bản đồ vai trò quanh một sản phẩm app đặt đồ ăn</title>
   <desc>Các vai trò vây quanh sản phẩm: PM/BA định hướng, Designer thiết kế, Frontend/Backend/Mobile Dev xây dựng, DevOps/Cloud vận hành, Data phân tích, QA kiểm thử. Mũi tên liền là dòng chảy chính từ định hướng đến vận hành; đường nét đứt là các cặp phối hợp qua lại: Frontend với Backend, Backend với Data, Dev với QA.</desc>
-
   <defs>
     <marker id="rmArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Một đội làm ra app đặt đồ ăn — ai làm gì, phối hợp với ai</text>
-
   <!-- Sản phẩm ở trung tâm -->
   <rect x="296" y="206" width="128" height="58" rx="12" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="360" y="232" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Sản phẩm</text>
   <text x="360" y="250" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">app đặt đồ ăn</text>
-
   <!-- PM/BA: định hướng (trên-trái) -->
   <rect x="40" y="48" width="180" height="52" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="52" y="70" font-size="12.5" font-weight="700" fill="currentColor">PM / BA</text>
   <text x="52" y="88" font-size="10.5" fill="currentColor" opacity="0.7">định hướng: làm gì tiếp</text>
-
   <!-- Designer: thiết kế (trên-phải) -->
   <rect x="500" y="48" width="180" height="52" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="512" y="70" font-size="12.5" font-weight="700" fill="currentColor">Designer</text>
   <text x="512" y="88" font-size="10.5" fill="currentColor" opacity="0.7">thiết kế UI/UX</text>
-
   <!-- Frontend (trái-giữa) -->
   <rect x="24" y="160" width="150" height="50" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="36" y="181" font-size="12" font-weight="700" fill="currentColor">Frontend Dev</text>
   <text x="36" y="198" font-size="10.5" fill="currentColor" opacity="0.7">màn hình, nút bấm</text>
-
   <!-- Mobile (trái-dưới) -->
   <rect x="24" y="244" width="150" height="50" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="36" y="265" font-size="12" font-weight="700" fill="currentColor">Mobile Dev</text>
   <text x="36" y="282" font-size="10.5" fill="currentColor" opacity="0.7">app iOS / Android</text>
-
   <!-- Backend (phải-giữa) -->
   <rect x="546" y="160" width="150" height="50" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="558" y="181" font-size="12" font-weight="700" fill="currentColor">Backend Dev</text>
   <text x="558" y="198" font-size="10.5" fill="currentColor" opacity="0.7">đơn hàng, tính tiền</text>
-
   <!-- Data (phải-dưới) -->
   <rect x="546" y="244" width="150" height="50" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="558" y="265" font-size="12" font-weight="700" fill="currentColor">Data</text>
   <text x="558" y="282" font-size="10.5" fill="currentColor" opacity="0.7">phân tích số liệu</text>
-
   <!-- QA (dưới-giữa) -->
   <rect x="270" y="338" width="180" height="50" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="282" y="359" font-size="12" font-weight="700" fill="currentColor">QA / Tester</text>
   <text x="282" y="376" font-size="10.5" fill="currentColor" opacity="0.7">kiểm thử, tìm lỗi</text>
-
   <!-- DevOps (dưới) -->
   <rect x="270" y="408" width="180" height="48" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="282" y="429" font-size="12" font-weight="700" fill="currentColor">DevOps / Cloud</text>
   <text x="282" y="446" font-size="10.5" fill="currentColor" opacity="0.7">vận hành ổn định</text>
-
   <!-- Dòng chảy chính (mũi tên liền): PM/BA -> Designer -> Dev -> DevOps -->
   <g stroke="currentColor" stroke-opacity="0.5" fill="none" stroke-width="1.5">
     <path d="M220 74 h268" marker-end="url(#rmArr)"/>
@@ -85,18 +73,15 @@ Sơ đồ dưới đây vẽ các vai trò vây quanh một sản phẩm (app đ
     <path d="M510 100 C 470 150, 450 180, 420 210" marker-end="url(#rmArr)"/>
   </g>
   <text x="354" y="66" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">định hướng tính năng</text>
-
   <!-- Dev xây dựng vào sản phẩm -->
   <g stroke="currentColor" stroke-opacity="0.5" fill="none" stroke-width="1.5">
     <path d="M174 184 C 230 195, 260 205, 294 216" marker-end="url(#rmArr)"/>
     <path d="M174 266 C 230 256, 262 246, 296 234" marker-end="url(#rmArr)"/>
     <path d="M546 184 C 490 195, 460 205, 426 216" marker-end="url(#rmArr)"/>
   </g>
-
   <!-- Vận hành: sản phẩm -> DevOps -->
   <path d="M360 264 V 408" stroke="currentColor" stroke-opacity="0.5" fill="none" stroke-width="1.5" marker-end="url(#rmArr)"/>
   <text x="368" y="328" font-size="10" fill="currentColor" opacity="0.65">vận hành</text>
-
   <!-- Phối hợp qua lại (nét đứt): FE <-> BE, BE <-> Data, Dev <-> QA -->
   <g stroke="currentColor" stroke-opacity="0.4" fill="none" stroke-dasharray="5 4">
     <path d="M174 178 H 546" marker-end="url(#rmArr)"/>

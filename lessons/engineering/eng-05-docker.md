@@ -101,7 +101,6 @@ Mỗi chỉ thị `FROM/COPY/RUN` tạo một **layer**. Docker cache theo nguy�
     <text x="281" y="173" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">rebuild</text>
   </g>
   <text x="180" y="216" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">COPY . . ở trên → mọi layer sau đều mất cache</text>
-
   <g>
     <rect x="384" y="44" width="312" height="44" rx="8" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="400" y="64" font-size="12.5" font-weight="700" fill="currentColor">FROM node:22-alpine</text>

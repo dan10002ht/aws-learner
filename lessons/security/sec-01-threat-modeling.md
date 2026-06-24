@@ -85,7 +85,6 @@ Trực quan hoá quan hệ **threat ↔ thuộc tính bị vi phạm** — mỗi
   <desc>Spoofing vi phạm Authentication, Tampering vi phạm Integrity, Repudiation vi phạm Non-repudiation, Information Disclosure vi phạm Confidentiality, Denial of Service vi phạm Availability, Elevation of Privilege vi phạm Authorization.</desc>
   <text x="150" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Threat (STRIDE)</text>
   <text x="570" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Thuộc tính bị vi phạm</text>
-
   <g stroke="currentColor" stroke-opacity="0.45" fill="none">
     <line x1="270" y1="68" x2="450" y2="68"/>
     <line x1="270" y1="116" x2="450" y2="116"/>
@@ -94,7 +93,6 @@ Trực quan hoá quan hệ **threat ↔ thuộc tính bị vi phạm** — mỗi
     <line x1="270" y1="260" x2="450" y2="260"/>
     <line x1="270" y1="308" x2="450" y2="308"/>
   </g>
-
   <g font-size="12" text-anchor="middle">
     <rect x="20" y="50" width="250" height="36" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="145" y="73" fill="currentColor"><tspan font-weight="700">S</tspan>poofing — giả danh</text>
@@ -109,7 +107,6 @@ Trực quan hoá quan hệ **threat ↔ thuộc tính bị vi phạm** — mỗi
     <rect x="20" y="290" width="250" height="36" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="145" y="313" fill="currentColor"><tspan font-weight="700">E</tspan>levation — chiếm quyền</text>
   </g>
-
   <g font-size="12" text-anchor="middle">
     <rect x="450" y="50" width="250" height="36" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="575" y="73" fill="currentColor">Authentication</text>
@@ -124,7 +121,6 @@ Trực quan hoá quan hệ **threat ↔ thuộc tính bị vi phạm** — mỗi
     <rect x="450" y="290" width="250" height="36" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="575" y="313" fill="currentColor">Authorization</text>
   </g>
-
   <g fill="currentColor" opacity="0.55">
     <circle cx="270" cy="68" r="3"/><circle cx="450" cy="68" r="3"/>
     <circle cx="270" cy="116" r="3"/><circle cx="450" cy="116" r="3"/>
@@ -150,17 +146,14 @@ Bạn không thể threat-model thứ mình không nhìn thấy. **Data Flow Dia
   <title>Data Flow Diagram với hai trust boundary</title>
   <desc>Browser (external entity, không tin) gửi HTTPS tới API (process), API gửi SQL tới Postgres (data store). Hai đường đứt nét là trust boundary; mỗi mũi tên cắt boundary cần authentication, validate và mã hoá.</desc>
   <text x="360" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Data Flow Diagram — dữ liệu chảy qua các trust boundary</text>
-
   <rect x="24" y="92" width="132" height="64" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
   <text x="90" y="120" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Browser</text>
   <text x="90" y="139" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">external entity</text>
   <text x="90" y="174" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">KHÔNG TIN</text>
-
   <circle cx="360" cy="124" r="46" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
   <text x="360" y="120" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">API svc</text>
   <text x="360" y="138" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">process</text>
   <text x="360" y="200" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">VÙNG CỦA TA</text>
-
   <g stroke="currentColor" stroke-opacity="0.55" fill="none">
     <line x1="566" y1="98" x2="696" y2="98"/>
     <line x1="566" y1="150" x2="696" y2="150"/>
@@ -168,7 +161,6 @@ Bạn không thể threat-model thứ mình không nhìn thấy. **Data Flow Dia
   <text x="631" y="120" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Postgres</text>
   <text x="631" y="139" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">data store</text>
   <text x="631" y="200" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">DỮ LIỆU NHẠY CẢM</text>
-
   <defs>
     <marker id="dfdArrow" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
       <path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/>
@@ -182,7 +174,6 @@ Bạn không thể threat-model thứ mình không nhìn thấy. **Data Flow Dia
   </g>
   <text x="232" y="106" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">HTTPS</text>
   <text x="483" y="106" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">SQL</text>
-
   <g stroke="#ef4444" stroke-width="2" stroke-dasharray="6 5" stroke-opacity="0.85">
     <line x1="232" y1="40" x2="232" y2="240"/>
     <line x1="483" y1="40" x2="483" y2="240"/>
@@ -207,14 +198,12 @@ Mỗi mũi tên cắt qua một đường đứt nét = một nơi **bắt buộ
   <title>Defense in Depth — các lớp đồng tâm bảo vệ dữ liệu</title>
   <desc>Request độc hại phải xuyên qua các lớp xếp tầng: WAF, rate limiter, authentication, authorization, input validation, parameterized query, rồi tới lớp trong cùng là DB user least-privilege. Các lớp ngoài có thể thủng nhưng lớp DB user chỉ READ chặn thiệt hại.</desc>
   <text x="360" y="22" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Defense in Depth — mỗi lớp có thể thủng, lớp cuối đỡ</text>
-
   <rect x="40" y="44"  width="640" height="252" rx="14" fill="#3b82f6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.35"/>
   <rect x="78" y="74"  width="564" height="208" rx="13" fill="#3b82f6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.35"/>
   <rect x="116" y="100" width="488" height="160" rx="12" fill="#3b82f6" fill-opacity="0.09" stroke="currentColor" stroke-opacity="0.35"/>
   <rect x="154" y="124" width="412" height="116" rx="11" fill="#3b82f6" fill-opacity="0.10" stroke="currentColor" stroke-opacity="0.35"/>
   <rect x="192" y="146" width="336" height="76"  rx="10" fill="#3b82f6" fill-opacity="0.11" stroke="currentColor" stroke-opacity="0.35"/>
   <rect x="230" y="166" width="260" height="40"  rx="9"  fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
-
   <g font-size="11.5" text-anchor="middle" fill="currentColor">
     <text x="360" y="62">WAF</text>
     <text x="360" y="92">rate limiter</text>
@@ -224,7 +213,6 @@ Mỗi mũi tên cắt qua một đường đứt nét = một nơi **bắt buộ
   </g>
   <text x="360" y="183" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">DB user least-privilege</text>
   <text x="360" y="198" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">(chỉ SELECT — không xoá được data)</text>
-
   <defs>
     <marker id="didArrow" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
       <path d="M0,0 L7,3 L0,6 Z" fill="#ef4444"/>
@@ -290,13 +278,11 @@ Vì vậy bảo mật là **vòng lặp liên tục**, không phải checkbox k�
   <title>Vòng lặp bảo mật liên tục</title>
   <desc>Chu trình bốn bước lặp lại: Threat Model, Thiết kế phòng thủ, Triển khai, Giám sát và phát hiện; rồi học từ sự cố quay lại Threat Model.</desc>
   <text x="360" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Bảo mật là vòng lặp, không phải checkbox</text>
-
   <defs>
     <marker id="loopArrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
       <path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/>
     </marker>
   </defs>
-
   <g font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">
     <rect x="250" y="50"  width="220" height="48" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="360" y="79">Threat Model</text>
@@ -308,14 +294,12 @@ Vì vậy bảo mật là **vòng lặp liên tục**, không phải checkbox k�
     <text x="127" y="148">Giám sát</text>
     <text x="127" y="165" font-weight="400" font-size="11.5">&amp; phát hiện</text>
   </g>
-
   <g stroke="currentColor" fill="none" stroke-width="1.6" marker-end="url(#loopArrow)">
     <path d="M470 80 Q540 95 560 122"/>
     <path d="M560 178 Q505 215 474 222"/>
     <path d="M250 226 Q170 215 150 178"/>
     <path d="M150 122 Q175 95 246 80"/>
   </g>
-
   <text x="556" y="108" font-size="10.5" fill="currentColor" opacity="0.8">→</text>
   <text x="360" y="290" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Học từ sự cố → quay lại Threat Model (lặp liên tục)</text>
 </svg>

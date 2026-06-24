@@ -343,41 +343,35 @@ Server (trong cloud) gọi tới **metadata endpoint** và trả về credential
     </marker>
   </defs>
   <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">SSRF: đánh cắp credential qua metadata</text>
-
   <g>
     <rect x="16" y="48" width="150" height="62" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="91" y="74" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Attacker</text>
     <text x="91" y="93" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">ngoài Internet</text>
   </g>
-
   <g>
     <rect x="285" y="40" width="170" height="78" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="370" y="66" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Server (trong VPC)</text>
     <text x="370" y="85" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">endpoint "fetch from URL"</text>
     <text x="370" y="101" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">gọi URL thay attacker</text>
   </g>
-
   <g>
     <rect x="558" y="40" width="146" height="78" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="631" y="64" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Metadata</text>
     <text x="631" y="81" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">169.254.169.254</text>
     <text x="631" y="99" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">credential IAM tạm</text>
   </g>
-
   <g stroke="currentColor" fill="none" stroke-width="1.6">
     <path d="M166 70 H283" marker-end="url(#ssrfArrow)"/>
     <path d="M455 70 H556" marker-end="url(#ssrfArrow)"/>
   </g>
   <text x="224" y="62" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">(1) URL=.../security-credentials</text>
   <text x="505" y="62" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">(2) GET metadata</text>
-
   <g stroke="#f59e0b" fill="none" stroke-width="1.8">
     <path d="M556 100 H457" marker-end="url(#ssrfArrowRed)"/>
     <path d="M283 100 H168" marker-end="url(#ssrfArrowRed)"/>
   </g>
   <text x="505" y="115" font-size="9.5" text-anchor="middle" fill="#f59e0b">(3) credential</text>
   <text x="224" y="115" font-size="9.5" text-anchor="middle" fill="#f59e0b">(4) credential lọt ra ngoài</text>
-
   <text x="16" y="168" font-size="13" font-weight="700" fill="currentColor">Các lớp chặn (defense in depth)</text>
   <g>
     <rect x="16" y="182" width="334" height="52" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>

@@ -144,45 +144,34 @@ Dữ liệu **không** được gửi trần. Mỗi khi đi **xuống** một t�
   <desc>Đi xuống bên gửi, dữ liệu HTTP được bọc thêm header mỗi tầng thành các hộp lồng nhau: Data, Segment (TCP), Packet (IP), Frame (Ethernet có trailer), Bits; đi lên bên nhận thì bóc dần.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Bên GỬI — đi xuống, bọc thêm header mỗi tầng</text>
   <text x="16" y="356" font-size="11.5" fill="currentColor" opacity="0.7">Bên NHẬN — đi lên, bóc dần từng header (decapsulation).</text>
-
   <rect x="16" y="38" width="688" height="44" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <rect x="28" y="50" width="62" height="20" rx="10" fill="#8b5cf6" fill-opacity="0.9"/>
   <text x="59" y="64" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">L2 Frame</text>
   <text x="100" y="64" font-size="11" fill="currentColor" opacity="0.85">Eth hdr</text>
-
   <rect x="152" y="44" width="540" height="32" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
   <rect x="160" y="50" width="58" height="20" rx="10" fill="#f59e0b" fill-opacity="0.9"/>
   <text x="189" y="64" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">L3 IP</text>
   <text x="228" y="64" font-size="11" fill="currentColor" opacity="0.85">IP hdr</text>
-
   <rect x="272" y="50" width="356" height="20" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="284" y="64" font-size="10.5" font-weight="700" fill="currentColor">L4</text>
   <text x="304" y="64" font-size="11" fill="currentColor" opacity="0.85">TCP hdr</text>
-
   <rect x="356" y="52" width="208" height="16" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="460" y="64" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">L7 · HTTP data</text>
-
   <rect x="572" y="44" width="116" height="32" rx="7" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="630" y="64" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">Eth trailer</text>
-
   <g font-size="11" fill="currentColor" opacity="0.8">
     <text x="16" y="108">L7</text><text x="92" y="108" font-weight="700">Data</text>
     <line x1="160" y1="104" x2="170" y2="104" stroke="currentColor" stroke-opacity="0.5"/>
     <text x="180" y="108">[ HTTP data ]</text>
-
     <text x="16" y="138">L4</text><text x="92" y="138" font-weight="700">Segment</text>
     <text x="180" y="138">[ TCP hdr | HTTP data ]</text>
-
     <text x="16" y="168">L3</text><text x="92" y="168" font-weight="700">Packet</text>
     <text x="180" y="168">[ IP hdr | TCP hdr | data ]</text>
-
     <text x="16" y="198">L2</text><text x="92" y="198" font-weight="700">Frame</text>
     <text x="180" y="198">[ Eth hdr | IP | TCP | data | Eth trailer ]</text>
-
     <text x="16" y="228">L1</text><text x="92" y="228" font-weight="700">Bits</text>
     <text x="180" y="228">101000110101...  (bit lên dây)</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.45" fill="none">
     <path d="M52 240 v76" marker-end="url(#encDown)"/>
     <path d="M668 316 v-76" marker-end="url(#encUp)"/>
@@ -326,11 +315,9 @@ Tấm bản đồ giá trị nhất khi có sự cố: **mỗi tầng có công 
   <title>Quy trình debug từ dưới lên — dừng ở tầng đầu tiên fail</title>
   <desc>Năm bước tuần tự từ tầng thấp lên cao: L1 link, L2 ARP, L3 route, L4 port, L7 app. Mỗi bước có câu hỏi và công cụ; nếu fail thì dừng ngay ở tầng đó, còn OK thì lên tầng kế tiếp.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Debug từ DƯỚI lên — dừng ở tầng đầu tiên fail</text>
-
   <defs>
     <marker id="dbgArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <g>
     <rect x="16" y="40" width="180" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="28" y="58" font-size="12" font-weight="700" fill="currentColor">L1 — Link sống?</text>
@@ -338,7 +325,6 @@ Tấm bản đồ giá trị nhất khi có sự cố: **mỗi tầng có công 
   </g>
   <line x1="106" y1="84" x2="106" y2="104" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#dbgArr)"/>
   <text x="116" y="100" font-size="10" fill="#10b981" opacity="0.95">OK ↓</text>
-
   <g>
     <rect x="16" y="104" width="180" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="28" y="122" font-size="12" font-weight="700" fill="currentColor">L2 — ARP có MAC?</text>
@@ -346,7 +332,6 @@ Tấm bản đồ giá trị nhất khi có sự cố: **mỗi tầng có công 
   </g>
   <line x1="106" y1="148" x2="106" y2="168" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#dbgArr)"/>
   <text x="116" y="164" font-size="10" fill="#10b981" opacity="0.95">OK ↓</text>
-
   <g>
     <rect x="16" y="168" width="180" height="44" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="28" y="186" font-size="12" font-weight="700" fill="currentColor">L3 — Route tới đích?</text>
@@ -354,13 +339,11 @@ Tấm bản đồ giá trị nhất khi có sự cố: **mỗi tầng có công 
   </g>
   <line x1="106" y1="212" x2="106" y2="232" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#dbgArr)"/>
   <text x="116" y="228" font-size="10" fill="#10b981" opacity="0.95">OK ↓</text>
-
   <g>
     <rect x="16" y="232" width="180" height="44" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="28" y="250" font-size="12" font-weight="700" fill="currentColor">L4 — Port mở/nghe?</text>
     <text x="28" y="268" font-size="10.5" fill="currentColor" opacity="0.7">nc -zv · ss -tn</text>
   </g>
-
   <g>
     <rect x="252" y="232" width="200" height="44" rx="9" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="264" y="250" font-size="12" font-weight="700" fill="currentColor">L7 — DNS/TLS/app?</text>
@@ -368,7 +351,6 @@ Tấm bản đồ giá trị nhất khi có sự cố: **mỗi tầng có công 
   </g>
   <line x1="196" y1="254" x2="246" y2="254" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#dbgArr)"/>
   <text x="208" y="248" font-size="10" fill="#10b981" opacity="0.95">OK →</text>
-
   <g>
     <line x1="196" y1="62" x2="252" y2="62" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="4 3" marker-end="url(#dbgArr)"/>
     <rect x="252" y="42" width="452" height="44" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>

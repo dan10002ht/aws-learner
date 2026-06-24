@@ -6,18 +6,14 @@ API Gateway là "cửa ngõ" (front door) cho mọi API trong kiến trúc AWS: 
   <title>API Gateway là cửa ngõ — luồng xử lý request</title>
   <desc>Request từ client đi vào API Gateway, lần lượt qua authorizer, throttling và usage plan, mapping/validation, cache, rồi forward tới một trong các backend: Lambda, HTTP endpoint, AWS service, hoặc MOCK.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">API Gateway — cửa ngõ trước backend</text>
-
   <defs>
     <marker id="gwArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <rect x="20" y="116" width="96" height="48" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="68" y="145" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
   <line x1="116" y1="140" x2="148" y2="140" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#gwArr)"/>
-
   <rect x="152" y="56" width="392" height="168" rx="12" fill="#10b981" fill-opacity="0.10" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="348" y="78" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">API Gateway</text>
-
   <g font-size="11" fill="currentColor">
     <rect x="170" y="92" width="356" height="26" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="348" y="109" text-anchor="middle" fill="currentColor">1 · Authorizer (IAM / Cognito / Lambda)</text>
@@ -28,9 +24,7 @@ API Gateway là "cửa ngõ" (front door) cho mọi API trong kiến trúc AWS: 
     <rect x="170" y="188" width="356" height="26" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="348" y="205" text-anchor="middle" fill="currentColor">4 · Cache (per-stage)</text>
   </g>
-
   <line x1="544" y1="140" x2="576" y2="140" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#gwArr)"/>
-
   <g font-size="10.5" fill="currentColor">
     <rect x="580" y="64" width="124" height="30" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="642" y="83" text-anchor="middle" fill="currentColor">Lambda</text>
@@ -75,21 +69,17 @@ POST https://{api-id}.execute-api.{region}.amazonaws.com/{stage}/@connections/{c
   <title>WebSocket API — định tuyến message hai chiều</title>
   <desc>Client mở kết nối kích route hệ thống $connect; mỗi message được định tuyến qua route selection expression tới handler tương ứng; server đẩy message ngược về client qua @connections API; khi đóng kết nối kích $disconnect.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">WebSocket API — định tuyến hai chiều</text>
-
   <defs>
     <marker id="wsArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <rect x="24" y="120" width="120" height="56" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="84" y="146" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
   <text x="84" y="164" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">kết nối lâu dài</text>
-
   <rect x="270" y="96" width="180" height="104" rx="11" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="360" y="120" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">API Gateway</text>
   <text x="360" y="138" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">route selection expression</text>
   <text x="360" y="154" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">$request.body.action</text>
   <text x="360" y="180" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">@connections → đẩy về client</text>
-
   <g font-size="11" fill="currentColor">
     <rect x="540" y="58" width="156" height="30" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="618" y="78" text-anchor="middle" fill="currentColor">$connect (mở)</text>
@@ -100,7 +90,6 @@ POST https://{api-id}.execute-api.{region}.amazonaws.com/{stage}/@connections/{c
     <rect x="540" y="178" width="156" height="30" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="618" y="198" text-anchor="middle" fill="currentColor">$disconnect (đóng)</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.5" fill="none">
     <path d="M144 134 H262" marker-end="url(#wsArr)"/>
     <path d="M450 120 H534" marker-end="url(#wsArr)"/>
@@ -109,10 +98,8 @@ POST https://{api-id}.execute-api.{region}.amazonaws.com/{stage}/@connections/{c
     <path d="M450 184 H534" marker-end="url(#wsArr)"/>
   </g>
   <text x="200" y="126" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">message</text>
-
   <path d="M262 178 H144" stroke="#10b981" stroke-opacity="0.75" fill="none" marker-end="url(#wsArr)"/>
   <text x="200" y="172" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">server push (@connections)</text>
-
   <text x="12" y="232" font-size="10.5" text-anchor="start" fill="currentColor" opacity="0.7">connect → $connect · close → $disconnect</text>
   <text x="618" y="232" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">handler theo từng route</text>
 </svg>
@@ -191,53 +178,42 @@ exports.handler = async (event) => {
   <title>Lambda proxy vs non-proxy — đường đi dữ liệu</title>
   <desc>Bên trái: integration proxy AWS_PROXY chuyển nguyên request thành event chuẩn, Lambda bắt buộc trả {statusCode, headers, body string}, sai format thì 502. Bên phải: integration non-proxy AWS dùng mapping template VTL transform request vào và response ra, Lambda nhận/trả JSON tùy ý.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Proxy vs Non-proxy — đường đi dữ liệu</text>
-
   <defs>
     <marker id="apFlow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <text x="190" y="52" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Proxy (AWS_PROXY)</text>
   <text x="530" y="52" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Non-proxy (AWS)</text>
   <line x1="360" y1="40" x2="360" y2="344" stroke="currentColor" stroke-opacity="0.18"/>
-
   <g>
     <rect x="40" y="66" width="300" height="40" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="190" y="91" font-size="12" text-anchor="middle" fill="currentColor">Client request (headers, query, body)</text>
     <line x1="190" y1="106" x2="190" y2="124" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#apFlow)"/>
-
     <rect x="40" y="126" width="300" height="44" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="190" y="146" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">API GW: truyền NGUYÊN request</text>
     <text x="190" y="162" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">đóng thành event chuẩn (không VTL)</text>
     <line x1="190" y1="170" x2="190" y2="188" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#apFlow)"/>
-
     <rect x="40" y="190" width="300" height="40" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="190" y="215" font-size="12" text-anchor="middle" fill="currentColor">Lambda: đọc event, viết logic trong code</text>
     <line x1="190" y1="230" x2="190" y2="248" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#apFlow)"/>
-
     <rect x="40" y="250" width="300" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="190" y="270" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">BẮT BUỘC trả {statusCode, headers, body}</text>
     <text x="190" y="286" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">body là string — sai format → 502</text>
   </g>
-
   <g>
     <rect x="380" y="66" width="300" height="40" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="530" y="91" font-size="12" text-anchor="middle" fill="currentColor">Client request (headers, query, body)</text>
     <line x1="530" y1="106" x2="530" y2="124" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#apFlow)"/>
-
     <rect x="380" y="126" width="300" height="44" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="530" y="146" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Mapping template VTL (request)</text>
     <text x="530" y="162" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">transform → input Lambda tùy ý</text>
     <line x1="530" y1="170" x2="530" y2="188" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#apFlow)"/>
-
     <rect x="380" y="190" width="300" height="40" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="530" y="215" font-size="12" text-anchor="middle" fill="currentColor">Lambda: nhận/trả JSON tùy ý</text>
     <line x1="530" y1="230" x2="530" y2="248" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#apFlow)"/>
-
     <rect x="380" y="250" width="300" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="530" y="270" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Mapping template VTL (response)</text>
     <text x="530" y="286" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">transform output → response client</text>
   </g>
-
   <text x="190" y="320" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Ít config, logic nằm trong code</text>
   <text x="530" y="320" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Transform/validate không sửa code Lambda</text>
 </svg>

@@ -66,16 +66,13 @@ Sau đó nó **chọn** một token, **nối vào input**, và lặp lại. Đâ
     </marker>
   </defs>
   <text x="360" y="26" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Vòng lặp autoregressive — sinh từng token một</text>
-
   <rect x="40" y="150" width="150" height="62" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="115" y="176" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Input (prompt)</text>
   <text x="115" y="195" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">prompt + các token</text>
   <text x="115" y="208" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">đã sinh</text>
-
   <rect x="285" y="150" width="150" height="62" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="360" y="180" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">MODEL</text>
   <text x="360" y="199" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">đoán next-token</text>
-
   <rect x="500" y="120" width="200" height="124" rx="10" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="600" y="142" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Phân phối xác suất</text>
   <g font-size="10.5" fill="currentColor">
@@ -88,14 +85,11 @@ Sau đó nó **chọn** một token, **nối vào input**, và lặp lại. Đâ
     <rect x="600" y="206" width="7" height="10" rx="3" fill="#10b981" fill-opacity="0.4"/>
     <text x="600" y="234" font-size="9.5" fill="currentColor" opacity="0.6">… ~100k token khác</text>
   </g>
-
   <g stroke="currentColor" fill="none" stroke-width="1.6">
     <path d="M190 181 H283" marker-end="url(#ar-arrow)"/>
     <path d="M435 181 H498" marker-end="url(#ar-arrow)"/>
   </g>
-
   <text x="600" y="266" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">chọn 1 token</text>
-
   <g stroke="currentColor" fill="none" stroke-width="1.6" stroke-dasharray="5 4">
     <path d="M600 274 V336 H115 V214" marker-end="url(#ar-arrow)"/>
   </g>
@@ -123,36 +117,28 @@ Hệ quả thực tế bạn phải nhớ:
   <title>Bố cục context window và vùng lost in the middle</title>
   <desc>Một thanh ngang là trần token của context window, chia thành các ô: system prompt, lịch sử hội thoại, tài liệu RAG, câu hỏi và output. Vùng giữa thanh được đánh dấu là lost in the middle nơi model dễ bỏ sót thông tin.</desc>
   <text x="360" y="26" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Context window = input + output, vừa trong 1 trần token</text>
-
   <rect x="24" y="70" width="672" height="64" rx="8" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.6"/>
   <text x="360" y="58" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">Trần context window (ví dụ 200k token) — phải vừa TẤT CẢ trong đây</text>
-
   <g font-size="11" font-weight="600" text-anchor="middle">
     <rect x="28" y="74" width="120" height="56" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="88" y="98" fill="currentColor">system</text>
     <text x="88" y="113" fill="currentColor">prompt</text>
-
     <rect x="150" y="74" width="150" height="56" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="225" y="98" fill="currentColor">lịch sử</text>
     <text x="225" y="113" fill="currentColor">hội thoại</text>
-
     <rect x="302" y="74" width="160" height="56" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="382" y="98" fill="currentColor">tài liệu</text>
     <text x="382" y="113" fill="currentColor">RAG</text>
-
     <rect x="464" y="74" width="110" height="56" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="519" y="106" fill="currentColor">câu hỏi</text>
-
     <rect x="576" y="74" width="116" height="56" rx="6" fill="#10b981" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="634" y="98" fill="currentColor">output</text>
     <text x="634" y="113" fill="currentColor">(sinh ra)</text>
   </g>
-
   <g>
     <rect x="160" y="150" width="400" height="30" rx="6" fill="#ef4444" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="5 4"/>
     <text x="360" y="170" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">vùng "lost in the middle" — dễ bị bỏ sót</text>
   </g>
-
   <g font-size="11" font-weight="700" fill="currentColor">
     <text x="88" y="210" text-anchor="middle">chú ý tốt</text>
     <text x="88" y="224" text-anchor="middle" opacity="0.7">(đầu)</text>
@@ -201,14 +187,12 @@ messages.append({"role": "user", "content": new_question})
   <title>Không gian embedding 2D và độ tương đồng ngữ nghĩa</title>
   <desc>Các điểm biểu diễn vector embedding trong không gian 2D: chó và cún nằm sát nhau vì cùng ý nghĩa, hóa đơn nằm xa vì khác nghĩa. Khoảng cách gần phản ánh ý nghĩa giống nhau.</desc>
   <text x="360" y="26" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Không gian embedding: ý nghĩa gần nhau → vector gần nhau</text>
-
   <g stroke="currentColor" stroke-opacity="0.4" stroke-width="1.4" fill="none">
     <path d="M70 320 H660"/>
     <path d="M70 320 V60"/>
   </g>
   <text x="660" y="340" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.6">chiều 1</text>
   <text x="58" y="64" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.6">chiều 2</text>
-
   <g stroke="currentColor" stroke-opacity="0.18" stroke-dasharray="3 4">
     <path d="M70 120 H660"/>
     <path d="M70 200 H660"/>
@@ -217,24 +201,18 @@ messages.append({"role": "user", "content": new_question})
     <path d="M350 60 V320"/>
     <path d="M490 60 V320"/>
   </g>
-
   <ellipse cx="220" cy="150" rx="90" ry="62" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 4"/>
   <text x="220" y="100" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">cụm "động vật"</text>
-
   <circle cx="195" cy="160" r="9" fill="#3b82f6" fill-opacity="0.9"/>
   <text x="195" y="190" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">"chó"</text>
-
   <circle cx="245" cy="135" r="9" fill="#3b82f6" fill-opacity="0.9"/>
   <text x="262" y="125" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">"cún"</text>
-
   <g stroke="#3b82f6" stroke-opacity="0.7" stroke-width="1.6">
     <path d="M204 160 L236 138"/>
   </g>
   <text x="220" y="220" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">khoảng cách nhỏ → rất giống</text>
-
   <circle cx="560" cy="280" r="9" fill="#f59e0b" fill-opacity="0.95"/>
   <text x="560" y="308" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">"hóa đơn"</text>
-
   <g stroke="currentColor" stroke-opacity="0.45" stroke-width="1.4" stroke-dasharray="6 5">
     <path d="M252 142 L552 274"/>
   </g>

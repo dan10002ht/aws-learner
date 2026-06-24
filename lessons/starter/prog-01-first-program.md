@@ -83,7 +83,6 @@ Lưu ý quan trọng: trong lập trình, dấu `=` **không** có nghĩa "bằn
   <title>Biến là chiếc hộp có nhãn tên chứa giá trị</title>
   <desc>Ba chiếc hộp xếp ngang, mỗi hộp có nhãn tên ở trên và giá trị bên trong: ten chứa "Lan", tuoi chứa 18, diem chứa 9. Phía dưới mỗi hộp là một mũi tên đổ giá trị từ bên phải vào hộp, minh hoạ phép gán bằng dấu bằng đọc từ phải sang trái.</desc>
   <text x="16" y="26" font-size="14" font-weight="700" fill="currentColor">Biến = chiếc hộp có nhãn tên, gán = đổ giá trị vào hộp</text>
-
   <g>
     <text x="120" y="66" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">nhãn: ten</text>
     <rect x="76" y="76" width="88" height="64" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
@@ -93,7 +92,6 @@ Lưu ý quan trọng: trong lập trình, dấu `=` **không** có nghĩa "bằn
     <rect x="89" y="188" width="62" height="24" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="120" y="205" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">"Lan"</text>
   </g>
-
   <g transform="translate(240,0)">
     <text x="120" y="66" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">nhãn: tuoi</text>
     <rect x="76" y="76" width="88" height="64" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
@@ -103,7 +101,6 @@ Lưu ý quan trọng: trong lập trình, dấu `=` **không** có nghĩa "bằn
     <rect x="89" y="188" width="62" height="24" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="120" y="205" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">18</text>
   </g>
-
   <g transform="translate(480,0)">
     <text x="120" y="66" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">nhãn: diem</text>
     <rect x="76" y="76" width="88" height="64" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
@@ -113,9 +110,7 @@ Lưu ý quan trọng: trong lập trình, dấu `=` **không** có nghĩa "bằn
     <rect x="89" y="188" width="62" height="24" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="120" y="205" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">9</text>
   </g>
-
   <text x="16" y="252" font-size="11.5" fill="currentColor" opacity="0.75">diem = 9 nghĩa là: lấy giá trị 9 (vế phải dấu =) đổ vào hộp tên diem (vế trái) — đọc phải → trái.</text>
-
   <defs>
     <marker id="boxArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
@@ -251,7 +246,6 @@ Với số, dấu `+` là **phép cộng**. Với chuỗi, dấu `+` là **nối
   <title>Số 5 khác chuỗi "5" — cộng được vs nối được</title>
   <desc>Hai cột so sánh. Bên trái: ô số 5 là kiểu số, dấu cộng là phép cộng nên 5 + 3 bằng 8. Bên phải: ô chuỗi "5" là kiểu chữ, dấu cộng là nối chuỗi nên "5" + "3" bằng "53".</desc>
   <text x="16" y="26" font-size="14" font-weight="700" fill="currentColor">Số 5 và chuỗi "5" là hai thứ khác nhau</text>
-
   <g>
     <rect x="16" y="42" width="330" height="180" rx="10" fill="#10b981" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="32" y="66" font-size="13" font-weight="700" fill="currentColor">Số  5  — kiểu SỐ</text>
@@ -266,7 +260,6 @@ Với số, dấu `+` là **phép cộng**. Với chuỗi, dấu `+` là **nối
     <text x="239" y="135" font-size="20" font-weight="700" text-anchor="middle" fill="currentColor">8</text>
     <text x="32" y="196" font-size="12" fill="currentColor" opacity="0.85">5 + 3 = 8  (phép cộng)</text>
   </g>
-
   <g>
     <rect x="374" y="42" width="330" height="180" rx="10" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="390" y="66" font-size="13" font-weight="700" fill="currentColor">Chuỗi  "5"  — kiểu CHỮ</text>
@@ -433,11 +426,9 @@ Chú thích: phần nhập liệu là chỗ 4 ngôn ngữ khác nhau nhiều nh�
   <title>Luồng Nhập → Xử lý → Xuất với ví dụ tính tuổi</title>
   <desc>Pipeline ba bước từ trái sang phải: Nhập là hỏi năm sinh người dùng gõ vào, Xử lý là lấy 2026 trừ năm sinh ra tuổi, Xuất là in lời chào kèm tuổi ra màn hình.</desc>
   <text x="16" y="26" font-size="14" font-weight="700" fill="currentColor">Nhập → Xử lý → Xuất (ví dụ tính tuổi)</text>
-
   <defs>
     <marker id="flowArr" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0 0 L8 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <g>
     <rect x="16" y="56" width="200" height="92" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="116" y="82" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">1. NHẬP (input)</text>
@@ -445,7 +436,6 @@ Chú thích: phần nhập liệu là chỗ 4 ngôn ngữ khác nhau nhiều nh�
     <text x="116" y="126" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">người dùng gõ: 2008</text>
   </g>
   <line x1="220" y1="102" x2="256" y2="102" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#flowArr)"/>
-
   <g>
     <rect x="260" y="56" width="200" height="92" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="360" y="82" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">2. XỬ LÝ (process)</text>
@@ -453,7 +443,6 @@ Chú thích: phần nhập liệu là chỗ 4 ngôn ngữ khác nhau nhiều nh�
     <text x="360" y="126" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">2026 − 2008 = 18</text>
   </g>
   <line x1="464" y1="102" x2="500" y2="102" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#flowArr)"/>
-
   <g>
     <rect x="504" y="56" width="200" height="92" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="604" y="82" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">3. XUẤT (output)</text>

@@ -121,14 +121,11 @@ Hai cách gộp, hai hình hài lịch sử khác hẳn nhau. Nhìn cạnh nhau 
   <defs>
     <marker id="rmArr" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <line x1="360" y1="40" x2="360" y2="300" stroke="currentColor" stroke-opacity="0.18" stroke-dasharray="4 4"/>
-
   <!-- MERGE -->
   <rect x="16" y="36" width="120" height="24" rx="12" fill="#8b5cf6" fill-opacity="0.9"/>
   <text x="76" y="53" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">git merge</text>
   <text x="16" y="80" font-size="11" fill="currentColor" opacity="0.7">Tạo merge commit M (2 cha) — lịch sử rẽ nhánh, hash GIỮ NGUYÊN.</text>
-
   <g stroke="currentColor" stroke-opacity="0.5" fill="none">
     <line x1="50" y1="220" x2="100" y2="220" marker-end="url(#rmArr)"/>
     <line x1="120" y1="220" x2="170" y2="220" marker-end="url(#rmArr)"/>
@@ -155,12 +152,10 @@ Hai cách gộp, hai hình hài lịch sử khác hẳn nhau. Nhìn cạnh nhau 
   <text x="40" y="262" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">main</text>
   <text x="92" y="100" font-size="10.5" fill="currentColor" opacity="0.7">feature</text>
   <text x="305" y="262" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">M: cha E + C</text>
-
   <!-- REBASE -->
   <rect x="396" y="36" width="120" height="24" rx="12" fill="#3b82f6" fill-opacity="0.9"/>
   <text x="456" y="53" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">git rebase</text>
   <text x="396" y="80" font-size="11" fill="currentColor" opacity="0.7">Phát lại A'B'C' lên đỉnh main — lịch sử THẲNG, hash ĐỔI.</text>
-
   <g stroke="currentColor" stroke-opacity="0.5" fill="none">
     <line x1="430" y1="220" x2="475" y2="220" marker-end="url(#rmArr)"/>
     <line x1="495" y1="220" x2="540" y2="220" marker-end="url(#rmArr)"/>
@@ -271,9 +266,7 @@ f9a0b1c (HEAD -> feature) Add login form
   <defs>
     <marker id="sqArr" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0 0 L9 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <text x="16" y="26" font-size="13" font-weight="700" fill="currentColor">TRƯỚC — 4 commit lộn xộn</text>
-
   <!-- before commits -->
   <g>
     <rect x="16" y="44" width="150" height="44" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
@@ -295,7 +288,6 @@ f9a0b1c (HEAD -> feature) Add login form
     <rect x="26" y="210" width="68" height="18" rx="9" fill="#f59e0b" fill-opacity="0.85"/><text x="60" y="223" font-size="10" text-anchor="middle" fill="#fff">fixup d4e5</text>
     <text x="26" y="239" font-size="10.5" fill="currentColor" opacity="0.6">fix typo again</text>
   </g>
-
   <!-- fixup absorb arrows: 3 lower commits fold up into the first -->
   <g stroke="currentColor" stroke-opacity="0.45" fill="none" stroke-dasharray="3 3">
     <path d="M176 118 q40 -20 0 -42" marker-end="url(#sqArr)"/>
@@ -304,11 +296,9 @@ f9a0b1c (HEAD -> feature) Add login form
   </g>
   <text x="250" y="96" font-size="10" fill="#f59e0b" opacity="0.95" font-weight="700">fixup: gộp lên,</text>
   <text x="250" y="110" font-size="10" fill="#f59e0b" opacity="0.95" font-weight="700">vứt message</text>
-
   <!-- big arrow to after -->
   <line x1="370" y1="130" x2="450" y2="130" stroke="currentColor" stroke-opacity="0.5" stroke-width="2" marker-end="url(#sqArr)"/>
   <text x="410" y="120" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">rebase -i</text>
-
   <text x="490" y="26" font-size="13" font-weight="700" fill="currentColor">SAU — 1 commit sạch</text>
   <g>
     <rect x="490" y="100" width="214" height="60" rx="10" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>

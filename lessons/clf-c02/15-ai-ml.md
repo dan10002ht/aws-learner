@@ -29,11 +29,9 @@ Hình dung 3 tầng như một chồng xếp: càng **lên cao** càng ít việ
   <title>Chồng 3 tầng AI/ML của AWS — Frameworks, SageMaker, AI services, kèm Bedrock cho GenAI</title>
   <desc>Tháp 3 tầng xếp chồng: đáy là Frameworks (TensorFlow, PyTorch trên EC2/EKS) nhiều control và effort nhất; giữa là SageMaker (nền tảng ML managed); đỉnh là AI services pre-trained (Rekognition, Polly, Lex) ít control và effort nhất. Mũi tên bên trái cho thấy lên cao thì effort và control giảm. Bên phải là Bedrock — API foundation model cho GenAI.</desc>
   <text x="360" y="28" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Chồng 3 tầng AI/ML trên AWS</text>
-
   <defs>
     <marker id="aiArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <g>
     <rect x="170" y="56" width="340" height="84" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <rect x="182" y="68" width="150" height="22" rx="11" fill="#10b981" fill-opacity="0.95"/>
@@ -41,7 +39,6 @@ Hình dung 3 tầng như một chồng xếp: càng **lên cao** càng ít việ
     <text x="182" y="110" font-size="11.5" font-weight="700" fill="currentColor">Pre-trained, gọi API</text>
     <text x="182" y="128" font-size="10.5" fill="currentColor" opacity="0.7">Rekognition · Polly · Lex · Comprehend · Kendra</text>
   </g>
-
   <g>
     <rect x="120" y="156" width="440" height="84" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <rect x="132" y="168" width="160" height="22" rx="11" fill="#3b82f6" fill-opacity="0.9"/>
@@ -49,7 +46,6 @@ Hình dung 3 tầng như một chồng xếp: càng **lên cao** càng ít việ
     <text x="132" y="210" font-size="11.5" font-weight="700" fill="currentColor">Nền tảng ML managed</text>
     <text x="132" y="228" font-size="10.5" fill="currentColor" opacity="0.7">Studio · Autopilot · Training · Endpoint · Pipelines</text>
   </g>
-
   <g>
     <rect x="70" y="256" width="540" height="84" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <rect x="82" y="268" width="160" height="22" rx="11" fill="#f59e0b" fill-opacity="0.95"/>
@@ -57,18 +53,15 @@ Hình dung 3 tầng như một chồng xếp: càng **lên cao** càng ít việ
     <text x="82" y="310" font-size="11.5" font-weight="700" fill="currentColor">Tự build, full control</text>
     <text x="82" y="328" font-size="10.5" fill="currentColor" opacity="0.7">TensorFlow · PyTorch · MXNet trên EC2/EKS</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.5" fill="none">
     <path d="M40 336 v-264" marker-end="url(#aiArr)"/>
   </g>
   <text x="34" y="200" font-size="11" fill="currentColor" opacity="0.8" transform="rotate(-90 34 200)" text-anchor="middle">Lên cao: effort ↓ và control ↓</text>
-
   <g>
     <rect x="636" y="56" width="68" height="284" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="670" y="190" font-size="12" font-weight="700" fill="currentColor" transform="rotate(-90 670 190)" text-anchor="middle">Bedrock</text>
     <text x="688" y="190" font-size="10" fill="currentColor" opacity="0.7" transform="rotate(-90 688 190)" text-anchor="middle">GenAI · LLM API</text>
   </g>
-
   <text x="360" y="372" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">Mặc định thử Tầng 3 trước → chỉ xuống Tầng 2/1 khi cần model riêng.</text>
   <text x="360" y="392" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">Bedrock = nhánh riêng cho foundation model (Claude, Titan, Llama…).</text>
 </svg>

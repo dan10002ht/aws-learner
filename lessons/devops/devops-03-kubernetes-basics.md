@@ -27,15 +27,12 @@ K8s đặt ra một **trạng thái mong muốn (desired state)** dạng khai b�
   <rect x="40" y="110" width="200" height="80" rx="12" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="140" y="142" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">DESIRED (spec)</text>
   <text x="140" y="164" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.75">bạn khai báo: replicas=5</text>
-
   <rect x="480" y="110" width="200" height="80" rx="12" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="580" y="142" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">ACTUAL (status)</text>
   <text x="580" y="164" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.75">thực tế: đang có 4 Pod</text>
-
   <rect x="290" y="20" width="140" height="46" rx="10" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
   <text x="360" y="42" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">controller</text>
   <text x="360" y="58" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">so sánh + hành động</text>
-
   <defs>
     <marker id="ar4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
@@ -68,10 +65,8 @@ Một cluster gồm 2 nhóm máy: **control plane** (bộ não, ra quyết đị
   <text x="174" y="74" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">CONTROL PLANE (bộ não)</text>
   <rect x="386" y="50" width="320" height="300" rx="12" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="546" y="74" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">WORKER NODE (cơ bắp)</text>
-
   <rect x="300" y="14" width="120" height="30" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="360" y="34" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">kubectl</text>
-
   <rect x="44" y="92" width="260" height="40" rx="9" fill="#3b82f6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/>
   <text x="174" y="117" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">kube-apiserver — cửa ngõ duy nhất</text>
   <rect x="44" y="148" width="260" height="38" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
@@ -80,7 +75,6 @@ Một cluster gồm 2 nhóm máy: **control plane** (bộ não, ra quyết đị
   <text x="174" y="224" font-size="12.5" text-anchor="middle" fill="currentColor">kube-scheduler — chọn node cho Pod</text>
   <rect x="44" y="252" width="260" height="38" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="174" y="276" font-size="12.5" text-anchor="middle" fill="currentColor">controller-manager — control loop</text>
-
   <rect x="416" y="92" width="260" height="36" rx="9" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.35"/>
   <text x="546" y="115" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">kubelet — agent của node</text>
   <rect x="416" y="138" width="260" height="36" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
@@ -94,7 +88,6 @@ Một cluster gồm 2 nhóm máy: **control plane** (bộ não, ra quyết đị
   <text x="546" y="267" font-size="11.5" text-anchor="middle" fill="currentColor">Pod</text>
   <rect x="594" y="248" width="68" height="28" rx="6" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="628" y="267" font-size="11.5" text-anchor="middle" fill="currentColor">Pod</text>
-
   <defs>
     <marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
@@ -180,15 +173,12 @@ Là thứ bạn dùng thật. **Deployment quản lý ReplicaSet, ReplicaSet qu�
   <rect x="270" y="14" width="180" height="46" rx="10" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
   <text x="360" y="36" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Deployment: web</text>
   <text x="360" y="52" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">replicas: 3 + rolling update</text>
-
   <rect x="70" y="116" width="220" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.32"/>
   <text x="180" y="137" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">ReplicaSet (cũ)</text>
   <text x="180" y="153" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">nginx:1.27 — đang co lại</text>
-
   <rect x="430" y="116" width="220" height="44" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
   <text x="540" y="137" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">ReplicaSet (mới)</text>
   <text x="540" y="153" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">nginx:1.28 — đang dâng lên</text>
-
   <g>
     <rect x="78" y="210" width="62" height="40" rx="7" fill="#8b5cf6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="109" y="234" font-size="11" text-anchor="middle" fill="currentColor">Pod</text>
@@ -203,7 +193,6 @@ Là thứ bạn dùng thật. **Deployment quản lý ReplicaSet, ReplicaSet qu�
     <rect x="582" y="210" width="62" height="40" rx="7" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="613" y="234" font-size="11" text-anchor="middle" fill="currentColor">Pod</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.5" fill="none" stroke-width="1.5">
     <path d="M330 60 C260 80 200 95 180 114" marker-end="url(#ar2)"/>
     <path d="M390 60 C460 80 520 95 540 114" marker-end="url(#ar2)"/>
@@ -213,7 +202,6 @@ Là thứ bạn dùng thật. **Deployment quản lý ReplicaSet, ReplicaSet qu�
     <path d="M540 160 L541 208" marker-end="url(#ar2)"/>
     <path d="M540 160 L613 208" marker-end="url(#ar2)"/>
   </g>
-
   <text x="360" y="300" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Rolling update: tạo ReplicaSet mới, dời Pod dần — không downtime</text>
   <text x="360" y="322" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">rollback = quay lại ReplicaSet cũ</text>
 </svg>
@@ -278,13 +266,11 @@ Pod có IP nhưng IP **đổi mỗi lần Pod tái tạo**. Không thể hardcod
   <rect x="20" y="120" width="150" height="70" rx="11" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="95" y="150" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Client / Pod khác</text>
   <text x="95" y="170" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">gọi http://web</text>
-
   <rect x="250" y="110" width="190" height="90" rx="12" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.38"/>
   <text x="345" y="138" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Service: web</text>
   <text x="345" y="160" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">ClusterIP ổn định</text>
   <text x="345" y="178" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">DNS: web.default.svc</text>
   <text x="345" y="194" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">selector: app=web</text>
-
   <g>
     <rect x="540" y="30" width="160" height="58" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="620" y="54" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Pod (app=web)</text>
@@ -296,7 +282,6 @@ Pod có IP nhưng IP **đổi mỗi lần Pod tái tạo**. Không thể hardcod
     <text x="620" y="246" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Pod (app=web)</text>
     <text x="620" y="264" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">IP đổi khi tái tạo</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.6">
     <path d="M170 155 L246 155" marker-end="url(#ar3)"/>
     <path d="M440 140 C490 110 500 80 538 62" marker-end="url(#ar3)"/>

@@ -147,32 +147,25 @@ Lưu ý: Python viết gọn `elif`, ba ngôn ngữ còn lại viết đầy đ�
   <defs>
     <marker id="cfArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">if / else — chọn một trong hai nhánh</text>
-
   <ellipse cx="120" cy="52" rx="54" ry="17" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.35"/>
   <text x="120" y="56" font-size="11.5" text-anchor="middle" fill="currentColor">Bắt đầu</text>
   <line x1="120" y1="69" x2="120" y2="88" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#cfArr)"/>
-
   <polygon points="120,92 196,134 120,176 44,134" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="120" y="131" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">tuoi &gt;= 18 ?</text>
   <text x="120" y="148" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">điều kiện</text>
-
   <line x1="44" y1="134" x2="22" y2="134" stroke="currentColor" stroke-opacity="0.5"/>
   <line x1="22" y1="134" x2="22" y2="210" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#cfArr)"/>
   <text x="30" y="200" font-size="10.5" fill="#ef4444" opacity="0.95" font-weight="700">Sai</text>
   <line x1="196" y1="134" x2="218" y2="134" stroke="currentColor" stroke-opacity="0.5"/>
   <line x1="218" y1="134" x2="218" y2="210" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#cfArr)"/>
   <text x="200" y="200" font-size="10.5" fill="#10b981" opacity="0.95" font-weight="700">Đúng</text>
-
   <rect x="-12" y="214" width="68" height="40" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="22" y="238" font-size="10.5" text-anchor="middle" fill="currentColor">chưa đủ tuổi</text>
   <rect x="184" y="214" width="68" height="40" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="218" y="238" font-size="10.5" text-anchor="middle" fill="currentColor">đủ tuổi bầu cử</text>
-
   <text x="300" y="22" font-size="13.5" font-weight="700" fill="currentColor">if / elif / else — bậc thang xếp loại điểm</text>
   <text x="300" y="40" font-size="10.5" fill="currentColor" opacity="0.7">kiểm tra từ trên xuống, dừng ở nhánh ĐÚNG đầu tiên</text>
-
   <g>
     <polygon points="360,52 432,76 360,100 288,76" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="360" y="80" font-size="11" text-anchor="middle" fill="currentColor">diem &gt;= 8 ?</text>
@@ -374,33 +367,25 @@ Python đi đường khác: `range(1, 6)` tạo sẵn dãy số rồi `for` duy�
   <defs>
     <marker id="forArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">Vòng đời của for: 3 phần — khởi tạo · điều kiện · bước nhảy</text>
-
   <rect x="40" y="48" width="150" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="115" y="70" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">1. Khởi tạo</text>
   <text x="115" y="86" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">i = 1 (chỉ một lần)</text>
   <line x1="115" y1="92" x2="115" y2="128" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#forArr)"/>
-
   <polygon points="115,132 235,182 115,232 -5,182" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="115" y="178" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">2. Điều kiện</text>
   <text x="115" y="195" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">i &lt;= 5 ?</text>
-
   <line x1="235" y1="182" x2="300" y2="182" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#forArr)"/>
   <text x="248" y="174" font-size="10.5" fill="#10b981" font-weight="700">Đúng</text>
-
   <rect x="304" y="138" width="170" height="44" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="389" y="160" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Thân vòng lặp</text>
   <text x="389" y="176" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">print(i)</text>
   <line x1="389" y1="182" x2="389" y2="218" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#forArr)"/>
-
   <rect x="304" y="222" width="170" height="44" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="389" y="244" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">3. Bước nhảy</text>
   <text x="389" y="260" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">i = i + 1 (i++)</text>
-
   <path d="M304 244 H115 V236" fill="none" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#forArr)"/>
   <text x="150" y="262" font-size="10.5" fill="currentColor" opacity="0.7">quay lại kiểm tra</text>
-
   <line x1="115" y1="232" x2="115" y2="300" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#forArr)"/>
   <text x="124" y="290" font-size="10.5" fill="#ef4444" font-weight="700">Sai</text>
   <rect x="40" y="304" width="150" height="40" rx="9" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/>
@@ -486,32 +471,24 @@ std::cout << "Tiêu được " << ngay << " ngày, còn dư " << tien << std::en
   <defs>
     <marker id="bcArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">break vs continue — hai kiểu nhảy trong vòng lặp</text>
-
   <rect x="150" y="44" width="300" height="232" rx="14" fill="#3b82f6" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.22" stroke-dasharray="6 4"/>
   <text x="166" y="64" font-size="11" fill="currentColor" opacity="0.7">vòng lặp for / while</text>
-
   <rect x="190" y="76" width="220" height="34" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="300" y="97" font-size="11.5" text-anchor="middle" fill="currentColor">đầu vòng (kiểm tra điều kiện)</text>
   <line x1="300" y1="110" x2="300" y2="132" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#bcArr)"/>
-
   <rect x="190" y="136" width="220" height="34" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="300" y="157" font-size="11.5" text-anchor="middle" fill="currentColor">if số chẵn → continue</text>
   <line x1="300" y1="170" x2="300" y2="192" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#bcArr)"/>
-
   <rect x="190" y="196" width="220" height="34" rx="8" fill="#ef4444" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="300" y="217" font-size="11.5" text-anchor="middle" fill="currentColor">if i == 9 → break</text>
   <line x1="300" y1="230" x2="300" y2="252" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#bcArr)"/>
-
   <rect x="210" y="252" width="180" height="20" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="300" y="266" font-size="11" text-anchor="middle" fill="currentColor">phần còn lại: print(i)</text>
-
   <path d="M190 153 H110 V93 H186" fill="none" stroke="#f59e0b" stroke-opacity="0.9" stroke-width="1.6" marker-end="url(#bcArr)"/>
   <text x="40" y="120" font-size="11.5" font-weight="700" fill="#f59e0b">continue</text>
   <text x="40" y="136" font-size="10" fill="currentColor" opacity="0.7">về đầu vòng,</text>
   <text x="40" y="149" font-size="10" fill="currentColor" opacity="0.7">bỏ phần còn lại</text>
-
   <path d="M410 213 H540 V296 H300" fill="none" stroke="#ef4444" stroke-opacity="0.9" stroke-width="1.6" marker-end="url(#bcArr)"/>
   <text x="556" y="200" font-size="11.5" font-weight="700" fill="#ef4444">break</text>
   <text x="556" y="216" font-size="10" fill="currentColor" opacity="0.7">nhảy ra ngoài,</text>

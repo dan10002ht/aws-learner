@@ -25,19 +25,16 @@ Bốn nhiệm vụ cốt lõi:
   <title>User space vs kernel space và cánh cửa syscall</title>
   <desc>App chạy ở user space đặc quyền thấp, không đụng được phần cứng; muốn ra ngoài phải đi qua một mũi tên syscall duy nhất xuống kernel space đặc quyền cao rồi trả kết quả về.</desc>
   <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Kernel space vs user space</text>
-
   <rect x="16" y="44" width="688" height="92" rx="10" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="32" y="66" font-size="12.5" font-weight="700" fill="currentColor">USER SPACE — đặc quyền thấp</text>
   <text x="32" y="88" font-size="12" fill="currentColor" opacity="0.85">App của bạn (Node, JVM…), thư viện, runtime</text>
   <rect x="32" y="100" width="320" height="26" rx="7" fill="#ef4444" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/>
   <text x="44" y="117" font-size="11" fill="currentColor" opacity="0.9">KHÔNG được đụng trực tiếp phần cứng</text>
-
   <rect x="16" y="216" width="688" height="92" rx="10" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="32" y="238" font-size="12.5" font-weight="700" fill="currentColor">KERNEL SPACE — đặc quyền tối cao</text>
   <text x="32" y="260" font-size="12" fill="currentColor" opacity="0.85">Kernel: scheduler, driver, quản lý memory, file system</text>
   <rect x="32" y="272" width="300" height="26" rx="7" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.18"/>
   <text x="44" y="289" font-size="11" fill="currentColor" opacity="0.9">ĐƯỢC đụng trực tiếp CPU · RAM · đĩa · mạng</text>
-
   <g stroke="currentColor" stroke-opacity="0.7" fill="none">
     <path d="M520 136 v74" marker-end="url(#osArrowDn)"/>
     <path d="M600 210 v-74" marker-end="url(#osArrowUp)"/>
@@ -77,24 +74,20 @@ Mỗi lần chuyển user → kernel → user là một lần **mode switch**, t
   <desc>Bên trái: hai process có address space riêng, có tường cách ly không đụng vào nhau. Bên phải: một process với heap và globals chia sẻ giữa các thread, mỗi thread chỉ có stack riêng.</desc>
   <text x="16" y="26" font-size="14" font-weight="700" fill="currentColor">Process: cách ly</text>
   <text x="392" y="26" font-size="14" font-weight="700" fill="currentColor">Thread: chia sẻ trong 1 process</text>
-
   <rect x="16" y="40" width="150" height="160" rx="10" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="91" y="62" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Process A</text>
   <text x="91" y="86" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Code · Data · Heap</text>
   <text x="91" y="106" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Stack · file descr.</text>
   <text x="91" y="180" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">address space riêng</text>
-
   <rect x="218" y="40" width="150" height="160" rx="10" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="293" y="62" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Process B</text>
   <text x="293" y="86" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Code · Data · Heap</text>
   <text x="293" y="106" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Stack · file descr.</text>
   <text x="293" y="180" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">address space riêng</text>
-
   <g>
     <line x1="192" y1="40" x2="192" y2="200" stroke="#ef4444" stroke-opacity="0.6" stroke-width="3" stroke-dasharray="6 5"/>
     <text x="192" y="222" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.8">⛔ tường cách ly</text>
   </g>
-
   <rect x="392" y="40" width="312" height="160" rx="10" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <rect x="404" y="52" width="288" height="30" rx="7" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.18"/>
   <text x="548" y="72" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Heap + Globals (CHIA SẺ)</text>
@@ -103,12 +96,10 @@ Mỗi lần chuyển user → kernel → user là một lần **mode switch**, t
     <text x="448" y="118" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Thread 1</text>
     <text x="448" y="138" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">stack</text>
     <text x="448" y="151" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">riêng</text>
-
     <rect x="504" y="96" width="88" height="78" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="548" y="118" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Thread 2</text>
     <text x="548" y="138" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">stack</text>
     <text x="548" y="151" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">riêng</text>
-
     <rect x="604" y="96" width="88" height="78" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="648" y="118" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Thread 3</text>
     <text x="648" y="138" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">stack</text>
@@ -168,16 +159,12 @@ Process/thread không phải lúc nào cũng "chạy". Trạng thái điển hì
   <defs>
     <marker id="stArrow" markerWidth="10" markerHeight="10" refX="8" refY="3.2" orient="auto"><path d="M0 0 L8 3.2 L0 6.4 Z" fill="currentColor"/></marker>
   </defs>
-
   <rect x="280" y="56" width="160" height="56" rx="12" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="360" y="90" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">RUNNING</text>
-
   <rect x="40" y="56" width="160" height="56" rx="12" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="120" y="90" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">READY</text>
-
   <rect x="520" y="56" width="160" height="56" rx="12" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="600" y="90" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">BLOCKED</text>
-
   <g stroke="currentColor" stroke-opacity="0.65" fill="none" stroke-width="1.5">
     <path d="M200 74 H274" marker-end="url(#stArrow)"/>
     <path d="M280 96 H206" marker-end="url(#stArrow)"/>
@@ -186,7 +173,6 @@ Process/thread không phải lúc nào cũng "chạy". Trạng thái điển hì
   <text x="237" y="64" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">scheduler chọn</text>
   <text x="243" y="118" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">hết time slice</text>
   <text x="477" y="70" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">chờ I/O (đĩa/mạng)</text>
-
   <g stroke="currentColor" stroke-opacity="0.65" fill="none" stroke-width="1.5">
     <path d="M600 112 V180 H120 V112" marker-end="url(#stArrow)"/>
   </g>
@@ -210,23 +196,19 @@ Cơ chế: OS + phần cứng (MMU) dịch **địa chỉ ảo (virtual address)
   <defs>
     <marker id="pgArrow" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0 0 L7.5 3 L0 6 Z" fill="currentColor"/></marker>
   </defs>
-
   <!-- Process A -->
   <rect x="16" y="40" width="150" height="120" rx="10" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="91" y="60" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Process A</text>
   <text x="32" y="84" font-size="11" fill="currentColor" opacity="0.9">page 0</text>
   <text x="32" y="110" font-size="11" fill="currentColor" opacity="0.9">page 1</text>
   <text x="32" y="136" font-size="11" fill="currentColor" opacity="0.9">page 2</text>
-
   <!-- Process B -->
   <rect x="16" y="220" width="150" height="90" rx="10" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="91" y="240" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Process B</text>
   <text x="32" y="266" font-size="11" fill="currentColor" opacity="0.9">page 0</text>
-
   <!-- Page table -->
   <rect x="296" y="40" width="128" height="270" rx="10" fill="#8b5cf6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="360" y="62" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">dịch địa chỉ (MMU)</text>
-
   <!-- RAM -->
   <rect x="560" y="40" width="144" height="200" rx="10" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <rect x="572" y="56" width="120" height="26" rx="6" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.18"/>
@@ -235,12 +217,10 @@ Cơ chế: OS + phần cứng (MMU) dịch **địa chỉ ảo (virtual address)
   <text x="632" y="109" font-size="11" text-anchor="middle" fill="currentColor">frame 7</text>
   <rect x="572" y="170" width="120" height="26" rx="6" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.18"/>
   <text x="632" y="187" font-size="11" text-anchor="middle" fill="currentColor">frame 9</text>
-
   <!-- Swap -->
   <rect x="560" y="276" width="144" height="48" rx="10" fill="#ef4444" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="632" y="296" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">ổ SWAP (đĩa)</text>
   <text x="632" y="313" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">page chưa nạp</text>
-
   <!-- arrows virtual -> page table -->
   <g stroke="currentColor" stroke-opacity="0.55" fill="none">
     <path d="M166 80 H290" marker-end="url(#pgArrow)"/>

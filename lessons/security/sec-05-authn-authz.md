@@ -61,49 +61,39 @@ Stateless rất hợp cho microservices và mobile, nhưng đánh đổi: **khô
   <title>So sánh luồng request: Session (stateful) vs JWT (stateless)</title>
   <desc>Hai cột song song. Cột Session: client gửi cookie sid, server phải tra store (Redis/DB) mỗi request để biết user — revoke dễ nhưng cần store dùng chung khi scale. Cột JWT: client gửi token tự chứa, server chỉ verify chữ ký không cần store — scale dễ nhưng khó revoke ngay.</desc>
   <text x="360" y="24" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Một request đã đăng nhập: Session vs JWT</text>
-
   <g>
     <rect x="16" y="44" width="336" height="296" rx="10" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.18"/>
     <text x="184" y="68" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Session (stateful)</text>
-
     <rect x="36" y="82" width="120" height="40" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.35"/>
     <text x="96" y="106" font-size="12" text-anchor="middle" fill="currentColor">Client</text>
     <rect x="212" y="82" width="120" height="40" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.35"/>
     <text x="272" y="106" font-size="12" text-anchor="middle" fill="currentColor">Server</text>
-
     <line x1="156" y1="140" x2="212" y2="140" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ar)"/>
     <text x="184" y="135" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">Cookie: sid=abc</text>
-
     <rect x="212" y="160" width="120" height="48" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="272" y="180" font-size="10.5" text-anchor="middle" fill="currentColor">tra STORE</text>
     <text x="272" y="196" font-size="10.5" text-anchor="middle" fill="currentColor">(Redis/DB)</text>
     <line x1="272" y1="208" x2="272" y2="234" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ar)"/>
     <rect x="212" y="236" width="120" height="34" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="272" y="257" font-size="10.5" text-anchor="middle" fill="currentColor">→ biết user 42</text>
-
     <text x="32" y="296" font-size="10.5" fill="currentColor" opacity="0.85">+ Revoke tức thì (xoá khỏi store)</text>
     <text x="32" y="314" font-size="10.5" fill="currentColor" opacity="0.85">− Scale cần store dùng chung</text>
   </g>
-
   <g>
     <rect x="368" y="44" width="336" height="296" rx="10" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
     <text x="536" y="68" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">JWT (stateless)</text>
-
     <rect x="388" y="82" width="120" height="40" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.35"/>
     <text x="448" y="106" font-size="12" text-anchor="middle" fill="currentColor">Client</text>
     <rect x="564" y="82" width="120" height="40" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.35"/>
     <text x="624" y="106" font-size="12" text-anchor="middle" fill="currentColor">Server</text>
-
     <line x1="508" y1="140" x2="564" y2="140" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ar)"/>
     <text x="536" y="135" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">Bearer: token tự chứa</text>
-
     <rect x="564" y="160" width="120" height="48" rx="8" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="624" y="180" font-size="10.5" text-anchor="middle" fill="currentColor">verify CHỮ KÝ</text>
     <text x="624" y="196" font-size="10.5" text-anchor="middle" fill="currentColor">(không tra store)</text>
     <line x1="624" y1="208" x2="624" y2="234" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ar)"/>
     <rect x="564" y="236" width="120" height="34" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="624" y="257" font-size="10.5" text-anchor="middle" fill="currentColor">→ đọc sub=42</text>
-
     <text x="384" y="296" font-size="10.5" fill="currentColor" opacity="0.85">+ Scale dễ, không cần store</text>
     <text x="384" y="314" font-size="10.5" fill="currentColor" opacity="0.85">− Khó revoke ngay (cần denylist)</text>
   </g>
@@ -171,36 +161,27 @@ PKCE thêm một bí mật dùng-một-lần do client tự sinh:
   <title>OAuth 2.1 Authorization Code + PKCE: sequence chống chặn code</title>
   <desc>Sequence diagram hai cột Client và Auth Server theo thời gian đi xuống. Client sinh code_verifier rồi tính challenge = SHA256(verifier), gọi /authorize kèm challenge, nhận về code. Kẻ tấn công chặn được code nhưng không có verifier. Client gọi /token kèm code và verifier gốc; server tự hash verifier so với challenge đã lưu, khớp mới cấp token.</desc>
   <text x="360" y="22" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Authorization Code + PKCE</text>
-
   <text x="150" y="50" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Client (app)</text>
   <text x="570" y="50" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Auth Server</text>
   <line x1="150" y1="60" x2="150" y2="400" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
   <line x1="570" y1="60" x2="570" y2="400" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-
   <rect x="36" y="74" width="228" height="40" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="150" y="90" font-size="10.5" text-anchor="middle" fill="currentColor">sinh code_verifier (ngẫu nhiên)</text>
   <text x="150" y="105" font-size="10.5" text-anchor="middle" fill="currentColor">challenge = SHA256(verifier)</text>
-
   <line x1="150" y1="134" x2="570" y2="134" stroke="currentColor" stroke-opacity="0.65" marker-end="url(#pa)"/>
   <text x="360" y="128" font-size="10.5" text-anchor="middle" fill="currentColor">/authorize ... &amp;code_challenge=hash &amp;method=S256</text>
-
   <line x1="570" y1="164" x2="150" y2="164" stroke="currentColor" stroke-opacity="0.65" marker-end="url(#pa)"/>
   <text x="360" y="158" font-size="10.5" text-anchor="middle" fill="currentColor">trả về authorization code</text>
-
   <rect x="180" y="184" width="360" height="50" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="360" y="204" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Kẻ tấn công chặn được CODE...</text>
   <text x="360" y="222" font-size="10.5" text-anchor="middle" fill="currentColor">nhưng KHÔNG có verifier → vô dụng</text>
-
   <line x1="150" y1="264" x2="570" y2="264" stroke="currentColor" stroke-opacity="0.65" marker-end="url(#pa)"/>
   <text x="360" y="258" font-size="10.5" text-anchor="middle" fill="currentColor">/token ... &amp;code=code &amp;code_verifier=verifier gốc</text>
-
   <rect x="456" y="284" width="228" height="50" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="570" y="304" font-size="10.5" text-anchor="middle" fill="currentColor">hash(verifier) == challenge?</text>
   <text x="570" y="320" font-size="10.5" text-anchor="middle" fill="currentColor">khớp → cấp token</text>
-
   <line x1="570" y1="364" x2="150" y2="364" stroke="currentColor" stroke-opacity="0.65" marker-end="url(#pa)"/>
   <text x="360" y="358" font-size="10.5" text-anchor="middle" fill="currentColor">access token (+ refresh, id token)</text>
-
   <defs>
     <marker id="pa" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0 0 L7 3.2 L0 6.4 z" fill="currentColor"/></marker>
   </defs>
@@ -224,56 +205,42 @@ Cơ chế **rotation + reuse detection**:
   <title>Refresh token rotation và reuse detection</title>
   <desc>Mỗi lần /refresh cấp access token mới và refresh token mới (RT1 đổi thành RT2, RT2 thành RT3) đồng thời vô hiệu token cũ. Nếu một refresh token cũ đã dùng (ví dụ RT1 do bị lộ) lại tái xuất hiện thì server phát hiện reuse và thu hồi toàn bộ token family của user, bắt đăng nhập lại.</desc>
   <text x="360" y="24" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Rotation + reuse detection</text>
-
   <text x="360" y="52" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.85">Luồng bình thường — mỗi refresh xoay token</text>
-
   <g>
     <rect x="36" y="64" width="120" height="48" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="96" y="84" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">RT1</text>
     <text x="96" y="101" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">family F</text>
-
     <rect x="300" y="64" width="120" height="48" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="360" y="84" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">RT2</text>
     <text x="360" y="101" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">family F</text>
-
     <rect x="564" y="64" width="120" height="48" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="624" y="84" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">RT3</text>
     <text x="624" y="101" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">family F</text>
-
     <line x1="156" y1="88" x2="300" y2="88" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ra)"/>
     <text x="228" y="80" font-size="10" text-anchor="middle" fill="currentColor">/refresh</text>
     <text x="228" y="126" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">RT1 đánh dấu đã dùng</text>
-
     <line x1="420" y1="88" x2="564" y2="88" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ra)"/>
     <text x="492" y="80" font-size="10" text-anchor="middle" fill="currentColor">/refresh</text>
     <text x="492" y="126" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">RT2 đánh dấu đã dùng</text>
   </g>
-
   <line x1="16" y1="156" x2="704" y2="156" stroke="currentColor" stroke-opacity="0.18"/>
   <text x="360" y="184" font-size="12" font-weight="700" text-anchor="middle" fill="#f59e0b" opacity="0.95">Token bị lộ — RT1 (đã dùng) tái xuất hiện</text>
-
   <g>
     <rect x="36" y="200" width="150" height="48" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="111" y="220" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Kẻ tấn công</text>
     <text x="111" y="237" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">gửi RT1 đã dùng</text>
-
     <line x1="186" y1="224" x2="300" y2="224" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ra)"/>
     <text x="243" y="216" font-size="10" text-anchor="middle" fill="currentColor">/refresh</text>
-
     <rect x="300" y="196" width="170" height="56" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
     <text x="385" y="217" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">RT1.used == true?</text>
     <text x="385" y="234" font-size="10.5" text-anchor="middle" fill="currentColor">→ phát hiện REUSE</text>
-
     <line x1="470" y1="224" x2="540" y2="224" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ra)"/>
-
     <rect x="540" y="196" width="160" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
     <text x="620" y="217" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">revoke family F</text>
     <text x="620" y="234" font-size="10.5" text-anchor="middle" fill="currentColor">bắt đăng nhập lại</text>
   </g>
-
   <text x="360" y="296" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">RT2, RT3 cùng family F cũng bị thu hồi → cả người dùng thật lẫn kẻ tấn công đều mất quyền.</text>
   <text x="360" y="320" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">Người dùng thật đăng nhập lại an toàn; việc đánh cắp trở thành phát hiện được.</text>
-
   <defs>
     <marker id="ra" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0 0 L7 3.2 L0 6.4 z" fill="currentColor"/></marker>
   </defs>
@@ -350,41 +317,31 @@ Thứ tự ưu tiên thực dụng:
   <title>Passkey / WebAuthn: đăng ký và đăng nhập challenge-response</title>
   <desc>Sequence diagram hai cột Thiết bị và Server. Khi đăng ký, thiết bị sinh cặp khoá và gửi public key cho server lưu. Khi đăng nhập, server gửi challenge ngẫu nhiên, thiết bị mở private key bằng vân tay và ký challenge kèm origin, gửi chữ ký về; server verify bằng public key đã lưu. Vì chữ ký gắn với origin nên trang phishing không lấy được chữ ký hợp lệ.</desc>
   <text x="360" y="22" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Passkey / WebAuthn — challenge-response</text>
-
   <text x="150" y="48" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Thiết bị</text>
   <text x="570" y="48" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Server</text>
   <line x1="150" y1="58" x2="150" y2="404" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
   <line x1="570" y1="58" x2="570" y2="404" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-
   <rect x="22" y="66" width="676" height="22" rx="6" fill="#3b82f6" fill-opacity="0.14"/>
   <text x="36" y="81" font-size="11" font-weight="700" fill="currentColor">Đăng ký (1 lần)</text>
-
   <rect x="36" y="96" width="228" height="40" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="150" y="112" font-size="10.5" text-anchor="middle" fill="currentColor">sinh cặp khoá (private giữ trong</text>
   <text x="150" y="127" font-size="10.5" text-anchor="middle" fill="currentColor">Secure Enclave/TPM)</text>
-
   <line x1="150" y1="152" x2="570" y2="152" stroke="currentColor" stroke-opacity="0.65" marker-end="url(#wa)"/>
   <text x="360" y="146" font-size="10.5" text-anchor="middle" fill="currentColor">gửi PUBLIC key</text>
   <rect x="456" y="162" width="228" height="30" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="570" y="182" font-size="10.5" text-anchor="middle" fill="currentColor">lưu public key của user</text>
-
   <rect x="22" y="206" width="676" height="22" rx="6" fill="#8b5cf6" fill-opacity="0.16"/>
   <text x="36" y="221" font-size="11" font-weight="700" fill="currentColor">Đăng nhập (mỗi lần)</text>
-
   <line x1="570" y1="248" x2="150" y2="248" stroke="currentColor" stroke-opacity="0.65" marker-end="url(#wa)"/>
   <text x="360" y="242" font-size="10.5" text-anchor="middle" fill="currentColor">gửi challenge (ngẫu nhiên)</text>
-
   <rect x="36" y="262" width="228" height="44" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="150" y="282" font-size="10.5" text-anchor="middle" fill="currentColor">mở bằng vân tay → ký challenge</text>
   <text x="150" y="298" font-size="10.5" text-anchor="middle" fill="currentColor">+ origin bằng PRIVATE key</text>
-
   <line x1="150" y1="324" x2="570" y2="324" stroke="currentColor" stroke-opacity="0.65" marker-end="url(#wa)"/>
   <text x="360" y="318" font-size="10.5" text-anchor="middle" fill="currentColor">gửi chữ ký</text>
   <rect x="456" y="334" width="228" height="30" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="570" y="354" font-size="10.5" text-anchor="middle" fill="currentColor">verify bằng public key đã lưu</text>
-
   <text x="360" y="392" font-size="10.5" text-anchor="middle" fill="#f59e0b" opacity="0.95">Chữ ký gắn với ORIGIN → trang phishing examp1e.com không có chữ ký hợp lệ.</text>
-
   <defs>
     <marker id="wa" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0 0 L7 3.2 L0 6.4 z" fill="currentColor"/></marker>
   </defs>

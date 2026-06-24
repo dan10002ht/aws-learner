@@ -75,14 +75,12 @@ AWS = **chủ đầu tư toà nhà**. Bạn = **khách thuê căn hộ**.
   <title>Ranh giới trách nhiệm dịch chuyển qua 3 loại service AWS</title>
   <desc>Ba cột so sánh cùng cấu trúc: Infrastructure (EC2), Container (RDS), Abstracted (S3 và Lambda). Mỗi cột chia hai phần — phần khách hàng chịu (phía trên) thu hẹp dần khi service càng managed, phần AWS chịu (phía dưới) lớn dần. Ranh giới đi lên từ trái sang phải.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Service càng managed → phần khách hàng chịu càng thu hẹp</text>
-
   <g font-size="11.5">
     <rect x="16" y="44" width="150" height="16" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="26" y="56" fill="currentColor">Khách hàng chịu (IN)</text>
     <rect x="180" y="44" width="150" height="16" rx="4" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="190" y="56" fill="currentColor">AWS chịu (OF)</text>
   </g>
-
   <!-- Infrastructure (EC2) -->
   <g>
     <text x="100" y="84" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Infrastructure</text>
@@ -97,7 +95,6 @@ AWS = **chủ đầu tư toà nhà**. Bạn = **khách thuê căn hộ**.
     <text x="100" y="290" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">HW · hypervisor</text>
     <text x="100" y="308" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">network vật lý</text>
   </g>
-
   <!-- Container (RDS) -->
   <g>
     <text x="290" y="84" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Container</text>
@@ -113,7 +110,6 @@ AWS = **chủ đầu tư toà nhà**. Bạn = **khách thuê căn hộ**.
     <text x="290" y="266" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">backup tự động</text>
     <text x="290" y="298" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">HW · hypervisor</text>
   </g>
-
   <!-- Abstracted (S3/Lambda) -->
   <g>
     <text x="480" y="84" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Abstracted</text>
@@ -127,7 +123,6 @@ AWS = **chủ đầu tư toà nhà**. Bạn = **khách thuê căn hộ**.
     <text x="480" y="262" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">service code</text>
     <text x="480" y="284" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">HW · hypervisor</text>
   </g>
-
   <!-- boundary trend line going up -->
   <g stroke="#f59e0b" stroke-width="2.2" stroke-opacity="0.85" fill="none">
     <path d="M32 262 L168 262 L222 204 L358 204 L412 172 L548 172" stroke-dasharray="6 4"/>
@@ -187,49 +182,39 @@ Cùng câu hỏi: "Ai patch lỗ hổng bảo mật mới phát hiện?"
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Mô hình Shared Responsibility — Security IN vs OF the cloud</title>
   <desc>Hai tầng xếp chồng, ngăn bởi một đường ranh giới rõ. Tầng trên là Customer (Security IN the cloud) gồm Customer Data, Platform/Application/IAM, OS và cấu hình Network/Firewall, mã hoá client-side, mã hoá server-side, bảo vệ traffic mạng. Tầng dưới là AWS (Security OF the cloud) gồm Software hạ tầng Compute/Storage/Database/Networking và Hardware/Global Infrastructure Regions/AZs/Edge/Datacenters.</desc>
-
   <!-- CUSTOMER tier -->
   <text x="16" y="26" font-size="14" font-weight="700" fill="#3b82f6">CUSTOMER — Security IN the cloud</text>
   <text x="704" y="26" font-size="11" text-anchor="end" fill="currentColor" opacity="0.65">khách hàng chịu</text>
-
   <g font-size="11.5">
     <rect x="16" y="38" width="688" height="34" rx="7" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="28" y="59" font-weight="700" fill="currentColor">Customer Data — phân loại, mã hoá, backup, xoá</text>
-
     <rect x="16" y="78" width="338" height="34" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="28" y="99" fill="currentColor">Platform · Application · IAM</text>
     <rect x="366" y="78" width="338" height="34" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="378" y="99" fill="currentColor">OS · Network &amp; Firewall config</text>
-
     <rect x="16" y="118" width="338" height="34" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="28" y="139" fill="currentColor">Client-side encryption &amp; integrity</text>
     <rect x="366" y="118" width="338" height="34" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="378" y="139" fill="currentColor">Server-side encryption (file/data)</text>
-
     <rect x="16" y="158" width="688" height="34" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="28" y="179" fill="currentColor">Networking traffic protection (encryption, IDS/IPS)</text>
   </g>
-
   <!-- boundary -->
   <line x1="16" y1="210" x2="704" y2="210" stroke="#f59e0b" stroke-width="2.5" stroke-opacity="0.9"/>
   <rect x="288" y="200" width="144" height="20" rx="10" fill="#f59e0b" fill-opacity="0.95"/>
   <text x="360" y="214" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">RANH GIỚI TRÁCH NHIỆM</text>
-
   <!-- AWS tier -->
   <text x="16" y="248" font-size="14" font-weight="700" fill="#10b981">AWS — Security OF the cloud</text>
   <text x="704" y="248" font-size="11" text-anchor="end" fill="currentColor" opacity="0.65">AWS chịu</text>
-
   <g font-size="11.5">
     <rect x="16" y="260" width="688" height="44" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="28" y="280" font-weight="700" fill="currentColor">Software</text>
     <text x="28" y="297" fill="currentColor" opacity="0.85">Compute · Storage · Database · Networking · hypervisor (Nitro)</text>
-
     <rect x="16" y="312" width="688" height="58" rx="7" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="28" y="332" font-weight="700" fill="currentColor">Hardware / Global Infrastructure</text>
     <text x="28" y="349" fill="currentColor" opacity="0.85">Regions · Availability Zones · Edge Locations</text>
     <text x="28" y="365" fill="currentColor" opacity="0.85">Datacenters (an ninh vật lý, điện, làm mát)</text>
   </g>
-
   <text x="16" y="396" font-size="11" fill="currentColor" opacity="0.7">AWS lo "toà nhà" (hạ tầng) · Bạn lo "đồ trong nhà" (data, IAM, OS guest, app, config).</text>
 </svg>
 

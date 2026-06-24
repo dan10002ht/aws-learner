@@ -357,32 +357,24 @@ Cơ chế: "**Thử (try)** làm việc này; nếu có sự cố thì **bắt (
     </marker>
   </defs>
   <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">try / catch / finally — tấm lưới an toàn</text>
-
   <rect x="40" y="48" width="280" height="62" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="180" y="74" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">try { ... }</text>
   <text x="180" y="94" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.72">đi trên dây — code chạy bình thường</text>
-
   <line x1="180" y1="110" x2="180" y2="156" stroke="currentColor" stroke-width="2" marker-end="url(#ar)"/>
   <text x="196" y="136" font-size="11.5" font-weight="700" fill="#10b981">không lỗi</text>
-
   <line x1="320" y1="79" x2="470" y2="79" stroke="#ef4444" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#ar)"/>
   <text x="395" y="70" font-size="11.5" font-weight="700" text-anchor="middle" fill="#ef4444">có exception → "ngã"</text>
-
   <rect x="470" y="48" width="240" height="62" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="590" y="74" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">catch (e) { ... }</text>
   <text x="590" y="94" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.72">tấm lưới — bắt và xử lý nhẹ nhàng</text>
-
   <line x1="590" y1="110" x2="590" y2="180" stroke="currentColor" stroke-width="2"/>
   <line x1="590" y1="180" x2="364" y2="180" stroke="currentColor" stroke-width="2" marker-end="url(#ar)"/>
-
   <rect x="40" y="156" width="280" height="58" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="180" y="181" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">finally { ... }</text>
   <text x="180" y="200" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.72">LUÔN chạy — dù lỗi hay không</text>
-
   <line x1="180" y1="214" x2="180" y2="248" stroke="currentColor" stroke-width="2" marker-end="url(#ar)"/>
   <rect x="60" y="248" width="240" height="34" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="180" y="270" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Chương trình chạy tiếp — không văng</text>
-
   <text x="395" y="232" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.75">Không có lưới: ngã là rơi xuống đất → chương trình "văng" (crash)</text>
   <line x1="120" y1="298" x2="640" y2="298" stroke="#10b981" stroke-width="2.5" stroke-dasharray="3 4"/>
   <text x="380" y="316" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">lưới = catch: rơi vào lưới chứ không rơi xuống đất</text>

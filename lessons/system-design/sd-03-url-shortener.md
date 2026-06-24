@@ -189,7 +189,6 @@ Ba cơ chế nhìn cạnh nhau — mỗi cột là một luồng sinh code khác
     <text x="120" y="134" text-anchor="middle" opacity="0.65">app dùng cục bộ</text>
     <rect x="40" y="176" width="160" height="30" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="120" y="195" text-anchor="middle" font-weight="700">base62(id) → code</text>
-
     <rect x="280" y="40" width="160" height="30" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="360" y="59" text-anchor="middle" font-weight="700">MD5/SHA(longURL)</text>
     <rect x="280" y="104" width="160" height="38" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
@@ -200,7 +199,6 @@ Ba cơ chế nhìn cạnh nhau — mỗi cột là một luồng sinh code khác
     <text x="360" y="206" text-anchor="middle" opacity="0.65">đọc trước khi ghi</text>
     <rect x="280" y="248" width="160" height="30" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="360" y="267" text-anchor="middle" font-weight="700">không đụng → dùng</text>
-
     <rect x="520" y="40" width="160" height="30" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="600" y="59" text-anchor="middle" font-weight="700">unused_keys</text>
     <rect x="520" y="104" width="160" height="38" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>

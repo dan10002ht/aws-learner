@@ -188,7 +188,6 @@ vercel        # lần đầu hỏi cấu hình; sau đó mỗi push tự deploy
     </marker>
   </defs>
   <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Từ máy dev ra tới người dùng</text>
-
   <g>
     <rect x="16" y="60" width="150" height="110" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="91" y="86" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">npm run build</text>
@@ -197,7 +196,6 @@ vercel        # lần đầu hỏi cấu hình; sau đó mỗi push tự deploy
     <text x="91" y="134" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">dist/</text>
     <text x="91" y="149" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">index.html · .js · .css</text>
   </g>
-
   <g>
     <rect x="200" y="60" width="150" height="110" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <rect x="248" y="74" width="54" height="22" rx="11" fill="#10b981" fill-opacity="0.95"/>
@@ -206,7 +204,6 @@ vercel        # lần đầu hỏi cấu hình; sau đó mỗi push tự deploy
     <text x="275" y="138" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.72">bucket chứa</text>
     <text x="275" y="153" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.72">file tĩnh</text>
   </g>
-
   <g>
     <rect x="384" y="60" width="160" height="110" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <rect x="436" y="74" width="84" height="22" rx="11" fill="#f59e0b" fill-opacity="0.95"/>
@@ -215,7 +212,6 @@ vercel        # lần đầu hỏi cấu hình; sau đó mỗi push tự deploy
     <text x="464" y="138" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.72">cache gần user</text>
     <text x="464" y="153" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.72">HTTPS · nén</text>
   </g>
-
   <g>
     <rect x="578" y="60" width="126" height="110" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <circle cx="641" cy="92" r="13" fill="none" stroke="currentColor" stroke-width="2"/>
@@ -223,7 +219,6 @@ vercel        # lần đầu hỏi cấu hình; sau đó mỗi push tự deploy
     <text x="641" y="152" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Người dùng</text>
     <text x="641" y="167" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">trình duyệt</text>
   </g>
-
   <g stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#ah-dep)" stroke-opacity="0.75">
     <path d="M166 115 H198"/>
     <path d="M350 115 H382"/>
@@ -232,7 +227,6 @@ vercel        # lần đầu hỏi cấu hình; sau đó mỗi push tự deploy
   <text x="182" y="50" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">aws s3 sync</text>
   <text x="367" y="50" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">origin</text>
   <text x="560" y="50" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">HTTPS</text>
-
   <text x="360" y="208" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.78">JS/CSS có content hash → cache 1 năm (immutable) · index.html → no-cache</text>
   <text x="360" y="232" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.78">Mỗi lần deploy: aws s3 sync + cloudfront create-invalidation</text>
 </svg>
@@ -262,32 +256,27 @@ Cách sửa: cấu hình host **trả về `index.html` cho mọi đường dẫ
     </marker>
   </defs>
   <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">F5 tại /reports — vì sao không bị 404</text>
-
   <g>
     <rect x="16" y="50" width="160" height="74" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="96" y="78" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Trình duyệt</text>
     <text x="96" y="100" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.74">GET /reports</text>
   </g>
-
   <g>
     <rect x="280" y="50" width="180" height="74" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="370" y="76" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">CloudFront</text>
     <text x="370" y="98" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.74">không có file /reports</text>
     <text x="370" y="113" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">(S3 trả 403/404)</text>
   </g>
-
   <g>
     <rect x="540" y="50" width="164" height="74" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="622" y="72" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Custom Error</text>
     <text x="622" y="88" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Response</text>
     <text x="622" y="110" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.74">403/404 → /index.html</text>
   </g>
-
   <g stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#ah-spa)" stroke-opacity="0.75">
     <path d="M176 87 H278"/>
     <path d="M460 87 H538"/>
   </g>
-
   <g>
     <rect x="280" y="168" width="180" height="84" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <rect x="318" y="180" width="104" height="22" rx="11" fill="#10b981" fill-opacity="0.95"/>
@@ -295,7 +284,6 @@ Cách sửa: cấu hình host **trả về `index.html` cho mọi đường dẫ
     <text x="370" y="222" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.78">trình duyệt nạp app</text>
     <text x="370" y="239" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.78">React Router render /reports</text>
   </g>
-
   <g stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#ah-spa)" stroke-opacity="0.75">
     <path d="M622 124 V210 H462"/>
   </g>

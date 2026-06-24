@@ -55,7 +55,6 @@ Object storage bỏ hẳn khái niệm thư mục và block. Mỗi mẩu dữ li
   <title>So sánh ba kiểu lưu trữ: block, file, object và ánh xạ sang AWS</title>
   <desc>Block storage là dãy block đánh số gắn vào một máy (EBS); File storage là cây thư mục nhiều máy cùng mount (EFS); Object storage là key trỏ tới object truy cập qua API HTTP (S3).</desc>
   <text x="360" y="26" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Ba kiểu lưu trữ: Block · File · Object</text>
-
   <g>
     <rect x="16" y="44" width="222" height="232" rx="11" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
     <text x="127" y="68" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Block storage</text>
@@ -78,7 +77,6 @@ Object storage bỏ hẳn khái niệm thư mục và block. Mỗi mẩu dữ li
     <rect x="74" y="232" width="106" height="26" rx="13" fill="#3b82f6" fill-opacity="0.9"/>
     <text x="127" y="249" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">Amazon EBS</text>
   </g>
-
   <g>
     <rect x="249" y="44" width="222" height="232" rx="11" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.18"/>
     <text x="360" y="68" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">File storage</text>
@@ -100,7 +98,6 @@ Object storage bỏ hẳn khái niệm thư mục và block. Mỗi mẩu dữ li
     <rect x="307" y="232" width="106" height="26" rx="13" fill="#10b981" fill-opacity="0.9"/>
     <text x="360" y="249" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">Amazon EFS</text>
   </g>
-
   <g>
     <rect x="482" y="44" width="222" height="232" rx="11" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.18"/>
     <text x="593" y="68" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Object storage</text>
@@ -176,38 +173,32 @@ RAID chỉ cứu bạn khỏi hỏng **ổ đĩa**; nếu cả máy chủ cháy,
       <path d="M0 0 L10 5 L0 10 z" fill="currentColor" fill-opacity="0.6"/>
     </marker>
   </defs>
-
   <g>
     <rect x="24" y="118" width="84" height="44" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="66" y="138" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
     <text x="66" y="154" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">ghi (write)</text>
   </g>
   <path d="M108 140 h44" stroke="currentColor" stroke-opacity="0.6" fill="none" marker-end="url(#arrR)"/>
-
   <g>
     <rect x="158" y="110" width="120" height="60" rx="11" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="218" y="135" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Primary</text>
     <text x="218" y="153" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">nhận mọi write</text>
   </g>
-
   <g>
     <rect x="470" y="44" width="234" height="80" rx="11" fill="#10b981" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.18" stroke-dasharray="4 3"/>
     <text x="486" y="64" font-size="10.5" fill="currentColor" opacity="0.6">Cùng data center</text>
     <rect x="498" y="74" width="120" height="40" rx="9" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="558" y="98" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Replica 1</text>
   </g>
-
   <g>
     <rect x="470" y="160" width="234" height="80" rx="11" fill="#f59e0b" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.18" stroke-dasharray="4 3"/>
     <text x="486" y="180" font-size="10.5" fill="currentColor" opacity="0.6">Data center khác</text>
     <rect x="498" y="190" width="120" height="40" rx="9" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="558" y="214" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Replica 2</text>
   </g>
-
   <path d="M278 128 C 360 100, 410 90, 496 94" stroke="#10b981" stroke-opacity="0.85" stroke-width="2" fill="none" marker-end="url(#arrR)"/>
   <text x="360" y="90" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">đồng bộ (synchronous)</text>
   <text x="360" y="106" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">chờ ghi xong rồi mới báo thành công</text>
-
   <path d="M278 152 C 360 190, 410 200, 496 210" stroke="#f59e0b" stroke-opacity="0.9" stroke-width="2" fill="none" stroke-dasharray="6 4" marker-end="url(#arrR)"/>
   <text x="360" y="240" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">bất đồng bộ (asynchronous)</text>
   <text x="360" y="256" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">báo thành công ngay, sao chép sau</text>

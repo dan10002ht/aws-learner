@@ -31,27 +31,21 @@ Day la bay so 1 cua ca bai. Hai khai niem TEN giong nhau nhung muc dich KHAC HOA
   <title>Reserved vs Provisioned Concurrency trong account pool</title>
   <desc>Account pool 1000 concurrency. Reserved Concurrency cat ra mot lat co tran (cap+dam bao, mien phi, cach ly hang xom on ao). Provisioned Concurrency lam am san instance ben trong mot phan cap de loai cold start (tra phi, can alias hoac version).</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Account concurrency pool = 1000 (mac dinh)</text>
-
   <rect x="16" y="40" width="688" height="84" rx="10" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.25"/>
-
   <rect x="32" y="56" width="150" height="52" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="107" y="78" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Reserved: Func A</text>
   <text x="107" y="96" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">cap 100 + dam bao 100</text>
-
   <rect x="194" y="56" width="120" height="52" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="254" y="78" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Reserved: Func B</text>
   <text x="254" y="96" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">co phan rieng</text>
-
   <rect x="326" y="56" width="362" height="52" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="5 3"/>
   <text x="507" y="80" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Unreserved pool (chia chung)</text>
   <text x="507" y="98" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">cac function khac tranh nhau o day</text>
-
   <text x="16" y="156" font-size="12.5" font-weight="700" fill="currentColor">Reserved Concurrency</text>
   <rect x="16" y="166" width="334" height="78" rx="9" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="30" y="188" font-size="11" fill="currentColor">• Cat lat co tran: gioi han + dam bao</text>
   <text x="30" y="208" font-size="11" fill="currentColor">• Cach ly hang xom on ao (noisy neighbor)</text>
   <text x="30" y="228" font-size="11" fill="currentColor">• Mien phi · KHONG giai quyet cold start</text>
-
   <text x="370" y="156" font-size="12.5" font-weight="700" fill="currentColor">Provisioned Concurrency</text>
   <rect x="370" y="166" width="334" height="78" rx="9" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
   <g>
@@ -62,7 +56,6 @@ Day la bay so 1 cua ca bai. Hai khai niem TEN giong nhau nhung muc dich KHAC HOA
   </g>
   <text x="384" y="222" font-size="11" fill="currentColor">• Init truoc → loai cold start</text>
   <text x="384" y="240" font-size="11" fill="currentColor">• Tra phi · phai tro alias / version</text>
-
   <text x="16" y="280" font-size="11.5" fill="currentColor" opacity="0.8" font-weight="700">Hai cai doc lap: co the dat Provisioned BEN TRONG phan da Reserved.</text>
   <text x="16" y="302" font-size="11" fill="currentColor" opacity="0.7">Reserved = bao nhieu concurrency duoc cap. Provisioned = bao nhieu trong so do da am san.</text>
 </svg>
@@ -180,19 +173,15 @@ def save_user(user_id, data):
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 350" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Lazy Loading vs Write-Through — hai luong cache</title>
   <desc>Lazy loading: doc, neu cache miss thi query DB roi populate cache kem TTL. Write-through: ghi xuong DB va cap nhat cache cung luc. TTL dong vai luoi an toan chong stale data o ca hai.</desc>
-
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Lazy Loading (cache-aside) — luong ĐỌC</text>
   <g>
     <rect x="16" y="36" width="92" height="40" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="62" y="60" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">App đọc</text>
-
     <rect x="168" y="36" width="100" height="40" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="218" y="55" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Cache</text>
     <text x="218" y="69" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">miss?</text>
-
     <rect x="328" y="36" width="100" height="40" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="378" y="60" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Query DB</text>
-
     <rect x="488" y="36" width="216" height="40" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="596" y="55" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Populate cache</text>
     <text x="596" y="69" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">cache.set(..., ttl=300)</text>
@@ -205,17 +194,13 @@ def save_user(user_id, data):
   <text x="138" y="50" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">miss</text>
   <path d="M218 76 v22 h-156 v-22" stroke="#10b981" stroke-opacity="0.6" fill="none" marker-end="url(#cacheArrG)"/>
   <text x="140" y="112" font-size="9.5" fill="#10b981" opacity="0.95">hit → tra ngay (lan sau)</text>
-
   <line x1="16" y1="132" x2="704" y2="132" stroke="currentColor" stroke-opacity="0.15"/>
-
   <text x="16" y="160" font-size="13.5" font-weight="700" fill="currentColor">Write-Through — luong GHI</text>
   <g>
     <rect x="16" y="172" width="92" height="40" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="62" y="196" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">App ghi</text>
-
     <rect x="260" y="148" width="180" height="40" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="350" y="172" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">DB write</text>
-
     <rect x="260" y="196" width="180" height="40" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="350" y="216" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Cache update</text>
     <text x="350" y="230" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">cung luc</text>
@@ -226,11 +211,9 @@ def save_user(user_id, data):
   </g>
   <text x="460" y="170" font-size="10.5" fill="currentColor" opacity="0.85">→ data vua ghi luon co trong cache</text>
   <text x="460" y="218" font-size="10.5" fill="currentColor" opacity="0.85">→ cache to hon (ghi ca data chua doc)</text>
-
   <rect x="16" y="262" width="688" height="42" rx="9" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="5 3"/>
   <text x="32" y="280" font-size="11.5" font-weight="700" fill="currentColor">TTL = luoi an toan</text>
   <text x="32" y="296" font-size="10.5" fill="currentColor" opacity="0.78">Du dung chien luoc nao, TTL het han buoc cache nap lai → chong stale data.</text>
-
   <defs>
     <marker id="cacheArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
     <marker id="cacheArrG" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="#10b981" fill-opacity="0.7"/></marker>
@@ -363,44 +346,33 @@ Cac dich vu caching o tren khong canh tranh nhau ma **xep chong** doc theo duong
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 412" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Cac tang cache xep chong tren duong request</title>
   <desc>Tu user xuong: edge cache (CloudFront, S3 Transfer Acceleration) gan user, roi API layer cache (API Gateway stage cache), roi data cache (DAX cho DynamoDB, ElastiCache generic), cuoi cung la database. Moi tang chan bot tai cho tang sau.</desc>
-
   <rect x="280" y="14" width="160" height="38" rx="19" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="360" y="38" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">User (toan cau)</text>
-
   <line x1="360" y1="52" x2="360" y2="72" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#stackArr)"/>
-
   <rect x="56" y="72" width="608" height="62" rx="11" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <rect x="68" y="84" width="120" height="20" rx="10" fill="#3b82f6" fill-opacity="0.9"/>
   <text x="128" y="98" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">EDGE CACHE</text>
   <text x="200" y="98" font-size="12" font-weight="700" fill="currentColor">CloudFront · S3 Transfer Acceleration</text>
   <text x="68" y="124" font-size="10.5" fill="currentColor" opacity="0.72">Tai edge gan user — static content, phan phoi dia ly, tang toc upload S3.</text>
-
   <line x1="360" y1="134" x2="360" y2="154" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#stackArr)"/>
-
   <rect x="56" y="154" width="608" height="62" rx="11" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <rect x="68" y="166" width="150" height="20" rx="10" fill="#10b981" fill-opacity="0.95"/>
   <text x="143" y="180" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">API LAYER CACHE</text>
   <text x="230" y="180" font-size="12" font-weight="700" fill="currentColor">API Gateway stage cache</text>
   <text x="68" y="206" font-size="10.5" fill="currentColor" opacity="0.72">Cache response REST API theo cache key — giam goi Lambda/backend cho GET lap lai.</text>
-
   <line x1="360" y1="216" x2="360" y2="236" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#stackArr)"/>
-
   <rect x="56" y="236" width="608" height="62" rx="11" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <rect x="68" y="248" width="120" height="20" rx="10" fill="#8b5cf6" fill-opacity="0.95"/>
   <text x="128" y="262" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">DATA CACHE</text>
   <text x="200" y="262" font-size="12" font-weight="700" fill="currentColor">DAX (DynamoDB) · ElastiCache (generic)</text>
   <text x="68" y="288" font-size="10.5" fill="currentColor" opacity="0.72">In-memory truoc DB — DAX microsecond cho DynamoDB; ElastiCache cho moi nguon.</text>
-
   <line x1="360" y1="298" x2="360" y2="318" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#stackArr)"/>
-
   <rect x="56" y="318" width="608" height="58" rx="11" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <rect x="68" y="330" width="100" height="20" rx="10" fill="#f59e0b" fill-opacity="0.95"/>
   <text x="118" y="344" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">DATABASE</text>
   <text x="180" y="344" font-size="12" font-weight="700" fill="currentColor">DynamoDB · RDS · nguon goc du lieu</text>
   <text x="68" y="368" font-size="10.5" fill="currentColor" opacity="0.72">Chi cham toi khi MISS o moi tang cache phia tren.</text>
-
   <text x="690" y="224" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.6" transform="rotate(90 690 224)">moi tang chan bot tai cho tang sau →</text>
-
   <defs>
     <marker id="stackArr" markerWidth="9" markerHeight="9" refX="4.5" refY="7" orient="auto"><path d="M0 0 L4.5 7 L9 0" fill="none" stroke="currentColor" stroke-opacity="0.6"/></marker>
   </defs>

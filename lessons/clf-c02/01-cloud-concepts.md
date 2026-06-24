@@ -234,7 +234,6 @@ Càng đi từ IaaS sang SaaS, **phần AWS quản tăng dần** còn **phần b
   <title>Phân tầng AWS Global Infrastructure: Region bọc AZ bọc datacenter, kèm Edge và các biến thể ngoài region</title>
   <desc>Khối lớn là Region ap-southeast-1 chứa ba Availability Zone; mỗi AZ chứa nhiều datacenter; các AZ nối nhau bằng fiber dưới 2ms. Bên trái user qua Edge Location/PoP cache gần người dùng đi vào Region. Bên dưới ba biến thể ngoài region: Local Zone gần metro, Wavelength trong mạng 5G, Outposts đặt on-premises.</desc>
   <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">AWS Global Infrastructure — quan hệ chứa &amp; khoảng cách</text>
-
   <g>
     <rect x="20" y="92" width="92" height="64" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="66" y="118" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">User</text>
@@ -253,10 +252,8 @@ Càng đi từ IaaS sang SaaS, **phần AWS quản tăng dần** còn **phần b
       <path d="M0 0 L8 4 L0 8 z" fill="currentColor" fill-opacity="0.55"/>
     </marker>
   </defs>
-
   <rect x="256" y="60" width="448" height="200" rx="12" fill="#3b82f6" fill-opacity="0.10" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="272" y="82" font-size="12.5" font-weight="700" fill="currentColor">Region — ap-southeast-1 (Singapore)</text>
-
   <g>
     <rect x="272" y="96" width="132" height="118" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="338" y="116" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">AZ-a</text>
@@ -287,7 +284,6 @@ Càng đi từ IaaS sang SaaS, **phần AWS quản tăng dần** còn **phần b
     <path d="M338 214 V232 H622 V214"/>
   </g>
   <text x="480" y="250" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">fiber inter-AZ &lt; 2ms</text>
-
   <text x="16" y="298" font-size="12.5" font-weight="700" fill="currentColor">Biến thể đẩy compute ra ngoài Region (gần điểm tiêu thụ hơn)</text>
   <g>
     <rect x="20" y="312" width="218" height="118" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>

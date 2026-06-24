@@ -82,30 +82,25 @@ Giảm độ trễ và giảm tải lên nguồn dữ liệu đắt đỏ (DB, s
     <text x="70" y="94" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">asset, response</text>
     <text x="70" y="110" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">0 round-trip</text>
     <text x="70" y="128" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">mỗi user 1 bản</text>
-
     <rect x="132" y="48" width="108" height="92" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="186" y="74" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">CDN edge</text>
     <text x="186" y="94" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">ảnh, JS/CSS</text>
     <text x="186" y="110" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">gần user toàn cầu</text>
     <text x="186" y="128" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">dễ stale</text>
-
     <rect x="248" y="48" width="108" height="92" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="302" y="74" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">API GW</text>
     <text x="302" y="94" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">response cache</text>
     <text x="302" y="110" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">chặn tải downstream</text>
-
     <rect x="364" y="48" width="108" height="92" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="418" y="74" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">App cache</text>
     <text x="418" y="91" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Redis</text>
     <text x="418" y="107" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">query, session</text>
     <text x="418" y="125" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">chia sẻ giữa node</text>
-
     <rect x="480" y="48" width="108" height="92" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="534" y="71" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">DB buffer</text>
     <text x="534" y="86" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">pool</text>
     <text x="534" y="104" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">trang nóng</text>
     <text x="534" y="122" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">giới hạn RAM của DB</text>
-
     <rect x="596" y="48" width="108" height="92" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="650" y="78" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Disk</text>
     <text x="650" y="98" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">nguồn "chân lý"</text>
@@ -172,7 +167,6 @@ Khi cache đầy, bỏ gì ra? **LRU** (ít dùng gần đây nhất) là mặc 
     </marker>
   </defs>
   <line x1="360" y1="24" x2="360" y2="264" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
-
   <text x="20" y="28" font-size="13.5" font-weight="700" fill="currentColor">QUEUE — point-to-point</text>
   <text x="20" y="46" font-size="11" fill="currentColor" opacity="0.65">mỗi msg → đúng 1 consumer</text>
   <g font-size="11">
@@ -198,7 +192,6 @@ Khi cache đầy, bỏ gì ra? **LRU** (ít dùng gần đây nhất) là mặc 
   </g>
   <text x="186" y="200" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">mỗi msg do MỘT consumer lấy</text>
   <text x="186" y="216" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">→ task/job: gửi email, resize ảnh</text>
-
   <text x="380" y="28" font-size="13.5" font-weight="700" fill="currentColor">PUB/SUB — fan-out</text>
   <text x="380" y="46" font-size="11" fill="currentColor" opacity="0.65">mỗi msg → MỌI subscriber</text>
   <g font-size="11">
@@ -258,28 +251,22 @@ producer ─► [ ■■■■ ] ─► consumer     publisher ─►│─► s
     </marker>
   </defs>
   <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Leader–Follower: write tập trung, read co giãn</text>
-
   <rect x="276" y="52" width="120" height="32" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="336" y="73" font-size="12" text-anchor="middle" fill="currentColor">writes (client)</text>
   <line x1="336" y1="84" x2="336" y2="106" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#rpHead)"/>
-
   <rect x="276" y="110" width="120" height="48" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="336" y="132" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">LEADER</text>
   <text x="336" y="149" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">nhận mọi write</text>
-
   <text x="336" y="184" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">replication log (async) ↓ fan tới followers</text>
-
   <g font-size="11">
     <rect x="40" y="206" width="150" height="58" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="115" y="228" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">follower 1</text>
     <text x="115" y="246" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">đã bắt kịp</text>
     <text x="115" y="260" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">read trả dữ liệu mới</text>
-
     <rect x="262" y="206" width="150" height="58" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="337" y="228" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">follower 2</text>
     <text x="337" y="246" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">đã bắt kịp</text>
     <text x="337" y="260" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">read trả dữ liệu mới</text>
-
     <rect x="484" y="206" width="196" height="58" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="582" y="226" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">follower 3 — đang LAG</text>
     <text x="582" y="244" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">log chưa apply kịp</text>
@@ -338,12 +325,10 @@ Replication giải quyết *read scaling* nhưng **không** giải quyết *writ
   <title>Vòng consistent hashing và việc thêm node D</title>
   <desc>Key và node được map lên một vòng tròn; mỗi key đi theo chiều kim đồng hồ tới node đầu tiên. Thêm node D chỉ cướp cung của hàng xóm nên chỉ dời khoảng một phần N số key. Bên phải minh hoạ virtual node.</desc>
   <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Consistent hashing — thêm node chỉ dời ~1/N key</text>
-
   <g>
     <circle cx="200" cy="190" r="110" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-width="2"/>
     <text x="200" y="194" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.55">vòng băm</text>
     <text x="200" y="208" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.45">(theo chiều kim đồng hồ)</text>
-
     <g fill="#3b82f6" fill-opacity="0.9">
       <circle cx="200" cy="80" r="9"/>
       <circle cx="295" cy="245" r="9"/>
@@ -352,7 +337,6 @@ Replication giải quyết *read scaling* nhưng **không** giải quyết *writ
     <text x="200" y="64" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">node A</text>
     <text x="320" y="258" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">node B</text>
     <text x="78" y="258" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">node C</text>
-
     <g fill="#10b981" fill-opacity="0.95">
       <circle cx="285" cy="130" r="6"/>
       <circle cx="160" cy="295" r="6"/>
@@ -361,7 +345,6 @@ Replication giải quyết *read scaling* nhưng **không** giải quyết *writ
     <text x="300" y="123" font-size="10.5" fill="currentColor" opacity="0.8">k1</text>
     <text x="160" y="316" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">k2</text>
     <text x="74" y="113" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.8">k3</text>
-
     <g fill="#f59e0b" fill-opacity="0.95">
       <circle cx="310" cy="190" r="9"/>
     </g>
@@ -369,16 +352,12 @@ Replication giải quyết *read scaling* nhưng **không** giải quyết *writ
     <path d="M289 173 A30 30 0 0 1 305 181" fill="none" stroke="#f59e0b" stroke-opacity="0.8" stroke-width="2" stroke-dasharray="3 2"/>
     <text x="200" y="338" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">D chỉ "cướp" cung B→D: dời mỗi key trong cung đó</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"><line x1="430" y1="60" x2="430" y2="320"/></g>
-
   <text x="460" y="74" font-size="12.5" font-weight="700" fill="currentColor">hash % N (so sánh)</text>
   <text x="460" y="94" font-size="11" fill="currentColor" opacity="0.7">đổi N → gần như MỌI key đổi chỗ</text>
   <text x="460" y="111" font-size="11" fill="currentColor" opacity="0.7">→ đại di trú dữ liệu, cache cháy</text>
-
   <text x="460" y="150" font-size="12.5" font-weight="700" fill="currentColor">consistent hashing</text>
   <text x="460" y="170" font-size="11" fill="currentColor" opacity="0.7">thêm/bớt node → chỉ ~1/N key dời</text>
-
   <text x="460" y="208" font-size="12.5" font-weight="700" fill="currentColor">virtual node</text>
   <text x="460" y="228" font-size="11" fill="currentColor" opacity="0.7">mỗi node vật lý = nhiều điểm trên vòng</text>
   <g fill="#3b82f6" fill-opacity="0.85">
@@ -480,7 +459,6 @@ Tầng ứng dụng **không giữ state cục bộ** giữa các request: bất
     <rect x="382" y="52" width="108" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="436" y="71" text-anchor="middle" fill="currentColor">API Gateway</text>
     <text x="436" y="85" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">auth, rate limit</text>
-
     <rect x="520" y="48" width="184" height="48" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="612" y="70" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">stateless app tier</text>
     <text x="612" y="86" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">cattle, auto-scale</text>
@@ -491,12 +469,10 @@ Tầng ứng dụng **không giữ state cục bộ** giữa các request: bất
     <line x1="352" y1="72" x2="382" y2="72" marker-end="url(#e2eHead)"/>
     <line x1="490" y1="72" x2="520" y2="72" marker-end="url(#e2eHead)"/>
   </g>
-
   <g font-size="11">
     <rect x="380" y="160" width="120" height="46" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="440" y="181" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">App Cache</text>
     <text x="440" y="196" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">Redis — read nhanh</text>
-
     <rect x="560" y="150" width="144" height="40" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="632" y="174" text-anchor="middle" fill="currentColor">Queue / Pub-Sub</text>
     <rect x="580" y="206" width="104" height="38" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
@@ -508,12 +484,10 @@ Tầng ứng dụng **không giữ state cục bộ** giữa các request: bất
     <line x1="632" y1="190" x2="632" y2="206" marker-end="url(#e2eHead)"/>
   </g>
   <text x="660" y="124" font-size="9.5" text-anchor="end" fill="currentColor" opacity="0.6">async</text>
-
   <g font-size="11">
     <rect x="300" y="300" width="180" height="56" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="390" y="324" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Leader DB (sharded)</text>
     <text x="390" y="342" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">nhận write, phân mảnh</text>
-
     <rect x="528" y="296" width="176" height="32" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="616" y="316" text-anchor="middle" fill="currentColor">follower 1 (reads)</text>
     <rect x="528" y="334" width="176" height="32" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
@@ -526,7 +500,6 @@ Tầng ứng dụng **không giữ state cục bộ** giữa các request: bất
     <line x1="480" y1="332" x2="528" y2="346" marker-end="url(#e2eHead)"/>
   </g>
   <text x="492" y="290" font-size="9.5" fill="currentColor" opacity="0.6">replication →</text>
-
   <text x="16" y="392" font-size="11" fill="currentColor" opacity="0.7">Mỗi hop thêm: độ trễ, một điểm cần HA, một chỗ dữ liệu có thể stale.</text>
   <text x="16" y="408" font-size="11" font-weight="600" fill="currentColor" opacity="0.85">Đừng thêm khối nào trước khi có vấn đề đo được mà nó giải quyết.</text>
 </svg>

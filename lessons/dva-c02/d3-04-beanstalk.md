@@ -34,11 +34,9 @@ Co che worker: tren moi instance worker co mot **daemon** doc message tu SQS, PO
   <title>Web Server tier vs Worker tier — kiến trúc hai loại environment</title>
   <desc>Web Server tier: người dùng gửi HTTP qua ELB tới các EC2 xử lý request. Worker tier: message vào SQS queue, daemon trên mỗi instance kéo message và POST body vào localhost của app, app trả 200 thì message bị xóa; cron.yaml đặt lịch định kỳ.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Web Server tier vs Worker tier</text>
-
   <defs>
     <marker id="ebtArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <text x="16" y="52" font-size="12.5" font-weight="700" fill="currentColor">Web Server tier — HTTP trực tiếp</text>
   <g>
     <rect x="16" y="62" width="96" height="40" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
@@ -60,9 +58,7 @@ Co che worker: tren moi instance worker co mot **daemon** doc message tu SQS, PO
     <text x="360" y="99" font-size="10" font-weight="700" text-anchor="middle" fill="currentColor">EC2 — app HTTP</text>
   </g>
   <text x="440" y="86" font-size="9.5" fill="currentColor" opacity="0.7">Auto Scaling Group</text>
-
   <line x1="16" y1="128" x2="704" y2="128" stroke="currentColor" stroke-opacity="0.15"/>
-
   <text x="16" y="156" font-size="12.5" font-weight="700" fill="currentColor">Worker tier — qua SQS queue</text>
   <g>
     <rect x="16" y="166" width="110" height="40" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
@@ -75,7 +71,6 @@ Co che worker: tren moi instance worker co mot **daemon** doc message tu SQS, PO
     <text x="227" y="184" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">SQS queue</text>
     <text x="227" y="199" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">message body</text>
   </g>
-
   <rect x="338" y="156" width="366" height="120" rx="11" fill="#f59e0b" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="352" y="174" font-size="10.5" font-weight="700" fill="currentColor">EC2 worker instance</text>
   <line x1="282" y1="186" x2="350" y2="200" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ebtArr)"/>
@@ -171,11 +166,9 @@ Uu diem: **zero downtime**, **rollback gan nhu lap tuc**, test toan dien tren mo
   <title>Blue/Green qua swap CNAME — trước và sau khi đổi DNS</title>
   <desc>Trước swap: CNAME app.example.com trỏ tới environment Blue đang chạy prod, Green chạy version mới chờ test. Sau swap-environment-cnames: CNAME trỏ sang Green, traffic chuyển sang version mới; muốn rollback thì swap ngược lại. DNS có TTL nên một số client còn trỏ về Blue một lúc.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Blue/Green qua swap CNAME (đổi DNS record)</text>
-
   <defs>
     <marker id="bgArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <text x="16" y="52" font-size="12" font-weight="700" fill="currentColor">TRƯỚC swap</text>
   <g>
     <rect x="16" y="62" width="120" height="34" rx="8" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.25"/>
@@ -193,11 +186,9 @@ Uu diem: **zero downtime**, **rollback gan nhu lap tuc**, test toan dien tren mo
     <text x="258" y="126" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Green</text>
     <text x="258" y="141" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">version mới — test</text>
   </g>
-
   <line x1="358" y1="100" x2="408" y2="100" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="5 3" marker-end="url(#bgArr)"/>
   <text x="383" y="92" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">swap-</text>
   <text x="383" y="116" font-size="8.5" text-anchor="middle" fill="currentColor" opacity="0.7">environment-cnames</text>
-
   <text x="420" y="52" font-size="12" font-weight="700" fill="currentColor">SAU swap</text>
   <g>
     <rect x="420" y="62" width="120" height="34" rx="8" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.25"/>
@@ -215,7 +206,6 @@ Uu diem: **zero downtime**, **rollback gan nhu lap tuc**, test toan dien tren mo
     <text x="632" y="126" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Green (prod)</text>
     <text x="632" y="141" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.75">nhận toàn bộ traffic</text>
   </g>
-
   <line x1="16" y1="172" x2="704" y2="172" stroke="currentColor" stroke-opacity="0.15"/>
   <text x="16" y="196" font-size="10.5" fill="currentColor" opacity="0.85">Rollback = swap NGƯỢC lại (Green -> Blue), gần như tức thì vì Blue vẫn còn sống.</text>
   <rect x="16" y="210" width="688" height="44" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
@@ -357,11 +347,9 @@ Khi tao EB environment, ban co the cho EB **tao luon mot RDS instance ben trong 
   <title>RDS coupling — RDS trong environment vs RDS riêng (decoupled)</title>
   <desc>Bên trái: RDS tạo bên trong EB environment, chung vòng đời với environment nên terminate environment sẽ xóa luôn RDS và mất dữ liệu. Bên phải: RDS tạo riêng bên ngoài, EB nối qua biến môi trường, khi terminate environment thì RDS vẫn sống còn nguyên dữ liệu.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">RDS coupling: bên trong environment vs decoupled</text>
-
   <defs>
     <marker id="rdsArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <text x="16" y="50" font-size="12" font-weight="700" fill="#f59e0b">RDS trong EB environment — nguy hiểm</text>
   <rect x="16" y="60" width="320" height="150" rx="11" fill="#f59e0b" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="5 4"/>
   <text x="30" y="80" font-size="10.5" font-weight="700" fill="currentColor">EB environment (1 vòng đời)</text>
@@ -379,7 +367,6 @@ Khi tao EB environment, ban co the cho EB **tao luon mot RDS instance ben trong 
   <rect x="32" y="160" width="288" height="38" rx="8" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="46" y="178" font-size="10.5" font-weight="700" fill="currentColor">Terminate environment</text>
   <text x="46" y="192" font-size="9.5" fill="currentColor" opacity="0.8">-> xóa luôn RDS -> MẤT DỮ LIỆU</text>
-
   <text x="384" y="50" font-size="12" font-weight="700" fill="#10b981">RDS riêng (decoupled) — production</text>
   <rect x="384" y="60" width="200" height="100" rx="11" fill="#3b82f6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="5 4"/>
   <text x="398" y="80" font-size="10.5" font-weight="700" fill="currentColor">EB environment</text>
@@ -399,7 +386,6 @@ Khi tao EB environment, ban co the cho EB **tao luon mot RDS instance ben trong 
   <rect x="384" y="170" width="320" height="38" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="398" y="188" font-size="10.5" font-weight="700" fill="currentColor">Terminate environment</text>
   <text x="398" y="202" font-size="9.5" fill="currentColor" opacity="0.8">-> RDS VẪN SỐNG, dữ liệu còn nguyên</text>
-
   <line x1="16" y1="228" x2="704" y2="228" stroke="currentColor" stroke-opacity="0.15"/>
   <text x="16" y="252" font-size="10.5" fill="currentColor" opacity="0.85">Best practice prod: tạo RDS riêng, nối qua biến môi trường / Secrets Manager — tách vòng đời khỏi environment.</text>
 </svg>

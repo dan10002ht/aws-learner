@@ -28,11 +28,9 @@ Phần này là nền tảng của Domain 1: mọi tương tác với AWS từ c
   <title>Credential Provider Chain — SDK dò từng nguồn từ trên xuống, dừng ở nguồn đầu tiên tìm thấy</title>
   <desc>SDK thử lần lượt sáu nguồn credentials theo thứ tự ưu tiên từ trên xuống: credentials trong code, environment variables, file credentials, file config, ECS container credentials, EC2 IMDS. Dừng ngay khi một nguồn có credentials. Environment variables đứng trước nên thắng file và IMDS.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Credential Provider Chain — dừng ở nguồn ĐẦU TIÊN tìm thấy</text>
-
   <defs>
     <marker id="ccArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <g>
     <rect x="40" y="40" width="430" height="44" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
     <rect x="50" y="52" width="24" height="24" rx="7" fill="#10b981" fill-opacity="0.95"/>
@@ -41,7 +39,6 @@ Phần này là nền tảng của Domain 1: mọi tương tác với AWS từ c
     <text x="86" y="76" font-size="10.5" fill="currentColor" opacity="0.65">truyền key khi tạo client — ưu tiên cao nhất</text>
   </g>
   <line x1="255" y1="84" x2="255" y2="100" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ccArr)"/>
-
   <g>
     <rect x="40" y="100" width="430" height="44" rx="9" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
     <rect x="50" y="112" width="24" height="24" rx="7" fill="#3b82f6" fill-opacity="0.9"/>
@@ -50,7 +47,6 @@ Phần này là nền tảng của Domain 1: mọi tương tác với AWS từ c
     <text x="86" y="136" font-size="10.5" fill="currentColor" opacity="0.65">AWS_ACCESS_KEY_ID · AWS_SECRET_ACCESS_KEY · AWS_SESSION_TOKEN</text>
   </g>
   <line x1="255" y1="144" x2="255" y2="160" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ccArr)"/>
-
   <g>
     <rect x="40" y="160" width="430" height="40" rx="9" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
     <rect x="50" y="170" width="24" height="24" rx="7" fill="#3b82f6" fill-opacity="0.9"/>
@@ -59,7 +55,6 @@ Phần này là nền tảng của Domain 1: mọi tương tác với AWS từ c
     <text x="86" y="193" font-size="10.5" fill="currentColor" opacity="0.65">~/.aws/credentials (chọn profile qua AWS_PROFILE)</text>
   </g>
   <line x1="255" y1="200" x2="255" y2="214" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ccArr)"/>
-
   <g>
     <rect x="40" y="214" width="430" height="40" rx="9" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
     <rect x="50" y="224" width="24" height="24" rx="7" fill="#3b82f6" fill-opacity="0.9"/>
@@ -68,7 +63,6 @@ Phần này là nền tảng của Domain 1: mọi tương tác với AWS từ c
     <text x="86" y="247" font-size="10.5" fill="currentColor" opacity="0.65">~/.aws/config</text>
   </g>
   <line x1="255" y1="254" x2="255" y2="268" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ccArr)"/>
-
   <g>
     <rect x="40" y="268" width="430" height="40" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
     <rect x="50" y="278" width="24" height="24" rx="7" fill="#f59e0b" fill-opacity="0.95"/>
@@ -77,7 +71,6 @@ Phần này là nền tảng của Domain 1: mọi tương tác với AWS từ c
     <text x="86" y="301" font-size="10.5" fill="currentColor" opacity="0.65">endpoint 169.254.170.2</text>
   </g>
   <line x1="255" y1="308" x2="255" y2="322" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ccArr)"/>
-
   <g>
     <rect x="40" y="322" width="430" height="40" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
     <rect x="50" y="332" width="24" height="24" rx="7" fill="#f59e0b" fill-opacity="0.95"/>
@@ -85,14 +78,12 @@ Phần này là nền tảng của Domain 1: mọi tương tác với AWS từ c
     <text x="86" y="340" font-size="12.5" font-weight="700" fill="currentColor">Instance Profile / IMDS (EC2 instance role)</text>
     <text x="86" y="355" font-size="10.5" fill="currentColor" opacity="0.65">endpoint 169.254.169.254 — ưu tiên thấp nhất</text>
   </g>
-
   <g>
     <rect x="496" y="100" width="200" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="596" y="119" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Env vars THẮNG</text>
     <text x="596" y="135" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">đứng trước file (3,4) và IMDS (6)</text>
   </g>
   <path d="M596 144 V 280 H 478" fill="none" stroke="#8b5cf6" stroke-opacity="0.6" stroke-dasharray="5 3" marker-end="url(#ccArr)"/>
-
   <text x="255" y="392" font-size="11" text-anchor="middle" fill="#10b981" opacity="0.95" font-weight="700">Tìm thấy ở nguồn nào → DỪNG, dùng luôn, bỏ qua phần còn lại</text>
   <text x="255" y="412" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">Best practice trên AWS: bỏ trống 1–4, để SDK lấy role qua 5/6 (ECS task role · EC2 instance profile)</text>
 </svg>
@@ -182,39 +173,31 @@ for page in paginator.paginate(Bucket="my-bucket"):
   <title>Vòng lặp pagination — gửi request, nhận page, nếu còn token thì lặp lại đến khi hết</title>
   <desc>Chu trình phân trang: gửi request đến API, nhận response gồm Items và token tiếp theo, kiểm tra có token hay không. Nếu CÓ token thì nạp lại làm ExclusiveStartKey hoặc ContinuationToken cho request kế tiếp và lặp lại. Nếu KHÔNG còn token thì kết thúc.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Vòng lặp pagination — lặp đến khi response KHÔNG còn token</text>
-
   <defs>
     <marker id="pgArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <g>
     <rect x="44" y="58" width="180" height="58" rx="10" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="134" y="83" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Gửi REQUEST</text>
     <text x="134" y="101" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">list_objects_v2 / Scan ...</text>
   </g>
-
   <line x1="224" y1="87" x2="296" y2="87" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#pgArr)"/>
-
   <g>
     <rect x="296" y="58" width="200" height="58" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="396" y="83" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Nhận RESPONSE</text>
     <text x="396" y="101" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">Items[] + token tiếp theo</text>
   </g>
-
   <line x1="396" y1="116" x2="396" y2="150" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#pgArr)"/>
-
   <g>
     <path d="M396 152 L486 192 L396 232 L306 192 Z" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="396" y="188" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Còn token?</text>
     <text x="396" y="204" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">IsTruncated / LastEvaluatedKey</text>
   </g>
-
   <line x1="306" y1="192" x2="134" y2="192" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#pgArr)"/>
   <text x="220" y="184" font-size="11" text-anchor="middle" fill="#f59e0b" font-weight="700">CÓ</text>
   <text x="220" y="222" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">nạp token làm ExclusiveStartKey /</text>
   <text x="220" y="236" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">ContinuationToken cho request kế</text>
   <path d="M134 192 V 116" fill="none" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#pgArr)"/>
-
   <line x1="486" y1="192" x2="566" y2="192" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#pgArr)"/>
   <text x="528" y="184" font-size="11" text-anchor="middle" fill="#10b981" font-weight="700">KHÔNG</text>
   <g>
@@ -222,7 +205,6 @@ for page in paginator.paginate(Bucket="my-bucket"):
     <text x="635" y="190" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">HẾT — dừng</text>
     <text x="635" y="207" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">đã lấy đủ dữ liệu</text>
   </g>
-
   <text x="360" y="296" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">Paginator của Boto3 tự thực hiện đúng vòng lặp này — bạn chỉ cần for-loop qua các page.</text>
 </svg>
 

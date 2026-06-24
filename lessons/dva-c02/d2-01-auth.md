@@ -138,7 +138,6 @@ Identity Pool gắn với **2 IAM role**:
   <title>Luồng kết hợp User Pool + Identity Pool + STS để lấy AWS credentials tạm thời</title>
   <desc>Sơ đồ tuần tự theo thời gian: App đăng nhập vào User Pool và nhận ID token (JWT); App đưa ID token cho Identity Pool; Identity Pool gọi STS AssumeRoleWithWebIdentity; STS trả credentials tạm thời; App dùng credentials gọi thẳng S3 và DynamoDB. User Pool cấp token, Identity Pool cấp credentials.</desc>
   <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">User Pool cấp TOKEN — Identity Pool cấp CREDENTIALS</text>
-
   <g font-size="11" font-weight="700" text-anchor="middle">
     <rect x="20" y="38" width="96" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="68" y="59" fill="currentColor">App (client)</text>
@@ -154,7 +153,6 @@ Identity Pool gắn với **2 IAM role**:
     <text x="652" y="55" fill="currentColor">S3 / DynamoDB</text>
     <text x="652" y="68" font-size="9.5" font-weight="400" fill="currentColor" opacity="0.7">AWS service</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4">
     <line x1="68" y1="74" x2="68" y2="392"/>
     <line x1="218" y1="74" x2="218" y2="392"/>
@@ -162,34 +160,25 @@ Identity Pool gắn với **2 IAM role**:
     <line x1="534" y1="74" x2="534" y2="392"/>
     <line x1="652" y1="74" x2="652" y2="392"/>
   </g>
-
   <defs>
     <marker id="seqArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.65"/></marker>
   </defs>
-
   <g font-size="10.5" fill="currentColor">
     <line x1="68" y1="100" x2="214" y2="100" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#seqArr)"/>
     <text x="72" y="95" opacity="0.9">1. đăng nhập (user/pass, SRP)</text>
-
     <line x1="218" y1="132" x2="72" y2="132" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#seqArr)"/>
     <text x="214" y="127" text-anchor="end" opacity="0.9" font-weight="700">2. ID token (JWT)</text>
-
     <line x1="68" y1="166" x2="378" y2="166" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#seqArr)"/>
     <text x="72" y="161" opacity="0.9">3. gửi ID token (qua logins)</text>
-
     <line x1="382" y1="200" x2="530" y2="200" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#seqArr)"/>
     <text x="378" y="195" text-anchor="end" opacity="0.9">4. AssumeRoleWithWebIdentity</text>
-
     <line x1="534" y1="234" x2="386" y2="234" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#seqArr)"/>
     <text x="530" y="229" text-anchor="end" opacity="0.9">5. temp credentials</text>
-
     <line x1="382" y1="268" x2="72" y2="268" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#seqArr)"/>
     <text x="378" y="263" text-anchor="end" opacity="0.9" font-weight="700">6. AWS credentials tạm thời</text>
-
     <line x1="68" y1="302" x2="648" y2="302" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#seqArr)"/>
     <text x="72" y="297" opacity="0.9">7. gọi thẳng AWS service (SigV4) — KHÔNG qua backend</text>
   </g>
-
   <g>
     <rect x="20" y="324" width="684" height="58" rx="9" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="32" y="345" font-size="11" font-weight="700" fill="currentColor">Phân vai rạch ròi:</text>
@@ -239,13 +228,11 @@ STS (Security Token Service) cấp **temporary credentials** (có `SessionToken`
   <title>Chọn API STS theo nguồn danh tính</title>
   <desc>Cây quyết định: từ câu hỏi nguồn danh tính là gì, rẽ thành bốn nhánh. IAM principal đã có hoặc cross-account dùng AssumeRole; web, OIDC, social hoặc Cognito dùng AssumeRoleWithWebIdentity; SAML 2.0 hoặc Active Directory dùng AssumeRoleWithSAML; MFA cho IAM user dùng GetSessionToken.</desc>
   <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">Chọn API STS theo NGUỒN danh tính</text>
-
   <g>
     <rect x="250" y="36" width="220" height="42" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="360" y="55" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Nguồn danh tính là gì?</text>
     <text x="360" y="71" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">(ai đang xin credentials)</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.4" fill="none">
     <path d="M360 78 v18"/>
     <path d="M90 96 h540"/>
@@ -254,7 +241,6 @@ STS (Security Token Service) cấp **temporary credentials** (có `SessionToken`
     <path d="M450 96 v22"/>
     <path d="M630 96 v22"/>
   </g>
-
   <g font-size="10" fill="currentColor" opacity="0.85" text-anchor="middle">
     <text x="90" y="134">IAM principal đã có /</text>
     <text x="90" y="147">cross-account, đổi role</text>
@@ -265,29 +251,24 @@ STS (Security Token Service) cấp **temporary credentials** (có `SessionToken`
     <text x="630" y="134">MFA cho</text>
     <text x="630" y="147">IAM user keys</text>
   </g>
-
   <g text-anchor="middle">
     <rect x="14" y="160" width="152" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="90" y="183" font-size="11.5" font-weight="700" fill="currentColor">AssumeRole</text>
     <text x="90" y="201" font-size="9.5" fill="currentColor" opacity="0.72">input: IAM</text>
     <text x="90" y="212" font-size="9.5" fill="currentColor" opacity="0.72">principal hiện có</text>
-
     <rect x="194" y="160" width="152" height="56" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="270" y="181" font-size="11" font-weight="700" fill="currentColor">AssumeRoleWith</text>
     <text x="270" y="194" font-size="11" font-weight="700" fill="currentColor">WebIdentity</text>
     <text x="270" y="211" font-size="9.5" fill="currentColor" opacity="0.72">input: web identity token</text>
-
     <rect x="374" y="160" width="152" height="56" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="450" y="181" font-size="11" font-weight="700" fill="currentColor">AssumeRoleWith</text>
     <text x="450" y="194" font-size="11" font-weight="700" fill="currentColor">SAML</text>
     <text x="450" y="211" font-size="9.5" fill="currentColor" opacity="0.72">input: SAML assertion</text>
-
     <rect x="554" y="160" width="152" height="56" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="630" y="183" font-size="11.5" font-weight="700" fill="currentColor">GetSessionToken</text>
     <text x="630" y="201" font-size="9.5" fill="currentColor" opacity="0.72">input: IAM user keys</text>
     <text x="630" y="212" font-size="9.5" fill="currentColor" opacity="0.72">+ mã MFA</text>
   </g>
-
   <g>
     <rect x="14" y="244" width="692" height="92" rx="9" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/>
     <text x="28" y="266" font-size="11" font-weight="700" fill="currentColor">Đọc đề theo từ khoá nguồn danh tính:</text>

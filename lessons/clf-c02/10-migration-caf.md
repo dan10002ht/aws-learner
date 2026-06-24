@@ -109,16 +109,12 @@ Từ CLF-C01 chỉ có 6 R, AWS chính thức nâng lên **7 R** từ 2022:
   <title>Phổ 7 R: đánh đổi giữa tốc độ migration và lợi ích cloud</title>
   <desc>Các chiến lược migration nằm trên một dải liên tục. Bên trái nhanh và ít công sửa nhưng ít lợi ích cloud: Relocate, Rehost, Replatform. Càng sang phải càng chậm và tốn công hơn nhưng lợi ích cloud càng lớn: Repurchase tới Refactor. Retire và Retain nằm ngoài dải vì không thực sự chuyển workload lên cloud.</desc>
   <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Phổ 7 R — đánh đổi tốc độ ↔ lợi ích cloud</text>
-
   <defs>
     <marker id="rAxis" markerWidth="11" markerHeight="11" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <text x="16" y="58" font-size="11.5" fill="currentColor" opacity="0.8">← Nhanh, ít công sửa, ít benefit cloud</text>
   <text x="704" y="58" font-size="11.5" text-anchor="end" fill="currentColor" opacity="0.8">Chậm, tốn công, nhiều benefit cloud →</text>
-
   <line x1="24" y1="74" x2="696" y2="74" stroke="currentColor" stroke-opacity="0.45" marker-end="url(#rAxis)"/>
-
   <g>
     <rect x="24" y="90" width="120" height="58" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="84" y="114" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Relocate</text>
@@ -144,9 +140,7 @@ Từ CLF-C01 chỉ có 6 R, AWS chính thức nâng lên **7 R** từ 2022:
     <text x="640" y="114" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Refactor</text>
     <text x="640" y="133" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">cloud-native</text>
   </g>
-
   <text x="24" y="178" font-size="11" fill="currentColor" opacity="0.7">Đa số enterprise bắt đầu bên trái (Rehost) rồi dần dịch sang phải (Refactor) theo business value.</text>
-
   <line x1="24" y1="200" x2="696" y2="200" stroke="currentColor" stroke-opacity="0.18"/>
   <text x="24" y="226" font-size="11.5" font-weight="700" fill="currentColor" opacity="0.8">Ngoài phổ — không chuyển workload lên cloud:</text>
   <g>
@@ -169,11 +163,9 @@ Từ CLF-C01 chỉ có 6 R, AWS chính thức nâng lên **7 R** từ 2022:
   <title>Ba phase migration: Assess đến Mobilize đến Migrate và Modernize</title>
   <desc>Quy trình migration ba giai đoạn nối tiếp nhau: Assess (Discovery) phát hiện và đánh giá, sang Mobilize (Plan) lập kế hoạch và dựng nền, sang Migrate và Modernize thực thi chuyển và hiện đại hoá. Mỗi phase liệt kê công cụ AWS tương ứng.</desc>
   <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Ba phase migration</text>
-
   <defs>
     <marker id="phaseArr" markerWidth="11" markerHeight="11" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <g>
     <rect x="16" y="46" width="208" height="132" rx="11" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <rect x="28" y="58" width="80" height="22" rx="11" fill="#3b82f6" fill-opacity="0.9"/>
@@ -184,9 +176,7 @@ Từ CLF-C01 chỉ có 6 R, AWS chính thức nâng lên **7 R** từ 2022:
     <text x="28" y="156" font-size="10.5" fill="currentColor" opacity="0.85">· Migration Evaluator (TCO)</text>
     <text x="28" y="172" font-size="10.5" fill="currentColor" opacity="0.85">· Migration Hub</text>
   </g>
-
   <line x1="226" y1="112" x2="254" y2="112" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#phaseArr)"/>
-
   <g>
     <rect x="258" y="46" width="208" height="132" rx="11" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <rect x="270" y="58" width="80" height="22" rx="11" fill="#10b981" fill-opacity="0.95"/>
@@ -197,9 +187,7 @@ Từ CLF-C01 chỉ có 6 R, AWS chính thức nâng lên **7 R** từ 2022:
     <text x="270" y="156" font-size="10.5" fill="currentColor" opacity="0.85">· Network, IAM, logging</text>
     <text x="270" y="172" font-size="10.5" fill="currentColor" opacity="0.85">· Train team</text>
   </g>
-
   <line x1="468" y1="112" x2="496" y2="112" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#phaseArr)"/>
-
   <g>
     <rect x="500" y="46" width="204" height="132" rx="11" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <rect x="512" y="58" width="80" height="22" rx="11" fill="#f59e0b" fill-opacity="0.95"/>
@@ -210,7 +198,6 @@ Từ CLF-C01 chỉ có 6 R, AWS chính thức nâng lên **7 R** từ 2022:
     <text x="512" y="156" font-size="10.5" fill="currentColor" opacity="0.85">· Snow Family, DataSync</text>
     <text x="512" y="172" font-size="10.5" fill="currentColor" opacity="0.85">· Transfer Family</text>
   </g>
-
   <text x="16" y="206" font-size="11" fill="currentColor" opacity="0.7">Đây cũng là 3 phase của chương trình MAP (Migration Acceleration Program).</text>
 </svg>
 

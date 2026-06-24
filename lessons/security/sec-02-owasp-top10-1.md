@@ -170,7 +170,6 @@ db.execute(
   <title>Nối chuỗi gây SQL Injection so với parameterized query</title>
   <desc>Nhánh trên nối chuỗi: input người dùng hoà vào câu lệnh nên engine parse thành code độc. Nhánh dưới placeholder: data đi kênh riêng, luôn chỉ là giá trị. Minh hoạ nguyên tắc tách data khỏi code.</desc>
   <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Tách data khỏi code — gốc rễ chống SQL Injection</text>
-
   <g>
     <text x="16" y="52" font-size="12.5" font-weight="700" fill="#f59e0b">Nối chuỗi — input hoà vào câu lệnh</text>
     <rect x="16" y="62" width="150" height="44" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
@@ -187,9 +186,7 @@ db.execute(
       <path d="M452 84 H546" marker-end="url(#ah)"/>
     </g>
   </g>
-
   <line x1="16" y1="138" x2="704" y2="138" stroke="currentColor" stroke-opacity="0.2"/>
-
   <g>
     <text x="16" y="170" font-size="12.5" font-weight="700" fill="#10b981">Placeholder — data đi kênh riêng</text>
     <rect x="16" y="180" width="150" height="44" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
@@ -206,7 +203,6 @@ db.execute(
       <path d="M452 202 H546" marker-end="url(#ah2)"/>
     </g>
   </g>
-
   <g>
     <text x="16" y="262" font-size="11.5" font-weight="700" fill="currentColor">Hai kênh tách biệt khi parameterize:</text>
     <rect x="16" y="274" width="340" height="30" rx="8" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
@@ -215,7 +211,6 @@ db.execute(
     <text x="380" y="293" font-size="11" fill="currentColor">Kênh DATA — giá trị người dùng, không bao giờ thành code</text>
     <text x="16" y="330" font-size="11" fill="currentColor" opacity="0.8">Input không thể "thoát" sang kênh code → dấu nháy, -- chỉ là ký tự thường.</text>
   </g>
-
   <defs>
     <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#f59e0b"/></marker>
     <marker id="ah2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#10b981"/></marker>
@@ -242,7 +237,6 @@ XSS là injection vào **trình duyệt**: kẻ tấn công nhét JavaScript ch�
   <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Ba loại XSS — đường đi của payload</text>
   <text x="16" y="50" font-size="11" fill="currentColor" opacity="0.7">Kẻ tấn công →</text>
   <text x="704" y="50" font-size="11" text-anchor="end" fill="currentColor" opacity="0.7">→ Trình duyệt nạn nhân (script chạy)</text>
-
   <g>
     <rect x="16" y="62" width="688" height="86" rx="10" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
     <text x="28" y="84" font-size="12.5" font-weight="700" fill="#f59e0b">Reflected</text>
@@ -258,7 +252,6 @@ XSS là injection vào **trình duyệt**: kẻ tấn công nhét JavaScript ch�
       <path d="M450 113 H562" marker-end="url(#x1)"/>
     </g>
   </g>
-
   <g>
     <rect x="16" y="158" width="688" height="86" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
     <text x="28" y="180" font-size="12.5" font-weight="700" fill="#3b82f6">Stored</text>
@@ -275,7 +268,6 @@ XSS là injection vào **trình duyệt**: kẻ tấn công nhét JavaScript ch�
       <path d="M450 209 H506" marker-end="url(#x2)"/>
     </g>
   </g>
-
   <g>
     <rect x="16" y="254" width="688" height="86" rx="10" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
     <text x="28" y="276" font-size="12.5" font-weight="700" fill="#8b5cf6">DOM-based</text>
@@ -292,7 +284,6 @@ XSS là injection vào **trình duyệt**: kẻ tấn công nhét JavaScript ch�
       <path d="M450 305 H562" marker-end="url(#x3)"/>
     </g>
   </g>
-
   <defs>
     <marker id="x1" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#f59e0b"/></marker>
     <marker id="x2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#3b82f6"/></marker>

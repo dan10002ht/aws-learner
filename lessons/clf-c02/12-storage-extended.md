@@ -28,70 +28,57 @@ Sau bài này bạn có thể:
   <title>So sánh cách gắn của Block, File và Object storage trên AWS</title>
   <desc>Block (EBS/Instance Store) gắn vào 1 EC2 trong 1 AZ; File (EFS/FSx) share nhiều EC2 qua nhiều AZ bằng NFS hoặc SMB; Object (S3) truy cập qua HTTP API, không gắn vào máy nào.</desc>
   <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Ba kiểu storage gắn vào compute như thế nào?</text>
-
   <g>
     <rect x="16" y="40" width="220" height="300" rx="10" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.18"/>
     <rect x="28" y="52" width="86" height="22" rx="11" fill="#3b82f6" fill-opacity="0.9"/>
     <text x="71" y="67" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">BLOCK</text>
     <text x="124" y="67" font-size="11" fill="currentColor" opacity="0.7">1 EC2 · 1 AZ</text>
-
     <rect x="40" y="92" width="172" height="46" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3"/>
     <text x="126" y="109" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Availability Zone A</text>
     <rect x="56" y="118" width="64" height="34" rx="6" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.4"/>
     <text x="88" y="139" font-size="11" text-anchor="middle" fill="currentColor">EC2</text>
-
     <line x1="120" y1="135" x2="148" y2="135" stroke="currentColor" stroke-width="2"/>
     <rect x="148" y="118" width="52" height="34" rx="6" fill="#3b82f6" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.4"/>
     <text x="174" y="139" font-size="10.5" text-anchor="middle" fill="currentColor">Volume</text>
-
     <text x="126" y="180" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">EBS · Instance Store</text>
     <text x="126" y="200" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">gắn trực tiếp 1 máy</text>
     <text x="126" y="216" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">low latency, format FS</text>
     <text x="126" y="244" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.55">đổi AZ phải snapshot</text>
   </g>
-
   <g>
     <rect x="250" y="40" width="220" height="300" rx="10" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
     <rect x="262" y="52" width="74" height="22" rx="11" fill="#10b981" fill-opacity="0.95"/>
     <text x="299" y="67" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">FILE</text>
     <text x="346" y="67" font-size="11" fill="currentColor" opacity="0.7">nhiều EC2 · multi-AZ</text>
-
     <rect x="262" y="92" width="92" height="40" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 3"/>
     <text x="308" y="106" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">AZ-A</text>
     <rect x="276" y="110" width="64" height="18" rx="4" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.4"/>
     <text x="308" y="123" font-size="9.5" text-anchor="middle" fill="currentColor">EC2</text>
-
     <rect x="366" y="92" width="92" height="40" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 3"/>
     <text x="412" y="106" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">AZ-B</text>
     <rect x="380" y="110" width="64" height="18" rx="4" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.4"/>
     <text x="412" y="123" font-size="9.5" text-anchor="middle" fill="currentColor">EC2</text>
-
     <line x1="308" y1="128" x2="308" y2="168" stroke="currentColor" stroke-width="1.5"/>
     <line x1="412" y1="128" x2="412" y2="168" stroke="currentColor" stroke-width="1.5"/>
     <text x="360" y="152" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">NFS / SMB</text>
     <rect x="284" y="168" width="152" height="34" rx="8" fill="#10b981" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.4"/>
     <text x="360" y="189" font-size="10.5" text-anchor="middle" fill="currentColor">File system chung</text>
-
     <text x="360" y="228" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">EFS · FSx</text>
     <text x="360" y="248" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">nhiều máy share cùng lúc</text>
   </g>
-
   <g>
     <rect x="484" y="40" width="220" height="300" rx="10" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
     <rect x="496" y="52" width="82" height="22" rx="11" fill="#f59e0b" fill-opacity="0.95"/>
     <text x="537" y="67" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">OBJECT</text>
     <text x="588" y="67" font-size="11" fill="currentColor" opacity="0.7">không gắn máy</text>
-
     <rect x="556" y="96" width="64" height="34" rx="6" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.4"/>
     <text x="588" y="117" font-size="10.5" text-anchor="middle" fill="currentColor">Client</text>
     <text x="588" y="148" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">EC2 · Lambda · app</text>
-
     <line x1="588" y1="158" x2="588" y2="168" stroke="currentColor" stroke-width="1.5"/>
     <line x1="588" y1="184" x2="588" y2="190" stroke="currentColor" stroke-width="1.5"/>
     <text x="588" y="180" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">HTTP API (GET/PUT)</text>
     <rect x="528" y="190" width="120" height="40" rx="8" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.4"/>
     <text x="588" y="215" font-size="11" text-anchor="middle" fill="currentColor">Bucket S3</text>
-
     <text x="588" y="256" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Amazon S3</text>
     <text x="588" y="276" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">unlimited, REST endpoint</text>
     <text x="588" y="292" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">không cần mount</text>

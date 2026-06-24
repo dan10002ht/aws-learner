@@ -64,43 +64,33 @@ Bắt đầu từ kiến trúc đơn giản nhất chạy được. Đây là m�
   <defs>
     <marker id="archArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">Kiến trúc 3-tier TaskShare + CI/CD</text>
-
   <rect x="252" y="38" width="216" height="48" rx="9" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="360" y="60" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Người dùng (Browser)</text>
   <text x="360" y="77" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">SPA chạy trong trình duyệt</text>
-
   <line x1="360" y1="86" x2="360" y2="118" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#archArr)"/>
   <text x="370" y="106" font-size="10.5" fill="currentColor" opacity="0.7">HTTPS</text>
-
   <rect x="234" y="120" width="252" height="56" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="360" y="142" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">FRONTEND — React + TS (SPA)</text>
   <text x="360" y="160" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.68">Host: Vercel (CDN + build, preview/PR)</text>
-
   <line x1="360" y1="176" x2="360" y2="240" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#archArr)"/>
   <text x="370" y="200" font-size="10.5" fill="currentColor" opacity="0.7">fetch() JSON / HTTPS</text>
   <text x="370" y="216" font-size="10.5" fill="currentColor" opacity="0.7">Authorization: Bearer JWT</text>
-
   <g stroke="#f59e0b" stroke-opacity="0.85" stroke-dasharray="6 4" fill="none">
     <line x1="40" y1="208" x2="680" y2="208"/>
   </g>
   <rect x="40" y="196" width="190" height="22" rx="11" fill="#f59e0b" fill-opacity="0.9"/>
   <text x="135" y="211" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">TRUST BOUNDARY</text>
   <text x="248" y="232" font-size="10" fill="#f59e0b" opacity="0.95">mọi thứ từ browser đều không đáng tin → validate ở BE</text>
-
   <rect x="216" y="242" width="288" height="74" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="360" y="263" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">BACKEND — Node/Express + TS</text>
   <text x="360" y="281" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">JWT auth middleware · REST · validate</text>
   <text x="360" y="298" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Host: AWS (App Runner / ECS Fargate / EC2)</text>
-
   <line x1="360" y1="316" x2="360" y2="348" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#archArr)"/>
   <text x="370" y="336" font-size="10.5" fill="currentColor" opacity="0.7">SQL (TCP, trong VPC)</text>
-
   <rect x="234" y="350" width="252" height="56" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="360" y="372" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">DATABASE — PostgreSQL</text>
   <text x="360" y="390" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.68">Host: AWS RDS (private subnet)</text>
-
   <g>
     <rect x="528" y="120" width="176" height="196" rx="9" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="5 4"/>
     <text x="616" y="140" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">CI/CD</text>
@@ -117,7 +107,6 @@ Bắt đầu từ kiến trúc đơn giản nhất chạy được. Đây là m�
   </g>
   <line x1="544" y1="262" x2="486" y2="150" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3" marker-end="url(#archArr)"/>
   <line x1="544" y1="294" x2="504" y2="290" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3" marker-end="url(#archArr)"/>
-
   <text x="16" y="440" font-size="10.5" fill="currentColor" opacity="0.6">FE và BE khác origin → cần cấu hình CORS; DB không có public access, chỉ BE trong VPC truy cập.</text>
 </svg>
 
@@ -157,9 +146,7 @@ Trái tim của TaskShare là quan hệ **many-to-many**: một user có nhiều
   <defs>
     <marker id="erdArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">ERD TaskShare — many-to-many qua bảng nối, one-to-many owner</text>
-
   <g>
     <rect x="24" y="120" width="160" height="118" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
     <rect x="24" y="120" width="160" height="24" rx="8" fill="#3b82f6" fill-opacity="0.85"/>
@@ -169,7 +156,6 @@ Trái tim của TaskShare là quan hệ **many-to-many**: một user có nhiều
     <text x="36" y="202" font-size="11" fill="currentColor" opacity="0.8">password_hash</text>
     <text x="36" y="221" font-size="11" fill="currentColor" opacity="0.8">created_at</text>
   </g>
-
   <g>
     <rect x="280" y="104" width="176" height="150" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
     <rect x="280" y="104" width="176" height="24" rx="8" fill="#f59e0b" fill-opacity="0.9"/>
@@ -181,7 +167,6 @@ Trái tim của TaskShare là quan hệ **many-to-many**: một user có nhiều
     <text x="292" y="234" font-size="9.5" fill="#f59e0b" opacity="0.95" font-weight="700">composite PK:</text>
     <text x="292" y="247" font-size="9.5" fill="#f59e0b" opacity="0.95">(project_id, user_id)</text>
   </g>
-
   <g>
     <rect x="544" y="120" width="160" height="118" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
     <rect x="544" y="120" width="160" height="24" rx="8" fill="#10b981" fill-opacity="0.9"/>
@@ -191,7 +176,6 @@ Trái tim của TaskShare là quan hệ **many-to-many**: một user có nhiều
     <text x="556" y="202" font-size="11" font-weight="700" fill="currentColor">owner_id  FK</text>
     <text x="556" y="221" font-size="11" fill="currentColor" opacity="0.8">created_at</text>
   </g>
-
   <g>
     <rect x="544" y="290" width="160" height="124" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
     <rect x="544" y="290" width="160" height="24" rx="8" fill="#8b5cf6" fill-opacity="0.9"/>
@@ -202,15 +186,12 @@ Trái tim của TaskShare là quan hệ **many-to-many**: một user có nhiều
     <text x="556" y="384" font-size="11" fill="currentColor" opacity="0.8">status · due_date</text>
     <text x="556" y="401" font-size="11" fill="currentColor" opacity="0.8">created_by · created_at</text>
   </g>
-
   <line x1="280" y1="158" x2="186" y2="172" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#erdArr)"/>
   <line x1="456" y1="148" x2="542" y2="160" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#erdArr)"/>
   <text x="200" y="285" font-size="11" font-weight="700" fill="#f59e0b" opacity="0.95">M : N (users ↔ projects qua bảng nối)</text>
-
   <path d="M624 238 v52" fill="none" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#erdArr)"/>
   <text x="634" y="268" font-size="10.5" fill="currentColor" opacity="0.8">1 : N</text>
   <text x="634" y="283" font-size="9.5" fill="currentColor" opacity="0.65">project có N task</text>
-
   <path d="M544 200 q-30 30 -10 90" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="4 3" marker-end="url(#erdArr)"/>
   <text x="470" y="60" font-size="10.5" fill="currentColor" opacity="0.75">projects.owner_id → users.id</text>
   <path d="M520 64 q-160 -10 -380 50" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="4 3" marker-end="url(#erdArr)"/>
@@ -343,62 +324,49 @@ Cắt dự án thành các mốc *chạy được* (mỗi mốc deploy/demo đư
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Roadmap milestone M0–M5 dạng timeline; M1 là vertical slice mỏng xuyên FE-BE-DB cho auth</title>
   <desc>Timeline ngang sáu mốc M0 đến M5. M1 được làm nổi bật là lát cắt dọc (vertical slice) mỏng xuyên cả ba tầng Frontend, Backend, Database chỉ cho tính năng auth, thay vì làm xong từng tầng theo chiều ngang. Phía dưới so sánh cách vertical với cách horizontal.</desc>
-
   <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">Roadmap M0 → M5 — và vì sao M1 là lát cắt DỌC</text>
-
   <line x1="40" y1="60" x2="700" y2="60" stroke="currentColor" stroke-opacity="0.4"/>
   <defs>
     <marker id="msArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.5"/></marker>
   </defs>
   <line x1="40" y1="60" x2="700" y2="60" stroke="currentColor" stroke-opacity="0.4" marker-end="url(#msArr)"/>
-
   <g font-size="10.5" text-anchor="middle">
     <circle cx="70" cy="60" r="6" fill="#3b82f6" fill-opacity="0.9"/>
     <text x="70" y="44" font-weight="700" fill="currentColor">M0</text>
     <text x="70" y="80" fill="currentColor" opacity="0.7">Setup</text>
-
     <circle cx="190" cy="60" r="9" fill="#f59e0b" fill-opacity="0.95"/>
     <text x="190" y="42" font-weight="700" fill="#f59e0b">M1</text>
     <text x="190" y="80" fill="#f59e0b" opacity="0.95" font-weight="700">Auth (dọc)</text>
-
     <circle cx="320" cy="60" r="6" fill="#3b82f6" fill-opacity="0.9"/>
     <text x="320" y="44" font-weight="700" fill="currentColor">M2</text>
     <text x="320" y="80" fill="currentColor" opacity="0.7">Core CRUD</text>
-
     <circle cx="440" cy="60" r="6" fill="#3b82f6" fill-opacity="0.9"/>
     <text x="440" y="44" font-weight="700" fill="currentColor">M3</text>
     <text x="440" y="80" fill="currentColor" opacity="0.7">Chia sẻ</text>
-
     <circle cx="560" cy="60" r="6" fill="#3b82f6" fill-opacity="0.9"/>
     <text x="560" y="44" font-weight="700" fill="currentColor">M4</text>
     <text x="560" y="80" fill="currentColor" opacity="0.7">Deploy</text>
-
     <circle cx="670" cy="60" r="6" fill="#3b82f6" fill-opacity="0.9"/>
     <text x="670" y="44" font-weight="700" fill="currentColor">M5</text>
     <text x="670" y="80" fill="currentColor" opacity="0.7">Polish</text>
   </g>
-
   <g>
     <rect x="24" y="120" width="320" height="210" rx="10" fill="#10b981" fill-opacity="0.10" stroke="#10b981" stroke-opacity="0.5"/>
     <text x="184" y="142" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">VERTICAL SLICE (M1) — nên làm</text>
     <text x="184" y="159" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">lát mỏng xuyên cả 3 tầng cho 1 tính năng (auth)</text>
-
     <rect x="48" y="172" width="272" height="34" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="60" y="193" font-size="10.5" fill="currentColor">FE: màn login gọi API thật</text>
     <rect x="48" y="212" width="272" height="34" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="60" y="233" font-size="10.5" fill="currentColor">BE: register/login + 1 route bảo vệ</text>
     <rect x="48" y="252" width="272" height="34" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="60" y="273" font-size="10.5" fill="currentColor">DB: bảng users + migration</text>
-
     <rect x="150" y="166" width="22" height="126" rx="5" fill="#10b981" fill-opacity="0.22" stroke="#10b981" stroke-opacity="0.6"/>
     <text x="184" y="312" font-size="10" text-anchor="middle" fill="#10b981" opacity="0.95" font-weight="700">cắt dọc 1 lần → end-to-end chạy</text>
   </g>
-
   <g>
     <rect x="372" y="120" width="324" height="210" rx="10" fill="#f59e0b" fill-opacity="0.08" stroke="#f59e0b" stroke-opacity="0.45"/>
     <text x="534" y="142" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">HORIZONTAL — tránh</text>
     <text x="534" y="159" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">xong hết 1 tầng rồi mới sang tầng khác</text>
-
     <rect x="396" y="172" width="276" height="34" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="408" y="193" font-size="10.5" fill="currentColor">① xong TOÀN BỘ DB</text>
     <rect x="396" y="212" width="276" height="34" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>

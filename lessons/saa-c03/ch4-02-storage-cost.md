@@ -82,7 +82,6 @@ Bill mới: **$500/tháng cho cold + transition cost**. Save **$11,000/tháng**.
   <title>Vòng đời object S3 theo tuổi: chuyển tầng để giảm chi phí</title>
   <desc>Timeline ngang theo tuổi object log/audit. Standard từ 0 đến 30 ngày, Standard-IA tại 30 ngày, Glacier Instant tại 90 ngày, Deep Archive tại 365 ngày, rồi expire. Càng về cuối chi phí lưu trữ càng giảm nhưng thời gian lấy lại càng tăng.</desc>
   <text x="16" y="24" font-size="14.5" font-weight="700" fill="currentColor">Lifecycle log/audit — chuyển tầng theo tuổi object</text>
-
   <line x1="30" y1="70" x2="690" y2="70" stroke="currentColor" stroke-opacity="0.45"/>
   <polygon points="690,70 680,65 680,75" fill="currentColor" fill-opacity="0.6"/>
   <text x="30" y="58" font-size="11" fill="currentColor" opacity="0.7">0d</text>
@@ -90,7 +89,6 @@ Bill mới: **$500/tháng cho cold + transition cost**. Save **$11,000/tháng**.
   <text x="350" y="58" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">90d</text>
   <text x="510" y="58" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">365d</text>
   <text x="660" y="58" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">7y</text>
-
   <g>
     <rect x="30" y="86" width="150" height="58" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <line x1="30" y1="70" x2="30" y2="86" stroke="currentColor" stroke-opacity="0.3"/>
@@ -115,24 +113,20 @@ Bill mới: **$500/tháng cho cold + transition cost**. Save **$11,000/tháng**.
     <text x="585" y="110" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Deep Archive</text>
     <text x="585" y="128" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">restore 12-48h · rẻ nhất</text>
   </g>
-
   <g fill="currentColor" fill-opacity="0.55">
     <polygon points="180,115 192,109 192,121"/>
     <polygon points="340,115 352,109 352,121"/>
     <polygon points="500,115 512,109 512,121"/>
   </g>
-
   <g transform="translate(660,86)">
     <text x="6" y="34" font-size="11" font-weight="700" fill="currentColor" opacity="0.7">expire</text>
     <text x="6" y="50" font-size="10" fill="currentColor" opacity="0.55">(xóa)</text>
   </g>
-
   <text x="30" y="216" font-size="11.5" font-weight="700" fill="currentColor">Chi phí lưu trữ / GB</text>
   <rect x="30" y="226" width="660" height="14" rx="7" fill="#10b981" fill-opacity="0.18"/>
   <text x="40" y="237" font-size="10.5" fill="currentColor" opacity="0.75">cao</text>
   <text x="680" y="237" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.75">rất thấp</text>
   <polygon points="30,233 680,228 680,238 30,238" fill="#10b981" fill-opacity="0.22"/>
-
   <text x="30" y="270" font-size="11.5" font-weight="700" fill="currentColor">Thời gian lấy lại (retrieval)</text>
   <rect x="30" y="280" width="660" height="14" rx="7" fill="#f59e0b" fill-opacity="0.16"/>
   <text x="40" y="291" font-size="10.5" fill="currentColor" opacity="0.75">tức thì</text>

@@ -143,47 +143,38 @@ Sau bài này bạn có thể:
   <text x="180" y="26" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Multi-AZ (HA)</text>
   <text x="540" y="26" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Read Replica (scale read)</text>
   <line x1="360" y1="40" x2="360" y2="340" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 4"/>
-
   <!-- Multi-AZ column -->
   <rect x="36" y="56" width="120" height="52" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="96" y="80" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Primary</text>
   <text x="96" y="98" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">AZ-a · read+write</text>
-
   <rect x="204" y="56" width="120" height="52" rx="9" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="5 3"/>
   <text x="264" y="80" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Standby</text>
   <text x="264" y="98" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">AZ-b · KHÔNG đọc</text>
-
   <line x1="156" y1="82" x2="204" y2="82" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#azArr)"/>
   <text x="180" y="74" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">sync</text>
-
   <rect x="36" y="142" width="288" height="46" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="180" y="161" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Auto failover 60–120s</text>
   <text x="180" y="178" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">DNS endpoint trỏ sang standby khi primary fail</text>
-
   <rect x="36" y="206" width="288" height="100" rx="9" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="50" y="228" font-size="11" font-weight="700" fill="currentColor">Mục tiêu: tính sẵn sàng (HA)</text>
   <text x="50" y="248" font-size="10.5" fill="currentColor" opacity="0.8">• Sync — standby luôn đồng bộ</text>
   <text x="50" y="266" font-size="10.5" fill="currentColor" opacity="0.8">• Standby KHÔNG phục vụ read</text>
   <text x="50" y="284" font-size="10.5" fill="currentColor" opacity="0.8">• 1 standby, cùng region</text>
   <text x="50" y="302" font-size="10.5" fill="currentColor" opacity="0.8">• Không giảm tải đọc</text>
-
   <!-- Read Replica column -->
   <rect x="400" y="56" width="120" height="52" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="460" y="80" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Primary</text>
   <text x="460" y="98" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">read+write</text>
-
   <rect x="560" y="50" width="124" height="30" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="622" y="69" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Replica 1 · read</text>
   <rect x="560" y="86" width="124" height="30" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="622" y="105" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Replica 2 · read</text>
   <rect x="560" y="122" width="124" height="30" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="622" y="141" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">… up to 15</text>
-
   <line x1="520" y1="74" x2="560" y2="65" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#azArr)"/>
   <line x1="520" y1="82" x2="560" y2="101" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#azArr)"/>
   <line x1="520" y1="90" x2="560" y2="137" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#azArr)"/>
   <text x="536" y="60" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">async</text>
-
   <rect x="400" y="206" width="284" height="118" rx="9" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="414" y="228" font-size="11" font-weight="700" fill="currentColor">Mục tiêu: scale đọc</text>
   <text x="414" y="248" font-size="10.5" fill="currentColor" opacity="0.8">• Async — có thể lag</text>
@@ -191,7 +182,6 @@ Sau bài này bạn có thể:
   <text x="414" y="284" font-size="10.5" fill="currentColor" opacity="0.8">• Cross-AZ hoặc cross-region</text>
   <text x="414" y="302" font-size="10.5" fill="currentColor" opacity="0.8">• Có thể promote thành DB riêng</text>
   <text x="414" y="320" font-size="10.5" fill="currentColor" opacity="0.8">• KHÔNG tự failover</text>
-
   <defs>
     <marker id="azArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
@@ -239,13 +229,10 @@ Sau bài này bạn có thể:
   <title>DynamoDB data model — Table, Item, Attribute, Partition Key và Sort Key</title>
   <desc>Một Table chứa nhiều Item, mỗi Item gồm các Attribute. Partition Key (hash) chia dữ liệu thành các partition; trong cùng một Partition Key, các Item được sắp xếp theo Sort Key.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">DynamoDB: Table → Item → Attribute</text>
-
   <!-- partitions -->
   <text x="16" y="52" font-size="11" font-weight="700" fill="currentColor" opacity="0.85">Partition Key (hash) chia partition</text>
-
   <rect x="16" y="62" width="334" height="210" rx="10" fill="#3b82f6" fill-opacity="0.10" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="30" y="82" font-size="11" font-weight="700" fill="currentColor">Partition A  (PK = "user#1")</text>
-
   <!-- item 1 -->
   <rect x="30" y="92" width="306" height="50" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="40" y="110" font-size="10" font-weight="700" fill="currentColor">Item · PK=user#1 · SK=2026-01</text>
@@ -255,22 +242,18 @@ Sau bài này bạn có thể:
   <text x="144" y="129" font-size="9.5" text-anchor="middle" fill="#fff">Email</text>
   <rect x="184" y="116" width="80" height="18" rx="9" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="224" y="129" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">Attributes</text>
-
   <!-- item 2 -->
   <rect x="30" y="150" width="306" height="34" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="40" y="171" font-size="10" font-weight="700" fill="currentColor">Item · PK=user#1 · SK=2026-02  (sort theo SK)</text>
-
   <text x="30" y="206" font-size="11" font-weight="700" fill="currentColor">Partition B  (PK = "user#2")</text>
   <rect x="30" y="214" width="306" height="34" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="40" y="235" font-size="10" font-weight="700" fill="currentColor">Item · PK=user#2 · SK=2026-01</text>
-
   <!-- GSI vs LSI -->
   <rect x="366" y="62" width="338" height="98" rx="10" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="380" y="84" font-size="12" font-weight="700" fill="currentColor">GSI — Global Secondary Index</text>
   <text x="380" y="104" font-size="10.5" fill="currentColor" opacity="0.85">• PK/SK KHÁC hoàn toàn table gốc</text>
   <text x="380" y="122" font-size="10.5" fill="currentColor" opacity="0.85">• Eventual consistent · throughput riêng</text>
   <text x="380" y="140" font-size="10.5" fill="currentColor" opacity="0.85">• Tạo bất cứ lúc nào</text>
-
   <rect x="366" y="170" width="338" height="102" rx="10" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="380" y="192" font-size="12" font-weight="700" fill="currentColor">LSI — Local Secondary Index</text>
   <text x="380" y="212" font-size="10.5" fill="currentColor" opacity="0.85">• SAME PK, khác SK</text>

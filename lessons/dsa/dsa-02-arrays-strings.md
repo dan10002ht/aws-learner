@@ -246,7 +246,6 @@ Mỗi bước loại bỏ một ứng viên → **O(n)** thời gian, **O(1)** b
   <title>Two-pointer hai đầu trên mảng đã sort</title>
   <desc>Con trỏ left ở đầu và right ở cuối mảng đã sort cùng tiến vào giữa; nếu tổng a[left]+a[right] nhỏ hơn target thì left tăng, nếu lớn hơn target thì right giảm, bằng target là tìm thấy.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Two-pointer hai đầu (mảng đã sort) — tiến vào giữa</text>
-
   <g font-size="14" fill="currentColor">
     <rect x="40" y="48" width="58" height="48" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
     <rect x="106" y="48" width="58" height="48" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
@@ -261,7 +260,6 @@ Mỗi bước loại bỏ một ứng viên → **O(n)** thời gian, **O(1)** b
     <text x="333" y="78" text-anchor="middle">11</text>
     <text x="399" y="78" text-anchor="middle">15</text>
   </g>
-
   <text x="69" y="118" font-size="12" font-weight="700" text-anchor="middle" fill="#3b82f6">left</text>
   <text x="399" y="118" font-size="12" font-weight="700" text-anchor="middle" fill="#10b981">right</text>
   <g stroke="currentColor" stroke-opacity="0.45" stroke-width="1.6" fill="none">
@@ -269,7 +267,6 @@ Mỗi bước loại bỏ một ứng viên → **O(n)** thời gian, **O(1)** b
     <path d="M393 130 h-120" marker-end="url(#tparr)"/>
   </g>
   <text x="234" y="126" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">cùng tiến vào giữa</text>
-
   <text x="40" y="172" font-size="12.5" font-weight="700" fill="currentColor">Quyết định theo sum = a[left] + a[right] so với target:</text>
   <g font-size="12">
     <rect x="40" y="184" width="200" height="46" rx="7" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
@@ -371,7 +368,6 @@ Vì mỗi con trỏ chỉ đi một chiều và mỗi phần tử vào/ra cửa 
   <title>Sliding window co và giãn trên một dãy</title>
   <desc>Cửa sổ [left, right] mở rộng khi tăng right để thu nạp phần tử mới, và co lại khi tăng left lúc vi phạm điều kiện; mỗi phần tử vào và ra cửa sổ tối đa một lần.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Sliding window — mở rộng (right++) rồi co lại (left++)</text>
-
   <text x="16" y="58" font-size="12" font-weight="700" fill="currentColor">1. Mở rộng: tăng right thu nạp phần tử mới</text>
   <g font-size="13" fill="currentColor">
     <rect x="16" y="70" width="48" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
@@ -393,7 +389,6 @@ Vì mỗi con trỏ chỉ đi một chiều và mỗi phần tử vào/ra cửa 
     <path d="M232 92 h44" marker-end="url(#swarr)"/>
   </g>
   <text x="296" y="88" font-size="11" fill="#10b981">right++</text>
-
   <text x="16" y="178" font-size="12" font-weight="700" fill="currentColor">2. Vi phạm điều kiện → co lại: tăng left bỏ phần tử trái</text>
   <g font-size="13" fill="currentColor">
     <rect x="16" y="190" width="48" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
@@ -415,7 +410,6 @@ Vì mỗi con trỏ chỉ đi một chiều và mỗi phần tử vào/ra cửa 
     <path d="M120 212 h44" marker-end="url(#swarr2)"/>
   </g>
   <text x="76" y="208" font-size="11" fill="#f59e0b">left++</text>
-
   <text x="380" y="148" font-size="11.5" fill="currentColor" opacity="0.85">Mỗi phần tử vào (right++)</text>
   <text x="380" y="166" font-size="11.5" fill="currentColor" opacity="0.85">và ra (left++) cửa sổ</text>
   <text x="380" y="184" font-size="11.5" fill="currentColor" opacity="0.85">tối đa một lần → O(n).</text>
@@ -529,7 +523,6 @@ sum(i..j) = pre[j + 1] - pre[i]
   <title>Prefix sum và công thức tổng đoạn</title>
   <desc>Mảng gốc a có 6 phần tử và mảng prefix pre dài 7 với pre[0]=0, mỗi pre[k] là tổng các phần tử a[0..k-1]; tổng đoạn a[1..3] bằng pre[4] trừ pre[1].</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Prefix sum: pre dài n+1, pre[0]=0, sum(i..j) = pre[j+1] − pre[i]</text>
-
   <text x="16" y="58" font-size="12" font-weight="700" fill="currentColor">Mảng gốc a (n = 6) — tô đoạn cần tính: a[1..3]</text>
   <g font-size="13" fill="currentColor">
     <rect x="40" y="68" width="56" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
@@ -553,7 +546,6 @@ sum(i..j) = pre[j + 1] - pre[i]
     <text x="300" y="128" text-anchor="middle">4</text>
     <text x="358" y="128" text-anchor="middle">5</text>
   </g>
-
   <text x="16" y="168" font-size="12" font-weight="700" fill="currentColor">Mảng prefix pre (n+1 = 7) — pre[k] = tổng a[0..k-1]</text>
   <g font-size="13" fill="currentColor">
     <rect x="40" y="178" width="56" height="44" rx="6" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
@@ -580,7 +572,6 @@ sum(i..j) = pre[j + 1] - pre[i]
     <text x="358" y="238" text-anchor="middle">pre[5]</text>
     <text x="416" y="238" text-anchor="middle">pre[6]</text>
   </g>
-
   <g font-size="13" fill="currentColor">
     <text x="40" y="282" font-weight="700">sum(1..3) = pre[4] − pre[1] = 14 − 2 = 12</text>
     <text x="40" y="304" opacity="0.75" font-size="12">(kiểm chứng: a[1]+a[2]+a[3] = 4 + 1 + 7 = 12)</text>

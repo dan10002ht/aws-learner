@@ -127,7 +127,6 @@ Cách `GROUP BY` hoạt động: gom các dòng có cùng `customer_id` vào m�
   <text x="16" y="22" font-size="13" font-weight="700" fill="currentColor">7 dòng orders</text>
   <text x="300" y="22" font-size="13" font-weight="700" fill="currentColor">GROUP BY customer_id → 4 rổ</text>
   <text x="600" y="22" font-size="13" font-weight="700" fill="currentColor">4 dòng kết quả</text>
-
   <g font-size="11" fill="currentColor">
     <rect x="16" y="34" width="150" height="26" rx="5" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/><text x="26" y="51">id=1 · cust 1</text>
     <rect x="16" y="64" width="150" height="26" rx="5" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/><text x="26" y="81">id=2 · cust 1</text>
@@ -137,7 +136,6 @@ Cách `GROUP BY` hoạt động: gom các dòng có cùng `customer_id` vào m�
     <rect x="16" y="184" width="150" height="26" rx="5" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/><text x="26" y="201">id=6 · cust 1</text>
     <rect x="16" y="214" width="150" height="26" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/><text x="26" y="231">id=7 · cust 4</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.4" fill="none">
     <path d="M166 47 C220 47 230 60 286 60"/>
     <path d="M166 77 C220 77 230 60 286 60"/>
@@ -147,14 +145,12 @@ Cách `GROUP BY` hoạt động: gom các dòng có cùng `customer_id` vào m�
     <path d="M166 167 C220 167 240 175 286 175"/>
     <path d="M166 227 C230 227 250 232 286 232"/>
   </g>
-
   <g font-size="11" fill="currentColor">
     <rect x="286" y="44" width="180" height="34" rx="6" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="298" y="65" font-weight="700">Rổ cust 1 · 3 đơn</text>
     <rect x="286" y="105" width="180" height="34" rx="6" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/><text x="298" y="126" font-weight="700">Rổ cust 2 · 1 đơn</text>
     <rect x="286" y="158" width="180" height="34" rx="6" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/><text x="298" y="179" font-weight="700">Rổ cust 3 · 2 đơn</text>
     <rect x="286" y="215" width="180" height="34" rx="6" fill="#8b5cf6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/><text x="298" y="236" font-weight="700">Rổ cust 4 · 1 đơn</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.45" fill="none">
     <defs><marker id="gbArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker></defs>
     <line x1="466" y1="61" x2="556" y2="61" marker-end="url(#gbArr)"/>
@@ -163,7 +159,6 @@ Cách `GROUP BY` hoạt động: gom các dòng có cùng `customer_id` vào m�
     <line x1="466" y1="232" x2="556" y2="232" marker-end="url(#gbArr)"/>
   </g>
   <text x="495" y="56" font-size="10" fill="currentColor" opacity="0.7">COUNT(*)</text>
-
   <g font-size="11" fill="currentColor">
     <rect x="556" y="46" width="148" height="30" rx="5" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/><text x="566" y="65">cust 1 → so_don 3</text>
     <rect x="556" y="107" width="148" height="30" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/><text x="566" y="126">cust 2 → so_don 1</text>
@@ -245,35 +240,27 @@ HAVING COUNT(*) >= 2;
   <title>Thứ tự thực thi logic của một câu truy vấn: FROM, WHERE, GROUP BY, HAVING, SELECT, ORDER BY</title>
   <desc>Pipeline trái sang phải sáu bước: FROM lấy bảng và JOIN, WHERE lọc từng dòng trước khi gom, GROUP BY gom thành nhóm, HAVING lọc từng nhóm sau khi gom, SELECT chọn cột và tính hàm tổng hợp, ORDER BY sắp xếp. WHERE lọc trước GROUP BY, HAVING lọc sau.</desc>
   <text x="16" y="22" font-size="13" font-weight="700" fill="currentColor">Thứ tự thực thi logic của truy vấn</text>
-
   <defs><marker id="eoArr" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker></defs>
-
   <g font-size="12">
     <rect x="16" y="40" width="104" height="56" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="68" y="62" font-weight="700" text-anchor="middle" fill="currentColor">FROM</text>
     <text x="68" y="80" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">lấy bảng + JOIN</text>
-
     <rect x="138" y="40" width="104" height="56" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="190" y="62" font-weight="700" text-anchor="middle" fill="currentColor">WHERE</text>
     <text x="190" y="80" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">lọc từng DÒNG</text>
-
     <rect x="260" y="40" width="104" height="56" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="312" y="62" font-weight="700" text-anchor="middle" fill="currentColor">GROUP BY</text>
     <text x="312" y="80" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">gom thành nhóm</text>
-
     <rect x="382" y="40" width="104" height="56" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="434" y="62" font-weight="700" text-anchor="middle" fill="currentColor">HAVING</text>
     <text x="434" y="80" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">lọc từng NHÓM</text>
-
     <rect x="504" y="40" width="104" height="56" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="556" y="62" font-weight="700" text-anchor="middle" fill="currentColor">SELECT</text>
     <text x="556" y="80" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">chọn cột + SUM</text>
-
     <rect x="626" y="40" width="78" height="56" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="665" y="62" font-weight="700" text-anchor="middle" fill="currentColor">ORDER BY</text>
     <text x="665" y="80" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">sắp xếp</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.5" fill="none">
     <line x1="120" y1="68" x2="136" y2="68" marker-end="url(#eoArr)"/>
     <line x1="242" y1="68" x2="258" y2="68" marker-end="url(#eoArr)"/>
@@ -281,14 +268,12 @@ HAVING COUNT(*) >= 2;
     <line x1="486" y1="68" x2="502" y2="68" marker-end="url(#eoArr)"/>
     <line x1="608" y1="68" x2="624" y2="68" marker-end="url(#eoArr)"/>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.4" fill="none">
     <path d="M190 96 v22 h66" marker-end="url(#eoArr)"/>
     <path d="M434 96 v44 h-66" marker-end="url(#eoArr)"/>
   </g>
   <text x="16" y="124" font-size="11" fill="currentColor" font-weight="700">WHERE: lọc TRƯỚC khi gom</text>
   <text x="704" y="166" font-size="11" text-anchor="end" fill="currentColor" font-weight="700">HAVING: lọc SAU khi gom</text>
-
   <text x="16" y="195" font-size="11" fill="currentColor" opacity="0.72">WHERE chạy lúc SUM/COUNT chưa tồn tại → không lọc được theo kết quả tổng hợp. HAVING thì có.</text>
   <text x="16" y="214" font-size="11" fill="currentColor" opacity="0.72">Lưu ý: SELECT chạy gần cuối, nên bí danh cột đặt ở SELECT thường chưa dùng được trong WHERE/HAVING.</text>
 </svg>
@@ -421,14 +406,11 @@ Hàm tổng hợp gộp nhiều dòng thành **một**. **Window function** tín
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>GROUP BY gộp nhiều dòng thành một, còn PARTITION BY chia nhóm nhưng giữ nguyên từng dòng</title>
   <desc>So sánh hai bên. Bên trái GROUP BY category: bốn dòng sản phẩm gộp lại còn hai dòng kết quả, mỗi danh mục một dòng. Bên phải window function PARTITION BY category: vẫn giữ đủ bốn dòng nhưng thêm một cột tính toán theo nhóm.</desc>
-
   <text x="180" y="22" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">GROUP BY category</text>
   <text x="180" y="40" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">GỘP nhiều dòng → 1 dòng/nhóm</text>
   <text x="540" y="22" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">OVER (PARTITION BY category)</text>
   <text x="540" y="40" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">GIỮ nguyên từng dòng + thêm cột</text>
-
   <line x1="360" y1="50" x2="360" y2="300" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
-
   <g font-size="11" fill="currentColor">
     <text x="16" y="66" font-size="10.5" opacity="0.65">Đầu vào: 4 sản phẩm</text>
     <rect x="16" y="72" width="320" height="24" rx="4" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/><text x="26" y="88">Phu kien · Ban phim · 350000</text>
@@ -436,7 +418,6 @@ Hàm tổng hợp gộp nhiều dòng thành **một**. **Window function** tín
     <rect x="16" y="124" width="320" height="24" rx="4" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/><text x="26" y="140">Thiet bi · Laptop · 18000000</text>
     <rect x="16" y="150" width="320" height="24" rx="4" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/><text x="26" y="166">Thiet bi · Man hinh · 2500000</text>
   </g>
-
   <g font-size="11" fill="currentColor">
     <text x="384" y="66" font-size="10.5" opacity="0.65">Cùng 4 sản phẩm đầu vào</text>
     <rect x="384" y="72" width="320" height="24" rx="4" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/><text x="394" y="88">Phu kien · Ban phim · 350000</text>
@@ -444,17 +425,14 @@ Hàm tổng hợp gộp nhiều dòng thành **một**. **Window function** tín
     <rect x="384" y="124" width="320" height="24" rx="4" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/><text x="394" y="140">Thiet bi · Laptop · 18000000</text>
     <rect x="384" y="150" width="320" height="24" rx="4" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/><text x="394" y="166">Thiet bi · Man hinh · 2500000</text>
   </g>
-
   <defs><marker id="cmpArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker></defs>
   <line x1="180" y1="174" x2="180" y2="208" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#cmpArr)"/>
   <line x1="540" y1="174" x2="540" y2="208" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#cmpArr)"/>
-
   <g font-size="11" fill="currentColor">
     <text x="16" y="226" font-size="10.5" opacity="0.65">Kết quả: 2 dòng (COUNT mỗi danh mục)</text>
     <rect x="16" y="232" width="320" height="26" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="26" y="249" font-weight="700">Phu kien → 2 sản phẩm</text>
     <rect x="16" y="262" width="320" height="26" rx="5" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/><text x="26" y="279" font-weight="700">Thiet bi → 2 sản phẩm</text>
   </g>
-
   <g font-size="10.5" fill="currentColor">
     <text x="384" y="226" font-size="10.5" opacity="0.65">Kết quả: vẫn 4 dòng + cột so_trong_nhom</text>
     <rect x="384" y="232" width="320" height="16" rx="3" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/><text x="392" y="244">Phu kien · Ban phim · 350000 · <tspan font-weight="700">2</tspan></text>

@@ -60,7 +60,6 @@ Mỗi lần một hàm được gọi, máy đẩy một **stack frame** (khung 
   <title>Call stack của factorial(4): đẩy frame xuống base case rồi pop nhân ngược</title>
   <desc>Bên trái các stack frame chồng lên nhau từ factorial(4) tới factorial(1); chạm base case rồi lần lượt pop và nhân ngược 1, 2, 6, 24. Độ sâu 4 frame minh hoạ O(d) bộ nhớ.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Call stack của factorial(4)</text>
-
   <text x="120" y="48" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">PUSH (đi xuống base case)</text>
   <rect x="40" y="58" width="160" height="38" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="120" y="82" font-size="12.5" text-anchor="middle" fill="currentColor">factorial(4)</text>
@@ -73,7 +72,6 @@ Mỗi lần một hàm được gọi, máy đẩy một **stack frame** (khung 
   <text x="120" y="217" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">base case → 1</text>
   <line x1="40" y1="234" x2="200" y2="234" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="120" y="250" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">độ sâu d=4 → O(d) bộ nhớ</text>
-
   <g stroke="currentColor" stroke-opacity="0.5" fill="none">
     <path d="M232 77 h60" marker-end="url(#arr1)"/>
     <path d="M232 119 h60" marker-end="url(#arr1)"/>
@@ -82,7 +80,6 @@ Mỗi lần một hàm được gọi, máy đẩy một **stack frame** (khung 
   <defs>
     <marker id="arr1" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <text x="540" y="48" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">POP (nhân ngược)</text>
   <rect x="460" y="58" width="160" height="34" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="540" y="80" font-size="12" text-anchor="middle" fill="currentColor">4 × 6 = 24</text>
@@ -452,7 +449,6 @@ Cả BFS và DFS đều chạy **O(V + E)** vì mỗi đỉnh và mỗi cạnh �
   <text x="180" y="22" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">BFS — queue, lan theo lớp</text>
   <text x="540" y="22" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">DFS — stack/đệ quy, đi sâu hết nhánh</text>
   <line x1="360" y1="36" x2="360" y2="300" stroke="currentColor" stroke-opacity="0.18"/>
-
   <g stroke="currentColor" stroke-opacity="0.35" fill="none">
     <path d="M180 70 L100 140"/><path d="M180 70 L260 140"/>
     <path d="M100 140 L70 220"/><path d="M100 140 L160 220"/>
@@ -475,7 +471,6 @@ Cả BFS và DFS đều chạy **O(V + E)** vì mỗi đỉnh và mỗi cạnh �
     <circle cx="302" cy="204" r="10" fill="#3b82f6"/><text x="302" y="208" text-anchor="middle" fill="#fff">6</text>
   </g>
   <text x="180" y="296" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">thứ tự thăm: A → B → C → D → E → F</text>
-
   <g stroke="currentColor" stroke-opacity="0.35" fill="none">
     <path d="M540 70 L460 140"/><path d="M540 70 L620 140"/>
     <path d="M460 140 L430 220"/><path d="M460 140 L520 220"/>
@@ -530,7 +525,6 @@ DP áp dụng khi bài toán có **hai dấu hiệu**:
   <desc>Cây đệ quy của fib(5) phân nhánh thành fib(4) và fib(3). Nhiều nút lặp lại: fib(3) tính 2 lần, fib(2) tính 3 lần, fib(1) và fib(0) nhiều lần. Đây là overlapping subproblems, động lực của memoization.</desc>
   <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Cây gọi fib(5) chưa cache</text>
   <text x="704" y="22" font-size="11" text-anchor="end" fill="#f59e0b">■ nút bị tính lại (trùng lặp)</text>
-
   <g stroke="currentColor" stroke-opacity="0.35" fill="none">
     <path d="M360 56 L200 106"/><path d="M360 56 L540 106"/>
     <path d="M200 106 L120 166"/><path d="M200 106 L300 166"/>
@@ -540,28 +534,23 @@ DP áp dụng khi bài toán có **hai dấu hiệu**:
     <path d="M460 166 L420 226"/><path d="M460 166 L500 226"/>
     <path d="M70 226 L40 286"/><path d="M70 226 L110 286"/>
   </g>
-
   <g font-size="11.5" text-anchor="middle">
     <g><rect x="334" y="40" width="52" height="30" rx="7" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/><text x="360" y="60" fill="currentColor" font-weight="700">fib(5)</text></g>
     <g><rect x="174" y="90" width="52" height="30" rx="7" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/><text x="200" y="110" fill="currentColor" font-weight="700">fib(4)</text></g>
     <g><rect x="514" y="90" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="540" y="110" fill="currentColor" font-weight="700">fib(3)</text></g>
-
     <g><rect x="94" y="150" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="120" y="170" fill="currentColor" font-weight="700">fib(3)</text></g>
     <g><rect x="274" y="150" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="300" y="170" fill="currentColor" font-weight="700">fib(2)</text></g>
     <g><rect x="434" y="150" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="460" y="170" fill="currentColor" font-weight="700">fib(2)</text></g>
     <g><rect x="594" y="150" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="620" y="170" fill="currentColor" font-weight="700">fib(1)</text></g>
-
     <g><rect x="44" y="210" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="70" y="230" fill="currentColor" font-weight="700">fib(2)</text></g>
     <g><rect x="154" y="210" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="180" y="230" fill="currentColor" font-weight="700">fib(1)</text></g>
     <g><rect x="234" y="210" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="260" y="230" fill="currentColor" font-weight="700">fib(1)</text></g>
     <g><rect x="334" y="210" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="360" y="230" fill="currentColor" font-weight="700">fib(0)</text></g>
     <g><rect x="394" y="210" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="420" y="230" fill="currentColor" font-weight="700">fib(1)</text></g>
     <g><rect x="474" y="210" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="500" y="230" fill="currentColor" font-weight="700">fib(0)</text></g>
-
     <g><rect x="14" y="270" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="40" y="290" fill="currentColor" font-weight="700">fib(1)</text></g>
     <g><rect x="84" y="270" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="110" y="290" fill="currentColor" font-weight="700">fib(0)</text></g>
   </g>
-
   <text x="360" y="332" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85">fib(3) tính 2 lần, fib(2) tính 3 lần — overlapping subproblems → động lực của memoization</text>
 </svg>
 

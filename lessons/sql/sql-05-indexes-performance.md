@@ -46,7 +46,6 @@ Hình dung bạn cần tìm từ "PostgreSQL" trong một cuốn sách 900 trang
   <title>Seq Scan so với Index Scan — lật từng trang so với dùng mục lục</title>
   <desc>Hai cột so sánh: bên trái Seq Scan quét tuần tự toàn bộ 2 triệu dòng như lật từng trang; bên phải Index Scan dùng mục lục nhảy thẳng tới dòng cần.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Tìm 1 dòng trong 2.000.000 dòng</text>
-
   <rect x="16" y="40" width="336" height="264" rx="10" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="32" y="64" font-size="12.5" font-weight="700" fill="currentColor">Seq Scan — lật từng trang</text>
   <text x="32" y="82" font-size="10.5" fill="currentColor" opacity="0.7">Không có index · O(n)</text>
@@ -71,7 +70,6 @@ Hình dung bạn cần tìm từ "PostgreSQL" trong một cuốn sách 900 trang
   <rect x="32" y="238" width="288" height="48" rx="7" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="44" y="258" font-size="11.5" font-weight="700" fill="currentColor">~412 ms</text>
   <text x="44" y="276" font-size="10.5" fill="currentColor" opacity="0.75">Rows Removed by Filter: 1999999</text>
-
   <rect x="368" y="40" width="336" height="264" rx="10" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="384" y="64" font-size="12.5" font-weight="700" fill="currentColor">Index Scan — dùng mục lục</text>
   <text x="384" y="82" font-size="10.5" fill="currentColor" opacity="0.7">Có index · O(log n)</text>
@@ -90,7 +88,6 @@ Hình dung bạn cần tìm từ "PostgreSQL" trong một cuốn sách 900 trang
   <rect x="384" y="238" width="304" height="48" rx="7" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="396" y="258" font-size="11.5" font-weight="700" fill="currentColor">~0.07 ms</text>
   <text x="396" y="276" font-size="10.5" fill="currentColor" opacity="0.75">nhanh hơn ~5800 lần</text>
-
   <defs>
     <marker id="sqArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.5"/></marker>
     <marker id="idxArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
@@ -118,7 +115,6 @@ B-tree giữ các giá trị **đã sắp xếp** trong một cây nhiều tần
   <title>Cấu trúc B-tree nhiều tầng và đường đi tìm kiếm O(log n)</title>
   <desc>Cây B-tree ba tầng: nút gốc, tầng nhánh, tầng lá chứa giá trị và con trỏ tới dòng. Đường tìm một giá trị chỉ qua 3 bước, mỗi tầng loại bỏ phần lớn nhánh còn lại.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">B-tree — tìm 1 giá trị chỉ qua 3–4 bước</text>
-
   <g stroke="currentColor" stroke-opacity="0.3" fill="none">
     <path d="M360 86 L188 138"/>
     <path d="M360 86 L532 138"/>
@@ -129,18 +125,15 @@ B-tree giữ các giá trị **đã sắp xếp** trong một cây nhiều tần
     <path d="M570 174 L570 226"/>
     <path d="M570 174 L650 226"/>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.85" fill="none" stroke-width="2.2">
     <path d="M360 86 L188 138"/>
     <path d="M150 174 L290 226"/>
   </g>
-
   <g>
     <rect x="312" y="56" width="96" height="32" rx="7" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
     <text x="360" y="77" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">M</text>
     <text x="416" y="77" font-size="10.5" fill="currentColor" opacity="0.7">gốc</text>
   </g>
-
   <g>
     <rect x="108" y="146" width="118" height="32" rx="7" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.45"/>
     <text x="167" y="167" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">D · H</text>
@@ -148,7 +141,6 @@ B-tree giữ các giá trị **đã sắp xếp** trong một cây nhiều tần
     <text x="511" y="167" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">R · W</text>
     <text x="232" y="167" font-size="10.5" fill="currentColor" opacity="0.7">nhánh</text>
   </g>
-
   <g font-size="10.5" text-anchor="middle">
     <rect x="28" y="226" width="84" height="42" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="70" y="244" font-weight="700" fill="currentColor">A · B · C</text>
@@ -170,7 +162,6 @@ B-tree giữ các giá trị **đã sắp xếp** trong một cây nhiều tần
     <text x="658" y="260" fill="currentColor" opacity="0.6">→ con trỏ</text>
   </g>
   <text x="16" y="219" font-size="10" fill="currentColor" opacity="0.55">tầng lá</text>
-
   <g font-size="10.5" fill="#f59e0b">
     <text x="240" y="108" font-weight="700">"J" trước M → trái</text>
     <text x="60" y="200" font-weight="700">"J" sau H → phải</text>
@@ -226,7 +217,6 @@ Hãy hình dung index này như một danh bạ điện thoại sắp xếp theo
   <title>Composite index leftmost-prefix — danh bạ sắp theo (customer_id, status)</title>
   <desc>Index gồm hai cột customer_id rồi status, sắp xếp như danh bạ. Query lọc từ cột trái dùng được index; query bỏ qua cột đầu chỉ lọc status thì không nhảy thẳng được, phải dò gần hết.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Index (customer_id, status) — sắp như danh bạ</text>
-
   <rect x="16" y="40" width="300" height="284" rx="10" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
   <g font-size="11">
     <rect x="32" y="56" width="120" height="22" rx="5" fill="#3b82f6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
@@ -247,20 +237,17 @@ Hãy hình dung index này như một danh bạ điện thoại sắp xếp theo
   <rect x="32" y="134" width="248" height="22" rx="4" fill="#f59e0b" fill-opacity="0.22"/>
   <text x="36" y="270" font-size="10.5" fill="currentColor" opacity="0.7">Sắp theo cột trái trước; trong cùng id mới theo status.</text>
   <text x="36" y="288" font-size="10.5" fill="currentColor" opacity="0.7">Như danh bạ: theo HỌ trước, rồi mới đến TÊN.</text>
-
   <g font-size="11">
     <rect x="332" y="40" width="372" height="86" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="346" y="60" font-size="12" font-weight="700" fill="currentColor">✓ DÙNG ĐƯỢC — lọc từ cột trái</text>
     <text x="346" y="82" fill="currentColor" opacity="0.9">WHERE customer_id = 42 AND status = 'paid'</text>
     <text x="346" y="102" fill="currentColor" opacity="0.9">WHERE customer_id = 42</text>
     <text x="346" y="120" font-size="10" fill="currentColor" opacity="0.65">→ nhảy thẳng tới khối id=42 (đã gom liền nhau)</text>
-
     <rect x="332" y="138" width="372" height="80" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="346" y="158" font-size="12" font-weight="700" fill="currentColor">✗ KHÔNG dùng được — bỏ cột đầu</text>
     <text x="346" y="180" fill="currentColor" opacity="0.9">WHERE status = 'paid'</text>
     <text x="346" y="200" font-size="10" fill="currentColor" opacity="0.65">→ 'paid' nằm rải khắp mọi id, không có điểm</text>
     <text x="346" y="214" font-size="10" fill="currentColor" opacity="0.65">  bắt đầu để nhảy → phải dò gần hết.</text>
-
     <rect x="332" y="230" width="372" height="94" rx="9" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="346" y="250" font-size="11.5" font-weight="700" fill="currentColor">Ẩn dụ danh bạ</text>
     <text x="346" y="270" font-size="10.5" fill="currentColor" opacity="0.8">Biết HỌ (cột trái) → mở thẳng tới đúng trang.</text>
@@ -390,7 +377,6 @@ Tổng cộng **1 + 100 = 101** lần đi vòng tới database. Đó là "N+1": 
   <title>Vấn đề N+1 — 101 lần đi-về DB so với gộp thành 1 query JOIN</title>
   <desc>Bên trái: 1 query lấy 100 khách rồi vòng lặp phát sinh 100 query con, tổng 101 lần đi-về database. Bên phải: gộp tất cả thành 1 query JOIN, chỉ 1 lần đi-về.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Lấy 100 khách kèm đơn hàng của mỗi người</text>
-
   <rect x="16" y="40" width="336" height="278" rx="10" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="32" y="64" font-size="12.5" font-weight="700" fill="currentColor">N+1 — 101 lần đi-về</text>
   <text x="48" y="90" font-size="10.5" font-weight="700" fill="currentColor">APP</text>
@@ -414,7 +400,6 @@ Tổng cộng **1 + 100 = 101** lần đi vòng tới database. Đó là "N+1": 
   <text x="70" y="252" font-size="11" fill="currentColor" opacity="0.6">⋮ (tới customer_id=100)</text>
   <rect x="32" y="268" width="288" height="38" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="44" y="292" font-size="11.5" font-weight="700" fill="currentColor">1 + 100 = 101 lần đi-về (chậm)</text>
-
   <rect x="368" y="40" width="336" height="278" rx="10" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="384" y="64" font-size="12.5" font-weight="700" fill="currentColor">JOIN — 1 lần đi-về</text>
   <text x="400" y="90" font-size="10.5" font-weight="700" fill="currentColor">APP</text>
@@ -430,7 +415,6 @@ Tổng cộng **1 + 100 = 101** lần đi vòng tới database. Đó là "N+1": 
   <rect x="384" y="248" width="304" height="58" rx="7" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="396" y="270" font-size="11.5" font-weight="700" fill="currentColor">1 lần đi-về (nhanh)</text>
   <text x="396" y="290" font-size="10" fill="currentColor" opacity="0.75">cắt 100 lần độ trễ mạng cộng dồn</text>
-
   <defs>
     <marker id="n1a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
     <marker id="n1b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="currentColor" fill-opacity="0.4"/></marker>

@@ -100,47 +100,39 @@ Guardrails là lớp lọc **trước** và **sau** lời gọi model. Sơ đồ
     </marker>
   </defs>
   <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Guardrails: chặn cái xấu vào và cái xấu ra</text>
-
   <!-- hàng chính -->
   <g>
     <rect x="16" y="56" width="120" height="52" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="76" y="80" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">User input</text>
     <text x="76" y="97" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">câu hỏi vào</text>
-
     <rect x="172" y="50" width="148" height="64" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="246" y="72" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">INPUT guardrail</text>
     <text x="246" y="89" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">PII · jailbreak</text>
     <text x="246" y="103" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">off-topic · quá dài</text>
-
     <rect x="356" y="50" width="148" height="64" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="430" y="78" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">LLM / RAG</text>
     <text x="430" y="95" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Agent</text>
-
     <rect x="540" y="50" width="164" height="64" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="622" y="72" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">OUTPUT guardrail</text>
     <text x="622" y="89" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">PII rò rỉ · toxic</text>
     <text x="622" y="103" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">bịa · lộ system prompt</text>
   </g>
-
   <!-- mũi tên hàng chính -->
   <g stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#ga)">
     <path d="M136 82 H170"/>
     <path d="M320 82 H354"/>
     <path d="M504 82 H538"/>
   </g>
-
   <!-- User cuối -->
   <rect x="296" y="160" width="128" height="46" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="360" y="188" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">User (trả lời)</text>
   <g stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#ga)">
     <path d="M622 114 V140 H360 V158"/>
   </g>
-
   <!-- nhánh chặn -->
   <rect x="160" y="244" width="400" height="52" rx="9" fill="#ef4444" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="360" y="268" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Trả lời an toàn (từ chối / lọc lại / câu thay thế)</text>
   <text x="360" y="285" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">không gọi model hoặc không trả output gốc</text>
-
   <g stroke="currentColor" stroke-width="1.4" stroke-dasharray="5 4" fill="none" marker-end="url(#ga)">
     <path d="M246 114 V236"/>
     <path d="M622 114 V128 H660 V236 H560"/>
@@ -193,26 +185,21 @@ Không phải request nào cũng cần model to nhất. Dùng model **nhỏ/rẻ
     </marker>
   </defs>
   <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Model routing</text>
-
   <!-- query -->
   <rect x="240" y="44" width="120" height="42" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="300" y="70" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">query</text>
-
   <!-- classifier -->
   <rect x="222" y="116" width="156" height="48" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="300" y="138" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">classifier nhỏ</text>
   <text x="300" y="154" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">phân loại độ khó</text>
-
   <!-- model nhỏ -->
   <rect x="56" y="218" width="180" height="58" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="146" y="242" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">model nhỏ</text>
   <text x="146" y="259" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">rẻ, nhanh</text>
-
   <!-- model lớn -->
   <rect x="364" y="218" width="180" height="58" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="454" y="242" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">model lớn</text>
   <text x="454" y="259" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">đắt, giỏi</text>
-
   <g stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#mr)">
     <path d="M300 86 V114"/>
     <path d="M260 164 C220 188 180 192 146 216"/>
@@ -371,35 +358,28 @@ Một kiến trúc production điển hình trên AWS: API Gateway → Lambda �
     </marker>
   </defs>
   <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Kiến trúc production trên AWS</text>
-
   <!-- hàng chính -->
   <rect x="14" y="56" width="104" height="50" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="66" y="78" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">API Gateway</text>
   <text x="66" y="94" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">request vào</text>
-
   <rect x="142" y="56" width="104" height="50" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="194" y="86" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Lambda</text>
-
   <rect x="270" y="50" width="120" height="62" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="330" y="76" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Guardrails</text>
   <text x="330" y="93" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">input</text>
-
   <rect x="414" y="50" width="140" height="62" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="484" y="74" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Knowledge Base</text>
   <text x="484" y="90" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">/ Agent</text>
   <text x="484" y="105" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">trên Bedrock</text>
-
   <rect x="578" y="50" width="126" height="62" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="641" y="76" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Guardrails</text>
   <text x="641" y="93" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">output</text>
-
   <g stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#aw)">
     <path d="M118 81 H140"/>
     <path d="M246 81 H268"/>
     <path d="M390 81 H412"/>
     <path d="M554 81 H576"/>
   </g>
-
   <!-- OpenSearch vector -->
   <rect x="424" y="158" width="120" height="50" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="484" y="180" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">OpenSearch</text>
@@ -407,7 +387,6 @@ Một kiến trúc production điển hình trên AWS: API Gateway → Lambda �
   <g stroke="currentColor" stroke-width="1.4" fill="none" marker-end="url(#aw)">
     <path d="M484 112 V156"/>
   </g>
-
   <!-- stream về client -->
   <rect x="578" y="158" width="126" height="50" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="641" y="180" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
@@ -416,7 +395,6 @@ Một kiến trúc production điển hình trên AWS: API Gateway → Lambda �
     <path d="M641 112 V156"/>
   </g>
   <text x="650" y="138" font-size="10" font-weight="700" fill="currentColor">stream</text>
-
   <!-- CloudWatch -->
   <rect x="118" y="270" width="200" height="56" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="218" y="294" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">CloudWatch</text>

@@ -154,18 +154,15 @@ Bạn cần ship 1 gói hàng:
   <title>Cách Auto Scaling Group hoạt động</title>
   <desc>Launch Template định nghĩa instance; ASG giữ Min/Desired/Max và trải instance qua nhiều AZ; CloudWatch metric kích hoạt scaling policy (target tracking, step, scheduled, predictive); health check tự thay instance unhealthy.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Auto Scaling Group hoạt động thế nào</text>
-
   <defs>
     <marker id="asgArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <rect x="16" y="42" width="190" height="66" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="28" y="62" font-size="12.5" font-weight="700" fill="currentColor">Launch Template</text>
   <text x="28" y="80" font-size="10.5" fill="currentColor" opacity="0.72">AMI · instance type</text>
   <text x="28" y="96" font-size="10.5" fill="currentColor" opacity="0.72">Security Group · IAM role</text>
   <line x1="111" y1="108" x2="111" y2="130" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#asgArr)"/>
   <text x="120" y="124" font-size="10" fill="currentColor" opacity="0.7">khuôn tạo</text>
-
   <rect x="14" y="132" width="430" height="222" rx="11" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="28" y="154" font-size="12.5" font-weight="700" fill="currentColor">Auto Scaling Group</text>
   <g font-size="11" fill="currentColor">
@@ -176,7 +173,6 @@ Bạn cần ship 1 gói hàng:
     <rect x="284" y="164" width="120" height="26" rx="6" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="344" y="181" font-size="11" text-anchor="middle" fill="currentColor">Max 6</text>
   </g>
-
   <g>
     <rect x="28" y="206" width="120" height="94" rx="8" fill="#10b981" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="88" y="224" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">AZ-a</text>
@@ -194,12 +190,10 @@ Bạn cần ship 1 gói hàng:
   </g>
   <text x="28" y="320" font-size="10" fill="currentColor" opacity="0.72">Health check (EC2/ELB) thấy instance hỏng</text>
   <text x="28" y="336" font-size="10" fill="currentColor" opacity="0.72">→ ASG tự tạo instance mới (cross-AZ cân bằng)</text>
-
   <rect x="466" y="42" width="240" height="66" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="478" y="62" font-size="12.5" font-weight="700" fill="currentColor">CloudWatch metric</text>
   <text x="478" y="80" font-size="10.5" fill="currentColor" opacity="0.72">CPU · request count · queue</text>
   <text x="478" y="96" font-size="10.5" fill="currentColor" opacity="0.72">vượt ngưỡng → báo động</text>
-
   <rect x="466" y="132" width="240" height="222" rx="11" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="478" y="154" font-size="12.5" font-weight="700" fill="currentColor">Scaling policy</text>
   <g font-size="10.5" fill="currentColor">
@@ -216,7 +210,6 @@ Bạn cần ship 1 gói hàng:
     <text x="488" y="318" font-weight="700">Predictive</text>
     <text x="488" y="334" opacity="0.72">ML dự đoán trước</text>
   </g>
-
   <line x1="586" y1="108" x2="586" y2="130" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#asgArr)"/>
   <line x1="464" y1="243" x2="446" y2="200" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#asgArr)"/>
   <text x="372" y="382" font-size="10.5" fill="currentColor" opacity="0.78">Policy đổi Desired → ASG thêm/bớt instance theo template</text>
@@ -270,24 +263,19 @@ Bạn cần ship 1 gói hàng:
   <title>Pattern HA cổ điển trên AWS</title>
   <desc>Luồng từ User qua CloudFront (CDN, DDoS L3/4, TLS), tới ALB multi-AZ (routing L7, WAF), tới ASG chạy EC2/ECS trải nhiều AZ, xuống RDS Multi-AZ với standby đồng bộ ở AZ khác; mỗi tầng chú thích vai trò.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Pattern HA cổ điển — vai trò từng tầng</text>
-
   <defs>
     <marker id="haArr" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0 0 L8 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <rect x="280" y="40" width="160" height="40" rx="9" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="360" y="65" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">User</text>
   <line x1="360" y1="80" x2="360" y2="104" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#haArr)"/>
-
   <rect x="220" y="106" width="280" height="56" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="360" y="128" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">CloudFront (CDN)</text>
   <text x="360" y="148" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">cache edge · DDoS L3/4 · TLS</text>
   <line x1="360" y1="162" x2="360" y2="186" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#haArr)"/>
-
   <rect x="220" y="188" width="280" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="360" y="210" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">ALB (multi-AZ)</text>
   <text x="360" y="230" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">routing L7 · TLS termination · WAF</text>
-
   <rect x="60" y="280" width="600" height="110" rx="11" fill="#10b981" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="74" y="300" font-size="11.5" font-weight="700" fill="currentColor">Auto Scaling Group — EC2/ECS trải nhiều AZ</text>
   <g>
@@ -306,9 +294,7 @@ Bạn cần ship 1 gói hàng:
     <path d="M360 246 L360 312" marker-end="url(#haArr)"/>
     <path d="M420 246 L565 312" marker-end="url(#haArr)"/>
   </g>
-
   <line x1="360" y1="390" x2="360" y2="414" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#haArr)"/>
-
   <rect x="200" y="416" width="320" height="50" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="280" y="445" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">RDS primary</text>
   <text x="420" y="438" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">standby AZ khác</text>

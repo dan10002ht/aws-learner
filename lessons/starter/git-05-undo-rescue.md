@@ -79,11 +79,9 @@ git commit --amend --no-edit
   <title>revert so với reset trên dòng lịch sử commit</title>
   <desc>Cùng một lịch sử A-B-C. revert thêm một commit C' đảo ngược ở cuối nên lịch sử dài ra và an toàn khi đã push. reset kéo con trỏ HEAD lùi về B nên commit C bị gỡ khỏi nhánh.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">revert vs reset trên dòng lịch sử</text>
-
   <defs>
     <marker id="hArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <text x="16" y="58" font-size="12" font-weight="700" fill="#10b981">git revert C — thêm commit đảo ngược (lịch sử DÀI ra)</text>
   <g>
     <line x1="64" y1="92" x2="556" y2="92" stroke="currentColor" stroke-opacity="0.4" marker-end="url(#hArr)"/>
@@ -100,9 +98,7 @@ git commit --amend --no-edit
     <rect x="580" y="82" width="124" height="22" rx="11" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="642" y="97" font-size="10.5" text-anchor="middle" fill="#10b981">An toàn khi đã push</text>
   </g>
-
   <line x1="16" y1="168" x2="704" y2="168" stroke="currentColor" stroke-opacity="0.15"/>
-
   <text x="16" y="200" font-size="12" font-weight="700" fill="#ef4444">git reset --hard B — kéo HEAD lùi (C bị GỠ khỏi nhánh)</text>
   <g>
     <line x1="64" y1="240" x2="240" y2="240" stroke="currentColor" stroke-opacity="0.4" marker-end="url(#hArr)"/>
@@ -143,12 +139,10 @@ Giải nghĩa: `HEAD` là "vị trí hiện tại" (commit mới nhất bạn đ
   <title>Ba mức git reset HEAD~1 ảnh hưởng tới những khu vực nào</title>
   <desc>Sau khi gỡ commit cuối, ba mức reset khác nhau ở chỗ chúng giữ hay xoá hai khu vực: --soft giữ cả khu chờ và bàn làm việc; --mixed xoá khu chờ nhưng giữ bàn làm việc; --hard xoá cả hai. Ô tô lục là giữ thay đổi, ô gạch chéo đỏ là xoá thay đổi.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">git reset HEAD~1 — ba mức tác động tới đâu</text>
-
   <text x="16" y="60" font-size="11" font-weight="700" fill="currentColor" opacity="0.8">Mức</text>
   <text x="206" y="60" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.8">Commit cuối</text>
   <text x="396" y="60" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.8">Khu chờ (staging)</text>
   <text x="586" y="60" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.8">Bàn làm việc</text>
-
   <g font-size="11">
     <text x="16" y="98" font-size="12" font-weight="700" fill="currentColor">--soft</text>
     <rect x="126" y="80" width="160" height="32" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
@@ -158,7 +152,6 @@ Giải nghĩa: `HEAD` là "vị trí hiện tại" (commit mới nhất bạn đ
     <rect x="506" y="80" width="160" height="32" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="586" y="100" text-anchor="middle" fill="currentColor">Giữ nguyên</text>
   </g>
-
   <g font-size="11">
     <text x="16" y="148" font-size="12" font-weight="700" fill="currentColor">--mixed</text>
     <text x="16" y="162" font-size="9.5" fill="currentColor" opacity="0.6">(mặc định)</text>
@@ -169,7 +162,6 @@ Giải nghĩa: `HEAD` là "vị trí hiện tại" (commit mới nhất bạn đ
     <rect x="506" y="130" width="160" height="32" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="586" y="150" text-anchor="middle" fill="currentColor">Giữ nguyên</text>
   </g>
-
   <g font-size="11">
     <text x="16" y="198" font-size="12" font-weight="700" fill="#ef4444">--hard</text>
     <rect x="126" y="180" width="160" height="32" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
@@ -179,7 +171,6 @@ Giải nghĩa: `HEAD` là "vị trí hiện tại" (commit mới nhất bạn đ
     <rect x="506" y="180" width="160" height="32" rx="7" fill="#ef4444" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="586" y="200" text-anchor="middle" font-weight="700" fill="#ef4444">XOÁ SẠCH</text>
   </g>
-
   <g font-size="10.5" fill="currentColor" opacity="0.8">
     <rect x="126" y="244" width="16" height="16" rx="4" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="150" y="256">Giữ thay đổi (cứu được)</text>

@@ -34,7 +34,6 @@ Trước hết phải nắm trục so sánh: **downtime**, **chi phí hạ tần
   <title>Đồ thị % traffic chuyển sang bản mới theo thời gian — Canary, Linear, Blue/Green, All-at-once</title>
   <desc>Trục ngang là thời gian, trục dọc là phần trăm traffic sang bản mới. Canary nhảy lên một phần nhỏ rồi nhảy thẳng 100%. Linear tăng đều từng bước 10%. Blue/Green và All-at-once nhảy thẳng 0 lên 100% trong một lần chuyển.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">% traffic sang bản mới theo thời gian</text>
-
   <g stroke="currentColor" stroke-opacity="0.5" fill="none">
     <path d="M70 40 V300"/>
     <path d="M70 300 H660"/>
@@ -50,7 +49,6 @@ Trước hết phải nắm trục so sánh: **downtime**, **chi phí hạ tần
     <path d="M70 56 H660"/>
     <path d="M70 178 H660"/>
   </g>
-
   <g stroke-width="2.5" fill="none" stroke-linejoin="round">
     <path d="M70 300 H300 V274 H470 V56 H660" stroke="#3b82f6"/>
     <path d="M70 300 H120 L300 105 V56 H660" stroke="#10b981"/>
@@ -64,7 +62,6 @@ Trước hết phải nắm trục so sánh: **downtime**, **chi phí hạ tần
     <circle cx="210" cy="183" r="3" fill="#10b981"/>
     <circle cx="300" cy="105" r="3" fill="#10b981"/>
   </g>
-
   <g font-size="11">
     <rect x="486" y="246" width="12" height="12" rx="2" fill="#3b82f6"/>
     <text x="503" y="256" fill="currentColor">Canary (10% → 100%)</text>
@@ -133,35 +130,27 @@ aws lambda update-alias --function-name myFunc \
   <title>Lambda weighted alias — alias prod chia traffic 90% sang v1 và 10% sang v2</title>
   <desc>Client gọi alias prod. Alias trỏ tới version chính v1 nhận 90% traffic còn lại và một version phụ v2 nhận 10% theo trọng số. Alias không thể trỏ tới $LATEST.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Weighted alias: chia traffic theo trọng số</text>
-
   <defs>
     <marker id="walArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <rect x="24" y="108" width="120" height="56" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="84" y="132" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
   <text x="84" y="150" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">gọi alias ARN</text>
-
   <line x1="144" y1="136" x2="234" y2="136" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#walArr)"/>
-
   <rect x="236" y="100" width="150" height="72" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="311" y="124" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Alias 'prod'</text>
   <text x="311" y="142" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">function-version: 1</text>
   <text x="311" y="158" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">+ weight {2: 0.10}</text>
-
   <path d="M386 124 H470 V72" fill="none" stroke="#10b981" stroke-opacity="0.7" stroke-width="2" marker-end="url(#walArr)"/>
   <path d="M386 150 H470 V198" fill="none" stroke="#f59e0b" stroke-opacity="0.7" stroke-width="2" marker-end="url(#walArr)"/>
   <text x="408" y="98" font-size="11" font-weight="700" fill="#10b981">90%</text>
   <text x="408" y="190" font-size="11" font-weight="700" fill="#f59e0b">10%</text>
-
   <rect x="476" y="44" width="180" height="56" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="566" y="68" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Version 1 (chính)</text>
   <text x="566" y="86" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">nhận traffic còn lại</text>
-
   <rect x="476" y="200" width="180" height="56" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="566" y="224" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Version 2 (phụ)</text>
   <text x="566" y="242" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">weight = 0.10</text>
-
   <rect x="236" y="208" width="150" height="44" rx="10" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 3"/>
   <text x="311" y="227" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.7">$LATEST</text>
   <text x="311" y="244" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">KHÔNG thể trỏ</text>

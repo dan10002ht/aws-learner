@@ -38,11 +38,9 @@ Có hai giai đoạn: **Indexing (offline)** làm trước, và **Query (online)
       <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
     </marker>
   </defs>
-
   <rect x="8" y="34" width="704" height="132" rx="12" fill="#3b82f6" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.18"/>
   <text x="24" y="56" font-size="13" font-weight="700" fill="currentColor">INDEXING — offline</text>
   <text x="24" y="72" font-size="10.5" fill="currentColor" opacity="0.6">chạy 1 lần / khi tài liệu thay đổi</text>
-
   <g>
     <rect x="24" y="92" width="120" height="52" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="84" y="116" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Tài liệu</text>
@@ -68,11 +66,9 @@ Có hai giai đoạn: **Indexing (offline)** làm trước, và **Query (online)
     <line x1="314" y1="118" x2="360" y2="118"/>
     <line x1="484" y1="118" x2="530" y2="118"/>
   </g>
-
   <rect x="8" y="190" width="704" height="232" rx="12" fill="#f59e0b" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.18"/>
   <text x="24" y="212" font-size="13" font-weight="700" fill="currentColor">QUERY — online</text>
   <text x="24" y="228" font-size="10.5" fill="currentColor" opacity="0.6">chạy mỗi lần user hỏi</text>
-
   <g>
     <rect x="24" y="248" width="120" height="48" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="84" y="277" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Câu hỏi</text>
@@ -96,7 +92,6 @@ Có hai giai đoạn: **Indexing (offline)** làm trước, và **Query (online)
     <line x1="300" y1="272" x2="332" y2="272"/>
     <line x1="486" y1="272" x2="518" y2="272"/>
   </g>
-
   <g>
     <rect x="378" y="344" width="166" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="461" y="368" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Inject context</text>
@@ -116,7 +111,6 @@ Có hai giai đoạn: **Indexing (offline)** làm trước, và **Query (online)
     <line x1="378" y1="372" x2="346" y2="372"/>
     <line x1="192" y1="372" x2="158" y2="372"/>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.55" stroke-dasharray="5 4" fill="none" marker-end="url(#rag-arrow)">
     <path d="M611 144 V200 H411 V236"/>
   </g>
@@ -254,13 +248,11 @@ RRF (Reciprocal Rank Fusion) là cách trộn đơn giản và mạnh: ưu tiên
       <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
     </marker>
   </defs>
-
   <g>
     <rect x="16" y="116" width="118" height="56" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
     <text x="75" y="142" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Câu hỏi</text>
     <text x="75" y="159" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">query của user</text>
   </g>
-
   <g>
     <rect x="214" y="32" width="200" height="64" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
     <text x="314" y="58" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Vector search</text>
@@ -273,7 +265,6 @@ RRF (Reciprocal Rank Fusion) là cách trộn đơn giản và mạnh: ưu tiên
     <text x="314" y="236" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">full-text — khớp từ khoá</text>
     <text x="314" y="249" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.55">SKU-7741 · getUserToken</text>
   </g>
-
   <g>
     <rect x="446" y="44" width="92" height="40" rx="7" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="492" y="60" font-size="10" font-weight="700" text-anchor="middle" fill="currentColor">Xếp hạng A</text>
@@ -284,7 +275,6 @@ RRF (Reciprocal Rank Fusion) là cách trộn đơn giản và mạnh: ưu tiên
     <text x="492" y="220" font-size="10" font-weight="700" text-anchor="middle" fill="currentColor">Xếp hạng B</text>
     <text x="492" y="234" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.6">top-k từ khoá</text>
   </g>
-
   <g>
     <rect x="566" y="104" width="138" height="80" rx="10" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
     <text x="635" y="132" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">RRF</text>
@@ -292,7 +282,6 @@ RRF (Reciprocal Rank Fusion) là cách trộn đơn giản và mạnh: ưu tiên
     <text x="635" y="161" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">Fusion</text>
     <text x="635" y="176" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.55">trộn → danh sách cuối</text>
   </g>
-
   <g stroke="currentColor" fill="none" marker-end="url(#hyb-arrow)">
     <path d="M134 134 C175 124 175 70 210 66"/>
     <path d="M134 154 C175 164 175 222 210 222"/>
@@ -301,7 +290,6 @@ RRF (Reciprocal Rank Fusion) là cách trộn đơn giản và mạnh: ưu tiên
     <path d="M538 64 C556 64 558 120 562 132"/>
     <path d="M538 224 C556 224 558 168 562 156"/>
   </g>
-
   <text x="160" y="24" font-size="10" fill="currentColor" opacity="0.7">chạy song song →</text>
 </svg>
 

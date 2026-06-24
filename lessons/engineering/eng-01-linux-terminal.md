@@ -167,38 +167,30 @@ SSH dùng cặp khoá: **private key** giữ ở máy bạn, **public key** nằ
   <title>Xác thực SSH bằng cặp khoá — handshake challenge/response</title>
   <desc>Laptop giữ private key, EC2 giữ public key trong ~/.ssh/authorized_keys. Bốn bước bắt tay: client xin kết nối, server gửi challenge, client ký bằng private key, server kiểm chữ ký bằng public key rồi cho vào. Private key không bao giờ rời laptop.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Xác thực SSH bằng cặp khoá (key-based auth)</text>
-
   <rect x="16" y="40" width="240" height="80" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="32" y="62" font-size="12.5" font-weight="700" fill="currentColor">Laptop (client)</text>
   <rect x="32" y="74" width="208" height="34" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
   <rect x="42" y="82" width="74" height="18" rx="9" fill="#10b981" fill-opacity="0.95"/>
   <text x="79" y="95" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">PRIVATE</text>
   <text x="124" y="95" font-size="10.5" fill="currentColor" opacity="0.85">~/.ssh/id_ed25519</text>
-
   <rect x="464" y="40" width="240" height="80" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="480" y="62" font-size="12.5" font-weight="700" fill="currentColor">EC2 (server)</text>
   <rect x="480" y="74" width="208" height="34" rx="7" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
   <rect x="490" y="82" width="64" height="18" rx="9" fill="#3b82f6" fill-opacity="0.95"/>
   <text x="522" y="95" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">PUBLIC</text>
   <text x="562" y="95" font-size="10" fill="currentColor" opacity="0.85">authorized_keys</text>
-
   <defs>
     <marker id="sshArrR" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
     <marker id="sshArrL" markerWidth="10" markerHeight="10" refX="2" refY="3" orient="auto"><path d="M8 0 L0 3 L8 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <line x1="256" y1="148" x2="464" y2="148" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#sshArrR)"/>
   <text x="360" y="142" font-size="11" text-anchor="middle" fill="currentColor">1. "Tôi muốn vào, dùng key này"</text>
-
   <line x1="464" y1="186" x2="256" y2="186" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#sshArrL)"/>
   <text x="360" y="180" font-size="11" text-anchor="middle" fill="currentColor">2. Server gửi challenge (số ngẫu nhiên)</text>
-
   <line x1="256" y1="224" x2="464" y2="224" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#sshArrR)"/>
   <text x="360" y="218" font-size="11" text-anchor="middle" fill="currentColor">3. Client KÝ challenge bằng private key</text>
-
   <line x1="464" y1="262" x2="256" y2="262" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#sshArrL)"/>
   <text x="360" y="256" font-size="11" text-anchor="middle" fill="currentColor">4. Server kiểm chữ ký bằng public key → OK</text>
-
   <rect x="16" y="288" width="688" height="30" rx="8" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="360" y="307" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.9">Private key KHÔNG BAO GIỜ rời laptop — chỉ chữ ký được gửi đi. Quyền key phải là 400.</text>
 </svg>

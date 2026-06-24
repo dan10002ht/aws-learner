@@ -34,15 +34,12 @@ DBA báo: Postgres p99 query latency 200ms, target 20ms. CPU chỉ 40%, RAM dư.
   <title>Cây quyết định chọn loại storage trên AWS</title>
   <desc>Cây quyết định: cần truy cập kiểu nào? Block một instance thì chọn EBS hoặc Instance Store; chia sẻ file nhiều client thì chọn EFS, FSx for Windows hoặc FSx for Lustre; lưu object qua API thì chọn S3 hoặc S3 Glacier theo tần suất truy cập.</desc>
   <text x="16" y="24" font-size="14.5" font-weight="700" fill="currentColor">Chọn loại storage — cây quyết định</text>
-
   <defs>
     <marker id="stArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.5"/></marker>
   </defs>
-
   <rect x="276" y="40" width="168" height="42" rx="9" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="360" y="59" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Kiểu truy cập?</text>
   <text x="360" y="75" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">block / file / object</text>
-
   <g stroke="currentColor" stroke-opacity="0.45" fill="none">
     <path d="M300 82 C200 110 130 110 130 132" marker-end="url(#stArr)"/>
     <path d="M360 82 v50" marker-end="url(#stArr)"/>
@@ -51,50 +48,41 @@ DBA báo: Postgres p99 query latency 200ms, target 20ms. CPU chỉ 40%, RAM dư.
   <text x="150" y="106" font-size="10.5" font-weight="700" fill="currentColor" opacity="0.8">Block (1 máy)</text>
   <text x="360" y="106" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.8">File (nhiều client)</text>
   <text x="580" y="106" font-size="10.5" font-weight="700" text-anchor="end" fill="currentColor" opacity="0.8">Object (API)</text>
-
   <rect x="44" y="132" width="172" height="58" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="130" y="152" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Cần bền (persist)?</text>
   <text x="130" y="170" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">Có → EBS · Không (cache,</text>
   <text x="130" y="183" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">scratch) → Instance Store</text>
-
   <rect x="276" y="132" width="168" height="58" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="360" y="152" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Protocol / workload?</text>
   <text x="360" y="170" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">Linux NFS · Windows SMB</text>
   <text x="360" y="183" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">· HPC/ML throughput cao</text>
-
   <rect x="504" y="132" width="172" height="58" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="590" y="152" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Tần suất truy cập?</text>
   <text x="590" y="170" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">Nóng → S3 · Lạnh / archive</text>
   <text x="590" y="183" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">trên 90 ngày → Glacier</text>
-
   <g stroke="currentColor" stroke-opacity="0.4" fill="none">
     <path d="M130 190 v22" marker-end="url(#stArr)"/>
     <path d="M360 190 v22" marker-end="url(#stArr)"/>
     <path d="M590 190 v22" marker-end="url(#stArr)"/>
   </g>
-
   <g font-size="11" font-weight="700" text-anchor="middle" fill="#fff">
     <rect x="34" y="216" width="92" height="30" rx="8" fill="#3b82f6" fill-opacity="0.9"/>
     <text x="80" y="235">EBS</text>
     <rect x="132" y="216" width="98" height="30" rx="8" fill="#3b82f6" fill-opacity="0.6"/>
     <text x="181" y="235">Instance Store</text>
-
     <rect x="270" y="216" width="58" height="30" rx="8" fill="#10b981" fill-opacity="0.9"/>
     <text x="299" y="235">EFS</text>
     <rect x="332" y="216" width="100" height="30" rx="8" fill="#10b981" fill-opacity="0.7"/>
     <text x="382" y="235">FSx Win/Lustre</text>
-
     <rect x="500" y="216" width="78" height="30" rx="8" fill="#f59e0b" fill-opacity="0.9"/>
     <text x="539" y="235">S3</text>
     <rect x="584" y="216" width="92" height="30" rx="8" fill="#f59e0b" fill-opacity="0.65"/>
     <text x="630" y="235">S3 Glacier</text>
   </g>
-
   <rect x="34" y="270" width="652" height="56" rx="9" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/>
   <text x="46" y="290" font-size="11" font-weight="700" fill="currentColor" opacity="0.85">Bẫy thường gặp:</text>
   <text x="46" y="307" font-size="10.5" fill="currentColor" opacity="0.75">• "Share file giữa nhiều EC2" → EFS, KHÔNG phải EBS Multi-Attach (cần cluster-aware FS).</text>
   <text x="46" y="321" font-size="10.5" fill="currentColor" opacity="0.75">• "Low latency + bền" → io2 Block Express, KHÔNG phải Instance Store (mất data khi stop).</text>
-
   <text x="360" y="352" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">Chọn TYPE trước (cây trên), rồi mới tune IOPS / throughput trong từng type.</text>
 </svg>
 
@@ -132,7 +120,6 @@ DBA báo: Postgres p99 query latency 200ms, target 20ms. CPU chỉ 40%, RAM dư.
   <title>Định vị các loại EBS và Instance Store theo IOPS và throughput</title>
   <desc>Biểu đồ phân tán: trục ngang là IOPS (thang log từ thấp đến rất cao), trục dọc là throughput (MB trên giây). SSD gp3 và io2 nằm vùng IOPS cao; io2 Block Express và Instance Store ở góc trên phải IOPS và throughput cực cao; HDD st1 và sc1 nằm dưới với IOPS thấp nhưng throughput tuần tự khá. Màu đậm hơn thể hiện chi phí cao hơn.</desc>
   <text x="16" y="24" font-size="14.5" font-weight="700" fill="currentColor">Định vị EBS — IOPS × throughput (đắt dần khi lên góc phải-trên)</text>
-
   <line x1="70" y1="60" x2="70" y2="360" stroke="currentColor" stroke-opacity="0.4"/>
   <line x1="70" y1="360" x2="680" y2="360" stroke="currentColor" stroke-opacity="0.4"/>
   <text x="60" y="64" font-size="11" text-anchor="end" fill="currentColor" opacity="0.7">4000</text>
@@ -146,13 +133,10 @@ DBA báo: Postgres p99 query latency 200ms, target 20ms. CPU chỉ 40%, RAM dư.
     <text x="470" y="378">64k</text>
     <text x="620" y="378">256k+</text>
   </g>
-
   <line x1="70" y1="214" x2="680" y2="214" stroke="currentColor" stroke-opacity="0.12" stroke-dasharray="4 4"/>
   <line x1="70" y1="306" x2="680" y2="306" stroke="currentColor" stroke-opacity="0.12" stroke-dasharray="4 4"/>
-
   <text x="100" y="80" font-size="10.5" font-weight="700" fill="currentColor" opacity="0.55">SSD — IOPS cao, latency ms→sub-ms</text>
   <text x="100" y="340" font-size="10.5" font-weight="700" fill="currentColor" opacity="0.55">HDD — throughput tuần tự, IOPS thấp</text>
-
   <g>
     <circle cx="310" cy="290" r="13" fill="#3b82f6" fill-opacity="0.45" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="310" y="270" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">gp3</text>
@@ -182,7 +166,6 @@ DBA báo: Postgres p99 query latency 200ms, target 20ms. CPU chỉ 40%, RAM dư.
     <circle cx="110" cy="328" r="10" fill="#f59e0b" fill-opacity="0.35" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="110" y="354" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">sc1</text>
   </g>
-
   <text x="70" y="416" font-size="10.5" fill="currentColor" opacity="0.7">Mỗi điểm: IOPS · throughput(MB/s) · chi phí. gp3 = default. Cần trên 16k IOPS → io2; cực cao + 5 nines → io2 Block Express.</text>
 </svg>
 

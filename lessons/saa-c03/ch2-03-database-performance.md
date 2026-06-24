@@ -50,7 +50,6 @@ Profile thực tế: **80% query time đang dùng cho 5 query thiếu index**. S
     <marker id="auArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Aurora — compute tách khỏi shared storage</text>
-
   <text x="16" y="50" font-size="11.5" font-weight="700" fill="currentColor" opacity="0.7">Tầng COMPUTE</text>
   <g>
     <rect x="40" y="58" width="150" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
@@ -70,13 +69,11 @@ Profile thực tế: **80% query time đang dùng cho 5 query thiếu index**. S
     <text x="463" y="81" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">READER N</text>
     <text x="432" y="103" font-size="10.5" fill="currentColor" opacity="0.75">tới 15 reader</text>
   </g>
-
   <line x1="115" y1="114" x2="115" y2="176" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#auArr)"/>
   <text x="122" y="150" font-size="10" fill="currentColor" opacity="0.8">ghi</text>
   <line x1="335" y1="114" x2="200" y2="176" stroke="currentColor" stroke-opacity="0.45" marker-end="url(#auArr)"/>
   <line x1="485" y1="114" x2="240" y2="176" stroke="currentColor" stroke-opacity="0.45" marker-end="url(#auArr)"/>
   <text x="360" y="150" font-size="10" fill="currentColor" opacity="0.8">đọc · invalidate cache page</text>
-
   <text x="16" y="200" font-size="11.5" font-weight="700" fill="currentColor" opacity="0.7">SHARED STORAGE LAYER — 6 bản / 3 AZ</text>
   <rect x="40" y="210" width="640" height="120" rx="12" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <g>
@@ -217,11 +214,9 @@ Switching: 1 lần per 24h.
   <defs>
     <marker id="caArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <text x="180" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Cache-aside (lazy loading) — khi ĐỌC</text>
   <text x="540" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Write-through — khi GHI</text>
   <line x1="360" y1="36" x2="360" y2="340" stroke="currentColor" stroke-opacity="0.18"/>
-
   <g>
     <rect x="30" y="56" width="110" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="85" y="81" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">App</text>
@@ -229,18 +224,15 @@ Switching: 1 lần per 24h.
     <text x="280" y="81" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Cache</text>
     <rect x="125" y="270" width="110" height="40" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="180" y="295" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">DB</text>
-
     <line x1="140" y1="70" x2="221" y2="70" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#caArr)"/>
     <text x="180" y="64" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">1. đọc</text>
     <line x1="221" y1="84" x2="142" y2="84" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="4 3" marker-end="url(#caArr)"/>
     <text x="182" y="110" font-size="10" text-anchor="middle" fill="#10b981" opacity="0.95" font-weight="700">HIT → trả ngay</text>
-
     <line x1="100" y1="96" x2="165" y2="266" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#caArr)"/>
     <text x="78" y="200" font-size="10" fill="currentColor" opacity="0.85">2. MISS → đọc DB</text>
     <line x1="232" y1="270" x2="276" y2="100" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#caArr)"/>
     <text x="262" y="200" font-size="10" fill="currentColor" opacity="0.85">3. ghi lại cache</text>
   </g>
-
   <g>
     <rect x="385" y="56" width="110" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="440" y="81" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">App</text>
@@ -248,14 +240,12 @@ Switching: 1 lần per 24h.
     <text x="640" y="81" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Cache</text>
     <rect x="485" y="270" width="110" height="40" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="540" y="295" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">DB</text>
-
     <line x1="495" y1="74" x2="581" y2="74" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#caArr)"/>
     <text x="538" y="68" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">1a. ghi cache</text>
     <line x1="460" y1="96" x2="525" y2="266" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#caArr)"/>
     <text x="408" y="200" font-size="10" fill="currentColor" opacity="0.85">1b. ghi DB (cùng lúc)</text>
     <text x="640" y="120" font-size="10" text-anchor="middle" fill="#10b981" opacity="0.95" font-weight="700">cache luôn fresh</text>
   </g>
-
   <text x="30" y="338" font-size="10" fill="currentColor" opacity="0.7">Chỉ data được hỏi mới vào cache; lần miss đầu tốn 3 bước.</text>
   <text x="385" y="338" font-size="10" fill="currentColor" opacity="0.7">Mọi write đều vào cache, kể cả data ít khi đọc lại.</text>
 </svg>
@@ -344,7 +334,6 @@ Switching: 1 lần per 24h.
     <marker id="wsArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Web stack điển hình — request đi trái sang phải</text>
-
   <g>
     <rect x="14" y="70" width="92" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="60" y="96" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
@@ -377,7 +366,6 @@ Switching: 1 lần per 24h.
     <text x="663" y="92" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">RDS/</text>
     <text x="663" y="108" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Aurora</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.6">
     <line x1="106" y1="98" x2="128" y2="98" marker-end="url(#wsArr)"/>
     <line x1="232" y1="98" x2="254" y2="98" marker-end="url(#wsArr)"/>
@@ -386,7 +374,6 @@ Switching: 1 lần per 24h.
     <line x1="594" y1="98" x2="616" y2="98" marker-end="url(#wsArr)"/>
   </g>
   <text x="542" y="150" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">miss → đọc DB</text>
-
   <text x="16" y="186" font-size="10.5" fill="currentColor" opacity="0.72">Hai tầng cache giảm tải: CloudFront chặn ở edge cho nội dung tĩnh; ElastiCache (cache-aside) đỡ DB cho app tier.</text>
 </svg>
 

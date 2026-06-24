@@ -25,7 +25,6 @@ Bon dich vu messaging chinh co topology khac han nhau — nhin tong the truoc kh
     <marker id="mArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
   <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">Bon topology messaging</text>
-
   <!-- SQS -->
   <text x="16" y="48" font-size="12" font-weight="700" fill="currentColor">SQS — point-to-point</text>
   <circle cx="30" cy="78" r="13" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
@@ -37,7 +36,6 @@ Bon dich vu messaging chinh co topology khac han nhau — nhin tong the truoc kh
   <line x1="44" y1="78" x2="60" y2="78" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#mArr)"/>
   <line x1="111" y1="78" x2="125" y2="78" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#mArr)"/>
   <text x="86" y="108" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">1 msg → 1 consumer</text>
-
   <!-- SNS -->
   <text x="200" y="48" font-size="12" font-weight="700" fill="currentColor">SNS — fan-out</text>
   <circle cx="210" cy="98" r="13" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
@@ -57,7 +55,6 @@ Bon dich vu messaging chinh co topology khac han nhau — nhin tong the truoc kh
   <line x1="281" y1="98" x2="314" y2="98" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#mArr)"/>
   <line x1="281" y1="100" x2="314" y2="128" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#mArr)"/>
   <text x="280" y="160" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">1 msg → nhieu subscriber</text>
-
   <!-- SNS + SQS fan-out -->
   <text x="16" y="196" font-size="12" font-weight="700" fill="currentColor">SNS + SQS fan-out — moi consumer co queue dem rieng</text>
   <circle cx="30" cy="234" r="13" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
@@ -87,7 +84,6 @@ Bon dich vu messaging chinh co topology khac han nhau — nhin tong the truoc kh
   <line x1="183" y1="214" x2="196" y2="214" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#mArr)"/>
   <line x1="183" y1="240" x2="196" y2="240" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#mArr)"/>
   <line x1="183" y1="266" x2="196" y2="266" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#mArr)"/>
-
   <!-- EventBridge -->
   <text x="400" y="196" font-size="12" font-weight="700" fill="currentColor">EventBridge — bus + rule theo noi dung</text>
   <circle cx="414" cy="234" r="13" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
@@ -150,7 +146,6 @@ Khi 1 consumer nhan message, message khong bi xoa ma bi "an" trong khoang visibi
   </defs>
   <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">Visibility timeout — hai ket cuc</text>
   <text x="700" y="22" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.6">thoi gian →</text>
-
   <!-- Kich ban tot -->
   <text x="16" y="56" font-size="11.5" font-weight="700" fill="#10b981">Tot: xoa truoc khi het timeout</text>
   <line x1="16" y1="100" x2="704" y2="100" stroke="currentColor" stroke-opacity="0.3"/>
@@ -163,7 +158,6 @@ Khi 1 consumer nhan message, message khong bi xoa ma bi "an" trong khoang visibi
   <text x="300" y="142" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.65">→ message bien mat</text>
   <line x1="380" y1="100" x2="500" y2="100" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 3"/>
   <text x="500" y="96" font-size="9" fill="currentColor" opacity="0.55">(timeout chua het cung khong sao)</text>
-
   <!-- Kich ban xau -->
   <text x="16" y="196" font-size="11.5" font-weight="700" fill="#f59e0b">Xau: timeout het truoc khi xu ly xong</text>
   <line x1="16" y1="240" x2="704" y2="240" stroke="currentColor" stroke-opacity="0.3"/>
@@ -178,7 +172,6 @@ Khi 1 consumer nhan message, message khong bi xoa ma bi "an" trong khoang visibi
   <circle cx="480" cy="240" r="6" fill="#3b82f6" fill-opacity="0.9"/>
   <text x="480" y="224" font-size="9.5" text-anchor="middle" fill="currentColor">consumer khac nhan</text>
   <text x="480" y="268" font-size="9.5" text-anchor="middle" fill="#f59e0b">→ XU LY LAI (trung)</text>
-
   <!-- ChangeMessageVisibility -->
   <rect x="60" y="288" width="540" height="22" rx="5" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="330" y="303" font-size="10" text-anchor="middle" fill="currentColor">ChangeMessageVisibility = gia han cua so AN khi can them thoi gian xu ly</text>
@@ -356,7 +349,6 @@ Orchestration: dieu phoi workflow nhieu buoc bang **state machine** dinh nghia b
   <defs>
     <marker id="orArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <!-- Orchestration -->
   <text x="16" y="24" font-size="13" font-weight="700" fill="currentColor">Orchestration — nhac truong trung tam</text>
   <rect x="120" y="44" width="120" height="40" rx="9" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
@@ -374,9 +366,7 @@ Orchestration: dieu phoi workflow nhieu buoc bang **state machine** dinh nghia b
   <line x1="180" y1="84" x2="180" y2="148" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#orArr)"/>
   <line x1="200" y1="84" x2="280" y2="148" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#orArr)"/>
   <text x="180" y="210" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">1 → 2 → 3 theo thu tu, retry, branching</text>
-
   <line x1="360" y1="40" x2="360" y2="270" stroke="currentColor" stroke-opacity="0.2"/>
-
   <!-- Choreography -->
   <text x="396" y="24" font-size="13" font-weight="700" fill="currentColor">Choreography — phan ung theo event</text>
   <g>
@@ -416,7 +406,6 @@ Cho **real-time streaming** du lieu lon (clickstream, log, IoT, metrics). Khac S
     <marker id="kArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
   <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">Kinesis: partition key → shard → nhieu consumer</text>
-
   <!-- Producers / records -->
   <g>
     <rect x="16" y="56" width="78" height="26" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
@@ -427,7 +416,6 @@ Cho **real-time streaming** du lieu lon (clickstream, log, IoT, metrics). Khac S
     <text x="55" y="231" font-size="9.5" text-anchor="middle" fill="currentColor">record key=B</text>
   </g>
   <text x="55" y="100" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.6">partition key</text>
-
   <!-- Shards -->
   <g>
     <rect x="200" y="58" width="200" height="50" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
@@ -442,7 +430,6 @@ Cho **real-time streaming** du lieu lon (clickstream, log, IoT, metrics). Khac S
   <line x1="95" y1="226" x2="198" y2="222" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#kArr)"/>
   <text x="300" y="130" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.6">cung key → cung shard</text>
   <text x="300" y="276" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">giu lai 24h – 365 ngay (replay duoc)</text>
-
   <!-- Consumers -->
   <g>
     <rect x="500" y="50" width="120" height="34" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>

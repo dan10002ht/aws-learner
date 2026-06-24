@@ -290,13 +290,11 @@ Bậc thang "mức độ tự quản lý" trên AWS — sẽ xuất hiện rất
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Bậc thang mức độ tự quản lý trên AWS: EC2, ECS/EKS trên EC2, Fargate, Lambda</title>
   <desc>Bốn bậc thang đi xuống theo trục từ trái (quản lý nhiều) sang phải (quản lý ít): EC2 ánh xạ máy ảo, ECS hoặc EKS trên EC2 ánh xạ container tự quản máy, Fargate ánh xạ container không quản máy, Lambda ánh xạ serverless chỉ viết hàm.</desc>
-
   <text x="20" y="26" font-size="13" font-weight="700" fill="currentColor">Quản lý nhiều</text>
   <text x="700" y="26" font-size="13" font-weight="700" text-anchor="end" fill="currentColor">Quản lý ít</text>
   <line x1="20" y1="36" x2="700" y2="36" stroke="currentColor" stroke-opacity="0.3"/>
   <path d="M700 36 l-8 -4 v8 z" fill="currentColor" fill-opacity="0.6"/>
   <text x="360" y="51" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">Máy vật lý → VM → Container → Serverless</text>
-
   <!-- Step 1: EC2 (tallest, highest) -->
   <g>
     <rect x="20" y="78" width="160" height="150" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
@@ -309,7 +307,6 @@ Bậc thang "mức độ tự quản lý" trên AWS — sẽ xuất hiện rất
     <text x="32" y="196" font-size="10.5" fill="currentColor" opacity="0.62">scaling, runtime</text>
     <text x="32" y="218" font-size="10.5" font-weight="700" fill="currentColor" opacity="0.75">Toàn quyền OS</text>
   </g>
-
   <!-- Step 2: ECS/EKS on EC2 -->
   <g>
     <rect x="190" y="110" width="160" height="118" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
@@ -320,7 +317,6 @@ Bậc thang "mức độ tự quản lý" trên AWS — sẽ xuất hiện rất
     <text x="202" y="198" font-size="10.5" fill="currentColor" opacity="0.62">Tự quản máy (EC2)</text>
     <text x="202" y="214" font-size="10.5" fill="currentColor" opacity="0.62">chạy container</text>
   </g>
-
   <!-- Step 3: Fargate -->
   <g>
     <rect x="360" y="148" width="160" height="80" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
@@ -329,7 +325,6 @@ Bậc thang "mức độ tự quản lý" trên AWS — sẽ xuất hiện rất
     <text x="372" y="198" font-size="14" font-weight="700" fill="currentColor">Fargate</text>
     <text x="372" y="216" font-size="10.5" fill="currentColor" opacity="0.62">AWS quản máy hộ</text>
   </g>
-
   <!-- Step 4: Lambda (lowest, smallest) -->
   <g>
     <rect x="530" y="186" width="170" height="42" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
@@ -338,7 +333,6 @@ Bậc thang "mức độ tự quản lý" trên AWS — sẽ xuất hiện rất
     <text x="636" y="210" font-size="13.5" font-weight="700" fill="currentColor">Lambda</text>
   </g>
   <text x="615" y="246" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">Chỉ viết hàm</text>
-
   <text x="20" y="278" font-size="10.5" fill="currentColor" opacity="0.6">"Ít vận hành nhất" → phía phải (Fargate, Lambda)</text>
   <text x="700" y="278" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.6">"Toàn quyền OS" → phía trái (EC2)</text>
 </svg>

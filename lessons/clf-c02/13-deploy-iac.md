@@ -98,68 +98,49 @@ Vòng đời của một stack — và đường mà CDK đi vòng qua CloudForm
   <defs>
     <marker id="iacArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">Vòng đời CloudFormation Stack</text>
-
   <rect x="16" y="38" width="150" height="54" rx="9" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="91" y="60" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Template</text>
   <text x="91" y="78" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">YAML / JSON</text>
-
   <line x1="166" y1="65" x2="216" y2="65" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#iacArr)"/>
-
   <rect x="218" y="38" width="150" height="54" rx="9" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="293" y="60" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Create Stack</text>
   <text x="293" y="78" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">CF gọi API tạo</text>
-
   <line x1="368" y1="65" x2="418" y2="65" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#iacArr)"/>
-
   <rect x="420" y="38" width="150" height="54" rx="9" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="495" y="60" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Resource</text>
   <text x="495" y="78" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">S3, DynamoDB...</text>
-
   <rect x="596" y="38" width="108" height="54" rx="9" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="650" y="60" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Delete Stack</text>
   <text x="650" y="78" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">xoá hết</text>
   <line x1="570" y1="65" x2="594" y2="65" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="4 3" marker-end="url(#iacArr)"/>
-
   <line x1="91" y1="92" x2="91" y2="132" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#iacArr)"/>
   <text x="100" y="118" font-size="10" fill="currentColor" opacity="0.7">sửa template</text>
-
   <rect x="16" y="134" width="150" height="54" rx="9" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="91" y="156" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Change Set</text>
   <text x="91" y="174" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">preview diff</text>
-
   <line x1="166" y1="161" x2="216" y2="161" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#iacArr)"/>
-
   <rect x="218" y="134" width="150" height="54" rx="9" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="293" y="156" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Update Stack</text>
   <text x="293" y="174" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">apply thay đổi</text>
-
   <line x1="293" y1="92" x2="293" y2="132" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="4 3" marker-end="url(#iacArr)"/>
   <line x1="368" y1="150" x2="495" y2="98" stroke="currentColor" stroke-opacity="0.45" marker-end="url(#iacArr)"/>
   <text x="400" y="128" font-size="10" fill="#10b981" opacity="0.95" font-weight="700">OK</text>
-
   <line x1="293" y1="188" x2="293" y2="220" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#iacArr)"/>
   <text x="302" y="208" font-size="10" fill="#f59e0b" opacity="0.95" font-weight="700">FAIL</text>
-
   <rect x="218" y="222" width="220" height="44" rx="9" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="328" y="244" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Auto Rollback</text>
   <text x="328" y="260" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">CF tự revert về trạng thái cũ</text>
-
   <line x1="218" y1="200" x2="120" y2="200" stroke="currentColor" stroke-opacity="0" />
-
   <text x="16" y="300" font-size="13.5" font-weight="700" fill="currentColor">CDK đi vòng qua CloudFormation</text>
-
   <rect x="16" y="312" width="150" height="40" rx="9" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="91" y="337" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">CDK code (TS/Py)</text>
   <line x1="166" y1="332" x2="216" y2="332" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#iacArr)"/>
   <text x="191" y="325" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">synth</text>
-
   <rect x="218" y="312" width="150" height="40" rx="9" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="293" y="337" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">CF template</text>
   <line x1="368" y1="332" x2="418" y2="332" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#iacArr)"/>
   <text x="393" y="325" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">deploy</text>
-
   <rect x="420" y="312" width="150" height="40" rx="9" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="495" y="337" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Stack tạo resource</text>
 </svg>
@@ -237,46 +218,36 @@ Ba con đường nối on-prem ↔ AWS, đặt cạnh nhau trên ba trục laten
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Ba lựa chọn kết nối on-prem tới AWS: Public Internet, Site-to-Site VPN, Direct Connect</title>
   <desc>Ba cột song song so sánh ba cách kết nối từ data center on-prem tới AWS. Public Internet đi qua Internet công cộng chỉ bảo vệ bằng TLS, latency cao biến động, chi phí rẻ, bảo mật thấp. Site-to-Site VPN đi qua Internet nhưng tạo đường hầm IPsec mã hoá, latency trung bình, chi phí trung bình, bảo mật trung bình. Direct Connect dùng cáp quang riêng không qua Internet, latency thấp ổn định, chi phí cao và setup lâu, bảo mật cao nhất.</desc>
-
   <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">On-prem ↔ AWS — 3 con đường</text>
-
   <rect x="16" y="36" width="120" height="38" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="76" y="59" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Data center</text>
   <rect x="584" y="36" width="120" height="38" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="644" y="59" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">AWS VPC</text>
-
   <rect x="16" y="92" width="220" height="206" rx="10" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.2"/>
   <rect x="252" y="92" width="220" height="206" rx="10" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.2"/>
   <rect x="488" y="92" width="216" height="206" rx="10" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.2"/>
-
   <text x="126" y="116" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Public Internet</text>
   <text x="362" y="116" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Site-to-Site VPN</text>
   <text x="596" y="116" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Direct Connect</text>
-
   <text x="126" y="138" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">qua Internet, chỉ TLS</text>
   <text x="362" y="138" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">qua Internet, hầm IPsec</text>
   <text x="596" y="138" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">cáp quang riêng, private</text>
-
   <g font-size="10.5" fill="currentColor">
     <text x="32" y="172" opacity="0.6">Latency</text>
     <text x="126" y="172" text-anchor="middle" font-weight="700">cao, biến động</text>
     <text x="362" y="172" text-anchor="middle" font-weight="700">trung bình</text>
     <text x="596" y="172" text-anchor="middle" font-weight="700">thấp, ổn định</text>
-
     <text x="32" y="210" opacity="0.6">Cost</text>
     <text x="126" y="210" text-anchor="middle" font-weight="700">rẻ</text>
     <text x="362" y="210" text-anchor="middle" font-weight="700">trung bình</text>
     <text x="596" y="210" text-anchor="middle" font-weight="700">đắt + setup lâu</text>
-
     <text x="32" y="248" opacity="0.6">Bảo mật</text>
     <text x="126" y="248" text-anchor="middle" font-weight="700">TLS thôi</text>
     <text x="362" y="248" text-anchor="middle" font-weight="700">IPsec encrypted</text>
     <text x="596" y="248" text-anchor="middle" font-weight="700">private link</text>
   </g>
-
   <line x1="16" y1="186" x2="704" y2="186" stroke="currentColor" stroke-opacity="0.12"/>
   <line x1="16" y1="224" x2="704" y2="224" stroke="currentColor" stroke-opacity="0.12"/>
-
   <text x="126" y="282" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">browser, app thường</text>
   <text x="362" y="282" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">nhanh, không cần telco</text>
   <text x="596" y="282" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">enterprise, băng thông lớn</text>

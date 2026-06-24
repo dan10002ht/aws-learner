@@ -151,63 +151,45 @@ Bản đồ giá data transfer theo **ranh giới** dữ liệu vượt qua — 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 440" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Bản đồ giá data transfer theo ranh giới AZ, Region và Internet</title>
   <desc>Dữ liệu trong cùng một AZ truyền miễn phí; cross-AZ trong region tốn 0.01 USD mỗi GB mỗi chiều; cross-region tốn 0.02 USD mỗi GB trở lên; ra Internet egress tốn 0.09 USD mỗi GB; qua NAT Gateway tốn thêm 0.045 USD mỗi GB xử lý. Các khối lồng nhau thể hiện ranh giới AZ nằm trong Region, Region nằm trong AWS, ngoài cùng là Internet.</desc>
-
   <defs>
     <marker id="dtArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Giá data transfer theo ranh giới</text>
-
   <rect x="14" y="34" width="692" height="392" rx="12" fill="#f59e0b" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="28" y="54" font-size="11.5" font-weight="700" fill="currentColor" opacity="0.85">Internet</text>
-
   <rect x="36" y="68" width="640" height="282" rx="11" fill="#8b5cf6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="50" y="88" font-size="11.5" font-weight="700" fill="currentColor" opacity="0.85">AWS — Region us-east-1</text>
-
   <rect x="56" y="100" width="280" height="232" rx="10" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="70" y="120" font-size="11" font-weight="700" fill="currentColor" opacity="0.85">AZ a</text>
-
   <rect x="392" y="100" width="266" height="118" rx="10" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="406" y="120" font-size="11" font-weight="700" fill="currentColor" opacity="0.85">AZ b</text>
-
   <rect x="78" y="138" width="110" height="40" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="133" y="162" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">EC2 #1</text>
-
   <rect x="204" y="138" width="110" height="40" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="259" y="162" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">EC2 #2</text>
-
   <rect x="430" y="138" width="110" height="40" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="485" y="162" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">EC2 #3</text>
-
   <rect x="78" y="252" width="110" height="40" rx="8" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="133" y="276" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">NAT GW</text>
-
   <line x1="133" y1="178" x2="259" y2="178" stroke="#10b981" stroke-width="2" stroke-opacity="0.7" marker-end="url(#dtArr)"/>
   <text x="196" y="200" font-size="10.5" font-weight="700" text-anchor="middle" fill="#10b981">same-AZ: FREE</text>
-
   <line x1="314" y1="158" x2="428" y2="158" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#dtArr)"/>
   <text x="372" y="150" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">cross-AZ</text>
   <text x="372" y="200" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">$0.01/GB mỗi chiều</text>
-
   <line x1="133" y1="240" x2="133" y2="252" stroke="currentColor" stroke-opacity="0.45"/>
   <line x1="133" y1="252" x2="133" y2="240" stroke="currentColor" stroke-opacity="0"/>
   <line x1="133" y1="178" x2="133" y2="252" stroke="#f59e0b" stroke-width="2" stroke-opacity="0.7" marker-end="url(#dtArr)"/>
   <text x="143" y="222" font-size="10" fill="currentColor" opacity="0.8">qua NAT</text>
-
   <rect x="392" y="252" width="266" height="80" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="525" y="280" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Region khác</text>
   <text x="525" y="300" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.78">eu-west-1 ...</text>
-
   <line x1="314" y1="272" x2="390" y2="285" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#dtArr)"/>
   <text x="350" y="262" font-size="10" font-weight="700" text-anchor="middle" fill="currentColor">cross-region</text>
   <text x="350" y="324" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">$0.02+/GB</text>
-
   <line x1="133" y1="292" x2="133" y2="370" stroke="#f59e0b" stroke-width="2.2" stroke-opacity="0.8" marker-end="url(#dtArr)"/>
-
   <rect x="56" y="370" width="280" height="42" rx="9" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="196" y="388" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Internet egress (ra ngoài)</text>
   <text x="196" y="404" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">$0.09/GB · NAT processing +$0.045/GB</text>
-
   <g font-size="10.5">
     <rect x="372" y="370" width="14" height="14" rx="3" fill="#10b981" fill-opacity="0.6"/>
     <text x="392" y="381" fill="currentColor" opacity="0.8">miễn phí</text>

@@ -16,59 +16,46 @@ Trước khi gõ lệnh, vẽ ra sơ đồ. Nếu không vẽ được, bạn ch
   <defs>
     <marker id="archArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <rect x="278" y="20" width="164" height="46" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="360" y="40" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Người dùng (Browser)</text>
   <text x="360" y="57" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">HTTPS</text>
-
   <line x1="220" y1="66" x2="160" y2="98" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#archArr)"/>
   <line x1="500" y1="66" x2="560" y2="98" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#archArr)"/>
-
   <rect x="40" y="100" width="220" height="64" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="150" y="120" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">taskshare.app — Vercel CDN</text>
   <text x="150" y="137" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">React+TS (Vite) · static</text>
   <text x="150" y="153" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">build-time env (VITE_API_URL)</text>
-
   <line x1="262" y1="132" x2="556" y2="132" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="5 4" marker-end="url(#archArr)"/>
   <text x="410" y="124" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">fetch JSON + Bearer JWT (CORS)</text>
-
   <rect x="468" y="100" width="216" height="64" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="576" y="121" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">api.taskshare.app — ALB</text>
   <text x="576" y="138" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">:443 listener · ACM cert</text>
   <text x="576" y="154" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">health check /health</text>
-
   <rect x="296" y="196" width="408" height="344" rx="14" fill="#8b5cf6" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="7 4"/>
   <text x="312" y="216" font-size="11.5" font-weight="700" fill="currentColor" opacity="0.85">VPC</text>
-
   <rect x="316" y="228" width="368" height="92" rx="11" fill="#8b5cf6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 3"/>
   <text x="332" y="247" font-size="11" font-weight="700" fill="currentColor" opacity="0.85">Private subnet</text>
   <rect x="430" y="256" width="240" height="52" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="550" y="277" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">ECS Fargate Service</text>
   <text x="550" y="294" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Express container · ≥2 task (autoscale)</text>
-
   <line x1="576" y1="164" x2="566" y2="254" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#archArr)"/>
   <text x="592" y="212" font-size="10" fill="currentColor" opacity="0.7">private</text>
-
   <rect x="316" y="396" width="368" height="128" rx="11" fill="#8b5cf6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 3"/>
   <text x="332" y="415" font-size="11" font-weight="700" fill="currentColor" opacity="0.85">Private subnet (data + quan sát)</text>
-
   <rect x="330" y="426" width="150" height="78" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="405" y="450" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">RDS PostgreSQL</text>
   <text x="405" y="467" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">private · SG cho ECS</text>
   <text x="405" y="483" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">SQL :5432 (sslmode)</text>
-
   <rect x="496" y="426" width="86" height="78" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="539" y="450" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Secrets</text>
   <text x="539" y="465" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Manager</text>
   <text x="539" y="484" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">inject lúc start</text>
   <text x="539" y="496" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">DATABASE_URL/JWT</text>
-
   <rect x="598" y="426" width="76" height="78" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="636" y="450" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Cloud</text>
   <text x="636" y="465" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Watch</text>
   <text x="636" y="486" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">Logs +</text>
   <text x="636" y="497" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">Metrics</text>
-
   <line x1="500" y1="308" x2="420" y2="424" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#archArr)"/>
   <text x="430" y="360" font-size="9.5" fill="currentColor" opacity="0.7">SQL trong VPC</text>
   <line x1="545" y1="308" x2="540" y2="424" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#archArr)"/>
@@ -321,34 +308,27 @@ Pipeline đáng tin = mỗi push lên `main` tự chạy lint + test + build, r�
   <defs>
     <marker id="ciArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <rect x="16" y="150" width="120" height="60" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="76" y="176" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">git push</text>
   <text x="76" y="194" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">main</text>
-
   <line x1="136" y1="180" x2="170" y2="180" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ciArr)"/>
-
   <rect x="174" y="146" width="146" height="68" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="247" y="170" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">job: test</text>
   <text x="247" y="187" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">lint + test + build</text>
   <text x="247" y="203" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">fail → chặn deploy</text>
-
   <line x1="320" y1="170" x2="372" y2="92" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ciArr)"/>
   <line x1="320" y1="192" x2="372" y2="300" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ciArr)"/>
   <text x="350" y="120" font-size="9.5" fill="#10b981" opacity="0.95" font-weight="700">needs:test</text>
   <text x="350" y="276" font-size="9.5" fill="#10b981" opacity="0.95" font-weight="700">needs:test</text>
-
   <rect x="376" y="36" width="328" height="116" rx="11" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="392" y="56" font-size="11.5" font-weight="700" fill="currentColor">job: deploy-api  (OIDC, không access key)</text>
   <text x="392" y="78" font-size="10" fill="currentColor" opacity="0.78">1 · docker build → push ECR (tag = SHA)</text>
   <text x="392" y="96" font-size="10" fill="currentColor" opacity="0.78">2 · prisma migrate deploy (one-off task)</text>
   <text x="392" y="114" font-size="10" fill="currentColor" opacity="0.78">3 · render taskdef (image mới)</text>
   <text x="392" y="132" font-size="10" fill="currentColor" opacity="0.78">4 · ECS deploy → chờ stability (auto-rollback)</text>
-
   <rect x="376" y="278" width="328" height="64" rx="11" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="392" y="302" font-size="11.5" font-weight="700" fill="currentColor">job: deploy-web</text>
   <text x="392" y="322" font-size="10.5" fill="currentColor" opacity="0.78">vercel deploy --prod (Vercel prod)</text>
-
   <rect x="16" y="252" width="146" height="60" rx="9" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="89" y="276" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">OIDC → AWS STS</text>
   <text x="89" y="294" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">token ngắn hạn, không key</text>
@@ -493,31 +473,24 @@ production:  CORS_ORIGIN = https://taskshare.app   (đặt ở task def, mục 4
   <defs>
     <marker id="corsArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <rect x="40" y="20" width="200" height="44" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="140" y="40" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Browser</text>
   <text x="140" y="56" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">origin: taskshare.app</text>
   <line x1="140" y1="64" x2="140" y2="300" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-
   <rect x="480" y="20" width="200" height="44" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="580" y="40" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">api.taskshare.app</text>
   <text x="580" y="56" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">ALB → ECS</text>
   <line x1="580" y1="64" x2="580" y2="300" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-
   <line x1="140" y1="98" x2="576" y2="98" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#corsArr)"/>
   <text x="358" y="92" font-size="10.5" text-anchor="middle" fill="currentColor">preflight OPTIONS (Origin, Access-Control-Request-*)</text>
-
   <line x1="580" y1="138" x2="144" y2="138" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#corsArr)"/>
   <text x="358" y="132" font-size="10.5" text-anchor="middle" fill="currentColor">Allow-Origin: https://taskshare.app</text>
   <line x1="580" y1="166" x2="144" y2="166" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#corsArr)"/>
   <text x="358" y="160" font-size="10.5" text-anchor="middle" fill="currentColor">Allow-Methods / Allow-Headers: Authorization</text>
-
   <line x1="140" y1="206" x2="576" y2="206" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#corsArr)"/>
   <text x="358" y="200" font-size="10.5" text-anchor="middle" fill="currentColor" font-weight="700">request thật (Authorization: Bearer JWT)</text>
-
   <line x1="580" y1="236" x2="144" y2="236" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#corsArr)"/>
   <text x="358" y="230" font-size="10.5" text-anchor="middle" fill="currentColor">response JSON (kèm Allow-Origin)</text>
-
   <rect x="40" y="266" width="640" height="48" rx="9" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="56" y="286" font-size="10.5" font-weight="700" fill="currentColor">Bẫy preview domain:</text>
   <text x="56" y="303" font-size="10" fill="currentColor" opacity="0.8">mỗi PR một subdomain *.vercel.app ≠ taskshare.app → bị chặn nếu chỉ whitelist domain prod.</text>

@@ -23,7 +23,6 @@ Toàn bộ bài học chỉ là đi sâu vào từng nhân vật trong văn phò
   <rect x="14" y="40" width="692" height="366" rx="16" fill="#8b5cf6" fill-opacity="0.10" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="6 4"/>
   <text x="30" y="64" font-size="13.5" font-weight="700" fill="currentColor">Hệ điều hành (OS) — người quản lý, điều phối tất cả</text>
   <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Văn phòng máy tính</text>
-
   <g stroke="currentColor" stroke-opacity="0.45" fill="none">
     <line x1="360" y1="200" x2="180" y2="300"/>
     <line x1="360" y1="200" x2="540" y2="300"/>
@@ -32,20 +31,17 @@ Toàn bộ bài học chỉ là đi sâu vào từng nhân vật trong văn phò
   <text x="232" y="248" font-size="10.5" fill="currentColor" opacity="0.75">đọc/ghi rất nhanh</text>
   <text x="430" y="248" font-size="10.5" fill="currentColor" opacity="0.75">đọc/ghi chậm hơn</text>
   <text x="360" y="277" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">mở file: chép lên RAM · Save: chép về ổ cứng</text>
-
   <g>
     <rect x="278" y="150" width="164" height="68" rx="12" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="360" y="180" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">CPU</text>
     <text x="360" y="200" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.72">nhân viên — làm mọi tính toán</text>
   </g>
-
   <g>
     <rect x="78" y="300" width="204" height="74" rx="12" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="180" y="328" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">RAM — bàn làm việc</text>
     <text x="180" y="346" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">nhanh · nhỏ (8–32 GB)</text>
     <text x="180" y="362" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">tắt máy là mất</text>
   </g>
-
   <g>
     <rect x="438" y="300" width="204" height="74" rx="12" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="540" y="328" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Ổ cứng — tủ hồ sơ</text>
@@ -169,11 +165,9 @@ Khi bạn nháy đúp vào biểu tượng Chrome:
   <title>Vòng đời mở một chương trình — từ ổ cứng tới tiến trình trên màn hình</title>
   <desc>Luồng trái qua phải: chương trình nằm yên trong ổ cứng, được nạp vào RAM, CPU thực thi từng dòng lệnh, chương trình đang chạy trở thành tiến trình, kết quả xuất ra màn hình. Chương trình là bản nằm yên trên ổ cứng; tiến trình là bản đang chạy trong bộ nhớ.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Mở một chương trình: từ ổ cứng đến tiến trình</text>
-
   <defs>
     <marker id="lifeArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <g>
     <rect x="16" y="70" width="128" height="76" rx="12" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="80" y="98" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Ổ cứng</text>
@@ -182,7 +176,6 @@ Khi bạn nháy đúp vào biểu tượng Chrome:
   </g>
   <line x1="148" y1="108" x2="178" y2="108" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#lifeArr)"/>
   <text x="163" y="100" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">nạp</text>
-
   <g>
     <rect x="182" y="70" width="128" height="76" rx="12" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="246" y="98" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">RAM</text>
@@ -190,7 +183,6 @@ Khi bạn nháy đúp vào biểu tượng Chrome:
     <text x="246" y="130" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">bàn làm việc</text>
   </g>
   <line x1="314" y1="108" x2="344" y2="108" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#lifeArr)"/>
-
   <g>
     <rect x="348" y="70" width="128" height="76" rx="12" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="412" y="98" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">CPU</text>
@@ -198,7 +190,6 @@ Khi bạn nháy đúp vào biểu tượng Chrome:
     <text x="412" y="130" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">dòng lệnh</text>
   </g>
   <line x1="480" y1="108" x2="510" y2="108" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#lifeArr)"/>
-
   <g>
     <rect x="514" y="70" width="130" height="76" rx="12" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="579" y="98" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Tiến trình</text>
@@ -206,12 +197,10 @@ Khi bạn nháy đúp vào biểu tượng Chrome:
     <text x="579" y="130" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">đang chạy</text>
   </g>
   <line x1="579" y1="148" x2="579" y2="178" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#lifeArr)"/>
-
   <g>
     <rect x="514" y="182" width="130" height="46" rx="12" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="579" y="210" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Màn hình</text>
   </g>
-
   <g font-size="10.5" fill="currentColor" opacity="0.8">
     <text x="16" y="170" text-anchor="start">trên ổ cứng = CHƯƠNG TRÌNH (bản nằm yên)</text>
     <text x="412" y="200" text-anchor="middle">trong bộ nhớ, đang chạy = TIẾN TRÌNH</text>

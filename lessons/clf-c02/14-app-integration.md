@@ -35,11 +35,9 @@ Nếu image processor chết / overload → web app cũng chết theo. So sánh 
   <defs>
     <marker id="diArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <text x="180" y="26" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Tightly coupled (xấu)</text>
   <text x="540" y="26" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Decoupled với SQS (tốt)</text>
   <line x1="360" y1="40" x2="360" y2="300" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="5 4"/>
-
   <rect x="30" y="56" width="120" height="46" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="90" y="84" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Web App</text>
   <rect x="210" y="56" width="120" height="46" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
@@ -47,14 +45,12 @@ Nếu image processor chết / overload → web app cũng chết theo. So sánh 
   <text x="270" y="93" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Processor</text>
   <line x1="150" y1="79" x2="206" y2="79" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#diArr)"/>
   <text x="178" y="71" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">HTTP trực tiếp</text>
-
   <text x="270" y="150" font-size="20" text-anchor="middle" fill="#ef4444" font-weight="700">✕</text>
   <text x="270" y="138" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">processor chết</text>
   <line x1="270" y1="158" x2="160" y2="158" stroke="#ef4444" stroke-opacity="0.6" stroke-dasharray="4 3" marker-end="url(#diArr)"/>
   <rect x="30" y="170" width="120" height="42" rx="9" fill="#ef4444" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.4"/>
   <text x="90" y="190" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Web App</text>
   <text x="90" y="205" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">chết theo</text>
-
   <rect x="392" y="56" width="100" height="46" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="442" y="78" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Web App</text>
   <text x="442" y="93" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">(ghi message)</text>
@@ -68,7 +64,6 @@ Nếu image processor chết / overload → web app cũng chết theo. So sánh 
   <line x1="492" y1="79" x2="524" y2="79" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#diArr)"/>
   <line x1="644" y1="86" x2="616" y2="86" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#diArr)"/>
   <text x="678" y="118" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">pull khi rảnh</text>
-
   <text x="678" y="160" font-size="18" text-anchor="middle" fill="#ef4444" font-weight="700">✕</text>
   <text x="678" y="174" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">processor chết</text>
   <rect x="504" y="196" width="132" height="58" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
@@ -137,18 +132,15 @@ Nếu image processor chết / overload → web app cũng chết theo. So sánh 
   <defs>
     <marker id="foArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <rect x="16" y="118" width="120" height="60" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="76" y="142" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">SNS topic</text>
   <text x="76" y="160" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.78">"image uploaded"</text>
-
   <g stroke="currentColor" stroke-opacity="0.5" fill="none">
     <path d="M136 148 C 180 148, 190 50, 232 50" marker-end="url(#foArr)"/>
     <path d="M136 148 L 232 148" marker-end="url(#foArr)"/>
     <path d="M136 148 C 180 148, 190 246, 232 246" marker-end="url(#foArr)"/>
   </g>
   <text x="180" y="40" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">fan-out</text>
-
   <!-- Row A -->
   <rect x="236" y="28" width="92" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="282" y="48" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">SQS A</text>
@@ -157,7 +149,6 @@ Nếu image processor chết / overload → web app cũng chết theo. So sánh 
   <rect x="420" y="28" width="284" height="44" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="436" y="48" font-size="11.5" font-weight="700" fill="currentColor">Lambda A</text>
   <text x="436" y="63" font-size="10" fill="currentColor" opacity="0.78">resize image</text>
-
   <!-- Row B -->
   <rect x="236" y="126" width="92" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="282" y="146" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">SQS B</text>
@@ -166,7 +157,6 @@ Nếu image processor chết / overload → web app cũng chết theo. So sánh 
   <rect x="420" y="126" width="284" height="44" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="436" y="146" font-size="11.5" font-weight="700" fill="currentColor">Lambda B</text>
   <text x="436" y="161" font-size="10" fill="currentColor" opacity="0.78">extract metadata</text>
-
   <!-- Row C -->
   <rect x="236" y="224" width="92" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="282" y="244" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">SQS C</text>

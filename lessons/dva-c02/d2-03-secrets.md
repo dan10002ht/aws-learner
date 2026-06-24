@@ -96,11 +96,9 @@ Cơ chế: một Lambda rotation function chạy qua 4 bước (steps):
   <title>Vòng đời rotation 4 bước của Secrets Manager và sự di chuyển staging label</title>
   <desc>Bốn bước tuần tự: createSecret tạo password mới gắn label AWSPENDING, setSecret cập nhật database, testSecret kết nối thử bằng credential mới, finishSecret chuyển AWSCURRENT sang version mới và version cũ thành AWSPREVIOUS. Hàng dưới minh hoạ label di chuyển giữa version cũ và version mới.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Vòng đời rotation — 4 bước Lambda chạy tuần tự</text>
-
   <defs>
     <marker id="rotArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <g>
     <rect x="16" y="42" width="160" height="62" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="28" y="62" font-size="12.5" font-weight="700" fill="currentColor">createSecret</text>
@@ -109,7 +107,6 @@ Cơ chế: một Lambda rotation function chạy qua 4 bước (steps):
     <text x="74" y="96" font-size="9.5" font-weight="700" text-anchor="middle" fill="#fff">AWSPENDING</text>
   </g>
   <line x1="176" y1="73" x2="204" y2="73" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#rotArr)"/>
-
   <g>
     <rect x="206" y="42" width="160" height="62" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="218" y="62" font-size="12.5" font-weight="700" fill="currentColor">setSecret</text>
@@ -117,7 +114,6 @@ Cơ chế: một Lambda rotation function chạy qua 4 bước (steps):
     <text x="218" y="96" font-size="10.5" fill="currentColor" opacity="0.72">mới vào database</text>
   </g>
   <line x1="366" y1="73" x2="394" y2="73" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#rotArr)"/>
-
   <g>
     <rect x="396" y="42" width="160" height="62" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="408" y="62" font-size="12.5" font-weight="700" fill="currentColor">testSecret</text>
@@ -125,7 +121,6 @@ Cơ chế: một Lambda rotation function chạy qua 4 bước (steps):
     <text x="408" y="96" font-size="10.5" fill="currentColor" opacity="0.72">credential mới</text>
   </g>
   <line x1="556" y1="73" x2="584" y2="73" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#rotArr)"/>
-
   <g>
     <rect x="544" y="120" width="160" height="62" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="556" y="140" font-size="12.5" font-weight="700" fill="currentColor">finishSecret</text>
@@ -133,9 +128,7 @@ Cơ chế: một Lambda rotation function chạy qua 4 bước (steps):
     <text x="556" y="174" font-size="10.5" fill="currentColor" opacity="0.72">sang version mới</text>
   </g>
   <path d="M624 104 v8 h0 v8" stroke="currentColor" stroke-opacity="0.5" fill="none" marker-end="url(#rotArr)"/>
-
   <text x="16" y="222" font-size="12" font-weight="700" fill="currentColor">Label di chuyển khi finishSecret hoàn tất:</text>
-
   <g>
     <rect x="16" y="238" width="200" height="78" rx="9" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="28" y="260" font-size="12" font-weight="700" fill="currentColor">Version CŨ</text>
@@ -144,10 +137,8 @@ Cơ chế: một Lambda rotation function chạy qua 4 bước (steps):
     <rect x="28" y="292" width="100" height="16" rx="8" fill="#8b5cf6" fill-opacity="0.9"/>
     <text x="78" y="304" font-size="9.5" font-weight="700" text-anchor="middle" fill="#fff">AWSPREVIOUS</text>
   </g>
-
   <line x1="216" y1="277" x2="318" y2="277" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#rotArr)"/>
   <text x="267" y="270" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">đổi nhãn</text>
-
   <g>
     <rect x="320" y="238" width="200" height="78" rx="9" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="332" y="260" font-size="12" font-weight="700" fill="currentColor">Version MỚI</text>
@@ -156,7 +147,6 @@ Cơ chế: một Lambda rotation function chạy qua 4 bước (steps):
     <rect x="332" y="292" width="104" height="16" rx="8" fill="#10b981" fill-opacity="0.95"/>
     <text x="384" y="304" font-size="9.5" font-weight="700" text-anchor="middle" fill="#fff">AWSCURRENT</text>
   </g>
-
   <text x="536" y="277" font-size="10.5" fill="currentColor" opacity="0.72">App đọc AWSCURRENT</text>
   <text x="536" y="294" font-size="10.5" fill="currentColor" opacity="0.72">→ tự nhận password</text>
   <text x="536" y="311" font-size="10.5" fill="currentColor" opacity="0.72">mới, không downtime</text>

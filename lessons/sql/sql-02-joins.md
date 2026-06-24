@@ -62,7 +62,6 @@ Hình dung quan hệ giữa ba bảng: `orders` ở giữa, mỗi đơn "trỏ" 
   <defs>
     <marker id="fkArr" markerWidth="11" markerHeight="11" refX="9" refY="3.5" orient="auto"><path d="M0 0 L9 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <g>
     <rect x="16" y="80" width="176" height="120" rx="10" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="104" y="102" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">customers</text>
@@ -73,7 +72,6 @@ Hình dung quan hệ giữa ba bảng: `orders` ở giữa, mỗi đơn "trỏ" 
     <text x="26" y="160" font-size="11" fill="currentColor" opacity="0.7">name</text>
     <text x="26" y="182" font-size="11" fill="currentColor" opacity="0.7">city</text>
   </g>
-
   <g>
     <rect x="272" y="60" width="176" height="160" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="360" y="82" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">orders</text>
@@ -89,7 +87,6 @@ Hình dung quan hệ giữa ba bảng: `orders` ở giữa, mỗi đơn "trỏ" 
     <text x="324" y="167" font-size="11.5" fill="currentColor">product_id</text>
     <text x="282" y="194" font-size="11" fill="currentColor" opacity="0.7">quantity</text>
   </g>
-
   <g>
     <rect x="528" y="80" width="176" height="120" rx="10" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="616" y="102" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">products</text>
@@ -100,7 +97,6 @@ Hình dung quan hệ giữa ba bảng: `orders` ở giữa, mỗi đơn "trỏ" 
     <text x="538" y="160" font-size="11" fill="currentColor" opacity="0.7">name</text>
     <text x="538" y="182" font-size="11" fill="currentColor" opacity="0.7">price</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.55" fill="none">
     <path d="M282 137 C248 137 224 133 200 131" marker-end="url(#fkArr)"/>
     <path d="M448 163 C486 163 504 134 520 131" marker-end="url(#fkArr)"/>
@@ -173,7 +169,6 @@ Mệnh đề `ON` cho biết **ghép theo cột nào** — ở đây là cặp k
     <clipPath id="vL"><circle cx="0" cy="70" r="42"/></clipPath>
     <clipPath id="vR"><circle cx="44" cy="70" r="42"/></clipPath>
   </defs>
-
   <g transform="translate(38,10)">
     <text x="58" y="14" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">INNER JOIN</text>
     <g transform="translate(16,18)">
@@ -184,7 +179,6 @@ Mệnh đề `ON` cho biết **ghép theo cột nào** — ở đây là cặp k
     <text x="20" y="124" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">orders</text>
     <text x="96" y="124" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">customers</text>
   </g>
-
   <g transform="translate(206,10)">
     <text x="58" y="14" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">LEFT JOIN</text>
     <g transform="translate(16,18)">
@@ -194,7 +188,6 @@ Mệnh đề `ON` cho biết **ghép theo cột nào** — ở đây là cặp k
     <text x="20" y="124" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">orders</text>
     <text x="96" y="124" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">customers</text>
   </g>
-
   <g transform="translate(374,10)">
     <text x="58" y="14" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">RIGHT JOIN</text>
     <g transform="translate(16,18)">
@@ -204,7 +197,6 @@ Mệnh đề `ON` cho biết **ghép theo cột nào** — ở đây là cặp k
     <text x="20" y="124" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">orders</text>
     <text x="96" y="124" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">customers</text>
   </g>
-
   <g transform="translate(542,10)">
     <text x="58" y="14" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">FULL OUTER</text>
     <g transform="translate(16,18)">
@@ -363,20 +355,16 @@ An là sếp lớn nhất nên không có sếp (`NULL`) — đó là lý do dù
   <text x="80" y="24" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">customers</text>
   <text x="320" y="24" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">orders</text>
   <text x="600" y="24" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">kết quả JOIN</text>
-
   <rect x="16" y="100" width="128" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
   <text x="80" y="122" font-size="11.5" text-anchor="middle" fill="currentColor">An (id 1)</text>
-
   <rect x="256" y="56" width="128" height="34" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
   <text x="320" y="78" font-size="11.5" text-anchor="middle" fill="currentColor">đơn 1001 (id 1)</text>
   <rect x="256" y="144" width="128" height="34" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
   <text x="320" y="166" font-size="11.5" text-anchor="middle" fill="currentColor">đơn 1002 (id 1)</text>
-
   <rect x="496" y="56" width="208" height="34" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
   <text x="600" y="78" font-size="11.5" text-anchor="middle" fill="currentColor">An — 1001</text>
   <rect x="496" y="144" width="208" height="34" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
   <text x="600" y="166" font-size="11.5" text-anchor="middle" fill="currentColor">An — 1002</text>
-
   <defs>
     <marker id="foArr" markerWidth="11" markerHeight="11" refX="9" refY="3.5" orient="auto"><path d="M0 0 L9 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>

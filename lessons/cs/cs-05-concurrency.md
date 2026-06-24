@@ -116,20 +116,15 @@ Giờ tưởng tượng hai thread bị xen kẽ đúng lúc xấu (`counter` đ
   <g font-size="12" font-weight="700" text-anchor="middle">
     <rect x="44" y="52" width="152" height="28" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="120" y="71" fill="currentColor">READ tmp=41</text>
     <text x="630" y="71" fill="currentColor">41</text>
-
     <rect x="284" y="96" width="152" height="28" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="360" y="115" fill="currentColor">READ tmp=41</text>
     <text x="630" y="115" fill="currentColor">41</text>
     <text x="630" y="135" font-size="10" font-weight="400" fill="#f59e0b">B đọc trước khi A ghi!</text>
-
     <rect x="44" y="148" width="152" height="28" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="120" y="167" fill="currentColor">ADD tmp=42</text>
     <text x="630" y="167" fill="currentColor">41</text>
-
     <rect x="284" y="192" width="152" height="28" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="360" y="211" fill="currentColor">ADD tmp=42</text>
     <text x="630" y="211" fill="currentColor">41</text>
-
     <rect x="44" y="236" width="152" height="28" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="120" y="255" fill="currentColor">WRITE counter=42</text>
     <text x="630" y="255" fill="currentColor">42</text>
-
     <rect x="284" y="280" width="152" height="28" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="360" y="299" fill="currentColor">WRITE counter=42</text>
     <text x="630" y="299" fill="#f59e0b">42</text>
     <text x="630" y="320" font-size="10" font-weight="400" fill="#f59e0b">mất 1 lần tăng (43→42)</text>
@@ -198,7 +193,6 @@ def thread_2():
   <text x="180" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Vòng chờ khép kín → DEADLOCK</text>
   <text x="540" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Thứ tự lock cố định → an toàn</text>
   <line x1="360" y1="44" x2="360" y2="300" stroke="currentColor" stroke-opacity="0.2"/>
-
   <g font-size="12" text-anchor="middle">
     <rect x="40" y="70" width="120" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="100" y="88" font-weight="700" fill="currentColor">Thread 1</text>
@@ -221,7 +215,6 @@ def thread_2():
   </g>
   <text x="180" y="135" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">T1 chờ B</text>
   <text x="178" y="207" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">T2 chờ A</text>
-
   <g font-size="12" text-anchor="middle">
     <rect x="420" y="64" width="120" height="36" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="480" y="86" font-weight="700" fill="currentColor">Thread 1</text>
@@ -296,25 +289,20 @@ Node.js chạy code JS của bạn trên **một thread duy nhất** với một
     <marker id="ev" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker>
   </defs>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Event loop — 1 thread duy nhất</text>
-
   <circle cx="180" cy="170" r="78" fill="#8b5cf6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="180" y="166" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">event loop</text>
   <text x="180" y="184" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">vòng lặp mãi</text>
-
   <g font-size="11.5" text-anchor="middle">
     <rect x="340" y="60" width="200" height="48" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="440" y="80" font-weight="700" fill="currentColor">chạy code → gặp await fetch</text>
     <text x="440" y="97" font-size="10" fill="currentColor" opacity="0.7">đăng ký "khi xong gọi tôi"</text>
-
     <rect x="560" y="146" width="148" height="48" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="634" y="166" font-weight="700" fill="currentColor">mạng / I/O</text>
     <text x="634" y="183" font-size="10" fill="currentColor" opacity="0.7">đang chờ trả lời</text>
-
     <rect x="340" y="248" width="200" height="56" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="440" y="270" font-weight="700" fill="currentColor">hàng đợi callback</text>
     <text x="440" y="288" font-size="10" fill="currentColor" opacity="0.7">mạng trả lời → đẩy callback vào</text>
   </g>
-
   <g stroke="currentColor" fill="none" marker-end="url(#ev)" stroke-width="1.6">
     <path d="M256 130 C300 110 320 96 338 88"/>
     <path d="M540 100 C580 116 600 130 612 144"/>
@@ -405,7 +393,6 @@ Triết lý nổi tiếng của Go: *"Đừng giao tiếp bằng cách chia sẻ
   <text x="540" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Message passing</text>
   <text x="540" y="42" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">mỗi worker giữ dữ liệu riêng</text>
   <line x1="360" y1="56" x2="360" y2="285" stroke="currentColor" stroke-opacity="0.2"/>
-
   <g font-size="12" text-anchor="middle" font-weight="700">
     <rect x="30" y="80" width="86" height="34" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/><text x="73" y="102" fill="currentColor">T1</text>
     <rect x="30" y="138" width="86" height="34" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/><text x="73" y="160" fill="currentColor">T2</text>
@@ -420,7 +407,6 @@ Triết lý nổi tiếng của Go: *"Đừng giao tiếp bằng cách chia sẻ
     <path d="M116 213 C160 200 175 180 204 165"/>
   </g>
   <text x="266" y="210" font-size="10.5" text-anchor="middle" fill="#f59e0b" font-weight="700">→ phải khoá (lock)</text>
-
   <g font-size="12" text-anchor="middle" font-weight="700">
     <rect x="402" y="128" width="104" height="44" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="454" y="155" fill="currentColor">Producer</text>
     <rect x="542" y="128" width="70" height="44" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/><text x="577" y="155" fill="currentColor">queue</text>

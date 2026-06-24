@@ -34,44 +34,31 @@ getDiscount("100");
   <title>Type erasure — ranh giới compile-time và runtime</title>
   <desc>Code .tsx được tsc kiểm tra kiểu lúc compile-time (nơi type sống), rồi xoá hết type biên dịch ra JS thuần chạy ở browser lúc runtime (không còn type). Dữ liệu ngoài như API, JSON.parse, localStorage vào lúc runtime là unknown, type không bảo vệ, nên cần lớp validate Zod ở ranh giới; tsc --noEmit trong CI là cổng chặn.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Type erasure — type chỉ sống lúc compile, biến mất lúc runtime</text>
-
   <defs>
     <marker id="teArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <text x="178" y="52" font-size="11.5" font-weight="700" text-anchor="middle" fill="#3b82f6" fill-opacity="0.95">COMPILE-TIME — nơi type sống</text>
   <rect x="20" y="60" width="316" height="120" rx="11" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.18"/>
-
   <rect x="36" y="80" width="120" height="44" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="96" y="100" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">code .tsx</text>
   <text x="96" y="116" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">có type</text>
-
   <line x1="158" y1="102" x2="196" y2="102" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#teArr)"/>
-
   <rect x="200" y="80" width="124" height="44" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="262" y="100" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">tsc kiểm kiểu</text>
   <text x="262" y="116" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">đỏ nếu sai</text>
-
   <text x="178" y="150" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">tsc --noEmit trong CI = cổng chặn, fail thì không deploy</text>
   <text x="178" y="168" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">→ xoá hết type, build ra JS thuần</text>
-
   <line x1="336" y1="120" x2="384" y2="120" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#teArr)"/>
-
   <text x="540" y="52" font-size="11.5" font-weight="700" text-anchor="middle" fill="#f59e0b" fill-opacity="0.95">RUNTIME — không còn type</text>
   <rect x="388" y="60" width="316" height="120" rx="11" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
-
   <rect x="404" y="80" width="120" height="44" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="464" y="100" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">JS thuần</text>
   <text x="464" y="116" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">đã mất type</text>
-
   <line x1="526" y1="102" x2="564" y2="102" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#teArr)"/>
-
   <rect x="568" y="80" width="120" height="44" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="628" y="100" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">browser</text>
   <text x="628" y="116" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">chạy thật</text>
-
   <text x="540" y="160" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">type là "lời hứa lúc compile" — không bảo vệ ở đây</text>
-
   <g>
     <rect x="388" y="210" width="316" height="110" rx="11" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="546" y="232" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Dữ liệu NGOÀI vào lúc runtime</text>
@@ -216,18 +203,14 @@ function render(state: FetchState) {
   <title>Narrowing như cái phễu — thu hẹp union qua các cổng kiểm tra runtime</title>
   <desc>Bắt đầu từ union rộng string number null, qua các cổng kiểm tra runtime typeof, so sánh literal, in, instanceof, union thu hẹp dần xuống đúng một nhánh kiểu cụ thể, sau đó autocomplete và method khả dụng theo nhánh.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Narrowing — cái phễu thu hẹp kiểu</text>
-
   <defs>
     <marker id="nwArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <rect x="120" y="40" width="480" height="40" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="360" y="58" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">UNION RỘNG — TS chưa biết nhánh nào</text>
   <text x="360" y="73" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.85">string | number | null</text>
-
   <path d="M120 90 L600 90 L470 168 L250 168 Z" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.18"/>
   <text x="360" y="116" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">CÁC CỔNG KIỂM TRA RUNTIME</text>
-
   <g font-size="10.5" fill="currentColor">
     <rect x="150" y="126" width="92" height="26" rx="13" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="196" y="143" text-anchor="middle" font-weight="700">typeof</text>
@@ -238,18 +221,13 @@ function render(state: FetchState) {
     <rect x="442" y="126" width="110" height="26" rx="13" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="497" y="143" text-anchor="middle" font-weight="700">instanceof</text>
   </g>
-
   <line x1="360" y1="168" x2="360" y2="196" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#nwArr)"/>
-
   <rect x="248" y="200" width="224" height="38" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="360" y="218" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">ĐÚNG MỘT NHÁNH KIỂU</text>
   <text x="360" y="232" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">vd: value là string</text>
-
   <line x1="360" y1="238" x2="360" y2="262" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#nwArr)"/>
-
   <rect x="216" y="266" width="288" height="36" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="360" y="289" font-size="11" text-anchor="middle" fill="currentColor">autocomplete + method khả dụng theo nhánh</text>
-
   <g font-size="10.5" fill="currentColor" opacity="0.78">
     <text x="16" y="334" font-weight="700">Discriminated union:</text>
     <text x="16" y="352">narrow theo trường status — "loading" / "success" / "error" mỗi nhánh mở đúng field của nó.</text>

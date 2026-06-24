@@ -19,37 +19,31 @@ Tưởng tượng một nhà thi đấu có 1000 tủ đồ đánh số 0–999.
     </marker>
   </defs>
   <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Luồng băm: từ key tới chỉ số ô</text>
-
   <g>
     <rect x="16" y="48" width="118" height="56" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="75" y="72" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.7">key</text>
     <text x="75" y="92" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">"An"</text>
   </g>
   <line x1="138" y1="76" x2="166" y2="76" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#hf-arrow)"/>
-
   <g>
     <rect x="170" y="48" width="136" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="238" y="72" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">hash function</text>
     <text x="238" y="92" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">băm key thành số</text>
   </g>
   <line x1="310" y1="76" x2="338" y2="76" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#hf-arrow)"/>
-
   <g>
     <rect x="342" y="48" width="160" height="56" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="422" y="72" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.7">số nguyên lớn</text>
     <text x="422" y="92" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">3 752 219</text>
   </g>
   <line x1="506" y1="76" x2="534" y2="76" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#hf-arrow)"/>
-
   <g>
     <rect x="538" y="48" width="166" height="56" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="621" y="72" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">modulo số bucket</text>
     <text x="621" y="92" font-size="13" text-anchor="middle" fill="currentColor">3 752 219 % 8 = 3</text>
   </g>
-
   <path d="M621 108 v18 h-300 v18" fill="none" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#hf-arrow)"/>
   <text x="335" y="142" font-size="11" fill="currentColor" opacity="0.7">→ chỉ số ô = 3</text>
-
   <text x="16" y="174" font-size="12" fill="currentColor" opacity="0.7">mảng nội bộ (8 ô):</text>
   <g font-size="13" text-anchor="middle">
     <rect x="16" y="184" width="84" height="48" rx="7" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.22"/>
@@ -90,7 +84,6 @@ Công thức hash không hoàn hảo: hai key khác nhau có thể cho ra cùng 
     </marker>
   </defs>
   <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Chaining: va chạm tạo danh sách móc xích</text>
-
   <g>
     <rect x="16" y="44" width="120" height="40" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="76" y="69" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">"An"</text>
@@ -101,22 +94,17 @@ Công thức hash không hoàn hảo: hai key khác nhau có thể cho ra cùng 
   <text x="148" y="166" font-size="11" fill="currentColor" opacity="0.7">cùng băm về ô 1 → va chạm</text>
   <path d="M138 64 C 200 64, 232 112, 286 116" fill="none" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ch-arrow)"/>
   <path d="M138 116 C 200 116, 232 128, 286 128" fill="none" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ch-arrow)"/>
-
   <text x="290" y="40" font-size="12" fill="currentColor" opacity="0.7">mảng bucket (4 ô):</text>
   <g>
     <rect x="290" y="48" width="70" height="44" rx="7" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="325" y="75" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.55">ô 0</text>
-
     <rect x="290" y="100" width="70" height="44" rx="7" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.4"/>
     <text x="325" y="127" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">ô 1</text>
-
     <rect x="290" y="152" width="70" height="44" rx="7" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="325" y="179" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.55">ô 2</text>
-
     <rect x="290" y="204" width="70" height="44" rx="7" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="325" y="231" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.55">ô 3</text>
   </g>
-
   <g>
     <line x1="360" y1="122" x2="392" y2="122" stroke="currentColor" stroke-opacity="0.6"/>
     <rect x="392" y="100" width="92" height="44" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
@@ -127,7 +115,6 @@ Công thức hash không hoàn hảo: hai key khác nhau có thể cho ra cùng 
     <text x="612" y="121" font-size="12" fill="currentColor" opacity="0.6">→ ∅</text>
     <text x="392" y="164" font-size="10.5" fill="currentColor" opacity="0.6">danh sách móc xích trong ô 1</text>
   </g>
-
   <line x1="16" y1="266" x2="704" y2="266" stroke="currentColor" stroke-opacity="0.18"/>
   <text x="16" y="290" font-size="12.5" font-weight="700" fill="currentColor">load factor = số phần tử / số ô</text>
   <text x="16" y="310" font-size="11.5" fill="currentColor" opacity="0.78">Vượt ngưỡng ~0.75 → <tspan font-weight="700">resize</tspan>: cấp mảng gấp đôi (4 → 8 ô) rồi <tspan font-weight="700">rehash</tspan> mọi phần tử (O(n), hiếm khi xảy ra).</text>

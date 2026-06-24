@@ -27,7 +27,6 @@ Tiền đề: [[ch3-01-iam-deep-dive]], [[ch3-02-network-security]], [[ch3-03-da
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Mỗi service = 1 câu hỏi</text>
   <text x="232" y="24" font-size="11.5" fill="currentColor" opacity="0.6">Câu hỏi cần trả lời</text>
   <text x="540" y="24" font-size="11.5" fill="currentColor" opacity="0.6">Service</text>
-
   <g>
     <rect x="16" y="38" width="500" height="44" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
     <text x="30" y="65" font-size="12.5" fill="currentColor">"Ai đã làm gì, khi nào?" (API call)</text>
@@ -292,11 +291,9 @@ AWS có **AWS Artifact** — repository chứa compliance report của AWS, down
   <title>Luồng incident response playbook 7 bước</title>
   <desc>Chuỗi xử lý sự cố từ trái qua phải: Detect, Triage, Investigate, Contain, Eradicate, Recover, Post-mortem; mỗi bước kèm service AWS tương ứng.</desc>
   <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Playbook ứng cứu sự cố — chuỗi 7 bước</text>
-
   <defs>
     <marker id="irArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <g>
     <rect x="16" y="40" width="150" height="56" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="28" y="62" font-size="13" font-weight="700" fill="currentColor">1. Detect</text>
@@ -324,9 +321,7 @@ AWS có **AWS Artifact** — repository chứa compliance report của AWS, down
     <text x="562" y="80" font-size="10" fill="currentColor" opacity="0.7">isolate SG, revoke</text>
     <text x="562" y="92" font-size="10" fill="currentColor" opacity="0.7">cred, snapshot</text>
   </g>
-
   <line x1="627" y1="96" x2="627" y2="120" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#irArr)"/>
-
   <g>
     <rect x="550" y="124" width="154" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="562" y="146" font-size="13" font-weight="700" fill="currentColor">5. Eradicate</text>
@@ -347,7 +342,6 @@ AWS có **AWS Artifact** — repository chứa compliance report của AWS, down
     <text x="206" y="164" font-size="10" fill="currentColor" opacity="0.7">root cause +</text>
     <text x="206" y="176" font-size="10" fill="currentColor" opacity="0.7">cải thiện</text>
   </g>
-
   <text x="16" y="216" font-size="11" fill="currentColor" opacity="0.65">Detect → Triage → Investigate → Contain (chứa thiệt hại) → Eradicate → Recover → học từ sự cố.</text>
 </svg>
 

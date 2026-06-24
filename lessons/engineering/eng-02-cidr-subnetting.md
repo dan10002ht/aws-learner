@@ -41,7 +41,6 @@ Số địa chỉ trong block = 2^(32 − prefix)
   <title>Thanh 32 bit IPv4 chia network và host theo prefix</title>
   <desc>Một địa chỉ IPv4 32 bit chia thành 4 octet. Với /24, 24 bit đầu là network cố định, 8 bit cuối là host thay đổi. Với /26, network lấn 2 bit đầu của octet 4 (octet đáng quan tâm) với giá trị bit 128 64 32 16 8 4 2 1.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Địa chỉ IPv4 = 32 bit = 4 octet · phần network (cố định) vs host (thay đổi)</text>
-
   <!-- /24 row -->
   <text x="16" y="58" font-size="12" font-weight="700" fill="currentColor">/24</text>
   <rect x="48" y="44" width="492" height="26" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
@@ -52,7 +51,6 @@ Số địa chỉ trong block = 2^(32 − prefix)
   <text x="212" y="86" font-size="10" fill="currentColor" opacity="0.6">octet 2</text>
   <text x="376" y="86" font-size="10" fill="currentColor" opacity="0.6">octet 3</text>
   <text x="540" y="86" font-size="10" fill="currentColor" opacity="0.6">octet 4 (interesting)</text>
-
   <!-- /26 row -->
   <text x="16" y="130" font-size="12" font-weight="700" fill="currentColor">/26</text>
   <rect x="48" y="116" width="492" height="26" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
@@ -61,7 +59,6 @@ Số địa chỉ trong block = 2^(32 − prefix)
   <rect x="581" y="116" width="123" height="26" rx="0" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="560" y="133" font-size="10" text-anchor="middle" fill="currentColor">+2</text>
   <text x="642" y="133" font-size="11" text-anchor="middle" fill="currentColor">Host — 6 bit</text>
-
   <!-- interesting octet zoom -->
   <text x="16" y="180" font-size="12" font-weight="700" fill="currentColor">Octet đáng quan tâm (octet 4) — giá trị từng bit</text>
   <g font-size="11.5" text-anchor="middle">
@@ -178,7 +175,6 @@ VPC: 10.0.0.0/16
   <title>Phân bố subnet trong VPC 10.0.0.0/16</title>
   <desc>Dải VPC 10.0.0.0/16 (octet 3 chạy 0 đến 255) được cắt thành các block: ba public /24 tại octet 3 = 0,1,2; ba private app /20 tại 16,32,48; ba private data /24 tại 64,65,66; phần còn lại dự phòng. Mỗi block bắt đầu tại bội số của block size của nó.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">VPC 10.0.0.0/16 — octet thứ 3 chạy từ 0 → 255</text>
-
   <!-- scale: x = 16 + (octet3/256)*688 ; full bar 16..704 -->
   <!-- baseline ruler -->
   <line x1="16" y1="300" x2="704" y2="300" stroke="currentColor" stroke-opacity="0.3"/>
@@ -198,15 +194,12 @@ VPC: 10.0.0.0/16
     <line x1="188" y1="296" x2="188" y2="304"/>
     <line x1="704" y1="296" x2="704" y2="304"/>
   </g>
-
   <!-- Public /24 x3 : octet3 = 0,1,2 -> each width ~2.7px, group it as a labeled sliver -->
   <rect x="16" y="60" width="10" height="220" fill="#10b981" fill-opacity="0.30" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="21" y="50" font-size="10.5" text-anchor="middle" fill="currentColor">Public</text>
   <text x="21" y="38" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">/24 ×3 AZ</text>
   <text x="21" y="296" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.6">.0 .1 .2</text>
-
   <!-- gap .3 .. .15 unused (tiny) -->
-
   <!-- Private app /20 x3 : octet3 = 16(.16-.31), 32(.32-.47), 48(.48-.63) -->
   <rect x="59" y="60" width="43" height="220" fill="#3b82f6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
   <rect x="102" y="60" width="43" height="220" fill="#3b82f6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
@@ -215,16 +208,13 @@ VPC: 10.0.0.0/16
   <text x="80" y="175" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">.16</text>
   <text x="123" y="175" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">.32</text>
   <text x="166" y="175" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">.48</text>
-
   <!-- Private data /24 x3 : octet3 = 64,65,66 -->
   <rect x="188" y="60" width="10" height="220" fill="#8b5cf6" fill-opacity="0.26" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="225" y="50" font-size="10.5" text-anchor="middle" fill="currentColor">Private data</text>
   <text x="225" y="38" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">/24 ×3 (.64 .65 .66)</text>
-
   <!-- Reserve : octet3 = 67..255 -->
   <rect x="198" y="60" width="506" height="220" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 3"/>
   <text x="451" y="175" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.65">Dự phòng (phần còn lại) — .67 → .255</text>
-
   <text x="16" y="344" font-size="10.5" fill="currentColor" opacity="0.75">Mỗi block bắt đầu tại bội số block size của nó: /20 tại 0,16,32,48… · /24 tại bất kỳ giá trị octet 3</text>
 </svg>
 
@@ -288,26 +278,21 @@ Packet tới `10.1.5.40`: khớp cả /16 (peering) lẫn /24 (TGW) → chọn *
   <title>Longest-prefix match — chọn route cụ thể nhất</title>
   <desc>Destination 10.1.5.40 rơi vào ba dải route chồng nhau: 0.0.0.0/0 phủ tất cả, 10.1.0.0/16 phủ một phần, và 10.1.5.0/24 hẹp nhất. Router chọn prefix dài nhất là /24 đi Transit Gateway, vì nó cụ thể nhất.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Cùng một destination khớp nhiều route → chọn prefix DÀI nhất</text>
-
   <!-- destination marker -->
   <line x1="300" y1="40" x2="300" y2="210" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5 4" stroke-opacity="0.85"/>
   <circle cx="300" cy="46" r="4" fill="#ef4444"/>
   <text x="300" y="38" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Dest 10.1.5.40</text>
-
   <!-- /0 widest -->
   <rect x="16" y="58" width="688" height="34" rx="5" fill="#8b5cf6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="26" y="79" font-size="11.5" fill="currentColor">0.0.0.0/0 → NAT</text>
   <text x="694" y="79" font-size="10" text-anchor="end" fill="currentColor" opacity="0.6">prefix /0 — phủ tất cả</text>
-
   <!-- /16 medium -->
   <rect x="140" y="100" width="420" height="34" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="150" y="121" font-size="11.5" fill="currentColor">10.1.0.0/16 → VPC peering</text>
   <text x="550" y="121" font-size="10" text-anchor="end" fill="currentColor" opacity="0.6">/16</text>
-
   <!-- /24 narrowest, the winner -->
   <rect x="250" y="142" width="120" height="34" rx="5" fill="#10b981" fill-opacity="0.22" stroke="#10b981" stroke-width="2"/>
   <text x="310" y="163" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">10.1.5.0/24 → TGW</text>
-
   <!-- arrow selecting the winner -->
   <defs>
     <marker id="lpm-arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
@@ -338,7 +323,6 @@ Trong **mỗi subnet**, AWS dành riêng **5 địa chỉ** (đầu 4 + cuối 1
   <title>Năm địa chỉ AWS giữ trong mỗi subnet /24</title>
   <desc>Trên dải 10.0.0.0/24 (256 địa chỉ từ .0 đến .255), AWS giữ 5 địa chỉ: .0 network, .1 router, .2 DNS, .3 dự phòng, và .255 broadcast. Phần usable là .4 đến .254, tổng 251 địa chỉ = 256 trừ 5.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Dải 10.0.0.0/24 — AWS giữ 5 IP → usable = 256 − 5 = 251</text>
-
   <!-- main bar 16..704 maps .0 .. .255 -->
   <!-- reserved head .0-.3 (4 of 256 -> width ~10.7px) -->
   <rect x="16" y="50" width="11" height="44" fill="#f59e0b" fill-opacity="0.30" stroke="currentColor" stroke-opacity="0.3"/>
@@ -347,7 +331,6 @@ Trong **mỗi subnet**, AWS dành riêng **5 địa chỉ** (đầu 4 + cuối 1
   <!-- reserved tail .255 -->
   <rect x="701" y="50" width="3" height="44" fill="#f59e0b" fill-opacity="0.30" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="364" y="77" font-size="12" text-anchor="middle" fill="currentColor">Usable — .4 → .254  (251 địa chỉ)</text>
-
   <!-- callouts for first 4 reserved -->
   <g font-size="10.5" fill="currentColor">
     <line x1="18" y1="50" x2="50" y2="118" stroke="currentColor" stroke-opacity="0.4"/>
@@ -361,7 +344,6 @@ Trong **mỗi subnet**, AWS dành riêng **5 địa chỉ** (đầu 4 + cuối 1
     <line x1="702" y1="50" x2="640" y2="118" stroke="currentColor" stroke-opacity="0.4"/>
     <text x="600" y="134">.255 Broadcast</text>
   </g>
-
   <!-- 5 reserved badges -->
   <g font-size="11" text-anchor="middle">
     <rect x="40" y="160" width="120" height="30" rx="6" fill="#f59e0b" fill-opacity="0.9"/>

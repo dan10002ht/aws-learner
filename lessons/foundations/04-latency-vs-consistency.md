@@ -159,32 +159,27 @@ So sánh: trong cùng region, **cross-AZ** chỉ ~1-2ms. Đó là lý do Multi-A
     <text x="70" y="142" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">RTO 60-120s</text>
     <text x="70" y="156" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">RPO 0</text>
     <text x="70" y="186" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">phức tạp: thấp</text>
-
     <rect x="132" y="100" width="108" height="106" rx="7" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="186" y="118" font-weight="700" text-anchor="middle" fill="currentColor">Pilot light</text>
     <text x="186" y="132" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">(cold standby)</text>
     <text x="186" y="156" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">RTO 10-30 phút</text>
     <text x="186" y="170" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">RPO phút</text>
     <text x="186" y="194" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">phức tạp: TB</text>
-
     <rect x="248" y="114" width="108" height="92" rx="7" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="302" y="132" font-weight="700" text-anchor="middle" fill="currentColor">Warm standby</text>
     <text x="302" y="158" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">RTO vài phút</text>
     <text x="302" y="172" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">RPO giây</text>
     <text x="302" y="194" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">phức tạp: TB</text>
-
     <rect x="364" y="128" width="108" height="78" rx="7" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="418" y="146" font-weight="700" text-anchor="middle" fill="currentColor">Active-passive</text>
     <text x="418" y="160" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">(read in DR)</text>
     <text x="418" y="180" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">RTO vài phút</text>
     <text x="418" y="194" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">phức tạp: TB</text>
-
     <rect x="480" y="142" width="108" height="64" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="534" y="158" font-size="9.5" font-weight="700" text-anchor="middle" fill="currentColor">Active-active</text>
     <text x="534" y="170" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">single-writer</text>
     <text x="534" y="186" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">RTO/RPO giây</text>
     <text x="534" y="199" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.6">phức tạp: cao</text>
-
     <rect x="596" y="156" width="108" height="50" rx="7" fill="#8b5cf6" fill-opacity="0.18" stroke="#8b5cf6" stroke-opacity="0.8" stroke-width="1.5"/>
     <text x="650" y="172" font-size="9.5" font-weight="700" text-anchor="middle" fill="currentColor">Active-active</text>
     <text x="650" y="184" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">multi-writer (LWW)</text>

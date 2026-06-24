@@ -29,22 +29,17 @@ Junior cấu hình ALB → EC2. Bật SG chỉ cho phép `0.0.0.0/0 → 443`. De
   <title>VPC isolation theo tier — Public, Private và Database subnet</title>
   <desc>Internet qua Internet Gateway vào Public subnet chứa ALB, NAT Gateway, Bastion. Public subnet nối xuống Private subnet (App tier EC2/ECS/Lambda ENI), App tier nối xuống Database subnet (RDS, ElastiCache) không có đường ra internet. Traffic ra ngoài của App tier đi qua NAT Gateway.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">VPC isolation theo tier — cô lập theo lớp subnet</text>
-
   <defs>
     <marker id="vpcArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <rect x="240" y="36" width="240" height="32" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="360" y="56" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Internet — 0.0.0.0/0</text>
   <line x1="360" y1="68" x2="360" y2="86" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#vpcArr)"/>
   <rect x="285" y="86" width="150" height="26" rx="13" fill="#f59e0b" fill-opacity="0.9"/>
   <text x="360" y="104" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">Internet Gateway</text>
-
   <rect x="20" y="122" width="680" height="218" rx="12" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="34" y="142" font-size="12" font-weight="700" fill="currentColor" opacity="0.75">VPC</text>
-
   <line x1="360" y1="112" x2="360" y2="150" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#vpcArr)"/>
-
   <rect x="40" y="150" width="640" height="50" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="52" y="170" font-size="12.5" font-weight="700" fill="currentColor">Public subnet — route → IGW</text>
   <rect x="430" y="160" width="78" height="30" rx="7" fill="#3b82f6" fill-opacity="0.85"/>
@@ -53,14 +48,12 @@ Junior cấu hình ALB → EC2. Bật SG chỉ cho phép `0.0.0.0/0 → 443`. De
   <text x="555" y="179" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">NAT GW</text>
   <rect x="602" y="160" width="66" height="30" rx="7" fill="#3b82f6" fill-opacity="0.85"/>
   <text x="635" y="179" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">Bastion</text>
-
   <line x1="200" y1="200" x2="200" y2="222" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#vpcArr)"/>
   <rect x="40" y="222" width="640" height="50" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="52" y="242" font-size="12.5" font-weight="700" fill="currentColor">Private subnet — no IGW</text>
   <text x="52" y="260" font-size="10.5" fill="currentColor" opacity="0.7">App tier: EC2 / ECS / Lambda ENI — ra internet qua NAT GW</text>
   <line x1="560" y1="222" x2="560" y2="200" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="4 3" marker-end="url(#vpcArr)"/>
   <text x="600" y="216" font-size="9.5" fill="currentColor" opacity="0.7">egress qua NAT</text>
-
   <line x1="200" y1="272" x2="200" y2="294" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#vpcArr)"/>
   <rect x="40" y="294" width="640" height="50" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="52" y="314" font-size="12.5" font-weight="700" fill="currentColor">Database subnet — no IGW, no route to public</text>
@@ -118,36 +111,27 @@ Vì NACL stateless, return traffic phải allow port range. Linux dùng port 327
   <title>Chuỗi SG-to-SG reference — ALB SG, App SG, DB SG</title>
   <desc>Internet gửi 443 vào ALB SG. ALB SG là nguồn cho App SG inbound 8080. App SG là nguồn cho DB SG inbound 5432. Mỗi Security Group tham chiếu SG đứng trước thay vì IP, nên khi ALB scale-out IP mới tự được chấp nhận.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">SG-to-SG reference — tham chiếu SG thay vì IP</text>
-
   <defs>
     <marker id="sgArr" markerWidth="11" markerHeight="11" refX="9" refY="3.2" orient="auto"><path d="M0 0 L9 3.2 L0 6.4 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <rect x="16" y="60" width="120" height="56" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="76" y="84" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Internet</text>
   <text x="76" y="102" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">0.0.0.0/0</text>
-
   <line x1="136" y1="88" x2="178" y2="88" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#sgArr)"/>
   <text x="157" y="80" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">443</text>
-
   <rect x="182" y="60" width="152" height="56" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="258" y="84" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">ALB SG</text>
   <text x="258" y="102" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">in 443 from internet</text>
-
   <line x1="334" y1="88" x2="378" y2="88" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#sgArr)"/>
   <text x="356" y="80" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">8080</text>
-
   <rect x="382" y="60" width="152" height="56" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="458" y="84" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">App SG</text>
   <text x="458" y="102" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">in 8080 from ALB SG</text>
-
   <line x1="534" y1="88" x2="578" y2="88" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#sgArr)"/>
   <text x="556" y="80" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">5432</text>
-
   <rect x="582" y="60" width="122" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="643" y="84" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">DB SG</text>
   <text x="643" y="102" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">in 5432 from App SG</text>
-
   <text x="16" y="158" font-size="11" fill="currentColor" opacity="0.8">Mỗi SG nhận nguồn là SG đứng trước (không phải IP).</text>
   <text x="16" y="176" font-size="11" fill="currentColor" opacity="0.8">→ ALB scale-out: IP mới tự được App SG chấp nhận, không cần update IP list.</text>
 </svg>
@@ -306,33 +290,25 @@ Nhắc lại trong context: GuardDuty phân tích VPC Flow Logs + DNS Logs + Clo
   <title>Defense in depth — các lớp đồng tâm bảo vệ data, từ ngoài vào trong</title>
   <desc>Các lớp phòng thủ bao bọc đồng tâm. Vòng ngoài cùng là Route 53 DNS firewall chặn DNS tunneling và exfil; tiếp đến CloudFront với Shield và WAF chặn DDoS và OWASP L7 (SQLi/XSS); rồi ALB với Security Group chặn IP/port lạ; rồi App EC2 với Security Group chỉ nhận từ ALB SG chặn lateral access; lõi trong cùng là RDS với Security Group và KMS chặn truy cập trực tiếp và lộ data lúc nghỉ. Mũi tên request độc hại đâm từ ngoài vào, mỗi lớp chặn một class attack riêng; lớp nào trong mất thì breach tới đó.</desc>
   <text x="360" y="22" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Defense in depth — các lớp đồng tâm, từ ngoài vào trong</text>
-
   <defs>
     <marker id="didArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="#ef4444"/></marker>
   </defs>
-
   <rect x="40"  y="44"  width="640" height="316" rx="16" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
   <rect x="86"  y="78"  width="548" height="270" rx="15" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
   <rect x="132" y="112" width="456" height="216" rx="14" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
   <rect x="178" y="146" width="364" height="156" rx="13" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
   <rect x="224" y="186" width="272" height="84"  rx="12" fill="#f59e0b" fill-opacity="0.2"  stroke="currentColor" stroke-opacity="0.4"/>
-
   <text x="360" y="64" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Route 53 DNS firewall</text>
   <text x="666" y="64" font-size="10" text-anchor="end" fill="currentColor" opacity="0.75">DNS tunneling / exfil</text>
-
   <text x="360" y="98" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">CloudFront — Shield + WAF</text>
   <text x="620" y="98" font-size="10" text-anchor="end" fill="currentColor" opacity="0.75">DDoS + OWASP L7</text>
-
   <text x="360" y="132" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">ALB — Security Group</text>
   <text x="574" y="132" font-size="10" text-anchor="end" fill="currentColor" opacity="0.75">IP/port lạ</text>
-
   <text x="360" y="166" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">App EC2 — Security Group</text>
   <text x="528" y="166" font-size="10" text-anchor="end" fill="currentColor" opacity="0.75">lateral access</text>
-
   <text x="360" y="222" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">RDS — Security Group + KMS</text>
   <text x="360" y="240" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">lõi: data được bảo vệ</text>
   <text x="360" y="256" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">chặn truy cập trực tiếp + lộ data lúc nghỉ</text>
-
   <line x1="6" y1="228" x2="218" y2="228" stroke="#ef4444" stroke-width="2" marker-end="url(#didArr)"/>
   <text x="10" y="218" font-size="11" font-weight="700" fill="#ef4444">request độc hại</text>
   <text x="360" y="376" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">lớp nào trong mất → breach tới đó · mỗi lớp chặn 1 class attack</text>

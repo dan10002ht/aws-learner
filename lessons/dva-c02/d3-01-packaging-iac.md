@@ -8,11 +8,9 @@ Domain 3 (Deployment) chiếm ~25% đề DVA-C02. Phần này xoay quanh một c
   <title>Cả ba cách viết IaC đều hội tụ về CloudFormation rồi mới deploy</title>
   <desc>CDK (code) qua cdk synth, SAM (template.yaml) qua transform, và CloudFormation YAML/JSON trực tiếp — cả ba đều cho ra một CloudFormation template, đưa vào CloudFormation engine và tạo ra resource AWS thật.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Ba cách viết IaC → cùng hội tụ về CloudFormation</text>
-
   <defs>
     <marker id="iacArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <g>
     <rect x="16" y="46" width="184" height="50" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="28" y="68" font-size="12.5" font-weight="700" fill="currentColor">CDK</text>
@@ -28,7 +26,6 @@ Domain 3 (Deployment) chiếm ~25% đề DVA-C02. Phần này xoay quanh một c
     <text x="28" y="208" font-size="12.5" font-weight="700" fill="currentColor">CloudFormation</text>
     <text x="28" y="226" font-size="10.5" fill="currentColor" opacity="0.7">YAML / JSON</text>
   </g>
-
   <g font-size="10.5" fill="currentColor" opacity="0.8">
     <path d="M200 71 H300 V134 H332" fill="none" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#iacArr)"/>
     <text x="214" y="65">cdk synth</text>
@@ -37,17 +34,13 @@ Domain 3 (Deployment) chiếm ~25% đề DVA-C02. Phần này xoay quanh một c
     <path d="M200 211 H300 V148 H332" fill="none" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#iacArr)"/>
     <text x="214" y="205">trực tiếp</text>
   </g>
-
   <rect x="338" y="116" width="160" height="50" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="418" y="138" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">CloudFormation</text>
   <text x="418" y="156" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">template (CFN)</text>
-
   <path d="M498 141 H530" fill="none" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#iacArr)"/>
-
   <rect x="536" y="110" width="168" height="62" rx="9" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.28"/>
   <text x="620" y="136" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">CloudFormation</text>
   <text x="620" y="153" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">engine (deploy)</text>
-
   <path d="M620 172 V202" fill="none" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#iacArr)"/>
   <rect x="520" y="208" width="200" height="44" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.28"/>
   <text x="620" y="235" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Resource AWS thật</text>
@@ -350,28 +343,22 @@ AppConfig kiểm tra config trước khi áp (JSON Schema validator hoặc Lambd
   <title>AppConfig rollout an toàn — phơi config dần ra host, có validator và alarm để tự rollback</title>
   <desc>Configuration profile qua deployment strategy canary hoặc linear phơi config dần cho các host; trước khi áp có validator (JSON schema hoặc Lambda); trong lúc rollout CloudWatch alarm giám sát, nếu lỗi tăng thì tự rollback — tất cả không cần redeploy app.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">AppConfig — rollout config dần + tự rollback (không redeploy app)</text>
-
   <defs>
     <marker id="acArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <rect x="16" y="44" width="170" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="28" y="68" font-size="12" font-weight="700" fill="currentColor">Configuration</text>
   <text x="28" y="84" font-size="12" font-weight="700" fill="currentColor">profile</text>
   <text x="28" y="100" font-size="10" fill="currentColor" opacity="0.65">feature flag / freeform</text>
-
   <rect x="16" y="124" width="170" height="54" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="28" y="148" font-size="12" font-weight="700" fill="currentColor">Validator</text>
   <text x="28" y="166" font-size="10" fill="currentColor" opacity="0.68">JSON schema / Lambda</text>
   <path d="M101 124 V100" fill="none" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#acArr)"/>
   <text x="108" y="116" font-size="9.5" fill="currentColor" opacity="0.7">kiểm trước</text>
-
   <path d="M186 72 H236" fill="none" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#acArr)"/>
-
   <rect x="242" y="44" width="206" height="234" rx="11" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="345" y="66" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Deployment strategy</text>
   <text x="345" y="83" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">canary / linear — phơi dần</text>
-
   <g>
     <rect x="262" y="98" width="166" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="274" y="118" font-size="10.5" fill="currentColor">Bước 1: 10% host</text>
@@ -382,24 +369,20 @@ AppConfig kiểm tra config trước khi áp (JSON Schema validator hoặc Lambd
   </g>
   <path d="M345 128 V134" fill="none" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#acArr)"/>
   <path d="M345 164 V170" fill="none" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#acArr)"/>
-
   <rect x="262" y="216" width="166" height="48" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.24"/>
   <text x="345" y="236" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">CloudWatch alarm</text>
   <text x="345" y="252" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">giám sát lỗi trong lúc rollout</text>
   <path d="M345 200 V216" fill="none" stroke="currentColor" stroke-opacity="0.45"/>
-
   <path d="M448 130 H504" fill="none" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#acArr)"/>
   <text x="456" y="124" font-size="9.5" fill="#10b981" opacity="0.95">OK →</text>
   <rect x="510" y="100" width="194" height="58" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.26"/>
   <text x="607" y="125" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Áp 100% — xong</text>
   <text x="607" y="143" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">app đọc config mới live</text>
-
   <path d="M448 240 H504" fill="none" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#acArr)"/>
   <text x="452" y="234" font-size="9.5" fill="#f59e0b" opacity="0.95" font-weight="700">alarm kêu →</text>
   <rect x="510" y="212" width="194" height="58" rx="9" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="607" y="237" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Tự ROLLBACK</text>
   <text x="607" y="255" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">về config cũ, không downtime</text>
-
   <text x="16" y="316" font-size="10.5" fill="currentColor" opacity="0.72">Toàn bộ vòng này diễn ra mà KHÔNG cần redeploy Lambda/app — chỉ đổi config runtime.</text>
 </svg>
 

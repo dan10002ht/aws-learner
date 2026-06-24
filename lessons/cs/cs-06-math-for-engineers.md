@@ -166,7 +166,6 @@ index = hash(key) % bucket_count
   <text x="180" y="26" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Modulo % N — thêm node</text>
   <text x="540" y="26" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Consistent hashing — thêm node</text>
   <line x1="360" y1="44" x2="360" y2="320" stroke="currentColor" stroke-opacity="0.25"/>
-
   <text x="40" y="62" font-size="11" fill="currentColor" opacity="0.7">Trước: hash(key) % 4</text>
   <g font-size="11">
     <rect x="40" y="72" width="28" height="22" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="54" y="87" text-anchor="middle" fill="currentColor">0</text>
@@ -184,7 +183,6 @@ index = hash(key) % bucket_count
   </g>
   <text x="40" y="205" font-size="13" font-weight="700" fill="currentColor">~100% key phải di chuyển</text>
   <text x="40" y="226" font-size="11" fill="currentColor" opacity="0.7">→ bão cache miss, dời gần hết dữ liệu</text>
-
   <circle cx="540" cy="170" r="95" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-width="2"/>
   <g>
     <circle cx="540" cy="75" r="11" fill="#3b82f6" fill-opacity="0.85"/><text x="540" y="79" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">N1</text>
@@ -218,7 +216,6 @@ Graph chỉ gồm **node** (đỉnh) và **edge** (cạnh nối hai node). Nghe 
   <text x="180" y="26" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Directed graph (có chu trình)</text>
   <text x="540" y="26" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">DAG (không chu trình)</text>
   <line x1="360" y1="44" x2="360" y2="300" stroke="currentColor" stroke-opacity="0.25"/>
-
   <g stroke="currentColor" stroke-opacity="0.6" stroke-width="1.6" fill="none" marker-end="url(#arrow)">
     <path d="M115 95 L245 95"/>
     <path d="M255 120 L150 215"/>
@@ -231,7 +228,6 @@ Graph chỉ gồm **node** (đỉnh) và **edge** (cạnh nối hai node). Nghe 
   </g>
   <text x="180" y="92" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">follow</text>
   <text x="270" y="290" font-size="10.5" text-anchor="middle" fill="#ef4444">A→B→C→A: cycle!</text>
-
   <g stroke="currentColor" stroke-opacity="0.6" stroke-width="1.6" fill="none" marker-end="url(#arrow)">
     <path d="M540 117 L470 165"/>
     <path d="M540 117 L610 165"/>
@@ -246,7 +242,6 @@ Graph chỉ gồm **node** (đỉnh) và **edge** (cạnh nối hai node). Nghe 
   </g>
   <text x="478" y="138" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">import</text>
   <text x="540" y="305" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">topological sort chạy được</text>
-
   <text x="360" y="318" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">edge = quan hệ: bạn bè · follow · import module · gọi service · foreign key</text>
 </svg>
 

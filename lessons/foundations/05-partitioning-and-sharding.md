@@ -36,7 +36,6 @@ Replication (bài 03) **không** giải quyết 1 & 2. Replication chỉ làm nh
   <title>Partition so với Replication và cách kết hợp cả hai</title>
   <desc>Replication nhân bản toàn bộ dataset thành nhiều copy giống nhau; Partition chia dataset thành nhiều phần, mỗi node giữ một phần; hệ lớn dùng cả hai: chia thành nhiều partition rồi mỗi partition lại nhân ra 3 replica.</desc>
   <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Partition vs Replication vs Cả hai</text>
-
   <text x="120" y="58" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Replication</text>
   <text x="120" y="74" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">nhân bản — cùng kích thước</text>
   <g>
@@ -48,7 +47,6 @@ Replication (bài 03) **không** giải quyết 1 & 2. Replication chỉ làm nh
     <text x="120" y="188" font-size="11" text-anchor="middle" fill="currentColor">copy 3 · A B C D</text>
   </g>
   <text x="120" y="220" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">→ giải availability, KHÔNG giải storage/throughput</text>
-
   <text x="360" y="58" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Partition</text>
   <text x="360" y="74" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">chia nhỏ — mỗi node 1 phần</text>
   <g>
@@ -60,7 +58,6 @@ Replication (bài 03) **không** giải quyết 1 & 2. Replication chỉ làm nh
     <text x="360" y="188" font-size="11" text-anchor="middle" fill="currentColor">node 3 · C D</text>
   </g>
   <text x="360" y="220" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">→ giải storage + throughput</text>
-
   <text x="600" y="58" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Cả hai (DynamoDB)</text>
   <text x="600" y="74" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">partition × replicate</text>
   <g>
@@ -72,7 +69,6 @@ Replication (bài 03) **không** giải quyết 1 & 2. Replication chỉ làm nh
     <text x="600" y="174" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">3 replica của B</text>
   </g>
   <text x="600" y="220" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">→ vừa scale vừa bền</text>
-
   <text x="360" y="252" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">A B C D = 4 phần của cùng 1 dataset</text>
   <line x1="40" y1="268" x2="700" y2="268" stroke="currentColor" stroke-opacity="0.15"/>
   <text x="360" y="292" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">Replication chỉ tạo nhiều bản y hệt → vẫn cùng size. Partition mới cắt dataset ra.</text>
@@ -147,27 +143,22 @@ Nếu 1 PK chiếm > 1000 WCU/s → **throttle**, dù tổng capacity của tabl
   <desc>Bên trái thiết kế xấu PK bằng logs hoặc date làm mọi write dồn vào một partition, vượt giới hạn 1000 WCU mỗi giây và bị throttle dù các partition khác còn trống. Bên phải thiết kế tốt PK phân tán đều như userId hoặc date#shardId làm write trải đều, không partition nào vượt giới hạn.</desc>
   <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Hot partition — phân bố write lệch vs đều</text>
   <text x="704" y="24" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.6">giới hạn: 1000 WCU/s mỗi partition</text>
-
   <text x="180" y="54" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ef4444">✗ PK = "logs" / date — lệch</text>
   <g>
     <rect x="40" y="180" width="60" height="60" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="70" y="258" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">P1</text>
     <text x="70" y="215" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.5">~0</text>
-
     <rect x="120" y="74" width="60" height="166" rx="5" fill="#ef4444" fill-opacity="0.22" stroke="#ef4444" stroke-opacity="0.6"/>
     <text x="150" y="258" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">P2</text>
     <text x="150" y="68" font-size="10" font-weight="700" text-anchor="middle" fill="#ef4444">THROTTLE</text>
     <text x="150" y="160" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">1M/s</text>
-
     <rect x="200" y="180" width="60" height="60" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="230" y="258" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">P3</text>
     <text x="230" y="215" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.5">~0</text>
   </g>
   <line x1="40" y1="74" x2="260" y2="74" stroke="#ef4444" stroke-opacity="0.7" stroke-dasharray="5 4"/>
   <text x="150" y="284" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">tổng còn dư, vẫn throttle ở P2</text>
-
   <line x1="360" y1="60" x2="360" y2="290" stroke="currentColor" stroke-opacity="0.15"/>
-
   <text x="540" y="54" font-size="12.5" font-weight="700" text-anchor="middle" fill="#10b981">✓ PK = userId / date#shard — đều</text>
   <g>
     <rect x="420" y="160" width="44" height="80" rx="5" fill="#10b981" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.25"/>
@@ -255,7 +246,6 @@ Khi dataset tăng → cần thêm partition. Có 2 cách:
   <title>Consistent hashing ring với virtual node so với mod N</title>
   <desc>Bên trái mod N rehash toàn bộ key khi thêm node, hầu hết key phải di chuyển. Bên phải consistent hashing ring: key đi theo chiều kim đồng hồ tới node gần nhất; mỗi node có nhiều virtual node trải đều trên ring nên thêm node D chỉ kéo một phần nhỏ key từ các node lân cận, phần còn lại đứng yên.</desc>
   <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Consistent hashing + virtual nodes</text>
-
   <text x="150" y="50" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ef4444">mod N — thêm node = rehash hết</text>
   <g font-size="10.5">
     <text x="20" y="80" fill="currentColor" opacity="0.75">N=3:  key → hash % 3</text>
@@ -274,14 +264,11 @@ Khi dataset tăng → cần thêm partition. Có 2 cách:
     <text x="242" y="175" text-anchor="middle" fill="currentColor">k3 → n3</text>
   </g>
   <text x="150" y="210" font-size="10.5" text-anchor="middle" fill="#ef4444">hầu như MỌI key phải đổi node</text>
-
   <line x1="320" y1="44" x2="320" y2="356" stroke="currentColor" stroke-opacity="0.15"/>
-
   <text x="530" y="50" font-size="12.5" font-weight="700" text-anchor="middle" fill="#10b981">ring — thêm D chỉ động 1 phần</text>
   <circle cx="530" cy="200" r="100" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-width="2"/>
   <text x="530" y="200" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.45">key đi theo</text>
   <text x="530" y="214" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.45">chiều kim đồng hồ</text>
-
   <g>
     <circle cx="530" cy="100" r="9" fill="#3b82f6" fill-opacity="0.9"/>
     <text x="530" y="86" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">A</text>
@@ -296,12 +283,10 @@ Khi dataset tăng → cần thêm partition. Có 2 cách:
     <circle cx="448" cy="222" r="9" fill="#8b5cf6" fill-opacity="0.9"/>
     <text x="430" y="226" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">C</text>
   </g>
-
   <circle cx="555" cy="298" r="10" fill="#f59e0b" fill-opacity="0.95"/>
   <text x="555" y="302" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">D</text>
   <path d="M610 250 A 95 95 0 0 1 568 295" fill="none" stroke="#f59e0b" stroke-width="3"/>
   <text x="525" y="345" font-size="10.5" text-anchor="middle" fill="#f59e0b">D thêm vào → chỉ kéo key của cung này</text>
-
   <g font-size="10" opacity="0.8">
     <text x="530" y="372" text-anchor="middle" fill="currentColor">A, B, C đều có 2 virtual node → trải đều, các key còn lại đứng yên</text>
   </g>

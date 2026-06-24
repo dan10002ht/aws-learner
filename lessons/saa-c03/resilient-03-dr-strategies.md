@@ -24,7 +24,6 @@ AWS định nghĩa 4 cấp độ. Hãy hình dung một thanh trượt: bên tr�
   <title>Thang 4 chiến lược DR — chi phí tăng dần, RTO/RPO giảm dần</title>
   <desc>Bốn cột song song từ trái sang phải: Backup và Restore, Pilot Light, Warm Standby, Multi-Site Active-Active. Sang phải thì chi phí tăng dần và RTO/RPO giảm dần; trạng thái compute ở DR region lần lượt là không có, tắt, chạy nhỏ, chạy đầy đủ active.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">4 chiến lược DR — trượt từ rẻ/chậm sang đắt/nhanh</text>
-
   <g>
     <rect x="16" y="44" width="160" height="150" rx="10" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="96" y="66" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Backup &amp; Restore</text>
@@ -61,7 +60,6 @@ AWS định nghĩa 4 cấp độ. Hãy hình dung một thanh trượt: bên tr�
     <text x="624" y="138" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">Chi phí: $$$$</text>
     <text x="624" y="170" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">cả 2 region nhận traffic</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.4" fill="none">
     <line x1="176" y1="119" x2="192" y2="119" marker-end="url(#drArr)"/>
     <line x1="352" y1="119" x2="368" y2="119" marker-end="url(#drArr)"/>
@@ -70,12 +68,10 @@ AWS định nghĩa 4 cấp độ. Hãy hình dung một thanh trượt: bên tr�
   <defs>
     <marker id="drArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <line x1="16" y1="240" x2="704" y2="240" stroke="currentColor" stroke-opacity="0.35" marker-end="url(#drArr)"/>
   <text x="16" y="232" font-size="11" fill="currentColor" opacity="0.8">Chi phí tăng dần →</text>
   <line x1="704" y1="276" x2="16" y2="276" stroke="currentColor" stroke-opacity="0.35" marker-end="url(#drArr)"/>
   <text x="704" y="268" font-size="11" text-anchor="end" fill="currentColor" opacity="0.8">← RTO/RPO giảm dần</text>
-
   <text x="16" y="312" font-size="11" fill="currentColor" opacity="0.7">Trái: rẻ nhất, RTO/RPO cao (giờ) — DR region gần như trống.</text>
   <text x="16" y="332" font-size="11" fill="currentColor" opacity="0.7">Phải: đắt nhất, RTO/RPO ~ 0 — DR region chạy production thật.</text>
 </svg>
@@ -205,17 +201,14 @@ Route 53 là "công tắc traffic" chuyển hướng người dùng từ Region 
   <title>Route 53 Failover sang DR region</title>
   <desc>app.example.com trong Route 53 với failover routing: bản ghi Primary trỏ tới ALB us-east-1 có health check HTTP 200; khi primary unhealthy, Route 53 chuyển traffic sang bản ghi Secondary trỏ tới ALB eu-west-1 ở region khác.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Route 53 Failover sang DR region</text>
-
   <defs>
     <marker id="r53Arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <g>
     <rect x="24" y="110" width="170" height="64" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="109" y="138" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Route 53</text>
     <text x="109" y="157" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">app.example.com</text>
   </g>
-
   <g>
     <rect x="430" y="44" width="266" height="66" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
     <rect x="446" y="56" width="64" height="20" rx="10" fill="#10b981" fill-opacity="0.9"/>
@@ -223,7 +216,6 @@ Route 53 là "công tắc traffic" chuyển hướng người dùng từ Region 
     <text x="520" y="71" font-size="11.5" font-weight="700" fill="currentColor">ALB · us-east-1</text>
     <text x="446" y="95" font-size="10.5" fill="currentColor" opacity="0.78">health check: HTTP 200 / — khỏe</text>
   </g>
-
   <g>
     <rect x="430" y="160" width="266" height="66" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
     <rect x="446" y="172" width="78" height="20" rx="10" fill="#f59e0b" fill-opacity="0.9"/>
@@ -231,14 +223,12 @@ Route 53 là "công tắc traffic" chuyển hướng người dùng từ Region 
     <text x="534" y="187" font-size="11.5" font-weight="700" fill="currentColor">ALB · eu-west-1</text>
     <text x="446" y="211" font-size="10.5" fill="currentColor" opacity="0.78">kích hoạt khi primary unhealthy</text>
   </g>
-
   <g fill="none">
     <path d="M194 134 C 320 120, 340 90, 430 80" stroke="#10b981" stroke-opacity="0.7" stroke-width="2" marker-end="url(#r53Arr)"/>
     <path d="M194 150 C 320 175, 340 200, 430 193" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="5 4" marker-end="url(#r53Arr)"/>
   </g>
   <text x="300" y="96" font-size="10.5" fill="#10b981" opacity="0.95" font-weight="700">khỏe → primary</text>
   <text x="300" y="216" font-size="10.5" fill="currentColor" opacity="0.7">unhealthy → secondary</text>
-
   <text x="24" y="264" font-size="11" fill="currentColor" opacity="0.7">Thiếu health check ở primary → Route 53 không biết primary chết → không failover.</text>
   <text x="24" y="284" font-size="11" fill="currentColor" opacity="0.7">TTL thấp (vd 60s) → client cập nhật bản ghi mới nhanh, failover nhanh.</text>
 </svg>

@@ -200,11 +200,9 @@ Sơ đồ dưới thể hiện luồng 3 chặng và cơ chế dark mode chỉ "
   <title>Design token 2 tầng và cơ chế đổi theme dark mode</title>
   <desc>Token nguyên thuỷ (blue-600, gray-900) được token ngữ nghĩa (color-primary, color-bg, color-text) trỏ vào; component chỉ tiêu thụ tầng ngữ nghĩa. Khi class dark xuất hiện trên html, chỉ tầng ngữ nghĩa được gán lại giá trị nên mọi component tự đổi màu mà không sửa dòng nào.</desc>
   <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Token 2 tầng → component, và cách dark mode gán lại biến</text>
-
   <text x="86" y="58" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.75">Tầng 1 — Nguyên thuỷ</text>
   <text x="320" y="58" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.75">Tầng 2 — Ngữ nghĩa</text>
   <text x="615" y="58" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.75">Component</text>
-
   <g>
     <rect x="16" y="72" width="140" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="86" y="93" font-size="12" text-anchor="middle" fill="currentColor">--blue-600 = #2563eb</text>
@@ -213,7 +211,6 @@ Sơ đồ dưới thể hiện luồng 3 chặng và cơ chế dark mode chỉ "
     <rect x="16" y="156" width="140" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="86" y="177" font-size="12" text-anchor="middle" fill="currentColor">--white = #ffffff</text>
   </g>
-
   <g>
     <rect x="246" y="72" width="148" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="320" y="93" font-size="12" text-anchor="middle" fill="currentColor">--color-primary</text>
@@ -222,14 +219,12 @@ Sơ đồ dưới thể hiện luồng 3 chặng và cơ chế dark mode chỉ "
     <rect x="246" y="156" width="148" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="320" y="177" font-size="12" text-anchor="middle" fill="currentColor">--color-bg</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.5" fill="none">
     <path d="M246 89 H156" marker-end="url(#ar)"/>
     <path d="M246 131 H156" marker-end="url(#ar)"/>
     <path d="M246 173 H156" marker-end="url(#ar)"/>
   </g>
   <text x="201" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">trỏ vào</text>
-
   <g>
     <rect x="500" y="100" width="204" height="62" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="602" y="124" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">&lt;Button&gt;</text>
@@ -240,10 +235,8 @@ Sơ đồ dưới thể hiện luồng 3 chặng và cơ chế dark mode chỉ "
     <path d="M394 100 Q450 100 450 131 T500 131" marker-end="url(#ar)"/>
   </g>
   <text x="447" y="96" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">tiêu thụ</text>
-
   <line x1="16" y1="222" x2="704" y2="222" stroke="currentColor" stroke-opacity="0.15"/>
   <text x="16" y="252" font-size="13" font-weight="700" fill="currentColor">Đổi theme = chỉ gán lại tầng ngữ nghĩa</text>
-
   <g>
     <rect x="16" y="268" width="200" height="120" rx="10" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="116" y="290" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">:root  (sáng)</text>
@@ -251,12 +244,10 @@ Sơ đồ dưới thể hiện luồng 3 chặng và cơ chế dark mode chỉ "
     <text x="116" y="332" font-size="11.5" text-anchor="middle" fill="currentColor">--color-text = --gray-900</text>
     <text x="116" y="368" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">nền sáng · chữ tối</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.5" fill="none">
     <path d="M216 328 H300" marker-end="url(#ar)"/>
   </g>
   <text x="258" y="320" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">.dark trên &lt;html&gt;</text>
-
   <g>
     <rect x="300" y="268" width="200" height="120" rx="10" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="400" y="290" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">.dark  (tối)</text>
@@ -264,18 +255,15 @@ Sơ đồ dưới thể hiện luồng 3 chặng và cơ chế dark mode chỉ "
     <text x="400" y="332" font-size="11.5" text-anchor="middle" fill="currentColor">--color-text = #f3f4f6</text>
     <text x="400" y="368" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">nền tối · chữ sáng</text>
   </g>
-
   <g stroke="currentColor" stroke-opacity="0.5" fill="none">
     <path d="M500 328 H584" marker-end="url(#ar)"/>
   </g>
-
   <g>
     <rect x="584" y="298" width="120" height="60" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="644" y="324" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Component</text>
     <text x="644" y="343" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">tự đổi màu</text>
   </g>
   <text x="644" y="378" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">không sửa 1 dòng</text>
-
   <defs>
     <marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
       <path d="M0 0 L6 3 L0 6 Z" fill="currentColor" fill-opacity="0.6"/>

@@ -11,11 +11,9 @@ Ta dùng monorepo đã chốt ở bài 1: `apps/api` (BE), `apps/web` (FE), `pac
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Sơ đồ luồng tổng quan TaskShare — FE, BE, DB và type dùng chung</title>
   <desc>apps/web (React+TS, React Query, axios interceptor) gọi HTTP+JSON kèm Authorization Bearer JWT tới apps/api (Express, zod, JWT middleware, Prisma), apps/api dùng SQL tới PostgreSQL. packages/shared là type dùng chung cho cả FE và BE. Port localhost: FE 5173, BE 4000, DB 5432.</desc>
-
   <defs>
     <marker id="flowArr" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0 0 L8 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <rect x="20" y="56" width="190" height="120" rx="11" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="32" y="80" font-size="13" font-weight="700" fill="currentColor">apps/web (Vite)</text>
   <text x="32" y="100" font-size="11" fill="currentColor" opacity="0.78">React + TS</text>
@@ -24,7 +22,6 @@ Ta dùng monorepo đã chốt ở bài 1: `apps/api` (BE), `apps/web` (FE), `pac
   <text x="32" y="154" font-size="11" fill="currentColor" opacity="0.78">axios (interceptor)</text>
   <rect x="32" y="162" width="120" height="0" />
   <text x="115" y="200" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.62">localhost:5173</text>
-
   <rect x="266" y="56" width="190" height="120" rx="11" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="278" y="80" font-size="13" font-weight="700" fill="currentColor">apps/api (Express+TS)</text>
   <text x="278" y="100" font-size="11" fill="currentColor" opacity="0.78">/auth /me /projects</text>
@@ -32,7 +29,6 @@ Ta dùng monorepo đã chốt ở bài 1: `apps/api` (BE), `apps/web` (FE), `pac
   <text x="278" y="136" font-size="11" fill="currentColor" opacity="0.78">zod validate, JWT mw</text>
   <text x="278" y="154" font-size="11" fill="currentColor" opacity="0.78">Prisma ORM</text>
   <text x="361" y="200" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.62">localhost:4000</text>
-
   <rect x="512" y="56" width="186" height="120" rx="11" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="524" y="80" font-size="13" font-weight="700" fill="currentColor">PostgreSQL</text>
   <text x="524" y="100" font-size="11" fill="currentColor" opacity="0.78">users</text>
@@ -40,16 +36,13 @@ Ta dùng monorepo đã chốt ở bài 1: `apps/api` (BE), `apps/web` (FE), `pac
   <text x="524" y="136" font-size="11" fill="currentColor" opacity="0.78">project_members</text>
   <text x="524" y="154" font-size="11" fill="currentColor" opacity="0.78">tasks</text>
   <text x="605" y="200" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.62">localhost:5432</text>
-
   <line x1="210" y1="98" x2="264" y2="98" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#flowArr)"/>
   <line x1="266" y1="128" x2="212" y2="128" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#flowArr)"/>
   <text x="238" y="40" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">HTTP + JSON</text>
   <text x="238" y="52" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.62">CORS · Bearer JWT</text>
-
   <line x1="456" y1="98" x2="510" y2="98" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#flowArr)"/>
   <line x1="512" y1="128" x2="458" y2="128" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#flowArr)"/>
   <text x="484" y="50" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">SQL (Prisma)</text>
-
   <rect x="120" y="238" width="480" height="44" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="360" y="257" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">packages/shared</text>
   <text x="360" y="274" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">type Task · Project · DTO — dùng chung FE + BE (đỏ đèn compile-time cả hai bên)</text>
@@ -340,36 +333,27 @@ FE chạy `localhost:5173`, BE `localhost:4000` → **khác origin** → browser
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>CORS preflight — chuỗi trao đổi giữa Browser và Backend theo thời gian</title>
   <desc>Browser ở localhost:5173 gửi OPTIONS preflight tới Backend ở localhost:4000; Backend trả Access-Control-Allow-Origin, Allow-Methods, Allow-Headers; sau đó Browser mới gửi request thật kèm header Authorization và Backend trả dữ liệu. Thời gian đi từ trên xuống.</desc>
-
   <defs>
     <marker id="corsArr" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0 0 L8 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <rect x="60" y="20" width="200" height="40" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="160" y="38" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Browser</text>
   <text x="160" y="53" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">localhost:5173</text>
-
   <rect x="460" y="20" width="200" height="40" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="560" y="38" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Backend (BE)</text>
   <text x="560" y="53" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">localhost:4000</text>
-
   <line x1="160" y1="60" x2="160" y2="288" stroke="currentColor" stroke-opacity="0.28" stroke-dasharray="3 4"/>
   <line x1="560" y1="60" x2="560" y2="288" stroke="currentColor" stroke-opacity="0.28" stroke-dasharray="3 4"/>
-
   <line x1="160" y1="96" x2="558" y2="96" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#corsArr)"/>
   <text x="360" y="89" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">preflight: OPTIONS (Origin, Access-Control-Request-*)</text>
-
   <line x1="560" y1="136" x2="162" y2="136" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#corsArr)"/>
   <text x="360" y="129" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Access-Control-Allow-Origin: http://localhost:5173</text>
   <line x1="560" y1="166" x2="162" y2="166" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#corsArr)"/>
   <text x="360" y="159" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Allow-Methods / Allow-Headers</text>
-
   <line x1="160" y1="220" x2="558" y2="220" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#corsArr)"/>
   <text x="360" y="213" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">request thật (kèm Authorization: Bearer …)</text>
-
   <line x1="560" y1="260" x2="162" y2="260" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#corsArr)"/>
   <text x="360" y="253" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">200 + dữ liệu JSON</text>
-
   <text x="64" y="192" font-size="10" fill="currentColor" opacity="0.6">— browser duyệt header OK rồi mới gửi tiếp —</text>
 </svg>
 
@@ -465,39 +449,31 @@ Trước khi đọc code, đây là **vòng đời của token** phía FE — m�
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Vòng đời token phía Frontend — máy trạng thái chu kỳ kín</title>
   <desc>Máy trạng thái của token. Trạng thái Chưa đăng nhập (chưa có token), khi login thành công chuyển sang Đã lưu token, hợp lệ. Khi token hết hạn 30 phút thì BE trả 401, chuyển sang Hết hạn hoặc không hợp lệ. Response interceptor dọn token và redirect về /login, đưa về lại trạng thái Chưa đăng nhập — tạo thành vòng kín. ProtectedRoute là guard rẽ nhánh theo state có token hợp lệ hay không.</desc>
-
   <defs>
     <marker id="authArr" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0 0 L8 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <!-- State: chưa có token -->
   <rect x="40" y="44" width="220" height="58" rx="14" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="150" y="69" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Chưa đăng nhập</text>
   <text x="150" y="88" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">localStorage: không có token</text>
-
   <!-- State: hợp lệ -->
   <rect x="460" y="44" width="220" height="58" rx="14" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="570" y="69" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Đã lưu token · hợp lệ</text>
   <text x="570" y="88" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">setItem("token") · gắn Bearer</text>
-
   <!-- State: hết hạn -->
   <rect x="460" y="240" width="220" height="58" rx="14" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
   <text x="570" y="265" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Hết hạn · không hợp lệ</text>
   <text x="570" y="284" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">request kế tiếp bị từ chối</text>
-
   <!-- transition: login thành công -->
   <line x1="260" y1="73" x2="458" y2="73" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#authArr)"/>
   <text x="359" y="64" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.78">login thành công (POST /auth/login)</text>
-
   <!-- transition: hết hạn -> 401 -->
   <line x1="570" y1="102" x2="570" y2="238" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#authArr)"/>
   <text x="578" y="160" font-size="10.5" fill="currentColor" opacity="0.78">hết hạn 30m</text>
   <text x="578" y="176" font-size="10.5" fill="currentColor" opacity="0.78">→ BE trả 401</text>
-
   <!-- transition: interceptor dọn token + redirect -> chưa đăng nhập -->
   <path d="M460 269 H150 V104" fill="none" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#authArr)"/>
   <text x="305" y="261" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.78">response interceptor: removeItem("token") → redirect /login</text>
-
   <!-- ProtectedRoute guard -->
   <rect x="40" y="332" width="640" height="52" rx="12" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.28" stroke-dasharray="5 3"/>
   <text x="58" y="354" font-size="12" font-weight="700" fill="currentColor">ProtectedRoute (guard)</text>

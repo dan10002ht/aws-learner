@@ -156,11 +156,9 @@ Giải pháp là cho hàm **trả về** (return) kết quả — giống như b
   <title>Hàm như một hộp đen: đối số vào, giá trị return ra</title>
   <desc>Hai đối số donGia và soLuong đi vào hộp hàm tinhTien ở bên trái; bên trong hộp xử lý donGia nhân soLuong; giá trị tiền return đi ra ở bên phải.</desc>
   <text x="16" y="26" font-size="14" font-weight="700" fill="currentColor">Hàm = hộp đen: đối số đi vào → xử lý → kết quả đi ra</text>
-
   <defs>
     <marker id="fnArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
-
   <g>
     <rect x="16" y="62" width="150" height="36" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="91" y="85" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">donGia = 50000</text>
@@ -168,10 +166,8 @@ Giải pháp là cho hàm **trả về** (return) kết quả — giống như b
     <text x="91" y="143" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">soLuong = 2</text>
     <text x="91" y="48" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">đối số (đầu vào)</text>
   </g>
-
   <line x1="170" y1="80" x2="270" y2="98" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#fnArr)"/>
   <line x1="170" y1="138" x2="270" y2="120" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#fnArr)"/>
-
   <g>
     <rect x="276" y="56" width="200" height="106" rx="12" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="376" y="84" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">tinhTien( )</text>
@@ -179,16 +175,13 @@ Giải pháp là cho hàm **trả về** (return) kết quả — giống như b
     <text x="376" y="125" font-size="12" text-anchor="middle" fill="currentColor">donGia × soLuong</text>
     <text x="376" y="48" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">bên trong: xử lý</text>
   </g>
-
   <line x1="476" y1="109" x2="566" y2="109" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#fnArr)"/>
   <text x="521" y="100" font-size="11" text-anchor="middle" fill="#10b981" opacity="0.95" font-weight="700">return</text>
-
   <g>
     <rect x="572" y="90" width="132" height="38" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="638" y="114" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">100000</text>
     <text x="638" y="78" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">giá trị trả ra</text>
   </g>
-
   <text x="360" y="200" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.72">In ra chỉ "khoe" kết quả cho người xem; return "đưa tận tay" kết quả cho chương trình dùng tiếp.</text>
 </svg>
 
@@ -310,13 +303,11 @@ Vậy tại sao không cho mọi biến ra "sảnh chung" cho tiện? Vì khi ch
   <title>Scope như các căn phòng riêng: biến cục bộ trong phòng, biến toàn cục ở sảnh chung</title>
   <desc>Một sảnh chung chứa biến toàn cục mà mọi phòng đều thấy. Hai căn phòng riêng tinhThue và tinhTien, mỗi phòng có biến cục bộ chỉ dùng được bên trong phòng đó; nhìn từ ngoài phòng không thấy biến cục bộ.</desc>
   <text x="16" y="26" font-size="14" font-weight="700" fill="currentColor">Scope = các căn phòng riêng; sảnh chung là biến toàn cục</text>
-
   <rect x="16" y="40" width="688" height="62" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="32" y="63" font-size="12.5" font-weight="700" fill="currentColor">SẢNH CHUNG — biến toàn cục</text>
   <rect x="32" y="70" width="170" height="24" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="117" y="87" font-size="11.5" text-anchor="middle" fill="currentColor">TI_GIA = 25000</text>
   <text x="240" y="87" font-size="11.5" fill="currentColor" opacity="0.78">phòng nào cũng nhìn thấy được</text>
-
   <g>
     <rect x="16" y="120" width="334" height="150" rx="11" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.28"/>
     <text x="32" y="144" font-size="13" font-weight="700" fill="currentColor">Phòng tinhThue( )</text>
@@ -325,7 +316,6 @@ Vậy tại sao không cho mọi biến ra "sảnh chung" cho tiện? Vì khi ch
     <text x="40" y="208" font-size="11" fill="currentColor" opacity="0.78">✓ thấy thue và TI_GIA</text>
     <text x="40" y="228" font-size="11" fill="currentColor" opacity="0.78">✗ KHÔNG thấy biến của phòng kia</text>
   </g>
-
   <g>
     <rect x="370" y="120" width="334" height="150" rx="11" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.28"/>
     <text x="386" y="144" font-size="13" font-weight="700" fill="currentColor">Phòng tinhTien( )</text>
@@ -334,7 +324,6 @@ Vậy tại sao không cho mọi biến ra "sảnh chung" cho tiện? Vì khi ch
     <text x="394" y="208" font-size="11" fill="currentColor" opacity="0.78">✓ thấy tong và TI_GIA</text>
     <text x="394" y="228" font-size="11" fill="currentColor" opacity="0.78">✗ KHÔNG thấy thue của phòng kia</text>
   </g>
-
   <text x="360" y="285" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.72">Hai phòng có thể trùng tên biến mà không "đụng hàng" — như hai phòng đều có ghế tên "ghế của tôi".</text>
 </svg>
 
@@ -440,34 +429,28 @@ Hãy để ý `tinhHoaDon` đọc lên **gần như văn xuôi**: tính tiền h
   <title>Cây gọi hàm: tinhHoaDon chỉ huy tinhTienHang và tinhThue</title>
   <desc>Hàm lớn tinhHoaDon ở trên cùng gọi hai hàm nhỏ tinhTienHang và tinhThue ở dưới; mỗi hàm nhỏ làm một việc, hàm lớn ghép kết quả lại. Hình cây minh hoạ xây tháp từ những viên gạch.</desc>
   <text x="16" y="26" font-size="14" font-weight="700" fill="currentColor">Cây gọi hàm: hàm lớn chỉ huy các hàm nhỏ</text>
-
   <defs>
     <marker id="treeArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
-
   <g>
     <rect x="270" y="48" width="180" height="48" rx="11" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="360" y="70" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">tinhHoaDon( )</text>
     <text x="360" y="88" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">hàm lớn — chỉ huy</text>
   </g>
-
   <path d="M310 96 C 250 130, 200 140, 165 160" stroke="currentColor" stroke-opacity="0.5" fill="none" marker-end="url(#treeArr)"/>
   <path d="M410 96 C 470 130, 520 140, 555 160" stroke="currentColor" stroke-opacity="0.5" fill="none" marker-end="url(#treeArr)"/>
   <text x="220" y="128" font-size="10.5" fill="currentColor" opacity="0.7">gọi</text>
   <text x="488" y="128" font-size="10.5" fill="currentColor" opacity="0.7">gọi</text>
-
   <g>
     <rect x="60" y="166" width="200" height="48" rx="11" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.28"/>
     <text x="160" y="188" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">tinhTienHang( )</text>
     <text x="160" y="206" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">donGia × soLuong</text>
   </g>
-
   <g>
     <rect x="460" y="166" width="200" height="48" rx="11" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.28"/>
     <text x="560" y="188" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">tinhThue( )</text>
     <text x="560" y="206" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">tien × 0.1</text>
   </g>
-
   <text x="360" y="252" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.78">Mỗi hàm nhỏ làm một việc; ghép lại thành hàm lớn — xây tháp từ những viên gạch.</text>
 </svg>
 

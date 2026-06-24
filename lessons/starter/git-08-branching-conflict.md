@@ -70,7 +70,6 @@ Versioning nhiều bản   kém           kém           tốt
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>So sánh topology ba chiến lược branching: Trunk-based, GitHub Flow, GitFlow</title>
   <desc>Ba sơ đồ commit graph xếp chồng. Trunk-based: một nhánh main duy nhất với các branch sống cực ngắn merge nhanh. GitHub Flow: main luôn deployable với vài feature branch ngắn. GitFlow: nhiều nhánh dài hạn main, develop, release, feature, hotfix nhiều tầng.</desc>
-
   <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">Trunk-based — 1 nhánh, branch siêu ngắn</text>
   <g stroke="currentColor" fill="none">
     <line x1="40" y1="58" x2="690" y2="58" stroke-opacity="0.9" stroke-width="2"/>
@@ -84,7 +83,6 @@ Versioning nhiều bản   kém           kém           tốt
     <circle cx="228" cy="80" r="5"/><circle cx="264" cy="80" r="5"/><circle cx="500" cy="78" r="5"/>
   </g>
   <text x="40" y="100" font-size="10.5" fill="currentColor" opacity="0.7">main (trunk) — ai cũng merge vào liên tục; branch xanh sống vài giờ</text>
-
   <text x="16" y="148" font-size="13.5" font-weight="700" fill="currentColor">GitHub Flow — main + feature ngắn qua PR</text>
   <g stroke="currentColor" fill="none">
     <line x1="40" y1="184" x2="690" y2="184" stroke-opacity="0.9" stroke-width="2"/>
@@ -99,7 +97,6 @@ Versioning nhiều bản   kém           kém           tốt
   <text x="252" y="161" font-size="10" fill="currentColor" opacity="0.7">feat-a</text>
   <text x="552" y="161" font-size="10" fill="currentColor" opacity="0.7">feat-login</text>
   <text x="40" y="212" font-size="10.5" fill="currentColor" opacity="0.7">main luôn deployable — mỗi việc 1 feature branch → PR → merge → deploy</text>
-
   <text x="16" y="260" font-size="13.5" font-weight="700" fill="currentColor">GitFlow — nhiều nhánh dài hạn nhiều tầng</text>
   <g font-size="10.5" fill="currentColor" opacity="0.75">
     <text x="16" y="300">main</text>
@@ -266,13 +263,11 @@ Bố cục 3-way (3 panel) cần hiểu:
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Bố cục 3-way merge của mergetool: ours, BASE, theirs hội tụ về kết quả</title>
   <desc>Ba panel trên cùng: ours là HEAD, BASE là tổ tiên chung ở giữa được nhấn mạnh, theirs là nhánh kia. Cả ba mũi tên hội tụ xuống panel kết quả là file bạn lưu. BASE giúp biết mỗi bên đã đổi gì so với gốc.</desc>
-
   <g>
     <rect x="20" y="40" width="190" height="70" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="115" y="66" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">ours (HEAD)</text>
     <text x="115" y="90" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">phía nhánh bạn đang đứng</text>
   </g>
-
   <g>
     <rect x="262" y="34" width="196" height="82" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.5"/>
     <rect x="278" y="48" width="62" height="20" rx="10" fill="#f59e0b" fill-opacity="0.95"/>
@@ -280,13 +275,11 @@ Bố cục 3-way (3 panel) cần hiểu:
     <text x="360" y="63" font-size="12.5" font-weight="700" fill="currentColor">tổ tiên chung</text>
     <text x="360" y="98" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">bản trước khi hai bên rẽ nhánh</text>
   </g>
-
   <g>
     <rect x="510" y="40" width="190" height="70" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="605" y="66" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">theirs</text>
     <text x="605" y="90" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">phía nhánh kia</text>
   </g>
-
   <defs>
     <marker id="mtArr" markerWidth="11" markerHeight="11" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor" fill-opacity="0.55"/></marker>
   </defs>
@@ -296,7 +289,6 @@ Bố cục 3-way (3 panel) cần hiểu:
     <path d="M605 110 C 605 180, 420 180, 372 210" marker-end="url(#mtArr)"/>
   </g>
   <text x="360" y="162" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">so BASE để biết mỗi bên đổi gì</text>
-
   <g>
     <rect x="220" y="216" width="280" height="74" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="360" y="246" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">KẾT QUẢ</text>
