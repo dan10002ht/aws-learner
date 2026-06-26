@@ -1,4 +1,4 @@
-# Bài 13 — Deploy & Operate trong AWS (CLI / SDK / Console / IaC / Systems Manager)
+# Bài 14 — Deploy & Operate trong AWS (CLI / SDK / Console / IaC / Systems Manager)
 
 > Map exam: **CLF-C02 Task 3.1 — Define methods of deploying and operating in the AWS Cloud**.
 

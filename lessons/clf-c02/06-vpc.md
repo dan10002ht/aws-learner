@@ -1,4 +1,4 @@
-# Bài 6 — VPC (Virtual Private Cloud) & Networking cơ bản
+# Bài 10 — VPC (Virtual Private Cloud) & Networking cơ bản
 
 ## 1. Mục tiêu
 Sau bài này bạn có thể:

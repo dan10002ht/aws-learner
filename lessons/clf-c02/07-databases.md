@@ -1,4 +1,4 @@
-# Bài 7 — Databases trên AWS
+# Bài 11 — Databases trên AWS
 
 ## 1. Mục tiêu
 Sau bài này bạn có thể:

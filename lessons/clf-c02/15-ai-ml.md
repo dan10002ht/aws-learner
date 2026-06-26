@@ -1,4 +1,4 @@
-# Bài 15 — AI/ML Services trên AWS
+# Bài 16 — AI/ML Services trên AWS
 
 > Map exam: **CLF-C02 Task 3.7 — Identify AWS AI/ML services**. Đề CLF chỉ hỏi **nhận diện service nào giải bài toán nào** — không hỏi code/model.
 

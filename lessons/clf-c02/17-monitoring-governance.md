@@ -1,4 +1,4 @@
-# Bài 17 — Monitoring & Governance (CloudWatch, CloudTrail, Config, Trusted Advisor, Organizations, Control Tower, Service Catalog, …)
+# Bài 6 — Monitoring & Governance (CloudWatch, CloudTrail, Config, Trusted Advisor, Organizations, Control Tower, Service Catalog, …)
 
 > Map exam: **CLF-C02 Task 2.2 (governance/compliance/logging), Task 4.3 (Trusted Advisor/Health), và Management & Governance category**.
 
@@ -294,7 +294,7 @@ Sau bài này bạn có thể:
 
 ### 2.16 AWS Well-Architected Tool
 
-- Đã đề cập ở Bài 9.
+- Đã đề cập ở Bài 2.
 - Self-assess workload theo 6 pillar, output HRI/MRI improvement plan.
 
 ---

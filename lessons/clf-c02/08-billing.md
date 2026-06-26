@@ -1,4 +1,4 @@
-# Bài 8 — Billing, Pricing, Support & Management Tools
+# Bài 18 — Billing, Pricing, Support & Management Tools
 
 ## 1. Mục tiêu
 Sau bài này bạn có thể:

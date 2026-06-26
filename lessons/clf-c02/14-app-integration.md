@@ -1,4 +1,4 @@
-# Bài 14 — Application Integration (SNS, SQS, EventBridge, Step Functions)
+# Bài 15 — Application Integration (SNS, SQS, EventBridge, Step Functions)
 
 > Map exam: **CLF-C02 Task 3.8 — Identify services from other in-scope AWS service categories (Application Integration)**. Đề CLF rất hay hỏi pattern "decouple".
 

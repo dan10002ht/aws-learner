@@ -1,4 +1,4 @@
-# Bài 16 — Analytics Services (Athena, Glue, EMR, Kinesis, MSK, OpenSearch, QuickSight, Redshift, Data Exchange)
+# Bài 17 — Analytics Services (Athena, Glue, EMR, Kinesis, MSK, OpenSearch, QuickSight, Redshift, Data Exchange)
 
 > Map exam: **CLF-C02 Task 3.7 — Identify AWS analytics services**.
 

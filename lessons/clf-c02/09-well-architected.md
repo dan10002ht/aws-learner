@@ -1,4 +1,4 @@
-# Bài 9 — AWS Well-Architected Framework (6 Pillars)
+# Bài 2 — AWS Well-Architected Framework (6 Pillars)
 
 > Map exam: **CLF-C02 Task 1.2 — Identify design principles of the AWS Cloud**.
 

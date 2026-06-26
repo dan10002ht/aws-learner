@@ -1,6 +1,6 @@
-# Bài 18 — Security mở rộng (KMS, Secrets Manager, ACM, Cognito, Directory Service, WAF/Shield, GuardDuty, Inspector, Macie, Detective, Security Hub, Network Firewall, Firewall Manager, RAM, Artifact)
+# Bài 7 — Security mở rộng (KMS, Secrets Manager, ACM, Cognito, Directory Service, WAF/Shield, GuardDuty, Inspector, Macie, Detective, Security Hub, Network Firewall, Firewall Manager, RAM, Artifact)
 
-> Map exam: **CLF-C02 Task 2.2 + 2.4 + 2.3**. Bài 3 đã học IAM. Bài 6 đã học SG/NACL. Bài này phủ phần còn lại của Security category.
+> Map exam: **CLF-C02 Task 2.2 + 2.4 + 2.3**. Bài 5 đã học IAM. Bài 10 đã học SG/NACL. Bài này phủ phần còn lại của Security category.
 
 ## 1. Mục tiêu
 Sau bài này bạn có thể:

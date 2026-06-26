@@ -1,6 +1,6 @@
-# Bài 12 — Storage mở rộng (EBS, EFS, FSx, Instance Store, Storage Gateway, Backup, DRS)
+# Bài 13 — Storage mở rộng (EBS, EFS, FSx, Instance Store, Storage Gateway, Backup, DRS)
 
-> Map exam: **CLF-C02 Task 3.6 — Identify AWS storage services**. Bài 5 đã học S3 sâu. Bài này phủ block / file / hybrid / backup storage.
+> Map exam: **CLF-C02 Task 3.6 — Identify AWS storage services**. Bài 9 đã học S3 sâu. Bài này phủ block / file / hybrid / backup storage.
 
 ## 1. Mục tiêu
 Sau bài này bạn có thể:

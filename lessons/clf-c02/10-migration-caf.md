@@ -1,4 +1,4 @@
-# Bài 10 — Migration to AWS & Cloud Adoption Framework (CAF)
+# Bài 3 — Migration to AWS & Cloud Adoption Framework (CAF)
 
 > Map exam: **CLF-C02 Task 1.3 — Understand the benefits of and strategies for migration to the AWS Cloud**.
 > **Đây là task MỚI thêm vào CLF-C02 so với CLF-C01** → tỷ lệ ra đề cao.

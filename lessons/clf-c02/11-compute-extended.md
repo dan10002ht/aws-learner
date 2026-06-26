@@ -1,6 +1,6 @@
-# Bài 11 — Compute mở rộng (Containers, Lambda, Beanstalk, Auto Scaling, ELB)
+# Bài 12 — Compute mở rộng (Containers, Lambda, Beanstalk, Auto Scaling, ELB)
 
-> Map exam: **CLF-C02 Task 3.3 — Identify AWS compute services**. Bài 4 đã học EC2 (instance, pricing). Bài này phủ phần còn lại của task 3.3.
+> Map exam: **CLF-C02 Task 3.3 — Identify AWS compute services**. Bài 8 đã học EC2 (instance, pricing). Bài này phủ phần còn lại của task 3.3.
 
 ## 1. Mục tiêu
 Sau bài này bạn có thể:

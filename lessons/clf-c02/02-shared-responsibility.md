@@ -1,4 +1,4 @@
-# Bài 2 — Shared Responsibility Model
+# Bài 4 — Shared Responsibility Model
 
 ## 1. Mục tiêu
 Sau bài này bạn có thể:
