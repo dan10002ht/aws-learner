@@ -2803,12 +2803,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một kiến trúc sư phân loại các thành phần của AWS global infrastructure theo mục đích sử dụng. Phát biểu nào dưới đây mô tả ĐÚNG mối quan hệ và vai trò của chúng?",
+    "question": "An architect classifies the components of AWS global infrastructure by purpose. Which of the following statements CORRECTLY describes their relationship and role?",
     "options": [
-      "Một Region chứa nhiều Availability Zones cách ly để đạt HA, còn Edge Location nằm phân tán toàn cầu để phục vụ nội dung độ trễ thấp",
-      "Một Availability Zone chứa nhiều Region, và mỗi Region là một Edge Location",
-      "Edge Location chứa nhiều Availability Zones, dùng để chạy cơ sở dữ liệu chính",
-      "Một Region chỉ gồm đúng một Availability Zone, và HA đạt được bằng cách dùng nhiều Edge Location"
+      "A Region contains multiple isolated Availability Zones to achieve HA, while Edge Locations are distributed globally to serve content with low latency",
+      "An Availability Zone contains multiple Regions, and each Region is an Edge Location",
+      "Edge Locations contain multiple Availability Zones and are used to run primary databases",
+      "A Region consists of exactly one Availability Zone, and HA is achieved by using multiple Edge Locations"
     ],
     "correctIndices": [
       0
@@ -2826,11 +2826,11 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty muốn chạy ứng dụng web truyền thống trên máy ảo, có toàn quyền kiểm soát hệ điều hành và lựa chọn cấu hình CPU/RAM linh hoạt. Dịch vụ AWS nào phù hợp nhất?",
+    "question": "A company wants to run a traditional web application on a virtual machine with full OS control and flexible CPU/RAM configuration. Which AWS service is most suitable?",
     "options": [
-      "Amazon EC2",
+      "Amazon EC2 with Auto Scaling",
       "AWS Lambda",
-      "Amazon S3",
+      "Amazon S3 to run application code",
       "Amazon RDS"
     ],
     "correctIndices": [
@@ -2849,12 +2849,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một ứng dụng phân tích dữ liệu in-memory cần lượng RAM rất lớn so với CPU để xử lý các tập dữ liệu khổng lồ trong bộ nhớ. Họ nên chọn EC2 instance family nào?",
+    "question": "An in-memory data analytics application needs extremely high RAM relative to CPU to process massive datasets in memory. Which EC2 instance family should be chosen?",
     "options": [
-      "Memory optimized (ví dụ R family)",
-      "Compute optimized (ví dụ C family)",
-      "Storage optimized (ví dụ I family)",
-      "General purpose (ví dụ T family)"
+      "Memory optimized (e.g., R family)",
+      "Compute optimized (e.g., C family)",
+      "Storage optimized (e.g., I family)",
+      "General purpose (e.g., T family)"
     ],
     "correctIndices": [
       0
@@ -2872,7 +2872,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một nhóm khoa học cần chạy mô phỏng HPC và mã hóa video đòi hỏi hiệu năng CPU cao liên tục, trong khi nhu cầu RAM ở mức vừa phải. EC2 instance family nào phù hợp nhất?",
+    "question": "A scientific team needs to run HPC simulations and video encoding requiring high sustained CPU performance, while RAM needs are moderate. Which EC2 instance family is most suitable?",
     "options": [
       "Compute optimized (C family)",
       "Memory optimized (X family)",
@@ -2895,7 +2895,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty triển khai data warehouse cần truy cập tuần tự thông lượng cao tới hàng chục TB dữ liệu trên đĩa cục bộ với chi phí trên mỗi GB thấp. EC2 instance family nào phù hợp nhất?",
+    "question": "A company deploying a data warehouse needs high sequential throughput access to tens of TB of data on local disk with low per-GB cost. Which EC2 instance family is most suitable?",
     "options": [
       "Storage optimized (D family)",
       "Compute optimized (C family)",
@@ -2918,12 +2918,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một startup muốn chạy hàm xử lý ảnh kích hoạt mỗi khi người dùng upload ảnh lên S3, không muốn quản lý hay vận hành bất kỳ máy chủ nào và chỉ trả tiền theo thời gian chạy. Giải pháp nào phù hợp nhất?",
+    "question": "A startup wants to run image processing functions triggered each time a user uploads an image to S3, without managing any servers and paying only for execution time. Which solution is most suitable?",
     "options": [
       "AWS Lambda",
-      "Amazon EC2 với Auto Scaling",
-      "Amazon ECS trên EC2",
-      "AWS Batch trên EC2"
+      "Amazon EC2 with Auto Scaling",
+      "Amazon ECS on EC2",
+      "AWS Batch on EC2"
     ],
     "correctIndices": [
       0
@@ -2941,12 +2941,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty đã đóng gói ứng dụng thành Docker container và muốn chạy container mà KHÔNG cần quản lý, vá lỗi hay scale các EC2 instance bên dưới. Lựa chọn nào đáp ứng tốt nhất?",
+    "question": "A company has packaged an application as Docker containers and wants to run them WITHOUT managing, patching, or scaling the underlying EC2 instances. Which option best meets this requirement?",
     "options": [
       "AWS Fargate",
-      "Amazon ECS trên EC2 launch type",
-      "Amazon EC2 cài Docker thủ công",
-      "Amazon EKS với managed node group EC2"
+      "Amazon ECS with EC2 launch type",
+      "Amazon EC2 with manually installed Docker",
+      "Amazon EKS with managed EC2 node group"
     ],
     "correctIndices": [
       0
@@ -2964,7 +2964,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một tổ chức đã chuẩn hóa trên Kubernetes và muốn dùng một dịch vụ container orchestration tương thích Kubernetes được AWS quản lý. Dịch vụ nào phù hợp nhất?",
+    "question": "An organization has standardized on Kubernetes and wants to use a Kubernetes-compatible container orchestration service managed by AWS. Which service is most suitable?",
     "options": [
       "Amazon EKS",
       "Amazon ECS",
@@ -2987,7 +2987,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Lưu lượng truy cập của một ứng dụng web tăng cao vào ban ngày và giảm mạnh vào ban đêm. Công ty muốn tự động thêm EC2 khi tải tăng và bớt khi tải giảm để tối ưu chi phí và hiệu năng. Giải pháp nào cung cấp tính elasticity này?",
+    "question": "Web application traffic spikes during the day and drops significantly at night. A company wants to automatically add EC2 instances when load increases and remove them when load decreases to optimize cost and performance. Which solution provides this elasticity?",
     "options": [
       "Amazon EC2 Auto Scaling",
       "Reserved Instances",
@@ -3010,7 +3010,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty chạy nhiều EC2 instance phục vụ cùng một ứng dụng web và cần phân phối lưu lượng đến (incoming traffic) đều giữa các instance, đồng thời ngừng gửi request tới instance bị lỗi. Dịch vụ nào đáp ứng nhu cầu này?",
+    "question": "A company runs multiple EC2 instances serving the same web application and needs to distribute incoming traffic evenly across instances while stopping requests to failed instances. Which service meets this need?",
     "options": [
       "Elastic Load Balancing (ELB)",
       "Amazon Route 53 latency routing",
@@ -3033,13 +3033,13 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Một công ty muốn xây kiến trúc web có khả năng chịu lỗi và co giãn: tự động tăng/giảm số lượng EC2 theo tải, đồng thời phân phối đều request đến các instance đang khỏe mạnh. Họ nên kết hợp những thành phần nào? (Chọn 2)",
+    "question": "A company wants to build a fault-tolerant and elastic web architecture: automatically scale EC2 instances up/down based on load while distributing requests evenly to healthy instances. Which components should be combined? (Select 2)",
     "options": [
       "Amazon EC2 Auto Scaling",
       "Elastic Load Balancing (ELB)",
-      "AWS Lambda thay cho toàn bộ EC2",
-      "Amazon S3 để chạy mã ứng dụng",
-      "Single Dedicated Host duy nhất"
+      "AWS Lambda to replace all EC2",
+      "Amazon S3 to run application code",
+      "Single Dedicated Host only"
     ],
     "correctIndices": [
       0,
@@ -3058,7 +3058,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty đang chạy ứng dụng web cần một relational database fully managed, hỗ trợ MySQL và PostgreSQL engine, đồng thời muốn AWS tự xử lý patching, backup và failover. Dịch vụ nào phù hợp nhất?",
+    "question": "A company running a web application needs a fully managed relational database supporting MySQL and PostgreSQL engines, with AWS handling patching, backup, and failover. Which service is most suitable?",
     "options": [
       "Amazon RDS",
       "Amazon DynamoDB",
@@ -3081,7 +3081,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một ứng dụng gaming cần lưu profile người chơi với độ trễ single-digit millisecond ở quy mô hàng triệu request mỗi giây, không cần schema cố định. Dịch vụ database nào phù hợp nhất?",
+    "question": "A gaming application needs to store player profiles with single-digit millisecond latency at millions of requests per second, without requiring a fixed schema. Which database service is most suitable?",
     "options": [
       "Amazon DynamoDB",
       "Amazon RDS for MySQL",
@@ -3104,12 +3104,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một website thương mại điện tử có cùng một sản phẩm bán chạy bị truy vấn lặp đi lặp lại từ database, gây tải cao và tăng độ trễ. Công ty muốn giảm tải đọc và cải thiện thời gian phản hồi. Giải pháp nào phù hợp nhất?",
+    "question": "An e-commerce website has a best-selling product that is repeatedly queried from the database, causing high load and increased latency. The company wants to reduce read load and improve response time. Which solution is most suitable?",
     "options": [
-      "Thêm Amazon ElastiCache làm lớp in-memory cache trước database",
-      "Chuyển database sang Amazon Redshift",
-      "Bật Multi-AZ deployment cho RDS",
-      "Di chuyển dữ liệu sang Amazon DynamoDB"
+      "Add Amazon ElastiCache as an in-memory cache layer in front of the database",
+      "Migrate database to Amazon Redshift",
+      "Enable Multi-AZ deployment for RDS",
+      "Move data to Amazon DynamoDB"
     ],
     "correctIndices": [
       0
@@ -3127,7 +3127,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty muốn chạy báo cáo phân tích phức tạp (analytics) trên hàng petabyte dữ liệu lịch sử bằng truy vấn SQL, sử dụng columnar storage để tối ưu tốc độ. Dịch vụ nào phù hợp nhất?",
+    "question": "A company wants to run complex analytics reports on petabytes of historical data using SQL queries with columnar storage optimization. Which service is most suitable?",
     "options": [
       "Amazon Redshift",
       "Amazon DynamoDB",
@@ -3150,7 +3150,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty đang di chuyển database Oracle on-premises lên AWS và muốn tối thiểu downtime trong quá trình migration, đồng thời database nguồn vẫn hoạt động. Dịch vụ nào hỗ trợ thực hiện việc này?",
+    "question": "A company is migrating an on-premises Oracle database to AWS and wants minimal downtime during migration while the source database remains operational. Which service supports this?",
     "options": [
       "AWS Database Migration Service (DMS)",
       "AWS Snowball",
@@ -3173,10 +3173,10 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một công ty muốn migrate database từ Oracle sang Amazon Aurora PostgreSQL. Vì engine nguồn và đích khác nhau, họ cần chuyển đổi schema và stored procedures trước khi di chuyển dữ liệu. Công cụ nào phù hợp cho việc chuyển đổi schema này?",
+    "question": "A company wants to migrate from Oracle to Amazon Aurora PostgreSQL. Since the source and target engines are different, they need to convert schema and stored procedures before migrating data. Which tool is suitable for schema conversion?",
     "options": [
       "AWS Schema Conversion Tool (SCT)",
-      "AWS Database Migration Service (DMS) một mình",
+      "AWS Database Migration Service (DMS) alone",
       "Amazon Aurora Serverless",
       "AWS DataSync"
     ],
@@ -3196,13 +3196,13 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Một startup cần một relational database trên AWS với hiệu năng cao, tương thích MySQL/PostgreSQL, sao chép dữ liệu tự động qua nhiều Availability Zone và khả năng tự động scale storage. Những phát biểu nào về Amazon Aurora là ĐÚNG? (Chọn 2)",
+    "question": "A startup needs a high-performance relational database on AWS compatible with MySQL/PostgreSQL, automatically replicating data across multiple Availability Zones with automatic storage scaling. Which statements about Amazon Aurora are TRUE? (Select 2)",
     "options": [
-      "Aurora tương thích với MySQL và PostgreSQL",
-      "Aurora tự động sao chép dữ liệu qua nhiều Availability Zone",
-      "Aurora là dịch vụ NoSQL key-value",
-      "Aurora yêu cầu khách hàng tự quản lý OS patching trên EC2",
-      "Aurora là dịch vụ in-memory cache thay thế ElastiCache"
+      "Aurora is compatible with MySQL and PostgreSQL",
+      "Aurora automatically replicates data across multiple Availability Zones",
+      "Aurora is a NoSQL key-value service",
+      "Aurora requires customers to manage OS patching on EC2",
+      "Aurora is an in-memory cache service replacing ElastiCache"
     ],
     "correctIndices": [
       0,
@@ -3221,12 +3221,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty cần chạy một database engine cũ với phiên bản đặc thù mà Amazon RDS không hỗ trợ, và họ muốn toàn quyền kiểm soát hệ điều hành cũng như cấu hình database. Cách triển khai nào phù hợp nhất?",
+    "question": "A company needs to run an old database engine with a specific version that Amazon RDS doesn't support, and wants full control over the OS and database configuration. Which deployment approach is most suitable?",
     "options": [
-      "Tự cài database trên Amazon EC2",
-      "Sử dụng Amazon RDS",
-      "Sử dụng Amazon DynamoDB",
-      "Sử dụng Amazon Aurora Serverless"
+      "Install database manually on Amazon EC2",
+      "Use Amazon RDS",
+      "Use Amazon DynamoDB",
+      "Use Amazon Aurora Serverless"
     ],
     "correctIndices": [
       0
@@ -3244,12 +3244,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty triển khai web server trong VPC và muốn các instance trong private subnet có thể tải bản cập nhật phần mềm từ Internet, nhưng KHÔNG cho phép kết nối từ Internet vào các instance này. Giải pháp nào phù hợp?",
+    "question": "A company deploying web servers in VPC wants instances in private subnets to download software updates from the Internet but NOT allow inbound connections from the Internet. Which solution is suitable?",
     "options": [
-      "NAT Gateway đặt trong public subnet",
-      "Internet Gateway gắn trực tiếp vào private subnet",
-      "VPC Peering tới một VPC khác",
-      "Direct Connect tới on-premises"
+      "NAT Gateway placed in a public subnet",
+      "Internet Gateway attached directly to private subnet",
+      "VPC Peering to another VPC",
+      "Direct Connect to on-premises"
     ],
     "correctIndices": [
       0
@@ -3267,12 +3267,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một quản trị viên cấu hình security group cho phép inbound HTTPS (port 443). Người dùng phản ánh rằng response trả về vẫn hoạt động bình thường dù không có rule outbound tương ứng. Đặc tính nào của security group giải thích điều này?",
+    "question": "An administrator configures a security group to allow inbound HTTPS (port 443). Users report that responses work normally even without a corresponding outbound rule. Which characteristic of security groups explains this?",
     "options": [
-      "Security group là stateful, tự động cho phép traffic phản hồi của kết nối đã được phép",
-      "Security group là stateless nên cần rule cho cả hai chiều",
-      "Security group đánh giá rule theo thứ tự số (rule number)",
-      "Security group áp dụng ở cấp subnet"
+      "Security groups are stateful and automatically allow return traffic of permitted connections",
+      "Security groups are stateless so rules are needed for both directions",
+      "Security groups evaluate rules by rule number order",
+      "Security groups apply at the subnet level"
     ],
     "correctIndices": [
       0
@@ -3290,7 +3290,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty cần chặn một dải địa chỉ IP độc hại cụ thể ở mức toàn bộ subnet, đồng thời cho phép tất cả traffic khác. Lớp bảo mật nào trong VPC phù hợp nhất để áp dụng quy tắc deny rõ ràng (explicit deny)?",
+    "question": "A company needs to block a specific range of malicious IP addresses at the subnet level while allowing all other traffic. Which VPC security layer is most suitable for applying explicit deny rules?",
     "options": [
       "Network ACL",
       "Security group",
@@ -3313,7 +3313,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một startup muốn đăng ký tên miền cho website và định tuyến lưu lượng người dùng tới Application Load Balancer của mình. Dịch vụ AWS nào cung cấp DNS và đăng ký domain?",
+    "question": "A startup wants to register a domain name for its website and route user traffic to its Application Load Balancer. Which AWS service provides DNS and domain registration?",
     "options": [
       "Amazon Route 53",
       "Amazon CloudFront",
@@ -3336,12 +3336,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty media phục vụ video và hình ảnh tĩnh cho người dùng toàn cầu, muốn giảm độ trễ bằng cách lưu nội dung ở các edge location gần người dùng. Dịch vụ nào phù hợp nhất?",
+    "question": "A media company serving videos and images to global users wants to reduce latency by storing content at edge locations near users. Which service is most suitable?",
     "options": [
       "Amazon CloudFront",
       "Amazon Route 53",
       "AWS Global Accelerator",
-      "Elastic Load Balancing"
+      "Elastic Load Balancing (ELB)"
     ],
     "correctIndices": [
       0
@@ -3359,10 +3359,10 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một ngân hàng cần kết nối on-premises tới AWS với băng thông ổn định, độ trễ thấp nhất quán và không đi qua public Internet để truyền dữ liệu nhạy cảm liên tục. Giải pháp nào đáp ứng tốt nhất?",
+    "question": "A bank needs to connect on-premises to AWS with stable bandwidth, consistently low latency and without going through the public Internet to transmit sensitive data continuously. Which solution best meets this?",
     "options": [
       "AWS Direct Connect",
-      "AWS Site-to-Site VPN qua Internet",
+      "AWS Site-to-Site VPN over the Internet",
       "NAT Gateway",
       "Internet Gateway"
     ],
@@ -3382,13 +3382,13 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "multi",
-    "question": "Một kiến trúc sư so sánh security group và network ACL khi thiết kế VPC. Những phát biểu nào sau đây ĐÚNG? (Chọn 2)",
+    "question": "An architect compares security groups and network ACLs when designing VPC. Which of the following statements are TRUE? (Select 2)",
     "options": [
-      "Security group là stateful và được gắn ở cấp instance/ENI",
-      "Network ACL là stateless và được áp dụng ở cấp subnet",
-      "Security group hỗ trợ cả allow và deny rule",
-      "Network ACL không cần rule cho return traffic vì là stateful",
-      "Security group được đánh giá theo thứ tự rule number"
+      "Security groups are stateful and attached at the instance/ENI level",
+      "Network ACLs are stateless and applied at the subnet level",
+      "Security groups support both allow and deny rules",
+      "Network ACLs don't need return traffic rules because they're stateful",
+      "Security groups are evaluated by rule number order"
     ],
     "correctIndices": [
       0,
@@ -3407,11 +3407,11 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một công ty muốn cải thiện độ sẵn sàng bằng cách triển khai ứng dụng trên hai region và tự động chuyển hướng người dùng sang region khỏe mạnh khi một region gặp sự cố. Tính năng nào của Route 53 hỗ trợ điều này?",
+    "question": "A company wants to improve availability by deploying an application across two regions and automatically redirecting users to the healthy region when one fails. Which Route 53 feature supports this?",
     "options": [
-      "Route 53 health checks kết hợp failover routing policy",
+      "Route 53 health checks combined with failover routing policy",
       "CloudFront origin failover",
-      "VPC Peering giữa hai region",
+      "VPC Peering between two regions",
       "Security group cross-region reference"
     ],
     "correctIndices": [
@@ -3430,7 +3430,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty lưu trữ ảnh sản phẩm được truy cập thường xuyên và cần độ sẵn sàng cao. Họ muốn lưu các object (file) mà không quản lý server. Loại storage nào của AWS phù hợp nhất?",
+    "question": "A company stores product images that are frequently accessed and need high availability. They want to store objects (files) without managing servers. Which AWS storage type is most suitable?",
     "options": [
       "Amazon EBS (block storage)",
       "Amazon S3 (object storage)",
@@ -3453,7 +3453,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty cần lưu dữ liệu backup truy cập rất hiếm (1-2 lần/năm) và chấp nhận thời gian khôi phục tới 12-48 giờ để có chi phí THẤP NHẤT. Storage class nào phù hợp?",
+    "question": "A company needs to store backup data that is accessed very rarely (1-2 times/year) and accepts recovery time up to 12-48 hours for the LOWEST cost. Which storage class is suitable?",
     "options": [
       "S3 Standard",
       "S3 Standard-IA",
@@ -3476,12 +3476,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty có dữ liệu với mẫu truy cập KHÔNG dự đoán được và muốn AWS tự động chuyển dữ liệu giữa các tier để tối ưu chi phí mà không ảnh hưởng hiệu năng. Giải pháp nào phù hợp nhất?",
+    "question": "A company has data with unpredictable access patterns and wants AWS to automatically move data between tiers to optimize cost without impacting performance. Which solution is most suitable?",
     "options": [
-      "S3 Standard và viết script chuyển thủ công",
+      "S3 Standard with manual migration scripts",
       "S3 Intelligent-Tiering",
       "S3 One Zone-IA",
-      "Cấu hình lifecycle chuyển sang Glacier sau 30 ngày"
+      "Configure lifecycle transition to Glacier after 30 days"
     ],
     "correctIndices": [
       1
@@ -3499,7 +3499,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty lưu các bản sao thumbnail có thể tạo lại dễ dàng từ ảnh gốc, ít khi truy cập. Họ muốn giảm chi phí và chấp nhận lưu trong một Availability Zone duy nhất vì dữ liệu không quan trọng. Storage class nào tối ưu chi phí nhất?",
+    "question": "A company stores thumbnail copies that can be easily recreated from the original image and are rarely accessed. They want to reduce costs and accept storing in a single Availability Zone because the data is not critical. Which storage class optimizes cost the most?",
     "options": [
       "S3 Standard",
       "S3 One Zone-IA",
@@ -3522,7 +3522,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty muốn tự động chuyển log sang Standard-IA sau 30 ngày và sang Glacier sau 90 ngày, rồi xóa sau 365 ngày. Tính năng nào của S3 thực hiện điều này?",
+    "question": "A company wants to automatically transition logs to Standard-IA after 30 days and to Glacier after 90 days, then delete after 365 days. Which S3 feature implements this?",
     "options": [
       "S3 Versioning",
       "S3 Lifecycle policy",
@@ -3545,7 +3545,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một ứng dụng database trên EC2 cần một volume lưu trữ block hiệu năng cao, gắn vào instance và tồn tại độc lập khi instance dừng. Dịch vụ nào phù hợp?",
+    "question": "A database application on EC2 needs a high-performance block storage volume attached to the instance that persists independently when the instance is stopped. Which service is appropriate?",
     "options": [
       "Amazon S3",
       "Amazon EBS",
@@ -3568,7 +3568,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Nhiều EC2 instance Linux trong cùng VPC cần đồng thời đọc/ghi vào một file system chung dùng giao thức NFS, tự động co giãn dung lượng. Dịch vụ nào phù hợp nhất?",
+    "question": "Multiple Linux EC2 instances within the same VPC need to simultaneously read/write to a shared file system using the NFS protocol that automatically scales capacity. Which service is most appropriate?",
     "options": [
       "Amazon EBS",
       "Amazon EFS",
@@ -3591,7 +3591,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty chạy ứng dụng Windows yêu cầu file share dùng giao thức SMB và tích hợp Active Directory. Dịch vụ AWS nào phù hợp nhất?",
+    "question": "A company runs a Windows application that requires a file share using the SMB protocol and Active Directory integration. Which AWS service is most appropriate?",
     "options": [
       "Amazon EFS",
       "Amazon FSx for Windows File Server",
@@ -3614,7 +3614,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty có trung tâm dữ liệu on-premises muốn mở rộng lưu trữ lên đám mây một cách liền mạch, để ứng dụng on-prem truy cập lưu trữ AWS qua giao thức file/iSCSI tiêu chuẩn với cache cục bộ. Dịch vụ nào phù hợp?",
+    "question": "A company has an on-premises data center and wants to seamlessly expand storage to the cloud, allowing on-premises applications to access AWS storage via standard file/iSCSI protocols with local caching. Which service is appropriate?",
     "options": [
       "AWS Direct Connect",
       "AWS Storage Gateway",
@@ -3637,13 +3637,13 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Một công ty muốn quản lý backup TẬP TRUNG cho nhiều dịch vụ AWS (EBS, RDS, DynamoDB, EFS) với chính sách thống nhất và tuân thủ compliance. Những phát biểu nào về AWS Backup là ĐÚNG? (Chọn 2)",
+    "question": "A company wants CENTRALIZED backup management for multiple AWS services (EBS, RDS, DynamoDB, EFS) with unified policies and compliance requirements. Which statements about AWS Backup are CORRECT? (Choose 2)",
     "options": [
-      "AWS Backup quản lý và tự động hóa backup tập trung cho nhiều dịch vụ AWS",
-      "AWS Backup cho phép định nghĩa backup plan với lịch và retention áp dụng qua tag",
-      "AWS Backup chỉ hỗ trợ backup cho Amazon EBS",
-      "AWS Backup là một storage class của S3",
-      "AWS Backup thay thế hoàn toàn nhu cầu dùng S3 Versioning"
+      "AWS Backup manages and automates centralized backups for multiple AWS services",
+      "AWS Backup allows defining backup plans with schedules and retention policies applied via tags",
+      "AWS Backup only supports backup for Amazon EBS",
+      "AWS Backup is a storage class of S3",
+      "AWS Backup completely replaces the need for S3 Versioning"
     ],
     "correctIndices": [
       0,
@@ -3662,7 +3662,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty muốn tự động phân tích hình ảnh do người dùng tải lên để phát hiện nội dung không phù hợp (NSFW) và nhận diện đối tượng trong ảnh mà không cần huấn luyện mô hình machine learning. Dịch vụ AWS nào phù hợp nhất?",
+    "question": "A company wants to automatically analyze images uploaded by users to detect inappropriate content (NSFW) and identify objects in images without training a machine learning model. Which AWS service is most appropriate?",
     "options": [
       "Amazon Rekognition",
       "Amazon Comprehend",
@@ -3685,7 +3685,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một ứng dụng đọc sách cần chuyển nội dung văn bản thành giọng nói tự nhiên để người dùng nghe. Dịch vụ AWS nào phù hợp?",
+    "question": "A reading application needs to convert text content to natural-sounding speech so users can listen. Which AWS service is appropriate?",
     "options": [
       "Amazon Polly",
       "Amazon Transcribe",
@@ -3708,7 +3708,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty muốn xây dựng chatbot hỗ trợ khách hàng có khả năng hiểu ngôn ngữ tự nhiên và xử lý hội thoại bằng cả văn bản lẫn giọng nói. Dịch vụ AWS nào nên dùng?",
+    "question": "A company wants to build a chatbot with support for natural language understanding and conversation handling in both text and voice. Which AWS service should be used?",
     "options": [
       "Amazon Lex",
       "Amazon Kendra",
@@ -3731,7 +3731,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một doanh nghiệp có hàng nghìn tài liệu nội bộ và muốn nhân viên tìm kiếm thông tin bằng câu hỏi ngôn ngữ tự nhiên, trả về câu trả lời chính xác thay vì danh sách từ khóa. Dịch vụ AWS nào phù hợp nhất?",
+    "question": "A business has thousands of internal documents and wants employees to search for information using natural language questions, returning accurate answers rather than keyword lists. Which AWS service is most appropriate?",
     "options": [
       "Amazon Kendra",
       "Amazon Lex",
@@ -3754,7 +3754,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một nhóm phân tích muốn chạy truy vấn SQL trực tiếp trên các file log lưu trong Amazon S3 mà không cần tải dữ liệu vào database hay quản lý máy chủ. Dịch vụ nào phù hợp?",
+    "question": "An analytics team wants to run SQL queries directly on log files stored in Amazon S3 without loading data into a database or managing servers. Which service is appropriate?",
     "options": [
       "Amazon Athena",
       "Amazon EMR",
@@ -3777,7 +3777,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty cần xây dựng pipeline ETL serverless để khám phá, chuẩn bị và biến đổi dữ liệu từ nhiều nguồn trước khi nạp vào data warehouse, đồng thời duy trì một data catalog. Dịch vụ AWS nào phù hợp nhất?",
+    "question": "A company needs to build a serverless ETL pipeline to discover, prepare, and transform data from multiple sources before loading into a data warehouse, while maintaining a data catalog. Which AWS service is most appropriate?",
     "options": [
       "AWS Glue",
       "Amazon Kinesis Data Streams",
@@ -3800,7 +3800,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty cần thu thập và xử lý dữ liệu clickstream từ website theo thời gian thực để phân tích hành vi người dùng ngay khi sự kiện xảy ra. Dịch vụ AWS nào phù hợp nhất?",
+    "question": "A company needs to collect and process clickstream data from their website in real-time to analyze user behavior as events occur. Which AWS service is most appropriate?",
     "options": [
       "Amazon Kinesis",
       "AWS Glue",
@@ -3823,7 +3823,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Một công ty muốn xây dựng giải pháp phân tích phản hồi khách hàng đa quốc gia: tự động dịch các đánh giá tiếng nước ngoài sang tiếng Anh, sau đó phân tích cảm xúc (sentiment) và trích xuất thực thể từ văn bản. Những dịch vụ AWS nào nên kết hợp sử dụng? (Chọn 2)",
+    "question": "A company wants to build a solution to analyze multi-national customer feedback: automatically translate foreign-language reviews to English, then analyze sentiment and extract entities from the text. Which AWS services should be combined? (Choose 2)",
     "options": [
       "Amazon Translate",
       "Amazon Comprehend",
@@ -3848,12 +3848,13 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty muốn gửi cùng một thông báo (notification) đến nhiều hệ thống đăng ký (subscribers) cùng lúc theo mô hình pub/sub, ví dụ gửi đồng thời tới email, SMS và một hàng đợi xử lý. Dịch vụ AWS nào phù hợp nhất?",
+    "question": "A company is implementing a highly available web application using EC2 instances in multiple Availability Zones, needs to ensure users can reach at least one healthy instance, and wants automatic failover if an AZ becomes unavailable. How can this architecture be designed? (Choose 2)",
     "options": [
-      "Amazon SNS",
-      "Amazon SQS",
-      "Amazon Connect",
-      "Amazon SES"
+      "Place EC2 instances in different Availability Zones within the same region",
+      "Use an Application Load Balancer across multiple Availability Zones with health checks",
+      "Use a single EC2 instance with high instance type for redundancy",
+      "Rely on Amazon CloudFront to handle multi-AZ failover",
+      "Configure NAT Gateway in each Availability Zone"
     ],
     "correctIndices": [
       0
@@ -3871,12 +3872,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một ứng dụng cần tách rời (decouple) thành phần tiếp nhận đơn hàng với thành phần xử lý đơn hàng, để khi lượng đơn tăng đột biến thì các đơn được đệm lại và xử lý dần, tránh mất dữ liệu khi consumer bận. Giải pháp nào phù hợp nhất?",
+    "question": "A company's website experiences unexpected traffic spikes and needs to scale automatically. They use Application Load Balancer to distribute traffic and want to add/remove EC2 instances automatically when CPU utilization exceeds 70%. Which service enables this?",
     "options": [
-      "Dùng Amazon SQS làm hàng đợi đệm giữa hai thành phần",
-      "Dùng Amazon SNS để push trực tiếp đơn hàng tới consumer",
-      "Dùng Amazon SES để email đơn hàng cho consumer",
-      "Dùng AWS X-Ray để truyền đơn hàng giữa các thành phần"
+      "AWS Auto Scaling",
+      "Amazon CloudWatch only",
+      "Elastic Load Balancing alone",
+      "Amazon Machine Image (AMI) templates"
     ],
     "correctIndices": [
       0
@@ -3894,12 +3895,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty muốn điều phối (route) các sự kiện từ nhiều ứng dụng SaaS và dịch vụ AWS tới các target khác nhau dựa trên quy tắc lọc sự kiện (event rules), để xây dựng kiến trúc hướng sự kiện (event-driven). Dịch vụ nào phù hợp nhất?",
+    "question": "A company wants to consolidate management of network connectivity between multiple VPCs within the same region and an on-premises data center into a central location. Which service enables this central management?",
     "options": [
-      "Amazon EventBridge",
-      "Amazon SQS",
-      "AWS CodePipeline",
-      "Amazon AppStream 2.0"
+      "AWS Transit Gateway",
+      "Amazon VPC Peering",
+      "AWS Direct Connect alone",
+      "Internet Gateway"
     ],
     "correctIndices": [
       0
@@ -3917,12 +3918,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một tổ chức muốn cung cấp cho nhân viên làm việc từ xa các máy tính desktop ảo (virtual desktops) chạy trên đám mây, được quản lý tập trung, có hệ điều hành đầy đủ để họ làm việc hằng ngày. Dịch vụ nào phù hợp nhất?",
+    "question": "A company monitors its AWS infrastructure and wants to receive notifications when CPU utilization on an EC2 instance exceeds 80%, or when database connections reach 1000 on an RDS database. Which service enables these custom monitoring and alerting?",
     "options": [
-      "Amazon WorkSpaces",
-      "Amazon AppStream 2.0",
-      "Amazon Connect",
-      "AWS Amplify"
+      "Amazon CloudWatch",
+      "AWS CloudTrail",
+      "Amazon CloudFront",
+      "AWS Config"
     ],
     "correctIndices": [
       0
@@ -3940,12 +3941,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một startup muốn nhanh chóng xây dựng backend GraphQL có thời gian thực và đồng bộ dữ liệu offline cho ứng dụng mobile, đồng thời lưu trữ và tự động build/deploy phần frontend web. Cặp dịch vụ nào phù hợp nhất cho nhu cầu này?",
+    "question": "A company needs to audit and track all API calls made to AWS services (who called what, when, from where) for compliance purposes, and store the audit logs for 2 years. Which service provides this capability?",
     "options": [
-      "AWS AppSync cho API GraphQL và AWS Amplify cho phát triển/host frontend",
-      "Amazon SQS cho API GraphQL và Amazon SES cho frontend",
-      "AWS X-Ray cho API GraphQL và AWS CodeBuild cho frontend",
-      "Amazon Connect cho API GraphQL và Amazon EventBridge cho frontend"
+      "AWS CloudTrail",
+      "Amazon CloudWatch",
+      "AWS CloudFormation",
+      "Amazon GuardDuty"
     ],
     "correctIndices": [
       0
@@ -3963,13 +3964,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Một nhóm DevOps muốn xây dựng quy trình phát hành phần mềm tự động trên AWS: biên dịch và kiểm thử mã nguồn, sau đó điều phối toàn bộ các giai đoạn build–test–deploy, và cuối cùng phân tích hiệu năng cùng truy vết (trace) request giữa các microservice để gỡ lỗi. Hãy chọn các dịch vụ phù hợp (chọn nhiều).",
+    "question": "A company has hundreds of AWS resources and wants to check if all EC2 instances have encryption enabled and all S3 buckets have versioning enabled across their entire AWS account. Which service helps assess compliance against these rules?",
     "options": [
-      "AWS CodeBuild để biên dịch và chạy kiểm thử mã nguồn",
-      "AWS CodePipeline để điều phối các giai đoạn build–test–deploy",
-      "AWS X-Ray để truy vết và phân tích request giữa các microservice",
-      "Amazon AppStream 2.0 để biên dịch mã nguồn",
-      "Amazon SES để điều phối pipeline phát hành"
+      "AWS Config",
+      "Amazon CloudWatch",
+      "AWS CloudTrail",
+      "Amazon Inspector"
     ],
     "correctIndices": [
       0,
@@ -3989,12 +3989,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty chạy một workload xử lý batch có thể bị gián đoạn (interruptible) và muốn tiết kiệm tối đa chi phí EC2. Công việc không cần chạy liên tục và có thể tự khởi động lại khi bị dừng. Mô hình giá nào phù hợp nhất?",
+    "question": "A company wants to automatically scan EC2 instances for software vulnerabilities (CVE) and security issues without having to manually audit each instance. Which AWS service automates this vulnerability assessment?",
     "options": [
-      "Spot Instances",
-      "On-Demand Instances",
-      "Reserved Instances (3 năm All Upfront)",
-      "Dedicated Hosts"
+      "Amazon Inspector",
+      "AWS WAF",
+      "Amazon GuardDuty",
+      "AWS Macie"
     ],
     "correctIndices": [
       0
@@ -4012,12 +4012,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty chuyển dữ liệu (data ingest) lớn từ trung tâm dữ liệu của họ lên Amazon S3 và lo lắng về chi phí. Họ muốn biết chi phí của lưu lượng data transfer này. Phát biểu nào ĐÚNG?",
+    "question": "A company runs internet-facing web applications and wants to protect them from DDoS attacks and common web exploits (SQL injection, cross-site scripting). Which AWS service filters malicious web traffic?",
     "options": [
-      "Inbound data transfer vào AWS thường miễn phí (free)",
-      "Inbound data transfer vào AWS bị tính phí cao hơn outbound",
-      "Mọi data transfer đều bị tính phí như nhau bất kể chiều",
-      "Data transfer chỉ miễn phí nếu dùng AWS Direct Connect"
+      "AWS WAF",
+      "Amazon GuardDuty",
+      "AWS Shield only",
+      "VPC Security Group only"
     ],
     "correctIndices": [
       0
@@ -4035,12 +4035,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty có workload web ổn định, chạy 24/7 trong nhiều năm và muốn linh hoạt thay đổi giữa nhiều loại instance family, kích thước, OS và Region trong khi vẫn được giảm giá đáng kể so với On-Demand. Lựa chọn nào phù hợp nhất?",
+    "question": "A company continuously analyzes VPC Flow Logs and CloudTrail events to detect unusual API activity and potential unauthorized access patterns in real-time. Which AWS service intelligently detects threats?",
     "options": [
-      "Compute Savings Plans",
-      "Standard Reserved Instances",
-      "Spot Instances",
-      "On-Demand Capacity Reservations"
+      "Amazon GuardDuty",
+      "AWS WAF",
+      "Amazon Inspector",
+      "AWS Macie"
     ],
     "correctIndices": [
       0
@@ -4058,12 +4058,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty dùng AWS Organizations với consolidated billing. Một tài khoản thành viên mua Reserved Instances nhưng không sử dụng hết. Điều gì xảy ra với phần Reserved Instance chưa dùng theo mặc định?",
+    "question": "A company has petabytes of sensitive customer data stored in S3 buckets and wants to automatically discover and catalog personally identifiable information (PII) like credit card numbers and social security numbers. Which AWS service automates this discovery?",
     "options": [
-      "Lợi ích giảm giá có thể được chia sẻ (shared) cho các tài khoản khác trong tổ chức nếu RI sharing được bật",
-      "Phần chưa dùng bị hủy ngay lập tức và hoàn tiền",
-      "Reserved Instance không bao giờ áp dụng được trong Organizations",
-      "Mọi tài khoản phải mua RI riêng, không thể chia sẻ trong mọi trường hợp"
+      "AWS Macie",
+      "Amazon Rekognition",
+      "AWS Secrets Manager",
+      "AWS KMS"
     ],
     "correctIndices": [
       0
@@ -4081,12 +4081,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty có yêu cầu license phần mềm theo socket/core (BYOL) buộc phải chạy trên máy chủ vật lý chuyên dụng và cần khả năng nhìn thấy thông tin phần cứng vật lý để tuân thủ. Giải pháp EC2 nào đáp ứng?",
+    "question": "A company stores database passwords and API keys in AWS and wants to automatically rotate them, control who can access them, and audit access. Which service manages secrets?",
     "options": [
-      "Dedicated Hosts",
-      "Dedicated Instances",
-      "Spot Instances",
-      "On-Demand Capacity Reservations"
+      "AWS Secrets Manager",
+      "AWS Systems Manager Parameter Store only",
+      "IAM Policy Documents",
+      "Environment Variables in EC2 AMI"
     ],
     "correctIndices": [
       0
@@ -4104,12 +4104,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty muốn đảm bảo luôn có đủ năng lực EC2 trong một Availability Zone cụ thể cho sự kiện quan trọng sắp tới, không lo bị thiếu capacity, nhưng KHÔNG bắt buộc cần giảm giá dài hạn. Lựa chọn nào phù hợp nhất?",
+    "question": "A company has sensitive data that must be encrypted both in transit and at rest, and wants AWS to manage encryption keys while maintaining full control over key lifecycle. Which key management service is appropriate?",
     "options": [
-      "On-Demand Capacity Reservations",
-      "Spot Instances",
-      "Compute Savings Plans",
-      "Standard Reserved Instances bán lại trên Marketplace"
+      "AWS Key Management Service (KMS)",
+      "AWS Secrets Manager only",
+      "Amazon S3 Server-Side Encryption with S3-managed keys (SSE-S3)",
+      "SSL/TLS certificates only"
     ],
     "correctIndices": [
       0
@@ -4127,12 +4127,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một kiến trúc sư đặt một EC2 instance ở us-east-1 truy vấn một RDS database ở eu-west-1. Họ nhận thấy hóa đơn data transfer cao. Cách hiệu quả nhất để giảm chi phí data transfer này là gì?",
+    "question": "A company's IAM policy allows users to create, modify, and delete resources, but a manager wants to prevent a user from deleting a critical database even though the policy would normally allow it. Which mechanism enforces this protection?",
     "options": [
-      "Đặt EC2 và RDS trong cùng một Region (và cùng AZ nếu được)",
-      "Chuyển EC2 sang Spot Instances",
-      "Mua Reserved Instances cho EC2",
-      "Bật S3 Intelligent-Tiering"
+      "IAM Permission Boundaries",
+      "Service Control Policies (SCP)",
+      "Resource-based policy tags",
+      "IAM roles only"
     ],
     "correctIndices": [
       0
@@ -4150,13 +4150,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Một công ty đang tối ưu chi phí Amazon S3 cho dữ liệu có pattern truy cập khác nhau. Hãy chọn HAI lựa chọn lưu trữ/tier phù hợp với mô tả về chi phí.",
+    "question": "A large organization has multiple AWS accounts for different departments and wants to enforce organizational policies (like requiring encryption, preventing public S3 access) across all accounts in one place. Which service provides this central governance?",
     "options": [
-      "S3 Glacier Deep Archive có chi phí lưu trữ thấp nhất nhưng thời gian truy xuất dài nhất",
-      "S3 Intelligent-Tiering tự động chuyển object giữa các tier truy cập để tối ưu chi phí mà không cần thao tác thủ công",
-      "S3 Standard có chi phí lưu trữ thấp hơn S3 Glacier Deep Archive",
-      "S3 One Zone-IA luôn đắt hơn S3 Standard do lưu nhiều bản sao hơn",
-      "Mọi storage class của S3 đều có cùng mức phí lưu trữ mỗi GB"
+      "AWS Organizations with Service Control Policies",
+      "IAM Policy alone",
+      "VPC Peering",
+      "AWS Config only"
     ],
     "correctIndices": [
       0,
@@ -4175,12 +4174,13 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một công ty cam kết Savings Plans nhưng muốn mức giảm giá CAO NHẤT có thể và sẵn sàng cố định loại instance family cùng Region cụ thể trong 1 năm. Loại Savings Plans nào phù hợp nhất?",
+    "question": "A company wants to grant temporary AWS access to a third-party auditor for 24 hours without creating a long-term IAM user and without sharing permanent credentials. Which approach provides secure temporary access? (Choose 2)",
     "options": [
-      "EC2 Instance Savings Plans",
-      "Compute Savings Plans",
-      "Standard Reserved Instances chuyển nhượng (Convertible)",
-      "Spot Savings Plans"
+      "Use AWS STS (Security Token Service) to assume an IAM role with time-limited session",
+      "Create an IAM user with a one-time password that expires after 24 hours",
+      "Share the root account credentials for 24 hours only",
+      "Use Amazon Cognito for federated access to grant temporary credentials",
+      "Create an EC2 instance key pair and share it verbally"
     ],
     "correctIndices": [
       0
@@ -4198,7 +4198,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty muốn nhận cảnh báo qua email khi chi phí AWS hàng tháng vượt ngưỡng 5.000 USD đã đặt trước, để chủ động kiểm soát ngân sách. Dịch vụ nào phù hợp nhất?",
+    "question": "A company wants to receive an email alert when its monthly AWS expenses exceed $5,000, to proactively control its budget. Which service is the best fit?",
     "options": [
       "AWS Budgets",
       "AWS Cost Explorer",
@@ -4221,7 +4221,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một kiến trúc sư đang lên kế hoạch di chuyển workload lên AWS và cần ước tính chi phí hàng tháng cho EC2, S3 và RDS TRƯỚC khi triển khai bất kỳ tài nguyên nào. Công cụ nào nên dùng?",
+    "question": "An architect is planning to migrate a workload to AWS and needs to estimate monthly costs for EC2, S3, and RDS BEFORE deploying any resources. Which tools should I use?",
     "options": [
       "AWS Pricing Calculator",
       "AWS Cost Explorer",
@@ -4244,12 +4244,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một tập đoàn có 12 tài khoản AWS riêng cho từng phòng ban. Họ muốn nhận một hóa đơn duy nhất và tận dụng giảm giá theo bậc khối lượng (volume discount) khi gộp mức sử dụng của tất cả tài khoản. Giải pháp nào phù hợp?",
+    "question": "A corporation has 12 separate AWS accounts for each department. They want to receive a single invoice and take advantage of volume discounts when aggregating the usage of all accounts. Which solution is right for you?",
     "options": [
-      "Dùng AWS Organizations với consolidated billing",
-      "Tạo một AWS Budget chung cho tất cả tài khoản",
-      "Bật Cost and Usage Report cho từng tài khoản",
-      "Mua Reserved Instances trong tài khoản quản lý"
+      "Using AWS Organizations with consolidated billing",
+      "Create an AWS Budget common to all accounts",
+      "Enable Cost and Usage Report for each account",
+      "Buy Reserved Instances in management account"
     ],
     "correctIndices": [
       0
@@ -4267,12 +4267,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty muốn phân bổ chi phí AWS theo từng dự án và phòng ban để biết chính xác bộ phận nào tiêu tốn bao nhiêu. Họ cần gắn nhãn metadata vào tài nguyên và kích hoạt chúng để xuất hiện trong báo cáo chi phí. Giải pháp nào đúng?",
+    "question": "A company wants to allocate AWS costs by project and department to see exactly how much it costs. They need to label their resources with metadata and enable them to appear in the expense report. Which solution is right?",
     "options": [
-      "Sử dụng cost allocation tags và kích hoạt chúng trong Billing console",
-      "Tạo nhiều linked account, mỗi dự án một tài khoản, rồi đọc Cost Explorer",
-      "Bật AWS Pricing Calculator cho mỗi phòng ban",
-      "Dùng IAM groups để tách chi phí theo người dùng"
+      "Use cost allocation tags and activate them in Billing console",
+      "Create multiple linked accounts, one per project, then read Cost Explorer",
+      "Enable AWS Pricing Calculator per department",
+      "Use IAM groups to split costs by user"
     ],
     "correctIndices": [
       0
@@ -4290,10 +4290,10 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Bộ phận tài chính cần dữ liệu chi phí và sử dụng chi tiết NHẤT, ở mức từng dòng (line item) theo giờ, để nạp vào hệ thống phân tích nội bộ trên Amazon Athena và Amazon Redshift. Nguồn dữ liệu nào phù hợp nhất?",
+    "question": "The finance department needs the MOST detailed cost and usage data, line item by line hourly, to feed into the internal analytics system on Amazon Athena and Amazon Redshift. Which data source is the best fit?",
     "options": [
-      "AWS Cost and Usage Report (CUR) lưu vào S3",
-      "AWS Cost Explorer xuất CSV",
+      "AWS Cost and Usage Report (CUR) saved to S3",
+      "AWS Cost Explorer export CSV",
       "AWS Budgets reports",
       "AWS Billing Dashboard"
     ],
@@ -4313,7 +4313,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty muốn phân tích xu hướng chi phí trong 6 tháng qua, lọc theo dịch vụ và region, đồng thời xem dự báo (forecast) chi phí cho 3 tháng tới bằng giao diện biểu đồ trực quan. Công cụ nào phù hợp nhất?",
+    "question": "A company wants to analyze cost trends over the past 6 months, filter by service and region, and see cost forecasts for the next 3 months using an intuitive charting interface. Which tool is the best fit?",
     "options": [
       "AWS Cost Explorer",
       "AWS Pricing Calculator",
@@ -4336,13 +4336,13 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Một tổ chức dùng AWS Organizations với consolidated billing trên nhiều tài khoản. Những phát biểu nào về cơ chế tính phí hợp nhất là ĐÚNG? (Chọn 2)",
+    "question": "An organization uses AWS Organizations with consolidated billing across multiple accounts. What statements about the consolidated charging mechanism are TRUE? (Select 2)",
     "options": [
-      "Mức sử dụng của tất cả tài khoản được gộp lại để hưởng giá theo bậc khối lượng (volume tiering)",
-      "Lợi ích Reserved Instances và Savings Plans có thể được chia sẻ giữa các tài khoản trong tổ chức",
-      "Mỗi tài khoản thành viên vẫn nhận một hóa đơn riêng từ AWS",
-      "Consolidated billing tự động chuyển toàn bộ tài nguyên về một tài khoản duy nhất",
-      "Consolidated billing yêu cầu mua Savings Plans mới có hiệu lực"
+      "Usage of all pooled accounts for volume tiering",
+      "Reserved Instances and Savings Plans benefits can be shared between accounts within the organization",
+      "Each member account still receives a separate invoice from AWS",
+      "Consolidated billing automatically transfers all resources to a single account",
+      "Consolidated billing new Savings Plans in effect"
     ],
     "correctIndices": [
       0,
@@ -4361,12 +4361,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một startup vừa tạo tài khoản AWS đầu tiên và lo lắng về việc chi tiêu vượt mức trong tháng đầu. Họ muốn thiết lập một giới hạn ngân sách 100 USD và được thông báo khi chi phí thực tế đạt 80% giới hạn. Nên dùng gì?",
+    "question": "A startup has just created its first AWS account and is worried about overspending for the first month. They want to set a budget limit of $100 and be notified when the actual cost reaches 80% of the limit. What to use?",
     "options": [
-      "AWS Budgets với cost budget và alert ở 80%",
-      "AWS Cost Explorer với báo cáo hằng ngày",
-      "AWS Pricing Calculator để khóa chi tiêu ở 100 USD",
-      "AWS Organizations để giới hạn chi tiêu tài khoản"
+      "AWS Budgets with cost budget and alerts at 80%",
+      "AWS Cost Explorer with daily reports",
+      "AWS Pricing Calculator to lock in spending at $100",
+      "AWS Organizations to limit account spend"
     ],
     "correctIndices": [
       0
@@ -4384,7 +4384,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một startup nhỏ chạy workload thử nghiệm trên AWS và muốn có khả năng mở ticket hỗ trợ kỹ thuật qua email trong giờ làm việc với chi phí thấp nhất có thể. Họ chấp nhận thời gian phản hồi chậm. Support plan nào phù hợp nhất?",
+    "question": "A small startup running a test workload on AWS wants the ability to open an email technical support ticket during business hours at the lowest possible cost. They accept slow response times. Which support plan is the best fit?",
     "options": [
       "AWS Developer Support",
       "AWS Basic Support",
@@ -4407,7 +4407,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty vận hành ứng dụng production quan trọng cần một AWS điểm liên hệ chuyên trách (dedicated) hiểu rõ kiến trúc của họ, hỗ trợ proactive và quyền truy cập Concierge Support cho các vấn đề billing/account. Họ muốn chi phí thấp hơn gói cao nhất nhưng vẫn có TAM. Lựa chọn nào phù hợp?",
+    "question": "A company that runs critical production applications needs a dedicated AWS point of contact that understands their architecture, proactive support, and Concierge Support access for billing/account issues. They want the cost to be lower than the highest plan but still have TAM. Which option is right for you?",
     "options": [
       "AWS Business Support",
       "AWS Enterprise On-Ramp",
@@ -4430,7 +4430,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một tổ chức muốn nhận khuyến nghị tự động để giảm chi phí (idle resources), cải thiện bảo mật (security groups mở rộng), tăng fault tolerance và kiểm tra service quotas. Công cụ AWS nào cung cấp các kiểm tra (checks) này?",
+    "question": "An organization wants to receive automated recommendations to reduce costs (idle resources), improve security (extended security groups), increase fault tolerance, and test service quotas. Which AWS tools provide these checks?",
     "options": [
       "AWS Trusted Advisor",
       "AWS Health Dashboard",
@@ -4453,7 +4453,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Đội vận hành của một công ty cần biết liệu sự cố mới phát sinh có ảnh hưởng trực tiếp đến các tài nguyên AWS cụ thể của họ hay không, và muốn nhận thông báo cá nhân hóa về maintenance theo lịch ảnh hưởng tới account của mình. Dịch vụ nào đáp ứng?",
+    "question": "A company's operations team needs to know if a new outage is directly affecting their specific AWS resources, and wants to receive scheduled maintenance personalized notifications that affect their account. What services are available?",
     "options": [
       "AWS Personal Health Dashboard (AWS Health Dashboard - Your account health)",
       "AWS Service Health Dashboard (Open status, public)",
@@ -4476,13 +4476,13 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "multi",
-    "question": "Một công ty đăng ký AWS Enterprise Support. Những lợi ích nào sau đây CHỈ có/đặc trưng của Enterprise (so với Business)? (Chọn 2)",
+    "question": "A company that subscribes to AWS Enterprise Support. Which of the following benefits ARE unique/characteristic of Enterprise (compared to Business)? (Select 2)",
     "options": [
-      "Technical Account Manager (TAM) chuyên trách (designated)",
+      "Technical Account Manager (TAM) designated",
       "AWS Concierge Support team",
-      "Hỗ trợ kỹ thuật 24/7 qua phone, chat và email",
-      "Truy cập đầy đủ tất cả các Trusted Advisor checks",
-      "Mở case account và billing không giới hạn"
+      "24/7 technical support via phone, chat and email",
+      "Full access to all Trusted Advisor checks",
+      "Open case account and unlimited billing"
     ],
     "correctIndices": [
       0,
@@ -4501,10 +4501,10 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một doanh nghiệp cần một đối tác bên ngoài đã được AWS chứng nhận để thiết kế và triển khai giải pháp di chuyển (migration) lên cloud, hoặc mua phần mềm của bên thứ ba đã tích hợp sẵn với AWS. Họ nên tìm đến đâu?",
+    "question": "An enterprise needs an AWS-certified external partner to design and deploy a migration solution to the cloud, or to purchase third-party software that is already integrated with AWS. Where should they go?",
     "options": [
-      "AWS Partner Network (APN) và AWS Marketplace",
-      "AWS re:Post",
+      "AWS Partner Network (APN) and AWS Marketplace",
+      "AWS re:post",
       "AWS Trusted Advisor",
       "AWS Basic Support"
     ],
@@ -4524,12 +4524,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một công ty đang đăng ký Business Support gặp sự cố khiến hệ thống production bị xuống (production system down). Đây là mức severity cao nhất mà gói Business hỗ trợ. Theo cam kết của AWS Support, thời gian phản hồi mục tiêu (response time) cho trường hợp này là gì?",
+    "question": "A company that is applying for Business Support has a problem that causes the production system to be down. This is the highest severity level supported by the Business plan. Per AWS Support commitment, what is the target response time for this instance?",
     "options": [
-      "Production system down — phản hồi mục tiêu < 1 giờ",
-      "Production system impaired — phản hồi mục tiêu < 4 giờ",
-      "General guidance — phản hồi mục tiêu < 24 giờ",
-      "Production system down — phản hồi mục tiêu < 15 phút"
+      "Production system down — target response < 1 hour",
+      "Production system impaired — target response < 4 hours",
+      "General guidance — goal response < 24 hours",
+      "Production system down — target feedback < 15 minutes"
     ],
     "correctIndices": [
       0
@@ -4547,11 +4547,11 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một developer muốn nhanh chóng triển khai một blog WordPress nhỏ với chi phí cố định, dễ dự đoán hàng tháng, đã bao gồm máy ảo, dung lượng lưu trữ và truyền dữ liệu trong một gói gọn. Dịch vụ nào phù hợp nhất?",
+    "question": "A developer wants to quickly deploy a small WordPress blog with a fixed, predictable monthly cost that includes virtual machines, storage, and data transfer in one package. Which service is the best fit?",
     "options": [
       "Amazon Lightsail",
       "AWS Batch",
-      "Amazon EC2 với Reserved Instances",
+      "Amazon EC2 with Reserved Instances",
       "AWS Outposts"
     ],
     "correctIndices": [
@@ -4569,7 +4569,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Công ty cần chạy hàng nghìn job tính toán khoa học theo lô (batch), tự động cấp phát và thu hồi tài nguyên compute tùy theo khối lượng công việc, mà không phải quản lý hệ thống hàng đợi và scheduler. Dịch vụ nào phù hợp?",
+    "question": "The company needs to run thousands of scientific calculation jobs in batches, automatically allocate and recover compute resources depending on the workload, without having to manage the queue system and scheduler. Which service is suitable?",
     "options": [
       "AWS Batch",
       "Amazon Lightsail",
@@ -4591,7 +4591,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một nhóm phát triển muốn upload code ứng dụng web (Java) và để AWS tự động lo việc cung cấp EC2, load balancer, Auto Scaling và monitoring, nhưng vẫn giữ quyền truy cập đầy đủ vào các tài nguyên bên dưới khi cần tinh chỉnh. Dịch vụ nào phù hợp nhất?",
+    "question": "A development team wants to upload web application code (Java) and let AWS take care of EC2 provisioning, load balancer, Auto Scaling, and monitoring automatically, but keep full access to the underlying resources when fine-tuning is required. Which service is the best fit?",
     "options": [
       "AWS Elastic Beanstalk",
       "AWS Lambda",
@@ -4879,7 +4879,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một nhóm nghiên cứu cần hệ thống file hiệu năng cực cao (high-performance computing) cho khối lượng tính toán machine learning và phân tích, có khả năng liên kết với dữ liệu trong S3. Dịch vụ FSx nào phù hợp nhất?",
+    "question": "A research team needs a high-performance file system for machine learning and analytics workloads, capable of linking to data in S3. Which FSx service is most suitable?",
     "options": [
       "Amazon FSx for Lustre",
       "Amazon FSx for Windows File Server",
@@ -4901,7 +4901,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một trung tâm dữ liệu on-premises cần truy cập kho lưu trữ object S3 như một file share NFS/SMB local để các ứng dụng cũ có thể đọc/ghi mà không cần viết lại code. Giải pháp nào nên dùng?",
+    "question": "An on-premises data center needs to access the S3 object store as a local NFS/SMB file share so that legacy applications can read/write without rewriting code. Which solution should I use?",
     "options": [
       "Amazon S3 File Gateway (Storage Gateway)",
       "AWS Snowball",
@@ -4923,12 +4923,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty muốn quản lý tập trung và tự động hóa lịch backup cho EBS volumes, RDS databases, DynamoDB tables và EFS file systems từ một nơi duy nhất, với chính sách lưu giữ thống nhất. Dịch vụ nào phù hợp?",
+    "question": "A company wants to centrally manage and automate backup schedules for EBS volumes, RDS databases, DynamoDB tables and EFS file systems from a single place, with a unified retention policy. Which service is suitable?",
     "options": [
       "AWS Backup",
       "Amazon S3 Lifecycle",
       "AWS Storage Gateway",
-      "Amazon EBS Snapshots thủ công"
+      "Amazon EBS Manual Snapshots"
     ],
     "correctIndices": [
       0
@@ -4945,7 +4945,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một địa điểm khai thác dầu ngoài khơi không có kết nối internet ổn định cần thu thập và xử lý sơ bộ dữ liệu cảm biến (edge computing) trong môi trường khắc nghiệt, sau đó chuyển khoảng 50 TB dữ liệu về AWS. Thiết bị Snow Family nào phù hợp nhất?",
+    "question": "An offshore oil site without a stable internet connection needs to collect and preprocess sensor data (edge ​​computing) in a harsh environment, then transfer about 50 TB of data to AWS. Which Snow Family device is best suited?",
     "options": [
       "AWS Snowball Edge",
       "AWS Snowmobile",
@@ -4967,13 +4967,13 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "multi",
-    "question": "Một quản trị viên đang chọn loại EBS volume cho các workload khác nhau. Những phát biểu nào sau đây ĐÚNG? (Chọn 2)",
+    "question": "An administrator is selecting EBS volume types for different workloads. Which of the following statements are TRUE? (Choose 2)",
     "options": [
-      "gp3 là SSD đa dụng cho phép cấu hình IOPS và throughput độc lập với dung lượng",
-      "io2 là SSD hiệu năng cao phù hợp cho database cần IOPS cao và độ bền cao",
-      "sc1 là SSD chuyên cho workload IOPS cực cao",
-      "st1 là volume SSD giá rẻ nhất, không hỗ trợ làm boot volume cho nhu cầu throughput",
-      "gp2 cho phép cấu hình throughput hoàn toàn tách rời IOPS giống gp3"
+      "gp3 is a general-purpose SSD that allows IOPS and throughput to be configured independently of capacity",
+      "io2 is a high-performance SSD suitable for databases that require high IOPS and high endurance",
+      "sc1 is an SSD specialized for extremely high IOPS workloads",
+      "st1 is the cheapest SSD volume, does not support being a boot volume for throughput needs",
+      "gp2 allows throughput configuration completely separate from IOPS like gp3"
     ],
     "correctIndices": [
       0,
@@ -4991,7 +4991,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một doanh nghiệp đang dùng băng từ vật lý (physical tape) cho backup và muốn loại bỏ chi phí quản lý băng từ nhưng vẫn giữ phần mềm backup hiện tại. Giải pháp AWS nào phù hợp?",
+    "question": "A business is using physical tape for backup and wants to eliminate tape management costs while keeping its current backup software. Which AWS solution is right?",
     "options": [
       "Tape Gateway (Storage Gateway)",
       "Volume Gateway",
@@ -5013,12 +5013,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty cần sao chép tự động object từ một S3 bucket ở us-east-1 sang một bucket ở eu-west-1 để phục vụ tuân thủ và giảm độ trễ cho người dùng châu Âu. Tính năng nào đáp ứng?",
+    "question": "A company needs to automatically copy objects from an S3 bucket in us-east-1 to a bucket in eu-west-1 for compliance and reduced latency for European users. Which features are met?",
     "options": [
       "S3 Cross-Region Replication (CRR)",
       "S3 Transfer Acceleration",
       "S3 Same-Region Replication (SRR)",
-      "S3 Versioning đơn thuần"
+      "Simple S3 Versioning"
     ],
     "correctIndices": [
       0
@@ -5035,12 +5035,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một dự án phân tích di truyền cần khoảng 5 PB dữ liệu được chuyển từ data center về AWS trong vài tuần. Đường truyền internet hiện tại sẽ mất nhiều tháng để upload. Lựa chọn nào tối ưu nhất về thời gian và chi phí?",
+    "question": "A genetic analysis project requires about 5 PB of data transferred from the data center to AWS in a few weeks. Current internet connections will take many months to upload. Which option is the most optimal in terms of time and cost?",
     "options": [
-      "Sử dụng nhiều thiết bị AWS Snowball để vận chuyển dữ liệu",
-      "Dùng AWS Snowmobile cho toàn bộ dữ liệu",
-      "Upload trực tiếp qua S3 Transfer Acceleration",
-      "Triển khai Volume Gateway để đồng bộ dần qua internet"
+      "Use multiple AWS Snowball devices to transport data",
+      "Use AWS Snowmobile for all data",
+      "Upload directly via S3 Transfer Acceleration",
+      "Deploy Volume Gateway to gradually synchronize over the internet"
     ],
     "correctIndices": [
       0
@@ -5057,7 +5057,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một ứng dụng đang chạy cần lưu trữ block storage giá thấp cho dữ liệu log truy cập tuần tự, throughput lớn nhưng ít ngẫu nhiên, ví dụ big data và streaming. Loại EBS nào tiết kiệm chi phí nhất mà vẫn phù hợp?",
+    "question": "A running application needs low-cost block storage for sequentially accessed log data, large throughput but little randomness, for example big data and streaming. Which type of EBS is most cost-effective and still suitable?",
     "options": [
       "st1 (Throughput Optimized HDD)",
       "io2 (Provisioned IOPS SSD)",
@@ -5079,7 +5079,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty lưu hàng triệu file CloudTrail log dưới dạng JSON trong Amazon S3. Team security muốn chạy các câu SQL ad-hoc để điều tra sự cố mà KHÔNG phải provision hay quản lý cluster nào. Dịch vụ nào phù hợp nhất?",
+    "question": "A company saves millions of CloudTrail log files as JSON in Amazon S3. The security team wants to run ad-hoc SQL queries to investigate problems WITHOUT provisioning or managing any cluster. Which service is most suitable?",
     "options": [
       "Amazon Athena",
       "Amazon Redshift",
@@ -5101,7 +5101,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một tổ chức cần một data warehouse columnar quy mô petabyte để chạy các báo cáo BI phức tạp lặp lại hằng ngày trên hàng tỷ dòng dữ liệu bán hàng. Dịch vụ AWS nào được thiết kế cho mục đích này?",
+    "question": "An organization needs a petabyte-scale columnar data warehouse to run complex BI reports that repeat daily on billions of lines of sales data. Which AWS services are designed for this purpose?",
     "options": [
       "Amazon Redshift",
       "Amazon Athena",
@@ -5123,7 +5123,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một startup cần đẩy dữ liệu streaming liên tục vào Amazon S3 với batching và nén tự động, near real-time, mà KHÔNG muốn viết code consumer hay quản lý shard. Lựa chọn nào phù hợp nhất?",
+    "question": "A startup needs to push streaming data continuously into Amazon S3 with automatic batching and compression, near real-time, without wanting to write consumer code or manage shards. Which option is most suitable?",
     "options": [
       "Amazon Data Firehose",
       "Amazon Kinesis Data Streams",
@@ -5145,7 +5145,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty muốn xây dashboard BI cho ban lãnh đạo, dùng natural language để hỏi như 'show me sales by region last quarter', và nhúng dashboard vào ứng dụng SaaS nội bộ. Dịch vụ nào đáp ứng?",
+    "question": "A company wants to build a BI dashboard for management, use natural language to ask questions like 'show me sales by region last quarter', and embed the dashboard into an internal SaaS application. Which service is available?",
     "options": [
       "Amazon QuickSight",
       "Amazon Athena",
@@ -5167,9 +5167,9 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Team data engineering cần tự động phát hiện schema của các file CSV/JSON mới được upload lên S3 và đưa metadata vào một catalog trung tâm để Athena query ngay. Thành phần nào của AWS Glue làm việc này?",
+    "question": "The data engineering team needs to automatically detect the schema of newly uploaded CSV/JSON files to S3 and put the metadata into a central catalog for Athena to query immediately. Which AWS Glue component does this?",
     "options": [
-      "Glue Crawler kết hợp Glue Data Catalog",
+      "Glue Crawler combines Glue Data Catalog",
       "Glue DataBrew",
       "Kinesis Data Firehose",
       "Redshift Spectrum"
@@ -5189,7 +5189,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty cần phân tích 100 GB log nginx theo thời gian thực, hỗ trợ full-text search và dashboard trực quan kiểu Kibana cho team observability. Dịch vụ nào phù hợp nhất?",
+    "question": "A company needs real-time analysis of 100 GB of nginx logs, full-text search support, and a visual Kibana-style dashboard for team observability. Which service is most suitable?",
     "options": [
       "Amazon OpenSearch Service",
       "Amazon Athena",
@@ -5211,7 +5211,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một team đã có nhiều ứng dụng dùng Apache Kafka on-premises và muốn chuyển lên AWS với ít thay đổi code nhất, tận dụng ecosystem Kafka quen thuộc. Dịch vụ nào nên chọn?",
+    "question": "A team had multiple applications using Apache Kafka on-premises and wanted to migrate to AWS with minimal code changes, leveraging the familiar Kafka ecosystem. Which service should I choose?",
     "options": [
       "Amazon MSK",
       "Amazon Kinesis Data Streams",
@@ -5233,13 +5233,13 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "multi",
-    "question": "Một công ty xây data lake trên S3 và muốn kiểm soát quyền truy cập fine-grained (row-level, column-level) cho hàng trăm người dùng phục vụ tuân thủ GDPR. Những phát biểu nào ĐÚNG về AWS Lake Formation? (Chọn 2)",
+    "question": "A company builds a data lake on S3 and wants to control fine-grained (row-level, column-level) access for hundreds of users to comply with GDPR. Which statements are TRUE about AWS Lake Formation? (Choose 2)",
     "options": [
-      "Lake Formation cho phép quản fine-grained permission ở mức row/column/cell trên data lake",
-      "Lake Formation hỗ trợ tag-based access control và tích hợp với Athena, Redshift Spectrum, EMR",
-      "Lake Formation là một data warehouse columnar thay thế cho Redshift",
-      "Lake Formation là công cụ BI để vẽ dashboard cho business user",
-      "Lake Formation là dịch vụ stream ingest real-time thay cho Kinesis"
+      "Lake Formation allows fine-grained permission management at the row/column/cell level on the data lake",
+      "Lake Formation supports tag-based access control and integrates with Athena, Redshift Spectrum, EMR",
+      "Lake Formation is a columnar data warehouse alternative to Redshift",
+      "Lake Formation is a BI tool to draw dashboards for business users",
+      "Lake Formation is a real-time streaming service that replaces Kinesis"
     ],
     "correctIndices": [
       0,
@@ -5257,7 +5257,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một nhóm nghiên cứu cần chạy các job Apache Spark và Apache Hive quy mô hàng terabyte, đồng thời muốn dùng thêm HBase và Flink, với khả năng tận dụng EC2 Spot để giảm chi phí. Dịch vụ nào phù hợp nhất?",
+    "question": "A research team needs to run terabyte-scale Apache Spark and Apache Hive jobs and wants to add HBase and Flink, with the ability to leverage EC2 Spot to reduce costs. Which service is most suitable?",
     "options": [
       "Amazon EMR",
       "AWS Glue ETL",
@@ -5279,7 +5279,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty muốn mua dataset thời tiết và dữ liệu nhân khẩu học từ nhà cung cấp bên thứ ba, và để dữ liệu tự động được giao vào Amazon S3. Dịch vụ AWS nào dùng cho việc này?",
+    "question": "A company wants to purchase a dataset of weather and demographic data from a third-party supplier, and have the data automatically delivered to Amazon S3. Which AWS service is used for this?",
     "options": [
       "AWS Data Exchange",
       "AWS Glue",
@@ -5301,7 +5301,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một ứng dụng IoT thu thập dữ liệu từ 100.000 thiết bị real-time, và cần NHIỀU consumer khác nhau (analytics, alerting, lưu trữ) cùng đọc một stream với khả năng replay dữ liệu trong nhiều ngày. Dịch vụ nào phù hợp nhất?",
+    "question": "An IoT application collects data from 100,000 real-time devices, and needs MANY different consumers (analytics, alerting, storage) to read the same stream with the ability to replay data for days. Which service is most suitable?",
     "options": [
       "Amazon Kinesis Data Streams",
       "Amazon Kinesis Data Firehose",
@@ -5323,12 +5323,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một công ty dùng Athena query data lake trên S3 nhưng chi phí tăng cao vì mỗi truy vấn scan toàn bộ file CSV lớn. Họ muốn giảm chi phí Athena mà vẫn giữ dữ liệu trên S3. Hành động nào hiệu quả nhất?",
+    "question": "A company uses Athena query data lake on S3 but the cost increases because each query scans the entire large CSV file. They wanted to reduce Athena costs while still keeping data on S3. Which action is most effective?",
     "options": [
-      "Chuyển dữ liệu sang định dạng cột nén như Parquet/ORC và partition theo cột thường lọc",
-      "Chuyển toàn bộ workload sang Amazon EMR để xử lý",
-      "Nâng cấp lên Redshift provisioned cluster cỡ lớn nhất",
-      "Bật Kinesis Data Firehose để stream lại dữ liệu vào S3"
+      "Convert data to a compressed column format such as Parquet/ORC and partition by filtered columns",
+      "Transfer entire workload to Amazon EMR for processing",
+      "Upgrade to the largest sized Redshift provisioned cluster",
+      "Turn on Kinesis Data Firehose to stream data back to S3"
     ],
     "correctIndices": [
       0
@@ -5345,7 +5345,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một security team cần biết CHÍNH XÁC ai đã xoá một IAM user vào lúc 3 giờ sáng và từ IP nào. Họ nên xem ở đâu?",
+    "question": "A security team needs to know EXACTLY who deleted an IAM user at 3am and from what IP. Where should they watch?",
     "options": [
       "AWS CloudTrail event history",
       "Amazon CloudWatch Metrics",
@@ -5367,9 +5367,9 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Đội vận hành muốn nhận thông báo qua SMS khi CPU của một EC2 instance vượt 80% trong 5 phút. Dịch vụ nào phù hợp nhất?",
+    "question": "The operations team wants to receive SMS notifications when the CPU of an EC2 instance exceeds 80% for 5 minutes. Which service is most suitable?",
     "options": [
-      "Amazon CloudWatch alarm tích hợp SNS",
+      "Amazon CloudWatch alarm integrates with SNS",
       "AWS CloudTrail Insights",
       "AWS Config rule",
       "Amazon CloudWatch Logs Insights"
@@ -5389,7 +5389,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Công ty cần đảm bảo TẤT CẢ S3 bucket luôn bật versioning và được đánh dấu NON_COMPLIANT nếu vi phạm. Dịch vụ nào đáp ứng?",
+    "question": "The company needs to ensure ALL S3 buckets always have versioning enabled and are marked NON_COMPLIANT if violated. Which service is available?",
     "options": [
       "AWS Config với managed rule",
       "AWS CloudTrail data events",
@@ -5411,7 +5411,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một tổ chức có 12 AWS account và muốn 1 hoá đơn duy nhất cùng việc share volume discount. Dịch vụ nào cung cấp điều này?",
+    "question": "An organization has 12 AWS accounts and wants a single invoice and shared volume discount. Which service provides this?",
     "options": [
       "AWS Organizations với consolidated billing",
       "AWS Control Tower guardrails",
@@ -5433,12 +5433,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Quản trị viên đã gắn SCP deny s3:DeleteBucket cho một OU, nhưng muốn cấp quyền tạo bucket cho dev trong OU đó. Họ cần làm gì?",
+    "question": "The administrator has attached SCP deny s3:DeleteBucket to an OU, but wants to grant permission to create buckets to devs in that OU. What do they need to do?",
     "options": [
-      "Tạo IAM policy grant s3:CreateBucket cho dev, vì SCP không tự grant quyền",
-      "Thêm Allow s3:CreateBucket vào SCP để tự động cấp quyền cho dev",
-      "Xoá SCP vì SCP ghi đè mọi IAM policy",
-      "Dùng AWS Config rule để grant quyền tạo bucket"
+      "Create IAM policy grant s3:CreateBucket for dev, because SCP does not grant permissions itself",
+      "Add Allow s3:CreateBucket to SCP to automatically grant permissions to devs",
+      "Delete SCP because SCP overrides all IAM policies",
+      "Use AWS Config rule to grant permission to create a bucket"
     ],
     "correctIndices": [
       0
@@ -5455,10 +5455,10 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Doanh nghiệp lớn cần nhanh chóng dựng landing zone multi-account chuẩn best practice (audit account, log archive, SCP, Config, CloudTrail) mà không cấu hình thủ công. Dịch vụ nào?",
+    "question": "Large businesses need to quickly set up best practice multi-account landing zones (audit account, log archive, SCP, Config, CloudTrail) without manual configuration. Which service?",
     "options": [
       "AWS Control Tower",
-      "AWS Organizations đơn thuần",
+      "AWS Organizations simply",
       "AWS Service Catalog",
       "AWS CloudFormation StackSets"
     ],
@@ -5477,7 +5477,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Team muốn để các BU tự launch một số kiến trúc đã được duyệt (từ CloudFormation template) nhưng vẫn đảm bảo governance. Dịch vụ nào phù hợp?",
+    "question": "The team wants to let the BUs launch some approved architectures (from the CloudFormation template) but still ensure governance. Which service is suitable?",
     "options": [
       "AWS Service Catalog",
       "AWS Systems Manager",
@@ -5499,12 +5499,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Khách hàng muốn biết một sự cố AWS có đang ảnh hưởng cụ thể đến account của họ không (vd EC2 sắp retire, maintenance window). Họ nên dùng gì?",
+    "question": "Customers want to know if an AWS incident is specifically affecting their account (e.g. EC2 is retiring, maintenance window). What should they use?",
     "options": [
       "AWS Health Dashboard (Your account health)",
       "Amazon CloudWatch dashboard",
       "AWS Trusted Advisor",
-      "Public status page chung của AWS"
+      "Public status page of AWS"
     ],
     "correctIndices": [
       0
@@ -5521,7 +5521,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "multi",
-    "question": "AWS Trusted Advisor đưa ra khuyến nghị thuộc những mảng (category) nào sau đây? (Chọn 3)",
+    "question": "AWS Trusted Advisor makes recommendations in which of the following categories? (Choose 3)",
     "options": [
       "Cost optimization",
       "Security",
@@ -5546,7 +5546,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Auditor yêu cầu bằng chứng (evidence) thu thập tự động cho audit SOC 2 và PCI DSS, gom từ nhiều dịch vụ AWS theo framework có sẵn. Dịch vụ nào phù hợp nhất?",
+    "question": "An auditor requires automatically collected evidence for SOC 2 and PCI DSS audits, aggregated from multiple AWS services according to a pre-built framework. Which service is most suitable?",
     "options": [
       "AWS Audit Manager",
       "AWS Config",
@@ -5568,7 +5568,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Công ty BYOL Oracle Database lên AWS và lo vi phạm số core license khi Auto Scaling tăng instance. Dịch vụ nào giúp track và enforce license?",
+    "question": "A company brings its BYOL Oracle Database to AWS and is concerned about license core violations when Auto Scaling increases instances. Which service helps track and enforce licenses?",
     "options": [
       "AWS License Manager",
       "AWS Config",
@@ -5590,7 +5590,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một fleet 200 EC2 instance, đội tài chính muốn gợi ý right-sizing dựa trên ML để giảm chi phí (vd m5.large xuống m5.medium). Dịch vụ nào?",
+    "question": "With a fleet of 200 EC2 instances, the finance team wants ML-based right-sizing recommendations to reduce costs (e.g., from m5.large to m5.medium). Which service provides this?",
     "options": [
       "AWS Compute Optimizer",
       "AWS Trusted Advisor cost check",
@@ -5612,7 +5612,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một startup thương mại điện tử vừa ra mắt và không thể dự đoán lượng truy cập. Họ muốn hạ tầng tự động tăng tài nguyên khi có chương trình khuyến mãi và giảm xuống khi vắng khách, để chỉ trả tiền cho thứ thực sự dùng. Đặc tính nào của AWS Cloud đáp ứng nhu cầu này?",
+    "question": "An e-commerce startup has just launched and cannot predict traffic volume. They want infrastructure that automatically increases resources during promotions and decreases during slow periods, paying only for what they actually use. Which AWS Cloud characteristic meets this requirement?",
     "options": [
       "Elasticity",
       "High availability",
@@ -5635,12 +5635,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty truyền thống mua sẵn các máy chủ vật lý đắt tiền cho trung tâm dữ liệu, đầu tư lớn ngay từ đầu dù chưa biết có dùng hết công suất hay không. Khi chuyển sang AWS, lợi ích kinh tế cốt lõi nào họ nhận được?",
+    "question": "A traditional company purchases expensive physical servers for its data center with large upfront investment, even though they don't know if they'll use full capacity. When moving to AWS, which core economic benefit do they gain?",
     "options": [
-      "Chuyển chi phí từ CapEx sang OpEx, trả theo mức sử dụng",
-      "Loại bỏ hoàn toàn mọi chi phí vận hành hằng tháng",
-      "Được AWS bảo hành phần cứng vật lý tại văn phòng của họ",
-      "Sở hữu vĩnh viễn các máy chủ AWS sau 12 tháng"
+      "Convert capital expenditure (CapEx) to operational expenditure (OpEx), paying based on usage",
+      "Completely eliminate all monthly operational expenses",
+      "Receive AWS warranty for physical hardware at your office",
+      "Permanently own AWS servers after 12 months"
     ],
     "correctIndices": [
       0
@@ -5658,12 +5658,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một nền tảng game trực tuyến có người chơi ở châu Á, châu Âu và Bắc Mỹ phàn nàn về độ trễ cao. Đội kỹ thuật muốn triển khai máy chủ gần người chơi ở từng khu vực để giảm latency mà không cần xây trung tâm dữ liệu riêng. Đặc tính nào của AWS Cloud cho phép điều này?",
+    "question": "An online gaming platform has players in Asia, Europe, and North America complaining about high latency. The technical team wants to deploy servers near players in each region to reduce latency without building separate data centers. Which AWS Cloud characteristic enables this?",
     "options": [
-      "Global reach thông qua các AWS Regions trên toàn thế giới",
-      "Vertical scaling máy chủ trong một Availability Zone",
-      "Tăng dung lượng lưu trữ Amazon S3 cho mỗi bucket",
-      "Sử dụng Reserved Instances để giảm chi phí EC2"
+      "Global reach through AWS Regions worldwide",
+      "Vertical scaling servers within one Availability Zone",
+      "Increase Amazon S3 storage capacity for each bucket",
+      "Use Reserved Instances to reduce EC2 costs"
     ],
     "correctIndices": [
       0
@@ -5681,12 +5681,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một nhóm nghiên cứu cần chạy thử nghiệm phân tích dữ liệu lớn trong vài ngày. Trước đây họ phải chờ hàng tuần để mua và lắp đặt máy chủ. Trên AWS, họ khởi tạo hàng trăm instance trong vài phút và xóa khi xong. Lợi ích nào của AWS Cloud được thể hiện rõ nhất ở đây?",
+    "question": "A research group needs to run large data analysis experiments for a few days. Previously, they had to wait weeks to purchase and set up servers. On AWS, they provision hundreds of instances in minutes and delete them when done. Which AWS Cloud benefit is most clearly demonstrated here?",
     "options": [
-      "Agility — triển khai tài nguyên nhanh để thử nghiệm và đổi mới",
-      "Fault tolerance — hệ thống tiếp tục chạy khi một thành phần lỗi",
-      "Economies of scale — giá thấp hơn nhờ quy mô của AWS",
-      "Shared responsibility — phân chia trách nhiệm bảo mật"
+      "Agility — quickly deploy resources for experimentation and innovation",
+      "Fault tolerance — system continues operating when a component fails",
+      "Economies of scale — lower prices due to AWS scale",
+      "Shared responsibility — division of security responsibility"
     ],
     "correctIndices": [
       0
@@ -5704,12 +5704,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một ngân hàng yêu cầu ứng dụng giao dịch trực tuyến luôn truy cập được, kể cả khi một data center gặp sự cố. Kiến trúc sư triển khai ứng dụng trên nhiều Availability Zones trong một Region. Lợi ích nào của AWS Cloud là động lực chính cho thiết kế này?",
+    "question": "A bank requires that its online transaction application is always accessible, even if a data center fails. The architect deploys the application across multiple Availability Zones within one Region. Which AWS Cloud benefit is the primary driver for this design?",
     "options": [
       "High availability",
       "Elasticity",
-      "Chuyển đổi CapEx sang OpEx",
-      "Edge computing với AWS Wavelength"
+      "Converting CapEx to OpEx",
+      "Edge computing with AWS Wavelength"
     ],
     "correctIndices": [
       0
@@ -5727,12 +5727,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một CFO đang chuẩn bị business case chuyển data center on-premises sang AWS Cloud và cần nêu ĐÚNG một lợi ích tài chính/vận hành thực sự của AWS. Phát biểu nào sau đây là lợi ích hợp lệ?",
+    "question": "A CFO is preparing a business case to move an on-premises data center to AWS Cloud and needs to state one CORRECT financial/operational benefit of AWS. Which statement is a valid benefit?",
     "options": [
-      "Trả theo mức sử dụng (pay-as-you-go) thay vì đầu tư vốn lớn ban đầu",
-      "Chuyển sang AWS sẽ loại bỏ hoàn toàn trách nhiệm bảo mật của khách hàng",
-      "AWS đảm bảo ứng dụng sẽ không bao giờ phát sinh bất kỳ chi phí nào",
-      "AWS sẽ tự viết và bảo trì mã nguồn ứng dụng của khách hàng"
+      "Pay-as-you-go pricing instead of large upfront capital investment",
+      "Moving to AWS will completely eliminate all security responsibility of the customer",
+      "AWS guarantees the application will never incur any additional costs",
+      "AWS will automatically write and maintain your application source code"
     ],
     "correctIndices": [
       0
@@ -5750,7 +5750,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một nhà sản xuất xe tự hành cần xử lý dữ liệu cảm biến với độ trễ cực thấp ngay tại các thành phố lớn, dùng mạng 5G của nhà mạng viễn thông để dữ liệu không phải đi xa tới Region. Giải pháp AWS nào phù hợp nhất với yêu cầu edge computing trên hạ tầng 5G này?",
+    "question": "An autonomous vehicle manufacturer needs to process sensor data with ultra-low latency directly in major cities, using telecom carrier 5G networks so data doesn't have to travel far to a Region. Which AWS solution best fits this 5G edge computing requirement?",
     "options": [
       "AWS Wavelength",
       "AWS Local Zones",
@@ -5773,7 +5773,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một công ty bảo hiểm muốn xây dựng ứng dụng chatbot sinh ngôn ngữ tự nhiên dựa trên các foundation model có sẵn, đồng thời tùy biến theo dữ liệu nội bộ, mà không phải tự huấn luyện mô hình từ đầu hay quản lý hạ tầng. Dịch vụ AWS nào phù hợp nhất để xây dựng ứng dụng generative AI này?",
+    "question": "An insurance company wants to build a natural language generation chatbot based on pre-built foundation models, customized with internal data, without having to train models from scratch or manage infrastructure. Which AWS service is most suitable for building this generative AI application?",
     "options": [
       "Amazon Bedrock",
       "Amazon SageMaker",
@@ -5796,7 +5796,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty thương mại điện tử muốn giảm tác động môi trường của hạ tầng cloud bằng cách chuyển workload sang Graviton instances và chọn region dùng nhiều năng lượng tái tạo. Mục tiêu này thuộc pillar nào của AWS Well-Architected Framework?",
+    "question": "An e-commerce company wants to reduce the environmental impact of its cloud infrastructure by switching workloads to Graviton instances and choosing regions that use renewable energy. Which AWS Well-Architected Framework pillar does this goal belong to?",
     "options": [
       "Sustainability",
       "Cost Optimization",
@@ -5819,7 +5819,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một ngân hàng muốn đảm bảo hệ thống core banking tiếp tục hoạt động và tự động khôi phục khi một Availability Zone bị lỗi, với RTO dưới 5 phút. Yêu cầu này phù hợp nhất với pillar nào?",
+    "question": "A bank wants to ensure its core banking system continues operating and automatically recovers when an Availability Zone fails, with RTO under 5 minutes. Which pillar does this requirement best align with?",
     "options": [
       "Reliability",
       "Security",
@@ -5842,7 +5842,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một startup deploy hạ tầng thủ công qua AWS Console, không có quy trình rollback và không monitor. Họ muốn cải thiện bằng cách quản lý hạ tầng bằng CloudFormation, deploy nhỏ thường xuyên và thêm CloudWatch alarm. Những cải tiến này chủ yếu thuộc pillar nào?",
+    "question": "A startup manually deploys infrastructure through the AWS Console with no rollback process and no monitoring. They want to improve by managing infrastructure with CloudFormation, deploying small updates frequently, and adding CloudWatch alarms. Which pillar do these improvements primarily belong to?",
     "options": [
       "Operational Excellence",
       "Reliability",
@@ -5865,7 +5865,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty SaaS phục vụ người dùng toàn cầu phàn nàn về độ trễ cao. Đội kiến trúc muốn dùng CloudFront, chọn đúng EC2 instance family cho workload và áp dụng serverless để scale theo nhu cầu. Các quyết định này phản ánh pillar nào?",
+    "question": "A global SaaS company receives complaints about high latency. The architecture team wants to use CloudFront, choose the right EC2 instance family for the workload, and apply serverless to scale on demand. Which pillar do these decisions reflect?",
     "options": [
       "Performance Efficiency",
       "Cost Optimization",
@@ -5888,7 +5888,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "CFO của một doanh nghiệp yêu cầu giảm hóa đơn AWS bằng cách mua Savings Plans cho compute ổn định, bật S3 Intelligent-Tiering và dùng AWS Budgets để theo dõi chi tiêu. Hoạt động này thuộc pillar nào của Well-Architected Framework?",
+    "question": "A company's CFO requires reducing the AWS bill by purchasing Savings Plans for stable compute, enabling S3 Intelligent-Tiering, and using AWS Budgets to track spending. Which Well-Architected Framework pillar does this activity belong to?",
     "options": [
       "Cost Optimization",
       "Performance Efficiency",
@@ -5911,7 +5911,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một bệnh viện cần tuân thủ quy định bảo vệ dữ liệu bệnh nhân. Họ bật mã hóa at-rest bằng KMS, mã hóa in-transit bằng TLS, áp dụng least privilege qua IAM và bật MFA cho mọi tài khoản. Những biện pháp này thuộc pillar nào?",
+    "question": "A hospital needs to comply with patient data protection regulations. They enable encryption at-rest with KMS, encryption in-transit with TLS, apply least privilege through IAM, and enable MFA for all accounts. Which pillar do these measures belong to?",
     "options": [
       "Security",
       "Reliability",
@@ -5934,12 +5934,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một đội DevOps quyết định chạy batch processing không quan trọng trên Spot Instances để tiết kiệm tới 90% chi phí, chấp nhận rằng instance có thể bị reclaim. Theo tinh thần Well-Architected Framework, nhận định nào MÔ TẢ ĐÚNG NHẤT tình huống này?",
+    "question": "A DevOps team decides to run non-critical batch processing on Spot Instances to save up to 90% on costs, accepting that instances may be reclaimed. According to the Well-Architected Framework spirit, which statement BEST DESCRIBES this situation?",
     "options": [
-      "Đây là một explicit trade-off: tăng Cost Optimization nhưng có thể giảm Reliability, và WAF khuyến khích chấp nhận trade-off khi đã cân nhắc",
-      "Đây là vi phạm nghiêm trọng vì WAF cấm dùng Spot Instances trong mọi trường hợp",
-      "Spot Instances cải thiện đồng thời cả Cost Optimization và Reliability mà không có đánh đổi",
-      "Quyết định này thuộc Performance Efficiency pillar vì Spot giúp hệ thống chạy nhanh hơn"
+      "This is an explicit trade-off: increasing Cost Optimization but potentially decreasing Reliability, and WAF encourages accepting trade-offs when considered",
+      "This is a serious violation because WAF prohibits using Spot Instances in all cases",
+      "Spot Instances improve both Cost Optimization and Reliability simultaneously without trade-offs",
+      "This decision belongs to the Performance Efficiency pillar because Spot makes the system run faster"
     ],
     "correctIndices": [
       0
@@ -5957,12 +5957,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một kiến trúc sư thay thế các server và database tự quản lý trên EC2 bằng AWS managed services như RDS, Lambda và DynamoDB. Theo Well-Architected Framework, đâu là mô tả ĐÚNG về lợi ích mà managed services mang lại?",
+    "question": "An architect replaces self-managed servers and databases on EC2 with AWS managed services like RDS, Lambda, and DynamoDB. According to the Well-Architected Framework, which statement CORRECTLY describes the benefits managed services provide?",
     "options": [
-      "Cost Optimization được hỗ trợ vì loại bỏ undifferentiated heavy lifting",
-      "Security được cải thiện vì managed services tự động vô hiệu hóa toàn bộ IAM",
-      "Reliability được đảm bảo vì managed services loại bỏ hoàn toàn nhu cầu backup và DR",
-      "Operational Excellence không liên quan vì managed services làm tăng operational burden"
+      "Cost Optimization is supported because managed services eliminate undifferentiated heavy lifting",
+      "Security is improved because managed services automatically disable all IAM",
+      "Reliability is guaranteed because managed services completely eliminate the need for backup and DR",
+      "Operational Excellence is irrelevant because managed services increase operational burden"
     ],
     "correctIndices": [
       0
@@ -5980,7 +5980,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty có ứng dụng web cũ chạy trên on-premises servers. Họ muốn nhanh chóng chuyển ứng dụng lên AWS mà KHÔNG thay đổi code, chỉ đơn giản 'lift and shift' lên EC2 instances. Chiến lược migration nào trong 7 Rs phù hợp nhất?",
+    "question": "A company has a legacy web application running on on-premises servers. They want to quickly move it to AWS WITHOUT changing code, simply 'lift and shift' to EC2 instances. Which of the 7 Rs migration strategies is most appropriate?",
     "options": [
       "Rehost",
       "Refactor",
@@ -6003,7 +6003,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một tổ chức đang lập kế hoạch chuyển đổi đám mây và muốn đảm bảo nhân viên có đủ kỹ năng cloud, đồng thời xây dựng văn hóa thay đổi và quản lý đào tạo. Perspective nào trong AWS Cloud Adoption Framework (CAF) tập trung vào khía cạnh này?",
+    "question": "An organization is planning cloud transformation and wants to ensure employees have sufficient cloud skills, build a change culture, and manage training. Which perspective in the AWS Cloud Adoption Framework (CAF) focuses on this aspect?",
     "options": [
       "People perspective",
       "Platform perspective",
@@ -6026,10 +6026,10 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty cần migrate 200 TB dữ liệu từ data center lên Amazon S3. Đường truyền internet của họ chậm và việc truyền qua mạng sẽ mất nhiều tuần. Giải pháp nào giúp chuyển lượng dữ liệu lớn này lên AWS nhanh chóng và an toàn?",
+    "question": "A company needs to migrate 200 TB of data from a data center to Amazon S3. Their internet connection is slow and network transfer would take many weeks. Which solution helps move this large amount of data to AWS quickly and securely?",
     "options": [
       "AWS Snowball",
-      "AWS DataSync qua internet",
+      "AWS DataSync over internet",
       "Amazon S3 Transfer Acceleration",
       "AWS Direct Connect 1 Gbps"
     ],
@@ -6049,7 +6049,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một doanh nghiệp đang dùng máy chủ email Microsoft Exchange tự quản. Khi lên cloud, họ quyết định bỏ hệ thống tự quản và chuyển sang dùng dịch vụ email SaaS (như Microsoft 365). Đây là chiến lược nào trong 7 Rs?",
+    "question": "A business currently uses self-managed Microsoft Exchange email servers. When moving to cloud, they decide to abandon the self-managed system and switch to a SaaS email service (like Microsoft 365). Which of the 7 Rs strategy is this?",
     "options": [
       "Repurchase",
       "Replatform",
@@ -6072,9 +6072,9 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty muốn di chuyển cơ sở dữ liệu Oracle on-premises sang Amazon Aurora với thời gian gián đoạn (downtime) tối thiểu, và cần chuyển đổi giữa hai loại database engine khác nhau. Dịch vụ AWS nào hỗ trợ tốt nhất cho việc này?",
+    "question": "A company wants to migrate an on-premises Oracle database to Amazon Aurora with minimal downtime, and needs to convert between two different database engines. Which AWS service best supports this?",
     "options": [
-      "AWS Database Migration Service (DMS) kết hợp Schema Conversion Tool (SCT)",
+      "AWS Database Migration Service (DMS) combined with Schema Conversion Tool (SCT)",
       "Amazon S3 cross-region replication",
       "AWS Snowcone",
       "Amazon RDS automated backup"
@@ -6095,12 +6095,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một tổ chức đang phân loại ứng dụng theo chiến lược di trú 7 Rs. Tình huống nào sau đây được ánh xạ ĐÚNG với chiến lược tương ứng?",
+    "question": "An organization is categorizing applications according to the 7 Rs migration strategies. Which scenario is CORRECTLY mapped to its corresponding strategy?",
     "options": [
-      "Một ứng dụng nội bộ không còn ai dùng và sẽ được tắt hoàn toàn — Retire",
-      "Chuyển ứng dụng lên EC2 nhưng đổi self-managed MySQL sang Amazon RDS — Refactor",
-      "Viết lại hoàn toàn monolith thành microservices serverless — Rehost",
-      "Mua thiết bị Snowball để chuyển dữ liệu — Replatform"
+      "A legacy internal application no longer used by anyone will be completely shut down — Retire",
+      "Moving the application to EC2 but changing self-managed MySQL to Amazon RDS — Refactor",
+      "Completely rewriting a monolith as serverless microservices — Rehost",
+      "Purchasing Snowball equipment to transfer data — Replatform"
     ],
     "correctIndices": [
       0
@@ -6118,7 +6118,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Trong AWS Cloud Adoption Framework, đội ngũ cần thiết lập kiểm soát danh tính, phát hiện mối đe dọa, quản lý quyền truy cập và bảo vệ dữ liệu trong suốt quá trình chuyển đổi cloud. Perspective nào của CAF chịu trách nhiệm chính cho các năng lực này?",
+    "question": "In the AWS Cloud Adoption Framework, teams need to establish identity controls, detect threats, manage access, and protect data throughout cloud transformation. Which CAF perspective is primarily responsible for these capabilities?",
     "options": [
       "Security perspective",
       "Business perspective",
@@ -6141,7 +6141,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty đang chạy ứng dụng trên VMware tại data center và muốn nhanh chóng di chuyển toàn bộ môi trường VMware lên AWS Cloud mà không cần mua lại license, không thay đổi kiến trúc hay hệ điều hành. Chiến lược 7 Rs nào mô tả đúng nhất việc này?",
+    "question": "A company runs applications on VMware in its data center and wants to quickly move the entire VMware environment to AWS Cloud without repurchasing licenses, without changing architecture or operating systems. Which 7 Rs strategy best describes this?",
     "options": [
       "Relocate",
       "Repurchase",
@@ -6164,12 +6164,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty đang lập kế hoạch ngân sách hàng tháng cho hệ thống chạy trên EC2 với mô hình On-Demand, nơi số lượng instance tăng giảm theo lưu lượng truy cập thực tế. Theo nguyên tắc cloud economics, chi phí EC2 On-Demand này được phân loại là gì?",
+    "question": "A company is planning monthly budgets for systems running on EC2 with On-Demand pricing, where the number of instances increases and decreases with actual traffic. According to cloud economics principles, how is this EC2 On-Demand cost classified?",
     "options": [
-      "Variable cost (chi phí biến đổi) vì thay đổi theo mức sử dụng",
-      "Fixed cost (chi phí cố định) vì luôn trả một khoản như nhau mỗi tháng",
-      "Capital expenditure (CapEx) vì là khoản đầu tư trả trước",
-      "Sunk cost vì không thể thu hồi"
+      "Variable cost (changes based on usage)",
+      "Fixed cost (same amount paid each month)",
+      "Capital expenditure (CapEx) as a prepaid investment",
+      "Sunk cost as it cannot be recovered"
     ],
     "correctIndices": [
       0
@@ -6187,12 +6187,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một doanh nghiệp di chuyển từ data center on-premises lên AWS và muốn so sánh chi phí. Yếu tố chi phí nào sau đây tồn tại trong môi trường on-premises nhưng được AWS đảm nhận, giúp giảm Total Cost of Ownership (TCO)?",
+    "question": "A business moves from an on-premises data center to AWS and wants to compare costs. Which of the following cost factors exists in the on-premises environment but is borne by AWS, helping reduce Total Cost of Ownership (TCO)?",
     "options": [
-      "Chi phí điện, làm mát và bảo trì phần cứng vật lý của data center",
-      "Chi phí lưu lượng dữ liệu ra Internet (data transfer out)",
-      "Chi phí cấp phép phần mềm ứng dụng bên thứ ba do công ty tự mua",
-      "Chi phí nhân sự phát triển ứng dụng nội bộ"
+      "Electricity, cooling, and physical hardware maintenance costs of the data center",
+      "Data transfer charges going out to the Internet (data transfer out)",
+      "Third-party software licensing costs purchased by the company",
+      "Internal application development staff costs"
     ],
     "correctIndices": [
       0
@@ -6210,12 +6210,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Công ty hiện sở hữu giấy phép Microsoft SQL Server đã mua trước đây và muốn tiếp tục tận dụng khi chạy trên AWS để tránh trả thêm phí license. Cách tiếp cận license nào phù hợp nhất?",
+    "question": "A company currently owns previously purchased Microsoft SQL Server licenses and wants to continue using them when running on AWS to avoid paying additional licensing fees. Which licensing approach is most appropriate?",
     "options": [
-      "Bring Your Own License (BYOL), mang giấy phép hiện có sang AWS",
-      "License-included, dùng RDS với chi phí license đã gộp vào giá giờ",
-      "Mua mới license trực tiếp từ AWS Marketplace cho mỗi instance",
-      "Sử dụng phiên bản open-source thay thế để khỏi cần license"
+      "Bring Your Own License (BYOL), bringing existing licenses to AWS",
+      "License-included, using RDS with license cost already included in hourly price",
+      "Purchase new licenses directly from AWS Marketplace for each instance",
+      "Use open-source versions instead to avoid needing a license"
     ],
     "correctIndices": [
       0
@@ -6233,10 +6233,10 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "AWS có thể cung cấp dịch vụ với giá thấp hơn so với việc mỗi công ty tự xây data center riêng. Nguyên tắc cloud economics nào giải thích điều này?",
+    "question": "AWS can provide services at lower costs than if each company built their own data center. Which cloud economics principle explains this?",
     "options": [
-      "Economies of scale (lợi thế quy mô)",
-      "Loose coupling kiến trúc",
+      "Economies of scale",
+      "Loose coupling architecture",
       "Multi-AZ deployment",
       "Vertical scaling"
     ],
@@ -6256,12 +6256,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Đội vận hành phát hiện nhiều EC2 instance loại m5.4xlarge nhưng CPU và bộ nhớ chỉ dùng dưới 10% trong thời gian dài. Hành động tối ưu chi phí nào phù hợp nhất theo nguyên tắc cloud economics?",
+    "question": "Operations team discovers many m5.4xlarge EC2 instances but CPU and memory are used less than 10% for extended periods. What is the most appropriate cost optimization action according to cloud economics principles?",
     "options": [
-      "Rightsizing — chuyển sang instance type nhỏ hơn phù hợp với tải thực tế",
-      "Mua Reserved Instances cho chính các m5.4xlarge này để được giảm giá",
-      "Bật Multi-AZ để phân tán tải tốt hơn",
-      "Chuyển toàn bộ sang S3 để lưu trữ rẻ hơn"
+      "Rightsizing — migrate to a smaller instance type that matches actual load",
+      "Purchase Reserved Instances for these m5.4xlarge instances to get a discount",
+      "Enable Multi-AZ to distribute load better",
+      "Migrate everything to S3 for cheaper storage"
     ],
     "correctIndices": [
       0
@@ -6279,12 +6279,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một startup muốn cắt giảm chi phí cloud bằng cách áp dụng nguyên tắc automation và elasticity, tránh lãng phí tài nguyên. Biện pháp nào sau đây áp dụng ĐÚNG nguyên tắc này?",
+    "question": "A startup wants to reduce cloud costs by applying automation and elasticity principles to avoid resource waste. Which of the following measures correctly applies this principle?",
     "options": [
-      "Dùng Auto Scaling để tự động giảm số EC2 instance khi lưu lượng thấp",
-      "Mua trước nhiều EC2 On-Demand chạy 24/7 để luôn sẵn sàng cho cao điểm",
-      "Triển khai instance cố định kích thước tối đa quanh năm cho an toàn",
-      "Tắt thủ công từng server vào cuối mỗi ngày làm việc"
+      "Use Auto Scaling to automatically reduce the number of EC2 instances when traffic is low",
+      "Purchase many EC2 On-Demand instances in advance running 24/7 to always be ready for peak loads",
+      "Deploy instances at fixed maximum size year-round for safety",
+      "Manually shut down each server at the end of each business day"
     ],
     "correctIndices": [
       0
@@ -6302,12 +6302,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Giám đốc tài chính yêu cầu giải thích vì sao việc chuyển lên AWS giúp chuyển đổi cơ cấu chi phí. Đặc điểm nào mô tả đúng sự thay đổi từ on-premises sang AWS?",
+    "question": "The CFO asks for an explanation of why migrating to AWS helps transform cost structure. Which characteristic correctly describes the shift from on-premises to AWS?",
     "options": [
-      "Chuyển từ chi phí cố định trả trước (CapEx) sang chi phí biến đổi theo mức dùng (OpEx)",
-      "Chuyển từ chi phí biến đổi sang chi phí cố định trả trước hằng năm",
-      "Loại bỏ hoàn toàn mọi chi phí biến đổi liên quan data transfer",
-      "Buộc phải trả trước toàn bộ hạ tầng 3 năm để được dùng dịch vụ"
+      "Shift from upfront fixed costs (CapEx) to variable costs based on usage (OpEx)",
+      "Shift from variable costs to fixed costs paid annually upfront",
+      "Eliminate all variable costs related to data transfer",
+      "Must pay for all infrastructure in advance for 3 years to use the service"
     ],
     "correctIndices": [
       0
@@ -6325,12 +6325,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một ứng dụng có tải nền ổn định 24/7 đã biết trước trong 3 năm, cộng thêm các đợt tăng đột biến không thể dự đoán. Để tối ưu chi phí theo cloud economics, cách kết hợp mua nào hợp lý nhất?",
+    "question": "An application has a stable 24/7 baseline load predictable for 3 years, plus unpredictable traffic spikes. To optimize costs according to cloud economics, which combination purchase strategy makes the most sense?",
     "options": [
-      "Dùng Savings Plans/Reserved Instances cho phần tải nền ổn định, và On-Demand/Spot cho phần tải đột biến",
-      "Dùng toàn bộ On-Demand cho cả tải nền lẫn tải đột biến để giữ linh hoạt tối đa",
-      "Dùng toàn bộ Reserved Instances cam kết theo công suất đỉnh cao nhất từng ghi nhận",
-      "Dùng toàn bộ Spot Instances cho cả tải nền và tải đột biến để có giá rẻ nhất"
+      "Use Savings Plans/Reserved Instances for stable baseline load and On-Demand/Spot for traffic spikes",
+      "Use On-Demand exclusively for both baseline and spike loads to maintain maximum flexibility",
+      "Use Reserved Instances exclusively committed to the highest peak capacity ever recorded",
+      "Use Spot Instances exclusively for both baseline and spike loads for the lowest price"
     ],
     "correctIndices": [
       0
@@ -6348,12 +6348,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty chạy ứng dụng trên Amazon EC2. Theo AWS Shared Responsibility Model, ai chịu trách nhiệm cài đặt các bản patch bảo mật cho hệ điều hành (guest OS) trên instance đó?",
+    "question": "A company runs an application on Amazon EC2. According to the AWS Shared Responsibility Model, who is responsible for installing security patches for the operating system (guest OS) on that instance?",
     "options": [
-      "Khách hàng (customer)",
+      "Customer",
       "AWS",
-      "Nhà cung cấp phần cứng của trung tâm dữ liệu",
-      "AWS Support, miễn phí ở mọi tier"
+      "Data center hardware provider",
+      "AWS Support, free at all tiers"
     ],
     "correctIndices": [
       0
@@ -6371,12 +6371,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Trong AWS Shared Responsibility Model, hạng mục nào LUÔN thuộc về AWS bất kể khách hàng dùng dịch vụ nào?",
+    "question": "In the AWS Shared Responsibility Model, which category ALWAYS belongs to AWS regardless of which service the customer uses?",
     "options": [
-      "Bảo mật vật lý của các trung tâm dữ liệu (physical security)",
-      "Cấu hình Security Group",
-      "Quản lý IAM users và policies",
-      "Mã hóa dữ liệu phía client (client-side encryption)"
+      "Physical security of data centers",
+      "Configure Security Group",
+      "Manage IAM users and policies",
+      "Client-side data encryption"
     ],
     "correctIndices": [
       0
@@ -6394,12 +6394,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một nhóm DevOps chuyển workload từ Amazon EC2 (tự cài database) sang Amazon RDS. Sau khi chuyển, trách nhiệm nào của họ ĐƯỢC GIẢM (chuyển sang AWS) nhờ dịch vụ quản lý?",
+    "question": "A DevOps team migrates workloads from Amazon EC2 (self-managed database) to Amazon RDS. After migration, which responsibility is REDUCED (transferred to AWS) thanks to the managed service?",
     "options": [
-      "Vá lỗi (patching) hệ điều hành nền của database engine",
-      "Thiết kế schema và viết câu truy vấn của ứng dụng",
-      "Quản lý quyền truy cập IAM vào RDS",
-      "Cấu hình Security Group cho RDS instance"
+      "Patching the underlying operating system of the database engine",
+      "Design schema and write application queries",
+      "Manage IAM access to RDS",
+      "Configure Security Group for RDS instance"
     ],
     "correctIndices": [
       0
@@ -6417,12 +6417,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một developer build ứng dụng serverless bằng AWS Lambda. Hạng mục nào KHÔNG còn là trách nhiệm của họ vì Lambda quản lý sẵn?",
+    "question": "A developer builds a serverless application using AWS Lambda. Which category is NO LONGER their responsibility because Lambda manages it?",
     "options": [
-      "Vá lỗi và bảo trì hệ điều hành chạy code",
-      "Bảo mật code của function (tránh lỗ hổng trong logic)",
-      "Quản lý IAM execution role gán cho function",
-      "Cấu hình biến môi trường và quyền truy cập tài nguyên"
+      "Patch and maintain the operating system running code",
+      "Secure function code (avoid logic vulnerabilities)",
+      "Manage IAM execution role assigned to function",
+      "Configure environment variables and resource access"
     ],
     "correctIndices": [
       0
@@ -6440,12 +6440,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty lưu trữ tài liệu nhạy cảm trong Amazon S3. Họ lo ngại bị rò rỉ dữ liệu. Theo Shared Responsibility Model, ai chịu trách nhiệm BẬT mã hóa và cấu hình quyền truy cập (bucket policy) cho dữ liệu này?",
+    "question": "A company stores sensitive documents in Amazon S3. They are concerned about data leaks. According to the Shared Responsibility Model, who is responsible for ENABLING encryption and configuring access permissions (bucket policy) for this data?",
     "options": [
-      "Khách hàng",
-      "AWS, vì S3 là dịch vụ được quản lý",
-      "AWS, vì mã hóa hạ tầng là 'security OF the cloud'",
-      "Cả hai cùng cấu hình quyền truy cập theo từng object"
+      "Customer",
+      "AWS, because S3 is a managed service",
+      "AWS, because infrastructure encryption is 'security OF the cloud'",
+      "Both configure access permissions per object together"
     ],
     "correctIndices": [
       0
@@ -6463,12 +6463,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một kiến trúc sư review môi trường gồm EC2, RDS và Lambda theo Shared Responsibility Model. Hạng mục nào LUÔN là trách nhiệm của khách hàng bất kể dùng dịch vụ nào?",
+    "question": "An architect reviews an environment with EC2, RDS, and Lambda according to the Shared Responsibility Model. Which category is ALWAYS the customer's responsibility regardless of which service is used?",
     "options": [
-      "Quản lý IAM (users, roles, policies) và quyền truy cập",
-      "Vá lỗi (patch) hypervisor bên dưới",
-      "Bảo trì phần cứng máy chủ vật lý",
-      "Kiểm soát truy cập vật lý vào trung tâm dữ liệu"
+      "Manage IAM (users, roles, policies) and access permissions",
+      "Patch the underlying hypervisor",
+      "Maintain physical server hardware",
+      "Control physical access to data centers"
     ],
     "correctIndices": [
       0
@@ -6486,12 +6486,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một team chuyển một loạt workload từ EC2 sang các managed/serverless services. Phát biểu nào MÔ TẢ ĐÚNG cách trách nhiệm dịch chuyển dọc theo phổ EC2 → RDS → Lambda?",
+    "question": "A team migrates multiple workloads from EC2 to managed/serverless services. Which statement CORRECTLY DESCRIBES how responsibilities shift along the spectrum EC2 → RDS → Lambda?",
     "options": [
-      "Càng dùng dịch vụ được quản lý nhiều, AWS đảm nhận thêm phần OS/runtime, khách hàng tập trung vào dữ liệu và cấu hình",
-      "Khi dùng Lambda, khách hàng chịu trách nhiệm nhiều hơn vì phải quản lý cả OS lẫn scaling",
-      "Với RDS, khách hàng phải tự vá lỗi database engine giống hệt như EC2",
-      "Khi dùng dịch vụ managed, AWS sẽ tự cấu hình IAM và quyền truy cập dữ liệu cho khách hàng"
+      "The more managed services are used, AWS assumes more OS/runtime responsibility, customer focuses on data and configuration",
+      "With Lambda, customer assumes more responsibility because they must manage both OS and scaling",
+      "With RDS, customer must patch database engine themselves just like EC2",
+      "When using managed services, AWS automatically configures IAM and data access permissions for the customer"
     ],
     "correctIndices": [
       0
@@ -6509,12 +6509,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một auditor phát hiện một EC2 instance bị xâm nhập do guest OS chưa cài bản vá lỗ hổng đã công bố 6 tháng trước, và một Security Group mở port 22 cho 0.0.0.0/0. Theo Shared Responsibility Model, kết luận nào ĐÚNG về trách nhiệm?",
+    "question": "An auditor discovers an EC2 instance was compromised because the guest OS didn't have patches for a vulnerability disclosed 6 months ago, and a Security Group opens port 22 to 0.0.0.0/0. According to the Shared Responsibility Model, which conclusion about responsibility is CORRECT?",
     "options": [
-      "Cả việc patch OS lẫn cấu hình Security Group đều là trách nhiệm của khách hàng",
-      "AWS chịu trách nhiệm vì lỗ hổng OS nằm trong hạ tầng AWS cung cấp",
-      "AWS chịu trách nhiệm cấu hình Security Group vì đó là tài nguyên mạng của AWS",
-      "Trách nhiệm patch OS thuộc AWS, còn Security Group thuộc khách hàng"
+      "Both OS patching and Security Group configuration are the customer's responsibility",
+      "AWS is responsible because the OS vulnerability lies in AWS infrastructure",
+      "AWS is responsible for Security Group configuration because it's an AWS network resource",
+      "OS patching responsibility is AWS, Security Group is customer"
     ],
     "correctIndices": [
       0
@@ -6532,13 +6532,13 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Một công ty dùng Amazon RDS làm database chính. Khi áp dụng Shared Responsibility Model, những hạng mục nào dưới đây vẫn THUỘC TRÁCH NHIỆM của khách hàng dù RDS là managed service? (Chọn 2)",
+    "question": "A company uses Amazon RDS as the primary database. When applying the Shared Responsibility Model, which of the following categories remain the CUSTOMER'S RESPONSIBILITY even though RDS is a managed service? (Select 2)",
     "options": [
-      "Bật mã hóa at-rest và cấu hình quản lý key cho database",
-      "Cấu hình quyền truy cập network (Security Group, subnet) tới RDS",
-      "Vá lỗi hệ điều hành nền của RDS",
-      "Bảo trì và thay thế ổ đĩa phần cứng lưu trữ",
-      "Cài đặt và nâng cấp phiên bản minor của database engine theo lịch bảo trì tự động"
+      "Enable at-rest encryption and configure key management for the database",
+      "Configure network access permissions (Security Group, subnet) to RDS",
+      "Patch the underlying RDS operating system",
+      "Maintain and replace storage hardware drives",
+      "Install and upgrade minor database engine versions according to auto-maintenance schedule"
     ],
     "correctIndices": [
       0,
@@ -6557,12 +6557,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Phát biểu nào tóm tắt ĐÚNG nguyên tắc cốt lõi của AWS Shared Responsibility Model?",
+    "question": "Which statement correctly summarizes the core principle of the AWS Shared Responsibility Model?",
     "options": [
-      "AWS chịu trách nhiệm bảo mật OF the cloud (hạ tầng); khách hàng chịu trách nhiệm bảo mật IN the cloud (dữ liệu, cấu hình, truy cập)",
-      "AWS chịu trách nhiệm toàn bộ bảo mật, khách hàng chỉ trả tiền",
-      "Khách hàng chịu trách nhiệm bảo mật phần cứng vật lý của data center",
-      "Trách nhiệm bảo mật được chia 50/50 cố định cho mọi dịch vụ"
+      "AWS is responsible for security OF the cloud (infrastructure); customer is responsible for security IN the cloud (data, configuration, access)",
+      "AWS is responsible for all security, customer only pays",
+      "Customer is responsible for physical security of data center hardware",
+      "Security responsibility is fixed 50/50 for all services"
     ],
     "correctIndices": [
       0
@@ -6791,8 +6791,8 @@ export const generatedQuestions: Question[] = [
     "type": "single",
     "question": "Một kiến trúc sư cần mã hóa lưu lượng giữa người dùng và Application Load Balancer (in transit) đồng thời mã hóa dữ liệu lưu trong Amazon RDS (at rest). Phát biểu nào mô tả đúng cách dùng dịch vụ AWS cho hai yêu cầu này?",
     "options": [
-      "Dùng ACM cấp TLS certificate cho ALB để mã hóa in transit, và bật encryption with KMS cho RDS để mã hóa at rest",
-      "Dùng KMS cho cả mã hóa in transit ở ALB và at rest ở RDS",
+      "Use ACM to issue TLS certificates for ALB for in-transit encryption, and enable encryption with KMS for RDS for at-rest encryption",
+      "Use KMS for both in-transit encryption at ALB and at-rest encryption at RDS",
       "Dùng AWS Shield để mã hóa in transit và AWS Artifact để mã hóa at rest",
       "Dùng CloudTrail để mã hóa in transit và Inspector để mã hóa at rest"
     ],
@@ -6814,8 +6814,8 @@ export const generatedQuestions: Question[] = [
     "type": "single",
     "question": "Một công ty startup vừa tạo AWS account mới bằng email công ty. Đội bảo mật khuyến nghị KHÔNG dùng tài khoản root cho công việc hằng ngày. Theo best practice của AWS, sau khi tạo account, hành động nào nên thực hiện ĐẦU TIÊN để bảo vệ root user?",
     "options": [
-      "Bật MFA cho root user và tạo IAM user riêng cho công việc hằng ngày",
-      "Xóa root user và chỉ dùng IAM users",
+      "Enable MFA for root user and create separate IAM users for daily work",
+      "Delete root user and use only IAM users",
       "Chia sẻ mật khẩu root cho cả đội qua Secrets Manager",
       "Tạo access keys cho root user để dùng với AWS CLI"
     ],
@@ -6837,8 +6837,8 @@ export const generatedQuestions: Question[] = [
     "type": "single",
     "question": "Một tổ chức có 50 nhân viên cùng cần quyền đọc một bucket S3. Thay vì gán policy cho từng người, giải pháp IAM nào giúp quản lý quyền hiệu quả và dễ bảo trì nhất?",
     "options": [
-      "Tạo IAM group, gắn policy vào group rồi thêm các user vào group",
-      "Tạo 50 policy giống nhau gán riêng từng user",
+      "Create IAM group, attach policy to group, then add users to the group",
+      "Create 50 identical policies and assign them individually to each user",
       "Dùng chung một access key cho cả 50 người",
       "Bật root user cho từng nhân viên"
     ],
@@ -6860,8 +6860,8 @@ export const generatedQuestions: Question[] = [
     "type": "single",
     "question": "Một ứng dụng chạy trên EC2 cần truy cập bucket S3 để đọc file cấu hình. Đội DevOps muốn tránh lưu credentials cứng (hard-coded) trong code. Giải pháp AWS nào phù hợp nhất?",
     "options": [
-      "Gán IAM role cho EC2 instance (instance profile)",
-      "Lưu access key trong file cấu hình trên EC2",
+      "Assign IAM role to EC2 instance (instance profile)",
+      "Store access key in config file on EC2",
       "Dùng access key của root user trong biến môi trường",
       "Nhúng access key của một IAM user vào source code"
     ],
@@ -6904,10 +6904,10 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Doanh nghiệp đang dùng Microsoft Active Directory nội bộ và muốn nhân viên đăng nhập vào nhiều AWS account bằng tài khoản công ty hiện có, quản lý quyền tập trung. Dịch vụ AWS nào phù hợp nhất?",
+    "question": "A business uses Microsoft Active Directory internally and wants employees to log in to multiple AWS accounts using AD credentials without creating separate IAM users. Which solution?",
     "options": [
       "AWS IAM Identity Center (SSO)",
-      "Tạo IAM user trùng tên cho từng nhân viên trong mỗi account",
+      "Create IAM users with the same names for each employee in each account",
       "AWS Secrets Manager",
       "Amazon Cognito user pool cho nhân viên nội bộ"
     ],
@@ -7625,7 +7625,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty đang chạy database PostgreSQL self-managed trên một EC2 instance. Đội vận hành phải tự lo việc patch hệ điều hành, cài đặt bản vá engine, cấu hình backup và monitoring. Họ muốn chuyển sang một managed service để AWS lo các tác vụ vận hành này mà vẫn giữ engine PostgreSQL. Dịch vụ nào phù hợp nhất?",
+    "question": "A company is running a self-managed PostgreSQL database on an EC2 instance. The operations team must handle OS patching, install engine patches, configure backup and monitoring themselves. They want to switch to a managed service where AWS handles operational tasks while maintaining the PostgreSQL engine. Which service is most appropriate?",
     "options": [
       "Amazon RDS for PostgreSQL",
       "Amazon DynamoDB",
@@ -7648,12 +7648,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một ứng dụng web thương mại điện tử dùng Amazon RDS làm primary database. Khi khuyến mãi, lượng truy vấn ĐỌC (đọc catalog sản phẩm) tăng vọt và làm primary instance quá tải, trong khi lượng ghi không đổi. Đội kỹ thuật muốn phân tải các truy vấn đọc ra nhiều instance. Giải pháp nào phù hợp nhất?",
+    "question": "An e-commerce web application uses Amazon RDS as primary database. During promotional campaigns, READ query volume (reading product catalogs) spikes and overloads the primary instance, while write volume remains constant. The technical team wants to distribute read queries across multiple instances. Which solution is most appropriate?",
     "options": [
-      "Tạo RDS Read Replica để serve các truy vấn đọc",
-      "Bật Multi-AZ deployment để standby instance xử lý truy vấn đọc",
-      "Tăng backup retention period lên 35 ngày",
-      "Bật Deletion Protection trên primary instance"
+      "Create an RDS Read Replica to serve read queries",
+      "Enable Multi-AZ deployment for standby instance to handle read queries",
+      "Increase backup retention period to 35 days",
+      "Enable Deletion Protection on primary instance"
     ],
     "correctIndices": [
       0
@@ -7671,7 +7671,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một startup gaming xây dựng tính năng giỏ hàng (shopping cart) và session người dùng cần độ trễ truy cập sub-millisecond, dữ liệu mang tính tạm thời. Họ muốn một in-memory data store managed để giảm tải cho database chính. Dịch vụ nào phù hợp nhất?",
+    "question": "A gaming startup is building a shopping cart feature and user sessions need sub-millisecond access latency; data is temporary. They want a managed in-memory data store to reduce load on the main database. Which service is most appropriate?",
     "options": [
       "Amazon ElastiCache",
       "Amazon Athena",
@@ -7694,12 +7694,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một doanh nghiệp đang vận hành database Oracle on-premises và muốn migrate sang Amazon Aurora PostgreSQL. Vì engine nguồn (Oracle) và engine đích (PostgreSQL) khác nhau, họ cần chuyển đổi schema và stored procedures trước, sau đó di chuyển dữ liệu với downtime tối thiểu. Tổ hợp dịch vụ AWS nào phù hợp nhất?",
+    "question": "An enterprise is operating an Oracle database on-premises and wants to migrate to Amazon Aurora PostgreSQL. Since the source engine (Oracle) and target engine (PostgreSQL) are different, they need to convert schema and stored procedures first, then migrate data with minimal downtime. Which combination of AWS services is most appropriate?",
     "options": [
-      "AWS Schema Conversion Tool (SCT) để chuyển đổi schema, sau đó AWS Database Migration Service (DMS) để di chuyển dữ liệu",
-      "Chỉ dùng AWS DMS để vừa chuyển schema vừa di chuyển dữ liệu giống hệt nhau",
-      "Amazon Redshift Spectrum để query trực tiếp database Oracle",
-      "AWS Glue Crawler để tự động chuyển đổi schema Oracle sang PostgreSQL"
+      "AWS Schema Conversion Tool (SCT) to convert schema, then AWS Database Migration Service (DMS) to migrate data",
+      "Use only AWS DMS to both convert schema and migrate data identically",
+      "Amazon Redshift Spectrum to query Oracle database directly",
+      "AWS Glue Crawler to automatically convert schema from Oracle to PostgreSQL"
     ],
     "correctIndices": [
       0
@@ -7717,13 +7717,13 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Một công ty social media cần một database phục vụ workload key-value với hàng triệu request mỗi giây, độ trễ single-digit millisecond ổn định, và quy mô tăng trưởng gần như vô hạn mà không cần quản lý server. Họ chọn Amazon DynamoDB. Những phát biểu nào sau đây ĐÚNG về DynamoDB? (Chọn 2)",
+    "question": "A social media company needs a database to serve key-value workloads with millions of requests per second, stable single-digit millisecond latency, and nearly unlimited growth without server management. They choose Amazon DynamoDB. Which of the following statements about DynamoDB are TRUE? (Select 2)",
     "options": [
-      "DynamoDB là serverless NoSQL, không cần provision hay quản lý server",
-      "DynamoDB cung cấp DynamoDB Global Tables cho multi-region active-active replication",
-      "DynamoDB hỗ trợ SQL JOIN phức tạp giữa nhiều bảng giống RDS",
-      "DynamoDB yêu cầu bạn tự patch hệ điều hành của các node",
-      "DynamoDB chỉ chạy được trong một Availability Zone duy nhất"
+      "DynamoDB is serverless NoSQL, no need to provision or manage servers",
+      "DynamoDB provides DynamoDB Global Tables for multi-region active-active replication",
+      "DynamoDB supports complex SQL JOINs between multiple tables like RDS",
+      "DynamoDB requires you to patch the OS of nodes yourself",
+      "DynamoDB can only run in a single Availability Zone"
     ],
     "correctIndices": [
       0,
@@ -7742,7 +7742,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty triển khai web server trong public subnet. Họ muốn cho phép HTTPS inbound từ Internet nhưng tạm thời CHẶN một dải IP cụ thể đang tấn công. Họ chỉ cần tạo rule DENY ở đâu trong VPC?",
+    "question": "A company deploys web servers in a public subnet. They want to allow HTTPS inbound from the Internet but temporarily BLOCK a specific IP range that is attacking. Where do they only need to create a DENY rule in the VPC?",
     "options": [
       "Network ACL (NACL) của subnet — vì NACL hỗ trợ explicit DENY rule",
       "Security Group của instance — vì Security Group hỗ trợ DENY rule",
@@ -7765,7 +7765,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một startup cần giảm độ trễ khi phân phối video và ảnh tĩnh cho người dùng toàn cầu bằng cách cache nội dung tại edge locations. Dịch vụ AWS nào phù hợp nhất?",
+    "question": "A startup needs to reduce latency when distributing videos and static images to global users by caching content at edge locations. Which AWS service is most appropriate?",
     "options": [
       "Amazon CloudFront",
       "Amazon Route 53",
@@ -7788,7 +7788,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty cần kết nối data center on-premises với AWS qua một đường truyền RIÊNG, băng thông ổn định, độ trễ thấp và nhất quán để truyền khối lượng dữ liệu lớn hằng ngày. Giải pháp nào phù hợp nhất?",
+    "question": "A company needs to connect an on-premises data center to AWS via a PRIVATE connection with stable bandwidth, low and consistent latency to transfer large volumes of data daily. Which solution is most appropriate?",
     "options": [
       "AWS Direct Connect",
       "AWS Site-to-Site VPN",
@@ -7811,7 +7811,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Một kiến trúc sư cần cấu hình để instance trong private subnet có thể tải bản cập nhật từ Internet nhưng KHÔNG cho phép Internet khởi tạo kết nối đến instance đó. Những thành phần nào cần dùng? (Chọn 2)",
+    "question": "An architect needs to configure instances in a private subnet to download updates from the Internet but NOT allow the Internet to initiate connections to those instances. Which components are needed? (Select 2)",
     "options": [
       "NAT Gateway đặt trong public subnet",
       "Route trong private subnet trỏ traffic Internet (0.0.0.0/0) tới NAT Gateway",
@@ -7836,7 +7836,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một quản trị viên cấu hình Security Group cho phép inbound HTTPS (port 443) nhưng KHÔNG thêm bất kỳ outbound rule nào cho phản hồi. Người dùng vẫn nhận được phản hồi từ web server thành công. Vì sao?",
+    "question": "An administrator configures a Security Group to allow inbound HTTPS (port 443) but does NOT add any outbound rules for responses. Users still receive responses from the web server successfully. Why?",
     "options": [
       "Security Group là stateful — phản hồi cho kết nối inbound được phép tự động được cho phép đi ra",
       "Security Group là stateless nên cần rule outbound riêng, nhưng NACL đã tự xử lý",
@@ -7859,7 +7859,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty cần lưu trữ các bản backup mà họ hiếm khi truy cập (vài lần mỗi năm), chấp nhận thời gian truy xuất vài giờ và muốn chi phí lưu trữ THẤP NHẤT có thể. Storage class nào của Amazon S3 phù hợp nhất?",
+    "question": "A company needs to store backups that they rarely access (a few times per year), accept retrieval time of several hours, and want the LOWEST possible storage cost. Which Amazon S3 storage class is most appropriate?",
     "options": [
       "S3 Glacier Deep Archive",
       "S3 Standard",
@@ -7882,7 +7882,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một ứng dụng phân tích log có mẫu truy cập KHÔNG dự đoán được: một số object được đọc liên tục trong tháng đầu rồi gần như không bao giờ đụng tới, một số khác thì ngược lại. Công ty muốn tối ưu chi phí mà KHÔNG phải tự phân tích và di chuyển dữ liệu thủ công. Lựa chọn nào tốt nhất?",
+    "question": "A log analytics application has UNPREDICTABLE access patterns: some objects are read continuously in the first month then rarely accessed, others are the opposite. The company wants to optimize costs WITHOUT manually analyzing and moving data. Which option is best?",
     "options": [
       "S3 Intelligent-Tiering",
       "S3 Standard-IA",
@@ -7905,7 +7905,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một ứng dụng EC2 chạy database cần block storage hiệu năng cao mà dữ liệu phải TỒN TẠI ngay cả khi instance bị stop hoặc terminate. Loại storage nào đáp ứng?",
+    "question": "An EC2 application running a database needs high-performance block storage where data must PERSIST even if the instance is stopped or terminated. Which storage type meets this requirement?",
     "options": [
       "Amazon EBS",
       "EC2 Instance Store",
@@ -7928,7 +7928,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Nhiều EC2 instance trên Linux trong cùng một ứng dụng cần CÙNG truy cập đọc/ghi vào một hệ thống file dùng chung, tự động co giãn dung lượng. Dịch vụ nào phù hợp nhất?",
+    "question": "Multiple Linux EC2 instances in the same application need shared read/write access to a common file system that automatically scales. Which service is most appropriate?",
     "options": [
       "Amazon EFS",
       "Amazon EBS",
@@ -7951,7 +7951,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty muốn TỰ ĐỘNG chuyển object từ S3 Standard sang S3 Standard-IA sau 30 ngày và xóa chúng sau 365 ngày để giảm chi phí. Tính năng nào của S3 thực hiện việc này?",
+    "question": "A company wants to AUTOMATICALLY transition objects from S3 Standard to S3 Standard-IA after 30 days and delete them after 365 days to reduce costs. Which S3 feature accomplishes this?",
     "options": [
       "S3 Lifecycle configuration",
       "S3 Versioning",
@@ -7974,7 +7974,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một trung tâm dữ liệu on-premises muốn cung cấp cho ứng dụng nội bộ quyền truy cập file qua giao thức NFS/SMB với độ trễ thấp (cache cục bộ), trong khi dữ liệu thực tế được lưu bền vững trên Amazon S3. Giải pháp nào phù hợp?",
+    "question": "An on-premises data center wants to provide internal applications with file access via NFS/SMB protocol with low latency (local cache) while actual data is persistently stored on Amazon S3. Which solution is appropriate?",
     "options": [
       "AWS Storage Gateway (Amazon S3 File Gateway)",
       "AWS DataSync",
@@ -7997,7 +7997,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "multi",
-    "question": "Một tổ chức muốn quản lý backup TẬP TRUNG và tự động theo policy cho nhiều dịch vụ AWS từ một nơi duy nhất. AWS Backup có thể bảo vệ những tài nguyên nào sau đây? (Chọn 2)",
+    "question": "An organization wants centralized backup management and automatic policy-based backups for multiple AWS services from a single location. Which of the following resources can AWS Backup protect? (Select 2)",
     "options": [
       "Amazon EBS volumes",
       "Amazon RDS databases",
@@ -8022,7 +8022,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một startup muốn xây dựng nhanh một ứng dụng chatbot tư vấn sản phẩm dựa trên large language model (như Claude), không có data scientist và không muốn train model từ đầu. Họ chỉ cần gọi foundation model qua API và thêm guardrails. Dịch vụ AWS nào phù hợp nhất?",
+    "question": "A startup wants to quickly build a product recommendation chatbot based on a large language model (like Claude) without a data scientist and without training a model from scratch. They only need to call foundation models via API and add guardrails. Which AWS service is most appropriate?",
     "options": [
       "Amazon Bedrock",
       "Amazon SageMaker",
@@ -8045,7 +8045,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một bệnh viện cần chuyển các file ghi âm cuộc trao đổi giữa bác sĩ và bệnh nhân thành văn bản text để lưu hồ sơ, với thuật ngữ y khoa chính xác. Dịch vụ nào phù hợp nhất?",
+    "question": "A hospital needs to convert audio recordings of conversations between doctors and patients into text for medical records with accurate medical terminology. Which service is most appropriate?",
     "options": [
       "Amazon Transcribe Medical",
       "Amazon Polly",
@@ -8068,7 +8068,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty bảo hiểm cần tự động trích xuất số tiền, ngày, và các trường form từ hàng nghìn file PDF hóa đơn và đơn yêu cầu bồi thường scan. Dịch vụ AWS nào được thiết kế chuyên cho việc này?",
+    "question": "An insurance company needs to automatically extract amounts, dates, and form fields from thousands of scanned PDF invoices and claim requests. Which AWS service is specifically designed for this?",
     "options": [
       "Amazon Textract",
       "Amazon Rekognition",
@@ -8091,7 +8091,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Team analytics cần chạy truy vấn SQL ad-hoc trực tiếp trên các file log định dạng CSV/Parquet đang lưu trong Amazon S3, mà không muốn dựng và quản lý server database. Dịch vụ nào phù hợp nhất?",
+    "question": "Analytics team needs to run ad-hoc SQL queries directly on log files in CSV/Parquet format stored in Amazon S3 without building and managing a database server. Which service is most appropriate?",
     "options": [
       "Amazon Athena",
       "Amazon Kinesis Data Streams",
@@ -8114,7 +8114,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Một doanh nghiệp xây dựng pipeline phân tích dữ liệu: thu thập clickstream real-time từ website, làm sạch/biến đổi (ETL) và tạo data catalog, rồi cuối cùng trình bày kết quả bằng dashboard tương tác cho lãnh đạo. Hãy chọn các dịch vụ phù hợp với từng giai đoạn (chọn 3).",
+    "question": "An enterprise builds a data analytics pipeline: collect real-time clickstream from website, clean/transform (ETL) and create data catalog, then finally present results with interactive dashboards for leadership. Choose services appropriate for each stage (select 3).",
     "options": [
       "Amazon Kinesis — ingest clickstream streaming real-time",
       "AWS Glue — ETL và tạo data catalog",
@@ -8140,7 +8140,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Một tập đoàn có hàng triệu tài liệu nội bộ nằm rải rác trên Amazon S3, SharePoint và Confluence. Nhân viên muốn đặt câu hỏi bằng ngôn ngữ tự nhiên (ví dụ 'chính sách nghỉ phép thai sản là gì?') và nhận câu trả lời chính xác từ kho tài liệu này. Dịch vụ AWS chuyên cho enterprise search NLU này là gì?",
+    "question": "A corporation has millions of internal documents scattered across Amazon S3, SharePoint and Confluence. Employees want to ask questions in natural language (e.g., 'what is the maternity leave policy?') and get accurate answers from this document repository. Which AWS service specializes in this enterprise search NLU?",
     "options": [
       "Amazon Kendra",
       "Amazon Athena",
@@ -8163,7 +8163,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một công ty muốn gửi thông báo cùng lúc đến nhiều endpoint khác nhau (email, SMS và một số hàng đợi xử lý) theo mô hình publish/subscribe, mỗi message được đẩy ngay đến tất cả subscriber. Dịch vụ nào phù hợp nhất?",
+    "question": "A company wants to send notifications simultaneously to multiple different endpoints (email, SMS, and processing queues) using a publish/subscribe model, with each message pushed immediately to all subscribers. Which service is most appropriate?",
     "options": [
       "Amazon SNS",
       "Amazon SQS",
@@ -8186,7 +8186,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một nhóm DevOps muốn tự động hóa toàn bộ quy trình: lấy code từ repo, build, test rồi deploy qua nhiều giai đoạn (staging, production). Dịch vụ nào điều phối (orchestrate) toàn bộ pipeline CI/CD end-to-end này?",
+    "question": "A DevOps team wants to automate the entire process: pull code from repo, build, test, and deploy across multiple stages (staging, production). Which service orchestrates this entire end-to-end CI/CD pipeline?",
     "options": [
       "AWS CodePipeline",
       "AWS CodeBuild",
@@ -8209,7 +8209,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một ứng dụng cần định tuyến sự kiện từ nhiều nguồn (SaaS bên thứ ba, dịch vụ AWS, ứng dụng nội bộ) đến các target khác nhau dựa trên rule mà không cần viết code polling. Dịch vụ serverless nào đáp ứng tốt nhất?",
+    "question": "An application needs to route events from multiple sources (third-party SaaS, AWS services, internal applications) to different targets based on rules without writing polling code. Which serverless service best meets this requirement?",
     "options": [
       "Amazon EventBridge",
       "Amazon SQS",
@@ -8232,7 +8232,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Một startup muốn xây dựng ứng dụng web/mobile nhanh với backend GraphQL real-time, đồng thời triển khai và hosting frontend với CI/CD tích hợp. Những dịch vụ AWS nào phù hợp cho mục tiêu này? (Chọn 2)",
+    "question": "A startup wants to quickly build web/mobile applications with real-time GraphQL backend while deploying and hosting frontend with integrated CI/CD. Which AWS services are appropriate for this goal? (Select 2)",
     "options": [
       "AWS Amplify",
       "AWS AppSync",
@@ -8257,7 +8257,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một công ty chạy một batch job xử lý ảnh chạy vào ban đêm. Job có thể bị gián đoạn và tự khởi động lại từ checkpoint mà không ảnh hưởng nghiệp vụ. Họ muốn giảm chi phí EC2 tối đa. Mô hình giá nào phù hợp nhất?",
+    "question": "A company runs an image processing batch job at night. The job can be interrupted and automatically restart from a checkpoint without affecting business. They want to minimize EC2 costs. Which pricing model is most appropriate?",
     "options": [
       "Spot Instances",
       "On-Demand Instances",
@@ -8280,7 +8280,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một startup cam kết chi tiêu $10/giờ cho compute trong 1 năm và muốn được giảm giá nhưng vẫn linh hoạt thay đổi giữa EC2, Lambda và Fargate, đổi instance family, kích thước, OS và Region. Lựa chọn nào đáp ứng?",
+    "question": "A startup commits to spending $10/hour on compute over 1 year and wants discounts but still has flexibility to change between EC2, Lambda and Fargate, switch instance families, sizes, OS and Region. Which option meets this?",
     "options": [
       "Compute Savings Plans",
       "EC2 Instance Savings Plans",
@@ -8303,12 +8303,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Trong AWS, hướng truyền dữ liệu nào thường KHÔNG bị tính phí data transfer?",
+    "question": "In AWS, which direction of data transmission is typically NOT charged for data transfer?",
     "options": [
-      "Dữ liệu inbound đi vào AWS từ Internet",
-      "Dữ liệu outbound từ EC2 ra Internet",
-      "Dữ liệu chuyển giữa hai Region khác nhau",
-      "Dữ liệu chuyển giữa hai Availability Zone trong cùng Region"
+      "Inbound data coming into AWS from the Internet",
+      "Outbound data from EC2 to the Internet",
+      "Data transfer between two different Regions",
+      "Data transfer between two Availability Zones in the same Region"
     ],
     "correctIndices": [
       0

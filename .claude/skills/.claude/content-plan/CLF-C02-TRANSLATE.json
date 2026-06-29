@@ -1,0 +1,48 @@
+{
+  "taskType": "translate",
+  "courseId": "CLF-C02",
+  "createdAt": "2026-06-29T08:06:22.440Z",
+  "status": "in-progress",
+  "parts": [
+    {
+      "id": "batch-1",
+      "name": "Questions 1-120",
+      "status": "pending",
+      "range": [
+        0,
+        120
+      ],
+      "note": "120 questions"
+    },
+    {
+      "id": "batch-2",
+      "name": "Questions 121-240",
+      "status": "pending",
+      "range": [
+        120,
+        240
+      ],
+      "note": "120 questions"
+    },
+    {
+      "id": "batch-3",
+      "name": "Questions 241-360",
+      "status": "pending",
+      "range": [
+        240,
+        360
+      ],
+      "note": "120 questions"
+    },
+    {
+      "id": "batch-4",
+      "name": "Questions 361-373",
+      "status": "pending",
+      "range": [
+        360,
+        373
+      ],
+      "note": "13 questions"
+    }
+  ]
+}

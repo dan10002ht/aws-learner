@@ -9,32 +9,35 @@
     {
       "id": "batch-1",
       "name": "Questions 1-120",
-      "status": "pending",
+      "status": "done",
       "range": [
         0,
         120
       ],
-      "note": "clf-m1, clf-m2 partial"
+      "note": "clf-m1, clf-m2 partial",
+      "completedAt": "2026-06-29T07:48:04.395Z"
     },
     {
       "id": "batch-2",
       "name": "Questions 121-240",
-      "status": "pending",
+      "status": "done",
       "range": [
         120,
         240
       ],
-      "note": "clf-m2, clf-m3 partial"
+      "note": "clf-m2, clf-m3 partial",
+      "completedAt": "2026-06-29T09:03:47.969Z"
     },
     {
       "id": "batch-3",
       "name": "Questions 241-325",
-      "status": "pending",
+      "status": "done",
       "range": [
         240,
         325
       ],
-      "note": "clf-m3, practice"
+      "note": "clf-m3, practice",
+      "completedAt": "2026-06-29T09:03:47.970Z"
     }
   ]
 }
