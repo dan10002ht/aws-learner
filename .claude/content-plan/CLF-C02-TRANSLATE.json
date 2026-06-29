@@ -1,0 +1,40 @@
+{
+  "courseId": "CLF-C02",
+  "task": "translate-questions-to-english",
+  "description": "Translate question + options to English, keep explanation in Vietnamese",
+  "totalQuestions": 325,
+  "batchSize": 120,
+  "createdAt": "2026-06-29T07:42:05.422Z",
+  "parts": [
+    {
+      "id": "batch-1",
+      "name": "Questions 1-120",
+      "status": "pending",
+      "range": [
+        0,
+        120
+      ],
+      "note": "clf-m1, clf-m2 partial"
+    },
+    {
+      "id": "batch-2",
+      "name": "Questions 121-240",
+      "status": "pending",
+      "range": [
+        120,
+        240
+      ],
+      "note": "clf-m2, clf-m3 partial"
+    },
+    {
+      "id": "batch-3",
+      "name": "Questions 241-325",
+      "status": "pending",
+      "range": [
+        240,
+        325
+      ],
+      "note": "clf-m3, practice"
+    }
+  ]
+}
