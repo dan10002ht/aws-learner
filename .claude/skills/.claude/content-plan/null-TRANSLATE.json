@@ -1,0 +1,38 @@
+{
+  "taskType": "translate",
+  "courseId": null,
+  "createdAt": "2026-06-30T04:46:35.354Z",
+  "status": "in-progress",
+  "parts": [
+    {
+      "id": "batch-1",
+      "name": "Questions 1-120",
+      "status": "pending",
+      "range": [
+        0,
+        120
+      ],
+      "note": "120 questions"
+    },
+    {
+      "id": "batch-2",
+      "name": "Questions 121-240",
+      "status": "pending",
+      "range": [
+        120,
+        240
+      ],
+      "note": "120 questions"
+    },
+    {
+      "id": "batch-3",
+      "name": "Questions 241-300",
+      "status": "pending",
+      "range": [
+        240,
+        300
+      ],
+      "note": "60 questions"
+    }
+  ]
+}

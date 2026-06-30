@@ -20,12 +20,14 @@ export const meta = {
   ]
 };
 
-const courseId = args.courseId || "CLF-C02";
-const batchSize = args.batchSize || 120;
+const courseId = args.courseId; // null = all courses
+const batchSize = args.batchSize || 150; // larger for all courses
 const language = args.language || "English";
 const sourceLanguage = args.sourceLanguage || "Vietnamese";
+const isAllCourses = !courseId;
 
-log(`📝 Translating ${courseId} → ${language} (explanation: ${sourceLanguage})\n`);
+log(`📝 Translating ${isAllCourses ? "ALL COURSES" : courseId} → ${language}`);
+log(`(keeping explanation: ${sourceLanguage})\n`);
 
 // Phase 1: Extract questions + split into batches
 phase("Extract");
@@ -44,7 +46,10 @@ const match = content.match(/export const generatedQuestions: Question\\[\\] = \
 if (!match) throw new Error("Parse failed");
 
 const questions = JSON.parse("[" + match[1] + "]");
-const courseQuestions = questions.filter(q => q.courseId === "${courseId}");
+${isAllCourses ?
+  `const courseQuestions = questions; // ALL courses` :
+  `const courseQuestions = questions.filter(q => q.courseId === "${courseId}");`
+}
 
 const batchSize = ${batchSize};
 const batches = [];
@@ -60,7 +65,7 @@ EXTRACT_EOF
 \`\`\`
 
 Then return the JSON output (copy from console.log above).
-Return JSON with this shape: { batches: [{id: "batch-1", count: 120, range: [0, 120]}, ...], total: 373 }
+Return JSON with this shape: { batches: [{id: "batch-1", count: 150, range: [0, 150]}, ...], total: 771 }
   `,
   { label: "extract-batches", phase: "Extract", schema: {
     type: "object",

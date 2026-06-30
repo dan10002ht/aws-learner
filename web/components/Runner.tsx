@@ -48,6 +48,7 @@ export default function Runner({ setKey, mode }: Props) {
   const [startedAt, setStartedAt] = useState(0);
   const [finishedAt, setFinishedAt] = useState(0);
   const [showPalette, setShowPalette] = useState(false); // mobile palette drawer
+  const [filter, setFilter] = useState<'all' | 'wrong' | 'correct'>('all');
 
   const available = useMemo(() => {
     if (!set) return 0;
@@ -166,7 +167,7 @@ export default function Runner({ setKey, mode }: Props) {
   if (!set) {
     return (
       <div className="card p-6 text-center">
-        <p className="text-[var(--text-dim)]">Không tìm thấy bộ câu hỏi này.</p>
+        <p className="text-[var(--text-dim)]">Question set not found.</p>
       </div>
     );
   }
@@ -175,7 +176,7 @@ export default function Runner({ setKey, mode }: Props) {
   if (autoExam && phase === "setup") {
     return (
       <div className="card p-8 text-center max-w-xl mx-auto">
-        <p className="text-[var(--text-dim)]">Đang vào phòng thi…</p>
+        <p className="text-[var(--text-dim)]">Loading exam…</p>
       </div>
     );
   }
@@ -189,7 +190,7 @@ export default function Runner({ setKey, mode }: Props) {
           href={`/courses/${set.courseId}/${isExam ? "exam" : "practice"}`}
           className="text-sm text-[var(--text-dim)] hover:text-[var(--text)] inline-flex items-center gap-1"
         >
-          <ChevronLeft size={14} /> Quay lại danh sách
+          <ChevronLeft size={14} /> Back
         </Link>
 
         <div>
@@ -198,22 +199,22 @@ export default function Runner({ setKey, mode }: Props) {
           </div>
           <h1 className="text-2xl font-extrabold">{set.label}</h1>
           <p className="text-[var(--text-dim)] mt-1 text-sm">{set.description}</p>
-          <p className="text-xs text-[var(--text-mute)] mt-2">{available} câu khả dụng trong bộ này.</p>
+          <p className="text-xs text-[var(--text-mute)] mt-2">{available} questions available in this set.</p>
         </div>
 
         <div className="card p-5 space-y-4">
-          <Field label="Số câu hỏi">
+          <Field label="Number of Questions">
             <input
               type="number" min={1} max={available || 1}
               value={config.count}
               onChange={(e) => setConfig({ ...config, count: Math.max(1, Math.min(available || 1, Number(e.target.value) || 1)) })}
               className="w-full px-3 py-2 rounded-lg surface-2 border border-[var(--border)] focus:outline-none focus:border-brand-500 font-medium"
             />
-            <span className="text-xs text-[var(--text-mute)]">Tối đa {available}</span>
+            <span className="text-xs text-[var(--text-mute)]">Max {available}</span>
           </Field>
 
           {isExam && (
-            <Field label="Thời gian (phút)">
+            <Field label="Time (minutes)">
               <input
                 type="number" min={1} max={300}
                 value={config.examMinutes}
@@ -229,7 +230,7 @@ export default function Runner({ setKey, mode }: Props) {
               onChange={(e) => setConfig({ ...config, shuffleQuestions: e.target.checked })}
               className="w-4 h-4 accent-brand-500"
             />
-            <span className="text-sm">Trộn thứ tự câu hỏi</span>
+            <span className="text-sm">Shuffle question order</span>
           </label>
           <label className="flex items-center gap-2.5 cursor-pointer select-none">
             <input
@@ -237,12 +238,12 @@ export default function Runner({ setKey, mode }: Props) {
               onChange={(e) => setConfig({ ...config, shuffleOptions: e.target.checked })}
               className="w-4 h-4 accent-brand-500"
             />
-            <span className="text-sm">Trộn thứ tự đáp án</span>
+            <span className="text-sm">Shuffle answer options</span>
           </label>
         </div>
 
         <Button3D variant="primary" onClick={start} disabled={available === 0} className="w-full">
-          {available === 0 ? "Chưa có câu hỏi" : `Bắt đầu ${isExam ? "thi" : "luyện"}`}
+          {available === 0 ? "No questions available" : `Start ${isExam ? "Exam" : "Practice"}`}
         </Button3D>
       </div>
     );
@@ -286,16 +287,16 @@ export default function Runner({ setKey, mode }: Props) {
     const palettePanel = (
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <div className="text-xs font-bold uppercase tracking-widest text-[var(--text-dim)]">Bảng câu hỏi</div>
+          <div className="text-xs font-bold uppercase tracking-widest text-[var(--text-dim)]">Question Palette</div>
           <div className="text-xs text-[var(--text-mute)]">
             <span className="text-success font-semibold">{answeredCount}</span> / {prepared.length}
           </div>
         </div>
         {paletteGrid}
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.7rem] text-[var(--text-mute)] pt-1">
-          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded border-2 border-brand-500 bg-brand-500/15 inline-block" /> hiện tại</span>
-          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded border-2 border-success/40 bg-success/10 inline-block" /> đã trả lời</span>
-          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded border-2 border-[var(--border)] inline-block" /> chưa</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded border-2 border-brand-500 bg-brand-500/15 inline-block" /> current</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded border-2 border-success/40 bg-success/10 inline-block" /> answered</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded border-2 border-[var(--border)] inline-block" /> unanswered</span>
         </div>
       </div>
     );
@@ -303,29 +304,29 @@ export default function Runner({ setKey, mode }: Props) {
     const navButtons = (
       <div className="flex justify-between gap-3">
         <Button3D variant="secondary" size="sm" onClick={() => setCurrentIdx((i) => Math.max(0, i - 1))} disabled={currentIdx === 0}>
-          <ChevronLeft size={16} /> Trước
+          <ChevronLeft size={16} /> Previous
         </Button3D>
         {mode === "practice" ? (
           !rev ? (
             <Button3D variant="primary" size="sm" onClick={() => onCheck(currentIdx)} disabled={sel.length === 0}>
-              Kiểm tra
+              Check
             </Button3D>
           ) : currentIdx < prepared.length - 1 ? (
             <Button3D variant="primary" size="sm" onClick={() => setCurrentIdx((i) => i + 1)}>
-              Tiếp <ChevronRight size={16} />
+              Next <ChevronRight size={16} />
             </Button3D>
           ) : (
             <Button3D variant="primary" size="sm" onClick={finishAttempt}>
-              Hoàn thành
+              Complete
             </Button3D>
           )
         ) : currentIdx < prepared.length - 1 ? (
           <Button3D variant="primary" size="sm" onClick={() => setCurrentIdx((i) => i + 1)}>
-            Tiếp <ChevronRight size={16} />
+            Next <ChevronRight size={16} />
           </Button3D>
         ) : (
           <Button3D variant="primary" size="sm" onClick={finishAttempt}>
-            <Send size={14} /> Nộp bài
+            <Send size={14} /> Submit
           </Button3D>
         )}
       </div>
@@ -343,7 +344,7 @@ export default function Runner({ setKey, mode }: Props) {
               <Timer startMs={startedAt} totalMs={config.examMinutes * 60_000} onExpire={finishAttempt} />
             )}
             <Button3D variant="secondary" size="sm" onClick={finishAttempt}>
-              {isExam ? <><Send size={14} /> Nộp bài</> : <><Square size={14} /> Kết thúc</>}
+              {isExam ? <><Send size={14} /> Submit</> : <><Square size={14} /> End</>}
             </Button3D>
           </div>
         </div>
@@ -363,7 +364,7 @@ export default function Runner({ setKey, mode }: Props) {
                 onClick={() => setShowPalette(true)}
                 className="lg:hidden flex items-center gap-2 text-sm font-medium text-[var(--text-dim)] hover:text-[var(--text)]"
               >
-                <LayoutGrid size={16} /> Bảng câu hỏi ({answeredCount}/{prepared.length})
+                <LayoutGrid size={16} /> Question Palette ({answeredCount}/{prepared.length})
               </button>
             )}
 
@@ -433,43 +434,93 @@ export default function Runner({ setKey, mode }: Props) {
             passed ? "bg-success/15 text-success" : "bg-danger/15 text-danger"
           }`}
         >
-          {passed ? "ĐẬU" : "TRƯỢT"} · ngưỡng {passingScore}%
+          {passed ? "PASSED" : "FAILED"} · Passing Score {passingScore}%
         </div>
         <div className="text-lg font-semibold">
-          {correctCount} / {prepared.length} câu đúng
+          {correctCount} / {prepared.length} correct
         </div>
         <div className="text-sm text-[var(--text-dim)] mt-1">
-          Thời gian: {durationMin}:{String(durationSec).padStart(2, "0")} · +{correctCount * 10 + 50} XP
+          Time: {durationMin}:{String(durationSec).padStart(2, "0")} · +{correctCount * 10 + 50} XP
         </div>
         <div className="flex gap-2 justify-center mt-5 flex-wrap">
           <Link href={`/courses/${set.courseId}/${mode === "exam" ? "exam" : "practice"}`} className="btn3d btn3d-secondary btn3d-sm">
-            Bộ khác
+            Another Set
           </Link>
           <Link href="/history" className="btn3d btn3d-secondary btn3d-sm">
-            Lịch sử
+            History
           </Link>
           <Button3D variant="primary" size="sm" onClick={() => setPhase("setup")}>
-            <RotateCw size={14} /> Làm lại
+            <RotateCw size={14} /> Retry
           </Button3D>
         </div>
       </div>
 
+      <div className="card p-4">
+        <div className="flex gap-2 mb-4">
+          <Button3D
+            variant={filter === 'all' ? 'primary' : 'secondary'}
+            size="sm"
+            onClick={() => setFilter('all')}
+          >
+            All ({prepared.length})
+          </Button3D>
+          <Button3D
+            variant={filter === 'wrong' ? 'primary' : 'secondary'}
+            size="sm"
+            onClick={() => setFilter('wrong')}
+          >
+            Wrong ({prepared.length - correctCount})
+          </Button3D>
+          <Button3D
+            variant={filter === 'correct' ? 'primary' : 'secondary'}
+            size="sm"
+            onClick={() => setFilter('correct')}
+          >
+            Correct ({correctCount})
+          </Button3D>
+        </div>
+
+        <div className="grid grid-cols-4 gap-2 mb-4 text-sm">
+          <div className="text-center">
+            <div className="text-xs text-[var(--text-mute)]">Wrong</div>
+            <div className="text-lg font-bold text-danger">{prepared.length - correctCount}</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xs text-[var(--text-mute)]">Correct</div>
+            <div className="text-lg font-bold text-success">{correctCount}</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xs text-[var(--text-mute)]">Pass Rate</div>
+            <div className="text-lg font-bold">{score}%</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xs text-[var(--text-mute)]">Time</div>
+            <div className="text-lg font-bold">{durationMin}:{String(durationSec).padStart(2, "0")}</div>
+          </div>
+        </div>
+      </div>
+
       <div>
-        <h2 className="text-xl font-bold mb-3">Chi tiết từng câu</h2>
+        <h2 className="text-xl font-bold mb-3">Question Details</h2>
         <div className="space-y-4">
-          {prepared.map((p, i) => (
-            <QuestionCard
-              key={p.q.id}
-              question={p.q}
-              optionMap={p.optionMap}
-              selected={selections[i] ?? []}
-              revealed
-              questionNumber={i + 1}
-              totalQuestions={prepared.length}
-              onToggle={() => {}}
-              disabled
-            />
-          ))}
+          {prepared.map((p, i) => {
+            const isAnsweredCorrectly = isCorrect(p.q, p.optionMap, selections[i] ?? []);
+            if (filter === 'wrong' && isAnsweredCorrectly) return null;
+            if (filter === 'correct' && !isAnsweredCorrectly) return null;
+            return (
+              <QuestionCard
+                key={p.q.id}
+                question={p.q}
+                optionMap={p.optionMap}
+                selected={selections[i] ?? []}
+                revealed
+                questionNumber={i + 1}
+                totalQuestions={prepared.length}
+                onToggle={() => {}}
+                disabled
+              />
+            );
+          })}
         </div>
       </div>
     </div>
