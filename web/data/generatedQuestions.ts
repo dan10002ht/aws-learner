@@ -8727,12 +8727,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Đội phát triển muốn tích hợp một công cụ giám sát của bên thứ ba để thu thập telemetry và đẩy log của Lambda function tới hệ thống quan sát riêng, chạy như tiến trình độc lập bên cạnh runtime mà không sửa code function. Cơ chế Lambda nào phù hợp nhất?",
+    "question": "The development team wants to integrate a third-party monitoring tool to collect telemetry and push Lambda function logs to their own observability system, running as an independent process alongside the runtime without modifying function code. Which Lambda mechanism is most appropriate?",
     "options": [
-      "Lambda Extension (external extension) chạy song song trong cùng execution environment",
-      "Lambda Layer chứa thư viện logging",
+      "Lambda Extension (external extension) running in parallel within the same execution environment",
+      "Lambda Layer containing logging libraries",
       "Lambda Destinations on-success",
-      "Environment variable trỏ tới endpoint của hệ thống quan sát"
+      "Environment variable pointing to the observability system's endpoint"
     ],
     "correctIndices": [
       0
@@ -8934,12 +8934,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Đội DevOps cần chạy một Lambda dọn dẹp dữ liệu tạm mỗi ngày lúc 02:00 UTC, theo mô hình serverless không quản lý server cron. Cách triển khai đúng và tối ưu nhất là gì?",
+    "question": "The DevOps team needs to run a Lambda function to clean up temporary data daily at 02:00 UTC using a serverless model without managing a cron server. What is the correct and most optimal implementation approach?",
     "options": [
-      "EventBridge rule (hoặc EventBridge Scheduler) với biểu thức cron(0 2 * * ? *) target tới Lambda",
-      "SQS delay queue với DelaySeconds tính ra 24 giờ để kích hoạt Lambda",
-      "Step Functions Standard với một state Wait 24 giờ lặp vô hạn",
-      "SNS topic publish định kỳ bằng một CloudWatch alarm"
+      "EventBridge rule (or EventBridge Scheduler) with cron expression cron(0 2 * * ? *) targeting Lambda",
+      "SQS delay queue with DelaySeconds calculated to 24 hours to trigger Lambda",
+      "Step Functions Standard with a Wait state for 24 hours looping infinitely",
+      "SNS topic publishing periodically via a CloudWatch alarm"
     ],
     "correctIndices": [
       0
@@ -9467,12 +9467,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Ứng dụng lưu hồ sơ y tế (PHI) phải tuân thủ HIPAA. Logs ứng dụng vô tình ghi cả số bảo hiểm và chẩn đoán bệnh nhân ra CloudWatch Logs. Cách tốt nhất để giảm rủi ro lộ PHI trong logs?",
+    "question": "An application storing medical records (PHI) must comply with HIPAA. Application logs accidentally record both patient insurance numbers and diagnoses in CloudWatch Logs. What is the best way to reduce the risk of PHI disclosure in logs?",
     "options": [
-      "Áp dụng data masking/sanitization ở tầng ứng dụng trước khi ghi log, và bật CloudWatch Logs data protection policy để che dữ liệu nhạy cảm",
-      "Tắt hoàn toàn logging để không có dữ liệu nào bị ghi",
-      "Chuyển toàn bộ log sang S3 bucket public với versioning",
-      "Tăng retention của log group lên vô hạn để dễ audit về sau"
+      "Apply data masking/sanitization at the application layer before logging, and enable CloudWatch Logs data protection policy to mask sensitive data",
+      "Disable logging entirely to prevent any data from being recorded",
+      "Move all logs to a public S3 bucket with versioning",
+      "Increase the retention of the log group to unlimited for easier auditing later"
     ],
     "correctIndices": [
       0
@@ -9726,7 +9726,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Đội DevOps muốn mỗi lần deploy version mới lên Elastic Beanstalk được thực hiện trên một tập instances HOÀN TOÀN mới trong một Auto Scaling group tạm thời; nếu health check thất bại thì rollback cực nhanh bằng cách hủy group mới mà không ảnh hưởng instances đang chạy. Họ chấp nhận chi phí gấp đôi tạm thời. Policy nào đáp ứng đúng nhất?",
+    "question": "The DevOps team wants each new version deployment to Elastic Beanstalk to be performed on a COMPLETELY new set of instances in a temporary Auto Scaling group; if health checks fail, they want to rollback extremely fast by terminating the new group without affecting running instances. They accept the temporary double cost. Which policy best meets the requirements?",
     "options": [
       "Immutable",
       "Rolling with additional batch",
@@ -9818,12 +9818,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Đội DevOps muốn triển khai dịch vụ ECS với khả năng: chạy song song task set mới và cũ, kiểm thử bằng test listener trước khi chuyển production traffic, và có thể rollback tức thì. Giải pháp nào đúng?",
+    "question": "The DevOps team wants to deploy an ECS service with the ability to: run new and old task sets in parallel, test using a test listener before switching production traffic, and be able to rollback instantly. Which solution is correct?",
     "options": [
-      "ECS blue/green deployment thông qua CodeDeploy với production và test listener trên Application Load Balancer",
-      "ECS rolling update (deployment type mặc định của ECS service)",
-      "Tự viết script đổi desired count của hai service ECS thủ công",
-      "Dùng AWS Batch để chạy task set mới song song"
+      "ECS blue/green deployment via CodeDeploy with production and test listeners on Application Load Balancer",
+      "ECS rolling update (default deployment type of ECS service)",
+      "Write your own script to manually change the desired count of two ECS services",
+      "Use AWS Batch to run the new task set in parallel"
     ],
     "correctIndices": [
       0
@@ -10144,13 +10144,13 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Đội phát triển cần đảm bảo idempotency khi client có thể retry các thao tác. Với mỗi service, cơ chế NÀO là cách đúng để chống xử lý/tạo trùng? (Chọn 2)",
+    "question": "The development team needs to ensure idempotency when clients might retry operations. For each service, which mechanism is the correct way to prevent duplicate processing/creation? (Select 2)",
     "options": [
-      "DynamoDB: dùng conditional write với ConditionExpression attribute_not_exists(orderId)",
-      "SQS FIFO: dùng MessageDeduplicationId để khử trùng message trong cửa sổ 5 phút",
-      "S3: dùng ContinuationToken để đảm bảo PutObject không tạo trùng object",
-      "EC2: tăng max_attempts trong retry config để đảm bảo RunInstances chỉ tạo một instance",
-      "Lambda: bật adaptive retry mode để invoke đồng bộ trở nên idempotent"
+      "DynamoDB: use conditional write with ConditionExpression attribute_not_exists(orderId)",
+      "SQS FIFO: use MessageDeduplicationId to deduplicate messages within a 5-minute window",
+      "S3: use ContinuationToken to ensure PutObject does not create duplicate objects",
+      "EC2: increase max_attempts in retry config to ensure RunInstances only creates one instance",
+      "Lambda: enable adaptive retry mode to make synchronous invoke idempotent"
     ],
     "correctIndices": [
       0,
@@ -10723,12 +10723,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Đội phát triển cần lưu khoảng 500 cấu hình ứng dụng dạng plain text (không nhạy cảm) như feature flags và endpoint URL, ưu tiên CHI PHÍ THẤP NHẤT. Lựa chọn nào tối ưu?",
+    "question": "The development team needs to store approximately 500 application configurations as plain text (non-sensitive) such as feature flags and endpoint URLs, prioritizing THE LOWEST COST. Which option is optimal?",
     "options": [
-      "SSM Parameter Store standard tier với kiểu String (miễn phí)",
-      "AWS Secrets Manager, mỗi cấu hình một secret",
-      "AWS AppConfig với hosted configuration profile riêng cho từng giá trị",
-      "SSM Parameter Store advanced tier với kiểu SecureString"
+      "SSM Parameter Store standard tier with String type (free)",
+      "AWS Secrets Manager, one secret per configuration",
+      "AWS AppConfig with hosted configuration profile for each value",
+      "SSM Parameter Store advanced tier with SecureString type"
     ],
     "correctIndices": [
       0
@@ -10792,11 +10792,11 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Ứng dụng cần lưu một API token nhỏ (khoảng 200 byte) đã được mã hóa bằng KMS trong bảng cấu hình. Developer nên gọi API nào để mã hóa trực tiếp?",
+    "question": "An application needs to store a small API token (approximately 200 bytes) encrypted with KMS in a configuration table. Which API should the developer call to encrypt it directly?",
     "options": [
-      "GenerateDataKey với KeySpec AES_256",
-      "Encrypt với KeyId của KMS key",
-      "CreateGrant rồi truyền token vào grant",
+      "GenerateDataKey with KeySpec AES_256",
+      "Encrypt with the KeyId of the KMS key",
+      "CreateGrant then pass the token to the grant",
       "GenerateDataKeyWithoutPlaintext"
     ],
     "correctIndices": [
@@ -11118,12 +11118,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Để đạt blue/green deployment với zero-downtime trên Elastic Beanstalk, developer clone environment hiện tại (blue) sang environment mới (green), deploy version mới lên green và test. Bước cuối cùng để chuyển traffic sang green với gián đoạn tối thiểu là gì?",
+    "question": "To achieve blue/green deployment with zero-downtime on Elastic Beanstalk, the developer clones the current environment (blue) to a new environment (green), deploys the new version to green and tests. What is the final step to shift traffic to green with minimal interruption?",
     "options": [
-      "Thực hiện Swap Environment URLs giữa hai environments (đổi CNAME)",
-      "Terminate environment blue rồi trỏ DNS Route 53 thủ công sang green",
-      "Đổi deployment policy của blue sang immutable",
-      "Dùng all-at-once deploy lại trên blue với version của green"
+      "Perform Swap Environment URLs between the two environments (swap CNAME)",
+      "Terminate environment blue then manually point DNS Route 53 to green",
+      "Change the deployment policy of blue to immutable",
+      "Use all-at-once deployment again on blue with green's version"
     ],
     "correctIndices": [
       0
@@ -11164,12 +11164,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Đội phát triển muốn pipeline tự động chạy ngay khi có commit mới được push lên nhánh main của repository CodeCommit. Cách cấu hình được khuyến nghị (gần realtime, không polling) là gì?",
+    "question": "The development team wants the pipeline to automatically run as soon as a new commit is pushed to the main branch of the CodeCommit repository. What is the recommended configuration approach (near real-time, no polling)?",
     "options": [
-      "Dùng Amazon EventBridge (CloudWatch Events) rule bắt sự kiện commit của CodeCommit để khởi động pipeline",
-      "Bật periodic polling của CodePipeline kiểm tra repository mỗi vài phút",
-      "Tạo cron job trên EC2 gọi StartPipelineExecution mỗi phút",
-      "Cấu hình S3 event notification trên repository CodeCommit"
+      "Use Amazon EventBridge (CloudWatch Events) rule to capture CodeCommit commit events to trigger the pipeline",
+      "Enable periodic polling of CodePipeline to check the repository every few minutes",
+      "Create a cron job on EC2 to call StartPipelineExecution every minute",
+      "Configure S3 event notification on CodeCommit repository"
     ],
     "correctIndices": [
       0
@@ -11187,12 +11187,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Đội triển khai một dịch vụ chạy trên Amazon ECS dùng CodeDeploy blue/green. appspec.yml cho ECS khác với appspec cho EC2. Thành phần BẮT BUỘC nào phải khai báo trong appspec.yml cho deployment ECS?",
+    "question": "The deployment team runs a service on Amazon ECS using CodeDeploy blue/green. The appspec.yml for ECS is different from the one for EC2. Which REQUIRED component must be declared in appspec.yml for ECS deployment?",
     "options": [
-      "Resources trỏ tới TaskDefinition và LoadBalancerInfo (ContainerName, ContainerPort)",
-      "Danh sách file ánh xạ source/destination giống deployment EC2 in-place",
-      "Hook ApplicationStop và ApplicationStart để dừng/khởi động container",
-      "Đường dẫn tới buildspec.yml để CodeDeploy build lại task"
+      "Resources pointing to TaskDefinition and LoadBalancerInfo (ContainerName, ContainerPort)",
+      "File list mapping source/destination like EC2 in-place deployment",
+      "ApplicationStop and ApplicationStart hooks to stop/start containers",
+      "Path to buildspec.yml for CodeDeploy to rebuild the task"
     ],
     "correctIndices": [
       0
@@ -11371,13 +11371,13 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Đội ngũ chuẩn bị bật X-Ray cho ứng dụng container trên EC2 dùng X-Ray SDK. Họ cần đảm bảo segment được gửi và hiển thị thành công. Những điều kiện nào sau đây là cần thiết? (Chọn 2)",
+    "question": "The team is preparing to enable X-Ray for a container application on EC2 using X-Ray SDK. They need to ensure segments are sent and displayed successfully. Which of the following conditions are necessary? (Select 2)",
     "options": [
-      "IAM role gắn vào instance/task có quyền xray:PutTraceSegments và xray:PutTelemetryRecords",
-      "X-Ray daemon đang chạy và lắng nghe UDP cổng 2000 để nhận segment từ SDK",
-      "Mỗi downstream call phải được ghi thành annotation thì mới gửi được segment",
-      "Phải tắt sampling hoàn toàn để mọi request đều được gửi",
-      "Phải tạo trước service map trong console khớp với tên service"
+      "IAM role attached to instance/task with xray:PutTraceSegments and xray:PutTelemetryRecords permissions",
+      "X-Ray daemon running and listening on UDP port 2000 to receive segments from SDK",
+      "Each downstream call must be recorded as an annotation to send a segment",
+      "Must disable sampling completely so every request is sent",
+      "Must pre-create service map in console matching service names"
     ],
     "correctIndices": [
       0,
@@ -11582,12 +11582,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Đội phát triển muốn bật X-Ray cho một Lambda function viết bằng Python để xem trace trong service map. Cách bật tracing đơn giản, được khuyến nghị nhất là gì?",
+    "question": "The development team wants to enable X-Ray for a Python Lambda function to view traces in the service map. What is the simplest, most recommended way to enable tracing?",
     "options": [
-      "Bật Active tracing trên cấu hình Lambda function (kèm IAM permission cho X-Ray)",
-      "Cài và chạy X-Ray daemon như một process nền bên trong Lambda runtime",
-      "Tạo một EC2 instance riêng chạy X-Ray daemon để Lambda gửi UDP tới",
-      "Cấu hình CloudWatch Synthetics canary để sinh trace cho Lambda"
+      "Enable Active tracing in Lambda function configuration (with X-Ray IAM permission)",
+      "Install and run X-Ray daemon as a background process within Lambda runtime",
+      "Create a separate EC2 instance running X-Ray daemon for Lambda to send UDP to",
+      "Configure CloudWatch Synthetics canary to generate traces for Lambda"
     ],
     "correctIndices": [
       0
@@ -12299,12 +12299,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Đội bảo mật yêu cầu mọi lần object trong S3 được giải mã phải được audit (ai, khi nào), đồng thời cần kiểm soát key policy và rotation. Lựa chọn mã hóa S3 nào đáp ứng tốt nhất?",
+    "question": "The security team requires that every time an object in S3 is decrypted, it must be audited (who, when), and they need to control key policy and rotation. Which S3 encryption option best meets the requirements?",
     "options": [
-      "SSE-S3 với key aws/s3 do AWS quản lý",
-      "SSE-KMS với customer managed key",
-      "SSE-C với key do client cung cấp mỗi request",
-      "Client-side encryption với AWS Encryption SDK"
+      "SSE-S3 with aws/s3 key managed by AWS",
+      "SSE-KMS with customer-managed key",
+      "SSE-C with key provided by client per request",
+      "Client-side encryption with AWS Encryption SDK"
     ],
     "correctIndices": [
       1
@@ -12437,12 +12437,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Đội DevOps cần share một snapshot EBS đã mã hóa (bằng customer managed KMS key) sang một AWS account khác để account đó khôi phục volume. Ngoài việc share snapshot, cần làm gì để account kia decrypt được?",
+    "question": "The DevOps team needs to share an encrypted EBS snapshot (with customer-managed KMS key) to another AWS account so that account can restore the volume. Besides sharing the snapshot, what else needs to be done for the other account to decrypt?",
     "options": [
-      "Không cần làm gì thêm, share snapshot là đủ",
-      "Cập nhật key policy của KMS key để cho phép account kia dùng key (kms:Decrypt, kms:CreateGrant...) và share snapshot",
-      "Chuyển snapshot sang SSE-S3 trước khi share",
-      "Bật automatic rotation cho KMS key"
+      "No additional steps needed, sharing the snapshot is sufficient",
+      "Update the KMS key policy to allow the other account to use the key (kms:Decrypt, kms:CreateGrant...) and share the snapshot",
+      "Convert the snapshot to SSE-S3 before sharing",
+      "Enable automatic rotation for the KMS key"
     ],
     "correctIndices": [
       1
@@ -12807,12 +12807,12 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Đội phát triển triển khai Lambda qua AWS CodeDeploy với deployment preset CodeDeployDefault.LambdaCanary10Percent5Minutes. Họ muốn tự động rollback nếu tỷ lệ lỗi tăng cao trong giai đoạn canary. Cấu hình nào đạt được điều này?",
+    "question": "The development team deploys Lambda via AWS CodeDeploy with the CodeDeployDefault.LambdaCanary10Percent5Minutes preset. They want to automatically rollback if the error rate increases during the canary phase. Which configuration achieves this?",
     "options": [
-      "Liên kết một CloudWatch alarm theo dõi error rate vào deployment group và bật automatic rollback khi alarm kích hoạt",
-      "Bật CloudTrail logging và viết Lambda thủ công để revert alias khi thấy log lỗi",
-      "Đặt reserved concurrency = 0 cho version mới khi có lỗi",
-      "Dựa vào API Gateway throttling để tự động chặn version lỗi"
+      "Associate a CloudWatch alarm monitoring error rate to the deployment group and enable automatic rollback when the alarm is triggered",
+      "Enable CloudTrail logging and write a Lambda manually to revert the alias when seeing error logs",
+      "Set reserved concurrency = 0 for the new version when errors occur",
+      "Rely on API Gateway throttling to automatically block the failing version"
     ],
     "correctIndices": [
       0
@@ -13222,13 +13222,13 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "multi",
-    "question": "Để bảo vệ root user của AWS account theo best practice, Solutions Architect nên thực hiện những hành động nào? (Chọn 2)",
+    "question": "To protect the root user of an AWS account according to best practices, which actions should a Solutions Architect perform? (Select 2)",
     "options": [
-      "Bật MFA cho root user",
-      "Khóa lại access key của root user và không tạo access key cho root để dùng hàng ngày",
-      "Dùng root user cho mọi hoạt động vận hành hàng ngày để dễ kiểm soát",
-      "Chia sẻ mật khẩu root cho toàn bộ admin team để đảm bảo tính sẵn sàng",
-      "Gắn SCP trực tiếp lên root user để giới hạn quyền"
+      "Enable MFA for the root user",
+      "Lock down the root user's access keys and do not create access keys for root for daily use",
+      "Use the root user for all daily operational activities for easier control",
+      "Share the root password with the entire admin team to ensure availability",
+      "Attach SCP directly to the root user to restrict permissions"
     ],
     "correctIndices": [
       0,
