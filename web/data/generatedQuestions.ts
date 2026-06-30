@@ -6603,7 +6603,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Đội bảo mật muốn biết ai đã gọi API để xóa một S3 bucket và vào thời điểm nào, nhằm phục vụ điều tra. Dịch vụ nào ghi lại lịch sử các API call trong tài khoản AWS?",
+    "question": "The security team wants to know who called an API to delete an S3 bucket and at what time for investigation purposes. Which service records the history of API calls in an AWS account?",
     "options": [
       "AWS CloudTrail",
       "Amazon CloudWatch",
@@ -6672,7 +6672,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Đội DevOps cần tự động quét các EC2 instance và container image để phát hiện các lỗ hổng phần mềm đã biết (CVE) và các vấn đề về network exposure. Dịch vụ AWS nào được thiết kế cho mục đích này?",
+    "question": "The DevOps team needs to automatically scan EC2 instances and container images to detect known software vulnerabilities (CVEs) and network exposure issues. Which AWS service is designed for this purpose?",
     "options": [
       "Amazon Inspector",
       "Amazon GuardDuty",
@@ -6950,13 +6950,13 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Đội bảo mật rà soát một AWS account và lập danh sách các tác vụ CHỈ root user mới thực hiện được (không thể ủy quyền cho IAM user). Chọn HAI tác vụ chỉ root làm được.",
+    "question": "The security team reviews an AWS account and makes a list of tasks that ONLY the root user can perform (cannot be delegated to IAM users). Select TWO tasks that only root can do.",
     "options": [
-      "Thay đổi AWS Support plan của account",
-      "Đóng (close) AWS account",
-      "Tạo một IAM user mới",
-      "Gắn policy vào IAM group",
-      "Khởi chạy một EC2 instance"
+      "Change the AWS Support plan of the account",
+      "Close the AWS account",
+      "Create a new IAM user",
+      "Attach a policy to an IAM group",
+      "Launch an EC2 instance"
     ],
     "correctIndices": [
       0,
@@ -7067,7 +7067,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Đội bảo mật muốn lọc các request HTTP độc hại như SQL injection và cross-site scripting (XSS) tới một Application Load Balancer và Amazon CloudFront. Dịch vụ AWS nào phù hợp nhất?",
+    "question": "The security team wants to filter malicious HTTP requests such as SQL injection and cross-site scripting (XSS) to an Application Load Balancer and Amazon CloudFront. Which AWS service is most suitable?",
     "options": [
       "AWS WAF",
       "AWS Shield Standard",
@@ -7113,7 +7113,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Đội vận hành muốn phát hiện hành vi bất thường như EC2 instance giao tiếp với địa chỉ IP của máy chủ điều khiển malware hoặc truy cập trái phép vào tài khoản, bằng cách phân tích VPC Flow Logs, DNS logs và CloudTrail. Dịch vụ nào được thiết kế cho việc này?",
+    "question": "The operations team wants to detect abnormal behavior such as EC2 instances communicating with malware command-and-control server IP addresses or unauthorized access to accounts, by analyzing VPC Flow Logs, DNS logs, and CloudTrail. Which service is designed for this?",
     "options": [
       "Amazon GuardDuty",
       "AWS WAF",
@@ -8560,7 +8560,7 @@ export const generatedQuestions: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Đội vận hành muốn nhận thông báo cá nhân hóa về các sự kiện bảo trì theo lịch và các vấn đề ảnh hưởng TRỰC TIẾP đến tài nguyên AWS cụ thể của tài khoản họ (ví dụ một EC2 instance sắp bị retire). Công cụ nào đáp ứng nhu cầu này?",
+    "question": "The operations team wants to receive personalized notifications about scheduled maintenance events and issues that directly impact their specific AWS resources (for example, an EC2 instance about to be retired). Which tool meets this need?",
     "options": [
       "AWS Trusted Advisor",
       "AWS Health Dashboard (Your account health)",
