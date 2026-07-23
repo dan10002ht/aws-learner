@@ -4,38 +4,347 @@
   "description": "Course Blockchain fundamental -> expert. Lessons first, quiz later. Vietnamese content, English terms. Rigorous hands-on (Foundry/ZK/full-stack) + capstones.",
   "language": "Vietnamese",
   "createdAt": "2026-07-23",
-  "phase1Chapters": ["bc-ch1", "bc-ch2", "bc-ch3", "bc-ch4", "bc-ch5", "bc-ch6", "bc-ch7"],
-  "phase2Chapters": ["bc-ch8", "bc-ch9", "bc-ch10", "bc-ch11", "bc-ch12", "bc-ch13", "bc-ch14", "bc-ch15", "bc-ch16"],
+  "phase1Chapters": [
+    "bc-ch1",
+    "bc-ch2",
+    "bc-ch3",
+    "bc-ch4",
+    "bc-ch5",
+    "bc-ch6",
+    "bc-ch7"
+  ],
+  "phase2Chapters": [
+    "bc-ch8",
+    "bc-ch9",
+    "bc-ch10",
+    "bc-ch11",
+    "bc-ch12",
+    "bc-ch13",
+    "bc-ch14",
+    "bc-ch15",
+    "bc-ch16"
+  ],
   "styleRef": "lessons/engineering/eng-osi-model.md",
   "parts": [
-    { "id": "bc-01-what-is-blockchain", "chapter": "bc-ch1", "title": "Blockchain la gi? Song cai phan tan & double-spending", "status": "pending" },
-    { "id": "bc-02-hashing-merkle", "chapter": "bc-ch1", "title": "Ham bam (SHA-256) & cay Merkle", "status": "pending" },
-    { "id": "bc-03-pubkey-signatures", "chapter": "bc-ch1", "title": "Mat ma khoa cong khai & chu ky so (ECDSA/EdDSA)", "status": "pending" },
-    { "id": "bc-04-block-chain-structure", "chapter": "bc-ch1", "title": "Cau truc block & chain, tinh bat bien", "status": "pending" },
-    { "id": "bc-05-wallets-keys", "chapter": "bc-ch1", "title": "Vi, khoa, dia chi, seed phrase (BIP-32/39/44)", "status": "pending" },
-    { "id": "bc-06-distributed-byzantine", "chapter": "bc-ch2", "title": "He phan tan & bai toan Byzantine Generals", "status": "pending" },
-    { "id": "bc-07-proof-of-work", "chapter": "bc-ch2", "title": "Proof of Work: mining, difficulty, nonce", "status": "pending" },
-    { "id": "bc-08-proof-of-stake", "chapter": "bc-ch2", "title": "Proof of Stake: validator, slashing, finality", "status": "pending" },
-    { "id": "bc-09-other-consensus", "chapter": "bc-ch2", "title": "Cac co che khac: DPoS, PBFT, Tendermint, Avalanche", "status": "pending" },
-    { "id": "bc-10-forks-finality-p2p", "chapter": "bc-ch2", "title": "Fork choice, finality, P2P & mempool", "status": "pending" },
-    { "id": "bc-11-utxo-transactions", "chapter": "bc-ch3", "title": "Mo hinh UTXO, cau truc giao dich, phi", "status": "pending" },
-    { "id": "bc-12-bitcoin-script-taproot", "chapter": "bc-ch3", "title": "Bitcoin Script, SegWit, Taproot", "status": "pending" },
-    { "id": "bc-13-lightning-network", "chapter": "bc-ch3", "title": "Lightning Network (Layer 2 Bitcoin)", "status": "pending" },
-    { "id": "bc-14-ethereum-evm", "chapter": "bc-ch4", "title": "Account model, EVM, gas & opcode", "status": "pending" },
-    { "id": "bc-15-solidity-basics", "chapter": "bc-ch4", "title": "Solidity co ban: storage/memory/calldata", "status": "pending" },
-    { "id": "bc-16-contract-lifecycle", "chapter": "bc-ch4", "title": "Vong doi contract, ABI, event, deploy", "status": "pending" },
-    { "id": "bc-17-token-standards", "chapter": "bc-ch4", "title": "Chuan token: ERC-20/721/1155/4626", "status": "pending" },
-    { "id": "bc-cap1-erc20-nft", "chapter": "bc-ch4", "title": "CAPSTONE 1: Viet & deploy ERC-20 + ERC-721 co test", "status": "pending" },
-    { "id": "bc-18-foundry-dev", "chapter": "bc-ch5", "title": "Foundry/Hardhat: viet, test, deploy", "status": "pending" },
-    { "id": "bc-19-design-patterns", "chapter": "bc-ch5", "title": "Design patterns: access control, proxy nang cap", "status": "pending" },
-    { "id": "bc-20-oracles-gas", "chapter": "bc-ch5", "title": "Oracle (Chainlink) & toi uu gas", "status": "pending" },
-    { "id": "bc-21-vulnerabilities", "chapter": "bc-ch6", "title": "Lo hong: reentrancy, overflow, front-running, delegatecall", "status": "pending" },
-    { "id": "bc-22-hacks-casestudy", "chapter": "bc-ch6", "title": "Case study cac vu hack lon (DAO/Parity/Ronin/Wormhole)", "status": "pending" },
-    { "id": "bc-23-audit-tools", "chapter": "bc-ch6", "title": "Quy trinh audit: Slither, Echidna, formal verification", "status": "pending" },
-    { "id": "bc-cap2-audit", "chapter": "bc-ch6", "title": "CAPSTONE 2: Audit contract co lo hong, viet report", "status": "pending" },
-    { "id": "bc-24-amm-liquidity", "chapter": "bc-ch7", "title": "AMM & liquidity pool (Uniswap x*y=k), impermanent loss", "status": "pending" },
-    { "id": "bc-25-lending-stablecoins", "chapter": "bc-ch7", "title": "Lending/borrowing (Aave/Compound), stablecoin", "status": "pending" },
-    { "id": "bc-26-flashloan-yield", "chapter": "bc-ch7", "title": "Flash loan, yield farming, derivatives & rui ro DeFi", "status": "pending" },
-    { "id": "bc-cap3-amm", "chapter": "bc-ch7", "title": "CAPSTONE 3: Build AMM mini (Uniswap V2 clone)", "status": "pending" }
-  ]
+    {
+      "id": "bc-01-what-is-blockchain",
+      "chapter": "bc-ch1",
+      "title": "Blockchain la gi? Song cai phan tan & double-spending",
+      "status": "done"
+    },
+    {
+      "id": "bc-02-hashing-merkle",
+      "chapter": "bc-ch1",
+      "title": "Ham bam (SHA-256) & cay Merkle",
+      "status": "done"
+    },
+    {
+      "id": "bc-03-pubkey-signatures",
+      "chapter": "bc-ch1",
+      "title": "Mat ma khoa cong khai & chu ky so (ECDSA/EdDSA)",
+      "status": "done"
+    },
+    {
+      "id": "bc-04-block-chain-structure",
+      "chapter": "bc-ch1",
+      "title": "Cau truc block & chain, tinh bat bien",
+      "status": "done"
+    },
+    {
+      "id": "bc-05-wallets-keys",
+      "chapter": "bc-ch1",
+      "title": "Vi, khoa, dia chi, seed phrase (BIP-32/39/44)",
+      "status": "done"
+    },
+    {
+      "id": "bc-06-distributed-byzantine",
+      "chapter": "bc-ch2",
+      "title": "He phan tan & bai toan Byzantine Generals",
+      "status": "done"
+    },
+    {
+      "id": "bc-07-proof-of-work",
+      "chapter": "bc-ch2",
+      "title": "Proof of Work: mining, difficulty, nonce",
+      "status": "done"
+    },
+    {
+      "id": "bc-08-proof-of-stake",
+      "chapter": "bc-ch2",
+      "title": "Proof of Stake: validator, slashing, finality",
+      "status": "done"
+    },
+    {
+      "id": "bc-09-other-consensus",
+      "chapter": "bc-ch2",
+      "title": "Cac co che khac: DPoS, PBFT, Tendermint, Avalanche",
+      "status": "done"
+    },
+    {
+      "id": "bc-10-forks-finality-p2p",
+      "chapter": "bc-ch2",
+      "title": "Fork choice, finality, P2P & mempool",
+      "status": "done"
+    },
+    {
+      "id": "bc-11-utxo-transactions",
+      "chapter": "bc-ch3",
+      "title": "Mo hinh UTXO, cau truc giao dich, phi",
+      "status": "done"
+    },
+    {
+      "id": "bc-12-bitcoin-script-taproot",
+      "chapter": "bc-ch3",
+      "title": "Bitcoin Script, SegWit, Taproot",
+      "status": "done"
+    },
+    {
+      "id": "bc-13-lightning-network",
+      "chapter": "bc-ch3",
+      "title": "Lightning Network (Layer 2 Bitcoin)",
+      "status": "done"
+    },
+    {
+      "id": "bc-14-ethereum-evm",
+      "chapter": "bc-ch4",
+      "title": "Account model, EVM, gas & opcode",
+      "status": "done"
+    },
+    {
+      "id": "bc-15-solidity-basics",
+      "chapter": "bc-ch4",
+      "title": "Solidity co ban: storage/memory/calldata",
+      "status": "done"
+    },
+    {
+      "id": "bc-16-contract-lifecycle",
+      "chapter": "bc-ch4",
+      "title": "Vong doi contract, ABI, event, deploy",
+      "status": "done"
+    },
+    {
+      "id": "bc-17-token-standards",
+      "chapter": "bc-ch4",
+      "title": "Chuan token: ERC-20/721/1155/4626",
+      "status": "done"
+    },
+    {
+      "id": "bc-cap1-erc20-nft",
+      "chapter": "bc-ch4",
+      "title": "CAPSTONE 1: Viet & deploy ERC-20 + ERC-721 co test",
+      "status": "done"
+    },
+    {
+      "id": "bc-18-foundry-dev",
+      "chapter": "bc-ch5",
+      "title": "Foundry/Hardhat: viet, test, deploy",
+      "status": "done"
+    },
+    {
+      "id": "bc-19-design-patterns",
+      "chapter": "bc-ch5",
+      "title": "Design patterns: access control, proxy nang cap",
+      "status": "done"
+    },
+    {
+      "id": "bc-20-oracles-gas",
+      "chapter": "bc-ch5",
+      "title": "Oracle (Chainlink) & toi uu gas",
+      "status": "done"
+    },
+    {
+      "id": "bc-21-vulnerabilities",
+      "chapter": "bc-ch6",
+      "title": "Lo hong: reentrancy, overflow, front-running, delegatecall",
+      "status": "done"
+    },
+    {
+      "id": "bc-22-hacks-casestudy",
+      "chapter": "bc-ch6",
+      "title": "Case study cac vu hack lon (DAO/Parity/Ronin/Wormhole)",
+      "status": "done"
+    },
+    {
+      "id": "bc-23-audit-tools",
+      "chapter": "bc-ch6",
+      "title": "Quy trinh audit: Slither, Echidna, formal verification",
+      "status": "done"
+    },
+    {
+      "id": "bc-cap2-audit",
+      "chapter": "bc-ch6",
+      "title": "CAPSTONE 2: Audit contract co lo hong, viet report",
+      "status": "done"
+    },
+    {
+      "id": "bc-24-amm-liquidity",
+      "chapter": "bc-ch7",
+      "title": "AMM & liquidity pool (Uniswap x*y=k), impermanent loss",
+      "status": "done"
+    },
+    {
+      "id": "bc-25-lending-stablecoins",
+      "chapter": "bc-ch7",
+      "title": "Lending/borrowing (Aave/Compound), stablecoin",
+      "status": "done"
+    },
+    {
+      "id": "bc-26-flashloan-yield",
+      "chapter": "bc-ch7",
+      "title": "Flash loan, yield farming, derivatives & rui ro DeFi",
+      "status": "done"
+    },
+    {
+      "id": "bc-cap3-amm",
+      "chapter": "bc-ch7",
+      "title": "CAPSTONE 3: Build AMM mini (Uniswap V2 clone)",
+      "status": "done"
+    },
+    {
+      "id": "bc-27-trilemma-scaling",
+      "chapter": "bc-ch8",
+      "title": "bc-27-trilemma-scaling",
+      "status": "done"
+    },
+    {
+      "id": "bc-28-rollups",
+      "chapter": "bc-ch8",
+      "title": "bc-28-rollups",
+      "status": "done"
+    },
+    {
+      "id": "bc-29-data-availability",
+      "chapter": "bc-ch8",
+      "title": "bc-29-data-availability",
+      "status": "done"
+    },
+    {
+      "id": "bc-30-zk-proofs",
+      "chapter": "bc-ch9",
+      "title": "bc-30-zk-proofs",
+      "status": "done"
+    },
+    {
+      "id": "bc-31-zk-circuits",
+      "chapter": "bc-ch9",
+      "title": "bc-31-zk-circuits",
+      "status": "done"
+    },
+    {
+      "id": "bc-32-advanced-crypto",
+      "chapter": "bc-ch9",
+      "title": "bc-32-advanced-crypto",
+      "status": "done"
+    },
+    {
+      "id": "bc-33-bridges",
+      "chapter": "bc-ch10",
+      "title": "bc-33-bridges",
+      "status": "done"
+    },
+    {
+      "id": "bc-34-cosmos-polkadot",
+      "chapter": "bc-ch10",
+      "title": "bc-34-cosmos-polkadot",
+      "status": "done"
+    },
+    {
+      "id": "bc-35-solana",
+      "chapter": "bc-ch10",
+      "title": "bc-35-solana",
+      "status": "done"
+    },
+    {
+      "id": "bc-36-move-aptos-sui",
+      "chapter": "bc-ch10",
+      "title": "bc-36-move-aptos-sui",
+      "status": "done"
+    },
+    {
+      "id": "bc-37-tokenomics",
+      "chapter": "bc-ch11",
+      "title": "bc-37-tokenomics",
+      "status": "done"
+    },
+    {
+      "id": "bc-38-governance-dao",
+      "chapter": "bc-ch11",
+      "title": "bc-38-governance-dao",
+      "status": "done"
+    },
+    {
+      "id": "bc-39-nft-metadata",
+      "chapter": "bc-ch12",
+      "title": "bc-39-nft-metadata",
+      "status": "done"
+    },
+    {
+      "id": "bc-40-account-abstraction",
+      "chapter": "bc-ch12",
+      "title": "bc-40-account-abstraction",
+      "status": "done"
+    },
+    {
+      "id": "bc-41-did-rwa",
+      "chapter": "bc-ch12",
+      "title": "bc-41-did-rwa",
+      "status": "done"
+    },
+    {
+      "id": "bc-42-mev",
+      "chapter": "bc-ch13",
+      "title": "bc-42-mev",
+      "status": "done"
+    },
+    {
+      "id": "bc-43-restaking-intents",
+      "chapter": "bc-ch13",
+      "title": "bc-43-restaking-intents",
+      "status": "done"
+    },
+    {
+      "id": "bc-44-privacy-regulatory",
+      "chapter": "bc-ch13",
+      "title": "bc-44-privacy-regulatory",
+      "status": "done"
+    },
+    {
+      "id": "bc-45-web3-frontend",
+      "chapter": "bc-ch14",
+      "title": "bc-45-web3-frontend",
+      "status": "done"
+    },
+    {
+      "id": "bc-46-indexing-thegraph",
+      "chapter": "bc-ch14",
+      "title": "bc-46-indexing-thegraph",
+      "status": "done"
+    },
+    {
+      "id": "bc-cap4-fullstack-dapp",
+      "chapter": "bc-ch14",
+      "title": "bc-cap4-fullstack-dapp",
+      "status": "done"
+    },
+    {
+      "id": "bc-47-node-validator",
+      "chapter": "bc-ch15",
+      "title": "bc-47-node-validator",
+      "status": "done"
+    },
+    {
+      "id": "bc-48-cryptoeconomics",
+      "chapter": "bc-ch15",
+      "title": "bc-48-cryptoeconomics",
+      "status": "done"
+    },
+    {
+      "id": "bc-cap5-build-blockchain",
+      "chapter": "bc-ch16",
+      "title": "bc-cap5-build-blockchain",
+      "status": "done"
+    }
+  ],
+  "phase1DoneAt": "2026-07-23",
+  "phase2DoneAt": "2026-07-23"
 }
