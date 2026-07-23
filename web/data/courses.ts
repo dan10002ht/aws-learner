@@ -368,6 +368,21 @@ export const courses: Course[] = [
     accentColor: "#e11d48",
     order: 13, status: "available", kind: "knowledge", category: "architecture",
   },
+  {
+    id: "BLOCKCHAIN",
+    code: "BLOCKCHAIN",
+    title: "Blockchain — Từ nền tảng đến chuyên gia",
+    shortTitle: "Blockchain",
+    level: "Nền tảng",
+    description:
+      "Lộ trình trọn vẹn fundamental → chuyên gia: mật mã & cấu trúc chain, đồng thuận (PoW/PoS), Bitcoin & Ethereum/EVM, smart contract với Foundry, bảo mật & audit, DeFi, scaling/Layer 2, ZK, non-EVM (Solana/Move), full-stack Web3. Kèm capstone thực chiến.",
+    hint: "Cần biết lập trình trước. Đi từ số 0 tới build & audit được sản phẩm on-chain.",
+    durationHours: 60,
+    passingScore: 0, examMinutes: 0, examQuestions: 0,
+    prerequisites: ["PROGRAMMING"],
+    accentColor: "#8b5cf6",
+    order: 14, status: "available", kind: "knowledge", category: "software",
+  },
 ];
 
 export function getCourse(id: CourseId | string): Course | undefined {

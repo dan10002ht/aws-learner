@@ -625,10 +625,84 @@ const sapChapters: Chapter[] = [
 ];
 
 // =====================================================================
+// BLOCKCHAIN — Từ nền tảng đến chuyên gia (Phase 1: Ch.1–7)
+// =====================================================================
+const bcLessons: Lesson[] = [
+  { slug: "bc-01-what-is-blockchain", courseId: "BLOCKCHAIN", title: "Blockchain là gì? Sổ cái phân tán & double-spending", shortTitle: "Blockchain là gì", chapter: "bc-ch1", order: 1, available: true,
+    description: "Vấn đề double-spending, sổ cái phân tán, vì sao cần blockchain, so với DB truyền thống, các loại (public/private/permissioned).", file: "blockchain/bc-01-what-is-blockchain.md" },
+  { slug: "bc-02-hashing-merkle", courseId: "BLOCKCHAIN", title: "Hàm băm (SHA-256) & cây Merkle", shortTitle: "Hashing & Merkle", chapter: "bc-ch1", order: 2, available: false,
+    description: "Tính chất hàm băm mật mã, SHA-256, tính bất biến; cây Merkle & Merkle proof cho light client.", file: "blockchain/bc-02-hashing-merkle.md" },
+  { slug: "bc-03-pubkey-signatures", courseId: "BLOCKCHAIN", title: "Mật mã khóa công khai & chữ ký số", shortTitle: "Chữ ký số", chapter: "bc-ch1", order: 3, available: false,
+    description: "Public/private key, chữ ký số ECDSA/EdDSA (secp256k1), xác thực giao dịch, vì sao không lộ private key.", file: "blockchain/bc-03-pubkey-signatures.md" },
+  { slug: "bc-04-block-chain-structure", courseId: "BLOCKCHAIN", title: "Cấu trúc block & chain, tính bất biến", shortTitle: "Cấu trúc chain", chapter: "bc-ch1", order: 4, available: false,
+    description: "Cấu trúc 1 block (header, prev hash, nonce, Merkle root), liên kết chain, vì sao sửa 1 block phá cả chuỗi.", file: "blockchain/bc-04-block-chain-structure.md" },
+  { slug: "bc-05-wallets-keys", courseId: "BLOCKCHAIN", title: "Ví, khóa, địa chỉ & seed phrase", shortTitle: "Ví & khóa", chapter: "bc-ch1", order: 5, available: false,
+    description: "Từ private key → public key → address; HD wallet BIP-32/39/44, seed phrase, custodial vs non-custodial, an toàn khóa.", file: "blockchain/bc-05-wallets-keys.md" },
+  { slug: "bc-06-distributed-byzantine", courseId: "BLOCKCHAIN", title: "Hệ phân tán & bài toán Byzantine Generals", shortTitle: "Byzantine Generals", chapter: "bc-ch2", order: 6, available: false,
+    description: "Vì sao đồng thuận khó, bài toán các tướng Byzantine, BFT, CAP, vì sao blockchain là giải pháp cho niềm tin phi tập trung.", file: "blockchain/bc-06-distributed-byzantine.md" },
+  { slug: "bc-07-proof-of-work", courseId: "BLOCKCHAIN", title: "Proof of Work: mining, difficulty, nonce", shortTitle: "Proof of Work", chapter: "bc-ch2", order: 7, available: false,
+    description: "Cơ chế PoW, mining, difficulty & target, nonce, hashrate, tấn công 51%, chi phí năng lượng, Nakamoto consensus.", file: "blockchain/bc-07-proof-of-work.md" },
+  { slug: "bc-08-proof-of-stake", courseId: "BLOCKCHAIN", title: "Proof of Stake: validator, slashing, finality", shortTitle: "Proof of Stake", chapter: "bc-ch2", order: 8, available: false,
+    description: "PoS, validator & staking, slashing, Ethereum Gasper (Casper FFG + LMD-GHOST), finality, so PoW vs PoS.", file: "blockchain/bc-08-proof-of-stake.md" },
+  { slug: "bc-09-other-consensus", courseId: "BLOCKCHAIN", title: "Các cơ chế đồng thuận khác", shortTitle: "Consensus khác", chapter: "bc-ch2", order: 9, available: false,
+    description: "DPoS, PBFT, Tendermint/CometBFT, Avalanche; BFT vs Nakamoto; đánh đổi throughput/finality/decentralization.", file: "blockchain/bc-09-other-consensus.md" },
+  { slug: "bc-10-forks-finality-p2p", courseId: "BLOCKCHAIN", title: "Fork choice, finality, P2P & mempool", shortTitle: "Fork & P2P", chapter: "bc-ch2", order: 10, available: false,
+    description: "Fork choice rule, reorg, finality probabilistic vs deterministic, mạng P2P gossip, mempool, lan truyền giao dịch/block.", file: "blockchain/bc-10-forks-finality-p2p.md" },
+  { slug: "bc-11-utxo-transactions", courseId: "BLOCKCHAIN", title: "Mô hình UTXO, cấu trúc giao dịch, phí", shortTitle: "UTXO", chapter: "bc-ch3", order: 11, available: false,
+    description: "UTXO là gì, input/output, change, phí giao dịch, so UTXO vs account model, coin selection.", file: "blockchain/bc-11-utxo-transactions.md" },
+  { slug: "bc-12-bitcoin-script-taproot", courseId: "BLOCKCHAIN", title: "Bitcoin Script, SegWit, Taproot", shortTitle: "Bitcoin Script", chapter: "bc-ch3", order: 12, available: false,
+    description: "Bitcoin Script (stack-based), P2PKH/P2SH, multisig, SegWit, Taproot & Schnorr, MAST.", file: "blockchain/bc-12-bitcoin-script-taproot.md" },
+  { slug: "bc-13-lightning-network", courseId: "BLOCKCHAIN", title: "Lightning Network (Layer 2 Bitcoin)", shortTitle: "Lightning Network", chapter: "bc-ch3", order: 13, available: false,
+    description: "Payment channel, HTLC, định tuyến đa hop, off-chain, trade-off của Lightning; mô hình L2 đầu tiên.", file: "blockchain/bc-13-lightning-network.md" },
+  { slug: "bc-14-ethereum-evm", courseId: "BLOCKCHAIN", title: "Ethereum: Account model, EVM, gas & opcode", shortTitle: "Ethereum & EVM", chapter: "bc-ch4", order: 14, available: false,
+    description: "Account model (EOA vs contract), state trie, EVM & opcode, gas & gas limit, transaction lifecycle trên Ethereum.", file: "blockchain/bc-14-ethereum-evm.md" },
+  { slug: "bc-15-solidity-basics", courseId: "BLOCKCHAIN", title: "Solidity cơ bản: storage/memory/calldata", shortTitle: "Solidity cơ bản", chapter: "bc-ch4", order: 15, available: false,
+    description: "Cú pháp Solidity, kiểu dữ liệu, storage vs memory vs calldata, function visibility, modifier, mapping/struct.", file: "blockchain/bc-15-solidity-basics.md" },
+  { slug: "bc-16-contract-lifecycle", courseId: "BLOCKCHAIN", title: "Vòng đời contract, ABI, event, deploy", shortTitle: "Contract lifecycle", chapter: "bc-ch4", order: 16, available: false,
+    description: "Constructor & deploy, ABI encoding, call vs transaction, event & log, contract interaction, revert & error.", file: "blockchain/bc-16-contract-lifecycle.md" },
+  { slug: "bc-17-token-standards", courseId: "BLOCKCHAIN", title: "Chuẩn token: ERC-20/721/1155/4626", shortTitle: "Token standards", chapter: "bc-ch4", order: 17, available: false,
+    description: "ERC-20 (fungible), ERC-721 (NFT), ERC-1155 (multi-token), ERC-4626 (vault); interface & implement, approve/transferFrom.", file: "blockchain/bc-17-token-standards.md" },
+  { slug: "bc-cap1-erc20-nft", courseId: "BLOCKCHAIN", title: "Capstone 1: Viết & deploy ERC-20 + ERC-721 có test", shortTitle: "Capstone 1: Token", chapter: "bc-ch4", order: 18, available: false,
+    description: "Dự án thực chiến: viết token ERC-20 và NFT ERC-721 bằng Foundry, viết test đầy đủ, deploy lên testnet.", file: "blockchain/bc-cap1-erc20-nft.md" },
+  { slug: "bc-18-foundry-dev", courseId: "BLOCKCHAIN", title: "Foundry/Hardhat: viết, test, deploy", shortTitle: "Foundry", chapter: "bc-ch5", order: 19, available: false,
+    description: "Cài & dùng Foundry (forge/cast/anvil), viết test Solidity, fuzz test, fork test, script deploy; so với Hardhat.", file: "blockchain/bc-18-foundry-dev.md" },
+  { slug: "bc-19-design-patterns", courseId: "BLOCKCHAIN", title: "Design patterns: access control & proxy nâng cấp", shortTitle: "Design patterns", chapter: "bc-ch5", order: 20, available: false,
+    description: "Ownable/AccessControl, pull-over-push, checks-effects-interactions, proxy nâng cấp (Transparent/UUPS), storage collision.", file: "blockchain/bc-19-design-patterns.md" },
+  { slug: "bc-20-oracles-gas", courseId: "BLOCKCHAIN", title: "Oracle (Chainlink) & tối ưu gas", shortTitle: "Oracle & Gas", chapter: "bc-ch5", order: 21, available: false,
+    description: "Bài toán oracle & niềm tin dữ liệu ngoài chain, Chainlink price feed/VRF/Automation; kỹ thuật tối ưu gas thực tế.", file: "blockchain/bc-20-oracles-gas.md" },
+  { slug: "bc-21-vulnerabilities", courseId: "BLOCKCHAIN", title: "Lỗ hổng smart contract kinh điển", shortTitle: "Lỗ hổng", chapter: "bc-ch6", order: 22, available: false,
+    description: "Reentrancy, integer overflow, front-running/MEV, delegatecall, tx.origin, unchecked call, access control; cách phòng.", file: "blockchain/bc-21-vulnerabilities.md" },
+  { slug: "bc-22-hacks-casestudy", courseId: "BLOCKCHAIN", title: "Case study các vụ hack lớn", shortTitle: "Hack case study", chapter: "bc-ch6", order: 23, available: false,
+    description: "Phân tích The DAO, Parity, Ronin Bridge, Wormhole, Euler...; nguyên nhân gốc & bài học phòng thủ.", file: "blockchain/bc-22-hacks-casestudy.md" },
+  { slug: "bc-23-audit-tools", courseId: "BLOCKCHAIN", title: "Quy trình audit: Slither, Echidna, formal verification", shortTitle: "Audit tools", chapter: "bc-ch6", order: 24, available: false,
+    description: "Quy trình audit chuyên nghiệp, static analysis (Slither), fuzzing (Echidna/Foundry), invariant testing, formal verification.", file: "blockchain/bc-23-audit-tools.md" },
+  { slug: "bc-cap2-audit", courseId: "BLOCKCHAIN", title: "Capstone 2: Audit contract có lỗ hổng, viết report", shortTitle: "Capstone 2: Audit", chapter: "bc-ch6", order: 25, available: false,
+    description: "Dự án thực chiến: audit một contract có lỗ hổng cài sẵn, tìm bug, phân loại severity, viết audit report chuẩn.", file: "blockchain/bc-cap2-audit.md" },
+  { slug: "bc-24-amm-liquidity", courseId: "BLOCKCHAIN", title: "AMM & liquidity pool (x·y=k), impermanent loss", shortTitle: "AMM", chapter: "bc-ch7", order: 26, available: false,
+    description: "Constant product x·y=k, liquidity pool, LP token, slippage, impermanent loss, Uniswap V2/V3 concentrated liquidity.", file: "blockchain/bc-24-amm-liquidity.md" },
+  { slug: "bc-25-lending-stablecoins", courseId: "BLOCKCHAIN", title: "Lending/borrowing & stablecoin", shortTitle: "Lending & Stablecoin", chapter: "bc-ch7", order: 27, available: false,
+    description: "Over-collateralized lending (Aave/Compound), health factor, thanh lý; stablecoin fiat-backed/crypto-backed (DAI)/algorithmic.", file: "blockchain/bc-25-lending-stablecoins.md" },
+  { slug: "bc-26-flashloan-yield", courseId: "BLOCKCHAIN", title: "Flash loan, yield farming, derivatives & rủi ro DeFi", shortTitle: "Flash loan & Yield", chapter: "bc-ch7", order: 28, available: false,
+    description: "Flash loan & ứng dụng/tấn công, yield farming & liquidity mining, perps/derivatives, các rủi ro hệ thống DeFi.", file: "blockchain/bc-26-flashloan-yield.md" },
+  { slug: "bc-cap3-amm", courseId: "BLOCKCHAIN", title: "Capstone 3: Build AMM mini (Uniswap V2 clone)", shortTitle: "Capstone 3: AMM", chapter: "bc-ch7", order: 29, available: false,
+    description: "Dự án thực chiến: xây một AMM tối giản kiểu Uniswap V2 (pool, swap, add/remove liquidity) bằng Foundry + test.", file: "blockchain/bc-cap3-amm.md" },
+];
+
+const bcChapters: Chapter[] = [
+  { id: "bc-ch1", courseId: "BLOCKCHAIN", title: "Chương 1 — Nền tảng mật mã & cấu trúc", lessonSlugs: ["bc-01-what-is-blockchain", "bc-02-hashing-merkle", "bc-03-pubkey-signatures", "bc-04-block-chain-structure", "bc-05-wallets-keys"], category: "security" },
+  { id: "bc-ch2", courseId: "BLOCKCHAIN", title: "Chương 2 — Đồng thuận & Mạng", lessonSlugs: ["bc-06-distributed-byzantine", "bc-07-proof-of-work", "bc-08-proof-of-stake", "bc-09-other-consensus", "bc-10-forks-finality-p2p"], category: "network" },
+  { id: "bc-ch3", courseId: "BLOCKCHAIN", title: "Chương 3 — Bitcoin chuyên sâu", lessonSlugs: ["bc-11-utxo-transactions", "bc-12-bitcoin-script-taproot", "bc-13-lightning-network"], category: "foundation" },
+  { id: "bc-ch4", courseId: "BLOCKCHAIN", title: "Chương 4 — Ethereum & Smart Contract", lessonSlugs: ["bc-14-ethereum-evm", "bc-15-solidity-basics", "bc-16-contract-lifecycle", "bc-17-token-standards", "bc-cap1-erc20-nft"], category: "compute" },
+  { id: "bc-ch5", courseId: "BLOCKCHAIN", title: "Chương 5 — Phát triển Smart Contract", lessonSlugs: ["bc-18-foundry-dev", "bc-19-design-patterns", "bc-20-oracles-gas"], category: "compute" },
+  { id: "bc-ch6", courseId: "BLOCKCHAIN", title: "Chương 6 — Bảo mật & Audit", lessonSlugs: ["bc-21-vulnerabilities", "bc-22-hacks-casestudy", "bc-23-audit-tools", "bc-cap2-audit"], category: "security" },
+  { id: "bc-ch7", courseId: "BLOCKCHAIN", title: "Chương 7 — DeFi (Tài chính phi tập trung)", lessonSlugs: ["bc-24-amm-liquidity", "bc-25-lending-stablecoins", "bc-26-flashloan-yield", "bc-cap3-amm"], category: "billing" },
+];
+
+// =====================================================================
 // Aggregate
 // =====================================================================
-export const lessons: Lesson[] = [...techLessons, ...progLessons, ...webLessons, ...sqlLessons, ...gitLessons, ...sysdLessons, ...foundLessons, ...engLessons, ...beLessons, ...csLessons, ...dsaLessons, ...secLessons, ...devopsLessons, ...sreLessons, ...aimlLessons, ...feLessons, ...capLessons, ...clfLessons, ...saaLessons, ...dvaLessons];
-export const chapters: Chapter[] = [...techChapters, ...progChapters, ...webChapters, ...sqlChapters, ...gitChapters, ...sysdChapters, ...foundChapters, ...engChapters, ...beChapters, ...csChapters, ...dsaChapters, ...secChapters, ...devopsChapters, ...sreChapters, ...aimlChapters, ...feChapters, ...capChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters];
+export const lessons: Lesson[] = [...techLessons, ...progLessons, ...webLessons, ...sqlLessons, ...gitLessons, ...sysdLessons, ...foundLessons, ...engLessons, ...beLessons, ...csLessons, ...dsaLessons, ...secLessons, ...devopsLessons, ...sreLessons, ...aimlLessons, ...feLessons, ...capLessons, ...clfLessons, ...saaLessons, ...dvaLessons, ...bcLessons];
+export const chapters: Chapter[] = [...techChapters, ...progChapters, ...webChapters, ...sqlChapters, ...gitChapters, ...sysdChapters, ...foundChapters, ...engChapters, ...beChapters, ...csChapters, ...dsaChapters, ...secChapters, ...devopsChapters, ...sreChapters, ...aimlChapters, ...feChapters, ...capChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters, ...bcChapters];
 
 export function lessonsOfCourse(courseId: CourseId): Lesson[] {
   return lessons.filter((l) => l.courseId === courseId).sort((a, b) => a.order - b.order);
