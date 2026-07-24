@@ -818,10 +818,63 @@ const dsChapters: Chapter[] = [
 ];
 
 // =====================================================================
+// DATASTORES — Data & Caching Systems (Tầng 1)
+// =====================================================================
+const dstLessons: Lesson[] = [
+  { slug: "dst-01-redis-intro", courseId: "DATASTORES", title: "Redis là gì? In-memory, single-thread & use cases", shortTitle: "Redis là gì", chapter: "dst-ch1", order: 1, available: true,
+    description: "Redis in-memory, mô hình single-thread event loop & vì sao vẫn nhanh, so với memcached, các use case (cache, session, queue, rate limit, leaderboard), cài & redis-cli.", file: "datastores/dst-01-redis-intro.md" },
+  { slug: "dst-02-redis-datastructures", courseId: "DATASTORES", title: "Redis data structures: string, hash, list, set, zset...", shortTitle: "Redis Data Structures", chapter: "dst-ch1", order: 2, available: false,
+    description: "String, Hash, List, Set, Sorted Set (zset), Bitmap, HyperLogLog, Geo, Bitfield; lệnh chính & độ phức tạp, khi nào dùng cấu trúc nào. CODE redis-cli.", file: "datastores/dst-02-redis-datastructures.md" },
+  { slug: "dst-03-redis-persistence", courseId: "DATASTORES", title: "Redis persistence, eviction & memory", shortTitle: "Persistence & Eviction", chapter: "dst-ch1", order: 3, available: false,
+    description: "RDB snapshot vs AOF (append-only), trade-off durability/performance, hybrid; TTL & expiration; maxmemory & eviction policies (LRU/LFU/TTL); memory optimization.", file: "datastores/dst-03-redis-persistence.md" },
+  { slug: "dst-04-redis-pubsub-streams", courseId: "DATASTORES", title: "Redis Pub/Sub & Streams", shortTitle: "Pub/Sub & Streams", chapter: "dst-ch1", order: 4, available: false,
+    description: "Pub/Sub (fire-and-forget) vs Streams (bền, consumer group, ack, replay); XADD/XREAD/XACK; so Redis Streams với Kafka nhẹ; keyspace notifications. CODE.", file: "datastores/dst-04-redis-pubsub-streams.md" },
+  { slug: "dst-05-redis-cluster", courseId: "DATASTORES", title: "Redis replication, Sentinel & Cluster", shortTitle: "Redis Cluster", chapter: "dst-ch1", order: 5, available: false,
+    description: "Replication master-replica, Sentinel (HA & failover), Cluster mode (16384 hash slot, resharding, MOVED/ASK), client-side & smart client; giới hạn multi-key.", file: "datastores/dst-05-redis-cluster.md" },
+  { slug: "dst-06-redis-patterns", courseId: "DATASTORES", title: "Redis patterns: lock, rate limiter, leaderboard, cache", shortTitle: "Redis Patterns", chapter: "dst-ch1", order: 6, available: false,
+    description: "Distributed lock (SET NX PX, Redlock & tranh cãi), rate limiter (token bucket/sliding window bằng Lua), leaderboard (zset), session store, cache-aside; Lua script atomicity. CODE.", file: "datastores/dst-06-redis-patterns.md" },
+  { slug: "dst-07-cache-strategies", courseId: "DATASTORES", title: "Cache strategies: aside, read/write-through, write-behind", shortTitle: "Cache Strategies", chapter: "dst-ch2", order: 7, available: false,
+    description: "Cache-aside (lazy), read-through, write-through, write-behind (write-back); TTL & freshness; đặt cache ở đâu (client/CDN/app/DB); trade-off nhất quán vs hiệu năng. Sơ đồ.", file: "datastores/dst-07-cache-strategies.md" },
+  { slug: "dst-08-cache-pitfalls", courseId: "DATASTORES", title: "Cache pitfalls: stampede, penetration, avalanche, hot key", shortTitle: "Cache Pitfalls", chapter: "dst-ch2", order: 8, available: false,
+    description: "Cache stampede/thundering herd (lock, request coalescing, early recompute), penetration (null cache, bloom filter), avalanche (jitter TTL), hot key & big key; invalidation & consistency. CODE.", file: "datastores/dst-08-cache-pitfalls.md" },
+  { slug: "dst-09-nosql-overview", courseId: "DATASTORES", title: "NoSQL taxonomy & khi nào rời bỏ SQL", shortTitle: "NoSQL Overview", chapter: "dst-ch3", order: 9, available: false,
+    description: "Vì sao NoSQL ra đời (scale, schema linh hoạt), 4 họ: key-value, document, wide-column, graph; BASE vs ACID; CAP positioning; khi nào KHÔNG nên bỏ SQL. Bảng so sánh.", file: "datastores/dst-09-nosql-overview.md" },
+  { slug: "dst-10-document-mongodb", courseId: "DATASTORES", title: "Document DB: MongoDB", shortTitle: "MongoDB", chapter: "dst-ch3", order: 10, available: false,
+    description: "Document model (BSON), embedding vs referencing, index (single/compound/multikey), aggregation pipeline, replica set & sharding, transaction; khi nào dùng document. CODE query.", file: "datastores/dst-10-document-mongodb.md" },
+  { slug: "dst-11-widecolumn-cassandra", courseId: "DATASTORES", title: "Wide-column: Cassandra & DynamoDB", shortTitle: "Cassandra & DynamoDB", chapter: "dst-ch3", order: 11, available: false,
+    description: "Wide-column model, partition key vs clustering key, query-first design, tunable consistency (Cassandra), DynamoDB (on-demand, GSI/LSI); write-optimized (LSM); anti-pattern. CODE CQL.", file: "datastores/dst-11-widecolumn-cassandra.md" },
+  { slug: "dst-12-data-modeling-nosql", courseId: "DATASTORES", title: "Data modeling NoSQL: access-pattern first", shortTitle: "NoSQL Data Modeling", chapter: "dst-ch3", order: 12, available: false,
+    description: "Tư duy ngược với SQL: thiết kế theo access pattern, denormalization & duplication có chủ đích, single-table design (DynamoDB), xử lý quan hệ many-to-many, khi nào dùng. Ví dụ cụ thể.", file: "datastores/dst-12-data-modeling-nosql.md" },
+  { slug: "dst-13-search-elasticsearch", courseId: "DATASTORES", title: "Search: Elasticsearch — inverted index & relevance", shortTitle: "Elasticsearch", chapter: "dst-ch4", order: 13, available: false,
+    description: "Vì sao DB kém cho full-text; inverted index, analyzer (tokenize/normalize), relevance scoring (TF-IDF/BM25), mapping & document; Elasticsearch vs OpenSearch. CODE query.", file: "datastores/dst-13-search-elasticsearch.md" },
+  { slug: "dst-14-search-operations", courseId: "DATASTORES", title: "Elasticsearch vận hành: query DSL, aggregation, scale", shortTitle: "ES Operations", chapter: "dst-ch4", order: 14, available: false,
+    description: "Query DSL (match/term/bool/filter context), aggregation (bucket/metric), shard & replica & routing, index lifecycle, refresh/near-real-time; khi nào ES vs DB, đồng bộ dữ liệu (CDC). CODE.", file: "datastores/dst-14-search-operations.md" },
+  { slug: "dst-15-oltp-vs-olap", courseId: "DATASTORES", title: "OLTP vs OLAP: row vs columnar", shortTitle: "OLTP vs OLAP", chapter: "dst-ch5", order: 15, available: false,
+    description: "OLTP (giao dịch, nhiều write nhỏ) vs OLAP (phân tích, quét lớn); row-oriented vs columnar storage & vì sao columnar nhanh cho analytics (compression, vectorization); data warehouse vs lake vs lakehouse. Sơ đồ.", file: "datastores/dst-15-oltp-vs-olap.md" },
+  { slug: "dst-16-clickhouse", courseId: "DATASTORES", title: "ClickHouse: columnar OLAP tốc độ cao", shortTitle: "ClickHouse", chapter: "dst-ch5", order: 16, available: false,
+    description: "ClickHouse kiến trúc columnar, MergeTree engine & primary index thưa, partition, materialized view, vì sao cực nhanh cho aggregation; khi nào dùng ClickHouse vs data warehouse. CODE SQL.", file: "datastores/dst-16-clickhouse.md" },
+  { slug: "dst-17-timeseries", courseId: "DATASTORES", title: "Time-series DB: Prometheus TSDB & InfluxDB", shortTitle: "Time-Series DB", chapter: "dst-ch5", order: 17, available: false,
+    description: "Đặc thù dữ liệu time-series (append-heavy, time-ordered, downsampling, retention), Prometheus TSDB (labels, chunks) & InfluxDB, so với lưu time-series trong SQL; cardinality problem.", file: "datastores/dst-17-timeseries.md" },
+  { slug: "dst-18-polyglot-persistence", courseId: "DATASTORES", title: "Polyglot persistence: chọn đúng store", shortTitle: "Polyglot Persistence", chapter: "dst-ch6", order: 18, available: false,
+    description: "Không có store 'một cho tất cả'; framework quyết định theo access pattern + consistency + scale + chi phí; kết hợp nhiều store & giữ đồng bộ (CDC, dual-write & rủi ro, outbox). Bảng decision.", file: "datastores/dst-18-polyglot-persistence.md" },
+  { slug: "dst-cap-storage", courseId: "DATASTORES", title: "Capstone: Thiết kế storage layer cho một hệ thực tế", shortTitle: "Capstone: Storage Design", chapter: "dst-ch6", order: 19, available: false,
+    description: "Dự án tổng kết: thiết kế tầng lưu trữ cho một hệ (vd e-commerce hoặc news feed) — chọn SQL cho đơn hàng, Redis cache/session, Elasticsearch cho tìm kiếm sản phẩm, ClickHouse cho analytics; giải thích lý do & cách đồng bộ. Sơ đồ kiến trúc.", file: "datastores/dst-cap-storage.md" },
+];
+
+const dstChapters: Chapter[] = [
+  { id: "dst-ch1", courseId: "DATASTORES", title: "Chương 1 — Redis chuyên sâu", lessonSlugs: ["dst-01-redis-intro", "dst-02-redis-datastructures", "dst-03-redis-persistence", "dst-04-redis-pubsub-streams", "dst-05-redis-cluster", "dst-06-redis-patterns"], category: "storage" },
+  { id: "dst-ch2", courseId: "DATASTORES", title: "Chương 2 — Caching strategy & pitfalls", lessonSlugs: ["dst-07-cache-strategies", "dst-08-cache-pitfalls"], category: "compute" },
+  { id: "dst-ch3", courseId: "DATASTORES", title: "Chương 3 — NoSQL taxonomy & data modeling", lessonSlugs: ["dst-09-nosql-overview", "dst-10-document-mongodb", "dst-11-widecolumn-cassandra", "dst-12-data-modeling-nosql"], category: "storage" },
+  { id: "dst-ch4", courseId: "DATASTORES", title: "Chương 4 — Search (Elasticsearch)", lessonSlugs: ["dst-13-search-elasticsearch", "dst-14-search-operations"], category: "network" },
+  { id: "dst-ch5", courseId: "DATASTORES", title: "Chương 5 — Analytics & OLAP", lessonSlugs: ["dst-15-oltp-vs-olap", "dst-16-clickhouse", "dst-17-timeseries"], category: "billing" },
+  { id: "dst-ch6", courseId: "DATASTORES", title: "Chương 6 — Chọn đúng store", lessonSlugs: ["dst-18-polyglot-persistence", "dst-cap-storage"], category: "foundation" },
+];
+
+// =====================================================================
 // Aggregate
 // =====================================================================
-export const lessons: Lesson[] = [...techLessons, ...progLessons, ...webLessons, ...sqlLessons, ...gitLessons, ...sysdLessons, ...foundLessons, ...engLessons, ...beLessons, ...csLessons, ...dsaLessons, ...secLessons, ...devopsLessons, ...sreLessons, ...aimlLessons, ...feLessons, ...capLessons, ...clfLessons, ...saaLessons, ...dvaLessons, ...bcLessons, ...dsLessons];
-export const chapters: Chapter[] = [...techChapters, ...progChapters, ...webChapters, ...sqlChapters, ...gitChapters, ...sysdChapters, ...foundChapters, ...engChapters, ...beChapters, ...csChapters, ...dsaChapters, ...secChapters, ...devopsChapters, ...sreChapters, ...aimlChapters, ...feChapters, ...capChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters, ...bcChapters, ...dsChapters];
+export const lessons: Lesson[] = [...techLessons, ...progLessons, ...webLessons, ...sqlLessons, ...gitLessons, ...sysdLessons, ...foundLessons, ...engLessons, ...beLessons, ...csLessons, ...dsaLessons, ...secLessons, ...devopsLessons, ...sreLessons, ...aimlLessons, ...feLessons, ...capLessons, ...clfLessons, ...saaLessons, ...dvaLessons, ...bcLessons, ...dsLessons, ...dstLessons];
+export const chapters: Chapter[] = [...techChapters, ...progChapters, ...webChapters, ...sqlChapters, ...gitChapters, ...sysdChapters, ...foundChapters, ...engChapters, ...beChapters, ...csChapters, ...dsaChapters, ...secChapters, ...devopsChapters, ...sreChapters, ...aimlChapters, ...feChapters, ...capChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters, ...bcChapters, ...dsChapters, ...dstChapters];
 
 export function lessonsOfCourse(courseId: CourseId): Lesson[] {
   return lessons.filter((l) => l.courseId === courseId).sort((a, b) => a.order - b.order);
