@@ -51,7 +51,7 @@ Khi đó, làm thủ công sụp đổ nhanh chóng. Hãy thử liệt kê nhữ
 <rect x="30" y="160" width="130" height="38" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
 <text x="95" y="184" text-anchor="middle" font-size="11" fill="currentColor">Rollout/Rollback</text>
 <rect x="500" y="160" width="130" height="38" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="565" y="184" text-anchor="middle" font-size="11" fill="currentColor">Config & Secret</text>
+<text x="565" y="184" text-anchor="middle" font-size="11" fill="currentColor">Config &amp; Secret</text>
 <line x1="160" y1="39" x2="255" y2="95" stroke="currentColor" stroke-width="1"/>
 <line x1="500" y1="39" x2="405" y2="95" stroke="currentColor" stroke-width="1"/>
 <line x1="160" y1="109" x2="255" y2="111" stroke="currentColor" stroke-width="1"/>

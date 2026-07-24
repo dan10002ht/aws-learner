@@ -54,8 +54,11 @@
       "layer": 4,
       "prefix": "cn-",
       "dir": "lessons/cloudnative",
-      "status": "pending",
-      "note": "k8s architecture->production, Helm, operators, service mesh, GitOps, troubleshooting."
+      "status": "done",
+      "note": "k8s architecture->production, Helm, operators, service mesh, GitOps, troubleshooting.",
+      "doneAt": "2026-07-24",
+      "lessons": 18,
+      "chapters": 7
     }
   ],
   "extensions": [
