@@ -871,10 +871,63 @@ const dstChapters: Chapter[] = [
 ];
 
 // =====================================================================
+// MESSAGING — Messaging & Event Streaming (Tầng 2)
+// =====================================================================
+const msgLessons: Lesson[] = [
+  { slug: "msg-01-messaging-intro", courseId: "MESSAGING", title: "Vì sao async messaging? Queue vs Pub/Sub & decoupling", shortTitle: "Messaging là gì", chapter: "msg-ch1", order: 1, available: true,
+    description: "Vấn đề gọi đồng bộ chặt (coupling, back-pressure, spike), async messaging giải quyết gì; message queue (point-to-point) vs pub/sub (fan-out); broker, producer, consumer; đánh đổi (độ trễ, phức tạp, eventual).", file: "messaging/msg-01-messaging-intro.md" },
+  { slug: "msg-02-delivery-semantics", courseId: "MESSAGING", title: "Delivery semantics, ordering & Dead Letter Queue", shortTitle: "Delivery Semantics", chapter: "msg-ch1", order: 2, available: false,
+    description: "At-most-once / at-least-once / exactly-once (và vì sao 'exactly-once' thực chất là idempotent consumer), ack & redelivery, ordering guarantee & khi mất thứ tự, poison message & Dead Letter Queue, retry policy.", file: "messaging/msg-02-delivery-semantics.md" },
+  { slug: "msg-03-messaging-patterns", courseId: "MESSAGING", title: "Messaging patterns: work queue, fanout, request-reply", shortTitle: "Messaging Patterns", chapter: "msg-ch1", order: 3, available: false,
+    description: "Competing consumers/work queue (chia tải), publish-subscribe fanout, request-reply (correlation id, reply-to), priority queue, delay/scheduled message, claim-check; khi nào dùng pattern nào. Sơ đồ.", file: "messaging/msg-03-messaging-patterns.md" },
+  { slug: "msg-04-rabbitmq", courseId: "MESSAGING", title: "RabbitMQ: exchange, queue, binding & routing", shortTitle: "RabbitMQ", chapter: "msg-ch2", order: 4, available: false,
+    description: "Mô hình AMQP: producer → exchange → (binding + routing key) → queue → consumer; 4 loại exchange (direct/topic/fanout/headers), ack/nack/reject, prefetch (QoS); ví dụ định tuyến. CODE.", file: "messaging/msg-04-rabbitmq.md" },
+  { slug: "msg-05-rabbitmq-reliability", courseId: "MESSAGING", title: "RabbitMQ reliability: confirm, DLX, quorum queue", shortTitle: "RabbitMQ Reliability", chapter: "msg-ch2", order: 5, available: false,
+    description: "Publisher confirms & mandatory, consumer ack & requeue, durable queue + persistent message, Dead Letter Exchange & TTL, quorum queue (Raft) vs classic mirrored; khi nào chọn RabbitMQ vs Kafka. CODE.", file: "messaging/msg-05-rabbitmq-reliability.md" },
+  { slug: "msg-06-cloud-queues", courseId: "MESSAGING", title: "Cloud queues: SQS, SNS & managed messaging", shortTitle: "SQS & SNS", chapter: "msg-ch2", order: 6, available: false,
+    description: "Amazon SQS (standard at-least-once & unordered vs FIFO exactly-once & ordered), visibility timeout, long polling, DLQ; SNS pub/sub & fan-out SNS→SQS; khi nào managed queue thay tự vận hành. CODE.", file: "messaging/msg-06-cloud-queues.md" },
+  { slug: "msg-07-kafka-intro", courseId: "MESSAGING", title: "Kafka là gì? Log-based, topic/partition/offset", shortTitle: "Kafka là gì", chapter: "msg-ch3", order: 7, available: false,
+    description: "Kafka là distributed commit log, không phải queue truyền thống; topic → partition (đơn vị song song & thứ tự), offset, message được GIỮ LẠI (không xoá khi đọc) → nhiều consumer & replay; vì sao khác RabbitMQ. Sơ đồ log + CODE.", file: "messaging/msg-07-kafka-intro.md" },
+  { slug: "msg-08-kafka-producers-consumers", courseId: "MESSAGING", title: "Kafka producer, consumer group & rebalance", shortTitle: "Producer & Consumer", chapter: "msg-ch3", order: 8, available: false,
+    description: "Producer: key → partition (hash), acks (0/1/all), batching & linger, idempotent producer; consumer group (mỗi partition 1 consumer trong group), rebalance & partition assignment, offset commit (auto vs manual) & at-least-once. CODE.", file: "messaging/msg-08-kafka-producers-consumers.md" },
+  { slug: "msg-09-kafka-storage", courseId: "MESSAGING", title: "Kafka storage: log segment, retention, replication", shortTitle: "Kafka Storage", chapter: "msg-ch3", order: 9, available: false,
+    description: "Log segment & index, retention (time/size) & log compaction (giữ bản mới nhất theo key), replication (leader/follower, ISR, min.insync.replicas), durability & high watermark; vì sao Kafka ghi đĩa vẫn nhanh (sequential I/O, page cache, zero-copy). Sơ đồ.", file: "messaging/msg-09-kafka-storage.md" },
+  { slug: "msg-10-kafka-delivery", courseId: "MESSAGING", title: "Kafka delivery: exactly-once & ordering", shortTitle: "Kafka Exactly-Once", chapter: "msg-ch3", order: 10, available: false,
+    description: "Ordering guarantee (chỉ trong 1 partition), idempotent producer (chống trùng khi retry), transactions (atomic multi-partition write, read-process-write EOS), consumer isolation level; vì sao exactly-once end-to-end khó & khi nào cần. CODE.", file: "messaging/msg-10-kafka-delivery.md" },
+  { slug: "msg-11-kafka-connect", courseId: "MESSAGING", title: "Kafka Connect & CDC (Debezium)", shortTitle: "Kafka Connect & CDC", chapter: "msg-ch4", order: 11, available: false,
+    description: "Kafka Connect (source & sink connector, không cần code), use case đồng bộ DB↔Kafka↔hệ khác; Change Data Capture với Debezium (đọc WAL/binlog → event), ứng dụng outbox & đồng bộ cache/search. CODE config.", file: "messaging/msg-11-kafka-connect.md" },
+  { slug: "msg-12-schema-registry", courseId: "MESSAGING", title: "Schema Registry & schema evolution", shortTitle: "Schema Registry", chapter: "msg-ch4", order: 12, available: false,
+    description: "Vì sao cần contract cho message; Avro/Protobuf/JSON Schema, Schema Registry (subject, version, id), compatibility (backward/forward/full) & schema evolution an toàn (thêm field optional...); rủi ro khi đổi schema. CODE.", file: "messaging/msg-12-schema-registry.md" },
+  { slug: "msg-13-kafka-streams", courseId: "MESSAGING", title: "Stream processing: Kafka Streams & ksqlDB", shortTitle: "Kafka Streams", chapter: "msg-ch4", order: 13, available: false,
+    description: "Xử lý luồng thời gian thực; KStream (event) vs KTable (changelog/state), stateless (map/filter) vs stateful (aggregate/join), windowing (tumbling/hopping/session), state store & exactly-once; ksqlDB; so ý niệm với Apache Flink. CODE.", file: "messaging/msg-13-kafka-streams.md" },
+  { slug: "msg-14-event-driven", courseId: "MESSAGING", title: "Event-Driven Architecture: các kiểu event", shortTitle: "Event-Driven", chapter: "msg-ch5", order: 14, available: false,
+    description: "Event-driven architecture là gì, event notification vs event-carried state transfer vs event sourcing; command vs event vs message; lợi ích (decoupling, scale) & cái giá (eventual consistency, khó debug, thứ tự); event như API. Sơ đồ.", file: "messaging/msg-14-event-driven.md" },
+  { slug: "msg-15-event-sourcing", courseId: "MESSAGING", title: "Event Sourcing: sự thật là chuỗi sự kiện", shortTitle: "Event Sourcing", chapter: "msg-ch5", order: 15, available: false,
+    description: "Thay vì lưu trạng thái hiện tại, lưu chuỗi event bất biến; rebuild state bằng replay, snapshot để tăng tốc; lợi ích (audit, time-travel, tách read model), thách thức (schema event evolution, replay cost); event store. Ví dụ tài khoản ngân hàng. Sơ đồ.", file: "messaging/msg-15-event-sourcing.md" },
+  { slug: "msg-16-cqrs", courseId: "MESSAGING", title: "CQRS: tách đường ghi và đường đọc", shortTitle: "CQRS", chapter: "msg-ch5", order: 16, available: false,
+    description: "Command Query Responsibility Segregation: tách model ghi (command) và model đọc (query/projection); vì sao (tối ưu đọc/ghi riêng, scale riêng), kết hợp Event Sourcing, read model projection & eventual consistency; khi nào KHÔNG nên CQRS (over-engineering). Sơ đồ.", file: "messaging/msg-16-cqrs.md" },
+  { slug: "msg-17-saga-outbox", courseId: "MESSAGING", title: "Saga & Outbox pattern trong hệ event-driven", shortTitle: "Saga & Outbox", chapter: "msg-ch5", order: 17, available: false,
+    description: "Giao dịch qua nhiều service bằng Saga (orchestration vs choreography, compensating action) — liên hệ [[ds-20-saga]]; bài toán dual-write (ghi DB + publish event không atomic) & Outbox pattern (ghi event vào bảng outbox cùng transaction, relay ra broker), Inbox chống trùng. CODE.", file: "messaging/msg-17-saga-outbox.md" },
+  { slug: "msg-18-choosing", courseId: "MESSAGING", title: "Chọn đúng: Kafka vs RabbitMQ vs Pulsar vs NATS", shortTitle: "Chọn Broker", chapter: "msg-ch6", order: 18, available: false,
+    description: "So sánh Kafka (streaming, replay, throughput cao) vs RabbitMQ (routing linh hoạt, per-message ack, task queue) vs Pulsar (tách compute/storage, multi-tenant) vs NATS (nhẹ, low-latency); tiêu chí chọn (ordering, retention, throughput, routing, vận hành). Bảng decision.", file: "messaging/msg-18-choosing.md" },
+  { slug: "msg-cap-pipeline", courseId: "MESSAGING", title: "Capstone: Thiết kế event-driven order pipeline", shortTitle: "Capstone: Pipeline", chapter: "msg-ch6", order: 19, available: false,
+    description: "Dự án tổng kết: thiết kế pipeline xử lý đơn hàng event-driven — service phát event qua Outbox → Kafka (topic orders, partition theo orderId giữ thứ tự) → các consumer (payment, inventory, shipping) idempotent, Saga điều phối + compensation, DLQ cho lỗi, schema registry cho contract; phân tích delivery/ordering/consistency. Sơ đồ kiến trúc.", file: "messaging/msg-cap-pipeline.md" },
+];
+
+const msgChapters: Chapter[] = [
+  { id: "msg-ch1", courseId: "MESSAGING", title: "Chương 1 — Nền tảng Messaging", lessonSlugs: ["msg-01-messaging-intro", "msg-02-delivery-semantics", "msg-03-messaging-patterns"], category: "foundation" },
+  { id: "msg-ch2", courseId: "MESSAGING", title: "Chương 2 — Message Queue (RabbitMQ, SQS)", lessonSlugs: ["msg-04-rabbitmq", "msg-05-rabbitmq-reliability", "msg-06-cloud-queues"], category: "network" },
+  { id: "msg-ch3", courseId: "MESSAGING", title: "Chương 3 — Kafka core", lessonSlugs: ["msg-07-kafka-intro", "msg-08-kafka-producers-consumers", "msg-09-kafka-storage", "msg-10-kafka-delivery"], category: "compute" },
+  { id: "msg-ch4", courseId: "MESSAGING", title: "Chương 4 — Kafka ecosystem", lessonSlugs: ["msg-11-kafka-connect", "msg-12-schema-registry", "msg-13-kafka-streams"], category: "storage" },
+  { id: "msg-ch5", courseId: "MESSAGING", title: "Chương 5 — Event-Driven Architecture", lessonSlugs: ["msg-14-event-driven", "msg-15-event-sourcing", "msg-16-cqrs", "msg-17-saga-outbox"], category: "security" },
+  { id: "msg-ch6", courseId: "MESSAGING", title: "Chương 6 — Chọn broker & Capstone", lessonSlugs: ["msg-18-choosing", "msg-cap-pipeline"], category: "billing" },
+];
+
+// =====================================================================
 // Aggregate
 // =====================================================================
-export const lessons: Lesson[] = [...techLessons, ...progLessons, ...webLessons, ...sqlLessons, ...gitLessons, ...sysdLessons, ...foundLessons, ...engLessons, ...beLessons, ...csLessons, ...dsaLessons, ...secLessons, ...devopsLessons, ...sreLessons, ...aimlLessons, ...feLessons, ...capLessons, ...clfLessons, ...saaLessons, ...dvaLessons, ...bcLessons, ...dsLessons, ...dstLessons];
-export const chapters: Chapter[] = [...techChapters, ...progChapters, ...webChapters, ...sqlChapters, ...gitChapters, ...sysdChapters, ...foundChapters, ...engChapters, ...beChapters, ...csChapters, ...dsaChapters, ...secChapters, ...devopsChapters, ...sreChapters, ...aimlChapters, ...feChapters, ...capChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters, ...bcChapters, ...dsChapters, ...dstChapters];
+export const lessons: Lesson[] = [...techLessons, ...progLessons, ...webLessons, ...sqlLessons, ...gitLessons, ...sysdLessons, ...foundLessons, ...engLessons, ...beLessons, ...csLessons, ...dsaLessons, ...secLessons, ...devopsLessons, ...sreLessons, ...aimlLessons, ...feLessons, ...capLessons, ...clfLessons, ...saaLessons, ...dvaLessons, ...bcLessons, ...dsLessons, ...dstLessons, ...msgLessons];
+export const chapters: Chapter[] = [...techChapters, ...progChapters, ...webChapters, ...sqlChapters, ...gitChapters, ...sysdChapters, ...foundChapters, ...engChapters, ...beChapters, ...csChapters, ...dsaChapters, ...secChapters, ...devopsChapters, ...sreChapters, ...aimlChapters, ...feChapters, ...capChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters, ...bcChapters, ...dsChapters, ...dstChapters, ...msgChapters];
 
 export function lessonsOfCourse(courseId: CourseId): Lesson[] {
   return lessons.filter((l) => l.courseId === courseId).sort((a, b) => a.order - b.order);
