@@ -1,0 +1,83 @@
+{
+  "track": "infrastructure-distributed-systems",
+  "description": "Systematized infra/distributed track: 4 new courses (by layer, foundations first) + 2 extensions. Vietnamese, English terms, hands-on config/code, quiz later.",
+  "styleWorkflow": ".claude/workflows/author-course.js (reads /tmp/course-job.json = {styleRef, courseName, lessons})",
+  "buildOrder": [
+    "DISTRIBUTED",
+    "DATASTORES",
+    "MESSAGING",
+    "CLOUDNATIVE",
+    "SRE-observability-ext",
+    "BACKEND-comm-ext"
+  ],
+  "courses": [
+    {
+      "id": "DISTRIBUTED",
+      "title": "Distributed Systems Foundations",
+      "layer": 0,
+      "lessons": 23,
+      "chapters": 7,
+      "prefix": "ds-",
+      "dir": "lessons/distributed",
+      "goldLesson": "ds-01-what-is-distributed",
+      "status": "done",
+      "note": "Tang 0 theory backbone. ds-01 authored gold; ds-02..23 via workflow.",
+      "doneAt": "2026-07-24"
+    },
+    {
+      "id": "DATASTORES",
+      "title": "Data & Caching Systems (Redis, NoSQL, Search, OLAP)",
+      "layer": 1,
+      "prefix": "dst-",
+      "dir": "lessons/datastores",
+      "status": "pending",
+      "note": "Redis deep, NoSQL taxonomy, Elasticsearch, ClickHouse, cache patterns, polyglot."
+    },
+    {
+      "id": "MESSAGING",
+      "title": "Messaging & Event Streaming (Kafka, RabbitMQ, Event-Driven)",
+      "layer": 2,
+      "prefix": "msg-",
+      "dir": "lessons/messaging",
+      "status": "pending",
+      "note": "MQ fundamentals, RabbitMQ/SQS, Kafka deep, event-driven (ES/CQRS/Saga/Outbox)."
+    },
+    {
+      "id": "CLOUDNATIVE",
+      "title": "Cloud Native & Kubernetes",
+      "layer": 4,
+      "prefix": "cn-",
+      "dir": "lessons/cloudnative",
+      "status": "pending",
+      "note": "k8s architecture->production, Helm, operators, service mesh, GitOps, troubleshooting."
+    }
+  ],
+  "extensions": [
+    {
+      "courseId": "SRE",
+      "add": "Observability chapter",
+      "topics": [
+        "3 pillars",
+        "OpenTelemetry",
+        "Prometheus/Grafana PromQL",
+        "tracing Jaeger",
+        "logging Loki/ELK",
+        "SLO/error budget"
+      ],
+      "status": "pending"
+    },
+    {
+      "courseId": "BACKEND",
+      "add": "Service Communication chapter",
+      "topics": [
+        "gRPC/Protobuf deep",
+        "API Gateway",
+        "Load Balancer",
+        "reverse proxy nginx/Envoy",
+        "rate limiting"
+      ],
+      "status": "pending"
+    }
+  ],
+  "createdAt": "2026-07-24"
+}
