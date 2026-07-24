@@ -249,10 +249,19 @@ const sreLessons: Lesson[] = [
     description: "Capacity planning, load testing, chaos engineering, graceful degradation, DR drill.", file: "sre/sre-05-reliability-patterns.md" },
   { slug: "sre-06-progressive-delivery", courseId: "SRE", title: "Deployment Safety & Progressive Delivery", shortTitle: "Safe Deploy", chapter: "sre-ch2", order: 6, available: true,
     description: "Rollback nhanh, canary/automated rollback, feature flag, error-budget-based release.", file: "sre/sre-06-progressive-delivery.md" },
+  { slug: "sre-07-three-pillars-otel", courseId: "SRE", title: "Ba trụ cột Observability & OpenTelemetry", shortTitle: "3 Pillars & OTel", chapter: "sre-ch3", order: 7, available: true,
+    description: "Metrics vs Logs vs Traces (mỗi cái trả lời câu hỏi gì), khi nào dùng cái nào; OpenTelemetry (chuẩn thống nhất: SDK, instrumentation tự động/thủ công, collector, OTLP) để không khoá nhà cung cấp; observability vs monitoring.", file: "sre/sre-07-three-pillars-otel.md" },
+  { slug: "sre-08-metrics-prometheus", courseId: "SRE", title: "Metrics sâu: Prometheus & Grafana", shortTitle: "Prometheus & Grafana", chapter: "sre-ch3", order: 8, available: true,
+    description: "Prometheus pull model, exporter & scrape, 4 loại metric (counter/gauge/histogram/summary), PromQL (rate, histogram_quantile, aggregation), recording/alerting rule, Alertmanager; Grafana dashboard; RED & USE method. CODE PromQL.", file: "sre/sre-08-metrics-prometheus.md" },
+  { slug: "sre-09-distributed-tracing", courseId: "SRE", title: "Distributed tracing: span, context & Jaeger", shortTitle: "Distributed Tracing", chapter: "sre-ch3", order: 9, available: true,
+    description: "Trace & span & parent-child, context propagation qua service (trace id/span id, W3C traceparent), sampling (head vs tail), Jaeger/Tempo, vì sao tracing thiết yếu cho microservices; liên kết trace-log-metric (exemplar). CODE.", file: "sre/sre-09-distributed-tracing.md" },
+  { slug: "sre-10-logging-aggregation", courseId: "SRE", title: "Structured logging & log aggregation (Loki/ELK)", shortTitle: "Logging & Aggregation", chapter: "sre-ch3", order: 10, available: true,
+    description: "Structured logging (JSON, level, context field), correlation id gắn với trace, tránh log quá nhiều/nhạy cảm; tập trung log (Loki vs ELK/Elastic), pipeline (agent → buffer → store → query), retention & chi phí, cardinality. CODE.", file: "sre/sre-10-logging-aggregation.md" },
 ];
 const sreChapters: Chapter[] = [
   { id: "sre-ch1", courseId: "SRE", title: "Độ tin cậy & quan sát", lessonSlugs: ["sre-01-principles-slo","sre-02-observability","sre-03-alerting-oncall"], category: "foundation" },
   { id: "sre-ch2", courseId: "SRE", title: "Sự cố & an toàn vận hành", lessonSlugs: ["sre-04-incident-postmortem","sre-05-reliability-patterns","sre-06-progressive-delivery"], category: "security" },
+  { id: "sre-ch3", courseId: "SRE", title: "Observability sâu (Metrics · Traces · Logs)", lessonSlugs: ["sre-07-three-pillars-otel","sre-08-metrics-prometheus","sre-09-distributed-tracing","sre-10-logging-aggregation"], category: "network" },
 ];
 const aimlLessons: Lesson[] = [
   { slug: "aiml-01-landscape", courseId: "AIML", title: "AI/ML landscape cho kỹ sư", shortTitle: "AI Landscape", chapter: "aiml-ch1", order: 1, available: true,
@@ -416,12 +425,19 @@ const beLessons: Lesson[] = [
     description: "Config qua env, secrets manager, graceful shutdown, liveness vs readiness, feature flags.", file: "backend/be-06-twelve-factor.md" },
   { slug: "be-08-performance", courseId: "BACKEND", title: "Performance & Profiling", shortTitle: "Performance", chapter: "be-ch3", order: 8, available: true,
     description: "p50/p95/p99, profiling, N+1, connection pool sizing, benchmark đúng cách, tail latency.", file: "backend/be-08-performance.md" },
+  { slug: "be-09-grpc-protobuf", courseId: "BACKEND", title: "gRPC & Protobuf: giao tiếp service hiệu năng cao", shortTitle: "gRPC & Protobuf", chapter: "be-ch4", order: 9, available: true,
+    description: "Protobuf IDL & binary serialization (nhỏ/nhanh hơn JSON), gRPC trên HTTP/2, 4 kiểu (unary, server/client/bidi streaming), code generation, so gRPC vs REST vs GraphQL, khi nào dùng; deadline, interceptor, error model. CODE .proto + service.", file: "backend/be-09-grpc-protobuf.md" },
+  { slug: "be-10-api-gateway-lb", courseId: "BACKEND", title: "API Gateway & Load Balancing", shortTitle: "Gateway & LB", chapter: "be-ch4", order: 10, available: true,
+    description: "API Gateway (single entry, auth, rate limit, routing, aggregation, BFF pattern) vs service mesh; Load balancing L4 vs L7, thuật toán (round-robin, least-conn, consistent hash), health check, sticky session; client-side vs server-side LB. Sơ đồ + CODE.", file: "backend/be-10-api-gateway-lb.md" },
+  { slug: "be-11-reverse-proxy-ratelimit", courseId: "BACKEND", title: "Reverse proxy (nginx/Envoy) & rate limiting", shortTitle: "Reverse Proxy & Rate Limit", chapter: "be-ch4", order: 11, available: true,
+    description: "Reverse proxy vs forward proxy, vai trò (TLS termination, caching, compression, routing) với nginx & Envoy; rate limiting thuật toán (token bucket, leaky bucket, sliding window) & đặt ở đâu (edge/gateway/app), 429 & Retry-After; connection handling. CODE nginx/Envoy config.", file: "backend/be-11-reverse-proxy-ratelimit.md" },
 ];
 
 const beChapters: Chapter[] = [
   { id: "be-ch1", courseId: "BACKEND", title: "API & Dữ liệu", lessonSlugs: ["be-01-api-design", "be-02-database-engineering", "be-03-caching"], category: "database" },
   { id: "be-ch2", courseId: "BACKEND", title: "Bất đồng bộ & Resilience", lessonSlugs: ["be-04-async-jobs", "be-07-resilience-code"], category: "network" },
   { id: "be-ch3", courseId: "BACKEND", title: "Chất lượng & Vận hành code", lessonSlugs: ["be-05-testing", "be-06-twelve-factor", "be-08-performance"], category: "foundation" },
+  { id: "be-ch4", courseId: "BACKEND", title: "Giao tiếp Service (gRPC · Gateway · Proxy)", lessonSlugs: ["be-09-grpc-protobuf", "be-10-api-gateway-lb", "be-11-reverse-proxy-ratelimit"], category: "network" },
 ];
 
 

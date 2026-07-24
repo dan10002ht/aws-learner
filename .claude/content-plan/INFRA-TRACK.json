@@ -73,7 +73,7 @@
         "logging Loki/ELK",
         "SLO/error budget"
       ],
-      "status": "pending"
+      "status": "done"
     },
     {
       "courseId": "BACKEND",
@@ -85,8 +85,9 @@
         "reverse proxy nginx/Envoy",
         "rate limiting"
       ],
-      "status": "pending"
+      "status": "done"
     }
   ],
-  "createdAt": "2026-07-24"
+  "createdAt": "2026-07-24",
+  "trackDoneAt": "2026-07-24"
 }
