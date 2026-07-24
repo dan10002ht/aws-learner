@@ -30,8 +30,11 @@
       "layer": 1,
       "prefix": "dst-",
       "dir": "lessons/datastores",
-      "status": "pending",
-      "note": "Redis deep, NoSQL taxonomy, Elasticsearch, ClickHouse, cache patterns, polyglot."
+      "status": "done",
+      "note": "Redis deep, NoSQL taxonomy, Elasticsearch, ClickHouse, cache patterns, polyglot.",
+      "doneAt": "2026-07-24",
+      "lessons": 19,
+      "chapters": 6
     },
     {
       "id": "MESSAGING",
