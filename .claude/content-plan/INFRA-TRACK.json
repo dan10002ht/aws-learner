@@ -42,8 +42,11 @@
       "layer": 2,
       "prefix": "msg-",
       "dir": "lessons/messaging",
-      "status": "pending",
-      "note": "MQ fundamentals, RabbitMQ/SQS, Kafka deep, event-driven (ES/CQRS/Saga/Outbox)."
+      "status": "done",
+      "note": "MQ fundamentals, RabbitMQ/SQS, Kafka deep, event-driven (ES/CQRS/Saga/Outbox).",
+      "doneAt": "2026-07-24",
+      "lessons": 19,
+      "chapters": 6
     },
     {
       "id": "CLOUDNATIVE",
