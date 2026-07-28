@@ -71717,6 +71717,1040 @@ const k9: Question[] = [
       1
     ],
     "explanation": "PoS đổi cách chọn người đóng block, không đổi khung dữ liệu.\n✓ Thay vòng lặp nonce bằng chọn validator theo stake — cùng khung Block/Chain, chỉ khác luật chọn người đóng block\n✗ Không cần viết lại toàn bộ Block/Chain — đó là điểm nhấn của bài\n✗ Chữ ký ECDSA vẫn cần để xác thực giao dịch\n✗ difficulty là khái niệm của PoW, không dùng để bù trong PoS"
+  },
+  {
+    "id": "sre-q-079",
+    "courseId": "SRE",
+    "lesson": "sre-07-three-pillars-otel",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một alert bắn lúc 2 giờ sáng: 'error_rate vượt SLO'. Theo trình tự điều tra kinh điển trong bài (rẻ→đắt, tổng quát→chi tiết), bạn nên làm gì TIẾP THEO sau khi metric đã báo có vấn đề?",
+    "options": [
+      "Mở vài trace của các request chậm/lỗi trong khung giờ đó để khoanh vùng service nào đỏ",
+      "Grep toàn bộ log full-text của mọi service để tìm chuỗi 'error'",
+      "Thêm log mới vào code rồi deploy lại và chờ sự cố tái hiện",
+      "Tăng số lượng label trên metric để có thêm chiều điều tra"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Trình tự là Metric phát hiện → Trace khoanh vùng → Log tìm nguyên nhân gốc.\n✓ Mở trace của request chậm/lỗi trong khung giờ để thấy span nào đỏ là bước khoanh vùng đúng ngay sau metric.\n✗ Grep full-text mọi service là bước tốn kém và bừa, chưa khoanh vùng được service.\n✗ Thêm log rồi deploy chờ tái hiện chính là dấu hiệu hệ thống CHƯA observable, không phải quy trình điều tra.\n✗ Tăng label trên metric làm nổ cardinality, không giúp điều tra request cụ thể."
+  },
+  {
+    "id": "sre-q-080",
+    "courseId": "SRE",
+    "lesson": "sre-07-three-pillars-otel",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong ba trụ cột, loại tín hiệu nào có chi phí lưu trữ gần như KHÔNG phụ thuộc vào số lượng request (1 triệu hay 1 tỷ request đổ vào cùng một histogram thì dung lượng như nhau)?",
+    "options": [
+      "Metrics",
+      "Logs",
+      "Traces",
+      "Cả ba đều tỷ lệ thuận với traffic như nhau"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Metric đã được aggregate trước khi lưu; chi phí quyết định bởi số time series (tích các label), không bởi lưu lượng request.\n✓ Metrics rẻ vì dữ liệu tổng hợp, dung lượng cố định theo số chuỗi chứ không theo số request.\n✗ Logs có volume tỷ lệ thuận với traffic, index tốn kém.\n✗ Traces volume khổng lồ nếu 100%, phải sampling.\n✗ Không phải cả ba giống nhau — chính điểm khác biệt này là lý do metric rẻ nhất."
+  },
+  {
+    "id": "sre-q-081",
+    "courseId": "SRE",
+    "lesson": "sre-07-three-pillars-otel",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đội của bạn muốn có thể trả lời câu hỏi 'đơn hàng o_88213 đã đi qua những bước nào và exception stack ra sao'. Trụ cột nào phù hợp nhất, và cần điều kiện gì?",
+    "options": [
+      "Logs, ưu tiên structured JSON có kèm trace_id",
+      "Metrics, thêm label order_id để lọc từng đơn",
+      "Traces, nhưng bỏ hết attribute cho nhẹ",
+      "Metrics dạng histogram để tính p99 của đơn đó"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Log giữ nguyên danh tính từng sự kiện và ngữ cảnh chi tiết như input, rẽ nhánh, exception stack.\n✓ Logs structured JSON có trace_id trả lời được 'chuyện gì xảy ra với đơn o_88213' và nối được sang trace.\n✗ Đặt order_id làm label metric làm nổ cardinality — metric đã vứt bỏ danh tính từng sự kiện nên không trả lời 'request nào'.\n✗ Trace bỏ hết attribute thì gần như vô giá trị; và trace trả lời 'chậm/lỗi ở đâu' hơn là kể chi tiết stack.\n✗ Histogram p99 là số tổng hợp, không cho biết chi tiết một đơn cụ thể."
+  },
+  {
+    "id": "sre-q-082",
+    "courseId": "SRE",
+    "lesson": "sre-07-three-pillars-otel",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một kỹ sư định thêm label 'user_id' và 'request_id' vào metric 'http_requests_total' để 'dễ điều tra hơn'. Vấn đề chí mạng là gì?",
+    "options": [
+      "Mỗi giá trị unique tạo một time series mới, hàng triệu user sẽ nổ bộ nhớ TSDB (cardinality)",
+      "Counter không cho phép có label nào cả",
+      "Metric sẽ chuyển thành gauge và mất khả năng tính rate()",
+      "Prometheus sẽ tự động chuyển các label này sang cold storage"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cardinality là điểm yếu chí mạng của metric: số time series = tích các label.\n✓ user_id/request_id có cực nhiều giá trị unique, mỗi cái tạo một series mới → nổ bộ nhớ TSDB.\n✗ Counter vẫn được phép có label — vấn đề là chọn label cardinality thấp, không phải cấm hẳn.\n✗ Thêm label không biến counter thành gauge.\n✗ Không có cơ chế tự chuyển label sang cold storage; đó là chuyện của log."
+  },
+  {
+    "id": "sre-q-083",
+    "courseId": "SRE",
+    "lesson": "sre-07-three-pillars-otel",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Định nghĩa vận hành sắc bén nhất về 'chưa observable' theo bài học là gì?",
+    "options": [
+      "Để debug một sự cố MỚI bạn phải thêm log rồi deploy lại và chờ tái hiện",
+      "Dashboard của bạn có ít hơn 10 biểu đồ",
+      "Bạn dùng Prometheus thay vì Datadog",
+      "Bạn chưa bật tail-based sampling ở gateway"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Observable = đặt được câu hỏi MỚI trên dữ liệu CŨ, không cần deploy thêm để lấy cảm biến.\n✓ Nếu phải thêm log rồi deploy lại và chờ tái hiện để debug sự cố mới thì hệ thống chưa observable — đúng định nghĩa của bài.\n✗ Số lượng biểu đồ trên dashboard không liên quan đến tính observable.\n✗ Chọn vendor nào (Prometheus hay Datadog) không quyết định tính observable.\n✗ Tail-based sampling là kỹ thuật trace, không phải định nghĩa observability."
+  },
+  {
+    "id": "sre-q-084",
+    "courseId": "SRE",
+    "lesson": "sre-07-three-pillars-otel",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Vì sao nên đặt OTel Collector ở GIỮA app và backend thay vì cho SDK export thẳng lên vendor? Chọn TẤT CẢ lợi ích đúng theo bài.",
+    "options": [
+      "Đổi vendor (Datadog→Grafana) chỉ sửa exporter trong config, app không đổi dòng nào",
+      "Gánh nặng batching/retry/nén/sampling chuyển sang Collector, app nhẹ đi",
+      "Có thể lọc PII và thêm resource attribute tập trung cho mọi service một chỗ",
+      "Loại bỏ hoàn toàn nhu cầu instrument code ứng dụng",
+      "Nhận đa nguồn: scrape Prometheus, nhận Jaeger/Zipkin cũ khi di cư dần"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Collector đứng giữa mang lại vendor-neutral thật, gỡ gánh nặng, xử lý tập trung và nhận đa nguồn.\n✓ Đổi backend chỉ sửa config exporter, không đụng code app.\n✓ Batching/retry/nén/sampling nằm ở Collector giúp process app nhẹ đi.\n✓ Lọc PII và thêm resource attribute làm tập trung một chỗ cho mọi service.\n✓ Collector scrape Prometheus, nhận Jaeger/Zipkin cũ — cầu nối khi di cư.\n✗ Collector KHÔNG loại bỏ nhu cầu instrument — app vẫn phải dùng API/SDK để phát telemetry."
+  },
+  {
+    "id": "sre-q-085",
+    "courseId": "SRE",
+    "lesson": "sre-07-three-pillars-otel",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "So sánh head-based và tail-based sampling. Những phát biểu nào ĐÚNG theo bài?",
+    "options": [
+      "Head-based quyết định ở đầu request nên rẻ và không phải giữ trace trong RAM",
+      "Tail-based giữ được đúng trace lỗi/chậm dù hiếm, nhưng tốn RAM/CPU vì phải buffer toàn trace",
+      "Head-based có thể vô tình vứt mất trace lỗi hiếm",
+      "Tail-based quyết định ngay khi tạo trace, trước cả khi request chạy",
+      "Nhiều team dùng tail-based ở gateway: giữ 100% trace lỗi/chậm, sample 1–5% trace bình thường"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Head quyết định ở đầu (rẻ, có thể mất lỗi hiếm); tail quyết định sau khi trace hoàn tất ở gateway (bắt được lỗi hiếm, tốn RAM).\n✓ Head-based rẻ, đơn giản, không giữ trace trong RAM.\n✓ Tail-based giữ đúng trace lỗi/chậm hiếm nhưng phải buffer toàn trace nên tốn RAM/CPU.\n✓ Head-based có thể vứt mất trace lỗi hiếm vì quyết định trước khi biết kết quả.\n✓ Nhiều team dùng tail ở gateway: giữ 100% lỗi/chậm, sample 1–5% bình thường.\n✗ Tail-based quyết định SAU khi trace hoàn tất, không phải ngay khi tạo trace — mô tả đó là của head-based."
+  },
+  {
+    "id": "sre-q-086",
+    "courseId": "SRE",
+    "lesson": "sre-07-three-pillars-otel",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong header W3C 'traceparent: 00-4bf9...4736-00f067aa0ba902b7-01', phần '01' ở cuối mang ý nghĩa gì và vì sao quan trọng cho sampling?",
+    "options": [
+      "Là flag báo trace đã được sampled; service con dùng parentbased sampler tôn trọng quyết định của cha",
+      "Là version của giao thức traceparent",
+      "Là trace_id rút gọn để tiết kiệm băng thông",
+      "Là số lần retry của request hiện tại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Flag 01 = sampled; để sampling nhất quán theo cả trace, service con nên tôn trọng quyết định của cha.\n✓ '01' là flag sampled; parentbased_* sampler đọc flag này để service con theo quyết định của cha, tránh trace gãy.\n✗ Version nằm ở phần đầu '00', không phải '01' cuối.\n✗ trace_id là đoạn 16 byte '4bf9...4736', không phải flag cuối.\n✗ Không có trường số retry trong traceparent."
+  },
+  {
+    "id": "sre-q-087",
+    "courseId": "SRE",
+    "lesson": "sre-07-three-pillars-otel",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Service A giữ span nhưng service B (do config lệch) tự quyết định drop độc lập, tạo ra trace gãy 'còn tệ hơn không có'. Cách sửa đúng theo bài là gì?",
+    "options": [
+      "Dùng sampler 'parentbased_*' để service con tôn trọng quyết định sampled đọc từ flag trong traceparent",
+      "Cho mỗi service tự quyết sampling độc lập với cùng tỉ lệ 10%",
+      "Chuyển toàn bộ sang tail-based và tắt propagation giữa service",
+      "Tăng OTEL_TRACES_SAMPLER_ARG lên 1.0 ở mọi service để trace 100%"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Sampling phải nhất quán theo cả trace; parentbased sampler làm service con theo quyết định của cha.\n✓ parentbased_* đọc flag sampled trong traceparent để con tôn trọng cha, tránh trace gãy — đúng cách bài khuyến nghị.\n✗ Mỗi service tự quyết độc lập dù cùng 10% vẫn có thể lệch nhau và gãy trace — chính là nguyên nhân lỗi.\n✗ Tắt propagation thì không còn ghép được trace, phá vỡ cả cơ chế.\n✗ Trace 100% giải quyết bằng cách đốt chi phí, bất khả thi ở quy mô lớn và không phải cách sửa được nêu."
+  },
+  {
+    "id": "sre-q-088",
+    "courseId": "SRE",
+    "lesson": "sre-07-three-pillars-otel",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong code OTel, việc code nghiệp vụ chỉ gọi API (get_tracer, start_as_current_span) còn 'export đi đâu, sample bao nhiêu' do SDK cấu hình qua biến môi trường thể hiện nguyên tắc thiết kế nào?",
+    "options": [
+      "Tách bạch API và SDK để tránh vendor lock-in — instrument một lần, đổi backend chỉ sửa cấu hình",
+      "Giảm cardinality của metric xuống mức thấp nhất có thể",
+      "Bắt buộc mọi span phải có exemplar",
+      "Ép auto-instrumentation thay thế hoàn toàn manual"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Code chỉ phụ thuộc API; SDK lo sampling/batching/exporter — đúng tinh thần tách bạch chống lock-in.\n✓ Tách API (tạo span) khỏi SDK (export, sample) cho phép instrument một lần rồi đổi backend chỉ bằng cấu hình.\n✗ Cardinality là chuyện chọn label metric, không phải điều nguyên tắc này nói tới.\n✗ Exemplar là cách nối metric↔trace, không phải điều thể hiện ở đây.\n✗ Bài nhấn mạnh manual mới là nơi giá trị thật nằm, auto không thay thế hoàn toàn."
+  },
+  {
+    "id": "sre-q-089",
+    "courseId": "SRE",
+    "lesson": "sre-07-three-pillars-otel",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong đoạn code create_order, dòng nào dưới đây là lựa chọn label an toàn cho METRIC (cardinality thấp)?",
+    "options": [
+      "order_counter.add(1, {\"channel\": \"web\"})",
+      "span.set_attribute(\"user.id\", user_id)",
+      "span.set_attribute(\"order.id\", order_id)",
+      "order_counter.add(1, {\"user_id\": user_id})"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Metric cần label cardinality thấp; span/attribute mới là nơi chấp nhận cardinality cao.\n✓ channel='web' có ít giá trị (web/mobile/...) nên an toàn làm label metric.\n✗ user.id đặt trên SPAN (trace) là chấp nhận được, nhưng đó là attribute của trace chứ không phải label metric.\n✗ order.id cũng là attribute span, và làm label metric sẽ nổ cardinality.\n✗ Đưa user_id làm label metric là điều bài cảnh báo tuyệt đối tránh."
+  },
+  {
+    "id": "sre-q-090",
+    "courseId": "SRE",
+    "lesson": "sre-07-three-pillars-otel",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn muốn từ điểm p99 nhọn trên biểu đồ latency nhảy THẲNG vào một trace mẫu của đúng request chậm đó. Cơ chế nào làm được điều này?",
+    "options": [
+      "Exemplar — gắn trace_id vào bucket histogram để nhảy từ metric sang trace mẫu",
+      "Tăng OTEL_TRACES_SAMPLER_ARG để lấy nhiều trace hơn",
+      "Semantic Conventions đặt tên attribute thống nhất",
+      "Resource attribute service.name trên mọi tín hiệu"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Exemplar gắn trace_id vào bucket histogram, cho phép nhảy từ điểm p99 thẳng vào trace mẫu.\n✓ Exemplar là cơ chế nối metric↔trace: từ điểm nhọn trên histogram mở đúng trace của request chậm.\n✗ Tăng tỉ lệ sampling chỉ lấy nhiều trace hơn, không tạo liên kết trực tiếp từ điểm p99.\n✗ Semantic Conventions chuẩn hoá tên attribute, không phải cơ chế nhảy metric→trace.\n✗ service.name giúp group theo service nhưng không nối một điểm p99 tới trace cụ thể."
+  },
+  {
+    "id": "sre-q-091",
+    "courseId": "SRE",
+    "lesson": "sre-08-metrics-prometheus",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong pull model của Prometheus, điều gì xảy ra khi Prometheus scrape một target thất bại?",
+    "options": [
+      "Prometheus tự động chuyển sang nhận metric do app push lên",
+      "Prometheus biết ngay target down qua series up == 0, coi như health check miễn phí",
+      "Metric của target vẫn được giữ nguyên giá trị cũ và báo target khoẻ",
+      "Alertmanager tự dừng mọi alert cho tới khi scrape thành công lại"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Scrape fail chính là tín hiệu health check: Prometheus set up == 0 cho target đó.\n✓ Biết ngay target down qua up == 0 là ưu điểm cốt lõi của pull so với push.\n✗ Pull model không nhận push từ app; đó là mô hình push kiểu StatsD.\n✗ Giữ giá trị cũ và báo khoẻ là điều pull model tránh được — push model mới không phân biệt được app im lặng với app chết.\n✗ Alertmanager không dừng alert khi scrape fail; ngược lại TargetDown thường bắn alert."
+  },
+  {
+    "id": "sre-q-092",
+    "courseId": "SRE",
+    "lesson": "sre-08-metrics-prometheus",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn có một batch job chạy khoảng 2 giây rồi kết thúc, cần đẩy kết quả ra Prometheus. Cách phù hợp là gì?",
+    "options": [
+      "Cho job push metric vào Pushgateway, Prometheus scrape Pushgateway",
+      "Tăng scrape_interval lên vài giây để kịp scrape trực tiếp job",
+      "Dùng blackbox_exporter probe HTTP vào job đang chạy",
+      "Đặt job làm summary để quantile tính sẵn phía client"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Job ngắn chết trước khi kịp bị scrape, nên cần trung gian lưu tạm giá trị.\n✓ Job push vào Pushgateway rồi Prometheus scrape Pushgateway là pattern chuẩn cho job ngắn/batch.\n✗ Tăng scrape_interval không đảm bảo trùng đúng 2 giây job sống, và làm chậm mọi target khác.\n✗ blackbox_exporter probe từ ngoài vào, không giải quyết chuyện job chết quá nhanh.\n✗ Summary chỉ là loại metric, không giải quyết vấn đề vòng đời job quá ngắn."
+  },
+  {
+    "id": "sre-q-093",
+    "courseId": "SRE",
+    "lesson": "sre-08-metrics-prometheus",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn đang đo latency của một API chạy trên 12 instance và muốn tính p99 latency cho toàn hệ thống. Nên chọn loại metric nào và vì sao?",
+    "options": [
+      "Summary, vì quantile được tính sẵn phía client nên chính xác tuyệt đối",
+      "Histogram, vì bucket cho phép gộp nhiều instance rồi mới tính p99 phía server",
+      "Gauge, vì latency lên xuống nên đọc trực tiếp giá trị hiện tại là đủ",
+      "Counter, vì chỉ cần bọc rate() là ra được phân vị latency"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "p99 toàn cục cần cộng gộp dữ liệu nhiều instance trước khi tính quantile.\n✓ Histogram lưu bucket cumulative, gộp được nhiều instance rồi histogram_quantile phía server cho p99 toàn hệ thống.\n✗ Summary tính quantile client-side nên KHÔNG cộng gộp được: trung bình p99 từng máy không phải p99 toàn cục.\n✗ Gauge đọc giá trị tức thời, không cho phân phối/phân vị.\n✗ Counter chỉ đếm tích luỹ, rate() ra tốc độ chứ không ra quantile latency."
+  },
+  {
+    "id": "sre-q-094",
+    "courseId": "SRE",
+    "lesson": "sre-08-metrics-prometheus",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đâu là biểu thức PromQL đúng để tính p99 latency theo route, gộp đúng cách trên nhiều instance?",
+    "options": [
+      "avg by (route) (histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m])))",
+      "histogram_quantile(0.99, sum by (le, route) (rate(http_request_duration_seconds_bucket[5m])))",
+      "histogram_quantile(0.99, rate(sum by (le, route) (http_request_duration_seconds_bucket)[5m]))",
+      "rate(histogram_quantile(0.99, http_request_duration_seconds_bucket) by (route) [5m])"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Thứ tự đúng là rate → sum by (le) → histogram_quantile.\n✓ rate() lên _bucket, sum by (le, route) gộp instance giữ chiều le, rồi histogram_quantile cho p99 đúng toán học.\n✗ Tính quantile từng instance rồi avg là đảo thứ tự, cho số sai về toán.\n✗ Đưa sum vào trong rồi rate ngoài kiểu này sai cú pháp và sai logic; rate phải áp trên counter _bucket trước.\n✗ Không thể rate() bọc quanh kết quả histogram_quantile; cú pháp và ngữ nghĩa đều sai."
+  },
+  {
+    "id": "sre-q-095",
+    "courseId": "SRE",
+    "lesson": "sre-08-metrics-prometheus",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "scrape_interval của bạn là 15s. Đồng nghiệp viết rate(http_requests_total[20s]) và than phiền đồ thị đầy lỗ (gaps). Nguyên nhân và cách sửa hợp lý nhất là gì?",
+    "options": [
+      "Cửa sổ 20s quá ngắn so với scrape_interval; nới lên tối thiểu [1m], mượt hơn thì [5m]",
+      "Phải đổi sang irate() vì rate() không chạy được với counter",
+      "Counter bị reset nên cần tự tính hiệu tay thay cho rate()",
+      "Đổi metric sang gauge để tránh phải dùng cửa sổ thời gian"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cửa sổ rate() cần đủ điểm để chịu vài lần scrape lỗi.\n✓ Cửa sổ nên ≥ 4× scrape_interval; với 15s thì [1m] là tối thiểu an toàn, [5m] mượt hơn cho alert — 20s quá ngắn nên đầy lỗ.\n✗ rate() chính là hàm dành cho counter; không phải lỗi loại hàm.\n✗ rate() đã tự xử lý counter reset; tự tính hiệu tay là điều bài học dặn KHÔNG làm.\n✗ Đổi sang gauge làm sai ngữ nghĩa đếm tích luỹ và không phải nguyên nhân của gaps."
+  },
+  {
+    "id": "sre-q-096",
+    "courseId": "SRE",
+    "lesson": "sre-08-metrics-prometheus",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Vì sao đưa label user_id vào metric http_requests_total là ý tưởng tồi? Chọn TẤT CẢ lý do đúng.",
+    "options": [
+      "Mỗi user_id mới tạo một time series mới sống mãi trong RAM, dễ gây OOM",
+      "Cardinality nhân theo tích Descartes, user_id giá trị vô hạn làm nổ số series",
+      "Nhu cầu truy vết theo user thuộc về log/trace (qua exemplar), không phải metric",
+      "Counter sẽ không reset đúng khi có nhiều user_id",
+      "histogram_quantile ngừng hoạt động khi có label unbounded"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "user_id là label unbounded — kẻ giết Prometheus phổ biến nhất.\n✓ Mỗi giá trị label mới tạo một series mới sống mãi trong bộ nhớ, dẫn tới OOM.\n✓ Cardinality nhân theo tích Descartes; user_id cả triệu giá trị làm số series nổ tung.\n✓ Truy vết theo user là việc của log/trace qua exemplar, không nhét vào label metric.\n✗ Counter reset khi process restart, không liên quan tới số lượng user_id.\n✗ histogram_quantile không 'ngừng hoạt động' vì label unbounded; vấn đề là cardinality, không phải hàm hỏng."
+  },
+  {
+    "id": "sre-q-097",
+    "courseId": "SRE",
+    "lesson": "sre-08-metrics-prometheus",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Route /orders/12345, /orders/98765... đang tạo ra rất nhiều series riêng. Cách phòng thủ cardinality đúng là gì?",
+    "options": [
+      "Normalize route thành /orders/:id TRƯỚC khi đặt làm label",
+      "Đưa order id vào một label thứ hai để dễ lọc theo từng đơn",
+      "Tăng RAM cho Prometheus để chứa hết mọi series order id",
+      "Chuyển http_requests_total từ counter sang summary"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Order id trong path là giá trị unbounded nếu không normalize.\n✓ Normalize /orders/12345 thành /orders/:id trước khi thành label giữ cardinality hữu hạn.\n✗ Đưa order id thành label khác chính là nhân thêm cardinality — làm vấn đề tệ hơn.\n✗ Tăng RAM chỉ trì hoãn, không giải quyết gốc unbounded cardinality.\n✗ Đổi sang summary không liên quan gì tới bùng nổ series do path."
+  },
+  {
+    "id": "sre-q-098",
+    "courseId": "SRE",
+    "lesson": "sre-08-metrics-prometheus",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một node có CPU utilization 100% nhưng run-queue (saturation) bằng 0. Kết luận vận hành nào là đúng theo tinh thần USE?",
+    "options": [
+      "Node đang dùng hết CPU đúng nghĩa, chưa có tiến trình xếp hàng chờ — thường vẫn ổn",
+      "Node chắc chắn quá tải và cần page ngay vì utilization đã chạm 100%",
+      "Saturation = 0 nghĩa là số liệu sai, nên bỏ qua saturation và chỉ nhìn utilization",
+      "Phải chuyển ngay workload sang node khác vì utilization là chỉ báo sớm nhất của sự cố"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Utilization là tỉ lệ bận; saturation là lượng việc phải xếp hàng chờ.\n✓ CPU 100% mà run-queue = 0 nghĩa là dùng hết đúng nghĩa, chưa ai phải chờ — thường vẫn ổn.\n✗ Utilization 100% một mình không đủ để kết luận quá tải; phải nhìn saturation.\n✗ Saturation = 0 là giá trị hợp lệ và có ý nghĩa, không phải số liệu sai.\n✗ Saturation (không phải utilization) mới là chỉ báo sớm sát 'sắp sập'; utilization 100% chưa buộc phải di chuyển workload."
+  },
+  {
+    "id": "sre-q-099",
+    "courseId": "SRE",
+    "lesson": "sre-08-metrics-prometheus",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Đội bạn muốn cấu hình alert đúng chuẩn production. Những phát biểu nào là ĐÚNG theo bài học? Chọn TẤT CẢ.",
+    "options": [
+      "Nên dùng for để lọc nhiễu thoáng qua, tránh spike 15s cũng đánh thức người",
+      "Chỉ nên page trên symptom ảnh hưởng user (error rate, latency, SLO burn)",
+      "CPU cao là cause, nên để severity warning gửi Slack thay vì page",
+      "Alertmanager là nơi định nghĩa điều kiện alert bằng biểu thức PromQL",
+      "Bỏ for đi để alert phản ứng tức thì luôn tốt hơn cho on-call"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Prometheus phát hiện (rule + for), Alertmanager định tuyến/thông báo.\n✓ for lọc nhiễu thoáng qua, tránh spike 15s gọi dậy lúc 3h sáng.\n✓ Chỉ page trên symptom ảnh hưởng user như error rate, latency, SLO burn.\n✓ CPU cao là cause nên để severity warning gửi Slack, không page.\n✗ Điều kiện alert (PromQL) định nghĩa trong alerting rule ở Prometheus, không phải Alertmanager.\n✗ Bỏ for khiến mọi spike thoáng qua đều bắn alert — gây nhiễu, không tốt hơn."
+  },
+  {
+    "id": "sre-q-100",
+    "courseId": "SRE",
+    "lesson": "sre-08-metrics-prometheus",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Alertmanager, khi cả một node chết kéo theo hàng loạt pod trên node đó cũng báo lỗi, cơ chế nào giúp bạn chỉ thấy nguyên nhân gốc thay vì ngập trong hệ quả?",
+    "options": [
+      "Grouping theo group_by để gộp thành một thông báo",
+      "Inhibition: alert node-down ức chế các alert pod-down phụ thuộc",
+      "Silence có TTL đặt qua UI trong thời gian bảo trì",
+      "repeat_interval để nhắc lại alert đang firing"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Đây là quan hệ nhân-quả: node down là nguyên nhân, pod down là hệ quả.\n✓ Inhibition để alert node-down (nguyên nhân gốc) ức chế các alert pod-down phụ thuộc, tránh ngập hệ quả.\n✗ Grouping chỉ gộp alert cùng nhóm thành một thông báo, không xử lý quan hệ nhân-quả giữa hai loại alert khác nhau.\n✗ Silence là tắt tạm thủ công theo matcher/TTL, không tự động theo quan hệ nguyên nhân.\n✗ repeat_interval chỉ điều khiển nhịp nhắc lại, không khử hệ quả."
+  },
+  {
+    "id": "sre-q-101",
+    "courseId": "SRE",
+    "lesson": "sre-08-metrics-prometheus",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "p99 latency của một service nhìn ổn định, nhưng bạn nghi ngờ có hai cụm người dùng: một nhóm rất nhanh, một nhóm rất chậm (phân phối bimodal). Cách hiển thị nào giúp phát hiện điều p99 đang giấu?",
+    "options": [
+      "Stat panel hiển thị đúng con số p99 mới nhất",
+      "Heatmap của các _bucket histogram theo thời gian",
+      "Gauge panel cho giá trị p99 hiện tại",
+      "Bar chart topk route theo request rate"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Một phân vị đơn lẻ nén cả phân phối thành một con số, che mất cấu trúc.\n✓ Heatmap của các _bucket cho thấy toàn bộ phân phối latency theo thời gian, lộ ra bimodal (2 cụm nhanh/chậm) mà p99 giấu đi.\n✗ Stat panel chỉ hiện một con số p99, chính là thứ đang che phân phối.\n✗ Gauge panel cũng chỉ một giá trị hiện tại, không thấy được hai cụm.\n✗ topk theo request rate nói về lưu lượng, không nói về phân phối latency."
+  },
+  {
+    "id": "sre-q-102",
+    "courseId": "SRE",
+    "lesson": "sre-08-metrics-prometheus",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Vì sao nên tạo recording rule job:http_errors:ratio5m thay vì để mỗi dashboard và alert tự tính lại error ratio lồng nhiều tầng?",
+    "options": [
+      "Recording rule tính sẵn theo chu kỳ, lưu thành series mới nên query rẻ và cho một nguồn sự thật nhất quán",
+      "Recording rule làm giảm cardinality bằng cách xoá bớt label unbounded tự động",
+      "Recording rule thay thế được Alertmanager trong việc routing alert",
+      "Recording rule biến counter thành gauge để đọc trực tiếp không cần rate()"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Query lồng nhiều tầng (nhất là histogram_quantile high-cardinality) đắt khi chạy mỗi 15s.\n✓ Recording rule tính trước theo chu kỳ và lưu thành series mới, nên dashboard/alert đọc rẻ và dùng chung một nguồn sự thật.\n✗ Recording rule không tự xoá label unbounded; giảm cardinality là việc thiết kế label, không phải recording rule.\n✗ Định tuyến alert là việc của Alertmanager; recording rule không thay thế.\n✗ Recording rule không đổi counter thành gauge; nó lưu kết quả biểu thức, giá trị vẫn cần tính đúng bằng rate()."
+  },
+  {
+    "id": "sre-q-103",
+    "courseId": "SRE",
+    "lesson": "sre-09-distributed-tracing",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Dashboard báo p99 latency của /checkout nhảy từ 300ms lên 2.4s. Tín hiệu observability nào giúp bạn PHÁT HIỆN sự cố này nhưng KHÔNG cho biết chặng nào đang nghẽn?",
+    "options": [
+      "Metric — aggregate, biết cả hệ chậm nhưng không biết request nào, ở đâu",
+      "Trace — chỉ ra ngay chặng nghẽn qua waterfall",
+      "Log của inventory-service — dòng nào lỗi",
+      "Exemplar — trỏ thẳng tới trace cụ thể"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Metric trả lời \"có vấn đề không\" nhưng bị điểm mù aggregate: biết cả hệ chậm mà không biết request nào hay chặng nào.\n✓ Chỉ số aggregate cho biết p99 tăng nhưng không định vị được điểm nghẽn\n✗ Trace mới là thứ định vị chặng nghẽn, đây là câu hỏi về công cụ chỉ phát hiện\n✗ Log giải thích tại sao ở một service, nhưng câu hỏi hỏi công cụ phát hiện toàn cục\n✗ Exemplar là cây cầu từ metric sang trace, không phải thứ chỉ dùng để phát hiện"
+  },
+  {
+    "id": "sre-q-104",
+    "courseId": "SRE",
+    "lesson": "sre-09-distributed-tracing",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong mô hình dữ liệu tracing, cấu trúc nào tạo nên \"cây\" của một trace?",
+    "options": [
+      "Quan hệ Parent Span ID / child giữa các span",
+      "Việc mọi span chia sẻ chung một Span ID",
+      "Thứ tự start time tăng dần của các span",
+      "Operation name giống nhau giữa các span"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chính quan hệ parent/child (qua Parent Span ID) tạo nên cây; root span không có parent.\n✓ Mỗi span trỏ về span cha đã spawn ra nó, root span không có parent nên thành gốc cây\n✗ Các span chia sẻ chung trace-id chứ không phải span-id; span-id là định danh riêng từng span\n✗ Thứ tự thời gian không định nghĩa quan hệ cha-con; clock skew còn làm timestamp không đáng tin\n✗ Operation name mô tả công việc, không quyết định cấu trúc cây"
+  },
+  {
+    "id": "sre-q-105",
+    "courseId": "SRE",
+    "lesson": "sre-09-distributed-tracing",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Xét header W3C: traceparent: 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01. Khi service B nhận header này và tạo span mới, giá trị nào trở thành Parent Span ID của span B?",
+    "options": [
+      "00f067aa0ba902b7",
+      "4bf92f3577b34da6a3ce929d0e0e4736",
+      "01",
+      "00"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "parent-id (span-id của bên gửi) là trường thứ ba trong traceparent và trở thành parentSpanId của span bên nhận.\n✓ Đây là span-id 8 byte của bên gửi, sẽ thành parent của span mới bên nhận\n✗ Chuỗi 16 byte là trace-id, giữ nguyên suốt hành trình chứ không phải parent\n✗ Giá trị cuối là flags (sampled=01), không phải id\n✗ Giá trị đầu là version của định dạng, không phải id"
+  },
+  {
+    "id": "sre-q-106",
+    "courseId": "SRE",
+    "lesson": "sre-09-distributed-tracing",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Team báo trace của /checkout luôn \"cụt lủn\": chỉ thấy api-gateway và order-service, thiếu hẳn payment và inventory dù chúng vẫn được gọi. Nguyên nhân khả dĩ NHẤT là gì?",
+    "options": [
+      "Một service ở giữa không forward/inject header traceparent nên propagation bị gãy",
+      "Head-based sampling đã roll bỏ trace này ngay ở root",
+      "Clock skew làm span downstream có timestamp âm",
+      "Backend Jaeger không đủ dung lượng lưu span"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Triệu chứng trace cụt, thiếu hẳn nửa downstream là dấu hiệu kinh điển của propagation hỏng — context không được truyền qua một hop.\n✓ Egress client không instrument hoặc proxy strip header khiến downstream tạo trace mới, trace gãy thành hai cây\n✗ Head-based sampling giữ hoặc bỏ cả trace nhất quán, không bỏ nửa chừng để lại phần đầu\n✗ Clock skew làm lệch thời gian span, không làm biến mất các span downstream\n✗ Thiếu dung lượng thường mất ngẫu nhiên hoặc toàn bộ, không bỏ đúng nửa downstream một cách hệ thống"
+  },
+  {
+    "id": "sre-q-107",
+    "courseId": "SRE",
+    "lesson": "sre-09-distributed-tracing",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn muốn CHẮC CHẮN giữ lại 100% các trace bị lỗi hoặc chậm hơn 1s để điều tra sự cố, dù chỉ lưu tổng thể một tỉ lệ nhỏ trace. Chiến lược sampling nào phù hợp?",
+    "options": [
+      "Tail-based: buffer full trace ở collector rồi áp luật error/latency",
+      "Head-based 1% ở root span",
+      "Head-based 100% ở root, giảm dần theo tải",
+      "Tắt hẳn sampling, lưu mọi trace"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chỉ tail-based mới quyết định sau khi có full trace nên biết được trace có lỗi/chậm hay không rồi mới giữ.\n✓ Buffer toàn bộ span rồi xét luật error=true hoặc duration>1s để giữ đúng 100% trace đáng điều tra\n✗ Head 1% quyết định mù ở root trước khi biết kết quả, đúng những trace lỗi hiếm lại thường bị vứt\n✗ Head 100% giảm theo tải vẫn quyết định trước khi biết kết quả, không đảm bảo giữ trace lỗi\n✗ Lưu mọi trace bất khả thi về chi phí ở quy mô lớn, trái yêu cầu chỉ lưu tỉ lệ nhỏ"
+  },
+  {
+    "id": "sre-q-108",
+    "courseId": "SRE",
+    "lesson": "sre-09-distributed-tracing",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những phát biểu nào ĐÚNG về tail-based sampling so với head-based?",
+    "options": [
+      "Quyết định giữ/bỏ sau khi đã thu đủ toàn bộ span của trace",
+      "Giữ được gần như 100% trace lỗi và trace chậm",
+      "Đòi hỏi mọi span của một trace tới cùng một collector instance (LB theo trace-id)",
+      "Rẻ hơn và không cần buffer bộ nhớ",
+      "Quyết định được ghi vào flag sampled ở root và truyền xuống downstream"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Tail-based buffer full trace ở collector rồi mới quyết định, nên giữ được trace lỗi/chậm nhưng tốn RAM và cần LB theo trace-id.\n✓ Nó chờ đủ span (hết span hoặc timeout) rồi mới áp luật\n✓ Chính điểm mạnh: giữ đúng thứ đáng điều tra là trace lỗi và chậm\n✓ Vì phải gom mọi span của một trace vào cùng chỗ để xét, cần load-balancing theo trace-id\n✗ Rẻ và không buffer là đặc điểm của head-based, không phải tail-based\n✗ Ghi flag sampled ở root rồi truyền xuống là cơ chế head-based đảm bảo nhất quán, không phải tail-based"
+  },
+  {
+    "id": "sre-q-109",
+    "courseId": "SRE",
+    "lesson": "sre-09-distributed-tracing",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trace ↔ metric: histogram Prometheus cho biết p99 = 2.4s nhưng không nói trace CỤ THỂ nào rơi vào p99. Cơ chế nào là cây cầu để từ điểm trên biểu đồ latency nhảy thẳng sang trace tương ứng?",
+    "options": [
+      "Exemplar — đính kèm trace_id vào một mẫu quan sát rơi vào bucket",
+      "Inject trace id vào mọi dòng log",
+      "tracestate trong header traceparent",
+      "Service dependency graph của Jaeger"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Exemplar đính kèm (trace_id, giá trị) vào bucket của histogram, cho phép click từ chart nhảy sang trace.\n✓ Mỗi bucket mang một mẫu có trace_id nên click chấm exemplar trên Grafana là mở đúng trace trong Tempo/Jaeger\n✗ Inject trace id vào log là cầu nối trace↔log, không phải metric↔trace\n✗ tracestate mang metadata vendor trong propagation, không liên quan histogram\n✗ Dependency graph hiển thị quan hệ service, không nối một quan sát metric với trace cụ thể"
+  },
+  {
+    "id": "sre-q-110",
+    "courseId": "SRE",
+    "lesson": "sre-09-distributed-tracing",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Team đặt operation name của span là \"GET /orders/12345\", \"GET /orders/12346\"... theo từng id request. Hậu quả chính là gì và nên sửa thế nào?",
+    "options": [
+      "Cardinality nổ, vỡ aggregation — dùng tên low-cardinality \"GET /orders/{id}\", đưa id vào attribute",
+      "Trace bị gãy do propagation — phải forward header ở mọi hop",
+      "Clock skew tăng — bật heuristic điều chỉnh ở Jaeger",
+      "Sampling không nhất quán — chuyển sang tail-based"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Nhét id cụ thể vào operation name khiến mỗi id thành một tên khác, cardinality cao làm vỡ aggregation.\n✓ Giải pháp là dùng template low-cardinality cho tên và đặt id cụ thể vào attribute\n✗ Vấn đề ở đây là đặt tên, không phải propagation hỏng\n✗ Clock skew liên quan lệch đồng hồ giữa máy, không phải cách đặt tên\n✗ Sampling không giải quyết được vấn đề cardinality của operation name"
+  },
+  {
+    "id": "sre-q-111",
+    "courseId": "SRE",
+    "lesson": "sre-09-distributed-tracing",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với propagation qua Kafka (không phải HTTP), context được truyền như thế nào để trace kéo dài xuyên ranh giới async?",
+    "options": [
+      "Producer inject() context vào message header; consumer extract() khi nhận",
+      "Ghi trace id vào payload body và tự parse ở consumer",
+      "Dựa vào timestamp của message để ghép span",
+      "Collector tự đoán quan hệ parent/child từ topic name"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Với queue, context được nhét vào message header/attribute: producer inject(), consumer extract() giống mô hình HTTP.\n✓ Nhờ đó thấy được cả quãng message nằm chờ trong queue (span receive có parent là span publish)\n✗ Nhét vào payload body không phải chuẩn, dễ lẫn với dữ liệu nghiệp vụ và không được thư viện xử lý tự động\n✗ Timestamp không định nghĩa quan hệ cha-con và còn bị clock skew\n✗ Collector ghép theo trace-id/parent trong context, không đoán từ topic name"
+  },
+  {
+    "id": "sre-q-112",
+    "courseId": "SRE",
+    "lesson": "sre-09-distributed-tracing",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Ở quy mô rất lớn, bạn ưu tiên chi phí lưu trữ, đã có kỷ luật \"lần theo trace-id từ log/exemplar\" và muốn lưu span trên object storage rẻ. Những lựa chọn/đặc điểm nào PHÙ HỢP?",
+    "options": [
+      "Grafana Tempo làm backend, lưu span trên S3/GCS",
+      "Chỉ index theo trace-id thay vì search phức tạp",
+      "Dùng OpenTelemetry để instrument một lần, đổi backend tuỳ ý",
+      "Jaeger là lựa chọn tối ưu nhất về chi phí object storage",
+      "Bắt buộc dùng Zipkin vì nó lưu được trên object storage rẻ nhất"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Tempo tối ưu chi phí: index theo trace-id, lưu trên object storage; OTel cho phép đổi backend không đổi code.\n✓ Tempo được thiết kế đúng cho object storage S3/GCS rẻ\n✓ Nó chỉ index theo trace-id nên hợp với kỷ luật lần theo trace-id từ log/exemplar\n✓ OTel vendor-neutral: instrument một lần, đổi backend tuỳ ý là lý do lớn nó thắng thế\n✗ Jaeger mạnh về UI điều tra và search linh hoạt, không phải lựa chọn tối ưu chi phí object storage\n✗ Zipkin nhẹ và đơn giản nhưng lưu trên Cassandra/ES/MySQL, không phải object storage"
+  },
+  {
+    "id": "sre-q-113",
+    "courseId": "SRE",
+    "lesson": "sre-09-distributed-tracing",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Lúc 3h sáng bạn mở một trace lỗi đẹp trong Jaeger nhưng vẫn phải mò log theo timestamp vì không tìm được đúng dòng log của request đó. Thiếu sót nào gây ra tình huống này?",
+    "options": [
+      "Không inject trace id (và span id) vào log để correlation",
+      "Head-based sampling đặt tỉ lệ quá thấp",
+      "Chưa bật tail-based ở collector",
+      "Operation name có cardinality quá cao"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bẫy thường gặp: instrument tracing nhưng quên inject trace id vào log, nên không thể lấy trace id dán vào log backend để ra đúng dòng.\n✓ Bật log correlation (in trace_id/span_id mọi dòng) cho phép dán trace id vào Loki/ES là ra đúng log của request\n✗ Tỉ lệ sampling ảnh hưởng trace nào được giữ, không phải việc log có trace id hay không\n✗ Tail-based liên quan giữ trace lỗi, ở đây bạn đã có trace lỗi rồi\n✗ Cardinality tên span là vấn đề aggregation, không liên quan việc tìm log theo trace id"
+  },
+  {
+    "id": "sre-q-114",
+    "courseId": "SRE",
+    "lesson": "sre-09-distributed-tracing",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Chiến lược sampling nào được mô tả là \"thực dụng phổ biến nhất\" trong bài?",
+    "options": [
+      "Kết hợp: head-based ở SDK giảm tải mạng, rồi tail-based ở collector chắt lọc giữ 100% lỗi/chậm",
+      "Chỉ head-based 1% ở SDK cho đơn giản",
+      "Chỉ tail-based, bỏ hoàn toàn head-based",
+      "Không sampling, giữ 100% mọi trace"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài khuyên kết hợp: head-based ở SDK giảm tải mạng, tail-based ở collector chắt lọc giữ 100% lỗi/chậm.\n✓ Đây là chiến lược thực dụng, tránh để head 1% mù là dây chuyền duy nhất\n✗ Chỉ head 1% mù dễ mất đúng những trace cần khi sự cố xảy ra\n✗ Chỉ tail-based tốn RAM và hạ tầng, bỏ head làm tăng tải mạng không cần thiết\n✗ Giữ 100% mọi trace bất khả thi về chi phí ở quy mô lớn"
+  },
+  {
+    "id": "sre-q-115",
+    "courseId": "SRE",
+    "lesson": "sre-10-logging-aggregation",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao trong structured logging, trường `message` nên là chuỗi CỐ ĐỊNH (ví dụ \"payment failed\") thay vì nhét biến vào (\"payment failed for user 8842\")?",
+    "options": [
+      "Vì message cố định giúp nhóm được \"tất cả payment failed\" thành một nhóm để đếm; biến số tách ra field riêng",
+      "Vì message động chiếm nhiều dung lượng lưu trữ hơn message cố định",
+      "Vì các thư viện logging không cho phép chuỗi có khoảng trắng",
+      "Vì message cố định được đánh full-text index còn message động thì không"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Message cố định cho phép nhóm và đếm theo sự kiện; biến số phải nằm ở field riêng để query.\n✓ Message cố định giúp gom mọi sự kiện cùng loại thành một nhóm, còn biến số như user_id tách ra field để lọc\n✗ Vấn đề không phải dung lượng lưu trữ mà là khả năng nhóm/đếm\n✗ Thư viện logging hoàn toàn cho phép chuỗi có khoảng trắng\n✗ Việc đánh index không phụ thuộc message cố định hay động theo cách này"
+  },
+  {
+    "id": "sre-q-116",
+    "courseId": "SRE",
+    "lesson": "sre-10-logging-aggregation",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong pipeline log aggregation bốn tầng, thành phần nào chạy như DaemonSet (một instance mỗi node), tail log từ stdout của container và gắn metadata Kubernetes?",
+    "options": [
+      "Agent (Fluent Bit/Promtail)",
+      "Buffer (Kafka)",
+      "Store (Loki/Elasticsearch)",
+      "Query UI (Grafana/Kibana)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Agent chạy như DaemonSet trên mỗi node, tail stdout và gắn metadata pod/namespace/label.\n✓ Agent như Fluent Bit/Promtail chạy một bản mỗi node, thu gom và gắn metadata Kubernetes\n✗ Buffer (Kafka) chỉ hấp thụ burst và tách rời tốc độ, không tail log\n✗ Store lưu trữ và đánh index, không chạy cạnh từng node để thu log\n✗ Query UI dùng để truy vấn và dashboard, không thu gom log"
+  },
+  {
+    "id": "sre-q-117",
+    "courseId": "SRE",
+    "lesson": "sre-10-logging-aggregation",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, khi nào một dòng log nên dùng level `error` (thay vì `warn`)?",
+    "options": [
+      "Khi một thao tác thất bại và cần người xem/làm gì đó (payment lỗi, không ghi được DB)",
+      "Khi hệ thống tự xử lý được nhưng muốn ghi lại (retry thành công)",
+      "Khi ghi một sự kiện nghiệp vụ bình thường (order tạo xong)",
+      "Khi cần dump payload chi tiết để dev điều tra"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "`error` = một thao tác thất bại, cần người xử lý; đó là trục để alert.\n✓ Thao tác thất bại cần người can thiệp là đúng ngữ nghĩa của error\n✗ Hệ thống tự xử lý và chỉ muốn ghi lại là ngữ nghĩa của warn\n✗ Sự kiện nghiệp vụ bình thường thuộc info\n✗ Dump payload chi tiết thuộc trace/debug"
+  },
+  {
+    "id": "sre-q-118",
+    "courseId": "SRE",
+    "lesson": "sre-10-logging-aggregation",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khác biệt cốt lõi giữa Loki và Elasticsearch (ELK) nằm ở đâu?",
+    "options": [
+      "Loki chỉ index label (metadata), còn Elasticsearch đánh full-text index mọi field",
+      "Loki chạy trên Kubernetes còn Elasticsearch chỉ chạy trên máy ảo",
+      "Loki lưu log dạng JSON còn Elasticsearch lưu dạng text tự do",
+      "Loki không hỗ trợ alert còn Elasticsearch thì có"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khác biệt trung tâm xoay quanh cái gì được đánh index.\n✓ Loki chỉ index một bộ label nhỏ, ELK đánh full-text index toàn bộ field\n✗ Cả hai đều có thể chạy trên Kubernetes; nền tảng chạy không phải khác biệt cốt lõi\n✗ Định dạng log không phải điểm phân biệt hai store\n✗ Cả hai đều tạo được alert từ log qua Grafana/Kibana"
+  },
+  {
+    "id": "sre-q-119",
+    "courseId": "SRE",
+    "lesson": "sre-10-logging-aggregation",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một dev cấu hình Promtail promote `trace_id` thành label trong Loki để \"dễ lọc theo request\". Vài ngày sau hóa đơn tăng vọt và query chậm rã. Nguyên nhân là gì?",
+    "options": [
+      "`trace_id` cardinality cao (gần vô hạn) tạo hàng triệu stream, làm nổ index và ingest chậm",
+      "Loki không hỗ trợ field tên `trace_id`, nó bị xung đột với field nội bộ",
+      "Promtail parse JSON hai lần khiến mỗi log bị nhân đôi khối lượng",
+      "Label `trace_id` buộc Loki bật full-text index giống Elasticsearch"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mỗi tổ hợp giá trị label duy nhất tạo một stream; label cardinality cao làm nổ số stream.\n✓ trace_id có gần như vô hạn giá trị, promote thành label tạo hàng triệu stream, index nổ và query rã\n✗ Không có xung đột tên field nội bộ; vấn đề là cardinality\n✗ Promtail không nhân đôi log khi parse JSON\n✗ Label không khiến Loki bật full-text index; Loki vốn không index nội dung"
+  },
+  {
+    "id": "sre-q-120",
+    "courseId": "SRE",
+    "lesson": "sre-10-logging-aggregation",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần truy vấn tùy ý mạnh: \"tìm mọi log chứa từ `timeout` ở bất kỳ đâu\" trên khoảng thời gian rộng, phục vụ điều tra bảo mật (SIEM) trên log kém cấu trúc. Chọn store nào và vì sao?",
+    "options": [
+      "Elasticsearch/ELK, vì full-text index mọi field cho phép tra ngược tức thì bất kỳ từ nào",
+      "Loki, vì grep song song trong chunk luôn nhanh hơn full-text index",
+      "Loki, vì SIEM yêu cầu chi phí thấp là ràng buộc quan trọng nhất",
+      "Elasticsearch, vì nó không cần đánh index nên nhẹ hơn Loki"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Full-text search tùy ý trên log kém cấu trúc là điểm mạnh của ELK, chấp nhận trả giá hạ tầng.\n✓ ELK đánh full-text index mọi field nên tra ngược bất kỳ từ nào tức thì, hợp SIEM và log kém cấu trúc\n✗ Grep song song của Loki chậm hơn khi label không thu hẹp tốt trên khoảng thời gian rộng\n✗ Nhu cầu ở đây là search mạnh, không phải tối ưu chi phí\n✗ Elasticsearch chính là store đánh index nặng, không phải nhẹ"
+  },
+  {
+    "id": "sre-q-121",
+    "courseId": "SRE",
+    "lesson": "sre-10-logging-aggregation",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một request đi gateway → service A → service B → DB, nhưng khi điều tra bạn chỉ ghép được log ở gateway và service A, còn service B thì \"mất dấu\". Nguyên nhân khả dĩ nhất theo bài học là gì?",
+    "options": [
+      "Service A quên forward header `X-Request-Id`/`traceparent` khi gọi service B nên chuỗi correlation đứt tại đó",
+      "Service B ghi log ở level `debug` nên bị agent drop hoàn toàn",
+      "Loki chỉ giữ được log của tối đa hai service trong một stream",
+      "Gateway sinh `request_id` mới cho mỗi service thay vì tái sử dụng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chuỗi correlation chỉ bền bằng mắt xích yếu nhất; một service quên forward header là đứt từ đó.\n✓ Nếu service A không forward X-Request-Id/traceparent xuống B, B sinh id khác và chuỗi đứt tại đó\n✗ Level debug bị tắt/drop không giải thích việc mất đúng correlation của một chặng\n✗ Loki không giới hạn số service trong một stream\n✗ Gateway phải sinh một request_id và forward xuyên suốt, không sinh mới mỗi service"
+  },
+  {
+    "id": "sre-q-122",
+    "courseId": "SRE",
+    "lesson": "sre-10-logging-aggregation",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong đoạn code xử lý 10 triệu dòng, việc `log.debug(\"processing row\", id=row.id)` trong vòng lặp gây hại kiểu gì, và cách sửa đúng là gì?",
+    "options": [
+      "Vừa ngập storage vừa làm chậm chính code (serialize JSON + I/O mỗi vòng); sửa bằng log tổng kết ngoài vòng lặp hoặc dùng metric counter",
+      "Chỉ tốn CPU chứ không ảnh hưởng storage; sửa bằng cách nâng level lên info",
+      "Làm sai thứ tự log; sửa bằng cách thêm timestamp thủ công vào mỗi dòng",
+      "Khiến trace_id bị trùng; sửa bằng cách sinh trace_id mới mỗi vòng lặp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Log trong hot loop vừa ngập storage vừa chậm code vì mỗi lần là serialize + I/O.\n✓ Log hàng triệu lần làm ngập storage và chậm code; nên log tổng kết ngoài vòng hoặc dùng metric cho thứ đếm được\n✗ Nó ảnh hưởng cả storage, và nâng lên info còn làm tệ hơn\n✗ Vấn đề không phải thứ tự log hay thiếu timestamp\n✗ Không liên quan trùng trace_id"
+  },
+  {
+    "id": "sre-q-123",
+    "courseId": "SRE",
+    "lesson": "sre-10-logging-aggregation",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Ở 10.000 RPS, mỗi request log 3 dòng info ~1KB. Ước tính bài học đưa ra là bao nhiêu, và kỷ luật đúng để kiểm soát là gì?",
+    "options": [
+      "Khoảng 2.5 TB/ngày; kỷ luật: giữ 100% error nhưng sampling log info (ví dụ 1%), log sự kiện chứ không log mỗi bước",
+      "Khoảng 2.5 GB/ngày; kỷ luật: nâng tất cả log lên error để dễ tìm",
+      "Khoảng 250 GB/ngày; kỷ luật: bỏ hẳn structured logging để tiết kiệm",
+      "Khoảng 25 TB/ngày; kỷ luật: promote thêm label để nén tốt hơn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "30.000 dòng/s ~1KB ≈ 2.5 TB/ngày; kiểm soát bằng sampling info và log theo sự kiện.\n✓ Con số ~2.5 TB/ngày, kỷ luật là giữ 100% error, sample info, log sự kiện không log mỗi bước\n✗ 2.5 GB sai bậc, và nâng tất cả lên error gây alert fatigue\n✗ Bỏ structured logging đi ngược mục tiêu bài; con số cũng sai\n✗ 25 TB sai bậc, và promote thêm label làm nổ cardinality chứ không nén tốt hơn"
+  },
+  {
+    "id": "sre-q-124",
+    "courseId": "SRE",
+    "lesson": "sre-10-logging-aggregation",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài học, những field nào PHÙ HỢP để promote thành LABEL trong Loki (cardinality thấp, bounded)? Chọn tất cả đáp án đúng.",
+    "options": [
+      "`namespace`",
+      "`level`",
+      "`user_id`",
+      "`trace_id`",
+      "`region`"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "Label chỉ dùng field cardinality thấp và bounded; field cardinality cao để trong nội dung log.\n✓ namespace là field bounded, vài giá trị, hợp làm label\n✓ level chỉ có vài giá trị (error/warn/info/debug), hợp làm label\n✓ region là field bounded, hợp làm label\n✗ user_id có hàng triệu giá trị, làm label sẽ nổ số stream\n✗ trace_id gần như vô hạn giá trị, tuyệt đối không làm label"
+  },
+  {
+    "id": "sre-q-125",
+    "courseId": "SRE",
+    "lesson": "sre-10-logging-aggregation",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Vì sao log PII/secret (mật khẩu, số thẻ, token, email) đặc biệt nguy hiểm, và biện pháp đúng là gì? Chọn tất cả đáp án đúng.",
+    "options": [
+      "Log thường ít được kiểm soát quyền hơn database và bị nhân bản sang nhiều nơi (aggregator, backup, SIEM)",
+      "Redact ở tầng logging: allow-list field được phép log hoặc masking pattern cho số thẻ/token",
+      "Vi phạm GDPR/PCI-DSS và trở thành mỏ vàng khi hệ thống log bị lộ",
+      "Chỉ cần mã hóa disk chứa log là đủ, không cần redact",
+      "Nên log nguyên `request.body`/`headers` để tiện đối chiếu khi điều tra"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Log lan rộng, giữ lâu, ít kiểm soát quyền; phải redact ngay tầng logging.\n✓ Log ít kiểm soát quyền hơn DB và bị nhân bản sang nhiều nơi nên rủi ro cao\n✓ Biện pháp đúng là redact ở tầng logging bằng allow-list hoặc masking\n✓ Đây là vi phạm GDPR/PCI-DSS và là mỏ vàng khi log bị lộ\n✗ Mã hóa disk không đủ; dữ liệu vẫn lộ qua aggregator/backup/SIEM nếu không redact\n✗ Không bao giờ log nguyên request.body/headers vì chứa Authorization và PII"
+  },
+  {
+    "id": "sre-q-126",
+    "courseId": "SRE",
+    "lesson": "sre-10-logging-aggregation",
+    "certifications": [
+      "SRE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong kiến trúc aggregation, vì sao đặt một buffer Kafka giữa agent và store lại quan trọng ở quy mô lớn?",
+    "options": [
+      "Hấp thụ burst và tách rời tốc độ ghi khỏi tốc độ nhận của store, nên store bảo trì/sập vài phút thì log nằm chờ trong Kafka, không mất",
+      "Kafka đánh index full-text thay cho store nên query nhanh hơn",
+      "Kafka redact PII tự động trước khi log tới store",
+      "Kafka thay thế agent, nên không cần Fluent Bit/Promtail nữa"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Buffer hấp thụ burst và tách rời tốc độ; store sập vài phút thì log chờ trong Kafka.\n✓ Kafka đệm burst và tách rời tốc độ ghi/nhận, giữ log an toàn khi store bảo trì hay sập ngắn\n✗ Kafka không đánh full-text index; đó là việc của store như Elasticsearch\n✗ Redact PII là việc của agent (Fluent Bit modify/remove), không phải Kafka\n✗ Kafka là buffer, không thay thế agent thu gom log"
   }
 ];
 

@@ -46,7 +46,7 @@
         "sre-09-distributed-tracing",
         "sre-10-logging-aggregation"
       ],
-      "status": "in-progress",
+      "status": "done",
       "note": "prefix sre EXISTS — offset re-id"
     },
     {
@@ -57,7 +57,7 @@
         "be-10-api-gateway-lb",
         "be-11-reverse-proxy-ratelimit"
       ],
-      "status": "pending",
+      "status": "in-progress",
       "note": "prefix be EXISTS — offset re-id"
     }
   ],
