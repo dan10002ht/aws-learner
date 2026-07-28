@@ -40684,7 +40684,4664 @@ const k5: Question[] = [
       0
     ],
     "explanation": "BACKWARD nghĩa là schema mới đọc được dữ liệu cũ, cho phép nâng cấp lệch pha giữa producer và consumer.\n✓ \"BACKWARD + couponCode optional có default; producer nâng trước, consumer nâng sau\" đúng: thay đổi tương thích an toàn, không downtime.\n✗ Tắt Schema Registry bỏ mất hợp đồng cưỡng chế, dễ vỡ deserialization hàng loạt.\n✗ NONE cho qua cả schema phá vỡ tương thích, đúng thứ ta muốn tránh.\n✗ Bắt deploy đồng thời phá vỡ mục tiêu deploy độc lập không downtime."
+  },
+  {
+    "id": "cn-q-001",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-01-why-orchestration",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một startup có đúng 1 app nhỏ, tải ổn định, chạy vài container trên 1 VM. Đội chưa ai từng vận hành Kubernetes. Theo bài học, lựa chọn hợp lý nhất là gì?",
+    "options": [
+      "Dựng ngay cụm Kubernetes để 'chuẩn ngành' ngay từ đầu",
+      "Dùng docker compose trên VM hoặc một PaaS như Render/Fly.io/App Runner",
+      "Bắt buộc chuyển toàn bộ sang Service Mesh",
+      "Tự viết script bash tự khởi động lại container thay cho orchestrator"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài khuyên không lạm dụng k8s cho app nhỏ, tải ổn định, đội chưa sẵn sàng vận hành.\n✓ Compose trên VM hoặc PaaS đủ và rẻ hơn cho quy mô nhỏ, tải ổn định.\n✗ Dựng cụm k8s ngay gánh chi phí học tập và vận hành lớn không cần thiết.\n✗ Service Mesh là công cụ hệ sinh thái nâng cao, càng làm phức tạp thêm cho app nhỏ.\n✗ Tự viết script khởi động lại chính là làm thủ công thứ mà orchestrator sinh ra để tự động hoá, và không giải quyết được scheduling/scale."
+  },
+  {
+    "id": "cn-q-002",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-01-why-orchestration",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, ý tưởng 'declarative + desired state + reconciliation' của Kubernetes nghĩa là bạn làm gì?",
+    "options": [
+      "Ra lệnh từng bước: chạy container này, rồi cái kia, nếu chết thì khởi động lại",
+      "Khai báo trạng thái mong muốn (ví dụ 'muốn 3 bản'), K8s liên tục kéo thực tế về đúng mong muốn",
+      "Chỉ chạy container một lần rồi tự bạn theo dõi và sửa khi có sự cố",
+      "Cấu hình load balancer thủ công mỗi khi số bản thay đổi"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cốt lõi là khai báo kết quả mong muốn, K8s tự duy trì qua vòng lặp reconciliation.\n✓ Bạn khai báo desired state, controller so sánh với actual và tự hành động để khớp.\n✗ Ra lệnh từng bước là mô hình imperative, ngược với tư tưởng declarative của k8s.\n✗ Tự theo dõi và sửa thủ công chính là gánh nặng mà orchestrator loại bỏ.\n✗ Chỉnh load balancer thủ công là việc tay mà k8s tự lo qua service discovery/load balancing."
+  },
+  {
+    "id": "cn-q-003",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-01-why-orchestration",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Deployment khai báo desired = 3 replica. Đột nhiên 1 Pod chết, actual còn 2. Không có ai can thiệp. Theo cơ chế bài mô tả, điều gì xảy ra?",
+    "options": [
+      "Không có gì xảy ra cho tới khi bạn chạy lại lệnh triển khai",
+      "Controller phát hiện lệch (2 ≠ 3) và tự tạo thêm 1 Pod để về đúng 3",
+      "Toàn bộ 3 Pod bị xoá và tạo lại từ đầu để đảm bảo đồng nhất",
+      "Deployment tự động giảm desired xuống 2 cho khớp thực tế"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Vòng lặp reconciliation so sánh actual với desired và hành động để khớp, sinh ra self-healing.\n✓ Actual 2 lệch desired 3, controller tạo thêm 1 Pod để về đúng số mong muốn.\n✗ Không cần bạn chạy lại lệnh: k8s tự phát hiện và sửa liên tục.\n✗ K8s chỉ tạo bù phần thiếu, không xoá và tạo lại toàn bộ các Pod đang khoẻ.\n✗ K8s kéo actual về desired, chứ không hạ desired xuống theo actual."
+  },
+  {
+    "id": "cn-q-004",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-01-why-orchestration",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, những bài toán nào là trách nhiệm của một container orchestrator? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Scheduling: quyết định container chạy ở node nào theo tài nguyên còn trống",
+      "Self-healing: container/node chết thì tự tạo lại để giữ đúng số bản mong muốn",
+      "Service discovery: cho các service tìm và gọi nhau qua tên ổn định dù IP đổi",
+      "Viết code nghiệp vụ bên trong ứng dụng của bạn",
+      "Rollout/Rollback: cập nhật phiên bản dần dần, lỗi thì quay lui"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Bài liệt kê rõ các trách nhiệm của orchestrator quanh việc vận hành container.\n✓ Scheduling chọn node dựa trên tài nguyên còn trống và ràng buộc.\n✓ Self-healing tự tạo lại container/node chết để giữ đúng số bản mong muốn.\n✓ Service discovery cho service tìm và gọi nhau qua tên ổn định khi IP đổi.\n✓ Rollout/Rollback cập nhật phiên bản dần dần và quay lui khi lỗi.\n✗ Viết code nghiệp vụ trong app là việc của lập trình viên, không phải nhiệm vụ của orchestrator."
+  },
+  {
+    "id": "cn-q-005",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-01-why-orchestration",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong bài, self-healing được mô tả là 'miễn phí' theo nghĩa nào?",
+    "options": [
+      "Kubernetes là phần mềm mã nguồn mở nên không tốn tiền bản quyền",
+      "Bạn không cần viết logic 'nếu chết thì khởi động lại'; nó là hệ quả tự nhiên của vòng lặp reconciliation",
+      "Nó chỉ hoạt động với các gói dịch vụ cloud trả phí đắt tiền",
+      "Bạn phải cấu hình một health-check script riêng cho từng container"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Self-healing sinh ra từ việc controller liên tục kéo actual về desired, không cần code riêng.\n✓ Chỉ cần khai báo 'muốn 3 bản', k8s tự tạo lại khi có Pod chết mà bạn không viết logic khởi động lại.\n✗ 'Miễn phí' ở đây nói về công sức viết logic, không phải chi phí bản quyền phần mềm.\n✗ Cơ chế này là bản chất của k8s, không phụ thuộc gói dịch vụ trả phí.\n✗ Bạn không phải viết health-check script riêng cho từng container để có self-healing cơ bản này."
+  },
+  {
+    "id": "cn-q-006",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-01-why-orchestration",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, Kubernetes (K8s) có nguồn gốc từ đâu và đứng ở vị trí nào trong ngành?",
+    "options": [
+      "Do Docker Inc. tạo ra và ít được dùng trong thực tế",
+      "Khởi nguồn từ hệ thống Borg của Google, nay là chuẩn de-facto của ngành",
+      "Là một dịch vụ độc quyền chỉ chạy được trên AWS",
+      "Một công cụ mới thử nghiệm, chưa được dùng ở production"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nêu K8s bắt nguồn từ Borg của Google và là orchestrator phổ biến nhất, chuẩn de-facto.\n✓ Kubernetes khởi nguồn từ hệ thống Borg của Google và nay là chuẩn de-facto.\n✗ K8s không phải sản phẩm của Docker Inc. và được dùng rộng rãi.\n✗ K8s là mã nguồn mở, chạy đa nền tảng chứ không độc quyền AWS.\n✗ K8s đã trưởng thành và là chuẩn ngành, không phải công cụ thử nghiệm."
+  },
+  {
+    "id": "cn-q-007",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-01-why-orchestration",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một workload event-driven, ít trạng thái, chạy theo sự kiện rời rạc (ví dụ xử lý ảnh khi có file upload). Theo bài, hướng nào thường HỢP hơn là dựng Kubernetes?",
+    "options": [
+      "StatefulSet trên một cụm Kubernetes tự quản lý lớn",
+      "Serverless như Lambda/Cloud Run",
+      "Service Mesh để định tuyến sự kiện",
+      "Tự viết orchestrator riêng cho phù hợp"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nói serverless hợp hơn cho workload event-driven, ít trạng thái.\n✓ Lambda/Cloud Run hợp cho workload theo sự kiện, ít trạng thái, không cần cụm chạy 24/7.\n✗ StatefulSet trên cụm k8s lớn là quá nặng và không cần thiết cho workload rời rạc, ít trạng thái.\n✗ Service Mesh là lớp phức tạp cho giao tiếp service, không phải giải pháp cho workload event-driven.\n✗ Tự viết orchestrator là làm lại thứ đã có, tốn công vô ích."
+  },
+  {
+    "id": "cn-q-008",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-01-why-orchestration",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đội của bạn muốn dùng k8s vì 'công ty nào cũng xài'. Theo quy tắc trong bài, tiêu chí ĐÚNG để chọn Kubernetes là gì?",
+    "options": [
+      "Vì đó là công nghệ mới và giúp CV đẹp hơn",
+      "Khi thật sự cần nhiều service, scale động, self-healing và triển khai thường xuyên trên nhiều máy",
+      "Khi chỉ có một container duy nhất chạy trên một máy",
+      "Bất cứ khi nào bạn dùng Docker để đóng gói app"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài đặt quy tắc: chọn k8s theo nhu cầu thực, không theo trào lưu.\n✓ Chọn k8s khi thật sự cần nhiều service, scale động, self-healing và triển khai thường xuyên trên nhiều máy.\n✗ 'Công nghệ mới, CV đẹp' hay 'ai cũng xài' đúng là lý do bài khuyên tránh.\n✗ Một container trên một máy thì docker run là đủ, không cần k8s.\n✗ Dùng Docker để đóng gói không đồng nghĩa cần orchestrator; đó là hai tầng khác nhau."
+  },
+  {
+    "id": "cn-q-009",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-01-why-orchestration",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Container A cần gọi container B, nhưng IP của B đổi liên tục khi B bị tạo lại hay chuyển máy. Nếu KHÔNG có orchestrator, hệ quả trực tiếp bạn phải gánh là gì?",
+    "options": [
+      "Phải tự quản lý một 'danh bạ IP' và cập nhật thủ công mỗi khi IP đổi",
+      "IP của B sẽ được cố định vĩnh viễn tự động",
+      "Container A và B buộc phải chạy chung một tiến trình",
+      "Vấn đề tự biến mất vì Docker luôn giữ IP không đổi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài liệt kê việc 'container A tìm địa chỉ container B (IP đổi liên tục)' là gánh nặng tay khi không có orchestrator.\n✓ Không có service discovery, bạn phải tự quản lý danh bạ IP và cập nhật thủ công.\n✗ IP không tự cố định vĩnh viễn; chính vấn đề IP đổi liên tục là điểm gây khó.\n✗ Ghép A và B vào một tiến trình không phải cách giải quyết và phá vỡ tách biệt service.\n✗ Docker không đảm bảo IP không đổi khi container bị tạo lại hay chuyển máy."
+  },
+  {
+    "id": "cn-q-010",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-01-why-orchestration",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "So sánh mô hình imperative và declarative theo bảng trong bài, những phát biểu nào ĐÚNG? (chọn tất cả)",
+    "options": [
+      "Declarative: bạn khai báo kết quả mong muốn ('muốn luôn có 3 bản đang chạy')",
+      "Imperative: bạn ra lệnh từng bước và tự lo duy trì",
+      "Với declarative, Kubernetes là bên lo duy trì trạng thái mong muốn",
+      "Declarative tương tự việc chỉ đường từng ngã rẽ thủ công",
+      "Imperative tương tự nhập điểm đến vào GPS rồi để máy tự lo"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bảng đối chiếu: declarative khai báo kết quả và để K8s duy trì; imperative ra lệnh từng bước, bạn tự lo.\n✓ Declarative là khai báo kết quả mong muốn như 'muốn luôn có 3 bản'.\n✓ Imperative là ra lệnh từng bước và tự bạn duy trì.\n✓ Với declarative, chính Kubernetes lo việc duy trì trạng thái mong muốn.\n✗ 'Chỉ đường từng ngã rẽ' là ẩn dụ cho imperative, không phải declarative.\n✗ 'Nhập điểm đến vào GPS' là ẩn dụ cho declarative, không phải imperative."
+  },
+  {
+    "id": "cn-q-011",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-01-why-orchestration",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Vào lúc flash sale, bạn cần scale một service từ 3 lên 10 bản. Bài dùng tình huống này để minh hoạ điều gì về việc làm thủ công so với orchestrator?",
+    "options": [
+      "Thủ công phải chạy tay 7 lệnh và sửa load balancer; orchestrator tự động hoá việc mở rộng",
+      "Thủ công nhanh và an toàn hơn vì bạn kiểm soát từng bước",
+      "Không thể scale quá 3 bản nếu không có orchestrator",
+      "Orchestrator chỉ scale được khi bạn khởi động lại toàn bộ cụm"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bảng 'việc phải làm tay' cho thấy scale thủ công tốn nhiều lệnh và dễ lệch, còn orchestrator tự động hoá.\n✓ Làm tay phải chạy 7 lệnh và sửa load balancer; orchestrator (auto-scaling) tự lo việc này.\n✗ Thủ công không hề an toàn hơn: bài xem đây là gánh nặng, dễ sai.\n✗ Vẫn scale được thủ công, chỉ là cực và dễ lệch tải, không phải bất khả thi.\n✗ Orchestrator scale bằng cách điều chỉnh số bản mong muốn, không cần khởi động lại toàn cụm."
+  },
+  {
+    "id": "cn-q-012",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-01-why-orchestration",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn khai báo desired state của một Deployment ở đâu, theo cách bài mô tả?",
+    "options": [
+      "Gõ trực tiếp các lệnh docker run tuần tự trên từng máy",
+      "Trong file YAML mô tả trạng thái mong muốn (ví dụ 'Deployment web gồm 3 replica image web:v2')",
+      "Trong một cơ sở dữ liệu SQL riêng do bạn tự quản lý",
+      "Bằng cách cấu hình thủ công load balancer cho mỗi bản"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nêu bạn mô tả desired state trong file YAML để k8s reconcile.\n✓ Desired state được mô tả trong file YAML, ví dụ Deployment web gồm 3 replica image web:v2.\n✗ Gõ docker run tuần tự là mô hình imperative làm tay, không phải khai báo desired state.\n✗ K8s lưu và quản lý trạng thái nội bộ; bạn không tự dựng DB SQL để khai báo desired state.\n✗ Cấu hình load balancer thủ công là việc tay mà k8s tự lo, không phải nơi khai báo desired state."
+  },
+  {
+    "id": "cn-q-013",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-02-k8s-architecture",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong một cluster Kubernetes, thành phần nào là cửa ngõ DUY NHẤT mà mọi tương tác (kubectl, controller, kubelet) đều phải đi qua?",
+    "options": [
+      "kube-apiserver",
+      "etcd",
+      "kube-scheduler",
+      "kube-controller-manager"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mọi thành phần đều nói chuyện qua một cửa để tập trung xác thực, phân quyền, kiểm định và ghi log.\n✓ Là cửa ngõ REST duy nhất, mọi request đi qua nó rồi mới tới các thành phần khác.\n✗ Nguồn sự thật lưu state nhưng chỉ apiserver được đụng tới, client không gọi thẳng.\n✗ Chỉ lo gán Pod chưa có node vào node, không phải cửa ngõ.\n✗ Gói các reconcile loop, cũng phải đi qua cửa ngõ REST để đọc/ghi object."
+  },
+  {
+    "id": "cn-q-014",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-02-k8s-architecture",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Thành phần nào được mô tả là 'nguồn sự thật' (single source of truth) duy nhất của cluster, nơi lưu mọi trạng thái?",
+    "options": [
+      "etcd",
+      "kube-proxy",
+      "kubelet",
+      "container runtime"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Xoá sạch mọi thứ khác, chỉ cần nó còn nguyên là dựng lại được cluster.\n✓ Key-value store phân tán nhất quán mạnh, lưu mọi Deployment/Pod/Service/Secret.\n✗ Chỉ lập trình iptables/IPVS để định tuyến Service tới Pod, không lưu state cluster.\n✗ Là agent trên node vận hành Pod, không phải kho lưu trạng thái.\n✗ Chỉ thật sự chạy container, không lưu trạng thái cluster."
+  },
+  {
+    "id": "cn-q-015",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-02-k8s-architecture",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trên một worker node, thành phần nào là agent watch apiserver để biết Pod nào được gán cho node của mình rồi gọi runtime chạy container?",
+    "options": [
+      "kubelet",
+      "kube-scheduler",
+      "etcd",
+      "controller-manager"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đây là cầu nối duy nhất giữa thế giới quyết định (control plane) và thế giới thực thi (runtime).\n✓ Agent trên mỗi node, watch apiserver, gọi runtime qua CRI, chạy probe, báo status.\n✗ Chỉ chọn node cho Pod chưa xếp chỗ, chạy ở control plane chứ không trên mọi worker node.\n✗ Là kho state, worker node không chạy nó.\n✗ Gói reconcile loop ở control plane, không trực tiếp chạy container trên node."
+  },
+  {
+    "id": "cn-q-016",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-02-k8s-architecture",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "kube-scheduler quyết định Pod chạy ở node nào rồi làm gì để thực hiện quyết định đó?",
+    "options": [
+      "Ghi spec.nodeName cho Pod qua apiserver, không tự chạy Pod",
+      "Trực tiếp gọi container runtime để start container",
+      "Gọi thẳng kubelet trên node đích để pull image",
+      "Ghi thẳng vào etcd bỏ qua apiserver"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Scheduler chỉ ghi lại quyết định, việc thật để kubelet làm.\n✓ Cập nhật pod.spec.nodeName qua apiserver; kubelet mới là bên chạy container.\n✗ Scheduler không đụng tới runtime, đó là việc của kubelet.\n✗ Không thành phần nào gọi trực tiếp thành phần khác, tất cả qua apiserver và watch.\n✗ Chỉ apiserver được ghi etcd, các thành phần khác đi qua apiserver."
+  },
+  {
+    "id": "cn-q-017",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-02-k8s-architecture",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một request tạo Deployment vừa qua authn và authz thành công. Bước kiểm định cuối cùng nào có thể TỰ ĐỘNG sửa object (ví dụ tiêm sidecar) HOẶC từ chối nó (ví dụ cấm image :latest) trước khi ghi vào etcd?",
+    "options": [
+      "Admission control",
+      "Authentication",
+      "Authorization (RBAC)",
+      "Raft quorum của etcd"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chốt cuối vừa có thể biến đổi (mutating) vừa có thể từ chối (validating) object.\n✓ Mutating webhook sửa được, validating webhook từ chối được; ví dụ built-in như ResourceQuota, LimitRanger.\n✗ Chỉ trả lời 'bạn là ai', đã chạy trước bước này.\n✗ Chỉ trả lời 'bạn được phép làm gì', không sửa nội dung object.\n✗ Là cơ chế đồng thuận để ghi bền vào etcd, không phải bước kiểm định object."
+  },
+  {
+    "id": "cn-q-018",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-02-k8s-architecture",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn muốn cụm etcd chịu được lỗi mà vẫn ghi được. Cấu hình nào hợp lý và vì sao?",
+    "options": [
+      "5 node, để chịu mất 2 node mà vẫn giữ quorum đa số",
+      "4 node, vì số chẵn cho quorum bền hơn",
+      "2 node, để một node backup cho node kia",
+      "1 node, vì nhất quán mạnh nên không cần thêm"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "etcd dùng Raft nên cần số node lẻ để giữ quorum (đa số); mất quorum thì cluster chỉ đọc, không ghi được.\n✓ Cụm 5 chịu mất 2 vẫn còn đa số 3/5, tiếp tục ghi được.\n✗ Số chẵn không tăng khả năng chịu lỗi mà còn dễ mất quorum; nên dùng số lẻ.\n✗ Cụm 2 mất 1 là mất đa số ngay, không ghi được.\n✗ Một node không có dự phòng; hỏng là mất khả năng ghi."
+  },
+  {
+    "id": "cn-q-019",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-02-k8s-architecture",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "kube-apiserver được mô tả là 'stateless'. Hệ quả trực tiếp quan trọng nhất của tính chất này là gì?",
+    "options": [
+      "Có thể chạy nhiều bản apiserver sau load balancer để đạt HA vì mọi state nằm ở etcd",
+      "Không cần backup etcd vì apiserver đã giữ bản sao state",
+      "Mỗi apiserver phải giữ một bản etcd riêng để phục vụ request",
+      "Chỉ được chạy đúng một bản apiserver trong cluster"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "apiserver không tự nhớ gì, mọi trạng thái ở etcd nên nhân bản dễ dàng.\n✓ Nhiều bản apiserver sau load balancer cùng đọc/ghi một etcd, cho HA.\n✗ etcd vẫn là nguồn sự thật duy nhất và phải backup; apiserver không giữ state.\n✗ Chỉ apiserver mới đụng etcd, nhưng không phải mỗi bản một etcd riêng.\n✗ Ngược lại, stateless cho phép chạy nhiều bản."
+  },
+  {
+    "id": "cn-q-020",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-02-k8s-architecture",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn chạy 'kubectl apply -f web-deploy.yaml' với replicas: 3 và apiserver trả về 201 Created. Ngay tại thời điểm nhận 201, trạng thái thực tế là gì?",
+    "options": [
+      "Chưa có container nào chạy — mới chỉ có 'ý định' Deployment được ghi vào etcd",
+      "Cả 3 Pod đã Running trên các node",
+      "3 Pod đã được scheduler gán node xong nhưng chưa pull image",
+      "ReplicaSet và 3 Pod đã được tạo và gán node đầy đủ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "201 chỉ nghĩa là object Deployment đã được persist; các bước reconcile diễn ra sau đó bất đồng bộ.\n✓ Lúc này mới có ý định trong etcd, controller/scheduler/kubelet chưa kịp làm gì.\n✗ Pod chạy là kết quả cuối chuỗi, xảy ra sau khi kubelet+runtime start container.\n✗ Việc gán node của scheduler diễn ra sau, chưa xong lúc nhận 201.\n✗ ReplicaSet và Pod do controller tạo sau khi Deployment đã ghi, không tức thời cùng 201."
+  },
+  {
+    "id": "cn-q-021",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-02-k8s-architecture",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong luồng tạo Deployment, thành phần nào TẠO ra các object Pod (khi thấy actual = 0 nhưng desired = 3 replica), và Pod lúc mới tạo có đặc điểm gì?",
+    "options": [
+      "ReplicaSet controller tạo 3 Pod với nodeName còn rỗng",
+      "Deployment controller tạo trực tiếp 3 Pod đã gán sẵn node",
+      "scheduler tạo 3 Pod và gán node ngay khi tạo",
+      "kubelet tạo 3 Pod trên node của mình"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chuỗi trách nhiệm: Deployment controller tạo ReplicaSet, ReplicaSet controller mới tạo Pod, scheduler gán node sau.\n✓ ReplicaSet controller thấy thiếu Pod thì tạo object Pod, nodeName còn rỗng chờ scheduler xếp chỗ.\n✗ Deployment controller chỉ tạo/cập nhật ReplicaSet, không tạo Pod và không gán node.\n✗ scheduler chỉ gán node cho Pod đã tồn tại, không tạo Pod.\n✗ kubelet chỉ chạy Pod đã được gán cho node mình, không tạo object Pod."
+  },
+  {
+    "id": "cn-q-022",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-02-k8s-architecture",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một controller trong controller-manager bị crash rồi khởi động lại. Vì sao thiết kế của Kubernetes khiến nó vẫn tiếp tục đúng mà không bị 'mất message'?",
+    "options": [
+      "Vì mô hình level-triggered/event-driven: controller đọc lại state hiện tại từ etcd qua apiserver và reconcile, không phụ thuộc message trong quá khứ",
+      "Vì mỗi controller giữ một hàng đợi message bền trên đĩa để replay khi khởi động lại",
+      "Vì controller gọi trực tiếp các thành phần khác nên đồng bộ tức thời",
+      "Vì scheduler sẽ gửi lại toàn bộ lệnh cũ cho controller sau khi nó sống lại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Các thành phần chỉ đọc/ghi object qua apiserver và watch thay đổi, so sánh desired với actual.\n✓ Level-triggered nghĩa là chỉ cần đọc lại trạng thái hiện tại từ etcd là đủ để tiếp tục đúng.\n✗ Không dựa vào hàng đợi message để replay; cơ chế là so trạng thái, không phải phát lại sự kiện.\n✗ Không thành phần nào gọi trực tiếp thành phần khác; tất cả gián tiếp qua apiserver.\n✗ scheduler không gửi lại lệnh cho controller; mỗi bên tự watch state của mình."
+  },
+  {
+    "id": "cn-q-023",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-02-k8s-architecture",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những phát biểu nào ĐÚNG về mối quan hệ giữa apiserver, etcd và các thành phần khác? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Chỉ apiserver được phép đọc/ghi etcd, các thành phần khác không đụng trực tiếp",
+      "Không thành phần nào gọi trực tiếp thành phần khác; chúng đọc/ghi object và watch qua apiserver",
+      "etcd cung cấp cơ chế watch để client được thông báo ngay khi một key thay đổi",
+      "scheduler và kubelet ghi thẳng vào etcd để tiết kiệm một chặng qua apiserver",
+      "Worker node chạy một bản etcd cục bộ để phục vụ Pod trên node đó"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Thiết kế hub-and-spoke: apiserver là trung tâm, etcd là kho, mọi thứ gián tiếp.\n✓ Chỉ apiserver được đụng etcd, thành phần khác đi qua nó.\n✓ Các thành phần liên lạc gián tiếp bằng đọc/ghi object và watch qua apiserver, không gọi trực tiếp nhau.\n✓ etcd có cơ chế watch, nền tảng cho mô hình event-driven của Kubernetes.\n✗ scheduler và kubelet KHÔNG ghi thẳng etcd; chúng cập nhật qua apiserver.\n✗ Worker node không chạy etcd; etcd nằm ở control plane."
+  },
+  {
+    "id": "cn-q-024",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-02-k8s-architecture",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những phát biểu nào ĐÚNG về worker node và các thành phần của nó? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "kubelet gọi container runtime qua chuẩn CRI để pull image và chạy container",
+      "kube-proxy lập trình iptables hoặc IPVS để định tuyến ClusterIP tới Pod sẵn sàng",
+      "container runtime có thể thay thế được (containerd, CRI-O) nhờ giao diện chuẩn CRI",
+      "kubelet tự quyết định lịch, chọn node cho Pod mà không cần scheduler",
+      "Node control plane thường bị taint để không nhận workload thường, giữ bộ não sạch tải"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "kubelet là cầu nối thực thi, kube-proxy lo network Service, runtime thay thế được qua CRI.\n✓ kubelet gọi runtime qua CRI để kéo image và khởi chạy container.\n✓ kube-proxy watch Service/Endpoints và lập trình iptables/IPVS để DNAT và load-balance tới Pod.\n✓ Runtime thay thế được nhờ CRI: containerd phổ biến nhất, còn có CRI-O.\n✓ Node control plane thường bị taint để không nhận workload thường.\n✗ kubelet KHÔNG tự quyết định lịch; nó chỉ quản Pod được apiserver giao, scheduler mới chọn node."
+  },
+  {
+    "id": "cn-q-025",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-03-kubectl-objects",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khi bạn gõ `kubectl scale deployment web --replicas=5`, thực chất kubectl làm gì để thay đổi số bản Pod?",
+    "options": [
+      "kubectl tự tính toán và trực tiếp tạo thêm Pod trên các node",
+      "kubectl dịch lệnh thành request HTTP gửi tới api-server; api-server ghi vào etcd, rồi controller mới thực thi",
+      "kubectl ghi thẳng số replica mới vào etcd, bỏ qua api-server",
+      "kubectl ra lệnh trực tiếp cho kubelet trên từng node để đẻ Pod"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "kubectl chỉ là client dịch lệnh thành REST request tới api-server; nguồn sự thật là object trong api-server/etcd, còn scheduler/controller/kubelet làm việc dựa trên dữ liệu đó.\n✓ Dịch lệnh thành HTTP request tới api-server rồi controller thực thi: đúng bản chất 'kubectl không tự làm gì cả'.\n✗ kubectl tự tạo Pod trên node: sai, kubectl không tự thực thi công việc.\n✗ Ghi thẳng vào etcd bỏ qua api-server: sai, chỉ api-server mới đọc/ghi etcd.\n✗ Ra lệnh trực tiếp cho kubelet: sai, kubectl không giao tiếp trực tiếp với kubelet."
+  },
+  {
+    "id": "cn-q-026",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-03-kubectl-objects",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong khung 5 khối của một object Kubernetes, khối nào do Kubernetes tự ghi chứ không phải bạn viết?",
+    "options": [
+      "`spec`",
+      "`status`",
+      "`metadata`",
+      "`kind`"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "`status` là actual state do controller cập nhật liên tục; bạn chỉ viết phần desired state.\n✓ `status`: đúng, đây là actual state K8s tự ghi (phase, podIP, conditions...).\n✗ `spec`: sai, đây là desired state do chính bạn viết.\n✗ `metadata`: sai, danh tính object do bạn điền.\n✗ `kind`: sai, loại object do bạn khai báo."
+  },
+  {
+    "id": "cn-q-027",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-03-kubectl-objects",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một bạn viết manifest cho một Deployment nhưng để `apiVersion: v1`. Điều gì đúng?",
+    "options": [
+      "Đúng, vì mọi object core đều dùng `v1`",
+      "Sai, Deployment thuộc nhóm workload nên phải là `apps/v1`",
+      "Đúng, `apiVersion` không ảnh hưởng gì đến việc apply",
+      "Sai, Deployment phải dùng `batch/v1`"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Deployment nằm trong nhóm workload `apps/v1`; chỉ các object core (Pod, Service, ConfigMap, Namespace, Secret) mới dùng `v1`.\n✓ Phải là `apps/v1`: đúng, Deployment/ReplicaSet/StatefulSet/DaemonSet đều thuộc nhóm apps.\n✗ Mọi object core dùng `v1`: sai vế lập luận, Deployment không thuộc core group.\n✗ `apiVersion` không ảnh hưởng: sai, ghép sai apiVersion/kind là lỗi phổ biến khiến apply thất bại.\n✗ Phải dùng `batch/v1`: sai, batch dành cho Job/CronJob."
+  },
+  {
+    "id": "cn-q-028",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-03-kubectl-objects",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn chạy `kubectl apply -f web.yaml`, rồi `kubectl get endpoints web` trả về danh sách Endpoints TRỐNG, dù Pod đang chạy bình thường. Nguyên nhân khả dĩ nhất là gì?",
+    "options": [
+      "Service đang thiếu trường `ports`",
+      "`selector` của Service không khớp với `labels` của Pod",
+      "Deployment chưa đạt đủ số replicas mong muốn",
+      "Namespace của Service khác namespace của api-server"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Endpoints trống trong khi Pod vẫn chạy gần như chắc chắn là do selector của Service không khớp label Pod, nên không Pod nào lọt vào tập đích.\n✓ selector Service không khớp label Pod: đúng, đây là lỗi kết nối kinh điển của người mới.\n✗ Thiếu `ports`: sai, thiếu ports gây lỗi cấu hình khác, không phải Endpoints trống khi Pod đã chạy.\n✗ Chưa đủ replicas: sai, đề bài nói Pod đang chạy bình thường.\n✗ Namespace khác api-server: sai, api-server không có namespace theo kiểu đó, không liên quan Endpoints."
+  },
+  {
+    "id": "cn-q-029",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-03-kubectl-objects",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một container vừa crash và đã bị restart. Bạn chạy `kubectl logs nginx` nhưng log gần như trống. Lệnh nào giúp xem log của lần chạy đã chết?",
+    "options": [
+      "`kubectl logs nginx -f`",
+      "`kubectl logs nginx --previous`",
+      "`kubectl describe pod nginx`",
+      "`kubectl exec -it nginx -- sh`"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "`--previous` đọc log của container ở lần chạy TRƯỚC khi restart — đúng thứ bạn cần khi container vừa crash.\n✓ `logs nginx --previous`: đúng, lấy log của lần chết trước.\n✗ `logs nginx -f`: sai, -f chỉ follow log hiện tại (đang trống).\n✗ `describe pod`: hữu ích xem Events nhưng không in log stdout/stderr của lần chạy trước.\n✗ `exec -it ... sh`: sai, mở shell trong container đang chạy, không lấy được log lần đã chết."
+  },
+  {
+    "id": "cn-q-030",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-03-kubectl-objects",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn muốn sinh nhanh một file YAML skeleton cho Deployment để chỉnh rồi commit vào Git, mà KHÔNG tạo gì trên cluster. Lệnh nào đúng?",
+    "options": [
+      "`kubectl create deployment web --image=nginx:1.27`",
+      "`kubectl create deployment web --image=nginx:1.27 --dry-run=client -o yaml > deployment.yaml`",
+      "`kubectl apply -f deployment.yaml --dry-run=server`",
+      "`kubectl edit deployment web`"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "`--dry-run=client -o yaml` chỉ dựng object phía client và in ra YAML, KHÔNG gửi lên cluster — đây là mẹo lai imperative-sinh-declarative.\n✓ `create ... --dry-run=client -o yaml > file`: đúng, sinh YAML tại client không chạm cluster.\n✗ `create deployment` không có dry-run: sai, sẽ tạo thật object trên cluster.\n✗ `apply --dry-run=server`: sai, dry-run=server vẫn gửi lên api-server để validate và cần file sẵn có.\n✗ `edit deployment`: sai, sửa object đang chạy, cần object tồn tại sẵn."
+  },
+  {
+    "id": "cn-q-031",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-03-kubectl-objects",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Team cho rằng namespace giúp cô lập hoàn toàn: Pod ở `team-a` sẽ không gọi được Pod ở `team-b`. Nhận định này đúng hay sai, vì sao?",
+    "options": [
+      "Đúng, namespace tạo tường lửa mạng giữa các khoang",
+      "Sai, namespace chỉ cô lập logic (tên, RBAC, quota); mặc định Pod xuyên namespace vẫn gọi được nhau, muốn chặn phải dùng NetworkPolicy",
+      "Đúng, mọi lưu lượng xuyên namespace bị api-server chặn",
+      "Sai, nhưng chỉ vì cần bật cờ `--allow-cross-namespace`"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Namespace chỉ cô lập logic (đặt tên, phân quyền RBAC, ResourceQuota), KHÔNG cô lập mạng; muốn chặn phải dùng NetworkPolicy.\n✓ Cô lập logic, cần NetworkPolicy để chặn mạng: đúng bản chất namespace.\n✗ Tạo tường lửa mạng: sai, namespace không cô lập mạng.\n✗ api-server chặn lưu lượng xuyên namespace: sai, api-server không lọc traffic giữa Pod.\n✗ Cần cờ `--allow-cross-namespace`: sai, không có cờ đó; mặc định đã gọi được nhau."
+  },
+  {
+    "id": "cn-q-032",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-03-kubectl-objects",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Service `db` nằm trong namespace `prod`. Một Pod trong namespace `app` muốn kết nối tới nó. Tên nào dùng được?",
+    "options": [
+      "`db`",
+      "`db.prod`",
+      "`prod.db`",
+      "`db.app.svc.cluster.local`"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Gọi xuyên namespace phải ghi kèm namespace: `db.prod` (dạng rút gọn của `db.prod.svc.cluster.local`). Chỉ `db` trần dùng được khi ở cùng namespace.\n✓ `db.prod`: đúng, DNS nội bộ ghép <service>.<namespace> để gọi xuyên namespace.\n✗ `db`: sai, tên trần chỉ resolve trong cùng namespace `app`.\n✗ `prod.db`: sai thứ tự, phải là service trước namespace sau.\n✗ `db.app.svc.cluster.local`: sai namespace, Service nằm ở `prod` chứ không phải `app`."
+  },
+  {
+    "id": "cn-q-033",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-03-kubectl-objects",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong lúc chữa cháy, một kỹ sư chạy `kubectl edit deployment web` sửa image trực tiếp trên cluster. Hệ quả tiềm ẩn quan trọng nhất về lâu dài là gì?",
+    "options": [
+      "Object bị xoá khỏi etcd sau khi thoát editor",
+      "File YAML trong Git bị lệch với thực tế trên cluster (config drift)",
+      "Lệnh edit làm restart toàn bộ control plane",
+      "Thay đổi không có hiệu lực vì edit chỉ là dry-run"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "`edit` sửa trực tiếp object live, khiến YAML nguồn trong Git không còn khớp thực tế — đó là config drift; sửa lâu dài phải quay lại apply từ file.\n✓ Config drift giữa Git và cluster: đúng, đây là con dao hai lưỡi của edit.\n✗ Object bị xoá khỏi etcd: sai, edit cập nhật object chứ không xoá.\n✗ Restart control plane: sai, edit không liên quan control plane.\n✗ edit chỉ là dry-run: sai, lưu là apply thật lên cluster."
+  },
+  {
+    "id": "cn-q-034",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-03-kubectl-objects",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Vì sao `kubectl apply -f web.yaml` chạy đi chạy lại nhiều lần vẫn an toàn, trong khi `kubectl create -f web.yaml` lần thứ hai có thể lỗi 'đã tồn tại'?",
+    "options": [
+      "apply luôn xoá rồi tạo lại object mỗi lần chạy",
+      "apply tính diff giữa file và trạng thái hiện tại rồi chỉ vá phần khác biệt (three-way merge) nên idempotent",
+      "apply bỏ qua object đã tồn tại và không làm gì",
+      "create có idempotent còn apply thì không"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "apply tính diff (three-way merge dựa trên annotation last-applied-configuration) và chỉ vá phần khác biệt, nên chạy nhiều lần cho cùng kết quả — tính idempotent; create luôn cố tạo mới nên lần hai báo 'đã tồn tại'.\n✓ Tính diff rồi vá phần khác biệt: đúng bản chất idempotent của apply.\n✗ Xoá rồi tạo lại mỗi lần: sai, apply chỉ vá diff chứ không xoá-tạo.\n✗ Bỏ qua và không làm gì: sai, apply vẫn cập nhật khi có khác biệt.\n✗ create idempotent còn apply thì không: sai hoàn toàn, ngược lại."
+  },
+  {
+    "id": "cn-q-035",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-03-kubectl-objects",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn TẤT CẢ các phát biểu ĐÚNG khi phân biệt label và annotation.",
+    "options": [
+      "Selector có thể dùng label để chọn object, nhưng KHÔNG dùng annotation để chọn",
+      "Annotation chịu ràng buộc ký tự/độ dài lỏng hơn, chứa được chuỗi dài",
+      "Nhiều controller ngoài (Ingress-NGINX, cert-manager, Prometheus) nhận cấu hình qua annotation",
+      "Label thường dùng để lưu git commit hay cấu hình chi tiết cho công cụ ngoài",
+      "`kubernetes.io/change-cause` là một label giúp Service chọn Pod"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Label để máy lọc/selector chọn object; annotation để lưu metadata phụ cho người và công cụ ngoài, ràng buộc lỏng hơn.\n✓ Selector dùng label chứ không dùng annotation: đúng, đây là khác biệt cốt lõi.\n✓ Annotation ràng buộc lỏng, chứa chuỗi dài: đúng theo bảng so sánh.\n✓ Controller ngoài nhận cấu hình qua annotation: đúng, ví dụ rewrite-target, prometheus.io/scrape.\n✗ Label lưu git commit / cấu hình công cụ ngoài: sai, đó là vai trò của annotation.\n✗ `change-cause` là label giúp Service chọn Pod: sai, nó là annotation ghi lịch sử rollout, không dùng để selector."
+  },
+  {
+    "id": "cn-q-036",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-03-kubectl-objects",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Bạn đang thiết lập quy trình cho môi trường production. Chọn TẤT CẢ thực hành phù hợp với khuyến nghị vàng declarative trong bài.",
+    "options": [
+      "Lưu YAML trong Git và áp mọi thay đổi qua `kubectl apply -f` sau khi review bằng Pull Request",
+      "Dùng `kubectl diff -f deployment.yaml` để xem trước thay đổi trước khi áp",
+      "Mỗi lần deploy dùng `kubectl run` và `kubectl scale` trực tiếp, ghi lại lệnh trong đầu",
+      "Dùng `kubectl edit` làm cách chính thức để cập nhật cấu hình lâu dài trên cluster",
+      "Có thể dùng imperative `create --dry-run=client -o yaml` để SINH YAML rồi chỉnh và commit"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "Production dùng declarative: YAML trong Git, thay đổi qua PR, apply idempotent; imperative chỉ để thử nhanh hoặc để sinh YAML.\n✓ YAML trong Git + apply sau review PR: đúng khuyến nghị vàng.\n✓ `diff -f` xem trước thay đổi: đúng, giúp an toàn trước khi áp.\n✓ Dùng imperative `--dry-run=client -o yaml` để sinh YAML rồi commit: đúng, mẹo lai được khuyến khích.\n✗ Deploy bằng run/scale trực tiếp, nhớ lệnh trong đầu: sai, trạng thái không được ghi lại, không review/tái lập được.\n✗ edit làm cách chính thức lâu dài: sai, edit gây config drift, chỉ nên dùng để debug."
+  },
+  {
+    "id": "cn-q-037",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-04-pods",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đơn vị nhỏ nhất mà Kubernetes lên lịch (schedule) và quản lý là gì?",
+    "options": [
+      "Container",
+      "Pod",
+      "Node",
+      "Deployment"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "K8s không lên lịch từng container trần mà bọc chúng trong một đơn vị lớn hơn.\n✓ Đơn vị nhỏ nhất được K8s schedule và quản lý là bọc quanh 1+ container, chia sẻ network/volume/vòng đời.\n✗ Container là thứ chạy bên trong đơn vị đó, không phải thứ K8s trực tiếp lên lịch.\n✗ Node là máy chủ chứa nhiều đơn vị chạy, không phải đơn vị nhỏ nhất.\n✗ Deployment là lớp quản lý nhiều bản sao, cao hơn đơn vị lên lịch nhỏ nhất."
+  },
+  {
+    "id": "cn-q-038",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-04-pods",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Hai container trong CÙNG một Pod giao tiếp với nhau như thế nào?",
+    "options": [
+      "Qua địa chỉ IP riêng của mỗi container",
+      "Qua localhost vì chia sẻ chung network namespace",
+      "Qua một Service ClusterIP trung gian",
+      "Qua DNS tên Pod của nhau"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mọi container trong cùng một Pod chia sẻ network namespace nên dùng chung một IP.\n✓ Chia sẻ network namespace nghĩa là cùng một IP, gọi nhau trực tiếp qua localhost.\n✗ Các container trong cùng Pod không có IP riêng biệt; chúng dùng chung một IP.\n✗ Không cần Service trung gian khi hai container ở chung một Pod.\n✗ Không cần DNS vì chúng đã ở chung network namespace, gọi thẳng localhost."
+  },
+  {
+    "id": "cn-q-039",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-04-pods",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một container app treo deadlock (kẹt vòng lặp, không phản hồi) nhưng process vẫn còn sống. Loại probe nào giúp K8s phát hiện và cứu bằng cách restart container?",
+    "options": [
+      "readiness probe",
+      "startup probe",
+      "liveness probe",
+      "resource limit"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Process còn sống không có nghĩa app còn khoẻ; cần một probe hỏi 'app còn khoẻ hay treo?' và restart khi fail.\n✓ Probe hỏi 'app còn khoẻ không', fail đủ số lần thì kill và restart container, đúng để thoát treo/deadlock.\n✗ Probe kiểm tra 'sẵn sàng nhận traffic' chỉ gỡ Pod khỏi Service, KHÔNG restart nên không cứu được treo.\n✗ Probe 'khởi động xong chưa' chỉ bảo vệ giai đoạn boot, không xử lý treo lúc đang chạy.\n✗ Resource limit chỉ chặn ngốn tài nguyên, không phát hiện app treo."
+  },
+  {
+    "id": "cn-q-040",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-04-pods",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Init container khác sidecar ở điểm cốt lõi nào?",
+    "options": [
+      "Init container chạy tuần tự tới khi thành công rồi thoát, TRƯỚC khi container chính khởi động",
+      "Init container chạy song song với app suốt đời Pod",
+      "Init container luôn có readinessProbe còn sidecar thì không",
+      "Init container nằm ở node khác với container chính"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Init container là bước chuẩn bị chạy trước, còn sidecar hỗ trợ chạy đồng thời.\n✓ Init container chạy tuần tự tới khi thành công rồi thoát, xong mới tới container chính, đảm bảo môi trường sẵn sàng.\n✗ Chạy song song suốt đời Pod là đặc điểm của sidecar, không phải init container.\n✗ Việc có readinessProbe hay không không phải điểm phân biệt giữa init container và sidecar.\n✗ Mọi container trong một Pod luôn nằm trọn trên cùng một node, không thể ở node khác."
+  },
+  {
+    "id": "cn-q-041",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-04-pods",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Pod chạy API để phục vụ web, do Deployment quản lý. Container app đôi khi crash và cần được restart để hồi phục. Giá trị restartPolicy phù hợp (và cũng là mặc định) là gì?",
+    "options": [
+      "Never",
+      "OnFailure",
+      "Always",
+      "Managed"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Service chạy hoài cần luôn được restart khi container chết, kể cả thoát code 0.\n✓ Chính sách này restart container mỗi khi thoát (dù code 0 hay lỗi), là mặc định và đúng cho service web/API do Deployment quản lý.\n✗ Chính sách không bao giờ restart chỉ hợp với Job chạy một lần, không hợp service.\n✗ Chính sách chỉ restart khi thoát lỗi hợp cho Job/batch, không phải service chạy hoài.\n✗ Không tồn tại giá trị restartPolicy tên như vậy."
+  },
+  {
+    "id": "cn-q-042",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-04-pods",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "App Java boot mất ~45s. Cấu hình hiện tại chỉ có livenessProbe với initialDelaySeconds: 20 → tới giây 20 liveness fail, K8s kill, lặp mãi thành CrashLoopBackOff. Cách sửa đúng là gì?",
+    "options": [
+      "Đổi restartPolicy sang Never để K8s không kill nữa",
+      "Thêm startupProbe (ví dụ failureThreshold: 30, periodSeconds: 5) để hoãn liveness cho tới khi app boot xong",
+      "Xoá luôn livenessProbe để app không bao giờ bị restart",
+      "Tăng CPU limit để app boot nhanh dưới 20s"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "App boot chậm bị liveness giết sớm; cần một probe che liveness trong giai đoạn khởi động.\n✓ Thêm startupProbe hoãn liveness/readiness cho tới khi app boot xong (cho tới 150s), liveness chỉ chạy sau đó nên hết crash loop.\n✗ Đổi restartPolicy sang Never phá tính self-healing của service và không giải quyết việc liveness fail lúc boot.\n✗ Xoá liveness khiến app treo lúc chạy sẽ không bao giờ được cứu, chỉ đổi lỗi này lấy lỗi khác.\n✗ Tăng CPU limit không đảm bảo boot dưới 20s và không phải cách đúng để xử lý app khởi động chậm."
+  },
+  {
+    "id": "cn-q-043",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-04-pods",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao KHÔNG nên để livenessProbe kiểm tra một dependency ngoài như DB hay API bên thứ ba?",
+    "options": [
+      "Vì httpGet không hỗ trợ gọi ra ngoài container",
+      "Vì DB chập chờn sẽ khiến liveness fail → K8s restart app vô ích, khuếch đại sự cố",
+      "Vì liveness chỉ được phép dùng handler tcpSocket",
+      "Vì K8s cấm liveness và readiness trỏ cùng một endpoint"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Liveness fail dẫn tới restart; nếu buộc nó vào dependency ngoài thì sự cố dependency biến thành bão restart.\n✓ DB chập chờn làm liveness fail → K8s kill và restart app dù bản thân app vẫn khoẻ, làm sự cố lan rộng thay vì thu hẹp.\n✗ httpGet vẫn có thể gọi ra ngoài về mặt kỹ thuật; vấn đề là hậu quả restart, không phải giới hạn của handler.\n✗ Liveness dùng được cả httpGet, tcpSocket và exec, không bị bó vào tcpSocket.\n✗ K8s không cấm điều đó; đây là khuyến nghị thiết kế, không phải ràng buộc kỹ thuật."
+  },
+  {
+    "id": "cn-q-044",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-04-pods",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "kubectl get pod cho thấy một Pod có STATUS là Running nhưng cột READY hiển thị 0/1 kéo dài. Điều gì đang xảy ra?",
+    "options": [
+      "Container đã crash và đang chờ restart",
+      "Liveness probe đang fail nên container liên tục bị kill",
+      "Readiness probe đang fail → Pod không được đưa vào Service endpoints, không nhận traffic",
+      "Pod đang ở phase Pending vì chưa được lên lịch"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "READY 0/1 phản ánh trạng thái readiness, tách biệt với STATUS Running.\n✓ READY 0/1 kéo dài nghĩa readiness đang fail, Pod bị gỡ khỏi endpoints nên không nhận traffic dù STATUS là Running.\n✗ Container crash sẽ thể hiện qua cột RESTARTS tăng, không phải READY đứng ở 0/1.\n✗ Liveness fail biểu hiện bằng RESTARTS tăng đều (container bị giết), không phải READY 0/1 ổn định.\n✗ STATUS đã là Running nghĩa Pod đã được lên lịch và bám node, không còn ở Pending."
+  },
+  {
+    "id": "cn-q-045",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-04-pods",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Pod production chuẩn, endpoint nào nên gán cho readinessProbe và được phép kiểm tra DB/cache?",
+    "options": [
+      "/healthz — chỉ trả 200 khi bản thân process còn xử lý được, KHÔNG chạm DB",
+      "/ready — được phép kiểm tra dependency như DB/cache",
+      "Cả hai probe nên trỏ chung /healthz cho gọn",
+      "Không cần endpoint riêng, readiness luôn tự pass khi container start"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mất DB nên khiến app ngừng nhận traffic (readiness) chứ không restart (liveness), nên chỉ readiness mới được chạm DB.\n✓ Endpoint dành cho readiness được phép kiểm tra DB/cache: mất DB thì gỡ khỏi Service, tự hồi khi DB trở lại.\n✗ Endpoint của liveness chỉ nên phản ánh sức khoẻ nội tại process và KHÔNG được chạm DB, vì fail sẽ gây restart.\n✗ Gộp chung một endpoint cho cả hai probe làm mất tách biệt: một sự cố DB sẽ khiến app bị restart oan.\n✗ Nếu không khai readiness, K8s coi Pod sẵn sàng ngay khi container start, đúng là nguồn gốc lỗi ngầm cần tránh."
+  },
+  {
+    "id": "cn-q-046",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-04-pods",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một team deploy API 8 replica, mỗi lần rollout khách nhận 504 khoảng 15 giây. App cần ~8s nạp cache lúc boot. Nguyên nhân gốc và cách sửa đúng là gì?",
+    "options": [
+      "Thiếu livenessProbe; thêm liveness trỏ /healthz để restart Pod chậm",
+      "Thiếu readinessProbe; thêm readiness trỏ /ready (chỉ 200 sau khi cache nạp xong) để K8s chỉ route traffic khi Pod đã ready",
+      "restartPolicy sai; đổi sang OnFailure để tránh 504",
+      "Thiếu resource limits; thêm limits để Pod boot nhanh hơn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Không có readiness thì K8s route traffic ngay khi container Running, trúng vào 8s Pod chưa nạp xong cache và trong rolling update gỡ Pod cũ quá sớm.\n✓ Thêm readiness trỏ endpoint chỉ trả 200 sau khi cache nạp xong: K8s chỉ đưa Pod vào Service khi đã ready và chỉ gỡ Pod cũ khi Pod mới ready → hết 504.\n✗ Liveness dùng để restart app treo, không giải quyết việc traffic vào Pod chưa nạp cache lúc rollout.\n✗ restartPolicy không liên quan; Pod service vẫn phải là Always và đổi nó không sửa được downtime rollout.\n✗ Resource limits không đảm bảo cache nạp nhanh hơn và không phải nguyên nhân của 504 khi rollout."
+  },
+  {
+    "id": "cn-q-047",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-04-pods",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn TẤT CẢ phát biểu ĐÚNG về hành vi của các probe và hậu quả khi THIẾU probe.",
+    "options": [
+      "readiness fail → K8s gỡ Pod khỏi Service endpoints nhưng KHÔNG restart container",
+      "liveness fail đủ số lần → K8s kill và restart container theo restartPolicy",
+      "Thiếu readiness → trong rolling update K8s tưởng Pod mới đã sẵn sàng, gỡ Pod cũ sớm → có downtime",
+      "startup probe khi CHƯA pass sẽ khiến liveness và readiness chạy song song ngay lập tức",
+      "Thiếu liveness → app treo im lặng mãi mà không được cứu, chiếm slot nhưng không phục vụ"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Mỗi probe có một hành động riêng, và thiếu probe tạo ra các lỗi ngầm khác nhau.\n✓ readiness fail chỉ gỡ Pod khỏi endpoints để ngừng nhận traffic, không restart container.\n✓ liveness fail đủ số lần dẫn tới kill và restart container theo restartPolicy.\n✓ Thiếu readiness khiến rolling update gỡ Pod cũ khi Pod mới thực ra chưa sẵn sàng, gây downtime.\n✓ Thiếu liveness khiến app treo mãi không được cứu, vẫn chiếm slot mà không phục vụ.\n✗ Khi startup CHƯA pass, K8s TẠM HOÃN liveness và readiness, chứ không cho chúng chạy song song ngay."
+  },
+  {
+    "id": "cn-q-048",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-04-pods",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Bạn cần thêm một container phụ vào Pod chạy CÙNG mạng/đĩa/vòng đời với app chính. Những trường hợp nào là lý do HỢP LỆ để gộp thêm container vào Pod (thay vì tạo Pod/Deployment riêng)?",
+    "options": [
+      "Sidecar fluent-bit đọc file log trong volume chung của app rồi đẩy về hệ thống log tập trung",
+      "Nhồi thêm vài bản sao của chính app vào một Pod để tăng thông lượng",
+      "Init container migrate DB / chờ dependency sẵn sàng trước khi app chính khởi động",
+      "Sidecar proxy mesh (Envoy) chia sẻ network namespace để can thiệp traffic của app",
+      "Gộp một microservice độc lập hoàn toàn khác nghiệp vụ để 'tiết kiệm Pod'"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "Chỉ gộp thêm container khi nó thật sự cần chung mạng/đĩa/vòng đời với app chính; muốn thêm bản sao thì thêm Pod.\n✓ Sidecar đọc log qua volume chung là ví dụ kinh điển cần chung đĩa và vòng đời với app.\n✓ Init container migrate DB / chờ dependency chạy trước app chính là mẫu hợp lệ đảm bảo môi trường sẵn sàng.\n✓ Sidecar proxy mesh (Envoy) cần chung network namespace để can thiệp traffic, đúng lý do gộp Pod.\n✗ Muốn thêm bản sao app thì thêm Pod qua Deployment, KHÔNG nhồi nhiều bản app vào một Pod.\n✗ Một microservice độc lập khác nghiệp vụ nên là Pod/Deployment riêng, không gộp chỉ để 'tiết kiệm Pod'."
+  },
+  {
+    "id": "cn-q-049",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-05-deployments",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn tạo một object `kind: Pod` trần (naked Pod) chạy một web app. Node đang đỡ Pod đó bị drain để bảo trì. Điều gì xảy ra với ứng dụng?",
+    "options": [
+      "Pod tự động được tạo lại trên node khác, ứng dụng không bị ảnh hưởng",
+      "Pod biến mất vĩnh viễn, không ai tạo Pod mới thay thế → mất một bản chạy",
+      "kube-scheduler tự động di chuyển nguyên Pod đang chạy sang node khác",
+      "restartPolicy sẽ restart Pod trên một node còn sống"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Pod trần không có controller đứng canh nên khi node biến mất thì Pod mất theo, không được tái tạo.\n✓ Pod biến mất vĩnh viễn vì không có ReplicaSet/controller nào so sánh desired với actual để tạo bù.\n✗ Việc tự tạo lại trên node khác là việc của controller (ReplicaSet/Deployment), Pod trần không có.\n✗ Scheduler không 'di chuyển' Pod đang chạy; Pod đã mất thì phải có object mới được tạo mới.\n✗ restartPolicy chỉ restart container TRONG CÙNG một Pod còn sống, không cứu được khi cả Pod mất theo node."
+  },
+  {
+    "id": "cn-q-050",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-05-deployments",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong phân cấp Deployment → ReplicaSet → Pod, tầng nào chịu trách nhiệm giữ đúng số replica cho MỘT phiên bản pod-template cố định (thiếu thì tạo, dư thì xoá)?",
+    "options": [
+      "Deployment",
+      "ReplicaSet",
+      "Pod",
+      "kubelet"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "ReplicaSet là tầng chạy vòng lặp reconciliation để giữ đúng số replica của một template cố định.\n✓ ReplicaSet đếm Pod khớp selector và tạo/xoá cho khớp desired, nhưng không biết gì về 'phiên bản mới'.\n✗ Deployment lo rollout và lưu lịch sử, nó không trực tiếp đếm/tạo Pod.\n✗ Pod chỉ chạy container, không tự sinh lại.\n✗ kubelet chạy container trên node, không quản lý số replica."
+  },
+  {
+    "id": "cn-q-051",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-05-deployments",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn đổi `image` trong `spec.template` của một Deployment rồi apply. Với ReplicaSet cũ, điều gì xảy ra (giả sử revisionHistoryLimit mặc định)?",
+    "options": [
+      "ReplicaSet cũ bị xoá ngay lập tức để giải phóng tài nguyên",
+      "ReplicaSet cũ được co desired về 0 nhưng vẫn được giữ lại",
+      "ReplicaSet cũ được sửa image tại chỗ thành phiên bản mới",
+      "ReplicaSet cũ và mới cùng giữ desired=3 song song vĩnh viễn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Deployment tạo RS mới và co RS cũ về 0 nhưng không xoá — đó là nền tảng của rollback.\n✓ RS cũ desired=0 nhưng vẫn tồn tại (mặc định giữ 10 bản), cho phép rollback sau này.\n✗ RS cũ không bị xoá ngay; nếu xoá thì mất khả năng rollback.\n✗ Đổi image tạo RS mới, không sửa RS cũ tại chỗ (pod-template là bất biến cho mỗi RS).\n✗ Sau rollout, RS mới=3 còn RS cũ=0, không song song vĩnh viễn."
+  },
+  {
+    "id": "cn-q-052",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-05-deployments",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Deployment cấu hình `replicas: 3`, `maxSurge: 1`, `maxUnavailable: 0`. Trong lúc rolling update, tổng số Pod (cũ + mới) tối đa có thể tồn tại đồng thời là bao nhiêu, và có lúc nào số Pod Ready tụt dưới 3 không?",
+    "options": [
+      "Tối đa 4 Pod; số Ready luôn ≥ 3",
+      "Tối đa 3 Pod; có lúc chỉ 2 Ready",
+      "Tối đa 4 Pod; có lúc chỉ 2 Ready",
+      "Tối đa 6 Pod; số Ready luôn ≥ 3"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "maxSurge=1 cho phép tạo dư 1 trên mức desired (3+1=4); maxUnavailable=0 không cho tụt dưới 3 Ready.\n✓ Tổng tối đa 4 Pod (3 desired + 1 surge), và số Ready luôn ≥ 3 nên zero-downtime.\n✗ Tối đa 3 Pod với 2 Ready mô tả cấu hình maxSurge=0/maxUnavailable=1, không phải cấu hình này.\n✗ maxUnavailable=0 nghĩa là KHÔNG được tụt dưới desired, nên không thể chỉ còn 2 Ready.\n✗ maxSurge=1 chỉ cho dư 1 Pod, không thể lên tới 6."
+  },
+  {
+    "id": "cn-q-053",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-05-deployments",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Deployment không khai báo `readinessProbe`. Bạn chạy rolling update sang image mới; app mất khoảng 8 giây để khởi động HTTP server sau khi container start. Hậu quả nhiều khả năng nhất là gì?",
+    "options": [
+      "Rollout bị treo mãi vì k8s không biết Pod đã Ready",
+      "k8s coi Pod mới Ready ngay khi container start rồi hạ Pod cũ → rớt request trong lúc app còn khởi động",
+      "Rollout tự động chuyển sang chiến lược Recreate để an toàn",
+      "Không sao cả, k8s luôn chờ 8 giây trước khi chuyển traffic"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Không có readinessProbe thì k8s tưởng Pod sẵn sàng ngay khi container start, dẫn tới rớt request.\n✓ Thiếu probe, k8s hạ Pod cũ trong khi Pod mới chưa phục vụ được → traffic đổ vào Pod chưa sẵn sàng → rớt request.\n✗ Không có probe thì k8s không treo chờ mà lại tưởng Pod Ready quá sớm.\n✗ k8s không tự đổi strategy sang Recreate.\n✗ k8s không tự biết chờ 8 giây nếu không có probe báo trạng thái Ready."
+  },
+  {
+    "id": "cn-q-054",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-05-deployments",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bản mới vừa rollout gặp lỗi nghiêm trọng. Bạn muốn quay lại phiên bản ngay trước đó nhanh nhất. Cách đúng và mô tả đúng về cơ chế của nó là gì?",
+    "options": [
+      "`kubectl delete deploy/web` rồi apply lại YAML cũ; k8s tạo RS mới hoàn toàn",
+      "`kubectl rollout undo deploy/web`; nó tăng lại desired của RS cũ (đang 0) và co RS hiện tại về 0",
+      "`kubectl set image` về image cũ; đây là cách duy nhất rollback được",
+      "`kubectl scale deploy/web --replicas=0` rồi scale lại; RS mới sẽ khởi động lại đúng"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "rollout undo tái sử dụng RS cũ đang giữ desired=0 nên rollback nhanh, không tạo RS mới.\n✓ `rollout undo` tăng lại desired của RS cũ và co RS hiện tại về 0 — không tạo RS mới nên thường nhanh hơn update xuôi.\n✗ Xoá Deployment rồi apply lại là thao tác thô, gây downtime và không dùng cơ chế lịch sử revision.\n✗ set image về image cũ cũng được nhưng không phải 'cách duy nhất' và phải nhớ image cũ; undo tiện hơn.\n✗ Scale về 0 rồi scale lại chỉ tắt/bật Pod của bản mới lỗi, không quay về phiên bản cũ."
+  },
+  {
+    "id": "cn-q-055",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-05-deployments",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "App của bạn thực hiện migration schema DB KHÔNG tương thích ngược (bản cũ và bản mới không thể chạy song song trên cùng schema). Bạn nên chọn strategy nào cho Deployment?",
+    "options": [
+      "RollingUpdate với maxUnavailable: 0 để zero-downtime",
+      "Recreate — tắt hết Pod cũ rồi mới tạo Pod mới, chấp nhận downtime",
+      "RollingUpdate với maxSurge: 50% cho nhanh",
+      "RollingUpdate với maxSurge: 0, maxUnavailable: 0"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Khi hai phiên bản không được chạy song song, phải dùng Recreate dù có downtime.\n✓ Recreate tắt hết Pod cũ trước rồi mới bật Pod mới, đảm bảo không bao giờ có hai phiên bản chạy cùng lúc.\n✗ RollingUpdate (kể cả maxUnavailable:0) luôn có giai đoạn Pod cũ và mới cùng chạy → xung đột schema.\n✗ maxSurge 50% vẫn là rolling, hai phiên bản chồng lấn.\n✗ Đặt cả maxSurge và maxUnavailable = 0 bị k8s từ chối vì không có cách nào tiến."
+  },
+  {
+    "id": "cn-q-056",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-05-deployments",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn apply một Deployment nhưng bị k8s từ chối. YAML có `selector.matchLabels: {app: web}` nhưng `template.metadata.labels: {app: frontend}`. Vấn đề là gì?",
+    "options": [
+      "revisionHistoryLimit chưa được đặt",
+      "selector phải khớp template.labels, nhưng ở đây chúng lệch nhau",
+      "Thiếu readinessProbe nên apply bị chặn",
+      "maxSurge và maxUnavailable đều bằng 0"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "selector của Deployment phải khớp nhãn trong template, lệch thì apply bị từ chối.\n✓ selector matchLabels app=web không khớp template labels app=frontend → k8s từ chối; và selector là bất biến sau khi tạo.\n✗ revisionHistoryLimit có mặc định (10), không đặt vẫn hợp lệ.\n✗ Thiếu readinessProbe làm rollout kém an toàn nhưng không khiến apply bị từ chối.\n✗ Cấu hình maxSurge/maxUnavailable không phải nguyên nhân ở đây (chúng không cùng 0)."
+  },
+  {
+    "id": "cn-q-057",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-05-deployments",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Deployment `web` đang chạy với HPA bật (HPA đang giữ replicas=8). Trong YAML GitOps của bạn vẫn còn `replicas: 3`. Bạn `kubectl apply -f web.yaml`. Hệ quả và cách xử lý đúng?",
+    "options": [
+      "apply và HPA phối hợp hoà bình, replicas ổn định ở 8",
+      "apply đặt replicas=3, rồi HPA lại kéo lên 8 → hai bên 'đánh nhau'; nên bỏ field replicas khỏi YAML khi có HPA",
+      "HPA tự động bị vô hiệu hoá khi bạn apply YAML có replicas",
+      "replicas cố định ở 3 vì YAML luôn thắng HPA"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Khi có HPA, HPA làm chủ field replicas; để replicas trong YAML gây xung đột ghi đè.\n✓ apply ghi replicas=3, HPA lại kéo về 8 → giằng co; giải pháp là bỏ replicas khỏi YAML để HPA làm chủ.\n✗ Không phải 'hoà bình' — cả hai cùng ghi vào một field nên xung đột.\n✗ apply YAML không tự vô hiệu hoá HPA.\n✗ YAML không 'luôn thắng' HPA; HPA sẽ tiếp tục điều chỉnh lại theo tải."
+  },
+  {
+    "id": "cn-q-058",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-05-deployments",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Tên Pod là `web-6d8f9c7b5-x2k4p`. Phần `6d8f9c7b5` ở giữa mang ý nghĩa gì và dùng để làm gì?",
+    "options": [
+      "Là ID ngẫu nhiên của Pod, không mang thông tin gì",
+      "Là pod-template-hash — hash của pod-template, dùng để phân biệt ReplicaSet cũ/mới",
+      "Là số revision của Deployment, tăng dần mỗi lần rollout",
+      "Là hash của node đang chạy Pod, dùng để định vị Pod"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Phần giữa tên Pod là pod-template-hash, cách ReplicaSet mới/cũ được phân biệt.\n✓ 6d8f9c7b5 là hash của pod-template; mỗi RS có hash riêng nên đây là cách phân biệt các ReplicaSet.\n✗ Phần ngẫu nhiên nằm ở đuôi (x2k4p), không phải phần giữa.\n✗ Số revision là khái niệm của Deployment history, không nhúng vào tên Pod theo dạng này.\n✗ Nó không liên quan tới node đang chạy Pod."
+  },
+  {
+    "id": "cn-q-059",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-05-deployments",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Rollback (`kubectl rollout undo`) một Deployment KHÔNG hoàn tác được những thứ nào sau đây? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Dữ liệu đã ghi vào DB bởi bản mới",
+      "Migration schema DB đã chạy",
+      "Field `image` trong pod-template về giá trị revision trước",
+      "Message đã được gửi ra hệ thống bên ngoài",
+      "Field `env` trong template về giá trị revision trước"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Rollback chỉ hoàn tác spec của Deployment, không đụng tới side-effect dữ liệu bên ngoài.\n✓ Dữ liệu đã ghi vào DB là side-effect ngoài Deployment spec → rollback không hoàn tác.\n✓ Migration schema đã chạy nằm ngoài spec → rollback không undo được, cần expand/contract.\n✓ Message đã gửi ra ngoài đã rời khỏi hệ thống → không thể thu hồi bằng rollback.\n✗ Field image trong template CHÍNH là thứ rollback khôi phục về revision trước.\n✗ Field env trong template cũng thuộc spec Deployment nên được rollback khôi phục."
+  },
+  {
+    "id": "cn-q-060",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-05-deployments",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những phát biểu nào sau đây về `maxSurge`/`maxUnavailable` trong rolling update là ĐÚNG? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Không được đặt cả maxSurge và maxUnavailable cùng bằng 0; k8s sẽ từ chối",
+      "Khi dùng %, maxSurge làm tròn lên còn maxUnavailable làm tròn xuống",
+      "Mặc định của k8s là maxSurge 25% và maxUnavailable 25%",
+      "Chỉ cần maxUnavailable: 0 là đủ đảm bảo tuyệt đối không rớt một request nào",
+      "maxSurge: 0, maxUnavailable: 1 giúp không tốn tài nguyên dư nhưng giảm capacity lúc rollout"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "maxSurge/maxUnavailable điều khiển tốc độ và rủi ro rollout; nhưng zero-downtime thật cần nhiều hơn một tham số.\n✓ Đặt cả hai = 0 khiến rollout không thể tiến, nên k8s từ chối.\n✓ Với %, surge làm tròn lên và unavailable làm tròn xuống.\n✓ Mặc định của k8s đúng là 25%/25%.\n✓ maxSurge:0/maxUnavailable:1 không cần slot tài nguyên dư nhưng có lúc chỉ còn 2 Ready (giảm capacity).\n✗ Chỉ maxUnavailable:0 chưa đủ 'thật sự' không rớt request — còn cần readinessProbe, preStop hook drain connection và terminationGracePeriodSeconds đủ dài."
+  },
+  {
+    "id": "cn-q-061",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-06-statefulset-daemonset-jobs",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn cần triển khai một cluster PostgreSQL 3 node, mỗi node phải giữ đúng ổ đĩa dữ liệu của nó sau khi restart và có danh tính cố định (node-0 là primary). Controller nào phù hợp nhất?",
+    "options": [
+      "Deployment với replicas=3 và một PVC dùng chung",
+      "StatefulSet",
+      "DaemonSet",
+      "Job với completions=3"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Stateful app cần danh tính bền, DNS ổn định và PVC riêng mỗi pod — đúng những gì StatefulSet cấp.\n✓ StatefulSet cho pod danh tính cố định (-0,-1,-2), DNS bền và một PVC riêng theo volumeClaimTemplates.\n✗ Deployment tạo pod ẩn danh, tên ngẫu nhiên; mount cùng một PVC RWO cho nhiều replica gây data corruption.\n✗ DaemonSet chạy 1 pod mỗi node, không dành cho cluster DB có số bản cố định.\n✗ Job chạy tới hoàn thành rồi dừng, không phải long-running DB."
+  },
+  {
+    "id": "cn-q-062",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-06-statefulset-daemonset-jobs",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Nhóm bạn muốn thu log của mọi container trên từng máy trong cluster, và khi thêm node mới thì agent tự chạy trên node đó. Controller nào đúng?",
+    "options": [
+      "Deployment",
+      "StatefulSet",
+      "DaemonSet",
+      "CronJob"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Yêu cầu 'đúng 1 pod trên mỗi node, tự phủ node mới' chính là định nghĩa DaemonSet.\n✓ DaemonSet đảm bảo mỗi node đủ điều kiện có đúng 1 pod; thêm node → tự sinh pod, không khai báo replicas.\n✗ Deployment tạo N bản 'đâu đó', không đảm bảo mỗi node một pod.\n✗ StatefulSet dành cho app cần danh tính/đĩa bền, không gắn số bản với số node.\n✗ CronJob đẻ Job theo lịch, không phải agent chạy mãi trên mỗi node."
+  },
+  {
+    "id": "cn-q-063",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-06-statefulset-daemonset-jobs",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong Job, tham số 'completions' có ý nghĩa gì?",
+    "options": [
+      "Số pod chạy song song cùng lúc",
+      "Số lần chạy thành công cần đạt để Job coi là xong",
+      "Số lần retry tối đa trước khi Job Failed",
+      "Số giây trần cho toàn bộ Job trước khi bị kill"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "completions xác định cần bao nhiêu lần chạy thành công thì Job hoàn tất.\n✓ completions = số lần thành công (exit 0) cần đạt để Job kết thúc.\n✗ Số pod song song là parallelism, không phải completions.\n✗ Số retry tối đa là backoffLimit.\n✗ Trần thời gian toàn Job là activeDeadlineSeconds."
+  },
+  {
+    "id": "cn-q-064",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-06-statefulset-daemonset-jobs",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Lịch cron '0 2 * * *' trong CronJob nghĩa là gì?",
+    "options": [
+      "Chạy mỗi 2 phút",
+      "Chạy 02:00 hằng ngày",
+      "Chạy đầu mỗi giờ",
+      "Chạy 02:00 mỗi Chủ nhật"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "5 trường cron: phút giờ ngày-tháng tháng thứ; '0 2 * * *' là phút 0 giờ 2 mỗi ngày.\n✓ 02:00 hằng ngày đúng với phút=0, giờ=2, các trường còn lại là '*'.\n✗ Mỗi 2 phút sẽ là '*/2 * * * *'.\n✗ Đầu mỗi giờ là '0 * * * *'.\n✗ 02:00 mỗi Chủ nhật phải có trường thứ là 0, tức '0 2 * * 0'."
+  },
+  {
+    "id": "cn-q-065",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-06-statefulset-daemonset-jobs",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong StatefulSet 'db' (replicas=3), pod db-1 gọi trực tiếp db-0 để replicate. Điều kiện hạ tầng nào BẮT BUỘC để mỗi pod có tên DNS bền như db-0.db?",
+    "options": [
+      "Một Service kiểu LoadBalancer trỏ tới các pod",
+      "Một headless Service (clusterIP: None) với serviceName trỏ tới nó",
+      "Một Ingress định tuyến theo host db-0",
+      "Đặt podManagementPolicy: Parallel"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "DNS per-pod của StatefulSet đến từ headless Service kết hợp trường serviceName.\n✓ Headless Service (clusterIP: None) khiến DNS trả về IP từng pod, cho tên bền db-0.db.namespace.svc; StatefulSet.serviceName phải trỏ tới nó.\n✗ LoadBalancer/Service thường có VIP và load-balance ngẫu nhiên, không địa chỉ hoá từng peer.\n✗ Ingress định tuyến HTTP layer 7, không tạo DNS per-pod cho giao tiếp nội bộ DB.\n✗ podManagementPolicy chỉ đổi thứ tự tạo pod, không liên quan đến DNS bền."
+  },
+  {
+    "id": "cn-q-066",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-06-statefulset-daemonset-jobs",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một kỹ sư viết Job migrate DB nhưng đặt 'restartPolicy: Always' trong pod template. Kết quả là gì?",
+    "options": [
+      "Job chạy bình thường và tự restart pod mãi",
+      "API Server từ chối, phải dùng Never hoặc OnFailure",
+      "Job chạy nhưng bỏ qua backoffLimit",
+      "Job chuyển thành CronJob"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "restartPolicy của pod trong Job chỉ được Never hoặc OnFailure, không được Always.\n✓ API từ chối cấu hình Always vì Job không phải để chạy mãi; phải sửa thành Never hoặc OnFailure.\n✗ Always không được chấp nhận nên Job không thể chạy với nó.\n✗ backoffLimit vẫn áp dụng khi dùng Never/OnFailure, không bị bỏ qua.\n✗ restartPolicy không biến Job thành CronJob."
+  },
+  {
+    "id": "cn-q-067",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-06-statefulset-daemonset-jobs",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Backup Postgres bằng CronJob thường mất ~40 phút nhưng lịch chạy mỗi 30 phút. Muốn tránh hai lượt backup chồng nhau gây khoá DB, nên đặt concurrencyPolicy nào?",
+    "options": [
+      "Allow",
+      "Forbid",
+      "Replace",
+      "Parallel"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Forbid bỏ qua lượt mới khi lượt cũ chưa xong — hợp cho backup dài.\n✓ Forbid ngăn lượt mới khởi động nếu lượt trước còn chạy, tránh chồng lượt khoá DB.\n✗ Allow (mặc định) cho chạy chồng, đúng tình huống cần tránh.\n✗ Replace giết Job cũ để chạy Job mới — backup đang chạy dở sẽ bị cắt ngang, không mong muốn.\n✗ Parallel không phải giá trị của concurrencyPolicy."
+  },
+  {
+    "id": "cn-q-068",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-06-statefulset-daemonset-jobs",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "DaemonSet node-exporter của bạn chạy trên tất cả worker node nhưng KHÔNG xuất hiện trên các control-plane node. Nguyên nhân và cách sửa hợp lý nhất là gì?",
+    "options": [
+      "Thiếu replicas: cần đặt replicas bằng số control-plane node",
+      "Control-plane node bị taint; cần thêm tolerations để pod phủ được các node đó",
+      "Thiếu volumeClaimTemplates cho control-plane",
+      "Phải đổi sang StatefulSet để phủ mọi node"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Control-plane thường bị taint đẩy pod thường ra; agent hệ thống cần tolerations mới phủ tới.\n✓ Thêm tolerations (ví dụ operator: Exists) cho phép DaemonSet chạy cả trên node bị taint như control-plane.\n✗ DaemonSet không dùng replicas; số bản = số node phù hợp.\n✗ volumeClaimTemplates là của StatefulSet, không liên quan việc phủ node.\n✗ StatefulSet không giải quyết taint và không phải mô hình 1-pod-mỗi-node."
+  },
+  {
+    "id": "cn-q-069",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-06-statefulset-daemonset-jobs",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Sau nhiều tuần, cluster tồn đọng hàng trăm pod trạng thái 'Completed' từ các Job và CronJob làm rối 'kubectl get pods'. Cách xử lý gọn nhất theo bài học là gì?",
+    "options": [
+      "Tăng backoffLimit để Job không tạo pod mới",
+      "Đặt ttlSecondsAfterFinished để Job/pod tự dọn sau khi xong",
+      "Đổi restartPolicy sang Always",
+      "Xoá headless Service liên quan"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "ttlSecondsAfterFinished khiến Job và pod tự dọn sau khi hoàn thành, tránh rác.\n✓ Đặt ttlSecondsAfterFinished cho Job/CronJob để pod Completed tự bị xoá sau khoảng thời gian đặt.\n✗ backoffLimit chỉ giới hạn retry, không dọn pod đã xong.\n✗ Always không hợp lệ cho Job và không liên quan việc dọn rác.\n✗ Headless Service dành cho StatefulSet, không liên quan đến pod Completed của Job."
+  },
+  {
+    "id": "cn-q-070",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-06-statefulset-daemonset-jobs",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn xoá StatefulSet 'db' rồi apply lại. Pod db-1 khởi động lại. Điều gì xảy ra với dữ liệu và PVC?",
+    "options": [
+      "PVC bị xoá cùng StatefulSet nên db-1 khởi động với đĩa trống",
+      "db-1 được gắn lại đúng PVC data-db-1 vì xoá StatefulSet không tự xoá PVC",
+      "Tất cả pod chia sẻ chung PVC data-db-0",
+      "PVC được cấp lại ngẫu nhiên nên db-1 có thể nhận data của db-2"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Xoá StatefulSet không tự xoá PVC (an toàn dữ liệu); pod theo ordinal được gắn lại đúng PVC của nó.\n✓ db-1 restart luôn được gắn lại đúng volume data-db-1, và xoá StatefulSet để lại PVC nên dữ liệu còn nguyên.\n✗ PVC không bị xoá theo StatefulSet; muốn dọn phải delete pvc thủ công.\n✗ Mỗi pod có PVC riêng theo volumeClaimTemplates, không chia sẻ data-db-0.\n✗ PVC gắn theo ordinal cố định, không cấp ngẫu nhiên nên không lẫn data của db-2."
+  },
+  {
+    "id": "cn-q-071",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-06-statefulset-daemonset-jobs",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Job xử lý batch có cấu hình 'completions: 6, parallelism: 2'. Những phát biểu nào ĐÚNG?",
+    "options": [
+      "Tối đa 2 pod chạy song song tại một thời điểm",
+      "Cần 6 lần chạy thành công thì Job mới coi là xong",
+      "Job luôn tạo đúng 6 pod, không bao giờ nhiều hơn",
+      "Có thể hình dung 6 work item chạy trong 3 đợt, mỗi đợt 2 pod",
+      "Đặt parallelism cao hơn completions sẽ tăng số lần thành công cần đạt"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "parallelism giới hạn số pod đồng thời, completions là số lần thành công cần đạt.\n✓ parallelism=2 nghĩa tối đa 2 pod chạy cùng lúc.\n✓ completions=6 nghĩa cần 6 lần thành công thì Job xong.\n✓ Hình dung 6 item chạy 3 đợt, mỗi đợt 2 pod là mô tả đúng của mẫu fixed completion count.\n✗ Job không đảm bảo đúng 6 pod: nếu có pod fail và retry (theo backoffLimit) tổng số pod tạo ra có thể nhiều hơn 6.\n✗ parallelism không đổi completions; nó chỉ điều tiết số pod song song, không thay đổi số lần thành công cần đạt."
+  },
+  {
+    "id": "cn-q-072",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-06-statefulset-daemonset-jobs",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những cặp 'yêu cầu → controller' nào là lựa chọn ĐÚNG theo bài học?",
+    "options": [
+      "API front-end stateless cần scale 3→30 theo tải → Deployment",
+      "Kafka cluster 3 broker, mỗi broker giữ partition data riêng → StatefulSet",
+      "Backup Postgres 02:00 hằng đêm → CronJob",
+      "Migrate database chạy một lần tới hoàn thành → DaemonSet",
+      "CNI/Cilium cần chạy trên mọi node → Job"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Chọn controller theo bản chất workload: chạy-mãi/ẩn danh, chạy-mãi/danh tính, theo-node, chạy-tới-xong, theo-lịch.\n✓ API stateless scale theo tải hợp với Deployment (pod ẩn danh, replicas linh hoạt).\n✓ Kafka broker cần danh tính và PVC riêng hợp với StatefulSet.\n✓ Backup hằng đêm theo lịch cron hợp với CronJob.\n✗ Migrate DB chạy một lần tới hoàn thành phải dùng Job, không phải DaemonSet.\n✗ CNI cần 1 pod mỗi node phải dùng DaemonSet, không phải Job."
+  },
+  {
+    "id": "cn-q-073",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-07-services",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao không nên nướng cứng IP của một backend Pod (ví dụ 10.244.3.7) vào config của frontend?",
+    "options": [
+      "Vì Pod IP là phù du — Pod bị xoá/tạo lại liên tục và nhận IP mới mỗi lần",
+      "Vì Pod IP luôn nằm ngoài dải mạng cluster nên frontend không route được",
+      "Vì mỗi Pod chỉ được phép có một kết nối đến tại một thời điểm",
+      "Vì kube-proxy chặn mọi kết nối đi thẳng tới Pod IP mà không qua Service"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Pod là cattle chứ không phải pet: rollout, node chết, scale, crash đều làm Pod bị tạo lại với IP mới.\n✓ Nướng cứng Pod IP sẽ hỏng ngay khi backend restart một lần vì IP đã đổi\n✗ Pod IP nằm trong dải mạng cluster, frontend hoàn toàn route được — vấn đề là IP không ổn định\n✗ Không có giới hạn 'một kết nối' như vậy cho Pod\n✗ kube-proxy không chặn kết nối thẳng tới Pod IP; gọi thẳng vẫn được, chỉ là IP không bền"
+  },
+  {
+    "id": "cn-q-074",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-07-services",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Service chọn Pod nào để đưa vào danh sách endpoints dựa trên tiêu chí gì?",
+    "options": [
+      "Theo label selector — Pod mang đúng label thì được đưa vào",
+      "Theo dải IP Pod mà admin khai báo tĩnh trong Service",
+      "Theo thứ tự Pod được tạo, lấy tối đa 5 Pod đầu tiên",
+      "Theo node mà Pod đang chạy, ưu tiên node cùng zone"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Service không chọn Pod theo IP mà theo label selector; Pod chết rớt khỏi danh sách, Pod mới đúng label tự thêm vào.\n✓ Cơ chế cốt lõi là selector khớp label Pod\n✗ Service không khai báo dải IP Pod tĩnh; endpoints do K8s tự sinh từ selector\n✗ Không có giới hạn 'tối đa 5 Pod đầu' theo thứ tự tạo\n✗ Việc chọn không dựa trên node/zone của Pod"
+  },
+  {
+    "id": "cn-q-075",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-07-services",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Phát biểu nào MÔ TẢ ĐÚNG bản chất của một ClusterIP như 10.96.0.10?",
+    "options": [
+      "Là một VIP ảo chỉ tồn tại trong bảng luật kernel mỗi node, không process nào lắng nghe trên nó",
+      "Là IP của Pod kube-proxy, mọi request tới Service đều đi qua Pod đó",
+      "Là IP của một node được bầu làm 'leader' để làm proxy trung tâm",
+      "Là IP thật của Pod backend đầu tiên trong EndpointSlice"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "ClusterIP là VIP ảo, không thuộc máy nào; nó tồn tại trong bảng iptables/IPVS của kernel trên mỗi node.\n✓ Không có tiến trình nào lắng nghe trên VIP; kernel DNAT gói tới Pod IP thật\n✗ Service không phải một Pod proxy mà request phải đi xuyên qua\n✗ Không có node 'leader' làm proxy trung tâm; load-balance xảy ra tại node gọi\n✗ VIP là địa chỉ ảo cố định, không phải IP của Pod backend nào"
+  },
+  {
+    "id": "cn-q-076",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-07-services",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Cơ chế hiện thực Service gồm những mảnh nào phối hợp với nhau?",
+    "options": [
+      "Service object khai báo VIP, port và selector",
+      "EndpointSlice liệt kê IP:port của Pod khớp selector và đang Ready",
+      "kube-proxy lập trình luật iptables/IPVS trong kernel mỗi node",
+      "Một daemon proxy trung tâm nhận toàn bộ traffic rồi phân phối lại",
+      "CoreDNS trực tiếp thực hiện DNAT gói tin từ VIP sang Pod IP"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Ba mảnh là Service object + EndpointSlice + kube-proxy; load-balance diễn ra ngay trong kernel node gọi.\n✓ Service object định nghĩa VIP, port, selector\n✓ EndpointSlice chứa danh sách IP:port của Pod khớp selector VÀ đang Ready\n✓ kube-proxy watch api-server rồi viết luật iptables/IPVS để DNAT\n✗ Không có daemon proxy trung tâm nhận toàn bộ traffic; đó chính là hiểu lầm bài bác bỏ\n✗ CoreDNS chỉ phân giải tên sang VIP, việc DNAT là của kernel do kube-proxy lập trình"
+  },
+  {
+    "id": "cn-q-077",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-07-services",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một team cần cho các microservice trong cluster gọi nhau nội bộ, không phơi ra ngoài. Nên dùng kiểu Service nào?",
+    "options": [
+      "ClusterIP",
+      "NodePort",
+      "LoadBalancer",
+      "Headless với clusterIP: None"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Giao tiếp service-to-service nội bộ đúng là công dụng của ClusterIP (mặc định).\n✓ ClusterIP cho VIP ổn định chỉ truy cập được trong cluster\n✗ NodePort phơi service ra ngoài qua port của node — thừa và mở rộng bề mặt tấn công\n✗ LoadBalancer xin cloud LB public — dành cho phơi ra Internet\n✗ Headless bỏ VIP và không load-balance, dùng cho StatefulSet cần địa chỉ từng peer"
+  },
+  {
+    "id": "cn-q-078",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-07-services",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Quan hệ 'lớp bọc' đúng giữa ba kiểu Service phơi ra ngoài là gì?",
+    "options": [
+      "LoadBalancer bọc NodePort, NodePort bọc ClusterIP",
+      "ClusterIP bọc NodePort, NodePort bọc LoadBalancer",
+      "NodePort bọc LoadBalancer, LoadBalancer bọc ClusterIP",
+      "Cả ba là ba thứ tách rời, không lớp nào bọc lớp nào"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "NodePort được xây trên ClusterIP, LoadBalancer được xây trên NodePort — các lớp lồng nhau.\n✓ Ngoài cùng là LoadBalancer, trong là NodePort, lõi là ClusterIP\n✗ Thứ tự ngược lại là sai\n✗ Việc đảo NodePort và LoadBalancer là sai\n✗ Chúng không tách rời mà là các lớp bọc chồng lên nhau"
+  },
+  {
+    "id": "cn-q-079",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-07-services",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Service `payment` nằm trong namespace `billing`. Một client ở namespace `web` muốn gọi nó bằng tên ngắn nhất còn hợp lệ. Nên dùng địa chỉ nào?",
+    "options": [
+      "payment.billing",
+      "payment",
+      "payment.web.svc.cluster.local",
+      "payment.svc.cluster.local"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Client khác namespace phải kèm namespace của Service: dạng <service>.<namespace>.\n✓ payment.billing đủ để phân giải từ namespace khác nhờ search domain\n✗ Gọi ngắn chỉ 'payment' chỉ hoạt động khi client CÙNG namespace với Service (ở đây là billing)\n✗ payment.web... trỏ vào namespace web nơi không có Service payment\n✗ payment.svc.cluster.local thiếu phần namespace nên không phải FQDN hợp lệ của Service này"
+  },
+  {
+    "id": "cn-q-080",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-07-services",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "`kubectl get endpointslices` cho Service trả về RỖNG dù Deployment đang chạy 3 Pod. Nguyên nhân hay gặp nhất là gì?",
+    "options": [
+      "selector của Service không khớp label Pod, HOẶC Pod chưa Ready do readinessProbe fail",
+      "ClusterIP đã bị một Service khác chiếm nên không cấp được endpoints",
+      "kube-proxy chỉ tạo EndpointSlice sau khi có ít nhất một client gọi vào Service",
+      "CoreDNS trong kube-system bị lỗi nên EndpointSlice không được sinh"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "EndpointSlice rỗng nghĩa là không Pod nào đủ điều kiện: hoặc selector sai, hoặc Pod chưa Ready.\n✓ Selector không khớp label, hoặc readinessProbe fail khiến Pod chưa Ready nên bị loại khỏi endpoints\n✗ Việc trùng ClusterIP không làm endpoints rỗng — đó là vấn đề cấp VIP khác\n✗ EndpointSlice được sinh từ selector + trạng thái Ready, không cần có client gọi trước\n✗ CoreDNS lo phân giải tên, không liên quan tới việc sinh EndpointSlice"
+  },
+  {
+    "id": "cn-q-081",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-07-services",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trên Service LoadBalancer, đặt `externalTrafficPolicy: Local` thay vì `Cluster` mang lại hệ quả nào?",
+    "options": [
+      "Giữ được source IP thật của client và bớt một hop, nhưng node không có Pod sẽ fail health-check nên LB chỉ gửi tới node có Pod",
+      "Phân tải đều mọi node nhưng mất source IP do bị SNAT",
+      "Bắt buộc mọi Pod phải nằm trên cùng một node để giữ source IP",
+      "Tắt kube-proxy và để cloud LB tự DNAT trực tiếp tới Pod"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Local giữ source IP thật và bỏ bớt một hop, đổi lại node không có Pod sẽ fail health-check.\n✓ LB do đó chỉ route tới node đang chạy Pod, đảm bảo giữ source IP client\n✗ 'Phân tải đều mọi node nhưng mất source IP do SNAT' là mô tả của Cluster (mặc định), không phải Local\n✗ Local không yêu cầu dồn mọi Pod về một node\n✗ Local không tắt kube-proxy; kube-proxy vẫn lập trình luật trên node nhận"
+  },
+  {
+    "id": "cn-q-082",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-07-services",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Đội vận hành triển khai một cụm Postgres primary/replica bằng StatefulSet và cần client kết nối đúng một peer cụ thể. Những phát biểu nào ĐÚNG về lựa chọn Service phù hợp?",
+    "options": [
+      "Dùng Headless Service với clusterIP: None để bỏ VIP và không load-balance",
+      "CoreDNS sẽ trả nhiều bản ghi A — mỗi Pod một IP — thay vì một VIP duy nhất",
+      "Mỗi Pod có tên DNS ổn định dạng db-0.db.shop.svc.cluster.local",
+      "Dùng ClusterIP thường để kube-proxy round-robin đều qua các Pod",
+      "Phải dùng NodePort để mỗi replica có một port riêng ra ngoài node"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Hệ có trạng thái cần địa chỉ từng peer cụ thể, nên dùng Headless Service.\n✓ clusterIP: None bỏ VIP và bỏ load-balance, để client tự chọn peer\n✓ CoreDNS trả nhiều bản ghi A (mỗi Pod một IP) thay vì một VIP\n✓ Kết hợp StatefulSet, mỗi replica có tên DNS ổn định như db-0.db.shop.svc.cluster.local\n✗ ClusterIP round-robin sẽ trỏ tới 'một Pod bất kỳ', sai với yêu cầu địa chỉ một peer cụ thể\n✗ NodePort không phải cơ chế cấp địa chỉ ổn định cho từng peer nội bộ, và không cần thiết ở đây"
+  },
+  {
+    "id": "cn-q-083",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-07-services",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Service ClusterIP có endpoints đầy đủ, DNS phân giải tốt, nhưng client curl vào thì kết nối treo/refused. Nghi vấn hợp lý nhất là gì?",
+    "options": [
+      "targetPort của Service không khớp cổng process thực sự lắng nghe trong container",
+      "selector của Service không khớp label Pod",
+      "CoreDNS trong kube-system đang bị lỗi",
+      "ClusterIP chỉ nội bộ nên không thể truy cập được từ trong cluster"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Endpoints đầy đủ và DNS tốt loại trừ lỗi selector/DNS; triệu chứng treo/refused chỉ về sai cổng đích.\n✓ targetPort sai (không khớp containerPort process lắng nghe) khiến kết nối bị refused/treo\n✗ Nếu selector sai thì endpoints đã rỗng, nhưng đề nói endpoints đầy đủ\n✗ DNS đã phân giải tốt nên CoreDNS không phải nghi vấn\n✗ ClusterIP truy cập được bình thường TỪ TRONG cluster; nó chỉ chặn truy cập từ ngoài"
+  },
+  {
+    "id": "cn-q-084",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-07-services",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "readinessProbe đóng vai trò gì đối với việc một Pod nhận traffic qua Service?",
+    "options": [
+      "Là công tắc bật/tắt: Pod chỉ vào EndpointSlice khi đã Ready, nên rollout không rơi request",
+      "Quyết định Pod có được cấp ClusterIP riêng hay không",
+      "Chọn kiểu Service (ClusterIP/NodePort/LoadBalancer) cho Pod",
+      "Ép CoreDNS tạo bản ghi DNS cho từng Pod chưa Ready"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "readinessProbe điều khiển việc Pod có nằm trong EndpointSlice hay không, tức có nhận traffic hay không.\n✓ Pod mới chỉ vào EndpointSlice khi Ready, và bị rớt trước khi kill để rollout an toàn không rơi request\n✗ Pod không được cấp ClusterIP riêng; VIP thuộc về Service\n✗ Kiểu Service do trường type quyết định, không phải readinessProbe\n✗ Pod chưa Ready bị loại khỏi endpoints, không phải được thêm bản ghi DNS"
+  },
+  {
+    "id": "cn-q-085",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-08-ingress",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn có 5 microservice HTTP cần phơi ra Internet và muốn tiết kiệm chi phí. Nếu dùng Service type=LoadBalancer thuần cho mỗi service thì hệ quả là gì?",
+    "options": [
+      "Cần 5 Cloud LB riêng, tốn 5 IP và 5 hoá đơn, lại không route được theo host/path",
+      "Chỉ cần 1 Cloud LB duy nhất vì LoadBalancer tự đọc Host header",
+      "Kubernetes tự gộp thành 1 LB và route theo path giúp bạn",
+      "Không tốn LB nào vì Service ClusterIP đã đủ phơi ra ngoài"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Service LoadBalancer là L4, mỗi service cần một Cloud LB riêng và không đọc được HTTP.\n✓ Mỗi service một Cloud LB nên tốn nhiều IP/hoá đơn, và L4 không route theo host/path\n✗ LoadBalancer L4 chỉ thấy IP:port, không đọc Host header nên không thể dùng chung 1 LB route theo host\n✗ Kubernetes không tự gộp nhiều LoadBalancer thành một cửa L7\n✗ ClusterIP chỉ nội bộ cluster, không phơi ra Internet"
+  },
+  {
+    "id": "cn-q-086",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-08-ingress",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao nói Service LoadBalancer/NodePort 'không đọc được' đường dẫn /api hay Host header?",
+    "options": [
+      "Vì chúng hoạt động ở tầng 4 (transport), chỉ thấy IP:port chứ không mở gói đọc HTTP",
+      "Vì chúng hoạt động ở tầng 7 nhưng bị tắt tính năng parse HTTP",
+      "Vì thiếu annotation bật chế độ L7",
+      "Vì chưa gắn TLS Secret nên không giải mã được URL"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Route theo host/path là chuyện của tầng 7 (HTTP), còn LoadBalancer/NodePort chỉ ở tầng 4.\n✓ Tầng 4 chỉ thấy IP:port, không mở gói tin để đọc Host header hay path\n✗ LoadBalancer/NodePort không phải L7, không có chuyện 'tắt' parse HTTP\n✗ Không có annotation nào biến Service L4 thành bộ route L7\n✗ TLS không liên quan; vấn đề là tầng hoạt động, không phải giải mã"
+  },
+  {
+    "id": "cn-q-087",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-08-ingress",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một kỹ sư mới `kubectl apply` một Ingress, `kubectl get ingress` thấy nó tồn tại nhưng gõ URL thì không có gì trả lời. Nguyên nhân gốc phổ biến nhất là gì?",
+    "options": [
+      "Chưa cài Ingress Controller nào — Ingress chỉ là luật, cần một reverse proxy thật đọc và thực thi",
+      "Ingress object bị lỗi cú pháp nên apply không thành công",
+      "Phải khởi động lại kube-proxy để nó thực thi Ingress",
+      "Thiếu Service type=LoadBalancer đặt trước từng Pod backend"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Ingress là desired state (luật); phải có Ingress Controller chạy vòng reconciliation mới thực thi.\n✓ Không có Ingress Controller (nginx/Traefik...) thì không có reverse proxy nào đọc luật và xử lý traffic\n✗ Nếu apply lỗi cú pháp thì object đã không tồn tại; nhưng get vẫn thấy nó\n✗ kube-proxy phục vụ Service, không thực thi Ingress\n✗ Backend của Ingress là Service (thường ClusterIP), không cần LB trước mỗi Pod"
+  },
+  {
+    "id": "cn-q-088",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-08-ingress",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Sau khi cài ingress-nginx theo manifest cloud provider, cấu trúc traffic vào cluster như thế nào để vẫn chỉ trả tiền 1 Cloud LB?",
+    "options": [
+      "Bản thân controller là 1 Service LoadBalancer; traffic vào IP đó rồi controller phân luồng L7 theo các Ingress",
+      "Mỗi Ingress object tự tạo thêm một Cloud LB riêng khi được apply",
+      "Cloud LB được tạo cho từng Service ClusterIP backend phía sau",
+      "Controller chạy như NodePort nên không cần Cloud LB nào"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Controller tự nó là một Service LoadBalancer duy nhất, đứng trước và phân luồng L7.\n✓ Traffic vào EXTERNAL-IP của controller (1 Cloud LB), rồi controller mới route theo Ingress\n✗ Ingress object là luật, không tự sinh Cloud LB\n✗ Backend ClusterIP không phơi ra ngoài nên không cần Cloud LB\n✗ Manifest cloud provider dựng controller như Service LoadBalancer, không phải NodePort"
+  },
+  {
+    "id": "cn-q-089",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-08-ingress",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cluster chạy hai Ingress Controller (một public, một internal). Cơ chế nào quyết định controller nào xử lý một Ingress cụ thể?",
+    "options": [
+      "`spec.ingressClassName` trỏ tới một IngressClass; nếu bỏ trống thì class được đánh dấu default nhận",
+      "Thứ tự apply — controller nào apply trước sẽ ưu tiên xử lý mọi Ingress",
+      "Namespace của Ingress phải trùng namespace controller",
+      "Annotation proxy-body-size xác định controller đích"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "IngressClass (qua spec.ingressClassName) chọn controller thực thi; không set thì class default nhận.\n✓ ingressClassName trỏ IngressClass; bỏ trống thì class có nhãn is-default-class=true xử lý\n✗ Không có cơ chế 'apply trước ưu tiên'\n✗ Ingress không cần cùng namespace với controller để được xử lý\n✗ proxy-body-size là annotation tính năng, không chọn controller"
+  },
+  {
+    "id": "cn-q-090",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-08-ingress",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với Ingress route theo host shop.com có hai path Prefix là `/img` (svc-img) và `/` (svc-web), request `shop.com/img/logo.png` sẽ đi về đâu và vì sao?",
+    "options": [
+      "Về svc-img, vì controller ưu tiên path cụ thể/dài hơn nên /img được xét trước /",
+      "Về svc-web, vì `/` luôn được xét đầu tiên do đứng sau trong danh sách",
+      "Trả 404 vì hai path Prefix trùng nhau gây xung đột",
+      "Về cả hai service theo kiểu round-robin"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Controller thường ưu tiên path cụ thể/dài hơn, nên /img thắng / cho request bắt đầu bằng /img.\n✓ /img là tiền tố cụ thể hơn nên request /img/logo.png về svc-img, phần còn lại về svc-web\n✗ / không được ưu tiên trước; nó là path 'bắt còn lại'\n✗ Hai Prefix khác nhau không xung đột; controller phân giải theo độ cụ thể\n✗ Không có round-robin giữa các backend theo path"
+  },
+  {
+    "id": "cn-q-091",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-08-ingress",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Client gọi `shop.com/api/users` nhưng backend svc-api chỉ định nghĩa route `/users` (không có tiền tố /api) nên trả 404. Cách xử lý đúng ở Ingress nginx là gì?",
+    "options": [
+      "Dùng rewrite-target (kèm regex bắt phần sau /api) để cắt tiền tố /api trước khi chuyển xuống backend",
+      "Đổi pathType sang Exact để tự động bỏ tiền tố",
+      "Thêm annotation ssl-redirect để chuyển hướng đúng path",
+      "Tạo thêm một Service LoadBalancer cho svc-api"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "rewrite-target cắt tiền tố /api để backend nhận đúng /users thay vì /api/users.\n✓ rewrite-target: /$2 với regex bắt phần sau /api gửi đúng /users xuống backend\n✗ Exact chỉ thay đổi cách khớp path, không viết lại URL gửi tới backend\n✗ ssl-redirect chỉ ép HTTP sang HTTPS, không đổi path\n✗ Thêm LoadBalancer không giải quyết việc backend nhận sai path"
+  },
+  {
+    "id": "cn-q-092",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-08-ingress",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong Ingress, backend của một rule trỏ tới đối tượng nào?",
+    "options": [
+      "Một Service (thường ClusterIP), và Service đó lo load balancing xuống các Pod",
+      "Trực tiếp một Pod cụ thể theo tên",
+      "Một Deployment",
+      "Một Node có nhãn phù hợp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Ingress route tới Service, không phải Pod; Service tiếp tục cân bằng tải xuống Pod.\n✓ Backend là Service (thường ClusterIP vì Ingress đã là cửa), Service phân phối xuống Pod\n✗ Ingress không trỏ trực tiếp tới một Pod cụ thể\n✗ Ingress không route tới Deployment\n✗ Ingress không trỏ tới Node"
+  },
+  {
+    "id": "cn-q-093",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-08-ingress",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn cấu hình TLS cho shop.com và api.shop.com dùng một Secret shop-tls, nhưng khi truy cập api.shop.com client báo lỗi cert. Nguyên nhân liên quan trực tiếp tới cơ chế nào và cần kiểm tra gì?",
+    "options": [
+      "SNI — `hosts` trong khối spec.tls phải khớp `host` trong rules để controller chọn đúng cert khi bắt tay",
+      "kube-proxy chưa mở cổng 443 nên cert bị từ chối",
+      "pathType phải là Exact thì cert mới áp dụng cho host",
+      "proxy-body-size quá nhỏ khiến handshake TLS thất bại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Controller chọn cert theo SNI dựa trên host client báo lúc bắt tay; hosts trong tls phải khớp rules.\n✓ SNI cho client báo tên miền lúc handshake; nếu api.shop.com thiếu trong spec.tls.hosts thì cert không được chọn đúng\n✗ kube-proxy không quản lý TLS handshake của Ingress\n✗ pathType khớp đường dẫn, không liên quan chọn cert theo host\n✗ proxy-body-size giới hạn kích thước body, không gây lỗi cert"
+  },
+  {
+    "id": "cn-q-094",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-08-ingress",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Đội của bạn phải triển khai canary chia 90% traffic sang v1, 10% sang v2, cho nhiều team cùng dùng chung cửa vào, và muốn tránh 'rừng annotation' khoá vào nginx. Lựa chọn phù hợp nhất là gì?",
+    "options": [
+      "Gateway API: nhiều backendRefs kèm weight là field chuẩn, tách vai Gateway (platform) và HTTPRoute (dev)",
+      "Ingress nginx với nhiều annotation canary vì đó là cách chuẩn hoá duy nhất",
+      "Tạo nhiều Service LoadBalancer, mỗi phiên bản một LB",
+      "Dùng pathType ImplementationSpecific để tự chia phần trăm traffic"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Gateway API chuẩn hoá traffic splitting bằng weight và tách vai trò multi-team, thoát khỏi annotation vendor.\n✓ backendRefs kèm weight là field chuẩn cho canary; Gateway/HTTPRoute tách quyền platform và dev\n✗ Annotation canary của nginx chính là thứ khoá vendor mà đề bài muốn tránh, không phải chuẩn hoá\n✗ Nhiều LoadBalancer tốn kém và không giải quyết chia tỉ lệ traffic một cửa\n✗ pathType chỉ khớp đường dẫn, không chia phần trăm traffic"
+  },
+  {
+    "id": "cn-q-095",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-08-ingress",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Chọn các phát biểu ĐÚNG về Ingress và Ingress Controller.",
+    "options": [
+      "Ingress object chỉ là luật khai báo (desired state), tự nó không xử lý gói tin nào",
+      "Ingress Controller là một reverse proxy thật (nginx/Traefik...) watch các Ingress và tự cấu hình để thực thi",
+      "Kubernetes cài sẵn một Ingress Controller mặc định, giống như kube-proxy cho Service",
+      "Ingress có thể terminate TLS và route L7 theo host và path",
+      "Backend của Ingress bắt buộc phải là Service type=LoadBalancer"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Ingress là luật, cần controller (reverse proxy thật) thực thi; Ingress làm TLS termination và route L7.\n✓ Ingress object chỉ là dữ liệu mô tả luật, không tự xử lý traffic\n✓ Controller là proxy thật watch Ingress và tự cấu hình chính nó\n✓ Ingress terminate TLS và route theo host/path ở L7\n✗ K8s KHÔNG cài sẵn Ingress Controller (khác kube-proxy); phải tự cài\n✗ Backend thường là Service ClusterIP, không bắt buộc LoadBalancer"
+  },
+  {
+    "id": "cn-q-096",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-08-ingress",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Nhóm bạn cân nhắc chuyển từ Ingress sang Gateway API. Đâu là những lý do/đặc điểm ĐÚNG ủng hộ Gateway API?",
+    "options": [
+      "Tách vai: platform team sở hữu Gateway (IP, cổng, cert), dev chỉ tạo HTTPRoute gắn vào — phân quyền rõ hơn",
+      "Hỗ trợ đa giao thức qua TCPRoute/UDPRoute/GRPCRoute, không giới hạn HTTP",
+      "Traffic splitting/canary chuẩn hoá bằng weight, không cần annotation riêng",
+      "Ingress bị Kubernetes gỡ bỏ nên buộc phải chuyển ngay lập tức",
+      "Match theo header/query param/method là field chuẩn thay vì annotation đặc thù controller"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Gateway API tách vai, đa giao thức, canary bằng weight và match chuẩn hoá; nhưng Ingress vẫn tồn tại song song.\n✓ Gateway (platform) tách khỏi HTTPRoute (dev) cho phân quyền multi-team rõ ràng\n✓ Hỗ trợ TCPRoute/UDPRoute/GRPCRoute, không chỉ HTTP\n✓ Nhiều backendRefs kèm weight cho canary mà không cần annotation\n✓ Match header/query/method là field chuẩn, không phải annotation vendor\n✗ Ingress KHÔNG bị gỡ bỏ; cả hai cùng tồn tại, Ingress vẫn phổ biến và đủ tốt cho route đơn giản"
+  },
+  {
+    "id": "cn-q-097",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-09-config-secret",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo triết lý 12-factor (Factor III), lý do chính để tách cấu hình ra khỏi image là gì?",
+    "options": [
+      "Để build MỘT image chạy được ở mọi môi trường, tiêm config lúc chạy thay vì phải rebuild",
+      "Để giảm dung lượng image xuống dưới 100MB",
+      "Để Kubernetes có thể tự động scale số Pod theo config",
+      "Để image luôn được mã hoá khi lưu trong registry"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Factor III nói cấu hình phải nằm ngoài code/image và tiêm vào lúc chạy, nhờ đó cùng một binary chạy dev/staging/prod.\n✓ Một image build một lần, kết hợp config khác nhau để ra runtime khác nhau — đúng cái đã test là cái chạy prod.\n✗ Giảm dung lượng image không phải mục tiêu của việc tách config.\n✗ Auto-scale số Pod là chuyện của HPA, không liên quan tách config.\n✗ Tách config không tự làm image được mã hoá trong registry."
+  },
+  {
+    "id": "cn-q-098",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-09-config-secret",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Dữ liệu trong một Secret của Kubernetes mặc định được lưu ở dạng nào?",
+    "options": [
+      "base64 (chỉ encode, KHÔNG mã hoá) — decode ngược được ngay",
+      "AES-256 mã hoá bằng khoá của cluster",
+      "Băm một chiều (hash) không thể đảo ngược",
+      "Plaintext nhưng chỉ root trên node đọc được"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Secret mặc định chỉ base64 — một cách encode, ai cũng decode ngược trong một giây, không phải mã hoá.\n✓ base64 chỉ là encode; kubectl ... | base64 -d lộ nguyên văn ngay.\n✗ Không có mã hoá AES mặc định; muốn mã hoá phải bật encryption-at-rest cho etcd.\n✗ base64 hoàn toàn đảo ngược được, không phải hash một chiều.\n✗ Mặc định Secret nằm plaintext trong etcd và ai có quyền get secret là đọc được, không giới hạn ở root node."
+  },
+  {
+    "id": "cn-q-099",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-09-config-secret",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn sửa ConfigMap được tiêm vào Pod bằng env var (dùng envFrom) rồi kubectl apply. Kết quả trong Pod đang chạy là gì?",
+    "options": [
+      "Env var trong Pod KHÔNG đổi cho tới khi Pod được restart",
+      "Env var tự cập nhật trong khoảng một phút giống như mount file",
+      "Container tự động restart ngay khi ConfigMap đổi",
+      "Pod bị đưa vào trạng thái CrashLoopBackOff cho tới khi apply lại"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Env var chỉ được đọc một lần lúc container khởi động, nên sửa ConfigMap không làm env đổi — phải restart Pod.\n✓ Muốn env dùng giá trị mới thì bắt buộc restart Pod (rollout restart, config-hash, Reloader).\n✗ Chỉ mount file mới tự cập nhật theo kubelet sync, còn env thì không.\n✗ Kubernetes không tự restart container khi ConfigMap đổi.\n✗ Việc sửa ConfigMap không gây CrashLoopBackOff cho Pod."
+  },
+  {
+    "id": "cn-q-100",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-09-config-secret",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "App cần một file nginx.conf nguyên khối và muốn khi bạn sửa cấu hình thì file trong container tự cập nhật để app watch & reload. Cách tiêm phù hợp nhất là?",
+    "options": [
+      "Mount ConfigMap thành file qua volume (không dùng subPath)",
+      "Inject qua envFrom để đổ toàn bộ key thành env var",
+      "Mount ConfigMap bằng subPath cho đúng đường dẫn file",
+      "Nướng thẳng nginx.conf vào image rồi rebuild mỗi lần đổi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mount thành file (volume) hợp với file cấu hình lớn và tự cập nhật khi ConfigMap đổi, cho phép app watch & reload.\n✓ Mount volume thường thì file trong Pod tự cập nhật theo kubelet sync (~1 phút).\n✗ Env var chỉ đọc một lần lúc khởi động, không tự cập nhật.\n✗ Mount bằng subPath là ngoại lệ KHÔNG tự cập nhật khi config đổi.\n✗ Nướng vào image lại phá vỡ nguyên tắc tách config, phải rebuild mỗi lần."
+  },
+  {
+    "id": "cn-q-101",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-09-config-secret",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn tiêm env sau lấy giá trị nào vào biến POD_NAME?\n\nenv:\n  - name: POD_NAME\n    valueFrom:\n      fieldRef:\n        fieldPath: metadata.name",
+    "options": [
+      "Tên của chính Pod đang chạy, do Kubernetes gán lúc runtime (Downward API)",
+      "Một key tên POD_NAME trong ConfigMap app-config",
+      "Tên của node mà Pod đang chạy",
+      "Giá trị base64 của một Secret có key metadata.name"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "fieldRef với fieldPath metadata.name là Downward API — Pod tự đọc metadata của chính nó do k8s gán lúc chạy.\n✓ POD_NAME nhận tên của chính Pod, hữu ích cho log/tracing.\n✗ Đây không phải configMapKeyRef nên không lấy từ ConfigMap.\n✗ Tên node lấy qua spec.nodeName, không phải metadata.name.\n✗ Không liên quan Secret hay base64; đây là fieldRef metadata."
+  },
+  {
+    "id": "cn-q-102",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-09-config-secret",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn đổi mật khẩu DB trong Secret (tiêm qua env var secretKeyRef) rồi apply, nhưng ứng dụng vẫn kết nối bằng password cũ. Nguyên nhân đúng nhất là?",
+    "options": [
+      "Pod cũ vẫn giữ env đọc lúc khởi động; phải restart Pod mới nạp password mới",
+      "base64 của password mới bị sai nên k8s bỏ qua giá trị",
+      "Secret không thể chứa mật khẩu DB, chỉ chứa được chứng chỉ TLS",
+      "RBAC đã chặn Pod đọc Secret nên nó fallback về giá trị cũ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Env var chỉ set một lần lúc container khởi động, nên Pod cũ giữ password cũ tới khi bị thay — chính là bẫy env = phải restart.\n✓ Cần rollout restart (hoặc config-hash/Reloader) để Pod đọc lại Secret.\n✗ Vấn đề không phải base64 sai; k8s vẫn nạp bình thường lúc Pod khởi động.\n✗ Secret hoàn toàn dùng được cho mật khẩu DB, không chỉ TLS.\n✗ Nếu RBAC chặn get secret thì Pod không lấy được giá trị, không có chuyện fallback về giá trị cũ."
+  },
+  {
+    "id": "cn-q-103",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-09-config-secret",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Nhóm bạn muốn giữ bí mật thật ở AWS Secrets Manager và chỉ commit một 'con trỏ' an toàn vào Git, đồng thời tự rotate định kỳ. Công cụ/đối tượng phù hợp là?",
+    "options": [
+      "External Secrets Operator với đối tượng ExternalSecret trỏ tới kho ngoài",
+      "Một ConfigMap chứa mật khẩu đã base64",
+      "Downward API để Pod tự đọc mật khẩu",
+      "Stakater Reloader để watch và restart Deployment"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "ExternalSecret (do External Secrets Operator xử lý) trỏ tới kho ngoài, tự tạo/đồng bộ Secret k8s và rotate theo refreshInterval.\n✓ Bí mật thật ở kho ngoài, Git chỉ chứa con trỏ ExternalSecret an toàn để commit.\n✗ ConfigMap không dành cho bí mật và base64 vẫn lộ nguyên văn.\n✗ Downward API chỉ đọc metadata của Pod, không lấy bí mật từ kho ngoài.\n✗ Reloader chỉ tự rollout khi ConfigMap/Secret đổi, không đồng bộ bí mật từ kho ngoài."
+  },
+  {
+    "id": "cn-q-104",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-09-config-secret",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong bảng reload config, trường hợp nào là ngoại lệ 'file KHÔNG tự cập nhật' dù bạn mount ConfigMap và app đang đọc từ file?",
+    "options": [
+      "Mount bằng subPath",
+      "Mount cả thư mục với readOnly: true",
+      "Dùng defaultMode: 0400 khi mount",
+      "Dùng items để chọn vài key cụ thể"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mount thường tự cập nhật theo kubelet sync, nhưng mount bằng subPath là ngoại lệ không tự cập nhật.\n✓ subPath mount không nhận cập nhật khi ConfigMap/Secret đổi — cần nhớ.\n✗ readOnly chỉ chặn ghi, không ảnh hưởng khả năng tự cập nhật.\n✗ defaultMode chỉ đặt quyền file, vẫn tự cập nhật bình thường.\n✗ Dùng items để chọn key không phá vỡ cơ chế tự cập nhật của volume."
+  },
+  {
+    "id": "cn-q-105",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-09-config-secret",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Cơ chế 'config-hash annotation' (ví dụ checksum/config trong Pod template) giúp giải quyết vấn đề gì?",
+    "options": [
+      "Buộc Deployment tự rollout Pod mới mỗi khi nội dung ConfigMap/Secret đổi",
+      "Mã hoá ConfigMap trước khi ghi xuống etcd",
+      "Ngăn không cho ai decode Secret bằng base64 -d",
+      "Cho phép env var tự cập nhật mà không cần restart"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Ghi hash nội dung config vào annotation của Pod template: config đổi thì hash đổi, template đổi nên Deployment tự lăn bản mới.\n✓ Đây là cách buộc rollout khi tiêm bằng env (vốn không tự cập nhật).\n✗ Config-hash không mã hoá gì cho etcd; đó là việc của EncryptionConfiguration.\n✗ Nó không ngăn được việc decode base64 của Secret.\n✗ Env var vẫn cần Pod mới; annotation chỉ là cách kích hoạt tạo Pod mới, bản thân env không tự cập nhật."
+  },
+  {
+    "id": "cn-q-106",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-09-config-secret",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo 'quy tắc vàng' của bài, đối tượng nào an toàn để commit thẳng vào Git, còn đối tượng nào KHÔNG nên commit ở dạng thô?",
+    "options": [
+      "ConfigMap commit thoải mái; Secret thô thì KHÔNG (dùng ExternalSecret/Sealed Secrets/SOPS)",
+      "Secret commit thoải mái vì đã base64; ConfigMap thì KHÔNG",
+      "Cả hai đều an toàn vì đều nằm trong etcd",
+      "Cả hai đều không được commit trong mọi trường hợp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "ConfigMap chứa config không nhạy cảm nên commit thoải mái; Secret thô chỉ base64 nên không được commit trực tiếp.\n✓ Với bí mật nên dùng ExternalSecret (con trỏ) hoặc mã hoá bằng Sealed Secrets/SOPS trước khi commit.\n✗ base64 không phải mã hoá nên Secret thô KHÔNG an toàn để commit.\n✗ Nằm trong etcd không liên quan tới an toàn khi commit vào Git.\n✗ ConfigMap hoàn toàn có thể commit; không phải cả hai đều cấm."
+  },
+  {
+    "id": "cn-q-107",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-09-config-secret",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Vì sao nói Secret mặc định 'an toàn hơn ConfigMap' chỉ ở vài lớp mỏng, CHƯA đủ cho production? Chọn các phát biểu ĐÚNG.",
+    "options": [
+      "Secret mặc định chỉ base64, vẫn nằm plaintext trong etcd nếu chưa bật encryption-at-rest",
+      "Ai có quyền get secret là đọc được nội dung, không cần mật khẩu gì thêm",
+      "base64 khiến Secret không thể bị decode ngược nếu không có khoá KMS",
+      "Production cần thêm encryption-at-rest (KMS), RBAC chặt và/hoặc external secret manager",
+      "Chỉ cần đổi ConfigMap thành Secret là dữ liệu tự động được mã hoá an toàn"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Secret chỉ hơn ConfigMap vài lớp mỏng (không in trong describe, RBAC riêng, tmpfs khi mount) nhưng bản chất vẫn base64 trong etcd.\n✓ Mặc định Secret nằm plaintext/base64 trong etcd nếu chưa bật encryption-at-rest.\n✓ Ai có quyền get secret đọc được ngay, không cần thêm mật khẩu.\n✓ Production cần encryption-at-rest bằng KMS, RBAC least-privilege và external secret manager.\n✗ base64 luôn decode ngược được, không cần khoá KMS gì cả.\n✗ Đổi sang Secret không tự mã hoá dữ liệu — vẫn chỉ base64."
+  },
+  {
+    "id": "cn-q-108",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-09-config-secret",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những cách nào dưới đây sẽ khiến một Pod (tiêm config qua env var) thực sự dùng giá trị ConfigMap MỚI sau khi bạn sửa? Chọn tất cả cách đúng.",
+    "options": [
+      "Chạy kubectl rollout restart deployment/web để tạo Pod mới đọc lại config",
+      "Dùng config-hash annotation (checksum/config) đổi theo nội dung để Deployment tự rollout",
+      "Dùng Stakater Reloader tự watch ConfigMap và rollout restart Deployment",
+      "Chỉ cần kubectl apply ConfigMap mới, Pod đang chạy sẽ tự nạp env mới",
+      "Sửa file mount bằng subPath để env đọc lại giá trị"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Env var chỉ đọc lúc khởi động nên phải tạo Pod mới thì env mới đổi.\n✓ rollout restart tạo Pod mới đọc lại config.\n✓ config-hash annotation đổi theo nội dung khiến template đổi và Deployment tự rollout.\n✓ Reloader tự watch ConfigMap/Secret và rollout restart Deployment tham chiếu.\n✗ Chỉ apply ConfigMap không làm env của Pod đang chạy đổi.\n✗ subPath mount thậm chí không tự cập nhật file, và đằng nào env cũng không đọc từ mount đó."
   }
 ];
 
-export const generatedKnowledge: Question[] = [...k1, ...k2, ...k3, ...k4, ...k5];
+const k6: Question[] = [
+  {
+    "id": "cn-q-109",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-10-storage",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một container Postgres ghi database vào /var/lib/postgresql/data mà KHÔNG dùng volume nào. Node bị reboot, kubelet tạo lại container. Chuyện gì xảy ra với data?",
+    "options": [
+      "Data vẫn còn nguyên vì kubelet tự động backup writable layer trước khi restart",
+      "Data mất sạch vì writable layer của container bị vứt đi khi container được tạo lại",
+      "Data được giữ trên node và tự động mount lại vào container mới",
+      "Kubernetes chặn không cho container restart để bảo vệ data"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Filesystem của container sống trong writable layer, bị vứt đi mỗi khi container được tạo lại — đây là thiết kế, không phải bug.\n✓ Data mất sạch vì writable layer bị vứt khi tạo lại container, đúng bản chất ephemeral.\n✗ Kubelet không backup writable layer trước khi restart.\n✗ Data KHÔNG được giữ trên node hay mount lại nếu không khai báo volume.\n✗ Kubernetes không chặn restart; restart/reschedule là điều xảy ra liên tục."
+  },
+  {
+    "id": "cn-q-110",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-10-storage",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "emptyDir có vòng đời như thế nào?",
+    "options": [
+      "Sống theo vòng đời Pod: còn khi container restart trong cùng Pod, mất khi Pod bị xoá",
+      "Sống độc lập cả Pod lẫn node, tồn tại qua reschedule",
+      "Gắn chặt với một node, còn khi Pod chuyển sang node khác",
+      "Mất ngay khi container bên trong Pod restart"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "emptyDir tạo thư mục rỗng khi Pod được gán vào node và sống cùng vòng đời Pod.\n✓ Còn khi container restart trong cùng Pod, mất khi Pod bị xoá — đúng đặc tính emptyDir.\n✗ Chỉ PV/PVC mới độc lập cả Pod lẫn node và sống qua reschedule.\n✗ hostPath mới gắn với node; emptyDir không đi theo node.\n✗ emptyDir KHÔNG mất khi container restart, chỉ mất khi Pod bị xoá."
+  },
+  {
+    "id": "cn-q-111",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-10-storage",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Có 5 replica nginx trên nhiều node cùng phục vụ và ghi vào một thư mục ảnh upload chung. Lựa chọn lưu trữ đúng là gì?",
+    "options": [
+      "EBS với access mode ReadWriteOnce vì nó nhanh nhất",
+      "File storage như EFS/NFS với ReadWriteMany vì nhiều node cần cùng ghi",
+      "hostPath trên mỗi node để mỗi replica ghi cục bộ",
+      "emptyDir Memory để tăng tốc chia sẻ giữa các replica"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Nhiều node cùng đọc-ghi một thư mục đòi hỏi access mode RWX, chỉ file storage mới hỗ trợ.\n✓ EFS/NFS hỗ trợ ReadWriteMany cho nhiều node cùng ghi — đúng yêu cầu.\n✗ EBS là block storage chỉ RWO, một disk attach vào một node tại một thời điểm, không cho 5 node cùng ghi.\n✗ hostPath tách rời trên từng node, dữ liệu không chia sẻ và mất khi reschedule.\n✗ emptyDir chỉ sống trong một Pod, không chia sẻ được xuyên Pod/node."
+  },
+  {
+    "id": "cn-q-112",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-10-storage",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong mô hình PV/PVC, một Pod tham chiếu lưu trữ bền vững như thế nào?",
+    "options": [
+      "Pod trỏ trực tiếp tới PV qua tên PV",
+      "Pod trỏ tới PVC qua claimName, và Kubernetes lo việc bind PVC vào PV phù hợp",
+      "Pod khai báo trực tiếp thông số disk trong spec container",
+      "Pod trỏ tới StorageClass và tự tạo disk trong runtime"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Nhờ tách cung–cầu, developer chỉ khai báo nhu cầu qua PVC mà không cần biết disk phía dưới.\n✓ Pod trỏ tới PVC qua claimName; Kubernetes bind PVC vào PV phù hợp (đủ dung lượng, đúng access mode, đúng class).\n✗ Pod KHÔNG bao giờ tham chiếu PV trực tiếp.\n✗ Pod không khai báo thông số disk trong container spec.\n✗ Pod không trỏ thẳng StorageClass; PVC mới tham chiếu StorageClass."
+  },
+  {
+    "id": "cn-q-113",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-10-storage",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một StorageClass để volumeBindingMode: Immediate. Cluster có node ở nhiều availability zone. Vì sao Pod có thể kẹt Pending mãi?",
+    "options": [
+      "PV bị tạo trước ở một zone, Pod lại bị lên lịch ở zone khác nên không attach được disk",
+      "Immediate làm PVC không bao giờ được bind vào PV",
+      "Immediate bắt buộc reclaimPolicy phải là Retain khiến provisioner từ chối tạo PV",
+      "Immediate chỉ hoạt động với access mode ReadWriteMany"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Immediate tạo PV ngay khi PVC ra đời, chưa biết Pod sẽ chạy ở zone nào; disk như EBS không đi xuyên zone.\n✓ PV tạo ở zone A còn Pod lại xếp ở zone B → không attach được → Pod kẹt Pending. WaitForFirstConsumer sinh ra để tránh đúng điều này.\n✗ Immediate vẫn bind PVC vào PV bình thường.\n✗ Immediate không liên quan tới ràng buộc reclaimPolicy.\n✗ volumeBindingMode không giới hạn theo access mode."
+  },
+  {
+    "id": "cn-q-114",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-10-storage",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Điểm hay nhầm nhất về access mode ReadWriteOnce (RWO) là gì?",
+    "options": [
+      "RWO cho phép đúng một Pod duy nhất trong toàn cluster ghi",
+      "RWO gắn với một node, nhiều Pod trên cùng node đó vẫn ghi được",
+      "RWO cho nhiều node cùng đọc-ghi miễn là dùng file storage",
+      "RWO chỉ cho phép đọc, không cho ghi"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "RWO nghĩa là mount đọc-ghi bởi một node, không phải một Pod.\n✓ RWO gắn với node; nhiều Pod trên cùng node đó vẫn cùng ghi được.\n✗ Chỉ Pod duy nhất mới ghi là đặc tính của ReadWriteOncePod (RWOP), chặt hơn RWO.\n✗ Nhiều node cùng ghi là RWX, không phải RWO.\n✗ RWO là đọc-ghi, không phải chỉ đọc (đó là ROX)."
+  },
+  {
+    "id": "cn-q-115",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-10-storage",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "StorageClass dynamic mặc định thường đặt reclaimPolicy: Delete. Rủi ro thực chiến với database production là gì, và cách phòng?",
+    "options": [
+      "Xoá nhầm PVC sẽ xoá luôn disk vật lý và toàn bộ data; nên đặt reclaimPolicy: Retain cho volume quý",
+      "Delete làm PVC không bao giờ bind được; nên chuyển sang Recycle",
+      "Delete khiến disk bị mã hoá không đọc được; nên tắt encrypted",
+      "Delete tự động nhân đôi disk gây tốn chi phí; nên giảm số replica"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Reclaim policy quyết định số phận PV/disk sau khi PVC bị xoá; Delete xoá luôn disk vật lý.\n✓ Xoá nhầm PVC production = bay ổ đĩa và data; đặt Retain để xoá PVC không kéo theo xoá disk.\n✗ Delete không cản trở việc bind PVC.\n✗ Recycle đã deprecated, không nên dùng.\n✗ Delete không liên quan tới mã hoá hay nhân đôi disk."
+  },
+  {
+    "id": "cn-q-116",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-10-storage",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Deployment 3 replica gắn cùng một PVC cho database. Vì sao đây là thiết kế sai, và cách đúng là gì?",
+    "options": [
+      "Mọi replica chia sẻ chung một PVC nên data lẫn nhau; dùng StatefulSet với volumeClaimTemplate để mỗi Pod có PVC riêng",
+      "Deployment không hỗ trợ PVC nên phải chuyển sang DaemonSet",
+      "Cần đặt replicas về 1 vĩnh viễn vì database không bao giờ scale",
+      "Phải dùng hostPath thay cho PVC để mỗi replica ghi cục bộ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Deployment gắn PVC thì mọi replica dùng chung một PVC — sai cho database vì mỗi instance cần ổ riêng.\n✓ StatefulSet với volumeClaimTemplate tạo một PVC riêng cho từng Pod, ổn định theo ordinal, data không lẫn.\n✗ Deployment vẫn dùng được PVC, vấn đề là dùng chung; DaemonSet không phải giải pháp ở đây.\n✗ Không cần ép replicas=1; StatefulSet cho scale mà mỗi Pod giữ ổ riêng.\n✗ hostPath dính node và rủi ro, không phải cách đúng cho database."
+  },
+  {
+    "id": "cn-q-117",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-10-storage",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một PVC ở trạng thái Pending. Bước kiểm tra đầu tiên hợp lý nhất để tìm nguyên nhân là gì?",
+    "options": [
+      "kubectl describe pvc <tên> để xem event (không có PV khớp, sai class, sai access mode...)",
+      "kubectl delete pvc rồi tạo lại cho tới khi Bound",
+      "Restart toàn bộ node để buộc bind lại",
+      "kubectl edit pod để đổi image container"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Pending nghĩa là chưa có PV khớp; event trong describe cho biết lý do cụ thể.\n✓ describe pvc hiển thị event giải thích vì sao chưa bind — đúng bước debug đầu tiên.\n✗ Xoá tạo lại mù quáng không giải quyết nguyên nhân gốc.\n✗ Restart node không liên quan tới lý do PVC chưa khớp PV.\n✗ Đổi image container không ảnh hưởng tới việc bind PVC."
+  },
+  {
+    "id": "cn-q-118",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-10-storage",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một PVC 50Gi đã Bound và gần đầy. StorageClass có allowVolumeExpansion: true. Cách nới đĩa đúng, không downtime là gì?",
+    "options": [
+      "Xoá PVC rồi tạo PVC mới 100Gi để provisioner cấp disk lớn hơn",
+      "Sửa spec.resources.requests.storage của PVC lên 100Gi; driver online-resize",
+      "Giảm request xuống 25Gi trước rồi tăng dần lên 100Gi",
+      "Tạo một PV mới 100Gi và bind tay đè lên PVC hiện tại"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "allowVolumeExpansion cho phép chỉ cần tăng requests.storage của PVC; driver hỗ trợ online-resize không cần downtime.\n✓ Sửa requests.storage từ 50Gi lên 100Gi là cách đúng, driver nới online.\n✗ Xoá PVC có thể kéo theo xoá disk (nếu Delete) và gây downtime — không cần thiết.\n✗ Không thu nhỏ được volume; giảm xuống 25Gi là sai và không hợp lệ.\n✗ Không bind tay đè PV mới lên PVC đang Bound; expansion là cơ chế đúng."
+  },
+  {
+    "id": "cn-q-119",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-10-storage",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Về CSI (Container Storage Interface), những phát biểu nào ĐÚNG? (chọn tất cả đáp án đúng)",
+    "options": [
+      "CSI là chuẩn API cho phép hệ lưu trữ cắm vào Kubernetes mà không cần sửa core",
+      "provisioner trong StorageClass chỉ là tên CSI driver, ví dụ ebs.csi.aws.com",
+      "CSI mở khoá các tính năng chuẩn hoá như snapshot, clone, volume expansion, topology awareness",
+      "CSI driver phải được biên dịch thẳng vào source Kubernetes như in-tree plugin cũ",
+      "CSI chỉ hoạt động với emptyDir và hostPath, không dùng cho PV/PVC"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "CSI là chuẩn cắm driver ngoài core, thay cho in-tree plugin cũ.\n✓ CSI là chuẩn API để hệ lưu trữ cắm vào K8s mà không sửa core.\n✓ provisioner trong StorageClass chính là tên CSI driver như ebs.csi.aws.com.\n✓ CSI mang lại snapshot, clone, volume expansion, topology awareness.\n✗ CSI driver chạy như Pod trong cluster, KHÔNG biên dịch vào source K8s — đó là in-tree plugin cũ mà CSI thay thế.\n✗ CSI dùng cho PV/PVC bền vững, không phải chỉ emptyDir/hostPath."
+  },
+  {
+    "id": "cn-q-120",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-10-storage",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Về StatefulSet với volumeClaimTemplate, những phát biểu nào ĐÚNG? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Kubernetes tạo một PVC riêng cho từng Pod, đặt tên ổn định theo ordinal",
+      "PVC của mỗi Pod được giữ nguyên qua reschedule/restart nên Pod cũ tìm lại đúng data",
+      "Xoá StatefulSet sẽ tự động xoá tất cả PVC do nó tạo",
+      "Tên PVC sinh ra theo dạng <template>-<statefulset>-<ordinal>",
+      "Tất cả replica dùng chung một PVC giống như Deployment gắn PVC"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "volumeClaimTemplate cấp mỗi Pod một PVC riêng, ổn định và bám Pod.\n✓ Mỗi Pod có một PVC riêng, tên ổn định theo ordinal.\n✓ PVC được giữ qua reschedule/restart nên Pod tìm lại đúng data của mình.\n✓ Tên PVC theo dạng <template>-<statefulset>-<ordinal>, ví dụ data-postgres-0.\n✗ Xoá StatefulSet KHÔNG xoá các PVC (có chủ đích để không mất data); phải xoá PVC thủ công.\n✗ Việc dùng chung một PVC là hành vi của Deployment gắn PVC — chính điều StatefulSet tránh."
+  },
+  {
+    "id": "cn-q-121",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-11-scheduling",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong Kubernetes, con số nào scheduler dùng để quyết định đặt Pod lên node nào?",
+    "options": [
+      "limits — trần cứng do runtime ép buộc",
+      "requests — mức tối thiểu được bảo đảm",
+      "mức CPU/memory thực tế Pod đang dùng",
+      "QoS class của Pod"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Scheduler chỉ nhìn requests (tổng requests so với dung lượng node) để đặt Pod, không nhìn mức dùng thực.\n✓ requests là mức bảo đảm và là con số duy nhất scheduler dùng để chọn node\n✗ limits là trần do kubelet/cgroup ép lúc chạy, không phải căn cứ để schedule\n✗ scheduler không nhìn mức dùng thực tế, chỉ nhìn con số requests khai báo\n✗ QoS class chỉ ảnh hưởng thứ tự evict, không phải căn cứ đặt Pod"
+  },
+  {
+    "id": "cn-q-122",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-11-scheduling",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một container vượt quá memory limit thì điều gì xảy ra?",
+    "options": [
+      "Bị throttle, chạy chậm lại nhưng không chết",
+      "Bị kernel OOMKiller giết ngay, container restart với exit 137",
+      "Scheduler dời Pod sang node khác",
+      "Được tự động nâng limit lên"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Memory là tài nguyên không nén được, nên vượt limit thì kernel giết container ngay lập tức.\n✓ vượt memory limit bị OOMKill, exit code 137 (128 + SIGKILL 9), Pod restart\n✗ throttle (chạy chậm không chết) là cơ chế cho CPU, không phải memory\n✗ vượt limit không khiến scheduler dời Pod; đó là ép trần lúc runtime\n✗ Kubernetes không tự nâng limit khi container vượt trần"
+  },
+  {
+    "id": "cn-q-123",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-11-scheduling",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một service latency-sensitive có CPU limit thấp, p99 latency bỗng nhảy từ 20ms lên 300ms nhưng log không hề báo lỗi. Nguyên nhân khả dĩ nhất là gì?",
+    "options": [
+      "Container liên tục bị OOMKilled",
+      "CPU bị cgroup throttle khi chạm limit",
+      "Pod bị evict do node cạn RAM",
+      "nodeSelector không khớp label nên Pod Pending"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "CPU là tài nguyên nén được: vượt limit bị throttle, tiến trình chậm lại mà không sinh lỗi, nên latency tăng âm thầm.\n✓ throttle làm p99 xấu đi mà không có log lỗi — rất khó chẩn đoán, khớp triệu chứng\n✗ OOMKilled sẽ khiến container chết/restart và hiện rõ trong describe, không phải \"không lỗi\"\n✗ Pod bị evict cũng là sự kiện nhìn thấy được, không âm thầm như throttle\n✗ Pod Pending nghĩa là chưa chạy, không thể có latency phục vụ tăng"
+  },
+  {
+    "id": "cn-q-124",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-11-scheduling",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Node app đặt memory limit quá thấp, chạy vài phút rồi bị giết lặp lại và rơi vào CrashLoopBackOff. Cách chữa đúng theo bài là gì?",
+    "options": [
+      "Bỏ hẳn memory limit để app tự do dùng RAM",
+      "Đo memory thực (RSS) lúc tải đỉnh rồi đặt limit có biên an toàn",
+      "Đặt CPU limit cao hơn để bù",
+      "Chuyển Pod sang QoS BestEffort"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "OOMKilled lặp lại là do memory limit quá thấp; cách chữa là đo mức memory thực rồi đặt limit đủ với biên an toàn.\n✓ đo RSS lúc tải đỉnh rồi đặt limit có biên an toàn là cách bài khuyến nghị\n✗ bài khuyên bỏ CPU limit trong vài trường hợp, nhưng memory thường đặt request=limit chứ không bỏ trần bừa\n✗ tăng CPU limit không liên quan tới OOMKill do thiếu memory\n✗ BestEffort chỉ làm Pod dễ bị evict hơn, không giải quyết việc vượt memory limit"
+  },
+  {
+    "id": "cn-q-125",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-11-scheduling",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Pod A đặt requests = limits cho cả CPU lẫn memory ở mọi container. QoS class của nó là gì và điều đó có ý nghĩa gì khi node cạn RAM?",
+    "options": [
+      "BestEffort — bị evict đầu tiên",
+      "Burstable — bị evict ở giữa",
+      "Guaranteed — được giữ lâu nhất, evict cuối cùng",
+      "Guaranteed — nhưng vẫn bị evict trước BestEffort"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "requests = limits cho cả CPU và memory ở mọi container cho ra QoS Guaranteed, được ưu ái nhất khi evict.\n✓ Guaranteed được giữ lâu nhất, bị evict sau cùng khi node ngộp\n✗ BestEffort là khi không đặt request/limit nào, không phải trường hợp này\n✗ Burstable là có request nhưng không thoả điều kiện Guaranteed\n✗ Guaranteed luôn được giữ sau BestEffort và Burstable, không bị đuổi trước"
+  },
+  {
+    "id": "cn-q-126",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-11-scheduling",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn muốn hai replica của cùng một Deployment không bao giờ nằm trên cùng một node. Công cụ nào phù hợp nhất?",
+    "options": [
+      "podAntiAffinity với topologyKey: kubernetes.io/hostname",
+      "podAffinity với topologyKey: kubernetes.io/hostname",
+      "nodeSelector trỏ tới một node cụ thể",
+      "taint NoExecute lên node"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Rải replica ra khác node là bài toán \"spread\" theo Pod khác, dùng pod anti-affinity với topologyKey hostname (\"cùng node\").\n✓ podAntiAffinity + topologyKey=hostname buộc các replica cùng label không ở chung một node\n✗ podAffinity làm ngược lại — gom Pod lại gần nhau (colocate)\n✗ nodeSelector chỉ ràng buộc theo label node, không diễn tả quan hệ giữa các Pod\n✗ taint NoExecute đuổi Pod không tolerate, không phải công cụ để rải replica"
+  },
+  {
+    "id": "cn-q-127",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-11-scheduling",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đang có 4 pod, CPU trung bình đo được là 90%, target averageUtilization là 45%. Theo công thức HPA, số replica mong muốn là bao nhiêu?",
+    "options": [
+      "6 pod",
+      "8 pod",
+      "9 pod",
+      "4 pod"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "desiredReplicas = ceil(currentReplicas × currentMetric / targetMetric) = ceil(4 × 90/45) = ceil(8) = 8.\n✓ 4 × 90/45 = 8, làm tròn lên vẫn 8 pod\n✗ 6 pod không khớp công thức tỷ lệ\n✗ 9 pod là kết quả sai; 4×90/45 đúng bằng 8, không cần làm tròn thêm\n✗ 4 pod là số hiện tại, HPA sẽ tăng vì CPU vượt xa target"
+  },
+  {
+    "id": "cn-q-128",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-11-scheduling",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "HPA scale target theo % utilization của request, nhưng bạn đặt CPU request quá thấp so với mức app thực sự cần. Hậu quả là gì?",
+    "options": [
+      "HPA sẽ scale chính xác vì nó đo mức dùng thực tế tuyệt đối",
+      "HPA thấy utilization cao hơn thực chất nên scale ra quá nhiều pod",
+      "HPA ngừng hoạt động vì thiếu limit",
+      "QoS tự động chuyển sang Guaranteed"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "HPA tính utilization = mức dùng / request; request quá thấp làm tỷ lệ này bị thổi phồng nên HPA scale sai (thường là quá đà).\n✓ request thấp → utilization tính ra cao giả tạo → HPA tạo dư pod; \"request sai thì HPA scale sai\"\n✗ HPA không đo tuyệt đối mà theo % của request, nên phụ thuộc chặt vào request đặt đúng\n✗ HPA CPU cần metrics-server chứ không cần limit; thiếu limit không làm HPA ngừng\n✗ QoS class không tự đổi theo hành vi HPA"
+  },
+  {
+    "id": "cn-q-129",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-11-scheduling",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "HPA tạo thêm pod nhưng nhiều pod kẹt ở trạng thái Pending vì không node nào còn đủ request để chứa. Thành phần nào giải quyết và bằng cách nào?",
+    "options": [
+      "VPA — tăng request của từng pod hiện có",
+      "Cluster Autoscaler — thêm node mới vào node group để chứa pod Pending",
+      "kube-scheduler — ép nhồi pod vào node đã đầy",
+      "HPA — tự giảm request của pod để vừa node"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Pod Pending vì hết chỗ là tín hiệu để Cluster Autoscaler thêm node; đây là chuỗi phối hợp HPA → Pending → CA.\n✓ Cluster Autoscaler thấy pod Pending không xếp được → gọi cloud thêm node → pod được schedule\n✗ VPA chỉnh request từng pod, không thêm máy để chứa pod dư\n✗ scheduler chỉ nhìn request và không nhồi quá dung lượng node\n✗ HPA điều chỉnh số replica, không sửa request của pod"
+  },
+  {
+    "id": "cn-q-130",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-11-scheduling",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Effect nào của taint sẽ đuổi cả những Pod ĐANG CHẠY mà không tolerate taint đó ra khỏi node?",
+    "options": [
+      "NoSchedule",
+      "PreferNoSchedule",
+      "NoExecute",
+      "IgnoredDuringExecution"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "NoExecute là effect duy nhất tác động tới Pod đang chạy, đuổi Pod không tolerate sau tolerationSeconds.\n✓ NoExecute đuổi cả Pod đang chạy không tolerate — cũng chính là cơ chế node not-ready tự đuổi Pod\n✗ NoSchedule chỉ chặn Pod mới không tolerate, không đụng Pod đang chạy\n✗ PreferNoSchedule chỉ là ưu tiên mềm khi xếp Pod mới\n✗ IgnoredDuringExecution là thuật ngữ của affinity, không phải effect của taint"
+  },
+  {
+    "id": "cn-q-131",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-11-scheduling",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, những phát biểu nào ĐÚNG khi so sánh CPU và memory về requests/limits? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Memory thường nên đặt requests = limits vì không nén được",
+      "Nhiều team bỏ CPU limit (chỉ đặt request) để tránh throttle cho service latency-sensitive",
+      "Vượt CPU limit sẽ khiến container bị OOMKilled với exit 137",
+      "CPU là tài nguyên nén được, memory là tài nguyên không nén được",
+      "Bỏ trống request thì scheduler coi như request bằng dung lượng cả node"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Sự khác biệt nén được/không nén được dẫn tới các quy tắc thực chiến về đặt request/limit cho CPU và memory.\n✓ memory không nén được nên thường đặt request=limit để chắc chắn\n✓ nhiều team bỏ CPU limit để tránh throttle, chấp nhận pod mượn CPU rảnh của node\n✓ CPU nén được (chỉ throttle), memory không nén được (bị giết)\n✗ vượt CPU limit chỉ bị throttle, không bị OOMKill; OOMKill là của memory\n✗ bỏ trống request bị coi như 0, không phải bằng cả node, dễ dẫn tới oversubscribe"
+  },
+  {
+    "id": "cn-q-132",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-11-scheduling",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những phát biểu nào ĐÚNG về HPA và VPA theo bài? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Không nên dùng VPA và HPA cùng trên một metric CPU/mem vì chúng đánh nhau",
+      "HPA dùng nhiều metric thì lấy giá trị desiredReplicas LỚN NHẤT trong các metric",
+      "KEDA mở rộng HPA để scale theo event, kể cả scale về 0",
+      "VPA áp request mới thường phải restart Pod vì request là bất biến khi Pod đang chạy",
+      "best practice là scale lên chậm nhưng scale xuống nhanh để tiết kiệm tài nguyên"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Các phát biểu này phản ánh đúng cơ chế phối hợp và cấu hình HPA/VPA trong bài.\n✓ VPA và HPA trên cùng metric CPU/mem sẽ xung đột, nên tránh; mẫu an toàn là HPA theo custom metric + VPA chỉnh CPU/mem\n✓ dùng nhiều metric, HPA tính desired từng metric rồi lấy giá trị lớn nhất cho an toàn\n✓ KEDA scale theo event và có thể về 0 khi queue rỗng, điều HPA gốc không làm được\n✓ VPA áp request mới phải restart Pod vì request bất biến lúc Pod chạy\n✗ best practice là ngược lại: lên nhanh (chịu spike) nhưng xuống chậm (tránh flapping)"
+  },
+  {
+    "id": "cn-q-133",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-12-rbac-security",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong RBAC của Kubernetes, một Role (hoặc ClusterRole) đóng vai trò gì?",
+    "options": [
+      "Là 'tập quyền' liệt kê các rule (apiGroup × resource × verb), nhưng bản thân không biết ai được dùng",
+      "Là 'phép gán' nối một subject cụ thể tới quyền",
+      "Là danh tính của Pod khi gọi API server",
+      "Là luật chặn traffic mạng giữa các Pod"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Role/ClusterRole chỉ định nghĩa 'cái gì được làm', còn Binding mới nói 'ai được dùng'.\n✓ Là tập quyền liệt kê rule nhưng không biết ai dùng — đúng bản chất Role.\n✗ Phép gán subject tới quyền — đó là RoleBinding/ClusterRoleBinding.\n✗ Danh tính của Pod — đó là ServiceAccount.\n✗ Luật chặn traffic mạng — đó là NetworkPolicy."
+  },
+  {
+    "id": "cn-q-134",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-12-rbac-security",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một Pod không khai báo trường serviceAccountName sẽ chạy dưới danh tính nào?",
+    "options": [
+      "ServiceAccount tên 'default' của namespace đó",
+      "Không có danh tính nào, không thể gọi API server",
+      "ServiceAccount 'cluster-admin' toàn cluster",
+      "Danh tính của user đã tạo Pod"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mỗi namespace có sẵn một SA 'default', và Pod không khai serviceAccountName sẽ tự nhận nó.\n✓ ServiceAccount 'default' của namespace — đúng hành vi mặc định.\n✗ Không có danh tính — sai, Pod luôn có ít nhất SA default.\n✗ cluster-admin toàn cluster — SA default không có quyền admin.\n✗ Danh tính của user tạo Pod — Pod dùng SA, không kế thừa user."
+  },
+  {
+    "id": "cn-q-135",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-12-rbac-security",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Về mặc định của Secret trong Kubernetes, phát biểu nào đúng?",
+    "options": [
+      "Secret chỉ được mã hoá base64 — không phải mã hoá thật; ai đọc được object là thấy plaintext",
+      "Secret được mã hoá AES-GCM sẵn trong etcd nên rất an toàn",
+      "Secret chỉ Pod chủ sở hữu mới đọc được, ngay cả admin cũng không",
+      "Secret luôn được lấy từ Vault bên ngoài"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "base64 chỉ là mã hoá biểu diễn, giải trong một giây; cần encryption at rest mới an toàn.\n✓ Chỉ base64, không phải mã hoá, đọc được object là thấy plaintext — đúng.\n✗ Mã hoá AES-GCM sẵn — chỉ khi bật EncryptionConfiguration, không phải mặc định.\n✗ Chỉ Pod chủ sở hữu đọc được — ai có RBAC hoặc etcd đều đọc được.\n✗ Luôn lấy từ Vault — đó là External Secrets, phải cấu hình thêm."
+  },
+  {
+    "id": "cn-q-136",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-12-rbac-security",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong Kubernetes mặc định (chưa có NetworkPolicy nào), traffic giữa các Pod ra sao?",
+    "options": [
+      "Mọi Pod nói chuyện được với mọi Pod ở mọi namespace — không có tường lửa nội bộ",
+      "Mọi Pod bị chặn hoàn toàn cho tới khi có policy cho phép",
+      "Chỉ Pod cùng namespace mới nói chuyện được với nhau",
+      "Chỉ Pod cùng một Deployment mới liên lạc được"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mạng mặc định là 'mở toang': không có deny mặc định, phải chủ động whitelist.\n✓ Mọi Pod nói chuyện với mọi Pod mọi namespace — đúng mặc định.\n✗ Bị chặn hoàn toàn cho tới khi cho phép — đó là trạng thái sau khi áp default-deny.\n✗ Chỉ cùng namespace — sai, cross-namespace vẫn thông.\n✗ Chỉ cùng Deployment — sai, không có ranh giới đó."
+  },
+  {
+    "id": "cn-q-137",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-12-rbac-security",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn muốn định nghĩa một gói quyền quản lý Deployment MỘT LẦN rồi gán riêng trong từng namespace team-a, team-b... mà không phải copy Role vào từng ns. Cách đúng là gì?",
+    "options": [
+      "Tạo một ClusterRole, rồi trong mỗi namespace tạo một RoleBinding trỏ tới ClusterRole đó",
+      "Tạo một Role trong mỗi namespace và copy nội dung rules giống hệt nhau",
+      "Tạo một ClusterRole và một ClusterRoleBinding duy nhất",
+      "Tạo một RoleBinding trỏ tới nhiều Role cùng lúc"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "RoleBinding (namespaced) được phép trỏ tới một ClusterRole, cấp quyền chỉ trong ns của binding.\n✓ ClusterRole + RoleBinding trong mỗi ns — định nghĩa một lần, gán từng ns, đúng mẹo bài nêu.\n✗ Copy Role vào từng ns — chính là cái ta muốn tránh.\n✗ ClusterRoleBinding duy nhất — sẽ cấp quyền TOÀN cluster, không giới hạn theo ns.\n✗ RoleBinding trỏ nhiều Role — roleRef chỉ trỏ tới đúng một Role/ClusterRole."
+  },
+  {
+    "id": "cn-q-138",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-12-rbac-security",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn thêm một RoleBinding 'deny' để cố gỡ bớt một quyền mà một SA đang có từ binding khác, nhưng không hiệu quả. Vì sao?",
+    "options": [
+      "RBAC thuần additive, không có 'deny'; hiệu lực là hợp của mọi quyền được gán, muốn cắt phải gỡ binding",
+      "RoleBinding deny phải nằm trong namespace kube-system mới có tác dụng",
+      "Cần đặt priority cao hơn cho binding deny",
+      "Deny chỉ hoạt động với ClusterRoleBinding chứ không với RoleBinding"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "RBAC không có khái niệm phủ định; quyền cuối là union, muốn cắt phải xoá binding cấp quyền.\n✓ Additive, không có deny, phải gỡ binding — đúng bản chất RBAC.\n✗ Deny nằm ở kube-system — không tồn tại cơ chế deny nào.\n✗ Đặt priority — RBAC không có priority giữa binding.\n✗ Deny chỉ với ClusterRoleBinding — không loại binding nào có deny."
+  },
+  {
+    "id": "cn-q-139",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-12-rbac-security",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một app web thuần túy KHÔNG hề gọi API server của Kubernetes. Cấu hình bảo mật nào là hợp lý nhất cho ServiceAccount của nó?",
+    "options": [
+      "Đặt automountServiceAccountToken: false để không phát token vô ích",
+      "Gán ClusterRole cluster-admin cho chắc chắn không bị Forbidden",
+      "Dùng chung SA default của namespace",
+      "Đặt automountServiceAccountToken: true và cấp quyền list secrets"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Không gọi API thì không cần token; tắt automount để token khỏi bị lộ làm bàn đạp tấn công.\n✓ automountServiceAccountToken: false — đúng least-privilege khi Pod không gọi API.\n✗ Gán cluster-admin — vi phạm least-privilege nghiêm trọng, dù không cần quyền gì.\n✗ Dùng chung SA default — nên có SA riêng cho mỗi workload.\n✗ Bật automount + list secrets — phát token và quyền nhạy cảm không cần thiết."
+  },
+  {
+    "id": "cn-q-140",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-12-rbac-security",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn bật NetworkPolicy default-deny cả Ingress lẫn Egress cho namespace, rồi app báo 'gọi service nào cũng timeout' dù chính app vẫn chạy. Nguyên nhân phổ biến nhất và cách sửa?",
+    "options": [
+      "Egress đã chặn cả DNS (cổng 53 tới kube-dns) nên không resolve được tên; cần thêm policy mở DNS",
+      "Pod thiếu readOnlyRootFilesystem nên không ghi được cache DNS",
+      "RBAC của SA thiếu quyền get endpoints",
+      "Thiếu label pod-security enforce: restricted trên namespace"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "default-deny Egress chặn luôn UDP/TCP 53 tới kube-dns, làm mọi phân giải tên thất bại.\n✓ Egress chặn DNS, mở cổng 53 tới kube-dns — đúng bẫy kinh điển bài nêu.\n✗ readOnlyRootFilesystem/cache DNS — không liên quan tới timeout resolve.\n✗ RBAC get endpoints — RBAC gác control plane, không ảnh hưởng data plane.\n✗ Label pod-security — PSS không liên quan tới kết nối mạng."
+  },
+  {
+    "id": "cn-q-141",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-12-rbac-security",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn tạo hàng loạt NetworkPolicy trên cluster dùng CNI là flannel thuần, nhưng traffic vẫn không bị chặn chút nào. Vì sao?",
+    "options": [
+      "flannel thuần không thực thi NetworkPolicy; cần CNI hỗ trợ như Calico, Cilium hoặc Weave",
+      "NetworkPolicy chỉ chặn Egress chứ không chặn Ingress",
+      "Phải khởi động lại toàn bộ node thì policy mới nạp",
+      "NetworkPolicy chỉ áp cho traffic cross-namespace, không áp trong cùng namespace"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "NetworkPolicy chỉ là đối tượng API; phải có CNI biết thực thi thì mới có tác dụng.\n✓ flannel thuần bỏ qua policy, cần Calico/Cilium/Weave — đúng, tạo policy mà không thực thi là ảo giác an toàn.\n✗ Chỉ chặn Egress — sai, policy chặn cả hai hướng tuỳ policyTypes.\n✗ Khởi động lại node — không phải nguyên nhân.\n✗ Chỉ cross-namespace — sai, áp cả trong cùng namespace."
+  },
+  {
+    "id": "cn-q-142",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-12-rbac-security",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một ServiceAccount ứng dụng chỉ được cấp quyền 'create pods' trong namespace, tưởng là vô hại. Vì sao đây vẫn là rủi ro leo thang quyền?",
+    "options": [
+      "Kẻ có 'create pods' có thể tạo Pod mount bất kỳ Secret nào trong namespace rồi đọc, tức leo thang tới mọi secret",
+      "create pods tự động kèm quyền cluster-admin",
+      "create pods cho phép sửa RBAC binding của namespace khác",
+      "create pods vô hiệu hoá mọi NetworkPolicy trong namespace"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Quyền tạo Pod cho phép chọn secretRef/volume, nên gián tiếp đọc được mọi secret trong ns.\n✓ Tạo Pod mount secret rồi đọc — đúng con đường leo thang bài cảnh báo.\n✗ Tự kèm cluster-admin — sai, không có liên kết đó.\n✗ Sửa RBAC binding ns khác — create pods không cho sửa RBAC.\n✗ Vô hiệu hoá NetworkPolicy — hai cơ chế độc lập, không liên quan."
+  },
+  {
+    "id": "cn-q-143",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-12-rbac-security",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Trong một phần tử 'from' của NetworkPolicy ingress, khác biệt ngữ nghĩa nào là ĐÚNG và cần lưu ý để không mở quá rộng? (chọn tất cả đáp án đúng)",
+    "options": [
+      "namespaceSelector và podSelector viết CÙNG một gạch đầu dòng nghĩa là giao (AND): Pod khớp label TRONG namespace đó",
+      "namespaceSelector và podSelector viết ở HAI gạch đầu dòng riêng nghĩa là hợp (OR), dễ mở toang ngoài ý muốn",
+      "Viết cùng một gạch đầu dòng luôn có nghĩa là OR để bao phủ rộng hơn",
+      "NetworkPolicy chọn Pod bằng label, không phải bằng địa chỉ IP",
+      "podSelector rỗng {} chỉ chọn đúng Pod tên 'default'"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Ngữ nghĩa AND/OR phụ thuộc cách bố trí gạch đầu dòng, và selector làm việc theo label.\n✓ Cùng một gạch đầu dòng = AND (Pod khớp label trong ns đó) — đúng.\n✓ Hai gạch đầu dòng riêng = OR, dễ mở toang — đúng cảnh báo bài nêu.\n✓ NetworkPolicy chọn Pod bằng label, không phải IP — đúng.\n✗ Cùng một gạch đầu dòng là OR — sai, đó là AND.\n✗ podSelector rỗng {} chỉ chọn Pod tên default — sai, {} chọn MỌI Pod trong namespace."
+  },
+  {
+    "id": "cn-q-144",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-12-rbac-security",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Bạn muốn 'cứng hoá' một container theo mức restricted. Những cấu hình securityContext nào dưới đây phù hợp với mục tiêu đó? (chọn tất cả đáp án đúng)",
+    "options": [
+      "runAsNonRoot: true",
+      "allowPrivilegeEscalation: false",
+      "capabilities.drop: [\"ALL\"] rồi add lại đúng cái cần",
+      "privileged: true để container có toàn quyền cho tiện",
+      "readOnlyRootFilesystem: false để app ghi thoải mái vào rootfs"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "restricted đòi non-root, chặn leo quyền, drop mọi caps, rootfs read-only, seccomp RuntimeDefault.\n✓ runAsNonRoot: true — ép chạy user thường, đúng hướng cứng hoá.\n✓ allowPrivilegeEscalation: false — chặn setuid leo quyền, đúng.\n✓ drop ALL rồi add lại cái cần — đúng nguyên tắc tối thiểu capability.\n✗ privileged: true — gần như root trên host, đi ngược hoàn toàn mục tiêu.\n✗ readOnlyRootFilesystem: false — cho ghi rootfs mở đường ghi payload, nên đặt true và dùng emptyDir cho /tmp."
+  },
+  {
+    "id": "cn-q-145",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-13-observability-troubleshoot",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một Pod đang ở STATUS CrashLoopBackOff, RESTARTS tăng dần. Bạn chạy `kubectl logs web-xyz` nhưng output rỗng. Lệnh nào cho bạn thấy lý do app chết?",
+    "options": [
+      "`kubectl logs web-xyz -p` — xem log của container đã chết trước đó",
+      "`kubectl logs web-xyz -f` — follow log realtime của container hiện tại",
+      "`kubectl get pod web-xyz -o wide` — xem node và IP",
+      "`kubectl top pod web-xyz` — xem RAM/CPU thực dùng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khi container crash, kubelet giết nó và tạo container mới; `logs` mặc định soi container mới (thường rỗng), còn lý do chết nằm ở container trước → phải dùng `-p`.\n✓ Cờ `-p` (previous) đọc log của container đã chết — đúng nơi chứa exception/panic lúc boot.\n✗ Follow log container hiện tại vẫn rỗng vì container mới chưa kịp lỗi hoặc đang chờ restart.\n✗ Xem node/IP không cho biết vì sao app crash.\n✗ Xem RAM/CPU giúp chẩn đoán OOM chứ không hiện log lỗi khởi động."
+  },
+  {
+    "id": "cn-q-146",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-13-observability-troubleshoot",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong 'vòng chẩn đoán' một Pod hỏng, lệnh nào được coi là quan trọng nhất vì phần Events kể lại chuỗi hành động scheduler/kubelet đã làm và lý do thất bại?",
+    "options": [
+      "`kubectl describe pod`",
+      "`kubectl get pods -o wide`",
+      "`kubectl exec -it -- sh`",
+      "`kubectl top nodes`"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nhấn mạnh nếu chỉ được dùng một lệnh để debug thì đó là `describe`, vì phần Events ở cuối kể lại việc kéo image, gắn volume, chạy probe và lý do thất bại.\n✓ `describe pod` cho phần Events — nơi Kubernetes 'kể' chuyện gì đang xảy ra và thất bại ra sao.\n✗ `get -o wide` chỉ là cái nhìn tổng quan (STATUS, RESTARTS, node, IP), không có chi tiết Events.\n✗ `exec` chỉ dùng khi cần soi bên trong, hiếm khi phải tới bước này.\n✗ `top nodes` xem tài nguyên node, không phải nơi kể lý do lỗi Pod."
+  },
+  {
+    "id": "cn-q-147",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-13-observability-troubleshoot",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Pod ở STATUS OOMKilled với Exit Code 137. Đây là dấu hiệu của điều gì và hướng sửa hợp lý là gì?",
+    "options": [
+      "Container vượt `limits.memory` → kernel OOM killer giết; sửa bằng tăng `limits.memory` hoặc chữa memory leak",
+      "Container nhận SIGTERM khi graceful shutdown; sửa bằng tăng `terminationGracePeriodSeconds`",
+      "Readiness probe fail nên bị gỡ khỏi Endpoints; sửa bằng nới `timeoutSeconds`",
+      "Image bị xoá khỏi registry; sửa bằng tạo `imagePullSecrets`"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Exit Code 137 = 128+9 (SIGKILL); kernel cgroup theo dõi RSS, vượt `limits.memory` thì OOM killer giết ngay không cảnh báo.\n✓ Nguyên nhân là dùng RAM vượt limit; sửa bằng tăng `limits.memory` và/hoặc chữa leak, cache vô hạn, JVM `-Xmx`.\n✗ SIGTERM cho exit code 143, không phải 137.\n✗ Readiness fail khiến Pod Running nhưng 0/1, không phải OOMKilled.\n✗ Image bị xoá gây ImagePullBackOff, không liên quan tới exit 137."
+  },
+  {
+    "id": "cn-q-148",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-13-observability-troubleshoot",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một Pod ở STATUS Running nhưng cột READY là 0/1 và Service không gửi traffic đến nó. Nguyên nhân khả dĩ nhất?",
+    "options": [
+      "Readiness probe fail → Pod bị gỡ khỏi Endpoints của Service",
+      "Liveness probe fail → container bị restart liên tục",
+      "Pod bị OOMKilled nên kernel giết tiến trình",
+      "Node bị memory pressure nên kubelet Evicted Pod"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Readiness fail khiến Pod vẫn Running (không restart) nhưng READY = 0/1 và bị gỡ khỏi Endpoints nên Service ngừng gửi traffic — khác hẳn liveness.\n✓ Readiness probe fail đúng với triệu chứng Running + 0/1 + biến mất khỏi Endpoints.\n✗ Liveness fail thì container bị restart (RESTARTS tăng), không phải chỉ đứng ở 0/1.\n✗ OOMKilled làm container chết/restart, không phải Running ổn định 0/1.\n✗ Evicted để lại xác Pod ở phase Failed, không phải Pod Running 0/1."
+  },
+  {
+    "id": "cn-q-149",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-13-observability-troubleshoot",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Image production của bạn là distroless (`FROM scratch`), không có `sh`, `curl`, `ps`. Bạn cần chui vào soi network/filesystem của container đang chạy. Cách đúng?",
+    "options": [
+      "`kubectl debug -it web-xyz --image=busybox --target=web -- sh` — ephemeral container dùng chung namespace",
+      "`kubectl exec -it web-xyz -- sh` — mở shell trong container",
+      "`kubectl logs web-xyz -p` — đọc log container trước",
+      "Rebuild image thêm shell rồi redeploy mới debug được"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "`kubectl debug` với ephemeral container gắn thêm container tạm dùng chung network + process namespace với container đích, cứu image tối giản không có shell mà không phải rebuild.\n✓ Ephemeral debug container với `--target` cho bạn công cụ (busybox) chung namespace với container đích.\n✗ `exec -- sh` thất bại vì image distroless không có `sh`.\n✗ Đọc log không cho phép soi filesystem/network động.\n✗ Rebuild + redeploy là dư thừa; `debug` giải quyết ngay mà không cần đổi image."
+  },
+  {
+    "id": "cn-q-150",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-13-observability-troubleshoot",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "`kubectl top pods` báo lỗi `Metrics API not available`. Nguyên nhân gốc là gì?",
+    "options": [
+      "Cluster chưa cài metrics-server — cùng nguồn dữ liệu mà HPA dùng",
+      "Chưa cài Prometheus + Grafana trong namespace monitoring",
+      "Chưa khai báo ServiceMonitor cho các Pod",
+      "Thiếu node-exporter nên không có metrics phần cứng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "`kubectl top` (và HPA) lấy dữ liệu từ metrics-server; không có nó thì Metrics API không khả dụng.\n✓ metrics-server là thành phần bắt buộc cho `top` và HPA — thiếu là báo Metrics API not available.\n✗ Prometheus/Grafana lo observability dài hạn, độc lập với `kubectl top`.\n✗ ServiceMonitor phục vụ Prometheus scrape, không liên quan Metrics API của `top`.\n✗ node-exporter là target của Prometheus, không phải nguồn cho `kubectl top`."
+  },
+  {
+    "id": "cn-q-151",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-13-observability-troubleshoot",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "App của bạn khởi động chậm (nạp cache lớn ~40s). Sau khi deploy, Pod liên tục CrashLoopBackOff dù log không hề có exception. Nghi ngờ hợp lý nhất và cách sửa?",
+    "options": [
+      "Liveness probe quá gắt giết app đang khởi động chậm → tăng `initialDelaySeconds`/`failureThreshold`",
+      "Thiếu biến môi trường/secret → thêm env vào Deployment",
+      "Image sai tag → sửa tên image",
+      "Node hết RAM → thêm capacity cho node"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu rõ liveness probe quá gắt có thể giết app đang khởi động chậm gây CrashLoopBackOff; đặc điểm là không có exception trong log mà vẫn bị restart.\n✓ Liveness probe kích hoạt quá sớm giết tiến trình khởi động chậm; nới `initialDelaySeconds`/`failureThreshold` cho app kịp sẵn sàng.\n✗ Thiếu env/secret thường để lại exception/panic rõ ràng trong log — trái với triệu chứng.\n✗ Sai tag image gây ImagePullBackOff chứ không phải CrashLoopBackOff.\n✗ Hết RAM node dẫn tới Evicted/OOM, không phải crash lặp không có log."
+  },
+  {
+    "id": "cn-q-152",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-13-observability-troubleshoot",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "`kubectl describe pod` hiện: `0/5 nodes are available: 3 Insufficient cpu, 2 node(s) had untolerated taint`. Pod đang ở STATUS nào và cần làm gì?",
+    "options": [
+      "Pending — giảm `requests.cpu` hoặc thêm node cho phần thiếu CPU, và thêm `tolerations` cho phần taint",
+      "CrashLoopBackOff — xem `logs -p` để sửa lỗi app",
+      "Evicted — dọn xác Pod Failed rồi để controller tạo lại",
+      "OOMKilled — tăng `limits.memory`"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Thông báo '0/N nodes are available' là đặc trưng của Pending: scheduler chưa tìm được node vì thiếu CPU và vì taint không được tolerate.\n✓ Pending do hai lý do song song: thiếu CPU (giảm request/thêm node) và taint (thêm tolerations).\n✗ CrashLoopBackOff liên quan app chạy rồi chết, không phải chưa xếp được lịch.\n✗ Evicted là Pod đã bị đuổi khỏi node, không phải chưa được schedule.\n✗ OOMKilled là lỗi memory runtime, không liên quan thông báo scheduling."
+  },
+  {
+    "id": "cn-q-153",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-13-observability-troubleshoot",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Về mô hình thu thập metrics của Prometheus trong Kubernetes, phát biểu nào ĐÚNG?",
+    "options": [
+      "Prometheus theo mô hình pull: định kỳ scrape endpoint `/metrics` của target rồi lưu vào TSDB",
+      "Prometheus theo mô hình push: app chủ động đẩy metrics lên Prometheus",
+      "Grafana là nơi lưu chuỗi thời gian, còn Prometheus chỉ vẽ dashboard",
+      "Alertmanager scrape metrics và Prometheus gửi cảnh báo tới Slack"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Prometheus dùng mô hình pull: định kỳ scrape endpoint `/metrics` (text) của mỗi target và lưu vào TSDB dạng chuỗi thời gian có label.\n✓ Pull/scrape + lưu TSDB đúng là cách Prometheus hoạt động — không đợi app push.\n✗ Push là mô hình ngược lại; bài nói rõ Prometheus PULL chứ không đợi app push.\n✗ Prometheus mới là nơi lưu TSDB; Grafana vẽ dashboard, truy vấn PromQL.\n✗ Alertmanager là bên gửi cảnh báo (Slack/PagerDuty), không phải bên scrape."
+  },
+  {
+    "id": "cn-q-154",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-13-observability-troubleshoot",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "multi",
+    "question": "Ba trụ cột observability kinh điển gồm những gì? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Metrics — con số theo thời gian (CPU, RAM, request/s)",
+      "Logs — dòng sự kiện dạng text",
+      "Traces — đường đi một request qua nhiều service",
+      "Snapshots — ảnh chụp toàn bộ etcd định kỳ",
+      "Backups — bản sao lưu dữ liệu cluster"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bài nêu ba trụ cột observability kinh điển là metrics, logs và traces.\n✓ Metrics là các con số theo thời gian như CPU, RAM, request/s.\n✓ Logs là các dòng sự kiện dạng text app tự nói.\n✓ Traces là đường đi của một request qua nhiều service.\n✗ Snapshots etcd là chuyện backup/khôi phục cluster, không phải trụ cột observability.\n✗ Backups dữ liệu không nằm trong ba trụ cột observability."
+  },
+  {
+    "id": "cn-q-155",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-13-observability-troubleshoot",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Pod ở STATUS ImagePullBackOff. Những nguyên nhân nào phù hợp và cách xử lý nào đúng theo bài? (chọn tất cả)",
+    "options": [
+      "Typo tên hoặc tag image → sửa lại tên/tag cho đúng",
+      "Registry private thiếu credential → tạo secret docker-registry và tham chiếu `imagePullSecrets`",
+      "Registry hoặc tag đã bị xoá → kiểm tra registry/tag còn sống",
+      "App crash lúc boot vì thiếu env → xem `logs -p` để sửa",
+      "Node hết RAM đuổi Pod → thêm capacity cho node"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bài liệt kê ba nguyên nhân ImagePullBackOff: typo tên/tag, registry private thiếu credential, và registry/tag đã bị xoá.\n✓ Typo tên/tag image là nguyên nhân phổ biến — sửa lại cho đúng.\n✓ Registry private thiếu credential — tạo secret `docker-registry` rồi tham chiếu `imagePullSecrets`.\n✓ Registry/tag bị xoá — kiểm tra registry còn sống, tag còn tồn tại.\n✗ App crash vì thiếu env là CrashLoopBackOff (dùng `logs -p`), không phải lỗi kéo image.\n✗ Node hết RAM đuổi Pod là Evicted, không liên quan tới việc pull image."
+  },
+  {
+    "id": "cn-q-156",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-13-observability-troubleshoot",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn muốn cảnh báo khi có container restart trong 1 giờ qua (bắt CrashLoopBackOff) bằng PromQL. Biểu thức nào đúng theo bài?",
+    "options": [
+      "`increase(kube_pod_container_status_restarts_total[1h]) > 0`",
+      "`sum(container_memory_working_set_bytes) by (pod)`",
+      "`rate(container_cpu_usage_seconds_total[5m])`",
+      "`kube_pod_status_ready{condition=\"true\"} == 0`"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài đưa ra đúng truy vấn `increase(kube_pod_container_status_restarts_total[1h]) > 0` để đếm số lần container restart trong 1h nhằm bắt CrashLoopBackOff.\n✓ `increase(...restarts_total[1h]) > 0` đo số restart trong 1 giờ — đúng mục tiêu bắt crash loop.\n✗ `container_memory_working_set_bytes` dùng để đối chiếu OOMKilled (RAM), không đếm restart.\n✗ `rate(...cpu_usage...)` đo CPU thực dùng, không liên quan restart.\n✗ `kube_pod_status_ready == 0` bắt Pod không Ready, không phải đếm số lần restart."
+  },
+  {
+    "id": "cn-q-157",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-14-helm",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong Helm, khi bạn chạy `helm install web-prod ./web` hai lần với hai tên khác nhau vào cùng một namespace, kết quả là gì?",
+    "options": [
+      "Hai release độc lập, mỗi release có lịch sử revision riêng",
+      "Lần cài thứ hai ghi đè lên lần đầu, chỉ còn một release",
+      "Helm báo lỗi vì một chart chỉ được cài đúng một lần mỗi namespace",
+      "Hai release chia sẻ chung một chuỗi revision"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Release là một lần cài một chart vào namespace, mang tên riêng; cài chart nhiều lần với tên khác nhau tạo nhiều release độc lập.\n✓ Hai lần cài với tên khác nhau tạo hai release riêng biệt, mỗi cái có revision và values riêng.\n✗ Không có chuyện ghi đè: tên release khác nhau nên chúng không đụng nhau.\n✗ Helm không giới hạn một chart chỉ cài một lần mỗi namespace.\n✗ Mỗi release giữ chuỗi revision độc lập, không dùng chung."
+  },
+  {
+    "id": "cn-q-158",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-14-helm",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, ba khái niệm hạt nhân của Helm — chart, values, release — tương ứng gần nhất với điều gì?",
+    "options": [
+      "Chart = gói phần mềm (khuôn + mặc định), values = bảng tham số điền vào template, release = một lần cài vào namespace",
+      "Chart = một lần cài, values = lịch sử revision, release = tham số môi trường",
+      "Chart = tham số môi trường, values = gói phần mềm, release = template Go",
+      "Chart = namespace, values = image tag, release = file YAML render ra"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài định nghĩa chart là gói/khuôn, values là bảng tham số, release là một lần cài chart vào namespace.\n✓ Chart là khuôn kèm giá trị mặc định, values điền vào template, release là instance đã cài.\n✗ Đảo lộn vai trò: chart không phải một lần cài và values không phải lịch sử revision.\n✗ Sai hoàn toàn: chart không phải tham số môi trường.\n✗ Chart không phải namespace; các ánh xạ đều lệch."
+  },
+  {
+    "id": "cn-q-159",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-14-helm",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong `Chart.yaml`, sự khác biệt giữa `version` và `appVersion` là gì?",
+    "options": [
+      "`version` là phiên bản của gói chart (bump khi sửa template), `appVersion` chỉ ghi chú phiên bản app đóng bên trong",
+      "`version` là phiên bản app đang chạy, `appVersion` là phiên bản của template",
+      "Cả hai luôn phải giống nhau, nếu lệch Helm sẽ báo lỗi",
+      "`version` dùng cho subchart, `appVersion` dùng cho chart cha"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài phân biệt rõ: version là phiên bản của gói chart, appVersion chỉ ghi chú app bên trong, hai thứ tiến hoá độc lập.\n✓ version bump khi sửa template/logic; appVersion chỉ để hiển thị app bản mấy.\n✗ Đảo ngược ý nghĩa hai trường.\n✗ Hai trường tiến hoá độc lập, không bắt buộc bằng nhau.\n✗ Cả hai đều là trường của chính chart đó, không phân theo cha/con."
+  },
+  {
+    "id": "cn-q-160",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-14-helm",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Helm 3 render template ở đâu, và trạng thái release được lưu như thế nào?",
+    "options": [
+      "Render ở phía client thành YAML thuần rồi gửi API server; trạng thái release lưu trong một Secret trong namespace",
+      "Render ở component server-side Tiller; trạng thái lưu trong etcd của Tiller",
+      "Render trong cluster bởi API server; trạng thái lưu trong một ConfigMap ở kube-system",
+      "Render ở client nhưng cluster phải chạy Helm agent để thực thi chart"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Helm 3 render phía client thành manifest thuần, cluster chỉ nhận YAML; trạng thái release lưu vào Secret trong chính namespace, và Helm 3 đã bỏ Tiller.\n✓ Client render, gửi YAML hoàn chỉnh, state nằm trong Secret của namespace.\n✗ Helm 3 đã bỏ Tiller, không còn component server-side.\n✗ API server không render Helm template; cluster chỉ nhận YAML.\n✗ Cluster không chạy Helm agent nào để thực thi chart."
+  },
+  {
+    "id": "cn-q-161",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-14-helm",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đoạn template chỉ đặt `replicas` khi `{{- if not .Values.autoscaling.enabled }}`. Lý do cốt lõi của nhánh này là gì?",
+    "options": [
+      "Nếu bật autoscaling thì HPA quản lý số bản; đặt cứng replicas sẽ đánh nhau với HPA",
+      "replicas và autoscaling không thể cùng khai báo trong một Deployment",
+      "Bỏ replicas giúp Pod khởi động nhanh hơn khi có HPA",
+      "HPA yêu cầu replicas phải bằng 0 lúc khởi tạo"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài giải thích khi bật autoscaling, HPA quản lý số bản chạy; đặt cứng replicas sẽ xung đột với HPA.\n✓ Khi HPA điều khiển số replica, việc đặt cứng replicas trong Deployment tạo xung đột kéo qua kéo lại.\n✗ Về kỹ thuật có thể khai báo cả hai, nhưng chúng sẽ đánh nhau — đó chính là lý do phải rẽ nhánh.\n✗ Không liên quan tới tốc độ khởi động Pod.\n✗ HPA không yêu cầu replicas bằng 0."
+  },
+  {
+    "id": "cn-q-162",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-14-helm",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn đưa `env` value là `8080` vào template nhưng render ra YAML báo lỗi vì k8s cần env value là chuỗi. Idiom nào trong bài sửa đúng?",
+    "options": [
+      "Bọc bằng `| quote` để ép thành string, ví dụ `value: {{ $v | quote }}`",
+      "Dùng `| default \"8080\"` để tránh giá trị rỗng",
+      "Thêm `nindent 4` trước value để canh lề",
+      "Đổi sang `toYaml` để giữ nguyên kiểu number"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu | quote bọc nháy, bắt buộc cho env value vì \"true\"/\"8080\" phải là string chứ không phải bool/number.\n✓ | quote biến 8080 thành \"8080\" đúng kiểu string mà k8s cần cho env value.\n✗ default chỉ xử lý giá trị rỗng, không đổi kiểu number thành string.\n✗ nindent chỉ canh lề block, không đổi kiểu dữ liệu.\n✗ toYaml giữ nguyên number, càng làm sai kiểu mong muốn."
+  },
+  {
+    "id": "cn-q-163",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-14-helm",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với `values.yaml` mặc định có `replicaCount: 1`, `env.LOG_LEVEL: debug` và bạn cài bằng `-f values-prod.yaml` chỉ chứa `replicaCount: 6` và `image.tag: \"2.2.4\"`, thì `LOG_LEVEL` cuối cùng là gì?",
+    "options": [
+      "debug — vì override chỉ đổi field khai báo, phần còn lại kế thừa qua deep-merge",
+      "Rỗng — vì values-prod.yaml không khai báo env nên nó bị xoá",
+      "info — vì prod luôn tự nâng log level",
+      "Lỗi — vì thiếu env trong file override"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Helm deep-merge: file override chỉ cần chứa field muốn đổi, phần còn lại kế thừa từ values.yaml.\n✓ values-prod không đụng env nên LOG_LEVEL giữ nguyên debug từ values.yaml qua merge sâu.\n✗ Deep-merge không xoá field vắng mặt trong override; env không bị mất.\n✗ Không có cơ chế tự nâng log level; nếu muốn info phải khai báo trong override.\n✗ Thiếu env trong override không gây lỗi vì đã có mặc định."
+  },
+  {
+    "id": "cn-q-164",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-14-helm",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong pipeline CI/CD deploy prod, lệnh nào phù hợp nhất để deploy idempotent, tự rollback khi hỏng và chờ tới khi thực sự sẵn sàng?",
+    "options": [
+      "`helm upgrade --install web-prod ./web -f values-prod.yaml --atomic --wait`",
+      "`helm install web-prod ./web -f values-prod.yaml`",
+      "`helm template web-prod ./web -f values-prod.yaml | kubectl apply -f -`",
+      "`helm upgrade web-prod ./web -f values-prod.yaml`"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "upgrade --install là idempotent (cài hoặc nâng), --atomic tự rollback khi thất bại, --wait chờ mọi resource sẵn sàng.\n✓ Kết hợp --install (idempotent), --atomic (tự rollback) và --wait (chờ ready) đúng cho production CI/CD.\n✗ install thuần fail nếu release đã tồn tại — không idempotent.\n✗ helm template | kubectl apply chỉ đẩy YAML, mất release/rollback và không tự lui khi hỏng.\n✗ upgrade thuần thiếu --install (fail nếu chưa có release), thiếu --atomic và --wait."
+  },
+  {
+    "id": "cn-q-165",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-14-helm",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bản v2.3.0 vừa upgrade lên rev 3 bị rò rỉ bộ nhớ. Bạn chạy `helm rollback web-prod 2`. Điều gì xảy ra với lịch sử revision?",
+    "options": [
+      "Tạo revision 4 là bản sao nội dung của revision 2; rev 3 vẫn còn trong lịch sử",
+      "Xoá revision 3 và revision 4, đưa con trỏ về đúng revision 2",
+      "Ghi đè trực tiếp lên revision 2, không tạo revision mới",
+      "Đưa release về revision 1 vì rollback luôn về bản install đầu tiên"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Theo sơ đồ vòng đời, rollback tạo revision mới sao chép lại nội dung một revision cũ; rev 4 = bản sao của rev 2.\n✓ rollback về rev 2 sinh rev 4 mang nội dung y hệt rev 2, lịch sử cũ được giữ nguyên.\n✗ Rollback không xoá các revision cũ; nó cộng thêm revision mới.\n✗ Không ghi đè lên rev 2; luôn tạo revision kế tiếp.\n✗ Rollback về số bạn chỉ định (2), không bắt buộc về rev 1."
+  },
+  {
+    "id": "cn-q-166",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-14-helm",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Team dev muốn tắt Redis (dùng in-memory), prod muốn bật cluster Redis, dùng CÙNG một chart cha. Cách khai báo đúng theo bài là gì?",
+    "options": [
+      "Khai báo subchart redis với `condition: redis.enabled` trong Chart.yaml, rồi đặt `redis.enabled` khác nhau ở mỗi file values",
+      "Viết hai chart cha riêng, một bản có Redis một bản không",
+      "Dùng `--set redis=null` ở dev để gỡ subchart khỏi charts/",
+      "Xoá thư mục charts/redis thủ công trên môi trường dev"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu condition: redis.enabled cho phép bật/tắt subchart theo môi trường bằng cách đặt cờ khác nhau trong values.\n✓ condition trong Chart.yaml + cờ redis.enabled theo từng values cho cùng chart cha bật/tắt subchart linh hoạt.\n✗ Không cần hai chart cha riêng — mục tiêu là dùng chung một chart.\n✗ --set redis=null không phải cơ chế bật/tắt subchart; condition mới đúng.\n✗ Xoá thủ công charts/redis phá tính lặp lại và không phải cách chuẩn."
+  },
+  {
+    "id": "cn-q-167",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-14-helm",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bảng so sánh, những phát biểu nào ĐÚNG về sự khác biệt giữa Helm và Kustomize? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Kustomize được cài sẵn trong kubectl (`kubectl apply -k`), còn Helm phải cài riêng",
+      "YAML gốc của Kustomize là YAML k8s hợp lệ apply được luôn; YAML gốc của Helm là template có `{{ }}` không apply thẳng",
+      "Helm có vòng đời release (install/upgrade/rollback + lịch sử), còn Kustomize chỉ sinh YAML để kubectl apply lo phần còn lại",
+      "Kustomize hỗ trợ đóng gói, versioning và dependency như Helm",
+      "Helm chỉ đổi field qua patch, còn Kustomize tham số hoá tự do bằng `.Values.x`"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bảng so sánh nêu Kustomize có sẵn trong kubectl, dùng YAML thật, không có vòng đời release; Helm template hoá, có package/version/dependency và vòng đời release.\n✓ Kustomize dùng qua kubectl apply -k; Helm cài riêng.\n✓ YAML gốc Kustomize apply thẳng được, còn của Helm là template chứa {{ }}.\n✓ Helm có install/upgrade/rollback + lịch sử; Kustomize chỉ sinh YAML.\n✗ Kustomize không có khái niệm package/version/dependency sẵn — đó là điểm mạnh của Helm.\n✗ Bị đảo: chính Kustomize đổi field qua patch, còn Helm mới dùng .Values.x tự do."
+  },
+  {
+    "id": "cn-q-168",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-14-helm",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Về template Go trong Helm, những phát biểu nào ĐÚNG theo bài? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "`{{- ... }}` cắt khoảng trắng phía có dấu `-`, quan trọng vì YAML nhạy cảm với thụt lề",
+      "`nindent N` xuống dòng rồi thụt N khoảng trắng cho cả khối, dùng khi chèn block con vào đúng cấp",
+      "`toYaml .` biến một nhánh values (object/list) thành YAML nguyên vẹn, tránh liệt kê từng field",
+      "`include \"web.fullname\" .` gọi named template và truyền toàn bộ ngữ cảnh `.`",
+      "`| default X` ép giá trị luôn thành X kể cả khi giá trị đã có, để ghi đè cứng"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Bài mô tả các idiom: dấu - cắt whitespace, nindent thêm newline + thụt cho cả khối, toYaml giữ nguyên nhánh values, include truyền ngữ cảnh .; default chỉ dùng khi giá trị rỗng.\n✓ Dấu - cắt whitespace, cần thiết vì YAML nhạy thụt lề.\n✓ nindent N xuống dòng và thụt N cho cả block con.\n✓ toYaml . xuất nguyên nhánh values thành YAML, khỏi liệt kê từng field.\n✓ include gọi named template với toàn bộ ngữ cảnh . được truyền vào.\n✗ default chỉ rơi về X khi giá trị RỖNG, không ghi đè khi giá trị đã có."
+  },
+  {
+    "id": "cn-q-169",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-15-operators",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn apply một CRD PostgresCluster rồi tạo một object PostgresCluster tên orders-db, nhưng CHƯA cài operator (controller). Kết quả nào đúng?",
+    "options": [
+      "Object được lưu trong etcd và kubectl get pgc thấy nó, nhưng không có Pod Postgres nào mọc lên và cột PHASE trống",
+      "API server từ chối apply vì thiếu controller",
+      "Kubernetes tự tạo StatefulSet Postgres dựa trên schema trong CRD",
+      "Object bị xoá tự động sau vài giây vì không có controller nhận nó"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "CRD chỉ tạo ra danh từ (dữ liệu trong etcd), tự nó không làm gì; cần controller để biến CR thành hiện thực.\n✓ Object lưu trong etcd, kubectl thấy nó nhưng không Pod nào mọc lên và PHASE trống — bằng chứng CRD chỉ là dữ liệu.\n✗ API server vẫn chấp nhận apply bình thường, không đòi hỏi controller mới lưu được object.\n✗ CRD không chứa logic tạo StatefulSet; schema chỉ dùng để validate, không hành động.\n✗ Object không tự bị xoá; nó nằm im chờ một controller đọc."
+  },
+  {
+    "id": "cn-q-170",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-15-operators",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, công thức định nghĩa một Operator là gì?",
+    "options": [
+      "CRD (danh từ mới) + Custom Controller chạy reconcile loop (động từ)",
+      "Helm chart + values.yaml",
+      "Deployment + Service + HPA",
+      "StatefulSet + PersistentVolumeClaim"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Operator đóng gói tri thức vận hành bằng cách kết hợp một kind mới với controller riêng cho nó.\n✓ CRD tạo danh từ (dữ liệu), controller reconcile là động từ biến dữ liệu thành thực tế — đúng định nghĩa Operator.\n✗ Helm chart + values chỉ rải YAML lúc cài, không có controller chạy liên tục — đó là Helm, không phải Operator.\n✗ Deployment + Service + HPA là combo cho app stateless thường, không phải cấu trúc của một Operator.\n✗ StatefulSet + PVC là resource con mà controller có thể tạo, không phải bản thân Operator."
+  },
+  {
+    "id": "cn-q-171",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-15-operators",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, sự khác biệt cốt lõi giữa Helm và Operator là gì?",
+    "options": [
+      "Helm đóng gói cách dựng (cấu trúc triển khai lúc đầu); Operator đóng gói cách vận hành liên tục 24/7",
+      "Helm chạy trong cluster còn Operator chạy ngoài cluster",
+      "Helm dùng cho stateful còn Operator chỉ dùng cho stateless",
+      "Helm cần CRD còn Operator thì không"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Helm như hộp nguyên liệu kèm công thức, rời đi sau khi cài; Operator như đầu bếp thường trực liên tục xử lý.\n✓ Helm đóng gói cấu trúc triển khai lúc đầu, Operator đóng gói tri thức vận hành liên tục — đúng trọng tâm bài.\n✗ Không đúng về vị trí chạy: controller của Operator chạy trong cluster, và Helm là client tool.\n✗ Ngược hoàn toàn: Operator hợp với stateful phức tạp, Helm thường đủ cho stateless.\n✗ Ngược lại: chính Operator cần CRD để định nghĩa kind mới, còn Helm chỉ điền template."
+  },
+  {
+    "id": "cn-q-172",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-15-operators",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong reconcile loop, controller được mô tả là 'level-triggered, không edge-triggered'. Hệ quả thực tế quan trọng nhất của tính chất này là gì?",
+    "options": [
+      "Nếu controller crash và bỏ lỡ nhiều sự kiện, khi sống lại nó đọc lại toàn cảnh trạng thái hiện tại nên vẫn hội tụ đúng",
+      "Controller chỉ hành động khi nhận đúng sự kiện, bỏ lỡ sự kiện là mất đồng bộ vĩnh viễn",
+      "Controller phải lưu lịch sử mọi sự kiện để replay khi khởi động lại",
+      "Controller chỉ chạy một lần khi CR được tạo, sau đó dừng hẳn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Level-triggered nghĩa là luôn nhìn trạng thái hiện tại rồi sửa, không phụ thuộc lịch sử sự kiện.\n✓ Crash bỏ lỡ sự kiện vẫn ổn: sống lại nó đọc lại toàn cảnh và hội tụ đúng — chính là sức mạnh của level-triggered.\n✗ Mô tả đúng edge-triggered (dựa vào sự kiện), là cái mà bài nói controller KHÔNG làm.\n✗ Level-triggered không cần lưu/replay lịch sử; nó đọc trạng thái hiện tại trực tiếp.\n✗ Controller chạy liên tục qua watch và requeue định kỳ, không dừng sau lần tạo đầu."
+  },
+  {
+    "id": "cn-q-173",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-15-operators",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đội bạn cần triển khai một REST API stateless: chỉ cần rolling update, HPA scale theo tải, restart lại là xong không mất data. Lựa chọn đúng theo bài là gì?",
+    "options": [
+      "Deployment + Service + HPA + Helm/Kustomize, đừng viết operator",
+      "Viết một operator riêng với CRD RestApi để tự động hoá",
+      "Chuyển sang StatefulSet và viết controller failover",
+      "Đóng gói thành CRD nhưng không cần controller"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "App stateless với self-healing, scale, rollout đều đã built-in thì viết operator chỉ thêm service phải bảo trì mà không thêm giá trị.\n✓ Deployment + Service + HPA + Helm/Kustomize giải quyết trọn nhu cầu này — đúng khuyến nghị của bài.\n✗ Viết operator cho app stateless đơn giản là trả giá vô ích, thêm phần mềm phân tán phải bảo trì.\n✗ StatefulSet + failover controller dành cho stateful phức tạp, thừa thãi với API stateless.\n✗ CRD không controller chỉ tạo dữ liệu nằm im, không mang lại gì cho app này."
+  },
+  {
+    "id": "cn-q-174",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-15-operators",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong hàm Reconcile mã giả, dòng `return Result{}, client.IgnoreNotFound(err)` khi Get CR thất bại phục vụ mục đích gì?",
+    "options": [
+      "Nếu CR đã bị xoá (không tìm thấy) thì bỏ qua yên lặng, không coi là lỗi cần retry",
+      "Tạo lại CR đã bị xoá để giữ desired state",
+      "Xoá toàn bộ StatefulSet và Service con ngay lập tức",
+      "Ghi status Phase = Failing rồi requeue liên tục"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khi CR đã bị xoá, việc reconcile không còn ý nghĩa nên controller bỏ qua thay vì báo lỗi.\n✓ IgnoreNotFound biến lỗi not-found thành nil để bỏ qua yên lặng khi CR đã bị xoá — đúng ý comment 'CR đã bị xoá -> bỏ qua'.\n✗ Controller không tạo lại CR người dùng đã chủ động xoá; đó không phải desired state.\n✗ Việc dọn resource con thường do owner references / garbage collection lo, không phải hành động của dòng này.\n✗ Không ghi Failing hay requeue vô hạn; mục tiêu là thoát nhẹ nhàng khi CR biến mất."
+  },
+  {
+    "id": "cn-q-175",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-15-operators",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo Operator Maturity Model 5 cấp trong bài, những khả năng nào thuộc các cấp CAO HƠN 'Basic Install' (cấp 1)? Chọn tất cả đáp án đúng.",
+    "options": [
+      "Backup, restore, failover — quản trọn vòng đời dữ liệu (Full Lifecycle)",
+      "Tự scale theo tải, tự tuning, tự chữa lành, nhận diện bất thường (Auto Pilot)",
+      "Xuất metrics, alert, log, health tuỳ app (Deep Insights)",
+      "Cài đặt và cấu hình tự động app từ CR",
+      "Chỉ có khả năng lưu object CR vào etcd, không làm gì thêm"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Basic Install (cấp 1) chỉ là cài/cấu hình; các cấp cao hơn thêm dần upgrade, lifecycle, insights, auto-pilot.\n✓ Full Lifecycle (backup/restore/failover) là cấp 3, cao hơn Basic Install.\n✓ Auto Pilot (tự scale/tuning/chữa lành) là cấp 5, cao nhất.\n✓ Deep Insights (metrics/alert/log) là cấp 4, cao hơn Basic Install.\n✗ Cài đặt và cấu hình tự động từ CR chính là Basic Install cấp 1, không phải cấp cao hơn.\n✗ Lưu object vào etcd mà không làm gì là hành vi của CRD trần, thậm chí chưa đạt cấp 1."
+  },
+  {
+    "id": "cn-q-176",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-15-operators",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong CRD YAML, trong danh sách versions, bao nhiêu version được phép đặt `storage: true`?",
+    "options": [
+      "Đúng một version duy nhất được lưu trong etcd",
+      "Tất cả version phải đặt storage: true",
+      "Ít nhất hai version để dự phòng",
+      "Không version nào, storage do etcd tự quyết"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "storage: true đánh dấu version được dùng để lưu dữ liệu trong etcd, chỉ được đúng một version.\n✓ Đúng một version = storage: true như comment trong YAML nêu rõ.\n✗ Không thể tất cả cùng true vì etcd chỉ lưu theo một định dạng version tại một thời điểm.\n✗ Không cần và không được đặt hai version cùng storage: true.\n✗ Trường storage phải do người định nghĩa CRD khai báo, không phải etcd tự quyết."
+  },
+  {
+    "id": "cn-q-177",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-15-operators",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một bạn muốn chạy Kafka trên Kubernetes và định tự viết operator từ đầu. Theo bài, những khuyến nghị/nguyên tắc nào là đúng? Chọn tất cả đáp án đúng.",
+    "options": [
+      "Ưu tiên dùng lại operator chín muồi có sẵn trên OperatorHub (ví dụ Strimzi) thay vì viết lại",
+      "Nếu vẫn phải viết, dùng Kubebuilder / Operator SDK để scaffold khung, không viết reconcile loop từ số 0",
+      "Hàm Reconcile phải idempotent: gọi nhiều lần cùng input cho cùng kết quả và luôn tiến về desired state",
+      "Nên tự lo watch, cache, work-queue, leader election bằng tay để hiểu sâu, thay vì dùng controller-runtime",
+      "Kafka là stateful phức tạp nên đây là ứng viên hợp lý cho operator pattern"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Bài khuyên tái sử dụng operator chín muồi, dùng scaffold, giữ Reconcile idempotent; Kafka đúng là ca hợp lý cho operator.\n✓ Luôn ưu tiên dùng lại operator chín muồi trên OperatorHub như Strimzi thay vì viết lại.\n✓ Gần như không bao giờ viết reconcile loop từ số 0; dùng Kubebuilder/Operator SDK scaffold khung.\n✓ Nguyên tắc vàng: Reconcile phải idempotent và luôn tiến về desired state.\n✓ Kafka là stateful phức tạp (message broker) — đúng loại app nên dùng operator.\n✗ Tự lo watch/cache/work-queue/leader election bằng tay là điều bài khuyên tránh; đó chính là việc controller-runtime lo hộ."
+  },
+  {
+    "id": "cn-q-178",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-15-operators",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong CRD, `subresources: status: {}` được khai báo. Lợi ích chính của việc tách /status thành subresource là gì?",
+    "options": [
+      "Controller cập nhật status mà không đụng tới spec (và ngược lại), tách rõ desired state do người dùng ghi và observed state do controller ghi",
+      "Cho phép người dùng cuối chỉnh sửa status để ép controller hành động",
+      "Bỏ qua bước validate OpenAPI schema cho toàn bộ object",
+      "Tự động sinh thêm Pod mỗi khi status thay đổi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Subresource status tách phần desired (spec) do người dùng ghi khỏi phần observed (status) do controller ghi.\n✓ Controller cập nhật status không đụng spec và ngược lại — đúng mục đích tách /status như comment YAML nêu.\n✗ Mục tiêu ngược lại: status là nơi controller ghi observed state, không phải để người dùng ép hành động.\n✗ Subresource status không tắt validate schema; validation vẫn áp dụng.\n✗ Việc tạo Pod là do reconcile logic quyết định, không phải hệ quả của thay đổi status."
+  },
+  {
+    "id": "cn-q-179",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-15-operators",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong workflow Kubebuilder, bạn khai báo schema trong Go struct rồi chạy `make manifests`. Vì sao bài nhấn mạnh cách này thay vì viết CRD YAML thủ công song song?",
+    "options": [
+      "Go struct là single source of truth; sinh CRD YAML tự động tránh lệch (drift) giữa code và manifest",
+      "Vì Kubernetes không chấp nhận CRD YAML viết tay",
+      "Vì make manifests nhanh hơn khi apply CRD vào cluster",
+      "Vì Go struct thay thế hoàn toàn nhu cầu có CRD trong cluster"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khai báo schema một lần trong Go struct rồi sinh CRD YAML tự động giữ code và manifest luôn khớp.\n✓ Go struct là single source of truth, make manifests sinh CRD YAML tránh lệch giữa code và manifest.\n✗ Kubernetes hoàn toàn chấp nhận CRD YAML viết tay; đó không phải lý do.\n✗ Vấn đề là tránh drift, không phải tốc độ apply.\n✗ Vẫn cần CRD được apply vào cluster; Go struct không thay thế việc đó, chỉ sinh ra nó."
+  },
+  {
+    "id": "cn-q-180",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-15-operators",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bài nêu Operator SDK (Red Hat) khác Kubebuilder ở điểm nào?",
+    "options": [
+      "Operator SDK bọc quanh Kubebuilder, thêm đường Helm-based và Ansible-based (không cần Go) cùng tích hợp OLM",
+      "Operator SDK thay thế hoàn toàn reconcile loop bằng Helm, không có controller",
+      "Kubebuilder chỉ hỗ trợ Ansible còn Operator SDK chỉ hỗ trợ Go",
+      "Operator SDK không dùng CRD, chỉ dùng ConfigMap"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Operator SDK mở rộng Kubebuilder với thêm lựa chọn ngôn ngữ và tích hợp phân phối OLM.\n✓ Operator SDK bọc quanh Kubebuilder, thêm Helm-based/Ansible-based và tích hợp OLM (Operator Lifecycle Manager).\n✗ Operator SDK vẫn dựa trên mô hình controller/reconcile, không xoá bỏ nó.\n✗ Ngược với thực tế: Kubebuilder dựa trên Go/controller-runtime, không phải chỉ Ansible.\n✗ Operator vẫn dùng CRD làm nền, không thay bằng ConfigMap."
+  },
+  {
+    "id": "cn-q-181",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-16-gitops",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong mô hình GitOps, đâu là 'nguồn sự thật DUY NHẤT' cho trạng thái mong muốn của cụm?",
+    "options": [
+      "Trạng thái live đang chạy trong etcd của cluster",
+      "Git repo chứa manifest/Helm/Kustomize",
+      "Log của CI runner",
+      "Dashboard của ArgoCD"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "GitOps đặt Git làm nguồn sự thật duy nhất; muốn đổi cụm phải commit vào Git.\n✓ Git repo chứa manifest/Helm/Kustomize là desired state tối thượng, có version và history.\n✗ Trạng thái live trong etcd là thứ agent kéo về đúng Git, không phải nguồn sự thật.\n✗ Log của CI runner chỉ là dấu vết rời rạc, không mô tả desired state.\n✗ Dashboard ArgoCD chỉ trực quan hoá trạng thái, bản thân nó không phải nguồn sự thật."
+  },
+  {
+    "id": "cn-q-182",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-16-gitops",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Lý do bảo mật LỚN NHẤT khiến GitOps pull-based thắng CI-push cho khâu deploy là gì?",
+    "options": [
+      "Agent kéo Git nên deploy nhanh hơn CI push",
+      "API server không cần lộ cho CI và admin kubeconfig không rời khỏi cluster",
+      "GitOps không cần credential nào cả",
+      "Git repo tự động mã hoá mọi secret"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Với pull-based, agent nằm sẵn trong cluster nên credential cụm không cần đi ra ngoài.\n✓ API server không phải expose cho CI và admin kubeconfig không rời cluster, giảm mạnh bề mặt tấn công.\n✗ Tốc độ deploy không phải lý do bảo mật cốt lõi.\n✗ GitOps vẫn cần credential, chỉ là agent chỉ cần quyền đọc Git (read-only deploy key).\n✗ Git không tự mã hoá secret; đó là việc của công cụ như SOPS, không liên quan luận điểm này."
+  },
+  {
+    "id": "cn-q-183",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-16-gitops",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Ai đó chạy 'kubectl scale' prod từ 3 lên 10 replica, trong khi Git vẫn ghi 3 và Application bật 'selfHeal: true'. Kết quả là gì?",
+    "options": [
+      "Cụm giữ nguyên 10 replica vì kubectl có ưu tiên cao hơn Git",
+      "Agent phát hiện drift và tự kéo về 3 replica",
+      "Agent báo lỗi và dừng đồng bộ cho tới khi có người can thiệp",
+      "Git tự cập nhật thành 10 để khớp live state"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "selfHeal biến live state lệch Git thành thứ agent tự sửa về đúng Git.\n✓ Agent thấy live=10 nhưng Git=3, đánh dấu drift và tự kéo về 3 replica.\n✗ kubectl tay không có ưu tiên hơn Git; muốn 10 thật phải sửa Git rồi commit.\n✗ selfHeal không dừng lại chờ người, nó tự sync về Git.\n✗ Agent không ghi ngược live state vào Git; chiều đồng bộ luôn là Git → cluster."
+  },
+  {
+    "id": "cn-q-184",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-16-gitops",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong GitOps, cách rollback prod về trạng thái trước một commit hỏng là gì?",
+    "options": [
+      "kubectl edit trực tiếp trên prod để sửa nhanh",
+      "git revert <sha> rồi push, agent tự sync cụm về bản cũ",
+      "Xoá agent ArgoCD/Flux đi cho cụm ngừng thay đổi",
+      "Khôi phục thủ công từ snapshot etcd"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mọi thay đổi là commit nên rollback cũng là một thao tác Git có review, có audit.\n✓ git revert tạo commit đảo ngược, agent phát hiện Git đổi và tự kéo cụm về bản cũ.\n✗ kubectl edit tay bị self-heal kéo lại, và phá vỡ kỷ luật GitOps.\n✗ Xoá agent chỉ khiến drift không được sửa, không hề rollback.\n✗ Khôi phục snapshot etcd là thao tác thủ công căng thẳng, đúng thứ GitOps tránh."
+  },
+  {
+    "id": "cn-q-185",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-16-gitops",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đội cần dashboard trực quan hoá cây tài nguyên và sync status cho nhiều đội dùng chung. Nên chọn công cụ nào?",
+    "options": [
+      "Flux vì nó thuần CLI/CRD, tối giản",
+      "ArgoCD vì có UI/dashboard mạnh, ApplicationSet/Projects cho multi-tenant",
+      "Chỉ dùng kubectl apply từ CI cho gọn",
+      "Helm CLI chạy tay trên máy mỗi dev"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "ArgoCD mạnh về trực quan hoá và quản lý nhiều đội.\n✓ ArgoCD có UI/dashboard mạnh, ApplicationSet và Projects hợp multi-tenant.\n✗ Flux gọn và thuần CRD nhưng không có dashboard mạnh, ngược yêu cầu.\n✗ kubectl apply từ CI là mô hình push cũ, mất audit và bảo mật kém.\n✗ Helm CLI chạy tay không phải công cụ GitOps, không có drift detection/dashboard."
+  },
+  {
+    "id": "cn-q-186",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-16-gitops",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Yêu cầu: deploy v2 nhưng cần khả năng rollback TỨC THÌ và chấp nhận tốn gấp đôi tài nguyên trong lúc chuyển. Chiến lược phù hợp nhất?",
+    "options": [
+      "Rolling update",
+      "Blue-green",
+      "Canary progressive delivery",
+      "Recreate (xoá hết rồi tạo lại)"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Rollback tức thì + chấp nhận 2x tài nguyên là chữ ký của blue-green.\n✓ Blue-green chạy 2 môi trường song song, đổi selector là rollback tức thì, đúng đánh đổi 2x tài nguyên.\n✗ Rolling rẻ nhưng rollback là rolling ngược nên không tức thì.\n✗ Canary rủi ro thấp nhưng triển khai chậm theo từng bước, không phải 'tức thì'.\n✗ Recreate gây downtime và không cho rollback tức thì."
+  },
+  {
+    "id": "cn-q-187",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-16-gitops",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Nhược điểm CỐT LÕI của rolling update mà kỹ sư phải lường trước khi thiết kế release là gì?",
+    "options": [
+      "Luôn tốn gấp đôi tài nguyên trong lúc chuyển",
+      "v1 và v2 chạy đồng thời lúc chuyển nên phải tương thích DB/schema",
+      "Bắt buộc phải có Service Mesh để chia traffic",
+      "Không thể đạt zero-downtime dù chỉnh tham số nào"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Rolling thay dần từng nhóm pod nên có giai đoạn hai phiên bản cùng phục vụ.\n✓ v1 và v2 chạy đồng thời lúc chuyển, buộc thay đổi phải tương thích DB/schema.\n✗ Rolling không tốn gấp đôi tài nguyên; đó là đặc điểm của blue-green.\n✗ Rolling không cần Service Mesh; nó là chiến lược mặc định của Deployment.\n✗ Có thể đạt zero-downtime bằng maxUnavailable: 0 và maxSurge: 1."
+  },
+  {
+    "id": "cn-q-188",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-16-gitops",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong Argo Rollouts, AnalysisTemplate 'success-rate' đặt successCondition '>= 0.95' và failureLimit 2. Khi metric tụt dưới ngưỡng đủ số lần trong bước canary, điều gì xảy ra?",
+    "options": [
+      "Rollout bỏ qua analysis và vẫn setWeight lên 100%",
+      "Rollout tự abort và rollback về v1 tự động",
+      "Rollout tạm dừng vô thời hạn chờ người promote",
+      "Prometheus tự khởi động lại các pod v2 bị lỗi"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "failureLimit định số lần dưới ngưỡng trước khi analysis coi là fail và hủy canary.\n✓ Vượt failureLimit khiến bước analysis fail, Rollout tự abort và rollback về v1 theo dữ liệu.\n✗ Rollout không bỏ qua analysis; bước analysis nằm giữa các setWeight để chặn promote khi hỏng.\n✗ Nó rollback tự động, không đứng chờ người promote.\n✗ Prometheus chỉ cung cấp metric để phân tích, không khởi động lại pod."
+  },
+  {
+    "id": "cn-q-189",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-16-gitops",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Với ArgoCD, sau khi muốn nâng image 'v2.3.1 → v2.3.2' đúng chuẩn GitOps thì làm gì?",
+    "options": [
+      "Chạy 'kubectl set image' trực tiếp trên namespace prod",
+      "Sửa tag trong path của repo, commit, push; ArgoCD thấy OutOfSync rồi apply",
+      "Dùng 'docker push' image mới là cụm tự cập nhật",
+      "Xoá Deployment cũ rồi tạo lại bằng tay"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Trong GitOps mọi thay đổi cụm đều đi qua Git.\n✓ Sửa tag trong repo rồi commit/push, ArgoCD phát hiện OutOfSync và apply về Synced.\n✗ kubectl set image tay bị self-heal kéo lại và phá kỷ luật GitOps.\n✗ docker push chỉ đẩy image lên registry, không đổi desired state trong Git.\n✗ Xoá và tạo lại tay là thao tác thủ công không audit, sai mô hình."
+  },
+  {
+    "id": "cn-q-190",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-16-gitops",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những phát biểu nào ĐÚNG về canary / progressive delivery (theo bài)?",
+    "options": [
+      "Rót traffic tăng dần và soi metric giữa mỗi bước, blast radius nhỏ",
+      "Có thể tự rollback theo dữ liệu, không cần người trực",
+      "Luôn tốn gấp đôi tài nguyên như blue-green",
+      "Cần traffic splitting (Service Mesh/Ingress) và metric đáng tin",
+      "Là chiến lược đơn giản và triển khai nhanh nhất"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Canary đánh đổi độ phức tạp lấy rủi ro thấp nhất và tự động hoá theo metric.\n✓ Rót traffic tăng dần (5→25→50→100%) và soi metric mỗi bước, chỉ một phần nhỏ user dính khi lỗi.\n✓ Tự rollback theo dữ liệu (analysis fail) mà không cần người trực.\n✓ Cần traffic splitting qua Service Mesh/Ingress và metric đáng tin để phân tích.\n✗ Canary không cố định tốn gấp đôi tài nguyên; đó là đặc trưng blue-green.\n✗ Canary phức tạp nhất và triển khai chậm hơn vì phải chờ mỗi bước, không phải đơn giản/nhanh nhất."
+  },
+  {
+    "id": "cn-q-191",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-16-gitops",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Trong ArgoCD Application, syncPolicy.automated có 'prune: true' và 'selfHeal: true'. Chọn các hệ quả ĐÚNG.",
+    "options": [
+      "Tài nguyên bị xoá khỏi Git sẽ bị xoá khỏi cluster",
+      "Live state lệch Git sẽ được tự kéo về đúng Git",
+      "Mọi thay đổi kubectl edit trên prod trở nên vô nghĩa vì bị kéo lại",
+      "Application sẽ tự sửa Git cho khớp với live state",
+      "CI runner được cấp admin kubeconfig để đẩy thay đổi"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "prune và selfHeal cùng ép cluster bám sát Git theo cả hai hướng thêm và bớt.\n✓ prune: true khiến tài nguyên bị xoá khỏi Git cũng bị xoá khỏi cluster.\n✓ selfHeal: true khiến live lệch Git được tự kéo về đúng Git.\n✓ Vì bị kéo lại, kubectl edit tay trên prod trở nên vô nghĩa.\n✗ Chiều đồng bộ là Git → cluster; agent không sửa Git theo live.\n✗ GitOps pull-based nghĩa là credential không rời cluster, CI không cầm admin kubeconfig."
+  },
+  {
+    "id": "cn-q-192",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-16-gitops",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "GitOps và progressive delivery bổ sung nhau như thế nào khi Rollout/AnalysisTemplate cũng nằm trong Git?",
+    "options": [
+      "GitOps thay thế hoàn toàn nhu cầu về deployment strategy",
+      "GitOps lo nguồn sự thật, progressive delivery lo độ an toàn mỗi lần đổi; cả canary cũng có audit trong Git",
+      "Progressive delivery khiến Git không còn là nguồn sự thật nữa",
+      "Chỉ dùng được một trong hai, không thể kết hợp"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Hai lớp giải hai bài toán khác nhau và ăn khớp qua Git.\n✓ GitOps lo 'nguồn sự thật ở đâu', progressive delivery lo 'đổi v1→v2 an toàn ra sao'; Rollout/AnalysisTemplate trong Git nên vẫn tự động, an toàn và truy vết được.\n✗ GitOps không thay thế deployment strategy; nó trả lời câu hỏi khác.\n✗ Đưa Rollout vào Git càng củng cố Git là nguồn sự thật, không phủ định.\n✗ Hai lớp được thiết kế để kết hợp, không loại trừ nhau."
+  },
+  {
+    "id": "cn-q-193",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-17-service-mesh",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong kiến trúc service mesh, thành phần nào trực tiếp chuyển và xử lý traffic thật giữa các Pod?",
+    "options": [
+      "Control plane (istiod)",
+      "Data plane — các sidecar proxy Envoy tiêm cạnh mỗi Pod",
+      "API server của Kubernetes",
+      "MutatingWebhook"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Data plane gồm các sidecar Envoy, mọi byte traffic đều đi qua chúng.\n✓ Data plane là các sidecar Envoy tiêm cạnh mỗi Pod, chặn và xử lý mọi traffic thật\n✗ Control plane (istiod) chỉ đẩy cấu hình và cấp certificate, không nằm trên đường đi của request\n✗ API server điều phối tài nguyên cluster, không xử lý traffic service-to-service\n✗ MutatingWebhook chỉ chèn container sidecar lúc Pod được tạo, không chuyển traffic"
+  },
+  {
+    "id": "cn-q-194",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-17-service-mesh",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao nhét các concern như retry, timeout, mTLS vào code thư viện của từng service lại là một bài toán khó chịu ở quy mô microservices?",
+    "options": [
+      "Vì thư viện luôn chậm hơn sidecar",
+      "Vì logic đó lặp lại ở mọi service và mọi ngôn ngữ, dễ lệch nhau, đổi policy phải build & deploy lại",
+      "Vì Kubernetes cấm gọi mạng trong code app",
+      "Vì các ngôn ngữ như Go và Java không hỗ trợ TLS"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Đây là cross-cutting concern: nó cắt ngang mọi service nên nhét vào code gây lặp và cứng nhắc.\n✓ Logic hạ tầng lặp ở mọi service, mọi ngôn ngữ, hành vi không đồng bộ, muốn đổi policy phải build và deploy lại hàng chục service\n✗ Vấn đề không phải tốc độ thư viện so với sidecar\n✗ Kubernetes không hề cấm code app gọi mạng\n✗ Go và Java đều hỗ trợ TLS đầy đủ, đó không phải lý do"
+  },
+  {
+    "id": "cn-q-195",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-17-service-mesh",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Sau khi bật auto sidecar injection và deploy lại, lệnh kubectl get pod hiển thị frontend ở trạng thái READY 2/2. Con số 2/2 này nghĩa là gì?",
+    "options": [
+      "Pod đã chạy được 2 giây",
+      "Có 2 replica của frontend",
+      "Trong Pod có 2 container sẵn sàng: app và istio-proxy (sidecar)",
+      "Pod đã restart 2 lần"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Injection thêm container istio-proxy vào cùng Pod với app.\n✓ 2/2 nghĩa là Pod có 2 container đều ready: container app và sidecar istio-proxy được Istio tiêm\n✗ Con số READY là số container sẵn sàng, không phải thời gian chạy\n✗ Số replica hiển thị ở cấp Deployment/ReplicaSet, không phải cột READY của một Pod\n✗ Số lần restart nằm ở cột RESTARTS riêng"
+  },
+  {
+    "id": "cn-q-196",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-17-service-mesh",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn apply một PeerAuthentication với mtls mode STRICT cho namespace. Ngay sau đó một số service bên ngoài mesh (chưa có sidecar) gọi vào bị lỗi kết nối. Nguyên nhân đúng nhất là gì?",
+    "options": [
+      "STRICT từ chối mọi kết nối plaintext, chỉ nhận mTLS — caller không có sidecar gửi plaintext nên bị chặn",
+      "istiod bị chết nên data plane ngừng nhận traffic",
+      "Certificate hết hạn và không được xoay vòng",
+      "STRICT vô tình tắt luôn cả traffic mTLS hợp lệ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "STRICT ép mọi traffic service-to-service phải là mTLS và từ chối plaintext.\n✓ Caller chưa có sidecar chỉ gửi được plaintext, mà STRICT từ chối mọi kết nối plaintext nên bị cắt\n✗ Nếu istiod chết, các Envoy vẫn giữ config cũ và tiếp tục chuyển traffic, không phải nguyên nhân\n✗ Certificate được tự động rotate vài giờ một lần, không phải vấn đề ở đây\n✗ STRICT vẫn cho phép traffic mTLS hợp lệ đi qua bình thường"
+  },
+  {
+    "id": "cn-q-197",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-17-service-mesh",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn muốn đẩy 10% traffic của service reviews sang phiên bản v2 để canary. Cấu hình đúng gồm những gì?",
+    "options": [
+      "Chỉ cần một VirtualService chia weight 90/10",
+      "DestinationRule khai báo subset v1/v2 theo label, và VirtualService route weight 90/10 giữa hai subset",
+      "Chỉ cần sửa Deployment reviews thành 2 replica",
+      "Một AuthorizationPolicy cho phép reviews-v2"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cần DestinationRule định nghĩa subset, rồi VirtualService định tuyến theo %.\n✓ DestinationRule khai báo các subset (nhóm bản theo label version) và VirtualService route weight 90 cho v1, 10 cho v2\n✗ Chỉ VirtualService không đủ vì phải có subset do DestinationRule định nghĩa để trỏ tới\n✗ Đổi số replica không tạo ra phân chia traffic theo phần trăm giữa hai phiên bản\n✗ AuthorizationPolicy dùng để siết ai được gọi ai, không làm traffic split"
+  },
+  {
+    "id": "cn-q-198",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-17-service-mesh",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Canary v2 đang chạy 90/10 thì phát hiện v2 lỗi nặng. Cách khắc phục nhanh và đúng tinh thần service mesh là gì?",
+    "options": [
+      "Rollback bằng cách build & deploy lại toàn bộ service",
+      "Sửa weight trong VirtualService về 100/0 rồi kubectl apply — không deploy lại",
+      "Xoá namespace và tạo lại",
+      "Tắt istiod để dừng traffic"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Traffic split nằm trong YAML nên đổi tỉ lệ chỉ cần apply lại, không đụng code.\n✓ Đổi weight về 100/0 rồi kubectl apply cắt traffic khỏi v2 trong vài giây, không cần deploy lại\n✗ Build và deploy lại toàn bộ service là chậm và không cần thiết khi mesh đã tách việc định tuyến ra khỏi code\n✗ Xoá namespace gây gián đoạn diện rộng, hoàn toàn quá tay\n✗ Tắt istiod không cắt được traffic vì Envoy giữ config cũ, và sẽ mất khả năng thay đổi cấu hình"
+  },
+  {
+    "id": "cn-q-199",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-17-service-mesh",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Team chỉ cần mTLS toàn cụm và observability nhanh gọn, ít nút vặn, tài nguyên sidecar thấp nhất. Không cần traffic management L7 phức tạp. Nên chọn mesh nào?",
+    "options": [
+      "Istio vì nó xịn hơn",
+      "Linkerd vì tối giản, proxy Rust siêu nhẹ, mTLS auto bật mặc định",
+      "Istio vì nó có VirtualService",
+      "Không dùng mesh nào, chỉ dùng Ingress"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Nguyên tắc: cần mTLS + quan sát nhanh gọn nhẹ thì chọn Linkerd, đừng chọn theo 'xịn hơn'.\n✓ Linkerd tối giản, proxy viết bằng Rust siêu nhẹ (vài mili-core, <1ms), mTLS auto bật mặc định — hợp yêu cầu\n✗ Chọn Istio chỉ vì 'xịn hơn' là sai nguyên tắc khi không cần L7 phức tạp\n✗ VirtualService là tính năng L7 mạnh nhưng đề bài nói rõ không cần, nên không phải lý do chọn\n✗ Ingress không cung cấp mTLS service-to-service tự động toàn cụm"
+  },
+  {
+    "id": "cn-q-200",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-17-service-mesh",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Câu nào mô tả ĐÚNG vai trò của control plane (istiod) đối với đường đi của request?",
+    "options": [
+      "Mọi request đều phải đi qua istiod trước khi tới đích",
+      "istiod nằm trên đường đi để mã hoá từng gói tin",
+      "Control plane không nằm trên đường đi của request; nếu istiod chết, Envoy vẫn giữ config cũ và tiếp tục chuyển traffic",
+      "Nếu istiod chết thì toàn bộ traffic data plane dừng ngay lập tức"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Đây là thiết kế chịu lỗi: control plane cấu hình chứ không xử lý luồng dữ liệu.\n✓ Control plane không nằm trên đường đi của request; istiod chết thì Envoy giữ config cũ, chỉ mất khả năng thay đổi cấu hình\n✗ Request không đi qua istiod, nó đi trực tiếp giữa các Envoy trong data plane\n✗ Việc mã hoá từng gói do các Envoy sidecar làm, không phải istiod\n✗ istiod chết không làm dừng traffic data plane, đó chính là điểm chịu lỗi của thiết kế"
+  },
+  {
+    "id": "cn-q-201",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-17-service-mesh",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Sau khi bật mesh, một chuỗi gọi sâu qua nhiều service bắt đầu chậm hơn dù mỗi service xử lý vẫn nhanh. Giải thích hợp lý nhất theo bài học là gì?",
+    "options": [
+      "Sidecar Envoy làm app chạy chậm bên trong process",
+      "Mỗi hop giờ qua 2 proxy (Envoy gửi + Envoy nhận), thêm ~0.5–2ms mỗi hop, cộng dồn qua chuỗi gọi sâu",
+      "mTLS làm CPU của node cạn kiệt hoàn toàn",
+      "Control plane chèn thêm một request tới istiod mỗi hop"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Latency mesh cộng dồn theo số hop proxy, rõ nhất ở chuỗi gọi sâu.\n✓ Mỗi request qua 2 hop proxy (Envoy gửi và Envoy nhận), thêm khoảng 0.5–2ms mỗi hop, cộng dồn qua chuỗi sâu gây chậm rõ\n✗ Sidecar chạy ở container riêng, không làm chậm logic bên trong process app\n✗ mTLS tốn thêm chút CPU nhưng không phải nguyên nhân 'cạn kiệt hoàn toàn' được mô tả\n✗ Request đi thẳng giữa các Envoy, không gọi istiod mỗi hop"
+  },
+  {
+    "id": "cn-q-202",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-17-service-mesh",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Về distributed tracing với mesh, lưu ý quan trọng nào là ĐÚNG?",
+    "options": [
+      "Mesh tự nối liền toàn bộ trace nên app không cần làm gì",
+      "App vẫn nên tự truyền tiếp trace header (traceparent) qua các lời gọi nội bộ; mesh chỉ lan truyền ở tầng mạng, không thấy quan hệ nhân-quả bên trong process app",
+      "Chỉ Jaeger mới tạo được trace header, Envoy thì không",
+      "Tracing chỉ hoạt động khi tắt mTLS"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mesh lo lan truyền ở tầng mạng nhưng không nhìn được bên trong process app.\n✓ App vẫn phải tự truyền tiếp trace header như traceparent qua lời gọi nội bộ để trace nối liền, vì mesh không thấy quan hệ nhân-quả bên trong process\n✗ Mesh không tự nối liền hoàn toàn; nếu app không truyền tiếp header thì trace bị đứt\n✗ Chính Envoy tự tạo và lan truyền trace header ở tầng mạng\n✗ Tracing không phụ thuộc vào việc bật hay tắt mTLS"
+  },
+  {
+    "id": "cn-q-203",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-17-service-mesh",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Ambient mesh (sidecar-less) của Istio khác mô hình sidecar ở những điểm nào? Chọn TẤT CẢ đáp án đúng.",
+    "options": [
+      "ztunnel là một agent mỗi node lo L4 + mTLS cho các Pod trên node đó, thay vì mỗi Pod một Envoy",
+      "waypoint proxy chỉ triển khai khi cần xử lý L7 (traffic split, retry L7), không cắm vào mọi Pod",
+      "Giảm chi phí tài nguyên và latency cho workload chỉ cần mTLS",
+      "Ambient mesh loại bỏ hoàn toàn khả năng làm mTLS",
+      "Ambient mesh bắt buộc mỗi Pod vẫn phải có một Envoy riêng"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Ambient thay sidecar-mỗi-Pod bằng ztunnel-mỗi-node cho L4/mTLS và waypoint khi cần L7.\n✓ ztunnel là agent mỗi node lo L4 và mTLS cho toàn bộ Pod trên node đó\n✓ waypoint proxy chỉ triển khai khi cần xử lý L7, không cắm vào mọi Pod\n✓ Nhờ đó chi phí tài nguyên và latency giảm mạnh cho workload chỉ cần mTLS\n✗ Ambient vẫn làm mTLS (qua ztunnel), không hề loại bỏ mTLS\n✗ Mục tiêu của ambient chính là bỏ Envoy mỗi Pod, nên không bắt buộc mỗi Pod một Envoy"
+  },
+  {
+    "id": "cn-q-204",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-17-service-mesh",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Đâu là những 'cái giá' thật của service mesh cần cân nhắc trước khi đưa vào? Chọn TẤT CẢ đáp án đúng.",
+    "options": [
+      "Độ phức tạp vận hành: thêm control plane phải nâng cấp/giám sát, CRD mới phải học, sai PeerAuthentication STRICT có thể cắt cả cluster",
+      "Thêm latency mỗi hop proxy",
+      "Tốn thêm tài nguyên: mỗi Pod cõng một Envoy, cluster 1000 Pod là 1000 Envoy",
+      "Khó debug hơn: phải phân biệt lỗi ở app hay ở sidecar",
+      "Bắt buộc phải viết lại logic retry/timeout trong code mỗi service"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Mesh đánh đổi bằng phức tạp, latency, tài nguyên và độ khó debug.\n✓ Độ phức tạp vận hành tăng: control plane phải nâng cấp/giám sát, CRD mới phải học, một PeerAuthentication STRICT sai có thể cắt cả cluster\n✓ Mỗi hop proxy thêm latency (~0.5–2ms/hop)\n✓ Mỗi Pod cõng thêm một Envoy nên tốn CPU và RAM, quy mô lớn thì tốn kém rõ\n✓ Khó debug hơn vì phải phân biệt lỗi ở app hay ở sidecar\n✗ Ngược lại, mesh giúp bỏ logic retry/timeout khỏi code; giờ nằm gọn trong YAML áp cho mọi caller"
+  },
+  {
+    "id": "cn-q-205",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-cap-deploy",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong kiến trúc app 3 tầng của bài, thành phần nào được chọn dùng StatefulSet + PVC thay vì Deployment?",
+    "options": [
+      "Frontend (React/Nginx phục vụ static)",
+      "Backend API (Node/Go)",
+      "Redis cache",
+      "Ingress controller"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Redis là workload stateful nên cần StatefulSet + PVC + Service headless.\n✓ Redis cache có dữ liệu trên đĩa và cần danh tính ổn định (redis-0), đúng bản chất stateful.\n✗ Frontend chỉ phục vụ static, mỗi bản như nhau nên là stateless Deployment.\n✗ Backend API stateless, dùng Deployment + HPA để scale theo CPU.\n✗ Ingress controller là thành phần hạ tầng định tuyến, không phải workload cache của app."
+  },
+  {
+    "id": "cn-q-206",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-cap-deploy",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo nguyên tắc thiết kế của bài, thành phần nào là thứ DUY NHẤT được lộ ra Internet?",
+    "options": [
+      "Redis qua Service headless",
+      "Backend qua ClusterIP",
+      "Frontend qua Ingress + TLS",
+      "Cả ba tầng đều lộ ra qua Ingress"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Chỉ frontend lộ ra ngoài qua Ingress + TLS; backend và Redis là ClusterIP nội bộ.\n✓ Frontend đi qua Ingress + TLS là cửa trước duy nhất ra Internet.\n✗ Redis là stateful nội bộ, chỉ backend gọi tới, không lộ ra Internet.\n✗ Backend là ClusterIP nội bộ, Internet không chạm trực tiếp.\n✗ Backend/Redis giữ nội bộ chính là để giảm bề mặt tấn công, không cùng lộ ra."
+  },
+  {
+    "id": "cn-q-207",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-cap-deploy",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao Service của Redis được đặt clusterIP: None (headless)?",
+    "options": [
+      "Để load-balance L4 đều giữa nhiều replica Redis",
+      "Để mỗi Pod Redis có DNS riêng dạng redis-0.redis.shop.svc",
+      "Để expose Redis ra Internet qua Ingress",
+      "Để Redis không cần PVC vẫn giữ được dữ liệu"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Service headless (clusterIP: None) khiến DNS trỏ thẳng tới từng Pod thay vì một IP ảo cân bằng tải.\n✓ Nhờ headless, mỗi Pod StatefulSet có DNS ổn định riêng như redis-0.redis.shop.svc.\n✗ Load-balance L4 qua một ClusterIP ảo là hành vi của Service thường, không phải headless.\n✗ Headless không expose ra Internet; việc đó là của Ingress.\n✗ Dữ liệu bền vẫn nhờ PVC/volumeClaimTemplates, không liên quan tới headless."
+  },
+  {
+    "id": "cn-q-208",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-cap-deploy",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong manifest, giá trị nhạy cảm như DATABASE_URL (có mật khẩu) và REDIS_PASSWORD nên đặt ở đâu?",
+    "options": [
+      "ConfigMap để dễ chỉnh sửa",
+      "Biến hard-code thẳng trong image",
+      "Secret",
+      "Trực tiếp trong args của container"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Thông tin nhạy cảm đặt trong Secret; config không nhạy cảm mới đặt ConfigMap.\n✓ Secret tách bí mật khỏi image/manifest, kiểm soát truy cập bằng RBAC, hỗ trợ encryption-at-rest ở etcd.\n✗ ConfigMap dành cho config không nhạy cảm như log level, feature flag.\n✗ Hard-code vào image làm lộ bí mật cho bất kỳ ai kéo được image.\n✗ Nhét thẳng vào args cũng làm lộ giá trị, không tách được khỏi manifest."
+  },
+  {
+    "id": "cn-q-209",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-cap-deploy",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Redis/DB downstream tạm sập trong vài giây. Ta muốn Pod backend RỜI khỏi Service nhưng KHÔNG bị restart. Cách cấu hình probe nào đạt đúng điều đó?",
+    "options": [
+      "Cho liveness fail khi downstream chết để K8s restart Pod",
+      "Cho readiness (/readyz) kiểm tra downstream fail, còn liveness (/healthz) chỉ kiểm tra process còn sống",
+      "Gộp chung liveness và readiness vào một endpoint /healthz kiểm tra cả downstream",
+      "Tắt readiness, chỉ giữ liveness kiểm tra downstream"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Tách readiness khỏi liveness: readiness fail thì rút khỏi Service, liveness vẫn ok thì không restart.\n✓ /readyz kiểm tra downstream để fail rút Pod khỏi Service, còn /healthz chỉ soát process nên liveness vẫn pass, Pod không bị giết.\n✗ Cho liveness fail sẽ restart Pod đúng lúc downstream chết, chỉ làm mọi thứ tệ hơn.\n✗ Gộp chung khiến downstream sập cũng làm liveness fail và restart hàng loạt.\n✗ Tắt readiness thì Service vẫn route traffic vào Pod dù downstream đã chết."
+  },
+  {
+    "id": "cn-q-210",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-cap-deploy",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "HPA của backend cấu hình averageUtilization: 60. Hiện có 3 replica, CPU trung bình đang ở 120% mục tiêu. Theo công thức trong bài, HPA muốn scale lên bao nhiêu replica?",
+    "options": [
+      "4 replica",
+      "6 replica",
+      "3 replica",
+      "12 replica"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "desiredReplicas = ceil(currentReplicas × currentMetric/targetMetric) = ceil(3 × 120/60) = 6.\n✓ 6 replica là kết quả đúng của công thức khi tỉ lệ metric gấp đôi mục tiêu.\n✗ 4 replica không khớp với hệ số nhân đôi tải.\n✗ 3 replica là con số hiện tại, chưa scale.\n✗ 12 là maxReplicas trần, không phải giá trị công thức tính ra ở tình huống này."
+  },
+  {
+    "id": "cn-q-211",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-cap-deploy",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Pod backend bị OOMKilled liên tục dù CPU vẫn nhàn. Theo cách phân biệt requests/limits trong bài, nguyên nhân trực tiếp là gì?",
+    "options": [
+      "requests.cpu đặt quá thấp nên scheduler xếp nhầm node",
+      "App dùng memory vượt quá limits.memory nên bị kernel giết",
+      "HPA scale xuống quá nhanh làm thiếu Pod",
+      "readOnlyRootFilesystem chặn ghi vào /tmp"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "OOMKilled xảy ra khi container dùng memory vượt trần limits.memory.\n✓ Vượt limits.memory thì bị OOMKilled, đúng như bài mô tả trần cứng của memory.\n✗ requests.cpu thấp chỉ ảnh hưởng xếp chỗ và tính % HPA, không gây OOM.\n✗ HPA scale xuống liên quan số replica, không gây một Pod bị OOMKilled.\n✗ readOnlyRootFS thiếu volume ghi sẽ gây lỗi ghi file, không phải OOMKilled."
+  },
+  {
+    "id": "cn-q-212",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-cap-deploy",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Backend cần tự ĐỌC ConfigMap qua Kubernetes API để hot-reload config. Cấu hình RBAC/ServiceAccount nào phù hợp nhất theo least-privilege?",
+    "options": [
+      "Dùng SA default và gắn ClusterRole cluster-admin cho tiện",
+      "SA riêng backend-sa + Role (namespace) chỉ verbs get/list/watch trên configmaps, có mount token",
+      "SA riêng nhưng đặt automountServiceAccountToken: false để bảo mật",
+      "ClusterRole cho phép get/list/watch/create/update/delete mọi resource"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Least-privilege: SA riêng + Role phạm vi namespace, chỉ verb đọc trên đúng resource cần, và phải mount token vì workload gọi API.\n✓ backend-sa + Role get/list/watch trên configmaps cho đúng quyền tối thiểu; vì gọi API nên bật mount token mới dùng được.\n✗ SA default + cluster-admin vi phạm least-privilege, thừa quyền nguy hiểm.\n✗ Đặt automount false sẽ khiến backend không có token để gọi API, hot-reload gãy.\n✗ ClusterRole ghi/xóa mọi resource là quá rộng, trái nguyên tắc tối thiểu."
+  },
+  {
+    "id": "cn-q-213",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-cap-deploy",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong StatefulSet Redis, trường serviceName: redis dùng để làm gì và vì sao phải khớp Service headless?",
+    "options": [
+      "Để HPA biết scale StatefulSet theo tên Service",
+      "Để tạo DNS ổn định cho từng Pod (redis-0.redis...) thông qua Service headless đã khai",
+      "Để expose Redis ra Ingress theo tên đó",
+      "Để chọn image redis theo tên Service"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "serviceName phải trỏ đúng Service headless để StatefulSet cấp DNS ổn định cho từng Pod.\n✓ Nhờ khớp Service headless redis, mỗi Pod có DNS riêng dạng redis-0.redis.shop.svc.\n✗ HPA không dùng serviceName để scale; ở đây Redis cũng không gắn HPA.\n✗ serviceName không liên quan tới việc expose qua Ingress.\n✗ Việc chọn image do trường image quyết định, không phải serviceName."
+  },
+  {
+    "id": "cn-q-214",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-cap-deploy",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn đã tạo NetworkPolicy default-deny-ingress cho namespace shop và allow-backend-to-redis, allow-frontend-to-backend. Kết quả: Ingress vào được nhưng frontend trả 502, backend không nhận được request. Nhiều khả năng thiếu policy nào?",
+    "options": [
+      "Policy cho phép Redis gọi ngược ra backend",
+      "Policy allow-ingress-to-frontend cho phép frontend nhận traffic từ namespace ingress-nginx",
+      "Egress policy cho phép backend gọi ra Internet",
+      "Policy mở port 6379 từ frontend tới Redis"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Sau default-deny, mọi luồng ingress bị chặn trừ khi được allow; frontend cần policy nhận traffic từ ingress-nginx.\n✓ Thiếu allow-ingress-to-frontend thì Ingress không tới được frontend, gây 502 dù các policy khác đã đúng.\n✗ Redis không cần gọi ngược ra backend trong luồng này.\n✗ default-deny của bài chỉ áp policyTypes Ingress, egress ra Internet không bị chặn ở đây.\n✗ Mở frontend tới Redis trực tiếp là sai thiết kế; Redis chỉ nhận từ backend."
+  },
+  {
+    "id": "cn-q-215",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-cap-deploy",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những khẳng định nào ĐÚNG về PodDisruptionBudget (PDB) và tính sẵn sàng theo bài?",
+    "options": [
+      "PDB chỉ bảo vệ trước voluntary disruption như drain node hay rollout chủ động",
+      "PDB đảm bảo Pod không bao giờ chết kể cả khi node đột tử",
+      "minAvailable: 2 giữ tối thiểu 2 backend sống khi có voluntary disruption",
+      "Việc sống sót khi một node chết đột ngột dựa vào replicas + anti-affinity, không phải PDB",
+      "PDB thay thế hoàn toàn cho HPA trong việc giữ đủ số replica"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "PDB chỉ chặn voluntary disruption, không cứu khi node đột tử; đó là việc của replicas + anti-affinity.\n✓ PDB bảo vệ trước drain/rollout chủ động (voluntary disruption).\n✓ minAvailable: 2 giữ ít nhất 2 backend sống khi có voluntary disruption.\n✓ Node chết đột ngột được bù bởi replicas nhiều + anti-affinity trải Pod.\n✗ PDB không ngăn Pod chết khi node đột tử, đó là involuntary disruption.\n✗ PDB không thay thế HPA; HPA lo co giãn theo tải, PDB lo giới hạn gián đoạn."
+  },
+  {
+    "id": "cn-q-216",
+    "courseId": "CLOUDNATIVE",
+    "lesson": "cn-cap-deploy",
+    "certifications": [
+      "CLOUDNATIVE"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Đâu là những lợi ích/đặc điểm ĐÚNG khi triển khai bằng GitOps với ArgoCD như bài mô tả?",
+    "options": [
+      "Git là nguồn sự thật duy nhất cho trạng thái mong muốn",
+      "selfHeal kéo cluster về khớp Git khi ai đó sửa tay trực tiếp",
+      "Rollback thực hiện đơn giản bằng git revert",
+      "Phải cấp credential cluster cho CI để CI push trực tiếp vào cluster",
+      "prune: true sẽ xóa khỏi cluster những object đã bị xóa khỏi Git"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "GitOps lấy Git làm nguồn sự thật, ArgoCD trong cluster tự đồng bộ, cho audit/rollback/selfHeal và không cần cấp credential cho CI.\n✓ Git là nguồn sự thật duy nhất cho desired state.\n✓ selfHeal chống drift bằng cách kéo cluster về khớp Git khi bị sửa tay.\n✓ Rollback chỉ là git revert nhờ mọi thay đổi đều là commit.\n✓ prune: true xóa khỏi cluster các object đã bị bỏ khỏi Git.\n✗ Ưu điểm là KHÔNG cần cấp credential cluster cho CI; chính cluster tự pull từ Git."
+  }
+];
+
+export const generatedKnowledge: Question[] = [...k1, ...k2, ...k3, ...k4, ...k5, ...k6];
