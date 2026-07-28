@@ -31,10 +31,10 @@
       "prefix": "dst-",
       "dir": "lessons/datastores",
       "status": "done",
-      "note": "Redis deep, NoSQL taxonomy, Elasticsearch, ClickHouse, cache patterns, polyglot.",
+      "note": "Redis deep, NoSQL taxonomy, Elasticsearch, ClickHouse, cache patterns, polyglot. +Ch7 Data ops at scale (migrations/index/vacuum/replication-lag/pool/hotspot/incident).",
       "doneAt": "2026-07-24",
-      "lessons": 19,
-      "chapters": 6
+      "lessons": 26,
+      "chapters": 7
     },
     {
       "id": "MESSAGING",
