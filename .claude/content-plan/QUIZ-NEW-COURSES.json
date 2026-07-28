@@ -15,13 +15,13 @@
       "id": "CLOUDNATIVE",
       "prefix": "cn",
       "lessons": 18,
-      "status": "in-progress"
+      "status": "done"
     },
     {
       "id": "DISTRIBUTED",
       "prefix": "ds",
       "lessons": 23,
-      "status": "pending"
+      "status": "in-progress"
     },
     {
       "id": "DATASTORES",

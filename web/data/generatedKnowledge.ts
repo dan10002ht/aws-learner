@@ -45341,6 +45341,5950 @@ const k6: Question[] = [
       4
     ],
     "explanation": "GitOps lấy Git làm nguồn sự thật, ArgoCD trong cluster tự đồng bộ, cho audit/rollback/selfHeal và không cần cấp credential cho CI.\n✓ Git là nguồn sự thật duy nhất cho desired state.\n✓ selfHeal chống drift bằng cách kéo cluster về khớp Git khi bị sửa tay.\n✓ Rollback chỉ là git revert nhờ mọi thay đổi đều là commit.\n✓ prune: true xóa khỏi cluster các object đã bị bỏ khỏi Git.\n✗ Ưu điểm là KHÔNG cần cấp credential cluster cho CI; chính cluster tự pull từ Git."
+  },
+  {
+    "id": "ds-q-001",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-01-what-is-distributed",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo định nghĩa trong bài, điều gì mô tả đúng nhất một 'hệ phân tán'?",
+    "options": [
+      "Một chương trình đa luồng chạy trên một máy duy nhất để tận dụng nhiều CPU core",
+      "Nhiều máy tính độc lập giao tiếp qua mạng, phối hợp để người dùng thấy như một hệ thống duy nhất",
+      "Một máy chủ mạnh chạy nhiều tiến trình phục vụ nhiều người dùng cùng lúc",
+      "Một cơ sở dữ liệu được sao lưu định kỳ ra ổ cứng khác trên cùng máy"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Hệ phân tán = nhiều máy độc lập qua mạng, hiện ra như một hệ thống duy nhất.\n✓ Nhiều máy độc lập giao tiếp qua mạng và phối hợp thành một hệ thống duy nhất — đúng bản chất mạng + độc lập.\n✗ Đa luồng trên một máy vẫn chung một clock, một bộ nhớ, không có yếu tố mạng không tin cậy.\n✗ Một máy chủ chạy nhiều tiến trình vẫn là một máy, không có partial failure giữa các node.\n✗ Sao lưu ra ổ cứng khác trên cùng máy không liên quan tới nhiều máy độc lập qua mạng."
+  },
+  {
+    "id": "ds-q-002",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-01-what-is-distributed",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Node A gọi node B rồi bị timeout, không nhận được phản hồi. Theo bài, vì sao đây là điểm 'chí mạng' nhất của hệ phân tán?",
+    "options": [
+      "Vì timeout luôn có nghĩa là B đã chết, nên A phải khởi động lại B",
+      "Vì A không thể phân biệt được B đã chết, B xử lý xong nhưng reply bị mất, hay B chỉ đang chậm",
+      "Vì mạng đảm bảo gói tin không bao giờ mất nên chỉ còn khả năng B chậm",
+      "Vì A và B luôn dùng chung một đồng hồ nên có thể tính chính xác thời điểm B chết"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bản chất partial failure: một timeout ứng với ba tình huống khác nhau mà bên gọi không phân biệt được.\n✓ A không biết B chết, reply mất hay B chậm — ba khả năng đòi ba cách xử lý khác nhau nhưng A mù thông tin.\n✗ Timeout không đồng nghĩa B đã chết; kết luận vội rồi khởi động lại có thể sai.\n✗ Bài khẳng định mạng KHÔNG tin cậy, gói tin có thể mất — nên vẫn còn khả năng reply bị mất.\n✗ Mỗi máy có clock riêng lệch nhau, không có đồng hồ chung để tính thời điểm."
+  },
+  {
+    "id": "ds-q-003",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-01-what-is-distributed",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Câu nói kinh điển của Leslie Lamport — 'một máy bạn còn không biết nó tồn tại bị hỏng lại làm máy của bạn đứng hình' — nhấn mạnh điều gì?",
+    "options": [
+      "Các phần trong hệ phụ thuộc lẫn nhau qua mạng, và mạng thì không đáng tin",
+      "Nên mua phần cứng đắt tiền để không máy nào hỏng",
+      "Một máy mạnh luôn tốt hơn nhiều máy yếu cộng lại",
+      "Đồng hồ của mọi máy trong hệ luôn đồng bộ tuyệt đối"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Câu của Lamport tóm gọn nỗi đau phụ thuộc qua mạng không đáng tin.\n✓ Các phần phụ thuộc nhau qua mạng và mạng không đáng tin — đúng thông điệp câu nói.\n✗ Mua phần cứng đắt không phải điểm của câu nói; hỏng hóc vẫn xảy ra.\n✗ Câu nói không so sánh một máy mạnh với nhiều máy yếu.\n✗ Trái ngược bài — mỗi máy một clock lệch nhau, không đồng bộ tuyệt đối."
+  },
+  {
+    "id": "ds-q-004",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-01-what-is-distributed",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, đâu là những 'gốc rễ' bản chất khiến hệ phân tán khó (khác với một chương trình chạy trên một máy)? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Partial failure — một phần chết, phần khác sống, và không phân biệt được node chết hay chỉ chậm",
+      "Không có đồng hồ chung — mỗi máy một clock lệch nhau nên 'cái nào xảy ra trước' trở nên mơ hồ",
+      "Concurrency & mạng — gọi qua mạng có độ trễ, gói tin có thể mất/lặp/đảo thứ tự",
+      "Ngôn ngữ lập trình dùng để viết mỗi service bắt buộc phải khác nhau",
+      "CPU của các máy bắt buộc phải cùng một hãng sản xuất"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bài nêu ba gốc rễ: partial failure, không có đồng hồ chung, concurrency & mạng.\n✓ Partial failure với việc không phân biệt được node chết hay chậm là gốc rễ chí mạng.\n✓ Không có đồng hồ chung khiến thứ tự sự kiện mơ hồ.\n✓ Concurrency & mạng gây trễ, mất/lặp/đảo thứ tự gói tin.\n✗ Ngôn ngữ lập trình khác nhau không phải gốc rễ bài nêu.\n✗ Hãng CPU giống nhau không liên quan; fallacy 8 còn nói mạng vốn không đồng nhất."
+  },
+  {
+    "id": "ds-q-005",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-01-what-is-distributed",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một service gọi service khác bằng nhiều lời gọi nhỏ liên tiếp (chatty) qua mạng và bị chậm nghiêm trọng. Fallacy nào đang bị vi phạm rõ nhất?",
+    "options": [
+      "'The network is secure' — mạng an toàn",
+      "'Latency is zero' — độ trễ bằng không",
+      "'There is one administrator' — chỉ có một quản trị viên",
+      "'The network is homogeneous' — mạng đồng nhất"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Gọi qua mạng chậm hơn gọi hàm cục bộ hàng nghìn–triệu lần; thiết kế chatty vi phạm 'latency is zero'.\n✓ 'Latency is zero' bị vi phạm — bài dặn 'đừng chatty' chính vì độ trễ mạng lớn.\n✗ 'Network is secure' nói về nghe lén/giả mạo, không phải độ chậm do nhiều lời gọi.\n✗ 'One administrator' nói về nhiều team/chính sách, không liên quan chatty.\n✗ 'Homogeneous' nói về nhiều loại thiết bị/giao thức, không phải số lời gọi."
+  },
+  {
+    "id": "ds-q-006",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-01-what-is-distributed",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong ví dụ đặt món: Payment đã trừ tiền xong nhưng reply bị mất, app tưởng thất bại nên người dùng bấm lại và bị trừ tiền hai lần. Đây là biểu hiện của (những) vấn đề nào?",
+    "options": [
+      "Mạng không tin cậy (fallacy 1) cộng với việc thiếu idempotency khi retry",
+      "Băng thông vô hạn (fallacy 3) nên payload gửi quá lớn",
+      "Topology không đổi (fallacy 5) nên IP của Payment thay đổi",
+      "Chỉ có một quản trị viên (fallacy 6) nên chính sách bị xung đột"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Reply mất là mạng không tin cậy; retry mà không idempotent gây tác dụng lặp (trừ tiền hai lần).\n✓ Fallacy 1 (mạng không tin cậy) làm mất reply, và thiếu idempotency khiến lần bấm lại trừ tiền lần nữa.\n✗ Băng thông/payload lớn không phải nguyên nhân trừ tiền hai lần.\n✗ Đổi IP (fallacy 5) là tình huống Delivery timeout khác, không phải trừ tiền hai lần.\n✗ Xung đột chính sách nhiều quản trị viên không gây ra vụ trừ tiền hai lần này."
+  },
+  {
+    "id": "ds-q-007",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-01-what-is-distributed",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cũng trong ví dụ đó, Inventory ở data center khác nên log hai nơi ghi thứ tự mâu thuẫn nhau. Gốc rễ nào gây ra chuyện này, và chủ đề nào sinh ra để xử lý?",
+    "options": [
+      "Không có đồng hồ chung → logical clock / vector clock",
+      "Dữ liệu vượt một máy → partitioning / consistent hashing",
+      "Nhiều node phải đồng ý một giá trị → consensus / Raft",
+      "Đánh đổi nhất quán ↔ sẵn sàng → CAP / PACELC"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Clock lệch giữa hai data center khiến 'cái nào trước' mơ hồ; logical/vector clock ra đời để sắp thứ tự sự kiện.\n✓ Không có đồng hồ chung là gốc rễ; bài ánh xạ nó tới logical clock / vector clock (Ch.6).\n✗ Partitioning/consistent hashing giải quyết dữ liệu vượt một máy, không phải thứ tự log lệch clock.\n✗ Consensus/Raft giải quyết nhiều node đồng ý một giá trị, không phải bản thân việc lệch clock.\n✗ CAP/PACELC là đánh đổi nhất quán–sẵn sàng, không phải nguyên nhân log ghi thứ tự mâu thuẫn."
+  },
+  {
+    "id": "ds-q-008",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-01-what-is-distributed",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, vì sao người ta 'buộc phải' xây hệ phân tán dù nó khó?",
+    "options": [
+      "Vì hệ phân tán luôn đơn giản hơn chạy trên một máy",
+      "Vì cần scale vượt trần một máy, cần fault tolerance, và cần giảm latency địa lý cho người dùng toàn cầu",
+      "Vì mạng nhanh và tin cậy hơn gọi hàm cục bộ",
+      "Vì như vậy chỉ cần một quản trị viên duy nhất quản lý toàn bộ"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Ta đánh đổi sự đơn giản của một máy để lấy scale, fault tolerance và latency thấp.\n✓ Scale vượt trần một máy, fault tolerance và latency địa lý là ba lý do bài nêu.\n✗ Hệ phân tán khó hơn chứ không đơn giản hơn một máy.\n✗ Gọi qua mạng chậm và kém tin cậy hơn gọi hàm cục bộ, không phải nhanh hơn.\n✗ Thực tế có nhiều quản trị viên (fallacy 6), không phải một."
+  },
+  {
+    "id": "ds-q-009",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-01-what-is-distributed",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Đội bạn triển khai service trên Kubernetes: pod bị thêm/bớt, IP đổi, DNS đổi liên tục; đồng thời mạng nội bộ vẫn có thể bị nghe lén. Những fallacy nào đang được nhắc nhở phải xử lý? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "'Topology doesn't change' — giả định cấu trúc mạng không đổi",
+      "'The network is secure' — giả định mạng an toàn",
+      "'Latency is zero' — giả định độ trễ bằng không",
+      "'Bandwidth is infinite' — giả định băng thông vô hạn",
+      "'There is one administrator' — giả định chỉ một quản trị viên"
+    ],
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Pod/IP/DNS đổi liên tục vi phạm 'topology không đổi'; nguy cơ nghe lén vi phạm 'mạng an toàn'.\n✓ 'Topology doesn't change' bị phá vỡ khi node thêm/bớt và IP/DNS đổi (đặc trưng cloud/k8s).\n✓ 'The network is secure' bị phá vỡ khi mạng có kẻ nghe lén/giả mạo, cần mã hoá & xác thực.\n✗ 'Latency is zero' nói về độ trễ mạng, không phải tình huống đổi IP/nghe lén mô tả ở đây.\n✗ 'Bandwidth is infinite' nói về payload lớn gây nghẽn, không phải topology hay bảo mật.\n✗ 'One administrator' nói về nhiều team/chính sách, không phải tình huống thay đổi topology này."
+  },
+  {
+    "id": "ds-q-010",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-01-what-is-distributed",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Yêu cầu: 'giao dịch trải qua nhiều service (Order → Payment → Inventory) cần được điều phối cho nhất quán'. Theo bản đồ chủ đề của bài, thách thức này sinh ra nhóm giải pháp nào?",
+    "options": [
+      "Consistent hashing để chia dữ liệu ra nhiều node",
+      "2PC / Saga để điều phối giao dịch qua nhiều service",
+      "Vector clock để phát hiện ghi đồng thời",
+      "Consensus/Raft để bầu một leader duy nhất"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Giao dịch qua nhiều service được bài ánh xạ tới 2PC và Saga (Ch.7).\n✓ 2PC / Saga đúng là nhóm giải pháp cho giao dịch trải nhiều service.\n✗ Consistent hashing giải quyết dữ liệu vượt một máy (partitioning), không phải điều phối giao dịch.\n✗ Vector clock dùng để so thứ tự / phát hiện concurrent, không điều phối commit nhiều service.\n✗ Consensus/Raft là để nhiều node đồng ý một giá trị, không phải commit giao dịch nhiều service."
+  },
+  {
+    "id": "ds-q-011",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-01-what-is-distributed",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một đồng nghiệp nói: 'Cứ retry khi timeout là an toàn, vì mạng của mình rất ổn định.' Theo tinh thần của bài, phản biện đúng nhất là gì?",
+    "options": [
+      "Đúng, mạng nội bộ luôn tin cậy nên retry bao nhiêu lần cũng vô hại",
+      "Sai — mạng không tin cậy (fallacy 1); nếu request không idempotent thì retry có thể gây tác dụng lặp như trừ tiền hai lần",
+      "Sai — retry luôn cấm dùng trong hệ phân tán",
+      "Đúng, vì timeout luôn có nghĩa là request chưa hề tới được node đích"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mạng không tin cậy và timeout mơ hồ; retry chỉ an toàn khi thao tác idempotent.\n✓ Fallacy 1 nói mạng không tin cậy; retry lên thao tác không idempotent có thể lặp tác dụng (trừ tiền hai lần) — đó là lý do cần idempotency.\n✗ 'Mạng nội bộ luôn tin cậy' chính là fallacy 1, một giả định sai.\n✗ Retry không bị cấm tuyệt đối; nó hợp lệ khi thao tác idempotent.\n✗ Timeout không có nghĩa request chưa tới — node có thể đã xử lý xong nhưng reply bị mất."
+  },
+  {
+    "id": "ds-q-012",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-01-what-is-distributed",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Theo thông điệp tổng kết của bài, cách học đúng đắn nhất về các chủ đề CAP, replication, consensus, idempotency... là gì?",
+    "options": [
+      "Học rời rạc từng chủ đề vì chúng không liên quan nhau",
+      "Xem tất cả như những cách con người thuần hoá ba gốc rễ (partial failure, không đồng hồ chung, mạng không tin cậy)",
+      "Chỉ cần thuộc 8 fallacies là đủ, các chủ đề kia không cần thiết",
+      "Ưu tiên học phần cứng mạng trước, phần thuật toán sau"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nhấn mạnh mọi chủ đề đều là giải pháp cho ba gốc rễ, nên học theo mạch đó sẽ thấy liền một khối.\n✓ Coi tất cả là cách thuần hoá ba gốc rễ giúp thấy chúng liền một khối, đúng thông điệp tổng kết.\n✗ Học rời rạc là điều bài khuyên tránh ('đừng học rời rạc').\n✗ 8 fallacies là danh sách cảnh giác, không thay thế được các chủ đề giải pháp.\n✗ Bài không đề nghị học phần cứng mạng trước; trọng tâm là mạch gốc rễ → giải pháp."
+  },
+  {
+    "id": "ds-q-013",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-02-system-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong synchronous model, khi bạn gửi request rồi chờ quá chặn trên D mà không có phản hồi, bạn có thể kết luận điều gì?",
+    "options": [
+      "Node kia chắc chắn đã chết chứ không phải chỉ chậm — timeout là failure detector hoàn hảo",
+      "Node kia có thể chết hoặc chỉ đang chậm, không thể phân biệt",
+      "Message đã bị mất vĩnh viễn trên đường truyền",
+      "Clock của hai máy đã lệch nhau quá ngưỡng ε"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Synchronous có chặn trên D đã biết cho độ trễ, nên vượt D nghĩa là node đã chết chứ không phải chậm.\n✓ Kết luận node chắc chắn chết: đúng bản chất timeout hoàn hảo trong synchronous.\n✗ Không phân biệt được chết với chậm: đó là đặc điểm của async, không phải synchronous.\n✗ Message mất vĩnh viễn: các model ở đây giả định message chắc chắn tới, không mất vĩnh viễn.\n✗ Clock lệch quá ε: đây là chuyện về clock, không phải về việc suy ra node đã chết từ timeout."
+  },
+  {
+    "id": "ds-q-014",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-02-system-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao trong asynchronous model, timeout trở nên vô nghĩa để phát hiện lỗi?",
+    "options": [
+      "Vì không có chặn trên nào cho độ trễ, nên chờ mãi vẫn có thể là 'message sắp tới'",
+      "Vì message trong async luôn bị mất nên không bao giờ tới",
+      "Vì clock chạy nhanh hơn thực tế khiến timeout hết hạn sớm",
+      "Vì async luôn có kẻ tấn công giả mạo tín hiệu timeout"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Async không có chặn trên độ trễ, nên không thể suy ra 'quá lâu = đã chết'.\n✓ Không có chặn trên nên chờ mãi vẫn có thể sắp tới: đúng lý do timeout vô nghĩa.\n✗ Message luôn bị mất: sai, async giả định message chắc chắn tới, chỉ không biết bao lâu.\n✗ Clock chạy nhanh: async giả định không có clock đáng tin, không phải clock nhanh gây timeout sớm.\n✗ Kẻ tấn công giả mạo: đó là Byzantine (failure model), không liên quan tới bản chất timing của async."
+  },
+  {
+    "id": "ds-q-015",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-02-system-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Raft và Paxos được thiết kế cho partial synchronous model. Phát biểu nào mô tả ĐÚNG đảm bảo của chúng liên quan tới GST?",
+    "options": [
+      "Luôn an toàn (safety) kể cả khi mạng đang loạn, chỉ đảm bảo tiến triển (liveness) sau khi mạng ổn định trở lại",
+      "Luôn tiến triển kể cả khi mạng loạn, nhưng có thể trả lời sai trong lúc loạn",
+      "Chỉ an toàn khi biết chính xác thời điểm GST xảy ra",
+      "Vừa an toàn vừa tiến triển ở mọi thời điểm vì đã lách được FLP hoàn toàn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Partial sync: hệ luôn giữ safety, còn liveness chỉ được đảm bảo sau GST khi mạng tuân thủ lại chặn D.\n✓ An toàn luôn, tiến triển sau GST: đúng thiết kế Raft/Paxos.\n✗ Luôn tiến triển nhưng có thể trả lời sai: ngược hoàn toàn — chúng thà trì hoãn tiến triển chứ không hy sinh safety.\n✗ Chỉ an toàn khi biết GST: sai, không ai biết GST khi nào; safety vẫn giữ bất kể GST.\n✗ Vừa an toàn vừa tiến triển ở mọi thời điểm: không thể, trong lúc mạng loạn liveness bị trì hoãn."
+  },
+  {
+    "id": "ds-q-016",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-02-system-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao Raft BẮT BUỘC phải fsync currentTerm và votedFor xuống đĩa TRƯỚC khi trả lời một RPC bầu cử?",
+    "options": [
+      "Vì mô hình crash-recovery giả định node có thể sống lại sau khi mất state trong RAM, nếu 'quên' đã bầu cho ai thì có thể bầu hai leader",
+      "Vì mô hình synchronous yêu cầu mọi state phải nằm trên đĩa để timeout hoạt động",
+      "Vì fsync giúp chống lại node Byzantine gửi tin mâu thuẫn",
+      "Vì ghi đĩa làm giảm độ trễ mạng xuống dưới chặn D"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Crash-recovery: node chết rồi sống lại chỉ còn state đã persist; quên votedFor có thể gây bầu hai leader.\n✓ Persist để không quên đã bầu cho ai sau reboot: đúng lý do trong crash-recovery.\n✗ Synchronous yêu cầu state trên đĩa: sai, đây là vấn đề crash-recovery, không phải timing.\n✗ Chống Byzantine: fsync không giải quyết nói dối; Raft giả định crash chứ không Byzantine.\n✗ Giảm độ trễ mạng: fsync không liên quan tới độ trễ mạng, thậm chí còn thêm độ trễ ghi."
+  },
+  {
+    "id": "ds-q-017",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-02-system-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Điểm phân biệt cốt lõi giữa fail-stop và fail-silent nằm ở đâu?",
+    "options": [
+      "Ở timing model — nó quyết định các node khác có failure detector đáng tin để phát hiện chắc chắn node đã chết hay không",
+      "Ở failure model — fail-stop là crash còn fail-silent là Byzantine",
+      "Ở việc node có persist state xuống đĩa hay không",
+      "Ở số lượng node cần để chịu f lỗi (2f+1 so với 3f+1)"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cả hai đều là node dừng; khác biệt là có phát hiện được chắc chắn hay không, và điều đó do timing model quyết định.\n✓ Nằm ở timing model quyết định failure detector: đúng, fail-stop tồn tại đầy đủ trong synchronous.\n✗ fail-silent là Byzantine: sai, cả hai đều là crash (không nói dối), khác nhau ở khả năng phát hiện.\n✗ Persist state hay không: đó là chuyện crash-recovery, không phải fail-stop vs fail-silent.\n✗ Số node 2f+1 vs 3f+1: đó là khác biệt crash vs Byzantine, không phải fail-stop vs fail-silent."
+  },
+  {
+    "id": "ds-q-018",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-02-system-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một kiến trúc sư nói: 'Consensus của tôi không cần timeout, chạy trên mạng async thoải mái mà vẫn luôn kết thúc đúng.' Dựa trên FLP, bạn đánh giá thế nào?",
+    "options": [
+      "Sai — trong async chỉ cần một node có thể crash thì không có thuật toán deterministic nào vừa luôn an toàn vừa luôn kết thúc",
+      "Đúng — FLP chỉ áp dụng cho Byzantine chứ không áp dụng cho crash",
+      "Đúng — nếu dùng đủ nhiều node (3f+1) thì async cũng giải được deterministic",
+      "Không kết luận được vì FLP chỉ nói về synchronous model"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "FLP: async + chỉ một crash đã đủ khiến consensus deterministic bất khả thi (vừa safe vừa terminate).\n✓ Sai vì FLP với một crash trong async: đúng, đây chính là phát biểu FLP.\n✗ FLP chỉ cho Byzantine: sai, FLP dùng đúng mô hình lỗi nhẹ nhất là crash.\n✗ Thêm node 3f+1 là giải được: sai, FLP không bị phá bởi số node; vấn đề là timing async.\n✗ FLP chỉ nói synchronous: sai, FLP là về asynchronous."
+  },
+  {
+    "id": "ds-q-019",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-02-system-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao chống Byzantine đắt hơn hẳn so với chống crash, cụ thể ở yêu cầu số node?",
+    "options": [
+      "Cần ≥ 3f+1 node để chịu f lỗi (so với 2f+1 cho crash) vì node Byzantine có thể nói dối và gửi tin mâu thuẫn",
+      "Cần đúng 2f+1 node nhưng phải nhân đôi băng thông mạng",
+      "Cần f+1 node vì node Byzantine tự phát hiện và loại chính nó",
+      "Số node giống crash, chỉ khác là phải chạy trên synchronous model"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Byzantine cần ≥3f+1 (so với 2f+1 crash) cộng chữ ký số và nhiều vòng message.\n✓ 3f+1 vì node có thể nói dối/mâu thuẫn: đúng chi phí của Byzantine.\n✗ 2f+1 nhân đôi băng thông: sai con số, Byzantine cần 3f+1.\n✗ f+1 tự loại chính nó: node Byzantine không hợp tác tự loại; đây là mô hình hiểm ác nhất.\n✗ Giống crash chỉ khác timing: sai, khác biệt then chốt là số node 3f+1 và chữ ký."
+  },
+  {
+    "id": "ds-q-020",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-02-system-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một GC pause 8 giây trên leader khiến follower tưởng leader chết và bầu leader mới; khi leader cũ 'tỉnh dậy' thì đã có leader khác. Vì sao Raft xử lý đúng còn một consensus tự viết giả định synchronous lại gây split-brain?",
+    "options": [
+      "Raft dùng term number nên leader cũ bị từ chối; giả định synchronous coi vượt chặn D là 'chắc chắn chết' nên không phòng trường hợp leader cũ sống lại tranh quyền",
+      "Raft giả định synchronous nên timeout của nó không bao giờ sai, còn code tự viết giả định async",
+      "Raft dùng 3f+1 node nên chịu được Byzantine, còn code tự viết chỉ dùng 2f+1",
+      "Vấn đề nằm ở fsync — Raft không cần persist nên không bị ảnh hưởng bởi GC pause"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "GC pause vi phạm chặn D ngầm định; Raft an toàn nhờ term number từ chối leader cũ, còn giả định synchronous tin timeout tuyệt đối nên sinh split-brain.\n✓ Term number từ chối leader cũ, synchronous tin 'vượt D là chết': đúng cơ chế.\n✗ Raft giả định synchronous nên timeout không sai: sai, Raft giả định partial synchronous và chấp nhận timeout có thể sai.\n✗ Raft 3f+1 chịu Byzantine: sai, Raft dùng 2f+1 và không chống Byzantine.\n✗ Raft không cần persist: sai, Raft bắt buộc persist; và fsync không phải mấu chốt của tình huống split-brain này."
+  },
+  {
+    "id": "ds-q-021",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-02-system-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một cụm etcd 5 node. Nó chịu được tối đa bao nhiêu node crash mà vẫn hoạt động, và vì sao KHÔNG dùng công thức 3f+1?",
+    "options": [
+      "Chịu 2 node crash (2f+1 với f=2) vì etcd giả định crash-recovery chứ không giả định Byzantine",
+      "Chịu 1 node crash (3f+1 với f=1) vì mọi hệ quorum đều cần chống Byzantine",
+      "Chịu 4 node crash vì chỉ cần 1 node sống là đủ ghi dữ liệu",
+      "Chịu 2 node crash nhưng phải dùng chữ ký số cho mỗi message"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "5 node = 2f+1 với f=2, chịu 2 crash; dùng 2f+1 vì không giả định Byzantine (chỉ crash-recovery).\n✓ Chịu 2 crash, 2f+1, không Byzantine: đúng cấu hình etcd.\n✗ Chịu 1 crash với 3f+1: sai, etcd không cần 3f+1 vì không giả định node nói dối.\n✗ Chịu 4 crash chỉ cần 1 node: sai, cần quorum majority (3/5), không phải 1 node.\n✗ Cần chữ ký số: chữ ký là cho Byzantine; etcd giả định crash nên không cần."
+  },
+  {
+    "id": "ds-q-022",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-02-system-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong etcd, đặt election-timeout quá thấp so với mạng 'chậm nhưng bình thường' dẫn tới hậu quả gì, và điều đó minh hoạ nguyên tắc nào?",
+    "options": [
+      "Leader bị coi là chết oan gây bầu cử liên miên — minh hoạ hậu quả khi mô hình timing giả định không khớp thực tế",
+      "Node mất state trong RAM — minh hoạ vì sao phải persist WAL xuống đĩa",
+      "Xuất hiện node Byzantine gửi tin mâu thuẫn — minh hoạ nhu cầu 3f+1",
+      "Message bị mất vĩnh viễn — minh hoạ giả định async về mất gói"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Election-timeout là cụ thể hoá giả định độ trễ D; đặt quá thấp khiến leader khoẻ bị coi là chết, gây bầu cử liên miên.\n✓ Chết oan, bầu cử liên miên do mô hình timing sai thực tế: đúng.\n✗ Mất state RAM/persist WAL: đó là chuyện crash-recovery, không phải election-timeout đặt sai.\n✗ Node Byzantine: election-timeout không liên quan tới nói dối/Byzantine.\n✗ Message mất vĩnh viễn: các model ở đây giả định message chắc chắn tới, không phải nguyên nhân bầu cử liên miên."
+  },
+  {
+    "id": "ds-q-023",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-02-system-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Theo bảng ghép (timing × failure), những phát biểu nào ĐÚNG?",
+    "options": [
+      "Trong (asynchronous, crash-stop), consensus deterministic là bất khả thi theo FLP, cần thêm randomness hoặc timeout",
+      "Raft, Paxos, Multi-Paxos sống ở ô (partial synchronous, crash-recovery)",
+      "PBFT và Tendermint nằm ở ô (partial synchronous, Byzantine)",
+      "Trong (synchronous, crash-stop) consensus rất khó vì timeout không đáng tin",
+      "Byzantine trong async có thể giải deterministic dễ dàng mà không cần randomness"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bảng ghép định vị mỗi thuật toán vào một ô (timing × failure) cụ thể.\n✓ (async, crash) bất khả thi theo FLP, cần randomness/timeout: đúng.\n✓ Raft/Paxos ở (partial sync, crash-recovery): đúng, câu trả lời phỏng vấn kinh điển.\n✓ PBFT/Tendermint ở (partial sync, Byzantine): đúng, BFT thực dụng.\n✗ (synchronous, crash-stop) rất khó vì timeout không đáng tin: sai, ô này RẤT DỄ vì timeout hoàn hảo.\n✗ Byzantine async giải deterministic dễ dàng: sai, cần randomness (Ben-Or), không dễ dàng deterministic."
+  },
+  {
+    "id": "ds-q-024",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-02-system-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Về bốn failure model xếp theo mức hiểm ác tăng dần và quan hệ bao trùm, phát biểu nào ĐÚNG?",
+    "options": [
+      "Byzantine bao trùm omission, omission bao trùm crash-recovery, crash-recovery bao trùm crash-stop",
+      "Chỉ có Byzantine mới cho phép node 'nói dối' hay gửi tin mâu thuẫn cho các node khác nhau",
+      "Crash-recovery khác crash-stop ở chỗ node có thể sống lại và mất state trong RAM nếu chưa persist",
+      "Omission nghĩa là node gửi tin sai và bịa dữ liệu để đánh lừa",
+      "Crash-stop là mô hình lỗi lạc quan/đơn giản nhất, node chạy đúng rồi dừng hẳn không quay lại"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Bốn model bao trùm nhau theo mức hiểm ác; chỉ Byzantine mới nói dối, còn lại đều 'làm gì cũng đúng' hoặc dừng/bỏ sót.\n✓ Byzantine ⊃ omission ⊃ crash-recovery ⊃ crash-stop: đúng thứ tự bao trùm.\n✓ Chỉ Byzantine nói dối/gửi tin mâu thuẫn: đúng, các model khác không bịa.\n✓ Crash-recovery sống lại và mất RAM nếu chưa persist: đúng khác biệt với crash-stop.\n✗ Omission là gửi tin sai/bịa: sai, omission chỉ bỏ sót gửi/nhận nhưng những gì làm vẫn đúng, không bịa.\n✓ Crash-stop lạc quan nhất, dừng hẳn không quay lại: đúng, mô hình lõi trong cùng."
+  },
+  {
+    "id": "ds-q-025",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-03-rpc-networking",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, bản chất thật sự của một lời gọi RPC là gì?",
+    "options": [
+      "Một lời gọi hàm cục bộ được tối ưu để chạy nhanh hơn trên cùng máy",
+      "Gửi một message đi qua mạng và hy vọng nhận được một message trả về",
+      "Một giao dịch được đảm bảo luôn thành công nhờ tầng vận chuyển tin cậy",
+      "Một cơ chế chia sẻ con trỏ bộ nhớ giữa hai tiến trình khác máy"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "RPC trông giống gọi hàm nhưng thực chất là gửi message đi và chờ message về, nên mọi rủi ro mạng đều lộ ra.\n✓ Gửi message qua mạng rồi hy vọng nhận message về đúng là chốt bản chất mà bài nhấn mạnh.\n✗ Nói là gọi hàm cục bộ tối ưu hoá là hiểu sai — điểm mấu chốt là nó chạy trên MÁY KHÁC qua mạng.\n✗ Mạng là async, unreliable nên không có gì đảm bảo luôn thành công.\n✗ Khác process/máy nên không chia sẻ address space, con trỏ vô nghĩa và phải serialize copy toàn bộ."
+  },
+  {
+    "id": "ds-q-026",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-03-rpc-networking",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bài báo kinh điển 'A Note on Distributed Computing' (Waldo và cộng sự, 1994) cảnh báo điều gì?",
+    "options": [
+      "RPC luôn nhanh hơn gọi hàm cục bộ nhờ phần cứng mạng hiện đại",
+      "Cố che giấu sự khác biệt giữa gọi local và remote là sai lầm nền tảng",
+      "Nên tránh dùng RPC hoàn toàn và chỉ dùng bộ nhớ chia sẻ",
+      "Serialize tham số là kỹ thuật không cần thiết trong RPC"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài báo chỉ ra rằng giả vờ remote giống local là sai lầm nền tảng vì có bốn thứ không thể che giấu.\n✓ Che giấu khác biệt local/remote là sai lầm nền tảng đúng như luận điểm bài báo.\n✗ RPC chậm hơn local ~10^4–10^6 lần, không nhanh hơn.\n✗ Bài không kêu bỏ RPC, mà kêu đừng che giấu bản chất của nó.\n✗ Vì khác máy nên serialize là bắt buộc chứ không thừa."
+  },
+  {
+    "id": "ds-q-027",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-03-rpc-networking",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Từ phía client, tại sao 'request bị mất trên đường đi' và 'reply bị mất trên đường về' lại là vấn đề nan giải?",
+    "options": [
+      "Vì hai trường hợp này trông y hệt nhau: gửi đi, không thấy hồi âm",
+      "Vì TCP luôn phân biệt được chính xác hai trường hợp và báo lỗi khác nhau",
+      "Vì request mất luôn xảy ra trước, reply mất luôn xảy ra sau",
+      "Vì chỉ reply mất mới gây timeout, còn request mất thì không"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Client không thể phân biệt hai chặng hỏng này vì cả hai đều biểu hiện là 'gửi đi, không nhận hồi âm'.\n✓ Cả hai trông y hệt nhau từ phía client, đây là mầm mống mọi rắc rối phía sau.\n✗ TCP không giúp phân biệt được — ở tầng nghiệp vụ hai ca này giống hệt.\n✗ Không có thứ tự cố định như vậy; điểm quan trọng là client không quan sát được sự khác biệt.\n✗ Cả hai đều dẫn tới cùng biểu hiện timeout, không riêng gì reply mất."
+  },
+  {
+    "id": "ds-q-028",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-03-rpc-networking",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Đâu là các message anomaly mà bài học yêu cầu LUÔN phải giả định có thể xảy ra trên mạng async, unreliable?",
+    "options": [
+      "Loss — message không bao giờ tới",
+      "Duplication — cùng một message tới nhiều lần",
+      "Reordering — M2 tới trước M1 dù gửi M1 trước",
+      "Arbitrary delay — message tới rất muộn",
+      "Encryption — message tự động bị mã hoá sai khi truyền"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Bài liệt kê đúng bốn anomaly: loss, duplication, reordering, arbitrary delay.\n✓ Mất (loss) là một trong bốn anomaly cốt lõi.\n✓ Lặp (duplication) do retransmit/retry là anomaly cốt lõi.\n✓ Đảo thứ tự (reordering) do gói đi đường khác nhau là anomaly cốt lõi.\n✓ Trễ tuỳ ý (arbitrary delay) do queue nghẽn, GC pause là anomaly cốt lõi.\n✗ Mã hoá sai không nằm trong bốn anomaly bài nêu; nó không phải một bất thường mạng được liệt kê."
+  },
+  {
+    "id": "ds-q-029",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-03-rpc-networking",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một kỹ sư lập luận: 'Chúng ta dùng TCP nên message không bao giờ mất hay đảo thứ tự, tầng nghiệp vụ khỏi lo duplicate.' Nhận định nào đúng theo bài?",
+    "options": [
+      "Đúng hoàn toàn, TCP đảm bảo mọi thứ nên tầng nghiệp vụ không cần idempotent",
+      "Sai, TCP chỉ đảm bảo ordering và không mất TRONG một connection còn sống; khi rớt/tái kết nối, nhiều connection, hoặc retry ở tầng app thì cả bốn anomaly quay lại",
+      "Sai, TCP không hề đảm bảo thứ tự trong bất kỳ trường hợp nào",
+      "Đúng, vì retry ở tầng ứng dụng cũng được TCP khử trùng lặp tự động"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "TCP chỉ che các anomaly trong phạm vi một connection sống; ngoài phạm vi đó chúng quay lại đầy đủ.\n✓ Đúng: TCP đảm bảo trong một connection sống, nhưng rớt/tái kết nối, nhiều connection song song, hoặc retry tầng app khiến bốn anomaly quay lại — tầng nghiệp vụ vẫn phải giả định mất/lặp/đảo.\n✗ Không đúng hoàn toàn — 'khỏi lo idempotent' là cái bẫy để TCP ru ngủ.\n✗ TCP thực sự CÓ đảm bảo thứ tự trong một connection, nên nói không hề đảm bảo là sai.\n✗ Retry ở tầng ứng dụng nằm ngoài phạm vi TCP nên TCP không khử trùng lặp giúp được."
+  },
+  {
+    "id": "ds-q-030",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-03-rpc-networking",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Client gửi R1, chờ lâu, timeout rồi retry thành R2; R2 xong thì reply của R1 mới lết về muộn. Cơ chế nào ngăn client gán nhầm reply cũ của R1 cho R2?",
+    "options": [
+      "Tăng timeout T lên thật lớn để R1 không bao giờ timeout",
+      "Gắn request ID / correlation ID duy nhất cho từng call và bỏ qua reply 'mồ côi'",
+      "Dùng at-most-once để không bao giờ có R2",
+      "Chuyển toàn bộ giao tiếp sang UDP để reply cũ tự bị drop"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Đây là 'zombie reply' do arbitrary delay; giải pháp là gắn ID duy nhất cho mỗi call để khớp reply đúng request.\n✓ Request ID / correlation ID duy nhất cho phép khớp reply với đúng call và bỏ reply mồ côi — đúng cách bài nêu.\n✗ Tăng T lớn làm phát hiện lỗi chậm và không giải quyết gốc rễ việc khớp reply.\n✗ At-most-once bỏ retry sẽ gây mất request, không phải cách xử lý zombie reply.\n✗ UDP không đảm bảo drop reply cũ và không phải cơ chế khớp reply."
+  },
+  {
+    "id": "ds-q-031",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-03-rpc-networking",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Cụm 5 node bị network partition chia thành nhóm 3 node và nhóm 2 node. Theo cơ chế quorum majority, điều gì xảy ra?",
+    "options": [
+      "Cả hai nhóm cùng bầu leader và cùng nhận ghi để tối đa uptime",
+      "Chỉ nhóm 3 node đạt đa số được làm leader và nhận ghi; nhóm 2 node tự ngừng nhận ghi",
+      "Nhóm 2 node được ưu tiên vì ít node hơn nên nhất quán hơn",
+      "Không nhóm nào được nhận ghi cho tới khi mạng lành lại"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Quorum majority chỉ cho nhóm chiếm đa số (>N/2) làm leader, nên chỉ nhóm 3 node được ghi.\n✓ Nhóm 3 node đạt majority nên làm leader và nhận ghi; nhóm 2 node fail thay vì phân kỳ — đúng cơ chế quorum.\n✗ Cả hai cùng nhận ghi chính là split-brain mà quorum sinh ra để ngăn.\n✗ Ít node không phải tiêu chí; đa số (>N/2) mới là tiêu chí.\n✗ Nhóm đa số vẫn tiếp tục phục vụ được, không cần chờ mạng lành."
+  },
+  {
+    "id": "ds-q-032",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-03-rpc-networking",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao quorum majority ngăn được split-brain (hai leader cùng nhận ghi)?",
+    "options": [
+      "Vì hai nhóm không thể CÙNG chiếm đa số, nên không bao giờ có hai leader hợp lệ",
+      "Vì leader cũ luôn tự động thắng mọi cuộc bầu cử",
+      "Vì quorum khiến mạng không bao giờ bị partition",
+      "Vì mỗi node chỉ được bỏ đúng một phiếu duy nhất mãi mãi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Split-brain bị chặn vì tính chất đa số: hai nhóm rời rạc không thể đồng thời chiếm >N/2 node.\n✓ Hai nhóm không thể cùng đạt đa số nên chỉ tối đa một leader hợp lệ — đây là hạt nhân chống split-brain.\n✗ Leader cũ không mặc nhiên thắng; vấn đề là điều kiện đa số chứ không phải thâm niên.\n✗ Quorum không ngăn được partition xảy ra; nó chỉ xử lý hậu quả an toàn.\n✗ Cơ chế nằm ở đa số theo term, không phải 'một phiếu mãi mãi'."
+  },
+  {
+    "id": "ds-q-033",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-03-rpc-networking",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Câu được bài coi là 'quan trọng nhất': khi client gửi request và không nhận reply sau T giây, nó biết chắc điều gì?",
+    "options": [
+      "Server chắc chắn đã chết, nên phải retry sang node khác ngay",
+      "Chỉ biết 'chưa thấy hồi âm sau T giây'; KHÔNG phân biệt được server chết, chậm, hay reply mất",
+      "Server chắc chắn đã xử lý xong, nên tuyệt đối không được retry",
+      "Reply chắc chắn bị mất trên đường về, nên cứ retry vô tư"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Timeout chỉ nói lên 'chưa thấy hồi âm sau T', không phân biệt được ba khả năng chết/chậm/reply mất.\n✓ Client mù thông tin, chỉ biết chưa thấy hồi âm sau T; không phân biệt được server chết, đang xử lý chậm, hay reply đã mất.\n✗ Không thể kết luận chắc server chết — đó chỉ là một trong ba khả năng.\n✗ Cũng không thể kết luận chắc đã xử lý xong.\n✗ Không thể kết luận chắc reply mất; ba khả năng đòi ba cách xử lý ngược nhau nhưng client không biết chọn cái nào."
+  },
+  {
+    "id": "ds-q-034",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-03-rpc-networking",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Từ chuỗi lập luận 'timeout không phân biệt chết/chậm/reply mất', bài rút ra những hệ quả nền tảng nào?",
+    "options": [
+      "Mọi retry đều có nguy cơ gây duplication",
+      "Vì duplication không tránh khỏi, phía nhận buộc phải idempotent nếu muốn đúng đắn",
+      "Chọn T là một đánh đổi: quá ngắn gây retry storm, quá dài thì phát hiện lỗi chậm",
+      "Nên dùng exponential backoff + jitter để tránh đồng loạt dội bom retry",
+      "Chỉ cần đặt T đủ lớn là loại bỏ được hoàn toàn duplication"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Vì timeout mù thông tin, retry có thể gây lặp, kéo theo yêu cầu idempotent và các đánh đổi khi chọn T.\n✓ Mọi retry đều có nguy cơ duplication vì có thể server đã thực hiện rồi.\n✓ Do duplication không tránh khỏi, phía nhận buộc phải idempotent để đúng đắn.\n✓ Chọn T là đánh đổi: quá ngắn tạo retry storm làm sập node ngắc ngoải, quá dài phát hiện lỗi chậm.\n✓ Exponential backoff + jitter giúp retry không đồng loạt dội bom.\n✗ Đặt T lớn KHÔNG loại bỏ được duplication; nguồn gốc là client không phân biệt được ba khả năng, nên idempotency mới là lời giải."
+  },
+  {
+    "id": "ds-q-035",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-03-rpc-networking",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn thiết kế đường truyền cho luồng streaming vị trí GPS: mất một điểm không sao, cần độ trễ thấp. Delivery semantics nào phù hợp nhất?",
+    "options": [
+      "at-most-once: gửi rồi thôi, không retry, xử lý 0 hoặc 1 lần",
+      "at-least-once: retry tới khi có ACK, chấp nhận có thể lặp",
+      "exactly-once: idempotency + dedup cho mọi điểm GPS",
+      "two-phase commit cho từng điểm GPS để đảm bảo bền vững"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Khi mất mát chấp nhận được và tốc độ là ưu tiên thì at-most-once là lựa chọn đúng.\n✓ At-most-once (gửi, không retry, 0 hoặc 1 lần) hợp cho metrics/log/telemetry/GPS vì rẻ, nhanh, mất một điểm không sao.\n✗ At-least-once thêm retry và duplicate không cần thiết, làm tăng chi phí cho luồng chịu mất được.\n✗ Exactly-once là đắt nhất, thừa thãi khi mất một điểm GPS chẳng ảnh hưởng.\n✗ Two-phase commit cho từng điểm GPS là quá nặng và lệch mục tiêu độ trễ thấp."
+  },
+  {
+    "id": "ds-q-036",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-03-rpc-networking",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong sơ đồ 'reply mất khiến retry trừ tiền hai lần', bài kết luận chỗ SỬA nằm ở đâu?",
+    "options": [
+      "Ở phía client: cấm client retry để không bao giờ gửi lần hai",
+      "Ở phía server: nhận diện request trùng qua idempotency-key và trả kết quả cũ thay vì thực hiện lại",
+      "Ở tầng mạng: nâng cấp để reply không bao giờ bị mất",
+      "Ở phía client: tăng timeout để reply lần đầu kịp về"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Client buộc phải retry vì không biết reply có mất hay không; nên chỗ sửa đúng nằm ở server idempotent.\n✓ Server nhận diện request trùng qua idempotency-key và trả kết quả cũ — retry an toàn = client retry + server idempotent.\n✗ Cấm client retry là sai: client đúng khi retry vì nó không phân biệt được reply mất hay chưa xử lý.\n✗ Không thể làm mạng 'không bao giờ mất reply'; mạng vốn unreliable.\n✗ Tăng timeout không giải quyết gốc rễ trùng lặp khi reply thật sự bị mất."
+  },
+  {
+    "id": "ds-q-037",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-04-cap-pacelc",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo phát biểu CHÍNH XÁC của CAP (Gilbert–Lynch), cách hiểu \"pick 2 of 3\" bị coi là sai vì sao?",
+    "options": [
+      "Vì thực ra bạn luôn có thể có cả 3 thuộc tính nếu mạng đủ nhanh",
+      "Vì P (partition tolerance) không phải món ngang hàng để tự do bỏ; với hệ chạy qua mạng thật, partition bắt buộc phải chịu, lựa chọn thật sự chỉ là C hay A khi có partition",
+      "Vì CAP chỉ áp dụng cho hệ single-node",
+      "Vì Consistency và Availability luôn tương đương nhau khi có partition"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "CAP chuẩn nói: khi có partition, không thể vừa linearizable vừa available; P là thứ bị áp lên bạn.\n✓ P không phải để chọn; hễ có mạng thật thì partition chắc chắn xảy ra, chỉ còn chọn CP hay AP.\n✗ Không thể có cả 3 khi partition; đó chính là điều CAP cấm.\n✗ CAP là về hệ phân tán nhiều node, không phải single-node.\n✗ C và A đối nghịch nhau khi partition, không tương đương."
+  },
+  {
+    "id": "ds-q-038",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-04-cap-pacelc",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong CAP, chữ \"C\" (Consistency) được định nghĩa chặt là gì?",
+    "options": [
+      "Ràng buộc toàn vẹn của giao dịch giống chữ C trong ACID",
+      "Linearizability: mọi read thấy write mới nhất đã hoàn tất, hệ hành xử như thể có một bản copy duy nhất",
+      "Uptime cao, hệ hầu như không bao giờ downtime",
+      "Mọi request tới node còn sống đều được trả lời non-error"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "CAP-C là linearizability (consistency mạnh về thứ tự/độ mới của read-write).\n✓ Linearizability nghĩa là toàn hệ hành xử như một bản copy duy nhất, read luôn thấy write mới nhất.\n✗ ACID-C là ràng buộc toàn vẹn, khác hẳn CAP-C.\n✗ Uptime cao không phải định nghĩa của C.\n✗ \"Mọi request tới node sống được trả lời\" là định nghĩa của A, không phải C."
+  },
+  {
+    "id": "ds-q-039",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-04-cap-pacelc",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một hệ được quảng cáo là \"CA\" (từ chối P). Theo bài, điều này thực chất nghĩa là gì?",
+    "options": [
+      "Đó là một hệ phân tán tối ưu, vừa nhất quán vừa sẵn sàng",
+      "Đó thực chất là một RDBMS single-node, không phải hệ phân tán, vì giả định mạng không bao giờ mất message",
+      "Đó là hệ AP có thêm cơ chế hoà giải mạnh",
+      "Đó là hệ dùng consensus để đạt cả 3 thuộc tính"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "\"Bỏ P\" nghĩa là giả định mạng không bao giờ mất message — chỉ đúng khi chạy trên một máy duy nhất.\n✓ Một hệ \"CA\" từ chối P thực chất là RDBMS single-node, không phải hệ phân tán.\n✗ Không có hệ phân tán nào có được cả 3 khi partition.\n✗ AP là chuyện khác; \"CA\" không phải AP có hoà giải.\n✗ Consensus vẫn phải hy sinh A khi partition, không thoát khỏi CAP."
+  },
+  {
+    "id": "ds-q-040",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-04-cap-pacelc",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Giỏ hàng của một sàn thương mại điện tử cần khách hàng LUÔN thêm được sản phẩm kể cả khi một phần cluster bị partition, chấp nhận hoà giải các bản sao lệch nhau sau. Nên chọn mô hình nào?",
+    "options": [
+      "CP: từ chối thao tác ở phía thiểu số để giữ nhất quán tuyệt đối",
+      "AP: mọi node vẫn nhận read/write từ dữ liệu cục bộ, hoà giải sau bằng cơ chế như vector clock hoặc CRDT",
+      "Bỏ P để đạt cả C lẫn A",
+      "PC/EC như Spanner để đảm bảo linearizable"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Giỏ hàng thà available (khách luôn thêm được hàng, hoà giải sau) → AP.\n✓ AP giữ mọi node nhận read/write, chấp nhận divergence tạm thời rồi hoà giải bằng last-write-wins/vector clock/CRDT.\n✗ CP sẽ từ chối khách ở phía thiểu số — trái yêu cầu \"luôn thêm được\".\n✗ Không thể bỏ P với hệ phân tán thật.\n✗ PC/EC ưu tiên đúng bằng mọi giá, sẽ chặn thao tác khi partition — không hợp giỏ hàng."
+  },
+  {
+    "id": "ds-q-041",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-04-cap-pacelc",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "PACELC bổ khuyết cho CAP ở điểm nào mà CAP im lặng?",
+    "options": [
+      "Nó mô tả hành vi khi ĐANG có partition rõ hơn CAP",
+      "Nó nói rằng khi KHÔNG có partition (Else), hệ có replication vẫn phải chọn giữa Latency thấp và Consistency mạnh",
+      "Nó chứng minh có thể đạt cả 3 thuộc tính CAP",
+      "Nó thay thế linearizability bằng eventual consistency"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "CAP chỉ nói hành vi khi có partition (hiếm); PACELC vá phần Else — 99.9% thời gian mạng lành.\n✓ Khi không partition, để nhất quán mạnh phải chờ đủ replica (tăng latency); muốn latency thấp thì chấp nhận đọc stale.\n✗ CAP đã mô tả phần partition; PACELC bổ sung phần Else chứ không làm rõ phần P.\n✗ PACELC không cho phép đạt cả 3.\n✗ PACELC không thay thế định nghĩa C."
+  },
+  {
+    "id": "ds-q-042",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-04-cap-pacelc",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao Dynamo được xếp nhãn EL (chọn Latency khi bình thường), và điều đó cho thấy gì về \"eventually consistent\"?",
+    "options": [
+      "Vì Dynamo bị partition liên tục nên buộc phải eventual",
+      "Vì Dynamo chọn latency thấp NGAY CẢ khi mạng hoàn toàn khoẻ — đó là quyết định thiết kế chủ động, không phải hệ quả bị ép của partition",
+      "Vì Dynamo dùng consensus quorum chờ majority",
+      "Vì Dynamo luôn linearizable khi không partition"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Điểm hay của PACELC: eventual không chỉ là hệ quả của partition.\n✓ Dynamo chọn EL (latency thấp) ngay cả khi mạng khoẻ — quyết định chủ động, trả lời sau khi ghi ít replica nên đọc có thể stale.\n✗ Không phải do bị partition liên tục.\n✗ Dynamo leaderless, không chờ majority consensus như PC/EC.\n✗ Chọn EL nghĩa là chấp nhận stale, không linearizable."
+  },
+  {
+    "id": "ds-q-043",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-04-cap-pacelc",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong Cassandra với N=3, một câu lệnh chạy CONSISTENCY ONE (W=1, R=1). Kết quả đọc có thể ra sao và vì sao?",
+    "options": [
+      "Luôn đọc bản mới nhất vì R+W=2 đủ chạm replica mới",
+      "Có thể đọc dữ liệu cũ (stale) vì R+W=2 ≤ 3, không đảm bảo read chạm replica có bản mới nhất — nghiêng EL, nhanh",
+      "Không đọc được vì chưa đạt quorum",
+      "Đọc nhất quán mạnh nhưng latency rất cao"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Quy tắc: R+W > N mới đảm bảo read chạm ít nhất một replica có bản mới nhất.\n✓ ONE cho R+W=2 ≤ 3 → không thoả R+W>N, đọc có thể stale nhưng chỉ chờ 1 replica nên nhanh (nghiêng EL).\n✗ R+W=2 không > 3 nên KHÔNG đảm bảo đọc bản mới nhất.\n✗ ONE vẫn phục vụ được, không cần quorum.\n✗ ONE nghiêng latency thấp, không phải nhất quán mạnh chậm."
+  },
+  {
+    "id": "ds-q-044",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-04-cap-pacelc",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "MongoDB (mặc định) được xếp PC/EC. Khi primary bị partition khỏi majority, nó cư xử thế nào để giữ tính cách đó?",
+    "options": [
+      "Primary tiếp tục nhận write ở phía thiểu số để giữ availability",
+      "Primary tự hạ cấp (step down); phía thiểu số ngừng nhận write → mất A, giữ C",
+      "Cả hai phía cùng nhận write rồi hoà giải bằng CRDT",
+      "Primary chuyển sang eventual consistency để giảm latency"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "MongoDB single-primary: mất majority thì primary step down để tránh split-brain, chọn C hơn A.\n✓ Primary tự hạ cấp, phía thiểu số ngừng nhận write → mất A giữ C, đúng tính cách PC.\n✗ Nếu primary vẫn nhận write ở thiểu số sẽ gây split-brain — trái thiết kế.\n✗ MongoDB mặc định không hoà giải kiểu leaderless/CRDT.\n✗ Nó giữ nhất quán, không tụt xuống eventual để đổi latency."
+  },
+  {
+    "id": "ds-q-045",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-04-cap-pacelc",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một dịch vụ khoá phân tán và bầu leader cần độ đúng tuyệt đối, thà từ chối còn hơn trả sai. Lựa chọn kiến trúc nào phù hợp và vì sao?",
+    "options": [
+      "Cassandra với CONSISTENCY ONE để giảm latency",
+      "Dynamo leaderless để luôn available",
+      "Hệ consensus như ZooKeeper/etcd (ZAB/Raft): cần majority quorum để tiến, phía thiểu số từ chối write → CP điển hình",
+      "DynamoDB với đọc eventually-consistent mặc định"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Khoá phân tán, bầu leader thà đúng → CP; nền tảng là consensus cần majority.\n✓ ZooKeeper/etcd cần majority quorum, phía thiểu số từ chối write, tránh split-brain — đúng cho khoá và bầu leader.\n✗ Cassandra ONE nghiêng EL, có thể đọc stale — không đảm bảo đúng tuyệt đối.\n✗ Dynamo leaderless AP chấp nhận divergence — sai cho khoá.\n✗ DynamoDB eventual read mặc định có thể trả bản cũ — không hợp."
+  },
+  {
+    "id": "ds-q-046",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-04-cap-pacelc",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những phát biểu nào ĐÚNG về việc \"P là thứ bắt buộc phải chịu\" trong hệ phân tán? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Trong hệ có ≥2 node giao tiếp qua mạng thật, partition chắc chắn sẽ xảy ra (đứt cáp, switch treo, GC pause dài...)",
+      "Một node không phân biệt được \"peer đã chết\" với \"message tới peer bị mất\"",
+      "Bỏ P đồng nghĩa giả định mạng không bao giờ mất message, chỉ đúng khi chạy trên một máy duy nhất",
+      "Có thể loại bỏ P bằng cách dùng mạng đủ nhanh và ổn định",
+      "Partition là thứ bạn chủ động lựa chọn khi thiết kế"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "P bị áp lên mọi hệ chạy qua mạng thật; chỉ còn chọn CP hay AP khi partition xảy ra.\n✓ Với ≥2 node qua mạng thật, partition chắc chắn xảy ra do đủ loại sự cố.\n✓ Đây là partial failure: node không phân biệt được peer chết hay message mất.\n✓ Bỏ P = giả định mạng không mất message, chỉ đúng với single-node.\n✗ Mạng nhanh/ổn định cũng không loại bỏ được partition; nó vẫn chắc chắn xảy ra.\n✗ Partition xảy tới với bạn, không phải thứ bạn chọn."
+  },
+  {
+    "id": "ds-q-047",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-04-cap-pacelc",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những hiểu lầm nào về CAP/PACELC được nêu là SAI (cần tránh)? (chọn tất cả đáp án sai-cần-tránh)",
+    "options": [
+      "\"Chọn 2 trong 3 (CA, CP, AP)\" — coi CA là một lựa chọn hợp lệ của hệ phân tán",
+      "\"C trong CAP giống C trong ACID\"",
+      "\"A trong CAP nghĩa là uptime cao\"",
+      "\"Partition hiếm nên có thể bỏ qua CAP hoàn toàn\"",
+      "\"Khi có partition, phải hy sinh ít nhất một trong C và A\""
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Bài liệt kê các hiểu lầm phổ biến cần tránh; câu hỏi chọn những phát biểu SAI.\n✓ \"2 trong 3\"/CA là hệ phân tán — sai, CA thực chất single-node.\n✓ CAP-C = linearizability, khác ACID-C (ràng buộc toàn vẹn) — nên đồng nhất hai thứ là sai.\n✓ CAP-A là định nghĩa toán học (mọi request tới node sống được trả lời), không phải \"uptime cao\".\n✓ Partition hiếm nhưng chắc chắn xảy ra; bỏ qua CAP dẫn tới mất dữ liệu/split-brain — nên phát biểu đó sai.\n✗ \"Khi partition phải hy sinh ít nhất một trong C và A\" là phát biểu ĐÚNG của CAP, không phải hiểu lầm."
+  },
+  {
+    "id": "ds-q-048",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-04-cap-pacelc",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Nhãn PACELC \"PA/EL\" (ví dụ Dynamo/Cassandra) mô tả tính cách hệ thống thế nào?",
+    "options": [
+      "Luôn đúng bằng mọi giá, chịu chậm hơn cả khi partition lẫn khi bình thường",
+      "Khi partition ưu tiên available, khi bình thường ưu tiên latency thấp; nhất quán yếu (eventual)",
+      "Khi partition ưu tiên consistency, khi bình thường ưu tiên latency thấp",
+      "Available khi partition nhưng consistency mạnh khi bình thường"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "PA/EL: partition thì available, else thì latency thấp — luôn nhanh, luôn trả lời, eventual.\n✓ PA = available khi đứt; EL = latency thấp khi bình thường; kết quả nhất quán yếu.\n✗ \"Luôn đúng bằng mọi giá, chịu chậm\" là PC/EC (Spanner...).\n✗ \"Consistency khi partition + latency khi thường\" là PC/EL — hiếm gặp.\n✗ \"Available khi partition + consistency khi thường\" là PA/EC, không phải PA/EL."
+  },
+  {
+    "id": "ds-q-049",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-05-consistency-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, \"consistency model\" trong ngữ cảnh replication thực chất là gì?",
+    "options": [
+      "Ràng buộc toàn vẹn (integrity constraint) của một transaction — chính là chữ C trong ACID",
+      "Một hợp đồng giữa hệ lưu trữ nhiều bản sao và ứng dụng, quy định đọc ra giá trị nào là hợp lệ",
+      "Cơ chế mã hoá dữ liệu khi truyền giữa các replica để chống nghe lén",
+      "Thuật toán nén dữ liệu để giảm băng thông khi đồng bộ các bản sao"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Consistency model là tập đảm bảo về trật tự đọc-ghi hợp lệ trên dữ liệu được sao chép.\n✓ Hợp đồng giữa hệ nhiều bản sao và app về giá trị đọc hợp lệ đúng là định nghĩa bài nêu.\n✗ Chữ C trong ACID là ràng buộc toàn vẹn transaction, bài nói rõ đây KHÔNG phải cái đó mà là replication consistency.\n✗ Mã hoá đường truyền không liên quan tới trật tự hiển thị giá trị.\n✗ Nén dữ liệu là chuyện băng thông, không phải hợp đồng về giá trị đọc được."
+  },
+  {
+    "id": "ds-q-050",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-05-consistency-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Sắp xếp phổ nhất quán data-centric từ MẠNH nhất tới YẾU nhất là:",
+    "options": [
+      "eventual → causal → sequential → linearizability",
+      "linearizability → sequential → causal → eventual",
+      "sequential → linearizability → eventual → causal",
+      "causal → linearizability → eventual → sequential"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Phổ đi từ mạnh (giống một bản sao) tới yếu (chỉ hứa hội tụ).\n✓ linearizability → sequential → causal → eventual đúng thứ tự mạnh-yếu trong bài.\n✗ Đảo ngược hoàn toàn, đặt eventual lên đầu là sai vì eventual yếu nhất.\n✗ Xếp sequential trên linearizability sai — linearizability = sequential cộng ràng buộc real-time nên mạnh hơn.\n✗ Trộn lộn thứ tự, causal không mạnh hơn linearizability."
+  },
+  {
+    "id": "ds-q-051",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-05-consistency-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đâu là đảm bảo DUY NHẤT mà eventual consistency hứa?",
+    "options": [
+      "Nếu ngừng mọi write đủ lâu, cuối cùng tất cả bản sao sẽ hội tụ về cùng một giá trị",
+      "Mọi đọc luôn thấy giá trị mới nhất ngay sau khi write hoàn thành",
+      "Các thao tác có quan hệ nhân-quả luôn hiện ra đúng thứ tự",
+      "Tồn tại một total order chung mà mọi node đều thấy giống nhau"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Eventual chỉ hứa hội tụ khi ngừng ghi đủ lâu, không hứa gì về khi nào hay thứ tự đọc trong lúc chờ.\n✓ Ngừng write đủ lâu thì các bản sao hội tụ đúng là đảm bảo duy nhất của eventual.\n✗ Luôn thấy giá trị mới nhất (recency) là đặc quyền của linearizability, không phải eventual.\n✗ Giữ đúng nhân-quả là đảm bảo của causal, mạnh hơn eventual.\n✗ Một total order chung cho mọi node là sequential consistency."
+  },
+  {
+    "id": "ds-q-052",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-05-consistency-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Client-centric consistency (session guarantees) khác data-centric ở điểm cốt lõi nào khiến nó RẺ hơn nhiều?",
+    "options": [
+      "Nó dùng phần cứng chuyên dụng để tăng tốc đồng bộ",
+      "Nó chỉ ràng buộc trong phạm vi một session/client, không đòi đồng bộ toàn cục",
+      "Nó loại bỏ hoàn toàn nhu cầu sao chép dữ liệu giữa các replica",
+      "Nó luôn cho consistency mạnh hơn linearizability trên toàn hệ"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Session guarantees chỉ đảm bảo trải nghiệm cho một client cụ thể nên không cần phối hợp toàn cầu.\n✓ Chỉ ràng buộc trong phạm vi một session/client, không cần đồng bộ toàn cục nên cực rẻ.\n✗ Không liên quan phần cứng chuyên dụng.\n✗ Vẫn có replication, chỉ là bảo đảm cho góc nhìn một client.\n✗ Client-centric không mạnh hơn linearizability toàn hệ; nó là loại bảo đảm khác, phạm vi hẹp."
+  },
+  {
+    "id": "ds-q-053",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-05-consistency-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Điểm khác biệt DUY NHẤT giữa linearizability và sequential consistency là gì?",
+    "options": [
+      "Linearizability thêm ràng buộc tôn trọng thời gian thực (real-time) mà sequential bỏ qua",
+      "Sequential đảm bảo recency tuyệt đối còn linearizability thì không",
+      "Linearizability không cần total order còn sequential thì cần",
+      "Sequential vẫn available khi partition còn linearizability thì không"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu rõ: linearizability = sequential CỘNG THÊM ràng buộc real-time.\n✓ Linearizability tôn trọng thời gian thực (A xong trước B bắt đầu thì A đứng trước), sequential bỏ ràng buộc này.\n✗ Recency tuyệt đối là của linearizability, không phải sequential.\n✗ Cả hai đều dựa trên total order; linearizability vẫn có total order.\n✗ Cả sequential lẫn linearizability đều KHÔNG available khi partition theo bảng so sánh trong bài."
+  },
+  {
+    "id": "ds-q-054",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-05-consistency-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trên diễn đàn replicate kiểu eventual: Alice post câu hỏi (replica 1), Bob ĐỌC THẤY câu hỏi rồi trả lời (replica 2), replica 2 đẩy câu trả lời sang replica 3 nhanh hơn câu hỏi, Carol thấy câu trả lời mà chưa có câu hỏi. Mức consistency nào là mức YẾU NHẤT chặn được anomaly này?",
+    "options": [
+      "Linearizability",
+      "Eventual consistency",
+      "Causal consistency",
+      "Monotonic reads"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Câu trả lời nhân-quả phụ thuộc câu hỏi (Bob đọc rồi mới viết), nên cần giữ nhân-quả.\n✓ Causal consistency theo dõi dependency, giữ đúng thứ tự nhân-quả và là mức mạnh nhất còn available khi partition — mức yếu nhất chặn được anomaly này.\n✗ Linearizability chặn được nhưng đắt hơn hẳn, không phải mức yếu nhất cần dùng.\n✗ Eventual thuần chính là mức để lọt anomaly này.\n✗ Monotonic reads chỉ chặn đọc bị lùi trong một session, không đảm bảo nhân-quả giữa câu hỏi và câu trả lời của người khác."
+  },
+  {
+    "id": "ds-q-055",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-05-consistency-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với Cassandra N (RF) = 3, bạn cần đọc luôn thấy write mới nhất mình vừa ghi (read-your-writes). Cấu hình R/W nào đạt điều đó?",
+    "options": [
+      "W = ONE (1), R = ONE (1)",
+      "W = QUORUM (2), R = QUORUM (2)",
+      "W = ONE (1), R = QUORUM (2)",
+      "W = ANY (0), R = ONE (1)"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cần R + W > N để tập ghi và tập đọc chắc chắn giao nhau ít nhất một replica giữ bản mới nhất.\n✓ W=2, R=2 với N=3 cho R+W=4>3 nên hai tập giao nhau, đọc thấy được write mới nhất.\n✗ W=1, R=1 cho R+W=2 ≤ 3, không giao nhau đảm bảo → rớt xuống eventual, có thể đọc bản cũ.\n✗ W=1, R=2 cho R+W=3, không thỏa R+W>3 nên không đảm bảo overlap.\n✗ W=0 (ANY), R=1 càng yếu, không có đảm bảo overlap nào."
+  },
+  {
+    "id": "ds-q-056",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-05-consistency-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn đổi avatar xong reload lại thấy avatar CŨ (như hình minh hoạ: write vào leader nhưng read rơi vào follower chưa sync). Session guarantee nào được thiết kế để chặn đúng anomaly này?",
+    "options": [
+      "Monotonic reads",
+      "Writes-follow-reads",
+      "Read-your-writes",
+      "Monotonic writes"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Anomaly: sau khi chính bạn ghi, bạn đọc lại không thấy ghi của mình.\n✓ Read-your-writes đảm bảo sau khi bạn ghi, chính bạn đọc lại luôn thấy ghi đó (hoặc mới hơn) — đúng ví dụ đổi avatar.\n✗ Monotonic reads chặn đọc bị lùi giữa các lần đọc, không đảm bảo thấy chính write của mình.\n✗ Writes-follow-reads đảm bảo write sau khi đọc A thì mọi nơi thấy A trước — về thứ tự nhân-quả, không phải ca này.\n✗ Monotonic writes đảm bảo thứ tự áp dụng các write của cùng client, không phải chuyện đọc lại thấy write của mình."
+  },
+  {
+    "id": "ds-q-057",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-05-consistency-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, những phát biểu nào ĐÚNG về việc vì sao đa số hệ production cố tình KHÔNG chọn linearizability? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Linearizable đọc/ghi cần phối hợp qua quorum/consensus, cộng round-trip mạng vào mọi request",
+      "Khi partition, hệ linearizable (CP) phải từ chối phục vụ phần thiểu số để khỏi trả dữ liệu sai",
+      "Phần lớn dữ liệu như số like, view count, đang online chịu được cũ vài giây mà không hại",
+      "Linearizability không thể hiện thực được trên bất kỳ hệ thực tế nào",
+      "PACELC nói rằng chỉ khi có partition mới có đánh đổi, còn lúc bình thường thì không"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bài nêu ba lý do thực tế: latency, availability (CAP/PACELC), và đa số dữ liệu chịu được cũ.\n✓ Quorum/consensus cộng round-trip vào mọi request là lý do latency.\n✓ Hệ CP từ chối phục vụ thiểu số khi partition là lý do availability.\n✓ Like, view count, đang online chịu được cũ vài giây là lý do thứ ba.\n✗ Linearizability vẫn hiện thực được (etcd, ZooKeeper, Spanner) — nói không thể là sai.\n✗ PACELC bổ sung rằng NGAY CẢ KHI không partition vẫn có đánh đổi Latency vs Consistency — nói ngược là sai."
+  },
+  {
+    "id": "ds-q-058",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-05-consistency-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong Cassandra, dù bạn đặt QUORUM đọc và ghi thỏa R + W > N, bài học lưu ý điều gì về mức đảm bảo đạt được?",
+    "options": [
+      "Đạt read-your-writes nhưng CHƯA phải linearizability đầy đủ, vì thiếu ràng buộc real-time chặt giữa các client khác nhau",
+      "Đạt linearizability đầy đủ tương đương consensus Paxos",
+      "Chỉ đạt eventual consistency vì quorum không đảm bảo overlap",
+      "Đạt sequential consistency nhưng mất read-your-writes"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Quorum overlap đảm bảo tập R và W giao nhau nên đọc thấy write mới, nhưng không có ràng buộc real-time toàn cục.\n✓ R+W>N cho read-your-writes nhưng không cho linearizability đầy đủ; muốn tuyến tính thật cần cơ chế như Paxos/lightweight transaction IF.\n✗ Quorum overlap KHÔNG tương đương linearizability đầy đủ — đó chính là điểm bài cảnh báo.\n✗ Quorum có đảm bảo overlap khi R+W>N, không phải eventual.\n✗ Nó cho read-your-writes chứ không mất, và không tự động thành sequential."
+  },
+  {
+    "id": "ds-q-059",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-05-consistency-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Một kiến trúc sư áp dụng nguyên tắc \"chọn consistency theo từng loại dữ liệu\". Ghép nào là hợp lý theo bảng ra quyết định trong bài? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Số dư tài khoản, khoá phân tán, cấp phát ID duy nhất → linearizable (etcd, ZooKeeper, Spanner)",
+      "Bình luận, hội thoại chat cần đúng nhân-quả → causal (COPS, MongoDB causal session, Cosmos DB)",
+      "Counter like, feed mạng xã hội, cache, DNS → eventual (+ client-centric)",
+      "Toàn bộ mọi loại dữ liệu nên ép về một mức linearizable duy nhất cho đơn giản",
+      "Cờ đã thanh toán chưa nên để eventual vì đọc cũ vài giây không sao"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Nguyên tắc thực chiến: trả đúng giá cho đúng chỗ, chọn mức theo loại dữ liệu.\n✓ Tiền/khoá/ID cần strong → linearizable với etcd, ZooKeeper, Spanner.\n✓ Chat/comment cần nhân-quả → causal với COPS, MongoDB causal session, Cosmos DB.\n✓ Like/feed/cache/DNS chịu được cũ → eventual kèm client-centric.\n✗ Ép cả hệ về một mức đi ngược đúng nguyên tắc bài dạy (đừng đặt cả hệ vào một mức).\n✗ Cờ đã thanh toán là chỗ đọc cũ = sai nghiệp vụ nghiêm trọng, phải linearizable chứ không phải eventual."
+  },
+  {
+    "id": "ds-q-060",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-05-consistency-models",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong MongoDB, readConcern level \"linearizable\" làm thêm điều gì so với readConcern \"majority\" để đảm bảo recency đúng?",
+    "options": [
+      "Nó đọc song song từ tất cả replica rồi lấy giá trị xuất hiện nhiều nhất",
+      "Nó bắt hệ xác nhận replica đang đọc vẫn là leader hợp lệ, tránh đọc từ leader cũ đã bị thay",
+      "Nó nén dữ liệu trước khi trả về để giảm latency",
+      "Nó tự động chuyển write sang chế độ w=1 để nhanh hơn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "linearizable readConcern trả giá bằng việc kiểm tra tính hợp lệ của leader để bảo đảm recency tuyệt đối.\n✓ Nó bắt hệ xác nhận replica đọc vẫn là leader hợp lệ, tránh đọc từ leader cũ đã bị thay — chậm hơn nhưng đúng recency.\n✗ Không phải bỏ phiếu đa số giá trị giữa các replica.\n✗ Không liên quan nén dữ liệu; linearizable thực ra đắt/chậm hơn.\n✗ Không hạ write xuống w=1; đây là tham số readConcern, và majority write vẫn cần cho strong."
+  },
+  {
+    "id": "ds-q-061",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-06-isolation-vs-consistency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, hai khái niệm hay bị nhét chung chữ \"consistency\" thực chất nói về hai trục khác nhau. Cách phân biệt cốt lõi nào là đúng?",
+    "options": [
+      "Isolation nói về THỜI GIAN (nhiều tác vụ chồng lấn trên một store), consistency nói về KHÔNG GIAN (nhiều bản sao trên nhiều node)",
+      "Isolation nói về nhiều bản sao trên nhiều node, consistency nói về nhiều transaction song song",
+      "Cả hai đều nói về một store duy nhất và chỉ khác tên gọi",
+      "Isolation là chữ C trong CAP, consistency là chữ I trong ACID"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Isolation là trục thời gian (nhiều transaction chồng lấn trên một store); consistency của replication là trục không gian (nhiều bản sao trên nhiều node).\n✓ Isolation về THỜI GIAN, consistency về KHÔNG GIAN là cách phân biệt cốt lõi bài nêu.\n✗ Đảo ngược hai trục là sai — isolation không nói về bản sao trên nhiều node.\n✗ Chúng không chỉ khác tên; thuộc hai thế giới học thuật khác hẳn (CSDL vs hệ phân tán).\n✗ Isolation là chữ I trong ACID, còn C trong CAP mới là consistency/linearizability — bị hoán đổi."
+  },
+  {
+    "id": "ds-q-062",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-06-isolation-vs-consistency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một hệ single-node Postgres KHÔNG có replica sẽ gặp loại vấn đề nào?",
+    "options": [
+      "Có đầy đủ vấn đề isolation nhưng không có vấn đề consistency của CAP",
+      "Có vấn đề consistency của CAP nhưng không có vấn đề isolation",
+      "Không gặp cả isolation lẫn consistency vì chỉ có một node",
+      "Chỉ gặp vấn đề linearizability giữa các bản sao"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Single-node không có nhiều bản sao nên không có vấn đề consistency của CAP, nhưng nhiều transaction song song vẫn tạo ra anomaly isolation.\n✓ Vẫn có đầy đủ vấn đề isolation (concurrency), không có consistency của CAP — đúng như bài nêu.\n✗ Ngược lại: không có replica thì không có vấn đề consistency của CAP.\n✗ Concurrency của transaction vẫn tồn tại trên một node nên vẫn có isolation issue.\n✗ Linearizability giữa các bản sao vô nghĩa khi chỉ có một node."
+  },
+  {
+    "id": "ds-q-063",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-06-isolation-vs-consistency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong cùng một transaction, bạn chạy `SELECT * FROM orders WHERE status='pending'` hai lần; lần thứ hai xuất hiện thêm vài hàng mới do transaction khác vừa INSERT và commit. Đây là anomaly gì?",
+    "options": [
+      "Phantom read",
+      "Non-repeatable read",
+      "Dirty read",
+      "Lost update"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Tập kết quả theo điều kiện thay đổi (xuất hiện/biến mất hàng khớp WHERE) do INSERT/DELETE của transaction khác chính là phantom read.\n✓ Tập hàng theo điều kiện đổi giữa hai lần đọc là đặc trưng của phantom read.\n✗ Non-repeatable read là cùng một hàng đổi giá trị, không phải xuất hiện hàng mới.\n✗ Dirty read là đọc dữ liệu chưa commit — ở đây transaction kia đã commit.\n✗ Lost update là hai read-modify-write đè lên nhau, không liên quan đọc lặp."
+  },
+  {
+    "id": "ds-q-064",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-06-isolation-vs-consistency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Logic nghiệp vụ của bạn là \"đọc để kiểm tra một điều kiện rồi ghi vào HÀNG KHÁC dựa trên điều kiện đó\" (ví dụ lịch trực bệnh viện luôn ≥ 1 bác sĩ). Chạy ở Snapshot Isolation / Repeatable Read có an toàn không, và nên làm gì?",
+    "options": [
+      "Không an toàn — SI vẫn cho write skew; cần Serializable hoặc khóa predicate tường minh",
+      "An toàn tuyệt đối vì SI đã chặn lost update nên cũng chặn write skew",
+      "An toàn vì Repeatable Read cấm mọi phantom trong mọi DB",
+      "Chỉ cần hạ xuống Read Committed là đủ để tránh write skew"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SI đọc snapshot đông cứng và mỗi transaction ghi hàng khác nhau nên không xung đột ghi, dẫn tới write skew; phải dùng Serializable hoặc khóa tường minh.\n✓ SI không chống được write skew nên cần Serializable hoặc SELECT ... FOR UPDATE — đúng cái bẫy bài nhấn mạnh.\n✗ Chặn được lost update KHÔNG kéo theo chặn write skew; đây chính là hiểu sai phổ biến.\n✗ Dù Repeatable Read cấm phantom ở Postgres, nó vẫn để lọt write skew.\n✗ Hạ xuống Read Committed còn yếu hơn SI, không thể chống write skew."
+  },
+  {
+    "id": "ds-q-065",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-06-isolation-vs-consistency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trạng thái ban đầu: Alice=on-call, Bob=on-call, invariant \"≥ 1 bác sĩ trực\". Hai transaction chạy ở REPEATABLE READ (Postgres, thực chất SI): T1 đọc thấy 2 người rồi set Alice=off; T2 đọc thấy 2 người rồi set Bob=off. Kết quả là gì?",
+    "options": [
+      "Cả hai commit thành công và kết quả là 0 bác sĩ on-call — invariant vỡ",
+      "Transaction commit sau bị abort với lỗi serialization, invariant được giữ",
+      "T2 phải chờ khóa của T1, cuối cùng vẫn còn 1 bác sĩ on-call",
+      "Cả hai bị rollback vì phát hiện dirty read"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Dưới SI hai transaction đọc cùng snapshot đủ 2 người và ghi hai hàng khác nhau nên không xung đột ghi, cả hai commit và phá invariant.\n✓ Cả hai commit → 0 bác sĩ on-call là kết quả write skew đúng như ví dụ lịch trực.\n✗ Abort/serialization failure chỉ xảy ra nếu đặt SERIALIZABLE, không phải REPEATABLE READ.\n✗ SI đọc không khóa và ghi hàng khác nhau nên T2 không chờ khóa của T1.\n✗ Không có dirty read ở đây; cả hai đều đọc snapshot đã commit."
+  },
+  {
+    "id": "ds-q-066",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-06-isolation-vs-consistency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần \"read-modify-write một hàng số dư an toàn\" nhưng KHÔNG muốn nâng cả transaction lên Serializable. Cách nào KHÔNG phù hợp cho mục tiêu này?",
+    "options": [
+      "Chỉ hạ isolation xuống Read Uncommitted để đọc nhanh hơn rồi ghi",
+      "SELECT ... FOR UPDATE để khóa hàng khi đọc để ghi",
+      "UPDATE ... SET balance = balance - 30 WHERE id=42 AND balance >= 30 (atomic)",
+      "Optimistic concurrency bằng cột version: UPDATE ... WHERE version = 5, retry nếu affected rows = 0"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Ba cách khóa tường minh, atomic update, và version column đều chống lost update; hạ xuống Read Uncommitted làm tình huống tệ hơn.\n✗ Read Uncommitted không hề chống lost update, còn cho cả dirty read — không phù hợp mục tiêu.\n✓ FOR UPDATE khóa hàng khi đọc để ghi là cách 1 bài nêu.\n✓ Atomic update để DB tự đọc-sửa-ghi trong một câu tránh race hoàn toàn.\n✓ Version column là optimistic concurrency: affected rows = 0 nghĩa là có người sửa, retry."
+  },
+  {
+    "id": "ds-q-067",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-06-isolation-vs-consistency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bài, những phát biểu nào ĐÚNG về Snapshot Isolation (SI) qua MVCC?",
+    "options": [
+      "SI loại được dirty read, non-repeatable read và (ở Postgres) phantom",
+      "SI chặn được lost update nhờ cơ chế first-committer-wins / abort khi ghi chồng",
+      "SI KHÔNG chống được write skew",
+      "SI đảm bảo strict serializability và tôn trọng real-time order",
+      "Mỗi transaction đọc từ một snapshot đông cứng tại thời điểm nó bắt đầu"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "SI mạnh hơn Read Committed nhiều, chặn lost update nhưng vẫn để lọt write skew, và đọc từ snapshot đông cứng.\n✓ SI loại dirty read, non-repeatable read và (Postgres) phantom — đúng.\n✓ SI chặn lost update nhờ first-committer-wins / abort khi ghi chồng.\n✓ SI không chống write skew là điểm bẫy trung tâm của bài.\n✗ SI không hề đảm bảo strict serializability; nó thậm chí không bằng serializable.\n✓ Đọc từ snapshot đông cứng tại thời điểm transaction bắt đầu là bản chất MVCC."
+  },
+  {
+    "id": "ds-q-068",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-06-isolation-vs-consistency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Postgres cung cấp SERIALIZABLE bằng SSI (Serializable Snapshot Isolation). Ứng dụng phải làm gì khác so với khi chỉ chạy SI, và vì sao?",
+    "options": [
+      "Phải retry transaction bị abort với serialization failure (SQLSTATE 40001) vì SSI đẩy xử lý xung đột từ lock sang abort",
+      "Không cần làm gì thêm vì SSI khóa mọi thứ nên không bao giờ abort",
+      "Phải tự cài đặt 2PL ở tầng ứng dụng vì Postgres không hỗ trợ khóa",
+      "Phải hạ xuống Read Committed mỗi khi gặp deadlock"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "SSI chạy optimistic trên MVCC, theo dõi dependency và abort transaction tạo chu trình nguy hiểm, nên ứng dụng bắt buộc phải retry.\n✓ Retry khi gặp serialization failure 40001 là bắt buộc vì level cao đẩy xử lý xung đột sang abort.\n✗ SSI là optimistic, đọc không khóa, và vẫn có thể abort — không phải khóa mọi thứ.\n✗ Postgres có hỗ trợ khóa; không cần tự cài 2PL ở tầng ứng dụng.\n✗ Hạ xuống Read Committed làm mất bảo đảm serializable, không phải cách xử lý."
+  },
+  {
+    "id": "ds-q-069",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-06-isolation-vs-consistency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Phát biểu nào mô tả ĐÚNG sự khác biệt giữa Serializability và Linearizability?",
+    "options": [
+      "Serializability nói về nhiều transaction/thao tác nhưng KHÔNG bắt buộc theo real-time order; linearizability nói về từng thao tác đơn trên một object và tôn trọng real-time order",
+      "Serializability tôn trọng real-time order còn linearizability thì không",
+      "Cả hai đều chỉ nói về một thao tác đơn trên một object",
+      "Linearizability cho phép nhiều transaction nhiều object còn serializability chỉ một object"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Serializability đảm bảo tồn tại một thứ tự tuần tự tương đương nhưng không nhất thiết trùng real-time; linearizability nói về từng op đơn và tôn trọng real-time order.\n✓ Serializability = nhiều thao tác, không ép real-time; linearizability = op đơn, tôn trọng real-time — đúng bảng so sánh.\n✗ Đảo ngược: chính linearizability mới tôn trọng real-time order.\n✗ Serializability nói về nhiều transaction nhiều thao tác, không phải op đơn.\n✗ Ngược vai trò: linearizability chỉ op đơn trên một object."
+  },
+  {
+    "id": "ds-q-070",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-06-isolation-vs-consistency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Theo bảng \"chọn cái gì khi nào\", ghép nhu cầu với lựa chọn nào là ĐÚNG?",
+    "options": [
+      "Check-điều-kiện-rồi-ghi để chống write skew → Serializable (hoặc khóa predicate tường minh)",
+      "Client luôn thấy write mới nhất qua nhiều replica → Linearizable read (đọc từ leader / quorum)",
+      "Vừa transaction đúng vừa real-time order toàn cục → Strict serializability (Spanner, CockroachDB)",
+      "Không đọc dữ liệu chưa commit → Read Uncommitted",
+      "Thứ tự nhân-quả giữa các thao tác → chỉ cần Read Committed"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Ba cặp đầu khớp đúng bảng tổng hợp; hai cặp còn lại ghép sai level/model.\n✓ Chống write skew cần Serializable hoặc khóa predicate — đúng.\n✓ Thấy write mới nhất qua replica cần linearizable read từ leader/quorum.\n✓ Transaction đúng + real-time toàn cục là strict serializability (Spanner, CockroachDB).\n✗ Không đọc dữ liệu chưa commit cần ≥ Read Committed, chứ Read Uncommitted cho phép dirty read.\n✗ Thứ tự nhân-quả cần Causal consistency, không phải Read Committed."
+  },
+  {
+    "id": "ds-q-071",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-06-isolation-vs-consistency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Vì sao strict serializability qua nhiều node lại đắt, và Spanner giải quyết ra sao?",
+    "options": [
+      "Vì cần vừa serializable vừa linearizable (thứ tự thời gian thực toàn cục); Spanner dùng TrueTime và cố tình commit-wait vài ms",
+      "Vì cần nhiều replica hơn bình thường; Spanner giải bằng cách tăng số bản sao",
+      "Vì phải bỏ hoàn toàn MVCC; Spanner chuyển sang Read Uncommitted cho nhanh",
+      "Vì linearizability rẻ nhưng serializability không thể hiện thực; Spanner bỏ serializable"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Strict serializability = serializable + linearizable, mà linearizable qua nhiều node đòi thứ tự thời gian thực toàn cục — Spanner dùng TrueTime + commit-wait.\n✓ Cần cả serializable lẫn linearizable (real-time toàn cục), Spanner dùng TrueTime và commit-wait — đúng.\n✗ Chi phí không đến từ số bản sao mà từ việc đảm bảo real-time order toàn cục.\n✗ Spanner không bỏ MVCC hay hạ xuống Read Uncommitted.\n✗ Strict serializability giữ cả serializable lẫn linearizable, không bỏ serializable."
+  },
+  {
+    "id": "ds-q-072",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-06-isolation-vs-consistency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo chuẩn SQL-92, isolation level nào cấm cả dirty read, non-repeatable read và phantom?",
+    "options": [
+      "Serializable",
+      "Read Committed",
+      "Repeatable Read",
+      "Read Uncommitted"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Theo bảng SQL-92, chỉ Serializable cấm cả ba anomaly dirty read, non-repeatable read và phantom.\n✓ Serializable cấm cả ba — đúng bảng chuẩn.\n✗ Read Committed chỉ cấm dirty read, vẫn cho non-repeatable read và phantom.\n✗ Repeatable Read (chuẩn) vẫn cho phantom.\n✗ Read Uncommitted cho phép cả ba anomaly."
+  },
+  {
+    "id": "ds-q-073",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-07-replication-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong single-leader replication, quy tắc vàng về việc ghi dữ liệu là gì?",
+    "options": [
+      "Mọi write đều phải đi qua đúng một node duy nhất là leader; follower chỉ nhận log và phục vụ đọc",
+      "Client có thể ghi vào bất kỳ follower nào, follower sẽ tự đồng bộ với leader",
+      "Leader và tất cả follower đều nhận write song song để tăng thông lượng ghi",
+      "Write được ghi vào follower gần nhất rồi mới forward lên leader"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Single-leader: mọi write qua đúng một leader để có một thứ tự ghi toàn cục; follower chỉ nhận log và đọc.\n✓ Mọi write đi qua một leader, follower nhận log và phục vụ đọc — đúng bản chất.\n✗ Cho client ghi vào follower bất kỳ là mô hình multi-leader/leaderless, không phải single-leader.\n✗ Leader và mọi follower cùng nhận write song song phá vỡ tổng thứ tự ghi.\n✗ Ghi vào follower gần nhất rồi forward không phải luồng của single-leader."
+  },
+  {
+    "id": "ds-q-074",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-07-replication-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Mục tiêu nào KHÔNG phải là lý do chính để replicate dữ liệu theo bài học?",
+    "options": [
+      "Tăng khả năng ghi (write scaling) bằng cách chia tải ghi cho nhiều node",
+      "High availability: một node chết, node khác vẫn phục vụ",
+      "Read scaling: chia tải đọc ra nhiều bản sao",
+      "Giảm latency địa lý bằng cách đặt replica gần user"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài nêu ba mục tiêu của replication: high availability, read scaling và latency địa lý — không có write scaling.\n✓ Write scaling không phải mục tiêu; ngược lại leader còn là điểm nghẽn ghi.\n✗ High availability là một trong ba mục tiêu được nêu.\n✗ Read scaling (chia tải đọc) là mục tiêu chính của replication.\n✗ Đặt replica gần user để giảm latency địa lý là mục tiêu được liệt kê."
+  },
+  {
+    "id": "ds-q-075",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-07-replication-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một dịch vụ thanh toán yêu cầu tuyệt đối không mất giao dịch đã báo OK, nhưng bạn không muốn cả cụm ngừng ghi chỉ vì một follower kẹt GC. Cấu hình replication nào phù hợp nhất?",
+    "options": [
+      "Semi-synchronous: chờ ít nhất 1 follower xác nhận rồi mới ack, phần còn lại async",
+      "Fully synchronous với mọi follower để tuyệt đối an toàn",
+      "Asynchronous hoàn toàn để đạt latency thấp nhất",
+      "Tắt replication log để tránh phụ thuộc follower"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Semi-sync đảm bảo dữ liệu nằm trên ≥2 node trước khi ack nhưng không chờ mọi follower, chính là điểm cân bằng thực chiến.\n✓ Semi-sync đảm bảo ≥1 bản sao bền vững mà một follower kẹt không chặn toàn cụm.\n✗ Fully synchronous với mọi follower bị chặn write ngay khi một follower chậm/chết — gần như không ai dùng.\n✗ Async cho latency thấp nhưng có cửa sổ mất write đã báo OK — vi phạm yêu cầu.\n✗ Tắt replication log thì không còn replicate được, hoàn toàn sai."
+  },
+  {
+    "id": "ds-q-076",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-07-replication-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "User đổi avatar, reload liền và thấy avatar CŨ vì đọc trúng follower đang lag. Đây là vi phạm đảm bảo đọc nào, và cách chữa gọn nhất là gì?",
+    "options": [
+      "Vi phạm read-your-own-writes; chữa bằng cách route đọc dữ liệu-của-chính-user về leader (hoặc follower đã bắt kịp) trong khoảng ngắn sau khi ghi",
+      "Vi phạm monotonic reads; chữa bằng cách pin user vào cùng một replica",
+      "Vi phạm consistent prefix reads; chữa bằng cách để write nhân quả cùng một partition",
+      "Vi phạm durability; chữa bằng cách chuyển sang synchronous replication"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "User vừa ghi mà đọc lại không thấy thay đổi của chính mình là vi phạm read-your-own-writes.\n✓ Read-your-own-writes: đọc dữ liệu user có thể tự sửa từ leader/follower đã bắt kịp một khoảng sau ghi.\n✗ Monotonic reads là về đọc nhiều lần bị lùi về quá khứ, không phải mất chính write của mình.\n✗ Consistent prefix là thấy B trước A khi ghi có quan hệ nhân quả ở partition khác.\n✗ Đây là vấn đề nhất quán đọc do lag, không phải durability."
+  },
+  {
+    "id": "ds-q-077",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-07-replication-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "User đọc lần 1 thấy comment mới, reload lại thì comment biến mất (như du hành ngược thời gian). Cách chữa đúng cho nghịch lý này là gì?",
+    "options": [
+      "Pin mỗi user vào cùng một replica (ví dụ hash theo user id) để không nhảy sang replica trễ hơn",
+      "Đọc mọi thứ từ leader để luôn thấy dữ liệu mới nhất",
+      "Đảm bảo các write nhân quả nằm cùng một partition",
+      "Chuyển replication từ async sang synchronous"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đọc bị lùi về quá khứ giữa các lần đọc là vi phạm monotonic reads; chữa bằng cách pin user vào một replica cố định.\n✓ Pin user vào cùng replica (hash user id) đảm bảo không nhảy qua replica lag cao hơn.\n✗ Đọc mọi thứ từ leader giải quyết được nhưng làm mất lợi ích read scaling và không phải cách bài đề xuất cho monotonic reads.\n✗ Cùng partition cho write nhân quả là cách chữa consistent prefix, không phải monotonic reads.\n✗ Chuyển sang synchronous là về durability/lag chung, không nhắm đúng monotonic reads."
+  },
+  {
+    "id": "ds-q-078",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-07-replication-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi thêm một follower mới vào cụm đang chạy, vì sao không thể chỉ copy trực tiếp file dữ liệu của leader?",
+    "options": [
+      "Vì dữ liệu leader liên tục thay đổi trong lúc copy nên bản sao sẽ vá víu, không nhất quán",
+      "Vì file dữ liệu của leader đã được mã hoá, follower không giải mã được",
+      "Vì follower dùng storage engine khác leader nên định dạng file không tương thích",
+      "Vì copy file luôn nhanh hơn snapshot nên gây quá tải mạng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Trong lúc copy, dữ liệu leader vẫn thay đổi liên tục nên ảnh chụp không nhất quán; và không thể khoá cả DB để copy.\n✓ Dữ liệu thay đổi liên tục khi copy khiến bản sao không nhất quán — đúng lý do bài nêu.\n✗ Mã hoá không phải lý do; bài không đề cập.\n✗ Storage engine khác nhau không phải vấn đề ở đây (thường cùng engine).\n✗ Copy nhanh hay chậm không liên quan đến tính nhất quán bản sao."
+  },
+  {
+    "id": "ds-q-079",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-07-replication-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Chọn các phát biểu ĐÚNG về kỹ thuật thêm follower mới bằng snapshot + log position.",
+    "options": [
+      "Snapshot phải gắn với một vị trí chính xác trong replication log (PostgreSQL: LSN; MySQL: binlog coordinate hoặc GTID)",
+      "Sau khi copy snapshot, follower yêu cầu tất cả thay đổi kể từ vị trí log đã ghi và replay tới khi bắt kịp",
+      "Kỹ thuật này cho phép thêm follower mà không cần khoá toàn hệ thống",
+      "Bắt buộc phải dừng nhận write trên leader trong suốt quá trình copy snapshot",
+      "Follower mới phải copy lại toàn bộ từ đầu mỗi khi có write mới đến leader"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Snapshot gắn log position rồi replay tới khi caught up cho phép thêm follower không cần khoá hệ thống.\n✓ Snapshot gắn vị trí log chính xác (LSN, binlog coord/GTID) là bước 1 chuẩn.\n✓ Follower yêu cầu thay đổi từ vị trí log đó và replay tới khi bắt kịp — đúng bước 3-4.\n✓ Toàn bộ mục đích là thêm follower mà không cần khoá DB.\n✗ Không phải dừng nhận write; snapshot nhất quán được chụp trong lúc leader vẫn chạy.\n✗ Follower không copy lại từ đầu mỗi write; nó stream tiếp phần log mới."
+  },
+  {
+    "id": "ds-q-080",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-07-replication-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong failover, split-brain xảy ra khi nào và biện pháp chống chính là gì?",
+    "options": [
+      "Leader cũ chỉ bị cô lập mạng (chưa chết thật) vẫn nhận write, đồng thời leader mới được bầu cũng nhận write; chống bằng fencing/STONITH + quorum",
+      "Hai follower cùng replay log sai thứ tự; chống bằng cách tăng replication lag timeout",
+      "Leader mới có LSN nhỏ hơn leader cũ; chống bằng cách chọn follower có log position nhỏ nhất",
+      "Client gửi write tới cả leader và follower; chống bằng cách tắt read trên follower"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Split-brain: leader cũ bị cô lập nhưng chưa chết vẫn ghi, cùng lúc leader mới cũng ghi → dữ liệu phân nhánh; chống bằng fencing + quorum.\n✓ Leader cũ cô lập vẫn ghi song song với leader mới đúng là split-brain; fencing/STONITH và quorum là biện pháp bài nêu.\n✗ Follower replay sai thứ tự không phải định nghĩa split-brain, tăng timeout không chống được.\n✗ Bầu leader phải chọn log position LỚN nhất để mất ít nhất, không phải nhỏ nhất.\n✗ Split-brain là hai leader cùng nhận write, không phải client ghi vào follower."
+  },
+  {
+    "id": "ds-q-081",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-07-replication-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Cụm dùng async replication, leader chết lúc heartbeat timeout kích hoạt failover. Điều gì xảy ra với các write cuối cùng và cửa sổ mất dữ liệu bằng bao nhiêu?",
+    "options": [
+      "Các write chưa kịp gửi sang follower bị mất; cửa sổ mất dữ liệu đúng bằng replication lag tại thời điểm leader chết",
+      "Không mất gì vì follower luôn có mọi write trước khi leader ack cho client",
+      "Toàn bộ write của leader bị rollback về snapshot gần nhất bất kể lag",
+      "Mất dữ liệu bằng đúng heartbeat timeout, không liên quan đến replication lag"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Async: leader ack mà chưa chờ follower, nên khi leader chết các write chưa gửi bị mất, cửa sổ mất đúng bằng lag lúc đó.\n✓ Cửa sổ mất dữ liệu bằng đúng replication lag tại thời điểm leader chết — con số cần nhớ của bài.\n✗ Với async, follower KHÔNG chắc có mọi write trước khi ack; đó là mô tả của synchronous.\n✗ Không rollback toàn bộ về snapshot; chỉ mất phần chưa replicate.\n✗ Cửa sổ mất là replication lag, không phải heartbeat timeout."
+  },
+  {
+    "id": "ds-q-082",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-07-replication-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đội của bạn cần nâng cấp version DB không downtime và đồng thời đẩy thay đổi ra Kafka làm CDC feed cho search index. Dạng replication log nào phù hợp nhất?",
+    "options": [
+      "Logical / row-based (gửi thay đổi ở mức hàng logic)",
+      "WAL / physical (log-shipping mức byte/block)",
+      "Statement-based (gửi nguyên câu lệnh SQL)",
+      "Không dùng replication log, copy file định kỳ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Logical/row-based tách khỏi định dạng lưu trữ nội bộ nên hỗ trợ upgrade cuốn chiếu và feed CDC ra Kafka/search index.\n✓ Logical/row-based cho phép nâng cấp version cuốn chiếu và feed CDC — đúng nhu cầu.\n✗ WAL/physical gắn chặt storage engine & version nên khó nâng cấp không downtime, khó đẩy ra hệ khác.\n✗ Statement-based không tất định (NOW(), RAND(), auto-increment) nên tránh làm mặc định.\n✗ Copy file định kỳ không phải replication log và không nhất quán."
+  },
+  {
+    "id": "ds-q-083",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-07-replication-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn các phát biểu ĐÚNG về ba dạng replication log và cách chọn.",
+    "options": [
+      "Statement-based không tất định với NOW(), RAND(), auto-increment nên có thể gây lệch dữ liệu giữa các node",
+      "WAL/physical rất chính xác nhưng gắn chặt storage engine và version, khó nâng cấp không downtime",
+      "Logical/row-based tách khỏi định dạng lưu trữ nội bộ, hỗ trợ upgrade cuốn chiếu và CDC",
+      "Statement-based luôn là mặc định an toàn nhất vì gọn và tất định",
+      "WAL/physical là lựa chọn tốt nhất để replicate sang một hệ cơ sở dữ liệu khác loại"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Ba dạng log khác nhau về tính tất định và linh hoạt: statement không tất định, WAL chính xác nhưng gắn engine, logical linh hoạt.\n✓ Statement-based không tất định với NOW()/RAND()/auto-increment gây lệch dữ liệu.\n✓ WAL/physical chính xác nhưng gắn engine & version, khó upgrade không downtime.\n✓ Logical/row-based tách khỏi lưu trữ nội bộ, hỗ trợ upgrade cuốn chiếu và CDC.\n✗ Statement-based KHÔNG tất định nên ít dùng làm mặc định, không phải an toàn nhất.\n✗ WAL gắn chặt engine nên khó replicate sang hệ khác loại; logical mới hợp cho việc đó."
+  },
+  {
+    "id": "ds-q-084",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-07-replication-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao single-leader lại chọn dùng đúng MỘT leader thay vì cho nhiều node cùng quyết định thứ tự ghi?",
+    "options": [
+      "Để có một thứ tự ghi toàn cục (total order), né vấn đề không có clock chung giữa các node",
+      "Để mỗi node giữ một bản sao khác nhau nhằm phân tán rủi ro",
+      "Để loại bỏ hoàn toàn nhu cầu failover khi node chết",
+      "Để tăng tốc độ ghi bằng cách song song hoá write trên mọi node"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Một leader làm trọng tài thứ tự để có total order cho mọi thay đổi, né cái khó không có clock chung.\n✓ Một leader cho một thứ tự ghi toàn cục, tránh nhiều node cãi nhau ai ghi trước.\n✗ Mục tiêu là mọi bản sao thấy cùng thay đổi theo đúng thứ tự, không phải giữ bản sao khác nhau.\n✗ Single-leader vẫn cần failover vì leader là điểm chết đơn.\n✗ Leader là điểm nghẽn ghi, không song song hoá write trên mọi node."
+  },
+  {
+    "id": "ds-q-085",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-08-multi-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đội của bạn cần cho phép user ở cả Singapore và Frankfurt ghi vào DC gần nhất để giảm latency, đồng thời mỗi DC vẫn ghi được khi DC kia chết. Kiến trúc replication nào phù hợp nhất?",
+    "options": [
+      "Single-leader với leader đặt ở Singapore",
+      "Multi-leader, mỗi DC có một leader nhận write cục bộ",
+      "Single-leader với đồng bộ ghi (sync replication) sang cả hai DC",
+      "Chỉ một node duy nhất phục vụ toàn cầu"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Multi-leader cho phép mỗi DC nhận write cục bộ, giảm latency và vẫn ghi được khi một DC chết — đúng ba điểm chết của single-leader.\n✓ Mỗi DC có leader riêng nhận write cục bộ đáp ứng cả latency thấp lẫn chịu lỗi khi một DC chết.\n✗ Single-leader ở Singapore buộc user Frankfurt chịu round-trip xa và ngừng ghi khi leader chết.\n✗ Sync replication sang hai DC càng làm write chậm và không giải quyết việc ghi cục bộ khi một DC mất kết nối.\n✗ Một node duy nhất toàn cầu là single point of failure và latency cao cho user xa."
+  },
+  {
+    "id": "ds-q-086",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-08-multi-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, vì sao write conflict trong multi-leader được coi là 'bản chất của mô hình' chứ không phải bug hạ tầng?",
+    "options": [
+      "Vì mạng giữa các DC luôn có packet loss",
+      "Vì cho phép ghi song song ở nhiều nơi + replicate bất đồng bộ tất yếu sinh ra hai write concurrent không cái nào happens-before cái kia",
+      "Vì các leader dùng clock lệch nhau nên timestamp sai",
+      "Vì follower luôn tụt hậu so với leader"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Conflict là hệ quả logic: ghi song song nhiều nơi + replicate async ⇒ chắc chắn có lúc hai write concurrent trên cùng dữ liệu.\n✓ Ghi song song cộng replicate bất đồng bộ khiến hai write concurrent (không cái nào happens-before) là điều tất yếu — chính là định nghĩa của mô hình.\n✗ Packet loss là vấn đề mạng, không phải lý do bản chất sinh conflict.\n✗ Clock skew làm LWW chọn sai, nhưng nó là vấn đề của chiến lược giải quyết, không phải nguyên nhân conflict tồn tại.\n✗ Follower tụt hậu là chuyện replication lag thông thường, khác với conflict do ghi concurrent."
+  },
+  {
+    "id": "ds-q-087",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-08-multi-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một app calendar offline: bạn đổi giờ họp sang 15:00 trên điện thoại (đang offline), cùng lúc trợ lý đổi sang 16:00 trên laptop. Nếu hệ dùng Last-Write-Wins, kết quả khả dĩ nhất khi điện thoại online lại là gì?",
+    "options": [
+      "Hệ báo có 2 phiên bản và hỏi người dùng chọn cái nào",
+      "Hệ tự merge thành khoảng 15:00-16:00",
+      "Một trong hai giờ bị xoá vĩnh viễn không dấu vết, giữ lại giá trị có timestamp lớn hơn",
+      "Cả hai write đều bị từ chối vì phát hiện conflict"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "LWW giữ write có timestamp lớn hơn và vứt cái còn lại một cách âm thầm, gây silent data loss.\n✓ LWW so timestamp, giữ cái lớn hơn và xoá vĩnh viễn cái kia mà không báo — người dùng tưởng đã lưu nhưng bị đè.\n✗ Hiện 2 phiên bản để người dùng chọn là hành vi của version vector, không phải LWW.\n✗ LWW không hiểu ngữ nghĩa để merge thành khoảng thời gian.\n✗ LWW không từ chối write; nó luôn chọn một cái và ghi đè."
+  },
+  {
+    "id": "ds-q-088",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-08-multi-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cho hai version vector của cùng một khoá: V1 = {A:2, B:1} và V2 = {A:2, B:3}. Server nên xử lý thế nào?",
+    "options": [
+      "Đây là hai write concurrent → giữ cả hai làm siblings",
+      "V1 là tổ tiên của V2 → ghi đè an toàn bằng V2",
+      "V2 là tổ tiên của V1 → giữ V1",
+      "Không so sánh được → dùng timestamp wall clock để chọn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "V1 ≤ V2 ở mọi thành phần (2≤2, 1≤3) nên V1 là tổ tiên, V2 mới hơn và kế thừa V1, ghi đè an toàn.\n✓ Vì mọi thành phần của V1 nhỏ hơn hoặc bằng V2, V1 là tổ tiên và V2 là bản mới hơn nên ghi đè an toàn, không mất dữ liệu.\n✗ Không phải concurrent: concurrent đòi mỗi vector lớn hơn ở ít nhất một thành phần, ở đây V1 không lớn hơn V2 ở đâu cả.\n✗ V2 không thể là tổ tiên vì nó lớn hơn ở thành phần B.\n✗ Version vector so sánh được rõ ràng ở đây nên không cần rơi về wall clock."
+  },
+  {
+    "id": "ds-q-089",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-08-multi-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Ba replica đếm like bằng G-Counter: A={A:5,B:0,C:0}, B={A:0,B:3,C:0}, C={A:0,B:0,C:2}. Sau khi cả ba gặp nhau và merge, giá trị đếm là bao nhiêu và merge dùng phép gì?",
+    "options": [
+      "10, merge = lấy max từng ô rồi cộng tổng các ô",
+      "5, merge = lấy max toàn cục",
+      "10, merge = cộng dồn tất cả các lần nhận message",
+      "30, merge = nhân các ô với nhau"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "G-Counter: mỗi replica giữ ô riêng, merge lấy max từng ô ({A:5,B:3,C:2}), value = tổng các ô = 5+3+2 = 10.\n✓ Merge lấy max từng ô cho {A:5,B:3,C:2}, cộng tổng ra 10 — đúng số lượt, không mất lượt nào và idempotent.\n✗ Lấy max toàn cục (ra 5) sẽ mất các lượt tăng ở replica khác — đúng cái CRDT tránh.\n✗ Cộng dồn mỗi lần nhận message sẽ đếm trùng khi state gửi lặp, phá tính idempotent.\n✗ Nhân các ô không phải cách G-Counter hoạt động."
+  },
+  {
+    "id": "ds-q-090",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-08-multi-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong OR-Set (Observed-Remove Set), replica A thực hiện add(x) tạo tag x#a1, còn replica B đồng thời remove(x) nhưng chưa từng thấy tag a1. Sau khi merge, x còn trong set không và vì sao?",
+    "options": [
+      "x bị xoá, vì remove luôn thắng add",
+      "x còn trong set, vì remove chỉ loại các tag đã quan sát được mà a1 chưa bị nó thấy",
+      "Không xác định, phụ thuộc thứ tự message tới",
+      "x bị xoá nếu timestamp remove lớn hơn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "OR-Set: remove chỉ loại các tag đã quan sát; tag a1 của add concurrent chưa bị remove thấy nên vẫn còn → x tồn tại (add thắng).\n✓ Remove chỉ xoá tag nó đã quan sát; vì a1 chưa bị B thấy, sau merge tag a1 vẫn còn nên x vẫn trong set — thiên về add thắng.\n✗ Không phải remove luôn thắng; OR-Set thiên về add khi concurrent.\n✗ Kết quả xác định, không phụ thuộc thứ tự message — đó là điểm mạnh của CRDT.\n✗ OR-Set không dùng timestamp để quyết mà dùng tập tag đã quan sát."
+  },
+  {
+    "id": "ds-q-091",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-08-multi-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Amazon Dynamo (2007) chọn không dùng LWW cho giỏ hàng mà giữ siblings rồi merge = hợp hai giỏ. Hệ quả có thật và lý do là gì?",
+    "options": [
+      "Giỏ hàng luôn chính xác tuyệt đối, không bao giờ sai",
+      "Một món đã xoá đôi khi hiện lại, chấp nhận vì 'thêm nhầm một món' rẻ hơn 'mất một món khách định mua'",
+      "Giỏ hàng bị mất toàn bộ khi có conflict, nhưng khôi phục được",
+      "Tất cả write bị chặn cho đến khi resolve xong conflict"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Merge bằng hợp (union) hai giỏ nghĩa là món đã xoá có thể hiện lại; Dynamo chấp nhận vì ngữ nghĩa nghiệp vụ ưu tiên không mất món khách muốn mua.\n✓ Hợp hai giỏ khiến món đã xoá có thể xuất hiện lại, nhưng thêm nhầm một món rẻ hơn mất một món khách định mua — chiến lược khớp ngữ nghĩa nghiệp vụ.\n✗ Không phải chính xác tuyệt đối; chính bài học nêu tác dụng phụ món hiện lại.\n✗ Merge kiểu hợp không làm mất toàn bộ giỏ mà thiên về giữ thừa.\n✗ Dynamo không chặn write chờ resolve; nó nhận write và giữ siblings."
+  },
+  {
+    "id": "ds-q-092",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-08-multi-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Chọn các phát biểu ĐÚNG về so sánh LWW, Version vector và CRDT.",
+    "options": [
+      "LWW có thể âm thầm mất dữ liệu và lệ thuộc clock skew",
+      "Version vector phát hiện chính xác write concurrent nhưng không tự giải, đẩy hoà giải lên ứng dụng",
+      "CRDT tự hội tụ mà không cần đồng thuận, nhờ merge giao hoán/kết hợp/idempotent",
+      "Version vector luôn mất một trong hai write concurrent",
+      "CRDT phải dùng wall clock để chọn write thắng"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "LWW mất dữ liệu và phụ thuộc clock; version vector phát hiện chính xác và đẩy merge lên app; CRDT tự hội tụ nhờ tính chất merge.\n✓ LWW so timestamp wall clock nên bị clock skew và âm thầm vứt một write.\n✓ Version vector phát hiện chính xác concurrent nhưng chỉ giữ siblings, việc hoà giải là của ứng dụng.\n✓ CRDT hội tụ không cần đồng thuận nhờ merge giao hoán, kết hợp, idempotent.\n✗ Version vector không mất dữ liệu; nó giữ cả hai write concurrent làm siblings.\n✗ CRDT không dựa wall clock; nó dựa cấu trúc dữ liệu để merge xác định."
+  },
+  {
+    "id": "ds-q-093",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-08-multi-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn các phát biểu ĐÚNG về topology replication trong multi-leader.",
+    "options": [
+      "All-to-all không có single point of failure nhưng message có thể tới sai thứ tự nhân quả nên cần causal ordering",
+      "Star đơn giản nhưng hub chết là đứt toàn bộ replication",
+      "Ring an toàn tuyệt đối vì mỗi node chỉ nói chuyện với node kế bên",
+      "Với star và ring, phải gắn định danh node vào mỗi write để chặn vòng lặp replication vô hạn",
+      "All-to-all đảm bảo mọi message tới đúng thứ tự nhân quả nhờ đường đi ngắn"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "All-to-all khoẻ nhưng async gây sai thứ tự nên cần causal ordering; star phụ thuộc hub; star/ring cần node-id chặn loop.\n✓ All-to-all không có SPOF nhưng đường A→C nhanh hơn A→B→C có thể làm message tới sai thứ tự nhân quả, nên cần version vector.\n✓ Star có hub là điểm chết: hub chết thì replication đứt.\n✓ Star và ring cần gắn định danh node để một node nhận lại write của chính mình thì bỏ qua, tránh loop vô hạn.\n✗ Ring không an toàn tuyệt đối: một node chết là đứt vòng và dễ trễ do nhiều chặng.\n✗ All-to-all không đảm bảo đúng thứ tự nhân quả — chính vì async nên mới cần causal ordering."
+  },
+  {
+    "id": "ds-q-094",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-08-multi-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong topology all-to-all, một write 'tạo row R' và write 'sửa row R' (dựa trên row vừa tạo) được gửi cùng lúc tới node đích qua các đường khác nhau. Rủi ro kinh điển là gì và cách xử lý đúng?",
+    "options": [
+      "Write 'sửa row' có thể tới trước 'tạo row' do async → cần causal ordering (version vector / dependency tracking), không thể chỉ dựa timestamp",
+      "Không có rủi ro vì all-to-all luôn giữ thứ tự FIFO toàn cục",
+      "Chỉ cần tăng số lượng bản sao là hết lỗi",
+      "Dùng LWW theo timestamp là đủ để đảm bảo đúng thứ tự nhân quả"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Vì async và đường đi khác nhau, write phụ thuộc có thể tới trước write nó dựa vào, phá thứ tự nhân quả — phải theo dõi nhân quả.\n✓ Đường ngắn khiến 'sửa row' tới trước 'tạo row'; cần causal ordering bằng version vector/dependency tracking để tôn trọng nhân quả, không thể chỉ dựa timestamp.\n✗ All-to-all không đảm bảo FIFO toàn cục vì các đường có độ trễ khác nhau.\n✗ Thêm bản sao không giải quyết thứ tự nhân quả.\n✗ LWW dựa timestamp không bảo toàn nhân quả và còn bị clock skew."
+  },
+  {
+    "id": "ds-q-095",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-08-multi-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn thiết kế hệ multi-DC async với replication lag có thể vài trăm ms. Nguyên tắc thiết kế đúng về xác suất conflict là gì?",
+    "options": [
+      "Coi conflict là hiếm, chỉ xử lý khi log báo lỗi",
+      "Cửa sổ lag càng dài thì xác suất hai write cùng khoá concurrent càng lớn → phải thiết kế giả định conflict xảy ra thường xuyên",
+      "Tăng lag để gom write lại giúp giảm conflict",
+      "Conflict chỉ xảy ra khi hai write cách nhau đúng 0ms nên gần như không bao giờ"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Trong cửa sổ lag, mọi write cùng khoá ở hai DC đều là ứng viên conflict; lag càng dài, xác suất càng cao nên phải giả định conflict thường xuyên.\n✓ Cửa sổ replication lag càng dài thì càng nhiều write cùng khoá rơi vào vùng concurrent, nên thiết kế phải giả định conflict thường xuyên.\n✗ Coi conflict hiếm và chỉ xử lý khi lỗi là sai với mô hình async liên lục địa.\n✗ Tăng lag làm cửa sổ concurrent rộng ra, tăng chứ không giảm conflict.\n✗ Concurrent không đòi cách nhau đúng 0ms; bất kỳ hai write nào chưa thấy nhau trong cửa sổ lag đều concurrent."
+  },
+  {
+    "id": "ds-q-096",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-08-multi-leader",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khi nào dùng LWW là chấp nhận được theo bài học?",
+    "options": [
+      "Với dữ liệu giỏ hàng và tài liệu người dùng quý",
+      "Khi mất một trong hai write concurrent không gây hại, ví dụ cache hoặc trạng thái hiện tại của cảm biến",
+      "Khi cần phát hiện chính xác mọi conflict",
+      "Khi bắt buộc phải giữ cả hai phiên bản để người dùng chọn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "LWW dùng được khi mất một write concurrent không hại: cache, dữ liệu ghi-đè-được, hoặc mỗi khoá chỉ một writer.\n✓ Cache hay trạng thái hiện tại của cảm biến ghi đè được nên mất một write concurrent không gây hại — LWW phù hợp.\n✗ Giỏ hàng và tài liệu quý thì không dùng LWW vì mất dữ liệu âm thầm.\n✗ Muốn phát hiện chính xác conflict thì dùng version vector chứ không phải LWW.\n✗ Muốn giữ cả hai phiên bản để người dùng chọn là version vector, ngược với hành vi vứt bớt của LWW."
+  },
+  {
+    "id": "ds-q-097",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-09-quorum",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong mô hình leaderless kiểu Dynamo, N/W/R lần lượt là gì?",
+    "options": [
+      "N = số replica giữ mỗi key, W = số ack ghi cần có, R = số bản trả lời khi đọc",
+      "N = số node cần bầu leader, W = độ trễ ghi, R = độ trễ đọc",
+      "N = số datacenter, W = số write-behind, R = số read-through cache",
+      "N = số shard, W = số worker ghi, R = số reader song song"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "N là replication factor, W là số bản phải ack ghi, R là số bản phải trả lời khi đọc.\n✓ Định nghĩa đúng: N replica giữ key, W ack ghi, R bản trả lời đọc.\n✗ Không có khái niệm bầu leader hay độ trễ trực tiếp thành W/R trong quorum.\n✗ N/W/R không phải là số datacenter hay cơ chế cache.\n✗ Không phải là số shard/worker theo cách này."
+  },
+  {
+    "id": "ds-q-098",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-09-quorum",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao Amazon tạo ra Dynamo với kiến trúc leaderless thay vì single-leader?",
+    "options": [
+      "Vì giỏ hàng cần luôn ghi được (always writeable), tránh cửa sổ mất khả năng ghi khi failover",
+      "Vì leaderless cho phép transaction ACID mạnh hơn single-leader",
+      "Vì single-leader không thể nhân bản dữ liệu ra nhiều node",
+      "Vì leaderless đảm bảo linearizability tự nhiên không cần cấu hình"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Leaderless bỏ vai trò leader nên không có cửa sổ mất khả năng ghi khi một node chết — đáp ứng nhu cầu giỏ hàng luôn ghi được.\n✓ Mục tiêu gốc là always writeable, tránh failover window.\n✗ Leaderless thực ra yếu hơn về transaction/consistency mạnh, không phải mạnh hơn.\n✗ Single-leader vẫn nhân bản xuống follower bình thường.\n✗ Quorum không đảm bảo linearizability, ngược lại còn có mép stale."
+  },
+  {
+    "id": "ds-q-099",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-09-quorum",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với N=3, cấu hình W=1, R=1 (CONSISTENCY ONE cho cả ghi và đọc) sẽ cho kết quả gì?",
+    "options": [
+      "Có thể đọc ra dữ liệu cũ vì W+R = 2 ≤ 3, không đảm bảo giao nhau",
+      "Vẫn đọc thấy ghi mới vì mỗi ghi luôn được replicate đủ 3 bản trước khi ack",
+      "Ghi thất bại vì không đủ quorum tối thiểu",
+      "Đọc luôn linearizable vì R=1 nghĩa là đọc từ leader"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "W=1, R=1 cho W+R=2 ≤ N=3 nên tập ghi và tập đọc có thể không giao nhau, đọc có thể trúng bản cũ.\n✓ W+R ≤ N phá điều kiện giao nhau nên có thể stale.\n✗ Ghi ONE chỉ cần 1 ack, không đợi cả 3 bản, các bản kia cũ.\n✗ Ghi vẫn thành công với W=1, không fail.\n✗ Leaderless không có leader, R=1 chỉ là đọc 1 bản bất kỳ, không linearizable."
+  },
+  {
+    "id": "ds-q-100",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-09-quorum",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một đội cần đọc rất nhiều nhưng ghi rất hiếm, muốn đọc nhanh và vẫn thấy ghi mới với N=3. Nên chọn W/R nào?",
+    "options": [
+      "W=3, R=1 — đọc chỉ chạm 1 bản (nhanh), ghi chạm cả 3 nên vẫn W+R>N",
+      "W=1, R=3 — ghi nhanh, đọc chậm",
+      "W=1, R=1 — nhanh nhất cho cả hai",
+      "W=2, R=2 — luôn là lựa chọn duy nhất đúng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đọc nhiều/ghi hiếm nên đẩy chi phí về phía ghi: W=3 để ghi chạm mọi bản, R=1 để đọc chỉ 1 bản mà vẫn W+R=4>3.\n✓ W=3,R=1 tối ưu đọc nhanh mà giữ điều kiện quorum.\n✗ W=1,R=3 làm đọc chậm — ngược nhu cầu.\n✗ W=1,R=1 vi phạm W+R>N nên có thể stale.\n✗ W=2,R=2 hợp lệ nhưng đọc phải chạm 2 bản, chậm hơn R=1 cho tình huống đọc nhiều."
+  },
+  {
+    "id": "ds-q-101",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-09-quorum",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Nguyên lý toán học nào giải thích vì sao W+R>N đảm bảo tập ghi và tập đọc luôn giao nhau?",
+    "options": [
+      "Nguyên lý ngăn kéo (pigeonhole): nếu hai tập con của N mà tách rời thì tổng kích thước ≤ N, mâu thuẫn với W+R>N",
+      "Định lý CAP: chỉ được chọn 2 trong 3 tính chất",
+      "Bất đẳng thức tam giác trên vòng consistent hashing",
+      "Định lý giới hạn trung tâm về phân phối request"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đây là pigeonhole thuần: hai tập con của N mà rời nhau thì tổng ≤ N, nên W+R>N buộc chúng giao nhau.\n✓ Lập luận pigeonhole là đúng bản chất.\n✗ CAP nói về đánh đổi C/A/P, không phải chứng minh giao nhau.\n✗ Bất đẳng thức tam giác không liên quan.\n✗ Định lý giới hạn trung tâm là về thống kê, không liên quan."
+  },
+  {
+    "id": "ds-q-102",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-09-quorum",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Chọn TẤT CẢ phát biểu ĐÚNG về sloppy quorum + hinted handoff.",
+    "options": [
+      "Khi không gom đủ W node home, coordinator mượn tạm node khoẻ ngoài N node home để nhận ghi cho đủ W",
+      "Node mượn tạm lưu bản ghi kèm hint và sẽ handoff về node home khi node đó sống lại",
+      "Sloppy quorum phá vỡ đảm bảo giao nhau của W+R>N trong lúc dữ liệu chưa được handoff",
+      "Sloppy quorum làm mạnh thêm read-your-write, đảm bảo đọc luôn thấy ghi mới nhất",
+      "Mục tiêu của sloppy quorum là tăng độ bền/khả dụng cho ghi, đánh đổi bằng nhất quán"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Sloppy quorum mượn node tạm để đủ W, giữ hint và handoff về sau, đổi lại giảm đảm bảo nhất quán.\n✓ Mượn node khoẻ ngoài N home để đủ W là đúng định nghĩa.\n✓ Node tạm giữ hint rồi handoff khi home hồi phục.\n✓ Trong lúc chưa handoff, đọc quorum trên N home có thể không thấy ghi mới.\n✓ Đánh đổi cố ý: tăng durability/availability, giảm consistency.\n✗ Ngược lại, sloppy quorum LÀM YẾU read-your-write chứ không mạnh thêm."
+  },
+  {
+    "id": "ds-q-103",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-09-quorum",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Read repair và anti-entropy (Merkle tree) bù nhau như thế nào?",
+    "options": [
+      "Read repair chỉ vá key đang được đọc (nóng); anti-entropy/Merkle quét cả key không ai đọc (nguội)",
+      "Read repair vá key nguội; anti-entropy chỉ vá key đang được đọc",
+      "Cả hai đều chỉ chạy khi có đọc, khác nhau ở tốc độ",
+      "Cả hai đều chỉ chạy nền định kỳ, không liên quan luồng đọc"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Read repair sửa trong luồng đọc nên chỉ chữa key được đọc; Merkle anti-entropy quét nền nên chữa cả key lạnh.\n✓ Read repair = nóng (key đọc), anti-entropy = nguội (key lạnh).\n✗ Đảo ngược vai trò là sai.\n✗ Anti-entropy chạy nền, không cần có đọc.\n✗ Read repair gắn với luồng đọc, không phải chỉ chạy nền."
+  },
+  {
+    "id": "ds-q-104",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-09-quorum",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Khi hai replica so sánh bằng Merkle tree và thấy GỐC cây bằng nhau, điều gì xảy ra?",
+    "options": [
+      "Toàn bộ dữ liệu giống hệt nhau nên không cần truyền gì cả",
+      "Vẫn phải so từng lá vì gốc bằng nhau chỉ là ngẫu nhiên",
+      "Phải stream toàn bộ dữ liệu để chắc chắn",
+      "Chỉ cần so nửa cây bên trái"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Gốc là hash của toàn bộ; gốc bằng nhau nghĩa là mọi khoảng key khớp, nên không cần truyền dữ liệu — đây là điểm ăn tiền.\n✓ Gốc bằng ⇒ dữ liệu giống hệt ⇒ không truyền gì.\n✗ Không cần so từng lá khi gốc đã khớp.\n✗ Không cần stream toàn bộ khi gốc bằng.\n✗ Không có chuyện chỉ so nửa cây; chỉ đi xuống nhánh khác hash khi gốc lệch."
+  },
+  {
+    "id": "ds-q-105",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-09-quorum",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Client A ghi cart={sách} tới R1,R2 và cùng lúc client B ghi cart={đĩa} tới R2,R3 (N=3,W=2). Vì sao quorum KHÔNG ngăn được conflict này?",
+    "options": [
+      "Không có leader để serial hoá thứ tự, hai ghi đồng thời không có 'ai đúng' tự nhiên; cần version vector để phát hiện",
+      "Vì W=2 quá nhỏ; nếu tăng W=3 thì conflict sẽ tự biến mất",
+      "Vì R chưa được cấu hình nên ghi không được xác nhận",
+      "Vì read repair đã ghi đè sai một trong hai bản"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Quorum chỉ đảm bảo giao nhau khi ghi tuần tự; ghi đồng thời không có leader serial hoá nên sinh conflict, phải dùng version vector để phát hiện.\n✓ Thiếu leader serial hoá ⇒ concurrent write conflict, cần versioning.\n✗ Tăng W không giải quyết đồng thời; hai ghi vẫn không so sánh được.\n✗ R không liên quan tới việc ack ghi.\n✗ Read repair không phải nguyên nhân sinh conflict ở đây."
+  },
+  {
+    "id": "ds-q-106",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-09-quorum",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Khi đọc phát hiện hai giá trị có version KHÔNG so sánh được (concurrent thật sự), cách xử lý ĐÚNG là gì?",
+    "options": [
+      "Trả về cả hai bản (siblings) cho ứng dụng tự hoà giải theo ngữ nghĩa",
+      "Dùng CRDT để merge tự động, đúng đắn",
+      "Giỏ hàng Dynamo hợp nhất bằng union hai giỏ (thà dư còn hơn thiếu)",
+      "Luôn dùng last-write-wins theo timestamp lớn hơn vì nó không bao giờ mất dữ liệu",
+      "Coi như không có conflict và im lặng chọn bản đầu tiên đọc được"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Concurrent thật sự là conflict: trả siblings cho app merge, hoặc dùng CRDT; ví dụ giỏ hàng union hai giỏ.\n✓ Trả siblings để ứng dụng hoà giải là cách Dynamo làm.\n✓ CRDT merge tự động, đúng đắn là lựa chọn hợp lệ.\n✓ Giỏ hàng union hai giỏ là ví dụ gốc trong paper.\n✗ LWW đơn thuần LÀM MẤT dữ liệu và phụ thuộc clock lệch, không an toàn.\n✗ Im lặng chọn bừa một bản là bỏ mất ghi hợp lệ."
+  },
+  {
+    "id": "ds-q-107",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-09-quorum",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Cassandra (N=3), quy tắc vàng để 'đọc thấy ghi mới' được phát biểu thế nào?",
+    "options": [
+      "Chỉ cần CL_write + CL_read > N; ví dụ QUORUM cho cả hai (2+2>3) là mặc định an toàn",
+      "Chỉ cần đặt CL_write = ALL, còn CL_read tuỳ ý",
+      "Chỉ cần CL_read = QUORUM, không quan tâm CL_write",
+      "Chỉ cần bật nodetool repair thường xuyên là đủ, không cần quan tâm CL"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Không nhìn W hay R riêng lẻ; điều kiện là CL_write + CL_read > N, QUORUM cho cả hai đạt 2+2>3.\n✓ Tổng hai mức consistency phải lớn hơn N.\n✗ ALL cho ghi mà đọc ONE có thể vẫn đủ, nhưng phát biểu 'tuỳ ý' là sai vì phải tính tổng.\n✗ Chỉ QUORUM đọc mà ghi ONE cho 1+2=3 ≤ 3, không đủ.\n✗ nodetool repair là anti-entropy nền, không thay được điều kiện quorum khi đọc."
+  },
+  {
+    "id": "ds-q-108",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-09-quorum",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao KHÔNG nên dùng leaderless quorum thuần cho số dư tài khoản ngân hàng?",
+    "options": [
+      "Vì union hai số dư là vô nghĩa và LWW làm mất giao dịch; nghiệp vụ cần một thứ tự tuyệt đối (single-leader/consensus)",
+      "Vì Cassandra không hỗ trợ kiểu dữ liệu số",
+      "Vì quorum quá chậm không đáp ứng ngân hàng",
+      "Vì leaderless không thể lưu quá 3 bản sao"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Số dư cần thứ tự tuyệt đối; merge kiểu union vô nghĩa và LWW mất giao dịch, nên phải dùng single-leader + consensus.\n✓ union/LWW không phù hợp tiền bạc, cần thứ tự tuyệt đối qua consensus.\n✗ Không phải vì thiếu kiểu dữ liệu số.\n✗ Vấn đề là tính đúng đắn/nhất quán, không phải tốc độ.\n✗ N có thể đặt lớn hơn 3; không phải giới hạn kỹ thuật này."
+  },
+  {
+    "id": "ds-q-109",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-10-partitioning",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao replication (nhân bản) một mình KHÔNG giải quyết được bài toán scale khi dataset quá lớn, buộc phải partition?",
+    "options": [
+      "Vì replication làm chậm đường đọc nên phải chia nhỏ dữ liệu",
+      "Vì mỗi replica vẫn phải chứa TOÀN BỘ dataset và mọi ghi vẫn qua một leader (một máy)",
+      "Vì replication không đảm bảo tính nhất quán giữa các bản sao",
+      "Vì replication chỉ hoạt động khi số node là số chẵn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Replication nhân bản cùng một tập dữ liệu, không chia nhỏ nó, nên không vượt được trần dung lượng và throughput ghi.\n✓ Mỗi replica vẫn giữ toàn bộ dataset và ghi vẫn dồn qua một leader duy nhất là một máy — đó là hai trần replication không phá được.\n✗ Replication thực ra tăng khả năng đọc chứ không làm chậm đọc, và đó không phải lý do phải partition.\n✗ Vấn đề nhất quán là chuyện khác; nó không phải lý do khiến replication bất lực trước bài toán dung lượng/ghi.\n✗ Số node chẵn hay lẻ không liên quan gì tới giới hạn của replication ở đây."
+  },
+  {
+    "id": "ds-q-110",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-10-partitioning",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một hệ log time-series cần chạy nhiều truy vấn dạng \"tất cả bản ghi từ ngày X đến ngày Y\" (range scan theo thời gian). Nếu chỉ được chọn một chiến lược partition thuần, nên chọn cách nào?",
+    "options": [
+      "Hash partitioning vì băm rải đều tránh hot spot",
+      "Range partitioning vì các key liền kề nằm cạnh nhau và dữ liệu được sắp xếp",
+      "Hash partitioning để mọi truy vấn chỉ chạm một partition",
+      "Range partitioning vì nó tự động chống hot spot với key timestamp"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Range partitioning giữ các khoảng key liên tục và sắp xếp, nên range query chỉ chạm một hoặc vài partition liền nhau và quét tuần tự rất rẻ.\n✓ Chính vì key liền kề nằm cạnh nhau và dữ liệu sorted trong partition mà range scan theo thời gian trở nên rất hiệu quả.\n✗ Hash phá vỡ thứ tự nên range query phải scatter/gather mọi partition — đúng thứ ta muốn tránh ở đây.\n✗ Với hash, truy vấn theo khoảng phải hỏi TẤT CẢ partition chứ không phải một, nên phát biểu này sai.\n✗ Range partitioning lại rất DỄ hot spot với key timestamp tuần tự chứ không hề chống được."
+  },
+  {
+    "id": "ds-q-111",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-10-partitioning",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bảng Cassandra: partition key = sensor_id, clustering key = timestamp DESC. Kết quả của thiết kế compound key này là gì?",
+    "options": [
+      "Các sensor bị dồn vào một node nóng, nhưng range query trong một sensor thì nhanh",
+      "Các sensor rải đều ra cluster nhờ băm, và dữ liệu trong mỗi sensor vẫn sorted theo thời gian nên range query nhanh",
+      "Mọi range query theo thời gian phải scatter/gather toàn bộ cluster",
+      "Dữ liệu của một sensor bị rải khắp nhiều partition nên mất tính sorted"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Compound key băm phần partition key để chọn node và giữ sort ở clustering key trong partition, lấy được cả hai lợi ích.\n✓ Băm theo sensor_id rải đều các sensor ra cluster (không nóng theo thời gian), còn timestamp DESC giữ dữ liệu trong mỗi sensor sorted nên range \"7 ngày gần nhất của sensor X\" rất nhanh.\n✗ Băm theo sensor_id rải đều các sensor chứ không dồn vào một node nóng.\n✗ Range query BÊN TRONG một sensor không cần scatter/gather vì nó chỉ chạm một partition đã sorted.\n✗ Dữ liệu một sensor nằm gọn trong một partition và được sort theo clustering key, không hề bị rải mất thứ tự."
+  },
+  {
+    "id": "ds-q-112",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-10-partitioning",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một bài đăng của người nổi tiếng bị đọc/ghi cực nhiều tạo hot key. Vì sao chuyển sang hash partitioning KHÔNG cứu được tình huống này?",
+    "options": [
+      "Vì hàm băm không đủ ngẫu nhiên cho key dài",
+      "Vì một key duy nhất dù băm thế nào vẫn nằm trên đúng một partition",
+      "Vì hash partitioning luôn tạo scatter/gather khi đọc",
+      "Vì hash chỉ hoạt động khi các key có thứ tự tuần tự"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Băm giúp rải các key KHÁC nhau ra đều, nhưng một key đơn lẻ vẫn ánh xạ về một partition cố định.\n✓ Vì hash của một key cố định luôn trỏ về đúng một partition, toàn bộ tải của celebrity vẫn dồn vào node đó — băm không chia nhỏ được một key.\n✗ Vấn đề không nằm ở chất lượng hàm băm với key dài; ngay cả hàm băm hoàn hảo cũng không tách một key ra nhiều node.\n✗ Scatter/gather là chuyện của range query trên hash, không phải nguyên nhân khiến hot key không được cứu.\n✗ Hash hoạt động tốt nhất chính khi key tuần tự (rải chúng ra), nên phát biểu này ngược với thực tế."
+  },
+  {
+    "id": "ds-q-113",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-10-partitioning",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao các hệ thực tế tránh dùng công thức thô partition = hash(key) mod N khi số node có thể thay đổi?",
+    "options": [
+      "Vì hàm hash chạy chậm khi N lớn",
+      "Vì khi N đổi (thêm/bớt node), gần như MỌI key phải rehash và di chuyển partition",
+      "Vì mod N làm mất tính point lookup",
+      "Vì mod N chỉ đúng khi N là số nguyên tố"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Điểm yếu của mod N là phụ thuộc vào N; đổi N phá vỡ ánh xạ của hầu hết key.\n✓ Đổi N từ 3 lên 4 làm hầu hết key đổi partition, gây một cơn bão copy dữ liệu làm ngộp mạng — nên dùng fixed partitions hoặc consistent hashing thay thế.\n✗ Tốc độ hàm hash không phải vấn đề; vấn đề là lượng key phải di chuyển khi rebalance.\n✗ Point lookup theo key vẫn hoạt động tốt với mod N; nó chỉ tệ ở khâu rebalance.\n✗ N là số nguyên tố hay không không phải lý do; vấn đề vẫn là rehash toàn bộ khi N đổi."
+  },
+  {
+    "id": "ds-q-114",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-10-partitioning",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với consistent hashing (hash ring) khi thêm một node mới vào cluster N node, lượng key phải di chuyển xấp xỉ bao nhiêu?",
+    "options": [
+      "Gần như toàn bộ K key",
+      "Khoảng K/N key — chỉ các key giữa node mới và node kề trước",
+      "Đúng một nửa K/2 key",
+      "Không key nào cần di chuyển"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Trên vòng băm, key thuộc node đầu tiên gặp theo chiều kim đồng hồ, nên thêm node chỉ ảnh hưởng đoạn cung cục bộ.\n✓ Chỉ các key nằm giữa node mới và node kề trước phải chuyển, khoảng K/N key, phần còn lại đứng yên — đó là ưu điểm chính so với mod N.\n✗ Gần như toàn bộ K key phải di chuyển là đặc điểm của mod N thô, không phải consistent hashing.\n✗ K/2 không phản ánh đúng; lượng di chuyển tỉ lệ 1/N chứ không phải một nửa.\n✗ Vẫn có key phải chuyển (khoảng K/N); nói không key nào là sai."
+  },
+  {
+    "id": "ds-q-115",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-10-partitioning",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "So sánh secondary index local (document-partitioned) và global (term-partitioned). Những phát biểu nào ĐÚNG?",
+    "options": [
+      "Local index: ghi rẻ vì chỉ đụng index cùng partition với document, nhưng đọc theo thuộc tính phải scatter/gather mọi partition",
+      "Global index: đọc theo term đi thẳng tới đúng một partition index, nhưng ghi đắt vì một document đụng nhiều partition index",
+      "Local index cho đọc rẻ hơn global vì mọi entry cùng term nằm chung một partition",
+      "Global index thường eventually consistent do cập nhật thường phải async",
+      "DynamoDB LSI là ví dụ global index còn GSI là local index"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Local đắt ở đường đọc (scatter/gather), rẻ ở đường ghi; global thì ngược lại và thường trễ.\n✓ Local index chỉ đụng index cùng partition khi ghi (rẻ), nhưng đọc theo thuộc tính phải hỏi mọi partition rồi gộp.\n✓ Global index gom mọi entry cùng term vào một partition nên đọc trỏ thẳng, nhưng một document nhiều thuộc tính khiến ghi đụng nhiều partition index.\n✓ Global index thường async khi cập nhật nên index có thể trễ so với document — eventually consistent.\n✗ Đọc rẻ (mọi entry cùng term chung một partition) là đặc điểm của GLOBAL, không phải local; local mới phải scatter khi đọc.\n✗ Ngược thực tế: LSI là local (document-partitioned) còn GSI là global (term-partitioned)."
+  },
+  {
+    "id": "ds-q-116",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-10-partitioning",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "DynamoDB: partition key để là ngày 2026-07-24 và log dồn vào ngày hiện tại gây hot partition bị throttle dù tổng capacity còn thừa. Cách khắc phục kinh điển nào phù hợp?",
+    "options": [
+      "Giảm số partition xuống để tập trung tải",
+      "Thêm suffix ngẫu nhiên như 2026-07-24#7 (write sharding) hoặc dùng partition key có cardinality cao",
+      "Chuyển toàn bộ sang range partitioning theo timestamp",
+      "Tăng replication factor để chia tải ghi"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Hot partition do partition key cardinality thấp; giải pháp là rải ghi ra nhiều giá trị key.\n✓ Thêm suffix ngẫu nhiên (write sharding) hoặc dùng key cardinality cao như userId sẽ rải ghi ra nhiều partition, hết dồn một chỗ.\n✗ Giảm số partition càng tập trung tải, làm hot partition tệ hơn.\n✗ Range partitioning theo timestamp lại chính là nguồn hot spot với key tuần tự — đi ngược mục tiêu.\n✗ Replication nhân bản để chịu lỗi, không chia tải GHI (ghi vẫn qua leader), nên không giải quyết hot partition."
+  },
+  {
+    "id": "ds-q-117",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-10-partitioning",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Kỹ thuật salting một hot key (tách key thành key#0..key#9, ghi chia ngẫu nhiên) có những đặc điểm nào ĐÚNG?",
+    "options": [
+      "Giảm áp lực ghi lên một partition khoảng 10 lần",
+      "Đường đọc trở nên đắt hơn vì phải cộng dồn cả 10 sub-key",
+      "Loại bỏ hoàn toàn nhu cầu đọc từ nhiều nơi",
+      "Đánh đổi độ phức tạp đọc để lấy phân bố ghi tốt hơn",
+      "Chỉ hiệu quả với range partitioning, vô dụng với hash"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Salting rải ghi của một hot key ra nhiều sub-key, đổi lấy chi phí đọc cao hơn.\n✓ Chia ghi ngẫu nhiên vào 10 sub-key giảm áp lực ghi lên một partition khoảng 10 lần.\n✓ Đọc phải cộng dồn cả 10 sub-key nên đường đọc đắt hơn.\n✓ Đây đúng là đánh đổi: chấp nhận đọc phức tạp hơn để phân bố ghi tốt hơn.\n✗ Salting KHÔNG loại bỏ đọc nhiều nơi; ngược lại nó buộc đọc từ 10 sub-key rồi gộp.\n✗ Salting là kỹ thuật xử lý hot key áp dụng chung, không phải chỉ dành cho range partitioning."
+  },
+  {
+    "id": "ds-q-118",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-10-partitioning",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong mô hình partition kết hợp replication (kiểu Kafka/Cassandra), vì sao leader của các partition khác nhau lại được đặt rải trên nhiều node thay vì gom hết vào một node?",
+    "options": [
+      "Để giảm số bản sao cần lưu trên toàn cluster",
+      "Để tải ghi trải đều — mỗi node làm leader cho một số partition và follower cho các partition còn lại",
+      "Để mọi node đều có bản sao đầy đủ của toàn bộ dataset",
+      "Để loại bỏ hoàn toàn nhu cầu bầu leader khi một node chết"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Ghi luôn đi qua leader của partition, nên gom hết leader vào một node sẽ dồn toàn bộ tải ghi vào đó.\n✓ Rải leader ra nhiều node giúp tải ghi cân bằng: node A là leader cho P0 nhưng chỉ là follower cho P1, P2, mỗi node gánh một phần ghi.\n✗ Vị trí leader không thay đổi số bản sao (replica) phải lưu; đó là chuyện của replication factor.\n✗ Trong partitioning mỗi node chỉ giữ MỘT PHẦN dataset, không node nào có toàn bộ — đó là điểm khác replication.\n✗ Khi node chết vẫn phải bầu leader mới cho partition mất leader; rải leader không loại bỏ việc bầu."
+  },
+  {
+    "id": "ds-q-119",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-10-partitioning",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Kafka topic orders có 12 partition, key = order_id nhưng 90% message lại cùng một customer_id VIP dùng làm key. Hệ quả là gì?",
+    "options": [
+      "Cả 12 consumer đều nghẽn đều nhau",
+      "Partition chứa key VIP nóng, một consumer nghẽn còn 11 consumer rảnh",
+      "Message tự động rải đều nhờ replication factor 3",
+      "Throughput tăng gấp 12 lần như thiết kế"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Kafka route bằng hash(key) mod số partition; key lệch khiến một partition ôm phần lớn message.\n✓ 90% message cùng một key VIP dồn vào một partition khiến nó nóng — consumer đọc partition đó nghẽn còn 11 consumer kia rảnh, đúng bài toán hot key.\n✗ Tải không chia đều 12 consumer vì message không rải đều; chỉ một consumer bị dồn.\n✗ Replication factor nhân bản để chịu lỗi, không rải tải ghi/đọc theo key.\n✗ Throughput không đạt gấp 12 lần vì song song bị phá bởi phân bố key kém — chỉ một partition làm việc nặng."
+  },
+  {
+    "id": "ds-q-120",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-10-partitioning",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Ánh xạ partition→node thay đổi mỗi khi rebalance. Hệ thống thường giữ \"nguồn sự thật\" về topology này ở đâu để mọi node/driver biết bố cục hiện tại?",
+    "options": [
+      "Trong bộ nhớ cache cục bộ của từng client, không đồng bộ",
+      "Ở dịch vụ coordination như ZooKeeper/etcd, hoặc qua gossip protocol",
+      "Trong file cấu hình tĩnh nạp lúc khởi động, không đổi khi chạy",
+      "Ở leader của partition đầu tiên trong cluster"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Topology cần một nguồn sự thật nhất quán mà mọi node/driver tra cứu được khi bố cục đổi.\n✓ Dịch vụ coordination như ZooKeeper/etcd (hoặc gossip protocol kiểu Cassandra) giữ topology hiện tại để định tuyến đúng sau rebalance.\n✗ Cache cục bộ không đồng bộ sẽ cho bố cục lỗi thời sau rebalance, không thể làm nguồn sự thật.\n✗ File cấu hình tĩnh không đổi khi chạy sẽ sai ngay khi topology thay đổi động.\n✗ Không có khái niệm gom topology vào leader của partition đầu tiên; đó không phải cơ chế được mô tả."
+  },
+  {
+    "id": "ds-q-121",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-11-consistent-hashing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vấn đề cốt lõi khiến `hash(key) % N` không phù hợp cho cụm co giãn là gì?",
+    "options": [
+      "Khi N cố định thì phân bố key bị lệch nặng",
+      "Khi N thay đổi (thêm/bớt node), gần như toàn bộ key phải rehash sang node khác",
+      "Nó cần một bảng tra cứu trung tâm gây single point of failure",
+      "Nó không tính được node đích nếu không có SHA-1"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Điểm chết của mod N nằm ở lúc N đổi, không phải lúc N cố định.\n✓ Khi thêm/bớt node, xác suất một key giữ nguyên node rất nhỏ, khoảng (N-1)/N key phải đổi chỗ.\n✗ Với N cố định, mod N phân bố rất đều — đây không phải vấn đề.\n✗ Bản thân mod N để client tự tính, không cần bảng tra cứu trung tâm.\n✗ Hash nào cho ra số cũng dùng được, không bắt buộc SHA-1."
+  },
+  {
+    "id": "ds-q-122",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-11-consistent-hashing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong consistent hashing ring, một key thuộc về node nào?",
+    "options": [
+      "Node có hash gần nhất về mặt số học với hash của key",
+      "Node đầu tiên gặp khi đi theo chiều kim đồng hồ từ vị trí của key",
+      "Node đứng ngay trước key theo chiều kim đồng hồ",
+      "Node có ít key nhất tại thời điểm ghi"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Quy tắc gán là node kế tiếp theo chiều kim đồng hồ.\n✓ Key được đặt lên vòng tại hash(key), rồi đi CW tới node đầu tiên gặp — đó là node phụ trách.\n✗ Không phải node gần nhất về số học; chỉ xét chiều kim đồng hồ nên có thể bỏ qua node đứng sau lưng.\n✗ Node đứng trước theo CW không phải node phụ trách; ta đi tới, không lùi lại.\n✗ Gán không dựa vào tải hiện tại mà dựa vào vị trí tương đối trên vòng."
+  },
+  {
+    "id": "ds-q-123",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-11-consistent-hashing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khi thêm 1 node vào một ring đang có N node, tỉ lệ key phải di chuyển xấp xỉ bao nhiêu?",
+    "options": [
+      "~1/N key, và chúng chảy vào node mới",
+      "~(N-1)/N key, rehash gần khắp cụm",
+      "Đúng 50% key",
+      "Toàn bộ key trong cụm"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đây chính là tính chất O(K/N) của consistent hashing.\n✓ Node mới chỉ cướp cung nằm giữa node trước nó và nó, nên chỉ khoảng 1/N key dời và đều chảy vào node mới.\n✗ Con số ~(N-1)/N là đặc trưng của mod N chứ không phải ring.\n✗ Không phải cố định 50%; tỉ lệ phụ thuộc N.\n✗ Toàn bộ key phải chuyển là thảm hoạ của mod N, không phải ring."
+  },
+  {
+    "id": "ds-q-124",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-11-consistent-hashing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Hệ nào KHÔNG dùng consistent hashing ring mà dùng một biến thể rời rạc (hash slot)?",
+    "options": [
+      "Apache Cassandra",
+      "Amazon DynamoDB",
+      "Redis Cluster",
+      "memcached (ketama)"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Redis Cluster là ngoại lệ được nêu rõ trong bài.\n✓ Redis Cluster chia không gian key thành 16384 hash slot cố định thay vì dùng ring.\n✗ Cassandra dùng ring với nhiều token (vnode) mỗi node.\n✗ DynamoDB/Dynamo partition dữ liệu quanh ring và phổ biến hoá vnode.\n✗ memcached ketama là chuẩn de-facto của consistent hashing phía client."
+  },
+  {
+    "id": "ds-q-125",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-11-consistent-hashing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một cụm memcached đang chạy tốt, bạn thêm 1 server để scale nhưng client vẫn dùng `hash(key) % N`. Hậu quả điển hình ngay sau khi thêm là gì?",
+    "options": [
+      "Chỉ ~1/N cache entry bị miss, phần còn lại vẫn hit bình thường",
+      "Gần như toàn bộ cache invalid, request biến thành cache miss và database bị thundering herd",
+      "Không ảnh hưởng vì mod N vốn ổn định khi N đổi",
+      "Dữ liệu bị mất vĩnh viễn do server cũ xoá key"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Đổi N làm mod N ánh xạ lại gần như mọi key.\n✓ Vì ~80% key đổi node, phần lớn cache miss cùng lúc, mọi request đập thẳng xuống DB gây thundering herd.\n✗ Chỉ ~1/N là kết quả của consistent hashing, không phải mod N.\n✗ Mod N chính là thứ mất ổn định khi N đổi.\n✗ Cache miss không phải mất dữ liệu vĩnh viễn; dữ liệu gốc vẫn ở DB, vấn đề là tải dồn về DB."
+  },
+  {
+    "id": "ds-q-126",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-11-consistent-hashing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Virtual node (vnode) đem lại những lợi ích nào so với ring cơ bản 1 điểm/node? (chọn tất cả đúng)",
+    "options": [
+      "Cân bằng tải mượt hơn vì mỗi node giữ nhiều cung nhỏ trải khắp vòng",
+      "Khi một node chết, gánh của nó được chia cho nhiều node khác nhau thay vì dồn vào một node",
+      "Hỗ trợ trọng số theo capacity: node mạnh cấp nhiều vnode hơn nên nhận nhiều tải hơn",
+      "Giảm bộ nhớ dùng cho ring vì có ít điểm hơn",
+      "Loại bỏ hoàn toàn nhu cầu dùng hàm hash phân bố đều"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Vnode rải mỗi node thành V điểm, đổi lấy cân bằng bằng chi phí bộ nhớ.\n✓ Nhiều cung nhỏ trải khắp vòng làm variance tải giảm, cân bằng mượt.\n✓ Node chết thì hàng trăm cung nhỏ được nhiều node hứng, tránh hot node.\n✓ Node mạnh cấp gấp đôi vnode thì nhận gấp đôi tải, cụm heterogeneous vẫn cân.\n✗ Vnode làm TĂNG số điểm (V×N) nên tốn thêm bộ nhớ chứ không giảm.\n✗ Vnode không thay được hash tốt; hash kém vẫn làm hỏng cân bằng."
+  },
+  {
+    "id": "ds-q-127",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-11-consistent-hashing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong đoạn code, `get_node` dùng `bisect_right` trên mảng điểm đã sort rồi nếu `idx == len(self._sorted)` thì đặt `idx = 0`. Dòng reset về 0 phục vụ điều gì?",
+    "options": [
+      "Xử lý trường hợp ring rỗng để tránh chia cho 0",
+      "Đảm bảo ngữ nghĩa vòng tròn: key nằm sau điểm cuối cùng thì quay về node đầu vòng",
+      "Chọn node có ít tải nhất khi nhiều node hoà nhau",
+      "Bỏ qua các vnode trùng node vật lý khi chọn replica"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Reset idx về 0 là bước cuộn vòng lại.\n✓ Nếu hash(key) lớn hơn mọi điểm, đi CW sẽ vượt cuối mảng và phải quay lại đầu — chính là node đầu vòng.\n✗ Ring rỗng đã được kiểm tra riêng bằng nhánh raise ValueError ở đầu hàm.\n✗ Việc chọn node không dựa vào tải hiện tại.\n✗ Bỏ qua vnode trùng node là logic chọn replica, không nằm trong get_node này."
+  },
+  {
+    "id": "ds-q-128",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-11-consistent-hashing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Redis Cluster, vì sao đặt key `user:{1000}:profile` và `user:{1000}:cart` lại cho phép chạy lệnh multi-key (MSET, transaction) trên chúng?",
+    "options": [
+      "Vì cả hai đều nằm trên cùng một vnode kế tiếp theo chiều kim đồng hồ",
+      "Vì phần trong `{}` đều là `1000` nên băm ra cùng một slot, cùng một node",
+      "Vì Redis tự động sao chép key sang mọi node để mọi lệnh đều multi-key được",
+      "Vì tên key có tiền tố `user:` giống nhau nên Redis nhóm chúng lại"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Hash tag ép nhiều key vào cùng slot.\n✓ Redis chỉ băm phần trong dấu ngoặc nhọn; cả hai đều là 1000 nên cùng slot, cùng node, cho phép lệnh multi-key.\n✗ Redis Cluster dùng hash slot, không dùng ring vnode CW.\n✗ Redis không sao chép key sang mọi node để làm điều này; multi-key chỉ chạy khi các key cùng slot.\n✗ Việc nhóm dựa vào hash tag trong {}, không phải trùng tiền tố tên."
+  },
+  {
+    "id": "ds-q-129",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-11-consistent-hashing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi chọn replica trên ring có vnode, một cạm bẫy cần tránh là gì?",
+    "options": [
+      "Đặt tất cả replica lên các vnode ngẫu nhiên bất kỳ trên vòng",
+      "Để N replica rơi vào N vnode nhưng đều thuộc cùng một node vật lý",
+      "Chọn replica bằng cách đi ngược chiều kim đồng hồ thay vì thuận chiều",
+      "Dùng ít vnode để giảm số lần binary search khi tìm replica"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Replica phải nằm trên máy vật lý khác nhau mới chịu lỗi được.\n✓ Nếu N vnode kế tiếp CW đều thuộc cùng một node vật lý, mất một máy là mất hết replica — hệ thật bỏ qua vnode trùng node/rack/DC (rack awareness).\n✗ Không chọn ngẫu nhiên; quy tắc là đi CW nhưng lọc trùng node.\n✗ Chiều đi (thuận/ngược) không phải cạm bẫy được nêu; vấn đề là trùng node vật lý.\n✗ Giảm vnode để tối ưu search không liên quan đến an toàn replica và còn làm lệch tải."
+  },
+  {
+    "id": "ds-q-130",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-11-consistent-hashing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những phát biểu nào ĐÚNG khi so sánh `hash % N` với consistent hashing? (chọn tất cả đúng)",
+    "options": [
+      "Cả hai đều cho client tự tính node mà không cần bảng tra cứu trung tâm",
+      "Khi ±1 node, mod N dời ~toàn bộ key còn consistent hashing dời ~1/N",
+      "Khi một node chết trong consistent hashing, chỉ node láng giềng gánh thêm chứ không rehash cả cụm",
+      "Ring cơ bản với ít node cân bằng tải tốt hơn mod N",
+      "Consistent hashing bắt buộc phải có thư mục trung tâm để tra node"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "So sánh dựa trên bảng đối chiếu trong bài.\n✓ Cả hai đều không cần bảng tra cứu trung tâm; client tự tính node từ key.\n✓ Mod N dời O(K) key khi ±1 node, còn ring dời O(K/N) ~1/N.\n✓ Node chết trong ring chỉ khiến node láng giềng CW hứng key của nó, các node khác không đụng.\n✗ Ring cơ bản với ít node lại LỆCH tải (một node có thể chiếm cung rộng), không tốt hơn phân bố đều của mod N.\n✗ Consistent hashing KHÔNG cần thư mục trung tâm — đó là ưu điểm của nó."
+  },
+  {
+    "id": "ds-q-131",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-11-consistent-hashing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn có một cụm cache trong Kubernetes, node bị autoscaler thêm/bớt liên tục, và tải key thỉnh thoảng lệch bất thường khiến một node bị dồn quá mức dù đã dùng vnode. Lựa chọn phù hợp nhất là gì?",
+    "options": [
+      "Quay lại `hash % N` vì nó phân bố đều khi N cố định",
+      "Tăng số vnode lên hàng nghìn để chắc chắn không bao giờ có node quá tải",
+      "Dùng consistent hashing with bounded loads: đặt trần tải mỗi node, tràn thì sang node kế",
+      "Chuyển toàn cụm sang Redis Cluster để dùng hash slot"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Ring vnode không tự chặn được node bị dồn quá mức khi key lệch bất thường.\n✓ Bounded loads (Google 2016, dùng ở Vimeo/HAProxy) đặt trần tải mỗi node, vượt trần thì tràn sang node kế — đúng vấn đề này.\n✗ Mod N sụp đổ khi N đổi liên tục, mà k8s chính là môi trường node đến đi liên tục.\n✗ Tăng vnode giảm variance nhưng vẫn không chặn được node quá tải do phân bố lệch bất thường.\n✗ Hash slot của Redis Cluster giải bài toán resharding từng phần, không phải bài toán đặt trần tải chống hot key."
+  },
+  {
+    "id": "ds-q-132",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-11-consistent-hashing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một kỹ sư triển khai ring nhưng dùng `key.hashCode()` của Java làm hàm băm và chỉ đặt 8 vnode mỗi node, kết quả tải rất lệch giữa các node. Nguyên nhân gốc nào khớp nhất?",
+    "options": [
+      "hashCode() phân bố kém gây vón cục, cộng với quá ít vnode làm variance tải lớn",
+      "Số vnode quá nhiều làm ring chậm rebuild và lệch tải",
+      "bisect_right trả về sai node khi mảng chưa đủ lớn",
+      "Ring 2^32 quá nhỏ nên không đủ chỗ cho 8 vnode mỗi node"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Hai cạm bẫy độc lập cùng xuất hiện: hash kém và quá ít vnode.\n✓ hashCode() không phân bố đều nên key vón cục, và 8 vnode là quá ít nên variance tải lớn — cả hai đều làm lệch tải.\n✗ 8 vnode là quá ÍT chứ không phải quá nhiều; quá nhiều mới gây chậm rebuild.\n✗ bisect_right đúng ngữ nghĩa với mọi kích thước mảng, không phải nguồn lệch tải.\n✗ Không gian 2^32 thừa sức chứa hàng nghìn điểm; kích thước vòng không phải nguyên nhân."
+  },
+  {
+    "id": "ds-q-133",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-12-rebalancing-routing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao `hash mod N` bị loại làm cơ chế gán key cho node trong một cluster có thể thay đổi số node?",
+    "options": [
+      "Vì nó phân bố key không đều giữa các node",
+      "Vì khi đổi N (thêm/bớt node), hầu như mọi key phải di chuyển sang node khác",
+      "Vì nó không thể tính được với key dạng chuỗi",
+      "Vì nó yêu cầu một coordination service tập trung mới chạy được"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "`hash mod N` gắn cứng ánh xạ vào số node hiện tại, nên đổi mẫu số N làm ~N/(N+1) số key nhảy node.\n✓ Đổi N làm hầu hết key phải copy sang node khác — bão rebalance, đúng lý do bị loại\n✗ Ngược lại, `hash mod N` phân bố rất đều — đó không phải nhược điểm của nó\n✗ Nó tính được với mọi kiểu key qua hàm băm, không giới hạn kiểu dữ liệu\n✗ Bản thân `mod N` không cần coordination service nào; vấn đề nằm ở lượng dữ liệu phải di dời"
+  },
+  {
+    "id": "ds-q-134",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-12-rebalancing-routing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Nguyên tắc chung xuyên suốt cả ba chiến lược rebalancing đúng là gì?",
+    "options": [
+      "Luôn giữ số partition đúng bằng số node",
+      "Tách rời 'key thuộc partition nào' khỏi 'partition nằm ở node nào'",
+      "Dùng một proxy trung tâm để định tuyến mọi request",
+      "Chỉ rebalance khi có con người bấm nút"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cả ba chiến lược đều hiện thân ý tưởng tách ánh xạ key→partition khỏi partition→node, nhờ đó thêm/bớt node chỉ chạm một phần nhỏ.\n✓ Tách 'key→partition' khỏi 'partition→node' là nguyên tắc chung, giữ được thì di chuyển tối thiểu\n✗ Giữ số partition bằng số node không phải nguyên tắc chung; fixed number còn tạo nhiều partition hơn hẳn số node\n✗ Proxy trung tâm là một kiểu request routing, không phải nguyên tắc của rebalancing\n✗ Bấm nút thủ công là lựa chọn vận hành, không phải nguyên tắc tách ánh xạ"
+  },
+  {
+    "id": "ds-q-135",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-12-rebalancing-routing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một team dùng Elasticsearch tạo index với `number_of_shards` cố định. Sau vài năm dữ liệu tăng mạnh và họ muốn tăng số shard. Điều gì đúng về tình huống này?",
+    "options": [
+      "Có thể tăng số shard tại chỗ mà không di chuyển dữ liệu, vì ranh giới key→partition không đổi",
+      "Đổi số partition tương đương re-partition toàn bộ (đắt như `mod N`), thực tế phải reindex",
+      "Elasticsearch tự động split shard khi vượt ngưỡng dung lượng như HBase",
+      "Chỉ cần thêm node mới là số shard tự tăng theo tỉ lệ số node"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Fixed number cố định P suốt vòng đời; đổi P sau này là quyết định một chiều, phải re-partition/reindex toàn bộ.\n✓ Đổi P = re-partition toàn bộ, đắt như `mod N`; Elasticsearch phải reindex sang index mới\n✗ Không thể tăng shard tại chỗ 'miễn phí'; chính vì P cố định nên đổi mới đắt\n✗ Tự split theo ngưỡng là dynamic partitioning (HBase), không phải mô hình fixed number của Elasticsearch\n✗ Thêm node chỉ phân bổ lại shard sẵn có; số shard là cố định, không tăng theo số node"
+  },
+  {
+    "id": "ds-q-136",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-12-rebalancing-routing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Dynamic partitioning (HBase, MongoDB) có một cạm bẫy đặc trưng khi dataset còn nhỏ. Đó là gì và cách chữa?",
+    "options": [
+      "Quá nhiều partition rỗng gây overhead; chữa bằng cách merge bớt",
+      "Chỉ có 1 partition nên ghi dồn vào 1 node (hotspot khởi đầu); chữa bằng pre-splitting",
+      "Bản đồ routing bị stale; chữa bằng cách trả về MOVED",
+      "Token phân bổ lệch; chữa bằng cách tăng num_tokens"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Lúc dataset nhỏ chỉ có 1 partition, mọi ghi dồn vào 1 node cho tới khi đủ lớn để split — hotspot khởi đầu, chữa bằng pre-split.\n✓ Hotspot khởi đầu do 1 partition đầu tiên; pre-splitting khai báo trước điểm cắt để khởi động đã có nhiều partition\n✗ Partition rỗng thừa là cạm bẫy của fixed number chọn P quá cao, không phải của dynamic lúc nhỏ\n✗ Stale routing và MOVED là chuyện của request routing/Redis, không phải hotspot khởi đầu\n✗ Token và num_tokens thuộc chiến lược proportional to nodes (Cassandra), không phải dynamic partitioning"
+  },
+  {
+    "id": "ds-q-137",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-12-rebalancing-routing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Chiến lược 'partitioning proportional to nodes' (Cassandra vnodes, Dynamo) gắn chặt với kỹ thuật nào và vì sao?",
+    "options": [
+      "Consistent hashing — mỗi node đặt nhiều virtual node/token lên vòng băm nên thêm node chỉ hút một cung nhỏ dữ liệu",
+      "2PC — để đảm bảo hai node không cùng sở hữu một khoảng key",
+      "Key-range splitting — mỗi region tự tách khi vượt ngưỡng dung lượng",
+      "hash mod N — vì số partition tỉ lệ trực tiếp với N"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Proportional to nodes gắn với consistent hashing: mỗi node là nhiều token trên vòng, thêm node thật chỉ hút ~1/(N+1) dữ liệu từ node kế → di chuyển tối thiểu.\n✓ Consistent hashing với nhiều virtual node/token cho phép rải đều và di chuyển tối thiểu khi thêm node\n✗ 2PC là giao thức commit phân tán, không phải cơ chế phân partition theo số node\n✗ Key-range splitting theo ngưỡng là dynamic partitioning (HBase), không phải proportional to nodes\n✗ `hash mod N` chính là thứ bị loại vì rebalance thảm hoạ, không liên quan chiến lược này"
+  },
+  {
+    "id": "ds-q-138",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-12-rebalancing-routing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "So sánh coordination tập trung (ZooKeeper/etcd) với coordination phi tập trung (gossip). Những phát biểu nào ĐÚNG?",
+    "options": [
+      "ZooKeeper/etcd cho nhất quán bản đồ mạnh nhờ consensus, nhưng trở thành thành phần phụ thuộc phải vận hành cẩn thận",
+      "Gossip phát hiện node chết nhanh và dứt khoát hơn ephemeral znode",
+      "Gossip là eventually consistent về membership — trong khoảng lan truyền các node có thể thấy bản đồ hơi khác nhau",
+      "Ephemeral node + watch giúp mọi watcher được báo ngay khi một node chết (session hết hạn)",
+      "ZooKeeper/etcd không cần chạy quorum, chỉ cần 1 instance duy nhất"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "Tập trung mạnh về nhất quán (consensus, ephemeral+watch) nhưng là điểm phụ thuộc; gossip tự lành nhưng eventually consistent và phát hiện chết chậm hơn.\n✓ ZooKeeper/etcd nhất quán mạnh qua consensus nhưng là thành phần phụ thuộc phải vận hành cẩn thận\n✓ Gossip eventually consistent — trong lúc lan truyền các node có thể thấy bản đồ hơi lệch\n✓ Ephemeral znode + watch báo ngay cho watcher khi session node chết hết hạn\n✗ Gossip phát hiện node chết CHẬM hơn (qua nhiều vòng), không nhanh dứt khoát bằng ephemeral\n✗ ZooKeeper/etcd cần quorum 3–5 node, không phải một instance duy nhất"
+  },
+  {
+    "id": "ds-q-139",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-12-rebalancing-routing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong đoạn cấu hình etcd, node dùng `lease(ttl=10)` rồi gọi `lease.refresh()` định kỳ. Nếu node chết đột ngột và ngừng refresh thì điều gì xảy ra?",
+    "options": [
+      "Key vẫn tồn tại vĩnh viễn cho tới khi có người xoá thủ công",
+      "Key tự bị xoá khi lease hết hạn, router đang watch sẽ nhận thay đổi và cập nhật bản đồ",
+      "Toàn bộ cluster bị khoá cho tới khi node sống lại",
+      "Router phải polling liên tục vì watch không phát hiện được node mất"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Lease giống ephemeral: ngừng refresh (node chết) thì key tự bay khi hết TTL, và watch_prefix của router nhận event để cập nhật routing table tại chỗ.\n✓ Hết lease → key tự xoá; router watch prefix nhận event và cập nhật bản đồ, phản ánh topology hiện tại\n✗ Key không tồn tại vĩnh viễn — chính lease TTL khiến nó tự bay khi ngừng gia hạn\n✗ Không có chuyện khoá cả cluster; cơ chế này để phát hiện node rời một cách mượt\n✗ Watch chủ động push thay đổi nên router không cần polling — đó là ưu điểm được nêu"
+  },
+  {
+    "id": "ds-q-140",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-12-rebalancing-routing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một hệ cần độ trễ đọc thấp nhất và chấp nhận nhét logic routing vào mọi client (dù nhiều ngôn ngữ). Kiểu request routing nào phù hợp nhất, và ví dụ điển hình?",
+    "options": [
+      "Routing tier/proxy — như mongos, Vitess",
+      "Client-aware (smart client) — như Redis Cluster, Kafka",
+      "Node forwarding — như Cassandra, DynamoDB",
+      "Coordination tập trung — như ZooKeeper, etcd"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Client-aware cho 0 hop thừa (độ trễ thấp nhất) đổi lại phải nhét logic routing vào mọi client — đúng ràng buộc đề bài.\n✓ Client-aware đi thẳng tới node đúng, 0 hop thừa, độ trễ thấp nhất; Redis Cluster, Kafka là ví dụ\n✗ Routing tier/proxy thêm 1 network hop, không đạt độ trễ thấp nhất\n✗ Node forwarding có thể tốn hop nội bộ khi node nhận không giữ partition\n✗ ZooKeeper/etcd là cơ chế coordination bản đồ, không phải một kiểu request routing"
+  },
+  {
+    "id": "ds-q-141",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-12-rebalancing-routing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Redis Cluster dùng client-aware routing. Khi client giữ slot map cũ và gửi request tới node không còn giữ slot đó, cơ chế 'sửa sai' là gì?",
+    "options": [
+      "Node im lặng bỏ qua request để tránh trả dữ liệu sai",
+      "Server trả về MOVED/ASK để client cập nhật lại slot map và thử lại đúng node",
+      "Một proxy trung tâm tự động chuyển tiếp request tới node đúng",
+      "Cluster bị khoá và rebalance lại toàn bộ slot"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bản đồ stale là rủi ro cố hữu của client-aware; Redis thiết kế đường sửa sai bằng cách server trả MOVED/ASK để client tự cập nhật slot map.\n✓ Server trả MOVED/ASK, client cập nhật slot map rồi đi đúng node — đường sửa sai của Redis\n✗ Node không im lặng bỏ qua; như vậy sẽ mất request thay vì sửa được\n✗ Redis Cluster là client-aware, không có proxy trung tâm forward (đó là mô hình routing tier)\n✗ Không khoá và rebalance toàn bộ chỉ vì một client giữ bản đồ cũ"
+  },
+  {
+    "id": "ds-q-142",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-12-rebalancing-routing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Vì sao Cassandra/Elasticsearch đặt một khoảng delay (ví dụ `index.unassigned.node_left.delayed_timeout: 5m`) trước khi coi một node là mất hẳn?",
+    "options": [
+      "Để chờ con người phê duyệt việc rebalance thủ công",
+      "Để tránh rebalance storm: chớp mạng ngắn không nên kích hoạt copy TB dữ liệu rồi lại copy về",
+      "Để lease trong etcd kịp hết hạn trước khi phát hiện",
+      "Để consistent hashing kịp phân bổ lại token"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Yêu cầu 'xác định & kiểm soát được' chống rebalance storm: đừng rebalance ồ ạt lúc chỉ nghi ngờ; delay chờ để tránh copy vô ích khi node chỉ chớp mạng.\n✓ Delay tránh rebalance storm — chớp mạng ngắn không nên kích hoạt copy TB dữ liệu rồi lại copy về\n✗ Delay là tự động chờ, không phải chờ con người phê duyệt (đó là human-in-the-loop khác)\n✗ Cơ chế này độc lập với lease etcd; đây là ngưỡng chờ trước khi coi node mất hẳn\n✗ Token consistent hashing không cần khoảng delay này để phân bổ"
+  },
+  {
+    "id": "ds-q-143",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-12-rebalancing-routing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Về các cạm bẫy thực chiến của rebalancing, những phát biểu nào ĐÚNG?",
+    "options": [
+      "Di dời 1 partition 50 GB qua mạng 1 Gbps mất khoảng vài phút chỉ riêng truyền, nên phải throttle băng thông để không giết tải production",
+      "Rebalance tự động luôn an toàn hơn human-in-the-loop vì loại bỏ sai sót con người",
+      "Client giữ bản đồ stale sẽ gõ nhầm node, nên thiết kế phải có đường sửa sai (MOVED, coordinator forward, mongos refresh)",
+      "Vì copy dữ liệu gần như miễn phí nên không cần giới hạn tốc độ stream",
+      "Kafka đã bỏ ZooKeeper chuyển sang KRaft — nhúng Raft vào broker để tự quản metadata"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      4
+    ],
+    "explanation": "Copy tốn thật nên phải throttle; stale routing cần đường sửa sai; và KRaft là ví dụ coordination vẫn cần consensus chỉ đổi chỗ đặt.\n✓ Copy 50 GB qua 1 Gbps mất hàng phút chỉ riêng truyền, phải throttle (ví dụ setstreamthroughput) để không giết production\n✓ Stale routing cần đường sửa sai: Redis MOVED, Cassandra coordinator forward, mongos refresh từ config server\n✓ Kafka bỏ ZooKeeper sang KRaft, nhúng Raft vào broker để tự quản metadata\n✗ Rebalance tự động KHÔNG luôn an toàn hơn — tự động + phát hiện lỗi sai có thể gây cascading failure, nên nhiều hệ để human-in-the-loop\n✗ Copy dữ liệu tốn thật (I/O, băng thông), không hề miễn phí; chính vì vậy phải throttle"
+  },
+  {
+    "id": "ds-q-144",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-12-rebalancing-routing",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một datastore key-range như HBase/CockroachDB thường query theo khoảng (`WHERE ts BETWEEN ...`). Chiến lược partitioning nào hợp nhất và vì sao?",
+    "options": [
+      "Fixed number of partitions vì P cố định giúp query khoảng nhanh",
+      "Dynamic partitioning vì partition thích ứng dữ liệu và giữ được thứ tự key-range",
+      "Proportional to nodes vì consistent hashing tối ưu cho query theo khoảng",
+      "hash mod N vì phân bố đều giúp quét khoảng song song"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Dynamic partitioning tự split/merge theo lượng dữ liệu và giữ khoảng key liền mạch, hợp dữ liệu key-range query theo khoảng.\n✓ Dynamic partitioning thích ứng dataset và hợp key-range, đúng cho query BETWEEN theo khoảng\n✗ Fixed number thường băm key (mất thứ tự), không tối ưu cho query khoảng\n✗ Proportional to nodes gắn consistent hashing (băm) làm mất tính liền mạch của khoảng key\n✗ `hash mod N` băm rải key làm query khoảng phải quét mọi node, lại còn rebalance thảm hoạ"
+  },
+  {
+    "id": "ds-q-145",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-13-consensus-flp",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Tính chất nào của consensus thuộc nhóm liveness (\"cuối cùng làm được điều tốt\"), khác với ba tính chất còn lại?",
+    "options": [
+      "Termination — mọi node correct cuối cùng đều decide",
+      "Agreement — không hai node correct nào decide khác nhau",
+      "Validity — giá trị decide phải do ai đó propose",
+      "Integrity — mỗi node correct decide tối đa một lần"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Consensus có 3 tính chất safety (never bad) và 1 tính chất liveness (eventually good); chính sự chia đôi này là nơi FLP đánh vào.\n✓ Cam kết \"cuối cùng ai cũng chốt được, không treo mãi\" là liveness.\n✗ \"Không hai node decide khác nhau\" là safety (chống split brain).\n✗ \"Giá trị decide phải do ai đó propose\" là safety (không bịa giá trị).\n✗ \"Decide tối đa một lần\" là safety (không đổi ý sau khi chốt)."
+  },
+  {
+    "id": "ds-q-146",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-13-consensus-flp",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài, gốc rễ khiến consensus khó trong mô hình async là gì?",
+    "options": [
+      "Không phân biệt được node đang chậm/mất mạng với node đã chết",
+      "Băng thông mạng luôn không đủ cho số lượng message",
+      "CPU của các node có tốc độ khác nhau nên tính toán lệch",
+      "Các node dùng đồng hồ vật lý không được đồng bộ NTP"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bản chất khó nằm ở partial failure: khi A gửi B mà không thấy trả lời, A không biết B chết hay chỉ chậm.\n✓ Chờ mãi thì mất termination, không chờ thì có thể mất agreement — thế lưỡng nan cứng này là cái FLP chứng minh không giải triệt để được.\n✗ Vấn đề không phải băng thông thiếu.\n✗ Không phải do tốc độ CPU khác nhau.\n✗ Không phải do lệch đồng hồ vật lý — FLP đúng cả khi bỏ qua clock."
+  },
+  {
+    "id": "ds-q-147",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-13-consensus-flp",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Phát biểu nào diễn giải ĐÚNG kết luận của FLP impossibility?",
+    "options": [
+      "Trong async với dù chỉ 1 crash, không thuật toán deterministic nào vừa luôn an toàn vừa luôn terminate",
+      "Consensus là bất khả thi trong mọi mô hình, kể cả synchronous",
+      "Trong async, không thể đảm bảo agreement dù mạng hoàn hảo không lỗi",
+      "Chỉ cần có Byzantine fault thì consensus mới trở nên bất khả thi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "FLP nói bạn không thể có CẢ HAI (luôn safety) và (luôn termination) cùng lúc trong async với ít nhất 1 khả năng crash.\n✓ Đây đúng là phát biểu chính xác — thực tế người ta giữ chặt safety, hy sinh cam kết termination.\n✗ FLP không áp dụng cho synchronous; ở đó consensus giải được.\n✗ FLP cần điều kiện có thể crash; \"không lỗi nào\" thì consensus tầm thường giải được.\n✗ FLP đã dùng mô hình lỗi yếu nhất (crash/fail-stop), không cần Byzantine."
+  },
+  {
+    "id": "ds-q-148",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-13-consensus-flp",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "FLP dựa trên bốn giả thiết. Muốn \"lách\" FLP mà không hy sinh safety, những cách nào dưới đây là hướng đi hợp lệ được nêu trong bài?",
+    "options": [
+      "Dùng partial synchrony + timeout làm failure detector không hoàn hảo",
+      "Cho phép node tung đồng xu (randomness), biến termination thành xác suất → 1",
+      "Dùng failure detector ◇S cung cấp gợi ý về lỗi",
+      "Hy sinh agreement để đổi lấy termination luôn đảm bảo",
+      "Giả định mô hình fully synchronous với bound thời gian tuyệt đối cho mọi tin nhắn"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Lách FLP = phá bỏ MỘT giả thiết (async tuyệt đối, deterministic, hoặc không có gợi ý về lỗi) nhưng tuyệt đối không đụng tới safety.\n✓ Partial synchrony + timeout phá \"async tuyệt đối\": chỉ terminate sau GST, safety luôn giữ (Raft, Paxos, ZAB).\n✓ Randomness phá \"deterministic\": kẻ đối kháng không đoán được nên hệ gần như chắc thoát bivalent.\n✓ Failure detector ◇S phá \"không có gợi ý về lỗi\" (Chandra–Toueg, nền của Paxos).\n✗ Hy sinh agreement là hy sinh safety — điều bài nhấn mạnh tuyệt đối không được làm.\n✗ Giả định fully synchronous cho MỌI tin nhắn không phải mô hình thực tế mà bài đề xuất; hướng thực chiến là partial synchrony, chỉ đôi khi có bound."
+  },
+  {
+    "id": "ds-q-149",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-13-consensus-flp",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong trực giác chứng minh FLP, vì sao randomness giúp thoát khỏi lịch trình vô hạn không quyết định?",
+    "options": [
+      "Kẻ đối kháng thắng nhờ đoán trước hành vi node để hoãn đúng tin nhắn; khi node tung xu, hắn không đoán được nên không giữ hệ ở bivalent mãi",
+      "Randomness khiến tin nhắn được gửi nhanh hơn nên vượt qua mọi timeout",
+      "Randomness làm mọi node chọn cùng một giá trị ngay từ round đầu",
+      "Randomness biến mô hình async thành synchronous, nên FLP không còn áp dụng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Kẻ đối kháng FLP chỉ giữ được hệ ở cấu hình bivalent nếu trì hoãn đúng tin nhắn then chốt đúng lúc — điều này cần đoán trước node sẽ làm gì.\n✓ Khi node tung đồng xu, hành vi không thể đoán trước nên kẻ đối kháng mất khả năng né lối ra univalent → gần như chắc chắn thoát.\n✗ Randomness không làm tin nhắn gửi nhanh hơn.\n✗ Nó không ép mọi node chọn cùng giá trị ngay round đầu; termination chỉ hội tụ về 1 theo thời gian.\n✗ Nó không biến async thành synchronous; nó phá giả thiết deterministic chứ không phá async."
+  },
+  {
+    "id": "ds-q-150",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-13-consensus-flp",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cluster etcd 3 node bị partition thành nhóm 2 node và nhóm 1 node. Với quorum = ⌊N/2⌋+1, điều gì xảy ra?",
+    "options": [
+      "Nhóm 2 node đạt quorum và tiếp tục ghi; nhóm 1 node dừng ghi",
+      "Cả hai nhóm cùng bầu leader và cùng ghi, gây split brain",
+      "Cả hai nhóm đều dừng ghi vì không nhóm nào đạt quorum",
+      "Nhóm 1 node vẫn ghi được vì nó là số lẻ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "N=3 → quorum = ⌊3/2⌋+1 = 2, và cluster chịu được 1 node chết.\n✓ Chỉ nhóm 2 node đạt đa số nghiêm ngặt nên được quyết định/ghi; nhóm 1 node không đạt quorum nên phải dừng ghi để tránh split brain.\n✗ Không thể cả hai cùng ghi — chỉ một bên đạt quorum nên không có split brain.\n✗ Không phải cả hai đều dừng: nhóm 2 node vẫn đủ đa số (khác với ví dụ N=4 tách 2+2).\n✗ Số lẻ không giúp nhóm 1 node đạt quorum."
+  },
+  {
+    "id": "ds-q-151",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-13-consensus-flp",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi cấu hình Raft/etcd, vì sao election-timeout phải lớn hơn nhiều (thường ~10x) heartbeat-interval?",
+    "options": [
+      "Để tránh bầu lại leader nhầm khi mạng chỉ trễ nhẹ, tuân quy tắc broadcast-time << election-timeout << MTBF",
+      "Để leader có thời gian ghi log ra đĩa trước mỗi lần heartbeat",
+      "Để tăng số node quorum cần thiết khi mạng ổn định",
+      "Vì election-timeout tính bằng giây còn heartbeat tính bằng mili-giây"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Heartbeat là nhịp leader chứng minh còn sống; election-timeout là ngưỡng nghi leader chết để bầu lại.\n✓ Nếu election-timeout quá sát heartbeat, một cú trễ mạng nhẹ đã kích hoạt bầu lại vô ích; quy tắc broadcast-time << election-timeout << MTBF giữ hệ ổn định.\n✗ Heartbeat không phải để chờ ghi log ra đĩa.\n✗ Nó không thay đổi số node quorum.\n✗ Cả hai đều tính bằng mili-giây; quan hệ 10x là chọn chủ động, không do đơn vị."
+  },
+  {
+    "id": "ds-q-152",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-13-consensus-flp",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Điểm khác biệt tinh tế về validity giữa atomic commit (2PC) và consensus thuần là gì?",
+    "options": [
+      "Atomic commit chỉ được commit nếu MỌI participant vote yes; một no hoặc một crash → phải abort (mỗi node có quyền veto)",
+      "Atomic commit cho phép decide bất kỳ giá trị nào, kể cả giá trị không ai propose",
+      "Consensus bắt buộc mọi node vote yes mới decide, còn atomic commit thì không",
+      "Atomic commit không cần agreement giữa các participant"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Consensus decide bất kỳ giá trị nào do ai đó propose; atomic commit siết chặt hơn.\n✓ 2PC chỉ commit khi TẤT CẢ vote yes — mỗi participant có quyền veto, nên một no/crash buộc phải abort; đây là điểm khác consensus.\n✗ Ngược lại: consensus mới cho decide giá trị do ai đó propose; atomic commit không bịa giá trị.\n✗ Consensus không đòi mọi node vote yes — đó chính là đặc trưng của atomic commit.\n✗ Atomic commit vẫn cần mọi participant cùng commit hoặc cùng abort — rất giống agreement."
+  },
+  {
+    "id": "ds-q-153",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-13-consensus-flp",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Vì sao 2PC với một coordinator đơn lẻ dễ bị \"blocking\", và cách khắc phục theo hướng bài nêu là gì?",
+    "options": [
+      "Coordinator chết sau khi participant đã vote yes nhưng trước khi ra lệnh → participant kẹt; thay coordinator đơn bằng một nhóm consensus (như Paxos group trong Spanner)",
+      "Participant gửi vote quá chậm nên coordinator timeout; khắc phục bằng tăng băng thông mạng",
+      "2PC vi phạm agreement nên phải chuyển sang mô hình eventual consistency",
+      "Coordinator giữ quá nhiều khoá nên nghẽn; khắc phục bằng cách bỏ khoá hoàn toàn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "2PC nhạy cảm với lỗi hơn consensus vì đòi mọi node đồng ý mới commit và phụ thuộc coordinator đơn lẻ.\n✓ Nếu coordinator chết sau khi participant vote yes nhưng chưa ra lệnh, participant kẹt giữ khoá, không dám commit cũng không dám abort; giải pháp là thay coordinator đơn bằng nhóm consensus (Spanner: Paxos group mỗi shard rồi 2PC bắc cầu).\n✗ Blocking không phải do vote chậm hay thiếu băng thông.\n✗ 2PC không vi phạm agreement; vấn đề là liveness/blocking.\n✗ Bỏ khoá hoàn toàn không phải cách khắc phục được nêu."
+  },
+  {
+    "id": "ds-q-154",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-13-consensus-flp",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Total order broadcast là gì và vì sao nó là trái tim của state machine replication?",
+    "options": [
+      "Mọi node nhận cùng một tập message theo cùng một thứ tự; nếu mọi replica áp cùng chuỗi lệnh từ cùng trạng thái đầu thì luôn ở cùng trạng thái",
+      "Mỗi node phát message riêng và tự chọn thứ tự áp dụng theo timestamp cục bộ",
+      "Chỉ leader nhận message, các follower không cần thấy cùng thứ tự",
+      "Message được gửi song song để tối đa throughput, thứ tự không quan trọng"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Total order broadcast (atomic broadcast) đảm bảo mọi node thấy cùng tập message với cùng thứ tự.\n✓ Nhờ vậy mọi replica áp cùng chuỗi lệnh từ cùng trạng thái đầu → luôn hội tụ về cùng trạng thái, đó là nền của state machine replication.\n✗ Tự chọn thứ tự theo timestamp cục bộ sẽ phá tính \"cùng thứ tự\".\n✗ Follower cũng phải thấy cùng thứ tự, không chỉ leader.\n✗ Thứ tự chính là điều then chốt, không thể bỏ qua."
+  },
+  {
+    "id": "ds-q-155",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-13-consensus-flp",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những phát biểu nào dưới đây ĐÚNG về mối tương đương consensus ↔ total order broadcast và các con số thực chiến trong bài?",
+    "options": [
+      "Có total order broadcast thì giải được consensus bằng cách decide message đầu tiên trong thứ tự chung",
+      "Raft/Paxos thực chất tạo ra một replicated log có thứ tự toàn cục — mỗi entry là một quyết định consensus",
+      "ZooKeeper (ZAB) cần 2f+1 node để tolerate f lỗi, nên 5 node chịu được 2 lỗi",
+      "Thêm node vào cluster consensus làm mọi thao tác ghi nhanh hơn nhờ chia tải",
+      "Cluster consensus nên chọn số node chẵn để tăng khả năng chịu lỗi"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Consensus và total order broadcast tương đương hai chiều; các con số production được nêu rõ trong bài.\n✓ Có total order broadcast thì mọi node broadcast giá trị rồi decide message đầu trong thứ tự chung → agreement.\n✓ Raft/Paxos tạo replicated log có thứ tự toàn cục, mỗi entry là một phiên consensus.\n✓ ZAB cần 2f+1 để chịu f lỗi → 5 node chịu 2 lỗi là cấu hình phổ biến.\n✗ Vì mọi ghi phải qua quorum, thêm node KHÔNG làm ghi nhanh hơn — thậm chí chậm hơn do chờ nhiều ack.\n✗ Nên chọn số node LẺ (3,5,7); node chẵn tốn thêm máy mà không tăng khả năng chịu lỗi."
+  },
+  {
+    "id": "ds-q-156",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-13-consensus-flp",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong hướng partial synchrony + timeout, chuyện gì xảy ra với safety và liveness khi mạng đang \"loạn\" (trước GST)?",
+    "options": [
+      "Safety (agreement) vẫn luôn giữ, nhưng hệ có thể không quyết định được — mất liveness tạm thời",
+      "Cả safety lẫn liveness đều bị hy sinh cho tới khi mạng ổn lại",
+      "Liveness luôn giữ nhờ timeout, nhưng agreement có thể bị vi phạm",
+      "Hệ tự động chuyển sang chốt bừa một giá trị để không treo"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Timeout đóng vai failure detector không hoàn hảo: lúc mạng loạn có thể nghi nhầm node còn sống.\n✓ Khi đó hệ có thể không tiến triển (mất liveness tạm), nhưng agreement — tức safety — vẫn luôn được giữ; sau GST timeout đoán đúng và liveness khôi phục.\n✗ Safety không bao giờ bị hy sinh — đó là nguyên tắc bất di bất dịch.\n✗ Không phải liveness luôn giữ còn agreement bị phá — ngược lại hoàn toàn.\n✗ Hệ không chốt bừa; thà treo còn hơn chốt sai gây split brain."
+  },
+  {
+    "id": "ds-q-157",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-14-raft",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong Raft, một follower khởi động bầu cử (chuyển sang candidate) khi nào?",
+    "options": [
+      "Khi nhận được heartbeat từ leader hiện tại",
+      "Khi election timeout cạn mà không nghe gì từ leader",
+      "Khi client gửi request ghi trực tiếp tới nó",
+      "Khi commitIndex của nó vượt lastApplied"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Follower reset đồng hồ mỗi khi nhận AppendEntries hợp lệ; nếu đồng hồ cạn mà không nghe leader, nó cho rằng leader chết và mở bầu cử.\n✓ Hết election timeout mà chưa nghe leader chính là điều kiện khởi động bầu cử.\n✗ Nhận heartbeat hợp lệ thì follower reset đồng hồ và ở yên, không bầu cử.\n✗ Client chỉ gửi request tới leader; follower nhận cũng không vì thế mà thành candidate.\n✗ commitIndex vượt lastApplied chỉ kích hoạt việc apply vào state machine, không liên quan bầu cử."
+  },
+  {
+    "id": "ds-q-158",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-14-raft",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Term trong Raft đóng vai trò gì đối với cả cụm?",
+    "options": [
+      "Là logical clock, mọi RPC đều mang term để phát hiện thông tin cũ",
+      "Là số byte của mỗi log entry",
+      "Là thời gian thực (wall-clock) đồng bộ giữa các node",
+      "Là số phiếu tối thiểu cần để thắng bầu cử"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Term là số nguyên tăng đơn điệu, hoạt động như logical clock của cụm và đi kèm mọi RPC.\n✓ Nhờ term gắn trong RPC, node phát hiện được thông tin lỗi thời (term nhỏ hơn bị chối, term lớn hơn buộc hạ bậc).\n✗ Term không mô tả kích thước entry.\n✗ Raft cố ý tránh phụ thuộc wall-clock đồng bộ; term là logical clock chứ không phải thời gian thực.\n✗ Số phiếu tối thiểu là khái niệm quorum (đa số), không phải term."
+  },
+  {
+    "id": "ds-q-159",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-14-raft",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một cụm Raft 5 node cần bao nhiêu node còn sống để vẫn bầu được leader và nhận ghi?",
+    "options": [
+      "2",
+      "3",
+      "4",
+      "5"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Đa số của 5 là ⌊5/2⌋+1 = 3, nên cần ít nhất 3 node còn sống.\n✓ 3 node đạt quorum, cụm vẫn bầu được leader và nhận ghi (chịu được 2 node chết).\n✗ 2 node không đủ đa số của 5, quorum vỡ.\n✗ 4 vượt yêu cầu tối thiểu; cụm vẫn chạy tốt với chỉ 3.\n✗ Không cần cả 5 node sống; Raft chịu lỗi được tới 2 node."
+  },
+  {
+    "id": "ds-q-160",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-14-raft",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao khuyến nghị cụm Raft nên có số node lẻ (3, 5) thay vì chẵn (4)?",
+    "options": [
+      "Node lẻ giúp heartbeat nhanh hơn node chẵn",
+      "4 node chịu lỗi vẫn chỉ bằng 3 (1 lỗi) nhưng đắt và dễ split hơn",
+      "Số chẵn không thể tính được commitIndex",
+      "Chỉ số node lẻ mới cho phép randomized timeout"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Đa số của 4 là 3, chỉ chịu được 1 lỗi giống như cụm 3 node, nhưng tốn thêm 1 node và dễ split hơn.\n✓ 4 node chịu lỗi ngang 3 nhưng đắt hơn và dễ split hơn, nên số lẻ là lựa chọn tối ưu chi phí/độ chịu lỗi.\n✗ Số node lẻ/chẵn không quyết định tốc độ heartbeat.\n✗ commitIndex tính được với bất kỳ kích thước cụm; số chẵn không cản trở việc này.\n✗ Randomized timeout áp dụng cho mọi kích thước cụm, không phụ thuộc chẵn lẻ."
+  },
+  {
+    "id": "ds-q-161",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-14-raft",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một leader cũ bị cô lập mạng một thời gian, sau đó kết nối lại và gửi AppendEntries với term = 3, nhưng cụm hiện đã ở term = 5. Điều gì xảy ra?",
+    "options": [
+      "Follower chấp nhận và ghi đè log theo leader cũ",
+      "Follower từ chối vì term < currentTerm; leader cũ thấy term lớn hơn sẽ hạ bậc về follower",
+      "Cụm rơi vào split-brain với hai leader cùng lúc",
+      "Follower nâng term của mình xuống 3 để đồng bộ với leader cũ"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Quy tắc term: RPC mang term nhỏ hơn currentTerm bị từ chối, và node thấy term lớn hơn phải hạ bậc.\n✓ Term 3 < 5 nên bị chối; khi leader cũ nhận phản hồi có term 5, nó lập tức trở về follower — cơ chế loại bỏ 'leader ma'.\n✗ Follower không bao giờ chấp nhận lệnh từ term cũ hơn để ghi đè log.\n✗ Chính cơ chế term ngăn split-brain: leader cũ không thể áp lệnh.\n✗ Term chỉ tăng đơn điệu, node không hạ term của mình xuống."
+  },
+  {
+    "id": "ds-q-162",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-14-raft",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "AppendEntries gửi tới một follower nhưng bị từ chối vì consistency check thất bại (prevLogIndex/prevLogTerm không khớp). Leader làm gì tiếp theo?",
+    "options": [
+      "Xoá và ghi lại log của chính leader cho khớp follower",
+      "Lùi nextIndex của follower đó và thử lại với entry cũ hơn cho tới khi hai log trùng",
+      "Loại follower đó khỏi cụm vĩnh viễn",
+      "Giảm term hiện tại rồi mở bầu cử lại"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Khi consistency check thất bại, leader lùi nextIndex và thử lại lùi dần tới điểm hai log trùng, rồi ghi đè phần lệch của follower.\n✓ Lùi nextIndex và retry với entry cũ hơn là cách Raft đưa log follower hội tụ về bản của leader.\n✗ Leader không bao giờ sửa/xoá log của chính nó; dòng chảy là một chiều leader → follower.\n✗ Từ chối consistency check là bình thường, không phải lý do loại node.\n✗ Từ chối AppendEntries không kích hoạt bầu cử lại hay hạ term."
+  },
+  {
+    "id": "ds-q-163",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-14-raft",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao Raft dùng election timeout NGẪU NHIÊN cho mỗi node thay vì cùng một giá trị cố định?",
+    "options": [
+      "Để tiết kiệm bộ nhớ trên mỗi follower",
+      "Để phá đối xứng, tránh nhiều follower cùng thành candidate gây split vote lặp lại",
+      "Để mỗi node có thể là leader ở nhiều term cùng lúc",
+      "Để đồng bộ đồng hồ vật lý giữa các node"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Timeout ngẫu nhiên khiến thường chỉ một node hết giờ trước, thắng gọn trước khi node khác kịp khởi động.\n✓ Randomized timeout phá đối xứng, giảm khả năng split vote khi nhiều node cùng hết giờ và chia đều phiếu.\n✗ Mục tiêu là tránh split vote, không phải tiết kiệm bộ nhớ.\n✗ Mỗi term có tối đa 1 leader; một node không thể là leader nhiều term cùng lúc.\n✗ Raft không đồng bộ đồng hồ vật lý; term là logical clock."
+  },
+  {
+    "id": "ds-q-164",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-14-raft",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong cấu hình etcd, khuyến nghị đặt election-timeout ≈ 10 × heartbeat-interval và lớn hơn round-trip time giữa các node. Nếu đặt election-timeout QUÁ NHỎ (gần bằng RTT) thì hậu quả điển hình là gì?",
+    "options": [
+      "Ghi (write) trở nên nhanh hơn nhiều",
+      "Bầu cử oan liên tục: mạng trễ nhẹ đã bị hiểu là leader chết, gây bầu lại thường xuyên",
+      "Cụm không bao giờ commit được entry nào",
+      "commitIndex và lastApplied luôn bằng nhau"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "election-timeout phải lớn hơn RTT để tránh hiểu nhầm trễ mạng thành leader chết.\n✓ Timeout quá nhỏ khiến chỉ cần trễ mạng nhẹ đã kích hoạt bầu cử oan liên tục, cụm mất ổn định.\n✗ Bầu cử liên miên làm gián đoạn ghi chứ không tăng tốc ghi.\n✗ Cụm vẫn commit được khi có leader; vấn đề là leader bị thay liên tục.\n✗ Quan hệ commitIndex/lastApplied không do election-timeout quyết định."
+  },
+  {
+    "id": "ds-q-165",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-14-raft",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cụm 5 node, leader S1 vừa replicate một entry lên S1, S2, S3 (3/5) và trả OK cho client. S1 chết ngay sau đó. S4 (thiếu entry đó) làm candidate xin phiếu. Kết quả nào ĐÚNG?",
+    "options": [
+      "S4 thắng và entry vừa committed bị mất",
+      "S2/S3 từ chối bầu S4 vì log của S4 không up-to-date; committed entry được giữ",
+      "S4 thắng nhưng phải chờ S1 sống lại để lấy entry",
+      "Cụm split-brain vì S4 và S2 cùng thành leader term 5"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Election Restriction: node chỉ bầu candidate có log up-to-date ít nhất bằng mình; entry đã committed nằm trên đa số nên giao với mọi quorum bầu cử.\n✓ S2/S3 có entry đó sẽ từ chối S4 (thiếu entry term mới), nên candidate thiếu log không thể thắng — committed entry được bảo toàn.\n✗ S4 không thể thắng, entry không mất.\n✗ Raft không cần S1 sống lại; entry đã có sẵn trên đa số còn sống.\n✗ Mỗi node 1 phiếu/term nên không thể có hai leader cùng term 5."
+  },
+  {
+    "id": "ds-q-166",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-14-raft",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Theo hệ quả Figure 8 trong paper, vì sao leader mới KHÔNG được commit một entry của term CŨ chỉ vì nó đã được replicate lên đa số?",
+    "options": [
+      "Vì entry term cũ luôn bị hỏng dữ liệu",
+      "Vì entry term cũ đã replicate lên đa số vẫn có thể bị leader khác ghi đè; chỉ an toàn khi commit gián tiếp qua một entry của term hiện tại",
+      "Vì term cũ không có prevLogIndex",
+      "Vì client chỉ chấp nhận kết quả của term hiện tại"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Entry term cũ dù đã lên đa số vẫn có thể bị ghi đè bởi một leader khác; nó chỉ thực sự an toàn khi leader commit một entry của term hiện tại (kéo theo commit mọi entry trước theo Log Matching).\n✓ Vì thế cài đặt thực tế thường append một no-op entry đầu term để commit gián tiếp phần thừa kế.\n✗ Entry term cũ không hề bị hỏng dữ liệu; vấn đề là an toàn commit chứ không phải tính toàn vẹn.\n✗ Entry term cũ vẫn có prevLogIndex bình thường.\n✗ Client không phân biệt term khi nhận kết quả; ràng buộc là về safety của log."
+  },
+  {
+    "id": "ds-q-167",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-14-raft",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Những phát biểu nào ĐÚNG về Election Restriction và điều kiện cấp phiếu trong Raft? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Node so sánh 'up-to-date' bằng term của entry cuối trước; nếu bằng term thì log dài hơn (index cuối lớn hơn) mới hơn",
+      "Mỗi node có thể bỏ nhiều phiếu trong cùng một term nếu candidate hợp lệ",
+      "Vì candidate phải gom đa số và committed entry cũng nằm trên đa số, hai tập giao nhau nên candidate thiếu committed entry không thể thắng",
+      "Election Restriction dẫn tới Leader Completeness: committed entry ở term trước chắc chắn có trong log mọi leader tương lai",
+      "Một node vẫn cấp phiếu cho candidate dù log candidate cũ hơn, miễn candidate có term lớn hơn"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "Election Restriction so sánh log qua term entry cuối, rồi tới index; node giao giữa hai quorum sẽ chặn candidate thiếu log.\n✓ So sánh up-to-date: term entry cuối lớn hơn thì mới hơn, bằng term thì index cuối lớn hơn mới hơn.\n✓ Đa số bầu cử giao với đa số đã lưu committed entry, nên candidate thiếu entry đó bị từ chối, không thể thắng.\n✓ Kết quả là Leader Completeness: committed entry ở các term trước chắc chắn có mặt trong mọi leader tương lai.\n✗ Mỗi node chỉ 1 phiếu/term, không thể bỏ nhiều phiếu trong cùng term.\n✗ Term lớn hơn không đủ; node vẫn từ chối nếu log candidate không up-to-date bằng log của mình."
+  },
+  {
+    "id": "ds-q-168",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-14-raft",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Về membership change và hành vi CAP của một cụm Raft, phát biểu nào ĐÚNG? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Chuyển trực tiếp Cold sang Cnew an toàn tuyệt đối, không cần joint consensus",
+      "Joint consensus dùng cấu hình chuyển tiếp C_{old,new} yêu cầu đa số của CẢ Cold và Cnew để không bao giờ tồn tại hai đa số độc lập",
+      "Single-server change (mỗi lần thêm/bớt đúng 1 node) an toàn vì thay đổi 1 node không thể tạo hai đa số rời nhau",
+      "Khi cụm 3 node mất 2 node (quorum vỡ), Raft ngừng nhận ghi — chọn C và P, hy sinh A",
+      "Khi quorum vỡ, Raft vẫn tiếp tục nhận ghi trên node còn lại để giữ tính sẵn sàng"
+    ],
+    "correctIndices": [
+      1,
+      2,
+      3
+    ],
+    "explanation": "Joint consensus và single-server change đều nhằm tránh hai đa số rời nhau; mất quorum thì Raft dừng ghi (ưu tiên nhất quán).\n✓ C_{old,new} cần đa số cả hai tập nên không lúc nào có hai đa số độc lập, tránh split-brain khi đổi cấu hình.\n✓ Thêm/bớt đúng 1 node không thể tạo hai đa số rời nhau, nên single-server change an toàn mà bỏ được joint consensus cho phần lớn tình huống.\n✓ Mất quá bán node làm quorum vỡ, cụm ngừng ghi — chọn C và P, hy sinh A đúng như CAP.\n✗ Chuyển trực tiếp Cold→Cnew có thể sinh hai đa số rời nhau bầu hai leader cùng term (split-brain), nên KHÔNG an toàn.\n✗ Raft không nhận ghi khi quorum vỡ; thà dừng còn hơn phân đôi dữ liệu."
+  },
+  {
+    "id": "ds-q-169",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-15-coordination",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đội bạn cần lưu metadata quan trọng: ai là leader, cấu hình động, danh sách node sống. Cách tiếp cận đúng theo bài học là gì?",
+    "options": [
+      "Tự cài Paxos/Raft ngay trong dịch vụ ứng dụng của mình để kiểm soát hoàn toàn",
+      "Dùng một coordination service (ZooKeeper/etcd) đã tôi luyện, ứng dụng làm client của nó",
+      "Nhét toàn bộ metadata vào database chính của ứng dụng và cho tất cả instance ghi tự do",
+      "Cho mỗi instance tự bầu leader bằng heartbeat riêng, không cần cụm trung tâm"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nhấn mạnh 'đừng tự cài Paxos/Raft'; hãy thuê ngoài consensus cho một cụm nhỏ đáng tin.\n✓ Coordination service như ZooKeeper/etcd chạy consensus bên trong, phơi ra KV linearizable cho metadata; ứng dụng chỉ dùng API.\n✗ Tự cài Paxos/Raft cực khó đúng và khó test, dễ có bug ngủ đông.\n✗ Nhồi metadata điều phối vào DB chính và cho ghi tự do không giải quyết bài toán đồng thuận/leader.\n✗ Tự viết heartbeat riêng kém chuẩn xác hơn nhiều so với membership qua ephemeral/lease của cụm."
+  },
+  {
+    "id": "ds-q-170",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-15-coordination",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong Paxos một quyết định, vai nào giữ 'trạng thái bền' của hệ và cần đa số đồng ý để chốt một giá trị?",
+    "options": [
+      "Proposer",
+      "Acceptor",
+      "Learner",
+      "Leader ổn định (distinguished proposer)"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Acceptor là 'cử tri' bỏ phiếu; trạng thái bền nằm ở đây và cần đa số acceptor đồng ý.\n✓ Đúng đa số acceptor accept cùng (n,v) thì giá trị được chốt.\n✗ Proposer chỉ đề xuất giá trị và cố làm nó được chốt.\n✗ Learner chỉ học ra giá trị đã chốt để đem đi dùng.\n✗ Leader ổn định là tối ưu của Multi-Paxos về hiệu năng, không phải nơi giữ trạng thái bền."
+  },
+  {
+    "id": "ds-q-171",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-15-coordination",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Ở Pha 1 (prepare), một acceptor phản hồi promise và kèm theo một giá trị nó đã accept trước đó với số cao. Proposer PHẢI làm gì tiếp?",
+    "options": [
+      "Bỏ qua giá trị cũ và tự do dùng giá trị của mình vì mình có số n lớn hơn",
+      "Buộc phải dùng lại giá trị đã accept có số cao nhất trong đám promise",
+      "Hủy đề xuất và nâng n lên rồi bắt đầu lại từ đầu",
+      "Chốt ngay giá trị của mình mà không cần Pha 2"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Đây là mấu chốt an toàn của Paxos: proposer không được ghi đè một giá trị có thể đã chốt.\n✓ Nếu trong promise có ai đã accept, proposer buộc lặp lại giá trị có số cao nhất trong đó.\n✗ Tự do dùng giá trị của mình chỉ được phép khi KHÔNG acceptor nào đã accept gì.\n✗ Nâng n và bắt đầu lại không phải quy tắc bắt buộc ở đây, và bỏ qua ràng buộc an toàn.\n✗ Không thể chốt mà bỏ Pha 2 accept."
+  },
+  {
+    "id": "ds-q-172",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-15-coordination",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao 'hai quorum đa số bất kỳ luôn giao nhau ≥ 1 node' lại là điều kiện sống còn của consensus?",
+    "options": [
+      "Để giảm số message cần gửi khi ghi một giá trị",
+      "Vì node giao điểm nhớ giá trị đã chốt và ép mọi proposer sau lặp lại đúng nó, ngăn hai quyết định mâu thuẫn",
+      "Để cụm có thể chịu được node nói dối kiểu Byzantine",
+      "Vì nó cho phép cụm tiếp tục hoạt động ngay cả khi mất đa số node"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Giao điểm của hai quorum là cơ chế ngăn hai quyết định xung đột cùng được chốt.\n✓ Acceptor giao đó nhớ giá trị đã chốt và ép proposer số lớn hơn lặp lại đúng giá trị ở Pha 1.\n✗ Không phải để giảm số message; giao nhau là về tính an toàn.\n✗ Paxos giả định crash-fault, KHÔNG chống Byzantine.\n✗ Mất đa số thì cụm KHÔNG còn quorum để chốt, không phải điểm mạnh này."
+  },
+  {
+    "id": "ds-q-173",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-15-coordination",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi Multi-Paxos ở trạng thái ổn định với một leader, chi phí để chốt mỗi lệnh mới là bao nhiêu?",
+    "options": [
+      "Hai pha đầy đủ (prepare + accept) cho mỗi lệnh",
+      "Chỉ Pha 2 (accept), khoảng 1 RTT tới quorum",
+      "Không cần liên lạc vì leader tự quyết một mình",
+      "Ba pha vì cần thêm bước xác nhận từ learner"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Multi-Paxos bầu leader ổn định để tránh chạy Pha 1 cho mỗi entry.\n✓ Leader chạy Pha 1 một lần cho cả dải slot, sau đó mỗi lệnh chỉ tốn Pha 2 ≈ 1 RTT tới quorum, ngang Raft.\n✗ Chạy đủ 2 pha cho mỗi entry là quá tốn, đúng cái Multi-Paxos né.\n✗ Leader vẫn phải qua quorum accept, không tự quyết một mình.\n✗ Không có 'ba pha' ở đây."
+  },
+  {
+    "id": "ds-q-174",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-15-coordination",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Bài học nêu những lý do khiến Paxos 'khó cài đúng' đến mức không nên tự cài. Chọn các phát biểu ĐÚNG.",
+    "options": [
+      "Bài báo gốc chỉ mô tả single-decree; chuỗi log, chọn leader, slot trống phải tự thiết kế",
+      "Paxos không đảm bảo liveness (do FLP); hai proposer có thể đua vô tận gây livelock",
+      "Paxos an toàn cả khi có node nói dối kiểu Byzantine nên phần khó chỉ là hiệu năng",
+      "Lỗi thường chỉ lộ dưới tổ hợp hiếm của mất gói + trễ + crash đúng thời điểm nên cực khó test",
+      "Promise/accept không cần ghi bền xuống đĩa vì trạng thái luôn phục hồi được từ leader"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Các khó khăn thực dụng: khoảng cách từ single-decree tới production là khổng lồ.\n✓ Bài báo chỉ single-decree; log/leader/no-op phải tự thiết kế, mỗi chỗ là cơ hội sai.\n✓ Không đảm bảo liveness do FLP; hai proposer nâng n liên tục gây livelock.\n✓ Lỗi chỉ lộ dưới tổ hợp hiếm nên rất khó test, dễ có bug ngủ đông.\n✗ Paxos chỉ chịu crash-fault, KHÔNG chống Byzantine.\n✗ Promise/accept PHẢI fsync xuống đĩa trước khi trả lời để phục hồi sau crash."
+  },
+  {
+    "id": "ds-q-175",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-15-coordination",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần phát hiện tức thì khi một node chết trong cụm bằng ZooKeeper. Nên tạo znode loại nào để đăng ký node đó dưới /members/?",
+    "options": [
+      "persistent znode, xóa thủ công khi biết node chết",
+      "ephemeral znode gắn với session của node",
+      "sequential znode để xếp thứ tự node",
+      "persistent + sequential để vừa bền vừa có số"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Ephemeral znode tự biến mất khi session client tạo ra nó hết hạn — đúng cho membership/failure detection.\n✓ Node chết → session timeout → ephemeral znode bị xóa tự động → cả hệ biết ngay.\n✗ Persistent znode tồn tại tới khi xóa tường minh, không tự phản ánh node chết.\n✗ Sequential chỉ gắn hậu tố số tăng để xếp thứ tự, không tự biến mất.\n✗ Persistent + sequential vẫn không tự xóa khi node chết."
+  },
+  {
+    "id": "ds-q-176",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-15-coordination",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "So với watch của ZooKeeper (one-shot), watch của etcd có đặc điểm nào giúp client KHÔNG bỏ sót sự kiện?",
+    "options": [
+      "Watch của etcd cũng one-shot nhưng gửi lại nhiều lần cho chắc",
+      "Watch của etcd stream liên tục từ một revision trở đi, không sót sự kiện",
+      "Watch của etcd yêu cầu client polling định kỳ để lấy sự kiện mới",
+      "Watch của etcd chỉ báo khi lease hết hạn, không báo thay đổi giá trị"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "etcd dựa trên MVCC + revision nên watch mạnh hơn one-shot.\n✓ Watch etcd stream liên tục từ revision X trở đi, đảm bảo không sót sự kiện.\n✗ Watch etcd KHÔNG one-shot như ZooKeeper.\n✗ Không cần polling; đó là điều cả hai loại watch giúp tránh.\n✗ Watch báo mọi thay đổi key/prefix chứ không riêng lease hết hạn."
+  },
+  {
+    "id": "ds-q-177",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-15-coordination",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong công thức lock công bằng của ZooKeeper (ephemeral+sequential), khi node của bạn KHÔNG có số nhỏ nhất, bạn nên watch cái gì để tránh 'herd effect'?",
+    "options": [
+      "Watch toàn bộ các con của /lock/ để biết ngay khi có thay đổi",
+      "Chỉ watch znode có số liền kề nhỏ hơn (đứng ngay trước mình)",
+      "Watch znode có số nhỏ nhất (đang giữ lock)",
+      "Không watch gì, polling danh sách con mỗi giây"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Herd effect xảy ra khi mọi client cùng bị đánh thức bởi một thay đổi.\n✓ Chỉ watch znode liền trước → khi nó biến mất mới quay lại kiểm tra, tránh đánh thức tất cả.\n✗ Watch toàn bộ con của /lock/ chính là nguyên nhân herd effect.\n✗ Watch node nhỏ nhất khiến mọi client đợi cùng bị đánh thức khi lock nhả.\n✗ Polling mỗi giây tốn kém và phản ứng chậm, trái với cơ chế watch."
+  },
+  {
+    "id": "ds-q-178",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-15-coordination",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Client 1 giữ lock (token 33) rồi bị GC pause 13s > TTL; lease hết, lock chuyển sang Client 2 (token 34) và Client 2 đã ghi. Client 1 tỉnh dậy ghi với token 33. Vì sao fencing token chặn được split-brain còn 'chỉ có lock' thì không?",
+    "options": [
+      "Vì coordination service sẽ chủ động gọi lại Client 1 để hủy thao tác ghi của nó",
+      "Vì storage nhớ token lớn nhất (34) và từ chối ghi token 33 < 34, tại đúng nơi ghi xảy ra",
+      "Vì lock tự động khóa storage lại khi bị thu hồi nên Client 1 không ghi được",
+      "Vì Client 1 khi tỉnh dậy tự kiểm tra lease và biết mình đã mất lock"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Cái ghi cuối cùng xảy ra ở storage, nơi không tham gia vào lock, nên bản thân lock không ngăn được.\n✓ Storage nhớ max token đã thấy (34) và từ chối token 33 nhỏ hơn — chặn ngay tại nơi ghi thật.\n✗ Coordination service không thể gọi lại và hủy thao tác ghi đang bay của một client đã mất kết nối.\n✗ Lock không 'khóa storage'; storage không tham gia vào cơ chế lock.\n✗ Client 1 đang pause/mất mạng nên không hề biết lock đã bị thu hồi — đó chính là gốc lỗi."
+  },
+  {
+    "id": "ds-q-179",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-15-coordination",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Về fencing token và điều kiện để lock thật sự an toàn, chọn các phát biểu ĐÚNG theo bài học.",
+    "options": [
+      "etcd có thể dùng ModRevision/revision của key lock làm fencing token vì luôn tăng đơn điệu toàn cục",
+      "ZooKeeper có thể dùng zxid hoặc số sequential của znode lock làm token",
+      "Nếu backend không kiểm được token thì lock chỉ đảm bảo hiệu quả, không đảm bảo đúng đắn",
+      "Fencing token nên là số ngẫu nhiên để khó đoán, miễn là đủ dài",
+      "Chỉ cần TTL lease đủ ngắn là loại bỏ hoàn toàn split-brain, không cần fencing token"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Fencing token phải tăng đơn điệu và storage phải kiểm được nó thì lock mới an toàn.\n✓ etcd dùng ModRevision/revision của key lock — tăng đơn điệu toàn cục, là fencing token trời cho.\n✓ ZooKeeper dùng zxid hoặc số sequential của znode lock làm token.\n✓ Nếu backend không kiểm token thì lock chỉ giảm đụng độ (hiệu quả), không đảm bảo đúng đắn.\n✗ Token phải TĂNG ĐƠN ĐIỆU để so sánh cũ/mới, không được ngẫu nhiên.\n✗ TTL ngắn không loại bỏ được split-brain do pause/mất mạng; vẫn cần fencing token."
+  },
+  {
+    "id": "ds-q-180",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-15-coordination",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao coordination service gần như luôn triển khai với số node lẻ (3 hoặc 5) thay vì số chẵn như 4?",
+    "options": [
+      "Số lẻ luôn cho throughput ghi cao hơn bất kể thực tế mạng",
+      "4 node vẫn chỉ chịu 1 node chết như 3 node, lại nhiều điểm hỏng hơn và latency ghi cao hơn",
+      "Số chẵn khiến hai quorum không thể giao nhau nên phá vỡ an toàn",
+      "Chỉ số lẻ mới chạy được thuật toán Raft/Zab"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Quorum = đa số; thêm node chẵn không tăng khả năng chịu lỗi mà còn hại.\n✓ Cụm 4 node vẫn chỉ chịu 1 chết như cụm 3, lại thêm điểm hỏng và latency ghi cao hơn do quorum lớn hơn.\n✗ Không phải 'luôn throughput cao hơn'; lý do là khả năng chịu lỗi trên chi phí.\n✗ Số chẵn vẫn có quorum đa số giao nhau; nó không phá an toàn, chỉ kém hiệu quả.\n✗ Raft/Zab không đòi hỏi bắt buộc số lẻ về mặt thuật toán; đây là lựa chọn tối ưu chịu lỗi."
+  },
+  {
+    "id": "ds-q-181",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-16-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn cần đo xem hàm doWork() chạy mất bao nhiêu mili-giây. Nên đọc loại đồng hồ nào ở hai đầu?",
+    "options": [
+      "Monotonic clock (ví dụ System.nanoTime()) vì hiệu hai lần đọc luôn >= 0 và không bị NTP làm nhảy lùi",
+      "Wall clock (System.currentTimeMillis()) vì nó cho biết thời điểm tuyệt đối chính xác",
+      "Wall clock nhưng nhớ cộng thêm offset NTP để bù sai số",
+      "Lamport clock vì nó gán số nguyên tăng dần cho mỗi sự kiện"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đo elapsed time luôn dùng monotonic clock vì nó không bao giờ lùi.\n✓ Monotonic clock cho hiệu luôn không âm và không bị NTP step làm nhảy lùi\n✗ Wall clock có thể nhảy lùi khi NTP step nên elapsed có thể ra âm hoặc sai\n✗ Cộng offset NTP không cứu được vì bản thân wall clock vẫn có thể bị step giữa hai lần đọc\n✗ Lamport clock đo nhân quả logic, không đo khoảng thời gian vật lý"
+  },
+  {
+    "id": "ds-q-182",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-16-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Đặc điểm nào phân biệt monotonic clock với wall (time-of-day) clock?",
+    "options": [
+      "Monotonic clock không bao giờ nhảy lùi, trong khi wall clock có thể lùi khi NTP chỉnh hoặc admin sửa giờ",
+      "Monotonic clock cho biết chính xác thời điểm tuyệt đối tính từ epoch 1970",
+      "Wall clock không bao giờ bị NTP tác động, monotonic clock thì có",
+      "Giá trị tuyệt đối của monotonic clock so được giữa hai máy khác nhau"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Monotonic clock luôn tăng, không lùi; wall clock có thể lùi.\n✓ Monotonic luôn tăng còn wall clock có thể nhảy lùi khi NTP step, leap second hay admin sửa giờ\n✗ Giá trị tuyệt đối của monotonic clock vô nghĩa (đếm từ mốc tuỳ ý như lúc boot), chỉ epoch mới là của wall clock\n✗ Ngược lại: wall clock chính là cái bị NTP kéo nhanh/chậm và có thể step\n✗ Giá trị monotonic chỉ có nghĩa qua hiệu trên cùng một máy, không so được giữa các máy"
+  },
+  {
+    "id": "ds-q-183",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-16-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Client A ghi x=1 với timestamp 100; sau đó về thời gian thực client B ghi x=2 nhưng đồng hồ B chậm hơn nên timestamp chỉ là 95. Server dùng Last-Write-Wins. Kết quả cuối cùng của x là gì và vấn đề gì xảy ra?",
+    "options": [
+      "x=1; write x=2 (đúng theo nhân quả) bị âm thầm loại bỏ do timestamp nhỏ hơn",
+      "x=2; LWW luôn giữ giá trị được ghi sau về thời gian thực",
+      "Server báo lỗi xung đột và yêu cầu client ghi lại",
+      "x=2; vì B ghi sau nên nhân quả được tôn trọng bất kể timestamp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "LWW giữ timestamp lớn hơn (100) nên bản ghi mới hơn của B bị mất.\n✓ LWW chọn ts=100 nên giữ x=1 và vứt x=2, dữ liệu đúng biến mất không cảnh báo\n✗ LWW không nhìn thời gian thực, chỉ so timestamp; timestamp B nhỏ hơn nên B thua\n✗ LWW không phát hiện xung đột để báo lỗi, nó im lặng chọn ts lớn nhất\n✗ Nhân quả không được tôn trọng vì clock skew làm timestamp đảo ngược thứ tự thật"
+  },
+  {
+    "id": "ds-q-184",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-16-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Ba process bắt đầu bộ đếm 0. P1 làm sự kiện a rồi gửi message m1 tại b. P2 nhận m1 tại c. Theo quy tắc Lamport, L(a), L(b), L(c) lần lượt là bao nhiêu?",
+    "options": [
+      "1, 2, 3",
+      "0, 1, 2",
+      "1, 2, 2",
+      "2, 3, 4"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "R1 tăng bộ đếm khi làm việc/gửi; R2 lấy max(local, t)+1 khi nhận.\n✓ a: 0+1=1; b (gửi, mang t=2): 1+1=2; c (nhận t=2): max(0,2)+1=3\n✗ Bộ đếm tăng trước sự kiện nên sự kiện đầu là 1 chứ không phải 0\n✗ Khi nhận vẫn phải +1 sau max nên c là 3 chứ không giữ nguyên 2\n✗ Không có bước nào làm a bắt đầu từ 2 khi bộ đếm khởi tạo 0"
+  },
+  {
+    "id": "ds-q-185",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-16-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một process có bộ đếm Lamport hiện là 4. Nó nhận một message mang timestamp t=9. Sau khi áp dụng quy tắc R2, bộ đếm mới của process này là bao nhiêu?",
+    "options": [
+      "10",
+      "9",
+      "13",
+      "5"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "R2: C = max(C, t) + 1 = max(4, 9) + 1 = 10.\n✓ max(4,9)=9 rồi cộng 1 thành 10\n✗ 9 là kết quả nếu quên cộng 1 sau khi lấy max\n✗ 13 là kết quả sai nếu cộng cả hai giá trị (4+9) thay vì lấy max\n✗ 5 là kết quả sai nếu chỉ tăng bộ đếm cục bộ mà bỏ qua timestamp nhận được"
+  },
+  {
+    "id": "ds-q-186",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-16-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn quan sát hai sự kiện với L(a)=5 và L(b)=5 trong một hệ dùng Lamport clock. Kết luận đúng về quan hệ giữa a và b là gì?",
+    "options": [
+      "Chưa thể kết luận nhân quả; chúng có thể concurrent, số Lamport trùng chỉ là tình cờ",
+      "a và b chắc chắn là cùng một sự kiện",
+      "a happens-before b vì hai số bằng nhau nghĩa là đồng thời có nhân quả",
+      "b happens-before a theo quy ước phá hoà"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Số Lamport bằng nhau không nói lên quan hệ nhân quả.\n✓ Hai sự kiện ở process khác nhau có thể trùng số Lamport mà vẫn là concurrent\n✗ Trùng số không có nghĩa cùng một sự kiện; đó là hai sự kiện khác process\n✗ Clock condition chỉ đi một chiều nên số không suy ra được happens-before\n✗ Phá hoà bằng process id chỉ dùng để tạo total order tuỳ tiện, không phản ánh nhân quả thật"
+  },
+  {
+    "id": "ds-q-187",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-16-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Kafka, để xác định thứ tự các message TRONG MỘT partition một cách đáng tin, nên dựa vào đâu thay vì timestamp?",
+    "options": [
+      "Offset — một dạng số tăng đơn điệu, không phụ thuộc wall clock",
+      "CreateTime do client gán bằng wall clock của nó",
+      "LogAppendTime do broker gán bằng wall clock của broker",
+      "Lamport clock tính lại trên mỗi consumer"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Offset trong partition là số tăng đơn điệu, đáng tin để xác định thứ tự.\n✓ Offset tăng đơn điệu và không dính clock skew nên đáng tin cho thứ tự trong partition\n✗ CreateTime là wall clock của client, lệch giờ làm thứ tự sai\n✗ LogAppendTime là wall clock của broker, chỉ dùng cho retention chứ không đảm bảo thứ tự tin cậy\n✗ Kafka không tính Lamport clock cho message; thứ tự nội partition đã có sẵn qua offset"
+  },
+  {
+    "id": "ds-q-188",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-16-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao Google TrueTime (Spanner) trả về một KHOẢNG [earliest, latest] thay vì một mốc thời gian đơn, rồi thực hiện commit-wait?",
+    "options": [
+      "Vì clock không thể chính xác tuyệt đối; TrueTime định lượng độ bất định và chờ nó qua trước khi công bố commit",
+      "Vì khoảng thời gian giúp nén dữ liệu timestamp nhỏ gọn hơn",
+      "Vì Spanner không chạy NTP nên phải đoán thời gian bằng khoảng rộng",
+      "Vì commit-wait giúp tăng throughput ghi bằng cách gộp nhiều commit"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "TrueTime thừa nhận sai số đồng hồ là không thể loại bỏ, nên định lượng và chờ nó qua.\n✓ Khoảng [earliest, latest] bảo đảm chứa thời gian thật; commit-wait chờ hết bất định để đảm bảo đúng đắn\n✗ Mục đích không phải nén dữ liệu mà là xử lý sai số đồng hồ\n✗ Spanner vẫn đồng bộ đồng hồ; khoảng là để định lượng sai số còn lại, không phải vì thiếu đồng bộ\n✗ Commit-wait làm chậm commit (chờ) chứ không nhằm tăng throughput"
+  },
+  {
+    "id": "ds-q-189",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-16-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một dịch vụ đếm lượt xem lưu ở nhiều replica, dùng LWW theo wall-clock timestamp để resolve xung đột. Hai lượt tăng (increment) xảy ra gần như đồng thời trên hai replica có clock lệch nhau. Hậu quả nghiêm trọng nhất là gì và cách sửa đúng hướng?",
+    "options": [
+      "Một increment bị mất khiến số đếm sai vĩnh viễn; nên dùng CRDT thay cho LWW để gộp cả hai",
+      "Cả hai increment đều được giữ nên số đếm luôn đúng; không cần thay đổi gì",
+      "Số đếm tạm sai nhưng NTP sẽ tự động cộng lại increment bị mất",
+      "Chỉ cần đổi sang LogAppendTime là đủ đảm bảo không mất increment"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Với increment, LWW loại một trong hai lần tăng đồng thời làm số liệu sai không phục hồi.\n✓ LWW giữ một ts và bỏ cái kia nên một increment mất vĩnh viễn; CRDT gộp được cả hai nên là hướng đúng\n✗ LWW không giữ cả hai; nó chọn một timestamp và loại phần còn lại\n✗ NTP chỉ đồng bộ đồng hồ, không thể khôi phục dữ liệu increment đã bị vứt bỏ\n✗ Đổi loại timestamp vẫn là LWW một-thắng-một-thua nên vẫn mất increment"
+  },
+  {
+    "id": "ds-q-190",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-16-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Vì sao ngay cả khi mọi máy đều chạy NTP đầy đủ, việc so sánh hai wall-clock timestamp từ hai máy khác nhau vẫn không đủ tin cậy để kết luận sự kiện nào xảy ra trước?",
+    "options": [
+      "NTP chỉ ước lượng offset từ round-trip bất đối xứng nên luôn còn sai số vài ms; skew cỡ đó đủ đảo ngược thứ tự hai sự kiện gần nhau",
+      "NTP đảm bảo mọi máy có cùng đồng hồ tuyệt đối nên vấn đề nằm ở chỗ khác",
+      "Vấn đề chỉ tồn tại trên Internet công cộng; trong LAN NTP luôn chính xác tuyệt đối",
+      "Wall clock của các máy không dùng chung epoch nên không so được"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "NTP không bao giờ chính xác tuyệt đối vì offset chỉ được ước lượng và đường đi/về bất đối xứng.\n✓ Sai số còn lại vài ms là đủ để hai sự kiện cách nhau vài chục ms bị đảo thứ tự\n✗ NTP không cho mọi máy cùng một đồng hồ tuyệt đối; luôn còn offset ước lượng\n✗ Ngay cả LAN (<1 ms) vẫn có sai số, không bao giờ tuyệt đối\n✗ Wall clock đều dùng epoch chung; vấn đề là độ chính xác chứ không phải gốc thời gian"
+  },
+  {
+    "id": "ds-q-191",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-16-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn TẤT CẢ phát biểu ĐÚNG về Lamport clock và giới hạn của nó.",
+    "options": [
+      "Nếu a → b thì chắc chắn L(a) < L(b)",
+      "Nếu L(a) < L(b) thì chắc chắn a → b",
+      "Lamport clock không thể phân biệt hai sự kiện concurrent với hai sự kiện có nhân quả chỉ bằng việc so số",
+      "Vector clock cho cả hai chiều a → b ⟺ V(a) < V(b), nhờ đó phát hiện được concurrent",
+      "Hai sự kiện concurrent luôn có số Lamport bằng nhau"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "Clock condition chỉ đi một chiều; vector clock mới phát hiện concurrent.\n✓ Chiều a → b ⟹ L(a) < L(b) luôn đúng (clock condition)\n✓ Chỉ so số Lamport không phân biệt được concurrent với nhân quả\n✓ Vector clock cho quan hệ hai chiều nên phát hiện chính xác concurrent\n✗ Chiều ngược L(a) < L(b) ⟹ a → b là SAI; số nhỏ hơn không suy ra happens-before\n✗ Hai sự kiện concurrent có thể có số Lamport khác nhau, không nhất thiết bằng nhau"
+  },
+  {
+    "id": "ds-q-192",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-16-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Chọn TẤT CẢ trường hợp nên dùng WALL CLOCK (thay vì monotonic clock).",
+    "options": [
+      "Ghi timestamp hiển thị trong log để con người đọc",
+      "Xác định thời điểm hết hạn của JWT (trường exp)",
+      "Đo thời gian một request mất bao lâu để tính p99 latency trên cùng một máy",
+      "Đặt hẹn lịch / TTL theo giờ thật",
+      "Tính khoảng backoff cho retry"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Wall clock dùng để so sánh/hiển thị thời điểm tuyệt đối; monotonic dùng để đo elapsed.\n✓ Log hiển thị cho người đọc cần thời điểm thật nên dùng wall clock\n✓ JWT exp là mốc thời gian tuyệt đối theo giờ thật nên dùng wall clock (kèm leeway)\n✓ Hẹn lịch và TTL theo giờ thật cần wall clock\n✗ Đo p99 latency là đo elapsed nên phải dùng monotonic clock\n✗ Tính khoảng backoff là đo khoảng thời gian nên dùng monotonic clock"
+  },
+  {
+    "id": "ds-q-193",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-17-vector-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Điểm yếu chí mạng của Lamport clock mà vector clock ra đời để khắc phục là gì?",
+    "options": [
+      "Không cho được thứ tự toàn phần giữa các event",
+      "Không phát hiện được hai event concurrent (song song, không nhân quả)",
+      "Tốn quá nhiều bộ nhớ vì phải giữ một vector N ô",
+      "Không đảm bảo tính chất a → b ⇒ clock(a) < clock(b)"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Lamport nén nhân quả 2 chiều xuống 1 trục số nên mất khả năng phân biệt song song.\n✓ Không phát hiện được concurrent: với Lamport luôn có L(a)<L(b) hoặc ngược lại, nên nó giấu mất quan hệ ∥.\n✗ Không cho thứ tự toàn phần: ngược lại, Lamport CÓ cho total order (kèm tie-break node id).\n✗ Tốn bộ nhớ vì vector N ô: đó là nhược điểm của chính vector clock, không phải Lamport (Lamport chỉ O(1)).\n✗ Không đảm bảo a → b ⇒ clock tăng: chiều thuận này Lamport vẫn đảm bảo; cái sai là chiều ngược lại."
+  },
+  {
+    "id": "ds-q-194",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-17-vector-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khi node i NHẬN một message kèm vector Vm, quy tắc cập nhật đúng là gì?",
+    "options": [
+      "Chỉ tăng ô của mình: V_i[i] += 1, bỏ qua Vm",
+      "Lấy max từng ô giữa V_i và Vm, rồi tăng ô của mình V_i[i] += 1",
+      "Cộng từng ô V_i[k] += Vm[k] cho mọi k",
+      "Gán thẳng V_i = Vm rồi tăng ô của mình"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Quy tắc receive là merge bằng max theo từng phần tử rồi tăng ô của chính mình.\n✓ Max từng ô rồi V_i[i]+=1: đúng nguyên văn ba quy tắc, giúp 'mình biết ít nhất bằng những gì bên gửi biết'.\n✗ Chỉ tăng ô mình, bỏ Vm: sẽ bỏ mất thông tin nhân quả mang trong message.\n✗ Cộng từng ô: max chứ không phải cộng; cộng làm sai số đếm.\n✗ Gán thẳng V_i = Vm: sẽ đè mất những event của chính node i mà bên gửi chưa biết."
+  },
+  {
+    "id": "ds-q-195",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-17-vector-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "So sánh hai vector clock [2,1,0] và [0,1,3] cho kết quả nào?",
+    "options": [
+      "[2,1,0] → [0,1,3] (xảy ra trước)",
+      "[0,1,3] → [2,1,0] (xảy ra trước)",
+      "concurrent (∥)",
+      "hai vector bằng nhau"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Có ô mà bên này trội và ô khác mà bên kia trội thì hai vector là concurrent.\n✓ Concurrent: ô 0 thì [2,1,0] trội (2>0), ô 2 thì [0,1,3] trội (3>0) → mỗi bên trội một ô → ∥.\n✗ [2,1,0] → [0,1,3]: sai vì không phải mọi ô của trái đều ≤ phải (2>0).\n✗ [0,1,3] → [2,1,0]: sai vì không phải mọi ô của phải đều ≤ trái (3>0).\n✗ Bằng nhau: sai vì các ô khác nhau rõ ràng."
+  },
+  {
+    "id": "ds-q-196",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-17-vector-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong kịch bản 3 node, e5 là event nội bộ của P2 với vector [0,0,1], còn e4 là send của P1 với [2,2,0]. Quan hệ giữa e5 và e4 là gì và vì sao?",
+    "options": [
+      "e4 → e5, vì e4 gửi message mà e5 sẽ nhận",
+      "e5 → e4, vì P2 có số thứ tự nhỏ hơn P1",
+      "concurrent, vì lúc làm e5 thì P2 chưa hề nhận m2",
+      "e5 → e4, vì [0,0,1] có tổng nhỏ hơn [2,2,0]"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "e5 xảy ra khi P2 chưa nhận m2 nên không có quan hệ nhân quả với e4.\n✓ Concurrent vì P2 chưa nhận m2: ô 2 e5 trội (1>0), ô 0 và 1 e4 trội → ∥, đúng bản chất hai việc song song.\n✗ e4 → e5: message m2 chỉ tới P2 ở e6, chứ e5 xảy ra trước và độc lập với việc nhận đó.\n✗ e5 → e4 vì P2 số nhỏ hơn: thứ tự nhân quả không dựa vào chỉ số node.\n✗ e5 → e4 vì tổng nhỏ hơn: so sánh vector không dùng tổng các ô, mà so từng ô."
+  },
+  {
+    "id": "ds-q-197",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-17-vector-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Dynamo/Riak, khi so hai version vector của cùng một key cho kết quả concurrent (∥), hệ sẽ làm gì?",
+    "options": [
+      "Chọn bản có timestamp vật lý mới hơn (last-write-wins)",
+      "Ghi đè bản cũ bằng bản mới vì bản mới kế thừa bản cũ",
+      "Giữ CẢ HAI bản dưới dạng sibling và trả về cho ứng dụng reconcile",
+      "Từ chối cả hai ghi và trả lỗi conflict cho client"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Concurrent nghĩa là conflict thật, hệ AP không dám vứt bên nào nên giữ cả hai.\n✓ Giữ cả hai làm sibling để app reconcile: đúng cơ chế Dynamo, ví dụ union giỏ hàng.\n✗ Last-write-wins theo timestamp: chính cách này bị Dynamo tránh vì clock lệch gây âm thầm mất dữ liệu.\n✗ Ghi đè vì kế thừa: chỉ đúng khi V_cũ < V_mới, không phải khi ∥.\n✗ Từ chối cả hai và báo lỗi: Dynamo là AP, luôn nhận ghi; nó giữ sibling chứ không từ chối."
+  },
+  {
+    "id": "ds-q-198",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-17-vector-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Riak, vì sao việc GẮN LẠI X-Riak-Vclock vừa đọc được khi ghi giá trị đã hợp nhất lại quan trọng?",
+    "options": [
+      "Vì Riak dùng vclock làm khoá xác thực, thiếu nó sẽ bị từ chối ghi",
+      "Vì nó báo 'tôi đã đọc/thấy cả hai nhánh' nên bản ghi mới kế thừa (<) thay vì sinh sibling mới (∥)",
+      "Vì vclock nén dữ liệu giúp giảm băng thông khi ghi",
+      "Vì Riak cần vclock để chọn coordinator xử lý ghi"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Gắn lại vclock = 'tôi đọc trước khi ghi', biến quan hệ thành kế thừa thay vì concurrent.\n✓ Báo đã thấy cả hai nhánh nên là descendant (<): giúp thu gọn sibling về một version, tránh đẻ thêm conflict.\n✗ Làm khoá xác thực: vclock không phải cơ chế auth.\n✗ Nén dữ liệu giảm băng thông: vclock là metadata nhân quả, không phải nén.\n✗ Chọn coordinator: việc gắn vclock không liên quan tới chọn node điều phối."
+  },
+  {
+    "id": "ds-q-199",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-17-vector-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những kỹ thuật/lựa chọn nào giúp giảm chi phí kích thước của vector/version clock? (chọn tất cả đúng)",
+    "options": [
+      "Index theo server coordinator thay vì theo từng client",
+      "Dotted Version Vectors (DVV) để tránh false conflict khi một client ghi liên tiếp",
+      "Prune (cắt) bớt ô cũ nhất khi số cặp (node, counter) vượt ngưỡng",
+      "Chuyển sang last-write-wins bằng timestamp vật lý để bỏ hẳn vector",
+      "Interval Tree Clocks (ITC) cho hệ có node vào/ra động"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Các kỹ thuật giảm kích thước xoay quanh giảm số ô và quản lý danh phận actor, không phải vứt bỏ nhân quả.\n✓ Index theo server coordinator: số server hữu hạn, ổn định nên vector nhỏ, không phình theo lượng client.\n✓ DVV: tránh false conflict khi một client ghi liên tiếp mà vẫn giữ vector gọn.\n✓ Prune ô cũ nhất khi vượt ngưỡng: đánh đổi có thể sinh false conflict hiếm gặp, thà thừa sibling còn hơn mất dữ liệu.\n✓ ITC: cấp phát và thu hồi 'danh phận' cho hệ node vào/ra động mà không cần biết trước N.\n✗ Chuyển sang last-write-wins: đây là bỏ luôn khả năng phát hiện conflict và gây mất dữ liệu, không phải cách giảm kích thước hợp lệ."
+  },
+  {
+    "id": "ds-q-200",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-17-vector-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao dùng timestamp vật lý (last-write-wins) để giải quyết ghi đồng thời trong hệ leaderless AP là nguy hiểm?",
+    "options": [
+      "Vì timestamp vật lý luôn lớn hơn logic clock nên gây tràn số",
+      "Vì đồng hồ vật lý giữa các node bị lệch, dẫn tới âm thầm mất dữ liệu của bản ghi bị coi là 'cũ'",
+      "Vì last-write-wins yêu cầu một leader, phá vỡ kiến trúc leaderless",
+      "Vì timestamp không so sánh được nên không thể chọn bản thắng"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Clock vật lý lệch khiến LWW chọn nhầm bản thắng và vứt mất dữ liệu hợp lệ.\n✓ Đồng hồ lệch gây âm thầm mất dữ liệu: một ghi thật sự mới có thể bị timestamp lệch làm coi là cũ và bị vứt.\n✗ Timestamp gây tràn số: không phải lý do được nêu.\n✗ LWW cần leader: LWW không đòi hỏi leader; vấn đề là ngữ nghĩa mất dữ liệu.\n✗ Timestamp không so sánh được: timestamp so sánh được, nhưng so sánh đó không phản ánh đúng nhân quả."
+  },
+  {
+    "id": "ds-q-201",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-17-vector-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Ba node P0,P1,P2, vector [P0,P1,P2] khởi tạo [0,0,0]. Diễn biến: P0 làm 1 internal → gửi m1 cho P1 → P1 nhận m1 → P1 gửi m2 cho P2 → P2 nhận m2. Vector của P2 ngay sau khi nhận m2 là gì?",
+    "options": [
+      "[2,2,1]",
+      "[2,2,2]",
+      "[2,1,1]",
+      "[1,1,1]"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Áp dụng lần lượt các quy tắc và tính theo bảng tính tay.\n✓ [2,2,2]: P0 internal→[1,0,0], send m1→[2,0,0] (đính [2,0,0]); P1 nhận→max→[2,0,0] rồi +1 →[2,1,0]; P1 send m2→[2,2,0]; P2 (đang [0,0,0]) nhận→max([0,0,0],[2,2,0])=[2,2,0] rồi P2[2]+=1 →[2,2,2].\n✗ [2,2,1]: quên rằng P2 phải tăng ô của chính mình sau khi merge.\n✗ [2,1,1]: bỏ sót lần P1 tăng ô khi send m2 (P1 phải lên 2 trước khi đính kèm).\n✗ [1,1,1]: không áp dụng đúng bước send của P0 (send cũng là một event, phải tăng ô)."
+  },
+  {
+    "id": "ds-q-202",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-17-vector-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "So sánh Lamport clock và vector clock, những phát biểu nào ĐÚNG? (chọn tất cả đúng)",
+    "options": [
+      "Cả hai đều thoả a → b ⇒ clock(a) < clock(b)",
+      "Chỉ vector clock thoả chiều ngược lại clock(a) < clock(b) ⇒ a → b (đặc trưng đầy đủ happens-before)",
+      "Vector clock cho thứ tự bộ phận (partial order), còn Lamport cho thứ tự toàn phần (kèm tie-break)",
+      "Lamport clock phát hiện được concurrent còn vector thì không",
+      "Metadata của Lamport là O(1), của vector là O(N) theo số node"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Bảng chốt: cả hai đúng chiều thuận; chỉ vector đúng chiều ngược và thấy concurrent, đổi lại tốn O(N).\n✓ Cả hai đều thoả chiều thuận a→b ⇒ clock tăng: đúng cho cả Lamport và vector.\n✓ Chỉ vector thoả chiều ngược: vector đặc trưng hoá đầy đủ happens-before, Lamport thì không.\n✓ Vector partial order, Lamport total order: đúng, Lamport có tie-break theo node id nên tổng thứ tự.\n✓ Lamport O(1), vector O(N): đúng về kích thước metadata.\n✗ Lamport phát hiện concurrent còn vector thì không: ngược hoàn toàn — chính vector mới thấy ∥, Lamport mù."
+  },
+  {
+    "id": "ds-q-203",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-17-vector-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Nếu index version vector theo CLIENT trong một key bị hàng nghìn client khác nhau ghi, hậu quả là gì và cách khắc phục phổ biến nhất?",
+    "options": [
+      "Vector phình tới hàng nghìn ô; khắc phục bằng index theo server coordinator (số node hữu hạn, ổn định)",
+      "Vector luôn cho false conflict; khắc phục bằng cách tắt allow_mult",
+      "Không phát hiện được concurrent nữa; khắc phục bằng Lamport clock",
+      "Mất tính đặc trưng đầy đủ happens-before; khắc phục bằng cách tăng số replica"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đây là cái bẫy kinh điển của Dynamo đời đầu và cách Dynamo/Riak thực tế xử lý.\n✓ Phình hàng nghìn ô, khắc phục bằng index theo server coordinator: số server chỉ chục–trăm và ổn định nên vector nhỏ, không phình theo lượng client.\n✗ Luôn false conflict, tắt allow_mult: tắt sibling là quay lại nguy cơ mất dữ liệu, không giải bài toán kích thước.\n✗ Không phát hiện concurrent, dùng Lamport: Lamport không thay được vector, và index theo client không làm mất khả năng phát hiện ∥.\n✗ Mất đặc trưng happens-before, tăng replica: tăng replica còn làm vector to hơn, không phải cách giảm."
+  },
+  {
+    "id": "ds-q-204",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-17-vector-clocks",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Khi reconcile hai version concurrent va={Sx:2,Sy:0} và vb={Sx:1,Sy:1}, version vector của bản đã hợp nhất (merge) nên là gì?",
+    "options": [
+      "{Sx:3, Sy:1}",
+      "{Sx:2, Sy:1}",
+      "{Sx:1, Sy:0}",
+      "{Sx:2, Sy:0}"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Merge dùng khi reconcile là lấy max từng ô để bản mới trở thành descendant của cả hai nhánh.\n✓ {Sx:2, Sy:1}: max(2,1)=2 cho Sx, max(0,1)=1 cho Sy — đúng phép merge, khiến version mới > cả va và vb.\n✗ {Sx:3, Sy:1}: merge là max chứ không cộng dồn, Sx không tự nhiên lên 3.\n✗ {Sx:1, Sy:0}: đây là min từng ô, ngược với ý nghĩa 'đã thấy cả hai nhánh'.\n✗ {Sx:2, Sy:0}: chính là va, vẫn concurrent với vb nên chưa phải bản hợp nhất."
+  },
+  {
+    "id": "ds-q-205",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-18-ordering-broadcast",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Xếp 5 mức broadcast theo sức mạnh tăng dần (yếu → mạnh), đâu là thứ tự ĐÚNG?",
+    "options": [
+      "best-effort → reliable → FIFO → causal → total order",
+      "reliable → best-effort → causal → FIFO → total order",
+      "best-effort → FIFO → reliable → total order → causal",
+      "causal → FIFO → reliable → best-effort → total order"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Thang kinh điển: mỗi mức trên bao hàm mức dưới và cộng thêm một ràng buộc, đỉnh là total order.\n✓ best-effort ở đáy, rồi reliable (agreement về ai nhận), FIFO (thứ tự cùng sender), causal (happens-before), total order ở đỉnh.\n✗ Đặt reliable dưới best-effort là sai: reliable mạnh hơn best-effort.\n✗ Đặt FIFO dưới reliable là sai: FIFO là reliable cộng thêm thứ tự per-sender.\n✗ Đặt causal trên total order là sai: total order là mức mạnh nhất, causal nằm dưới nó."
+  },
+  {
+    "id": "ds-q-206",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-18-ordering-broadcast",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong Kafka, một partition đảm bảo điều gì về thứ tự?",
+    "options": [
+      "Total order toàn topic bất kể có bao nhiêu partition",
+      "Total order (theo offset) chỉ TRONG một partition, không có thứ tự tổng giữa các partition",
+      "Chỉ đảm bảo reliable, hoàn toàn không có thứ tự nào",
+      "Causal order xuyên suốt mọi partition của topic"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Mỗi partition là một append-only log với offset tăng nghiêm ngặt = total order trong partition đó.\n✓ Trong một partition mọi consumer đọc cùng một thứ tự; giữa các partition thì KHÔNG có thứ tự tổng.\n✗ Kafka từ bỏ total order toàn topic để scale bằng nhiều partition song song.\n✗ Trong một partition có total order chứ không chỉ reliable.\n✗ Kafka không cung cấp causal order xuyên partition."
+  },
+  {
+    "id": "ds-q-207",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-18-ordering-broadcast",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Total order broadcast còn được gọi bằng tên nào khác?",
+    "options": [
+      "Gossip broadcast",
+      "Atomic broadcast",
+      "Anti-entropy",
+      "Epidemic broadcast"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài định nghĩa total order broadcast chính là atomic broadcast.\n✓ Atomic broadcast là tên tương đương của total order broadcast.\n✗ Gossip broadcast là cơ chế lan truyền kiểu dịch tễ, không phải tên gọi này.\n✗ Anti-entropy là kỹ thuật đồng bộ bản sao, không liên quan tên gọi.\n✗ Epidemic broadcast cũng là họ gossip, khác khái niệm."
+  },
+  {
+    "id": "ds-q-208",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-18-ordering-broadcast",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Muốn mọi event của cùng một `order_id` giữ đúng thứ tự trong Kafka, cách làm đúng là gì?",
+    "options": [
+      "Tăng số partition của topic lên thật nhiều",
+      "Đặt key = order_id để Kafka hash cùng key về cùng một partition",
+      "Bật acks=0 cho nhanh",
+      "Cho mỗi event vào một partition khác nhau để song song"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Total order chỉ có TRONG một partition, nên các message phải-theo-thứ-tự cần vào cùng partition.\n✓ Đặt key = order_id khiến Kafka hash cùng key về cùng partition, giữ thứ tự per-key.\n✗ Tăng partition càng khiến event của cùng order_id bị phân tán, mất thứ tự.\n✗ acks=0 làm mất bảo đảm bền vững/thứ tự khi leader chết, không giải quyết vấn đề.\n✗ Rải mỗi event sang partition khác là chắc chắn phá thứ tự."
+  },
+  {
+    "id": "ds-q-209",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-18-ordering-broadcast",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao FIFO và causal broadcast làm được mà KHÔNG cần consensus, còn total order thì cần?",
+    "options": [
+      "Vì FIFO/causal chỉ chạy trên một node duy nhất",
+      "Vì FIFO/causal chỉ ràng buộc thứ tự các message CÓ QUAN HỆ; message đồng thời được tự do sắp xếp, nên không phải bắt cả nhóm chọn chung một trình tự",
+      "Vì total order không cần quorum còn FIFO/causal thì cần",
+      "Vì causal broadcast không đảm bảo agreement"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Điểm mấu chốt: chỉ total order mới bắt một trình tự toàn cục cho cả message đồng thời — đó là chỗ cần các node đồng thuận.\n✓ FIFO/causal chỉ ràng buộc message có quan hệ (per-sender, happens-before); message concurrent được tự do, làm bằng sequence/vector clock, không cần đồng thuận.\n✗ FIFO/causal vẫn là broadcast tới cả nhóm nhiều node, không phải một node.\n✗ Ngược lại: total order MỚI cần quorum/consensus, FIFO/causal thì không.\n✗ Causal broadcast vẫn xây trên reliable nên vẫn có agreement; đó không phải lý do."
+  },
+  {
+    "id": "ds-q-210",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-18-ordering-broadcast",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một kiến trúc sư đề xuất: \"Ta cần một total order log siêu nhẹ, không bầu leader, không quorum, để đạt throughput cực cao.\" Đánh giá đúng nhất?",
+    "options": [
+      "Khả thi, total order vốn rẻ hơn consensus nhiều",
+      "Không khả thi: total order broadcast TƯƠNG ĐƯƠNG consensus nên phải trả giá quorum + leader; muốn throughput cao phải sharding thành nhiều log độc lập",
+      "Khả thi nếu dùng vector clock thay cho leader",
+      "Khả thi vì total order có thể song song hoá trên cùng một log"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Kết quả Chandra–Toueg: total order broadcast và consensus quy về nhau, nên total order không rẻ hơn consensus.\n✓ Phải trả giá consensus (quorum, leader, mất khả dụng khi mất quorum); muốn throughput cao phải cắt thành nhiều total order log riêng (sharding), đánh đổi total order toàn cục.\n✗ Total order KHÔNG rẻ hơn consensus, nó đắt bằng consensus.\n✗ Vector clock chỉ cho causal, không tạo ra thứ tự tổng cho message đồng thời.\n✗ Total order không song song hoá được trên cùng một log — đó chính là giới hạn throughput."
+  },
+  {
+    "id": "ds-q-211",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-18-ordering-broadcast",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong định nghĩa hình thức, vì sao total order broadcast phân biệt sự kiện `receive` (nhận) với `deliver` (giao)?",
+    "options": [
+      "Vì receive nhanh hơn deliver do dùng UDP",
+      "Vì message có thể ĐẾN sớm nhưng bị GIỮ trong buffer, chỉ deliver khi vị trí của nó trong thứ tự tổng đã cố định (không còn phải chèn gì vào trước nó)",
+      "Vì deliver chỉ xảy ra ở leader còn receive ở follower",
+      "receive và deliver thực ra là một, phân biệt chỉ để cho vui"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "deliver là lúc giao message lên tầng ứng dụng để xử lý, khác với lúc gói tin đến mạng.\n✓ Message có thể receive sớm nhưng bị giữ trong buffer; chỉ deliver khi giao thức chắc chắn không còn phải chèn gì vào TRƯỚC nó nữa — vị trí trong thứ tự tổng đã cố định.\n✗ Không liên quan tới UDP hay tốc độ giao thức truyền tải.\n✗ deliver xảy ra ở mọi node đúng, không riêng leader.\n✗ Chúng khác nhau về ngữ nghĩa và là mấu chốt để đảm bảo total order."
+  },
+  {
+    "id": "ds-q-212",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-18-ordering-broadcast",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Ví điện tử replicate 3 node nhận hai lệnh `NẠP +100k` và `RÚT -100k` (số dư ban đầu 0). Nếu ba node KHÔNG thống nhất thứ tự apply thì hậu quả là gì, và total order broadcast sửa ra sao?",
+    "options": [
+      "Không sao, cộng trừ có tính giao hoán nên kết quả luôn bằng nhau",
+      "Ba node có thể ra số dư khác nhau (vd một node RÚT trước bị từ chối rồi NẠP → 100k, node khác NẠP rồi RÚT → 0); total order ép cả ba apply đúng một chuỗi nên luôn khớp",
+      "Chỉ cần reliable broadcast là đủ để ba số dư khớp nhau",
+      "Vấn đề tự hết nếu tăng replication factor lên 5 node"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Với state machine, cùng lệnh khác thứ tự cho khác kết quả — đây là lý do total order quan trọng.\n✓ RÚT khi số dư 0 bị từ chối rồi NẠP → 100k, còn NẠP rồi RÚT → 0; ba node lệch nhau. Total order broadcast (Raft) ép cả ba apply đúng một chuỗi → luôn khớp.\n✗ Phép có điều kiện (RÚT bị từ chối khi thiếu tiền) KHÔNG giao hoán, kết quả phụ thuộc thứ tự.\n✗ Reliable chỉ lo ai nhận, không lo thứ tự nhận, nên không cứu được.\n✗ Thêm node không giải quyết vấn đề thứ tự; cần total order chứ không phải nhiều bản sao hơn."
+  },
+  {
+    "id": "ds-q-213",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-18-ordering-broadcast",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Ánh xạ khái niệm total order broadcast sang Raft, cặp nào ĐÚNG?",
+    "options": [
+      "`deliver(m)` ↔ leader gửi AppendEntries xuống follower",
+      "Chọn vị trí (slot) cho message ↔ số term của leader",
+      "`deliver(m)` ↔ entry đã committed được apply vào state machine; chọn slot ↔ log index",
+      "Message được cố định thứ tự ↔ khi client gửi command tới leader"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Raft là total order broadcast được kỹ sư hoá; ánh xạ 1–1 rất rõ.\n✓ deliver(m) ứng với entry committed được apply vào state machine; chọn slot ứng với log index leader gán tăng dần.\n✗ AppendEntries ứng với bước broadcast/replicate, không phải deliver.\n✗ Slot ứng với log index chứ không phải term (term dùng cho bầu leader).\n✗ Message được cố định thứ tự là khi entry committed đủ quorum, không phải lúc client vừa gửi command."
+  },
+  {
+    "id": "ds-q-214",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-18-ordering-broadcast",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một team để state machine tính `expires_at = now() + 24h` TẠI MỖI replica khi apply lệnh, và thấy ba replica phân kỳ dù log giống hệt. Chẩn đoán và cách sửa đúng?",
+    "options": [
+      "Log bị mất thứ tự; sửa bằng tăng min.insync.replicas",
+      "State machine không đơn định (đọc now() cục bộ); sửa bằng cách LEADER tính expires_at một lần rồi ghi vào entry, replica đọc lại từ log",
+      "Do thiếu quorum; sửa bằng thêm node vào cụm",
+      "Total order broadcast không đảm bảo cùng thứ tự; phải đổi sang causal broadcast"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Total order log chỉ đảm bảo cùng input cùng thứ tự; tính đơn định của state machine là trách nhiệm của bạn.\n✓ now() cục bộ khiến ba replica sinh giá trị khác nhau (không đơn định); sửa bằng cách leader tính một lần, ghi vào entry, replica đọc từ log thay vì tự sinh.\n✗ Log KHÔNG mất thứ tự — bài nói rõ log giống hệt nhau; min.insync.replicas không liên quan.\n✗ Không phải vấn đề quorum; thêm node không sửa được nguồn không đơn định.\n✗ Total order vẫn đảm bảo cùng thứ tự; đổi sang causal chỉ làm yếu bảo đảm, không sửa lỗi đơn định."
+  },
+  {
+    "id": "ds-q-215",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-18-ordering-broadcast",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn TẤT CẢ phát biểu ĐÚNG về quan hệ tương đương giữa total order broadcast và consensus.",
+    "options": [
+      "Có thể xây total order broadcast bằng một chuỗi các phiên consensus đánh số, phiên thứ i quyết định message chiếm slot i",
+      "Có thể xây consensus bằng total order broadcast: mỗi node broadcast đề xuất của mình, giá trị được deliver ĐẦU TIÊN là giá trị quyết định",
+      "Total order broadcast dễ hơn consensus nên có thể giải trong hệ async mà không cần giả định thêm",
+      "Cả hai đều không giải được đơn định trong hệ async có lỗi crash (hệ quả FLP), nhưng đều giải được nếu thêm giả định như failure detector hoặc số node đúng > n/2",
+      "Consensus giải được nhưng total order broadcast thì không, nên chúng không tương đương"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Chandra–Toueg: total order broadcast và consensus quy về được lẫn nhau, cùng độ khó.\n✓ Chuỗi phiên consensus đánh số, phiên i chọn message cho slot i, cho ra một total order log — đúng cách Raft/Paxos/Zab hoạt động.\n✓ Ngược lại, mỗi node broadcast đề xuất, quy ước lấy giá trị deliver đầu tiên → mọi node chọn cùng giá trị → consensus.\n✓ Cả hai đều vướng FLP trong async có crash, và cùng giải được khi thêm failure detector/timeout/đa số node đúng.\n✗ Total order KHÔNG dễ hơn consensus; nó đắt bằng consensus và cũng vướng FLP.\n✗ Nói consensus giải được còn total order thì không là sai — hai bài toán tương đương."
+  },
+  {
+    "id": "ds-q-216",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-18-ordering-broadcast",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Trong cấu hình Kafka producer, những tham số/thiết lập nào giúp total order TRONG một partition KHÔNG bị phá?",
+    "options": [
+      "`acks=all` cùng `min.insync.replicas=2` để bản ghi chỉ committed khi đủ quorum ISR",
+      "`enable.idempotence=true` để retry của producer không tạo bản ghi trùng làm lệch offset",
+      "`max.in.flight.requests.per.connection ≤ 5` khi bật idempotence để tránh ghi đảo thứ tự lúc retry",
+      "Tăng số partition để mỗi message có thứ tự riêng",
+      "`acks=0` để gửi nhanh nhất, giảm khả năng đảo thứ tự"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bài liệt kê đúng ba tham số để total order per-partition không bị phá.\n✓ acks=all + min.insync.replicas=2: chỉ committed khi đủ quorum → không mất thứ tự khi leader chết.\n✓ enable.idempotence=true: tránh retry tạo bản ghi trùng làm lệch offset.\n✓ max.in.flight ≤ 5 khi bật idempotence: đảm bảo không ghi đảo thứ tự khi retry.\n✗ Tăng partition làm phân tán message, phá thứ tự tổng giữa các partition, không giữ thứ tự.\n✗ acks=0 bỏ mọi bảo đảm bền vững, dễ mất/đảo thứ tự khi leader chết, làm hỏng total order."
+  },
+  {
+    "id": "ds-q-217",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-19-distributed-txn",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong bài toán atomic commit phân tán, kết quả nào là HỢP LỆ đối với một tập participant?",
+    "options": [
+      "Tất cả cùng commit, hoặc tất cả cùng abort",
+      "Một số commit, một số abort, miễn là đa số commit",
+      "Bank A commit trước rồi Bank B commit sau vài phút cũng được",
+      "Participant nào xong trước thì commit trước, không cần đợi ai"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Atomic commit yêu cầu mọi participant đi tới CÙNG một quyết định: hoặc tất cả commit, hoặc tất cả abort.\n✓ Chỉ hai kết cục 'tất cả commit' hoặc 'tất cả abort' là đúng định nghĩa atomic.\n✗ Cho phép một số commit một số abort là phá vỡ atomicity, tạo cảnh 'trừ tiền mà không cộng tiền'.\n✗ Commit lệch thời điểm giữa các bên không đảm bảo tất cả cùng đi tới một quyết định.\n✗ Ai xong trước commit trước là đơn phương quyết định, vi phạm atomic commit."
+  },
+  {
+    "id": "ds-q-218",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-19-distributed-txn",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong 2PC, coordinator gửi PREPARE ở phase 1 để làm gì?",
+    "options": [
+      "Yêu cầu mỗi participant chuẩn bị và bỏ phiếu YES/NO về khả năng commit",
+      "Ra lệnh commit ngay lập tức cho mọi participant",
+      "Yêu cầu participant nhả khoá và rollback",
+      "Bầu ra participant làm coordinator mới"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Phase 1 (prepare/voting) hỏi từng participant xem có sẵn sàng commit không.\n✓ PREPARE yêu cầu participant làm mọi việc trừ commit, ghi prepare record, giữ khoá rồi vote YES/NO.\n✗ Ra lệnh commit ngay là việc của phase 2, không phải PREPARE.\n✗ Nhả khoá và rollback chỉ xảy ra sau quyết định ABORT ở phase 2.\n✗ 2PC không bầu coordinator mới trong luồng bình thường."
+  },
+  {
+    "id": "ds-q-219",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-19-distributed-txn",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Sau khi participant đã vote YES trong 2PC, nó bị ràng buộc điều gì?",
+    "options": [
+      "Không được đơn phương abort nữa, phải chờ lệnh của coordinator",
+      "Được tự do abort bất cứ lúc nào nếu chờ quá lâu",
+      "Phải commit ngay không cần chờ coordinator",
+      "Được phép hỏi ý kiến participant khác rồi tự quyết định commit"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Vote YES là lời hứa: participant tự trói tay, mất quyền quyết định đơn phương.\n✓ Sau YES, participant không được tự abort mà phải chờ lệnh coordinator dù chờ rất lâu.\n✗ Tự abort khi chờ lâu sẽ phá atomicity nếu coordinator đã quyết COMMIT.\n✗ Commit ngay không chờ coordinator là sai vì biết đâu có bên khác vote NO.\n✗ Tự quyết commit dựa trên ý kiến participant khác không được phép trong 2PC (khi tất cả đều in-doubt cũng vô ích)."
+  },
+  {
+    "id": "ds-q-220",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-19-distributed-txn",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Điều gì được coi là 'commit point' — điểm no-return của một giao dịch 2PC?",
+    "options": [
+      "Khoảnh khắc coordinator flush bản ghi COMMIT xuống recovery log bền",
+      "Khi participant đầu tiên vote YES",
+      "Khi coordinator gửi PREPARE cho participant cuối cùng",
+      "Khi tất cả participant đã gửi ACK cho phase 2"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Commit point là lúc coordinator ghi bền quyết định COMMIT, từ đó không thể huỷ.\n✓ Flush bản ghi COMMIT xuống recovery log chính là điểm no-return: dù coordinator chết ngay đó, khi sống lại nó đọc log và tiếp tục commit.\n✗ Participant đầu tiên vote YES vẫn còn có thể abort nếu bên khác vote NO.\n✗ Gửi PREPARE mới ở giai đoạn thu thập vote, chưa quyết định gì.\n✗ Khi mọi ACK về thì giao dịch đã kết thúc, commit point đã qua từ trước."
+  },
+  {
+    "id": "ds-q-221",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-19-distributed-txn",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Kịch bản nào khiến participant trong 2PC rơi vào trạng thái in-doubt và bị BLOCK?",
+    "options": [
+      "Coordinator chết sau khi participant vote YES nhưng trước khi gửi quyết định phase 2",
+      "Một participant vote NO nên coordinator quyết abort",
+      "Coordinator chết trước khi gửi PREPARE cho bất kỳ ai",
+      "Participant chết ngay sau khi nhận PREPARE, chưa vote"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "In-doubt là khoảnh khắc participant đã hứa (vote YES) mà chưa biết kết cục.\n✓ Coordinator chết sau khi participant vote YES nhưng chưa gửi quyết định phase 2 khiến participant kẹt: không thể commit hay abort đơn phương, giữ khoá vô hạn.\n✗ Có bên vote NO thì coordinator quyết abort rõ ràng, không phải tình huống bế tắc in-doubt.\n✗ Coordinator chết trước khi gửi PREPARE thì chưa ai vote, participant chưa hứa gì nên chưa in-doubt.\n✗ Participant chết trước khi vote thì nó chưa tự trói tay, khi sống lại có thể an toàn abort."
+  },
+  {
+    "id": "ds-q-222",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-19-distributed-txn",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Recovery log trong 2PC đảm bảo tính chất nào, và KHÔNG đảm bảo tính chất nào?",
+    "options": [
+      "Đảm bảo safety (không vi phạm atomicity), nhưng không đảm bảo liveness (vẫn có thể kẹt chờ coordinator)",
+      "Đảm bảo liveness (không bao giờ kẹt), nhưng không đảm bảo safety",
+      "Đảm bảo cả safety lẫn liveness trong mọi tình huống",
+      "Không đảm bảo gì, chỉ dùng để debug sau sự cố"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Ghi log bền trước khi hành động giữ cho quyết định luôn nhất quán, nhưng không giải phóng khỏi việc phải chờ coordinator.\n✓ Log đảm bảo safety (không sai atomicity) nhưng liveness vẫn phụ thuộc coordinator sống lại để trả lời participant in-doubt.\n✗ Nói log đảm bảo liveness là sai: participant in-doubt vẫn phải chờ, có thể kẹt.\n✗ Log không thể đảm bảo cả hai vì blocking là hệ quả lý thuyết không tránh được khi coordinator có thể chết.\n✗ Log không chỉ để debug: nó là cơ sở để 2PC vẫn đúng qua crash."
+  },
+  {
+    "id": "ds-q-223",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-19-distributed-txn",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "3PC chèn thêm phase PreCommit để giảm blocking. Ý nghĩa cốt lõi của việc một participant NHẬN được PRE-COMMIT là gì?",
+    "options": [
+      "Nó biết chắc mọi bên đều đã đồng ý, nên nếu coordinator chết vẫn an toàn commit",
+      "Nó đã commit xong và có thể nhả khoá ngay",
+      "Nó phải rollback vì có bên vote NO",
+      "Nó trở thành coordinator mới cho giao dịch"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "PreCommit là 'báo trước' rằng vote đã đồng thuận YES toàn bộ.\n✓ Nhận PRE-COMMIT nghĩa là mọi bên đã đồng ý, nên khi coordinator chết participant có thể suy luận an toàn để commit (bầu coordinator mới điều phối tiếp).\n✗ PRE-COMMIT chưa phải DoCommit; participant chưa thi hành commit và chưa nhả khoá.\n✗ Nếu có bên vote NO thì đã abort ngay từ phase CanCommit, không tới PRE-COMMIT.\n✗ Nhận PRE-COMMIT không biến participant thành coordinator."
+  },
+  {
+    "id": "ds-q-224",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-19-distributed-txn",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Vì sao 3PC gần như không được dùng trong hệ thực tế, dù nó giảm blocking so với 2PC?",
+    "options": [
+      "3PC chỉ non-blocking khi giả định synchronous; trong hệ async gặp network partition có thể vỡ atomicity",
+      "3PC không có recovery log nên không sống sót qua crash",
+      "3PC cần nhiều coordinator hơn nên tốn phần cứng",
+      "3PC không hỗ trợ ghi khoá trên row nên dữ liệu bị race condition"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "3PC đánh đổi bằng một giả định mạnh mà thực tế không có.\n✓ 3PC chỉ non-blocking khi hệ synchronous (bound timeout đã biết); hệ thực là async/partially synchronous, khi partition hai nhóm có thể đi tới hai quyết định trái ngược, vỡ atomicity — tệ hơn cả blocking.\n✗ 3PC vẫn dùng log bền; vấn đề không phải thiếu recovery log.\n✗ Số lượng coordinator không phải lý do; 3PC vẫn một coordinator điều phối.\n✗ 3PC vẫn dùng khoá; race condition không phải nguyên nhân né 3PC."
+  },
+  {
+    "id": "ds-q-225",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-19-distributed-txn",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn thấy một prepared transaction 'txn-42' treo trong pg_prepared_xacts đã nhiều giờ, đang chặn VACUUM và giữ khoá. Coordinator đã chết và không quay lại. Hành động vận hành đúng là gì?",
+    "options": [
+      "Chạy ROLLBACK PREPARED 'txn-42' (hoặc COMMIT PREPARED nếu biết chắc quyết định) để giải phóng khoá",
+      "Tăng max_prepared_transactions để có thêm chỗ chứa",
+      "Khởi động lại PostgreSQL để tự động xoá transaction treo",
+      "Chờ vô thời hạn vì chỉ coordinator mới được quyền quyết định"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Prepared transaction bị bỏ rơi giữ khoá và chặn VACUUM vô thời hạn, cần dọn thủ công.\n✓ Chạy ROLLBACK PREPARED (hoặc COMMIT PREPARED nếu đã biết chắc kết cục) sẽ giải phóng khoá và kết thúc giao dịch treo.\n✗ Tăng max_prepared_transactions không dọn được cái đang treo, chỉ cho phép nhiều prepared txn hơn.\n✗ Restart PostgreSQL không xoá prepared transaction: chúng cố ý sống sót qua restart.\n✗ Chờ vô hạn chính là biểu hiện blocking; DBA hoàn toàn có thể can thiệp thủ công."
+  },
+  {
+    "id": "ds-q-226",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-19-distributed-txn",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một luồng đặt-món-online đi qua 4 service (Order, Payment, Inventory, Delivery), có cả Kafka và REST API không nói XA, và cần luôn khả dụng kể cả khi một service đang deploy. Nên chọn cách nào?",
+    "options": [
+      "Saga: chuỗi transaction local với compensating transaction, đổi atomicity lấy availability",
+      "2PC/XA để đảm bảo atomic commit chặt trên cả 4 service",
+      "3PC vì nó non-blocking và an toàn khi partition",
+      "Một transaction database duy nhất bao trùm cả 4 service"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Yêu cầu là loose coupling + availability cao, với các datastore không nói XA.\n✓ Saga hợp lý: mỗi bước là local txn ngắn, khi bước sau fail thì bù trừ bằng compensating (ví dụ hoàn tiền), hệ luôn sống dù một service tạm chết.\n✗ 2PC/XA đòi tất cả bên nói XA và cùng sống, khoá lâu và availability là tích các xác suất — không phù hợp.\n✗ 3PC cần giả định synchronous và có thể vỡ atomicity khi partition, không dùng thật.\n✗ Không thể có một transaction DB duy nhất bao trùm nhiều service độc lập, nhất là Kafka/REST."
+  },
+  {
+    "id": "ds-q-227",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-19-distributed-txn",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Vì sao microservices thường NÉ 2PC? Chọn TẤT CẢ lý do đúng theo bài.",
+    "options": [
+      "Coupling chặt: coordinator phải biết mọi participant và tất cả cùng vào một transaction, phá tính độc lập của service",
+      "Khoá bị giữ qua round-trip mạng giữa phase 1 và phase 2, làm giảm mạnh throughput",
+      "Availability là tích các xác suất: cần tất cả participant và coordinator cùng sống mới commit được",
+      "2PC luôn vi phạm atomicity nên cho kết quả sai",
+      "Nhiều datastore (nhiều NoSQL/queue như Kafka) không nói được giao thức 2PC/XA"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Bài liệt kê coupling, khoá lâu, availability thấp, và datastore không hỗ trợ XA là các lý do né 2PC.\n✓ Coupling chặt phá tính độc lập service là lý do đúng.\n✓ Khoá giữ qua round-trip mạng làm giảm throughput là lý do đúng.\n✓ Availability là tích xác suất, cần tất cả cùng sống, là lý do đúng.\n✓ Nhiều NoSQL/queue như Kafka không nói được 2PC/XA là lý do đúng.\n✗ Nói 2PC luôn vi phạm atomicity là sai: 2PC vốn ĐÚNG về atomicity (safety), nhược điểm của nó là blocking chứ không phải cho kết quả sai."
+  },
+  {
+    "id": "ds-q-228",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-19-distributed-txn",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "So sánh 2PC và Saga cho microservices. Những phát biểu nào ĐÚNG?",
+    "options": [
+      "2PC cho nhất quán strong/atomic tức thì, Saga cho eventual consistency với cửa sổ không nhất quán",
+      "Saga rollback thủ công qua compensating transaction, còn 2PC rollback tự động và sạch",
+      "Saga chỉ giữ khoá trong từng local txn ngắn, còn 2PC giữ khoá qua mạng suốt round-trip",
+      "2PC có availability cao hơn Saga vì không cần tất cả bên cùng sống",
+      "Saga coupling chặt hơn 2PC vì mọi bước phải nằm trong cùng một transaction"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bảng so sánh cho thấy 2PC = strong/atomic, khoá qua mạng, coupling chặt, availability thấp; Saga = eventual, khoá local ngắn, coupling lỏng, availability cao, rollback thủ công.\n✓ 2PC strong/atomic tức thì còn Saga eventual với cửa sổ không nhất quán là đúng.\n✓ Saga bù trừ thủ công qua compensating còn 2PC rollback tự động sạch là đúng.\n✓ Saga chỉ khoá trong local txn ngắn còn 2PC giữ khoá qua mạng là đúng.\n✗ Nói 2PC availability cao hơn Saga là ngược: 2PC availability thấp vì cần tất cả bên cùng sống.\n✗ Nói Saga coupling chặt hơn là ngược: Saga coupling lỏng (event/command giữa service), 2PC mới bó tất cả vào một transaction."
+  },
+  {
+    "id": "ds-q-229",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-20-saga",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khi một Saga gồm T1, T2, T3, T4 chạy tới bước T3 thì thất bại (T3 chưa commit thành công), orchestrator sẽ làm gì để đưa hệ về trạng thái nhất quán nghiệp vụ?",
+    "options": [
+      "Chạy compensation C2 rồi C1 theo thứ tự ngược",
+      "Chạy compensation C1, C2, C3 theo thứ tự xuôi",
+      "Rollback database của cả bốn service về snapshot trước Saga",
+      "Bỏ qua và để hệ ở trạng thái treo cho đến khi có người can thiệp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lỗi tại Tk thì bù các bước ĐÃ hoàn tất theo thứ tự ngược C(k-1)...C1; T3 lỗi nên chỉ bù T2 và T1.\n✓ Chạy C2 rồi C1 theo thứ tự ngược đúng vì chỉ T1, T2 đã commit trước đó\n✗ Chạy C1, C2, C3 xuôi sai cả thứ tự lẫn phạm vi (T3 chưa hoàn tất nên không có gì để bù)\n✗ Rollback database về snapshot sai vì compensation KHÔNG phải rollback DB — các Ti đã commit và hiện ra ngoài\n✗ Để hệ treo sai vì Saga luôn phải tiến hoặc bù về trạng thái nhất quán"
+  },
+  {
+    "id": "ds-q-230",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-20-saga",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao khi Payment đã trừ tiền khách rồi mà Saga phải huỷ, ta KHÔNG thể dùng database rollback mà phải dùng compensation (hoàn tiền)?",
+    "options": [
+      "Vì T1 (trừ tiền) đã commit và hiện ra bên ngoài, không thể xoá dấu vết như chưa từng xảy ra",
+      "Vì rollback chậm hơn compensation nên bị cấm dùng",
+      "Vì Payment không hỗ trợ lệnh ROLLBACK trong SQL",
+      "Vì compensation luôn miễn phí còn rollback tốn phí giao dịch"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Compensation là giao dịch MỚI chạy sau khi Ti đã commit và đã hiện ra ngoài; không thể \"chưa từng trừ tiền\", chỉ có thể hoàn tiền.\n✓ T1 đã commit và hiện ra ngoài đúng bản chất: rollback DB xoá sạch dấu vết còn compensation là bản ghi có thật trong lịch sử\n✗ Rollback chậm hơn sai — vấn đề là ngữ nghĩa chứ không phải tốc độ\n✗ Payment không hỗ trợ ROLLBACK sai — local transaction đã commit xong nên không còn gì để rollback\n✗ Compensation miễn phí sai — analogy huỷ vé cho thấy compensation có khi tốn phí"
+  },
+  {
+    "id": "ds-q-231",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-20-saga",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một đơn hàng đi qua Payment, Inventory và cả một cổng thanh toán bên thứ ba mất vài giây. Nhóm định dùng 2PC cho toàn bộ. Nhận định nào đúng nhất?",
+    "options": [
+      "2PC không phù hợp: nó giữ lock suốt prepare→commit và cổng bên thứ ba không \"nói\" được 2PC",
+      "2PC phù hợp vì nó cho throughput cao hơn Saga trong giao dịch dài",
+      "2PC phù hợp vì nó không blocking khi coordinator chết",
+      "2PC phù hợp miễn là tất cả service dùng chung một database"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "2PC giữ lock trên mọi participant tới lúc commit và cần mọi bên biết nói 2PC — không hợp giao dịch dài xuyên bên thứ ba.\n✓ 2PC không phù hợp đúng: lock hàng tồn kẹt suốt thời gian chờ, cổng bên thứ ba không có \"prepare rồi chờ\"\n✗ 2PC throughput cao hơn sai — 2PC làm throughput sụp khi giao dịch dài\n✗ 2PC không blocking sai — coordinator chết làm participant kẹt ở prepared giữ lock vô thời hạn\n✗ Dùng chung một database sai với đề bài: đây là ba service, ba database riêng, còn có bên thứ ba"
+  },
+  {
+    "id": "ds-q-232",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-20-saga",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Saga được nói là cho ta A, C, D của ACID nhưng KHÔNG có I (Isolation). Vì sao Saga thiếu Isolation?",
+    "options": [
+      "Vì mỗi Ti commit ngay, kết quả hiện ra ngoài trước khi Saga kết thúc, giao dịch khác đọc thấy trạng thái nửa vời",
+      "Vì Saga không dùng database ACID nên không có isolation level",
+      "Vì compensation ghi đè lên dữ liệu gốc làm mất isolation",
+      "Vì orchestrator đọc state machine từ nhiều service cùng lúc"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mỗi local transaction commit ngay và độc lập nên kết quả lộ ra trước khi cả Saga xong, cho phép actor khác đọc trạng thái trung gian.\n✓ Mỗi Ti commit ngay đúng: đây là nguyên nhân gốc gây dirty read, lost update, non-repeatable read\n✗ Saga không dùng DB ACID sai — mỗi local transaction VẪN ACID, chính vì thế mới có A, C, D\n✗ Compensation ghi đè sai — compensation là hành động bù ngữ nghĩa, không phải nguyên nhân thiếu isolation\n✗ Orchestrator đọc state machine sai — đó là chuyện điều phối, không liên quan tới việc dữ liệu nghiệp vụ lộ ra"
+  },
+  {
+    "id": "ds-q-233",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-20-saga",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Nhiều Saga cùng giữ hàng trên một SKU. Câu lệnh nào giúp tránh lost update nhờ tính commutative (giao hoán)?",
+    "options": [
+      "UPDATE inventory SET reserved = reserved + :qty WHERE sku = :sku AND available - reserved >= :qty",
+      "UPDATE inventory SET reserved = 900 WHERE sku = :sku",
+      "SELECT reserved FROM inventory WHERE sku = :sku rồi ứng dụng tự tính giá trị mới và SET tuyệt đối",
+      "UPDATE inventory SET reserved = :new_absolute_value WHERE sku = :sku"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Commutative update dùng delta (reserved + :qty) nên thứ tự áp dụng không đổi kết quả, tránh lost update; guard available-reserved>=qty chống âm kho.\n✓ reserved = reserved + :qty đúng: là delta giao hoán, hai delta cộng kiểu gì cũng ra đúng tổng\n✗ SET reserved = 900 sai — SET tuyệt đối ghi đè nhau khi hai Saga chạy song song\n✗ SELECT rồi SET tuyệt đối sai — đọc-rồi-ghi giá trị tuyệt đối chính là kịch bản lost update kinh điển\n✗ SET reserved = :new_absolute_value sai — vẫn là gán tuyệt đối, không giao hoán"
+  },
+  {
+    "id": "ds-q-234",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-20-saga",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đội đang thiết kế Saga có nhiều điều kiện rẽ nhánh, cần audit rõ trạng thái từng đơn và quan sát flow tổng thể. Nên chọn kiểu điều phối nào và vì sao?",
+    "options": [
+      "Orchestration — flow nằm gọn trong một state machine, dễ quan sát và audit",
+      "Choreography — vì phi tập trung nên không bao giờ có điểm lỗi tập trung",
+      "Choreography — vì logic rải trong các service giúp nhìn ra flow dễ hơn",
+      "Orchestration — vì nó tự động loại bỏ nhu cầu idempotency và compensation"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Saga nhiều nhánh, cần audit/quan sát rõ nghiêng về orchestration vì logic tập trung trong một state machine.\n✓ Orchestration flow gọn một state machine đúng: dễ nhìn ra flow, dễ audit, kiểm soát tốt\n✗ Choreography phi tập trung nên chọn sai lý do — ưu điểm đó không đáp ứng yêu cầu quan sát/audit\n✗ Choreography logic rải giúp nhìn flow dễ sai ngược — logic rải làm KHÓ hình dung flow\n✗ Orchestration loại bỏ idempotency/compensation sai — mọi bước và compensation vẫn phải idempotent bất kể kiểu điều phối"
+  },
+  {
+    "id": "ds-q-235",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-20-saga",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong Saga đặt hàng, đơn để status = PENDING trong khi chạy, compensation đổi thành CANCELLED, và các đơn khác không đụng vào đơn đang PENDING. Đây là counter-measure nào cho việc thiếu isolation?",
+    "options": [
+      "Semantic lock — cờ trạng thái báo bản ghi đang trong Saga để actor khác xử lý cho đúng",
+      "Commutative update — thao tác giao hoán không phụ thuộc thứ tự",
+      "Reread / re-validate — đọc lại và so version trước khi ghi",
+      "Pivot transaction — bước sau đó Saga chỉ tiến không lùi"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Cờ PENDING/RESERVED/AUTHORIZED là khoá mềm ở tầng nghiệp vụ báo dữ liệu đang bất định; compensation có nhiệm vụ giải phóng cờ — chính là semantic lock.\n✓ Semantic lock đúng: cờ PENDING đánh dấu \"đang trong Saga\", đơn khác thấy cờ thì tránh\n✗ Commutative update sai — đó là kỹ thuật dùng delta chống lost update, không phải cờ trạng thái\n✗ Reread/re-validate sai — đó là so version optimistic trước khi ghi\n✗ Pivot transaction sai — đó là ranh giới sau đó không còn bù, không phải cờ khoá mềm"
+  },
+  {
+    "id": "ds-q-236",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-20-saga",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bước Shipping có hành động \"gửi email xác nhận cho khách\" — không thể bù (không thể unsend). Cách thiết kế đúng theo bài là gì?",
+    "options": [
+      "Đặt hành động không-thể-bù sau pivot transaction, các bước sau pivot đều retriable để không bao giờ phải bù chúng",
+      "Đặt gửi email ở bước đầu tiên để nếu Saga fail thì compensation gửi email xin lỗi",
+      "Viết một compensation \"gửi email thu hồi\" cho email đã gửi",
+      "Bỏ hẳn hành động gửi email vì Saga không cho phép hành động không thể bù"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Pivot transaction là ranh giới sau đó Saga chỉ tiến không lùi; đặt hành động không-thể-bù (gửi mail, in vé) sau pivot để không bao giờ phải hoàn tác chúng.\n✓ Đặt sau pivot, các bước sau retriable đúng: đó chính là mục đích của pivot transaction\n✗ Đặt gửi email ở bước đầu sai — nếu Saga fail sẽ phải bù một hành động không thể bù\n✗ Gửi email thu hồi sai — không thể unsend, đó không phải compensation hợp lệ\n✗ Bỏ hẳn gửi email sai — Saga vẫn làm được, chỉ cần đặt đúng chỗ sau pivot"
+  },
+  {
+    "id": "ds-q-237",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-20-saga",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Refund (compensation của Payment) thất bại tạm thời do cổng thanh toán chập chờn. Orchestrator nên xử lý thế nào theo nguyên tắc của bài?",
+    "options": [
+      "Retry mãi với backoff cho tới khi thành công — Saga không có khái niệm \"bỏ cuộc để trạng thái treo\"",
+      "Đánh dấu Saga thất bại vĩnh viễn và dừng lại ngay để tránh gọi lại cổng",
+      "Bỏ qua refund và chuyển tiền thủ công sau, đóng Saga là COMPLETED",
+      "Chạy lại toàn bộ chuỗi T1..Tn từ đầu để ép hệ về trạng thái ban đầu"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Compensation phải luôn \"thành công cuối cùng\": refund lỗi tạm thời thì retry mãi (with backoff), vì Saga không được để trạng thái treo.\n✓ Retry mãi với backoff đúng: compensation bắt buộc thành công cuối cùng\n✗ Thất bại vĩnh viễn rồi dừng sai — để lại trạng thái treo, đúng thứ Saga cấm\n✗ Đóng COMPLETED sai — Saga đang bù thì kết cục là ABORTED, không phải COMPLETED, và tiền chưa hoàn thì chưa nhất quán\n✗ Chạy lại T1..Tn từ đầu sai — hướng bù là compensation ngược, không phải chạy lại chuỗi tiến"
+  },
+  {
+    "id": "ds-q-238",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-20-saga",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn TẤT CẢ phát biểu ĐÚNG khi so sánh Saga với 2PC.",
+    "options": [
+      "2PC thật sự atomic tức thời còn Saga chỉ đạt \"atomic nghiệp vụ\" qua compensation",
+      "Saga không blocking và throughput cao hơn khi giao dịch dài, nhưng code phức tạp hơn",
+      "2PC giữ được Isolation (giữ lock tới khi commit) còn Saga phải tự bù isolation ở tầng ứng dụng",
+      "Saga không để lộ bất kỳ trạng thái trung gian nào ra ngoài, giống hệt 2PC",
+      "Saga luôn tốt hơn 2PC trong mọi tình huống nên nên bỏ hẳn 2PC"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Bảng trade-off: 2PC atomic thật + có isolation nhưng blocking/throughput kém; Saga atomic nghiệp vụ, không blocking, throughput cao nhưng lộ trạng thái trung gian và code phức tạp.\n✓ 2PC atomic tức thời vs Saga atomic nghiệp vụ qua compensation đúng theo bảng\n✓ Saga không blocking, throughput cao, code phức tạp hơn đúng theo bảng\n✓ 2PC giữ Isolation còn Saga tự bù đúng — Saga mất I, phải dùng semantic lock...\n✗ Saga không lộ trạng thái trung gian sai — Saga CÓ lộ trạng thái tạm thời không nhất quán, khác 2PC\n✗ Saga luôn tốt hơn sai — không cái nào tốt hơn tuyệt đối, chọn theo thời lượng giao dịch và ranh giới sở hữu"
+  },
+  {
+    "id": "ds-q-239",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-20-saga",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Chọn TẤT CẢ kỹ thuật/nguyên tắc mà bài yêu cầu để bù cho việc Saga thiếu Isolation hoặc để Saga chạy đúng khi message có thể tới hai lần.",
+    "options": [
+      "Semantic lock — cờ PENDING/RESERVED/AUTHORIZED ở tầng nghiệp vụ",
+      "Commutative update — dùng delta thay cho SET tuyệt đối",
+      "Reread / re-validate — so version trước khi ghi, lệch thì abort/retry",
+      "Idempotent — ghi saga log/inbox theo (saga_id, step) để bỏ qua lần lặp",
+      "Giữ lock cứng của DB trên mọi bản ghi suốt toàn bộ vòng đời Saga"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Bài liệt kê semantic lock, commutative update, reread/re-validate làm counter-measure isolation, và idempotency (saga log theo saga_id,step) cho message tới hai lần.\n✓ Semantic lock đúng — khoá mềm nghiệp vụ\n✓ Commutative update đúng — delta giao hoán chống lost update\n✓ Reread/re-validate đúng — so version optimistic\n✓ Idempotent bằng saga log (saga_id, step) đúng — chặn xử lý lặp cùng bước\n✗ Giữ lock cứng DB suốt vòng đời Saga sai — chính điều Saga tránh; giữ lock lâu là không chấp nhận được với LLT"
+  },
+  {
+    "id": "ds-q-240",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-20-saga",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong bản choreography của Saga đặt hàng, khi Inventory hết hàng nó phát event StockReserveFailed. Điều gì xảy ra tiếp theo?",
+    "options": [
+      "Payment nghe event này và tự chạy refund — không ai \"ra lệnh\", chuỗi tự chảy theo event",
+      "Orchestrator trung tâm nhận event và ra lệnh refund cho Payment",
+      "Inventory tự gọi trực tiếp API refund của Payment qua HTTP đồng bộ",
+      "Broker tự động rollback tất cả event đã phát để xoá lịch sử"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Choreography không có bộ não trung tâm; mỗi service nghe event và tự phản ứng — Payment nghe StockReserveFailed rồi tự refund.\n✓ Payment tự nghe và tự refund đúng bản chất choreography: chuỗi tự chảy theo event\n✗ Orchestrator ra lệnh sai — đó là mô hình orchestration, không phải choreography\n✗ Inventory gọi trực tiếp API Payment sai — choreography kết nối qua event broker, service chỉ biết event\n✗ Broker rollback mọi event sai — event đã phát là sự kiện có thật, không có phép xoá lịch sử; phải bù bằng compensation"
+  },
+  {
+    "id": "ds-q-241",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-21-idempotency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khi A gọi B và bị timeout, vì sao A không thể biết chắc chắn nên retry hay không?",
+    "options": [
+      "Vì timeout luôn có nghĩa là B đã chết hẳn",
+      "Vì timeout không phân biệt được B đã chết, B xong nhưng reply bị mất, hay B chỉ đang chậm",
+      "Vì retry luôn bị mạng chặn sau lần đầu",
+      "Vì A chưa gửi request lần nào cả"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Timeout là mơ hồ: A không biết trạng thái thực sự của B, nên phải chọn giữa retry (có thể nhân đôi) và bỏ (có thể mất).\n✓ Timeout che mất ba khả năng khác nhau nên A không suy ra được kết quả\n✗ Timeout không đồng nghĩa B chết hẳn; B có thể chỉ chậm hoặc đã xong\n✗ Mạng không tự chặn retry sau lần đầu\n✗ A đã gửi request rồi mới bị timeout"
+  },
+  {
+    "id": "ds-q-242",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-21-idempotency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Thao tác nào sau đây tự bản chất đã idempotent (chạy lại nhiều lần cho cùng trạng thái)?",
+    "options": [
+      "balance = balance - 100",
+      "INSERT một dòng đơn hàng mới",
+      "SET balance = 100 (ghi đè giá trị tuyệt đối)",
+      "POST /charges tạo giao dịch mới"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Thao tác ghi đè giá trị tuyệt đối cho cùng kết quả dù chạy 1 hay n lần.\n✓ Gán giá trị tuyệt đối lặp lại vẫn cho cùng một trạng thái\n✗ Trừ tương đối chạy 2 lần trừ 200 — không idempotent\n✗ Chèn dòng mới lặp lại tạo nhiều dòng\n✗ Tạo giao dịch mới lặp lại tạo nhiều giao dịch"
+  },
+  {
+    "id": "ds-q-243",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-21-idempotency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, công thức của 'effectively-once' là gì?",
+    "options": [
+      "exactly-once delivery trên đường truyền",
+      "at-most-once delivery + retry",
+      "at-least-once delivery + idempotent consumer (dedup)",
+      "at-least-once delivery mà không cần dedup"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Effectively-once đạt được bằng cách giao ít nhất một lần rồi khử trùng lặp ở consumer.\n✓ Giao ít nhất một lần cộng với consumer khử trùng lặp cho tác dụng đúng một lần\n✗ Giao đúng một lần trên đường truyền là bất khả thi\n✗ At-most-once có thể mất, không đảm bảo giao\n✗ Thiếu dedup thì at-least-once vẫn nhân đôi tác dụng"
+  },
+  {
+    "id": "ds-q-244",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-21-idempotency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao idempotency key phải do client sinh chứ không phải server?",
+    "options": [
+      "Vì server không đủ khả năng sinh UUID",
+      "Vì nếu server sinh key thì mỗi lần retry server lại cấp key mới, không nhận ra đây là retry",
+      "Vì key của client ngắn hơn nên tiết kiệm băng thông",
+      "Vì client cần key để mã hoá request"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Client cố định key trước khi gửi và giữ nguyên qua mọi lần retry, nhờ đó server nhận ra trùng ý định.\n✓ Server sinh key sẽ cấp key mới mỗi lần retry nên không thể phát hiện trùng\n✗ Server hoàn toàn sinh được UUID; đó không phải lý do\n✗ Độ dài key không liên quan tới việc ai sinh\n✗ Key dùng để dedup, không dùng để mã hoá"
+  },
+  {
+    "id": "ds-q-245",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-21-idempotency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một dedup store chỉ lưu 'tập các key đã xử lý' và bỏ qua khi thấy key trùng (không lưu response). Hậu quả là gì?",
+    "options": [
+      "Nghiệp vụ bị chạy lại lần hai gây nhân đôi",
+      "Client retry nhận lại đúng response cũ như mong muốn",
+      "Client retry vẫn không biết kết quả vì server chỉ 'bỏ qua' mà không trả lại kết quả cũ",
+      "Database bị khoá vĩnh viễn do unique constraint"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Client retry chính vì chưa nhận được reply; chỉ 'bỏ qua' mà không trả kết quả khiến client vẫn mù thông tin.\n✓ Không lưu response nên retry không nhận lại được kết quả đã chốt\n✗ Việc bỏ qua ngăn chạy lại, nên không phải nhân đôi nghiệp vụ\n✗ Không lưu response thì không thể trả lại response cũ\n✗ Unique constraint không gây khoá vĩnh viễn"
+  },
+  {
+    "id": "ds-q-246",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-21-idempotency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một request mang key k tới và trong dedup store k đang ở trạng thái IN_PROGRESS. Cách xử lý ĐÚNG là gì?",
+    "options": [
+      "Chạy lại nghiệp vụ ngay để tránh mất dữ liệu",
+      "Trả 409 Conflict để client thử lại sau, hoặc chặn chờ tới khi xong; tuyệt đối không chạy nghiệp vụ lần hai",
+      "Xoá key rồi tạo mới với status NEW",
+      "Trả response rỗng 200 và kết thúc"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "IN_PROGRESS nghĩa là một request trùng key đang chạy song song; phải tránh chạy nghiệp vụ lần hai.\n✓ Trả 409 hoặc chặn chờ, không chạy nghiệp vụ lần hai\n✗ Chạy lại nghiệp vụ ngay gây nhân đôi tác dụng\n✗ Xoá key đang xử lý phá vỡ việc phân xử race\n✗ Trả 200 rỗng khiến client hiểu nhầm đã xong với kết quả trống"
+  },
+  {
+    "id": "ds-q-247",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-21-idempotency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong handler thanh toán, vì sao ngoài việc so key còn phải so thêm request_hash (hash của body)?",
+    "options": [
+      "Để tăng tốc truy vấn dedup store",
+      "Để phát hiện client vô tình dùng lại một key cho request KHÁC (ví dụ số tiền khác) và trả 422 thay vì trả nhầm response của giao dịch cũ",
+      "Để mã hoá số tiền trước khi lưu",
+      "Để nén body cho nhỏ hơn khi lưu vào DB"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "request_hash chặn lỗi tái sử dụng cùng key cho body khác, tránh trả nhầm kết quả giao dịch cũ.\n✓ So hash body phát hiện key bị dùng lại cho request khác và từ chối bằng 422\n✗ Hash không nhằm tăng tốc truy vấn\n✗ Hash để so sánh, không phải mã hoá số tiền\n✗ Hash không dùng để nén dữ liệu"
+  },
+  {
+    "id": "ds-q-248",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-21-idempotency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Trong client retry sau đây, đâu là lỗi khiến server không dedup được và có thể trừ tiền nhiều lần?\n\nfor attempt in range(3):\n    idem_key = str(uuid.uuid4())\n    r = requests.post(url, headers={\"Idempotency-Key\": idem_key}, json=body)",
+    "options": [
+      "Dùng timeout quá ngắn",
+      "Sinh idem_key MỚI bên trong vòng lặp retry, nên mỗi lần retry thành một ý định mới",
+      "Gửi body dưới dạng JSON",
+      "Chỉ retry 3 lần là quá ít"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Key phải sinh MỘT LẦN trước vòng lặp và giữ nguyên qua mọi retry; sinh trong vòng lặp phá vỡ dedup.\n✓ Sinh key mới mỗi vòng biến mỗi retry thành ý định mới nên server không nhận ra trùng\n✗ Timeout ngắn không phá dedup\n✗ Gửi JSON là bình thường\n✗ Số lần retry không phải nguyên nhân trừ tiền nhiều lần"
+  },
+  {
+    "id": "ds-q-249",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-21-idempotency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao viết 'db.insert(order)' rồi 'kafka.publish(event)' tuần tự là một bug (dual write)?",
+    "options": [
+      "Vì Kafka chậm hơn database",
+      "Vì hai hệ không share transaction: một trong hai bước hỏng gây mất event hoặc event ma, không thứ tự nào cứu được",
+      "Vì insert luôn phải chạy sau publish",
+      "Vì event luôn lớn hơn giới hạn message của Kafka"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Dual write ghi vào hai hệ không cùng transaction nên luôn có chế độ hỏng gây lệch.\n✓ Không share transaction: crash giữa hai bước gây mất event, còn rollback sau publish gây event ma\n✗ Tốc độ Kafka không phải bản chất của bug\n✗ Đảo thứ tự cũng không cứu được vì vẫn không cùng transaction\n✗ Kích thước message không phải nguyên nhân"
+  },
+  {
+    "id": "ds-q-250",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-21-idempotency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Team dùng outbox pattern nhưng bên consumer báo thỉnh thoảng bị xử lý event trùng. Chẩn đoán đúng nhất là gì?",
+    "options": [
+      "Outbox pattern bị hỏng, phải quay lại dual write",
+      "Relay chạy at-least-once (crash sau publish trước khi đánh dấu → publish lại), nên vẫn cần inbox/idempotent consumer để chống đôi",
+      "Database transaction không hoạt động",
+      "Phải bỏ event id để consumer không nhầm"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Outbox chống mất event nhưng relay at-least-once vẫn có thể publish lại; chống đôi là việc của inbox.\n✓ Relay at-least-once có thể publish lại nên consumer cần inbox dedup theo event id\n✗ Trùng event không có nghĩa outbox hỏng; đây là hành vi mong đợi của at-least-once\n✗ Transaction DB vẫn đảm bảo business row và outbox row cùng commit\n✗ Bỏ event id sẽ làm consumer mất khả năng dedup"
+  },
+  {
+    "id": "ds-q-251",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-21-idempotency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn các phát biểu ĐÚNG về việc chèn key vào dedup store và xử lý race giữa hai request cùng key.",
+    "options": [
+      "Việc chèn key phải atomic (INSERT với unique constraint hoặc SET NX) để race được phân xử bởi database chứ không bởi code",
+      "Khi hai request cùng key chạy song song, PRIMARY KEY trên key khiến chỉ một INSERT thành công, cái kia dính unique violation",
+      "Nên để code tự kiểm tra 'đã có key chưa' bằng SELECT rồi mới INSERT để tránh dùng constraint",
+      "Redis SET NX EX là dedup bền tuyệt đối, thay thế được dedup store trong DB nghiệp vụ cho luồng tiền bạc",
+      "Với tiền bạc nên đặt dedup và business effect trong CÙNG một transaction để không lệch nhau"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "Tính atomic của việc chèn key và việc gộp dedup với business effect vào một transaction là chìa khoá chống race và lệch.\n✓ Chèn atomic bằng unique constraint hay SET NX để database phân xử race\n✓ PRIMARY KEY khiến chỉ một INSERT thắng, cái kia dính unique violation\n✓ Với tiền bạc, dedup và business effect nên chung một transaction để không lệch\n✗ SELECT-rồi-INSERT thủ công tạo cửa sổ race; phải dựa vào constraint atomic\n✗ Redis là dedup best-effort có thể mất khi evict/restart, không dùng cho tiền bạc"
+  },
+  {
+    "id": "ds-q-252",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-21-idempotency",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn các phát biểu ĐÚNG về 'exactly-once' và các cơ chế thực tế như Kafka EOS, SQS FIFO.",
+    "options": [
+      "Exactly-once delivery qua mạng không tin cậy là bất khả thi vì người gửi buộc phải chọn gửi lại (đôi) hoặc bỏ (mất)",
+      "Kafka EOS thực chất là dedup theo (producer_id, sequence) phía broker, không phải phép màu chống nhân đôi trên đường truyền",
+      "SQS FIFO khử trùng lặp trong cửa sổ 5 phút; ngoài cửa sổ đó cùng nội dung bị coi là mới",
+      "Bật enable.idempotence là đủ để mạng không bao giờ giao trùng gói tin",
+      "Dedup luôn có giới hạn thời gian/không gian, phải chọn cho khớp mẫu retry của bạn"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "explanation": "Các cơ chế 'exactly-once' thương mại đều là dedup có giới hạn, không phải giao đúng một lần trên đường truyền.\n✓ Không có lựa chọn thứ ba ngoài gửi lại hoặc bỏ nên exactly-once delivery là bất khả thi\n✓ Kafka EOS là dedup theo (producer_id, sequence) ở broker\n✓ SQS FIFO dedup trong cửa sổ 5 phút, ngoài đó coi là mới\n✓ Dedup luôn có giới hạn thời gian/không gian, phải khớp mẫu retry\n✗ enable.idempotence không khiến mạng ngừng giao trùng; nó là dedup, tin vẫn có thể tới nhiều lần"
+  },
+  {
+    "id": "ds-q-253",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-22-reliability-patterns",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao \"không bao giờ gọi mạng mà không có timeout\" được coi là luật số 1 của reliability?",
+    "options": [
+      "Vì một lời gọi không timeout có thể chờ vô hạn, và request treo vĩnh viễn là hạt giống của cascading failure",
+      "Vì timeout giúp mã hoá dữ liệu trên đường truyền an toàn hơn",
+      "Vì không đặt timeout sẽ khiến downstream trả về sai kết quả",
+      "Vì timeout là bắt buộc theo giao thức TCP, thiếu nó kết nối không mở được"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Timeout chặn việc chờ vô hạn — nguồn gốc của cascading failure.\n✓ Lời gọi không timeout chờ vô hạn, giữ tài nguyên mãi, làm cạn pool và lan sập ngược lên trên.\n✗ Timeout không liên quan đến mã hoá/bảo mật đường truyền.\n✗ Timeout không làm downstream trả kết quả đúng hay sai; nó chỉ giới hạn thời gian chờ.\n✗ TCP không bắt buộc timeout ứng dụng; kết nối vẫn mở được mà không có timeout."
+  },
+  {
+    "id": "ds-q-254",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-22-reliability-patterns",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Downstream đo được p99 = 40ms, p999 = 120ms. Cách đặt request timeout nào hợp lý nhất theo bài?",
+    "options": [
+      "Khoảng 250-300ms, hơi trên p99.9 ở đường bình thường",
+      "30 giây cho chắc chắn không cắt oan request nào",
+      "Đúng bằng p50 để phản hồi nhanh nhất",
+      "5ms để fail-fast tối đa"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đặt timeout hơi trên p99.9: đủ rộng cho request khoẻ, đủ chặt để không ôm request bệnh.\n✓ ~250-300ms nằm trên p999=120ms một khoảng an toàn, đúng khuyến nghị của bài.\n✗ 30s là \"tự sát\": giữ thread quá lâu, mở đường cho cascading failure.\n✗ Đặt bằng p50 sẽ cắt oan gần một nửa số request khoẻ.\n✗ 5ms thấp hơn cả p99, cắt oan hầu hết request bình thường."
+  },
+  {
+    "id": "ds-q-255",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-22-reliability-patterns",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Chuỗi A→B→C→D, mỗi service tự đặt timeout 1s độc lập. Hệ quả điển hình là gì?",
+    "options": [
+      "A có thể chờ tới ~3s dù \"nghĩ\" mình chỉ chờ 1s, và khi A bỏ cuộc thì B, C, D vẫn làm việc thừa",
+      "Toàn chuỗi luôn hoàn thành trong đúng 1s vì các timeout song song nhau",
+      "D sẽ bị timeout đầu tiên và tự động huỷ toàn chuỗi",
+      "Mỗi service tiết kiệm tài nguyên tối đa vì timeout ngắn"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Timeout độc lập cộng dồn theo chuỗi và gây wasted work.\n✓ Mỗi hop tự chờ 1s nên A có thể chờ đến ~3s; khi A đã bỏ cuộc, B/C/D vẫn cắm đầu làm việc thừa, càng nghẽn thêm.\n✗ Các timeout không song song; chúng nối tiếp nên cộng dồn, không gói gọn trong 1s.\n✗ D không tự huỷ toàn chuỗi; các hop trên không biết A đã bỏ cuộc.\n✗ Không hề tiết kiệm — ngược lại còn lãng phí tài nguyên vì làm việc vô ích."
+  },
+  {
+    "id": "ds-q-256",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-22-reliability-patterns",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cách đúng để tránh timeout cộng dồn và wasted work xuyên chuỗi service là gì?",
+    "options": [
+      "Truyền deadline tuyệt đối kèm request; mỗi hop tính budget còn lại = deadline − now, ≤ 0 thì fail-fast ngay",
+      "Tăng timeout mỗi hop lên gấp đôi để chắc chắn hop sau đủ thời gian",
+      "Bỏ timeout ở các hop giữa, chỉ đặt ở service ngoài cùng",
+      "Đặt cùng một con số timeout cố định cho mọi service trong hệ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Deadline propagation: mốc thời gian tuyệt đối đi kèm request, budget tự co lại mỗi hop.\n✓ Truyền deadline tuyệt đối và tính budget còn lại; nếu cạn thì fail-fast, không tốn công gọi tiếp — đúng cách gRPC/context làm.\n✗ Nhân đôi timeout mỗi hop càng làm tổng thời gian chờ phình to.\n✗ Bỏ timeout ở hop giữa để hở đường cho request treo vô hạn ở tầng đó.\n✗ Con số cố định độc lập chính là gốc của bài toán cộng dồn cần tránh."
+  },
+  {
+    "id": "ds-q-257",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-22-reliability-patterns",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Trường hợp nào an toàn/hợp lệ để retry theo bài? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Lỗi timeout khi gọi một endpoint GET",
+      "503 Service Unavailable từ downstream vừa restart",
+      "POST trừ tiền có kèm idempotency key",
+      "404 Not Found do sai đường dẫn tài nguyên",
+      "400 Bad Request do body sai định dạng"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Chỉ retry lỗi transient trên thao tác idempotent (hoặc POST có idempotency key).\n✓ Timeout trên GET là lỗi transient và GET idempotent — retry an toàn.\n✓ 503 là transient; downstream vừa restart có thể phục hồi.\n✓ POST trừ tiền vốn không idempotent, nhưng kèm idempotency key thì retry được mà không nhân đôi tác dụng.\n✗ 404 là lỗi do request (sai path), retry vô ích.\n✗ 400 là lỗi client cố định, retry không bao giờ đổi kết quả."
+  },
+  {
+    "id": "ds-q-258",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-22-reliability-patterns",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "1000 client cùng dùng backoff cứng \"200ms, 400ms, 800ms...\". Vấn đề gì xảy ra và cách khắc phục?",
+    "options": [
+      "Chúng retry đồng loạt cùng thời điểm (thundering herd); thêm jitter để rải đều các lần retry",
+      "Backoff cứng luôn tốt hơn jitter vì dễ dự đoán; không cần sửa gì",
+      "Cần bỏ backoff và retry ngay lập tức để giảm độ trễ tổng",
+      "Chỉ cần tăng cap lên rất cao là hết dội tải"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Backoff cứng đồng bộ tạo sóng tải nhịp nhàng đập vào downstream.\n✓ 1000 client backoff cùng mốc sẽ retry đồng loạt (thundering herd); jitter ngẫu nhiên hoá thời điểm để rải đều tải.\n✗ Backoff cứng \"dễ dự đoán\" chính là điểm yếu vì gây đồng bộ, cần jitter.\n✗ Retry ngay lập tức càng dội tải, ngược với mục tiêu cho downstream hồi phục.\n✗ Tăng cap không giải quyết việc các client vẫn khởi động retry đồng bộ."
+  },
+  {
+    "id": "ds-q-259",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-22-reliability-patterns",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "A retry B tối đa 3 lần, B retry C 3 lần, C retry D 3 lần. Một request gốc có thể dội vào D bao nhiêu lần, và bài khuyên làm gì?",
+    "options": [
+      "Tối đa 27 lần (3×3×3); nên retry ở một tầng gần client nhất, các tầng trong fail-fast",
+      "Tối đa 9 lần; nên cho mọi tầng cùng retry để tăng cơ hội thành công",
+      "Đúng 3 lần vì retry không nhân lên qua các tầng",
+      "Tối đa 27 lần; đây là hành vi mong muốn để đảm bảo độ bền"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Retry ở nhiều tầng nhân lên theo cấp số nhân, khuếch đại tải vào tầng cuối.\n✓ 3×3×3 = 27 lần; bài khuyên retry chỉ ở một tầng (gần client nhất), các tầng trong fail-fast.\n✗ Không phải 9 — nhân là 3×3×3=27; và cho mọi tầng retry chính là điều cần tránh.\n✗ Retry có nhân lên qua các tầng, không giữ nguyên 3 lần.\n✗ 27 lần là con số đúng nhưng đó là retry storm cần tránh, không phải hành vi mong muốn."
+  },
+  {
+    "id": "ds-q-260",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-22-reliability-patterns",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Circuit breaker đang ở trạng thái Open. Điều gì đúng về hành vi của nó?",
+    "options": [
+      "Fail-fast ngay, không gọi downstream; sau cooldown chuyển sang Half-Open để thử vài request",
+      "Cho mọi request đi qua và chờ timeout để đo lại tỉ lệ lỗi",
+      "Retry liên tục xuống downstream cho đến khi nó phục hồi",
+      "Chuyển thẳng về Closed ngay khi hết cooldown mà không cần thử"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Open = cầu dao đã ngắt: fail-fast, giải phóng thread, cho downstream hồi phục.\n✓ Ở Open, breaker trả lỗi/fallback tức thì không gọi downstream; hết cooldown thì sang Half-Open để cho vài request thăm dò.\n✗ Cho mọi request đi qua chờ timeout chính là điều Open muốn tránh (lãng phí thread).\n✗ Retry liên tục xuống downstream đang chết là phản mục đích của breaker.\n✗ Từ Open không nhảy thẳng về Closed; phải qua Half-Open thăm dò thành công trước."
+  },
+  {
+    "id": "ds-q-261",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-22-reliability-patterns",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Cân nhắc cài đặt circuit breaker thực chiến: cách đếm lỗi nào tốt hơn và vì sao?",
+    "options": [
+      "Đếm theo cửa sổ trượt theo tỉ lệ (ví dụ ≥50% lỗi trên tối thiểu 20 request), tránh mở oan khi tải thấp",
+      "Đếm N lỗi liên tiếp, vì đơn giản và luôn phản ánh đúng sức khoẻ downstream",
+      "Đếm cả 4xx lẫn 5xx để nhạy hơn với mọi loại lỗi",
+      "Chỉ mở khi 100% request lỗi để tuyệt đối không mở oan"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Tỉ lệ trên số mẫu tối thiểu ổn định hơn \"N lỗi liên tiếp\".\n✓ Cửa sổ trượt theo tỉ lệ với ngưỡng số mẫu tối thiểu tránh mở oan lúc tải thấp — đúng khuyến nghị thực chiến.\n✗ \"N lỗi liên tiếp\" dễ mở oan khi tải thấp và không phản ánh tỉ lệ thật.\n✗ Tính cả 4xx sẽ khiến một loạt 404 (lỗi client) mở nhầm cầu dao; chỉ nên tính lỗi hệ thống.\n✗ Chờ 100% lỗi mới mở là quá muộn, breaker mất tác dụng bảo vệ."
+  },
+  {
+    "id": "ds-q-262",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-22-reliability-patterns",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Payment, Recommendation, Search dùng chung một thread pool 100 luồng. Recommendation chậm. Vấn đề và cách sửa bằng bulkhead?",
+    "options": [
+      "Recommendation chiếm hết 100 luồng nên Payment cũng đói luồng; chia pool riêng (ví dụ Payment 60, Recommendation 20, Search 20)",
+      "Không sao vì mỗi luồng tự động ưu tiên Payment trước",
+      "Chỉ cần tăng pool lên 1000 luồng là hết vấn đề mãi mãi",
+      "Gộp cả ba vào một circuit breaker chung để cùng mở khi một cái chậm"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bulkhead cô lập tài nguyên: một downstream chết không nuốt hết pool chung.\n✓ Dùng chung pool nên Recommendation chậm chiếm hết 100 luồng, Payment đói theo; chia pool riêng giới hạn thiệt hại của mỗi downstream.\n✗ Thread pool không tự ưu tiên Payment; luồng ai chiếm trước giữ trước.\n✗ Tăng pool chỉ trì hoãn; Recommendation vẫn có thể ăn hết pool lớn hơn.\n✗ Circuit breaker chung sẽ mở nhầm cho cả Payment/Search khoẻ khi chỉ Recommendation chậm."
+  },
+  {
+    "id": "ds-q-263",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-22-reliability-patterns",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Về backpressure và load shedding khi hệ quá tải, phát biểu nào đúng? (chọn tất cả đáp án đúng)",
+    "options": [
+      "Hàng đợi bounded là bạn; queue đầy là tín hiệu sức khoẻ để shed tải, đừng giấu bằng cách nới queue",
+      "Load shedding chủ động drop request ngay ở cửa (503 + Retry-After), ưu tiên request quan trọng",
+      "Backpressure đẩy tín hiệu \"chậm lại\" ngược về nguồn để nó tự giảm tốc",
+      "Xếp hàng vô hạn là an toàn nhất vì không bao giờ từ chối request nào",
+      "Nới rộng queue không giới hạn giúp che giấu quá tải mà không gây hại"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Hệ trưởng thành chọn từ chối bớt thay vì xếp hàng vô hạn: fail fast, fail cheap.\n✓ Queue bounded biến \"đầy\" thành tín hiệu để shed tải; nới queue chỉ giấu bệnh.\n✓ Load shedding drop sớm ở cửa với 503 + Retry-After, ưu tiên request quan trọng.\n✓ Backpressure truyền tín hiệu chậm lại ngược về nguồn (bounded queue đầy, request(n)...) để nguồn tự giảm tốc.\n✗ Xếp hàng vô hạn không an toàn: queue phình → latency phình theo Little's Law → OOM và chết toàn bộ.\n✗ Nới queue không giới hạn là quả bom hẹn giờ, không phải cách che giấu vô hại."
+  },
+  {
+    "id": "ds-q-264",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-22-reliability-patterns",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao token bucket là lựa chọn mặc định tốt cho rate limiting API so với leaky bucket?",
+    "options": [
+      "Nó cho phép burst có kiểm soát tới capacity trong khi vẫn chặn tốc độ trung bình dài hạn ở refill",
+      "Nó làm phẳng tuyệt đối tốc độ ra, không bao giờ cho burst",
+      "Nó chính xác tuyệt đối nhờ lưu log mọi timestamp request",
+      "Nó không cần bất kỳ trạng thái nào nên chạy nhanh nhất"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Token bucket cân bằng burst tức thời và tốc độ trung bình dài hạn.\n✓ Xô đầy cho phép burst tới capacity, còn tốc độ trung bình dài hạn bị chặn ở refill — linh hoạt, hợp API.\n✗ \"Làm phẳng tuyệt đối, không cho burst\" là đặc điểm của leaky bucket.\n✗ \"Chính xác nhờ lưu log timestamp\" là sliding window log, tốn bộ nhớ.\n✗ Token bucket vẫn cần trạng thái (số token, mốc last refill); nó không phải không-trạng-thái."
+  },
+  {
+    "id": "ds-q-265",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-cap-kvstore",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong kiến trúc hai mặt phẳng của KV store, mỗi mặt phẳng nên dùng cơ chế nào?",
+    "options": [
+      "Control plane dùng quorum, data plane dùng Raft",
+      "Control plane dùng Raft cho membership/partition map, data plane dùng quorum cho đọc/ghi key",
+      "Cả hai mặt phẳng đều đi qua một leader Raft duy nhất",
+      "Cả hai mặt phẳng đều dùng quorum W/R, không cần consensus"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Nguyên tắc vàng: consensus cho metadata ít-thay-đổi, quorum cho data nhiều-thay-đổi.\n✓ Control plane dùng Raft giữ membership và partition map (ít ghi, phải nhất quán mạnh); data plane dùng quorum trực tiếp tới replica (nhiều ghi, ưu tiên sẵn sàng).\n✗ Đảo vai trò hai cơ chế là sai hoàn toàn với thiết kế.\n✗ Bắt mọi thao tác qua một leader Raft chính là sai lầm gây nghẽn, không scale, không AP được.\n✗ Metadata bắt buộc phải nhất quán tuyệt đối nên không thể chỉ dùng quorum; membership phải qua consensus."
+  },
+  {
+    "id": "ds-q-266",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-cap-kvstore",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao không dùng công thức ngây thơ node = hash(key) % N để phân dữ liệu?",
+    "options": [
+      "Vì hàm hash không phân bố đều",
+      "Vì khi N đổi (thêm/bớt node) gần như toàn bộ key phải di chuyển",
+      "Vì nó không hỗ trợ replication N=3",
+      "Vì nó yêu cầu một leader để tính toán"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Modulo theo N gắn chặt vị trí key vào tổng số node.\n✓ Khi N thay đổi, phép chia dư đổi kết quả cho gần như mọi key nên gần toàn bộ dữ liệu phải rebalance — cực đắt.\n✗ Vấn đề không nằm ở chất lượng hàm hash mà ở việc phụ thuộc vào N.\n✗ Modulo vẫn có thể gán replica; đó không phải lý do bị loại.\n✗ Phép modulo là tính toán cục bộ, không cần leader nào cả."
+  },
+  {
+    "id": "ds-q-267",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-cap-kvstore",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với N=3, cấu hình quorum W=2, R=2 được gọi là 'mặc định vàng'. Đặc tính cốt lõi khiến nó được khuyên dùng là gì?",
+    "options": [
+      "W+R=4 > 3 nên tập ghi và tập đọc luôn giao nhau, chịu được 1 node down cho cả đọc lẫn ghi",
+      "Nó đảm bảo mọi đọc luôn thấy bản mới nhất kể cả khi 2 node cùng chết",
+      "Nó cho phép ghi mà không cần bất kỳ ack nào để đạt latency thấp nhất",
+      "Nó loại bỏ hoàn toàn nhu cầu read repair và anti-entropy"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bất biến then chốt: W+R > N thì tập đã-ghi và tập được-đọc luôn giao nhau ≥ 1 node.\n✓ W=2,R=2 cho W+R=4>3, mỗi phía chỉ cần 2/3 node nên chịu đúng 1 node bất kỳ down mà cả đọc lẫn ghi vẫn chạy và vẫn overlap.\n✗ Nếu 2/3 node chết thì không đủ 2 node cho quorum, không đảm bảo được gì.\n✗ Ghi vẫn cần đợi đủ W=2 ack, không phải zero ack.\n✗ Quorum overlap giảm bất đồng nhưng read repair và anti-entropy vẫn cần để hội tụ các bản trôi dạt."
+  },
+  {
+    "id": "ds-q-268",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-cap-kvstore",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đội thiết kế đặt N=3, W=3, R=1. Điều gì xảy ra khi đúng 1 node trong preference list của một key bị down?",
+    "options": [
+      "Đọc key đó sẽ thất bại vì thiếu replica",
+      "Ghi key đó sẽ thất bại vì không đủ 3 ack, dù đọc vẫn nhanh",
+      "Cả đọc lẫn ghi đều vẫn hoạt động bình thường",
+      "Hệ tự động chuyển sang W=1 để tiếp tục ghi"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "W=3 nghĩa là ghi phải được cả 3 replica ack mới coi là thành công.\n✓ Chỉ cần 1 trong 3 node down là không thể gom đủ 3 ack nên put fail; R=1 nên đọc vẫn nhanh và vẫn chạy.\n✗ R=1 chỉ cần 1 node trả lời nên đọc không thất bại khi mất 1 node.\n✗ Ghi không thể chạy bình thường vì thiếu ack thứ ba.\n✗ Hệ không tự hạ W; W là ràng buộc cấu hình, không tự nới (hinted handoff là cơ chế khác, không phải đổi W)."
+  },
+  {
+    "id": "ds-q-269",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-cap-kvstore",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Hai client cùng ghi hai giá trị khác nhau cho một key trên hai replica khác nhau trong chế độ AP. Vì sao KHÔNG nên dùng last-write-wins theo đồng hồ tường (wall-clock) để giải xung đột?",
+    "options": [
+      "Vì wall-clock chậm hơn logical clock",
+      "Vì đồng hồ các node bị lệch, ghi mới có thể bị ghi cũ (timestamp lớn hơn do lệch) đè mất",
+      "Vì LWW luôn tạo ra siblings phải merge",
+      "Vì wall-clock không thể lưu cùng giá trị"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Hệ phân tán không có đồng hồ chung; clock giữa các node lệch nhau.\n✓ Nếu so bằng giờ tường, một ghi thực sự mới có thể mang timestamp nhỏ hơn ghi cũ (do node kia chạy nhanh) và bị đè mất — sai nhân quả.\n✗ Vấn đề là độ chính xác/đồng bộ, không phải tốc độ đọc đồng hồ.\n✗ LWW ngược lại là chọn một bản thắng, không sinh siblings; siblings là cách của version vector.\n✗ Wall-clock hoàn toàn có thể lưu kèm giá trị; đó không phải lý do."
+  },
+  {
+    "id": "ds-q-270",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-cap-kvstore",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Khi đọc R replica cho một key hiếm được truy cập, read repair không kịp sửa vì key gần như không bao giờ được đọc. Cơ chế nào giải quyết trôi dạt dài hạn cho những key này?",
+    "options": [
+      "Hinted handoff",
+      "Anti-entropy dùng Merkle tree quét nền so cây băm giữa các replica",
+      "Tăng W lên bằng N",
+      "Đổi partition map version"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Read repair chỉ sửa lỗi trên đường đọc nên key ít đọc bị bỏ sót.\n✓ Anti-entropy chạy nền, so Merkle tree giữa replica để tìm nhánh khác nhau và chỉ đồng bộ đúng phần lệch, bù trôi dạt dài hạn.\n✗ Hinted handoff chỉ giữ ghi khi replica đích down lúc ghi, không quét bù key ít đọc.\n✗ Tăng W không sửa dữ liệu đã lệch sẵn trên đĩa.\n✗ Đổi partition map version thuộc rebalance topology, không đồng bộ nội dung key."
+  },
+  {
+    "id": "ds-q-271",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-cap-kvstore",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một client gọi increment counter qua put, bị timeout (không biết ghi vào chưa) và retry. Cách nào an toàn nhất để retry không làm counter tăng hai lần?",
+    "options": [
+      "Dựa vào việc put vốn idempotent nên retry mù là đủ",
+      "Gửi kèm một Idempotency-Key (request-id) cố định qua mọi lần retry để coordinator dedup, hoặc dùng CAS if-version",
+      "Tăng W để ghi chắc hơn",
+      "Dùng wall-clock timestamp để phân biệt lần ghi"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Increment không phải ghi-đè thuần nên retry mù sẽ cộng dồn.\n✓ Idempotency-Key cố định cho phép coordinator nhận ra thao tác đã xử lý và trả kết quả cũ; hoặc CAS (if-version=V) biến increment thành ghi có điều kiện, retry không cộng thêm.\n✗ Put chỉ tự-idempotent với ghi-đè nội dung; increment thì không, retry mù vẫn cộng hai lần.\n✗ Tăng W chỉ tăng số ack, không chống áp dụng lại thao tác.\n✗ Wall-clock không giải quyết dedup và còn dính vấn đề lệch đồng hồ."
+  },
+  {
+    "id": "ds-q-272",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-cap-kvstore",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong đề bài, dịch vụ số dư ví / tồn kho nên nghiêng cấu hình nào, và vì sao?",
+    "options": [
+      "PA/EL (W=1,R=1, merge siblings) vì tuyệt đối không được từ chối thao tác",
+      "CP hoặc PC/EC (quorum chặt hoặc route qua Raft group riêng) vì thà lỗi còn hơn bán âm kho / số dư sai",
+      "PA/EC (W=2,R=2) vì đây là mặc định cho mọi loại dữ liệu",
+      "AP với hinted handoff vì cần luôn phục vụ như cart"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Consistency là cái núm chỉnh theo nghiệp vụ từng loại dữ liệu.\n✓ Số dư/tồn kho cần nhất quán mạnh: thà từ chối (mất sẵn sàng) còn hơn cho phép đọc/ghi cũ dẫn tới bán âm kho hay số dư sai — nên CP hoặc PC/EC.\n✗ PA/EL ưu tiên sẵn sàng và có thể đọc cũ/sinh sibling — hợp cart/session, nguy hiểm cho tiền/kho.\n✗ PA/EC là mặc định thực dụng nhưng không đủ chặt cho dữ liệu tiền bạc quan trọng.\n✗ AP luôn phục vụ đúng cho cart, nhưng với tồn kho thì chấp nhận ghi khi phân mảnh có thể bán quá số lượng."
+  },
+  {
+    "id": "ds-q-273",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-cap-kvstore",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Vì sao việc thay đổi partition map khi node join/leave bắt buộc phải là một quyết định consensus (qua Raft) chứ không lan truyền tự do kiểu gossip data plane?",
+    "options": [
+      "Vì Raft nhanh hơn gossip",
+      "Vì nếu hai node bất đồng về 'cung này thuộc ai', request cùng key có thể đi tới các preference list khác nhau gây mất/nhân bản dữ liệu",
+      "Vì gossip không thể truyền bảng lớn",
+      "Vì data plane không được phép đọc partition map"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Partition map phải nhất quán tuyệt đối trên toàn cụm.\n✓ Nếu cụm bất đồng về ownership một cung, các coordinator sẽ tra ra preference list khác nhau cho cùng key, dẫn tới ghi/đọc sai chỗ, mất hoặc nhân bản dữ liệu; consensus đảm bảo một sự thật duy nhất, version tăng đơn điệu.\n✗ Tốc độ không phải lý do; Raft thậm chí đắt hơn cho mỗi quyết định.\n✗ Bảng có thể lớn nhưng gossip vẫn truyền được; vấn đề là tính nhất quán chứ không phải kích thước.\n✗ Ngược lại, mọi node đều phải đọc và cache partition map để định tuyến."
+  },
+  {
+    "id": "ds-q-274",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-cap-kvstore",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn TẤT CẢ phát biểu ĐÚNG về replication N=3 và cơ chế tự lành trong thiết kế này.",
+    "options": [
+      "Hinted handoff cho phép đạt đủ W ack bằng cách ghi tạm vào node fallback kèm hint khi một replica đích đang down",
+      "Read repair sửa lỗi trên traffic đọc nóng bằng cách ghi bản mới xuống node có version cũ",
+      "Với N=3 và W=2,R=2, hệ chịu được đồng thời 2 node down mà đọc/ghi vẫn thành công",
+      "Ba lớp hinted handoff, read repair, anti-entropy cùng nhau đưa hệ tới eventual consistency sau sự cố",
+      "N=3 nghĩa là mỗi put phải chờ cả 3 replica ack mới trả về client"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "N là số bản sao; W/R quyết định bao nhiêu phải phản hồi.\n✓ Hinted handoff ghi tạm vào node fallback kèm hint để vẫn đủ W khi replica đích down, trả về nhà sau.\n✓ Read repair khi đọc thấy lệch sẽ ghi bản mới xuống node cũ ngay, sửa trên traffic nóng.\n✓ Ba lớp handoff/read repair/anti-entropy phối hợp cho eventual consistency, mọi replica hội tụ sau sự cố.\n✗ Với W=2,R=2/N=3, mất 2 node thì chỉ còn 1 node < quorum 2 nên đọc/ghi fail; chỉ chịu được 1 node down.\n✗ N=3 là số bản sao, còn số ack cần là W; với W=2 chỉ cần 2 ack, không chờ cả 3."
+  },
+  {
+    "id": "ds-q-275",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-cap-kvstore",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Chọn TẤT CẢ phát biểu ĐÚNG về consistent hashing với virtual node (vnode) trong bài.",
+    "options": [
+      "Key đi thuận chiều kim đồng hồ tới node đầu tiên gặp trên vòng, đó là node chủ",
+      "Thêm/bớt một node chỉ ảnh hưởng một cung kề nó, khoảng K/N key phải di chuyển",
+      "Mỗi node vật lý đặt nhiều vnode để phân bố đều và tránh hotspot",
+      "Node mạnh hơn nên được cấp ít vnode hơn để giảm tải",
+      "Partition map (token → node) do data plane tự quyết định độc lập ở mỗi node"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Consistent hashing băm cả key và node lên cùng một vòng [0, 2^64).\n✓ Key đi thuận chiều kim đồng hồ tới node đầu tiên gặp — đó là node chủ của key.\n✓ Thêm/bớt node chỉ dời ~K/N key ở cung kề, thay vì gần toàn bộ như modulo.\n✓ Nhiều vnode mỗi node vật lý giúp rải đều và tránh hotspot.\n✗ Node mạnh hơn phải được cấp NHIỀU vnode hơn để nhận nhiều dữ liệu hơn, không phải ít.\n✗ Partition map là artifact do control plane (Raft) quản lý có version, không phải mỗi node tự quyết độc lập."
+  },
+  {
+    "id": "ds-q-276",
+    "courseId": "DISTRIBUTED",
+    "lesson": "ds-cap-kvstore",
+    "certifications": [
+      "DISTRIBUTED"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong chế độ AP dùng version vector, khi đọc một key mà hai version KHÔNG so sánh được (concurrent), coordinator nên làm gì?",
+    "options": [
+      "Chọn bản có wall-clock timestamp lớn hơn và bỏ bản kia",
+      "Trả về cả hai (siblings) để tầng ứng dụng merge",
+      "Từ chối đọc cho tới khi một bản bị xoá",
+      "Tự động cộng dồn hai giá trị lại"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Version vector cho phép phát hiện hai ghi concurrent (không có quan hệ nhân quả).\n✓ Khi hai version không so sánh được, Dynamo trả cả hai siblings để ứng dụng merge theo ngữ nghĩa (ví dụ union giỏ hàng) — không bao giờ mất ghi.\n✗ Dùng wall-clock để chọn thắng chính là LWW ngây thơ có thể mất ghi do lệch đồng hồ.\n✗ Từ chối đọc không cần thiết và làm mất sẵn sàng.\n✗ Tự cộng dồn là logic nghiệp vụ, hệ không tự quyết merge kiểu gì; nó trả siblings cho app."
   }
 ];
 
