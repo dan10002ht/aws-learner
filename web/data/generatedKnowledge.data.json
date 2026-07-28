@@ -72721,5 +72721,779 @@
       0
     ],
     "explanation": "Buffer hấp thụ burst và tách rời tốc độ; store sập vài phút thì log chờ trong Kafka.\n✓ Kafka đệm burst và tách rời tốc độ ghi/nhận, giữ log an toàn khi store bảo trì hay sập ngắn\n✗ Kafka không đánh full-text index; đó là việc của store như Elasticsearch\n✗ Redact PII là việc của agent (Fluent Bit modify/remove), không phải Kafka\n✗ Kafka là buffer, không thay thế agent thu gom log"
+  },
+  {
+    "id": "be-q-105",
+    "courseId": "BACKEND",
+    "lesson": "be-09-grpc-protobuf",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Vì sao payload Protobuf nhỏ hơn JSON nhiều lần khi mã hoá cùng một message?",
+    "options": [
+      "Vì Protobuf nén payload bằng gzip trước khi gửi",
+      "Vì Protobuf không ghi tên field lên dây, chỉ ghi field number cùng wire type, và dùng varint cho số nguyên",
+      "Vì Protobuf loại bỏ mọi field mang giá trị mặc định nên message ngắn hơn",
+      "Vì Protobuf luôn gửi kèm schema .proto giúp bên nhận tái tạo dữ liệu"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Protobuf mã hoá mỗi field thành cặp tag + value, trong đó tag chỉ chứa field number và wire type chứ không có tên field.\n✓ Không ghi tên field, chỉ ghi số của field và dùng varint cho số nguyên nên bytes nhỏ hơn hẳn JSON dạng text.\n✗ Việc nhỏ gọn đến từ wire format, không phải nhờ gzip nén thêm.\n✗ Field mang giá trị default có thể không xuất hiện, nhưng đó không phải lý do chính khiến payload nhỏ; cốt lõi là bỏ tên field và dùng varint.\n✗ Bytes Protobuf không hề tự mang schema đi kèm; ngược lại chúng không self-describing nên phải chia sẻ .proto riêng."
+  },
+  {
+    "id": "be-q-106",
+    "courseId": "BACKEND",
+    "lesson": "be-09-grpc-protobuf",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong proto3, vì sao mỗi enum dùng ở biên nên có giá trị _UNSPECIFIED = 0?",
+    "options": [
+      "Vì proto3 bắt buộc phần tử enum đầu tiên phải bằng 0, và giá trị 0 là default khi field vắng nên để dành cho \"không biết\" giúp phát hiện lỗi",
+      "Vì giá trị 0 giúp Protobuf nén enum thành 0 byte trên dây",
+      "Vì nếu không có phần tử = 0 thì enum không thể serialize được",
+      "Vì _UNSPECIFIED là từ khoá bắt buộc của compiler protoc"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "proto3 buộc phần tử enum đầu tiên = 0, và 0 chính là giá trị default khi field vắng.\n✓ Để dành 0 cho trạng thái \"không biết/chưa set\" giúp phát hiện lỗi thay vì mặc định nhầm vào một trạng thái thật.\n✗ Giá trị 0 không làm enum thành 0 byte; đây là chuyện ngữ nghĩa default, không phải tiết kiệm kích thước.\n✗ Enum vẫn serialize được kể cả giá trị khác; ràng buộc là compiler yêu cầu phần tử đầu = 0, không phải không serialize được.\n✗ _UNSPECIFIED chỉ là quy ước đặt tên, không phải từ khoá bắt buộc của protoc."
+  },
+  {
+    "id": "be-q-107",
+    "courseId": "BACKEND",
+    "lesson": "be-09-grpc-protobuf",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Theo bài học, giá trị lớn nhất mà gRPC + Protobuf mang lại là gì?",
+    "options": [
+      "Tốc độ serialize luôn nhanh hơn mọi định dạng khác",
+      "Contract-first + codegen: một .proto sinh stub cho cả client lẫn server nên không thể lệch hợp đồng",
+      "Cho phép browser gọi thẳng service nội bộ mà không cần proxy",
+      "Loại bỏ hoàn toàn nhu cầu đặt timeout ở phía client"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nhấn mạnh giá trị cốt lõi không phải tốc độ mà là contract-first cộng codegen.\n✓ Cùng một .proto sinh ra stub cho client và server đa ngôn ngữ nên hai bên không thể hiểu field khác nhau.\n✗ Tốc độ là lợi ích, nhưng bài nói rõ đó không phải giá trị lớn nhất.\n✗ Browser không nói HTTP/2 trailer thô nên vẫn cần gRPC-Web kèm proxy, không thể gọi thẳng.\n✗ Ngược lại, bài nhấn mạnh luôn phải đặt deadline ở client; gRPC không loại bỏ nhu cầu này."
+  },
+  {
+    "id": "be-q-108",
+    "courseId": "BACKEND",
+    "lesson": "be-09-grpc-protobuf",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một team muốn xoá field discount_code (số 7) khỏi message Order ở v2. Cách làm an toàn để không phá schema evolution là gì?",
+    "options": [
+      "Đổi field number của coupon_id thành 7 để tái sử dụng số vừa trống",
+      "Xoá dòng đó đi và để field mới sau này tự do dùng lại số 7",
+      "Khai báo reserved 7 (và reserved \"discount_code\"), field mới luôn lấy số mới chưa từng dùng",
+      "Đổi type của discount_code từ string sang int32 rồi để trống"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Khi xoá field phải cấm vĩnh viễn số (và tên) đó để không ai vô tình tái dùng và đọc nhầm dữ liệu cũ.\n✓ Dùng reserved cho cả số 7 lẫn tên discount_code, và field mới luôn lấy số mới chưa từng dùng.\n✗ Tái dùng số 7 cho coupon_id khiến bên đọc byte theo số cũ sẽ lệch dữ liệu hoàn toàn.\n✗ Xoá dòng rồi để số 7 tự do bị tái dùng chính là lỗi mà reserved sinh ra để ngăn.\n✗ Đổi type sang int32 là thay đổi wire type không tương thích, làm parse hỏng, không phải cách xoá field an toàn."
+  },
+  {
+    "id": "be-q-109",
+    "courseId": "BACKEND",
+    "lesson": "be-09-grpc-protobuf",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Những thao tác nào sau đây trên một message Protobuf được xem là AN TOÀN cho backward/forward compatibility?",
+    "options": [
+      "Thêm một field mới với field number chưa từng dùng",
+      "Đổi tên một field (giữ nguyên field number)",
+      "Đổi field number của một field đang được dùng",
+      "Đổi type của field từ int32 sang string",
+      "Xoá field nhưng có reserved số và tên của nó"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      4
+    ],
+    "explanation": "An toàn khi giữ nguyên ý nghĩa của các field number đang dùng và cấm tái dùng số đã xoá.\n✓ Thêm field số mới an toàn: bên cũ bỏ qua field lạ, bên mới thấy vắng thì nhận default.\n✓ Đổi tên field an toàn vì tên không đi trên dây, chỉ field number mới quan trọng.\n✓ Xoá field kèm reserved số và tên là cách xoá đúng, ngăn tái dùng nhầm.\n✗ Đổi field number của field đang dùng khiến bên kia đọc byte theo số cũ và lệch dữ liệu hoàn toàn.\n✗ Đổi type int32 sang string đổi wire type nên parse hỏng."
+  },
+  {
+    "id": "be-q-110",
+    "courseId": "BACKEND",
+    "lesson": "be-09-grpc-protobuf",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Bạn cần phân biệt \"field chưa được set\" với \"field được set bằng 0\" trong proto3. Cách đúng là gì?",
+    "options": [
+      "Không thể phân biệt được trong proto3, phải chuyển sang JSON",
+      "Dùng optional (sinh hàm HasX()) hoặc wrapper type",
+      "Đặt field number cho field đó là 0",
+      "Dùng sint32 thay cho int32 để nhận biết giá trị chưa set"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Trong proto3, field vắng và field mang giá trị default (0, chuỗi rỗng, false) không phân biệt được trên dây.\n✓ Dùng optional để sinh ra HasX(), hoặc dùng wrapper type, mới phân biệt được \"chưa set\" với \"set = 0\".\n✗ Không cần bỏ Protobuf sang JSON; proto3 có công cụ optional/wrapper cho đúng nhu cầu này.\n✗ Field number không thể là 0; số này cũng không liên quan tới việc phân biệt giá trị.\n✗ sint32 chỉ là zigzag tối ưu số âm, không giúp biết field đã set hay chưa."
+  },
+  {
+    "id": "be-q-111",
+    "courseId": "BACKEND",
+    "lesson": "be-09-grpc-protobuf",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đặt một dịch vụ gRPC sau L4 load balancer, người ta thấy toàn bộ traffic của một client dồn hết vào một backend duy nhất. Nguyên nhân đúng và cách xử lý là gì?",
+    "options": [
+      "L4 LB hỏng, chỉ cần khởi động lại là traffic tự rải đều",
+      "gRPC dồn mọi RPC vào một connection HTTP/2 sống lâu nên L4 không thấy từng RPC; cần client-side LB, L7 proxy hiểu HTTP/2, hoặc đặt MAX_CONNECTION_AGE",
+      "Do Protobuf quá nhỏ nên LB bỏ qua các request; nên chuyển sang JSON",
+      "Vì thiếu deadline nên request không được phân phối; chỉ cần thêm timeout"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "gRPC dùng một connection HTTP/2 sống lâu mang mọi RPC, nên L4 LB (chỉ nhìn connection) ghim toàn bộ vào một backend.\n✓ Khắc phục bằng client-side load balancing, dùng L7 proxy hiểu HTTP/2 như Envoy hoặc ALB, hoặc đặt MAX_CONNECTION_AGE để ép mở lại connection và tái cân bằng.\n✗ Đây là bản chất của L4 với connection sống lâu, không phải LB hỏng nên restart không giải quyết.\n✗ Kích thước Protobuf không liên quan; chuyển JSON không sửa được vấn đề cân bằng connection.\n✗ Deadline chống cascading failure, không liên quan tới việc rải RPC qua backend."
+  },
+  {
+    "id": "be-q-112",
+    "courseId": "BACKEND",
+    "lesson": "be-09-grpc-protobuf",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một service cần theo dõi liên tục các thay đổi order của một khách hàng: gửi một yêu cầu rồi nhận về dòng sự kiện kéo dài. Kiểu RPC phù hợp nhất là gì?",
+    "options": [
+      "Unary (1 request → 1 response)",
+      "Server streaming (1 request → nhiều response)",
+      "Client streaming (nhiều request → 1 response)",
+      "Bidirectional (hai chiều độc lập)"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Một yêu cầu ban đầu rồi nhận về nhiều sự kiện liên tục đúng là mô hình server streaming.\n✓ Server streaming gửi 1 request và server đẩy nhiều response qua stream, hợp với theo dõi thay đổi (WatchOrders).\n✗ Unary chỉ 1 request đổi 1 response, không thể đẩy dòng event liên tục.\n✗ Client streaming là nhiều request gộp thành 1 response, hợp với upload/gộp chứ không phải nhận luồng event.\n✗ Bidirectional dành cho realtime hai chiều độc lập như chat/sync, thừa cho nhu cầu chỉ nhận một chiều."
+  },
+  {
+    "id": "be-q-113",
+    "courseId": "BACKEND",
+    "lesson": "be-09-grpc-protobuf",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Client gọi GetOrder với deadline 300ms và nhận về lỗi có status.Code là codes.DeadlineExceeded. Xử lý hợp lý theo bài học là gì?",
+    "options": [
+      "Retry ngay lập tức không giới hạn cho tới khi thành công",
+      "Trả về cache/degraded thay vì treo, và chỉ retry có backoff nếu thao tác idempotent",
+      "Coi như input sai và yêu cầu người dùng sửa dữ liệu",
+      "Bỏ deadline đi để lần sau request không bao giờ hết hạn"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "DeadlineExceeded nghĩa là hết hạn thời gian; bài chỉ rõ cách xử lý.\n✓ Nên trả cache/degraded thay vì treo, và chỉ retry có backoff khi thao tác idempotent.\n✗ Retry ngay lập tức không giới hạn dễ gây bão retry và chồng tải, không có backoff là sai.\n✗ Input sai ứng với INVALID_ARGUMENT, không phải DeadlineExceeded.\n✗ Bỏ deadline khiến downstream treo có thể giữ tài nguyên vô thời hạn, đúng thứ mà bài cảnh báo phải tránh."
+  },
+  {
+    "id": "be-q-114",
+    "courseId": "BACKEND",
+    "lesson": "be-09-grpc-protobuf",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Khi thiết kế error model cho một service gRPC, những khẳng định nào đúng theo bài học?",
+    "options": [
+      "UNAVAILABLE thường an toàn để client retry với backoff",
+      "INVALID_ARGUMENT nên được client retry nhiều lần vì có thể tự khỏi",
+      "Lỗi INTERNAL không nên leak chi tiết nội bộ ra client",
+      "RESOURCE_EXHAUSTED báo rate limit/hết quota, client nên retry có backoff và tôn trọng delay",
+      "gRPC dùng nguyên bộ mã HTTP 4xx/5xx làm status code"
+    ],
+    "correctIndices": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "gRPC có bộ status code riêng, giàu ngữ nghĩa và độc lập transport, để client quyết định retry đúng.\n✓ UNAVAILABLE là server tạm chết, retry với backoff thường an toàn.\n✓ Lỗi INTERNAL không nên leak chi tiết ra client.\n✓ RESOURCE_EXHAUSTED là rate limit/hết quota, client nên retry có backoff và tôn trọng delay.\n✗ INVALID_ARGUMENT là client bug ở input, không nên retry mà phải sửa input.\n✗ gRPC không dùng bộ mã HTTP 4xx/5xx mà có khoảng 17 mã status riêng, độc lập với transport."
+  },
+  {
+    "id": "be-q-115",
+    "courseId": "BACKEND",
+    "lesson": "be-09-grpc-protobuf",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn xây một public API cho browser và third-party gọi, cần cache qua CDN và debug bằng curl. Lựa chọn transport hợp lý nhất và lý do là gì?",
+    "options": [
+      "gRPC, vì binary Protobuf luôn nhanh nhất nên phù hợp mọi consumer",
+      "REST/JSON, vì browser gọi native, hỗ trợ cache HTTP/CDN và debug bằng curl ngay",
+      "gRPC-Web ép ra browser, vì giữ được đầy đủ 4 kiểu streaming",
+      "GraphQL bắt buộc, vì mọi public API đều cần client tự chọn field"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Consumer là browser/public với nhu cầu cache CDN và debug bằng curl — đúng vùng north-south của REST.\n✓ REST/JSON được browser gọi native, tận dụng cache HTTP/CDN, và curl debug được ngay.\n✗ Không nên ép gRPC ra browser chỉ vì nhanh; browser không nói HTTP/2 trailer thô, phải thêm gRPC-Web và proxy.\n✗ gRPC-Web còn mất một phần streaming (client/bidi bị giới hạn) và thêm hạ tầng, không phải lựa chọn tối giản cho public API.\n✗ GraphQL hợp khi nhiều client cần data shape khác nhau, không phải bắt buộc cho mọi public API."
+  },
+  {
+    "id": "be-q-116",
+    "courseId": "BACKEND",
+    "lesson": "be-09-grpc-protobuf",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong chuỗi gọi A → B → C, service A cho B deadline 300ms. Nhờ deadline propagation của gRPC, điều gì xảy ra khi B gọi tiếp C?",
+    "options": [
+      "C nhận một deadline mới 300ms tính từ lúc B gọi C",
+      "C thừa hưởng phần thời gian còn lại của deadline; khi hết hạn thì mọi hop cùng huỷ",
+      "C không có deadline nào và chạy tới khi tự hoàn thành",
+      "B phải tự tay copy timeout sang C như trong REST, gRPC không truyền tự động"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "gRPC truyền deadline tuyệt đối đi kèm request xuống toàn bộ chuỗi gọi.\n✓ C thừa hưởng phần thời gian còn lại, và khi hết hạn thì mọi hop cùng huỷ, không ai làm việc vô ích cho request đã chết — đây là vũ khí chống cascading failure.\n✗ C không được cấp mới 300ms; nếu vậy tổng thời gian sẽ vượt quá ngân sách của A.\n✗ C có deadline thừa hưởng chứ không phải chạy vô thời hạn.\n✗ Khác REST vốn mỗi hop tự đặt timeout riêng, gRPC truyền deadline tự động qua context nên B không phải copy tay."
+  },
+  {
+    "id": "be-q-117",
+    "courseId": "BACKEND",
+    "lesson": "be-10-api-gateway-lb",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một team đề xuất chuyển toàn bộ logic tính giá đơn hàng (tổng tiền, áp mã giảm giá) vào API Gateway để 'client gọi một chỗ cho gọn'. Theo tinh thần bài học, nên đánh giá đề xuất này thế nào?",
+    "options": [
+      "Hợp lý — gateway là single entry point nên gom mọi logic vào đó là đúng",
+      "Đây là 'smart gateway', một anti-pattern: gateway nên gánh policy chứ không chứa business logic",
+      "Chỉ nên làm nếu gateway chạy trên cùng máy với Order Service",
+      "Bắt buộc phải làm vì rate limiting cần biết giá đơn hàng"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Gateway là nơi hội tụ policy (cross-cutting concern), không phải nơi chứa business logic; nhét logic nghiệp vụ vào gateway biến nó thành 'smart gateway' — cục nghẽn về tổ chức và triển khai.\n✓ Coi đây là smart gateway anti-pattern và giữ gateway mỏng là đúng tinh thần bài học\n✗ Gom mọi logic vào một chỗ mâu thuẫn với nguyên tắc gateway chỉ gánh policy\n✗ Việc cùng máy với service không liên quan tới ranh giới policy vs business logic\n✗ Rate limiting hoạt động theo API key/user/IP, không cần biết giá đơn hàng"
+  },
+  {
+    "id": "be-q-118",
+    "courseId": "BACKEND",
+    "lesson": "be-10-api-gateway-lb",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Trong phân trục traffic của bài học, đâu là địa hạt của Service Mesh?",
+    "options": [
+      "North-south — traffic client bên ngoài đi vào/ra khỏi hệ thống",
+      "East-west — traffic giữa các service nội bộ gọi lẫn nhau",
+      "Chỉ traffic TLS termination ở edge",
+      "Traffic từ mobile app tới BFF"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Service Mesh lo trục east-west: traffic giữa các service nội bộ, triển khai bằng sidecar proxy cạnh mỗi pod cho mTLS, retry, canary.\n✓ East-west giữa các service nội bộ đúng là địa hạt của service mesh\n✗ North-south client vào/ra là địa hạt của API Gateway, không phải mesh\n✗ TLS termination ở edge là việc của gateway phía north-south\n✗ Mobile app tới BFF là traffic north-south của gateway"
+  },
+  {
+    "id": "be-q-119",
+    "courseId": "BACKEND",
+    "lesson": "be-10-api-gateway-lb",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một L4 load balancer nhận request HTTPS. Yêu cầu: route request có path /admin/* sang một cụm riêng. Kết quả sẽ là gì?",
+    "options": [
+      "L4 route được vì nó đọc path trong URL",
+      "L4 không làm được: nó chỉ thấy IP:port, không mở gói TCP/TLS đọc path — cần L7",
+      "L4 route được sau khi bật chế độ passthrough",
+      "L4 chỉ route được nếu client thêm header X-Path"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "L4 hoạt động ở tầng transport, chỉ thấy IP:port nguồn/đích và forward nguyên byte stream; payload (kể cả HTTP path, và TLS đã mã hoá) là hộp đen với nó — muốn route theo path phải dùng L7 parse HTTP.\n✓ L4 mù nội dung nên không route theo path được, cần L7 là kết luận đúng\n✗ L4 không đọc path vì không parse HTTP\n✗ Passthrough càng làm L4 không giải mã, không giúp đọc path\n✗ L4 cũng không đọc header vì không parse tầng ứng dụng"
+  },
+  {
+    "id": "be-q-120",
+    "courseId": "BACKEND",
+    "lesson": "be-10-api-gateway-lb",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một service chạy 10 pod. Request có độ dài xử lý rất lệch nhau (có cái vài ms, có cái vài giây). Dùng round-robin thì p99 xấu vì tải dồn không đều. Thuật toán nào phù hợp nhất?",
+    "options": [
+      "Round-robin nhưng tăng số pod lên 20",
+      "Weighted round-robin với trọng số bằng nhau",
+      "Least-connections (hoặc least-response-time) để phản ứng với tải thực",
+      "Consistent hashing theo user_id"
+    ],
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Với request thời lượng lệch nhau, least-connections chọn backend đang ít kết nối active nhất nên phản ứng với tải thực tế, tránh dội request nặng lên backend đang bận.\n✓ Least-connections/least-response-time hợp với tải không đồng nhất là đúng\n✗ Thêm pod không sửa được bản chất round-robin chia đều số lượng bất kể độ nặng\n✗ Weighted RR trọng số bằng nhau vẫn là round-robin thuần, không phản ứng tải thực\n✗ Consistent hashing giải bài toán sticky/cache locality, không nhắm cân bằng tải theo thời lượng"
+  },
+  {
+    "id": "be-q-121",
+    "courseId": "BACKEND",
+    "lesson": "be-10-api-gateway-lb",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Vì sao một L4 load balancer 'ngây thơ' lại làm tải lệch nghiêm trọng khi backend là gRPC (HTTP/2)?",
+    "options": [
+      "Vì gRPC dùng UDP nên L4 không đếm được connection",
+      "Vì L4 chọn backend lúc bắt tay TCP rồi ghim luôn, mà HTTP/2 multiplex mọi request trên một connection sống lâu → dồn hết về một backend",
+      "Vì gRPC không hỗ trợ health check nên L4 loại hết backend",
+      "Vì Protobuf lớn hơn JSON nên vượt buffer của L4"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "gRPC chạy trên HTTP/2 với connection sống lâu, multiplex nhiều request trên một TCP connection; L4 chọn backend lúc bắt tay TCP rồi ghim, nên toàn bộ request của client dồn về một backend suốt đời connection.\n✓ L4 ghim theo connection còn HTTP/2 multiplex trên một connection nên dồn tải — đúng\n✗ gRPC chạy trên HTTP/2 (TCP), không phải UDP\n✗ Vấn đề là ghim connection, không phải chuyện health check\n✗ Kích thước Protobuf không liên quan tới cơ chế ghim connection L4"
+  },
+  {
+    "id": "be-q-122",
+    "courseId": "BACKEND",
+    "lesson": "be-10-api-gateway-lb",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Đội bạn muốn chữa vấn đề dồn tải của gRPC nhưng KHÔNG muốn nhét logic LB vào từng client. Cách nào trong bài phù hợp nhất?",
+    "options": [
+      "Đặt một L4 NLB ở trước các backend gRPC",
+      "Dùng L7 proxy hiểu HTTP/2 (ví dụ Envoy) cân bằng ở tầng request thay vì tầng connection",
+      "Tắt HTTP/2, ép gRPC chạy trên HTTP/1.1",
+      "Bật sticky session theo IP nguồn trên L4"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Bài nêu ba lối thoát; nếu không muốn client-side LB thì dùng L7 proxy hiểu HTTP/2 như Envoy để cân bằng ở tầng request chứ không phải tầng connection.\n✓ L7 proxy hiểu HTTP/2 cân bằng theo request là cách không cần logic LB trong client\n✗ L4 NLB chính là thứ gây dồn tải vì ghim theo connection\n✗ Tắt HTTP/2 không phải giải pháp bài đề xuất và phá bản chất gRPC\n✗ Sticky theo IP càng ghim chặt request về một backend, làm tệ hơn"
+  },
+  {
+    "id": "be-q-123",
+    "courseId": "BACKEND",
+    "lesson": "be-10-api-gateway-lb",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một pod vừa start, tiến trình sống nhưng chưa kết nối được DB. Bạn muốn LB CHƯA gửi traffic tới nó cho đến khi sẵn sàng. Cần cấu hình gì?",
+    "options": [
+      "Liveness probe fail để kubelet restart pod",
+      "Readiness probe phản ánh trạng thái sẵn sàng (đã nối DB) — pod chưa ready bị gỡ khỏi Endpoints",
+      "Sticky session để ghim traffic sang pod khác",
+      "Tăng weight của các pod còn lại lên"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Readiness check phải phản ánh có sẵn sàng nhận traffic không (đã nối DB, warm cache); chỉ pod ready mới nằm trong Endpoints nên LB chưa gửi request tới pod chưa ready dù tiến trình vẫn sống.\n✓ Readiness probe phản ánh sẵn sàng và gỡ pod chưa ready khỏi Endpoints là đúng cơ chế\n✗ Liveness fail sẽ restart pod chứ không phải chỉ tạm ngừng nhận traffic\n✗ Sticky session không liên quan tới việc chặn traffic vào pod chưa sẵn sàng\n✗ Tăng weight pod khác không ngăn LB gửi tới pod đang chưa nối DB"
+  },
+  {
+    "id": "be-q-124",
+    "courseId": "BACKEND",
+    "lesson": "be-10-api-gateway-lb",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cấu hình /healthz của bạn gọi đồng bộ sang 5 downstream service; một trong số đó thỉnh thoảng chậm. Rủi ro gì và nên sửa thế nào?",
+    "options": [
+      "Không rủi ro; health check càng kiểm nhiều càng an toàn",
+      "Cascade: một downstream chậm làm cả cụm bị đánh unhealthy dây chuyền → tự gây outage; health check nên nông và nhanh",
+      "Nên tăng interval health check lên 60s để bớt gọi downstream",
+      "Chuyển sang liveness probe để kubelet restart mọi pod khi downstream chậm"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Health check gọi cascade sang nhiều service dễ khiến một downstream chậm đánh unhealthy cả cụm theo dây chuyền, tự gây outage; health endpoint nên nông và nhanh.\n✓ Nhận diện cascade tự gây outage và giữ health check nông/nhanh là đúng\n✗ Kiểm càng nhiều không an toàn hơn — nó tạo rủi ro dây chuyền\n✗ Tăng interval không bỏ được phụ thuộc cascade, chỉ trì hoãn phát hiện\n✗ Restart mọi pod khi downstream chậm càng khuếch đại outage"
+  },
+  {
+    "id": "be-q-125",
+    "courseId": "BACKEND",
+    "lesson": "be-10-api-gateway-lb",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Trong config Envoy có outlier_detection với max_ejection_percent: 50. Nếu bỏ giới hạn này (cho phép eject 100%) thì kịch bản xấu nào có thể xảy ra?",
+    "options": [
+      "Không có gì khác, chỉ tốn thêm CPU",
+      "Nếu một sự cố dùng chung (ví dụ DB downstream lỗi) khiến mọi backend cùng trả 5xx, Envoy eject toàn bộ cụm → tự gây outage",
+      "Active health check sẽ bị vô hiệu hoá",
+      "Consistent hashing sẽ ngừng hoạt động"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "max_ejection_percent chặn việc eject quá nửa cụm; bỏ giới hạn khiến khi mọi backend cùng trả 5xx (ví dụ do sự cố downstream chung), Envoy có thể eject toàn bộ cụm, tự tạo outage dù backend không thực sự chết.\n✓ Eject 100% khi lỗi dùng chung dẫn tới tự-outage — đúng lý do có max_ejection_percent\n✗ Đây không phải chuyện tốn CPU mà là rủi ro mất toàn bộ cụm\n✗ Giới hạn eject không liên quan tới việc bật/tắt active health check\n✗ outlier_detection độc lập với thuật toán consistent hashing"
+  },
+  {
+    "id": "be-q-126",
+    "courseId": "BACKEND",
+    "lesson": "be-10-api-gateway-lb",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một hệ thống cache sharding hash key theo hash(key) % N với N=8 node. Khi thêm node thứ 9, hiện tượng gì xảy ra và consistent hashing khắc phục ra sao?",
+    "options": [
+      "Chỉ 1/9 key remap; consistent hashing không cần thiết",
+      "Gần như mọi key remap → cache miss hàng loạt; consistent hashing đặt node/key trên vòng tròn nên trung bình chỉ ~1/N key dời sang hàng xóm",
+      "Không key nào remap vì hash đã cố định",
+      "Toàn bộ cache bị xoá và phải rebuild từ đầu bất kể thuật toán"
+    ],
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Đổi mẫu số N trong hash(key) % N khiến gần như mọi key remap gây cache miss hàng loạt; consistent hashing đặt cả node và key trên vòng tròn, khi thêm/bớt node chỉ ~1/N key bị dời, phần còn lại giữ nguyên.\n✓ Modulo đổi N làm đa số key remap còn consistent hashing chỉ dời ~1/N — đúng bản chất\n✗ Modulo không giữ được 1/8 key; đó chính là điểm consistent hashing mới đạt được\n✗ Đổi N chắc chắn làm key remap dù hàm hash cố định\n✗ Không phải toàn bộ cache bị xoá — consistent hashing tránh đúng kịch bản đó"
+  },
+  {
+    "id": "be-q-127",
+    "courseId": "BACKEND",
+    "lesson": "be-10-api-gateway-lb",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "So sánh client-side LB và server-side LB theo bài học. Những phát biểu nào ĐÚNG? (chọn tất cả phương án đúng)",
+    "options": [
+      "Server-side LB: client chỉ biết một VIP, LB ở giữa chọn backend — thêm một hop và là điểm cần scale/HA riêng",
+      "Client-side LB: client tự tra service registry rồi gọi thẳng backend, không hop trung gian — hợp với gRPC",
+      "Client-side LB dễ cập nhật policy đồng loạt hơn server-side vì logic tập trung",
+      "Server-side LB tập trung policy ở một chỗ, đơn giản cho client",
+      "Client-side LB bắt buộc phải có một VIP đứng giữa client và backend"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "Server-side LB dùng một VIP với LB trung gian (một hop thêm, cần HA riêng) và tập trung policy; client-side LB tra registry rồi gọi thẳng, bỏ hop trung gian, hợp gRPC nhưng khó cập nhật policy đồng loạt vì logic nằm trong mỗi client.\n✓ Server-side qua một VIP, thêm hop và cần scale/HA riêng — đúng\n✓ Client-side tra registry gọi thẳng, không hop trung gian, hợp gRPC — đúng\n✓ Server-side tập trung policy, client đơn giản — đúng\n✗ Client-side KHÓ cập nhật policy đồng loạt hơn vì logic rải trong mỗi client\n✗ Client-side gọi thẳng backend, không có VIP trung gian"
+  },
+  {
+    "id": "be-q-128",
+    "courseId": "BACKEND",
+    "lesson": "be-10-api-gateway-lb",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Về sticky session (session affinity), những phát biểu nào ĐÚNG theo bài học? (chọn tất cả phương án đúng)",
+    "options": [
+      "Sticky là mùi của thiết kế stateful và phá vỡ cân bằng đều giữa các backend",
+      "Khi backend đang giữ sticky session chết, các session trên nó bị mất",
+      "Giải pháp đúng theo 12-factor là stateless backend + state để ngoài (ví dụ session ở Redis)",
+      "Sticky session làm mọi backend đều phục vụ được mọi user tốt hơn",
+      "Bật sticky là cách khuyến nghị mặc định để tối ưu cân bằng tải"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Sticky ghim user vào một backend nên là mùi stateful, phá cân bằng đều và làm mất session khi backend đó chết; hướng đúng theo 12-factor là stateless backend đẩy state ra ngoài (Redis) để mọi backend phục vụ mọi user.\n✓ Sticky là mùi stateful và phá cân bằng đều — đúng\n✓ Backend chết thì session in-memory trên nó bay hết — đúng\n✓ Stateless + session ở Redis là giải pháp đúng theo 12-factor — đúng\n✗ Chính sticky mới ngăn mọi backend phục vụ mọi user; stateless mới đạt điều đó\n✗ Sticky chỉ dùng khi bất đắc dĩ, không phải khuyến nghị mặc định"
+  },
+  {
+    "id": "be-q-129",
+    "courseId": "BACKEND",
+    "lesson": "be-11-reverse-proxy-ratelimit",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Điểm khác biệt bản chất giữa reverse proxy và forward proxy là gì?",
+    "options": [
+      "Reverse proxy đại diện cho server (giấu backend), forward proxy đại diện cho client (giấu client)",
+      "Reverse proxy nhanh hơn forward proxy vì viết bằng ngôn ngữ khác",
+      "Forward proxy dùng cho HTTPS, reverse proxy chỉ dùng cho HTTP",
+      "Reverse proxy chạy trên client, forward proxy chạy trên server"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mấu chốt là proxy phục vụ CHO AI, tức hướng nó đứng trong kết nối.\n✓ Reverse proxy đứng trước server, đại diện server và giấu backend; forward proxy đứng trước client, đại diện client và giấu client.\n✗ Không phải vấn đề tốc độ hay ngôn ngữ; cùng một phần mềm (nginx) làm được cả hai.\n✗ Cả hai đều xử lý được HTTP lẫn HTTPS; giao thức không phải điểm phân biệt.\n✗ Vị trí bị đảo ngược: forward đứng trước client, reverse đứng trước server."
+  },
+  {
+    "id": "be-q-130",
+    "courseId": "BACKEND",
+    "lesson": "be-11-reverse-proxy-ratelimit",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Bạn cần phục vụ một endpoint SSE (server-sent events) qua nginx nhưng client không nhận được byte nào cho tới khi stream kết thúc. Nguyên nhân và cách sửa hợp lý nhất?",
+    "options": [
+      "Buffering đang bật; đặt proxy_buffering off để đẩy từng byte tới client ngay",
+      "Thiếu gzip; bật gzip on cho location đó",
+      "Thiếu keepalive; tăng keepalive lên 32",
+      "Sai load balancing; đổi least_conn thành round-robin"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Buffering đọc trọn response rồi mới chuyển, làm hỏng luồng streaming/SSE.\n✓ Tắt buffering (proxy_buffering off) để proxy đẩy từng byte tới client ngay khi có, đúng cho SSE/streaming.\n✗ Bật nén không giải quyết việc client bị chặn tới khi đọc xong; nén còn có thể làm chậm thêm.\n✗ keepalive là để tái dùng connection tới upstream, không liên quan tới việc giữ byte lại.\n✗ Thuật toán load balance không quyết định việc buffer response."
+  },
+  {
+    "id": "be-q-131",
+    "courseId": "BACKEND",
+    "lesson": "be-11-reverse-proxy-ratelimit",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Sau khi bật TLS termination ở nginx, rate limit theo IP bỗng chặn nhầm tất cả người dùng như thể họ chung một địa chỉ. Nguyên nhân gốc nhiều khả năng nhất là gì?",
+    "options": [
+      "App đọc IP của proxy vì thiếu X-Forwarded-For / X-Real-IP nên mọi client bị gộp vào IP proxy",
+      "Redis bị race condition nên đếm sai số request",
+      "TLS 1.3 làm ẩn IP client khỏi mọi lớp phía sau",
+      "Zone limit_req_zone khai báo dung lượng bộ nhớ quá nhỏ"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Sau termination, app chỉ thấy IP của proxy trừ khi proxy chuyển IP thật qua header.\n✓ Không set X-Forwarded-For / X-Real-IP khiến app log và limit theo IP proxy, gộp mọi client vào một IP.\n✗ Race condition Redis gây đếm sai số lượng, không gây hiện tượng mọi người chung một IP.\n✗ TLS 1.3 không che IP client theo cách này; vấn đề là header chuyển tiếp.\n✗ Zone nhỏ chỉ làm hết chỗ lưu state, không khiến mọi IP bị gộp thành một."
+  },
+  {
+    "id": "be-q-132",
+    "courseId": "BACKEND",
+    "lesson": "be-11-reverse-proxy-ratelimit",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Backend của bạn chạy trên Kubernetes, pod scale/rolling deploy liên tục nên IP endpoint đổi mỗi phút. Vì sao Envoy phù hợp hơn nginx OSS cho tình huống này?",
+    "options": [
+      "Envoy nhận config động qua xDS (đặc biệt EDS) để thêm/bớt endpoint mà không reload, không rớt kết nối",
+      "Envoy chạy nhanh hơn nginx nên chịu được nhiều pod hơn",
+      "nginx không hỗ trợ HTTP/2 nên không dùng được trong Kubernetes",
+      "Envoy tự sinh pod mới khi phát hiện endpoint chết"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Bài toán là topology động, và Envoy sinh ra để nhận cấu hình động qua API.\n✓ Control plane push EDS update khi pod lên/xuống, Envoy cập nhật endpoint không reload, không rớt connection — thứ nginx OSS không làm sạch.\n✗ Vấn đề không phải tốc độ thô mà là khả năng cập nhật endpoint động.\n✗ nginx có hỗ trợ HTTP/2; đây không phải lý do.\n✗ Envoy là proxy, không tạo pod; việc scale pod là của orchestrator."
+  },
+  {
+    "id": "be-q-133",
+    "courseId": "BACKEND",
+    "lesson": "be-11-reverse-proxy-ratelimit",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Với fixed window limit 100 req/phút, một client bắn 100 req lúc 00:00:59 rồi 100 req lúc 00:01:00. Kết quả là gì và tại sao?",
+    "options": [
+      "Cả 200 req đều được chấp nhận vì rơi vào hai window khác nhau — lỗ hổng burst biên window",
+      "Client bị chặn ngay từ req thứ 101 vì tổng vượt 100",
+      "Chỉ 100 req đầu qua, 100 req sau bị delay tới phút kế",
+      "Redis tự động gộp hai window nên chỉ 100 req qua"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Fixed window đếm theo khung cố định và reset ở ranh giới, tạo lỗ hổng biên.\n✓ Hai đợt rơi vào hai window khác nhau nên cả 200 req đều hợp lệ, tức 200 req trong ~1 giây — lỗi burst biên kinh điển.\n✗ Nó không nhìn tổng liên tục nên không chặn ở req 101 xuyên biên.\n✗ Fixed window không xếp hàng/delay, nó chỉ đếm và cho/chặn.\n✗ Redis không tự gộp window; chính cơ chế fixed window gây ra lỗ hổng."
+  },
+  {
+    "id": "be-q-134",
+    "courseId": "BACKEND",
+    "lesson": "be-11-reverse-proxy-ratelimit",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "API của bạn muốn thân thiện với spike ngắn hợp lệ (mở app tải nhiều thứ cùng lúc) nhưng vẫn chặn lạm dụng kéo dài. Thuật toán rate limit nào hợp nhất?",
+    "options": [
+      "Token bucket — xô đầy sẵn cho phép burst tới capacity rồi ghì về refill rate",
+      "Leaky bucket — output phẳng đều, triệt tiêu mọi burst",
+      "Fixed window — đơn giản và rẻ nhất",
+      "Sliding log — lưu mọi timestamp để chính xác tuyệt đối"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Yêu cầu là cho phép burst có kiểm soát nhưng chặn lạm dụng dài, đúng đặc tính token bucket.\n✓ Token bucket cho client im lặng lâu bung một burst tới capacity, sau đó bị ghì về refill rate — thân thiện spike thật.\n✗ Leaky bucket cố tình làm mượt và triệt tiêu burst, ngược với mong muốn cho phép spike.\n✗ Fixed window rẻ nhưng dính lỗi biên và không kiểm soát burst có chủ đích.\n✗ Sliding log chính xác nhưng tốn bộ nhớ và không nhằm mục tiêu cho phép burst."
+  },
+  {
+    "id": "be-q-135",
+    "courseId": "BACKEND",
+    "lesson": "be-11-reverse-proxy-ratelimit",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Downstream của bạn là một database và third-party API chậm, không chịu nổi spike. Bạn cần rate limit để bảo vệ chúng. Chọn cách nào?",
+    "options": [
+      "Leaky bucket — request rỉ ra đáy với tốc độ cố định, output luôn phẳng đều bất kể input bùng",
+      "Token bucket capacity lớn để hấp thụ mọi spike và forward ngay",
+      "Fixed window để reset counter mỗi giây",
+      "Tăng số instance gateway để chia tải burst"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Mục tiêu là bảo vệ downstream chậm bằng output ổn định, đúng vai trò leaky bucket.\n✓ Leaky bucket cho hàng đợi hấp thụ burst rồi rỉ ra với tốc độ cố định, giữ output phẳng để downstream không bị spike.\n✗ Token bucket capacity lớn lại forward cả burst ngay, đúng thứ downstream không chịu được.\n✗ Fixed window không làm mượt output, vẫn cho burst dồn qua.\n✗ Thêm instance không kiểm soát tốc độ ra downstream, thậm chí còn tăng đồng thời."
+  },
+  {
+    "id": "be-q-136",
+    "courseId": "BACKEND",
+    "lesson": "be-11-reverse-proxy-ratelimit",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Bạn triển khai token bucket distributed trên 5 instance gateway bằng Redis. Vì sao dùng Lua script thay vì hai lệnh INCR + EXPIRE?",
+    "options": [
+      "Token bucket cần đọc-tính refill-trừ-ghi liên hoàn nguyên tử; INCR+EXPIRE chỉ làm được fixed window và sẽ race giữa các instance",
+      "INCR không tồn tại trong Redis nên buộc phải dùng Lua",
+      "Lua giúp lưu ít key hơn nên tiết kiệm bộ nhớ",
+      "INCR+EXPIRE gây rớt kết nối tới Redis, Lua thì không"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Token bucket là chuỗi đọc-tính-ghi phải chạy như một khối atomic để tránh race đa instance.\n✓ Lua chạy một round-trip, một khối atomic nên đọc token, tính refill, trừ, ghi lại không bị xen kẽ; INCR+EXPIRE chỉ đủ cho fixed window (và dính lỗi biên).\n✗ INCR có tồn tại trong Redis; vấn đề là nó không đủ để làm token bucket atomic.\n✗ Lợi ích chính là tính nguyên tử, không phải tiết kiệm key.\n✗ INCR+EXPIRE không gây rớt kết nối; đó không phải lý do."
+  },
+  {
+    "id": "be-q-137",
+    "courseId": "BACKEND",
+    "lesson": "be-11-reverse-proxy-ratelimit",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Redis dùng cho rate limiter là single point of failure. Khi Redis chết, lựa chọn fail-open vs fail-closed nên theo nguyên tắc nào?",
+    "options": [
+      "Fail-open cho limit công bằng (thà không limit còn hơn sập tính năng), fail-closed cho limit an ninh (brute-force login thì thà chặn)",
+      "Luôn fail-closed cho mọi loại limit để tuyệt đối an toàn",
+      "Luôn fail-open vì availability quan trọng hơn mọi thứ",
+      "Để mặc định của thư viện quyết, không cần cấu hình"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Quyết định phụ thuộc bản chất limit và phải có chủ đích, không phó mặc mặc định.\n✓ Limit công bằng thường fail-open (thà không giới hạn còn hơn sập tính năng), limit an ninh như chống brute-force nên fail-closed (thà chặn).\n✗ Luôn fail-closed sẽ sập cả những tính năng chỉ cần limit công bằng khi Redis chết.\n✗ Luôn fail-open bỏ ngỏ các đường an ninh như brute-force login.\n✗ Bài nhấn mạnh phải quyết định có chủ đích, đừng để mặc định thư viện quyết hộ."
+  },
+  {
+    "id": "be-q-138",
+    "courseId": "BACKEND",
+    "lesson": "be-11-reverse-proxy-ratelimit",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Khi client chạm rate limit, response nên trả status và header nào để client tự sửa hành vi?",
+    "options": [
+      "429 Too Many Requests kèm Retry-After (và nên có RateLimit-*)",
+      "503 Service Unavailable, không cần header thêm",
+      "403 Forbidden với thông báo chung chung",
+      "200 OK nhưng body rỗng để client tự đoán"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Chuẩn cho vượt rate limit là 429 kèm chỉ dẫn thời gian chờ.\n✓ 429 Too Many Requests với Retry-After (bắt buộc) giúp client tử tế đợi đúng khoảng; RateLimit-* cho client chủ động biết quota còn lại.\n✗ 503 là lỗi dịch vụ chung, không truyền tải rõ nghĩa vượt giới hạn và thiếu chỉ dẫn chờ.\n✗ 403 Forbidden mang nghĩa cấm truy cập, không phải quá nhiều request.\n✗ 200 với body rỗng khiến client không biết đã bị limit và tiếp tục đập lại."
+  },
+  {
+    "id": "be-q-139",
+    "courseId": "BACKEND",
+    "lesson": "be-11-reverse-proxy-ratelimit",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn các phát biểu ĐÚNG về ba khái niệm rate limit, throttle và quota.",
+    "options": [
+      "Rate limit giới hạn số request trên đơn vị thời gian ngắn, vượt thì từ chối (429)",
+      "Throttle làm chậm/xếp hàng request thay vì từ chối, cho trải nghiệm mềm hơn",
+      "Quota là tổng lượng tích luỹ trong kỳ dài (ngày/tháng), reset theo chu kỳ",
+      "Ba khái niệm là đồng nghĩa, chỉ khác tên gọi",
+      "Một hệ thống không thể dùng đồng thời cả ba"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Ba khái niệm khác nhau về bản chất và thời gian tác dụng, và thường phối hợp cùng lúc.\n✓ Rate limit đo trên thời gian ngắn (giây/phút) và từ chối request thừa bằng 429.\n✓ Throttle ghì tốc độ/xếp hàng thay vì cắt phựt, trải nghiệm mềm hơn.\n✓ Quota là đếm dồn dài hạn theo kỳ billing, reset theo chu kỳ.\n✗ Chúng không đồng nghĩa — khác nhau về bản chất và đơn vị thời gian.\n✗ Một hệ thường dùng cả ba: quota tháng, rate limit giây, throttle làm mượt."
+  },
+  {
+    "id": "be-q-140",
+    "courseId": "BACKEND",
+    "lesson": "be-11-reverse-proxy-ratelimit",
+    "certifications": [
+      "BACKEND"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "Chọn các phát biểu ĐÚNG về việc đặt rate limit ở đâu và chọn key theo chiều nào.",
+    "options": [
+      "Limit càng sớm (edge/CDN) càng rẻ nhưng càng ít ngữ cảnh",
+      "Luật nghiệp vụ tinh vi như '3 lần đổi mật khẩu sai/giờ' hợp đặt ở tầng application",
+      "Limit theo IP dễ bị NAT chặn oan cả văn phòng, còn attacker có thể đổi IP để vượt",
+      "Limit theo API key/user luôn tệ hơn limit theo IP nên nên tránh",
+      "Chỉ được đặt rate limit ở đúng một tầng duy nhất trong toàn hệ thống"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Đặt limit là quyết định kiến trúc phân tầng, mỗi tầng có ngữ cảnh và độ chính xác khác nhau.\n✓ Càng sớm (edge/CDN) càng rẻ và sớm chặn rác, nhưng ngữ cảnh ít nhất.\n✓ Luật cần ngữ cảnh nghiệp vụ như đếm lần đổi mật khẩu sai chỉ app mới đủ thông tin để làm.\n✓ Key theo IP dễ bị NAT (chặn oan) hoặc bị vượt (đổi IP); key theo user/key chính xác hơn.\n✗ Limit theo API key/user thực ra chính xác hơn theo IP, chỉ cần đã xác thực — không phải luôn tệ hơn.\n✗ Thực tế phối hợp nhiều tầng: IP thô ở edge, user/key tinh ở gateway, luật ở app."
   }
 ]

@@ -57,9 +57,10 @@
         "be-10-api-gateway-lb",
         "be-11-reverse-proxy-ratelimit"
       ],
-      "status": "in-progress",
+      "status": "done",
       "note": "prefix be EXISTS — offset re-id"
     }
   ],
-  "createdAt": "2026-07-28"
+  "createdAt": "2026-07-28",
+  "trackDoneAt": "2026-07-28"
 }
