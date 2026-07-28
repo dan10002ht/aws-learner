@@ -1,0 +1,65 @@
+{
+  "task": "practice-quiz-for-new-courses",
+  "perLesson": 12,
+  "workflow": ".claude/skills/build-content-loop/scripts/knowledge-quiz-file.workflow.js (reads /tmp/quiz-job.json)",
+  "append": "node .claude/skills/build-content-loop/scripts/append-questions.mjs <task-output-file>",
+  "note": "Job file = {courseId,prefix,subject,dir,perLesson,guidance,lessons}. After workflow: append-questions.mjs on the task .output file (has result.questions), then build+commit. Prefixes bc/ds/dst/msg/cn are FREE; sre/be EXIST → for extension lessons must re-id with offset = max existing id of that prefix.",
+  "courses": [
+    {
+      "id": "MESSAGING",
+      "prefix": "msg",
+      "lessons": 19,
+      "status": "done"
+    },
+    {
+      "id": "CLOUDNATIVE",
+      "prefix": "cn",
+      "lessons": 18,
+      "status": "in-progress"
+    },
+    {
+      "id": "DISTRIBUTED",
+      "prefix": "ds",
+      "lessons": 23,
+      "status": "pending"
+    },
+    {
+      "id": "DATASTORES",
+      "prefix": "dst",
+      "lessons": 26,
+      "status": "pending"
+    },
+    {
+      "id": "BLOCKCHAIN",
+      "prefix": "bc",
+      "lessons": 53,
+      "status": "pending"
+    }
+  ],
+  "extensions": [
+    {
+      "id": "SRE",
+      "prefix": "sre",
+      "lessons": [
+        "sre-07-three-pillars-otel",
+        "sre-08-metrics-prometheus",
+        "sre-09-distributed-tracing",
+        "sre-10-logging-aggregation"
+      ],
+      "status": "pending",
+      "note": "prefix sre EXISTS — offset re-id"
+    },
+    {
+      "id": "BACKEND",
+      "prefix": "be",
+      "lessons": [
+        "be-09-grpc-protobuf",
+        "be-10-api-gateway-lb",
+        "be-11-reverse-proxy-ratelimit"
+      ],
+      "status": "pending",
+      "note": "prefix be EXISTS — offset re-id"
+    }
+  ],
+  "createdAt": "2026-07-28"
+}
