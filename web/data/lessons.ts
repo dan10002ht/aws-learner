@@ -541,6 +541,9 @@ const saaLessons: Lesson[] = [
   { slug: "ch2-04-network-performance", courseId: "SAA-C03", title: "Network & Edge Performance", shortTitle: "Network Perf", chapter: "saa-ch2", order: 12, available: true,
     description: "CloudFront, Global Accelerator, VPC endpoints, Direct Connect, API Gateway.",
     file: "saa-c03/ch2-04-network-performance.md" },
+  { slug: "ch2-05-migration-transfer", courseId: "SAA-C03", title: "Data Transfer & Migration", shortTitle: "Migration & Transfer", chapter: "saa-ch2", order: 13, available: true,
+    description: "DataSync vs Snow Family vs Storage Gateway (File/Volume/Tape), DMS + SCT, Transfer Family, MGN — bảng quyết định online/offline/hybrid & DB migration.",
+    file: "saa-c03/ch2-05-migration-transfer.md" },
   // Domain 1 — Design Secure Architectures (30%)
   { slug: "ch3-01-iam-deep-dive", courseId: "SAA-C03", title: "IAM Deep Dive & Identity Federation", shortTitle: "IAM Deep", chapter: "saa-ch3", order: 1, available: true,
     description: "Policy evaluation, STS, federation (IdC, SAML, OIDC), Permission Boundary, SCP, ABAC.",
@@ -555,16 +558,16 @@ const saaLessons: Lesson[] = [
     description: "CloudTrail, Config, GuardDuty, Inspector, Macie, Security Hub, Detective, incident response.",
     file: "saa-c03/ch3-04-detective-controls.md" },
   // Domain 4 — Design Cost-Optimized Architectures (20%)
-  { slug: "ch4-01-compute-cost", courseId: "SAA-C03", title: "Compute Cost Optimization", shortTitle: "Compute Cost", chapter: "saa-ch4", order: 13, available: true,
+  { slug: "ch4-01-compute-cost", courseId: "SAA-C03", title: "Compute Cost Optimization", shortTitle: "Compute Cost", chapter: "saa-ch4", order: 14, available: true,
     description: "Savings Plan vs RI vs Spot, right-sizing, Graviton, serverless cost, container cost.",
     file: "saa-c03/ch4-01-compute-cost.md" },
-  { slug: "ch4-02-storage-cost", courseId: "SAA-C03", title: "Storage Cost Optimization", shortTitle: "Storage Cost", chapter: "saa-ch4", order: 14, available: true,
+  { slug: "ch4-02-storage-cost", courseId: "SAA-C03", title: "Storage Cost Optimization", shortTitle: "Storage Cost", chapter: "saa-ch4", order: 15, available: true,
     description: "S3 storage classes, lifecycle, Intelligent-Tiering, EBS snapshot, Glacier, EFS cost.",
     file: "saa-c03/ch4-02-storage-cost.md" },
-  { slug: "ch4-03-db-network-cost", courseId: "SAA-C03", title: "Database & Network Cost", shortTitle: "DB & Net Cost", chapter: "saa-ch4", order: 15, available: true,
+  { slug: "ch4-03-db-network-cost", courseId: "SAA-C03", title: "Database & Network Cost", shortTitle: "DB & Net Cost", chapter: "saa-ch4", order: 16, available: true,
     description: "RDS/Aurora/DynamoDB cost, data transfer trap, CloudWatch cost, NAT/CloudFront optimization.",
     file: "saa-c03/ch4-03-db-network-cost.md" },
-  { slug: "ch4-04-cost-visibility", courseId: "SAA-C03", title: "Cost Visibility & Governance", shortTitle: "Cost Visibility", chapter: "saa-ch4", order: 16, available: true,
+  { slug: "ch4-04-cost-visibility", courseId: "SAA-C03", title: "Cost Visibility & Governance", shortTitle: "Cost Visibility", chapter: "saa-ch4", order: 17, available: true,
     description: "Cost Explorer, Budgets, Anomaly Detection, CUR, tagging, SCP guardrail, FinOps basics.",
     file: "saa-c03/ch4-04-cost-visibility.md" },
 ];
@@ -574,7 +577,7 @@ const saaLessons: Lesson[] = [
 const saaChapters: Chapter[] = [
   { id: "saa-ch3", courseId: "SAA-C03", title: "Domain 1 — Design Secure Architectures (30%)", lessonSlugs: ["ch3-01-iam-deep-dive", "ch3-02-network-security", "ch3-03-data-protection", "ch3-04-detective-controls"], category: "security" },
   { id: "saa-ch-res", courseId: "SAA-C03", title: "Domain 2 — Design Resilient Architectures (26%)", lessonSlugs: ["resilient-01-decoupling", "resilient-02-ha-fault-tolerance", "resilient-03-dr-strategies", "resilient-04-scalability"], category: "network" },
-  { id: "saa-ch2", courseId: "SAA-C03", title: "Domain 3 — Design High-Performing Architectures (24%)", lessonSlugs: ["ch2-01-compute-performance", "ch2-02-storage-performance", "ch2-03-database-performance", "ch2-04-network-performance"], category: "compute" },
+  { id: "saa-ch2", courseId: "SAA-C03", title: "Domain 3 — Design High-Performing Architectures (24%)", lessonSlugs: ["ch2-01-compute-performance", "ch2-02-storage-performance", "ch2-03-database-performance", "ch2-04-network-performance", "ch2-05-migration-transfer"], category: "compute" },
   { id: "saa-ch4", courseId: "SAA-C03", title: "Domain 4 — Design Cost-Optimized Architectures (20%)", lessonSlugs: ["ch4-01-compute-cost", "ch4-02-storage-cost", "ch4-03-db-network-cost", "ch4-04-cost-visibility"], category: "billing" },
 ];
 
