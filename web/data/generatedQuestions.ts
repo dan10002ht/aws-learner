@@ -18115,5 +18115,275 @@ export const generatedQuestions: Question[] = [
     ],
     "explanation": "200 TB qua 1 Gbps mất khoảng 18+ ngày, vượt hạn 2 tuần và rủi ro, nên chuyển offline mới an toàn.\n✓ Snowball Edge Storage Optimized rồi lifecycle sang Glacier: ship vài ngày, chắc chắn trong 2 tuần, sau đó lifecycle hạ tầng lưu trữ.\n✗ DataSync online: qua 1 Gbps mất 18+ ngày, sát/vượt hạn, rủi ro cao.\n✗ Tape Gateway lên Glacier: dùng thay băng từ backup, không phải công cụ chuyển khối archive lớn kịp hạn.\n✗ Transfer Family SFTP: vẫn phụ thuộc băng thông online 1 Gbps, không giải quyết được thời hạn.",
     "domain": 3
+  },
+  {
+    "id": "saa-ext-018",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-06-data-ingestion-analytics",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một team muốn nạp clickstream vào S3 để phân tích, với yêu cầu số một là VẬN HÀNH ÍT NHẤT: không quản lý shard, không viết consumer, tự động buffer và giao dữ liệu. Dịch vụ nào phù hợp nhất?",
+    "options": [
+      "Kinesis Data Firehose",
+      "Kinesis Data Streams",
+      "Amazon MSK",
+      "Managed Service for Apache Flink"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Firehose là đường ống nạp 'lười', tự buffer + deliver vào S3/Redshift/OpenSearch, không cần quản lý shard/consumer.\n✓ Đường ống tự buffer và deliver vào S3, no-code, không quản shard/consumer đúng với yêu cầu ít vận hành nhất.\n✗ Ingest thô cần bạn tự viết consumer (Lambda/KCL) và quản shard, nhiều vận hành hơn.\n✗ Hệ Kafka managed chỉ chọn khi cần Kafka API/đã có hệ Kafka, không phải mục tiêu ít vận hành nạp thẳng S3.\n✗ Dịch vụ tính toán trong luồng dùng để phân tích/biến đổi real-time, không phải để nạp lười vào S3.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-019",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-06-data-ingestion-analytics",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Nhiều nhóm ứng dụng cần cùng đọc một luồng giao dịch real-time, mỗi nhóm xử lý độc lập với offset riêng, và phải PHÁT LẠI (replay) dữ liệu trong 7 ngày khi cần. Chọn dịch vụ đúng.",
+    "options": [
+      "Kinesis Data Streams",
+      "Kinesis Data Firehose",
+      "Amazon SQS Standard",
+      "Amazon QuickSight"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Data Streams giữ dữ liệu 1–365 ngày, cho nhiều consumer đọc độc lập (mỗi consumer offset riêng) và replay.\n✓ Giữ dữ liệu nhiều ngày, multi-consumer độc lập và replay đúng khớp yêu cầu.\n✗ Đường ống nạp lười không có replay, không giữ dữ liệu, nạp xong là xong.\n✗ Hàng đợi message không giữ nhiều consumer đọc độc lập cùng dữ liệu kèm replay theo cách stream.\n✗ Đây là dịch vụ BI/dashboard, không phải để ingest stream.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-020",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-06-data-ingestion-analytics",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một hệ thống cần TÍNH TOÁN CỬA SỔ THỜI GIAN (windowing), aggregate và anomaly detection NGAY TRONG LUỒNG streaming bằng SQL hoặc Apache Flink. Dịch vụ nào?",
+    "options": [
+      "Managed Service for Apache Flink",
+      "Kinesis Data Firehose",
+      "AWS Glue ETL",
+      "Amazon Athena"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Managed Service for Apache Flink phân tích/biến đổi ngay trong luồng: windowing, aggregate, anomaly detection real-time.\n✓ Xử lý cửa sổ thời gian và tính toán real-time trong luồng bằng SQL/Flink đúng mô tả.\n✗ Đường ống nạp lười chỉ buffer + deliver, không làm windowing/aggregate trong luồng.\n✗ ETL Spark serverless là xử lý batch biến đổi dữ liệu, không phải tính toán real-time trong luồng streaming.\n✗ SQL serverless truy vấn file S3, không xử lý windowing trên luồng đang chảy.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-021",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-06-data-ingestion-analytics",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Data analyst chỉ THỈNH THOẢNG chạy SQL ad-hoc trên log lưu ở S3 và không muốn quản lý bất kỳ hạ tầng nào. Giải pháp chi phí/vận hành hợp lý nhất là gì?",
+    "options": [
+      "Athena, và chuyển dữ liệu sang Parquet + partition để giảm dữ liệu quét",
+      "Load toàn bộ log vào một Redshift cluster chạy 24/7 rồi query",
+      "Dựng EMR cluster Hadoop để chạy các câu SQL",
+      "Nạp log vào RDS rồi query trực tiếp"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Athena là SQL serverless query thẳng S3, trả tiền theo GB quét, hợp ad-hoc/không thường xuyên; Parquet + partition giảm mạnh dữ liệu quét.\n✓ Query serverless trên S3 kèm Parquet + partition đúng cho ad-hoc và tối ưu cost.\n✗ Nuôi cluster 24/7 tốn kém và thừa cho nhu cầu query thỉnh thoảng.\n✗ Cụm Hadoop vận hành cao nhất, thừa cho vài câu SQL ad-hoc.\n✗ RDS là OLTP row-based, gục trước khối lượng quét phân tích lớn.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-022",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-06-data-ingestion-analytics",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Athena tính tiền theo lượng dữ liệu quét. Đội bạn đang lưu dữ liệu dạng CSV và muốn giảm chi phí query mà vẫn nhanh hơn. Cách hiệu quả nhất là gì?",
+    "options": [
+      "Chuyển CSV sang Parquet (columnar, nén) và partition theo ngày",
+      "Gộp tất cả CSV thành một file lớn duy nhất",
+      "Bật replay để đọc lại dữ liệu nhiều lần",
+      "Tăng số shard để đọc song song"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Parquet columnar + nén + partition theo ngày có thể giảm >90% dữ liệu quét → rẻ và nhanh hơn nhiều.\n✓ Chuyển sang định dạng cột hoá và partition trực tiếp cắt giảm lượng dữ liệu Athena phải quét.\n✗ Gộp thành một file lớn không giảm dữ liệu quét, còn mất khả năng loại partition.\n✗ Replay là khái niệm của stream ingest, không liên quan chi phí quét của Athena.\n✗ Shard thuộc Kinesis, không ảnh hưởng cost query của Athena.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-023",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-06-data-ingestion-analytics",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "BI team cần dashboard doanh thu chạy HẰNG NGÀY, nhiều JOIN phức tạp trên dữ liệu có cấu trúc, đòi hỏi hiệu năng ổn định và lặp lại. Engine phân tích nào phù hợp nhất?",
+    "options": [
+      "Amazon Redshift",
+      "Amazon Athena",
+      "Amazon EMR",
+      "Kinesis Data Streams"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Redshift là data warehouse columnar MPP cho phân tích phức tạp, lặp lại, join nhiều, cần hiệu năng ổn định (BI/báo cáo).\n✓ Warehouse cho workload BI lặp lại, join phức tạp, hiệu năng ổn định đúng nhu cầu.\n✗ Query serverless hợp ad-hoc/thỉnh thoảng, không tối ưu cho báo cáo nặng chạy hằng ngày với hiệu năng ổn định.\n✗ Cụm Hadoop/Spark dành cho big-data transform tùy biến/ML, không phải BI dashboard SQL lặp lại.\n✗ Đây là dịch vụ ingest stream, không phải engine phân tích cho dashboard.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-024",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-06-data-ingestion-analytics",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Team ML cần chạy job Apache Spark khổng lồ biến đổi hàng petabyte với framework Hadoop cụ thể và cấu hình tùy biến. Lựa chọn đúng là gì?",
+    "options": [
+      "Amazon EMR",
+      "Amazon Athena",
+      "Amazon Redshift Serverless",
+      "AWS Lake Formation"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "EMR là cụm Hadoop/Spark/Hive/Presto managed cho big-data xử lý nặng, tùy biến (ML, transform khối lượng lớn, framework Hadoop cụ thể).\n✓ Cụm Spark/Hadoop tùy biến cho transform petabyte và ML đúng mô tả.\n✗ Query SQL serverless trên S3 không dành cho job Spark tùy biến khối lượng lớn.\n✗ Data warehouse dù serverless vẫn không chạy được framework Spark/Hadoop tùy biến.\n✗ Đây là dịch vụ phân quyền data lake, không phải engine chạy Spark.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-025",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-06-data-ingestion-analytics",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một tổ chức muốn PHÂN QUYỀN TẬP TRUNG, fine-grained theo bảng/cột/hàng cho data lake trên S3 + Glue Catalog, thay vì rải rác IAM/bucket policy. Dịch vụ nào?",
+    "options": [
+      "AWS Lake Formation",
+      "AWS Glue Crawler",
+      "Amazon QuickSight",
+      "Redshift Spectrum"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Lake Formation dựng và phân quyền tập trung fine-grained (bảng/cột/hàng) cho data lake trên S3 + Glue Catalog.\n✓ Phân quyền tập trung fine-grained cho data lake đúng vai trò của dịch vụ này.\n✗ Crawler chỉ quét S3 suy ra schema và tạo table trong Catalog, không quản phân quyền.\n✗ Đây là BI/dashboard, không phải công cụ phân quyền data lake.\n✗ Đây là tính năng query S3 từ Redshift, không phải quản lý quyền tập trung.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-026",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-06-data-ingestion-analytics",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Business users cần một công cụ BI SERVERLESS để dựng dashboard, có SPICE (in-memory tăng tốc) và ML Insights. Chọn dịch vụ.",
+    "options": [
+      "Amazon QuickSight",
+      "Amazon Athena",
+      "AWS Glue Data Catalog",
+      "Kinesis Data Firehose"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "QuickSight là BI serverless với dashboard, SPICE in-memory và ML Insights cho business users.\n✓ BI serverless kèm SPICE và ML Insights cho dashboard đúng mô tả.\n✗ SQL serverless để query S3, không phải công cụ dựng dashboard cho business.\n✗ Đây là kho metadata schema/partition, không phải công cụ BI.\n✗ Đây là đường ống nạp dữ liệu, không phải BI.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-027",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-06-data-ingestion-analytics",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Về AWS Glue trong pipeline data lake, những phát biểu nào ĐÚNG? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Glue Data Catalog là kho metadata trung tâm được Athena, Redshift Spectrum và EMR dùng chung",
+      "Glue Crawler tự quét S3, suy ra schema và tạo table trong Catalog",
+      "Glue ETL (Spark serverless) có thể biến đổi CSV → Parquet mà không cần quản server",
+      "Glue là data warehouse columnar MPP để chạy BI dashboard lặp lại",
+      "Glue giữ dữ liệu streaming 1–365 ngày cho nhiều consumer replay"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Glue gồm Data Catalog (metadata dùng chung), Crawler (suy schema) và ETL Spark serverless (ví dụ CSV→Parquet).\n✓ Data Catalog là metadata trung tâm được Athena/Redshift Spectrum/EMR dùng chung.\n✓ Crawler tự quét S3, suy schema và tạo table trong Catalog.\n✓ ETL Spark serverless biến đổi CSV→Parquet, làm sạch, join mà không quản server.\n✗ Data warehouse columnar MPP cho BI lặp lại là vai trò của Redshift, không phải Glue.\n✗ Giữ dữ liệu nhiều ngày cho multi-consumer replay là đặc điểm của Kinesis Data Streams, không phải Glue.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-028",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-06-data-ingestion-analytics",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "multi",
+    "question": "So sánh Kinesis Data Streams và Kinesis Data Firehose, những phát biểu nào ĐÚNG? (Chọn tất cả đáp án đúng)",
+    "options": [
+      "Data Streams giữ dữ liệu 1–365 ngày và hỗ trợ replay; Firehose không giữ dữ liệu, không replay",
+      "Firehose tự động buffer + deliver vào S3/Redshift/OpenSearch/Splunk mà không cần quản shard/consumer",
+      "Firehose có thể convert dữ liệu sang Parquet/ORC và transform bằng Lambda ngay trong đường ống",
+      "Firehose cho nhiều consumer đọc độc lập với offset riêng",
+      "Data Streams giao dữ liệu no-code vào Redshift mà không cần viết consumer"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Data Streams giữ dữ liệu và cho replay/multi-consumer; Firehose là đường ống near-real-time no-code có convert Parquet/ORC và transform Lambda.\n✓ Giữ dữ liệu nhiều ngày + replay là đặc điểm Data Streams, còn Firehose nạp xong là hết.\n✓ Firehose tự buffer + deliver vào S3/Redshift/OpenSearch/Splunk không cần quản shard/consumer.\n✓ Firehose có thể convert sang Parquet/ORC và transform bằng Lambda ngay trong đường ống.\n✗ Cho nhiều consumer đọc độc lập với offset riêng là đặc điểm của Data Streams, không phải Firehose.\n✗ Giao no-code vào Redshift không cần viết consumer là đặc điểm của Firehose; Data Streams thì cần bạn tự viết consumer.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-029",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-06-data-ingestion-analytics",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Kiến trúc data lake điển hình end-to-end được đề xuất trong bài là thứ tự nào?",
+    "options": [
+      "Nguồn → Kinesis/Firehose → S3 raw (CSV/JSON) → Glue ETL → S3 curated (Parquet) → Athena/Redshift → QuickSight",
+      "Nguồn → RDS → Glue Crawler → EMR → QuickSight → S3",
+      "Nguồn → QuickSight → Athena → S3 raw → Glue → Redshift",
+      "Nguồn → S3 Parquet → Firehose → RDS → Lake Formation → EMR"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Pipeline chuẩn: nguồn → Kinesis → S3 raw → Glue → S3 Parquet → Athena/Redshift → QuickSight.\n✓ Thứ tự ingest qua Kinesis/Firehose, lưu raw, Glue biến đổi sang Parquet curated, rồi query và BI đúng như bài mô tả.\n✗ Đưa RDS làm lớp lưu trung tâm và đảo vị trí các bước không khớp pipeline data lake.\n✗ Đặt BI/QuickSight ở đầu và raw ở sau là sai chiều dòng dữ liệu.\n✗ Trộn Firehose sau S3 Parquet rồi đổ vào RDS là thứ tự vô nghĩa so với pipeline chuẩn.",
+    "domain": 3
   }
 ];
