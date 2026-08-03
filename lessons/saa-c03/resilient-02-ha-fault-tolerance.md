@@ -386,7 +386,26 @@ Bốn chiến lược DR (RTO/RPO giảm dần, chi phí tăng dần):
 
 > ⚠️ Bẫy: RTO ≠ RPO. RTO nói về **thời gian phục hồi (downtime)**; RPO nói về **dữ liệu bị mất**. Đề hỏi "tối đa được mất 5 phút dữ liệu" → đó là **RPO = 5 phút** (cần replication, không phải backup hằng đêm).
 
-## 9. Tổng kết quyết định nhanh (cheat sheet)
+## 9. Deployment strategies an toàn cho resilience
+
+Resilience không chỉ là chịu lỗi hạ tầng — **lúc release code mới cũng là lúc dễ gây downtime nhất**. Chọn đúng chiến lược deploy giúp giảm rủi ro và rút ngắn thời gian rollback. Đề SAA hay hỏi "làm sao release mà không gián đoạn / có thể rollback nhanh / test trên tập nhỏ user trước".
+
+| Strategy | Ý nghĩa | Rủi ro chính | Rollback | Công cụ AWS |
+|---|---|---|---|---|
+| **Rolling** | Cập nhật lần lượt từng batch instance trong cùng nhóm (in-place) | Trong lúc deploy tồn tại **cả version cũ và mới cùng phục vụ**; nếu bad → đã dính một phần fleet | Chậm (phải rolling ngược lại) | ASG `Instance Refresh`, CodeDeploy in-place, Elastic Beanstalk (Rolling / Rolling with additional batch) |
+| **Blue-Green** | Dựng **môi trường mới (green) song song** với môi trường cũ (blue), rồi **chuyển toàn bộ traffic** sang green | Tốn gấp đôi tài nguyên khi chuyển; cần cơ chế switch traffic sạch | **Rất nhanh** (trỏ traffic về blue) | CodeDeploy Blue/Green, ASG + đổi Target Group của ALB, Route 53 đổi bản ghi, Beanstalk swap CNAME |
+| **Immutable** | **Không sửa** instance cũ; launch **instance hoàn toàn mới** từ image/template mới, chỉ khi khỏe mạnh mới cắt traffic, rồi bỏ instance cũ | Tốn tài nguyên tạm thời; thời gian dựng lâu hơn in-place | Nhanh (giữ nguyên fleet cũ tới khi xác nhận) | Beanstalk **Immutable**, ASG launch nhóm instance mới từ Launch Template mới (AMI mới) |
+| **Canary** | Đẩy version mới cho **một phần nhỏ traffic/user** (vd 5–10%), theo dõi lỗi/metric rồi mới tăng dần tới 100% | Một phần nhỏ user có thể dính lỗi trong giai đoạn thử | Nhanh (kéo % về 0) | **Route 53 Weighted**, ALB weighted target group, CodeDeploy `Canary`/`Linear` (Lambda/ECS), API Gateway canary, Beanstalk **Traffic Splitting** |
+
+> 💡 Phân biệt Immutable vs Rolling: Rolling **sửa tại chỗ** máy đang chạy (có thời điểm lẫn lộn 2 version, khó rollback sạch); Immutable **thay máy mới hoàn toàn** (không đụng máy cũ → rollback = vứt máy mới, an toàn hơn nhưng tốn hơn).
+
+> 💡 Phân biệt Blue-Green vs Canary: Blue-Green chuyển **toàn bộ** traffic một lần (cutover) — nhanh, rollback tức thì, nhưng lỗi ảnh hưởng 100% user ngay khi switch. Canary chuyển **dần theo %** — giới hạn "bán kính vụ nổ" (blast radius) khi có lỗi, nhưng release lâu hơn.
+
+> ⚠️ Bẫy thi: Đề mô tả *"muốn test version mới trên một tỉ lệ nhỏ traffic thật trước khi rollout toàn bộ"* → **Canary** (thường qua **Route 53 Weighted** hoặc CodeDeploy Canary), KHÔNG phải Blue-Green (Blue-Green là all-or-nothing). Đề mô tả *"cần rollback tức thì về môi trường cũ nếu deploy hỏng"* → **Blue-Green**.
+
+> ⚠️ Bẫy thi: "Zero-downtime deploy + rollback nhanh nhất, chấp nhận tốn thêm tài nguyên tạm thời" → **Blue-Green** hoặc **Immutable**. Nếu đề chốt "**không chỉnh sửa instance đang chạy**, luôn thay bằng máy mới" → **Immutable**. Rolling KHÔNG đảm bảo rollback nhanh vì phải cuộn ngược từng batch.
+
+## 10. Tổng kết quyết định nhanh (cheat sheet)
 
 - "HA cho RDS" → **Multi-AZ**. "Scale đọc" → **Read Replica**. Cần cả hai → dùng cả hai.
 - "Failover cực nhanh + global + RPO~0" → **Aurora Global Database**.
@@ -396,5 +415,6 @@ Bốn chiến lược DR (RTO/RPO giảm dần, chi phí tăng dần):
 - "Chịu lỗi 1 AZ" → **Multi-AZ là đủ**. "Chịu lỗi cả region" → **Multi-Region**.
 - "Mất tối đa X phút dữ liệu" = **RPO**. "Phục hồi trong tối đa X phút" = **RTO**.
 - Loại bỏ SPOF: ASG đa AZ, NAT Gateway mỗi AZ, RDS Multi-AZ, dữ liệu trên S3/EFS thay vì đĩa local.
+- Release: "test trên % nhỏ traffic" → **Canary (Route 53 Weighted)**. "Rollback tức thì về môi trường cũ" → **Blue-Green**. "Không sửa máy đang chạy, thay máy mới" → **Immutable**. "Cập nhật lần lượt in-place" → **Rolling**.
 
 > 💡 Nguyên tắc vàng cho phần resilience: **Design for failure** — luôn giả định mọi component sẽ chết, và thiết kế để hệ thống vẫn sống. Khi phân vân giữa hai đáp án, chọn đáp án **loại bỏ SPOF** mà **không over-engineer** (đừng chọn Multi-Region khi đề chỉ cần Multi-AZ).

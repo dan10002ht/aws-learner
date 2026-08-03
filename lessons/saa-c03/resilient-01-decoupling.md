@@ -208,6 +208,22 @@ Pattern kinh điển: publish **một** message lên SNS topic, topic fan-out t�
 
 > ⚠️ Bẫy: Câu hỏi muốn fan-out + đảm bảo không mất message → đừng chọn "SNS to multiple Lambda". Lambda có thể throttle/lỗi; **SNS → SQS → Lambda** mới có buffer an toàn.
 
+### Amazon MQ — messaging chuẩn công nghiệp (khi nào KHÔNG dùng SQS/SNS)
+
+**Amazon MQ** là managed message broker cho **ActiveMQ** và **RabbitMQ**, hỗ trợ các giao thức messaging chuẩn công nghiệp: **AMQP, MQTT, STOMP, JMS, OpenWire, WebSocket**. Nó tồn tại để phục vụ ứng dụng **on-premises đang chạy sẵn** trên các broker này muốn di dời lên AWS mà **không phải viết lại code**.
+
+| Dấu hiệu trong đề | Chọn |
+|---|---|
+| App **đã dùng messaging chuẩn** (AMQP/MQTT/STOMP/JMS/OpenWire) | **Amazon MQ** |
+| **Lift-and-shift / migrate** từ ActiveMQ hoặc RabbitMQ on-prem | **Amazon MQ** |
+| "Không muốn viết lại app / giữ nguyên protocol hiện có" | **Amazon MQ** |
+| App **cloud-native mới**, chấp nhận API riêng của AWS | **SQS / SNS** |
+| Cần scale gần như vô hạn, ít vận hành nhất, fan-out đơn giản | **SQS / SNS** |
+
+> 💡 Mẹo thi: Cứ thấy các từ khóa **AMQP / MQTT / STOMP / JMS**, **ActiveMQ**, **RabbitMQ**, "migrate messaging without changing code" → đáp án là **Amazon MQ**. Ngược lại, hệ thống dựng mới trên AWS thì **SQS/SNS** là lựa chọn mặc định (rẻ hơn, serverless, scale tự động, không phải quản lý broker).
+
+> ⚠️ Bẫy: Amazon MQ chạy trên **broker instance** (có thể multi-AZ active/standby) — bạn vẫn phải chọn size/patch ở mức nhất định và throughput **không "vô hạn"** như SQS. Đừng chọn Amazon MQ chỉ vì "cần một hàng đợi"; nó dành cho tương thích **protocol chuẩn**, không phải để thay SQS trong app mới.
+
 ## 4. Amazon EventBridge — Event Bus
 
 EventBridge (tiền thân CloudWatch Events) là **serverless event bus** cho kiến trúc event-driven. Khác SNS ở chỗ: route message dựa trên **nội dung event** (content-based filtering rất mạnh), tích hợp sâu với **AWS services** và **SaaS partner**.
@@ -249,6 +265,38 @@ Kinesis dành cho **real-time streaming** với volume lớn, nhiều consumer �
 - **Kinesis Data Streams**: retention 1–365 ngày, nhiều consumer đọc **độc lập** (mỗi consumer giữ vị trí riêng), có thể **replay** dữ liệu.
 - **Kinesis Data Firehose**: tự động deliver vào S3, Redshift, OpenSearch (near-real-time, không cần quản lý consumer).
 
+### Kinesis Data Streams vs Data Firehose — phân biệt tình huống
+
+Hai dịch vụ khác nhau về bản chất: **Data Streams** là một stream bạn tự đọc/xử lý (real-time thật), còn **Firehose** là một **đường ống nạp (delivery pipeline)** managed, no-code, đổ dữ liệu vào đích lưu trữ.
+
+| Tiêu chí | Kinesis Data Streams | Kinesis Data Firehose |
+|---|---|---|
+| Mục đích | **Custom real-time**: tự viết consumer xử lý từng record | **Nạp (ingest) near-real-time** vào đích, **no-code** |
+| Đích đến | Bất kỳ (Lambda, KCL app, Flink, Firehose...) | **S3, Redshift, OpenSearch, Splunk**, HTTP endpoint |
+| Độ trễ | Real-time (~200 ms) | Near-real-time (buffer theo size/time, tối thiểu ~60s) |
+| Replay | **Có** (retention 1–365 ngày) | **Không** (không lưu trữ, không đọc lại) |
+| Multi-consumer | **Có** (nhiều app đọc độc lập, fan-out) | Không (chỉ chảy tới đích đã cấu hình) |
+| Vận hành | Quản lý shard/on-demand, quản lý consumer | **Fully managed, tự scale**, không có shard |
+| Transform | Trong consumer của bạn | Lambda transform + convert sang Parquet/ORC |
+
+> 💡 Mẹo thi:
+> - "Chỉ cần **đưa streaming data vào S3/Redshift/OpenSearch** mà không viết consumer, ít vận hành" → **Firehose**.
+> - "Cần **xử lý real-time tùy biến**, **replay**, hoặc **nhiều consumer** đọc cùng dữ liệu" → **Data Streams**.
+> - Pattern thường gặp: **Data Streams → Firehose → S3** (stream real-time cho nhiều consumer, đồng thời một nhánh Firehose archive xuống S3).
+
+### Amazon MSK vs Kinesis — chọn nền tảng streaming
+
+**Amazon MSK (Managed Streaming for Apache Kafka)** là Kafka được AWS quản lý. Nó tồn tại khi bạn cần **Kafka API và hệ sinh thái Kafka** (Kafka Connect, Kafka Streams, schema registry, các connector có sẵn) hoặc **migrate cluster Kafka on-prem** mà không đổi code.
+
+| Dấu hiệu trong đề | Chọn |
+|---|---|
+| **Đã có / cần Kafka API**, hệ sinh thái Kafka (Connect, Streams), migrate từ Kafka | **Amazon MSK** |
+| Team đã quen Kafka, cần tương thích protocol Kafka | **Amazon MSK** |
+| Muốn **streaming managed thuần AWS, ít vận hành nhất**, tích hợp sẵn AWS | **Kinesis** |
+| Serverless, không muốn quản lý broker/cluster/partition | **Kinesis** (Data Streams / Firehose) |
+
+> 💡 Mẹo thi: Từ khóa **"Kafka" / "Kafka API" / "existing Kafka application"** → **Amazon MSK**. Nếu đề chỉ mô tả nhu cầu streaming chung chung, "managed", "ít ops nhất", "serverless" mà **không nhắc Kafka** → **Kinesis**. (MSK Serverless tồn tại nhưng vẫn là Kafka; điểm mấu chốt phân biệt vẫn là "có ràng buộc Kafka hay không".)
+
 ### SQS vs SNS vs EventBridge vs Kinesis
 
 | Yêu cầu | Chọn |
@@ -279,6 +327,25 @@ API Gateway cung cấp:
 - Để chống quá tải downstream: **API Gateway → SQS → Lambda** (queue làm buffer) thay vì API Gateway gọi thẳng Lambda khi traffic spike và backend chậm.
 
 > ⚠️ Bẫy: API Gateway có timeout tích hợp **29 giây**. Tác vụ chạy lâu → trả về 202 ngay, đẩy job vào **SQS/Step Functions** xử lý bất đồng bộ, đừng giữ kết nối đồng bộ.
+
+### Step Functions — orchestration nhiều bước
+
+Khi một quy trình gồm **nhiều bước tuần tự/rẽ nhánh** (gọi Lambda A → chờ → Lambda B → nếu lỗi thì retry/bù trừ), đừng để các **Lambda tự gọi nhau** (chuỗi khó theo dõi, khó retry, khó xử lý lỗi). **AWS Step Functions** là dịch vụ **orchestration** quản lý state machine: định nghĩa các bước bằng JSON (Amazon States Language), tự lo **retry, catch lỗi, rẽ nhánh (Choice), chạy song song (Parallel/Map), chờ (Wait)** và **theo dõi trạng thái** trực quan.
+
+| | Standard workflow | Express workflow |
+|---|---|---|
+| Thời lượng tối đa | **Tới 1 năm** | **≤ 5 phút** |
+| Mô hình thực thi | Exactly-once, có audit đầy đủ | At-least-once (Async) hoặc Sync |
+| Tần suất | Ít execution, chạy dài | **Rất cao** (hàng triệu/s), ngắn |
+| Giá | Theo **state transition** | Theo **số execution + thời gian/bộ nhớ** |
+| Hợp với | Quy trình nghiệp vụ dài (order fulfillment, ETL, human approval) | Sự kiện high-volume, xử lý ngắn (IoT ingestion, streaming backend) |
+
+> 💡 Mẹo thi:
+> - "Điều phối **nhiều Lambda/step** với retry và xử lý lỗi, cần **visual workflow** / audit" → **Step Functions** (thay chuỗi Lambda gọi nhau).
+> - Workflow **chạy lâu, chờ approval, tới hàng giờ/ngày** → **Standard**.
+> - Workflow **rất ngắn, tần suất cực cao** → **Express**.
+
+> ⚠️ Bẫy: Đừng chọn "Lambda gọi Lambda nhau" hay "chuỗi SQS thủ công" khi đề nhấn mạnh **orchestration / điều phối / theo dõi trạng thái nhiều bước** — đó là dấu hiệu của **Step Functions**.
 
 ## 7. Microservices: ECS / EKS / Fargate
 

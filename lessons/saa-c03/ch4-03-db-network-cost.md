@@ -70,7 +70,7 @@ After:
 ### 2.8 Stop instance khi không dùng
 - Dev/staging RDS có thể stop tới 7 ngày (auto restart).
 - Stopped instance: pay storage + backup, không pay compute.
-- Aurora Serverless v2 auto-pause sau idle (v1 có, v2 cấu hình tương tự).
+- Aurora Serverless v2 **scale-to-0** (auto-pause) khi idle nếu đặt **min capacity = 0 ACU** (GA từ 11/2024); nếu min > 0 (mặc định cũ 0.5 ACU) thì luôn bill tối thiểu mức đó.
 
 ---
 
@@ -110,6 +110,22 @@ After:
 ### 3.7 Stream + DAX
 - DynamoDB Stream miễn phí (read free).
 - DAX có cost cluster — chỉ dùng khi read heavy + hit rate cao.
+
+### 3.8 RDS vs DynamoDB — khi nào rẻ hơn?
+
+Không phải "NoSQL luôn rẻ". Chi phí phụ thuộc **hình dạng traffic** và **access pattern**, không phải loại DB.
+
+| Tiêu chí | RDS / Aurora (relational) | DynamoDB (key-value) |
+|----------|---------------------------|----------------------|
+| Billing model | Trả theo **instance-hour** (chạy 24/7 dù idle) + storage + IOPS | Trả theo **request** (on-demand) hoặc RCU/WCU provisioned + storage |
+| Traffic steady, util cao | **Rẻ hơn** — RI/Reserved kéo giá xuống, amortize instance tốt | Provisioned + Reserved Capacity cũng ổn nhưng ít linh hoạt |
+| Traffic spiky / intermittent / scale-to-0 | Đắt — instance idle vẫn bill (trừ Aurora Serverless v2 min=0 ACU) | **Rẻ hơn** — on-demand không có idle cost, trả đúng lượng request |
+| Query pattern | Cần **join, transaction đa bảng, ad-hoc SQL, aggregate** | Chỉ **key/PK-SK lookup** đơn giản, biết trước access pattern |
+| Scale write cực lớn | Giới hạn bởi instance size (scale-up) | Scale-out gần như vô hạn, phẳng chi phí theo request |
+
+> 💡 **Quy tắc chọn theo chi phí**: workload **relational + steady + util cao** → RDS/Aurora + RI thường rẻ nhất. Workload **key-value + spiky/khó đoán + có lúc idle** → DynamoDB on-demand thắng vì không trả tiền cho instance nằm không.
+
+> 🪤 Bẫy thi: đề mô tả app **traffic đều 24/7, cần join phức tạp** nhưng đáp án gài "chuyển sang DynamoDB để tiết kiệm" → **Sai**. Ngược lại, app **traffic burst vài giờ/ngày, còn lại gần 0** mà giữ RDS instance chạy suốt → lãng phí, DynamoDB on-demand mới rẻ.
 
 ---
 
@@ -255,6 +271,46 @@ After:
 - **Reserved Capacity Pricing** (commit > 10 TB/tháng): discount lớn.
 - Origin Shield extra cost nhưng giảm origin egress 50-80%.
 
+### 6.5 NAT Gateway vs NAT Instance — chọn cái nào về chi phí
+
+Cả hai đều cho private subnet ra Internet, nhưng **mô hình chi phí khác nhau hoàn toàn**.
+
+| Tiêu chí | NAT Gateway (managed) | NAT Instance (tự quản EC2) |
+|----------|------------------------|-----------------------------|
+| Cost model | **$0.045/giờ** + **$0.045/GB processing** (US) | Chỉ **EC2 instance-hour** + data transfer chuẩn — **không có phí processing/GB** |
+| HA | HA trong 1 AZ; muốn chịu lỗi AZ phải deploy **1 NAT GW / AZ** | Single point of failure — tự làm failover (script + 2 instance, route table swap) |
+| Bandwidth | Auto scale tới **~100 Gbps**, không phải lo | Giới hạn bởi **instance type** (network của EC2), phải right-size thủ công |
+| Quản lý | AWS lo hết (patch, scale) | Tự patch OS, quản security group, source/dest check off, monitor |
+
+> 💡 **Khi nào rẻ hơn**: traffic **rất thấp / dev-test** hoặc muốn instance kiêm **bastion** → NAT Instance (t4g.nano/micro) rẻ hơn vì không có phí $0.045/GB. Traffic **vừa–cao hoặc cần HA + zero-ops** → NAT Gateway thắng: phí/GB đáng, nhưng bù lại HA và không tốn công vận hành. Điểm hòa vốn nghiêng về NAT GW rất nhanh khi throughput tăng.
+
+> 🪤 Bẫy thi: đề đòi **giảm chi phí NAT cho traffic ra S3/DynamoDB** → đáp án đúng thường **không phải** "đổi sang NAT Instance" mà là **VPC Gateway endpoint** (free, bỏ NAT hoàn toàn cho AWS service đó).
+
+### 6.6 Hybrid connectivity cost — Internet vs VPN vs Direct Connect
+
+Nối on-prem với VPC có 3 đường, khác nhau ở **chi phí cố định**, **$/GB egress**, và **độ ổn định**.
+
+| Tiêu chí | Public Internet | Site-to-Site VPN | Direct Connect (DX) |
+|----------|-----------------|------------------|----------------------|
+| Chi phí cố định | Không | **~$0.05/giờ** mỗi VPN connection (~$36/tháng) | **Port fee** theo giờ (1 Gbps và 10 Gbps...) + cross-connect/partner fee |
+| $/GB egress (US) | **$0.09/GB** (giá Internet chuẩn) | **$0.09/GB** (vẫn đi qua Internet egress) | **~$0.02/GB** (DX data transfer out, rẻ hơn nhiều) |
+| Độ ổn định / latency | Kém, biến thiên, không SLA băng thông | Trung bình; qua Internet nên latency biến thiên; ~1.25 Gbps/tunnel | **Cao nhất** — dedicated, latency ổn định, có SLA |
+| Bảo mật | Không mã hoá (tự lo TLS) | **IPsec mã hoá** sẵn | Riêng tư (không public); muốn mã hoá thêm VPN over DX |
+
+> 💡 **Break-even theo volume**: VPN thắng khi **volume thấp/vừa** (phí cố định gần như bằng 0, chấp nhận $0.09/GB). Direct Connect có phí port cố định cao nhưng **$/GB egress rẻ hơn ~4-5 lần** → khi **egress lớn và ổn định (nhiều TB/tháng)**, phần tiết kiệm $/GB vượt phí port → DX rẻ hơn tổng thể, đồng thời cho latency ổn định. Pattern thi phổ biến: **DX cho backbone + VPN làm backup** (failover rẻ khi DX chết).
+
+### 6.7 Transit Gateway vs VPC Peering — cost khi nối nhiều VPC
+
+| Tiêu chí | VPC Peering | Transit Gateway (TGW) |
+|----------|-------------|------------------------|
+| Phí | **Không phí processing** cho bản thân peering; chỉ trả data transfer cross-AZ/cross-region chuẩn | **$0.05/giờ mỗi attachment** + **$0.02/GB data processing** qua TGW |
+| Topology | **Non-transitive** — phải full mesh: N VPC cần **N·(N-1)/2** kết nối | **Hub-and-spoke, transitive** — mỗi VPC 1 attachment, TGW route giữa tất cả |
+| Độ phức tạp | Rẻ nhưng **bùng nổ số kết nối** và route table khi nhiều VPC | Đơn giản khi scale, quản lý tập trung, hỗ trợ cross-region peering |
+
+> 💡 **Khi nào chọn**: **ít VPC (2-3), cost-sensitive, quan hệ tĩnh** → VPC Peering rẻ hơn (không mất $0.02/GB). **Nhiều VPC / cần transitive / hub trung tâm / nối cả VPN+DX** → Transit Gateway: chấp nhận phí attachment + $0.02/GB để đổi lấy topology gọn, tránh mesh chằng chịt.
+
+> 🪤 Bẫy thi: "TGW luôn rẻ hơn peering" → **Sai**. TGW có phí per-GB processing mà peering không có; peering rẻ hơn cho ít VPC. Ngược lại, "peering scale tốt cho hàng chục VPC" cũng **Sai** vì non-transitive gây mesh bùng nổ.
+
 ---
 
 ## 7. CloudWatch & monitoring cost
@@ -327,7 +383,7 @@ After:
 5. **"CloudFront tăng cost so với serve direct"** → **Sai** thường, vì giảm origin egress nhiều hơn cost CF.
 6. **"NAT Gateway free intra-VPC"** → **Sai**, mọi data qua NAT charge $0.045/GB.
 7. **"CloudWatch Logs free trong AWS"** → **Sai**, ingest + storage charge.
-8. **"Aurora Serverless v2 free khi idle"** → **Sai**, min 0.5 ACU pay luôn (v2 không pause như v1).
+8. **"Aurora Serverless v2 luôn tốn tối thiểu 0.5 ACU"** → **Lỗi thời**: từ 11/2024 v2 hỗ trợ **scale-to-0 ACU** (auto-pause) nếu cấu hình min capacity = 0; nhưng nếu để min ≥ 0.5 ACU (mặc định cũ) thì vẫn bill mức đó — đọc kỹ min capacity.
 
 ---
 

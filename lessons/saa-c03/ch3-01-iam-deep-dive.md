@@ -86,14 +86,17 @@ Khi 1 request đến (vd `s3:GetObject`), AWS đánh giá theo trình tự:
 
 ```
 0. Default DENY (deny mặc định nếu không có allow)
-1. Có SCP? Nếu SCP deny → DENY (kể cả admin)
-2. Resource-based policy có allow explicit cho principal? → ALLOW (skip identity check)
-3. Identity-based policy có allow? Không → DENY
-4. Có explicit DENY ở bất kỳ policy? → DENY (luôn thắng)
+1. Có explicit DENY ở BẤT KỲ policy (SCP / identity / resource / boundary / session)?
+   → DENY ngay (luôn thắng, kể cả admin). Bước này chặn trước mọi kết luận ALLOW.
+2. Có SCP? SCP phải allow action (implicit deny nếu ngoài phạm vi SCP) → nếu không: DENY
+3. Resource-based policy có allow explicit cho principal? → ALLOW (skip identity check)
+4. Identity-based policy có allow? Không → DENY
 5. Có Permission Boundary? Boundary có allow? Không → DENY
 6. Có session policy? Session policy có allow? Không → DENY
 7. → ALLOW
 ```
+
+> 🪤 Bẫy thi: đề hay sắp bước "explicit DENY" xuống cuối để bạn tưởng deny được xét sau khi đã ALLOW. Thực tế **explicit DENY được đánh giá và thắng trước** — không tầng allow nào cứu được.
 
 ### Quy tắc vàng (nhớ thuộc lòng)
 
@@ -220,9 +223,28 @@ User A có `AdministratorAccess`. Bucket policy có:
 
 ### 5.3 Cognito (user-facing app)
 
-- **User Pool**: directory cho app users (mobile/web).
-- **Identity Pool**: vend AWS credential cho authenticated/unauthenticated user.
-- Use case: mobile app upload S3 trực tiếp, không qua backend.
+Cognito có **2 thành phần tách biệt** — đây là điểm SAA hay đánh tráo. Nhớ: **User Pool = "bạn là ai" (authentication), Identity Pool = "bạn được cầm AWS credential gì" (authorization/credential vending)**.
+
+| | **User Pool** | **Identity Pool** (Federated Identities) |
+|--|---------------|------------------------------------------|
+| Trả lời câu hỏi | **Authentication** — "bạn là ai?" | **Authorization / credential vending** — "cho bạn quyền AWS nào?" |
+| Chức năng | Directory cho app users: sign-up / sign-in, MFA, verify email/phone, hosted UI | Đổi token (đã xác thực) lấy **AWS credential tạm** để gọi AWS service trực tiếp |
+| Nguồn identity | Bản thân là IdP; hoặc federate social (Google, Apple, Facebook) / SAML / OIDC | Nhận token từ User Pool **hoặc** IdP ngoài (Google, SAML, OIDC…) |
+| Kết quả trả về | **JWT** (ID token + Access token + Refresh token) | **AWS credential tạm** (Access Key + Secret + Session Token) qua **STS** |
+| Gọi được gì | Chỉ chứng minh danh tính; muốn gọi AWS phải qua Identity Pool | Gọi thẳng S3 / DynamoDB / các AWS API theo IAM role |
+
+**Luồng token → AWS credential (mobile/web app):**
+
+1. User đăng nhập vào **User Pool** (hoặc IdP ngoài) → nhận **JWT (ID token)**.
+2. App gửi JWT cho **Identity Pool** (`GetId` + `GetCredentialsForIdentity`).
+3. Identity Pool đổi token, gọi **STS AssumeRoleWithWebIdentity** → trả **AWS credential tạm** gắn với một **authenticated role**.
+4. App dùng credential đó gọi thẳng **S3 / DynamoDB** — không qua backend server.
+
+**Use case kinh điển: mobile app upload thẳng S3 = Identity Pool.** Người dùng sign-in (User Pool) → Identity Pool vend credential map vào IAM role chỉ cho `s3:PutObject` vào prefix riêng của user (dùng biến policy `${cognito-identity.amazonaws.com:sub}` để mỗi user chỉ ghi vào folder của mình). App upload trực tiếp, không cần EC2/Lambda làm proxy.
+
+- **Unauthenticated identity**: Identity Pool có thể cấp credential cho **khách chưa đăng nhập** (guest), map vào một *unauthenticated role* quyền tối thiểu — vd cho phép đọc catalog công khai, ghi analytics trước khi user tạo tài khoản. Tắt được nếu không cần.
+
+> 🪤 Bẫy thi: "app cần gọi AWS service trực tiếp / upload S3 từ mobile" → đáp án có **Identity Pool** (vending credential qua STS). Nếu chỉ hỏi "quản lý sign-up/sign-in, MFA, social login" → đó là **User Pool**. Nhìn thấy "AWS credential tạm cho client" = Identity Pool, không phải User Pool.
 
 ### 5.4 IAM Roles Anywhere
 
@@ -234,6 +256,31 @@ User A có `AdministratorAccess`. Bucket policy có:
 - **IRSA (IAM Roles for Service Accounts)**: K8s service account map sang IAM role qua OIDC.
 - **EKS Pod Identity** (2023+): đơn giản hơn IRSA, không cần OIDC setup.
 - Pod nhận credential tự động qua SDK.
+
+### 5.6 AWS Directory Service — khi cần Active Directory
+
+Directory Service là họ dịch vụ **Active Directory managed** (khác hẳn IAM). Dùng khi có app **AD-aware** (join domain, LDAP, Kerberos) hoặc muốn dùng AD làm nguồn danh tính. SAA hỏi chủ yếu để phân biệt 3 loại:
+
+| | **Managed Microsoft AD** | **AD Connector** | **Simple AD** |
+|--|--------------------------|------------------|---------------|
+| Bản chất | AD **thật** do AWS quản lý (Windows Server AD) | **Proxy** chuyển tiếp auth về on-prem AD hiện có | **Samba 4** standalone, tương thích AD ở mức cơ bản |
+| Lưu dữ liệu directory | Có (directory riêng trên AWS) | **Không** — chỉ redirect, không cache/lưu user | Có (nhỏ, độc lập) |
+| Trust với on-prem AD | **Two-way / one-way forest trust** | Không tạo trust — *dùng chính* on-prem AD | **Không** trust được on-prem |
+| App AD-aware hỗ trợ | Đầy đủ: RDS SQL Server, WorkSpaces, FSx for Windows, EC2 domain join, .NET app | Chủ yếu để join AWS app (WorkSpaces, WorkDocs) vào AD on-prem | Cơ bản: EC2 Linux/Windows join, LDAP app nhỏ |
+| Quy mô / chi phí | Lớn, HA multi-AZ, giá cao nhất | Rẻ (chỉ proxy) nhưng cần kết nối tới on-prem | Rẻ nhất, cho môi trường nhỏ (&lt; 5.000 user) |
+
+**Khi nào dùng cái nào:**
+
+- Cần AD **riêng trên cloud**, có app Microsoft (RDS SQL Server, FSx Windows, WorkSpaces), muốn **trust 2 chiều** với on-prem → **Managed Microsoft AD**.
+- **Đã có** AD on-prem, chỉ muốn AWS app xác thực qua nó mà **không copy user lên cloud** → **AD Connector**.
+- Chỉ cần một directory **nhỏ, rẻ**, không cần liên kết on-prem, không cần tính năng Microsoft AD nâng cao → **Simple AD**.
+
+**Tie-in với IAM Identity Center & domain join:**
+
+- **IAM Identity Center** có thể dùng **Managed Microsoft AD (hoặc AD Connector)** làm **identity source** → nhân viên đăng nhập bằng tài khoản AD công ty để vào các AWS account/role. (Ngược lại với Cognito ở §5.3 vốn dành cho *end-user của app*, không phải nhân viên.)
+- **EC2 domain join**: instance Windows join vào Managed Microsoft AD để login bằng tài khoản domain, chạy Group Policy — thường tự động hoá qua Seamless Domain Join / SSM.
+
+> 💡 Directory Service ≠ IAM. IAM quản principal gọi AWS API; Directory Service cung cấp **Active Directory** cho workload và app cần Windows/LDAP/Kerberos, đồng thời có thể làm nguồn danh tính cho IAM Identity Center.
 
 ---
 
@@ -383,6 +430,8 @@ Thay vì 1000 role cho 1000 team, dùng **tag-based**:
 ```
 
 → 1 policy phục vụ N team. Tag-based scale tốt cho enterprise.
+
+**ABAC vs RBAC — chọn cái nào?** **RBAC** = gán role/permission set truyền thống, mỗi vai trò một policy — trực quan khi số nhóm cố định và nhỏ, nhưng số policy phình theo số team (thêm team = thêm role). **ABAC** = tag-based (`aws:PrincipalTag` khớp `aws:ResourceTag`), **1 policy dùng chung**, thêm team chỉ cần gắn tag đúng — chọn khi số team/dự án tăng nhanh, cần scale mà không đẻ thêm policy.
 
 ---
 

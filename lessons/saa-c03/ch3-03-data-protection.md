@@ -24,6 +24,22 @@ Dev push code lên public GitHub repo. Hardcoded DB password trong `config.py`. 
 
 **Quy tắc**: bật cả 2. At rest mặc định ở 95% service AWS. In transit cần config TLS đúng.
 
+### 2.1 In-transit: VPN vs Direct Connect — bẫy kinh điển
+
+Nhiều người tưởng "kết nối riêng tư từ on-prem về AWS thì auto được mã hoá". **Sai** với Direct Connect.
+
+| Kết nối | Mã hoá in-transit mặc định? | Bản chất |
+|---------|------------------------------|----------|
+| **Site-to-Site VPN** | ✅ Có — **IPsec** sẵn | Đi qua Internet public nhưng tunnel đã encrypt |
+| **Direct Connect (DX)** | ❌ **Không** | Đường riêng (private) nhưng traffic là **plaintext** trên layer 2/3 |
+
+- DX cho bạn băng thông ổn định, latency thấp, private — **nhưng không đồng nghĩa với encrypted**. "Private" ≠ "encrypted".
+- Muốn encrypt in-transit trên DX, có 2 cách:
+  1. **VPN over DX** (IPsec chạy đè lên DX) — dùng public VIF, chồng Site-to-Site VPN lên đường DX. Đơn giản, phổ biến.
+  2. **MACsec** (IEEE 802.1AE) — mã hoá layer 2, chỉ hỗ trợ trên DX **dedicated connection** ở các location đủ điều kiện, chỉ với port **10 Gbps hoặc 100 Gbps** (không có ở 1 Gbps). Hiệu năng cao, độ trễ thấp hơn IPsec.
+
+> 🪤 Bẫy thi: đề yêu cầu "kết nối on-prem về AWS **phải mã hoá in-transit**" nhưng đáp án lại chọn Direct Connect trần → **Sai**. Phải là **VPN**, hoặc **VPN over Direct Connect**, hoặc **Direct Connect + MACsec**. Nếu đề nhấn "consistent low latency **và** encrypted" → DX + MACsec (hoặc VPN over DX).
+
 ---
 
 ## 3. KMS (Key Management Service)
@@ -31,7 +47,7 @@ Dev push code lên public GitHub repo. Hardcoded DB password trong `config.py`. 
 ### 3.1 Khái niệm core
 
 - KMS lưu **CMK (Customer Master Key)** — giờ gọi là **KMS key**.
-- Key **không bao giờ rời KMS** (FIPS 140-2 Level 2 HSM, Level 3 với CloudHSM).
+- Key **không bao giờ rời KMS** ở dạng plaintext (HSM đã được validate **FIPS 140-2 Level 3** từ 2023; CloudHSM cũng Level 3 nhưng **single-tenant**).
 - Bạn dùng key qua API: `Encrypt`, `Decrypt`, `GenerateDataKey`, `ReEncrypt`.
 
 ### 3.2 Loại key
@@ -150,10 +166,10 @@ Vấn đề: KMS giới hạn ~4KB cho `Encrypt` API. Encrypt 1GB không khả t
 
 | Yêu cầu | KMS | CloudHSM |
 |---------|-----|----------|
-| FIPS 140-2 Level 2 | ✅ | ✅ |
-| FIPS 140-2 Level 3 | ❌ | ✅ |
-| Single-tenant HSM | ❌ | ✅ |
-| Bạn quản lý key material 100% (AWS không thấy) | ⚠️ (BYOK option) | ✅ |
+| FIPS 140-2 Level 3 (HSM validated) | ✅ (từ 2023) | ✅ |
+| **Single-tenant** HSM (dành riêng cho bạn) | ❌ (multi-tenant) | ✅ |
+| Bạn quản lý key material 100% (AWS không thấy) | ⚠️ (BYOK/External Key Store) | ✅ |
+| Tự quản cluster HSM (patch, HA, backup) | ❌ (AWS lo) | ✅ (bạn lo) |
 | Compliance đặc thù (PCI-DSS, common criteria) | ❓ | ✅ |
 | PKCS#11 / JCE / OpenSSL standard API | ❌ | ✅ |
 
@@ -191,6 +207,29 @@ Vấn đề: KMS giới hạn ~4KB cho `Encrypt` API. Encrypt 1GB không khả t
   "Condition": { "StringNotEquals": { "s3:x-amz-server-side-encryption": "aws:kms" } }
 }
 ```
+
+#### 5.1.1 S3 Block Public Access (BPA) và Access Points
+
+Encryption bảo vệ data at rest, nhưng data leak lớn nhất của S3 lịch sử là **bucket public vô tình**. **Block Public Access** là lớp chặn cứng, đứng **trên** mọi ACL và bucket policy.
+
+**4 setting BPA** (2 nhóm — ACL và Policy):
+
+| Setting | Chặn gì |
+|---------|---------|
+| **BlockPublicAcls** | Từ chối *request tạo/đặt* ACL public (chặn ngay lúc PUT) |
+| **IgnorePublicAcls** | *Bỏ qua* mọi ACL public đang tồn tại (coi như không có) |
+| **BlockPublicPolicy** | Từ chối *đặt* bucket policy cấp quyền public |
+| **RestrictPublicBuckets** | Nếu policy đã public, *hạn chế* chỉ AWS service principal và authorized user trong **chính account chủ bucket** được access (chặn cross-account) |
+
+- **Mặc định BẬT cả 4 từ tháng 4/2023** cho mọi bucket mới (kèm ACL disabled). Muốn public thật sự phải chủ động tắt.
+- Có **account-level override**: bật BPA ở cấp account thì áp cho **toàn bộ bucket**, kể cả bucket bật public riêng — account-level thắng.
+- Quan hệ với **Object Ownership 'Bucket owner enforced'**: setting này **disable ACL hoàn toàn** — mọi object thuộc bucket owner, ACL bị vô hiệu, quyền chỉ còn qua IAM/bucket policy. Đây là default khuyến nghị của AWS; khi ACL đã tắt thì 2 setting ACL của BPA gần như không còn tác dụng gì để lo.
+
+> 🪤 Bẫy thi: bucket policy `Allow` `s3:GetObject` cho `Principal: "*"` (public) nhưng **BlockPublicPolicy / RestrictPublicBuckets vẫn bật** → object **vẫn không public**. BPA đứng trên bucket policy; policy allow public không thắng được BPA.
+
+**Khi nào dùng S3 Access Points** (thay vì mở bucket rộng): khi một bucket lớn được **nhiều ứng dụng/team share** và bạn muốn **least-privilege per-consumer**. Mỗi Access Point có hostname riêng + **access point policy** riêng, gắn network origin (VPC-only hoặc Internet). Thay vì nhồi một bucket policy khổng lồ khó audit, mỗi team dùng access point của mình với quyền hẹp. BPA cũng cấu hình được **per access point**.
+
+> 💡 Chia sẻ an toàn theo thứ tự ưu tiên: Object Ownership *Bucket owner enforced* (tắt ACL) → BPA bật → cấp quyền hẹp qua **Access Point** thay vì bucket policy rộng.
 
 ### 5.2 EBS
 

@@ -311,6 +311,30 @@ Switching: 1 lần per 24h.
 
 > 🪤 Bẫy thi: "Read DynamoDB strongly consistent < 1ms" → **DAX không giúp**. DAX chỉ accelerate eventual.
 
+### 7.1 DAX vs ElastiCache — chọn cái nào (câu exam kinh điển)
+
+Cả hai đều là in-memory cache, nhưng phục vụ mục đích khác nhau. Đề SAA rất hay hỏi "cache cho DynamoDB read-heavy, ít đổi code nhất" (→ DAX) vs "cache đa nguồn/RDS, cần cấu trúc dữ liệu phong phú" (→ ElastiCache).
+
+| Tiêu chí | **DAX** | **ElastiCache (Redis/Memcached)** |
+|----------|---------|-----------------------------------|
+| Chuyên cho | **Chỉ DynamoDB** | **Đa mục đích** — RDS/Aurora, DynamoDB, kết quả tính toán, session, bất kỳ nguồn nào |
+| Latency | **Microsecond** (µs) read | **Sub-millisecond** (ms) |
+| Cache pattern | **Write-through tích hợp sẵn** — app không tự quản lý cache | **Cache-aside**: app phải tự code đọc/ghi/invalidate |
+| Thay đổi code | **Rất ít** — API tương thích DynamoDB, chỉ đổi endpoint/client sang DAX SDK | **Nhiều** — viết logic cache-aside, key design, serialize |
+| Cấu trúc dữ liệu | Chỉ item/query result của DynamoDB | Redis: string, list, hash, set, sorted set, stream, geo, pub/sub |
+| Consistency | **Eventually consistent reads only** (strong → bypass DAX) | Tùy chiến lược app tự định nghĩa |
+| Invalidation | Tự động (write-through) + TTL | App tự invalidate hoặc dựa TTL |
+| Trường hợp điển hình | DynamoDB read-heavy, hot key, cần µs, ngại đổi code | Leaderboard, session store, cache RDS, rate limiter, queue, cache đa nguồn |
+
+**Quyết định nhanh**:
+- Nguồn dữ liệu là **DynamoDB** + read-heavy + muốn **thay đổi code tối thiểu** → **DAX**.
+- Cache cho **RDS/Aurora** hoặc **nhiều nguồn**, cần **cấu trúc dữ liệu phong phú** (sorted set, pub/sub...) hoặc pattern cache tùy biến → **ElastiCache Redis**.
+- Cần cache DynamoDB **nhưng** muốn dùng chung một lớp cache với dữ liệu khác, hoặc cần strongly consistent qua cache → ElastiCache cache-aside (tự quản lý).
+
+> 🪤 Bẫy thi: "Cache cho **RDS/Aurora**" mà đáp án có DAX → **loại ngay**. DAX chỉ cache DynamoDB. Ngược lại "cache DynamoDB, ít sửa code nhất" mà chọn ElastiCache thì thua DAX vì phải tự code cache-aside.
+
+> 💡 Không loại trừ nhau: một hệ thống có thể dùng **DAX** cho lớp DynamoDB và **ElastiCache Redis** cho session/leaderboard cùng lúc.
+
 ---
 
 ## 8. CloudFront — cache ở edge
