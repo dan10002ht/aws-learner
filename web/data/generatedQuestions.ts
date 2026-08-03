@@ -17845,5 +17845,275 @@ export const generatedQuestions: Question[] = [
     "explanation": "Tải dao động mạnh và về gần 0 ban đêm cần database tự co giãn; service ARM hợp Graviton.\n✓ Aurora Serverless v2 tự động co giãn capacity theo tải (kể cả xuống thấp ban đêm), Graviton Fargate rẻ hơn cho workload ARM đã rebuild.\n✗ RDS instance lớn provisioned trả tiền cho peak suốt 24/7 dù ban đêm gần như rảnh, lãng phí; x86 đắt hơn Graviton.\n✗ Aurora provisioned reader luôn bật vẫn tốn chi phí cố định; Fargate Spot cho task production quan trọng gây rủi ro bị gián đoạn.\n✗ RDS Multi-AZ cố định không giải quyết tải dao động về compute database; EC2 launch type thêm gánh nặng quản lý cluster và x86 đắt hơn.",
     "domain": 4,
     "id": "saa-ext-005"
+  },
+  {
+    "id": "saa-ext-006",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-05-migration-transfer",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Một công ty cần đồng bộ mỗi đêm 2 TB file mới từ NAS on-prem (giao thức NFS) sang EFS để phân tích, đường truyền Internet dư băng thông. Dịch vụ nào phù hợp nhất?",
+    "options": [
+      "AWS DataSync với lịch chạy incremental",
+      "AWS Snowball Edge Storage Optimized",
+      "AWS Storage Gateway — Volume Gateway",
+      "AWS DMS với CDC"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Đồng bộ file NFS qua mạng theo lịch, băng thông đủ → đây đúng là bài toán online scheduled của DataSync.\n✓ DataSync incremental: chuyên chuyển file NFS/SMB sang EFS/FSx/S3, chạy theo lịch, băng thông đủ nên đi online.\n✗ Snowball Edge Storage Optimized: offline gửi thiết bị, chỉ hợp khi dữ liệu quá lớn hoặc mạng yếu, không hợp job đồng bộ mỗi đêm.\n✗ Volume Gateway: là hybrid cho app truy cập block iSCSI liên tục, không phải công cụ đồng bộ file.\n✗ DMS với CDC: dành cho database, không hiểu file/object.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-007",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-05-migration-transfer",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cần đưa 500 TB dữ liệu trên NAS lên S3, đường truyền chỉ 500 Mbps, hạn hoàn thành trong vòng vài ngày. Cách nào đáp ứng được thời hạn?",
+    "options": [
+      "Gửi AWS Snowball Edge, copy dữ liệu vào thiết bị rồi ship trả cho AWS",
+      "Dùng DataSync để tối ưu băng thông và chuyển online",
+      "Chạy aws s3 cp song song nhiều luồng",
+      "Dựng Storage Gateway File Gateway rồi copy dần"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "500 TB qua 500 Mbps mất khoảng 92 ngày nếu online, nên phải chuyển offline bằng thiết bị vật lý mới kịp vài ngày.\n✓ Snowball Edge offline: ship thiết bị chỉ mất vài ngày, đây chính là kịch bản dữ liệu lớn + băng thông thấp + hạn gấp.\n✗ DataSync online: dù tối ưu vẫn phụ thuộc 500 Mbps, mất hàng tuần đến hàng tháng, không kịp.\n✗ aws s3 cp song song: vẫn bị chặn bởi băng thông vật lý 500 Mbps, không thể rút xuống vài ngày.\n✗ File Gateway copy dần: cũng đi qua mạng, không giải quyết được nút thắt băng thông.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-008",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-05-migration-transfer",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Một nhà máy ở vùng sâu, mạng vệ tinh chập chờn, cần vừa thu thập vừa lọc/nén dữ liệu cảm biến ngay tại chỗ rồi định kỳ gửi về AWS. Lựa chọn nào đúng nhất?",
+    "options": [
+      "Snowball Edge Compute Optimized",
+      "Snowball Edge Storage Optimized",
+      "DataSync chạy trên agent tại nhà máy",
+      "Storage Gateway — Tape Gateway"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Yêu cầu có hai phần: xử lý (compute) tại edge và transfer offline vì mạng yếu.\n✓ Snowball Edge Compute Optimized: có GPU/compute để chạy xử lý tại edge trước khi gửi, đồng thời chuyển offline phù hợp mạng yếu.\n✗ Snowball Edge Storage Optimized: chỉ để chứa và chuyển data, không chạy được compute tại chỗ.\n✗ DataSync trên agent: là công cụ online, mạng vệ tinh chập chờn không đảm bảo, và cũng không xử lý dữ liệu.\n✗ Tape Gateway: dùng thay thư viện băng từ backup, không liên quan thu thập/xử lý cảm biến tại edge.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-009",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-05-migration-transfer",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cần di chuyển Oracle 11g on-prem sang Aurora PostgreSQL với downtime tối thiểu. Kiến trúc migration nào đúng?",
+    "options": [
+      "Dùng SCT để chuyển schema/stored-procedure, rồi DMS chuyển dữ liệu với CDC",
+      "Chỉ dùng DMS chạy trực tiếp, không cần công cụ khác",
+      "Dùng DataSync để copy file dữ liệu của Oracle sang Aurora",
+      "Dùng Application Migration Service (MGN) để rehost database"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Oracle sang Aurora PostgreSQL là đổi engine (heterogeneous), cần chuyển schema trước rồi mới chuyển data.\n✓ SCT + DMS với CDC: SCT chuyển schema/stored-procedure khác engine, DMS chuyển dữ liệu và CDC giữ downtime tối thiểu.\n✗ Chỉ DMS trực tiếp: đúng cho homogeneous (cùng engine); đổi engine thì schema không tự chuyển được.\n✗ DataSync: chỉ hiểu file/object, không hiểu schema database, không dùng để migrate DB.\n✗ MGN: dùng rehost VM/server lên EC2, không phải migration database đổi engine.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-010",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-05-migration-transfer",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "App kế toán on-prem ghi file qua SMB, muốn backend là S3 để tận dụng lifecycle và versioning, nhưng không đổi ứng dụng và app vẫn dùng SMB liên tục. Dịch vụ nào?",
+    "options": [
+      "Storage Gateway — File Gateway",
+      "DataSync một lần rồi chuyển hẳn lên S3",
+      "Transfer Family với endpoint SFTP",
+      "Snowball Edge Storage Optimized"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "App vẫn dùng SMB liên tục và cần backend S3 — đây là truy cập hybrid liên tục, không phải chuyển một lần.\n✓ File Gateway: cho app truy cập qua NFS/SMB nhưng lưu thành object trên S3, tận dụng lifecycle/Glacier, app không đổi.\n✗ DataSync một lần: chỉ chuyển rồi thôi, không cung cấp lối truy cập SMB liên tục cho app.\n✗ Transfer Family SFTP: cho đối tác dùng SFTP/FTPS, không phải mount SMB cho app on-prem đang chạy.\n✗ Snowball Edge: offline chuyển khối lượng lớn, không phục vụ truy cập liên tục.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-011",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-05-migration-transfer",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "easy",
+    "type": "single",
+    "question": "Nhiều đối tác đang dùng SFTP để upload file và không muốn đổi quy trình, nhưng dữ liệu cần đáp thẳng vào S3 mà không phải tự nuôi server FTP. Dịch vụ nào?",
+    "options": [
+      "AWS Transfer Family",
+      "AWS Storage Gateway — File Gateway",
+      "AWS DataSync",
+      "AWS Snowcone"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Giữ nguyên giao thức SFTP của đối tác nhưng lưu vào S3 mà không tự quản server là đặc trưng của Transfer Family.\n✓ Transfer Family: cổng SFTP/FTPS/FTP/AS2 quản lý, dữ liệu đáp thẳng vào S3 hoặc EFS.\n✗ File Gateway: dùng NFS/SMB cho app on-prem, không phải cổng SFTP cho đối tác bên ngoài.\n✗ DataSync: công cụ đồng bộ file do bạn điều khiển, không cung cấp endpoint SFTP cho đối tác.\n✗ Snowcone: thiết bị offline nhỏ, không liên quan cổng SFTP.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-012",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-05-migration-transfer",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Một trung tâm dữ liệu muốn loại bỏ tủ băng từ (tape library) vật lý nhưng vẫn giữ nguyên phần mềm backup cũ vốn chỉ biết 'ghi ra tape'. Giải pháp AWS nào phù hợp?",
+    "options": [
+      "Storage Gateway — Tape Gateway (VTL)",
+      "Storage Gateway — Volume Gateway Stored",
+      "AWS Backup ghi trực tiếp lên S3 Glacier",
+      "DataSync đẩy bản backup lên Glacier theo lịch"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Phần mềm backup cũ chỉ hiểu tape, nên cần một 'tape ảo' để không phải thay đổi phần mềm.\n✓ Tape Gateway (VTL): giả lập thư viện băng từ qua iSCSI VTL, phần mềm cũ vẫn ghi tape nhưng thật ra lưu lên S3/Glacier.\n✗ Volume Gateway Stored: cung cấp block volume iSCSI, không giả lập tape nên phần mềm backup không dùng như tape được.\n✗ AWS Backup lên Glacier: đòi thay đổi cách phần mềm backup hoạt động, không giữ được giao diện tape.\n✗ DataSync lên Glacier: đồng bộ file, không cung cấp giao diện tape cho phần mềm cũ.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-013",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-05-migration-transfer",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Chọn TẤT CẢ phát biểu ĐÚNG khi phân biệt DataSync và Storage Gateway.",
+    "options": [
+      "DataSync chuyển dữ liệu một chiều rồi thôi (migration/replication), còn Storage Gateway phục vụ truy cập lai liên tục cho app on-prem",
+      "Tình huống 'one-time hoặc scheduled transfer' nghiêng về DataSync",
+      "Tình huống 'app on-prem vẫn dùng đều kho lưu trữ' nghiêng về Storage Gateway",
+      "Storage Gateway chỉ chạy được với database, không hỗ trợ file",
+      "DataSync không thể chạy theo lịch, chỉ chuyển đúng một lần"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "DataSync là chuyển rồi thôi (có thể theo lịch), còn Storage Gateway là lối truy cập hybrid liên tục cho app on-prem.\n✓ 'DataSync một chiều rồi thôi, Storage Gateway truy cập lai liên tục': đúng bản chất khác biệt của hai dịch vụ.\n✓ 'one-time/scheduled → DataSync': đúng, DataSync hợp migration và replication theo lịch.\n✓ 'app on-prem dùng đều → Storage Gateway': đúng, đây là kịch bản hybrid truy cập liên tục.\n✗ 'Storage Gateway chỉ chạy với database': sai, Storage Gateway phục vụ file (File), block (Volume) và tape (Tape), không phải database.\n✗ 'DataSync không thể chạy theo lịch': sai, DataSync chạy được một lần hoặc theo lịch incremental.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-014",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-05-migration-transfer",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cần migrate một database MySQL on-prem sang Aurora MySQL với downtime tối thiểu, giữ đồng bộ thay đổi trong khi copy. Cách làm đúng?",
+    "options": [
+      "Dùng DMS trực tiếp (homogeneous) với CDC, không cần SCT",
+      "Dùng DMS kèm SCT vì bắt buộc chuyển schema",
+      "Dùng DataSync để copy file dữ liệu MySQL",
+      "Dùng Storage Gateway Volume Gateway Cached"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "MySQL sang Aurora MySQL là cùng engine (homogeneous) nên không cần chuyển schema.\n✓ DMS trực tiếp với CDC: homogeneous chạy thẳng, CDC bắt thay đổi để downtime tối thiểu, không cần SCT.\n✗ DMS kèm SCT: SCT chỉ cần khi đổi engine (heterogeneous); cùng engine không cần.\n✗ DataSync: chỉ hiểu file/object, không migrate được database.\n✗ Volume Gateway Cached: là hybrid block storage, không phải công cụ migration database.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-015",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-05-migration-transfer",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "multi",
+    "question": "Với yêu cầu 'backup block storage on-prem lên cloud nhưng giữ dữ liệu chính/nóng ở on-prem để độ trễ thấp', chọn TẤT CẢ phát biểu ĐÚNG.",
+    "options": [
+      "Nên dùng Storage Gateway — Volume Gateway Stored: dữ liệu chính ở on-prem, async backup lên S3 (EBS snapshot)",
+      "Volume Gateway dùng giao thức iSCSI (block)",
+      "Nếu ngược lại, dữ liệu chính ở S3 và chỉ cache nóng on-prem thì đó là Volume Gateway Cached",
+      "File Gateway là lựa chọn đúng vì nó lưu block trên S3",
+      "DMS là dịch vụ phù hợp cho yêu cầu backup block này"
+    ],
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Giữ dữ liệu chính on-prem và chỉ backup lên cloud là đặc trưng của Volume Gateway ở chế độ Stored.\n✓ 'Volume Gateway Stored': dữ liệu chính nằm on-prem, async backup lên S3 dưới dạng EBS snapshot, đúng yêu cầu.\n✓ 'Volume Gateway dùng iSCSI (block)': đúng, đây là giao thức block của Volume Gateway.\n✓ 'ngược lại là Cached': đúng, Cached để dữ liệu chính ở S3 và chỉ giữ cache nóng on-prem.\n✗ 'File Gateway lưu block trên S3': sai, File Gateway dùng NFS/SMB lưu file thành object, không phải block.\n✗ 'DMS phù hợp': sai, DMS là migration database, không dùng cho backup block storage.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-016",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-05-migration-transfer",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "medium",
+    "type": "single",
+    "question": "Cần lift-and-shift nhiều máy chủ VM on-prem lên EC2 với thay đổi tối thiểu, dùng block-level replication rồi cutover. Dịch vụ nào?",
+    "options": [
+      "AWS Application Migration Service (MGN)",
+      "AWS DMS",
+      "AWS DataSync",
+      "AWS Snowball Edge Compute Optimized"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Rehost VM/server nguyên trạng lên EC2 bằng block-level replication rồi cutover là nhiệm vụ của MGN.\n✓ MGN: chuyên rehost (lift-and-shift) máy chủ vật lý/VM lên EC2 với thay đổi tối thiểu.\n✗ DMS: migrate database, không rehost cả server.\n✗ DataSync: chuyển file/object, không di chuyển nguyên máy chủ thành EC2.\n✗ Snowball Edge Compute Optimized: chạy compute tại edge và chuyển offline, không phải công cụ rehost server lên EC2.",
+    "domain": 3
+  },
+  {
+    "id": "saa-ext-017",
+    "courseId": "SAA-C03",
+    "lesson": "ch2-05-migration-transfer",
+    "certifications": [
+      "SAA-C03"
+    ],
+    "difficulty": "hard",
+    "type": "single",
+    "question": "Có 200 TB video archive, đường truyền 1 Gbps, cần đưa lên S3 rồi chuyển sang Glacier trong vòng 2 tuần. Phương án nào an toàn nhất về thời hạn?",
+    "options": [
+      "Snowball Edge Storage Optimized, sau đó dùng lifecycle chuyển sang Glacier",
+      "DataSync online chuyển thẳng vào S3 Glacier",
+      "Storage Gateway Tape Gateway ghi trực tiếp lên Glacier",
+      "Transfer Family để upload video qua SFTP"
+    ],
+    "correctIndices": [
+      0
+    ],
+    "explanation": "200 TB qua 1 Gbps mất khoảng 18+ ngày, vượt hạn 2 tuần và rủi ro, nên chuyển offline mới an toàn.\n✓ Snowball Edge Storage Optimized rồi lifecycle sang Glacier: ship vài ngày, chắc chắn trong 2 tuần, sau đó lifecycle hạ tầng lưu trữ.\n✗ DataSync online: qua 1 Gbps mất 18+ ngày, sát/vượt hạn, rủi ro cao.\n✗ Tape Gateway lên Glacier: dùng thay băng từ backup, không phải công cụ chuyển khối archive lớn kịp hạn.\n✗ Transfer Family SFTP: vẫn phụ thuộc băng thông online 1 Gbps, không giải quyết được thời hạn.",
+    "domain": 3
   }
 ];
