@@ -18,6 +18,13 @@ const WEIGHTS = {
 const MIN_PER_LESSON = 8;
 const MULTI_LO = 0.10, MULTI_HI = 0.15;
 
+// Các mock tái hiện nguyên bộ đề gốc: multi-ratio và domain-mix là ĐẶC TÍNH CỦA BỘ ĐỀ
+// chứ không phải lỗi tác giả (có bộ tới 25% multi-answer) — ép hai chỉ số này lại sẽ
+// làm sai lệch đề. Chỉ in ra để tham khảo.
+const FIXED_ORDER_MOCKS = {
+  "SAA-C03": [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+};
+
 function loadQuestions() {
   const t = fs.readFileSync(DATA, "utf8");
   const start = t.indexOf("= [");
@@ -49,10 +56,13 @@ function reviewCourse(qs, course) {
     s.forEach((q) => { diff[q.difficulty] = (diff[q.difficulty] || 0) + 1; });
     console.log(`\n  mock ${mk}: ${s.length} câu | multi ${(ratio * 100).toFixed(0)}% | domains ${JSON.stringify(byD)} | diff ${JSON.stringify(diff)}`);
 
-    if (ratio < MULTI_LO || ratio > MULTI_HI)
+    const fixedOrder = (FIXED_ORDER_MOCKS[course] || []).includes(mk);
+    if (fixedOrder) console.log(`    (đề cố định — bỏ qua check multi-ratio & domain-mix)`);
+
+    if (!fixedOrder && (ratio < MULTI_LO || ratio > MULTI_HI))
       (ratio > MULTI_HI ? issues : warns).push(`mock ${mk}: multi-ratio ${(ratio * 100).toFixed(0)}% ngoài ${MULTI_LO * 100}-${MULTI_HI * 100}%`);
 
-    if (W) {
+    if (W && !fixedOrder) {
       for (const d of [1, 2, 3, 4]) {
         const target = Math.round(s.length * W[d]);
         if (Math.abs(byD[d] - target) > 2)

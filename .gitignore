@@ -35,3 +35,6 @@ tmp/
 
 # Workflow run output (per-run artifacts + manifest)
 .claude/thorough-out/
+
+# Source exam PDFs (39MB) — giữ lại làm nguồn đối chiếu, không đưa vào repo
+*.zip

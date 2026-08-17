@@ -38,8 +38,9 @@ export default function Runner({ setKey, mode }: Props) {
   const [config, setConfig] = useState<Config>({
     count: defaultCount,
     examMinutes: defaultMin,
-    shuffleQuestions: true,
-    shuffleOptions: true,
+    // Các đề fixed-order mặc định giữ nguyên thứ tự gốc; còn lại thì trộn.
+    shuffleQuestions: !set?.fixedOrder,
+    shuffleOptions: !set?.fixedOrder,
   });
   const [prepared, setPrepared] = useState<PreparedQuestion[]>([]);
   const [selections, setSelections] = useState<number[][]>([]);

@@ -13,9 +13,19 @@ export interface QuestionSet {
   description: string;
   lessonSlugs?: string[];
   mock?: number;          // for course-mock: which fixed mock set
+  fixedOrder?: boolean;   // giữ nguyên thứ tự câu/đáp án của bộ đề gốc
   defaultExamMinutes: number;
   defaultCount: number;
 }
+
+/**
+ * Các mock giữ nguyên thứ tự câu và thứ tự đáp án như bộ đề gốc, thay vì trộn như
+ * mock tự sinh — để bám sát trải nghiệm làm đề thật. Người dùng vẫn bật lại trộn
+ * được ở màn hình setup.
+ */
+const FIXED_ORDER_MOCKS: Partial<Record<CourseId, number[]>> = {
+  "SAA-C03": [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+};
 
 /** Distinct mock numbers available for a course, sorted ascending. */
 function mockNumbers(courseId: CourseId): number[] {
@@ -63,16 +73,22 @@ export function setsForCourse(courseId: CourseId): QuestionSet[] {
   // Một bộ "Mock đề" cố định cho mỗi số mock có trong ngân hàng câu hỏi.
   // Mỗi mock được cân bằng theo blueprint (D1 24% / D2 30% / D3 34% / D4 12%).
   const mocks = mockNumbers(courseId);
-  const mockSets: QuestionSet[] = mocks.map((n) => ({
-    key: `${courseId}|mock|${n}`,
-    kind: "course-mock" as const,
-    courseId,
-    mock: n,
-    label: `${course.code} — Mock đề ${n}`,
-    description: `Đề mô phỏng cố định #${n}, cân theo blueprint (~${course.examQuestions} câu, ${course.examMinutes} phút).`,
-    defaultCount: course.examQuestions,
-    defaultExamMinutes: course.examMinutes,
-  }));
+  const mockSets: QuestionSet[] = mocks.map((n) => {
+    const fixedOrder = (FIXED_ORDER_MOCKS[courseId] ?? []).includes(n);
+    return {
+      key: `${courseId}|mock|${n}`,
+      kind: "course-mock" as const,
+      courseId,
+      mock: n,
+      fixedOrder,
+      label: `${course.code} — Mock đề ${n}`,
+      description: fixedOrder
+        ? `Đề cố định #${n}, giữ nguyên thứ tự gốc (${course.examQuestions} câu, ${course.examMinutes} phút).`
+        : `Đề mô phỏng cố định #${n}, cân theo blueprint (~${course.examQuestions} câu, ${course.examMinutes} phút).`,
+      defaultCount: course.examQuestions,
+      defaultExamMinutes: course.examMinutes,
+    };
+  });
 
   const chapterSets: QuestionSet[] = chaptersOfCourse(courseId).map((c) => ({
     key: `${courseId}|chapter|${c.id}`,
