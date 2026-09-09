@@ -443,6 +443,21 @@ export const courses: Course[] = [
     accentColor: "#326ce5",
     order: 18, status: "available", kind: "knowledge", category: "systems",
   },
+  {
+    id: "GAMESERVER",
+    code: "GAMESERVER",
+    title: "Game Server Engineering — từ tick loop tới production",
+    shortTitle: "Game Server",
+    level: "Nền tảng",
+    description:
+      "Server cho game online real-time: tick loop & fixed timestep, determinism, netcode lõi (prediction, reconciliation, lag compensation, rollback), đồng bộ state & băng thông, kiến trúc room/gateway, chống gian lận, và vận hành hệ stateful.",
+    hint: "Dành cho dev backend đã có nghề. Không đụng render — server thuần, code Go.",
+    durationHours: 55,
+    passingScore: 0, examMinutes: 0, examQuestions: 0,
+    prerequisites: ["PROGRAMMING"],
+    accentColor: "#84cc16",
+    order: 19, status: "available", kind: "knowledge", category: "systems",
+  },
 ];
 
 export function getCourse(id: CourseId | string): Course | undefined {
