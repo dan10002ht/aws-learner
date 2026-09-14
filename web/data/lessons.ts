@@ -166,6 +166,14 @@ const sysdLessons: Lesson[] = [
     description: "Presigned upload, transcoding DAG & chunk theo GOP, ABR HLS/DASH, CDN 80/20, tiered storage & chi phí egress.", file: "system-design/sd-19-youtube.md" },
   { slug: "sd-20-google-drive", courseId: "SYSTEM-DESIGN", title: "Case study: Google Drive — đồng bộ file", shortTitle: "Google Drive", chapter: "sysd-ch7", order: 20, available: true,
     description: "Block-level delta sync, dedupe & existence oracle, metadata vs block store, long polling vs WebSocket, conflict.", file: "system-design/sd-20-google-drive.md" },
+  { slug: "sd-21-object-storage", courseId: "SYSTEM-DESIGN", title: "Case study: Object Storage kiểu S3", shortTitle: "Object Storage", chapter: "sysd-ch7", order: 21, available: true,
+    description: "Tách data/metadata plane, WAL gộp object nhỏ, erasure coding vs replication, bit rot & scrubbing, listing theo prefix.", file: "system-design/sd-21-object-storage.md" },
+  { slug: "sd-22-email-service", courseId: "SYSTEM-DESIGN", title: "Case study: Distributed Email Service", shortTitle: "Email Service", chapter: "sysd-ch7", order: 22, available: true,
+    description: "SMTP/IMAP, metadata column-family, threading, gửi/nhận flow, deliverability SPF-DKIM-DMARC, search theo user.", file: "system-design/sd-22-email-service.md" },
+  { slug: "sd-23-proximity-service", courseId: "SYSTEM-DESIGN", title: "Case study: Proximity Service — tìm địa điểm gần tôi", shortTitle: "Proximity Service", chapter: "sysd-ch7", order: 23, available: true,
+    description: "Vì sao index 2 chiều chậm, geohash & boundary issue, quadtree, S2, Redis GEO, rebuild index.", file: "system-design/sd-23-proximity-service.md" },
+  { slug: "sd-24-nearby-friends", courseId: "SYSTEM-DESIGN", title: "Case study: Nearby Friends — vị trí động realtime", shortTitle: "Nearby Friends", chapter: "sysd-ch7", order: 24, available: true,
+    description: "Write-heavy + fan-out, WebSocket stateful & draining, Redis pub/sub theo user, reconnect storm, privacy.", file: "system-design/sd-24-nearby-friends.md" },
 ];
 
 
@@ -428,7 +436,7 @@ const sysdChapters: Chapter[] = [
   { id: "sysd-ch4", courseId: "SYSTEM-DESIGN", title: "Build vs Buy & Strategy", lessonSlugs: ["sd-08-tradeoff-strategy"], category: "security" },
   { id: "sysd-ch5", courseId: "SYSTEM-DESIGN", title: "Concept lõi hệ phân tán", lessonSlugs: ["sd-09-consistent-hashing", "sd-10-kv-store", "sd-11-unique-id", "sd-12-rate-limiter"], category: "compute" },
   { id: "sysd-ch6", courseId: "SYSTEM-DESIGN", title: "Scale, Search & Streaming", lessonSlugs: ["sd-13-web-crawler", "sd-14-notification", "sd-15-autocomplete", "sd-16-message-queue", "sd-17-metrics-alerting", "sd-18-ad-click-aggregation"], category: "compute" },
-  { id: "sysd-ch7", courseId: "SYSTEM-DESIGN", title: "Media, Storage & Geo", lessonSlugs: ["sd-19-youtube", "sd-20-google-drive"], category: "storage" },
+  { id: "sysd-ch7", courseId: "SYSTEM-DESIGN", title: "Media, Storage & Geo", lessonSlugs: ["sd-19-youtube", "sd-20-google-drive", "sd-21-object-storage", "sd-22-email-service", "sd-23-proximity-service", "sd-24-nearby-friends"], category: "storage" },
 ];
 
 
