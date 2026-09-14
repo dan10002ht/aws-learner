@@ -342,7 +342,7 @@ export const courses: Course[] = [
     description:
       "Cầu nối SA → CTO: case study scale thực tế, trade-off analysis, cost-aware architecture, multi-account/org design, build-vs-buy. Sẽ mở sau khi bạn hoàn thành SAA.",
     hint: "Track dài hạn cho lộ trình kiến trúc sư trưởng / CTO.",
-    durationHours: 60,
+    durationHours: 150,
     passingScore: 0,
     examMinutes: 0,
     examQuestions: 0,

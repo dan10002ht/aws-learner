@@ -174,6 +174,18 @@ const sysdLessons: Lesson[] = [
     description: "Vì sao index 2 chiều chậm, geohash & boundary issue, quadtree, S2, Redis GEO, rebuild index.", file: "system-design/sd-23-proximity-service.md" },
   { slug: "sd-24-nearby-friends", courseId: "SYSTEM-DESIGN", title: "Case study: Nearby Friends — vị trí động realtime", shortTitle: "Nearby Friends", chapter: "sysd-ch7", order: 24, available: true,
     description: "Write-heavy + fan-out, WebSocket stateful & draining, Redis pub/sub theo user, reconnect storm, privacy.", file: "system-design/sd-24-nearby-friends.md" },
+  { slug: "sd-25-google-maps", courseId: "SYSTEM-DESIGN", title: "Case study: Google Maps — bản đồ, định tuyến & ETA", shortTitle: "Google Maps", chapter: "sysd-ch7", order: 25, available: true,
+    description: "Map tile & vector tile, road graph phân cấp, A* → contraction hierarchies, map matching HMM, ETA & traffic realtime.", file: "system-design/sd-25-google-maps.md" },
+  { slug: "sd-26-leaderboard", courseId: "SYSTEM-DESIGN", title: "Case study: Real-time Gaming Leaderboard", shortTitle: "Leaderboard", chapter: "sysd-ch8", order: 26, available: true,
+    description: "Vì sao SQL không tính được rank, Redis sorted set & skip list span, tie-break, range-shard, ElastiCache vs MemoryDB.", file: "system-design/sd-26-leaderboard.md" },
+  { slug: "sd-27-hotel-reservation", courseId: "SYSTEM-DESIGN", title: "Case study: Hotel Reservation System", shortTitle: "Hotel Reservation", chapter: "sysd-ch8", order: 27, available: true,
+    description: "Inventory theo ngày, double booking & 3 cách chữa, idempotency, hold, overbooking, saga + outbox pattern.", file: "system-design/sd-27-hotel-reservation.md" },
+  { slug: "sd-28-payment-system", courseId: "SYSTEM-DESIGN", title: "Case study: Payment System", shortTitle: "Payment System", chapter: "sysd-ch8", order: 28, available: true,
+    description: "PSP & PCI scope, idempotency end-to-end, double-entry ledger, state machine, reconciliation, webhook & timeout≠failure.", file: "system-design/sd-28-payment-system.md" },
+  { slug: "sd-29-digital-wallet", courseId: "SYSTEM-DESIGN", title: "Case study: Digital Wallet — chuyển tiền giữa các ví", shortTitle: "Digital Wallet", chapter: "sysd-ch8", order: 29, available: true,
+    description: "In-memory → RDBMS → 2PC → saga → event sourcing & CQRS, Raft replicate event store, shard theo wallet_id, replay.", file: "system-design/sd-29-digital-wallet.md" },
+  { slug: "sd-30-stock-exchange", courseId: "SYSTEM-DESIGN", title: "Case study: Stock Exchange — sàn khớp lệnh độ trễ cực thấp", shortTitle: "Stock Exchange", chapter: "sysd-ch8", order: 30, available: true,
+    description: "Order book & price-time priority, matching engine đơn luồng, sequencer, LMAX Disruptor, kernel bypass, multicast feed + tổng kết course.", file: "system-design/sd-30-stock-exchange.md" },
 ];
 
 
@@ -436,7 +448,8 @@ const sysdChapters: Chapter[] = [
   { id: "sysd-ch4", courseId: "SYSTEM-DESIGN", title: "Build vs Buy & Strategy", lessonSlugs: ["sd-08-tradeoff-strategy"], category: "security" },
   { id: "sysd-ch5", courseId: "SYSTEM-DESIGN", title: "Concept lõi hệ phân tán", lessonSlugs: ["sd-09-consistent-hashing", "sd-10-kv-store", "sd-11-unique-id", "sd-12-rate-limiter"], category: "compute" },
   { id: "sysd-ch6", courseId: "SYSTEM-DESIGN", title: "Scale, Search & Streaming", lessonSlugs: ["sd-13-web-crawler", "sd-14-notification", "sd-15-autocomplete", "sd-16-message-queue", "sd-17-metrics-alerting", "sd-18-ad-click-aggregation"], category: "compute" },
-  { id: "sysd-ch7", courseId: "SYSTEM-DESIGN", title: "Media, Storage & Geo", lessonSlugs: ["sd-19-youtube", "sd-20-google-drive", "sd-21-object-storage", "sd-22-email-service", "sd-23-proximity-service", "sd-24-nearby-friends"], category: "storage" },
+  { id: "sysd-ch7", courseId: "SYSTEM-DESIGN", title: "Media, Storage & Geo", lessonSlugs: ["sd-19-youtube", "sd-20-google-drive", "sd-21-object-storage", "sd-22-email-service", "sd-23-proximity-service", "sd-24-nearby-friends", "sd-25-google-maps"], category: "storage" },
+  { id: "sysd-ch8", courseId: "SYSTEM-DESIGN", title: "Realtime & Money", lessonSlugs: ["sd-26-leaderboard", "sd-27-hotel-reservation", "sd-28-payment-system", "sd-29-digital-wallet", "sd-30-stock-exchange"], category: "database" },
 ];
 
 
