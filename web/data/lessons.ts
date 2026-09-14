@@ -142,6 +142,14 @@ const sysdLessons: Lesson[] = [
     description: "AWS Organizations, landing zone, blast radius, cost-aware design, FinOps, well-architected.", file: "system-design/sd-07-multi-account-cost.md" },
   { slug: "sd-08-tradeoff-strategy", courseId: "SYSTEM-DESIGN", title: "Build vs Buy & Technology Strategy", shortTitle: "Strategy", chapter: "sysd-ch4", order: 8, available: true,
     description: "Khung ra quyết định build vs buy, tech radar, nợ kỹ thuật, tư duy CTO về đánh đổi dài hạn.", file: "system-design/sd-08-tradeoff-strategy.md" },
+  { slug: "sd-09-consistent-hashing", courseId: "SYSTEM-DESIGN", title: "Consistent Hashing — phân phối dữ liệu khi cụm co giãn", shortTitle: "Consistent Hashing", chapter: "sysd-ch5", order: 9, available: true,
+    description: "Vì sao hash % N hỏng, hash ring, virtual node & độ lệch tải, rendezvous/jump/Maglev, ring vs slot.", file: "system-design/sd-09-consistent-hashing.md" },
+  { slug: "sd-10-kv-store", courseId: "SYSTEM-DESIGN", title: "Thiết kế Key-Value Store phân tán", shortTitle: "Key-Value Store", chapter: "sysd-ch5", order: 10, available: true,
+    description: "Dynamo-style: quorum W+R>N, vector clock, gossip, hinted handoff, Merkle tree, LSM vs B-tree.", file: "system-design/sd-10-kv-store.md" },
+  { slug: "sd-11-unique-id", courseId: "SYSTEM-DESIGN", title: "Sinh Unique ID trong hệ phân tán", shortTitle: "Unique ID", chapter: "sysd-ch5", order: 11, available: true,
+    description: "UUID v4/v7, ticket server, Snowflake tới từng bit, clock skew & clock backwards, cấp machine ID.", file: "system-design/sd-11-unique-id.md" },
+  { slug: "sd-12-rate-limiter", courseId: "SYSTEM-DESIGN", title: "Rate Limiter phân tán — thuật toán, đặt ở đâu, và cái giá phải trả", shortTitle: "Rate Limiter", chapter: "sysd-ch5", order: 12, available: true,
+    description: "5 thuật toán ở mức định lượng, race condition & Lua atomic, hot key, fail-open/closed, 429 headers.", file: "system-design/sd-12-rate-limiter.md" },
 ];
 
 
@@ -402,6 +410,7 @@ const sysdChapters: Chapter[] = [
   { id: "sysd-ch2", courseId: "SYSTEM-DESIGN", title: "Case Studies: Scale thực tế", lessonSlugs: ["sd-03-url-shortener", "sd-04-news-feed", "sd-05-chat"], category: "compute" },
   { id: "sysd-ch3", courseId: "SYSTEM-DESIGN", title: "Data, Cost & Multi-account", lessonSlugs: ["sd-06-data-pipeline", "sd-07-multi-account-cost"], category: "billing" },
   { id: "sysd-ch4", courseId: "SYSTEM-DESIGN", title: "Build vs Buy & Strategy", lessonSlugs: ["sd-08-tradeoff-strategy"], category: "security" },
+  { id: "sysd-ch5", courseId: "SYSTEM-DESIGN", title: "Concept lõi hệ phân tán", lessonSlugs: ["sd-09-consistent-hashing", "sd-10-kv-store", "sd-11-unique-id", "sd-12-rate-limiter"], category: "compute" },
 ];
 
 
