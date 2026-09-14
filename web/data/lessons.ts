@@ -1105,9 +1105,9 @@ const gsLessons: Lesson[] = [
     description: "Bot phải dùng lại client code thật và hành vi phải động; chạy bot ở máy khác; đo cả phía client; tìm xem cái gì gãy trước — CPU, băng thông hay file descriptor.", file: "gameserver/gs-39-load-testing.md" },
   { slug: "gs-40-deploy-stateful", courseId: "GAMESERVER", title: "Deploy & vận hành hệ stateful", shortTitle: "Deploy stateful", chapter: "gs-ch9", order: 40, available: true,
     description: "Drain thay cho rolling deploy; orchestration (Agones/k8s) và allocation; scale theo số trận chứ không theo CPU; chi phí vận hành theo CCU.", file: "gameserver/gs-40-deploy-stateful.md" },
-  { slug: "gs-41-capstone-1", courseId: "GAMESERVER", title: "Capstone 1 — agar-lite chạy được", shortTitle: "Capstone 1", chapter: "gs-ch10", order: 41, available: false,
+  { slug: "gs-41-capstone-1", courseId: "GAMESERVER", title: "Capstone 1 — agar-lite chạy được", shortTitle: "Capstone 1", chapter: "gs-ch10", order: 41, available: true,
     description: "Tick loop + WebSocket + room; input → simulation → broadcast; cố ý thêm độ trễ và packet loss giả lập để tự cảm thấy ngân sách độ trễ ở chương 2.", file: "gameserver/gs-41-capstone-1.md" },
-  { slug: "gs-42-capstone-2", courseId: "GAMESERVER", title: "Capstone 2 — agar-lite chơi được", shortTitle: "Capstone 2", chapter: "gs-ch10", order: 42, available: false,
+  { slug: "gs-42-capstone-2", courseId: "GAMESERVER", title: "Capstone 2 — agar-lite chơi được", shortTitle: "Capstone 2", chapter: "gs-ch10", order: 42, available: true,
     description: "Thêm prediction + reconciliation + interpolation; AOI; hit detection có lag compensation; đo lại toàn bộ số và đối chiếu với dự đoán ở chương 2 và 6.", file: "gameserver/gs-42-capstone-2.md" },
 ];
 
