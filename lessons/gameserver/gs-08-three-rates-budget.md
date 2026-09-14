@@ -180,6 +180,12 @@ Xếp bốn cái theo **thứ tự lợi nhất → tệ nhất**, và với m�
 | 3 | B — snapshot 20 → 30 Hz | −8,3 ms | Băng thông **+50%**, mỗi tháng |
 | **4** | **A — sim 60 → 128 Hz** | **−4,4 ms** | **CPU ×2** |
 
+> **Bảng này giả định độ sâu buffer nội suy cố định 100 ms, độc lập với snapshot rate.**
+> Đó là đơn giản hoá. Thực tế buffer phải sâu ít nhất một vài khoảng snapshot, nên tăng
+> snapshot rate cũng **làm ngắn buffer theo**. Bài 20 nới giả định đó và tính lại: hạng của
+> dòng B thay đổi. Ở đây cứ đọc bảng như trên — nó đúng khi buffer là hằng số, và cái cần
+> nhớ là thứ hạng gần như đảo ngược mức độ được bàn tán.
+
 Cách tính, để tự đối chiếu:
 
 ```
