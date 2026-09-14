@@ -158,6 +158,14 @@ const sysdLessons: Lesson[] = [
     description: "Trie + cache top-k tại node, bộ nhớ & sharding lệch tải, pipeline build offline + swap snapshot, debounce/CDN.", file: "system-design/sd-15-autocomplete.md" },
   { slug: "sd-16-message-queue", courseId: "SYSTEM-DESIGN", title: "Case study: Distributed Message Queue", shortTitle: "Message Queue", chapter: "sysd-ch6", order: 16, available: true,
     description: "Append-only log, zero-copy, partition & ordering, consumer group & rebalance, ISR/acks, exactly-once, SQS vs Kinesis vs MSK.", file: "system-design/sd-16-message-queue.md" },
+  { slug: "sd-17-metrics-alerting", courseId: "SYSTEM-DESIGN", title: "Case study: Metrics Monitoring & Alerting", shortTitle: "Metrics & Alerting", chapter: "sysd-ch6", order: 17, available: true,
+    description: "Metrics vs logs vs traces, cardinality explosion, pull vs push, TSDB & Gorilla encoding, rollup, SLO burn rate.", file: "system-design/sd-17-metrics-alerting.md" },
+  { slug: "sd-18-ad-click-aggregation", courseId: "SYSTEM-DESIGN", title: "Case study: Ad Click Event Aggregation", shortTitle: "Ad Click Aggregation", chapter: "sysd-ch6", order: 18, available: true,
+    description: "Stream aggregation ra tiền thật: event time & watermark, late event, exactly-once, hot ad, reconciliation batch.", file: "system-design/sd-18-ad-click-aggregation.md" },
+  { slug: "sd-19-youtube", courseId: "SYSTEM-DESIGN", title: "Case study: YouTube — video upload & streaming", shortTitle: "YouTube", chapter: "sysd-ch7", order: 19, available: true,
+    description: "Presigned upload, transcoding DAG & chunk theo GOP, ABR HLS/DASH, CDN 80/20, tiered storage & chi phí egress.", file: "system-design/sd-19-youtube.md" },
+  { slug: "sd-20-google-drive", courseId: "SYSTEM-DESIGN", title: "Case study: Google Drive — đồng bộ file", shortTitle: "Google Drive", chapter: "sysd-ch7", order: 20, available: true,
+    description: "Block-level delta sync, dedupe & existence oracle, metadata vs block store, long polling vs WebSocket, conflict.", file: "system-design/sd-20-google-drive.md" },
 ];
 
 
@@ -419,7 +427,8 @@ const sysdChapters: Chapter[] = [
   { id: "sysd-ch3", courseId: "SYSTEM-DESIGN", title: "Data, Cost & Multi-account", lessonSlugs: ["sd-06-data-pipeline", "sd-07-multi-account-cost"], category: "billing" },
   { id: "sysd-ch4", courseId: "SYSTEM-DESIGN", title: "Build vs Buy & Strategy", lessonSlugs: ["sd-08-tradeoff-strategy"], category: "security" },
   { id: "sysd-ch5", courseId: "SYSTEM-DESIGN", title: "Concept lõi hệ phân tán", lessonSlugs: ["sd-09-consistent-hashing", "sd-10-kv-store", "sd-11-unique-id", "sd-12-rate-limiter"], category: "compute" },
-  { id: "sysd-ch6", courseId: "SYSTEM-DESIGN", title: "Scale, Search & Streaming", lessonSlugs: ["sd-13-web-crawler", "sd-14-notification", "sd-15-autocomplete", "sd-16-message-queue"], category: "compute" },
+  { id: "sysd-ch6", courseId: "SYSTEM-DESIGN", title: "Scale, Search & Streaming", lessonSlugs: ["sd-13-web-crawler", "sd-14-notification", "sd-15-autocomplete", "sd-16-message-queue", "sd-17-metrics-alerting", "sd-18-ad-click-aggregation"], category: "compute" },
+  { id: "sysd-ch7", courseId: "SYSTEM-DESIGN", title: "Media, Storage & Geo", lessonSlugs: ["sd-19-youtube", "sd-20-google-drive"], category: "storage" },
 ];
 
 
