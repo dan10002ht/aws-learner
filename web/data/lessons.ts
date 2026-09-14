@@ -150,6 +150,14 @@ const sysdLessons: Lesson[] = [
     description: "UUID v4/v7, ticket server, Snowflake tới từng bit, clock skew & clock backwards, cấp machine ID.", file: "system-design/sd-11-unique-id.md" },
   { slug: "sd-12-rate-limiter", courseId: "SYSTEM-DESIGN", title: "Rate Limiter phân tán — thuật toán, đặt ở đâu, và cái giá phải trả", shortTitle: "Rate Limiter", chapter: "sysd-ch5", order: 12, available: true,
     description: "5 thuật toán ở mức định lượng, race condition & Lua atomic, hot key, fail-open/closed, 429 headers.", file: "system-design/sd-12-rate-limiter.md" },
+  { slug: "sd-13-web-crawler", courseId: "SYSTEM-DESIGN", title: "Case study: Web Crawler", shortTitle: "Web Crawler", chapter: "sysd-ch6", order: 13, available: true,
+    description: "URL frontier hai tầng (politeness + priority), Bloom filter URL-seen, DNS cache, spider trap, trang JS-rendered.", file: "system-design/sd-13-web-crawler.md" },
+  { slug: "sd-14-notification", courseId: "SYSTEM-DESIGN", title: "Case study: Notification System", shortTitle: "Notification", chapter: "sysd-ch6", order: 14, available: true,
+    description: "Push/SMS/email, device token, queue theo kênh, dedupe & retry/DLQ, provider rate limit, bounce & reputation.", file: "system-design/sd-14-notification.md" },
+  { slug: "sd-15-autocomplete", courseId: "SYSTEM-DESIGN", title: "Case study: Search Autocomplete", shortTitle: "Autocomplete", chapter: "sysd-ch6", order: 15, available: true,
+    description: "Trie + cache top-k tại node, bộ nhớ & sharding lệch tải, pipeline build offline + swap snapshot, debounce/CDN.", file: "system-design/sd-15-autocomplete.md" },
+  { slug: "sd-16-message-queue", courseId: "SYSTEM-DESIGN", title: "Case study: Distributed Message Queue", shortTitle: "Message Queue", chapter: "sysd-ch6", order: 16, available: true,
+    description: "Append-only log, zero-copy, partition & ordering, consumer group & rebalance, ISR/acks, exactly-once, SQS vs Kinesis vs MSK.", file: "system-design/sd-16-message-queue.md" },
 ];
 
 
@@ -411,6 +419,7 @@ const sysdChapters: Chapter[] = [
   { id: "sysd-ch3", courseId: "SYSTEM-DESIGN", title: "Data, Cost & Multi-account", lessonSlugs: ["sd-06-data-pipeline", "sd-07-multi-account-cost"], category: "billing" },
   { id: "sysd-ch4", courseId: "SYSTEM-DESIGN", title: "Build vs Buy & Strategy", lessonSlugs: ["sd-08-tradeoff-strategy"], category: "security" },
   { id: "sysd-ch5", courseId: "SYSTEM-DESIGN", title: "Concept lõi hệ phân tán", lessonSlugs: ["sd-09-consistent-hashing", "sd-10-kv-store", "sd-11-unique-id", "sd-12-rate-limiter"], category: "compute" },
+  { id: "sysd-ch6", courseId: "SYSTEM-DESIGN", title: "Scale, Search & Streaming", lessonSlugs: ["sd-13-web-crawler", "sd-14-notification", "sd-15-autocomplete", "sd-16-message-queue"], category: "compute" },
 ];
 
 
