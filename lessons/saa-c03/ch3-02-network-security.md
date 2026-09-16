@@ -142,32 +142,93 @@ Vì NACL stateless, return traffic phải allow port range. Linux dùng port 327
 
 ## 4. Endpoint security
 
-### 4.1 VPC endpoints (lại)
+### 4.1 Ba loại VPC endpoint — nhìn từ góc bảo mật
 
-- **Gateway endpoint** (S3, DynamoDB): free, route trong VPC.
-- **Interface endpoint** (PrivateLink): ENI với private IP, $$$.
+| | **Gateway endpoint** | **Interface endpoint (PrivateLink)** | **Gateway Load Balancer endpoint (GWLBe)** |
+|---|---|---|---|
+| Cơ chế | Entry trong **route table**, đích là prefix list `pl-xxxx` | **ENI có private IP** trong subnet của bạn | ENI làm **next hop** trong route table, bọc traffic bằng **GENEVE (UDP 6081)** gửi sang GWLB |
+| Dùng cho | Chỉ **S3 và DynamoDB** | Hầu hết service AWS (SSM, KMS, Secrets Manager, ECR, CloudWatch Logs…) + **service của bên thứ 3 / của chính bạn** publish qua PrivateLink | Đẩy traffic qua **appliance inspect của bên thứ 3** (Palo Alto, Fortinet, IDS/IPS) |
+| Có Security Group? | ❌ Không — SG không gắn được vào gateway endpoint | ✅ Có — SG trên ENI endpoint là chốt chặn ai trong VPC được gọi endpoint | ❌ Không (SG nằm ở appliance phía sau GWLB) |
+| Có endpoint policy? | ✅ (mặc định `Allow *`) | ✅ (mặc định full access) | ❌ |
+| On-prem qua DX/VPN gọi được? | ❌ **Không** — route table của VPC không lan sang on-prem | ✅ Có — đây là lý do chính chọn interface endpoint cho S3 dù gateway free | — |
+| Tiền | **Free** | Tính **giờ/endpoint/AZ + per-GB** xử lý | Giờ + per-GB |
+| Từ khoá đề | "S3 access không ra internet, không tốn thêm phí" | "on-prem phải tới S3 mà **không qua internet**", "private IP cho service", "expose SaaS cho khách mà không peering" | "chèn firewall của hãng thứ ba", "transparent inspection" |
 
-**Security benefit**: traffic không qua internet. Combine với:
+**Bẫy 1**: gateway endpoint chỉ hoạt động **trong VPC**. Đề tả "on-premises qua Direct Connect phải truy cập S3 riêng tư" → đáp án là **interface endpoint cho S3**, không phải gateway endpoint.
+
+**Bẫy 2**: interface endpoint có **private DNS**. Bật lên thì tên chuẩn (`secretsmanager.ap-southeast-1.amazonaws.com`) resolve về private IP — app không phải đổi code. Nếu tắt private DNS mà app vẫn gọi tên chuẩn thì traffic lại ra NAT/internet.
+
+**Bẫy 3**: VPC endpoint **không thay được NAT Gateway** cho mọi thứ. Chỉ service AWS có endpoint mới đi lối này; `yum update` hay gọi API bên ngoài vẫn cần NAT.
+
+### 4.2 Endpoint policy — chặn ngay tại cửa VPC
+
+Endpoint policy là **resource policy gắn trên chính endpoint**. Nó **không cấp quyền**; quyền hiệu lực = **giao** của (IAM identity policy) ∩ (endpoint policy) ∩ (resource policy của service). Mặc định là `Allow *`, tức không siết gì — phải chủ động thay.
 
 ```json
-// S3 bucket policy: chỉ cho phép access qua VPC endpoint
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ChiChoDocBucketCuaCongTy",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": ["s3:GetObject", "s3:ListBucket"],
+      "Resource": [
+        "arn:aws:s3:::acme-prod-data",
+        "arn:aws:s3:::acme-prod-data/*"
+      ]
+    },
+    {
+      "Sid": "ChanBucketNgoaiOrg",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "s3:*",
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": { "aws:ResourceOrgID": "o-a1b2c3d4e5" }
+      }
+    }
+  ]
+}
+```
+
+Statement thứ hai là mẫu chống **data exfiltration** (resource perimeter): nhân viên hoặc malware trong
+VPC không copy được dữ liệu sang bucket **ngoài Organization**, vì request qua endpoint này bị Deny.
+
+> 🪤 **Đừng lẫn hai key này — đề rất hay đánh tráo:**
+>
+> | Key | Lọc theo | Dùng cho | Chặn được gì |
+> |---|---|---|---|
+> | `aws:ResourceOrgID` | Org của **resource** đang bị truy cập | **Resource perimeter** | Nhân viên hợp lệ copy dữ liệu ra bucket cá nhân ngoài org (**exfiltration**) |
+> | `aws:PrincipalOrgID` | Org của **principal** gọi request | **Identity perimeter** | Người ngoài org dùng credential lạ truy cập resource của bạn |
+>
+> Chống exfil mà dùng nhầm `aws:PrincipalOrgID` là **vô tác dụng**: nhân viên vẫn đang dùng credential
+> trong org, condition không khớp, Deny không bao giờ nổ, dữ liệu vẫn ra ngoài.
+
+### 4.3 Ép traffic chỉ đi qua endpoint — `aws:SourceVpce` vs `aws:SourceVpc`
+
+Hai condition key này chỉ **tồn tại khi request đi qua VPC endpoint**. Request từ internet, từ console, từ laptop có access key → key vắng mặt → `StringNotEquals` khớp → bị Deny. Đó chính là cơ chế khoá bucket.
+
+| Condition key | Giá trị | Khi nào chọn |
+|---|---|---|
+| `aws:SourceVpce` | ID của **một endpoint** (`vpce-0a1b2c3d`) | Siết chặt nhất — chỉ đúng một endpoint. Dùng khi chỉ có 1 lối vào hợp lệ |
+| `aws:SourceVpc` | ID của **VPC** (`vpc-0a1b2c3d`) | Dễ vận hành hơn — mọi endpoint trong VPC đó đều qua được, khỏi sửa policy mỗi lần tạo endpoint mới ở AZ khác |
+
+```json
 {
   "Effect": "Deny",
   "Principal": "*",
   "Action": "s3:*",
   "Resource": ["arn:aws:s3:::bucket", "arn:aws:s3:::bucket/*"],
   "Condition": {
-    "StringNotEquals": { "aws:SourceVpce": "vpce-xxx" }
+    "StringNotEquals": { "aws:SourceVpce": "vpce-0a1b2c3d4e5f6a7b8" }
   }
 }
 ```
 
-→ Bucket chỉ accessible từ VPC cụ thể, kể cả có access key.
+→ Bucket chỉ accessible từ VPC endpoint đó, **kể cả kẻ tấn công đã có access key hợp lệ**.
 
-### 4.2 PrivateLink endpoint policy
-
-- Mỗi VPC endpoint có policy riêng — restrict thêm action/resource qua endpoint.
-- Vd: endpoint S3 chỉ allow GetObject từ bucket whitelist.
+**Bẫy khoá chính mình**: `Deny` này chặn luôn console, CloudShell, CloudFront OAC, và replication/ Athena/ CloudTrail ghi log vào bucket — vì những đường đó không đi qua endpoint. Muốn giữ chúng, thêm ngoại lệ bằng `aws:PrincipalArn`, `aws:SourceArn` hoặc `aws:PrincipalIsAWSService` trong cùng statement.
 
 ---
 
@@ -209,9 +270,11 @@ Size constraint: body > 10 MB → block
 ### 6.2 Shield Advanced
 - **$3000/tháng**, commitment 1 năm.
 - Bảo vệ DDoS sophisticate hơn, L3-L7.
-- **DDoS Response Team (DRT)** support 24/7.
+- **Shield Response Team (SRT)** — tên cũ là DRT — support 24/7, có thể uỷ quyền cho họ sửa WAF rule thay bạn lúc đang bị tấn công.
 - **Cost protection**: bồi hoàn cost spike do DDoS (EC2, ELB, CloudFront…).
-- WAF included.
+- **AWS WAF miễn phí** trên resource đã đăng ký Shield Advanced (không tính phí web ACL/rule/request).
+- Resource phải **đăng ký thủ công**, không tự áp: CloudFront, Route 53 hosted zone, Global Accelerator, ELB, **Elastic IP** của EC2/NLB.
+- Giá tính **một lần cho cả Organization**, không nhân theo account.
 - Use case: high-profile app (banking, gaming, election), SLA tài chính.
 
 ### 6.3 Khi nào cần Shield Advanced
@@ -275,16 +338,41 @@ Size constraint: body > 10 MB → block
 - Block DNS query đến domain bad (malware, C2).
 - Hoặc allow list (paranoid mode).
 - Use case: prevent data exfiltration qua DNS tunneling.
+- Gắn vào **VPC** (qua Resolver rule group), không gắn vào instance. Action mỗi domain list: **ALLOW / BLOCK / ALERT**; khi BLOCK chọn trả `NODATA`, `NXDOMAIN` hoặc `OVERRIDE` (trả về domain sinkhole của bạn).
+- Có **AWS managed domain list** (malware, botnet C2) — bật được ngay, không cần tự nuôi feed.
 
 ---
 
-## 11. GuardDuty (detective, sang chương 3.4)
+## 11. Bảng quyết định — WAF vs Shield vs Network Firewall vs DNS Firewall
+
+Đây là nhóm dễ nhầm nhất của domain 1. Mẹo phân biệt: **hỏi "chặn ở tầng nào và gắn vào cái gì"**, không hỏi "cái nào mạnh hơn".
+
+| Service | Tầng chặn | Chặn được gì | Gắn vào | Tính tiền | Từ khoá đề |
+|---|---|---|---|---|---|
+| **AWS WAF** | **L7 — HTTP/HTTPS request** | SQLi, XSS, bad bot, scraping, credential stuffing, geo-block, **rate-based rule** (mặc định cửa sổ 5 phút, cấu hình được 1/2/5/10 phút; aggregate theo IP, forwarded IP, header, cookie hoặc custom key), size constraint | CloudFront, ALB, API Gateway, AppSync, Cognito user pool, App Runner | Web ACL/tháng + mỗi rule/tháng + **theo triệu request** | "OWASP Top 10", "SQL injection", "chặn theo quốc gia", "giới hạn số request từ một IP", "chặn bot" |
+| **Shield Standard** | L3/L4 | DDoS thường gặp: SYN/UDP flood, reflection | **Tự động, không cấu hình** — CloudFront, Route 53, Global Accelerator, ELB | **Miễn phí, luôn bật** cho mọi account | "đã có sẵn", "không tốn thêm chi phí", "bảo vệ DDoS cơ bản" |
+| **Shield Advanced** | L3–L7 | DDoS tinh vi, phát hiện theo health check của resource, **kèm AWS WAF miễn phí** trên resource được bảo vệ | Đăng ký thủ công từng resource: CloudFront, Route 53 hosted zone, Global Accelerator, ELB, **Elastic IP của EC2/NLB** | **$3.000/tháng** cho cả Organization, cam kết 1 năm (+ data transfer) | "**SRT**/DDoS Response Team trực 24/7", "**cost protection** hoàn tiền khi scale do DDoS", "SLA/brand nhạy cảm" |
+| **Network Firewall** | L3–L7, **stateful + stateless**, có **IDS/IPS** | Lọc **egress theo domain** (kể cả HTTPS nhờ đọc **SNI**), chặn C2 callback, deep packet inspection, rule **Suricata** | **VPC** — tạo firewall endpoint trong **subnet riêng mỗi AZ**, sửa route table để traffic vòng qua | Theo **giờ/endpoint** + **per-GB** xử lý → đắt | "inspect mọi outbound", "IDS/IPS", "compliance bắt buộc deep packet inspection", "chặn domain xấu ở tầng mạng" |
+| **Route 53 Resolver DNS Firewall** | **Tầng truy vấn DNS** | Chặn/cho phép **tên miền** khi resolve; chống **DNS tunneling exfiltration** | **VPC** (qua rule group) | Theo số **DNS query** + rule group | "DNS tunneling", "chỉ cho resolve domain trong allow list", "chặn malware domain rẻ nhất" |
+
+**Cách chọn nhanh trong phòng thi**
+
+- Đề nói **HTTP request có payload độc** → **WAF**. WAF **không** chặn được DDoS volumetric.
+- Đề nói **DDoS** mà nhấn "không tốn thêm tiền / đã có sẵn" → **Shield Standard**. Nhấn "đội hỗ trợ khi bị tấn công", "được hoàn phần chi phí scale" → **Shield Advanced**.
+- Đề nói **outbound / egress phải kiểm soát** → nếu chỉ cần chặn **tên miền** thì **DNS Firewall** (rẻ hơn nhiều); nếu cần **inspect nội dung gói tin / IDS/IPS / compliance** thì **Network Firewall**.
+- Đề nói **áp một chính sách cho tất cả account trong Organization** → **AWS Firewall Manager** (mục 8), không phải cấu hình tay từng cái.
+
+**Bẫy chồng chéo**: DNS Firewall chỉ thấy **truy vấn DNS**. Malware hard-code IP (không resolve DNS) thì DNS Firewall mù — lúc đó mới cần Network Firewall. Ngược lại, Network Firewall đắt hơn nhiều; đề nào nhấn "cost-effective" mà chỉ yêu cầu chặn domain thì chọn DNS Firewall.
+
+---
+
+## 12. GuardDuty (detective, sang chương 3.4)
 
 Nhắc lại trong context: GuardDuty phân tích VPC Flow Logs + DNS Logs + CloudTrail → detect anomaly. Là **detective**, không **preventive**. Chi tiết ở [[ch3-04-detective-controls]].
 
 ---
 
-## 12. Defense in depth — ví dụ web app
+## 13. Defense in depth — ví dụ web app
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Defense in depth — các lớp đồng tâm bảo vệ data, từ ngoài vào trong</title>
@@ -326,34 +414,34 @@ Mỗi layer chặn 1 class. Không layer nào trong mất → app down/breach.
 
 ---
 
-## 13. Ví dụ design cho 4 use case
+## 14. Ví dụ design cho 4 use case
 
-### 13.1 Public web app B2C
+### 14.1 Public web app B2C
 - CloudFront + WAF (managed Core, SQL, XSS, rate-limit).
 - ALB + SG.
 - App private subnet + SG SG-to-SG.
 - RDS Multi-AZ private + KMS.
 - Shield Standard (free), Advanced nếu DDoS-target.
 
-### 13.2 Enterprise SaaS B2B, customer cấp IP whitelist
+### 14.2 Enterprise SaaS B2B, customer cấp IP whitelist
 - Internet-facing endpoint nhưng SG hoặc WAF rule allow chỉ customer CIDR.
 - Hoặc PrivateLink → customer VPC trực tiếp (không qua internet).
 
-### 13.3 Healthcare HIPAA
+### 14.3 Healthcare HIPAA
 - Multi-account: prod / data / audit.
 - Network Firewall inspect mọi egress.
 - All data KMS encrypted, S3 bucket policy require encryption.
 - VPC endpoint everywhere (không IGW cho data subnet).
 - CloudTrail + GuardDuty + Config conformance pack HIPAA.
 
-### 13.4 Dev environment
+### 14.4 Dev environment
 - Single account, simple SG.
 - SSM Session Manager thay bastion.
 - SCP block production region.
 
 ---
 
-## 14. Cạm bẫy đề thi (SAA)
+## 15. Cạm bẫy đề thi (SAA)
 
 1. **"NACL stateful"** → **Sai**, stateless.
 2. **"SG có deny rule"** → **Sai**, SG chỉ allow.
@@ -364,16 +452,21 @@ Mỗi layer chặn 1 class. Không layer nào trong mất → app down/breach.
 7. **"SG cross-VPC reference"** → **Đúng** nếu VPC peer hoặc TGW + cùng region.
 8. **"NACL allow ephemeral port 1024-65535"** → Cụ thể Linux 32768-65535, Windows khác. Đề chi tiết hỏi.
 9. **"PrivateLink tự encrypt"** → Layer transport (TCP). App vẫn nên TLS.
+10. **"Gateway endpoint cho on-prem qua Direct Connect truy cập S3"** → **Sai**. Gateway endpoint chỉ dùng được trong VPC. On-prem cần **interface endpoint** (PrivateLink) cho S3.
+11. **"Endpoint policy cấp quyền cho request"** → **Sai**. Nó chỉ **giới hạn**; quyền hiệu lực = giao của IAM policy ∩ endpoint policy ∩ resource policy. Mặc định endpoint policy là `Allow *` nên không siết gì cho tới khi bạn thay.
+12. **"Shield Advanced tính $3000/tháng cho mỗi account"** → **Sai**, tính một lần cho cả Organization.
+13. **"Dùng Network Firewall để chặn nhân viên resolve domain xấu cho rẻ"** → Sai hướng: nếu chỉ cần chặn **tên miền** thì **Route 53 Resolver DNS Firewall** rẻ hơn nhiều. Network Firewall dành cho inspect nội dung gói tin / IDS/IPS.
+14. **"DNS Firewall chặn được mọi kết nối ra ngoài"** → **Sai**. Malware hard-code IP không truy vấn DNS → DNS Firewall mù. Lúc đó mới cần Network Firewall.
 
 ---
 
-## 15. Tóm tắt 1 dòng
+## 16. Tóm tắt 1 dòng
 
 > Defense in depth: **L3/L4 (SG, NACL, Shield) + L7 (WAF) + DNS Firewall + Network Firewall + IAM + Encryption**. SG cho 95% case, NACL cho deny explicit, WAF cho HTTP, Shield Standard free luôn-bật, Advanced cho high-stake.
 
 ---
 
-## 16. Bài tập tự kiểm tra
+## 17. Bài tập tự kiểm tra
 
 1. App bị DDoS layer 7 (botnet với valid HTTP request). SG và Shield Standard có chặn được không? Bạn dùng gì?
 2. Compliance yêu cầu mọi outbound traffic đến internet phải inspect domain. Service AWS nào? So sánh với chỉ dùng NAT + proxy app-level.
@@ -384,7 +477,7 @@ Mỗi layer chặn 1 class. Không layer nào trong mất → app down/breach.
 
 ---
 
-## 17. Đọc thêm
+## 18. Đọc thêm
 
 - AWS Whitepaper — *AWS Security Best Practices*, *AWS Best Practices for DDoS Resiliency*.
 - AWS docs — *VPC Security*, *AWS WAF Developer Guide*.

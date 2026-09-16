@@ -18,6 +18,8 @@ Profile thực tế: **80% query time đang dùng cho 5 query thiếu index**. S
 
 ## 2. Map database theo workload
 
+### 2.1 Map nhanh theo workload
+
 | Workload | DB chính | Lý do |
 |----------|----------|-------|
 | OLTP truyền thống, ACID, JOIN nhiều | **Aurora MySQL/Postgres** | Compatible, performance gấp 3-5x RDS thường, storage scale tự động |
@@ -32,6 +34,26 @@ Profile thực tế: **80% query time đang dùng cho 5 query thiếu index**. S
 | Ledger immutable | **QLDB** | Cryptographic verify |
 | MongoDB workload | **DocumentDB** | MongoDB API compatible (3.6/4.0/5.0) |
 | Cassandra workload | **Keyspaces** | Cassandra-compatible, serverless |
+
+### 2.2 Purpose-built database — chọn theo dạng dữ liệu + từ khoá đề
+
+AWS không có "một DB cho mọi thứ". Đề SAA gần như luôn mô tả **dạng dữ liệu** và **kiểu truy vấn** rồi bắt bạn chọn engine — nhận ra từ khoá là xong câu, không cần biết sâu engine.
+
+| Service | Dạng dữ liệu | Truy vấn đặc trưng | Từ khoá đề hay dùng | Bẫy |
+|---------|--------------|--------------------|---------------------|-----|
+| **DynamoDB** | Key-value / document, schemaless | `GetItem`/`Query` theo PK(+SK), single-digit ms ở quy mô bất kỳ | "millions of requests/s", "serverless", "key-value", "access pattern biết trước" | Không JOIN, không ad-hoc query. Query theo thuộc tính khác PK phải tạo GSI |
+| **Aurora (MySQL/PostgreSQL)** | Quan hệ, schema chặt | SQL JOIN, transaction ACID, report | "relational", "ACID", "failover nhanh", "cần đọc scale tới 15 replica" | Không phải drop-in cho mọi engine — chỉ MySQL/PostgreSQL-compatible |
+| **RDS (Oracle/SQL Server/MariaDB/Db2…)** | Quan hệ | SQL, feature riêng của engine | "lift-and-shift Oracle/SQL Server", "cần license BYOL" | Engine ngoài MySQL/PostgreSQL thì **không** có bản Aurora |
+| **DocumentDB** | JSON document | MongoDB API/driver, aggregation pipeline | "MongoDB workload", "migrate MongoDB không sửa code" | MongoDB-**compatible**, không phải MongoDB thật — feature mới nhất của Mongo có thể thiếu |
+| **Keyspaces** | Wide-column | CQL của Cassandra, partition key + clustering column | "Cassandra", "CQL", "không muốn quản node Cassandra" | Serverless: không tự chọn node/replication factor như cluster Cassandra tự dựng |
+| **Neptune** | Graph — node + edge + property | Duyệt quan hệ nhiều bậc bằng **Gremlin / openCypher** (property graph) hoặc **SPARQL** (RDF) | "social network", "friend-of-friend", "fraud ring", "recommendation engine", "knowledge graph", "relationship" | Quan hệ nhiều bậc trên RDBMS = self-JOIN lồng nhau → đề mô tả "JOIN quá sâu, chậm" là dấu hiệu Neptune |
+| **Timestream** | Time-series (timestamp + measure + dimension) | Aggregate theo cửa sổ thời gian, interpolation, smoothing | "IoT sensor", "metric", "telemetry", "dữ liệu theo thời gian, dữ liệu cũ ít truy cập" | Tiering memory store → magnetic store là **built-in**; đáp án "tự viết lifecycle cho time-series trên DynamoDB" thường là bẫy |
+| **QLDB** | Ledger — journal append-only, immutable | Đọc đầy đủ lịch sử thay đổi + **verify bằng mật mã** (hash chain, digest) | "immutable", "cryptographically verifiable", "audit trail không sửa được", "system of record" | Khác blockchain: QLDB do **một chủ sở hữu tập trung** vận hành, không có consensus phi tập trung. Đề nói "nhiều bên không tin nhau cùng ghi" → Managed Blockchain. Lưu ý: AWS đã công bố ngừng hỗ trợ QLDB và khuyến nghị chuyển sang Aurora PostgreSQL, nhưng ngân hàng đề SAA-C03 vẫn còn câu chạm tới nó |
+| **MemoryDB** | In-memory (kiểu dữ liệu Redis-compatible) | Như Redis, nhưng **durable** nhờ Multi-AZ transaction log | "in-memory **database**", "microsecond read", "không được mất dữ liệu", "Redis làm primary datastore" | Đề hỏi "cache" → ElastiCache; hỏi "primary database in-memory, durable" → MemoryDB. Chọn nhầm chiều là mất điểm |
+| **ElastiCache (Redis/Valkey/Memcached)** | In-memory, ephemeral | Cache-aside, session, leaderboard, rate limit | "cache", "giảm tải DB", "session store", "leaderboard" | Là **cache**, không phải nguồn dữ liệu chuẩn. Mất node = mất phần dữ liệu chưa persist |
+| **Redshift** | Quan hệ, columnar MPP | Aggregate trên hàng tỉ dòng, BI/dashboard | "data warehouse", "OLAP", "complex analytical query", "join nhiều bảng fact/dimension" | Không dùng làm OLTP — write đơn lẻ tần suất cao là anti-pattern |
+
+**Quy tắc đọc đề 10 giây**: tìm danh từ mô tả dữ liệu trước (relationship / time-series / ledger / document / key-value / warehouse), rồi mới đọc phần yêu cầu vận hành (serverless, managed, HA). Danh từ quyết định engine; yêu cầu vận hành chỉ quyết định biến thể (Serverless v2, on-demand, Multi-AZ).
 
 ---
 
@@ -141,9 +163,64 @@ Profile thực tế: **80% query time đang dùng cho 5 query thiếu index**. S
 
 ---
 
-## 4. DynamoDB performance
+## 4. RDS & Aurora — backup tự động, PITR và restore
 
-### 4.1 Capacity modes
+Hiệu năng vô nghĩa nếu mất dữ liệu. Đây là nhóm câu "RPO/RTO cho database": đề mô tả một sự cố (DROP TABLE nhầm, deploy hỏng dữ liệu lúc 14:37) rồi hỏi cách khôi phục **ít mất dữ liệu nhất**.
+
+### 4.1 Automated backup vs manual snapshot
+
+| Tiêu chí | **Automated backup** | **Manual snapshot** |
+|----------|----------------------|---------------------|
+| Ai tạo | RDS/Aurora tự tạo hằng ngày trong **backup window** | Bạn gọi `CreateDBSnapshot` / `CreateDBClusterSnapshot` |
+| Retention | **1–35 ngày** (RDS cho phép đặt 0 để tắt; Aurora tối thiểu 1 — **không tắt được**) | **Giữ tới khi bạn xoá**, không có hạn |
+| Cho phép PITR | ✅ — đây là thứ duy nhất bật được PITR | ❌ — chỉ restore về đúng thời điểm chụp |
+| Khi xoá DB instance/cluster | Bị xoá theo (trừ final snapshot bạn chọn giữ) | Vẫn còn |
+| Copy cross-Region / share sang account khác | Gián tiếp (phải copy ra snapshot trước) | ✅ trực tiếp |
+| Ảnh hưởng hiệu năng | Aurora: **không** (backup liên tục ở storage layer). RDS Single-AZ: có thể khựng I/O vài giây lúc chụp | Như trên |
+
+- **Backup window**: cửa sổ ~30 phút/ngày bạn chọn (hoặc AWS chọn hộ theo Region). Đặt vào giờ thấp điểm và **không trùng maintenance window**.
+- Retention = 0 (chỉ RDS) nghĩa là **tắt automated backup** ⇒ mất luôn PITR. Bẫy thi: đề kể "team đặt retention 0 cho rẻ" rồi hỏi vì sao không PITR được.
+- Snapshot **mã hoá** chỉ share sang account khác được khi mã hoá bằng **customer managed KMS key** (key mặc định `aws/rds` không share được) — và phải share cả key.
+
+### 4.2 Point-in-Time Recovery hoạt động thế nào
+
+Automated backup = **snapshot hằng ngày + transaction log liên tục** đẩy sang S3. Restore = lấy snapshot gần nhất trước mốc bạn chọn rồi **replay log tới đúng giây** bạn yêu cầu.
+
+| Điểm cần nhớ | Chi tiết |
+|--------------|----------|
+| Độ mịn | Chọn tới **từng giây** trong khoảng retention |
+| Cận trên | Không phải "ngay bây giờ" — API trả về **latest restorable time**, thường trễ vài phút so với hiện tại |
+| Kết quả | **Luôn tạo instance/cluster MỚI**, endpoint mới — không ghi đè cái đang chạy |
+| Hệ quả vận hành | Phải trỏ app sang endpoint mới (đổi connection string, hoặc CNAME/Route 53) → RTO gồm cả bước này |
+| RPO điển hình | Vài phút (phụ thuộc latest restorable time), **không phải 0** |
+
+> 🪤 Bẫy thi kinh điển: đáp án nào nói "PITR khôi phục tại chỗ, app không phải đổi gì" → **sai**. PITR luôn sinh resource mới.
+
+### 4.3 Aurora Backtrack — khác PITR thế nào
+
+| Tiêu chí | **PITR (restore)** | **Aurora Backtrack** |
+|----------|--------------------|----------------------|
+| Engine | RDS + Aurora (MySQL & PostgreSQL) | **Chỉ Aurora MySQL-compatible** |
+| Cơ chế | Tạo cluster mới từ snapshot + log | **Tua ngược cluster đang chạy, tại chỗ** |
+| Endpoint | Mới → phải đổi connection string | **Giữ nguyên** |
+| Tốc độ | Phút → giờ, tuỳ kích thước dữ liệu | Thường vài phút, ít phụ thuộc kích thước |
+| Phạm vi thời gian | Cả khoảng retention (tới 35 ngày) | Trong **backtrack window**, tối đa **72 giờ** |
+| Tính chất | Không đụng dữ liệu hiện tại (ra bản mới) | **Phá huỷ** — dữ liệu sau mốc tua sẽ mất (vẫn tua tới lại được nếu còn trong window) |
+| Phải bật trước? | Chỉ cần automated backup đang bật | **Bật lúc tạo cluster** — không bật thêm cho cluster đang chạy |
+
+**Chọn cái nào**: lỡ chạy `UPDATE` thiếu `WHERE` cách đây 20 phút trên Aurora MySQL và cần app online lại nhanh nhất → **Backtrack**. Cần trạng thái 3 ngày trước để đối chiếu mà production vẫn phải chạy → **PITR ra cluster mới**. Cần giữ bản sao lâu dài cho compliance → **manual snapshot** (hoặc AWS Backup với vault + retention policy tập trung).
+
+### 4.4 Ba thứ hay bị nhầm
+
+1. **Read Replica ≠ backup**. Xoá nhầm bảng thì replica xoá theo trong vài trăm ms. Chỉ PITR/snapshot cứu được.
+2. **Multi-AZ ≠ backup**. Standby là bản sao đồng bộ — lỗi logic được nhân bản y hệt.
+3. **DynamoDB có PITR riêng**: bật `PointInTimeRecovery` cho table, restore tới bất kỳ giây nào trong **35 ngày** gần nhất, và cũng **luôn ra table mới**. Cùng tư duy với RDS, khác API.
+
+---
+
+## 5. DynamoDB performance
+
+### 5.1 Capacity modes
 
 | Mode | Khi dùng |
 |------|----------|
@@ -154,14 +231,14 @@ Switching: 1 lần per 24h.
 
 > 💡 On-demand thường **đắt hơn 7x** provisioned nếu utilization cao. Đừng default on-demand cho mọi table.
 
-### 4.2 Item size & cost
+### 5.2 Item size & cost
 
 - 1 RCU = 1 strongly consistent read 4KB/s, hoặc 2 eventually consistent.
 - 1 WCU = 1 write 1KB/s.
 - Item > 4KB → tốn nhiều RCU. **Quy tắc**: keep item < 4 KB nếu access frequent.
 - Max item size: **400 KB**.
 
-### 4.3 Hot partition revisit
+### 5.3 Hot partition revisit
 
 Đã đề cập [[foundations-05-partitioning-and-sharding]]. Quick fix list:
 
@@ -169,7 +246,7 @@ Switching: 1 lần per 24h.
 - **Adaptive capacity** (auto, không phải reason để design ẩu).
 - **GSI sparse**: chỉ items match condition mới có trong GSI → giảm fan-out.
 
-### 4.4 Indexes
+### 5.4 Indexes
 
 | Index | Tạo lúc | Storage | Strongly consistent? | Cost |
 |-------|---------|---------|---------------------|------|
@@ -178,32 +255,32 @@ Switching: 1 lần per 24h.
 
 > 🪤 Bẫy thi: "Cần strongly consistent với PK khác" → **không có giải pháp 100%**. GSI eventual. Workaround: write thêm record với PK đó vào main table (denormalize).
 
-### 4.5 DynamoDB Streams + Lambda
+### 5.5 DynamoDB Streams + Lambda
 
 - Stream record mỗi item change.
 - 24h retention.
 - Trigger Lambda async → use case: ETL, replication ra OpenSearch, cross-table consistency.
 
-### 4.6 DynamoDB Transactions
+### 5.6 DynamoDB Transactions
 
 - `TransactWriteItems`: tối đa 100 item, 4MB. 2x WCU cost.
 - `TransactGetItems`: tối đa 100 item. 2x RCU.
 - Use case: financial, multi-table consistency. **Không** dùng cho mọi write.
 
-### 4.7 Global Tables
+### 5.7 Global Tables
 - Active-active multi-region, LWW. (Xem [[foundations-04-latency-vs-consistency]].)
 - Charged WCU cho mỗi region replicate.
 
 ---
 
-## 5. Caching — đòn bẩy lớn nhất
+## 6. Caching — đòn bẩy lớn nhất
 
-### 5.1 Cache-aside (lazy loading)
+### 6.1 Cache-aside (lazy loading)
 - App đọc cache trước; miss → đọc DB → ghi cache.
 - **Ưu**: chỉ data thực sự cần mới cache.
 - **Nhược**: cold start chậm. 3 query/miss/key đầu tiên.
 
-### 5.2 Write-through
+### 6.2 Write-through
 - App ghi DB và cache cùng lúc.
 - **Ưu**: cache luôn fresh.
 - **Nhược**: cache nhiều data không bao giờ đọc lại.
@@ -250,21 +327,21 @@ Switching: 1 lần per 24h.
   <text x="385" y="338" font-size="10" fill="currentColor" opacity="0.7">Mọi write đều vào cache, kể cả data ít khi đọc lại.</text>
 </svg>
 
-### 5.3 Write-behind / write-back
+### 6.3 Write-behind / write-back
 - App ghi cache, cache flush DB async.
 - **Ưu**: write nhanh.
 - **Nhược**: risk mất data nếu cache chết. Hiếm dùng.
 
-### 5.4 TTL strategy
+### 6.4 TTL strategy
 - Short TTL (giây-phút): data fresh, miss rate cao hơn.
 - Long TTL (giờ): tiết kiệm DB, stale data risk.
 - **Jitter**: thêm random ±10% để tránh thundering herd khi expire đồng loạt.
 
 ---
 
-## 6. ElastiCache
+## 7. ElastiCache
 
-### 6.1 Redis vs Memcached
+### 7.1 Redis vs Memcached
 
 | Aspect | Redis | Memcached |
 |--------|-------|-----------|
@@ -279,19 +356,19 @@ Switching: 1 lần per 24h.
 
 → **99% case dùng Redis**. Memcached chỉ khi cần simple LRU cache multi-threaded.
 
-### 6.2 ElastiCache Redis modes
+### 7.2 ElastiCache Redis modes
 
 | Mode | Shard | Use case |
 |------|-------|----------|
 | **Cluster mode disabled** | 1 shard, 1 primary + N replica | Dataset fit 1 node, scale read |
 | **Cluster mode enabled** | Nhiều shard, sharding theo key hash | Dataset lớn, scale write |
 
-### 6.3 Global Datastore
+### 7.3 Global Datastore
 - Cross-region Redis replication.
 - 1 primary region, đến 2 secondary region (read-only).
 - Sub-second replication.
 
-### 6.4 MemoryDB for Redis (khác ElastiCache)
+### 7.4 MemoryDB for Redis (khác ElastiCache)
 
 - **Durable** (Multi-AZ transaction log).
 - **Strong consistency**.
@@ -300,7 +377,7 @@ Switching: 1 lần per 24h.
 
 ---
 
-## 7. DAX — DynamoDB Accelerator
+## 8. DAX — DynamoDB Accelerator
 
 - **Cluster cache** cho DynamoDB, in-memory, microsecond read.
 - Tích hợp ở SDK level: thay endpoint → app code không đổi.
@@ -311,7 +388,7 @@ Switching: 1 lần per 24h.
 
 > 🪤 Bẫy thi: "Read DynamoDB strongly consistent < 1ms" → **DAX không giúp**. DAX chỉ accelerate eventual.
 
-### 7.1 DAX vs ElastiCache — chọn cái nào (câu exam kinh điển)
+### 8.1 DAX vs ElastiCache — chọn cái nào (câu exam kinh điển)
 
 Cả hai đều là in-memory cache, nhưng phục vụ mục đích khác nhau. Đề SAA rất hay hỏi "cache cho DynamoDB read-heavy, ít đổi code nhất" (→ DAX) vs "cache đa nguồn/RDS, cần cấu trúc dữ liệu phong phú" (→ ElastiCache).
 
@@ -337,7 +414,7 @@ Cả hai đều là in-memory cache, nhưng phục vụ mục đích khác nhau.
 
 ---
 
-## 8. CloudFront — cache ở edge
+## 9. CloudFront — cache ở edge
 
 - CDN cho static + dynamic content.
 - TTL theo origin Cache-Control hoặc CloudFront behavior config.
@@ -347,9 +424,9 @@ Cả hai đều là in-memory cache, nhưng phục vụ mục đích khác nhau.
 
 ---
 
-## 9. Patterns kết hợp
+## 10. Patterns kết hợp
 
-### 9.1 Web stack điển hình
+### 10.1 Web stack điển hình
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Web stack nhiều tầng cache — Client tới CloudFront, ALB, ECS/EC2, ElastiCache, RDS/Aurora</title>
@@ -401,12 +478,12 @@ Cả hai đều là in-memory cache, nhưng phục vụ mục đích khác nhau.
   <text x="16" y="186" font-size="10.5" fill="currentColor" opacity="0.72">Hai tầng cache giảm tải: CloudFront chặn ở edge cho nội dung tĩnh; ElastiCache (cache-aside) đỡ DB cho app tier.</text>
 </svg>
 
-### 9.2 DynamoDB heavy read
+### 10.2 DynamoDB heavy read
 ```
 Client → API Gateway → Lambda → DAX → DynamoDB
 ```
 
-### 9.3 Cache stampede protection
+### 10.3 Cache stampede protection
 - **Lock**: chỉ 1 worker refresh, others wait.
 - **Stale-while-revalidate**: serve stale + background refresh.
 - **TTL jitter**.
@@ -414,7 +491,7 @@ Client → API Gateway → Lambda → DAX → DynamoDB
 
 ---
 
-## 10. Anti-patterns
+## 11. Anti-patterns
 
 1. **Cache mọi thứ** → cache hit rate thấp, tốn RAM, không lợi. Đo hit rate trước.
 2. **Không invalidate cache khi write** → stale data. Phải có chiến lược: TTL ngắn, hoặc invalidate explicit.
@@ -426,7 +503,7 @@ Client → API Gateway → Lambda → DAX → DynamoDB
 
 ---
 
-## 11. Performance Insights
+## 12. Performance Insights
 
 - RDS / Aurora built-in tool.
 - **Top SQL** theo wait time.
@@ -436,31 +513,31 @@ Client → API Gateway → Lambda → DAX → DynamoDB
 
 ---
 
-## 12. Ví dụ design cho 4 use case
+## 13. Ví dụ design cho 4 use case
 
-### 12.1 E-commerce, product catalog 100k SKU, read 10k QPS
+### 13.1 E-commerce, product catalog 100k SKU, read 10k QPS
 - DynamoDB + DAX cluster. PK=`productId`, GSI theo `category`.
 - TTL 5 phút trên DAX. Update SKU → invalidate DAX entry.
 - CloudFront cache thumbnail S3.
 
-### 12.2 SaaS multi-tenant, OLTP, variable per tenant
+### 13.2 SaaS multi-tenant, OLTP, variable per tenant
 - Aurora Serverless v2, min 1 ACU max 32 ACU.
 - RDS Proxy cho Lambda app tier.
 - ElastiCache Redis cho session.
 
-### 12.3 Real-time leaderboard game
+### 13.3 Real-time leaderboard game
 - Redis sorted set (`ZADD`, `ZRANGE`).
 - MemoryDB nếu cần durable.
 - Snapshot Redis sang S3 daily.
 
-### 12.4 Analytics dashboard, data ở S3
+### 13.4 Analytics dashboard, data ở S3
 - **Hot path**: Athena query trực tiếp.
 - **Aggregated**: pre-compute với Glue → S3 Parquet → Athena.
 - Cache report kết quả trong ElastiCache 1h.
 
 ---
 
-## 13. Cạm bẫy đề thi (SAA)
+## 14. Cạm bẫy đề thi (SAA)
 
 1. **"Aurora reader endpoint strong consistency"** → **Sai**, eventual lag < 100ms.
 2. **"DAX cho strongly consistent read"** → **Sai**.
@@ -473,13 +550,13 @@ Client → API Gateway → Lambda → DAX → DynamoDB
 
 ---
 
-## 14. Tóm tắt 1 dòng
+## 15. Tóm tắt 1 dòng
 
 > Tune query trước infra. Cache là đòn bẩy 10x — nhưng đi kèm complexity (invalidation, stampede). Chọn DB theo access pattern, không theo "phổ biến nhất".
 
 ---
 
-## 15. Bài tập tự kiểm tra
+## 16. Bài tập tự kiểm tra
 
 1. Aurora MySQL CPU 85% sustained. Performance Insights cho thấy 1 query chiếm 60% wait time. Bước tiếp theo? (Không phải scale up.)
 2. DynamoDB table read 50k RCU, hit rate cache thấp (40%). Bạn analyze gì để quyết định có nên thêm DAX không?
@@ -490,7 +567,7 @@ Client → API Gateway → Lambda → DAX → DynamoDB
 
 ---
 
-## 16. Đọc thêm
+## 17. Đọc thêm
 
 - AWS Whitepaper — *Best Practices for Amazon Aurora MySQL/Postgres*.
 - AWS Builder's Library — *Caching challenges and strategies*, *Avoiding fallback*.

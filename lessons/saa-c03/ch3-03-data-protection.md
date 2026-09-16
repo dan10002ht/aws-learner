@@ -141,10 +141,38 @@ Vấn đề: KMS giới hạn ~4KB cho `Encrypt` API. Encrypt 1GB không khả t
 
 ### 3.6 Rotation
 
-- **Automatic rotation**: bật → KMS rotate key material hàng năm. Cũ vẫn dùng được cho decrypt (key ID không đổi).
-- **Manual rotation**: tạo key mới, app phải re-encrypt data.
-- AWS managed key: rotate mỗi 365 ngày tự động.
-- Imported key material: phải rotate thủ công.
+Đây là mục hay bị nhớ sai nhất. Nhiều tài liệu cũ ghi "KMS rotate **mỗi năm, không đổi được**" — điều đó **không còn đúng**.
+
+| Kiểu rotation | Cơ chế | Con số cần nhớ |
+|---------------|--------|----------------|
+| **Automatic rotation** (customer managed key) | KMS sinh key material mới, giữ lại toàn bộ material cũ | Chu kỳ **cấu hình được: 90 – 2560 ngày**, mặc định **365 ngày** |
+| **On-demand rotation** | Gọi `RotateKeyOnDemand` để rotate ngay, không chờ hết chu kỳ | Tối đa **25 lần on-demand / key** (không tính lần tự động) |
+| **AWS managed key** | AWS tự lo | Rotate tự động, bạn không chỉnh chu kỳ được |
+| **Manual rotation** (alias swap) | Bạn tạo **key mới** rồi trỏ alias sang; muốn dữ liệu cũ dùng key mới thì phải **re-encrypt** (`ReEncrypt`) | Key ID **đổi** → mọi thứ tham chiếu key ID phải cập nhật |
+
+Cơ chế của automatic/on-demand rotation:
+
+- Key material mới chỉ dùng để **encrypt dữ liệu mới**. Material cũ **vẫn nằm trong key** để decrypt ciphertext cũ → **không phải re-encrypt gì cả**.
+- **Key ID, key ARN, alias, key policy, grants đều không đổi** → app không phải sửa dòng code nào. Đây là lý do automatic rotation gần như luôn là đáp án khi đề nói "rotate key **without changing application**" / "without re-encrypting existing data".
+- Ngược lại, khi đề nói "key material phải **hoàn toàn mới** và dữ liệu cũ phải được mã hoá lại bằng key mới" → đó là **manual rotation** (key mới + `ReEncrypt`), không phải automatic.
+
+**Không rotate tự động được** (bẫy hay gặp): chỉ **symmetric encryption KMS key** hỗ trợ automatic rotation. Các loại sau **không**:
+
+| Loại key | Vì sao không |
+|----------|--------------|
+| **Asymmetric** (RSA/ECC) | Public key đã phát ra ngoài; đổi material sẽ phá verify/encrypt phía client |
+| **HMAC key** | Không hỗ trợ |
+| **Imported key material (BYOK)** | Material do bạn cấp → bạn tự import material mới, KMS không sinh giúp |
+| **Key trong custom key store** (CloudHSM / External Key Store) | Material nằm ngoài KMS |
+
+> **Multi-Region key thì rotate được** (đừng nhầm): MRK symmetric origin `AWS_KMS` hỗ trợ cả automatic
+> lẫn on-demand rotation. Chỉ khác ở chỗ bật/khởi tạo trên **primary key**, rồi KMS đồng bộ key material
+> sang mọi replica trước khi dùng. Imported key material (`EXTERNAL`) thì không automatic nhưng **có**
+> on-demand.
+
+> 🪤 Bẫy thi: "compliance bắt rotate key **mỗi 90 ngày**" → **được**, đặt chu kỳ automatic rotation = 90 ngày (cận dưới của dải 90–2560). Đáp án "phải viết Lambda tự tạo key mới mỗi 90 ngày" là đáp án lỗi thời.
+
+> 🪤 Bẫy thi 2: key đang dùng là **imported key material** mà đề đòi "enable automatic rotation" → không làm được; hoặc import material mới thủ công, hoặc chuyển sang KMS-generated key.
 
 ### 3.7 Multi-region keys
 
@@ -317,9 +345,87 @@ Encryption bảo vệ data at rest, nhưng data leak lớn nhất của S3 lịc
 - Cert từ CA bên ngoài (DigiCert, GoDaddy) → import vào ACM.
 - AWS không renew giúp; phải re-import.
 
+### 7.4 Cert nằm ở Region nào — bẫy `us-east-1`
+
+ACM là dịch vụ **theo Region**. Cert import/issue ở Region nào thì chỉ resource ở Region đó thấy được. Hai luật phải thuộc lòng:
+
+| Resource dùng cert | Cert phải nằm ở đâu |
+|--------------------|---------------------|
+| **CloudFront** (alternate domain name / custom SSL) | **BẮT BUỘC `us-east-1`** (N. Virginia) — bất kể origin ở Region nào |
+| **ALB / NLB** | **Cùng Region với load balancer** |
+| **API Gateway — edge-optimized** | **`us-east-1`** (vì thực chất chạy trên CloudFront distribution do AWS quản) |
+| **API Gateway — regional / private** | Cùng Region với API |
+| **AWS Global Accelerator** | **Không dùng cert.** Listener của GA chỉ có TCP/UDP, không terminate TLS — cert nằm ở endpoint phía sau (ALB/NLB), đúng Region của endpoint đó |
+
+> 🪤 Bẫy thi kinh điển: team issue cert ACM ở `ap-southeast-1`, gắn vào CloudFront → **cert không xuất hiện trong dropdown**. Nguyên nhân không phải validation sai, mà là sai Region. Cách xử lý: **request lại cert (miễn phí) ở `us-east-1`** — ACM public cert không copy/move giữa Region được vì không export được private key. Cùng một domain có thể có nhiều cert ở nhiều Region, hoàn toàn hợp lệ.
+
+### 7.5 TLS termination — terminate ở đâu, re-encrypt hay không
+
+"Encryption in transit" trong đề thường không chỉ là "bật HTTPS", mà là **kết thúc TLS ở tầng nào** và **đoạn sau đó có còn mã hoá không**.
+
+| Mô hình | TLS kết thúc ở | Đoạn LB → target | Cert nằm ở | Khi nào chọn |
+|---------|----------------|------------------|-----------|--------------|
+| **ALB HTTPS listener → HTTP target** | ALB | **Plaintext** trong VPC | ACM (cùng Region ALB) | Mặc định, đơn giản, offload CPU khỏi EC2. Đủ khi không có yêu cầu compliance end-to-end |
+| **ALB HTTPS listener → HTTPS target** (re-encrypt) | ALB, rồi **mã hoá lại** tới target | **Encrypted** | ACM ở ALB + cert trên EC2/ECS task (self-signed **được chấp nhận**) | Đề nói "**end-to-end encryption**", "traffic phải mã hoá **kể cả bên trong VPC**", HIPAA/PCI |
+| **NLB TLS listener** | NLB (TLS offload ở L4) | Plaintext hoặc TLS tuỳ target group protocol | ACM (cùng Region NLB) | Cần offload TLS nhưng giữ hiệu năng L4; cần **static IP** |
+| **NLB TCP listener (passthrough)** | **Trên chính EC2/target** | **Encrypted suốt**, LB không giải mã | **Trên instance** — ACM **không** dùng được ở đây | Đề nói "LB **không được** giải mã traffic", "cert phải do app kiểm soát", mTLS tự triển khai ở app |
+| **CloudFront → origin HTTPS** | CloudFront (viewer side), re-encrypt tới origin | Encrypted | Viewer cert ở **us-east-1**; origin cert do origin sở hữu (ALB dùng ACM Region của ALB) | Mọi kiến trúc CDN có yêu cầu mã hoá tới origin. Set *Origin Protocol Policy* = HTTPS Only |
+
+Điểm bẫy quan trọng của re-encrypt trên ALB: ALB **không verify** cert của target (không kiểm CA, không kiểm hostname) → cert **self-signed hoặc hết hạn trên EC2 vẫn hoạt động**. Vì thế "end-to-end encryption" với ALB không đòi bạn phải mua cert public cho từng instance.
+
+Khi bắt buộc **traffic không được ai giải mã giữa đường** (LB chỉ được forward byte): dùng **NLB TCP passthrough**, và lúc đó **không dùng được ACM public cert** (không export private key ra EC2 được) → phải dùng cert import lên instance, hoặc cert từ **ACM Private CA** (loại này export được).
+
+**SNI — nhiều cert trên một listener**: ALB/NLB hỗ trợ **SNI**, cho phép gắn **nhiều cert** lên **một HTTPS/TLS listener** để phục vụ nhiều domain trên cùng IP/port. Một cert là **default certificate** (trả về cho client cũ không gửi SNI), phần còn lại chọn theo hostname client gửi. Đây là đáp án cho "host nhiều domain HTTPS mà **không muốn tạo thêm ALB / thêm IP**".
+
+> 🪤 Bẫy: cert **wildcard** `*.example.com` **không** phủ `example.com` trần, và **không** phủ `a.b.example.com` (chỉ một cấp). Đề mô tả "apex domain vẫn báo lỗi cert" → thêm cả `example.com` vào SAN của cert.
+
+> 🪤 Bẫy: "cần cert TLS cho **web server chạy on-prem**" → ACM public cert **không export được** → đáp án là **ACM Private CA** (cert export được, dùng cho internal/mTLS) hoặc mua cert bên ngoài. Xem lại §7.1–7.2.
+
 ---
 
-## 8. Macie — discover sensitive data
+## 8. S3 Object Lock — chống xoá, chống ransomware
+
+Encryption chống **đọc trộm**. Object Lock chống **xoá/ghi đè** — kể cả bởi chính admin có quyền cao. Đây là cơ chế **WORM (Write Once Read Many)** của S3, là đáp án chuẩn cho đề nói "immutable", "cannot be deleted even by root", "WORM", "SEC 17a-4", "ransomware".
+
+**Điều kiện bắt buộc**: bucket phải **bật Versioning**, và Object Lock phải được bật **lúc tạo bucket** (bật sau cần mở ticket AWS Support). Khi Object Lock đã bật, versioning **không tắt được nữa**.
+
+Object Lock có **2 cơ chế độc lập, dùng chung hoặc riêng**: *retention period* và *legal hold*.
+
+### 8.1 Retention mode — Governance vs Compliance
+
+| Tiêu chí | **Governance mode** | **Compliance mode** |
+|----------|---------------------|---------------------|
+| Ai được rút ngắn/gỡ retention | User có quyền `s3:BypassGovernanceRetention` (kèm header `x-amz-bypass-governance-retention:true`) | **Không ai** — kể cả **root account** của chính AWS account đó |
+| Xoá object version trong hạn | Được, nếu có quyền bypass | **Không**, tuyệt đối |
+| Rút ngắn retention period | Được (có bypass) | **Không** — chỉ **kéo dài** được |
+| Khi nào chọn | Bảo vệ khỏi **xoá nhầm**, vẫn muốn đội security có đường lùi; môi trường test compliance trước khi làm thật | **Compliance pháp lý thật sự**, chống insider threat / ransomware có credential admin |
+| Bẫy | Đề nói "even the root user cannot delete" → **KHÔNG** phải Governance | Đặt nhầm retention 10 năm = **trả phí lưu trữ 10 năm** và không có cách nào gỡ trong account. AWS ghi rõ: **đóng AWS account là cách DUY NHẤT** xoá được object compliance-mode trước hạn |
+
+- Retention đặt **per object version**, tính bằng `Retain Until Date`. Có thể đặt **default retention ở cấp bucket** (ví dụ 90 ngày) để mọi object mới tự kế thừa.
+- Hết hạn retention → object trở lại bình thường, xoá được; muốn tự dọn thì kết hợp **lifecycle expiration**.
+
+### 8.2 Legal hold
+
+- Là cờ **bật/tắt**, **không có thời hạn** — giữ object cho tới khi ai đó có quyền `s3:PutObjectLegalHold` tắt đi.
+- **Độc lập với retention**: object đã hết retention nhưng còn legal hold → vẫn không xoá được; và ngược lại.
+- Use case điển hình: **litigation hold** — đang kiện tụng/điều tra, phải giữ bằng chứng nhưng chưa biết giữ tới bao giờ.
+
+### 8.3 Dùng Object Lock chống ransomware
+
+Kịch bản tấn công thật: attacker lấy được credential admin → xoá sạch backup trong S3 → đòi tiền chuộc. Lớp phòng thủ xếp chồng:
+
+1. **Versioning** — ghi đè không mất bản cũ (nhưng vẫn **xoá version được** nếu có quyền → chưa đủ).
+2. **Object Lock Compliance mode** + retention ≥ RPO/RTO yêu cầu — version trong hạn **không ai xoá được**, kể cả root.
+3. **MFA Delete** — thêm rào cho thao tác xoá version / tắt versioning (chỉ root bucket owner bật được, phải dùng CLI).
+4. **CRR sang account/Region khác** — attacker chiếm 1 account vẫn không chạm tới bản sao ở account kia.
+
+> 💡 So sánh nhanh nhóm "chống xoá" hay bị lẫn: **Versioning** = giữ bản cũ; **MFA Delete** = thêm bước xác thực khi xoá; **Object Lock** = **cấm xoá** theo thời hạn; **S3 Glacier Vault Lock** = WORM cho **Vault kiểu Glacier cũ**, policy khoá vĩnh viễn sau khi lock. Đề mô tả "S3 bucket + immutable" → Object Lock, không phải Vault Lock.
+
+> 🪤 Bẫy thi: "bật Object Lock cho bucket **đang chạy**" → giao diện không có nút; điều kiện là bật lúc tạo bucket (hoặc qua Support). Đáp án kiến trúc thường là **tạo bucket mới có Object Lock rồi copy/replicate dữ liệu sang**.
+
+---
+
+## 9. Macie — discover sensitive data
 
 - ML-based scan S3 bucket cho PII (SSN, credit card, name, address).
 - Generate finding, gửi Security Hub / EventBridge.
@@ -328,26 +434,26 @@ Encryption bảo vệ data at rest, nhưng data leak lớn nhất của S3 lịc
 
 ---
 
-## 9. Patterns thực chiến
+## 10. Patterns thực chiến
 
-### 9.1 RDS password rotation
+### 10.1 RDS password rotation
 1. RDS dùng KMS encrypt at rest.
 2. Secrets Manager lưu password, auto-rotate mỗi 30 ngày qua Lambda.
 3. App đọc Secrets Manager mỗi connection (cache 5 phút).
 4. Khi rotate: Secrets Manager update RDS password + secret value. App retry → connect bằng pass mới.
 
-### 9.2 Cross-region S3 replication encrypted
+### 10.2 Cross-region S3 replication encrypted
 1. Source bucket SSE-KMS với key A (region us-east-1).
 2. Destination bucket SSE-KMS với key B (region eu-west-1).
 3. Source CRR config: encrypt với key B at destination.
 4. Replication role có quyền decrypt key A + encrypt key B.
 
-### 9.3 mTLS giữa microservice
+### 10.3 mTLS giữa microservice
 1. ACM Private CA issue cert cho mỗi service.
 2. Cert nằm trong Secrets Manager hoặc mount qua sidecar (Envoy/AWS App Mesh).
 3. Service-to-service traffic encrypt + mutual authentication.
 
-### 9.4 Encrypted everywhere
+### 10.4 Encrypted everywhere
 - S3: SSE-KMS với CMK.
 - EBS: encryption default ON.
 - RDS: KMS.
@@ -357,7 +463,7 @@ Encryption bảo vệ data at rest, nhưng data leak lớn nhất của S3 lịc
 
 ---
 
-## 10. KMS performance & cost
+## 11. KMS performance & cost
 
 - **KMS quota**: 5,500 - 30,000 req/s depend region và operation.
 - Hit quota → throttle. Use case high-volume: **cache data key**.
@@ -370,7 +476,7 @@ Encryption bảo vệ data at rest, nhưng data leak lớn nhất của S3 lịc
 
 ---
 
-## 11. Cạm bẫy đề thi (SAA)
+## 12. Cạm bẫy đề thi (SAA)
 
 1. **"KMS encrypt 1 GB file trực tiếp"** → **Sai**, 4 KB limit. Dùng envelope.
 2. **"AWS managed key có thể custom policy"** → **Sai**, chỉ CMK.
@@ -384,13 +490,13 @@ Encryption bảo vệ data at rest, nhưng data leak lớn nhất của S3 lịc
 
 ---
 
-## 12. Tóm tắt 1 dòng
+## 13. Tóm tắt 1 dòng
 
 > Encrypt at rest **mọi nơi** (KMS hoặc service-default), TLS in transit, secret trong **Secrets Manager/Parameter Store**, cert trong **ACM**. Envelope encryption là pattern cốt lõi của KMS. CMK khi cần rotate/audit control.
 
 ---
 
-## 13. Bài tập tự kiểm tra
+## 14. Bài tập tự kiểm tra
 
 1. App ghi 10TB log/ngày vào S3, SSE-KMS với CMK. KMS bill $500/ngày. Bạn analyze gì và đề xuất giảm cost?
 2. Cross-account: account A có S3 bucket SSE-KMS. Account B user cần read. Cấu hình IAM + KMS thế nào?
@@ -401,7 +507,7 @@ Encryption bảo vệ data at rest, nhưng data leak lớn nhất của S3 lịc
 
 ---
 
-## 14. Đọc thêm
+## 15. Đọc thêm
 
 - AWS Whitepaper — *AWS KMS Cryptographic Details*, *Logical Separation on AWS*.
 - AWS docs — *KMS Developer Guide*, *Secrets Manager User Guide*.

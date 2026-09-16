@@ -185,11 +185,99 @@ Mỗi hop là cơ hội tối ưu.
 - TCP/UDP non-HTTP → **GA**.
 - Cần static IP → **GA**.
 
+### 5.5 Route 53 failover vs Global Accelerator — chọn cái nào cho multi-region failover
+
+Cả hai đều "chuyển traffic từ region hỏng sang region lành", nhưng **điểm chuyển hướng khác nhau**: Route 53 chuyển ở tầng **phân giải tên** (client phải hỏi DNS lại mới biết), Global Accelerator chuyển ở tầng **edge POP** (client vẫn giữ nguyên IP, không cần hỏi lại gì).
+
+| Tiêu chí | Route 53 failover | Global Accelerator |
+|---|---|---|
+| Cơ chế chuyển hướng | Đổi record trả về khi health check fail | Đổi endpoint phía sau **2 static anycast IP** — IP client dùng không đổi |
+| Thời gian thực tế tới khi client đi đúng chỗ | Thời gian health check phát hiện lỗi **+ TTL của record + cache của resolver + cache DNS của client** | Thời gian health check phát hiện lỗi; sau đó chuyển hướng gần như tức thì vì không có bước resolve lại |
+| Health check | Route 53 health check (interval 30s chuẩn, 10s nếu bật fast) | Health check tới endpoint (ALB/NLB/EIP/EC2) của accelerator |
+| Hoạt động với non-HTTP (TCP/UDP thuần, game, VoIP, MQTT) | Có, nhưng vẫn là DNS nên vẫn dính TTL | Có — GA làm việc ở L4 |
+| Cho client cần **IP tĩnh để whitelist firewall** | Không — record trỏ tới DNS name của ALB, IP thay đổi | **Có** — 2 anycast IP cố định suốt vòng đời accelerator |
+| Chi phí | Rẻ: tiền hosted zone + query + health check | Phí cố định theo giờ cho mỗi accelerator (~$0.025/h) + phí data transfer premium theo GB |
+| Bẫy | Client cache DNS quá TTL (một số cấu hình JVM cache vĩnh viễn (`networkaddress.cache.ttl=-1`), nhiều SDK/OS cũng cache riêng) → hạ TTL xuống 60s vẫn có client kẹt ở IP chết | GA **không cache** nội dung; đặt GA trước origin static không giúp gì so với CloudFront |
+
+**Khi nào bắt buộc phải là Global Accelerator** (đề mô tả một trong các ý này thì Route 53 là đáp án sai):
+
+- Đề nói khách hàng/đối tác phải **whitelist IP cố định** trong firewall của họ.
+- Protocol **không phải HTTP**: UDP game server, VoIP/SIP, MQTT, custom TCP.
+- Yêu cầu failover **"gần như tức thì" / "không phụ thuộc DNS TTL" / "client không kiểm soát được"** (thiết bị IoT, set-top box, app cũ cache DNS).
+- Cần **client affinity theo source IP** cho session TCP dài.
+
+**Khi nào Route 53 failover là đủ (và rẻ hơn)**: web app HTTP mà client là trình duyệt (trình duyệt tôn trọng TTL tương đối tốt), RTO đo bằng phút chứ không phải giây, hoặc DR kiểu pilot light / backup-restore nơi vài phút DNS chẳng đáng gì so với thời gian khôi phục stack.
+
+> Khi cần **quyết định failover bằng tay, không để health check tự bật tắt** (tránh flapping trong sự cố lớn), Route 53 **Application Recovery Controller** cho "routing control" — công tắc On/Off chạy trên data plane 5 region, bật/tắt được kể cả khi control plane region chính đang lỗi.
+
 ---
 
-## 6. VPC networking
+## 6. Hạ tầng edge & hybrid compute — Outposts, Local Zones, Wavelength
 
-### 6.1 VPC endpoints — tránh internet
+CloudFront và Global Accelerator chỉ đưa **điểm vào mạng** lại gần user; compute vẫn nằm trong Region. Khi đề nói "app phải chạy gần user/gần máy móc, latency single-digit millisecond" hoặc "dữ liệu không được rời khỏi toà nhà", thì phải đẩy **chính compute** ra ngoài Region. Đó là nhóm Outposts / Local Zones / Wavelength.
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Phổ hạ tầng AWS từ Region ra tới datacenter khách hàng</title>
+  <desc>Trục ngang từ xa user tới gần user. Region chứa compute đầy đủ. Local Zone đặt ở metro lớn, chạy EC2 và EBS, latency vài mili giây tới user trong metro. Wavelength Zone nằm trong datacenter nhà mạng 5G, traffic từ thiết bị di động không rời mạng carrier. Outposts là rack AWS đặt ngay trong datacenter khách hàng, dùng khi cần data residency hoặc nói chuyện với hệ thống on-premises. CloudFront và Global Accelerator nằm ở edge POP nhưng chỉ đưa điểm vào mạng lại gần, không chạy workload của bạn.</desc>
+  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Compute nằm ở đâu — từ Region ra tới DC khách hàng</text>
+  <line x1="30" y1="200" x2="694" y2="200" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="30" y="222" font-size="10.5" fill="currentColor" opacity="0.6">xa user · service đầy đủ nhất</text>
+  <text x="694" y="222" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.6">gần user / gần máy móc · service hạn chế</text>
+  <rect x="24" y="52" width="150" height="128" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
+  <rect x="36" y="64" width="78" height="20" rx="10" fill="#3b82f6" fill-opacity="0.9"/>
+  <text x="75" y="78" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">Region</text>
+  <text x="36" y="104" font-size="11" font-weight="700" fill="currentColor">AWS Region / AZ</text>
+  <text x="36" y="122" font-size="10" fill="currentColor" opacity="0.65">mọi service, nhiều AZ</text>
+  <text x="36" y="138" font-size="10" fill="currentColor" opacity="0.65">mặc định cho mọi thứ</text>
+  <text x="36" y="160" font-size="10" fill="currentColor" opacity="0.5">latency: hàng chục ms</text>
+  <rect x="190" y="52" width="150" height="128" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <rect x="202" y="64" width="98" height="20" rx="10" fill="#10b981" fill-opacity="0.92"/>
+  <text x="251" y="78" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">Local Zone</text>
+  <text x="202" y="104" font-size="11" font-weight="700" fill="currentColor">metro lớn</text>
+  <text x="202" y="122" font-size="10" fill="currentColor" opacity="0.65">EC2, EBS, ALB, FSx…</text>
+  <text x="202" y="138" font-size="10" fill="currentColor" opacity="0.65">AWS quản hạ tầng</text>
+  <text x="202" y="160" font-size="10" fill="currentColor" opacity="0.5">latency: vài ms trong metro</text>
+  <rect x="356" y="52" width="150" height="128" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+  <rect x="368" y="64" width="106" height="20" rx="10" fill="#8b5cf6" fill-opacity="0.92"/>
+  <text x="421" y="78" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">Wavelength</text>
+  <text x="368" y="104" font-size="11" font-weight="700" fill="currentColor">trong DC nhà mạng 5G</text>
+  <text x="368" y="122" font-size="10" fill="currentColor" opacity="0.65">traffic không rời carrier</text>
+  <text x="368" y="138" font-size="10" fill="currentColor" opacity="0.65">chỉ cho client 5G</text>
+  <text x="368" y="160" font-size="10" fill="currentColor" opacity="0.5">AR/VR, xe kết nối, IoT 5G</text>
+  <rect x="522" y="52" width="172" height="128" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+  <rect x="534" y="64" width="92" height="20" rx="10" fill="#f59e0b" fill-opacity="0.92"/>
+  <text x="580" y="78" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">Outposts</text>
+  <text x="534" y="104" font-size="11" font-weight="700" fill="currentColor">rack AWS trong DC bạn</text>
+  <text x="534" y="122" font-size="10" fill="currentColor" opacity="0.65">data residency tại chỗ</text>
+  <text x="534" y="138" font-size="10" fill="currentColor" opacity="0.65">nói chuyện hệ thống on-prem</text>
+  <text x="534" y="160" font-size="10" fill="currentColor" opacity="0.5">control plane vẫn ở Region</text>
+  <text x="30" y="242" font-size="10.5" fill="currentColor" opacity="0.7">CloudFront / Global Accelerator: ở edge POP nhưng CHỈ đưa điểm vào mạng lại gần — workload của bạn vẫn ở Region.</text>
+</svg>
+
+### 6.1 Bảng chọn hạ tầng edge
+
+| Hạ tầng | Đặt ở đâu | Chạy được gì | Khi nào chọn | Từ khoá đề | Bẫy |
+|---|---|---|---|---|---|
+| **AWS Outposts** (rack 42U hoặc server 1U/2U) | Trong datacenter / nhà máy / cửa hàng **của khách hàng**, AWS giao và vận hành | EC2, EBS, S3 on Outposts, ECS/EKS, RDS, ElastiCache, ALB (tập con service) | Dữ liệu **bắt buộc ở lại tại chỗ** vì luật/hợp đồng; app phải nói chuyện với hệ thống on-prem (SCADA, máy sản xuất, mainframe) ở latency dưới mili giây | "data residency", "không được rời khỏi cơ sở", "kết nối tới hệ thống cũ trong nhà máy", "cùng API/công cụ như AWS nhưng on-prem" | Vẫn cần **service link** ổn định về home Region: mất link thì instance đang chạy vẫn chạy nhưng **control plane (tạo/xoá instance, API) ngừng dùng được**. Không phải giải pháp "chạy hoàn toàn offline". Capacity là hữu hạn và mua trước — không co giãn vô hạn như Region |
+| **Local Zones** | Cơ sở của AWS đặt ở **trung tâm đô thị lớn**, là phần mở rộng của một parent Region (tên dạng `us-west-2-lax-1a`) | EC2, EBS, và một tập con service (thường có ALB, FSx) — không phải mọi service | Cần **single-digit millisecond** tới user hoặc tới on-prem trong chính metro đó, nhưng **không muốn tự quản rack** | "user ở thành phố X cần độ trễ vài ms", "media/game rendering", "ML inference gần user", "app on-prem chưa migrate được cần latency thấp tới AWS" | Thường chỉ có **một zone** (vài Local Zone như LA có 2) → gần như không có HA đa AZ trong Local Zone; muốn bền phải kết hợp với parent Region. Service thiếu thì phải gọi ngược về parent Region (thêm latency) |
+| **AWS Wavelength** | **Bên trong datacenter của nhà mạng** ở rìa mạng 5G (tên zone dạng `us-east-1-wl1-…`) | EC2, EBS và một tập con rất hẹp | Client là **thiết bị di động trên mạng 5G** của chính carrier đó, và cần latency cực thấp | "5G", "mobile edge computing", "AR/VR trên điện thoại", "xe kết nối", "nhà máy thông minh qua 5G" | Chỉ hưởng lợi khi traffic **đi qua mạng của carrier đó** — user trên Wi-Fi/cáp quang không được lợi gì. Không phải cách làm web app toàn cầu nhanh hơn |
+| **CloudFront edge location** | 600+ POP toàn cầu | Chỉ CloudFront Functions / Lambda@Edge, không phải app của bạn | Nội dung **HTTP cacheable**, TLS terminate gần user | "static content", "video", "cache", "toàn cầu" | Không chạy được workload nặng/stateful ở edge |
+| **Global Accelerator edge** | Cùng mạng edge POP | Không chạy code — chỉ là điểm vào anycast | Non-HTTP, IP tĩnh, failover nhanh (xem 5.5) | "static IP", "UDP", "failover không phụ thuộc DNS" | Không cache |
+
+### 6.2 Phân biệt nhanh khi đọc đề
+
+- Đề nhắc **quy định/luật/dữ liệu không được rời cơ sở** → **Outposts**. Local Zones và Wavelength là hạ tầng của AWS/telco, không giải quyết bài toán data residency trong toà nhà của khách.
+- Đề nhắc **một thành phố cụ thể + vài mili giây + không muốn quản hạ tầng** → **Local Zones**.
+- Đề nhắc **5G / carrier / thiết bị di động** → **Wavelength**. Thấy chữ "5G" gần như luôn là Wavelength.
+- Đề nhắc **cache / static asset / video toàn cầu** → **CloudFront**, không phải nhóm trên.
+- Đề nhắc **IP tĩnh hoặc TCP/UDP + failover nhanh** → **Global Accelerator**.
+- Đề nhắc **thiết bị rời rạc ở nơi không có mạng ổn định, cần xử lý cục bộ rồi đồng bộ sau** → đó là bài toán của **Snowball Edge / IoT Greengrass**, không phải Outposts (xem [[ch2-05-migration-transfer]]).
+
+---
+
+## 7. VPC networking
+
+### 7.1 VPC endpoints — tránh internet
 
 | Type | Service | Cost |
 |------|---------|------|
@@ -198,7 +286,7 @@ Mỗi hop là cơ hội tối ưu.
 
 → Traffic giữa VPC và service đi qua **private AWS network**, không qua NAT GW → tiết kiệm NAT data charge + giảm latency.
 
-### 6.2 NAT Gateway
+### 7.2 NAT Gateway
 
 - $0.045/h + **$0.045/GB processed**.
 - Cho instance trong private subnet ra internet.
@@ -246,18 +334,18 @@ Mỗi hop là cơ hội tối ưu.
   <text x="250" y="286" font-size="9.5" fill="currentColor" opacity="0.6">(data through endpoint $0.01/GB; gateway endpoint không tính phí endpoint)</text>
 </svg>
 
-### 6.3 Enhanced Networking
+### 7.3 Enhanced Networking
 
 - **ENA**: tới 100 Gbps. Default cho modern instance.
 - **EFA**: low latency, HPC, MPI.
 - **Placement Group Cluster**: low intra-cluster latency.
 
-### 6.4 Jumbo frames
+### 7.4 Jumbo frames
 - MTU 9001 (vs 1500 default) trong VPC (cùng AZ và peered VPC).
 - Tăng throughput cho bulk transfer (giảm header overhead).
 - **Không** ra internet với MTU > 1500.
 
-### 6.5 VPC Peering vs Transit Gateway
+### 7.5 VPC Peering vs Transit Gateway
 
 | Aspect | VPC Peering | Transit Gateway (TGW) |
 |--------|-------------|----------------------|
@@ -318,7 +406,7 @@ Mỗi hop là cơ hội tối ưu.
 
 > Quy tắc: ≤ 5 VPC dùng peering. ≥ 10 VPC dùng TGW.
 
-### 6.6 PrivateLink
+### 7.6 PrivateLink
 
 - Expose service từ **VPC provider** sang **VPC consumer** qua ENI private.
 - Use case: SaaS multi-tenant, share service nội bộ giữa account.
@@ -326,9 +414,9 @@ Mỗi hop là cơ hội tối ưu.
 
 ---
 
-## 7. Hybrid network — on-prem ↔ AWS
+## 8. Hybrid network — on-prem ↔ AWS
 
-### 7.1 Site-to-Site VPN
+### 8.1 Site-to-Site VPN
 
 - IPsec qua internet.
 - Setup: phút.
@@ -337,7 +425,7 @@ Mỗi hop là cơ hội tối ưu.
 - Cost: $0.05/h + data egress.
 - Use case: dev, backup, low-traffic.
 
-### 7.2 Direct Connect (DX)
+### 8.2 Direct Connect (DX)
 
 - Physical fiber từ on-prem → AWS DX location.
 - Throughput: 1, 10, 100 Gbps.
@@ -346,10 +434,10 @@ Mỗi hop là cơ hội tối ưu.
 - Cost: port + data egress (rẻ hơn internet egress).
 - HA: cần 2 DX ở 2 location khác nhau, hoặc DX + VPN backup.
 
-### 7.3 DX Gateway
+### 8.3 DX Gateway
 - Cho phép 1 DX kết nối nhiều VPC ở nhiều region.
 
-### 7.4 Khi nào DX vs VPN
+### 8.4 Khi nào DX vs VPN
 
 | Yêu cầu | Chọn |
 |---------|------|
@@ -359,13 +447,13 @@ Mỗi hop là cơ hội tối ưu.
 | HA cao | DX × 2 hoặc DX + VPN backup |
 | Compliance "no internet" | DX |
 
-### 7.5 Cloud WAN (mới)
+### 8.5 Cloud WAN (mới)
 - AWS managed WAN cho enterprise multi-region multi-VPC + on-prem.
 - Higher-level abstraction trên TGW.
 
 ---
 
-## 8. Bandwidth & egress cost
+## 9. Bandwidth & egress cost
 
 | Path | Cost (US) |
 |------|-----------|
@@ -389,9 +477,9 @@ Mỗi hop là cơ hội tối ưu.
 
 ---
 
-## 9. API Gateway performance
+## 10. API Gateway performance
 
-### 9.1 Types
+### 10.1 Types
 
 | Type | Protocol | Use case |
 |------|----------|----------|
@@ -399,7 +487,7 @@ Mỗi hop là cơ hội tối ưu.
 | **HTTP API** | HTTP | ~70% rẻ hơn REST, simple use case, JWT |
 | **WebSocket API** | WebSocket | Realtime |
 
-### 9.2 Optimization
+### 10.2 Optimization
 - **Caching**: enable per stage, TTL configurable. Reduce backend load.
 - **Throttling**: per-API key, per-stage. Bảo vệ backend.
 - **Regional vs Edge-optimized**: edge route qua CloudFront mạng AWS — tốt cho global client. Regional cho client cùng region.
@@ -407,7 +495,7 @@ Mỗi hop là cơ hội tối ưu.
 
 ---
 
-## 10. App Mesh / Service Mesh
+## 11. App Mesh / Service Mesh
 
 - Sidecar (Envoy proxy) per service.
 - Cung cấp: traffic shifting, retry policy, circuit breaker, mTLS, observability.
@@ -421,34 +509,34 @@ Mỗi hop là cơ hội tối ưu.
 
 ---
 
-## 11. Ví dụ design network cho 4 use case
+## 12. Ví dụ design network cho 4 use case
 
-### 11.1 SaaS web app, user toàn cầu, B2C
+### 12.1 SaaS web app, user toàn cầu, B2C
 - Route 53 latency-based → 2 region (us-east-1, eu-west-1).
 - CloudFront trước ALB ở mỗi region.
 - WAF integrated với CloudFront.
 - ACM certificate.
 - Aurora Global Database, write us-east-1.
 
-### 11.2 Game server realtime UDP
+### 12.2 Game server realtime UDP
 - Global Accelerator → NLB → EC2 fleet (instance store cho state).
 - Static anycast IP cho client.
 - 2 region failover qua GA.
 
-### 11.3 Enterprise hybrid
+### 12.3 Enterprise hybrid
 - Direct Connect 10 Gbps × 2 (HA, 2 DX location).
 - Transit Gateway hub.
 - VPC endpoints cho S3/DynamoDB (tránh NAT cost).
 - VPN backup.
 
-### 11.4 Multi-account organization
+### 12.4 Multi-account organization
 - Transit Gateway shared via Resource Access Manager (RAM).
 - Centralized egress qua security account.
 - PrivateLink expose shared service.
 
 ---
 
-## 12. Cạm bẫy đề thi (SAA)
+## 13. Cạm bẫy đề thi (SAA)
 
 1. **"CloudFront cache POST"** → **Không**, chỉ cache GET/HEAD (và OPTIONS). POST đi thẳng origin.
 2. **"Global Accelerator có cache"** → **Sai**.
@@ -462,13 +550,13 @@ Mỗi hop là cơ hội tối ưu.
 
 ---
 
-## 13. Tóm tắt 1 dòng
+## 14. Tóm tắt 1 dòng
 
 > Đẩy content ra **edge** (CloudFront) cho static, dùng **AWS backbone** (Global Accelerator, VPC endpoint, DX) cho dynamic / private. Egress là cost trap — design để minimize cross-AZ, cross-region, và internet egress.
 
 ---
 
-## 14. Bài tập tự kiểm tra
+## 15. Bài tập tự kiểm tra
 
 1. Web app deploy us-east-1, user VN báo chậm. CloudFront giải quyết bao nhiêu trong các vấn đề: (a) DNS, (b) TLS handshake, (c) TTFB dynamic, (d) static asset?
 2. NAT Gateway hóa đơn $5000/tháng, 90% traffic là S3 read. Action?
@@ -479,7 +567,7 @@ Mỗi hop là cơ hội tối ưu.
 
 ---
 
-## 15. Đọc thêm
+## 16. Đọc thêm
 
 - AWS Whitepaper — *AWS Networking Overview*, *Best Practices for VPC Design*.
 - AWS Builder's Library — nhiều bài về *Workload isolation*, *Caching*.

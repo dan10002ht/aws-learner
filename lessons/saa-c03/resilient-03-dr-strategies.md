@@ -235,6 +235,26 @@ Route 53 là "công tắc traffic" chuyển hướng người dùng từ Region 
 
 > ⚠️ **Bẫy:** Để Route 53 failover hoạt động, phải gắn **health check** vào primary record. Thiếu health check → Route 53 không biết primary chết → không chuyển. Ngoài ra **TTL cao** là thủ phạm khiến failover "chậm bất thường" trong đề.
 
+## AWS Elastic Disaster Recovery (AWS DRS)
+
+Service DR chuyên dụng, kế thừa CloudEndure Disaster Recovery. Cài agent lên server **nguồn**
+(on-premises, VMware, hoặc EC2 ở cloud khác), agent **replicate liên tục ở mức block** sang một
+**staging area** giá rẻ trong AWS — staging chỉ chạy instance nhỏ + EBS rẻ, nên chi phí lúc "chờ"
+thấp hơn hẳn việc dựng sẵn cả hệ thống standby.
+
+Khi có sự cố, DRS **launch instance thật** từ dữ liệu đã replicate. Đổi lại: RPO tính bằng **giây**,
+RTO tính bằng **phút** — tốt hơn Backup & Restore nhiều mà không phải trả tiền cho Warm Standby
+chạy 24/7.
+
+| Đề mô tả | Chọn | Vì sao |
+|---|---|---|
+| DR cho server **on-premises** (kể cả SQL Server, app cũ) lên AWS, không muốn đổi kiến trúc | **Elastic Disaster Recovery** | Replicate block-level, không cần refactor, không cần bản sao chạy sẵn |
+| **Di cư** một lần lên AWS rồi thôi | **Application Migration Service (MGN)** | Cùng gốc công nghệ nhưng dành cho migrate, không phải DR lặp lại |
+| Chỉ cần khôi phục dữ liệu, chịu được hàng giờ | **AWS Backup** | Rẻ nhất, nhưng RTO/RPO kém xa |
+
+> 🪤 Bẫy: đề nói "DR cho on-prem, RPO vài giây, không muốn trả tiền cho môi trường chạy sẵn"
+> → **DRS**. Không phải Warm Standby (tốn tiền chạy sẵn), cũng không phải MGN (đó là để migrate).
+
 ## Ghép service vào từng chiến lược
 
 | Chiến lược | Data tier điển hình | Traffic switch |

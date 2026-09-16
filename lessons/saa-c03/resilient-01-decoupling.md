@@ -364,6 +364,24 @@ Decoupling ở tầng compute = tách monolith thành **microservices** độc l
 
 Microservices nên giao tiếp **bất đồng bộ qua SQS/SNS/EventBridge** thay vì gọi REST đồng bộ chuỗi dài (tránh cascade failure). Service discovery dùng **AWS Cloud Map**; cân bằng tải nội bộ dùng **ALB** (path/host-based routing).
 
+## 7b. Step Functions vs Amazon SWF (service cũ)
+
+**Amazon Simple Workflow Service (SWF)** là service điều phối workflow đời đầu: bạn tự viết
+**decider** và **activity worker**, tự chạy chúng, SWF giữ trạng thái và lịch sử thực thi.
+Đổi lại sự linh hoạt đó là phải tự vận hành code điều phối.
+
+**AWS Step Functions** là lựa chọn mặc định cho ứng dụng mới: định nghĩa state machine bằng JSON,
+không phải nuôi decider, tích hợp sẵn với hơn 200 service, có retry/catch khai báo được.
+
+| Đề mô tả | Chọn |
+|---|---|
+| Workflow mới, muốn ít vận hành, ghép nhiều AWS service | **Step Functions** |
+| Cần **luồng có bước thao tác thủ công của con người** kéo dài, hoặc signal từ hệ thống ngoài, và cần điều khiển ở mức code | **SWF** |
+| Chỉ cần tách producer/consumer, không cần trạng thái workflow | **SQS/SNS/EventBridge** |
+
+> 🪤 Bẫy: SWF vẫn xuất hiện trong đề như một mồi nhử. Trừ khi đề nhấn mạnh **human task** hoặc
+> **decider tự viết**, đáp án gần như luôn là Step Functions.
+
 ## 8. Tổng hợp cây quyết định cho đề thi
 
 Đọc câu hỏi và bắt từ khóa:

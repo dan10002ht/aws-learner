@@ -595,6 +595,9 @@ const saaLessons: Lesson[] = [
   { slug: "ch2-06-data-ingestion-analytics", courseId: "SAA-C03", title: "Data Ingestion & Analytics", shortTitle: "Ingestion & Analytics", chapter: "saa-ch2", order: 14, available: true,
     description: "Kinesis Data Streams vs Firehose vs Managed Flink (vs MSK), Athena + Parquet, Glue ETL/Catalog, Redshift vs Athena vs EMR, Lake Formation, QuickSight — pipeline data lake (TS5).",
     file: "saa-c03/ch2-06-data-ingestion-analytics.md" },
+  { slug: "ch2-07-hybrid-connectivity", courseId: "SAA-C03", title: "Hybrid Connectivity Deep Dive", shortTitle: "Hybrid Connectivity", chapter: "saa-ch2", order: 21, available: true,
+    description: "Direct Connect (VIF, LAG, resiliency model), Site-to-Site & Client VPN, DX+VPN failover, Transit Gateway, VPC endpoint vs PrivateLink vs GWLB endpoint, egress-only IGW & IPv6.",
+    file: "saa-c03/ch2-07-hybrid-connectivity.md" },
   // Domain 1 — Design Secure Architectures (30%)
   { slug: "ch3-01-iam-deep-dive", courseId: "SAA-C03", title: "IAM Deep Dive & Identity Federation", shortTitle: "IAM Deep", chapter: "saa-ch3", order: 1, available: true,
     description: "Policy evaluation, STS, federation (IdC, SAML, OIDC), Permission Boundary, SCP, ABAC.",
@@ -608,6 +611,12 @@ const saaLessons: Lesson[] = [
   { slug: "ch3-04-detective-controls", courseId: "SAA-C03", title: "Detective Controls & Compliance", shortTitle: "Detective", chapter: "saa-ch3", order: 4, available: true,
     description: "CloudTrail, Config, GuardDuty, Inspector, Macie, Security Hub, Detective, incident response.",
     file: "saa-c03/ch3-04-detective-controls.md" },
+  { slug: "ch3-05-multi-account-governance", courseId: "SAA-C03", title: "Multi-Account & Governance", shortTitle: "Governance", chapter: "saa-ch3", order: 19, available: true,
+    description: "Organizations, SCP vs RCP, Control Tower landing zone, IAM Identity Center permission set, RAM, Service Catalog, License Manager, bảo vệ root.",
+    file: "saa-c03/ch3-05-multi-account-governance.md" },
+  { slug: "ch3-06-operations-iac", courseId: "SAA-C03", title: "Operations & Infrastructure as Code", shortTitle: "Ops & IaC", chapter: "saa-ch3", order: 20, available: true,
+    description: "Systems Manager (Session Manager, Run Command, Parameter Store, Patch), CloudFormation & StackSet, Elastic Beanstalk deployment policy, Launch Template, DLM, AWS Backup.",
+    file: "saa-c03/ch3-06-operations-iac.md" },
   // Domain 4 — Design Cost-Optimized Architectures (20%)
   { slug: "ch4-01-compute-cost", courseId: "SAA-C03", title: "Compute Cost Optimization", shortTitle: "Compute Cost", chapter: "saa-ch4", order: 15, available: true,
     description: "Savings Plan vs RI vs Spot, right-sizing, Graviton, serverless cost, container cost.",
@@ -626,9 +635,9 @@ const saaLessons: Lesson[] = [
 // Xếp theo trọng số blueprint SAA-C03: Secure 30% → Resilient 26% → High-Performing 24% → Cost 20%,
 // foundations (lý thuyết hệ phân tán) để cuối làm phụ lục.
 const saaChapters: Chapter[] = [
-  { id: "saa-ch3", courseId: "SAA-C03", title: "Domain 1 — Design Secure Architectures (30%)", lessonSlugs: ["ch3-01-iam-deep-dive", "ch3-02-network-security", "ch3-03-data-protection", "ch3-04-detective-controls"], category: "security" },
+  { id: "saa-ch3", courseId: "SAA-C03", title: "Domain 1 — Design Secure Architectures (30%)", lessonSlugs: ["ch3-01-iam-deep-dive", "ch3-02-network-security", "ch3-03-data-protection", "ch3-04-detective-controls", "ch3-05-multi-account-governance", "ch3-06-operations-iac"], category: "security" },
   { id: "saa-ch-res", courseId: "SAA-C03", title: "Domain 2 — Design Resilient Architectures (26%)", lessonSlugs: ["resilient-01-decoupling", "resilient-02-ha-fault-tolerance", "resilient-03-dr-strategies", "resilient-04-scalability"], category: "network" },
-  { id: "saa-ch2", courseId: "SAA-C03", title: "Domain 3 — Design High-Performing Architectures (24%)", lessonSlugs: ["ch2-01-compute-performance", "ch2-02-storage-performance", "ch2-03-database-performance", "ch2-04-network-performance", "ch2-05-migration-transfer", "ch2-06-data-ingestion-analytics"], category: "compute" },
+  { id: "saa-ch2", courseId: "SAA-C03", title: "Domain 3 — Design High-Performing Architectures (24%)", lessonSlugs: ["ch2-01-compute-performance", "ch2-02-storage-performance", "ch2-03-database-performance", "ch2-04-network-performance", "ch2-05-migration-transfer", "ch2-06-data-ingestion-analytics", "ch2-07-hybrid-connectivity"], category: "compute" },
   { id: "saa-ch4", courseId: "SAA-C03", title: "Domain 4 — Design Cost-Optimized Architectures (20%)", lessonSlugs: ["ch4-01-compute-cost", "ch4-02-storage-cost", "ch4-03-db-network-cost", "ch4-04-cost-visibility"], category: "billing" },
 ];
 

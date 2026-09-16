@@ -89,11 +89,16 @@ Khi 1 request đến (vd `s3:GetObject`), AWS đánh giá theo trình tự:
 1. Có explicit DENY ở BẤT KỲ policy (SCP / identity / resource / boundary / session)?
    → DENY ngay (luôn thắng, kể cả admin). Bước này chặn trước mọi kết luận ALLOW.
 2. Có SCP? SCP phải allow action (implicit deny nếu ngoài phạm vi SCP) → nếu không: DENY
-3. Resource-based policy có allow explicit cho principal? → ALLOW (skip identity check)
-4. Identity-based policy có allow? Không → DENY
-5. Có Permission Boundary? Boundary có allow? Không → DENY
-6. Có session policy? Session policy có allow? Không → DENY
-7. → ALLOW
+3. Caller và resource CÙNG account?
+   3a. Resource-based policy có allow explicit cho principal? → ALLOW (không cần identity policy)
+   3b. Không có resource policy → đi tiếp bước 4
+4. Caller và resource KHÁC account (cross-account)? → cần Allow ở CẢ HAI:
+   identity policy bên caller VÀ resource policy bên resource. Thiếu một bên là DENY.
+   (Ngoại lệ đáng nhớ: KMS — key policy là BẮT BUỘC, IAM policy một mình không cứu được.)
+5. Identity-based policy có allow? Không → DENY
+6. Có Permission Boundary? Boundary có allow? Không → DENY
+7. Có session policy? Session policy có allow? Không → DENY
+8. → ALLOW
 ```
 
 > 🪤 Bẫy thi: đề hay sắp bước "explicit DENY" xuống cuối để bạn tưởng deny được xét sau khi đã ALLOW. Thực tế **explicit DENY được đánh giá và thắng trước** — không tầng allow nào cứu được.
@@ -359,7 +364,7 @@ Account A user còn cần identity policy allow `s3:GetObject` trên `bucket-b`.
 
 - Chỉ trong AWS Organizations.
 - Apply lên OU hoặc account.
-- Là **trần quyền** — kể cả root account cũng bị giới hạn.
+- Là **trần quyền** — trong **member account** thì kể cả root user cũng bị giới hạn. Nhưng SCP **không áp dụng cho management account** (mọi user/role ở đó nằm ngoài tầm SCP) — đây là lý do best practice là không chạy workload trong management account.
 - Không grant quyền, chỉ deny/allow framework.
 
 ### Patterns
@@ -470,7 +475,7 @@ Thay vì 1000 role cho 1000 team, dùng **tag-based**:
 ## 12. Cạm bẫy đề thi (SAA)
 
 1. **"AdministratorAccess + SCP deny S3 → có truy cập S3?"** → **Không**, SCP deny thắng admin.
-2. **"Bucket policy allow account A + A user không có S3 permission → có truy cập?"** → **Có** (chỉ cần 1 trong 2 cho cross-account và resource policy thường đủ cho same-service cross-account; nhưng cross-account S3 cần CẢ HAI cho identity của caller). Đề SAA hay đánh tráo — đọc kỹ.
+2. **"Bucket policy allow account A + user của A không có S3 permission → có truy cập?"** → **KHÔNG**. Đây là cross-account, phải có Allow ở **cả hai** phía: bucket policy bên account B VÀ identity policy của user bên account A. Thiếu identity policy bên caller là deny. Chỉ khi **cùng account** thì resource policy một mình mới đủ — đó đúng là chỗ đề SAA đánh tráo.
 3. **"Cross-account: chỉ cần resource policy"** → **Sai cho hầu hết**. Cần cả identity policy + resource policy (trừ trường hợp special như S3 bucket policy với explicit principal).
 4. **"Permission Boundary thay thế IAM policy"** → **Sai**. Boundary là trần, vẫn cần identity policy grant quyền.
 5. **"SCP grant quyền"** → **Sai**, SCP chỉ deny/allow framework. Vẫn cần IAM policy.
