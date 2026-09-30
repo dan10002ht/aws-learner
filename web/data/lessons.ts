@@ -1172,11 +1172,68 @@ const gsChapters: Chapter[] = [
   { id: "gs-ch10", courseId: "GAMESERVER", title: "Chương 10 — Capstone agar-lite", lessonSlugs: ["gs-41-capstone-1", "gs-42-capstone-2"], category: "compute" },
 ];
 
+const ctLessons: Lesson[] = [
+  { slug: "ct-01-kernel-khong-biet-container", courseId: "CONTAINERS", title: "Kernel không biết \"container\" là gì", shortTitle: "Không có container", chapter: "ct-ch1", order: 1, available: true,
+    description: "Cùng một process có hai PID — một trong container, một trên host, và đó không phải bug; vì sao container không \"boot\"; bốn thứ Docker lắp lại; cái gì KHÔNG được ảo hoá.", file: "containers/ct-01-kernel-khong-biet-container.md" },
+  { slug: "ct-02-tam-namespace-unshare", courseId: "CONTAINERS", title: "Tám namespace, và tự dựng container bằng unshare", shortTitle: "Tám namespace", chapter: "ct-ch1", order: 2, available: true,
+    description: "Đủ tám loại (mnt/uts/ipc/pid/net/user/cgroup/time), không phải sáu; /proc/<pid>/ns/* và cách so st_dev+st_ino; vì sao unshare -p phải đi kèm -f; PID 1 trong namespace.", file: "containers/ct-02-tam-namespace-unshare.md" },
+  { slug: "ct-03-mount-namespace-pivot-root", courseId: "CONTAINERS", title: "mount namespace, pivot_root và rootfs", shortTitle: "mount ns & pivot_root", chapter: "ct-ch1", order: 3, available: true,
+    description: "Vì sao container thấy filesystem khác mà không copy gì; pivot_root khác chroot ở bản chất, không phải ở bug; mount propagation và chuyện bind-mount rò sang host.", file: "containers/ct-03-mount-namespace-pivot-root.md" },
+  { slug: "ct-04-cgroup-v1-vs-v2", courseId: "CONTAINERS", title: "cgroup v1 vs v2: đọc /sys/fs/cgroup", shortTitle: "cgroup v1 vs v2", chapter: "ct-ch2", order: 4, available: false,
+    description: "v1 nhiều hierarchy rời rạc vs v2 một cây thống nhất; cgroup.controllers và subtree_control; ràng buộc no-internal-process; vì sao cùng câu hỏi có hai chỗ trả lời tuỳ máy.", file: "containers/ct-04-cgroup-v1-vs-v2.md" },
+  { slug: "ct-05-cpu-max-quota-throttle", courseId: "CONTAINERS", title: "cpu.max là quota/period, không phải \"số core\"", shortTitle: "cpu.max & throttling", chapter: "ct-ch2", order: 5, available: false,
+    description: "cpu.max = \"$MAX $PERIOD\" microsecond; throttle nghĩa là dừng tới hết period; nr_throttled và throttled_usec; vì sao p99 vọt khi CPU average còn thấp; cpu.weight và cpu.max.burst.", file: "containers/ct-05-cpu-max-quota-throttle.md" },
+  { slug: "ct-06-container-thay-64-cpu", courseId: "CONTAINERS", title: "Vì sao container thấy 64 CPU khi limit là 2", shortTitle: "64 CPU, limit 2", chapter: "ct-ch2", order: 6, available: false,
+    description: "/proc/cpuinfo không được namespace hoá; Go runtime.NumCPU/GOMAXPROCS, JVM, Node threadpool, nproc; nghịch lý thêm worker làm chậm đi vì thread nhiều trên cgroup bị throttle.", file: "containers/ct-06-container-thay-64-cpu.md" },
+  { slug: "ct-07-oomkilled-page-cache", courseId: "CONTAINERS", title: "OOMKilled trong khi top báo còn RAM", shortTitle: "OOMKilled", chapter: "ct-ch2", order: 7, available: false,
+    description: "memory.max tính cả page cache chứ không chỉ RSS; memory.stat anon vs file; memory.high throttle reclaim còn memory.max mới kill; memory.events.oom_kill; exit 137 không đồng nghĩa OOM.", file: "containers/ct-07-oomkilled-page-cache.md" },
+  { slug: "ct-08-overlayfs-copy-up", courseId: "CONTAINERS", title: "overlayfs: lowerdir, upperdir và giá của copy-up", shortTitle: "overlayfs", chapter: "ct-ch3", order: 8, available: false,
+    description: "Một lệnh mount dựng cả rootfs; copy-up copy CẢ file khi bạn ghi một byte; whiteout là char device 0/0; opaque dir; layout overlay2 và vì sao cần thư mục l/ symlink ngắn.", file: "containers/ct-08-overlayfs-copy-up.md" },
+  { slug: "ct-09-byte-nao-o-layer-nao", courseId: "CONTAINERS", title: "Vì sao image 1,2 GB, và byte nào ở layer nào", shortTitle: "Byte ở layer nào", chapter: "ct-ch3", order: 9, available: false,
+    description: "docker save bung tar rồi đối chiếu blob với docker history; empty_layer; xoá file ở layer sau không làm image nhỏ lại; diff_ids (uncompressed) khác layers[].digest (compressed).", file: "containers/ct-09-byte-nao-o-layer-nao.md" },
+  { slug: "ct-10-oci-image-spec", courseId: "CONTAINERS", title: "OCI image spec: index, manifest, config, layers", shortTitle: "OCI image spec", chapter: "ct-ch3", order: 10, available: false,
+    description: "Descriptor mediaType/digest/size; digest tính trên BYTES của JSON nên re-indent là đổi digest; tag là con trỏ dời được, digest thì không; image index & multi-arch.", file: "containers/ct-10-oci-image-spec.md" },
+  { slug: "ct-11-registry-protocol", courseId: "CONTAINERS", title: "Registry protocol: vì sao push nhanh mà pull chậm", shortTitle: "Registry protocol", chapter: "ct-ch3", order: 11, available: false,
+    description: "HEAD blob trước khi upload nên layer trùng không gửi lại; cross-repo blob mount trả 201 còn không hỗ trợ thì 202; content-addressable nghĩa là dedup ở mức blob.", file: "containers/ct-11-registry-protocol.md" },
+  { slug: "ct-12-storage-driver-volume", courseId: "CONTAINERS", title: "Storage driver, volume và writable layer", shortTitle: "Volume vs writable layer", chapter: "ct-ch3", order: 12, available: false,
+    description: "Writable layer là upperdir của overlay, không phải disk riêng; volume vs bind mount vs tmpfs; docker ps -s cột SIZE vs virtual; json-file max-size mặc định là không giới hạn.", file: "containers/ct-12-storage-driver-volume.md" },
+  { slug: "ct-13-buildkit-dag", courseId: "CONTAINERS", title: "BuildKit là một DAG, không phải chuỗi lệnh", shortTitle: "BuildKit là DAG", chapter: "ct-ch4", order: 13, available: false,
+    description: "LLB ví như LLVM IR của Dockerfile; stage không ai cần thì không build; step độc lập chạy song song; vì sao --progress=plain cho thấy thứ tự khác Dockerfile.", file: "containers/ct-13-buildkit-dag.md" },
+  { slug: "ct-14-cache-miss", courseId: "CONTAINERS", title: "Cache miss dù code không đổi", shortTitle: "Cache key", chapter: "ct-ch4", order: 14, available: false,
+    description: "RUN: cache key CHỈ là chuỗi lệnh — gốc của lỗi apt-get update cache mãi; COPY/ADD: checksum nội dung và mtime KHÔNG tính; --mount=type=cache; mode=min vs mode=max và chuyện CI không hit cache.", file: "containers/ct-14-cache-miss.md" },
+  { slug: "ct-15-image-nho", courseId: "CONTAINERS", title: "Image nhỏ: byte nào biến mất và vì sao", shortTitle: "Image nhỏ", chapter: "ct-ch4", order: 15, available: false,
+    description: "Đi ngược full base → slim → alpine → distroless → scratch, mỗi bước bỏ đúng cái gì; static vs dynamic link; musl khác glibc nên binary build trên Debian chết trên Alpine; cái giá của scratch.", file: "containers/ct-15-image-nho.md" },
+  { slug: "ct-16-oci-runtime-spec-runc", courseId: "CONTAINERS", title: "OCI runtime spec và runc chạy tay", shortTitle: "runtime spec & runc", chapter: "ct-ch5", order: 16, available: false,
+    description: "Bundle = config.json + rootfs; lifecycle creating/created/running/stopped và chuyện sửa config sau create vô tác dụng; toàn bộ chương 1–2 nằm gọn trong một file JSON.", file: "containers/ct-16-oci-runtime-spec-runc.md" },
+  { slug: "ct-17-containerd-shim", courseId: "CONTAINERS", title: "containerd, shim, dockerd: ai giữ process", shortTitle: "containerd & shim", chapter: "ct-ch5", order: 17, available: false,
+    description: "runc thoát ngay sau khi container start — shim là cái ở lại; một shim có thể phục vụ nhiều container; vì sao tách shim; docker vs nerdctl vs ctr nói chuyện với ai.", file: "containers/ct-17-containerd-shim.md" },
+  { slug: "ct-18-rootless-user-namespace", courseId: "CONTAINERS", title: "Rootless và user namespace", shortTitle: "Rootless", chapter: "ct-ch5", order: 18, available: false,
+    description: "uid_map ba cột là ID-trong-ns / ID-ngoài-ns / size; /etc/subuid và con số 65536 đến từ đâu; vì sao file bind-mount hiện owner lạ (overflowuid); capability trong user ns là capability chỉ trong ns đó.", file: "containers/ct-18-rootless-user-namespace.md" },
+  { slug: "ct-19-veth-bridge", courseId: "CONTAINERS", title: "veth pair và bridge: dựng mạng container bằng ip link", shortTitle: "veth & bridge", chapter: "ct-ch6", order: 19, available: false,
+    description: "veth là cặp, gói vào đầu này ra ngay đầu kia; cắm một đầu vào netns, đầu kia vào bridge; default bridge chỉ tới nhau bằng IP còn user-defined mới có DNS tự động.", file: "containers/ct-19-veth-bridge.md" },
+  { slug: "ct-20-port-publishing-dnat", courseId: "CONTAINERS", title: "Port publishing là NAT, và nó đi trước firewall", shortTitle: "Port publishing", chapter: "ct-ch6", order: 20, available: false,
+    description: "-p không ghi host IP thì publish ra 0.0.0.0 và [::]; Docker route ở table nat nên gói bị chuyển hướng trước chain INPUT mà ufw dùng — ufw không chặn được; iptables vs nftables; CNI ở mức ai gọi ai.", file: "containers/ct-20-port-publishing-dnat.md" },
+  { slug: "ct-21-container-khong-start", courseId: "CONTAINERS", title: "Container không start được: đọc lỗi cho đúng", shortTitle: "Không start được", chapter: "ct-ch7", order: 21, available: false,
+    description: "Phân loại theo tầng: exec format error (sai kiến trúc) · no such file dù file có thật (thiếu dynamic linker, musl vs glibc) · không có shell (distroless) · exit code nói gì; vì sao docker logs trống.", file: "containers/ct-21-container-khong-start.md" },
+  { slug: "ct-22-chay-duoc-tren-may-toi", courseId: "CONTAINERS", title: "\"Chạy được trên máy tôi mà crash trên CI\"", shortTitle: "Máy tôi vs CI", chapter: "ct-ch7", order: 22, available: false,
+    description: "Cây quyết định tổng hợp cả course: kiến trúc image · cgroup v1 vs v2 trên runner · số CPU runner thấy vs limit · /dev/shm · ulimit · cache layer · seccomp. Mỗi nhánh trỏ về bài đã giải thích cơ chế.", file: "containers/ct-22-chay-duoc-tren-may-toi.md" },
+];
+
+const ctChapters: Chapter[] = [
+  { id: "ct-ch1", courseId: "CONTAINERS", title: "Chương 1 — Container không phải một cái máy", lessonSlugs: ["ct-01-kernel-khong-biet-container", "ct-02-tam-namespace-unshare", "ct-03-mount-namespace-pivot-root"], category: "foundation" },
+  { id: "ct-ch2", courseId: "CONTAINERS", title: "Chương 2 — Tài nguyên, và những lời nói dối", lessonSlugs: ["ct-04-cgroup-v1-vs-v2", "ct-05-cpu-max-quota-throttle", "ct-06-container-thay-64-cpu", "ct-07-oomkilled-page-cache"], category: "compute" },
+  { id: "ct-ch3", courseId: "CONTAINERS", title: "Chương 3 — Image: byte nằm ở đâu", lessonSlugs: ["ct-08-overlayfs-copy-up", "ct-09-byte-nao-o-layer-nao", "ct-10-oci-image-spec", "ct-11-registry-protocol", "ct-12-storage-driver-volume"], category: "storage" },
+  { id: "ct-ch4", courseId: "CONTAINERS", title: "Chương 4 — Build: cache key là gì", lessonSlugs: ["ct-13-buildkit-dag", "ct-14-cache-miss", "ct-15-image-nho"], category: "compute" },
+  { id: "ct-ch5", courseId: "CONTAINERS", title: "Chương 5 — Runtime stack: ai thật sự chạy container", lessonSlugs: ["ct-16-oci-runtime-spec-runc", "ct-17-containerd-shim", "ct-18-rootless-user-namespace"], category: "foundation" },
+  { id: "ct-ch6", courseId: "CONTAINERS", title: "Chương 6 — Mạng: veth, bridge, NAT", lessonSlugs: ["ct-19-veth-bridge", "ct-20-port-publishing-dnat"], category: "network" },
+  { id: "ct-ch7", courseId: "CONTAINERS", title: "Chương 7 — Khi nó vỡ", lessonSlugs: ["ct-21-container-khong-start", "ct-22-chay-duoc-tren-may-toi"], category: "security" },
+];
+
 // =====================================================================
 // Aggregate
 // =====================================================================
-export const lessons: Lesson[] = [...techLessons, ...progLessons, ...webLessons, ...sqlLessons, ...gitLessons, ...sysdLessons, ...foundLessons, ...engLessons, ...beLessons, ...csLessons, ...dsaLessons, ...secLessons, ...devopsLessons, ...sreLessons, ...aimlLessons, ...feLessons, ...capLessons, ...clfLessons, ...saaLessons, ...dvaLessons, ...bcLessons, ...dsLessons, ...dstLessons, ...msgLessons, ...cnLessons, ...gsLessons];
-export const chapters: Chapter[] = [...techChapters, ...progChapters, ...webChapters, ...sqlChapters, ...gitChapters, ...sysdChapters, ...foundChapters, ...engChapters, ...beChapters, ...csChapters, ...dsaChapters, ...secChapters, ...devopsChapters, ...sreChapters, ...aimlChapters, ...feChapters, ...capChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters, ...bcChapters, ...dsChapters, ...dstChapters, ...msgChapters, ...cnChapters, ...gsChapters];
+export const lessons: Lesson[] = [...techLessons, ...progLessons, ...webLessons, ...sqlLessons, ...gitLessons, ...sysdLessons, ...foundLessons, ...engLessons, ...beLessons, ...csLessons, ...dsaLessons, ...secLessons, ...devopsLessons, ...sreLessons, ...aimlLessons, ...feLessons, ...capLessons, ...clfLessons, ...saaLessons, ...dvaLessons, ...bcLessons, ...dsLessons, ...dstLessons, ...msgLessons, ...cnLessons, ...gsLessons, ...ctLessons];
+export const chapters: Chapter[] = [...techChapters, ...progChapters, ...webChapters, ...sqlChapters, ...gitChapters, ...sysdChapters, ...foundChapters, ...engChapters, ...beChapters, ...csChapters, ...dsaChapters, ...secChapters, ...devopsChapters, ...sreChapters, ...aimlChapters, ...feChapters, ...capChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters, ...bcChapters, ...dsChapters, ...dstChapters, ...msgChapters, ...cnChapters, ...gsChapters, ...ctChapters];
 
 export function lessonsOfCourse(courseId: CourseId): Lesson[] {
   return lessons.filter((l) => l.courseId === courseId).sort((a, b) => a.order - b.order);

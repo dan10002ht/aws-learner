@@ -458,6 +458,21 @@ export const courses: Course[] = [
     accentColor: "#84cc16",
     order: 19, status: "available", kind: "knowledge", category: "systems",
   },
+  {
+    id: "CONTAINERS",
+    code: "CONTAINERS",
+    title: "Containers — cơ chế bên dưới",
+    shortTitle: "Containers",
+    level: "Nền tảng",
+    description:
+      "Container không phải một cái máy, và kernel Linux không có object nào tên là \"container\". Course này mổ bốn thứ Docker lắp lại: namespace, cgroup, union filesystem, OCI spec. Đọc được /sys/fs/cgroup, docker save, config.json của runc và iptables -t nat — rồi giải thích được vì sao container thấy 64 CPU khi limit là 2, vì sao OOMKilled khi top báo còn RAM, và vì sao build cache miss dù code không đổi.",
+    hint: "Dành cho dev đã dùng Docker thành thạo và muốn hiểu vì sao nó hỏng. Không dạy lại CLI hay Dockerfile — cơ chế thuần.",
+    durationHours: 30,
+    passingScore: 0, examMinutes: 0, examQuestions: 0,
+    prerequisites: ["ENGINEER"],
+    accentColor: "#d946ef",
+    order: 20, status: "available", kind: "knowledge", category: "systems",
+  },
 ];
 
 export function getCourse(id: CourseId | string): Course | undefined {
