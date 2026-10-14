@@ -4,7 +4,7 @@ export type CourseId =
   | "CLF-C02" | "SAA-C03" | "DVA-C02" | "SOA-C02" | "SAP-C02"
   | "SYSTEM-DESIGN"
   | "DISTRIBUTED" | "DATASTORES" | "MESSAGING" | "CLOUDNATIVE"
-  | "GAMESERVER" | "CONTAINERS";
+  | "GAMESERVER" | "CONTAINERS" | "AGENTIC";
 
 /** Learning-path stage used to group courses on the home page. */
 export type CourseCategory = "starter" | "systems" | "software" | "certification" | "architecture";

@@ -1262,10 +1262,76 @@ const ctChapters: Chapter[] = [
 ];
 
 // =====================================================================
+// AGENTIC — Làm việc với AI agent: 7 level
+// =====================================================================
+const agLessons: Lesson[] = [
+  { slug: "ag-01-bay-level", courseId: "AGENTIC", title: "Bảy level dùng AI agent, và bạn đang ở đâu", shortTitle: "Bảy level", chapter: "ag-ch1", order: 1, available: true,
+    description: "Bản đồ 7 level: mỗi level làm gì, bỏ được việc gì, thay bằng cơ chế gì; tự định vị bằng prompt + commit + task; vị trí của dev khi agent code nhanh hơn.", file: "agentic/ag-01-bay-level.md" },
+  { slug: "ag-02-chat-va-gioi-han", courseId: "AGENTIC", title: "Chat giỏi tới đâu, và vì sao copy-paste là trần", shortTitle: "Chat & giới hạn", chapter: "ag-ch1", order: 2, available: true,
+    description: "Model không thấy repo, không chạy lệnh; context window; prompt có ngữ cảnh và tiêu chí xong; khi nào chat vẫn là công cụ đúng.", file: "agentic/ag-02-chat-va-gioi-han.md" },
+  { slug: "ag-03-coding-agent-hoat-dong", courseId: "AGENTIC", title: "Coding agent là một vòng lặp tool", shortTitle: "Coding agent", chapter: "ag-ch2", order: 3, available: true,
+    description: "Claude Code và Codex CLI: đọc, sửa, chạy shell, quan sát; permission mode, approval, sandbox; chế độ headless.", file: "agentic/ag-03-coding-agent-hoat-dong.md" },
+  { slug: "ag-04-context-va-file-huong-dan", courseId: "AGENTIC", title: "Context là tài nguyên: CLAUDE.md, AGENTS.md", shortTitle: "Context & CLAUDE.md", chapter: "ag-ch2", order: 4, available: true,
+    description: "File hướng dẫn nạp mỗi session, thứ bậc user/project/local; viết gì và không viết gì; compaction; plan mode; research trước khi code.", file: "agentic/ag-04-context-va-file-huong-dan.md" },
+  { slug: "ag-05-checkpoint-tung-buoc", courseId: "AGENTIC", title: "Duyệt từng bước: git là lưới an toàn", shortTitle: "Duyệt từng bước", chapter: "ag-ch2", order: 5, available: true,
+    description: "Review diff, commit nhỏ, hoàn tác; ranh giới đọc/ghi quyết định khi nào phải hỏi người; chi phí thật của việc duyệt từng prompt.", file: "agentic/ag-05-checkpoint-tung-buoc.md" },
+  { slug: "ag-06-memory-va-feedback", courseId: "AGENTIC", title: "Memory: để agent không phải được dặn lại", shortTitle: "Memory", chapter: "ag-ch3", order: 6, available: true,
+    description: "Memory file, ghi feedback có Why và How to apply; durable vs transient; memory thối khi tên file/flag đã đổi.", file: "agentic/ag-06-memory-va-feedback.md" },
+  { slug: "ag-07-skill-va-slash-command", courseId: "AGENTIC", title: "Đóng gói quy trình thành skill", shortTitle: "Skill", chapter: "ag-ch3", order: 7, available: true,
+    description: "SKILL.md và description quyết định khi nào được gọi; slash command; skill viết từ một sự cố mang theo giả định của sự cố đó.", file: "agentic/ag-07-skill-va-slash-command.md" },
+  { slug: "ag-08-hook-va-chan-bang-cau-hinh", courseId: "AGENTIC", title: "Hook và permission: chặn bằng cấu hình, không bằng lời dặn", shortTitle: "Hook & permission", chapter: "ag-ch3", order: 8, available: true,
+    description: "Hook event, permission allow/deny; vì sao lời dặn trong prompt bị vượt còn cấu hình thì không; tool response không mang chỉ thị.", file: "agentic/ag-08-hook-va-chan-bang-cau-hinh.md" },
+  { slug: "ag-09-mcp", courseId: "AGENTIC", title: "MCP: nối agent với hệ thống bên ngoài", shortTitle: "MCP", chapter: "ag-ch3", order: 9, available: true,
+    description: "MCP server/client, tool và resource; stdio vs HTTP; auth API key vs OAuth; quyền đọc vs ghi; browser automation cho agent.", file: "agentic/ag-09-mcp.md" },
+  { slug: "ag-10-done-criteria-va-gate", courseId: "AGENTIC", title: "Định nghĩa 'xong' bằng lệnh chạy được", shortTitle: "Done-criteria & gate", chapter: "ag-ch4", order: 10, available: true,
+    description: "Done-criteria kiểm được; tiêu chí có số phải kèm cách đo; boolean vs tỉ lệ khi máy tải nặng; một gate hợp nhất trước merge.", file: "agentic/ag-10-done-criteria-va-gate.md" },
+  { slug: "ag-11-gate-xanh-gia", courseId: "AGENTIC", title: "Khi gate xanh mà không chứng minh gì", shortTitle: "Gate xanh giả", chapter: "ag-ch4", order: 11, available: true,
+    description: "Exit code bị nuốt, test SKIP im lặng, regex vs AST, thước đo phải đỏ được, ack không phải hiệu ứng, dry-run nuốt typo.", file: "agentic/ag-11-gate-xanh-gia.md" },
+  { slug: "ag-12-verifier-doc-lap", courseId: "AGENTIC", title: "Verifier: một agent khác chấm bài", shortTitle: "Verifier", chapter: "ag-ch4", order: 12, available: true,
+    description: "Context sạch, không sửa file, verdict kèm bằng chứng; dựng lại lỗi trước fix; tách agent mutation; bằng chứng phải phân biệt được.", file: "agentic/ag-12-verifier-doc-lap.md" },
+  { slug: "ag-13-kiem-ui-bang-anh", courseId: "AGENTIC", title: "Kiểm UI: so ảnh, không so chữ", shortTitle: "Kiểm UI bằng ảnh", chapter: "ag-ch4", order: 13, available: true,
+    description: "Vì sao nhiều verifier cùng xác nhận sai khi so innerText; screenshot diff; đo layout shift bằng browser automation có control test.", file: "agentic/ag-13-kiem-ui-bang-anh.md" },
+  { slug: "ag-14-subagent-va-brief", courseId: "AGENTIC", title: "Subagent: giao việc như giao cho đồng nghiệp", shortTitle: "Subagent & brief", chapter: "ag-ch5", order: 14, available: true,
+    description: "Khi nào delegate, brief viết ra file dùng chung, main agent giữ brief + verify + commit; case viết lại 31 bài bằng 31 agent.", file: "agentic/ag-14-subagent-va-brief.md" },
+  { slug: "ag-15-worktree-va-xung-dot", courseId: "AGENTIC", title: "Worktree: cho mỗi agent một bàn làm việc", shortTitle: "Worktree", chapter: "ag-ch5", order: 15, available: true,
+    description: "git worktree; ai được ghi file chung; worktree trong repo làm tooling thấy N bản sao; bằng chứng phải sống qua reboot.", file: "agentic/ag-15-worktree-va-xung-dot.md" },
+  { slug: "ag-16-hai-ho-model", courseId: "AGENTIC", title: "Claude điều phối, Codex làm: chấm chéo giữa hai họ model", shortTitle: "Hai họ model", chapter: "ag-ch5", order: 16, available: true,
+    description: "Vì sao hai họ model bắt lỗi của nhau; lane hỏng thì sửa nguyên nhân, không đổi vai; prompt không chạy; fallback khi hết quota.", file: "agentic/ag-16-hai-ho-model.md" },
+  { slug: "ag-17-soat-cheo-noi-dung", courseId: "AGENTIC", title: "N agent viết N phần: đúng từng phần, sai tổng thể", shortTitle: "Soát chéo", chapter: "ag-ch5", order: 17, available: true,
+    description: "Agent không đọc được phần của nhau nên lệch số và tên; đặt số dùng chung trong brief, soát chéo bằng script, chia đợt khi phụ thuộc chặt.", file: "agentic/ag-17-soat-cheo-noi-dung.md" },
+  { slug: "ag-18-brief-la-shared-state", courseId: "AGENTIC", title: "BRIEF.md: trí nhớ duy nhất sống ngoài context", shortTitle: "BRIEF.md", chapter: "ag-ch6", order: 18, available: true,
+    description: "Vì sao loop cần state bền; bốn kiểu thối của BRIEF.md; mẫu BRIEF.md đầy đủ.", file: "agentic/ag-18-brief-la-shared-state.md" },
+  { slug: "ag-19-vong-lap-nhat-task", courseId: "AGENTIC", title: "Một vòng loop: nhặt task, làm song song, verify, commit", shortTitle: "Vòng loop", chapter: "ag-ch6", order: 19, available: true,
+    description: "Thiết kế skill loop: N task mỗi lượt, mỗi task một worktree, verifier độc lập, điều kiện dừng; loop vs cron vs workflow.", file: "agentic/ag-19-vong-lap-nhat-task.md" },
+  { slug: "ag-20-viec-nen-va-ack", courseId: "AGENTIC", title: "Việc chạy nền: làm sao biết nó đã xong", shortTitle: "Việc nền & ack", chapter: "ag-ch6", order: 20, available: true,
+    description: "Gửi việc vào lane không có ack; chấm việc agent nền; timeout khi đang ghi thì đọc lại từ nguồn; process zombie báo còn sống.", file: "agentic/ag-20-viec-nen-va-ack.md" },
+  { slug: "ag-21-loop-la-he-phan-tan", courseId: "AGENTIC", title: "Loop agent là một hệ phân tán nhỏ", shortTitle: "Loop là hệ phân tán", chapter: "ag-ch6", order: 21, available: true,
+    description: "Idempotency, retry, lock/lease, mốc đã xử lý bằng hash chứ không bằng thời gian; runner local vs VM; hàng đợi slot.", file: "agentic/ag-21-loop-la-he-phan-tan.md" },
+  { slug: "ag-22-second-brain", courseId: "AGENTIC", title: "Second brain: bộ nhớ dài hạn cho cả người và agent", shortTitle: "Second brain", chapter: "ag-ch7", order: 22, available: true,
+    description: "PARA + Zettelkasten, note nguyên tử, MOC; phía ghi mạnh phía đọc yếu; đo bằng số; tra theo triệu chứng.", file: "agentic/ag-22-second-brain.md" },
+  { slug: "ag-23-job-dinh-ky-va-bot", courseId: "AGENTIC", title: "Job định kỳ và bot: agent làm việc khi bạn ngủ", shortTitle: "Job & bot", chapter: "ag-ch7", order: 23, available: true,
+    description: "Digest hằng ngày, học từ chat, weekly; capture một lần đóng băng giả thuyết đầu; bot có danh tính riêng, chỉ đọc, người ghi.", file: "agentic/ag-23-job-dinh-ky-va-bot.md" },
+  { slug: "ag-24-harness-tu-cai-tien", courseId: "AGENTIC", title: "Harness tự cải tiến: retro bằng số, người duyệt bằng một cú click", shortTitle: "Harness tự retro", chapter: "ag-ch7", order: 24, available: true,
+    description: "Harness = brain + hook + skill + verifier + file hướng dẫn; đo lại bản vá cũ, chọn đúng một lỗi lặp, một patch nhỏ, người duyệt.", file: "agentic/ag-24-harness-tu-cai-tien.md" },
+  { slug: "ag-25-tu-dong-hoa-co-gioi-han", courseId: "AGENTIC", title: "Tự động hoá mọi việc — và chỗ phải dừng", shortTitle: "Tự động hoá & giới hạn", chapter: "ag-ch7", order: 25, available: true,
+    description: "Chọn việc nào tự động theo tần suất, thời gian, rủi ro, hoàn tác được không; chi phí token; human-in-the-loop; lộ trình lên level kế tiếp.", file: "agentic/ag-25-tu-dong-hoa-co-gioi-han.md" },
+];
+
+const agChapters: Chapter[] = [
+  { id: "ag-ch1", courseId: "AGENTIC", title: "Level 1 — Chat: hỏi đáp & copy-paste", lessonSlugs: ["ag-01-bay-level", "ag-02-chat-va-gioi-han"], category: "foundation" },
+  { id: "ag-ch2", courseId: "AGENTIC", title: "Level 2 — Agent trong repo, duyệt từng bước", lessonSlugs: ["ag-03-coding-agent-hoat-dong", "ag-04-context-va-file-huong-dan", "ag-05-checkpoint-tung-buoc"], category: "compute" },
+  { id: "ag-ch3", courseId: "AGENTIC", title: "Level 3 — Dạy agent cách mình làm việc", lessonSlugs: ["ag-06-memory-va-feedback", "ag-07-skill-va-slash-command", "ag-08-hook-va-chan-bang-cau-hinh", "ag-09-mcp"], category: "foundation" },
+  { id: "ag-ch4", courseId: "AGENTIC", title: "Level 4 — Kiểm việc mà không đọc từng dòng", lessonSlugs: ["ag-10-done-criteria-va-gate", "ag-11-gate-xanh-gia", "ag-12-verifier-doc-lap", "ag-13-kiem-ui-bang-anh"], category: "security" },
+  { id: "ag-ch5", courseId: "AGENTIC", title: "Level 5 — Nhiều agent song song", lessonSlugs: ["ag-14-subagent-va-brief", "ag-15-worktree-va-xung-dot", "ag-16-hai-ho-model", "ag-17-soat-cheo-noi-dung"], category: "compute" },
+  { id: "ag-ch6", courseId: "AGENTIC", title: "Level 6 — Loop: một brief, agent tự chạy", lessonSlugs: ["ag-18-brief-la-shared-state", "ag-19-vong-lap-nhat-task", "ag-20-viec-nen-va-ack", "ag-21-loop-la-he-phan-tan"], category: "network" },
+  { id: "ag-ch7", courseId: "AGENTIC", title: "Level 7 — Hệ thống tự vận hành 24/7", lessonSlugs: ["ag-22-second-brain", "ag-23-job-dinh-ky-va-bot", "ag-24-harness-tu-cai-tien", "ag-25-tu-dong-hoa-co-gioi-han"], category: "storage" },
+];
+
+// =====================================================================
 // Aggregate
 // =====================================================================
-export const lessons: Lesson[] = [...techLessons, ...progLessons, ...webLessons, ...sqlLessons, ...gitLessons, ...sysdLessons, ...foundLessons, ...engLessons, ...beLessons, ...csLessons, ...dsaLessons, ...secLessons, ...devopsLessons, ...sreLessons, ...aimlLessons, ...feLessons, ...capLessons, ...clfLessons, ...saaLessons, ...dvaLessons, ...bcLessons, ...dsLessons, ...dstLessons, ...msgLessons, ...cnLessons, ...gsLessons, ...ctLessons];
-export const chapters: Chapter[] = [...techChapters, ...progChapters, ...webChapters, ...sqlChapters, ...gitChapters, ...sysdChapters, ...foundChapters, ...engChapters, ...beChapters, ...csChapters, ...dsaChapters, ...secChapters, ...devopsChapters, ...sreChapters, ...aimlChapters, ...feChapters, ...capChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters, ...bcChapters, ...dsChapters, ...dstChapters, ...msgChapters, ...cnChapters, ...gsChapters, ...ctChapters];
+export const lessons: Lesson[] = [...techLessons, ...progLessons, ...webLessons, ...sqlLessons, ...gitLessons, ...sysdLessons, ...foundLessons, ...engLessons, ...beLessons, ...csLessons, ...dsaLessons, ...secLessons, ...devopsLessons, ...sreLessons, ...aimlLessons, ...feLessons, ...capLessons, ...clfLessons, ...saaLessons, ...dvaLessons, ...bcLessons, ...dsLessons, ...dstLessons, ...msgLessons, ...cnLessons, ...gsLessons, ...ctLessons, ...agLessons];
+export const chapters: Chapter[] = [...techChapters, ...progChapters, ...webChapters, ...sqlChapters, ...gitChapters, ...sysdChapters, ...foundChapters, ...engChapters, ...beChapters, ...csChapters, ...dsaChapters, ...secChapters, ...devopsChapters, ...sreChapters, ...aimlChapters, ...feChapters, ...capChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters, ...bcChapters, ...dsChapters, ...dstChapters, ...msgChapters, ...cnChapters, ...gsChapters, ...ctChapters, ...agChapters];
 
 export function lessonsOfCourse(courseId: CourseId): Lesson[] {
   return lessons.filter((l) => l.courseId === courseId).sort((a, b) => a.order - b.order);

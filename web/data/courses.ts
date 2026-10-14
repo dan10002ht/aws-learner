@@ -473,6 +473,21 @@ export const courses: Course[] = [
     accentColor: "#d946ef",
     order: 20, status: "available", kind: "knowledge", category: "systems",
   },
+  {
+    id: "AGENTIC",
+    code: "AGENTIC",
+    title: "Làm việc với AI agent — 7 level",
+    shortTitle: "AI Agents",
+    level: "Nền tảng",
+    description:
+      "Đi từ chat hỏi đáp lên vận hành coding agent (Claude Code, Codex CLI) theo 7 level: agent trong repo, dạy agent cách mình làm việc (memory, skill, hook, MCP), kiểm việc không cần đọc từng dòng (gate, verifier), chạy nhiều agent song song, loop tự chạy theo một brief, rồi hệ thống tự vận hành 24/7 (second brain, job định kỳ, harness tự retro). Mỗi level trả lời: bỏ được việc gì, và thay bằng cơ chế gì để vẫn tin được kết quả.",
+    hint: "Dành cho dev đã dùng ChatGPT/Claude kiểu chat. Lý thuyết LLM/agent ở mức API nằm ở course AI/ML — course này dạy người vận hành agent.",
+    durationHours: 25,
+    passingScore: 0, examMinutes: 0, examQuestions: 0,
+    prerequisites: ["AIML"],
+    accentColor: "#65a30d",
+    order: 21, status: "available", kind: "knowledge", category: "software",
+  },
 ];
 
 export function getCourse(id: CourseId | string): Course | undefined {
