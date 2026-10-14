@@ -338,8 +338,8 @@ Khi không thể tránh cấp phát (buffer snapshot phải tồn tại), `sync.
 |---|---|---|---|
 | 64 B | 10,42 ns | **6,59 ns** | 1,58 × |
 | 512 B | 62,29 ns | 6,72 ns | 9,3 × |
-| 4 KB | 300,2 ns | 6,92 ns | **43 ×** |
-| 64 KB | 2.665 ns | 6,97 ns | **382 ×** |
+| 4 KiB | 300,2 ns | 6,92 ns | **43 ×** |
+| 64 KiB | 2.665 ns | 6,97 ns | **382 ×** |
 
 Chi phí Pool **phẳng ~6,7 ns bất kể kích thước**, còn `make` tăng tuyến tính theo byte (phải zero bộ nhớ). Pool đáng giá tỉ lệ thuận với kích thước object. Ba trường hợp nó phản tác dụng, cả ba đo được:
 
@@ -477,7 +477,7 @@ Cách bịt: gác trên `B/op` của benchmark trong CI (`b.ReportAllocs()` đã
 
 **Bài 3.** Snapshot buffer 8 KB, dựng mới mỗi tick cho mỗi player, 100 player, 20 Hz.
 - Bao nhiêu MB rác mỗi giây? Với `GOGC=100` và heap sống 300 MB, bao nhiêu giây một chu kỳ GC?
-- Dùng bảng mục 3.5: `sync.Pool` tiết kiệm bao nhiêu ns mỗi lần và bao nhiêu ms mỗi giây? *(Nội suy giữa mốc 4 KB và 64 KB — ghi rõ đây là nội suy.)*
+- Dùng bảng mục 3.5: `sync.Pool` tiết kiệm bao nhiêu ns mỗi lần và bao nhiêu ms mỗi giây? *(Nội suy giữa mốc 4 KiB và 64 KiB — ghi rõ đây là nội suy.)*
 - Nếu mỗi room sở hữu **một** buffer 8 KB dùng lại cho cả 100 player trong tick đó thì rác còn bao nhiêu MB/s, và Pool còn giải quyết vấn đề gì không?
 
 ---

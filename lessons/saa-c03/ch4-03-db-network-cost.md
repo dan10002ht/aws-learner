@@ -497,7 +497,7 @@ Bảng giá tham khảo (us-east-1):
   <line x1="140" y1="92" x2="500" y2="140" stroke="#f59e0b" stroke-width="2" stroke-opacity="0.7"/>
   <rect x="500" y="122" width="200" height="36" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="510" y="138" font-size="11.5" font-weight="700" fill="currentColor">Cross-region</text>
-  <text x="510" y="152" font-size="10.5" fill="currentColor" opacity="0.7">$0.02/GB trở lên</text>
+  <text x="510" y="152" font-size="10.5" fill="currentColor" opacity="0.7">$0.01–0.09/GB tuỳ cặp region</text>
   <!-- internet egress -->
   <line x1="140" y1="100" x2="500" y2="188" stroke="#ef4444" stroke-width="2.5" stroke-opacity="0.75"/>
   <rect x="500" y="170" width="200" height="36" rx="8" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>

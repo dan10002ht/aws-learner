@@ -260,11 +260,11 @@ có CPU profile  mean 0,4184 – 0,4626 ms   p99 0,4508 – 0,4969 ms
 Chỗ méo có thật, đo được, và lớn:
 
 ```
-cấp phát 64 B, MemProfileRate mặc định (512 KB)    12,47 ns
+cấp phát 64 B, MemProfileRate mặc định (512 KiB)    12,47 ns
 cấp phát 64 B, MemProfileRate = 1                 395,01 ns      x31,7
 ```
 
-Đặt `runtime.MemProfileRate = 1` để "bắt hết allocation" làm mỗi lần cấp phát **chậm đi 31,7 lần**. Trên một tick loop đang cấp phát, đó không còn là quan sát nữa — bạn đã tạo ra một hệ thống khác và đang đo hệ thống đó. Mặc định lấy mẫu 512 KB thì gần như miễn phí, và với mục đích tìm chỗ cấp phát nhiều nhất thì lấy mẫu là đủ.
+Đặt `runtime.MemProfileRate = 1` để "bắt hết allocation" làm mỗi lần cấp phát **chậm đi 31,7 lần**. Trên một tick loop đang cấp phát, đó không còn là quan sát nữa — bạn đã tạo ra một hệ thống khác và đang đo hệ thống đó. Mặc định lấy mẫu 512 KiB thì gần như miễn phí, và với mục đích tìm chỗ cấp phát nhiều nhất thì lấy mẫu là đủ.
 
 Còn một cách profile làm hỏng phép đo mà không tốn nano giây nào: **cửa sổ thời gian**. `go tool pprof` mặc định 30 giây; đuôi ở mục 3.1 dày 0,1%, mà 30 giây ở 60 Hz là 1.800 tick — kỳ vọng **1,8 tick tệ**. Profile có thể không chứa sự kiện bạn đang săn, và cái nó cho xem là chân dung rất sắc nét của **trạng thái bình thường**. Vì thế: bộ đếm trước, profile sau.
 

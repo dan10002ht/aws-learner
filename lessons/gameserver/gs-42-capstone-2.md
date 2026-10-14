@@ -382,7 +382,7 @@ if math.Hypot(float64(ax-rec.x), float64(ay-rec.y)) <= float64(rec.r) { hit() }
 
 Ở cấu hình chuẩn của chính bản dựng này — RTT 100 ms, đệm nội suy 100 ms, `t_view` lùi 150 ms — người nhắm hoàn hảo **trượt 9 trên 10 lần** nếu server không bù. Bài 21 dự đoán `D = v·(RTT/2 + d)`: với v đo được 174 đơn vị/giây thì D = 26,1, đúng số đo. Bảng cũng chỉ ra ngưỡng đau: **50 ms còn tha thứ được (D nhỏ hơn một bán kính), 100 ms thì hỏng rồi.**
 
-Chi phí: truy vấn tua ngược **p99 = 42 ns**, lịch sử **37,5 KiB** cho 50 player × 64 tick — ở quy mô này không đáng nhắc.
+Chi phí: truy vấn tua ngược **p99 = 42 ns**, lịch sử **38,4 KB** cho 50 player × 64 tick — ở quy mô này không đáng nhắc.
 
 Cái tôi **chưa** cài và nói rõ: kẹp (`clamp`) trần tua ngược chống lag switch, và `Undo()` để cửa sổ tua ngược không sống qua lệnh khác. Ở agar-lite một người một hành động thì không thấy khác biệt; ở game có đạn bay và hiệu ứng vùng thì thiếu `Undo()` là bug nghiêm trọng nhất trong file.
 
@@ -466,7 +466,7 @@ Ba dòng đáng nhớ nhất, không dòng nào nói về tốc độ code:
 - Binary quantized: **31,40 → 4,29 B/entity, 7,31×**. Bất biến thật không phải B/entity mà là **B/field**: JSON 12,73 · binary căn byte 1,75 · tỉ số 7,27 — khớp tỉ số đo trực tiếp 7,31 trong vòng 0,55 %.
 - AOI R = 400 cắt **561 → 57,3 entity (9,79×)**. Tích hai kỹ thuật: **66,80×**, và đo trực tiếp cũng ra 66,80. Băng thông **351.387 → 5.267 B/s mỗi player**, tức 52,7 % mục tiêu 10.000 B/s của cả course.
 - Broadcast ở 100 player: **84,7 % → 4,7 % ngân sách tick**. Trần room từ **114 lên trên 800, cỡ 2.000** — và nút thắt tiếp theo không còn là tính toán mà là **cấp phát: 3,39 MB rác mỗi broadcast ở 1.600 conn**, đúng chỗ bài 37 chỉ.
-- Lag compensation: ở `t_view` lùi 150 ms, nhắm hoàn hảo mà **trượt 89,79 % số phát** nếu không bù; có bù thì **100 %**. Giá: 42 ns mỗi truy vấn, 37,5 KiB lịch sử cho 50 player.
+- Lag compensation: ở `t_view` lùi 150 ms, nhắm hoàn hảo mà **trượt 89,79 % số phát** nếu không bù; có bù thì **100 %**. Giá: 42 ns mỗi truy vấn, 38,4 KB lịch sử cho 50 player.
 - Tiền: **$88,27 → $1,33 mỗi CCU mỗi tháng**, giảm 66,2 lần, toàn bộ nằm ở egress. Không tối ưu một vòng lặp nào.
 
 ---

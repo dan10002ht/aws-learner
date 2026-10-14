@@ -6,7 +6,7 @@ Tiền đề: [[ch2-01-compute-performance]], CLF [[08-billing]].
 
 ---
 
-## 1. Câu chuyện mở đầu — "Tôi save $200k/năm chỉ bằng 3 việc"
+## 1. Câu chuyện mở đầu — "Tôi save $480k/năm chỉ bằng 3 việc"
 
 Real story (anonymized): SaaS B2B, compute bill $80k/tháng. SRE team làm 3 việc trong 1 sprint:
 
@@ -672,7 +672,7 @@ Thứ tự có lý do: right-size trước rồi mới cam kết, nếu không s
 
 ## 15. Bài tập tự kiểm tra
 
-1. Compute bill $50k/tháng, 24/7 m5.4xlarge fleet 20 instance. Cost Explorer cho thấy CPU avg 25%. Bạn làm gì trước? Quantify expected saving?
+1. Fleet 20 instance m5.4xlarge chạy 24/7 ở us-east-1 (~$11,2k/tháng on-demand). Cost Explorer cho thấy CPU avg 25%. Bạn làm gì trước? Quantify expected saving?
 2. Lambda function memory 256MB, duration 5s, 10M req/tháng. Tăng memory 1024MB còn duration 1s. Tổng cost thay đổi thế nào?
 3. So sánh Compute SP vs EC2 Instance SP cho team đang chạy m5/m6i/m7g lung tung. Chọn cái nào & vì sao?
 4. CI/CD chạy 1000 build/ngày, mỗi build 10 phút, cần c5.4xlarge. Design compute strategy?

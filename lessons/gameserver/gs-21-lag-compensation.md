@@ -135,13 +135,13 @@ Giữ **1 giây** ở **60 Hz** là 60 bản ghi mỗi entity. Nhân lên:
 
 | N entity | 32 B/bản ghi | 416 B/bản ghi |
 |---|---|---|
-| 20 | 37,5 KiB | 487,5 KiB |
-| 100 | 187,5 KiB | 2,38 MiB |
-| 1.000 | 1,83 MiB | **23,8 MiB** |
+| 20 | 38,4 KB | 499,2 KB |
+| 100 | 192 KB | 2,50 MB |
+| 1.000 | 1,92 MB | **24,96 MB** |
 
-Kết luận ngược trực giác: **bộ nhớ không phải ràng buộc.** Trường hợp xấu nhất — nghìn nhân vật có xương đầy đủ — là 23,8 MiB, chưa bằng một tấm ảnh. Nhưng có hai chỗ đáng cắt vì lý do khác:
+Kết luận ngược trực giác: **bộ nhớ không phải ràng buộc.** Trường hợp xấu nhất — nghìn nhân vật có xương đầy đủ — là 24,96 MB, cỡ một tấm ảnh RAW. Nhưng có hai chỗ đáng cắt vì lý do khác:
 
-**Cắt theo chiều dài, không theo tần số.** Nếu trần là 200 ms (mục 3.7) thì mọi bản ghi cũ hơn 200 ms không bao giờ được đọc: `200 / 16,67 = 12` tick thay vì 60 — nhỏ đi **5 lần**, 416 B × 12 × 1.000 = **4,76 MiB**. Cái lợi thật nằm ở **cache**: mỗi phát bắn là một lần duyệt vòng đệm. Giữ 1 giây theo truyền thống là vì replay và debug, không phải vì lag comp cần.
+**Cắt theo chiều dài, không theo tần số.** Nếu trần là 200 ms (mục 3.7) thì mọi bản ghi cũ hơn 200 ms không bao giờ được đọc: `200 / 16,67 = 12` tick thay vì 60 — nhỏ đi **5 lần**, 416 B × 12 × 1.000 = **4,99 MB**. Cái lợi thật nằm ở **cache**: mỗi phát bắn là một lần duyệt vòng đệm. Giữ 1 giây theo truyền thống là vì replay và debug, không phải vì lag comp cần.
 
 **Đừng cắt theo tần số.** "Lưu thưa 20 Hz rồi nội suy lại" nghe hợp lý — tiết kiệm 3 lần. Sai số khi mục tiêu 5 m/s bẻ 90° đúng giữa khoảng lưu là `(v·Δt/2)/√2`:
 
@@ -151,7 +151,7 @@ Kết luận ngược trực giác: **bộ nhớ không phải ràng buộc.** T
 | 20 Hz (mỗi snapshot) | 50 ms | **8,84 cm** |
 | 10 Hz | 100 ms | 17,7 cm |
 
-Đầu người rộng khoảng 20 cm, nên 8,84 cm là **44,2% chiều rộng một cái đầu** — đủ để biến headshot thành trượt và ngược lại, ở đúng loại phát bắn người chơi nhớ lâu nhất. Đổi ngần ấy độ chính xác lấy 1,6 MiB là giao dịch tồi. **Ghi mỗi tick.**
+Đầu người rộng khoảng 20 cm, nên 8,84 cm là **44,2% chiều rộng một cái đầu** — đủ để biến headshot thành trượt và ngược lại, ở đúng loại phát bắn người chơi nhớ lâu nhất. Đổi ngần ấy độ chính xác lấy 1,7 MB là giao dịch tồi. **Ghi mỗi tick.**
 
 *(32 B và 416 B là kích thước bản ghi của một thiết kế cụ thể — bậc độ lớn, không phải hằng số.)*
 
@@ -364,7 +364,7 @@ Ba thứ đáng ghi thêm: **tua ngược tách theo trúng/trượt** (phát *t
 
 **Bài 1.** Game bắn súng chiến thuật: đi bộ 3 m/s, chạy 6 m/s, snapshot 30 Hz nên `d = 2T`. Người bắn RTT 60 ms: `d`, lượng tua ngược và `D` ở hai tốc độ là bao nhiêu? Hitbox thân 0,5 m — ở tốc độ nào thì `D ≤ w` và tranh cãi biến mất (mục 3.5)? Muốn giữ tính chất đó cả khi chạy, phải hạ tốc độ chạy xuống bao nhiêu, hoặc nâng snapshot lên bao nhiêu Hz?
 
-**Bài 2.** Server 128 người, sim 60 Hz, bản ghi 416 B, trần 250 ms. Vòng đệm đúng kích thước cần bao nhiêu tick mỗi entity, tổng bao nhiêu MiB? Giữ 1 giây thì lãng phí mấy lần? Đội đề xuất lưu 30 Hz để cắt đôi: sai số nội suy tối đa ở 6 m/s bẻ 90° là bao nhiêu cm, bằng bao nhiêu phần trăm hitbox đầu 0,2 m?
+**Bài 2.** Server 128 người, sim 60 Hz, bản ghi 416 B, trần 250 ms. Vòng đệm đúng kích thước cần bao nhiêu tick mỗi entity, tổng bao nhiêu MB? Giữ 1 giây thì lãng phí mấy lần? Đội đề xuất lưu 30 Hz để cắt đôi: sai số nội suy tối đa ở 6 m/s bẻ 90° là bao nhiêu cm, bằng bao nhiêu phần trăm hitbox đầu 0,2 m?
 
 **Bài 3.** Vẫn `v` = 5 m/s, `d` = 100 ms. Yêu cầu sản phẩm: *"không ai chết khi đã khuất sau tường quá 0,60 m"*. Trần phải đặt bao nhiêu ms? Từ RTT bao nhiêu trở lên thì người bắn phải tự dẫn? Người RTT 200 ms phải dẫn mấy mét, so với thân người 0,5 m thế nào? Dùng bảng 4.2: trần này nằm giữa hai dòng nào, tỉ lệ phát bắn bị cắt ước trong khoảng nào?
 
@@ -386,7 +386,7 @@ Ba thứ đáng ghi thêm: **tua ngược tách theo trúng/trượt** (phát *t
 
 - Tua ngược `= RTT/2 + d`; `D = v · (RTT/2 + d)` là **độ lệch không xoá được**. Cấu hình chuẩn bài 20 cho 120 ms → **0,60 m ở 5 m/s, hơn 120% thân người 0,5 m**: không bù thì cả người ping tốt nhất phòng cũng trượt sạch mục tiêu chạy ngang. **`D` không chứa tick rate.**
 - Cơ chế: ghi lịch sử mỗi tick, khôi phục hitbox tại `t_view`, raycast, `Undo()` ngay trong cùng tick — cửa sổ tua ngược không được sống qua bất cứ lệnh nào khác.
-- **Bộ nhớ không phải ràng buộc**: 1.000 entity × 60 bản ghi × 416 B = **23,8 MiB**. Vòng đệm nên dài đúng bằng trần chứ không phải 1 giây — 200 ms là 12 tick, **nhỏ đi 5 lần còn 4,76 MiB**, và cái được là cache. **Đừng lưu thưa**: 20 Hz thay vì 60 Hz gây sai số **8,84 cm = 44,2% hitbox đầu** để đổi lấy 1,6 MiB.
+- **Bộ nhớ không phải ràng buộc**: 1.000 entity × 60 bản ghi × 416 B = **24,96 MB**. Vòng đệm nên dài đúng bằng trần chứ không phải 1 giây — 200 ms là 12 tick, **nhỏ đi 5 lần còn 4,99 MB**, và cái được là cache. **Đừng lưu thưa**: 20 Hz thay vì 60 Hz gây sai số **8,84 cm = 44,2% hitbox đầu** để đổi lấy 1,7 MB.
 - **Định luật bảo toàn `e_s + e_v ≥ D`**: phân xử ở thời điểm nào cũng không đổi tổng sai số, chỉ đổi người trả. Phân xử "ở giữa" cho **0,30 m mỗi bên** — sinh cả hai lời phàn nàn thay vì một. Đó là lý do không có phương án thứ ba.
 - Lối thoát duy nhất là **giảm `D`** — RTT (hạ tầng), `d` (bài 20, có sàn cứng), **`v` (thiết kế game)**. Tranh cãi biến mất khi `D ≤ w`: `v* = w/0,12` cho **4,17 m/s với thân người** nhưng chỉ **1,67 m/s với hitbox đầu**, nên headshot luôn phải chọn phe.
 - **Trần chọn từ mét, không từ mili giây**: 200 ms = "không ai chết quá **1,00 m** sau khi khuất". Giá: RTT 400 ms mất 100 ms tua ngược, phải tự dẫn **0,50 m — trọn một thân**; ngưỡng bắt đầu thiệt là RTT 200 ms.

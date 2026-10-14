@@ -227,7 +227,7 @@ Ba dòng cuối *có vẻ* thuộc tầng mạng — đặc biệt delta compres
 
 ```
 40.000 x 64 B  = 2,56 MB   bang conn -> (match_id, node)
-40.000 x 8 KB  = 328 MB    buffer doc/ghi socket (phan that su ton RAM)
+40.000 x 8 KiB = 328 MB    buffer doc/ghi socket (phan that su ton RAM)
 ```
 
 Bảng định tuyến chỉ **2,56 MB**. Cái ăn RAM của gateway là buffer socket, không phải state — dấu hiệu của gateway làm đúng việc: RAM tỉ lệ với **số kết nối**, không tỉ lệ với **nội dung trận đấu**.

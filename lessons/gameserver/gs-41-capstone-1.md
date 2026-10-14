@@ -19,7 +19,7 @@ Bạn vừa đọc chín chương lý thuyết và **chưa viết một dòng ga
 
 Bài này dựng agar-lite thật. Nhưng có một quyết định về thứ tự cần nói trước, vì nó ngược với bản năng:
 
-**Bản dựng ở bài này cố tình chơi rất dở.** Không prediction — vòng tròn của chính bạn phản hồi sau **158,2 ms**. Không interpolation — mỗi gói mất là một cú giật. Không AOI — mỗi snapshot chở toàn bộ 561 entity. Không binary — JSON thô, **362,6 KB/s mỗi người chơi**.
+**Bản dựng ở bài này cố tình chơi rất dở.** Không prediction — vòng tròn của chính bạn phản hồi sau **158,2 ms**. Không interpolation — mỗi gói mất là một cú giật. Không AOI — mỗi snapshot chở toàn bộ 561 entity. Không binary — JSON thô, **371,3 KB/s mỗi người chơi**.
 
 Nếu sửa bốn thứ đó ngay từ đầu, bạn sẽ có một game chơi được và **không biết mình đã mua gì bằng cái gì**. Prediction che 158 ms — nhưng che 158 ms trông như thế nào nếu bạn chưa từng thấy 158 ms trần? Bài 42 chỉ có nghĩa nếu bài 41 để lại một vết đau đo được.
 
@@ -218,7 +218,7 @@ Và `reader` gửi `quit` bằng phép gửi **chặn**, không `default`: mất
 
 Trước khi đi tiếp, cho **bản sai** chạy một lượt, vì nó là phản xạ đúng của dev backend: *"1 + 2P goroutine cho 100 người là 201 goroutine, nghe phí. Cứ để reader ghi thẳng vào `World` rồi bọc một `sync.Mutex` là xong."*
 
-Nó **không** cho race detector kêu. Nó hỏng ở chỗ khác: bài 28 đã đo, `step()` đọc và ghi trên hầu hết dữ liệu nên khoá phải bao gần trọn tick, và lúc đó mutex chỉ là hàng đợi có thêm chi phí. Còn cái mất lớn hơn không đo bằng ns: input được áp dụng **vào lúc gói tới**, tức tại một điểm ngẫu nhiên giữa hai tick. Hai lần chạy cùng một chuỗi input cho ra hai world khác nhau — mất đúng thứ chương 3 dựng suốt bốn bài. Còn 201 goroutine thì tốn 201 × 8 KB stack khởi điểm ≈ **1,6 MB**, ít hơn một snapshot broadcast của chính room này.
+Nó **không** cho race detector kêu. Nó hỏng ở chỗ khác: bài 28 đã đo, `step()` đọc và ghi trên hầu hết dữ liệu nên khoá phải bao gần trọn tick, và lúc đó mutex chỉ là hàng đợi có thêm chi phí. Còn cái mất lớn hơn không đo bằng ns: input được áp dụng **vào lúc gói tới**, tức tại một điểm ngẫu nhiên giữa hai tick. Hai lần chạy cùng một chuỗi input cho ra hai world khác nhau — mất đúng thứ chương 3 dựng suốt bốn bài. Còn 201 goroutine thì tốn 201 × 2 KiB stack khởi điểm ≈ **0,41 MB**, ít hơn một snapshot broadcast của chính room này.
 
 Vòng sim đúng khung bài 5–6, chỉ thêm một dòng broadcast:
 
@@ -402,10 +402,10 @@ Bốn lần chạy, mỗi lần 14 giây, bot không đầu gửi input 30 Hz. M
 
 | Player | sim.Step p50/p99 | broadcast p50/p99 | tick work p99 | % ngân sách | egress/player |
 |---|---|---|---|---|---|
-| 1 | 5 / 10 µs | 170 / 251 µs | 246 µs | **1,5 %** | 328,9 KB/s |
-| 10 | 20 / 30 µs | 1,26 / 1,49 ms | 1,44 ms | **8,7 %** | 323,7 KB/s |
-| 50 | 87 / 101 µs | 6,25 / 7,04 ms | 6,96 ms | **41,8 %** | 338,5 KB/s |
-| 100 | 113 / 166 µs | 11,79 / 14,89 ms | 13,97 ms | **83,8 %** | 362,6 KB/s |
+| 1 | 5 / 10 µs | 170 / 251 µs | 246 µs | **1,5 %** | 336,8 KB/s |
+| 10 | 20 / 30 µs | 1,26 / 1,49 ms | 1,44 ms | **8,7 %** | 331,5 KB/s |
+| 50 | 87 / 101 µs | 6,25 / 7,04 ms | 6,96 ms | **41,8 %** | 346,6 KB/s |
+| 100 | 113 / 166 µs | 11,79 / 14,89 ms | 13,97 ms | **83,8 %** | 371,3 KB/s |
 
 Đáp án hộp #1 là **(b)**. Tách sâu hơn vào bên trong `broadcast` ở 50 player:
 
@@ -455,7 +455,7 @@ Suốt chương 3 tới chương 6, mọi bảng băng thông đều dùng cùng
 | lateness p99 ~1,06 ms, spin=0 | bài 7 | 2,05 ms | lệch 1,93× — có I/O |
 | vật lý không phải nút thắt | bài 8 | 0,996 % ngân sách ở 100 player | **khớp** |
 | JSON 112,7 B/entity | bài 24 | 31,4 B/entity, nhưng **12,6 B/field** vs 12,52 | **khớp ở mức field, 0,81 %** |
-| 10 KB/s mỗi player | chương 6 | **351.820 B/s** = 343,6 KB/s | lệch **35,2×** |
+| 10 KB/s mỗi player | chương 6 | **351.820 B/s** = 351,8 KB/s | lệch **35,2×** |
 
 Dòng cuối là dòng phải mổ, và đáp án hộp #3 là **(c)**. Số đo trên là payload thuần — bot đếm `len(message)`, chưa tính một byte framing nào — nên (d) bị loại ngay. `50 entity × 10 B × 20 Hz = 10.000 B/s` giả định hai thứ mà bản dựng này vi phạm cả hai:
 

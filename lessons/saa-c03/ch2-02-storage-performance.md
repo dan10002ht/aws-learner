@@ -192,7 +192,7 @@ Có hai nhóm, chia theo đúng hai kiểu workload ở §1.1:
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 440" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Định vị các loại EBS và Instance Store theo IOPS và throughput</title>
-  <desc>Biểu đồ phân tán: trục ngang là IOPS (thang log từ thấp đến rất cao), trục dọc là throughput (MB trên giây). SSD gp3 và io2 nằm vùng IOPS cao; io2 Block Express và Instance Store ở góc trên phải IOPS và throughput cực cao; HDD st1 và sc1 nằm dưới với IOPS thấp nhưng throughput tuần tự khá. Màu đậm hơn thể hiện chi phí cao hơn.</desc>
+  <desc>Biểu đồ phân tán: trục ngang là IOPS (thang log từ thấp đến rất cao), trục dọc là throughput (MB trên giây). SSD gp3 và io1 nằm vùng IOPS cao; io2 Block Express và Instance Store ở góc trên phải IOPS và throughput cực cao; HDD st1 và sc1 nằm dưới với IOPS thấp nhưng throughput tuần tự khá. Màu đậm hơn thể hiện chi phí cao hơn.</desc>
   <text x="16" y="24" font-size="14.5" font-weight="700" fill="currentColor">Định vị EBS — IOPS × throughput (đắt dần khi lên góc phải-trên)</text>
   <line x1="70" y1="60" x2="70" y2="360" stroke="currentColor" stroke-opacity="0.4"/>
   <line x1="70" y1="360" x2="680" y2="360" stroke="currentColor" stroke-opacity="0.4"/>
@@ -214,11 +214,11 @@ Có hai nhóm, chia theo đúng hai kiểu workload ở §1.1:
   <g>
     <circle cx="310" cy="290" r="13" fill="#3b82f6" fill-opacity="0.45" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="310" y="270" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">gp3</text>
-    <text x="310" y="258" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">16k · 1000 · $$</text>
+    <text x="310" y="258" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">80k (đề thi 16k) · 2000 (đề thi 1000) · $$</text>
   </g>
   <g>
     <circle cx="470" cy="214" r="15" fill="#8b5cf6" fill-opacity="0.55" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="470" y="192" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">io2</text>
+    <text x="470" y="192" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">io1</text>
     <text x="470" y="180" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">64k · 1000 · $$$</text>
   </g>
   <g>
@@ -240,7 +240,7 @@ Có hai nhóm, chia theo đúng hai kiểu workload ở §1.1:
     <circle cx="110" cy="328" r="10" fill="#f59e0b" fill-opacity="0.35" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="110" y="354" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">sc1</text>
   </g>
-  <text x="70" y="416" font-size="10.5" fill="currentColor" opacity="0.7">Mỗi điểm: IOPS · throughput(MB/s) · chi phí. gp3 = default. Cần trên 16k IOPS → io2; cực cao + 5 nines → io2 Block Express.</text>
+  <text x="70" y="416" font-size="10.5" fill="currentColor" opacity="0.7">Mỗi điểm: IOPS · throughput(MB/s) · chi phí. gp3 = default. Đề thi: trên 16k IOPS → io2 (thực tế gp3 đã lên 80k); 5 nines → io2 Block Express.</text>
 </svg>
 
 Sơ đồ vẽ theo bộ số **đề thi** (gp3 ở mốc 16k IOPS / 1.000 MiB/s, io2 tách khỏi io2 Block Express). Thứ tự tương đối giữa các loại vẫn đúng; riêng trần gp3 hiện nay đã dịch sang phải tới 80k như ghi chú 📏 ở trên.

@@ -176,13 +176,13 @@ Tự ước lượng một con số Mbps rồi mới đọc tiếp.
 ```
 payload = 8 × 2 = 16 B
 header UDP + IPv4 = 28 B
-gói = 44 B ; gửi 60 Hz  →  44 × 60 = 2.640 B/s = 2,58 KB/s mỗi chiều
+gói = 44 B ; gửi 60 Hz  →  44 × 60 = 2.640 B/s = 2,64 KB/s mỗi chiều
 ```
 
 Một cặp đi qua TURN: relay **nhận** từ A rồi **gửi** cho B, nhận từ B rồi gửi cho A. Băng thông ra của relay cho một cặp:
 
 ```
-2.640 × 2 = 5.280 B/s = 5,16 KB/s mỗi cặp
+2.640 × 2 = 5.280 B/s = 5,28 KB/s mỗi cặp
 ```
 
 10.000 cặp đồng thời, ba kịch bản tỉ lệ phải relay *(what-if, không phải số đo — xem mục 3.3)*:
@@ -199,7 +199,7 @@ Một cặp đi qua TURN: relay **nhận** từ A rồi **gửi** cho B, nhận 
 
 Cộng thêm ba khoản mà "P2P miễn phí" bỏ qua:
 
-- **STUN vẫn phải nuôi.** Băng thông rẻ thật — ~8 gói × 100 B = 800 B mỗi phiên, 10.000 phiên/phút cũng chỉ ~130 KB/s. Nhưng vẫn là dịch vụ IP công cộng chạy 24/7 có giám sát, và **là điểm chết đơn của việc vào trận**: STUN sập thì không ai ghép trận được, kể cả cặp lẽ ra hole punch được.
+- **STUN vẫn phải nuôi.** Băng thông rẻ thật — ~8 gói × 100 B = 800 B mỗi phiên, 10.000 phiên/phút cũng chỉ ~133 KB/s. Nhưng vẫn là dịch vụ IP công cộng chạy 24/7 có giám sát, và **là điểm chết đơn của việc vào trận**: STUN sập thì không ai ghép trận được, kể cả cặp lẽ ra hole punch được.
 - **Server ghép trận vẫn phải có** — hai máy sau NAT không tự tìm thấy nhau.
 - **Không có authority.** P2P là không có trọng tài, nên chương 8 phải làm lại theo cách khác và yếu hơn.
 
@@ -416,7 +416,7 @@ Câu 6 là chỗ tầng vận chuyển và tầng ứng dụng chạm nhau — t
 - NAT tồn tại vì IPv4 cạn; bảng của nó ánh xạ `(IP nội bộ, port) ↔ (IP công cộng, port)`. **Mục ánh xạ chỉ sinh ra khi có gói đi RA** — quy tắc duy nhất cần nhớ, mọi thứ còn lại suy ra từ nó.
 - **Với dedicated server, NAT không phải là bài toán.** Client luôn gọi trước nên đường về tự mở: không STUN, không hole punching, không TURN, không một dòng code nào.
 - P2P là bế tắc đối xứng. Gỡ bằng **STUN** → **hole punching** (mỗi bên tự đục lỗ ở NAT của chính mình) → **TURN** khi thất bại. Hole punching hỏng khi NAT **đổi port công cộng theo từng đích** (symmetric); tỉ lệ thất bại **không có con số phổ quát**, phải tự đo.
-- **"P2P khỏi tốn tiền server" là sai.** TURN relay 5,16 KB/s mỗi cặp — **đúng bằng** dedicated server cho cùng game đó; 10.000 cặp với 10 % phải relay là **42,2 Mbps**. Cộng STUN nuôi 24/7 (điểm chết đơn của việc vào trận), server ghép trận, và mất hẳn authority.
+- **"P2P khỏi tốn tiền server" là sai.** TURN relay 5,28 KB/s mỗi cặp — **đúng bằng** dedicated server cho cùng game đó; 10.000 cặp với 10 % phải relay là **42,2 Mbps**. Cộng STUN nuôi 24/7 (điểm chết đơn của việc vào trận), server ghép trận, và mất hẳn authority.
 - Vòng đời: handshake → **ticket đã ký** verify cục bộ không I/O (bài 2) → heartbeat, vừa phát hiện chết vừa **giữ mục ánh xạ NAT sống** (chu kỳ < một nửa thời hạn NAT tệ nhất) → timeout.
 - **`T_dead` và `T_slot` là hai quyết định khác nhau.** `T_dead` ≈ **5 s = 300 gói ở 60 Hz** — đủ sống sót qua một lần chuyển mạng, và bằng 27,5 lần ngân sách 182 ms của bài 8 vì nó là ngưỡng sống/chết chứ không phải ngưỡng chất lượng. Đặt 1 s là tự tạo ra chết giả.
 - Reconnect cần đúng bốn thứ: giữ **slot + session record**; **resume token đã ký**, hạn bằng `T_slot`, gắn `match_id`, dùng một lần; gửi **full snapshot hiện tại** chứ không phát lại 240 tick đã lỡ (thiếu input của người khác thì không replay được — bài 9); rồi **khớp lại tick number** (bài 17).

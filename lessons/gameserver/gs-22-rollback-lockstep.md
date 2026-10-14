@@ -253,11 +253,11 @@ Phần bài 4 chưa tính: **`SaveState` và `LoadState` tốn bao nhiêu?** N�
 
 | S | Ring 8 frame | 1 lần `SaveState` | Băng thông | 4 lần copy | % của frame 16,67 ms |
 |---|---|---|---|---|---|
-| 1 KB | 8 KB | **9,1 ns** | 112,5 GB/s | 36 ns | **0,0002 %** |
-| 4 KB | 32 KB | **36,3 ns** | 112,8 GB/s | 145 ns | **0,0009 %** |
-| 64 KB | 512 KB | **571,5 ns** | 114,7 GB/s | 2,29 µs | **0,014 %** |
-| 1 MB | 8 MB | **14,19 µs** | 73,9 GB/s | 56,7 µs | **0,34 %** |
-| 4 MB | 32 MB | **57,22 µs** | 73,3 GB/s | 229 µs | **1,37 %** |
+| 1 KiB | 8 KiB | **9,1 ns** | 112,5 GB/s | 36 ns | **0,0002 %** |
+| 4 KiB | 32 KiB | **36,3 ns** | 112,8 GB/s | 145 ns | **0,0009 %** |
+| 64 KiB | 512 KiB | **571,5 ns** | 114,7 GB/s | 2,29 µs | **0,014 %** |
+| 1 MiB | 8 MiB | **14,19 µs** | 73,9 GB/s | 56,7 µs | **0,34 %** |
+| 4 MiB | 32 MiB | **57,22 µs** | 73,3 GB/s | 229 µs | **1,37 %** |
 
 *(Bậc độ lớn, không phải hằng số — thay đổi theo phần cứng, mức cache và tải. Ba dòng đầu nằm gọn trong cache; hai dòng cuối đã chạm băng thông RAM thật.)*
 
@@ -267,7 +267,7 @@ Nhìn cột phải cho kỹ trước khi đọc tiếp.
 
 ## ⏸ Dừng lại — đoán trước #3
 
-Câu giải thích phổ biến nhất về rollback: *"nó chỉ khả thi ở fighting game vì state nhỏ — copy vài MB mỗi frame thì không kịp."* Nhưng bảng trên vừa nói copy 4 MB tốn **1,37 %** một frame.
+Câu giải thích phổ biến nhất về rollback: *"nó chỉ khả thi ở fighting game vì state nhỏ — copy vài MB mỗi frame thì không kịp."* Nhưng bảng trên vừa nói copy 4 MiB tốn **1,37 %** một frame.
 
 **Vậy cái gì thật sự chặn rollback ở một game FPS 20 người?**
 
@@ -301,7 +301,7 @@ Với `f = 10` (người chơi đổi phím/hướng khoảng 10 lần mỗi gi�
 
 **Phần việc rollback tăng đúng 19 lần** — tỉ lệ số đối thủ, vì `f` và `d` triệt tiêu: `19·10·3 = 570` bước phụ so với `1·10·3 = 30`. Tính cả 60 bước nền thì tổng là **630 so với 90, tức 7,0×** — con số nhỏ hơn, nhưng phần nền 60 bước là thứ mọi mô hình đều phải trả, nên cái đáng nhìn là 19 lần ở phần phụ. Và 190 rollback/giây ở 60 FPS là **hơn ba lần rollback mỗi frame**: không còn "đường bình thường" nào nữa, mọi frame đều là frame chạy lại. Kể cả hạ `d` xuống 1 bằng cách hoãn input, FPS vẫn phải chạy 250 bước/giây — **4,17×**.
 
-**Yếu tố nhỏ hơn: state của engine không phải khối phẳng.** Bảng mục 3.5 giả định `memcpy`, nhưng state engine 3D là đồ thị con trỏ — entity trỏ tới component, physics giữ contact cache riêng, animation giữ blend tree — nên sao chép nó là **duyệt đồ thị**. Đo trên cùng khối 288 KB: `memcpy` phẳng **3,90 µs**, deep copy 4.096 node có con trỏ **13,26 µs** — **đắt hơn 3,4 lần**. *(Cận dưới: bản đo không cấp phát và không gọi constructor.)*
+**Yếu tố nhỏ hơn: state của engine không phải khối phẳng.** Bảng mục 3.5 giả định `memcpy`, nhưng state engine 3D là đồ thị con trỏ — entity trỏ tới component, physics giữ contact cache riêng, animation giữ blend tree — nên sao chép nó là **duyệt đồ thị**. Đo trên cùng khối 295 KB: `memcpy` phẳng **3,90 µs**, deep copy 4.096 node có con trỏ **13,26 µs** — **đắt hơn 3,4 lần**. *(Cận dưới: bản đo không cấp phát và không gọi constructor.)*
 
 3,4 lần thì không giết ai. **19 lần phần việc phụ, tức 7,0× tổng, thì có.** Phát biểu đúng của kết luận:
 
@@ -348,7 +348,7 @@ Chương 5 dựng nhánh authoritative client-server qua năm bài (17–21); b�
 |---|---|---|---|
 | Độ trễ mình cảm nhận | **8 ms** (bài 18) | 58 ms, hoặc 20 FPS nếu không hoãn | **8 ms** |
 | Độ trễ nhìn người khác | 182 ms (bài 8), tua ngược khi bắn (bài 21) | 58 ms — cùng nhịp với mình | ≤ 50 ms, nhưng có thể bị sửa lại |
-| Băng thông | theo **số entity**: 6,2 KB/s ở FPS 5v5 | theo **số người**: 0,62 KB/s ở RTS 8 người/200 quân | 2,16 KB/s ở 1v1 |
+| Băng thông | theo **số entity**: 6,4 KB/s ở FPS 5v5 | theo **số người**: 0,64 KB/s ở RTS 8 người/200 quân | 2,16 KB/s ở 1v1 |
 | Chống gian lận | **có** | **không** | **không** |
 | Determinism cần | mức A; B chỉ cần đúng ngữ nghĩa | **mức C** | **mức C**, và chạy lại phải ra y hệt |
 | Số người chịu được | hàng chục tới hàng nghìn (bài 26, 32) | 8 người thoải mái; ràng buộc là RTT người tệ nhất | **2–4**; 630 bước sim/giây ở 20 người |
@@ -410,7 +410,7 @@ Câu 6 là chỗ ba nhánh của course gặp nhau: netcode, determinism, chốn
 - Cái mất: **chống gian lận** và **cơ chế sửa sai tự động** — sai số không bị dập, chỉ có desync: phát hiện bằng checksum định kỳ, xử lý bằng huỷ trận.
 - **Lockstep thuần**: RTT 100 → trần **20 FPS**, RTT 150 → 13,3. RTS sống nhờ turn delay và trục 250 ms; fighting game với 50 ms thì không, vì turn delay hoãn **cả input của chính bạn**.
 - **Rollback** = đoán đối thủ giữ nguyên input frame trước; sai thì tua ngược → thay input → chạy lại, trong một frame. Ring buffer `W` frame chịu được RTT tới `2 × W × 16,67 ms`: **W = 7 → 233 ms**, đúng con số GGPO dùng. Vượt W thì thoái hoá về chờ.
-- Ngân sách bài 4 giữ nguyên: RTT 100 → `d = 3` → **5,56 ms** mỗi bước (**4,17 ms** nếu tính cả bước của frame hiện tại). Copy state **không phải nút thắt**: **9,1 ns cho 1 KB**, và ngay cả **4 MB** thì bốn lần copy chỉ tốn **1,37 %** một frame; ring 8 frame của một trận đối kháng là **8 KB**.
+- Ngân sách bài 4 giữ nguyên: RTT 100 → `d = 3` → **5,56 ms** mỗi bước (**4,17 ms** nếu tính cả bước của frame hiện tại). Copy state **không phải nút thắt**: **9,1 ns cho 1 KiB**, và ngay cả **4 MiB** thì bốn lần copy chỉ tốn **1,37 %** một frame; ring 8 frame của một trận đối kháng là **8 KB**.
 - Nút thắt thật là **số lần chạy lại**: `bước sim/giây = 60 + n × f × d`. Fighting 1v1 → **90 (1,50×)**; FPS 20 người → **630 (10,50×)**, đúng **19 lần** nhiều hơn vì `f` và `d` triệt tiêu. Hạ `d` xuống 1 vẫn còn 4,17×. Yếu tố phụ: deep-copy đồ thị con trỏ đắt hơn memcpy **3,4 lần**.
 - **Determinism mức C là điều kiện tồn tại**: bài 11 đo cùng file `.go` trên arm64 và amd64 lệch **18,13 m ở frame 3.600**. Fixed-point là lời giải, giá **+1,41 %** CPU, quyết định của tuần đầu tiên.
 - Người chơi vẫn trả, chỉ là trả chỗ khác: đối thủ nhảy tối đa **25,0 cm** ở RTT 100 ms. Một RTT phải trả bằng **frame rate**, **input lag của mình**, hoặc **hình ảnh đối thủ** — không có phương án thứ tư, và CPU nhanh hơn không tạo ra phương án thứ tư.

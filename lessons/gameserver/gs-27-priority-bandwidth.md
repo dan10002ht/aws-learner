@@ -342,7 +342,7 @@ Cả ba con số đều tính được. Ở 20 Hz, mỗi tick cách nhau 50 ms:
 
 Con số 196,48 kbps là ranh giới, và nó lật ngược đáp án trực giác. **(b) sai, (a) gần đúng nhưng vì lý do khác với lý do bạn nghĩ.**
 
-- **Trên 196,48 kbps, MTU chặn trước, không phải băng thông.** Client 1 Mbps chở lọt 5 gói mỗi tick, 10 Mbps chở lọt 50. Nhưng bạn *không* gửi 50 gói: đó là 12,5 MB/s một người, và cái chặn không còn là mạng của họ mà là hoá đơn của bạn (mục 3.7) và CPU serialize của server. Trần thật ở đây là **quyết định sản phẩm**, thường 1 gói/tick, tối đa 2 khi có burst entity mới vào tầm.
+- **Trên 196,48 kbps, MTU chặn trước, không phải băng thông.** Client 1 Mbps chở lọt 5 gói mỗi tick, 10 Mbps chở lọt 50. Nhưng bạn *không* gửi 50 gói: đó là 1,23 MB/s một người, và cái chặn không còn là mạng của họ mà là hoá đơn của bạn (mục 3.7) và CPU serialize của server. Trần thật ở đây là **quyết định sản phẩm**, thường 1 gói/tick, tối đa 2 khi có burst entity mới vào tầm.
 - **Dưới 196,48 kbps, client chặn trước** — và lúc đó K phải giảm theo từng người:
 
 ```

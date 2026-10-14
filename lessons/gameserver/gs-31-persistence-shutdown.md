@@ -231,7 +231,7 @@ Bây giờ ngân sách đầy đủ. Sáu bước, và năm trong sáu bước g
 | 1 | Nhận `SIGTERM`, đặt cờ `draining` | 0,001 s | Chỉ set một biến. **Không** đóng listener — client đang chơi cần reconnect được |
 | 2 | Báo allocator ngừng nhận trận mới | **3,0 s** | Xoá key sức chứa khỏi Redis xong (~0,5 ms) vẫn phải chờ hết cửa sổ những lần cấp phát *đã bay* — bằng chu kỳ heartbeat |
 | 3 | Chờ trận hiện tại xong, hoặc tới hạn D | **683,4 s (p99)** | Cực đại của 20 trận, bảng trên |
-| 4 | Snapshot trận chưa xong | 0,02 s | 20 trận × 18,1 KB = 362,5 KB, serialize 0,74 ms + một pipeline Redis |
+| 4 | Snapshot trận chưa xong | 0,02 s | 20 trận × 18,6 KB = 371,2 KB, serialize 0,74 ms + một pipeline Redis |
 | 5 | Flush outbox | 0,30 s | ~220 bản ghi còn trong bộ đệm, một lần ghi theo lô |
 | 6 | Đóng kết nối, thoát | 0,10 s | |
 | | **Tổng tệ nhất** | **686,8 s = 11,45 phút** | |
@@ -272,9 +272,9 @@ Bước 4 nói "snapshot trận chưa xong". Câu phải trả lời trước kh
 
 | Khoản | Số | Cách ra |
 |---|---|---|
-| Kích thước snapshot một trận | **18,1 KB** | 500 entity × 32 B + 10 player × 256 B = 18.560 B |
-| Ghi 20 trận lúc shutdown | **~4,2 ms** | serialize 0,74 ms + một pipeline Redis 362,5 KB |
-| Snapshot **định kỳ** mỗi 10 s (để chống crash) | 2,0 ghi/s/node, 36,2 KB/s | 20 trận / 10 s |
+| Kích thước snapshot một trận | **18,6 KB** | 500 entity × 32 B + 10 player × 256 B = 18.560 B |
+| Ghi 20 trận lúc shutdown | **~4,2 ms** | serialize 0,74 ms + một pipeline Redis 371,2 KB |
+| Snapshot **định kỳ** mỗi 10 s (để chống crash) | 2,0 ghi/s/node, 37,1 KB/s | 20 trận / 10 s |
 | CPU của snapshot định kỳ | **0,0074 % một core** | 37,1 µs/trận × 2 trận/s |
 
 Chi phí máy gần bằng không, kể cả bản định kỳ. **Chi phí thật nằm ở chỗ khác:** state phải serialize được đầy đủ và phục hồi lại *chính xác* — mọi thứ trong RAM phải là dữ liệu thuần, không con trỏ tuỳ tiện, không closure giữ trạng thái, không timer chỉ tồn tại trong runtime. Simulation đã tất định theo chương 3 thì gần như có sẵn tính chất này; chưa thì đây là một đợt refactor thật.
@@ -368,7 +368,7 @@ Không có đáp án trong bài.
 
 1. Ba nhịp ghi ở mục 3.2 áp vào game này thế nào? Nhịp nào biến mất, nhịp nào phải thêm?
 2. Số người trong một trận **giảm theo thời gian**. Điều đó làm bảng 3.5 (% trận bị giết) nói dối theo hướng nào — bạn đang đánh giá thiệt hại cao hơn hay thấp hơn thực tế?
-3. Snapshot một trận battle royale to hơn 18,1 KB bao nhiêu lần, và nó có còn "gần bằng không" nữa không? Ước lượng bằng số entity, đừng đoán.
+3. Snapshot một trận battle royale to hơn 18,6 KB bao nhiêu lần, và nó có còn "gần bằng không" nữa không? Ước lượng bằng số entity, đừng đoán.
 4. Node giữ được bao nhiêu trận nếu một trận 100 người? Con số đó đổi bảng "trận bị giết mỗi node" thế nào — theo hướng tốt hay xấu?
 5. Người chơi **nhặt được item hiếm ở phút thứ 3** rồi chết ở phút thứ 5. Item đó ghi xuống DB lúc nào — lúc nhặt, lúc chết, hay lúc trận kết thúc? Ba lựa chọn cho ba loại lỗi khác nhau; kể ra loại lỗi của từng lựa chọn.
 6. **Câu khó nhất:** trận dài 18–25 phút nhưng số người giảm dần, nên "thiệt hại của việc giết một trận" **không phải hằng số theo thời gian** — nó đạt cực đại ở đâu đó rồi giảm. Hãy đặt ra một hàm thiệt hại theo phút và tìm thời điểm cực đại. Rồi trả lời câu thật sự: nếu drain có thể **chọn thứ tự** giết trận, nó nên giết trận **mới bắt đầu** hay trận **sắp xong** trước, và điều đó có mâu thuẫn với cách drain hoạt động (chờ trận xong) không?

@@ -191,7 +191,7 @@ Ba điều rút ra, theo thứ tự bất ngờ dần.
 
 **Một — bốn kiểm tra rẻ cộng lại vẫn không đáng kể.** Tầm với + cooldown + tốc độ (bản 2 ô) + rate limit = **1,703 µs = 0,0102 % ngân sách = 1,35 lần** một `sim.Step`. Toàn bộ tầng validate của 1.000 người tốn hơn phần vật lý của họ đúng 35 %, nên câu "authoritative đắt vì phải kiểm mọi thứ" không sống sót qua dòng này.
 
-**Hai — cấu trúc dữ liệu quan trọng hơn bản thân phép kiểm.** Ring buffer 60 ô mỗi người là **234 KiB** cho 1.000 người, quét ra khỏi cache, tốn **1,790 µs — đắt hơn cả `sim.Step`**. Hai ô tích luỹ (ô đang chạy + ô trước, hoán vị mỗi W tick) còn **7,8 KiB, rẻ đi 3,51 lần**; giá là cửa sổ trượt thành *xấp xỉ* trượt, độ dài dao động giữa W và 2W. Theo `W × ε = B` thì cửa sổ dài hơn chỉ làm ε an toàn hơn — đánh đổi gần như miễn phí.
+**Hai — cấu trúc dữ liệu quan trọng hơn bản thân phép kiểm.** Ring buffer 60 ô mỗi người là **240 KB** cho 1.000 người, quét ra khỏi cache, tốn **1,790 µs — đắt hơn cả `sim.Step`**. Hai ô tích luỹ (ô đang chạy + ô trước, hoán vị mỗi W tick) còn **8,0 KB, rẻ đi 3,51 lần**; giá là cửa sổ trượt thành *xấp xỉ* trượt, độ dài dao động giữa W và 2W. Theo `W × ε = B` thì cửa sổ dài hơn chỉ làm ε an toàn hơn — đánh đổi gần như miễn phí.
 
 **Ba — LOS đắt gấp 22,65 lần, và đó vẫn không phải vấn đề**, vì LOS **không chạy mỗi tick** mà chạy khi có sự kiện:
 
@@ -369,7 +369,7 @@ Ba dòng cuối in đậm chữ "chỉ kẹp" là **toàn bộ bề mặt tấn 
 - Kiểm khoảng cách **mỗi tick** chặn nhầm **100 % người chơi thật** trong trận 10 phút, **32,93 % số tick** ở σ jitter 15 ms. Nới dung sai 5 % → 50 % không giảm một phần trăm nào: tick bị gộp có quãng đường **đúng 2 lần** giới hạn.
 - Bunching không sinh thêm chuyển động: tỉ lệ tick nhận 2 input và tỉ lệ tick đói **bằng nhau tới ba chữ số** (24,342 / 24,333 ở σ = 5 ms). Jitter **dời chỗ** chuyển động; cửa sổ tích luỹ hoàn nguyên đúng phép dời đó.
 - **`W × ε = B`**, với `B` = 14 input = 233,3 ms ở cấu hình đo, hằng số từ W = 30 trở lên và do đuôi jitter quyết định chứ không do server. Suy ra `W > B/h` để bắt hack ×(1+h): **×1,30 cần 0,78 s; ×1,10 cần 2,33 s; ×1,05 cần 4,67 s**. Cửa sổ W ≤ 14 bị trần "2 input/tick" siết trước và ε phải bằng 100 % — không dùng được.
-- Bốn kiểm tra rẻ cho 1.000 người = **1,703 µs = 0,0102 % ngân sách = 1,35 lần `sim.Step`**. Cấu trúc dữ liệu quan trọng hơn phép kiểm: ring 60 ô tốn 234 KiB và 1,790 µs; hai ô tích luỹ tốn 7,8 KiB, **rẻ hơn 3,51 lần**.
+- Bốn kiểm tra rẻ cho 1.000 người = **1,703 µs = 0,0102 % ngân sách = 1,35 lần `sim.Step`**. Cấu trúc dữ liệu quan trọng hơn phép kiểm: ring 60 ô tốn 240 KB và 1,790 µs; hai ô tích luỹ tốn 8,0 KB, **rẻ hơn 3,51 lần**.
 - LOS đắt **22,65 lần `sim.Step`**, nhưng chạy theo sự kiện thay vì mỗi tick làm nó **rẻ đi 15 lần** (114,3 µs/s so với 1,71 ms/s). **Rate limit là cái chặn trên của ngân sách validate.**
 - **Ba chỗ nguyên tắc gãy** — hướng nhìn camera, vật lý phức tạp, timestamp cho lag comp — cùng một hình dạng: server chỉ kiểm chứng được thứ nó tự sinh lại được, còn lại chỉ **kẹp biên**. Kẹp `Δyaw` 2.000 °/s cho 33,3° mỗi tick trong khi aimbot chỉ cần 5,71°: chặn teleport-aim, **không chặn aimbot**.
 - Ragdoll tối giản tốn **1.499 lần** một entity chất điểm, nhưng 100 con chỉ là 1,134 % ngân sách: cái đắt không phải CPU mà là **không chạy lại được bit-exact cái PhysX của client**.

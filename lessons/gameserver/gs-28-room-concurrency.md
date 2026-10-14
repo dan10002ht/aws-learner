@@ -300,7 +300,7 @@ RÒ     10.000 kết nối vào-ra: goroutine 1 -> 10.001 (rò 10.000), heap 0,2
 CHẶN   10.000 kết nối vào-ra: goroutine 10.001 -> 10.001 (rò 0),  heap 8,5 -> 8,6 MB
 ```
 
-GC dọn không được: goroutine đang chờ channel vẫn là root sống, nên `outbox` và toàn bộ closure sống theo. **8,3 MB heap cho 10.000 kết nối đã đóng**, cộng ~3,4 KB stack mỗi cái (mục 4) là thêm 34 MB.
+GC dọn không được: goroutine đang chờ channel vẫn là root sống, nên `outbox` và toàn bộ closure sống theo. **8,3 MB heap cho 10.000 kết nối đã đóng**, cộng ~3,3 KB stack mỗi cái (mục 4) là thêm 33 MB.
 
 Bản chặn khác đúng một khái niệm — `context` bắc tín hiệu "chết rồi" qua mọi goroutine của cùng connection:
 
@@ -344,7 +344,7 @@ P = 10 → 0,708 + 35,6 = 36,3 µs/giây → 10.000.000 / 36,3 = 275.573 room
 
 ```
 mỗi player nhận 20 Hz × (P × 13,68 + 28) B/s
-P = 10 → 20 × 164,8 = 3.296 B/s ; room 10 người = 32.960 B/s = 32,19 KB/s
+P = 10 → 20 × 164,8 = 3.296 B/s ; room 10 người = 32.960 B/s = 32,96 KB/s
 NIC 1 Gbps = 125.000.000 B/s → 125.000.000 / 32.960 = 3.792 room
 ```
 
@@ -362,7 +362,7 @@ NIC 1 Gbps = 125.000.000 B/s → 125.000.000 / 32.960 = 3.792 room
 
 *(Hai lần chạy độc lập, lấy lần xấu hơn. Mốc ≤ 20.000 luôn dưới 2 ms; mốc ≥ 30.000 luôn vượt.)*
 
-**p50 vẫn đẹp trong khi p99 đã vỡ**: ở 50.000 goroutine p50 là 0,32 ms còn p99 là 56,8 ms, chênh **175 lần** — nhìn trung bình thì hệ thống trông hoàn hảo, đúng cái bài 7 cảnh báo. RAM cho giá một goroutine: `(677 − 8) MB / 200.000 = ` **3,4 KB**, tức 2 KB stack cộng sổ sách runtime.
+**p50 vẫn đẹp trong khi p99 đã vỡ**: ở 50.000 goroutine p50 là 0,32 ms còn p99 là 56,8 ms, chênh **175 lần** — nhìn trung bình thì hệ thống trông hoàn hảo, đúng cái bài 7 cảnh báo. RAM cho giá một goroutine: `(677 − 8) MB / 200.000 = ` **3,3 KB**, tức 2 KiB stack cộng sổ sách runtime.
 
 Đo tiếp cái nằm dưới — **throughput đánh thức** của scheduler:
 
@@ -438,7 +438,7 @@ Lấy **20.000 goroutine** làm trần vận hành → `20.000 / (1 + 2P)` room.
 **Bài 1.** Game 5v5 (`P = 10`), node 10 core, NIC 1 Gbps, `1 + 2P`, node đầy ở 952 room.
 - Egress lúc đó bao nhiêu MB/s, bằng bao nhiêu phần trăm NIC?
 - Gộp writer lại còn `1 + P` goroutine mỗi room: trần goroutine mới là bao nhiêu room, và ràng buộc nào chạm trước, ở con số nào?
-- 20.000 goroutine × 3,4 KB là bao nhiêu MB stack? So với 82 MB `Sys` ở mốc đó, phần chênh đi đâu?
+- 20.000 goroutine × 3,3 KB là bao nhiêu MB stack? So với 82 MB `Sys` ở mốc đó, phần chênh đi đâu?
 
 **Bài 2.** Trận 100 người, snapshot 20 Hz, outbox mỗi client cap = 8, drop gói cũ, client chậm 40 % (nhận 12 Hz).
 - Theo bảng 3.5, tuổi p99 là bao nhiêu? Ngân sách độ trễ 182 ms của bài 8 bị vượt bao nhiêu **lần**?
@@ -473,7 +473,7 @@ Bạn làm **game cờ theo lượt**: 2 người một trận, mỗi nước đ
 - **Ba loại goroutine mỗi room, `1 + 2P` cái.** Reader tách khỏi writer vì `conn.Read()` chặn; tick không tách vì nó chính là vòng lặp simulation. Chỉ simulation chạm world state.
 - **Simulation single-threaded vì hai lý do độc lập:** song song hoá mất thứ tự xác định (chết rollback bài 22, replay bài 35); và mutex không mua được gì — **1,91 ns có khoá so với 0,28 ns không khoá, đắt 6,8 lần ngay cả khi 0 contention**, trong khi `step()` ghi lên hầu hết dữ liệu nên phần lớn thời gian vẫn chỉ một luồng chạy. Song song hoá nằm giữa các room.
 - **Channel rẻ, đừng tối ưu nó.** Buffer 64 **21,7 ns/op** (unbuffered 86,2 — 0→64 giảm **74,8 %**; 64→1024 không lời gì); fan-in 100 producer 153,3 ns. Trận 100 người ở 60 Hz = **15,33 µs = 0,092 % ngân sách tick**. Chỗ channel làm đau là nó **chặn** và nó **giữ goroutine sống**.
-- **Buffer to là lựa chọn tệ nhất, không phải an toàn nhất.** Producer 20 Hz / consumer 12 Hz: buffer 64 → p99 **4.000 ms**; buffer 1 chặn → producer tụt còn **12,5 Hz** kéo cả room theo; **buffer 1 + drop gói cũ → đủ 200/200, p50 33 ms, p99 51 ms**. Snapshot có hạn sử dụng (bài 12) nên vứt gói cũ không mất thông tin — kênh reliable bài 14 thì ngược lại. Và **10.000 kết nối vào-ra rò đúng 10.000 goroutine** (8,3 MB heap + 34 MB stack, GC không dọn được) nếu writer không có `ctx.Done()`; ở 100 kết nối/phút, node chạm trần sau **3 giờ 20 phút**.
-- **Ba trần độc lập, CPU không bao giờ chạm trước.** Scheduler vỡ về độ trễ trước throughput: trần **~2,9–3,0 triệu wakeup/giây** nhưng p99 lateness đã **29,4 ms ở 30.000 goroutine** trong khi p50 vẫn 0,16 ms — trần vận hành **20.000 goroutine**, 3,4 KB mỗi cái. Ở P = 10: CPU 275.573 room / băng thông 3.792 / goroutine **952**, và node đầy khi sim dùng **0,067 % một core** — bài 1 lặp lại ở tầng node, nên **đừng autoscale theo CPU**. Giao điểm băng thông–goroutine ở **P ≈ 45**.
+- **Buffer to là lựa chọn tệ nhất, không phải an toàn nhất.** Producer 20 Hz / consumer 12 Hz: buffer 64 → p99 **4.000 ms**; buffer 1 chặn → producer tụt còn **12,5 Hz** kéo cả room theo; **buffer 1 + drop gói cũ → đủ 200/200, p50 33 ms, p99 51 ms**. Snapshot có hạn sử dụng (bài 12) nên vứt gói cũ không mất thông tin — kênh reliable bài 14 thì ngược lại. Và **10.000 kết nối vào-ra rò đúng 10.000 goroutine** (8,3 MB heap + 33 MB stack, GC không dọn được) nếu writer không có `ctx.Done()`; ở 100 kết nối/phút, node chạm trần sau **3 giờ 20 phút**.
+- **Ba trần độc lập, CPU không bao giờ chạm trước.** Scheduler vỡ về độ trễ trước throughput: trần **~2,9–3,0 triệu wakeup/giây** nhưng p99 lateness đã **29,4 ms ở 30.000 goroutine** trong khi p50 vẫn 0,16 ms — trần vận hành **20.000 goroutine**, 3,3 KB mỗi cái. Ở P = 10: CPU 275.573 room / băng thông 3.792 / goroutine **952**, và node đầy khi sim dùng **0,067 % một core** — bài 1 lặp lại ở tầng node, nên **đừng autoscale theo CPU**. Giao điểm băng thông–goroutine ở **P ≈ 45**.
 
 → **Bài 29 — Gateway vs game node**: một tiến trình giữ được vài chục trận. Nhưng người chơi phải tìm được đúng tiến trình đang giữ trận của mình — và load balancer bạn quen dùng làm chuyện đó sai hoàn toàn.

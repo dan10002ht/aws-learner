@@ -445,16 +445,16 @@ Bốn mươi micromet trên dải hai nghìn mét — độ chính xác **không
 |---|---|---|---|
 | 64 | 260 B | 6.417,7 LSB | **80,00 LSB** |
 | **256** | **1,0 KB** | 1.602,1 LSB | **6,28 LSB** |
-| 1.024 | 4,0 KB | 396,1 LSB | **1,70 LSB** |
-| 4.096 | 16,0 KB | 94,7 LSB | **1,43 LSB** |
+| 1.024 | 4,1 KB | 396,1 LSB | **1,70 LSB** |
+| 4.096 | 16,4 KB | 94,7 LSB | **1,43 LSB** |
 
 Đọc bảng theo đường chéo:
 
-> Bảng **256 mục có nội suy** (1,0 KB, sai 6,28 LSB) **chính xác hơn 15,1 lần** so với bảng **4.096 mục tra thẳng** (16,0 KB, sai 94,7 LSB), trong khi tốn **ít hơn 15,9 lần** bộ nhớ.
+> Bảng **256 mục có nội suy** (1,0 KB, sai 6,28 LSB) **chính xác hơn 15,1 lần** so với bảng **4.096 mục tra thẳng** (16,4 KB, sai 94,7 LSB), trong khi tốn **ít hơn 15,9 lần** bộ nhớ.
 
 Nội suy tuyến tính tốn thêm một trừ, một nhân, một cộng — khoảng 1 ns theo bảng mục 3.10 — và mua được nhiều hơn việc nhân bảng lên 16 lần. Một trong số ít chỗ mà đánh đổi **không** đối xứng: gần như luôn nên nội suy.
 
-Chú ý hai dòng cuối: từ 1.024 lên 4.096 mục, sai số chỉ giảm 1,70 → 1,43 LSB. Bảng hết tác dụng — thứ giới hạn giờ là **sàn lượng tử của chính Q16.16**, nên tăng bảng thêm là mua bộ nhớ đổi lấy không gì cả. 1.024 mục (4 KB) là điểm dừng hợp lý.
+Chú ý hai dòng cuối: từ 1.024 lên 4.096 mục, sai số chỉ giảm 1,70 → 1,43 LSB. Bảng hết tác dụng — thứ giới hạn giờ là **sàn lượng tử của chính Q16.16**, nên tăng bảng thêm là mua bộ nhớ đổi lấy không gì cả. 1.024 mục (4,1 KB) là điểm dừng hợp lý.
 
 ---
 
@@ -548,7 +548,7 @@ Nếu câu trả lời là "chắc là không, nhưng có thể", có đường 
 - **Tràn số nguy hơn ở fixed-point**: float bão hoà thành `+Inf` (nhìn là biết hỏng), fixed-point **quay vòng im lặng**. `dx²+dy²` trong Q16.16 có trần thật **181,02 m**; khoảng cách 1 km trả về `16.960` tức "130 m", và AOI sẽ tin điều đó. Chọn định dạng theo cột **ngưỡng `d²`**: Q16.16 → 181 m, Q24.8 → 2.896 m, **Q32.32 → 46.341 m**.
 - `dt` phải biểu diễn được: **1/64, 1/128, 1/256 chính xác tuyệt đối; 1/60 lệch 4,07e-06 mỗi bước = 0,0146 s sau một phút**. Dùng fixed-point thì chọn tick rate là luỹ thừa của 2.
 - **Giá CPU gần như bằng không**: một bước sim đầy đủ tốn **+1,41 %** so với `float32` (54,1 ns vs 53,4 ns = 0,00035 % ngân sách tick 64 Hz); cộng và nhân fixed-point còn **nhanh hơn** 2,1–2,4 lần.
-- **Giá thật nằm ở hàm siêu việt và ở con người**: `sqrt` Newton-Raphson tốn **7,602 ns, đắt hơn 15,1 lần** lệnh phần cứng (sai tối đa 2,60 LSB = 39,7 micromet). `sin` bằng bảng **256 mục có nội suy** (1,0 KB, 6,28 LSB) chính xác hơn **15,1 lần** bảng **4.096 mục tra thẳng** (16,0 KB, 94,7 LSB) — luôn nội suy.
+- **Giá thật nằm ở hàm siêu việt và ở con người**: `sqrt` Newton-Raphson tốn **7,602 ns, đắt hơn 15,1 lần** lệnh phần cứng (sai tối đa 2,60 LSB = 39,7 micromet). `sin` bằng bảng **256 mục có nội suy** (1,0 KB, 6,28 LSB) chính xác hơn **15,1 lần** bảng **4.096 mục tra thẳng** (16,4 KB, 94,7 LSB) — luôn nội suy.
 - **Có authoritative server thì chỉ cần mức A, và fixed-point là chi phí thuần.** Chỉ **rollback/lockstep P2P cross-platform** — mức C — mới thật sự bắt buộc. Và đổi từ float sang fixed-point là **viết lại lõi simulation**, làm **mọi replay đã lưu không phát lại được** — quyết định của tuần đầu tiên.
 
 → **Chương 4 — Mạng nền tảng.** Ba chương vừa rồi dựng một simulation chạy đúng nhịp và chạy lại được y hệt. Bài 12 hỏi câu tiếp theo: kết quả của nó đi tới người chơi bằng đường nào, và vì sao chọn sai đường thì mọi thứ ở trên thành vô nghĩa.

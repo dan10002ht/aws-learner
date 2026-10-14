@@ -21,9 +21,9 @@ Studio làm game thứ hai: **RTS 4v4, mỗi bên khoảng 200 quân**. Cùng đ
 Kết quả trên máy dev, mạng LAN: chạy được. Kết quả trên Internet:
 
 ```
-băng thông chiều ra mỗi player   39,1 KB/s   → 312,5 KB/s cho một trận 8 người
+băng thông chiều ra mỗi player   40,0 KB/s   → 320,0 KB/s cho một trận 8 người
 người chơi 4G                    rớt liên tục
-trận có 2.000 quân (late game)   391 KB/s mỗi player — không ai chơi nổi
+trận có 2.000 quân (late game)   400 KB/s mỗi player — không ai chơi nổi
 ```
 
 Đội netcode profile, tối ưu serialization, thêm delta compression. Xuống được một nửa. Vẫn không đủ.
@@ -116,10 +116,10 @@ Chênh nhau **40 lần** giữa hai đầu. Đó là lý do câu "game server ph
 | | Client-server (gửi state) | Lockstep (gửi input) |
 |---|---|---|
 | Gửi cái gì | vị trí/HP của 200 quân | mệnh lệnh của 8 người |
-| Mỗi player nhận | 200 × 10 B × 20 Hz = **39,1 KB/s** | — |
-| Tổng cả trận | 39,1 × 8 = **312,5 KB/s** | 8 × 8 B × 10 Hz = **0,62 KB/s** |
+| Mỗi player nhận | 200 × 10 B × 20 Hz = **40,0 KB/s** | — |
+| Tổng cả trận | 40,0 × 8 = **320 KB/s** | 8 × 8 B × 10 Hz = **0,64 KB/s** |
 | Tỉ lệ | 1 | **rẻ hơn 500 lần** |
-| Khi lên 2.000 quân | **391 KB/s mỗi player** | **0,62 KB/s — không đổi** |
+| Khi lên 2.000 quân | **400 KB/s mỗi player** | **0,64 KB/s — không đổi** |
 
 Dòng cuối là dòng quan trọng nhất, và nó không phải chuyện tối ưu:
 
@@ -177,9 +177,9 @@ Băng thông rất dễ chịu vì số entity nhìn thấy nhỏ:
 
 | Trường hợp | Entity thấy | Snapshot | Băng thông/player |
 |---|---|---|---|
-| FPS 1v1 | 2 | 64 Hz | 1,2 KB/s |
-| FPS 5v5 | 10 | 64 Hz | 6,2 KB/s |
-| Battle royale 100 người (AOI 20) | 20 | 30 Hz | 5,9 KB/s |
+| FPS 1v1 | 2 | 64 Hz | 1,28 KB/s |
+| FPS 5v5 | 10 | 64 Hz | 6,4 KB/s |
+| Battle royale 100 người (AOI 20) | 20 | 30 Hz | 6,0 KB/s |
 
 *(Giả định ~10 byte/entity sau nén — con số này sẽ được đo thật ở bài 24.)*
 
@@ -215,7 +215,7 @@ MMO ở góc ngược lại: độ trễ rộng rãi (500 ms cho PvE), nhưng **
 - **Sharding thế giới** — một tiến trình không giữ nổi cả thế giới, phải cắt (bài 32).
 - **Cross-node handoff** — người chơi đi từ vùng này sang vùng khác, tức đổi tiến trình chủ sở hữu, mà không được đứng hình (bài 32).
 
-Băng thông: 50 entity trong tầm × 10 B × 10 Hz = **4,9 KB/s mỗi player** — nhỏ hơn cả FPS 5v5. Điều đó nói lên bản chất: **MMO không khó vì mạng, MMO khó vì kiến trúc.**
+Băng thông: 50 entity trong tầm × 10 B × 10 Hz = **5,0 KB/s mỗi player** — nhỏ hơn cả FPS 5v5. Điều đó nói lên bản chất: **MMO không khó vì mạng, MMO khó vì kiến trúc.**
 
 ### 3.7 Bảng tổng hợp
 
@@ -292,7 +292,7 @@ Câu 6 là dạng câu hỏi thật của nghề: không phải "cái nào đún
 - **Lockstep gửi input, không gửi state**: rẻ hơn 500 lần trong ví dụ RTS 8 người/200 quân, và **băng thông không phụ thuộc số entity** — tính chất mà không kỹ thuật nén nào cho được.
 - Cái giá của lockstep là **determinism tuyệt đối** và **chờ người tệ nhất**: RTT 150 ms kéo trần xuống 13 frame/giây. Đó là lý do Doom chỉ chơi được trên LAN.
 - **FPS** chọn authoritative + prediction + lag compensation vì cần chống gian lận và có ít entity. **Fighting game** chọn rollback vì P2P tiết kiệm một chặng mạng và simulation đủ nhẹ để chạy lại.
-- **MMO không khó vì mạng** (4,9 KB/s/player) mà khó vì kiến trúc: interest management, sharding, handoff.
+- **MMO không khó vì mạng** (5,0 KB/s/player) mà khó vì kiến trúc: interest management, sharding, handoff.
 - Chọn netcode bằng **bốn câu hỏi đo được**: ngưỡng độ trễ, KB/s mỗi player, simulation có tất định không, có ai cần gian lận không.
 
 → **Bài 4 — Lịch sử netcode 1993 tới nay**: bốn cột mốc đã sinh ra đúng bốn họ netcode ở trên, theo đúng thứ tự chúng buộc phải xảy ra.
