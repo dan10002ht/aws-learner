@@ -66,19 +66,34 @@ Junior cấu hình ALB → EC2. Bật SG chỉ cho phép `0.0.0.0/0 → 443`. De
 
 ### 2.2 Multi-account separation
 
-Best practice **AWS Organizations**:
-- Prod / Staging / Dev → **account riêng biệt**.
-- Security / Audit account riêng.
-- Shared services (DNS, log archive) account riêng.
-- Communicate qua TGW + RAM + PrivateLink.
+Subnet và SG cô lập các tầng **bên trong một VPC**. Lớp cô lập mạnh hơn nữa là **AWS account**: hai account khác nhau mặc định không nhìn thấy resource của nhau, không chung IAM user/role, không chung VPC. Muốn đi từ account này sang account kia thì phải có người chủ động mở đường (một role cho phép assume, một kết nối mạng). Vì vậy best practice là dùng **AWS Organizations** (dịch vụ gom nhiều account về một mối để quản lý và tính tiền chung) và chia:
 
-→ Blast radius nhỏ. Compromise dev account không leak prod.
+- Prod / Staging / Dev → mỗi môi trường một **account riêng biệt**.
+- Security / Audit → account riêng, để người vận hành prod không sửa/xoá được log kiểm toán của chính mình.
+- Shared services (DNS, log archive) → account riêng.
+
+**Blast radius** ("bán kính vụ nổ") là phạm vi thiệt hại khi một thứ bị chiếm hoặc bị cấu hình sai. Access key của một dev bị lộ trong account dev thì kẻ tấn công chỉ phá được account dev; dữ liệu khách hàng nằm ở account prod, nơi key đó không có quyền gì. Nếu tất cả chung một account, ranh giới duy nhất còn lại là IAM policy — viết lỏng một dòng là mất hết.
+
+Tách account rồi thì các account vẫn phải nói chuyện với nhau. Ba công cụ hay gặp:
+
+| Công cụ | Nó là gì | Dùng khi |
+|---|---|---|
+| **Transit Gateway (TGW)** | Một router trung tâm do AWS quản lý. Mỗi VPC (và đường VPN/Direct Connect) cắm vào nó một lần, thay vì nối từng cặp VPC với nhau | Nhiều VPC ở nhiều account cần **thông mạng** với nhau ở tầng IP |
+| **Resource Access Manager (RAM)** | Dịch vụ **chia sẻ một resource** cho account khác dùng chung, không phải tạo bản sao (subnet, TGW, Resolver rule…) | Account network sở hữu TGW/subnet, các account khác chỉ "dùng nhờ" |
+| **PrivateLink** | Mở **đúng một service** (một cổng, một chiều) cho VPC khác gọi qua private IP, không thông cả hai mạng | Chỉ cần gọi một API nội bộ, không muốn hai VPC thấy hết nhau (chi tiết ở §4.1) |
+
+Thứ tự "hẹp dần": TGW thông cả mạng, PrivateLink chỉ thông một service. Đề nhấn "least privilege về mạng" hoặc "hai VPC trùng CIDR" → PrivateLink. Chi tiết TGW ở bài ch2-07 §6, RAM ở [[ch3-05-multi-account-governance]] §8.
 
 ---
 
 ## 3. Security Groups (SG) vs Network ACL (NACL)
 
 ### 3.1 Bảng so sánh đầy đủ
+
+Cả hai đều là bộ lọc gói tin theo IP + port (L3/L4), khác nhau ở **chỗ đứng** và ở việc **có nhớ kết nối hay không**.
+
+- **Security Group** bọc quanh từng **ENI** (card mạng ảo của instance, RDS, Lambda trong VPC…). Nó **stateful**: khi cho một kết nối đi qua, nó ghi kết nối đó vào bảng theo dõi, và gói trả lời của đúng kết nối ấy được đi qua mà không cần rule nào.
+- **NACL** đứng ở **ranh giới subnet**. Nó **stateless**: không nhớ gì cả, mỗi gói tin (kể cả gói trả lời) được xét lại từ đầu theo rule của chiều nó đang đi. Vì thế phải viết rule cho **cả hai chiều** — đây là gốc của bẫy ephemeral port ở §3.3.
 
 | Aspect | Security Group | NACL |
 |--------|---------------|------|
@@ -101,9 +116,40 @@ Best practice **AWS Organizations**:
 
 ### 3.3 Ephemeral ports trap
 
-Vì NACL stateless, return traffic phải allow port range. Linux dùng port 32768-65535, Windows khác. Sai range → "request đi được, response không về".
+**Ephemeral port là gì.** Một kết nối TCP có hai đầu, mỗi đầu là một cặp IP + port. Phía server nghe ở port cố định ai cũng biết (443 cho HTTPS, 5432 cho PostgreSQL). Phía **client** thì không cần port cố định: mỗi lần mở kết nối, hệ điều hành của client **bốc tạm một port còn trống** trong một dải cao để làm "địa chỉ nhận trả lời", dùng xong thì trả lại. Port tạm đó gọi là ephemeral port.
 
-→ Đây là bẫy quen thuộc khi audit NACL. Luôn allow ephemeral range outbound.
+Hệ quả: gói trả lời của server **không** quay về port 443, mà quay về port tạm của client.
+
+```
+Client 203.0.113.7 gọi web server 10.0.1.20 trong subnet của bạn:
+
+  Request :  203.0.113.7:51514  →  10.0.1.20:443      (vào subnet  → xét NACL INBOUND)
+  Response:  10.0.1.20:443      →  203.0.113.7:51514  (ra khỏi subnet → xét NACL OUTBOUND)
+                                              ^^^^^ đích là port tạm của client, không phải 443
+```
+
+SG nhớ kết nối nên tự cho response đi. NACL thì không: nếu outbound chỉ allow 443, gói response có **đích là port 51514** sẽ rơi vào rule `*` DENY. Triệu chứng kinh điển: request tới được server (thấy trong access log) nhưng client treo tới khi timeout.
+
+**Dải port tuỳ ai là client** — bên **mở kết nối** quyết định dải, không phải server:
+
+| Client | Dải ephemeral port |
+|---|---|
+| Linux (nhiều kernel, gồm Amazon Linux) | 32768–61000 |
+| Windows Server 2008 trở lên, Windows 10/11 | 49152–65535 |
+| Elastic Load Balancing, NAT Gateway, Lambda | 1024–65535 |
+
+Vì không biết trước client ngoài internet chạy hệ điều hành gì, subnet public thường mở hẳn **1024–65535** cho chiều trả lời (ví dụ mẫu trong docs AWS dùng 32768–65535).
+
+**Chiều ngược lại cũng dính bẫy.** Khi instance trong subnet là bên **gọi ra** (ví dụ gọi API bên ngoài ở port 443), vai trò đảo lại:
+
+```
+  Request :  10.0.1.20:40000   →  198.51.100.5:443    (OUTBOUND phải allow đích 443)
+  Response:  198.51.100.5:443  →  10.0.1.20:40000     (INBOUND phải allow đích 32768–61000)
+```
+
+Áp vào bài tập 5 cuối bài: NACL "inbound chỉ 443, outbound chỉ 1024–65535" hỏng **cả hai gói** — request ra có đích 443 không nằm trong dải outbound 1024–65535, và response về có đích là port tạm ~40000 không khớp inbound 443. Cách sửa: thêm outbound 443 và inbound 1024–65535 (hoặc đúng dải của hệ điều hành trên instance).
+
+> 🪤 Thấy "NACL" + "request tới nơi nhưng không có phản hồi" trong đề → nghĩ ngay tới thiếu rule ephemeral port ở chiều trả lời. Thấy cùng triệu chứng mà chỉ có SG → không phải lỗi này, vì SG stateful.
 
 ### 3.4 SG-to-SG reference
 
@@ -143,6 +189,26 @@ Vì NACL stateless, return traffic phải allow port range. Linux dùng port 327
 ## 4. Endpoint security
 
 ### 4.1 Ba loại VPC endpoint — nhìn từ góc bảo mật
+
+**Bài toán.** S3, DynamoDB, Secrets Manager, SQS… là dịch vụ có **địa chỉ public**. Một EC2 trong private subnet muốn gọi chúng thì mặc định phải đi vòng ra internet qua NAT Gateway. Đi như vậy có hai cái dở: tốn phí NAT theo từng GB, và — quan trọng hơn về bảo mật — đã mở đường ra internet thì dữ liệu cũng có đường đi tới bất kỳ đâu. **VPC endpoint** là một "cửa riêng" đặt ngay trong VPC, nối thẳng tới dịch vụ qua mạng nội bộ của AWS: traffic không ra internet, và tại cửa đó bạn đặt được chính sách kiểm soát (§4.2, §4.3).
+
+Có ba loại, khác nhau ở **cách traffic được dẫn tới cửa**:
+
+- **Gateway endpoint** hoạt động ở tầng **định tuyến**. Bạn không nhận được IP nào cả; AWS thêm vào route table của subnet một dòng "đi tới S3 thì rẽ lối này". Đích của dòng đó là một **prefix list** — một danh sách đặt tên (`pl-xxxx`) chứa sẵn các dải IP của S3 trong region, do AWS tự cập nhật. App vẫn gọi tên miền và IP public của S3 như cũ, chỉ có đường đi là khác. Chỉ có cho **S3 và DynamoDB**, và miễn phí.
+- **Interface endpoint** đặt hẳn một **ENI có private IP** (ví dụ `10.0.2.57`) vào subnet của bạn; gọi tới IP đó là tới dịch vụ. Công nghệ đứng sau tên là **PrivateLink**: kết nối một chiều từ VPC của bạn tới đúng một service, không thông hai mạng với nhau. Vì nó là một IP thật trong VPC nên **bất kỳ mạng nào route được tới VPC** (on-prem qua Direct Connect/VPN, VPC khác qua peering/TGW) đều gọi được — điều gateway endpoint không làm được, vì route table của VPC không lan ra ngoài VPC. Cũng nhờ là ENI nên gắn được Security Group.
+- **Gateway Load Balancer endpoint (GWLBe)** không dùng để gọi dịch vụ AWS, mà để **bắt traffic đi vòng qua thiết bị kiểm tra** của hãng thứ ba. **Gateway Load Balancer (GWLB)** là một load balancer tầng 3: nó nhận nguyên gói IP rồi chia cho một dàn appliance (firewall, IDS/IPS chạy trên EC2). Bạn sửa route table để gói tin có next hop là GWLBe; GWLB bọc **nguyên vẹn** gói gốc trong một lớp vỏ theo giao thức **GENEVE** (chạy trên UDP port 6081) rồi gửi cho appliance. Bọc lại như vậy để appliance thấy đúng IP nguồn/đích ban đầu; kiểm xong nó trả gói về và gói đi tiếp tới đích. Hai đầu kết nối không biết có thiết bị đứng giữa — đề gọi là "transparent inspection".
+
+Về tiền (us-east-1, số tròn): gateway endpoint **$0**; interface endpoint ~**$0,01/giờ cho mỗi AZ** + ~**$0,01/GB**.
+
+```
+3 interface endpoint (SSM, Secrets Manager, ECR) × 2 AZ × 730 giờ × $0,01  ≈ $43,8/tháng
++ 100 GB đi qua × $0,01                                                    ≈ $1
+                                                                    Tổng   ≈ $44,8/tháng
+```
+
+Rẻ theo từng cái nhưng cộng dồn nhanh: mỗi service cần một endpoint riêng, nhân với số AZ. Đó là lý do với S3/DynamoDB trong VPC, đề luôn ưu tiên gateway endpoint miễn phí.
+
+Bảng dưới gom lại ba loại theo các tiêu chí đề hay hỏi:
 
 | | **Gateway endpoint** | **Interface endpoint (PrivateLink)** | **Gateway Load Balancer endpoint (GWLBe)** |
 |---|---|---|---|
@@ -235,71 +301,201 @@ Hai condition key này chỉ **tồn tại khi request đi qua VPC endpoint**. R
 ## 5. AWS WAF (Web Application Firewall)
 
 ### 5.1 Cơ bản
-- Attach vào CloudFront, ALB, API Gateway, AppSync, App Runner.
-- **Web ACL** = collection of rules.
-- Rule type:
-  - **Managed rule groups** (AWS, vendor): SQL injection, XSS, bot, OWASP top 10.
-  - **Custom rules**: theo IP, header, body, geo, rate-limit.
-  - **Rate-based**: throttle theo IP, 5-min window.
+
+**Nó là gì.** SG và NACL chỉ nhìn "phong bì" của gói tin: IP nào, port nào. WAF **mở phong bì ra đọc nội dung HTTP** — URI, query string, header, cookie, body — rồi quyết định cho qua hay chặn. Trong câu chuyện ở §1, request `GET /search?q=' OR 1=1--` tới port 443 hoàn toàn hợp lệ với SG; chỉ thứ đọc được chuỗi `q=` mới nhận ra đó là SQL injection.
+
+**Gắn vào đâu.** WAF không đứng một mình trong mạng. Nó chạy **bên trong** một dịch vụ đã giải mã TLS và hiểu HTTP: **CloudFront, ALB, API Gateway, AppSync, App Runner** (và Cognito user pool). Suy ra hai điều đề hay hỏi: WAF **không gắn được vào NLB hay thẳng vào EC2** (NLB làm việc ở L4, không đọc HTTP), và muốn WAF che một app chạy trên EC2 thì phải đặt ALB hoặc CloudFront phía trước.
+
+**Web ACL và cách nó xét một request.** Một **Web ACL** là danh sách rule có đánh số ưu tiên, kèm một **default action** (Allow hoặc Block) cho request không khớp rule nào. Mỗi request đi qua các rule theo **priority từ số nhỏ tới số lớn**:
+
+- Khớp rule có action **Allow** hoặc **Block** → dừng ngay, các rule phía sau không được xét.
+- Khớp rule có action **Count** → chỉ tăng bộ đếm, ghi log, rồi **xét tiếp** rule sau. Count không chặn gì cả.
+- Không khớp rule nào → áp default action.
+
+Vì "khớp là dừng" nên thứ tự là chuyện sống còn: một rule Allow rộng (ví dụ "cho mọi IP văn phòng") đặt ở priority 0 sẽ khiến IP văn phòng **bỏ qua toàn bộ** rule SQLi phía sau.
+
+**Ba nguồn rule:**
+
+- **Managed rule group** — bộ rule viết sẵn, do AWS hoặc hãng bảo mật trên Marketplace duy trì và tự cập nhật khi có kiểu tấn công mới. Ví dụ: *Core rule set* (các lỗi phổ biến thuộc **OWASP Top 10** — danh sách 10 nhóm lỗ hổng web thường gặp nhất), *SQL database* (SQL injection), *Known bad inputs*, *Bot Control*. Đề nói "chặn SQLi/XSS với ít công vận hành nhất" → managed rule group.
+- **Custom rule** — tự viết điều kiện trên IP (IP set), quốc gia (geo match), header, URI, body, kích thước.
+- **Rate-based rule** — rule đếm request theo từng nguồn và chỉ ra tay khi nguồn đó gửi quá nhanh (chi tiết ngay dưới).
+
+**Rate-based rule hoạt động thế nào.** Bạn đặt một ngưỡng (tối thiểu 10) và một **cửa sổ đánh giá**: 1, 2, 5 hoặc 10 phút, mặc định 5 phút. WAF gom request theo **khoá gộp** — mặc định là IP nguồn; cũng có thể là IP trong header `X-Forwarded-For`, một header, cookie, hoặc tổ hợp tự chọn — và liên tục đếm số request của mỗi khoá trong cửa sổ vừa qua.
+
+```
+Rule: ngưỡng 2.000 request / 5 phút, gộp theo IP
+  2.000 ÷ 300 giây ≈ 6,7 request/giây (trung bình) — người dùng thật hiếm khi vượt
+
+IP A gửi 50 request/giây  → sau ~40 giây đã quá 2.000 → các request tiếp theo của A bị Block
+IP B gửi 2 request/giây   → 600 request / 5 phút       → không bị gì
+```
+
+Không có "án phạt" cố định: IP bị chặn **chừng nào tốc độ của nó còn trên ngưỡng**, tụt xuống dưới thì tự được gỡ. WAF chỉ **ước lượng** tốc độ và có độ trễ (thường dưới 30 giây) cả khi bắt đầu chặn lẫn khi gỡ, nên đây là công cụ chống flood, **không phải** bộ đếm quota chính xác cho API — việc đó thuộc về usage plan của API Gateway.
 
 ### 5.2 Patterns
 
+Các rule hay gặp, viết theo thứ tự priority của một Web ACL thực tế (default action = Allow):
+
 ```
-Block list bot user-agent
-Block specific country (geo match)
-Rate limit 2000 req / 5 min per IP
-SQL injection match in body
-XSS match in URI/header
-Size constraint: body > 10 MB → block
+0  Allow   IP thuộc IP set "monitoring" của công ty      (đặt trước để khỏi bị rate-limit)
+1  Block   User-Agent khớp danh sách bot xấu
+2  Block   Request từ quốc gia X                          (geo match)
+3  Block   Quá 2.000 request / 5 phút trên mỗi IP         (rate-based)
+4  Block   Managed: Core rule set — XSS trong URI/header, …
+5  Block   Managed: SQL database — SQL injection trong body/query string
+6  Block   Body lớn hơn 8 KB                              (size constraint)
 ```
 
+Một rule rate-based dạng JSON trông như sau — đủ để nhận ra ba thành phần ngưỡng, cửa sổ, khoá gộp:
+
+```json
+{
+  "Name": "RateLimitPerIP",
+  "Priority": 3,
+  "Statement": {
+    "RateBasedStatement": {
+      "Limit": 2000,
+      "EvaluationWindowSec": 300,
+      "AggregateKeyType": "IP"
+    }
+  },
+  "Action": { "Block": {} }
+}
+```
+
+**Vì sao rule số 6 là 8 KB chứ không phải 10 MB.** WAF chỉ được đọc phần **đầu** của body: **8 KB** đầu tiên với ALB và AppSync; **16 KB** mặc định (nâng được tới 64 KB, trả thêm tiền) với CloudFront, API Gateway, Cognito, App Runner. Phần body vượt quá mức đó WAF không nhìn thấy, nên kẻ tấn công có thể độn 8 KB rác rồi mới đặt payload phía sau. Cách bịt: một rule size constraint chặn body lớn hơn đúng giới hạn inspect, hoặc đặt *oversize handling* = Match trên các rule đọc body. Endpoint cần nhận file upload lớn thì viết rule Allow riêng cho đúng URI đó, đặt trước.
+
+**Tính tiền** (us-east-1): ~$5/Web ACL/tháng + ~$1/rule (hoặc rule group)/tháng + ~$0,60 mỗi triệu request.
+
+```
+1 Web ACL + 5 rule + 100 triệu request/tháng
+  = $5 + 5 × $1 + 100 × $0,60  = $70/tháng
+```
+
+Phần theo request chiếm gần hết, và nó tính cả request **bị chặn** — bị flood L7 thì hoá đơn WAF cũng tăng.
+
 ### 5.3 WAF không phải silver bullet
-- Layer 7 only, không chặn DDoS volumetric.
-- False positive cao nếu enable mọi managed rule — phải tune theo app.
-- Mode: **Count** (log only) → tune → **Block**.
+
+- **Chỉ làm việc ở L7.** Một trận **DDoS volumetric** (đánh bằng khối lượng: đổ lưu lượng tính bằng Gbps để làm nghẽn đường truyền, chưa cần tới tầng HTTP) không phải việc của WAF — gói SYN hay UDP rác không phải là HTTP request để WAF đọc. Lớp đó do Shield lo (§6). WAF chỉ giúp với flood **HTTP** nhờ rate-based rule.
+- **False positive.** Bật mọi managed rule group thì sẽ chặn nhầm request hợp lệ: một form cho người dùng dán đoạn code hay nội dung HTML rất dễ bị coi là XSS/SQLi. Phải chỉnh theo từng app.
+- **Quy trình triển khai an toàn:** bật rule ở chế độ **Count** trước (chỉ đếm và ghi log, không chặn), xem log vài ngày để biết rule sẽ chặn những request nào, loại trừ các trường hợp nhầm, rồi mới chuyển sang **Block**. Đề hỏi "thử rule mới mà không ảnh hưởng người dùng" → Count.
 
 ---
 
 ## 6. AWS Shield
 
+**DDoS là gì.** *Distributed Denial of Service*: kẻ tấn công không tìm cách đột nhập mà dùng hàng nghìn tới hàng triệu máy bị chiếm quyền (botnet) cùng gửi traffic, làm hệ thống **hết tài nguyên** nên người dùng thật không vào được. Có ba kiểu, đánh vào ba thứ tài nguyên khác nhau:
+
+| Kiểu | Đánh vào | Ví dụ và cơ chế |
+|---|---|---|
+| **Volumetric** (L3/L4) | **Băng thông** đường truyền | **UDP reflection**: kẻ tấn công gửi truy vấn nhỏ tới các server DNS/NTP công cộng nhưng **giả IP nguồn thành IP nạn nhân**. Server trả lời (to hơn câu hỏi nhiều lần) về phía nạn nhân. Nạn nhân bị dội traffic từ hàng nghìn server hợp pháp, không thấy được kẻ đứng sau |
+| **State exhaustion** (L4) | **Bảng kết nối** của server/load balancer | **SYN flood**: mở kết nối TCP cần 3 bước (SYN → SYN-ACK → ACK). Kẻ tấn công gửi dồn dập gói SYN rồi **không bao giờ gửi ACK**. Server giữ chỗ cho từng kết nối dang dở tới khi bảng đầy, kết nối thật bị từ chối |
+| **Application layer** (L7) | **CPU, database** của ứng dụng | **HTTP flood**: botnet gửi request HTTP hợp lệ vào đúng endpoint nặng (`/search`, `/login`). Từng request trông bình thường, chỉ tổng số là bất thường |
+
+Shield lo hai kiểu đầu ở tầng mạng. Kiểu thứ ba phải có thứ đọc được HTTP — tức WAF.
+
 ### 6.1 Shield Standard
-- **Free, mặc định bật** cho mọi AWS account.
-- Bảo vệ chống DDoS L3/L4 phổ biến (SYN flood, UDP reflection).
-- Tích hợp tự động với CloudFront, Route 53, Global Accelerator, ELB.
+
+Shield Standard là lớp lọc DDoS nằm sẵn ở **biên mạng của AWS**, trước khi traffic tới resource của bạn. Nó nhận diện và bỏ các kiểu tấn công L3/L4 đã biết (SYN flood, UDP reflection) ngay trên đường vào.
+
+- **Miễn phí và luôn bật** cho mọi AWS account. Không có nút bật, không có gì để cấu hình.
+- Hiệu quả nhất khi traffic đi vào qua **CloudFront, Route 53, Global Accelerator** (ba dịch vụ chạy ở edge, hấp thụ tấn công trên toàn bộ mạng lưới edge thay vì dồn về một region) và **ELB**.
+- Giới hạn: bạn **không thấy gì** (không có báo cáo "đang bị tấn công"), không có ai để gọi, và nó không hiểu traffic "bình thường" của riêng app bạn trông thế nào.
 
 ### 6.2 Shield Advanced
-- **$3000/tháng**, commitment 1 năm.
-- Bảo vệ DDoS sophisticate hơn, L3-L7.
-- **Shield Response Team (SRT)** — tên cũ là DRT — support 24/7, có thể uỷ quyền cho họ sửa WAF rule thay bạn lúc đang bị tấn công.
-- **Cost protection**: bồi hoàn cost spike do DDoS (EC2, ELB, CloudFront…).
-- **AWS WAF miễn phí** trên resource đã đăng ký Shield Advanced (không tính phí web ACL/rule/request).
-- Resource phải **đăng ký thủ công**, không tự áp: CloudFront, Route 53 hosted zone, Global Accelerator, ELB, **Elastic IP** của EC2/NLB.
-- Giá tính **một lần cho cả Organization**, không nhân theo account.
-- Use case: high-profile app (banking, gaming, election), SLA tài chính.
+
+Shield Advanced là gói trả tiền, thêm vào đúng ba chỗ Standard thiếu: **phát hiện theo từng resource**, **con người hỗ trợ**, và **bảo vệ hoá đơn**.
+
+- **Phát hiện theo baseline của riêng bạn.** Standard chỉ bắt được các mẫu tấn công chung. Advanced học mức traffic thường ngày của **từng resource** đã đăng ký và báo động khi lệch khỏi mức đó; nếu gắn thêm Route 53 health check, nó dùng luôn tình trạng sức khoẻ của app làm tín hiệu, nên phát hiện được cả những đợt tấn công nhỏ nhưng đủ làm app chậm. "Tinh vi hơn" chính là ở đây: các đợt tấn công **nhỏ, nhắm đúng một app**, không đủ lớn để lộ ra ở quy mô toàn mạng AWS.
+- **Giảm thiểu tự động ở L7.** Với resource có Web ACL, Shield Advanced có thể tự tạo và gỡ rule WAF để chặn HTTP flood. Đây là lý do bảng ghi phạm vi "L3–L7": phần L7 thực chất làm **thông qua WAF**.
+- **Shield Response Team (SRT)** — tên cũ là DRT (DDoS Response Team), đề thi dùng cả hai. Đội kỹ sư chuyên DDoS trực 24/7; nếu bạn uỷ quyền trước, họ được sửa rule WAF thay bạn ngay trong lúc bị tấn công. Điều kiện: account phải có **Business hoặc Enterprise Support**.
+- **Cost protection.** Bị DDoS thì Auto Scaling nở ra, data transfer tăng vọt, và hoá đơn đó vẫn là của bạn. Với Advanced, bạn được xin hoàn (dưới dạng credit) phần chi phí tăng do tấn công trên EC2, ELB, CloudFront, Global Accelerator, Route 53.
+- **Nhìn thấy được.** Có metric CloudWatch và báo cáo chi tiết từng sự kiện.
+- **Kèm AWS WAF** cho resource đã đăng ký: không tính phí Web ACL, rule và request cơ bản (Bot Control và các gói nâng cao vẫn tính riêng).
+- Resource phải **đăng ký thủ công từng cái**, không tự áp: CloudFront distribution, Route 53 hosted zone, Global Accelerator, ELB, và **Elastic IP** (đây là cách bảo vệ EC2 hoặc NLB).
+
+**Giá:**
+
+```
+$3.000/tháng × 12 tháng cam kết  = $36.000/năm   (+ phí data transfer out trên resource được bảo vệ)
+```
+
+Phí $3.000 tính **một lần cho payer account**, tức cả Organization dùng chung một hoá đơn chỉ trả một lần, không nhân theo số account. Để dễ hình dung mức giá: nó gấp ~40 lần chi phí WAF của ví dụ ở §5.2 ($70/tháng).
 
 ### 6.3 Khi nào cần Shield Advanced
 
-- Doanh thu / brand impact > $3000/tháng nếu down.
-- Đã từng bị DDoS / là target nhạy cảm.
-- Cần DRT response.
+Phép so đơn giản: thiệt hại của một lần sập vì DDoS có lớn hơn $36.000/năm không?
+
+- Doanh thu hoặc uy tín mất đi khi down vượt xa mức phí đó: ngân hàng, sàn giao dịch, game online, trang bầu cử, hệ thống có SLA phạt tiền.
+- Đã từng bị DDoS, hoặc thuộc ngành hay bị nhắm tới.
+- Cần **người** hỗ trợ trong lúc bị tấn công (SRT), hoặc cần **cost protection** để hoá đơn không nổ theo.
+
+Không rơi vào các trường hợp trên thì Shield Standard + CloudFront + WAF rate-based rule là đủ, và đó cũng là đáp án khi đề nhấn "cost-effective".
+
+> 🪤 Đề nhắc "DDoS Response Team / SRT", "hoàn chi phí scale do tấn công", hoặc "bảo vệ Elastic IP" → **Shield Advanced**. Đề chỉ nói "bảo vệ DDoS, không tốn thêm chi phí" → **Shield Standard**, và không cần làm gì để bật.
 
 ---
 
 ## 7. AWS Network Firewall
 
-- Managed stateful firewall ở **VPC level** (cross-subnet, cross-VPC qua TGW).
-- Suricata-compatible rule set.
-- Use case:
-  - **Egress filtering**: chặn outbound đến domain xấu (C2 callback).
-  - **Inspect inter-VPC traffic** qua TGW.
-  - **Compliance** yêu cầu IDS/IPS dedicated.
+**Nó giải quyết bài toán gì.** SG và NACL chỉ trả lời được câu "IP nào, port nào". Chúng không trả lời được: *"server này được ra internet ở port 443, nhưng chỉ tới `api.stripe.com` và `github.com` thôi"*, hay *"gói tin này có mang dấu hiệu của một mã độc đã biết không"*. WAF đọc được nội dung nhưng chỉ cho HTTP **đi vào** qua ALB/CloudFront. **AWS Network Firewall** là firewall do AWS quản lý (bạn không dựng và vá EC2 nào) đứng trên đường đi của **mọi loại traffic của VPC**, cả vào lẫn ra, và đọc được tới nội dung gói tin.
 
-### Khác SG/NACL
-- SG/NACL không inspect payload.
-- Network Firewall inspect L3-L7, signature-based + behavior.
+### Traffic bị ép đi qua firewall thế nào
+
+Network Firewall không tự động thấy traffic. Bạn tạo firewall thì AWS đặt một **firewall endpoint** vào một **subnet riêng** ở mỗi AZ (subnet này chỉ chứa endpoint, không chứa gì khác). Sau đó chính bạn **sửa route table** để traffic có next hop là endpoint đó:
+
+```
+Trước:  private subnet ──► NAT Gateway ──► Internet Gateway ──► internet
+
+Sau:    private subnet ──► NAT Gateway ──► firewall endpoint ──► Internet Gateway ──► internet
+                                           (subnet firewall)
+        Chiều về: route table gắn vào IGW trỏ dải IP của VPC về lại firewall endpoint
+```
+
+Quên sửa route ở một chiều thì traffic chiều đó lách qua firewall, hoặc bị rớt vì firewall chỉ thấy một nửa kết nối. Với nhiều VPC, mô hình thường gặp là một **inspection VPC** riêng chứa firewall, nối vào **Transit Gateway**; TGW route mọi traffic giữa các VPC và ra internet đi vòng qua đó.
+
+### Bên trong: hai bộ máy rule
+
+Mỗi gói tin đi qua hai tầng theo thứ tự:
+
+1. **Stateless engine** xét từng gói riêng lẻ theo **5-tuple** (IP nguồn, IP đích, port nguồn, port đích, giao thức), giống NACL: rule theo thứ tự ưu tiên, khớp là dừng. Kết quả là pass, drop, hoặc chuyển tiếp cho tầng sau.
+2. **Stateful engine** xét gói tin **trong ngữ cảnh cả kết nối** và đọc được nội dung. Đây là nơi làm các việc SG/NACL không làm được:
+   - **Lọc theo tên miền.** Với HTTP nó đọc header `Host`; với HTTPS nó đọc trường **SNI** — tên miền mà client gửi **không mã hoá** ở bước đầu của bắt tay TLS. Nhờ vậy cho/chặn được `*.example.com` mà không cần giải mã traffic.
+   - **IDS/IPS theo chữ ký.** *IDS* (Intrusion Detection System) phát hiện và báo động; *IPS* (Intrusion Prevention System) phát hiện rồi chặn luôn. "Signature-based" nghĩa là so traffic với một thư viện **mẫu nhận dạng** của các cuộc tấn công đã biết (chuỗi byte đặc trưng của một exploit, kiểu gói tin của một họ malware).
+   - Rule viết theo cú pháp của **Suricata** — một engine IPS mã nguồn mở phổ biến. "Suricata-compatible" có ý nghĩa thực tế: bộ rule Suricata công ty đang dùng ở on-prem, hoặc mua từ hãng bảo mật, mang lên dùng lại được. AWS cũng có sẵn managed rule group (danh sách domain độc hại, chữ ký mối đe doạ).
+
+### Use case
+
+- **Egress filtering**: chỉ cho server gọi ra một danh sách domain đã duyệt. Malware trong VPC muốn gọi về máy chủ điều khiển của kẻ tấn công (**C2** — *command and control*) thì bị chặn vì domain không nằm trong danh sách.
+- **Inspect traffic giữa các VPC** qua TGW (east-west), không chỉ traffic ra internet.
+- **Compliance** yêu cầu có IDS/IPS hoặc deep packet inspection trên mọi luồng mạng.
+
+### Khác SG/NACL và WAF
+
+| | SG / NACL | AWS WAF | Network Firewall |
+|---|---|---|---|
+| Nhìn thấy | IP, port, giao thức | Nội dung **HTTP** | IP/port **và** nội dung gói tin của nhiều giao thức |
+| Chiều | Vào + ra | Chỉ request **vào** app | Vào + ra + giữa các VPC |
+| Lọc theo tên miền | Không | Chỉ header `Host` của request vào | Có (HTTP `Host`, TLS SNI) |
+| IDS/IPS | Không | Không | Có (rule Suricata) |
+| Đứng ở đâu | ENI / subnet | Trong CloudFront, ALB, API Gateway… | Endpoint trong subnet riêng, traffic tới nhờ route table |
+| Giá | Miễn phí | ~$70/tháng ở ví dụ §5.2 | ~$640/tháng ở ví dụ dưới |
 
 ### Cost
-- $$$$ (per endpoint hour + traffic GB). Đắt. Dùng khi compliance bắt.
+
+Tính theo **giờ của mỗi endpoint** (mỗi AZ một endpoint) cộng **mỗi GB** đi qua. Giá us-east-1: ~$0,395/giờ/endpoint và ~$0,065/GB. So với NAT Gateway (~$0,045/giờ và ~$0,045/GB), cho hệ thống 2 AZ, 1.000 GB/tháng:
+
+```
+Network Firewall:  2 endpoint × 730 giờ × $0,395 = $576,70
+                   1.000 GB × $0,065             =  $65,00
+                                           Tổng  ≈ $641,70/tháng
+
+NAT Gateway:       2 × 730 giờ × $0,045          =  $65,70
+                   1.000 GB × $0,045             =  $45,00
+                                           Tổng  ≈ $110,70/tháng
+```
+
+Tức đắt gấp ~6 lần NAT Gateway, và phần lớn là **phí giờ cố định** ($577) — trả đủ dù traffic gần bằng 0. (AWS có miễn một phần phí NAT Gateway khi NAT đứng chung đường với Network Firewall, nhưng phí firewall thì vẫn nguyên.) Vì vậy chỉ chọn Network Firewall khi đề thật sự đòi **đọc nội dung gói tin, IDS/IPS, hoặc compliance**. Nếu chỉ cần chặn tên miền thì DNS Firewall (§10) rẻ hơn khoảng 10 lần.
 
 ---
 
@@ -313,31 +509,71 @@ Size constraint: body > 10 MB → block
 
 ## 9. Bastion & access pattern
 
+Bài toán: instance nằm trong private subnet, không có public IP. Admin cần shell vào để debug thì đi đường nào, và đường đó mở thêm bề mặt tấn công gì?
+
 ### 9.1 Classic bastion (anti-pattern ngày càng)
-- EC2 trong public subnet, SSH từ admin → bastion → private instance.
-- Maintain SSH key, audit khó.
+
+**Bastion host** (còn gọi jump box) là một EC2 đặt ở **public subnet** làm trạm trung chuyển: admin SSH từ internet vào bastion, rồi từ bastion SSH tiếp vào instance private. SG của instance private chỉ nhận port 22 từ SG của bastion.
+
+Cách này chạy được, nhưng mỗi phần của nó là một gánh:
+
+- **Một port 22 mở ra internet.** Dù SG giới hạn theo IP văn phòng, đó vẫn là một cửa vào phải canh; nếu lỡ để `0.0.0.0/0` thì bot quét SSH trên internet sẽ dò mật khẩu/key liên tục.
+- **Phải quản SSH key.** Key nằm trên laptop từng người; ai nghỉ việc phải đi gỡ public key trên từng server. Key lộ là mất quyền vào.
+- **Audit yếu.** SSH log chỉ cho biết "user `ec2-user` đăng nhập", không biết là người nào và đã gõ lệnh gì.
+- **Thêm một server để nuôi**: vá lỗi, trả tiền, và nếu chỉ có một cái thì nó là điểm chết duy nhất.
 
 ### 9.2 Systems Manager Session Manager (recommended)
-- Không cần bastion, không cần SSH key, không cần public IP.
-- SSM Agent → SSM endpoint qua PrivateLink.
-- Audit log mọi session.
-- MFA + IAM permission.
+
+**Cơ chế — vì sao không cần mở inbound port nào.** Trên instance có sẵn **SSM Agent** (cài sẵn trong Amazon Linux, Ubuntu và Windows AMI của AWS). Agent **tự mở một kết nối HTTPS đi ra** (outbound 443) tới dịch vụ Systems Manager và giữ kết nối đó để chờ lệnh. Khi admin bấm "Start session", lệnh và kết quả chạy **ngược về trên chính kết nối outbound ấy**. Từ góc nhìn của SG, không hề có kết nối nào đi *vào* instance, nên inbound để trống hoàn toàn — không port 22, không public IP, không bastion.
+
+Instance trong private subnet tới được Systems Manager bằng một trong hai đường: qua NAT Gateway, hoặc — nếu subnet không có đường ra internet — qua **interface endpoint** (§4.1) cho `ssm`, `ssmmessages` và `ec2messages`.
+
+Đổi lại những gì:
+
+- **Không SSH key.** Ai được mở session do **IAM policy** quyết định (`ssm:StartSession`), nên kéo theo được MFA, giới hạn theo tag, và thu hồi quyền bằng cách gỡ policy.
+- **Audit đầy đủ.** CloudTrail ghi **IAM principal nào** mở session vào instance nào, lúc nào; nội dung phiên (lệnh gõ và output) ghi được ra S3 hoặc CloudWatch Logs.
+- Instance cần một **instance profile** có policy `AmazonSSMManagedInstanceCore`. Thiếu role này là lý do số một khiến instance không hiện trong danh sách.
+
+Bốn điều kiện đầy đủ và sơ đồ một phiên trong private subnet nằm ở [[ch3-06-operations-iac]] §3–§4.
 
 ### 9.3 Client VPN / Direct Connect
-- Cho user/dev VPN vào VPC.
-- Authenticate qua AD, certificate, SAML.
+
+Hai cách trên cho admin vào **một instance**. Khi cả nhóm dev cần tới **nhiều thứ trong VPC** (database, dashboard nội bộ, service chưa public) thì đưa hẳn máy họ vào mạng:
+
+- **AWS Client VPN**: dịch vụ VPN do AWS quản lý, chạy giao thức OpenVPN. Laptop cài client, kết nối xong thì có một IP trong dải riêng và route được vào VPC. Xác thực người dùng bằng **Active Directory**, **certificate** (mutual TLS: cả hai phía trình chứng thư), hoặc **SAML** (chuẩn đăng nhập một lần — người dùng đăng nhập ở hệ thống danh tính của công ty như Okta/Entra ID, hệ thống đó cấp một "giấy xác nhận" có chữ ký để Client VPN tin).
+- **Direct Connect / Site-to-Site VPN**: nối **cả mạng văn phòng** với VPC, người trong văn phòng tới thẳng private IP mà không cài gì. Chi tiết ở bài ch2-07.
+
+Vào được mạng rồi thì SG vẫn là lớp quyết định ai tới được port nào.
 
 ### 9.4 EC2 Instance Connect
-- Browser-based SSH, ephemeral key push qua AWS.
-- Free, dễ setup.
+
+Vẫn là SSH, nhưng bỏ được việc quản key dài hạn. Khi bạn kết nối, API của EC2 Instance Connect **đẩy một SSH public key dùng một lần** vào instance metadata; key đó chỉ tồn tại **60 giây**, đủ để phiên SSH xác thực xong. Quyền đẩy key do IAM kiểm soát và mọi lần kết nối được ghi vào CloudTrail. Dùng được ngay từ console (SSH trong trình duyệt), miễn phí.
+
+Khác biệt gốc so với Session Manager: đây vẫn là **kết nối SSH đi vào**, nên instance vẫn phải **mở inbound port 22** và phải tới được qua mạng (có public IP, hoặc đi qua *EC2 Instance Connect Endpoint* cho instance private).
+
+### 9.5 Đặt bốn cách cạnh nhau
+
+| | Bastion | Session Manager | EC2 Instance Connect | Client VPN |
+|---|---|---|---|---|
+| Inbound port trên instance | 22 (từ bastion) | **Không** | 22 | Tuỳ service cần tới |
+| SSH key dài hạn | Có | Không | Không (key sống 60 giây) | Tuỳ |
+| Ai được vào do | Key + SG | **IAM** | **IAM** + SG | AD / certificate / SAML + SG |
+| Audit | Log SSH của OS | CloudTrail + log nội dung phiên | CloudTrail (ai kết nối) | Log kết nối VPN |
+| Chi phí thêm | Một EC2 chạy 24/7 | Không (trừ phí interface endpoint nếu dùng) | Không | Theo giờ endpoint + giờ kết nối |
+
+> 🪤 Đề hỏi "truy cập shell vào instance private, **không mở port inbound, không quản SSH key**, có audit" → **Session Manager**. Đáp án có "bastion host" gần như luôn là mồi nhử, trừ khi đề nói rõ phải dùng công cụ chỉ chạy được qua SSH thuần.
 
 ---
 
 ## 10. Route 53 Resolver DNS Firewall
 
-- Block DNS query đến domain bad (malware, C2).
-- Hoặc allow list (paranoid mode).
-- Use case: prevent data exfiltration qua DNS tunneling.
+Mọi instance trong VPC mặc định hỏi tên miền qua **Route 53 Resolver** — DNS server có sẵn của VPC. DNS Firewall là bộ lọc đặt ngay tại resolver đó: nó xem **tên miền đang được hỏi** và quyết định trả lời hay không. Malware gần như luôn phải resolve tên miền của máy chủ điều khiển (C2) trước khi kết nối, nên chặn ở bước hỏi DNS là cắt được từ gốc, mà không cần đụng tới route table.
+
+**DNS tunneling** là cách tuồn dữ liệu ra ngoài bằng chính câu hỏi DNS: malware mã hoá dữ liệu thành tên miền con, ví dụ hỏi `4d7a5f3e2a.evil.com`. Câu hỏi đó được chuyển tới DNS server của kẻ tấn công (chủ của `evil.com`), và phần `4d7a5f3e2a` chính là dữ liệu bị đánh cắp. Cách này lọt qua SG và NACL vì SG không chặn được traffic tới Route 53 Resolver, và gần như VPC nào cũng cho phép DNS.
+
+- Block DNS query đến domain xấu (malware, C2).
+- Hoặc đảo lại thành allow list: chỉ cho resolve các domain đã duyệt, còn lại chặn hết. Chặt nhất, và là cách chống DNS tunneling triệt để.
+- Giá (us-east-1): ~$0,60 mỗi triệu query. 100 triệu query/tháng ≈ **$60**, so với ~$640 của Network Firewall ở §7.
 - Gắn vào **VPC** (qua Resolver rule group), không gắn vào instance. Action mỗi domain list: **ALLOW / BLOCK / ALERT**; khi BLOCK chọn trả `NODATA`, `NXDOMAIN` hoặc `OVERRIDE` (trả về domain sinkhole của bạn).
 - Có **AWS managed domain list** (malware, botnet C2) — bật được ngay, không cần tự nuôi feed.
 
@@ -416,28 +652,44 @@ Mỗi layer chặn 1 class. Không layer nào trong mất → app down/breach.
 
 ## 14. Ví dụ design cho 4 use case
 
+Mỗi thiết kế dưới đây xuất phát từ một câu hỏi: **mối đe doạ chính là gì**, rồi mới chọn lớp chặn tương ứng. Cùng một bộ dịch vụ, bốn bối cảnh cho ra bốn lựa chọn khác nhau.
+
 ### 14.1 Public web app B2C
-- CloudFront + WAF (managed Core, SQL, XSS, rate-limit).
-- ALB + SG.
-- App private subnet + SG SG-to-SG.
-- RDS Multi-AZ private + KMS.
-- Shield Standard (free), Advanced nếu DDoS-target.
+
+Mối đe doạ: ai trên internet cũng gọi được, nên phải chịu cả tấn công web lẫn flood.
+
+| Thành phần | Vì sao chọn |
+|---|---|
+| **CloudFront + WAF** (managed Core rule set, SQL database, rate-based rule) | Chặn SQLi/XSS và HTTP flood **ở edge**, trước khi request tới region. CloudFront còn hấp thụ DDoS L3/L4 trên mạng lưới edge |
+| **ALB + SG** | ALB là thứ duy nhất nằm ở public subnet. Nên giới hạn SG của ALB chỉ nhận từ CloudFront (managed prefix list của CloudFront), để không ai gọi thẳng ALB mà né WAF |
+| **App ở private subnet, SG tham chiếu SG của ALB** (§3.4) | App không có public IP; chỉ ALB gọi được vào port app, kể cả khi ALB đổi IP lúc scale |
+| **RDS Multi-AZ ở subnet riêng, SG chỉ nhận từ SG của app, mã hoá bằng KMS** | DB không có đường ra/vào internet. KMS bảo vệ dữ liệu lúc lưu, phòng khi snapshot hay ổ đĩa bị lộ |
+| **Shield Standard** (có sẵn); **Advanced** nếu là mục tiêu DDoS | Theo phép so ở §6.3 |
 
 ### 14.2 Enterprise SaaS B2B, customer cấp IP whitelist
-- Internet-facing endpoint nhưng SG hoặc WAF rule allow chỉ customer CIDR.
-- Hoặc PrivateLink → customer VPC trực tiếp (không qua internet).
+
+Mối đe doạ: chỉ một nhóm khách hàng biết trước được phép gọi; mọi nguồn khác đều là không mong muốn.
+
+- **Cách 1 — vẫn đi internet, lọc theo IP nguồn.** Endpoint vẫn internet-facing, nhưng chỉ cho CIDR của khách: dùng **SG** nếu danh sách ngắn và ít đổi, hoặc **WAF IP set** nếu danh sách dài, đổi thường xuyên, hay mỗi khách một đường dẫn riêng (WAF kết hợp được điều kiện IP với URI, SG thì không). Điểm yếu: IP nguồn của khách đổi là phải cập nhật, và traffic vẫn chạy trên internet.
+- **Cách 2 — PrivateLink.** Bạn publish service thành một *endpoint service* (đứng sau NLB); khách tạo interface endpoint trong VPC của họ và gọi qua private IP. Không qua internet, không cần whitelist IP, không lo trùng CIDR, và khách **chỉ thấy đúng một service** chứ không thấy mạng của bạn. Đề nhấn "private connectivity tới khách hàng, không peering" → cách này.
 
 ### 14.3 Healthcare HIPAA
-- Multi-account: prod / data / audit.
-- Network Firewall inspect mọi egress.
-- All data KMS encrypted, S3 bucket policy require encryption.
-- VPC endpoint everywhere (không IGW cho data subnet).
-- CloudTrail + GuardDuty + Config conformance pack HIPAA.
+
+Mối đe doạ: **dữ liệu bệnh nhân lọt ra ngoài**, và phải **chứng minh được** với kiểm toán rằng nó không lọt.
+
+- **Multi-account: prod / data / audit** (§2.2). Người vận hành prod không có quyền trong account audit, nên không xoá được dấu vết.
+- **Network Firewall inspect mọi egress** (§7). Server chỉ gọi ra được các domain đã duyệt; đây là chỗ yêu cầu compliance biện minh cho mức phí ~$640/tháng.
+- **Mã hoá mọi dữ liệu bằng KMS**, và **bucket policy từ chối upload không mã hoá** để việc mã hoá là bắt buộc chứ không phụ thuộc vào ý thức của từng dev.
+- **VPC endpoint cho mọi service AWS cần dùng**, data subnet không có route tới IGW/NAT. Dữ liệu tới S3/KMS đi mạng nội bộ AWS; kèm endpoint policy ở §4.2 để không copy được ra bucket ngoài Organization.
+- **CloudTrail + GuardDuty + Config conformance pack HIPAA**: ba lớp *detective* — ai làm gì, có hành vi bất thường không, cấu hình có lệch khỏi chuẩn không (chi tiết ở [[ch3-04-detective-controls]]).
 
 ### 14.4 Dev environment
-- Single account, simple SG.
-- SSM Session Manager thay bastion.
-- SCP block production region.
+
+Mối đe doạ: không phải hacker tinh vi, mà là **sai sót và chi phí** — dev mở nhầm port, quên tắt máy, tạo resource lung tung. Thiết kế ưu tiên đơn giản và rẻ.
+
+- **Một account dev riêng, SG đơn giản.** Tách khỏi prod là đủ để sai sót ở dev không chạm dữ liệu thật; không cần WAF hay Network Firewall.
+- **Session Manager thay bastion** (§9.2): bớt một EC2 phải trả tiền và vá, không có port 22 nào để dev lỡ tay mở ra `0.0.0.0/0`.
+- **SCP chặn các region không dùng** (SCP — *Service Control Policy* — là policy của Organizations đặt trần quyền cho cả account). Dev không tạo được resource ở region lạ, nơi không ai theo dõi và hoá đơn âm thầm chạy.
 
 ---
 
@@ -449,8 +701,8 @@ Mỗi layer chặn 1 class. Không layer nào trong mất → app down/breach.
 4. **"Shield Standard cần bật"** → **Sai**, mặc định bật và free.
 5. **"VPC endpoint thay thế NAT GW cho mọi traffic"** → **Sai**, chỉ cho service AWS có endpoint. Traffic internet khác vẫn cần NAT.
 6. **"Bastion là best practice"** → **Lạc hậu**. SSM Session Manager tốt hơn.
-7. **"SG cross-VPC reference"** → **Đúng** nếu VPC peer hoặc TGW + cùng region.
-8. **"NACL allow ephemeral port 1024-65535"** → Cụ thể Linux 32768-65535, Windows khác. Đề chi tiết hỏi.
+7. **"SG cross-VPC reference"** → **Đúng** nếu hai VPC nối bằng VPC peering hoặc Transit Gateway, cùng region (qua TGW chỉ tham chiếu được trong rule **inbound**). Khác region thì phải dùng CIDR.
+8. **"NACL allow ephemeral port 1024-65535"** → Đúng nếu muốn phủ mọi loại client (ELB, NAT Gateway, Lambda dùng cả dải này). Dải hẹp hơn tuỳ hệ điều hành của **bên mở kết nối**: Linux 32768–61000, Windows Server 2008+ 49152–65535 (§3.3). Điều đề thật sự kiểm tra là bạn có nhớ mở dải này ở **chiều trả lời** hay không.
 9. **"PrivateLink tự encrypt"** → Layer transport (TCP). App vẫn nên TLS.
 10. **"Gateway endpoint cho on-prem qua Direct Connect truy cập S3"** → **Sai**. Gateway endpoint chỉ dùng được trong VPC. On-prem cần **interface endpoint** (PrivateLink) cho S3.
 11. **"Endpoint policy cấp quyền cho request"** → **Sai**. Nó chỉ **giới hạn**; quyền hiệu lực = giao của IAM policy ∩ endpoint policy ∩ resource policy. Mặc định endpoint policy là `Allow *` nên không siết gì cho tới khi bạn thay.

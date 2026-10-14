@@ -46,24 +46,61 @@ Nhiều người tưởng "kết nối riêng tư từ on-prem về AWS thì aut
 
 ### 3.1 Khái niệm core
 
-- KMS lưu **CMK (Customer Master Key)** — giờ gọi là **KMS key**.
-- Key **không bao giờ rời KMS** ở dạng plaintext (HSM đã được validate **FIPS 140-2 Level 3** từ 2023; CloudHSM cũng Level 3 nhưng **single-tenant**).
-- Bạn dùng key qua API: `Encrypt`, `Decrypt`, `GenerateDataKey`, `ReEncrypt`.
+**Nó là gì.** KMS là dịch vụ **giữ khoá mã hoá hộ bạn và thực hiện phép mã hoá/giải mã thay bạn**. Bạn không bao giờ cầm khoá trong tay; bạn chỉ gọi API "hãy mã hoá cái này bằng khoá X" và KMS trả kết quả. Vì khoá không nằm trong code, trong file cấu hình hay trên đĩa của bạn, nên lộ source code hay lộ ổ đĩa không kéo theo lộ khoá.
+
+Bốn thuật ngữ dùng suốt bài:
+
+- **KMS key** — khoá gốc nằm trong KMS. Tài liệu cũ và nhiều đề thi gọi là **CMK (Customer Master Key)**; hai tên chỉ cùng một thứ. Mỗi key có *key ID*, *ARN*, có thể gắn *alias* (tên dễ đọc như `alias/prod-db`).
+- **Key material** — chuỗi bit bí mật thật sự của key (với key đối xứng là 256 bit). "Rotate key" nghĩa là sinh key material mới, còn key ID giữ nguyên (xem §3.6).
+- **HSM (Hardware Security Module)** — thiết bị phần cứng chuyên dụng để sinh và giữ khoá, được thiết kế để **khoá không thể bị đọc ra ngoài**: mọi phép tính dùng khoá diễn ra bên trong thiết bị, cạy vỏ thì thiết bị tự xoá khoá. KMS chạy trên một đội HSM do AWS vận hành, dùng chung cho mọi khách hàng (multi-tenant) nhưng tách biệt về logic.
+- **Data key** — một khoá *khác*, do KMS sinh ra theo yêu cầu và **giao cho bạn** để bạn tự mã hoá dữ liệu lớn. KMS key chỉ dùng để mã hoá chính data key này. Cơ chế hai tầng khoá đó là *envelope encryption* ở §3.4.
+
+**Vì sao key "không bao giờ rời KMS"?** Key material chỉ tồn tại dạng plaintext bên trong HSM. Không có API nào trả nó về, kể cả cho root account hay nhân viên AWS. Thứ duy nhất đi ra ngoài là *kết quả* của phép tính (ciphertext, plaintext, chữ ký).
+
+**FIPS 140 Level 3 là gì.** FIPS 140 là chuẩn của chính phủ Mỹ để kiểm định module mật mã, chia 4 cấp. **Level 3** đòi phần cứng **chống cạy phá vật lý** và xác thực theo danh tính người vận hành. Đề thi và hầu hết tài liệu ghi KMS đạt **FIPS 140-2 Level 3** (bài này trước đây cũng ghi vậy); trang FAQ hiện tại của AWS ghi HSM của KMS đã được kiểm định theo bản mới **FIPS 140-3 Level 3**. Điều cần nhớ cho đề: KMS và CloudHSM **cùng Level 3**, khác nhau ở chỗ CloudHSM là **single-tenant** (§4), không phải ở cấp FIPS.
+
+**Bạn dùng key qua API**, bốn lệnh hay gặp:
+
+| API | Làm gì | Ghi chú |
+|-----|--------|---------|
+| `Encrypt` | Gửi dữ liệu lên, KMS mã hoá bằng KMS key rồi trả ciphertext | Tối đa **4 KB** dữ liệu mỗi lần gọi |
+| `Decrypt` | Gửi ciphertext lên, nhận lại plaintext | Ciphertext tự chứa thông tin key nào đã mã hoá nó |
+| `GenerateDataKey` | KMS sinh một data key, trả **hai bản**: bản plaintext để dùng ngay và bản đã mã hoá bằng KMS key để lưu | Viên gạch của envelope encryption |
+| `ReEncrypt` | Giải mã bằng key A rồi mã hoá lại bằng key B, tất cả **bên trong KMS** | Plaintext không lộ ra phía client |
 
 ### 3.2 Loại key
 
-| Type | Quản lý bởi | Cost | Use case |
-|------|-------------|------|----------|
-| **AWS managed key** (`aws/s3`, `aws/rds`…) | AWS | Free | Default encryption cho service |
-| **Customer managed key (CMK)** | Bạn | $1/key/tháng + API calls | Cần custom policy, rotation control, audit |
-| **AWS owned key** | AWS (không thấy) | Free | Service-internal, không user-facing |
+Câu hỏi phân loại là **ai sở hữu và ai điều khiển được key**. Có ba mức, đi từ "AWS lo hết" tới "bạn lo hết":
+
+- **AWS owned key** — key nằm trong account **của AWS**, một key có thể phục vụ nhiều khách hàng. Bạn không thấy nó trong console KMS, không xem được policy, không có log CloudTrail về việc nó được dùng, và việc dùng nó **không tính vào quota request** của account bạn. Miễn phí. Ví dụ: mặc định của DynamoDB, SSE-S3, SSE-SQS.
+- **AWS managed key** — key nằm trong account **của bạn** nhưng do một dịch vụ AWS tạo và quản lý thay bạn, alias dạng `aws/<service>` (`aws/ebs`, `aws/rds`, `aws/s3`…). Bạn **thấy** nó trong console, **đọc** được key policy, và CloudTrail **có ghi** mỗi lần nó được dùng. Nhưng bạn **không sửa** được key policy, không tự rotate, không xoá, và không cho account khác dùng được. Không mất phí giữ key; request thì vẫn tính tiền và tính quota như thường.
+- **Customer managed key** — key do **bạn tạo**. Bạn viết key policy, bật/tắt rotation và chọn chu kỳ, disable hoặc xoá key, chia sẻ cho account khác. Trả **$1/key/tháng** (us-east-1) cộng tiền request.
+
+Khác biệt giữa AWS owned và AWS managed trong thực tế gói lại ở hai câu hỏi: *"có log ai đã dùng key không?"* và *"request có ăn vào quota của tôi không?"*. AWS owned: không và không. AWS managed: có và có.
+
+| Type | Nằm ở account | Bạn sửa policy / rotation | CloudTrail log | Cost | Use case |
+|------|---------------|---------------------------|----------------|------|----------|
+| **AWS owned key** | Của AWS (bạn không thấy) | Không | Không | Free | Mã hoá mặc định bên trong service, không cần audit |
+| **AWS managed key** (`aws/s3`, `aws/rds`…) | Của bạn | Không (chỉ xem) | Có | Free tiền key; request vẫn tính | Mã hoá mặc định, muốn có log, không cần chia sẻ cross-account |
+| **Customer managed key (CMK)** | Của bạn | **Có** | Có | ~$1/key/tháng + request | Cần custom policy, điều khiển rotation, audit, chia sẻ cross-account |
+
+> 🪤 Bẫy thi: đề cần **chia sẻ dữ liệu đã mã hoá sang account khác** (snapshot EBS/RDS, bucket SSE-KMS) → phải là **customer managed key**, vì key policy của AWS managed key không sửa được nên không thêm account kia vào được.
 
 ### 3.3 Symmetric vs Asymmetric
 
-| Type | Algorithm | Use case |
-|------|-----------|----------|
-| **Symmetric** (256-bit AES) | AES-GCM | Encrypt/decrypt data, default cho mọi case |
-| **Asymmetric RSA / ECC** | RSA-2048/3072/4096, ECDSA | Sign/verify, encrypt cho public consumer |
+**Symmetric (đối xứng)**: một khoá duy nhất vừa mã hoá vừa giải mã. Trong KMS đó là khoá **AES 256-bit**, thuật toán AES-GCM. Ai muốn mã hoá hay giải mã đều phải **gọi API KMS** (và do đó phải có quyền IAM/key policy), vì khoá không bao giờ ra ngoài. Đây là loại mặc định và là loại duy nhất mà các dịch vụ AWS (S3, EBS, RDS, DynamoDB, SQS…) dùng để mã hoá at rest.
+
+**Asymmetric (bất đối xứng)**: một **cặp** khoá. *Private key* nằm trong KMS và không rời đi; *public key* thì tải về được (`GetPublicKey`) và phát cho bất kỳ ai. Cặp khoá làm được hai việc:
+
+- **Sign/verify**: KMS ký bằng private key, bên ngoài dùng public key để kiểm chữ ký. Ví dụ: ký JWT, ký bản build phần mềm, ký tài liệu.
+- **Encrypt/decrypt**: bên ngoài mã hoá bằng public key, chỉ KMS giải mã được bằng private key.
+
+**Khi nào thật sự cần asymmetric?** Khi có một bên **không gọi được API KMS** nhưng vẫn phải tham gia: đối tác không có tài khoản AWS, app mobile, thiết bị offline. Họ cầm public key và tự kiểm chữ ký hoặc tự mã hoá, không cần credential AWS. Nếu cả hai đầu đều ở trong AWS thì symmetric rẻ hơn và nhanh hơn:
+
+| Type | Algorithm | Giá request (us-east-1) | Quota mặc định | Use case |
+|------|-----------|--------------------------|----------------|----------|
+| **Symmetric** (256-bit AES) | AES-GCM | ~$0.03 / 10.000 request | 10.000 req/s trở lên (xem §11) | Encrypt/decrypt data, default cho mọi case |
+| **Asymmetric RSA / ECC** | RSA-2048/3072/4096, ECDSA | ~$0.15 / 10.000 request (gấp 5) | 1.000 req/s | Sign/verify, encrypt cho bên ngoài AWS cầm public key |
 
 ### 3.4 Envelope encryption — quan trọng nhất
 
@@ -131,13 +168,69 @@ Vấn đề: KMS giới hạn ~4KB cho `Encrypt` API. Encrypt 1GB không khả t
 
 ### 3.5 Key policy + grants + IAM
 
-3 cơ chế quyền KMS:
+Với S3 hay DynamoDB, một IAM policy `Allow` là đủ để user trong cùng account dùng resource. **KMS thì không**: mỗi KMS key có một **key policy** riêng và key policy là nơi quyết định cuối cùng. Có ba cơ chế cấp quyền, đi qua từng cái.
 
-1. **Key policy**: gắn trên key. Mặc định cho root account quyền — **PHẢI** có để IAM policy work.
-2. **IAM policy**: gắn trên user/role. Hoạt động cùng key policy.
-3. **Grants**: temporary permission, programmatic. Use case: cho service AWS use key tạm thời.
+**1. Key policy — policy gắn trên chính key.** Đây là resource-based policy, và là thứ **bắt buộc phải có**: không key nào tồn tại mà thiếu key policy. Nếu key policy không nhắc tới bạn (trực tiếp hoặc gián tiếp), bạn không dùng được key dù IAM policy của bạn ghi `kms:*`.
 
-> 🪤 Trap: bạn `iam:Allow kms:*` cho user nhưng key policy không reference user → vẫn DENY. Key policy là **gateway**.
+Khi tạo key bằng console, KMS chèn sẵn một statement mặc định:
+
+```json
+{
+  "Sid": "Enable IAM User Permissions",
+  "Effect": "Allow",
+  "Principal": { "AWS": "arn:aws:iam::111122223333:root" },
+  "Action": "kms:*",
+  "Resource": "*"
+}
+```
+
+Statement này **không** có nghĩa "chỉ root user được dùng". `arn:...:root` ở đây đại diện cho **cả account**, và ý nghĩa của nó là: *"key này uỷ quyền cho IAM của account 111122223333 quyết định tiếp"*. Chính statement này là thứ "phải có để IAM policy hoạt động". Xoá nó đi thì mọi IAM policy `kms:*` trong account trở nên vô dụng với key đó, và chỉ những principal được nêu đích danh trong key policy mới dùng được key.
+
+**2. IAM policy — policy gắn trên user/role.** Chỉ có hiệu lực khi key policy đã mở cửa như trên. Hai lớp kết hợp như sau:
+
+| Tình huống | Kết quả |
+|-----------|---------|
+| Key policy có statement uỷ quyền cho account **và** IAM policy của role `Allow kms:Decrypt` | Được |
+| Key policy nêu đích danh ARN của role với `kms:Decrypt` (không cần IAM policy, cùng account) | Được |
+| IAM policy `Allow kms:*` nhưng key policy không uỷ quyền cho account và không nêu role | **Bị từ chối** |
+| **Cross-account**: role ở account B dùng key ở account A | Cần **cả hai**: key policy ở A cho phép account B (hoặc role đó), **và** IAM policy ở B cho phép role dùng key ARN của A |
+
+> 🪤 Trap: bạn `Allow kms:*` trong IAM policy cho user nhưng key policy không uỷ quyền cho account và không reference user → vẫn DENY. Key policy là **gateway**.
+
+**Ví dụ cross-account** (cũng là lời giải bài tập 2 ở §14). Account A có bucket mã hoá SSE-KMS, user ở account B cần đọc. Đọc một object SSE-KMS gồm hai việc: S3 trả object đã mã hoá, và KMS giải mã data key. Nên phải mở **hai cánh cửa**, mỗi cửa hai phía:
+
+```
+Phía account A (chủ dữ liệu):
+  1. Bucket policy: Allow s3:GetObject cho principal của account B
+  2. Key policy:    Allow kms:Decrypt  cho principal của account B
+                    (key phải là customer managed key — AWS managed key không sửa policy được)
+
+Phía account B (người đọc):
+  3. IAM policy của user: Allow s3:GetObject trên ARN bucket của A
+  4. IAM policy của user: Allow kms:Decrypt  trên ARN key của A
+```
+
+Thiếu bước 2 hoặc 4 thì user B nhận `AccessDenied` dù đã thấy object trong danh sách. Đây là lỗi kinh điển khi chia sẻ dữ liệu mã hoá.
+
+**3. Grants — "giấy uỷ quyền" cấp bằng API.** Policy là văn bản JSON bạn phải sửa tay. **Grant** là một bản ghi cấp quyền gắn vào key, tạo bằng lệnh `CreateGrant` và xoá bằng một lệnh khác, **không đụng tới key policy hay IAM policy**. Mỗi grant nói: *principal này* (grantee) được làm *các thao tác này* (ví dụ `Decrypt`, `GenerateDataKey`) trên *đúng một key này*. Grant khác policy ở ba điểm:
+
+- **Chỉ cho phép, không cấm được.** Không có grant kiểu `Deny`.
+- **Tạo và huỷ bằng code, theo từng việc.** Tạo khi cần, huỷ khi xong. Huỷ có hai cách: *retire* (chính bên được uỷ quyền tự trả lại khi xong việc) và *revoke* (admin của key thu hồi).
+- **Ai tạo được?** Principal có quyền `kms:CreateGrant` trên key. Quyền này mạnh gần bằng quyền sửa key policy, nên chỉ cấp cho role cần thiết.
+
+Người dùng grant nhiều nhất không phải bạn mà là **các dịch vụ AWS**. Ví dụ với EBS: khi bạn gắn một volume mã hoá vào EC2 instance, EC2 dùng quyền của bạn để tạo một grant trên KMS key, cho phép nó giải mã data key của volume đó. Grant chỉ tồn tại chừng nào còn cần; xong việc thì được retire. Tương tự, RDS tạo một grant lúc tạo DB instance và dùng nó suốt vòng đời instance; Auto Scaling cần grant trên CMK để tự launch instance có volume mã hoá.
+
+> 🪤 Bẫy thi: Auto Scaling group không launch được instance, lỗi liên quan tới KMS, volume dùng **customer managed key** → service-linked role của Auto Scaling chưa được phép dùng key. Sửa bằng cách thêm role đó vào key policy (cùng account) hoặc **tạo grant** cho nó (key ở account khác).
+
+Một chi tiết vận hành: grant mới tạo cần vài giây (có khi vài phút) mới lan ra toàn hệ thống KMS. Muốn dùng ngay thì truyền kèm **grant token** mà `CreateGrant` trả về.
+
+**Khi nào dùng cái nào:**
+
+| Cần gì | Dùng |
+|--------|------|
+| Quy định dài hạn ai là admin, ai là user của key; cho phép account khác | **Key policy** |
+| Cấp quyền cho user/role trong cùng account theo cách quản lý IAM quen thuộc | **IAM policy** (với điều kiện key policy đã uỷ quyền cho account) |
+| Quyền tạm thời, theo từng resource, cấp và thu hồi bằng code; dịch vụ AWS dùng key thay bạn | **Grant** |
 
 ### 3.6 Rotation
 
@@ -176,57 +269,122 @@ Cơ chế của automatic/on-demand rotation:
 
 ### 3.7 Multi-region keys
 
-- 1 key có replica ở nhiều region.
-- Cùng key ID, cùng key material → encrypt ở region A, decrypt ở region B.
-- Use case: cross-region replication, DR, multi-region active-active.
+**Vấn đề.** KMS key bình thường là **single-Region**: key tạo ở `us-east-1` chỉ tồn tại ở `us-east-1`. Nếu bạn tự tạo "hai key giống nhau" ở hai Region thì thực ra đó là **hai key hoàn toàn khác nhau**, key material khác, key ID khác. Dữ liệu mã hoá ở Region A mang sang Region B thì key ở B không giải mã được. Muốn đọc ở B bạn phải gọi ngược về KMS ở A (thêm độ trễ, và A sập là hết đọc), hoặc giải mã rồi mã hoá lại bằng key của B.
+
+**Multi-Region key (MRK) giải quyết thế nào.** Bạn tạo một **primary key** ở một Region rồi **replicate** nó sang Region khác thành **replica key**. Cả nhóm dùng **chung key material và chung key ID** (key ID có tiền tố `mrk-`), nên ciphertext mã hoá ở Region nào cũng giải mã được ở Region còn lại **ngay tại chỗ**, không gọi chéo Region, không mã hoá lại.
+
+| | Hai key single-Region riêng | Multi-Region key |
+|--|------------------------------|------------------|
+| Key material | Khác nhau | **Giống nhau** |
+| Key ID | Khác nhau | **Giống nhau** (`mrk-…`), chỉ khác phần Region trong ARN |
+| Mã hoá ở A, giải mã ở B | Không được | **Được**, tại chỗ |
+| Key policy, grants, alias, bật/tắt | Riêng từng key | **Vẫn riêng từng key** — KMS không đồng bộ các thứ này |
+| Rotation | Riêng | Bật trên primary, KMS đồng bộ material mới sang replica |
+
+Ba điều dễ hiểu sai:
+
+- **MRK không phải key "global".** Nó chỉ có mặt ở những Region bạn chủ động replicate tới. AWS không tự replicate hộ.
+- **Không convert được.** Key single-Region không đổi thành MRK được (và ngược lại); phải tạo MRK mới rồi mã hoá lại dữ liệu.
+- **Đánh đổi bảo mật.** Cùng một key material nằm ở nhiều Region nghĩa là bề mặt tấn công rộng hơn và phá vỡ tính cô lập theo Region. AWS khuyên vẫn dùng single-Region key cho đa số trường hợp.
+
+**Use case**: disaster recovery (Region dự phòng tự giải mã được dữ liệu sao lưu), ứng dụng active-active nhiều Region, và dữ liệu **mã hoá phía client** di chuyển giữa các Region.
+
+> 🪤 Bẫy thi: "S3 Cross-Region Replication với SSE-KMS bắt buộc phải dùng Multi-Region key" → **Sai**. S3 CRR giải mã bằng key Region nguồn rồi mã hoá lại bằng key Region đích, key đích là key single-Region bình thường cũng được (xem §10.2). MRK có giá trị nhất khi **chính ứng dụng** của bạn mã hoá/giải mã ở nhiều Region.
 
 ### 3.8 KMS pricing
 
-- $1 / key / tháng (CMK).
-- $0.03 / 10,000 API calls (Encrypt/Decrypt/GenerateDataKey).
-- Hi-volume app: KMS request có thể $$$. Cache data key client-side (S3 SDK auto, custom code cần aware).
+Giá us-east-1, có hai khoản:
+
+- **Tiền giữ key**: ~**$1 / key / tháng** cho mỗi customer managed key. Mỗi replica của MRK tính là một key. Bật rotation thì lần rotate thứ nhất và thứ hai mỗi lần cộng thêm $1/tháng, từ lần thứ ba trở đi không tăng nữa (tối đa $3/tháng/key). AWS managed key và AWS owned key không mất tiền giữ key.
+- **Tiền request**: ~**$0.03 / 10.000 request** (`Encrypt`, `Decrypt`, `GenerateDataKey`…) với key đối xứng; ~$0.15 / 10.000 với RSA/ECC. Miễn phí 20.000 request đầu mỗi tháng.
+
+Tiền giữ key hầu như không bao giờ là vấn đề. Thứ làm hoá đơn phình ra là **request**, vì các dịch vụ như S3 gọi KMS thay bạn mỗi lần đọc/ghi object:
+
+```
+3 key × $1                                  =  $3/tháng
+5.000.000 request × $0.03 / 10.000          = $15/tháng     ← app nhỏ: không đáng kể
+
+2.000 request/giây liên tục
+  = 172.800.000 request/ngày × $0.03/10.000 = $518,40/ngày  ← ~$15.500/tháng
+```
+
+Cách hạ con số thứ hai xuống (S3 Bucket Keys, cache data key) nằm ở §11.
 
 ---
 
 ## 4. CloudHSM
 
+**Nó là gì.** §3.1 đã nói KMS chạy trên một đội **HSM** (thiết bị phần cứng giữ khoá, không cho đọc khoá ra) mà AWS vận hành và **mọi khách hàng dùng chung**. **CloudHSM** là dịch vụ cho bạn thuê **HSM riêng**: thiết bị chỉ phục vụ một mình bạn (single-tenant), đặt trong VPC của bạn, và **chỉ bạn có tài khoản đăng nhập vào HSM**. AWS lo phần cứng, cấp phát, vá lỗi và backup, nhưng không có credential để dùng khoá bên trong.
+
+Khác biệt gốc so với KMS là **ai kiểm soát lớp truy cập khoá**. Với KMS, AWS kiểm soát HSM và bạn điều khiển qua IAM/key policy. Với CloudHSM, bạn tự tạo user trên HSM, tự quản khoá, tự dựng cluster đủ số node; đổi lại nếu bạn làm mất credential thì AWS cũng không cứu được.
+
+Ba thuật ngữ trong bảng bên dưới:
+
+- **Single-tenant vs multi-tenant**: thiết bị dành riêng cho một khách hàng, so với thiết bị dùng chung nhiều khách hàng (tách nhau bằng phần mềm). Một số quy định hoặc hợp đồng ghi thẳng "khoá phải nằm trên HSM dành riêng"; khi đó KMS không đáp ứng được dù cùng cấp FIPS.
+- **FIPS 140 Level 3**: xem §3.1. KMS và CloudHSM đều đạt Level 3 (CloudHSM: 140-2 hoặc 140-3 tuỳ loại HSM, khi cluster chạy FIPS mode).
+- **PKCS#11, JCE, OpenSSL, CNG/KSP**: các **giao diện lập trình chuẩn của ngành** để phần mềm nói chuyện với HSM (PKCS#11 là chuẩn chung cho C; JCE cho Java; CNG/KSP cho Windows). Phần mềm có sẵn như Oracle Database TDE, web server cần offload TLS, hệ thống PKI on-prem đều nói các chuẩn này chứ **không biết gọi API KMS**. Đưa chúng lên AWS mà không viết lại thì cần CloudHSM.
+
 ### Khi nào CloudHSM thay KMS
 
 | Yêu cầu | KMS | CloudHSM |
 |---------|-----|----------|
-| FIPS 140-2 Level 3 (HSM validated) | ✅ (từ 2023) | ✅ |
+| FIPS 140 Level 3 (HSM validated) | ✅ (140-2 Level 3 từ 2023 theo đề thi; nay là 140-3) | ✅ |
 | **Single-tenant** HSM (dành riêng cho bạn) | ❌ (multi-tenant) | ✅ |
-| Bạn quản lý key material 100% (AWS không thấy) | ⚠️ (BYOK/External Key Store) | ✅ |
-| Tự quản cluster HSM (patch, HA, backup) | ❌ (AWS lo) | ✅ (bạn lo) |
-| Compliance đặc thù (PCI-DSS, common criteria) | ❓ | ✅ |
-| PKCS#11 / JCE / OpenSSL standard API | ❌ | ✅ |
+| Bạn quản lý key material 100% (AWS không thấy) | ⚠️ Chỉ một phần, qua BYOK (import key material) hoặc External Key Store | ✅ |
+| Ai vận hành | AWS lo toàn bộ, không có gì để quản | AWS lo phần cứng, vá lỗi, backup; **bạn lo** user trên HSM, khoá, số HSM và phân bố AZ để có HA |
+| Compliance | Đã nằm trong phạm vi PCI DSS, SOC, FedRAMP, HIPAA — đủ cho phần lớn yêu cầu | Khi quy định/hợp đồng ghi rõ **HSM dành riêng** (bài tập 6 lấy ví dụ PCI-DSS; Common Criteria cũng hay được nhắc) |
+| PKCS#11 / JCE / OpenSSL standard API | ❌ (chỉ API của KMS) | ✅ |
+| Tích hợp sẵn với S3, EBS, RDS… | ✅ Bấm chọn là xong | ❌ Không trực tiếp; phải đi qua *custom key store* bên dưới |
 
 ### Trade-off
-- CloudHSM đắt: ~$1.5/h per HSM × 2 (HA) = ~$2200/tháng minimum.
-- Cluster management overhead.
-- Không tích hợp sâu với AWS service như KMS.
-- Use case: hardcore compliance, custom crypto.
+
+- **Chi phí**: trả theo giờ cho từng HSM, chạy hay không cũng tính. Trang giá KMS lấy ví dụ **~$1,60/giờ/HSM** ở us-east-1 (các tài liệu cũ ghi ~$1,45–1,5). Một HSM đơn lẻ **không có HA**; cần **ít nhất 2 HSM ở 2 AZ**:
+
+```
+2 HSM × $1,60/giờ × 730 giờ ≈ $2.336/tháng   (mức sàn, chưa có request nào)
+So với KMS: 1 key × $1/tháng + tiền request
+```
+
+- **Vận hành**: bạn quản user và khoá trên HSM, cài client SDK lên từng máy ứng dụng, tự thêm HSM khi tải tăng.
+- **Không tích hợp sâu** với dịch vụ AWS như KMS.
+- **Use case**: quy định bắt buộc HSM dành riêng; phần mềm cần PKCS#11/JCE; thuật toán hoặc loại khoá KMS không hỗ trợ; offload TLS cho web server; Oracle TDE.
 
 ### KMS custom key store
-- KMS key store **được backed by CloudHSM cluster**.
-- Best of both: KMS API + CloudHSM-level isolation.
+
+Muốn vừa có **khoá nằm trên HSM riêng** vừa dùng được **tích hợp sẵn của KMS** với S3/EBS/RDS thì dùng **custom key store**: bạn tạo KMS key như thường, nhưng key material của nó được sinh và cất trong **cluster CloudHSM của bạn** thay vì trong đội HSM chung của KMS. Ứng dụng và dịch vụ AWS vẫn gọi API KMS; KMS chuyển phép tính xuống cluster của bạn.
+
+Cái giá: bạn vẫn trả tiền cluster CloudHSM, cluster sập thì mọi key trong store không dùng được, và thông lượng thấp hơn hẳn — mỗi custom key store bị giới hạn **1.800 request/giây** (không nâng được), so với 10.000 trở lên của KMS thường. Key trong custom key store cũng **không automatic rotation** được (§3.6).
+
+Có một biến thể nữa là **External Key Store (XKS)**: key material nằm ở HSM **ngoài AWS** (on-prem hoặc nhà cung cấp khác), dành cho yêu cầu "khoá không được nằm trên hạ tầng AWS".
+
+> 🪤 Bẫy thi: "cần HSM **dành riêng** / single-tenant" hoặc "cần PKCS#11" → **CloudHSM**. "Cần HSM dành riêng **và** vẫn dùng SSE-KMS cho S3/EBS" → **KMS custom key store backed by CloudHSM**. Chỉ nói "FIPS 140-2 Level 3" mà không nhắc dành riêng → **KMS là đủ** và rẻ hơn cả nghìn lần.
 
 ---
 
 ## 5. Encryption ở từng service
 
+Mọi dịch vụ dưới đây đều dùng envelope encryption của §3.4: dịch vụ xin KMS một data key, tự mã hoá dữ liệu bằng data key đó, và cất bản data key đã mã hoá bên cạnh dữ liệu. Thứ thay đổi giữa các dịch vụ chỉ là **bật lúc nào**, **dùng key nào** và **có bật sau được không**.
+
 ### 5.1 S3
 
-| Method | Key | Trade-off |
-|--------|-----|-----------|
-| **SSE-S3** (`AES256`) | S3 managed | Default, dễ |
-| **SSE-KMS** (`aws:kms`) | KMS CMK | Audit per key access, control rotation |
-| **SSE-C** (customer-provided key) | Bạn gửi key mỗi request | Đặc biệt, hiếm |
-| **DSSE-KMS** (dual-layer) | 2 KMS keys | Strong compliance |
-| **Client-side** | Bạn encrypt trước upload | E2E, AWS không thấy plaintext |
+S3 có bốn kiểu **server-side encryption** (SSE: bạn gửi dữ liệu thường lên, S3 mã hoá trước khi ghi đĩa và giải mã khi bạn đọc) và một kiểu **client-side** (bạn mã hoá trước khi gửi). Chúng khác nhau ở chỗ **ai giữ khoá**:
 
-- **2023+**: SSE-S3 bật mặc định cho mọi bucket mới.
-- Bucket policy bắt buộc encryption:
+- **SSE-S3** (header `AES256`): S3 tự sinh và tự giữ khoá. Bạn không thấy khoá, không cấu hình gì, không tốn thêm tiền. Mặc định của mọi bucket.
+- **SSE-KMS** (header `aws:kms`): khoá là một KMS key. Lợi ích so với SSE-S3 là **hai lớp quyền** và **log theo từng lần dùng khoá**. Muốn đọc object, người đọc cần cả `s3:GetObject` lẫn `kms:Decrypt`; lỡ bucket policy mở nhầm thì người ngoài vẫn không giải mã được. Và mỗi lần S3 gọi KMS để giải mã, CloudTrail ghi một event: *ai*, *lúc nào*, *dùng key nào*, *cho object nào*. "Audit per key access" nghĩa là vậy. Cái giá là mỗi request S3 kéo theo một request KMS (tiền và quota — xem §11).
+- **DSSE-KMS** (header `aws:kms:dsse`): mã hoá **hai lớp AES-256 chồng nhau**. Lớp một dùng data key do KMS sinh; lớp hai mã hoá tiếp kết quả bằng một khoá riêng do S3 quản. Vẫn chỉ dùng **một KMS key** — "dual" là hai *lớp mã hoá*, không phải hai KMS key. Dùng khi quy định ghi rõ **"dữ liệu phải được mã hoá nhiều lớp"** (thường gặp ở khối chính phủ/quốc phòng Mỹ). Đắt hơn và chậm hơn SSE-KMS một chút, và **không dùng được S3 Bucket Keys**.
+- **SSE-C** (customer-provided key): **bạn gửi khoá kèm theo từng request**. S3 dùng khoá đó mã hoá/giải mã rồi **vứt đi, không lưu**. Bạn tự giữ khoá ở đâu đó; mất khoá là mất dữ liệu. Bắt buộc HTTPS. Hiếm dùng.
+- **Client-side**: bạn mã hoá bằng SDK trước khi upload. S3 chỉ nhận được ciphertext, AWS không bao giờ thấy plaintext.
+
+| Method | Ai giữ khoá | Được gì | Mất gì |
+|--------|-------------|---------|--------|
+| **SSE-S3** (`AES256`) | S3 | Mặc định, không cấu hình, không phí KMS | Không có lớp quyền thứ hai, không log theo lần dùng khoá |
+| **SSE-KMS** (`aws:kms`) | KMS key (AWS managed hoặc CMK) | Thêm lớp quyền `kms:Decrypt`, CloudTrail ghi từng lần dùng khoá, tự chọn rotation (với CMK) | Mỗi request S3 = 1 request KMS: ~$0.03/10.000 và ăn vào quota |
+| **SSE-C** (customer-provided key) | Bạn, gửi theo từng request | Khoá không nằm ở AWS | Tự quản khoá, mất khoá = mất dữ liệu |
+| **DSSE-KMS** (dual-layer) | 1 KMS key + 1 khoá do S3 quản (2 lớp mã hoá) | Đáp ứng quy định "mã hoá nhiều lớp" | Đắt/chậm hơn SSE-KMS, không có Bucket Keys |
+| **Client-side** | Bạn (hoặc KMS qua SDK) | E2E, AWS không thấy plaintext | Tự viết code mã hoá, S3 không giúp được gì với nội dung |
+
+- **2023+**: SSE-S3 bật mặc định cho mọi bucket mới. Không còn object "không mã hoá" trên S3; câu hỏi chỉ còn là mã hoá bằng khoá nào.
+- Bucket policy bắt buộc mọi object upload phải dùng SSE-KMS (từ chối `PutObject` nào không khai header `aws:kms`):
 ```json
 {
   "Effect": "Deny",
@@ -261,89 +419,218 @@ Encryption bảo vệ data at rest, nhưng data leak lớn nhất của S3 lịc
 
 ### 5.2 EBS
 
-- Default encryption bật ở **region level**.
-- Snapshot follow volume encryption.
-- Cross-account snapshot share encrypted → cần share KMS key permission nữa.
-- Boot volume encryption: phải bật ở AMI.
+**Mã hoá diễn ra ở đâu.** Trên **máy chủ vật lý chạy EC2 instance**, trước khi dữ liệu đi xuống hệ thống lưu trữ. Vì vậy bật mã hoá cho một volume là được cả bốn thứ cùng lúc: dữ liệu nằm trên volume, dữ liệu **đang chạy giữa instance và volume**, mọi snapshot chụp từ volume, và mọi volume tạo lại từ các snapshot đó. Hệ điều hành trong instance không biết gì và không phải cấu hình gì.
+
+**"Snapshot follow volume"** nghĩa là trạng thái mã hoá **di truyền** và **một chiều**: snapshot của volume mã hoá thì luôn mã hoá (cùng KMS key); volume tạo từ snapshot mã hoá thì luôn mã hoá. **Không gỡ mã hoá được** khỏi volume hay snapshot đã mã hoá.
+
+**Mã hoá một volume đang chạy thế nào?** Không bật tại chỗ được, vì dữ liệu cũ đã nằm trên đĩa dạng plaintext; muốn mã hoá phải ghi lại toàn bộ sang chỗ mới. Quy trình:
+
+```
+1. Chụp snapshot volume cũ (chưa mã hoá)
+2. Tạo volume MỚI từ snapshot đó, tick "Encrypt" + chọn KMS key
+   (hoặc: copy snapshot kèm tuỳ chọn mã hoá, rồi tạo volume từ bản copy)
+3. Dừng instance → gỡ volume cũ → gắn volume mới vào đúng device name → chạy lại
+```
+
+Đổi KMS key của một volume cũng đi đường này: copy snapshot và chọn key khác lúc copy.
+
+**Encryption by default.** Là một công tắc **theo từng Region của account**. Bật lên thì mọi volume **mới** và mọi bản copy snapshot ở Region đó tự mã hoá (mặc định bằng AWS managed key `aws/ebs`, đổi sang CMK được). Hai điều cần nhớ: nó **không đụng** tới volume và snapshot đã có, và phải bật **ở từng Region** bạn dùng.
+
+**Boot (root) volume.** Root volume sinh ra từ snapshot nằm trong AMI. Muốn nó mã hoá thì có ba đường: bật encryption by default (mọi volume lúc launch đều mã hoá, kể cả khi AMI chưa mã hoá); chỉ định mã hoá cho root volume ngay lúc launch; hoặc **copy AMI kèm tuỳ chọn mã hoá** để có AMI mã hoá sẵn.
+
+**Chia sẻ snapshot mã hoá sang account khác:**
+
+- Snapshot mã hoá bằng **AWS managed key `aws/ebs` không chia sẻ được**. Lý do đã nói ở §3.2: key policy của AWS managed key không sửa được nên không thêm account kia vào.
+- Phải mã hoá bằng **customer managed key**, rồi chia sẻ **cả hai thứ**: quyền trên snapshot **và** quyền dùng KMS key (qua key policy). Account nhận nên copy snapshot ra bằng key của chính họ để không phụ thuộc key của bạn.
+- Snapshot mã hoá **không public được**; chỉ snapshot không mã hoá mới chia sẻ công khai được.
 
 ### 5.3 RDS / Aurora
 
-- Encryption at rest: KMS, chọn khi tạo. **Không enable được sau khi tạo** → phải snapshot, copy với encryption, restore.
-- Replica inherit encryption từ primary.
-- TLS in transit: download CA bundle, config app SSL.
-- **Transparent Data Encryption (TDE)**: Oracle/SQL Server, layer trên KMS.
+**Mã hoá gì.** Bật mã hoá cho một DB instance là mã hoá storage bên dưới, log, **automated backup, snapshot và read replica** của nó — tất cả bằng cùng một KMS key (`aws/rds` hoặc CMK). Ứng dụng không phải đổi gì.
+
+**Chỉ chọn được lúc tạo.** Lý do giống EBS: mã hoá nằm ở tầng storage, dữ liệu đã ghi dạng plaintext thì không "bật" tại chỗ được mà phải ghi lại sang storage mới. Một khi đã mã hoá thì cũng **không tắt được** và **không đổi key được**. Đường vòng chuẩn để mã hoá một instance đang chạy:
+
+```
+1. Chụp snapshot instance (snapshot này chưa mã hoá)
+2. COPY snapshot, tick "Enable encryption" + chọn KMS key   → snapshot đã mã hoá
+3. Restore snapshot đã mã hoá thành instance MỚI
+4. Trỏ ứng dụng sang endpoint mới, xoá instance cũ
+```
+
+Cách này có **downtime ghi**: dữ liệu ghi vào instance cũ sau bước 1 sẽ không có ở instance mới, nên phải dừng ghi từ bước 1 tới bước 4. Muốn downtime ngắn (lời giải bài tập 3) thì giữ instance cũ chạy và đồng bộ liên tục sang instance mã hoá mới, rồi mới chuyển: dùng **AWS DMS** với change data capture, hoặc **RDS Blue/Green Deployment** (tài liệu RDS hiện ghi blue/green dùng được để mã hoá một instance chưa mã hoá). Không dùng read replica cho việc này được, vì quy tắc ngay dưới đây.
+
+**Quy tắc replica và snapshot:**
+
+- Replica **kế thừa** trạng thái mã hoá của primary: không có replica mã hoá của primary chưa mã hoá, và không có replica chưa mã hoá của primary đã mã hoá.
+- Replica **cùng Region** dùng **cùng KMS key** với primary. Replica **khác Region** phải chỉ định một KMS key **ở Region đích**, vì KMS key là tài nguyên theo Region.
+- Copy snapshot mã hoá sang Region khác: cũng phải chọn KMS key ở Region đích.
+- Snapshot mã hoá bằng AWS managed key `aws/rds` **không chia sẻ cross-account được** (cùng lý do với EBS) → dùng CMK.
+
+**In transit**: RDS hỗ trợ TLS cho kết nối từ app tới DB. Tải CA bundle của AWS về, cấu hình client bật SSL (ví dụ `sslmode=verify-full` với PostgreSQL). Muốn ép buộc thì đặt tham số phía DB như `rds.force_ssl`.
+
+**Transparent Data Encryption (TDE)**: tính năng mã hoá **của chính database engine** (Oracle, SQL Server), mã hoá file dữ liệu ở tầng engine. Độc lập với mã hoá storage bằng KMS và dùng chồng lên nhau được. Chỉ chọn khi đề nêu rõ yêu cầu TDE của Oracle/SQL Server.
+
+> 🪤 Bẫy thi: nếu **disable hoặc xoá KMS key** của một DB instance, RDS mất quyền đọc storage và instance rơi vào trạng thái không truy cập được. Xoá key là xoá khả năng đọc mọi thứ đã mã hoá bằng nó — đó là lý do KMS bắt chờ 7–30 ngày trước khi xoá key thật.
 
 ### 5.4 DynamoDB
 
-- Default encryption KMS (AWS managed key) — không tắt được.
-- Có thể switch sang CMK cho audit/control.
-- Encryption transparent với app.
+DynamoDB **luôn mã hoá at rest và không tắt được**: bảng, index, stream, backup, global table đều mã hoá. Bạn chỉ chọn **loại key**, và đổi qua lại bất cứ lúc nào mà không downtime:
+
+| Loại key | Phí | Khi nào chọn |
+|----------|-----|--------------|
+| **AWS owned key** (mặc định) | Miễn phí | Chỉ cần "có mã hoá". Không có log dùng khoá |
+| **AWS managed key** (`aws/dynamodb`) | Phí request KMS | Muốn thấy việc dùng khoá trong CloudTrail |
+| **Customer managed key** | $1/tháng + phí request | Cần tự viết key policy, điều khiển rotation, hoặc khả năng thu hồi key |
+
+Mã hoá trong suốt với ứng dụng: query, scan, độ trễ không đổi.
+
+> 📏 Bài này trước đây ghi mặc định là "AWS managed key". Docs hiện tại ghi mặc định là **AWS owned key**. Trong đề thi, ý đúng cần nhớ vẫn là: *DynamoDB mã hoá at rest mặc định, không cần bật và không tắt được.*
 
 ### 5.5 EFS / FSx
 
-- At rest: KMS (chọn khi tạo).
-- In transit: TLS option (mount với `tls`).
+- **EFS at rest**: chọn **lúc tạo** file system, sau đó **không đổi được**. Tạo bằng console thì mã hoá bật sẵn; tạo bằng CLI/API/SDK thì phải bật tường minh. Muốn mã hoá một file system chưa mã hoá: tạo file system mới có mã hoá rồi chuyển dữ liệu sang (EFS replication hoặc DataSync). Ép buộc toàn tổ chức bằng condition key `elasticfilesystem:Encrypted` trong IAM policy hoặc SCP.
+- **EFS in transit**: không tự có. Bạn bật ở **phía client lúc mount**, dùng EFS mount helper với tuỳ chọn `-o tls`. Helper dựng một đường hầm TLS giữa EC2 và EFS.
+- **FSx**: cũng mã hoá at rest bằng KMS key chọn lúc tạo file system.
+
+> 🪤 Bẫy thi: "EFS đã bật encryption at rest, vậy dữ liệu trên đường truyền cũng được mã hoá" → **Sai**. Hai thứ độc lập; in transit phải mount với `tls`.
 
 ### 5.6 SQS / SNS / Kinesis / MSK
 
-- KMS encryption option.
-- TLS endpoint mặc định.
+Bốn dịch vụ messaging cùng một ý: **at rest là tuỳ chọn KMS** (trừ chỗ ghi khác bên dưới), **in transit là HTTPS/TLS của endpoint**. Khác nhau ở mặc định:
+
+| Dịch vụ | At rest | Ghi chú |
+|---------|---------|---------|
+| **SQS** | Queue mới mặc định bật **SSE-SQS** (khoá do SQS quản, miễn phí). Đổi sang **SSE-KMS** nếu cần key policy riêng/audit | Chỉ mã hoá **thân message**; tên queue, message ID, attribute không mã hoá |
+| **SNS** | **Tuỳ chọn**, bật bằng cách gán một KMS key cho topic | Cũng chỉ mã hoá thân message |
+| **Kinesis Data Streams** | **Tuỳ chọn**, bật SSE với KMS key (`aws/kinesis` hoặc CMK) | Chỉ mã hoá record ghi vào **sau khi bật**; record cũ giữ nguyên |
+| **MSK** | **Luôn mã hoá** at rest (AWS managed key nếu bạn không chỉ định CMK) | In transit: TLS giữa các broker bật mặc định; giữa client và broker mặc định chỉ nhận TLS, có thể nới ra cho phép plaintext |
+
+Với SQS và SNS dùng SSE-KMS, dịch vụ **không gọi KMS cho từng message**. Nó giữ lại một data key và dùng lại trong một khoảng thời gian gọi là *data key reuse period* (SQS: mặc định **5 phút**, chỉnh được từ 1 phút tới 24 giờ). Đây chính là kỹ thuật "cache data key" của §11: kéo dài khoảng này thì ít request KMS hơn, đổi lại data key sống lâu hơn.
+
+> 🪤 Bẫy thi: SNS topic hoặc S3 event gửi vào một **SQS queue mã hoá SSE-KMS** mà message không tới → dịch vụ gửi không có quyền dùng key. AWS managed key `aws/sqs` không sửa policy được, nên phải dùng **CMK** và thêm service principal (ví dụ `sns.amazonaws.com`) vào key policy với `kms:GenerateDataKey` và `kms:Decrypt`.
 
 ### 5.7 Lambda
 
-- Environment variables: encrypt với KMS optionally.
-- Best practice: dùng Secrets Manager / Parameter Store thay vì env var cho secret.
+- **Environment variable luôn được mã hoá at rest.** Mặc định Lambda dùng AWS managed key (`aws/lambda`), không tốn phí và không cần cấu hình. Chọn **CMK** khi muốn kiểm soát ai xem được: lúc đó chỉ user có `kms:Decrypt` trên key mới đọc/sửa được biến trong console.
+- **Mã hoá at rest không có nghĩa là bí mật.** Lambda giải mã biến lúc khởi động function, và bất kỳ ai có quyền xem cấu hình function (cùng quyền dùng key mặc định) đều thấy giá trị dạng chữ thường trong console. Giá trị cũng nằm trong mọi bản sao cấu hình: CloudFormation template, Terraform state, lịch sử deploy.
+- **Best practice**: env var chỉ giữ **tên/ARN của secret**. Giá trị thật để ở **Secrets Manager** hoặc **Parameter Store**, function đọc lúc chạy bằng execution role và cache lại trong bộ nhớ (lời giải bài tập 4 — chi tiết ở §6).
 
 ---
 
 ## 6. Secrets Manager vs Parameter Store
 
+Cả hai đều trả lời câu hỏi của §1: *secret để ở đâu nếu không để trong code?* Ý tưởng chung: secret nằm trong một dịch vụ AWS, **mã hoá bằng KMS**, và ứng dụng **gọi API lấy lúc chạy** bằng IAM role của nó. Trong code chỉ còn *tên* của secret. Đổi mật khẩu thì sửa một chỗ, không phải build lại app; và CloudTrail ghi ai đã đọc secret nào.
+
+**SSM Parameter Store** là kho **cấu hình** dạng key–value có phân cấp theo đường dẫn (`/prod/db/host`, `/prod/feature/new-checkout`). Mỗi parameter là `String`, `StringList`, hoặc **`SecureString`** (giá trị được mã hoá bằng KMS). Nó chỉ *cất* giá trị; không biết giá trị đó là mật khẩu của hệ thống nào và không tự đổi được.
+
+**Secrets Manager** là kho chuyên cho **secret**, hơn Parameter Store ở ba việc: **tự rotate** (tự đổi mật khẩu trên database rồi cập nhật secret), **tự sinh mật khẩu ngẫu nhiên**, và **replicate secret sang Region khác**.
+
+### 6.1 Rotation chạy thế nào
+
+"Rotate" một mật khẩu DB không chỉ là sửa giá trị trong kho: mật khẩu **trên database** cũng phải đổi theo, và hai việc phải khớp nhau. Secrets Manager làm việc đó bằng một **hàm Lambda rotation** (AWS có sẵn template cho RDS, Aurora, Redshift, DocumentDB), chạy theo lịch bạn đặt — thưa nhất 999 ngày một lần, dày nhất **4 giờ một lần**.
+
+Mỗi secret có nhiều *version*, đánh dấu bằng nhãn: **`AWSCURRENT`** (bản app đang lấy), **`AWSPENDING`** (bản mới đang thử), **`AWSPREVIOUS`** (bản vừa bị thay). Một lần rotate đi bốn bước:
+
+| Bước | Lambda làm gì |
+|------|----------------|
+| 1. `createSecret` | Sinh mật khẩu mới, lưu thành một version gắn nhãn `AWSPENDING`. App vẫn nhận bản `AWSCURRENT` cũ |
+| 2. `setSecret` | Đăng nhập vào database và **đổi mật khẩu** của user thành giá trị `AWSPENDING` |
+| 3. `testSecret` | Thử kết nối database bằng mật khẩu mới để chắc chắn nó chạy |
+| 4. `finishSecret` | Chuyển nhãn `AWSCURRENT` sang version mới; bản cũ thành `AWSPREVIOUS` |
+
+**App có bị đứt kết nối không?** Kết nối **đang mở** không bị ngắt; mật khẩu chỉ được kiểm lúc mở kết nối mới. Rủi ro nằm ở khe hẹp giữa bước 2 và bước 4: database đã nhận mật khẩu mới nhưng app hỏi Secrets Manager vẫn được trả mật khẩu cũ. Kết nối mới mở đúng lúc đó sẽ bị từ chối. Có hai cách xử lý:
+
+- **Single user** (mặc định, đủ cho đa số): chấp nhận khe hẹp đó, app **retry** khi gặp lỗi xác thực và đọc lại secret.
+- **Alternating users** (cho app cần sẵn sàng cao): secret luân phiên giữa **hai user** database có quyền như nhau (`app` và `app_clone`). Mỗi lần rotate chỉ đổi mật khẩu của user **đang không được dùng**, nên mật khẩu app đang cầm luôn còn hiệu lực. Cần thêm một secret chứa credential superuser để Lambda tạo/sửa user thứ hai.
+
+Hai điều kiện hay bị quên: Lambda rotation phải **kết nối mạng được tới database** (cùng VPC/subnet và security group cho phép) và tới endpoint Secrets Manager (NAT hoặc VPC endpoint). Và app **không được cache secret vô thời hạn** — cache vài phút, gặp lỗi xác thực thì đọc lại.
+
+Với master password của RDS/Aurora còn có **managed rotation**: bật "manage master user password in Secrets Manager" là RDS tự tạo secret và tự rotate, **không cần Lambda**.
+
+### 6.2 Con số và chi phí
+
+Giá us-east-1:
+
+- **Secrets Manager**: ~**$0.40 / secret / tháng** + ~$0.05 / 10.000 lần gọi API. Giá trị tối đa **64 KB**.
+- **Parameter Store Standard**: **miễn phí**, tối đa 10.000 parameter mỗi account mỗi Region, mỗi giá trị tối đa **4 KB**.
+- **Parameter Store Advanced**: ~**$0.05 / parameter / tháng** + ~$0.05 / 10.000 lần gọi API; tối đa 100.000 parameter, giá trị tối đa **8 KB**; có thêm *parameter policy* (ví dụ tự hết hạn) và chia sẻ cross-account. Đã nâng lên Advanced thì không hạ về Standard được.
+
+```
+50 secret trong Secrets Manager:           50 × $0.40          = $20/tháng
+50 parameter Standard:                                          = $0
+50 parameter Advanced:                     50 × $0.05          = $2,50/tháng
+
+Tiền gọi API phụ thuộc cách app đọc:
+  20 instance, mỗi instance đọc lại 5 phút/lần
+    = 20 × 12 × 730 = 175.200 call/tháng × $0.05/10.000        ≈ $0,88/tháng
+  Đọc secret ở MỖI request, 200 request/giây
+    = 518.400.000 call/tháng × $0.05/10.000                    ≈ $2.592/tháng
+```
+
+Dòng cuối là lý do phải **cache secret trong bộ nhớ** thay vì gọi API ở mỗi request.
+
+### 6.3 Đặt cạnh nhau
+
 | Feature | Secrets Manager | SSM Parameter Store |
 |---------|----------------|---------------------|
-| Rotation tự động | ✅ (built-in cho RDS, Redshift, DocumentDB) | ❌ (manual or Lambda) |
+| Rotation tự động | ✅ Built-in cho RDS, Aurora, Redshift, DocumentDB; secret khác thì tự viết Lambda | ❌ Không có. Phải tự viết Lambda/EventBridge đổi giá trị |
+| Tự sinh mật khẩu ngẫu nhiên | ✅ | ❌ |
 | Cross-region replication | ✅ | ❌ |
-| Cost | $0.40 / secret / tháng + API | Free (Standard), $$$ Advanced |
+| Cost | ~$0.40 / secret / tháng + API | Free (Standard); ~$0.05 / parameter / tháng (Advanced) |
 | Max size | 64 KB | 4 KB (Standard), 8 KB (Advanced) |
-| Versioning | ✅ | ✅ (Advanced) |
-| KMS integration | ✅ | ✅ |
-| Use case | Production secret cần rotate | Config + non-rotate secret |
+| Versioning | ✅ theo nhãn `AWSCURRENT` / `AWSPREVIOUS` | ✅ lưu lịch sử các version của parameter |
+| KMS integration | ✅ luôn mã hoá | ✅ với kiểu `SecureString` |
+| Use case | Production secret cần rotate | Config + secret không cần rotate |
+
+Hai dịch vụ không loại trừ nhau: Parameter Store đọc được secret của Secrets Manager qua đường dẫn đặc biệt `/aws/reference/secretsmanager/<tên-secret>`, nên app có thể chỉ dùng một API.
 
 ### Patterns
 
-- DB credential → **Secrets Manager** với auto-rotate Lambda.
-- API token bên thứ 3 → Secrets Manager.
-- Feature flag, config → Parameter Store.
-- License key → Parameter Store (SecureString).
+- DB credential → **Secrets Manager** với auto-rotate Lambda (hoặc managed rotation của RDS).
+- API token bên thứ 3 → Secrets Manager. Rotate được nếu bên thứ ba có API đổi token và bạn viết Lambda gọi nó.
+- Feature flag, config → Parameter Store (`String`).
+- License key → Parameter Store (`SecureString`): là secret nhưng không bao giờ đổi, nên không cần trả $0.40/tháng.
 
 ### Anti-pattern
 - Env var hardcoded secret.
-- Secret trong CloudFormation parameter (plaintext in template).
+- Secret trong CloudFormation parameter (plaintext in template). Thay bằng *dynamic reference* `{{resolve:secretsmanager:...}}` để template chỉ chứa tên secret.
 - Secret trong code repository (kể cả private).
+
+> 🪤 Bẫy thi: đề có chữ **"automatic rotation"** hoặc "rotate database credentials" → **Secrets Manager**. Đề nhấn **"lowest cost"** / "no additional charge" cho config hoặc secret không cần rotate → **Parameter Store** (SecureString).
 
 ---
 
 ## 7. Certificate Manager (ACM)
 
+Một **TLS certificate** là tấm "chứng minh thư" của server: nó gắn một tên miền với một *public key*, và được một **CA (Certificate Authority)** ký xác nhận. Server giữ *private key* tương ứng. Trình duyệt tin certificate vì tin CA đã ký nó. ACM là dịch vụ cấp, cất và tự gia hạn certificate cho bạn.
+
 ### 7.1 ACM public
 
-- Free SSL/TLS cert cho:
+- Certificate do CA công khai của Amazon ký, **trình duyệt nào cũng tin**. **Miễn phí** khi dùng với các dịch vụ tích hợp:
   - CloudFront
   - ALB / NLB
   - API Gateway
   - App Runner
-- Auto-renew.
-- Validation: DNS (recommended) hoặc email.
-- **Không xuất được private key** — chỉ AWS service dùng.
+- **Auto-renew**: ACM tự gia hạn và tự thay certificate trên các dịch vụ trên, không ai phải nhớ ngày hết hạn.
+- **Validation**: ACM phải kiểm bạn thật sự sở hữu tên miền. **DNS validation** (recommended) là thêm một bản ghi CNAME do ACM đưa; để yên bản ghi đó thì lần gia hạn sau tự qua. **Email validation** là bấm link trong email, và mỗi lần gia hạn phải bấm lại.
+- **Không xuất được private key** — chỉ AWS service dùng. Đây là điều đề thi dựa vào: private key nằm trong ACM, bạn không tải về để cài lên EC2 hay server on-prem được.
+
+> 📏 Docs hiện tại: từ **17/06/2025** ACM có thêm loại **exportable public certificate**. Bạn phải bật "Enable export" **lúc request** (certificate cấp trước ngày đó hoặc không bật thì vẫn không export được), và loại này **tính phí**: ~$7 cho mỗi tên miền, ~$79 cho mỗi tên wildcard, tính lúc cấp và mỗi lần gia hạn. Đề thi SAA-C03 và hầu hết tài liệu vẫn theo quy tắc cũ: **"ACM public certificate không export được → cần cert trên EC2/on-prem thì dùng Private CA hoặc import cert bên ngoài"**. Trả lời đề theo quy tắc cũ.
 
 ### 7.2 ACM Private CA
 
-- Bạn tự là CA, issue cert internal.
-- Use case: mTLS giữa microservice, IoT device, internal service.
-- Cost: per CA + per cert.
+- **Bạn tự làm CA**: dựng một CA riêng của tổ chức và tự cấp certificate cho hệ thống nội bộ. Trình duyệt ngoài Internet **không tin** các certificate này; chỉ máy nào được cài root CA của bạn mới tin.
+- Use case: **mTLS** giữa các microservice (hai phía cùng xuất trình certificate để xác thực lẫn nhau), thiết bị IoT, dịch vụ nội bộ không có tên miền công khai.
+- Certificate do Private CA cấp **export được** kèm private key, nên cài được lên EC2, container, server on-prem.
+- Cost (us-east-1): ~**$400 / CA / tháng** ở chế độ thường (~$50 ở chế độ short-lived certificate), cộng tiền từng certificate, ~$0.75 mỗi cái cho 1.000 cái đầu trong tháng.
+
+```
+1 Private CA + 200 certificate/tháng = $400 + 200 × $0.75 = $550/tháng
+```
 
 ### 7.3 Import certificate
-- Cert từ CA bên ngoài (DigiCert, GoDaddy) → import vào ACM.
-- AWS không renew giúp; phải re-import.
+- Certificate mua từ CA bên ngoài (DigiCert, GoDaddy) → import vào ACM (kèm private key) để gắn lên ALB/CloudFront.
+- AWS **không renew giúp**; bạn tự mua bản mới và re-import trước khi hết hạn. Nên đặt cảnh báo: ACM phát event sắp hết hạn qua EventBridge, và AWS Config có rule kiểm certificate sắp hết hạn.
 
 ### 7.4 Cert nằm ở Region nào — bẫy `us-east-1`
 
@@ -387,7 +674,7 @@ Khi bắt buộc **traffic không được ai giải mã giữa đường** (LB 
 
 Encryption chống **đọc trộm**. Object Lock chống **xoá/ghi đè** — kể cả bởi chính admin có quyền cao. Đây là cơ chế **WORM (Write Once Read Many)** của S3, là đáp án chuẩn cho đề nói "immutable", "cannot be deleted even by root", "WORM", "SEC 17a-4", "ransomware".
 
-**Điều kiện bắt buộc**: bucket phải **bật Versioning**, và Object Lock phải được bật **lúc tạo bucket** (bật sau cần mở ticket AWS Support). Khi Object Lock đã bật, versioning **không tắt được nữa**.
+**Điều kiện bắt buộc**: bucket phải **bật Versioning**. Đề thi và tài liệu cũ ghi Object Lock chỉ bật được **lúc tạo bucket** (bật sau phải mở ticket AWS Support); docs hiện tại cho phép **bật trên bucket có sẵn** ngay trong console/API, miễn là bucket đã bật Versioning. Khi Object Lock đã bật thì **không tắt được nữa**, và versioning cũng **không suspend được nữa**.
 
 Object Lock có **2 cơ chế độc lập, dùng chung hoặc riêng**: *retention period* và *legal hold*.
 
@@ -421,16 +708,32 @@ Kịch bản tấn công thật: attacker lấy được credential admin → xo
 
 > 💡 So sánh nhanh nhóm "chống xoá" hay bị lẫn: **Versioning** = giữ bản cũ; **MFA Delete** = thêm bước xác thực khi xoá; **Object Lock** = **cấm xoá** theo thời hạn; **S3 Glacier Vault Lock** = WORM cho **Vault kiểu Glacier cũ**, policy khoá vĩnh viễn sau khi lock. Đề mô tả "S3 bucket + immutable" → Object Lock, không phải Vault Lock.
 
-> 🪤 Bẫy thi: "bật Object Lock cho bucket **đang chạy**" → giao diện không có nút; điều kiện là bật lúc tạo bucket (hoặc qua Support). Đáp án kiến trúc thường là **tạo bucket mới có Object Lock rồi copy/replicate dữ liệu sang**.
+> 🪤 Bẫy thi: "bật Object Lock cho bucket **đang chạy**" → theo đề thi và tài liệu cũ, Object Lock chỉ bật được lúc tạo bucket, nên đáp án kiến trúc thường là **tạo bucket mới có Object Lock rồi copy/replicate dữ liệu sang**. Thực tế hiện nay bật được trên bucket có sẵn (cần Versioning), nhưng lưu ý: bật Object Lock **không tự khoá** các object đã có — phải đặt retention/legal hold cho chúng (ví dụ bằng S3 Batch Operations), default retention của bucket chỉ áp cho object mới.
 
 ---
 
 ## 9. Macie — discover sensitive data
 
-- ML-based scan S3 bucket cho PII (SSN, credit card, name, address).
-- Generate finding, gửi Security Hub / EventBridge.
-- Use case: compliance audit, data classification.
-- Pricing: per GB scan + storage.
+**Bài toán.** Bạn có vài trăm bucket với hàng trăm triệu object tích lại qua nhiều năm. Câu hỏi của kiểm toán: *"dữ liệu cá nhân của khách hàng đang nằm ở những bucket nào?"* Không ai mở từng file ra xem được. Macie làm việc đó.
+
+**Nó làm hai việc khác nhau:**
+
+1. **Kiểm kê bucket** (chạy liên tục, tự động sau khi bật): liệt kê mọi bucket và đánh giá cấu hình bảo mật — bucket nào **public**, bucket nào **chưa mã hoá**, bucket nào **chia sẻ ra ngoài account/organization**. Phần này chỉ nhìn cấu hình, không đọc nội dung object.
+2. **Tìm dữ liệu nhạy cảm** (sensitive data discovery): **mở object ra đọc nội dung** và tìm **PII** (personally identifiable information — thông tin định danh cá nhân) như số an sinh xã hội (SSN), số thẻ tín dụng, họ tên, địa chỉ, số hộ chiếu, cùng credential như AWS secret key. Macie nhận diện bằng machine learning kết hợp **pattern matching**: AWS có sẵn bộ *managed data identifier*, và bạn tự thêm *custom data identifier* bằng regex cho định dạng riêng (mã nhân viên, mã hồ sơ bệnh án…). Chạy theo hai kiểu: *automated discovery* lấy mẫu dần trên toàn bộ bucket, hoặc *discovery job* quét đúng các bucket bạn chỉ định.
+
+**Kết quả** là các **finding** ("bucket X, object Y chứa 1.240 số thẻ tín dụng"). Finding được gửi sang **Security Hub** và **EventBridge**, từ đó nối vào Lambda/SNS để tự xử lý (ví dụ tự gắn tag, tự chặn public). Macie **chỉ phát hiện**; nó không tự mã hoá hay tự xoá gì.
+
+**Pricing** (us-east-1): ~$0.10 / bucket / tháng cho phần kiểm kê, và ~**$1 / GB** dữ liệu được đọc để tìm dữ liệu nhạy cảm.
+
+```
+Quét toàn bộ 2 TB (≈ 2.000 GB) bằng discovery job ≈ 2.000 × $1 = $2.000 cho một lượt quét
+```
+
+Vì tính theo GB đã đọc, nên giới hạn phạm vi job (theo bucket, prefix, loại file) hoặc dùng automated discovery lấy mẫu thay vì quét hết.
+
+**Use case**: kiểm toán compliance (GDPR, HIPAA, PCI-DSS), phân loại dữ liệu trước khi migrate hoặc mở quyền truy cập.
+
+> 🪤 Bẫy thi: "phát hiện **PII / dữ liệu nhạy cảm trong S3**" → **Macie**. Đừng lẫn với **GuardDuty** (phát hiện *hành vi* đáng ngờ từ log) và **Inspector** (quét *lỗ hổng phần mềm* trên EC2/container/Lambda). Macie chỉ làm việc với **S3**.
 
 ---
 
@@ -465,14 +768,72 @@ Kịch bản tấn công thật: attacker lấy được credential admin → xo
 
 ## 11. KMS performance & cost
 
-- **KMS quota**: 5,500 - 30,000 req/s depend region và operation.
-- Hit quota → throttle. Use case high-volume: **cache data key**.
-- S3 với SSE-KMS có thể tốn KMS API per request — cân nhắc SSE-S3 cho bucket truy cập cực cao.
+### 11.1 Quota: KMS chịu được bao nhiêu request
 
-### Cost optimization
-- AWS managed key (free) cho non-audit case.
-- CMK chỉ khi cần rotation control, audit, key policy.
-- Data key caching SDK (S3 Encryption Client).
+Mọi phép mã hoá đối xứng (`Encrypt`, `Decrypt`, `GenerateDataKey`, `ReEncrypt`…) trong **một account, một Region** dùng **chung một quota** tính theo request/giây. Vượt thì KMS trả `ThrottlingException`, và vì S3/EBS/SQS gọi KMS thay bạn nên lỗi hiện ra dưới dạng request S3 thất bại.
+
+| Region | Quota mặc định theo docs hiện tại |
+|--------|-----------------------------------|
+| Phần lớn Region | **10.000** request/giây |
+| us-east-2, ap-southeast-1 (Singapore), ap-southeast-2, ap-northeast-1, eu-central-1, eu-west-2, eu-south-2 | **20.000** request/giây |
+| us-east-1, us-west-2, eu-west-1 | **100.000** request/giây |
+
+> 📏 Tài liệu cũ và nhiều đề luyện (kể cả bản trước của bài này) ghi dải **5.500 / 10.000 / 30.000** request/giây. AWS đã nâng mặc định nhiều lần; con số chính xác không phải thứ đề thi hỏi. Thứ cần nhớ: quota **có tồn tại**, **dùng chung cho cả account trong Region** (mọi key, mọi dịch vụ gọi thay bạn), **xin nâng được** qua Service Quotas, và key bất đối xứng chỉ có **1.000** request/giây.
+
+Request của **AWS owned key** không tính vào quota của bạn; AWS managed key và CMK thì có. Với request cross-account, account **gọi** bị tính quota, không phải account chủ key.
+
+### 11.2 Vì sao S3 + SSE-KMS tốn request đến vậy
+
+Không có tối ưu gì thì S3 dùng **một data key riêng cho mỗi object**, nên:
+
+```
+1 PutObject SSE-KMS  →  1 request KMS GenerateDataKey
+1 GetObject SSE-KMS  →  1 request KMS Decrypt
+```
+
+Tính thử một bucket nhận 500 PUT/giây và 1.500 GET/giây:
+
+```
+500 + 1.500                       = 2.000 request KMS/giây
+                                    → mới 20% quota 10.000, chưa bị throttle
+2.000 × 86.400 giây               = 172.800.000 request/ngày
+172.800.000 × $0.03 / 10.000      = $518,40/ngày  ≈ $15.552/tháng
+```
+
+Chưa chạm quota nhưng hoá đơn đã rất lớn. Và một job phân tích đọc 15.000 object/giây ở Region quota 10.000 sẽ bị throttle ngay, kéo theo mọi ứng dụng khác trong account dùng KMS ở Region đó.
+
+### 11.3 "Cache data key" hoạt động thế nào
+
+Nguyên tắc chung: **đừng xin KMS một data key mới cho mỗi lần mã hoá; xin một lần rồi dùng lại trong một khoảng thời gian.** Mỗi lần dùng lại là một request KMS không phải gọi. Có ba dạng:
+
+**S3 Bucket Keys** (dùng cho SSE-KMS, bật bằng một tuỳ chọn trên bucket, không sửa code). Thay vì gọi KMS cho từng object, S3 xin KMS **một khoá cấp bucket** có thời hạn ngắn và giữ nó trong S3. Khoá này sinh ra data key cho các object mới, nên trong lúc nó còn hạn S3 không cần gọi KMS nữa. AWS công bố mức giảm **tới 99%** chi phí request KMS:
+
+```
+$518,40/ngày × (1 − 99%) ≈ $5,18/ngày      (trường hợp tốt nhất)
+```
+
+Mức giảm thực tế tuỳ số lượng "người gọi" khác nhau (mỗi role/account lấy bucket key riêng ít nhất một lần). Ba hệ quả phải biết: CloudTrail của KMS sẽ **ít event hơn và ghi ARN của bucket thay vì ARN từng object** (mất độ chi tiết audit theo object); policy nào dùng *encryption context* là ARN object phải sửa thành ARN bucket; và Bucket Key **chỉ áp dụng cho object ghi sau khi bật** — object cũ muốn hưởng phải copy lại. **DSSE-KMS không hỗ trợ** Bucket Keys.
+
+**Data key caching trong AWS Encryption SDK** (dùng khi **code của bạn** tự mã hoá phía client). SDK giữ data key trong bộ nhớ và dùng lại cho nhiều message, theo ngưỡng bạn đặt: tối đa bao nhiêu giây, bao nhiêu message, bao nhiêu byte cho mỗi key. Đánh đổi: một data key bảo vệ nhiều dữ liệu hơn, nên nếu lộ thì lộ nhiều hơn.
+
+**Data key reuse period của SQS/SNS** (§5.6): cùng ý tưởng, dịch vụ dùng lại một data key trong 5 phút mặc định.
+
+### 11.4 Cost optimization
+
+- **Bật S3 Bucket Keys** cho mọi bucket SSE-KMS có lưu lượng lớn. Đây là đáp án mặc định cho "giảm chi phí KMS của S3 mà vẫn giữ SSE-KMS".
+- **Gom object nhỏ thành object lớn** trước khi ghi (ví dụ dùng Firehose gom log thành file vài chục MB): số request S3 giảm thì số request KMS giảm theo.
+- **SSE-S3** cho bucket không có yêu cầu audit/kiểm soát khoá: không có request KMS nào.
+- **AWS managed key hoặc AWS owned key** (miễn phí tiền key) cho trường hợp không cần audit riêng; **CMK** chỉ khi cần điều khiển rotation, audit, key policy, cross-account.
+- **Data key caching** trong Encryption SDK cho code tự mã hoá.
+
+**Áp vào bài tập 1** (10 TB log/ngày vào S3, SSE-KMS với CMK, hoá đơn KMS $500/ngày). Tính ngược từ hoá đơn:
+
+```
+$500 ÷ $0.03 × 10.000        ≈ 166.700.000 request KMS/ngày  ≈ 1.930 request/giây
+10 TB ÷ 166.700.000 object   ≈ 60 KB mỗi object (nếu toàn bộ là PUT)
+```
+
+Kết luận rút ra từ phép tính: app đang ghi **hàng trăm triệu object nhỏ** (hoặc có một luồng đọc lại rất nhiều), mỗi object một request KMS. Cần xem trong CloudTrail/Cost Explorer tỉ lệ `GenerateDataKey` so với `Decrypt` để biết PUT hay GET chiếm phần lớn. Đề xuất theo thứ tự: bật **S3 Bucket Keys**; **gom log thành file lớn** (60 KB → 64 MB thì số object giảm khoảng 1.000 lần); và cân nhắc **SSE-S3** nếu log không cần audit theo khoá.
 
 ---
 
@@ -482,11 +843,11 @@ Kịch bản tấn công thật: attacker lấy được credential admin → xo
 2. **"AWS managed key có thể custom policy"** → **Sai**, chỉ CMK.
 3. **"Bật encryption RDS sau khi tạo"** → **Sai**, phải snapshot → copy encrypt → restore.
 4. **"Secrets Manager free"** → **Sai**, $0.40/secret/tháng + API.
-5. **"ACM cert export để dùng on-prem server"** → **Sai**, không export được. ACM Private CA mới issue cert export được.
+5. **"ACM cert export để dùng on-prem server"** → **Sai** theo đề thi: ACM public cert không export được, ACM Private CA mới issue cert export được. (Thực tế từ 6/2025 có loại exportable public certificate trả phí, phải bật lúc request — xem §7.1.)
 6. **"Cross-region KMS key tự động"** → **Sai**, cần Multi-region key explicit, hoặc encrypt với key region đích.
 7. **"SSE-C: AWS lưu key"** → **Sai**, customer gửi key mỗi request, AWS không lưu.
-8. **"CloudHSM cluster 1 node là HA"** → **Sai**, cần ≥2 HSM cho HA.
-9. **"DynamoDB không encrypted"** → **Sai**, mặc định encrypted với AWS managed key.
+8. **"CloudHSM cluster 1 node là HA"** → **Sai**, cần ≥2 HSM ở 2 AZ cho HA.
+9. **"DynamoDB không encrypted"** → **Sai**, luôn mã hoá at rest, mặc định bằng AWS owned key, không tắt được.
 
 ---
 

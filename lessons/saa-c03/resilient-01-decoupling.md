@@ -48,6 +48,19 @@ Trong Domain 2 (Design Resilient Architectures), tư duy cốt lõi là: **giả
   <text x="593" y="166" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">throughput ỔN ĐỊNH</text>
 </svg>
 
+**Tính thử để thấy queue "hấp thụ" nghĩa là gì.** Giả sử backend xử lý được 200 request/giây, bình thường nhận 50 request/giây, và một đợt flash sale đẩy lên 1.000 request/giây trong 5 phút:
+
+```
+Không có queue:  1.000 đến − 200 xử lý được = 800 request/giây bị từ chối hoặc timeout
+                 800 × 300 giây              = 240.000 request mất trong 5 phút
+
+Có SQS ở giữa:   240.000 message nằm chờ trong queue, không mất cái nào
+                 Hết spike, tải về 50/giây → consumer dư 200 − 50 = 150 message/giây để xả hàng tồn
+                 240.000 ÷ 150               = 1.600 giây ≈ 27 phút là queue về 0
+```
+
+Cái giá của load leveling là **độ trễ**: request cuối đợt spike phải chờ gần nửa tiếng mới được xử lý. Muốn rút ngắn thì cho fleet consumer scale theo độ sâu queue (số message đang chờ), thay vì nuôi sẵn 1.000 request/giây công suất cho 5 phút cao điểm mỗi ngày.
+
 > 💡 Mẹo thi: Hễ câu hỏi nhắc "spike traffic làm backend quá tải / mất request", đáp án gần như luôn là **đặt SQS ở giữa** (queue-based load leveling) để buffer.
 
 ### Stateless là gì và lưu state ở đâu?
@@ -65,17 +78,47 @@ Tier xử lý KHÔNG nên giữ state trên local disk/memory. Đẩy state ra n
 
 ## 2. Amazon SQS — hàng đợi message
 
-SQS là **pull-based queue**: consumer chủ động poll message. Message được lưu tối đa 14 ngày, mặc định 4 ngày. Đây là dịch vụ decoupling "mặc định" cho point-to-point.
+SQS là một **hàng đợi message**: **producer** (bên gửi) bỏ message vào queue, **consumer** (bên xử lý) lấy ra làm rồi xoá đi. Nó là **pull-based**, nghĩa là SQS không tự đẩy message cho ai cả; consumer phải chủ động gọi API `ReceiveMessage` để hỏi "có việc không?" (động tác này gọi là *poll*). Mỗi message chỉ dành cho **một** consumer xử lý, nên SQS là dịch vụ decoupling "mặc định" cho kiểu **point-to-point** (một bên gửi, một nhóm worker cùng loại nhận).
+
+Message chưa ai xử lý sẽ nằm trong queue theo **retention**: mặc định **4 ngày**, chỉnh được từ **60 giây tới 14 ngày**. Quá hạn thì SQS tự xoá. Đây là lý do consumer chết cả cuối tuần mà thứ Hai bật lại vẫn còn đủ việc để làm.
 
 ### Standard vs FIFO
 
+SQS có hai loại queue, khác nhau ở chỗ chúng đánh đổi **thứ tự và chống trùng** lấy **thông lượng**.
+
+**Standard queue — nhanh, nhưng có thể trùng và lệch thứ tự.** SQS lưu mỗi message thành nhiều bản trên nhiều server để không mất dữ liệu. Hệ quả của cách lưu phân tán này:
+
+- **At-least-once delivery** (giao ít nhất một lần): nếu lúc bạn gọi `DeleteMessage` có một server giữ bản sao đang không liên lạc được, bản sao đó vẫn còn và message có thể được giao **lần nữa**. Hiếm, nhưng có.
+- **Best-effort ordering**: SQS cố giao theo thứ tự gửi nhưng không cam kết, vì mỗi lần poll chỉ lấy mẫu từ một số server.
+- Đổi lại, không có nút cổ chai nào: docs ghi thông lượng "gần như không giới hạn" số lời gọi API mỗi giây, tức bạn không phải khai báo hay xin trước công suất.
+
+Vì có thể nhận trùng, consumer của Standard queue phải **idempotent**: xử lý cùng một message hai lần cho kết quả giống xử lý một lần. Ví dụ "đặt trạng thái đơn #123 = PAID" là idempotent; "trừ 100.000đ trong ví" thì không, chạy hai lần là trừ hai lần.
+
+**FIFO queue — đúng thứ tự, không trùng, nhưng có trần thông lượng.** FIFO (first-in-first-out) thêm hai cơ chế:
+
+- **`MessageGroupId` — giữ thứ tự theo nhóm.** Mỗi message gửi vào FIFO queue phải kèm một group ID (ví dụ `order-123` hoặc `user-42`). Trong **cùng một group**, SQS giao đúng thứ tự gửi và **không giao message kế tiếp cho tới khi message trước được xoá** (hoặc hết visibility timeout). Các group khác nhau thì chạy song song. Nên chọn group ID càng mịn càng tốt: dùng chung một group cho cả queue thì toàn bộ queue chỉ xử lý được từng message một.
+- **Khử trùng (deduplication) trong 5 phút.** Mỗi message có một `MessageDeduplicationId`. Nếu trong vòng **5 phút** có message thứ hai mang cùng ID, SQS nhận lời gọi nhưng **không đưa thêm bản nào vào queue**. Bạn tự cấp ID này, hoặc bật **content-based deduplication** để SQS tự lấy mã băm SHA-256 của nội dung message làm ID (hai message nội dung y hệt trong 5 phút coi như một). Tình huống điển hình: producer gửi xong bị timeout mạng, không biết đã vào chưa nên gửi lại. Với FIFO, lần gửi lại bị loại.
+
+"Exactly-once" của FIFO vì thế nên hiểu là: **không có bản trùng nào được đưa vào queue**, và mỗi message chỉ giao cho một consumer tại một thời điểm. Nếu consumer xử lý quá visibility timeout mà chưa xoá thì message vẫn hiện lại như thường (xem mục Visibility Timeout bên dưới).
+
+**Vì sao FIFO chậm hơn?** Giữ thứ tự và tra bảng khử trùng buộc SQS xử lý tuần tự thay vì rải tự do ra nhiều server, nên có hạn mức cứng: **300 lời gọi API mỗi giây** cho mỗi loại thao tác (gửi, nhận, xoá). Mỗi lời gọi batch chở tối đa 10 message, nên trần thực tế là:
+
+```
+Không batch:  300 lời gọi/giây × 1 message   =   300 message/giây
+Có batch:     300 lời gọi/giây × 10 message  = 3.000 message/giây
+```
+
+Cần hơn nữa thì bật **high throughput mode**: SQS chia queue thành nhiều partition theo `MessageGroupId`, trần lên tới **70.000 lời gọi/giây** ở us-east-1, us-west-2, eu-west-1 (các Region khác thấp hơn, từ 2.400 tới 19.000). Điều kiện đi kèm là phải có nhiều group ID khác nhau, vì thứ tự chỉ còn được giữ trong từng group.
+
+Ví dụ chọn loại queue: hệ thống ghi nhận 5.000 giao dịch/giây, yêu cầu đúng thứ tự theo từng tài khoản. FIFO thường (3.000 message/giây khi batch) không đủ; dùng FIFO high throughput với `MessageGroupId = account_id`. Còn nếu là 5.000 job resize ảnh/giây, không cần thứ tự, thì Standard là đủ và không phải nghĩ tới hạn mức.
+
 | Tiêu chí | Standard | FIFO |
 |---|---|---|
-| Throughput | Gần như không giới hạn | 300 msg/s (3000 với batching), 70k/s với high throughput mode |
-| Ordering | Best-effort, **không đảm bảo** | Đảm bảo thứ tự (theo MessageGroupId) |
-| Delivery | **At-least-once** (có thể trùng) | **Exactly-once** (khử trùng) |
+| Throughput | Gần như không giới hạn, không cần khai báo trước | 300 lời gọi API/giây (3.000 message/giây khi batch 10); high throughput mode tới 70.000 lời gọi/giây ở Region lớn |
+| Ordering | Best-effort, **không đảm bảo** | Đảm bảo thứ tự **trong từng `MessageGroupId`** |
+| Delivery | **At-least-once** (có thể trùng) | **Exactly-once** (khử trùng trong cửa sổ 5 phút) |
 | Tên queue | bất kỳ | phải kết thúc `.fifo` |
-| Dedup | không | MessageDeduplicationId hoặc content-based |
+| Dedup | không, consumer phải idempotent | `MessageDeduplicationId` tự cấp, hoặc content-based (SHA-256 của body) |
 
 > 💡 Mẹo thi: "Order of transactions matters" / "no duplicates" → **SQS FIFO**. "Maximum throughput, order không quan trọng" → **SQS Standard**.
 
@@ -122,6 +165,17 @@ Khi consumer nhận message, message bị "ẩn" trong khoảng **visibility tim
 
 ### Long Polling vs Short Polling
 
+Vì SQS là pull-based, consumer phải hỏi liên tục, và SQS tính tiền theo **số lời gọi API** kể cả khi câu trả lời là "không có gì". Hai cách hỏi:
+
+- **Short polling** (mặc định, `WaitTimeSeconds = 0`): SQS trả lời ngay lập tức, queue rỗng thì trả về rỗng. Consumer lại phải hỏi tiếp.
+- **Long polling** (`WaitTimeSeconds` từ 1 tới **20 giây**): nếu queue đang rỗng, SQS **giữ kết nối** và chỉ trả lời khi có message tới hoặc hết thời gian chờ. Message vừa tới là consumer nhận được ngay, không phải đợi tới lượt hỏi kế tiếp.
+
+```
+Queue rỗng suốt 1 ngày, 1 consumer:
+Short polling, hỏi mỗi 100 ms:  10 lời gọi/giây × 86.400 giây = 864.000 lời gọi rỗng
+Long polling 20 giây:            3 lời gọi/phút × 1.440 phút  =   4.320 lời gọi rỗng   (ít hơn 200 lần)
+```
+
 | | Short polling | Long polling |
 |---|---|---|
 | Hành vi | Trả lời ngay, có thể rỗng | Chờ tới khi có message (tối đa `WaitTimeSeconds`, max 20s) |
@@ -138,17 +192,28 @@ DLQ là queue riêng nhận các message **xử lý thất bại nhiều lần**
 
 ### SQS — các tính năng khác hay hỏi
 
-- **Delay queue**: trì hoãn message hiển thị (tối đa 15 phút).
-- **Message size**: tối đa 256 KB. Payload lớn hơn → dùng **SQS Extended Client + S3** (lưu body ở S3, để con trỏ trong message).
-- **Lambda trigger**: SQS có thể trigger Lambda (event source mapping) — pattern serverless decoupling rất phổ biến.
+**Delay queue.** Message gửi vào sẽ bị **ẩn một khoảng thời gian rồi mới cho consumer thấy**, từ 0 (mặc định) tới tối đa **15 phút**. Dùng khi muốn hoãn xử lý, ví dụ "gửi email nhắc sau 10 phút nếu khách chưa thanh toán". Khác visibility timeout ở thời điểm: delay ẩn message **ngay khi vừa gửi vào**, còn visibility timeout ẩn message **sau khi một consumer đã nhận**.
+
+**Message size.** SQS chở dữ liệu dạng text (JSON, XML), không phải để chuyển file. Đề thi và hầu hết tài liệu dùng trần **256 KB/message**; docs hiện tại đã nâng lên **1 MiB**. Lớn hơn thế (ảnh, video, file báo cáo) thì dùng **SQS Extended Client Library**: thư viện tự upload nội dung lên **S3** và chỉ bỏ vào queue một con trỏ (bucket + key); phía consumer thư viện tự tải về. Cách này chở được payload tới 2 GB.
+
+**Lambda trigger (event source mapping).** Lambda không tự biết trong queue có gì. **Event source mapping** là một bộ phận của dịch vụ Lambda **poll queue thay bạn**: nó gọi `ReceiveMessage`, gom message thành lô (batch), gọi hàm của bạn với lô đó, và nếu hàm chạy xong không lỗi thì tự xoá message khỏi queue. Bạn không viết vòng lặp poll, không nuôi EC2 để chạy consumer. Nếu hàm báo lỗi, message không bị xoá, hết visibility timeout sẽ hiện lại và được thử lại; quá `maxReceiveCount` thì sang DLQ. Vì vậy visibility timeout của queue phải dài hơn timeout của hàm (AWS khuyên ít nhất **gấp 6 lần**: hàm timeout 30 giây thì đặt 180 giây), nếu không message hiện lại khi hàm vẫn đang chạy và bị xử lý trùng.
 
 ## 3. Amazon SNS — Pub/Sub
 
-SNS là **push-based**, mô hình **publisher → topic → nhiều subscriber**. Một message publish lên topic được đẩy tới TẤT CẢ subscriber.
+SNS (Simple Notification Service) làm việc ngược với SQS. Ở SQS, một message chỉ tới **một** consumer và consumer phải tự đi lấy. Ở SNS, bên gửi (**publisher**) đăng message lên một **topic** (kênh có tên), và SNS **tự đẩy một bản sao tới mọi bên đã đăng ký** (**subscriber**) của topic đó. Mô hình này gọi là **pub/sub**, và vì SNS chủ động đẩy nên nó là **push-based**: subscriber không poll gì cả.
 
-- Subscriber: SQS, Lambda, HTTP/S endpoint, Email, SMS, **Kinesis Data Firehose**.
-- **SNS FIFO** tồn tại (ghép với SQS FIFO) để giữ ordering trong fan-out.
-- SNS không lưu trữ message lâu — nếu subscriber lỗi và không có buffer, message có thể mất (trừ khi có DLQ/retry).
+Các loại subscriber: **SQS**, **Lambda**, **HTTP/S endpoint**, **Email**, **SMS**, mobile push, và **Kinesis Data Firehose** (để lưu mọi message xuống S3). Một topic Standard nhận được tới 12,5 triệu subscription.
+
+**SNS không phải nơi lưu message.** Publish xong là SNS giao ngay, và topic Standard không giữ lại bản nào để đọc sau. Nếu subscriber đang lỗi, SNS thử giao lại theo một lịch cố định rồi **bỏ message**:
+
+| Loại subscriber | SNS thử lại tới đâu |
+|---|---|
+| Do AWS quản lý: **SQS, Lambda** | 100.015 lần, trải trong **23 ngày** |
+| Do bạn quản lý: **HTTP/S, Email, SMS, mobile push** | 50 lần, trải trong **6 giờ** |
+
+Đọc bảng này cho đúng: retry chỉ cứu được trường hợp **đích tạm thời không nhận được**. Web server của bạn (HTTP endpoint) sập quá 6 giờ là mất message. Với Lambda, SNS giao thành công ngay khi Lambda *nhận* event; nếu sau đó hàm chạy lỗi thì đó là chuyện retry của Lambda (3 lần, xem §6), không còn là của SNS. Muốn giữ lại message giao hỏng thì gắn **DLQ (một SQS queue) vào subscription**.
+
+**SNS FIFO** là loại topic giữ thứ tự và khử trùng giống SQS FIFO, dùng khi cần fan-out mà vẫn đúng thứ tự. Nó chỉ giao tới **SQS queue**, không giao tới Lambda, HTTP, email hay SMS.
 
 ### Fan-out: SNS + SQS
 
@@ -226,13 +291,18 @@ Pattern kinh điển: publish **một** message lên SNS topic, topic fan-out t�
 
 ## 4. Amazon EventBridge — Event Bus
 
-EventBridge (tiền thân CloudWatch Events) là **serverless event bus** cho kiến trúc event-driven. Khác SNS ở chỗ: route message dựa trên **nội dung event** (content-based filtering rất mạnh), tích hợp sâu với **AWS services** và **SaaS partner**.
+Một **event** là một bản ghi JSON nói rằng "có chuyện vừa xảy ra": một object vừa được upload lên S3, một EC2 instance vừa đổi trạng thái, một đơn hàng vừa được tạo. **Kiến trúc event-driven** là kiểu hệ thống mà các thành phần không gọi nhau trực tiếp, chỉ phát event và phản ứng với event của nhau.
 
-Thành phần chính:
-- **Event bus**: default bus (AWS service events), custom bus (app của bạn), partner bus (Zendesk, Datadog...).
-- **Rules**: pattern matching trên JSON event → route tới target (Lambda, SQS, SNS, Step Functions, Kinesis...).
-- **Schema registry**: tự khám phá và lưu schema của event → generate code binding.
-- **Scheduler / scheduled rules**: chạy theo cron (thay cron server).
+EventBridge (tên cũ: CloudWatch Events) là một **event bus** serverless: một đường ống chung nhận event từ nhiều nguồn, so từng event với các **rule** bạn viết, rồi chuyển event khớp tới **target** tương ứng. Khác SNS ở hai điểm gốc. Thứ nhất, publisher của SNS phải biết và chọn topic để gửi; còn với EventBridge, nguồn cứ phát event lên bus, việc ai nhận do **rule soi nội dung event** quyết định. Thứ hai, rất nhiều nguồn đã **phát event sẵn** mà bạn không phải viết gì: hơn 90 AWS service và hơn 45 đối tác SaaS.
+
+Các thành phần:
+
+- **Event bus** có ba loại. **Default bus** có sẵn trong mỗi account, nhận event do AWS service tự phát. **Custom bus** do bạn tạo để ứng dụng của mình tự gửi event vào (API `PutEvents`). **Partner bus** nhận event từ SaaS như Zendesk, Datadog, Shopify.
+- **Rule** gồm một **event pattern** (mẫu để so khớp) và tối đa **5 target**. Target có thể là Lambda, SQS, SNS, Step Functions, Kinesis, ECS task, hoặc một bus ở account khác.
+- **Schema registry** lưu "khuôn dạng" của event: event loại này có những field nào, kiểu gì. EventBridge tự suy ra schema từ các event chạy qua bus, và từ schema đó sinh sẵn class Java/Python/TypeScript để code của bạn đọc event có gợi ý field thay vì dò JSON bằng tay. Tiện cho dev, hiếm khi là đáp án đề thi.
+- **Scheduler / scheduled rule** phát event theo lịch (cron hoặc "mỗi 5 phút"), thay cho việc nuôi một EC2 chỉ để chạy crontab.
+
+Ví dụ một event pattern:
 
 ```json
 {
@@ -242,17 +312,24 @@ Thành phần chính:
 }
 ```
 
+Pattern này khớp event thoả **cả ba** điều kiện: nguồn phát là S3, loại event là "Object Created", và trong phần `detail` tên bucket là `my-bucket`. Upload file vào bucket khác, hoặc *xoá* object trong `my-bucket`, đều không khớp và rule không chạy. Mỗi giá trị là một mảng nên có thể liệt kê nhiều lựa chọn (`["my-bucket", "other-bucket"]` nghĩa là "một trong hai"). Ngoài so khớp chính xác còn có prefix, suffix, khoảng số, `anything-but`. Đây là ý nghĩa của **content-based filtering**: lọc theo bất kỳ field nào nằm sâu trong thân event.
+
+EventBridge cũng giao lại khi target lỗi: mặc định thử trong **24 giờ, tối đa 185 lần**, sau đó bỏ event trừ khi rule có gắn DLQ. Nó còn có **archive & replay**: lưu event đã qua bus và phát lại vào bus khi cần (ví dụ để chạy lại sau khi sửa bug ở consumer).
+
 ### SNS vs EventBridge — phân biệt cho đề thi
+
+Cả hai đều "một nguồn, nhiều đích", nên đề thi phân biệt bằng các chi tiết sau. Điểm cần nhớ về tốc độ: SNS được thiết kế để giao thật nhanh tới thật nhiều đích, còn EventBridge mất thêm thời gian so khớp rule, đổi lại lọc được kỹ hơn.
 
 | | SNS | EventBridge |
 |---|---|---|
-| Mô hình | Pub/sub đơn giản | Event bus + routing nâng cao |
-| Filtering | Có (message attributes) | **Content-based mạnh hơn** (toàn bộ JSON) |
-| Throughput/latency | Rất cao, độ trễ thấp | Cao hơn về tính năng, latency nhỉnh hơn |
-| Tích hợp AWS services | Hạn chế | **90+ AWS service làm event source** |
+| Mô hình | Pub/sub: publisher chọn topic | Event bus: rule soi nội dung để định tuyến |
+| Filtering | Có, bằng filter policy trên message attributes hoặc body | **Content-based trên toàn bộ JSON**, nhiều toán tử hơn, kèm biến đổi input trước khi giao |
+| Độ trễ điển hình | Dưới 30 ms | Khoảng 0,5 giây |
+| Thông lượng mặc định (us-east-1) | 30.000 message/giây mỗi account | 10.000 lời gọi `PutEvents`/giây (cả hai đều xin tăng được) |
+| Tích hợp AWS services | Một số service publish được vào topic | **90+ AWS service phát event sẵn** vào default bus |
 | SaaS / third-party | Không | **Có (partner event source)** |
-| Số target/rule | Nhiều subscriber | Tối đa 5 target/rule |
-| Replay/Archive | Không | **Có archive & replay event** |
+| Số đích | Tới 12,5 triệu subscription/topic | Tối đa **5 target/rule** (mỗi bus 300 rule) |
+| Replay/Archive | Không (topic Standard) | **Có archive & replay event** |
 
 > 💡 Mẹo thi:
 > - "React tới event từ AWS service (S3 upload, EC2 state change), hoặc từ SaaS, có filtering phức tạp, hoặc cần schedule (cron)" → **EventBridge**.
@@ -260,10 +337,28 @@ Thành phần chính:
 
 ## 5. Amazon Kinesis — Streaming dữ liệu
 
-Kinesis dành cho **real-time streaming** với volume lớn, nhiều consumer đọc lại cùng dữ liệu, và cần **giữ thứ tự theo partition key**.
+**Streaming** là dữ liệu đến liên tục, từng mẩu nhỏ, không có điểm kết thúc: mỗi cú click, mỗi dòng log, mỗi lần cảm biến đo là một **record** (thường vài trăm byte tới vài KB). Kinesis là họ dịch vụ nhận loại dữ liệu này. Trong bài decoupling chỉ cần nắm nó khác queue ở đâu; chi tiết về shard, Firehose và Flink nằm ở bài ch2-06 (Data ingestion & analytics).
 
-- **Kinesis Data Streams**: retention 1–365 ngày, nhiều consumer đọc **độc lập** (mỗi consumer giữ vị trí riêng), có thể **replay** dữ liệu.
-- **Kinesis Data Firehose**: tự động deliver vào S3, Redshift, OpenSearch (near-real-time, không cần quản lý consumer).
+**Kinesis Data Streams là một cuốn log chỉ ghi nối đuôi, không phải queue.** Ở SQS, consumer xử lý xong thì **xoá** message, không ai đọc lại được nữa. Ở Kinesis, record ghi vào sẽ **nằm yên theo đúng thứ tự cho tới khi hết hạn lưu**; consumer đọc không làm mất gì, nó chỉ tự nhớ mình đã đọc tới đâu. Từ một khác biệt đó suy ra ba tính chất đề thi hay hỏi:
+
+- **Nhiều consumer độc lập.** Team fraud, team analytics, team archive cùng đọc một stream, mỗi bên giữ vị trí đọc riêng, không ai lấy mất dữ liệu của ai. Với SQS muốn vậy phải fan-out ra ba queue.
+- **Replay.** Consumer có bug thì sửa xong lùi vị trí đọc về hôm qua rồi đọc lại. Chỉ làm được trong **retention**: mặc định **24 giờ**, tăng được tới **365 ngày**.
+- **Thứ tự theo partition key.** Mỗi record gửi kèm một **partition key** (ví dụ `device_id`). Stream được chia thành nhiều **shard**, mỗi shard là một làn log riêng; Kinesis băm partition key để chọn shard, nên record cùng key luôn vào cùng shard và giữ đúng thứ tự trong shard đó. Thứ tự được đảm bảo **theo từng key**, không phải trên toàn stream.
+
+**"Volume lớn" là bao nhiêu?** Shard cũng là đơn vị đo công suất. Mỗi shard nhận ghi **1 MB/giây hoặc 1.000 record/giây** (chạm cái nào trước thì bị chặn) và cho đọc **2 MB/giây**. Cần nhiều hơn thì thêm shard, không có trần số shard:
+
+```
+Tải: 2.000 thiết bị IoT, mỗi thiết bị gửi 1 record 1 KB mỗi giây
+     = 2.000 record/giây = 2 MB/giây
+
+Theo dung lượng:  2 MB/giây ÷ 1 MB/giây              = 2 shard
+Theo số record:   2.000 record/giây ÷ 1.000 record/giây = 2 shard
+→ cần 2 shard. Tải gấp 100 lần (200 MB/giây) thì 200 shard.
+```
+
+Vậy tín hiệu "thousands of records per second", "clickstream", "IoT telemetry" trong đề nghĩa là cỡ hàng nghìn record/giây trở lên, liên tục, và thường có nhiều bên cùng cần đọc. Không muốn tự tính shard thì chọn chế độ **on-demand**, AWS tự thêm bớt shard theo tải.
+
+**Kinesis Data Firehose** (tên mới: Amazon Data Firehose) là dịch vụ khác hẳn: một băng chuyền một chiều nhận record, gom thành lô rồi tự ghi vào S3, Redshift hoặc OpenSearch. Nó không lưu dữ liệu để đọc lại và không có consumer nào do bạn viết. Vì phải gom lô nên nó là **near-real-time**, không phải real-time.
 
 ### Kinesis Data Streams vs Data Firehose — phân biệt tình huống
 
@@ -273,8 +368,8 @@ Hai dịch vụ khác nhau về bản chất: **Data Streams** là một stream 
 |---|---|---|
 | Mục đích | **Custom real-time**: tự viết consumer xử lý từng record | **Nạp (ingest) near-real-time** vào đích, **no-code** |
 | Đích đến | Bất kỳ (Lambda, KCL app, Flink, Firehose...) | **S3, Redshift, OpenSearch, Splunk**, HTTP endpoint |
-| Độ trễ | Real-time (~200 ms) | Near-real-time (buffer theo size/time, tối thiểu ~60s) |
-| Replay | **Có** (retention 1–365 ngày) | **Không** (không lưu trữ, không đọc lại) |
+| Độ trễ | Real-time (~200 ms) | Near-real-time do gom lô theo size/time. Đề thi dùng mốc **~60 giây trở lên**; hiện nay chỉnh được thời gian đệm từ 0 tới 900 giây (mặc định 300 giây với đích S3) |
+| Replay | **Có** (retention 24 giờ → 365 ngày) | **Không** (không lưu trữ, không đọc lại) |
 | Multi-consumer | **Có** (nhiều app đọc độc lập, fan-out) | Không (chỉ chảy tới đích đã cấu hình) |
 | Vận hành | Quản lý shard/on-demand, quản lý consumer | **Fully managed, tự scale**, không có shard |
 | Transform | Trong consumer của bạn | Lambda transform + convert sang Parquet/ORC |
@@ -299,13 +394,15 @@ Hai dịch vụ khác nhau về bản chất: **Data Streams** là một stream 
 
 ### SQS vs SNS vs EventBridge vs Kinesis
 
+Bốn dịch vụ khác nhau ở hai câu hỏi gốc: message **giao cho một bên hay nhiều bên**, và **giao xong thì còn hay mất**. SQS giao cho một bên rồi xoá. SNS và EventBridge đẩy cho nhiều bên rồi không giữ. Kinesis giữ lại cho nhiều bên tự đọc.
+
 | Yêu cầu | Chọn |
 |---|---|
 | Point-to-point queue, buffer load, retry, DLQ | **SQS** |
-| Đảm bảo ordering + no duplicate, 1 consumer group | **SQS FIFO** |
-| Fan-out 1→nhiều, pub/sub, throughput cao | **SNS** |
+| Đảm bảo ordering + no duplicate, mỗi message chỉ một nhóm worker cùng loại xử lý | **SQS FIFO** |
+| Fan-out 1→nhiều, pub/sub, giao nhanh (dưới 30 ms) tới rất nhiều subscriber | **SNS** |
 | Event-driven từ AWS services/SaaS, filtering phức tạp, schedule | **EventBridge** |
-| Streaming real-time, nhiều consumer đọc lại, replay, big data, ordering theo shard | **Kinesis** |
+| Streaming real-time từ hàng nghìn record/giây, nhiều consumer đọc lại, replay, big data, ordering theo partition key (trong từng shard) | **Kinesis** |
 
 > 💡 Mẹo thi: Tín hiệu nhận diện Kinesis: "real-time analytics", "clickstream", "IoT telemetry", "thousands of records/sec", "multiple consumers replaying data", "ordered per device". Nếu chỉ là "decouple 2 service / buffer task" thì **đừng** chọn Kinesis (overkill) → SQS.
 
@@ -323,10 +420,19 @@ API Gateway cung cấp:
 
 ### Async decoupling với Lambda
 
-- Lambda gọi async (SNS, S3 event, EventBridge) có **retry tự động** và có thể cấu hình **on-failure destination** (SQS/SNS).
-- Để chống quá tải downstream: **API Gateway → SQS → Lambda** (queue làm buffer) thay vì API Gateway gọi thẳng Lambda khi traffic spike và backend chậm.
+Lambda có ba kiểu được gọi, và mỗi kiểu xử lý lỗi khác nhau. Biết kiểu nào đang dùng thì mới biết message có bị mất khi hàm lỗi hay không.
 
-> ⚠️ Bẫy: API Gateway có timeout tích hợp **29 giây**. Tác vụ chạy lâu → trả về 202 ngay, đẩy job vào **SQS/Step Functions** xử lý bất đồng bộ, đừng giữ kết nối đồng bộ.
+| Kiểu gọi | Ai gọi | Hàm lỗi thì sao |
+|---|---|---|
+| **Synchronous** (đồng bộ) | API Gateway, ALB, SDK gọi trực tiếp | Bên gọi **đứng chờ** kết quả và nhận luôn lỗi. Lambda **không tự retry**; thử lại hay không là việc của bên gọi |
+| **Asynchronous** (bất đồng bộ) | SNS, S3 event, EventBridge | Lambda nhận event, xếp vào hàng đợi nội bộ của nó và trả lời "đã nhận" ngay. Hàm lỗi thì Lambda **tự chạy lại 2 lần nữa** (tổng 3 lần): chờ 1 phút trước lần hai, 2 phút trước lần ba |
+| **Event source mapping** | Lambda tự poll SQS, Kinesis, DynamoDB Streams | Message không bị xoá khỏi nguồn, nên được thử lại theo cơ chế của nguồn (với SQS: visibility timeout rồi DLQ) |
+
+Với kiểu async, sau 3 lần vẫn lỗi thì Lambda **bỏ event**. Muốn giữ lại, cấu hình **on-failure destination** (SQS, SNS, EventBridge hoặc một Lambda khác nhận bản ghi về lần gọi hỏng) hoặc DLQ cho hàm. Event cũng bị bỏ nếu nằm chờ trong hàng đợi nội bộ quá **6 giờ** (mặc định), chẳng hạn khi hàm bị throttle kéo dài.
+
+Để chống quá tải downstream, dùng **API Gateway → SQS → Lambda** thay vì API Gateway gọi thẳng Lambda. Khi gọi thẳng, 1.000 request tới cùng lúc sẽ thành 1.000 bản Lambda chạy song song cùng mở kết nối vào database. Có queue ở giữa, API Gateway chỉ ghi message vào SQS rồi trả lời client ngay, còn Lambda rút message ra theo nhịp bạn giới hạn được (batch size, maximum concurrency của event source mapping).
+
+> ⚠️ Bẫy: API Gateway có timeout tích hợp **29 giây**: backend không trả lời kịp thì client nhận lỗi 504 dù Lambda vẫn đang chạy. (Hiện nay xin nâng được mức này cho REST API loại Regional và private, đánh đổi bằng việc giảm throttle quota của account; đề thi vẫn coi 29 giây là giới hạn.) Tác vụ chạy lâu → trả về 202 ngay, đẩy job vào **SQS/Step Functions** xử lý bất đồng bộ, đừng giữ kết nối đồng bộ.
 
 ### Step Functions — orchestration nhiều bước
 
@@ -335,8 +441,8 @@ Khi một quy trình gồm **nhiều bước tuần tự/rẽ nhánh** (gọi La
 | | Standard workflow | Express workflow |
 |---|---|---|
 | Thời lượng tối đa | **Tới 1 năm** | **≤ 5 phút** |
-| Mô hình thực thi | Exactly-once, có audit đầy đủ | At-least-once (Async) hoặc Sync |
-| Tần suất | Ít execution, chạy dài | **Rất cao** (hàng triệu/s), ngắn |
+| Mô hình thực thi | Exactly-once, lưu lịch sử từng bước 90 ngày để audit | Async: at-least-once (có thể chạy lặp, bước phải idempotent). Sync: at-most-once |
+| Tần suất | Ít execution, chạy dài. Quota mặc định ở us-east-1: khởi động ~300 execution/giây | Nhiều execution ngắn. Quota mặc định: khởi động 6.000 execution/giây, không giới hạn số state transition |
 | Giá | Theo **state transition** | Theo **số execution + thời gian/bộ nhớ** |
 | Hợp với | Quy trình nghiệp vụ dài (order fulfillment, ETL, human approval) | Sự kiện high-volume, xử lý ngắn (IoT ingestion, streaming backend) |
 
@@ -346,6 +452,8 @@ Khi một quy trình gồm **nhiều bước tuần tự/rẽ nhánh** (gọi La
 > - Workflow **rất ngắn, tần suất cực cao** → **Express**.
 
 > ⚠️ Bẫy: Đừng chọn "Lambda gọi Lambda nhau" hay "chuỗi SQS thủ công" khi đề nhấn mạnh **orchestration / điều phối / theo dõi trạng thái nhiều bước** — đó là dấu hiệu của **Step Functions**.
+
+Đề thi đôi khi đặt Step Functions cạnh một dịch vụ workflow đời cũ là Amazon SWF; phần so sánh nằm ở §7b bên dưới.
 
 ## 7. Microservices: ECS / EKS / Fargate
 
@@ -362,13 +470,23 @@ Decoupling ở tầng compute = tách monolith thành **microservices** độc l
 > - "Already using Kubernetes / cần portability K8s" → **EKS**.
 > - "Cần kiểm soát instance hoặc tiết kiệm bằng Spot/Reserved" → **ECS on EC2**.
 
-Microservices nên giao tiếp **bất đồng bộ qua SQS/SNS/EventBridge** thay vì gọi REST đồng bộ chuỗi dài (tránh cascade failure). Service discovery dùng **AWS Cloud Map**; cân bằng tải nội bộ dùng **ALB** (path/host-based routing).
+Microservices nên giao tiếp **bất đồng bộ qua SQS/SNS/EventBridge** thay vì gọi REST đồng bộ thành chuỗi dài. Lý do là **cascade failure** (lỗi dây chuyền): nếu A gọi B, B gọi C, C gọi D và tất cả đều đứng chờ, thì khi D chậm, C giữ kết nối chờ D, B chờ C, A chờ B. Mỗi service cạn dần thread và connection, và một service chậm kéo sập cả chuỗi. Có queue ở giữa thì A gửi xong là xong, D chậm chỉ làm queue dài ra.
+
+Khi vẫn cần gọi trực tiếp, hai câu hỏi phải trả lời:
+
+- **Service kia đang ở địa chỉ nào?** Container sinh ra và mất đi liên tục, IP đổi theo. **Service discovery** là cơ chế để service tìm nhau bằng **tên** thay vì IP cứng. **AWS Cloud Map** là sổ đăng ký đó: ECS tự ghi IP của từng task vào khi task khởi động và xoá khi task chết; service khác tra tên (ví dụ `orders.internal`) qua DNS hoặc API để lấy địa chỉ đang sống.
+- **Chia tải giữa nhiều bản của cùng một service thế nào?** Đặt một **ALB** nội bộ phía trước. ALB định tuyến theo đường dẫn (`/orders/*` về service orders, `/users/*` về service users, gọi là path-based routing) hoặc theo tên miền (host-based routing), nên một ALB phục vụ được nhiều microservice.
 
 ## 7b. Step Functions vs Amazon SWF (service cũ)
 
-**Amazon Simple Workflow Service (SWF)** là service điều phối workflow đời đầu: bạn tự viết
-**decider** và **activity worker**, tự chạy chúng, SWF giữ trạng thái và lịch sử thực thi.
-Đổi lại sự linh hoạt đó là phải tự vận hành code điều phối.
+Mục này nối tiếp phần Step Functions ở §6: cả hai đều là dịch vụ điều phối workflow nhiều bước.
+
+**Amazon Simple Workflow Service (SWF)** là service điều phối workflow đời đầu. SWF chỉ giữ **trạng thái và lịch sử thực thi**; mọi logic do hai loại chương trình bạn tự viết và tự chạy (trên EC2 hoặc on-premises) đảm nhận:
+
+- **Activity worker** là chương trình làm **một bước việc cụ thể** (charge thẻ, gửi email, encode video). Nó poll SWF để nhận task, làm xong thì báo kết quả.
+- **Decider** là chương trình chứa **logic điều phối**: mỗi khi một bước xong, SWF đưa lịch sử cho decider, decider đọc và quyết định bước tiếp theo là gì (chạy bước B, retry, hay kết thúc).
+
+Nói cách khác, phần mà Step Functions cho bạn khai báo bằng JSON thì ở SWF bạn phải viết thành code và nuôi server để chạy nó. Đổi lại sự linh hoạt đó là phải tự vận hành code điều phối.
 
 **AWS Step Functions** là lựa chọn mặc định cho ứng dụng mới: định nghĩa state machine bằng JSON,
 không phải nuôi decider, tích hợp sẵn với hơn 200 service, có retry/catch khai báo được.
@@ -403,7 +521,7 @@ không phải nuôi decider, tích hợp sẵn với hơn 200 service, có retry
 - ❌ Chọn SNS một mình cho fan-out cần **durability** → phải ghép **SQS**.
 - ❌ Dùng SQS khi cần **replay/nhiều consumer độc lập** → phải **Kinesis**.
 - ❌ Dùng Kinesis cho task decouple đơn giản → **overkill**, dùng **SQS**.
-- ❌ Quên rằng SQS message tối đa **256 KB** → payload lớn dùng **S3 + Extended Client**.
+- ❌ Quên rằng SQS message có trần kích thước (**256 KB** trong đề thi, 1 MiB theo docs hiện tại) → payload lớn dùng **S3 + Extended Client**.
 - ❌ Giữ session trên instance (stateful) → đẩy ra **DynamoDB/ElastiCache**.
 - ❌ Tác vụ > 29s qua API Gateway đồng bộ → chuyển **async**.
 - ❌ Visibility timeout quá ngắn → **double processing**.

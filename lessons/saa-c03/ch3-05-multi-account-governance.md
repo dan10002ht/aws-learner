@@ -18,9 +18,13 @@ Câu hỏi của sếp không phải "ai làm", mà là: *"Sao hệ thống lạ
 
 ## 2. Bức tranh tổng thể — 3 tầng governance
 
-Ba tầng, đừng trộn vào nhau: **cấu trúc** (Organizations: root, OU, member account, consolidated billing) — **chặn/cho phép** (SCP, RCP, IAM policy, permission boundary) — **vận hành** (Control Tower, IAM Identity Center, RAM, Service Catalog, License Manager).
+*Governance* ở đây nghĩa là: công ty có vài chục AWS account, làm sao đặt **một bộ luật chung** mà không phải vào từng account cấu hình tay. Các dịch vụ trong bài chia làm ba tầng, mỗi tầng trả lời một câu hỏi khác nhau — đề thi hay gài bằng cách lấy công cụ của tầng này trả lời câu hỏi của tầng kia.
 
-Nguyên tắc xuyên suốt: **Organizations không cấp quyền cho ai cả**, nó chỉ *thu hẹp* thứ IAM có thể cấp.
+- **Tầng cấu trúc — "account nào thuộc nhóm nào, ai trả tiền?"** Đây là việc của **AWS Organizations**: gom các account thành một cây (root, OU, member account) và gộp hoá đơn (consolidated billing).
+- **Tầng chặn/cho phép — "ai được làm gì?"** Gồm **IAM policy** và **permission boundary** (nằm trong từng account), cộng với **SCP** và **RCP** (gắn từ trên cây Organizations xuống).
+- **Tầng vận hành — "làm sao dựng và dùng hằng ngày cho nhanh?"** Gồm **Control Tower** (dựng sẵn cả bộ khung), **IAM Identity Center** (đăng nhập một lần vào mọi account), **RAM** (chia sẻ resource), **Service Catalog** (tự phục vụ hạ tầng đã duyệt), **License Manager** (đếm license).
+
+Nguyên tắc xuyên suốt: **Organizations không cấp quyền cho ai cả**, nó chỉ *thu hẹp* thứ IAM có thể cấp. Quyền luôn phải được cấp từ bên trong account (IAM policy hoặc resource policy); mọi thứ gắn từ cây Organizations xuống chỉ là cái trần.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Cây AWS Organizations và điểm gắn policy</title>
@@ -57,9 +61,18 @@ Nguyên tắc xuyên suốt: **Organizations không cấp quyền cho ai cả**,
 
 ## 3. AWS Organizations — cấu trúc
 
-**Management account** (tên cũ master/payer) tạo Org, mời account, gắn policy và **trả tiền cho toàn Org**. **Member account** là phần còn lại — mỗi account là một **ranh giới bảo mật và ranh giới quota** độc lập, đây mới là lý do thật để tách account. **Root** là node gốc của cây, đừng nhầm với *root user* của một account. **OU** gom account; một account thuộc **đúng một OU**.
+Một **organization** (viết tắt Org) là một nhóm AWS account được quản lý chung. Bốn khái niệm tạo nên nó:
+
+- **Management account** (tên cũ: master account, payer account) là account tạo ra Org. Nó mời hoặc tạo account khác, gắn policy lên cây, và **trả tiền cho toàn Org**. Mỗi Org có đúng một management account.
+- **Member account** là mọi account còn lại. Lý do thật để tách nhiều account không phải cho gọn, mà vì mỗi account là một **ranh giới bảo mật** (IAM của account này mặc định không chạm được resource account kia) và một **ranh giới quota** (hạn mức như số vCPU EC2 hay số lần gọi API mỗi giây tính riêng từng account — team test chạy load không ăn hết quota của production).
+- **Root** là node gốc của cây, nơi mọi OU và account treo vào. Đừng nhầm với *root user* — người dùng gốc đăng nhập bằng email của một account (mục 11). Mỗi Org có đúng một root.
+- **OU (Organizational Unit)** là một "thư mục" gom account, lồng nhau được tối đa **5 cấp** dưới root. Một account thuộc **đúng một OU** tại một thời điểm, giống một file chỉ nằm trong một thư mục.
+
+Policy gắn vào root thì áp cho cả cây, gắn vào OU thì áp cho mọi account bên dưới OU đó — đó là lý do người ta xếp OU theo *mức độ kiểm soát giống nhau* (Prod, Dev, Sandbox, Security) chứ không theo sơ đồ phòng ban.
 
 ### 3.1 Hai chế độ
+
+Khi tạo Org bạn chọn một trong hai bộ tính năng. Khác biệt gốc: chế độ đầu chỉ đụng tới **hoá đơn**, chế độ sau cho management account quyền **đặt luật** lên member account.
 
 | Chế độ | Có gì | Khi nào chọn |
 |---|---|---|
@@ -70,11 +83,15 @@ Bẫy: đề nói "chặn service ở vài account" mà Org đang ở consolidat
 
 ### 3.2 Consolidated billing
 
-Một hoá đơn, nhưng Cost Explorer vẫn tách theo `linked account` ([[ch4-04-cost-visibility]]). **Volume tier cộng dồn**: 100 account × 1 TB S3 tính bậc giá như 100 TB. **RI và Savings Plans chia sẻ toàn Org** mặc định, tắt được cho từng account. Free tier tính **một lần cho cả Org**.
+Cả Org nhận **một hoá đơn** do management account trả, nhưng chi phí không bị trộn: Cost Explorer vẫn tách được theo chiều `linked account` (tên gọi của member account trong ngữ cảnh billing — xem [[ch4-04-cost-visibility]]). Gộp hoá đơn kéo theo ba hệ quả về tiền:
+
+- **Bậc giá theo khối lượng cộng dồn.** Nhiều dịch vụ càng dùng nhiều thì đơn giá càng giảm (S3, data transfer). AWS cộng mức dùng của mọi account rồi mới xét bậc: 100 account, mỗi account 1 TB S3, được tính giá như **một** khách hàng dùng 100 TB — chạm bậc rẻ hơn (S3 Standard hạ đơn giá sau 50 TB đầu) trong khi từng account riêng lẻ không bao giờ tới.
+- **Reserved Instance và Savings Plans chia sẻ toàn Org.** Đây là các cam kết trả trước để được giảm giá compute. Account A mua mà giờ đó không dùng hết thì phần giảm giá tự áp sang instance phù hợp ở account B. Mặc định bật, tắt được cho từng account (khi một đơn vị muốn giữ riêng phần mình mua).
+- **Free tier chỉ tính một lần cho cả Org**, không phải mỗi account một suất.
 
 ### 3.3 Delegated administrator
 
-Management account không nên là nơi vận hành hằng ngày. AWS cho chỉ định một member account làm **delegated administrator** cho từng service (GuardDuty, Security Hub, Config, Backup, IAM Identity Center…) — thực tế giao cho account *Security Tooling*.
+Management account là account quyền lực nhất và cũng là nơi SCP không với tới (mục 4.3), nên càng ít người đăng nhập vào đó càng tốt. Nhưng nhiều dịch vụ bảo mật cần một "account quản trị" nhìn xuyên cả Org. Lời giải là **delegated administrator**: management account chỉ định một member account làm quản trị viên cho **từng service** — GuardDuty, Security Hub, Config, Backup, IAM Identity Center… Team security làm việc hằng ngày trong account đó (thường đặt tên *Security Tooling* hoặc *Audit*) mà không cần chạm vào management account.
 
 ---
 
@@ -82,9 +99,46 @@ Management account không nên là nơi vận hành hằng ngày. AWS cho chỉ 
 
 ### 4.1 Cơ chế: filter, không phải grant
 
-SCP định nghĩa **quyền tối đa** của principal trong account và **không cấp quyền**: SCP allow `s3:*` mà IAM policy không cho gì thì user vẫn không làm được gì. Quyền hiệu lực = **giao (AND)** của SCP và IAM policy. Mặc định AWS gắn `FullAWSAccess` ở **root, mọi OU và mọi account** — nên khi chuyển sang allow-list phải gỡ nó ở **đúng tầng đang gắn SCP allow-list**, gỡ mỗi ở root là chưa đủ. Vì vậy khi chưa cấu hình gì SCP "trong suốt". Nhiều tầng SCP cũng là **giao**: mọi tầng (root → OU cha → OU con → account) đều phải allow và không tầng nào deny.
+**Nó là gì.** SCP là một tài liệu JSON viết gần giống IAM policy, nhưng gắn vào **root, OU hoặc account** trên cây Organizations thay vì gắn vào user/role. Nó định nghĩa **quyền tối đa** mà mọi *principal* (user hoặc role — "ai" đang gọi API) trong các account bên dưới có thể có.
+
+**SCP lọc, không cấp.** Hình dung IAM policy là danh sách "việc tôi được giao", còn SCP là nội quy toà nhà. Nội quy cho phép mang laptop không có nghĩa bạn được phát laptop. Cụ thể:
+
+```
+SCP allow s3:*   +  IAM policy không cho gì      → KHÔNG làm được gì (không ai cấp quyền)
+SCP deny  ec2:*  +  IAM có AdministratorAccess  → KHÔNG dùng được EC2 (trần chặn)
+SCP allow s3:*   +  IAM cho s3:GetObject        → làm được đúng s3:GetObject
+```
+
+Quyền hiệu lực là **phần giao (AND)** của SCP và IAM policy: một action phải được cả hai bên cho qua.
+
+**Vì sao lúc mới bật thì SCP "trong suốt".** SCP theo mô hình *mặc định là chặn*: action nào không có câu `Allow` thì coi như bị cấm. Để việc bật SCP không làm sập cả Org, AWS tự gắn sẵn một SCP tên **`FullAWSAccess`** (nội dung: allow `*` trên `*`) vào **root, mọi OU và mọi account**. Nhờ nó, trần đang ở mức "mọi thứ", nên chưa cấu hình gì thêm thì SCP không thay đổi hành vi nào cả.
+
+**Nhiều tầng cũng là phép giao.** Một account chịu mọi SCP trên đường đi từ root xuống nó. Luật đánh giá có hai vế:
+
+- **Allow phải có ở MỌI tầng**: root, từng OU trên đường đi, và chính account. Thiếu `Allow` ở một tầng là action đó bị chặn cho mọi thứ bên dưới tầng ấy.
+- **Deny chỉ cần ở MỘT tầng** bất kỳ là đủ chặn, và không `Allow` nào ở tầng dưới gỡ lại được.
+
+Ví dụ cây ba tầng:
+
+```
+Root                     FullAWSAccess
+└─ OU Workloads          FullAWSAccess + SCP "Deny mọi region ngoài EU"
+   └─ OU Dev             SCP "Allow ec2:*, s3:*, cloudwatch:*"   (đã gỡ FullAWSAccess ở OU này)
+      └─ Account dev-1   FullAWSAccess
+
+Một role trong dev-1 có IAM policy AdministratorAccess:
+  ec2:RunInstances  ở eu-west-1  → ĐƯỢC   (mọi tầng allow, không tầng nào deny)
+  ec2:RunInstances  ở ap-east-1  → CHẶN   (Deny tại OU Workloads)
+  rds:CreateDBInstance eu-west-1 → CHẶN   (OU Dev không có Allow cho rds)
+```
+
+Dòng cuối là chỗ hay nhầm: không có câu `Deny rds` nào cả, RDS bị chặn chỉ vì **một tầng** trên đường đi thiếu `Allow`. `FullAWSAccess` ở root và ở account dev-1 không cứu được.
 
 ### 4.2 Deny-list vs allow-list
+
+Từ luật trên suy ra hai cách dùng SCP. **Deny-list** (danh sách cấm): để nguyên `FullAWSAccess` ở mọi tầng rồi gắn thêm SCP `Deny` cho những thứ muốn cấm — "được hết, trừ…". **Allow-list** (danh sách cho phép): thay `FullAWSAccess` bằng một SCP chỉ `Allow` vài service — "cấm hết, trừ…".
+
+Điểm dễ sai của allow-list là chỗ gỡ `FullAWSAccess`. Phải gỡ nó ở **đúng tầng bạn gắn SCP allow-list**. Trong ví dụ trên, nếu OU Dev vẫn còn `FullAWSAccess` bên cạnh SCP allow-list thì hai SCP cùng tầng cộng lại thành "allow mọi thứ", allow-list vô tác dụng. Ngược lại, gỡ `FullAWSAccess` ở root mà không gắn SCP `Allow` nào thay thế thì root không còn câu `Allow` nào, toàn bộ member account mất hết quyền.
 
 | Kiểu | Cách làm | Khi nào chọn | Bẫy |
 |---|---|---|---|
@@ -93,14 +147,49 @@ SCP định nghĩa **quyền tối đa** của principal trong account và **kh�
 
 ### 4.3 Những gì SCP KHÔNG đụng tới
 
-1. **Management account** — SCP hoàn toàn không áp, kể cả gắn ở root. Hệ quả: **đừng chạy workload trong management account**.
-2. **Service-linked role** — action của SLR không bị chặn.
-3. **Root user của management account** — không chặn được; ngược lại **root của member account thì SCP CHẶN ĐƯỢC**.
-4. **Resource-based policy** — SCP lọc theo *ai gọi trong account của tôi*, nên principal từ account ngoài đọc bucket của bạn thì SCP không có tiếng nói — lỗ hổng đó là lý do RCP ra đời.
+SCP có bốn vùng mù. Đề thi thích hỏi đúng bốn chỗ này.
+
+1. **Management account.** SCP chỉ tác động lên member account. User và role trong management account không bị ảnh hưởng, kể cả khi SCP gắn ở root của cây. Hệ quả thực tế: **đừng chạy workload trong management account**, vì thứ gì chạy ở đó nằm ngoài mọi hàng rào bạn dựng.
+2. **Service-linked role (SLR).** Đây là loại IAM role đặc biệt do **chính một dịch vụ AWS tạo ra và định nghĩa quyền**, để dịch vụ đó thay bạn gọi các dịch vụ khác — ví dụ `AWSServiceRoleForAutoScaling` cho phép Auto Scaling launch và terminate EC2. Bạn không sửa được policy của nó, và chỉ dịch vụ chủ mới assume được. SCP không chặn action thực hiện bằng SLR, vì nếu chặn được thì một SCP viết ẩu sẽ làm chính các dịch vụ AWS (kể cả những dịch vụ tích hợp với Organizations như Control Tower, Config) ngừng hoạt động. Lưu ý: miễn trừ áp cho *việc SLR làm*, không áp cho người dùng *tạo ra* SLR.
+3. **Root user của management account.** Hệ quả trực tiếp của điểm 1. Ngược lại, **root user của member account thì SCP CHẶN ĐƯỢC** — SCP áp lên mọi principal của member account, tính cả root.
+4. **Principal ở ngoài và resource-based policy.** SCP lọc theo *ai gọi từ trong account của tôi*. Một người ở account ngoài Org đọc bucket của bạn (vì bucket policy cho phép) không phải principal của bạn, nên SCP không có tiếng nói. Lỗ hổng đó là lý do RCP ra đời (mục 5).
 
 ### 4.4 Condition hay dùng
 
-`aws:RequestedRegion` khoá region (thứ thiếu ở mục 1); `aws:PrincipalOrgID` chỉ cho principal trong Org; `ec2:InstanceType` cấm family đắt ở OU Sandbox; `aws:PrincipalArn` + `ArnNotLike` chừa một break-glass role; deny `cloudtrail:StopLogging` và `config:DeleteConfigurationRecorder` để bảo vệ tầng detective của [[ch3-04-detective-controls]]. SCP có **giới hạn kích thước tài liệu** khá chặt — tách theo chủ đề.
+SCP mạnh nhờ khối `Condition`: chặn theo ngữ cảnh của request chứ không chỉ theo tên action. Năm kiểu sau gần như phủ hết các câu hỏi về SCP.
+
+**Khoá region — `aws:RequestedRegion`.** Đây chính là thứ còn thiếu trong câu chuyện ở mục 1. Key này mang giá trị region mà request gửi tới.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Sid": "DenyOutsideEU",
+    "Effect": "Deny",
+    "NotAction": ["iam:*", "organizations:*", "route53:*", "cloudfront:*", "sts:*", "support:*"],
+    "Resource": "*",
+    "Condition": {
+      "StringNotEquals": { "aws:RequestedRegion": ["eu-west-1", "eu-central-1"] },
+      "ArnNotLike":      { "aws:PrincipalArn": "arn:aws:iam::*:role/BreakGlassAdmin" }
+    }
+  }]
+}
+```
+
+Đọc policy này thành lời: *chặn mọi action, trừ nhóm trong `NotAction`, khi region không phải hai region EU và người gọi không phải role `BreakGlassAdmin`*. Hai chi tiết cần hiểu:
+
+- **Vì sao phải có `NotAction`.** IAM, Organizations, Route 53, CloudFront là **global service**: chúng không thuộc region nào và API của chúng đặt ở `us-east-1`. Request tới các dịch vụ này luôn mang `aws:RequestedRegion = us-east-1`. Không loại chúng ra thì khoá region xong không ai tạo được IAM role hay sửa được DNS nữa.
+- **Gắn ở đâu.** Gắn vào root (áp cả Org) hoặc OU. Management account vẫn không bị áp (mục 4.3).
+
+**Chừa lối thoát — `aws:PrincipalArn` với `ArnNotLike`.** *Break-glass* ("đập kính khi khẩn cấp") là một role dự phòng quyền rất cao, bình thường không ai dùng, chỉ mở khi sự cố và mọi lần dùng đều bị ghi log, báo động. Điều kiện `ArnNotLike` ở trên chừa role đó ra khỏi lệnh cấm, để khi chính SCP gây sự cố vẫn còn một đường vào sửa.
+
+**Cấm loại instance đắt — `ec2:InstanceType`.** Ở OU Sandbox, deny `ec2:RunInstances` khi instance type khớp `p*` hoặc `g*` (các họ GPU). Kết hợp với khoá region là chặn được trọn kịch bản mục 1.
+
+**Bảo vệ tầng log.** Không cần condition: deny thẳng các action `cloudtrail:StopLogging`, `cloudtrail:DeleteTrail`, `config:DeleteConfigurationRecorder`, `guardduty:DeleteDetector`. Kẻ chiếm được quyền admin của một account thường tắt log trước tiên; SCP này khiến admin account cũng không tắt được tầng detective của [[ch3-04-detective-controls]].
+
+**`aws:PrincipalOrgID` và `aws:ResourceOrgID`.** Hai key này so ID của Org. `aws:ResourceOrgID` dùng trong SCP để cấm principal của bạn ghi dữ liệu ra resource ngoài Org. `aws:PrincipalOrgID` chủ yếu dùng trong resource policy và RCP để chỉ cho principal trong Org vào. Cả hai là nền của data perimeter ở mục 5.2.
+
+> 📏 **Giới hạn kích thước.** Docs hiện tại: một SCP tối đa **10.240 ký tự**, và gắn trực tiếp được tối đa **10 SCP** lên mỗi root, OU hay account (SCP thừa kế từ tầng trên không tính vào con số này). Tài liệu ôn thi cũ ghi **5.120 ký tự và 5 SCP** — gặp con số nào trong đề thì ý cần nhớ vẫn là một: SCP có trần kích thước, nên tách theo chủ đề (một SCP cho region, một cho bảo vệ log…) và gắn ở OU cao thay vì lặp lại ở từng account.
 
 ---
 
@@ -108,7 +197,7 @@ SCP định nghĩa **quyền tối đa** của principal trong account và **kh�
 
 ### 5.1 RCP soi chiều ngược lại
 
-**SCP** giới hạn *principal trong account của tôi* được làm gì, dù resource ở đâu. **RCP (Resource Control Policy)** giới hạn *ai được chạm resource trong account của tôi*, dù họ từ đâu tới. RCP cũng **không cấp quyền**, cũng có policy mặc định cho phép mọi thứ (`RCPFullAWSAccess`), và chỉ hỗ trợ **một tập service chọn lọc** — nhóm hay bị lộ nhất: S3, STS, KMS, SQS, Secrets Manager.
+**SCP** giới hạn *principal trong account của tôi* được làm gì, dù resource ở đâu. **RCP (Resource Control Policy)** giới hạn *ai được chạm resource trong account của tôi*, dù họ từ đâu tới. RCP cũng **không cấp quyền**, cũng có policy mặc định cho phép mọi thứ (`RCPFullAWSAccess`), cũng **không áp lên resource trong management account**, và chỉ hỗ trợ **một tập service** chứ không phải toàn bộ AWS. Lúc ra mắt là năm service hay bị lộ dữ liệu nhất — S3, STS, KMS, SQS, Secrets Manager (danh sách đề thi quen dùng); docs hiện tại đã mở rộng thêm nhiều service khác như DynamoDB, ECR, CloudWatch Logs, Cognito.
 
 ### 5.2 Data perimeter
 
@@ -165,9 +254,39 @@ Nhân viên copy dữ liệu sang bucket cá nhân: IAM cho `s3:PutObject`, hợ
 
 ### 5.5 Policy Organization khác
 
-**Tag policy** chuẩn hoá key/value tag và báo cáo resource lệch chuẩn; **backup policy** đẩy backup plan của AWS Backup xuống toàn OU; **AI services opt-out** chặn AWS dùng dữ liệu của bạn để cải thiện AI service; **declarative policy** giữ *cấu hình mặc định mong muốn* của vài service, kể cả với account mới.
+SCP và RCP là hai loại policy *phân quyền* (authorization): chúng quyết định một lời gọi API được qua hay không. Organizations còn một nhóm policy *quản lý* gắn lên cây theo cùng cách (root, OU, account) nhưng làm việc khác hẳn: chúng **đẩy một cấu hình xuống** các account. Bốn loại đề thi nhắc tới:
 
-Bẫy: tag policy **không** cưỡng chế. Muốn *bắt buộc* gắn tag thì dùng **SCP `Deny` + `aws:RequestTag`**.
+**Tag policy — chuẩn hoá cách viết tag.** Bạn khai báo key chuẩn và các giá trị hợp lệ, ví dụ key phải viết đúng `CostCenter` và giá trị chỉ được là `100`, `200`, `300`. Organizations báo cáo resource nào lệch chuẩn (`costcenter`, `Cost_Center`…), và có thể bật chế độ từ chối thao tác gắn tag sai giá trị cho một số loại resource. Nó sinh ra để báo cáo chi phí theo tag không bị vỡ vì mỗi team viết một kiểu.
+
+**Backup policy — một lịch backup cho cả OU.** Bạn viết một backup plan (tần suất, giữ bao lâu, copy sang region nào) thành policy; Organizations tự tạo plan đó trong AWS Backup ở mọi account bên dưới. Account mới vào OU là có lịch backup ngay, không ai phải nhớ cấu hình.
+
+**AI services opt-out policy — không cho AWS dùng dữ liệu của bạn để huấn luyện.** Một số dịch vụ AI của AWS (Rekognition, Transcribe, Lex…) mặc định có thể lưu và dùng nội dung bạn gửi lên để cải thiện dịch vụ. Policy này tắt việc đó cho cả Org bằng một lần gắn ở root.
+
+**Declarative policy — khoá một thiết lập của dịch vụ.** Bạn khai báo *trạng thái mong muốn* của một thuộc tính cấp account, và dịch vụ giữ nguyên trạng thái đó; admin account không đổi lại được, account mới vào Org tự thừa kế. Hiện hỗ trợ chủ yếu cho EC2/VPC/EBS:
+
+| Thuộc tính | Khoá cái gì |
+|---|---|
+| VPC Block Public Access | Chặn traffic internet qua internet gateway của mọi VPC |
+| Image Block Public Access | Không cho chia sẻ AMI ra public |
+| Snapshot Block Public Access | Không cho chia sẻ EBS snapshot ra public |
+| Allowed Images Settings | Chỉ được launch từ AMI của nhà cung cấp đã duyệt |
+| Instance Metadata defaults | Ép IMDSv2 cho instance mới |
+| Serial Console Access | Bật/tắt EC2 serial console |
+
+Khác SCP ở đâu? SCP chặn **từng lời gọi API**, nên dịch vụ ra API mới là bạn phải viết thêm action vào SCP. Declarative policy được thi hành **ngay trong dịch vụ**, không phụ thuộc API nào được gọi, nên vẫn đúng khi có API mới — và nó áp lên cả service-linked role, thứ SCP bỏ qua (mục 4.3). Bạn còn đặt được thông báo lỗi riêng để người bị chặn biết phải hỏi ai.
+
+> 🪤 Bẫy thi: **tag policy không bắt buộc gắn tag.** Nó chỉ kiểm tra tag *khi tag có mặt*; tạo resource không tag nào vẫn qua. Muốn *không tag thì không tạo được* phải dùng **SCP `Deny`** với condition key `aws:RequestTag` (giá trị tag gửi kèm request tạo resource):
+>
+> ```json
+> {
+>   "Effect": "Deny",
+>   "Action": "ec2:RunInstances",
+>   "Resource": "arn:aws:ec2:*:*:instance/*",
+>   "Condition": { "Null": { "aws:RequestTag/CostCenter": "true" } }
+> }
+> ```
+>
+> `Null … "true"` nghĩa là "key này không có trong request" — tức launch instance mà thiếu tag `CostCenter` thì bị chặn. Tag policy lo *viết đúng*, SCP lo *phải có*; hai thứ dùng cùng nhau.
 
 ---
 
@@ -175,11 +294,20 @@ Bẫy: tag policy **không** cưỡng chế. Muốn *bắt buộc* gắn tag th�
 
 ### 6.1 Nó làm gì
 
-Control Tower là lớp *orchestration* dựng sẵn một **landing zone** theo best practice, chạy trên chính Organizations + Config + CloudTrail + IAM Identity Center + Service Catalog. Nó tạo: OU nền **Security** (chứa **Log Archive** + **Audit**) và một OU workload, **CloudTrail org-wide** ghi về Log Archive, **Config** + aggregator ở Audit, **IAM Identity Center** với permission set sẵn, một **home region** và khả năng **deny region không dùng**.
+Tự dựng mọi thứ ở mục 3–5 cho một Org mới là vài tuần làm việc: tạo OU, viết SCP, bật CloudTrail và Config ở từng account, gom log về một chỗ, dựng đăng nhập tập trung. **Landing zone** là tên gọi của kết quả cuối: một môi trường multi-account đã có sẵn cấu trúc account, logging, bảo mật và đăng nhập, để team chỉ việc "hạ cánh" workload vào. **Control Tower** là dịch vụ dựng landing zone đó giúp bạn trong khoảng một giờ.
 
-Bẫy kinh điển: "cần **phát hiện**" → detective (Config); "cần **ngăn** không cho tạo" → preventive (SCP) hoặc proactive (hook).
+Control Tower **không phải công nghệ mới**. Nó là lớp điều phối: thay bạn gọi và cấu hình các dịch vụ sẵn có — Organizations, CloudTrail, Config, IAM Identity Center, Service Catalog, CloudFormation StackSets — theo một thiết kế AWS đã chọn. Sau khi chạy xong bạn có:
+
+- **OU Security** chứa hai account dùng chung: **Log Archive** (bucket S3 nhận log của mọi account, gần như không ai có quyền ghi/xoá) và **Audit** (nơi team security đọc xuyên account).
+- Ít nhất một **OU cho workload** (mặc định tên *Sandbox*).
+- **CloudTrail cấp organization**: mọi account, kể cả account tạo sau này, đều ghi log API về Log Archive.
+- **AWS Config** bật ở mọi account, có **aggregator** (bảng tổng hợp trạng thái resource của cả Org) đặt ở Audit.
+- **IAM Identity Center** với vài permission set dựng sẵn (mục 7).
+- Một **home region** — region bạn chạy Control Tower, nơi đặt các resource dùng chung của landing zone — và tuỳ chọn **Region deny**: một SCP cấm dùng các region ngoài danh sách bạn cho phép.
 
 ### 6.2 Controls — ba loại
+
+Luật trong Control Tower gọi là **control** (tên cũ: *guardrail*, đề thi dùng cả hai). Bạn bật control trên một OU, Control Tower tự triển khai cơ chế thực thi bên dưới. Có ba loại, khác nhau ở **thời điểm can thiệp**:
 
 | Loại | Thi hành bằng | Thời điểm | Ví dụ |
 |---|---|---|---|
@@ -187,11 +315,26 @@ Bẫy kinh điển: "cần **phát hiện**" → detective (Config); "cần **ng
 | **Detective** | **AWS Config rule** | *Sau* khi resource tồn tại | EBS chưa mã hoá, bucket public |
 | **Proactive** | **CloudFormation hook** | *Khi provision qua CFN* | Từ chối template RDS không mã hoá |
 
-Mỗi control có mức **Mandatory** (bật sẵn, không tắt được), **Strongly recommended**, **Elective**.
+Ba loại khác nhau vì cơ chế bên dưới khác nhau. **Preventive** dùng SCP nên chặn ngay tại lời gọi API: hành động không bao giờ xảy ra. **Detective** dùng Config rule, mà Config chỉ biết về một resource *sau khi* nó được tạo hoặc sửa, nên chỉ có thể đánh dấu "non-compliant" chứ không ngăn được. **Proactive** dùng *CloudFormation hook* — một đoạn kiểm tra chạy trước khi CloudFormation tạo resource, soi template và từ chối nếu vi phạm; vì thế nó chỉ bắt được resource tạo **qua CloudFormation**, tạo tay trên console thì lọt.
+
+Mỗi control có một mức khuyến nghị: **Mandatory** (bật sẵn, không tắt được — ví dụ cấm sửa bucket log ở Log Archive), **Strongly recommended**, **Elective** (tuỳ chọn).
+
+> 🪤 Bẫy kinh điển là đọc đúng động từ trong đề. "Cần **phát hiện** / báo cáo resource vi phạm" → **detective** (Config rule). "Cần **ngăn** không cho làm" → **preventive** (SCP). "Cần chặn resource sai chuẩn **trước khi được provision bằng CloudFormation**" → **proactive** (hook).
 
 ### 6.3 Account Factory
 
-**Account vending**: điền form (tên, email, OU, tuỳ chọn mạng) → Control Tower tạo account, đưa vào OU, áp control, cấu hình Identity Center. Nó được xuất bản như một **Service Catalog product** — lý do hai service này luôn đi cùng nhau. Đã chuẩn hoá Terraform thì dùng **Account Factory for Terraform (AFT)**. Account có sẵn thì **enroll**; account drift khỏi baseline phải re-register OU.
+Team mới cần một account. Làm tay thì phải tạo account, đưa vào đúng OU, bật CloudTrail và Config, tạo role, cấu hình đăng nhập — mười mấy bước dễ sót. **Account Factory** là tính năng *account vending* ("máy bán account") của Control Tower: bạn điền một form (tên account, email, OU đích, tuỳ chọn mạng) rồi Control Tower làm hết phần còn lại, cho ra một account đã nằm trong OU, đã áp control của OU đó và đã nối với Identity Center.
+
+Về kỹ thuật, Account Factory được xuất bản như một **Service Catalog product** (mục 9) — đó là lý do hai dịch vụ này luôn xuất hiện cùng nhau, và bạn có thể cấp cho một team quyền tự "launch" account mà không cần quyền Organizations. Công ty đã chuẩn hoá Terraform thì dùng **Account Factory for Terraform (AFT)**: yêu cầu account là một commit vào git thay vì một lần bấm form.
+
+Bốn thuật ngữ đi kèm:
+
+- **Baseline** là bộ cấu hình nền Control Tower cài vào mỗi account nó quản lý: CloudTrail, Config recorder, các IAM role để Control Tower vào quản trị. Nó được triển khai bằng CloudFormation StackSets.
+- **Register OU** là đưa một OU có sẵn vào tầm quản lý của Control Tower. **Enroll account** là việc tương tự cho một account có sẵn (account tạo trước khi có Control Tower, hoặc tạo thẳng bằng Organizations): Control Tower cài baseline vào account đó và áp control của OU. Account tạo qua Account Factory thì được enroll sẵn.
+- **Drift** ("trôi") là khi trạng thái thật lệch khỏi thứ Control Tower đã thiết lập, do ai đó sửa bên ngoài Control Tower: chuyển account sang OU khác bằng console Organizations, sửa hoặc gỡ một SCP do Control Tower quản lý, xoá một role của baseline. Control Tower tự quét và báo drift.
+- **Re-register OU** là cách sửa drift phổ biến nhất: Control Tower áp lại baseline và control lên OU và mọi account trong đó. Drift nặng ở tầng landing zone (xoá OU Security, xoá role nền) thì phải **reset/update landing zone**.
+
+Bài học rút ra cho đề thi: đã dùng Control Tower thì thay đổi cấu trúc nên làm **qua Control Tower**, không sửa thẳng trong Organizations.
 
 ### 6.4 Control Tower vs Organizations thuần
 
@@ -212,6 +355,8 @@ User đăng nhập **AWS access portal** bằng identity của *identity source*
 Tức là **permission set ≈ template của một IAM role**, nhân bản vào mọi account nó được gán; sửa permission set thì IdC đồng bộ lại role ở tất cả account. Không IAM user, không access key dài hạn. Permission set chứa managed policy AWS, **customer managed policy** (tham chiếu theo tên — policy phải có sẵn ở account đích), inline policy và một **permission boundary**.
 
 ### 7.2 Identity source
+
+*Identity source* là nơi Identity Center lấy danh sách user và group — tức nơi lưu username/mật khẩu thật. Chỉ chọn được **một** nguồn tại một thời điểm. Hai thuật ngữ cần biết trước khi đọc bảng: **IdP (identity provider)** là hệ thống quản lý danh tính của công ty như Okta hay Microsoft Entra ID; **SAML 2.0** là giao thức để IdP xác nhận với AWS "người này đã đăng nhập, tên là X" mà AWS không cần biết mật khẩu; **SCIM** là giao thức để IdP tự động **đồng bộ danh sách** user/group sang AWS (tạo, sửa, vô hiệu hoá).
 
 | Identity source | Mô tả | Khi nào chọn |
 |---|---|---|
@@ -310,7 +455,42 @@ Root user không bị IAM policy giới hạn và có những tác vụ không a
 
 ## 12. Cost — góc nhìn governance
 
-Organizations, SCP, RCP, RAM và Control Tower controls không tính phí riêng, nhưng **thứ Control Tower bật thì có**: Config ghi configuration item ở mọi account, CloudTrail org-wide (data event là khoản đắt), Security Hub/GuardDuty nếu bật kèm — với Org vài chục account, **Config thường là khoản lớn nhất**, nên cấu hình recorder có chọn lọc. Ở chiều ngược lại, **consolidated billing** là đòn bẩy tiết kiệm, **VPC sharing qua RAM** giảm số NAT Gateway, và `linked account` cho chargeback chính xác gần như miễn phí.
+**Cái gì miễn phí.** Organizations, SCP, RCP, RAM, IAM Identity Center và bản thân Control Tower không tính phí riêng. Nhưng **những dịch vụ Control Tower bật giúp bạn thì có tính**, và chúng nhân lên theo số account.
+
+**AWS Config — thường là khoản lớn nhất.** Config tính tiền theo **configuration item (CI)**: mỗi lần một resource được tạo, sửa hoặc xoá, Config ghi lại một bản chụp cấu hình của resource đó, và mỗi bản chụp là một CI. Giá ~**0,003 USD/CI** (us-east-1, chế độ ghi liên tục). Nghe nhỏ, nhưng Control Tower bật Config ghi **mọi loại resource ở mọi account**:
+
+```
+Giả định: 40 account, mỗi account trung bình 15.000 CI/tháng
+40 × 15.000 CI × 0,003 USD  = 1.800 USD/tháng  (chưa tính phí đánh giá rule)
+```
+
+Con số 15.000 CI/tháng không cần hệ thống lớn mới tới. Thủ phạm là resource **sống ngắn và đổi liên tục**: một Auto Scaling group scale ra vào cả ngày, mỗi instance sinh rồi chết kéo theo CI của instance, network interface, EBS volume. Có hai cách hạ:
+
+- **Loại bớt resource type** khỏi recorder ở những account không cần (ví dụ bỏ network interface ở account Dev).
+- **Chuyển sang periodic recording** cho resource đổi nhiều: thay vì ghi mỗi lần đổi, Config ghi tối đa một CI mỗi 24 giờ nếu có thay đổi, giá ~0,012 USD/CI.
+
+```
+Một resource đổi 20 lần/ngày:
+  ghi liên tục:  20 × 0,003 = 0,060 USD/ngày
+  ghi định kỳ:    1 × 0,012 = 0,012 USD/ngày   → rẻ hơn 5 lần
+Điểm hoà vốn: 0,012 ÷ 0,003 = 4 lần đổi/ngày; đổi ít hơn thế thì ghi liên tục rẻ hơn.
+```
+
+Cái giá của ghi định kỳ là mất lịch sử chi tiết giữa hai lần chụp, nên không dùng cho resource cần audit từng thay đổi (security group, IAM).
+
+**CloudTrail.** Bản sao đầu tiên của *management event* (lời gọi API quản trị như `RunInstances`, `CreateBucket`) ghi ra S3 là miễn phí, nên trail cấp organization của Control Tower gần như chỉ tốn tiền lưu S3. Thứ đắt là **data event** — lời gọi trên chính dữ liệu như `s3:GetObject` hay `lambda:Invoke` — giá ~0,10 USD cho mỗi 100.000 event:
+
+```
+Một bucket nhận 50 triệu GET/ngày, bật data event:
+50.000.000 × 30 ngày = 1,5 tỷ event/tháng
+1.500.000.000 ÷ 100.000 × 0,10 USD = 1.500 USD/tháng — chỉ cho MỘT bucket
+```
+
+Vì vậy data event chỉ bật cho những bucket nhạy cảm, không bật toàn Org.
+
+**Security Hub, GuardDuty** nếu bật kèm cũng tính theo account và theo lượng dữ liệu phân tích.
+
+**Chiều tiết kiệm.** Multi-account cũng là đòn bẩy giảm tiền: **consolidated billing** gộp bậc giá và chia sẻ RI/Savings Plans (mục 3.2); **VPC sharing qua RAM** cho nhiều account dùng chung NAT Gateway thay vì mỗi account một bộ (mục 8); và chiều `linked account` trong Cost Explorer cho bạn chia chi phí về từng team (*chargeback*) mà không cần hệ thống tag hoàn hảo.
 
 ---
 
