@@ -488,6 +488,21 @@ export const courses: Course[] = [
     accentColor: "#65a30d",
     order: 21, status: "available", kind: "knowledge", category: "software",
   },
+  {
+    id: "KEYCLOAK",
+    code: "KEYCLOAK",
+    title: "IAM & Keycloak — từ giao thức tới production",
+    shortTitle: "Keycloak",
+    level: "Nền tảng",
+    description:
+      "Làm được việc của một Keycloak / IAM engineer: đọc OAuth 2.0, OIDC, SAML ở mức tham số; cấu hình realm, client, scope, mapper, session cho nhiều app; tích hợp SPA (BFF) và Spring Boot resource server; brokering, LDAP, Organizations; authentication flow, MFA, brute force; viết SPI bằng Java; rồi vận hành cụm HA — clustering, Operator, sizing, observability, xoay key, nâng version. Mọi con số đo thật trên Keycloak 26.8.1.",
+    hint: "Dành cho dev backend đã làm login bằng session/JWT. Lab dùng Keycloak 26.8.1, Java Spring Boot và curl — không cần Docker.",
+    durationHours: 45,
+    passingScore: 0, examMinutes: 0, examQuestions: 0,
+    prerequisites: ["SECURITY"],
+    accentColor: "#0ea5e9",
+    order: 22, status: "available", kind: "knowledge", category: "systems",
+  },
 ];
 
 export function getCourse(id: CourseId | string): Course | undefined {

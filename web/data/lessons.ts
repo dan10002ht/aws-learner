@@ -1330,8 +1330,85 @@ const agChapters: Chapter[] = [
 // =====================================================================
 // Aggregate
 // =====================================================================
-export const lessons: Lesson[] = [...techLessons, ...progLessons, ...webLessons, ...sqlLessons, ...gitLessons, ...sysdLessons, ...foundLessons, ...engLessons, ...beLessons, ...csLessons, ...dsaLessons, ...secLessons, ...devopsLessons, ...sreLessons, ...aimlLessons, ...feLessons, ...capLessons, ...clfLessons, ...saaLessons, ...dvaLessons, ...bcLessons, ...dsLessons, ...dstLessons, ...msgLessons, ...cnLessons, ...gsLessons, ...ctLessons, ...agLessons];
-export const chapters: Chapter[] = [...techChapters, ...progChapters, ...webChapters, ...sqlChapters, ...gitChapters, ...sysdChapters, ...foundChapters, ...engChapters, ...beChapters, ...csChapters, ...dsaChapters, ...secChapters, ...devopsChapters, ...sreChapters, ...aimlChapters, ...feChapters, ...capChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters, ...bcChapters, ...dsChapters, ...dstChapters, ...msgChapters, ...cnChapters, ...gsChapters, ...ctChapters, ...agChapters];
+// =====================================================================
+// KEYCLOAK — IAM & Keycloak: từ giao thức tới production
+// =====================================================================
+const kcLessons: Lesson[] = [
+  { slug: "kc-01-idp-giai-bai-toan-gi", courseId: "KEYCLOAK", title: "IdP giải bài toán gì", shortTitle: "IdP giải bài toán gì", chapter: "kc-ch1", order: 1, available: true,
+    description: "Tách identity khỏi app: đếm chỗ giữ mật khẩu/MFA/khoá tài khoản; bốn vai OAuth; authn vs authz vs federation; dựng Keycloak đầu tiên và đọc discovery.", file: "keycloak/kc-01-idp-giai-bai-toan-gi.md" },
+  { slug: "kc-02-oauth2-tham-so", courseId: "KEYCLOAK", title: "OAuth 2.0 đọc ở mức tham số", shortTitle: "OAuth 2.0", chapter: "kc-ch1", order: 2, available: true,
+    description: "Authorization code flow từng request, từng tham số chặn tấn công nào; vì sao code đổi qua back-channel; client credentials; vì sao implicit và password grant bị loại.", file: "keycloak/kc-02-oauth2-tham-so.md" },
+  { slug: "kc-03-pkce-va-oidc", courseId: "KEYCLOAK", title: "PKCE và OIDC", shortTitle: "PKCE & OIDC", chapter: "kc-ch1", order: 3, available: true,
+    description: "PKCE chặn đúng cuộc tấn công nào, tính tay S256; OIDC thêm id_token, nonce, userinfo, discovery, JWKS; state khác nonce ở đâu.", file: "keycloak/kc-03-pkce-va-oidc.md" },
+  { slug: "kc-04-token-jwt-opaque", courseId: "KEYCLOAK", title: "Token: JWT, opaque, và validate cho đúng", shortTitle: "Token & validate", chapter: "kc-ch1", order: 4, available: true,
+    description: "Giải phẫu access/ID/refresh token Keycloak thật; verify local vs introspection; vì sao revoke một JWT là bài toán khó; aud mặc định là account.", file: "keycloak/kc-04-token-jwt-opaque.md" },
+  { slug: "kc-05-saml2", courseId: "KEYCLOAK", title: "SAML 2.0", shortTitle: "SAML 2.0", chapter: "kc-ch1", order: 5, available: true,
+    description: "Assertion, metadata, binding Redirect/POST, ký và mã hoá; XML Signature Wrapping; map SAML sang OIDC; đọc metadata và Response thật.", file: "keycloak/kc-05-saml2.md" },
+  { slug: "kc-06-kien-truc-keycloak", courseId: "KEYCLOAK", title: "Kiến trúc Keycloak", shortTitle: "Kiến trúc", chapter: "kc-ch2", order: 6, available: true,
+    description: "Quarkus, build-time vs runtime option, kc.sh build/start/--optimized; dữ liệu nằm ở DB hay cache; management port; master realm.", file: "keycloak/kc-06-kien-truc-keycloak.md" },
+  { slug: "kc-07-realm-va-client", courseId: "KEYCLOAK", title: "Realm và client", shortTitle: "Realm & client", chapter: "kc-ch2", order: 7, available: true,
+    description: "Realm là ranh giới cách ly; public vs confidential; xác thực client; luật khớp redirect_uri, wildcard và cuộc tấn công đánh cắp code.", file: "keycloak/kc-07-realm-va-client.md" },
+  { slug: "kc-08-user-group-role", courseId: "KEYCLOAK", title: "User, group, role", shortTitle: "User, group, role", chapter: "kc-ch2", order: 8, available: true,
+    description: "Realm role vs client role, composite, default roles, group kế thừa; role vào claim nào; Full Scope Allowed làm token phình bao nhiêu.", file: "keycloak/kc-08-user-group-role.md" },
+  { slug: "kc-09-client-scope-mapper", courseId: "KEYCLOAK", title: "Client scope và protocol mapper", shortTitle: "Scope & mapper", chapter: "kc-ch2", order: 9, available: true,
+    description: "Default vs optional scope; mapper quyết định claim ở token nào; audience mapper để aud đúng; introspection tính lại aud; lightweight token.", file: "keycloak/kc-09-client-scope-mapper.md" },
+  { slug: "kc-10-session-token-lifetime", courseId: "KEYCLOAK", title: "Session và token lifetime", shortTitle: "Session & lifetime", chapter: "kc-ch2", order: 10, available: true,
+    description: "SSO idle/max, client session, access token, offline session; refresh token rotation và Max Reuse; tính tay request nào fail lúc mấy giờ.", file: "keycloak/kc-10-session-token-lifetime.md" },
+  { slug: "kc-11-spa-pkce-bff", courseId: "KEYCLOAK", title: "SPA, PKCE và BFF", shortTitle: "SPA & BFF", chapter: "kc-ch3", order: 11, available: true,
+    description: "Ba kiến trúc cho SPA và kẻ có XSS lấy được gì; BFF bằng Spring Boot oauth2-client chạy thật: refresh, CSRF, logout, token store.", file: "keycloak/kc-11-spa-pkce-bff.md" },
+  { slug: "kc-12-spring-resource-server", courseId: "KEYCLOAK", title: "Spring Boot làm resource server", shortTitle: "Spring resource server", chapter: "kc-ch3", order: 12, available: true,
+    description: "issuer-uri, JWKS fetch và cache, kid lạ, map realm_access.roles; Spring mặc định không kiểm aud — thêm audience validator; 401 vs 403.", file: "keycloak/kc-12-spring-resource-server.md" },
+  { slug: "kc-13-service-to-service", courseId: "KEYCLOAK", title: "Service-to-service", shortTitle: "Service-to-service", chapter: "kc-ch3", order: 13, available: true,
+    description: "Client credentials và cache token; token exchange RFC 8693 (standard V2) chuyển danh tính qua chuỗi service; delegation, DPoP.", file: "keycloak/kc-13-service-to-service.md" },
+  { slug: "kc-14-logout-sso", courseId: "KEYCLOAK", title: "Logout và SSO nhiều app", shortTitle: "Logout & SSO", chapter: "kc-ch3", order: 14, available: true,
+    description: "Cookie SSO; RP-initiated, front-channel, back-channel logout với logout_token thật; app treo thì logout chờ bao lâu.", file: "keycloak/kc-14-logout-sso.md" },
+  { slug: "kc-15-identity-brokering", courseId: "KEYCLOAK", title: "Identity brokering", shortTitle: "Brokering", chapter: "kc-ch4", order: 15, available: true,
+    description: "Login qua IdP ngoài, first broker login flow, account linking theo email và lỗ chiếm tài khoản khi email chưa xác minh; kc_idp_hint.", file: "keycloak/kc-15-identity-brokering.md" },
+  { slug: "kc-16-ldap-active-directory", courseId: "KEYCLOAK", title: "LDAP / Active Directory", shortTitle: "LDAP / AD", chapter: "kc-ch4", order: 16, available: true,
+    description: "User federation: edit mode, import, sync mặc định tắt, mapper; mật khẩu không vào DB Keycloak; lab LDAP in-memory chạy thật.", file: "keycloak/kc-16-ldap-active-directory.md" },
+  { slug: "kc-17-organizations-multitenancy", courseId: "KEYCLOAK", title: "Organizations và multi-tenancy", shortTitle: "Organizations", chapter: "kc-ch4", order: 17, available: true,
+    description: "Multi-tenancy trong một realm: domain, IdP theo domain, managed/unmanaged member, claim organization; SCIM.", file: "keycloak/kc-17-organizations-multitenancy.md" },
+  { slug: "kc-18-authentication-flow", courseId: "KEYCLOAK", title: "Authentication flow", shortTitle: "Auth flow", chapter: "kc-ch5", order: 18, available: true,
+    description: "Browser flow từng execution; REQUIRED/ALTERNATIVE/CONDITIONAL; override theo client; step-up với ACR/LoA và lỗ tự cài OTP.", file: "keycloak/kc-18-authentication-flow.md" },
+  { slug: "kc-19-mfa-otp-webauthn", courseId: "KEYCLOAK", title: "MFA: OTP và WebAuthn/passkey", shortTitle: "MFA", chapter: "kc-ch5", order: 19, available: true,
+    description: "TOTP tính tay theo RFC 6238, look-around và chống replay; vì sao OTP không chống phishing còn WebAuthn thì có; passkey, recovery codes.", file: "keycloak/kc-19-mfa-otp-webauthn.md" },
+  { slug: "kc-20-brute-force-password-hashing", courseId: "KEYCLOAK", title: "Brute force, password policy, hashing", shortTitle: "Brute force & hashing", chapter: "kc-ch5", order: 20, available: true,
+    description: "Brute force mặc định tắt, chuỗi khoá đo thật, khoá vĩnh viễn thành DoS; password policy; Argon2 vs PBKDF2 và giá CPU mỗi login.", file: "keycloak/kc-20-brute-force-password-hashing.md" },
+  { slug: "kc-21-authorization-services", courseId: "KEYCLOAK", title: "Authorization Services", shortTitle: "Authorization Services", chapter: "kc-ch5", order: 21, available: true,
+    description: "Resource, scope, policy, permission, decision strategy, UMA và RPT; chi phí round-trip; khi nào RBAC trong app rẻ hơn.", file: "keycloak/kc-21-authorization-services.md" },
+  { slug: "kc-22-spi-custom-authenticator", courseId: "KEYCLOAK", title: "SPI và custom authenticator", shortTitle: "SPI & authenticator", chapter: "kc-ch6", order: 22, available: true,
+    description: "ProviderFactory vs Provider, providers/ + kc.sh build; viết authenticator Java chạy thật; failure() không đếm brute force; SPI internal.", file: "keycloak/kc-22-spi-custom-authenticator.md" },
+  { slug: "kc-23-event-listener-user-storage", courseId: "KEYCLOAK", title: "Event listener và user storage", shortTitle: "Events & user storage", chapter: "kc-ch6", order: 23, available: true,
+    description: "Listener chạy đồng bộ: webhook chậm làm chậm login; đẩy queue; UserStorageProvider cho user ở DB cũ và migrate dần.", file: "keycloak/kc-23-event-listener-user-storage.md" },
+  { slug: "kc-24-theme-admin-api-config-as-code", courseId: "KEYCLOAK", title: "Theme, Admin API, config-as-code", shortTitle: "Theme & config-as-code", chapter: "kc-ch6", order: 24, available: true,
+    description: "Admin REST và least privilege; export/import, --import-realm chỉ tạo mới; Terraform, keycloak-config-cli; theme và cache.", file: "keycloak/kc-24-theme-admin-api-config-as-code.md" },
+  { slug: "kc-25-clustering", courseId: "KEYCLOAK", title: "Clustering", shortTitle: "Clustering", chapter: "kc-ch7", order: 25, available: true,
+    description: "Cache Infinispan nào giữ gì, persistent user sessions, jdbc-ping; kill node mà session còn; hostname, sticky session.", file: "keycloak/kc-25-clustering.md" },
+  { slug: "kc-26-keycloak-operator", courseId: "KEYCLOAK", title: "Keycloak Operator", shortTitle: "Operator", chapter: "kc-ch7", order: 26, available: true,
+    description: "CR Keycloak và KeycloakRealmImport đọc từ CRD thật; image build sẵn và --optimized; update strategy Recreate vs Auto.", file: "keycloak/kc-26-keycloak-operator.md" },
+  { slug: "kc-27-sizing-tuning", courseId: "KEYCLOAK", title: "Sizing và tuning", shortTitle: "Sizing & tuning", chapter: "kc-ch7", order: 27, available: true,
+    description: "Số sizing chính thức theo login/s và token/s; tính tay cho 1 triệu user; hash là trần CPU; các núm tuning có nguồn.", file: "keycloak/kc-27-sizing-tuning.md" },
+  { slug: "kc-28-observability-audit", courseId: "KEYCLOAK", title: "Observability và audit", shortTitle: "Observability", chapter: "kc-ch7", order: 28, available: true,
+    description: "Health, metrics, event metrics; login event vs admin event; những lỗ audit; báo động gì và dung lượng event.", file: "keycloak/kc-28-observability-audit.md" },
+  { slug: "kc-29-upgrade-key-rotation-dr", courseId: "KEYCLOAK", title: "Nâng version, xoay key, DR", shortTitle: "Upgrade, keys & DR", chapter: "kc-ch7", order: 29, available: true,
+    description: "Xoay signing key không làm 401 cả hệ thống; nâng version, migration, rolling; backup và multi-site.", file: "keycloak/kc-29-upgrade-key-rotation-dr.md" },
+  { slug: "kc-30-saas-multitenant-chon-idp", courseId: "KEYCLOAK", title: "IAM cho SaaS multi-tenant và chọn IdP", shortTitle: "SaaS & chọn IdP", chapter: "kc-ch8", order: 30, available: true,
+    description: "Một realm vs Organizations vs realm-per-tenant; tự host Keycloak hay dịch vụ managed; cây quyết định.", file: "keycloak/kc-30-saas-multitenant-chon-idp.md" },
+  { slug: "kc-31-su-co-checklist", courseId: "KEYCLOAK", title: "Sự cố thường gặp và checklist Keycloak engineer", shortTitle: "Sự cố & checklist", chapter: "kc-ch8", order: 31, available: true,
+    description: "Đọc invalid_grant, invalid_redirect_uri, issuer lệch, clock skew; checklist go-live; câu hỏi phỏng vấn.", file: "keycloak/kc-31-su-co-checklist.md" },
+];
+const kcChapters: Chapter[] = [
+  { id: "kc-ch1", courseId: "KEYCLOAK", title: "Chương 1 — Nền IAM và giao thức", lessonSlugs: ["kc-01-idp-giai-bai-toan-gi", "kc-02-oauth2-tham-so", "kc-03-pkce-va-oidc", "kc-04-token-jwt-opaque", "kc-05-saml2"], category: "foundation" },
+  { id: "kc-ch2", courseId: "KEYCLOAK", title: "Chương 2 — Keycloak core", lessonSlugs: ["kc-06-kien-truc-keycloak", "kc-07-realm-va-client", "kc-08-user-group-role", "kc-09-client-scope-mapper", "kc-10-session-token-lifetime"], category: "foundation" },
+  { id: "kc-ch3", courseId: "KEYCLOAK", title: "Chương 3 — Tích hợp app", lessonSlugs: ["kc-11-spa-pkce-bff", "kc-12-spring-resource-server", "kc-13-service-to-service", "kc-14-logout-sso"], category: "compute" },
+  { id: "kc-ch4", courseId: "KEYCLOAK", title: "Chương 4 — Federation", lessonSlugs: ["kc-15-identity-brokering", "kc-16-ldap-active-directory", "kc-17-organizations-multitenancy"], category: "network" },
+  { id: "kc-ch5", courseId: "KEYCLOAK", title: "Chương 5 — Authentication và bảo mật", lessonSlugs: ["kc-18-authentication-flow", "kc-19-mfa-otp-webauthn", "kc-20-brute-force-password-hashing", "kc-21-authorization-services"], category: "security" },
+  { id: "kc-ch6", courseId: "KEYCLOAK", title: "Chương 6 — Mở rộng", lessonSlugs: ["kc-22-spi-custom-authenticator", "kc-23-event-listener-user-storage", "kc-24-theme-admin-api-config-as-code"], category: "compute" },
+  { id: "kc-ch7", courseId: "KEYCLOAK", title: "Chương 7 — Production", lessonSlugs: ["kc-25-clustering", "kc-26-keycloak-operator", "kc-27-sizing-tuning", "kc-28-observability-audit", "kc-29-upgrade-key-rotation-dr"], category: "database" },
+  { id: "kc-ch8", courseId: "KEYCLOAK", title: "Chương 8 — Kiến trúc và tổng kết", lessonSlugs: ["kc-30-saas-multitenant-chon-idp", "kc-31-su-co-checklist"], category: "security" },
+];
+export const lessons: Lesson[] = [...techLessons, ...progLessons, ...webLessons, ...sqlLessons, ...gitLessons, ...sysdLessons, ...foundLessons, ...engLessons, ...beLessons, ...csLessons, ...dsaLessons, ...secLessons, ...devopsLessons, ...sreLessons, ...aimlLessons, ...feLessons, ...capLessons, ...clfLessons, ...saaLessons, ...dvaLessons, ...bcLessons, ...dsLessons, ...dstLessons, ...msgLessons, ...cnLessons, ...gsLessons, ...ctLessons, ...agLessons, ...kcLessons];
+export const chapters: Chapter[] = [...techChapters, ...progChapters, ...webChapters, ...sqlChapters, ...gitChapters, ...sysdChapters, ...foundChapters, ...engChapters, ...beChapters, ...csChapters, ...dsaChapters, ...secChapters, ...devopsChapters, ...sreChapters, ...aimlChapters, ...feChapters, ...capChapters, ...clfChapters, ...saaChapters, ...dvaChapters, ...soaChapters, ...sapChapters, ...sysdChapters, ...bcChapters, ...dsChapters, ...dstChapters, ...msgChapters, ...cnChapters, ...gsChapters, ...ctChapters, ...agChapters, ...kcChapters];
 
 export function lessonsOfCourse(courseId: CourseId): Lesson[] {
   return lessons.filter((l) => l.courseId === courseId).sort((a, b) => a.order - b.order);
