@@ -336,40 +336,27 @@ Muốn đo hiệu quả của memory cho chính bạn: trong một tuần, đế
 
 ## 5. Bẫy thường gặp
 
-**Memory chỉ có luật, không có Why.**
-Triệu chứng: agent làm đúng ở ca quen, làm sai ở ca hơi khác (luật "đừng nhờ user chạy query" được áp cho cả một lệnh `UPDATE`).
-Nguyên nhân gốc: luật một câu không mang tiêu chí; ở ca biên, model chỉ còn cách khớp mặt chữ.
-Chặn bằng cơ chế: template memory có ô Why bắt buộc; script §3.8 báo `NOWHY` cho mọi feedback thiếu Why.
+### Memory chỉ có luật, thiếu Why
 
-**Index phình quá trần, memory mới nhất biến mất.**
-Triệu chứng: memory vừa ghi tuần trước, session này agent không biết tới — dù file vẫn nằm trên đĩa.
-Nguyên nhân gốc: chỉ 200 dòng / 25KB đầu của `MEMORY.md` được nạp (docs); dòng mới thường nằm cuối; phía đọc không báo lỗi.
-Chặn bằng cơ chế: index mỗi memory một dòng, chi tiết để ở topic file; script cảnh báo từ 180 dòng / 23.000 byte, trước khi chạm trần.
+Agent làm đúng ở ca quen nhưng sai ở ca hơi khác: luật "đừng nhờ user chạy query" bị áp luôn cho một lệnh `UPDATE`. Luật một câu không mang tiêu chí, nên ở ca biên model chỉ còn cách khớp mặt chữ. Template memory nên có ô Why bắt buộc; script §3.8 báo `NOWHY` cho mọi feedback thiếu Why.
 
-**Dùng memory cho thứ phải chặn cứng.**
-Triệu chứng: đã ghi "không bao giờ push thẳng main", vẫn có một lần agent push.
-Nguyên nhân gốc: memory là context, không phải cấu hình được thực thi (docs).
-Chặn bằng cơ chế: permission deny hoặc hook `PreToolUse` ([[ag-08-hook-va-chan-bang-cau-hinh]]); memory chỉ giải thích lý do.
+### Index vượt trần, memory mới nhất biến mất
 
-**Ghi trạng thái việc đang làm vào memory.**
-Triệu chứng: memory nói "đang chờ review PR migrate", PR đã merge từ ba tuần trước, agent vẫn né đụng vào module đó.
-Nguyên nhân gốc: thông tin transient không có ai cập nhật khi nó hết đúng.
-Chặn bằng cơ chế: ba câu hỏi ở §3.6 trước khi ghi; trạng thái việc đi vào file brief của việc đó ([[ag-18-brief-la-shared-state]]); script báo `STALE` theo field `modified`.
+Memory vừa ghi tuần trước mà session này agent không biết tới, dù file vẫn nằm trên đĩa. Docs nói chỉ 200 dòng / 25KB đầu của `MEMORY.md` được nạp; dòng mới thường nằm cuối, và phía đọc không báo lỗi gì. Giữ index mỗi memory một dòng, chi tiết để ở topic file. Script cảnh báo từ 180 dòng / 23.000 byte, tức là trước khi chạm trần.
 
-**Luật cả team chỉ nằm trong auto memory của một người.**
-Triệu chứng: agent của bạn chạy đúng gate, agent của đồng nghiệp hoặc agent trên CI thì không.
-Nguyên nhân gốc: auto memory là machine-local, không chia sẻ qua máy hay môi trường cloud (docs).
-Chặn bằng cơ chế: lời sửa thứ hai lặp lại ở người khác → chuyển nó vào `CLAUDE.md` của project và commit. Docs liệt kê đúng tín hiệu này cho CLAUDE.md: *"Claude makes the same mistake a second time"*, *"A new teammate would need the same context"*.
+### Trạng thái việc đang làm lọt vào memory
 
-**Subagent không biết luật mà main agent biết.**
-Triệu chứng: main agent luôn chạy gate, nhưng việc giao cho subagent về thì không có output gate.
-Nguyên nhân gốc: auto memory của main không nạp vào subagent (docs).
-Chặn bằng cơ chế: luật quan trọng nằm trong CLAUDE.md của project hoặc đi kèm trong brief giao việc ([[ag-14-subagent-va-brief]]).
+Memory ghi "đang chờ review PR migrate", PR đã merge từ ba tuần trước, mà agent vẫn né đụng vào module đó. Thông tin transient không có ai cập nhật khi nó hết đúng. Ba câu hỏi ở §3.6 lọc nó ra trước khi ghi, vì trạng thái việc thuộc về file brief của việc đó ([[ag-18-brief-la-shared-state]]). Thứ đã lọt vào thì script bắt bằng `STALE` theo field `modified`.
 
-**Memory ngoại lệ mâu thuẫn với luật chung.**
-Triệu chứng: cùng một repo, hôm agent tạo nhánh, hôm push thẳng.
-Nguyên nhân gốc: hai file nói khác nhau và không file nào ghi đè file nào; docs nói Claude có thể chọn một cách tuỳ ý.
-Chặn bằng cơ chế: memory ngoại lệ gọi tên luật nó thay thế và nói vì sao; chạy `/doctor prompt-audit` định kỳ để tìm mâu thuẫn trong các file hướng dẫn.
+### Luật quan trọng chỉ nằm trong auto memory của một agent
+
+Agent của bạn chạy đúng gate, còn agent của đồng nghiệp, agent trên CI, hay subagent do chính main agent giao việc thì không. Theo docs, auto memory là machine-local, không chia sẻ qua máy hay môi trường cloud, và không nạp vào subagent. Lời sửa phải nói lần thứ hai, hoặc lặp lại ở người khác, là lúc chuyển nó vào `CLAUDE.md` của project và commit; với subagent thì luật đi kèm trong brief giao việc ([[ag-14-subagent-va-brief]]). Docs liệt kê đúng tín hiệu này cho CLAUDE.md: *"Claude makes the same mistake a second time"*, *"A new teammate would need the same context"*.
+
+### Memory ngoại lệ mâu thuẫn với luật chung
+
+Cùng một repo, hôm agent tạo nhánh, hôm push thẳng. Hai file nói khác nhau, không file nào ghi đè file nào, và docs nói Claude có thể chọn một cách tuỳ ý. Memory ngoại lệ phải gọi tên luật nó thay thế và nói vì sao; chạy `/doctor prompt-audit` định kỳ để tìm mâu thuẫn trong các file hướng dẫn.
+
+Nếu điều cần là **không bao giờ** push thẳng main thì memory không đủ. Đã ghi đúng câu đó mà vẫn có một lần agent push, vì memory là context chứ không phải cấu hình được thực thi (docs). Chặn bằng permission deny hoặc hook `PreToolUse` ([[ag-08-hook-va-chan-bang-cau-hinh]]); memory chỉ giữ phần giải thích lý do.
 
 ---
 

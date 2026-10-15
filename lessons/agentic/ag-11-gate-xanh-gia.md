@@ -488,35 +488,27 @@ bash prove-red.sh gate.sh calc.py 's/SUM(v)/COUNT(v)/'    # mutant ở nhánh DB
 
 ## 5. Bẫy thường gặp
 
-**Sửa gate cho xanh.**
-Triệu chứng: gate đỏ mà không ai giải thích được, agent (hoặc người) nới điều kiện, thêm file vào allowlist, hoặc thêm `|| true` cho "khỏi phiền".
-Nguyên nhân gốc: coi gate đỏ là phiền toái chứ không phải phát hiện; và người sửa gate là người đang bị gate chấm.
-Chặn bằng cơ chế: gate và allowlist nằm trong thư mục agent không được ghi (deny trong permission, xem [[ag-08-hook-va-chan-bang-cau-hinh]]); mọi thay đổi gate phải kèm output `prove-red` mới.
+### Sửa gate cho xanh
 
-**Gate grep SKIP trên output không `-v`.**
-Triệu chứng: luật "có SKIP thì FAIL" tồn tại, nhưng chưa từng kích hoạt.
-Nguyên nhân gốc: `go test` không `-v` chỉ in dòng `ok`; chuỗi cần grep không bao giờ xuất hiện.
-Chặn bằng cơ chế: `prove-red` có một mutant "gỡ hạ tầng" (bỏ biến môi trường DB) — gate phải đỏ. Nếu không đỏ, luật SKIP đang mù.
+Gate đỏ mà không ai giải thích được, thế là agent (hoặc người) nới điều kiện, thêm file vào allowlist, hoặc thêm `|| true` cho "khỏi phiền". Gốc của nó là coi gate đỏ như phiền toái chứ không phải một phát hiện, cộng với việc người sửa gate lại chính là người đang bị gate chấm. Đặt gate và allowlist trong thư mục agent không được ghi (deny trong permission, xem [[ag-08-hook-va-chan-bang-cau-hinh]]), và **mọi thay đổi gate phải kèm output `prove-red` mới**.
 
-**Một con số tổng duy nhất làm tiêu chí.**
-Triệu chứng: "271 suite pass" hoặc "Ran 2 tests" được báo là xong trong khi một suite rỗng hoặc test bị skip.
-Nguyên nhân gốc: con số tổng gộp hai trạng thái khác nhau (chạy-và-qua, không-chạy) thành một.
-Chặn bằng cơ chế: gate in và so **ít nhất hai số** (suite và test, chạy và skip) với baseline đo trên chính worktree vừa dựng; lệch baseline là FAIL.
+### Gate mới viết chỉ được thử chiều "đúng thì xanh"
 
-**"0 kết quả" được đọc thành "sạch".**
-Triệu chứng: báo cáo của agent viết "đã kiểm, không còn chỗ nào dùng X" dựa trên `grep -c`/`grep -rl`.
-Nguyên nhân gốc: 0 có ba nghĩa (không có / pattern sai / đo sai chỗ) và câu lệnh không phân biệt.
-Chặn bằng cơ chế: brief yêu cầu mọi phép đếm in kèm mẫu số và chạy trên `HEAD`; script đếm exit lỗi khi số file quét được là 0.
+Gate chạy trên code hiện tại ra xanh là được đưa ngay vào loop. Chiều đó một gate `exit 0` cứng cũng qua, nên nó không phân biệt được gì. Skill hay loop nên từ chối dùng gate chưa có file `prove-red.log` mới hơn lần sửa gate cuối (so mtime, hoặc hash gate ghi trong log).
 
-**Gate chỉ thử chiều "đúng thì xanh".**
-Triệu chứng: gate mới viết, chạy trên code hiện tại ra xanh, được đưa ngay vào loop.
-Nguyên nhân gốc: chiều đó cũng qua với `exit 0` cứng; nó không phân biệt được gì.
-Chặn bằng cơ chế: skill/loop từ chối dùng gate chưa có file `prove-red.log` mới hơn lần sửa gate cuối (so mtime hoặc hash gate ghi trong log).
+Luật SKIP là chỗ hay lộ ra nhất: "có SKIP thì FAIL" tồn tại nhưng chưa từng kích hoạt, vì `go test` không `-v` chỉ in dòng `ok` và chuỗi cần grep không bao giờ xuất hiện. Cho `prove-red` thêm một mutant "gỡ hạ tầng" (bỏ biến môi trường DB); gate không đỏ thì luật SKIP đang mù.
 
-**Test xanh trên commit chưa vá.**
-Triệu chứng: bản vá merge kèm test "chứng minh", sau đó bug quay lại.
-Nguyên nhân gốc: test quan sát tầng hoặc phạm vi mà bug không đi qua (§3.6), hoặc fixture mang cùng giả định với code.
-Chặn bằng cơ chế: done-criteria của task fix bug có dòng "test mới phải ĐỎ trên commit trước bản vá" — verifier chạy nó bằng `git stash`/checkout commit cha, không chỉ đọc test.
+### Một con số tổng làm tiêu chí xong
+
+"271 suite pass" hay "Ran 2 tests" được báo là xong trong khi một suite rỗng hoặc test bị skip: con số tổng gộp chạy-và-qua với không-chạy làm một. Gate phải in và so ít nhất hai số (suite và test, chạy và skip) với baseline đo trên chính worktree vừa dựng; lệch baseline là FAIL.
+
+### Đọc "0 kết quả" thành "sạch"
+
+Agent viết "đã kiểm, không còn chỗ nào dùng X" dựa trên `grep -c` hay `grep -rl`, trong khi 0 có ba nghĩa (không có, pattern sai, đo sai chỗ) và câu lệnh không phân biệt. Brief yêu cầu mọi phép đếm in kèm mẫu số và chạy trên `HEAD`; script đếm exit lỗi khi số file quét được là 0.
+
+### Test "chứng minh" bản vá vẫn xanh trên commit chưa vá
+
+Bản vá merge kèm test, rồi bug quay lại. Test đó quan sát tầng hoặc phạm vi mà bug không đi qua (§3.6), hoặc fixture mang cùng giả định với code. Done-criteria của task fix bug cần dòng "test mới phải ĐỎ trên commit trước bản vá", và verifier chạy nó bằng `git stash`/checkout commit cha chứ không chỉ đọc test.
 
 ---
 

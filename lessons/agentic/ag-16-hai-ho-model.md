@@ -314,29 +314,25 @@ Số đếm đó — trên đúng codebase của bạn — mới là cơ sở đ
 
 ## 5. Bẫy thường gặp
 
-**Lane hỏng thì cho Claude viết luôn.**
-Triệu chứng: loop vẫn chạy, mọi task PASS, nhưng log toàn `executor: claude`. Nguyên nhân gốc: fallback không có danh sách đóng nên mọi trục trặc đều thành lý do đổi vai, nguyên nhân thật (modal update, stdin mở) không ai sửa. Chặn bằng cơ chế: bảng fallback đóng ở §3.6 viết vào skill loop; ghi `executor` cho mỗi task; báo cáo cuối lượt in tỉ lệ task chấm chéo — tỉ lệ tụt là tín hiệu có nguyên nhân chưa sửa.
+### Lane hỏng nào cũng giao cho Claude viết, rồi coi PASS như thường
 
-**Tin receipt "đã giao việc".**
-Triệu chứng: báo "4 task đang chạy" trong khi worktree rỗng. Nguyên nhân gốc: receipt chỉ chứng minh văn bản đã tới terminal, không chứng minh agent đã submit và bắt đầu chạy. Chặn: sau khi giao việc, chờ tác dụng phụ đầu tiên (mốc §3.4) có thời hạn; quá hạn thì đọc transcript bằng script, không hỏi `status`. Chi tiết về ack ở [[ag-20-viec-nen-va-ack]].
+Loop vẫn chạy, task nào cũng PASS, nhưng mở log ra thì toàn `executor: claude`, và có task Claude viết, Claude chấm rồi merge thẳng. Fallback không có danh sách đóng nên trục trặc nào cũng thành lý do đổi vai, còn nguyên nhân thật (modal update, stdin mở) không ai sửa; verdict lại không mang thông tin "ai viết". Viết bảng fallback đóng ở §3.6 vào skill loop, ghi `executor` cho mỗi task và đưa nó vào verdict file. Báo cáo cuối lượt in tỉ lệ task chấm chéo: tỉ lệ tụt là tín hiệu có nguyên nhân chưa sửa. Gate merge yêu cầu thêm bằng chứng phân biệt được hoặc người review khi `executor == verifier_family`.
 
-**`codex exec` treo 0% CPU.**
-Triệu chứng: tiến trình sống mãi, không ghi file. Nguyên nhân gốc: stdin được pipe mà không đóng; theo docs Codex đọc stdin làm ngữ cảnh thêm nên chờ EOF. Chặn: mọi lời gọi từ code dùng `stdio: ['ignore', ...]` hoặc `< /dev/null`; prompt đưa vào bằng `- < file`. Thêm một timeout cứng cho tiến trình.
+### Tin receipt "đã giao việc"
 
-**Vá phiên bản Codex một lần đầu phiên.**
-Triệu chứng: task đầu chạy, task giữa phiên chết ở giây thứ 9–23. Nguyên nhân gốc: bản mới ra *trong* phiên, modal update bật lại. Chặn: bước kiểm/ghim phiên bản nằm trong thủ tục **mỗi lần giao việc**, không ở đầu phiên.
+Main agent báo "4 task đang chạy" trong khi worktree rỗng. Receipt chỉ chứng minh văn bản đã tới terminal, không chứng minh agent đã submit và bắt đầu chạy. Sau khi giao việc, chờ tác dụng phụ đầu tiên (mốc §3.4) có thời hạn; quá hạn thì đọc transcript bằng script chứ không hỏi `status`, rồi khớp với bốn biến thể ở §3.4 (kể cả việc vá phiên bản phải làm trước mỗi lần giao, và `codex exec` treo 0% CPU vì stdin không đóng). Chi tiết về ack ở [[ag-20-viec-nen-va-ack]].
 
-**Bắt quota bằng regex chưa kiểm hai chiều.**
-Triệu chứng: hoá đơn Claude tăng, lỗi thật (thiếu dependency, timeout) biến mất khỏi log. Nguyên nhân gốc: regex rộng quá, biến lỗi thật thành fallback. Chặn: một file mẫu lỗi thật gồm cả hai nhóm, chạy như test của regex mỗi lần sửa nó (Bước 4).
+### Regex bắt quota chưa kiểm hai chiều
 
-**Đọc lỗi Claude ở nhầm luồng.**
-Triệu chứng: script báo "Claude lỗi: success" hoặc thông báo vô nghĩa, chẩn đoán đi sai hướng. Nguyên nhân gốc: theo docs, lỗi xảy ra trong lượt chạy của `claude -p` (ví dụ thiếu đăng nhập) được in làm result trên **stdout**, không phải stderr; script cắt sai chỗ. Chặn: dùng `--output-format json`, kiểm exit code và đọc trường kết quả, không grep stderr.
+Hoá đơn Claude tăng dần, còn lỗi thật như thiếu dependency hay timeout thì biến mất khỏi log. Regex rộng quá đã biến lỗi thật thành fallback. Giữ một file mẫu lỗi thật gồm cả hai nhóm và chạy nó như test của regex **mỗi lần sửa regex** (Bước 4).
 
-**Verifier "read-only" nhưng vẫn sửa được file.**
-Triệu chứng: verdict PASS, diff có thêm thay đổi không ai giao. Nguyên nhân gốc: verifier chạy ở mode tự duyệt ghi (`acceptEdits`) hoặc allow `Edit`. Chặn: `--permission-mode dontAsk` + allowlist chỉ có công cụ đọc và lệnh gate; kiểm bằng `git status` trước và sau bước verify phải giống nhau.
+### Đọc lỗi `claude -p` ở nhầm luồng
 
-**Fallback xong rồi coi PASS như thường.**
-Triệu chứng: task do Claude viết, Claude chấm, merge thẳng. Nguyên nhân gốc: verdict không mang thông tin "ai viết". Chặn: verdict file kèm `executor`; gate merge yêu cầu thêm bằng chứng phân biệt được hoặc người review khi `executor == verifier_family`.
+Script báo "Claude lỗi: success" hoặc một thông báo vô nghĩa, và việc chẩn đoán đi sai hướng. Theo docs, lỗi xảy ra trong lượt chạy (ví dụ thiếu đăng nhập) được in làm result trên **stdout**, không phải stderr, nên script đã cắt sai chỗ. Dùng `--output-format json`, kiểm exit code và đọc trường kết quả thay vì grep stderr.
+
+### Verifier "read-only" vẫn sửa được file
+
+Verdict PASS nhưng diff có thêm thay đổi không ai giao, vì verifier chạy ở mode tự duyệt ghi (`acceptEdits`) hoặc được allow `Edit`. Dùng `--permission-mode dontAsk` với allowlist chỉ gồm công cụ đọc và lệnh gate, rồi kiểm bằng `git status` trước và sau bước verify: hai lần phải giống nhau.
 
 ---
 

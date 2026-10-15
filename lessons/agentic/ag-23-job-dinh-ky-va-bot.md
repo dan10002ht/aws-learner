@@ -417,32 +417,33 @@ Chi phí mỗi lượt: đọc `cost=` trong log sau một tuần, nhân 30 cho 
 
 ## 5. Bẫy thường gặp
 
-**Job chạy tay được, chạy theo lịch thì "command not found".**
-Triệu chứng: `claude: command not found` hoặc `node` sai phiên bản trong file `.err.log`. Nguyên nhân gốc: cron/launchd không đọc shell profile, `PATH` tối thiểu. Chặn: khai báo `PATH` tường minh trong crontab/plist, và wrapper preflight bằng `command -v` cho từng binary, thoát 127 với thông báo rõ.
+### Chạy tay được, chạy theo lịch thì không
 
-**Mốc chốt trước khi agent xong.**
-Triệu chứng: một ngày dữ liệu biến mất sau lượt bị kill (mất mạng, máy ngủ giữa chừng). Nguyên nhân gốc: wrapper ghi mốc ngay sau khi gom input. Chặn: ghi state mới ra file tạm, chỉ `mv` đè sau khi agent trả về và phong bì sạch. Ngược lại, giá trị của mốc phải được **chụp trước** (hash HEAD, giờ bắt đầu) — chụp ở cuối thì input đến trong lúc agent chạy bị bỏ qua (suy luận từ cách wrapper trong case dùng `touch` ở cuối lượt; chưa đo được lần nào mất dữ liệu vì nó).
+File `.err.log` báo `claude: command not found`, hoặc `node` sai phiên bản. cron và launchd không đọc shell profile và chạy với `PATH` tối thiểu. Khai báo `PATH` tường minh trong crontab/plist, và cho wrapper preflight bằng `command -v` cho từng binary, thoát 127 với thông báo rõ.
 
-**Học từ nguồn sống bằng mốc thời gian.**
-Triệu chứng: note trích nguyên văn, có `source:` đúng, nhưng kết luận đã bị chính tác giả bác. Nguyên nhân gốc: mốc theo ts tin gốc mù với reply mới và tin bị sửa. Chặn: dấu vân nội dung + cửa sổ thăm lại có hạn + prompt có nhánh "đọc lại thì sửa note cũ" (§3.3).
+Một lỗi đặt lịch khác là dùng `/loop` cho việc cần chạy hằng đêm. Theo docs, scheduled task trong phiên tự hết hạn sau 7 ngày và chỉ chạy khi phiên mở, nên job ngừng âm thầm sau một tuần hoặc ngay khi đóng terminal. Việc dài hạn đặt ở launchd/cron, Desktop task hoặc routine (§3.1); `/loop` chỉ cho việc canh trong vài giờ.
 
-**Log báo "success" cho một lượt chưa từng gọi model.**
-Triệu chứng: case fail với thông báo vô nghĩa, chạy vài giây, chi phí 0. Nguyên nhân gốc: wrapper đọc `subtype`/mã trạng thái thay cho nội dung, trong khi lỗi nằm ở `result`. Chặn: kiểm `is_error` và **luôn in `result`**; thêm cảnh báo khi thời gian chạy < 10% trung vị hoặc chi phí bằng 0.
+### Học từ nguồn còn sống bằng mốc thời gian
 
-**Đăng nhập lại mà job vẫn hỏng.**
-Triệu chứng: đã `/login` thành công, lượt sau vẫn "Not logged in". Nguyên nhân gốc: token rơi vào user OS khác user chạy job, hoặc vào `CLAUDE_CONFIG_DIR` khác. Chặn: canary chạy dưới đúng user của job; với máy 24/7 dùng `CLAUDE_CODE_OAUTH_TOKEN` từ `claude setup-token` và ghi ngày hết hạn (một năm) vào lịch.
+Note trích nguyên văn, `source:` trỏ đúng, mà kết luận đã bị chính tác giả bác. Mốc theo ts tin gốc không thấy reply mới, cũng không thấy tin bị sửa. Dùng dấu vân nội dung, cửa sổ thăm lại có hạn, và cho prompt một nhánh "đọc lại thì sửa note cũ" (§3.3).
 
-**Bot đăng dưới tên người.**
-Triệu chứng: đồng nghiệp tag người khi cần bot và ngược lại; cảm ơn nhầm bot. Nguyên nhân gốc: dùng token người dùng hoặc connector liên kết với tài khoản cá nhân cho tiện. Chặn: mỗi agent một bot user riêng; wrapper đăng tin chỉ có token của bot, không có token người.
+Thứ tự chốt mốc đi theo [[ag-21-loop-la-he-phan-tan]]: ghi state mới ra file tạm, chỉ `mv` đè sau khi agent trả về và phong bì sạch, còn giá trị của mốc (hash HEAD, giờ bắt đầu) thì **chụp trước** khi chạy agent. Chụp ở cuối thì input đến trong lúc agent chạy bị bỏ qua. Điểm sau là suy luận từ cách wrapper trong case dùng `touch` ở cuối lượt, chưa đo được lần nào mất dữ liệu vì nó.
 
-**"Chỉ đọc" được giữ bằng một câu trong prompt.**
-Triệu chứng: một ngày bot "giúp luôn" bằng cách ghi dữ liệu thật vì người yêu cầu nhờ. Nguyên nhân gốc: luật nằm ở chỗ model có thể bỏ qua. Chặn: cổng chặn mutation ở client, `--disallowedTools` cho lệnh ghi, soát transcript trước khi đăng — và rào thật là user OS không đọc được khoá ghi.
+### Log báo "success" cho một lượt chưa từng gọi model
 
-**Kênh riêng cho bot, tin "không có gì".**
-Triệu chứng: kênh nhiều tin, 0 reply, 0 reaction sau vài tuần. Nguyên nhân gốc: đầu ra đáp vào nơi agent sống, không phải nơi việc sống; tin không có chủ. Chặn: đăng vào thread của việc, tag đúng một người; cấm hẳn tin báo rỗng, tín hiệu sống chuyển sang canary riêng cho người vận hành.
+Case fail với thông báo vô nghĩa, chạy vài giây, chi phí 0. Wrapper đọc `subtype` hay mã trạng thái, trong khi lỗi nằm ở `result`. Kiểm `is_error`, luôn in `result`, và cảnh báo khi thời gian chạy dưới 10% trung vị hoặc chi phí bằng 0.
 
-**Dùng `/loop` cho việc cần chạy hằng đêm.**
-Triệu chứng: job âm thầm ngừng sau một tuần, hoặc ngừng khi đóng terminal. Nguyên nhân gốc: theo docs, scheduled task trong phiên tự hết hạn sau 7 ngày và chỉ chạy khi phiên mở. Chặn: việc dài hạn đặt ở launchd/cron, Desktop task hoặc routine (§3.1); `/loop` chỉ cho việc canh trong vài giờ.
+Đã `/login` thành công mà lượt sau vẫn "Not logged in" thì thường token đã rơi vào user OS khác user chạy job, hoặc vào `CLAUDE_CONFIG_DIR` khác. Canary phải chạy dưới đúng user của job. Máy 24/7 thì dùng `CLAUDE_CODE_OAUTH_TOKEN` từ `claude setup-token` và ghi ngày hết hạn (một năm) vào lịch.
+
+### "Chỉ đọc" được giữ bằng một câu trong prompt
+
+Một ngày bot "giúp luôn" bằng cách ghi dữ liệu thật vì người yêu cầu nhờ, bởi luật nằm ở chỗ model có thể bỏ qua. Chặn bằng cổng mutation ở client, `--disallowedTools` cho lệnh ghi, và soát transcript trước khi đăng. Ba lớp đó vẫn là rào quy trình; **rào thật là user OS không đọc được khoá ghi**.
+
+### Bot đăng dưới tên người, vào kênh không ai đọc
+
+Đồng nghiệp tag người khi cần bot và ngược lại, có người cảm ơn nhầm bot, vì bot dùng token người dùng hoặc connector liên kết tài khoản cá nhân cho tiện. Mỗi agent cần một bot user riêng, và wrapper đăng tin chỉ giữ token của bot, không có token người.
+
+Kênh riêng cho bot hỏng theo kiểu khác: vài tuần nhiều tin mà 0 reply, 0 reaction. Đầu ra đáp vào nơi agent sống chứ không phải nơi việc sống, và tin không có chủ. Đăng vào thread của việc, tag đúng một người, cấm hẳn tin báo rỗng; tín hiệu sống chuyển sang canary riêng cho người vận hành.
 
 ---
 

@@ -369,33 +369,21 @@ Liệt kê 10 việc gần nhất bạn đã nhờ AI. Với mỗi việc, trả
 
 ### 5.1 Dán cả file lớn "cho chắc"
 
-- **Triệu chứng:** dán 2 000 dòng, hỏi "có bug không", nhận câu trả lời chung chung hoặc chỉ ra lỗi ở đoạn đầu/cuối file.
-- **Nguyên nhân gốc:** context rot (§3.3) — nhiều token hơn không đồng nghĩa với chú ý tốt hơn; và câu hỏi không chỉ chỗ.
-- **Chặn bằng cơ chế:** grep trước, dán **đoạn liên quan + danh sách mọi chỗ khớp** (`grep -rn "<tên hàm>" src/`), kèm triệu chứng cụ thể. Khối "Bối cảnh" trong mẫu §3.5 bắt bạn làm bước này.
+Dán 2 000 dòng rồi hỏi "có bug không" thường nhận về câu trả lời chung chung, hoặc một lỗi ở đoạn đầu hay đoạn cuối file. Nhiều token hơn không có nghĩa là chú ý tốt hơn (context rot, §3.3), và câu hỏi lại không chỉ chỗ. Grep trước, rồi dán đoạn liên quan cùng **danh sách mọi chỗ khớp** (`grep -rn "<tên hàm>" src/`) và triệu chứng cụ thể. Khối "Bối cảnh" trong mẫu §3.5 bắt bạn làm bước này.
 
-### 5.2 "Nó bảo chạy được rồi"
+### 5.2 Coi điều chưa ai kiểm là sự thật
 
-- **Triệu chứng:** dán fix vào, deploy, lỗi vẫn còn hoặc lỗi khác xuất hiện.
-- **Nguyên nhân gốc:** model không chạy được gì (§3.4 lỗi 2); "chạy được" là dự đoán.
-- **Chặn bằng cơ chế:** khối "Xong khi" luôn đòi **lệnh kiểm + output mong đợi**; bạn không áp fix trước khi đã có lệnh đó. Dán output thật kèm exit code (`echo $?`) cho lượt sau, không dán "vẫn lỗi".
+Model nói fix "chạy được rồi", bạn dán vào, deploy, và lỗi vẫn còn hoặc lỗi khác xuất hiện. Câu đó là dự đoán, vì model không chạy được gì (§3.4 lỗi 2). Khối "Xong khi" vì vậy luôn đòi lệnh kiểm kèm output mong đợi, và bạn không áp fix khi chưa có lệnh đó. Lượt sau dán output thật kèm exit code (`echo $?`), đừng chỉ gõ "vẫn lỗi".
+
+Chiều ngược lại hỏng y như vậy. Bạn viết "chắc do cache Redis, sửa cache đi"; model sửa cache, bug còn nguyên. Model coi mọi thứ trong prompt là dữ kiện và không kiểm được giả thuyết của bạn vì không thấy hệ thống. Trong khối "Ràng buộc", tách phần đã xác minh khỏi phần **nghi ngờ, chưa xác minh** như mẫu §3.5, rồi yêu cầu model nêu cách xác nhận giả thuyết trước khi sửa.
 
 ### 5.3 Ràng buộc trôi trong chat dài
 
-- **Triệu chứng:** model đề xuất đúng thứ bạn đã cấm ở đầu cuộc chat.
-- **Nguyên nhân gốc:** ràng buộc nằm xa trong context dài, hoặc đã bị đẩy ra khỏi context theo cơ chế cuốn chiếu của giao diện chat (§3.3).
-- **Chặn bằng cơ chế:** giữ một **file text "khối ngữ cảnh"** cho mỗi việc (bối cảnh + ràng buộc + tiêu chí xong). Khi đổi hướng hoặc cuộc chat dài, mở chat mới và dán lại khối đó ở đầu. Đây chính là tiền thân của `CLAUDE.md`/`AGENTS.md` — file mà agent tự nạp mỗi session.
+Model đề xuất đúng thứ bạn đã cấm ở đầu cuộc chat. Ràng buộc đó nằm xa trong một context dài, hoặc đã bị giao diện chat đẩy ra theo cơ chế cuốn chiếu (§3.3). Giữ một **file text "khối ngữ cảnh"** cho mỗi việc (bối cảnh, ràng buộc, tiêu chí xong); khi đổi hướng hoặc chat đã dài, mở chat mới và dán lại khối đó ở đầu. File này là tiền thân của `CLAUDE.md`/`AGENTS.md`, thứ agent tự nạp mỗi session.
 
 ### 5.4 Tin câu trả lời về tài liệu mà model chưa được đưa
 
-- **Triệu chứng:** model nêu một tham số, một giới hạn, một tên flag cụ thể — sai hoặc đã cũ.
-- **Nguyên nhân gốc:** tài liệu không có trong context; câu trả lời đến từ dữ liệu huấn luyện hoặc từ một bản tóm tắt (§3.4 lỗi 3).
-- **Chặn bằng cơ chế:** với mọi con số/flag/giới hạn sẽ đi vào code, **dán nguyên văn đoạn docs** vào chat và yêu cầu model trích câu mà nó dựa vào. Không trích được câu → không dùng con số.
-
-### 5.5 Giả thuyết của bạn thành sự thật của model
-
-- **Triệu chứng:** bạn viết "chắc do cache Redis, sửa cache đi"; model sửa cache, bug còn nguyên.
-- **Nguyên nhân gốc:** model coi mọi thứ trong prompt là dữ kiện; nó không thể kiểm giả thuyết của bạn vì không thấy hệ thống.
-- **Chặn bằng cơ chế:** trong khối "Ràng buộc", tách rõ **đã xác minh** và **nghi ngờ, chưa xác minh** (như mẫu §3.5), và yêu cầu model nêu cách xác nhận giả thuyết trước khi sửa.
+Model nêu một tham số, một giới hạn hay một tên flag cụ thể, và nó sai hoặc đã cũ. Tài liệu không có trong context, nên câu trả lời đến từ dữ liệu huấn luyện hoặc từ một bản tóm tắt (§3.4 lỗi 3). Với mọi con số, flag hay giới hạn sẽ đi vào code, dán nguyên văn đoạn docs vào chat và yêu cầu model trích câu nó dựa vào. **Không trích được câu thì không dùng con số.**
 
 ---
 

@@ -391,45 +391,29 @@ git worktree list
 
 ## 5. Bẫy thường gặp
 
-### Bẫy 1 — Worker không thấy thay đổi chưa commit
+### Giao worker làm tiếp phần đang sửa dở mà chưa commit
 
-**Triệu chứng.** Bạn sửa dở vài file ở working copy chính, giao subagent "làm tiếp phần còn lại" trong worktree; nó báo không tìm thấy hàm bạn vừa viết, hoặc viết lại từ đầu.
+Bạn sửa dở vài file ở working copy chính rồi giao subagent "làm tiếp phần còn lại" trong worktree. Nó báo không tìm thấy hàm bạn vừa viết, hoặc viết lại từ đầu. Worktree là checkout của một commit, còn thay đổi chưa commit chỉ nằm trong thư mục của bạn; thêm nữa, worktree của Claude Code mặc định branch từ nhánh mặc định trên remote chứ không phải `HEAD` hiện tại (docs: `worktree.baseRef` mặc định `"fresh"`).
 
-**Nguyên nhân gốc.** Worktree là checkout của một **commit**. Thay đổi chưa commit chỉ nằm trong thư mục của bạn. Thêm vào đó, worktree của Claude Code mặc định branch từ nhánh mặc định trên remote, không phải `HEAD` hiện tại (docs: `worktree.baseRef` mặc định `"fresh"`).
+Commit (hoặc tạo nhánh nháp) trước khi giao. Khi subagent cần làm trên việc đang dở, đặt `"worktree": { "baseRef": "head" }` trong settings của Claude Code. Brief ghi rõ commit gốc (`git rev-parse HEAD`) để worker tự kiểm `git log -1` của nó có khớp không.
 
-**Chặn bằng cơ chế.** Commit (hoặc tạo nhánh nháp) trước khi giao; với Claude Code đặt `"worktree": { "baseRef": "head" }` trong settings khi subagent cần làm trên việc đang dở. Brief ghi rõ commit gốc (`git rev-parse HEAD`) để worker tự kiểm `git log -1` của nó khớp.
+### "Dọn rác" xoá luôn việc của session khác
 
-### Bẫy 2 — "Dọn rác" xoá việc của session khác
+Thấy `.claude/worktrees/` có năm thư mục, nghĩ là rác, thế là `rm -rf` hoặc `git worktree remove --force` hết, và một session khác đang chạy mất file chưa commit. Không có chỗ nào ghi worktree nào thuộc ai, còn sống hay không, nên quyết định dựa trên cảm giác.
 
-**Triệu chứng.** Thấy `.claude/worktrees/` có năm thư mục, nghĩ là rác, `rm -rf` hoặc `git worktree remove --force` hết. Một session khác đang chạy mất file chưa commit.
+Agent chạy `lock --reason "<task> <thời điểm>"` khi bắt đầu và `unlock` khi xong. Việc dọn chỉ đi qua script kiểu `wt-reap.sh` (bỏ qua lock, bẩn, chưa push). **Skill dọn không được dùng `--force`**; có thể chặn hẳn bằng permission deny cho `git worktree remove -f*` theo cách ở [[ag-08-hook-va-chan-bang-cau-hinh]].
 
-**Nguyên nhân gốc.** Không có chỗ nào ghi worktree nào thuộc ai, còn sống hay không; quyết định dựa trên cảm giác.
+### Worker tự đổi tên nhánh
 
-**Chặn bằng cơ chế.** Agent `lock --reason "<task> <thời điểm>"` khi bắt đầu, `unlock` khi xong. Dọn chỉ bằng script kiểu `wt-reap.sh` (bỏ qua lock, bẩn, chưa push). Cấm `--force` trong skill dọn — có thể chặn hẳn bằng permission deny cho `git worktree remove -f*` theo cách ở [[ag-08-hook-va-chan-bang-cau-hinh]].
+Coordinator checkout nhánh `agent/T3` để chấm thì lỗi, hoặc tệ hơn là checkout thất bại im lặng và verifier chấm lại commit cũ. Worker đã áp một luật đặt tên chung (vd "tên nhánh ngắn") lên nhánh do harness tạo bằng `git branch -m`, trong khi coordinator vẫn giữ tên cũ trong record (kinh nghiệm thực tế, cơ chế chi tiết ở [[ag-12-verifier-doc-lap]]). Coordinator neo vào SHA: lấy `git -C <worktree> rev-parse HEAD`, chấm bằng `checkout --detach <sha>` và kiểm mã thoát. Brief cấm `branch -m` / `checkout -b` và nói rõ tên nhánh là khoá liên kết.
 
-### Bẫy 3 — Worker tự đổi tên nhánh
+### Hai worker đụng nhau ở cổng mạng và DB local
 
-**Triệu chứng.** Coordinator checkout nhánh `agent/T3` để chấm thì lỗi; hoặc tệ hơn, checkout thất bại im lặng và verifier chấm lại commit cũ.
+Test của agent B lúc fail lúc không, báo "bản ghi lạ" hay "cổng đã dùng", còn chạy riêng thì xanh. Worktree chỉ tách file; cổng mạng, DB/emulator local và cache trong `$HOME` vẫn dùng chung (§3.2). Brief cấp tài nguyên riêng cho từng worker, như cổng bằng cổng gốc cộng số thứ tự task, tên DB hoặc namespace có hậu tố task. Task nào không cấp được thì đưa vào nhóm verify tuần tự thay vì song song.
 
-**Nguyên nhân gốc.** Tên nhánh là con trỏ ai cũng sửa được. Worker áp một luật đặt tên nhánh chung (vd "tên nhánh ngắn") lên nhánh do harness tạo, dùng `git branch -m`. Coordinator vẫn giữ tên cũ trong record (kinh nghiệm thực tế, cơ chế chi tiết ở [[ag-12-verifier-doc-lap]]).
+### Báo "đã gỡ worktree" mà nhánh vẫn bị khoá
 
-**Chặn bằng cơ chế.** Coordinator neo vào **SHA**, không vào tên nhánh: chấm bằng `git -C <worktree> rev-parse HEAD` rồi `checkout --detach <sha>`, và kiểm mã thoát. Brief cấm `branch -m` / `checkout -b` và nói rõ tên nhánh là khoá liên kết.
-
-### Bẫy 4 — Hai agent cùng cổng, cùng DB
-
-**Triệu chứng.** Test của agent B fail ngẫu nhiên ("bản ghi lạ", "cổng đã dùng") trong khi chạy riêng thì xanh.
-
-**Nguyên nhân gốc.** Worktree chỉ tách file. Cổng mạng, DB/emulator local, cache trong `$HOME` vẫn chung (§3.2).
-
-**Chặn bằng cơ chế.** Brief cấp cho mỗi worker một tài nguyên riêng: cổng = cổng gốc + số thứ tự task, tên DB/namespace có hậu tố task. Không cấp được thì đưa task đó vào nhóm verify **tuần tự** thay vì song song.
-
-### Bẫy 5 — Báo cáo "đã gỡ worktree" mà nhánh vẫn khoá
-
-**Triệu chứng.** Agent báo xong, nhưng `git checkout <nhánh>` vẫn `already used by worktree`.
-
-**Nguyên nhân gốc.** Agent xoá thư mục (`rm -rf`) chứ không `git worktree remove`; metadata ở `.git/worktrees/<tên>` còn, nhánh vẫn bị coi là đang checkout tới khi `prune`.
-
-**Chặn bằng cơ chế.** Done-criteria của bước dọn là lệnh, không phải câu báo: `git worktree list --porcelain | grep -c "branch refs/heads/<nhánh>"` phải in `0`. Script dọn luôn kết thúc bằng `git worktree prune -v`.
+Agent báo xong, nhưng `git checkout <nhánh>` vẫn ra `already used by worktree`. Agent đã `rm -rf` thư mục thay vì `git worktree remove`, nên metadata ở `.git/worktrees/<tên>` còn đó và nhánh vẫn bị coi là đang checkout cho tới khi `prune`. Done-criteria của bước dọn phải là lệnh chứ không phải câu báo: `git worktree list --porcelain | grep -c "branch refs/heads/<nhánh>"` phải in `0`, và script dọn luôn kết thúc bằng `git worktree prune -v`.
 
 ---
 

@@ -398,45 +398,27 @@ Rồi `python3 retro.py dang-ky de-xuat.json` — baseline do script chụp, kh�
 
 ## 5. Bẫy thường gặp
 
-**Bẫy 1 — Đổi thước giữa hai lần đo.**
-Triệu chứng: baseline "7 lượt lỗi", đo lại "3 lượt lỗi", ai cũng vui — rồi phát hiện lần đầu đếm 4 ngày, lần sau 7 ngày, hoặc lần sau đếm bằng lệnh khác vì lệnh cũ bị chặn quyền.
-Nguyên nhân gốc: phép đo do LLM chạy theo hướng dẫn văn xuôi; gặp trở ngại nó tự chọn đường vòng.
-Chặn: `metric_cmd` lưu nguyên văn trong sổ, **code** chạy đúng chuỗi đó ở cả hai lần; lệnh đo được duyệt sẵn trong permission của phiên headless; danh sách lệnh đo được phép ghi cứng trong prompt đề xuất.
+### Đổi thước giữa hai lần đo
 
-**Bẫy 2 — "Bằng 0" vì thứ được đo đã chết.**
-Triệu chứng: retro "lượt nhiễu = 0" chấm `dat` trong tuần hook bị tắt.
-Nguyên nhân gốc: thước chỉ đếm cái xấu, không đếm tổng.
-Chặn: `min_sample` trên tổng (`prompt_lookups >= 10`); thiếu mẫu thì `chua-du-mau`, không bao giờ `dat`. Thước nào cũng phải kiểm được cả hai chiều ([[ag-11-gate-xanh-gia]]).
+Baseline "7 lượt lỗi", đo lại "3 lượt lỗi", ai cũng vui, rồi mới phát hiện lần đầu đếm 4 ngày còn lần sau 7 ngày, hoặc lần sau đếm bằng lệnh khác vì lệnh cũ bị chặn quyền. Phép đo do LLM chạy theo hướng dẫn văn xuôi thì gặp trở ngại là nó tự chọn đường vòng. `metric_cmd` lưu nguyên văn trong sổ và **code** chạy đúng chuỗi đó ở cả hai lần; lệnh đo được duyệt sẵn trong permission của phiên headless, danh sách lệnh đo được phép ghi cứng trong prompt đề xuất.
 
-**Bẫy 3 — Hai patch chạm một file trong cùng cửa sổ đo.**
-Triệu chứng: số đo lại không quy được cho patch nào.
-Nguyên nhân gốc: mỗi vòng chọn lỗi độc lập, không biết vòng trước đang đo gì.
-Chặn: `dang-ky` tự từ chối nếu `patch_files` giao với retro `cho-duyet`/`da-ap` (đã có trong `retro.py`). Chấp nhận cái giá: đôi khi phải vá tầng khác và để gốc chờ một tuần (§3.4).
+Cùng lý do, đừng tin số trong đề xuất của LLM. Nó chép từ trí nhớ hoặc làm tròn, nên baseline trong decision note lệch với output thật của lệnh đo. Code chạy lại `metric_cmd` ngay sau khi đề xuất được ghi và lưu object đó làm baseline; số trong văn bản đề xuất chỉ để người đọc.
 
-**Bẫy 4 — Retro tay đè retro tự động.**
-Triệu chứng: một đề xuất đang soạn biến mất; sổ có hai bản ghi cùng id. (Case thực tế: một retro làm tay tự lấy id kế tiếp và đè mất đề xuất tự động cùng id.)
-Nguyên nhân gốc: người (hoặc agent) tự đặt id bằng cách nhìn số lớn nhất hiện có, trong khi job tự động cũng đang giữ số đó cho bản nháp.
-Chặn: chỉ một đường cấp id — lệnh đăng ký của code, và nó tính cả đề xuất đang soạn dở. Retro làm tay chụp baseline *trước* khi sửa rồi đăng ký qua đúng lệnh đó.
+### Thước bằng 0 vì thứ được đo đã chết
 
-**Bẫy 5 — Dạy cho thi.**
-Triệu chứng: con số đạt, nhưng không ai thấy agent làm tốt hơn.
-Nguyên nhân gốc: patch và thước dùng chung một định nghĩa (§3.8).
-Chặn: ghi điều đó vào Tradeoff, và chỉ định một thước thứ hai patch không chạm tới (A/B chất lượng, số ca trượt lặp lại).
+Retro "lượt nhiễu = 0" được chấm `dat` đúng tuần hook bị tắt, vì thước chỉ đếm cái xấu mà không đếm tổng. Đặt `min_sample` trên tổng (`prompt_lookups >= 10`); thiếu mẫu thì `chua-du-mau`, không bao giờ `dat`. Thước nào cũng phải kiểm được cả hai chiều ([[ag-11-gate-xanh-gia]]).
 
-**Bẫy 6 — Ép mỗi tuần phải có patch.**
-Triệu chứng: patch nhỏ dần, bằng chứng mỏng dần, file hướng dẫn dài dần.
-Nguyên nhân gốc: coi retro là sản lượng.
-Chặn: tiêu chí ≥ 2 lần có nguồn + đếm được bằng JSON là cứng; prompt cho phép trả `{"verdict": "khong-co-loi-lap"}`, và đó là một lượt thành công.
+### Retro tay đè retro tự động
 
-**Bẫy 7 — Vá đúng nội dung, sai chỗ.**
-Triệu chứng: luật mới có trong file hướng dẫn mà agent vẫn không theo (1/34 ở §3.7).
-Nguyên nhân gốc: file nạp đầu session ở xa chỗ agent ra quyết định.
-Chặn: khi đề xuất, hỏi thêm "agent đọc cái gì *ngay lúc* nó mắc lỗi này?" — khối hook, output của tool, mô tả skill — và đặt luật ở đó. Không được thì dùng cấu hình chặn hẳn ([[ag-08-hook-va-chan-bang-cau-hinh]]).
+Case thực tế: một retro làm tay tự lấy id kế tiếp và đè mất đề xuất tự động cùng id. Từ bên ngoài, đề xuất đang soạn biến mất và sổ có hai bản ghi cùng id. Người (hoặc agent) đặt id bằng cách nhìn số lớn nhất hiện có, trong khi job tự động cũng đang giữ số đó cho bản nháp. Chỉ để một đường cấp id là lệnh đăng ký của code, và lệnh đó tính cả đề xuất đang soạn dở. Retro làm tay chụp baseline *trước* khi sửa rồi đăng ký qua đúng lệnh đó.
 
-**Bẫy 8 — Tin số trong đề xuất của LLM.**
-Triệu chứng: baseline trong decision note khác với output thật của lệnh đo.
-Nguyên nhân gốc: LLM chép số từ trí nhớ hoặc làm tròn.
-Chặn: code chạy lại `metric_cmd` ngay sau khi đề xuất được ghi và lưu object đó làm baseline; số trong văn bản đề xuất chỉ để người đọc.
+### Vá đúng nội dung nhưng sai chỗ
+
+Luật mới đã có trong file hướng dẫn mà agent vẫn không theo (1/34 ở §3.7), vì file nạp đầu session ở xa chỗ agent ra quyết định. Khi đề xuất, hỏi thêm: agent đọc cái gì *ngay lúc* nó mắc lỗi này — khối hook, output của tool, mô tả skill? Đặt luật ở đó. Không được thì dùng cấu hình chặn hẳn ([[ag-08-hook-va-chan-bang-cau-hinh]]).
+
+### Ép mỗi tuần phải có patch
+
+Patch nhỏ dần, bằng chứng mỏng dần, file hướng dẫn dài dần: đó là khi retro bị coi là sản lượng. Tiêu chí ≥ 2 lần có nguồn và đếm được bằng JSON phải cứng, và prompt cho phép trả `{"verdict": "khong-co-loi-lap"}`. **Trả như vậy là một lượt thành công.**
 
 ---
 

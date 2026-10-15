@@ -389,40 +389,27 @@ Bài toán test rỗng (`average([])`) cố ý mơ hồ: trả `0` hay ném lỗ
 
 ## 5. Bẫy thường gặp
 
-**Agent tự biến một lần bị chặn thành luật chung.**
-Triệu chứng: agent đẩy cả lệnh đọc sang cho người chạy tay, buổi làm việc chậm lại vì mỗi lệnh là một vòng chờ.
-Nguyên nhân gốc: chặn xảy ra ở lớp 3 (sandbox) nhưng agent ghi nhận ở lớp 1 (một "quy tắc" tự đặt trong context), và không có gì trong context nói ranh giới thật là đọc/ghi.
-Chặn bằng cơ chế: cho phép lệnh đọc ở lớp 2 bằng rule `allow` cụ thể; giữ lệnh ghi ở `ask`; ghi một feedback có Why nói rõ ranh giới là đọc vs ghi (Level 3).
+### Agent tự biến một lần bị chặn thành luật chung
 
-**Tin rằng `deny: Bash(rm *)` là hàng rào.**
-Triệu chứng: rule nằm đó, nhưng `bash -c 'rm …'` hoặc `/bin/rm` vẫn chạy.
-Nguyên nhân gốc: rule Bash khớp chuỗi lệnh sau khi tách lệnh ghép, không khớp chương trình; docs nói rõ nó không phải security boundary.
-Chặn bằng cơ chế: bật sandbox OS cho ràng buộc file/mạng, hoặc hook `PreToolUse` tự kiểm chuỗi lệnh; chạy `bypassPermissions`/`--yolo` chỉ trong VM/container dùng một lần.
+Agent đẩy cả lệnh đọc sang cho người chạy tay, và buổi làm việc chậm hẳn vì mỗi lệnh là một vòng chờ. Lần chặn thật xảy ra ở lớp 3 (sandbox), nhưng agent ghi nhận nó ở lớp 1, thành một "quy tắc" tự đặt trong context; không có gì trong context nói ranh giới thật là đọc hay ghi. Sửa ở đúng lớp: cho lệnh đọc chạy ở lớp 2 bằng rule `allow` cụ thể, giữ lệnh ghi ở `ask`, và ghi một feedback có Why nói rõ ranh giới là **đọc vs ghi** (Level 3).
 
-**Ghi "đừng sửa test" vào prompt và nghĩ là đã chặn.**
-Triệu chứng: một lượt dài, context bị nén, agent sửa test cho xanh.
-Nguyên nhân gốc: lời dặn ở lớp 1, chịu ảnh hưởng của context; docs: *"they don't change what Claude Code allows."*
-Chặn bằng cơ chế: `deny: ["Edit(./test_calc.py)"]` (hoặc pattern thư mục test); kiểm sau bằng `git diff --stat`.
+### Tin rằng `deny: Bash(rm *)` là hàng rào
 
-**Tưởng checkpoint cứu được mọi thứ.**
-Triệu chứng: agent chạy script ghi database / gọi API, bạn nhấn `Esc` hai lần, file về như cũ nhưng dữ liệu thì không.
-Nguyên nhân gốc: checkpoint chỉ chụp file cục bộ; docs: hành động lên hệ thống từ xa không checkpoint được.
-Chặn bằng cơ chế: lệnh ghi ra ngoài luôn ở `ask`; script ghi phải có chế độ `read`/`apply`/`revert` (case §2).
+Rule nằm đó, nhưng `bash -c 'rm …'` hoặc `/bin/rm` vẫn chạy. Rule Bash khớp chuỗi lệnh sau khi tách lệnh ghép, không khớp chương trình, và docs nói rõ nó không phải security boundary. Ràng buộc file và mạng thì đặt ở sandbox OS, hoặc tự kiểm chuỗi lệnh bằng hook `PreToolUse`. Còn `bypassPermissions`/`--yolo` chỉ chạy trong VM/container dùng một lần.
 
-**Headless "thành công" mà không làm gì.**
-Triệu chứng: job cron báo xong, không có thay đổi nào; log chỉ có một câu trả lời lịch sự.
-Nguyên nhân gốc: trong `-p` không ai duyệt, tool cần duyệt bị từ chối; hoặc lỗi bên trong run (thiếu đăng nhập) được in như kết quả trên stdout; hoặc prompt bị một flag nuốt.
-Chặn bằng cơ chế: `--output-format json`, fail job khi `permission_denials` khác rỗng ngoài dự kiến hoặc exit code khác 0; prompt đặt ngay sau `--print`; kiểm hiệu ứng (`git diff`, file đầu ra) chứ không kiểm lời agent nói.
+### Ghi "đừng sửa test" vào prompt và nghĩ là đã chặn
 
-**Chạy `-p` trên repo lạ và nạp nguyên cấu hình của repo đó.**
-Triệu chứng: CI chạy agent trên PR từ fork, hook trong `.claude/settings.json` của PR được thực thi.
-Nguyên nhân gốc: không có `--bare`, `-p` nạp hook và MCP server của thư mục mà không hỏi trust.
-Chặn bằng cơ chế: `--bare` cho script/CI, truyền cấu hình tường minh bằng `--settings`, `--mcp-config`.
+Sau một lượt dài, context bị nén, agent sửa test cho xanh. Lời dặn nằm ở lớp 1 và chịu ảnh hưởng của context; docs nói thẳng *"they don't change what Claude Code allows."* Thứ giữ được là `deny: ["Edit(./test_calc.py)"]` (hoặc pattern thư mục test), kiểm lại sau bằng `git diff --stat`.
 
-**Copy cờ Codex từ bài viết cũ.**
-Triệu chứng: `--full-auto` hoặc `-a untrusted` báo lỗi hoặc hành vi khác mong đợi.
-Nguyên nhân gốc: tên cờ và giá trị policy đã đổi; docs hiện ghi `untrusted` ngừng hỗ trợ, `--full-auto` không còn cho `codex exec`.
-Chặn bằng cơ chế: `codex --help` / `codex exec --help` trên đúng phiên bản bạn chạy trước khi viết script; script fail khi gặp exit code khác 0.
+### Headless "thành công" mà không làm gì
+
+Job cron báo xong, không có thay đổi nào, log chỉ có một câu trả lời lịch sự. Có ba đường dẫn tới đây: trong `-p` không ai duyệt nên tool cần duyệt bị từ chối; lỗi bên trong run (thiếu đăng nhập) được in như kết quả trên stdout; hoặc prompt bị một flag nuốt mất. Chạy với `--output-format json`, cho job fail khi exit code khác 0 hoặc `permission_denials` khác rỗng ngoài dự kiến, và đặt prompt ngay sau `--print`. Cuối cùng **kiểm hiệu ứng** (`git diff`, file đầu ra) chứ không kiểm lời agent nói.
+
+### Chạy `-p` trên repo lạ và nạp nguyên cấu hình của repo đó
+
+CI chạy agent trên PR từ fork, và hook trong `.claude/settings.json` của PR được thực thi. Không có `--bare` thì `-p` nạp hook và MCP server của thư mục mà không hỏi trust. Script và CI nên dùng `--bare`, truyền cấu hình tường minh bằng `--settings`, `--mcp-config`.
+
+Hai lỗi khác của bài này đã có chỗ riêng. Checkpoint chỉ chụp file cục bộ, nên nhấn `Esc` hai lần không lùi được dữ liệu đã ghi lên database hay API; đường lùi cho loại ghi đó là script `read`/`apply`/`revert` ở [[ag-05-checkpoint-tung-buoc]]. Cờ Codex chép từ bài viết cũ (`--full-auto`, `-a untrusted`) thì §3.5 đã nói: chạy `codex exec --help` trên đúng phiên bản trước khi viết script.
 
 ---
 

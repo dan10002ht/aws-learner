@@ -448,40 +448,29 @@ Với code bản chia đều: lệnh đầu in "Gate đỏ — chưa được b�
 
 ## 5. Bẫy thường gặp
 
-**Tiêu chí viết bằng "đảm bảo".**
-Triệu chứng: brief có "đảm bảo responsive", "đảm bảo 44px", "đảm bảo không hồi quy"; verifier trả PASS kèm bằng chứng đọc từ code.
-Nguyên nhân gốc: dòng tiêu chí không có lệnh, verifier tự chọn phép kiểm rẻ nhất, thường là đọc lại lời khai.
-Chặn bằng cơ chế: mẫu brief bắt buộc bảng bốn cột (mệnh đề / lệnh / pass / môi trường) như §3.1; dòng nào trống cột "lệnh" thì không được giao. Có thể thêm một bước kiểm trong skill giao việc: `grep -n "đảm bảo" BRIEF.md` khác rỗng thì dừng và hỏi.
+### Tiêu chí viết bằng chữ "đảm bảo"
 
-**Agent bịa gate theo mặc định chung.**
-Triệu chứng: agent chạy `tsc` trong repo không có TypeScript, hoặc `npx jest` ở root rồi đi "sửa" 34 suite vốn hỏng sẵn.
-Nguyên nhân gốc: repo không có khối gate viết sẵn, agent điền chỗ trống bằng thói quen chung.
-Chặn: khối gate trong `CLAUDE.md`/`AGENTS.md` hoặc đầu `BRIEF.md` (§3.3), và skill giao việc dán nguyên văn khối đó vào mọi brief — không để agent tự đọc rồi tóm tắt.
+Brief có "đảm bảo responsive", "đảm bảo 44px", "đảm bảo không hồi quy", và verifier trả PASS kèm bằng chứng đọc từ code. Dòng tiêu chí không có lệnh thì verifier tự chọn phép kiểm rẻ nhất, thường là đọc lại lời khai. Mẫu brief nên bắt buộc bảng bốn cột (mệnh đề / lệnh / pass / môi trường) như §3.1; dòng nào trống cột "lệnh" thì không được giao. Skill giao việc có thể thêm một bước kiểm: `grep -n "đảm bảo" BRIEF.md` khác rỗng thì dừng và hỏi.
 
-**Baseline đỏ sẵn bị coi là lỗi mới.**
-Triệu chứng: lint báo 94 lỗi, agent sửa lan sang 30 file không liên quan; diff phình.
-Nguyên nhân gốc: gate đo tuyệt đối ("0 lỗi") trên repo không ở trạng thái 0.
-Chặn: gate so với baseline ghi trong file ("fail khi số lỗi TĂNG"), và cập nhật baseline sau mỗi lần merge trên trạng thái hợp nhất.
+### Agent tự chế gate, hoặc coi lỗi có sẵn là lỗi mới
 
-**Số thống kê đo lúc máy bận.**
-Triệu chứng: p99 hay fail rate trong báo cáo khác hẳn lần đo trước, không ai giải thích được; hoặc tệ hơn, nó được ghi vào tài liệu.
-Nguyên nhân gốc: phép đo không kiểm soát biến "tải máy".
-Chặn: script đo tự kiểm tải trước và trả mã UNVERIFIED riêng (§3.4); điều kiện dừng gắn vào từng task thống kê, không vào cả hàng đợi.
+Repo không có khối gate viết sẵn thì agent điền chỗ trống bằng thói quen chung: chạy `tsc` trong repo không có TypeScript, hay `npx jest` ở root rồi đi "sửa" 34 suite vốn hỏng sẵn. Khối gate nằm trong `CLAUDE.md`/`AGENTS.md` hoặc đầu `BRIEF.md` (§3.3), và skill giao việc dán nguyên văn khối đó vào mọi brief, không để agent tự đọc rồi tóm tắt.
 
-**Hai task PASS riêng, đỏ khi gộp.**
-Triệu chứng: nhánh chính đỏ ngay sau khi merge hai nhánh đều đã được verify.
-Nguyên nhân gốc: mỗi verifier nhìn một worktree; trạng thái hợp nhất chưa ai chấm.
-Chặn: gate hợp nhất trên nhánh tích hợp trước khi đưa vào nhánh chính (§3.6); task đổi luật xếp trước task chịu luật.
+Cùng gốc là gate đo tuyệt đối ("0 lỗi") trên repo không ở trạng thái 0: lint báo 94 lỗi, agent sửa lan sang 30 file không liên quan và diff phình ra. Gate nên so với baseline ghi trong file ("fail khi số lỗi TĂNG"), và baseline được cập nhật sau mỗi lần merge trên trạng thái hợp nhất.
 
-**Gate chung chạy trước vòng sửa cuối.**
-Triệu chứng: các verifier đều PASS dựa trên một output gate, nhưng commit cuối đỏ.
-Nguyên nhân gốc: vòng sửa bug A sau khi gate đã chạy làm hỏng bug B; không ai chạy lại.
-Chặn: gate chung là bước cuối cùng của quy trình, sau mọi vòng sửa — đặt nó trong skill/loop như một bước bắt buộc trước commit, không phải trước verify.
+### Số thống kê đo lúc máy bận
 
-**Worker làm cho xanh thay vì báo failed.**
-Triệu chứng: diff có đổi ngưỡng, nới assertion, đổi seed, hoặc thêm `skip`.
-Nguyên nhân gốc: tiêu chí bất khả thi hoặc khó, và brief không nói rõ báo `failed` là chấp nhận được.
-Chặn: brief ghi "báo failed đúng theo tiêu chí là hành vi đúng; KHÔNG sửa file đo/ngưỡng/seed"; gate kiểm `git diff --name-only` không đụng file đo (như tiêu chí ở §4).
+p99 hay fail rate trong báo cáo khác hẳn lần đo trước mà không ai giải thích được, hoặc tệ hơn, con số đó đã vào tài liệu. Phép đo không kiểm soát biến "tải máy". Script đo tự kiểm tải trước và trả mã UNVERIFIED riêng (§3.4); điều kiện dừng gắn vào từng task thống kê, không vào cả hàng đợi.
+
+### Gate chạy trên một trạng thái không phải trạng thái cuối
+
+Hai nhánh đều đã được verify, merge vào thì nhánh chính đỏ ngay. Mỗi verifier nhìn một worktree, còn trạng thái hợp nhất chưa ai chấm. Chạy gate hợp nhất trên nhánh tích hợp trước khi đưa vào nhánh chính (§3.6), và xếp task đổi luật trước task chịu luật.
+
+Biến thể theo thời gian: các verifier đều PASS dựa trên một output gate chung, nhưng commit cuối đỏ, vì vòng sửa bug A chạy sau gate đã làm hỏng bug B và không ai chạy lại. Gate chung phải là **bước cuối cùng**, sau mọi vòng sửa, đặt trong skill/loop như bước bắt buộc trước commit chứ không phải trước verify.
+
+### Worker làm cho xanh thay vì báo failed
+
+Diff có đổi ngưỡng, nới assertion, đổi seed, hoặc thêm `skip`. Tiêu chí bất khả thi hoặc khó, và brief không nói rõ báo `failed` là chấp nhận được. Brief nên ghi "báo failed đúng theo tiêu chí là hành vi đúng; KHÔNG sửa file đo/ngưỡng/seed", và gate kiểm `git diff --name-only` không đụng file đo (như tiêu chí ở §4).
 
 ---
 

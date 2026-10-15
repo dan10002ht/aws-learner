@@ -405,40 +405,27 @@ Hỏi lại câu rollback. Agent không được gọi tool; ghi lại nó báo 
 
 ## 5. Bẫy thường gặp
 
-**Server "chạy" nhưng agent không thấy tool.**
-Triệu chứng: process sống, không traceback, client báo lỗi hoặc danh sách tool trống.
-Nguyên nhân gốc: có thứ ghi ra stdout ngoài JSON-RPC — một `print` debug, một thư viện in banner, một warning của package manager khi chạy qua `npx`.
-Chặn bằng cơ chế: mọi log đi qua một hàm ghi `stderr`; thêm lệnh kiểm "parse mọi dòng stdout thành JSON" (bước 3) vào CI hoặc pre-commit của repo server.
+### Server chạy nhưng agent không thấy tool nào
 
-**Tool trả rỗng, agent kết luận "không có".**
-Triệu chứng: agent trả lời chắc chắn một điều sai, trích dẫn đúng output của tool.
-Nguyên nhân gốc: tool đọc nguồn dữ liệu không ai ghi, hoặc lọc sai, và trả `[]` — agent không phân biệt được rỗng-thật với rỗng-vì-không-biết.
-Chặn bằng cơ chế: kết quả rỗng luôn kèm phạm vi đã quét; với mỗi collection mà một tool đọc, có một kiểm tra tự động "trong repo có ít nhất một đường ghi vào nó". Kiểu gate này và cách nó tự xanh giả nằm ở [[ag-11-gate-xanh-gia]].
+Process sống, không traceback, nhưng client báo lỗi hoặc danh sách tool trống. Có thứ gì đó ghi ra stdout ngoài JSON-RPC: một `print` debug, một thư viện in banner, một warning của package manager khi chạy qua `npx`. Cho mọi log đi qua một hàm ghi `stderr`, và đưa lệnh kiểm "parse mọi dòng stdout thành JSON" (bước 3) vào CI hoặc pre-commit của repo server.
 
-**Lộ dữ liệu qua tool đọc.**
-Triệu chứng: không ai phát hiện, vì không có lỗi — chỉ thấy khi tình cờ đọc log của bên thứ ba.
-Nguyên nhân gốc: tool forward nguyên object nguồn trừ vài key (denylist); field mới hoặc field nhạy cảm bị quên đi theo.
-Chặn bằng cơ chế: allowlist theo nhóm và theo field; test khẳng định **tập key trả ra bằng đúng** allowlist, không phải "không chứa key X".
+### Tool trả rỗng, agent kết luận "không có"
 
-**Server project-scope chạy không hỏi trong pipeline.**
-Triệu chứng: job chạy `claude -p` trên repo lạ gọi một server bạn chưa từng duyệt.
-Nguyên nhân gốc: docs ghi rõ ở `claude -p` và Agent SDK, prompt duyệt `.mcp.json` không xuất hiện nên server nạp luôn.
-Chặn bằng cơ chế: liệt kê server không mong muốn trong `disabledMcpjsonServers`; với tổ chức, dùng managed MCP (`allowedMcpServers` / `deniedMcpServers`).
+Agent trả lời chắc chắn một điều sai mà vẫn trích đúng output của tool. Tool đọc một nguồn không ai ghi, hoặc lọc sai, rồi trả `[]`, và agent không phân biệt được rỗng-thật với rỗng-vì-không-biết. Kết quả rỗng luôn phải kèm phạm vi đã quét. Với mỗi collection mà một tool đọc, nên có một kiểm tra tự động "trong repo có ít nhất một đường ghi vào nó"; kiểu gate này và cách nó tự xanh giả nằm ở [[ag-11-gate-xanh-gia]].
 
-**Đặt secret thẳng vào `.mcp.json` rồi commit.**
-Triệu chứng: token xuất hiện trong lịch sử git.
-Nguyên nhân gốc: `.mcp.json` là file chia sẻ qua git theo thiết kế.
-Chặn bằng cơ chế: dùng `${API_KEY}` trong file, giá trị nằm ở môi trường; thêm secret scanner vào pre-commit. Server tin cậy chỉ cần cho một người thì để scope `local`/`user`, không phải `project`.
+### Tool đọc trả nguyên object, chỉ trừ vài key
 
-**Agent đổi sang headed sau một lần treo, rồi giữ luôn.**
-Triệu chứng: cửa sổ trình duyệt nhảy lên giữa lúc người dùng đang làm việc.
-Nguyên nhân gốc: agent "sửa" một lần treo chưa chẩn đoán bằng cách đổi chế độ vĩnh viễn.
-Chặn bằng cơ chế: ghi luật "headless mặc định, headed chỉ khi được yêu cầu" vào skill kiểm UI; skill đặt sẵn tên session riêng cho agent; bước dọn process nằm trong skill, không trong trí nhớ của agent.
+Không ai phát hiện, vì không có lỗi; chỉ thấy khi tình cờ đọc log của bên thứ ba. Denylist bỏ quên field mới hoặc field nhạy cảm, và chúng đi theo. Dùng allowlist theo nhóm và theo field, với test khẳng định **tập key trả ra bằng đúng** allowlist, không phải "không chứa key X".
 
-**"Không verify được" sau khi thử đúng một công cụ.**
-Triệu chứng: báo cáo có mục "những gì không kiểm được", người đọc tin đó là giới hạn hệ thống.
-Nguyên nhân gốc: công cụ đầu tiên hỏng bị đọc thành kết luận về khả năng verify.
-Chặn bằng cơ chế: mẫu báo cáo bắt buộc trường "đã thử: <công cụ> → chết ở <đâu>" cho từng đường; verifier ([[ag-12-verifier-doc-lap]]) trả `UNVERIFIED` khi trường đó có ít hơn hai đường.
+### Quên rằng `.mcp.json` là file chia sẻ
+
+`.mcp.json` chia sẻ qua git theo thiết kế. Đặt secret thẳng vào đó rồi commit thì token nằm luôn trong lịch sử git. Dùng `${API_KEY}` trong file, giá trị để ở môi trường, thêm secret scanner vào pre-commit; server tin cậy mà chỉ một người cần thì để scope `local`/`user`, không phải `project`.
+
+Chiều ngược lại khó thấy hơn: job chạy `claude -p` trên repo lạ gọi một server bạn chưa từng duyệt. Docs ghi rõ ở `claude -p` và Agent SDK, prompt duyệt `.mcp.json` không xuất hiện nên server nạp luôn. Liệt kê server không mong muốn trong `disabledMcpjsonServers`; với tổ chức thì dùng managed MCP (`allowedMcpServers` / `deniedMcpServers`).
+
+### Kết luận "không verify được" sau khi thử đúng một công cụ
+
+Báo cáo có mục "những gì không kiểm được", người đọc tin đó là giới hạn của hệ thống, trong khi thật ra chỉ công cụ đầu tiên hỏng. Mẫu báo cáo nên bắt buộc trường "đã thử: <công cụ> → chết ở <đâu>" cho từng đường, và verifier ([[ag-12-verifier-doc-lap]]) trả `UNVERIFIED` khi trường đó có ít hơn hai đường. Chuyện agent đổi sang headed sau một lần treo rồi giữ luôn (§3.7, luật 1) cùng một gốc: một lần hỏng chưa chẩn đoán bị biến thành quyết định vĩnh viễn. Vì vậy luật headless mặc định, tên session riêng và bước dọn process nằm trong skill kiểm UI, không nằm trong trí nhớ của agent.
 
 ---
 

@@ -467,40 +467,31 @@ python3 bin/measure.py
 
 ## 5. Bẫy thường gặp
 
-**Đo brain bằng số note và số job chạy thành công.**
-Triệu chứng: báo cáo tuần luôn xanh, brain lớn đều, nhưng không ai nhớ lần cuối brain giúp được một task.
-Nguyên nhân gốc: mọi số phía ghi tự tăng và không thể đỏ khi brain vô dụng.
-Chặn bằng cơ chế: báo cáo chỉ gồm bốn số phía đọc (§3.4), script từ chối in tỉ lệ dưới ngưỡng mẫu; luật "số lượt tra/tuần phải tăng trước khi thêm bất kỳ job sinh note nào".
+### Đo brain bằng số phía ghi
 
-**Viết note mới cho thứ brain đã có.**
-Triệu chứng: brain có hai, ba note nói cùng một cơ chế với tên khác nhau; ca sau vẫn trượt.
-Nguyên nhân gốc: coi lỗi truy hồi là knowledge gap.
-Chặn bằng cơ chế: trước khi viết note, chạy công cụ tra với câu triệu chứng **và** grep theo cơ chế; grep ra mà tra không ra → sửa summary của note cũ, không tạo note mới. Kết luận task ghi `Brain:` theo ba nhánh của bảng §3.4.
+Báo cáo tuần luôn xanh, brain lớn đều, nhưng không ai nhớ lần cuối brain giúp được một task. Số note và số job chạy thành công tự tăng, nên không thể đỏ khi brain vô dụng. Báo cáo chỉ nên gồm bốn số phía đọc (§3.4), script từ chối in tỉ lệ dưới ngưỡng mẫu, và có luật "số lượt tra/tuần phải tăng trước khi thêm bất kỳ job sinh note nào".
 
-**Summary chỉ nói nguyên nhân.**
-Triệu chứng: ticket tới, tra brain bằng lời người báo lỗi, trượt; người điều tra mất nửa ngày tìm lại đúng thứ đã ghi tháng trước.
-Nguyên nhân gốc: người viết note đã biết đáp án nên tóm đáp án; người tra chưa biết đáp án nên hỏi bằng triệu chứng.
-Chặn bằng cơ chế: luật "≥ 2 từ phân biệt chung với dòng triệu chứng" nằm trong **prompt của job sinh note** và trong script lint; backtest bằng ca đã đóng với truy vấn chỉ chứa triệu chứng.
+Thước của chính công cụ tra cũng tự xanh theo cách này. Đếm "có trả về file" là hit thì nhật ký ngày được tính là đã có câu trả lời, tỉ lệ hit đẹp và knowledge gap tuần nào cũng rỗng. Dùng bốn hạng `co-co-che/chi-inbox/chi-nhat-ky/truot`, cho công cụ in cảnh báo ngay trong output khi chỉ có nhật ký, và kiểm thước bằng log giả cho nó đỏ.
 
-**Hook nói mỗi lượt nên không ai đọc nữa.**
-Triệu chứng: khối "brain có liên quan" xuất hiện gần như mọi tin nhắn; agent và người đều lờ đi, kể cả lần nó đúng.
-Nguyên nhân gốc: không có cổng — khối không mang thông tin dạy người đọc bỏ qua cả khối.
-Chặn bằng cơ chế: ba cổng (§3.6); đo tỉ lệ lượt hook bắn có `co-co-che`; nếu bắn nhiều mà toàn trượt thì cổng 1 quá rộng.
+### Viết note mới cho thứ brain đã có
 
-**Chèn được note mà agent không mở.**
-Triệu chứng: transcript có khối brain, nhưng agent điều tra từ đầu hoặc hỏi lại người dùng.
-Nguyên nhân gốc: chỉ chèn đường dẫn, không có lý do để mở và không có hành động được yêu cầu.
-Chặn bằng cơ chế: chèn kèm summary + dòng hành động + bắt buộc dòng `Brain:` trong kết luận; đếm "phiên được chèn / phiên mở note" định kỳ ([[ag-24-harness-tu-cai-tien]]).
+Brain dần có hai, ba note nói cùng một cơ chế dưới tên khác nhau, mà ca sau vẫn trượt, vì lỗi truy hồi bị coi là knowledge gap. Trước khi viết note, chạy công cụ tra với câu triệu chứng **và** grep theo cơ chế. Grep ra mà tra không ra thì sửa summary của note cũ, không tạo note mới; kết luận task ghi `Brain:` theo ba nhánh của bảng §3.4.
 
-**Nhật ký ngày được đếm là "đã có câu trả lời".**
-Triệu chứng: tỉ lệ hit đẹp, knowledge gap tuần nào cũng rỗng.
-Nguyên nhân gốc: thước đo "có trả về file" do chính công cụ tra tự đặt.
-Chặn bằng cơ chế: bốn hạng `co-co-che/chi-inbox/chi-nhat-ky/truot`; công cụ tra in cảnh báo ngay trong output khi chỉ có nhật ký; kiểm thước đo bằng log giả cho nó đỏ.
+### Summary chỉ nói nguyên nhân
 
-**Brain rò ra ngoài.**
-Triệu chứng: một file của task (log, dump dữ liệu, ghi chú có tên khách hàng) nằm trong repo brain, và repo đó được push tự động mỗi tối.
-Nguyên nhân gốc: brain chứa chi tiết công việc thật, và đường ống "file lạ rơi vào brain → `git add -A` → push" chạy không người duyệt. Case thực tế: remote của một brain từng để public gần ba tháng trước khi được chuyển private.
-Chặn bằng cơ chế: remote private; job sync có cổng danh sách thư mục hợp lệ — path ngoài danh sách thì DỪNG, không commit; hook `PreToolUse` chặn phiên agent đang làm việc trong brain ghi file ra ngoài brain ([[ag-08-hook-va-chan-bang-cau-hinh]]).
+Ticket tới, tra brain bằng lời người báo lỗi thì trượt, và người điều tra mất nửa ngày tìm lại đúng thứ đã ghi tháng trước. Người viết note đã biết đáp án nên tóm đáp án; người tra chưa biết nên hỏi bằng triệu chứng mình thấy. Luật "≥ 2 từ phân biệt chung với dòng triệu chứng" vì vậy phải nằm trong prompt của job sinh note và trong script lint, kèm backtest bằng ca đã đóng mà truy vấn chỉ chứa triệu chứng như lúc ticket vừa tới.
+
+### Hook chèn khối mà không ai dùng
+
+Hook không có cổng thì khối "brain có liên quan" hiện gần như mọi tin nhắn, và cả agent lẫn người học cách lờ nó đi, kể cả lần nó đúng. Ba cổng ở §3.6 chặn chuyện đó; đo thêm tỉ lệ lượt hook bắn có `co-co-che`, bắn nhiều mà toàn trượt nghĩa là cổng 1 quá rộng.
+
+Có cổng rồi vẫn còn chiều ngược lại: transcript có khối brain, nhưng agent điều tra từ đầu hoặc hỏi lại người dùng. Khối chỉ có đường dẫn thì agent không có lý do để mở, cũng không bị đòi hành động nào. Chèn kèm summary và dòng hành động, bắt buộc dòng `Brain:` trong kết luận, rồi định kỳ đếm "phiên được chèn / phiên mở note" ([[ag-24-harness-tu-cai-tien]]).
+
+### Brain rò ra ngoài
+
+Một file của task (log, dump dữ liệu, ghi chú có tên khách hàng) lọt vào repo brain, và repo đó được push tự động mỗi tối. Brain chứa chi tiết công việc thật, còn đường ống "file lạ rơi vào brain → `git add -A` → push" chạy không người duyệt. Case thực tế: remote của một brain từng để public gần ba tháng trước khi được chuyển private.
+
+Giữ remote private. Cho job sync một cổng danh sách thư mục hợp lệ: path ngoài danh sách thì **dừng, không commit**. Thêm hook `PreToolUse` chặn phiên agent đang làm việc trong brain ghi file ra ngoài brain ([[ag-08-hook-va-chan-bang-cau-hinh]]).
 
 ---
 

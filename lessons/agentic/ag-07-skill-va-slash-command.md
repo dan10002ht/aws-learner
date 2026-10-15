@@ -340,45 +340,27 @@ Không có con số chuẩn nào ở đây. Bạn tự đo tỉ lệ khớp củ
 
 ## 5. Bẫy thường gặp
 
-**Skill có mà không bao giờ được gọi.**
-Triệu chứng: bạn phải tự gõ `/tên` mọi lần, hoặc quên luôn là có skill.
-Nguyên nhân gốc: description nói skill *là gì* chứ không nói *khi nào dùng*. Hoặc các cụm kích hoạt nằm sau ký tự thứ 1.536 và bị cắt.
-Chặn: bảng prompt kích hoạt ở §4 bước 3 lưu thành file cạnh skill, chạy lại mỗi lần sửa description. Đưa trường hợp dùng chính lên câu đầu.
+### Description nói skill là gì, không nói khi nào dùng
 
-**Skill có tác dụng phụ bị agent tự gọi.**
-Triệu chứng: agent tự chạy skill deploy/gửi tin nhắn vì "có vẻ bạn muốn vậy".
-Nguyên nhân gốc: mặc định agent được tự gọi mọi skill có description khớp.
-Chặn: `disable-model-invocation: true` cho mọi skill ghi ra bên ngoài repo. Thêm `allowed-tools` hẹp, chỉ đúng script cần chạy. Chặn cứng bằng permission/hook là việc của [[ag-08-hook-va-chan-bang-cau-hinh]].
+Bạn phải tự gõ `/tên` mọi lần, hoặc quên luôn là có skill. Thường là description chỉ tả skill *là gì* chứ không nói *khi nào dùng*, hoặc các cụm kích hoạt nằm sau ký tự thứ 1.536 và bị cắt. Đưa trường hợp dùng chính lên câu đầu. Bảng prompt kích hoạt ở §4 bước 3 nên lưu thành file cạnh skill và chạy lại mỗi lần sửa description.
 
-**Skill thừa hưởng giả định của sự cố sinh ra nó.**
-Triệu chứng: skill chạy tốt với đúng loại việc gốc, các loại khác bị bỏ qua hoặc kẹt, và output dự kiến của skill không bao giờ xuất hiện.
-Nguyên nhân gốc: khái quát từ một mẫu duy nhất (§3.7).
-Chặn: trước khi merge skill, chạy nó trên ít nhất hai kịch bản **khác loại** sự cố gốc. Đặt một phép đếm lượt dùng thật, và đặt mốc review có ngày cụ thể.
+### Skill có tác dụng phụ bị agent tự gọi
 
-**Luật "ô trống thì dừng" mà không có lối ra hợp lệ.**
-Triệu chứng: agent bịa số cho đủ ô, hoặc người bỏ qua cả skill.
-Nguyên nhân gốc: gate đòi một thứ không đo được với một loại việc, và không cho cách nào khai điều đó ra.
-Chặn: thêm trạng thái `CHƯA ĐO` / `UNVERIFIED` hợp lệ, bắt kèm bằng chứng đã thử (tên dụng cụ, lệnh, lỗi). Cách thiết kế tiêu chí đo được nói kỹ ở [[ag-10-done-criteria-va-gate]].
+Agent tự chạy skill deploy hay gửi tin nhắn vì "có vẻ bạn muốn vậy", vì mặc định agent được tự gọi mọi skill có description khớp. Skill nào ghi ra bên ngoài repo thì đặt `disable-model-invocation: true`, kèm `allowed-tools` hẹp, chỉ đúng script cần chạy. Chặn cứng bằng permission hay hook là việc của [[ag-08-hook-va-chan-bang-cau-hinh]].
 
-**Session resume làm theo bản skill cũ.**
-Triệu chứng: đã commit luật mới mà bot hoặc session dài vẫn làm theo luật cũ, đôi khi tự trích "bản HH:MM".
-Nguyên nhân gốc: nội dung skill đã gọi nằm trong lịch sử hội thoại. Resume nối tiếp lịch sử đó (§3.8).
-Chặn: mọi chỗ code gọi `--resume` sau khi harness có thể đã đổi thì chèn prompt "đọc lại file skill, bản mới thắng, làm lại các mục luật mới giải được". Hoặc bỏ resume, mở session mới với state lấy từ file.
+### Skill mang theo giả định của sự cố sinh ra nó
 
-**`` !`lệnh` `` lỗi và cả skill im lặng không chạy.**
-Triệu chứng: gõ `/tên` mà agent không làm theo skill, hoặc báo lần gọi bị huỷ.
-Nguyên nhân gốc: theo docs, lệnh nhúng lỗi hoặc không qua được permission thì cả lần gọi bị huỷ.
-Chặn: chỉ nhúng lệnh chỉ-đọc, chắc chắn chạy được ở mọi trạng thái repo (`git diff --stat`, không phải lệnh cần mạng). Duyệt sẵn bằng `allowed-tools`. Chạy tay lệnh đó một lần ở trạng thái repo "xấu nhất" (nhánh mới tạo, chưa có commit nào).
+Skill chạy tốt với đúng loại việc gốc, còn loại khác thì bị bỏ qua hoặc kẹt, và output dự kiến của skill không bao giờ xuất hiện. Đó là hậu quả của việc khái quát từ một mẫu duy nhất (§3.7). Trước khi merge skill, chạy nó trên ít nhất hai kịch bản **khác loại** sự cố gốc, đặt một phép đếm lượt dùng thật và một mốc review có ngày cụ thể.
 
-**Skill trỏ đường dẫn máy cá nhân.**
-Triệu chứng: skill chạy trên máy người viết, máy đồng đội thì hỏng.
-Nguyên nhân gốc: script và credential nằm ở thư mục riêng của một người. Case thực tế: skill kiểm A/B ghi rõ trong tradeoff là "người khác chưa dùng được" vì script trỏ vào repo ghi chú cá nhân.
-Chặn: script để trong thư mục skill và gọi qua `${CLAUDE_SKILL_DIR}`. Credential đọc từ biến môi trường của từng người. Muốn dùng cho cả team thì chuyển skill vào `.claude/skills/` của repo app.
+Nặng hơn là khi giả định đó nằm trong một luật "ô trống thì dừng" mà không có lối ra hợp lệ: gate đòi một thứ không đo được với một loại việc và không cho cách nào khai điều đó ra, nên agent bịa số cho đủ ô, hoặc người bỏ qua cả skill. Thêm trạng thái `CHƯA ĐO` / `UNVERIFIED` hợp lệ, bắt kèm bằng chứng đã thử (tên dụng cụ, lệnh, lỗi). Cách thiết kế tiêu chí đo được nói kỹ ở [[ag-10-done-criteria-va-gate]].
 
-**Skill dài nhồi hết vào `SKILL.md`.**
-Triệu chứng: quy tắc ở cuối file bị lờ đi sau khi session dài bị nén context.
-Nguyên nhân gốc: compaction chỉ giữ 5.000 token đầu mỗi skill (docs).
-Chặn: nguyên tắc và điểm dừng đặt ở đầu file, bảng tra cứu và query chuyển sang `references/`, `SKILL.md` dưới 500 dòng.
+### Session resume vẫn làm theo bản skill cũ
+
+Đã commit luật mới mà bot hoặc session dài vẫn làm theo luật cũ, có khi còn tự trích "bản HH:MM". Nội dung skill đã gọi nằm trong lịch sử hội thoại, và resume nối tiếp đúng lịch sử đó (§3.8). Mọi chỗ code gọi `--resume` sau khi harness có thể đã đổi thì chèn prompt "đọc lại file skill, bản mới thắng, làm lại các mục luật mới giải được". Hoặc bỏ resume, mở session mới với state lấy từ file.
+
+### Lệnh nhúng `` !`lệnh` `` lỗi làm cả skill không chạy
+
+Gõ `/tên` mà agent không làm theo skill, hoặc báo lần gọi bị huỷ. Theo docs, lệnh nhúng lỗi hoặc không qua được permission thì cả lần gọi bị huỷ. Chỉ nhúng lệnh chỉ-đọc, chắc chắn chạy được ở mọi trạng thái repo (`git diff --stat`, không phải lệnh cần mạng), duyệt sẵn bằng `allowed-tools`, và chạy tay lệnh đó một lần ở trạng thái repo "xấu nhất": nhánh mới tạo, chưa có commit nào.
 
 ---
 

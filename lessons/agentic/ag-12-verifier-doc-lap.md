@@ -399,40 +399,29 @@ Nếu `verifier-gate-only` cũng tự phát hiện ra `pending`: tốt, nhưng g
 
 ## 5. Bẫy thường gặp
 
-**Bẫy 1 — Verifier "không có Edit/Write" nhưng vẫn ghi được file.**
-Triệu chứng: sau một lượt verify, `git status` có file lạ, hoặc một file test bị "chỉnh nhẹ".
-Nguyên nhân gốc: `Bash` là một cửa ghi đầy đủ — `sed -i`, `echo >`, `git checkout` đều đi qua nó. Bỏ `Edit`/`Write` khỏi `tools` chỉ chặn hai tool, không chặn shell.
-Chặn bằng cơ chế: (1) chụp `git status --porcelain` + hash trước và sau mỗi lượt verify, lệch là verdict bị huỷ; (2) chặn các lệnh git ghi bằng permission deny hoặc hook `PreToolUse` — docs cho phép khai hook ngay trong frontmatter của subagent, chỉ chạy khi subagent đó đang hoạt động (cơ chế hook ở [[ag-08-hook-va-chan-bang-cau-hinh]]); (3) với Codex, chạy verifier bằng `codex exec` để mặc định read-only sandbox.
+### Verifier không có Edit/Write mà vẫn ghi được file
 
-**Bẫy 2 — `UNVERIFIED` bị đọc thành "gần như PASS".**
-Triệu chứng: main agent hoặc người đọc báo cáo commit luôn vì "chỉ thiếu tái hiện thôi".
-Nguyên nhân gốc: thiếu một luật cứng ở phía người nhận verdict; format ba trạng thái chỉ có nghĩa nếu phía đọc phân nhánh đúng.
-Chặn: skill/loop chỉ commit khi chuỗi `VERDICT: PASS` có mặt nguyên văn; `UNVERIFIED` tự động chuyển trạng thái task sang "chờ test tay". Đồng thời đừng phản xạ ngược "UNVERIFIED thì bỏ task" — nó không nói bản sửa sai.
+Sau một lượt verify, `git status` có file lạ, hoặc một file test bị "chỉnh nhẹ". `Bash` là một cửa ghi đầy đủ: `sed -i`, `echo >`, `git checkout` đều đi qua nó, nên bỏ `Edit`/`Write` khỏi `tools` chỉ chặn hai tool chứ không chặn shell.
 
-**Bẫy 3 — Brief tự mâu thuẫn.**
-Triệu chứng: báo cáo PASS kèm một dòng nhỏ ở mục "Chưa xác minh" mà không ai đọc.
-Nguyên nhân gốc: brief vừa cấm sửa file vừa bắt làm việc cần sửa file (mutation). Agent trung thực chọn tuân lệnh cấm và hạ việc kia xuống thành chú thích.
-Chặn: tách vai §3.6; và luật verdict — mục "Chưa xác minh" ảnh hưởng kết luận thì verdict tối đa là `UNVERIFIED`, không được PASS.
+Có ba lớp chặn. Chụp `git status --porcelain` cùng hash trước và sau mỗi lượt verify, lệch thì verdict bị huỷ. Chặn các lệnh git ghi bằng permission deny hoặc hook `PreToolUse`; docs cho phép khai hook ngay trong frontmatter của subagent, chỉ chạy khi subagent đó đang hoạt động (cơ chế hook ở [[ag-08-hook-va-chan-bang-cau-hinh]]). Với Codex thì chạy verifier bằng `codex exec` để mặc định nằm trong read-only sandbox.
 
-**Bẫy 4 — A/B đổi dữ liệu giữa hai lần chạy.**
-Triệu chứng: 01 lỗi, 02 đúng, nhưng 02 chạy với một bản ghi khác (đã bị sửa tay, hoặc fixture mới do agent tạo).
-Nguyên nhân gốc: chuẩn bị lại môi trường cho bước 02 thay vì dùng chung một nguồn.
-Chặn: brief chỉ định một file dữ liệu cố định (hoặc một ID bản ghi), verifier in hash của dữ liệu ở cả 01 và 02; hai hash phải bằng nhau.
+### Đọc `UNVERIFIED` thành "gần như PASS"
 
-**Bẫy 5 — So hai trạng thái bằng tên nhánh.**
-Triệu chứng: output của bước "trước" và "sau" trùng từng chữ.
-Nguyên nhân gốc: tên nhánh bị đổi hoặc checkout thất bại im lặng, nên cả hai lần chạy cùng một code (§3.4).
-Chặn: neo vào SHA (`git archive <sha>`), và hàm chạy lệnh phải throw khi exit code ≠ 0 ở những chỗ không được phép đi tiếp.
+Main agent hoặc người đọc báo cáo commit luôn, vì "chỉ thiếu tái hiện thôi". Format ba trạng thái chỉ có nghĩa nếu phía nhận verdict phân nhánh đúng, và phía đó thường thiếu luật cứng. Skill hay loop chỉ nên commit khi chuỗi `VERDICT: PASS` có mặt nguyên văn; `UNVERIFIED` tự chuyển task sang "chờ test tay". Cũng đừng phản xạ ngược thành "UNVERIFIED thì bỏ task", vì nó không nói bản sửa sai.
 
-**Bẫy 6 — Báo cáo đúng schema nhưng trả lời câu khác.**
-Triệu chứng: báo cáo trôi chảy, có verdict, nhưng không nhắc một mục đặc thù nào trong brief.
-Nguyên nhân gốc: brief không được thread vào prompt (skill bỏ qua `args`, hoặc main agent tự tóm brief mất chi tiết).
-Chặn: chuỗi mồi bắt buộc trong mọi brief; thiếu chuỗi mồi trong báo cáo thì báo cáo bị loại, không đọc tiếp.
+### Brief vừa cấm sửa file vừa bắt làm mutation
 
-**Bẫy 7 — Verifier soi đầy đủ mọi task, loop chậm tới mức người tắt nó.**
-Triệu chứng: verify chiếm phần lớn thời gian mỗi vòng; người bắt đầu bỏ qua verifier cho "task nhỏ".
-Nguyên nhân gốc: một mức soi cho mọi loại thay đổi.
-Chặn: phân tầng §3.8 theo loại file bị đụng, ghi hạng đã chọn vào báo cáo để đo lại về sau.
+Báo cáo ra PASS, kèm một dòng nhỏ ở mục "Chưa xác minh" mà không ai đọc. Agent trung thực gặp hai lệnh trái nhau thì chọn tuân lệnh cấm và hạ việc kia xuống thành chú thích. Tách vai như §3.6, và thêm luật verdict: **mục "Chưa xác minh" ảnh hưởng kết luận thì verdict tối đa là `UNVERIFIED`**.
+
+### A/B mà hai lần chạy không cùng dữ liệu hoặc cùng code
+
+01 lỗi, 02 đúng, nhưng 02 chạy với một bản ghi khác (đã bị sửa tay, hoặc fixture mới do agent tạo) vì môi trường được chuẩn bị lại cho bước 02 thay vì dùng chung một nguồn. Brief chỉ định một file dữ liệu cố định hoặc một ID bản ghi, và verifier in hash của dữ liệu ở cả 01 lẫn 02; hai hash phải bằng nhau.
+
+Chiều ngược lại: output bước "trước" và "sau" trùng từng chữ, vì so bằng tên nhánh mà tên bị đổi hoặc checkout thất bại im lặng, nên cả hai lần chạy cùng một code (§3.4). Neo vào SHA (`git archive <sha>`), và hàm chạy lệnh phải throw khi exit code ≠ 0 ở những chỗ không được phép đi tiếp.
+
+### Báo cáo đúng schema nhưng trả lời câu khác
+
+Báo cáo trôi chảy, có verdict, nhưng không nhắc một mục đặc thù nào trong brief. Brief đã không được thread vào prompt: skill bỏ qua `args`, hoặc main agent tự tóm brief mất chi tiết. Chuỗi mồi bắt buộc trong mọi brief; báo cáo thiếu chuỗi mồi thì bị loại, không đọc tiếp.
 
 ---
 

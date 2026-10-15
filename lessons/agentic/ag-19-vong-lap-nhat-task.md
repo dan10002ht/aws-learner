@@ -383,40 +383,27 @@ Muốn biết loop tốn bao nhiêu: số liệu chưa đo thì đừng đoán. 
 
 ## 5. Bẫy thường gặp
 
-**Nhánh song song có trong skill nhưng không bao giờ chạy**
-- *Triệu chứng:* mọi task xong tuần tự; không có worktree nào được tạo; không ai để ý vì kết quả vẫn đúng.
-- *Nguyên nhân gốc:* luật "không chắc → tuần tự", hoặc spawn từng agent rồi chờ.
-- *Chặn bằng cơ chế:* `isolation: worktree` trong frontmatter của worker (không phụ thuộc main agent nhớ); luật "chỉ bằng chứng mới ép tuần tự"; đo định kỳ trên transcript: số message có ≥ 2 lời gọi Agent. Số đó bằng 0 là báo động.
+### Nhánh song song có trong skill nhưng không bao giờ chạy
 
-**Iteration sau cướp task iteration trước đang làm**
-- *Triệu chứng:* hai worker trên cùng một task, diff chồng nhau, commit đôi.
-- *Nguyên nhân gốc:* lượt main agent kết thúc trong khi worker chạy nền; ngưỡng mồ côi ngắn hơn thời gian thật của task dài.
-- *Chặn bằng cơ chế:* mark `[lock YYYY-MM-DD HH:MM]` **trước** khi spawn; ngưỡng tính từ p95 thời gian task của chính repo; kiểm agent còn sống trước khi nhận lại; với cron hệ thống thêm `flock -n`.
+Mọi task xong tuần tự, không worktree nào được tạo, và không ai để ý vì kết quả vẫn đúng. Thủ phạm là luật "không chắc → tuần tự", hoặc thói quen spawn từng agent rồi chờ. Đặt `isolation: worktree` trong frontmatter của worker để nó không phụ thuộc vào việc main agent có nhớ hay không, giữ luật "chỉ bằng chứng mới ép tuần tự", và đo định kỳ trên transcript số message có ≥ 2 lời gọi Agent. **Số đó bằng 0 là báo động.**
 
-**Loop fire hàng trăm lần mà không làm gì**
-- *Triệu chứng:* log dài một màu "không thay đổi"; việc đang bị chặn trông như đang chạy.
-- *Nguyên nhân gốc:* chỉ có điều kiện dừng cấp lượt, thiếu cấp loop; hoặc luật dừng chỉ nằm trong lời dặn (case 62 lượt ở §2) — model không có bộ đếm bền qua các session.
-- *Chặn bằng cơ chế:* `empty-streak` lưu trong `BRIEF.md` (không trong context — context của loop dài bị tóm tắt); đủ ngưỡng thì skill tự huỷ lịch và viết tổng kết chặn-bởi-ai.
+### Iteration sau cướp task iteration trước đang làm
 
-**`/loop` fire nhưng skill không chạy, agent nhận được dòng chữ `/loop-tasks`**
-- *Triệu chứng:* mỗi lượt Claude chỉ "đọc" lệnh như văn bản.
-- *Nguyên nhân gốc:* docs ghi scheduled fire chỉ chạy skill mà Claude **được phép tự gọi**; skill có `disable-model-invocation: true`, hoặc bị deny rule chặn, sẽ tới Claude dưới dạng chữ.
-- *Chặn bằng cơ chế:* đừng đặt `disable-model-invocation` cho skill loop; thử một lượt `/loop 1m` trước khi để chạy dài.
+Hai worker chạy trên cùng một task, diff chồng nhau, commit đôi. Lượt của main agent đã kết thúc trong khi worker vẫn chạy nền, và ngưỡng mồ côi ngắn hơn thời gian thật của task dài. Mark `[lock YYYY-MM-DD HH:MM]` trước khi spawn, tính ngưỡng từ p95 thời gian task của chính repo, kiểm agent còn sống trước khi nhận lại; với cron hệ thống thì thêm `flock -n`.
 
-**Cron + `claude -p` chạy nhưng không tìm thấy skill, hoặc kẹt ở permission**
-- *Triệu chứng:* output báo không biết `/loop-tasks`, hoặc lượt kết thúc với danh sách `permission_denials`.
-- *Nguyên nhân gốc:* thêm `--bare` (docs: bỏ qua skill, CLAUDE.md, hook, subagent); hoặc không ai trả lời prompt quyền khi chạy không người.
-- *Chặn bằng cơ chế:* không dùng `--bare` cho loop dựa vào skill; liệt kê đủ tool trong `--allowedTools`, chọn `--permission-mode` rõ ràng; đọc exit code + `permission_denials` trong JSON output như một phần của gate.
+### Loop fire hàng trăm lần mà không làm gì
 
-**Worker làm trên code cũ hơn cái bạn đang nhìn**
-- *Triệu chứng:* diff của worker không áp được lên nhánh bạn đang làm, hoặc fix "đã có sẵn".
-- *Nguyên nhân gốc:* docs: worktree của subagent mặc định tách từ nhánh mặc định, không từ `HEAD` của session; và `main` local có thể cũ hơn remote.
-- *Chặn bằng cơ chế:* `git fetch` đầu iteration; ghi base branch vào khối Gate của `BRIEF.md` để mọi brief mang theo.
+Log dài một màu "không thay đổi", và việc đang bị chặn trông như việc đang chạy. Loop chỉ có điều kiện dừng cấp lượt mà thiếu cấp loop, hoặc luật dừng chỉ nằm trong lời dặn (case 62 lượt ở §2) trong khi model không có bộ đếm bền qua các session. `empty-streak` phải lưu trong `BRIEF.md` chứ không trong context, vì context của loop dài bị tóm tắt; đủ ngưỡng thì skill tự huỷ lịch và viết tổng kết chặn bởi ai.
 
-**Viết lại cả loop thành workflow "cho hiện đại", rồi mất state khi tắt máy**
-- *Triệu chứng:* thoát session là run dừng; không hỏi được người khi task cần quyết định.
-- *Nguyên nhân gốc:* workflow giữ state trong biến script, resume trong session; không có input giữa chừng.
-- *Chặn bằng cơ chế:* loop ngoài (state trên đĩa) giữ vai orchestrator; workflow chỉ là công cụ của một task nặng.
+### Skill loop không được gọi khi chạy không người
+
+Với `/loop`, mỗi lượt Claude chỉ nhận dòng chữ `/loop-tasks` và "đọc" nó như văn bản. Docs ghi scheduled fire chỉ chạy skill mà Claude được phép tự gọi; skill có `disable-model-invocation: true`, hoặc bị deny rule chặn, sẽ tới Claude dưới dạng chữ. Đừng đặt `disable-model-invocation` cho skill loop, và thử một lượt `/loop 1m` trước khi để chạy dài.
+
+Với cron + `claude -p`, output báo không biết `/loop-tasks`, hoặc lượt kết thúc với danh sách `permission_denials`. Nguyên nhân là đã thêm `--bare` (docs: bỏ qua skill, CLAUDE.md, hook, subagent), hoặc không ai trả lời prompt quyền khi chạy không người. Không dùng `--bare` cho loop dựa vào skill, liệt kê đủ tool trong `--allowedTools`, chọn `--permission-mode` rõ ràng, và coi exit code cùng `permission_denials` trong JSON output là một phần của gate.
+
+### Worker làm trên code cũ hơn cái bạn đang nhìn
+
+Diff của worker không áp được lên nhánh bạn đang làm, hoặc fix hoá ra "đã có sẵn". Theo docs, worktree của subagent mặc định tách từ nhánh mặc định chứ không từ `HEAD` của session, và `main` local có thể cũ hơn remote. Chạy `git fetch` đầu iteration và ghi base branch vào khối Gate của `BRIEF.md` để mọi brief mang theo.
 
 ---
 

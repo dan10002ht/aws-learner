@@ -422,35 +422,27 @@ exit=0
 
 ## 5. Bẫy thường gặp
 
-**Hỏi lại agent "số này lấy đâu ra".**
-Triệu chứng: agent trả lời tự tin, đưa thêm lý do, và con số được giữ nguyên.
-Nguyên nhân gốc: agent không có phần nguồn trong context, lúc viết cũng như lúc bạn hỏi, nên câu trả lời là một câu hợp lý thứ hai.
-Chặn: phép kiểm lớp 1 luôn mở **file nguồn**. Brief bắt dùng placeholder `CẦN-SỐ(...)` thay vì điền số, và `grep -rn "CẦN-SỐ"` phải rỗng trước khi đóng chương.
+### Hỏi lại agent "số này lấy đâu ra"
 
-**"Hoà giải" hai con số bằng cách sửa một bên cho khớp.**
-Triệu chứng: sau khi sửa, hai bài khớp nhau nhưng một bài mất câu giải thích vì sao số của nó như vậy.
-Nguyên nhân gốc: xung đột số bị coi là "có người sai", trong khi thường là khác điều kiện đo (13,96% và 19,92% ở §3.3).
-Chặn: brief bắt mọi số đo kèm điều kiện đo (cột "Điều kiện đo" trong bảng số chung). Khi script báo xung đột, việc đầu tiên là so hai cột điều kiện.
+Agent trả lời tự tin, đưa thêm lý do, và con số được giữ nguyên. Nó không có phần nguồn trong context, lúc viết cũng như lúc bạn hỏi, nên câu trả lời chỉ là một câu hợp lý thứ hai. Phép kiểm lớp 1 luôn mở **file nguồn**. Brief bắt dùng placeholder `CẦN-SỐ(...)` thay vì điền số, và `grep -rn "CẦN-SỐ"` phải rỗng trước khi đóng chương.
 
-**Gate xanh được đọc thành "nhất quán".**
-Triệu chứng: build, lint, check-svg đều xanh, chương được đóng, lỗi giữa các phần nằm lại nhiều ngày.
-Nguyên nhân gốc: mọi gate đó là hàm của một file. Không gate nào có cặp file làm input.
-Chặn: soát chéo là một bước **riêng** trong checklist đóng chương, với done-criteria của nó là `soat_cheo.py` exit 0 hoặc mọi finding còn lại đã được ghi lý do giữ ([[ag-10-done-criteria-va-gate]]).
+### Coi gate xanh là "nhất quán"
 
-**Bắn tất cả N phần trong một lượt dù chúng trích số của nhau.**
-Triệu chứng: các phần phụ thuộc mang số tự đặt, mỗi bản nháp một kiểu (`10×`, `×4`, `×2,5`).
-Nguyên nhân gốc: phần nguồn chưa có trên đĩa lúc phần phụ thuộc được viết.
-Chặn: brief khai báo `deps`, `waves.py` tính đợt, và vòng giao việc chỉ phát đợt k+1 khi mọi phần của đợt k đã commit.
+Build, lint, check-svg đều xanh, chương được đóng, và lỗi giữa các phần nằm lại nhiều ngày. Mọi gate đó là hàm của một file; không gate nào có cặp file làm input. Soát chéo phải là một bước riêng trong checklist đóng chương, với done-criteria là `soat_cheo.py` exit 0 hoặc mọi finding còn lại đã được ghi lý do giữ ([[ag-10-done-criteria-va-gate]]).
 
-**Thước đo báo nhầm, rồi người sửa bài cho hợp với thước đo.**
-Triệu chứng: script báo `37,1 MB/s = 297,1 Mbps` là sai, người điều phối sửa thành 296,8 và làm lệch các số khác trong bài vốn tính từ 37,14.
-Nguyên nhân gốc: dung sai của script không tính sai số làm tròn của vế trái (§3.5).
-Chặn: với mỗi finding lớp 3, tính lại bằng số chưa làm tròn trong nguồn trước khi sửa. Nếu số chưa làm tròn khớp thì sửa script, không sửa bài. Giữ fixture ở §4 làm test cho script: mỗi lần sửa script, năm lỗi cài sẵn vẫn phải bị bắt và hai câu đúng vẫn không bị báo.
+### Sửa một bên cho khớp khi hai số lệch nhau
 
-**Gạt đi việc agent cãi lại brief.**
-Triệu chứng: agent ghi "brief nói X nhưng tôi đo ra Y", người điều phối sửa lại về X cho đúng brief.
-Nguyên nhân gốc: brief bị coi là nguồn, trong khi nó là giả thuyết viết trước khi có phép đo (5/5 lần agent đúng trong case ở §3.7).
-Chặn: brief có mục "Khi số trong brief không tái tạo được" bắt agent ghi số + lệnh + điều kiện. Người điều phối chạy lại lệnh đó. Kết quả cập nhật vào **bảng số chung**, để các đợt sau dùng số mới.
+Sau khi sửa, hai bài khớp nhau nhưng một bài mất câu giải thích vì sao số của nó như vậy. Xung đột số bị coi là "có người sai", trong khi thường là khác điều kiện đo (13,96% và 19,92% ở §3.3). Brief nên bắt mọi số đo kèm điều kiện đo (cột "Điều kiện đo" trong bảng số chung), và khi script báo xung đột thì việc đầu tiên là so hai cột điều kiện.
+
+Cùng gốc là thói quen gạt đi khi agent ghi "brief nói X nhưng tôi đo ra Y" rồi sửa lại về X. Brief là giả thuyết viết trước khi có phép đo; trong case ở §3.7 agent đúng 5/5 lần. Mục "Khi số trong brief không tái tạo được" bắt agent ghi số + lệnh + điều kiện, người điều phối chạy lại lệnh đó, rồi cập nhật kết quả vào **bảng số chung** để các đợt sau dùng số mới.
+
+### Sửa bài cho hợp với một thước đo báo nhầm
+
+Script báo `37,1 MB/s = 297,1 Mbps` là sai, người điều phối sửa thành 296,8 và làm lệch các số khác trong bài vốn tính từ 37,14. Lỗi nằm ở dung sai của script, vốn không tính sai số làm tròn của vế trái (§3.5). Với mỗi finding lớp 3, tính lại bằng số chưa làm tròn trong nguồn trước khi sửa; nếu số chưa làm tròn khớp thì sửa script, không sửa bài. Giữ fixture ở §4 làm test cho script: mỗi lần sửa script, năm lỗi cài sẵn vẫn phải bị bắt và hai câu đúng vẫn không bị báo.
+
+### Phát tất cả N phần trong một lượt
+
+Các phần phụ thuộc mang số tự đặt, mỗi bản nháp một kiểu (`10×`, `×4`, `×2,5`), vì phần nguồn chưa có trên đĩa. Cách chặn đã ở §3.4: brief khai báo `deps`, `waves.py` tính đợt, và vòng giao việc chỉ phát đợt k+1 khi mọi phần của đợt k đã commit.
 
 ---
 

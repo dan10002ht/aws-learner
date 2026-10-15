@@ -352,47 +352,31 @@ Giao agent: *"Dùng store.js bật cờ newCheckout=true cho shop-test-1, rồi 
 
 ## 5. Bẫy thường gặp
 
-### Bẫy 1 — Tin `/rewind` lùi được mọi thứ agent làm
+### Tin `/rewind` lùi được mọi thứ agent làm
 
-**Triệu chứng:** sau rewind, test vẫn đỏ; có file đã bị đổi tên hoặc xoá mà không quay lại.
-**Nguyên nhân gốc:** checkpoint chụp ở tầng tool sửa file. Docs nói thẳng: thay đổi bởi Bash, đa số sửa đổi của subagent, và thay đổi từ ngoài session không được theo dõi.
-**Chặn bằng cơ chế:** commit (hoặc `git stash`) trước mỗi bước có lệnh shell sửa file hoặc trước khi giao cho subagent. Rewind dùng cho "đổi ý về cách sửa", git dùng cho "lùi trạng thái repo".
+Sau rewind test vẫn đỏ, có file đã bị đổi tên hoặc xoá mà không quay lại. Checkpoint chụp ở tầng tool sửa file; docs nói thẳng thay đổi bởi Bash, đa số sửa đổi của subagent và thay đổi từ ngoài session đều không được theo dõi. Commit (hoặc `git stash`) trước mỗi bước có lệnh shell sửa file, và trước khi giao việc cho subagent. Rewind dùng khi đổi ý về cách sửa; **lùi trạng thái repo là việc của git**.
 
-### Bẫy 2 — "Yes, and don't ask again" cho một prefix quá rộng
+### "Yes, and don't ask again" cho một prefix quá rộng
 
-**Triệu chứng:** agent chạy một lệnh bạn chưa bao giờ định cho phép, mà không hỏi.
-**Nguyên nhân gốc:** với Bash, lựa chọn này nhớ **vĩnh viễn theo repo và lệnh**. Docs chỉ ra `Bash(git *)` cho phép *mọi* lệnh git, kể cả `-c` — thứ khiến git chạy một chương trình bạn chỉ định.
-**Chặn bằng cơ chế:** viết allow theo subcommand (`Bash(git diff *)`, không `Bash(git *)`); đặt các lệnh nguy hiểm vào `deny`/`ask` — vì deny và ask luôn được xét trước allow. Định kỳ mở `/permissions` xem danh sách đã tích luỹ.
+Agent chạy một lệnh bạn chưa bao giờ định cho phép, mà không hỏi. Với Bash, lựa chọn này nhớ vĩnh viễn theo repo và lệnh, và docs chỉ ra `Bash(git *)` cho phép *mọi* lệnh git, kể cả `-c`, thứ khiến git chạy một chương trình bạn chỉ định. Viết allow theo subcommand (`Bash(git diff *)`, không phải `Bash(git *)`) và đặt lệnh nguy hiểm vào `deny`/`ask`, vì deny và ask luôn được xét trước allow. Định kỳ mở `/permissions` xem danh sách đã tích luỹ tới đâu.
 
-### Bẫy 3 — Commit lên nhánh không phải nhánh bạn nghĩ
+### Commit lên nhánh không phải nhánh bạn nghĩ
 
-**Triệu chứng:** commit của agent nằm trên `main`, hoặc trên nhánh của việc khác.
-**Nguyên nhân gốc:** trạng thái git agent thấy lúc đầu phiên là ảnh chụp; người dùng có thể đã checkout nhánh khác ở terminal khác (kinh nghiệm thực tế, đã gặp).
-**Chặn bằng cơ chế:** đưa `git branch --show-current` vào quy trình commit trong file hướng dẫn repo; chặt hơn, một hook kiểm nhánh trước lệnh `git commit` ([[ag-08-hook-va-chan-bang-cau-hinh]]).
+Commit của agent nằm trên `main`, hoặc trên nhánh của việc khác. Trạng thái git agent thấy lúc đầu phiên chỉ là ảnh chụp, và người dùng có thể đã checkout nhánh khác ở một terminal khác (kinh nghiệm thực tế, đã gặp). Đưa `git branch --show-current` vào quy trình commit trong file hướng dẫn repo; chặt hơn thì dùng một hook kiểm nhánh trước lệnh `git commit` ([[ag-08-hook-va-chan-bang-cau-hinh]]).
 
-### Bẫy 4 — Đẩy cả lệnh đọc sang cho người chạy
+### Ghi ra ngoài repo mà không có đường lùi
 
-**Triệu chứng:** trong một buổi điều tra, phần lớn thời gian là người copy-paste output qua lại.
-**Nguyên nhân gốc:** ranh giới đặt theo "có credentials production không" thay vì "có ghi không". Một lần sandbox chặn một script bị diễn giải thành luật chung.
-**Chặn bằng cơ chế:** allow-list tường minh cho lệnh/script chỉ đọc; tách script thành `read` và `apply` để luật permission phân biệt được hai chế độ theo chuỗi lệnh. Khi sandbox chặn một lệnh đọc, nói rõ "bị sandbox chặn" chứ không suy ra luật mới.
+Một cờ bị đặt sai trên dữ liệu thật, và không ai biết giá trị cũ là gì. Git và checkpoint đều không chạm tới hệ thống ngoài, và đường lùi không viết **trước** khi ghi thì sau đó không dựng lại được. Mọi script ghi cần `read` / `apply` / `revert`, backup trạng thái trước khi ghi, và từ chối flag hay mode lạ thay vì bỏ qua. Ghi lên dữ liệu của khách thì thêm dry-run và để người chạy.
 
-### Bẫy 5 — Ghi ra ngoài repo mà không có đường lùi
+Chính đường lùi cũng có thể gây hỏng. Dữ liệu trên môi trường test dùng chung thường là mốc so sánh của một việc khác (ảnh BEFORE, kiểm parity); một lần `revert` giữa chừng làm lệch mốc đó, và việc kia bỗng ra kết quả vô nghĩa mà không ai biết vì sao (kinh nghiệm thực tế). Trên môi trường dùng chung, trước khi `apply` hoặc `revert`, agent phải in ra nó đổi gì, ở đâu, và ghi lại vào chỗ team cùng đọc. Môi trường riêng cho từng việc giải triệt để hơn ([[ag-15-worktree-va-xung-dot]] cho phía repo).
 
-**Triệu chứng:** sai một cờ trên dữ liệu thật, và không ai biết giá trị cũ là gì.
-**Nguyên nhân gốc:** git và checkpoint đều không chạm tới hệ thống ngoài; nếu đường lùi không được viết *trước* khi ghi thì sau đó không dựng lại được.
-**Chặn bằng cơ chế:** mọi script ghi có `read` / `apply` / `revert`, backup trạng thái trước khi ghi, từ chối flag/mode lạ thay vì bỏ qua. Ghi lên dữ liệu của khách thì thêm dry-run và người chạy.
+### Duyệt "đóng việc" khi còn một khe hở đã biết
 
-### Bẫy 6 — `revert` của bạn phá mốc của người khác
+Sau nhiều vòng sửa, agent đề xuất "hướng đã đạt mục tiêu, khe còn lại nhỏ", và bạn đồng ý. Thực chất đó là agent tự chấm bài của mình, và lời duyệt của bạn chỉ dựa trên bản tóm tắt ấy. Case thực tế: sau 8 vòng vá một chỗ rò token qua log bằng regex, agent đề nghị đóng; người dev bác; vòng 9 đổi hẳn cách tiếp cận (quét bằng AST thay vì regex) và đóng được thật. Khe bị bỏ qua không biến mất, nó chỉ ngừng được nhắc tới.
 
-**Triệu chứng:** một việc khác đang so sánh trước/sau trên cùng môi trường test bỗng ra kết quả vô nghĩa.
-**Nguyên nhân gốc:** dữ liệu trên môi trường test thường đồng thời là **mốc so sánh** của việc khác (ảnh BEFORE, kiểm parity). Revert giữa chừng làm lệch mốc mà không ai biết vì sao (kinh nghiệm thực tế).
-**Chặn bằng cơ chế:** trước khi `apply` hoặc `revert` trên môi trường dùng chung, agent phải in ra nó đổi gì, ở đâu; ghi lại vào chỗ team cùng đọc. Môi trường riêng cho từng việc giải triệt để hơn ([[ag-15-worktree-va-xung-dot]] cho phía repo).
+Thất bại 2–3 vòng liên tiếp cùng một hướng là tín hiệu **đổi cách tiếp cận**, không phải thêm một vòng. Còn lỗ mô tả được thì đừng duyệt đóng; nếu thật sự dừng, ghi thành quyết định có tradeoff. Về lâu dài, thay câu "xong chưa?" bằng tiêu chí chạy được ([[ag-10-done-criteria-va-gate]]) và một verifier không phải chính agent đã làm ([[ag-12-verifier-doc-lap]]).
 
-### Bẫy 7 — Duyệt "đóng việc" khi còn một khe hở đã biết
-
-**Triệu chứng:** sau nhiều vòng sửa, agent đề xuất "hướng đã đạt mục tiêu, khe còn lại nhỏ", và bạn đồng ý.
-**Nguyên nhân gốc:** đó là agent **tự chấm** bài của mình, và lời duyệt của bạn chỉ dựa trên lời tóm tắt đó. Case thực tế: sau 8 vòng vá một chỗ rò token qua log bằng regex, agent đề nghị đóng; người dev bác; vòng 9 đổi hẳn cách tiếp cận (quét bằng AST thay vì regex) và đóng được thật. Khe bị bỏ qua không biến mất, nó chỉ ngừng được nhắc tới.
-**Chặn bằng cơ chế:** thất bại 2–3 vòng liên tiếp cùng một hướng là tín hiệu đổi cách tiếp cận, không phải thêm một vòng. Không duyệt đóng khi còn lỗ mô tả được; nếu thật sự dừng, ghi thành quyết định có tradeoff. Về lâu dài: thay câu "xong chưa?" bằng tiêu chí chạy được ([[ag-10-done-criteria-va-gate]]) và một verifier không phải chính agent đã làm ([[ag-12-verifier-doc-lap]]).
+Đẩy cả lệnh đọc sang cho người chạy vì "có credentials production" là đặt ranh giới sai trục (§3.3). Cách chẩn đoán lớp nào đang chặn, và sửa bằng allow-list cho lệnh chỉ đọc, ở [[ag-03-coding-agent-hoat-dong]].
 
 ---
 

@@ -417,53 +417,27 @@ Cơ chế dựng: <một file / lệnh / agent / job>
 
 ## 5. Bẫy thường gặp
 
-### Bẫy 1 — Tự động vì làm được, không vì đáng
+### Tự động vì làm được, không vì đáng
 
-- **Triệu chứng:** dựng xong một loop đẹp cho việc mỗi quý xảy ra một lần. Lần chạy kế tiếp, cấu hình đã lệch, phải sửa loop lâu hơn làm tay.
-- **Nguyên nhân gốc:** chỉ nhìn "mỗi lần tốn bao lâu", bỏ qua tần suất. Việc hiếm thì không đủ lần chạy để hoà vốn, và cũng không đủ lần chạy để lộ lỗi của chính cơ chế.
-- **Chặn bằng cơ chế:** không việc nào được dựng automation khi chưa có dòng trong `tasks.csv` và kết quả `LÀM` từ script §4.2.
+Dựng xong một loop đẹp cho việc mỗi quý xảy ra một lần; tới lần chạy kế, cấu hình đã lệch và sửa loop còn lâu hơn làm tay. Người dựng chỉ nhìn "mỗi lần tốn bao lâu" mà bỏ qua tần suất. Việc hiếm không đủ lần chạy để hoà vốn, và cũng không đủ lần chạy để lộ lỗi của chính cơ chế. Luật chặn: không việc nào được dựng automation khi chưa có dòng trong `tasks.csv` và kết quả `LÀM` từ script §4.2.
 
-### Bẫy 2 — Gate xanh thay cho chủ đầu ra ở việc R3
+### Lấy gate xanh thay cho chủ đầu ra ở việc R3
 
-- **Triệu chứng:** MR qua đỏ→xanh, test 42/42, nhưng bản sửa sai ở một ca không test nào chạm tới (case §2).
-- **Nguyên nhân gốc:** gate chỉ kiểm được những ca người viết test đã nghĩ ra. Ở việc R3, ca không ai nghĩ ra chính là chỗ đắt nhất.
-- **Chặn bằng cơ chế:** lớp R3 bị khoá ở mức "soạn nháp" bằng cấu hình: deny `git push` lên nhánh chung, không cấp quyền merge. Bản nháp phải đi qua một người là chủ đầu ra. Gate là điều kiện **cần** để bản nháp được tạo, không phải điều kiện **đủ** để merge.
+MR qua đỏ→xanh, test 42/42, mà bản sửa vẫn sai ở một ca không test nào chạm tới (case §2). Gate chỉ kiểm được những ca người viết test đã nghĩ ra, còn ở việc R3 thì ca không ai nghĩ ra chính là chỗ đắt nhất. Khoá lớp R3 ở mức "soạn nháp" bằng cấu hình: deny `git push` lên nhánh chung, không cấp quyền merge, bản nháp phải đi qua một người là chủ đầu ra. Gate là điều kiện **cần** để bản nháp được tạo, không phải điều kiện đủ để merge.
 
-### Bẫy 3 — Đầu ra không có chủ
+Ranh giới kiểu "đừng deploy" nói trong chat thì không giữ được lâu: theo docs, nó được đọc lại từ transcript, và compaction có thể xoá mất tin nhắn chứa nó (§3.4). Ranh giới nào phải còn hiệu lực sau vài giờ thì viết thành deny rule trong `settings.json`.
 
-- **Triệu chứng:** thư mục báo cáo, inbox, hay danh sách MR nháp cứ dài thêm. Không ai đọc, nhưng automation vẫn "chạy tốt" theo log.
-- **Nguyên nhân gốc:** khi dựng, chủ đầu ra tồn tại. Sau đó vai trò đổi người, còn automation thì không biết.
-- **Chặn bằng cơ chế:**
-  - Cột `co_chu_dau_ra` là điều kiện chặn trong script chấm.
-  - Ghi chú quyết định có ngày review, kèm câu hỏi "tháng qua có bao nhiêu đầu ra được dùng?".
-  - Số đo phía dùng đặt ở [[ag-22-second-brain]].
+### Đầu ra không có chủ
 
-### Bẫy 4 — Default bật, hoặc `undefined` bị coi là bật
+Thư mục báo cáo, inbox hay danh sách MR nháp cứ dài thêm, không ai đọc, còn log vẫn nói automation "chạy tốt". Lúc dựng, chủ đầu ra có tồn tại; sau đó vai trò đổi người mà automation không biết. Vì vậy cột `co_chu_dau_ra` là điều kiện chặn trong script chấm, ghi chú quyết định có ngày review kèm câu hỏi "tháng qua có bao nhiêu đầu ra được dùng?", và số đo phía dùng đặt ở [[ag-22-second-brain]].
 
-- **Triệu chứng:** ship feature mới với default tắt, nhưng khách cũ vẫn nhận email tự động.
-- **Nguyên nhân gốc:** worker kiểm `enabled !== false`. Bản ghi cũ không có cờ nên rơi vào nhánh bật.
-- **Chặn bằng cơ chế:**
-  - Chỉ chạy khi `enabled === true`.
-  - Đặt default ở **một nguồn sự thật**.
-  - Viết một test chạy worker trên một bản ghi **không có cờ**, và test đó phải khẳng định không có gì được gửi.
+### `undefined` bị coi là bật
 
-### Bẫy 5 — Job im lặng vì nguồn đã mất
+Feature mới ship với default tắt, vậy mà khách cũ vẫn nhận email tự động. Worker kiểm `enabled !== false`, nên bản ghi cũ không có cờ rơi vào nhánh bật. Chỉ chạy khi `enabled === true`, đặt default ở một nguồn sự thật, và viết một test chạy worker trên bản ghi **không có cờ** để khẳng định không có gì được gửi.
 
-- **Triệu chứng:** job hằng ngày báo "không có gì mới" suốt nhiều tuần. Thật ra nó không đọc được nguồn từ lâu.
-- **Nguyên nhân gốc:** code không phân biệt "đọc được, rỗng" với "không đọc được".
-- **Chặn bằng cơ chế:** kiểm nguồn tồn tại trước khi đọc. Nguồn mất thì thoát mã khác 0 và in `MISSING SOURCE` (script ở §3.5). Thêm phép kiểm ngược: thỉnh thoảng cho job một nguồn **chắc chắn có dữ liệu mới**, kết quả phải khác rỗng.
+### Job im lặng vì nguồn đã mất
 
-### Bẫy 6 — Chạy thưa hơn để tiết kiệm, hoá đơn lại tăng
-
-- **Triệu chứng:** giãn `/loop` từ 4 phút lên 10 phút cho "đỡ tốn", nhưng usage tăng.
-- **Nguyên nhân gốc:** khoảng cách vượt thời hạn cache (5 phút mặc định với API key), nên mỗi lần chạy đều xử lý lại cả context (phép tính 2 ở §3.3).
-- **Chặn bằng cơ chế:** job định kỳ chạy trong session mới, context nhỏ. Xem hàng *Loops* và dòng *Prompt cache* trong `/usage` sau ngày chạy đầu tiên, ghi per-run tokens vào `plan-4-tuan.md`.
-
-### Bẫy 7 — Ranh giới nói trong chat, rồi mất
-
-- **Triệu chứng:** đầu phiên đã dặn "đừng deploy". Ba giờ sau, agent ở mode `auto` deploy.
-- **Nguyên nhân gốc:** theo docs, ranh giới nói trong hội thoại được đọc lại từ transcript. Compaction có thể xoá mất tin nhắn chứa ranh giới đó.
-- **Chặn bằng cơ chế:** mọi ranh giới phải còn hiệu lực sau 3 giờ thì viết thành deny rule trong `settings.json`, không để ở dạng một câu trong chat.
+Nhiều tuần liền job hằng ngày báo "không có gì mới", trong khi thật ra nó không đọc được nguồn từ lâu. Code không phân biệt "đọc được, rỗng" với "không đọc được". Kiểm nguồn tồn tại trước khi đọc; nguồn mất thì thoát mã khác 0 và in `MISSING SOURCE` (script ở §3.5). Thỉnh thoảng kiểm ngược bằng cách cho job một nguồn chắc chắn có dữ liệu mới: kết quả phải khác rỗng.
 
 ---
 

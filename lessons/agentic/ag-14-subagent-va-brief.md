@@ -337,40 +337,29 @@ Sau đó chạy gate repo của bạn **một lần** (lint, link check, build).
 
 ## 5. Bẫy thường gặp
 
-**Dán brief vào prompt từng agent.**
-Triệu chứng: các agent làm theo hai phiên bản luật khác nhau; không ai nói được agent nào đọc bản nào.
-Nguyên nhân gốc: nội dung brief tồn tại thành N bản, bản nào cũng là "nguồn".
-Chặn: brief là **một file**, prompt chỉ trỏ tới nó. Sửa luật = sửa file, agent spawn sau đọc bản mới.
+### Fan-out khi N agent chưa có chung một thước
 
-**Mỗi agent tự chạy gate toàn repo.**
-Triệu chứng: việc xếp hàng mãi không spawn được; gate chạy lâu bất thường; máy nóng.
-Nguyên nhân gốc: agent giữ slot cho tới khi kết thúc hẳn, và N lượt gate trùng lặp tranh cùng tài nguyên.
-Chặn: brief chỉ cho phép kiểm **phần của mình**; gate toàn cục thuộc phiên chính, chạy một lần.
+Có hai cách để N agent làm theo N chuẩn. Cách thứ nhất là dán brief vào prompt từng agent: nội dung brief tồn tại thành N bản, bản nào cũng là "nguồn", và khi một bản bị sửa tay thì các agent làm theo hai phiên bản luật mà không ai nói được agent nào đọc bản nào. Brief phải là một file, prompt chỉ trỏ tới nó; sửa luật là sửa file, agent spawn sau đọc bản mới.
 
-**Agent ghi file chung.**
-Triệu chứng: registry/index/lockfile mất dòng, hoặc diff lẫn thay đổi của hai agent.
-Nguyên nhân gốc: N tiến trình cùng đọc-sửa-ghi một file, không có khoá.
-Chặn: danh sách file được ghi trong brief + script kiểm file thay đổi ⊆ danh sách (bước 5 §4). File chung để người điều phối gộp.
+Cách thứ hai là fan-out trước khi có bản mẫu. N kết quả đều đúng brief nhưng mỗi cái hiểu "đạt" một kiểu, vì brief chỉ có tính từ ("dễ hiểu", "đầy đủ"), và rồi phải sửa lại cả N. **Làm và duyệt một bản mẫu trước**, brief trỏ thẳng tới nó.
 
-**Tin báo cáo của agent.**
-Triệu chứng: báo cáo nói "đã kiểm với docs", nhưng số vẫn sai; link trông hợp lý nhưng gãy.
-Nguyên nhân gốc: báo cáo là văn bản do cùng agent sinh ra — nó không chạy, không đỏ được.
-Chặn: verify bằng lệnh (link check, diff phạm vi, build) và tự đối chiếu mẫu vài dữ kiện; giao chấm cho agent khác ([[ag-12-verifier-doc-lap]]).
+### Mỗi agent tự chạy gate toàn repo
 
-**Giao xong rồi quên.**
-Triệu chứng: worker báo failed nằm đó nhiều lượt; người dùng là người phát hiện.
-Nguyên nhân gốc: worker không tự gọi lại; phiên điều phối bị cuốn vào việc khác có vẻ gấp hơn.
-Chặn: mở mỗi lượt bằng việc kiểm trạng thái mọi worker; đóng mỗi lượt bằng khối tiến độ tổng — có khuôn cố định thì không quên được hàng "đang chạy".
+Việc xếp hàng mãi không spawn được, gate chạy lâu bất thường, máy nóng. Agent giữ slot tới khi kết thúc hẳn, còn N lượt gate trùng lặp tranh cùng tài nguyên. Brief chỉ cho phép agent kiểm phần của mình; gate toàn cục thuộc phiên chính, chạy một lần.
 
-**Brief/spec để trong thư mục tạm.**
-Triệu chứng: agent đợt sau, hoặc phiên sau khi crash, không tìm thấy file nó cần và đứng im.
-Nguyên nhân gốc: thư mục tạm sống theo phiên hoặc theo lần khởi động máy.
-Chặn: brief và spec cần cho việc kéo dài qua nhiều lượt đặt trong repo hoặc thư mục bền, kèm trong danh sách kiểm trước khi giao.
+### Nhiều agent ghi cùng một file chung
 
-**Fan-out trước khi có bản mẫu.**
-Triệu chứng: N kết quả đúng brief nhưng mỗi cái hiểu "đạt" một kiểu; phải sửa lại cả N.
-Nguyên nhân gốc: brief chỉ có tính từ ("dễ hiểu", "đầy đủ"), không có thước.
-Chặn: làm và duyệt một bản mẫu trước, brief trỏ thẳng tới nó.
+Registry, index hay lockfile mất dòng, hoặc diff lẫn thay đổi của hai agent, vì N tiến trình cùng đọc-sửa-ghi một file mà không có khoá. Brief ghi rõ danh sách file được ghi, script ở bước 5 §4 kiểm file thay đổi ⊆ danh sách, và file chung để người điều phối gộp.
+
+### Tin báo cáo của agent
+
+Báo cáo nói "đã kiểm với docs" mà số vẫn sai, link trông hợp lý mà gãy. Báo cáo là văn bản do chính agent đó sinh ra, nó không chạy và không đỏ được. Verify bằng lệnh (link check, diff phạm vi, build), tự đối chiếu mẫu vài dữ kiện, và giao phần chấm cho agent khác ([[ag-12-verifier-doc-lap]]).
+
+### Giao xong rồi quên, hoặc để brief ở chỗ không sống lâu
+
+Worker báo failed nằm đó nhiều lượt và người dùng là người phát hiện, vì worker không tự gọi lại còn phiên điều phối bị cuốn vào việc khác trông gấp hơn. Mở mỗi lượt bằng việc kiểm trạng thái mọi worker, đóng mỗi lượt bằng khối tiến độ tổng; khuôn cố định thì không quên được hàng "đang chạy".
+
+Cùng case đó còn một lớp nữa: agent đợt sau, hoặc phiên sau khi crash, không tìm thấy file nó cần và đứng im, vì brief và spec nằm trong thư mục tạm sống theo phiên hoặc theo lần khởi động máy. Việc kéo dài qua nhiều lượt thì đặt brief và spec trong repo hoặc thư mục bền, và đưa điều đó vào danh sách kiểm trước khi giao.
 
 ---
 

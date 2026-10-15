@@ -333,15 +333,13 @@ Tiêu chí xong: bạn có một bảng hai dòng (luật trong chat / luật tr
 
 ## 5. Bẫy thường gặp
 
-**Giữ nguyên bản nháp `/init`.**
-Triệu chứng: file 150–300 dòng, phần lớn là mô tả thư mục; agent vẫn mắc đúng lỗi bạn đã ghi.
-Nguyên nhân gốc: `/init` mô tả lại thứ code đã nói; luật quan trọng bị pha loãng (docs: file dài *"reduce adherence"*).
-Chặn bằng cơ chế: gate đếm dòng trong pre-commit hoặc CI — `test $(wc -l < CLAUDE.md) -le 60 || { echo "CLAUDE.md quá 60 dòng"; exit 1; }`. Định kỳ chạy `/doctor prompt-audit` (Claude Code v2.1.283 trở lên, theo docs [memory](https://code.claude.com/docs/en/memory)) để tìm luật lỗi thời, mâu thuẫn, hoặc trỏ tới file/lệnh không tồn tại.
+### Giữ nguyên bản nháp `/init`
 
-**Lệnh trong file đã thối.**
-Triệu chứng: agent chạy `npm test`, báo "missing script", rồi tự đoán lệnh khác hoặc báo "repo không có test".
-Nguyên nhân gốc: ai đó đổi tên script trong `package.json`, không ai sửa file hướng dẫn — không có gì nối hai nơi.
-Chặn bằng cơ chế: script kiểm chạy trong CI, đối chiếu mọi `npm run <x>` trong file với `package.json`:
+File dài 150–300 dòng, phần lớn là mô tả thư mục, và agent vẫn mắc đúng lỗi bạn đã ghi trong đó. `/init` mô tả lại thứ code đã nói, nên luật quan trọng bị pha loãng (docs: file dài *"reduce adherence"*). Đặt một gate đếm dòng trong pre-commit hoặc CI: `test $(wc -l < CLAUDE.md) -le 60 || { echo "CLAUDE.md quá 60 dòng"; exit 1; }`. Định kỳ chạy thêm `/doctor prompt-audit` (Claude Code v2.1.283 trở lên, theo docs [memory](https://code.claude.com/docs/en/memory)) để tìm luật lỗi thời, mâu thuẫn, hoặc trỏ tới file/lệnh không tồn tại.
+
+### Lệnh trong file đã thối
+
+Agent chạy `npm test`, nhận "missing script", rồi tự đoán lệnh khác hoặc báo "repo không có test". Ai đó đã đổi tên script trong `package.json` mà không sửa file hướng dẫn, và không có gì nối hai nơi. Script dưới đây chạy trong CI, đối chiếu mọi `npm run <x>` trong file với `package.json`:
 
 ```bash
 #!/usr/bin/env bash
@@ -355,32 +353,23 @@ done
 exit $missing
 ```
 
-Kiểm cả hai chiều trước khi tin nó: đổi tạm `test:unit` thành `test:unitx` trong `AGENTS.md`, script phải đỏ.
+Kiểm cả hai chiều trước khi tin nó: đổi tạm `test:unit` thành `test:unitx` trong `AGENTS.md`, script **phải đỏ**.
 
-**Cấm bằng lời trong file hướng dẫn.**
-Triệu chứng: "KHÔNG push main" nằm trong `CLAUDE.md`, và một ngày agent vẫn push.
-Nguyên nhân gốc: docs — `CLAUDE.md` là *"context, not enforced configuration"*; *"To block an action regardless of what Claude decides, use a PreToolUse hook"*.
-Chặn bằng cơ chế: giữ dòng trong file (để agent hiểu ý), **và** thêm permission deny hoặc hook — [[ag-08-hook-va-chan-bang-cau-hinh]].
+### Thêm `CLAUDE.local.md` làm mất `AGENTS.md` của team
 
-**Thêm `CLAUDE.local.md` làm mất `AGENTS.md` của team.**
-Triệu chứng: sau khi bạn tạo file ghi chú cá nhân, agent quên mọi convention chung.
-Nguyên nhân gốc: `CLAUDE.local.md` được tính là "có CLAUDE.md", nên Claude Code thôi đọc `AGENTS.md` ở chế độ mặc định.
-Chặn bằng cơ chế: dùng mẫu §4.2 (`CLAUDE.md` import `@AGENTS.md`), hoặc đặt Project instructions thành `claude-md-and-agents-md`; sau mỗi thay đổi file hướng dẫn, chạy `/context` hoặc `/memory` xem danh sách file nạp.
+Bạn tạo một file ghi chú cá nhân, và từ đó agent quên mọi convention chung. `CLAUDE.local.md` được tính là "có CLAUDE.md", nên ở chế độ mặc định Claude Code thôi đọc `AGENTS.md`. Dùng mẫu §4.2 (`CLAUDE.md` import `@AGENTS.md`) hoặc đặt Project instructions thành `claude-md-and-agents-md`; sau mỗi lần đổi file hướng dẫn, mở `/context` hoặc `/memory` xem danh sách file đã nạp.
 
-**Sửa file hướng dẫn giữa phiên rồi tưởng đã có hiệu lực.**
-Triệu chứng: bạn thêm luật vào `AGENTS.md`, agent Codex trong phiên đang mở vẫn làm ngược.
-Nguyên nhân gốc: docs Codex — discovery chạy một lần mỗi lần khởi động.
-Chặn bằng cơ chế: quy ước "sửa file hướng dẫn ⇒ mở phiên mới", và kiểm bằng lệnh tóm tắt hướng dẫn ở §4.3 trước khi giao việc.
+### Luật trong `AGENTS.md` không có tác dụng với Codex
 
-**`AGENTS.md` lồng nhau vượt 32 KiB.**
-Triệu chứng: luật ở `AGENTS.md` thư mục sâu không bao giờ có tác dụng trong Codex.
-Nguyên nhân gốc: `project_doc_max_bytes` mặc định 32 KiB; chạm trần thì file sau bị bỏ, không báo.
-Chặn bằng cơ chế: gate tổng dung lượng — `find . -name AGENTS.md -not -path './node_modules/*' -exec cat {} + | wc -c` phải nhỏ hơn 32768 (đây là tổng **mọi** file trong repo, chặt hơn thực tế vì Codex chỉ nạp nhánh thư mục đang đứng).
+Thường do một trong hai nguyên nhân. Bạn thêm luật giữa phiên, nhưng discovery của Codex chạy một lần mỗi lần khởi động, nên phiên đang mở vẫn làm ngược; quy ước "sửa file hướng dẫn thì mở phiên mới", và kiểm bằng lệnh tóm tắt hướng dẫn ở §4.3 trước khi giao việc.
 
-**Đọc đúng file, sai phiên bản.**
-Triệu chứng: báo cáo audit trích dẫn đầy đủ nhưng kết luận sai về prod (case §2).
-Nguyên nhân gốc: worktree đang mở là nhánh feature lệch master; context không có dòng nào nói phải đọc nhánh nào.
-Chặn bằng cơ chế: dòng "Điều tra / audit" trong §4.2, và đòi con số `rev-list` ở đầu mọi báo cáo audit — người đọc thấy `198` là biết ngay phải hỏi.
+Hoặc luật nằm ở `AGENTS.md` của một thư mục sâu, trong khi tổng dung lượng đã chạm `project_doc_max_bytes` (mặc định 32 KiB) và file sau bị bỏ mà không báo. Gate tổng dung lượng: `find . -name AGENTS.md -not -path './node_modules/*' -exec cat {} + | wc -c` phải nhỏ hơn 32768. Con số này là tổng **mọi** file trong repo, nên chặt hơn thực tế, vì Codex chỉ nạp nhánh thư mục đang đứng.
+
+### Đọc đúng file, sai phiên bản
+
+Báo cáo audit trích dẫn đầy đủ mà kết luận sai về prod, như case §2: worktree đang mở là nhánh feature lệch master, và context không có dòng nào nói phải đọc nhánh nào. Dòng "Điều tra / audit" ở §4.2 lấp chỗ đó, cùng yêu cầu ghi con số `rev-list` ở đầu mọi báo cáo audit. Người đọc thấy `198` là biết ngay phải hỏi.
+
+Viết "KHÔNG push main" vào `CLAUDE.md` rồi coi như đã chặn là lỗi đã nói ở bảng cuối §3.5: file là *"context, not enforced configuration"*. Giữ dòng đó để agent hiểu ý, và thêm permission deny hoặc hook ([[ag-08-hook-va-chan-bang-cau-hinh]]).
 
 ---
 

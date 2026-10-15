@@ -327,26 +327,29 @@ Output mong đợi (hash và giờ sẽ khác):
 
 ## 5. Bẫy thường gặp
 
-### Bẫy 1 — Ghi mốc vô điều kiện
-**Triệu chứng:** job xanh mỗi ngày nhưng có khoảng dữ liệu không ai đọc. **Gốc:** dòng ghi mốc chạy kể cả khi bước chính lỗi (thiếu `set -e`, hoặc `|| true` nuốt lỗi). **Chặn:** `set -euo pipefail`; ghi mốc là lệnh cuối; thêm một test cố ý làm bước chính lỗi và kiểm mốc không đổi.
+### Dòng ghi mốc chạy cả khi bước chính lỗi
 
-### Bẫy 2 — Mốc theo thời gian cho dữ liệu tới muộn
-**Triệu chứng:** thiếu những bản ghi lẻ tẻ, không có quy luật, không lỗi nào trong log. **Gốc:** so dấu thời gian của sự kiện với đồng hồ của job; sự kiện tới muộn mang dấu cũ. **Chặn:** mốc là tập id/hash đã xử lý; cửa sổ thời gian chỉ làm trần nhìn lại; định kỳ đối chiếu với nguồn ngoài (danh sách tag, danh sách id của hệ nguồn).
+Job xanh mỗi ngày, nhưng có những khoảng dữ liệu không ai đọc. Thủ phạm là dòng ghi mốc vẫn chạy khi bước chính đã lỗi, vì script thiếu `set -e` hoặc có `|| true` nuốt lỗi. Bật `set -euo pipefail`, để ghi mốc là lệnh cuối, và thêm một test cố ý làm bước chính lỗi rồi kiểm mốc **không đổi**.
 
-### Bẫy 3 — Mồi mốc để "khỏi phải đọc lại"
-**Triệu chứng:** sau khi đổi cơ chế, chất lượng đầu ra tụt mà không có lỗi nào. **Gốc:** đánh dấu đã xử lý cho thứ chưa xử lý; state không phân biệt `read` với `skipped`. **Chặn:** state có cột trạng thái; lý do bỏ qua phải kèm lệnh kiểm; đo bằng bộ case giữ riêng sau mỗi lần đổi cơ chế.
+Cùng họ là bước có hiệu ứng ngoài nằm giữa chuỗi: chạy lại một job lỗi thì hệ ngoài bị đẩy hai lần, hoặc output giữ trong bộ nhớ mất theo process và không ai biết lần trước đã đẩy chưa. Đặt bước đó cuối, cho log chảy ra file, và đọc trạng thái hệ ngoài trước khi đẩy (§3.3).
 
-### Bẫy 4 — TTL lock đặt theo cảm giác
-**Triệu chứng:** hai agent sửa cùng worktree, commit đè nhau; hoặc loop chạy rỗng hàng chục vòng. **Gốc:** TTL ngắn hơn đuôi thời gian chạy thật, hoặc lock không bao giờ hết hạn. **Chặn:** TTL theo p95 đo được; trước khi cướp lock, kiểm agent còn sống; ghi thời điểm nhận/đóng vào sổ để đo được.
+### So dấu thời gian của sự kiện với đồng hồ của job
 
-### Bẫy 5 — Tài nguyên tên cố định sống lâu hơn process
-**Triệu chứng:** runner mới không khởi động được, lỗi lặp mỗi vòng quét, đôi khi tự khỏi. **Gốc:** tiến trình con mồ côi giữ một tài nguyên có tên cố định (unit, port, file pid). **Chặn:** dọn tài nguyên cũ khi đã chứng minh không còn chủ (`flock` lấy được); không dọn được thì để hệ thống tự đặt tên; có done-criteria "kill -9 giữa chừng rồi chạy lại".
+Kiểu hỏng này không để lại lỗi nào trong log, chỉ thiếu vài bản ghi lẻ tẻ, không theo quy luật. Sự kiện tới muộn mang dấu thời gian cũ nên lọt qua mốc thời gian mãi mãi (§3.4). Mốc phải là tập id/hash đã xử lý; cửa sổ thời gian chỉ còn làm trần nhìn lại. Định kỳ đối chiếu với nguồn ngoài (danh sách tag, danh sách id của hệ nguồn), vì state của chính job luôn thấy mình xanh.
 
-### Bẫy 6 — Bước không idempotent nằm giữa chuỗi
-**Triệu chứng:** chạy lại một job lỗi thì hệ ngoài bị đẩy hai lần, hoặc không ai biết lần trước đã đẩy chưa. **Gốc:** bước có hiệu ứng ngoài đặt trước các bước dễ lỗi; output bị giữ trong bộ nhớ rồi mất khi process chết. **Chặn:** đặt cuối; log chảy ra file; có lệnh đọc trạng thái hệ ngoài trước khi đẩy.
+### Mồi mốc để khỏi phải đọc lại
 
-### Bẫy 7 — Hai mode "tương tự nhau" theo niềm tin
-**Triệu chứng:** task PASS ở local, hỏng khi lên môi trường thật; MR không nói nó đã chứng minh tới đâu. **Gốc:** mode thiếu năng lực vẫn chạy stage và in cùng verdict. **Chặn:** doctor kiểm hợp đồng năng lực mỗi lượt; thiếu tuỳ chọn thì tụt hạng **có ghi trong đầu ra**; cố ý tháo một năng lực để thấy doctor đỏ.
+Sau khi đổi cơ chế, chất lượng đầu ra tụt mà không có lỗi nào. Đó là dấu của việc đánh dấu "đã xử lý" cho thứ chưa xử lý, trong khi state không phân biệt `read` với `skipped`. State cần cột trạng thái, lý do bỏ qua phải kèm lệnh kiểm, và sau mỗi lần đổi cơ chế thì đo lại bằng bộ case giữ riêng.
+
+### TTL lock đặt theo cảm giác
+
+TTL ngắn hơn đuôi thời gian chạy thật thì hai agent cùng sửa một worktree, commit đè nhau; lock không bao giờ hết hạn thì loop chạy rỗng hàng chục vòng. Đặt TTL theo p95 đo được, ghi thời điểm nhận/đóng vào sổ để có số mà đo, và kiểm agent còn sống trước khi cướp lock.
+
+Lock ngầm hỏng theo cách tương tự. Tiến trình con mồ côi giữ một tài nguyên tên cố định (unit, port, file pid), runner mới không khởi động được, lỗi lặp mỗi vòng quét rồi đôi khi tự khỏi. Chỉ dọn tài nguyên cũ khi đã chứng minh không còn chủ (`flock` lấy được); không dọn được thì để hệ thống tự đặt tên. Done-criteria nên có bước "kill -9 giữa chừng rồi chạy lại".
+
+### Tin hai mode "tương tự nhau" mà không kiểm
+
+Task PASS ở local, hỏng khi lên môi trường thật, và MR không nói nó đã chứng minh tới đâu. Mode thiếu năng lực vẫn chạy stage và in cùng verdict như mode đủ. Cho doctor kiểm hợp đồng năng lực mỗi lượt; thiếu năng lực tuỳ chọn thì tụt hạng và ghi điều đó vào đầu ra. Muốn tin doctor thì cố ý tháo một năng lực để thấy nó đỏ.
 
 ---
 
