@@ -15,7 +15,7 @@ Web "truyền thống" (MPA — multi-page app): mỗi link là một request m�
 
 SPA (single-page app) như React: trình duyệt tải **một** file HTML + một bundle JS. Sau đó khi bấm link, React Router **chặn** việc reload, chỉ đổi URL bằng History API và **render component khác** ngay trong trang. Không reload, không màn hình trắng, state giữ nguyên.
 
-> 💡 **Ghi nhớ:** Routing trong SPA = "đổi URL → đổi component đang render", tất cả diễn ra trong trình duyệt. Server thường chỉ trả về cùng một `index.html` cho mọi đường dẫn (điều này quan trọng khi deploy — xem cuối bài).
+> **Ghi nhớ:** Routing trong SPA = "đổi URL → đổi component đang render", tất cả diễn ra trong trình duyệt. Server thường chỉ trả về cùng một `index.html` cho mọi đường dẫn (điều này quan trọng khi deploy — xem cuối bài).
 
 ## Cài & cấu hình React Router
 
@@ -95,7 +95,7 @@ function CreateButton() {
 }
 ```
 
-> ⚠️ **Bẫy:** Dùng `<a href="/products/42">` cho link nội bộ. Trình duyệt sẽ tải lại toàn bộ app từ đầu (reset state, mất tốc độ). Quy tắc: link **trong** app dùng `<Link>`/`navigate`, link **ra ngoài** (website khác) mới dùng `<a>`.
+> **Bẫy:** Dùng `<a href="/products/42">` cho link nội bộ. Trình duyệt sẽ tải lại toàn bộ app từ đầu (reset state, mất tốc độ). Quy tắc: link **trong** app dùng `<Link>`/`navigate`, link **ra ngoài** (website khác) mới dùng `<a>`.
 
 ## Đọc route param
 
@@ -111,7 +111,7 @@ export default function ProductDetail() {
 }
 ```
 
-> ⚠️ **Bẫy:** `useParams` luôn trả về **string**, kể cả khi nó nhìn như số. Nếu backend cần number, nhớ `Number(id)`. Và `id` có thể `undefined` (TypeScript sẽ nhắc), nên xử lý trường hợp thiếu.
+> **Bẫy:** `useParams` luôn trả về **string**, kể cả khi nó nhìn như số. Nếu backend cần number, nhớ `Number(id)`. Và `id` có thể `undefined` (TypeScript sẽ nhắc), nên xử lý trường hợp thiếu.
 
 Ngoài route param, còn có **query string** (`?sort=price&page=2`) đọc bằng `useSearchParams`:
 
@@ -157,7 +157,7 @@ function Layout() {
 
 `Layout` render một lần; khi đổi route con, chỉ phần trong `<Outlet />` đổi. Header/sidebar giữ nguyên, không re-mount.
 
-> 💡 **Ghi nhớ:** `Outlet` cho route giống như `children` cho component — nó là chỗ React Router "cắm" component của route con vào layout cha.
+> **Ghi nhớ:** `Outlet` cho route giống như `children` cho component — nó là chỗ React Router "cắm" component của route con vào layout cha.
 
 ## Data fetching: cách "ngây thơ" với useEffect + fetch
 
@@ -195,7 +195,7 @@ Code này *chạy được*, nhưng thiếu rất nhiều thứ mà app thật c
 - **Lặp code.** Bộ ba `loading/error/data` phải viết tay ở *mọi* component fetch.
 - **Không dedupe.** Hai component cùng cần `/api/products` → hai request.
 
-> ⚠️ **Bẫy:** `useEffect + fetch` rất hay quên cleanup, dẫn tới race condition và warning "set state trên component đã unmount". Tự xử lý đúng tất cả (cache, dedupe, retry, cancel) là viết lại... gần hết React Query.
+> **Bẫy:** `useEffect + fetch` rất hay quên cleanup, dẫn tới race condition và warning "set state trên component đã unmount". Tự xử lý đúng tất cả (cache, dedupe, retry, cancel) là viết lại... gần hết React Query.
 
 ## React Query (TanStack Query): công cụ cho server state
 
@@ -314,7 +314,7 @@ export default function ProductDetail() {
 }
 ```
 
-> 💡 **Ghi nhớ:** `queryKey` là *định danh* của dữ liệu trong cache. Cùng key → dùng chung cache, dedupe request. Key đổi (vd đổi `id`) → React Query coi là dữ liệu khác và fetch mới. Luôn đưa mọi tham số ảnh hưởng tới kết quả vào key.
+> **Ghi nhớ:** `queryKey` là *định danh* của dữ liệu trong cache. Cùng key → dùng chung cache, dedupe request. Key đổi (vd đổi `id`) → React Query coi là dữ liệu khác và fetch mới. Luôn đưa mọi tham số ảnh hưởng tới kết quả vào key.
 
 ## Cache, stale & refetch — trái tim của React Query
 
@@ -399,7 +399,7 @@ useQuery({
 });
 ```
 
-> 💡 **Ghi nhớ:** `staleTime` cao = ít request hơn nhưng dữ liệu có thể cũ hơn; `staleTime` thấp/0 = luôn mới nhưng nhiều request. Dữ liệu ít đổi (danh mục, hồ sơ) → `staleTime` cao. Dữ liệu sống động (giá real-time, tồn kho) → để thấp.
+> **Ghi nhớ:** `staleTime` cao = ít request hơn nhưng dữ liệu có thể cũ hơn; `staleTime` thấp/0 = luôn mới nhưng nhiều request. Dữ liệu ít đổi (danh mục, hồ sơ) → `staleTime` cao. Dữ liệu sống động (giá real-time, tồn kho) → để thấp.
 
 ## Mutation — ghi dữ liệu & invalidate
 
@@ -452,7 +452,7 @@ function CreateProductForm() {
 }
 ```
 
-> 💡 **Ghi nhớ:** Mẫu chuẩn = `useMutation` để ghi, rồi `invalidateQueries` trong `onSuccess` để đồng bộ lại dữ liệu liên quan. Bạn không tự `setState` cập nhật list — chỉ cần báo "key này cũ rồi", React Query lo phần còn lại.
+> **Ghi nhớ:** Mẫu chuẩn = `useMutation` để ghi, rồi `invalidateQueries` trong `onSuccess` để đồng bộ lại dữ liệu liên quan. Bạn không tự `setState` cập nhật list — chỉ cần báo "key này cũ rồi", React Query lo phần còn lại.
 
 ## Optimistic update — UI phản hồi tức thì
 
@@ -491,7 +491,7 @@ const toggleStock = useMutation({
 });
 ```
 
-> ⚠️ **Bẫy:** Optimistic update *bắt buộc* phải có rollback (`onError`) và đồng bộ lại (`onSettled`). Thiếu rollback, khi request lỗi, UI sẽ kẹt ở trạng thái sai mà người dùng tưởng đã thành công. Chỉ dùng optimistic cho hành động *rất hay thành công* và *dễ đảo ngược*.
+> **Bẫy:** Optimistic update *bắt buộc* phải có rollback (`onError`) và đồng bộ lại (`onSettled`). Thiếu rollback, khi request lỗi, UI sẽ kẹt ở trạng thái sai mà người dùng tưởng đã thành công. Chỉ dùng optimistic cho hành động *rất hay thành công* và *dễ đảo ngược*.
 
 ## Suspense & Error Boundary
 
@@ -525,7 +525,7 @@ import { ErrorBoundary } from "react-error-boundary";
 - `useSuspenseQuery` "treo" component cho đến khi có data → component bên trong không cần xử lý loading; `<Suspense fallback>` hiện trong lúc chờ.
 - Khi `queryFn` ném lỗi, lỗi nổi lên **error boundary** gần nhất → hiện `fallback` lỗi.
 
-> 💡 **Ghi nhớ:** `<Suspense>` xử lý *loading*, `<ErrorBoundary>` xử lý *error*. `Error Boundary` phải là **class component** hoặc dùng thư viện `react-error-boundary`, vì hiện chưa có hook bắt lỗi render. Đặt boundary đủ nhỏ để chỉ một phần UI lỗi, phần còn lại vẫn dùng được.
+> **Ghi nhớ:** `<Suspense>` xử lý *loading*, `<ErrorBoundary>` xử lý *error*. `Error Boundary` phải là **class component** hoặc dùng thư viện `react-error-boundary`, vì hiện chưa có hook bắt lỗi render. Đặt boundary đủ nhỏ để chỉ một phần UI lỗi, phần còn lại vẫn dùng được.
 
 ## React Query vs useEffect+fetch — chốt lại
 
@@ -541,7 +541,7 @@ import { ErrorBoundary } from "react-error-boundary";
 | Optimistic update | Rất khó tự làm đúng | Có pattern sẵn |
 | Lượng code | Nhiều, lặp lại | Ít, khai báo |
 
-> ⚠️ **Bẫy:** Không phải mọi thứ đều là server state. State *thuần client* (form đang nhập, modal mở/đóng, tab đang chọn) vẫn dùng `useState`/Zustand. React Query là cho **dữ liệu thuộc về server**. Đừng nhét mọi state vào React Query.
+> **Bẫy:** Không phải mọi thứ đều là server state. State *thuần client* (form đang nhập, modal mở/đóng, tab đang chọn) vẫn dùng `useState`/Zustand. React Query là cho **dữ liệu thuộc về server**. Đừng nhét mọi state vào React Query.
 
 ## Khi nào dùng gì
 

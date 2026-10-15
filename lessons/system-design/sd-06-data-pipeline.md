@@ -4,7 +4,7 @@
 
 Bài này không có một sơ đồ "đúng". Mỗi quyết định — batch hay stream, lake hay warehouse, ETL hay ELT — là một **đánh đổi giữa latency, chi phí và độ phức tạp vận hành**. Mục tiêu của một kiến trúc sư cấp cao không phải là biết service nào, mà là biết *vì sao* chọn nó và *sẽ trả giá ở đâu*.
 
-> 💡 Nguyên tắc: Trong hệ data, câu hỏi đầu tiên không phải "lưu ở đâu" mà là **"ai đọc, đọc kiểu gì, và chấp nhận dữ liệu cũ bao lâu?"**. Latency của *truy vấn* và độ *tươi* của dữ liệu định hình toàn bộ phần còn lại.
+> Nguyên tắc: Trong hệ data, câu hỏi đầu tiên không phải "lưu ở đâu" mà là **"ai đọc, đọc kiểu gì, và chấp nhận dữ liệu cũ bao lâu?"**. Latency của *truy vấn* và độ *tươi* của dữ liệu định hình toàn bộ phần còn lại.
 
 ---
 
@@ -61,7 +61,7 @@ BATCH                              STREAM
 | Retry / reprocess | dễ (chạy lại lô) | khó (phải replay log) |
 | Hợp với | báo cáo, ML training, billing | fraud detection, dashboard live, alert |
 
-> ⚠️ Bẫy thiết kế: Đừng chọn stream chỉ vì nghe "real-time" sang hơn. Nếu người dùng chỉ xem báo cáo mỗi sáng, một batch job chạy 4h sáng **rẻ hơn 5–10 lần** và ít sự cố vận hành hơn. Real-time là *yêu cầu*, không phải *mặc định*.
+> Bẫy thiết kế: Đừng chọn stream chỉ vì nghe "real-time" sang hơn. Nếu người dùng chỉ xem báo cáo mỗi sáng, một batch job chạy 4h sáng **rẻ hơn 5–10 lần** và ít sự cố vận hành hơn. Real-time là *yêu cầu*, không phải *mặc định*.
 
 ---
 
@@ -134,7 +134,7 @@ Tìm từ → ra ngay danh sách doc trong O(1) lookup, rồi giao/hợp các da
 - Eventual consistency: index trễ so với DB.
 - Reindex tốn kém khi đổi mapping.
 
-> 💡 Nguyên tắc: Search index là **read model**, không phải source of truth. Luôn có một DB chính làm chân lý, rồi *sync* sang index. Nếu index hỏng, ta rebuild được từ DB — đó là lý do nó được phép "eventually consistent".
+> Nguyên tắc: Search index là **read model**, không phải source of truth. Luôn có một DB chính làm chân lý, rồi *sync* sang index. Nếu index hỏng, ta rebuild được từ DB — đó là lý do nó được phép "eventually consistent".
 
 ---
 
@@ -153,7 +153,7 @@ Cả hai chứa dữ liệu để phân tích, nhưng khác nhau ở **schema á
 
 Thực tế hiện đại là **lakehouse**: giữ dữ liệu thô rẻ trên lake, thêm lớp table format (Iceberg/Delta/Hudi) để có ACID + schema + time-travel, và query trực tiếp bằng SQL engine. Bạn được sự rẻ của lake và một phần kỷ luật của warehouse.
 
-> ⚠️ Bẫy thiết kế: "Cứ đổ hết vào S3 rồi tính sau" biến lake thành **data swamp**: không ai biết bảng nào tin được, partition lung tung, query quét toàn bộ tốn tiền. Lake cần **catalog + partition + governance** ngay từ đầu, nếu không nó là nợ kỹ thuật ẩn.
+> Bẫy thiết kế: "Cứ đổ hết vào S3 rồi tính sau" biến lake thành **data swamp**: không ai biết bảng nào tin được, partition lung tung, query quét toàn bộ tốn tiền. Lake cần **catalog + partition + governance** ngay từ đầu, nếu không nó là nợ kỹ thuật ẩn.
 
 ---
 
@@ -245,7 +245,7 @@ Kappa: chỉ một đường stream. Muốn recompute lịch sử thì *replay* 
 | Độ phức tạp | cao (đồng bộ 2 nhánh) | trung bình (cần log bền) |
 | Khi nào chọn | transform batch & stream khác nhau căn bản | logic giống nhau, muốn ít code |
 
-> 💡 Nguyên tắc: Xu hướng hiện nay nghiêng về Kappa khi storage log đủ rẻ — *"một codebase, replay khi cần"* loại bỏ cả lớp bug do hai nhánh lệch nhau. Nhưng Lambda vẫn hợp lý khi batch dùng engine/thuật toán khác hẳn stream.
+> Nguyên tắc: Xu hướng hiện nay nghiêng về Kappa khi storage log đủ rẻ — *"một codebase, replay khi cần"* loại bỏ cả lớp bug do hai nhánh lệch nhau. Nhưng Lambda vẫn hợp lý khi batch dùng engine/thuật toán khác hẳn stream.
 
 ---
 
@@ -297,7 +297,7 @@ CDC đọc thẳng **transaction log** của database (WAL/binlog) và phát ra 
 
 Lợi ích: gần real-time, không tải lên DB nguồn (đọc log, không query), bắt được cả `DELETE`, và là cách "sạch" để xây *read models* downstream. CDC là xương sống của kiến trúc event-driven và đồng bộ lake/warehouse hiện đại.
 
-> ⚠️ Bẫy thiết kế: CDC tạo cơn lũ event khi ai đó chạy `UPDATE` triệu dòng (backfill, migration). Downstream phải chịu được spike, và *ordering theo key* phải được giữ — nếu UPDATE rồi DELETE bị xử lý ngược thứ tự, read model sẽ sai vĩnh viễn.
+> Bẫy thiết kế: CDC tạo cơn lũ event khi ai đó chạy `UPDATE` triệu dòng (backfill, migration). Downstream phải chịu được spike, và *ordering theo key* phải được giữ — nếu UPDATE rồi DELETE bị xử lý ngược thứ tự, read model sẽ sai vĩnh viễn.
 
 ---
 
@@ -321,7 +321,7 @@ Hai hệ quả phải chấp nhận và *nói rõ với stakeholder*:
 - **Eventual consistency**: search index / dashboard trễ vài giây–phút so với DB chính. Ổn cho analytics, *không* ổn cho "số dư tài khoản ngay sau khi chuyển tiền".
 - **Out-of-order**: events có thể đến lệch thứ tự → cần event-time + watermark, hoặc thiết kế phép cộng có tính giao hoán/idempotent.
 
-> 💡 Nguyên tắc: Trong data pipeline, đừng cố đạt exactly-once tuyệt đối — hãy đạt **at-least-once + xử lý idempotent**. Đó là combo vừa khả thi vừa đúng, và đơn giản hơn nhiều so với two-phase commit phân tán.
+> Nguyên tắc: Trong data pipeline, đừng cố đạt exactly-once tuyệt đối — hãy đạt **at-least-once + xử lý idempotent**. Đó là combo vừa khả thi vừa đúng, và đơn giản hơn nhiều so với two-phase commit phân tán.
 
 ---
 
@@ -350,7 +350,7 @@ Chi phí (định hướng, để so sánh — không phải báo giá):
   - Warehouse luôn-chạy: tốn theo giờ compute, đắt nếu để 24/7
 ```
 
-> 💡 Nguyên tắc: Trong analytics, **chi phí ≈ lượng dữ liệu bị quét**, không phải lượng dữ liệu được lưu. Partition theo ngày + cột Parquet + nén có thể cắt một query từ "quét 60 TB" xuống "quét 200 MB" — chênh nhau *hàng nghìn lần tiền*.
+> Nguyên tắc: Trong analytics, **chi phí ≈ lượng dữ liệu bị quét**, không phải lượng dữ liệu được lưu. Partition theo ngày + cột Parquet + nén có thể cắt một query từ "quét 60 TB" xuống "quét 200 MB" — chênh nhau *hàng nghìn lần tiền*.
 
 ---
 
@@ -363,7 +363,7 @@ Data là nơi hoá đơn cloud âm thầm phình to. Bốn đòn bẩy chính:
 3. **Tách storage & compute**: lake (storage rẻ, vô hạn) tách khỏi compute (bật khi cần, tắt khi xong). Đừng để warehouse 24/7 nếu chỉ query buổi sáng.
 4. **Vòng đời dữ liệu**: không phải data nào cũng cần giữ mãi. TTL, downsample (giữ raw 30 ngày, sau đó chỉ giữ bản tổng hợp).
 
-> ⚠️ Bẫy thiết kế: "Lưu hết, biết đâu cần" nghe vô hại vì storage rẻ — nhưng cái đắt là **mỗi query phải bơi qua đống đó**. Chi phí thật của data hoarding nằm ở *compute quét* và *độ chậm query*, không phải ở dung lượng đĩa.
+> Bẫy thiết kế: "Lưu hết, biết đâu cần" nghe vô hại vì storage rẻ — nhưng cái đắt là **mỗi query phải bơi qua đống đó**. Chi phí thật của data hoarding nằm ở *compute quét* và *độ chậm query*, không phải ở dung lượng đĩa.
 
 ---
 
@@ -434,9 +434,9 @@ Không có sơ đồ này là "đúng cho mọi nhà" — đây là *bộ khung*
 6. **Bottleneck**: hot partition, query quét toàn bảng, stream processor không kịp khi replay, CDC lag khi backfill.
 7. **Scale**: thêm shard, partition lại, tách compute, tiering, materialized aggregate.
 
-> 💡 Nguyên tắc trình bày: Luôn **phát biểu đánh đổi thành lời**: "Tôi chọn ELT + lake vì storage rẻ và muốn giữ data thô để reprocess; cái giá là query có thể chậm và cần kỷ luật partition." Người review đánh giá *tư duy đánh đổi*, không phải việc bạn đọc đúng tên service.
+> Nguyên tắc trình bày: Luôn **phát biểu đánh đổi thành lời**: "Tôi chọn ELT + lake vì storage rẻ và muốn giữ data thô để reprocess; cái giá là query có thể chậm và cần kỷ luật partition." Người review đánh giá *tư duy đánh đổi*, không phải việc bạn đọc đúng tên service.
 
-> ⚠️ Bẫy phỏng vấn: Nhảy thẳng vào "tôi dùng Kafka + Spark + Snowflake" trước khi hỏi freshness và volume. Bạn vừa over-engineer cho một bài toán có thể chỉ cần một batch job đêm. Hỏi yêu cầu *trước*, chọn công cụ *sau*.
+> Bẫy phỏng vấn: Nhảy thẳng vào "tôi dùng Kafka + Spark + Snowflake" trước khi hỏi freshness và volume. Bạn vừa over-engineer cho một bài toán có thể chỉ cần một batch job đêm. Hỏi yêu cầu *trước*, chọn công cụ *sau*.
 
 ---
 
@@ -456,4 +456,4 @@ Khung tư duy ở trên ánh xạ gần như 1–1 sang dịch vụ AWS:
 
 Một pipeline AWS điển hình theo Kappa-nghiêng: **clickstream → Kinesis → (Lambda/Flink xử lý stream) → S3 (lake, Parquet partition theo ngày) → Glue Catalog → Athena cho ad-hoc + Redshift cho BI; CDC từ RDS đẩy qua Kinesis để đồng bộ lake & OpenSearch.**
 
-> 💡 Nguyên tắc cuối: Service AWS chỉ là *hộp đã đóng gói sẵn* cho các khối tư duy bạn vừa học. Khi ai đó hỏi "dùng gì", câu trả lời cấp cao luôn bắt đầu bằng *"tuỳ freshness và pattern truy vấn"* — rồi mới đến tên service. Tên service thay đổi mỗi vài năm; tư duy đánh đổi thì không.
+> Nguyên tắc cuối: Service AWS chỉ là *hộp đã đóng gói sẵn* cho các khối tư duy bạn vừa học. Khi ai đó hỏi "dùng gì", câu trả lời cấp cao luôn bắt đầu bằng *"tuỳ freshness và pattern truy vấn"* — rồi mới đến tên service. Tên service thay đổi mỗi vài năm; tư duy đánh đổi thì không.

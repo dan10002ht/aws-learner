@@ -30,7 +30,7 @@ User CLICK ──────▶ [ Ad Click Event ] ← hệ thống ta thiết 
 
 Cuộc đấu giá đó là **real-time bidding (RTB)** — mỗi lần hiển thị là một phiên đấu giá riêng, phải xong dưới một giây vì user đang chờ trang load.
 
-> ⚠️ **Đừng nhầm hai hệ thống**. RTB (chọn quảng cáo nào để hiện) cần latency < 1 s, là hệ thống *online*. Ad click aggregation (đếm click đã xảy ra) cần latency **vài phút**, là hệ thống *near real-time*. Nhiều ứng viên nghe "RTB" rồi nhảy vào thiết kế hệ thống mili-giây — sai đề. Cái RTB cần từ ta không phải tốc độ, mà là **dữ liệu tổng hợp chính xác của quá khứ gần** để feed vào mô hình bidding.
+> **Đừng nhầm hai hệ thống**. RTB (chọn quảng cáo nào để hiện) cần latency < 1 s, là hệ thống *online*. Ad click aggregation (đếm click đã xảy ra) cần latency **vài phút**, là hệ thống *near real-time*. Nhiều ứng viên nghe "RTB" rồi nhảy vào thiết kế hệ thống mili-giây — sai đề. Cái RTB cần từ ta không phải tốc độ, mà là **dữ liệu tổng hợp chính xác của quá khứ gần** để feed vào mô hình bidding.
 
 Con số click được dùng cho ba việc, xếp theo độ nhạy cảm:
 
@@ -42,7 +42,7 @@ Con số click được dùng cho ba việc, xếp theo độ nhạy cảm:
 
 So với analytics thông thường (đếm page view, DAU) thì khác hẳn: ở đó at-least-once và xấp xỉ hoàn toàn ổn — DAU hiển thị 10.3 triệu thay vì 10.28 triệu thì không ai chết, người ta còn chủ động dùng HyperLogLog sai số 2% để tiết kiệm bộ nhớ. Ở đây thì không. Và điều tệ nhất: **sai lệch thường không ngẫu nhiên mà có hệ thống** — một node retry sau crash sẽ nhân đôi đúng một khoảng offset, tạo cục sai lệch tập trung vào vài `ad_id`, chứ không rải đều để triệt tiêu nhau.
 
-> 💡 **Nguyên tắc định hướng cả bài**: mỗi lần đứng trước lựa chọn "nhanh/rẻ nhưng xấp xỉ" vs "chậm/đắt nhưng chính xác", hãy hỏi *"con số này có đi vào hoá đơn không?"*. Có → chính xác. Không (ví dụ bảng xếp hạng top-100 để tham khảo) → được xấp xỉ, và phải nói rõ là đang xấp xỉ.
+> **Nguyên tắc định hướng cả bài**: mỗi lần đứng trước lựa chọn "nhanh/rẻ nhưng xấp xỉ" vs "chậm/đắt nhưng chính xác", hãy hỏi *"con số này có đi vào hoá đơn không?"*. Có → chính xác. Không (ví dụ bảng xếp hạng top-100 để tham khảo) → được xấp xỉ, và phải nói rõ là đang xấp xỉ.
 
 ---
 
@@ -83,7 +83,7 @@ So với analytics thông thường (đếm page view, DAU) thì khác hẳn: �
 | Độ trễ "hợp lý" tối đa | vài giây → vài phút | Quyết định độ dài watermark |
 | Nguồn timestamp | do **server ingest** gắn | Không tin client |
 
-> ⚠️ **Bẫy**: nhiều người nhận `click_timestamp` từ client rồi dùng luôn làm event time. Đồng hồ điện thoại lệch vài phút là chuyện thường, và attacker có thể gắn timestamp tuỳ ý để phá cửa sổ tổng hợp. Chuẩn thực tế: **gắn timestamp ở edge/log server** — điểm đầu tiên dưới quyền kiểm soát của mình — và coi đó là event time. Timestamp client vẫn giữ như một field để phát hiện bất thường.
+> **Bẫy**: nhiều người nhận `click_timestamp` từ client rồi dùng luôn làm event time. Đồng hồ điện thoại lệch vài phút là chuyện thường, và attacker có thể gắn timestamp tuỳ ý để phá cửa sổ tổng hợp. Chuẩn thực tế: **gắn timestamp ở edge/log server** — điểm đầu tiên dưới quyền kiểm soát của mình — và coi đó là event time. Timestamp client vẫn giữ như một field để phát hiện bất thường.
 
 ---
 
@@ -130,7 +130,7 @@ State in-memory của aggregation:
 | Tăng 30%/năm ⇒ ×2.2 sau 3 năm | Không cần dự phòng quá mức |
 | Mỗi dimension nhân bản ghi | **Không thể pre-aggregate mọi tổ hợp filter** (xem star schema) |
 
-> 💡 **Nguyên tắc**: khi ước lượng ra con số *nhỏ*, đó cũng là phát hiện quan trọng. Nó cho phép bạn nói: *"Throughput không phải bottleneck; bottleneck là tính đúng đắn khi có sự cố, nên tôi sẽ dành phần lớn thời gian cho delivery semantics."* Câu đó định khung cả buổi phỏng vấn theo hướng có lợi cho bạn.
+> **Nguyên tắc**: khi ước lượng ra con số *nhỏ*, đó cũng là phát hiện quan trọng. Nó cho phép bạn nói: *"Throughput không phải bottleneck; bottleneck là tính đúng đắn khi có sự cố, nên tôi sẽ dành phần lớn thời gian cho delivery semantics."* Câu đó định khung cả buổi phỏng vấn theo hướng có lợi cho bạn.
 
 ---
 
@@ -156,7 +156,7 @@ Hai field metadata thể hiện bạn hiểu bản chất bài toán:
 - **`watermark_complete`** — cửa sổ này đã "đóng" chưa, tức đã hết thời gian chờ event đến trễ chưa. `false` nghĩa là con số còn có thể tăng. **Billing chỉ được đọc khi `true`**; dashboard đọc thoải mái nhưng nên hiển thị nhãn "đang cập nhật".
 - **`approximate`** — kết quả có dùng cấu trúc xấp xỉ không. API nào trả số có thể xấp xỉ đều phải **tự khai báo**, không để người dùng tự đoán.
 
-> ⚠️ **Bẫy**: trả về con số trần trụi không kèm metadata về độ hoàn chỉnh. Sau đó team billing gọi API lúc 00:00:30 cho cửa sổ 23:59, lấy con số chưa đủ late event, xuất hoá đơn thiếu. Lỗi này đã xảy ra thật ở nhiều công ty. **Làm cho tính không-hoàn-chỉnh hiển nhiên ngay trong contract.**
+> **Bẫy**: trả về con số trần trụi không kèm metadata về độ hoàn chỉnh. Sau đó team billing gọi API lúc 00:00:30 cho cửa sổ 23:59, lấy con số chưa đủ late event, xuất hoá đơn thiếu. Lỗi này đã xảy ra thật ở nhiều công ty. **Làm cho tính không-hoàn-chỉnh hiển nhiên ngay trong contract.**
 
 ---
 
@@ -224,7 +224,7 @@ Kỹ thuật này là **star schema** trong data warehouse; các trường lọc
 
 **Dung hoà thực tế**: pre-aggregate các dimension **lực lượng thấp** (`country` ~200 giá trị, `device_type`, `campaign_id`). Dimension **lực lượng cao** như `ip` và `user_id` (hàng tỉ) thì **không bao giờ pre-aggregate toàn bộ** — sẽ nổ tung số bản ghi; phục vụ bằng ad-hoc query trên raw (S3 + Athena), chấp nhận vài chục giây, và nói rõ đó là "báo cáo", không phải "dashboard realtime".
 
-> 💡 **Nguyên tắc**: đừng hứa "lọc theo bất kỳ chiều nào, realtime". Chia rõ hai hạng dịch vụ: **dimension đã pre-aggregate → realtime < 10 ms**; **dimension tuỳ ý → ad-hoc vài chục giây**. Nêu ranh giới này ra trước là dấu hiệu của người đã làm thật.
+> **Nguyên tắc**: đừng hứa "lọc theo bất kỳ chiều nào, realtime". Chia rõ hai hạng dịch vụ: **dimension đã pre-aggregate → realtime < 10 ms**; **dimension tuỳ ý → ad-hoc vài chục giây**. Nêu ranh giới này ra trước là dấu hiệu của người đã làm thật.
 
 ### Giữ raw hay chỉ giữ aggregated?
 
@@ -292,11 +292,11 @@ Sửa bằng **message queue** ở giữa: tách nhịp producer/consumer, làm 
 
 ```
 Kịch bản A — ghi DB trước, commit offset sau:
-   ghi DB ✓ ... CRASH trước khi commit offset ...
+   ghi DB ✓  ... CRASH trước khi commit offset ...
    node mới đọc lại từ offset cũ → ghi DB LẦN HAI   ⇒ ĐẾM DƯ (tính thừa tiền)
 
 Kịch bản B — commit offset trước, ghi DB sau:
-   commit offset ✓ ... CRASH trước khi ghi DB ...
+   commit offset ✓  ... CRASH trước khi ghi DB ...
    node mới đọc từ offset mới → khoảng đó KHÔNG BAO GIỜ được ghi
                                                     ⇒ ĐẾM THIẾU (mất doanh thu)
 ```
@@ -321,7 +321,7 @@ Hai lợi ích nữa, không kém quan trọng:
 - **Tách nhịp giữa tính toán và lưu trữ.** Aggregation DB chậm/sự cố/bảo trì thì kết quả vẫn nằm an toàn trong topic-2 và được ghi lại khi DB sống dậy — aggregation service không bị chặn, không dồn lag.
 - **Nhiều consumer độc lập cho cùng kết quả**: DB writer, alerting (phát hiện ad tăng vọt), hệ thống bidding, data warehouse. Ghi thẳng DB thì mỗi consumer mới phải đi hỏi DB; có topic-2 thì chỉ cần thêm consumer group.
 
-> 💡 **Nguyên tắc**: khi phải "làm hai việc ở hai hệ thống một cách nguyên tử", chỉ có hai lối thoát — **gom về một hệ thống có transaction**, hoặc **làm việc thứ hai idempotent**. Bài này dùng cả hai.
+> **Nguyên tắc**: khi phải "làm hai việc ở hai hệ thống một cách nguyên tử", chỉ có hai lối thoát — **gom về một hệ thống có transaction**, hoặc **làm việc thứ hai idempotent**. Bài này dùng cả hai.
 
 ### Bên trong aggregation service: DAG kiểu MapReduce
 
@@ -403,7 +403,7 @@ Session (gom burst, ngắt khi im lặng đủ lâu) — dùng cho phân tích h
 
 Điểm hay: cửa sổ M phút **không cần đọc lại event thô** — chỉ cộng M kết quả tumbling 1 phút đã có. Tumbling 1 phút là "đơn vị tiền tệ" của toàn hệ thống.
 
-> 💡 **Nguyên tắc**: chọn **granularity nhỏ nhất người dùng thực sự cần** (ở đây 1 phút) làm đơn vị lưu trữ, rồi dựng mọi cửa sổ lớn hơn bằng phép cộng. Nếu lưu trực tiếp cửa sổ 5 phút, ai hỏi 3 phút thì bạn chịu chết.
+> **Nguyên tắc**: chọn **granularity nhỏ nhất người dùng thực sự cần** (ở đây 1 phút) làm đơn vị lưu trữ, rồi dựng mọi cửa sổ lớn hơn bằng phép cộng. Nếu lưu trực tiếp cửa sổ 5 phút, ai hỏi 3 phút thì bạn chịu chết.
 
 ### Watermark — khi nào thì đóng sổ
 
@@ -440,7 +440,7 @@ Bước t=3 minh hoạ chính xác giá trị của watermark: event **lệch th
 | 5 phút | +5 phút | Cực thấp | Khi client chủ yếu là mobile ở vùng sóng yếu |
 | 1 giờ | Không dùng được cho dashboard | ~0 | Không đáng — dùng batch reconciliation thay thế |
 
-> 💡 **Nguyên tắc**: watermark không loại bỏ event muộn, nó **mua** tỉ lệ muộn thấp hơn bằng **độ trễ**. Đuôi phân phối luôn dài vô tận. Đừng cố kéo dài để đạt 100% — chi phí latency tăng tuyến tính còn lợi ích giảm theo hàm mũ. Đặt 30 s – 2 phút rồi **để nhánh batch cuối ngày dọn nốt phần đuôi**.
+> **Nguyên tắc**: watermark không loại bỏ event muộn, nó **mua** tỉ lệ muộn thấp hơn bằng **độ trễ**. Đuôi phân phối luôn dài vô tận. Đừng cố kéo dài để đạt 100% — chi phí latency tăng tuyến tính còn lợi ích giảm theo hàm mũ. Đặt 30 s – 2 phút rồi **để nhánh batch cuối ngày dọn nốt phần đuôi**.
 
 ### Xử lý event đến muộn
 
@@ -496,7 +496,7 @@ Kiến trúc có **hai nhánh xử lý trên cùng dữ liệu** gọi là **lam
 
 Lựa chọn thực dụng: **Kappa cho backfill/recalculation** (chạy lại chính pipeline stream trên dữ liệu cũ, ghi bảng shadow), nhưng **giữ một job batch độc lập, viết bằng công nghệ khác, chỉ để đối chiếu**. Job đó đơn giản (chỉ `COUNT GROUP BY`) nên bảo trì rẻ, mà giá trị rất lớn: nó là thứ **duy nhất** phát hiện được bug trong pipeline chính.
 
-> ⚠️ **Bẫy**: dùng chung code giữa nhánh stream và nhánh đối chiếu để "đỡ bảo trì hai nơi". Làm vậy là tự huỷ mục đích — cả hai cùng chạy một hàm có bug sẽ khớp nhau hoàn hảo và báo "không lệch". **Đối chiếu chỉ có giá trị khi hai nhánh độc lập.**
+> **Bẫy**: dùng chung code giữa nhánh stream và nhánh đối chiếu để "đỡ bảo trì hai nơi". Làm vậy là tự huỷ mục đích — cả hai cùng chạy một hàm có bug sẽ khớp nhau hoàn hảo và báo "không lệch". **Đối chiếu chỉ có giá trị khi hai nhánh độc lập.**
 
 ### Quy trình tính lại khi phát hiện sai
 
@@ -562,7 +562,7 @@ UpdateItem
 
 `agg_version` bảo đảm một bản ghi **cũ hơn đến muộn** không ghi đè bản mới hơn — chuyện hoàn toàn có thể xảy ra khi retry kèm reorder.
 
-> 💡 **Nguyên tắc**: idempotency gần như luôn rẻ hơn distributed transaction. Trước khi nghĩ tới 2PC, hãy hỏi *"tôi có thể thiết kế lại thao tác ghi để chạy lại nhiều lần cũng vô hại không?"*. Ở bài này câu trả lời là có, và bí quyết là **phát ra trạng thái, không phát ra delta**.
+> **Nguyên tắc**: idempotency gần như luôn rẻ hơn distributed transaction. Trước khi nghĩ tới 2PC, hãy hỏi *"tôi có thể thiết kế lại thao tác ghi để chạy lại nhiều lần cũng vô hại không?"*. Ở bài này câu trả lời là có, và bí quyết là **phát ra trạng thái, không phát ra delta**.
 
 **Cách C (mạnh nhất) — distributed transaction / two-phase commit.** Khi sink không thể idempotent (append-only không có khoá, hoặc phải ghi đồng thời nhiều nơi), cần commit nguyên tử giữa "kết quả đã ghi" và "offset đã tiến".
 
@@ -616,7 +616,7 @@ Aggregation node chết lúc đang xử lý cửa sổ 9:03:
 
 Replay còn là **công cụ sửa lỗi mạnh nhất**: logic sai thì không cần ai gửi lại dữ liệu, không cần khôi phục backup — chỉ cần tua lại offset (hoặc đọc từ S3 nếu ngoài retention) và chạy lại. Đó là lý do **giữ log thô là bất khả xâm phạm**: nó là cỗ máy thời gian của hệ thống.
 
-> ⚠️ **Bẫy**: đặt Kafka retention 1 ngày để tiết kiệm đĩa. 100 GB/ngày × replication 3 × 7 ngày ≈ 2 TB — rẻ hơn rất nhiều so với một lần không thể tính lại hoá đơn. Hãy tính chi phí retention **so với chi phí của sự cố nó ngăn chặn**.
+> **Bẫy**: đặt Kafka retention 1 ngày để tiết kiệm đĩa. 100 GB/ngày × replication 3 × 7 ngày ≈ 2 TB — rẻ hơn rất nhiều so với một lần không thể tính lại hoá đơn. Hãy tính chi phí retention **so với chi phí của sự cố nó ngăn chặn**.
 
 ---
 
@@ -655,7 +655,7 @@ Min-heap 100 phần tử (đỉnh là phần tử NHỎ NHẤT trong top-100):
 
 **Ở bài này CMS không cần thiết cho chiều chính**: chỉ 2 triệu ad, state chính xác tốn ~90 MB/cửa sổ — vừa RAM. Đánh đổi độ chính xác để tiết kiệm 90 MB trong hệ thống tính tiền là quyết định tồi. CMS **chỉ có lý khi khoá là `ip` hoặc `(ad_id, user_id)`** (lực lượng hàng tỉ), ví dụ "IP nào click bất thường trong 1 phút" cho chống gian lận — nơi kết quả dùng để **đánh dấu nghi vấn**, không dùng tính tiền.
 
-> ⚠️ **Ranh giới cứng**: mọi con số đi vào **hoá đơn** phải chính xác tuyệt đối — cấm HyperLogLog, cấm CMS, cấm sampling. Con số dùng để **xếp hạng, cảnh báo, khám phá** thì xấp xỉ được, miễn API tự khai báo (`approximate: true`). Nhiều ứng viên khoe CMS/HLL để tỏ ra hiểu biết rồi áp vào đúng chỗ cấm — đó là điểm trừ.
+> **Ranh giới cứng**: mọi con số đi vào **hoá đơn** phải chính xác tuyệt đối — cấm HyperLogLog, cấm CMS, cấm sampling. Con số dùng để **xếp hạng, cảnh báo, khám phá** thì xấp xỉ được, miễn API tự khai báo (`approximate: true`). Nhiều ứng viên khoe CMS/HLL để tỏ ra hiểu biết rồi áp vào đúng chỗ cấm — đó là điểm trừ.
 
 **Top-N cho cửa sổ M phút** chỉ cần cộng M bảng `(ad_id, minute, count)` rồi lấy heap, không đọc lại event thô. Nhưng **không thể chỉ cộng top-100 của từng phút**: một ad hạng 150 ở cả 5 phút vẫn có thể lọt top-100 khi cộng lại. Vì vậy heap cục bộ mỗi phút nên giữ **nhiều hơn N** (vd top-1000) làm ứng viên cho cửa sổ dài — đánh đổi giữa độ chính xác cửa sổ dài và băng thông, chi tiết rất ít người nhắc tới.
 
@@ -702,7 +702,7 @@ Tầng hai không nghẽn dù ad rất nóng vì nó chỉ nhận **K bản ghi 
 | **Cấp thêm tài nguyên cho node nóng** | Không đổi logic | Vẫn còn điểm tập trung (node đó vẫn nhận toàn bộ event), phản ứng chậm |
 | **Tách topic riêng cho ad nóng** | Cách ly hoàn toàn | Thủ công, không kịp với viral đột ngột |
 
-> 💡 **Nguyên tắc**: hot key là bệnh cố hữu của **mọi** hệ thống partition theo khoá (xem lại bài consistent hashing và rate limiter). Thuốc chữa luôn cùng một họ: **thêm một chiều vào khoá để trải tải, rồi gộp lại ở tầng sau**. Nói được điều đó cho thấy bạn nhìn ra pattern, không chỉ nhớ một mẹo.
+> **Nguyên tắc**: hot key là bệnh cố hữu của **mọi** hệ thống partition theo khoá (xem lại bài consistent hashing và rate limiter). Thuốc chữa luôn cùng một họ: **thêm một chiều vào khoá để trải tải, rồi gộp lại ở tầng sau**. Nói được điều đó cho thấy bạn nhìn ra pattern, không chỉ nhớ một mẹo.
 
 ---
 
@@ -754,7 +754,7 @@ lệch ÂM (stream > batch)      stream ĐẾM DƯ ⇒ NGHIÊM TRỌNG: exactly-
                               không hoạt động. DỪNG BILLING.
 ```
 
-> 💡 **Nguyên tắc**: trong hệ thống tính tiền, **lệch âm nguy hiểm hơn lệch dương**. Đếm thiếu là mất doanh thu của mình; đếm dư là tính sai tiền khách hàng — hậu quả pháp lý và uy tín lớn hơn nhiều. Đặt ngưỡng cảnh báo **bất đối xứng** theo hướng đó.
+> **Nguyên tắc**: trong hệ thống tính tiền, **lệch âm nguy hiểm hơn lệch dương**. Đếm thiếu là mất doanh thu của mình; đếm dư là tính sai tiền khách hàng — hậu quả pháp lý và uy tín lớn hơn nhiều. Đặt ngưỡng cảnh báo **bất đối xứng** theo hướng đó.
 
 ---
 
@@ -772,7 +772,7 @@ lệch ÂM (stream > batch)      stream ĐẾM DƯ ⇒ NGHIÊM TRỌNG: exactly-
 | **Risk engine** | Click không được lọc gian lận | Quyết định nghiệp vụ: **fail-open**, gắn nhãn "chưa kiểm" | Fail-closed sẽ chặn cả traffic thật ⇒ mất doanh thu. Gắn nhãn lại sau bằng batch |
 | **Batch reconciliation** | Không phát hiện được lệch | Không ảnh hưởng realtime | Chạy lại — nhưng **không đóng sổ billing khi job này chưa xong** |
 
-> ⚠️ **Bẫy hay gặp**: coi "mất Kafka" là chuyện không thể xảy ra nên không có buffer ở collector. Mọi component **phía sau** Kafka đều khôi phục được *vì Kafka giữ dữ liệu*; nhưng **trước** Kafka thì không có lưới an toàn nào. Đó là **điểm mong manh duy nhất của toàn kiến trúc**, và phải nói ra.
+> **Bẫy hay gặp**: coi "mất Kafka" là chuyện không thể xảy ra nên không có buffer ở collector. Mọi component **phía sau** Kafka đều khôi phục được *vì Kafka giữ dữ liệu*; nhưng **trước** Kafka thì không có lưới an toàn nào. Đó là **điểm mong manh duy nhất của toàn kiến trúc**, và phải nói ra.
 
 ---
 
@@ -812,7 +812,7 @@ CloudFront/ALB → ECS log collector
                              └──▶ Redshift Spectrum / QuickSight
 ```
 
-> 💡 **Khi nói về AWS trong phỏng vấn**, đừng chỉ đọc tên dịch vụ. Gắn mỗi dịch vụ với **thuộc tính thiết kế nó cung cấp**: "Managed Flink vì tôi cần event-time watermark và exactly-once sink"; "DynamoDB conditional update vì tôi cần idempotent upsert"; "S3 + Athena cho nhánh đối chiếu vì tôi muốn một codebase độc lập với nhánh stream".
+> **Khi nói về AWS trong phỏng vấn**, đừng chỉ đọc tên dịch vụ. Gắn mỗi dịch vụ với **thuộc tính thiết kế nó cung cấp**: "Managed Flink vì tôi cần event-time watermark và exactly-once sink"; "DynamoDB conditional update vì tôi cần idempotent upsert"; "S3 + Athena cho nhánh đối chiếu vì tôi muốn một codebase độc lập với nhánh stream".
 
 ---
 
@@ -830,4 +830,4 @@ CloudFront/ALB → ECS log collector
 10. **Nêu failure mode mong manh nhất**: mọi thứ sau Kafka đều khôi phục được, nhưng click mất **trước** khi vào Kafka là mất vĩnh viễn ⇒ collector cần buffer xuống đĩa. Chỉ ra điểm yếu duy nhất của kiến trúc mình vừa vẽ là dấu hiệu chín chắn.
 11. **Khi review thiết kế của người khác**, hỏi đúng bốn câu: *"Event time hay processing time?"*, *"Retry hai lần thì số có đổi không?"*, *"Watermark bao lâu, event muộn hơn thế đi đâu?"*, *"Có ai kiểm tra chéo con số này không?"*. Bốn câu đó bóc trần gần như mọi lỗi phổ biến của một pipeline tổng hợp dữ liệu.
 
-> 💡 **Nguyên tắc cuối**: bài này dạy một sự thật tổng quát của stream processing — **độ chính xác, độ trễ và chi phí là một tam giác không thể đạt cả ba**. Watermark dài hơn = chính xác hơn nhưng chậm hơn. Exactly-once = chính xác hơn nhưng đắt và chậm hơn. Sketch = rẻ và nhanh hơn nhưng kém chính xác. Việc của người thiết kế không phải thắng tam giác đó, mà là **đặt kim chỉ nam đúng chỗ tuỳ theo con số ấy có đi vào hoá đơn hay không** — và nói ra lựa chọn đó một cách tường minh.
+> **Nguyên tắc cuối**: bài này dạy một sự thật tổng quát của stream processing — **độ chính xác, độ trễ và chi phí là một tam giác không thể đạt cả ba**. Watermark dài hơn = chính xác hơn nhưng chậm hơn. Exactly-once = chính xác hơn nhưng đắt và chậm hơn. Sketch = rẻ và nhanh hơn nhưng kém chính xác. Việc của người thiết kế không phải thắng tam giác đó, mà là **đặt kim chỉ nam đúng chỗ tuỳ theo con số ấy có đi vào hoá đơn hay không** — và nói ra lựa chọn đó một cách tường minh.

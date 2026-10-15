@@ -605,12 +605,12 @@ Cho 1 ứng dụng e-commerce, thiết kế:
 - Athena: convert CSV → Parquet giảm cost 90% (less bytes scanned).
 
 ### Anti-pattern
-- ❌ Chọn DynamoDB cho workload có nhiều JOIN ad-hoc → RDS/Aurora.
-- ❌ Public RDS với SG `0.0.0.0/0` → private subnet + bastion/SSM.
-- ❌ Self-managed MySQL trên EC2 cho prod → RDS/Aurora.
-- ❌ DDB partition key low-cardinality (status, country) → hot partition.
-- ❌ Read Replica để "HA" → nhầm Multi-AZ.
-- ❌ ElastiCache không có failover replica (Memcached) cho prod cache critical.
+- ✗ Chọn DynamoDB cho workload có nhiều JOIN ad-hoc → RDS/Aurora.
+- ✗ Public RDS với SG `0.0.0.0/0` → private subnet + bastion/SSM.
+- ✗ Self-managed MySQL trên EC2 cho prod → RDS/Aurora.
+- ✗ DDB partition key low-cardinality (status, country) → hot partition.
+- ✗ Read Replica để "HA" → nhầm Multi-AZ.
+- ✗ ElastiCache không có failover replica (Memcached) cho prod cache critical.
 
 ---
 

@@ -31,24 +31,24 @@ Sau bài này bạn có thể:
 #### Management Console
 - Web UI (https://console.aws.amazon.com).
 - Trực quan, tốt cho **exploration + 1-time task**.
-- ❌ Không tự động hoá, không reproducible.
+- ✗ Không tự động hoá, không reproducible.
 
 #### AWS CLI
 - Command-line `aws <service> <action>`. VD: `aws s3 ls`, `aws ec2 describe-instances`.
 - Cấu hình: `aws configure` (Access Key + Secret Key).
 - **AWS CloudShell** = CLI sẵn trong browser, không cần cài.
-- ✅ Script, automation.
+- ✓ Script, automation.
 
 #### AWS SDK
 - Thư viện cho ngôn ngữ: **Python (boto3), JavaScript, Java, Go, .NET, Ruby, PHP, C++, Rust, Swift, Kotlin**.
 - Dùng trong app code (Lambda function, backend).
-- ✅ Programmatic access trong app.
+- ✓ Programmatic access trong app.
 
 #### Infrastructure as Code (IaC)
 - Khai báo hạ tầng bằng file template → tool tạo/sửa/xoá resource.
 - **AWS-native**: CloudFormation, CDK, SAM.
 - **Third-party**: Terraform (HashiCorp), Pulumi, Crossplane.
-- ✅ Reproducible, versioned, peer-reviewed.
+- ✓ Reproducible, versioned, peer-reviewed.
 
 ---
 
@@ -151,8 +151,8 @@ Vòng đời của một stack — và đường mà CDK đi vòng qua CloudForm
 
 - Viết hạ tầng bằng **code TypeScript / Python / Java / Go / C#** thay YAML.
 - CDK **synth** → ra CloudFormation template → deploy bằng CF.
-- ✅ Type checking, autocomplete, vòng lặp/condition như code.
-- ❌ Cần biết lập trình.
+- ✓ Type checking, autocomplete, vòng lặp/condition như code.
+- ✗ Cần biết lập trình.
 
 ```python
 # CDK Python ví dụ

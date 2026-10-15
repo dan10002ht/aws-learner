@@ -4,7 +4,7 @@ Khi bạn bước vào một ngôi nhà, thứ giữ cho nó đứng vững là 
 
 HTML là viết tắt của **HyperText Markup Language** (ngôn ngữ đánh dấu siêu văn bản). Đừng để chữ "ngôn ngữ" làm bạn sợ — HTML không phải ngôn ngữ lập trình. Bạn không viết vòng lặp hay điều kiện ở đây. Bạn chỉ **đánh dấu** (markup) cho trình duyệt biết: "đây là tiêu đề", "đây là đoạn văn", "đây là cái ảnh".
 
-> 💡 Ghi nhớ: HTML mô tả *cấu trúc và ý nghĩa* của nội dung, không phải vẻ ngoài. "Cái này là tiêu đề" là việc của HTML; "tiêu đề màu xanh, cỡ 32px" là việc của CSS.
+> Ghi nhớ: HTML mô tả *cấu trúc và ý nghĩa* của nội dung, không phải vẻ ngoài. "Cái này là tiêu đề" là việc của HTML; "tiêu đề màu xanh, cỡ 32px" là việc của CSS.
 
 ## 1. Thẻ (tag) và phần tử (element)
 
@@ -38,7 +38,7 @@ Một vài thẻ **không có nội dung** nên không cần thẻ đóng — g�
 
 Analogy: thẻ là **danh từ** ("cái cửa"), thuộc tính là **tính chất** của nó ("cửa màu nâu, khoá số 7").
 
-> ⚠️ Lỗi người mới hay gặp: quên thẻ đóng (`<p>` mà không có `</p>`), hoặc lồng thẻ sai thứ tự. Sai: `<b><i>chữ</b></i>`. Đúng: `<b><i>chữ</i></b>` — mở sau thì phải đóng trước (giống ngoặc lồng nhau trong toán).
+> Lỗi người mới hay gặp: quên thẻ đóng (`<p>` mà không có `</p>`), hoặc lồng thẻ sai thứ tự. Sai: `<b><i>chữ</b></i>`. Đúng: `<b><i>chữ</i></b>` — mở sau thì phải đóng trước (giống ngoặc lồng nhau trong toán).
 
 ## 2. Cấu trúc một tài liệu HTML
 
@@ -128,9 +128,9 @@ Giải thích từng phần:
 | `<title>` | Tên hiển thị trên tab trình duyệt | Tên ngôi nhà trên bản đồ |
 | `<body>` | Toàn bộ nội dung người dùng **nhìn thấy** | Không gian sống bên trong nhà |
 
-> 💡 Ghi nhớ: Mọi thứ bạn *thấy* trên trang nằm trong `<body>`. Mọi thứ *mô tả* trang (như tiêu đề tab, bảng mã) nằm trong `<head>`.
+> Ghi nhớ: Mọi thứ bạn *thấy* trên trang nằm trong `<body>`. Mọi thứ *mô tả* trang (như tiêu đề tab, bảng mã) nằm trong `<head>`.
 
-> ⚠️ Lỗi người mới hay gặp: tiếng Việt hiển thị thành "Tiáº¿ng Viá»‡t" loạn xạ. Nguyên nhân hầu như luôn là thiếu `<meta charset="UTF-8">` trong `<head>`.
+> Lỗi người mới hay gặp: tiếng Việt hiển thị thành "Tiáº¿ng Viá»‡t" loạn xạ. Nguyên nhân hầu như luôn là thiếu `<meta charset="UTF-8">` trong `<head>`.
 
 **Thử ngay:** Mở Notepad (hoặc bất kỳ trình soạn văn bản nào), dán đoạn code trên vào, lưu thành file tên `index.html`, rồi kéo thả file đó vào trình duyệt. Bạn vừa tạo ra một trang web thật!
 
@@ -146,7 +146,7 @@ Có 6 cấp tiêu đề, từ to nhất `<h1>` đến nhỏ nhất `<h6>`. Hãy 
 <h3>Rau muống xào tỏi</h3>
 ```
 
-> ⚠️ Lỗi người mới hay gặp: dùng `<h1>` chỉ vì *muốn chữ to*. Cấp tiêu đề phản ánh **ý nghĩa**, không phải kích cỡ. Muốn chữ to thì dùng CSS. Một trang nên có đúng **một** `<h1>`.
+> Lỗi người mới hay gặp: dùng `<h1>` chỉ vì *muốn chữ to*. Cấp tiêu đề phản ánh **ý nghĩa**, không phải kích cỡ. Muốn chữ to thì dùng CSS. Một trang nên có đúng **một** `<h1>`.
 
 ### Đoạn văn: `<p>`
 
@@ -197,7 +197,7 @@ Thẻ `<a>` (*anchor*) tạo ra liên kết click được — thứ làm nên c
 </ol>
 ```
 
-> 💡 Ghi nhớ: `<li>` **phải** nằm bên trong `<ul>` hoặc `<ol>`. Nó không bao giờ đứng một mình.
+> Ghi nhớ: `<li>` **phải** nằm bên trong `<ul>` hoặc `<ol>`. Nó không bao giờ đứng một mình.
 
 ## 4. Semantic HTML — đặt tên đúng cho từng phần
 
@@ -274,7 +274,7 @@ Các thẻ semantic giúp "dán biển tên" cho từng khu vực:
 </footer>
 ```
 
-> 💡 Ghi nhớ: về *vẻ ngoài*, `<header>` và `<div>` trông y hệt nhau. Nhưng semantic HTML giúp Google hiểu trang của bạn tốt hơn (tốt cho SEO) và giúp người khiếm thị dùng trình đọc màn hình điều hướng dễ dàng.
+> Ghi nhớ: về *vẻ ngoài*, `<header>` và `<div>` trông y hệt nhau. Nhưng semantic HTML giúp Google hiểu trang của bạn tốt hơn (tốt cho SEO) và giúp người khiếm thị dùng trình đọc màn hình điều hướng dễ dàng.
 
 ## 5. Form và input — nơi người dùng nhập liệu
 
@@ -315,7 +315,7 @@ Một vài `type` hay dùng:
 - `placeholder` là chữ gợi ý mờ hiện trong ô khi còn trống.
 - `<button type="submit">` là nút gửi form đi.
 
-> ⚠️ Lỗi người mới hay gặp: viết `<label>` mà không liên kết với `<input>`. Thuộc tính `for` của `<label>` phải **trùng** với `id` của `<input>` (`for="email"` ↔ `id="email"`). Liên kết đúng thì khi click vào chữ nhãn, con trỏ sẽ tự nhảy vào ô — và trình đọc màn hình mới đọc đúng.
+> Lỗi người mới hay gặp: viết `<label>` mà không liên kết với `<input>`. Thuộc tính `for` của `<label>` phải **trùng** với `id` của `<input>` (`for="email"` ↔ `id="email"`). Liên kết đúng thì khi click vào chữ nhãn, con trỏ sẽ tự nhảy vào ô — và trình đọc màn hình mới đọc đúng.
 
 ## 6. Accessibility cơ bản — để ai cũng dùng được
 
@@ -335,7 +335,7 @@ Hãy hình dung một người mù "đọc" web bằng phần mềm đọc to n�
 
 **2. Luôn gắn `<label>` cho mỗi `<input>`** (như mục 5 đã nói).
 
-> 💡 Ghi nhớ: viết accessibility tốt không chỉ giúp người khuyết tật — nó còn giúp Google hiểu trang (text `alt` được index), và khi ảnh tải lỗi thì chữ `alt` hiện ra thay thế. Lợi cho tất cả.
+> Ghi nhớ: viết accessibility tốt không chỉ giúp người khuyết tật — nó còn giúp Google hiểu trang (text `alt` được index), và khi ảnh tải lỗi thì chữ `alt` hiện ra thay thế. Lợi cho tất cả.
 
 ## 7. Ghép tất cả lại — một trang HTML hoàn chỉnh
 
@@ -408,7 +408,7 @@ Hãy hình dung một người mù "đọc" web bằng phần mềm đọc to n�
 
 Để ý các liên kết `<nav>` dùng `href="#menu"` — dấu `#` trỏ tới `id` của một phần tử *trong cùng trang*. Click vào sẽ cuộn xuống đúng khu vực đó. Đây là **liên kết neo (anchor link)**.
 
-> ⚠️ Lỗi người mới hay gặp: ảnh không hiện. Hầu như luôn do `src` sai đường dẫn — file ảnh phải nằm đúng chỗ bạn trỏ tới. Nếu ảnh `banh-su-kem.jpg` nằm cùng thư mục với `index.html` thì `src="banh-su-kem.jpg"` mới đúng. Khi ảnh lỗi, chữ trong `alt` sẽ hiện ra — đó cũng là lý do nên luôn viết `alt`.
+> Lỗi người mới hay gặp: ảnh không hiện. Hầu như luôn do `src` sai đường dẫn — file ảnh phải nằm đúng chỗ bạn trỏ tới. Nếu ảnh `banh-su-kem.jpg` nằm cùng thư mục với `index.html` thì `src="banh-su-kem.jpg"` mới đúng. Khi ảnh lỗi, chữ trong `alt` sẽ hiện ra — đó cũng là lý do nên luôn viết `alt`.
 
 ## Tổng kết
 

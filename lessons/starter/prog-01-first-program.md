@@ -13,7 +13,7 @@ Hãy tưởng tượng bạn đưa cho một người bạn **công thức nấu
 
 Trong khoá học này, chúng ta học song song **4 ngôn ngữ phổ biến**: Python, JavaScript, Java và Go. Đừng lo — ý tưởng cốt lõi giống hệt nhau, chỉ khác "giọng nói". Bạn chỉ cần đọc kỹ **một** ngôn ngữ mình thích, và liếc qua các ngôn ngữ còn lại để thấy sự tương đồng.
 
-> 💡 Ghi nhớ: Chương trình = một dãy **lệnh** (instruction) được máy tính thực hiện **tuần tự từ trên xuống dưới**, từng dòng một.
+> Ghi nhớ: Chương trình = một dãy **lệnh** (instruction) được máy tính thực hiện **tuần tự từ trên xuống dưới**, từng dòng một.
 
 ## 2. Lệnh đầu tiên: in ra màn hình
 
@@ -63,7 +63,7 @@ Mấy điểm cần để ý:
 | Dấu ngoặc kép `" "` | Đánh dấu một đoạn **chữ** (văn bản) |
 | Dấu chấm phẩy `;` | JavaScript/Java dùng để kết thúc lệnh; Python/Go không cần |
 
-> ⚠️ Lỗi người mới hay gặp: Quên dấu ngoặc kép, quên đóng ngoặc tròn, hoặc gõ sai chữ hoa/thường (ví dụ `Print` thay vì `print` trong Python). Máy tính phân biệt hoa thường **tuyệt đối** — `print` và `Print` là hai thứ khác nhau!
+> Lỗi người mới hay gặp: Quên dấu ngoặc kép, quên đóng ngoặc tròn, hoặc gõ sai chữ hoa/thường (ví dụ `Print` thay vì `print` trong Python). Máy tính phân biệt hoa thường **tuyệt đối** — `print` và `Print` là hai thứ khác nhau!
 
 ## 3. Biến — chiếc hộp đựng giá trị
 
@@ -189,7 +189,7 @@ std::cout << diem << std::endl;  // in ra: 9
 - Đặt tên **có nghĩa**: `tuoi`, `tong_tien` tốt hơn `x`, `a1`.
 - Không dùng tiếng Việt có dấu trong tên biến (về kỹ thuật đôi khi được, nhưng quy ước chung là không).
 
-> 💡 Ghi nhớ: Biến = hộp có nhãn tên. Dấu `=` là "đổ giá trị vào hộp", đọc từ **phải sang trái**. Vì vậy `x = x + 1` là hợp lệ: lấy giá trị cũ của x, cộng 1, rồi bỏ ngược lại vào hộp x.
+> Ghi nhớ: Biến = hộp có nhãn tên. Dấu `=` là "đổ giá trị vào hộp", đọc từ **phải sang trái**. Vì vậy `x = x + 1` là hợp lệ: lấy giá trị cũ của x, cộng 1, rồi bỏ ngược lại vào hộp x.
 
 ## 4. Kiểu dữ liệu — đồ trong hộp thuộc loại gì?
 
@@ -300,7 +300,7 @@ std::cout << 5 + 3 << std::endl;        // 8  (cộng số)
 std::cout << ("5"s + "3"s) << std::endl; // "53" (nối chuỗi!)
 ```
 
-> ⚠️ Lỗi người mới hay gặp: Tưởng `"5" + "3"` ra `8`. Không! Hễ có ngoặc kép là **chữ**, và `+` với chữ là phép **ghép**. Đây là nguồn gốc của vô số bug (lỗi chương trình) ngoài đời thực.
+> Lỗi người mới hay gặp: Tưởng `"5" + "3"` ra `8`. Không! Hễ có ngoặc kép là **chữ**, và `+` với chữ là phép **ghép**. Đây là nguồn gốc của vô số bug (lỗi chương trình) ngoài đời thực.
 
 ## 5. Chuyển kiểu — đổi "ảnh chụp tiền" thành "tiền thật"
 
@@ -340,7 +340,7 @@ std::string nguocLai = std::to_string(tuoi); // số -> chuỗi: "25"
 
 Chú thích: Go trả về **hai** kết quả khi chuyển kiểu (giá trị + lỗi nếu chuỗi không phải số); dấu `_` nghĩa là "tạm bỏ qua phần lỗi" — bài sau sẽ học cách xử lý tử tế. Java dùng `Integer.parseInt` cho số nguyên và `Double.parseDouble` cho số thực.
 
-> ⚠️ Lỗi người mới hay gặp: Chuyển chuỗi không phải số, ví dụ `int("hai mươi")` — chương trình sẽ **báo lỗi và dừng** (Python: `ValueError`, Java: `NumberFormatException`...). Chỉ chuyển được chuỗi có nội dung đúng là con số.
+> Lỗi người mới hay gặp: Chuyển chuỗi không phải số, ví dụ `int("hai mươi")` — chương trình sẽ **báo lỗi và dừng** (Python: `ValueError`, Java: `NumberFormatException`...). Chỉ chuyển được chuỗi có nội dung đúng là con số.
 
 ## 6. Nhập từ bàn phím — máy tính lắng nghe bạn
 
@@ -451,7 +451,7 @@ Chú thích: phần nhập liệu là chỗ 4 ngôn ngữ khác nhau nhiều nh�
   </g>
 </svg>
 
-> 💡 Ghi nhớ: Quy trình kinh điển của mọi chương trình: **Nhập (input) → Xử lý (process) → Xuất (output)**. Ví dụ trên có đủ cả ba: hỏi năm sinh → lấy 2026 trừ đi → in lời chào.
+> Ghi nhớ: Quy trình kinh điển của mọi chương trình: **Nhập (input) → Xử lý (process) → Xuất (output)**. Ví dụ trên có đủ cả ba: hỏi năm sinh → lấy 2026 trừ đi → in lời chào.
 
 ## 7. Lỗi syntax đầu đời — đừng sợ chữ đỏ!
 
@@ -498,9 +498,9 @@ Một vài lỗi "kinh điển" của người mới:
 | `print(tuoi)` khi chưa tạo `tuoi` | NameError / cannot find symbol | Dùng hộp chưa tồn tại |
 | `"5" + 3` (Python) | TypeError | Cộng chuỗi với số — Python từ chối |
 
-> ⚠️ Lỗi người mới hay gặp: Thấy chữ đỏ là hoảng, đóng luôn chương trình. Đừng! Hãy **đọc dòng cuối cùng** của thông báo (thường là phần dễ hiểu nhất), tìm số dòng, nhìn kỹ dòng đó và dòng phía trên. 90% lỗi đầu đời chỉ là gõ thiếu/thừa một ký tự.
+> Lỗi người mới hay gặp: Thấy chữ đỏ là hoảng, đóng luôn chương trình. Đừng! Hãy **đọc dòng cuối cùng** của thông báo (thường là phần dễ hiểu nhất), tìm số dòng, nhìn kỹ dòng đó và dòng phía trên. 90% lỗi đầu đời chỉ là gõ thiếu/thừa một ký tự.
 
-> 💡 Ghi nhớ: Lập trình viên giỏi không phải người không bao giờ gặp lỗi, mà là người **đọc lỗi nhanh và sửa nhanh**. Mỗi thông báo lỗi là một bài học miễn phí.
+> Ghi nhớ: Lập trình viên giỏi không phải người không bao giờ gặp lỗi, mà là người **đọc lỗi nhanh và sửa nhanh**. Mỗi thông báo lỗi là một bài học miễn phí.
 
 ## 8. Tổng kết & bài tập tự luyện
 

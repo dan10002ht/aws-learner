@@ -4,7 +4,7 @@ Bài toán nghe rất tầm thường: có `N` máy chủ, có hàng tỷ key, h
 
 Đây là bài **concept** — không có user, không có API, nhưng nó là viên gạch nằm dưới đáy của DynamoDB, Cassandra, Memcached, CDN, và cả cách load balancer định tuyến request. Hiểu nó không phải để "biết thuật toán", mà để trả lời được ba câu trong review: *dữ liệu chia thế nào, khi thêm node thì cái gì phải copy, và khi một key nóng bất thường thì kiến trúc này sập ở đâu*.
 
-> 💡 Nguyên tắc xuyên bài: Consistent hashing **không làm tải cân bằng hơn** một cách kỳ diệu. Nó làm cho *sự thay đổi ánh xạ* trở nên rẻ. Cân bằng tải là một tính chất phải mua thêm bằng virtual node — và ngay cả thế vẫn có giới hạn.
+> Nguyên tắc xuyên bài: Consistent hashing **không làm tải cân bằng hơn** một cách kỳ diệu. Nó làm cho *sự thay đổi ánh xạ* trở nên rẻ. Cân bằng tải là một tính chất phải mua thêm bằng virtual node — và ngay cả thế vẫn có giới hạn.
 
 ---
 
@@ -61,7 +61,7 @@ Sau khi thêm node: hit rate ~1%, DB nhận 99% × 200K rps = 198K rps ← DB ch
 
 Tệ hơn nữa, vì bạn không chọn thời điểm. `N` tụt từ 10 xuống 9, ~90% key đổi chủ **ngay lập tức**, trong lúc cụm đang thiếu 10% capacity. Đúng lúc hệ thống yếu nhất thì nó lại tự tạo ra một cơn bão traffic nội bộ.
 
-> ⚠️ Bẫy thiết kế: Nhiều người "sửa" modulo hashing bằng cách giữ `N` cố định và chỉ thay node chết bằng node mới cùng chỉ số (hot spare). Cách này chặn được rehash, nhưng biến `N` thành trần cứng: muốn tăng capacity phải downtime hoặc migrate thủ công cả cụm. Nó trì hoãn vấn đề chứ không giải quyết.
+> Bẫy thiết kế: Nhiều người "sửa" modulo hashing bằng cách giữ `N` cố định và chỉ thay node chết bằng node mới cùng chỉ số (hot spare). Cách này chặn được rehash, nhưng biến `N` thành trần cứng: muốn tăng capacity phải downtime hoặc migrate thủ công cả cụm. Nó trì hoãn vấn đề chứ không giải quyết.
 
 ### Cái ta thực sự muốn
 
@@ -124,9 +124,9 @@ ring (trải phẳng, 0 ──────────────────�
 | MurmurHash3 | Rất nhanh (~5 ns) | Đều | Mặc định của Cassandra (Murmur3Partitioner) |
 | xxHash / CityHash | Cực nhanh | Đều | Hợp cho đường nóng, client-side |
 | CRC32 | Nhanh | Kém hơn, chỉ 32-bit | Redis Cluster dùng CRC16 cho slot — chấp nhận được vì chỉ cần 16384 giá trị |
-| `hash()` của Python | Nhanh | Đều nhưng **randomized per process** | ⚠️ Không dùng — mỗi process cho kết quả khác nhau |
+| `hash()` của Python | Nhanh | Đều nhưng **randomized per process** | Không dùng — mỗi process cho kết quả khác nhau |
 
-> ⚠️ Bẫy kinh điển: dùng hàm hash **không ổn định giữa các process/phiên bản ngôn ngữ** (Python `hash()` với `PYTHONHASHSEED` ngẫu nhiên, `Object.hashCode()` của Java cho object không override). Client A và client B sẽ tính ra hai node khác nhau cho cùng một key → dữ liệu ghi một nơi, đọc một nẻo. Luôn dùng hàm hash **xác định, chỉ định rõ, giống nhau ở mọi ngôn ngữ client**.
+> Bẫy kinh điển: dùng hàm hash **không ổn định giữa các process/phiên bản ngôn ngữ** (Python `hash()` với `PYTHONHASHSEED` ngẫu nhiên, `Object.hashCode()` của Java cho object không override). Client A và client B sẽ tính ra hai node khác nhau cho cùng một key → dữ liệu ghi một nơi, đọc một nẻo. Luôn dùng hàm hash **xác định, chỉ định rõ, giống nhau ở mọi ngôn ngữ client**.
 
 Cũng không cần hàm hash mật mã "an toàn" — chỉ cần **phân bố đều** và **nhanh**. MD5 vẫn phổ biến trong consistent hashing dù đã vỡ về mặt mật mã, vì ở đây ta không chống kẻ tấn công tìm collision (trừ khi kẻ tấn công có thể *chọn key* để dồn tải — xem phần hot partition).
 
@@ -226,7 +226,7 @@ Với `N` node phân bố đều, mỗi node sở hữu ~`1/N` không gian khoá
 | `hash % N` | ~6.34 TB | ~14 giờ (và cache hit gần như về 0 ngay lập tức) |
 | Consistent hashing | ~64 GB | ~9 phút, chỉ 1 node nguồn bị ảnh hưởng |
 
-> 💡 Nguyên tắc: Consistent hashing biến chi phí thay đổi topology từ **O(toàn bộ dữ liệu)** thành **O(dữ liệu của một node)**. Đó là điều biến việc scale từ "sự kiện có kế hoạch, có downtime" thành "thao tác thường ngày, tự động".
+> Nguyên tắc: Consistent hashing biến chi phí thay đổi topology từ **O(toàn bộ dữ liệu)** thành **O(dữ liệu của một node)**. Đó là điều biến việc scale từ "sự kiện có kế hoạch, có downtime" thành "thao tác thường ngày, tự động".
 
 ### Nhưng: sự bất đối xứng khó chịu
 
@@ -295,7 +295,7 @@ Quy luật: **giảm sai lệch một nửa thì phải tăng V gấp 4** (vì `
 | Datastore có replication (Cassandra) | 16–64 (khuyến nghị mới) | vnode nhiều làm **tăng xác suất mất dữ liệu**: mỗi vnode thêm một tổ hợp replica mới, nên nhiều vnode ⇒ hầu như mọi bộ 3 node đều là một preference list nào đó ⇒ chỉ cần 3 node bất kỳ chết là chắc chắn mất một range |
 | Node không đồng nhất (instance to/nhỏ lẫn lộn) | V tỉ lệ với capacity | Máy gấp đôi RAM thì cấp gấp đôi vnode — đây là cách cấp "trọng số" tự nhiên nhất của ring |
 
-> ⚠️ Bẫy: "Cứ tăng vnode cho chắc." Với **cache thuần** thì gần như vô hại. Với **datastore có replica** thì sai lầm: Cassandra từng mặc định `num_tokens=256` và đã hạ xuống 16 chính vì lý do độ bền dữ liệu và chi phí repair/streaming ở trên. Số vnode là đánh đổi giữa *cân bằng tải* và *xác suất mất dữ liệu + chi phí vận hành*, không phải "càng nhiều càng tốt".
+> Bẫy: "Cứ tăng vnode cho chắc." Với **cache thuần** thì gần như vô hại. Với **datastore có replica** thì sai lầm: Cassandra từng mặc định `num_tokens=256` và đã hạ xuống 16 chính vì lý do độ bền dữ liệu và chi phí repair/streaming ở trên. Số vnode là đánh đổi giữa *cân bằng tải* và *xác suất mất dữ liệu + chi phí vận hành*, không phải "càng nhiều càng tốt".
 
 ### Cài đặt ring có vnode
 
@@ -377,7 +377,7 @@ Trên nền đó là quorum `N/R/W`: nếu `W + R > N` thì hai quorum chắc ch
 
 Khi một node trong preference list tạm chết, Dynamo dùng **hinted handoff**: node kế tiếp nhận hộ bản ghi kèm "hint" rằng nó thuộc về ai, và trả lại khi node kia sống dậy. Cơ chế này giữ cho `W` vẫn đạt được trong lúc có sự cố — và nó chỉ khả thi vì ring cho ta một thứ tự kế tiếp xác định.
 
-> 💡 Nguyên tắc: Ring trả lời câu "**ai giữ key này**"; quorum trả lời câu "**bao nhiêu người phải đồng ý**". Trong phỏng vấn, tách bạch hai tầng này cho thấy bạn hiểu kiến trúc chứ không chỉ thuộc thuật toán.
+> Nguyên tắc: Ring trả lời câu "**ai giữ key này**"; quorum trả lời câu "**bao nhiêu người phải đồng ý**". Trong phỏng vấn, tách bạch hai tầng này cho thấy bạn hiểu kiến trúc chứ không chỉ thuộc thuật toán.
 
 ---
 
@@ -393,9 +393,9 @@ Ba dạng lệch thường gặp:
 
 | Dạng lệch | Ví dụ | Ring có cứu được không |
 |---|---|---|
-| **Hot key** — một key bị đọc/ghi cực nhiều | Post của celebrity, tỉ số trận chung kết, flag cấu hình toàn cục | ❌ Không. 1 key = 1 node, dù có 10.000 vnode |
-| **Big key** — một key có giá trị khổng lồ | Một set Redis 5 GB, một partition DynamoDB phình | ❌ Không. Ring chia key, không chia *bên trong* key |
-| **Hot partition** — một nhóm key cùng prefix | Mọi ghi đều có `tenant_id = BIG_CUSTOMER` | ❌ Không, nếu partition key chính là prefix đó |
+| **Hot key** — một key bị đọc/ghi cực nhiều | Post của celebrity, tỉ số trận chung kết, flag cấu hình toàn cục | ✗ Không. 1 key = 1 node, dù có 10.000 vnode |
+| **Big key** — một key có giá trị khổng lồ | Một set Redis 5 GB, một partition DynamoDB phình | ✗ Không. Ring chia key, không chia *bên trong* key |
+| **Hot partition** — một nhóm key cùng prefix | Mọi ghi đều có `tenant_id = BIG_CUSTOMER` | ✗ Không, nếu partition key chính là prefix đó |
 
 ### Cách xử lý (không thuộc về consistent hashing, phải thêm tầng khác)
 
@@ -405,7 +405,7 @@ Ba dạng lệch thường gặp:
 4. **Bounded-load consistent hashing** (phần biến thể bên dưới) — chặn trần tải mỗi node ở tầng thuật toán.
 5. **Tách hot key ra tier riêng.** Một cụm nhỏ chuyên phục vụ vài nghìn key nóng nhất.
 
-> ⚠️ Bẫy: Nếu key do người dùng chọn (username, tên file do client đặt), kẻ tấn công có thể **cố tình sinh key hash về cùng một cung** để dồn tải vào một node — một dạng **algorithmic DoS**. Phòng bằng cách thêm secret vào hàm hash (keyed hash như SipHash) hoặc không cho key ngoài quyết định trực tiếp partition.
+> Bẫy: Nếu key do người dùng chọn (username, tên file do client đặt), kẻ tấn công có thể **cố tình sinh key hash về cùng một cung** để dồn tải vào một node — một dạng **algorithmic DoS**. Phòng bằng cách thêm secret vào hàm hash (keyed hash như SipHash) hoặc không cho key ngoài quyết định trực tiếp partition.
 
 ### Các giới hạn khác cần nói ra
 
@@ -470,12 +470,12 @@ Xây trước một **bảng lookup** cỡ `M` (số nguyên tố lớn, ví d�
 
 | Thuật toán | Lookup | Bộ nhớ | Cân bằng | Minimal disruption | Hợp nhất cho |
 |---|---|---|---|---|---|
-| `hash % N` | O(1) | 0 | Hoàn hảo | ❌ Rất tệ | Cụm cố định vĩnh viễn |
-| Ring + vnode | O(log V) | O(N·V) | Tốt (phụ thuộc V) | ✅ | Datastore, cache, cụm co giãn thường xuyên |
-| Rendezvous (HRW) | O(N) | O(N) | Rất tốt, không cần vnode | ✅ | N nhỏ–vừa, cần top-k replica |
-| Jump hash | O(log N) | 0 | Gần hoàn hảo | ✅ nhưng chỉ ở cuối dãy | Số shard tăng dần, bucket logic |
-| Bounded-load | O(log V) + state | O(N·V) | Có trần cứng | ✅ (gần) | Load balancer, chống hot key |
-| Maglev | O(1) | O(M) | Rất đều | ⚠️ Gần tối thiểu | LB throughput cực cao |
+| `hash % N` | O(1) | 0 | Hoàn hảo | ✗ Rất tệ | Cụm cố định vĩnh viễn |
+| Ring + vnode | O(log V) | O(N·V) | Tốt (phụ thuộc V) | ✓ | Datastore, cache, cụm co giãn thường xuyên |
+| Rendezvous (HRW) | O(N) | O(N) | Rất tốt, không cần vnode | ✓ | N nhỏ–vừa, cần top-k replica |
+| Jump hash | O(log N) | 0 | Gần hoàn hảo | ✓ nhưng chỉ ở cuối dãy | Số shard tăng dần, bucket logic |
+| Bounded-load | O(log V) + state | O(N·V) | Có trần cứng | ✓ (gần) | Load balancer, chống hot key |
+| Maglev | O(1) | O(M) | Rất đều | Gần tối thiểu | LB throughput cực cao |
 
 ---
 
@@ -506,7 +506,7 @@ Thêm node-4  ⇒  mỗi node nhường ~1/4 slot của mình:
 | Cân bằng | Phụ thuộc V | Rất tốt nếu slot ≫ node |
 | Client cần biết gì | Danh sách node + hàm hash | Toàn bộ bảng slot (Redis: client cache bảng, gặp `MOVED`/`ASK` thì refresh) |
 
-> 💡 Nguyên tắc: Slot cố định là "consistent hashing có người lái". Bạn đánh đổi tính tự động lấy **quyền kiểm soát khi nào và cái gì di chuyển** — điều rất quý khi vận hành một cụm stateful. Ngược lại bạn phải chọn đúng số slot ngay từ đầu, vì đổi sau rất đắt.
+> Nguyên tắc: Slot cố định là "consistent hashing có người lái". Bạn đánh đổi tính tự động lấy **quyền kiểm soát khi nào và cái gì di chuyển** — điều rất quý khi vận hành một cụm stateful. Ngược lại bạn phải chọn đúng số slot ngay từ đầu, vì đổi sau rất đắt.
 
 Nói cách khác: hãy chọn số slot lớn hơn nhiều so với số node tối đa bạn sẽ từng có (16.384 slot cho một cụm tối đa vài trăm node là dư dả), rồi coi slot như "vnode có tên cố định".
 
@@ -591,4 +591,4 @@ Hiếm với 64/128-bit, nhưng **hash không ổn định giữa các client** 
 8. **Phân biệt ring với slot.** Nếu ai đó nói "Redis Cluster dùng consistent hashing", hãy chỉnh nhẹ: nó dùng **16.384 slot cố định + bảng gán**, tức là "consistent hashing có người lái" — đánh đổi tính tự động lấy quyền kiểm soát khi nào migrate cái gì.
 9. **Khi review một thiết kế**, hỏi đúng bốn câu: *Partition key là gì và cardinality bao nhiêu? Thêm node thì cái gì phải copy và mất bao lâu? Node chết thì ai gánh? Key nóng nhất chiếm bao nhiêu phần trăm traffic?* Bốn câu này lộ ra gần như mọi lỗi phân mảnh.
 
-> 💡 **Nguyên tắc cuối**: Consistent hashing không phải "thuật toán chia dữ liệu tốt nhất" — nó là **thuật toán làm cho việc đổi ý về topology trở nên rẻ**. Nếu cụm của bạn không bao giờ co giãn, modulo tốt hơn. Nếu bạn cần kiểm soát chặt từng lần migrate, slot cố định tốt hơn. Chọn đúng công cụ nghĩa là biết chính xác *cái giá* mà mỗi công cụ làm cho rẻ đi.
+> **Nguyên tắc cuối**: Consistent hashing không phải "thuật toán chia dữ liệu tốt nhất" — nó là **thuật toán làm cho việc đổi ý về topology trở nên rẻ**. Nếu cụm của bạn không bao giờ co giãn, modulo tốt hơn. Nếu bạn cần kiểm soát chặt từng lần migrate, slot cố định tốt hơn. Chọn đúng công cụ nghĩa là biết chính xác *cái giá* mà mỗi công cụ làm cho rẻ đi.

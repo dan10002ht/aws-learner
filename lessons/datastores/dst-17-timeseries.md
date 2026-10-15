@@ -245,10 +245,10 @@ http_requests_total với label:
   code    : 8 giá trị   (200, 404, 500, ...)
   host    : 500 giá trị
   ─────────────────────────────
-  => 5 × 8 × 500 = 20.000 series   ✅ chịu được
+  => 5 × 8 × 500 = 20.000 series   ✓ chịu được
 
 Thêm 1 label "user_id" (1 triệu user):
-  5 × 8 × 500 × 1.000.000 = 20 TỶ series  💥 sập RAM/OOM
+  5 × 8 × 500 × 1.000.000 = 20 TỶ series  sập RAM/OOM
 ```
 
 <svg viewBox="0 0 640 200" role="img" aria-labelledby="ce-t ce-d" style="width:100%;max-width:600px;height:auto;display:block;margin:1.25rem auto">

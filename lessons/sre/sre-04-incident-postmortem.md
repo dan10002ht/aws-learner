@@ -2,7 +2,7 @@
 
 Một sự cố (incident) không phải là dấu hiệu thất bại của đội ngũ — nó là điều tất yếu của bất kỳ hệ thống production nào đủ phức tạp. Câu hỏi không phải là "làm sao để không bao giờ có sự cố", mà là "khi sự cố xảy ra, chúng ta phản ứng nhanh, có kỷ luật và học được gì". Bài học này trình bày một quy trình incident management thực dụng theo tinh thần Google SRE, kèm những con số và tình huống cụ thể.
 
-> 💡 **Nguyên tắc**: Mục tiêu số một khi đang có sự cố là **khôi phục dịch vụ** (restore service), không phải tìm ra nguyên nhân gốc. Root-cause analysis là việc của postmortem, không phải của lúc 3 giờ sáng khi error rate đang ở 40%.
+> **Nguyên tắc**: Mục tiêu số một khi đang có sự cố là **khôi phục dịch vụ** (restore service), không phải tìm ra nguyên nhân gốc. Root-cause analysis là việc của postmortem, không phải của lúc 3 giờ sáng khi error rate đang ở 40%.
 
 ## Severity levels: phân loại để phản ứng đúng mức
 
@@ -15,7 +15,7 @@ Không phải mọi sự cố đều như nhau. Một typo trên trang footer v�
 | **SEV3** | Suy giảm chức năng phụ, không ảnh hưởng đường dẫn tiền | Email notification chậm 30 phút | < 1 giờ, giờ làm việc | On-call engineer |
 | **SEV4** | Lỗi nhỏ, cosmetic, không ảnh hưởng người dùng | Sai màu nút, log noise | Backlog | Tự xử lý trong sprint |
 
-> ⚠️ **Bẫy**: Đừng để "severity inflation" hoặc "severity deflation". Gọi mọi thứ là SEV1 sẽ làm đội kiệt sức và mất nhạy cảm với cảnh báo thật. Ngược lại, hạ cấp một SEV2 thành SEV3 để tránh phải thức dậy là cách bạn biến một sự cố 20 phút thành một sự cố 4 giờ.
+> **Bẫy**: Đừng để "severity inflation" hoặc "severity deflation". Gọi mọi thứ là SEV1 sẽ làm đội kiệt sức và mất nhạy cảm với cảnh báo thật. Ngược lại, hạ cấp một SEV2 thành SEV3 để tránh phải thức dậy là cách bạn biến một sự cố 20 phút thành một sự cố 4 giờ.
 
 Một quy tắc định lượng hữu ích: gắn severity với **error budget burn rate**. Nếu một sự cố đang đốt error budget của 30 ngày trong vòng dưới 1 giờ, nó tự động là SEV1 — bất kể "cảm giác" nghiêm trọng đến đâu.
 
@@ -83,7 +83,7 @@ Khi một SEV1 nổ ra, vấn đề lớn nhất thường không phải kỹ th
   <text x="360" y="420" font-size="11.5" font-weight="600" text-anchor="middle" fill="currentColor" opacity="0.85">IC sở hữu QUYẾT ĐỊNH, không sở hữu GIẢI PHÁP</text>
 </svg>
 
-> 💡 **Nguyên tắc**: IC sở hữu **quyết định**, không sở hữu **giải pháp**. Khi có bất đồng về cách xử lý, IC nói "ta thử cách A trong 10 phút, nếu burn rate không giảm thì chuyển cách B" — ra quyết định có ràng buộc thời gian, thay vì tranh luận vô tận.
+> **Nguyên tắc**: IC sở hữu **quyết định**, không sở hữu **giải pháp**. Khi có bất đồng về cách xử lý, IC nói "ta thử cách A trong 10 phút, nếu burn rate không giảm thì chuyển cách B" — ra quyết định có ràng buộc thời gian, thay vì tranh luận vô tận.
 
 Trong sự cố nhỏ (SEV3), một người có thể kiêm cả IC, Ops và Comms. Nhưng với SEV1, **phải tách**. Quy tắc thực dụng: nếu sự cố kéo dài quá 30 phút hoặc có hơn 3 người tham gia, hãy chỉ định IC rõ ràng ngay lập tức — "Tôi là IC cho sự cố này" được nói thành lời trong kênh.
 
@@ -112,7 +112,7 @@ Khách hàng tha thứ cho downtime. Họ không tha thứ cho sự im lặng. C
         bình thường. Chúng tôi xin lỗi vì sự bất tiện.
 ```
 
-> ⚠️ **Bẫy**: Đừng cam kết "đã sửa xong" trước khi có dữ liệu xác nhận ổn định. Tuyên bố "Resolved" rồi sự cố tái phát sau 5 phút làm xói mòn niềm tin nặng hơn cả sự cố ban đầu. Quy tắc: chờ ít nhất 2x chu kỳ alert (ví dụ 10 phút) với metric khỏe mạnh rồi mới tuyên bố resolved.
+> **Bẫy**: Đừng cam kết "đã sửa xong" trước khi có dữ liệu xác nhận ổn định. Tuyên bố "Resolved" rồi sự cố tái phát sau 5 phút làm xói mòn niềm tin nặng hơn cả sự cố ban đầu. Quy tắc: chờ ít nhất 2x chu kỳ alert (ví dụ 10 phút) với metric khỏe mạnh rồi mới tuyên bố resolved.
 
 Với stakeholder (lãnh đạo, sales, support): Comms Lead gửi cập nhật theo nhịp cố định (ví dụ mỗi 30 phút cho SEV1), kể cả khi "chưa có gì mới". Một cập nhật "vẫn đang xử lý, chưa có ETA, lần tới cập nhật lúc 14:45" tốt hơn nhiều so với im lặng khiến mọi người nhảy vào kênh kỹ thuật hỏi han.
 
@@ -120,7 +120,7 @@ Với stakeholder (lãnh đạo, sales, support): Comms Lead gửi cập nhật 
 
 Đây là điểm phân biệt giữa một đội vận hành trưởng thành và một đội mới. Bản năng của kỹ sư là "hiểu tại sao trước khi sửa". Trong production, bản năng đó giết chết SLA.
 
-> 💡 **Nguyên tắc**: **Stop the bleeding first.** Nếu rollback dừng được sự cố, hãy rollback ngay — kể cả khi bạn chưa biết chính xác commit nào gây ra. Bạn có thể điều tra root cause trên một bản copy, trong giờ làm việc, với cái đầu tỉnh táo.
+> **Nguyên tắc**: **Stop the bleeding first.** Nếu rollback dừng được sự cố, hãy rollback ngay — kể cả khi bạn chưa biết chính xác commit nào gây ra. Bạn có thể điều tra root cause trên một bản copy, trong giờ làm việc, với cái đầu tỉnh táo.
 
 Các đòn mitigate phổ biến, xếp theo tốc độ:
 
@@ -138,7 +138,7 @@ Tình huống thực tế: lúc 02:14, alert `CheckoutHighErrorRate` bắn. Ops 
 
 Sau khi dịch vụ phục hồi, công việc thật sự bắt đầu. Postmortem là tài liệu giúp tổ chức **học từ sự cố** mà không phá hủy con người. Nguyên tắc cốt lõi: **blameless** (không đổ lỗi).
 
-> 💡 **Nguyên tắc**: Con người không gây ra sự cố vì họ ngu dốt hay bất cẩn. Họ hành động hợp lý dựa trên thông tin họ có vào thời điểm đó. Nếu một thao tác sai làm sập hệ thống, lỗi nằm ở **hệ thống cho phép thao tác đó dễ dàng gây sập** — chứ không ở người bấm nút. Sửa hệ thống, không trừng phạt người.
+> **Nguyên tắc**: Con người không gây ra sự cố vì họ ngu dốt hay bất cẩn. Họ hành động hợp lý dựa trên thông tin họ có vào thời điểm đó. Nếu một thao tác sai làm sập hệ thống, lỗi nằm ở **hệ thống cho phép thao tác đó dễ dàng gây sập** — chứ không ở người bấm nút. Sửa hệ thống, không trừng phạt người.
 
 Tại sao blameless không chỉ là tử tế mà còn **hiệu quả hơn**: khi người ta sợ bị đổ lỗi, họ giấu thông tin, tô hồng timeline, và sự cố tiếp theo sẽ tệ hơn vì không ai dám nói thật. Văn hóa blameless mua được sự trung thực — thứ duy nhất giúp bạn thực sự hiểu chuyện gì đã xảy ra.
 
@@ -240,7 +240,7 @@ Kỹ thuật đào sâu để không dừng ở triệu chứng bề mặt:
 
 Lưu ý "why" cuối cùng dẫn tới một **lỗ hổng quy trình**, không phải một con người. Đó là dấu hiệu của 5 Whys làm đúng.
 
-> ⚠️ **Bẫy**: 5 Whys dễ bị lạm dụng thành công cụ đổ lỗi nếu câu trả lời là "vì kỹ sư X viết code sai". Khi gặp câu trả lời chỉ về một người, hãy hỏi tiếp: "tại sao hệ thống của chúng ta cho phép lỗi đó lọt qua?" — chuyển trọng tâm về quy trình và công cụ.
+> **Bẫy**: 5 Whys dễ bị lạm dụng thành công cụ đổ lỗi nếu câu trả lời là "vì kỹ sư X viết code sai". Khi gặp câu trả lời chỉ về một người, hãy hỏi tiếp: "tại sao hệ thống của chúng ta cho phép lỗi đó lọt qua?" — chuyển trọng tâm về quy trình và công cụ.
 
 ### 5. Action items
 Phần quan trọng nhất — và bị bỏ bê nhiều nhất. Mỗi action item phải có **chủ sở hữu (owner)**, **deadline**, và **mức ưu tiên**. Action item không có owner là action item sẽ không bao giờ xảy ra.
@@ -256,7 +256,7 @@ Phần quan trọng nhất — và bị bỏ bê nhiều nhất. Mỗi action it
 
 Một postmortem đẹp nhưng action item không được làm thì vô giá trị — bạn sẽ gặp lại đúng sự cố đó sau 3 tháng.
 
-> 💡 **Nguyên tắc**: Action item của postmortem phải vào **chung backlog** với feature work và được tính như công việc thật, không phải "việc làm thêm khi rảnh". Theo Google SRE, đặt ngưỡng: action item P0/P1 từ một SEV1 phải hoàn thành trong vòng **30 ngày**, và tỷ lệ hoàn thành được theo dõi như một metric của tổ chức.
+> **Nguyên tắc**: Action item của postmortem phải vào **chung backlog** với feature work và được tính như công việc thật, không phải "việc làm thêm khi rảnh". Theo Google SRE, đặt ngưỡng: action item P0/P1 từ một SEV1 phải hoàn thành trong vòng **30 ngày**, và tỷ lệ hoàn thành được theo dõi như một metric của tổ chức.
 
 Một số metric để đo sức khỏe của quy trình incident:
 
@@ -267,7 +267,7 @@ Một số metric để đo sức khỏe của quy trình incident:
 
 Để "học từ sự cố" trở thành văn hóa chứ không phải nghi thức: tổ chức **postmortem review** định kỳ, chia sẻ các postmortem đáng chú ý cho toàn đội (không chỉ đội liên quan), và xây một thư viện postmortem tìm kiếm được. Khi một on-call mới gặp alert lạ, họ nên tìm được postmortem cũ tương tự trong vài giây.
 
-> ⚠️ **Bẫy**: Đừng biến postmortem thành thủ tục hành chính chỉ để "đóng ticket". Dấu hiệu nhận biết: postmortem có 15 action item nhưng chẳng cái nào có owner thật, hoặc tất cả đều "cập nhật tài liệu". Một postmortem với 3 action item được thực thi thật giá trị hơn 15 cái nằm chết trong backlog.
+> **Bẫy**: Đừng biến postmortem thành thủ tục hành chính chỉ để "đóng ticket". Dấu hiệu nhận biết: postmortem có 15 action item nhưng chẳng cái nào có owner thật, hoặc tất cả đều "cập nhật tài liệu". Một postmortem với 3 action item được thực thi thật giá trị hơn 15 cái nằm chết trong backlog.
 
 ## Liên hệ sang AWS
 

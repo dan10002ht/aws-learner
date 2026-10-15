@@ -22,7 +22,7 @@ Ba loại tín hiệu observability trả lời ba câu hỏi khác nhau:
 
 Ví dụ thực tế: dashboard báo p99 của `/checkout` nhảy từ 300ms lên 2.4s. Metric cho bạn biết *có* sự cố nhưng không biết nghẽn ở `payment-service`, `inventory-service` hay ở cú gọi Redis nào. Log của 15 service thì hàng triệu dòng, không có sợi chỉ chung để lần. Trace giải quyết đúng chỗ này: mỗi request mang một **trace id** duy nhất theo suốt hành trình, và bạn xem được biểu đồ waterfall thấy rõ 1.9s trong 2.4s là do một câu query N+1 ở `inventory-service`.
 
-> 💡 Ghi nhớ: metric để **phát hiện** (alert), trace để **định vị** (chặng nào), log để **giải thích** (tại sao). Chúng bổ sung chứ không thay thế nhau — và giá trị bùng nổ khi ba thứ *liên kết* được với nhau qua trace id.
+> Ghi nhớ: metric để **phát hiện** (alert), trace để **định vị** (chặng nào), log để **giải thích** (tại sao). Chúng bổ sung chứ không thay thế nhau — và giá trị bùng nổ khi ba thứ *liên kết* được với nhau qua trace id.
 
 ## 2. Mô hình dữ liệu: trace là một cây span
 
@@ -77,7 +77,7 @@ Một **trace** là tập hợp mọi span cùng trace id, ghép theo quan hệ 
 
 Nhìn waterfall, mắt bắt ngay: `inventory-service` chiếm 1.9s/2.4s, và bên trong là 3 query tuần tự (N+1). Đây là loại insight mà không metric hay log rời rạc nào cho được.
 
-> ⚠️ Đồng hồ lệch (clock skew): mỗi span mang timestamp theo đồng hồ máy sinh ra nó. Máy khác nhau lệch nhau vài ms → thi thoảng thấy span con "bắt đầu trước" span cha hoặc âm thời gian. Backend tốt (Jaeger) có heuristic điều chỉnh, nhưng đừng tin tuyệt đối vào chênh lệch dưới ~10ms giữa hai service.
+> Đồng hồ lệch (clock skew): mỗi span mang timestamp theo đồng hồ máy sinh ra nó. Máy khác nhau lệch nhau vài ms → thi thoảng thấy span con "bắt đầu trước" span cha hoặc âm thời gian. Backend tốt (Jaeger) có heuristic điều chỉnh, nhưng đừng tin tuyệt đối vào chênh lệch dưới ~10ms giữa hai service.
 
 ## 3. Context propagation: sợi chỉ nối span cross-service
 
@@ -187,7 +187,7 @@ with tracer.start_as_current_span("process order", context=ctx,
     ...
 ```
 
-> ⚠️ Bẫy propagation kinh điển: một service ở giữa **không forward header** (viết bằng framework cũ, hoặc dùng HTTP client tự chế không có instrumentation) → trace bị "gãy" thành hai cây rời. Triệu chứng: trace cụt lủn, thiếu hẳn nửa downstream. Luôn kiểm tra *mọi* egress client đều được instrument và không có proxy/gateway nào strip header lạ.
+> Bẫy propagation kinh điển: một service ở giữa **không forward header** (viết bằng framework cũ, hoặc dùng HTTP client tự chế không có instrumentation) → trace bị "gãy" thành hai cây rời. Triệu chứng: trace cụt lủn, thiếu hẳn nửa downstream. Luôn kiểm tra *mọi* egress client đều được instrument và không có proxy/gateway nào strip header lạ.
 
 ## 4. Sampling: không thể lưu 100% trace
 
@@ -277,7 +277,7 @@ processors:
         probabilistic: { sampling_percentage: 1 } # 1% phần còn lại
 ```
 
-> 💡 Ghi nhớ: chiến lược thực dụng phổ biến là **kết hợp** — head-based ở SDK giữ một tỉ lệ vừa phải để giảm tải mạng, rồi tail-based ở collector chắt lọc giữ 100% lỗi/chậm. Đừng để head-based 1% "mù" là dây chuyền duy nhất, nếu không bạn sẽ mất đúng những trace cần khi sự cố xảy ra.
+> Ghi nhớ: chiến lược thực dụng phổ biến là **kết hợp** — head-based ở SDK giữ một tỉ lệ vừa phải để giảm tải mạng, rồi tail-based ở collector chắt lọc giữ 100% lỗi/chậm. Đừng để head-based 1% "mù" là dây chuyền duy nhất, nếu không bạn sẽ mất đúng những trace cần khi sự cố xảy ra.
 
 ## 5. Backend: Jaeger, Tempo, Zipkin
 
@@ -295,7 +295,7 @@ Kiến trúc thu thập điển hình 2025 hoàn toàn **vendor-neutral** nhờ 
 [App + OTel SDK] --OTLP--> [OTel Collector: sampling, batch] --> Jaeger / Tempo / Zipkin
 ```
 
-> 💡 Ghi nhớ: chọn **Jaeger** khi cần UI điều tra mạnh và search linh hoạt; chọn **Tempo** khi ưu tiên chi phí ở quy mô rất lớn và bạn đã có sẵn kỷ luật "lần theo trace-id từ log/metric" thay vì search mù.
+> Ghi nhớ: chọn **Jaeger** khi cần UI điều tra mạnh và search linh hoạt; chọn **Tempo** khi ưu tiên chi phí ở quy mô rất lớn và bạn đã có sẵn kỷ luật "lần theo trace-id từ log/metric" thay vì search mù.
 
 ## 6. Liên kết ba trụ: trace ↔ log ↔ metric
 
@@ -351,7 +351,7 @@ http_request_duration_seconds_bucket{le="2.5"} 12345 # {trace_id="4bf92f35..."} 
   <text x="360" y="222" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.7">cùng trace_id nối metric ↔ trace ↔ log — một cú click nhảy giữa ba trụ</text>
 </svg>
 
-> ⚠️ Bẫy thường gặp: instrument tracing nhưng **quên inject trace id vào log** → có trace đẹp nhưng vẫn phải mò log theo timestamp lúc 3h sáng. Việc rẻ nhất mà lời nhất là bật ngay log correlation từ ngày đầu.
+> Bẫy thường gặp: instrument tracing nhưng **quên inject trace id vào log** → có trace đẹp nhưng vẫn phải mò log theo timestamp lúc 3h sáng. Việc rẻ nhất mà lời nhất là bật ngay log correlation từ ngày đầu.
 
 ## 7. Thực hành: những điều dễ sai
 

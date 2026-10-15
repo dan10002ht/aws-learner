@@ -244,8 +244,8 @@ So sánh đường đi data từ private subnet để gọi S3/DynamoDB — cùn
 | Static IP | Không (DNS) | **Có + EIP per AZ** | - |
 | SSL | Terminate được | Passthrough hoặc terminate | - |
 | Routing | path / host / header / query / IP | port | - |
-| WAF | ✅ | ❌ | ❌ |
-| Slow start | ✅ | ❌ | - |
+| WAF | ✓ | ✗ | ✗ |
+| Slow start | ✓ | ✗ | - |
 | Sticky session | Có (cookie) | Có (source IP) | - |
 | Use case | Web, microservice | Game, IoT, high perf | Third-party firewall (Palo Alto, Fortinet) |
 
@@ -428,7 +428,7 @@ aws ec2 create-route --route-table-id $RT_PRIV --destination-cidr-block 0.0.0.0/
 aws ec2 associate-route-table --route-table-id $RT_PRIV --subnet-id $PRIV_A
 ```
 
-🚨 NAT GW **đắt**, nhớ delete khi xong: `aws ec2 delete-nat-gateway --nat-gateway-id $NAT && aws ec2 release-address --allocation-id $EIP`.
+NAT GW **đắt**, nhớ delete khi xong: `aws ec2 delete-nat-gateway --nat-gateway-id $NAT && aws ec2 release-address --allocation-id $EIP`.
 
 ### Lab 2 — Gateway Endpoint S3 (5 phút, free)
 ```bash
@@ -601,12 +601,12 @@ Vẽ trên Excalidraw:
 - **PrivateLink** thay VPN site-to-site khi share service tới partner.
 
 ### Anti-pattern
-- ❌ 1 NAT GW chung cho 3 AZ → AZ-A down = mất NAT cho cả 3.
-- ❌ VPC peering full mesh > 5 VPC → dùng TGW.
-- ❌ Route table chung cho mọi subnet → mọi subnet thành "public" nếu thêm route IGW.
-- ❌ Reserve IP < /28 → /29 không khả dụng (AWS reserve 5/min 16).
-- ❌ Default VPC cho prod → tạo VPC custom.
-- ❌ CloudFront không OAC, dùng S3 public → policy leak risk.
+- ✗ 1 NAT GW chung cho 3 AZ → AZ-A down = mất NAT cho cả 3.
+- ✗ VPC peering full mesh > 5 VPC → dùng TGW.
+- ✗ Route table chung cho mọi subnet → mọi subnet thành "public" nếu thêm route IGW.
+- ✗ Reserve IP < /28 → /29 không khả dụng (AWS reserve 5/min 16).
+- ✗ Default VPC cho prod → tạo VPC custom.
+- ✗ CloudFront không OAC, dùng S3 public → policy leak risk.
 
 ---
 

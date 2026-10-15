@@ -13,7 +13,7 @@ Ví dụ thực tế: bạn có 2 cách kiểm tra "user đã tồn tại chưa"
 
 Với 1 triệu user và 1 triệu lần kiểm tra: cách A làm ~10^12 phép so sánh (vài phút đến vài giờ), cách B làm ~10^6 (vài mili-giây). Cùng một bài toán, khác nhau về **bậc tăng trưởng** — đó chính là điều Big-O nắm bắt.
 
-> 💡 Ghi nhớ: Tối ưu *bậc tăng trưởng* (đổi `O(n)` thành `O(log n)`) gần như luôn đáng giá hơn tối ưu hằng số (làm vòng lặp nhanh hơn 2 lần). Hằng số bị `n` lớn nuốt chửng.
+> Ghi nhớ: Tối ưu *bậc tăng trưởng* (đổi `O(n)` thành `O(log n)`) gần như luôn đáng giá hơn tối ưu hằng số (làm vòng lặp nhanh hơn 2 lần). Hằng số bị `n` lớn nuốt chửng.
 
 ## Big-O notation là gì?
 
@@ -210,7 +210,7 @@ int binarySearch(const std::vector<int>& arr, int target) {  // arr đã sắp x
 }
 ```
 
-> ⚠️ Bẫy: `binary search` chỉ đúng khi dữ liệu **đã sắp xếp**. Nếu phải sắp xếp trước rồi mới tìm, chi phí là `O(n log n)` cho lần sắp xếp — chỉ đáng nếu bạn tìm nhiều lần.
+> Bẫy: `binary search` chỉ đúng khi dữ liệu **đã sắp xếp**. Nếu phải sắp xếp trước rồi mới tìm, chi phí là `O(n log n)` cho lần sắp xếp — chỉ đáng nếu bạn tìm nhiều lần.
 
 ### O(n) — tuyến tính
 
@@ -390,7 +390,7 @@ bool hasDupFast(const std::vector<int>& arr) {   // time O(n), space O(n)
 }
 ```
 
-> 💡 Ghi nhớ: Khi phỏng vấn nói độ phức tạp, **luôn nêu cả time lẫn space**. "Giải pháp này `O(n)` time, `O(n)` space" nghe chuyên nghiệp hơn nhiều so với chỉ nói một vế.
+> Ghi nhớ: Khi phỏng vấn nói độ phức tạp, **luôn nêu cả time lẫn space**. "Giải pháp này `O(n)` time, `O(n)` space" nghe chuyên nghiệp hơn nhiều so với chỉ nói một vế.
 
 ## Amortized — chi phí trung bình khấu hao
 
@@ -434,7 +434,7 @@ for (int i = 0; i < n; i++) {
 }
 ```
 
-> ⚠️ Bẫy: "Amortized O(1)" **không** có nghĩa "mỗi lần luôn O(1)". Một lần `append` cá biệt vẫn có thể tốn `O(n)`. Trong hệ thống real-time nhạy độ trễ (latency-sensitive), cú giật `O(n)` đó có thể đáng lo — khi đó hãy `reserve`/pre-allocate dung lượng trước.
+> Bẫy: "Amortized O(1)" **không** có nghĩa "mỗi lần luôn O(1)". Một lần `append` cá biệt vẫn có thể tốn `O(n)`. Trong hệ thống real-time nhạy độ trễ (latency-sensitive), cú giật `O(n)` đó có thể đáng lo — khi đó hãy `reserve`/pre-allocate dung lượng trước.
 
 ## Cách ước lượng nhanh từ vòng lặp
 
@@ -497,7 +497,7 @@ void linear(const std::vector<int>& arr) {
 }
 ```
 
-> ⚠️ Bẫy: Một lời gọi hàm "vô hại" trong vòng lặp có thể giấu chi phí. `if x in my_list` (Python list) là `O(n)` ẩn → đặt nó trong vòng `n` thành `O(n^2)`. Luôn hỏi: *thao tác bên trong này tốn bao nhiêu?*
+> Bẫy: Một lời gọi hàm "vô hại" trong vòng lặp có thể giấu chi phí. `if x in my_list` (Python list) là `O(n)` ẩn → đặt nó trong vòng `n` thành `O(n^2)`. Luôn hỏi: *thao tác bên trong này tốn bao nhiêu?*
 
 ## Best / Worst / Average case
 
@@ -511,7 +511,7 @@ Mặc định, khi nói "độ phức tạp của thuật toán" mà không nói
 
 Ví dụ nổi tiếng: `quick sort` trung bình `O(n log n)` nhưng worst case `O(n^2)` (khi pivot luôn chọn tệ). `hash map` lookup trung bình `O(1)` nhưng worst case `O(n)` khi nhiều khoá đụng độ (collision) vào cùng bucket.
 
-> 💡 Ghi nhớ: Khi phỏng vấn hỏi độ phức tạp, hãy nêu **worst case** trước, rồi bổ sung average nếu nó khác biệt đáng kể (như quick sort hay hash map). Điều đó cho thấy bạn hiểu sắc thái, không học vẹt.
+> Ghi nhớ: Khi phỏng vấn hỏi độ phức tạp, hãy nêu **worst case** trước, rồi bổ sung average nếu nó khác biệt đáng kể (như quick sort hay hash map). Điều đó cho thấy bạn hiểu sắc thái, không học vẹt.
 
 ## Bảng so sánh các bậc tăng trưởng
 

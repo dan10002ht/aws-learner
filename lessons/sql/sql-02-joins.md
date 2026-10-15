@@ -22,7 +22,7 @@ Khách "An" mua 3 lần thì email và địa chỉ của An bị **chép lại 
 
 Ta tách ra: thông tin khách ghi **một lần** ở bảng `customers`, mỗi đơn hàng ở bảng `orders` chỉ cần "trỏ" tới khách bằng một mã số. Đây chính là ý tưởng của **cơ sở dữ liệu quan hệ (relational database)**: dữ liệu được chia thành nhiều bảng có **quan hệ** với nhau.
 
-> 💡 Ghi nhớ: Nguyên tắc vàng — **mỗi sự thật chỉ lưu ở một nơi**. Sửa một chỗ là đúng ở mọi nơi.
+> Ghi nhớ: Nguyên tắc vàng — **mỗi sự thật chỉ lưu ở một nơi**. Sửa một chỗ là đúng ở mọi nơi.
 
 ## 2. Khoá chính (PRIMARY KEY) & khoá ngoại (FOREIGN KEY)
 
@@ -133,7 +133,7 @@ Dữ liệu mẫu (hãy nhớ kỹ vì ta dùng lại liên tục):
 | 1003     | 2           | 30         | 1        |
 | 1004     | 5           | 10         | 1        |
 
-> ⚠️ Lỗi người mới hay gặp: Để ý đơn `1004` có `customer_id = 5` — nhưng **không có** khách số 5 trong `customers`. Đây là dữ liệu "mồ côi" (cố tình để minh hoạ sự khác nhau giữa các loại JOIN ở phần sau). Khách `Dũng` (id 4) thì chưa có đơn nào.
+> Lỗi người mới hay gặp: Để ý đơn `1004` có `customer_id = 5` — nhưng **không có** khách số 5 trong `customers`. Đây là dữ liệu "mồ côi" (cố tình để minh hoạ sự khác nhau giữa các loại JOIN ở phần sau). Khách `Dũng` (id 4) thì chưa có đơn nào.
 
 ## 3. INNER JOIN — chỉ lấy phần khớp nhau
 
@@ -156,7 +156,7 @@ Mệnh đề `ON` cho biết **ghép theo cột nào** — ở đây là cặp k
 
 Để ý: đơn `1004` **biến mất** vì `customer_id = 5` không khớp khách nào. Đó là bản chất của INNER — không khớp thì loại.
 
-> 💡 Ghi nhớ: `INNER JOIN` = giao của hai tập hợp. Trong sơ đồ Venn, đó là **phần chồng lên nhau** ở giữa.
+> Ghi nhớ: `INNER JOIN` = giao của hai tập hợp. Trong sơ đồ Venn, đó là **phần chồng lên nhau** ở giữa.
 
 ## 4. LEFT / RIGHT / FULL OUTER JOIN
 
@@ -249,7 +249,7 @@ RIGHT JOIN customers AS c
 
 Lần này `Châu` và `Dũng` xuất hiện dù chưa mua gì (`order_id` là `NULL`). Đơn `1004` thì biến mất vì khách 5 không nằm trong `customers`.
 
-> 💡 Ghi nhớ: `A RIGHT JOIN B` luôn viết lại được thành `B LEFT JOIN A`. Thực tế đa số người chỉ dùng LEFT cho dễ đọc — cứ đặt bảng "muốn giữ trọn" ở bên trái.
+> Ghi nhớ: `A RIGHT JOIN B` luôn viết lại được thành `B LEFT JOIN A`. Thực tế đa số người chỉ dùng LEFT cho dễ đọc — cứ đặt bảng "muốn giữ trọn" ở bên trái.
 
 ### 4.3. FULL OUTER JOIN — giữ cả hai bên
 
@@ -273,7 +273,7 @@ FULL OUTER JOIN customers AS c
 
 Có cả `Dũng` (khách không đơn) lẫn đơn `1004` (đơn không khách). Đây là hợp của hai tập hợp trong sơ đồ Venn.
 
-> ⚠️ Lỗi người mới hay gặp: MySQL **không** hỗ trợ `FULL OUTER JOIN` trực tiếp (PostgreSQL, SQL Server thì có). Trên MySQL phải mô phỏng bằng `LEFT JOIN` kết hợp `UNION` với `RIGHT JOIN`.
+> Lỗi người mới hay gặp: MySQL **không** hỗ trợ `FULL OUTER JOIN` trực tiếp (PostgreSQL, SQL Server thì có). Trên MySQL phải mô phỏng bằng `LEFT JOIN` kết hợp `UNION` với `RIGHT JOIN`.
 
 ## 5. JOIN nhiều bảng cùng lúc
 
@@ -306,7 +306,7 @@ Bạn để ý mọi câu trên đều viết `orders AS o`, `customers AS c`. `
 
 Từ khoá `AS` có thể bỏ: `FROM orders o` tương đương `FROM orders AS o`.
 
-> 💡 Ghi nhớ: Cứ đặt alias cho mọi bảng ngay từ đầu. Vừa gõ nhanh, vừa tránh lỗi cột nhập nhằng khi câu lệnh lớn dần.
+> Ghi nhớ: Cứ đặt alias cho mọi bảng ngay từ đầu. Vừa gõ nhanh, vừa tránh lỗi cột nhập nhằng khi câu lệnh lớn dần.
 
 ## 7. SELF JOIN — bảng tự nối với chính nó
 
@@ -343,7 +343,7 @@ LEFT JOIN employees AS m
 
 An là sếp lớn nhất nên không có sếp (`NULL`) — đó là lý do dùng `LEFT JOIN` để không loại mất An.
 
-> 💡 Ghi nhớ: Self join **bắt buộc** phải có alias — vì không thể phân biệt hai "bản sao" của cùng một bảng nếu chúng cùng tên.
+> Ghi nhớ: Self join **bắt buộc** phải có alias — vì không thể phân biệt hai "bản sao" của cùng một bảng nếu chúng cùng tên.
 
 ## 8. Bẫy fan-out — JOIN làm nhân dòng
 
@@ -394,7 +394,7 @@ GROUP BY c.name;
 
 Dòng của `An` đã bị nhân thành 2. Điều này **đúng** nếu bạn muốn đếm số đơn. Nhưng nếu bạn cộng một cột thuộc về *khách* (ví dụ một hạn mức tín dụng lưu ở `customers`), nó sẽ bị **cộng trùng** nhiều lần và ra số sai.
 
-> ⚠️ Lỗi người mới hay gặp: `SUM` một giá trị thuộc bảng "một" sau khi JOIN với bảng "nhiều" sẽ bị nhân lên. Ví dụ nếu mỗi khách có cột `credit = 100`, thì `SUM(c.credit)` cho An ra `200` (sai), chứ không phải `100`.
+> Lỗi người mới hay gặp: `SUM` một giá trị thuộc bảng "một" sau khi JOIN với bảng "nhiều" sẽ bị nhân lên. Ví dụ nếu mỗi khách có cột `credit = 100`, thì `SUM(c.credit)` cho An ra `200` (sai), chứ không phải `100`.
 
 Cách tránh: **tổng hợp trước rồi mới JOIN** (dùng subquery — sẽ học kỹ ở bài sau):
 
@@ -493,4 +493,4 @@ Mọi thứ bạn vừa học về `JOIN` và quan hệ giữa các bảng đề
 - **Amazon Aurora**: vẫn là database quan hệ (tương thích MySQL/PostgreSQL) nên `JOIN` không đổi gì, nhưng được AWS thiết kế lại phần lưu trữ để **nhanh và bền hơn**, tự nhân bản dữ liệu qua nhiều vùng khả dụng. Phù hợp khi cần hiệu năng và độ sẵn sàng cao mà vẫn giữ mô hình quan hệ.
 - **Amazon DynamoDB**: đây là **NoSQL** — và điểm mấu chốt là DynamoDB **không có `JOIN`**. Triết lý ngược lại bài này: thay vì tách bảng rồi ghép khi truy vấn, người ta thường **gộp dữ liệu liên quan vào sẵn** (denormalize) để đọc cực nhanh ở quy mô lớn. Đổi lại, bạn mất sự linh hoạt khi truy vấn theo nhiều chiều.
 
-> 💡 Ghi nhớ: Cần `JOIN`, quan hệ chặt chẽ, truy vấn linh hoạt thì chọn **RDS/Aurora**. Cần độ trễ cực thấp ở quy mô khổng lồ và chấp nhận thiết kế dữ liệu quanh một vài kiểu truy vấn cố định thì cân nhắc **DynamoDB**. Hiểu `JOIN` giúp bạn biết *khi nào nên* và *khi nào không nên* dùng database quan hệ.
+> Ghi nhớ: Cần `JOIN`, quan hệ chặt chẽ, truy vấn linh hoạt thì chọn **RDS/Aurora**. Cần độ trễ cực thấp ở quy mô khổng lồ và chấp nhận thiết kế dữ liệu quanh một vài kiểu truy vấn cố định thì cân nhắc **DynamoDB**. Hiểu `JOIN` giúp bạn biết *khi nào nên* và *khi nào không nên* dùng database quan hệ.

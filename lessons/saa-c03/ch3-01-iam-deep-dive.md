@@ -64,7 +64,7 @@ Còn một loại cũ là **ACL** (trên S3 object/bucket), có từ trước kh
 
 Tiêu đề nói "4 loại policy" vì bốn dòng đầu là thứ đề SAA hỏi đi hỏi lại. Session policy và ACL là hai loại phụ, cần nhận ra tên là đủ.
 
-> 💡 Mẹo nhớ: quyền thực tế = (thứ nhóm cấp quyền đã cho) **giao với** (mọi cái trần đang áp lên) **trừ đi** (mọi thứ bị Deny tường minh). §3 biến câu này thành trình tự cụ thể.
+> Mẹo nhớ: quyền thực tế = (thứ nhóm cấp quyền đã cho) **giao với** (mọi cái trần đang áp lên) **trừ đi** (mọi thứ bị Deny tường minh). §3 biến câu này thành trình tự cụ thể.
 
 ---
 
@@ -161,11 +161,11 @@ Bảng tóm tắt cho trường hợp cùng account (giả sử không có SCP, 
 | không nhắc tới | không nhắc tới | **DENY** | Implicit deny |
 | Allow (kể cả admin) | **Deny** | **DENY** | Explicit deny thắng |
 
-> 📏 Ghi chú cho bước 3 — đủ dùng cho đề thi là câu "cùng account thì identity **hoặc** resource policy Allow là được". Chi tiết chính xác hơn: resource policy Allow đích danh một **IAM user** thì không bị permission boundary của user đó chặn. Nếu Allow ghi **ARN của role** thì boundary và session policy của role vẫn áp dụng như thường. Có hai ngoại lệ mà Allow ở identity policy một mình không đủ dù cùng account: **trust policy của role** (phải nêu principal hoặc account được assume) và **KMS key policy** (key policy phải cho phép thì IAM policy mới có tác dụng, xem bài ch3-03).
+> Ghi chú cho bước 3 — đủ dùng cho đề thi là câu "cùng account thì identity **hoặc** resource policy Allow là được". Chi tiết chính xác hơn: resource policy Allow đích danh một **IAM user** thì không bị permission boundary của user đó chặn. Nếu Allow ghi **ARN của role** thì boundary và session policy của role vẫn áp dụng như thường. Có hai ngoại lệ mà Allow ở identity policy một mình không đủ dù cùng account: **trust policy của role** (phải nêu principal hoặc account được assume) và **KMS key policy** (key policy phải cho phép thì IAM policy mới có tác dụng, xem bài ch3-03).
 
-> 📏 Nếu Organization bật **RCP** (Resource Control Policy), nó được xét ngay trước SCP ở bước 2. RCP là cái trần đặt lên *resource* của account, còn SCP là trần đặt lên *principal* của account. Chi tiết ở [[ch3-05-multi-account-governance]].
+> Nếu Organization bật **RCP** (Resource Control Policy), nó được xét ngay trước SCP ở bước 2. RCP là cái trần đặt lên *resource* của account, còn SCP là trần đặt lên *principal* của account. Chi tiết ở [[ch3-05-multi-account-governance]].
 
-> 🪤 Bẫy thi: đề hay sắp bước "explicit DENY" xuống cuối để bạn tưởng deny được xét sau khi đã ALLOW. Thực tế **explicit DENY được đánh giá và thắng trước** — không tầng allow nào cứu được.
+> Bẫy thi: đề hay sắp bước "explicit DENY" xuống cuối để bạn tưởng deny được xét sau khi đã ALLOW. Thực tế **explicit DENY được đánh giá và thắng trước** — không tầng allow nào cứu được.
 
 ### 3.3 Khi caller và resource khác account
 
@@ -357,7 +357,7 @@ STS có vài lời gọi khác nhau, phân biệt bởi **thứ bạn đưa ra �
 | `AssumeRoleWithWebIdentity` | Token OIDC (JWT) | Quyền của role | Như trên |
 | `GetSessionToken` | Access key của IAM user (+ MFA) | Quyền của chính user | 15 phút tới 36 giờ, mặc định 12 giờ |
 
-> 🪤 Bẫy thi: thấy "corporate directory / Active Directory / SAML 2.0" thì nghĩ tới `AssumeRoleWithSAML` hoặc IAM Identity Center. Thấy "mobile app, đăng nhập bằng Google/Facebook" thì là web identity, mà đáp án đúng thường là **Cognito** (bọc `AssumeRoleWithWebIdentity` bên trong). Thấy "yêu cầu MFA trước khi gọi API nhạy cảm" với IAM user thì là `GetSessionToken`.
+> Bẫy thi: thấy "corporate directory / Active Directory / SAML 2.0" thì nghĩ tới `AssumeRoleWithSAML` hoặc IAM Identity Center. Thấy "mobile app, đăng nhập bằng Google/Facebook" thì là web identity, mà đáp án đúng thường là **Cognito** (bọc `AssumeRoleWithWebIdentity` bên trong). Thấy "yêu cầu MFA trước khi gọi API nhạy cảm" với IAM user thì là `GetSessionToken`.
 
 ---
 
@@ -397,7 +397,7 @@ Thời hạn phiên của permission set mặc định 1 giờ, đặt được 
 
 **Điều kiện:** Identity Center dựa trên AWS Organizations để nhìn thấy danh sách account. Nó dành cho **nhân viên** (workforce). Người dùng cuối của ứng dụng bạn viết thì dùng Cognito (§5.3).
 
-> 🪤 Bẫy thi: "nhân viên dùng tài khoản công ty sẵn có để truy cập **nhiều account** AWS, quản lý quyền tập trung" → **IAM Identity Center**. Đáp án "tạo IAM user ở từng account" luôn sai.
+> Bẫy thi: "nhân viên dùng tài khoản công ty sẵn có để truy cập **nhiều account** AWS, quản lý quyền tập trung" → **IAM Identity Center**. Đáp án "tạo IAM user ở từng account" luôn sai.
 
 ### 5.2 SAML 2.0 federation (legacy / hybrid)
 
@@ -447,7 +447,7 @@ Cognito có **2 thành phần tách biệt** — đây là điểm SAA hay đán
 
 - **Unauthenticated identity**: Identity Pool có thể cấp credential cho **khách chưa đăng nhập** (guest), map vào một *unauthenticated role* quyền tối thiểu — vd cho phép đọc catalog công khai, ghi analytics trước khi user tạo tài khoản. Tắt được nếu không cần.
 
-> 🪤 Bẫy thi: "app cần gọi AWS service trực tiếp / upload S3 từ mobile" → đáp án có **Identity Pool** (vending credential qua STS). Nếu chỉ hỏi "quản lý sign-up/sign-in, MFA, social login" → đó là **User Pool**. Nhìn thấy "AWS credential tạm cho client" = Identity Pool, không phải User Pool.
+> Bẫy thi: "app cần gọi AWS service trực tiếp / upload S3 từ mobile" → đáp án có **Identity Pool** (vending credential qua STS). Nếu chỉ hỏi "quản lý sign-up/sign-in, MFA, social login" → đó là **User Pool**. Nhìn thấy "AWS credential tạm cho client" = Identity Pool, không phải User Pool.
 
 ### 5.4 IAM Roles Anywhere
 
@@ -463,7 +463,7 @@ Cognito có **2 thành phần tách biệt** — đây là điểm SAA hay đán
 
 **Lúc chạy:** một công cụ nhỏ của AWS trên server (credential helper) dùng private key của chứng chỉ để ký một request gửi tới Roles Anywhere. Dịch vụ kiểm tra chứng chỉ có đúng do CA đã đăng ký cấp không, rồi trả credential tạm của role. SDK gọi công cụ này tự động mỗi khi cần bộ mới.
 
-> 🪤 Bẫy thi: "workload **ngoài AWS** (on-prem, cloud khác) cần gọi AWS mà không lưu access key dài hạn" → **IAM Roles Anywhere**. Nếu workload ở trên EC2/Lambda/ECS thì chỉ cần role thường.
+> Bẫy thi: "workload **ngoài AWS** (on-prem, cloud khác) cần gọi AWS mà không lưu access key dài hạn" → **IAM Roles Anywhere**. Nếu workload ở trên EC2/Lambda/ECS thì chỉ cần role thường.
 
 ### 5.5 EKS IRSA / Pod Identity
 
@@ -527,7 +527,7 @@ Directory Service là họ dịch vụ **Active Directory managed** (khác hẳn
 - **IAM Identity Center** có thể dùng **Managed Microsoft AD (hoặc AD Connector)** làm **identity source** → nhân viên đăng nhập bằng tài khoản AD công ty để vào các AWS account/role. (Ngược lại với Cognito ở §5.3 vốn dành cho *end-user của app*, không phải nhân viên.)
 - **EC2 domain join**: instance Windows join vào Managed Microsoft AD để login bằng tài khoản domain, chạy Group Policy — thường tự động hoá qua Seamless Domain Join / SSM.
 
-> 💡 Directory Service ≠ IAM. IAM quản principal gọi AWS API; Directory Service cung cấp **Active Directory** cho workload và app cần Windows/LDAP/Kerberos, đồng thời có thể làm nguồn danh tính cho IAM Identity Center.
+> Directory Service ≠ IAM. IAM quản principal gọi AWS API; Directory Service cung cấp **Active Directory** cho workload và app cần Windows/LDAP/Kerberos, đồng thời có thể làm nguồn danh tính cho IAM Identity Center.
 
 ### 5.7 OIDC federation cho CI/CD (GitHub Actions)
 
@@ -614,7 +614,7 @@ Cách dùng:
 
 RAM không phải IAM policy mà là sharing mechanism. Nó bổ sung chứ không thay thế hai cách trên.
 
-> 🪤 Bẫy thi: "nhiều account dùng chung **subnet / Transit Gateway / Route 53 Resolver rule / License Manager**" → **RAM**. "account khác cần **đọc object S3 / gửi message SQS**" → resource-based policy hoặc AssumeRole.
+> Bẫy thi: "nhiều account dùng chung **subnet / Transit Gateway / Route 53 Resolver rule / License Manager**" → **RAM**. "account khác cần **đọc object S3 / gửi message SQS**" → resource-based policy hoặc AssumeRole.
 
 ---
 
@@ -703,7 +703,7 @@ Statement đầu ngăn Dev gỡ boundary khỏi role sau khi tạo. Statement sa
 
 → Dev không thể tạo user "admin" được. Boundary trap.
 
-> 🪤 Bẫy thi: "cho phép developer tự tạo IAM role nhưng role đó không được vượt quá một tập quyền" → **Permission Boundary**. SCP không phải đáp án ở đây vì SCP áp cho cả account (kể cả admin của account), còn yêu cầu chỉ nhắm vào các role do dev tạo.
+> Bẫy thi: "cho phép developer tự tạo IAM role nhưng role đó không được vượt quá một tập quyền" → **Permission Boundary**. SCP không phải đáp án ở đây vì SCP áp cho cả account (kể cả admin của account), còn yêu cầu chỉ nhắm vào các role do dev tạo.
 
 ---
 

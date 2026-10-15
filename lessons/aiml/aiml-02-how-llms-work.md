@@ -2,7 +2,7 @@
 
 Bài này giúp bạn — kỹ sư xây sản phẩm — có **mental model đúng** về cách một Large Language Model (LLM) như GPT, Claude, Gemini hoạt động. Mục tiêu là dùng đúng API, tránh bug và tối ưu chi phí, chứ không phải hiểu sâu transformer math.
 
-> 💡 Ghi nhớ: LLM về bản chất là một **máy đoán token tiếp theo**. Mọi thứ "thông minh" bạn thấy đều xuất phát từ việc lặp lại hành động đoán đó hàng nghìn lần.
+> Ghi nhớ: LLM về bản chất là một **máy đoán token tiếp theo**. Mọi thứ "thông minh" bạn thấy đều xuất phát từ việc lặp lại hành động đoán đó hàng nghìn lần.
 
 ---
 
@@ -37,7 +37,7 @@ if n_tokens > 100_000:
     user_text = truncate(user_text)   # hoặc chunk + RAG
 ```
 
-> ⚠️ Bẫy: Đừng ước lượng giá bằng `len(text)`. Tiếng Việt, JSON, code, emoji có tỉ lệ token/ký tự rất khác nhau. Luôn dùng tokenizer thật của model đó.
+> Bẫy: Đừng ước lượng giá bằng `len(text)`. Tiếng Việt, JSON, code, emoji có tỉ lệ token/ký tự rất khác nhau. Luôn dùng tokenizer thật của model đó.
 
 ---
 
@@ -105,7 +105,7 @@ Hệ quả thực tế bạn phải nhớ:
 - Model **không có kế hoạch tổng thể** trước khi viết. Nó "viết tới đâu nghĩ tới đó". Vì vậy kỹ thuật như "hãy suy nghĩ từng bước" (chain-of-thought) thực sự cải thiện chất lượng — bạn cho nó token để "nghĩ".
 - Model **không tra cứu database**. Nó không "tìm" câu trả lời; nó **tạo ra** chuỗi token có xác suất cao. Đây là gốc rễ của hallucination.
 
-> 💡 Ghi nhớ: LLM không "biết" sự thật. Nó tạo ra văn bản *nghe có vẻ đúng*. Đa số lúc trùng với sự thật vì training data đúng — nhưng không có gì đảm bảo.
+> Ghi nhớ: LLM không "biết" sự thật. Nó tạo ra văn bản *nghe có vẻ đúng*. Đa số lúc trùng với sự thật vì training data đúng — nhưng không có gì đảm bảo.
 
 ---
 
@@ -160,7 +160,7 @@ Những điều then chốt:
 - **"Lost in the middle"**: dù context lớn, model chú ý tốt nhất ở **đầu và cuối**. Thông tin quan trọng nhét giữa một context khổng lồ dễ bị bỏ sót.
 - Context lớn = **đắt và chậm hơn**. Nhồi 500k token mỗi turn không miễn phí.
 
-> ⚠️ Bẫy: Đừng nhồi toàn bộ knowledge base vào prompt chỉ vì "context window đủ lớn". Dùng **RAG** (lấy ra phần liên quan) — rẻ hơn, nhanh hơn, và chính xác hơn nhờ tránh "lost in the middle".
+> Bẫy: Đừng nhồi toàn bộ knowledge base vào prompt chỉ vì "context window đủ lớn". Dùng **RAG** (lấy ra phần liên quan) — rẻ hơn, nhanh hơn, và chính xác hơn nhờ tránh "lost in the middle".
 
 ```python
 # Quản lý history thủ công vì model không tự nhớ
@@ -235,7 +235,7 @@ prompt = build_prompt(context=top_k, question=user_question)
 answer = llm.generate(prompt)               # LLM chỉ đọc 5 chunk liên quan
 ```
 
-> 💡 Ghi nhớ: Embedding **đo độ giống về ý nghĩa**, LLM **sinh ra văn bản**. Hai loại model khác nhau, hai loại chi phí khác nhau. RAG = embedding (tìm) + LLM (trả lời).
+> Ghi nhớ: Embedding **đo độ giống về ý nghĩa**, LLM **sinh ra văn bản**. Hai loại model khác nhau, hai loại chi phí khác nhau. RAG = embedding (tìm) + LLM (trả lời).
 
 ---
 
@@ -259,7 +259,7 @@ Quy tắc thực dụng:
 resp = client.generate(prompt, temperature=0)
 ```
 
-> ⚠️ Bẫy: `temperature=0` làm output **ổn định hơn** nhưng **không đảm bảo 100% giống nhau** giữa các lần gọi (do hạ tầng, floating point, batching). Đừng dựa vào tính lặp lại tuyệt đối; nếu cần, hãy hash/cache kết quả.
+> Bẫy: `temperature=0` làm output **ổn định hơn** nhưng **không đảm bảo 100% giống nhau** giữa các lần gọi (do hạ tầng, floating point, batching). Đừng dựa vào tính lặp lại tuyệt đối; nếu cần, hãy hash/cache kết quả.
 
 ---
 
@@ -283,7 +283,7 @@ Cách giảm thiểu (đây là việc của kỹ sư, không phải của model
 - **Citations & verification**: bắt model trích nguồn, rồi kiểm lại.
 - **Eval**: đo tỉ lệ hallucination bằng test set, đừng tin cảm tính.
 
-> ⚠️ Bẫy: Không bao giờ cho output LLM thẳng vào hành động có hậu quả (gửi tiền, xóa data, hiển thị giá) mà không validate. Coi LLM như một **intern thông minh nhưng đôi khi bịa** — luôn kiểm tra.
+> Bẫy: Không bao giờ cho output LLM thẳng vào hành động có hậu quả (gửi tiền, xóa data, hiển thị giá) mà không validate. Coi LLM như một **intern thông minh nhưng đôi khi bịa** — luôn kiểm tra.
 
 ---
 
@@ -317,7 +317,7 @@ def route(task):
     return "mid-model"
 ```
 
-> 💡 Ghi nhớ: Tối ưu chi phí LLM = chọn đúng model cho đúng tác vụ + giảm token (RAG thay vì nhồi context) + caching. Không phải lúc nào cũng cần model mạnh nhất.
+> Ghi nhớ: Tối ưu chi phí LLM = chọn đúng model cho đúng tác vụ + giảm token (RAG thay vì nhồi context) + caching. Không phải lúc nào cũng cần model mạnh nhất.
 
 ---
 
@@ -346,7 +346,7 @@ messages = [
 - Phải **tự append** message `assistant` từ turn trước vào history — model không tự nhớ (xem phần 3).
 - **Prompt injection** đặc biệt nguy hiểm khi bạn đưa **nội dung không tin cậy** (email, web, tài liệu user upload) vào context: chúng có thể chứa lệnh ẩn. Hãy phân tách rõ "đây là dữ liệu, không phải lệnh".
 
-> ⚠️ Bẫy: Khi nhét tài liệu RAG hoặc input bên ngoài vào prompt, coi nó là **dữ liệu không tin cậy**. Bao bọc rõ ràng và không cho phép nó ghi đè system instruction.
+> Bẫy: Khi nhét tài liệu RAG hoặc input bên ngoài vào prompt, coi nó là **dữ liệu không tin cậy**. Bao bọc rõ ràng và không cho phép nó ghi đè system instruction.
 
 ---
 
@@ -370,7 +370,7 @@ Lưu ý vận hành:
 - Streaming làm **xử lý lỗi và parse JSON khó hơn**: JSON chỉ valid khi nhận đủ. Với structured output, hoặc tắt streaming, hoặc parse từng phần cẩn thận.
 - Cần xử lý **client disconnect** giữa chừng (vẫn bị tính token đã sinh).
 
-> 💡 Ghi nhớ: Streaming **không làm model nhanh hơn**, chỉ làm **người dùng cảm thấy** nhanh hơn vì thấy phản hồi ngay. Hầu như mọi UI chat nên bật streaming.
+> Ghi nhớ: Streaming **không làm model nhanh hơn**, chỉ làm **người dùng cảm thấy** nhanh hơn vì thấy phản hồi ngay. Hầu như mọi UI chat nên bật streaming.
 
 ---
 
@@ -386,4 +386,4 @@ Mọi khái niệm trên ánh xạ trực tiếp sang stack AI của AWS:
 - **Amazon Q Developer / Q Business**: trợ lý AI dựng sẵn (coding, hỏi đáp dữ liệu doanh nghiệp) — dùng khi không muốn tự ráp LLM + RAG.
 - **Amazon SageMaker**: khi cần **fine-tune**, host model riêng, hoặc chạy embedding/eval ở quy mô lớn. Nặng đô hơn Bedrock; chọn khi Bedrock managed không đủ linh hoạt.
 
-> 💡 Ghi nhớ: Trên AWS, lộ trình thực dụng nhất cho kỹ sư là **Bedrock + Knowledge Bases (RAG) + OpenSearch vector + Guardrails**. Cùng một mental model token / context / embedding / temperature / streaming mà bạn vừa học, chỉ khác tên API.
+> Ghi nhớ: Trên AWS, lộ trình thực dụng nhất cho kỹ sư là **Bedrock + Knowledge Bases (RAG) + OpenSearch vector + Guardrails**. Cùng một mental model token / context / embedding / temperature / streaming mà bạn vừa học, chỉ khác tên API.

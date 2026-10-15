@@ -16,7 +16,7 @@ Hãy tưởng tượng Internet như **hệ thống bưu điện khổng lồ to
 
 Internet **không phải** là một đám mây thần bí. Nó là hàng triệu máy tính nối với nhau bằng dây cáp (kể cả cáp quang chạy dưới đáy đại dương!), sóng Wi-Fi và sóng di động.
 
-> 💡 **Ghi nhớ**: Internet = mạng lưới khổng lồ các máy tính nối với nhau, gửi dữ liệu cho nhau như bưu điện gửi thư.
+> **Ghi nhớ**: Internet = mạng lưới khổng lồ các máy tính nối với nhau, gửi dữ liệu cho nhau như bưu điện gửi thư.
 
 ---
 
@@ -33,7 +33,7 @@ Khi bạn mở Facebook trên điện thoại:
 - Điện thoại của bạn là **client** — nó "gọi món": *"Cho tôi xem bảng tin!"*
 - Máy chủ của Facebook (những máy tính cực mạnh đặt trong các toà nhà lớn gọi là **data center** — trung tâm dữ liệu) là **server** — nó "nấu" và gửi bảng tin về cho bạn.
 
-> 💡 **Ghi nhớ**: Client hỏi — Server trả lời. Cả Internet vận hành dựa trên màn "hỏi – đáp" này, lặp lại hàng tỷ lần mỗi giây trên toàn thế giới.
+> **Ghi nhớ**: Client hỏi — Server trả lời. Cả Internet vận hành dựa trên màn "hỏi – đáp" này, lặp lại hàng tỷ lần mỗi giây trên toàn thế giới.
 
 ---
 
@@ -71,7 +71,7 @@ Bạn không cần nhớ số điện thoại của mẹ — chỉ cần bấm t
 
 **Tên miền** là cái tên dễ nhớ của một trang web: `google.com`, `vnexpress.net`, `wikipedia.org`. Mỗi tên miền là duy nhất trên thế giới — giống như biển số xe, không thể có hai trang trùng tên.
 
-> ⚠️ **Lỗi người mới hay gặp**: Tưởng rằng gõ `google.com` vào ô tìm kiếm của Google và gõ vào **thanh địa chỉ** trình duyệt là một. Thanh địa chỉ (ô dài trên cùng trình duyệt) đưa bạn đi **thẳng** đến trang đó; còn ô tìm kiếm chỉ tìm các trang **nói về** từ khoá đó. Kẻ lừa đảo hay lợi dụng điều này để dụ bạn bấm vào trang giả mạo trong kết quả tìm kiếm!
+> **Lỗi người mới hay gặp**: Tưởng rằng gõ `google.com` vào ô tìm kiếm của Google và gõ vào **thanh địa chỉ** trình duyệt là một. Thanh địa chỉ (ô dài trên cùng trình duyệt) đưa bạn đi **thẳng** đến trang đó; còn ô tìm kiếm chỉ tìm các trang **nói về** từ khoá đó. Kẻ lừa đảo hay lợi dụng điều này để dụ bạn bấm vào trang giả mạo trong kết quả tìm kiếm!
 
 ---
 
@@ -147,7 +147,7 @@ Tóm lại đường đi:
   </g>
 </svg>
 
-> ⚠️ **Lỗi người mới hay gặp**: Mạng chậm là đổ lỗi ngay cho "Wi-Fi yếu". Thực tế có thể do: (1) đứng quá xa router, (2) ISP đang nghẽn/đứt cáp quang biển, hoặc (3) chính server của trang web bị quá tải. Mẹo kiểm tra: nếu một trang chậm mà các trang khác vẫn nhanh → lỗi ở server trang đó, không phải mạng nhà bạn. Và khi nghi ngờ router "đơ" — tắt đi bật lại 30 giây thật sự có tác dụng!
+> **Lỗi người mới hay gặp**: Mạng chậm là đổ lỗi ngay cho "Wi-Fi yếu". Thực tế có thể do: (1) đứng quá xa router, (2) ISP đang nghẽn/đứt cáp quang biển, hoặc (3) chính server của trang web bị quá tải. Mẹo kiểm tra: nếu một trang chậm mà các trang khác vẫn nhanh → lỗi ở server trang đó, không phải mạng nhà bạn. Và khi nghi ngờ router "đơ" — tắt đi bật lại 30 giây thật sự có tác dụng!
 
 ---
 
@@ -191,7 +191,7 @@ Server luôn trả lời kèm một con số gọi là **status code** (mã tr�
 
 Giờ bạn đã hiểu vì sao thỉnh thoảng thấy trang báo **"404 Not Found"** — nghĩa là trang đó đã bị xoá hoặc bạn gõ sai địa chỉ.
 
-> 💡 **Ghi nhớ**: HTTP = một lượt hỏi (request) + một lượt đáp (response). Mỗi trang web bạn xem là kết quả của hàng chục, hàng trăm lượt hỏi–đáp như vậy (mỗi tấm hình, mỗi đoạn chữ là một lượt riêng).
+> **Ghi nhớ**: HTTP = một lượt hỏi (request) + một lượt đáp (response). Mỗi trang web bạn xem là kết quả của hàng chục, hàng trăm lượt hỏi–đáp như vậy (mỗi tấm hình, mỗi đoạn chữ là một lượt riêng).
 
 ---
 
@@ -269,7 +269,7 @@ Trình duyệt (Chrome, Safari...) nhận nguyên liệu và **dựng** thành t
 
 **Toàn bộ 5 bước này thường diễn ra trong chưa đầy 1 giây** — kể cả khi server nằm ở bên kia Trái Đất. Dữ liệu di chuyển gần bằng tốc độ ánh sáng qua cáp quang!
 
-> 💡 **Ghi nhớ**: Gõ URL → tra DNS lấy IP → gửi request → server xử lý → nhận response → trình duyệt vẽ trang. Sáu chữ: **Tra – Gửi – Xử – Nhận – Vẽ – Xem**.
+> **Ghi nhớ**: Gõ URL → tra DNS lấy IP → gửi request → server xử lý → nhận response → trình duyệt vẽ trang. Sáu chữ: **Tra – Gửi – Xử – Nhận – Vẽ – Xem**.
 
 ---
 
@@ -294,13 +294,13 @@ Cookie cũng là lý do bạn vừa xem một đôi giày trên Shopee, lát sau
 
 Đó là lý do các trang web châu Âu hay hiện bảng *"Trang này dùng cookie, bạn đồng ý không?"* — luật buộc họ phải xin phép.
 
-> ⚠️ **Lỗi người mới hay gặp**: Nghe lời khuyên "xoá cookie cho máy nhanh" rồi ngạc nhiên vì **bị đăng xuất khỏi mọi trang web**. Xoá cookie = vứt hết thẻ thành viên trong ví — mọi quán đều coi bạn là khách lạ, phải đăng nhập lại từ đầu. Không sai, nhưng hãy biết trước hậu quả!
+> **Lỗi người mới hay gặp**: Nghe lời khuyên "xoá cookie cho máy nhanh" rồi ngạc nhiên vì **bị đăng xuất khỏi mọi trang web**. Xoá cookie = vứt hết thẻ thành viên trong ví — mọi quán đều coi bạn là khách lạ, phải đăng nhập lại từ đầu. Không sai, nhưng hãy biết trước hậu quả!
 
 ---
 
 ## 9. HTTPS và chiếc ổ khoá — Thư thường vs. thư niêm phong
 
-Nhìn lên thanh địa chỉ trình duyệt, bạn sẽ thấy địa chỉ bắt đầu bằng `https://` và (trên nhiều trình duyệt) một biểu tượng **ổ khoá 🔒**. Nó nghĩa là gì?
+Nhìn lên thanh địa chỉ trình duyệt, bạn sẽ thấy địa chỉ bắt đầu bằng `https://` và (trên nhiều trình duyệt) một biểu tượng **ổ khoá**. Nó nghĩa là gì?
 
 ### HTTP thường = bưu thiếp
 
@@ -315,15 +315,15 @@ Dữ liệu gửi bằng HTTP thường giống **tấm bưu thiếp không phon
 | Hình ảnh | Bưu thiếp trần | Thư trong két sắt khoá |
 | Ai đọc được giữa đường? | Bất kỳ ai | Không ai |
 | Mật khẩu, số thẻ | **Nguy hiểm** | An toàn |
-| Dấu hiệu trên trình duyệt | "Không bảo mật" | Ổ khoá 🔒 |
+| Dấu hiệu trên trình duyệt | "Không bảo mật" | Ổ khoá |
 
 ### Ổ khoá còn xác nhận "đúng người"
 
 Ngoài việc niêm phong thư, HTTPS còn có **chứng chỉ** (certificate) — như **căn cước công dân** của trang web, do một tổ chức uy tín cấp, xác nhận: *"Trang này đúng là vnexpress.net thật, không phải hàng giả."*
 
-> ⚠️ **Lỗi người mới hay gặp**: Tưởng rằng **ổ khoá = trang web đáng tin hoàn toàn**. SAI! Ổ khoá chỉ nói: *"Đường truyền được niêm phong"*. Một trang **lừa đảo** vẫn có thể có ổ khoá — kẻ trộm vẫn có thể niêm phong thư của hắn! Ví dụ: `vietc0mbank-xacthuc.xyz` có thể có ổ khoá đàng hoàng nhưng vẫn là trang giả mạo. Hãy kiểm tra cả **tên miền có viết đúng không** chứ đừng chỉ nhìn ổ khoá.
+> **Lỗi người mới hay gặp**: Tưởng rằng **ổ khoá = trang web đáng tin hoàn toàn**. SAI! Ổ khoá chỉ nói: *"Đường truyền được niêm phong"*. Một trang **lừa đảo** vẫn có thể có ổ khoá — kẻ trộm vẫn có thể niêm phong thư của hắn! Ví dụ: `vietc0mbank-xacthuc.xyz` có thể có ổ khoá đàng hoàng nhưng vẫn là trang giả mạo. Hãy kiểm tra cả **tên miền có viết đúng không** chứ đừng chỉ nhìn ổ khoá.
 
-> 💡 **Ghi nhớ**: Không bao giờ nhập mật khẩu hay số thẻ ngân hàng vào trang **không có HTTPS**. Có HTTPS rồi thì kiểm tra tiếp **tên miền** có chính xác từng chữ không.
+> **Ghi nhớ**: Không bao giờ nhập mật khẩu hay số thẻ ngân hàng vào trang **không có HTTPS**. Có HTTPS rồi thì kiểm tra tiếp **tên miền** có chính xác từng chữ không.
 
 ---
 
@@ -353,7 +353,7 @@ Ghép tất cả lại bằng một câu chuyện 30 giây:
 1. Tại sao bạn gõ được `google.com` thay vì một dãy số? *(Gợi ý: danh bạ)*
 2. Wi-Fi đầy vạch nhưng không vào được mạng — chuyện đó có thể xảy ra không? Vì sao?
 3. Xoá cookie thì điều gì xảy ra với các tài khoản đang đăng nhập?
-4. Một trang có ổ khoá 🔒 thì có chắc chắn không lừa đảo không?
+4. Một trang có ổ khoá thì có chắc chắn không lừa đảo không?
 5. Thấy "404 Not Found" nghĩa là lỗi ở máy bạn hay ở phía trang web?
 
 Hẹn gặp bạn ở bài tiếp theo, nơi chúng ta sẽ tìm hiểu sâu hơn về trình duyệt và cách giữ an toàn khi lướt web!

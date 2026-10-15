@@ -26,7 +26,7 @@ Vì sao đề này tốt cho capstone:
 | Đánh dấu xong, lọc, sắp xếp | CRUD đầy đủ + query có điều kiện |
 | Realtime-ish (nice-to-have) | Cơ hội nâng cấp về sau (polling/websocket) |
 
-> 💡 Ghi nhớ: tiêu chí chọn đề capstone — (1) có **auth + nhiều user** (không phải app 1 người), (2) có **ít nhất một quan hệ many-to-many** (đây là nơi data model thật sự khó), (3) có thể **demo bằng 2 tài khoản** để thấy tính cộng tác. TaskShare thoả cả ba. (Đề thay thế tương đương: *URL shortener có dashboard thống kê* — cũng có auth + analytics.)
+> Ghi nhớ: tiêu chí chọn đề capstone — (1) có **auth + nhiều user** (không phải app 1 người), (2) có **ít nhất một quan hệ many-to-many** (đây là nơi data model thật sự khó), (3) có thể **demo bằng 2 tài khoản** để thấy tính cộng tác. TaskShare thoả cả ba. (Đề thay thế tương đương: *URL shortener có dashboard thống kê* — cũng có auth + analytics.)
 
 ## 2. Làm rõ yêu cầu: functional vs non-functional
 
@@ -52,7 +52,7 @@ Trước khi viết một dòng code, viết ra yêu cầu. Đây là bước nh
 | Maintainability | Có test cho phần auth & business logic lõi; CI chạy lint + test |
 | Cost | Nằm trong **free tier** Vercel + AWS RDS/EC2 nhỏ |
 
-> ⚠️ Bẫy phổ biến: viết non-functional requirement kiểu "phải scale tốt, phải nhanh, phải bảo mật". Vô nghĩa vì không đo được và dẫn tới over-engineering. Hãy ghi **con số** và **giới hạn scope** ("vài trăm user", không phải "vô hạn"). Capstone bị over-engineer (microservices, Kubernetes, event sourcing cho một app TODO) là dấu hiệu *thiếu* trưởng thành kỹ thuật, không phải thừa.
+> Bẫy phổ biến: viết non-functional requirement kiểu "phải scale tốt, phải nhanh, phải bảo mật". Vô nghĩa vì không đo được và dẫn tới over-engineering. Hãy ghi **con số** và **giới hạn scope** ("vài trăm user", không phải "vô hạn"). Capstone bị over-engineer (microservices, Kubernetes, event sourcing cho một app TODO) là dấu hiệu *thiếu* trưởng thành kỹ thuật, không phải thừa.
 
 ## 3. Sơ đồ kiến trúc (FE — BE — DB — deploy)
 
@@ -116,7 +116,7 @@ Vì sao tách FE và BE host khác nhau (Vercel cho FE, AWS cho BE)?
 - BE là process chạy lâu (long-running) cần kết nối DB trong VPC → AWS phù hợp hơn.
 - Trade-off: phải cấu hình **CORS** vì FE và BE khác origin. Đổi lại được tách biệt rõ ràng, scale độc lập.
 
-> 💡 Ghi nhớ: vẽ kiến trúc trước, code sau. Sơ đồ này trả lời 3 câu hỏi mọi reviewer sẽ hỏi: *dữ liệu chảy thế nào, mỗi thành phần host ở đâu, ranh giới tin cậy (trust boundary) nằm ở đâu*. Trust boundary ở đây là giữa browser và backend — **mọi thứ từ browser đều không đáng tin**, phải validate ở backend.
+> Ghi nhớ: vẽ kiến trúc trước, code sau. Sơ đồ này trả lời 3 câu hỏi mọi reviewer sẽ hỏi: *dữ liệu chảy thế nào, mỗi thành phần host ở đâu, ranh giới tin cậy (trust boundary) nằm ở đâu*. Trust boundary ở đây là giữa browser và backend — **mọi thứ từ browser đều không đáng tin**, phải validate ở backend.
 
 ## 4. Chọn tech stack & vì sao
 
@@ -132,7 +132,7 @@ Quyết định stack là bài tập về trade-off, không phải về "công n
 | Deploy FE | **Vercel** | Free, CDN, preview deploy theo PR, zero config với Vite | — |
 | Deploy BE | **AWS** (App Runner / ECS Fargate / EC2) | Bạn đang học AWS; gần DB (RDS) trong VPC | — |
 
-> ⚠️ Bẫy: đừng chọn stack vì "muốn học thêm cho oai" giữa lúc đang làm capstone. Capstone là lúc *củng cố* thứ đã biết thành sản phẩm, không phải lúc học 5 công nghệ mới cùng lúc. Mỗi công nghệ mới là một rủi ro tiến độ. Nếu muốn học cái mới, giới hạn **đúng một thứ** (ví dụ: Prisma) và dùng lại tất cả phần còn lại.
+> Bẫy: đừng chọn stack vì "muốn học thêm cho oai" giữa lúc đang làm capstone. Capstone là lúc *củng cố* thứ đã biết thành sản phẩm, không phải lúc học 5 công nghệ mới cùng lúc. Mỗi công nghệ mới là một rủi ro tiến độ. Nếu muốn học cái mới, giới hạn **đúng một thứ** (ví dụ: Prisma) và dùng lại tất cả phần còn lại.
 
 Lưu ý về JWT: chọn stateless cho đơn giản, nhưng phải biết trade-off — **không revoke được token trước khi hết hạn**. Giảm thiểu bằng access token TTL ngắn (15–60 phút). Refresh token là *nice-to-have*, để dành.
 
@@ -250,7 +250,7 @@ model Task {
 }
 ```
 
-> 💡 Ghi nhớ: data model là quyết định **khó đảo ngược nhất** trong dự án. Đổi cấu trúc bảng sau khi đã có dữ liệu thật là đau đớn (migration + backfill). Dành thời gian vẽ ERD đúng *trước* khi code. Câu hỏi vàng cho mọi quan hệ: "many-to-many?" — nếu có, gần như chắc chắn cần một bảng nối.
+> Ghi nhớ: data model là quyết định **khó đảo ngược nhất** trong dự án. Đổi cấu trúc bảng sau khi đã có dữ liệu thật là đau đớn (migration + backfill). Dành thời gian vẽ ERD đúng *trước* khi code. Câu hỏi vàng cho mọi quan hệ: "many-to-many?" — nếu có, gần như chắc chắn cần một bảng nối.
 
 ## 6. Thiết kế API contract (REST endpoints)
 
@@ -290,7 +290,7 @@ Content-Type: application/json
   "status": "todo", "dueDate": "2026-06-20", "projectId": "abc-123" }
 ```
 
-> ⚠️ Bẫy: trộn lẫn `401` và `403`. `401` = "tôi không biết bạn là ai" (thiếu/sai token → FE nên đẩy về trang login). `403` = "tôi biết bạn là ai nhưng bạn không được phép" (member cố xoá project → FE hiện thông báo, *không* logout). Lẫn hai cái này làm UX rối và che giấu bug phân quyền. Và: với resource của người khác, cân nhắc trả `404` thay vì `403` để không lộ "resource này tồn tại".
+> Bẫy: trộn lẫn `401` và `403`. `401` = "tôi không biết bạn là ai" (thiếu/sai token → FE nên đẩy về trang login). `403` = "tôi biết bạn là ai nhưng bạn không được phép" (member cố xoá project → FE hiện thông báo, *không* logout). Lẫn hai cái này làm UX rối và che giấu bug phân quyền. Và: với resource của người khác, cân nhắc trả `404` thay vì `403` để không lộ "resource này tồn tại".
 
 ## 7. Scope: MVP vs nice-to-have
 
@@ -306,7 +306,7 @@ Quyết định scope là kỹ năng quan trọng nhất của bài này. **MVP 
 | List + lọc task theo status | Realtime cập nhật (websocket / polling) |
 | Deploy được & demo 2 tài khoản | Activity log, thông báo, dark mode |
 
-> 💡 Ghi nhớ: định nghĩa "**Definition of Done**" cho MVP ngay bây giờ: *"Hai người dùng khác nhau đăng nhập trên 2 trình duyệt, cùng thấy và sửa task trong một project được chia sẻ, mọi thứ chạy trên domain production thật."* Nếu một tính năng không cần thiết để đạt câu đó → nó là nice-to-have. Câu này cũng chính là kịch bản demo ở bài 3.
+> Ghi nhớ: định nghĩa "**Definition of Done**" cho MVP ngay bây giờ: *"Hai người dùng khác nhau đăng nhập trên 2 trình duyệt, cùng thấy và sửa task trong một project được chia sẻ, mọi thứ chạy trên domain production thật."* Nếu một tính năng không cần thiết để đạt câu đó → nó là nice-to-have. Câu này cũng chính là kịch bản demo ở bài 3.
 
 ## 8. Chia milestone
 
@@ -377,7 +377,7 @@ Cắt dự án thành các mốc *chạy được* (mỗi mốc deploy/demo đư
   </g>
 </svg>
 
-> 💡 Ghi nhớ: làm **"vertical slice"** trước (M1 = một lát cắt mỏng xuyên cả FE → BE → DB cho đúng tính năng auth) thay vì "horizontal" (xong toàn bộ một tầng rồi mới sang tầng khác). Vertical slice phát hiện sớm các vấn đề tích hợp (CORS, shape của JSON, auth flow) — những thứ thường giết tiến độ ở cuối nếu để dồn.
+> Ghi nhớ: làm **"vertical slice"** trước (M1 = một lát cắt mỏng xuyên cả FE → BE → DB cho đúng tính năng auth) thay vì "horizontal" (xong toàn bộ một tầng rồi mới sang tầng khác). Vertical slice phát hiện sớm các vấn đề tích hợp (CORS, shape của JSON, auth flow) — những thứ thường giết tiến độ ở cuối nếu để dồn.
 
 ## 9. Setup repo: monorepo vs hai repo
 
@@ -421,9 +421,9 @@ mkdir taskshare && git -C taskshare init
 #   "workspaces": ["apps/*", "packages/*"]
 ```
 
-> ⚠️ Bẫy: monorepo deploy lên Vercel/AWS cần chỉ đúng **root directory** cho mỗi app (Vercel: set Root Directory = `apps/web`). Quên bước này → build fail vì tool không tìm thấy `package.json` đúng chỗ. Ghi sẵn điều này vào README để bài 3 không phải dò lại.
+> Bẫy: monorepo deploy lên Vercel/AWS cần chỉ đúng **root directory** cho mỗi app (Vercel: set Root Directory = `apps/web`). Quên bước này → build fail vì tool không tìm thấy `package.json` đúng chỗ. Ghi sẵn điều này vào README để bài 3 không phải dò lại.
 
-> 💡 Ghi nhớ: nếu thấy monorepo + workspaces làm bạn rối ngay từ đầu, **hai repo riêng cũng hoàn toàn ổn** cho capstone — đừng để công cụ chặn bạn bắt đầu. Quyết định này có thể đảo ngược tương đối rẻ; data model thì không. Ưu tiên năng lượng cho cái khó đảo ngược.
+> Ghi nhớ: nếu thấy monorepo + workspaces làm bạn rối ngay từ đầu, **hai repo riêng cũng hoàn toàn ổn** cho capstone — đừng để công cụ chặn bạn bắt đầu. Quyết định này có thể đảo ngược tương đối rẻ; data model thì không. Ưu tiên năng lượng cho cái khó đảo ngược.
 
 ## 10. Checklist trước khi sang bài 2
 
@@ -440,4 +440,4 @@ Kết thúc bài này, bạn phải có **tài liệu kế hoạch** (chưa cầ
 - [ ] Quyết định repo (monorepo / 2 repo) + cấu trúc thư mục khởi tạo
 - [ ] `git init` xong, README có sẵn mục Architecture, API Contract, Roadmap
 
-> 💡 Ghi nhớ cốt lõi của bài: **một giờ lên kế hoạch tiết kiệm mười giờ code lại.** Tài liệu bạn vừa tạo không phải để nộp cho ai — nó là *la bàn* để khi đang lạc giữa lúc debug CORS lúc nửa đêm ở bài 2, bạn vẫn biết mình đang đi đâu và vì sao đã quyết định như vậy. Sang **bài 2**, ta biến những quyết định này thành code chạy thật: Backend trước (API + DB + auth), rồi Frontend gọi API, nối thành một lát cắt dọc end-to-end.
+> Ghi nhớ cốt lõi của bài: **một giờ lên kế hoạch tiết kiệm mười giờ code lại.** Tài liệu bạn vừa tạo không phải để nộp cho ai — nó là *la bàn* để khi đang lạc giữa lúc debug CORS lúc nửa đêm ở bài 2, bạn vẫn biết mình đang đi đâu và vì sao đã quyết định như vậy. Sang **bài 2**, ta biến những quyết định này thành code chạy thật: Backend trước (API + DB + auth), rồi Frontend gọi API, nối thành một lát cắt dọc end-to-end.

@@ -19,7 +19,7 @@ Nhưng tỉ lệ **phụ thuộc vào bản chất service**:
 - **Service nhiều business logic** (pricing engine, rule engine): unit test chiếm đa số — logic thuần là đất diễn của unit test.
 - **Service kiểu CRUD/glue** (nhận request → validate → ghi DB → bắn event): phần lớn bug nằm ở SQL, mapping, config — unit test gần như vô dụng ở đây. Tỉ trọng integration test nên cao hơn hẳn. Đây là lý do nhiều team hiện đại theo trường phái "**testing trophy**" (Kent C. Dodds): integration test là tầng dày nhất.
 
-> 💡 Ghi nhớ: Đừng tranh cãi "pyramid hay trophy". Câu hỏi đúng là: **bug của service này thường nằm ở đâu?** Logic phức tạp → nhiều unit. Wiring/IO phức tạp → nhiều integration. Test ở tầng **thấp nhất có thể bắt được loại bug đó**.
+> Ghi nhớ: Đừng tranh cãi "pyramid hay trophy". Câu hỏi đúng là: **bug của service này thường nằm ở đâu?** Logic phức tạp → nhiều unit. Wiring/IO phức tạp → nhiều integration. Test ở tầng **thấp nhất có thể bắt được loại bug đó**.
 
 Một hình dạng cần tránh: **ice cream cone** (kem ốc quế ngược) — vài unit test, rất nhiều E2E chạy qua UI/staging. Triệu chứng: pipeline 45 phút, mỗi tuần "re-run vì flaky" chục lần, không ai tin kết quả đỏ.
 
@@ -67,14 +67,14 @@ Một hình dạng cần tránh: **ice cream cone** (kem ốc quế ngược) �
 Đây là kỹ năng quan trọng nhất và bị làm sai nhiều nhất. So sánh:
 
 ```python
-# ❌ Test implementation — gắn chặt vào cách code được viết
+# ✗ Test implementation — gắn chặt vào cách code được viết
 def test_apply_discount_calls_strategy():
     strategy = Mock()
     svc = PricingService(strategy)
     svc.price(order)
     strategy.compute.assert_called_once_with(order.items, order.customer_tier)
 
-# ✅ Test hành vi — gắn vào điều hệ thống cam kết
+# ✓ Test hành vi — gắn vào điều hệ thống cam kết
 def test_gold_customer_gets_10_percent_off():
     svc = PricingService(default_strategies())
     order = make_order(total=100, tier="gold")
@@ -90,7 +90,7 @@ Quy tắc thực dụng:
 - Assert trên **output và side effect quan sát được** (giá trị trả về, record trong DB, message bắn ra), không assert trên "hàm X được gọi mấy lần" — trừ khi lời gọi đó **chính là** hành vi cam kết (vd: "gửi đúng 1 email").
 - Đặt tên test theo nghiệp vụ: `test_expired_coupon_is_rejected`, không phải `test_validate_returns_false`.
 
-> ⚠️ Bẫy production: Test suite "1.500 test, 92% coverage" nhưng toàn mock-verify kiểu `assert_called_with` → khi có bug thật (SQL sai, mapping thiếu field), **toàn bộ 1.500 test vẫn xanh**. Team có cảm giác an toàn giả — nguy hiểm hơn không có test.
+> Bẫy production: Test suite "1.500 test, 92% coverage" nhưng toàn mock-verify kiểu `assert_called_with` → khi có bug thật (SQL sai, mapping thiếu field), **toàn bộ 1.500 test vẫn xanh**. Team có cảm giác an toàn giả — nguy hiểm hơn không có test.
 
 ## 3. Mock ở RANH GIỚI hệ thống — đừng mock mọi thứ
 
@@ -100,12 +100,12 @@ Nguyên tắc: **chỉ mock/fake ở ranh giới hệ thống** — nơi code c�
 
 | Loại dependency | Có nên mock trong unit test? |
 |---|---|
-| Class/module nội bộ cùng service | ❌ Không — dùng object thật |
-| Clock, random, UUID | ✅ Có — inject để test deterministic |
-| HTTP call sang service khác | ✅ Có (fake/stub ở boundary) |
+| Class/module nội bộ cùng service | ✗ Không — dùng object thật |
+| Clock, random, UUID | ✓ Có — inject để test deterministic |
+| HTTP call sang service khác | ✓ Có (fake/stub ở boundary) |
 | Database | Unit: stub repository. Tốt hơn: integration test với DB thật |
-| Message broker (SQS/Kafka) | ✅ Fake ở boundary, và có integration test riêng |
-| Payment gateway, email provider | ✅ Luôn — kèm contract/sandbox test |
+| Message broker (SQS/Kafka) | ✓ Fake ở boundary, và có integration test riêng |
+| Payment gateway, email provider | ✓ Luôn — kèm contract/sandbox test |
 
 Hai kỹ thuật giúp việc này dễ:
 
@@ -131,7 +131,7 @@ Phân loại test double cho đúng từ (mọi người gọi tất cả là "m
 | Spy | Ghi lại lời gọi để assert sau | Kiểm side effect là hành vi cam kết ("đã gửi 1 email") |
 | Mock | Định nghĩa kỳ vọng trước, verify sau | Hạn chế — dễ dẫn tới test implementation |
 
-> 💡 Ghi nhớ: Số lượng mock trong một test tỉ lệ nghịch với giá trị của test đó. Thấy test cần 5 mock để chạy → thiết kế đang ép bạn test implementation; cân nhắc refactor (tách pure logic ra) thay vì thêm mock thứ 6.
+> Ghi nhớ: Số lượng mock trong một test tỉ lệ nghịch với giá trị của test đó. Thấy test cần 5 mock để chạy → thiết kế đang ép bạn test implementation; cân nhắc refactor (tách pure logic ra) thay vì thêm mock thứ 6.
 
 ## 4. Integration test với DB thật
 
@@ -165,7 +165,7 @@ Mẹo giữ tốc độ:
 sqs = boto3.client("sqs", endpoint_url="http://localhost:4566")  # LocalStack
 ```
 
-> ⚠️ Bẫy production: Test integration dùng **shared database trên môi trường dev** (mọi developer + CI cùng trỏ vào một RDS dev). Hệ quả: test phụ thuộc dữ liệu của nhau, fail ngẫu nhiên theo giờ, không chạy parallel được. Mỗi lần chạy test phải có **DB riêng, sạch, ephemeral** — đó chính là giá trị của testcontainers.
+> Bẫy production: Test integration dùng **shared database trên môi trường dev** (mọi developer + CI cùng trỏ vào một RDS dev). Hệ quả: test phụ thuộc dữ liệu của nhau, fail ngẫu nhiên theo giờ, không chạy parallel được. Mỗi lần chạy test phải có **DB riêng, sạch, ephemeral** — đó chính là giá trị của testcontainers.
 
 ## 5. Contract testing cho microservices
 
@@ -227,17 +227,17 @@ Kết quả: B muốn đổi/bỏ một field → build của B **đỏ ngay t�
 
 Với **event-driven** (SQS/Kafka/EventBridge): nguyên tắc tương tự áp dụng cho message schema — dùng Pact message contracts, hoặc **schema registry** (Avro/JSON Schema + compatibility mode `BACKWARD`) để CI chặn schema đổi kiểu phá vỡ consumer.
 
-> 💡 Ghi nhớ: Contract test trả lời đúng một câu hỏi: "**hai bên còn hiểu nhau không?**" — không test business logic của provider. Đừng nhồi logic vào contract; giữ contract mỏng (field nào tồn tại, kiểu gì), nếu không sẽ thành E2E test trá hình và mong manh.
+> Ghi nhớ: Contract test trả lời đúng một câu hỏi: "**hai bên còn hiểu nhau không?**" — không test business logic của provider. Đừng nhồi logic vào contract; giữ contract mỏng (field nào tồn tại, kiểu gì), nếu không sẽ thành E2E test trá hình và mong manh.
 
 ## 6. Test async code
 
 Code async (background job, message handler, event-driven flow) là ổ flaky test nếu test sai cách. Tội đồ số một: `sleep`.
 
 ```python
-# ❌ Flaky: 2s đủ trên laptop, thiếu trên CI đang quá tải; và lãng phí 2s mỗi lần
+# ✗ Flaky: 2s đủ trên laptop, thiếu trên CI đang quá tải; và lãng phí 2s mỗi lần
 publish(event); time.sleep(2); assert db.find(order_id).status == "PAID"
 
-# ✅ Poll với timeout — nhanh khi nhanh, chỉ fail khi thật sự quá hạn
+# ✓ Poll với timeout — nhanh khi nhanh, chỉ fail khi thật sự quá hạn
 publish(event)
 await_until(lambda: db.find(order_id).status == "PAID", timeout=5, interval=0.05)
 ```
@@ -288,7 +288,7 @@ Quy trình xử lý ở mức team:
 3. **Đo đạc**: CI hiện đại (GitHub Actions + report tooling, Buildkite, Datadog CI Visibility) track flake rate per test — sửa từ test flaky nhất.
 4. Tái hiện bằng cách chạy lặp: `pytest --count=100 -x`, `go test -count=100 -race`.
 
-> ⚠️ Bẫy production: Bật "auto-retry failed tests 3 lần" ở CI như giải pháp lâu dài. Retry che giấu cả flaky test **lẫn race condition thật trong code production** — chính những bug chỉ xuất hiện dưới concurrency mà test flaky đang cố nói cho bạn biết.
+> Bẫy production: Bật "auto-retry failed tests 3 lần" ở CI như giải pháp lâu dài. Retry che giấu cả flaky test **lẫn race condition thật trong code production** — chính những bug chỉ xuất hiện dưới concurrency mà test flaky đang cố nói cho bạn biết.
 
 ## 8. Coverage là chỉ số phụ
 
@@ -306,7 +306,7 @@ Cách dùng coverage đúng:
 - Nếu cần một con số gate, **diff coverage** (coverage của riêng code mới trong PR) hợp lý hơn coverage toàn repo.
 - Chỉ số đo chất lượng test thật sự là **mutation testing** (PIT cho Java, `mutmut` cho Python, Stryker cho JS/TS): tool tự sửa code (`>` thành `>=`, xoá một dòng) rồi xem test có đỏ không. Test không giết được mutant = test không thực sự kiểm tra hành vi. Đắt về compute, nhưng chạy định kỳ trên module quan trọng rất đáng.
 
-> 💡 Ghi nhớ: Hỏi "coverage bao nhiêu?" không bằng hỏi: "**nếu tôi cố tình làm sai logic tính tiền, có test nào đỏ không?**"
+> Ghi nhớ: Hỏi "coverage bao nhiêu?" không bằng hỏi: "**nếu tôi cố tình làm sai logic tính tiền, có test nào đỏ không?**"
 
 ## 9. TDD — khi nào đáng?
 
@@ -365,4 +365,4 @@ Checklist nhanh khi review chiến lược test của một service:
 - **RDS/Aurora**: integration test dùng image Postgres/MySQL **đúng major version** với RDS production; migration test trên testcontainers trước khi chạy trên RDS thật. Với Aurora, nhớ rằng một số hành vi (failover, reader endpoint lag) chỉ kiểm được bằng game day/chaos test trên môi trường thật chứ không phải test suite.
 - **CodeBuild/CodePipeline hoặc GitHub Actions**: chạy testcontainers cần Docker — CodeBuild bật `privilegedMode: true`; tách stage `unit` (mỗi push) và `integration` (mỗi PR) để giữ vòng phản hồi nhanh.
 
-> 💡 Ghi nhớ cuối: chiến lược test tốt nhất là chiến lược mà cả team **tin vào màu đỏ** — đỏ nghĩa là có bug thật, xanh nghĩa là deploy được. Mọi quyết định trong bài này (mock ở boundary, trị flaky, coverage là phụ) đều phục vụ một chữ: **niềm tin**.
+> Ghi nhớ cuối: chiến lược test tốt nhất là chiến lược mà cả team **tin vào màu đỏ** — đỏ nghĩa là có bug thật, xanh nghĩa là deploy được. Mọi quyết định trong bài này (mock ở boundary, trị flaky, coverage là phụ) đều phục vụ một chữ: **niềm tin**.

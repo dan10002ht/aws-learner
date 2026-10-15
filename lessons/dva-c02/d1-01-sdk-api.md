@@ -11,7 +11,7 @@ Phần này là nền tảng của Domain 1: mọi tương tác với AWS từ c
 | SigV4 signing | Tự động | Tự động | Bạn tự ký (cực phức tạp) |
 | Retry/pagination | Có sẵn (cấu hình được) | Có sẵn | Tự code |
 
-> 💡 Mẹo thi: AWS CLI thực chất là một ứng dụng Python xây trên Botocore (cùng nền với Boto3). Nên CLI và Boto3 chia sẻ cùng credential chain và cùng file `~/.aws/config`, `~/.aws/credentials`.
+> Mẹo thi: AWS CLI thực chất là một ứng dụng Python xây trên Botocore (cùng nền với Boto3). Nên CLI và Boto3 chia sẻ cùng credential chain và cùng file `~/.aws/config`, `~/.aws/credentials`.
 
 ## Credential Provider Chain
 
@@ -88,9 +88,9 @@ Phần này là nền tảng của Domain 1: mọi tương tác với AWS từ c
   <text x="255" y="412" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">Best practice trên AWS: bỏ trống 1–4, để SDK lấy role qua 5/6 (ECS task role · EC2 instance profile)</text>
 </svg>
 
-> ⚠️ Bẫy: Thứ tự chính xác giữa **env vars** và **credentials file** — env vars **luôn thắng** credentials file. Đề hay hỏi "EC2 có instance role nhưng vẫn dùng access key trong env var → nó dùng cái nào?" → **env var** (đứng trước IMDS trong chain).
+> Bẫy: Thứ tự chính xác giữa **env vars** và **credentials file** — env vars **luôn thắng** credentials file. Đề hay hỏi "EC2 có instance role nhưng vẫn dùng access key trong env var → nó dùng cái nào?" → **env var** (đứng trước IMDS trong chain).
 
-> 💡 Mẹo thi: Best practice cho code chạy trên AWS (EC2/ECS/Lambda) là **KHÔNG hard-code key**, mà dùng **IAM role**. Lambda dùng execution role; ECS dùng task role; EC2 dùng instance profile. Nếu thấy đáp án "embed access key in code/env" → gần như luôn SAI.
+> Mẹo thi: Best practice cho code chạy trên AWS (EC2/ECS/Lambda) là **KHÔNG hard-code key**, mà dùng **IAM role**. Lambda dùng execution role; ECS dùng task role; EC2 dùng instance profile. Nếu thấy đáp án "embed access key in code/env" → gần như luôn SAI.
 
 Khởi tạo client tận dụng chain (không truyền key):
 
@@ -130,7 +130,7 @@ Custom endpoint hữu ích khi test với LocalStack hoặc gọi VPC endpoint:
 s3 = boto3.client("s3", endpoint_url="http://localhost:4566")
 ```
 
-> ⚠️ Bẫy: `AWS_REGION` vs `AWS_DEFAULT_REGION`. Trong **Lambda**, runtime tự set `AWS_REGION`. Boto3 đọc cả hai, nhưng nhiều SDK khác ưu tiên `AWS_REGION`. Nếu quên set region và config cũng trống → SDK ném lỗi `NoRegionError`.
+> Bẫy: `AWS_REGION` vs `AWS_DEFAULT_REGION`. Trong **Lambda**, runtime tự set `AWS_REGION`. Boto3 đọc cả hai, nhưng nhiều SDK khác ưu tiên `AWS_REGION`. Nếu quên set region và config cũng trống → SDK ném lỗi `NoRegionError`.
 
 ## Authenticated API Calls & SigV4
 
@@ -138,7 +138,7 @@ Mọi request đều được ký bằng **Signature Version 4**. Bạn gần nh
 
 Thành phần một signed request: access key + secret + region + service name + timestamp → hash. **Secret key không bao giờ được gửi qua mạng** — chỉ dùng để tính chữ ký.
 
-> 💡 Mẹo thi: Nếu request bị lỗi `SignatureDoesNotMatch` → thường do **clock skew** (đồng hồ máy lệch) hoặc sai region/secret. Lỗi này KHÁC với `AccessDenied` (là vấn đề IAM policy, không phải chữ ký).
+> Mẹo thi: Nếu request bị lỗi `SignatureDoesNotMatch` → thường do **clock skew** (đồng hồ máy lệch) hoặc sai region/secret. Lỗi này KHÁC với `AccessDenied` (là vấn đề IAM policy, không phải chữ ký).
 
 ## Pagination
 
@@ -217,7 +217,7 @@ Tên token theo từng API (đây là bẫy hay gặp):
 | EC2 `DescribeInstances` | `NextToken` | `NextToken` |
 | Generic (nhiều API) | `NextToken` | `NextToken` |
 
-> ⚠️ Bẫy: Với DynamoDB, **không có** `NextToken`. Token là `LastEvaluatedKey`; nếu nó **vắng mặt** trong response nghĩa là đã hết dữ liệu. Đừng nhầm với việc `Items` rỗng — một page có thể rỗng nhưng vẫn còn `LastEvaluatedKey` (do filter/limit), bạn vẫn phải tiếp tục.
+> Bẫy: Với DynamoDB, **không có** `NextToken`. Token là `LastEvaluatedKey`; nếu nó **vắng mặt** trong response nghĩa là đã hết dữ liệu. Đừng nhầm với việc `Items` rỗng — một page có thể rỗng nhưng vẫn còn `LastEvaluatedKey` (do filter/limit), bạn vẫn phải tiếp tục.
 
 CLI tự phân trang, nhưng có thể điều khiển:
 
@@ -242,7 +242,7 @@ from botocore.config import Config
 cfg = Config(retries={"max_attempts": 10, "mode": "standard"})
 ```
 
-> ⚠️ Bẫy: trong dict `Config(retries={"max_attempts": N})`, `max_attempts` là số lần **retry thêm** (CHƯA gồm lần gọi đầu) → tổng = N + 1 lần gọi. Ngược lại, `total_max_attempts` và biến môi trường `AWS_MAX_ATTEMPTS` (hay `max_attempts` trong `~/.aws/config` của CLI) **tính cả lần gọi đầu**. Đề rất thích xoáy điểm khác biệt này.
+> Bẫy: trong dict `Config(retries={"max_attempts": N})`, `max_attempts` là số lần **retry thêm** (CHƯA gồm lần gọi đầu) → tổng = N + 1 lần gọi. Ngược lại, `total_max_attempts` và biến môi trường `AWS_MAX_ATTEMPTS` (hay `max_attempts` trong `~/.aws/config` của CLI) **tính cả lần gọi đầu**. Đề rất thích xoáy điểm khác biệt này.
 
 ### Exponential backoff + jitter
 
@@ -263,7 +263,7 @@ def call_with_backoff(fn, max_attempts=6, base=0.1, cap=20.0):
             time.sleep(sleep)
 ```
 
-> ⚠️ Bẫy: Câu hỏi "Ứng dụng nhận `ProvisionedThroughputExceededException` / `ThrottlingException` / `RequestLimitExceeded` thì làm gì?" → đáp án đúng gần như luôn là **retry với exponential backoff (and jitter)**. KHÔNG phải "tăng ngay capacity", không phải "bỏ qua lỗi". Jitter là điểm phân biệt đáp án "đúng nhất".
+> Bẫy: Câu hỏi "Ứng dụng nhận `ProvisionedThroughputExceededException` / `ThrottlingException` / `RequestLimitExceeded` thì làm gì?" → đáp án đúng gần như luôn là **retry với exponential backoff (and jitter)**. KHÔNG phải "tăng ngay capacity", không phải "bỏ qua lỗi". Jitter là điểm phân biệt đáp án "đúng nhất".
 
 Một số mã lỗi throttling cần nhớ:
 
@@ -299,7 +299,7 @@ except ClientError as e:
         raise
 ```
 
-> 💡 Mẹo thi: Trong Boto3, mọi lỗi từ service đều là `ClientError`; phân loại qua `e.response["Error"]["Code"]`. HTTP status nằm ở `e.response["ResponseMetadata"]["HTTPStatusCode"]`.
+> Mẹo thi: Trong Boto3, mọi lỗi từ service đều là `ClientError`; phân loại qua `e.response["Error"]["Code"]`. HTTP status nằm ở `e.response["ResponseMetadata"]["HTTPStatusCode"]`.
 
 ## Idempotency
 
@@ -328,7 +328,7 @@ ddb.put_item(
 )
 ```
 
-> 💡 Mẹo thi: Các service thường gặp với client/idempotency token: **EC2 `RunInstances`** (`ClientToken`), **SQS** (deduplication ID cho FIFO queue), **Step Functions** `StartExecution` (name làm idempotency key), **Lambda** (gọi async tự dedupe trong cửa sổ thời gian). Khi đề nói "đảm bảo không xử lý trùng khi client retry" → nghĩ tới **idempotency token / deduplication ID / conditional write**.
+> Mẹo thi: Các service thường gặp với client/idempotency token: **EC2 `RunInstances`** (`ClientToken`), **SQS** (deduplication ID cho FIFO queue), **Step Functions** `StartExecution` (name làm idempotency key), **Lambda** (gọi async tự dedupe trong cửa sổ thời gian). Khi đề nói "đảm bảo không xử lý trùng khi client retry" → nghĩ tới **idempotency token / deduplication ID / conditional write**.
 
 ## Tóm tắt nhanh các bẫy đề
 

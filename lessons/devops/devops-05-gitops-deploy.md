@@ -73,7 +73,7 @@ So với cách làm cũ (chạy `kubectl apply` từ máy CI hoặc laptop), Git
 | Bề mặt tấn công | CI có quyền admin vào prod | Cluster không mở cổng vào cho ai |
 | Multi-cluster | Phải cấu hình credential từng cluster | Mỗi cluster tự kéo, dễ scale |
 
-> 💡 Ghi nhớ: Pull model an toàn hơn vì **không credential production nào rời khỏi cluster**. CI chỉ có quyền ghi vào Git repo, không có quyền vào cluster.
+> Ghi nhớ: Pull model an toàn hơn vì **không credential production nào rời khỏi cluster**. CI chỉ có quyền ghi vào Git repo, không có quyền vào cluster.
 
 ### Hai tool chính: Argo CD & Flux
 
@@ -138,7 +138,7 @@ spec:
 | Phù hợp | Đội cần dashboard, nhiều app, RBAC UI | Đội thích GitOps "thuần", tự động hoá sâu |
 | Progressive delivery | Argo Rollouts (cùng hệ) | Flagger (cùng hệ) |
 
-> ⚠️ Bẫy production: Bật `selfHeal: true` rồi vẫn `kubectl edit` hotfix trực tiếp trên prod — agent sẽ revert thay đổi của bạn sau vài giây, gây sự cố "sửa hoài không ăn". Mọi hotfix phải đi qua Git, kể cả lúc khẩn cấp.
+> Bẫy production: Bật `selfHeal: true` rồi vẫn `kubectl edit` hotfix trực tiếp trên prod — agent sẽ revert thay đổi của bạn sau vài giây, gây sự cố "sửa hoài không ăn". Mọi hotfix phải đi qua Git, kể cả lúc khẩn cấp.
 
 ### Tách config khỏi code: hai repo
 
@@ -184,7 +184,7 @@ Pattern chuẩn là **app repo** (code, Dockerfile) tách khỏi **config repo**
   <text x="360" y="307" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">cluster</text>
 </svg>
 
-> 💡 Ghi nhớ: **Không bao giờ dùng tag `:latest` trong GitOps.** Desired state phải bất biến — image phải pin theo digest hoặc commit SHA, nếu không reconcile loop mất nghĩa (Git không đổi nhưng image lại đổi).
+> Ghi nhớ: **Không bao giờ dùng tag `:latest` trong GitOps.** Desired state phải bất biến — image phải pin theo digest hoặc commit SHA, nếu không reconcile loop mất nghĩa (Git không đổi nhưng image lại đổi).
 
 ## Deployment strategies
 
@@ -275,7 +275,7 @@ spec:
       maxSurge: 2         # tạo thêm tối đa 2 pod mới
 ```
 
-> ⚠️ Bẫy production: Rolling update mặc định chạy ngay cả khi pod mới bị crashloop — readiness probe sai cấu hình khiến pod "Ready" giả, và rollout đẩy hết 10 pod lỗi ra production. **Readiness probe đúng là phanh an toàn của rolling update.** Không có probe = không có phanh.
+> Bẫy production: Rolling update mặc định chạy ngay cả khi pod mới bị crashloop — readiness probe sai cấu hình khiến pod "Ready" giả, và rollout đẩy hết 10 pod lỗi ra production. **Readiness probe đúng là phanh an toàn của rolling update.** Không có probe = không có phanh.
 
 ### Blue-Green
 
@@ -453,7 +453,7 @@ spec:
 | Traffic shaping | Cần service mesh / ingress (SMI, Istio, NGINX) | Cần service mesh / ingress tương tự |
 | Điều khiển bước | Khai báo `steps` chi tiết | `stepWeight` đều đặn |
 
-> 💡 Ghi nhớ: Progressive delivery cần **traffic splitting** ở tầng mạng (service mesh như Istio/Linkerd, hoặc ingress hỗ trợ weight). Nếu không có, controller chỉ chia traffic theo tỉ lệ số pod — kém chính xác.
+> Ghi nhớ: Progressive delivery cần **traffic splitting** ở tầng mạng (service mesh như Istio/Linkerd, hoặc ingress hỗ trợ weight). Nếu không có, controller chỉ chia traffic theo tỉ lệ số pod — kém chính xác.
 
 ## Automated rollback theo metric
 
@@ -470,7 +470,7 @@ Chọn metric đúng quan trọng hơn cơ chế:
 - **Latency p95/p99**: bắt regression hiệu năng mà error rate không thấy.
 - **Business metric** (tỉ lệ thanh toán thành công, tỉ lệ thêm giỏ hàng): bắt lỗi logic mà HTTP vẫn 200.
 
-> ⚠️ Bẫy production: Chỉ canh error rate, không canh business metric. Một bug khiến nút "Mua" lặng lẽ không gọi API — HTTP vẫn 200, error rate vẫn 0%, canary pass và lên 100%. Doanh thu rớt mới phát hiện. **Luôn có ít nhất một business metric trong analysis.**
+> Bẫy production: Chỉ canh error rate, không canh business metric. Một bug khiến nút "Mua" lặng lẽ không gọi API — HTTP vẫn 200, error rate vẫn 0%, canary pass và lên 100%. Doanh thu rớt mới phát hiện. **Luôn có ít nhất một business metric trong analysis.**
 
 ## Feature flags vs deploy
 
@@ -496,9 +496,9 @@ return old_checkout()
 
 Hai thứ này **bổ sung** nhau: dùng canary để đảm bảo binary mới ổn định, dùng feature flag để release tính năng cho từng nhóm user và làm **kill switch** khi sự cố.
 
-> 💡 Ghi nhớ: Có feature flag thì **rollback một tính năng lỗi không cần rollback cả deploy** — chỉ cần tắt flag, các tính năng khác trong cùng release vẫn chạy. Đây là lý do trunk-based development + feature flag rất phổ biến.
+> Ghi nhớ: Có feature flag thì **rollback một tính năng lỗi không cần rollback cả deploy** — chỉ cần tắt flag, các tính năng khác trong cùng release vẫn chạy. Đây là lý do trunk-based development + feature flag rất phổ biến.
 
-> ⚠️ Bẫy production: Flag để mãi không dọn ("flag debt") khiến code đầy nhánh `if` chết, logic rối, khó test mọi tổ hợp. Đặt ngày hết hạn cho mỗi flag và xoá khi tính năng đã ổn định 100%.
+> Bẫy production: Flag để mãi không dọn ("flag debt") khiến code đầy nhánh `if` chết, logic rối, khó test mọi tổ hợp. Đặt ngày hết hạn cho mỗi flag và xoá khi tính năng đã ổn định 100%.
 
 ## Liên hệ sang AWS
 
@@ -518,4 +518,4 @@ Các khái niệm trên ánh xạ trực tiếp sang dịch vụ AWS:
 
 Ví dụ tương đương "rollback tự động theo metric" của Argo Rollouts trên ECS: **CodeDeploy** triển khai canary (`Canary10Percent5Minutes`), gắn **CloudWatch alarm** lên error rate; alarm kêu trong cửa sổ bake → CodeDeploy tự đảo về task set cũ. Cùng triết lý, khác công cụ.
 
-> 💡 Ghi nhớ: Trên AWS, nếu dùng **ECS/Lambda** thì blue-green/canary + auto-rollback có sẵn qua **CodeDeploy + CloudWatch alarm** — không cần tự dựng Argo Rollouts. Nếu dùng **EKS** và muốn GitOps thuần, cài Argo CD + Argo Rollouts (hoặc Flux + Flagger) như trên cluster bất kỳ.
+> Ghi nhớ: Trên AWS, nếu dùng **ECS/Lambda** thì blue-green/canary + auto-rollback có sẵn qua **CodeDeploy + CloudWatch alarm** — không cần tự dựng Argo Rollouts. Nếu dùng **EKS** và muốn GitOps thuần, cài Argo CD + Argo Rollouts (hoặc Flux + Flagger) như trên cluster bất kỳ.

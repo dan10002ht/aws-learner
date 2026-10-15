@@ -71,7 +71,7 @@ Hai paper đo trên tác vụ tóm tắt và suy luận, không phải review co
 
 **Cơ chế suy luận ra:** gọi `e` là xác suất bên viết để lại một lỗi, `m` là xác suất verifier bỏ sót lỗi đó. Lỗi lọt qua cả hai với xác suất `e × m` **chỉ khi hai sự kiện độc lập**. Hai model cùng họ có chung dữ liệu, chung thói quen sinh code, nên lỗi mà bên viết hay mắc lại chính là lỗi bên chấm hay coi là "trông ổn" — `m` không còn độc lập với `e`, xác suất lọt lớn hơn tích. Khác họ không làm `m` về 0; nó chỉ làm hai điểm mù **ít trùng nhau hơn**.
 
-📏 **Số chưa đo, không điền.** Bài không đưa con số "khác họ bắt được nhiều hơn X%" vì chưa có phép đo trên code của bạn. Cách đo nằm ở §4 (bộ bug cài sẵn, so tỉ lệ bắt giữa hai verifier).
+**Số chưa đo, không điền.** Bài không đưa con số "khác họ bắt được nhiều hơn X%" vì chưa có phép đo trên code của bạn. Cách đo nằm ở §4 (bộ bug cài sẵn, so tỉ lệ bắt giữa hai verifier).
 
 **Kinh nghiệm thực tế:** trong pipeline tự động kể ở §2, bước verify được tách thành một tiến trình riêng chính vì lý do này: gộp verify vào bước implement thì *"là để agent tự chấm chính giả thuyết của mình, gần như luôn PASS"*.
 
@@ -314,28 +314,28 @@ Số đếm đó — trên đúng codebase của bạn — mới là cơ sở đ
 
 ## 5. Bẫy thường gặp
 
-🪤 **Lane hỏng thì cho Claude viết luôn.**
+**Lane hỏng thì cho Claude viết luôn.**
 Triệu chứng: loop vẫn chạy, mọi task PASS, nhưng log toàn `executor: claude`. Nguyên nhân gốc: fallback không có danh sách đóng nên mọi trục trặc đều thành lý do đổi vai, nguyên nhân thật (modal update, stdin mở) không ai sửa. Chặn bằng cơ chế: bảng fallback đóng ở §3.6 viết vào skill loop; ghi `executor` cho mỗi task; báo cáo cuối lượt in tỉ lệ task chấm chéo — tỉ lệ tụt là tín hiệu có nguyên nhân chưa sửa.
 
-🪤 **Tin receipt "đã giao việc".**
+**Tin receipt "đã giao việc".**
 Triệu chứng: báo "4 task đang chạy" trong khi worktree rỗng. Nguyên nhân gốc: receipt chỉ chứng minh văn bản đã tới terminal, không chứng minh agent đã submit và bắt đầu chạy. Chặn: sau khi giao việc, chờ tác dụng phụ đầu tiên (mốc §3.4) có thời hạn; quá hạn thì đọc transcript bằng script, không hỏi `status`. Chi tiết về ack ở [[ag-20-viec-nen-va-ack]].
 
-🪤 **`codex exec` treo 0% CPU.**
+**`codex exec` treo 0% CPU.**
 Triệu chứng: tiến trình sống mãi, không ghi file. Nguyên nhân gốc: stdin được pipe mà không đóng; theo docs Codex đọc stdin làm ngữ cảnh thêm nên chờ EOF. Chặn: mọi lời gọi từ code dùng `stdio: ['ignore', ...]` hoặc `< /dev/null`; prompt đưa vào bằng `- < file`. Thêm một timeout cứng cho tiến trình.
 
-🪤 **Vá phiên bản Codex một lần đầu phiên.**
+**Vá phiên bản Codex một lần đầu phiên.**
 Triệu chứng: task đầu chạy, task giữa phiên chết ở giây thứ 9–23. Nguyên nhân gốc: bản mới ra *trong* phiên, modal update bật lại. Chặn: bước kiểm/ghim phiên bản nằm trong thủ tục **mỗi lần giao việc**, không ở đầu phiên.
 
-🪤 **Bắt quota bằng regex chưa kiểm hai chiều.**
+**Bắt quota bằng regex chưa kiểm hai chiều.**
 Triệu chứng: hoá đơn Claude tăng, lỗi thật (thiếu dependency, timeout) biến mất khỏi log. Nguyên nhân gốc: regex rộng quá, biến lỗi thật thành fallback. Chặn: một file mẫu lỗi thật gồm cả hai nhóm, chạy như test của regex mỗi lần sửa nó (Bước 4).
 
-🪤 **Đọc lỗi Claude ở nhầm luồng.**
+**Đọc lỗi Claude ở nhầm luồng.**
 Triệu chứng: script báo "Claude lỗi: success" hoặc thông báo vô nghĩa, chẩn đoán đi sai hướng. Nguyên nhân gốc: theo docs, lỗi xảy ra trong lượt chạy của `claude -p` (ví dụ thiếu đăng nhập) được in làm result trên **stdout**, không phải stderr; script cắt sai chỗ. Chặn: dùng `--output-format json`, kiểm exit code và đọc trường kết quả, không grep stderr.
 
-🪤 **Verifier "read-only" nhưng vẫn sửa được file.**
+**Verifier "read-only" nhưng vẫn sửa được file.**
 Triệu chứng: verdict PASS, diff có thêm thay đổi không ai giao. Nguyên nhân gốc: verifier chạy ở mode tự duyệt ghi (`acceptEdits`) hoặc allow `Edit`. Chặn: `--permission-mode dontAsk` + allowlist chỉ có công cụ đọc và lệnh gate; kiểm bằng `git status` trước và sau bước verify phải giống nhau.
 
-🪤 **Fallback xong rồi coi PASS như thường.**
+**Fallback xong rồi coi PASS như thường.**
 Triệu chứng: task do Claude viết, Claude chấm, merge thẳng. Nguyên nhân gốc: verdict không mang thông tin "ai viết". Chặn: verdict file kèm `executor`; gate merge yêu cầu thêm bằng chứng phân biệt được hoặc người review khi `executor == verifier_family`.
 
 ---

@@ -2,7 +2,7 @@
 
 Ở bài trước, bạn đã biết HTML tạo ra "bộ khung" của trang web. Nhưng một trang chỉ có HTML thì trông như một tờ giấy trắng đen, chữ xếp chồng lên nhau, không màu mè gì cả. **CSS** (Cascading Style Sheets - "bảng định kiểu xếp tầng") chính là phần "trang điểm" cho trang web đó.
 
-> 💡 Ghi nhớ: Một cách ví von quen thuộc: HTML là **bộ xương**, CSS là **quần áo & trang điểm**, còn JavaScript là **cơ bắp giúp cử động**. Bài này ta lo phần quần áo.
+> Ghi nhớ: Một cách ví von quen thuộc: HTML là **bộ xương**, CSS là **quần áo & trang điểm**, còn JavaScript là **cơ bắp giúp cử động**. Bài này ta lo phần quần áo.
 
 ## 1. Cách gắn CSS vào trang
 
@@ -45,7 +45,7 @@ p {
 }
 ```
 
-> 💡 Ghi nhớ: Dùng file `.css` riêng giống như cất hết quần áo vào một tủ. Nhiều trang HTML có thể dùng chung một tủ đó, sửa một chỗ là cả website đổi theo.
+> Ghi nhớ: Dùng file `.css` riêng giống như cất hết quần áo vào một tủ. Nhiều trang HTML có thể dùng chung một tủ đó, sửa một chỗ là cả website đổi theo.
 
 ## 2. Cú pháp CSS & Selector
 
@@ -96,7 +96,7 @@ Class **dùng lại được nhiều lần** trên nhiều thẻ khác nhau. Đ�
 
 ID phải **duy nhất** trong trang - mỗi `id` chỉ được gắn cho đúng một thẻ.
 
-> 💡 Ghi nhớ: Phân biệt bằng đời thường: **class** giống "đồng phục" (cả lớp mặc giống nhau được), còn **id** giống "số báo danh" (mỗi người một số, không trùng).
+> Ghi nhớ: Phân biệt bằng đời thường: **class** giống "đồng phục" (cả lớp mặc giống nhau được), còn **id** giống "số báo danh" (mỗi người một số, không trùng).
 
 | Selector | Ký hiệu | Dùng lại nhiều lần? | Ví dụ |
 |----------|---------|---------------------|-------|
@@ -104,7 +104,7 @@ ID phải **duy nhất** trong trang - mỗi `id` chỉ được gắn cho đún
 | Class    | `.`     | Có | `.canhbao` |
 | ID       | `#`     | Không (duy nhất) | `#header-chinh` |
 
-> ⚠️ Lỗi người mới hay gặp: Quên dấu `.` trước tên class. Viết `canhbao { }` thì CSS lại đi tìm thẻ tên là `<canhbao>` (không tồn tại) thay vì class. Nhớ: class luôn có chấm, id luôn có thăng.
+> Lỗi người mới hay gặp: Quên dấu `.` trước tên class. Viết `canhbao { }` thì CSS lại đi tìm thẻ tên là `<canhbao>` (không tồn tại) thay vì class. Nhớ: class luôn có chấm, id luôn có thăng.
 
 ## 3. Box Model - mọi thứ đều là cái hộp
 
@@ -170,7 +170,7 @@ Mặc định, khi bạn đặt `width: 200px` rồi thêm `padding: 20px`, hộ
 
 Với `border-box`, `width: 200px` luôn đúng **200px** kể cả khi thêm padding - padding "ăn vào trong" thay vì phình ra.
 
-> 💡 Ghi nhớ: Hầu hết dự án thật đều đặt `* { box-sizing: border-box; }` ngay dòng đầu. Cứ chép nó vào, đời bạn sẽ dễ thở hơn.
+> Ghi nhớ: Hầu hết dự án thật đều đặt `* { box-sizing: border-box; }` ngay dòng đầu. Cứ chép nó vào, đời bạn sẽ dễ thở hơn.
 
 **Thử ngay:** Tạo một file HTML, thêm `<div class="the-bai">Xin chào</div>`, rồi đổi `padding`, `border`, `margin` và quan sát cái hộp thay đổi.
 
@@ -202,7 +202,7 @@ body {
 }
 ```
 
-> 💡 Ghi nhớ: `font-family` nên có nhiều tên cách nhau bằng dấu phẩy - đó là danh sách "dự phòng". Nếu máy người dùng không có font đầu, trình duyệt thử font tiếp theo. Luôn kết thúc bằng một loại chung như `sans-serif`.
+> Ghi nhớ: `font-family` nên có nhiều tên cách nhau bằng dấu phẩy - đó là danh sách "dự phòng". Nếu máy người dùng không có font đầu, trình duyệt thử font tiếp theo. Luôn kết thúc bằng một loại chung như `sans-serif`.
 
 ### Khoảng cách & căn chữ
 
@@ -242,7 +242,7 @@ Hai "công tắc" quan trọng nhất của Flexbox:
 | `justify-content` | Trục **ngang** (theo hàng) | `flex-start`, `center`, `space-between`, `space-around` |
 | `align-items` | Trục **dọc** (cao thấp) | `flex-start`, `center`, `flex-end`, `stretch` |
 
-> 💡 Ghi nhớ: Cách nhớ nhanh: muốn xếp đồ thành **một hàng và căn chỉnh chúng**, dùng Flexbox. `justify-content` lo bên trái-phải, `align-items` lo trên-dưới. Cần đổi sang hàng dọc thì thêm `flex-direction: column;`.
+> Ghi nhớ: Cách nhớ nhanh: muốn xếp đồ thành **một hàng và căn chỉnh chúng**, dùng Flexbox. `justify-content` lo bên trái-phải, `align-items` lo trên-dưới. Cần đổi sang hàng dọc thì thêm `flex-direction: column;`.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" role="img" style="width:100%;max-width:640px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Hai trục của Flexbox: main axis (justify-content) và cross axis (align-items)</title>
@@ -325,7 +325,7 @@ Flexbox giỏi xếp **một chiều** (một hàng hoặc một cột). Khi c�
   </g>
 </svg>
 
-> 💡 Ghi nhớ: Quy tắc đơn giản: **xếp thành một hàng → Flexbox**, **xếp thành lưới nhiều hàng nhiều cột → Grid**. Người mới chưa cần thạo Grid ngay, chỉ cần biết nó tồn tại để dùng khi gặp bố cục lưới.
+> Ghi nhớ: Quy tắc đơn giản: **xếp thành một hàng → Flexbox**, **xếp thành lưới nhiều hàng nhiều cột → Grid**. Người mới chưa cần thạo Grid ngay, chỉ cần biết nó tồn tại để dùng khi gặp bố cục lưới.
 
 ## 7. Responsive & Mobile-first
 
@@ -347,9 +347,9 @@ Trang web phải đẹp trên cả màn hình điện thoại lẫn máy tính. 
 
 Cách viết trên gọi là **mobile-first** (ưu tiên điện thoại trước): viết CSS cho màn hình nhỏ làm mặc định, rồi dùng `min-width` để "nâng cấp" giao diện khi màn hình to dần.
 
-> 💡 Ghi nhớ: Vì đa số người dùng vào web bằng điện thoại, viết mobile-first giúp trang nhẹ và đúng ngay với số đông. `min-width` nghĩa là "từ kích thước này trở lên", đọc theo chiều màn hình **to dần**.
+> Ghi nhớ: Vì đa số người dùng vào web bằng điện thoại, viết mobile-first giúp trang nhẹ và đúng ngay với số đông. `min-width` nghĩa là "từ kích thước này trở lên", đọc theo chiều màn hình **to dần**.
 
-> ⚠️ Lỗi người mới hay gặp: Quên thẻ này trong `<head>`. Thiếu nó, điện thoại sẽ "thu nhỏ" cả trang desktop lại, media query không hoạt động đúng:
+> Lỗi người mới hay gặp: Quên thẻ này trong `<head>`. Thiếu nó, điện thoại sẽ "thu nhỏ" cả trang desktop lại, media query không hoạt động đúng:
 > ```html
 > <meta name="viewport" content="width=device-width, initial-scale=1.0">
 > ```
@@ -380,7 +380,7 @@ Khi website dùng đi dùng lại một màu thương hiệu ở 50 chỗ, sửa
 - Tên biến luôn bắt đầu bằng hai gạch ngang `--`.
 - Lấy giá trị ra bằng hàm `var(--ten-bien)`.
 
-> 💡 Ghi nhớ: Đổi `--mau-chinh` một dòng duy nhất ở `:root` là toàn bộ website đổi màu theo. Đây là nền tảng để làm "chế độ tối" (dark mode) sau này.
+> Ghi nhớ: Đổi `--mau-chinh` một dòng duy nhất ở `:root` là toàn bộ website đổi màu theo. Đây là nền tảng để làm "chế độ tối" (dark mode) sau này.
 
 ## 9. Tổ chức style để không bị rối
 
@@ -401,7 +401,7 @@ Khi file CSS lớn dần, dễ thành "mớ bòng bong". Vài nguyên tắc cho 
 4. **Gom giá trị lặp lại vào biến CSS** (màu, khoảng cách, cỡ chữ).
 5. **Tránh selector quá dài** kiểu `div .a .b .c span` - vừa khó đọc vừa khó sửa.
 
-> ⚠️ Lỗi người mới hay gặp: Lạm dụng inline style (`style="..."`) cho mọi thứ. Lúc đầu thấy nhanh, nhưng khi cần đổi đồng loạt thì phải sửa từng thẻ. Hãy gom vào file `.css` với class ngay từ đầu.
+> Lỗi người mới hay gặp: Lạm dụng inline style (`style="..."`) cho mọi thứ. Lúc đầu thấy nhanh, nhưng khi cần đổi đồng loạt thì phải sửa từng thẻ. Hãy gom vào file `.css` với class ngay từ đầu.
 
 ## Tổng kết
 

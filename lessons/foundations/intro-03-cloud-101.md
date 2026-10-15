@@ -17,7 +17,7 @@ Hãy tưởng tượng năm 2005, bạn muốn mở một trang web bán hàng. 
    │  Bạn lo TẤT CẢ:              │
    │  điện, lạnh, mạng, phần cứng,│
    │  OS, bảo mật, ứng dụng...    │
-   │        🏢 phòng server       │
+   │           phòng server       │
    └──────────────────────────────┘
    Vốn lớn trả trước + chờ hàng tuần
 ```
@@ -28,7 +28,7 @@ Vấn đề cốt lõi: **tài nguyên tính toán bị mua theo kiểu "tài s�
 
 Các công ty khổng lồ (Amazon là điển hình) xây hạ tầng cực lớn để phục vụ mùa cao điểm (Black Friday), nhưng phần lớn thời gian trong năm máy móc... ngồi chơi. Họ nảy ra ý tưởng: **cho người khác thuê phần dư đó, tính tiền theo giờ**. Năm 2006, Amazon Web Services ra mắt — và mô hình "thuê tài nguyên qua Internet, trả theo mức dùng" trở thành **cloud computing**.
 
-> 💡 Ghi nhớ: Cloud computing = **thuê tài nguyên tính toán (máy chủ, lưu trữ, mạng, phần mềm) qua Internet, theo nhu cầu (on-demand), trả tiền theo mức sử dụng (pay-as-you-go)** — thay vì mua và tự vận hành phần cứng.
+> Ghi nhớ: Cloud computing = **thuê tài nguyên tính toán (máy chủ, lưu trữ, mạng, phần mềm) qua Internet, theo nhu cầu (on-demand), trả tiền theo mức sử dụng (pay-as-you-go)** — thay vì mua và tự vận hành phần cứng.
 
 ### Từ "bấm nút tạo server" đến Infrastructure as Code
 
@@ -121,7 +121,7 @@ Nhìn theo "tầng trách nhiệm":
 - **PaaS (Platform as a Service)**: bạn chỉ đưa code, nền tảng tự lo deploy, scale, vá lỗi hệ thống. Nhanh, đỡ việc, nhưng ít quyền kiểm soát hơn.
 - **SaaS (Software as a Service)**: dùng luôn phần mềm qua trình duyệt. Gmail, Slack, Zoom, Salesforce.
 
-> 💡 Ghi nhớ: Đi từ IaaS → PaaS → SaaS, **bạn lo ít hơn, nhà cung cấp lo nhiều hơn, nhưng quyền tùy biến cũng giảm dần**. Không có mức "tốt nhất" — chỉ có mức phù hợp với bài toán.
+> Ghi nhớ: Đi từ IaaS → PaaS → SaaS, **bạn lo ít hơn, nhà cung cấp lo nhiều hơn, nhưng quyền tùy biến cũng giảm dần**. Không có mức "tốt nhất" — chỉ có mức phù hợp với bài toán.
 
 ## 3. Public, Private, Hybrid cloud
 
@@ -192,7 +192,7 @@ Vì sao thiết kế như vậy? **Để chống sự cố.** Nếu một tòa n
 
 Chọn region thường dựa trên: (1) gần người dùng để giảm độ trễ, (2) quy định pháp lý về nơi lưu dữ liệu, (3) giá cả và dịch vụ có sẵn.
 
-> 💡 Ghi nhớ: **Region = khu vực địa lý; AZ = các cụm data center độc lập bên trong region.** Muốn ứng dụng chịu lỗi tốt, hãy trải nó trên **nhiều AZ**.
+> Ghi nhớ: **Region = khu vực địa lý; AZ = các cụm data center độc lập bên trong region.** Muốn ứng dụng chịu lỗi tốt, hãy trải nó trên **nhiều AZ**.
 
 ## 5. Scalability vs Elasticity — hai từ hay bị nhầm
 
@@ -211,7 +211,7 @@ Cả hai đều nói về "đáp ứng tải", nhưng khác nhau ở **chiều v
 
 Analogy: scalability là **nhà hàng có thể xây thêm tầng**; elasticity là **nhà hàng buffet tự động kê thêm bàn giờ cao điểm và cất bớt bàn lúc vắng**.
 
-> 💡 Ghi nhớ: Scalability = *có thể* lớn lên. Elasticity = *tự động* co giãn hai chiều theo nhu cầu. Elasticity là lý do kinh tế lớn nhất khiến cloud thắng on-premises.
+> Ghi nhớ: Scalability = *có thể* lớn lên. Elasticity = *tự động* co giãn hai chiều theo nhu cầu. Elasticity là lý do kinh tế lớn nhất khiến cloud thắng on-premises.
 
 ## 6. Pay-as-you-go và cuộc cách mạng CapEx → OpEx
 
@@ -230,7 +230,7 @@ Cloud chuyển chi phí hạ tầng từ **CapEx sang OpEx**: không cần vốn
 - **Không trả tiền cho công suất nhàn rỗi**: tắt máy là ngừng tính tiền (với hầu hết dịch vụ).
 - **Thử nghiệm rẻ**: dựng môi trường test trong 10 phút, xóa sau 1 giờ, tốn vài nghìn đồng.
 
-> 💡 Ghi nhớ: Pay-as-you-go biến hạ tầng từ **tài sản phải mua** thành **dịch vụ tiện ích như điện, nước** — dùng bao nhiêu trả bấy nhiêu.
+> Ghi nhớ: Pay-as-you-go biến hạ tầng từ **tài sản phải mua** thành **dịch vụ tiện ích như điện, nước** — dùng bao nhiêu trả bấy nhiêu.
 
 ## 7. Shared Responsibility — ai chịu trách nhiệm bảo mật?
 
@@ -243,7 +243,7 @@ Analogy chung cư: ban quản lý lo kết cấu tòa nhà, bảo vệ, camera h
 
 Ranh giới trượt theo mô hình dịch vụ: dùng IaaS thì bạn lo nhiều (cả vá OS); dùng SaaS thì bạn chỉ còn lo dữ liệu và tài khoản.
 
-> 💡 Ghi nhớ: Nhà cung cấp bảo vệ **hạ tầng cloud**; bạn bảo vệ **những gì bạn đặt vào cloud**. Lên cloud không có nghĩa là "khoán trắng" bảo mật.
+> Ghi nhớ: Nhà cung cấp bảo vệ **hạ tầng cloud**; bạn bảo vệ **những gì bạn đặt vào cloud**. Lên cloud không có nghĩa là "khoán trắng" bảo mật.
 
 ## 8. Multi-tenancy — nhiều khách chung một hạ tầng
 
@@ -302,4 +302,4 @@ Khi bạn bước vào học CLF/SAA/DVA, các khái niệm trên ánh xạ tr�
 | Multi-tenancy / single-tenancy | EC2 mặc định multi-tenant; **Dedicated Hosts/Instances** khi cần máy vật lý riêng |
 | Infrastructure as Code | **AWS CloudFormation** (và AWS CDK) |
 
-> 💡 Ghi nhớ: Bộ ba **EC2 (IaaS) → Beanstalk (PaaS) → Lambda (serverless)** chính là thang "bạn lo ít dần" của bài này, phiên bản AWS. Nắm chắc bài hôm nay, các dịch vụ AWS sau này sẽ chỉ là "tên riêng" của những ý tưởng bạn đã hiểu.
+> Ghi nhớ: Bộ ba **EC2 (IaaS) → Beanstalk (PaaS) → Lambda (serverless)** chính là thang "bạn lo ít dần" của bài này, phiên bản AWS. Nắm chắc bài hôm nay, các dịch vụ AWS sau này sẽ chỉ là "tên riêng" của những ý tưởng bạn đã hiểu.

@@ -4,7 +4,7 @@ Backtracking là **kỹ thuật vét cạn có tổ chức**: ta xây lời gi�
 
 Đây là một trong những chủ đề bị "ghét" nhất khi mới học, nhưng lại là chủ đề **dễ ăn điểm nhất khi phỏng vấn** — vì gần như mọi bài backtracking đều chung một bộ khung. Nắm chắc khung choose–explore–unchoose, biết nhận diện dạng bài, biết cắt nhánh, là bạn giải được hầu hết. Bài này đi *rất kĩ* qua decision tree, template, 9 dạng bài kinh điển, 3 bài mẫu giải chi tiết, và cách phân biệt backtracking với DP.
 
-> 💡 Ghi nhớ: Dấu hiệu "thấy là nghĩ ngay tới backtracking": đề yêu cầu **"liệt kê tất cả"**, **"tìm mọi tổ hợp/hoán vị/cách"**, **"sinh ra toàn bộ cấu hình hợp lệ"**, hoặc không gian nghiệm có dạng **cây quyết định** và `n` nhỏ (thường `n ≤ 20`).
+> Ghi nhớ: Dấu hiệu "thấy là nghĩ ngay tới backtracking": đề yêu cầu **"liệt kê tất cả"**, **"tìm mọi tổ hợp/hoán vị/cách"**, **"sinh ra toàn bộ cấu hình hợp lệ"**, hoặc không gian nghiệm có dạng **cây quyết định** và `n` nhỏ (thường `n ≤ 20`).
 
 ## 1. Trực giác & khi nào dùng
 
@@ -112,7 +112,7 @@ Cốt lõi là ta **dùng chung một biến trạng thái** `path` (đường �
   <g font-size="11.5" font-family="ui-monospace, monospace">
     <text x="40" y="248" fill="currentColor" opacity="0.85">path=[1]   → choose 2 → path=[1,2]  → đi sâu nhánh "2"</text>
     <text x="40" y="270" fill="#10b981">path=[1]   ← unchoose 2  (khôi phục, ĐÚNG)  → choose 3 → [1,3]</text>
-    <text x="40" y="292" fill="#f59e0b">path=[1,2] ✗ quên unchoose → choose 3 → [1,2,3]  (rác của nhánh trước → SAI)</text>
+    <text x="40" y="292" fill="#f59e0b">path=[1,2] ✗ quên unchoose → choose 3 → [1,2,3] (rác của nhánh trước → SAI)</text>
   </g>
 </svg>
 
@@ -124,7 +124,7 @@ Vét cạn thuần là quá đắt. **Pruning** là *từ chối đi vào* nhữ
 - **Cắt theo cận (bound pruning)**: nếu phần đã chọn đã vượt mục tiêu (ví dụ tổng đã `> target` trong combination sum với số dương) thì dừng nhánh.
 - **Cắt trùng lặp (dedup pruning)**: sort trước rồi bỏ qua các phần tử trùng cùng cấp để không sinh lời giải lặp.
 
-> 💡 Ghi nhớ: Hiệu năng của backtracking **quyết định gần như hoàn toàn bởi pruning**, không phải bởi vi tối ưu code. Một dòng `if (sum > target) return;` đặt đúng chỗ có thể cắt 99% cây.
+> Ghi nhớ: Hiệu năng của backtracking **quyết định gần như hoàn toàn bởi pruning**, không phải bởi vi tối ưu code. Một dòng `if (sum > target) return;` đặt đúng chỗ có thể cắt 99% cây.
 
 ### 1.4. Backtracking vs DP — phân biệt cho chuẩn
 
@@ -138,7 +138,7 @@ Vét cạn thuần là quá đắt. **Pruning** là *từ chối đi vào* nhữ
 | Độ phức tạp điển hình | Mũ / giai thừa `O(2^n)`, `O(n!)`, `O(b^d)` | Đa thức `O(n·m)`, `O(n^2)`... |
 | Trạng thái | Đường đi đầy đủ (`path`) | Khoá gọn (vài chỉ số) → cache theo khoá |
 
-> ⚠️ Bẫy: Nếu đề chỉ hỏi **"có bao nhiêu cách"** hoặc **"giá trị lớn nhất/nhỏ nhất"** mà *không* yêu cầu in ra từng nghiệm, đừng vội backtracking — rất có thể đó là **DP** và backtracking sẽ TLE. Backtracking khi cần *chính các nghiệm*; DP khi chỉ cần *con số tổng hợp*.
+> Bẫy: Nếu đề chỉ hỏi **"có bao nhiêu cách"** hoặc **"giá trị lớn nhất/nhỏ nhất"** mà *không* yêu cầu in ra từng nghiệm, đừng vội backtracking — rất có thể đó là **DP** và backtracking sẽ TLE. Backtracking khi cần *chính các nghiệm*; DP khi chỉ cần *con số tổng hợp*.
 
 ## 2. Template choose–explore–unchoose (khung chuẩn)
 
@@ -228,7 +228,7 @@ Ba "ổ cắm" cần điền cho mọi bài:
 2. **Tập lựa chọn hợp lệ tại node**: vòng `for` duyệt cái gì? Có cần `used[]`/`start` để tránh lặp không?
 3. **choose / unchoose đối xứng**: thêm gì thì gỡ nấy. Quên `unchoose` là lỗi kinh điển nhất.
 
-> 💡 Ghi nhớ: `start` dùng cho **tổ hợp** (thứ tự không quan trọng, chỉ tiến tới); `used[]` dùng cho **hoán vị** (thứ tự quan trọng, được quay lại phần tử trước nhưng không dùng lại đúng phần tử đang dùng). Phân biệt được hai cái này là phân biệt được combinations vs permutations.
+> Ghi nhớ: `start` dùng cho **tổ hợp** (thứ tự không quan trọng, chỉ tiến tới); `used[]` dùng cho **hoán vị** (thứ tự quan trọng, được quay lại phần tử trước nhưng không dùng lại đúng phần tử đang dùng). Phân biệt được hai cái này là phân biệt được combinations vs permutations.
 
 ## 3. Bảng DẠNG BÀI (problem patterns)
 
@@ -244,7 +244,7 @@ Ba "ổ cắm" cần điền cho mọi bài:
 | **N-Queens / Constraint** | "đặt sao cho không xung đột", ràng buộc hàng/cột/chéo | đặt theo từng hàng, dùng set kiểm tra O(1) | `O(n!)` (đã prune) | 51/52. N-Queens |
 | **Sudoku / Exact Cover** | "điền sao cho thoả mọi ràng buộc", ô trống | tìm ô trống, thử 1–9, validate, quay lui | `O(9^m)` (m = ô trống) | 37. Sudoku Solver |
 
-> 💡 Ghi nhớ: 90% bài backtracking phỏng vấn rơi vào 3 nhóm gốc — **subsets / permutations / combinations**. N-queens, sudoku, word search là biến thể "constraint" của cùng khung, chỉ khác phần kiểm tra hợp lệ và pruning.
+> Ghi nhớ: 90% bài backtracking phỏng vấn rơi vào 3 nhóm gốc — **subsets / permutations / combinations**. N-queens, sudoku, word search là biến thể "constraint" của cùng khung, chỉ khác phần kiểm tra hợp lệ và pruning.
 
 ### 3.1. Ý tưởng N-queens — kiểm tra an toàn O(1) & pruning
 
@@ -276,7 +276,7 @@ Bài N-queens là đại diện kinh điển của nhóm **constraint**: đặt 
   </g>
   <g>
     <rect x="150" y="42" width="60" height="60" fill="#10b981" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.4"/>
-    <text x="180" y="80" font-size="26" text-anchor="middle" fill="currentColor">♛</text>
+    <text x="180" y="80" font-size="26" text-anchor="middle" fill="currentColor">Q</text>
   </g>
   <g font-size="12" fill="currentColor">
     <rect x="378" y="60" width="20" height="14" rx="3" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
@@ -645,19 +645,19 @@ bool exist(vector<vector<char>>& board, string word) {
 
 ## 5. Sai lầm thường gặp & cách tránh
 
-> ⚠️ Bẫy 1 — Quên `unchoose`. Đây là lỗi số 1. Sau `backtrack()` mà không pop/gỡ dấu, `path` mang rác sang nhánh kế, kết quả sai hoàn toàn. **Cách tránh:** viết `choose` và `unchoose` *thành cặp đối xứng ngay lập tức*, đặt sát hai bên lời gọi đệ quy.
+> Bẫy 1 — Quên `unchoose`. Đây là lỗi số 1. Sau `backtrack()` mà không pop/gỡ dấu, `path` mang rác sang nhánh kế, kết quả sai hoàn toàn. **Cách tránh:** viết `choose` và `unchoose` *thành cặp đối xứng ngay lập tức*, đặt sát hai bên lời gọi đệ quy.
 
-> ⚠️ Bẫy 2 — Lưu tham chiếu thay vì copy. `res.append(path)` (không có `[:]`) lưu *con trỏ* tới cùng một list; khi `path` bị sửa tiếp, mọi phần tử trong `res` thay đổi theo. **Cách tránh:** luôn copy (`path[:]`, `[...path]`, `new ArrayList<>(path)`, `append([]int{}, path...)`) khi ghi nhận lời giải.
+> Bẫy 2 — Lưu tham chiếu thay vì copy. `res.append(path)` (không có `[:]`) lưu *con trỏ* tới cùng một list; khi `path` bị sửa tiếp, mọi phần tử trong `res` thay đổi theo. **Cách tránh:** luôn copy (`path[:]`, `[...path]`, `new ArrayList<>(path)`, `append([]int{}, path...)`) khi ghi nhận lời giải.
 
-> ⚠️ Bẫy 3 — Nhầm `start` với `used[]`. Tổ hợp/tập con dùng `start` (chỉ tiến); hoán vị dùng `used[]` (được quay lại). Lẫn lộn → hoặc thiếu nghiệm, hoặc sinh nghiệm trùng. **Cách tránh:** hỏi "thứ tự có quan trọng không?" — có thì `used[]`, không thì `start`.
+> Bẫy 3 — Nhầm `start` với `used[]`. Tổ hợp/tập con dùng `start` (chỉ tiến); hoán vị dùng `used[]` (được quay lại). Lẫn lộn → hoặc thiếu nghiệm, hoặc sinh nghiệm trùng. **Cách tránh:** hỏi "thứ tự có quan trọng không?" — có thì `used[]`, không thì `start`.
 
-> ⚠️ Bẫy 4 — Không khử trùng khi input có phần tử lặp. Subsets II / Permutations II / Comb Sum II cần **sort trước** và **bỏ qua phần tử trùng cùng cấp** (`if i > start and a[i] == a[i-1]: continue`). **Cách tránh:** thấy đề nói "mảng có thể có phần tử trùng" + "không lời giải trùng" là phản xạ sort + dedup.
+> Bẫy 4 — Không khử trùng khi input có phần tử lặp. Subsets II / Permutations II / Comb Sum II cần **sort trước** và **bỏ qua phần tử trùng cùng cấp** (`if i > start and a[i] == a[i-1]: continue`). **Cách tránh:** thấy đề nói "mảng có thể có phần tử trùng" + "không lời giải trùng" là phản xạ sort + dedup.
 
-> ⚠️ Bẫy 5 — Không pruning → TLE. Vét cạn thuần trên `n` lớn sẽ quá hạn. **Cách tránh:** luôn tự hỏi "nhánh nào chắc chắn vô vọng?" và cắt tại node (constraint/bound pruning), sort để `break` sớm.
+> Bẫy 5 — Không pruning → TLE. Vét cạn thuần trên `n` lớn sẽ quá hạn. **Cách tránh:** luôn tự hỏi "nhánh nào chắc chắn vô vọng?" và cắt tại node (constraint/bound pruning), sort để `break` sớm.
 
-> ⚠️ Bẫy 6 — Dùng backtracking cho bài DP. Đề hỏi "bao nhiêu cách"/"giá trị tối ưu" mà không cần liệt kê → backtracking sẽ mũ và TLE. **Cách tránh:** nhận diện đúng — đếm/tối ưu + bài con trùng lặp = DP.
+> Bẫy 6 — Dùng backtracking cho bài DP. Đề hỏi "bao nhiêu cách"/"giá trị tối ưu" mà không cần liệt kê → backtracking sẽ mũ và TLE. **Cách tránh:** nhận diện đúng — đếm/tối ưu + bài con trùng lặp = DP.
 
-> ⚠️ Bẫy 7 — Đệ quy quá sâu / tràn stack. Với `n` không quá nhỏ và ngôn ngữ giới hạn stack (Python ~1000), cần để ý độ sâu. **Cách tránh:** backtracking vốn chỉ dùng khi `n` nhỏ; nếu `n` lớn mà vẫn cần liệt kê, xem lại đề — thường đề ngầm cho `n` nhỏ.
+> Bẫy 7 — Đệ quy quá sâu / tràn stack. Với `n` không quá nhỏ và ngôn ngữ giới hạn stack (Python ~1000), cần để ý độ sâu. **Cách tránh:** backtracking vốn chỉ dùng khi `n` nhỏ; nếu `n` lớn mà vẫn cần liệt kê, xem lại đề — thường đề ngầm cho `n` nhỏ.
 
 ## 6. Checklist tự luyện
 
@@ -677,4 +677,4 @@ Luyện theo thứ tự từ gốc tới biến thể; mỗi bài tự hỏi "kh
 - [ ] **37. Sudoku Solver** — *constraint / exact cover*. Tìm ô trống, thử 1–9, validate, quay lui.
 - [ ] **212. Word Search II** — *grid DFS + Trie*. Gộp nhiều từ bằng Trie (nâng cao).
 
-> 💡 Ghi nhớ cuối bài: Đừng học thuộc từng lời giải. Thuộc **một** khung choose–explore–unchoose, rồi với mỗi bài chỉ trả lời 3 câu: *(1) khi nào ghi nhận lời giải? (2) tập lựa chọn hợp lệ tại node là gì — `start` hay `used[]`? (3) cắt nhánh ở đâu?* Trả lời được ba câu này là code gần như tự viết ra.
+> Ghi nhớ cuối bài: Đừng học thuộc từng lời giải. Thuộc **một** khung choose–explore–unchoose, rồi với mỗi bài chỉ trả lời 3 câu: *(1) khi nào ghi nhận lời giải? (2) tập lựa chọn hợp lệ tại node là gì — `start` hay `used[]`? (3) cắt nhánh ở đâu?* Trả lời được ba câu này là code gần như tự viết ra.

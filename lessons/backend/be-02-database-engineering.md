@@ -66,7 +66,7 @@ Hệ quả thiết kế quan trọng:
 | InnoDB: clustered index | Bảng **chính là** B-tree theo primary key; secondary index trỏ về PK |
 | PK ngẫu nhiên (UUIDv4) | Insert rải rác khắp cây → page split, cache miss. Ưu tiên **UUIDv7/ULID** hoặc bigint |
 
-> 💡 Ghi nhớ: Index không "tăng tốc database" — nó đánh đổi **write chậm hơn + tốn disk** lấy **read nhanh hơn cho một pattern truy vấn cụ thể**. Thiết kế index = thiết kế theo query, không theo bảng.
+> Ghi nhớ: Index không "tăng tốc database" — nó đánh đổi **write chậm hơn + tốn disk** lấy **read nhanh hơn cho một pattern truy vấn cụ thể**. Thiết kế index = thiết kế theo query, không theo bảng.
 
 ## 2. Composite index & quy tắc leftmost prefix
 
@@ -78,12 +78,12 @@ CREATE INDEX idx_orders ON orders (user_id, status, created_at);
 
 | Query | Dùng được index? |
 |---|---|
-| `WHERE user_id = 1` | ✅ (prefix `a`) |
-| `WHERE user_id = 1 AND status = 'paid'` | ✅ (prefix `a, b`) |
-| `WHERE user_id = 1 AND status = 'paid' AND created_at > X` | ✅ toàn bộ |
-| `WHERE status = 'paid'` | ❌ (bỏ qua cột đầu) |
-| `WHERE user_id = 1 AND created_at > X` | ⚠️ chỉ dùng phần `user_id`, lọc `created_at` sau |
-| `WHERE user_id = 1 ORDER BY created_at` | ⚠️ không tránh được sort (vì `status` chen giữa) |
+| `WHERE user_id = 1` | ✓ (prefix `a`) |
+| `WHERE user_id = 1 AND status = 'paid'` | ✓ (prefix `a, b`) |
+| `WHERE user_id = 1 AND status = 'paid' AND created_at > X` | ✓ toàn bộ |
+| `WHERE status = 'paid'` | ✗ (bỏ qua cột đầu) |
+| `WHERE user_id = 1 AND created_at > X` | chỉ dùng phần `user_id`, lọc `created_at` sau |
+| `WHERE user_id = 1 ORDER BY created_at` | không tránh được sort (vì `status` chen giữa) |
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Leftmost prefix của composite index như danh bạ sắp theo họ rồi tên</title>
@@ -103,13 +103,13 @@ CREATE INDEX idx_orders ON orders (user_id, status, created_at);
   <text x="32" y="234" font-size="10.5" fill="currentColor" opacity="0.6">user_id gom thành khối liền nhau ↑</text>
   <g>
     <rect x="380" y="58" width="324" height="92" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="396" y="80" font-size="12" font-weight="700" fill="currentColor">✅ WHERE user_id = 1 [AND status...]</text>
+    <text x="396" y="80" font-size="12" font-weight="700" fill="currentColor">✓ WHERE user_id = 1 [AND status...]</text>
     <text x="396" y="102" font-size="11" fill="currentColor" opacity="0.8">Bắt đầu từ cột trái → nhảy thẳng vào khối</text>
     <text x="396" y="122" font-size="11" fill="currentColor" opacity="0.8">"user 1" rồi đọc tuần tự. Dùng được index.</text>
   </g>
   <g>
     <rect x="380" y="162" width="324" height="96" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="396" y="184" font-size="12" font-weight="700" fill="currentColor">❌ WHERE status = 'paid' (bỏ cột đầu)</text>
+    <text x="396" y="184" font-size="12" font-weight="700" fill="currentColor">✗ WHERE status = 'paid' (bỏ cột đầu)</text>
     <text x="396" y="206" font-size="11" fill="currentColor" opacity="0.8">'paid' rải khắp mọi user, không gom 1 chỗ</text>
     <text x="396" y="226" font-size="11" fill="currentColor" opacity="0.8">→ phải quét toàn bộ. Index vô dụng,</text>
     <text x="396" y="244" font-size="11" fill="currentColor" opacity="0.8">như tìm theo "tên" trong danh bạ sắp "họ".</text>
@@ -122,7 +122,7 @@ Quy tắc xếp cột (heuristic, không tuyệt đối):
 2. Cột phục vụ `ORDER BY` đặt cuối, ngay sau các cột equality.
 3. Đừng máy móc "selectivity cao đứng trước" — thứ tự phải khớp **shape của query** trước đã.
 
-> ⚠️ Bẫy production: tạo `(user_id)` riêng khi đã có `(user_id, status)` là **thừa** — index composite đã phục vụ được query theo `user_id`. Index thừa = write amplification thuần tuý, không thêm lợi ích.
+> Bẫy production: tạo `(user_id)` riêng khi đã có `(user_id, status)` là **thừa** — index composite đã phục vụ được query theo `user_id`. Index thừa = write amplification thuần tuý, không thêm lợi ích.
 
 ## 3. Covering index — đọc mà không chạm bảng
 
@@ -173,7 +173,7 @@ CREATE INDEX idx_users_cover
 - MySQL không có `INCLUDE` — thêm cột vào cuối composite index để đạt hiệu ứng tương tự.
 - Postgres cần **visibility map** sạch (vacuum đều) thì Index Only Scan mới thực sự "only".
 
-> 💡 Ghi nhớ: Covering index là vũ khí cho 2–3 query nóng nhất hệ thống. Đừng cover mọi query — index phình to thì buffer pool chứa được ít hơn, mọi thứ cùng chậm.
+> Ghi nhớ: Covering index là vũ khí cho 2–3 query nóng nhất hệ thống. Đừng cover mọi query — index phình to thì buffer pool chứa được ít hơn, mọi thứ cùng chậm.
 
 ## 4. Khi nào index làm CHẬM — write amplification
 
@@ -217,7 +217,7 @@ Những thứ phải nhìn:
 | `Buffers: shared read=...` cao | Đọc từ disk nhiều, dữ liệu không nằm trong cache |
 | `Index Scan` nhưng `Rows Removed by Filter` lớn | Index chỉ khớp một phần điều kiện — cân nhắc composite tốt hơn |
 
-> ⚠️ Bẫy production: plan **thay đổi theo dữ liệu**. Query chạy tốt 6 tháng rồi đột ngột chậm thường do bảng vượt ngưỡng khiến optimizer đổi plan, hoặc thống kê lệch sau bulk insert. Hãy lưu baseline plan của các query nóng và bật log slow query (`log_min_duration_statement`).
+> Bẫy production: plan **thay đổi theo dữ liệu**. Query chạy tốt 6 tháng rồi đột ngột chậm thường do bảng vượt ngưỡng khiến optimizer đổi plan, hoặc thống kê lệch sau bulk insert. Hãy lưu baseline plan của các query nóng và bật log slow query (`log_min_duration_statement`).
 
 ## 6. N+1 query — lỗi kinh điển của ORM
 
@@ -235,7 +235,7 @@ for (const o of orders) {
 2. **Batch load**: gom ID, query một lần `WHERE id IN (...)` — pattern **DataLoader** (bắt buộc với GraphQL resolver).
 3. Phát hiện sớm: bật log query ở môi trường dev/CI, đếm số query mỗi request; tool như `n+1` detector của Prosopite (Rails) hoặc đơn giản là assertion "request này ≤ X query" trong integration test.
 
-> 💡 Ghi nhớ: ORM không gây N+1 — **lazy loading mặc định + lập trình viên không nhìn SQL sinh ra** mới gây N+1. Quy tắc đội: mọi PR đụng query path nóng phải đính kèm SQL thực tế hoặc số lượng query.
+> Ghi nhớ: ORM không gây N+1 — **lazy loading mặc định + lập trình viên không nhìn SQL sinh ra** mới gây N+1. Quy tắc đội: mọi PR đụng query path nóng phải đính kèm SQL thực tế hoặc số lượng query.
 
 ## 7. Transaction & isolation levels
 
@@ -251,10 +251,10 @@ Các anomaly cần biết:
 
 | Isolation level | Dirty read | Non-repeatable | Phantom | Ghi chú |
 |---|---|---|---|---|
-| Read Uncommitted | ❌ có thể | ❌ | ❌ | Postgres không thực sự có mức này |
-| **Read Committed** | ✅ chặn | ❌ | ❌ | **Mặc định Postgres** |
-| **Repeatable Read** | ✅ | ✅ | Postgres: ✅ (snapshot) / MySQL: gần ✅ | **Mặc định MySQL/InnoDB** |
-| Serializable | ✅ | ✅ | ✅ (+ chặn write skew) | Đắt nhất; Postgres dùng SSI, có thể fail với `40001` |
+| Read Uncommitted | ✗ có thể | ✗ | ✗ | Postgres không thực sự có mức này |
+| **Read Committed** | ✓ chặn | ✗ | ✗ | **Mặc định Postgres** |
+| **Repeatable Read** | ✓ | ✓ | Postgres: ✓ (snapshot) / MySQL: gần ✓ | **Mặc định MySQL/InnoDB** |
+| Serializable | ✓ | ✓ | ✓ (+ chặn write skew) | Đắt nhất; Postgres dùng SSI, có thể fail với `40001` |
 
 Điểm hay bị hiểu sai:
 
@@ -285,7 +285,7 @@ Phòng deadlock:
 3. Dùng `SELECT ... FOR UPDATE SKIP LOCKED` cho pattern job queue (worker không chờ nhau).
 4. `lock_timeout` để fail nhanh thay vì xếp hàng vô hạn.
 
-> ⚠️ Bẫy production: deadlock **không phải bug phải diệt bằng 0** — ở mức thấp nó là chuyện bình thường của hệ concurrent. Bug thật là **không retry** khi bị chọn làm nạn nhân. Mọi write transaction nên đi qua wrapper có retry.
+> Bẫy production: deadlock **không phải bug phải diệt bằng 0** — ở mức thấp nó là chuyện bình thường của hệ concurrent. Bug thật là **không retry** khi bị chọn làm nạn nhân. Mọi write transaction nên đi qua wrapper có retry.
 
 ## 9. Optimistic vs Pessimistic locking
 
@@ -294,7 +294,7 @@ Phòng deadlock:
 | Cơ chế | `SELECT ... FOR UPDATE` — khoá trước, làm sau | Cột `version`; `UPDATE ... WHERE version = :old` — làm trước, kiểm tra lúc ghi |
 | Phù hợp | Contention **cao**, conflict gần như chắc xảy ra (trừ kho, ghi sổ) | Contention **thấp**, conflict hiếm (user sửa profile, CMS) |
 | Chi phí khi đông | Transaction xếp hàng chờ lock | Retry/báo lỗi "dữ liệu đã bị sửa" |
-| Hoạt động qua nhiều request HTTP? | ❌ (không giữ lock qua request) | ✅ (gửi version về client, so lúc submit) |
+| Hoạt động qua nhiều request HTTP? | ✗ (không giữ lock qua request) | ✓ (gửi version về client, so lúc submit) |
 
 ```sql
 -- Optimistic: nếu affected rows = 0 → người khác đã sửa, báo conflict
@@ -303,7 +303,7 @@ SET body = :new_body, version = version + 1
 WHERE id = :id AND version = :expected_version;
 ```
 
-> 💡 Ghi nhớ: form chỉnh sửa kéo dài nhiều phút (admin panel, CMS) **bắt buộc** optimistic — không DB nào nên giữ row lock suốt thời gian user gõ phím. Pessimistic chỉ dành cho critical section ngắn trong một transaction.
+> Ghi nhớ: form chỉnh sửa kéo dài nhiều phút (admin panel, CMS) **bắt buộc** optimistic — không DB nào nên giữ row lock suốt thời gian user gõ phím. Pessimistic chỉ dành cho critical section ngắn trong một transaction.
 
 ## 10. Migration an toàn — expand-contract, không khoá bảng
 
@@ -384,7 +384,7 @@ WHERE id IN (
 -- lặp lại đến khi affected rows = 0; theo dõi replication lag giữa các vòng
 ```
 
-> ⚠️ Bẫy production: ngay cả `ALTER TABLE` "nhanh" cũng cần **ACCESS EXCLUSIVE lock trong tích tắc** — nếu có một query dài đang chạy, ALTER xếp hàng sau nó, và **mọi query mới xếp hàng sau ALTER** → toàn bộ bảng đứng hình. Luôn set `lock_timeout = '3s'` + retry cho migration, và chạy ngoài giờ peak.
+> Bẫy production: ngay cả `ALTER TABLE` "nhanh" cũng cần **ACCESS EXCLUSIVE lock trong tích tắc** — nếu có một query dài đang chạy, ALTER xếp hàng sau nó, và **mọi query mới xếp hàng sau ALTER** → toàn bộ bảng đứng hình. Luôn set `lock_timeout = '3s'` + retry cho migration, và chạy ngoài giờ peak.
 
 Với MySQL: dùng **`gh-ost`** hoặc **`pt-online-schema-change`** cho bảng lớn (tạo shadow table + copy + swap), hoặc `ALGORITHM=INSTANT` (MySQL 8.0) cho các thay đổi hỗ trợ.
 
@@ -410,7 +410,7 @@ Bài toán thật ở kiến trúc hiện đại:
   <title>Topology connection pool: không pooler vs có PgBouncer/RDS Proxy</title>
   <desc>Bên trái (xấu): 50 pod mỗi pod pool 20 mở thẳng 1000 connection đập vào Postgres làm DB ngộp. Bên phải (đúng): các pod nối vào pooler PgBouncer hoặc RDS Proxy ở giữa, pooler gom lại còn khoảng 20 connection thật tới DB.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">50 pod × pool 20 — đập thẳng vào DB vs qua pooler</text>
-  <text x="180" y="50" font-size="12" font-weight="700" text-anchor="middle" fill="#f59e0b">❌ Không pooler</text>
+  <text x="180" y="50" font-size="12" font-weight="700" text-anchor="middle" fill="#f59e0b">✗ Không pooler</text>
   <g>
     <rect x="20" y="64" width="60" height="26" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="50" y="81" font-size="10" text-anchor="middle" fill="currentColor">pod</text>
@@ -429,7 +429,7 @@ Bài toán thật ở kiến trúc hiện đại:
   <rect x="110" y="216" width="140" height="40" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
   <text x="180" y="240" font-size="11.5" text-anchor="middle" fill="currentColor">Postgres ngộp</text>
   <line x1="360" y1="44" x2="360" y2="280" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="540" y="50" font-size="12" font-weight="700" text-anchor="middle" fill="#10b981">✅ Có pooler</text>
+  <text x="540" y="50" font-size="12" font-weight="700" text-anchor="middle" fill="#10b981">✓ Có pooler</text>
   <g>
     <rect x="400" y="64" width="56" height="26" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="428" y="81" font-size="10" text-anchor="middle" fill="currentColor">pod</text>
@@ -456,7 +456,7 @@ Bài toán thật ở kiến trúc hiện đại:
   <text x="540" y="240" font-size="11.5" text-anchor="middle" fill="currentColor">Postgres khỏe</text>
 </svg>
 
-> 💡 Ghi nhớ: nếu tăng pool size mà latency tăng theo, bạn không thiếu connection — bạn thiếu **CPU/I-O ở database**. Pool nhỏ + hàng đợi ở tầng app cho throughput tổng tốt hơn 500 connection cùng tranh nhau lock và buffer pool. Đo `connections active vs idle` trước khi chỉnh.
+> Ghi nhớ: nếu tăng pool size mà latency tăng theo, bạn không thiếu connection — bạn thiếu **CPU/I-O ở database**. Pool nhỏ + hàng đợi ở tầng app cho throughput tổng tốt hơn 500 connection cùng tranh nhau lock và buffer pool. Đo `connections active vs idle` trước khi chỉnh.
 
 Cấu hình kèm theo bắt buộc: `connection timeout` (fail nhanh khi pool cạn), `max lifetime` (tránh connection già hơn failover/DNS TTL), `idle timeout`, và `statement_timeout` phía DB để query hỏng không chiếm connection vô hạn.
 

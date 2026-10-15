@@ -61,9 +61,9 @@ data = f.read()        # syscall read()
 
 Mỗi lần chuyển user → kernel → user là một lần **mode switch**, tốn vài trăm nanosecond. Nghe nhỏ, nhưng nếu code của bạn gọi `read()` 1 byte một lần trong vòng lặp triệu lần, chi phí syscall sẽ áp đảo cả công việc thật.
 
-> 💡 Ghi nhớ: Mọi thứ "ra ngoài" chương trình — file, mạng, thời gian hệ thống, tạo thread — đều đi qua syscall. Đó là lý do buffering tồn tại: gom nhiều thao tác nhỏ thành ít syscall lớn.
+> Ghi nhớ: Mọi thứ "ra ngoài" chương trình — file, mạng, thời gian hệ thống, tạo thread — đều đi qua syscall. Đó là lý do buffering tồn tại: gom nhiều thao tác nhỏ thành ít syscall lớn.
 
-> ⚠️ Bẫy: Đọc/ghi file không buffer (mỗi dòng một syscall) có thể chậm hơn 10–100 lần so với đọc cả block rồi xử lý trong bộ nhớ. Hầu hết thư viện chuẩn đã buffer sẵn — đừng tự "tối ưu" bằng cách tắt nó.
+> Bẫy: Đọc/ghi file không buffer (mỗi dòng một syscall) có thể chậm hơn 10–100 lần so với đọc cả block rồi xử lý trong bộ nhớ. Hầu hết thư viện chuẩn đã buffer sẵn — đừng tự "tối ưu" bằng cách tắt nó.
 
 ## Process: chương trình có không gian riêng
 
@@ -86,7 +86,7 @@ Mỗi lần chuyển user → kernel → user là một lần **mode switch**, t
   <text x="293" y="180" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">address space riêng</text>
   <g>
     <line x1="192" y1="40" x2="192" y2="200" stroke="#ef4444" stroke-opacity="0.6" stroke-width="3" stroke-dasharray="6 5"/>
-    <text x="192" y="222" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.8">⛔ tường cách ly</text>
+    <text x="192" y="222" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.8">tường cách ly</text>
   </g>
   <rect x="392" y="40" width="312" height="160" rx="10" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <rect x="404" y="52" width="288" height="30" rx="7" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.18"/>
@@ -129,7 +129,7 @@ Cách ly này là tính năng an toàn tuyệt vời: nếu process A bị crash
 
 Vì thread chia sẻ heap, hai thread cùng sửa một biến → **race condition**. Đây chính là cội nguồn của bug concurrency (sẽ học sâu ở bài cs-05). Ngược lại, vì process cách ly, mô hình "nhiều process" (như Nginx worker, Gunicorn worker, hay Lambda) thường **an toàn và dễ scale hơn** dù tốn RAM hơn.
 
-> 💡 Ghi nhớ: "Process = cách ly, an toàn, tốn RAM. Thread = chia sẻ, nhanh, nguy hiểm." Chọn cái nào tuỳ bài toán: cần cách ly fault → process; cần share dữ liệu lớn rẻ → thread.
+> Ghi nhớ: "Process = cách ly, an toàn, tốn RAM. Thread = chia sẻ, nhanh, nguy hiểm." Chọn cái nào tuỳ bài toán: cần cách ly fault → process; cần share dữ liệu lớn rẻ → thread.
 
 ## Context switch & scheduling: ảo giác "đồng thời"
 
@@ -148,7 +148,7 @@ Context switch **không miễn phí**:
 - Tốn ~1–10 µs để lưu/nạp trạng thái.
 - Tệ hơn: làm **lạnh cache CPU** (xem bài cs-02) — dữ liệu của process mới chưa có trong L1/L2, phải nạp lại từ RAM.
 
-> ⚠️ Bẫy: Tạo 10.000 thread cho 10.000 request không làm nhanh hơn — CPU dành phần lớn thời gian context-switch thay vì làm việc thật (gọi là *thrashing*). Đây là lý do mô hình async/event-loop (Node.js, Nginx) hay thread pool giới hạn lại thắng: ít luồng, ít switch, tận dụng cache tốt.
+> Bẫy: Tạo 10.000 thread cho 10.000 request không làm nhanh hơn — CPU dành phần lớn thời gian context-switch thay vì làm việc thật (gọi là *thrashing*). Đây là lý do mô hình async/event-loop (Node.js, Nginx) hay thread pool giới hạn lại thắng: ít luồng, ít switch, tận dụng cache tốt.
 
 Process/thread không phải lúc nào cũng "chạy". Trạng thái điển hình:
 
@@ -248,7 +248,7 @@ Lợi ích:
 
 Khi code truy cập một page chưa có trong RAM (đang nằm trên swap), CPU phát sinh **page fault**, kernel phải nạp page đó từ đĩa về. RAM truy cập ~100 ns; ổ đĩa (kể cả SSD) chậm hơn hàng nghìn lần.
 
-> ⚠️ Bẫy: Khi RAM gần đầy, OS swap liên tục — gọi là **thrashing**. Triệu chứng: CPU thấp nhưng app chậm kinh khủng, disk I/O cao ngất. Nhiều người tưởng "thiếu CPU" nhưng thật ra là **thiếu RAM**. Trong container, swap thường bị tắt → thay vì chậm, process bị giết thẳng (OOMKilled).
+> Bẫy: Khi RAM gần đầy, OS swap liên tục — gọi là **thrashing**. Triệu chứng: CPU thấp nhưng app chậm kinh khủng, disk I/O cao ngất. Nhiều người tưởng "thiếu CPU" nhưng thật ra là **thiếu RAM**. Trong container, swap thường bị tắt → thay vì chậm, process bị giết thẳng (OOMKilled).
 
 ## File descriptor & signal: hai khái niệm hay gặp khi debug
 
@@ -264,7 +264,7 @@ s = socket.connect(...)  # fd = 4
 
 Mỗi process có **giới hạn số fd** (xem bằng `ulimit -n`, thường 1024). Quên đóng file/connection → fd cạn → lỗi kinh điển **"Too many open files"**. Đây là một trong những bug production phổ biến nhất với service xử lý nhiều kết nối.
 
-> 💡 Ghi nhớ: Mỗi TCP connection ăn một fd. Service nhận 5.000 kết nối đồng thời cần `ulimit -n` đủ lớn. Luôn dùng connection pool và đóng tài nguyên (`with`, `try-with-resources`, `defer`).
+> Ghi nhớ: Mỗi TCP connection ăn một fd. Service nhận 5.000 kết nối đồng thời cần `ulimit -n` đủ lớn. Luôn dùng connection pool và đóng tài nguyên (`with`, `try-with-resources`, `defer`).
 
 ### Signal
 

@@ -2,7 +2,7 @@
 
 Khi production kêu lúc 2 giờ sáng, thứ cứu bạn không phải là một dashboard đẹp — mà là khả năng **đi từ "có gì đó sai" đến "sai ở dòng code nào, service nào, vì input nào" chỉ bằng dữ liệu đã có sẵn**. Ba loại tín hiệu — Metrics, Logs, Traces — mỗi loại trả lời một câu hỏi khác nhau và bù đắp điểm mù cho nhau. Bài này mổ xẻ bản chất, điểm mạnh/yếu, chi phí thực của từng trụ cột, rồi đi vào **OpenTelemetry** — chuẩn mở đang thống nhất cả ba để bạn không bị khoá vào một vendor.
 
-> 💡 Nguyên tắc: Ba trụ cột không phải ba sản phẩm bạn mua rời, mà là **ba góc nhìn vào cùng một sự kiện**. Sức mạnh thật nằm ở chỗ nối chúng lại: từ một điểm nhọn trên biểu đồ metric, nhảy sang trace của đúng request chậm đó, rồi mở log của đúng span bị lỗi. Correlation mới là đích, không phải từng trụ cột riêng lẻ.
+> Nguyên tắc: Ba trụ cột không phải ba sản phẩm bạn mua rời, mà là **ba góc nhìn vào cùng một sự kiện**. Sức mạnh thật nằm ở chỗ nối chúng lại: từ một điểm nhọn trên biểu đồ metric, nhảy sang trace của đúng request chậm đó, rồi mở log của đúng span bị lỗi. Correlation mới là đích, không phải từng trụ cột riêng lẻ.
 
 ## Mục tiêu
 
@@ -109,7 +109,7 @@ traceparent: 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01
 
 Điểm mạnh: chỉ ra **chính xác service/span nào ngốn thời gian** hoặc phát lỗi trong một chuỗi phân tán — thứ metric và log đơn lẻ không thấy được. Điểm yếu: **volume khổng lồ** nếu trace 100% → bắt buộc **sampling** (xem §4), và tự nó ít giá trị khi không kèm attribute đủ giàu hoặc không nối được với log.
 
-> ⚠️ Bẫy thường gặp: coi ba trụ cột là ba silo tách biệt (ba tool, ba team, ba ngân sách) rồi lúc sự cố phải copy timestamp thủ công qua lại. Giá trị thật đến khi **exemplar** gắn `trace_id` vào bucket histogram (từ điểm p99 nhảy thẳng vào trace mẫu), và mọi log đều mang `trace_id`. Thiết kế để **nối**, đừng để rời.
+> Bẫy thường gặp: coi ba trụ cột là ba silo tách biệt (ba tool, ba team, ba ngân sách) rồi lúc sự cố phải copy timestamp thủ công qua lại. Giá trị thật đến khi **exemplar** gắn `trace_id` vào bucket histogram (từ điểm p99 nhảy thẳng vào trace mẫu), và mọi log đều mang `trace_id`. Thiết kế để **nối**, đừng để rời.
 
 ## 2. Chọn trụ cột nào — quy trình điều tra thực tế
 
@@ -134,7 +134,7 @@ Hai khái niệm bổ sung nhau, không thay thế:
 
 Định nghĩa vận hành sắc bén nhất: **nếu để debug một sự cố mới bạn phải thêm log rồi deploy lại chờ tái hiện — hệ thống của bạn chưa observable.** Observable nghĩa là bạn có thể đặt câu hỏi *mới* trên dữ liệu *cũ*: "chỉ 0.3% request, từ app Android build 4.2.1, qua provider X, ở region ap-southeast-1 timeout" — tổ hợp chiều đó không ai dựng dashboard trước, nhưng nếu trace/log đủ giàu attribute (high cardinality!) thì bạn lọc ra được. Chính vì cần cardinality cao mà observability dựa nhiều vào trace/log giàu thuộc tính, còn monitoring dựa vào metric ít label.
 
-> 💡 Ghi nhớ: Monitoring nói "có gì đó cháy". Observability trả lời "cháy ở đâu, vì sao, ảnh hưởng ai" mà không cần chạy về lấy thêm cảm biến. Bạn cần cả hai: alert từ monitoring gọi bạn dậy, observability giúp bạn tắt lửa.
+> Ghi nhớ: Monitoring nói "có gì đó cháy". Observability trả lời "cháy ở đâu, vì sao, ảnh hưởng ai" mà không cần chạy về lấy thêm cảm biến. Bạn cần cả hai: alert từ monitoring gọi bạn dậy, observability giúp bạn tắt lửa.
 
 ## 4. OpenTelemetry — chuẩn mở thống nhất ba trụ cột
 
@@ -324,7 +324,7 @@ Trace 100% ở quy mô cao là bất khả thi về chi phí. Hai chiến lượ
 
 Thực tế nhiều team dùng **tail-based ở gateway Collector**: giữ 100% trace có lỗi hoặc latency vượt ngưỡng, sample 1–5% trace "bình thường". Nhờ vậy khi điều tra, trace của đúng request hỏng gần như luôn còn.
 
-> ⚠️ Bẫy production: sampling phải **nhất quán theo cả trace** — nếu service A giữ span nhưng service B (do config lệch) drop, bạn có trace gãy, còn tệ hơn không có. Dùng `parentbased_*` sampler để service con tôn trọng quyết định sampled của cha (đọc từ flag `01` trong `traceparent`), đừng để mỗi service tự quyết độc lập.
+> Bẫy production: sampling phải **nhất quán theo cả trace** — nếu service A giữ span nhưng service B (do config lệch) drop, bạn có trace gãy, còn tệ hơn không có. Dùng `parentbased_*` sampler để service con tôn trọng quyết định sampled của cha (đọc từ flag `01` trong `traceparent`), đừng để mỗi service tự quyết độc lập.
 
 ## Tóm tắt
 

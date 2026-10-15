@@ -2,7 +2,7 @@
 
 Mọi hệ thống lớn, dù phức tạp đến đâu, đều được lắp ghép từ một số ít **khối xây dựng (building blocks)** lặp đi lặp lại. Tư duy kiến trúc không phải là nhớ "công nghệ X tốt nhất", mà là hiểu mỗi khối **giải quyết vấn đề gì** và **bắt ta trả giá gì**. Bài này đi qua bảy khối nền tảng. Với mỗi khối, hãy luôn tự hỏi: *"Nó che giấu độ phức tạp nào, và đẩy độ phức tạp đó đi đâu?"*
 
-> 💡 Nguyên tắc: Không có khối nào "miễn phí". Mỗi lần bạn thêm một thành phần để giải quyết một vấn đề, bạn tạo ra ít nhất một vấn đề mới (vận hành, nhất quán, độ trễ, chi phí). Kiến trúc tốt là chọn tập đánh đổi mà bạn *chịu được*, không phải tập không có đánh đổi.
+> Nguyên tắc: Không có khối nào "miễn phí". Mỗi lần bạn thêm một thành phần để giải quyết một vấn đề, bạn tạo ra ít nhất một vấn đề mới (vận hành, nhất quán, độ trễ, chi phí). Kiến trúc tốt là chọn tập đánh đổi mà bạn *chịu được*, không phải tập không có đánh đổi.
 
 ---
 
@@ -38,7 +38,7 @@ Phân phối traffic tới nhiều instance để có **horizontal scaling** + *
 | IP Hash / Consistent Hash | Hash client → node cố định | Cần affinity (cache cục bộ) | Lệch tải, khó co giãn |
 | Least Response Time | Node phản hồi nhanh nhất | Nhạy với node chậm | Đo lường tốn kém |
 
-> ⚠️ Bẫy thiết kế: **Sticky session** (gắn user vào một node) là cách nhanh để "giữ state", nhưng nó phá vỡ tính stateless: node chết là mất session, scale-in mất dữ liệu, tải lệch. Hãy đẩy state ra ngoài (Redis) thay vì dùng sticky.
+> Bẫy thiết kế: **Sticky session** (gắn user vào một node) là cách nhanh để "giữ state", nhưng nó phá vỡ tính stateless: node chết là mất session, scale-in mất dữ liệu, tải lệch. Hãy đẩy state ra ngoài (Redis) thay vì dùng sticky.
 
 ---
 
@@ -61,7 +61,7 @@ Trách nhiệm điển hình: authentication/authorization, rate limiting & thro
 - **Lợi:** service không phải tự làm auth/rate-limit/logging → đơn giản hoá hàng chục service.
 - **Hại:** gateway trở thành **single point of failure** và **single point of contention**. Mọi request đi qua nó → phải HA + scale cẩn thận. Có nguy cơ thành "monolith mới": logic nghiệp vụ rò vào gateway. Thêm một network hop → độ trễ.
 
-> 💡 Nguyên tắc: Gateway chỉ chứa logic *cross-cutting* (đúng cho mọi service). Logic *nghiệp vụ* (đặc thù một service) phải nằm trong service. Vi phạm ranh giới này là cách phổ biến nhất biến API Gateway thành nút thắt không thể bảo trì.
+> Nguyên tắc: Gateway chỉ chứa logic *cross-cutting* (đúng cho mọi service). Logic *nghiệp vụ* (đặc thù một service) phải nằm trong service. Vi phạm ranh giới này là cách phổ biến nhất biến API Gateway thành nút thắt không thể bảo trì.
 
 ---
 
@@ -147,7 +147,7 @@ Browser ─► CDN ─► API GW ─► App Cache ─► DB Cache ─► Disk
 Khi cache đầy, bỏ gì ra? **LRU** (ít dùng gần đây nhất) là mặc định tốt; **LFU** (ít dùng nhất) hợp khi có key "siêu nóng" lâu dài; **FIFO/TTL** đơn giản nhưng kém thông minh.
 
 ### Invalidation — vấn đề khó nhất
-> ⚠️ Bẫy thiết kế: "There are only two hard things in Computer Science: cache invalidation and naming things." Cache **stale** (cũ) là nguồn bug khó tái hiện nhất. Ba cách: **TTL** (đơn giản, chấp nhận stale trong khoảng T), **write-time invalidation** (xoá/cập nhật khi ghi — đúng hơn nhưng phức tạp, dễ sót), **versioned key** (đổi key khi dữ liệu đổi — không bao giờ stale nhưng phình bộ nhớ).
+> Bẫy thiết kế: "There are only two hard things in Computer Science: cache invalidation and naming things." Cache **stale** (cũ) là nguồn bug khó tái hiện nhất. Ba cách: **TTL** (đơn giản, chấp nhận stale trong khoảng T), **write-time invalidation** (xoá/cập nhật khi ghi — đúng hơn nhưng phức tạp, dễ sót), **versioned key** (đổi key khi dữ liệu đổi — không bao giờ stale nhưng phình bộ nhớ).
 
 **Capacity ví dụ:** 10M user active, mỗi profile 2 KB, hit rate mong muốn 90% → cache khoảng 1M profile nóng × 2 KB ≈ **2 GB** RAM. Một node Redis 16 GB thừa sức; vấn đề thật là *invalidation*, không phải dung lượng.
 
@@ -231,9 +231,9 @@ producer ─► [ ■■■■ ] ─► consumer     publisher ─►│─► s
 - **Lợi:** chịu tải đỉnh, độ bền (durability), khả năng phục hồi, tách dịch vụ.
 - **Hại:** mất tính **đồng bộ** → hệ trở thành eventually consistent, khó debug (luồng phân tán), thêm hạ tầng vận hành. Phải xử lý: **at-least-once delivery** (message có thể lặp → consumer cần **idempotent**), **ordering** (không phải lúc nào cũng đảm bảo), **poison message** (cần dead-letter queue), **backpressure** khi consumer chậm hơn producer.
 
-> 💡 Nguyên tắc: Dùng queue khi câu trả lời có thể đến *sau* và việc gửi đi *phải* thành công cuối cùng. Đừng dùng queue cho luồng cần phản hồi tức thì cho user — bạn sẽ phải tự xây lại cơ chế request/response trên nó.
+> Nguyên tắc: Dùng queue khi câu trả lời có thể đến *sau* và việc gửi đi *phải* thành công cuối cùng. Đừng dùng queue cho luồng cần phản hồi tức thì cho user — bạn sẽ phải tự xây lại cơ chế request/response trên nó.
 
-> ⚠️ Bẫy thiết kế: Vì delivery thường là *at-least-once*, **mọi consumer phải idempotent** (xử lý cùng message 2 lần cho cùng kết quả). Bỏ qua điều này → trừ tiền khách hai lần. Dùng idempotency key + dedup store.
+> Bẫy thiết kế: Vì delivery thường là *at-least-once*, **mọi consumer phải idempotent** (xử lý cùng message 2 lần cho cùng kết quả). Bỏ qua điều này → trừ tiền khách hai lần. Dùng idempotency key + dedup store.
 
 ---
 
@@ -298,7 +298,7 @@ producer ─► [ ■■■■ ] ─► consumer     publisher ─►│─► s
 - **Synchronous:** leader chờ follower xác nhận mới commit. Không mất dữ liệu khi failover, nhưng write chậm và nếu follower treo thì leader cũng treo.
 - **Asynchronous:** leader commit ngay, follower bắt kịp sau. Write nhanh, nhưng có **replication lag** → đọc từ follower có thể thấy dữ liệu cũ (**read-your-writes** bị vi phạm), và mất vài giây dữ liệu nếu leader chết trước khi replica bắt kịp.
 
-> ⚠️ Bẫy thiết kế: User cập nhật profile rồi reload, thấy dữ liệu cũ vì read trúng follower đang lag. Khắc phục: route read-after-write của *chính user đó* về leader trong vài giây, hoặc theo dõi vị trí log (LSN) per-user.
+> Bẫy thiết kế: User cập nhật profile rồi reload, thấy dữ liệu cũ vì read trúng follower đang lag. Khắc phục: route read-after-write của *chính user đó* về leader trong vài giây, hoặc theo dõi vị trí log (LSN) per-user.
 
 ### Giới hạn
 Replication giải quyết *read scaling* nhưng **không** giải quyết *write scaling* — mọi write vẫn dồn vào một leader. Khi ghi vượt sức một máy → cần sharding.
@@ -380,7 +380,7 @@ Replication giải quyết *read scaling* nhưng **không** giải quyết *writ
 
 Với `hash % N` thông thường, đổi `N` (thêm/bớt node) làm **gần như mọi key đổi chỗ** → đại di trú dữ liệu, cache cháy. Consistent hashing giới hạn thiệt hại còn ~1/N. **Virtual nodes** (mỗi node vật lý chiếm nhiều điểm trên vòng) giúp cân tải đều và làm "mượt" việc thêm node không đồng nhất.
 
-> ⚠️ Bẫy thiết kế: Sharding làm **JOIN xuyên shard**, **transaction xuyên shard**, và **distributed query** trở nên đắt hoặc bất khả thi. Chọn **shard key** sai (gây hotspot hoặc buộc fan-out mọi query) là quyết định khó đảo ngược nhất hệ thống. Chọn key sao cho query phổ biến nhất chỉ chạm *một* shard.
+> Bẫy thiết kế: Sharding làm **JOIN xuyên shard**, **transaction xuyên shard**, và **distributed query** trở nên đắt hoặc bất khả thi. Chọn **shard key** sai (gây hotspot hoặc buộc fan-out mọi query) là quyết định khó đảo ngược nhất hệ thống. Chọn key sao cho query phổ biến nhất chỉ chạm *một* shard.
 
 ---
 
@@ -400,7 +400,7 @@ Khi có **Partition** (mạng chia cắt — điều *sẽ* xảy ra trong hệ 
    từ chối)      cũ/lệch)
 ```
 
-> 💡 Nguyên tắc: CAP không phải lựa chọn "một lần cho cả hệ thống". Nó là quyết định **per-operation**. Một hệ thống có thể CP cho thanh toán và AP cho hiển thị số lượt like. Hãy hỏi từng luồng: "Nếu trả dữ liệu cũ ở đây, hậu quả là gì?"
+> Nguyên tắc: CAP không phải lựa chọn "một lần cho cả hệ thống". Nó là quyết định **per-operation**. Một hệ thống có thể CP cho thanh toán và AP cho hiển thị số lượt like. Hãy hỏi từng luồng: "Nếu trả dữ liệu cũ ở đây, hậu quả là gì?"
 
 ### Phổ nhất quán thực tế
 Trong đời thực ta hiếm khi cần "strong consistency" tuyệt đối ở mọi nơi:
@@ -433,7 +433,7 @@ Tầng ứng dụng **không giữ state cục bộ** giữa các request: bất
    └─────────────────┘
 ```
 
-> 💡 Nguyên tắc: "Treat servers as cattle, not pets." State *phải* sống ở đâu đó (DB, cache, object store) — stateless không có nghĩa là phi-state, mà là **đẩy state xuống một tầng được thiết kế để giữ nó**. Bạn đã đổi sự đơn giản của tầng app lấy độ phức tạp tập trung ở tầng lưu trữ — và đó là một đổi chác *tốt*.
+> Nguyên tắc: "Treat servers as cattle, not pets." State *phải* sống ở đâu đó (DB, cache, object store) — stateless không có nghĩa là phi-state, mà là **đẩy state xuống một tầng được thiết kế để giữ nó**. Bạn đã đổi sự đơn giản của tầng app lấy độ phức tạp tập trung ở tầng lưu trữ — và đó là một đổi chác *tốt*.
 
 ---
 
@@ -532,7 +532,7 @@ Mỗi mũi tên thêm vào là một đánh đổi: thêm hop độ trễ, thêm
 - **Gọi tên consistency yêu cầu của từng luồng.** "Số dư tài khoản cần strong; số lượt xem video chịu được eventual." Điều này cho thấy bạn hiểu CAP không phải khẩu hiệu.
 - **Thừa nhận giới hạn của lựa chọn.** "Sharding theo user_id giải quyết write scaling nhưng làm báo cáo cross-user phải fan-out — em sẽ giải quyết bằng một read replica/OLAP riêng." Cho thấy bạn nghĩ tới hệ quả bậc hai.
 
-> ⚠️ Bẫy phỏng vấn: Vẽ kiến trúc đầy box ngay từ đầu mà không hỏi requirement. Hãy hỏi quy mô, tỷ lệ read/write, yêu cầu nhất quán *trước*, rồi mới thêm khối tương ứng. Một hệ thống over-engineered là tín hiệu xấu ngang một hệ thống không chịu tải.
+> Bẫy phỏng vấn: Vẽ kiến trúc đầy box ngay từ đầu mà không hỏi requirement. Hãy hỏi quy mô, tỷ lệ read/write, yêu cầu nhất quán *trước*, rồi mới thêm khối tương ứng. Một hệ thống over-engineered là tín hiệu xấu ngang một hệ thống không chịu tải.
 
 ---
 
@@ -554,4 +554,4 @@ Mỗi mũi tên thêm vào là một đánh đổi: thêm hop độ trễ, thêm
 | Stateless tier | **EC2 ASG**, **ECS/Fargate**, **Lambda** | State đẩy sang ElastiCache / DynamoDB / S3 |
 | State bền ngoài app | **S3**, **DynamoDB**, **ElastiCache** | "Cattle not pets" — app node vứt đi được |
 
-> 💡 Nguyên tắc cuối: Tên dịch vụ AWS sẽ đổi, nhưng *khối xây dựng* thì không. Khi đứng trước một dịch vụ mới, hãy hỏi "đây là khối nào trong bảy khối trên, và nó đánh đổi gì?" — bạn sẽ hiểu nó trong vài phút thay vì đọc tài liệu hàng giờ.
+> Nguyên tắc cuối: Tên dịch vụ AWS sẽ đổi, nhưng *khối xây dựng* thì không. Khi đứng trước một dịch vụ mới, hãy hỏi "đây là khối nào trong bảy khối trên, và nó đánh đổi gì?" — bạn sẽ hiểu nó trong vài phút thay vì đọc tài liệu hàng giờ.

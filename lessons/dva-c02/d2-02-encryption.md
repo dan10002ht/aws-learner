@@ -10,7 +10,7 @@ KMS là dịch vụ quản lý **key mã hóa**. Điểm cốt lõi: **plaintext
 - Mọi lời gọi KMS đều được ghi vào **CloudTrail** → audit được ai dùng key, lúc nào.
 - KMS tích hợp sẵn với hầu hết service AWS (S3, EBS, RDS, DynamoDB, Secrets Manager, SQS, SNS...).
 
-> 💡 Mẹo thi: Nếu câu hỏi nói "audit mọi lần key được sử dụng" → đáp án là **CloudTrail** (không phải CloudWatch).
+> Mẹo thi: Nếu câu hỏi nói "audit mọi lần key được sử dụng" → đáp án là **CloudTrail** (không phải CloudWatch).
 
 ## 2. Các loại KMS key (CMK)
 
@@ -27,7 +27,7 @@ Cách phân biệt nhanh:
 - Chỉ cần mã hóa "cho có", AWS lo hết → **AWS managed**.
 - **AWS owned** bạn thậm chí không thấy nó trong account (ví dụ một số mã hóa mặc định của DynamoDB).
 
-> ⚠️ Bẫy: **AWS managed key** bạn KHÔNG sửa được key policy và KHÔNG tự bật/tắt rotation (nó tự rotate mỗi năm, cố định). Chỉ **customer managed key** mới cho bạn toàn quyền.
+> Bẫy: **AWS managed key** bạn KHÔNG sửa được key policy và KHÔNG tự bật/tắt rotation (nó tự rotate mỗi năm, cố định). Chỉ **customer managed key** mới cho bạn toàn quyền.
 
 ## 3. Envelope Encryption — phần được hỏi NHIỀU NHẤT
 
@@ -128,11 +128,11 @@ const { Plaintext: dataKey } = await kms.send(new DecryptCommand({
 }));
 ```
 
-> 💡 Mẹo thi: `GenerateDataKey` trả về **cả plaintext lẫn encrypted version** của data key. Nếu chỉ cần encrypted version (chưa dùng ngay) → dùng `GenerateDataKeyWithoutPlaintext`.
+> Mẹo thi: `GenerateDataKey` trả về **cả plaintext lẫn encrypted version** của data key. Nếu chỉ cần encrypted version (chưa dùng ngay) → dùng `GenerateDataKeyWithoutPlaintext`.
 
-> ⚠️ Bẫy: Câu hỏi kinh điển: "Cần mã hóa file 10 GB bằng KMS, làm thế nào?" → KHÔNG gọi `Encrypt` (vì giới hạn 4KB). Đáp án là **envelope encryption với `GenerateDataKey`**. Đây gần như chắc chắn xuất hiện trong đề.
+> Bẫy: Câu hỏi kinh điển: "Cần mã hóa file 10 GB bằng KMS, làm thế nào?" → KHÔNG gọi `Encrypt` (vì giới hạn 4KB). Đáp án là **envelope encryption với `GenerateDataKey`**. Đây gần như chắc chắn xuất hiện trong đề.
 
-> ⚠️ Bẫy: `Decrypt` không cần truyền `KeyId` — KMS đọc metadata trong `CiphertextBlob` để biết dùng key nào (trừ multi-Region/asymmetric thì nên truyền). Nhưng truyền KeyId vào là best practice bảo mật để tránh nhầm key.
+> Bẫy: `Decrypt` không cần truyền `KeyId` — KMS đọc metadata trong `CiphertextBlob` để biết dùng key nào (trừ multi-Region/asymmetric thì nên truyền). Nhưng truyền KeyId vào là best practice bảo mật để tránh nhầm key.
 
 ## 4. Giới hạn 4 KB và khi nào dùng API nào
 
@@ -144,7 +144,7 @@ const { Plaintext: dataKey } = await kms.send(new DecryptCommand({
 | `GenerateDataKeyWithoutPlaintext` | Sinh data key để dùng SAU (chưa mã hóa ngay) | — |
 | `ReEncrypt` | Đổi data từ key này sang key khác **mà không lộ plaintext** | 4 KB |
 
-> 💡 Mẹo thi: Con số **4 KB** xuất hiện rất nhiều. Nhớ: `Encrypt`/`Decrypt`/`ReEncrypt` = 4KB; muốn lớn hơn = data key.
+> Mẹo thi: Con số **4 KB** xuất hiện rất nhiều. Nhớ: `Encrypt`/`Decrypt`/`ReEncrypt` = 4KB; muốn lớn hơn = data key.
 
 ## 5. Key Policy vs IAM Policy vs Grants
 
@@ -201,7 +201,7 @@ KMS có cơ chế phân quyền hơi khác các service khác. Có **3 lớp**:
   <text x="586" y="272" font-size="20" font-weight="700" text-anchor="middle" fill="#f59e0b">AccessDenied</text>
 </svg>
 
-> ⚠️ Bẫy: Đề hay hỏi "User đã có IAM policy `kms:Decrypt` nhưng vẫn bị AccessDenied". Nguyên nhân: **key policy chưa cho phép**. Ngược với hầu hết service khác — với KMS bạn phải nghĩ tới key policy trước.
+> Bẫy: Đề hay hỏi "User đã có IAM policy `kms:Decrypt` nhưng vẫn bị AccessDenied". Nguyên nhân: **key policy chưa cho phép**. Ngược với hầu hết service khác — với KMS bạn phải nghĩ tới key policy trước.
 
 | Cơ chế | Phạm vi | Tồn tại lâu? | Khi nào dùng |
 |---|---|---|---|
@@ -222,9 +222,9 @@ KMS có cơ chế phân quyền hơi khác các service khác. Có **3 lớp**:
 - Dữ liệu cũ vẫn giải mã được bằng material cũ (KMS giữ lại material cũ).
 - Chỉ áp dụng cho **symmetric customer managed key** (không phải imported/asymmetric mặc định).
 
-> 💡 Mẹo thi: Automatic rotation = **mỗi 1 năm** (trước đây là cố định 365 ngày; nay có thể tùy chỉnh từ 90 ngày trở lên, nhưng đề thường lấy mốc "yearly"). Nhớ con số "1 năm".
+> Mẹo thi: Automatic rotation = **mỗi 1 năm** (trước đây là cố định 365 ngày; nay có thể tùy chỉnh từ 90 ngày trở lên, nhưng đề thường lấy mốc "yearly"). Nhớ con số "1 năm".
 
-> ⚠️ Bẫy: Khi rotate, **alias trỏ vào cùng key, key ID không đổi**. Nếu câu hỏi nói "rotate mà không phải đổi code ứng dụng" → đó là automatic rotation của customer managed key. Manual rotation thì PHẢI cập nhật alias trỏ sang key mới.
+> Bẫy: Khi rotate, **alias trỏ vào cùng key, key ID không đổi**. Nếu câu hỏi nói "rotate mà không phải đổi code ứng dụng" → đó là automatic rotation của customer managed key. Manual rotation thì PHẢI cập nhật alias trỏ sang key mới.
 
 ## 7. Cross-Account Key Usage
 
@@ -243,9 +243,9 @@ Cho phép account B dùng key của account A. Cần **2 phía**:
 }
 ```
 
-> ⚠️ Bẫy: Cross-account cần **CẢ HAI**: key policy bên A mở quyền + IAM policy bên B cho phép. Thiếu một bên là AccessDenied. Đề rất hay cho đáp án "chỉ sửa một bên" để bẫy.
+> Bẫy: Cross-account cần **CẢ HAI**: key policy bên A mở quyền + IAM policy bên B cho phép. Thiếu một bên là AccessDenied. Đề rất hay cho đáp án "chỉ sửa một bên" để bẫy.
 
-> 💡 Mẹo thi: Để share một AMI/snapshot EBS đã mã hóa sang account khác, ngoài share snapshot bạn còn phải share **KMS key** (qua key policy) — nếu không account kia không decrypt được.
+> Mẹo thi: Để share một AMI/snapshot EBS đã mã hóa sang account khác, ngoài share snapshot bạn còn phải share **KMS key** (qua key policy) — nếu không account kia không decrypt được.
 
 ## 8. Multi-Region Keys
 
@@ -253,7 +253,7 @@ Cho phép account B dùng key của account A. Cần **2 phía**:
 - Dùng khi: disaster recovery, global table (DynamoDB Global Tables), dữ liệu mã hóa cần đọc được ở nhiều Region mà không gọi cross-Region.
 - Ciphertext mã hóa ở Region A có thể decrypt ở Region B **không cần gọi lại Region A**.
 
-> ⚠️ Bẫy: KMS key **mặc định là single-Region**. Ciphertext của key thường KHÔNG dùng được ở Region khác. Muốn dùng đa Region phải tạo **multi-Region key** ngay từ đầu. Đề hay hỏi "data mã hóa ở us-east-1 cần đọc ở eu-west-1 nhanh nhất" → multi-Region keys.
+> Bẫy: KMS key **mặc định là single-Region**. Ciphertext của key thường KHÔNG dùng được ở Region khác. Muốn dùng đa Region phải tạo **multi-Region key** ngay từ đầu. Đề hay hỏi "data mã hóa ở us-east-1 cần đọc ở eu-west-1 nhanh nhất" → multi-Region keys.
 
 ## 9. Encryption at Rest vs in Transit
 
@@ -316,11 +316,11 @@ aws s3 cp file.txt s3://my-bucket/file.txt \
   --sse aws:kms --sse-kms-key-id alias/my-key
 ```
 
-> ⚠️ Bẫy SSE-KMS: Mỗi lần PUT/GET object SSE-KMS đều gọi KMS (`GenerateDataKey`/`Decrypt`) → có thể chạm **KMS request throttle** khi traffic cao. Giải pháp: bật **S3 Bucket Keys** để giảm số lần gọi KMS (dùng một bucket-level data key). Đề hay hỏi cách giảm chi phí/throttle KMS với S3 → **S3 Bucket Keys**.
+> Bẫy SSE-KMS: Mỗi lần PUT/GET object SSE-KMS đều gọi KMS (`GenerateDataKey`/`Decrypt`) → có thể chạm **KMS request throttle** khi traffic cao. Giải pháp: bật **S3 Bucket Keys** để giảm số lần gọi KMS (dùng một bucket-level data key). Đề hay hỏi cách giảm chi phí/throttle KMS với S3 → **S3 Bucket Keys**.
 
-> ⚠️ Bẫy SSE-C: KMS KHÔNG liên quan ở đây — key do bạn cung cấp trong từng request. S3 dùng key đó để mã hóa rồi **quên key đi** (chỉ lưu HMAC để verify). Bắt buộc HTTPS vì key đi qua header.
+> Bẫy SSE-C: KMS KHÔNG liên quan ở đây — key do bạn cung cấp trong từng request. S3 dùng key đó để mã hóa rồi **quên key đi** (chỉ lưu HMAC để verify). Bắt buộc HTTPS vì key đi qua header.
 
-> 💡 Mẹo thi: Phân biệt "Ai giữ key" và "Ai thực hiện mã hóa":
+> Mẹo thi: Phân biệt "Ai giữ key" và "Ai thực hiện mã hóa":
 > - SSE-* → **server (S3)** mã hóa.
 > - Client-side → **client** mã hóa, S3 chỉ lưu ciphertext.
 > - SSE-C và Client-side đều do **bạn** giữ key, nhưng khác nhau ở chỗ ai thực hiện việc mã hóa.
@@ -340,11 +340,11 @@ ACM quản lý **TLS/SSL certificate** cho encryption **in transit**.
 | Chi phí | Miễn phí | Trả phí (CA + cert) |
 | Tự gia hạn | Có | Có (cấu hình được) |
 
-> ⚠️ Bẫy ACM: ACM cert public KHÔNG gắn trực tiếp lên **EC2 instance**. Phải dùng qua ALB/CloudFront/API Gateway. Muốn cert trên EC2 → tự import hoặc dùng Private CA.
+> Bẫy ACM: ACM cert public KHÔNG gắn trực tiếp lên **EC2 instance**. Phải dùng qua ALB/CloudFront/API Gateway. Muốn cert trên EC2 → tự import hoặc dùng Private CA.
 
-> 💡 Mẹo thi: "Cần HTTPS, tự động gia hạn, miễn phí, dùng với ALB/CloudFront" → **ACM public cert**. "Cần cert nội bộ cho microservice không expose internet" → **ACM Private CA**.
+> Mẹo thi: "Cần HTTPS, tự động gia hạn, miễn phí, dùng với ALB/CloudFront" → **ACM public cert**. "Cần cert nội bộ cho microservice không expose internet" → **ACM Private CA**.
 
-> 💡 Mẹo thi: ACM cert (public) chỉ dùng được trong **Region** của nó, RIÊNG **CloudFront yêu cầu cert ở Region us-east-1** (N. Virginia). Đây là một bẫy hay gặp.
+> Mẹo thi: ACM cert (public) chỉ dùng được trong **Region** của nó, RIÊNG **CloudFront yêu cầu cert ở Region us-east-1** (N. Virginia). Đây là một bẫy hay gặp.
 
 ## 12. Tổng hợp bẫy thi hay gặp
 
@@ -359,4 +359,4 @@ ACM quản lý **TLS/SSL certificate** cho encryption **in transit**.
 - **SSE-C** không liên quan KMS, bắt buộc HTTPS.
 - **ACM public cert** không gắn trực tiếp EC2; **CloudFront cần cert ở us-east-1**.
 
-> 💡 Mẹo thi tổng: Khi gặp câu hỏi security, luôn tự hỏi 3 điều: (1) Ai giữ key? (2) Ai thực hiện mã hóa (client hay server)? (3) Quyền được cấp ở key policy hay IAM? Trả lời được 3 câu này là loại được phần lớn đáp án sai.
+> Mẹo thi tổng: Khi gặp câu hỏi security, luôn tự hỏi 3 điều: (1) Ai giữ key? (2) Ai thực hiện mã hóa (client hay server)? (3) Quyền được cấp ở key policy hay IAM? Trả lời được 3 câu này là loại được phần lớn đáp án sai.

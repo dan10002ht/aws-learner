@@ -383,42 +383,42 @@ t "ls -la"                               # mong đợi 0
 
 ## 5. Bẫy thường gặp
 
-🪤 **Hook crash = hook cho qua.**
+**Hook crash = hook cho qua.**
 Triệu chứng: hook chặn đúng trên máy bạn, nhưng trên máy đồng nghiệp lệnh nguy hiểm vẫn chạy, transcript chỉ có một dòng "hook error".
 Nguyên nhân gốc: exit code khác 0 và 2 là lỗi **không chặn** — `jq: command not found` trả 127, hành động tiếp tục.
 Chặn bằng cơ chế: dòng đầu script kiểm phụ thuộc và `exit 2` nếu thiếu (như Bước 3); với hook *nhắc* (không phải hook chặn) thì làm ngược lại — lỗi thì im lặng exit 0, để hook hỏng không làm phiên đứng.
 
-🪤 **Tin `Bash(x *)` là rào an ninh.**
+**Tin `Bash(x *)` là rào an ninh.**
 Triệu chứng: deny `Bash(git push *)` nhưng vẫn có push lên remote.
 Nguyên nhân gốc: rule so tiền tố văn bản lệnh; docs xác nhận nó không phải security boundary quanh chương trình.
 Chặn bằng cơ chế: hook `PreToolUse` cho các biến thể, và credential/branch protection cho thứ không được sai lần nào.
 
-🪤 **Đặt rào ở `PostToolUse`.**
+**Đặt rào ở `PostToolUse`.**
 Triệu chứng: hook "chặn" ghi DB nhưng dữ liệu vẫn đã ghi, chỉ có thêm một thông báo.
 Nguyên nhân gốc: `PostToolUse` bắn sau khi tool đã chạy; `decision: "block"` chỉ thêm lý do cạnh kết quả.
 Chặn bằng cơ chế: thứ gì cần ngăn thì `PreToolUse`; `PostToolUse` dành cho format, lint, ghi log.
 
-🪤 **Hook trong `settings.local.json` biến mất ở worktree.**
+**Hook trong `settings.local.json` biến mất ở worktree.**
 Triệu chứng: hook chạy ở checkout chính, im lặng trong worktree hoặc trên máy khác.
 Nguyên nhân gốc: `.claude/settings.local.json` không được commit nên không đi theo; worktree là một checkout khác.
 Chặn bằng cơ chế: hook cho cả team → `.claude/settings.json` (commit); hook cá nhân cho mọi repo → `~/.claude/settings.json`. Kiểm bằng `/hooks` trong một worktree mới.
 
-🪤 **JSON đúng mà không có tác dụng.**
+**JSON đúng mà không có tác dụng.**
 Triệu chứng: script in `{"hookSpecificOutput": …}` hợp lệ, exit 0, nhưng quyết định không được áp, không có lỗi.
 Nguyên nhân gốc: theo docs, hai nguyên nhân thường gặp — shell profile `echo` một dòng trước JSON nên stdout không bắt đầu bằng `{`; hoặc trường đặt sai cấp (`permissionDecision` phải nằm trong `hookSpecificOutput`, `additionalContext` đặt ở cấp cao nhất bị bỏ qua).
 Chặn bằng cơ chế: dựng JSON bằng `jq -n`, không nối chuỗi; chạy `claude --debug` và tìm `Hook output does not start with {`.
 
-🪤 **Stop hook làm agent chạy vòng.**
+**Stop hook làm agent chạy vòng.**
 Triệu chứng: agent không chịu dừng, rồi dừng với cảnh báo Stop hook block quá nhiều lần.
 Nguyên nhân gốc: hook `Stop` chặn theo một điều kiện không bao giờ thoả. Docs: harness tự bỏ qua lần chặn sau 8 lần liên tiếp không có tool call nào xen giữa.
 Chặn bằng cơ chế: đọc `stop_hook_active` từ stdin, là `true` thì exit 0.
 
-🪤 **Chỉ thị nhét vào tool response.**
+**Chỉ thị nhét vào tool response.**
 Triệu chứng: muốn agent cư xử khác khi gặp một lỗi, bạn thêm "hãy làm X" vào message lỗi trả về từ tool/API của mình.
 Nguyên nhân gốc: tool response là dữ liệu; biến dữ liệu thành kênh ra lệnh là mở bề mặt prompt injection, và có nền tảng kiểm runtime rồi từ chối.
 Chặn bằng cơ chế: response = một câu trần thuật về sự kiện; hướng dẫn hành vi đặt ở kênh được chỉ định (system prompt, file instructions, `CLAUDE.md`, `additionalContext` của hook); test assert response không chứa động từ mệnh lệnh / ngôi thứ hai.
 
-🪤 **Denylist cho thứ được lộ ra ngoài.**
+**Denylist cho thứ được lộ ra ngoài.**
 Triệu chứng: tool trả cấu hình "mọi thứ trừ 3 key bí mật"; ai đó thêm một nhóm cấu hình mới có credential và nó lọt ra.
 Nguyên nhân gốc: denylist đúng tại lúc viết và sai im lặng khi dữ liệu lớn thêm (case thực tế: một tool MCP đã đẩy host/port/username SMTP dạng plaintext ra ngoài theo đúng cách này).
 Chặn bằng cơ chế: allowlist — thứ mới thêm vào mặc định **vô hình**, hỏng về phía an toàn. Chi tiết cho MCP ở [[ag-09-mcp]].

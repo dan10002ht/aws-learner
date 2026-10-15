@@ -4,7 +4,7 @@ Hệ thống monitoring là thứ kỳ lạ nhất trong hạ tầng: nó là **
 
 Bài này thiết kế một hệ metrics monitoring & alerting nội bộ cho một công ty lớn: 100.000 máy, ~10 triệu time series sống, retention 1 năm. Ta sẽ đi từ chỗ hay bị bỏ qua nhất — **phân biệt metrics với logs và traces** — vì chọn sai ranh giới ở đây thì mọi con số estimation phía sau đều vô nghĩa.
 
-> 💡 **Nguyên tắc xuyên suốt**: metrics monitoring không phải bài toán "lưu số liệu". Nó là bài toán **nén một lượng dữ liệu khổng lồ có cấu trúc rất đều đặn xuống đủ nhỏ để giữ được 1 năm, mà vẫn trả lời được câu hỏi trong 100 ms lúc 3 giờ sáng**. Mọi quyết định thiết kế đều xoay quanh đánh đổi giữa *độ phân giải*, *cardinality* và *chi phí*.
+> **Nguyên tắc xuyên suốt**: metrics monitoring không phải bài toán "lưu số liệu". Nó là bài toán **nén một lượng dữ liệu khổng lồ có cấu trúc rất đều đặn xuống đủ nhỏ để giữ được 1 năm, mà vẫn trả lời được câu hỏi trong 100 ms lúc 3 giờ sáng**. Mọi quyết định thiết kế đều xoay quanh đánh đổi giữa *độ phân giải*, *cardinality* và *chi phí*.
 
 ---
 
@@ -32,7 +32,7 @@ Ba câu hỏi ở dòng cuối mới là lý do thật sự tách ba hệ. Quy t
 
 Điểm nối hợp lý giữa ba hệ không phải gộp storage mà là **gộp ngữ cảnh**: dùng chung bộ label (`service`, `env`, `region`, `version`) và đính `trace_id` vào log (exemplar). Đó là "correlation", không phải "consolidation".
 
-> ⚠️ **Bẫy phổ biến nhất trong thực tế**: dùng CloudWatch Logs (hoặc ELK) làm nơi đếm số liệu — ghi log mỗi request rồi dựng Metric Filter để đếm. Nó chạy được ở quy mô nhỏ và **đắt kinh hoàng** ở quy mô lớn, vì bạn trả tiền theo GB ingest cho dữ liệu mà 99,99% nội dung bị vứt đi ngay sau khi đếm. Đúng ra phải đếm ở phía client rồi chỉ gửi con số (xem EMF ở phần AWS).
+> **Bẫy phổ biến nhất trong thực tế**: dùng CloudWatch Logs (hoặc ELK) làm nơi đếm số liệu — ghi log mỗi request rồi dựng Metric Filter để đếm. Nó chạy được ở quy mô nhỏ và **đắt kinh hoàng** ở quy mô lớn, vì bạn trả tiền theo GB ingest cho dữ liệu mà 99,99% nội dung bị vứt đi ngay sau khi đếm. Đúng ra phải đếm ở phía client rồi chỉ gửi con số (xem EMF ở phần AWS).
 
 Phạm vi bài này: **chỉ metrics hạ tầng và metrics ứng dụng mức thô** (CPU, memory, disk, RPS, latency, queue depth). Logs và traces nằm ngoài scope, nhưng ta sẽ bàn điểm nối ở phần AWS.
 
@@ -131,7 +131,7 @@ Tầng 3 — 1 giờ, giữ 1 năm
 
 **16 TB thay vì 7,2 PB — giảm 450 lần.** Đây là con số đắt giá nhất của cả bài: nó cho thấy retention 1 năm **không hề khả thi nếu thiếu downsampling**, và cho thấy tầng 2 (1 phút, 30 ngày) mới là tầng ngốn nhiều nhất, nên nếu cần cắt chi phí thì cắt ở đó (giữ 14 ngày thay vì 30, hoặc chỉ rollup `avg` + `max` thay vì 4 giá trị).
 
-> 💡 **Nguyên tắc**: trong hệ time series, **dung lượng tỉ lệ với `số series × tần suất × thời gian giữ`**. Ba số nhân với nhau. Muốn giảm chi phí, hãy giảm thừa số rẻ nhất — và thừa số rẻ nhất gần như luôn là *tần suất của dữ liệu cũ*, chứ không phải số series (bạn cần series) hay retention (hợp đồng yêu cầu).
+> **Nguyên tắc**: trong hệ time series, **dung lượng tỉ lệ với `số series × tần suất × thời gian giữ`**. Ba số nhân với nhau. Muốn giảm chi phí, hãy giảm thừa số rẻ nhất — và thừa số rẻ nhất gần như luôn là *tần suất của dữ liệu cũ*, chứ không phải số series (bạn cần series) hay retention (hợp đồng yêu cầu).
 
 ### 3.4 Read QPS — con số nhỏ nhưng lệch tải kinh khủng
 
@@ -198,17 +198,17 @@ Và cái độc nhất: **cardinality không tự dọn**. Series chết (pod b�
 
 ### 4.3 Quy tắc dùng label, và cách thực thi
 
-> 💡 **Quy tắc vàng**: một label chỉ hợp lệ khi **(a)** tập giá trị hữu hạn và biết trước, **(b)** bạn thực sự muốn *group by* hoặc *filter* theo nó, **(c)** giá trị không do người dùng cuối kiểm soát.
+> **Quy tắc vàng**: một label chỉ hợp lệ khi **(a)** tập giá trị hữu hạn và biết trước, **(b)** bạn thực sự muốn *group by* hoặc *filter* theo nó, **(c)** giá trị không do người dùng cuối kiểm soát.
 
 | Label | Nên? | Vì sao |
 |---|---|---|
-| `region`, `az`, `env`, `service`, `pool` | ✅ | Vài chục đến vài trăm giá trị, cố định, luôn muốn group by |
-| `status_code` | ✅ | ~10 giá trị hữu ích (gộp 2xx/4xx/5xx càng tốt) |
-| `endpoint` | ⚠️ | Phải là **route template** (`/orders/:id`), không phải URL thật |
-| `instance` / `host` | ⚠️ | Ổn với VM dài hạn; nguy hiểm với pod/lambda (churn) |
-| `version` | ⚠️ | Tăng theo mỗi deploy → churn; nên drop sau khi rollout xong |
-| `user_id`, `order_id`, `trace_id` | ❌ | Không giới hạn — việc của **logs/traces**, không phải metrics |
-| `error_message` | ❌ | Text tự do, cardinality vô hạn tuyệt đối |
+| `region`, `az`, `env`, `service`, `pool` | ✓ | Vài chục đến vài trăm giá trị, cố định, luôn muốn group by |
+| `status_code` | ✓ | ~10 giá trị hữu ích (gộp 2xx/4xx/5xx càng tốt) |
+| `endpoint` | | Phải là **route template** (`/orders/:id`), không phải URL thật |
+| `instance` / `host` | | Ổn với VM dài hạn; nguy hiểm với pod/lambda (churn) |
+| `version` | | Tăng theo mỗi deploy → churn; nên drop sau khi rollout xong |
+| `user_id`, `order_id`, `trace_id` | ✗ | Không giới hạn — việc của **logs/traces**, không phải metrics |
+| `error_message` | ✗ | Text tự do, cardinality vô hạn tuyệt đối |
 
 Vì "hãy cẩn thận" không bao giờ đủ, phải thực thi bằng kỹ thuật:
 
@@ -217,7 +217,7 @@ Vì "hãy cẩn thận" không bao giờ đủ, phải thực thi bằng kỹ th
 3. **Meta-metric `series_created_per_second` theo từng đội**, alert khi tăng đột biến. Đây là alert cứu hệ thống nhiều nhất trong thực tế.
 4. **Cần chiều có cardinality cao thì dùng exemplar** — đính vài `trace_id` mẫu vào histogram bucket thay vì biến nó thành label. Vẫn nhảy được sang trace của request chậm mà không tạo series mới.
 
-> ⚠️ **Bẫy**: histogram nhân cardinality thêm một lần nữa. Một histogram 12 bucket tạo **14 series cho mỗi tổ hợp label** (cộng `_sum` và `_count`), nên cardinality 2,5 triệu ở trên thực tế thành 35 triệu. Luôn tính histogram bằng *số bucket × cardinality*, và cắt số bucket xuống mức thật sự cần (8–10 là đủ cho SLO).
+> **Bẫy**: histogram nhân cardinality thêm một lần nữa. Một histogram 12 bucket tạo **14 series cho mỗi tổ hợp label** (cộng `_sum` và `_count`), nên cardinality 2,5 triệu ở trên thực tế thành 35 triệu. Luôn tính histogram bằng *số bucket × cardinality*, và cắt số bucket xuống mức thật sự cần (8–10 là đủ cho SLO).
 
 
 ## 5. API design
@@ -385,9 +385,9 @@ Nhược điểm thật của push:
 | Tổng hợp trước khi gửi | Khó (client phải giữ trạng thái) | Dễ (agent gom 10 s) | **Push** |
 | Quản lý cấu hình | Tập trung, dễ audit | Phân tán trên N agent | **Pull** |
 
-> 💡 **Kết luận thực chiến**: tổ chức lớn **luôn phải hỗ trợ cả hai**. Pull làm mặc định cho service chạy dài (nhận `up` miễn phí, cấu hình tập trung); push cho ba trường hợp pull không với tới: **job ngắn/serverless**, **mạng không thông chiều vào**, **thiết bị ngoài tổ chức**. Cả hai đổ vào cùng collector pool và cùng TSDB — khác biệt chỉ ở tầng thu thập.
+> **Kết luận thực chiến**: tổ chức lớn **luôn phải hỗ trợ cả hai**. Pull làm mặc định cho service chạy dài (nhận `up` miễn phí, cấu hình tập trung); push cho ba trường hợp pull không với tới: **job ngắn/serverless**, **mạng không thông chiều vào**, **thiết bị ngoài tổ chức**. Cả hai đổ vào cùng collector pool và cùng TSDB — khác biệt chỉ ở tầng thu thập.
 
-> ⚠️ **Bẫy khi trả lời**: nói "Prometheus dùng pull nên pull tốt hơn". Prometheus dùng pull vì nó sinh ra cho môi trường container nơi service discovery sẵn có và mạng nội bộ phẳng. CloudWatch dùng push vì phải nhận dữ liệu từ tài khoản khách hàng qua Internet, nơi AWS không thể mở đường gọi vào. **Kiến trúc mạng và mô hình sở hữu quyết định lựa chọn, không phải chất lượng kỹ thuật.**
+> **Bẫy khi trả lời**: nói "Prometheus dùng pull nên pull tốt hơn". Prometheus dùng pull vì nó sinh ra cho môi trường container nơi service discovery sẵn có và mạng nội bộ phẳng. CloudWatch dùng push vì phải nhận dữ liệu từ tài khoản khách hàng qua Internet, nơi AWS không thể mở đường gọi vào. **Kiến trúc mạng và mô hình sở hữu quyết định lựa chọn, không phải chất lượng kỹ thuật.**
 
 ### 7.4 Scale tầng collection bằng consistent hashing
 
@@ -436,14 +436,14 @@ Kafka ở quy mô này không nhỏ: 100 MB/s ingress × replication 3 = 300 MB/
 
 | Tình huống | Có nên đặt Kafka? |
 |---|---|
-| Chỉ ghi vào một TSDB, collector có WAL cục bộ | ❌ Thừa — dùng WAL + remote-write queue |
-| Nhiều consumer (TSDB + anomaly detection + data lake) | ✅ Fan-out là lý do chính đáng nhất |
-| Cần replay khi ghi sai hoặc mất shard | ✅ |
-| Cần biến đổi/tổng hợp nặng trước khi ghi (Flink) | ✅ |
-| Đội nhỏ, không có kinh nghiệm vận hành Kafka | ❌ Chi phí vận hành lớn hơn lợi ích |
-| Nguồn đẩy qua Internet, đỉnh khó đoán | ✅ Hấp thụ đỉnh |
+| Chỉ ghi vào một TSDB, collector có WAL cục bộ | ✗ Thừa — dùng WAL + remote-write queue |
+| Nhiều consumer (TSDB + anomaly detection + data lake) | ✓ Fan-out là lý do chính đáng nhất |
+| Cần replay khi ghi sai hoặc mất shard | ✓ |
+| Cần biến đổi/tổng hợp nặng trước khi ghi (Flink) | ✓ |
+| Đội nhỏ, không có kinh nghiệm vận hành Kafka | ✗ Chi phí vận hành lớn hơn lợi ích |
+| Nguồn đẩy qua Internet, đỉnh khó đoán | ✓ Hấp thụ đỉnh |
 
-> 💡 **Nguyên tắc**: Kafka ở đây không phải để "cho chắc" — nó tồn tại khi bạn cần **fan-out hoặc replay**. Nếu chỉ chống TSDB restart, một WAL cục bộ ở collector rẻ hơn nhiều lần.
+> **Nguyên tắc**: Kafka ở đây không phải để "cho chắc" — nó tồn tại khi bạn cần **fan-out hoặc replay**. Nếu chỉ chống TSDB restart, một WAL cục bộ ở collector rẻ hơn nhiều lần.
 
 ### 8.3 Tổng hợp ở đâu — ba vị trí, ba đánh đổi
 
@@ -478,7 +478,7 @@ avg(rate(http_requests_total{service="checkout"}[5m])) by (region)
 
 Điểm tinh tế của `rate()`: nó tự xử lý **counter reset** (process restart, counter về 0). Viết logic đó bằng SQL cho đúng và nhanh là bài tập khó chịu; trong TSDB nó là ngữ nghĩa có sẵn của kiểu dữ liệu.
 
-> ⚠️ **Ngoại lệ đáng biết**: TimescaleDB và các giải pháp "SQL + time series" chạy tốt ở quy mô vừa (hàng chục nghìn ghi/s) và rất đáng dùng nếu bạn đã có PostgreSQL và muốn join metric với dữ liệu nghiệp vụ. Ở 1 triệu ghi/s thì không.
+> **Ngoại lệ đáng biết**: TimescaleDB và các giải pháp "SQL + time series" chạy tốt ở quy mô vừa (hàng chục nghìn ghi/s) và rất đáng dùng nếu bạn đã có PostgreSQL và muốn join metric với dữ liệu nghiệp vụ. Ở 1 triệu ghi/s thì không.
 
 ### 9.2 Kiến trúc lưu trữ của một TSDB
 
@@ -527,7 +527,7 @@ XOR    = 0x0000 1000 0000 0000   ← rất nhiều bit 0 ở đầu và cuối
 
 Ghi XOR thay vì ghi giá trị: XOR = 0 (giá trị không đổi — cực phổ biến với gauge) thì ghi **1 bit**; khác 0 thì chỉ ghi "cửa sổ ý nghĩa" (số bit 0 dẫn đầu + độ dài + các bit giữa). Facebook đo: **59% giá trị nén xuống 1 bit**, còn lại trung bình ~13 bit. Kết hợp: 16 byte → **~1,37 byte**, hệ số ~12×. Chính con số này biến "2,4 PB" thành "vài TB".
 
-> ⚠️ **Điều kiện để nén hiệu quả**: dữ liệu phải **đều đặn và đến đúng thứ tự**. Dữ liệu out-of-order hoặc interval nhảy loạn làm delta-of-delta mất tác dụng và chunk phải mở lại — thêm một lý do để dùng pull (timestamp do collector gán, luôn đều) và chuẩn hoá interval trong toàn tổ chức.
+> **Điều kiện để nén hiệu quả**: dữ liệu phải **đều đặn và đến đúng thứ tự**. Dữ liệu out-of-order hoặc interval nhảy loạn làm delta-of-delta mất tác dụng và chunk phải mở lại — thêm một lý do để dùng pull (timestamp do collector gán, luôn đều) và chuẩn hoá interval trong toàn tổ chức.
 
 ### 9.4 Downsampling và retention
 
@@ -547,7 +547,7 @@ Ba chi tiết thực thi thường bị bỏ qua:
 
 **Truy vấn chọn tầng nào?** Query service tự chọn theo `step` và khoảng thời gian: 6 giờ với step 30 s → raw; 90 ngày với step 1 giờ → rollup 1 giờ. Chọn sai tầng là nguyên nhân số một của query timeout — hỏi 1 năm ở độ phân giải 10 s là quét 3,1 triệu điểm **cho mỗi series**.
 
-> 💡 **Nguyên tắc**: độ phân giải cần có tỉ lệ nghịch với tuổi dữ liệu, vì **giá trị của một điểm dữ liệu giảm theo thời gian nhưng chi phí lưu nó thì không**. Không ai cần biết CPU của 8 tháng trước ở giây thứ 37.
+> **Nguyên tắc**: độ phân giải cần có tỉ lệ nghịch với tuổi dữ liệu, vì **giá trị của một điểm dữ liệu giảm theo thời gian nhưng chi phí lưu nó thì không**. Không ai cần biết CPU của 8 tháng trước ở giây thứ 37.
 
 
 ## 10. Deep dive 4 — Query service: vì sao dashboard không được nói chuyện thẳng với TSDB
@@ -682,9 +682,9 @@ inhibit_rules:
 
 **Alert fatigue** là trạng thái đội ngũ nhận nhiều alert đến mức ngừng đọc. Đó không phải vấn đề tâm lý mà là vấn đề kỹ thuật có hậu quả đo được: khi 95% alert là nhiễu, phản xạ hợp lý của con người là bỏ qua — và alert thứ 96 là alert thật. Dấu hiệu định lượng: nếu một ca trực **bị đánh thức hơn 1–2 lần**, hệ alert đã hỏng. Google SRE Book đặt tiêu chí sắc hơn: **mọi page phải cần trí tuệ con người**. Nếu phản hồi là "restart service rồi đi ngủ tiếp", việc đó phải được tự động hoá chứ không phải đánh thức người.
 
-> 💡 **Alert trên triệu chứng người dùng cảm nhận được (symptom), không alert trên nguyên nhân (cause).**
+> **Alert trên triệu chứng người dùng cảm nhận được (symptom), không alert trên nguyên nhân (cause).**
 
-| Alert trên nguyên nhân ❌ | Alert trên triệu chứng ✅ |
+| Alert trên nguyên nhân ✗ | Alert trên triệu chứng ✓ |
 |---|---|
 | `cpu_usage > 90%` | `latency_p99 > 500ms` |
 | `memory_usage > 85%` | `error_rate > 1%` |
@@ -718,7 +718,7 @@ burn rate = (tỉ lệ lỗi quan sát) / (1 - SLO)
 
 lỗi 0,1%  → burn 1   → hết ngân sách đúng cuối 30 ngày
 lỗi 1%    → burn 10  → hết sau 3 ngày
-lỗi 14,4% → burn 144 → hết sau 5 giờ  ⚠️ page ngay
+lỗi 14,4% → burn 144 → hết sau 5 giờ  page ngay
 ```
 
 Thay vì một ngưỡng cứng, dùng **nhiều cửa sổ, nhiều tốc độ**:
@@ -803,7 +803,7 @@ Bốn lớp phòng vệ, từ rẻ tới đắt:
 
 **④ Synthetic/blackbox từ bên ngoài** — prober ngoài gọi vào API thật và vào cả API của hệ monitoring. Thứ duy nhất phát hiện được sự cố mà mọi metric nội bộ đều báo xanh: DNS hỏng, cert hết hạn, BGP sai, CDN lỗi cấu hình.
 
-> 💡 **Nguyên tắc**: hệ giám sát hệ monitoring **phải đơn giản hơn và độc lập hơn** thứ nó giám sát. Nếu phức tạp tương đương, bạn vừa tạo lại đúng bài toán ở tầng trên — đệ quy vô hạn. Dừng ở tầng hai, và tầng hai phải là dead man's switch ra ngoài tổ chức.
+> **Nguyên tắc**: hệ giám sát hệ monitoring **phải đơn giản hơn và độc lập hơn** thứ nó giám sát. Nếu phức tạp tương đương, bạn vừa tạo lại đúng bài toán ở tầng trên — đệ quy vô hạn. Dừng ở tầng hai, và tầng hai phải là dead man's switch ra ngoài tổ chức.
 
 | Meta-metric | Alert khi | Bắt được gì |
 |---|---|---|
@@ -853,11 +853,11 @@ Bốn lớp phòng vệ, từ rẻ tới đắt:
 | Alert | Alarm + Composite Alarm: đơn giản, đủ dùng | Alertmanager: mạnh hơn nhiều (inhibition, routing theo label, template) |
 | Phù hợp nhất | Hạ tầng thuần AWS, đội nhỏ, metric hạ tầng là chính | Nhiều container, cần PromQL, cardinality cao, đa môi trường |
 
-> ⚠️ **Bẫy chi phí lớn nhất trên CloudWatch**: **mỗi tổ hợp dimension duy nhất là một custom metric riêng và bị tính tiền riêng** (bậc đầu ~0,30 USD/metric/tháng). Thêm dimension `user_id` với 100.000 người dùng hoạt động không phải là "metric có nhiều nhãn hơn" — đó là **100.000 custom metric**, khoảng **30.000 USD/tháng** cho một dòng code. Đây chính là §4.2 nhưng có hoá đơn đi kèm, và nó khiến cardinality explosion bị phát hiện bởi phòng kế toán chứ không phải bởi trang alert. Luôn đặt **AWS Budgets alert riêng cho CloudWatch**, và review dimension trong code review như review một truy vấn database.
+> **Bẫy chi phí lớn nhất trên CloudWatch**: **mỗi tổ hợp dimension duy nhất là một custom metric riêng và bị tính tiền riêng** (bậc đầu ~0,30 USD/metric/tháng). Thêm dimension `user_id` với 100.000 người dùng hoạt động không phải là "metric có nhiều nhãn hơn" — đó là **100.000 custom metric**, khoảng **30.000 USD/tháng** cho một dòng code. Đây chính là §4.2 nhưng có hoá đơn đi kèm, và nó khiến cardinality explosion bị phát hiện bởi phòng kế toán chứ không phải bởi trang alert. Luôn đặt **AWS Budgets alert riêng cho CloudWatch**, và review dimension trong code review như review một truy vấn database.
 
-> ⚠️ **Bẫy thứ hai**: dùng Logs Metric Filter để đếm những thứ lẽ ra phải là metric — bạn trả tiền ingest (~0,50 USD/GB) cho toàn bộ nội dung log chỉ để trích ra một con số. Sửa được code thì dùng **EMF**.
+> **Bẫy thứ hai**: dùng Logs Metric Filter để đếm những thứ lẽ ra phải là metric — bạn trả tiền ingest (~0,50 USD/GB) cho toàn bộ nội dung log chỉ để trích ra một con số. Sửa được code thì dùng **EMF**.
 
-> 💡 **Kiến trúc lai phổ biến nhất trong thực tế**: CloudWatch cho metric hạ tầng AWS + AMP cho metric ứng dụng/container + **AMG làm một cửa duy nhất** hiển thị cả hai + SNS/EventBridge định tuyến alert từ cả hai nguồn. Được cái tốt nhất của cả hai mà chỉ phải vận hành tầng dashboard.
+> **Kiến trúc lai phổ biến nhất trong thực tế**: CloudWatch cho metric hạ tầng AWS + AMP cho metric ứng dụng/container + **AMG làm một cửa duy nhất** hiển thị cả hai + SNS/EventBridge định tuyến alert từ cả hai nguồn. Được cái tốt nhất của cả hai mà chỉ phải vận hành tầng dashboard.
 
 
 ## Cách trình bày khi phỏng vấn / review

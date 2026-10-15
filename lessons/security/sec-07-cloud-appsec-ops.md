@@ -2,7 +2,7 @@
 
 Bài này dành cho kỹ sư xây hệ thống, không phải pentester. Mục tiêu là tư duy phòng thủ: giả định kẻ tấn công SẼ vào được, và chúng ta thiết kế để (1) làm họ tốn công, (2) phát hiện sớm, (3) giới hạn thiệt hại, (4) phục hồi nhanh. Chúng ta đi từ lớp ngoài (WAF, rate limiting) vào trong (pipeline, IAM, secure defaults), rồi sang quy trình khi sự cố đã xảy ra (incident response, postmortem, runbook).
 
-> 💡 Nguyên tắc: An ninh không phải là một bức tường, mà là nhiều lớp (defense in depth). Một lớp bị xuyên thủng không được phép biến thành "game over".
+> Nguyên tắc: An ninh không phải là một bức tường, mà là nhiều lớp (defense in depth). Một lớp bị xuyên thủng không được phép biến thành "game over".
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Defense in depth — các lớp phòng thủ từ rìa vào lõi</title>
@@ -63,7 +63,7 @@ Nhưng rate limit theo IP là chưa đủ với botnet phân tán. Cần thêm c
 | Theo "fingerprint" thiết bị | Botnet đổi IP liên tục | — |
 | Toàn cục (global) | Layer-7 DDoS | tổng RPS tới /login |
 
-> ⚠️ Lỗ hổng: Rate limit chỉ theo IP. Botnet xoay 50.000 IP residential proxy sẽ vượt qua dễ dàng. Luôn rate limit thêm theo **account đích** (key = username) để chặn tấn công nhằm vào một tài khoản cụ thể, và dùng exponential backoff (mỗi lần sai, thời gian chờ tăng gấp đôi).
+> Lỗ hổng: Rate limit chỉ theo IP. Botnet xoay 50.000 IP residential proxy sẽ vượt qua dễ dàng. Luôn rate limit thêm theo **account đích** (key = username) để chặn tấn công nhằm vào một tài khoản cụ thể, và dùng exponential backoff (mỗi lần sai, thời gian chờ tăng gấp đôi).
 
 WAF còn dùng để chặn các họ tấn công trong OWASP Top 10 2021 ở mức thô: SQL injection (A03), path traversal, các payload XSS phổ biến. Đây là "virtual patching" — khi phát hiện CVE trong thư viện mà chưa kịp vá, bạn thêm WAF rule chặn pattern khai thác trong vài phút thay vì chờ deploy.
 
@@ -163,7 +163,7 @@ jobs:
         run: gitleaks detect --no-git -v --redact
 ```
 
-> 💡 Nguyên tắc: Cấu hình gate để **fail build** ở mức severity HIGH/CRITICAL, nhưng chỉ **cảnh báo** (warn) ở mức thấp. Nếu gate quá ồn (toàn false positive), kỹ sư sẽ học cách bỏ qua nó — và thế là bạn mất luôn lớp phòng thủ.
+> Nguyên tắc: Cấu hình gate để **fail build** ở mức severity HIGH/CRITICAL, nhưng chỉ **cảnh báo** (warn) ở mức thấp. Nếu gate quá ồn (toàn false positive), kỹ sư sẽ học cách bỏ qua nó — và thế là bạn mất luôn lớp phòng thủ.
 
 DAST chạy chậm hơn, nên thường đặt ở stage sau (nightly hoặc trên môi trường staging) chứ không chặn mỗi PR:
 
@@ -177,7 +177,7 @@ DAST chạy chậm hơn, nên thường đặt ở stage sau (nightly hoặc tr�
             -t https://staging.example.com -I   # -I = không fail trên warning
 ```
 
-> ⚠️ Lỗ hổng: Chỉ chạy SAST rồi tự tin "đã quét bảo mật". SAST gần như không bao giờ bắt được lỗi **business logic** (ví dụ: thiếu kiểm tra quyền sở hữu khi user A sửa đơn hàng của user B — IDOR/Broken Access Control, A01). Lỗi authz phải bắt bằng DAST/IAST có authenticated session và bằng test do người viết.
+> Lỗ hổng: Chỉ chạy SAST rồi tự tin "đã quét bảo mật". SAST gần như không bao giờ bắt được lỗi **business logic** (ví dụ: thiếu kiểm tra quyền sở hữu khi user A sửa đơn hàng của user B — IDOR/Broken Access Control, A01). Lỗi authz phải bắt bằng DAST/IAST có authenticated session và bằng test do người viết.
 
 ---
 
@@ -215,7 +215,7 @@ logger.info("auth.login", extra={
 # KHÔNG BAO GIỜ log: password, token, session id đầy đủ, số thẻ, OTP
 ```
 
-> ⚠️ Lỗ hổng: Log nhạy cảm (token, PII, request body có mật khẩu) gửi sang hệ thống log tập trung mà ai trong công ty cũng đọc được. Log trở thành mục tiêu tấn công béo bở. Hãy **redact/mask** ngay tại nguồn và giới hạn quyền đọc log production.
+> Lỗ hổng: Log nhạy cảm (token, PII, request body có mật khẩu) gửi sang hệ thống log tập trung mà ai trong công ty cũng đọc được. Log trở thành mục tiêu tấn công béo bở. Hãy **redact/mask** ngay tại nguồn và giới hạn quyền đọc log production.
 
 ### Detection: từ log thành cảnh báo
 
@@ -233,7 +233,7 @@ RULE "mass_403":
   COUNT(outcome=deny) BY user_id > 100 IN 1m  -> alert (đang dò IDOR)
 ```
 
-> 💡 Nguyên tắc: Đảm bảo log **bất biến (immutable / append-only)** và lưu ở nơi tách biệt khỏi quyền của ứng dụng. Kẻ tấn công chiếm app KHÔNG được phép xóa dấu vết của chính mình.
+> Nguyên tắc: Đảm bảo log **bất biến (immutable / append-only)** và lưu ở nơi tách biệt khỏi quyền của ứng dụng. Kẻ tấn công chiếm app KHÔNG được phép xóa dấu vết của chính mình.
 
 ---
 
@@ -306,8 +306,8 @@ Cùng một lỗ RCE, hai role khác nhau cho ra blast radius khác hẳn:
     <g stroke="currentColor" stroke-opacity="0.25" fill="none" stroke-dasharray="4 4">
       <path d="M474 202 L420 240"/><path d="M606 202 L660 240"/>
     </g>
-    <text x="420" y="256" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.5">DB prod ✕</text>
-    <text x="660" y="256" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.5">S3 khác ✕</text>
+    <text x="420" y="256" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.5">DB prod ✗</text>
+    <text x="660" y="256" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.5">S3 khác ✗</text>
     <text x="540" y="292" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Thiệt hại bị giới hạn ở 1 bucket</text>
   </g>
 </svg>
@@ -323,7 +323,7 @@ Checklist least-privilege:
 
 ### Secure defaults cloud
 
-> 💡 Nguyên tắc: Trạng thái an toàn phải là **mặc định**, và sự kém an toàn phải cần một hành động có chủ đích, được review. Không phải ngược lại.
+> Nguyên tắc: Trạng thái an toàn phải là **mặc định**, và sự kém an toàn phải cần một hành động có chủ đích, được review. Không phải ngược lại.
 
 Checklist secure defaults:
 
@@ -390,13 +390,13 @@ Giả định không phải "nếu" mà "khi nào" sẽ có sự cố. Một quy
 
 **2. Contain (cô lập).** Ngăn thiệt hại lan rộng, NHƯNG giữ bằng chứng. Ví dụ: thay vì tắt server bị chiếm (mất RAM forensics), hãy cô lập nó về một security group cách ly, thu hồi (revoke) credential bị lộ, vô hiệu hóa session/token của tài khoản bị nghi.
 
-> ⚠️ Lỗ hổng: Phản xạ "tắt máy / xóa ngay cho an toàn". Việc này phá hủy bằng chứng và đôi khi kích hoạt cơ chế phá hủy của malware. Hãy **cô lập trước, bảo toàn bằng chứng (snapshot), rồi mới hành động.**
+> Lỗ hổng: Phản xạ "tắt máy / xóa ngay cho an toàn". Việc này phá hủy bằng chứng và đôi khi kích hoạt cơ chế phá hủy của malware. Hãy **cô lập trước, bảo toàn bằng chứng (snapshot), rồi mới hành động.**
 
 **3. Eradicate (loại trừ).** Tìm và diệt nguyên nhân gốc: vá lỗ hổng đã bị khai thác, gỡ backdoor/webshell, xoay toàn bộ secret có thể đã lộ. Không chỉ xử lý triệu chứng. Nếu một access key bị lộ, giả định **mọi thứ key đó chạm tới đều đã bị xâm phạm**.
 
 **4. Recover (phục hồi).** Đưa hệ thống về hoạt động bình thường một cách có kiểm soát: khôi phục từ backup sạch (đã xác minh không nhiễm), giám sát chặt để chắc chắn kẻ tấn công không quay lại, dần gỡ các biện pháp containment.
 
-> 💡 Nguyên tắc: Quyết định lớn nhất trong containment là đánh đổi giữa "dừng thiệt hại ngay" và "quan sát để hiểu phạm vi". IC là người cân nhắc và chịu trách nhiệm cho đánh đổi đó — đừng để cả đội tranh cãi trong lúc nhà đang cháy.
+> Nguyên tắc: Quyết định lớn nhất trong containment là đánh đổi giữa "dừng thiệt hại ngay" và "quan sát để hiểu phạm vi". IC là người cân nhắc và chịu trách nhiệm cho đánh đổi đó — đừng để cả đội tranh cãi trong lúc nhà đang cháy.
 
 ---
 
@@ -404,7 +404,7 @@ Giả định không phải "nếu" mà "khi nào" sẽ có sự cố. Một quy
 
 Sau khi recover, viết postmortem. Mục tiêu là **học để hệ thống không lặp lại sự cố**, không phải tìm người để đổ lỗi.
 
-> 💡 Nguyên tắc: Con người vận hành trong một hệ thống. Nếu một kỹ sư gây ra sự cố, câu hỏi đúng không phải "tại sao anh ta cẩu thả" mà "tại sao hệ thống cho phép một hành động đơn lẻ gây ra hậu quả lớn đến vậy, và không có lớp chặn nào".
+> Nguyên tắc: Con người vận hành trong một hệ thống. Nếu một kỹ sư gây ra sự cố, câu hỏi đúng không phải "tại sao anh ta cẩu thả" mà "tại sao hệ thống cho phép một hành động đơn lẻ gây ra hậu quả lớn đến vậy, và không có lớp chặn nào".
 
 Blameless không có nghĩa là không có trách nhiệm — nghĩa là tập trung vào **nguyên nhân hệ thống và hành động sửa chữa**, vì chỉ khi mọi người an toàn về tâm lý họ mới kể thật chuyện đã xảy ra. Đổ lỗi khiến người ta giấu thông tin, và bạn mất chính dữ liệu cần để sửa.
 
@@ -476,4 +476,4 @@ Mọi khái niệm trên đều có dịch vụ tương ứng trên AWS. Bản �
 | Secure defaults & guardrail | **Organizations SCP**, **Config rules**, **Control Tower**, S3 Block Public Access |
 | Incident containment | Tách **Security Group**, revoke STS session, snapshot **EBS** để forensics |
 
-> 💡 Nguyên tắc: GuardDuty + CloudTrail + Security Hub là bộ ba "detect"; IAM + KMS + SCP là bộ ba "least privilege & secure defaults"; WAF + Shield là lớp rìa. Bật chúng từ ngày đầu — bật detection SAU khi bị tấn công thì đã muộn, vì bạn không có log của quá khứ để điều tra.
+> Nguyên tắc: GuardDuty + CloudTrail + Security Hub là bộ ba "detect"; IAM + KMS + SCP là bộ ba "least privilege & secure defaults"; WAF + Shield là lớp rìa. Bật chúng từ ngày đầu — bật detection SAU khi bị tấn công thì đã muộn, vì bạn không có log của quá khứ để điều tra.

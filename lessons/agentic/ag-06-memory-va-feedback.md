@@ -330,43 +330,43 @@ Hai lần chạy với hai kết quả ngược nhau là bằng chứng script *
 
 **Xong khi:** bước 4 có `gate: ok` không cần nhắc; bước 5 có cả exit=0 và exit=1 đúng thứ tự; bước 6 về exit=0.
 
-📏 Muốn đo hiệu quả của memory cho chính bạn: trong một tuần, đếm số lần bạn gõ lại một lời sửa đã từng gõ ở session trước (ghi tay một dòng mỗi lần là đủ). Tuần sau khi đã ghi memory cho các lời sửa đó, đếm lại. Đừng đoán con số trước khi đếm.
+Muốn đo hiệu quả của memory cho chính bạn: trong một tuần, đếm số lần bạn gõ lại một lời sửa đã từng gõ ở session trước (ghi tay một dòng mỗi lần là đủ). Tuần sau khi đã ghi memory cho các lời sửa đó, đếm lại. Đừng đoán con số trước khi đếm.
 
 ---
 
 ## 5. Bẫy thường gặp
 
-🪤 **Memory chỉ có luật, không có Why.**
+**Memory chỉ có luật, không có Why.**
 Triệu chứng: agent làm đúng ở ca quen, làm sai ở ca hơi khác (luật "đừng nhờ user chạy query" được áp cho cả một lệnh `UPDATE`).
 Nguyên nhân gốc: luật một câu không mang tiêu chí; ở ca biên, model chỉ còn cách khớp mặt chữ.
 Chặn bằng cơ chế: template memory có ô Why bắt buộc; script §3.8 báo `NOWHY` cho mọi feedback thiếu Why.
 
-🪤 **Index phình quá trần, memory mới nhất biến mất.**
+**Index phình quá trần, memory mới nhất biến mất.**
 Triệu chứng: memory vừa ghi tuần trước, session này agent không biết tới — dù file vẫn nằm trên đĩa.
 Nguyên nhân gốc: chỉ 200 dòng / 25KB đầu của `MEMORY.md` được nạp (docs); dòng mới thường nằm cuối; phía đọc không báo lỗi.
 Chặn bằng cơ chế: index mỗi memory một dòng, chi tiết để ở topic file; script cảnh báo từ 180 dòng / 23.000 byte, trước khi chạm trần.
 
-🪤 **Dùng memory cho thứ phải chặn cứng.**
+**Dùng memory cho thứ phải chặn cứng.**
 Triệu chứng: đã ghi "không bao giờ push thẳng main", vẫn có một lần agent push.
 Nguyên nhân gốc: memory là context, không phải cấu hình được thực thi (docs).
 Chặn bằng cơ chế: permission deny hoặc hook `PreToolUse` ([[ag-08-hook-va-chan-bang-cau-hinh]]); memory chỉ giải thích lý do.
 
-🪤 **Ghi trạng thái việc đang làm vào memory.**
+**Ghi trạng thái việc đang làm vào memory.**
 Triệu chứng: memory nói "đang chờ review PR migrate", PR đã merge từ ba tuần trước, agent vẫn né đụng vào module đó.
 Nguyên nhân gốc: thông tin transient không có ai cập nhật khi nó hết đúng.
 Chặn bằng cơ chế: ba câu hỏi ở §3.6 trước khi ghi; trạng thái việc đi vào file brief của việc đó ([[ag-18-brief-la-shared-state]]); script báo `STALE` theo field `modified`.
 
-🪤 **Luật cả team chỉ nằm trong auto memory của một người.**
+**Luật cả team chỉ nằm trong auto memory của một người.**
 Triệu chứng: agent của bạn chạy đúng gate, agent của đồng nghiệp hoặc agent trên CI thì không.
 Nguyên nhân gốc: auto memory là machine-local, không chia sẻ qua máy hay môi trường cloud (docs).
 Chặn bằng cơ chế: lời sửa thứ hai lặp lại ở người khác → chuyển nó vào `CLAUDE.md` của project và commit. Docs liệt kê đúng tín hiệu này cho CLAUDE.md: *"Claude makes the same mistake a second time"*, *"A new teammate would need the same context"*.
 
-🪤 **Subagent không biết luật mà main agent biết.**
+**Subagent không biết luật mà main agent biết.**
 Triệu chứng: main agent luôn chạy gate, nhưng việc giao cho subagent về thì không có output gate.
 Nguyên nhân gốc: auto memory của main không nạp vào subagent (docs).
 Chặn bằng cơ chế: luật quan trọng nằm trong CLAUDE.md của project hoặc đi kèm trong brief giao việc ([[ag-14-subagent-va-brief]]).
 
-🪤 **Memory ngoại lệ mâu thuẫn với luật chung.**
+**Memory ngoại lệ mâu thuẫn với luật chung.**
 Triệu chứng: cùng một repo, hôm agent tạo nhánh, hôm push thẳng.
 Nguyên nhân gốc: hai file nói khác nhau và không file nào ghi đè file nào; docs nói Claude có thể chọn một cách tuỳ ý.
 Chặn bằng cơ chế: memory ngoại lệ gọi tên luật nó thay thế và nói vì sao; chạy `/doctor prompt-audit` định kỳ để tìm mâu thuẫn trong các file hướng dẫn.

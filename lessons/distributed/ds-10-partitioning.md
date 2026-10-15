@@ -86,17 +86,17 @@ partition = hash(key) mod N   // N = số partition
 
 **Nhược điểm — mất range query.** Chính vì băm phá vỡ thứ tự, các key liền kề bị rải khắp nơi. Truy vấn *"từ ngày X đến Y"* giờ phải **hỏi TẤT CẢ partition** (scatter/gather) rồi gộp — đắt và chậm. Cassandra giải quyết một phần bằng **compound key**: phần **partition key** đem băm (để chọn node), phần **clustering key** giữ **sắp xếp trong partition** (để range query *bên trong* một partition vẫn nhanh).
 
-> **⚠️ Cạm bẫy `mod N`:** khi thêm/bớt node, N đổi → **gần như mọi key phải di chuyển** partition (rehash toàn bộ). Đây là lý do các hệ thực tế dùng **consistent hashing** hoặc **số partition cố định lớn** (fixed partitions) thay cho `mod N` thô. Xem 2.7.
+> **Cạm bẫy `mod N`:** khi thêm/bớt node, N đổi → **gần như mọi key phải di chuyển** partition (rehash toàn bộ). Đây là lý do các hệ thực tế dùng **consistent hashing** hoặc **số partition cố định lớn** (fixed partitions) thay cho `mod N` thô. Xem 2.7.
 
 ### 2.5 Bảng so sánh
 
 | Tiêu chí | Range partitioning | Hash partitioning |
 |----------|--------------------|--------------------|
-| **Range query** (`BETWEEN`, scan) | ✅ Rất tốt — chạm ít partition, dữ liệu sorted | ❌ Kém — phải scatter/gather mọi partition |
-| **Phân bố tải** | ⚠️ Dễ lệch theo phân bố key thật | ✅ Đều nếu hàm băm tốt |
-| **Hot spot với key tuần tự** (timestamp) | ❌ Rất dễ — dồn vào 1 partition | ✅ Tránh được (băm rải đều) |
-| **Point lookup** (1 key) | ✅ Tốt | ✅ Tốt |
-| **Rebalance khi thêm node** | ✅ Chỉ chia đôi partition lớn (dynamic split) | ⚠️ `mod N` thì tệ; consistent hashing thì tốt |
+| **Range query** (`BETWEEN`, scan) | ✓ Rất tốt — chạm ít partition, dữ liệu sorted | ✗ Kém — phải scatter/gather mọi partition |
+| **Phân bố tải** | Dễ lệch theo phân bố key thật | ✓ Đều nếu hàm băm tốt |
+| **Hot spot với key tuần tự** (timestamp) | ✗ Rất dễ — dồn vào 1 partition | ✓ Tránh được (băm rải đều) |
+| **Point lookup** (1 key) | ✓ Tốt | ✓ Tốt |
+| **Rebalance khi thêm node** | ✓ Chỉ chia đôi partition lớn (dynamic split) | `mod N` thì tệ; consistent hashing thì tốt |
 | **Ví dụ hệ dùng** | HBase, Bigtable, MongoDB (ranged) | Cassandra, DynamoDB, Riak, Redis Cluster |
 
 **Kết luận thực dụng:** cần **range query nhiều** (analytics theo thời gian, log, time-series) → range. Cần **ghi phân bố đều, chủ yếu point lookup** (session, user profile theo id) → hash. Nhiều hệ cho **cả hai**: hash ở partition key, sort ở clustering key.
@@ -172,8 +172,8 @@ Partition thường theo **primary key**. Nhưng ứng dụng hay hỏi theo **t
 | Tiêu chí | Local (document-partitioned) | Global (term-partitioned) |
 |----------|------------------------------|----------------------------|
 | Index chia theo | Cùng partition với document | Theo giá trị term (riêng) |
-| **Đường ghi** | ✅ Rẻ, 1 partition, đồng bộ | ❌ Đắt, nhiều partition, thường async |
-| **Đường đọc** | ❌ Scatter/gather mọi partition | ✅ Trỏ thẳng 1 partition |
+| **Đường ghi** | ✓ Rẻ, 1 partition, đồng bộ | ✗ Đắt, nhiều partition, thường async |
+| **Đường đọc** | ✗ Scatter/gather mọi partition | ✓ Trỏ thẳng 1 partition |
 | Tính nhất quán index | Dễ giữ đồng bộ | Thường eventually consistent |
 | Ví dụ | ES, Cassandra, DynamoDB LSI | DynamoDB GSI |
 

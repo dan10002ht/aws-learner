@@ -535,14 +535,14 @@ Free Tier không có. Bài tập: nếu có CUR, viết SQL Athena tính:
 - **Mua Compute SP 1 năm no-upfront** ngay khi workload ổn định 1 tháng.
 
 ### Anti-pattern
-- ❌ Không tag → không biết tốn ở đâu.
-- ❌ CloudWatch Logs retention "Never expire" → đắt theo thời gian.
-- ❌ EIP idle / unused.
-- ❌ EBS unattached → trả tiền vô ích.
-- ❌ Snapshot không xóa → tích lũy theo thời gian.
-- ❌ NAT GW serve S3 traffic → dùng Gateway Endpoint.
-- ❌ Multi-AZ dev/test không cần thiết.
-- ❌ Default CloudWatch detail monitoring trên mọi EC2 (1 phút) → tốn tiền.
+- ✗ Không tag → không biết tốn ở đâu.
+- ✗ CloudWatch Logs retention "Never expire" → đắt theo thời gian.
+- ✗ EIP idle / unused.
+- ✗ EBS unattached → trả tiền vô ích.
+- ✗ Snapshot không xóa → tích lũy theo thời gian.
+- ✗ NAT GW serve S3 traffic → dùng Gateway Endpoint.
+- ✗ Multi-AZ dev/test không cần thiết.
+- ✗ Default CloudWatch detail monitoring trên mọi EC2 (1 phút) → tốn tiền.
 
 ---
 

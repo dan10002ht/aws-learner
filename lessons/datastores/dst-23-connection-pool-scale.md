@@ -79,7 +79,7 @@ Mỗi instance app giữ **pool riêng** của nó. Điều nguy hiểm: pool l�
 <text x="530" y="132" text-anchor="middle" font-size="12" fill="currentColor">max_connections = 100</text>
 <text x="530" y="156" text-anchor="middle" font-size="11" fill="#f43f5e">900 conn bị từ chối / xếp hàng</text>
 <line x1="350" y1="130" x2="428" y2="130" stroke="currentColor" stroke-width="2" marker-end="url(#ap)"/>
-<text x="389" y="120" text-anchor="middle" font-size="18" fill="#f43f5e">✕</text>
+<text x="389" y="120" text-anchor="middle" font-size="18" fill="#f43f5e">✗</text>
 <defs><marker id="ap" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
 </svg>
 
@@ -112,7 +112,7 @@ Ví dụ DB 8 core, storage NVMe (ước ~2 kênh hữu ích): `8×2 + 2 = 18`. 
 
 **Vì sao con số này lại nhỏ đến vậy?** Vì một query chỉ ở hai trạng thái: đang **dùng CPU**, hoặc đang **chờ đĩa/lock**. Bạn chỉ cần đủ connection để: (a) lấp hết core khi chúng compute, cộng (b) một ít connection "dự phòng" để khi vài query đang chờ đĩa thì core không nằm không. Nhiều hơn thế chỉ là hàng chờ trá hình.
 
-> ⚠️ Công thức chỉ là **điểm xuất phát**, không phải chân lý. Bắt buộc **đo bằng thực nghiệm**: chạy load test, tăng dần pool, ghi lại throughput và p99. Bạn sẽ thấy đúng hình dạng đường cong ở mục 2 — throughput lên tới một đỉnh rồi đi ngang/tụt, còn **latency thì tăng đều**. Chọn pool ở **ngay trước đỉnh**, nơi throughput cao mà latency chưa phình.
+> Công thức chỉ là **điểm xuất phát**, không phải chân lý. Bắt buộc **đo bằng thực nghiệm**: chạy load test, tăng dần pool, ghi lại throughput và p99. Bạn sẽ thấy đúng hình dạng đường cong ở mục 2 — throughput lên tới một đỉnh rồi đi ngang/tụt, còn **latency thì tăng đều**. Chọn pool ở **ngay trước đỉnh**, nơi throughput cao mà latency chưa phình.
 
 Cấu hình pool phía app (ví dụ HikariCP — Java) nên đặt **cả timeout**, không chỉ size:
 

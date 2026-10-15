@@ -47,7 +47,7 @@ UDP chỉ là IP + port + checksum. Không handshake, không thứ tự, không 
 - **Video/voice realtime**: frame đến trễ là vô dụng — thà bỏ qua còn hơn chờ truyền lại (đây là lý do Zoom/WebRTC dùng UDP).
 - **QUIC (nền của HTTP/3)**: xây độ tin cậy *trên* UDP, để tự kiểm soát congestion control và tránh head-of-line blocking của TCP.
 
-> 💡 **Ghi nhớ**: TCP = "bưu phẩm bảo đảm, ký nhận từng kiện". UDP = "ném bưu thiếp qua hàng rào". Realtime thì bưu thiếp trễ không ai đọc nữa — nên UDP hợp lý.
+> **Ghi nhớ**: TCP = "bưu phẩm bảo đảm, ký nhận từng kiện". UDP = "ném bưu thiếp qua hàng rào". Realtime thì bưu thiếp trễ không ai đọc nữa — nên UDP hợp lý.
 
 ## 2. Port & Socket
 
@@ -78,7 +78,7 @@ Kết nối TCP đi qua các trạng thái: `LISTEN → SYN_SENT/SYN_RECEIVED �
 ss -tan | awk '{print $1}' | sort | uniq -c | sort -rn
 ```
 
-> ⚠️ **Lỗi thường gặp**: App backend mở kết nối mới đến database/API cho *mỗi* request rồi đóng ngay → tích luỹ hàng chục nghìn TIME_WAIT, cạn ephemeral port, lỗi `Cannot assign requested address`. Giải pháp: **connection pooling / keep-alive**, không phải tăng giới hạn hệ điều hành.
+> **Lỗi thường gặp**: App backend mở kết nối mới đến database/API cho *mỗi* request rồi đóng ngay → tích luỹ hàng chục nghìn TIME_WAIT, cạn ephemeral port, lỗi `Cannot assign requested address`. Giải pháp: **connection pooling / keep-alive**, không phải tăng giới hạn hệ điều hành.
 
 ## 4. HTTP/1.1 vs HTTP/2 vs HTTP/3
 
@@ -324,7 +324,7 @@ echo | openssl s_client -connect aws.amazon.com:443 -servername aws.amazon.com 2
   | openssl x509 -noout -dates -ext subjectAltName
 ```
 
-> 💡 **Ghi nhớ**: Hostname được kiểm tra theo **SAN (Subject Alternative Name)**, không phải Common Name — CN đã bị bỏ qua từ lâu. Cert public hiện tại tối đa **398 ngày**, và ngành đã thống nhất lộ trình rút xuống **~47 ngày vào 2029** → tự động hoá gia hạn (ACM, Let's Encrypt/certbot) là bắt buộc, không phải lựa chọn.
+> **Ghi nhớ**: Hostname được kiểm tra theo **SAN (Subject Alternative Name)**, không phải Common Name — CN đã bị bỏ qua từ lâu. Cert public hiện tại tối đa **398 ngày**, và ngành đã thống nhất lộ trình rút xuống **~47 ngày vào 2029** → tự động hoá gia hạn (ACM, Let's Encrypt/certbot) là bắt buộc, không phải lựa chọn.
 
 ### SNI — Server Name Indication
 
@@ -356,7 +356,7 @@ App (thường là mobile) "ghim" sẵn public key/cert của server; cert hợp
 | `unable to get local issuer certificate` | Server **quên gửi intermediate** — lỗi cấu hình server cực phổ biến | `s_client -showcerts` chỉ thấy 1 cert |
 | `handshake failure` | Lệch phiên bản TLS/cipher (server cũ chỉ có TLS 1.0/1.1) | Thử `-tls1_2`, `-tls1_3` |
 
-> ⚠️ **Lỗi thường gặp**: Khi gặp lỗi cert, đừng vội thêm `curl -k` / `verify=False` rồi để luôn trong code production. Đó là tắt hoàn toàn xác minh — kẻ tấn công man-in-the-middle sẽ cảm ơn bạn. Hãy sửa tận gốc: gia hạn cert, bổ sung SAN, hoặc gửi đủ chain.
+> **Lỗi thường gặp**: Khi gặp lỗi cert, đừng vội thêm `curl -k` / `verify=False` rồi để luôn trong code production. Đó là tắt hoàn toàn xác minh — kẻ tấn công man-in-the-middle sẽ cảm ơn bạn. Hãy sửa tận gốc: gia hạn cert, bổ sung SAN, hoặc gửi đủ chain.
 
 ## 8. Bộ công cụ thực hành — quy trình debug HTTPS
 
@@ -441,7 +441,7 @@ Total:       %{time_total}s\n'
     <text x="218" y="76" font-size="9" text-anchor="middle" fill="currentColor">TLS chặng 1</text>
     <text x="218" y="129" font-size="9" text-anchor="middle" fill="#f59e0b">cert ACM ở ALB</text>
     <text x="523" y="76" font-size="9" text-anchor="middle" fill="currentColor">TLS chặng 2 (re-encrypt)</text>
-    <text x="375" y="132" font-size="9" text-anchor="middle" fill="#ef4444">⬤ TLS đứt tại ALB → ALB thấy nội dung HTTP</text>
+    <text x="375" y="132" font-size="9" text-anchor="middle" fill="#ef4444">● TLS đứt tại ALB → ALB thấy nội dung HTTP</text>
   </g>
   <line x1="20" y1="158" x2="700" y2="158" stroke="currentColor" stroke-opacity="0.18"/>
   <g>
@@ -459,7 +459,7 @@ Total:       %{time_total}s\n'
       <path d="M140 223 L296 223" marker-end="url(#l2)"/>
       <path d="M450 223 L596 223" marker-end="url(#l2)"/>
     </g>
-    <text x="375" y="268" font-size="9.5" text-anchor="middle" fill="#10b981">⬤ TLS nguyên vẹn end-to-end: client → target, NLB không đọc được nội dung</text>
+    <text x="375" y="268" font-size="9.5" text-anchor="middle" fill="#10b981">● TLS nguyên vẹn end-to-end: client → target, NLB không đọc được nội dung</text>
   </g>
   <text x="360" y="300" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">Terminate = đọc được HTTP (routing/WAF) nhưng đứt mã hoá; passthrough = end-to-end nhưng LB mù nội dung.</text>
   <defs>
@@ -489,4 +489,4 @@ Total:       %{time_total}s\n'
 | mTLS | API Gateway mutual TLS với truststore trên S3; ALB mTLS |
 | Debug bằng curl/openssl | Truy lỗi 502 origin, security group chặn 443, cert sai SAN |
 
-> 💡 **Ghi nhớ chốt bài**: Khi HTTPS lỗi, đi từ dưới lên — **DNS (dig) → TCP (nc) → TLS (openssl s_client) → HTTP (curl -v)**. Tầng nào fail thì dừng ở tầng đó mà sửa; 90% thời gian debug bị lãng phí vì đoán mò ở sai tầng.
+> **Ghi nhớ chốt bài**: Khi HTTPS lỗi, đi từ dưới lên — **DNS (dig) → TCP (nc) → TLS (openssl s_client) → HTTP (curl -v)**. Tầng nào fail thì dừng ở tầng đó mà sửa; 90% thời gian debug bị lãng phí vì đoán mò ở sai tầng.

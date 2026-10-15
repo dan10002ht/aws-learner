@@ -94,11 +94,11 @@ Bạn cần ship 1 gói hàng:
 - **Pricing**: $0.20 / 1M request + $0.0000166667 / GB-second. Free tier 1M request/tháng vĩnh viễn.
 
 **Khi dùng Lambda**:
-- ✅ Event-driven, traffic không đều.
-- ✅ API backend cho mobile/web (qua API Gateway).
-- ✅ ETL nhỏ, file processing.
-- ❌ Long-running task > 15 phút → dùng **AWS Batch / ECS / Step Functions**.
-- ❌ Stateful workload (game server).
+- ✓ Event-driven, traffic không đều.
+- ✓ API backend cho mobile/web (qua API Gateway).
+- ✓ ETL nhỏ, file processing.
+- ✗ Long-running task > 15 phút → dùng **AWS Batch / ECS / Step Functions**.
+- ✗ Stateful workload (game server).
 
 ---
 

@@ -52,7 +52,7 @@ feature:   oo        oo
 - **Khi nào dùng:** sản phẩm có **versioning rõ ràng**, release theo lịch, cần support nhiều version cùng lúc (app desktop, mobile, on-premise).
 - **Nhược:** nặng nề, nhiều merge, dễ lệch giữa `develop` và `main`. **Đa số team web KHÔNG cần GitFlow** — nó hay bị dùng nhầm vì quán tính.
 
-> 💡 Ghi nhớ: Web/SaaS deploy liên tục → **GitHub Flow** hoặc **trunk-based**. Sản phẩm có version/release theo lịch → cân nhắc **GitFlow**. Đừng chọn GitFlow chỉ vì "nghe pro".
+> Ghi nhớ: Web/SaaS deploy liên tục → **GitHub Flow** hoặc **trunk-based**. Sản phẩm có version/release theo lịch → cân nhắc **GitFlow**. Đừng chọn GitFlow chỉ vì "nghe pro".
 
 ### So sánh nhanh
 
@@ -154,7 +154,7 @@ git switch -c feat/user-avatar      # đặt tên có ý nghĩa: type/mô-tả-n
   hotfix/payment-500
 ```
 
-> ⚠️ Bẫy: Branch "khổng lồ" sống 3 tuần với 40 file thay đổi là cơn ác mộng review + chắc chắn conflict. Chia nhỏ công việc thành nhiều branch/PR ngắn. Nếu feature lớn, dùng **feature flag** để merge dần phần code chưa bật.
+> Bẫy: Branch "khổng lồ" sống 3 tuần với 40 file thay đổi là cơn ác mộng review + chắc chắn conflict. Chia nhỏ công việc thành nhiều branch/PR ngắn. Nếu feature lớn, dùng **feature flag** để merge dần phần code chưa bật.
 
 ```bash
 # Cập nhật branch thường xuyên để conflict nhỏ & sớm
@@ -197,7 +197,7 @@ Ba dòng marker cần thuộc lòng:
 >>>>>>> <nhánh kia>   kết thúc "phía của họ" (theirs)
 ```
 
-> ⚠️ Bẫy: Trong `git rebase`, **HEAD/ours là origin/main**, còn "theirs" mới là commit của bạn — **ngược với trực giác**! Vì rebase phát lại commit của bạn LÊN TRÊN main. Trong `git merge` thì HEAD/ours đúng là nhánh bạn đang đứng. Đọc kỹ tên sau `>>>>>>>` thay vì đoán.
+> Bẫy: Trong `git rebase`, **HEAD/ours là origin/main**, còn "theirs" mới là commit của bạn — **ngược với trực giác**! Vì rebase phát lại commit của bạn LÊN TRÊN main. Trong `git merge` thì HEAD/ours đúng là nhánh bạn đang đứng. Đọc kỹ tên sau `>>>>>>>` thay vì đoán.
 
 Cách giải: **xoá sạch cả 3 dòng marker**, giữ lại đoạn code đúng (có thể là của bên này, bên kia, hoặc trộn cả hai), rồi:
 
@@ -237,7 +237,7 @@ git diff              # xem các hunk conflict
 git diff --name-only --diff-filter=U   # chỉ tên file còn unmerged
 ```
 
-> 💡 Ghi nhớ: `--ours`/`--theirs` lấy **nguyên cả file** một phía. Nếu cần giữ phần này của bên A, phần kia của bên B → phải sửa tay từng hunk, đừng dùng checkout cả file.
+> Ghi nhớ: `--ours`/`--theirs` lấy **nguyên cả file** một phía. Nếu cần giữ phần này của bên A, phần kia của bên B → phải sửa tay từng hunk, đừng dùng checkout cả file.
 
 ---
 
@@ -332,9 +332,9 @@ git rerere diff        # cách giải đã ghi lại
 git rerere forget src/auth.ts   # quên cách giải sai để giải lại
 ```
 
-> 💡 Ghi nhớ: Bật `rerere.enabled true` một lần và để đó. Nó âm thầm tiết kiệm cho bạn hàng giờ trong các cuộc rebase dài. Không có nhược điểm đáng kể.
+> Ghi nhớ: Bật `rerere.enabled true` một lần và để đó. Nó âm thầm tiết kiệm cho bạn hàng giờ trong các cuộc rebase dài. Không có nhược điểm đáng kể.
 
-> ⚠️ Bẫy: Nếu lần đầu bạn giải **sai**, rerere sẽ vui vẻ lặp lại cái sai đó. Khi thấy nó "tự giải" mà kết quả lạ, dùng `git rerere forget <file>` rồi giải lại cho đúng.
+> Bẫy: Nếu lần đầu bạn giải **sai**, rerere sẽ vui vẻ lặp lại cái sai đó. Khi thấy nó "tự giải" mà kết quả lạ, dùng `git rerere forget <file>` rồi giải lại cho đúng.
 
 ---
 
@@ -362,12 +362,12 @@ perf     cải thiện hiệu năng    build/ci  hệ thống build, pipeline
 Ví dụ tốt vs tệ:
 
 ```text
-✗ git commit -m "fix"
-✗ git commit -m "update code"
-✗ git commit -m "sửa lại lần cuối thật"
+✗  git commit -m "fix"
+✗  git commit -m "update code"
+✗  git commit -m "sửa lại lần cuối thật"
 
-✓ feat(auth): thêm refresh token tự động khi 401
-✓ fix(cart): chặn số lượng âm khi user spam nút giảm
+✓  feat(auth): thêm refresh token tự động khi 401
+✓  fix(cart): chặn số lượng âm khi user spam nút giảm
 ```
 
 Commit có thân giải thích lý do:
@@ -387,7 +387,7 @@ BREAKING CHANGE: client cũ đọc `userId` sẽ nhận undefined.
 Cần cập nhật mobile app >= v2.3.
 ```
 
-> 💡 Ghi nhớ: Mỗi commit nên là **một thay đổi logic hoàn chỉnh** (atomic). Đừng gộp "sửa bug + đổi format + thêm feature" vào một commit — khi cần revert hay `git bisect`, bạn sẽ khốn khổ.
+> Ghi nhớ: Mỗi commit nên là **một thay đổi logic hoàn chỉnh** (atomic). Đừng gộp "sửa bug + đổi format + thêm feature" vào một commit — khi cần revert hay `git bisect`, bạn sẽ khốn khổ.
 
 ---
 
@@ -432,7 +432,7 @@ An toàn         luôn an toàn                 KHÔNG rebase branch đã share
 Khi giải xung   1 lần                        có thể lặp từng commit
 ```
 
-> ⚠️ Bẫy GOLDEN RULE: **Không bao giờ rebase một branch đã được người khác pull/dùng chung** (đặc biệt `main`). Rebase viết lại hash → người khác sẽ bị lệch lịch sử, kéo về thành mớ hỗn độn. Rebase chỉ dùng cho branch **của riêng bạn, chưa ai dùng**.
+> Bẫy GOLDEN RULE: **Không bao giờ rebase một branch đã được người khác pull/dùng chung** (đặc biệt `main`). Rebase viết lại hash → người khác sẽ bị lệch lịch sử, kéo về thành mớ hỗn độn. Rebase chỉ dùng cho branch **của riêng bạn, chưa ai dùng**.
 
 Nếu lỡ rebase rồi và branch đã push trước đó, push lại an toàn bằng:
 
@@ -441,7 +441,7 @@ git push --force-with-lease     # AN TOÀN hơn --force:
                                 # từ chối nếu remote có commit bạn chưa thấy
 ```
 
-> 💡 Ghi nhớ: Đi làm thực tế, lựa chọn phổ biến: **rebase branch riêng của bạn lên `main`** để lịch sử sạch, rồi merge vào `main` qua PR (squash hoặc merge commit tuỳ convention team). Đừng tự ý dùng `--force` lên branch chung.
+> Ghi nhớ: Đi làm thực tế, lựa chọn phổ biến: **rebase branch riêng của bạn lên `main`** để lịch sử sạch, rồi merge vào `main` qua PR (squash hoặc merge commit tuỳ convention team). Đừng tự ý dùng `--force` lên branch chung.
 
 Dọn lịch sử branch trước khi mở PR bằng interactive rebase (gộp commit "fix typo", "wip"):
 
@@ -481,9 +481,9 @@ Quy trình chuẩn 1 task:
        --> mở PR nhỏ, mô tả rõ --> review --> merge --> xoá branch
 ```
 
-> 💡 Ghi nhớ: Một PR = một ý tưởng. Nếu bạn thấy mình viết "và" trong mô tả PR ("thêm login **và** refactor router"), rất có thể nên tách thành hai PR.
+> Ghi nhớ: Một PR = một ý tưởng. Nếu bạn thấy mình viết "và" trong mô tả PR ("thêm login **và** refactor router"), rất có thể nên tách thành hai PR.
 
-> ⚠️ Bẫy: Đừng để branch đã merge nằm lại. Xoá để repo gọn: `git branch -d feat/x` (local) và xoá trên remote qua nút "Delete branch" sau khi merge PR. Dọn local: `git fetch --prune`.
+> Bẫy: Đừng để branch đã merge nằm lại. Xoá để repo gọn: `git branch -d feat/x` (local) và xoá trên remote qua nút "Delete branch" sau khi merge PR. Dọn local: `git fetch --prune`.
 
 ---
 

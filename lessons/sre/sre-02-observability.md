@@ -2,7 +2,7 @@
 
 Monitoring trả lời câu hỏi bạn đã biết trước: "CPU có quá 80% không?". Observability trả lời câu hỏi bạn **chưa từng nghĩ tới** lúc 3 giờ sáng: "Vì sao 0.3% request từ một build app Android cụ thể, gọi qua một payment provider, chỉ ở region ap-southeast-1, lại timeout?". Bài này dạy bạn dựng hệ thống mà khi có sự cố lạ, bạn **suy luận ra nguyên nhân từ dữ liệu sẵn có** thay vì phải deploy thêm log rồi chờ tái hiện.
 
-> 💡 **Nguyên tắc:** Observability là thuộc tính "bạn có thể hiểu trạng thái bên trong hệ thống chỉ bằng output bên ngoài, mà không cần ship code mới". Nếu để debug một sự cố mới bạn phải thêm log rồi deploy lại — hệ thống của bạn chưa observable.
+> **Nguyên tắc:** Observability là thuộc tính "bạn có thể hiểu trạng thái bên trong hệ thống chỉ bằng output bên ngoài, mà không cần ship code mới". Nếu để debug một sự cố mới bạn phải thêm log rồi deploy lại — hệ thống của bạn chưa observable.
 
 ## 1. Monitoring vs Observability
 
@@ -18,7 +18,7 @@ Hai từ này hay bị dùng lẫn. Chúng bổ sung cho nhau, không thay thế
 
 Thực tế: bạn dùng **monitoring để biết có chuyện gì đó sai** (alert kêu), rồi dùng **observability để biết sai ở đâu** (đào sâu). Một hệ thống chỉ có monitoring sẽ kêu "error rate 5%" nhưng không cho bạn manh mối nào để biết tại sao.
 
-> ⚠️ **Bẫy:** Mua một SaaS gắn nhãn "observability platform" rồi vẫn chỉ dùng nó như dashboard CPU/RAM. Công cụ không tạo ra observability — **độ giàu của dữ liệu bạn phát ra** (cardinality, context, trace id) mới tạo ra nó.
+> **Bẫy:** Mua một SaaS gắn nhãn "observability platform" rồi vẫn chỉ dùng nó như dashboard CPU/RAM. Công cụ không tạo ra observability — **độ giàu của dữ liệu bạn phát ra** (cardinality, context, trace id) mới tạo ra nó.
 
 ## 2. Ba trụ cột: Metrics, Logs, Traces
 
@@ -122,7 +122,7 @@ Luồng điều tra điển hình:
 
 Ba trụ cột phải **liên kết được với nhau**: từ một điểm metric bất thường, click sang exemplar trace, từ trace nhảy sang log của đúng span đó. Nếu chúng nằm ở ba hệ thống rời rạc không có khóa chung, bạn mất nửa giờ copy-paste timestamp mỗi lần điều tra.
 
-> 💡 **Nguyên tắc:** Dùng `trace_id` làm khóa liên kết xuyên suốt cả ba trụ cột. Mọi dòng log phải có `trace_id`; mọi metric quan trọng nên có exemplar trỏ về một trace mẫu.
+> **Nguyên tắc:** Dùng `trace_id` làm khóa liên kết xuyên suốt cả ba trụ cột. Mọi dòng log phải có `trace_id`; mọi metric quan trọng nên có exemplar trỏ về một trace mẫu.
 
 ## 3. RED method — cho service hướng request
 
@@ -163,7 +163,7 @@ USE (Brendan Gregg) dùng cho **resource** (CPU, disk, network interface, connec
 
 Điểm tinh tế: **Utilization 100% chưa chắc là vấn đề** (một CPU chạy hết công suất mà không ai chờ thì vẫn ổn). Chính **Saturation** mới là tín hiệu đau: hàng đợi dài nghĩa là có việc đang phải chờ.
 
-> ⚠️ **Bẫy:** Chỉ alert trên Utilization ("CPU > 80%"). CPU 80% trong batch job là bình thường; còn connection pool saturation (request xếp hàng chờ slot) mới làm latency p99 nổ tung dù CPU chỉ 40%. Hãy đo và alert trên saturation.
+> **Bẫy:** Chỉ alert trên Utilization ("CPU > 80%"). CPU 80% trong batch job là bình thường; còn connection pool saturation (request xếp hàng chờ slot) mới làm latency p99 nổ tung dù CPU chỉ 40%. Hãy đo và alert trên saturation.
 
 ### RED hay USE?
 
@@ -207,9 +207,9 @@ Một trang gọi 100 microservice song song (fan-out). Trang chỉ trả về k
 
 Nghĩa là **63% số lần load trang** sẽ chạm tail latency 1s, dù mỗi service "chỉ" 1% chậm. Đây là lý do Amazon/Google ám ảnh với p99.9: ở quy mô fan-out, đuôi của một service trở thành trải nghiệm điển hình của người dùng.
 
-> 💡 **Nguyên tắc:** Đặt SLO trên percentile (p95/p99), không phải average. "p99 latency < 300ms" là mục tiêu có ý nghĩa; "average < 300ms" có thể đúng trong khi 1% người dùng khốn khổ.
+> **Nguyên tắc:** Đặt SLO trên percentile (p95/p99), không phải average. "p99 latency < 300ms" là mục tiêu có ý nghĩa; "average < 300ms" có thể đúng trong khi 1% người dùng khốn khổ.
 
-> ⚠️ **Bẫy:** Không lấy trung bình của percentile! `avg(p99 của 5 host)` là vô nghĩa toán học. Phải gộp histogram bucket từ tất cả host *rồi* mới tính `histogram_quantile`. Đó là lý do ta lưu latency dạng histogram chứ không lưu sẵn một con số p99 mỗi host.
+> **Bẫy:** Không lấy trung bình của percentile! `avg(p99 của 5 host)` là vô nghĩa toán học. Phải gộp histogram bucket từ tất cả host *rồi* mới tính `histogram_quantile`. Đó là lý do ta lưu latency dạng histogram chứ không lưu sẵn một con số p99 mỗi host.
 
 ## 6. High cardinality — sức mạnh và cái giá
 
@@ -276,7 +276,7 @@ http_requests_total{method="POST", route="/checkout", code="200"}
 http_requests_total{method="POST", user_id="u_8f3a...", request_id="r_..."}
 ```
 
-> ⚠️ **Bẫy:** Đừng bao giờ đặt id duy nhất (user_id, request_id, email, full URL có query param) làm **label của metric**. Những chiều cardinality cao đó thuộc về **logs và traces**, nơi chúng có thể truy vấn ad-hoc mà không nhân bản time series.
+> **Bẫy:** Đừng bao giờ đặt id duy nhất (user_id, request_id, email, full URL có query param) làm **label của metric**. Những chiều cardinality cao đó thuộc về **logs và traces**, nơi chúng có thể truy vấn ad-hoc mà không nhân bản time series.
 
 ## 7. Structured logging + trace id
 
@@ -312,7 +312,7 @@ Giờ bạn truy vấn được: *`error="payment_declined" AND build="android-4
 - **Tên field nhất quán** toàn hệ thống (`user_id` chứ không lúc `uid` lúc `userId`).
 - **Log level kỷ luật:** ERROR = cần người xem; WARN = bất thường tự hồi phục; INFO = mốc nghiệp vụ; DEBUG = tắt ở prod.
 
-> 💡 **Nguyên tắc:** Log như thể bạn sẽ phải *truy vấn* nó, không phải *đọc* nó. Câu hỏi đúng không phải "dòng này đọc có dễ hiểu không" mà "tôi có lọc/đếm/nhóm theo nó được không".
+> **Nguyên tắc:** Log như thể bạn sẽ phải *truy vấn* nó, không phải *đọc* nó. Câu hỏi đúng không phải "dòng này đọc có dễ hiểu không" mà "tôi có lọc/đếm/nhóm theo nó được không".
 
 ## 8. Distributed tracing
 
@@ -382,7 +382,7 @@ Khái niệm cốt lõi:
 
 **Sampling** là đánh đổi quan trọng: lưu 100% trace ở quy mô lớn rất tốn. Phổ biến là giữ 100% trace lỗi/chậm (tail-based sampling) và sample 1–10% trace bình thường. Dùng chuẩn **OpenTelemetry (OTel)** để instrument một lần, gửi đi nhiều backend (Jaeger, Tempo, X-Ray...).
 
-> ⚠️ **Bẫy:** Quên propagate context qua biên bất đồng bộ (message queue, background job). Khi đó trace "đứt" và bạn không nối được nguyên nhân từ producer sang consumer. Luôn nhét `trace_id` vào message metadata.
+> **Bẫy:** Quên propagate context qua biên bất đồng bộ (message queue, background job). Khi đó trace "đứt" và bạn không nối được nguyên nhân từ producer sang consumer. Luôn nhét `trace_id` vào message metadata.
 
 ## 9. Dashboard tốt
 
@@ -397,9 +397,9 @@ Dashboard không phải để "trông cho ngầu" mà để **rút ngắn thời
 | Annotation deploy | Đánh dấu mốc deploy/config-change lên trục thời gian — phần lớn sự cố theo sau một thay đổi |
 | Percentile, không average | Hiển thị p50/p95/p99 chồng lên nhau |
 
-> 💡 **Nguyên tắc:** Mỗi dashboard nên trả lời một câu hỏi cụ thể ("checkout có khỏe không?"). Dashboard 60 panel không có câu hỏi rõ ràng là nơi tín hiệu đi chết — không ai đọc nổi lúc khẩn cấp.
+> **Nguyên tắc:** Mỗi dashboard nên trả lời một câu hỏi cụ thể ("checkout có khỏe không?"). Dashboard 60 panel không có câu hỏi rõ ràng là nơi tín hiệu đi chết — không ai đọc nổi lúc khẩn cấp.
 
-> ⚠️ **Bẫy:** "Wall of graphs" — 40 panel đủ màu nhưng on-call không biết cái nào quan trọng. Ít panel có chủ đích đánh bại nhiều panel vô định. Mỗi panel phải gắn với một quyết định.
+> **Bẫy:** "Wall of graphs" — 40 panel đủ màu nhưng on-call không biết cái nào quan trọng. Ít panel có chủ đích đánh bại nhiều panel vô định. Mỗi panel phải gắn với một quyết định.
 
 ## Liên hệ sang AWS
 

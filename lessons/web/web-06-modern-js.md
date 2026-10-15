@@ -28,9 +28,9 @@ count = count + 1;   // OK vì là let
 // PI = 3.15;        // TypeError: Assignment to constant variable
 ```
 
-> 💡 Ghi nhớ: `const` không có nghĩa là "giá trị bất biến" mà là "không gán lại biến". Object/array khai báo bằng `const` vẫn sửa nội dung được: `const arr = []; arr.push(1)` hoàn toàn hợp lệ.
+> Ghi nhớ: `const` không có nghĩa là "giá trị bất biến" mà là "không gán lại biến". Object/array khai báo bằng `const` vẫn sửa nội dung được: `const arr = []; arr.push(1)` hoàn toàn hợp lệ.
 
-> ⚠️ Bẫy: `var` bị "hoisting" — biến được kéo lên đầu hàm với giá trị `undefined`. Đây là nguồn gốc của vô số bug khó hiểu. Bỏ `var` đi là bạn tránh được cả lớp lỗi này.
+> Bẫy: `var` bị "hoisting" — biến được kéo lên đầu hàm với giá trị `undefined`. Đây là nguồn gốc của vô số bug khó hiểu. Bỏ `var` đi là bạn tránh được cả lớp lỗi này.
 
 ## Arrow function & `this`
 
@@ -69,7 +69,7 @@ timer.start();
 
 Nếu dùng `function () { this.seconds++ }` bên trong `setInterval`, `this` sẽ trỏ tới `window` (hoặc `undefined` ở strict mode) và code sai.
 
-> ⚠️ Bẫy: Đừng dùng arrow function để định nghĩa **method của object** nếu method đó cần `this` trỏ vào chính object. `const obj = { val: 1, get: () => this.val }` sẽ hỏng vì `this` không phải `obj`.
+> Bẫy: Đừng dùng arrow function để định nghĩa **method của object** nếu method đó cần `this` trỏ vào chính object. `const obj = { val: 1, get: () => this.val }` sẽ hỏng vì `this` không phải `obj`.
 
 ## Template literal
 
@@ -152,7 +152,7 @@ console.log(head); // 10
 console.log(tail); // [20, 30]
 ```
 
-> 💡 Ghi nhớ: Spread tạo **bản sao nông (shallow copy)**. `const copy = [...arr]` là cách gọn để clone mảng/object mà không sửa bản gốc — rất quan trọng trong React.
+> Ghi nhớ: Spread tạo **bản sao nông (shallow copy)**. `const copy = [...arr]` là cách gọn để clone mảng/object mà không sửa bản gốc — rất quan trọng trong React.
 
 ## Tham số mặc định (default param)
 
@@ -192,7 +192,7 @@ console.log(count ?? 10); // 0   ← đúng, vì 0 không phải null/undefined
 const name = "" ?? "Khách"; // "" (chuỗi rỗng vẫn được giữ)
 ```
 
-> ⚠️ Bẫy: Đừng dùng `||` để đặt giá trị mặc định cho số hay boolean. `price || 100` sẽ biến `price = 0` thành `100`. Dùng `??` cho an toàn.
+> Bẫy: Đừng dùng `||` để đặt giá trị mặc định cho số hay boolean. `price || 100` sẽ biến `price = 0` thành `100`. Dùng `??` cho an toàn.
 
 ## Array methods: map / filter / reduce / find
 
@@ -233,7 +233,7 @@ const cheapNames = products
 | `reduce` | một giá trị bất kỳ | tính tổng, gộp, đếm |
 | `some` / `every` | boolean | "có ít nhất 1?" / "tất cả?" |
 
-> 💡 Ghi nhớ: Ưu tiên `map/filter/reduce` thay cho vòng `for` thủ công. Code ngắn hơn, ít lỗi index hơn, và không vô tình sửa mảng gốc.
+> Ghi nhớ: Ưu tiên `map/filter/reduce` thay cho vòng `for` thủ công. Code ngắn hơn, ít lỗi index hơn, và không vô tình sửa mảng gốc.
 
 ## ES Module: `import` / `export`
 
@@ -301,7 +301,7 @@ Trong trình duyệt, dùng module bằng cách thêm `type="module"`:
 <script type="module" src="main.js"></script>
 ```
 
-> ⚠️ Bẫy: Module ES6 chỉ chạy khi trang được phục vụ qua HTTP(S), **không chạy khi mở file bằng `file://`**. Dùng một server tĩnh (ví dụ `npx serve`) khi test cục bộ.
+> Bẫy: Module ES6 chỉ chạy khi trang được phục vụ qua HTTP(S), **không chạy khi mở file bằng `file://`**. Dùng một server tĩnh (ví dụ `npx serve`) khi test cục bộ.
 
 ## Promise & async/await sâu hơn
 
@@ -333,7 +333,7 @@ async function getUser(id) {
 }
 ```
 
-> ⚠️ Bẫy: Dùng `await` trong vòng `for` sẽ chạy **tuần tự** (chậm). Nếu các việc độc lập, gom vào `Promise.all` để chạy song song.
+> Bẫy: Dùng `await` trong vòng `for` sẽ chạy **tuần tự** (chậm). Nếu các việc độc lập, gom vào `Promise.all` để chạy song song.
 
 ## npm & package.json
 
@@ -416,7 +416,7 @@ npm install
 npm run dev
 ```
 
-> 💡 Ghi nhớ: Bạn viết code sạch, hiện đại (ES6+, JSX). Bundler + transpiler lo phần "biến nó thành thứ mọi trình duyệt chạy được và tải nhanh". Đây chính là nền móng cho React/Vue ở bài sau.
+> Ghi nhớ: Bạn viết code sạch, hiện đại (ES6+, JSX). Bundler + transpiler lo phần "biến nó thành thứ mọi trình duyệt chạy được và tải nhanh". Đây chính là nền móng cho React/Vue ở bài sau.
 
 ## Tổng kết
 

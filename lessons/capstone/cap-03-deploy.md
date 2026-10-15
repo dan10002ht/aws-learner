@@ -4,7 +4,7 @@ Bài 1 (`cap-01-plan`) đã chốt kiến trúc, bài 2 (`cap-02-build`) đã d�
 
 Đây cũng là phần nhà tuyển dụng nhìn vào nhiều nhất — vì nó chứng minh bạn hiểu cả **vòng đời** sản phẩm, không chỉ viết được `function`.
 
-> 💡 Ghi nhớ: mục tiêu bài này không phải "dùng được nhiều dịch vụ AWS nhất". Mục tiêu là **một pipeline đáng tin cậy mà bạn hiểu từng mắt xích** — đủ để giải thích cho người phỏng vấn vì sao chọn Fargate chứ không phải Lambda, vì sao secret nằm ở Secrets Manager chứ không phải trong repo.
+> Ghi nhớ: mục tiêu bài này không phải "dùng được nhiều dịch vụ AWS nhất". Mục tiêu là **một pipeline đáng tin cậy mà bạn hiểu từng mắt xích** — đủ để giải thích cho người phỏng vấn vì sao chọn Fargate chứ không phải Lambda, vì sao secret nằm ở Secrets Manager chứ không phải trong repo.
 
 ## 1. Sơ đồ kiến trúc deploy: thứ gì chạy ở đâu
 
@@ -65,7 +65,7 @@ Trước khi gõ lệnh, vẽ ra sơ đồ. Nếu không vẽ được, bạn ch
 
 Vì sao tách FE (Vercel) và BE (AWS) — đã giải thích ở bài 1: FE là static asset → CDN phục vụ cực nhanh, free, preview deploy mỗi PR; BE là process long-running cần ở gần DB trong VPC. Cái giá phải trả là **CORS** giữa hai origin — ta xử lý ở mục 8.
 
-> ⚠️ Bẫy: đừng để DB (RDS) ở public subnet rồi mở `0.0.0.0/0` cho "cho nhanh". DB nằm **private subnet**, chỉ ECS task trong VPC mới chạm tới được. Đây là trust boundary quan trọng nhất của hệ thống.
+> Bẫy: đừng để DB (RDS) ở public subnet rồi mở `0.0.0.0/0` cho "cho nhanh". DB nằm **private subnet**, chỉ ECS task trong VPC mới chạm tới được. Đây là trust boundary quan trọng nhất của hệ thống.
 
 ## 2. Dockerize Express API (multi-stage, non-root, healthcheck)
 
@@ -116,9 +116,9 @@ node_modules
 .git
 ```
 
-> 💡 Ghi nhớ: ba điều khiến image "production-grade" — (1) **multi-stage** để image runtime không chứa toolchain build; (2) **non-root** (`USER node`) để nếu container bị chiếm thì thiệt hại bị giới hạn; (3) **HEALTHCHECK** để orchestrator (ECS/compose) biết container *sống* hay *sẵn sàng nhận traffic*.
+> Ghi nhớ: ba điều khiến image "production-grade" — (1) **multi-stage** để image runtime không chứa toolchain build; (2) **non-root** (`USER node`) để nếu container bị chiếm thì thiệt hại bị giới hạn; (3) **HEALTHCHECK** để orchestrator (ECS/compose) biết container *sống* hay *sẵn sàng nhận traffic*.
 
-> ⚠️ Bẫy Prisma trong Docker: image `-slim`/`alpine` thiếu `openssl` → Prisma báo lỗi binary engine. Cài `openssl`, hoặc khai báo `binaryTargets` trong `schema.prisma` (vd `["native", "linux-musl-openssl-3.0.x"]` cho alpine). Test image bằng `docker run` trước khi đẩy lên cloud.
+> Bẫy Prisma trong Docker: image `-slim`/`alpine` thiếu `openssl` → Prisma báo lỗi binary engine. Cài `openssl`, hoặc khai báo `binaryTargets` trong `schema.prisma` (vd `["native", "linux-musl-openssl-3.0.x"]` cho alpine). Test image bằng `docker run` trước khi đẩy lên cloud.
 
 ### Prisma migrate khi deploy
 
@@ -131,7 +131,7 @@ npx prisma migrate deploy        # áp các migration trong prisma/migrations
 
 Hai cách phổ biến đặt bước này: (a) một bước riêng trong pipeline (ECS one-off task hoặc job trong GitHub Actions) chạy trước khi update service — **khuyến nghị**; (b) trong entrypoint container. Cách (b) đơn giản nhưng nguy hiểm khi chạy ≥2 task: nhiều container cùng migrate một lúc. Nếu dùng (b), bọc bằng advisory lock của Prisma (mặc định đã có) và chấp nhận một task migrate, các task khác chờ.
 
-> ⚠️ Bẫy: **không bao giờ** đưa `migrate dev`, `db push`, hay `migrate reset` vào đường deploy. Chỉ `migrate deploy`. Và nhớ: migration phải **backward-compatible** với code đang chạy (deploy DB trước, code sau — vd thêm cột nullable trước, dùng sau), nếu không sẽ downtime giữa lúc rollout.
+> Bẫy: **không bao giờ** đưa `migrate dev`, `db push`, hay `migrate reset` vào đường deploy. Chỉ `migrate deploy`. Và nhớ: migration phải **backward-compatible** với code đang chạy (deploy DB trước, code sau — vd thêm cột nullable trước, dùng sau), nếu không sẽ downtime giữa lúc rollout.
 
 ## 3. Deploy Database: Amazon RDS PostgreSQL
 
@@ -164,9 +164,9 @@ Connection string Prisma (đặt trong Secrets Manager, mục 7) — nhớ `sslm
 DATABASE_URL="postgresql://taskshare:<pass>@taskshare-db.xxxx.ap-southeast-1.rds.amazonaws.com:5432/taskshare?sslmode=require&connection_limit=5"
 ```
 
-> 💡 Ghi nhớ phương án thay thế: nếu thấy VPC/subnet/SG quá nặng cho capstone, **Neon** hoặc **Railway Postgres** (managed, serverless, có free tier, connection string dán-là-chạy) hoàn toàn ổn. Trade-off: đơn giản hơn rất nhiều, nhưng DB nằm ngoài VPC AWS của bạn → kết nối qua public internet (vẫn TLS) và không "kể chuyện" được về VPC khi phỏng vấn. Với capstone, **chọn cái giúp bạn ship được** — có thể nâng cấp sau.
+> Ghi nhớ phương án thay thế: nếu thấy VPC/subnet/SG quá nặng cho capstone, **Neon** hoặc **Railway Postgres** (managed, serverless, có free tier, connection string dán-là-chạy) hoàn toàn ổn. Trade-off: đơn giản hơn rất nhiều, nhưng DB nằm ngoài VPC AWS của bạn → kết nối qua public internet (vẫn TLS) và không "kể chuyện" được về VPC khi phỏng vấn. Với capstone, **chọn cái giúp bạn ship được** — có thể nâng cấp sau.
 
-> ⚠️ Bẫy connection pool: serverless/Fargate scale ra nhiều task, mỗi task mở pool riêng → dễ vượt `max_connections` của Postgres nhỏ. Giới hạn `connection_limit` trong DATABASE_URL, hoặc đặt **PgBouncer / RDS Proxy** ở giữa. Đừng để 10 task × 17 connection = sập DB.
+> Bẫy connection pool: serverless/Fargate scale ra nhiều task, mỗi task mở pool riêng → dễ vượt `max_connections` của Postgres nhỏ. Giới hạn `connection_limit` trong DATABASE_URL, hoặc đặt **PgBouncer / RDS Proxy** ở giữa. Đừng để 10 task × 17 connection = sập DB.
 
 ## 4. Deploy Backend: ECS Fargate
 
@@ -255,7 +255,7 @@ aws application-autoscaling put-scaling-policy \
     '{"TargetValue":60.0,"PredefinedMetricSpecification":{"PredefinedMetricType":"ECSServiceAverageCPUUtilization"}}'
 ```
 
-> 💡 Ghi nhớ: chạy **≥2 task ở ≥2 AZ** không phải để scale mà để **không single point of failure** — một task chết, ALB tự đẩy traffic sang task còn lại trong lúc ECS dựng task mới. Đây là khác biệt giữa "demo được" và "đáng tin cậy".
+> Ghi nhớ: chạy **≥2 task ở ≥2 AZ** không phải để scale mà để **không single point of failure** — một task chết, ALB tự đẩy traffic sang task còn lại trong lúc ECS dựng task mới. Đây là khác biệt giữa "demo được" và "đáng tin cậy".
 
 ### Phương án đơn giản hơn: Railway / Render
 
@@ -268,7 +268,7 @@ ECS Fargate có nhiều mảnh (ECR, task def, role, ALB, SG, autoscaling) — h
 | Kiểm soát hạ tầng | Toàn quyền | Hạn chế |
 | Hợp khi | Bạn đang luyện AWS / muốn job AWS | Bạn muốn sản phẩm chạy ngay |
 
-> 💡 Ghi nhớ: không có "đúng" tuyệt đối — có **trade-off phù hợp mục tiêu**. Nếu capstone này để xin job AWS, làm ECS và viết được lý do từng quyết định là điểm cộng lớn. Nếu để có sản phẩm demo, Railway/Render rồi *viết một mục README giải thích "nếu lên AWS tôi sẽ làm thế này"* cũng rất thuyết phục.
+> Ghi nhớ: không có "đúng" tuyệt đối — có **trade-off phù hợp mục tiêu**. Nếu capstone này để xin job AWS, làm ECS và viết được lý do từng quyết định là điểm cộng lớn. Nếu để có sản phẩm demo, Railway/Render rồi *viết một mục README giải thích "nếu lên AWS tôi sẽ làm thế này"* cũng rất thuyết phục.
 
 ## 5. Deploy Frontend: Vercel
 
@@ -283,7 +283,7 @@ FE Vite build ra static asset → Vercel phục vụ qua CDN, free, preview depl
 
 Điểm cốt lõi: `VITE_API_URL` là **build-time**. Vite "nướng" giá trị thẳng vào bundle JS lúc build (`import.meta.env.VITE_API_URL` ở bài 2). Đổi nó **phải rebuild** — không như BE đọc env lúc chạy.
 
-> ⚠️ Bẫy: FE chỉ trỏ được tới `api.taskshare.app` *sau khi* BE đã có domain + HTTPS. Thứ tự deploy lần đầu: (1) RDS → (2) ECS + ALB + domain BE → (3) set `VITE_API_URL` ở Vercel → (4) build FE. Set sai/thiếu `VITE_API_URL` → FE gọi `undefined/projects` → lỗi mạng khó hiểu.
+> Bẫy: FE chỉ trỏ được tới `api.taskshare.app` *sau khi* BE đã có domain + HTTPS. Thứ tự deploy lần đầu: (1) RDS → (2) ECS + ALB + domain BE → (3) set `VITE_API_URL` ở Vercel → (4) build FE. Set sai/thiếu `VITE_API_URL` → FE gọi `undefined/projects` → lỗi mạng khó hiểu.
 
 ### Phương án thay thế: S3 + CloudFront (SPA)
 
@@ -296,7 +296,7 @@ aws s3 sync apps/web/dist s3://taskshare-web --delete
 aws cloudfront create-invalidation --distribution-id E123ABC --paths "/*"   # xoá cache sau deploy
 ```
 
-> 💡 Ghi nhớ SPA routing: server không biết route phía client → mọi 404 phải rơi về `index.html` để router của React xử lý. Vercel làm tự động; S3+CloudFront phải tự khai "custom error response". Và đừng quên **invalidation** sau mỗi deploy, nếu không user thấy bản cũ vì CDN cache.
+> Ghi nhớ SPA routing: server không biết route phía client → mọi 404 phải rơi về `index.html` để router của React xử lý. Vercel làm tự động; S3+CloudFront phải tự khai "custom error response". Và đừng quên **invalidation** sau mỗi deploy, nếu không user thấy bản cũ vì CDN cache.
 
 ## 6. CI/CD: GitHub Actions
 
@@ -433,9 +433,9 @@ jobs:
 }
 ```
 
-> 💡 Ghi nhớ: **tag image bằng git SHA**, không bao giờ chỉ `:latest`. SHA cho biết chính xác commit nào đang chạy production → rollback = deploy lại SHA cũ; debug = `git checkout` đúng commit. `:latest` là mơ hồ, không truy vết được, và gây race khi nhiều deploy cùng lúc.
+> Ghi nhớ: **tag image bằng git SHA**, không bao giờ chỉ `:latest`. SHA cho biết chính xác commit nào đang chạy production → rollback = deploy lại SHA cũ; debug = `git checkout` đúng commit. `:latest` là mơ hồ, không truy vết được, và gây race khi nhiều deploy cùng lúc.
 
-> ⚠️ Bẫy: để job `deploy-api`/`deploy-web` phụ thuộc (`needs: test`) vào job test — nếu không, code lỗi vẫn lên production. `wait-for-service-stability: true` để pipeline *thất bại* khi task mới không healthy (ECS giữ task cũ chạy → tự rollback). Không có dòng này, pipeline báo xanh trong khi production sập.
+> Bẫy: để job `deploy-api`/`deploy-web` phụ thuộc (`needs: test`) vào job test — nếu không, code lỗi vẫn lên production. `wait-for-service-stability: true` để pipeline *thất bại* khi task mới không healthy (ECS giữ task cũ chạy → tự rollback). Không có dòng này, pipeline báo xanh trong khi production sập.
 
 ## 7. Env & secrets
 
@@ -456,7 +456,7 @@ aws secretsmanager create-secret --name taskshare/JWT_SECRET \
 
 `env.ts` ở bài 2 đã validate (`JWT_SECRET: z.string().min(32)`) — production fail nhanh nếu secret thiếu, đúng triết lý "chết sớm còn hơn lỗi mơ hồ".
 
-> ⚠️ Bẫy: `.env` của BE **phải** nằm trong `.gitignore` (đã ghi từ bài 2) và trong `.dockerignore` (mục 2). Một lần commit nhầm `.env` lên GitHub public = lộ JWT_SECRET vĩnh viễn (git history giữ lại) → phải **rotate** secret ngay. Đừng tin "xoá file rồi commit lại" — history vẫn còn.
+> Bẫy: `.env` của BE **phải** nằm trong `.gitignore` (đã ghi từ bài 2) và trong `.dockerignore` (mục 2). Một lần commit nhầm `.env` lên GitHub public = lộ JWT_SECRET vĩnh viễn (git history giữ lại) → phải **rotate** secret ngay. Đừng tin "xoá file rồi commit lại" — history vẫn còn.
 
 ## 8. CORS giữa Vercel domain và API
 
@@ -496,7 +496,7 @@ production:  CORS_ORIGIN = https://taskshare.app   (đặt ở task def, mục 4
   <text x="56" y="303" font-size="10" fill="currentColor" opacity="0.8">mỗi PR một subdomain *.vercel.app ≠ taskshare.app → bị chặn nếu chỉ whitelist domain prod.</text>
 </svg>
 
-> ⚠️ Bẫy CORS production hay gặp nhất: **domain Vercel preview** khác với domain production (mỗi PR một subdomain `*.vercel.app`). Nếu chỉ whitelist `taskshare.app`, preview deploy gọi API sẽ bị chặn. Hoặc whitelist một danh sách origin (regex cho `*.vercel.app`), hoặc dùng API riêng cho preview. Và tuyệt đối **không** `origin: "*"` cùng `credentials` — đã cảnh báo từ bài 2.
+> Bẫy CORS production hay gặp nhất: **domain Vercel preview** khác với domain production (mỗi PR một subdomain `*.vercel.app`). Nếu chỉ whitelist `taskshare.app`, preview deploy gọi API sẽ bị chặn. Hoặc whitelist một danh sách origin (regex cho `*.vercel.app`), hoặc dùng API riêng cho preview. Và tuyệt đối **không** `origin: "*"` cùng `credentials` — đã cảnh báo từ bài 2.
 
 ## 9. Custom domain & HTTPS
 
@@ -513,7 +513,7 @@ api.taskshare.app      A/ALIAS → taskshare-alb-....elb.amazonaws.com   (ALB)
 
 ACM cert phải **validate qua DNS** (thêm CNAME record ACM yêu cầu) và nằm **cùng region** với ALB. Sau khi cert "Issued", gắn vào listener :443 của ALB, và thêm listener :80 redirect 301 → :443.
 
-> 💡 Ghi nhớ: HTTPS không phải "nice-to-have" — không có nó, JWT (bài 1 cấm để token trong URL nhưng nó vẫn nằm trong header) đi qua mạng dưới dạng plaintext, ai chặn được gói tin là chiếm được phiên. Force redirect HTTP→HTTPS ở cả hai phía. Vercel làm tự động; ALB cần listener redirect.
+> Ghi nhớ: HTTPS không phải "nice-to-have" — không có nó, JWT (bài 1 cấm để token trong URL nhưng nó vẫn nằm trong header) đi qua mạng dưới dạng plaintext, ai chặn được gói tin là chiếm được phiên. Force redirect HTTP→HTTPS ở cả hai phía. Vercel làm tự động; ALB cần listener redirect.
 
 ## 10. Monitoring & logging
 
@@ -536,7 +536,7 @@ log("error", "unhandled", { code: err.code, status: err.status, path: req.path }
 | DB | RDS metrics: connections, CPU | Connections sát `max` → pool vấn đề |
 | Sống/chết | Health check ALB + ECS | Task unhealthy → ECS thay tự động |
 
-> ⚠️ Bẫy log: **không bao giờ log password, token, hay PII**. Bài 2 đã cẩn thận không trả `passwordHash`; log cũng vậy — đừng `log("info", "login", { body: req.body })` vì sẽ ghi cả password vào CloudWatch (lưu lâu, nhiều người đọc được). Log `userId`, `path`, `code` — đủ để debug, không lộ bí mật.
+> Bẫy log: **không bao giờ log password, token, hay PII**. Bài 2 đã cẩn thận không trả `passwordHash`; log cũng vậy — đừng `log("info", "login", { body: req.body })` vì sẽ ghi cả password vào CloudWatch (lưu lâu, nhiều người đọc được). Log `userId`, `path`, `code` — đủ để debug, không lộ bí mật.
 
 ## 11. Checklist performance + security trước khi "ship"
 
@@ -560,7 +560,7 @@ Hai checklist đối chiếu thẳng với non-functional requirement ở bài 1
 - [ ] Rate limit `/auth/login` (chống brute-force); validate input bằng zod (bài 2)
 - [ ] Không leak stack trace ra response production (errorHandler bài 2)
 
-> 💡 Ghi nhớ: security của capstone không phải "thêm WAF cho oai". Nó là **đóng đúng các cửa đã mở trong lúc dev**: secret hardcode, CORS `*`, DB public, log lộ token. Đi qua checklist này một lần trước khi đưa link cho người khác.
+> Ghi nhớ: security của capstone không phải "thêm WAF cho oai". Nó là **đóng đúng các cửa đã mở trong lúc dev**: secret hardcode, CORS `*`, DB public, log lộ token. Đi qua checklist này một lần trước khi đưa link cho người khác.
 
 ## 12. README + demo + biến thành portfolio
 
@@ -569,7 +569,7 @@ Sản phẩm chạy được mà README sơ sài thì nhà tuyển dụng không
 ```markdown
 # TaskShare
 Quản lý task có auth & chia sẻ project để cộng tác.
-🔗 Live: https://taskshare.app  ·  📺 Demo: <link video 90s>  ·  Tài khoản thử: demo@taskshare.app / demo1234
+Live: https://taskshare.app  ·  Demo: <link video 90s>  ·  Tài khoản thử: demo@taskshare.app / demo1234
 
 ## Stack
 React+TS (Vite) · Node/Express+TS · PostgreSQL+Prisma · JWT · monorepo · Docker · ECS Fargate · Vercel · GitHub Actions (OIDC)
@@ -597,7 +597,7 @@ npm ci && npm run dev       # web :5173, api :4000
 
 Kịch bản **demo 90 giây** chính là Definition of Done bài 1: mở 2 trình duyệt → 2 tài khoản đăng nhập → owner tạo project + mời member qua email → cả hai cùng thấy/sửa task realtime-ish → tất cả trên domain production thật.
 
-> 💡 Ghi nhớ biến capstone thành portfolio: nhà tuyển dụng không đọc hết code — họ đọc **README + xem demo + hỏi "vì sao"**. Ba thứ ăn điểm nhất: (1) link **live chạy được** với tài khoản demo sẵn; (2) sơ đồ kiến trúc + mục "quyết định kỹ thuật" giải thích trade-off (bạn đã có từ bài 1!); (3) CI/CD xanh trên GitHub. Đó là bằng chứng bạn ship được sản phẩm thật, không chỉ làm bài tập.
+> Ghi nhớ biến capstone thành portfolio: nhà tuyển dụng không đọc hết code — họ đọc **README + xem demo + hỏi "vì sao"**. Ba thứ ăn điểm nhất: (1) link **live chạy được** với tài khoản demo sẵn; (2) sơ đồ kiến trúc + mục "quyết định kỹ thuật" giải thích trade-off (bạn đã có từ bài 1!); (3) CI/CD xanh trên GitHub. Đó là bằng chứng bạn ship được sản phẩm thật, không chỉ làm bài tập.
 
 ## Checklist hoàn thành bài này (và cả capstone)
 

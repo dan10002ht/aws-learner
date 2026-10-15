@@ -40,7 +40,7 @@ STORE [total], R1  ; ghi kết quả ra biến total
 
 CPU không biết "biến", "vòng lặp", "object". Nó chỉ biết: nạp, cộng, so sánh, ghi, nhảy. Mọi thứ phức tạp đều dựng từ vài chục lệnh sơ đẳng này.
 
-> 💡 **Ghi nhớ**: CPU = vòng lặp fetch-decode-execute chạy hàng tỷ lần/giây trên những lệnh cực kỳ đơn giản. Code cao cấp của bạn cuối cùng đều phân rã thành chuỗi lệnh nạp/tính/ghi.
+> **Ghi nhớ**: CPU = vòng lặp fetch-decode-execute chạy hàng tỷ lần/giây trên những lệnh cực kỳ đơn giản. Code cao cấp của bạn cuối cùng đều phân rã thành chuỗi lệnh nạp/tính/ghi.
 
 ---
 
@@ -209,7 +209,7 @@ Nhìn cột bên phải: lấy dữ liệu từ L1 mất "3 giây", từ RAM m�
   <text x="360" y="344" font-size="10" font-style="italic" text-anchor="middle" fill="currentColor" opacity="0.6">trục logarit: mỗi cột dài thêm 1 đoạn = chậm gấp 10 lần</text>
 </svg>
 
-> 💡 **Ghi nhớ**: chênh lệch tốc độ giữa các tầng không phải vài %, mà là **bậc độ lớn (10×, 100×)**. Tối ưu performance phần lớn là tối ưu việc *dữ liệu nằm ở tầng nào* khi CPU cần nó.
+> **Ghi nhớ**: chênh lệch tốc độ giữa các tầng không phải vài %, mà là **bậc độ lớn (10×, 100×)**. Tối ưu performance phần lớn là tối ưu việc *dữ liệu nằm ở tầng nào* khi CPU cần nó.
 
 ---
 
@@ -369,7 +369,7 @@ for (j...) for (i...)  sum += m[i][j];
 
 Hai đoạn này khác nhau **đúng thứ tự hai dòng `for`**, nhưng đoạn dưới có thể chậm gấp 3–8 lần trên ma trận lớn. Big-O y hệt `O(N²)` — profiler mới lộ ra sự thật.
 
-> ⚠️ **Bẫy**: "Cùng Big-O thì cùng tốc độ." Sai. Big-O đếm *số phép tính*, không đếm *dữ liệu nằm ở tầng nào*. Một thuật toán `O(N²)` cache-friendly có thể đánh bại `O(N log N)` cache-hostile trên dữ liệu vừa phải.
+> **Bẫy**: "Cùng Big-O thì cùng tốc độ." Sai. Big-O đếm *số phép tính*, không đếm *dữ liệu nằm ở tầng nào*. Một thuật toán `O(N²)` cache-friendly có thể đánh bại `O(N log N)` cache-hostile trên dữ liệu vừa phải.
 
 ---
 
@@ -494,7 +494,7 @@ for (i...) if (arr[i] > threshold) sum += arr[i];
 - Mảng **đã sort**: điều kiện chuyển trạng thái đúng một lần (false...false rồi true...true). CPU đoán gần như luôn đúng → nhanh.
 - Mảng **chưa sort**: điều kiện nhảy lung tung → CPU đoán sai liên tục → mỗi miss phạt chục nhịp → chậm vài lần.
 
-> 💡 **Ghi nhớ**: branch khó đoán (random) làm chậm code. Đôi khi viết **branchless** (dùng phép toán thay `if`) lại nhanh hơn vì xoá luôn rủi ro đoán sai.
+> **Ghi nhớ**: branch khó đoán (random) làm chậm code. Đôi khi viết **branchless** (dùng phép toán thay `if`) lại nhanh hơn vì xoá luôn rủi ro đoán sai.
 
 ---
 

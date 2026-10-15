@@ -56,7 +56,7 @@ The DAO là một quỹ đầu tư phi tập trung (venture fund) chạy trên E
 Hàm rút tiền gửi ETH cho người dùng **trước khi** cập nhật số dư nội bộ. Vì gửi ETH cho một contract sẽ gọi hàm `fallback` của contract đó, kẻ tấn công đặt một cuộc gọi rút *lồng vào chính fallback* — vòng lặp rút nhiều lần trên **cùng một số dư chưa kịp bị trừ**.
 
 ```solidity
-// ❌ Mô hình lỗi (đơn giản hóa từ The DAO)
+// ✗ Mô hình lỗi (đơn giản hóa từ The DAO)
 mapping(address => uint) public balances;
 
 function withdraw() public {
@@ -90,7 +90,7 @@ contract Attacker {
 **Checks-Effects-Interactions**: cập nhật state (effects) *trước*, gọi ra ngoài (interactions) *sau cùng*. Kết hợp `ReentrancyGuard`.
 
 ```solidity
-// ✅ Đúng chuẩn
+// ✓ Đúng chuẩn
 function withdraw() public nonReentrant {          // guard chống re-entry
     uint amount = balances[msg.sender];
     balances[msg.sender] = 0;                        // EFFECTS trước
@@ -119,7 +119,7 @@ Parity là ví multisig phổ biến. Có **hai sự cố**; ở đây tập tru
 Một người dùng vô tình gọi `initWallet` lên chính contract library (biến mình thành owner), rồi gọi tiếp hàm chứa `selfdestruct`. `selfdestruct` **xóa library**. Vì tất cả ví con đều `delegatecall` tới library đã biến mất → **mọi ví mất phần logic**, ETH mắc kẹt bên trong không còn code để rút.
 
 ```solidity
-// ❌ Bản chất lỗi: hàm init không kiểm tra đã khởi tạo chưa
+// ✗ Bản chất lỗi: hàm init không kiểm tra đã khởi tạo chưa
 contract WalletLibrary {
     address owner;
     function initWallet(address _owner) public {   // thiếu modifier bảo vệ!
@@ -138,7 +138,7 @@ contract WalletLibrary {
 - Với proxy/library: đảm bảo **implementation contract cũng được khởi tạo/khóa** (`_disableInitializers()`), không để nó "vô chủ".
 
 ```solidity
-// ✅ OpenZeppelin pattern
+// ✓ OpenZeppelin pattern
 contract Wallet is Initializable {
     address owner;
     function initialize(address _owner) public initializer {  // chỉ chạy 1 lần
@@ -231,7 +231,7 @@ Bản chất: kẻ tấn công **cố tình tự làm mình vỡ nợ** rồi th
 - **Invariant testing / fuzzing** (Foundry): định nghĩa bất biến "không tài khoản nào có thể tự đưa mình vào trạng thái sinh lợi bất thường" và fuzz mọi chuỗi hàm.
 
 ```solidity
-// ✅ Nguyên tắc: kết thúc mọi mutation bằng health check
+// ✓ Nguyên tắc: kết thúc mọi mutation bằng health check
 function donateToReserves(uint amount) external {
     _transferToReserves(msg.sender, amount);
     _checkAccountHealth(msg.sender);   // BẮT BUỘC — Euler đã thiếu đúng dòng này

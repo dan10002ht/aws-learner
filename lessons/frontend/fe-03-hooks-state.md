@@ -2,7 +2,7 @@
 
 Ở bài [[fe-02-react-basics]] bạn đã thấy component chỉ là một hàm trả về JSX, và mỗi khi "state" đổi thì React render lại. Bài này đào sâu vào *cơ chế* đó: **hooks** là tập hàm cho phép một component (vốn là hàm thuần) "nhớ" được dữ liệu giữa các lần render, chạy side effect, và giữ tham chiếu tới DOM. Hiểu sai hooks là nguồn gốc của 90% bug React thực tế: UI không cập nhật, gọi API hai lần, `useEffect` chạy vô tận, giá trị "cũ" kẹt trong closure. Mục tiêu của bài: bạn viết được hooks **đúng và sạch**, biết *khi nào* cần từng hook, và nhận ra bẫy trước khi nó cắn.
 
-> 💡 Ghi nhớ: Render trong React = **gọi lại hàm component từ đầu**. Mọi biến local sinh ra lại từ con số 0. Thứ duy nhất "sống sót" giữa các render là những gì bạn cất vào hook (`useState`, `useRef`...). Đây là mô hình tư duy nền tảng cho cả bài.
+> Ghi nhớ: Render trong React = **gọi lại hàm component từ đầu**. Mọi biến local sinh ra lại từ con số 0. Thứ duy nhất "sống sót" giữa các render là những gì bạn cất vào hook (`useState`, `useRef`...). Đây là mô hình tư duy nền tảng cho cả bài.
 
 ## `useState` — bộ nhớ của component
 
@@ -29,11 +29,11 @@ Hai điểm dân mới hay sai:
 ```tsx
 const [todos, setTodos] = useState<string[]>([]);
 
-// ❌ SAI: mutate mảng cũ, tham chiếu không đổi -> UI đứng im
+// ✗ SAI: mutate mảng cũ, tham chiếu không đổi -> UI đứng im
 todos.push("học hooks");
 setTodos(todos);
 
-// ✅ ĐÚNG: tạo mảng MỚI
+// ✓ ĐÚNG: tạo mảng MỚI
 setTodos([...todos, "học hooks"]);
 
 // Object cũng vậy: spread rồi ghi đè field cần đổi
@@ -47,25 +47,25 @@ setUser((u) => ({ ...u, address: { ...u.address, city: "HN" } }));
 **2. Setter dạng hàm (functional update) khi giá trị mới phụ thuộc giá trị cũ.** Nhiều `setCount(count + 1)` liên tiếp trong cùng một event sẽ dùng *cùng một* `count` (do closure), nên chỉ tăng 1 lần.
 
 ```tsx
-// ❌ Bấm 1 lần chỉ +1 dù gọi 3 lần (cả 3 đọc count = 0)
+// ✗ Bấm 1 lần chỉ +1 dù gọi 3 lần (cả 3 đọc count = 0)
 setCount(count + 1);
 setCount(count + 1);
 setCount(count + 1);
 
-// ✅ +3 vì mỗi lần nhận giá trị mới nhất
+// ✓ +3 vì mỗi lần nhận giá trị mới nhất
 setCount((c) => c + 1);
 setCount((c) => c + 1);
 setCount((c) => c + 1);
 ```
 
-> ⚠️ Bẫy: `setCount` **không** cập nhật biến `count` ngay tại dòng tiếp theo. Nó *lên lịch* render mới; trong lần render đó `count` mới có giá trị mới. Đọc `count` ngay sau `setCount` vẫn ra giá trị cũ — đây là gốc của vô số bug "sao state chưa đổi".
+> Bẫy: `setCount` **không** cập nhật biến `count` ngay tại dòng tiếp theo. Nó *lên lịch* render mới; trong lần render đó `count` mới có giá trị mới. Đọc `count` ngay sau `setCount` vẫn ra giá trị cũ — đây là gốc của vô số bug "sao state chưa đổi".
 
 Khởi tạo state nặng thì truyền **hàm** để chỉ chạy một lần (lazy init), thay vì gọi mỗi render:
 
 ```tsx
-// ❌ readFromLocalStorage() chạy MỖI render rồi bị bỏ
+// ✗ readFromLocalStorage() chạy MỖI render rồi bị bỏ
 const [v, setV] = useState(readFromLocalStorage());
-// ✅ chỉ chạy ở lần mount đầu tiên
+// ✓ chỉ chạy ở lần mount đầu tiên
 const [v2, setV2] = useState(() => readFromLocalStorage());
 ```
 
@@ -74,16 +74,16 @@ const [v2, setV2] = useState(() => readFromLocalStorage());
 Lỗi kiến trúc phổ biến: lưu vào state thứ vốn **suy ra được** từ state khác. Nó sinh ra hai nguồn sự thật phải đồng bộ tay → bug lệch dữ liệu.
 
 ```tsx
-// ❌ fullName là state thừa, phải nhớ cập nhật mỗi khi đổi first/last
+// ✗ fullName là state thừa, phải nhớ cập nhật mỗi khi đổi first/last
 const [firstName, setFirstName] = useState("Nguyen");
 const [lastName, setLastName] = useState("An");
 const [fullName, setFullName] = useState("Nguyen An");
 
-// ✅ Tính thẳng trong lúc render — luôn đúng, không cần đồng bộ
+// ✓ Tính thẳng trong lúc render — luôn đúng, không cần đồng bộ
 const fullName = `${firstName} ${lastName}`;
 ```
 
-> 💡 Ghi nhớ: Nguyên tắc — **state càng ít càng tốt**. Trước khi thêm một `useState`, hỏi: "Cái này có tính ra được từ state/props sẵn có không?" Nếu có, đừng lưu, hãy tính trong render. Chỉ những thứ thật sự là *nguồn dữ liệu độc lập* (input của user, kết quả fetch) mới xứng đáng vào state.
+> Ghi nhớ: Nguyên tắc — **state càng ít càng tốt**. Trước khi thêm một `useState`, hỏi: "Cái này có tính ra được từ state/props sẵn có không?" Nếu có, đừng lưu, hãy tính trong render. Chỉ những thứ thật sự là *nguồn dữ liệu độc lập* (input của user, kết quả fetch) mới xứng đáng vào state.
 
 ## `useEffect` — đồng bộ với thế giới bên ngoài
 
@@ -143,9 +143,9 @@ function UserCard({ userId }: { userId: number }) {
 }
 ```
 
-> ⚠️ Bẫy race condition: Không có cờ `ignore`, khi `userId` đổi nhanh (1 → 2), request của user 1 có thể về *sau* request user 2 và ghi đè UI bằng dữ liệu cũ. Cleanup + cờ là cách thủ công xử lý. Trong dự án thật, **đừng tự viết fetch trong `useEffect`** — dùng React Query / SWR (xem [[fe-05-routing-data]]) lo sẵn cache, dedupe, race, retry.
+> Bẫy race condition: Không có cờ `ignore`, khi `userId` đổi nhanh (1 → 2), request của user 1 có thể về *sau* request user 2 và ghi đè UI bằng dữ liệu cũ. Cleanup + cờ là cách thủ công xử lý. Trong dự án thật, **đừng tự viết fetch trong `useEffect`** — dùng React Query / SWR (xem [[fe-05-routing-data]]) lo sẵn cache, dedupe, race, retry.
 
-> ⚠️ Bẫy "gọi API hai lần": Ở React 19 với Strict Mode, dev sẽ cố tình mount → unmount → mount lại để lộ effect thiếu cleanup. Thấy effect chạy 2 lần trong `dev` là *tính năng cảnh báo*, không phải bug — chỉ xảy ra ở development.
+> Bẫy "gọi API hai lần": Ở React 19 với Strict Mode, dev sẽ cố tình mount → unmount → mount lại để lộ effect thiếu cleanup. Thấy effect chạy 2 lần trong `dev` là *tính năng cảnh báo*, không phải bug — chỉ xảy ra ở development.
 
 ## `useRef` — giá trị "nhớ" mà không gây render
 
@@ -168,7 +168,7 @@ const renderCount = useRef(0);
 renderCount.current += 1; // tăng được, nhưng không làm component render lại
 ```
 
-> 💡 Ghi nhớ: Quy tắc chọn — nếu thay đổi giá trị **cần phản ánh lên UI** → `useState`. Nếu chỉ cần "ghi nhớ ngầm" không liên quan render → `useRef`. Đừng đọc/ghi `ref.current` *trong lúc render* (chỉ làm trong event handler hoặc effect).
+> Ghi nhớ: Quy tắc chọn — nếu thay đổi giá trị **cần phản ánh lên UI** → `useState`. Nếu chỉ cần "ghi nhớ ngầm" không liên quan render → `useRef`. Đừng đọc/ghi `ref.current` *trong lúc render* (chỉ làm trong event handler hoặc effect).
 
 ## `useMemo` / `useCallback` — chỉ dùng khi THỰC SỰ cần
 
@@ -193,12 +193,12 @@ const handleClick = useCallback((id: number) => {
 
 | Tình huống | Có nên dùng? |
 |------------|--------------|
-| Tính toán thật sự nặng (sort/filter list lớn, parse) mỗi render | ✅ `useMemo` |
-| Hàm/object truyền xuống con đã `React.memo` | ✅ `useCallback` / `useMemo` |
-| Hàm/object là dependency của `useEffect` (tránh effect chạy thừa) | ✅ |
-| Bọc mọi hàm, mọi biến "cho chắc" | ❌ Thừa, làm chậm |
+| Tính toán thật sự nặng (sort/filter list lớn, parse) mỗi render | ✓ `useMemo` |
+| Hàm/object truyền xuống con đã `React.memo` | ✓ `useCallback` / `useMemo` |
+| Hàm/object là dependency của `useEffect` (tránh effect chạy thừa) | ✓ |
+| Bọc mọi hàm, mọi biến "cho chắc" | ✗ Thừa, làm chậm |
 
-> ⚠️ Bẫy: Đừng rải `useMemo`/`useCallback` khắp nơi như phản xạ. Nguyên tắc: **đo trước, tối ưu sau**. React Compiler (ổn định dần từ React 19) còn tự memo hóa giúp bạn, nên nhu cầu tự tay càng giảm. Chỉ thêm khi React DevTools Profiler chỉ ra render chậm thật.
+> Bẫy: Đừng rải `useMemo`/`useCallback` khắp nơi như phản xạ. Nguyên tắc: **đo trước, tối ưu sau**. React Compiler (ổn định dần từ React 19) còn tự memo hóa giúp bạn, nên nhu cầu tự tay càng giảm. Chỉ thêm khi React DevTools Profiler chỉ ra render chậm thật.
 
 ## Rules of Hooks — luật bất di bất dịch
 
@@ -207,14 +207,14 @@ React nhận diện từng hook **theo thứ tự gọi**, không theo tên. Nê
 **1. Chỉ gọi hook ở top-level** — không trong `if`, vòng lặp, hàm lồng, hay sau một câu `return` sớm.
 
 ```tsx
-// ❌ SAI: hook nằm trong điều kiện -> thứ tự hook thay đổi giữa các render
+// ✗ SAI: hook nằm trong điều kiện -> thứ tự hook thay đổi giữa các render
 function Bad({ show }: { show: boolean }) {
   if (show) {
-    const [x, setX] = useState(0); // 💥 lúc có lúc không
+    const [x, setX] = useState(0); // lúc có lúc không
   }
 }
 
-// ✅ ĐÚNG: hook ở top-level, điều kiện nằm BÊN TRONG
+// ✓ ĐÚNG: hook ở top-level, điều kiện nằm BÊN TRONG
 function Good({ show }: { show: boolean }) {
   const [x, setX] = useState(0);
   if (!show) return null; // return sớm SAU khi đã gọi hết hook
@@ -224,7 +224,7 @@ function Good({ show }: { show: boolean }) {
 
 **2. Chỉ gọi hook từ React component hoặc custom hook** — không gọi từ hàm JS thường.
 
-> 💡 Ghi nhớ: Cài plugin `eslint-plugin-react-hooks`. Nó tự bắt vi phạm hai luật trên và cảnh báo dependency array thiếu/thừa — bắt bug trước khi chạy. Đây là thứ đầu tiên nên có trong mọi dự án React.
+> Ghi nhớ: Cài plugin `eslint-plugin-react-hooks`. Nó tự bắt vi phạm hai luật trên và cảnh báo dependency array thiếu/thừa — bắt bug trước khi chạy. Đây là thứ đầu tiên nên có trong mọi dự án React.
 
 ## Bẫy stale closure — "giá trị bị đóng băng"
 
@@ -308,7 +308,7 @@ function Timer() {
 
   useEffect(() => {
     const id = setInterval(() => {
-      // ❌ count ở đây MÃI là 0 — closure chụp count của render đầu
+      // ✗ count ở đây MÃI là 0 — closure chụp count của render đầu
       setCount(count + 1);
     }, 1000);
     return () => clearInterval(id);
@@ -321,20 +321,20 @@ function Timer() {
 Ba cách sửa:
 
 ```tsx
-// ✅ Cách 1 (tốt nhất): functional update — không phụ thuộc count bên ngoài
+// ✓ Cách 1 (tốt nhất): functional update — không phụ thuộc count bên ngoài
 setCount((c) => c + 1);
 
-// ✅ Cách 2: khai báo count vào deps để effect tạo lại closure mới
+// ✓ Cách 2: khai báo count vào deps để effect tạo lại closure mới
 //    (ở ví dụ interval thì kém vì phải reset interval mỗi giây)
 }, [count]);
 
-// ✅ Cách 3: dùng useRef giữ giá trị mới nhất cho callback đọc
+// ✓ Cách 3: dùng useRef giữ giá trị mới nhất cho callback đọc
 const countRef = useRef(count);
 countRef.current = count; // mỗi render cập nhật
 // trong interval: setCount(countRef.current + 1);
 ```
 
-> ⚠️ Bẫy: Khi một callback "đọc state nhưng luôn ra giá trị cũ", 99% là stale closure. Phản xạ đầu tiên: chuyển sang **functional update** `setX(prev => ...)` — nó luôn nhận giá trị mới nhất, miễn nhiễm với closure cũ.
+> Bẫy: Khi một callback "đọc state nhưng luôn ra giá trị cũ", 99% là stale closure. Phản xạ đầu tiên: chuyển sang **functional update** `setX(prev => ...)` — nó luôn nhận giá trị mới nhất, miễn nhiễm với closure cũ.
 
 ## Custom hook — đóng gói logic tái dùng
 
@@ -396,7 +396,7 @@ function Profile({ id }: { id: number }) {
 }
 ```
 
-> 💡 Ghi nhớ: Mỗi component dùng custom hook nhận **state riêng biệt** — custom hook chia sẻ *logic*, không chia sẻ *dữ liệu*. Muốn nhiều component dùng chung một state thì cần Context hoặc store (xem [[fe-04-state-management]]).
+> Ghi nhớ: Mỗi component dùng custom hook nhận **state riêng biệt** — custom hook chia sẻ *logic*, không chia sẻ *dữ liệu*. Muốn nhiều component dùng chung một state thì cần Context hoặc store (xem [[fe-04-state-management]]).
 
 ## Liên hệ thực tế
 

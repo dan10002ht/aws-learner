@@ -168,14 +168,14 @@ Còn có biến thể `*_TRANSITIVE` (BACKWARD_TRANSITIVE...): kiểm với **m�
 
 | Thao tác | An toàn? | Vì sao |
 |----------|----------|--------|
-| **Thêm field CÓ default** | ✅ Backward & Forward | Reader cũ bỏ qua field lạ; reader mới đọc data cũ thì điền default |
-| **Thêm field KHÔNG default** | ❌ Phá backward | Reader mới đọc data cũ không có field này → không biết điền gì |
-| **Xoá field CÓ default** | ✅ Backward | Reader mới thiếu field → dùng default khi đọc data cũ |
-| **Xoá field required (không default)** | ❌ Phá forward | Reader cũ đọc data mới thiếu field bắt buộc → lỗi |
-| **Đổi KIỂU field** (int → string) | ❌ Luôn nguy hiểm | Byte giải mã sai hoàn toàn; Avro không ép kiểu tuỳ tiện |
-| **Đổi TÊN field** (Avro) | ❌ (trừ khi dùng `aliases`) | Avro khớp theo tên; đổi tên = xoá field cũ + thêm field mới |
-| **Thu hẹp kiểu** (long → int) | ❌ | Giá trị cũ có thể tràn |
-| **Mở rộng kiểu** (int → long) | ⚠️ Một số trường hợp OK | Avro cho phép promote int→long, float→double khi đọc |
+| **Thêm field CÓ default** | ✓ Backward & Forward | Reader cũ bỏ qua field lạ; reader mới đọc data cũ thì điền default |
+| **Thêm field KHÔNG default** | ✗ Phá backward | Reader mới đọc data cũ không có field này → không biết điền gì |
+| **Xoá field CÓ default** | ✓ Backward | Reader mới thiếu field → dùng default khi đọc data cũ |
+| **Xoá field required (không default)** | ✗ Phá forward | Reader cũ đọc data mới thiếu field bắt buộc → lỗi |
+| **Đổi KIỂU field** (int → string) | ✗ Luôn nguy hiểm | Byte giải mã sai hoàn toàn; Avro không ép kiểu tuỳ tiện |
+| **Đổi TÊN field** (Avro) | ✗ (trừ khi dùng `aliases`) | Avro khớp theo tên; đổi tên = xoá field cũ + thêm field mới |
+| **Thu hẹp kiểu** (long → int) | ✗ | Giá trị cũ có thể tràn |
+| **Mở rộng kiểu** (int → long) | Một số trường hợp OK | Avro cho phép promote int→long, float→double khi đọc |
 
 Ba luật vàng để nhớ:
 1. **Field mới → luôn có `default`.** Đây là chiếc phao cứu sinh cho evolution: có default thì cả reader cũ lẫn mới đều xử lý được khi field vắng mặt.

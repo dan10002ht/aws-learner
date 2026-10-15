@@ -129,7 +129,7 @@ Ngưỡng scale-in đặt 30%:  57,6% nằm giữa 30% và 70% → đứng yên,
 
 Cách đặt "scale-out ở 70%, scale-in ở 30%" như vậy gọi là **dual-threshold**. Target tracking tự xử lý chuyện này (nó không scale-in nếu tính ra việc đó sẽ đẩy metric vượt đích), nên với target tracking bạn chỉ cần đặt instance warmup cho đúng.
 
-> 🪤 Bẫy thi: *"đơn giản nhất, giữ CPU quanh X%"* → **Target Tracking**. *"scale theo số message trong SQS"* → target tracking với custom metric **số message chia cho số instance** (backlog per instance), không phải tổng số message. *"tải tăng đúng 9 giờ sáng mỗi ngày, máy mất 10 phút khởi động"* → **Scheduled** hoặc **Predictive**, vì dynamic scaling chỉ phản ứng sau khi tải đã tới.
+> Bẫy thi: *"đơn giản nhất, giữ CPU quanh X%"* → **Target Tracking**. *"scale theo số message trong SQS"* → target tracking với custom metric **số message chia cho số instance** (backlog per instance), không phải tổng số message. *"tải tăng đúng 9 giờ sáng mỗi ngày, máy mất 10 phút khởi động"* → **Scheduled** hoặc **Predictive**, vì dynamic scaling chỉ phản ứng sau khi tải đã tới.
 
 ### 2.3 Lifecycle Hooks
 
@@ -142,7 +142,7 @@ ASG phát sự kiện ra **EventBridge** (hoặc SNS/SQS), bạn bắt sự ki�
 
 Nếu bạn không gọi, máy tự đi tiếp khi hết **heartbeat timeout** — mặc định **1 giờ**. Cần lâu hơn thì gửi heartbeat để gia hạn, nhưng tổng thời gian chờ tối đa là **48 giờ hoặc 100 lần heartbeat timeout, lấy số nhỏ hơn**. Với hook ở Lab 2 (`--heartbeat-timeout 300`): `100 × 300 giây = 30.000 giây ≈ 8,3 giờ`, chứ không phải 48 giờ.
 
-> 🪤 Hook lúc terminate chỉ là "cố gắng hết mức": hết timeout thì máy vẫn bị tắt. Và với Spot Instance, hook **không** chặn được việc AWS thu hồi máy sau thông báo 2 phút.
+> Hook lúc terminate chỉ là "cố gắng hết mức": hết timeout thì máy vẫn bị tắt. Và với Spot Instance, hook **không** chặn được việc AWS thu hồi máy sau thông báo 2 phút.
 
 ### 2.4 Warm Pool
 - Pre-initialized instance ở trạng thái **Stopped** hoặc **Hibernated**.
@@ -210,7 +210,7 @@ Con số "tiết kiệm 60–90%" hay gặp là nói về **riêng phần Spot**
 | **price-capacity-optimized** | Vừa dư công suất vừa giá thấp | AWS **khuyến nghị hiện nay** cho đa số trường hợp |
 | **lowest-price** | Pool rẻ nhất | Rủi ro bị thu hồi cao nhất, vì pool rẻ là pool nhiều người tranh. AWS khuyên không dùng |
 
-> 🪤 Bẫy thi: *"giảm thiểu khả năng Spot bị gián đoạn"* → **capacity-optimized** (hoặc price-capacity-optimized nếu có trong đáp án). *"chi phí thấp nhất cho workload chịu được gián đoạn"* → ASG mixed instances với Spot. *"một phần công suất tuyệt đối không được mất"* → đặt **On-Demand base capacity**.
+> Bẫy thi: *"giảm thiểu khả năng Spot bị gián đoạn"* → **capacity-optimized** (hoặc price-capacity-optimized nếu có trong đáp án). *"chi phí thấp nhất cho workload chịu được gián đoạn"* → ASG mixed instances với Spot. *"một phần công suất tuyệt đối không được mất"* → đặt **On-Demand base capacity**.
 
 ### 2.7 ASG bẫy
 - **Cooldown hoặc instance warmup quá ngắn** → oscillation (scale-out rồi scale-in liên tục): ASG ra quyết định mới khi máy vừa bật còn chưa gánh tải. Với step/simple scaling, nguyên nhân còn lại là hai ngưỡng scale-out và scale-in đặt quá sát nhau — xem ví dụ 70/30 ở §2.2.
@@ -261,16 +261,16 @@ AWS có ba loại, khác nhau ở chỗ **load balancer đọc gói tin sâu t�
 | Layer | 7 | 4 | 3 (gateway) + 4 (chia tải) |
 | Protocol | HTTP/HTTPS/gRPC/WebSocket | TCP/UDP/TLS | IP (bọc bằng GENEVE) |
 | Static IP | Không — chỉ có tên DNS | **1 IP tĩnh mỗi AZ, gắn được EIP** | - |
-| SSL terminate | ✅ | passthrough hoặc terminate | ❌ |
-| Path/host routing | ✅ | ❌ | ❌ |
-| WAF | ✅ | ❌ | ❌ |
+| SSL terminate | ✓ | passthrough hoặc terminate | ✗ |
+| Path/host routing | ✓ | ✗ | ✗ |
+| WAF | ✓ | ✗ | ✗ |
 | Sticky session | Cookie (app/duration) | Source IP | Theo flow (5-tuple) |
 | Health check | HTTP/HTTPS | TCP/HTTP/HTTPS | TCP/HTTP/HTTPS |
 | Cross-zone LB (§3.6) | Luôn ON, không tính phí | Mặc định OFF, bật thì tính phí cross-AZ | Mặc định OFF |
 | Latency thêm vào | Cỡ mili-giây (do phân tích HTTP) | Thấp hơn ALB rõ rệt, AWS gọi là "extremely low" | - |
 | Use case | Web, microservice, container | Game, IoT, extreme perf, static IP | Third-party firewall (Palo Alto, Fortinet) |
 
-> 🪤 Bẫy thi: thấy *path-based / host-based routing, WAF, đăng nhập Cognito, Lambda làm target* → **ALB**. Thấy *static IP, Elastic IP, UDP, giao thức không phải HTTP, hàng triệu request/giây, giữ nguyên TLS tới backend* → **NLB**. Thấy *third-party virtual appliance, inspect toàn bộ traffic, GENEVE* → **GLB**. Cần **cả** IP tĩnh **và** tính năng Layer 7 → đặt **NLB phía trước ALB** (NLB nhận ALB làm target), hoặc dùng Global Accelerator.
+> Bẫy thi: thấy *path-based / host-based routing, WAF, đăng nhập Cognito, Lambda làm target* → **ALB**. Thấy *static IP, Elastic IP, UDP, giao thức không phải HTTP, hàng triệu request/giây, giữ nguyên TLS tới backend* → **NLB**. Thấy *third-party virtual appliance, inspect toàn bộ traffic, GENEVE* → **GLB**. Cần **cả** IP tĩnh **và** tính năng Layer 7 → đặt **NLB phía trước ALB** (NLB nhận ALB làm target), hoặc dùng Global Accelerator.
 
 ### 3.2 ALB features
 
@@ -316,7 +316,7 @@ Các tính năng cụ thể:
   - **Duration-based**: ALB tự tạo cookie tên `AWSALB` ghi target đã chọn. Thời hạn dính do bạn đặt, từ 1 giây tới 7 ngày (mặc định 1 ngày).
   - **Application-based**: app của bạn đặt cookie riêng, ALB bám theo cookie đó.
 - **NLB**: không đọc được cookie nên bám theo **source IP**. Mọi client đứng sau cùng một NAT (cả văn phòng chung một IP public) sẽ dồn vào một target.
-- ⚠️ Sticky session = chống stateless. Target bị tắt khi scale-in thì mọi phiên dính vào nó mất; target mới thêm thì không được chia bớt các phiên cũ nên tải lệch. Avoid khi có thể, dùng external session store (ElastiCache, DynamoDB) để máy nào cũng đọc được phiên.
+- Sticky session = chống stateless. Target bị tắt khi scale-in thì mọi phiên dính vào nó mất; target mới thêm thì không được chia bớt các phiên cũ nên tải lệch. Avoid khi có thể, dùng external session store (ElastiCache, DynamoDB) để máy nào cũng đọc được phiên.
 
 ### 3.5 Connection Draining (Deregistration Delay)
 - Khi target deregister, ELB chờ in-flight request hoàn thành.
@@ -355,7 +355,7 @@ Cross-zone ON:
 
 Vì sao có người chủ động để OFF? Ngoài tiền, OFF giúp **cô lập sự cố theo AZ** (AZ này trục trặc không kéo traffic của AZ khác sang) và giữ traffic trong cùng AZ nên độ trễ thấp hơn một chút. Đổi lại, bạn phải tự bảo đảm mỗi AZ có đủ target cho phần tải của nó — ASG chia đều máy giữa các AZ chính là để phục vụ điều này.
 
-> 🪤 Bẫy thi: *"NLB, một số instance quá tải trong khi instance khác rảnh, số instance mỗi AZ không đều"* → **bật cross-zone load balancing**. *"ALB có tính phí cross-zone không?"* → không.
+> Bẫy thi: *"NLB, một số instance quá tải trong khi instance khác rảnh, số instance mỗi AZ không đều"* → **bật cross-zone load balancing**. *"ALB có tính phí cross-zone không?"* → không.
 
 ---
 
@@ -495,12 +495,12 @@ Launch template + ASG với:
 - [ ] Tag `Project`, `Environment`, `AutoStop` cho FinOps.
 
 ### Anti-pattern
-- ❌ Sticky session làm stateful.
-- ❌ Self-managed nginx LB trên EC2 thay ALB.
-- ❌ Single AZ ASG.
-- ❌ Health check EC2-only.
-- ❌ NLB cross-zone bật trên workload không cần (cost cross-AZ).
-- ❌ ALB không gắn WAF cho public app.
+- ✗ Sticky session làm stateful.
+- ✗ Self-managed nginx LB trên EC2 thay ALB.
+- ✗ Single AZ ASG.
+- ✗ Health check EC2-only.
+- ✗ NLB cross-zone bật trên workload không cần (cost cross-AZ).
+- ✗ ALB không gắn WAF cho public app.
 
 ## 9. Foundations
 Bài 18 (DR/HA) sẽ dùng concept failure modes — load balancer + ASG là core của HA pattern.

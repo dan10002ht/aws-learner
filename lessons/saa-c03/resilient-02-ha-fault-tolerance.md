@@ -20,7 +20,7 @@ Trong Domain 2 (Design Resilient Architectures), đây là bài "xương sống"
 
 Lưu ý một chỗ dễ nhầm: **cụm Aurora nhìn từ phía ứng dụng vẫn là HA, không phải FT**. Dữ liệu thì không mất và không gián đoạn (tầng storage chịu lỗi), nhưng nếu instance writer chết thì vẫn có vài chục giây không ghi được trong lúc một replica được nâng lên thay.
 
-> 💡 Mẹo thi: HA = "phục hồi nhanh, chấp nhận downtime ngắn". FT = "không downtime, không mất dữ liệu/giao dịch". Nếu đề nhấn mạnh "no interruption", "zero downtime" → hướng Fault Tolerance (thường cần redundancy nhiều hơn, đắt hơn).
+> Mẹo thi: HA = "phục hồi nhanh, chấp nhận downtime ngắn". FT = "không downtime, không mất dữ liệu/giao dịch". Nếu đề nhấn mạnh "no interruption", "zero downtime" → hướng Fault Tolerance (thường cần redundancy nhiều hơn, đắt hơn).
 
 ### Single Point of Failure (SPOF)
 
@@ -32,7 +32,7 @@ Các SPOF kinh điển trong đề:
 - NAT Instance đơn lẻ → giải pháp: NAT Gateway (managed, redundant trong AZ) hoặc nhiều NAT Gateway ở mỗi AZ.
 - Một AZ duy nhất → giải pháp: deploy qua ≥2 AZ.
 
-> ⚠️ Bẫy: NAT Gateway **bản thân nó đã redundant trong AZ đó**, nhưng nó vẫn nằm trong MỘT AZ. Nếu cả AZ đó chết, NAT Gateway chết theo. Kiến trúc HA thật sự cần **một NAT Gateway cho mỗi AZ**, và route table của mỗi private subnet trỏ về NAT Gateway cùng AZ.
+> Bẫy: NAT Gateway **bản thân nó đã redundant trong AZ đó**, nhưng nó vẫn nằm trong MỘT AZ. Nếu cả AZ đó chết, NAT Gateway chết theo. Kiến trúc HA thật sự cần **một NAT Gateway cho mỗi AZ**, và route table của mỗi private subnet trỏ về NAT Gateway cùng AZ.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 410" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Kiến trúc khử SPOF — VPC trải 2 AZ, NAT Gateway riêng mỗi AZ</title>
@@ -176,7 +176,7 @@ Bảng dưới gom lại những khác biệt vừa giải thích:
   </defs>
 </svg>
 
-> ⚠️ Bẫy phổ biến: "Tăng khả năng đọc + đảm bảo HA" → cần **CẢ HAI**: Multi-AZ (cho HA) và Read Replica (cho scale read). Đề hay cho đáp án chỉ một trong hai để bẫy.
+> Bẫy phổ biến: "Tăng khả năng đọc + đảm bảo HA" → cần **CẢ HAI**: Multi-AZ (cho HA) và Read Replica (cho scale read). Đề hay cho đáp án chỉ một trong hai để bẫy.
 
 ### Aurora
 
@@ -202,7 +202,7 @@ Dòng cuối là bẫy: dữ liệu Aurora luôn an toàn nhờ 6 bản, nhưng 
 
 **Aurora Global Database.** Thêm các cụm chỉ đọc ở Region khác, nhận dữ liệu từ Region chính theo kiểu bất đồng bộ với độ trễ thường dưới 1 giây. Dùng cho DR cross-region với RPO thấp (cỡ giây, không phải 0 vì là async) và cho người dùng ở xa đọc dữ liệu gần mình. Khi Region chính sập, promote Region phụ lên trong dưới 1 phút (RTO thấp).
 
-> 💡 Mẹo thi: Đề muốn "RPO gần 0 + đọc toàn cầu + failover cross-region nhanh" → **Aurora Global Database**. Đề muốn HA trong region + scale đọc, không cần global → Aurora với nhiều replica.
+> Mẹo thi: Đề muốn "RPO gần 0 + đọc toàn cầu + failover cross-region nhanh" → **Aurora Global Database**. Đề muốn HA trong region + scale đọc, không cần global → Aurora với nhiều replica.
 
 ### ELB Cross-AZ
 
@@ -235,7 +235,7 @@ Vì sao NLB để tắt mặc định? Giữ traffic trong cùng AZ thì không 
 
 Một con số liên quan tới HA: load balancer chỉ gửi request cho target **healthy**. Với ALB, health check mặc định chạy mỗi 30 giây và target bị coi là unhealthy sau 2 lần fail liên tiếp, tức mất khoảng `30 × 2 = 60 giây` kể từ lúc app chết tới lúc LB ngừng gửi request cho nó. Muốn phát hiện nhanh hơn thì giảm interval.
 
-> ⚠️ Bẫy: Nếu target không phân bố đều (AZ-A có 8 instance, AZ-B có 2) và cross-zone TẮT, traffic vào AZ-B sẽ dồn nặng lên 2 instance đó. Đề hỏi "vì sao tải không đều" → nghĩ tới cross-zone đang tắt (NLB).
+> Bẫy: Nếu target không phân bố đều (AZ-A có 8 instance, AZ-B có 2) và cross-zone TẮT, traffic vào AZ-B sẽ dồn nặng lên 2 instance đó. Đề hỏi "vì sao tải không đều" → nghĩ tới cross-zone đang tắt (NLB).
 
 ## 3. Auto Scaling cho High Availability
 
@@ -250,7 +250,7 @@ Các loại health check:
 - **EC2 health check** (mặc định): chỉ kiểm tra trạng thái hardware/hypervisor của instance.
 - **ELB health check**: kiểm tra ứng dụng có thực sự phản hồi (HTTP 200). **Nên bật** để ASG biết loại instance "máy sống nhưng app chết".
 
-> ⚠️ Bẫy: ASG mặc định chỉ dùng EC2 health check. Nếu app crash nhưng OS vẫn chạy, ASG **không** thay thế instance. Giải pháp đề thi: bật **ELB health check** cho ASG.
+> Bẫy: ASG mặc định chỉ dùng EC2 health check. Nếu app crash nhưng OS vẫn chạy, ASG **không** thay thế instance. Giải pháp đề thi: bật **ELB health check** cho ASG.
 
 Chiến lược tránh SPOF với ASG:
 - Đặt `min capacity` đủ để chịu mất 1 AZ (ví dụ cần 4 instance phục vụ → set min 6 qua 3 AZ, mất 1 AZ còn 4).
@@ -270,9 +270,9 @@ Các cách externalize session:
 | **DynamoDB** | Serverless, scale tự động, TTL tự xóa session hết hạn | Session store không cần quản lý, tích hợp tốt serverless |
 | **ALB Sticky Sessions** | Gắn user vào 1 instance qua cookie | Giải pháp "tạm", KHÔNG phải externalize thật — instance chết vẫn mất session |
 
-> 💡 Mẹo thi: "Làm sao để user không mất session khi instance bị thay thế?" → externalize ra **ElastiCache** hoặc **DynamoDB**. Sticky session là **bẫy** — nó chỉ định tuyến, không bảo toàn session khi instance chết.
+> Mẹo thi: "Làm sao để user không mất session khi instance bị thay thế?" → externalize ra **ElastiCache** hoặc **DynamoDB**. Sticky session là **bẫy** — nó chỉ định tuyến, không bảo toàn session khi instance chết.
 
-> ⚠️ Bẫy: Lưu dữ liệu lên đĩa local của EC2 cũng là anti-pattern. Cần dùng **S3** (object) hoặc **EFS** (shared file system gắn nhiều AZ) để dữ liệu sống độc lập với instance.
+> Bẫy: Lưu dữ liệu lên đĩa local của EC2 cũng là anti-pattern. Cần dùng **S3** (object) hoặc **EFS** (shared file system gắn nhiều AZ) để dữ liệu sống độc lập với instance.
 
 ## 5. Route 53 Routing Policies & Health Checks
 
@@ -334,9 +334,9 @@ Bias dương kéo thêm traffic về mình, bias âm đẩy bớt đi. Dùng khi
 | **Multivalue Answer** | Trả tối đa 8 IP healthy, client tự chọn | HA đơn giản kiểu round-robin có health check |
 | **IP-based** | Route theo dải IP (CIDR) nguồn do bạn khai | Biết trước user đến từ dải IP/nhà mạng nào |
 
-> ⚠️ Bẫy Latency vs Geolocation: **Latency** = tối ưu *tốc độ* (gần về độ trễ mạng, không nhất thiết gần địa lý). **Geolocation** = dựa trên *vị trí user* (cho compliance/nội dung). Đề mô tả "tuân thủ luật, user EU phải vào server EU" → **Geolocation**. Đề mô tả "user truy cập nhanh nhất có thể" → **Latency**.
+> Bẫy Latency vs Geolocation: **Latency** = tối ưu *tốc độ* (gần về độ trễ mạng, không nhất thiết gần địa lý). **Geolocation** = dựa trên *vị trí user* (cho compliance/nội dung). Đề mô tả "tuân thủ luật, user EU phải vào server EU" → **Geolocation**. Đề mô tả "user truy cập nhanh nhất có thể" → **Latency**.
 
-> ⚠️ Bẫy Failover vs Multivalue: **Failover** là active-passive (1 primary, 1 standby). **Multivalue** là active-active nhiều endpoint cùng phục vụ. Đề "active-passive DR site" → Failover, không phải Multivalue.
+> Bẫy Failover vs Multivalue: **Failover** là active-passive (1 primary, 1 standby). **Multivalue** là active-active nhiều endpoint cùng phục vụ. Đề "active-passive DR site" → Failover, không phải Multivalue.
 
 ### Health Checks
 
@@ -360,7 +360,7 @@ Phép tính này cho thấy failover bằng DNS tính bằng **phút**, và mu�
   - **CloudWatch Alarm** based (dùng cho resource private không expose ra internet).
 - Health check là điều kiện để **Failover** và **Multivalue** hoạt động đúng.
 
-> 💡 Mẹo thi: Failover routing **bắt buộc** gắn health check vào primary record thì mới biết khi nào chuyển sang secondary.
+> Mẹo thi: Failover routing **bắt buộc** gắn health check vào primary record thì mới biết khi nào chuyển sang secondary.
 
 ## 6. ELB Types: ALB vs NLB vs GWLB
 
@@ -419,9 +419,9 @@ Cách chọn nhanh:
 - Cần **static IP**, **độ trễ siêu thấp**, **traffic non-HTTP (TCP/UDP)**, hàng triệu request/giây → **NLB**.
 - Cần đưa traffic qua **virtual appliance bảo mật** (firewall) → **GWLB**.
 
-> ⚠️ Bẫy: "Cần whitelist một địa chỉ IP cố định cho LB" → **NLB** (có Elastic IP). ALB chỉ có DNS name thay đổi, không có static IP — đây là đáp án bẫy hay gặp.
+> Bẫy: "Cần whitelist một địa chỉ IP cố định cho LB" → **NLB** (có Elastic IP). ALB chỉ có DNS name thay đổi, không có static IP — đây là đáp án bẫy hay gặp.
 
-> 💡 Mẹo thi: ALB chỉ hỗ trợ HTTP/HTTPS. Nếu đề nói "TCP", "UDP", "MQTT", "không phải HTTP" → loại ALB ngay, nghĩ NLB.
+> Mẹo thi: ALB chỉ hỗ trợ HTTP/HTTPS. Nếu đề nói "TCP", "UDP", "MQTT", "không phải HTTP" → loại ALB ngay, nghĩ NLB.
 
 ## 7. Multi-AZ vs Multi-Region (bẫy lớn nhất của bài)
 
@@ -451,10 +451,10 @@ Cách chọn nhanh:
     <text x="263" y="118" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">AZ B</text>
     <rect x="208" y="130" width="110" height="34" rx="7" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="263" y="152" font-size="10" text-anchor="middle" fill="currentColor">standby</text>
-    <text x="183" y="244" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">✔ AZ A chết → AZ B gánh</text>
+    <text x="183" y="244" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">✓ AZ A chết → AZ B gánh</text>
   </g>
   <rect x="14" y="262" width="338" height="56" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="183" y="285" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">✘ Cả Region chết → toàn bộ sập</text>
+  <text x="183" y="285" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">✗ Cả Region chết → toàn bộ sập</text>
   <text x="183" y="303" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">Multi-AZ không bảo vệ được cấp Region</text>
   <g>
     <text x="384" y="56" font-size="12.5" font-weight="700" fill="currentColor">Multi-Region — phạm vi nhiều Region</text>
@@ -477,14 +477,14 @@ Cách chọn nhanh:
     <text x="537" y="218" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">Route 53 failover giữa region</text>
   </g>
   <rect x="368" y="262" width="338" height="56" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="537" y="285" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">✔ Cả Region 1 chết → Region 2 gánh</text>
+  <text x="537" y="285" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">✓ Cả Region 1 chết → Region 2 gánh</text>
   <text x="537" y="303" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">Chống thảm họa diện rộng — đắt &amp; phức tạp hơn</text>
   <defs>
     <marker id="mrArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
 </svg>
 
-> ⚠️ Bẫy: Nếu đề chỉ yêu cầu "chịu được lỗi của một datacenter / một AZ" → **Multi-AZ là đủ**, đừng chọn Multi-Region (thừa, đắt, sai). Multi-Region chỉ khi đề nói rõ "survive an entire region outage", "global users", hoặc "regulatory DR requirement".
+> Bẫy: Nếu đề chỉ yêu cầu "chịu được lỗi của một datacenter / một AZ" → **Multi-AZ là đủ**, đừng chọn Multi-Region (thừa, đắt, sai). Multi-Region chỉ khi đề nói rõ "survive an entire region outage", "global users", hoặc "regulatory DR requirement".
 
 ## 8. RTO & RPO (gắn với DR strategies)
 
@@ -540,12 +540,12 @@ Bốn chiến lược DR (RTO/RPO giảm dần, chi phí tăng dần):
 | **Warm Standby** | Thấp (phút) | Bản thu nhỏ của toàn hệ thống luôn chạy, scale lên khi failover | Trung bình |
 | **Multi-Site / Active-Active** | Gần 0 | Hai site chạy full song song | Cao nhất |
 
-> 💡 Mẹo thi:
+> Mẹo thi:
 > - Đề nhấn "minimize cost, có thể chấp nhận downtime vài giờ" → **Backup & Restore**.
 > - Đề nhấn "RTO/RPO thấp, chi phí hợp lý, DB đã replicate sẵn" → **Pilot Light** hoặc **Warm Standby**.
 > - Đề nhấn "near-zero RTO/RPO, không downtime" → **Multi-Site Active-Active** (vd Aurora Global DB + Route 53).
 
-> ⚠️ Bẫy: RTO ≠ RPO. RTO nói về **thời gian phục hồi (downtime)**; RPO nói về **dữ liệu bị mất**. Đề hỏi "tối đa được mất 5 phút dữ liệu" → đó là **RPO = 5 phút** (cần replication, không phải backup hằng đêm).
+> Bẫy: RTO ≠ RPO. RTO nói về **thời gian phục hồi (downtime)**; RPO nói về **dữ liệu bị mất**. Đề hỏi "tối đa được mất 5 phút dữ liệu" → đó là **RPO = 5 phút** (cần replication, không phải backup hằng đêm).
 
 ## 9. Deployment strategies an toàn cho resilience
 
@@ -584,13 +584,13 @@ Các công cụ AWS xuất hiện trong bảng, mỗi cái một câu:
 | **Immutable** | **Không sửa** instance cũ; launch **instance hoàn toàn mới** từ image/template mới, chỉ khi khỏe mạnh mới cắt traffic, rồi bỏ instance cũ | Tốn tài nguyên tạm thời; thời gian dựng lâu hơn in-place | Nhanh (giữ nguyên fleet cũ tới khi xác nhận) | Beanstalk **Immutable**, ASG launch nhóm instance mới từ Launch Template mới (AMI mới) |
 | **Canary** | Đẩy version mới cho **một phần nhỏ traffic/user** (vd 5–10%), theo dõi lỗi/metric rồi mới tăng dần tới 100% | Một phần nhỏ user có thể dính lỗi trong giai đoạn thử | Nhanh (kéo % về 0) | **Route 53 Weighted**, ALB weighted target group, CodeDeploy `Canary`/`Linear` (Lambda/ECS), API Gateway canary, Beanstalk **Traffic Splitting** |
 
-> 💡 Phân biệt Immutable vs Rolling: Rolling **sửa tại chỗ** máy đang chạy (có thời điểm lẫn lộn 2 version, khó rollback sạch); Immutable **thay máy mới hoàn toàn** (không đụng máy cũ → rollback = vứt máy mới, an toàn hơn nhưng tốn hơn).
+> Phân biệt Immutable vs Rolling: Rolling **sửa tại chỗ** máy đang chạy (có thời điểm lẫn lộn 2 version, khó rollback sạch); Immutable **thay máy mới hoàn toàn** (không đụng máy cũ → rollback = vứt máy mới, an toàn hơn nhưng tốn hơn).
 
-> 💡 Phân biệt Blue-Green vs Canary: Blue-Green chuyển **toàn bộ** traffic một lần (cutover) — nhanh, rollback tức thì, nhưng lỗi ảnh hưởng 100% user ngay khi switch. Canary chuyển **dần theo %** — giới hạn "bán kính vụ nổ" (blast radius) khi có lỗi, nhưng release lâu hơn.
+> Phân biệt Blue-Green vs Canary: Blue-Green chuyển **toàn bộ** traffic một lần (cutover) — nhanh, rollback tức thì, nhưng lỗi ảnh hưởng 100% user ngay khi switch. Canary chuyển **dần theo %** — giới hạn "bán kính vụ nổ" (blast radius) khi có lỗi, nhưng release lâu hơn.
 
-> ⚠️ Bẫy thi: Đề mô tả *"muốn test version mới trên một tỉ lệ nhỏ traffic thật trước khi rollout toàn bộ"* → **Canary** (thường qua **Route 53 Weighted** hoặc CodeDeploy Canary), KHÔNG phải Blue-Green (Blue-Green là all-or-nothing). Đề mô tả *"cần rollback tức thì về môi trường cũ nếu deploy hỏng"* → **Blue-Green**.
+> Bẫy thi: Đề mô tả *"muốn test version mới trên một tỉ lệ nhỏ traffic thật trước khi rollout toàn bộ"* → **Canary** (thường qua **Route 53 Weighted** hoặc CodeDeploy Canary), KHÔNG phải Blue-Green (Blue-Green là all-or-nothing). Đề mô tả *"cần rollback tức thì về môi trường cũ nếu deploy hỏng"* → **Blue-Green**.
 
-> ⚠️ Bẫy thi: "Zero-downtime deploy + rollback nhanh nhất, chấp nhận tốn thêm tài nguyên tạm thời" → **Blue-Green** hoặc **Immutable**. Nếu đề chốt "**không chỉnh sửa instance đang chạy**, luôn thay bằng máy mới" → **Immutable**. Rolling KHÔNG đảm bảo rollback nhanh vì phải cuộn ngược từng batch.
+> Bẫy thi: "Zero-downtime deploy + rollback nhanh nhất, chấp nhận tốn thêm tài nguyên tạm thời" → **Blue-Green** hoặc **Immutable**. Nếu đề chốt "**không chỉnh sửa instance đang chạy**, luôn thay bằng máy mới" → **Immutable**. Rolling KHÔNG đảm bảo rollback nhanh vì phải cuộn ngược từng batch.
 
 ## 10. Tổng kết quyết định nhanh (cheat sheet)
 
@@ -604,4 +604,4 @@ Các công cụ AWS xuất hiện trong bảng, mỗi cái một câu:
 - Loại bỏ SPOF: ASG đa AZ, NAT Gateway mỗi AZ, RDS Multi-AZ, dữ liệu trên S3/EFS thay vì đĩa local.
 - Release: "test trên % nhỏ traffic" → **Canary (Route 53 Weighted)**. "Rollback tức thì về môi trường cũ" → **Blue-Green**. "Không sửa máy đang chạy, thay máy mới" → **Immutable**. "Cập nhật lần lượt in-place" → **Rolling**.
 
-> 💡 Nguyên tắc vàng cho phần resilience: **Design for failure** — luôn giả định mọi component sẽ chết, và thiết kế để hệ thống vẫn sống. Khi phân vân giữa hai đáp án, chọn đáp án **loại bỏ SPOF** mà **không over-engineer** (đừng chọn Multi-Region khi đề chỉ cần Multi-AZ).
+> Nguyên tắc vàng cho phần resilience: **Design for failure** — luôn giả định mọi component sẽ chết, và thiết kế để hệ thống vẫn sống. Khi phân vân giữa hai đáp án, chọn đáp án **loại bỏ SPOF** mà **không over-engineer** (đừng chọn Multi-Region khi đề chỉ cần Multi-AZ).

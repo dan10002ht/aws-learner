@@ -63,7 +63,7 @@ SELECT * FROM pgstattuple('orders');
 |---|---|---|---|
 | Làm gì | Đánh dấu dead tuple là **tái dùng được** trong file | **Rewrite** cả bảng sang file mới, chỉ dòng sống | Rewrite online qua bảng phụ + trigger |
 | Trả đĩa cho OS? | **Không** (chỉ trả về *free space map* của bảng) | **Có** (file co lại thật) | **Có** |
-| Lock | Không chặn đọc/ghi | **ACCESS EXCLUSIVE** — chặn tất cả ❌ | Chỉ khoá ngắn lúc swap |
+| Lock | Không chặn đọc/ghi | **ACCESS EXCLUSIVE** — chặn tất cả ✗ | Chỉ khoá ngắn lúc swap |
 | Cần đĩa tạm | Không | Không (nhưng cần chỗ cho bản copy) | Cần ~2x bảng |
 | Dùng khi | Bảo trì thường xuyên (autovacuum lo) | Bảo trì khẩn, chấp nhận downtime | Bảng lớn, không được downtime |
 
@@ -76,7 +76,7 @@ Chỉ khi bảng đã bloat nặng và bạn thật sự cần **thu nhỏ file 
 VACUUM (VERBOSE, ANALYZE) orders;
 
 -- VACUUM FULL: KHOÁ toàn bảng, rewrite → chỉ chạy trong maintenance window
-VACUUM FULL orders;   -- ❌ chặn cả SELECT trong suốt thời gian chạy
+VACUUM FULL orders;   -- ✗ chặn cả SELECT trong suốt thời gian chạy
 ```
 
 ```bash

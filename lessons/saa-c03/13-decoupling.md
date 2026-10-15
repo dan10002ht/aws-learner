@@ -95,7 +95,7 @@ Giá tính theo **request**, không theo message. Một message đi trọn vòng
 30 triệu × $0,40/triệu              ≈ $12/tháng (Standard)
 ```
 
-> 🪤 Bẫy thi: đề nói *"thứ tự phải đúng"* hoặc *"không được xử lý trùng"* → FIFO. Đề nói *"throughput cao nhất, thứ tự không quan trọng"* → Standard. Không đổi qua lại được giữa hai loại sau khi tạo queue; muốn đổi phải tạo queue mới.
+> Bẫy thi: đề nói *"thứ tự phải đúng"* hoặc *"không được xử lý trùng"* → FIFO. Đề nói *"throughput cao nhất, thứ tự không quan trọng"* → Standard. Không đổi qua lại được giữa hai loại sau khi tạo queue; muốn đổi phải tạo queue mới.
 
 ### 3.2 Key concepts
 - **Visibility Timeout** (default 30s) — consumer nhận message, message ẩn trong VT. Consumer phải `DeleteMessage` trước khi hết VT, nếu không visible lại → duplicate process. **Set > thời gian xử lý**.
@@ -146,7 +146,7 @@ Vậy "scale bằng nhiều groups" nghĩa là chọn group ID đủ mịn. Dùn
 - **MessageDeduplicationId**: producer tự đặt, ví dụ `orderId`. Gửi lại cùng ID trong 5 phút thì bị bỏ.
 - **Content-based dedup**: bật trên queue, SQS tự lấy mã băm SHA-256 của nội dung message làm ID. Tiện, nhưng hai message hợp lệ có nội dung giống hệt nhau gửi cách nhau dưới 5 phút sẽ bị coi là trùng.
 
-> 🪤 Exactly-once của FIFO chỉ bao phần **gửi vào queue** trong 5 phút. Consumer nhận message, xử lý xong nhưng chết trước khi `DeleteMessage` thì message vẫn hiện lại sau visibility timeout. Consumer vẫn nên idempotent (§3.4).
+> Exactly-once của FIFO chỉ bao phần **gửi vào queue** trong 5 phút. Consumer nhận message, xử lý xong nhưng chết trước khi `DeleteMessage` thì message vẫn hiện lại sau visibility timeout. Consumer vẫn nên idempotent (§3.4).
 
 ### 3.4 Patterns
 
@@ -222,7 +222,7 @@ SNS:          100 triệu × $0,50/triệu = $50/tháng
 EventBridge:  100 triệu × $1,00/triệu = $100/tháng
 ```
 
-> 🪤 Bẫy thi: *"fan-out throughput rất cao, đơn giản"* → SNS + SQS. *"phản ứng với sự kiện của dịch vụ AWS"* (EC2 đổi trạng thái, GuardDuty finding), *"lọc theo nội dung event"*, *"tích hợp SaaS"*, *"chạy theo lịch"* → EventBridge.
+> Bẫy thi: *"fan-out throughput rất cao, đơn giản"* → SNS + SQS. *"phản ứng với sự kiện của dịch vụ AWS"* (EC2 đổi trạng thái, GuardDuty finding), *"lọc theo nội dung event"*, *"tích hợp SaaS"*, *"chạy theo lịch"* → EventBridge.
 
 ---
 
@@ -308,7 +308,7 @@ Họ Kinesis có bốn dịch vụ làm bốn việc khác nhau:
 | Mục đích | Real-time stream | Near-real-time → S3/RS/OS | SQL/Apache Flink trên stream | Video ingest |
 | Latency | Dưới 1 giây (~200 ms) | Vài giây → vài phút do gom lô (đề thi: ~60s) | Dưới giây → vài giây, theo cửa sổ tính | Thấp, đủ để xem trực tiếp |
 | Storage | 1-365 ngày | None (pass-through) | None (chỉ giữ trạng thái tính toán) | Configurable |
-| Replay | ✅ | ❌ | Phụ thuộc nguồn nó đọc | ✅ |
+| Replay | ✓ | ✗ | Phụ thuộc nguồn nó đọc | ✓ |
 | Pricing | Shard-hour + PUT (hoặc theo GB ở on-demand) | Per GB ingested | Per KPU (đơn vị CPU + bộ nhớ của cụm Flink, tính theo giờ) | Per GB |
 
 ### 6.2 Data Streams chi tiết
@@ -366,15 +366,15 @@ Mọi dòng trong bảng dưới đều suy ra từ một khác biệt: **SQS l�
 |--|-----------------|-----|-------------|
 | Mô hình | Log, đọc không xoá | Queue, xử lý xong xoá | Log, đọc không xoá |
 | Order | Per shard | Per FIFO group | Per partition |
-| Replay | ✅ trong retention (tới 365 ngày) | ❌ đã xoá là hết | ✅ trong retention do bạn cấu hình |
-| Multiple consumer | ✅ mỗi consumer một checkpoint | ❌ (1 consumer pool, các worker chia nhau message) | ✅ mỗi consumer group một offset |
+| Replay | ✓ trong retention (tới 365 ngày) | ✗ đã xoá là hết | ✓ trong retention do bạn cấu hình |
+| Multiple consumer | ✓ mỗi consumer một checkpoint | ✗ (1 consumer pool, các worker chia nhau message) | ✓ mỗi consumer group một offset |
 | Throughput | Shard-based: 1 MB/s ghi mỗi shard | Gần như không giới hạn với Standard | Partition-based, phụ thuộc cỡ và số broker |
 | Latency | Dưới 1 giây (~200 ms; ~70 ms với EFO) | Thường vài chục ms | Thường vài ms tới vài chục ms, tuỳ cấu hình cụm |
 | Managed level | Full: chỉ chọn số shard hoặc on-demand | Full: không có gì để chọn dung lượng | AWS chạy cụm; bạn vẫn chọn số broker, loại máy, số partition (hoặc dùng MSK Serverless) |
 
 Thuật ngữ Kafka tương ứng: **partition** giống shard, **offset** giống sequence number, **broker** là một máy chủ trong cụm Kafka.
 
-> 🪤 Bẫy thi: *"mỗi message một worker xử lý, xong thì thôi"* → SQS. *"nhiều ứng dụng đọc cùng dữ liệu"*, *"replay"*, *"thứ tự theo key ở thông lượng lớn"* → Kinesis Data Streams. *"đang dùng Kafka, muốn chuyển lên AWS ít sửa code nhất"* → MSK.
+> Bẫy thi: *"mỗi message một worker xử lý, xong thì thôi"* → SQS. *"nhiều ứng dụng đọc cùng dữ liệu"*, *"replay"*, *"thứ tự theo key ở thông lượng lớn"* → Kinesis Data Streams. *"đang dùng Kafka, muốn chuyển lên AWS ít sửa code nhất"* → MSK.
 
 ---
 
@@ -429,7 +429,7 @@ Express:   request:   1 triệu × $1/triệu                              = $1,
 
 Chênh khoảng 30 lần ở khối lượng lớn. Vì vậy quy trình ngắn chạy hàng triệu lần chọn Express, còn quy trình dài, ít lần chạy, cần truy vết thì chọn Standard.
 
-> 🪤 Loại workflow **không đổi được** sau khi tạo state machine. Đề cho quy trình *"chờ phê duyệt vài ngày"* hoặc *"6 tháng"* thì chỉ có Standard, dù khối lượng lớn.
+> Loại workflow **không đổi được** sau khi tạo state machine. Đề cho quy trình *"chờ phê duyệt vài ngày"* hoặc *"6 tháng"* thì chỉ có Standard, dù khối lượng lớn.
 
 ### 7.2 States
 - **Task** — làm một việc: invoke Lambda/ECS/SNS/SQS/DDB/... Step Functions gọi thẳng được nhiều dịch vụ AWS mà không cần Lambda trung gian.
@@ -462,7 +462,7 @@ Có hai cách phối hợp nhiều service trong một quy trình nghiệp vụ.
 | Xử lý lỗi / rollback | Khai báo Retry, Catch tại một chỗ | Mỗi service tự lo, phải phát thêm event bù trừ |
 | Use case | Saga, transactional, quy trình có thứ tự chặt | Microservices, event-driven, nhiều team độc lập |
 
-> 🪤 Bẫy thi: *"cần theo dõi trạng thái từng bước, retry, rollback"* → Step Functions. *"các service độc lập, thêm consumer mới không ảnh hưởng hệ thống hiện có"* → EventBridge. Hai cách hay đi cùng nhau: choreography giữa các domain, orchestration bên trong một domain.
+> Bẫy thi: *"cần theo dõi trạng thái từng bước, retry, rollback"* → Step Functions. *"các service độc lập, thêm consumer mới không ảnh hưởng hệ thống hiện có"* → EventBridge. Hai cách hay đi cùng nhau: choreography giữa các domain, orchestration bên trong một domain.
 
 ---
 
@@ -604,12 +604,12 @@ Tên "outbox" đến từ bản gốc dùng database quan hệ: trong cùng mộ
 - **Outbox pattern** với DDB Streams cho microservice CDC.
 
 ### Anti-pattern
-- ❌ Lambda gọi Lambda gọi Lambda → dùng Step Functions.
-- ❌ SQS không DLQ → message poison loop cho tới hết retention, chặn worker xử lý việc khác.
-- ❌ Visibility timeout < processing time → duplicate.
-- ❌ Non-idempotent consumer → corrupt state khi retry.
-- ❌ SNS subscription HTTP không có DLQ.
-- ❌ Kinesis 1 shard cho 100k records/s → throttle, vì 1 shard chỉ nhận 1.000 record/giây. Tăng lên ~100 shard, dùng on-demand, hoặc dùng Firehose nếu chỉ cần đổ vào kho.
+- ✗ Lambda gọi Lambda gọi Lambda → dùng Step Functions.
+- ✗ SQS không DLQ → message poison loop cho tới hết retention, chặn worker xử lý việc khác.
+- ✗ Visibility timeout < processing time → duplicate.
+- ✗ Non-idempotent consumer → corrupt state khi retry.
+- ✗ SNS subscription HTTP không có DLQ.
+- ✗ Kinesis 1 shard cho 100k records/s → throttle, vì 1 shard chỉ nhận 1.000 record/giây. Tăng lên ~100 shard, dùng on-demand, hoặc dùng Firehose nếu chỉ cần đổ vào kho.
 
 ## 13. Foundations
 - **At-least-once + idempotency** là chủ đề của replication. Đọc [[foundations-03-replication-and-quorum]] nếu chưa.

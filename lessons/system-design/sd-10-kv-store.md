@@ -74,7 +74,7 @@ Ba con số dẫn tới ba quyết định lớn:
 2. **330 MB/s traffic nhân bản nội bộ** → replication không miễn phí; nó ăn băng thông và ăn latency ghi. Vì vậy ta muốn **quorum** (chờ W bản, không chờ hết N).
 3. **Cache không phủ hết dữ liệu** → phần lớn read sẽ chạm đĩa → cấu trúc lưu trữ trên đĩa (LSM, bloom filter) là chuyện sống còn, không phải chi tiết nhỏ.
 
-> 💡 **Nguyên tắc**: Chừa **40% đĩa trống** trên node LSM. Compaction cần chỗ ghi file mới trước khi xoá file cũ; đĩa đầy 90% là kịch bản kinh điển khiến cả cluster Cassandra "đông cứng" vì không compact được.
+> **Nguyên tắc**: Chừa **40% đĩa trống** trên node LSM. Compaction cần chỗ ghi file mới trước khi xoá file cũ; đĩa đầy 90% là kịch bản kinh điển khiến cả cluster Cassandra "đông cứng" vì không compact được.
 
 
 ## Bước 3: API design
@@ -97,7 +97,7 @@ Ba chi tiết đáng nói ngay vì chúng lộ ra bạn hiểu hệ phân tán:
 - **`get` có thể trả về NHIỀU value.** Nghe vô lý với một KV store, nhưng đó là sự thật của hệ AP: khi hai client ghi đồng thời lên hai bản sao khác nhau, hệ **không có quyền tự chọn** cái nào đúng. Nó trả cả hai và để application quyết định (Dynamo gọi là *sibling*).
 - **`delete` không xoá ngay.** Nếu xoá thật, một replica đang offline lúc đó sẽ "hồi sinh" bản ghi khi nó quay lại (bản ghi cũ của nó mới hơn... hư vô). Nên xoá = ghi tombstone có version, và chỉ dọn sạch sau `gc_grace_period`.
 
-> ⚠️ **Bẫy kinh điển**: Quên tombstone → **zombie data**. Bạn xoá một record, ba tháng sau nó tự quay lại vì một node offline lâu ngày được đưa lại vào cluster. Đây là bug thật, xảy ra thường xuyên trên Cassandra khi node offline lâu hơn `gc_grace_seconds` (mặc định 10 ngày) rồi được join lại.
+> **Bẫy kinh điển**: Quên tombstone → **zombie data**. Bạn xoá một record, ba tháng sau nó tự quay lại vì một node offline lâu ngày được đưa lại vào cluster. Đây là bug thật, xảy ra thường xuyên trên Cassandra khi node offline lâu hơn `gc_grace_seconds` (mặc định 10 ngày) rồi được join lại.
 
 ---
 
@@ -148,7 +148,7 @@ Bình thường:                       Khi mạng đứt:
 
 **Bài này chọn AP**, vì yêu cầu non-functional đã nói "high availability, luôn ghi được". Amazon rút ra bài học này từ chính giỏ hàng của họ — *"giỏ hàng không thêm được món là mất tiền ngay; giỏ hàng hiển thị hơi cũ thì hoà giải sau được"*. Đó là nguồn gốc của Dynamo.
 
-> 💡 **Nguyên tắc trả lời phỏng vấn**: Đừng nói "tôi chọn AP vì AP tốt hơn". Hãy nói: *"Với use case này, chi phí của việc từ chối ghi cao hơn chi phí đọc phải dữ liệu cũ 200 ms, nên tôi chọn AP — và tôi sẽ làm consistency tunable để app nào cần thì mua lại bằng quorum."*
+> **Nguyên tắc trả lời phỏng vấn**: Đừng nói "tôi chọn AP vì AP tốt hơn". Hãy nói: *"Với use case này, chi phí của việc từ chối ghi cao hơn chi phí đọc phải dữ liệu cũ 200 ms, nên tôi chọn AP — và tôi sẽ làm consistency tunable để app nào cần thì mua lại bằng quorum."*
 
 
 ## High-level design
@@ -198,7 +198,7 @@ Cơ chế chi tiết (vòng băm, virtual node, rebalance, hot-spot) đã có ri
 | **Virtual node** (mỗi node vật lý = nhiều điểm trên ring) | Phân bố đều hơn; và cho phép **node mạnh nhận nhiều vnode hơn** → xử lý được cluster không đồng nhất (heterogeneity) |
 | Vị trí tính bằng hàm băm, không cần tra bảng | Mọi node tự tính được chủ sở hữu → không có metadata server trung tâm |
 
-> ⚠️ **Bẫy khi ghép consistent hashing với replication**: nếu bạn lấy "N node kế tiếp trên ring" một cách máy móc, rất có thể vài vnode trong số đó **thuộc cùng một máy vật lý** (vì một máy có nhiều vnode rải khắp vòng). Khi đó N=3 nhưng thực chất chỉ có 2 máy giữ dữ liệu — mất 1 máy là mất 2/3 bản sao. Thuật toán chọn replica phải **bỏ qua vnode trùng máy, và ưu tiên trải sang rack/AZ khác**.
+> **Bẫy khi ghép consistent hashing với replication**: nếu bạn lấy "N node kế tiếp trên ring" một cách máy móc, rất có thể vài vnode trong số đó **thuộc cùng một máy vật lý** (vì một máy có nhiều vnode rải khắp vòng). Khi đó N=3 nhưng thực chất chỉ có 2 máy giữ dữ liệu — mất 1 máy là mất 2/3 bản sao. Thuật toán chọn replica phải **bỏ qua vnode trùng máy, và ưu tiên trải sang rack/AZ khác**.
 
 ---
 
@@ -225,7 +225,7 @@ N = 3 replica:  [ A ]  [ B ]  [ C ]
 
 W = 2 → ghi xong nghĩa là ít nhất 2/3 đã có giá trị mới, vd {A, B}.
 R = 2 → đọc chạm ít nhất 2/3. Mọi tập 2 phần tử đều GIAO với {A,B}:
-        {A,B}∩{A,B}={A,B} ✓   {A,C}∩{A,B}={A} ✓   {B,C}∩{A,B}={B} ✓
+        {A,B}∩{A,B}={A,B} ✓    {A,C}∩{A,B}={A} ✓    {B,C}∩{A,B}={B} ✓
 
 W + R = 4 > 3 = N ⇒ tập ghi và tập đọc BẮT BUỘC chồng nhau
                   ⇒ luôn có ≥1 node giữ giá trị mới nhất
@@ -242,7 +242,7 @@ Ngược lại nếu `W + R ≤ N` (vd W=1, R=1, N=3), tập ghi có thể là `
 | **`N=3, W=2, R=2`** | **Cân bằng, strong consistency** | **Chịu mất 1 node cả đọc lẫn ghi** | **Mặc định nên nói trong phỏng vấn** |
 | `N=5, W=3, R=3` | Bền hơn, đắt hơn | Chịu mất 2 node | Dữ liệu quan trọng, multi-AZ rộng |
 
-> 💡 **Nguyên tắc**: `N=3, W=2, R=2` là điểm duy nhất vừa thoả `W+R>N` vừa **chịu mất một node ở CẢ hai chiều**. `W=3,R=1` cũng thoả công thức nhưng mất 1 node là tê liệt ghi — nghe "consistent" mà thực chất kém available hơn nhiều.
+> **Nguyên tắc**: `N=3, W=2, R=2` là điểm duy nhất vừa thoả `W+R>N` vừa **chịu mất một node ở CẢ hai chiều**. `W=3,R=1` cũng thoả công thức nhưng mất 1 node là tê liệt ghi — nghe "consistent" mà thực chất kém available hơn nhiều.
 
 Một chi tiết tinh tế: **latency quorum bị chi phối bởi node chậm thứ W**, không phải node trung bình. Với W=2/N=3 bạn chờ node nhanh thứ nhì — điều này thực ra *giảm* đuôi latency so với chờ cả 3, vì bạn được phép bỏ qua node đang GC pause.
 
@@ -260,7 +260,7 @@ Một chi tiết tinh tế: **latency quorum bị chi phối bởi node chậm t
 
 Causal đáng nói kỹ vì nó là điểm ngọt: strong thì đắt (đồng thuận toàn cục), eventual thì **có thể hiển thị nghịch lý** (thấy câu trả lời trước câu hỏi). Causal chỉ ép thứ tự ở nơi thực sự có nhân quả — và **vector clock chính là cách đo quan hệ nhân quả đó**.
 
-> ⚠️ **Bẫy**: "Eventual" nghe hiền nhưng không có cam kết thời gian. Production thường hội tụ trong **mili-giây tới vài trăm mili-giây**, nhưng có thể là **hàng giờ** nếu một replica offline và phải chờ anti-entropy. Đừng thiết kế luồng nghiệp vụ dựa vào giả định "chắc là nhanh thôi".
+> **Bẫy**: "Eventual" nghe hiền nhưng không có cam kết thời gian. Production thường hội tụ trong **mili-giây tới vài trăm mili-giây**, nhưng có thể là **hàng giờ** nếu một replica offline và phải chờ anti-entropy. Đừng thiết kế luồng nghiệp vụ dựa vào giả định "chắc là nhanh thôi".
 
 
 ## Deep dive 3 — Giải quyết bất đồng bằng vector clock
@@ -325,7 +325,7 @@ Và chú ý t2 so với t4/t5: cả hai đều là "đọc rồi ghi", nhưng t2
 | **Cắt tỉa gây sai** | Bỏ mục cũ làm mất khả năng suy ra quan hệ tổ tiên → xung đột giả | Chấp nhận: xung đột giả chỉ tốn công merge thừa, còn **mất dữ liệu thì không cứu được** |
 | **Sibling tích tụ** | App không hoà giải thì sibling nhân lên mỗi lần ghi song song | Bắt buộc ghi lại bản đã merge; giới hạn số sibling |
 
-> 💡 **Nguyên tắc chọn**: Hỏi một câu — *"mất một ghi cạnh tranh có gây thiệt hại nghiệp vụ không?"* Không (log, telemetry, profile field) → **LWW**. Có (giỏ hàng, danh sách, tài liệu cộng tác) → **vector clock hoặc CRDT**.
+> **Nguyên tắc chọn**: Hỏi một câu — *"mất một ghi cạnh tranh có gây thiệt hại nghiệp vụ không?"* Không (log, telemetry, profile field) → **LWW**. Có (giỏ hàng, danh sách, tài liệu cộng tác) → **vector clock hoặc CRDT**.
 
 
 ## Deep dive 4 — Xử lý lỗi
@@ -362,7 +362,7 @@ Vòng lặp mỗi node (vd mỗi 1 giây):
 
 Vì sao đúng hơn: **traffic O(n) mỗi node**; **không có điểm tập trung** (không có monitoring server chết là mù); và **chống false positive bằng nhiều nguồn** — node chỉ bị đánh dấu offline khi heartbeat không tăng theo quan sát lan truyền của nhiều node. Cassandra còn dùng **Phi Accrual Failure Detector**: thay vì ngưỡng cứng "quá 10s là chết", nó tính *xác suất* node đã chết dựa trên phân bố khoảng cách heartbeat trong quá khứ, nên mạng chậm ổn định thì ngưỡng tự nới ra.
 
-> ⚠️ **Bẫy vận hành**: Đặt failure detector quá nhạy trong môi trường có **GC pause dài** (JVM stop-the-world 10–20 giây) → node khoẻ liên tục bị đánh dấu chết rồi sống lại (*flapping*), mỗi lần lại rebalance. Triệu chứng: cluster "rung" liên tục, latency tăng vọt mà không node nào thật sự hỏng.
+> **Bẫy vận hành**: Đặt failure detector quá nhạy trong môi trường có **GC pause dài** (JVM stop-the-world 10–20 giây) → node khoẻ liên tục bị đánh dấu chết rồi sống lại (*flapping*), mỗi lần lại rebalance. Triệu chứng: cluster "rung" liên tục, latency tăng vọt mà không node nào thật sự hỏng.
 
 ### 4.2 Lỗi tạm thời — sloppy quorum + hinted handoff
 
@@ -375,7 +375,7 @@ Preference list của key K: [n4, n5, n6]     N=3, W=2.  n5 đang chết.
 
 Strict quorum:  còn n4, n6 → vừa đủ W=2 → OK
                 nhưng nếu n5 VÀ n6 cùng chết → chỉ còn 1 → TỪ CHỐI GHI
-Sloppy quorum:  n4 ✓, n5 ✗ → đi tiếp trên ring → n7
+Sloppy quorum:  n4 ✓, n5 ✗  → đi tiếp trên ring → n7
                 ghi vào [n4, n6, n7] → đủ W → OK
                 n7 KHÔNG phải chủ thật của K, nó chỉ giữ hộ.
 ```
@@ -387,7 +387,7 @@ Sloppy quorum:  n4 ✓, n5 ✗ → đi tiếp trên ring → n7
 | Sloppy quorum | Ghi **không bao giờ bị từ chối** vì node chết tạm thời | `W+R>N` không còn đảm bảo strong consistency (tập ghi có thể nằm ngoài preference list → không giao với tập đọc) |
 | Hinted handoff | Tự động bắt kịp, không cần can thiệp tay | Node giữ hint tốn đĩa; node đích chết **lâu** thì hint chất đống rồi **hết hạn và bị vứt** |
 
-> ⚠️ **Bẫy nghiêm trọng**: Hint có thời hạn (Cassandra `max_hint_window_in_ms`, mặc định 3 giờ). Node chết lâu hơn ngưỡng → hint bị **xoá**, dữ liệu ghi trong lúc nó chết **không tự về**, và không ai báo. Đây chính là lý do bắt buộc phải có cơ chế thứ hai.
+> **Bẫy nghiêm trọng**: Hint có thời hạn (Cassandra `max_hint_window_in_ms`, mặc định 3 giờ). Node chết lâu hơn ngưỡng → hint bị **xoá**, dữ liệu ghi trong lúc nó chết **không tự về**, và không ai báo. Đây chính là lý do bắt buộc phải có cơ chế thứ hai.
 
 ### 4.3 Lỗi vĩnh viễn — anti-entropy với Merkle tree
 
@@ -436,7 +436,7 @@ Bước 4 — gộp lên tầng trên tới gốc
 | Độ phức tạp phát hiện | O(n) | **O(log n)** |
 | Chi phí thêm | Không | Phải **xây và giữ cây**; mỗi lần ghi cập nhật hash dọc một nhánh |
 
-> ⚠️ **Bẫy**: Xây Merkle tree tốn CPU và I/O thật. Trên Cassandra, `nodetool repair` (chính là anti-entropy này) là thao tác **nặng nhất** trong vận hành — chạy nhiều node cùng lúc trong giờ cao điểm sẽ làm p99 tăng vọt. Thực tế: chạy **lệch giờ giữa các node**, và bắt buộc chạy **trước khi hết `gc_grace_seconds`** — nếu không, tombstone bị dọn trước khi kịp lan tới mọi replica và **dữ liệu đã xoá sẽ hồi sinh**.
+> **Bẫy**: Xây Merkle tree tốn CPU và I/O thật. Trên Cassandra, `nodetool repair` (chính là anti-entropy này) là thao tác **nặng nhất** trong vận hành — chạy nhiều node cùng lúc trong giờ cao điểm sẽ làm p99 tăng vọt. Thực tế: chạy **lệch giờ giữa các node**, và bắt buộc chạy **trước khi hết `gc_grace_seconds`** — nếu không, tombstone bị dọn trước khi kịp lan tới mọi replica và **dữ liệu đã xoá sẽ hồi sinh**.
 
 Ba tầng sửa lỗi bổ sung nhau và cần **cả ba**: **hinted handoff** lo mức giây–giờ; **read repair** (khi đọc R bản thấy version lệch thì ghi ngay bản mới về replica cũ — gần như miễn phí, nhưng chỉ chạm được dữ liệu có người đọc); **Merkle-tree anti-entropy** lo phần dữ liệu nguội mà không ai đụng tới suốt nhiều tháng.
 
@@ -508,7 +508,7 @@ Cấu trúc vừa mô tả chính là **LSM tree (Log-Structured Merge tree)**. 
 | Transaction / khoá | Khó (dữ liệu một key rải nhiều file) | Dễ (mỗi key một chỗ duy nhất) |
 | Hợp với | **Write-heavy**, ingest, time-series, KV phân tán | **Read-heavy**, OLTP có transaction, range scan mạnh |
 
-> 💡 **Nguyên tắc**: LSM tree **đổi read amplification lấy write amplification**. Nó thắng ở đây vì một KV store phân tán vốn đặt cược vào việc *ghi phải luôn nhanh và luôn nhận được* (AP), còn đọc thì cứu được bằng bloom filter + cache + nhiều replica cùng phục vụ. Nếu bài toán là OLTP có transaction và range query phức tạp thì B-tree mới đúng — đó là lý do người ta không thay PostgreSQL bằng Cassandra.
+> **Nguyên tắc**: LSM tree **đổi read amplification lấy write amplification**. Nó thắng ở đây vì một KV store phân tán vốn đặt cược vào việc *ghi phải luôn nhanh và luôn nhận được* (AP), còn đọc thì cứu được bằng bloom filter + cache + nhiều replica cùng phục vụ. Nếu bài toán là OLTP có transaction và range query phức tạp thì B-tree mới đúng — đó là lý do người ta không thay PostgreSQL bằng Cassandra.
 
 ### Compaction — cái giá phải trả của LSM
 
@@ -522,7 +522,7 @@ SSTable là **bất biến**. Sửa một key = ghi bản mới ở SSTable mớ
 | **Leveled (LCS)** | Level L0..Ln lớn dần ~10×, **trong một level key không chồng lấn** | **Cao** (10–30×) | **Thấp** | Thấp, ổn định | Read-heavy, cần latency đọc ổn định |
 | Time-window (TWCS) | Gom theo cửa sổ thời gian, hết TTL thì xoá nguyên file | Rất thấp | TB | Thấp | **Time-series có TTL** |
 
-> ⚠️ **Bẫy vận hành kinh điển**: Compaction cạnh tranh I/O và CPU với traffic thật — triệu chứng là p99 **tăng đột biến theo từng đợt**. Ba việc cần làm: giới hạn `compaction_throughput`; chừa **≥40% đĩa trống** (STCS cần chỗ ghi file gộp trước khi xoá file nguồn — đĩa đầy thì compaction kẹt, SSTable chất đống, đọc chậm dần tới chết); và **không dùng LCS cho workload ghi cực nặng** vì write amplification sẽ nuốt hết IOPS.
+> **Bẫy vận hành kinh điển**: Compaction cạnh tranh I/O và CPU với traffic thật — triệu chứng là p99 **tăng đột biến theo từng đợt**. Ba việc cần làm: giới hạn `compaction_throughput`; chừa **≥40% đĩa trống** (STCS cần chỗ ghi file gộp trước khi xoá file nguồn — đĩa đầy thì compaction kẹt, SSTable chất đống, đọc chậm dần tới chết); và **không dùng LCS cho workload ghi cực nặng** vì write amplification sẽ nuốt hết IOPS.
 
 
 ## Bottleneck & failure mode
@@ -578,7 +578,7 @@ SSTable là **bất biến**. Sửa một key = ghi bản mới ở SSTable mớ
 | Toàn bộ KV store managed | **DynamoDB** | Hậu duệ thương mại của Dynamo: partition key băm tự động, 3 bản sao qua 3 AZ, không phải vận hành node nào |
 | Data partition | **DynamoDB partition key** | Key được băm để chọn partition — đúng consistent hashing nhưng ẩn hoàn toàn. Đổi lại **bạn không kiểm soát được hot partition**, phải tự lo bằng thiết kế key |
 | Chọn mức consistency | **`ConsistentRead`** | `false` (mặc định) = eventually consistent, **rẻ bằng nửa** và nhanh hơn; `true` = strongly consistent, đọc từ leader replica, tốn 2× RCU và không dùng được với GSI |
-| Cache trước KV store | **DAX** | Cache write-through in-memory ngay trước DynamoDB, **mili-giây → micro-giây**; ⚠️ DAX luôn phục vụ eventually consistent — `ConsistentRead=true` đi thẳng qua DAX, không được cache |
+| Cache trước KV store | **DAX** | Cache write-through in-memory ngay trước DynamoDB, **mili-giây → micro-giây**; DAX luôn phục vụ eventually consistent — `ConsistentRead=true` đi thẳng qua DAX, không được cache |
 | Tự vận hành Dynamo-style | **Cassandra / ScyllaDB trên EC2** | Khi cần kiểm soát tận tay: N/W/R theo từng query, chiến lược compaction, tuning repair. Đổi lại **bạn gánh toàn bộ vận hành** |
 | Cassandra nhưng managed | **Amazon Keyspaces** | API tương thích CQL, serverless, không phải chạy `nodetool repair`; đổi lại mất một số tuỳ chọn của Cassandra |
 | Tầng cache / KV in-memory | **ElastiCache (Redis / Valkey / Memcached)** | Chính là "single-node KV store" ở Bước 4, có cluster mode để shard. Rất nhanh nhưng **không bền bằng** — hợp làm cache/session, không hợp làm nguồn sự thật |
@@ -605,4 +605,4 @@ SSTable là **bất biến**. Sửa một key = ghi bản mới ở SSTable mớ
 10. **Nêu bottleneck trước khi bị hỏi.** Hot key là bottleneck số một — chuẩn bị sẵn ba cách gỡ (cache, salting, tách key).
 11. **Khi review thiết kế của người khác**, hỏi đúng bốn câu: *"N/W/R là bao nhiêu và vì sao? Hai người ghi cùng lúc thì ai thắng? Node chết 3 ngày rồi quay lại thì dữ liệu về bằng cách nào? Đĩa còn trống bao nhiêu phần trăm?"* Bốn câu này chạm đúng bốn chỗ hay vỡ nhất trong thực tế.
 
-> 💡 **Nguyên tắc cuối**: Toàn bộ bài này chỉ là một chuỗi nhân quả duy nhất — *dữ liệu quá lớn → phải chia → chia rồi máy sẽ chết → phải nhân bản → nhân bản rồi các bản sẽ lệch → phải có cách phát hiện và hoà giải*. Kể được đúng chuỗi đó thì không cần nhớ tên kỹ thuật nào cả: mỗi kỹ thuật sẽ tự xuất hiện đúng chỗ nó cần.
+> **Nguyên tắc cuối**: Toàn bộ bài này chỉ là một chuỗi nhân quả duy nhất — *dữ liệu quá lớn → phải chia → chia rồi máy sẽ chết → phải nhân bản → nhân bản rồi các bản sẽ lệch → phải có cách phát hiện và hoà giải*. Kể được đúng chuỗi đó thì không cần nhớ tên kỹ thuật nào cả: mỗi kỹ thuật sẽ tự xuất hiện đúng chỗ nó cần.

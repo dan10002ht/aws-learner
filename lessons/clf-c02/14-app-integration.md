@@ -45,7 +45,7 @@ Nếu image processor chết / overload → web app cũng chết theo. So sánh 
   <text x="270" y="93" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Processor</text>
   <line x1="150" y1="79" x2="206" y2="79" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#diArr)"/>
   <text x="178" y="71" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">HTTP trực tiếp</text>
-  <text x="270" y="150" font-size="20" text-anchor="middle" fill="#ef4444" font-weight="700">✕</text>
+  <text x="270" y="150" font-size="20" text-anchor="middle" fill="#ef4444" font-weight="700">✗</text>
   <text x="270" y="138" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">processor chết</text>
   <line x1="270" y1="158" x2="160" y2="158" stroke="#ef4444" stroke-opacity="0.6" stroke-dasharray="4 3" marker-end="url(#diArr)"/>
   <rect x="30" y="170" width="120" height="42" rx="9" fill="#ef4444" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.4"/>
@@ -64,7 +64,7 @@ Nếu image processor chết / overload → web app cũng chết theo. So sánh 
   <line x1="492" y1="79" x2="524" y2="79" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#diArr)"/>
   <line x1="644" y1="86" x2="616" y2="86" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#diArr)"/>
   <text x="678" y="118" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">pull khi rảnh</text>
-  <text x="678" y="160" font-size="18" text-anchor="middle" fill="#ef4444" font-weight="700">✕</text>
+  <text x="678" y="160" font-size="18" text-anchor="middle" fill="#ef4444" font-weight="700">✗</text>
   <text x="678" y="174" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">processor chết</text>
   <rect x="504" y="196" width="132" height="58" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="570" y="218" font-size="10.5" text-anchor="middle" fill="currentColor">Message vẫn còn</text>

@@ -71,7 +71,7 @@ Hai thao tác cốt lõi:
 | `peek` | O(1) | O(1) |
 | Toàn bộ stack | — | O(n) |
 
-> 💡 **Ghi nhớ**: Bất cứ khi nào bạn cần "nhớ lại thứ gần đây nhất" hoặc "đảo ngược thứ tự", hãy nghĩ ngay đến `Stack`.
+> **Ghi nhớ**: Bất cứ khi nào bạn cần "nhớ lại thứ gần đây nhất" hoặc "đảo ngược thứ tự", hãy nghĩ ngay đến `Stack`.
 
 ### Code mẫu Stack
 
@@ -121,7 +121,7 @@ stack.pop();                     // ... lấy phần tử đỉnh ra
 bool empty = stack.empty();
 ```
 
-> ⚠️ **Bẫy**: Trong Java, đừng dùng class `java.util.Stack` cũ (nó kế thừa `Vector`, có khoá đồng bộ chậm). Hãy dùng `ArrayDeque` làm stack.
+> **Bẫy**: Trong Java, đừng dùng class `java.util.Stack` cũ (nó kế thừa `Vector`, có khoá đồng bộ chậm). Hãy dùng `ArrayDeque` làm stack.
 
 ### Bài toán điển hình: Ngoặc hợp lệ (Valid Parentheses)
 
@@ -229,7 +229,7 @@ Hai thao tác cốt lõi:
 | `dequeue` | O(1) amortized | O(1) |
 | Toàn bộ queue | — | O(n) |
 
-> ⚠️ **Bẫy**: Trong Python đừng dùng `list.pop(0)` làm dequeue — nó O(n) vì phải dịch chuyển toàn bộ phần tử. Hãy dùng `collections.deque`. Trong JavaScript, `array.shift()` cũng O(n); với dữ liệu lớn nên dùng con trỏ đầu hoặc cấu trúc deque.
+> **Bẫy**: Trong Python đừng dùng `list.pop(0)` làm dequeue — nó O(n) vì phải dịch chuyển toàn bộ phần tử. Hãy dùng `collections.deque`. Trong JavaScript, `array.shift()` cũng O(n); với dữ liệu lớn nên dùng con trỏ đầu hoặc cấu trúc deque.
 
 ### Code mẫu Queue
 
@@ -409,7 +409,7 @@ int shortestPath(const std::vector<std::vector<int>>& grid) {
 }
 ```
 
-> 💡 **Ghi nhớ**: `Stack` → `DFS`, `Queue` → `BFS`. BFS luôn cho đường ngắn nhất khi mỗi cạnh có trọng số bằng nhau (đếm theo số bước).
+> **Ghi nhớ**: `Stack` → `DFS`, `Queue` → `BFS`. BFS luôn cho đường ngắn nhất khi mỗi cạnh có trọng số bằng nhau (đếm theo số bước).
 
 ## Deque (Double-Ended Queue)
 
@@ -601,7 +601,7 @@ std::vector<int> nextGreater(const std::vector<int>& nums) {
   </g>
 </svg>
 
-> 💡 **Ghi nhớ**: Hỏi "phần tử lớn hơn gần nhất" → stack giảm dần. Hỏi "phần tử nhỏ hơn gần nhất" → stack tăng dần. Thường lưu **index** thay vì giá trị để tính được khoảng cách.
+> **Ghi nhớ**: Hỏi "phần tử lớn hơn gần nhất" → stack giảm dần. Hỏi "phần tử nhỏ hơn gần nhất" → stack tăng dần. Thường lưu **index** thay vì giá trị để tính được khoảng cách.
 
 ## Monotonic Queue (Sliding Window Maximum)
 
@@ -745,7 +745,7 @@ std::vector<int> maxSlidingWindow(const std::vector<int>& nums, int k) {
 }
 ```
 
-> ⚠️ **Bẫy**: Hãy nhớ deque lưu **index**, không lưu giá trị — vì ta cần biết phần tử nào đã trượt ra khỏi cửa sổ (so sánh `dq[0] <= i - k`). Nếu chỉ lưu giá trị, bạn sẽ không loại được phần tử cũ đúng cách.
+> **Bẫy**: Hãy nhớ deque lưu **index**, không lưu giá trị — vì ta cần biết phần tử nào đã trượt ra khỏi cửa sổ (so sánh `dq[0] <= i - k`). Nếu chỉ lưu giá trị, bạn sẽ không loại được phần tử cũ đúng cách.
 
 ## Tổng kết & so sánh
 
@@ -757,7 +757,7 @@ std::vector<int> maxSlidingWindow(const std::vector<int>& nums, int k) {
 | Monotonic stack | Đơn điệu | pop khi phá đơn điệu | Next greater/smaller, histogram |
 | Monotonic queue | Đơn điệu + cửa sổ | pop 2 đầu | Sliding window max/min |
 
-> 💡 **Ghi nhớ cuối**: Khi gặp bài "với mỗi phần tử, tìm phần tử lân cận thoả điều kiện so sánh" → nghĩ tới **monotonic stack**. Khi gặp "max/min của mọi cửa sổ trượt cố định" → nghĩ tới **monotonic queue**. Cả hai đều biến O(n²) thành O(n).
+> **Ghi nhớ cuối**: Khi gặp bài "với mỗi phần tử, tìm phần tử lân cận thoả điều kiện so sánh" → nghĩ tới **monotonic stack**. Khi gặp "max/min của mọi cửa sổ trượt cố định" → nghĩ tới **monotonic queue**. Cả hai đều biến O(n²) thành O(n).
 
 ---
 

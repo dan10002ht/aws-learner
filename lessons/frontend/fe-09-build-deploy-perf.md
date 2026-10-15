@@ -35,7 +35,7 @@ npm install
 npm run dev      # dev server + HMR tại http://localhost:5173
 ```
 
-> 💡 **Ghi nhớ:** Dev server nhanh **không** nói lên gì về tốc độ production. Dev phục vụ DX (sửa-xem nhanh); production mới là lúc bundle, minify, tree-shake. Luôn đo hiệu năng trên bản `npm run build` + `npm run preview`, đừng đo trên `npm run dev`.
+> **Ghi nhớ:** Dev server nhanh **không** nói lên gì về tốc độ production. Dev phục vụ DX (sửa-xem nhanh); production mới là lúc bundle, minify, tree-shake. Luôn đo hiệu năng trên bản `npm run build` + `npm run preview`, đừng đo trên `npm run dev`.
 
 ## Env variable & build mode
 
@@ -70,9 +70,9 @@ interface ImportMeta {
 }
 ```
 
-> ⚠️ **Bẫy — secret không có chỗ trên frontend:** Mọi biến `VITE_*` đều bị **nhúng thẳng vào file JS tĩnh** mà ai cũng tải về và mở DevTools đọc được. Không bao giờ để khoá bí mật (DB password, AWS secret key, Stripe secret) ở frontend. Frontend chỉ chứa khoá *công khai* (publishable key). Secret thật phải nằm ở backend.
+> **Bẫy — secret không có chỗ trên frontend:** Mọi biến `VITE_*` đều bị **nhúng thẳng vào file JS tĩnh** mà ai cũng tải về và mở DevTools đọc được. Không bao giờ để khoá bí mật (DB password, AWS secret key, Stripe secret) ở frontend. Frontend chỉ chứa khoá *công khai* (publishable key). Secret thật phải nằm ở backend.
 
-> ⚠️ **Bẫy:** `import.meta.env` được thay bằng **giá trị thật lúc build**, không phải lúc chạy. Đổi `.env` rồi phải build lại — không thể đổi env của một bản `dist/` đã build sẵn. Muốn cùng một bản build chạy nhiều môi trường thì phải nạp config runtime (ví dụ fetch `/config.json` lúc app khởi động).
+> **Bẫy:** `import.meta.env` được thay bằng **giá trị thật lúc build**, không phải lúc chạy. Đổi `.env` rồi phải build lại — không thể đổi env của một bản `dist/` đã build sẵn. Muốn cùng một bản build chạy nhiều môi trường thì phải nạp config runtime (ví dụ fetch `/config.json` lúc app khởi động).
 
 ## Code splitting & lazy load
 
@@ -124,9 +124,9 @@ function Report() {
 }
 ```
 
-> 💡 **Ghi nhớ:** Quy tắc cắt chunk: **theo route trước tiên** (hiệu quả nhất), rồi đến component nặng/hiếm. Đừng lazy load component nhỏ dùng ngay trên màn hình đầu — thêm một round-trip mạng để tiết kiệm 2KB là lỗ.
+> **Ghi nhớ:** Quy tắc cắt chunk: **theo route trước tiên** (hiệu quả nhất), rồi đến component nặng/hiếm. Đừng lazy load component nhỏ dùng ngay trên màn hình đầu — thêm một round-trip mạng để tiết kiệm 2KB là lỗ.
 
-> ⚠️ **Bẫy:** Lazy load thiếu kiểm soát gây **loading waterfall** (chuỗi chờ nối tiếp): trang A tải xong mới biết cần B, tải B xong mới biết cần C. Với dữ liệu, hãy **prefetch** sớm (React Query `prefetchQuery`, React Router loader) để tải song song thay vì tuần tự.
+> **Bẫy:** Lazy load thiếu kiểm soát gây **loading waterfall** (chuỗi chờ nối tiếp): trang A tải xong mới biết cần B, tải B xong mới biết cần C. Với dữ liệu, hãy **prefetch** sớm (React Query `prefetchQuery`, React Router loader) để tải song song thay vì tuần tự.
 
 ## Tree-shaking
 
@@ -135,10 +135,10 @@ function Report() {
 Điều kiện để tree-shaking hoạt động:
 
 ```typescript
-// ✅ Named import từ ESM -> tree-shake được, chỉ lấy debounce
+// ✓ Named import từ ESM -> tree-shake được, chỉ lấy debounce
 import { debounce } from "lodash-es";
 
-// ❌ Import cả package -> kéo TOÀN BỘ lodash vào bundle (~70KB)
+// ✗ Import cả package -> kéo TOÀN BỘ lodash vào bundle (~70KB)
 import _ from "lodash";
 _.debounce(fn, 300);
 ```
@@ -155,7 +155,7 @@ npm i -D rollup-plugin-visualizer
 npm run build      # mở stats.html xem từng chunk nặng bao nhiêu, do thư viện nào
 ```
 
-> 💡 **Ghi nhớ:** Tree-shaking là tự động, nhưng nó chỉ "thấy" được code khi bạn import đúng cách (ESM, named import). Nguồn phình bundle phổ biến nhất là một thư viện to (moment.js, lodash full, một icon pack import cả bộ). Đo bằng visualizer rồi thay bằng bản nhẹ (`date-fns`/`dayjs`, `lodash-es`, import icon lẻ).
+> **Ghi nhớ:** Tree-shaking là tự động, nhưng nó chỉ "thấy" được code khi bạn import đúng cách (ESM, named import). Nguồn phình bundle phổ biến nhất là một thư viện to (moment.js, lodash full, một icon pack import cả bộ). Đo bằng visualizer rồi thay bằng bản nhẹ (`date-fns`/`dayjs`, `lodash-es`, import icon lẻ).
 
 ## Deploy: từ `dist/` ra Internet
 
@@ -239,7 +239,7 @@ aws s3 sync dist/ s3://my-app-bucket --delete
 aws cloudfront create-invalidation --distribution-id E123ABC --paths "/*"
 ```
 
-> ⚠️ **Bẫy — cache `index.html`:** File JS/CSS có content hash nên đặt `Cache-Control: max-age=31536000, immutable` (cache 1 năm) cực an toàn — đổi nội dung thì hash đổi, tên file đổi. **Nhưng `index.html` thì KHÔNG được cache lâu** (đặt `no-cache`/`max-age=0`), vì nó là điểm vào trỏ tới các file hash mới. Cache `index.html` quá lâu = người dùng vẫn nạp HTML cũ trỏ tới JS đã bị xoá → trang trắng. Kèm theo đó, mỗi lần deploy phải **invalidate** CloudFront.
+> **Bẫy — cache `index.html`:** File JS/CSS có content hash nên đặt `Cache-Control: max-age=31536000, immutable` (cache 1 năm) cực an toàn — đổi nội dung thì hash đổi, tên file đổi. **Nhưng `index.html` thì KHÔNG được cache lâu** (đặt `no-cache`/`max-age=0`), vì nó là điểm vào trỏ tới các file hash mới. Cache `index.html` quá lâu = người dùng vẫn nạp HTML cũ trỏ tới JS đã bị xoá → trang trắng. Kèm theo đó, mỗi lần deploy phải **invalidate** CloudFront.
 
 ### SPA routing fallback (lỗi 404 kinh điển)
 
@@ -298,7 +298,7 @@ Cách sửa: cấu hình host **trả về `index.html` cho mọi đường dẫ
 { "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }] }
 ```
 
-> 💡 **Ghi nhớ:** "F5 trang con bị 404, trang chủ thì ổn" = thiếu SPA fallback. Đây là lỗi deploy SPA phổ biến nhất. Nhớ: client routing cần server (hoặc CDN) trả `index.html` cho mọi route không phải file tĩnh.
+> **Ghi nhớ:** "F5 trang con bị 404, trang chủ thì ổn" = thiếu SPA fallback. Đây là lỗi deploy SPA phổ biến nhất. Nhớ: client routing cần server (hoặc CDN) trả `index.html` cho mọi route không phải file tĩnh.
 
 ## Core Web Vitals: đo trải nghiệm thật
 
@@ -310,7 +310,7 @@ Google đo chất lượng trải nghiệm bằng **Core Web Vitals** — và ch
 | **INP** (Interaction to Next Paint) | Bấm/gõ xong bao lâu UI phản hồi (độ mượt tương tác) | ≤ 200ms | > 500ms |
 | **CLS** (Cumulative Layout Shift) | Layout nhảy lung tung bao nhiêu (độ ổn định) | ≤ 0.1 | > 0.25 |
 
-> 💡 **Ghi nhớ:** **INP đã chính thức thay FID từ 3/2024** — nếu tài liệu nào còn nhắc FID là đã cũ. INP đo *mọi* tương tác trong suốt phiên, khắt khe hơn FID nhiều.
+> **Ghi nhớ:** **INP đã chính thức thay FID từ 3/2024** — nếu tài liệu nào còn nhắc FID là đã cũ. INP đo *mọi* tương tác trong suốt phiên, khắt khe hơn FID nhiều.
 
 Nguyên nhân & cách chữa thường gặp:
 
@@ -323,7 +323,7 @@ npx lighthouse https://myapp.com --view   # report Core Web Vitals + gợi ý
 # Hoặc đo trên user thật bằng thư viện web-vitals và gửi về analytics
 ```
 
-> ⚠️ **Bẫy — lab vs field:** Lighthouse chạy trên máy bạn (lab data) thường đẹp hơn thực tế. Số liệu **thật** là **field data** từ người dùng (CrUX / `web-vitals` gửi về). Đừng tối ưu mù theo điểm Lighthouse rồi ngạc nhiên vì user vẫn than chậm — họ ở mạng yếu, máy yếu.
+> **Bẫy — lab vs field:** Lighthouse chạy trên máy bạn (lab data) thường đẹp hơn thực tế. Số liệu **thật** là **field data** từ người dùng (CrUX / `web-vitals` gửi về). Đừng tối ưu mù theo điểm Lighthouse rồi ngạc nhiên vì user vẫn than chậm — họ ở mạng yếu, máy yếu.
 
 ## Tối ưu render: memo đúng chỗ
 
@@ -353,9 +353,9 @@ function List({ items }: { items: Item[] }) {
 }
 ```
 
-> 💡 **Ghi nhớ — React 19 & React Compiler:** React 19 đi kèm **React Compiler** (đang phổ biến dần) tự động memo hoá phần lớn trường hợp — tức nhu cầu rải `useMemo`/`useCallback`/`memo` bằng tay sẽ **giảm mạnh**. Trước mắt: chỉ memo khi Profiler chỉ ra component đang re-render tốn kém. Memo bừa làm code rối mà chẳng nhanh hơn (so sánh props cũng tốn chi phí).
+> **Ghi nhớ — React 19 & React Compiler:** React 19 đi kèm **React Compiler** (đang phổ biến dần) tự động memo hoá phần lớn trường hợp — tức nhu cầu rải `useMemo`/`useCallback`/`memo` bằng tay sẽ **giảm mạnh**. Trước mắt: chỉ memo khi Profiler chỉ ra component đang re-render tốn kém. Memo bừa làm code rối mà chẳng nhanh hơn (so sánh props cũng tốn chi phí).
 
-> ⚠️ **Bẫy:** `memo(Row)` vô dụng nếu prop là **object/function tạo mới mỗi render** (`onSelect={() => ...}` inline, `style={{...}}` inline). Reference luôn khác → `memo` luôn cho qua. Phải bọc bằng `useCallback`/`useMemo` thì memo mới có ý nghĩa.
+> **Bẫy:** `memo(Row)` vô dụng nếu prop là **object/function tạo mới mỗi render** (`onSelect={() => ...}` inline, `style={{...}}` inline). Reference luôn khác → `memo` luôn cho qua. Phải bọc bằng `useCallback`/`useMemo` thì memo mới có ý nghĩa.
 
 ## Virtualization: danh sách dài
 
@@ -414,7 +414,7 @@ function BigList({ rows }: { rows: Row[] }) {
 />
 ```
 
-> 💡 **Ghi nhớ:** Ảnh hero (LCP) thì **đừng** `loading="lazy"` — nó cần hiện sớm; thậm chí nên `fetchpriority="high"`/`preload`. Lazy chỉ dành cho ảnh nằm dưới màn hình đầu.
+> **Ghi nhớ:** Ảnh hero (LCP) thì **đừng** `loading="lazy"` — nó cần hiện sớm; thậm chí nên `fetchpriority="high"`/`preload`. Lazy chỉ dành cho ảnh nằm dưới màn hình đầu.
 
 ## Accessibility (a11y) checklist
 
@@ -427,18 +427,18 @@ Checklist thực chiến cho mỗi PR:
 - **Ảnh có `alt`**: mô tả nội dung; ảnh trang trí thì `alt=""`.
 - **Form có `<label>`** gắn với input (`htmlFor`/`id`); báo lỗi liên kết bằng `aria-describedby`, `aria-invalid`.
 - **Tương phản màu** đủ (WCAG AA: chữ thường ≥ 4.5:1).
-- **`aria-*` chỉ khi cần**: ưu tiên HTML semantic trước; `aria-label` cho nút chỉ có icon (`<button aria-label="Đóng">✕</button>`).
+- **`aria-*` chỉ khi cần**: ưu tiên HTML semantic trước; `aria-label` cho nút chỉ có icon (`<button aria-label="Đóng">✗</button>`).
 - **Không chỉ dựa vào màu**: lỗi đỏ phải kèm chữ/icon, kẻo người mù màu không thấy.
 
 ```tsx
-// ❌ div giả nút: không Tab tới, không Enter, screen reader không hiểu
+// ✗ div giả nút: không Tab tới, không Enter, screen reader không hiểu
 <div onClick={save}>Lưu</div>
 
-// ✅ button thật: focus, phím, semantic miễn phí
+// ✓ button thật: focus, phím, semantic miễn phí
 <button onClick={save}>Lưu</button>
 
 // Nút chỉ icon -> cần nhãn cho screen reader
-<button onClick={close} aria-label="Đóng hộp thoại">✕</button>
+<button onClick={close} aria-label="Đóng hộp thoại">✗</button>
 ```
 
 ```bash
@@ -446,7 +446,7 @@ npm i -D eslint-plugin-jsx-a11y    # bắt lỗi a11y ngay khi viết
 # Audit nhanh: tab a11y trong Lighthouse, hoặc extension axe DevTools
 ```
 
-> ⚠️ **Bẫy:** `<div onClick>` là lỗi a11y phổ biến nhất. Nó trông giống nút nhưng không Tab tới được, không kích hoạt bằng phím, screen reader không đọc là "nút". Quy tắc vàng: dùng đúng thẻ HTML, đừng giả lập hành vi gốc bằng `<div>`.
+> **Bẫy:** `<div onClick>` là lỗi a11y phổ biến nhất. Nó trông giống nút nhưng không Tab tới được, không kích hoạt bằng phím, screen reader không đọc là "nút". Quy tắc vàng: dùng đúng thẻ HTML, đừng giả lập hành vi gốc bằng `<div>`.
 
 ## Tổng kết
 

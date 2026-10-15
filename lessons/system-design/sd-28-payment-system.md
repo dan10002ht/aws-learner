@@ -48,7 +48,7 @@ Mỗi thuật ngữ ở đây tương ứng với **một thực thể hoặc m�
 
 Lưu ý: **PSP không phải một vai trong four-party model** — nó là lớp thương mại chen giữa merchant và acquirer. Nhiều PSP hiện đại (Adyen, Stripe) *chính là* acquirer. Điều này quan trọng khi bàn về đổi PSP: token thẻ họ cấp **không mang đi được** — một dạng lock-in rất thật (§5.4).
 
-> 💡 **Nguyên tắc**: Vẽ đúng sơ đồ này trong 60 giây đầu và nói: *"Hệ thống tôi xây nằm giữa merchant và PSP. Tôi **không** xây issuer, **không** xây card network, và tuyệt đối **không** chạm vào số thẻ."* Câu đó đặt đúng phạm vi và loại bỏ 80% thứ bạn không cần nói.
+> **Nguyên tắc**: Vẽ đúng sơ đồ này trong 60 giây đầu và nói: *"Hệ thống tôi xây nằm giữa merchant và PSP. Tôi **không** xây issuer, **không** xây card network, và tuyệt đối **không** chạm vào số thẻ."* Câu đó đặt đúng phạm vi và loại bỏ 80% thứ bạn không cần nói.
 
 ### 0.2 Ba từ dễ nhầm nhất: authorization, capture, settlement
 
@@ -69,7 +69,7 @@ Ba từ này **không đồng nghĩa**, xảy ra ở **ba thời điểm khác n
   state: AUTHORIZED    state: CAPTURED     state: CAPTURED    state: SETTLED
 ```
 
-> ⚠️ **Bẫy kinh điển**: Ứng viên nói *"thanh toán thành công thì cập nhật ví seller"*. Câu hỏi ngược: *"thành công là authorized hay settled? Cộng ví lúc authorized thì capture hỏng xử lý sao? Đợi settled thì seller chờ 3 ngày — sản phẩm chịu không?"* Câu trả lời đúng: **cộng `pending_balance` khi captured, chuyển sang `available_balance` khi settled**. Ví có hai ngăn, không phải một số.
+> **Bẫy kinh điển**: Ứng viên nói *"thanh toán thành công thì cập nhật ví seller"*. Câu hỏi ngược: *"thành công là authorized hay settled? Cộng ví lúc authorized thì capture hỏng xử lý sao? Đợi settled thì seller chờ 3 ngày — sản phẩm chịu không?"* Câu trả lời đúng: **cộng `pending_balance` khi captured, chuyển sang `available_balance` khi settled**. Ví có hai ngăn, không phải một số.
 
 ### 0.3 Ba cách tiền chảy ngược
 
@@ -127,7 +127,7 @@ Visa/Mastercard đặt ngưỡng: tỷ lệ chargeback vượt **~0,9–1%** th�
 6. **Latency** vài giây cho auth — nhưng **không phải ràng buộc khó**; PSP mới là nơi tốn thời gian và bạn không kiểm soát nó.
 7. **Compliance** — PCI DSS; tuỳ khu vực thêm PSD2/SCA, lưu trú dữ liệu, AML/KYC cho pay-out.
 
-> 💡 **Nguyên tắc**: Hãy nói thành lời: *"Đây là hệ thống duy nhất tôi thiết kế mà tôi sẵn sàng đánh đổi **availability** để lấy **correctness**. Một feed sai thì user refresh. Một payment sai thì có người mất tiền và có người ra toà."*
+> **Nguyên tắc**: Hãy nói thành lời: *"Đây là hệ thống duy nhất tôi thiết kế mà tôi sẵn sàng đánh đổi **availability** để lấy **correctness**. Một feed sai thì user refresh. Một payment sai thì có người mất tiền và có người ra toà."*
 
 ---
 
@@ -167,9 +167,9 @@ Phần quan trọng: **những con số này dẫn tới quyết định gì?**
 | Settlement 200 MB/ngày | Job đối soát là **batch đêm**, ~1 triệu dòng, vài phút. Không cần Spark. Nhưng phải **idempotent** vì sẽ phải chạy lại |
 | 3–5 triệu webhook/ngày | Endpoint phải **nhận nhanh, xử lý sau** — nếu không PSP timeout rồi retry, nhân tải lên đúng lúc bạn đang chậm |
 
-> 💡 **Nguyên tắc — câu chốt của cả §2**: *"11,6 TPS nói với tôi đây **không phải bài toán scale**. Điều đó không làm bài dễ hơn — nó chuyển cái khó sang chỗ khác. Ngân sách kỹ thuật của tôi được giải phóng khỏi throughput, nên tôi tiêu toàn bộ nó vào **tính đúng đắn**: ACID, idempotency end-to-end, double-entry ledger, reconciliation."* Nếu chỉ nhớ một câu từ bài này, nhớ câu đó.
+> **Nguyên tắc — câu chốt của cả §2**: *"11,6 TPS nói với tôi đây **không phải bài toán scale**. Điều đó không làm bài dễ hơn — nó chuyển cái khó sang chỗ khác. Ngân sách kỹ thuật của tôi được giải phóng khỏi throughput, nên tôi tiêu toàn bộ nó vào **tính đúng đắn**: ACID, idempotency end-to-end, double-entry ledger, reconciliation."* Nếu chỉ nhớ một câu từ bài này, nhớ câu đó.
 
-> ⚠️ **Bẫy**: Đừng vì tải thấp mà kết luận "hệ thống này dễ". Các công ty thanh toán có **đội kỹ sư đông hơn** công ty mạng xã hội cùng quy mô traffic — độ phức tạp nằm ở số lượng trạng thái, số đối tác bên ngoài và yêu cầu tuân thủ, không ở QPS.
+> **Bẫy**: Đừng vì tải thấp mà kết luận "hệ thống này dễ". Các công ty thanh toán có **đội kỹ sư đông hơn** công ty mạng xã hội cùng quy mô traffic — độ phức tạp nằm ở số lượng trạng thái, số đối tác bên ngoài và yêu cầu tuân thủ, không ở QPS.
 
 ---
 
@@ -222,7 +222,7 @@ POST /webhooks/psp/{psp_name}          # PSP gọi vào, không phải ta gọi 
 
 `state_history` không phải trang trí. Khi CSKH nhận cuộc gọi "tôi bị trừ tiền mà đơn không lên", thứ họ cần là dòng thời gian đó. Và khi có chargeback, đây là bằng chứng.
 
-> 💡 **Nguyên tắc**: **Mọi endpoint làm tiền dịch chuyển đều bắt buộc `Idempotency-Key`** — capture, refund, payout, không chỉ create. Ứng viên hay đặt idempotency ở `POST /payments` rồi quên refund; kết quả là hoàn tiền hai lần, mất tiền thật.
+> **Nguyên tắc**: **Mọi endpoint làm tiền dịch chuyển đều bắt buộc `Idempotency-Key`** — capture, refund, payout, không chỉ create. Ứng viên hay đặt idempotency ở `POST /payments` rồi quên refund; kết quả là hoàn tiền hai lần, mất tiền thật.
 
 ---
 
@@ -321,7 +321,7 @@ POST /webhooks/psp/{psp_name}          # PSP gọi vào, không phải ta gọi 
 - **Payment order** là **đơn vị thực thi** và đồng thời **đơn vị idempotency**: một payee, một số tiền, một vòng đời. Retry ở tầng này an toàn vì id ổn định.
 - **Payment transaction** là **một lần tương tác cụ thể với PSP**. Bạn **cần** tầng này vì một order có vòng đời dài (auth hôm nay, capture ngày mai, refund tuần sau) và phải giữ dấu vết từng bước để đối soát — settlement file liệt kê theo *transaction*, không theo *order*.
 
-> ⚠️ **Bẫy**: Chỉ có hai tầng và nhét trạng thái capture/refund vào cột của order, thì khi đối soát thấy dòng "REFUND pi_3N2b −10.00", bạn không có bản ghi nội bộ nào để ghép. Bạn buộc phải đối soát theo tổng — và đối soát theo tổng là cách chắc chắn để **không bao giờ tìm ra** chênh lệch nằm ở đâu.
+> **Bẫy**: Chỉ có hai tầng và nhét trạng thái capture/refund vào cột của order, thì khi đối soát thấy dòng "REFUND pi_3N2b −10.00", bạn không có bản ghi nội bộ nào để ghép. Bạn buộc phải đối soát theo tổng — và đối soát theo tổng là cách chắc chắn để **không bao giờ tìm ra** chênh lệch nằm ở đâu.
 
 ### 4.4 Mô hình dữ liệu
 
@@ -384,7 +384,7 @@ CREATE TABLE idempotency_record (
 
 **Vì sao SQL chứ không NoSQL?** Ở 12 TPS, câu hỏi "cái nào nhanh hơn" là vô nghĩa; câu hỏi đúng là "cái nào giúp tôi ít sai hơn". SQL thắng ở bốn điểm: (1) **transaction ACID đa bảng** — ghi `payment_order` + `payment_transaction` + `outbox` trong **một** transaction là yêu cầu cốt lõi (§12), với NoSQL bạn phải tự dựng saga cho thứ DB đã làm sẵn; (2) **unique constraint** — vũ khí chống double payment mạnh và rẻ nhất (§6.3); (3) **hệ sinh thái tuân thủ** — auditor hiểu Postgres/Oracle, công cụ báo cáo và người vận hành đều sẵn; (4) **hồ sơ thực chiến** — ngân hàng chạy RDBMS trên tiền suốt 40 năm.
 
-> 💡 **Nguyên tắc**: Đây là bài hiếm hoi mà câu trả lời đúng là *"dùng Postgres"*, và đó là **dấu hiệu trưởng thành chứ không phải thiếu hiểu biết**. Nói rõ lý do: *"Tôi chọn RDBMS không phải vì nó nhanh — nó không nhanh. Tôi chọn vì nó cho tôi ACID, unique constraint và decimal chính xác, và ở 12 TPS tôi thừa ngân sách hiệu năng để mua những thứ đó."*
+> **Nguyên tắc**: Đây là bài hiếm hoi mà câu trả lời đúng là *"dùng Postgres"*, và đó là **dấu hiệu trưởng thành chứ không phải thiếu hiểu biết**. Nói rõ lý do: *"Tôi chọn RDBMS không phải vì nó nhanh — nó không nhanh. Tôi chọn vì nó cho tôi ACID, unique constraint và decimal chính xác, và ở 12 TPS tôi thừa ngân sách hiệu năng để mua những thứ đó."*
 
 ---
 
@@ -402,7 +402,7 @@ PCI DSS áp dụng cho **mọi tổ chức lưu trữ, xử lý, hoặc truyền
 
 Chênh lệch giữa SAQ A và SAQ D không phải "khó hơn một chút" — nó là chênh lệch giữa **một tuần công việc** và **một phòng ban vĩnh viễn**.
 
-> 💡 **Nguyên tắc, nói nguyên văn**: *"Quyết định kiến trúc đắt giá nhất bài này là quyết định về **phạm vi tuân thủ**, không phải về công nghệ. Bằng cách để số thẻ không bao giờ chạm hệ thống của tôi, tôi kéo mình từ SAQ D xuống SAQ A — và quan trọng hơn tiền: **tôi không thể làm rò rỉ dữ liệu mà tôi không hề có.**"* Mọi vụ rò rỉ thẻ lớn trong lịch sử (Target 2013, Home Depot 2014, British Airways 2018) đều xảy ra ở nơi dữ liệu thẻ *có mặt*.
+> **Nguyên tắc, nói nguyên văn**: *"Quyết định kiến trúc đắt giá nhất bài này là quyết định về **phạm vi tuân thủ**, không phải về công nghệ. Bằng cách để số thẻ không bao giờ chạm hệ thống của tôi, tôi kéo mình từ SAQ D xuống SAQ A — và quan trọng hơn tiền: **tôi không thể làm rò rỉ dữ liệu mà tôi không hề có.**"* Mọi vụ rò rỉ thẻ lớn trong lịch sử (Target 2013, Home Depot 2014, British Airways 2018) đều xảy ra ở nơi dữ liệu thẻ *có mặt*.
 
 ### 5.2 Ba cách tích hợp và cái giá của mỗi cách
 
@@ -431,7 +431,7 @@ Chênh lệch giữa SAQ A và SAQ D không phải "khó hơn một chút" — n
 | **Rủi ro script độc** | Gần như không | **Có thật**: Magecart chèn JS vào trang cha rồi vẽ **input giả đè lên iframe**. Phòng bằng CSP nghiêm ngặt + SRI | Thấp |
 | **Khi nào chọn** | Mặc định — ưu tiên tuân thủ và tốc độ ra mắt | Khi conversion quan trọng và bạn có năng lực bảo mật frontend | App di động |
 
-> ⚠️ **Bẫy ít người nêu**: iframe *không* tự động cho bạn SAQ A. Nếu JavaScript **của bạn** chạy trên cùng trang chứa ô nhập thẻ và về lý thuyết có thể đọc chúng, nhiều QSA sẽ xếp bạn vào SAQ A-EP. Điểm quyết định là: PSP có phục vụ **toàn bộ** ô nhập từ domain của họ không, và trang cha có CSP chặt không.
+> **Bẫy ít người nêu**: iframe *không* tự động cho bạn SAQ A. Nếu JavaScript **của bạn** chạy trên cùng trang chứa ô nhập thẻ và về lý thuyết có thể đọc chúng, nhiều QSA sẽ xếp bạn vào SAQ A-EP. Điểm quyết định là: PSP có phục vụ **toàn bộ** ô nhập từ domain của họ không, và trang cha có CSP chặt không.
 
 ### 5.3 Luồng hosted payment page
 
@@ -486,7 +486,7 @@ Bạn muốn "gọi PSP **đúng một lần**". Nhưng trên mạng không tồ
     │        ✗ response mất             │
     │◄────────── X X X ─────────────────┤  (mạng đứt / LB restart)
     │  TIMEOUT sau 30s                  │
-    │  ❓ Tiền đã trừ hay chưa?  Không có cách nào biết
+    │     Tiền đã trừ hay chưa?  Không có cách nào biết
     │     chỉ bằng thông tin tại chỗ.
 ```
 
@@ -494,7 +494,7 @@ Hai khả năng không phân biệt được: (a) PSP chưa nhận → phải re
 
 Lối thoát duy nhất: **đổi bài toán**. Thay vì cố gửi đúng một lần (bất khả thi), gửi **ít nhất một lần** (dễ: cứ retry), rồi làm cho **phía nhận xử lý nhiều lần cũng như một lần** (idempotency). At-least-once **+** at-most-once = exactly-once ở **tầng hiệu ứng**, dù tầng truyền tin vẫn lộn xộn.
 
-> 💡 **Nguyên tắc**: *"Exactly-once **delivery** không tồn tại. Exactly-once **processing** thì có — và nó được xây từ at-least-once delivery cộng xử lý idempotent ở phía nhận. Đây không phải mẹo vặt; đây là cách duy nhất."*
+> **Nguyên tắc**: *"Exactly-once **delivery** không tồn tại. Exactly-once **processing** thì có — và nó được xây từ at-least-once delivery cộng xử lý idempotent ở phía nhận. Đây không phải mẹo vặt; đây là cách duy nhất."*
 
 ### 6.2 Idempotency key: sinh ở đâu, lưu thế nào
 
@@ -533,7 +533,7 @@ Ba chi tiết hay bị bỏ sót:
 
 **(3) Vì sao cần `locked_until`?** Vì node giữ khoá có thể chết vĩnh viễn, và key sẽ kẹt mãi. Nhưng chiếm lại khoá là thao tác nguy hiểm — node cũ có thể đã kịp gọi PSP. Nên trước khi chiếm lại, **bắt buộc truy vấn PSP bằng chính key đó**.
 
-> ⚠️ **Bẫy phổ biến nhất**: dùng Redis `SETNX` làm kho idempotency. Nhanh và gọn, nhưng Redis mặc định **không bền** — mất một node, failover, hoặc AOF chưa fsync là key biến mất, và retry sẽ tính tiền lần hai. Với **tiền**, kho idempotency phải nằm trong **cùng cơ sở dữ liệu giao dịch** với dữ liệu nghiệp vụ, để "ghi khoá" và "ghi kết quả" nằm trong **cùng một transaction**. Redis chỉ là lớp chặn nhanh phía trước, **không bao giờ** là hàng phòng thủ cuối cùng.
+> **Bẫy phổ biến nhất**: dùng Redis `SETNX` làm kho idempotency. Nhanh và gọn, nhưng Redis mặc định **không bền** — mất một node, failover, hoặc AOF chưa fsync là key biến mất, và retry sẽ tính tiền lần hai. Với **tiền**, kho idempotency phải nằm trong **cùng cơ sở dữ liệu giao dịch** với dữ liệu nghiệp vụ, để "ghi khoá" và "ghi kết quả" nằm trong **cùng một transaction**. Redis chỉ là lớp chặn nhanh phía trước, **không bao giờ** là hàng phòng thủ cuối cùng.
 
 ### 6.3 Unique constraint là hàng phòng thủ mạnh nhất
 
@@ -554,7 +554,7 @@ UNIQUE (payment_event_id, seller_account)     -- chặn tách đôi cùng 1 dòn
 UNIQUE (payment_order_id, type, psp_idem_key) -- chặn gọi PSP 2 lần cùng mục đích
 ```
 
-> 💡 **Nguyên tắc**: **Bất biến nào database ép buộc được thì đừng ép bằng code ứng dụng.** Code có bug, có race, có version cũ chạy song song version mới khi deploy. Unique index thì đúng **ngay cả khi mọi tầng phía trên đã sai** — trong hệ thống tiền, hãy chọn hàng phòng thủ không phụ thuộc vào sự cẩn thận của lập trình viên.
+> **Nguyên tắc**: **Bất biến nào database ép buộc được thì đừng ép bằng code ứng dụng.** Code có bug, có race, có version cũ chạy song song version mới khi deploy. Unique index thì đúng **ngay cả khi mọi tầng phía trên đã sai** — trong hệ thống tiền, hãy chọn hàng phòng thủ không phụ thuộc vào sự cẩn thận của lập trình viên.
 
 ### 6.4 Chuỗi idempotency phải liền mạch từ đầu tới cuối
 
@@ -576,7 +576,7 @@ Browser ─K1─► API GW ─K1─► Payment ─K2─► Queue ─K2─► Exe
 | Executor → PSP | Timeout mạng rồi retry | `Idempotency-Key` header của PSP — PSP trả **cùng** kết quả cũ |
 | PSP → Webhook → ta | PSP gửi nhiều lần | Dedup theo `psp_event_id` + xử lý idempotent (§11) |
 
-> ⚠️ **Bẫy**: Đặt idempotency ở tầng API rồi coi như xong. Nhưng cú gọi PSP nằm **sau** queue, và queue là at-least-once. Không gửi `Idempotency-Key` xuống PSP thì một lần queue giao lại message = một lần trừ tiền nữa — trong khi tầng API vẫn "đúng".
+> **Bẫy**: Đặt idempotency ở tầng API rồi coi như xong. Nhưng cú gọi PSP nằm **sau** queue, và queue là at-least-once. Không gửi `Idempotency-Key` xuống PSP thì một lần queue giao lại message = một lần trừ tiền nữa — trong khi tầng API vẫn "đúng".
 
 Một điểm về **phía PSP** rất ít người nêu: PSP giữ idempotency key trong khoảng 24 giờ (Stripe) tới vài ngày. Nếu bạn retry **sau** cửa sổ đó, PSP coi là request mới và **tính tiền lần nữa**. Vì vậy **chính sách retry của bạn phải kết thúc trước khi cửa sổ idempotency của PSP hết hạn**; quá hạn thì không retry mù mà phải chuyển sang truy vấn trạng thái (§10.3).
 
@@ -623,7 +623,7 @@ Buyer trả 31,50 đô cho seller A. Sàn ăn hoa hồng 10% (3,15 đô). PSP th
  Liability:Seller_A:Pending                  28.35
  Revenue:Platform_Commission                  3.15
  ───────────────────────────────────────────────────
- TỔNG                             31.50     31.50   ✓ CÂN
+ TỔNG                             31.50     31.50   ✓  CÂN
 ```
 
 Đọc thành lời: "PSP đang nợ ta 31,50 (tài sản tăng → debit). Trong đó ta nợ seller A 28,35 (nợ tăng → credit) và ta kiếm 3,15 doanh thu." Tiền chưa vào ngân hàng ta, nên **không** đụng `Asset:Bank`.
@@ -634,7 +634,7 @@ Buyer trả 31,50 đô cho seller A. Sàn ăn hoa hồng 10% (3,15 đô). PSP th
  Expense:PSP_Fees                  1.21
  Asset:PSP_Receivable                        31.50
  ───────────────────────────────────────────────────
- TỔNG                             31.50     31.50   ✓ CÂN
+ TỔNG                             31.50     31.50   ✓  CÂN
 ```
 
 Chú ý: `PSP_Receivable` bị credit đúng 31,50 — **triệt tiêu** khoản debit ở JE-1001. Nếu sau settlement mà `PSP_Receivable` còn số dư khác 0 cho giao dịch đó, bạn vừa **tự động phát hiện một chênh lệch**. Đây chính là cơ chế của §9.
@@ -644,7 +644,7 @@ Chú ý: `PSP_Receivable` bị credit đúng 31,50 — **triệt tiêu** khoản
  Liability:Seller_A:Pending   28.35      Liability:Seller_A:Available  28.35
  Liability:Seller_A:Available     28.35  Asset:Bank_Operating               28.35
  ───────────────────────────────────     ────────────────────────────────────────
- TỔNG  28.35 = 28.35  ✓                  TỔNG  28.35 = 28.35  ✓
+ TỔNG  28.35 = 28.35  ✓                   TỔNG  28.35 = 28.35  ✓
 ```
 
 ```
@@ -653,7 +653,7 @@ Chú ý: `PSP_Receivable` bị credit đúng 31,50 — **triệt tiêu** khoản
  Revenue:Platform_Commission       1.00
  Asset:Bank_Operating                        10.00
  ───────────────────────────────────────────────────
- TỔNG                             10.00     10.00   ✓ CÂN
+ TỔNG                             10.00     10.00   ✓  CÂN
 ```
 
 Điều quan trọng: **ta KHÔNG sửa JE-1001.** Nó tồn tại vĩnh viễn, ghi lại sự thật rằng ngày 10/3 đã có giao dịch 31,50 đô. Refund là một **bút toán mới, ngược chiều**. Đây là ý nghĩa thực tế của append-only: lịch sử không bao giờ bị viết lại, chỉ được bổ sung. Ghi sai thì ghi một **bút toán đảo (reversing entry)** kèm lý do — không `UPDATE`, không `DELETE`.
@@ -710,9 +710,9 @@ Bốn chi tiết đáng bảo vệ:
    Lệch ⇒ wallet đã drift khỏi nguồn sự thật ⇒ dựng lại wallet từ ledger.
 ```
 
-> 💡 **Nguyên tắc**: Wallet là **view**, ledger là **sự thật**. Khi hai cái lệch, **ledger luôn đúng** và wallet phải tính lại từ ledger. Thiết kế wallet sao cho **tái tạo hoàn toàn được** bằng cách phát lại ledger từ đầu — khả năng đó là bảo hiểm của bạn, và phải **diễn tập định kỳ**, đừng đợi tới lúc khủng hoảng mới thử lần đầu.
+> **Nguyên tắc**: Wallet là **view**, ledger là **sự thật**. Khi hai cái lệch, **ledger luôn đúng** và wallet phải tính lại từ ledger. Thiết kế wallet sao cho **tái tạo hoàn toàn được** bằng cách phát lại ledger từ đầu — khả năng đó là bảo hiểm của bạn, và phải **diễn tập định kỳ**, đừng đợi tới lúc khủng hoảng mới thử lần đầu.
 
-> ⚠️ **Bẫy**: Đừng tính số dư bằng `SUM` toàn bộ lịch sử trên đường nóng — sau vài năm là hàng tỉ dòng. Dùng **snapshot số dư theo ngày** rồi cộng dồn delta. Snapshot là tối ưu hoá, **không phải nguồn sự thật**, và phải được kiểm chứng lại bằng full replay theo lịch.
+> **Bẫy**: Đừng tính số dư bằng `SUM` toàn bộ lịch sử trên đường nóng — sau vài năm là hàng tỉ dòng. Dùng **snapshot số dư theo ngày** rồi cộng dồn delta. Snapshot là tối ưu hoá, **không phải nguồn sự thật**, và phải được kiểm chứng lại bằng full replay theo lịch.
 
 ---
 
@@ -811,7 +811,7 @@ Mỗi 5 phút:
      bất kỳ      > 7 ngày  → hàng đợi xử lý thủ công
 ```
 
-> 💡 **Nguyên tắc**: Trong hệ thanh toán, **thời gian là một sự kiện**. Nhiều thứ quan trọng nhất được biểu diễn bằng "một khoảng thời gian đã trôi qua mà không có gì xảy ra" — và không message queue nào phát ra sự kiện đó cho bạn. Một hệ thanh toán không có timeout sweeper là một hệ thanh toán sẽ âm thầm đánh mất giao dịch.
+> **Nguyên tắc**: Trong hệ thanh toán, **thời gian là một sự kiện**. Nhiều thứ quan trọng nhất được biểu diễn bằng "một khoảng thời gian đã trôi qua mà không có gì xảy ra" — và không message queue nào phát ra sự kiện đó cho bạn. Một hệ thanh toán không có timeout sweeper là một hệ thanh toán sẽ âm thầm đánh mất giao dịch.
 
 ---
 
@@ -878,7 +878,7 @@ Tài khoản **Suspense** (tài khoản treo) là mẹo kế toán cổ điển 
      sao kê ngân hàng thì không.
 ```
 
-> 💡 **Nguyên tắc**: Đối soát là **vòng phản hồi** của hệ thanh toán. Không có nó, hệ chạy **mở vòng**: bạn ra lệnh rồi **hy vọng** thế giới làm theo. Có nó, bạn đo được thực tại và sửa sai. Chỉ số quan trọng nhất của nó không phải "số chênh lệch" mà là **thời gian trung bình từ lúc sai tới lúc biết mình sai**.
+> **Nguyên tắc**: Đối soát là **vòng phản hồi** của hệ thanh toán. Không có nó, hệ chạy **mở vòng**: bạn ra lệnh rồi **hy vọng** thế giới làm theo. Có nó, bạn đo được thực tại và sửa sai. Chỉ số quan trọng nhất của nó không phải "số chênh lệch" mà là **thời gian trung bình từ lúc sai tới lúc biết mình sai**.
 
 ---
 
@@ -935,9 +935,9 @@ Quy trình đúng:
    Có ở đó mà ta không có → MISSING_INTERNAL → §9.3.
 ```
 
-> ⚠️ **Bẫy chết người**: Đánh dấu `FAILED` khi timeout, hiển thị "Thanh toán thất bại", khách trả lại bằng thẻ khác, rồi hôm sau settlement file cho thấy **cả hai giao dịch đều thành công**. Khách bị trừ tiền hai lần và bạn biết sau 24 giờ — qua một bài đăng trên mạng xã hội. Đây là lỗi có thật, xảy ra thường xuyên, và nó bắt nguồn từ đúng một dòng code coi timeout là failure.
+> **Bẫy chết người**: Đánh dấu `FAILED` khi timeout, hiển thị "Thanh toán thất bại", khách trả lại bằng thẻ khác, rồi hôm sau settlement file cho thấy **cả hai giao dịch đều thành công**. Khách bị trừ tiền hai lần và bạn biết sau 24 giờ — qua một bài đăng trên mạng xã hội. Đây là lỗi có thật, xảy ra thường xuyên, và nó bắt nguồn từ đúng một dòng code coi timeout là failure.
 
-> 💡 **Nguyên tắc**: **"Tôi không biết" là một trạng thái hợp lệ và phải được mô hình hoá tường minh.** Hệ non tay chỉ có hai trạng thái — thành công và thất bại — nên khi gặp điều thứ ba, chúng buộc phải nói dối. Hệ trưởng thành có trạng thái thứ ba và một quy trình giải quyết nó.
+> **Nguyên tắc**: **"Tôi không biết" là một trạng thái hợp lệ và phải được mô hình hoá tường minh.** Hệ non tay chỉ có hai trạng thái — thành công và thất bại — nên khi gặp điều thứ ba, chúng buộc phải nói dối. Hệ trưởng thành có trạng thái thứ ba và một quy trình giải quyết nó.
 
 ### 10.4 Dead Letter Queue
 
@@ -1010,7 +1010,7 @@ POST /webhooks/psp/stripe            — NHẬN NHANH, LÀM SAU
 
 Vì sao trả `200` trước khi xử lý? Vì xử lý mất vài giây; giữ kết nối tới lúc xong thì PSP timeout và gửi lại, nhân tải lên đúng lúc bạn đang chậm — một vòng xoáy tử thần. Đánh đổi: bạn đã "hứa" nhận sự kiện, nên **phải** bền hoá nó ở bước 2 trước khi ack. Bước 2 là điểm bền hoá, bước 3 là lời hứa.
 
-> ⚠️ **Bẫy**: Trả `400` cho `event_type` bạn không quan tâm. PSP sẽ retry mãi một sự kiện bạn vốn không cần, và cuối cùng có thể **vô hiệu hoá endpoint của bạn** vì tỷ lệ lỗi cao — khiến bạn mất luôn các sự kiện quan trọng. Trả `200` và ghi log.
+> **Bẫy**: Trả `400` cho `event_type` bạn không quan tâm. PSP sẽ retry mãi một sự kiện bạn vốn không cần, và cuối cùng có thể **vô hiệu hoá endpoint của bạn** vì tỷ lệ lỗi cao — khiến bạn mất luôn các sự kiện quan trọng. Trả `200` và ghi log.
 
 ### 11.3 Đến sai thứ tự — vấn đề khó nhất
 
@@ -1049,9 +1049,9 @@ Payment service phải ghi DB **và** publish message — hai hệ thống khác
 
 ```
    Cách A: ghi DB trước                 Cách B: publish trước
-   BEGIN; INSERT …; COMMIT;  ✓          publish(msg)              ✓
-   💥 crash                              💥 crash
-   publish(msg)              ✗          BEGIN; INSERT …; COMMIT;  ✗
+   BEGIN; INSERT …; COMMIT;  ✓           publish(msg)              ✓
+   crash                              crash
+   publish(msg)              ✗           BEGIN; INSERT …; COMMIT;  ✗
    ⇒ DB có đơn, không ai xử lý.          ⇒ Executor xử lý một đơn KHÔNG
      Tiền không bao giờ được thu.          TỒN TẠI trong DB. Tiền bị thu,
      Khách tưởng đã mua.                   không có sổ.
@@ -1094,7 +1094,7 @@ Relay có thể crash **sau** khi publish, **trước** khi đánh dấu → mes
 
 Với một payment order, thứ tự **quan trọng**: `authorized` phải xử lý trước `captured`. Dùng hàng đợi bảo đảm thứ tự **theo nhóm**, khoá nhóm = `payment_order_id`. Các order khác nhau xử lý song song; cùng một order thì tuần tự. Đây chính xác là ngữ nghĩa `MessageGroupId` của SQS FIFO hoặc partition key của Kafka.
 
-> 💡 **Nguyên tắc**: Đảm bảo đúng đắn của cả hệ được xây từ **bốn lớp chồng lên nhau**, mỗi lớp bắt cái lớp trước lọt: (1) **unique constraint** — chặn trùng ở mức cấu trúc; (2) **idempotency key end-to-end** — chặn trùng ở mức luồng; (3) **outbox + transaction** — chặn mất tin; (4) **đối soát** — bắt mọi thứ đã lọt qua ba lớp trên. **Không lớp nào đủ một mình, và đó là chủ ý.**
+> **Nguyên tắc**: Đảm bảo đúng đắn của cả hệ được xây từ **bốn lớp chồng lên nhau**, mỗi lớp bắt cái lớp trước lọt: (1) **unique constraint** — chặn trùng ở mức cấu trúc; (2) **idempotency key end-to-end** — chặn trùng ở mức luồng; (3) **outbox + transaction** — chặn mất tin; (4) **đối soát** — bắt mọi thứ đã lọt qua ba lớp trên. **Không lớp nào đủ một mình, và đó là chủ ý.**
 
 ---
 
@@ -1172,7 +1172,7 @@ Bốn biện pháp kiểm soát đặc thù:
 | 4 | **Khoá hàng nóng trên wallet** | Một seller flash sale nhận 500 giao dịch/s → 500 `UPDATE` cùng một dòng ví | Ledger **append-only** (không tranh chấp) + cộng dồn wallet theo lô; hoặc **tách ví thành N sub-balance** rồi cộng khi đọc |
 | 5 | Kết nối DB | Chỉ là vấn đề nếu pool cấu hình sai | PgBouncer / RDS Proxy |
 
-> 💡 **Nguyên tắc**: Điểm nghẽn của hệ thanh toán là **hệ thống bên ngoài và con người**, không phải máy tính của bạn. Nói thẳng câu này trong phỏng vấn — nó cho thấy bạn hiểu bài toán thật thay vì áp khuôn "scale-out" đã học thuộc.
+> **Nguyên tắc**: Điểm nghẽn của hệ thanh toán là **hệ thống bên ngoài và con người**, không phải máy tính của bạn. Nói thẳng câu này trong phỏng vấn — nó cho thấy bạn hiểu bài toán thật thay vì áp khuôn "scale-out" đã học thuộc.
 
 ### 15.2 Component chết thì sao?
 
@@ -1187,7 +1187,7 @@ Bốn biện pháp kiểm soát đặc thù:
 | **Mất một AZ** | Mất một phần công suất | Đa AZ mọi tầng. Ở 200 TPS, cấp dư là chuyện dễ và rẻ |
 | **Mất cả region** | Ngừng nhận thanh toán | Bản sao liên vùng + quy trình chuyển vùng **có diễn tập**. RPO phải ~0 với dữ liệu tiền ⇒ sao chép đồng bộ, hoặc chấp nhận phục hồi lâu hơn nhưng **không mất dữ liệu** |
 
-> ⚠️ **Bẫy**: Thiết kế để "luôn nhận được thanh toán" bằng cách ghi tạm vào bộ nhớ khi DB chết. **Đừng.** Từ chối một giao dịch là phiền toái; chấp nhận rồi đánh mất nó là một sự cố tài chính. Khi nghi ngờ, **fail closed**.
+> **Bẫy**: Thiết kế để "luôn nhận được thanh toán" bằng cách ghi tạm vào bộ nhớ khi DB chết. **Đừng.** Từ chối một giao dịch là phiền toái; chấp nhận rồi đánh mất nó là một sự cố tài chính. Khi nghi ngờ, **fail closed**.
 
 ### 15.3 Chỉ số phải theo dõi
 
@@ -1206,7 +1206,7 @@ Bốn biện pháp kiểm soát đặc thù:
              độ trễ & tỷ lệ lỗi p99 của PSP; độ trễ xử lý webhook
 ```
 
-> 💡 **Nguyên tắc**: Chỉ số quan trọng nhất là **giá trị tiền xử lý thành công mỗi phút**, so với cùng kỳ tuần trước. Nó bắt được mọi kiểu hỏng — kể cả những kiểu mà mọi dashboard kỹ thuật vẫn xanh lè, ví dụ một thay đổi cấu hình khiến toàn bộ thẻ của một quốc gia bị từ chối.
+> **Nguyên tắc**: Chỉ số quan trọng nhất là **giá trị tiền xử lý thành công mỗi phút**, so với cùng kỳ tuần trước. Nó bắt được mọi kiểu hỏng — kể cả những kiểu mà mọi dashboard kỹ thuật vẫn xanh lè, ví dụ một thay đổi cấu hình khiến toàn bộ thẻ của một quốc gia bị từ chối.
 
 ---
 
@@ -1216,22 +1216,22 @@ Bốn biện pháp kiểm soát đặc thù:
 
 | Thành phần thiết kế | Dịch vụ AWS | Vì sao hợp (và bẫy) |
 |---|---|---|
-| DB giao dịch chính | **Aurora PostgreSQL** Multi-AZ (Aurora Global cho DR) | ACID thật, `DECIMAL` chính xác, unique constraint — đúng ba thứ §4.4 và §6.3 cần. Ở 200 TPS đỉnh thì một instance cỡ vừa là dư. ⚠️ **Aurora Backtrack** ("tua ngược" cụm về một thời điểm trong vài phút, cực giá trị khi deploy sai làm hỏng dữ liệu) **chỉ có ở Aurora MySQL**, *không* có ở Aurora PostgreSQL — với Postgres phải dùng **PITR**, và hiểu rằng PITR tạo cụm mới chứ không tua tại chỗ |
-| **Sổ cái append-only** | **Bảng ledger append-only trên Aurora**, hoặc **DynamoDB** với chính sách chỉ-ghi-thêm | ⚠️ **Trạng thái hiện tại của QLDB**: Amazon QLDB (sổ cái bất biến có xác minh mật mã) đã **ngừng phát triển và không nhận khách hàng mới**, AWS hướng dẫn chuyển sang Aurora PostgreSQL. **Khuyến nghị: đừng thiết kế mới quanh QLDB.** Tự dựng `journal_entry`/`journal_line` append-only trên Aurora với `REVOKE UPDATE, DELETE` + trigger chặn, cộng **chuỗi băm** (mỗi bút toán chứa băm của bút toán trước) để có khả năng phát hiện can thiệp tương đương phần giá trị nhất của QLDB. Trên DynamoDB thì `ConditionExpression: attribute_not_exists(pk)` để ghi một lần, không bao giờ ghi đè |
-| Idempotency store | **Chính Aurora** (bảng `idempotency_record`), hoặc **DynamoDB conditional write** | Ở cùng Aurora thì được nằm trong **cùng transaction** với ghi nghiệp vụ — mạnh nhất, và là mặc định nên chọn. Nếu tách: `PutItem` + `ConditionExpression: attribute_not_exists(key)` là compare-and-swap **bền vững**, cộng TTL tự dọn. ⚠️ **Tuyệt đối không dùng ElastiCache/Redis làm hàng phòng thủ cuối** — không bền (§6.2) |
-| Điều phối vòng đời giao dịch | **Step Functions** (Standard) | State machine §8 ánh xạ gần như một-một. Standard lưu **lịch sử thực thi tới 1 năm** — chính là audit trail từng giao dịch, miễn phí. Có retry/backoff/catch khai báo sẵn và `Wait` cho chờ webhook. ⚠️ Dùng **Standard**, không phải Express (Express giữ log 5 phút, ngữ nghĩa at-least-once). ⚠️ Nó **không thay thế** state machine trong DB — DB vẫn là nguồn sự thật, Step Functions chỉ điều phối |
-| Queue Payment Service → Executor | **SQS FIFO**, `MessageGroupId = payment_order_id` | Đúng nhu cầu §12.3: thứ tự trong một order, song song giữa các order. Có sẵn **dedup 5 phút** theo `MessageDeduplicationId` — một lớp phòng thủ nữa. ⚠️ FIFO giới hạn 300 tin/s mỗi group không batch (3.000 khi batch) — thừa cho 200 TPS, nhưng cần biết con số |
+| DB giao dịch chính | **Aurora PostgreSQL** Multi-AZ (Aurora Global cho DR) | ACID thật, `DECIMAL` chính xác, unique constraint — đúng ba thứ §4.4 và §6.3 cần. Ở 200 TPS đỉnh thì một instance cỡ vừa là dư. **Aurora Backtrack** ("tua ngược" cụm về một thời điểm trong vài phút, cực giá trị khi deploy sai làm hỏng dữ liệu) **chỉ có ở Aurora MySQL**, *không* có ở Aurora PostgreSQL — với Postgres phải dùng **PITR**, và hiểu rằng PITR tạo cụm mới chứ không tua tại chỗ |
+| **Sổ cái append-only** | **Bảng ledger append-only trên Aurora**, hoặc **DynamoDB** với chính sách chỉ-ghi-thêm | **Trạng thái hiện tại của QLDB**: Amazon QLDB (sổ cái bất biến có xác minh mật mã) đã **ngừng phát triển và không nhận khách hàng mới**, AWS hướng dẫn chuyển sang Aurora PostgreSQL. **Khuyến nghị: đừng thiết kế mới quanh QLDB.** Tự dựng `journal_entry`/`journal_line` append-only trên Aurora với `REVOKE UPDATE, DELETE` + trigger chặn, cộng **chuỗi băm** (mỗi bút toán chứa băm của bút toán trước) để có khả năng phát hiện can thiệp tương đương phần giá trị nhất của QLDB. Trên DynamoDB thì `ConditionExpression: attribute_not_exists(pk)` để ghi một lần, không bao giờ ghi đè |
+| Idempotency store | **Chính Aurora** (bảng `idempotency_record`), hoặc **DynamoDB conditional write** | Ở cùng Aurora thì được nằm trong **cùng transaction** với ghi nghiệp vụ — mạnh nhất, và là mặc định nên chọn. Nếu tách: `PutItem` + `ConditionExpression: attribute_not_exists(key)` là compare-and-swap **bền vững**, cộng TTL tự dọn. **Tuyệt đối không dùng ElastiCache/Redis làm hàng phòng thủ cuối** — không bền (§6.2) |
+| Điều phối vòng đời giao dịch | **Step Functions** (Standard) | State machine §8 ánh xạ gần như một-một. Standard lưu **lịch sử thực thi tới 1 năm** — chính là audit trail từng giao dịch, miễn phí. Có retry/backoff/catch khai báo sẵn và `Wait` cho chờ webhook. Dùng **Standard**, không phải Express (Express giữ log 5 phút, ngữ nghĩa at-least-once). Nó **không thay thế** state machine trong DB — DB vẫn là nguồn sự thật, Step Functions chỉ điều phối |
+| Queue Payment Service → Executor | **SQS FIFO**, `MessageGroupId = payment_order_id` | Đúng nhu cầu §12.3: thứ tự trong một order, song song giữa các order. Có sẵn **dedup 5 phút** theo `MessageDeduplicationId` — một lớp phòng thủ nữa. FIFO giới hạn 300 tin/s mỗi group không batch (3.000 khi batch) — thừa cho 200 TPS, nhưng cần biết con số |
 | Hàng đợi lỗi | **SQS DLQ** + alarm CloudWatch khi `ApproximateNumberOfMessagesVisible > 0` | §10.4: ngưỡng cảnh báo là **> 0**, không phải một con số lớn |
 | Nhận & định tuyến webhook | **API Gateway → Lambda → EventBridge** (hoặc EventBridge Partner Event Source) | Lambda verify chữ ký, ghi bản ghi dedup vào DynamoDB (`attribute_not_exists`), trả `200` trong vài chục ms, rồi đẩy sự kiện lên EventBridge để nhiều consumer (ledger, wallet, thông báo, phân tích) tự đăng ký — đúng mô hình nhiều-người-nhận. EventBridge có **archive + replay**, rất hữu ích khi một consumer có bug và cần xử lý lại lịch sử |
 | Outbox → queue | **Aurora + Debezium/DMS trên MSK**, hoặc **DynamoDB Streams** | DynamoDB Streams là cách rẻ và gọn nhất nếu bảng đã ở DynamoDB. Với Aurora, CDC tốt hơn polling (§12.2) |
 | Settlement file | **S3 + S3 Object Lock** (chế độ Compliance) cho bản gốc; **Athena/Glue** hoặc job container để đối soát | Object Lock khiến file **không thể xoá hoặc sửa** kể cả bởi tài khoản gốc trong thời hạn giữ — biến settlement file thành bằng chứng pháp lý thực sự. Athena quét 1 triệu dòng CSV/Parquet mất vài giây, trả tiền theo lượng quét |
-| Job đối soát đêm & quét kẹt | **EventBridge Scheduler → ECS Fargate** (hoặc Step Functions + Lambda) | Fargate hợp hơn cho job vài chục phút cần nhiều bộ nhớ. ⚠️ Lambda giới hạn 15 phút — đủ cho quét kẹt, **không đủ** cho đối soát lớn |
+| Job đối soát đêm & quét kẹt | **EventBridge Scheduler → ECS Fargate** (hoặc Step Functions + Lambda) | Fargate hợp hơn cho job vài chục phút cần nhiều bộ nhớ. Lambda giới hạn 15 phút — đủ cho quét kẹt, **không đủ** cho đối soát lớn |
 | Lưu trữ 7 năm | **S3 Intelligent-Tiering → Glacier Deep Archive** + Object Lock | 85 TB trên Deep Archive rẻ hơn giữ trong Aurora vài bậc. Giữ chỉ mục trong Athena để vẫn truy vấn được |
 | Quản lý khoá mã hoá | **KMS** (mặc định); **CloudHSM** khi có yêu cầu FIPS 140-2 Level 3 hoặc phải chứng minh quyền kiểm soát khoá độc quyền | KMS đủ cho 95% trường hợp và rẻ hơn nhiều. CloudHSM chỉ khi auditor/PSP **yêu cầu cụ thể** — nêu được ranh giới này quan trọng hơn nêu tên dịch vụ |
-| API key PSP, secret webhook | **Secrets Manager** (bật xoay vòng tự động) | ⚠️ Không để trong biến môi trường của task — chúng hiện trong định nghĩa task và trong log. Parameter Store rẻ hơn nhưng không có xoay vòng tự động |
+| API key PSP, secret webhook | **Secrets Manager** (bật xoay vòng tự động) | Không để trong biến môi trường của task — chúng hiện trong định nghĩa task và trong log. Parameter Store rẻ hơn nhưng không có xoay vòng tự động |
 | Kết nối tới PSP | **PrivateLink** nếu PSP có endpoint; nếu không thì **NAT Gateway + Elastic IP cố định** | PrivateLink giữ lưu lượng trong mạng AWS — giảm bề mặt tấn công và là điểm cộng khi audit. Nếu buộc đi Internet, EIP cố định cho phép PSP **ghim IP của bạn vào allowlist** |
 | Audit log bất biến | **CloudTrail** (+ CloudTrail Lake) ghi vào **S3 có Object Lock**, ở **tài khoản log tách riêng** | Mẫu chuẩn: tài khoản log là một tài khoản AWS khác, nơi đội ứng dụng **không có quyền xoá**. Đây là thứ biến audit log thành bằng chứng chứ không phải tập tin |
-| Chống gian lận | **Amazon Fraud Detector** + quy tắc tự viết | Fraud Detector huấn luyện trên dữ liệu của bạn, có mẫu dựng sẵn cho "online payment fraud". Thực tế nên **kết hợp**: quy tắc cứng cho cái đã biết (danh sách đen, vận tốc), mô hình cho cái chưa biết. ⚠️ Cần đủ dữ liệu mới huấn luyện tốt; giai đoạn đầu quy tắc hiệu quả hơn |
+| Chống gian lận | **Amazon Fraud Detector** + quy tắc tự viết | Fraud Detector huấn luyện trên dữ liệu của bạn, có mẫu dựng sẵn cho "online payment fraud". Thực tế nên **kết hợp**: quy tắc cứng cho cái đã biết (danh sách đen, vận tốc), mô hình cho cái chưa biết. Cần đủ dữ liệu mới huấn luyện tốt; giai đoạn đầu quy tắc hiệu quả hơn |
 | Cách ly CDE (nếu buộc phải vào) | **Tài khoản AWS riêng** + VPC riêng + **AWS Config** + **Security Hub** bộ chuẩn **PCI DSS** | Phân đoạn bằng ranh giới **tài khoản** là cách mạnh nhất để thu hẹp phạm vi audit. Security Hub dùng như bản đồ, **không phải** như chứng nhận |
 | Quan sát nghiệp vụ | **CloudWatch custom metrics** + **Managed Grafana**; **X-Ray** cho truy vết xuyên service | Chỉ số §15.3 là **metric nghiệp vụ tự phát**, không phải metric hạ tầng. Alarm trên "giá trị giao dịch mỗi phút" bằng **anomaly detection**, không phải ngưỡng tĩnh |
 | Hạn mức & cô lập | **Service Quotas**, **WAF** rate-based rule, **API Gateway usage plan** | Rate limit theo **thẻ/tài khoản** phải làm ở tầng ứng dụng — WAF chỉ thấy IP |
@@ -1282,4 +1282,4 @@ Bốn biện pháp kiểm soát đặc thù:
 
 18. **Chốt bằng triết lý fail-closed.** *"Đây là hệ thống duy nhất tôi thiết kế mà tôi chọn **consistency trên availability** không cần xin lỗi. Khi DB primary đang failover, tôi **từ chối** giao dịch mới chứ không đoán. Từ chối một giao dịch là phiền toái cho một khách hàng; chấp nhận rồi đánh mất nó là một sự cố tài chính cho tất cả."*
 
-> 💡 **Nguyên tắc cuối, gói cả bài trong một câu**: Mọi bài case study khác dạy bạn cách làm hệ thống **chịu được nhiều hơn**. Bài này dạy bạn cách làm hệ thống **sai ít hơn, và biết mình sai nhanh hơn**. Khi hiệu ứng của một thao tác không hoàn tác được, mọi công cụ quen thuộc đều đảo chiều: bạn chọn SQL thay vì NoSQL, chọn từ chối thay vì chấp nhận, chọn ghi thêm thay vì ghi đè, chọn hỏi lại thay vì đoán — và bạn xây một **vòng phản hồi** đối soát với thực tại, vì niềm tin rằng mình đã làm đúng không bao giờ là bằng chứng rằng mình đã làm đúng.
+> **Nguyên tắc cuối, gói cả bài trong một câu**: Mọi bài case study khác dạy bạn cách làm hệ thống **chịu được nhiều hơn**. Bài này dạy bạn cách làm hệ thống **sai ít hơn, và biết mình sai nhanh hơn**. Khi hiệu ứng của một thao tác không hoàn tác được, mọi công cụ quen thuộc đều đảo chiều: bạn chọn SQL thay vì NoSQL, chọn từ chối thay vì chấp nhận, chọn ghi thêm thay vì ghi đè, chọn hỏi lại thay vì đoán — và bạn xây một **vòng phản hồi** đối soát với thực tại, vì niềm tin rằng mình đã làm đúng không bao giờ là bằng chứng rằng mình đã làm đúng.

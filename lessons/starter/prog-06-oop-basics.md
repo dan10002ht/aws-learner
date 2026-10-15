@@ -13,7 +13,7 @@ Nếu không có OOP, bạn phải tạo hàng loạt biến rời rạc: `ten_k
 
 OOP nói: **hãy gói thông tin và hành động liên quan vào chung một "đối tượng"**, giống ngoài đời — mỗi khách hàng là một con người hoàn chỉnh, tự mang theo tên và ví tiền của mình, chứ không phải một đống giấy tờ vứt lung tung.
 
-> 💡 Ghi nhớ: OOP = mô hình hoá thế giới thật vào code. Mỗi "thứ" trong bài toán (khách hàng, tài khoản, sản phẩm, xe hơi...) trở thành một **đối tượng** tự chứa dữ liệu và hành vi của chính nó.
+> Ghi nhớ: OOP = mô hình hoá thế giới thật vào code. Mỗi "thứ" trong bài toán (khách hàng, tài khoản, sản phẩm, xe hơi...) trở thành một **đối tượng** tự chứa dữ liệu và hành vi của chính nó.
 
 ## 2. Class và Object: khuôn bánh và chiếc bánh
 
@@ -274,7 +274,7 @@ Chú thích khác biệt:
 - **Java**: constructor **trùng tên class**; thuộc tính phải khai báo kèm kiểu dữ liệu trước.
 - **Go**: không có constructor — lập trình viên tự viết hàm `NewCho` theo quy ước. Phương thức là hàm gắn "receiver" `(c *Cho)`; `c` chính là `self`.
 
-> ⚠️ Lỗi người mới hay gặp: trong Python, quên `self.` khi gán (`ten = ten` thay vì `self.ten = ten`) — biến chỉ sống tạm trong hàm rồi biến mất, object không lưu gì cả. Trong JavaScript, quên từ khoá `new` khi tạo object cũng gây lỗi tương tự khó hiểu.
+> Lỗi người mới hay gặp: trong Python, quên `self.` khi gán (`ten = ten` thay vì `self.ten = ten`) — biến chỉ sống tạm trong hàm rồi biến mất, object không lưu gì cả. Trong JavaScript, quên từ khoá `new` khi tạo object cũng gây lỗi tương tự khó hiểu.
 
 ## 5. Ví dụ trọn vẹn: Tài khoản ngân hàng
 
@@ -473,9 +473,9 @@ Hãy để ý điều quan trọng: bên ngoài chỉ cần gọi `tk.rut_tien(2
   <text x="120" y="306" font-size="11" fill="currentColor" opacity="0.72">Encapsulation = bên ngoài chỉ đi qua phương thức; dữ liệu được object tự bảo vệ.</text>
 </svg>
 
-> 💡 Ghi nhớ: mỗi object có **bản sao dữ liệu riêng**. Tạo `tk2 = TaiKhoanNganHang("Hùng", 999)` thì `tk2` rút tiền không ảnh hưởng gì đến số dư của `tk` — giống hai chiếc bánh, cắn bánh này không làm vơi bánh kia.
+> Ghi nhớ: mỗi object có **bản sao dữ liệu riêng**. Tạo `tk2 = TaiKhoanNganHang("Hùng", 999)` thì `tk2` rút tiền không ảnh hưởng gì đến số dư của `tk` — giống hai chiếc bánh, cắn bánh này không làm vơi bánh kia.
 
-> ⚠️ Lỗi người mới hay gặp: nhầm class với object. Viết `TaiKhoanNganHang.rut_tien(50)` (gọi trên **khuôn**) sẽ lỗi — khuôn bánh không ăn được! Phải tạo object trước (`tk = TaiKhoanNganHang(...)`) rồi gọi trên object: `tk.rut_tien(50)`.
+> Lỗi người mới hay gặp: nhầm class với object. Viết `TaiKhoanNganHang.rut_tien(50)` (gọi trên **khuôn**) sẽ lỗi — khuôn bánh không ăn được! Phải tạo object trước (`tk = TaiKhoanNganHang(...)`) rồi gọi trên object: `tk.rut_tien(50)`.
 
 ## 6. Kế thừa: con nhà tông
 
@@ -618,7 +618,7 @@ Thuật ngữ: class gốc gọi là **class cha** (parent / superclass), class 
   <text x="392" y="307" font-size="10.5" fill="currentColor" opacity="0.72">nên BanhXe là thuộc tính, không phải class cha.</text>
 </svg>
 
-> ⚠️ Lỗi người mới hay gặp: lạm dụng kế thừa cho mọi thứ. Chỉ kế thừa khi quan hệ "là một" đúng nghĩa. `Xe là một PhuongTien` ✓; nhưng `XeHoi kế thừa BanhXe` ✗ — xe hơi không *là* bánh xe, xe hơi *có* bánh xe (quan hệ "có một" thì dùng thuộc tính).
+> Lỗi người mới hay gặp: lạm dụng kế thừa cho mọi thứ. Chỉ kế thừa khi quan hệ "là một" đúng nghĩa. `Xe là một PhuongTien` ✓; nhưng `XeHoi kế thừa BanhXe` ✗ — xe hơi không *là* bánh xe, xe hơi *có* bánh xe (quan hệ "có một" thì dùng thuộc tính).
 
 ## 7. Tóm tắt
 

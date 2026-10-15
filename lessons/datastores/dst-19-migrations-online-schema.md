@@ -31,11 +31,11 @@ Một `ALTER TABLE` hay `CREATE INDEX` nhìn thì một dòng, nhưng bên dư�
 |------|------|---------|
 | `ALTER TABLE ... ADD COLUMN` (không default, PG11+) | ACCESS EXCLUSIVE **nhưng nhanh** (metadata) | Chặn ngắn — vẫn phải chờ lấy được lock |
 | `ALTER TABLE ... ADD COLUMN ... DEFAULT <hằng>` (PG11+) | Nhanh (metadata) | OK |
-| `ALTER TABLE ... ADD COLUMN ... DEFAULT <volatile>` / `ALTER TYPE` | ACCESS EXCLUSIVE + **rewrite cả bảng** | Chặn đọc+ghi rất lâu ❌ |
-| `CREATE INDEX` (thường) | SHARE — **chặn ghi** | App không INSERT/UPDATE được ❌ |
-| `CREATE INDEX CONCURRENTLY` | Không chặn ghi | An toàn ✓ (nhưng chậm hơn, quét bảng 2 lần) |
+| `ALTER TABLE ... ADD COLUMN ... DEFAULT <volatile>` / `ALTER TYPE` | ACCESS EXCLUSIVE + **rewrite cả bảng** | Chặn đọc+ghi rất lâu ✗ |
+| `CREATE INDEX` (thường) | SHARE — **chặn ghi** | App không INSERT/UPDATE được ✗ |
+| `CREATE INDEX CONCURRENTLY` | Không chặn ghi | An toàn ✓  (nhưng chậm hơn, quét bảng 2 lần) |
 
-> ⚠️ **Bẫy nguy hiểm nhất:** một `ALTER TABLE` "nhanh" vẫn phải **giành được ACCESS EXCLUSIVE lock**. Nếu có một transaction dài đang giữ lock trên bảng, lệnh ALTER của bạn **xếp hàng chờ** — và trong lúc chờ, nó **chặn luôn mọi query mới** phía sau nó. Bảng đang chạy ngon bỗng "đứng hình" chỉ vì một ALTER tưởng vô hại. → Luôn đặt `lock_timeout` ngắn (vd `SET lock_timeout = '2s'`) rồi retry, đừng để ALTER chờ vô hạn.
+> **Bẫy nguy hiểm nhất:** một `ALTER TABLE` "nhanh" vẫn phải **giành được ACCESS EXCLUSIVE lock**. Nếu có một transaction dài đang giữ lock trên bảng, lệnh ALTER của bạn **xếp hàng chờ** — và trong lúc chờ, nó **chặn luôn mọi query mới** phía sau nó. Bảng đang chạy ngon bỗng "đứng hình" chỉ vì một ALTER tưởng vô hại. → Luôn đặt `lock_timeout` ngắn (vd `SET lock_timeout = '2s'`) rồi retry, đừng để ALTER chờ vô hạn.
 
 ---
 

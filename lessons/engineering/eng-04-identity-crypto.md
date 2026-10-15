@@ -47,7 +47,7 @@ openssl genrsa -out rsa-private.pem 3072
 | Độ dài khoá phổ biến | 128/256 bit | RSA 2048–4096; EC P-256/P-384 |
 | Vấn đề chính | Phân phối khoá | Hiệu năng, cần PKI để tin public key |
 
-> 💡 **Ghi nhớ:** Thực tế luôn là **hybrid**: dùng bất đối xứng để trao đổi một khoá đối xứng, rồi dùng AES cho dữ liệu. TLS làm vậy, và AWS KMS **envelope encryption** cũng đúng mô hình này.
+> **Ghi nhớ:** Thực tế luôn là **hybrid**: dùng bất đối xứng để trao đổi một khoá đối xứng, rồi dùng AES cho dữ liệu. TLS làm vậy, và AWS KMS **envelope encryption** cũng đúng mô hình này.
 
 ### 1.4 Envelope encryption — tính tay
 
@@ -126,7 +126,7 @@ echo -n "hellp" | shasum -a 256   # đổi 1 ký tự
 
 Tính chất: một chiều (không đảo ngược được), thay đổi 1 bit → kết quả khác hẳn, gần như không thể tìm 2 input cùng hash (collision-resistant). Chuẩn: **SHA-256/SHA-512**. MD5 và SHA-1 đã **bị phá**, chỉ còn dùng làm checksum không bảo mật.
 
-> ⚠️ **Lỗi thường gặp:** Lưu password bằng SHA-256 trần. Hash nhanh = brute-force nhanh. Password phải dùng hàm **chậm có salt**: bcrypt, scrypt, hoặc **Argon2id** (khuyến nghị hiện nay).
+> **Lỗi thường gặp:** Lưu password bằng SHA-256 trần. Hash nhanh = brute-force nhanh. Password phải dùng hàm **chậm có salt**: bcrypt, scrypt, hoặc **Argon2id** (khuyến nghị hiện nay).
 
 ### 2.2 HMAC — hash có khoá
 
@@ -178,9 +178,9 @@ openssl s_client -connect aws.amazon.com:443 -showcerts </dev/null 2>/dev/null \
 # notBefore / notAfter: thời hạn hiệu lực
 ```
 
-> 💡 **Ghi nhớ:** Vòng đời cert public đang **rút ngắn mạnh**: CA/Browser Forum đã chốt lộ trình giảm dần xuống còn **47 ngày vào năm 2029** (hiện 2025–2026 đang ở giai đoạn ~200 ngày). Kết luận thực dụng: **tự động hoá gia hạn là bắt buộc** — ACME/Let's Encrypt, hoặc AWS ACM (tự gia hạn miễn phí cho cert dùng với ELB/CloudFront/API Gateway).
+> **Ghi nhớ:** Vòng đời cert public đang **rút ngắn mạnh**: CA/Browser Forum đã chốt lộ trình giảm dần xuống còn **47 ngày vào năm 2029** (hiện 2025–2026 đang ở giai đoạn ~200 ngày). Kết luận thực dụng: **tự động hoá gia hạn là bắt buộc** — ACME/Let's Encrypt, hoặc AWS ACM (tự gia hạn miễn phí cho cert dùng với ELB/CloudFront/API Gateway).
 
-> ⚠️ **Lỗi thường gặp:** Nhầm "mã hoá" với "xác thực". TLS cần **cả hai**: certificate xác thực server là thật (chống man-in-the-middle), sau đó handshake mới trao đổi khoá đối xứng để mã hoá. Self-signed cert vẫn mã hoá được nhưng không xác thực được danh tính.
+> **Lỗi thường gặp:** Nhầm "mã hoá" với "xác thực". TLS cần **cả hai**: certificate xác thực server là thật (chống man-in-the-middle), sau đó handshake mới trao đổi khoá đối xứng để mã hoá. Self-signed cert vẫn mã hoá được nhưng không xác thực được danh tính.
 
 ## 4. OAuth 2.1 — chuẩn uỷ quyền hiện hành
 
@@ -278,7 +278,7 @@ echo "challenge: $challenge"
 
 Luồng còn lại đáng dùng: service A gọi service B, không có người dùng. App gửi `client_id` + `client_secret` đổi thẳng lấy access token. Đây là luồng cho microservices, cron job, CI/CD.
 
-> ⚠️ **Lỗi thường gặp:** Năm 2026 mà vẫn thiết kế SPA/mobile dùng Implicit flow vì "đỡ một bước gọi token endpoint". Implicit đã bị loại khỏi chuẩn; SPA dùng Authorization Code + PKCE, không có ngoại lệ. Tương tự, nếu thấy ai đề xuất ROPC ("cứ post username/password lên token endpoint") — từ chối.
+> **Lỗi thường gặp:** Năm 2026 mà vẫn thiết kế SPA/mobile dùng Implicit flow vì "đỡ một bước gọi token endpoint". Implicit đã bị loại khỏi chuẩn; SPA dùng Authorization Code + PKCE, không có ngoại lệ. Tương tự, nếu thấy ai đề xuất ROPC ("cứ post username/password lên token endpoint") — từ chối.
 
 ## 5. OIDC — lớp xác thực trên OAuth
 
@@ -292,7 +292,7 @@ OAuth thuần chỉ trả lời "app này được phép làm gì", **không** t
 | Dùng để | Hiển thị "Xin chào Đan", tạo session phía app | Gắn vào header `Authorization: Bearer ...` khi gọi API |
 | Sai lầm điển hình | Gửi ID token cho API để authorize | Decode access token ở client rồi tin nội dung |
 
-> 💡 **Ghi nhớ:** ID token = giấy khai sinh (bạn là ai). Access token = vé vào cửa (bạn được vào đâu). API nhận nhầm giấy khai sinh thay vé là lỗ hổng thật ngoài đời.
+> **Ghi nhớ:** ID token = giấy khai sinh (bạn là ai). Access token = vé vào cửa (bạn được vào đâu). API nhận nhầm giấy khai sinh thay vé là lỗ hổng thật ngoài đời.
 
 ## 6. JWT đúng cách
 
@@ -367,7 +367,7 @@ JWT là **stateless** — đã ký là không thu hồi được cho đến khi 
 - Đừng nhét toàn bộ permission/role chi tiết vào claim: user bị khoá quyền vẫn xài token cũ tới khi hết hạn, và token phình to (mỗi request đều cõng nó). Để claim tối thiểu (`sub`, `scope` thô), quyền chi tiết tra ở backend.
 - Cần thu hồi tức thì (logout toàn cục, khoá tài khoản)? Phải có thêm denylist/introspection — tức là mất "stateless". Cân nhắc ngay từ đầu.
 
-> ⚠️ **Lỗi thường gặp:** Lưu JWT trong `localStorage` của SPA — XSS là mất sạch. Pattern 2025–2026 cho SPA: refresh token trong **HttpOnly Secure cookie** (hoặc kiến trúc BFF — Backend-for-Frontend giữ token hộ), access token chỉ sống trong bộ nhớ.
+> **Lỗi thường gặp:** Lưu JWT trong `localStorage` của SPA — XSS là mất sạch. Pattern 2025–2026 cho SPA: refresh token trong **HttpOnly Secure cookie** (hoặc kiến trúc BFF — Backend-for-Frontend giữ token hộ), access token chỉ sống trong bộ nhớ.
 
 ## 7. SAML — vẫn sống khoẻ trong enterprise
 
@@ -447,7 +447,7 @@ Vì sao **phishing-resistant** — hơn hẳn cả password + TOTP:
 - Server chỉ lưu **public key** → DB bị dump cũng không có gì để crack, không có password reuse.
 - Challenge ngẫu nhiên mỗi lần → chống replay.
 
-> 💡 **Ghi nhớ:** Password = "shared secret cả hai bên cùng biết" (lộ một bên là toang). Passkey = "chứng minh sở hữu private key, secret không bao giờ rời thiết bị". Đây là cùng một nguyên lý với chữ ký số và SigV4 — nắm một lần, hiểu cả ba.
+> **Ghi nhớ:** Password = "shared secret cả hai bên cùng biết" (lộ một bên là toang). Passkey = "chứng minh sở hữu private key, secret không bao giờ rời thiết bị". Đây là cùng một nguyên lý với chữ ký số và SigV4 — nắm một lần, hiểu cả ba.
 
 ## 9. Khi nào dùng gì — bảng tra nhanh
 

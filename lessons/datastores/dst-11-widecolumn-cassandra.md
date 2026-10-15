@@ -189,7 +189,7 @@ Cassandra là **AP** trong CAP nhưng cho bạn **vặn núm** nhất quán **th
 
 > `R + W > RF` ⇒ tập replica đọc và tập replica ghi **chắc chắn giao nhau** ≥ 1 → đọc luôn thấy write mới nhất.
 
-Ví dụ RF=3: chọn `W=QUORUM(2)` và `R=QUORUM(2)` → `2+2=4 > 3` ✅ strong. Còn `W=ONE(1) + R=ONE(1)` → `1+1=2 ≤ 3` → **eventual** (có thể đọc cũ). Đẹp ở chỗ: bạn dùng QUORUM cho lệnh cần đúng (thanh toán), ONE cho lệnh chịu được cũ (đếm view) — **trên cùng một cluster**.
+Ví dụ RF=3: chọn `W=QUORUM(2)` và `R=QUORUM(2)` → `2+2=4 > 3` ✓ strong. Còn `W=ONE(1) + R=ONE(1)` → `1+1=2 ≤ 3` → **eventual** (có thể đọc cũ). Đẹp ở chỗ: bạn dùng QUORUM cho lệnh cần đúng (thanh toán), ONE cho lệnh chịu được cũ (đếm view) — **trên cùng một cluster**.
 
 ```sql
 CONSISTENCY QUORUM;                 -- áp cho các lệnh kế tiếp trong cqlsh

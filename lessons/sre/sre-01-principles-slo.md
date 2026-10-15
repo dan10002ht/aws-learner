@@ -16,7 +16,7 @@ Khác biệt cốt lõi so với mô hình sysadmin truyền thống:
 | Quan hệ với Dev | Tách biệt, hay đổ lỗi | Chung error budget, chung trách nhiệm |
 | Thay đổi (change) | Sợ thay đổi, hạn chế deploy | Deploy thường xuyên trong giới hạn budget |
 
-> 💡 Nguyên tắc: Reliability là một **tính năng (feature)** của hệ thống, không phải một mong muốn. Đã là feature thì phải đo được, có mục tiêu, và có chi phí.
+> Nguyên tắc: Reliability là một **tính năng (feature)** của hệ thống, không phải một mong muốn. Đã là feature thì phải đo được, có mục tiêu, và có chi phí.
 
 SRE đứng trên ba khái niệm liên kết với nhau: **SLI → SLO → Error Budget**. Hiểu sai một cái là sai cả chuỗi.
 
@@ -96,7 +96,7 @@ sum(rate(http_request_duration_seconds_bucket{le="0.3", job="api"}[5m]))
 sum(rate(http_request_duration_seconds_count{job="api"}[5m]))
 ```
 
-> ⚠️ Bẫy: Đo availability bằng cách ping `/healthz`. Endpoint health-check thường chỉ kiểm tra process còn sống, không gọi database, không qua business logic. Nó sẽ báo "xanh" trong khi user thật đang nhận lỗi 500. Hãy đo trên **traffic thật của user**.
+> Bẫy: Đo availability bằng cách ping `/healthz`. Endpoint health-check thường chỉ kiểm tra process còn sống, không gọi database, không qua business logic. Nó sẽ báo "xanh" trong khi user thật đang nhận lỗi 500. Hãy đo trên **traffic thật của user**.
 
 ## SLO — Service Level Objective
 
@@ -131,7 +131,7 @@ Mỗi số 9 thêm vào làm giảm downtime cho phép gấp ~10 lần, nhưng c
 | 99.99% (4 nines) | 4m 23s | 52.6m | 1m 0s |
 | 99.999% (5 nines) | 26s | 5.26m | 6s |
 
-> 💡 Nguyên tắc: SLO tối ưu **không phải là 100%**. 100% nghĩa là bạn không bao giờ được deploy, không bao giờ được bảo trì, và phải trả chi phí dự phòng vô hạn. Mức 99.9% thường là điểm cân bằng tốt; chỉ leo lên 99.99% khi business thực sự trả tiền cho nó.
+> Nguyên tắc: SLO tối ưu **không phải là 100%**. 100% nghĩa là bạn không bao giờ được deploy, không bao giờ được bảo trì, và phải trả chi phí dự phòng vô hạn. Mức 99.9% thường là điểm cân bằng tốt; chỉ leo lên 99.99% khi business thực sự trả tiền cho nó.
 
 ### SLO phải bám vào kỳ vọng người dùng
 
@@ -148,7 +148,7 @@ SLA là **cam kết với khách hàng kèm hậu quả tài chính/pháp lý n�
 | Vi phạm thì sao | (không áp dụng) | Báo động, dừng deploy | Hoàn tiền / phạt credit |
 | Con số | 99.95% đo được | 99.9% đặt ra | 99.5% cam kết bán |
 
-> 💡 Nguyên tắc: **SLA luôn lỏng hơn SLO.** Nếu bạn bán SLA 99.9% thì nội bộ nên đặt SLO 99.95%. Khoảng đệm đó cho bạn thời gian phát hiện và sửa trước khi chạm ngưỡng phải trả tiền cho khách. Nếu SLO = SLA, bạn sẽ phải bồi thường ngay khi báo động đầu tiên kêu.
+> Nguyên tắc: **SLA luôn lỏng hơn SLO.** Nếu bạn bán SLA 99.9% thì nội bộ nên đặt SLO 99.95%. Khoảng đệm đó cho bạn thời gian phát hiện và sửa trước khi chạm ngưỡng phải trả tiền cho khách. Nếu SLO = SLA, bạn sẽ phải bồi thường ngay khi báo động đầu tiên kêu.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 290" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Khoảng đệm giữa SLA, SLO và SLI thực tế</title>
@@ -282,13 +282,13 @@ Ví dụ alert YAML (Prometheus):
     summary: "Đốt error budget nhanh gấp 14.4x — sẽ cháy sạch budget 28d trong ~2 ngày"
 ```
 
-> ⚠️ Bẫy: Cảnh báo trực tiếp trên "tỉ lệ lỗi > 0.1%" sẽ kêu ré lên với mọi spike 30 giây vô hại, gây alert fatigue. Hãy cảnh báo trên **burn rate kết hợp nhiều cửa sổ** (vd vi phạm cả 5m lẫn 1h) để vừa nhạy với sự cố thật, vừa không page vì nhiễu.
+> Bẫy: Cảnh báo trực tiếp trên "tỉ lệ lỗi > 0.1%" sẽ kêu ré lên với mọi spike 30 giây vô hại, gây alert fatigue. Hãy cảnh báo trên **burn rate kết hợp nhiều cửa sổ** (vd vi phạm cả 5m lẫn 1h) để vừa nhạy với sự cố thật, vừa không page vì nhiễu.
 
 ### Chính sách error budget — dùng số để ra quyết định
 
 Đây là điểm khiến error budget hữu dụng: nó là **cơ chế tự điều chỉnh** cho mâu thuẫn muôn thuở giữa Dev (muốn ship nhanh) và SRE (muốn ổn định).
 
-> 💡 Nguyên tắc (Error Budget Policy):
+> Nguyên tắc (Error Budget Policy):
 > - **Còn budget** → Dev được tự do deploy feature, thử nghiệm, chấp nhận rủi ro.
 > - **Hết budget** → đóng băng feature (feature freeze). Mọi nỗ lực dồn vào reliability: sửa bug, thêm test, cải thiện rollback — cho đến khi budget hồi lại.
 
@@ -302,7 +302,7 @@ Toil là **công việc vận hành thủ công, lặp lại, không tạo giá 
 
 Một việc là toil khi nó hội đủ các đặc điểm: thủ công, lặp lại, có thể script hoá, mang tính phản ứng (reactive), không có giá trị bền vững, và **scale tuyến tính theo traffic/số host**. Ví dụ: restart service bằng tay, duyệt cấp quyền lặp đi lặp lại, clear disk đầy mỗi tuần, copy log thủ công khi điều tra.
 
-> 💡 Nguyên tắc: Google đặt **trần toil ở mức 50%** thời gian của một SRE. Phần còn lại phải dành cho kỹ thuật làm giảm toil trong tương lai (automation, tooling, cải thiện hệ thống). Nếu không, team biến thành đội ops thuần, toil nuốt chửng mọi thời gian, và không bao giờ thoát ra được.
+> Nguyên tắc: Google đặt **trần toil ở mức 50%** thời gian của một SRE. Phần còn lại phải dành cho kỹ thuật làm giảm toil trong tương lai (automation, tooling, cải thiện hệ thống). Nếu không, team biến thành đội ops thuần, toil nuốt chửng mọi thời gian, và không bao giờ thoát ra được.
 
 Tại sao đo và giới hạn toil quan trọng:
 
@@ -333,4 +333,4 @@ Các khái niệm trên ánh xạ trực tiếp vào dịch vụ AWS:
 
 Gợi ý triển khai nhanh: đẩy success/latency của user thật (vd từ ALB hoặc app) vào CloudWatch, dùng **Application Signals** để khai báo SLO 99.9%, để CloudWatch tự tính error budget và bật **multi-window burn-rate alarm** page vào on-call (SNS → PagerDuty/Opsgenie). Đối chiếu sự cố nghi từ phía hạ tầng với **AWS Health Dashboard** trước khi kết luận lỗi là của ứng dụng bạn.
 
-> 💡 Nguyên tắc tổng kết: Đừng hỏi "hệ thống có ổn không?" — hãy hỏi "SLI đang bao nhiêu, còn bao nhiêu error budget, và burn rate có an toàn không?". Khi cả tổ chức nói cùng ngôn ngữ con số đó, reliability ngừng là cảm tính và trở thành kỹ thuật.
+> Nguyên tắc tổng kết: Đừng hỏi "hệ thống có ổn không?" — hãy hỏi "SLI đang bao nhiêu, còn bao nhiêu error budget, và burn rate có an toàn không?". Khi cả tổ chức nói cùng ngôn ngữ con số đó, reliability ngừng là cảm tính và trở thành kỹ thuật.

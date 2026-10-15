@@ -49,7 +49,7 @@ Chu kỳ bảng                : 1 tháng
 Thời gian giữ lịch sử      : vĩnh viễn, nhưng ở kho lạnh
 ```
 
-> 💡 **Nguyên tắc**: Luôn hỏi "bảng này có chia nhỏ được không?". Bài toán "xếp hạng 25 triệu người trong một bảng" và bài toán "xếp hạng 500.000 bảng, mỗi bảng 50 người" khác nhau về độ khó tới ba bậc. Rất nhiều game thật đã chọn cách thứ hai **chính vì lý do kỹ thuật này**, rồi mới nghĩ ra lý do sản phẩm sau.
+> **Nguyên tắc**: Luôn hỏi "bảng này có chia nhỏ được không?". Bài toán "xếp hạng 25 triệu người trong một bảng" và bài toán "xếp hạng 500.000 bảng, mỗi bảng 50 người" khác nhau về độ khó tới ba bậc. Rất nhiều game thật đã chọn cách thứ hai **chính vì lý do kỹ thuật này**, rồi mới nghĩ ra lý do sản phẩm sau.
 
 ---
 
@@ -101,7 +101,7 @@ Peak sự kiện (10×) ≈ 35.000 rps  — và có thể vọt 170.000 rps
 | Ghi điểm | 580 wps | 3.000 | 6.000 | 1× |
 | Đọc (top-10 + rank) | 3.500 rps | 17.000 | 35.000–170.000 | **~6×, lúc cao điểm tới 30×** |
 
-> 💡 **Nguyên tắc**: Nói thẳng ra trong phỏng vấn — *"Đây là hệ read-heavy, tỉ lệ đọc/ghi khoảng 6:1 ở trạng thái bình thường và 30:1 ở đỉnh. Mọi tối ưu của tôi sẽ hướng về đường đọc."* Một câu này đặt đúng khung cho toàn bộ 40 phút còn lại.
+> **Nguyên tắc**: Nói thẳng ra trong phỏng vấn — *"Đây là hệ read-heavy, tỉ lệ đọc/ghi khoảng 6:1 ở trạng thái bình thường và 30:1 ở đỉnh. Mọi tối ưu của tôi sẽ hướng về đường đọc."* Một câu này đặt đúng khung cho toàn bộ 40 phút còn lại.
 
 Và có một cấu trúc rất đẹp trong đường đọc: **top 10 giống hệt nhau với tất cả mọi người**. 170.000 request/giây cùng hỏi một câu và cùng nhận một câu trả lời — đó là định nghĩa hoàn hảo của thứ đáng cache. Còn "hạng của tôi" thì cá nhân hoá, không cache chung được, nhưng đổi lại nó là một lệnh `O(log n)` rẻ.
 
@@ -206,7 +206,7 @@ GET /v1/leaderboards/{board_id}/top?limit=10
 GET /v1/leaderboards/{board_id}/users/{user_id}
   200 -> {
     "user_id": "u_1934", "score": 842,
-    "rank": 4301887, "rank_exact": false,      # ⚠️ trường quan trọng
+    "rank": 4301887, "rank_exact": false,      # trường quan trọng
     "percentile": 82.7,
     "total_players": 25000000
   }
@@ -367,7 +367,7 @@ Con số thực tế: `COUNT(*)` trên 4,3 triệu mục index (index-only scan,
 Còn truy vấn "đánh số hạng cho cả bảng" thì tệ hơn nữa:
 
 ```sql
--- ⚠️ Đừng bao giờ chạy cái này trên production
+-- Đừng bao giờ chạy cái này trên production
 SELECT RANK() OVER (ORDER BY score DESC) AS rank, user_id, score
 FROM leaderboard WHERE season_id = '2026-09';
 ```
@@ -383,7 +383,7 @@ Window function `RANK()` phải **materialize toàn bộ 25 triệu dòng đã s
 | Cây tổng tiền tố (Fenwick/BIT) trong bảng SQL | Lưu cây chỉ số nhị phân theo dải điểm, `COUNT` thành O(log maxScore) | Đúng về thuật toán! Nhưng bạn đang **tự cài lại sorted set bằng SQL**, với chi phí mỗi cập nhật là ~20 lượt ghi dòng. Nếu phải làm vậy thì dùng Redis luôn cho xong |
 | Bảng histogram phụ (đếm theo bucket điểm) | Rank gần đúng bằng cách cộng count các bucket cao hơn | Cách này **thật sự dùng được** — xem §8.4. Nhưng nó cho rank gần đúng, tức là bạn đã chấp nhận nới lỏng yêu cầu |
 
-> ⚠️ **Bẫy phỏng vấn**: Rất nhiều người nói "thêm index vào cột score là xong". Người phỏng vấn đang chờ đúng câu đó để hỏi ngược: *"Index giúp gì cho `COUNT(*) WHERE score > X`?"*. Câu trả lời đúng là: **giúp biến full table scan thành index scan (nhanh hơn ~10 lần vì mục index nhỏ hơn dòng dữ liệu), nhưng vẫn là O(n) — vẫn phải đếm từng mục.** Nói được câu đó cho thấy bạn hiểu index thật sự làm gì, chứ không chỉ thuộc lòng "index làm truy vấn nhanh hơn".
+> **Bẫy phỏng vấn**: Rất nhiều người nói "thêm index vào cột score là xong". Người phỏng vấn đang chờ đúng câu đó để hỏi ngược: *"Index giúp gì cho `COUNT(*) WHERE score > X`?"*. Câu trả lời đúng là: **giúp biến full table scan thành index scan (nhanh hơn ~10 lần vì mục index nhỏ hơn dòng dữ liệu), nhưng vẫn là O(n) — vẫn phải đếm từng mục.** Nói được câu đó cho thấy bạn hiểu index thật sự làm gì, chứ không chỉ thuộc lòng "index làm truy vấn nhanh hơn".
 
 **Kết luận phương án 1**: MySQL thắng ở top-10, đơn giản, và bền. Nó chết ở rank cá nhân từ khoảng **vài trăm nghìn người chơi trở lên**. Vì "rank của tôi" là **chính xác cái mà người chơi quan tâm nhất**, phương án này không dùng được cho bài toán đã cho. Nhưng đừng bỏ MySQL đi — nó vẫn là **nguồn sự thật** và nơi lưu hồ sơ.
 
@@ -454,7 +454,7 @@ Nhờ `span`, khi tìm một phần tử, Redis chỉ cần **cộng dồn span 
 
 Nói cách khác: **skip list của Redis là một order-statistic tree**. Đây là câu trả lời chính xác cho câu hỏi "vì sao MySQL không làm được?" — B-tree của MySQL không lưu `span`, nên nó phải đếm tay.
 
-> 💡 **Nguyên tắc**: Khi một truy vấn cần "vị trí thứ tự", hãy hỏi cấu trúc dữ liệu bên dưới có lưu **số lượng** ở nút trung gian không. Nếu không, mọi index trên đời cũng chỉ giảm hằng số, không đổi được độ phức tạp.
+> **Nguyên tắc**: Khi một truy vấn cần "vị trí thứ tự", hãy hỏi cấu trúc dữ liệu bên dưới có lưu **số lượng** ở nút trung gian không. Nếu không, mọi index trên đời cũng chỉ giảm hằng số, không đổi được độ phức tạp.
 
 ### 6.3 Vì sao skip list mà không phải cây đỏ-đen / AVL / B-tree?
 
@@ -518,7 +518,7 @@ local stop  = rank + span
 return { rank, redis.call('ZREVRANGE', KEYS[1], start, stop, 'WITHSCORES') }
 ```
 
-> ⚠️ **Bẫy**: `ZREVRANK` trả về **vị trí 0-based**, còn người dùng muốn thấy hạng 1-based. Luôn `+1` ở tầng ứng dụng. Và khi người chơi chưa có điểm nào, `ZREVRANK` trả `nil` chứ không phải hạng cuối cùng — giao diện phải xử lý trạng thái "chưa xếp hạng" riêng, nếu không sẽ hiện "hạng null".
+> **Bẫy**: `ZREVRANK` trả về **vị trí 0-based**, còn người dùng muốn thấy hạng 1-based. Luôn `+1` ở tầng ứng dụng. Và khi người chơi chưa có điểm nào, `ZREVRANK` trả `nil` chứ không phải hạng cuối cùng — giao diện phải xử lý trạng thái "chưa xếp hạng" riêng, nếu không sẽ hiện "hạng null".
 
 ### 6.5 Hạng thứ tự (ordinal) vs hạng thi đấu (competition)
 
@@ -575,7 +575,7 @@ def board_key(game: str, scope: str, at: datetime) -> str:
     return f"leaderboard:{game}:{scope}:{at.strftime('%Y-%m')}"
 ```
 
-> ⚠️ **Bẫy múi giờ**: Nếu chu kỳ tính theo giờ địa phương của người chơi, hai người ở hai múi giờ sẽ ghi vào hai bảng khác nhau tại cùng một thời điểm — và bảng "tháng 9" sẽ có một cửa sổ 26 giờ. Luôn dùng UTC cho mốc chu kỳ, rồi **hiển thị** theo giờ địa phương nếu muốn.
+> **Bẫy múi giờ**: Nếu chu kỳ tính theo giờ địa phương của người chơi, hai người ở hai múi giờ sẽ ghi vào hai bảng khác nhau tại cùng một thời điểm — và bảng "tháng 9" sẽ có một cửa sổ 26 giờ. Luôn dùng UTC cho mốc chu kỳ, rồi **hiển thị** theo giờ địa phương nếu muốn.
 
 ### 7.2 TTL và vòng đời
 
@@ -780,7 +780,7 @@ Cách trình bày điều này ở giao diện cũng quan trọng: thay vì "H�
 
 Thiết kế này **xoá hẳn nhu cầu sharding** cho tới quy mô rất lớn: tầng nóng chỉ 1 triệu phần tử = 124 MB, và histogram là hằng số. Thứ duy nhất còn cần đủ chỗ là **điểm số của mọi người** — nhưng cái đó có thể sống trong DynamoDB (một khoá, một giá trị, không cần sắp xếp) thay vì trong RAM.
 
-> 💡 **Nguyên tắc**: Trước khi shard một cấu trúc dữ liệu, hãy hỏi *"có phải mọi phần dữ liệu đều cần cùng một mức chất lượng không?"*. Rất thường xuyên là không — và khi đó, hạ chất lượng ở phần không ai nhìn sẽ rẻ hơn nhiều so với nhân đôi hạ tầng.
+> **Nguyên tắc**: Trước khi shard một cấu trúc dữ liệu, hãy hỏi *"có phải mọi phần dữ liệu đều cần cùng một mức chất lượng không?"*. Rất thường xuyên là không — và khi đó, hạ chất lượng ở phần không ai nhìn sẽ rẻ hơn nhiều so với nhân đôi hạ tầng.
 
 ---
 
@@ -803,7 +803,7 @@ IEEE 754 double precision (64 bit):
 Số nguyên biểu diễn CHÍNH XÁC (không mất bit nào):
   từ -(2^53) đến 2^53  =  ±9.007.199.254.740.992  ≈ 9 × 10^15
 
-⚠️ Vượt 2^53 thì 2^53 + 1 == 2^53 — phép cộng biến mất im lặng.
+Vượt 2^53 thì 2^53 + 1 == 2^53 — phép cộng biến mất im lặng.
    Đây là bug kinh điển và rất khó tìm.
 ```
 
@@ -853,11 +853,11 @@ bob:   900 điểm, đạt lúc Δt = 500.000 s (muộn hơn)
   combined = 3.774.873.600 + 3.694.303
            = 3.778.567.903
 
-alice > bob  ✓  — cùng 900 điểm, alice đạt trước nên xếp trên.
+alice > bob  ✓   — cùng 900 điểm, alice đạt trước nên xếp trên.
 
 carol: 901 điểm, đạt muộn nhất Δt = 4.194.303
   combined = 901 × 4.194.304 + 0 = 3.779.067.904
-  carol > alice ✓ — điểm cao hơn luôn thắng, bất kể thời gian.
+  carol > alice ✓  — điểm cao hơn luôn thắng, bất kể thời gian.
 ```
 
 Điều kiện đúng đắn quan trọng: **phần timestamp phải không bao giờ tràn sang phần điểm**. Vì `T_MAX − Δt ≤ 2^22 − 1` luôn nhỏ hơn `2^22`, nên nó không bao giờ cộng thêm vào bit điểm. Bảo đảm này phải được viết thành unit test.
@@ -913,7 +913,7 @@ Yêu cầu "xem tôi đứng thứ mấy trong nhóm bạn bè" nghe giống m�
 **Cách sai**: duy trì một zset riêng cho mỗi người, chứa bạn bè của họ.
 
 ```
-❌ friends_board:{user_id} → zset gồm bạn bè
+✗ friends_board:{user_id} → zset gồm bạn bè
    Bộ nhớ  : 25 triệu user × 150 bạn × 124 B = 465 GB
    Ghi     : mỗi lần MỘT người đổi điểm, phải cập nhật zset của
              TẤT CẢ 150 người bạn → 600 wps × 150 = 90.000 wps
@@ -971,7 +971,7 @@ Lưu ý về quốc gia của người chơi: nó **có thể đổi** (di cư, 
 
 Cần nói rõ: **listpack** là encoding nén của Redis cho collection nhỏ — một mảng byte liền kề, không con trỏ, không hash table. Truy vấn là O(n) nhưng n ≤ 128 và dữ liệu nằm trong vài dòng cache CPU, nên thực tế nó **nhanh hơn** skip list. Redis tự chuyển sang skiplist khi vượt ngưỡng `zset-max-listpack-entries` (128) hoặc `zset-max-listpack-value` (64 byte).
 
-> 💡 **Nguyên tắc**: Câu trả lời hay nhất cho một bài toán scale đôi khi là **thay đổi bài toán**. Nếu bạn nêu được kiến trúc league trong phỏng vấn — kèm lý do nó vừa tốt hơn về kỹ thuật vừa tốt hơn về sản phẩm — bạn đang thể hiện tư duy của người thiết kế sản phẩm chứ không chỉ người viết code. Nhưng hãy nêu nó như **một lựa chọn có điều kiện**, rồi quay lại giải bài đã cho — đừng dùng nó để né câu hỏi.
+> **Nguyên tắc**: Câu trả lời hay nhất cho một bài toán scale đôi khi là **thay đổi bài toán**. Nếu bạn nêu được kiến trúc league trong phỏng vấn — kèm lý do nó vừa tốt hơn về kỹ thuật vừa tốt hơn về sản phẩm — bạn đang thể hiện tư duy của người thiết kế sản phẩm chứ không chỉ người viết code. Nhưng hãy nêu nó như **một lựa chọn có điều kiện**, rồi quay lại giải bài đã cho — đừng dùng nó để né câu hỏi.
 
 ---
 
@@ -1027,11 +1027,11 @@ Nhắc lại con số ở §2.2: đỉnh đọc có thể lên **170.000 rps**, 
 
 ### 11.4 Ba bẫy cache phải nêu
 
-> ⚠️ **Cache stampede**: Nếu 20 app instance cùng có TTL hết hạn vào cùng một giây (rất dễ xảy ra vì tất cả đều khởi động cùng lúc lúc deploy), Redis nhận 20 request đồng thời — vô hại ở đây, nhưng cùng cơ chế đó ở quy mô lớn hơn (2.000 instance) sẽ giết origin. Phòng: thêm **jitter** vào TTL (`1s ± 200ms` ngẫu nhiên), và dùng single-flight (chỉ một goroutine đi làm mới, các goroutine khác chờ kết quả của nó).
+> **Cache stampede**: Nếu 20 app instance cùng có TTL hết hạn vào cùng một giây (rất dễ xảy ra vì tất cả đều khởi động cùng lúc lúc deploy), Redis nhận 20 request đồng thời — vô hại ở đây, nhưng cùng cơ chế đó ở quy mô lớn hơn (2.000 instance) sẽ giết origin. Phòng: thêm **jitter** vào TTL (`1s ± 200ms` ngẫu nhiên), và dùng single-flight (chỉ một goroutine đi làm mới, các goroutine khác chờ kết quả của nó).
 
-> ⚠️ **Cache của top 10 phải bao gồm cả hồ sơ người chơi**. Nếu bạn cache 10 `(user_id, score)` rồi mỗi request lại đi tra 10 cái tên/avatar ở MySQL, bạn chỉ chuyển vấn đề sang chỗ khác — 170.000 rps × 10 lookup = 1,7 triệu truy vấn/giây. Hãy cache **response đã render hoàn chỉnh**, kèm tên và URL avatar. Vì top 10 đổi chậm, hồ sơ của họ có thể cache rất lâu (5 phút).
+> **Cache của top 10 phải bao gồm cả hồ sơ người chơi**. Nếu bạn cache 10 `(user_id, score)` rồi mỗi request lại đi tra 10 cái tên/avatar ở MySQL, bạn chỉ chuyển vấn đề sang chỗ khác — 170.000 rps × 10 lookup = 1,7 triệu truy vấn/giây. Hãy cache **response đã render hoàn chỉnh**, kèm tên và URL avatar. Vì top 10 đổi chậm, hồ sơ của họ có thể cache rất lâu (5 phút).
 
-> ⚠️ **Đừng cache "hạng của tôi" ở CDN.** Response cá nhân hoá phải có `Cache-Control: private`. Một lỗi cấu hình ở đây khiến người dùng A nhìn thấy hạng của người dùng B — một sự cố rò rỉ dữ liệu thật sự đã xảy ra ở nhiều hệ thống.
+> **Đừng cache "hạng của tôi" ở CDN.** Response cá nhân hoá phải có `Cache-Control: private`. Một lỗi cấu hình ở đây khiến người dùng A nhìn thấy hạng của người dùng B — một sự cố rò rỉ dữ liệu thật sự đã xảy ra ở nhiều hệ thống.
 
 ---
 
@@ -1077,7 +1077,7 @@ Cách 1 — phát lại toàn bộ event log:
   Tốc độ nạp bằng pipeline (batch 1.000 lệnh/lần gửi):
     ~500.000 ZINCRBY/giây trên một node (pipeline rất hiệu quả)
   Thời gian = 1.000.000.000 / 500.000 = 2.000 giây ≈ 33 phút
-  ⚠️ 33 phút không có leaderboard. Quá lâu.
+  33 phút không có leaderboard. Quá lâu.
 
 Cách 2 — snapshot điểm số + phát lại phần delta:
   Mỗi 10 phút, một job xuất trạng thái điểm hiện tại
@@ -1131,10 +1131,10 @@ Một leaderboard bị gian lận là một leaderboard chết — người chơ
 ### 13.1 Server-authoritative — nền tảng của mọi thứ
 
 ```
-❌ SAI:  Client ──"tôi thắng, +500 điểm"──► Leaderboard Service
+✗  SAI:  Client ──"tôi thắng, +500 điểm"──► Leaderboard Service
          Một proxy MITM là đủ để leo lên hạng 1 trong 5 phút.
 
-✅ ĐÚNG: Client ──"nước đi của tôi"──► Game Server (mô phỏng trận đấu)
+✓  ĐÚNG: Client ──"nước đi của tôi"──► Game Server (mô phỏng trận đấu)
                                           │
                                           │ Game Server tự quyết định
                                           │ ai thắng và được mấy điểm
@@ -1187,7 +1187,7 @@ Với game mà logic chạy trên server (cờ vua, MOBA, game bài), điều n�
 └────────────────────────────────────────────────────────────────┘
 ```
 
-> 💡 **Nguyên tắc**: Rate limit theo **ngữ nghĩa miền** luôn mạnh hơn rate limit theo giao thức. "Tối đa 100 request/phút" chặn được bot ngu; "một trận cờ không thể kết thúc dưới 30 giây" chặn được bot thông minh, vì nó ràng buộc vào một sự thật của game mà kẻ tấn công không lách được nếu không làm chậm chính mình.
+> **Nguyên tắc**: Rate limit theo **ngữ nghĩa miền** luôn mạnh hơn rate limit theo giao thức. "Tối đa 100 request/phút" chặn được bot ngu; "một trận cờ không thể kết thúc dưới 30 giây" chặn được bot thông minh, vì nó ràng buộc vào một sự thật của game mà kẻ tấn công không lách được nếu không làm chậm chính mình.
 
 Một chi tiết vận hành: khi phát hiện gian lận sau nhiều ngày, bạn phải **gỡ điểm về**. Nếu Redis là nguồn sự thật thì bạn phải đoán xem trừ bao nhiêu. Nếu event log là nguồn sự thật, bạn **đánh dấu các sự kiện gian lận là vô hiệu rồi dựng lại bảng** — chính xác tuyệt đối. Đây là lý do thực dụng thứ hai để có event log, bên cạnh khôi phục sau sự cố.
 
@@ -1241,7 +1241,7 @@ GHI (rất tốt):
    └─► Query GSI shard 31, Limit 10 ─┘
 
 ĐỌC HẠNG CỦA MỘT NGƯỜI (không làm được):
-   ✗ Không có cách nào đếm "bao nhiêu item có score > X" trong O(log n).
+   ✗  Không có cách nào đếm "bao nhiêu item có score > X" trong O(log n).
      DynamoDB Query trả về item, không trả về số đếm theo thứ tự.
      Muốn đếm thì phải Scan — và Scan 25 triệu item là chuyện của phút,
      không phải mili-giây.
@@ -1331,7 +1331,7 @@ Xếp theo thứ tự thật sự sẽ gặp khi tăng tải:
    → Giải bằng snapshot 10 phút → RTO 1 phút. §12.3
 ```
 
-> 💡 **Nguyên tắc**: Trong bài này, thứ nghẽn trước không phải thứ khó nhất. **Đọc top-10 nghẽn trước nhưng dễ giải nhất** (một dòng `Cache-Control`). **Hạng chính xác khó nhất nhưng nghẽn muộn nhất**. Thứ tự này phải được trình bày đúng — nếu bạn dành 20 phút nói về sharding mà không nói về cache, bạn đang tối ưu cái chưa vỡ.
+> **Nguyên tắc**: Trong bài này, thứ nghẽn trước không phải thứ khó nhất. **Đọc top-10 nghẽn trước nhưng dễ giải nhất** (một dòng `Cache-Control`). **Hạng chính xác khó nhất nhưng nghẽn muộn nhất**. Thứ tự này phải được trình bày đúng — nếu bạn dành 20 phút nói về sharding mà không nói về cache, bạn đang tối ưu cái chưa vỡ.
 
 ---
 
@@ -1339,21 +1339,21 @@ Xếp theo thứ tự thật sự sẽ gặp khi tăng tải:
 
 | Thành phần thiết kế | Dịch vụ AWS | Vì sao hợp (và bẫy) |
 |---|---|---|
-| Sorted set leaderboard — **lựa chọn mặc định** | **ElastiCache for Redis/Valkey**, cluster mode **tắt**, 1 primary + 1–2 replica khác AZ | 25 triệu phần tử = 3,1 GB, vừa gọn một node `cache.r7g.xlarge` (~26 GB). Cluster mode tắt vì ta chỉ có **một key lớn** — bật cluster mode cũng chẳng chia được một key ra nhiều slot. ⚠️ Đặt `maxmemory-policy` = **`noeviction`**, không phải `allkeys-lru` mặc định của tư duy cache: leaderboard bị evict âm thầm là mất dữ liệu không có log |
-| Sorted set khi **không được phép mất dữ liệu** | **MemoryDB for Redis/Valkey** | Đây là điểm quan trọng nhất của bài trên AWS. MemoryDB có API Redis y hệt nhưng **ghi vào một nhật ký giao dịch phân tán đa AZ trước khi ACK** → **durability thật sự, mất dữ liệu bằng 0**, và failover **không mất ghi nào**. ⚠️ Cái giá: **ghi mất mili-giây một chữ số** thay vì micro-giây của ElastiCache (chậm hơn khoảng **10×**), và giá cao hơn ~40–60%. Với **600 wps** của bài này thì độ trễ ghi hoàn toàn không thành vấn đề — nên **nếu bạn muốn bỏ event log và dùng Redis làm nguồn sự thật, MemoryDB là câu trả lời**. Chọn ElastiCache khi bạn đã có event log; chọn MemoryDB khi bạn muốn ít bộ phận chuyển động hơn |
-| Điểm số bền + hồ sơ người chơi | **DynamoDB** (PK = `SEASON#…#USER#…`), on-demand | `UpdateItem ... ADD score :delta` là atomic và không cần đọc trước — khớp hoàn hảo với ngữ nghĩa cộng điểm. Phân bố đều vì PK chứa `user_id`. ⚠️ Nếu dùng GSI với PK = mùa giải thì **hot partition** ngay: phải write-shard (§14.2) |
-| Truy vấn top-N thuần DynamoDB | **DynamoDB GSI** (`GSI-PK = SEASON#SHARD#n`, `GSI-SK = score`) | Query giảm dần + `Limit 10` trên mỗi shard rồi merge. ⚠️ GSI cập nhật **bất đồng bộ** (trễ vài chục–vài trăm ms) — chấp nhận được cho leaderboard, nhưng phải biết. ⚠️ GSI tiêu WCU **riêng** với bảng chính: mỗi lần điểm đổi là một lần ghi GSI nữa |
-| Cache top-N | **CloudFront**, `max-age=1, stale-while-revalidate=5, stale-if-error=300` | Giảm 170.000 rps xuống ~400 rps về origin (§11). `stale-if-error` là mảnh ghép sống còn: khi origin/Redis chết, CloudFront vẫn trả bản cũ 5 phút thay vì lỗi. ⚠️ Response cá nhân hoá ("hạng của tôi") phải là `private` — cấu hình sai là rò rỉ dữ liệu người dùng |
-| Ghi điểm (đường nóng) | **API Gateway (private/internal) → Lambda**, hoặc **ALB → ECS Fargate** | 600 wps là quá nhỏ để cần server thường trực → Lambda rất hợp. ⚠️ **Lambda trong VPC để gọi ElastiCache**: Hyperplane ENI đã làm cold start VPC gần như biến mất, nhưng vẫn phải quản lý **connection pool** — mỗi execution environment giữ một kết nối Redis, 1.000 concurrent Lambda = 1.000 kết nối. Redis chịu được, nhưng đặt `maxclients` cho đúng |
-| Đọc leaderboard | **API Gateway → Lambda** (hoặc ECS) | Nhờ cache, Lambda chỉ chạy ~400 lần/giây. ⚠️ Nếu bỏ cache, 170.000 concurrent Lambda vượt xa quota mặc định 1.000 — đây là ví dụ rõ nhất về việc cache không chỉ tiết kiệm tiền mà còn tránh chạm trần dịch vụ |
+| Sorted set leaderboard — **lựa chọn mặc định** | **ElastiCache for Redis/Valkey**, cluster mode **tắt**, 1 primary + 1–2 replica khác AZ | 25 triệu phần tử = 3,1 GB, vừa gọn một node `cache.r7g.xlarge` (~26 GB). Cluster mode tắt vì ta chỉ có **một key lớn** — bật cluster mode cũng chẳng chia được một key ra nhiều slot. Đặt `maxmemory-policy` = **`noeviction`**, không phải `allkeys-lru` mặc định của tư duy cache: leaderboard bị evict âm thầm là mất dữ liệu không có log |
+| Sorted set khi **không được phép mất dữ liệu** | **MemoryDB for Redis/Valkey** | Đây là điểm quan trọng nhất của bài trên AWS. MemoryDB có API Redis y hệt nhưng **ghi vào một nhật ký giao dịch phân tán đa AZ trước khi ACK** → **durability thật sự, mất dữ liệu bằng 0**, và failover **không mất ghi nào**. Cái giá: **ghi mất mili-giây một chữ số** thay vì micro-giây của ElastiCache (chậm hơn khoảng **10×**), và giá cao hơn ~40–60%. Với **600 wps** của bài này thì độ trễ ghi hoàn toàn không thành vấn đề — nên **nếu bạn muốn bỏ event log và dùng Redis làm nguồn sự thật, MemoryDB là câu trả lời**. Chọn ElastiCache khi bạn đã có event log; chọn MemoryDB khi bạn muốn ít bộ phận chuyển động hơn |
+| Điểm số bền + hồ sơ người chơi | **DynamoDB** (PK = `SEASON#…#USER#…`), on-demand | `UpdateItem ... ADD score :delta` là atomic và không cần đọc trước — khớp hoàn hảo với ngữ nghĩa cộng điểm. Phân bố đều vì PK chứa `user_id`. Nếu dùng GSI với PK = mùa giải thì **hot partition** ngay: phải write-shard (§14.2) |
+| Truy vấn top-N thuần DynamoDB | **DynamoDB GSI** (`GSI-PK = SEASON#SHARD#n`, `GSI-SK = score`) | Query giảm dần + `Limit 10` trên mỗi shard rồi merge. GSI cập nhật **bất đồng bộ** (trễ vài chục–vài trăm ms) — chấp nhận được cho leaderboard, nhưng phải biết. GSI tiêu WCU **riêng** với bảng chính: mỗi lần điểm đổi là một lần ghi GSI nữa |
+| Cache top-N | **CloudFront**, `max-age=1, stale-while-revalidate=5, stale-if-error=300` | Giảm 170.000 rps xuống ~400 rps về origin (§11). `stale-if-error` là mảnh ghép sống còn: khi origin/Redis chết, CloudFront vẫn trả bản cũ 5 phút thay vì lỗi. Response cá nhân hoá ("hạng của tôi") phải là `private` — cấu hình sai là rò rỉ dữ liệu người dùng |
+| Ghi điểm (đường nóng) | **API Gateway (private/internal) → Lambda**, hoặc **ALB → ECS Fargate** | 600 wps là quá nhỏ để cần server thường trực → Lambda rất hợp. **Lambda trong VPC để gọi ElastiCache**: Hyperplane ENI đã làm cold start VPC gần như biến mất, nhưng vẫn phải quản lý **connection pool** — mỗi execution environment giữ một kết nối Redis, 1.000 concurrent Lambda = 1.000 kết nối. Redis chịu được, nhưng đặt `maxclients` cho đúng |
+| Đọc leaderboard | **API Gateway → Lambda** (hoặc ECS) | Nhờ cache, Lambda chỉ chạy ~400 lần/giây. Nếu bỏ cache, 170.000 concurrent Lambda vượt xa quota mặc định 1.000 — đây là ví dụ rõ nhất về việc cache không chỉ tiết kiệm tiền mà còn tránh chạm trần dịch vụ |
 | Luồng sự kiện điểm (nguồn sự thật) | **Kinesis Data Streams** (on-demand), hoặc **MSK** nếu đã có Kafka | 600 rec/s × 200 B = 120 KB/s → **1 shard** là đủ (1 MB/s hoặc 1.000 rec/s mỗi shard); dùng 2 shard cho peak. Nhiều consumer độc lập: leaderboard, quest, chống gian lận, analytics. Giữ lại 7 ngày (tối đa 365) để phát lại |
-| Ghi điểm bất đồng bộ vào Redis | **Lambda consumer của Kinesis**, batch 500 record | Batch giúp gộp thành pipeline Redis → thông lượng gấp 10. ⚠️ Cấu hình `bisectBatchOnFunctionError` + DLQ, nếu không một record hỏng sẽ chặn cả shard vĩnh viễn (**poison pill**) |
+| Ghi điểm bất đồng bộ vào Redis | **Lambda consumer của Kinesis**, batch 500 record | Batch giúp gộp thành pipeline Redis → thông lượng gấp 10. Cấu hình `bisectBatchOnFunctionError` + DLQ, nếu không một record hỏng sẽ chặn cả shard vĩnh viễn (**poison pill**) |
 | Kho lạnh + lịch sử | **Kinesis Firehose → S3** (Parquet + Snappy, phân vùng `season=`) → **Athena** | 10 GB/ngày thô → ~2 GB Parquet. Athena tính tiền theo **byte quét** nên phân vùng và cột hoá là thứ quyết định hoá đơn. Tra hạng lịch sử = một query có predicate pushdown, ~2 giây, vài cent |
 | Snapshot để khôi phục nhanh | **Lambda/ECS job mỗi 10 phút → S3**; hoặc **MemoryDB snapshot** | Rút RTO từ 33 phút xuống 1 phút (§12.3). MemoryDB có snapshot tích hợp — thêm một lý do để chọn nó |
 | Chống gian lận (offline) | **Athena / EMR** trên S3, **SageMaker** cho mô hình phát hiện bất thường, **DynamoDB** cho danh sách chặn | Phát hiện win-trading cần phân tích đồ thị trên toàn bộ lịch sử — việc của batch, không phải đường nóng. Danh sách chặn phải đọc được với độ trễ thấp → DynamoDB + DAX |
-| Bảng theo quốc gia | Cùng cụm Redis, key riêng theo quốc gia | ⚠️ Trong Redis Cluster, nhiều key thuộc nhiều slot khác nhau thì **không dùng chung `MULTI` được**. Dùng **hash tag** `leaderboard:{2026-09}:country:VN` để ép cùng slot, hoặc bỏ atomicity và chấp nhận lệch tạm thời |
-| Quan sát hệ thống | **CloudWatch** metric của ElastiCache: `EngineCPUUtilization` (**không phải** `CPUUtilization`), `DatabaseMemoryUsagePercentage`, `Evictions`, `ReplicationLag`, `CurrConnections` | ⚠️ `CPUUtilization` là trung bình mọi core, nhưng Redis chỉ chạy lệnh trên **một** core — nó sẽ hiện 25% trong khi engine đã bão hoà 100%. **`EngineCPUUtilization` mới là chỉ số thật.** Cảnh báo `Evictions > 0` là cảnh báo P1: nó nghĩa là bạn đang **mất người chơi khỏi bảng** |
-| Đa vùng (nếu game toàn cầu) | **Global Datastore** cho ElastiCache, hoặc **DynamoDB Global Tables** | ⚠️ Global Datastore là nhân bản **một chiều** (một region ghi, các region kia chỉ đọc) — đủ cho leaderboard vì ghi ít và đọc nhiều, đọc cục bộ ở mỗi region là thắng lớn. Global Tables ghi nhiều region nhưng **last-writer-wins** sẽ làm hỏng phép cộng dồn điểm |
+| Bảng theo quốc gia | Cùng cụm Redis, key riêng theo quốc gia | Trong Redis Cluster, nhiều key thuộc nhiều slot khác nhau thì **không dùng chung `MULTI` được**. Dùng **hash tag** `leaderboard:{2026-09}:country:VN` để ép cùng slot, hoặc bỏ atomicity và chấp nhận lệch tạm thời |
+| Quan sát hệ thống | **CloudWatch** metric của ElastiCache: `EngineCPUUtilization` (**không phải** `CPUUtilization`), `DatabaseMemoryUsagePercentage`, `Evictions`, `ReplicationLag`, `CurrConnections` | `CPUUtilization` là trung bình mọi core, nhưng Redis chỉ chạy lệnh trên **một** core — nó sẽ hiện 25% trong khi engine đã bão hoà 100%. **`EngineCPUUtilization` mới là chỉ số thật.** Cảnh báo `Evictions > 0` là cảnh báo P1: nó nghĩa là bạn đang **mất người chơi khỏi bảng** |
+| Đa vùng (nếu game toàn cầu) | **Global Datastore** cho ElastiCache, hoặc **DynamoDB Global Tables** | Global Datastore là nhân bản **một chiều** (một region ghi, các region kia chỉ đọc) — đủ cho leaderboard vì ghi ít và đọc nhiều, đọc cục bộ ở mỗi region là thắng lớn. Global Tables ghi nhiều region nhưng **last-writer-wins** sẽ làm hỏng phép cộng dồn điểm |
 
 **Ba câu chốt đáng nhớ:**
 

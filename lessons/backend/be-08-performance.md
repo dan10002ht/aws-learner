@@ -4,7 +4,7 @@
 
 Tối ưu hiệu năng là kỹ năng phân biệt một mid-level developer với một Solutions Architect. Mid-level dev thấy chậm thì thêm cache, thêm index, đổi ngôn ngữ. Architect thì **đo trước, tìm bottleneck thật, rồi mới tối ưu đúng chỗ** — và biết khi nào *không* cần tối ưu.
 
-> 💡 Ghi nhớ: "Premature optimization is the root of all evil" (Knuth) không có nghĩa là bỏ qua hiệu năng — mà là **không tối ưu khi chưa có số liệu**. Câu đầy đủ của Knuth còn vế sau: "yet we should not pass up our opportunities in that critical 3%".
+> Ghi nhớ: "Premature optimization is the root of all evil" (Knuth) không có nghĩa là bỏ qua hiệu năng — mà là **không tối ưu khi chưa có số liệu**. Câu đầy đủ của Knuth còn vế sau: "yet we should not pass up our opportunities in that critical 3%".
 
 ## 1. Đo trước khi tối ưu: p50/p95/p99 và vì sao average nói dối
 
@@ -107,7 +107,7 @@ Average bị kéo lệch bởi outlier, và tệ hơn: nó **che giấu phân ph
   <text x="360" y="306" font-size="12" font-weight="700" text-anchor="middle" fill="#f59e0b">→ 63% request của user CHẠM tail (≥1 service chậm)</text>
 </svg>
 
-> ⚠️ Bẫy production: KHÔNG được lấy average của percentile từ nhiều server (`avg(p99 của 10 instance)` là con số vô nghĩa về mặt toán học). Percentile phải tính từ phân phối gộp — dùng histogram (HDR Histogram, t-digest) rồi merge, không merge percentile.
+> Bẫy production: KHÔNG được lấy average của percentile từ nhiều server (`avg(p99 của 10 instance)` là con số vô nghĩa về mặt toán học). Percentile phải tính từ phân phối gộp — dùng histogram (HDR Histogram, t-digest) rồi merge, không merge percentile.
 
 ### Kỹ thuật chống tail latency
 
@@ -168,7 +168,7 @@ Trước khi profile, hỏi: **hệ thống đang bound bởi cái gì?**
   </g>
 </svg>
 
-> 💡 Ghi nhớ: **On-CPU profiling** trả lời "CPU đang làm gì". **Off-CPU profiling** trả lời "thread đang *chờ* cái gì" (lock, disk, network). Hệ backend đa số là I/O-bound — nếu chỉ nhìn on-CPU flame graph, bạn sẽ tối ưu nhầm chỗ.
+> Ghi nhớ: **On-CPU profiling** trả lời "CPU đang làm gì". **Off-CPU profiling** trả lời "thread đang *chờ* cái gì" (lock, disk, network). Hệ backend đa số là I/O-bound — nếu chỉ nhìn on-CPU flame graph, bạn sẽ tối ưu nhầm chỗ.
 
 ### Continuous profiling
 
@@ -197,7 +197,7 @@ items = db.query("SELECT * FROM items WHERE order_id IN (...)", [o.id for o in o
 
 N+1 không chỉ ở DB. Microservice gọi nhau trong vòng lặp là N+1 qua network — đắt gấp 10-100 lần. Nguyên tắc: **API nhận và trả batch** (`GET /users?ids=1,2,3` thay vì gọi `GET /users/{id}` N lần).
 
-> ⚠️ Bẫy production: ORM với lazy loading mặc định (Hibernate, SQLAlchemy, Prisma include lồng nhau) là nguồn N+1 phổ biến nhất. Nó **chạy ổn ở dev** (10 bản ghi) và **chết ở production** (10.000 bản ghi). Bật log SQL ở môi trường staging và đếm số query mỗi request — đó là một test đáng viết.
+> Bẫy production: ORM với lazy loading mặc định (Hibernate, SQLAlchemy, Prisma include lồng nhau) là nguồn N+1 phổ biến nhất. Nó **chạy ổn ở dev** (10 bản ghi) và **chết ở production** (10.000 bản ghi). Bật log SQL ở môi trường staging và đếm số query mỗi request — đó là một test đáng viết.
 
 ## 4. Connection pool sizing — Little's Law
 
@@ -244,7 +244,7 @@ Ví dụ: 500 req/s, mỗi request giữ DB connection 20ms → L = 500 × 0.02 
   <g font-size="10.5" font-weight="600" text-anchor="middle">
     <rect x="380" y="170" width="300" height="120" rx="9" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="530" y="190" font-size="11" fill="currentColor">50 instance × pool 20</text>
-    <text x="530" y="236" font-size="16" font-weight="700" fill="#f59e0b">= 1000 connection 💥</text>
+    <text x="530" y="236" font-size="16" font-weight="700" fill="#f59e0b">= 1000 connection </text>
     <text x="530" y="268" font-size="9.5" fill="currentColor" opacity="0.75">DB quá tải → cần PgBouncer / RDS Proxy</text>
   </g>
 </svg>
@@ -259,9 +259,9 @@ pool_size ≈ cores × 2 + số_disk_spindle
 
 Pool quá to → context switch, lock contention trong DB, mỗi connection Postgres tốn vài MB RAM → **tổng throughput giảm**. Pool quá nhỏ → request xếp hàng chờ connection (nhưng xếp hàng ở app rẻ hơn nghẽn ở DB).
 
-> 💡 Ghi nhớ: Khi DB quá tải, **giảm** pool size thường giúp throughput tăng. Hàng đợi nên nằm ở tầng app (rẻ, kiểm soát được, timeout được) chứ không phải trong DB.
+> Ghi nhớ: Khi DB quá tải, **giảm** pool size thường giúp throughput tăng. Hàng đợi nên nằm ở tầng app (rẻ, kiểm soát được, timeout được) chứ không phải trong DB.
 
-> ⚠️ Bẫy production: Tổng pool = pool_size × số instance app. Autoscale app từ 10 lên 50 instance với pool 20 mỗi instance = 1000 connection đè lên DB → cần connection proxy (PgBouncer/RDS Proxy).
+> Bẫy production: Tổng pool = pool_size × số instance app. Autoscale app từ 10 lên 50 instance với pool 20 mỗi instance = 1000 connection đè lên DB → cần connection proxy (PgBouncer/RDS Proxy).
 
 ## 5. Serialization cost — chi phí vô hình
 
@@ -316,7 +316,7 @@ for chunk in db.cursor("SELECT * FROM events", chunk_size=5000):
 | Điểm chết | Hết thread khi I/O chậm | **Một đoạn CPU-bound block cả event loop** |
 | CPU-bound | OK (nhiều thread, nhiều core) | Phải đẩy sang worker pool/process |
 
-> ⚠️ Bẫy production: Trong Node.js/Python asyncio, một hàm sync chậm (parse JSON 50MB, bcrypt, gọi thư viện blocking) sẽ **đóng băng mọi request đang phục vụ** trên event loop đó. Triệu chứng: p99 tăng vọt toàn bộ endpoint dù chỉ một endpoint có lỗi. Theo dõi event loop lag như một metric hạng nhất.
+> Bẫy production: Trong Node.js/Python asyncio, một hàm sync chậm (parse JSON 50MB, bcrypt, gọi thư viện blocking) sẽ **đóng băng mọi request đang phục vụ** trên event loop đó. Triệu chứng: p99 tăng vọt toàn bộ endpoint dù chỉ một endpoint có lỗi. Theo dõi event loop lag như một metric hạng nhất.
 
 Lưu ý 2025: virtual threads (Java 21+ Loom), goroutine (Go) cho mô hình lập trình sync với chi phí gần như async — xu hướng là runtime lo việc này thay developer. Async/await tường minh vẫn thống trị ở Python/TypeScript/Rust.
 
@@ -388,7 +388,7 @@ User thật là **open-loop**: họ đến theo nhịp của họ, không chờ 
   <text x="360" y="307" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">→ p99 THẬT (hàng trăm request xếp hàng đều chậm)</text>
 </svg>
 
-> 💡 Ghi nhớ: Nếu kết quả load test cho p99 thấp đáng ngờ trong khi production kêu ca, nghi ngờ coordinated omission đầu tiên.
+> Ghi nhớ: Nếu kết quả load test cho p99 thấp đáng ngờ trong khi production kêu ca, nghi ngờ coordinated omission đầu tiên.
 
 ## 9. Capacity planning cơ bản
 
@@ -399,7 +399,7 @@ Quy trình 4 bước:
 3. **Headroom**: chạy ở ~50-70% công suất tại peak. Trên 70-80% utilization, queueing theory cho thấy latency tăng phi tuyến (W ~ 1/(1−ρ)) — hệ thống 90% utilization không còn buffer cho spike hay mất một AZ.
 4. **Tìm bottleneck kế tiếp**: scale app gấp đôi thì DB, cache, downstream API có chịu nổi không? Capacity planning là bài toán **chuỗi**, mắt xích yếu nhất quyết định.
 
-> ⚠️ Bẫy production: Autoscaling không thay thế capacity planning — scale-out mất 1-5 phút (boot, warmup, health check), trong khi spike đến trong giây. Cần đủ headroom để *sống sót đến khi* autoscale kịp, và DB thường không autoscale theo app.
+> Bẫy production: Autoscaling không thay thế capacity planning — scale-out mất 1-5 phút (boot, warmup, health check), trong khi spike đến trong giây. Cần đủ headroom để *sống sót đến khi* autoscale kịp, và DB thường không autoscale theo app.
 
 ## Liên hệ sang AWS
 

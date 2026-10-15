@@ -13,7 +13,7 @@ Khi app đạt được điều đó, bạn "mua được" các năng lực sau 
 - **Self-healing**: orchestrator (ECS, Kubernetes) giết instance lỗi và thay bằng instance mới mà không cần con người.
 - **Spot/preemptible instances**: chạy trên hạ tầng rẻ hơn 70% vì app chịu được việc bị tắt đột ngột.
 
-> 💡 **Ghi nhớ**: 12-Factor không phải checklist tôn giáo. Nó là *tập hợp các điều kiện cần* để orchestrator có thể quản lý app thay bạn. Vi phạm factor nào, bạn mất năng lực tương ứng.
+> **Ghi nhớ**: 12-Factor không phải checklist tôn giáo. Nó là *tập hợp các điều kiện cần* để orchestrator có thể quản lý app thay bạn. Vi phạm factor nào, bạn mất năng lực tương ứng.
 
 ## 2. Các factor quan trọng nhất — diễn giải 2025-2026
 
@@ -24,10 +24,10 @@ Không đi đều 12 mục — ta đào sâu những mục hay bị làm sai ở
 Nguyên tắc gốc: **config là thứ thay đổi giữa các môi trường** (DB host, API endpoint, log level), và phải tách khỏi code. Cách kiểm tra nhanh: *"Có thể open-source repo này ngay bây giờ mà không lộ credential nào không?"*
 
 ```typescript
-// ❌ Config trong code — đổi môi trường là phải rebuild
+// ✗ Config trong code — đổi môi trường là phải rebuild
 const dbHost = env === "prod" ? "prod-db.internal" : "localhost";
 
-// ✅ Config từ môi trường — cùng một image chạy mọi nơi
+// ✓ Config từ môi trường — cùng một image chạy mọi nơi
 const dbHost = process.env.DB_HOST;
 ```
 
@@ -59,13 +59,13 @@ Vì sao? Hãy theo dấu một bug kinh điển:
 6. Đội ơi-cứu-tôi bật sticky session trên LB → deploy mới giết instance A → toàn bộ user trên A văng.
 ```
 
-> ⚠️ **Bẫy production**: sticky session là thuốc giảm đau, không phải thuốc chữa. Nó phá luôn khả năng rolling deploy và autoscaling — instance "dính" nhiều user không thể giết để thay thế. Chuyển session sang Redis/DynamoDB (hoặc dùng JWT stateless) rồi tắt sticky session đi.
+> **Bẫy production**: sticky session là thuốc giảm đau, không phải thuốc chữa. Nó phá luôn khả năng rolling deploy và autoscaling — instance "dính" nhiều user không thể giết để thay thế. Chuyển session sang Redis/DynamoDB (hoặc dùng JWT stateless) rồi tắt sticky session đi.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Bug stateless: session trong RAM một instance so với session dùng chung qua Redis/DynamoDB</title>
   <desc>Bên trái: session lưu trong RAM của một instance, scale lên 3 instance sau load balancer khiến request rơi vào instance khác không có session nên user bị đá. Bên phải: session đẩy ra Redis/DynamoDB dùng chung nên instance nào cũng đọc được.</desc>
-  <text x="180" y="24" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">❌ Session trong RAM (vỡ khi scale)</text>
-  <text x="540" y="24" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">✅ Session dùng chung</text>
+  <text x="180" y="24" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">✗ Session trong RAM (vỡ khi scale)</text>
+  <text x="540" y="24" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">✓ Session dùng chung</text>
   <line x1="360" y1="36" x2="360" y2="344" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
   <g>
     <rect x="150" y="44" width="60" height="30" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
@@ -136,7 +136,7 @@ Khoảng cách giữa dev và prod càng lớn, bug "chỉ xảy ra trên prod" 
 - **Personnel gap**: người viết code tham gia deploy và vận hành nó ("you build it, you run it").
 - **Tools gap**: dev dùng SQLite, prod dùng Postgres? Khác biệt về locking, transaction isolation, kiểu dữ liệu sẽ cắn bạn. Năm 2025, Docker Compose + testcontainers khiến việc chạy đúng Postgres/Redis/Kafka thật ở local gần như miễn phí — không còn lý do để dùng đồ giả.
 
-> ⚠️ **Bẫy production**: mock backing service trong integration test (vd: mock S3 bằng dict) là dạng tools gap tinh vi. Bug về pagination, eventual consistency, hay size limit của service thật sẽ không bao giờ lộ ra ở CI. Dùng testcontainers/LocalStack cho integration test.
+> **Bẫy production**: mock backing service trong integration test (vd: mock S3 bằng dict) là dạng tools gap tinh vi. Bug về pagination, eventual consistency, hay size limit của service thật sẽ không bao giờ lộ ra ở CI. Dùng testcontainers/LocalStack cho integration test.
 
 ### 2.6. Logs là event stream — đừng tự quản lý file log
 
@@ -156,7 +156,7 @@ logger.info("order_created", extra={
 # → {"level":"info","msg":"order_created","order_id":"o_123",...}
 ```
 
-> 💡 **Ghi nhớ**: log dạng text cho người đọc, log dạng JSON cho máy query. Ở production có hàng triệu dòng/giờ — không ai "đọc" log nữa, người ta *query* log. Hãy ghi cho máy.
+> **Ghi nhớ**: log dạng text cho người đọc, log dạng JSON cho máy query. Ở production có hàng triệu dòng/giờ — không ai "đọc" log nữa, người ta *query* log. Hãy ghi cho máy.
 
 ### 2.7. Build, release, run — một artifact, nhiều môi trường
 
@@ -238,7 +238,7 @@ Lợi ích so với nhét password vào env:
 - **Audit**: mọi lần đọc secret có log — ai, lúc nào, từ đâu.
 - **Blast radius nhỏ**: `docker inspect`, crash dump, `/proc/environ` không còn lộ gì ngoài một cái ARN vô hại.
 
-> ⚠️ **Bẫy production**: rotate DB password trong khi connection pool đang giữ password cũ → fleet đồng loạt auth fail. Hai cách né: (1) rotation kiểu **two-user** (xoay xen kẽ 2 user, luôn có 1 user còn hiệu lực); (2) bắt auth error → refresh secret → reconnect, thay vì crash.
+> **Bẫy production**: rotate DB password trong khi connection pool đang giữ password cũ → fleet đồng loạt auth fail. Hai cách né: (1) rotation kiểu **two-user** (xoay xen kẽ 2 user, luôn có 1 user còn hiệu lực); (2) bắt auth error → refresh secret → reconnect, thay vì crash.
 
 ## 4. Feature flags — config thay đổi *trong lúc app đang chạy*
 
@@ -259,7 +259,7 @@ if (await flags.isEnabled("new-checkout", { userId, country })) {
 return legacyCheckoutFlow(cart);
 ```
 
-> ⚠️ **Bẫy production**: flag là **nợ kỹ thuật có lãi suất**. Mỗi flag nhân đôi số đường chạy của code; 10 flag chồng nhau = 1024 tổ hợp không ai test hết. Quy ước bắt buộc: mỗi flag có owner + ngày hết hạn; flag đã bật 100% quá 2 sprint thì xoá code nhánh cũ. Sự cố Knight Capital 2012 (mất 440 triệu USD trong 45 phút) có nguyên nhân gốc là code chết bị flag cũ kích hoạt lại.
+> **Bẫy production**: flag là **nợ kỹ thuật có lãi suất**. Mỗi flag nhân đôi số đường chạy của code; 10 flag chồng nhau = 1024 tổ hợp không ai test hết. Quy ước bắt buộc: mỗi flag có owner + ngày hết hạn; flag đã bật 100% quá 2 sprint thì xoá code nhánh cũ. Sự cố Knight Capital 2012 (mất 440 triệu USD trong 45 phút) có nguyên nhân gốc là code chết bị flag cũ kích hoạt lại.
 
 ## 5. Graceful shutdown — SIGTERM và nghệ thuật chết tử tế
 
@@ -324,7 +324,7 @@ process.on("SIGTERM", async () => {
   <text x="610" y="280" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">app chết sạch sẽ,</text>
   <text x="610" y="292" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">không request nào trả lỗi</text>
   <line x1="110" y1="162" x2="110" y2="348" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="2 3"/>
-  <text x="120" y="324" font-size="10" fill="currentColor" opacity="0.75">⏱ chờ grace period (ECS stopTimeout)</text>
+  <text x="120" y="324" font-size="10" fill="currentColor" opacity="0.75">chờ grace period (ECS stopTimeout)</text>
   <path d="M606 310 L114 338" stroke="#10b981" stroke-opacity="0.8" fill="none" marker-end="url(#gs-arrow)"/>
   <text x="362" y="306" font-size="10.5" text-anchor="middle" fill="currentColor">exit 0 trước hạn → orchestrator thay instance</text>
   <line x1="40" y1="360" x2="700" y2="360" stroke="currentColor" stroke-opacity="0.2"/>
@@ -341,7 +341,7 @@ Ba lỗi kinh điển:
 2. **PID 1 problem trong Docker**: viết `CMD npm start` → PID 1 là `npm`/`sh`, nó **không forward SIGTERM** cho node. App không bao giờ nhận được tín hiệu, đứng đợi đủ grace period rồi ăn SIGKILL. Fix: dùng exec form `CMD ["node", "server.js"]` hoặc init nhỏ như `tini`.
 3. **Race giữa LB và app**: deregistration là eventual — vài giây sau SIGTERM, LB *vẫn có thể* đẩy request tới. Best practice: nhận SIGTERM xong **đợi vài giây** (sleep 5-10s) rồi mới đóng listener, để chắc chắn LB đã ngừng gửi.
 
-> 💡 **Ghi nhớ**: graceful shutdown là hợp đồng 3 bên — LB ngừng gửi, app drain xong việc, orchestrator chờ đủ lâu. Sai một bên là user thấy lỗi. Grace period phải > thời gian request dài nhất + deregistration delay.
+> **Ghi nhớ**: graceful shutdown là hợp đồng 3 bên — LB ngừng gửi, app drain xong việc, orchestrator chờ đủ lâu. Sai một bên là user thấy lỗi. Grace period phải > thời gian request dài nhất + deregistration delay.
 
 ## 6. Health endpoint — liveness ≠ readiness
 
@@ -396,7 +396,7 @@ Quy tắc: liveness chỉ kiểm tra *bản thân process*; sự cố dependency
   <text x="609" y="197" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">KHÔNG restart — chờ hồi phục</text>
   <text x="360" y="125" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.6">≠</text>
   <line x1="16" y1="226" x2="704" y2="226" stroke="currentColor" stroke-opacity="0.18"/>
-  <text x="20" y="248" font-size="12" font-weight="700" fill="currentColor">⚠ Cảnh báo: nhét DB-check vào liveness → cascading restart</text>
+  <text x="20" y="248" font-size="12" font-weight="700" fill="currentColor">Cảnh báo: nhét DB-check vào liveness → cascading restart</text>
   <rect x="20" y="258" width="118" height="80" rx="8" fill="#ef4444" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
   <text x="79" y="277" font-size="10" text-anchor="middle" fill="currentColor">DB quá tải 30s</text>
   <text x="79" y="295" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">liveness check DB</text>
@@ -444,7 +444,7 @@ Hệ quả tổng hợp của factor "build-release-run" + "config": **một art
 - **Frontend SPA** (chỗ hay bị sai): `VITE_API_URL`/`NEXT_PUBLIC_*` bị nướng vào bundle **lúc build** → mỗi môi trường một bundle khác nhau. Cách sửa: serve một file `/config.json` (hoặc inject `window.__CONFIG__` lúc container khởi động) để cùng một bundle chạy mọi môi trường.
 - **Config động sau khi khởi động**: dùng dịch vụ config chuyên dụng (AWS AppConfig, LaunchDarkly...) có poll/push + validation + rollout dần — không bao giờ tự chế kiểu "app poll file trên S3 rồi tự parse" thiếu validation: một lần đẩy config sai cú pháp là cả fleet ăn config hỏng cùng lúc.
 
-> 💡 **Ghi nhớ**: câu hỏi kiểm tra nhanh độ trưởng thành của hệ thống: *"Đổi log level trên production mất bao lâu và có cần deploy không?"* Câu trả lời tốt: vài giây, không deploy, có rollout dần và rollback tự động.
+> **Ghi nhớ**: câu hỏi kiểm tra nhanh độ trưởng thành của hệ thống: *"Đổi log level trên production mất bao lâu và có cần deploy không?"* Câu trả lời tốt: vài giây, không deploy, có rollout dần và rollback tự động.
 
 ## 8. Những factor còn lại — điểm nhanh
 

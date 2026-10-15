@@ -94,7 +94,7 @@ Khác biệt nhỏ giữa các ngôn ngữ: Python dùng từ khoá `def`, JavaS
 
 Giờ muốn đổi câu chúc? Sửa **đúng 1 dòng** bên trong hàm. Đó là sức mạnh của DRY.
 
-> 💡 **Ghi nhớ:** Định nghĩa hàm giống như viết công thức nấu ăn — viết xong chưa có gì xảy ra cả. Phải **gọi hàm** (viết tên hàm kèm dấu ngoặc, ví dụ `chao("An")`) thì code bên trong mới thực sự chạy.
+> **Ghi nhớ:** Định nghĩa hàm giống như viết công thức nấu ăn — viết xong chưa có gì xảy ra cả. Phải **gọi hàm** (viết tên hàm kèm dấu ngoặc, ví dụ `chao("An")`) thì code bên trong mới thực sự chạy.
 
 ## 2. Tham số: "nguyên liệu" đưa vào hàm
 
@@ -144,7 +144,7 @@ void tinhTien(int donGia, int soLuong) {
 tinhTien(30000, 2);   // in ra 60000
 ```
 
-> ⚠️ **Lỗi người mới hay gặp:** Truyền đối số **sai thứ tự**. Nếu gọi `tinhTien(2, 30000)` thì kết quả nhân vẫn đúng (vì phép nhân giao hoán), nhưng với hàm kiểu `chuyenTien(nguoiGui, nguoiNhan)` mà đảo thứ tự thì... tiền đi nhầm người! Thứ tự đối số phải khớp đúng thứ tự tham số.
+> **Lỗi người mới hay gặp:** Truyền đối số **sai thứ tự**. Nếu gọi `tinhTien(2, 30000)` thì kết quả nhân vẫn đúng (vì phép nhân giao hoán), nhưng với hàm kiểu `chuyenTien(nguoiGui, nguoiNhan)` mà đảo thứ tự thì... tiền đi nhầm người! Thứ tự đối số phải khớp đúng thứ tự tham số.
 
 ## 3. Giá trị trả về: hàm "đưa lại" kết quả
 
@@ -243,7 +243,7 @@ Hai điều quan trọng về `return`:
 1. **`return` kết thúc hàm ngay lập tức.** Code đứng sau dòng `return` (trong cùng nhánh) sẽ không bao giờ chạy.
 2. **In ra (`print`) khác với trả về (`return`).** `print` chỉ hiện chữ cho con người xem; `return` đưa giá trị cho chương trình dùng tiếp.
 
-> ⚠️ **Lỗi người mới hay gặp:** Viết hàm dùng `print` thay vì `return`, rồi thắc mắc tại sao `tong = tinhTien(...) + 5` ra kết quả lạ (ở Python là lỗi vì hàm trả về `None`, ở JavaScript ra `NaN`). Quy tắc: nếu kết quả cần được **dùng tiếp**, hãy `return`; chỉ `print` khi mục đích duy nhất là hiển thị.
+> **Lỗi người mới hay gặp:** Viết hàm dùng `print` thay vì `return`, rồi thắc mắc tại sao `tong = tinhTien(...) + 5` ra kết quả lạ (ở Python là lỗi vì hàm trả về `None`, ở JavaScript ra `NaN`). Quy tắc: nếu kết quả cần được **dùng tiếp**, hãy `return`; chỉ `print` khi mục đích duy nhất là hiển thị.
 
 ## 4. Scope: biến "sống" ở đâu?
 
@@ -327,7 +327,7 @@ Vậy tại sao không cho mọi biến ra "sảnh chung" cho tiện? Vì khi ch
   <text x="360" y="285" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.72">Hai phòng có thể trùng tên biến mà không "đụng hàng" — như hai phòng đều có ghế tên "ghế của tôi".</text>
 </svg>
 
-> 💡 **Ghi nhớ:** Cách trao đổi dữ liệu lành mạnh giữa các hàm là: đưa vào qua **tham số**, lấy ra qua **giá trị trả về**. Hạn chế tối đa biến toàn cục — chương trình của bạn sẽ dễ hiểu và dễ sửa hơn rất nhiều.
+> **Ghi nhớ:** Cách trao đổi dữ liệu lành mạnh giữa các hàm là: đưa vào qua **tham số**, lấy ra qua **giá trị trả về**. Hạn chế tối đa biến toàn cục — chương trình của bạn sẽ dễ hiểu và dễ sửa hơn rất nhiều.
 
 Một điểm hay nữa: tham số cũng là biến cục bộ. Hai hàm khác nhau có thể cùng đặt tên tham số là `x` mà không hề "đụng hàng", giống như hai căn phòng đều có thể có một chiếc ghế tên "ghế của tôi".
 
@@ -454,7 +454,7 @@ Hãy để ý `tinhHoaDon` đọc lên **gần như văn xuôi**: tính tiền h
   <text x="360" y="252" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.78">Mỗi hàm nhỏ làm một việc; ghép lại thành hàm lớn — xây tháp từ những viên gạch.</text>
 </svg>
 
-> 💡 **Ghi nhớ:** Một hàm tốt làm **một việc duy nhất** và làm tốt việc đó. Nếu bạn phải dùng chữ "và" để mô tả hàm ("hàm này tính tiền *và* gửi email *và* in hoá đơn") — đó là dấu hiệu nên tách thành nhiều hàm.
+> **Ghi nhớ:** Một hàm tốt làm **một việc duy nhất** và làm tốt việc đó. Nếu bạn phải dùng chữ "và" để mô tả hàm ("hàm này tính tiền *và* gửi email *và* in hoá đơn") — đó là dấu hiệu nên tách thành nhiều hàm.
 
 ## 6. Đặt tên hàm: viết cho người đọc
 
@@ -462,7 +462,7 @@ Máy tính không quan tâm bạn đặt tên hàm là gì — `xyz()` hay `tinh
 
 Vài quy tắc vàng:
 
-| Quy tắc | Tên tệ ❌ | Tên tốt ✅ |
+| Quy tắc | Tên tệ ✗ | Tên tốt ✓ |
 |---|---|---|
 | Bắt đầu bằng động từ (hàm là hành động) | `thue()` | `tinhThue()` |
 | Nói rõ làm gì, không mơ hồ | `xuLy()`, `lam1()` | `guiEmailXacNhan()` |
@@ -476,7 +476,7 @@ Về **kiểu viết tên**, mỗi ngôn ngữ có thông lệ riêng (không b�
 - **JavaScript, Java, Go**: `camelCase` — viết hoa chữ đầu mỗi từ từ từ thứ hai: `tinhHoaDon`
 - **Go** có thêm quy tắc đặc biệt: hàm viết hoa chữ cái đầu (`TinhHoaDon`) sẽ được "xuất khẩu" cho package khác dùng; viết thường thì chỉ dùng nội bộ.
 
-> ⚠️ **Lỗi người mới hay gặp:** Đặt tên kiểu `ham1`, `ham2`, `test`, `abc` vì "để sau đổi". Sự thật là chẳng ai quay lại đổi cả, và 2 tuần sau chính bạn cũng không nhớ `ham2` làm gì. Dành 30 giây nghĩ tên tốt ngay từ đầu — đó là khoản đầu tư lãi nhất trong lập trình.
+> **Lỗi người mới hay gặp:** Đặt tên kiểu `ham1`, `ham2`, `test`, `abc` vì "để sau đổi". Sự thật là chẳng ai quay lại đổi cả, và 2 tuần sau chính bạn cũng không nhớ `ham2` làm gì. Dành 30 giây nghĩ tên tốt ngay từ đầu — đó là khoản đầu tư lãi nhất trong lập trình.
 
 ## 7. Thực hành: refactor code lặp thành hàm
 
@@ -669,7 +669,7 @@ baoCao("Bình", 6, 9, 10);
 
 Thêm học sinh thứ 100? Chỉ cần thêm **1 dòng** `baoCao(...)`. Muốn đổi tiêu chuẩn "Giỏi" từ 8 xuống 7.5? Sửa **1 con số** trong `xepLoai`. So với bản copy — dán phải sửa hàng trăm chỗ, bạn vừa tận mắt thấy DRY đáng giá thế nào.
 
-> 💡 **Ghi nhớ — quy tắc số 3:** Lặp code lần thứ nhất: chấp nhận được. Lần thứ hai: bắt đầu khó chịu. Đến lần thứ ba: dừng lại và refactor thành hàm. Đừng đợi đến lần thứ ba mươi.
+> **Ghi nhớ — quy tắc số 3:** Lặp code lần thứ nhất: chấp nhận được. Lần thứ hai: bắt đầu khó chịu. Đến lần thứ ba: dừng lại và refactor thành hàm. Đừng đợi đến lần thứ ba mươi.
 
 ## Tóm tắt
 

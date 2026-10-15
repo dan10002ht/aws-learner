@@ -4,7 +4,7 @@ LLM rất giỏi ngôn ngữ nhưng nó chỉ "biết" những gì có trong tra
 
 **RAG** là pattern phổ biến nhất 2025 để giải quyết việc này: trước khi gọi LLM, ta **đi tìm (retrieve)** đoạn dữ liệu liên quan từ kho riêng, **nhét (augment)** vào prompt làm bối cảnh, rồi mới để model **sinh (generate)** câu trả lời dựa trên đó.
 
-> 💡 Ghi nhớ: RAG không "dạy" model kiến thức mới. Nó chỉ đưa đúng tài liệu vào context window ngay lúc hỏi. Model vẫn là model cũ — chỉ là nó đang đọc tài liệu bạn đưa.
+> Ghi nhớ: RAG không "dạy" model kiến thức mới. Nó chỉ đưa đúng tài liệu vào context window ngay lúc hỏi. Model vẫn là model cũ — chỉ là nó đang đọc tài liệu bạn đưa.
 
 ---
 
@@ -146,7 +146,7 @@ resp = embeddings.create(model="embed-model", input=chunk)
 vector = resp.data[0].embedding   # ví dụ [0.013, -0.221, ...] dài 1024
 ```
 
-> ⚠️ Bẫy: phải dùng **đúng cùng một embedding model** cho lúc index và lúc query. Đổi model là phải re-embed lại toàn bộ kho, nếu không vector query và vector trong DB nằm ở "hai không gian khác nhau" và similarity vô nghĩa.
+> Bẫy: phải dùng **đúng cùng một embedding model** cho lúc index và lúc query. Đổi model là phải re-embed lại toàn bộ kho, nếu không vector query và vector trong DB nằm ở "hai không gian khác nhau" và similarity vô nghĩa.
 
 ### 3. Vector DB — lưu và tìm theo độ giống
 
@@ -171,7 +171,7 @@ hits = db.query(vector=q_vec, top_k=20,
                 filter={"team": user.team})   # metadata filter: chỉ tài liệu user được xem
 ```
 
-> 💡 Ghi nhớ: `metadata filter` cực kỳ quan trọng cho bảo mật. Đừng để user A hỏi rồi nhận về chunk thuộc tài liệu mật của team khác. Lọc quyền **trước hoặc trong** lúc retrieve.
+> Ghi nhớ: `metadata filter` cực kỳ quan trọng cho bảo mật. Đừng để user A hỏi rồi nhận về chunk thuộc tài liệu mật của team khác. Lọc quyền **trước hoặc trong** lúc retrieve.
 
 ### 5. Re-rank — tinh lọc lại
 
@@ -220,9 +220,9 @@ Câu chỉ thị "nếu không có thì nói không biết" là tuyến phòng t
 
 **Overlap** (chunk sau chồng lấn chunk trước ~10–20%) giúp tránh việc một câu/ý quan trọng bị cắt đúng ranh giới hai chunk và mất hẳn.
 
-> 💡 Ghi nhớ: Không có con số vàng. Điểm khởi đầu hợp lý: **chunk 500–800 token, overlap 10–15%**, rồi đo bằng eval (xem dưới) và điều chỉnh theo dữ liệu thật của bạn.
+> Ghi nhớ: Không có con số vàng. Điểm khởi đầu hợp lý: **chunk 500–800 token, overlap 10–15%**, rồi đo bằng eval (xem dưới) và điều chỉnh theo dữ liệu thật của bạn.
 
-> ⚠️ Bẫy: chunk quá lớn để "cho chắc" thường phản tác dụng. Context dài làm model bị nhiễu (lost-in-the-middle: model hay bỏ sót thông tin ở giữa context dài) và tốn tiền token.
+> Bẫy: chunk quá lớn để "cho chắc" thường phản tác dụng. Context dài làm model bị nhiễu (lost-in-the-middle: model hay bỏ sót thông tin ở giữa context dài) và tốn tiền token.
 
 ---
 
@@ -318,7 +318,7 @@ score = judge_llm.generate(judge_prompt)
 
 Quy trình thực tế: dựng một **golden set** vài chục cặp (câu hỏi → câu trả lời/chunk đúng), chạy eval mỗi lần đổi tham số. Framework hay dùng: Ragas, DeepEval.
 
-> ⚠️ Bẫy: đừng đánh giá RAG bằng cảm tính trên 3-4 câu hỏi tự nghĩ. Bạn sẽ tối ưu cho 3 câu đó mà hỏng phần còn lại. Có golden set + số liệu mới đi xa được.
+> Bẫy: đừng đánh giá RAG bằng cảm tính trên 3-4 câu hỏi tự nghĩ. Bạn sẽ tối ưu cho 3 câu đó mà hỏng phần còn lại. Có golden set + số liệu mới đi xa được.
 
 ---
 
@@ -334,7 +334,7 @@ Câu hỏi sai là "RAG hay fine-tune". Chúng giải quyết việc **khác nha
 | Model học một **kỹ năng/định dạng** khó tả bằng prompt | Fine-tune |
 | Kiến thức **ổn định**, không đổi, latency phải thấp tối đa | Fine-tune (hoặc cả hai) |
 
-> 💡 Ghi nhớ: Mặc định **bắt đầu bằng RAG**. Nó rẻ, cập nhật tức thì, dễ debug và có nguồn. Chỉ fine-tune khi bạn cần thay đổi *hành vi* mà prompt + RAG không làm được. Nhiều hệ thống tốt nhất = fine-tune giọng/format **cộng** RAG cho kiến thức.
+> Ghi nhớ: Mặc định **bắt đầu bằng RAG**. Nó rẻ, cập nhật tức thì, dễ debug và có nguồn. Chỉ fine-tune khi bạn cần thay đổi *hành vi* mà prompt + RAG không làm được. Nhiều hệ thống tốt nhất = fine-tune giọng/format **cộng** RAG cho kiến thức.
 
 ---
 
@@ -359,4 +359,4 @@ Trên AWS bạn có thể tự ráp pipeline hoặc dùng dịch vụ quản lý
 - **Amazon Q Business**: trợ lý RAG "đóng hộp" cấp doanh nghiệp — kết nối thẳng vào S3, SharePoint, Confluence, Slack... có sẵn kiểm soát quyền truy cập theo người dùng. Ít code nhất, hợp khi cần chatbot trên kho tài liệu nội bộ.
 - **Amazon SageMaker**: dùng khi bạn cần **fine-tune** model hoặc host embedding/re-rank model riêng — tức nhánh "fine-tune" trong bảng so sánh ở trên.
 
-> 💡 Ghi nhớ: lộ trình thực dụng trên AWS — bắt đầu với **Bedrock Knowledge Bases** (hoặc **Amazon Q Business** nếu cần ít code), dùng **OpenSearch** làm vector store khi cần kiểm soát sâu hybrid search và re-rank, chỉ chạm tới **SageMaker** khi bài toán buộc phải fine-tune.
+> Ghi nhớ: lộ trình thực dụng trên AWS — bắt đầu với **Bedrock Knowledge Bases** (hoặc **Amazon Q Business** nếu cần ít code), dùng **OpenSearch** làm vector store khi cần kiểm soát sâu hybrid search và re-rank, chỉ chạm tới **SageMaker** khi bài toán buộc phải fine-tune.

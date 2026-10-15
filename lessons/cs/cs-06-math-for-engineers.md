@@ -32,7 +32,7 @@ if (loggedIn && verified) allow();
 Giờ cần nhánh "chặn" — nhiều người viết vội:
 
 ```js
-if (!loggedIn && !verified) block();   // ❌ SAI
+if (!loggedIn && !verified) block();   // ✗ SAI
 ```
 
 Điều kiện chặn đúng là phủ định của điều kiện cho phép. Theo De Morgan:
@@ -42,12 +42,12 @@ if (!loggedIn && !verified) block();   // ❌ SAI
 ```
 
 ```js
-if (!loggedIn || !verified) block();   // ✅ chặn nếu THIẾU bất kỳ điều kiện nào
+if (!loggedIn || !verified) block();   // ✓ chặn nếu THIẾU bất kỳ điều kiện nào
 ```
 
 Cách viết sai chỉ chặn khi **cả hai** đều thiếu — nghĩa là một user đã đăng nhập nhưng chưa verify vẫn lọt qua. Đây là dạng lỗ hổng phân quyền kinh điển.
 
-> 💡 Ghi nhớ: Khi đẩy `!` vào trong ngoặc, `&&` biến thành `||` và ngược lại. Sai chỗ này là sai logic auth/filter — loại bug rất khó thấy vì test "happy path" vẫn xanh.
+> Ghi nhớ: Khi đẩy `!` vào trong ngoặc, `&&` biến thành `||` và ngược lại. Sai chỗ này là sai logic auth/filter — loại bug rất khó thấy vì test "happy path" vẫn xanh.
 
 ### Short-circuit — thứ tự quan trọng
 
@@ -58,10 +58,10 @@ Cách viết sai chỉ chặn khi **cả hai** đều thiếu — nghĩa là m�
 
 ```js
 if (user != null && user.isAdmin) { ... }   // an toàn: nếu user null, không đọc .isAdmin
-if (user.isAdmin && user != null) { ... }    // 💥 crash nếu user null
+if (user.isAdmin && user != null) { ... }    // crash nếu user null
 ```
 
-> ⚠️ Bẫy: Đặt điều kiện "rẻ và bảo vệ" (null check) **trước** điều kiện "đắt hoặc nguy hiểm". Short-circuit vừa tránh crash vừa là một thủ thuật tối ưu (đặt điều kiện hay false nhất lên đầu của `&&` để bỏ qua phần còn lại).
+> Bẫy: Đặt điều kiện "rẻ và bảo vệ" (null check) **trước** điều kiện "đắt hoặc nguy hiểm". Short-circuit vừa tránh crash vừa là một thủ thuật tối ưu (đặt điều kiện hay false nhất lên đầu của `&&` để bỏ qua phần còn lại).
 
 ## 2. Set & quan hệ — nền tảng của SQL và dedup
 
@@ -128,7 +128,7 @@ unique = set(emails)          # {"a@x.com", "b@x.com"} — O(n)
 
 Dùng set để dedup là O(n) vì kiểm tra "đã có chưa?" là O(1) (xem bài Hash Map). Nếu dùng list và `if x not in list` thì mỗi lần kiểm tra là O(n) → tổng O(n²). Cùng một việc, sai cấu trúc dữ liệu là chậm gấp bội.
 
-> 💡 Ghi nhớ: "Loại trùng", "đã thấy chưa", "phần chung của hai danh sách" → nghĩ ngay tới **set**. Đừng dùng list với vòng lặp lồng nhau.
+> Ghi nhớ: "Loại trùng", "đã thấy chưa", "phần chung của hai danh sách" → nghĩ ngay tới **set**. Đừng dùng list với vòng lặp lồng nhau.
 
 ## 3. Modulo — phép toán âm thầm chạy hạ tầng
 
@@ -158,7 +158,7 @@ shard = hash(user_id) % num_shards   # luôn ra cùng node cho cùng user
 index = hash(key) % bucket_count
 ```
 
-> ⚠️ Bẫy — modulo sharding & việc thêm node: Nếu bạn shard bằng `hash(key) % N` rồi tăng N từ 4 lên 5 node, thì **gần như mọi key đổi shard** (vì số dư đổi). Hậu quả: cache miss hàng loạt, phải di chuyển gần hết dữ liệu. Đây là lý do hệ thống thật dùng **consistent hashing** (thứ DynamoDB, Cassandra, nhiều CDN dùng) thay vì modulo thuần — thêm/bớt node chỉ ảnh hưởng một phần nhỏ key.
+> Bẫy — modulo sharding & việc thêm node: Nếu bạn shard bằng `hash(key) % N` rồi tăng N từ 4 lên 5 node, thì **gần như mọi key đổi shard** (vì số dư đổi). Hậu quả: cache miss hàng loạt, phải di chuyển gần hết dữ liệu. Đây là lý do hệ thống thật dùng **consistent hashing** (thứ DynamoDB, Cassandra, nhiều CDN dùng) thay vì modulo thuần — thêm/bớt node chỉ ảnh hưởng một phần nhỏ key.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>So sánh modulo sharding và consistent hashing khi thêm node</title>
@@ -260,7 +260,7 @@ Hai thuật toán duyệt bạn nên nhận diện:
 
 Phát hiện cycle cực kỳ thực dụng: nếu module A import B, B import C, C import A → **circular dependency**, nhiều bundler báo lỗi. Hệ thống build (Make, Bazel, terraform) phải sắp xếp thứ tự thực thi bằng **topological sort** trên DAG — và nó chỉ chạy được nếu **không có cycle**.
 
-> 💡 Ghi nhớ: Khi dữ liệu của bạn là "X liên quan tới Y", bạn đang có một graph. Câu hỏi "có đường nối không / ngắn nhất bao xa / có vòng lặp không" đều là bài toán graph đã có lời giải sẵn.
+> Ghi nhớ: Khi dữ liệu của bạn là "X liên quan tới Y", bạn đang có một graph. Câu hỏi "có đường nối không / ngắn nhất bao xa / có vòng lặp không" đều là bài toán graph đã có lời giải sẵn.
 
 ## 5. Tổ hợp đếm — đếm khả năng để ước lượng rủi ro
 
@@ -275,7 +275,7 @@ UUID v4 (122 bit ngẫu nhiên): ~ 5.3 × 10^36 khả năng
 
 Con số "số khả năng" này quyết định **xác suất collision** (đụng độ). Không gian càng lớn, càng khó trùng. Đây là cầu nối sang mục xác suất.
 
-> 💡 Ghi nhớ: Trước khi tin "ID ngẫu nhiên thì không bao giờ trùng", hãy hỏi: không gian có bao nhiêu khả năng, và mình sinh ra bao nhiêu ID? Trực giác của con người về số lần va chạm gần như **luôn sai** (xem mục dưới).
+> Ghi nhớ: Trước khi tin "ID ngẫu nhiên thì không bao giờ trùng", hãy hỏi: không gian có bao nhiêu khả năng, và mình sinh ra bao nhiêu ID? Trực giác của con người về số lần va chạm gần như **luôn sai** (xem mục dưới).
 
 ## 6. Xác suất thực dụng
 
@@ -292,7 +292,7 @@ Hash 32-bit:  N = 2^32 ≈ 4.3 tỷ
               √N ≈ 65.000  → chỉ ~65k phần tử đã có ~50% khả năng đụng!
 ```
 
-> ⚠️ Bẫy: Một hash 32-bit (như CRC32 hay 8 ký tự hex đầu của SHA) **không** an toàn làm khoá duy nhất ở quy mô lớn — bạn đụng collision sau vài chục nghìn item. Muốn ID gần như chắc chắn không trùng, dùng không gian đủ lớn: UUID v4 (122 bit) hay SHA-256. Đây cũng là lý do hash table cần xử lý collision thay vì giả vờ nó không xảy ra.
+> Bẫy: Một hash 32-bit (như CRC32 hay 8 ký tự hex đầu của SHA) **không** an toàn làm khoá duy nhất ở quy mô lớn — bạn đụng collision sau vài chục nghìn item. Muốn ID gần như chắc chắn không trùng, dùng không gian đủ lớn: UUID v4 (122 bit) hay SHA-256. Đây cũng là lý do hash table cần xử lý collision thay vì giả vờ nó không xảy ra.
 
 ### p99 latency — tại sao "trung bình" lừa bạn
 
@@ -357,7 +357,7 @@ Tại sao p99 là con số quan trọng nhất:
 - 1% nghe nhỏ, nhưng nếu một trang gọi **100 microservice** nội bộ, xác suất **ít nhất một** call rơi vào p99 là `1 − 0.99^100 ≈ 63%`. Nghĩa là **đa số** request người dùng sẽ "đụng" cái đuôi chậm của ít nhất một service.
 - Tối ưu p50 không giúp gì cho trải nghiệm tệ nhất; phải săn p99/p99.9.
 
-> 💡 Ghi nhớ: Đừng bao giờ chỉ nhìn latency trung bình. Một service "trung bình 30ms" có thể có p99 là 2s — và đó mới là thứ user khó chịu cảm nhận được. AWS CloudWatch cho phép theo dõi percentile (`p99`, `p99.9`) chứ không chỉ Average — hãy alarm trên p99.
+> Ghi nhớ: Đừng bao giờ chỉ nhìn latency trung bình. Một service "trung bình 30ms" có thể có p99 là 2s — và đó mới là thứ user khó chịu cảm nhận được. AWS CloudWatch cho phép theo dõi percentile (`p99`, `p99.9`) chứ không chỉ Average — hãy alarm trên p99.
 
 ### Load balancing — tải có thực sự "đều"?
 
@@ -412,7 +412,7 @@ Bảng so sánh số bước khi `n` tăng:
 
 Chênh lệch ~400.000 lần. Một câu query từ 5 giây xuống 5ms chỉ nhờ thêm đúng một index.
 
-> 💡 Ghi nhớ: Mỗi khi `n` tăng gấp đôi, thuật toán `O(log n)` chỉ tốn thêm **đúng 1 bước**. Đó là lý do nó "miễn nhiễm" với quy mô. Khi thấy query chậm tuyến tính theo số hàng → gần như luôn là thiếu index biến O(n) thành O(log n).
+> Ghi nhớ: Mỗi khi `n` tăng gấp đôi, thuật toán `O(log n)` chỉ tốn thêm **đúng 1 bước**. Đó là lý do nó "miễn nhiễm" với quy mô. Khi thấy query chậm tuyến tính theo số hàng → gần như luôn là thiếu index biến O(n) thành O(log n).
 
 ## Vì sao kỹ sư cần biết
 

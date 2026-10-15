@@ -31,7 +31,7 @@ Mấy từ này hay bị dùng lẫn lộn. Chúng là các vòng tròn lồng n
 | **DL** | ML dùng neural network sâu, ăn nhiều data + GPU | Nhận diện ảnh, speech-to-text |
 | **GenAI** | DL *sinh* ra text/ảnh/code mới | ChatGPT, Claude, Midjourney, GitHub Copilot |
 
-> 💡 Ghi nhớ: GenAI là một nhánh con của DL, DL là nhánh con của ML, ML là nhánh con của AI. Khi marketing nói "AI", 90% trường hợp năm 2025 họ đang nói về **GenAI/LLM**.
+> Ghi nhớ: GenAI là một nhánh con của DL, DL là nhánh con của ML, ML là nhánh con của AI. Khi marketing nói "AI", 90% trường hợp năm 2025 họ đang nói về **GenAI/LLM**.
 
 ## Ba kiểu học của ML (mức khái niệm)
 
@@ -43,7 +43,7 @@ Bạn không cần tự cài, nhưng cần nhận ra bài toán thuộc loại n
 - **Unsupervised learning** — data **không nhãn**, model tự tìm cấu trúc. Ví dụ: gom khách hàng thành các segment (clustering), hoặc giảm chiều dữ liệu. **Embedding** mà bạn dùng trong RAG cũng sinh ra từ kỹ thuật họ hàng với nhóm này.
 - **Reinforcement learning (RL)** — agent thử-sai trong môi trường, nhận reward, học chính sách tối ưu. Dùng cho robot, game, và quan trọng với bạn: **RLHF** (Reinforcement Learning from Human Feedback) là bước "dạy lễ phép" cho LLM sau khi pre-train.
 
-> 💡 Ghi nhớ: 95% việc của kỹ sư ứng dụng dính tới **supervised** (qua model có sẵn) hoặc dùng thẳng **LLM**. RL bạn gần như không tự train, chỉ cần biết nó tồn tại.
+> Ghi nhớ: 95% việc của kỹ sư ứng dụng dính tới **supervised** (qua model có sẵn) hoặc dùng thẳng **LLM**. RL bạn gần như không tự train, chỉ cần biết nó tồn tại.
 
 ## Traditional ML vs LLM
 
@@ -62,7 +62,7 @@ Bạn không cần tự cài, nhưng cần nhận ra bài toán thuộc loại n
 
 Ví dụ: "dự đoán khách nào sắp hủy gói" với 50 cột số liệu → **traditional ML** (XGBoost) ăn đứt LLM về độ chính xác, chi phí và tốc độ. Còn "tóm tắt ticket support và phân loại sang đúng team" → **LLM** thắng vì input là văn bản tự do.
 
-> ⚠️ Bẫy: Đừng nhét mọi thứ vào LLM vì nó "tiện". Dùng LLM để cộng hai số hay dự đoán doanh thu từ bảng số là vừa đắt, vừa chậm, vừa kém chính xác hơn một model truyền thống 50 dòng code.
+> Bẫy: Đừng nhét mọi thứ vào LLM vì nó "tiện". Dùng LLM để cộng hai số hay dự đoán doanh thu từ bảng số là vừa đắt, vừa chậm, vừa kém chính xác hơn một model truyền thống 50 dòng code.
 
 ## Khi nào dùng ML vs Rule-based vs LLM
 
@@ -111,7 +111,7 @@ Quy tắc ngón tay cái:
 - **Traditional ML** khi pattern quá phức tạp để viết tay nhưng bạn **có data lịch sử có nhãn** và đầu vào là số/category.
 - **LLM** khi input là **ngôn ngữ tự nhiên không cấu trúc** và bạn chấp nhận một mức sai số + chi phí token.
 
-> 💡 Ghi nhớ: Thứ tự ưu tiên khi xây nhanh: thử **rule-based** trước, không nổi thì **LLM qua API** (chứng minh giá trị nhanh), khi cần rẻ/nhanh/chính xác ở scale lớn mới cân nhắc **traditional ML / fine-tune**.
+> Ghi nhớ: Thứ tự ưu tiên khi xây nhanh: thử **rule-based** trước, không nổi thì **LLM qua API** (chứng minh giá trị nhanh), khi cần rẻ/nhanh/chính xác ở scale lớn mới cân nhắc **traditional ML / fine-tune**.
 
 ## Bạn ở đâu trong team? Vai trò AI
 
@@ -125,7 +125,7 @@ Quy tắc ngón tay cái:
 
 Là **AI application engineer**, kỹ năng cốt lõi của bạn là: thiết kế prompt, dựng RAG, ghép tool/agent, đo lường chất lượng (eval), kiểm soát chi phí & latency, và xử lý lỗi production (rate limit, hallucination, prompt injection). Đó toàn là kỹ năng *phần mềm*, không phải *thống kê*.
 
-> 💡 Ghi nhớ: Bạn không cần biết train model để xây sản phẩm AI tuyệt vời. Bạn cần biết **dùng** model đúng cách, đo nó, và bọc nó trong một hệ thống đáng tin cậy.
+> Ghi nhớ: Bạn không cần biết train model để xây sản phẩm AI tuyệt vời. Bạn cần biết **dùng** model đúng cách, đo nó, và bọc nó trong một hệ thống đáng tin cậy.
 
 ## Build vs Dùng API — quyết định nền tảng
 
@@ -165,7 +165,7 @@ print(resp.content[0].text)
 
 Lời khuyên thực dụng 2025-2026: **mặc định dùng managed API** để chứng minh sản phẩm có giá trị. Chỉ chuyển sang self-host/fine-tune khi có lý do cụ thể: yêu cầu compliance khắt khe, volume cực lớn khiến chi phí token vượt chi phí GPU, hoặc cần chạy offline.
 
-> ⚠️ Bẫy: "Fine-tune một LLM của riêng mình" nghe oai nhưng thường là sai lầm đầu tiên. 80% nhu cầu giải quyết được bằng **prompt tốt + RAG**, rẻ hơn và linh hoạt hơn fine-tune nhiều.
+> Bẫy: "Fine-tune một LLM của riêng mình" nghe oai nhưng thường là sai lầm đầu tiên. 80% nhu cầu giải quyết được bằng **prompt tốt + RAG**, rẻ hơn và linh hoạt hơn fine-tune nhiều.
 
 ## Chi phí & rủi ro — phần kỹ sư hay quên
 
@@ -182,7 +182,7 @@ Ví dụ thô: chatbot có 1M lượt/tháng, mỗi lượt ~2k input + 500 outp
 
 Đòn bẩy giảm chi phí: chọn **model nhỏ/rẻ** cho việc dễ (định tuyến model theo độ khó), **prompt caching** cho phần system prompt lặp lại, **cắt bớt context** thừa, **cache câu trả lời** cho câu hỏi trùng, và đặt **giới hạn `max_tokens`**.
 
-> 💡 Ghi nhớ: Mỗi token là tiền và là latency. Prompt ngắn gọn vừa rẻ vừa nhanh. Đừng nhồi cả cuốn tài liệu vào prompt khi RAG chỉ cần 3 đoạn liên quan.
+> Ghi nhớ: Mỗi token là tiền và là latency. Prompt ngắn gọn vừa rẻ vừa nhanh. Đừng nhồi cả cuốn tài liệu vào prompt khi RAG chỉ cần 3 đoạn liên quan.
 
 ### Rủi ro (risk)
 
@@ -195,7 +195,7 @@ Ví dụ thô: chatbot có 1M lượt/tháng, mỗi lượt ~2k input + 500 outp
 | **Tính bất định** | Cùng prompt ra kết quả khác nhau | Hạ temperature, ép structured output, eval |
 | **Chi phí trượt** | Token tăng âm thầm theo traffic | Theo dõi cost/request, đặt budget alert |
 
-> ⚠️ Bẫy: Đừng bao giờ tin tưởng tuyệt đối output của LLM trong luồng tự động. Với hành động quan trọng (xóa data, chuyển tiền, gửi email khách), luôn để **human-in-the-loop** hoặc validate cứng trước khi thực thi.
+> Bẫy: Đừng bao giờ tin tưởng tuyệt đối output của LLM trong luồng tự động. Với hành động quan trọng (xóa data, chuyển tiền, gửi email khách), luôn để **human-in-the-loop** hoặc validate cứng trước khi thực thi.
 
 ## Tổng kết bản đồ
 
@@ -216,4 +216,4 @@ Khi triển khai trên AWS, các khối kiến thức trên ánh xạ thẳng v�
 - **Amazon OpenSearch Service** (hỗ trợ **vector search / k-NN), Aurora PostgreSQL + pgvector** — nơi lưu **embedding** cho RAG. Bedrock Knowledge Bases có thể tự dùng các vector store này phía sau.
 - **AWS managed model API** giúp bạn ở đúng vai *application engineer*: ghép Bedrock + Knowledge Base + Guardrails + một hàm Lambda là đã có sản phẩm AI chạy thật mà không cần đụng tới GPU hay MLOps.
 
-> 💡 Ghi nhớ: Trên AWS, đường nhanh nhất cho kỹ sư ứng dụng là **Bedrock (model) + Knowledge Bases (RAG) + Guardrails (an toàn)**. SageMaker để dành cho khi bạn thực sự cần tự train.
+> Ghi nhớ: Trên AWS, đường nhanh nhất cho kỹ sư ứng dụng là **Bedrock (model) + Knowledge Bases (RAG) + Guardrails (an toàn)**. SageMaker để dành cho khi bạn thực sự cần tự train.

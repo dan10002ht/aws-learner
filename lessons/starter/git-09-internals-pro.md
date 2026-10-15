@@ -2,7 +2,7 @@
 
 Bạn đã add/commit/branch/PR thành thạo. Nhưng khi đi làm thật, sẽ có ngày bạn gặp những thứ "ngoài giáo trình": một dòng `detached HEAD` đỏ lòm khiến cả văn phòng hốt hoảng, một file binary 200MB làm repo phình to mãi mãi, một commit bị từ chối vì "không ký GPG", hay một thư mục `vendor/` lạ hoắc gọi là `submodule`. Bài này mổ xẻ **Git từ bên trong** — hiểu bản chất rồi thì mọi "phép màu" trở thành logic, và bạn sẽ cầm trong tay bộ công cụ của dân pro.
 
-> 💡 Ghi nhớ: 90% sự sợ hãi với Git đến từ việc coi nó như "hộp đen ma thuật". Sự thật, Git chỉ là **một cơ sở dữ liệu key-value đơn giản** lưu các "ảnh chụp" file. Hiểu đúng 4 loại object dưới đây, bạn sẽ ngừng sợ Git mãi mãi.
+> Ghi nhớ: 90% sự sợ hãi với Git đến từ việc coi nó như "hộp đen ma thuật". Sự thật, Git chỉ là **một cơ sở dữ liệu key-value đơn giản** lưu các "ảnh chụp" file. Hiểu đúng 4 loại object dưới đây, bạn sẽ ngừng sợ Git mãi mãi.
 
 ## 1. Object model: Git thật ra lưu cái gì?
 
@@ -121,7 +121,7 @@ git cat-file -p 9f1c2a7b
 
 Mỗi commit trỏ về commit cha → cả lịch sử là một **chuỗi liên kết bất biến**. Đổi một byte ở file cũ → đổi SHA của blob → đổi SHA của tree → đổi SHA của mọi commit từ đó về sau. Đây chính là cơ chế khiến lịch sử Git **không thể bị sửa lén** mà không ai biết.
 
-> 💡 Ghi nhớ: Commit **không** lưu "thay đổi", nó lưu **toàn bộ ảnh chụp** (qua tree). "Diff" mà bạn thấy trong `git diff` là Git **tính ra tại chỗ** bằng cách so hai ảnh chụp. Hiểu điều này, bạn sẽ thôi ngạc nhiên vì sao checkout commit cũ lại nhanh đến vậy.
+> Ghi nhớ: Commit **không** lưu "thay đổi", nó lưu **toàn bộ ảnh chụp** (qua tree). "Diff" mà bạn thấy trong `git diff` là Git **tính ra tại chỗ** bằng cách so hai ảnh chụp. Hiểu điều này, bạn sẽ thôi ngạc nhiên vì sao checkout commit cũ lại nhanh đến vậy.
 
 ## 2. Refs, HEAD, branch — tất cả chỉ là con trỏ
 
@@ -233,7 +233,7 @@ Detached HEAD **không phải lỗi** — nó hữu ích để xem lại code c�
 git switch -c nhanh-cuu-vot    # gắn một branch mới vào đúng chỗ đang đứng
 ```
 
-> ⚠️ Bẫy: Thấy `detached HEAD` đừng hoảng. Nó **không** mất data. Nếu chưa commit gì thì cứ `git switch main` là về bình thường. Chỉ cần nhớ: muốn giữ commit tạo ra ở đây thì **gắn branch trước khi rời đi**.
+> Bẫy: Thấy `detached HEAD` đừng hoảng. Nó **không** mất data. Nếu chưa commit gì thì cứ `git switch main` là về bình thường. Chỉ cần nhớ: muốn giữ commit tạo ra ở đây thì **gắn branch trước khi rời đi**.
 
 ## 3. Bên trong thư mục `.git`
 
@@ -262,7 +262,7 @@ Xoá `.git` = biến dự án thành thư mục thường, **mất toàn bộ l�
 npm run lint || exit 1     # lint fail thì chặn commit
 ```
 
-> ⚠️ Bẫy: Thư mục `.git/hooks/` **không được commit** lên repo → đồng đội không tự có hook của bạn. Vì thế thực tế người ta dùng công cụ quản lý hook bên ngoài, phổ biến nhất là **husky** (cho dự án JS/Node).
+> Bẫy: Thư mục `.git/hooks/` **không được commit** lên repo → đồng đội không tự có hook của bạn. Vì thế thực tế người ta dùng công cụ quản lý hook bên ngoài, phổ biến nhất là **husky** (cho dự án JS/Node).
 
 ### husky + lint-staged: combo chuẩn công nghiệp
 
@@ -288,7 +288,7 @@ npx lint-staged
 
 Kết quả: mỗi `git commit`, chỉ các file vừa sửa được tự động lint + format. Code bẩn không lọt vào lịch sử.
 
-> 💡 Ghi nhớ: Hook chạy **ở máy local** nên có thể bị bỏ qua (`git commit --no-verify`). Vì vậy hook chỉ là "tuyến phòng thủ đầu" cho tiện; tuyến phòng thủ thật, bắt buộc, phải đặt ở **CI trên server** (sẽ học ở khoá CI/CD).
+> Ghi nhớ: Hook chạy **ở máy local** nên có thể bị bỏ qua (`git commit --no-verify`). Vì vậy hook chỉ là "tuyến phòng thủ đầu" cho tiện; tuyến phòng thủ thật, bắt buộc, phải đặt ở **CI trên server** (sẽ học ở khoá CI/CD).
 
 ## 5. Tag & semantic release
 
@@ -319,7 +319,7 @@ git push origin --tags        # đẩy hết tag
 
 Công cụ như **semantic-release** đọc các commit message (theo Conventional Commits: `feat:`, `fix:`, `BREAKING CHANGE:`) để **tự động** quyết định version mới, tạo tag, sinh changelog và publish — không cần ai bấm tay.
 
-> 💡 Ghi nhớ: Release chính thức luôn dùng **annotated tag** (`-a`). Nó mang đủ thông tin "ai đóng dấu, lúc nào, vì sao", và là thứ mà `git describe` cùng các pipeline phát hành dựa vào.
+> Ghi nhớ: Release chính thức luôn dùng **annotated tag** (`-a`). Nó mang đủ thông tin "ai đóng dấu, lúc nào, vì sao", và là thứ mà `git describe` cùng các pipeline phát hành dựa vào.
 
 ## 6. Submodule vs Subtree vs Monorepo
 
@@ -341,7 +341,7 @@ repo-cha
 └── vendor/thu-vien  ──► (chỉ là con trỏ tới commit abc123 của repo con)
 ```
 
-> ⚠️ Bẫy: Submodule nổi tiếng "khó nhằn". Lỗi kinh điển: clone xong thấy `vendor/` **rỗng** vì quên `--recurse-submodules`. Cập nhật submodule cũng phải làm hai bước (vào repo con pull, rồi commit con trỏ mới ở repo cha) — quên là cả team kéo về sai phiên bản.
+> Bẫy: Submodule nổi tiếng "khó nhằn". Lỗi kinh điển: clone xong thấy `vendor/` **rỗng** vì quên `--recurse-submodules`. Cập nhật submodule cũng phải làm hai bước (vào repo con pull, rồi commit con trỏ mới ở repo cha) — quên là cả team kéo về sai phiên bản.
 
 ### Subtree — nhập code con thành một phần repo cha
 
@@ -376,7 +376,7 @@ git add .gitattributes         # LFS ghi luật vào file này — PHẢI commit
 git add video.mp4 && git commit -m "Thêm video demo"
 ```
 
-> ⚠️ Bẫy: LFS phải bật **trước khi** commit file lớn. Nếu file bự đã lỡ vào lịch sử, gỡ ra rất đau (phải `git filter-repo` viết lại toàn bộ lịch sử). Quy tắc: dự án có asset lớn → cấu hình LFS ngay từ commit đầu tiên.
+> Bẫy: LFS phải bật **trước khi** commit file lớn. Nếu file bự đã lỡ vào lịch sử, gỡ ra rất đau (phải `git filter-repo` viết lại toàn bộ lịch sử). Quy tắc: dự án có asset lớn → cấu hình LFS ngay từ commit đầu tiên.
 
 ## 8. Ký commit bằng GPG / SSH
 
@@ -394,7 +394,7 @@ git log --show-signature -1                 # kiểm tra chữ ký
 
 (Cách truyền thống dùng **GPG key** cũng tương tự, chỉ khác `gpg.format`.) Sau khi tạo key, nhớ **dán public key vào GitHub** ở mục *SSH and GPG keys* loại "Signing Key" thì nhãn Verified mới hiện.
 
-> 💡 Ghi nhớ: Nhiều công ty bật rule **bắt buộc commit phải ký** mới được merge. Ký commit không mã hoá code — nó chỉ **xác thực danh tính**, chống mạo danh trong lịch sử.
+> Ghi nhớ: Nhiều công ty bật rule **bắt buộc commit phải ký** mới được merge. Ký commit không mã hoá code — nó chỉ **xác thực danh tính**, chống mạo danh trong lịch sử.
 
 ## 9. `.gitignore` & `.gitattributes` nâng cao
 
@@ -408,7 +408,7 @@ dist/                  # output build, sinh lại được
 !important.log         # dấu ! = ngoại lệ: file này VẪN theo dõi
 ```
 
-> ⚠️ Bẫy: `.gitignore` chỉ có tác dụng với file **chưa từng được track**. File đã lỡ commit rồi thì thêm vào `.gitignore` *vô dụng* — phải gỡ khỏi tracking: `git rm --cached .env` rồi commit. (Và nếu `.env` đã từng push, coi như secret đã lộ → phải đổi secret ngay, không chỉ xoá file.)
+> Bẫy: `.gitignore` chỉ có tác dụng với file **chưa từng được track**. File đã lỡ commit rồi thì thêm vào `.gitignore` *vô dụng* — phải gỡ khỏi tracking: `git rm --cached .env` rồi commit. (Và nếu `.env` đã từng push, coi như secret đã lộ → phải đổi secret ngay, không chỉ xoá file.)
 
 ### `.gitattributes` — điều khiển cách Git xử lý file
 
@@ -423,7 +423,7 @@ package-lock.json -diff           # đừng hiển thị diff khổng lồ của
 
 `.gitattributes` giải triệt để cái bệnh kinh điển của team đa hệ điều hành: Windows dùng CRLF, Linux/macOS dùng LF, khiến `git diff` báo "cả file thay đổi" dù chẳng ai sửa gì. Đặt `* text=auto` là dẹp loạn.
 
-> 💡 Ghi nhớ: `.gitignore` quyết định **file nào được theo dõi**; `.gitattributes` quyết định **file được theo dõi sẽ xử lý ra sao** (line ending, diff, merge, LFS). Hai file này khác nhau, dân pro dùng cả hai.
+> Ghi nhớ: `.gitignore` quyết định **file nào được theo dõi**; `.gitattributes` quyết định **file được theo dõi sẽ xử lý ra sao** (line ending, diff, merge, LFS). Hai file này khác nhau, dân pro dùng cả hai.
 
 ## 10. Git worktree — nhiều nhánh, nhiều thư mục, một repo
 
@@ -470,7 +470,7 @@ git worktree list                         # xem các worktree đang có
 
 So với clone lần hai: worktree **dùng chung object database** nên nhẹ hơn nhiều, và các nhánh đồng bộ tức thì.
 
-> ⚠️ Bẫy: Một nhánh **không thể** được checkout ở hai worktree cùng lúc — Git sẽ chặn để tránh hai nơi giẫm chân nhau. Mỗi worktree giữ một nhánh riêng.
+> Bẫy: Một nhánh **không thể** được checkout ở hai worktree cùng lúc — Git sẽ chặn để tránh hai nơi giẫm chân nhau. Mỗi worktree giữ một nhánh riêng.
 
 ## 11. Tổng kết
 
@@ -487,4 +487,4 @@ So với clone lần hai: worktree **dùng chung object database** nên nhẹ h�
 | .gitignore / .gitattributes | "Track file nào" vs "xử lý file ra sao" |
 | Worktree | Nhiều nhánh ra nhiều thư mục, **chung một `.git`** |
 
-> 💡 Ghi nhớ cuối bài: Cái khiến bạn từ "biết dùng Git" lên "làm chủ Git" không phải thuộc thêm lệnh, mà là **mô hình tư duy đúng**: Git là database các ảnh chụp bất biến, mọi tên gọi chỉ là con trỏ tới SHA. Khi đã thấy bức tranh đó, bạn đọc được mọi trạng thái lạ, và không lệnh nào còn làm bạn hoảng nữa.
+> Ghi nhớ cuối bài: Cái khiến bạn từ "biết dùng Git" lên "làm chủ Git" không phải thuộc thêm lệnh, mà là **mô hình tư duy đúng**: Git là database các ảnh chụp bất biến, mọi tên gọi chỉ là con trỏ tới SHA. Khi đã thấy bức tranh đó, bạn đọc được mọi trạng thái lạ, và không lệnh nào còn làm bạn hoảng nữa.

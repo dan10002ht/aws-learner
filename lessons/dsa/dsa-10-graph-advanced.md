@@ -19,7 +19,7 @@ Rất nhiều bài "thực tế" là graph **trá hình**. Hãy tự hỏi: *bà
 | "số thành phần liên thông", "số đảo", "số tỉnh" | DSU **hoặc** DFS/BFS đếm cụm |
 | "biến đổi từng bước từ A → B", "ít bước nhất" | BFS trên không gian trạng thái (Word Ladder) |
 
-> 💡 Ghi nhớ: **Ngắn nhất + không trọng số = BFS; ngắn nhất + trọng số dương = Dijkstra; thứ tự/phụ thuộc = Topo; gộp nhóm/chu trình vô hướng = DSU.** Học thuộc một dòng này, bạn lọc được 90% bài graph chỉ trong 10 giây đọc đề.
+> Ghi nhớ: **Ngắn nhất + không trọng số = BFS; ngắn nhất + trọng số dương = Dijkstra; thứ tự/phụ thuộc = Topo; gộp nhóm/chu trình vô hướng = DSU.** Học thuộc một dòng này, bạn lọc được 90% bài graph chỉ trong 10 giây đọc đề.
 
 ### 1.1. Biểu diễn graph
 
@@ -230,7 +230,7 @@ void dfs(std::unordered_map<int, std::vector<int>>& graph, int node,
 }
 ```
 
-> ⚠️ Bẫy kinh điển: trong BFS, **đánh dấu `visited` ngay khi đưa node vào queue**, KHÔNG phải lúc lấy ra. Nếu đánh dấu lúc lấy ra, một node có thể bị nhồi vào queue nhiều lần → chậm và có thể sai khoảng cách.
+> Bẫy kinh điển: trong BFS, **đánh dấu `visited` ngay khi đưa node vào queue**, KHÔNG phải lúc lấy ra. Nếu đánh dấu lúc lấy ra, một node có thể bị nhồi vào queue nhiều lần → chậm và có thể sai khoảng cách.
 
 ## 2. Topological Sort (Kahn + DFS)
 
@@ -431,7 +431,7 @@ Trạng thái màu (white/gray/black) phát hiện chu trình có hướng:
 
 Độ phức tạp cả hai cách: **O(V + E)** thời gian, **O(V + E)** bộ nhớ.
 
-> 💡 Ghi nhớ: Kahn xếp được **< V đỉnh** ⟺ DFS gặp **đỉnh gray** ⟺ đồ thị **có chu trình** ⟺ **không** topo được. Câu hỏi "có hoàn thành tất cả khoá học không?" thực chất là "DAG này có chu trình không?".
+> Ghi nhớ: Kahn xếp được **< V đỉnh** ⟺ DFS gặp **đỉnh gray** ⟺ đồ thị **có chu trình** ⟺ **không** topo được. Câu hỏi "có hoàn thành tất cả khoá học không?" thực chất là "DAG này có chu trình không?".
 
 ## 3. Union-Find / DSU (Disjoint Set Union)
 
@@ -659,7 +659,7 @@ struct DSU {
 };
 ```
 
-> 💡 Ghi nhớ: `union(a, b)` trả về `false` ⟺ a và b **đã** cùng nhóm ⟺ cạnh (a,b) **tạo chu trình** (đồ thị vô hướng). Đây là cách phát hiện chu trình vô hướng nhanh và sạch nhất.
+> Ghi nhớ: `union(a, b)` trả về `false` ⟺ a và b **đã** cùng nhóm ⟺ cạnh (a,b) **tạo chu trình** (đồ thị vô hướng). Đây là cách phát hiện chu trình vô hướng nhanh và sạch nhất.
 
 ## 4. Dijkstra (shortest path có trọng số dương)
 
@@ -852,7 +852,7 @@ std::vector<long long> dijkstra(int n, std::vector<std::vector<std::pair<int,int
 
 Độ phức tạp: **O((V + E) log V)** với binary heap. Không gian **O(V + E)**.
 
-> ⚠️ Bẫy lớn: Dijkstra **SAI** khi có **cạnh trọng số ÂM**. Cần âm thì dùng **Bellman-Ford** (O(V·E)). Nếu mọi cạnh **trọng số bằng nhau** thì khỏi cần heap — BFS thường là đủ và nhanh hơn.
+> Bẫy lớn: Dijkstra **SAI** khi có **cạnh trọng số ÂM**. Cần âm thì dùng **Bellman-Ford** (O(V·E)). Nếu mọi cạnh **trọng số bằng nhau** thì khỏi cần heap — BFS thường là đủ và nhanh hơn.
 
 ## 5. BẢNG DẠNG BÀI (problem patterns)
 
@@ -1244,21 +1244,21 @@ int networkDelayTime(std::vector<std::vector<int>>& times, int n, int k) {
 
 ## 7. Sai lầm thường gặp & cách tránh
 
-> ⚠️ **Quên `visited` hoặc đánh dấu sai thời điểm (BFS).** Đánh dấu khi *đưa vào* queue, không phải khi *lấy ra*. Sai chỗ này → node bị thêm trùng, sai khoảng cách, có khi loop vô hạn.
+> **Quên `visited` hoặc đánh dấu sai thời điểm (BFS).** Đánh dấu khi *đưa vào* queue, không phải khi *lấy ra*. Sai chỗ này → node bị thêm trùng, sai khoảng cách, có khi loop vô hạn.
 
-> ⚠️ **Dùng Dijkstra cho cạnh ÂM.** Dijkstra giả định "đã lấy ra là tối ưu" — cạnh âm phá vỡ giả định này. Có cạnh âm → **Bellman-Ford**. Mọi cạnh bằng nhau → **BFS**.
+> **Dùng Dijkstra cho cạnh ÂM.** Dijkstra giả định "đã lấy ra là tối ưu" — cạnh âm phá vỡ giả định này. Có cạnh âm → **Bellman-Ford**. Mọi cạnh bằng nhau → **BFS**.
 
-> ⚠️ **Nhầm chiều cạnh trong topo sort.** `[a, b]` thường nghĩa "a cần b trước" ⟹ cạnh **b → a**, và in-degree của **a** tăng. Đọc kỹ đề, vẽ thử 2-3 đỉnh trước khi code.
+> **Nhầm chiều cạnh trong topo sort.** `[a, b]` thường nghĩa "a cần b trước" ⟹ cạnh **b → a**, và in-degree của **a** tăng. Đọc kỹ đề, vẽ thử 2-3 đỉnh trước khi code.
 
-> ⚠️ **Dùng DSU phát hiện chu trình cho đồ thị CÓ hướng.** DSU chỉ đúng với **vô hướng**. Chu trình có hướng phải dùng **topo sort** hoặc **DFS 3 màu (white/gray/black)**.
+> **Dùng DSU phát hiện chu trình cho đồ thị CÓ hướng.** DSU chỉ đúng với **vô hướng**. Chu trình có hướng phải dùng **topo sort** hoặc **DFS 3 màu (white/gray/black)**.
 
-> ⚠️ **Quên path compression / union by rank.** Thiếu cả hai, DSU có thể tụt về O(n) mỗi thao tác → cây suy biến thành danh sách. Luôn cài cả hai để đạt ~O(α(n)).
+> **Quên path compression / union by rank.** Thiếu cả hai, DSU có thể tụt về O(n) mỗi thao tác → cây suy biến thành danh sách. Luôn cài cả hai để đạt ~O(α(n)).
 
-> ⚠️ **Không xử lý đồ thị nhiều thành phần.** Đếm components / topo cho cả đồ thị: phải **lặp qua mọi đỉnh** làm điểm xuất phát, không chỉ từ một node.
+> **Không xử lý đồ thị nhiều thành phần.** Đếm components / topo cho cả đồ thị: phải **lặp qua mọi đỉnh** làm điểm xuất phát, không chỉ từ một node.
 
-> ⚠️ **shift() trong JS làm BFS chậm.** `Array.shift()` là O(n). Với input lớn, dùng con trỏ `head` (`q[head++]`) hoặc deque thật để giữ BFS ở O(V+E).
+> **shift() trong JS làm BFS chậm.** `Array.shift()` là O(n). Với input lớn, dùng con trỏ `head` (`q[head++]`) hoặc deque thật để giữ BFS ở O(V+E).
 
-> ⚠️ **JS/Go không có heap sẵn.** Phỏng vấn JS/Go cho Dijkstra: chuẩn bị sẵn lớp `MinHeap` (JS) hoặc `container/heap` (Go) — đừng để loay hoay cài heap giữa giờ.
+> **JS/Go không có heap sẵn.** Phỏng vấn JS/Go cho Dijkstra: chuẩn bị sẵn lớp `MinHeap` (JS) hoặc `container/heap` (Go) — đừng để loay hoay cài heap giữa giờ.
 
 ## 8. Checklist tự luyện
 
@@ -1278,4 +1278,4 @@ Luyện theo **pattern**, không theo số bài. Mỗi bài tự hỏi "dạng g
 - [ ] **Is Graph Bipartite?** — BFS/DFS tô 2 màu, kiểm tra mâu thuẫn.
 - [ ] **Graph Valid Tree** — DSU: đúng n-1 cạnh **và** không chu trình **và** liên thông.
 
-> 💡 Ghi nhớ cuối bài: Đừng thuộc lời giải — thuộc **5 template**: adjacency list, BFS/DFS + visited, Kahn (in-degree), DSU (find/union + path compression), Dijkstra (heap + bỏ bản cũ). Mọi bài graph phỏng vấn chỉ là biến thể của năm bộ xương này. Xem lại nền tảng tại [[dsa-07-recursion-graph-dp]] và bước tiếp sang [[dsa-11-dynamic-programming-1]].
+> Ghi nhớ cuối bài: Đừng thuộc lời giải — thuộc **5 template**: adjacency list, BFS/DFS + visited, Kahn (in-degree), DSU (find/union + path compression), Dijkstra (heap + bỏ bản cũ). Mọi bài graph phỏng vấn chỉ là biến thể của năm bộ xương này. Xem lại nền tảng tại [[dsa-07-recursion-graph-dp]] và bước tiếp sang [[dsa-11-dynamic-programming-1]].

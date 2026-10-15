@@ -2,7 +2,7 @@
 
 Elastic Beanstalk (EB) la dich vu PaaS cua AWS: ban day code len, EB tu provision EC2, Auto Scaling Group, Load Balancer, security group... thay vi ban tu cau hinh tay. Ban van **so huu va thay duoc** toan bo resource (khac voi Lambda hay App Runner che giau ha tang). Trong DVA-C02 Domain 3, EB la trong tam vi no gom ca **deployment policies** — phan rat hay ra bay thi.
 
-> 💡 Meo thi: Cau hoi EB hau het khong hoi "EB la gi" ma hoi "deployment policy nao zero-downtime / re nhat / rollback nhanh nhat". Hoc ky bang so sanh o cuoi bai la an diem.
+> Meo thi: Cau hoi EB hau het khong hoi "EB la gi" ma hoi "deployment policy nao zero-downtime / re nhat / rollback nhanh nhat". Hoc ky bang so sanh o cuoi bai la an diem.
 
 ## 1. Platforms (nen tang)
 
@@ -14,7 +14,7 @@ EB ho tro nhieu **platform** dung san:
 
 Moi platform co nhieu **platform version** (vd Node.js 20 running on Amazon Linux 2023). AWS phat hanh ban va cap nhat dinh ky; ban nen update platform version de va loi bao mat.
 
-> 💡 Meo thi: Neu app cua ban **khong** thuoc ngon ngu duoc support san -> dong goi bang **Docker platform**. Day la cach EB chay "bat ky" ung dung.
+> Meo thi: Neu app cua ban **khong** thuoc ngon ngu duoc support san -> dong goi bang **Docker platform**. Day la cach EB chay "bat ky" ung dung.
 
 ## 2. Environment Tiers — Web Server vs Worker
 
@@ -90,9 +90,9 @@ Co che worker: tren moi instance worker co mot **daemon** doc message tu SQS, PO
   <text x="352" y="268" font-size="9.5" fill="currentColor" opacity="0.78">cron.yaml: lịch chạy task định kỳ (vd mỗi 5 phút)</text>
 </svg>
 
-> ⚠️ Bay: Cau hoi mo ta "tach phan xu ly nang/cham ra khoi luong request user, dung SQS" -> dap an la **Worker environment**, KHONG phai them Lambda hay tu dung EC2. Worker tier sinh ra dung cho viec nay.
+> Bay: Cau hoi mo ta "tach phan xu ly nang/cham ra khoi luong request user, dung SQS" -> dap an la **Worker environment**, KHONG phai them Lambda hay tu dung EC2. Worker tier sinh ra dung cho viec nay.
 
-> 💡 Meo thi: `cron.yaml` chi dung tren **Worker tier** de chay periodic task (vd moi 5 phut). Dung nham cho web tier.
+> Meo thi: `cron.yaml` chi dung tren **Worker tier** de chay periodic task (vd moi 5 phut). Dung nham cho web tier.
 
 ## 3. Deployment Policies — phan ra thi nhieu nhat
 
@@ -139,12 +139,12 @@ Khi ban deploy version moi, EB cap nhat cac instance trong environment theo mot 
 
 \* Rolling khong "downtime hoan toan" nhung **giam capacity** -> co the nghen neu traffic cao.
 
-> 💡 Meo thi — cau hoi kinh dien:
+> Meo thi — cau hoi kinh dien:
 > - "Zero downtime VA full capacity, re nhat trong cac lua chon zero-downtime" -> **Rolling with additional batch** (neu khong duoc phep tut capacity ma khong muon nhan doi instance).
 > - "Zero downtime, rollback nhanh nhat, khong bao gio chay 2 version song song" -> **Immutable**.
 > - "Nhanh va re nhat, chap nhan downtime (moi truong dev)" -> **All at once**.
 
-> ⚠️ Bay: **Rolling** va **Rolling with additional batch** deu co the khien **2 version chay dong thoi** trong luc deploy. Neu de thi nhan manh "khong duoc co 2 version cung luc" -> phai chon **Immutable** (hoac Blue/Green).
+> Bay: **Rolling** va **Rolling with additional batch** deu co the khien **2 version chay dong thoi** trong luc deploy. Neu de thi nhan manh "khong duoc co 2 version cung luc" -> phai chon **Immutable** (hoac Blue/Green).
 
 ## 4. Blue/Green qua CNAME swap
 
@@ -209,13 +209,13 @@ Uu diem: **zero downtime**, **rollback gan nhu lap tuc**, test toan dien tren mo
   <line x1="16" y1="172" x2="704" y2="172" stroke="currentColor" stroke-opacity="0.15"/>
   <text x="16" y="196" font-size="10.5" fill="currentColor" opacity="0.85">Rollback = swap NGƯỢC lại (Green -> Blue), gần như tức thì vì Blue vẫn còn sống.</text>
   <rect x="16" y="210" width="688" height="44" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="30" y="230" font-size="11" font-weight="700" fill="currentColor">⚠ DNS TTL: một số client còn cache bản ghi cũ</text>
+  <text x="30" y="230" font-size="11" font-weight="700" fill="currentColor">DNS TTL: một số client còn cache bản ghi cũ</text>
   <text x="30" y="246" font-size="10" fill="currentColor" opacity="0.78">chờ hết TTL nên vẫn trỏ về Blue một lúc — chưa chuyển ngay 100% sang Green.</text>
 </svg>
 
-> ⚠️ Bay: Blue/Green qua **CNAME swap** chinh la doi **DNS record**. DNS co **TTL** -> mot so client co the con tro ve Blue mot luc cho cache het han. De thi co the hoi "tai sao mot so user van thay version cu sau khi swap" -> dap an: **DNS TTL caching**.
+> Bay: Blue/Green qua **CNAME swap** chinh la doi **DNS record**. DNS co **TTL** -> mot so client co the con tro ve Blue mot luc cho cache het han. De thi co the hoi "tai sao mot so user van thay version cu sau khi swap" -> dap an: **DNS TTL caching**.
 
-> 💡 Meo thi: Phan biet 2 khai niem.
+> Meo thi: Phan biet 2 khai niem.
 > - **Immutable** = blue/green o muc **instance trong cung 1 environment** (swap ASG noi bo).
 > - **CNAME swap** = blue/green o muc **2 environment rieng biet** (swap DNS). Dung khi muon doi ca platform version lon, hoac thay doi ma cac in-place policy khong lam duoc.
 
@@ -268,7 +268,7 @@ Cac key chinh trong file `.config`:
 | `option_settings` | Set option cua EB (scaling, env var, LB...) |
 | `Resources` | Them resource CloudFormation (vd SQS, DynamoDB) |
 
-> 💡 Meo thi: Phan biet **`commands`** vs **`container_commands`**. `container_commands` chay **sau** khi unpack ung dung va **co `leader_only: true`** — chi chay tren 1 instance (dung de **chay DB migration mot lan duy nhat**, tranh nhieu instance migrate dong thoi).
+> Meo thi: Phan biet **`commands`** vs **`container_commands`**. `container_commands` chay **sau** khi unpack ung dung va **co `leader_only: true`** — chi chay tren 1 instance (dung de **chay DB migration mot lan duy nhat**, tranh nhieu instance migrate dong thoi).
 
 ```yaml
 container_commands:
@@ -277,7 +277,7 @@ container_commands:
     leader_only: true
 ```
 
-> ⚠️ Bay: File trong `.ebextensions` phai co duoi `.config` (khong phai `.conf`), va dat o **goc** source bundle. Sai vi tri/duoi -> EB bo qua, config khong ap dung.
+> Bay: File trong `.ebextensions` phai co duoi `.config` (khong phai `.conf`), va dat o **goc** source bundle. Sai vi tri/duoi -> EB bo qua, config khong ap dung.
 
 ## 6. Environment Variables — cau hinh khong hardcode
 
@@ -295,7 +295,7 @@ Cach truyen config (DB host, API key, feature flag) vao app:
 
 Ung dung doc bien moi truong nhu binh thuong (`process.env.DB_HOST`, `os.environ['DB_HOST']`).
 
-> ⚠️ Bay: Environment properties cua EB **khong duoc ma hoa** va hien ro trong console. Voi secret (password, API key) -> dung **AWS Secrets Manager** hoac **SSM Parameter Store (SecureString)**, KHONG nhet thang vao environment property. De thi hay danh lua chon "luu DB password vao EB env var".
+> Bay: Environment properties cua EB **khong duoc ma hoa** va hien ro trong console. Voi secret (password, API key) -> dung **AWS Secrets Manager** hoac **SSM Parameter Store (SecureString)**, KHONG nhet thang vao environment property. De thi hay danh lua chon "luu DB password vao EB env var".
 
 ## 7. Saved Configurations
 
@@ -313,7 +313,7 @@ eb config save my-app-prod --cfg prod-template
 eb create my-app-staging --cfg prod-template
 ```
 
-> 💡 Meo thi: "Lam sao tao nhieu environment giong het nhau / tai su dung config" -> **Saved Configurations** (khong phai copy tay tung option).
+> Meo thi: "Lam sao tao nhieu environment giong het nhau / tai su dung config" -> **Saved Configurations** (khong phai copy tay tung option).
 
 ## 8. Quan ly nhieu environment (dev/test/prod)
 
@@ -325,7 +325,7 @@ Mot **application** trong EB chua nhieu **environment**. Mo hinh pho bien:
 
 EB luu lai **application versions** (cac ban source bundle da upload, luu trong S3). Ban co the deploy bat ky version cu nao -> rollback bang cach redeploy version truoc.
 
-> 💡 Meo thi: **Application version lifecycle policy** giup tu xoa version cu (gioi han so luong hoac theo tuoi) de tranh dung han ngach (mac dinh **1000 application versions / region**). De thi hoi "deploy bao loi qua nhieu version" -> bat lifecycle policy.
+> Meo thi: **Application version lifecycle policy** giup tu xoa version cu (gioi han so luong hoac theo tuoi) de tranh dung han ngach (mac dinh **1000 application versions / region**). De thi hoi "deploy bao loi qua nhieu version" -> bat lifecycle policy.
 
 ## 9. RDS Coupling Pitfall — bay quan trong
 
@@ -392,7 +392,7 @@ Khi tao EB environment, ban co the cho EB **tao luon mot RDS instance ben trong 
 
 Neu lo da tao RDS trong environment va muon "go" no ra ma khong mat data: bat **deletion protection**, tao snapshot, va decouple bang cach tro environment sang RDS ngoai qua env var truoc khi terminate.
 
-> ⚠️ Bay: Cau hoi rat hay ra — "Terminate EB environment xong mat sach database". Nguyen nhan: **RDS duoc provision ben trong environment**. Fix: **decouple RDS** (tao rieng, noi qua env var).
+> Bay: Cau hoi rat hay ra — "Terminate EB environment xong mat sach database". Nguyen nhan: **RDS duoc provision ben trong environment**. Fix: **decouple RDS** (tao rieng, noi qua env var).
 
 ## Tom tat nhanh truoc khi thi
 

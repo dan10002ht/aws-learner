@@ -2,7 +2,7 @@
 
 Lúc 3 giờ sáng, error rate tăng vọt. Bạn SSH vào một pod, `grep ERROR` trong `/var/log/app.log`, thấy vài dòng — nhưng traffic đã chia trên 40 pod, mỗi pod một file, log xoay vòng mỗi giờ, và pod gây lỗi có thể đã bị Kubernetes giết và tạo lại. `grep` trên một máy là vô nghĩa. Bài này dạy hai thứ đi liền nhau: **viết log sao cho máy query được** (structured logging) và **gom log của cả fleet về một chỗ để truy vấn** (aggregation) — cùng với cái giá phải trả để nó không phá sản ngân sách.
 
-> 💡 **Nguyên tắc:** Log không phải để con người đọc từng dòng — ở quy mô production, log là **dữ liệu có cấu trúc để máy lọc, nhóm và đếm**. Nếu bạn còn phải `grep` bằng regex để tách field ra khỏi một chuỗi text tự do, bạn đang trả tiền lưu trữ cho dữ liệu mà mình không query được.
+> **Nguyên tắc:** Log không phải để con người đọc từng dòng — ở quy mô production, log là **dữ liệu có cấu trúc để máy lọc, nhóm và đếm**. Nếu bạn còn phải `grep` bằng regex để tách field ra khỏi một chuỗi text tự do, bạn đang trả tiền lưu trữ cho dữ liệu mà mình không query được.
 
 ## Mục tiêu
 
@@ -69,7 +69,7 @@ Một dòng structured log tốt gồm:
   </g>
 </svg>
 
-> ⚠️ **Bẫy:** Đừng nhét biến vào `message` (`"payment failed for user 8842"`). Message phải **cố định** để bạn nhóm được "tất cả payment failed" thành một nhóm; biến số (`user_id`) tách ra field riêng. Message động làm mỗi log là một chuỗi duy nhất — không nhóm, không đếm được.
+> **Bẫy:** Đừng nhét biến vào `message` (`"payment failed for user 8842"`). Message phải **cố định** để bạn nhóm được "tất cả payment failed" thành một nhóm; biến số (`user_id`) tách ra field riêng. Message động làm mỗi log là một chuỗi duy nhất — không nhóm, không đếm được.
 
 ### Viết structured log trong code
 
@@ -128,7 +128,7 @@ def middleware(request):
 
 Khi service A gọi service B, **phải forward header** `X-Request-Id` và `traceparent` — nếu quên, chuỗi đứt tại đó. Đây là lỗi phổ biến nhất: chuỗi correlation chỉ bền bằng mắt xích yếu nhất — chỉ **một** service quên forward là đứt từ đó trở đi.
 
-> 💡 **Nguyên tắc:** Trả `request_id` về trong response (header hoặc body lỗi). Khi khách báo "đơn của tôi lỗi lúc 9h", họ đưa bạn `request_id` từ màn hình lỗi — bạn query đúng một request thay vì mò trong hàng triệu dòng.
+> **Nguyên tắc:** Trả `request_id` về trong response (header hoặc body lỗi). Khi khách báo "đơn của tôi lỗi lúc 9h", họ đưa bạn `request_id` từ màn hình lỗi — bạn query đúng một request thay vì mò trong hàng triệu dòng.
 
 ## 3. Log levels: dùng đúng để lọc được tín hiệu
 
@@ -167,7 +167,7 @@ for row in ten_million_rows:      # vòng lặp nóng
 
 Log trong vòng lặp chạy hàng triệu lần vừa làm ngập storage vừa **làm chậm chính code** (mỗi lần log là serialize JSON + I/O). Log **tổng kết ngoài vòng lặp** (`log.info("processed", count=n, failed=k, duration_ms=t)`), hoặc log theo mẫu (mỗi 10.000 dòng một lần), hoặc dùng metric (counter) thay vì log cho thứ đếm được.
 
-> ⚠️ **Bẫy:** Đừng để log I/O nằm trên đường đi nóng và **đồng bộ**. Ghi log chặn (blocking) trong request handler làm p99 latency phình lên khi backend log chậm. Log phải **async / non-blocking**: app ghi ra stdout, một agent riêng lo phần đẩy đi — app không bao giờ chờ mạng để log.
+> **Bẫy:** Đừng để log I/O nằm trên đường đi nóng và **đồng bộ**. Ghi log chặn (blocking) trong request handler làm p99 latency phình lên khi backend log chậm. Log phải **async / non-blocking**: app ghi ra stdout, một agent riêng lo phần đẩy đi — app không bao giờ chờ mạng để log.
 
 ## 5. Kiến trúc log aggregation: agent → buffer → store → query
 
@@ -321,7 +321,7 @@ sum(rate({namespace="checkout"} [5m]))
 level: "error" and message: "payment failed" and amount > 40
 ```
 
-> 💡 **Nguyên tắc:** Chọn Loki khi log của bạn **đã structured và gắn label tốt**, đội đã dùng Grafana/Prometheus, và chi phí là ràng buộc thật. Chọn ELK khi bạn cần **search/analytics tùy ý mạnh** (SIEM, điều tra bảo mật, log kém cấu trúc) và chấp nhận trả giá vận hành + hạ tầng.
+> **Nguyên tắc:** Chọn Loki khi log của bạn **đã structured và gắn label tốt**, đội đã dùng Grafana/Prometheus, và chi phí là ràng buộc thật. Chọn ELK khi bạn cần **search/analytics tùy ý mạnh** (SIEM, điều tra bảo mật, log kém cấu trúc) và chấp nhận trả giá vận hành + hạ tầng.
 
 ## 7. Retention, chi phí và cardinality của label
 
@@ -344,7 +344,7 @@ Ba thứ này gắn chặt và là nơi hầu hết chi phí log thất thoát.
 - **Áp compaction + retention** ở store; đẩy dữ liệu cũ xuống S3 lớp rẻ.
 - **Metric hóa cái đếm được:** thứ bạn chỉ cần đếm/đo (số request, latency) → dùng metrics (rẻ hơn log hàng bậc). Log dành cho **ngữ cảnh sự kiện lẻ** cần điều tra.
 
-> ⚠️ **Bẫy:** Một dev thêm `log.info("cache hit", key=...)` trong hot path và promote `key` thành label. Vài ngày sau hóa đơn log gấp 5 lần và Loki query chậm như rùa. Cardinality của label là thứ **phải review trong PR** — nó không tự lộ ra cho tới khi hóa đơn về.
+> **Bẫy:** Một dev thêm `log.info("cache hit", key=...)` trong hot path và promote `key` thành label. Vài ngày sau hóa đơn log gấp 5 lần và Loki query chậm như rùa. Cardinality của label là thứ **phải review trong PR** — nó không tự lộ ra cho tới khi hóa đơn về.
 
 ## 8. Tóm tắt
 

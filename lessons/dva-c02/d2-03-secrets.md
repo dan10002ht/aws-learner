@@ -11,16 +11,16 @@ AWS cho bạn 2 dịch vụ chính để lưu cấu hình & bí mật:
 | | Secrets Manager | SSM Parameter Store |
 |---|---|---|
 | Mục đích chính | Lưu **secret** (DB password, API key) | Lưu **config + secret** |
-| Auto rotation native | ✅ Có (qua Lambda) | ❌ Không |
-| RDS/Redshift/DocumentDB integration | ✅ Tích hợp sẵn rotation | ❌ Không |
+| Auto rotation native | ✓ Có (qua Lambda) | ✗ Không |
+| RDS/Redshift/DocumentDB integration | ✓ Tích hợp sẵn rotation | ✗ Không |
 | Mã hóa | Luôn mã hóa (KMS) | SecureString mới mã hóa |
-| Cross-account | ✅ Resource policy | ⚠️ Phải qua Advanced/RAM |
+| Cross-account | ✓ Resource policy | Phải qua Advanced/RAM |
 | Giá | ~$0.40/secret/tháng + $0.05/10k API call | **Standard tier MIỄN PHÍ** |
 | Kích thước value | tới 64 KB | Standard 4 KB / Advanced 8 KB |
-| Versioning | ✅ Có (staging labels) | ✅ Có (version number) |
-| Hierarchy (path `/app/dev/db`) | Hạn chế | ✅ Mạnh, query theo path |
+| Versioning | ✓ Có (staging labels) | ✓ Có (version number) |
+| Hierarchy (path `/app/dev/db`) | Hạn chế | ✓ Mạnh, query theo path |
 
-> 💡 Mẹo thi: Câu hỏi nào nhắc tới **"automatic rotation"** + database → đáp án gần như chắc chắn là **Secrets Manager**. Câu hỏi nhắc **"lowest cost / no rotation needed / store config"** → **Parameter Store (Standard tier)**.
+> Mẹo thi: Câu hỏi nào nhắc tới **"automatic rotation"** + database → đáp án gần như chắc chắn là **Secrets Manager**. Câu hỏi nhắc **"lowest cost / no rotation needed / store config"** → **Parameter Store (Standard tier)**.
 
 ---
 
@@ -60,7 +60,7 @@ creds = get_db_creds()
 conn = connect(user=creds["username"], password=creds["password"])
 ```
 
-> 💡 Mẹo thi: Lambda gọi `GetSecretValue` mỗi lần invoke sẽ tốn API cost + tăng latency. Hãy **cache secret bên ngoài handler** (global scope) để tái dùng qua warm invocation:
+> Mẹo thi: Lambda gọi `GetSecretValue` mỗi lần invoke sẽ tốn API cost + tăng latency. Hãy **cache secret bên ngoài handler** (global scope) để tái dùng qua warm invocation:
 
 ```python
 import boto3, json
@@ -77,7 +77,7 @@ def handler(event, context):
     # dùng _cache...
 ```
 
-> 💡 AWS còn có **Secrets Manager Lambda Extension** (layer) cung cấp HTTP endpoint localhost cache sẵn — giảm số lần gọi API rõ rệt.
+> AWS còn có **Secrets Manager Lambda Extension** (layer) cung cấp HTTP endpoint localhost cache sẵn — giảm số lần gọi API rõ rệt.
 
 ### Automatic Rotation
 
@@ -162,7 +162,7 @@ aws secretsmanager rotate-secret \
 - Với **RDS, Aurora, Redshift, DocumentDB**: AWS cung cấp sẵn rotation Lambda template → bật rotation chỉ vài click.
 - Với DB khác / API key tự quản: bạn tự viết Lambda theo 4 step trên.
 
-> ⚠️ Bẫy: Đề có thể "gài" rằng Parameter Store cũng rotate được. **Parameter Store KHÔNG có rotation native.** Muốn rotate trong Parameter Store bạn phải **tự build** bằng EventBridge + Lambda. Nếu câu hỏi yêu cầu "managed/built-in rotation" → loại Parameter Store.
+> Bẫy: Đề có thể "gài" rằng Parameter Store cũng rotate được. **Parameter Store KHÔNG có rotation native.** Muốn rotate trong Parameter Store bạn phải **tự build** bằng EventBridge + Lambda. Nếu câu hỏi yêu cầu "managed/built-in rotation" → loại Parameter Store.
 
 ### Versioning với staging labels
 
@@ -198,7 +198,7 @@ Secret nằm ở account A, ứng dụng ở account B muốn đọc:
 }
 ```
 
-> ⚠️ Bẫy: Quên cấp quyền `Decrypt` trên **KMS key** là lỗi cross-account hay gặp. Resource policy của secret thôi là **chưa đủ** nếu dùng customer-managed key.
+> Bẫy: Quên cấp quyền `Decrypt` trên **KMS key** là lỗi cross-account hay gặp. Resource policy của secret thôi là **chưa đủ** nếu dùng customer-managed key.
 
 ---
 
@@ -210,7 +210,7 @@ Secret nằm ở account A, ứng dụng ở account B muốn đọc:
 |---|---|---|
 | `String` | Không | Config thường (region, feature flag) |
 | `StringList` | Không | Danh sách phân tách dấu phẩy (`a,b,c`) |
-| `SecureString` | ✅ KMS | Secret (password, token) |
+| `SecureString` | ✓ KMS | Secret (password, token) |
 
 ```bash
 # String thường
@@ -227,7 +227,7 @@ aws ssm get-parameter --name /myapp/prod/db-password \
   --with-decryption --query Parameter.Value --output text
 ```
 
-> ⚠️ Bẫy kinh điển: Đọc `SecureString` mà **quên `--with-decryption`** → trả về **ciphertext** (chuỗi mã hóa), không phải plaintext. SDK tương ứng là `WithDecryption=True`.
+> Bẫy kinh điển: Đọc `SecureString` mà **quên `--with-decryption`** → trả về **ciphertext** (chuỗi mã hóa), không phải plaintext. SDK tương ứng là `WithDecryption=True`.
 
 ### Hierarchy & query theo path
 
@@ -249,9 +249,9 @@ Rất hợp pattern config nhiều môi trường: `/myapp/dev/...`, `/myapp/sta
 | Giá | **Miễn phí** | $0.05/param/tháng |
 | Value size | 4 KB | 8 KB |
 | Số parameter | 10.000 | 100.000 |
-| Parameter policies (TTL, expiration) | ❌ | ✅ |
+| Parameter policies (TTL, expiration) | ✗ | ✓ |
 
-> 💡 Mẹo thi: "Cần lưu hàng ngàn config value, chi phí thấp nhất, không cần rotation" → **Parameter Store Standard**. Đừng chọn Secrets Manager chỉ vì có chữ "secret".
+> Mẹo thi: "Cần lưu hàng ngàn config value, chi phí thấp nhất, không cần rotation" → **Parameter Store Standard**. Đừng chọn Secrets Manager chỉ vì có chữ "secret".
 
 ### Tích hợp với Secrets Manager
 
@@ -317,13 +317,13 @@ def decrypt(blob):
 DB_PASSWORD = decrypt(ENCRYPTED)  # giải mã 1 lần ở global scope
 ```
 
-> 💡 Mẹo thi: Phân biệt rõ:
+> Mẹo thi: Phân biệt rõ:
 > - **Encrypt at rest** (mặc định) → bảo vệ trên ổ đĩa AWS, ai có quyền `lambda:GetFunctionConfiguration` vẫn thấy plaintext.
 > - **Encryption helpers + CMK** → ngay cả người xem config cũng chỉ thấy ciphertext; cần quyền KMS `Decrypt` mới đọc được.
 
-> ⚠️ Bẫy: Env var dù mã hóa vẫn **không phải nơi tốt nhất** cho secret xoay vòng. Nếu đề nhấn "rotate", "tránh redeploy khi đổi secret" → câu trả lời vẫn là **Secrets Manager**, không phải env var. Đổi env var bắt buộc update function config.
+> Bẫy: Env var dù mã hóa vẫn **không phải nơi tốt nhất** cho secret xoay vòng. Nếu đề nhấn "rotate", "tránh redeploy khi đổi secret" → câu trả lời vẫn là **Secrets Manager**, không phải env var. Đổi env var bắt buộc update function config.
 
-> ⚠️ Bẫy: Đừng nhầm — bật CMK cho Lambda env var **không tự động** mã hóa per-value bằng helper. Helper là tính năng riêng (Console "Encryption in transit"), thường đi kèm thao tác `Encrypt` thủ công khi tạo value.
+> Bẫy: Đừng nhầm — bật CMK cho Lambda env var **không tự động** mã hóa per-value bằng helper. Helper là tính năng riêng (Console "Encryption in transit"), thường đi kèm thao tác `Encrypt` thủ công khi tạo value.
 
 ---
 
@@ -343,7 +343,7 @@ Công cụ AWS hỗ trợ developer:
 - **Amazon Comprehend** (`DetectPiiEntities`): phát hiện & gắn nhãn PII trong text.
 - **KMS / encryption**: mã hóa at-rest cho dữ liệu phân loại cao.
 
-> 💡 Mẹo thi: "Tự động phát hiện PII trong **S3 bucket**" → **Macie**. "Phát hiện PII trong **đoạn text/document** (NLP)" → **Comprehend**.
+> Mẹo thi: "Tự động phát hiện PII trong **S3 bucket**" → **Macie**. "Phát hiện PII trong **đoạn text/document** (NLP)" → **Comprehend**.
 
 ---
 
@@ -366,7 +366,7 @@ def mask_card(num):
 logger.info("User login: %s", mask_email(user.email))
 ```
 
-> ⚠️ Bẫy thực chiến (và hay xuất hiện trong đề): **đừng log full request/response** chứa token, password, số thẻ. CloudWatch Logs là plaintext — secret lọt vào log là rò rỉ.
+> Bẫy thực chiến (và hay xuất hiện trong đề): **đừng log full request/response** chứa token, password, số thẻ. CloudWatch Logs là plaintext — secret lọt vào log là rò rỉ.
 
 ### Sanitization input
 
@@ -424,15 +424,15 @@ Kết hợp **IAM policy với điều kiện `dynamodb:LeadingKeys`** để DB 
 
 Pattern mạnh: app dùng **`sts:AssumeRole` + session policy / session tags** để tạo credential giới hạn đúng tenant cho mỗi request — gọi là **dynamic / scoped credentials**.
 
-> 💡 Mẹo thi: "Đảm bảo cô lập tenant ở tầng IAM cho DynamoDB" → nghĩ tới **`dynamodb:LeadingKeys` condition**. "Cấp credential tạm giới hạn theo tenant mỗi request" → **STS AssumeRole + session policy/tags**.
+> Mẹo thi: "Đảm bảo cô lập tenant ở tầng IAM cho DynamoDB" → nghĩ tới **`dynamodb:LeadingKeys` condition**. "Cấp credential tạm giới hạn theo tenant mỗi request" → **STS AssumeRole + session policy/tags**.
 
-> ⚠️ Bẫy: Chỉ lọc `tenant_id` ở **tầng application code** là yếu — nếu code có bug, dữ liệu rò. Đề thường ưu tiên đáp án có **enforcement ở tầng IAM/DB**, không chỉ dựa code.
+> Bẫy: Chỉ lọc `tenant_id` ở **tầng application code** là yếu — nếu code có bug, dữ liệu rò. Đề thường ưu tiên đáp án có **enforcement ở tầng IAM/DB**, không chỉ dựa code.
 
 ---
 
 ## Tổng kết các bẫy thi hay gặp
 
-> ⚠️ Bẫy:
+> Bẫy:
 > - **Rotation native** = Secrets Manager. Parameter Store **không** có (phải tự build EventBridge + Lambda).
 > - Đọc **SecureString** quên `--with-decryption` / `WithDecryption=True` → ra ciphertext.
 > - Cross-account secret: nhớ cấp `Decrypt` trên **KMS key**, không chỉ resource policy.
@@ -442,4 +442,4 @@ Pattern mạnh: app dùng **`sts:AssumeRole` + session policy / session tags** �
 > - Multi-tenant: ưu tiên enforcement ở **IAM/DB** (`LeadingKeys`, STS), không chỉ lọc trong code.
 > - Đừng để secret/PII lọt vào **CloudWatch Logs** — mask trước khi log.
 
-> 💡 Mẹo thi cuối: Khi phân vân Secrets Manager vs Parameter Store, hỏi 2 câu: **(1) Có cần auto-rotation không? (2) Chi phí có là yếu tố quyết định không?** — hai câu này giải quyết ~90% câu hỏi dạng này trong đề.
+> Mẹo thi cuối: Khi phân vân Secrets Manager vs Parameter Store, hỏi 2 câu: **(1) Có cần auto-rotation không? (2) Chi phí có là yếu tố quyết định không?** — hai câu này giải quyết ~90% câu hỏi dạng này trong đề.

@@ -16,7 +16,7 @@ Trước khi phòng thủ, phải biết mình giữ cái gì. Mọi mục tiêu
 
 Điểm mấu chốt cho kỹ sư: **ba thuộc tính này thường mâu thuẫn nhau**, và bảo mật là nghệ thuật cân bằng. Mã hoá mạnh (Confidentiality) làm chậm hệ thống (ảnh hưởng Availability). Backup nhiều bản (Availability) làm tăng số nơi dữ liệu có thể lộ (giảm Confidentiality). Threat modeling giúp bạn biết với *từng tài sản cụ thể*, thuộc tính nào quan trọng nhất.
 
-> 💡 Nguyên tắc: Đừng hỏi "hệ thống này có an toàn không?" (câu hỏi vô nghĩa, không có hệ thống nào an toàn tuyệt đối). Hãy hỏi "tài sản nào quan trọng nhất, kẻ tấn công nào có động cơ, và tôi chấp nhận rủi ro nào?". Bảo mật là **quản lý rủi ro**, không phải đạt trạng thái hoàn hảo.
+> Nguyên tắc: Đừng hỏi "hệ thống này có an toàn không?" (câu hỏi vô nghĩa, không có hệ thống nào an toàn tuyệt đối). Hãy hỏi "tài sản nào quan trọng nhất, kẻ tấn công nào có động cơ, và tôi chấp nhận rủi ro nào?". Bảo mật là **quản lý rủi ro**, không phải đạt trạng thái hoàn hảo.
 
 ## 2. Attack surface — đếm cửa trước khi khoá cửa
 
@@ -63,7 +63,7 @@ curl -X POST https://api.shop.com/orders \
 # Nếu backend không validate lại → quantity âm có thể thành "hoàn tiền", price=0.01 được chấp nhận.
 ```
 
-> ⚠️ Lỗ hổng: Mọi dữ liệu **vượt qua một trust boundary** đều phải được kiểm lại như thể đến từ kẻ thù. "Internal service nên tin được" là giả định đã làm sập vô số hệ thống — một service bị chiếm là cả mạng nội bộ thành vùng tấn công. Đây là tư tưởng cốt lõi của **Zero Trust**: không tin vào vị trí mạng, chỉ tin vào danh tính đã xác thực.
+> Lỗ hổng: Mọi dữ liệu **vượt qua một trust boundary** đều phải được kiểm lại như thể đến từ kẻ thù. "Internal service nên tin được" là giả định đã làm sập vô số hệ thống — một service bị chiếm là cả mạng nội bộ thành vùng tấn công. Đây là tư tưởng cốt lõi của **Zero Trust**: không tin vào vị trí mạng, chỉ tin vào danh tính đã xác thực.
 
 ## 4. STRIDE — bộ khung 6 loại threat
 
@@ -244,14 +244,14 @@ Mỗi thành phần (người, service, token, DB user) chỉ nên có **đúng*
 Khi có lỗi, hệ thống phải **mặc định từ chối**, không mặc định cho qua. Lỗi là lúc kẻ tấn công khai thác nhiều nhất.
 
 ```python
-# ⚠️ Fail open: lỗi khi check quyền → cho qua. Thảm hoạ.
+# Fail open: lỗi khi check quyền → cho qua. Thảm hoạ.
 def can_access(user, resource):
     try:
         return auth_service.check(user, resource)
     except Exception:
         return True   # "để khỏi chặn nhầm user thật" — và mở toang cho kẻ tấn công
 
-# ✅ Fail secure: lỗi → từ chối, và log lại để điều tra
+# ✓ Fail secure: lỗi → từ chối, và log lại để điều tra
 def can_access(user, resource):
     try:
         return auth_service.check(user, resource)
@@ -262,7 +262,7 @@ def can_access(user, resource):
 
 Lưu ý: "fail securely" không phải lúc nào cũng là "fail closed". Với hệ thống *availability* là tối thượng (ví dụ mở cửa thoát hiểm khi cháy), fail **open** mới an toàn. Bảo mật luôn là chọn đúng hướng hỏng theo ngữ cảnh — đó chính là lý do phải threat-model trước.
 
-> 💡 Nguyên tắc: Defense in Depth giả định *các lớp sẽ thủng*. Least Privilege giới hạn *thiệt hại khi thủng*. Fail Securely quyết định *hành vi lúc thủng*. Ba nguyên tắc này phối hợp để biến một sự cố từ "mất sạch" thành "mất một phần, phát hiện được, khôi phục được".
+> Nguyên tắc: Defense in Depth giả định *các lớp sẽ thủng*. Least Privilege giới hạn *thiệt hại khi thủng*. Fail Securely quyết định *hành vi lúc thủng*. Ba nguyên tắc này phối hợp để biến một sự cố từ "mất sạch" thành "mất một phần, phát hiện được, khôi phục được".
 
 ## 7. Bảo mật là quá trình, không phải feature
 
@@ -326,7 +326,7 @@ Giả sử `POST /orders` cho phép user đã đăng nhập đặt hàng. Ta đi
 **Bước 3 — Sửa code theo threat tìm được:**
 
 ```typescript
-// ⚠️ TRƯỚC: tin client, không validate, không authz
+// TRƯỚC: tin client, không validate, không authz
 app.post("/orders", async (req, res) => {
   const { productId, quantity, price } = req.body;        // tin giá từ client (Tampering)
   const order = await db.orders.create({
@@ -338,7 +338,7 @@ app.post("/orders", async (req, res) => {
 ```
 
 ```typescript
-// ✅ SAU: phòng thủ theo STRIDE
+// ✓ SAU: phòng thủ theo STRIDE
 app.post("/orders",
   rateLimit({ perUser: 20, windowSec: 60 }),             // D: chống DoS
   requireAuth,                                            // S: xác thực thật
@@ -400,4 +400,4 @@ Threat modeling không thay đổi khi lên cloud — chỉ là các "lớp phò
 | **Phát hiện threat** (giám sát) | **GuardDuty** (phát hiện hành vi bất thường), **Security Hub** (tổng hợp), **Inspector** (quét CVE), **Macie** (phát hiện data nhạy cảm) |
 | **Spoofing**, xác thực mạnh | **Cognito** (MFA, passkeys/WebAuthn), IAM Identity Center cho nhân viên |
 
-> 💡 Nguyên tắc: Trên AWS, mỗi mũi tên vượt trust boundary trong DFD của bạn nên ánh xạ thành một control cụ thể — IAM cho authorization, KMS cho confidentiality, CloudTrail cho non-repudiation, GuardDuty cho phát hiện. Threat model là *bản thiết kế*; các dịch vụ này là *vật liệu xây dựng*. Vẽ trước, mua đồ nghề sau.
+> Nguyên tắc: Trên AWS, mỗi mũi tên vượt trust boundary trong DFD của bạn nên ánh xạ thành một control cụ thể — IAM cho authorization, KMS cho confidentiality, CloudTrail cho non-repudiation, GuardDuty cho phát hiện. Threat model là *bản thiết kế*; các dịch vụ này là *vật liệu xây dựng*. Vẽ trước, mua đồ nghề sau.

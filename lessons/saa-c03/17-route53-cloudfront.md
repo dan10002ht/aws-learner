@@ -51,7 +51,7 @@ Alias giải quyết bằng cách để Route 53 **tự phân giải tên đích
 
 Đích hợp lệ của Alias: CloudFront, ALB/NLB, S3 website endpoint, API Gateway, Elastic Beanstalk environment, VPC interface endpoint, Global Accelerator, và một record khác trong cùng hosted zone.
 
-> 🪤 Bẫy thi: *"trỏ `example.com` (không có www) vào ALB/CloudFront"* → **Alias**. Đáp án CNAME sai ngay vì apex. Alias cũng **không** trỏ được tới tên DNS của một EC2 instance.
+> Bẫy thi: *"trỏ `example.com` (không có www) vào ALB/CloudFront"* → **Alias**. Đáp án CNAME sai ngay vì apex. Alias cũng **không** trỏ được tới tên DNS của một EC2 instance.
 
 ### 2.3 Routing Policies — 8 loại
 
@@ -96,17 +96,17 @@ Nhờ đó bạn dịch dần traffic từ region này sang region khác mà kh�
 | Policy | Chọn câu trả lời theo | Use case | Health check? |
 |--------|-----------------------|----------|---------------|
 | **Simple** | Không chọn — trả hết, thứ tự ngẫu nhiên | 1 endpoint | Không |
-| **Weighted** | Tỉ lệ trọng số | A/B test, canary deploy | ✅ |
-| **Latency** | Độ trễ mạng tới region | Multi-region, đưa user tới region nhanh nhất | ✅ |
-| **Failover** | Primary còn sống hay không | Primary + secondary (DR) | ✅ |
-| **Geolocation** | Quốc gia/châu lục của user | Data residency, nội dung theo nước | ✅ |
-| **Geoproximity** | Khoảng cách địa lý + bias | Dịch dần traffic giữa các region (Traffic Flow) | ✅ |
-| **Multivalue** | Ngẫu nhiên, tối đa 8 record healthy | Chia tải thô phía client khi không có LB | ✅ |
-| **IP-based** (2022) | Dải CIDR của user | Route theo nhà mạng / dải IP biết trước | ✅ |
+| **Weighted** | Tỉ lệ trọng số | A/B test, canary deploy | ✓ |
+| **Latency** | Độ trễ mạng tới region | Multi-region, đưa user tới region nhanh nhất | ✓ |
+| **Failover** | Primary còn sống hay không | Primary + secondary (DR) | ✓ |
+| **Geolocation** | Quốc gia/châu lục của user | Data residency, nội dung theo nước | ✓ |
+| **Geoproximity** | Khoảng cách địa lý + bias | Dịch dần traffic giữa các region (Traffic Flow) | ✓ |
+| **Multivalue** | Ngẫu nhiên, tối đa 8 record healthy | Chia tải thô phía client khi không có LB | ✓ |
+| **IP-based** (2022) | Dải CIDR của user | Route theo nhà mạng / dải IP biết trước | ✓ |
 
 Về phí: query thường ~$0,40 / 1 triệu, Latency ~$0,60, Geolocation và Geoproximity ~$0,70 (us-east-1, 1 tỷ query đầu mỗi tháng). Với 100 triệu query/tháng đó là $40, $60 hoặc $70 — DNS hiếm khi là khoản đáng kể trong hoá đơn.
 
-> 🪤 Bẫy thi: Simple và Multivalue đều trả nhiều IP; khác nhau ở chỗ **Multivalue có health check**. Đề nói *"trả nhiều IP nhưng chỉ IP còn sống"* → Multivalue. Đề nói *"chuyển 10% traffic sang bản mới"* → Weighted.
+> Bẫy thi: Simple và Multivalue đều trả nhiều IP; khác nhau ở chỗ **Multivalue có health check**. Đề nói *"trả nhiều IP nhưng chỉ IP còn sống"* → Multivalue. Đề nói *"chuyển 10% traffic sang bản mới"* → Weighted.
 
 ### 2.4 Latency vs Geolocation
 - **Latency** = AWS đo network latency từ user → region, route best. **Network reality**.
@@ -142,7 +142,7 @@ Check thường, endpoint AWS:           $0,50
 Endpoint ngoài AWS + fast interval:   $0,75 + $2,00 = $2,75
 ```
 
-> 🪤 Bẫy thi: *"health check cho database / instance trong private subnet"* → không trỏ thẳng được; dùng **CloudWatch alarm + health check kiểu CloudWatch**. Và nhớ mở security group cho dải IP của Route 53 health checker khi check endpoint public.
+> Bẫy thi: *"health check cho database / instance trong private subnet"* → không trỏ thẳng được; dùng **CloudWatch alarm + health check kiểu CloudWatch**. Và nhớ mở security group cho dải IP của Route 53 health checker khi check endpoint public.
 
 ### 2.6 Failover pattern
 ```
@@ -192,7 +192,7 @@ Trên Route 53 có hai bước, thiếu bước nào cũng chưa xong:
 
 Chỉ làm bước 1 thì zone có ký nhưng không resolver nào kiểm tra, vì chuỗi tin cậy bị đứt ở tầng cha.
 
-> 🪤 Bẫy thi: DNSSEC signing chỉ áp dụng cho **public hosted zone**. KMS key phải là **asymmetric** và ở **us-east-1** — đáp án ghi symmetric key hoặc region khác là sai. Bản thân tính năng không tính phí, chỉ trả tiền KMS key.
+> Bẫy thi: DNSSEC signing chỉ áp dụng cho **public hosted zone**. KMS key phải là **asymmetric** và ở **us-east-1** — đáp án ghi symmetric key hoặc region khác là sai. Bản thân tính năng không tính phí, chỉ trả tiền KMS key.
 
 ---
 
@@ -293,7 +293,7 @@ Trước đây mọi thứ gộp chung một chỗ, nên muốn origin nhận đ
 - **Response Headers Policy** — thêm hoặc sửa header trên đường **trả về** người dùng: HSTS, CORS, các security header. Không liên quan tới cache key.
 - **Managed Policies** — các policy AWS làm sẵn cho trường hợp thường gặp. `CachingOptimized` (key tối thiểu, TTL dài — cho nội dung tĩnh), `CachingDisabled` (cả ba TTL bằng 0 — cho API động), `AllViewerExceptHostHeader` (một origin request policy forward mọi thứ trừ header `Host` — cho origin như API Gateway vốn từ chối `Host` lạ).
 
-> 🪤 Bẫy thi: *"hit ratio thấp, origin quá tải dù đã có CloudFront"* → cache key đang chứa thứ không cần (cookie, mọi query string, `User-Agent`). Sửa bằng cách **thu hẹp cache policy**. *"origin cần đọc một header nhưng không muốn ảnh hưởng cache"* → **origin request policy**, không phải cache policy.
+> Bẫy thi: *"hit ratio thấp, origin quá tải dù đã có CloudFront"* → cache key đang chứa thứ không cần (cookie, mọi query string, `User-Agent`). Sửa bằng cách **thu hẹp cache policy**. *"origin cần đọc một header nhưng không muốn ảnh hưởng cache"* → **origin request policy**, không phải cache policy.
 
 ### 3.3 OAC (Origin Access Control) — replace OAI
 
@@ -330,7 +330,7 @@ Bucket policy cho phép **service principal** `cloudfront.amazonaws.com`, kèm �
 
 Một giới hạn chung của cả hai: chỉ dùng được với S3 bucket thường (REST endpoint). Nếu bucket bật **static website hosting** và bạn trỏ origin vào website endpoint thì CloudFront coi đó là custom origin và không dùng được OAC lẫn OAI.
 
-> 🪤 Bẫy thi: *"CloudFront + S3 private, object mã hoá bằng KMS"* → **OAC**. Thấy OAI trong đáp án cho một hệ thống mới thì đó là đáp án cũ.
+> Bẫy thi: *"CloudFront + S3 private, object mã hoá bằng KMS"* → **OAC**. Thấy OAI trong đáp án cho một hệ thống mới thì đó là đáp án cũ.
 
 ### 3.4 Lambda@Edge vs CloudFront Functions
 
@@ -441,14 +441,14 @@ Cả hai đều dùng mạng edge của AWS và đều giúp người dùng ở 
 | Feature | CloudFront | Global Accelerator |
 |---------|-----------|---------------------|
 | Layer | 7 (HTTP) | 4 (TCP/UDP) |
-| Static IP | ❌ mặc định (IP đổi theo thời gian; có tính năng Anycast static IP riêng, phải yêu cầu) | ✅ 2 IP có sẵn |
-| Cache | ✅ | ❌ |
-| WAF | ✅ gắn thẳng vào distribution | ❌ (gắn WAF ở ALB phía sau) |
-| Edge compute | ✅ (Functions, Lambda@Edge) | ❌ |
+| Static IP | ✗ mặc định (IP đổi theo thời gian; có tính năng Anycast static IP riêng, phải yêu cầu) | ✓ 2 IP có sẵn |
+| Cache | ✓ | ✗ |
+| WAF | ✓ gắn thẳng vào distribution | ✗ (gắn WAF ở ALB phía sau) |
+| Edge compute | ✓ (Functions, Lambda@Edge) | ✗ |
 | Failover | Origin group: thử lại **từng request** ở origin phụ, chỉ `GET`/`HEAD`/`OPTIONS` | Chuyển **cả luồng** sang region khác, **dưới 1 phút**, không phụ thuộc DNS |
 | Use case | Web static + dynamic | TCP/UDP game, IoT, VoIP, legacy app static IP |
 
-> 🪤 Bẫy thi: thấy **UDP**, **static IP để whitelist**, hoặc **non-HTTP** → Global Accelerator. Thấy **cache**, **nội dung tĩnh**, **giảm tải origin** → CloudFront. Thấy *"failover nhanh giữa các region, không phụ thuộc DNS caching"* → Global Accelerator, không phải Route 53.
+> Bẫy thi: thấy **UDP**, **static IP để whitelist**, hoặc **non-HTTP** → Global Accelerator. Thấy **cache**, **nội dung tĩnh**, **giảm tải origin** → CloudFront. Thấy *"failover nhanh giữa các region, không phụ thuộc DNS caching"* → Global Accelerator, không phải Route 53.
 
 ### 4.3 Khi dùng cả 2
 
@@ -590,12 +590,12 @@ Player → Global Accelerator (2 anycast IP) → Region gần nhất
 - **Multi-region** với Aurora Global + Route 53 latency failover.
 
 ### Anti-pattern
-- ❌ CNAME apex → không hợp lệ DNS, dùng Alias.
-- ❌ OAI cho S3 mới (legacy, AWS khuyên dùng OAC).
-- ❌ CloudFront origin EC2 IP cứng → dùng ALB.
-- ❌ Cache GET với cookies/headers không cần → cache key explode, low hit ratio.
-- ❌ Origin EC2 public không có SG chỉ accept CloudFront → bypass cache.
-- ❌ Lambda@Edge dùng cho 1 line JS → Functions rẻ hơn 6x.
+- ✗ CNAME apex → không hợp lệ DNS, dùng Alias.
+- ✗ OAI cho S3 mới (legacy, AWS khuyên dùng OAC).
+- ✗ CloudFront origin EC2 IP cứng → dùng ALB.
+- ✗ Cache GET với cookies/headers không cần → cache key explode, low hit ratio.
+- ✗ Origin EC2 public không có SG chỉ accept CloudFront → bypass cache.
+- ✗ Lambda@Edge dùng cho 1 line JS → Functions rẻ hơn 6x.
 
 ## 10. Foundations
 - [[foundations-04-latency-vs-consistency]] — multi-region tradeoff. Edge cache reduce latency nhưng staleness là consistency loss.

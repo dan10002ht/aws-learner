@@ -26,7 +26,7 @@ free -h        # RAM và swap
 lsblk          # liệt kê block device (EBS volume hiện ở đây)
 ```
 
-> 💡 Ghi nhớ: `/proc` và `/sys` không phải file thật trên đĩa — chúng là cửa sổ nhìn vào kernel. `cat /proc/uptime` đọc trực tiếp từ kernel, không tốn I/O đĩa.
+> Ghi nhớ: `/proc` và `/sys` không phải file thật trên đĩa — chúng là cửa sổ nhìn vào kernel. `cat /proc/uptime` đọc trực tiếp từ kernel, không tốn I/O đĩa.
 
 ## 2. Điều hướng & thao tác file
 
@@ -52,7 +52,7 @@ tail -n 50 app.log      # 50 dòng cuối
 tail -f app.log         # theo dõi realtime — lệnh debug số 1
 ```
 
-> ⚠️ Lỗi thường gặp: `rm -rf` với biến chưa gán — `rm -rf $APP_DIR/` khi `$APP_DIR` rỗng sẽ thành `rm -rf /`. Trong script luôn dùng `rm -rf "${APP_DIR:?}/"` để bash báo lỗi nếu biến rỗng.
+> Lỗi thường gặp: `rm -rf` với biến chưa gán — `rm -rf $APP_DIR/` khi `$APP_DIR` rỗng sẽ thành `rm -rf /`. Trong script luôn dùng `rm -rf "${APP_DIR:?}/"` để bash báo lỗi nếu biến rỗng.
 
 ## 3. Permissions — rwx, chmod, chown, sudo
 
@@ -83,9 +83,9 @@ sudo systemctl restart nginx  # chạy lệnh với quyền root
 sudo -i                       # mở shell root (cẩn trọng)
 ```
 
-> 💡 Ghi nhớ: SSH từ chối hoạt động nếu private key có quyền quá rộng — lỗi kinh điển `WARNING: UNPROTECTED PRIVATE KEY FILE!`. Sửa bằng `chmod 400 my-key.pem`.
+> Ghi nhớ: SSH từ chối hoạt động nếu private key có quyền quá rộng — lỗi kinh điển `WARNING: UNPROTECTED PRIVATE KEY FILE!`. Sửa bằng `chmod 400 my-key.pem`.
 
-> ⚠️ Lỗi thường gặp: với **thư mục**, `x` nghĩa là "được đi vào" (cd), không phải execute. Thư mục có `r` mà không có `x` thì liệt kê được tên file nhưng không mở được file.
+> Lỗi thường gặp: với **thư mục**, `x` nghĩa là "được đi vào" (cd), không phải execute. Thư mục có `r` mà không có `x` thì liệt kê được tên file nhưng không mở được file.
 
 ## 4. Process — ps, top, kill, signals
 
@@ -112,7 +112,7 @@ sudo lsof -i :8080
 sudo kill $(sudo lsof -t -i :8080)
 ```
 
-> ⚠️ Lỗi thường gặp: quen tay `kill -9` ngay. SIGKILL không cho ứng dụng flush dữ liệu, đóng connection, xoá lock file — dễ gây hỏng dữ liệu. ECS/Kubernetes cũng theo logic này: gửi SIGTERM, chờ hết grace period (ECS `stopTimeout`, mặc định 30s) rồi mới SIGKILL.
+> Lỗi thường gặp: quen tay `kill -9` ngay. SIGKILL không cho ứng dụng flush dữ liệu, đóng connection, xoá lock file — dễ gây hỏng dữ liệu. ECS/Kubernetes cũng theo logic này: gửi SIGTERM, chờ hết grace period (ECS `stopTimeout`, mặc định 30s) rồi mới SIGKILL.
 
 ## 5. systemd — systemctl & journalctl
 
@@ -139,7 +139,7 @@ journalctl -u nginx -p err           # chỉ mức error trở lên
 journalctl -b                        # log từ lần boot này
 ```
 
-> 💡 Ghi nhớ: `start` ≠ `enable`. `start` chạy ngay bây giờ; `enable` đăng ký chạy khi boot. Instance trong Auto Scaling group bị thay thế thường xuyên — quên `enable` thì instance mới lên sẽ không chạy app. Đây là bug user data phổ biến nhất.
+> Ghi nhớ: `start` ≠ `enable`. `start` chạy ngay bây giờ; `enable` đăng ký chạy khi boot. Instance trong Auto Scaling group bị thay thế thường xuyên — quên `enable` thì instance mới lên sẽ không chạy app. Đây là bug user data phổ biến nhất.
 
 Một unit file tối giản (`/etc/systemd/system/myapp.service`):
 
@@ -223,7 +223,7 @@ Host web1
 
 Sau đó chỉ cần `ssh web1`, `scp app.tar.gz web1:~/`.
 
-> ⚠️ Lỗi thường gặp: `Permission denied (publickey)` thường do (1) sai user (`ec2-user` vs `ubuntu`), (2) sai key, (3) quyền key chưa phải 400. Thêm `-v` để SSH in ra nó đang thử key nào.
+> Lỗi thường gặp: `Permission denied (publickey)` thường do (1) sai user (`ec2-user` vs `ubuntu`), (2) sai key, (3) quyền key chưa phải 400. Thêm `-v` để SSH in ra nó đang thử key nào.
 
 ## 7. Package manager — dnf / apt
 
@@ -235,7 +235,7 @@ Sau đó chỉ cần `ssh web1`, `scp app.tar.gz web1:~/`.
 | Gỡ | `sudo dnf remove nginx` | `sudo apt remove nginx` |
 | Tìm | `dnf search nginx` | `apt search nginx` |
 
-> 💡 Ghi nhớ: Amazon Linux 2023 dùng **dnf** (kế nhiệm yum; gõ `yum` vẫn chạy vì là alias). AL2023 còn có cơ chế *deterministic upgrades* — repository được "đóng băng" theo phiên bản, giúp các instance trong fleet cài đúng cùng một bộ gói. Amazon Linux 2 đã hết hỗ trợ chuẩn (EOL 30/06/2026) — dự án mới hãy dùng AL2023.
+> Ghi nhớ: Amazon Linux 2023 dùng **dnf** (kế nhiệm yum; gõ `yum` vẫn chạy vì là alias). AL2023 còn có cơ chế *deterministic upgrades* — repository được "đóng băng" theo phiên bản, giúp các instance trong fleet cài đúng cùng một bộ gói. Amazon Linux 2 đã hết hỗ trợ chuẩn (EOL 30/06/2026) — dự án mới hãy dùng AL2023.
 
 Trong script tự động (user data) luôn thêm `-y` để không bị treo chờ xác nhận.
 
@@ -282,7 +282,7 @@ awk '{print $1}' access.log | sort | uniq -c | sort -rn | head -5
 
 Đọc từ phải sang trái khi giải thích pipeline: lấy 5 dòng đầu ← sort giảm dần theo số đếm ← đếm số lần xuất hiện ← sort (uniq cần input đã sort) ← lấy cột IP.
 
-> ⚠️ Lỗi thường gặp: `uniq` chỉ gộp các dòng **liền kề** giống nhau, nên luôn phải `sort` trước `uniq`.
+> Lỗi thường gặp: `uniq` chỉ gộp các dòng **liền kề** giống nhau, nên luôn phải `sort` trước `uniq`.
 
 ## 9. Bash scripting căn bản
 
@@ -322,7 +322,7 @@ Quy tắc sống còn:
 - **Luôn đặt biến trong nháy kép**: `"$FILE"` chứ không `$FILE` — tránh vỡ khi giá trị có dấu cách.
 - `set -euo pipefail` ở đầu mọi script — script chết sớm còn hơn chạy tiếp trong trạng thái sai.
 
-> 💡 Ghi nhớ: khi logic vượt quá ~50 dòng bash hoặc cần gọi API AWS phức tạp, chuyển sang Python + **boto3** (AWS SDK for Python). Ý tưởng: thay vì `aws ec2 describe-instances` rồi vật lộn parse text, boto3 trả về dict Python — lọc, lặp, retry, xử lý lỗi đều tự nhiên hơn. Bash để "dán" lệnh, Python để viết logic.
+> Ghi nhớ: khi logic vượt quá ~50 dòng bash hoặc cần gọi API AWS phức tạp, chuyển sang Python + **boto3** (AWS SDK for Python). Ý tưởng: thay vì `aws ec2 describe-instances` rồi vật lộn parse text, boto3 trả về dict Python — lọc, lặp, retry, xử lý lỗi đều tự nhiên hơn. Bash để "dán" lệnh, Python để viết logic.
 
 ```python
 # Mức ý tưởng: liệt kê instance đang chạy bằng boto3

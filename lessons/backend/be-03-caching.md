@@ -12,7 +12,7 @@ Cache giải quyết 3 vấn đề:
 
 Nhưng cache đưa vào hệ thống một **bản sao dữ liệu thứ hai**, và mọi bản sao đều đặt ra câu hỏi: *khi nào hai bản sao lệch nhau, và lệch bao lâu thì chấp nhận được?* Toàn bộ độ khó của caching nằm ở câu hỏi này.
 
-> 💡 Ghi nhớ: Cache không phải "tối ưu hoá miễn phí". Nó là một trade-off có chủ đích: đổi **consistency** và **độ phức tạp vận hành** lấy **latency** và **throughput**. Nếu bạn không trả lời được "dữ liệu này stale tối đa bao lâu thì chấp nhận được?", bạn chưa sẵn sàng cache nó.
+> Ghi nhớ: Cache không phải "tối ưu hoá miễn phí". Nó là một trade-off có chủ đích: đổi **consistency** và **độ phức tạp vận hành** lấy **latency** và **throughput**. Nếu bạn không trả lời được "dữ liệu này stale tối đa bao lâu thì chấp nhận được?", bạn chưa sẵn sàng cache nó.
 
 ## Bốn pattern kinh điển
 
@@ -144,7 +144,7 @@ Bốn pattern khác nhau ở hai chỗ: **ai đi load khi miss** và **write đi
 | Write-through | (cache luôn ấm) | App ghi cache + DB đồng bộ | Thấp | Không | Read-after-write quan trọng |
 | Write-behind | — | Ghi cache, flush DB async | Thấp (cache là nguồn mới nhất) | **Có** | Counter, metrics, dữ liệu chịu mất |
 
-> 💡 Ghi nhớ: 90% hệ thống dùng **cache-aside + TTL + xoá key khi update**. Bắt đầu từ đó; chỉ chuyển pattern khác khi có lý do đo đạc được.
+> Ghi nhớ: 90% hệ thống dùng **cache-aside + TTL + xoá key khi update**. Bắt đầu từ đó; chỉ chuyển pattern khác khi có lý do đo đạc được.
 
 ## TTL & Invalidation — vì sao là bài toán khó
 
@@ -214,7 +214,7 @@ Cửa sổ race này nhỏ nhưng ở traffic lớn thì *chắc chắn* xảy r
 
 3. **Một bản ghi nằm trong nhiều key**: user A xuất hiện trong `user:A`, `team:42:members`, `search:abc`, trang HTML đã render... Update user A phải biết xoá *tất cả*. Đây là lý do nên hạn chế cache dữ liệu đã denormalize/tổng hợp, hoặc chấp nhận TTL ngắn cho chúng.
 
-> ⚠️ Bẫy production: Xoá cache **trước** khi update DB là sai (reader chen vào giữa sẽ cache lại giá trị cũ). Thứ tự đúng cho cache-aside là: **update DB trước, xoá cache sau**, kèm TTL. Và "update cache thay vì xoá" còn nguy hiểm hơn — hai writer đồng thời có thể ghi cache theo thứ tự ngược với DB.
+> Bẫy production: Xoá cache **trước** khi update DB là sai (reader chen vào giữa sẽ cache lại giá trị cũ). Thứ tự đúng cho cache-aside là: **update DB trước, xoá cache sau**, kèm TTL. Và "update cache thay vì xoá" còn nguy hiểm hơn — hai writer đồng thời có thể ghi cache theo thứ tự ngược với DB.
 
 ## Cache stampede (dogpile) và cách chống
 
@@ -310,7 +310,7 @@ Nếu bạn warm 10.000 key cùng lúc với TTL 300s, đúng 300s sau bạn có
 ttl = 300 + random.randint(0, 60)   # 300–360s, dàn đều expiry
 ```
 
-> ⚠️ Bẫy production: Stampede hay xuất hiện lần đầu sau một lần **deploy hoặc restart Redis** (cache lạnh toàn bộ). Hãy có kế hoạch cold-start: warm-up script, rate limit xuống DB, hoặc circuit breaker — đừng để "restart cache" đồng nghĩa "sập DB".
+> Bẫy production: Stampede hay xuất hiện lần đầu sau một lần **deploy hoặc restart Redis** (cache lạnh toàn bộ). Hãy có kế hoạch cold-start: warm-up script, rate limit xuống DB, hoặc circuit breaker — đừng để "restart cache" đồng nghĩa "sập DB".
 
 ## Hot key
 
@@ -352,7 +352,7 @@ Nguyên tắc:
 - **Chuẩn hoá trước khi tạo key**: sort query params, lowercase, trim — `?a=1&b=2` và `?b=2&a=1` phải ra cùng key.
 - Đừng nhét raw user input dài vào key — hash nó (`sha256[:16]`) để tránh key khổng lồ và ký tự lạ.
 
-> ⚠️ Bẫy production: Cache response API theo URL mà quên rằng response phụ thuộc header `Authorization` → user A nhận về giỏ hàng của user B. Lỗi này xuất hiện đều đặn hằng năm ở các công ty lớn (kể cả qua CDN). Quy tắc: **dữ liệu cá nhân hoá thì key phải chứa định danh user, hoặc đừng cache ở tầng dùng chung.**
+> Bẫy production: Cache response API theo URL mà quên rằng response phụ thuộc header `Authorization` → user A nhận về giỏ hàng của user B. Lỗi này xuất hiện đều đặn hằng năm ở các công ty lớn (kể cả qua CDN). Quy tắc: **dữ liệu cá nhân hoá thì key phải chứa định danh user, hoặc đừng cache ở tầng dùng chung.**
 
 ## Local cache vs distributed cache
 
@@ -436,7 +436,7 @@ ETag: "abc123"
 - `private` / `no-store`: bắt buộc cho response có dữ liệu user.
 - Invalidation chủ động qua **purge API** của CDN khi dữ liệu đổi — nhưng purge là thao tác chậm và có giới hạn rate, đừng thiết kế hệ thống phụ thuộc purge liên tục.
 
-> 💡 Ghi nhớ: Thứ tự ưu tiên khi tối ưu read path: **CDN/edge → local cache → distributed cache → read replica → DB**. Mỗi tầng chặn được request thì các tầng sau rẻ đi tương ứng. Đẩy cache càng gần user càng tốt — với điều kiện dữ liệu chịu được stale.
+> Ghi nhớ: Thứ tự ưu tiên khi tối ưu read path: **CDN/edge → local cache → distributed cache → read replica → DB**. Mỗi tầng chặn được request thì các tầng sau rẻ đi tương ứng. Đẩy cache càng gần user càng tốt — với điều kiện dữ liệu chịu được stale.
 
 ## Consistency giữa cache và DB
 
@@ -460,7 +460,7 @@ Cache không có metrics là cache bạn không biết đang giúp hay đang h�
 | **DB load tương quan** | Mục tiêu cuối của cache | Hit ratio tăng mà DB load không giảm → đang cache sai thứ |
 | **Stale-serve count / lock wait** | Sức khoẻ cơ chế chống stampede | Tăng đột biến quanh thời điểm deploy/expiry |
 
-> ⚠️ Bẫy production: Hit ratio 99% nghe đẹp nhưng có thể vô nghĩa — nếu 99% đó là các key rẻ tiền còn 1% miss rơi đúng vào query nặng nhất. Luôn đo **chi phí của miss** (DB time tiết kiệm được), không chỉ đếm hit. Và nhớ: khi cache hit ratio quá cao quá lâu, DB của bạn đã "quen" tải thấp — một lần cache flush có thể là lần đầu DB thấy 100% traffic sau nhiều tháng.
+> Bẫy production: Hit ratio 99% nghe đẹp nhưng có thể vô nghĩa — nếu 99% đó là các key rẻ tiền còn 1% miss rơi đúng vào query nặng nhất. Luôn đo **chi phí của miss** (DB time tiết kiệm được), không chỉ đếm hit. Và nhớ: khi cache hit ratio quá cao quá lâu, DB của bạn đã "quen" tải thấp — một lần cache flush có thể là lần đầu DB thấy 100% traffic sau nhiều tháng.
 
 ## Checklist thiết kế cache (tóm tắt)
 

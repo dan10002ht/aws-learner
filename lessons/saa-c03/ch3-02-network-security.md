@@ -98,7 +98,7 @@ Cả hai đều là bộ lọc gói tin theo IP + port (L3/L4), khác nhau ở *
 | Aspect | Security Group | NACL |
 |--------|---------------|------|
 | Tầng | Instance/ENI | Subnet |
-| Stateful? | ✅ Stateful (allow inbound → outbound trả tự động) | ❌ Stateless (cần allow cả 2 chiều) |
+| Stateful? | ✓ Stateful (allow inbound → outbound trả tự động) | ✗ Stateless (cần allow cả 2 chiều) |
 | Rule | Chỉ Allow | Allow + Deny |
 | Đánh giá | Tất cả rule (union OR) | Theo thứ tự rule number, dừng ở first match |
 | Default outbound | Allow all | Allow all (cho default NACL) |
@@ -149,7 +149,7 @@ Vì không biết trước client ngoài internet chạy hệ điều hành gì,
 
 Áp vào bài tập 5 cuối bài: NACL "inbound chỉ 443, outbound chỉ 1024–65535" hỏng **cả hai gói** — request ra có đích 443 không nằm trong dải outbound 1024–65535, và response về có đích là port tạm ~40000 không khớp inbound 443. Cách sửa: thêm outbound 443 và inbound 1024–65535 (hoặc đúng dải của hệ điều hành trên instance).
 
-> 🪤 Thấy "NACL" + "request tới nơi nhưng không có phản hồi" trong đề → nghĩ ngay tới thiếu rule ephemeral port ở chiều trả lời. Thấy cùng triệu chứng mà chỉ có SG → không phải lỗi này, vì SG stateful.
+> Thấy "NACL" + "request tới nơi nhưng không có phản hồi" trong đề → nghĩ ngay tới thiếu rule ephemeral port ở chiều trả lời. Thấy cùng triệu chứng mà chỉ có SG → không phải lỗi này, vì SG stateful.
 
 ### 3.4 SG-to-SG reference
 
@@ -214,9 +214,9 @@ Bảng dưới gom lại ba loại theo các tiêu chí đề hay hỏi:
 |---|---|---|---|
 | Cơ chế | Entry trong **route table**, đích là prefix list `pl-xxxx` | **ENI có private IP** trong subnet của bạn | ENI làm **next hop** trong route table, bọc traffic bằng **GENEVE (UDP 6081)** gửi sang GWLB |
 | Dùng cho | Chỉ **S3 và DynamoDB** | Hầu hết service AWS (SSM, KMS, Secrets Manager, ECR, CloudWatch Logs…) + **service của bên thứ 3 / của chính bạn** publish qua PrivateLink | Đẩy traffic qua **appliance inspect của bên thứ 3** (Palo Alto, Fortinet, IDS/IPS) |
-| Có Security Group? | ❌ Không — SG không gắn được vào gateway endpoint | ✅ Có — SG trên ENI endpoint là chốt chặn ai trong VPC được gọi endpoint | ❌ Không (SG nằm ở appliance phía sau GWLB) |
-| Có endpoint policy? | ✅ (mặc định `Allow *`) | ✅ (mặc định full access) | ❌ |
-| On-prem qua DX/VPN gọi được? | ❌ **Không** — route table của VPC không lan sang on-prem | ✅ Có — đây là lý do chính chọn interface endpoint cho S3 dù gateway free | — |
+| Có Security Group? | ✗ Không — SG không gắn được vào gateway endpoint | ✓ Có — SG trên ENI endpoint là chốt chặn ai trong VPC được gọi endpoint | ✗ Không (SG nằm ở appliance phía sau GWLB) |
+| Có endpoint policy? | ✓ (mặc định `Allow *`) | ✓ (mặc định full access) | ✗ |
+| On-prem qua DX/VPN gọi được? | ✗ **Không** — route table của VPC không lan sang on-prem | ✓ Có — đây là lý do chính chọn interface endpoint cho S3 dù gateway free | — |
 | Tiền | **Free** | Tính **giờ/endpoint/AZ + per-GB** xử lý | Giờ + per-GB |
 | Từ khoá đề | "S3 access không ra internet, không tốn thêm phí" | "on-prem phải tới S3 mà **không qua internet**", "private IP cho service", "expose SaaS cho khách mà không peering" | "chèn firewall của hãng thứ ba", "transparent inspection" |
 
@@ -261,7 +261,7 @@ Endpoint policy là **resource policy gắn trên chính endpoint**. Nó **khôn
 Statement thứ hai là mẫu chống **data exfiltration** (resource perimeter): nhân viên hoặc malware trong
 VPC không copy được dữ liệu sang bucket **ngoài Organization**, vì request qua endpoint này bị Deny.
 
-> 🪤 **Đừng lẫn hai key này — đề rất hay đánh tráo:**
+> **Đừng lẫn hai key này — đề rất hay đánh tráo:**
 >
 > | Key | Lọc theo | Dùng cho | Chặn được gì |
 > |---|---|---|---|
@@ -432,7 +432,7 @@ Phép so đơn giản: thiệt hại của một lần sập vì DDoS có lớn 
 
 Không rơi vào các trường hợp trên thì Shield Standard + CloudFront + WAF rate-based rule là đủ, và đó cũng là đáp án khi đề nhấn "cost-effective".
 
-> 🪤 Đề nhắc "DDoS Response Team / SRT", "hoàn chi phí scale do tấn công", hoặc "bảo vệ Elastic IP" → **Shield Advanced**. Đề chỉ nói "bảo vệ DDoS, không tốn thêm chi phí" → **Shield Standard**, và không cần làm gì để bật.
+> Đề nhắc "DDoS Response Team / SRT", "hoàn chi phí scale do tấn công", hoặc "bảo vệ Elastic IP" → **Shield Advanced**. Đề chỉ nói "bảo vệ DDoS, không tốn thêm chi phí" → **Shield Standard**, và không cần làm gì để bật.
 
 ---
 
@@ -561,7 +561,7 @@ Khác biệt gốc so với Session Manager: đây vẫn là **kết nối SSH �
 | Audit | Log SSH của OS | CloudTrail + log nội dung phiên | CloudTrail (ai kết nối) | Log kết nối VPN |
 | Chi phí thêm | Một EC2 chạy 24/7 | Không (trừ phí interface endpoint nếu dùng) | Không | Theo giờ endpoint + giờ kết nối |
 
-> 🪤 Đề hỏi "truy cập shell vào instance private, **không mở port inbound, không quản SSH key**, có audit" → **Session Manager**. Đáp án có "bastion host" gần như luôn là mồi nhử, trừ khi đề nói rõ phải dùng công cụ chỉ chạy được qua SSH thuần.
+> Đề hỏi "truy cập shell vào instance private, **không mở port inbound, không quản SSH key**, có audit" → **Session Manager**. Đáp án có "bastion host" gần như luôn là mồi nhử, trừ khi đề nói rõ phải dùng công cụ chỉ chạy được qua SSH thuần.
 
 ---
 

@@ -157,7 +157,7 @@ Giá port-hour, ~us-east-1, tính 730 giờ/tháng:
 | MACsec | có trên cổng 10 / 100 / 400 Gbps, ở location hỗ trợ | không |
 | **Khi nào chọn** | traffic lớn, ổn định, cần nhiều VIF/LAG/MACsec | cần nhanh, băng thông vừa, không muốn tự làm việc với colo |
 
-> 🪤 Bẫy hay gặp: đề tả "cần 400 Mbps, muốn lên sớm, không có sẵn thiết bị ở DX location" → đáp án là **hosted connection qua partner**, không phải dedicated. Hai tín hiệu: 400 Mbps là một mức của hosted (dedicated bắt đầu từ 1 Gbps), và "không có thiết bị ở colo" loại luôn dedicated.
+> Bẫy hay gặp: đề tả "cần 400 Mbps, muốn lên sớm, không có sẵn thiết bị ở DX location" → đáp án là **hosted connection qua partner**, không phải dedicated. Hai tín hiệu: 400 Mbps là một mức của hosted (dedicated bắt đầu từ 1 Gbps), và "không có thiết bị ở colo" loại luôn dedicated.
 
 ### 3.2 Virtual Interface (VIF) — phần bị hỏi nhiều nhất
 
@@ -207,7 +207,7 @@ Một circuit DX không tự biết đưa gói đi đâu. **VIF** là VLAN logic
 | **Public VIF** | Toàn bộ public endpoint AWS ở **mọi region** | không cần gateway | on-prem cần S3/DynamoDB/API với băng thông DX và không muốn dựng VPC | cần IP public do bạn sở hữu để BGP advertise; không phải "internet access" |
 | **Transit VIF** | Transit Gateway | bắt buộc qua **Direct Connect Gateway** | hub-and-spoke: một circuit phục vụ nhiều VPC/nhiều account | một DXGW không cho phép vừa gắn transit VIF vừa gắn private VIF |
 
-> 📏 Về tốc độ cho transit VIF: docs hiện tại ghi transit VIF dùng được với **mọi** connection dedicated lẫn hosted, ở **mọi tốc độ**. Tài liệu ôn thi cũ thường ghi "hosted connection phải từ 1 Gbps trở lên mới có transit VIF" (quy định trước đây). Nếu gặp đáp án dựa vào giới hạn đó, hiểu là đề viết theo quy định cũ.
+> Về tốc độ cho transit VIF: docs hiện tại ghi transit VIF dùng được với **mọi** connection dedicated lẫn hosted, ở **mọi tốc độ**. Tài liệu ôn thi cũ thường ghi "hosted connection phải từ 1 Gbps trở lên mới có transit VIF" (quy định trước đây). Nếu gặp đáp án dựa vào giới hạn đó, hiểu là đề viết theo quy định cũ.
 
 **Direct Connect Gateway** là thành phần *global*: một circuit ở Singapore nói chuyện được với VPC ở Tokyo và Sydney, miễn là các VGW/TGW đó associate vào cùng DXGW. Nhưng hai VPC gắn cùng một DXGW **không** nói chuyện được với nhau qua DXGW — DXGW không phải router giữa các VPC. Muốn VPC-to-VPC thì dùng TGW hoặc peering.
 
@@ -293,7 +293,7 @@ Một lưu ý khi đọc con số này: ECMP chia theo **flow** (một kết n�
 
 Vì thế gần như mọi đề "VPN throughput không đủ" đều có đáp án chứa TGW + ECMP.
 
-> 📏 Con số đề thi là **1,25 Gbps/tunnel**. Từ cuối 2025 AWS có thêm tuỳ chọn **Large Bandwidth Tunnel** tới **5 Gbps/tunnel**, chỉ cho VPN gắn vào Transit Gateway hoặc Cloud WAN (VGW không có), không dùng chung với accelerated VPN, giá ~$0,60/giờ mỗi connection thay vì ~$0,05. Kết luận của đề không đổi: muốn vượt 1,25 Gbps thì phải rời VGW sang TGW.
+> Con số đề thi là **1,25 Gbps/tunnel**. Từ cuối 2025 AWS có thêm tuỳ chọn **Large Bandwidth Tunnel** tới **5 Gbps/tunnel**, chỉ cho VPN gắn vào Transit Gateway hoặc Cloud WAN (VGW không có), không dùng chung với accelerated VPN, giá ~$0,60/giờ mỗi connection thay vì ~$0,05. Kết luận của đề không đổi: muốn vượt 1,25 Gbps thì phải rời VGW sang TGW.
 
 ### 4.2 Static routing vs BGP (dynamic)
 
@@ -311,7 +311,7 @@ Dựng xong tunnel mới là một nửa. Hai bên còn phải biết **dải IP
 | Yêu cầu thiết bị | CGW không cần hỗ trợ BGP | CGW phải chạy BGP, cần ASN |
 | **Khi nào chọn** | thiết bị cũ không nói BGP, mạng nhỏ tĩnh | mặc định cho production, bắt buộc nếu muốn DX+VPN failover tự động |
 
-> 🪤 Bẫy: đề mô tả "muốn failover tự động giữa DX và VPN" → **phải BGP ở cả hai đường**. DX lúc nào cũng chạy BGP; nếu VPN dùng static thì không có gì báo cho AWS biết đường nào vừa chết.
+> Bẫy: đề mô tả "muốn failover tự động giữa DX và VPN" → **phải BGP ở cả hai đường**. DX lúc nào cũng chạy BGP; nếu VPN dùng static thì không có gì báo cho AWS biết đường nào vừa chết.
 
 ### 4.3 VGW hay TGW làm điểm cuối?
 

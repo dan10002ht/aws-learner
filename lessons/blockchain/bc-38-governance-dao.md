@@ -45,7 +45,7 @@ Ba khái niệm quyết định "một phiếu nặng bao nhiêu":
 - **Quorum**: **ngưỡng tối thiểu** tổng phiếu tham gia để proposal hợp lệ. Không đủ quorum → dù 100% "For" cũng **trượt**. Chống việc một nhóm nhỏ lén thông qua khi số đông ngủ quên.
 - **Delegation** (uỷ quyền): người giữ token **không tự bỏ phiếu** mà **uỷ quyền voting power** cho một địa chỉ khác (delegate) đại diện. Đây là mắt xích **bắt buộc** trong OpenZeppelin Governor.
 
-> ⚠️ Bẫy cực phổ biến: với `ERC20Votes`, **nếu bạn không delegate cho chính mình**, voting power của bạn = **0** — dù ví đầy token. Governor chỉ đếm **voting power đã được delegate**, không đếm balance thô. Rất nhiều người mới "vote không được" chỉ vì quên gọi `delegate(self)`.
+> Bẫy cực phổ biến: với `ERC20Votes`, **nếu bạn không delegate cho chính mình**, voting power của bạn = **0** — dù ví đầy token. Governor chỉ đếm **voting power đã được delegate**, không đếm balance thô. Rất nhiều người mới "vote không được" chỉ vì quên gọi `delegate(self)`.
 
 Lý do kỹ thuật: đếm balance trực tiếp sẽ bị **double-vote qua chuyển token** (vote xong gửi token cho ví khác vote tiếp). `ERC20Votes` lưu **checkpoint** voting power theo từng block; Governor chốt quyền bầu tại **một block quá khứ** (snapshot), nên chuyển token sau đó **không** đổi được phiếu.
 

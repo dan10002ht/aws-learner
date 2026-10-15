@@ -57,7 +57,7 @@ Domain 3 (Deployment) chiếm ~25% đề DVA-C02. Phần này xoay quanh một c
 | Local testing | Không | `sam local` | Không (synth ra rồi test) |
 | Khi nào chọn | Team quen YAML, hạ tầng tổng quát | App serverless thuần | Logic động, nhiều môi trường, dev quen code |
 
-> 💡 Mẹo thi: Nếu đề nói "developer muốn dùng **ngôn ngữ lập trình quen thuộc** (TypeScript/Python) để định nghĩa hạ tầng" → **CDK**. Nếu đề nói "viết template **ngắn gọn cho Lambda/API Gateway/DynamoDB** + test local" → **SAM**. Nếu chỉ nói "Infrastructure as Code chung chung, không serverless đặc thù" → **CloudFormation**.
+> Mẹo thi: Nếu đề nói "developer muốn dùng **ngôn ngữ lập trình quen thuộc** (TypeScript/Python) để định nghĩa hạ tầng" → **CDK**. Nếu đề nói "viết template **ngắn gọn cho Lambda/API Gateway/DynamoDB** + test local" → **SAM**. Nếu chỉ nói "Infrastructure as Code chung chung, không serverless đặc thù" → **CloudFormation**.
 
 ---
 
@@ -91,7 +91,7 @@ Outputs:           # Export giá trị ra ngoài / cho stack khác
       Name: !Sub "${EnvName}-bucket-arn"
 ```
 
-> ⚠️ Bẫy: Chỉ section **`Resources`** là bắt buộc. Đề hay hỏi "section nào không thể thiếu trong CloudFormation template" — đáp án là `Resources`.
+> Bẫy: Chỉ section **`Resources`** là bắt buộc. Đề hay hỏi "section nào không thể thiếu trong CloudFormation template" — đáp án là `Resources`.
 
 ### Intrinsic functions — thi rất hay hỏi phân biệt
 
@@ -104,9 +104,9 @@ Outputs:           # Export giá trị ra ngoài / cho stack khác
 | `!ImportValue` | Lấy giá trị `Export` từ stack khác | `!ImportValue dev-bucket-arn` |
 | `!FindInMap` | Tra cứu trong `Mappings` | `!FindInMap [EnvConfig, !Ref EnvName, InstanceType]` |
 
-> ⚠️ Bẫy `Ref` vs `GetAtt`: với cùng một resource, `!Ref` và `!GetAtt` thường trả về **giá trị khác nhau**. Ví dụ `AWS::S3::Bucket`: `!Ref` → tên bucket, `!GetAtt .Arn` → ARN. Với `AWS::EC2::Instance`: `!Ref` → instance ID, `!GetAtt .PublicIp` → IP. Đề hay đưa tình huống "cần ARN" rồi gài đáp án `!Ref` sai.
+> Bẫy `Ref` vs `GetAtt`: với cùng một resource, `!Ref` và `!GetAtt` thường trả về **giá trị khác nhau**. Ví dụ `AWS::S3::Bucket`: `!Ref` → tên bucket, `!GetAtt .Arn` → ARN. Với `AWS::EC2::Instance`: `!Ref` → instance ID, `!GetAtt .PublicIp` → IP. Đề hay đưa tình huống "cần ARN" rồi gài đáp án `!Ref` sai.
 
-> 💡 Mẹo thi: `!Sub` gọn hơn `!Join` rất nhiều khi ghép chuỗi có biến. Trong `!Sub` có thể dùng pseudo parameter như `${AWS::Region}`, `${AWS::AccountId}`, `${AWS::StackName}` mà không cần khai báo.
+> Mẹo thi: `!Sub` gọn hơn `!Join` rất nhiều khi ghép chuỗi có biến. Trong `!Sub` có thể dùng pseudo parameter như `${AWS::Region}`, `${AWS::AccountId}`, `${AWS::StackName}` mà không cần khai báo.
 
 ### Change sets — xem trước thay đổi
 
@@ -122,7 +122,7 @@ aws cloudformation execute-change-set \
   --stack-name myapp --change-set-name cs1   # áp dụng
 ```
 
-> 💡 Mẹo thi: "Muốn biết update có làm **replace/xóa** resource nào không trước khi apply" → **change set**. Change set còn cho thấy resource nào bị `Replacement: True` (nguy hiểm, mất dữ liệu).
+> Mẹo thi: "Muốn biết update có làm **replace/xóa** resource nào không trước khi apply" → **change set**. Change set còn cho thấy resource nào bị `Replacement: True` (nguy hiểm, mất dữ liệu).
 
 ### Nested stacks vs Cross-stack reference
 
@@ -137,7 +137,7 @@ aws cloudformation execute-change-set \
 
 Drift = ai đó sửa resource **thủ công** (qua console/CLI) khiến thực tế lệch với template. `detect-stack-drift` phát hiện lệch này.
 
-> ⚠️ Bẫy: CloudFormation **không tự sửa** drift. Nó chỉ báo cáo `MODIFIED/DELETED`. Muốn đồng bộ lại phải update stack hoặc sửa tay về đúng.
+> Bẫy: CloudFormation **không tự sửa** drift. Nó chỉ báo cáo `MODIFIED/DELETED`. Muốn đồng bộ lại phải update stack hoặc sửa tay về đúng.
 
 ---
 
@@ -151,7 +151,7 @@ SAM là **superset của CloudFormation**: mọi cú pháp CloudFormation đều
 Transform: AWS::Serverless-2016-10-31   # BẮT BUỘC — biến SAM thành CloudFormation
 ```
 
-> ⚠️ Bẫy thi kinh điển: Dòng `Transform: AWS::Serverless-2016-10-31` là thứ **bắt buộc** để CloudFormation hiểu đây là SAM template. Thiếu nó → CloudFormation báo lỗi không nhận ra `AWS::Serverless::Function`. Đề rất hay hỏi "thiếu gì khiến SAM template không deploy được".
+> Bẫy thi kinh điển: Dòng `Transform: AWS::Serverless-2016-10-31` là thứ **bắt buộc** để CloudFormation hiểu đây là SAM template. Thiếu nó → CloudFormation báo lỗi không nhận ra `AWS::Serverless::Function`. Đề rất hay hỏi "thiếu gì khiến SAM template không deploy được".
 
 ### Template SAM mẫu
 
@@ -187,7 +187,7 @@ Resources:
 
 `Globals` cho phép khai báo Runtime/Timeout/MemorySize/Env một lần, áp cho **tất cả** Function. Function riêng vẫn override được.
 
-> 💡 Mẹo thi: Đề hỏi "nhiều Lambda dùng chung Runtime/Timeout, tránh lặp lại" → dùng **`Globals`**.
+> Mẹo thi: Đề hỏi "nhiều Lambda dùng chung Runtime/Timeout, tránh lặp lại" → dùng **`Globals`**.
 
 ### Policy templates — không viết IAM tay
 
@@ -200,7 +200,7 @@ Thay vì viết IAM policy JSON đầy đủ, SAM cho dùng **policy template** 
 | `S3ReadPolicy` | Đọc 1 bucket |
 | `SQSSendMessagePolicy` | Gửi message vào 1 queue |
 
-> 💡 Mẹo thi: "Cấp quyền least-privilege cho Lambda mà không muốn viết IAM JSON" → **SAM policy templates**.
+> Mẹo thi: "Cấp quyền least-privilege cho Lambda mà không muốn viết IAM JSON" → **SAM policy templates**.
 
 ### Các lệnh SAM CLI
 
@@ -219,9 +219,9 @@ sam deploy --guided      # đóng gói lên S3 + tạo/đổi CloudFormation sta
 | `sam local start-api` | Giả lập API Gateway offline | **Có** |
 | `sam deploy` | Upload + deploy qua CloudFormation | Không |
 
-> ⚠️ Bẫy: `sam local` cần **Docker** chạy máy local. Đề hay hỏi "test Lambda dưới máy trước khi deploy" → `sam local invoke` / `sam local start-api`.
+> Bẫy: `sam local` cần **Docker** chạy máy local. Đề hay hỏi "test Lambda dưới máy trước khi deploy" → `sam local invoke` / `sam local start-api`.
 
-> 💡 Mẹo thi: `sam deploy` dưới nền dùng chính **CloudFormation change set** để áp thay đổi — nên SAM kế thừa toàn bộ ưu điểm rollback/preview của CloudFormation.
+> Mẹo thi: `sam deploy` dưới nền dùng chính **CloudFormation change set** để áp thay đổi — nên SAM kế thừa toàn bộ ưu điểm rollback/preview của CloudFormation.
 
 ---
 
@@ -265,9 +265,9 @@ cdk deploy       # synth + deploy qua CloudFormation
 cdk diff         # so sánh với stack đang chạy
 ```
 
-> ⚠️ Bẫy: `cdk bootstrap` phải chạy **một lần cho mỗi account/region** trước `cdk deploy` lần đầu. Thiếu bootstrap → deploy lỗi. Đề hay gài tình huống này.
+> Bẫy: `cdk bootstrap` phải chạy **một lần cho mỗi account/region** trước `cdk deploy` lần đầu. Thiếu bootstrap → deploy lỗi. Đề hay gài tình huống này.
 
-> 💡 Mẹo thi: `cdk synth` chỉ **sinh template, không deploy**. Method kiểu `bucket.grantRead(fn)` tự sinh IAM least-privilege — đây là điểm khác biệt lớn so với viết CloudFormation tay.
+> Mẹo thi: `cdk synth` chỉ **sinh template, không deploy**. Method kiểu `bucket.grantRead(fn)` tự sinh IAM least-privilege — đây là điểm khác biệt lớn so với viết CloudFormation tay.
 
 ---
 
@@ -280,7 +280,7 @@ cdk diff         # so sánh với stack đang chạy
 | Layers | Có | Không (gói thẳng vào image) |
 | Build | `sam build` / zip tay | Dockerfile + base image AWS |
 
-> 💡 Mẹo thi: Đề nói "package Lambda **vượt 250 MB**" hoặc "cần thư viện hệ thống/ML lớn" → **container image (tới 10 GB)**. Đề nói "nhiều function **dùng chung thư viện**, muốn giảm size mỗi deploy" → **Lambda layers**.
+> Mẹo thi: Đề nói "package Lambda **vượt 250 MB**" hoặc "cần thư viện hệ thống/ML lớn" → **container image (tới 10 GB)**. Đề nói "nhiều function **dùng chung thư viện**, muốn giảm size mỗi deploy" → **Lambda layers**.
 
 ### Lambda Layers
 
@@ -297,9 +297,9 @@ aws lambda publish-layer-version \
   --compatible-runtimes python3.12
 ```
 
-> ⚠️ Bẫy: Layers **không** giúp vượt giới hạn 250 MB — chúng vẫn nằm trong tổng 250 MB đó. Muốn thật sự lớn phải dùng **container image 10 GB**. Đề hay đánh tráo hai ý này.
+> Bẫy: Layers **không** giúp vượt giới hạn 250 MB — chúng vẫn nằm trong tổng 250 MB đó. Muốn thật sự lớn phải dùng **container image 10 GB**. Đề hay đánh tráo hai ý này.
 
-> ⚠️ Bẫy cấu trúc thư mục layer: dependency phải đặt đúng path runtime mong đợi. Ví dụ Python phải là `python/` hoặc `python/lib/python3.12/site-packages/`, Node.js là `nodejs/node_modules/`. Sai path → import không thấy.
+> Bẫy cấu trúc thư mục layer: dependency phải đặt đúng path runtime mong đợi. Ví dụ Python phải là `python/` hoặc `python/lib/python3.12/site-packages/`, Node.js là `nodejs/node_modules/`. Sai path → import không thấy.
 
 ### Dependency management & artifact organization
 
@@ -308,7 +308,7 @@ aws lambda publish-layer-version \
 - **Java**: `pom.xml`/`gradle` → đóng gói fat JAR.
 - Artifact build (`.aws-sam/build`) được `sam deploy` upload lên **S3** rồi CloudFormation tham chiếu.
 
-> 💡 Mẹo thi: `sam build --use-container` build dependency trong môi trường **giống Lambda thật** (Amazon Linux) — quan trọng với thư viện có phần native compile (ví dụ `numpy`, `pandas`) để tránh lỗi "works local, fails on Lambda".
+> Mẹo thi: `sam build --use-container` build dependency trong môi trường **giống Lambda thật** (Amazon Linux) — quan trọng với thư viện có phần native compile (ví dụ `numpy`, `pandas`) để tránh lỗi "works local, fails on Lambda".
 
 ---
 
@@ -333,7 +333,7 @@ AppConfig (thuộc Systems Manager) quản lý **cấu hình runtime** tách kh�
 | Lambda env var | Có (update function) | Không | Không |
 | **AppConfig** | **Không** | **Có** (canary/linear) | **Có** |
 
-> 💡 Mẹo thi: "Bật/tắt **feature flag** hoặc đổi tham số **lúc runtime mà không deploy lại**" → **AppConfig**. "Cần **rollout từ từ + tự rollback** khi config lỗi" → AppConfig deployment strategy.
+> Mẹo thi: "Bật/tắt **feature flag** hoặc đổi tham số **lúc runtime mà không deploy lại**" → **AppConfig**. "Cần **rollout từ từ + tự rollback** khi config lỗi" → AppConfig deployment strategy.
 
 ### Validators & rollback
 
@@ -386,9 +386,9 @@ AppConfig kiểm tra config trước khi áp (JSON Schema validator hoặc Lambd
   <text x="16" y="316" font-size="10.5" fill="currentColor" opacity="0.72">Toàn bộ vòng này diễn ra mà KHÔNG cần redeploy Lambda/app — chỉ đổi config runtime.</text>
 </svg>
 
-> ⚠️ Bẫy: Phân biệt với **Secrets Manager** (lưu secret + tự xoay) và **SSM Parameter Store** (lưu param/secret đơn giản). AppConfig **không phải kho secret** — nó là quản lý config có validate + rollout. Đề hay đánh tráo: "lưu DB password + auto rotation" → **Secrets Manager**, không phải AppConfig.
+> Bẫy: Phân biệt với **Secrets Manager** (lưu secret + tự xoay) và **SSM Parameter Store** (lưu param/secret đơn giản). AppConfig **không phải kho secret** — nó là quản lý config có validate + rollout. Đề hay đánh tráo: "lưu DB password + auto rotation" → **Secrets Manager**, không phải AppConfig.
 
-> 💡 Mẹo thi: Trong Lambda, dùng **AppConfig Lambda extension** (một layer) để cache config, giảm số lần gọi API và độ trễ — thay vì gọi `GetLatestConfiguration` trực tiếp mỗi request.
+> Mẹo thi: Trong Lambda, dùng **AppConfig Lambda extension** (một layer) để cache config, giảm số lần gọi API và độ trễ — thay vì gọi `GetLatestConfiguration` trực tiếp mỗi request.
 
 ---
 
@@ -409,4 +409,4 @@ AppConfig kiểm tra config trước khi áp (JSON Schema validator hoặc Lambd
 | Feature flag / đổi config không redeploy | AppConfig |
 | Lưu DB password + auto rotation | Secrets Manager (KHÔNG phải AppConfig) |
 
-> 💡 Mẹo thi cuối: Ba từ khóa phân biệt nhanh trong phòng thi — **"ngôn ngữ lập trình" → CDK**, **"serverless + local test" → SAM**, **"transform thiếu" → `AWS::Serverless-2016-10-31`**. Nắm chắc ba cái này là gỡ được phần lớn câu Domain 3 về IaC.
+> Mẹo thi cuối: Ba từ khóa phân biệt nhanh trong phòng thi — **"ngôn ngữ lập trình" → CDK**, **"serverless + local test" → SAM**, **"transform thiếu" → `AWS::Serverless-2016-10-31`**. Nắm chắc ba cái này là gỡ được phần lớn câu Domain 3 về IaC.

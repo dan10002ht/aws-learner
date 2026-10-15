@@ -130,7 +130,7 @@ Kết quả luôn ≤ 0 (một tổn thất). Bảng cảm nhận độ lớn:
 y/x = 6000  và  x·y = 3000  →  x = sqrt(3000/6000) = 0.707 ETH,  y = 4243 USDC
 Giá trị LP  = 0.707·6000 + 4243 = 8485 USDC
 Giá trị HODL = 1·6000 + 3000     = 9000 USDC
-IL = 8485/9000 − 1 = −5.72%   ✓ khớp công thức
+IL = 8485/9000 − 1 = −5.72%   ✓  khớp công thức
 ```
 
 **"Impermanent"** vì nếu giá **quay về mức cũ**, khoản lỗ biến mất. Nó chỉ thành **permanent loss** khi LP rút ra lúc giá đang lệch. Điểm mấu chốt: **fee thu được phải lớn hơn IL** thì làm LP mới có lãi. Pool biến động thấp (stablecoin: USDC/USDT) → IL gần như 0 → LP an toàn. Pool cặp biến động mạnh → IL lớn, cần volume/fee cao mới bù nổi.

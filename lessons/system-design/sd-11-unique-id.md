@@ -25,7 +25,7 @@ Ba tính chất tốt đẹp ta đang hưởng miễn phí: **duy nhất tuyệt
 
 Cả ba đều **mua bằng cùng một thứ**: sự tồn tại của một điểm tập trung. Và điểm tập trung ấy đem theo ba cái giá mà ở quy mô nhỏ bạn không thấy: **throughput có trần cứng** (mọi ghi xếp hàng qua một khoá); **single point of failure** (counter chết thì hệ thống không *tạo* được bản ghi mới — mission-critical mà lại tầm thường); và **round-trip trên đường nóng** (mỗi lần tạo object là một lần đi mạng chỉ để xin một con số, kể cả khi dữ liệu thật sẽ ghi ở nơi khác).
 
-> 💡 **Nguyên tắc**: Trong hệ phân tán, thứ đắt nhất không phải CPU hay disk mà là **sự phối hợp (coordination)**. Mọi thiết kế ID tốt đều là một cách trả lời: *"làm sao sinh ID mà các node không cần hỏi nhau?"* — nói cách khác, làm sao **chia không gian ID trước**, để mỗi node tự do trong phần của mình.
+> **Nguyên tắc**: Trong hệ phân tán, thứ đắt nhất không phải CPU hay disk mà là **sự phối hợp (coordination)**. Mọi thiết kế ID tốt đều là một cách trả lời: *"làm sao sinh ID mà các node không cần hỏi nhau?"* — nói cách khác, làm sao **chia không gian ID trước**, để mỗi node tự do trong phần của mình.
 
 Ý tưởng trung tâm của cả bài nằm đúng ở câu in đậm đó. Bạn không tránh được việc phải phối hợp; bạn chỉ **dời nó ra khỏi đường nóng**: phối hợp một lần lúc khởi động (cấp machine ID), rồi chạy hàng triệu request không cần hỏi ai.
 
@@ -80,7 +80,7 @@ Cộng lại: 1 (sign) + 41 (time) + 10 (node) + 12 (seq) = 64 bit. Vừa khít.
 
 Con số cần nhớ: **41 bit ms ≈ 69.7 năm**, **12 bit ≈ 4,096 ID/ms/node ≈ 4.09 triệu ID/s/node**. Chỉ riêng *một* node đã dư 400 lần so với yêu cầu 10K/s. Điều này nói lên một sự thật quan trọng: **bài này chưa bao giờ là bài về throughput**. Throughput là phần dễ. Phần khó là uniqueness + ordering + vận hành.
 
-> ⚠️ **Bẫy phỏng vấn**: Nhiều người lao vào tính QPS rồi kết luận "cần N node". Sai trọng tâm. Với Snowflake, một node là đủ cho 10K/s; bạn cần nhiều node vì **availability**, không phải vì throughput. Nói rõ điều đó ghi điểm rất mạnh.
+> **Bẫy phỏng vấn**: Nhiều người lao vào tính QPS rồi kết luận "cần N node". Sai trọng tâm. Với Snowflake, một node là đủ cho 10K/s; bạn cần nhiều node vì **availability**, không phải vì throughput. Nói rõ điều đó ghi điểm rất mạnh.
 
 ### Vì sao "64 bit" lại là yêu cầu cứng, không phải sở thích
 
@@ -146,7 +146,7 @@ Hệ quả đo được: trên bảng vài trăm triệu hàng, đổi PK từ U
 
 Thêm ba cái giá nữa của UUID: **128 bit** vi phạm thẳng yêu cầu của bài và nhân đôi mọi secondary index; lưu dạng `CHAR(36)` tốn 36 byte thay vì 16 (nếu buộc dùng UUID thì lưu `BINARY(16)`); và dữ liệu ngẫu nhiên có entropy tối đa nên **không nén được** — ảnh hưởng tới backup, log, message payload.
 
-> 💡 **Nguyên tắc**: Nếu bạn *phải* dùng UUID (ví dụ client sinh ID offline rồi mới sync lên), hãy dùng **UUIDv7** chứ đừng v4. Bạn giữ được tính phi phối hợp *và* lấy lại tính sortable — chỉ mất mỗi 64 bit thừa. Trong rất nhiều hệ thống thật, đó là đánh đổi tốt hơn Snowflake vì bạn không phải vận hành việc cấp machine ID.
+> **Nguyên tắc**: Nếu bạn *phải* dùng UUID (ví dụ client sinh ID offline rồi mới sync lên), hãy dùng **UUIDv7** chứ đừng v4. Bạn giữ được tính phi phối hợp *và* lấy lại tính sortable — chỉ mất mỗi 64 bit thừa. Trong rất nhiều hệ thống thật, đó là đánh đổi tốt hơn Snowflake vì bạn không phải vận hành việc cấp machine ID.
 
 ### Phương án 3 — Ticket server
 
@@ -193,16 +193,16 @@ Giảm tải ticket server **1,000 lần**, ID sinh trong process (nhanh như Sn
 | Tiêu chí | Multi-master | UUIDv4 | UUIDv7 | Ticket server | Snowflake |
 |---|---|---|---|---|---|
 | Kích thước | 64 bit | 128 bit | 128 bit | 64 bit | **64 bit** |
-| Sortable theo thời gian | ❌ | ❌ | ✅ (theo ms) | ✅ tuyệt đối | ✅ (thô, theo ms) |
+| Sortable theo thời gian | ✗ | ✗ | ✓ (theo ms) | ✓ tuyệt đối | ✓ (thô, theo ms) |
 | Cần phối hợp lúc runtime | Không | **Không** | **Không** | **Có** (mỗi ID / mỗi block) | Không (chỉ lúc start) |
 | SPOF | Không | Không | Không | **Có** | Không |
 | Latency sinh ID | ~1 ms (DB) | **~ns** | **~ns** | ~1 ms | **~ns** |
-| Thân thiện B-tree index | ✅ | ❌❌ | ✅ | ✅✅ | ✅ |
-| Đoán được / enumerate được | ✅ dễ | ❌ | một phần (thời gian) | ✅ dễ | một phần (thời gian + node) |
+| Thân thiện B-tree index | ✓ | ✗✗ | ✓ | ✓✓ | ✓ |
+| Đoán được / enumerate được | ✓ dễ | ✗ | một phần (thời gian) | ✓ dễ | một phần (thời gian + node) |
 | Độ phức tạp vận hành | Trung bình | **Rất thấp** | **Rất thấp** | Thấp | **Cao** (machine ID + đồng hồ) |
 | Hợp khi | — (nên tránh) | ID nội bộ, không cần sort | Mặc định hợp lý ngày nay | Quy mô vừa, cần ID đặc | Quy mô lớn, cần 64-bit + sortable |
 
-> 💡 **Nguyên tắc**: Trả lời phỏng vấn đừng nhảy thẳng vào Snowflake. Trình bày theo đúng thứ tự leo thang này — mỗi phương án hỏng ở đâu, và **cái hỏng đó đẩy ta tới phương án sau**. Người phỏng vấn chấm đường đi, không chấm đích đến.
+> **Nguyên tắc**: Trả lời phỏng vấn đừng nhảy thẳng vào Snowflake. Trình bày theo đúng thứ tự leo thang này — mỗi phương án hỏng ở đâu, và **cái hỏng đó đẩy ta tới phương án sau**. Người phỏng vấn chấm đường đi, không chấm đích đến.
 
 ---
 
@@ -221,18 +221,18 @@ Vì sao phí một bit? Vì Java (và nhiều ngôn ngữ, nhiều DB) **không 
 Nếu dùng Unix epoch 1970:
   Từ 1970 tới 2026 đã tiêu ≈ 1.77 × 10^12 ms
   2^41 = 2.199 × 10^12 ms
-  Còn lại ≈ 0.43 × 10^12 ms ≈ 13.6 năm  → hết hạn ~2039. ❌
+  Còn lại ≈ 0.43 × 10^12 ms ≈ 13.6 năm  → hết hạn ~2039. ✗
 
 Nếu dùng epoch riêng (ngày bạn deploy, ví dụ 2026):
   Toàn bộ 2^41 ms còn nguyên
   = 2,199,023,255,552 ms
   = 2,199,023,255 giây
-  = 2,199,023,255 / 31,536,000 ≈ 69.7 năm  → hết hạn ~2095. ✅
+  = 2,199,023,255 / 31,536,000 ≈ 69.7 năm  → hết hạn ~2095. ✓
 ```
 
 Twitter epoch 2010 + 69.7 năm → **tràn vào khoảng năm 2080**. Ghi lại con số này, nó hay được hỏi.
 
-> ⚠️ **Bẫy**: Epoch tuỳ chỉnh là **hằng số không bao giờ được đổi**. Đổi epoch sau khi đã sinh ID = ID mới có thể nhỏ hơn ID cũ = vỡ toàn bộ thứ tự và có thể trùng. Hard-code nó, comment rõ, và viết test khẳng định nó. Cũng đừng chọn epoch là "hôm nay" khi deploy trên nhiều môi trường — mọi môi trường phải dùng **cùng một** hằng số.
+> **Bẫy**: Epoch tuỳ chỉnh là **hằng số không bao giờ được đổi**. Đổi epoch sau khi đã sinh ID = ID mới có thể nhỏ hơn ID cũ = vỡ toàn bộ thứ tự và có thể trùng. Hard-code nó, comment rõ, và viết test khẳng định nó. Cũng đừng chọn epoch là "hôm nay" khi deploy trên nhiều môi trường — mọi môi trường phải dùng **cùng một** hằng số.
 
 **5 + 5 bit = 10 bit node.** Tách thành datacenter (32) × machine (32) chỉ là quy ước cho dễ vận hành — bạn hoàn toàn có thể coi nó là **10 bit worker ID phẳng (1,024 node)**. Thực tế nhiều bản cài đặt hiện đại làm phẳng vì việc cấp ID phẳng từ một registry đơn giản hơn nhiều so với quản lý 2 tầng.
 
@@ -295,7 +295,7 @@ const decode = (id) => ({
 
 Ba chi tiết trong đoạn code trên đáng chỉ ra khi review: (1) **`seq` reset về 0 khi sang ms mới** — một số bản cài đặt reset về số ngẫu nhiên nhỏ (0–9) thay vì 0, vì ở traffic thấp mọi ID đều có sequence = 0 sẽ khiến ID dễ đoán hẳn; (2) **vòng `while` chờ sang ms mới** là *busy-wait*, chỉ chạy khi thật sự vượt 4,096 ID/ms — nếu nó chạy thường xuyên thì bạn đang thiếu node, cần **alarm** ở đây; (3) **`throw` khi đồng hồ lùi**, không phải `return` — đây là khác biệt giữa bản đồ chơi và bản dùng thật.
 
-> ⚠️ **Bẫy**: Instance Snowflake **phải là singleton per process** và `next()` phải **thread-safe** (synchronized / mutex / atomic CAS). Hai thread cùng đọc `lastMs` và `seq` mà không đồng bộ = sinh trùng ID trên cùng một node — đúng thứ mà cả thiết kế này tồn tại để tránh. Trong Node.js single-thread thì miễn phí; trong Java/Go thì phải khoá.
+> **Bẫy**: Instance Snowflake **phải là singleton per process** và `next()` phải **thread-safe** (synchronized / mutex / atomic CAS). Hai thread cùng đọc `lastMs` và `seq` mà không đồng bộ = sinh trùng ID trên cùng một node — đúng thứ mà cả thiết kế này tồn tại để tránh. Trong Node.js single-thread thì miễn phí; trong Java/Go thì phải khoá.
 
 ---
 
@@ -319,7 +319,7 @@ Chỉ có cái thứ ba mới phá vỡ tính duy nhất. Hai cái đầu chỉ 
 t = 1000ms, node 7: sinh các ID (1000, 7, 0), (1000, 7, 1), (1000, 7, 2)
 t = 1001ms, node 7: sinh (1001, 7, 0) ...
 → NTP nhảy lùi 5ms →
-t = 996ms ... quay lại 1000ms, node 7: sinh (1000, 7, 0)  ⚠️ ĐÃ TỒN TẠI
+t = 996ms ... quay lại 1000ms, node 7: sinh (1000, 7, 0)  ĐÃ TỒN TẠI
 ```
 
 Trùng khoá chính. Tuỳ hệ thống, đây là lỗi 500 (may mắn), hoặc **ghi đè mất dữ liệu** (thảm hoạ, nếu bạn upsert).
@@ -363,7 +363,7 @@ if (now < lastMs) {
 }
 ```
 
-> ⚠️ **Bẫy**: VM snapshot / live migration / container restore là nguyên nhân đồng hồ lùi **phổ biến hơn NTP rất nhiều** trong cloud — một VM restore từ snapshot cũ có thể lùi hàng giờ. Có auto-scaling hay chạy spot instance thì phải giả định điều này *sẽ* xảy ra.
+> **Bẫy**: VM snapshot / live migration / container restore là nguyên nhân đồng hồ lùi **phổ biến hơn NTP rất nhiều** trong cloud — một VM restore từ snapshot cũ có thể lùi hàng giờ. Có auto-scaling hay chạy spot instance thì phải giả định điều này *sẽ* xảy ra.
 
 Một nguyên nhân nữa là **leap second**: giây nhuận khiến 23:59:60 tồn tại, và OS hay xử lý bằng cách lặp lại giây 23:59:59 — tức **lùi 1 giây**. Cách chống là dùng NTP server có **leap smearing** (dàn giây nhuận ra 24 giờ); AWS Time Sync Service và Google NTP đều làm sẵn — lý do rất tốt để dùng chúng thay vì pool NTP công cộng.
 
@@ -381,7 +381,7 @@ Một nguyên nhân nữa là **leap second**: giây nhuận khiến 23:59:60 t�
 | **Suy từ IP / hostname** | 10 bit cuối của private IP, hoặc ordinal StatefulSet (`pod-0`, `pod-1`) | Không cần phối hợp, zero hạ tầng | **Chỉ đúng khi IP không trùng trong 10 bit**: subnet /22 thì ổn, nhiều subnet /24 khác nhau thì hai node có thể ra cùng 10 bit → trùng ID âm thầm |
 | **Suy từ MAC address** | Hash MAC xuống 10 bit | Không cần phối hợp | 1,024 slot với ~30 node vẫn có **~35% khả năng đụng** (nghịch lý ngày sinh). Không chấp nhận nếu thiếu bước phát hiện va chạm |
 
-> 💡 **Nguyên tắc**: Với 10 bit (1,024 slot), mọi cách "hash cái gì đó xuống 10 bit" đều có xác suất va chạm cao đáng ngạc nhiên vì **birthday paradox** — chỉ cần ~38 node là xác suất đụng vượt 50%. Nếu dùng cách suy diễn, **bắt buộc** phải có bước tự kiểm tra va chạm lúc khởi động (ví dụ: đăng ký worker ID vào một registry và fail-fast nếu đã có người giữ).
+> **Nguyên tắc**: Với 10 bit (1,024 slot), mọi cách "hash cái gì đó xuống 10 bit" đều có xác suất va chạm cao đáng ngạc nhiên vì **birthday paradox** — chỉ cần ~38 node là xác suất đụng vượt 50%. Nếu dùng cách suy diễn, **bắt buộc** phải có bước tự kiểm tra va chạm lúc khởi động (ví dụ: đăng ký worker ID vào một registry và fail-fast nếu đã có người giữ).
 
 ### Vấn đề thật: khi bạn chạy serverless
 
@@ -396,7 +396,7 @@ Các cách xử lý thực tế, theo thứ tự nên cân nhắc:
 - **Suy từ `AWS_LAMBDA_LOG_STREAM_NAME`** — biến môi trường này duy nhất cho mỗi execution environment; hash xuống 10 bit, nhưng gặp đúng birthday paradox ở trên nên chỉ dùng khi concurrency thấp.
 - **Tách riêng một ID service** — chạy Snowflake trên ECS/EKS (nơi *có* danh tính ổn định), Lambda gọi vào xin **một block ID** rồi tiêu dần. Quay lại mô hình ticket server + range allocation, nhưng lần này không SPOF.
 
-> ⚠️ **Bẫy**: Đừng nói "dùng Snowflake" như một câu thần chú. Snowflake là sự đánh đổi **độ phức tạp vận hành lấy 64 bit + tính sortable**. Nếu hạ tầng của bạn không cho bạn một danh tính node ổn định và rẻ, cái giá đó không đáng, và UUIDv7 là lựa chọn kỹ thuật tốt hơn.
+> **Bẫy**: Đừng nói "dùng Snowflake" như một câu thần chú. Snowflake là sự đánh đổi **độ phức tạp vận hành lấy 64 bit + tính sortable**. Nếu hạ tầng của bạn không cho bạn một danh tính node ổn định và rẻ, cái giá đó không đáng, và UUIDv7 là lựa chọn kỹ thuật tốt hơn.
 
 ---
 
@@ -414,7 +414,7 @@ Ba loại rò rỉ cần phân biệt:
 | **Rò rỉ thời gian** | Snowflake/UUIDv7 nhúng timestamp → biết chính xác tài khoản/bài viết tạo lúc nào | Thường vô hại, đôi khi là vấn đề privacy |
 | **IDOR (Insecure Direct Object Reference)** | Đoán được ID → thử `GET /orders/1002` để xem đơn của người khác | **Lỗ hổng bảo mật thật sự** |
 
-> ⚠️ **Bẫy quan trọng nhất của mục này**: ID khó đoán **không phải** là biện pháp kiểm soát truy cập. IDOR được sửa bằng **authorization check** ("user này có quyền xem order này không?"), không phải bằng cách làm ID khó đoán. ID ngẫu nhiên chỉ là *defense in depth* — một lớp thêm, không phải lớp chính. Nói được câu này trong phỏng vấn/review là dấu hiệu rõ ràng của người hiểu bảo mật.
+> **Bẫy quan trọng nhất của mục này**: ID khó đoán **không phải** là biện pháp kiểm soát truy cập. IDOR được sửa bằng **authorization check** ("user này có quyền xem order này không?"), không phải bằng cách làm ID khó đoán. ID ngẫu nhiên chỉ là *defense in depth* — một lớp thêm, không phải lớp chính. Nói được câu này trong phỏng vấn/review là dấu hiệu rõ ràng của người hiểu bảo mật.
 
 Snowflake rò rỉ gì? Vì nó chứa timestamp ms và node ID lộ thiên, ai cũng có thể decode một ID để biết **thời điểm tạo chính xác tới ms** và **node nào tạo**. Nó **không** rò rỉ tổng số bản ghi (vì sequence reset mỗi ms), nhưng nếu kẻ tấn công sinh ID liên tục và quan sát, họ ước lượng được throughput của bạn.
 
@@ -443,7 +443,7 @@ Bốn cách encode, từ yếu tới mạnh:
 
 Stripe còn thêm **tiền tố loại đối tượng** (`cus_`, `ch_`, `sub_`, `in_`) — nhìn một ID trong log biết ngay nó là gì, và API **từ chối sớm** khi ai đó truyền customer ID vào chỗ cần charge ID, thay vì trả 404 mơ hồ.
 
-> 💡 **Nguyên tắc**: Quyết định "ID có được lộ ra ngoài không" ngay từ ngày đầu. Đổi định dạng public ID sau khi khách hàng đã lưu link/bookmark/tích hợp là một trong những migration đau đớn nhất. Chưa chắc thì mặc định **tách internal và public ID** — chi phí trả trước rất nhỏ so với chi phí sửa sau.
+> **Nguyên tắc**: Quyết định "ID có được lộ ra ngoài không" ngay từ ngày đầu. Đổi định dạng public ID sau khi khách hàng đã lưu link/bookmark/tích hợp là một trong những migration đau đớn nhất. Chưa chắc thì mặc định **tách internal và public ID** — chi phí trả trước rất nhỏ so với chi phí sửa sau.
 
 ---
 
@@ -459,8 +459,8 @@ Stripe còn thêm **tiền tố loại đối tượng** (`cus_`, `ch_`, `sub_`,
 
 Snowflake chỉ là **k-sorted**, và điều đó là *cố ý*: hai ID sinh trong **cùng một millisecond trên hai node khác nhau** có thứ tự do node ID quyết định, không do thời điểm thực. Cộng thêm clock skew giữa các node (kể cả NTP tốt cũng lệch ~1–10 ms trong datacenter), cửa sổ "không tin được thứ tự" thực tế là khoảng **vài chục ms**.
 
-- ✅ **Dùng được** cho: sort feed theo thời gian, phân trang theo cursor (`WHERE id > ?`), xác định "cũ hơn / mới hơn" ở mức giây, partition key theo thời gian, TTL/archival theo dải ID.
-- ❌ **Không dùng được** cho: quyết định "ai ghi sau thì thắng" (last-write-wins) giữa các node, xác định thứ tự nhân quả (causality), khoá phân tán, hay bất cứ thứ gì cần **linearizability**. Lúc đó bạn cần **Lamport clock**, **vector clock**, hoặc dịch vụ thời gian có cận sai số như **TrueTime** (Spanner) / **HLC** (CockroachDB, MongoDB). Nhận ra ranh giới này là dấu hiệu của trình độ Staff.
+- ✓ **Dùng được** cho: sort feed theo thời gian, phân trang theo cursor (`WHERE id > ?`), xác định "cũ hơn / mới hơn" ở mức giây, partition key theo thời gian, TTL/archival theo dải ID.
+- ✗ **Không dùng được** cho: quyết định "ai ghi sau thì thắng" (last-write-wins) giữa các node, xác định thứ tự nhân quả (causality), khoá phân tán, hay bất cứ thứ gì cần **linearizability**. Lúc đó bạn cần **Lamport clock**, **vector clock**, hoặc dịch vụ thời gian có cận sai số như **TrueTime** (Spanner) / **HLC** (CockroachDB, MongoDB). Nhận ra ranh giới này là dấu hiệu của trình độ Staff.
 
 ### Khi nào ULID / KSUID là lựa chọn đúng hơn
 
@@ -524,7 +524,7 @@ Nếu chạy Lambda (không có danh tính node):
   (hoặc) Lambda ──► DynamoDB ADD #c :1000 ──► block 1000 ID, tiêu trong execution env
 ```
 
-> 💡 **Nguyên tắc**: Trước khi tự xây ID service, hỏi xem hạ tầng đã cho sẵn thứ bạn cần chưa. DynamoDB atomic counter + range allocation giải quyết đại đa số hệ thống thật với **hai chục dòng code và không có thành phần mới nào phải vận hành**. Snowflake chỉ đáng khi ràng buộc 64-bit là thật.
+> **Nguyên tắc**: Trước khi tự xây ID service, hỏi xem hạ tầng đã cho sẵn thứ bạn cần chưa. DynamoDB atomic counter + range allocation giải quyết đại đa số hệ thống thật với **hai chục dòng code và không có thành phần mới nào phải vận hành**. Snowflake chỉ đáng khi ràng buộc 64-bit là thật.
 
 ---
 
@@ -550,4 +550,4 @@ Nếu chạy Lambda (không có danh tính node):
 
 10. **Kết bằng "khi nào không dùng cái này"**: không ràng buộc 64 bit → UUIDv7 đơn giản hơn nhiều; chạy serverless → Snowflake sai ngay từ tiền đề; quy mô vừa cần ID đặc → ticket server + block allocation là đủ. Biết **từ chối over-engineering** là thứ người ta thật sự muốn thuê.
 
-> 💡 **Câu chốt đáng nhớ cho cả bài**: mọi thiết kế ID phân tán đều là một cách **đổi sự phối hợp lấy sự không hoàn hảo**. Ticket server giữ sự hoàn hảo (thứ tự tuyệt đối, ID đặc) và trả bằng SPOF. Snowflake và UUIDv7 vứt bỏ sự hoàn hảo (thứ tự chỉ thô, ID có lỗ hổng) để mua lấy khả năng chạy độc lập. Câu hỏi không bao giờ là "cái nào đúng", mà là **"hệ thống của tôi chịu được sự không hoàn hảo nào"**.
+> **Câu chốt đáng nhớ cho cả bài**: mọi thiết kế ID phân tán đều là một cách **đổi sự phối hợp lấy sự không hoàn hảo**. Ticket server giữ sự hoàn hảo (thứ tự tuyệt đối, ID đặc) và trả bằng SPOF. Snowflake và UUIDv7 vứt bỏ sự hoàn hảo (thứ tự chỉ thô, ID có lỗ hổng) để mua lấy khả năng chạy độc lập. Câu hỏi không bao giờ là "cái nào đúng", mà là **"hệ thống của tôi chịu được sự không hoàn hảo nào"**.

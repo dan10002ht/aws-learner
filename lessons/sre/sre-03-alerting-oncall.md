@@ -19,7 +19,7 @@ Tại sao ưu tiên symptom?
 2. **Một symptom gom được vô số cause.** Bạn không thể liệt kê hết mọi cách checkout có thể hỏng. Nhưng nếu alert "checkout success rate < 99%", mọi nguyên nhân — DB, network, deploy lỗi, third-party down — đều bị bắt bằng đúng một rule.
 3. **Symptom map thẳng vào SLO.** Nếu SLO của bạn là 99.9% request thành công, thì alert nên phát ra **trước khi** bạn đốt hết error budget.
 
-> 💡 Nguyên tắc: Mỗi page phải trả lời được câu "ngay lúc này có người dùng đang bị ảnh hưởng không?". Nếu câu trả lời là "không chắc", đó không phải page.
+> Nguyên tắc: Mỗi page phải trả lời được câu "ngay lúc này có người dùng đang bị ảnh hưởng không?". Nếu câu trả lời là "không chắc", đó không phải page.
 
 Cause-based metric (CPU, memory, disk, replica lag...) **vẫn cần thu thập** — chúng là công cụ chẩn đoán trên dashboard khi bạn đã được page. Chỉ là chúng không nên tự page bạn. Ngoại lệ duy nhất: cause mà bạn **biết chắc** sẽ thành symptom và có **đủ thời gian** để xử lý trước (ví dụ disk sẽ đầy trong 4 giờ — page sớm để tránh sự cố). Đây là alert "saturation/predictive", không phải alert reactive.
 
@@ -69,7 +69,7 @@ Với SLO 99.9% (error budget 0.1% trong 30 ngày):
 
 Dùng hai window (ví dụ 1h **và** 5m cùng vượt) để vừa nhạy vừa không page vì một blip 30 giây.
 
-> ⚠️ Bẫy: Đặt SLO quá nghiêm (99.999%) cho dịch vụ không cần. Mỗi "số 9" thêm vào làm alert nhạy hơn theo cấp số nhân và biến đêm của on-call thành địa ngục. SLO phải phản ánh kỳ vọng thực của người dùng, không phải lòng tự hào kỹ thuật.
+> Bẫy: Đặt SLO quá nghiêm (99.999%) cho dịch vụ không cần. Mỗi "số 9" thêm vào làm alert nhạy hơn theo cấp số nhân và biến đêm của on-call thành địa ngục. SLO phải phản ánh kỳ vọng thực của người dùng, không phải lòng tự hào kỹ thuật.
 
 ---
 
@@ -155,7 +155,7 @@ Nếu **bất kỳ** câu nào trả lời "không" → hạ xuống ticket ho�
   <text x="375" y="290" font-size="10.5" font-weight="700" text-anchor="middle" fill="#10b981">cả 3 đều CÓ</text>
 </svg>
 
-> 💡 Nguyên tắc: "Mỗi lần bị page, on-call phải phản ứng bằng trí tuệ, không phải phản xạ máy móc." Nếu phản ứng luôn là cùng một thao tác (restart pod), hãy tự động hoá thao tác đó và xoá alert.
+> Nguyên tắc: "Mỗi lần bị page, on-call phải phản ứng bằng trí tuệ, không phải phản xạ máy móc." Nếu phản ứng luôn là cùng một thao tác (restart pod), hãy tự động hoá thao tác đó và xoá alert.
 
 ---
 
@@ -234,7 +234,7 @@ inhibit_rules:
   <text x="360" y="240" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">Cùng một sự cố, một lần đánh thức thay vì 52 lần</text>
 </svg>
 
-> ⚠️ Bẫy: "Để đó cho chắc, biết đâu cần." Mỗi alert giữ lại 'cho chắc' đều cộng vào noise và bào mòn sự tin tưởng vào toàn bộ hệ thống alert. Alert là nợ kỹ thuật; mặc định nên là xoá.
+> Bẫy: "Để đó cho chắc, biết đâu cần." Mỗi alert giữ lại 'cho chắc' đều cộng vào noise và bào mòn sự tin tưởng vào toàn bộ hệ thống alert. Alert là nợ kỹ thuật; mặc định nên là xoá.
 
 ---
 
@@ -258,7 +258,7 @@ annotations:
   dashboard: "https://grafana.internal/d/checkout"
 ```
 
-> 💡 Nguyên tắc: Runbook là để **giảm thời gian ra quyết định**, không phải thay thế tư duy. Nó hướng dẫn các bước an toàn đã biết; với tình huống lạ, runbook chỉ ra điểm bắt đầu và người để gọi. Runbook cũ/sai còn nguy hiểm hơn không có — review mỗi khi xảy ra incident.
+> Nguyên tắc: Runbook là để **giảm thời gian ra quyết định**, không phải thay thế tư duy. Nó hướng dẫn các bước an toàn đã biết; với tình huống lạ, runbook chỉ ra điểm bắt đầu và người để gọi. Runbook cũ/sai còn nguy hiểm hơn không có — review mỗi khi xảy ra incident.
 
 ---
 
@@ -343,7 +343,7 @@ Hai chiều escalation cần phân biệt:
 - **Theo thời gian (không ack)**: primary không phản hồi → tự động sang secondary → manager. Đây là an toàn cơ bản.
 - **Theo chuyên môn (functional)**: on-call xác nhận sự cố nằm ngoài hiểu biết → chủ động kéo team chuyên trách (DBA, network). Escalate **không** phải là thất bại; im lặng vật lộn một mình mới là thất bại.
 
-> 💡 Nguyên tắc: Trong incident lớn, tách vai **Incident Commander** (điều phối, ra quyết định, giao tiếp) khỏi người **operator** (tay gõ lệnh khắc phục). Một người không thể vừa sửa vừa cập nhật cho 20 người hỏi.
+> Nguyên tắc: Trong incident lớn, tách vai **Incident Commander** (điều phối, ra quyết định, giao tiếp) khỏi người **operator** (tay gõ lệnh khắc phục). Một người không thể vừa sửa vừa cập nhật cho 20 người hỏi.
 
 ---
 
@@ -367,13 +367,13 @@ Bàn giao tệ làm rơi context và kéo dài incident. Một handoff tốt c�
 - Deploy/change đang diễn ra hoặc sắp tới.
 - Bản ghi ngắn gọn (handoff doc / thread), không chỉ truyền miệng.
 
-> ⚠️ Bẫy: Silence một alert ồn ào rồi quên mất, người ca sau không biết. Mọi silence phải có **thời hạn hết hạn** và **lý do** — không có silence vĩnh viễn.
+> Bẫy: Silence một alert ồn ào rồi quên mất, người ca sau không biết. Mọi silence phải có **thời hạn hết hạn** và **lý do** — không có silence vĩnh viễn.
 
 ### Compensation (đền bù)
 
 On-call là lao động thật, ngoài giờ thật. Bền vững đòi hỏi ghi nhận tương xứng: trả thêm tiền on-call, hoặc nghỉ bù (time-off-in-lieu) cho đêm bị page. Nếu on-call "miễn phí", tổ chức mất động lực giảm noise — vì noise không tốn gì cho người ra quyết định. Compensation biến độ ồn của on-call thành chi phí nhìn thấy được, từ đó tạo áp lực lành mạnh để dọn dẹp alert.
 
-> 💡 Nguyên tắc: Thời gian xử lý "operational work" (page, ticket, on-call) nên bị giới hạn ở ~50% quỹ thời gian của SRE. Phần còn lại dành cho engineering để giảm chính tải đó. Vượt ngưỡng → trả bớt operational load về cho dev team cho tới khi cân bằng lại.
+> Nguyên tắc: Thời gian xử lý "operational work" (page, ticket, on-call) nên bị giới hạn ở ~50% quỹ thời gian của SRE. Phần còn lại dành cho engineering để giảm chính tải đó. Vượt ngưỡng → trả bớt operational load về cho dev team cho tới khi cân bằng lại.
 
 ---
 
@@ -387,7 +387,7 @@ On-call là lao động thật, ngoài giờ thật. Bền vững đòi hỏi gh
 - **Đã có alert symptom bao trùm.** Nếu "checkout error rate" đã bắt được hệ quả, đừng thêm page cho từng cause con (DB, cache, queue) — chúng chỉ làm bạn bị page nhiều lần cho cùng một sự cố.
 - **Tín hiệu quá nhiễu để hành động.** Nếu một metric flapping tới mức bạn không bao giờ tin nó → sửa metric hoặc bỏ, đừng alert.
 
-> ⚠️ Bẫy: Alert "phòng khi". Một alert chỉ có giá trị nếu ai đó sẽ **làm gì đó khác đi** khi nó nổ. Nếu hành động giống hệt dù có hay không alert, thì alert đó là zero-value — xoá.
+> Bẫy: Alert "phòng khi". Một alert chỉ có giá trị nếu ai đó sẽ **làm gì đó khác đi** khi nó nổ. Nếu hành động giống hệt dù có hay không alert, thì alert đó là zero-value — xoá.
 
 ---
 

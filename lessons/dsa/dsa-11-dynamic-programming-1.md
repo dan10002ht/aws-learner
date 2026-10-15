@@ -48,7 +48,7 @@ DP **không** phải một thuật toán cụ thể, nó là một **kỹ thuậ
 | **Tối ưu (min/max)** | "ít nhất", "nhiều nhất", "longest", "minimum cost", "maximum" | `dp[i] = min/max(dp[...] ...)` |
 | **Có thể hay không** | "có thể chia thành...", "can partition", "is reachable", "true/false" | `dp[i] = dp[...] OR dp[...]` (boolean) |
 
-> 💡 Ghi nhớ: Ba dấu hiệu phụ trợ luôn đi kèm DP — (1) đề hỏi về **một con số/giá trị tối ưu** chứ không phải liệt kê mọi cấu hình (cái đó là backtracking); (2) ở mỗi bước bạn phải **ra một quyết định** (lấy/không lấy, đi bước 1 hay 2 bậc...); (3) bạn cảm thấy "thử hết thì mũ" nhưng nhiều nhánh **lặp lại**.
+> Ghi nhớ: Ba dấu hiệu phụ trợ luôn đi kèm DP — (1) đề hỏi về **một con số/giá trị tối ưu** chứ không phải liệt kê mọi cấu hình (cái đó là backtracking); (2) ở mỗi bước bạn phải **ra một quyết định** (lấy/không lấy, đi bước 1 hay 2 bậc...); (3) bạn cảm thấy "thử hết thì mũ" nhưng nhiều nhánh **lặp lại**.
 
 ### 1.3. Phân biệt với các họ hàng
 
@@ -57,7 +57,7 @@ DP **không** phải một thuật toán cụ thể, nó là một **kỹ thuậ
 | "Liệt kê **tất cả** subset/permutation hợp lệ" | Backtracking (không phải DP) — vì cần output mọi cấu hình |
 | Chia nhỏ nhưng bài con **không** trùng (sort, search) | Divide & Conquer |
 | Mỗi bước chọn cái "tốt nhất tại chỗ" và nó luôn đúng | Greedy (DP là greedy *không* luôn đúng → phải thử mọi nhánh) |
-| "Đếm số cách / min / max" + bài con trùng | **DP** ✅ |
+| "Đếm số cách / min / max" + bài con trùng | **DP** ✓ |
 
 ## 2. Quy trình 4 bước (khung suy nghĩ chuẩn)
 
@@ -81,7 +81,7 @@ BƯỚC 4: THỨ TỰ TÍNH
   (chọn top-down memo hay bottom-up tabulation)
 ```
 
-> ⚠️ Bẫy: Đừng nhảy thẳng vào code. **Bước 1 (định nghĩa state) sai thì cả bài sai.** State phải đủ thông tin để (a) tính ra đáp án cuối, và (b) suy ra từ state nhỏ hơn. Nếu transition của bạn cần một thông tin mà state không chứa → state thiếu chiều, phải thêm.
+> Bẫy: Đừng nhảy thẳng vào code. **Bước 1 (định nghĩa state) sai thì cả bài sai.** State phải đủ thông tin để (a) tính ra đáp án cuối, và (b) suy ra từ state nhỏ hơn. Nếu transition của bạn cần một thông tin mà state không chứa → state thiếu chiều, phải thêm.
 
 ## 3. Template/khung code chuẩn
 
@@ -225,7 +225,7 @@ int solve(int n) {
 | Rủi ro | Tràn stack nếu state sâu | Phải xác định đúng thứ tự tính |
 | Tốc độ thực tế | Hằng số lớn hơn (overhead gọi hàm) | Nhanh hơn, cache-friendly |
 
-> 💡 Ghi nhớ: Lúc phỏng vấn, hãy **viết memo trước** (nó sinh ra rất tự nhiên từ transition), rồi nói "tôi có thể chuyển sang bottom-up để bỏ call stack và tối ưu bộ nhớ" — chuyển đổi giữa hai cách là kỹ năng được đánh giá cao.
+> Ghi nhớ: Lúc phỏng vấn, hãy **viết memo trước** (nó sinh ra rất tự nhiên từ transition), rồi nói "tôi có thể chuyển sang bottom-up để bỏ call stack và tối ưu bộ nhớ" — chuyển đổi giữa hai cách là kỹ năng được đánh giá cao.
 
 ## 4. Bảng DẠNG BÀI — 1D DP (problem patterns)
 
@@ -242,7 +242,7 @@ int solve(int n) {
 | **LIS (dãy con tăng dài nhất)** | "longest increasing subsequence", thứ tự giữ nguyên | `dp[i] = 1 + max(dp[j])` với `j<i, a[j]<a[i]` | O(n²), có cách O(n log n) | Longest Increasing Subsequence (LC 300) |
 | **Max Subarray (Kadane)** | "subarray tổng lớn nhất" (liên tục) | `cur = max(a[i], cur+a[i])`, `best = max(best,cur)` | O(n) | Maximum Subarray (LC 53) |
 
-> 💡 Ghi nhớ: Để ý hai chữ rất quan trọng — **subsequence** (không liên tục, được bỏ phần tử) thường dẫn tới `dp[i]` dựa trên *mọi* `j < i` (O(n²)); còn **subarray** (liên tục) thường chỉ cần state cuộn O(1) như Kadane. Đọc nhầm hai khái niệm này là sai cả bài.
+> Ghi nhớ: Để ý hai chữ rất quan trọng — **subsequence** (không liên tục, được bỏ phần tử) thường dẫn tới `dp[i]` dựa trên *mọi* `j < i` (O(n²)); còn **subarray** (liên tục) thường chỉ cần state cuộn O(1) như Kadane. Đọc nhầm hai khái niệm này là sai cả bài.
 
 ## 5. Bài mẫu giải chi tiết
 
@@ -445,7 +445,7 @@ int climb(int n) {
 
 **Phân tích độ phức tạp.** Brute-force O(2^n). Memo & tabulation **O(n)** thời gian; tabulation cuộn **O(1)** bộ nhớ. Đây là minh hoạ kinh điển: cùng một transition, ba cách hiện thực với chi phí khác nhau một trời một vực.
 
-> ⚠️ Bẫy: `ways(0) = 1`, **không phải 0**. "Không bước nào" cũng là một cách hợp lệ để "đứng yên ở đỉnh". Đặt base case sai một ly là lệch toàn bộ kết quả.
+> Bẫy: `ways(0) = 1`, **không phải 0**. "Không bước nào" cũng là một cách hợp lệ để "đứng yên ở đỉnh". Đặt base case sai một ly là lệch toàn bộ kết quả.
 
 ### 5.2. Bài mẫu 2 — House Robber (LC 198)
 
@@ -518,9 +518,9 @@ int rob(vector<int>& nums) {
 
 **Phân tích độ phức tạp.** Một lần quét: **O(n)** thời gian, **O(1)** bộ nhớ (đã cuộn `dp` thành 2 biến).
 
-> ⚠️ Bẫy: Cám dỗ greedy "cứ trộm nhà nhiều tiền nhất rồi nhảy cách 1" là **sai**. Ví dụ `[2, 1, 1, 2]`: greedy lấy hai số `2` ở hai đầu... nhưng chúng cách nhau hợp lệ nên ra 4 (đúng tình cờ); thử `[2, 7, 9, 3, 1]`: tối ưu là `2+9+1=12` chứ không phải chọn `9` rồi `7` (kề). Chỉ DP mới quét hết được mọi tổ hợp hợp lệ.
+> Bẫy: Cám dỗ greedy "cứ trộm nhà nhiều tiền nhất rồi nhảy cách 1" là **sai**. Ví dụ `[2, 1, 1, 2]`: greedy lấy hai số `2` ở hai đầu... nhưng chúng cách nhau hợp lệ nên ra 4 (đúng tình cờ); thử `[2, 7, 9, 3, 1]`: tối ưu là `2+9+1=12` chứ không phải chọn `9` rồi `7` (kề). Chỉ DP mới quét hết được mọi tổ hợp hợp lệ.
 
-> 💡 Ghi nhớ: **House Robber II** (LC 213) chỉ thêm một twist — nhà xếp **thành vòng tròn** (nhà đầu và cuối cũng kề nhau). Cách giải: chạy House Robber hai lần — một lần bỏ nhà đầu, một lần bỏ nhà cuối — rồi lấy max. Mẹo "phá vòng thành 2 đoạn thẳng" này rất hay gặp.
+> Ghi nhớ: **House Robber II** (LC 213) chỉ thêm một twist — nhà xếp **thành vòng tròn** (nhà đầu và cuối cũng kề nhau). Cách giải: chạy House Robber hai lần — một lần bỏ nhà đầu, một lần bỏ nhà cuối — rồi lấy max. Mẹo "phá vòng thành 2 đoạn thẳng" này rất hay gặp.
 
 ### 5.3. Bài mẫu 3 — Coin Change (LC 322): brute-force → memo → tabulation
 
@@ -769,7 +769,7 @@ int coinChange(vector<int>& coins, int amount) {
 
 **Phân tích độ phức tạp.** **O(amount × #coins)** thời gian, **O(amount)** bộ nhớ.
 
-> ⚠️ Bẫy: **Không greedy** chọn coin lớn nhất trước! Với `coins=[1,3,4], amount=6`: greedy ra `4+1+1=3 xu`, nhưng tối ưu là `3+3=2 xu`. Greedy chỉ đúng với vài hệ tiền tệ "canonical"; DP luôn đúng. Bẫy thứ hai: chọn giá trị "INF" sai (vd dùng số quá lớn rồi `+1` tràn `int`) — dùng `amount+1` là khôn ngoan vì không bao giờ cần quá `amount` xu.
+> Bẫy: **Không greedy** chọn coin lớn nhất trước! Với `coins=[1,3,4], amount=6`: greedy ra `4+1+1=3 xu`, nhưng tối ưu là `3+3=2 xu`. Greedy chỉ đúng với vài hệ tiền tệ "canonical"; DP luôn đúng. Bẫy thứ hai: chọn giá trị "INF" sai (vd dùng số quá lớn rồi `+1` tràn `int`) — dùng `amount+1` là khôn ngoan vì không bao giờ cần quá `amount` xu.
 
 ### 5.4. Điểm thưởng — 0/1 Knapsack (mỗi item lấy 1 lần)
 
@@ -878,7 +878,7 @@ int knapsack(vector<int>& wt, vector<int>& val, int W) {
   </g>
 </svg>
 
-> 💡 Ghi nhớ — quy tắc vàng phân biệt hai loại knapsack: **0/1 (mỗi món 1 lần) → duyệt sức chứa GIẢM dần**; **unbounded (dùng vô hạn, như coin change) → duyệt TĂNG dần**. Đảo chiều là đổi hẳn bài toán. Đây là một trong những bẫy "kinh điển" của phỏng vấn.
+> Ghi nhớ — quy tắc vàng phân biệt hai loại knapsack: **0/1 (mỗi món 1 lần) → duyệt sức chứa GIẢM dần**; **unbounded (dùng vô hạn, như coin change) → duyệt TĂNG dần**. Đảo chiều là đổi hẳn bài toán. Đây là một trong những bẫy "kinh điển" của phỏng vấn.
 
 ## 6. Sai lầm thường gặp & cách tránh
 
@@ -893,7 +893,7 @@ int knapsack(vector<int>& wt, vector<int>& val, int W) {
 | Memo nhưng quên cache đúng tham số | Vẫn O(mũ) | Cache theo **đúng** bộ tham số định nghĩa state |
 | Tràn số khi dùng INF rồi `+1` | Kết quả âm bất ngờ (Java/Go) | Dùng "INF" vừa đủ (vd `amount+1`) hoặc check `< 0` |
 
-> ⚠️ Bẫy lớn nhất với người mới: **nhảy vào code khi chưa viết được transition trên giấy.** Nếu chưa nói được bằng lời "dp[i] tính từ dp[...] thế nào", thì code chắc chắn sai. Hãy luôn viết 4 dòng (state / transition / base / thứ tự) ra trước.
+> Bẫy lớn nhất với người mới: **nhảy vào code khi chưa viết được transition trên giấy.** Nếu chưa nói được bằng lời "dp[i] tính từ dp[...] thế nào", thì code chắc chắn sai. Hãy luôn viết 4 dòng (state / transition / base / thứ tự) ra trước.
 
 ## 7. Checklist tự luyện
 
@@ -913,4 +913,4 @@ Luyện theo **dạng**, không luyện ngẫu nhiên. Sau mỗi bài, viết ra
 - [ ] **Partition Equal Subset Sum (LC 416)** — 0/1 knapsack boolean (chia mảng thành 2 tổng bằng nhau).
 - [ ] **Target Sum (LC 494)** — biến gán dấu +/- thành 0/1 knapsack đếm cách.
 
-> 💡 Ghi nhớ cuối bài: DP không phải năng khiếu — nó là **quy trình lặp lại**. Cứ ép mình viết 4 dòng (state → transition → base → thứ tự) cho từng bài, sau khoảng 25–30 bài bạn sẽ "thấy" được state ngay khi đọc đề. Bài tiếp theo (DP II) mở rộng đúng bộ khung này sang **2D & string** (grid, LCS, edit distance) — nắm vững 1D ở đây là đã đi được nửa đường.
+> Ghi nhớ cuối bài: DP không phải năng khiếu — nó là **quy trình lặp lại**. Cứ ép mình viết 4 dòng (state → transition → base → thứ tự) cho từng bài, sau khoảng 25–30 bài bạn sẽ "thấy" được state ngay khi đọc đề. Bài tiếp theo (DP II) mở rộng đúng bộ khung này sang **2D & string** (grid, LCS, edit distance) — nắm vững 1D ở đây là đã đi được nửa đường.

@@ -131,7 +131,7 @@ Hai ràng buộc cứng khi spawn nhóm song song — thiếu một trong hai l�
 
 Sau khi spawn, **đếm lại**: liệt kê agent đang chạy, phải thấy đủ N. Thiếu thì nói ra, đừng chạy tiếp như thể đã song song.
 
-💡 Chú ý câu docs về base branch: worktree của subagent mặc định tách từ **nhánh mặc định**, không từ `HEAD` của bạn. Nếu bạn đang đứng trên một nhánh feature và muốn worker làm tiếp trên nhánh đó, phải nói rõ trong brief hoặc cấu hình base — không thì worker làm trên code cũ hơn cái bạn đang nhìn.
+Chú ý câu docs về base branch: worktree của subagent mặc định tách từ **nhánh mặc định**, không từ `HEAD` của bạn. Nếu bạn đang đứng trên một nhánh feature và muốn worker làm tiếp trên nhánh đó, phải nói rõ trong brief hoặc cấu hình base — không thì worker làm trên code cũ hơn cái bạn đang nhìn.
 
 ### 3.4 Verify: task nào xong verify task đó, và chỉ một vòng sửa
 
@@ -377,43 +377,43 @@ Không còn task nào nhận được (task 3 đang `[wait …]`), nên mỗi l�
 
 **Xong khi:** (1) 2 nhánh `task/*`, mỗi nhánh test exit 0 và commit body có dòng `Gate:`; (2) `BRIEF.md` có 2 `[x …]` kèm hash, task `[wait …]` nguyên vẹn; (3) sau 3 lượt rỗng, hỏi `what scheduled tasks do I have?` trả về **không còn** job của `/loop`, và `BRIEF.md` có đoạn tổng kết nói task 3 đang chờ người chốt tên.
 
-📏 Muốn biết loop tốn bao nhiêu: số liệu chưa đo thì đừng đoán. Chạy cùng iteration qua `claude -p "/loop-tasks" --output-format json` và đọc trường `total_cost_usd` (docs: ước tính phía client), lặp vài lần cho lượt có việc và lượt rỗng, rồi nhân với số lượt/ngày của nhịp bạn chọn.
+Muốn biết loop tốn bao nhiêu: số liệu chưa đo thì đừng đoán. Chạy cùng iteration qua `claude -p "/loop-tasks" --output-format json` và đọc trường `total_cost_usd` (docs: ước tính phía client), lặp vài lần cho lượt có việc và lượt rỗng, rồi nhân với số lượt/ngày của nhịp bạn chọn.
 
 ---
 
 ## 5. Bẫy thường gặp
 
-🪤 **Nhánh song song có trong skill nhưng không bao giờ chạy**
+**Nhánh song song có trong skill nhưng không bao giờ chạy**
 - *Triệu chứng:* mọi task xong tuần tự; không có worktree nào được tạo; không ai để ý vì kết quả vẫn đúng.
 - *Nguyên nhân gốc:* luật "không chắc → tuần tự", hoặc spawn từng agent rồi chờ.
 - *Chặn bằng cơ chế:* `isolation: worktree` trong frontmatter của worker (không phụ thuộc main agent nhớ); luật "chỉ bằng chứng mới ép tuần tự"; đo định kỳ trên transcript: số message có ≥ 2 lời gọi Agent. Số đó bằng 0 là báo động.
 
-🪤 **Iteration sau cướp task iteration trước đang làm**
+**Iteration sau cướp task iteration trước đang làm**
 - *Triệu chứng:* hai worker trên cùng một task, diff chồng nhau, commit đôi.
 - *Nguyên nhân gốc:* lượt main agent kết thúc trong khi worker chạy nền; ngưỡng mồ côi ngắn hơn thời gian thật của task dài.
 - *Chặn bằng cơ chế:* mark `[lock YYYY-MM-DD HH:MM]` **trước** khi spawn; ngưỡng tính từ p95 thời gian task của chính repo; kiểm agent còn sống trước khi nhận lại; với cron hệ thống thêm `flock -n`.
 
-🪤 **Loop fire hàng trăm lần mà không làm gì**
+**Loop fire hàng trăm lần mà không làm gì**
 - *Triệu chứng:* log dài một màu "không thay đổi"; việc đang bị chặn trông như đang chạy.
 - *Nguyên nhân gốc:* chỉ có điều kiện dừng cấp lượt, thiếu cấp loop; hoặc luật dừng chỉ nằm trong lời dặn (case 62 lượt ở §2) — model không có bộ đếm bền qua các session.
 - *Chặn bằng cơ chế:* `empty-streak` lưu trong `BRIEF.md` (không trong context — context của loop dài bị tóm tắt); đủ ngưỡng thì skill tự huỷ lịch và viết tổng kết chặn-bởi-ai.
 
-🪤 **`/loop` fire nhưng skill không chạy, agent nhận được dòng chữ `/loop-tasks`**
+**`/loop` fire nhưng skill không chạy, agent nhận được dòng chữ `/loop-tasks`**
 - *Triệu chứng:* mỗi lượt Claude chỉ "đọc" lệnh như văn bản.
 - *Nguyên nhân gốc:* docs ghi scheduled fire chỉ chạy skill mà Claude **được phép tự gọi**; skill có `disable-model-invocation: true`, hoặc bị deny rule chặn, sẽ tới Claude dưới dạng chữ.
 - *Chặn bằng cơ chế:* đừng đặt `disable-model-invocation` cho skill loop; thử một lượt `/loop 1m` trước khi để chạy dài.
 
-🪤 **Cron + `claude -p` chạy nhưng không tìm thấy skill, hoặc kẹt ở permission**
+**Cron + `claude -p` chạy nhưng không tìm thấy skill, hoặc kẹt ở permission**
 - *Triệu chứng:* output báo không biết `/loop-tasks`, hoặc lượt kết thúc với danh sách `permission_denials`.
 - *Nguyên nhân gốc:* thêm `--bare` (docs: bỏ qua skill, CLAUDE.md, hook, subagent); hoặc không ai trả lời prompt quyền khi chạy không người.
 - *Chặn bằng cơ chế:* không dùng `--bare` cho loop dựa vào skill; liệt kê đủ tool trong `--allowedTools`, chọn `--permission-mode` rõ ràng; đọc exit code + `permission_denials` trong JSON output như một phần của gate.
 
-🪤 **Worker làm trên code cũ hơn cái bạn đang nhìn**
+**Worker làm trên code cũ hơn cái bạn đang nhìn**
 - *Triệu chứng:* diff của worker không áp được lên nhánh bạn đang làm, hoặc fix "đã có sẵn".
 - *Nguyên nhân gốc:* docs: worktree của subagent mặc định tách từ nhánh mặc định, không từ `HEAD` của session; và `main` local có thể cũ hơn remote.
 - *Chặn bằng cơ chế:* `git fetch` đầu iteration; ghi base branch vào khối Gate của `BRIEF.md` để mọi brief mang theo.
 
-🪤 **Viết lại cả loop thành workflow "cho hiện đại", rồi mất state khi tắt máy**
+**Viết lại cả loop thành workflow "cho hiện đại", rồi mất state khi tắt máy**
 - *Triệu chứng:* thoát session là run dừng; không hỏi được người khi task cần quyết định.
 - *Nguyên nhân gốc:* workflow giữ state trong biến script, resume trong session; không có input giữa chừng.
 - *Chặn bằng cơ chế:* loop ngoài (state trên đĩa) giữ vai orchestrator; workflow chỉ là công cụ của một task nặng.

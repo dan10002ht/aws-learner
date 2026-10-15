@@ -169,7 +169,7 @@ Tiêm y hệt ConfigMap, chỉ đổi `configMapKeyRef` → `secretKeyRef`, `con
         defaultMode: 0400     # chỉ owner đọc được
 ```
 
-### 2.4 ⚠️ Sự thật phũ phàng: Secret KHÔNG được mã hoá
+### 2.4 Sự thật phũ phàng: Secret KHÔNG được mã hoá
 
 Đây là **hiểu lầm nguy hiểm nhất** với người mới. `base64` **không phải là mã hoá** — nó chỉ là cách encode, ai cũng decode ngược được trong 1 giây:
 

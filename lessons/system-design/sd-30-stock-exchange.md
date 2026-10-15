@@ -30,7 +30,7 @@ Khác với 29 bài trước, ở bài này bạn **không thể suy luận nế
 | **Khách tổ chức (institutional)** | Quỹ, HFT (high-frequency trading) | Dùng phần mềm riêng, thuê chỗ đặt máy ngay trong datacenter của sàn (colocation) |
 | **Clearing house / depository** | Thực hiện chuyển tiền và chuyển quyền sở hữu sau khi khớp | **Không nằm trong bài này.** Khớp lệnh (matching) và thanh toán bù trừ (settlement, T+1/T+2) là hai hệ thống khác nhau |
 
-> 💡 **Điểm hay để nói trong phỏng vấn ngay từ phút thứ ba**: *"Tôi sẽ tách rõ **khớp lệnh** khỏi **thanh toán bù trừ**. Khớp lệnh là micro-giây và in-memory; thanh toán là T+1, chạy theo lô, cần ACID nghiêm ngặt và có thể dùng cơ sở dữ liệu quan hệ bình thường. Gộp hai thứ này vào một hệ thống là lỗi thiết kế phổ biến nhất của bài này."* Câu này lập tức thu hẹp phạm vi và cho thấy bạn biết thị trường vận hành ra sao.
+> **Điểm hay để nói trong phỏng vấn ngay từ phút thứ ba**: *"Tôi sẽ tách rõ **khớp lệnh** khỏi **thanh toán bù trừ**. Khớp lệnh là micro-giây và in-memory; thanh toán là T+1, chạy theo lô, cần ACID nghiêm ngặt và có thể dùng cơ sở dữ liệu quan hệ bình thường. Gộp hai thứ này vào một hệ thống là lỗi thiết kế phổ biến nhất của bài này."* Câu này lập tức thu hẹp phạm vi và cho thấy bạn biết thị trường vận hành ra sao.
 
 ### 1.2 Lệnh và các loại lệnh
 
@@ -54,7 +54,7 @@ Hai loại đầu là đủ cho bài này. Một chi tiết quan trọng về m�
 - **Mid price** = (bid + ask) / 2 — giá "tham chiếu" hay dùng để tính chỉ số.
 - **Độ sâu (depth)** — khối lượng chờ ở mỗi mức giá.
 
-> ⚠️ **Bẫy tư duy phổ biến**: nhiều người nghĩ "giá cổ phiếu" là một con số do sàn quyết định. Không. **Sàn không có giá.** Sàn chỉ có một sổ lệnh, và cái mà thế giới gọi là "giá" thực ra là **giá của giao dịch khớp gần nhất (last traded price)**. Giá là *hệ quả* của việc khớp, không phải *đầu vào*. Hiểu sai điểm này thì toàn bộ thiết kế của bạn sẽ đặt sai chỗ trách nhiệm.
+> **Bẫy tư duy phổ biến**: nhiều người nghĩ "giá cổ phiếu" là một con số do sàn quyết định. Không. **Sàn không có giá.** Sàn chỉ có một sổ lệnh, và cái mà thế giới gọi là "giá" thực ra là **giá của giao dịch khớp gần nhất (last traded price)**. Giá là *hệ quả* của việc khớp, không phải *đầu vào*. Hiểu sai điểm này thì toàn bộ thiết kế của bạn sẽ đặt sai chỗ trách nhiệm.
 
 ### 1.4 Sổ lệnh (order book), khớp lệnh, và fill
 
@@ -83,7 +83,7 @@ Một message FIX (rút gọn):
             ^ type=D (new order)        symbol ^     side=1(buy) ^  qty ^  type=2(limit) ^ price
 ```
 
-> 💡 Đọc được nó không quan trọng. Quan trọng là hiểu vì sao sàn tốc độ cao **bỏ FIX text trên critical path**: phân tích cú pháp một chuỗi văn bản có độ dài thay đổi mất hàng micro-giây và sinh ra cấp phát bộ nhớ. Một message nhị phân có bố cục cố định được đọc bằng vài phép truy cập offset — **không cấp phát, không nhánh rẽ, vài chục nano-giây**. Đây đã là ví dụ đầu tiên cho tinh thần chủ đạo của bài.
+> Đọc được nó không quan trọng. Quan trọng là hiểu vì sao sàn tốc độ cao **bỏ FIX text trên critical path**: phân tích cú pháp một chuỗi văn bản có độ dài thay đổi mất hàng micro-giây và sinh ra cấp phát bộ nhớ. Một message nhị phân có bố cục cố định được đọc bằng vài phép truy cập offset — **không cấp phát, không nhánh rẽ, vài chục nano-giây**. Đây đã là ví dụ đầu tiên cho tinh thần chủ đạo của bài.
 
 ---
 
@@ -145,7 +145,7 @@ Hệ số đỉnh thực tế: 5×  → Peak ≈ 215.000 lệnh/s
 Đỉnh của đỉnh (micro-burst trong 1 ms lúc 09:30:00.000): có thể chạm 1–2 triệu lệnh/s
 ```
 
-> ⚠️ **Bẫy lớn nhất của phần ước lượng trong bài này**: nếu bạn chỉ báo cáo QPS trung bình 43K rồi thiết kế cho nó, bạn sẽ **thiết kế một hệ thống sập vào đúng 09:30:00 mỗi ngày**. Lưu lượng của sàn không phải một dòng chảy đều, nó là **các đợt bùng nổ cực ngắn (micro-burst)** xen giữa những khoảng im ắng. Con số cần thiết kế không phải "lệnh/giây" mà là **"số lệnh dồn trong 1 ms tệ nhất"** và **kích thước bộ đệm cần để không mất gói**.
+> **Bẫy lớn nhất của phần ước lượng trong bài này**: nếu bạn chỉ báo cáo QPS trung bình 43K rồi thiết kế cho nó, bạn sẽ **thiết kế một hệ thống sập vào đúng 09:30:00 mỗi ngày**. Lưu lượng của sàn không phải một dòng chảy đều, nó là **các đợt bùng nổ cực ngắn (micro-burst)** xen giữa những khoảng im ắng. Con số cần thiết kế không phải "lệnh/giây" mà là **"số lệnh dồn trong 1 ms tệ nhất"** và **kích thước bộ đệm cần để không mất gói**.
 
 Ba hệ quả trực tiếp:
 
@@ -194,7 +194,7 @@ Lệnh còn sống (open orders) trong sổ tại một thời điểm:
 
 **Năm trăm megabyte.** Đây là con số làm thay đổi mọi thứ. Toàn bộ trạng thái sống của một sàn chứng khoán 100 mã vừa trong bộ nhớ đệm của một CPU máy chủ đời mới, chứ đừng nói RAM. Và vì nó vừa trong RAM của **một** máy, ta **không cần** phân tán, **không cần** đồng thuận phân tán trên đường nóng, **không cần** khoá phân tán, **không cần** giao dịch hai pha.
 
-> 💡 **Nguyên tắc cần rút ra và mang theo suốt đời**: trước khi bạn thiết kế một hệ phân tán, hãy tính xem dữ liệu nóng có vừa trong một máy không. Phân tán là **cái giá phải trả khi không còn lựa chọn**, không phải phần thưởng. Suốt 29 bài trước ta phân tán vì buộc phải thế (petabyte, hàng tỉ user). Ở đây dữ liệu nóng là 500 MB, nên phân tán chỉ mua về độ trễ mạng và sự bất định — hai thứ đúng bằng những thứ bài này cấm.
+> **Nguyên tắc cần rút ra và mang theo suốt đời**: trước khi bạn thiết kế một hệ phân tán, hãy tính xem dữ liệu nóng có vừa trong một máy không. Phân tán là **cái giá phải trả khi không còn lựa chọn**, không phải phần thưởng. Suốt 29 bài trước ta phân tán vì buộc phải thế (petabyte, hàng tỉ user). Ở đây dữ liệu nóng là 500 MB, nên phân tán chỉ mua về độ trễ mạng và sự bất định — hai thứ đúng bằng những thứ bài này cấm.
 
 ### 3.4 Nhật ký sự kiện (event log) và lưu trữ
 
@@ -242,7 +242,7 @@ Hai con số **34 Gbps** và **8,6 MB/s** chính là toàn bộ lý lẽ cho mul
 | Nhật ký sự kiện | 90 GB/ngày thô | Ghi tuần tự bất đồng bộ, không `fsync` trên đường nóng |
 | Fan-out market data | 8,6 MB/s × 500 người nhận | **Multicast UDP**, không phải TCP |
 
-> 💡 Một dòng tóm tắt cả phần ước lượng: **hệ này không lớn, nó nhanh.** Mọi bài trước ta chống lại *khối lượng*; bài này ta chống lại *thời gian*. Đó là hai môn thể thao khác nhau, dùng hai bộ công cụ gần như không giao nhau.
+> Một dòng tóm tắt cả phần ước lượng: **hệ này không lớn, nó nhanh.** Mọi bài trước ta chống lại *khối lượng*; bài này ta chống lại *thời gian*. Đó là hai môn thể thao khác nhau, dùng hai bộ công cụ gần như không giao nhau.
 
 ---
 
@@ -301,7 +301,7 @@ GET  /v1/reference/symbols                     # danh mục mã, tick size, lot 
 GET  /v1/reports/daily?date=2026-03-14         # đối soát cuối ngày
 ```
 
-> ⚠️ Đừng để REST dính vào đường nóng dù chỉ một chút. Mọi endpoint ở trên đọc từ **bản sao** của trạng thái (do market data publisher hoặc reporter dựng lại), **không bao giờ** hỏi trực tiếp matching engine. Nếu một truy vấn REST có thể làm engine dừng lại dù chỉ một micro-giây, bạn đã để tầng lạnh làm ô nhiễm tầng nóng — đây là lỗi thiết kế nghiêm trọng nhất mà một ứng viên có thể mắc ở bài này.
+> Đừng để REST dính vào đường nóng dù chỉ một chút. Mọi endpoint ở trên đọc từ **bản sao** của trạng thái (do market data publisher hoặc reporter dựng lại), **không bao giờ** hỏi trực tiếp matching engine. Nếu một truy vấn REST có thể làm engine dừng lại dù chỉ một micro-giây, bạn đã để tầng lạnh làm ô nhiễm tầng nóng — đây là lỗi thiết kế nghiêm trọng nhất mà một ứng viên có thể mắc ở bài này.
 
 ---
 
@@ -378,7 +378,7 @@ GET  /v1/reports/daily?date=2026-03-14         # đối soát cuối ngày
 | **Dữ liệu thị trường** | ⑤ → ⑥ | < 1 ms, và **đồng đều giữa mọi người nhận** | Công bằng |
 | **Báo cáo** | ⑤ → reporter → DB | Vài giây tới T+1 | Chính xác, đầy đủ, bất biến |
 
-> 💡 **Câu chốt đáng học thuộc**: *"Ba luồng này không chỉ khác nhau về tốc độ, chúng khác nhau về **thứ được tối ưu**. Luồng giao dịch tối ưu độ trễ và chấp nhận mất tính năng. Luồng dữ liệu tối ưu **sự đồng đều** — thà chậm cho tất cả còn hơn nhanh cho một người. Luồng báo cáo tối ưu tính đầy đủ và chấp nhận chậm. Nếu tôi để chúng dùng chung một đường ống, tôi đã ép cả ba nhận đặc tính tệ nhất của nhau."*
+> **Câu chốt đáng học thuộc**: *"Ba luồng này không chỉ khác nhau về tốc độ, chúng khác nhau về **thứ được tối ưu**. Luồng giao dịch tối ưu độ trễ và chấp nhận mất tính năng. Luồng dữ liệu tối ưu **sự đồng đều** — thà chậm cho tất cả còn hơn nhanh cho một người. Luồng báo cáo tối ưu tính đầy đủ và chấp nhận chậm. Nếu tôi để chúng dùng chung một đường ống, tôi đã ép cả ba nhận đặc tính tệ nhất của nhau."*
 
 ### 5.3 Vai trò từng thành phần — và vì sao nó tồn tại
 
@@ -418,16 +418,16 @@ Ngân sách wire-to-wire là 100 µs. Chỉ riêng việc nối các thành ph�
    │ seq 1001 │ seq 1002 │ seq 1003 │ seq 1004 │ ... │ (trống) │
    └───────────────────────────────────────────────────────────┘
         ▲           ▲          ▲          ▲
-        │           │          │          └── ✍ SEQUENCER ghi (người viết DUY NHẤT)
-        │           │          └── 👁 matching engine đọc tới đây
-        │           └── 👁 market data publisher đọc tới đây
-        └── 👁 reporter đọc tới đây (chậm nhất, không sao)
+        │           │          │          └──   SEQUENCER ghi (người viết DUY NHẤT)
+        │           │          └──   matching engine đọc tới đây
+        │           └──   market data publisher đọc tới đây
+        └──   reporter đọc tới đây (chậm nhất, không sao)
 
    Mỗi người đọc có con trỏ RIÊNG, đọc độc lập, KHÔNG khoá,
    KHÔNG ảnh hưởng lẫn nhau. Người đọc chậm không làm chậm người đọc nhanh.
 ```
 
-> 💡 **Nguyên tắc gây sốc nhất của bài**: ở 29 bài trước, "tách thành nhiều dịch vụ nối bằng queue" là câu trả lời đúng gần như mọi lúc. Ở đây nó là câu trả lời **sai**, vì mỗi ranh giới tiến trình/mạng bạn thêm vào là một khoản thuế micro-giây mà bài toán không đủ ngân sách để trả. Kiến trúc vẫn được **chia theo trách nhiệm** — nhưng **không bị chia theo không gian**. *Tách logic, không tách vật lý.* Đây chính là điều làm bài này trở thành bài kết thúc course: nó buộc bạn nhận ra rằng mọi "best practice" đều là hệ quả của một tập ràng buộc, và khi ràng buộc đổi thì kết luận lật ngược.
+> **Nguyên tắc gây sốc nhất của bài**: ở 29 bài trước, "tách thành nhiều dịch vụ nối bằng queue" là câu trả lời đúng gần như mọi lúc. Ở đây nó là câu trả lời **sai**, vì mỗi ranh giới tiến trình/mạng bạn thêm vào là một khoản thuế micro-giây mà bài toán không đủ ngân sách để trả. Kiến trúc vẫn được **chia theo trách nhiệm** — nhưng **không bị chia theo không gian**. *Tách logic, không tách vật lý.* Đây chính là điều làm bài này trở thành bài kết thúc course: nó buộc bạn nhận ra rằng mọi "best practice" đều là hệ quả của một tập ràng buộc, và khi ràng buộc đổi thì kết luận lật ngược.
 
 ---
 
@@ -459,7 +459,7 @@ Trước khi chọn cấu trúc dữ liệu, hãy liệt kê chính xác các th
 | **Cây đỏ-đen / AVL / B-tree** (`std::map`) | O(log n) | O(log n) | O(log n) nếu có con trỏ | log n ≈ 15–17 phép so sánh, **mỗi phép là một lần nhảy con trỏ tới vùng nhớ ngẫu nhiên → cache miss ~80–100 ns**. 17 × 80 ns ≈ **1,4 µs chỉ để tìm một mức giá** |
 | **Skip list** | O(log n) kỳ vọng | O(log n) | O(log n) | Cùng vấn đề cache, cộng thêm bất định về thời gian (ngẫu nhiên) — phá vỡ tính xác định độ trễ |
 | **Hash map giá → mức giá** | O(1) | **O(n)** — phải quét tìm giá tốt nhất | O(1) | Không duyệt được theo thứ tự giá |
-| **✅ Mảng chỉ số theo giá + danh sách liên kết đôi** | **O(1)** | **O(1)** | **O(1)** | Tốn RAM cho dải giá; cần xử lý giá ngoài dải |
+| **✓ Mảng chỉ số theo giá + danh sách liên kết đôi** | **O(1)** | **O(1)** | **O(1)** | Tốn RAM cho dải giá; cần xử lý giá ngoài dải |
 
 Hai lý do bác bỏ cây/heap, và lý do thứ hai mới là lý do thật:
 
@@ -467,7 +467,7 @@ Hai lý do bác bỏ cây/heap, và lý do thứ hai mới là lý do thật:
 
 **Lý do 2 — mechanical sympathy: O(log n) với cache miss chậm hơn O(n) tuần tự.** Một lần đọc RAM khi trượt cache tốn ~80–100 ns; một lần đọc trúng L1 tốn ~1 ns. Cây đỏ-đen phân bổ node rải rác khắp heap, nên mỗi bước xuống cây gần như chắc chắn trượt cache. Trong khi đó, một mảng liên tục được **bộ tiền nạp phần cứng (hardware prefetcher)** đoán trước và kéo vào cache — duyệt 64 phần tử liên tiếp trong mảng có thể **rẻ hơn** 4 bước xuống cây.
 
-> ⚠️ Đây là chỗ mà kiến thức thuật toán "sách giáo khoa" phản bội bạn. Ký hiệu O lớn giả định mọi phép truy cập bộ nhớ có chi phí như nhau. Trên CPU thật, tỉ lệ chi phí giữa "trúng L1" và "trượt xuống RAM" là khoảng **1:100**. Ở quy mô micro-giây, **hằng số quan trọng hơn bậc tiệm cận**. Nếu bạn nêu được đúng ý này trong phỏng vấn, bạn đã tách khỏi 90% ứng viên.
+> Đây là chỗ mà kiến thức thuật toán "sách giáo khoa" phản bội bạn. Ký hiệu O lớn giả định mọi phép truy cập bộ nhớ có chi phí như nhau. Trên CPU thật, tỉ lệ chi phí giữa "trúng L1" và "trượt xuống RAM" là khoảng **1:100**. Ở quy mô micro-giây, **hằng số quan trọng hơn bậc tiệm cận**. Nếu bạn nêu được đúng ý này trong phỏng vấn, bạn đã tách khỏi 90% ứng viên.
 
 ### 6.3 Cấu trúc dữ liệu được chọn
 
@@ -624,7 +624,7 @@ Lệnh thị trường không có giá, nên nó quét bên bids từ tốt nh�
  → best bid tụt từ 100.03 xuống 100.01. Ba mức giá bị xoá sổ trong một sự kiện.
 ```
 
-> ⚠️ **Vì sao lệnh thị trường nguy hiểm về mặt hệ thống**: nếu sổ lệnh mỏng, một lệnh thị trường đủ lớn có thể quét sạch hàng chục mức giá và khiến giá nhảy vài phần trăm trong vài micro-giây. Đây chính là cơ chế đã gây ra "Flash Crash" ngày 6/5/2010. Phòng thủ có hai lớp: **giới hạn dải giá cho lệnh thị trường** (biến nó ngầm thành lệnh giới hạn với giá trần/sàn rộng) và **circuit breaker** (§15).
+> **Vì sao lệnh thị trường nguy hiểm về mặt hệ thống**: nếu sổ lệnh mỏng, một lệnh thị trường đủ lớn có thể quét sạch hàng chục mức giá và khiến giá nhảy vài phần trăm trong vài micro-giây. Đây chính là cơ chế đã gây ra "Flash Crash" ngày 6/5/2010. Phòng thủ có hai lớp: **giới hạn dải giá cho lệnh thị trường** (biến nó ngầm thành lệnh giới hạn với giá trần/sàn rộng) và **circuit breaker** (§15).
 
 ### 6.5 Độ phức tạp và ngân sách thời gian thực tế
 
@@ -639,7 +639,7 @@ Lệnh thị trường không có giá, nên nó quét bên bids từ tốt nh�
 
 Tổng ngân sách nhân engine: **dưới 1 µs cho một lệnh điển hình**. Phần còn lại của 100 µs wire-to-wire bị tiêu ở: card mạng và ngăn xếp mạng (~10–30 µs nếu kernel bypass, ~50–80 µs nếu không), giải mã và kiểm tra rủi ro (~5–15 µs), sequencer (~1–3 µs), và mã hoá phản hồi + gửi đi (~10–30 µs).
 
-> 💡 Nhận xét quan trọng: **matching engine không phải phần chậm nhất.** Người mới thường dồn hết công tối ưu vào thuật toán khớp, trong khi 90% ngân sách bị tiêu ở mạng và tuần tự hoá. Biết đâu là chỗ tốn thời gian thật — và nói ra điều đó — quan trọng hơn việc tối ưu đúng.
+> Nhận xét quan trọng: **matching engine không phải phần chậm nhất.** Người mới thường dồn hết công tối ưu vào thuật toán khớp, trong khi 90% ngân sách bị tiêu ở mạng và tuần tự hoá. Biết đâu là chỗ tốn thời gian thật — và nói ra điều đó — quan trọng hơn việc tối ưu đúng.
 
 ---
 
@@ -688,7 +688,7 @@ Từng dòng mua một thứ cụ thể:
 | **Tắt turbo** | Tần số dao động theo nhiệt | Đổi **tốc độ trung bình** lấy **tính ổn định** |
 | Huge page | Trượt TLB khi vùng nhớ lớn | Giảm vài trăm ns/lần truy cập rải rác |
 
-> 💡 **Nguyên tắc gói gọn cả §7**: bạn không tối ưu độ trễ bằng cách làm code chạy nhanh hơn — code đã đủ nhanh từ lâu. Bạn tối ưu bằng cách **loại bỏ mọi thứ có thể làm gián đoạn nó**. Kẻ thù không phải là công việc, mà là **sự ngắt quãng**: bộ lập lịch, ngắt, gom rác, trượt trang, chuyển ngữ cảnh, di chuyển giữa các core. Đây là sự đảo ngược tư duy quan trọng nhất mà bài này dạy.
+> **Nguyên tắc gói gọn cả §7**: bạn không tối ưu độ trễ bằng cách làm code chạy nhanh hơn — code đã đủ nhanh từ lâu. Bạn tối ưu bằng cách **loại bỏ mọi thứ có thể làm gián đoạn nó**. Kẻ thù không phải là công việc, mà là **sự ngắt quãng**: bộ lập lịch, ngắt, gom rác, trượt trang, chuyển ngữ cảnh, di chuyển giữa các core. Đây là sự đảo ngược tư duy quan trọng nhất mà bài này dạy.
 
 ### 7.2 Toàn bộ trạng thái trong RAM — và vì sao điều đó an toàn
 
@@ -743,7 +743,7 @@ Một `seq_id` duy nhất, tăng đơn điệu, gán cho **mọi** sự kiện �
 
 Chênh lệch **1000×** về độ trễ là lý do duy nhất cần nêu. Kafka giải đúng bài toán nhưng ở sai thang thời gian. Trong phỏng vấn, hãy nói thẳng: *"Về mặt khái niệm sequencer của tôi chính là một Kafka partition đơn. Tôi tự hiện thực nó vì tôi cần độ trễ micro-giây chứ không phải mili-giây — nhưng tôi vẫn dùng Kafka ở **hạ nguồn**, cho reporter và các hệ phân tích, nơi vài ms là hoàn toàn chấp nhận được."* Câu này cho thấy bạn không bài xích công cụ, bạn chỉ đặt nó đúng chỗ.
 
-> ⚠️ Sequencer là **điểm đơn lỗi (SPOF) theo thiết kế** — nó bắt buộc phải là người viết duy nhất, nếu không thì không còn thứ tự toàn cục. Đừng cố "làm cho nó HA bằng cách chạy hai cái". Cách đúng là: một cái hoạt động, một cái chờ nóng, và **failover bằng bầu cử leader** (§10). Chấp nhận SPOF rồi bảo vệ nó kỹ càng là lựa chọn đúng ở đây.
+> Sequencer là **điểm đơn lỗi (SPOF) theo thiết kế** — nó bắt buộc phải là người viết duy nhất, nếu không thì không còn thứ tự toàn cục. Đừng cố "làm cho nó HA bằng cách chạy hai cái". Cách đúng là: một cái hoạt động, một cái chờ nóng, và **failover bằng bầu cử leader** (§10). Chấp nhận SPOF rồi bảo vệ nó kỹ càng là lựa chọn đúng ở đây.
 
 ---
 
@@ -789,7 +789,7 @@ Phát lại chỉ có giá trị nếu nó cho **kết quả y hệt**. Điều 
 | Đa luồng trong logic khớp | Thứ tự do OS quyết | Đơn luồng (§7) |
 | Gọi ra ngoài (HTTP, DB) từ engine | Không phát lại được | Đưa kết quả **vào** làm một sự kiện |
 
-> 💡 **Nguyên tắc**: *matching engine phải là một hàm thuần khiết của dòng sự kiện.* Mọi thứ không xác định — thời gian, ngẫu nhiên, mạng, cấu hình — phải được **thực thể hoá thành sự kiện** trước khi chạm tới engine. Ngay cả việc "thị trường mở cửa" cũng là một sự kiện có `seq_id`, không phải một phép so sánh với đồng hồ.
+> **Nguyên tắc**: *matching engine phải là một hàm thuần khiết của dòng sự kiện.* Mọi thứ không xác định — thời gian, ngẫu nhiên, mạng, cấu hình — phải được **thực thể hoá thành sự kiện** trước khi chạm tới engine. Ngay cả việc "thị trường mở cửa" cũng là một sự kiện có `seq_id`, không phải một phép so sánh với đồng hồ.
 
 ### 9.4 Ảnh chụp (snapshot) — vì replay từ đầu là không đủ nhanh
 
@@ -801,7 +801,7 @@ Phát lại 1 tỉ sự kiện mất hàng giờ, trong khi RTO là vài chục 
      │  ... 40 triệu sự kiện ...
   10:00:00  snapshot#1  (seq=40.000.000)   ← ghi bởi một TIẾN TRÌNH KHÁC
      │  ... sự kiện tiếp ...                  đọc nhật ký, KHÔNG đụng engine
-  10:07:13  💥 SỰ CỐ tại seq=49.812.004
+  10:07:13  SỰ CỐ tại seq=49.812.004
 
   PHỤC HỒI: nạp snapshot#1 (~500 MB, đọc tuần tự NVMe ≈ 0,2 s)
             + phát lại 9.812.004 sự kiện × ~300 ns ≈ 2,9 s
@@ -857,7 +857,7 @@ Vì engine là hàm thuần khiết của dòng sự kiện (§9.3), hai máy nh
 
 Thực tế các sàn dùng **cả hai**: hot-hot trong cùng datacenter (cùng phòng, cùng switch) để chịu lỗi phần cứng đơn lẻ, và hot-warm ở một datacenter khác thành phố cho thảm hoạ vùng. Warm ở xa vì một lý do vật lý không thể lách: 100 km sợi quang là ~0,5 ms một chiều — quá đắt cho nhân bản đồng bộ trên đường nóng.
 
-> ⚠️ **Bẫy lớn nhất của hot-hot**: nó bảo vệ bạn khỏi *hỏng phần cứng*, nhưng **không** bảo vệ khỏi *lỗi phần mềm*. Chính tính xác định mà bạn dày công xây dựng đảm bảo rằng một lệnh gây tràn số sẽ làm sập **cả ba** bản sao ở đúng cùng một `seq_id`. Vì thế cần thêm hai lớp khác nhau về bản chất: (1) **kiểm tra đầu vào cực kỳ nghiêm ngặt ở gateway** — chặn dữ liệu độc trước khi nó chạm vào bất kỳ bản sao nào; (2) **một bản sao chạy phiên bản phần mềm cũ hơn một nhịp** (kiểu "canary ngược"), để lỗi mới không thể xoá sổ toàn bộ đội hình.
+> **Bẫy lớn nhất của hot-hot**: nó bảo vệ bạn khỏi *hỏng phần cứng*, nhưng **không** bảo vệ khỏi *lỗi phần mềm*. Chính tính xác định mà bạn dày công xây dựng đảm bảo rằng một lệnh gây tràn số sẽ làm sập **cả ba** bản sao ở đúng cùng một `seq_id`. Vì thế cần thêm hai lớp khác nhau về bản chất: (1) **kiểm tra đầu vào cực kỳ nghiêm ngặt ở gateway** — chặn dữ liệu độc trước khi nó chạm vào bất kỳ bản sao nào; (2) **một bản sao chạy phiên bản phần mềm cũ hơn một nhịp** (kiểu "canary ngược"), để lỗi mới không thể xoá sổ toàn bộ đội hình.
 
 ### 10.3 Phát hiện lỗi và bầu chọn leader
 
@@ -878,7 +878,7 @@ Hai vấn đề bắt buộc phải nêu ra, vì chúng là chỗ mọi thiết 
 - **Split-brain.** Nếu A bị cô lập mạng nhưng vẫn sống, và B tự lên làm leader, sẽ có **hai** engine cùng phát fill — thảm hoạ tài chính thật sự (một lệnh khớp hai lần). Phòng thủ: đa số phiếu (quorum) theo Raft — leader phải được quá bán bản sao đồng ý, nên trong một cụm 3 máy không thể có hai leader cùng lúc. Cộng thêm **cơ chế vây hãm (fencing)**: mỗi nhiệm kỳ leader có một số hiệu tăng dần, và người nhận hạ nguồn từ chối mọi gói mang số hiệu nhiệm kỳ cũ.
 - **Trùng lặp khi chuyển đổi.** Leader cũ có thể đã phát fill seq 5000 trước khi chết, leader mới không biết và phát lại. Phòng thủ: người nhận hạ nguồn khử trùng lặp theo `seq_id` — đây chính là lý do §8 nói `seq_id` cho ta "đúng-một-lần".
 
-> 💡 **Nguyên tắc**: trong một hệ tuần tự hoá hoàn hảo, HA rẻ một cách bất ngờ, vì trạng thái là **hệ quả suy ra được** chứ không phải thứ phải chuyển giao. So sánh với bài KV Store: ở đó ta phải vất vả với vector clock, đọc/ghi quorum, anti-entropy — vì các bản ghi độc lập và không có thứ tự toàn cục. Thứ tự toàn cục **đắt ở đường nóng, nhưng làm cho mọi thứ khác rẻ đi**. Đó là một đánh đổi lớn, và bài này chọn trả trước.
+> **Nguyên tắc**: trong một hệ tuần tự hoá hoàn hảo, HA rẻ một cách bất ngờ, vì trạng thái là **hệ quả suy ra được** chứ không phải thứ phải chuyển giao. So sánh với bài KV Store: ở đó ta phải vất vả với vector clock, đọc/ghi quorum, anti-entropy — vì các bản ghi độc lập và không có thứ tự toàn cục. Thứ tự toàn cục **đắt ở đường nóng, nhưng làm cho mọi thứ khác rẻ đi**. Đó là một đánh đổi lớn, và bài này chọn trả trước.
 
 ---
 
@@ -914,7 +914,7 @@ Ba điều rút ra ngay: **syscall đắt gấp 10.000 lần một phép tính**
 CPU không đọc từng byte — nó đọc từng **cache line 64 byte**. Điều này sinh ra một loại lỗi hiệu năng vô hình trong code:
 
 ```
-  ❌ FALSE SHARING — hai biến KHÔNG liên quan nằm chung một cache line
+  ✗ FALSE SHARING — hai biến KHÔNG liên quan nằm chung một cache line
 
   class RingBuffer {
       volatile long writeCursor;   // offset 0   ┐
@@ -929,7 +929,7 @@ CPU không đọc từng byte — nó đọc từng **cache line 64 byte**. Đi�
   Hai core "đánh nhau" qua giao thức nhất quán cache dù chẳng chia sẻ dữ liệu gì.
   Hậu quả thực đo: chậm đi 5–10 LẦN.
 
-  ✅ CHÈN ĐỆM (padding) — đẩy mỗi biến sang cache line riêng
+  ✓ CHÈN ĐỆM (padding) — đẩy mỗi biến sang cache line riêng
 
   class RingBuffer {
       long p1,p2,p3,p4,p5,p6,p7;     // 56 B đệm
@@ -940,7 +940,7 @@ CPU không đọc từng byte — nó đọc từng **cache line 64 byte**. Đi�
   // Java hiện đại: @Contended.  C++: alignas(64).  Rust: #[repr(align(64))]
 ```
 
-> 💡 Đây là ví dụ hoàn hảo của mechanical sympathy: code **đúng về mặt logic** trong cả hai phiên bản, nhưng phiên bản sau nhanh gấp nhiều lần vì nó tôn trọng một chi tiết phần cứng mà ngôn ngữ lập trình cố tình giấu đi khỏi bạn.
+> Đây là ví dụ hoàn hảo của mechanical sympathy: code **đúng về mặt logic** trong cả hai phiên bản, nhưng phiên bản sau nhanh gấp nhiều lần vì nó tôn trọng một chi tiết phần cứng mà ngôn ngữ lập trình cố tình giấu đi khỏi bạn.
 
 ### 11.3 Ring buffer và LMAX Disruptor
 
@@ -976,18 +976,18 @@ Số đo công bố của LMAX: hơn **6 triệu message/giây** qua một Disru
 
 | Chiến lược | Hệ quả | Dùng khi |
 |---|---|---|
-| Chặn producer | Áp lực ngược lan ngược lên gateway → gateway từ chối lệnh mới | ✅ Đúng cho đường nóng: thà từ chối rõ ràng còn hơn mất lệnh im lặng |
-| Ghi đè dữ liệu cũ | Mất sự kiện | ❌ Không bao giờ cho lệnh. ✅ Chấp nhận được cho feed thống kê |
-| Tràn sang đĩa | Cú giật mili-giây | ❌ Trên đường nóng |
+| Chặn producer | Áp lực ngược lan ngược lên gateway → gateway từ chối lệnh mới | ✓ Đúng cho đường nóng: thà từ chối rõ ràng còn hơn mất lệnh im lặng |
+| Ghi đè dữ liệu cũ | Mất sự kiện | ✗ Không bao giờ cho lệnh. ✓ Chấp nhận được cho feed thống kê |
+| Tràn sang đĩa | Cú giật mili-giây | ✗ Trên đường nóng |
 
 ### 11.4 Vòng lặp bận (busy-wait) thay vì chặn
 
 ```
-  ❌ CHẶN (blocking): thread gọi queue.take() → không có dữ liệu → ngủ
+  ✗ CHẶN (blocking): thread gọi queue.take() → không có dữ liệu → ngủ
      Khi dữ liệu đến: kernel đánh thức → lập lịch lại → nạp lại cache
      → 1–5 µs chỉ để TỈNH DẬY, cộng với cache đã nguội (thêm vài µs)
 
-  ✅ QUAY BẬN (busy-spin): thread quay vòng đọc con trỏ, không bao giờ ngủ
+  ✓ QUAY BẬN (busy-spin): thread quay vòng đọc con trỏ, không bao giờ ngủ
      while (cursor == lastSeen) { Thread.onSpinWait(); }   // PAUSE instruction
      → phản ứng trong ~50–100 ns, cache luôn nóng, không chạm kernel
      → CÁI GIÁ: đốt 100% một core kể cả khi không có việc gì
@@ -1006,13 +1006,13 @@ GC là kẻ thù số một của độ trễ ổn định trong thế giới JV
 **Đường B — Java "không cấp phát" (zero-allocation Java).** Nhiều sàn thật sự chạy Java, và họ viết Java **không giống Java**:
 
 ```java
-// ❌ Java thông thường — mỗi dòng là một lần cấp phát
+// ✗ Java thông thường — mỗi dòng là một lần cấp phát
 String symbol = msg.getSymbol();                 // cấp phát String
 List<Fill> fills = new ArrayList<>();            // cấp phát
 fills.add(new Fill(orderId, price, qty));        // cấp phát
 BigDecimal p = new BigDecimal(price);            // cấp phát (và chậm)
 
-// ✅ Zero-allocation — không sinh một byte rác nào
+// ✓ Zero-allocation — không sinh một byte rác nào
 int symbolId = msg.symbolId();                   // đọc trường primitive
 fillBuffer.write(orderId, priceTicks, qty);      // ghi vào buffer cấp sẵn
 long priceTicks = msg.priceTicks();              // long, không BigDecimal
@@ -1024,7 +1024,7 @@ long priceTicks = msg.priceTicks();              // long, không BigDecimal
 
 Mục tiêu là **không có lần gom rác nào trong suốt phiên giao dịch**: đặt heap rất lớn (ví dụ 32 GB), sinh rác gần bằng 0, và đơn giản là không bao giờ chạm ngưỡng kích hoạt GC. Ngoài giờ giao dịch thì gom thoải mái. Các thư viện tiêu biểu: Agrona, Aeron, Chronicle. Nếu vẫn cần GC, dùng bộ gom độ trễ thấp (ZGC/Shenandoah, dừng dưới 1 ms) — nhưng ưu tiên vẫn là **đừng sinh rác ngay từ đầu**.
 
-> ⚠️ Java "không cấp phát" mua lại được độ trễ nhưng bán đi **tính dễ đọc và tốc độ phát triển**. Đây là đánh đổi phải nói rõ trong phỏng vấn, chứ không phải khoe kỹ thuật: *"Tôi sẽ viết theo kiểu này chỉ cho matching engine, sequencer và gateway — khoảng 5% lượng code. 95% còn lại (reporter, risk, market data lạnh, công cụ vận hành) viết Java bình thường, vì ở đó tốc độ phát triển đáng giá hơn micro-giây."*
+> Java "không cấp phát" mua lại được độ trễ nhưng bán đi **tính dễ đọc và tốc độ phát triển**. Đây là đánh đổi phải nói rõ trong phỏng vấn, chứ không phải khoe kỹ thuật: *"Tôi sẽ viết theo kiểu này chỉ cho matching engine, sequencer và gateway — khoảng 5% lượng code. 95% còn lại (reporter, risk, market data lạnh, công cụ vận hành) viết Java bình thường, vì ở đó tốc độ phát triển đáng giá hơn micro-giây."*
 
 ### 11.6 Kernel bypass
 
@@ -1062,9 +1062,9 @@ Máy chủ nhiều socket có kiến trúc **NUMA** (non-uniform memory access):
   │    của socket này            │   │                             │
   └─────────────────────────────┘   └─────────────────────────────┘
 
-  ✅ ĐÚNG: ghim engine vào core của node 0, cấp phát bộ nhớ trên node 0,
+  ✓ ĐÚNG: ghim engine vào core của node 0, cấp phát bộ nhớ trên node 0,
           dùng card mạng cắm vào PCIe của node 0.  → mọi thứ "cục bộ"
-  ❌ SAI: để OS tự đặt → luồng ở node 1, dữ liệu ở node 0, card ở node 0
+  ✗ SAI: để OS tự đặt → luồng ở node 1, dữ liệu ở node 0, card ở node 0
           → mỗi gói tin đi qua liên kết liên socket hai lần
 ```
 
@@ -1082,7 +1082,7 @@ Giải pháp của các sàn thật (NASDAQ, NYSE, ICE, và nổi tiếng nhất
 - **Cùng model switch, cùng số chặng (hop), cùng cấu hình cổng** cho mọi khách.
 - **IEX còn đi xa hơn**: đặt một cuộn cáp quang 38 dặm (**"speed bump"**) trên đường vào, tạo độ trễ 350 µs cho **mọi người**, để triệt tiêu lợi thế của HFT nhanh nhất. Đây là một quyết định thiết kế mang tính triết lý: **cố tình làm chậm hệ thống để mua sự công bằng.**
 
-> 💡 **Nguyên tắc kết thúc §11**: ở tầng micro-giây, "công bằng" ngừng là một thuộc tính phần mềm và trở thành một thuộc tính **vật lý**. Bạn không thể viết code để bù cho 90 mét cáp. Đây là điểm cuối cùng của chuỗi suy luận trong bài, và cũng là chỗ mà System Design chạm vào giới hạn của vũ trụ vật chất: tốc độ ánh sáng là ràng buộc kiến trúc thật sự.
+> **Nguyên tắc kết thúc §11**: ở tầng micro-giây, "công bằng" ngừng là một thuộc tính phần mềm và trở thành một thuộc tính **vật lý**. Bạn không thể viết code để bù cho 90 mét cáp. Đây là điểm cuối cùng của chuỗi suy luận trong bài, và cũng là chỗ mà System Design chạm vào giới hạn của vũ trụ vật chất: tốc độ ánh sáng là ràng buộc kiến trúc thật sự.
 
 ---
 
@@ -1105,7 +1105,7 @@ Với sàn giao dịch, 10 lệnh bị trễ 50 ms là 10 giao dịch sai giá, 
 
 Đo bằng **HdrHistogram** (hoặc tương đương): cấu trúc lưu phân bố đầy đủ với độ chính xác cấu hình được, ghi nhận trong **vài chục nano-giây**, không cấp phát, và — điểm quan trọng nhất — **các histogram cộng lại được**, nên gộp dữ liệu nhiều máy/nhiều khoảng thời gian vẫn cho phân vị đúng.
 
-> ⚠️ **Phân vị không cộng trung bình được.** Trung bình của p99 mỗi phút **không phải** p99 của cả giờ. Rất nhiều hệ thống giám sát (kể cả các dashboard cloud mặc định) mắc đúng lỗi này và báo cáo những con số vô nghĩa. Phải gộp **histogram**, rồi mới tính phân vị.
+> **Phân vị không cộng trung bình được.** Trung bình của p99 mỗi phút **không phải** p99 của cả giờ. Rất nhiều hệ thống giám sát (kể cả các dashboard cloud mặc định) mắc đúng lỗi này và báo cáo những con số vô nghĩa. Phải gộp **histogram**, rồi mới tính phân vị.
 
 Ngoài ra: dùng **đồng hồ đơn điệu độ phân giải cao** (`rdtsc`/`clock_gettime(CLOCK_MONOTONIC)`), đóng dấu thời gian **trên card mạng** (hardware timestamping) để đo wire-to-wire thật, và **đo từng chặng** (gateway → sequencer → engine → publish) để biết micro-giây bị mất ở đâu.
 
@@ -1118,7 +1118,7 @@ Ngoài ra: dùng **đồng hồ đơn điệu độ phân giải cao** (`rdtsc`/
   Tại t=0 ms nó gửi request A. Hệ thống bị treo 100 ms.
   A trả lời lúc t=100 ms → ghi nhận: 100 ms. Chỉ MỘT mẫu xấu.
 
-  ❌ Nhưng trong lúc đó, 99 request lẽ ra phải được gửi ở
+  ✗ Nhưng trong lúc đó, 99 request lẽ ra phải được gửi ở
      t=1,2,...,99 ms đã KHÔNG BAO GIỜ ĐƯỢC GỬI — vì công cụ đo
      đang ngồi chờ A. Chúng biến mất khỏi thống kê.
 
@@ -1137,7 +1137,7 @@ Vì sao gọi là "bỏ sót có phối hợp"? Vì công cụ đo đã **vô t�
 2. **Đo một chiều, không đo khứ hồi.** Đóng dấu thời gian lúc gói tin chạm card mạng vào và lúc rời card mạng ra; đo bằng một máy quan sát thụ động (tap/mirror port) hoàn toàn tách rời khỏi hệ thống. Máy quan sát không thể "phối hợp" vì nó không gửi gì cả.
 3. **Ưu tiên đo lưu lượng thật (production traffic) hơn benchmark tổng hợp.** Lưu lượng thật không bao giờ tự lùi lịch khi bạn chậm — thị trường không chờ bạn.
 
-> 💡 **Nguyên tắc**: mỗi khi ai đó khoe "p99 của chúng tôi là 2 ms", câu hỏi đầu tiên phải là ***"đo bằng công cụ closed-loop hay open-loop?"*** Nếu closed-loop (gửi xong chờ trả lời rồi mới gửi tiếp) thì con số đó gần như chắc chắn sai về phía tốt. Nêu được coordinated omission trong phỏng vấn là một trong những tín hiệu mạnh nhất rằng bạn đã thật sự vận hành hệ thống độ trễ thấp.
+> **Nguyên tắc**: mỗi khi ai đó khoe "p99 của chúng tôi là 2 ms", câu hỏi đầu tiên phải là ***"đo bằng công cụ closed-loop hay open-loop?"*** Nếu closed-loop (gửi xong chờ trả lời rồi mới gửi tiếp) thì con số đó gần như chắc chắn sai về phía tốt. Nêu được coordinated omission trong phỏng vấn là một trong những tín hiệu mạnh nhất rằng bạn đã thật sự vận hành hệ thống độ trễ thấp.
 
 ---
 
@@ -1199,7 +1199,7 @@ UDP có thể mất gói, đảo thứ tự, trùng lặp. Vì mọi gói đều
            chờ ảnh chụp kế tiếp và dựng lại từ đầu (vài giây)
 ```
 
-> 💡 **Nguyên tắc đáng nhớ**: đây là một trong số ít bài toán mà **UDP + tự làm tin cậy** đánh bại TCP một cách dứt khoát — không phải vì TCP chậm, mà vì **ngữ nghĩa của TCP sai**: TCP tối ưu "không mất gói cho từng kết nối", còn ta cần "đến cùng lúc cho mọi người, và ai lỡ thì tự đi xin lại". Khi yêu cầu là *công bằng trong fan-out*, mô hình một-tới-nhiều ở tầng mạng là câu trả lời, không phải nhiều kết nối một-tới-một.
+> **Nguyên tắc đáng nhớ**: đây là một trong số ít bài toán mà **UDP + tự làm tin cậy** đánh bại TCP một cách dứt khoát — không phải vì TCP chậm, mà vì **ngữ nghĩa của TCP sai**: TCP tối ưu "không mất gói cho từng kết nối", còn ta cần "đến cùng lúc cho mọi người, và ai lỡ thì tự đi xin lại". Khi yêu cầu là *công bằng trong fan-out*, mô hình một-tới-nhiều ở tầng mạng là câu trả lời, không phải nhiều kết nối một-tới-một.
 
 ### 13.4 Market data publisher và nến
 
@@ -1240,7 +1240,7 @@ Mọi lệnh phải qua risk check **trước** matching engine, và toàn bộ 
 
 Nếu không giữ ngay, khách có thể đặt 10 lệnh mua mà chỉ đủ tiền cho 1 — và nếu cả 10 cùng khớp, sàn phải gánh phần thiếu. Đây là **nợ thấu chi (overdraft)**, chính là rủi ro mà khâu này sinh ra để chặn.
 
-> ⚠️ Bộ đếm rủi ro phải nằm **trong RAM trên cùng máy**, không phải trong Redis/DB. Một chuyến đi Redis mất 200–500 µs — **gấp năm lần toàn bộ ngân sách wire-to-wire**. Cập nhật bền vững cho các bộ đếm này đi theo cùng cơ chế event sourcing như mọi thứ khác: ghi vào nhật ký sự kiện, dựng lại khi khởi động. Đây là ứng dụng trực tiếp của nguyên tắc ở §7.2.
+> Bộ đếm rủi ro phải nằm **trong RAM trên cùng máy**, không phải trong Redis/DB. Một chuyến đi Redis mất 200–500 µs — **gấp năm lần toàn bộ ngân sách wire-to-wire**. Cập nhật bền vững cho các bộ đếm này đi theo cùng cơ chế event sourcing như mọi thứ khác: ghi vào nhật ký sự kiện, dựng lại khi khởi động. Đây là ứng dụng trực tiếp của nguyên tắc ở §7.2.
 
 ---
 
@@ -1290,7 +1290,7 @@ Ta đã chốt "một engine cho cả 100 mã". Khi cần 10.000 mã hoặc 10×
 | Mã nóng quá một core? | Không chia nhỏ được một mã — thứ tự là toàn phần trong mã. Phải cho nó **một máy riêng, phần cứng tốt nhất**. Đây là giới hạn cứng, và là lý do các sàn lớn chạy engine trên CPU tần số cao nhất thị trường thay vì CPU nhiều core |
 | Khách hỏi nhiều mã? | Gateway fan-out tới nhiều engine rồi gộp kết quả. Không cần giao dịch phân tán vì mỗi lệnh chỉ chạm một mã |
 
-> 💡 **Nguyên tắc**: hãy tìm **trục phân mảnh tự nhiên** trước khi nghĩ tới phân mảnh nhân tạo. Ở đây nghiệp vụ đã tặng bạn một trục hoàn hảo (mã cổ phiếu độc lập) — bạn chỉ cần nhận ra và không phá vỡ nó. Nhiều bài toán khó về sharding thật ra chỉ khó vì người thiết kế đã vô tình tạo ra ràng buộc chéo giữa các mảnh.
+> **Nguyên tắc**: hãy tìm **trục phân mảnh tự nhiên** trước khi nghĩ tới phân mảnh nhân tạo. Ở đây nghiệp vụ đã tặng bạn một trục hoàn hảo (mã cổ phiếu độc lập) — bạn chỉ cần nhận ra và không phá vỡ nó. Nhiều bài toán khó về sharding thật ra chỉ khó vì người thiết kế đã vô tình tạo ra ràng buộc chéo giữa các mảnh.
 
 ---
 
@@ -1347,7 +1347,7 @@ Nhận xét quan trọng: **matching engine gần như không bao giờ là nút
 2. **Split-brain phát fill trùng.** Một lệnh khớp hai lần là mất tiền thật và là sự cố phải báo cáo. Phòng thủ: quorum, số hiệu nhiệm kỳ (fencing), khử trùng lặp theo `seq_id` ở hạ nguồn.
 3. **Sổ lệnh chéo (crossed book).** Nếu vì lỗi mà `bestBid ≥ bestAsk` mà không khớp, thị trường rơi vào trạng thái vô lý và mọi thuật toán của khách sẽ hành xử điên rồ. Phòng thủ: **bất biến (invariant) được kiểm tra sau mỗi sự kiện** — `bestBid < bestAsk` luôn phải đúng; nếu sai thì **dừng mã đó ngay lập tức** thay vì tiếp tục. 
 
-> 💡 **Nguyên tắc vận hành cho cả bài**: với hệ thống tài chính, **dừng lại là một kết quả chấp nhận được; sai là thì không.** Trong 29 bài trước, "suy giảm nhẹ nhàng" (degrade gracefully) gần như luôn tốt hơn dừng — feed thiếu vài bài viết, thông báo đến muộn, kết quả tìm kiếm cũ một chút. Ở đây thì ngược lại: khớp sai một lệnh gây tổn hại lớn hơn và **không thể hoàn tác**, vì hệ quả của nó lan ra ngoài hệ thống của bạn ngay lập tức. Đây là một trong những đảo ngược đáng suy ngẫm nhất của cả course.
+> **Nguyên tắc vận hành cho cả bài**: với hệ thống tài chính, **dừng lại là một kết quả chấp nhận được; sai là thì không.** Trong 29 bài trước, "suy giảm nhẹ nhàng" (degrade gracefully) gần như luôn tốt hơn dừng — feed thiếu vài bài viết, thông báo đến muộn, kết quả tìm kiếm cũ một chút. Ở đây thì ngược lại: khớp sai một lệnh gây tổn hại lớn hơn và **không thể hoàn tác**, vì hệ quả của nó lan ra ngoài hệ thống của bạn ngay lập tức. Đây là một trong những đảo ngược đáng suy ngẫm nhất của cả course.
 
 ---
 
@@ -1393,25 +1393,25 @@ Ngoài ra: cấu hình kernel bạn cần (`isolcpus`, `nohz_full`, tắt C-stat
 
 | Thành phần thiết kế | Dịch vụ AWS | Vì sao hợp (và bẫy) |
 |---|---|---|
-| **Matching engine, sequencer** | ❌ **Không có** — bare-metal tự vận hành | Xem bốn rào cản ở trên. Đừng cố ép |
-| Nếu **buộc** phải chạy trên AWS (sàn crypto, sàn mới nổi, môi trường thử nghiệm) | **EC2 metal** (`c7i.metal`, `m7i.metal`) + **cluster placement group** + **ENA Express** (SRD) + **SR-IOV** | Metal cho bạn quyền chỉnh kernel và không có hypervisor "ăn cắp" CPU. Cluster placement group đặt instance cùng rack → ~50–100 µs p99 giữa hai instance. ENA Express dùng giao thức SRD của AWS, giảm **đuôi** độ trễ đáng kể. ⚠️ Vẫn **không phải** micro-giây, và vẫn không có cáp dài bằng nhau |
+| **Matching engine, sequencer** | ✗ **Không có** — bare-metal tự vận hành | Xem bốn rào cản ở trên. Đừng cố ép |
+| Nếu **buộc** phải chạy trên AWS (sàn crypto, sàn mới nổi, môi trường thử nghiệm) | **EC2 metal** (`c7i.metal`, `m7i.metal`) + **cluster placement group** + **ENA Express** (SRD) + **SR-IOV** | Metal cho bạn quyền chỉnh kernel và không có hypervisor "ăn cắp" CPU. Cluster placement group đặt instance cùng rack → ~50–100 µs p99 giữa hai instance. ENA Express dùng giao thức SRD của AWS, giảm **đuôi** độ trễ đáng kể. Vẫn **không phải** micro-giây, và vẫn không có cáp dài bằng nhau |
 | Nền tảng ảo hoá độ trễ thấp | **AWS Nitro** | Nitro đẩy ảo hoá I/O xuống card chuyên dụng, nên overhead gần bằng 0 và jitter tốt hơn hypervisor truyền thống rất nhiều. Đây là lý do EC2 hiện đại *khả dĩ* cho tài chính độ trễ thấp — dù vẫn chưa đủ cho nhân khớp lệnh |
-| Tăng tốc bằng phần cứng | **FPGA F1/F2** | Phù hợp thật sự: giải mã FIX/SBE, tiền-kiểm-tra rủi ro, lọc market data trên FPGA — đúng những tác vụ các sàn chạy FPGA. Độ trễ dưới 1 µs và **jitter cực nhỏ**. ⚠️ Chu kỳ phát triển tính bằng tháng |
+| Tăng tốc bằng phần cứng | **FPGA F1/F2** | Phù hợp thật sự: giải mã FIX/SBE, tiền-kiểm-tra rủi ro, lọc market data trên FPGA — đúng những tác vụ các sàn chạy FPGA. Độ trễ dưới 1 µs và **jitter cực nhỏ**. Chu kỳ phát triển tính bằng tháng |
 | Đưa cloud tới gần sàn | **Local Zones**, **Outposts**, **Direct Connect** | Outposts đặt phần cứng AWS **ngay trong DC của bạn** — cho phép dịch vụ hạ nguồn chạy cạnh engine mà vẫn dùng API AWS. Local Zones đặt compute ở trung tâm tài chính (New York, London...) → vài ms tới sàn. Direct Connect cho đường riêng ổn định thay vì Internet |
-| Bộ đếm rủi ro / trạng thái cần bền + nhanh | **MemoryDB for Redis** | Tốc độ Redis + nhật ký giao dịch đa AZ (bền vững thật, khác ElastiCache). ⚠️ Vẫn là **vài trăm µs qua mạng** → chỉ dùng cho tầng ngoài đường nóng (broker, tiền-kiểm-tra), **không** cho risk check trong sàn — cái đó phải ở RAM cục bộ (§14) |
+| Bộ đếm rủi ro / trạng thái cần bền + nhanh | **MemoryDB for Redis** | Tốc độ Redis + nhật ký giao dịch đa AZ (bền vững thật, khác ElastiCache). Vẫn là **vài trăm µs qua mạng** → chỉ dùng cho tầng ngoài đường nóng (broker, tiền-kiểm-tra), **không** cho risk check trong sàn — cái đó phải ở RAM cục bộ (§14) |
 | Nhật ký sự kiện đi xuống hạ nguồn | **MSK (Kafka)** hoặc **Kinesis Data Streams** | Đây là chỗ Kafka **đúng**: sau khi rời sequencer, độ trễ mili-giây hoàn toàn ổn. MSK nếu muốn Kafka thật (giữ thứ tự trong partition, tái xử lý theo offset). Kinesis on-demand nếu muốn khỏi quản lý — 90 GB/ngày ≈ 3,8 MB/s trung bình, đỉnh ~20 MB/s → vài chục shard |
-| Fan-out market data ra **Internet công cộng** | **Kinesis → Lambda → API Gateway WebSocket**, hoặc **IoT Core (MQTT)** | Cho app nhà đầu tư cá nhân (L1, chậm vài trăm ms) thì hoàn toàn hợp lý và rẻ. ⚠️ **Không** dùng cho khách chuyên nghiệp — họ cần multicast tại DC |
-| Multicast trong VPC | **Transit Gateway multicast** | Có hỗ trợ, dùng được cho môi trường kiểm thử/DR. ⚠️ Giới hạn về số nhóm/số thành viên và **không bảo đảm đồng thời** → không đáp ứng yêu cầu công bằng |
+| Fan-out market data ra **Internet công cộng** | **Kinesis → Lambda → API Gateway WebSocket**, hoặc **IoT Core (MQTT)** | Cho app nhà đầu tư cá nhân (L1, chậm vài trăm ms) thì hoàn toàn hợp lý và rẻ. **Không** dùng cho khách chuyên nghiệp — họ cần multicast tại DC |
+| Multicast trong VPC | **Transit Gateway multicast** | Có hỗ trợ, dùng được cho môi trường kiểm thử/DR. Giới hạn về số nhóm/số thành viên và **không bảo đảm đồng thời** → không đáp ứng yêu cầu công bằng |
 | Kho lịch sử (32 TB, 7 năm) | **S3** + **Intelligent-Tiering** → **Glacier Deep Archive**, định dạng **Parquet**, phân vùng theo `date/symbol` | Rẻ đến mức không cần bàn. **S3 Object Lock (WORM)** đáp ứng yêu cầu bất biến của tuân thủ (SEC Rule 17a-4) — đây là lý do rất cụ thể để chọn S3 chứ không phải chỉ vì rẻ |
 | Truy vấn lịch sử | **Athena** (+ **Glue** catalog), hoặc **Redshift Spectrum** | Athena là lựa chọn mặc định: trả tiền theo byte quét, không cần cụm thường trực. Phân vùng đúng là tất cả — quét cả 32 TB cho một truy vấn một ngày là lỗi chi phí kinh điển |
-| **Backtest & mô phỏng** | **AWS Batch** (Spot) hoặc **EMR** | ✅ **Đây là chỗ cloud toả sáng nhất trong bài.** Backtest là bài toán song song hoàn hảo, chạy theo lô, chịu được gián đoạn → **Spot giảm 70–90% chi phí**. Phát lại một năm dữ liệu qua 500 bộ tham số là 500 job độc lập — bung 5.000 vCPU trong 2 giờ rồi trả lại |
+| **Backtest & mô phỏng** | **AWS Batch** (Spot) hoặc **EMR** | ✓ **Đây là chỗ cloud toả sáng nhất trong bài.** Backtest là bài toán song song hoàn hảo, chạy theo lô, chịu được gián đoạn → **Spot giảm 70–90% chi phí**. Phát lại một năm dữ liệu qua 500 bộ tham số là 500 job độc lập — bung 5.000 vCPU trong 2 giờ rồi trả lại |
 | **Phát lại xác định để kiểm thử phiên bản mới** | **Batch** + **S3** + **FSx for Lustre** | Lấy nhật ký một ngày thật, chạy qua engine mới, so từng fill (§9.2). FSx for Lustre gắn S3 làm kho đệm tốc độ cao cho các job đọc cùng dữ liệu |
-| Chuỗi thời gian giá / nến | **Timestream** (hoặc **InfluxDB trên EC2**, hoặc kdb+) | Timestream tự chia tầng nóng/lạnh, có hàm nội suy và cửa sổ sẵn — hợp cho dashboard và API nến. ⚠️ Không thay được kdb+ cho phân tích tick-level của quant |
+| Chuỗi thời gian giá / nến | **Timestream** (hoặc **InfluxDB trên EC2**, hoặc kdb+) | Timestream tự chia tầng nóng/lạnh, có hàm nội suy và cửa sổ sẵn — hợp cho dashboard và API nến. Không thay được kdb+ cho phân tích tick-level của quant |
 | **Giám sát thao túng thị trường** | **EMR/Glue** (Spark) theo lô T+1 + **SageMaker** cho mô hình phát hiện bất thường | Bài toán ngoại tuyến, dữ liệu lớn, chạy đêm — đúng hình dạng cloud. Phát hiện spoofing/layering là bài toán chuỗi sự kiện, hợp với Spark |
 | Báo cáo, đối soát, thuế | **Aurora PostgreSQL** hoặc **Redshift** | Cần ACID và SQL phức tạp, không cần tốc độ. Đây là phần "nhàm chán" mà RDBMS truyền thống giải tốt nhất |
-| API công khai & web cho nhà đầu tư | **CloudFront + ALB + ECS/Fargate**, **Cognito**, **WAF + Shield Advanced** | ✅ Tách hẳn khỏi mạng giao dịch. DDoS nhắm vào web **không được** chạm tới sàn — đây là yêu cầu cách ly vùng lỗi, không chỉ là bảo mật |
-| Đồng bộ thời gian | **Amazon Time Sync Service** (có hỗ trợ **PTP** trên instance đời mới) | Đủ cho hệ hạ nguồn. ⚠️ Với MiFID II sai số ≤ 100 µs ở nhân giao dịch, vẫn nên có **nguồn GPS + PTP grandmaster riêng** |
-| Quan sát hệ thống | **CloudWatch** cho hạ nguồn; **công cụ riêng** cho đường nóng | ⚠️ **Không** dùng agent CloudWatch trên máy engine — agent giám sát là một nguồn gây jitter. Đường nóng phải ghi histogram nhị phân vào shared memory, một tiến trình khác đọc và đẩy ra ngoài |
+| API công khai & web cho nhà đầu tư | **CloudFront + ALB + ECS/Fargate**, **Cognito**, **WAF + Shield Advanced** | ✓ Tách hẳn khỏi mạng giao dịch. DDoS nhắm vào web **không được** chạm tới sàn — đây là yêu cầu cách ly vùng lỗi, không chỉ là bảo mật |
+| Đồng bộ thời gian | **Amazon Time Sync Service** (có hỗ trợ **PTP** trên instance đời mới) | Đủ cho hệ hạ nguồn. Với MiFID II sai số ≤ 100 µs ở nhân giao dịch, vẫn nên có **nguồn GPS + PTP grandmaster riêng** |
+| Quan sát hệ thống | **CloudWatch** cho hạ nguồn; **công cụ riêng** cho đường nóng | **Không** dùng agent CloudWatch trên máy engine — agent giám sát là một nguồn gây jitter. Đường nóng phải ghi histogram nhị phân vào shared memory, một tiến trình khác đọc và đẩy ra ngoài |
 
 **Ba câu chốt đáng nhớ:**
 
@@ -1479,4 +1479,4 @@ Ba mươi bài, hai mươi mấy hệ thống, hàng trăm đánh đổi. Nếu 
 
 **10. Hiểu tầng dưới bạn đang đứng trên — mọi trừu tượng đều rò rỉ.** Xuyên suốt course, mỗi lần đào sâu ta lại chạm vào một tầng thấp hơn: TCP sau HTTP, đĩa sau database, mạng sau microservice. Bài này đi tới tận đáy: cache line, NUMA, ngắt, tốc độ ánh sáng trong sợi quang. Bạn không cần viết code như vậy mỗi ngày — nhưng bạn cần biết rằng bên dưới mọi lời hứa của framework vẫn là phần cứng thật, với chi phí thật. **Người thiết kế hệ thống giỏi không phải người thuộc nhiều dịch vụ nhất, mà là người biết mỗi lớp trừu tượng đang giấu đi cái giá nào.**
 
-> 💡 **Và điều cuối cùng, gói cả ba mươi bài trong một câu**: System Design không phải môn học về câu trả lời đúng, mà là môn học về **việc làm cho ràng buộc hiện ra thành lời**. Mọi kiến trúc trong course này — từ URL Shortener tới sàn giao dịch — đều là hệ quả logic của một tập ràng buộc được phát biểu rõ ràng. Khi bạn nghe ai đó tranh cãi "SQL hay NoSQL", "microservice hay monolith", "cloud hay on-prem" mà chưa ai nói ra con số nào, thì họ chưa bắt đầu thiết kế — họ mới đang bày tỏ sở thích. Việc đầu tiên của bạn, ở mọi buổi phỏng vấn và mọi buổi họp thiết kế thật, luôn là cùng một việc: **hỏi cho ra ràng buộc, ước lượng ra con số, rồi để kiến trúc tự lộ diện.**
+> **Và điều cuối cùng, gói cả ba mươi bài trong một câu**: System Design không phải môn học về câu trả lời đúng, mà là môn học về **việc làm cho ràng buộc hiện ra thành lời**. Mọi kiến trúc trong course này — từ URL Shortener tới sàn giao dịch — đều là hệ quả logic của một tập ràng buộc được phát biểu rõ ràng. Khi bạn nghe ai đó tranh cãi "SQL hay NoSQL", "microservice hay monolith", "cloud hay on-prem" mà chưa ai nói ra con số nào, thì họ chưa bắt đầu thiết kế — họ mới đang bày tỏ sở thích. Việc đầu tiên của bạn, ở mọi buổi phỏng vấn và mọi buổi họp thiết kế thật, luôn là cùng một việc: **hỏi cho ra ràng buộc, ước lượng ra con số, rồi để kiến trúc tự lộ diện.**

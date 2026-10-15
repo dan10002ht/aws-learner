@@ -40,7 +40,7 @@ Cố ý **bỏ ngoài phạm vi** — nói ra để ghi điểm chứ không ph�
 - Giữ tối đa 10 version gần nhất mỗi file
 ```
 
-> 💡 **Nguyên tắc**: mỗi giả định phải là thứ **sau này sẽ nhân lên để ra một con số**. "1,5 thiết bị/user" không phải chi tiết trang trí — nó là hệ số fan-out của notification, và nó sẽ quyết định vì sao ta chọn long polling.
+> **Nguyên tắc**: mỗi giả định phải là thứ **sau này sẽ nhân lên để ra một con số**. "1,5 thiết bị/user" không phải chi tiết trang trí — nó là hệ số fan-out của notification, và nó sẽ quyết định vì sao ta chọn long polling.
 
 ---
 
@@ -91,7 +91,7 @@ Nhưng 370:1 che giấu điều quan trọng hơn. Bóc ra:
 | Thao tác block | 50.000 | 4% | Có ích |
 | Ghi | 3.500 | **0,27%** | Toàn bộ sự thay đổi của hệ thống |
 
-> ⚠️ **Bẫy lớn nhất của bài**: gần **hai phần ba hạ tầng request-serving tồn tại chỉ để trả lời "chưa có gì thay đổi"**. Vẽ xong kiến trúc mà không nhận ra điều này là bỏ lỡ chỗ tốn tiền nhất. Mọi tối ưu ở §8.3 đều nhắm vào ô 64% đó.
+> **Bẫy lớn nhất của bài**: gần **hai phần ba hạ tầng request-serving tồn tại chỉ để trả lời "chưa có gì thay đổi"**. Vẽ xong kiến trúc mà không nhận ra điều này là bỏ lỡ chỗ tốn tiền nhất. Mọi tối ưu ở §8.3 đều nhắm vào ô 64% đó.
 
 Kết luận thứ hai, ngược hẳn bài URL Shortener: **về số byte, read:write chỉ ~2:1**. Drive **không** phải hệ read-heavy theo nghĩa thường. Nó là hệ **write-amplified, connection-heavy**: ghi ít nhưng mỗi ghi đắt, còn kết nối thì nhiều kinh khủng.
 
@@ -103,7 +103,7 @@ block: ~3 block/file kể cả version → ~300 tỉ row × 100 B ≈ 30 TB
 Tổng ≈ 80–100 TB, cần strong consistency + truy vấn quan hệ  →  BẮT BUỘC SHARD (§11.3)
 ```
 
-> 💡 500 PB block là bài toán *đã được giải* — ném vào S3, xong. **100 TB metadata có ràng buộc giao dịch mới là bài toán chưa giải sẵn.**
+> 500 PB block là bài toán *đã được giải* — ném vào S3, xong. **100 TB metadata có ràng buộc giao dịch mới là bài toán chưa giải sẵn.**
 
 ---
 
@@ -141,7 +141,7 @@ Hai trường đã hé lộ toàn bộ kiến trúc:
 
 **`parent_version`** — client nói "tôi sửa từ v41"; server đang ở v43 → có người ghi chen vào → 409. Đây là **optimistic concurrency control**, nền của toàn bộ §9.
 
-> 💡 API tốt là API mà nhìn signature đã đoán được kiến trúc: content-addressed storage + dedupe + optimistic locking.
+> API tốt là API mà nhìn signature đã đoán được kiến trúc: content-addressed storage + dedupe + optimistic locking.
 
 ---
 
@@ -226,7 +226,7 @@ Client upload 1 block          → 4 MB (nén còn ~1,2 MB)
 
 Một hệ quả rất đẹp: **version history gần như miễn phí**. v42 và v41 dùng chung 255/256 block, nên giữ 10 version của file 1 GB tốn 1 GB + 9×4 MB ≈ 1,04 GB thay vì 10 GB. Không có block-level, "giữ 10 version" đã bất khả thi về kinh tế.
 
-> 💡 **Nguyên tắc**: delta sync không chỉ tiết kiệm băng thông — nó khiến **version history, dedupe và resumable upload trở thành hệ quả tự nhiên** thay vì ba tính năng phải xây riêng. Quyết định kiến trúc tốt là quyết định trả lời nhiều câu hỏi cùng lúc.
+> **Nguyên tắc**: delta sync không chỉ tiết kiệm băng thông — nó khiến **version history, dedupe và resumable upload trở thành hệ quả tự nhiên** thay vì ba tính năng phải xây riêng. Quyết định kiến trúc tốt là quyết định trả lời nhiều câu hỏi cùng lúc.
 
 ### 5.4 Vì sao 4 MB
 
@@ -251,7 +251,7 @@ Một phép chèn nhỏ phá sạch delta sync. Với file text, log, hay `.docx
 
 Thực tế nhiều hệ thống **kết hợp**: fixed-size cho media lớn, CDC cho tài liệu và backup.
 
-> ⚠️ Đừng hứa "delta sync tiết kiệm 99% cho mọi file". Với file đã nén hoặc mã hoá (zip, jpg, mp4), sửa một chút có thể đổi toàn bộ luồng byte. Delta sync hiệu quả nhất với file **lớn, không nén, thay đổi cục bộ**: VM image, DB dump, PSD, văn bản thuần.
+> Đừng hứa "delta sync tiết kiệm 99% cho mọi file". Với file đã nén hoặc mã hoá (zip, jpg, mp4), sửa một chút có thể đổi toàn bộ luồng byte. Delta sync hiệu quả nhất với file **lớn, không nén, thay đổi cục bộ**: VM image, DB dump, PSD, văn bản thuần.
 
 ### 5.6 Nén và mã hoá từng block
 
@@ -282,7 +282,7 @@ Dễ và an toàn. User tải cùng một đính kèm ba lần, copy một thư 
 
 Cơ chế cần thêm là **reference counting**: một block được nhiều file/version trỏ tới, nên xoá file chỉ giảm refcount, về 0 mới xoá block. Refcount chính xác trong hệ phân tán là **khó**: sai chiều này thì rò rỉ block, sai chiều kia thì **xoá nhầm block đang dùng → hỏng file**. Cách an toàn: **không xoá đồng bộ** — đánh dấu ứng viên, rồi chạy job **mark-and-sweep** định kỳ, chỉ xoá block không ai trỏ tới **và đã cũ hơn N ngày**. Độ trễ N ngày là lớp đệm chống race: block vừa upload mà metadata chưa commit sẽ không bị quét nhầm.
 
-> 💡 Trong hệ lưu trữ, **thà rò rỉ vài TB rác còn hơn xoá nhầm một byte của khách** — rác thì trả tiền được, dữ liệu mất thì không mua lại được.
+> Trong hệ lưu trữ, **thà rò rỉ vài TB rác còn hơn xoá nhầm một byte của khách** — rác thì trả tiền được, dữ liệu mất thì không mua lại được.
 
 ### 6.2 Cross-user — và vì sao nó nguy hiểm
 
@@ -301,7 +301,7 @@ Nếu 10 triệu người cùng lưu một PDF sách giáo khoa hay một ISO c�
 
 **Lựa chọn thực dụng:** dedupe cross-user **ở phía server** (client vẫn upload) + kiểm soát truy cập chặt theo hash. Ta hy sinh tiết kiệm băng thông cross-user — vốn không lớn vì phần lớn upload là nội dung độc nhất — để đổi lấy việc **không tồn tại existence oracle**. Dedupe trong phạm vi một user thì làm ở client thoải mái, vì oracle chỉ lộ thông tin về chính user đó.
 
-> ⚠️ Rất nhiều ứng viên tự hào "tôi dedupe cross-user, tiết kiệm 10×" mà không ai nhắc existence oracle. Nêu được rủi ro **và** biện pháp giảm thiểu (thay vì chỉ nói "nguy hiểm nên thôi") là điểm phân biệt rõ rệt ở vòng Senior/Staff. Dropbox từng phải tắt tính năng này vì đúng lý do đó.
+> Rất nhiều ứng viên tự hào "tôi dedupe cross-user, tiết kiệm 10×" mà không ai nhắc existence oracle. Nêu được rủi ro **và** biện pháp giảm thiểu (thay vì chỉ nói "nguy hiểm nên thôi") là điểm phân biệt rõ rệt ở vòng Senior/Staff. Dropbox từng phải tắt tính năng này vì đúng lý do đó.
 
 ---
 
@@ -362,7 +362,7 @@ Block **bất biến và định danh bằng nội dung**. Khoá `9a3f...` hoặ
 | Kích thước / ghi | ~100 TB / 3.500 wps | ~500 PB / 50.000 ops/s |
 | Công nghệ | Aurora / Spanner / DynamoDB | S3 / GCS |
 
-> 💡 **Nguyên tắc trung tâm của bài**: **tách cái nhỏ-mà-phải-đúng ra khỏi cái to-mà-được-phép-trễ.** Nhét chung thì bạn phải chọn: hoặc trả giá strong consistency cho 500 PB (đắt kinh khủng), hoặc chấp nhận eventual cho metadata (mất dữ liệu). Tách ra thì mỗi bên được thứ nó cần. Mẫu hình này lặp lại ở rất nhiều hệ thống.
+> **Nguyên tắc trung tâm của bài**: **tách cái nhỏ-mà-phải-đúng ra khỏi cái to-mà-được-phép-trễ.** Nhét chung thì bạn phải chọn: hoặc trả giá strong consistency cho 500 PB (đắt kinh khủng), hoặc chấp nhận eventual cho metadata (mất dữ liệu). Tách ra thì mỗi bên được thứ nó cần. Mẫu hình này lặp lại ở rất nhiều hệ thống.
 
 Nhưng hai thế giới **phải khớp nhau**, và hai kịch bản hỏng thì bất đối xứng:
 
@@ -435,7 +435,7 @@ Lý do thật sự:
 1. **Lưu lượng một chiều và thưa** — client không đẩy gì qua kênh này (nó dùng REST), nên toàn bộ khả năng hai chiều của WebSocket bị bỏ phí trong khi cái giá stateful thì trả đủ. Và vài trăm ms là hoàn toàn chấp nhận được.
 2. **Vận hành ở 37,5 triệu kết nối** — lý do nặng nhất. Long polling: kết nối tự đứt và nối lại mỗi 45 s nên deploy chỉ là **rút dần server khỏi LB**, một phút là xong, không ai nhận ra. WebSocket: phải xây drain, phải rải reconnect ngẫu nhiên chống thundering herd, phải giữ và cập nhật bảng `user_id → notification server` khi server chết. Cả một hệ thống con, cho lợi ích không ai cảm nhận được.
 
-> 💡 Chọn giao thức theo **hình dạng lưu lượng** và **chi phí vận hành ở quy mô đích**, không theo độ hiện đại. WebSocket đúng cho chat (dày, hai chiều, cần dưới 100 ms). Long polling đúng cho Drive (thưa, một chiều, chịu được vài trăm ms). Cùng bài toán, hai đáp án — biết *vì sao khác* mới là thứ được chấm.
+> Chọn giao thức theo **hình dạng lưu lượng** và **chi phí vận hành ở quy mô đích**, không theo độ hiện đại. WebSocket đúng cho chat (dày, hai chiều, cần dưới 100 ms). Long polling đúng cho Drive (thưa, một chiều, chịu được vài trăm ms). Cùng bài toán, hai đáp án — biết *vì sao khác* mới là thứ được chấm.
 
 ### 8.3 Giảm tải cho 64% lưu lượng "không có gì mới"
 
@@ -486,13 +486,13 @@ Cám dỗ tự nhiên: "sao không merge như Git?". Git merge được vì nó 
 
 Với định dạng do chính Google sở hữu (Docs/Sheets), hợp nhất tự động *có* xảy ra bằng Operational Transformation — nhưng đó là **sản phẩm khác** trên mô hình dữ liệu khác (chuỗi thao tác, không phải blob).
 
-> 💡 Khi không thể hợp nhất an toàn, **đừng cố hợp nhất — hãy bảo toàn**. Không mất dữ liệu của ai, rồi đẩy quyết định cho người duy nhất có đủ ngữ cảnh: người dùng.
+> Khi không thể hợp nhất an toàn, **đừng cố hợp nhất — hãy bảo toàn**. Không mất dữ liệu của ai, rồi đẩy quyết định cho người duy nhất có đủ ngữ cảnh: người dùng.
 
 ### 9.3 First-write-wins + tạo bản copy
 
 ```
-t=10:05  Alice commit → v42  ✅ trở thành bản chính
-t=10:06  Bob commit   → 409  ❌ (parent_version=41)
+t=10:05  Alice commit → v42  ✓ trở thành bản chính
+t=10:06  Bob commit   → 409  ✗ (parent_version=41)
 
 Client của Bob xử lý 409:
   1. Giữ nguyên nội dung của Bob — KHÔNG ghi đè, KHÔNG vứt bỏ
@@ -591,7 +591,7 @@ Chuyển hạng phải làm ở **mức block, theo thời điểm truy cập cu
 | **"Chia sẻ với tôi" là truy vấn xuyên shard** | Bảng phụ `shared_with_me(user_id, namespace_id)` shard theo `user_id`, cập nhật bất đồng bộ. Eventual ở đây chấp nhận được vì nó chỉ ảnh hưởng **hiển thị danh sách**, không ảnh hưởng quyền truy cập thật |
 | **Bảng `block`** | Shard theo chính `block_hash` (phân bố đều sẵn). Nó là bảng tra cứu thuần, không tham gia giao dịch với cây file → tách ra thoải mái |
 
-> 💡 Chọn khoá shard bằng cách hỏi *"ranh giới giao dịch của tôi ở đâu?"*, không phải *"cái gì phân bố đều nhất?"*. Phân bố đều mà cắt ngang giao dịch là đổi một bài toán dễ lấy một bài toán rất khó.
+> Chọn khoá shard bằng cách hỏi *"ranh giới giao dịch của tôi ở đâu?"*, không phải *"cái gì phân bố đều nhất?"*. Phân bố đều mà cắt ngang giao dịch là đổi một bài toán dễ lấy một bài toán rất khó.
 
 ---
 
@@ -601,23 +601,23 @@ Chuyển hạng phải làm ở **mức block, theo thời điểm truy cập cu
 |---|---|---|
 | Block store (500 PB, content-addressed) | **S3 Standard**, key = `blocks/{sha256}` | Durability 11 số 9, đa AZ mặc định. Key bằng hash nên bất biến, không bao giờ cần invalidate |
 | Upload lớn / resumable | **S3 Multipart Upload** + **presigned URL** | Part tối đa 5 GB, 10.000 part; part lỗi chỉ gửi lại part đó. Presigned URL cho client PUT **thẳng** lên S3 → 1,7 GB/s peak không qua server ta. Nhớ lifecycle `AbortIncompleteMultipartUpload` sau 7 ngày |
-| Version history | **Tự quản trong metadata**; S3 Versioning chỉ làm lưới an toàn | ⚠️ Version của ta là *danh sách block* trong DB. S3 Versioning tạo version của **cả object**, mà object của ta là block bất biến — không bao giờ bị ghi đè nên gần như vô dụng. Vẫn bật để chống xoá nhầm, kèm MFA Delete |
-| Tiered storage | **S3 Lifecycle** → Standard-IA → Glacier → Deep Archive | Đúng bốn hạng §11.1. ⚠️ Phí lưu tối thiểu (IA 30, Glacier 90, Deep Archive 180 ngày) và phí transition per-object — với block 4 MB phải tính kỹ mới có lãi |
+| Version history | **Tự quản trong metadata**; S3 Versioning chỉ làm lưới an toàn | Version của ta là *danh sách block* trong DB. S3 Versioning tạo version của **cả object**, mà object của ta là block bất biến — không bao giờ bị ghi đè nên gần như vô dụng. Vẫn bật để chống xoá nhầm, kèm MFA Delete |
+| Tiered storage | **S3 Lifecycle** → Standard-IA → Glacier → Deep Archive | Đúng bốn hạng §11.1. Phí lưu tối thiểu (IA 30, Glacier 90, Deep Archive 180 ngày) và phí transition per-object — với block 4 MB phải tính kỹ mới có lãi |
 | Pattern truy cập không đoán được | **S3 Intelligent-Tiering** | Đúng bài của Drive. Tự chuyển hạng theo hành vi thật, không phí truy xuất khi nóng lại; đổi lấy phí giám sát per-object (object < 128 KB không được phân hạng) |
-| Mã hoá block | **SSE-KMS** + **S3 Bucket Keys** | KMS cho khoá theo tenant, audit CloudTrail, thu hồi bằng key policy. ⚠️ **Bắt buộc bật Bucket Keys** — không thì mỗi GET block là một lời gọi KMS; ở 50K ops/s vừa đụng trần quota vừa đội chi phí (Bucket Keys giảm ~99%) |
-| Khách tự giữ khoá | **SSE-C** hoặc mã hoá client | ⚠️ Server không đọc được nội dung → **không dedupe cross-user, không preview, không quét virus** |
-| Metadata DB | **Aurora PostgreSQL** sharded theo `namespace_id` (hoặc Aurora Limitless); thay thế: **DynamoDB** PK `namespace_id` + SK `path` | Cần ACID, UNIQUE `(namespace, parent, name)`, truy vấn cây; read replica độ trễ thấp, failover ~30 s. DynamoDB hợp nếu bỏ được ràng buộc quan hệ (scale ngang, strongly consistent read, transaction trong một partition) ⚠️ nhưng coi chừng **hot partition** với namespace doanh nghiệp lớn |
+| Mã hoá block | **SSE-KMS** + **S3 Bucket Keys** | KMS cho khoá theo tenant, audit CloudTrail, thu hồi bằng key policy. **Bắt buộc bật Bucket Keys** — không thì mỗi GET block là một lời gọi KMS; ở 50K ops/s vừa đụng trần quota vừa đội chi phí (Bucket Keys giảm ~99%) |
+| Khách tự giữ khoá | **SSE-C** hoặc mã hoá client | Server không đọc được nội dung → **không dedupe cross-user, không preview, không quét virus** |
+| Metadata DB | **Aurora PostgreSQL** sharded theo `namespace_id` (hoặc Aurora Limitless); thay thế: **DynamoDB** PK `namespace_id` + SK `path` | Cần ACID, UNIQUE `(namespace, parent, name)`, truy vấn cây; read replica độ trễ thấp, failover ~30 s. DynamoDB hợp nếu bỏ được ràng buộc quan hệ (scale ngang, strongly consistent read, transaction trong một partition) nhưng coi chừng **hot partition** với namespace doanh nghiệp lớn |
 | Bảng `block` + refcount; cache | **DynamoDB** (PK `block_hash`); **ElastiCache (Redis/Valkey)** | Bảng block là tra cứu khoá thuần, phân bố đều theo hash, `ADD` nguyên tử cho refcount. Redis cache cây thư mục + kết quả kiểm tra quyền, invalidate theo `namespace_id`, đồng thời là pub/sub cho notification |
 | Change log / sync cursor | **DynamoDB Streams** hoặc **Kinesis Data Streams** | Log nối đuôi theo namespace, cursor = sequence number. Streams giữ 24 h (đủ fan-out realtime), Kinesis tới 365 ngày (đủ cho thiết bị offline lâu) |
-| Notification — WebSocket | **API Gateway WebSocket API** | Có `@connections` để push, không phải tự quản kết nối. ⚠️ Tính tiền **theo phút kết nối**: 37,5M kết nối × 24 h không thể biện minh cho 3.500 sự kiện/giây. Hợp khi kết nối ít, sự kiện dày |
-| Notification — long polling (**chọn**) | **ALB → ECS/EKS** (Go/Netty), idle timeout 60–120 s | Lý do ở §8.2; trả tiền theo request + giờ compute. ⚠️ ALB idle timeout phải **lớn hơn** long-poll timeout, không thì LB cắt trước khi server trả lời |
+| Notification — WebSocket | **API Gateway WebSocket API** | Có `@connections` để push, không phải tự quản kết nối. Tính tiền **theo phút kết nối**: 37,5M kết nối × 24 h không thể biện minh cho 3.500 sự kiện/giây. Hợp khi kết nối ít, sự kiện dày |
+| Notification — long polling (**chọn**) | **ALB → ECS/EKS** (Go/Netty), idle timeout 60–120 s | Lý do ở §8.2; trả tiền theo request + giờ compute. ALB idle timeout phải **lớn hơn** long-poll timeout, không thì LB cắt trước khi server trả lời |
 | Việc bất đồng bộ sau commit | **SQS** + **DLQ** | Fan-out notification, refcount, thumbnail, quét virus, `used_bytes`. Tách khỏi đường nóng để commit metadata luôn nhanh. **FIFO với `MessageGroupId = namespace_id`** khi thứ tự quan trọng |
 | Sự kiện "block đã lên S3" | **S3 Event Notifications → EventBridge/Lambda** | Đúng bước 4 §7.3: xác nhận block tồn tại rồi chuyển `pending → uploaded`, thay vì API server tự HEAD từng block |
 | Download block | **CloudFront** + `max-age=31536000, immutable`, **OAC** | Block bất biến định danh bằng hash → **cache vĩnh viễn, không bao giờ invalidate**. Giảm cả egress lẫn độ trễ toàn cầu |
 | Chống lỗi vùng, chống xoá nhầm | **S3 CRR** + **Aurora Global Database**; **Object Lock** + Versioning + MFA Delete | CRR bất đồng bộ nên **RPO vài phút** — nói rõ, đừng hứa 0. Bug trong job GC của chính ta là rủi ro thật; Object Lock khiến nó không thể xoá vĩnh viễn |
 | GC block mồ côi | **S3 Inventory** + **Athena** + **S3 Batch Operations** | Đừng LIST 500 PB. Inventory sinh báo cáo Parquet hằng ngày; join với refcount bằng Athena; xoá bằng Batch Operations |
-| Auth & phân quyền, link chia sẻ | **Cognito** + phân quyền ở tầng ứng dụng; **CloudFront signed URL** | ⚠️ Đừng ánh xạ quyền chia sẻ sang IAM policy — IAM giới hạn kích thước và không thiết kế cho hàng tỉ ACL. Quyền là **dữ liệu ứng dụng** trong bảng `permission` |
-| **Khi nào EFS/FSx hợp hơn S3** | **EFS** (NFS), **FSx for Windows** (SMB), **FSx for Lustre** | Khi cần **ngữ nghĩa POSIX/SMB thật**: ghi tại chỗ theo offset, khoá file, `rename` nguyên tử, quyền cấp thư mục — S3 **không** có. FSx for Windows tích hợp AD + shadow copy (file server lift-and-shift); Lustre cho HPC/ML. ⚠️ Nhưng cho **Drive** thì **sai**: đắt hơn nhiều lần/GB, không có tầng lạnh sâu, và ta vốn *không cần* POSIX vì client tự ghép block |
+| Auth & phân quyền, link chia sẻ | **Cognito** + phân quyền ở tầng ứng dụng; **CloudFront signed URL** | Đừng ánh xạ quyền chia sẻ sang IAM policy — IAM giới hạn kích thước và không thiết kế cho hàng tỉ ACL. Quyền là **dữ liệu ứng dụng** trong bảng `permission` |
+| **Khi nào EFS/FSx hợp hơn S3** | **EFS** (NFS), **FSx for Windows** (SMB), **FSx for Lustre** | Khi cần **ngữ nghĩa POSIX/SMB thật**: ghi tại chỗ theo offset, khoá file, `rename` nguyên tử, quyền cấp thư mục — S3 **không** có. FSx for Windows tích hợp AD + shadow copy (file server lift-and-shift); Lustre cho HPC/ML. Nhưng cho **Drive** thì **sai**: đắt hơn nhiều lần/GB, không có tầng lạnh sâu, và ta vốn *không cần* POSIX vì client tự ghép block |
 | Nhập dữ liệu ban đầu; khách chỉ biết SFTP | **AWS DataSync**; **AWS Transfer Family** | DataSync đồng bộ hàng loạt từ NFS/SMB/HDFS/S3 khác vào S3 kèm kiểm tra toàn vẹn — đúng cho onboarding khách có sẵn 500 TB file server. Transfer Family dựng endpoint SFTP/FTPS/AS2 thẳng trước bucket S3 cho đối tác cũ |
 
 **Ba câu chốt đáng nhớ:**
@@ -652,4 +652,4 @@ Chuyển hạng phải làm ở **mức block, theo thời điểm truy cập cu
 
 11. **Đóng lại bằng chi phí, vì với hệ storage thì chi phí *là* kiến trúc**: tiered theo block chứ không theo file; thưa dần version thay vì cắt cụt; thùng rác có hạn để GC chạy được; và cảnh báo phí lưu tối thiểu — chuyển block 4 MB xuống Glacier rồi xoá sau một tuần thì **đắt hơn** là để yên.
 
-> 💡 **Nguyên tắc cuối**: cả bài chỉ là một quyết định được đẩy tới cùng — **thôi coi file là đơn vị của hệ thống; coi block bất biến định danh bằng hash là đơn vị.** Từ đó delta sync, dedupe, version history rẻ, resumable upload, cache CDN vĩnh viễn và retry idempotent đều là hệ quả. Phần còn lại — metadata strong consistency, long polling, first-write-wins — chỉ là việc xây một lớp **mutable, phải-đúng, và nhỏ** ở trên một biển dữ liệu **immutable, được-phép-trễ, và rất to**. Nếu chỉ nhớ một câu: **file là công thức lắp ráp, không phải dữ liệu.**
+> **Nguyên tắc cuối**: cả bài chỉ là một quyết định được đẩy tới cùng — **thôi coi file là đơn vị của hệ thống; coi block bất biến định danh bằng hash là đơn vị.** Từ đó delta sync, dedupe, version history rẻ, resumable upload, cache CDN vĩnh viễn và retry idempotent đều là hệ quả. Phần còn lại — metadata strong consistency, long polling, first-write-wins — chỉ là việc xây một lớp **mutable, phải-đúng, và nhỏ** ở trên một biển dữ liệu **immutable, được-phép-trễ, và rất to**. Nếu chỉ nhớ một câu: **file là công thức lắp ráp, không phải dữ liệu.**

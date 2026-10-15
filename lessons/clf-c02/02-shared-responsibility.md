@@ -418,14 +418,14 @@ Ghi "AWS / Khách hàng / Cả hai" cho mỗi tình huống:
 - **Compliance docs**: tải SOC 2 report từ AWS Artifact, attach vào hồ sơ compliance công ty.
 
 ### Anti-pattern thường gặp
-- ❌ Cho rằng "managed service = không cần lo bảo mật".
-- ❌ S3 bucket policy `Principal: "*"` cho "internal use" → vô tình public Internet.
-- ❌ IAM Role với `Action: "*"` cho EC2 "để cho tiện debug".
-- ❌ IMDSv1 vẫn enabled (default trước 2022).
-- ❌ Không có CloudTrail → không trace được khi incident.
-- ❌ KMS key policy quá rộng (`Principal: "*"`) → defeat purpose của customer-managed key.
-- ❌ Lambda environment variable lưu password plain text → dùng Secrets Manager hoặc Parameter Store với KMS.
-- ❌ RDS public endpoint cho "tiện kết nối từ máy dev" → dùng bastion hoặc SSM Session Manager.
+- ✗ Cho rằng "managed service = không cần lo bảo mật".
+- ✗ S3 bucket policy `Principal: "*"` cho "internal use" → vô tình public Internet.
+- ✗ IAM Role với `Action: "*"` cho EC2 "để cho tiện debug".
+- ✗ IMDSv1 vẫn enabled (default trước 2022).
+- ✗ Không có CloudTrail → không trace được khi incident.
+- ✗ KMS key policy quá rộng (`Principal: "*"`) → defeat purpose của customer-managed key.
+- ✗ Lambda environment variable lưu password plain text → dùng Secrets Manager hoặc Parameter Store với KMS.
+- ✗ RDS public endpoint cho "tiện kết nối từ máy dev" → dùng bastion hoặc SSM Session Manager.
 
 ---
 

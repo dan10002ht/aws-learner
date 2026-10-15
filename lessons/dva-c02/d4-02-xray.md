@@ -53,7 +53,7 @@ Hình dung — một **trace** bọc các **segment**, mỗi segment bọc các 
 
 **Trace ID** được truyền giữa các service qua HTTP header `X-Amzn-Trace-Id`. Đây là cách X-Ray "nối" các segment của các service khác nhau thành một trace.
 
-> 💡 Mẹo thi: Khi đề mô tả "muốn biết phần nào *bên trong* một function gây chậm" → đáp án là **subsegment**. Khi nói "mỗi service đóng góp dữ liệu" → **segment**. Khi nói "toàn bộ request end-to-end" → **trace**.
+> Mẹo thi: Khi đề mô tả "muốn biết phần nào *bên trong* một function gây chậm" → đáp án là **subsegment**. Khi nói "mỗi service đóng góp dữ liệu" → **segment**. Khi nói "toàn bộ request end-to-end" → **trace**.
 
 ## Annotations vs Metadata — câu hỏi kinh điển nhất
 
@@ -89,7 +89,7 @@ Filter expression tương ứng trên console (chỉ chạy được với annot
 annotation.customerTier = "premium" AND annotation.orderValue > 1000
 ```
 
-> ⚠️ Bẫy: Đề cho tình huống "team muốn **search/filter** trace theo `customerId`" rồi đưa ra cả hai lựa chọn. Nếu chọn **metadata** là SAI vì metadata không index, không filter được. Phải là **annotation**. Ngược lại, "lưu một object JSON lớn chỉ để xem khi debug" → **metadata** (annotation chỉ nhận giá trị đơn và bị giới hạn 50).
+> Bẫy: Đề cho tình huống "team muốn **search/filter** trace theo `customerId`" rồi đưa ra cả hai lựa chọn. Nếu chọn **metadata** là SAI vì metadata không index, không filter được. Phải là **annotation**. Ngược lại, "lưu một object JSON lớn chỉ để xem khi debug" → **metadata** (annotation chỉ nhận giá trị đơn và bị giới hạn 50).
 
 ## Service Map
 
@@ -129,7 +129,7 @@ Wrap client SQL (PostgreSQL, MySQL) → mỗi query thành subsegment, kèm th�
 const pg = AWSXRay.capturePostgres(require('pg'));
 ```
 
-> 💡 Mẹo thi: Khi đề nói "muốn thấy thời gian từng **truy vấn database** / từng **lời gọi DynamoDB** / từng **HTTP request ra ngoài**" trong trace → đó là **subsegment** tạo bởi SDK capture (`captureAWS`, `captureHTTPs`, `capturePostgres`). Không cần config thủ công từng cái.
+> Mẹo thi: Khi đề nói "muốn thấy thời gian từng **truy vấn database** / từng **lời gọi DynamoDB** / từng **HTTP request ra ngoài**" trong trace → đó là **subsegment** tạo bởi SDK capture (`captureAWS`, `captureHTTPs`, `capturePostgres`). Không cần config thủ công từng cái.
 
 ## X-Ray Daemon vs Lambda Active Tracing
 
@@ -217,9 +217,9 @@ Hai đường đi của segment — tự chạy daemon (trái) so với daemon d
   <text x="534" y="308" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">Không cài daemon thủ công — chỉ bật Active + IAM</text>
 </svg>
 
-> ⚠️ Bẫy 1: Câu hỏi "Lambda đã bật code instrument bằng SDK nhưng **không thấy trace** — thiếu gì?" → thường là **chưa bật Active tracing** (`Mode=Active`) hoặc **thiếu IAM permission**. KHÔNG phải "cài daemon" — Lambda không cần cài daemon thủ công.
+> Bẫy 1: Câu hỏi "Lambda đã bật code instrument bằng SDK nhưng **không thấy trace** — thiếu gì?" → thường là **chưa bật Active tracing** (`Mode=Active`) hoặc **thiếu IAM permission**. KHÔNG phải "cài daemon" — Lambda không cần cài daemon thủ công.
 
-> ⚠️ Bẫy 2: Câu hỏi về **EC2/ECS** "đã add SDK, IAM đủ, vẫn không có trace" → khả năng cao là **chưa chạy X-Ray daemon**. Đây là khác biệt then chốt so với Lambda.
+> Bẫy 2: Câu hỏi về **EC2/ECS** "đã add SDK, IAM đủ, vẫn không có trace" → khả năng cao là **chưa chạy X-Ray daemon**. Đây là khác biệt then chốt so với Lambda.
 
 ## Sampling Rules — kiểm soát chi phí
 
@@ -255,7 +255,7 @@ Bạn có thể tạo custom rule, ưu tiên theo: service name, HTTP method, UR
 
 Điểm hay: sampling rules cấu hình **tập trung trên X-Ray**, các SDK/service tự fetch và áp dụng — **không cần đổi code, không deploy lại**.
 
-> 💡 Mẹo thi: Đề hỏi "X-Ray **chi phí quá cao** do traffic lớn, giảm cách nào mà không tắt hẳn tracing?" → **điều chỉnh sampling rules** (giảm rate / reservoir). Đề hỏi "muốn đảm bảo **luôn trace 100%** các request đến `/payment`" → tạo custom rule với `rate: 1.0` cho path đó.
+> Mẹo thi: Đề hỏi "X-Ray **chi phí quá cao** do traffic lớn, giảm cách nào mà không tắt hẳn tracing?" → **điều chỉnh sampling rules** (giảm rate / reservoir). Đề hỏi "muốn đảm bảo **luôn trace 100%** các request đến `/payment`" → tạo custom rule với `rate: 1.0` cho path đó.
 
 ## IAM Permissions cho X-Ray
 
@@ -289,7 +289,7 @@ Ví dụ inline policy tối thiểu để **gửi** trace:
 }
 ```
 
-> ⚠️ Bẫy: Trace bị thiếu **không phải** lúc nào cũng do code. Một nguyên nhân kinh điển: **execution role / instance role thiếu `xray:PutTraceSegments`**. Khi đề liệt kê triệu chứng "code đã instrument, daemon đang chạy, nhưng X-Ray console trống" → soi **IAM permission** đầu tiên.
+> Bẫy: Trace bị thiếu **không phải** lúc nào cũng do code. Một nguyên nhân kinh điển: **execution role / instance role thiếu `xray:PutTraceSegments`**. Khi đề liệt kê triệu chứng "code đã instrument, daemon đang chạy, nhưng X-Ray console trống" → soi **IAM permission** đầu tiên.
 
 ## Tích hợp với các service AWS
 
@@ -311,7 +311,7 @@ Active tracing (đã nói trên). Khi được API Gateway gọi với trace con
 
 → Cho phép trace xuyên suốt cả luồng async: `API GW → Lambda A → SNS → SQS → Lambda B`, tất cả trong **một** trace.
 
-> 💡 Mẹo thi: "Làm sao trace một luồng **bất đồng bộ** qua SQS/SNS, giữ nguyên một trace end-to-end?" → trace context tự truyền qua **message attributes**; chỉ cần các service đều bật tracing.
+> Mẹo thi: "Làm sao trace một luồng **bất đồng bộ** qua SQS/SNS, giữ nguyên một trace end-to-end?" → trace context tự truyền qua **message attributes**; chỉ cần các service đều bật tracing.
 
 ## Bảng tổng hợp "khi nào dùng / chọn gì"
 

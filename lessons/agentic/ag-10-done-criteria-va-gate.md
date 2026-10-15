@@ -448,37 +448,37 @@ Với code bản chia đều: lệnh đầu in "Gate đỏ — chưa được b�
 
 ## 5. Bẫy thường gặp
 
-🪤 **Tiêu chí viết bằng "đảm bảo".**
+**Tiêu chí viết bằng "đảm bảo".**
 Triệu chứng: brief có "đảm bảo responsive", "đảm bảo 44px", "đảm bảo không hồi quy"; verifier trả PASS kèm bằng chứng đọc từ code.
 Nguyên nhân gốc: dòng tiêu chí không có lệnh, verifier tự chọn phép kiểm rẻ nhất, thường là đọc lại lời khai.
 Chặn bằng cơ chế: mẫu brief bắt buộc bảng bốn cột (mệnh đề / lệnh / pass / môi trường) như §3.1; dòng nào trống cột "lệnh" thì không được giao. Có thể thêm một bước kiểm trong skill giao việc: `grep -n "đảm bảo" BRIEF.md` khác rỗng thì dừng và hỏi.
 
-🪤 **Agent bịa gate theo mặc định chung.**
+**Agent bịa gate theo mặc định chung.**
 Triệu chứng: agent chạy `tsc` trong repo không có TypeScript, hoặc `npx jest` ở root rồi đi "sửa" 34 suite vốn hỏng sẵn.
 Nguyên nhân gốc: repo không có khối gate viết sẵn, agent điền chỗ trống bằng thói quen chung.
 Chặn: khối gate trong `CLAUDE.md`/`AGENTS.md` hoặc đầu `BRIEF.md` (§3.3), và skill giao việc dán nguyên văn khối đó vào mọi brief — không để agent tự đọc rồi tóm tắt.
 
-🪤 **Baseline đỏ sẵn bị coi là lỗi mới.**
+**Baseline đỏ sẵn bị coi là lỗi mới.**
 Triệu chứng: lint báo 94 lỗi, agent sửa lan sang 30 file không liên quan; diff phình.
 Nguyên nhân gốc: gate đo tuyệt đối ("0 lỗi") trên repo không ở trạng thái 0.
 Chặn: gate so với baseline ghi trong file ("fail khi số lỗi TĂNG"), và cập nhật baseline sau mỗi lần merge trên trạng thái hợp nhất.
 
-🪤 **Số thống kê đo lúc máy bận.**
+**Số thống kê đo lúc máy bận.**
 Triệu chứng: p99 hay fail rate trong báo cáo khác hẳn lần đo trước, không ai giải thích được; hoặc tệ hơn, nó được ghi vào tài liệu.
 Nguyên nhân gốc: phép đo không kiểm soát biến "tải máy".
 Chặn: script đo tự kiểm tải trước và trả mã UNVERIFIED riêng (§3.4); điều kiện dừng gắn vào từng task thống kê, không vào cả hàng đợi.
 
-🪤 **Hai task PASS riêng, đỏ khi gộp.**
+**Hai task PASS riêng, đỏ khi gộp.**
 Triệu chứng: nhánh chính đỏ ngay sau khi merge hai nhánh đều đã được verify.
 Nguyên nhân gốc: mỗi verifier nhìn một worktree; trạng thái hợp nhất chưa ai chấm.
 Chặn: gate hợp nhất trên nhánh tích hợp trước khi đưa vào nhánh chính (§3.6); task đổi luật xếp trước task chịu luật.
 
-🪤 **Gate chung chạy trước vòng sửa cuối.**
+**Gate chung chạy trước vòng sửa cuối.**
 Triệu chứng: các verifier đều PASS dựa trên một output gate, nhưng commit cuối đỏ.
 Nguyên nhân gốc: vòng sửa bug A sau khi gate đã chạy làm hỏng bug B; không ai chạy lại.
 Chặn: gate chung là bước cuối cùng của quy trình, sau mọi vòng sửa — đặt nó trong skill/loop như một bước bắt buộc trước commit, không phải trước verify.
 
-🪤 **Worker làm cho xanh thay vì báo failed.**
+**Worker làm cho xanh thay vì báo failed.**
 Triệu chứng: diff có đổi ngưỡng, nới assertion, đổi seed, hoặc thêm `skip`.
 Nguyên nhân gốc: tiêu chí bất khả thi hoặc khó, và brief không nói rõ báo `failed` là chấp nhận được.
 Chặn: brief ghi "báo failed đúng theo tiêu chí là hành vi đúng; KHÔNG sửa file đo/ngưỡng/seed"; gate kiểm `git diff --name-only` không đụng file đo (như tiêu chí ở §4).

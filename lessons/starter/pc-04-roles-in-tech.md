@@ -19,7 +19,7 @@ Hãy lấy ví dụ một ứng dụng quen thuộc: **app đặt đồ ăn** (k
 | **Data Analyst/Engineer** | Phân tích dữ liệu: "Món gà rán bán chạy nhất khung giờ nào?" |
 | **QA/Tester** | Kiểm tra app trước khi phát hành: bấm thử mọi nút, cố tình làm app "gãy" để tìm lỗi |
 
-> 💡 **Ghi nhớ**: Một sản phẩm tech là công sức của cả đội nhiều vai trò, không phải chỉ của "lập trình viên". Bạn có thể vào ngành tech qua nhiều cánh cửa khác nhau.
+> **Ghi nhớ**: Một sản phẩm tech là công sức của cả đội nhiều vai trò, không phải chỉ của "lập trình viên". Bạn có thể vào ngành tech qua nhiều cánh cửa khác nhau.
 
 Sơ đồ dưới đây vẽ các vai trò vây quanh một sản phẩm (app đặt đồ ăn) và **ai phối hợp với ai**. Mũi tên liền là dòng chảy chính từ ý tưởng đến vận hành; đường nét đứt là những cặp phối hợp qua lại hằng ngày (Frontend ↔ Backend, Backend ↔ Data, Dev ↔ QA).
 
@@ -237,7 +237,7 @@ Vì sao hướng này đáng đi với người mới?
 3. **Không đòi hỏi khiếu thẩm mỹ**: hợp với người thích logic, hệ thống.
 4. **Kiến thức nền dùng được cho nhiều nghề**: hiểu máy tính, Internet, server là nền tảng chung — sau này rẽ sang Data Engineer hay Backend đều tận dụng được.
 
-> 💡 **Ghi nhớ**: Học xong nền tảng ở khoá này, bạn chưa cần chốt nghề ngay. Nền "máy tính + Internet + cloud" là mẫu số chung — rẽ hướng nào cũng không phí.
+> **Ghi nhớ**: Học xong nền tảng ở khoá này, bạn chưa cần chốt nghề ngay. Nền "máy tính + Internet + cloud" là mẫu số chung — rẽ hướng nào cũng không phí.
 
 ---
 
@@ -262,9 +262,9 @@ Sự thật: **tài liệu tốt nhất của ngành đều bằng tiếng Anh**
 - **Chưa cần ngay**: nghe nói trôi chảy. Làm công ty Việt Nam thì giao tiếp tiếng Việt; tiếng Anh nói chỉ cần khi làm công ty nước ngoài (lương cao hơn — đó là động lực học dần).
 - **Mẹo**: vừa học tech vừa học tiếng Anh qua chính tài liệu tech — một công đôi việc.
 
-> ⚠️ **Lỗi người mới hay gặp**: Trì hoãn học tech "chờ giỏi tiếng Anh đã". Sai thứ tự! Cứ học tech bằng tiếng Việt trước (như khoá này), gặp thuật ngữ Anh thì nhặt dần. Tiếng Anh kỹ thuật chỉ quanh quẩn vài trăm từ.
+> **Lỗi người mới hay gặp**: Trì hoãn học tech "chờ giỏi tiếng Anh đã". Sai thứ tự! Cứ học tech bằng tiếng Việt trước (như khoá này), gặp thuật ngữ Anh thì nhặt dần. Tiếng Anh kỹ thuật chỉ quanh quẩn vài trăm từ.
 
-> ⚠️ **Lỗi người mới hay gặp**: Học dàn trải "mỗi nghề một ít" vì sợ chọn sai. Kết quả là biết mỗi thứ một chút, không đủ sâu để xin việc. Hãy chọn MỘT hướng, đi sâu 6-12 tháng, rồi mới tính chuyện rẽ nhánh.
+> **Lỗi người mới hay gặp**: Học dàn trải "mỗi nghề một ít" vì sợ chọn sai. Kết quả là biết mỗi thứ một chút, không đủ sâu để xin việc. Hãy chọn MỘT hướng, đi sâu 6-12 tháng, rồi mới tính chuyện rẽ nhánh.
 
 ---
 

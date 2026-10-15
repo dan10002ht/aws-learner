@@ -2,7 +2,7 @@
 
 Ai dùng Git cũng có lúc "lỡ tay": xoá nhầm code, commit thiếu file, gõ sai message, hoặc tệ hơn là tưởng mình đã xoá mất cả ngày làm việc. Tin tốt: **Git được thiết kế để gần như không bao giờ mất dữ liệu đã commit**. Bài này là "bộ đồ nghề cứu hộ" — học xong, bạn sẽ biết bình tĩnh thoát khỏi mọi tình huống thường gặp.
 
-> 💡 Ghi nhớ: Quy tắc vàng khi gặp sự cố với Git — **DỪNG LẠI, đừng gõ thêm lệnh bừa**. Hầu hết mọi thứ đều cứu được, trừ khi bạn hoảng loạn và chạy thêm các lệnh xoá khác.
+> Ghi nhớ: Quy tắc vàng khi gặp sự cố với Git — **DỪNG LẠI, đừng gõ thêm lệnh bừa**. Hầu hết mọi thứ đều cứu được, trừ khi bạn hoảng loạn và chạy thêm các lệnh xoá khác.
 
 ## 1. Ôn nhanh: 3 "khu vực" của Git
 
@@ -31,7 +31,7 @@ git restore .                 # khôi phục TẤT CẢ file đã sửa (cẩn t
 
 `restore` nghĩa là "khôi phục". Lệnh này lấy phiên bản file từ kho (commit gần nhất) đè lên bản trên bàn làm việc của bạn.
 
-> ⚠️ Lỗi người mới hay gặp: `git restore` **xoá vĩnh viễn** thay đổi chưa commit — đây là một trong số ít lệnh Git thật sự làm mất dữ liệu, vì thay đổi đó chưa từng được Git "chụp ảnh" lưu lại. Hãy chắc chắn bạn muốn vứt nó đi.
+> Lỗi người mới hay gặp: `git restore` **xoá vĩnh viễn** thay đổi chưa commit — đây là một trong số ít lệnh Git thật sự làm mất dữ liệu, vì thay đổi đó chưa từng được Git "chụp ảnh" lưu lại. Hãy chắc chắn bạn muốn vứt nó đi.
 
 ### Lỡ `git add` rồi, muốn rút file khỏi khu chờ?
 
@@ -64,9 +64,9 @@ git commit --amend --no-edit
 
 `--no-edit` nghĩa là "giữ nguyên message cũ, chỉ bổ sung nội dung". Git sẽ gộp file mới vào commit cuối, như thể bạn chưa từng quên.
 
-> 💡 Ghi nhớ: `--amend` không "sửa" commit cũ mà **tạo một commit mới thay thế** (mã commit sẽ đổi). Commit cũ vẫn nằm đâu đó trong kho — ta sẽ gặp lại nó ở phần reflog.
+> Ghi nhớ: `--amend` không "sửa" commit cũ mà **tạo một commit mới thay thế** (mã commit sẽ đổi). Commit cũ vẫn nằm đâu đó trong kho — ta sẽ gặp lại nó ở phần reflog.
 
-> ⚠️ Lỗi người mới hay gặp: **Đừng amend commit đã push lên GitHub** mà người khác đã kéo về. Vì mã commit thay đổi, lịch sử của bạn và đồng đội sẽ "lệch pha", gây xung đột khó chịu. Amend chỉ an toàn khi commit còn nằm riêng trên máy bạn.
+> Lỗi người mới hay gặp: **Đừng amend commit đã push lên GitHub** mà người khác đã kéo về. Vì mã commit thay đổi, lịch sử của bạn và đồng đội sẽ "lệch pha", gây xung đột khó chịu. Amend chỉ an toàn khi commit còn nằm riêng trên máy bạn.
 
 ## 4. Hoàn tác một commit: `revert` vs `reset`
 
@@ -189,13 +189,13 @@ Giải nghĩa: `HEAD` là "vị trí hiện tại" (commit mới nhất bạn đ
 
 | Tình huống | Dùng lệnh | Độ nguy hiểm |
 |---|---|---|
-| Commit lỗi **đã push** lên GitHub, người khác có thể đã kéo về | `git revert` | 🟢 An toàn — không sửa lịch sử |
-| Commit còn **trên máy mình**, muốn gỡ ra làm lại nhưng giữ code | `git reset --soft` / `--mixed` | 🟡 Vừa — code vẫn còn |
-| Muốn vứt sạch cả commit lẫn mọi thay đổi, quay về quá khứ | `git reset --hard` | 🔴 Cao — mất thay đổi chưa commit |
-| Chỉ sai message hoặc thiếu file ở commit cuối (chưa push) | `git commit --amend` | 🟡 Vừa — đừng dùng sau khi push |
-| Chỉ muốn vứt thay đổi chưa commit của 1 file | `git restore <file>` | 🔴 Mất thay đổi chưa lưu của file đó |
+| Commit lỗi **đã push** lên GitHub, người khác có thể đã kéo về | `git revert` | An toàn — không sửa lịch sử |
+| Commit còn **trên máy mình**, muốn gỡ ra làm lại nhưng giữ code | `git reset --soft` / `--mixed` | Vừa — code vẫn còn |
+| Muốn vứt sạch cả commit lẫn mọi thay đổi, quay về quá khứ | `git reset --hard` | Cao — mất thay đổi chưa commit |
+| Chỉ sai message hoặc thiếu file ở commit cuối (chưa push) | `git commit --amend` | Vừa — đừng dùng sau khi push |
+| Chỉ muốn vứt thay đổi chưa commit của 1 file | `git restore <file>` | Mất thay đổi chưa lưu của file đó |
 
-> 💡 Ghi nhớ: Câu thần chú — **"Đã push thì revert, chưa push thì reset"**. Khi phân vân, chọn `revert`: chậm hơn một chút nhưng không bao giờ phá lịch sử chung.
+> Ghi nhớ: Câu thần chú — **"Đã push thì revert, chưa push thì reset"**. Khi phân vân, chọn `revert`: chậm hơn một chút nhưng không bao giờ phá lịch sử chung.
 
 ## 5. Cất tạm công việc dở dang — `git stash`
 
@@ -226,7 +226,7 @@ git switch tinh-nang-a
 git stash pop            # lấy lại đồ, làm tiếp như chưa có gì xảy ra
 ```
 
-> ⚠️ Lỗi người mới hay gặp: (1) Cất stash rồi… quên luôn, vài tuần sau `git stash list` thấy 7 gói không nhớ gói nào là gì — hãy luôn dùng `-m` để ghi chú. (2) Mặc định `git stash` **không cất file mới tạo chưa từng `git add`** (gọi là untracked file — file Git chưa theo dõi); muốn cất cả chúng, dùng `git stash -u`.
+> Lỗi người mới hay gặp: (1) Cất stash rồi… quên luôn, vài tuần sau `git stash list` thấy 7 gói không nhớ gói nào là gì — hãy luôn dùng `-m` để ghi chú. (2) Mặc định `git stash` **không cất file mới tạo chưa từng `git add`** (gọi là untracked file — file Git chưa theo dõi); muốn cất cả chúng, dùng `git stash -u`.
 
 ## 6. Phao cứu sinh cuối cùng — `git reflog`
 
@@ -256,9 +256,9 @@ git reset --hard 9d8e7f6
 
 Xong. Cả commit "đã mất" quay về nguyên vẹn.
 
-> 💡 Ghi nhớ: **Mọi thứ đã từng commit đều cứu được bằng reflog** (trong vòng ~90 ngày trước khi Git dọn rác). Thứ duy nhất reflog KHÔNG cứu được là thay đổi **chưa bao giờ commit** — đó là lý do nên commit nhỏ và thường xuyên, như lưu game trước mỗi trận boss.
+> Ghi nhớ: **Mọi thứ đã từng commit đều cứu được bằng reflog** (trong vòng ~90 ngày trước khi Git dọn rác). Thứ duy nhất reflog KHÔNG cứu được là thay đổi **chưa bao giờ commit** — đó là lý do nên commit nhỏ và thường xuyên, như lưu game trước mỗi trận boss.
 
-> ⚠️ Lỗi người mới hay gặp: reflog là nhật ký **riêng của từng máy** — nó không được push lên GitHub. Bạn không thể dùng reflog của mình để cứu thao tác lỡ tay trên máy đồng nghiệp.
+> Lỗi người mới hay gặp: reflog là nhật ký **riêng của từng máy** — nó không được push lên GitHub. Bạn không thể dùng reflog của mình để cứu thao tác lỡ tay trên máy đồng nghiệp.
 
 ## 7. Sổ tay "Chết rồi, lỡ…" — thoát hiểm từng bước
 
@@ -333,13 +333,13 @@ git reset --hard HEAD~1     # gỡ commit nhầm khỏi main (nếu main CHƯA p
 
 | Lệnh | Cứu cái gì | Mức nguy hiểm |
 |---|---|---|
-| `git restore <file>` | Vứt thay đổi chưa commit của file | 🔴 Mất thay đổi chưa lưu |
-| `git restore --staged <file>` | Rút file khỏi khu chờ | 🟢 Vô hại |
-| `git commit --amend` | Sửa commit cuối (chưa push) | 🟡 Đổi mã commit |
-| `git revert <commit>` | Đảo ngược commit đã push | 🟢 An toàn nhất |
-| `git reset --soft/--mixed` | Gỡ commit, giữ code | 🟡 Vừa |
-| `git reset --hard` | Quay về quá khứ, xoá sạch | 🔴 Cao |
-| `git stash` | Cất tạm việc dở dang | 🟢 An toàn (nhớ ghi chú) |
-| `git reflog` | Tìm lại mọi thứ "đã mất" | 🟢 Chỉ xem, vô hại |
+| `git restore <file>` | Vứt thay đổi chưa commit của file | Mất thay đổi chưa lưu |
+| `git restore --staged <file>` | Rút file khỏi khu chờ | Vô hại |
+| `git commit --amend` | Sửa commit cuối (chưa push) | Đổi mã commit |
+| `git revert <commit>` | Đảo ngược commit đã push | An toàn nhất |
+| `git reset --soft/--mixed` | Gỡ commit, giữ code | Vừa |
+| `git reset --hard` | Quay về quá khứ, xoá sạch | Cao |
+| `git stash` | Cất tạm việc dở dang | An toàn (nhớ ghi chú) |
+| `git reflog` | Tìm lại mọi thứ "đã mất" | Chỉ xem, vô hại |
 
-> 💡 Ghi nhớ cuối bài: Ba thói quen giúp bạn gần như không bao giờ cần "cứu hộ khẩn cấp": (1) **commit nhỏ và thường xuyên** — mỗi commit là một điểm lưu game; (2) **đọc kỹ output của `git status`** trước khi gõ lệnh tiếp; (3) **chưa push thì thoải mái sửa lịch sử, đã push thì chỉ revert**. Git không trừng phạt người lỡ tay — nó chỉ trừng phạt người lỡ tay xong còn cuống.
+> Ghi nhớ cuối bài: Ba thói quen giúp bạn gần như không bao giờ cần "cứu hộ khẩn cấp": (1) **commit nhỏ và thường xuyên** — mỗi commit là một điểm lưu game; (2) **đọc kỹ output của `git status`** trước khi gõ lệnh tiếp; (3) **chưa push thì thoải mái sửa lịch sử, đã push thì chỉ revert**. Git không trừng phạt người lỡ tay — nó chỉ trừng phạt người lỡ tay xong còn cuống.

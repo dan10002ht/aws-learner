@@ -50,7 +50,7 @@ Giống như gửi email thay vì gọi điện thoại: người nhận không 
 | Phù hợp khi | Cần trả lời ngay (login, tra cứu) | Việc có thể làm sau (gửi email, resize ảnh, xuất báo cáo) |
 | Độ phức tạp | Đơn giản, dễ debug | Phức tạp hơn: retry, trùng lặp, thứ tự |
 
-> 💡 **Ghi nhớ:** Async không "nhanh hơn" sync cho một request đơn lẻ — nó **bền vững hơn dưới tải** và **tách rời số phận** của các service. Đổi lại, bạn mất câu trả lời tức thì và phải xử lý các vấn đề mới (retry, duplicate).
+> **Ghi nhớ:** Async không "nhanh hơn" sync cho một request đơn lẻ — nó **bền vững hơn dưới tải** và **tách rời số phận** của các service. Đổi lại, bạn mất câu trả lời tức thì và phải xử lý các vấn đề mới (retry, duplicate).
 
 ### 1.4 Vì sao phải decouple (tách rời)?
 
@@ -150,7 +150,7 @@ Queue chính ---(thất bại quá 3 lần)---> DLQ
 
 DLQ vừa bảo vệ luồng chính, vừa giữ lại "vật chứng" để debug. Một hệ thống messaging nghiêm túc **luôn** có DLQ và cảnh báo khi DLQ có message.
 
-> 💡 **Ghi nhớ:** Bộ ba ack — redelivery — DLQ là "lưới an toàn" của queue: ack chống mất message, redelivery chống worker chết, DLQ chống message độc làm tê liệt hệ thống.
+> **Ghi nhớ:** Bộ ba ack — redelivery — DLQ là "lưới an toàn" của queue: ack chống mất message, redelivery chống worker chết, DLQ chống message độc làm tê liệt hệ thống.
 
 ## 3. Pub/Sub vs Queue — chia việc hay phát thanh?
 
@@ -294,7 +294,7 @@ Trong EDA, service Đơn hàng chỉ tuyên bố `OrderPlaced`. Nó **không bi�
 
 Cái giá phải trả: **luồng xử lý trở nên vô hình**. Không còn một hàm `processOrder()` đọc từ trên xuống dưới — logic rải khắp các subscriber. Debug cần công cụ tracing tốt, và dữ liệu giữa các service chỉ **eventually consistent** (nhất quán sau một độ trễ).
 
-> 💡 **Ghi nhớ:** Event nói về **quá khứ** ("đã xảy ra"), command nói về **mong muốn** ("hãy làm"). Hệ thống event-driven lỏng lẻo (loosely coupled) hơn nhưng khó nhìn toàn cảnh hơn — đó là một sự đánh đổi, không phải bữa trưa miễn phí.
+> **Ghi nhớ:** Event nói về **quá khứ** ("đã xảy ra"), command nói về **mong muốn** ("hãy làm"). Hệ thống event-driven lỏng lẻo (loosely coupled) hơn nhưng khó nhìn toàn cảnh hơn — đó là một sự đánh đổi, không phải bữa trưa miễn phí.
 
 ## 5. Backpressure & Load Leveling — chống "vỡ trận" khi tải dồn
 
@@ -351,7 +351,7 @@ Nhưng hồ nào cũng có dung tích. Nếu producer cứ bơm nhanh hơn consu
 - **Shed load:** chủ động bỏ những việc ít quan trọng (tắt tính năng gợi ý, giữ tính năng thanh toán).
 - **Auto scaling theo độ dài queue:** queue dài quá → tự bật thêm consumer.
 
-> 💡 **Ghi nhớ:** Queue **hấp thụ đỉnh tải tạm thời**, không cứu được tình trạng quá tải **kéo dài**. Khi tải vào > tải ra liên tục, bạn cần backpressure (giảm đầu vào) hoặc scale consumer (tăng đầu ra) — queue chỉ mua thời gian.
+> **Ghi nhớ:** Queue **hấp thụ đỉnh tải tạm thời**, không cứu được tình trạng quá tải **kéo dài**. Khi tải vào > tải ra liên tục, bạn cần backpressure (giảm đầu vào) hoặc scale consumer (tăng đầu ra) — queue chỉ mua thời gian.
 
 ## 6. Idempotency — vì sao bắt buộc khi có retry
 
@@ -369,11 +369,11 @@ Analogy: nút bấm thang máy. Bấm tầng 5 một lần hay mười lần, th
 
 | Thao tác | Idempotent? | Vì sao |
 |---|---|---|
-| `SET balance = 100` | ✅ | Chạy lại vẫn ra 100 |
-| `balance = balance - 50` | ❌ | Chạy 2 lần trừ 100 |
-| `DELETE đơn #123` | ✅ | Xoá lần 2 chẳng còn gì để xoá |
-| `INSERT đơn mới` | ❌ | Chạy 2 lần tạo 2 đơn |
-| Gửi email xác nhận | ❌ | User nhận 2 email |
+| `SET balance = 100` | ✓ | Chạy lại vẫn ra 100 |
+| `balance = balance - 50` | ✗ | Chạy 2 lần trừ 100 |
+| `DELETE đơn #123` | ✓ | Xoá lần 2 chẳng còn gì để xoá |
+| `INSERT đơn mới` | ✗ | Chạy 2 lần tạo 2 đơn |
+| Gửi email xác nhận | ✗ | User nhận 2 email |
 
 ### 6.3 Cách làm thao tác trở nên idempotent
 
@@ -391,7 +391,7 @@ Nhận message (id = "abc-123"):
 
 Cách khác: thiết kế thao tác tự nhiên idempotent — dùng `UPSERT` thay `INSERT`, dùng `SET` trạng thái đích thay vì cộng/trừ delta.
 
-> 💡 **Ghi nhớ:** Retry và idempotency là cặp bài trùng **bắt buộc đi đôi**. Retry mà không idempotent = trừ tiền hai lần, gửi email hai lần. Bất cứ khi nào hệ thống có chữ "retry", câu hỏi đầu tiên phải là "consumer đã idempotent chưa?".
+> **Ghi nhớ:** Retry và idempotency là cặp bài trùng **bắt buộc đi đôi**. Retry mà không idempotent = trừ tiền hai lần, gửi email hai lần. Bất cứ khi nào hệ thống có chữ "retry", câu hỏi đầu tiên phải là "consumer đã idempotent chưa?".
 
 ## 7. Ordering & Exactly-Once — hai thứ nghe dễ mà rất khó
 
@@ -424,7 +424,7 @@ Vì sao exactly-once khó? Quay lại khe hở định mệnh: consumer xử lý
 
 Đây là hệ quả của bài toán **Two Generals**: hai bên liên lạc qua kênh không tin cậy không bao giờ chắc chắn 100% về trạng thái của nhau. Những hệ thống quảng cáo "exactly-once" thực chất là **at-least-once delivery + xử lý idempotent/dedup ở phía nhận** — tức exactly-once *processing* (xử lý hiệu quả đúng một lần), không phải exactly-once *delivery*.
 
-> 💡 **Ghi nhớ:** Mặc định thực dụng của ngành: **at-least-once delivery + idempotent consumer + per-key ordering khi thật sự cần**. Đừng đòi hỏi global ordering hay exactly-once delivery trừ khi sẵn sàng trả giá rất đắt về hiệu năng và độ phức tạp.
+> **Ghi nhớ:** Mặc định thực dụng của ngành: **at-least-once delivery + idempotent consumer + per-key ordering khi thật sự cần**. Đừng đòi hỏi global ordering hay exactly-once delivery trừ khi sẵn sàng trả giá rất đắt về hiệu năng và độ phức tạp.
 
 ## 8. Tổng kết các pattern
 

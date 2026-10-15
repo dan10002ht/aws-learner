@@ -33,7 +33,7 @@ Google Maps thật có hàng chục tính năng (Street View, review địa đi�
 | **Tiết kiệm data & pin** | Điện thoại, thường là gói data giới hạn, GPS ngốn pin | Batch vị trí gửi lên, vector tile thay raster, tính toán một phần ở client, chế độ offline |
 | **Availability & scale** | 1 tỉ DAU, phủ 99% thế giới | Không có "một database". Mỗi mảng có store riêng phù hợp bản chất của nó |
 
-> 💡 **Nguyên tắc**: Ba mảng chức năng có **ba profile tải hoàn toàn khác nhau** — tile là read-only cực nặng nhưng bất biến; routing là compute-bound; location update là write-heavy. Đừng cố nhét chúng vào cùng một kiến trúc. Câu đầu tiên nên nói với người phỏng vấn chính là câu này.
+> **Nguyên tắc**: Ba mảng chức năng có **ba profile tải hoàn toàn khác nhau** — tile là read-only cực nặng nhưng bất biến; routing là compute-bound; location update là write-heavy. Đừng cố nhét chúng vào cùng một kiến trúc. Câu đầu tiên nên nói với người phỏng vấn chính là câu này.
 
 ### Giả định chốt
 
@@ -48,7 +48,7 @@ Vị trí gửi lên      : mỗi 1–5 giây khi đang navigate, batch lại tr
 Tỉ lệ đang navigate : ~5% phiên dùng app là navigation thật sự
 ```
 
-> ⚠️ **Bẫy phỏng vấn**: đừng nói "chúng ta lưu bản đồ thế giới trong database". Bản đồ không phải dữ liệu giao dịch. Nó là **artifact được build offline** — giống như bạn build một static site rồi đẩy lên CDN, chỉ là site đó nặng 50 petabyte.
+> **Bẫy phỏng vấn**: đừng nói "chúng ta lưu bản đồ thế giới trong database". Bản đồ không phải dữ liệu giao dịch. Nó là **artifact được build offline** — giống như bạn build một static site rồi đẩy lên CDN, chỉ là site đó nặng 50 petabyte.
 
 ---
 
@@ -223,7 +223,7 @@ Ví dụ: (lat=10.7769, lng=106.7009) — Quận 1, TP.HCM — ở z=15:
   → tile URL: /tiles/15/26096/15585.pbf
 ```
 
-> 💡 **Nguyên tắc**: Client tự tính được `(z, x, y)` từ vị trí và mức zoom — **không cần hỏi server**. Đây là điều làm cho tile trở thành static content thuần tuý, và là nền móng cho toàn bộ chiến lược CDN.
+> **Nguyên tắc**: Client tự tính được `(z, x, y)` từ vị trí và mức zoom — **không cần hỏi server**. Đây là điều làm cho tile trở thành static content thuần tuý, và là nền móng cho toàn bộ chiến lược CDN.
 
 ### 3.2 Geocoding — địa chỉ ⇄ toạ độ
 
@@ -414,7 +414,7 @@ Ba điều đáng chỉ ra khi trình bày API này:
 | **Traffic weight store** | Trọng số cạnh hiện tại | Ghi liên tục, đọc cực nhiều (mọi routing request). In-memory là bắt buộc |
 | **Offline pipeline** | Build lại tile & routing graph | Chạy hàng giờ/ngày, hoàn toàn tách khỏi đường phục vụ. Sự cố ở đây không làm sập app |
 
-> 💡 **Nguyên tắc**: Nhìn sơ đồ, thấy ngay **ba luồng dữ liệu không giao nhau ở đường nóng**: (1) client ↔ CDN cho tile, (2) client ↔ routing cho đường đi, (3) client → stream → traffic. Chúng chỉ gặp nhau ở hai điểm: traffic weight nuôi routing, và offline pipeline sinh ra cả tile lẫn graph. Vẽ được sự tách bạch này là bạn đã trình bày đúng bản chất bài toán.
+> **Nguyên tắc**: Nhìn sơ đồ, thấy ngay **ba luồng dữ liệu không giao nhau ở đường nóng**: (1) client ↔ CDN cho tile, (2) client ↔ routing cho đường đi, (3) client → stream → traffic. Chúng chỉ gặp nhau ở hai điểm: traffic weight nuôi routing, và offline pipeline sinh ra cả tile lẫn graph. Vẽ được sự tách bạch này là bạn đã trình bày đúng bản chất bài toán.
 
 ---
 
@@ -428,7 +428,7 @@ Có đúng ba cách để đưa bản đồ lên màn hình người dùng, và 
 |---|---|---|
 | **Tải cả bản đồ về client** | Như game offline: nhét toàn bộ dữ liệu vào app | 50 PB. Không cần tính thêm gì nữa |
 | **Render một ảnh riêng cho mỗi request** | Server nhận `(lat, lng, zoom, width, height)`, vẽ đúng khung hình đó rồi trả PNG | Mỗi request là một ảnh **khác nhau** ⇒ cache hit rate ≈ 0 ⇒ mỗi lần người dùng nhích bản đồ 1 pixel là một lần render. 700K QPS × render ảnh = cần hàng trăm nghìn máy chỉ để vẽ |
-| **Chia thành tile cố định theo lưới** | Thế giới chia lưới theo zoom; client tải đúng những ô rơi vào khung nhìn rồi ghép lại như khảm | ✅ Cùng một ô được **hàng triệu người dùng chung** ⇒ cache được. Kéo bản đồ chỉ cần tải thêm vài ô ở rìa, không vẽ lại gì |
+| **Chia thành tile cố định theo lưới** | Thế giới chia lưới theo zoom; client tải đúng những ô rơi vào khung nhìn rồi ghép lại như khảm | ✓ Cùng một ô được **hàng triệu người dùng chung** ⇒ cache được. Kéo bản đồ chỉ cần tải thêm vài ô ở rìa, không vẽ lại gì |
 
 Điểm mấu chốt và cũng là câu đáng nói nhất trong phần này: **chia tile biến một bài toán render động thành một bài toán phân phối file tĩnh.** Bài toán render động cần hàng trăm nghìn CPU; bài toán phân phối file tĩnh thì ngành CDN đã giải xong từ hai thập kỷ trước với giá rẻ mạt. Đây là một ví dụ kinh điển của kỹ thuật *"đổi bài toán khó lấy bài toán đã có lời giải sẵn"*.
 
@@ -471,7 +471,7 @@ Khi người dùng kéo bản đồ sang phải một khoảng bằng một tile
   → đây chính là lý do bản đồ kéo mượt trên mạng kém.
 ```
 
-> 💡 **Nguyên tắc**: Kích thước dữ liệu cần tải tỉ lệ với **chu vi vùng mới lộ ra**, không phải với diện tích khung nhìn. Đó là món quà miễn phí mà cách chia tile tặng cho ta, và là lý do nó tồn tại ở mọi hệ bản đồ web từ 2005 tới nay.
+> **Nguyên tắc**: Kích thước dữ liệu cần tải tỉ lệ với **chu vi vùng mới lộ ra**, không phải với diện tích khung nhìn. Đó là món quà miễn phí mà cách chia tile tặng cho ta, và là lý do nó tồn tại ở mọi hệ bản đồ web từ 2005 tới nay.
 
 ### 6.3 Raster tile vs vector tile — vì sao vector thắng
 
@@ -493,7 +493,7 @@ Khi người dùng kéo bản đồ sang phải một khoảng bằng một tile
 
 **Kết luận thực tế**: dùng **vector cho bản đồ đường phố** (mặc định) và **raster cho lớp ảnh vệ tinh** (không có lựa chọn khác), kèm **fallback raster** cho client cũ. Đây là đúng những gì Google Maps, Mapbox và Apple Maps đều làm.
 
-> ⚠️ **Bẫy**: Đừng nói "vector tile nhẹ hơn nên ta dùng vector" rồi dừng lại. Lý do **nặng ký nhất** không phải kích thước mà là **chống nhân bản**: nếu bạn cần bản đồ ở 40 ngôn ngữ × 3 theme × 2 mật độ màn hình, raster buộc bạn render và lưu **240 bản** của 50 PB. Vector thì vẫn một bản. Đây là một phép nhân, không phải một cải thiện vài phần trăm.
+> **Bẫy**: Đừng nói "vector tile nhẹ hơn nên ta dùng vector" rồi dừng lại. Lý do **nặng ký nhất** không phải kích thước mà là **chống nhân bản**: nếu bạn cần bản đồ ở 40 ngôn ngữ × 3 theme × 2 mật độ màn hình, raster buộc bạn render và lưu **240 bản** của 50 PB. Vector thì vẫn một bản. Đây là một phép nhân, không phải một cải thiện vài phần trăm.
 
 ### 6.4 Precompute (render trước) vs on-the-fly (render khi có request)
 
@@ -522,7 +522,7 @@ Nhưng 360 triệu tile này phục vụ bao nhiêu phần traffic?
   vì vùng zoom sâu người ta xem là các thành phố, tập trung cực kỳ.
 ```
 
-> 💡 **Nguyên tắc**: Khi phân bố truy cập lệch theo luật luỹ thừa (power law) và không gian khoá thì khổng lồ, **đừng vật chất hoá toàn bộ không gian khoá**. Vật chất hoá phần đầu, tính động phần đuôi, để cache nối hai phần lại. Đây cũng chính là mẫu bạn đã gặp ở Autocomplete (sd-15) và Ad Click Aggregation (sd-18).
+> **Nguyên tắc**: Khi phân bố truy cập lệch theo luật luỹ thừa (power law) và không gian khoá thì khổng lồ, **đừng vật chất hoá toàn bộ không gian khoá**. Vật chất hoá phần đầu, tính động phần đuôi, để cache nối hai phần lại. Đây cũng chính là mẫu bạn đã gặp ở Autocomplete (sd-15) và Ad Click Aggregation (sd-18).
 
 Trong thực tế còn một biến thể quan trọng: với **vector tile**, người ta thường precompute sâu hơn (tới z=14–16) rồi để client **overzoom** — dùng tile z=14 để vẽ ở mức zoom 15, 16, 17 bằng cách nội suy hình học. Vì vector vẽ lại được ở tỉ lệ bất kỳ, chất lượng vẫn nét (chỉ là không có thêm chi tiết mới). Đây là mánh giảm số zoom level cần build đi 3–4 bậc — tức giảm số tile đi **64–256 lần**.
 
@@ -582,7 +582,7 @@ Khi build xong đợt tile mới:
 
 Lợi ích: **rollout dần và rollback tức thì**. Tile mới bị lỗi? Đổi manifest về `v37`, xong trong 5 phút. Không cần purge gì cả.
 
-> ⚠️ **Bẫy**: Đừng version toàn cầu cho **mọi** thay đổi nhỏ. Nếu một con đường ở Hà Nội đổi mà bạn bump version toàn cầu, bạn vừa làm mất hiệu lực cache của cả hành tinh — CDN miss 100% trong vài giờ, origin bị đè bẹp. Thực tế người ta version **theo vùng**: `/tiles/{region}/{version}/{z}/{x}/{y}`, và chỉ bump version của vùng thật sự đổi.
+> **Bẫy**: Đừng version toàn cầu cho **mọi** thay đổi nhỏ. Nếu một con đường ở Hà Nội đổi mà bạn bump version toàn cầu, bạn vừa làm mất hiệu lực cache của cả hành tinh — CDN miss 100% trong vài giờ, origin bị đè bẹp. Thực tế người ta version **theo vùng**: `/tiles/{region}/{version}/{z}/{x}/{y}`, và chỉ bump version của vùng thật sự đổi.
 
 
 ---
@@ -699,17 +699,17 @@ Chuyến TP.HCM → Hà Nội, chiến lược phân cấp:
 
 Đây chính là **hierarchical routing**, và nó phản ánh đúng cách con người nghĩ về đường đi: bạn không nhớ từng ngã rẽ suốt 1,700 km, bạn nhớ "ra Quốc lộ 1, đi tới Hà Nội, rồi tìm đường vào nhà".
 
-> 💡 **Nguyên tắc**: Phân cấp hoạt động được vì **một tính chất thật của mạng lưới đường**: một chuyến đi càng dài thì tỉ lệ quãng đường nằm trên đường cấp cao càng lớn. Chuyến 1,700 km có >97% quãng đường trên cao tốc/quốc lộ. Không có tính chất này — ví dụ trên một đồ thị ngẫu nhiên — phân cấp sẽ vô dụng. Nói được câu này là bạn cho thấy hiểu **vì sao** kỹ thuật hoạt động, chứ không chỉ **nó là gì**.
+> **Nguyên tắc**: Phân cấp hoạt động được vì **một tính chất thật của mạng lưới đường**: một chuyến đi càng dài thì tỉ lệ quãng đường nằm trên đường cấp cao càng lớn. Chuyến 1,700 km có >97% quãng đường trên cao tốc/quốc lộ. Không có tính chất này — ví dụ trên một đồ thị ngẫu nhiên — phân cấp sẽ vô dụng. Nói được câu này là bạn cho thấy hiểu **vì sao** kỹ thuật hoạt động, chứ không chỉ **nó là gì**.
 
-> ⚠️ **Bẫy**: Phân cấp là **heuristic, không đảm bảo tối ưu**. Có thể tồn tại một con đường tỉnh lộ cắt ngang ngắn hơn cao tốc, nhưng vì nó không có trong Level 2 nên thuật toán không thấy. Trong thực tế người ta chấp nhận: sai lệch thường < 1% và người dùng không phân biệt được. **Nói ra sự đánh đổi này** thay vì giả vờ kết quả luôn tối ưu — đó là dấu hiệu của ứng viên cấp cao.
+> **Bẫy**: Phân cấp là **heuristic, không đảm bảo tối ưu**. Có thể tồn tại một con đường tỉnh lộ cắt ngang ngắn hơn cao tốc, nhưng vì nó không có trong Level 2 nên thuật toán không thấy. Trong thực tế người ta chấp nhận: sai lệch thường < 1% và người dùng không phân biệt được. **Nói ra sự đánh đổi này** thay vì giả vờ kết quả luôn tối ưu — đó là dấu hiệu của ứng viên cấp cao.
 
 ### 7.4 Lưu routing tile ở đâu
 
 | Phương án | Ưu | Nhược | Kết luận |
 |---|---|---|---|
-| **Database quan hệ** (bảng nodes, edges) | Query linh hoạt, cập nhật từng dòng | Duyệt đồ thị thành hàng triệu query. Chậm hơn 1000× | ❌ Sai hoàn toàn |
-| **Graph database** (Neo4j...) | Mô hình đúng, có ngôn ngữ truy vấn đồ thị | Overhead transaction/ACID mà ta không cần; khó scale tới tỉ cạnh; vẫn chậm hơn cấu trúc in-memory chuyên dụng | ❌ Nghe hợp lý nhưng sai |
-| **Object storage (S3) chứa file nhị phân, cache trong RAM của routing server** | Đơn giản, rẻ, bất biến, dễ version. Tile nén thành mảng kề (adjacency array) đọc là dùng ngay | Cập nhật = build lại tile, không sửa từng dòng | ✅ **Đúng** |
+| **Database quan hệ** (bảng nodes, edges) | Query linh hoạt, cập nhật từng dòng | Duyệt đồ thị thành hàng triệu query. Chậm hơn 1000× | ✗ Sai hoàn toàn |
+| **Graph database** (Neo4j...) | Mô hình đúng, có ngôn ngữ truy vấn đồ thị | Overhead transaction/ACID mà ta không cần; khó scale tới tỉ cạnh; vẫn chậm hơn cấu trúc in-memory chuyên dụng | ✗ Nghe hợp lý nhưng sai |
+| **Object storage (S3) chứa file nhị phân, cache trong RAM của routing server** | Đơn giản, rẻ, bất biến, dễ version. Tile nén thành mảng kề (adjacency array) đọc là dùng ngay | Cập nhật = build lại tile, không sửa từng dòng | ✓ **Đúng** |
 
 Định dạng tile nên là **compressed adjacency array**, không phải danh sách kề bằng con trỏ:
 
@@ -729,7 +729,7 @@ Lợi ích:
   - mmap thẳng từ file → OS tự quản lý page cache, khởi động gần như tức thì
 ```
 
-> 💡 **Nguyên tắc**: Ở tầng thuật toán trên dữ liệu lớn, **bố trí bộ nhớ quan trọng ngang với độ phức tạp thuật toán**. Một A\* viết tốt trên adjacency array có thể nhanh hơn 10–50 lần chính nó viết trên cấu trúc object — cùng một O(...).
+> **Nguyên tắc**: Ở tầng thuật toán trên dữ liệu lớn, **bố trí bộ nhớ quan trọng ngang với độ phức tạp thuật toán**. Một A\* viết tốt trên adjacency array có thể nhanh hơn 10–50 lần chính nó viết trên cấu trúc object — cùng một O(...).
 
 ### 7.5 Quản lý cache routing tile trong routing server
 
@@ -750,7 +750,7 @@ Kèm một tối ưu lớn: **định tuyến request theo vùng địa lý**. G
 
 Đây đúng là bài toán **cache affinity** mà consistent hashing (sd-09) giải: băm theo **geohash của điểm xuất phát** thay vì theo user id.
 
-> ⚠️ **Bẫy**: Băm theo geohash tạo ra **hot partition** — server phụ trách Tokyo/Jakarta/Delhi nhận tải gấp hàng nghìn lần server phụ trách sa mạc Sahara. Khắc phục: gán **số lượng server tỉ lệ với tải lịch sử của vùng** (một dạng weighted consistent hashing), và cho phép tràn sang nhóm kế cận khi quá tải — chịu hit rate thấp hơn còn hơn từ chối request.
+> **Bẫy**: Băm theo geohash tạo ra **hot partition** — server phụ trách Tokyo/Jakarta/Delhi nhận tải gấp hàng nghìn lần server phụ trách sa mạc Sahara. Khắc phục: gán **số lượng server tỉ lệ với tải lịch sử của vùng** (một dạng weighted consistent hashing), và cho phép tràn sang nhóm kế cận khi quá tải — chịu hit rate thấp hơn còn hơn từ chối request.
 
 ---
 
@@ -818,7 +818,7 @@ Vùng A* khám phá: một hình ELIP hướng về đích
 
 **Và vẫn quá chậm.** Vài chục triệu nút vẫn là vài giây. Lý do sâu xa: heuristic hình học **quá yếu** vì nó không biết gì về mạng lưới đường. Nó không biết có cao tốc thẳng tắp hay có dãy núi chắn ngang. Ở châu Âu/Bắc Mỹ, tăng tốc thực tế của A\* thường chỉ **2–3 lần** — đáng giá, nhưng không đủ cứu chuyến xuyên lục địa.
 
-> ⚠️ **Bẫy phổ biến nhất của bài này**: dừng lại ở "dùng A* thay Dijkstra". Nhiều ứng viên nói đúng câu đó rồi tưởng đã xong. Người phỏng vấn giỏi sẽ hỏi ngay: *"A* nhanh hơn bao nhiêu lần? Có đủ cho chuyến xuyên lục địa không?"* — và đáp án trung thực là **không đủ, kém 2–3 bậc độ lớn**.
+> **Bẫy phổ biến nhất của bài này**: dừng lại ở "dùng A* thay Dijkstra". Nhiều ứng viên nói đúng câu đó rồi tưởng đã xong. Người phỏng vấn giỏi sẽ hỏi ngay: *"A* nhanh hơn bao nhiêu lần? Có đủ cho chuyến xuyên lục địa không?"* — và đáp án trung thực là **không đủ, kém 2–3 bậc độ lớn**.
 
 ### 8.3 Bidirectional search — chặt đôi vùng tìm kiếm
 
@@ -838,7 +838,7 @@ Trong thực tế trên mạng đường (chiều "fractal" ~1.5–2), lợi íc
 thường là 2–4 lần. Và lợi ích lớn hơn nhiều khi kết hợp với CH (§8.4).
 ```
 
-> ⚠️ **Bẫy**: điều kiện dừng của bidirectional **không phải** "khi hai vùng chạm nhau lần đầu". Nút gặp đầu tiên chưa chắc nằm trên đường ngắn nhất. Điều kiện đúng: dừng khi `top(queue_forward) + top(queue_backward) ≥ độ_dài_đường_tốt_nhất_đã_tìm_thấy`, và phải tiếp tục cập nhật đáp án tốt nhất mỗi khi một nút được cả hai phía chạm tới. Đây là lỗi kinh điển, và nói đúng chi tiết này ghi điểm rất mạnh.
+> **Bẫy**: điều kiện dừng của bidirectional **không phải** "khi hai vùng chạm nhau lần đầu". Nút gặp đầu tiên chưa chắc nằm trên đường ngắn nhất. Điều kiện đúng: dừng khi `top(queue_forward) + top(queue_backward) ≥ độ_dài_đường_tốt_nhất_đã_tìm_thấy`, và phải tiếp tục cập nhật đáp án tốt nhất mỗi khi một nút được cả hai phía chạm tới. Đây là lỗi kinh điển, và nói đúng chi tiết này ghi điểm rất mạnh.
 
 ### 8.4 Contraction Hierarchies — tiền xử lý offline, tăng tốc hàng nghìn lần
 
@@ -890,18 +890,18 @@ Sau khi tìm được đường trên đồ thị đã co, phải **bung (unpack
 
 | Phương pháp | Tiền xử lý | Thời gian truy vấn (đường 1,000 km) | Bộ nhớ thêm | Tối ưu? |
 |---|---|---|---|---|
-| Dijkstra | 0 | ~10–30 s | 0 | ✅ |
-| A\* (haversine) | 0 | ~3–10 s | 0 | ✅ |
-| A\* + bidirectional | 0 | ~1–3 s | 0 | ✅ |
-| Hierarchical tiles (§7.3) | Vài giờ | ~100–500 ms | ~1.5× | ❌ heuristic |
-| **Contraction Hierarchies** | Vài giờ–ngày | **~0.1–5 ms** | ~1.5–2× | ✅ **vẫn tối ưu!** |
-| CH + goal-directed (CALT/hub labels) | Lâu hơn nữa | **< 0.1 ms** | ~10–50× | ✅ |
+| Dijkstra | 0 | ~10–30 s | 0 | ✓ |
+| A\* (haversine) | 0 | ~3–10 s | 0 | ✓ |
+| A\* + bidirectional | 0 | ~1–3 s | 0 | ✓ |
+| Hierarchical tiles (§7.3) | Vài giờ | ~100–500 ms | ~1.5× | ✗ heuristic |
+| **Contraction Hierarchies** | Vài giờ–ngày | **~0.1–5 ms** | ~1.5–2× | ✓ **vẫn tối ưu!** |
+| CH + goal-directed (CALT/hub labels) | Lâu hơn nữa | **< 0.1 ms** | ~10–50× | ✓ |
 
 Điều khiến CH ấn tượng: nó **vừa nhanh hơn hàng nghìn lần, vừa vẫn cho đúng đường tối ưu**. Không phải một heuristic đánh đổi chất lượng — nó là một phép biến đổi bảo toàn đáp án.
 
 **Nhưng CH có một điểm yếu chí mạng, và đây là câu hỏi tiếp theo mà người phỏng vấn giỏi sẽ hỏi:**
 
-> ⚠️ **CH giả định trọng số cạnh là tĩnh.** Tiền xử lý mất hàng giờ. Nhưng trọng số của ta **đổi mỗi vài phút theo tình hình giao thông**. Nếu phải chạy lại CH mỗi khi có tắc đường, kỹ thuật này vô dụng.
+> **CH giả định trọng số cạnh là tĩnh.** Tiền xử lý mất hàng giờ. Nhưng trọng số của ta **đổi mỗi vài phút theo tình hình giao thông**. Nếu phải chạy lại CH mỗi khi có tắc đường, kỹ thuật này vô dụng.
 
 Ba cách xử lý, và bạn nên nêu cả ba rồi chọn:
 
@@ -929,7 +929,7 @@ thật sự ảnh hưởng và nơi có nhiều lựa chọn thay thế), traffi
 customize theo lô ở PHẦN GIỮA (nơi chỉ có vài lựa chọn cao tốc).
 ```
 
-> 💡 **Nguyên tắc**: Khi một kỹ thuật tăng tốc mạnh nhưng đòi hỏi tiền xử lý đắt, câu hỏi đúng không phải "dùng hay không dùng", mà **"phần nào của bài toán thật sự đổi thường xuyên?"**. Ở đây: *cấu trúc* mạng lưới gần như bất biến, chỉ có *trọng số* đổi. Tách hai thứ đó ra chính là toàn bộ ý tưởng của CRP.
+> **Nguyên tắc**: Khi một kỹ thuật tăng tốc mạnh nhưng đòi hỏi tiền xử lý đắt, câu hỏi đúng không phải "dùng hay không dùng", mà **"phần nào của bài toán thật sự đổi thường xuyên?"**. Ở đây: *cấu trúc* mạng lưới gần như bất biến, chỉ có *trọng số* đổi. Tách hai thứ đó ra chính là toàn bộ ý tưởng của CRP.
 
 ### 8.5 Nhiều loại route và hàm chi phí (cost function)
 
@@ -947,11 +947,11 @@ cost(edge) = base_time(edge) × traffic_factor(edge, t)
 | Loại route | Hàm chi phí | Điểm cần lưu ý |
 |---|---|---|
 | **Nhanh nhất** (mặc định) | `cost = thời gian đi có traffic` | Traffic factor là tất cả |
-| **Ngắn nhất** | `cost = length_m` | ⚠️ Hay ra route tệ: xuyên khu dân cư, nhiều đèn đỏ, tiết kiệm 200 m nhưng mất thêm 8 phút. Vì thế mặc định **không** là "ngắn nhất" |
+| **Ngắn nhất** | `cost = length_m` | Hay ra route tệ: xuyên khu dân cư, nhiều đèn đỏ, tiết kiệm 200 m nhưng mất thêm 8 phút. Vì thế mặc định **không** là "ngắn nhất" |
 | **Tránh phí** | `toll_cost × ∞` (hoặc một số rất lớn) | Dùng ∞ = cấm tuyệt đối; dùng số lớn hữu hạn = "tránh nếu không quá bất tiện" — cách sau thường tốt hơn cho trải nghiệm |
-| **Tránh cao tốc** | `road_class_penalty` cao cho motorway | ⚠️ Phá vỡ CH! Vì CH giả định cao tốc là nút hạng cao. Thường phải dùng đồ thị/metric riêng cho chế độ này |
+| **Tránh cao tốc** | `road_class_penalty` cao cho motorway | Phá vỡ CH! Vì CH giả định cao tốc là nút hạng cao. Thường phải dùng đồ thị/metric riêng cho chế độ này |
 | **Xe đạp** | Ưu tiên làn xe đạp, phạt độ dốc **rất mạnh** và **bất đối xứng** (lên dốc đắt hơn xuống dốc nhiều), phạt đường ô tô đông | Đồ thị khác hẳn: nhiều cạnh ô tô không đi được, và nhiều cạnh chỉ xe đạp/đi bộ mới đi được |
-| **Đi bộ** | Bỏ hoàn toàn oneway (đi bộ đi hai chiều được), thêm lối tắt, cầu vượt bộ hành, tốc độ ~5 km/h | ⚠️ Tuyệt đối không dùng đồ thị ô tô: sẽ chỉ người ta đi bộ lên đường cao tốc |
+| **Đi bộ** | Bỏ hoàn toàn oneway (đi bộ đi hai chiều được), thêm lối tắt, cầu vượt bộ hành, tốc độ ~5 km/h | Tuyệt đối không dùng đồ thị ô tô: sẽ chỉ người ta đi bộ lên đường cao tốc |
 | **Tiết kiệm nhiên liệu** | Phạt tăng/giảm tốc, ưu tiên tốc độ ổn định, phạt độ dốc lên | Cần mô hình tiêu hao theo loại xe |
 | **Xe tải** | Thêm ràng buộc cứng: chiều cao cầu, tải trọng, cấm giờ, hàng nguy hiểm | Đây là các ràng buộc **lọc cạnh**, không phải chi phí |
 
@@ -970,7 +970,7 @@ Số bộ dữ liệu = số mode × số profile
    ⇒ Đây là đánh đổi RẤT đáng: tốn storage rẻ để đổi lấy CPU đắt.
 ```
 
-> 💡 **Nguyên tắc**: Khi có N biến thể của cùng một phép tính và kết quả ổn định theo thời gian, hãy **precompute cả N** nếu chi phí lưu trữ nhỏ so với chi phí tính lại. Lưu trữ rẻ hơn CPU nhiều bậc — và đây là cùng một lập luận đã dẫn tới precompute map tile ở §6.4.
+> **Nguyên tắc**: Khi có N biến thể của cùng một phép tính và kết quả ổn định theo thời gian, hãy **precompute cả N** nếu chi phí lưu trữ nhỏ so với chi phí tính lại. Lưu trữ rẻ hơn CPU nhiều bậc — và đây là cùng một lập luận đã dẫn tới precompute map tile ở §6.4.
 
 ### 8.6 Nhiều phương án đường đi (alternative routes)
 
@@ -1048,7 +1048,7 @@ Nguồn dữ liệu, xếp theo chất lượng:
 
 Con số thô: 1 tỉ DAU, ~5% đang navigate ⇒ ~50 triệu thiết bị gửi vị trí, ~200K–1M điểm/giây. Đó là một mạng cảm biến dày đặc hơn mọi hệ thống hạ tầng giao thông từng xây.
 
-> ⚠️ **Quyền riêng tư — phải nói ra, đừng chờ bị hỏi**: dấu vết GPS là dữ liệu nhạy cảm bậc nhất (nó cho biết bạn ngủ ở đâu, làm ở đâu, đi khám bệnh gì). Ba biện pháp tối thiểu: **(1)** tách định danh — luồng tính traffic chỉ nhận `(session_id tạm thời, điểm)`, không nhận `user_id`; xoay `session_id` sau mỗi 10–15 phút để không ghép được cả chuyến đi; **(2)** k-anonymity — chỉ công bố tốc độ của một đoạn khi có **ít nhất k (5–10) thiết bị khác nhau** đóng góp, nếu không thì một chiếc xe duy nhất trên đường vắng sẽ bị suy ra danh tính; **(3)** cắt đầu-đuôi chuyến (~vài trăm mét quanh điểm xuất phát và điểm đến) trước khi đưa vào luồng phân tích — đó chính là nhà và nơi làm việc.
+> **Quyền riêng tư — phải nói ra, đừng chờ bị hỏi**: dấu vết GPS là dữ liệu nhạy cảm bậc nhất (nó cho biết bạn ngủ ở đâu, làm ở đâu, đi khám bệnh gì). Ba biện pháp tối thiểu: **(1)** tách định danh — luồng tính traffic chỉ nhận `(session_id tạm thời, điểm)`, không nhận `user_id`; xoay `session_id` sau mỗi 10–15 phút để không ghép được cả chuyến đi; **(2)** k-anonymity — chỉ công bố tốc độ của một đoạn khi có **ít nhất k (5–10) thiết bị khác nhau** đóng góp, nếu không thì một chiếc xe duy nhất trên đường vắng sẽ bị suy ra danh tính; **(3)** cắt đầu-đuôi chuyến (~vài trăm mét quanh điểm xuất phát và điểm đến) trước khi đưa vào luồng phân tích — đó chính là nhà và nơi làm việc.
 
 ### 9.3 Map matching — biến chuỗi GPS lệch thành chuỗi cạnh đúng
 
@@ -1116,7 +1116,7 @@ Vài chi tiết production đáng nói thêm, mỗi cái là một điểm cộn
 | **Chạy realtime hay theo lô?** | Realtime dùng **HMM cửa sổ trượt**: giữ vài giả thuyết tốt nhất trong 30–60 giây gần nhất, chốt lại khi bằng chứng đủ mạnh. Đây là *online Viterbi*, chấp nhận độ trễ vài giây để đổi lấy độ chính xác |
 | **Chi phí tính toán** | Viterbi trên ~10 cạnh ứng viên mỗi điểm, 1 triệu điểm/giây → hàng chục triệu phép tính/giây. Phải chạy trên stream engine phân tán (Flink), phân vùng **theo geohash** để mỗi worker chỉ giữ đồ thị vùng của nó |
 
-> 💡 **Nguyên tắc**: Map matching là ví dụ đẹp của mẫu *"một điểm dữ liệu thì mơ hồ, một chuỗi thì rõ ràng"*. Khi mỗi quan sát đơn lẻ quá nhiễu để quyết định, đừng cố làm sạch từng quan sát — hãy áp **ràng buộc lên cả chuỗi**. Cùng mẫu tư duy này xuất hiện ở nhận dạng giọng nói, gõ phím dự đoán và phát hiện gian lận.
+> **Nguyên tắc**: Map matching là ví dụ đẹp của mẫu *"một điểm dữ liệu thì mơ hồ, một chuỗi thì rõ ràng"*. Khi mỗi quan sát đơn lẻ quá nhiễu để quyết định, đừng cố làm sạch từng quan sát — hãy áp **ràng buộc lên cả chuỗi**. Cùng mẫu tư duy này xuất hiện ở nhận dạng giọng nói, gõ phím dự đoán và phát hiện gian lận.
 
 ### 9.4 Từ tốc độ quan sát tới trọng số cạnh
 
@@ -1194,7 +1194,7 @@ Bài toán: cho một chuỗi cạnh và thời điểm khởi hành t0,
 2. **Chỉ suy luận online phần bất thường**: những supersegment mà realtime lệch mạnh so với dự báo.
 3. Giữ một **mô hình dự phòng cực nhẹ** (trung bình lịch sử) để dùng khi hệ ML chết — xem §12.
 
-> ⚠️ **Bẫy**: đừng trả về ETA là một con số duy nhất trong nội bộ hệ thống. Hãy giữ **phân phối** (p50, p85). Hiển thị p50 cho người dùng thường, nhưng với người đang bắt chuyến bay thì p85 mới là con số họ cần. Nhiều ứng viên bỏ qua điều này, mà nó là khác biệt giữa "một con số" và "một dự báo".
+> **Bẫy**: đừng trả về ETA là một con số duy nhất trong nội bộ hệ thống. Hãy giữ **phân phối** (p50, p85). Hiển thị p50 cho người dùng thường, nhưng với người đang bắt chuyến bay thì p85 mới là con số họ cần. Nhiều ứng viên bỏ qua điều này, mà nó là khác biệt giữa "một con số" và "một dự báo".
 
 ### 9.6 Rerouting — và câu hỏi thật sự khó: *khi nào* nên báo đổi đường
 
@@ -1246,7 +1246,7 @@ Luật ngưỡng nên dùng (nêu vài điều kiện AND, đừng chỉ nêu m�
   - Đường phía trước bị ĐÓNG hoàn toàn → reroute ngay, ngưỡng không áp dụng
 ```
 
-> ⚠️ **Bẫy flapping**: nếu chỉ dùng ngưỡng "nhanh hơn 5 phút", hệ thống sẽ đẩy người dùng qua lại giữa hai tuyến mỗi khi dữ liệu dao động. Bắt buộc phải có **histeresis**: một khi đã ở tuyến A, ngưỡng để chuyển sang B phải **cao hơn** ngưỡng ban đầu để chọn B (ví dụ đòi hỏi tiết kiệm gấp rưỡi). Đây là cùng nguyên lý histeresis trong alerting (sd-17) — và chỉ ra được sự tương đồng đó là một điểm cộng rõ rệt trong phỏng vấn.
+> **Bẫy flapping**: nếu chỉ dùng ngưỡng "nhanh hơn 5 phút", hệ thống sẽ đẩy người dùng qua lại giữa hai tuyến mỗi khi dữ liệu dao động. Bắt buộc phải có **histeresis**: một khi đã ở tuyến A, ngưỡng để chuyển sang B phải **cao hơn** ngưỡng ban đầu để chọn B (ví dụ đòi hỏi tiết kiệm gấp rưỡi). Đây là cùng nguyên lý histeresis trong alerting (sd-17) — và chỉ ra được sự tương đồng đó là một điểm cộng rõ rệt trong phỏng vấn.
 
 Còn một tác động ngược đáng nói: **nếu dồn tất cả mọi người sang cùng một tuyến thay thế, tuyến đó sẽ tắc.** Hệ thống định tuyến ở quy mô này **tự ảnh hưởng tới hiện tượng nó đang đo**. Cách giảm nhẹ: phân bổ ngẫu nhiên người dùng vào nhiều tuyến thay thế gần tương đương, và đưa lưu lượng dự kiến (chứ không chỉ lưu lượng hiện tại) vào hàm chi phí.
 
@@ -1258,12 +1258,12 @@ Còn một tác động ngược đáng nói: **nếu dồn tất cả mọi ng�
 
 | Phương án | Phù hợp? | Lý do |
 |---|---|---|
-| **HTTP POST định kỳ** | ❌ | Header 600 byte cho payload 50 byte; TLS handshake lặp lại; server không đẩy xuống được |
-| **Long polling** | ⚠️ | Đẩy xuống được nhưng tốn kết nối chờ + tái lập liên tục; tệ hơn WebSocket ở mọi mặt |
-| **Server-Sent Events** | ⚠️ | Một chiều (chỉ xuống). Ta vẫn cần đường lên cho vị trí ⇒ phải ghép hai kênh |
-| **Push notification** | ❌ | Payload bé, độ trễ không đảm bảo, không có trên web |
-| **WebSocket** | ✅ | Hai chiều, một kết nối, frame overhead ~2–6 byte, giữ TLS session |
-| **UDP / QUIC** | ✅✅ | Vị trí là dữ liệu **có thể mất được**: mất điểm ở giây thứ 3 không sao, giây thứ 8 đã có điểm mới. TCP sẽ *chặn dòng* (head-of-line blocking) để truyền lại một gói đã hết giá trị. QUIC cho ta datagram không tin cậy + mã hoá + roaming IP khi đổi mạng |
+| **HTTP POST định kỳ** | ✗ | Header 600 byte cho payload 50 byte; TLS handshake lặp lại; server không đẩy xuống được |
+| **Long polling** | | Đẩy xuống được nhưng tốn kết nối chờ + tái lập liên tục; tệ hơn WebSocket ở mọi mặt |
+| **Server-Sent Events** | | Một chiều (chỉ xuống). Ta vẫn cần đường lên cho vị trí ⇒ phải ghép hai kênh |
+| **Push notification** | ✗ | Payload bé, độ trễ không đảm bảo, không có trên web |
+| **WebSocket** | ✓ | Hai chiều, một kết nối, frame overhead ~2–6 byte, giữ TLS session |
+| **UDP / QUIC** | ✓✓ | Vị trí là dữ liệu **có thể mất được**: mất điểm ở giây thứ 3 không sao, giây thứ 8 đã có điểm mới. TCP sẽ *chặn dòng* (head-of-line blocking) để truyền lại một gói đã hết giá trị. QUIC cho ta datagram không tin cậy + mã hoá + roaming IP khi đổi mạng |
 
 **Kết luận nên trình bày**: WebSocket (trên HTTP/2 hoặc HTTP/3) là mặc định đúng và là câu trả lời an toàn trong phỏng vấn. Nhưng nói thêm rằng **hướng lên của vị trí về bản chất hợp với UDP/QUIC datagram hơn**, vì dữ liệu vị trí là *lossy-tolerant*, và nêu được lý do head-of-line blocking — đó là chi tiết phân biệt ứng viên đã từng làm hệ realtime thật.
 
@@ -1283,7 +1283,7 @@ Một chi tiết vận hành: **WebSocket là stateful**, nên tầng này phả
 | ETA có traffic | **Server** | Cần dữ liệu realtime toàn cục |
 | Map matching để đóng góp dữ liệu traffic | **Server** | Cần đồ thị đầy đủ và tính toán nặng |
 
-> 💡 **Nguyên tắc**: Đẩy về client mọi thứ **cần tức thì và chỉ cần dữ liệu cục bộ**; giữ ở server mọi thứ **cần cái nhìn toàn cục**. Áp dụng luật này, app vẫn dùng được khi mạng chập chờn — mũi tên vẫn chạy, thoại vẫn nhắc rẽ, chỉ ETA là đứng yên. Đó đúng là trải nghiệm khi đi qua vùng sóng yếu.
+> **Nguyên tắc**: Đẩy về client mọi thứ **cần tức thì và chỉ cần dữ liệu cục bộ**; giữ ở server mọi thứ **cần cái nhìn toàn cục**. Áp dụng luật này, app vẫn dùng được khi mạng chập chờn — mũi tên vẫn chạy, thoại vẫn nhắc rẽ, chỉ ETA là đứng yên. Đó đúng là trải nghiệm khi đi qua vùng sóng yếu.
 
 ### 10.3 Chế độ offline
 
@@ -1297,11 +1297,11 @@ Gói offline chứa:
   - KHÔNG có: ảnh vệ tinh, Street View, traffic
 
 Hệ quả khi offline:
-  ✅ xem bản đồ, tìm địa chỉ trong vùng, tính route, chỉ đường từng bước
-  ❌ ETA chỉ dựa trên mô hình lịch sử nhúng sẵn (sai số lớn hơn)
-  ❌ không reroute theo tắc đường (vẫn reroute được khi đi lệch — vì
+  ✓ xem bản đồ, tìm địa chỉ trong vùng, tính route, chỉ đường từng bước
+  ✗ ETA chỉ dựa trên mô hình lịch sử nhúng sẵn (sai số lớn hơn)
+  ✗ không reroute theo tắc đường (vẫn reroute được khi đi lệch — vì
      việc đó chỉ cần đồ thị cục bộ)
-  ⚠️ hết hạn sau ~30 ngày → buộc tải lại, tránh chỉ đường theo bản đồ cũ
+  hết hạn sau ~30 ngày → buộc tải lại, tránh chỉ đường theo bản đồ cũ
 ```
 
 Điểm hay để nói: **chế độ offline chỉ khả thi vì routing tile nhỏ.** Một vùng cỡ một tỉnh có vài chục nghìn cạnh, nén lại chỉ vài MB. Nếu ta đã chọn kiến trúc "graph database tập trung" ở §7.4 thì offline là bất khả thi. Một quyết định lưu trữ ở tầng sâu quyết định một tính năng người dùng nhìn thấy — đó là loại liên hệ đáng nêu ra.
@@ -1347,7 +1347,7 @@ Hai nhịp cập nhật khác nhau — và đây là điểm mấu chốt:
     Routing đọc lớp phủ này và áp lên trọng số gốc lúc truy vấn.
 ```
 
-> 💡 **Nguyên tắc**: Đừng ép mọi thay đổi đi qua cùng một pipeline. Tách **thay đổi cấu trúc** (hiếm, đắt, build theo lô) khỏi **thay đổi trạng thái** (thường xuyên, rẻ, ghi đè lúc truy vấn). Không có sự tách này thì "một con đường đóng vì tai nạn" sẽ đòi rebuild một đồ thị hàng tỉ cạnh — điều bất khả thi.
+> **Nguyên tắc**: Đừng ép mọi thay đổi đi qua cùng một pipeline. Tách **thay đổi cấu trúc** (hiếm, đắt, build theo lô) khỏi **thay đổi trạng thái** (thường xuyên, rẻ, ghi đè lúc truy vấn). Không có sự tách này thì "một con đường đóng vì tai nạn" sẽ đòi rebuild một đồ thị hàng tỉ cạnh — điều bất khả thi.
 
 **Build incremental, không full rebuild.** Khi một con đường ở Quận 1 đổi, chỉ những tile chứa nó và các tile phân cấp phía trên bị ảnh hưởng:
 
@@ -1378,7 +1378,7 @@ Bản đồ phải hiển thị đúng với người xem, và "đúng" phụ th
 | **Biên giới tranh chấp** | Cùng một vùng đất, các nước vẽ khác nhau; hiển thị sai có thể bị chặn dịch vụ tại quốc gia đó | Server chọn bộ hình học biên giới theo **quốc gia phát hành app**, không theo ngôn ngữ. Đây là một **yêu cầu pháp lý**, không phải tính năng |
 | **Chỉ dẫn thoại** | Phát âm tên đường bản địa | TTS phía client, kèm gợi ý phiên âm trong dữ liệu khi cần |
 
-> ⚠️ **Bẫy**: biên giới tranh chấp là thứ duy nhất trong bài này **không giải được bằng kỹ thuật**. Nó là quyết định pháp lý/chính sách, và thiết kế chỉ cần đảm bảo **có khả năng phục vụ nhiều phiên bản hình học theo vùng phát hành**. Nêu ra được điều này cho thấy bạn nghĩ tới ràng buộc ngoài kỹ thuật — điều rất được đánh giá cao ở vị trí senior trở lên.
+> **Bẫy**: biên giới tranh chấp là thứ duy nhất trong bài này **không giải được bằng kỹ thuật**. Nó là quyết định pháp lý/chính sách, và thiết kế chỉ cần đảm bảo **có khả năng phục vụ nhiều phiên bản hình học theo vùng phát hành**. Nêu ra được điều này cho thấy bạn nghĩ tới ràng buộc ngoài kỹ thuật — điều rất được đánh giá cao ở vị trí senior trở lên.
 
 ---
 
@@ -1409,7 +1409,7 @@ Bản đồ phải hiển thị đúng với người xem, và "đúng" phụ th
 | **Geocoding** | Không nhập được địa chỉ dạng chữ | Vẫn chọn điểm trên bản đồ được; cache các truy vấn phổ biến |
 | **Offline pipeline** | Bản đồ ngừng cập nhật | **Không ảnh hưởng người dùng trong nhiều ngày.** Đây là lợi ích lớn nhất của việc tách offline khỏi online |
 
-> 💡 **Nguyên tắc thiết kế suy giảm (graceful degradation)**: xếp các thành phần theo thứ tự "mất nó thì tệ đến đâu": *bản đồ hiện ra* > *tính được đường* > *ETA đúng* > *tự đổi đường khi tắc*. Mọi fallback đều đi xuống theo thang này. Người dùng thà có bản đồ với ETA sai 20% còn hơn một màn hình trắng.
+> **Nguyên tắc thiết kế suy giảm (graceful degradation)**: xếp các thành phần theo thứ tự "mất nó thì tệ đến đâu": *bản đồ hiện ra* > *tính được đường* > *ETA đúng* > *tự đổi đường khi tắc*. Mọi fallback đều đi xuống theo thang này. Người dùng thà có bản đồ với ETA sai 20% còn hơn một màn hình trắng.
 
 ### 12.3 Suy giảm có chủ đích khi quá tải
 
@@ -1432,13 +1432,13 @@ Mức 4 (khẩn cấp):     chặn tải chuyến > 100 km; phục vụ route t�
 | Thành phần thiết kế | Dịch vụ AWS | Vì sao hợp |
 |---|---|---|
 | Phân phối map tile ở biên | **CloudFront** (+ Origin Shield) | Đúng bài của CDN: nội dung bất biến, dùng chung, cục bộ theo địa lý. Origin Shield thêm một tầng cache giữa POP và S3, giúp 400+ POP không cùng lúc đập vào origin sau mỗi lần phát hành phiên bản mới. Bật Brotli và HTTP/3 (QUIC) — HTTP/3 giúp rõ rệt trên mạng di động chập chờn |
-| Lưu 50 PB tile đã render | **S3** (Standard cho vùng nóng, **Intelligent-Tiering** cho phần đuôi dài) | Object storage thuần, không cần tính năng DB. Intelligent-Tiering rất hợp vì phân bố truy cập theo luật luỹ thừa: tile sa mạc ở z=19 sẽ tự trôi xuống tầng lạnh mà không cần ai quản lý. ⚠️ Số lượng object hàng nghìn tỉ ⇒ chi phí **request** mới là khoản lớn, không phải chi phí lưu trữ |
+| Lưu 50 PB tile đã render | **S3** (Standard cho vùng nóng, **Intelligent-Tiering** cho phần đuôi dài) | Object storage thuần, không cần tính năng DB. Intelligent-Tiering rất hợp vì phân bố truy cập theo luật luỹ thừa: tile sa mạc ở z=19 sẽ tự trôi xuống tầng lạnh mà không cần ai quản lý. Số lượng object hàng nghìn tỉ ⇒ chi phí **request** mới là khoản lớn, không phải chi phí lưu trữ |
 | Tính (z,x,y)→URL, chuẩn hoá cache key, chọn phiên bản theo vùng | **CloudFront Functions** (rẻ, dưới 1 ms) hoặc **Lambda@Edge** (khi cần logic nặng hơn) | Ép logic chọn version/locale xuống edge để giữ cache key ổn định (§6.6). CloudFront Functions đủ cho việc viết lại URL và rất rẻ ở 2 triệu QPS |
 | Render tile động cho zoom sâu (§6.4) | **Lambda** (tile lẻ) hoặc **ECS/Fargate** (khi lưu lượng đều), đặt sau CloudFront | Đuôi dài, tải rời rạc và khó đoán ⇒ đúng hình dạng của serverless. CloudFront cache kết quả nên mỗi tile chỉ render một lần |
-| Bản đồ, route, geocoding, tracker, geofence **dựng sẵn** | **Amazon Location Service** (Maps / Routes / Places / Trackers / Geofences) | Nếu bạn đang xây một sản phẩm chứ không phải xây Google Maps, đây là câu trả lời đúng: có sẵn vector tile, style, routing ma trận, geocoding, và **Trackers + Geofence Collection** cho vị trí động. ⚠️ Nhưng nó **không cho bạn kiểm soát thuật toán, hàm chi phí hay dữ liệu traffic** — nên trong phỏng vấn hãy nêu nó như baseline rồi nói rõ vì sao bài này phải tự xây |
-| Nhận vị trí từ hàng chục triệu thiết bị | **API Gateway WebSocket API** (+ Lambda) hoặc **NLB → ECS** giữ WebSocket | API Gateway WebSocket cho bạn quản lý kết nối, auth, throttle mà không phải vận hành flotilla. ⚠️ Ở mức 1 triệu QPS, chi phí per-message của API Gateway trở nên đáng kể — lúc đó NLB + fleet ECS tự quản rẻ hơn nhiều. Nêu được ngưỡng đánh đổi này ghi điểm |
+| Bản đồ, route, geocoding, tracker, geofence **dựng sẵn** | **Amazon Location Service** (Maps / Routes / Places / Trackers / Geofences) | Nếu bạn đang xây một sản phẩm chứ không phải xây Google Maps, đây là câu trả lời đúng: có sẵn vector tile, style, routing ma trận, geocoding, và **Trackers + Geofence Collection** cho vị trí động. Nhưng nó **không cho bạn kiểm soát thuật toán, hàm chi phí hay dữ liệu traffic** — nên trong phỏng vấn hãy nêu nó như baseline rồi nói rõ vì sao bài này phải tự xây |
+| Nhận vị trí từ hàng chục triệu thiết bị | **API Gateway WebSocket API** (+ Lambda) hoặc **NLB → ECS** giữ WebSocket | API Gateway WebSocket cho bạn quản lý kết nối, auth, throttle mà không phải vận hành flotilla. Ở mức 1 triệu QPS, chi phí per-message của API Gateway trở nên đáng kể — lúc đó NLB + fleet ECS tự quản rẻ hơn nhiều. Nêu được ngưỡng đánh đổi này ghi điểm |
 | Thiết bị nhúng / thiết bị IoT gửi vị trí (xe tải, đội xe) | **AWS IoT Core** | Đúng khi client là thiết bị chứ không phải app: MQTT nhẹ hơn WebSocket nhiều, có device identity bằng chứng chỉ X.509, shadow state khi mất kết nối, và rule engine đẩy thẳng vào Kinesis mà không cần server trung gian |
-| Đường ống telemetry vị trí | **Kinesis Data Streams** (phân vùng theo **geohash**, không phải user_id) | Phân vùng theo geohash để map matching ở bước sau chỉ cần giữ đồ thị vùng của shard đó trong bộ nhớ. Dùng **on-demand mode** vì tải lên xuống mạnh theo giờ cao điểm. ⚠️ Coi chừng hot shard ở các đô thị lớn — cần chia nhỏ prefix cho vùng đông |
+| Đường ống telemetry vị trí | **Kinesis Data Streams** (phân vùng theo **geohash**, không phải user_id) | Phân vùng theo geohash để map matching ở bước sau chỉ cần giữ đồ thị vùng của shard đó trong bộ nhớ. Dùng **on-demand mode** vì tải lên xuống mạnh theo giờ cao điểm. Coi chừng hot shard ở các đô thị lớn — cần chia nhỏ prefix cho vùng đông |
 | Map matching + tổng hợp tốc độ realtime | **Managed Service for Apache Flink** | Cần đúng thứ Flink mạnh: xử lý **stateful** theo khoá (giữ mấy chục giây lịch sử mỗi phiên cho HMM cửa sổ trượt), cửa sổ theo event time, watermark cho dữ liệu tới trễ (điện thoại mất sóng rồi gửi bù). Kinesis Data Analytics SQL hay Lambda đều **không** làm được HMM có trạng thái |
 | Trọng số cạnh hiện tại + lớp phủ sự cố | **ElastiCache for Redis/Valkey** (cluster mode) | Vài GB, ghi liên tục, đọc bởi mọi request routing. Đọc từ replica; mỗi routing server cache thêm cục bộ TTL 30 s để cắt bớt round-trip. Mất dữ liệu không thảm hoạ vì có fallback lịch sử |
 | Lưu lịch sử vị trí thô | **DynamoDB** (PK `session_id`, SK `timestamp`, bật TTL) hoặc **Keyspaces** (nếu muốn giữ mô hình Cassandra) | Write-heavy thuần, không cần join, không cần transaction. **TTL là bắt buộc** — đặt 7–30 ngày để dữ liệu nhạy cảm tự biến mất thay vì phải nhớ đi xoá. Ghi thẳng vào S3 qua Firehose cho phần phân tích dài hạn |
@@ -1451,7 +1451,7 @@ Mức 4 (khẩn cấp):     chặn tải chuyến > 100 km; phục vụ route t�
 | Định tuyến request theo vùng địa lý (cache affinity) | **Route 53 latency/geolocation routing** → ALB theo vùng; hoặc **ALB target group weighted** theo geohash | Hiện thực hoá ý §7.5: request TP.HCM tới cụm giữ sẵn tile TP.HCM |
 | Bảo vệ trước lạm dụng tile / cào dữ liệu | **WAF** (rate-based rule) + **CloudFront signed URL** cho lớp cao cấp | Tile không có auth ở đường nóng, nên phòng thủ phải ở edge: chặn quét lưới toạ độ có hệ thống — mối đe doạ thật với dữ liệu bản đồ |
 | Quyền riêng tư vị trí | **KMS** cho mã hoá; **S3 Lifecycle** + **DynamoDB TTL** để tự xoá; log đã làm tròn về geohash | §9.2. Đặt vòng đời dữ liệu từ ngày đầu; gỡ về sau thì đã muộn cả về kỹ thuật lẫn pháp lý |
-| Giám sát | **CloudWatch** (cache hit rate CDN, p99 route latency, Flink watermark lag, tuổi của traffic weight) | ⚠️ Metric quan trọng nhất mà người ta hay quên: **tuổi trung bình của trọng số traffic**. Hệ thống có thể "khoẻ" theo mọi metric hạ tầng trong khi đang chỉ đường bằng dữ liệu của 40 phút trước |
+| Giám sát | **CloudWatch** (cache hit rate CDN, p99 route latency, Flink watermark lag, tuổi của traffic weight) | Metric quan trọng nhất mà người ta hay quên: **tuổi trung bình của trọng số traffic**. Hệ thống có thể "khoẻ" theo mọi metric hạ tầng trong khi đang chỉ đường bằng dữ liệu của 40 phút trước |
 
 **Ba câu chốt đáng nhớ:**
 

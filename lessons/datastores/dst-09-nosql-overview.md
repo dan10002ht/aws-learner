@@ -5,7 +5,7 @@ Sau bài này bạn có thể:
 - Giải thích **vì sao NoSQL ra đời**: scale ngang (horizontal scaling), schema linh hoạt, throughput cao — và bản chất đánh đổi đằng sau.
 - Phân biệt **4 họ NoSQL chính**: key-value, document, wide-column, graph — đặc trưng lưu trữ, truy vấn và use case của mỗi họ.
 - Hiểu **BASE vs ACID** và định vị mỗi hệ theo **CAP theorem**.
-- ⚠️ Nhận ra sai lầm phổ biến nhất: **"NoSQL nhanh hơn SQL"** là SAI — và vì sao **đa số ứng dụng vẫn nên bắt đầu bằng SQL**.
+- Nhận ra sai lầm phổ biến nhất: **"NoSQL nhanh hơn SQL"** là SAI — và vì sao **đa số ứng dụng vẫn nên bắt đầu bằng SQL**.
 - Ra quyết định "khi nào thực sự cần rời bỏ SQL" dựa trên bằng chứng, không theo trend.
 
 ---
@@ -147,7 +147,7 @@ Nhắc lại CAP (đã học ở phần distributed systems): khi có **network 
 
 Nhiều hệ AP như Cassandra cho **tunable consistency**: đặt `QUORUM` cho cả read và write thì `R + W > N` đảm bảo đọc thấy ghi mới nhất (nhất quán mạnh hơn), đổi lại giảm availability khi node chết. Bạn *mua* consistency bằng availability, theo từng câu query.
 
-### 2.6 ⚠️ Cảnh báo lớn nhất: "NoSQL nhanh hơn SQL" là một huyền thoại
+### 2.6 Cảnh báo lớn nhất: "NoSQL nhanh hơn SQL" là một huyền thoại
 
 Đây là hiểu lầm tai hại nhất, phải nói thẳng:
 
@@ -212,7 +212,7 @@ Chiến lược trưởng thành là **polyglot persistence**: SQL làm nguồn 
 - **NoSQL = "Not Only SQL"**, một cái ô che **4 họ rất khác nhau**: key-value, document, wide-column, graph — chọn theo **access pattern**, không theo độ hot.
 - Ba động lực rời SQL: **scale ngang**, **schema linh hoạt**, **throughput cho pattern hẹp** — trong đó scale ngang là lý do *thật* quan trọng nhất.
 - **ACID vs BASE** là spectrum về ưu tiên correctness↔availability; **CAP** buộc chọn **CP hay AP** *khi có partition*. Nhiều hệ cho **tunable consistency**.
-- ⚠️ **"NoSQL nhanh hơn SQL" là huyền thoại**: bạn *đánh đổi* join/transaction/ad-hoc để lấy tốc độ trên một pattern. Rời SQL là mất mát, không phải nâng cấp.
+- **"NoSQL nhanh hơn SQL" là huyền thoại**: bạn *đánh đổi* join/transaction/ad-hoc để lấy tốc độ trên một pattern. Rời SQL là mất mát, không phải nâng cấp.
 - **Mặc định: bắt đầu bằng PostgreSQL.** Chỉ thêm NoSQL khi có **bằng chứng đo được**, và thường theo hướng **polyglot persistence** — thêm chứ không thay.
 
 > **Bài tiếp theo (Bài 10):** đi sâu vào **document database với MongoDB** — mô hình document, cách mô hình hoá aggregate, index, và những cạm bẫy denormalize.

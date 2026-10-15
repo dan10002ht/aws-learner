@@ -33,7 +33,7 @@ Vì sao pull lại thắng ở quy mô cloud-native:
 - **Không cần app biết địa chỉ monitoring**: app chỉ mở port, Prometheus tự tìm. Dễ chạy nhiều Prometheus song song (một cho team, một cho global) cùng scrape một target.
 - **Chống quá tải ngược**: Prometheus tự điều tiết nhịp lấy; push model dễ làm sập chính server monitoring khi có storm.
 
-> ⚠️ Pull không hợp cho **job ngắn/batch** (chạy 2 giây rồi chết, chưa kịp bị scrape). Với loại này dùng **Pushgateway**: job push metric vào Pushgateway, Prometheus scrape Pushgateway. Đừng lạm dụng Pushgateway cho service thường trực — nó phá luôn health check và giữ metric cũ mãi.
+> Pull không hợp cho **job ngắn/batch** (chạy 2 giây rồi chết, chưa kịp bị scrape). Với loại này dùng **Pushgateway**: job push metric vào Pushgateway, Prometheus scrape Pushgateway. Đừng lạm dụng Pushgateway cho service thường trực — nó phá luôn health check và giữ metric cũ mãi.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" aria-labelledby="pullT pullD" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title id="pullT">Prometheus pull model với service discovery và scrape endpoint /metrics</title>
@@ -135,7 +135,7 @@ start_http_server(8000)   # phơi /metrics ở :8000, Prometheus tự scrape
 - **Histogram** đếm số quan sát rơi vào từng **bucket** định trước (`le` = "less than or equal"). Bucket là **cumulative**. Quantile được tính *phía server* lúc query bằng `histogram_quantile()` — nghĩa là bạn **gộp được nhiều instance** rồi mới tính p99 toàn hệ thống. Đây là lý do histogram gần như luôn là lựa chọn đúng cho latency.
 - **Summary** tính quantile ngay *phía client* cho từng instance. Rẻ khi query nhưng **không cộng gộp được**: trung bình của p99 từng máy *không phải* p99 toàn cục. Chọn bucket của histogram sai thì độ chính xác quantile kém, nhưng bạn linh hoạt; summary thì quantile chính xác cho một instance nhưng cứng nhắc và không aggregate.
 
-> 💡 Quy tắc ngón tay cái: **latency → histogram** (để gộp p95/p99 nhiều instance). Chỉ dùng summary khi bạn đo một thứ đơn lẻ, không cần gộp, và muốn quantile chính xác không phụ thuộc bucket.
+> Quy tắc ngón tay cái: **latency → histogram** (để gộp p95/p99 nhiều instance). Chỉ dùng summary khi bạn đo một thứ đơn lẻ, không cần gộp, và muốn quantile chính xác không phụ thuộc bucket.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" aria-labelledby="hT hD" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title id="hT">Histogram bucket cumulative và cách histogram_quantile nội suy p95</title>
@@ -204,7 +204,7 @@ rate(http_requests_total[5m])
 increase(http_requests_total[1h])           # tổng request trong 1 giờ
 ```
 
-> ⚠️ Cửa sổ của `rate()` phải **≥ 4× scrape_interval** để chịu được 1–2 lần scrape lỗi. Scrape 15s thì `[1m]` là tối thiểu an toàn, `[5m]` mượt hơn cho alert. Quá ngắn → đồ thị đầy lỗ; quá dài → phản ứng chậm với sự cố.
+> Cửa sổ của `rate()` phải **≥ 4× scrape_interval** để chịu được 1–2 lần scrape lỗi. Scrape 15s thì `[1m]` là tối thiểu an toàn, `[5m]` mượt hơn cho alert. Quá ngắn → đồ thị đầy lỗ; quá dài → phản ứng chậm với sự cố.
 
 ### 4.3 histogram_quantile() — p95/p99 đúng cách
 
@@ -407,19 +407,19 @@ Prometheus lưu **mỗi tổ hợp label duy nhất là một time series riêng
 
 ```
 http_requests_total{method, route, status}
-= |method(5)| × |route(20)| × |status(6)| = 600 series   ✅ ổn
+= |method(5)| × |route(20)| × |status(6)| = 600 series   ✓ ổn
 ```
 
 Thêm một label giá trị vô hạn thì nổ:
 
 ```
 http_requests_total{method, route, status, user_id}
-= 600 × |user_id (1 triệu)| = 600 triệu series           💥 sập
+= 600 × |user_id (1 triệu)| = 600 triệu series           sập
 ```
 
 **Label giá trị cao (unbounded) = tử thần**: `user_id`, `email`, `request_id`, `trace_id`, `session_id`, full URL có query param, IP client, timestamp, error message thô. Mỗi giá trị mới tạo một series mới sống mãi trong RAM → Prometheus OOM, query chậm, ingest nghẽn.
 
-> ⚠️ Quy tắc vàng: **label chỉ dùng cho giá trị hữu hạn, ít, biết trước** (method, route đã normalize, status class, region, pod đến mức chấp nhận được). Thứ high-cardinality như `user_id`, `trace_id` **thuộc về log/trace, không phải metric**. Cần biết "user X gặp lỗi gì" → nhảy sang trace bằng exemplar, đừng nhét vào label.
+> Quy tắc vàng: **label chỉ dùng cho giá trị hữu hạn, ít, biết trước** (method, route đã normalize, status class, region, pod đến mức chấp nhận được). Thứ high-cardinality như `user_id`, `trace_id` **thuộc về log/trace, không phải metric**. Cần biết "user X gặp lỗi gì" → nhảy sang trace bằng exemplar, đừng nhét vào label.
 
 Mẹo phòng thủ:
 

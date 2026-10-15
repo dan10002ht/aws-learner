@@ -60,7 +60,7 @@ Cả hai đều là "trung gian chuyển tiếp request", nhưng đứng ở hai
   <text x="360" y="264" text-anchor="middle" font-size="10.5" fill="currentColor" opacity="0.7">Cùng một phần mềm (nginx) làm được cả hai — khác nhau ở CHIỀU nó phục vụ</text>
 </svg>
 
-> 💡 Ghi nhớ: mấu chốt không phải kỹ thuật mà là **hướng tin cậy**. Forward proxy bảo vệ/quản lý *client đi ra*; reverse proxy bảo vệ/điều phối *server nhận vào*. Cùng một nginx cấu hình khác đi là ra hai vai trò khác nhau.
+> Ghi nhớ: mấu chốt không phải kỹ thuật mà là **hướng tin cậy**. Forward proxy bảo vệ/quản lý *client đi ra*; reverse proxy bảo vệ/điều phối *server nhận vào*. Cùng một nginx cấu hình khác đi là ra hai vai trò khác nhau.
 
 ## 2. Sáu vai trò của reverse proxy
 
@@ -155,7 +155,7 @@ Vì sao từng dòng có mặt (những thứ hay bị thiếu trong thực tế
 - **`proxy_next_upstream`**: cho phép nginx tự thử backend khác khi gặp lỗi — nhưng **cẩn thận với POST không idempotent**, retry có thể double-write. Chỉ retry an toàn với GET/idempotent.
 - **`max_fails` / `fail_timeout`**: health check thụ động — sau 3 lần lỗi trong 15s, nginx tạm loại backend đó. Bản open source không có active health check (phải OSS module hoặc nginx Plus).
 
-> ⚠️ Bẫy production: `location` matching có thứ tự ưu tiên phức tạp (exact `=` > prefix `^~` > regex `~` > prefix thường). Cấu hình `location /` bắt hết rồi mới thêm `location /api/` phía dưới vẫn hoạt động vì prefix dài thắng, nhưng thêm một regex `~ \.php$` có thể "cướp" request bạn không ngờ. Luôn kiểm tra bằng `nginx -T` (dump toàn bộ config đã resolve) và test thật.
+> Bẫy production: `location` matching có thứ tự ưu tiên phức tạp (exact `=` > prefix `^~` > regex `~` > prefix thường). Cấu hình `location /` bắt hết rồi mới thêm `location /api/` phía dưới vẫn hoạt động vì prefix dài thắng, nhưng thêm một regex `~ \.php$` có thể "cướp" request bạn không ngờ. Luôn kiểm tra bằng `nginx -T` (dump toàn bộ config đã resolve) và test thật.
 
 ## 4. Envoy — dynamic config, xDS, sinh ra cho mesh
 
@@ -283,7 +283,7 @@ Chú ý Envoy dùng **token bucket ngay trong filter** (`local_ratelimit`) — t
 | Rate limit thuật toán | leaky bucket (`limit_req`) | token bucket (local) + global RLS service |
 | Khi nào chọn | Edge/web server, reverse proxy topology tĩnh | Sidecar trong mesh, backend động, cần retry/CB declarative |
 
-> 💡 Ghi nhớ: không phải "Envoy tốt hơn nginx". nginx thắng ở **edge tĩnh** (web server, TLS, cache, phục vụ file). Envoy thắng khi backend **động và cần policy declarative** (mesh). Nhiều hệ dùng cả hai: nginx/CDN ở ngoài cùng, Envoy sidecar bên trong.
+> Ghi nhớ: không phải "Envoy tốt hơn nginx". nginx thắng ở **edge tĩnh** (web server, TLS, cache, phục vụ file). Envoy thắng khi backend **động và cần policy declarative** (mesh). Nhiều hệ dùng cả hai: nginx/CDN ở ngoài cùng, Envoy sidecar bên trong.
 
 ## 5. Rate limiting — bốn thuật toán, chọn theo *mục đích*
 
@@ -368,7 +368,7 @@ Cũng là cái xô, nhưng góc nhìn ngược: request đổ *vào* xô (hàng 
 | **Token bucket** | **Cho phép burst tới capacity** | Nhỏ (tokens + timestamp) | **Mặc định tốt cho đa số API** — thân thiện spike thật |
 | **Leaky bucket** | **Triệt tiêu burst, output phẳng** | Nhỏ (queue depth) | Bảo vệ downstream chậm, cần rate ổn định |
 
-> 💡 Ghi nhớ một câu: **token bucket hỏi "được phép bùng bao nhiêu?"**, **leaky bucket hỏi "cho ra đều bao nhiêu?"**. Chọn token bucket khi ưu tiên trải nghiệm client (spike ngắn OK), leaky bucket khi ưu tiên bảo vệ thứ phía sau.
+> Ghi nhớ một câu: **token bucket hỏi "được phép bùng bao nhiêu?"**, **leaky bucket hỏi "cho ra đều bao nhiêu?"**. Chọn token bucket khi ưu tiên trải nghiệm client (spike ngắn OK), leaky bucket khi ưu tiên bảo vệ thứ phía sau.
 
 ## 6. Đặt rate limit ở đâu — và làm distributed với Redis
 
@@ -446,7 +446,7 @@ Vì sao Lua chứ không phải `INCR + EXPIRE`:
 - Lua chạy **một round-trip, một khối atomic** → không race giữa 5 instance, không cần distributed lock. Tốc độ cực cao (Redis single-threaded thực thi script không xen kẽ).
 - `EXPIRE` để **key idle tự dọn** — không thì mỗi user/IP để lại một key vĩnh viễn, phình bộ nhớ.
 
-> ⚠️ Bẫy production: Redis rate limiter là **single point of failure**. Redis chết thì làm gì — **fail-open** (cho qua hết, chấp nhận không limit trong lúc sự cố) hay **fail-closed** (chặn hết, an toàn nhưng sập tính năng)? Đa số chọn **fail-open cho limit "công bằng"** (thà không limit còn hơn sập) và **fail-closed cho limit "an ninh"** (brute-force login thì thà chặn). Phải quyết định *có chủ đích*, đừng để mặc định của thư viện quyết hộ.
+> Bẫy production: Redis rate limiter là **single point of failure**. Redis chết thì làm gì — **fail-open** (cho qua hết, chấp nhận không limit trong lúc sự cố) hay **fail-closed** (chặn hết, an toàn nhưng sập tính năng)? Đa số chọn **fail-open cho limit "công bằng"** (thà không limit còn hơn sập) và **fail-closed cho limit "an ninh"** (brute-force login thì thà chặn). Phải quyết định *có chủ đích*, đừng để mặc định của thư viện quyết hộ.
 
 ## 7. Trả 429 đúng chuẩn — và ba khái niệm dễ lẫn
 
@@ -485,7 +485,7 @@ Content-Type: application/problem+json
 - **Throttle** = thay vì cắt phựt, hệ *ghì tốc độ* — request vẫn chạy nhưng chậm lại (giống leaky bucket delay, hoặc bandwidth throttling). Trải nghiệm mềm hơn.
 - **Quota** = "1 triệu request/tháng" (gói trả phí). Đây là *đếm dồn dài hạn*, reset theo chu kỳ billing — không liên quan burst tức thời. Một hệ thường có **cả ba**: quota tháng theo gói, rate limit giây để chống spike, throttle để làm mượt.
 
-> ⚠️ Bẫy production: đừng gộp mọi thứ vào một con số. "100 request" mà không nói *trên bao lâu* và *theo ai (IP/user/key/endpoint)* là vô nghĩa. Và **key rate limit phải đúng chiều**: limit theo IP dễ bị NAT (cả văn phòng chung một IP bị chặn oan) hoặc bị vượt (attacker đổi IP); limit theo API key/user chính xác hơn nhưng cần đã xác thực. Thực tế phối hợp nhiều tầng: IP thô ở edge, user/key tinh ở gateway.
+> Bẫy production: đừng gộp mọi thứ vào một con số. "100 request" mà không nói *trên bao lâu* và *theo ai (IP/user/key/endpoint)* là vô nghĩa. Và **key rate limit phải đúng chiều**: limit theo IP dễ bị NAT (cả văn phòng chung một IP bị chặn oan) hoặc bị vượt (attacker đổi IP); limit theo API key/user chính xác hơn nhưng cần đã xác thực. Thực tế phối hợp nhiều tầng: IP thô ở edge, user/key tinh ở gateway.
 
 ## Tóm tắt
 

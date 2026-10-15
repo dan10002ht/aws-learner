@@ -60,9 +60,9 @@ Day la bay so 1 cua ca bai. Hai khai niem TEN giong nhau nhung muc dich KHAC HOA
   <text x="16" y="302" font-size="11" fill="currentColor" opacity="0.7">Reserved = bao nhieu concurrency duoc cap. Provisioned = bao nhieu trong so do da am san.</text>
 </svg>
 
-> ⚠️ **Bay:** "Function A dang lam can kiet concurrency khien function B bi throttle" -> dap an la **Reserved Concurrency** (de gioi han A va dam bao B co phan), KHONG phai Provisioned. Provisioned chi de chong cold start.
+> **Bay:** "Function A dang lam can kiet concurrency khien function B bi throttle" -> dap an la **Reserved Concurrency** (de gioi han A va dam bao B co phan), KHONG phai Provisioned. Provisioned chi de chong cold start.
 
-> ⚠️ **Bay:** Dat **Reserved Concurrency = 0** se **vo hieu hoa hoan toan** function (throttle 100%). Day la cach "tat khan cap" mot function ma khong xoa.
+> **Bay:** Dat **Reserved Concurrency = 0** se **vo hieu hoa hoan toan** function (throttle 100%). Day la cach "tat khan cap" mot function ma khong xoa.
 
 ```bash
 # Reserved: function nay toi da 100 concurrent, va dam bao co 100
@@ -75,7 +75,7 @@ aws lambda put-provisioned-concurrency-config \
   --provisioned-concurrent-executions 50
 ```
 
-> 💡 **Meo thi:** Provisioned Concurrency **phai** tro vao mot **alias** hoac **version** cu the (KHONG dung duoc `$LATEST`). Cau hoi co `$LATEST` + provisioned = sai.
+> **Meo thi:** Provisioned Concurrency **phai** tro vao mot **alias** hoac **version** cu the (KHONG dung duoc `$LATEST`). Cau hoi co `$LATEST` + provisioned = sai.
 
 ### Cold Start - nguyen nhan & giam thieu
 
@@ -97,7 +97,7 @@ Cach giam thieu:
 | **SnapStart** (Java) | Snapshot moi truong da init, restore nhanh (mien phi) |
 | Tang memory | Init nhanh hon vi nhieu CPU hon |
 
-> 💡 **Meo thi:** Cau hoi "Java + cold start + muon mien phi" -> **SnapStart**. "Bat ky runtime + can latency on dinh + chiu tra phi" -> **Provisioned Concurrency".
+> **Meo thi:** Cau hoi "Java + cold start + muon mien phi" -> **SnapStart**. "Bat ky runtime + can latency on dinh + chiu tra phi" -> **Provisioned Concurrency".
 
 ## 2. Lambda Memory - CPU Coupling & Power Tuning
 
@@ -116,11 +116,11 @@ Vi du minh hoa (so gia dinh):
 | 1024 MB | 1.5 s | 1.5 | Cung gia, nhanh gap 8 |
 | 1769 MB | 1.0 s | ~1.73 | 1 vCPU day du, hoi dat hon |
 
-> 💡 **Meo thi:** **1769 MB = chinh xac 1 vCPU**. Tren nguong nay moi co them vCPU thu hai (function multi-thread moi tan dung duoc).
+> **Meo thi:** **1769 MB = chinh xac 1 vCPU**. Tren nguong nay moi co them vCPU thu hai (function multi-thread moi tan dung duoc).
 
 **AWS Lambda Power Tuning**: cong cu open-source (Step Functions state machine) chay function o nhieu muc memory, ve bieu do cost vs speed de chon diem toi uu.
 
-> ⚠️ **Bay:** "Function chay cham, da tang memory nhung function single-thread" -> qua 1769 MB se KHONG nhanh them dang ke vi chi co 1 thread khong dung duoc vCPU thu 2. Dap an thuong la toi uu code hoac giu o muc 1 vCPU.
+> **Bay:** "Function chay cham, da tang memory nhung function single-thread" -> qua 1769 MB se KHONG nhanh them dang ke vi chi co 1 thread khong dung duoc vCPU thu 2. Dap an thuong la toi uu code hoac giu o muc 1 vCPU.
 
 ## 3. ElastiCache
 
@@ -138,7 +138,7 @@ Cache in-memory dat truoc database de giam latency va offload read. Hai engine:
 | Sharding | Cluster mode | Tu phan tan client-side |
 | Use case | Leaderboard, session, queue, can HA/persistence | Cache don gian, can scale ngang nhanh bang nhieu core |
 
-> 💡 **Meo thi:** Bat ky tu khoa nao trong {persistence, replication, Multi-AZ, failover, sorted set, leaderboard, pub/sub, geospatial} -> **Redis**. "Don gian, multi-threaded, scale horizontally nhanh" -> **Memcached**.
+> **Meo thi:** Bat ky tu khoa nao trong {persistence, replication, Multi-AZ, failover, sorted set, leaderboard, pub/sub, geospatial} -> **Redis**. "Don gian, multi-threaded, scale horizontally nhanh" -> **Memcached**.
 
 ### Caching Strategies: Lazy Loading vs Write-Through
 
@@ -220,9 +220,9 @@ def save_user(user_id, data):
   </defs>
 </svg>
 
-> 💡 **Meo thi:** Thuc te thuong **ket hop ca hai** + **TTL**. TTL la "luoi an toan" chong stale data du dung chien luoc nao. Cau hoi "cache co data cu" hau nhu luon co dap an dinh den **them/giam TTL**.
+> **Meo thi:** Thuc te thuong **ket hop ca hai** + **TTL**. TTL la "luoi an toan" chong stale data du dung chien luoc nao. Cau hoi "cache co data cu" hau nhu luon co dap an dinh den **them/giam TTL**.
 
-> ⚠️ **Bay:** 
+> **Bay:**
 > - "Muon dam bao data vua ghi co ngay trong cache, chap nhan cache to" -> **Write-Through**.
 > - "Cache chi chua data thuc su duoc doc, tiet kiem bo nho" -> **Lazy Loading**.
 > - "Du lieu cache bi cu/stale" -> them **TTL** (hoac giam TTL).
@@ -243,11 +243,11 @@ Diem manh la **khong phai sua logic ung dung**: DAX co API tuong thich DynamoDB,
 | Use case | Read-heavy DynamoDB, eventually consistent | Cache bat ky nguon nao, can data structure |
 | Strongly consistent read | **KHONG cache** (pass-through xuong DynamoDB) | - |
 
-> ⚠️ **Bay:** DAX chi tang toc **eventually consistent reads**. Neu app yeu cau **strongly consistent read**, DAX se di thang xuong DynamoDB -> khong giam latency. Cau hoi co "strongly consistent" + "DAX khong nhanh" la day.
+> **Bay:** DAX chi tang toc **eventually consistent reads**. Neu app yeu cau **strongly consistent read**, DAX se di thang xuong DynamoDB -> khong giam latency. Cau hoi co "strongly consistent" + "DAX khong nhanh" la day.
 
-> ⚠️ **Bay:** "Read-heavy tren DynamoDB, muon microsecond, KHONG muon sua nhieu code" -> **DAX**. Neu de them "can cache data tu nhieu nguon / can sorted set / leaderboard" -> **ElastiCache Redis** chu khong phai DAX.
+> **Bay:** "Read-heavy tren DynamoDB, muon microsecond, KHONG muon sua nhieu code" -> **DAX**. Neu de them "can cache data tu nhieu nguon / can sorted set / leaderboard" -> **ElastiCache Redis** chu khong phai DAX.
 
-> 💡 **Meo thi:** DAX **khong giai quyet** loi **write throttling** (provisioned write capacity). DAX chi cho read. Throttle ghi -> tang WCU hoac dung on-demand / exponential backoff.
+> **Meo thi:** DAX **khong giai quyet** loi **write throttling** (provisioned write capacity). DAX chi cho read. Throttle ghi -> tang WCU hoac dung on-demand / exponential backoff.
 
 ## 5. API Gateway Caching
 
@@ -269,9 +269,9 @@ aws apigateway update-stage --rest-api-id abc123 --stage-name prod \
     op=replace,path=/*/*/caching/ttlInSeconds,value=300
 ```
 
-> ⚠️ **Bay:** Neu khong cau hinh **cache key** theo query/header ma cac request khac nhau chi khac query param -> tat ca tra **cung 1 response cache** (sai data). Phai them param vao cache key.
+> **Bay:** Neu khong cau hinh **cache key** theo query/header ma cac request khac nhau chi khac query param -> tat ca tra **cung 1 response cache** (sai data). Phai them param vao cache key.
 
-> 💡 **Meo thi:** "Giam tai backend / giam so lan goi Lambda integration cho GET lap lai" -> bat **API Gateway cache**. Set TTL phu hop voi do tuoi du lieu chap nhan duoc.
+> **Meo thi:** "Giam tai backend / giam so lan goi Lambda integration cho GET lap lai" -> bat **API Gateway cache**. Set TTL phu hop voi do tuoi du lieu chap nhan duoc.
 
 ## 6. CloudFront Caching
 
@@ -287,14 +287,14 @@ Cac yeu to dieu khien cache:
 | **Origin Request Policy** | Quyet dinh forward gi xuong origin (tach biet cache key) |
 | TTL | Min / Default / Max TTL; origin co the gui `Cache-Control` |
 
-> ⚠️ **Bay:** Cache **theo header / query / cookie** lam **giam cache hit ratio** vi tao nhieu bien the cache key. Chi cache theo nhung gi **thuc su lam thay doi response**. Cau hoi "hit ratio thap" thuong do cache key chua qua nhieu thanh phan (vi du forward het cookie).
+> **Bay:** Cache **theo header / query / cookie** lam **giam cache hit ratio** vi tao nhieu bien the cache key. Chi cache theo nhung gi **thuc su lam thay doi response**. Cau hoi "hit ratio thap" thuong do cache key chua qua nhieu thanh phan (vi du forward het cookie).
 
-> 💡 **Meo thi:**
+> **Meo thi:**
 > - Static content (anh, JS, CSS) it doi -> TTL dai.
 > - Dynamic theo user -> tach cache behavior, hoac khong cache (TTL=0).
 > - **Invalidation** CloudFront ton phi va cham; thay vi do dung **versioned filename** (`app.v2.js`) de bust cache mien phi.
 
-> ⚠️ **Bay:** API Gateway cache vs CloudFront cache: cau hoi "cache o **edge gan user**" -> CloudFront. "Cache **response cua REST API stage**" -> API Gateway. CloudFront tot cho geographic distribution.
+> **Bay:** API Gateway cache vs CloudFront cache: cau hoi "cache o **edge gan user**" -> CloudFront. "Cache **response cua REST API stage**" -> API Gateway. CloudFront tot cho geographic distribution.
 
 ## 7. S3 Transfer Acceleration
 
@@ -310,9 +310,9 @@ Tang toc **upload/download** S3 qua khoang cach dia ly xa bang cach di qua **Clo
 | File rat lon (>100MB) upload | **Multipart Upload** (song song, resume duoc) |
 | Ket hop ca hai | TA + Multipart |
 
-> 💡 **Meo thi:** "User toan cau upload len 1 bucket o us-east-1, latency cao" -> **Transfer Acceleration**. "Upload file 5GB nhanh va chong loi" -> **Multipart Upload**. Hai cai nay hay xuat hien chung va co the ket hop.
+> **Meo thi:** "User toan cau upload len 1 bucket o us-east-1, latency cao" -> **Transfer Acceleration**. "Upload file 5GB nhanh va chong loi" -> **Multipart Upload**. Hai cai nay hay xuat hien chung va co the ket hop.
 
-> ⚠️ **Bay:** Transfer Acceleration **khong** giup gi neu client va bucket **cung region / gan nhau** (Speed Comparison tool se bao khong loi). Dung tien vo ich.
+> **Bay:** Transfer Acceleration **khong** giup gi neu client va bucket **cung region / gan nhau** (Speed Comparison tool se bao khong loi). Dung tien vo ich.
 
 ## 8. SNS Message Filtering (giam xu ly thua)
 
@@ -335,9 +335,9 @@ Message chi duoc gui toi subscriber neu **moi thuoc tinh** trong policy khop (lo
 | Khong filter, subscriber tu loc | Tat ca message deu invoke Lambda/vao SQS -> ton compute, ton tien |
 | **SNS filter policy** | Subscriber chi nhan message lien quan -> giam invocation thua |
 
-> 💡 **Meo thi:** "Lambda bi invoke cho ca message khong lien quan, muon giam chi phi/xu ly thua" -> them **SNS subscription filter policy**. Day la cach giam invocation **truoc khi** message toi subscriber.
+> **Meo thi:** "Lambda bi invoke cho ca message khong lien quan, muon giam chi phi/xu ly thua" -> them **SNS subscription filter policy**. Day la cach giam invocation **truoc khi** message toi subscriber.
 
-> ⚠️ **Bay:** Filter mac dinh tren **message attributes**, KHONG phai body. Muon loc theo noi dung body phai set `FilterPolicyScope=MessageBody`. Cau hoi loc theo field trong JSON body ma khong doi scope -> khong hoat dong.
+> **Bay:** Filter mac dinh tren **message attributes**, KHONG phai body. Muon loc theo noi dung body phai set `FilterPolicyScope=MessageBody`. Cau hoi loc theo field trong JSON body ma khong doi scope -> khong hoat dong.
 
 ## Buc tranh hop nhat - cac tang cache tren duong request
 
@@ -396,4 +396,4 @@ Cac dich vu caching o tren khong canh tranh nhau ma **xep chong** doc theo duong
 | Upload S3 tu xa cham | **Transfer Acceleration** |
 | Lambda invoke cho message khong lien quan | **SNS filter policy** |
 
-> 💡 **Meo thi cuoi:** Domain 4 thuong hoi "trieu chung -> giai phap". Hay map nhanh: **stale = TTL**, **cold start = provisioned**, **throttle hang xom = reserved**, **DynamoDB microsecond = DAX**, **invoke thua = SNS filter**, **upload xa = TA**, **CPU-bound = memory**. Nho bang nay la qua phan lon cau Domain 4.
+> **Meo thi cuoi:** Domain 4 thuong hoi "trieu chung -> giai phap". Hay map nhanh: **stale = TTL**, **cold start = provisioned**, **throttle hang xom = reserved**, **DynamoDB microsecond = DAX**, **invoke thua = SNS filter**, **upload xa = TA**, **CPU-bound = memory**. Nho bang nay la qua phan lon cau Domain 4.

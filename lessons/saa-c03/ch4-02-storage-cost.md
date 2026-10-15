@@ -4,7 +4,7 @@
 
 Tiền đề: [[ch2-02-storage-performance]], CLF [[05-s3]].
 
-> 📏 Mọi giá trong bài là giá niêm yết **us-east-1**, làm tròn, dùng để so sánh tương quan. Đề thi không hỏi con số giá chính xác — nó hỏi bạn biết **cái gì rẻ hơn cái gì, đổi lại mất gì**. Để phép tính dễ theo dõi, bài coi 1 TB = 1.000 GB và dùng giá S3 Standard bậc đầu ($0.023/GB) cho mọi dung lượng (thực tế từ TB thứ 51 trở đi còn $0.022).
+> Mọi giá trong bài là giá niêm yết **us-east-1**, làm tròn, dùng để so sánh tương quan. Đề thi không hỏi con số giá chính xác — nó hỏi bạn biết **cái gì rẻ hơn cái gì, đổi lại mất gì**. Để phép tính dễ theo dõi, bài coi 1 TB = 1.000 GB và dùng giá S3 Standard bậc đầu ($0.023/GB) cho mọi dung lượng (thực tế từ TB thứ 51 trở đi còn $0.022).
 
 ---
 
@@ -121,7 +121,7 @@ Tầng lạnh rẻ vì AWS đặt dữ liệu trên phần cứng chậm hơn v�
 | Archive, chờ vài phút tới vài giờ được | Glacier Flexible |
 | Lưu dài hạn vì compliance, chờ 12–48 giờ được | Glacier Deep Archive |
 
-> 🪤 Bẫy thi: đề nói *"truy cập ngay lập tức / millisecond"* thì loại Glacier Flexible và Deep Archive, dù chúng rẻ nhất. Đề nói *"dữ liệu tái tạo được"* thì One Zone-IA là đáp án tiết kiệm hơn Standard-IA.
+> Bẫy thi: đề nói *"truy cập ngay lập tức / millisecond"* thì loại Glacier Flexible và Deep Archive, dù chúng rẻ nhất. Đề nói *"dữ liệu tái tạo được"* thì One Zone-IA là đáp án tiết kiệm hơn Standard-IA.
 
 ---
 
@@ -419,7 +419,7 @@ Công cụ để làm việc đó:
 - gp3 đủ cho khoảng 90% workload.
 - io2 chỉ đáng tiền khi cần IOPS vượt trần của gp3, hoặc cần độ trễ dưới 1 mili-giây ổn định (io2 Block Express: trung bình dưới 0,5 ms, tối đa 256.000 IOPS, độ bền volume 99,999% so với 99,8–99,9% của gp3).
 
-  > 📏 Trần của gp3: đề thi và phần lớn tài liệu dùng **16.000 IOPS và 1.000 MiB/s**. Docs hiện tại đã nâng lên **80.000 IOPS và 2.000 MiB/s** (volume tới 64 TiB). Gặp câu hỏi có con số "trên 16.000 IOPS" thì đáp án đề mong đợi vẫn là io2; ngoài thực tế hãy thử gp3 trước.
+  > Trần của gp3: đề thi và phần lớn tài liệu dùng **16.000 IOPS và 1.000 MiB/s**. Docs hiện tại đã nâng lên **80.000 IOPS và 2.000 MiB/s** (volume tới 64 TiB). Gặp câu hỏi có con số "trên 16.000 IOPS" thì đáp án đề mong đợi vẫn là io2; ngoài thực tế hãy thử gp3 trước.
 
 - Chuyển io2 → gp3 khi workload không cần tới mức đó. Mức tiết kiệm phụ thuộc số IOPS, vì io2 tính tiền từng IOPS đắt gấp 13 lần gp3:
 
@@ -636,7 +636,7 @@ Tiền lưu trữ chưa phải toàn bộ hoá đơn; đưa dữ liệu **ra kh�
 5. Backup cross-region cho compliance. Cost = 3x storage. Cách giảm?
 6. EFS 10TB, 95% file không truy cập 6 tháng+. Setup gì để cost giảm tự động?
 
-> 💡 Gợi ý chỗ tìm cách tính: bài 1 làm như §1 (nhân dung lượng từng phần với giá tầng của nó); bài 2 xem §2.1 và §3.2; bài 3 xem §7.2–7.3; bài 4 xem §6.5; bài 5 xem §6.2 và §11; bài 6 xem §8.2.
+> Gợi ý chỗ tìm cách tính: bài 1 làm như §1 (nhân dung lượng từng phần với giá tầng của nó); bài 2 xem §2.1 và §3.2; bài 3 xem §7.2–7.3; bài 4 xem §6.5; bài 5 xem §6.2 và §11; bài 6 xem §8.2.
 
 ---
 

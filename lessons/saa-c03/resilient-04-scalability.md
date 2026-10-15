@@ -53,7 +53,7 @@ Scalability là khả năng hệ thống xử lý được lượng tải tăng 
   </defs>
 </svg>
 
-> 💡 Mẹo thi: Đề thi gần như **luôn ưu tiên horizontal scaling** vì nó vừa tăng scalability vừa tăng availability. Khi thấy đáp án "resize to a larger instance" cho web tier có khả năng cao là bẫy. Vertical chỉ hợp lý cho thành phần khó phân tán (ví dụ một RDS primary cần ghi mạnh hơn).
+> Mẹo thi: Đề thi gần như **luôn ưu tiên horizontal scaling** vì nó vừa tăng scalability vừa tăng availability. Khi thấy đáp án "resize to a larger instance" cho web tier có khả năng cao là bẫy. Vertical chỉ hợp lý cho thành phần khó phân tán (ví dụ một RDS primary cần ghi mạnh hơn).
 
 Nguyên tắc vàng: **muốn scale out thì tier đó phải stateless**. Đẩy session/state ra ngoài (DynamoDB, ElastiCache, hoặc dùng sticky session chỉ khi bất đắc dĩ).
 
@@ -88,7 +88,7 @@ Dùng khi bạn muốn kiểm soát phản ứng cụ thể hơn target tracking
 
 **Simple scaling — bản cũ của step.** Mỗi alarm chỉ gắn **một** hành động ("CPU > 60% thì thêm 1"), và sau mỗi lần scale phải chờ hết **cooldown** rồi mới nhận alarm tiếp. *Cooldown* là khoảng nghỉ bắt buộc sau một hoạt động scale, để instance mới kịp gánh tải trước khi ASG quyết định thêm nữa; mặc định **300 giây**. Trong 300 giây đó dù tải tăng gấp ba ASG cũng đứng im — đó là lý do step scaling thay thế nó.
 
-> 📏 Cooldown 300 giây **chỉ áp cho simple scaling**. Target tracking và step scaling không dùng cooldown mà dùng **instance warmup**: khoảng thời gian một instance mới chưa được tính vào metric trung bình của nhóm (vì nó còn đang khởi động, CPU chưa phản ánh tải thật). Trong lúc đó ASG vẫn tiếp tục scale-out được nếu các instance cũ còn vượt ngưỡng.
+> Cooldown 300 giây **chỉ áp cho simple scaling**. Target tracking và step scaling không dùng cooldown mà dùng **instance warmup**: khoảng thời gian một instance mới chưa được tính vào metric trung bình của nhóm (vì nó còn đang khởi động, CPU chưa phản ánh tải thật). Trong lúc đó ASG vẫn tiếp tục scale-out được nếu các instance cũ còn vượt ngưỡng.
 
 ### 2.2 Hai policy đi trước tải (proactive scaling)
 
@@ -106,7 +106,7 @@ Dùng khi bạn muốn kiểm soát phản ứng cụ thể hơn target tracking
 | **Scheduled** | Scale theo lịch (cron) | Tải có quy luật thời gian biết trước (9h sáng thứ Hai tăng) |
 | **Predictive** | ML dự báo tải tương lai, provision trước | Tải tuần hoàn theo ngày/tuần, muốn tránh độ trễ khởi động |
 
-> 💡 Mẹo thi:
+> Mẹo thi:
 > - Tải **biết trước theo giờ/ngày** (batch tối, giờ hành chính) → **Scheduled scaling**.
 > - Tải **lặp theo chu kỳ nhưng muốn AWS tự dự báo** → **Predictive scaling**.
 > - Spike **đột ngột, không đoán được** → Target tracking phản ứng nhanh, hoặc kết hợp với queue (mục 6).
@@ -125,7 +125,7 @@ Policy phản ứng theo metric thì phải đợi metric đổi trước đã. 
 
 (Chặng 3–4 là số minh hoạ; chúng phụ thuộc hoàn toàn vào ứng dụng của bạn.) Vài phút là ổn với tải tăng dần, nhưng một flash sale tăng gấp 10 lần trong 30 giây thì ASG không đuổi kịp.
 
-> ⚠️ Bẫy: Target tracking có **độ trễ** cỡ vài phút như trên. Nếu spike rất nhanh và đề nhấn "instantaneous"/"immediate", câu trả lời thường là **kiến trúc đệm bằng queue/serverless**, không phải tinh chỉnh ASG.
+> Bẫy: Target tracking có **độ trễ** cỡ vài phút như trên. Nếu spike rất nhanh và đề nhấn "instantaneous"/"immediate", câu trả lời thường là **kiến trúc đệm bằng queue/serverless**, không phải tinh chỉnh ASG.
 
 ### 2.5 Warm pools và lifecycle hooks
 
@@ -136,7 +136,7 @@ Policy phản ứng theo metric thì phải đợi metric đổi trước đã. 
 - Lúc **launch**: cài agent, kéo config, nạp cache trước khi instance nhận traffic.
 - Lúc **terminate**: đẩy log lên S3, hoàn tất request dang dở, huỷ đăng ký khỏi hệ thống khác.
 
-> ⚠️ Bẫy: Khi instance bị terminate lúc scale-in mà connection chưa drain → dùng **lifecycle hook (Terminating:Wait)** + connection draining (deregistration delay) ở ELB, đừng để mất request đang xử lý. *Deregistration delay* là khoảng thời gian ELB ngừng gửi request mới tới instance nhưng vẫn chờ các request đang chạy hoàn tất; mặc định **300 giây**.
+> Bẫy: Khi instance bị terminate lúc scale-in mà connection chưa drain → dùng **lifecycle hook (Terminating:Wait)** + connection draining (deregistration delay) ở ELB, đừng để mất request đang xử lý. *Deregistration delay* là khoảng thời gian ELB ngừng gửi request mới tới instance nhưng vẫn chờ các request đang chạy hoàn tất; mặc định **300 giây**.
 
 ## 3. Scaling Reads — Tách Read khỏi Write
 
@@ -165,7 +165,7 @@ Cách xử lý thường gặp: những màn hình "đọc lại ngay thứ mìn
 - Replica có thể được **promote** thành một database độc lập, nhưng đó là thao tác thủ công.
 - Dùng cho: offload báo cáo/analytics khỏi primary, scale lượng đọc, đọc cross-region.
 
-> ⚠️ Bẫy phân biệt **Read Replica vs Multi-AZ**:
+> Bẫy phân biệt **Read Replica vs Multi-AZ**:
 > - **Multi-AZ** = *high availability/disaster recovery*. Standby **không phục vụ read**, chỉ để failover tự động. (Trừ Multi-AZ DB cluster mới có 2 readable standby.)
 > - **Read Replica** = *scale read performance*. Không tự failover (trừ khi promote thủ công).
 > - Câu hỏi nói "offload reads / scale read traffic" → Read Replica. Nói "survive AZ failure / automatic failover" → Multi-AZ.
@@ -207,7 +207,7 @@ Bạn chọn một trong hai engine. (ElastiCache nay có thêm **Valkey**, mộ
 | Luồng xử lý | Lệnh chạy trên một luồng chính | Đa luồng |
 | Chọn khi | Cần HA, đọc từ replica, session quan trọng, leaderboard, pub/sub | Cache đơn giản, mất dữ liệu cache cũng không sao |
 
-> 💡 Mẹo thi: thấy "high availability", "failover", "backup", "leaderboard / sorted set", "pub/sub" → **Redis**. Thấy "simple", "multi-threaded", "không cần bền vững" → **Memcached**.
+> Mẹo thi: thấy "high availability", "failover", "backup", "leaderboard / sorted set", "pub/sub" → **Redis**. Thấy "simple", "multi-threaded", "không cần bền vững" → **Memcached**.
 
 ### DynamoDB
 
@@ -254,7 +254,7 @@ Một bảng chỉ bận 2 giờ mỗi ngày rồi gần như im → on-demand. 
 
 **Global Tables** sao chép một bảng sang nhiều region và cho **ghi ở mọi region** (multi-active): user châu Âu ghi vào region châu Âu, user châu Á ghi vào region châu Á, DynamoDB tự đồng bộ hai chiều. Được cả đọc/ghi độ trễ thấp tại chỗ lẫn khả năng chịu sự cố cấp region.
 
-> 💡 Mẹo thi: "DynamoDB read latency cao, cần microsecond" → **DAX**. "Cache cho RDS / kết quả query SQL tuỳ ý" → **ElastiCache**, KHÔNG phải DAX.
+> Mẹo thi: "DynamoDB read latency cao, cần microsecond" → **DAX**. "Cache cho RDS / kết quả query SQL tuỳ ý" → **ElastiCache**, KHÔNG phải DAX.
 
 Mẫu tổng hợp tách read/write cho RDS/Aurora: app **ghi** qua một endpoint tới primary/writer, còn **đọc** đi qua reader endpoint được load-balance trên nhiều read replica, và một lớp cache đứng trước để chặn bớt read trúng DB.
 
@@ -328,7 +328,7 @@ Trên AWS có bốn chỗ đặt cache, tính từ người dùng vào trong:
 | DynamoDB | **DAX** | Item/query reads của DynamoDB |
 | API | **API Gateway caching** | Response của REST API theo stage |
 
-> 💡 Mẹo thi: "Giảm tải cho origin/web server, phục vụ user toàn cầu, hấp thụ spike đọc nội dung tĩnh" → **CloudFront**. Nó còn hấp thụ được spike đột biến (flash sale, viral) cho static/cacheable content mà không cần scale backend.
+> Mẹo thi: "Giảm tải cho origin/web server, phục vụ user toàn cầu, hấp thụ spike đọc nội dung tĩnh" → **CloudFront**. Nó còn hấp thụ được spike đột biến (flash sale, viral) cho static/cacheable content mà không cần scale backend.
 
 Mẫu kiến trúc nhiều tầng cache điển hình: **CloudFront → API Gateway (cache) → ElastiCache → RDS/DynamoDB(+DAX)**. Mỗi tầng trả lời được phần lớn request tới nó và chỉ để lọt phần miss xuống tầng sau. Ví dụ với tỉ lệ hit giả định 95% ở edge và 80% ở tầng cache ứng dụng:
 
@@ -391,7 +391,7 @@ Thực tế hay dùng **cả hai**: write-through cho dữ liệu vừa ghi, laz
 - **ELB phía trước ASG**: ALB cho HTTP/HTTPS (layer 7, path/host routing), NLB cho TCP/UDP cực nhanh và static IP.
 - **Health check** để ASG thay thế instance hỏng; **connection draining** khi scale-in.
 
-> ⚠️ Bẫy: Sticky session (session affinity) trói user vào một instance → khi instance đó scale-in, user mất session, và load phân bổ không đều. Đề thi thích đáp án **externalize session vào ElastiCache/DynamoDB** hơn là bật sticky session.
+> Bẫy: Sticky session (session affinity) trói user vào một instance → khi instance đó scale-in, user mất session, và load phân bổ không đều. Đề thi thích đáp án **externalize session vào ElastiCache/DynamoDB** hơn là bật sticky session.
 
 ## 6. Queue-Based Load Leveling — Hấp thụ Spike
 
@@ -447,7 +447,7 @@ Thực tế hay dùng **cả hai**: write-through cho dữ liệu vừa ghi, laz
   </defs>
 </svg>
 
-> 💡 Mẹo thi: Bất cứ khi nào đề mô tả "spiky/unpredictable traffic", "decouple", "không được mất request khi backend bận", "smooth out the load" → nghĩ ngay **SQS (queue-based load leveling)**.
+> Mẹo thi: Bất cứ khi nào đề mô tả "spiky/unpredictable traffic", "decouple", "không được mất request khi backend bận", "smooth out the load" → nghĩ ngay **SQS (queue-based load leveling)**.
 
 ### Phân biệt các dịch vụ decoupling
 
@@ -471,7 +471,7 @@ SQS không phải dịch vụ duy nhất đứng giữa producer và consumer. N
 | **Kinesis Data Streams** | Streaming, replay, nhiều consumer đọc cùng dữ liệu | Real-time analytics, cần thứ tự theo từng shard, giữ dữ liệu 24 giờ → 365 ngày |
 | **EventBridge** | Event bus, routing theo rule, tích hợp SaaS | Event-driven, định tuyến theo nội dung |
 
-> ⚠️ Bẫy SQS vs Kinesis: SQS message bị **xoá sau khi xử lý**, không replay được, không giữ thứ tự (standard). Kinesis **giữ lại data** cho phép nhiều consumer & replay, theo thứ tự trong shard. Đề nói "multiple consumers cùng đọc một stream", "real-time analytics", "replay" → **Kinesis**, không phải SQS.
+> Bẫy SQS vs Kinesis: SQS message bị **xoá sau khi xử lý**, không replay được, không giữ thứ tự (standard). Kinesis **giữ lại data** cho phép nhiều consumer & replay, theo thứ tự trong shard. Đề nói "multiple consumers cùng đọc một stream", "real-time analytics", "replay" → **Kinesis**, không phải SQS.
 
 **Pattern SNS + SQS fan-out**: SNS publish một event, fan-out vào nhiều SQS queue, mỗi queue có fleet riêng xử lý độc lập và scale riêng. Ví dụ event "đơn hàng mới" được đẩy vào ba queue: thanh toán, kho, email. Nếu dịch vụ email chậm thì chỉ queue của nó dài ra, hai bên kia không bị ảnh hưởng. Vừa decouple vừa hấp thụ spike cho nhiều downstream.
 
@@ -510,7 +510,7 @@ Cùng hai tầng, khác tên:
 | **EKS trên EC2** | HPA (pod) | Cluster Autoscaler hoặc Karpenter (node) |
 | **EKS trên Fargate** | HPA (pod) | Không cần — AWS lo |
 
-> 💡 Mẹo thi: "Chạy container không muốn quản lý infrastructure/patching, scale theo nhu cầu" → **Fargate**. "Cần kiểm soát instance type/GPU, tối ưu chi phí với reserved/spot" → **EC2 launch type + Capacity Provider**.
+> Mẹo thi: "Chạy container không muốn quản lý infrastructure/patching, scale theo nhu cầu" → **Fargate**. "Cần kiểm soát instance type/GPU, tối ưu chi phí với reserved/spot" → **EC2 launch type + Capacity Provider**.
 
 ## 8. Lambda Concurrency & Scaling
 
@@ -562,9 +562,9 @@ Reserved không tốn thêm tiền và **không** làm environment khởi tạo 
 | Tốn thêm tiền? | Không | Có, tính theo thời gian bật |
 | Từ khoá trong đề | "guarantee capacity", "limit", "protect downstream", "throttle" | "cold start", "consistent low latency", "latency-sensitive" |
 
-> ⚠️ Bẫy Lambda + RDS: Lambda scale ra hàng nghìn concurrent execution có thể **làm cạn connection pool của RDS** — mỗi environment mở connection riêng, trong khi database chỉ nhận một số connection có hạn (một instance nhỏ cỡ vài trăm). Giải pháp: **RDS Proxy** (đứng giữa, giữ một pool connection tới DB và cho hàng nghìn environment dùng chung), hoặc đặt **reserved concurrency** để giới hạn. Đề hay hỏi tình huống "too many database connections" này.
+> Bẫy Lambda + RDS: Lambda scale ra hàng nghìn concurrent execution có thể **làm cạn connection pool của RDS** — mỗi environment mở connection riêng, trong khi database chỉ nhận một số connection có hạn (một instance nhỏ cỡ vài trăm). Giải pháp: **RDS Proxy** (đứng giữa, giữ một pool connection tới DB và cho hàng nghìn environment dùng chung), hoặc đặt **reserved concurrency** để giới hạn. Đề hay hỏi tình huống "too many database connections" này.
 
-> ⚠️ Bẫy cold start: Latency-sensitive API spike → **Provisioned concurrency**. Đừng nhầm với Reserved concurrency (cái này không loại bỏ cold start, chỉ phân bổ/giới hạn quota).
+> Bẫy cold start: Latency-sensitive API spike → **Provisioned concurrency**. Đừng nhầm với Reserved concurrency (cái này không loại bỏ cold start, chỉ phân bổ/giới hạn quota).
 
 ## 9. Cây quyết định nhanh cho phòng thi
 

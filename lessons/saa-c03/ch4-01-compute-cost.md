@@ -62,7 +62,7 @@ Hai lựa chọn còn lại **không phải để giảm giá**, nhưng đề ha
 | **Dedicated Host** | — (có Dedicated Host Reservation giảm tới 70% so với giá host on-demand) | Tuỳ | Compliance, BYOL |
 | **Capacity Reservation** | 0% (giá on-demand) | Không | Đảm bảo capacity, không discount |
 
-> 📏 Các con số 66% / 72% / 90% là **trần** AWS công bố, chỉ đạt được ở vài loại máy với kỳ hạn 3 năm trả hết trước. Mức thực tế thấp hơn nhiều — §2.2 có bảng giá thật của một instance.
+> Các con số 66% / 72% / 90% là **trần** AWS công bố, chỉ đạt được ở vài loại máy với kỳ hạn 3 năm trả hết trước. Mức thực tế thấp hơn nhiều — §2.2 có bảng giá thật của một instance.
 
 Bốn lựa chọn chính nằm trên một trục **đánh đổi**: càng cam kết (commitment) thì discount càng cao nhưng càng kém linh hoạt; ngược lại càng linh hoạt thì discount càng thấp (hoặc chấp nhận bị ngắt).
 
@@ -180,7 +180,7 @@ Utilization thấp nghĩa là cam kết **quá nhiều**. Coverage thấp nghĩa
 
 Thứ tự áp dụng khi có cả ba: RI trước, rồi EC2 Instance SP, cuối cùng mới tới Compute SP (cái linh hoạt nhất được để dành cho phần còn lại).
 
-> 🪤 Bẫy thi: *"giảm chi phí cho EC2 **và** Lambda/Fargate bằng một cam kết"* → **Compute Savings Plan** (RI và EC2 Instance SP không áp cho Lambda/Fargate). *"workload ổn định, cùng instance family, cùng Region, muốn discount cao nhất"* → **EC2 Instance Savings Plan** hoặc Standard RI. *"cần đảm bảo capacity trong một AZ"* → zonal RI hoặc **Capacity Reservation**, không phải Savings Plan. Spot **không** được Savings Plan che.
+> Bẫy thi: *"giảm chi phí cho EC2 **và** Lambda/Fargate bằng một cam kết"* → **Compute Savings Plan** (RI và EC2 Instance SP không áp cho Lambda/Fargate). *"workload ổn định, cùng instance family, cùng Region, muốn discount cao nhất"* → **EC2 Instance Savings Plan** hoặc Standard RI. *"cần đảm bảo capacity trong một AZ"* → zonal RI hoặc **Capacity Reservation**, không phải Savings Plan. Spot **không** được Savings Plan che.
 
 ### 3.3 Cách commit
 
@@ -198,7 +198,7 @@ Vậy nên câu hỏi với Spot không phải "có bị ngắt không" mà là 
 
 ### 4.1 Eligible workload
 
-| ✅ Phù hợp Spot | ❌ Tránh Spot |
+| ✓ Phù hợp Spot | ✗ Tránh Spot |
 |----------------|---------------|
 | Batch (ML training, video transcoding) | Stateful DB (Postgres primary) |
 | CI/CD runner | Hệ thống real-time strict latency |
@@ -254,7 +254,7 @@ Ngoài ra còn tín hiệu sớm hơn: **rebalance recommendation**, phát ra kh
 - **Giá Spot không còn nhảy thất thường.** Trước 2017, Spot là đấu giá: bạn đặt bid, giá vọt qua bid là mất máy, nên giá có thể tăng gấp nhiều lần trong vài phút. Từ cuối 2017, AWS tự đặt giá cho từng pool và điều chỉnh **chậm** theo cung cầu dài hạn. Bạn không cần bid nữa (vẫn đặt được giá trần, mặc định bằng giá on-demand). Hệ quả: bây giờ bị ngắt gần như luôn vì **hết capacity**, không phải vì giá.
 - **Tần suất bị ngắt.** AWS công bố mức trung bình lịch sử trên mọi Region và instance type là **dưới 5% mỗi tháng** (tỉ lệ instance Spot bị thu hồi trong tháng). Từng pool thì khác nhau nhiều; **Spot Instance Advisor** xếp mỗi instance type vào các bậc <5%, 5–10%, 10–15%, 15–20%, >20% để bạn tránh pool hay bị ngắt.
 
-> 🪤 Bẫy thi: Spot **không** dành cho workload không chịu được gián đoạn, dù đề có nói "tiết kiệm nhất". Thấy "fault-tolerant", "stateless", "có thể chạy lại", "batch", "flexible start time" → Spot. Thấy "không được gián đoạn", "database", "phải chạy liên tục 1 năm" → Savings Plan/RI.
+> Bẫy thi: Spot **không** dành cho workload không chịu được gián đoạn, dù đề có nói "tiết kiệm nhất". Thấy "fault-tolerant", "stateless", "có thể chạy lại", "batch", "flexible start time" → Spot. Thấy "không được gián đoạn", "database", "phải chạy liên tục 1 năm" → Savings Plan/RI.
 
 ---
 
@@ -302,7 +302,7 @@ Hệ quả cho right-sizing: không có metric RAM thì Compute Optimizer chỉ 
 - **Đổi thẳng trên production.** Đổi instance type cần stop/start. Thử ở staging với tải giống thật trước, rồi rollout dần.
 - **License tính theo vCPU.** Một số phần mềm (SQL Server, Oracle) thu tiền theo số vCPU/core. Tăng size kéo theo tiền license, hạ size có thể tiết kiệm license nhiều hơn cả tiền máy.
 
-> 🪤 Bẫy thi: *"công cụ nào đề xuất instance type tối ưu dựa trên utilization?"* → **Compute Optimizer**. **Trusted Advisor** chỉ ra instance **idle/low-utilization** nhưng không đề xuất type cụ thể. **Cost Explorer** có right-sizing recommendation cho EC2 và là nơi xem Savings Plan recommendation.
+> Bẫy thi: *"công cụ nào đề xuất instance type tối ưu dựa trên utilization?"* → **Compute Optimizer**. **Trusted Advisor** chỉ ra instance **idle/low-utilization** nhưng không đề xuất type cụ thể. **Cost Explorer** có right-sizing recommendation cho EC2 và là nơi xem Savings Plan recommendation.
 
 ---
 
@@ -348,7 +348,7 @@ Chương trình biên dịch cho x86 **không chạy** được trên ARM. Câu 
 4. Rolling deploy production: thêm node Graviton vào chung với node x86, chuyển tải dần.
 5. Theo dõi error rate và latency sau khi chuyển, giữ đường rollback về x86.
 
-> 💡 Chỗ dễ ăn nhất là managed database: Aurora PostgreSQL/MySQL và RDS trên Graviton (ví dụ `db.r7g`) chỉ cần đổi instance class, ứng dụng không phải sửa hay build lại gì vì nó chỉ nói chuyện với database qua mạng.
+> Chỗ dễ ăn nhất là managed database: Aurora PostgreSQL/MySQL và RDS trên Graviton (ví dụ `db.r7g`) chỉ cần đổi instance class, ứng dụng không phải sửa hay build lại gì vì nó chỉ nói chuyện với database qua mạng.
 
 ---
 
@@ -602,7 +602,7 @@ Với Windows Server, SQL Server, Oracle… tiền license có thể lớn hơn 
 - Một số điều khoản license yêu cầu phần cứng riêng → Dedicated Host.
 - License Manager theo dõi mức dùng tương tự như trên.
 
-> 🪤 Bẫy thi: *"dùng lại license Windows Server/SQL Server hiện có tính theo socket/core"* → **Dedicated Host** (Dedicated **Instance** cũng là phần cứng riêng nhưng không cho thấy socket/core nên không đủ cho loại license này). *"theo dõi và giới hạn việc dùng license"* → **License Manager**.
+> Bẫy thi: *"dùng lại license Windows Server/SQL Server hiện có tính theo socket/core"* → **Dedicated Host** (Dedicated **Instance** cũng là phần cứng riêng nhưng không cho thấy socket/core nên không đủ cho loại license này). *"theo dõi và giới hạn việc dùng license"* → **License Manager**.
 
 ---
 

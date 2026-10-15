@@ -17,7 +17,7 @@ Pyramid kinh điển (nhiều unit, ít E2E) vẫn đúng về tinh thần "càn
 
 Vì sao component test là tầng dày nhất với FE? Vì phần lớn bug FE không nằm ở pure logic (cái đó TypeScript + unit lo gần hết) mà nằm ở **wiring giữa state, event và DOM**: bấm nút mà handler không chạy, error không hiển thị, disabled không đúng lúc. Component test bắt đúng loại bug đó với chi phí thấp hơn E2E nhiều lần.
 
-> 💡 Ghi nhớ: Đừng tranh cãi "pyramid hay trophy". Câu hỏi đúng là *bug FE của bạn thường nằm ở đâu?* — gần như luôn là ở chỗ state gặp DOM. Đặt phần lớn test ở tầng component, và để TypeScript làm tầng đáy miễn phí.
+> Ghi nhớ: Đừng tranh cãi "pyramid hay trophy". Câu hỏi đúng là *bug FE của bạn thường nằm ở đâu?* — gần như luôn là ở chỗ state gặp DOM. Đặt phần lớn test ở tầng component, và để TypeScript làm tầng đáy miễn phí.
 
 Hình dạng cần tránh: **ice cream cone** — vài unit test, còn lại nhồi hết vào E2E qua browser. Triệu chứng: CI 30 phút, "re-run vì flaky" mỗi ngày, không ai tin màu đỏ nữa.
 
@@ -95,18 +95,18 @@ export default defineConfig({
 import "@testing-library/jest-dom/vitest";
 ```
 
-> ⚠️ Bẫy: jsdom **không phải browser thật**. Nó không có layout engine, không tính được kích thước, không chạy CSS animation, `scrollIntoView`/`IntersectionObserver` phải tự mock. Những thứ phụ thuộc rendering thật (vị trí tooltip, visual regression) hãy để Playwright lo, đừng cố ép vào jsdom.
+> Bẫy: jsdom **không phải browser thật**. Nó không có layout engine, không tính được kích thước, không chạy CSS animation, `scrollIntoView`/`IntersectionObserver` phải tự mock. Những thứ phụ thuộc rendering thật (vị trí tooltip, visual regression) hãy để Playwright lo, đừng cố ép vào jsdom.
 
 ## 3. Test hành vi người dùng, KHÔNG test implementation detail
 
 Đây là kỹ năng quan trọng nhất và bị làm sai nhiều nhất. Nguyên tắc của React Testing Library (RTL): **truy vấn DOM theo cách người dùng nhìn thấy nó**, không theo cách bạn viết code.
 
 ```tsx
-// ❌ Test implementation — gắn chặt vào class CSS, cấu trúc DOM, state nội bộ
+// ✗ Test implementation — gắn chặt vào class CSS, cấu trúc DOM, state nội bộ
 const btn = container.querySelector(".btn-primary");
 expect(wrapper.state("isOpen")).toBe(true);   // enzyme cũ — soi state nội bộ
 
-// ✅ Test hành vi — gắn vào điều user thật sự trải nghiệm
+// ✓ Test hành vi — gắn vào điều user thật sự trải nghiệm
 const btn = screen.getByRole("button", { name: /đăng nhập/i });
 expect(screen.getByText(/chào mừng/i)).toBeInTheDocument();
 ```
@@ -142,7 +142,7 @@ expect(screen.queryByText(/lỗi/i)).not.toBeInTheDocument();
 expect(await screen.findByText(/đã lưu/i)).toBeInTheDocument();
 ```
 
-> 💡 Ghi nhớ: Nếu test của bạn dùng nhiều `getByTestId` và `container.querySelector`, đó là mùi của việc đang test implementation. Test tốt đọc gần như một kịch bản user: "tìm ô email, gõ vào, bấm nút, thấy thông báo".
+> Ghi nhớ: Nếu test của bạn dùng nhiều `getByTestId` và `container.querySelector`, đó là mùi của việc đang test implementation. Test tốt đọc gần như một kịch bản user: "tìm ô email, gõ vào, bấm nút, thấy thông báo".
 
 ## 4. user-event thay vì fireEvent
 
@@ -160,7 +160,7 @@ it("gõ và submit như user thật", async () => {
 });
 ```
 
-> ⚠️ Bẫy: `user-event` (v14+) trả về **Promise** — luôn `await`. Quên `await` thì assertion chạy trước khi tương tác xong → test "thỉnh thoảng pass". Và gọi `userEvent.setup()` đúng một lần đầu test, đừng setup lại giữa chừng.
+> Bẫy: `user-event` (v14+) trả về **Promise** — luôn `await`. Quên `await` thì assertion chạy trước khi tương tác xong → test "thỉnh thoảng pass". Và gọi `userEvent.setup()` đúng một lần đầu test, đừng setup lại giữa chừng.
 
 ## 5. Ví dụ đầy đủ: test một component form
 
@@ -270,7 +270,7 @@ describe("SignupForm", () => {
 
 Vì sao test này tốt? Refactor `useState` → `useReducer`, đổi class CSS, đổi `<div>` thành `<fieldset>`, đổi thư viện form — **mọi test trên vẫn xanh** miễn là user vẫn nhập được, vẫn thấy lỗi, vẫn submit được. Test chỉ đỏ khi một hành vi cam kết thật sự gãy.
 
-> 💡 Ghi nhớ: Test một field bằng `getByLabelText` còn buộc bạn gắn `<label htmlFor>` đúng. Test hành vi và test accessibility ở frontend gần như là **một việc** — đó là phần thưởng kép của RTL.
+> Ghi nhớ: Test một field bằng `getByLabelText` còn buộc bạn gắn `<label htmlFor>` đúng. Test hành vi và test accessibility ở frontend gần như là **một việc** — đó là phần thưởng kép của RTL.
 
 ## 6. Mock API với MSW
 
@@ -325,14 +325,14 @@ it("hiện lỗi server khi email đã tồn tại", async () => {
 
 Lợi ích lớn của MSW: **cùng một mock dùng được cho cả test lẫn local dev** (chạy trong browser qua service worker) và cả Storybook. Bạn định nghĩa "backend giả" một lần, dùng khắp nơi.
 
-> ⚠️ Bẫy: Đặt `onUnhandledRequest: "error"`. Nếu không, một request bị gõ sai URL (`/api/singup`) sẽ lọt qua âm thầm, trả về kết quả khó đoán, và bạn debug nhầm cả buổi. Cho nó **fail to loud** ngay khi có request không được mock.
+> Bẫy: Đặt `onUnhandledRequest: "error"`. Nếu không, một request bị gõ sai URL (`/api/singup`) sẽ lọt qua âm thầm, trả về kết quả khó đoán, và bạn debug nhầm cả buổi. Cho nó **fail to loud** ngay khi có request không được mock.
 
 ## 7. Snapshot test — dùng rất cẩn thận
 
 Snapshot test render component ra chuỗi, lưu lại, lần sau diff. Nghe tiện nhưng đây là loại test **dễ thoái hoá nhất** ở frontend:
 
 ```tsx
-// ❌ Snapshot toàn bộ component — cám dỗ nhưng nguy hiểm
+// ✗ Snapshot toàn bộ component — cám dỗ nhưng nguy hiểm
 expect(container).toMatchSnapshot();
 ```
 
@@ -345,7 +345,7 @@ Khi nào snapshot **đáng** dùng:
 
 Với hầu hết component, một assertion tường minh `expect(screen.getByRole("button")).toBeDisabled()` luôn tốt hơn `toMatchSnapshot()`: nó nói rõ *bạn quan tâm điều gì*.
 
-> 💡 Ghi nhớ: Snapshot trả lời "có gì thay đổi không?" — câu hỏi yếu. Assertion tường minh trả lời "hành vi tôi cam kết còn đúng không?" — câu hỏi mạnh. Mặc định chọn assertion, chỉ dùng snapshot cho output nhỏ và ổn định.
+> Ghi nhớ: Snapshot trả lời "có gì thay đổi không?" — câu hỏi yếu. Assertion tường minh trả lời "hành vi tôi cam kết còn đúng không?" — câu hỏi mạnh. Mặc định chọn assertion, chỉ dùng snapshot cho output nhỏ và ổn định.
 
 ## 8. E2E với Playwright
 
@@ -386,7 +386,7 @@ So sánh nhanh component test và E2E để biết viết loại nào:
 | Số lượng nên có | nhiều | ít (3–8 happy path quan trọng) |
 | Khi nào viết | mọi component có logic | luồng nghiệp vụ then chốt (login, checkout) |
 
-> ⚠️ Bẫy: Đừng dùng E2E để test mọi nhánh validation (sai email, sai password, field rỗng...). Mỗi case như vậy là một lần khởi động browser — chậm gấp trăm lần. Test validation ở tầng **component**, để E2E lo đúng vài luồng xuyên hệ thống quan trọng nhất. Đây là cách tránh "ice cream cone".
+> Bẫy: Đừng dùng E2E để test mọi nhánh validation (sai email, sai password, field rỗng...). Mỗi case như vậy là một lần khởi động browser — chậm gấp trăm lần. Test validation ở tầng **component**, để E2E lo đúng vài luồng xuyên hệ thống quan trọng nhất. Đây là cách tránh "ice cream cone".
 
 Khi E2E vẫn flaky dù đã auto-wait: bật **trace** (`--trace on`) để xem lại từng bước kèm screenshot/DOM, dùng `data-testid` cho element động khó định danh, và **không** assert dựa vào thời gian thật hay thứ tự network không xác định.
 
@@ -403,7 +403,7 @@ Khi E2E vẫn flaky dù đã auto-wait: bật **trace** (`--trace on`) để xem
 
 Một con số cần tỉnh táo: **coverage cao không phải bằng chứng test tốt**. Một test render component rồi không assert gì vẫn cho coverage 100% file đó. Coverage thấp là tín hiệu xấu đáng tin; coverage cao thì chưa nói lên gì về chất lượng assert. Hỏi đúng câu: *"nếu tôi cố tình làm hỏng nút submit, có test nào đỏ không?"*
 
-> 💡 Ghi nhớ cuối: Chiến lược test FE tốt là chiến lược cả team **tin vào màu đỏ** — đỏ nghĩa user thật sẽ gặp lỗi, xanh nghĩa deploy được. Mọi nguyên tắc ở đây (query theo role, test hành vi không test detail, MSW ở boundary, dè chừng snapshot, bỏ `sleep`) đều phục vụ một chữ: **niềm tin**.
+> Ghi nhớ cuối: Chiến lược test FE tốt là chiến lược cả team **tin vào màu đỏ** — đỏ nghĩa user thật sẽ gặp lỗi, xanh nghĩa deploy được. Mọi nguyên tắc ở đây (query theo role, test hành vi không test detail, MSW ở boundary, dè chừng snapshot, bỏ `sleep`) đều phục vụ một chữ: **niềm tin**.
 
 ## Liên hệ thực tế
 

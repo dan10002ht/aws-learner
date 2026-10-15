@@ -64,7 +64,7 @@ Ba điều rút ra, cả ba đều ảnh hưởng tới thiết kế:
 | `4xx` | **Lỗi tạm thời** (greylisting, server bận, quota đầy tạm) | **Retry backoff mũ**, giữ trong queue tới 48–72 giờ |
 | `5xx` | Vĩnh viễn (`550 no such user`, `552 quá lớn`, `554 bị chặn`) | **Không retry**. Sinh bounce, gỡ địa chỉ khỏi danh sách |
 
-> 💡 **Nguyên tắc**: `4xx` không phải lỗi, nó là **lời hẹn**. Greylisting — chiến thuật chống spam phổ biến — cố tình trả `451 try again later` cho lần gửi đầu, vì bot spam thường không retry còn MTA thật thì có. Hệ thống coi mọi lỗi là vĩnh viễn sẽ mất 10–20% thư hợp lệ ngay ngày đầu chạy thật.
+> **Nguyên tắc**: `4xx` không phải lỗi, nó là **lời hẹn**. Greylisting — chiến thuật chống spam phổ biến — cố tình trả `451 try again later` cho lần gửi đầu, vì bot spam thường không retry còn MTA thật thì có. Hệ thống coi mọi lỗi là vĩnh viễn sẽ mất 10–20% thư hợp lệ ngay ngày đầu chạy thật.
 
 ### 1.2 POP3 vs IMAP — giao thức **nhận**, và vì sao IMAP thắng
 
@@ -74,17 +74,17 @@ SMTP chỉ đưa thư *tới server* người nhận. Việc lấy thư từ ser
 |---|---|---|
 | Mô hình tinh thần | **Tải về rồi xoá** — hộp thư là đường ống | **Đồng bộ** — hộp thư là nguồn sự thật trên server |
 | Nơi thư "sống" | Trên máy client | Trên server |
-| Nhiều thiết bị | ❌ Hỏng hoàn toàn. Điện thoại tải trước → laptop không thấy | ✅ Mọi thiết bị thấy cùng một trạng thái |
+| Nhiều thiết bị | ✗ Hỏng hoàn toàn. Điện thoại tải trước → laptop không thấy | ✓ Mọi thiết bị thấy cùng một trạng thái |
 | Trạng thái đã đọc / gắn cờ | Chỉ tồn tại cục bộ | Là **trạng thái server**, đồng bộ tới mọi thiết bị |
 | Thư mục | Chỉ có một Inbox | Nhiều thư mục, tạo/đổi tên/di chuyển được |
-| Tải từng phần | ❌ Tải nguyên thư mới đọc được tiêu đề | ✅ `FETCH BODYSTRUCTURE` — lấy header trước, tải attachment khi cần |
-| Tìm kiếm phía server | ❌ | ✅ `SEARCH` |
+| Tải từng phần | ✗ Tải nguyên thư mới đọc được tiêu đề | ✓ `FETCH BODYSTRUCTURE` — lấy header trước, tải attachment khi cần |
+| Tìm kiếm phía server | ✗ | ✓ `SEARCH` |
 | Băng thông | Tải một lần, sau đó offline | Cao hơn, cần kết nối thường xuyên |
 | Gánh nặng server | **Rất nhẹ** — server là ống dẫn, xoá xong là hết | **Nặng** — server phải lưu toàn bộ thư + trạng thái mãi mãi |
 
 POP3 thắng ở thập niên 90 vì lý do kinh tế: dung lượng server đắt kinh khủng và mỗi người chỉ có **một** máy tính, nên mô hình "tải về rồi xoá" biến server thành hạ tầng gần như không tốn gì. Hai thứ lật ngược điều đó: **giá lưu trữ sụp đổ** (Gmail ra mắt 2004 với 1 GB miễn phí), và **người ta có nhiều thiết bị** — khoảnh khắc có cả điện thoại lẫn laptop, mô hình POP3 vỡ vụn vì trạng thái đã đọc chỉ tồn tại cục bộ.
 
-> 💡 IMAP thắng không phải vì "nhiều tính năng hơn" mà vì nó đặt **nguồn sự thật (source of truth) ở server**. Đó chính xác là quyết định kiến trúc mà bài này xây quanh: nếu server là nguồn sự thật cho hàng tỉ hộp thư, thì metadata store là component khó nhất — và ta quay lại đúng §6.
+> IMAP thắng không phải vì "nhiều tính năng hơn" mà vì nó đặt **nguồn sự thật (source of truth) ở server**. Đó chính xác là quyết định kiến trúc mà bài này xây quanh: nếu server là nguồn sự thật cho hàng tỉ hộp thư, thì metadata store là component khó nhất — và ta quay lại đúng §6.
 
 **Vậy còn HTTP?** Webmail (Gmail, Outlook Web) và app di động hiện đại **không dùng IMAP** để nói với server của chính mình — chúng dùng REST/gRPC trên HTTPS cộng WebSocket. Lý do rất thực dụng: IMAP là giao thức stateful, có phiên, cú pháp cổ, khó qua proxy/CDN, khó phân trang linh hoạt, và không mang được các khái niệm hiện đại (conversation thread, label thay vì folder, smart categories). Ta vẫn **phải** hỗ trợ IMAP/POP3 cho client bên thứ ba (Thunderbird, Apple Mail, Outlook desktop) và **bắt buộc** phải hỗ trợ SMTP cho trao đổi liên server — nhưng đường đi chính của client của ta là HTTP.
 
@@ -104,7 +104,7 @@ POP3 thắng ở thập niên 90 vì lý do kinh tế: dung lượng server đ�
         (KHÔNG kiểm soát được — phải tuân thủ tuyệt đối)
 ```
 
-> ⚠️ **Bẫy phỏng vấn**: người phỏng vấn hay nói "giả sử dùng HTTP cho đơn giản" (sách Alex Xu cũng vậy). Đừng hiểu nhầm thành *"không cần SMTP"*. HTTP thay thế IMAP cho **client của ta**; SMTP thì **không thể bỏ**, vì không có nó bạn không nhận được thư từ gmail.com. Nói rõ ranh giới này ghi điểm ngay.
+> **Bẫy phỏng vấn**: người phỏng vấn hay nói "giả sử dùng HTTP cho đơn giản" (sách Alex Xu cũng vậy). Đừng hiểu nhầm thành *"không cần SMTP"*. HTTP thay thế IMAP cho **client của ta**; SMTP thì **không thể bỏ**, vì không có nó bạn không nhận được thư từ gmail.com. Nói rõ ranh giới này ghi điểm ngay.
 
 ### 1.3 DNS và MX record — làm sao thư tìm được đường
 
@@ -226,7 +226,7 @@ Cố ý **bỏ ngoài phạm vi** nhưng nên nói ra: xác thực/đăng nhập
 - Đọc: người dùng chỉ thực sự mở ~20% số thư nhận; 90% lượt đọc rơi vào thư của 30 ngày gần nhất
 ```
 
-> 💡 Giả định "đọc 20%, 90% tập trung ở 30 ngày gần nhất" không phải chi tiết mềm — nó là **giả định sinh lợi nhất cả bài**. Nó cho phép: (a) cache tầng nóng chỉ cần chứa ~1 tháng dữ liệu, (b) phân tầng lưu trữ theo tuổi thư, (c) và quan trọng nhất — chấp nhận rằng **phần lớn dữ liệu ta lưu sẽ không bao giờ được đọc lại**, nên tối ưu đường ghi quan trọng hơn tối ưu đường đọc thư cũ.
+> Giả định "đọc 20%, 90% tập trung ở 30 ngày gần nhất" không phải chi tiết mềm — nó là **giả định sinh lợi nhất cả bài**. Nó cho phép: (a) cache tầng nóng chỉ cần chứa ~1 tháng dữ liệu, (b) phân tầng lưu trữ theo tuổi thư, (c) và quan trọng nhất — chấp nhận rằng **phần lớn dữ liệu ta lưu sẽ không bao giờ được đọc lại**, nên tối ưu đường ghi quan trọng hơn tối ưu đường đọc thư cũ.
 
 ---
 
@@ -242,7 +242,7 @@ GỬI:
 
 NHẬN (đầu vào SMTP):
   1 tỉ × 40 = 40 tỉ sự kiện giao thư/ngày ≈ 460.000/s TB, peak ≈ 1,4 triệu/s
-  ⚠️ nhưng 60–80% lưu lượng tới cổng 25 trên Internet thật là SPAM
+  nhưng 60–80% lưu lượng tới cổng 25 trên Internet thật là SPAM
      → phải chặn RẤT SỚM, trước khi chạm bất kỳ thứ gì tốn kém
 
 ĐỌC (API mở thư mục / mở thư):
@@ -277,7 +277,7 @@ ATTACHMENT:
 TỔNG ≈ 1 EB (exabyte) MỖI NĂM, trong đó ~85% là attachment
 ```
 
-> 💡 Đây là kết luận thứ nhất và nó rất quan trọng: **về số byte, bài này là bài object storage**; nhưng ta sẽ không tốn một phút deep dive nào cho nó, vì lưu blob bất biến là bài toán **đã được giải** (S3, 11 số 9, ném vào là xong). 15% còn lại — metadata — mới là chỗ phải thiết kế, vì nó **mutable, cần giao dịch, cần sắp xếp, cần truy vấn**.
+> Đây là kết luận thứ nhất và nó rất quan trọng: **về số byte, bài này là bài object storage**; nhưng ta sẽ không tốn một phút deep dive nào cho nó, vì lưu blob bất biến là bài toán **đã được giải** (S3, 11 số 9, ném vào là xong). 15% còn lại — metadata — mới là chỗ phải thiết kế, vì nó **mutable, cần giao dịch, cần sắp xếp, cần truy vấn**.
 
 ### Metadata theo dòng và theo user
 
@@ -294,7 +294,7 @@ Nhưng bóc theo user thì con số dễ chịu hẳn:
 
 Đây là **kết luận thứ hai, và là chìa khoá của cả bài**: dữ liệu của một người dùng — kể cả sau 5 năm — chỉ vài GB, tức **vừa gọn trong một node**. Không có truy vấn nào cần join dữ liệu giữa hai người dùng. Không có "bảng xếp hạng toàn cục", không có "feed trộn từ nhiều người". Điều đó cho ta món quà mà news feed hay social graph không bao giờ có:
 
-> 💡 **`user_id` là partition key hoàn hảo.** Mọi truy vấn đường nóng nằm gọn trong một partition; mọi "giao dịch" (di chuyển thư giữa thư mục + cập nhật bộ đếm chưa đọc) nằm gọn trong một partition; thêm node là thêm năng lực tuyến tính, không có truy vấn xuyên shard nào phải xử lý. Bài này **scale ngang gần như hoàn hảo** — và đó là lý do phần khó còn lại không phải "scale", mà là *chọn đúng mô hình dữ liệu* và *deliverability*.
+> **`user_id` là partition key hoàn hảo.** Mọi truy vấn đường nóng nằm gọn trong một partition; mọi "giao dịch" (di chuyển thư giữa thư mục + cập nhật bộ đếm chưa đọc) nằm gọn trong một partition; thêm node là thêm năng lực tuyến tính, không có truy vấn xuyên shard nào phải xử lý. Bài này **scale ngang gần như hoàn hảo** — và đó là lý do phần khó còn lại không phải "scale", mà là *chọn đúng mô hình dữ liệu* và *deliverability*.
 
 ### Băng thông
 
@@ -321,7 +321,7 @@ GET  /v1/folders/{folder_id}/messages?cursor={c}&limit=50
      → { messages: [{ message_id, thread_id, from, subject, snippet,
                       has_attachment, is_read, ts }],
          next_cursor }
-     ⚠️ Cursor dựa trên clustering key (timestamp giảm dần), KHÔNG phải OFFSET.
+     Cursor dựa trên clustering key (timestamp giảm dần), KHÔNG phải OFFSET.
         OFFSET 100.000 trên một hộp thư 73.000 thư là tự sát.
 
 GET  /v1/messages/{message_id}
@@ -344,7 +344,7 @@ POST /v1/messages                    Idempotency-Key: <uuid từ client>
      { to: [...], cc: [...], bcc: [...], subject, body_html, body_text,
        attachment_ids: [...], in_reply_to?: "<msg-id>" }
      → 202 Accepted { message_id, status: "queued" }
-     ⚠️ 202 chứ KHÔNG phải 200: việc giao thư là bất đồng bộ, có thể mất giờ
+     202 chứ KHÔNG phải 200: việc giao thư là bất đồng bộ, có thể mất giờ
 
 ── Tìm kiếm (search store) ────────────────────────────────────────────
 GET /v1/search?q=...&folder=...&has_attachment=true&after=2026-01-01&cursor=...
@@ -394,7 +394,7 @@ Nó vỡ ở bốn chỗ, theo đúng thứ tự này:
 | **3. Tìm kiếm** | Không khả thi | `grep` qua 73.000 file cho **mỗi** truy vấn tìm kiếm, của **mỗi** người dùng. Không có index vì hệ thống file không phải cơ sở dữ liệu |
 | **4. Điểm chết đơn (SPOF)** | Mất dữ liệu và mất dịch vụ | Đĩa hỏng = mất thư. Máy sập = **toàn bộ** user trên máy đó mất dịch vụ, kể cả nhận thư (SMTP đích không kết nối được → thư bị deferred, tới 72 giờ sau thì bounce) |
 
-> ⚠️ **Bẫy thường gặp**: *"cứ shard theo user, mỗi shard một máy Postfix là xong"*. Nó chỉ dời vấn đề: mỗi máy vẫn là SPOF cho nhóm user của nó, rebalance khi thêm máy là chép hàng TB file, hộp thư nóng vẫn đè chết một máy, và vẫn **không có tìm kiếm**. Thứ ta cần không phải nhiều máy Postfix mà là **tách rời tính toán khỏi lưu trữ** — điều hệ thống file cục bộ về bản chất không cho phép.
+> **Bẫy thường gặp**: *"cứ shard theo user, mỗi shard một máy Postfix là xong"*. Nó chỉ dời vấn đề: mỗi máy vẫn là SPOF cho nhóm user của nó, rebalance khi thêm máy là chép hàng TB file, hộp thư nóng vẫn đè chết một máy, và vẫn **không có tìm kiếm**. Thứ ta cần không phải nhiều máy Postfix mà là **tách rời tính toán khỏi lưu trữ** — điều hệ thống file cục bộ về bản chất không cho phép.
 
 Nhận xét quan trọng nhất, và là câu chuyển ý vào kiến trúc mới: **mô hình truyền thống gắn chặt "nơi xử lý thư" với "nơi lưu thư"**. Mọi thứ còn lại của bài này là hệ quả của việc gỡ hai thứ đó ra khỏi nhau.
 
@@ -503,12 +503,12 @@ Trước khi chọn cơ sở dữ liệu, phải mô tả **hình dạng** của
 | **RDBMS sharded** (MySQL/Postgres) | Giao dịch ACID thật, index linh hoạt, `WHERE is_read=false` là chuyện vặt, ai cũng biết vận hành | **B-tree ghi đắt**: mỗi insert là random write + cập nhật nhiều index. Ở 50 tỉ dòng/ngày, write amplification giết IOPS. Bảng vài nghìn tỉ dòng khiến index không nằm vừa RAM. Thêm shard là thao tác thủ công đau đớn; failover vài chục giây. Body vài MB thành TOAST/BLOB làm phình page. **Vẫn đúng cho vài triệu user — sai cho một tỉ** |
 | **Object store thuần** (mỗi thư một object) | Rẻ nhất, durability sẵn, dung lượng vô hạn | Không liệt kê theo thứ tự thời gian hiệu quả, không có bộ đếm, không đánh dấu đã đọc, không giao dịch. LIST trên prefix là O(n). **Hợp làm tầng lạnh và backup, không hợp làm store chính** |
 | **Document store** (MongoDB) | Mô hình dữ liệu tự nhiên cho thư, có index phụ | Khá hợp, nhưng ở quy mô này việc cân bằng shard và độ trễ ghi kém hơn column-family. Index phụ toàn cục trở thành gánh nặng đúng lúc ta **không cần** chúng |
-| **NoSQL column-family** ✅ (Cassandra / HBase / BigTable) | **LSM-tree → ghi tuần tự, rất rẻ.** Partition key + clustering key cho ra *"lấy N dòng mới nhất của user X"* mà không sort. Wide row chứa được cột vài MB. Scale ngang thêm node là xong. Replication + tunable consistency có sẵn | Đánh đổi: **không truy vấn được trên cột không phải khoá** → phải denormalize (§7.4). Không có join. Không có giao dịch đa partition. **Tất cả những thứ ta không cần** |
+| **NoSQL column-family** ✓ (Cassandra / HBase / BigTable) | **LSM-tree → ghi tuần tự, rất rẻ.** Partition key + clustering key cho ra *"lấy N dòng mới nhất của user X"* mà không sort. Wide row chứa được cột vài MB. Scale ngang thêm node là xong. Replication + tunable consistency có sẵn | Đánh đổi: **không truy vấn được trên cột không phải khoá** → phải denormalize (§7.4). Không có join. Không có giao dịch đa partition. **Tất cả những thứ ta không cần** |
 | **Tự xây** (cái Gmail thật sự làm) | Tối ưu đúng IOPS của email, gộp search vào luôn | Nhiều năm kỹ thuật. Trong phỏng vấn: **nêu ra như lựa chọn đúng ở quy mô Google, rồi nói vì sao ta không chọn** |
 
-> 💡 Cách phát biểu quyết định này cho gọn: *"Email có đúng một hình dạng truy vấn — lấy N dòng mới nhất trong một partition thuộc một user. Tôi chọn column-family vì nó cho tôi chính xác hình dạng đó với chi phí ghi thấp nhất, và tôi sẵn sàng trả giá bằng việc mất truy vấn linh hoạt — vì tôi **không có** truy vấn linh hoạt nào cả."*
+> Cách phát biểu quyết định này cho gọn: *"Email có đúng một hình dạng truy vấn — lấy N dòng mới nhất trong một partition thuộc một user. Tôi chọn column-family vì nó cho tôi chính xác hình dạng đó với chi phí ghi thấp nhất, và tôi sẵn sàng trả giá bằng việc mất truy vấn linh hoạt — vì tôi **không có** truy vấn linh hoạt nào cả."*
 
-> ⚠️ Đừng nói "NoSQL scale tốt hơn SQL". Đó là câu trả lời của người học thuộc. Câu trả lời của người hiểu là: *"đường ghi của tôi là 50 tỉ dòng/ngày với pattern append-theo-thời-gian; LSM-tree hợp với nó còn B-tree thì không — và tôi không đánh đổi gì cả vì tôi vốn không dùng tới index phụ hay join."*
+> Đừng nói "NoSQL scale tốt hơn SQL". Đó là câu trả lời của người học thuộc. Câu trả lời của người hiểu là: *"đường ghi của tôi là 50 tỉ dòng/ngày với pattern append-theo-thời-gian; LSM-tree hợp với nó còn B-tree thì không — và tôi không đánh đổi gì cả vì tôi vốn không dùng tới index phụ hay join."*
 
 ### 7.3 Thiết kế bảng
 
@@ -526,7 +526,7 @@ folders
 │ u_1029   │ f_work    │ Công việc    │ 4            │ 892          │
 └──────────┴───────────┴──────────────┴──────────────┴──────────────┘
   → toàn bộ thư mục của một user nằm trong MỘT partition, một lần đọc
-  ⚠️ unread_count là COUNTER — xem §7.5, đây là chỗ dễ sai nhất
+  unread_count là COUNTER — xem §7.5, đây là chỗ dễ sai nhất
 ```
 
 **Bảng `emails`** — chỉ **header và tóm tắt**, đủ để render danh sách:
@@ -584,7 +584,7 @@ read_emails  — cùng cấu trúc (tuỳ chọn; chỉ cần nếu bộ lọc "
 
 Đánh dấu một thư là đã đọc trở thành: xoá dòng khỏi `unread_emails`, (tuỳ chọn) chèn vào `read_emails`, giảm `unread_count` trong `folders`. Ba thao tác, cùng một `user_id`, nên **cùng một partition** → gói trong một logged batch của Cassandra là được nguyên tử ở mức cần thiết. Đây chính là "giao dịch nhẹ" ở §7.1 đặc tính 5: ta không cần 2PC, ta chỉ cần nguyên tử trong phạm vi một người dùng — và mô hình dữ liệu đã bảo đảm điều đó *vì partition key là `user_id`*.
 
-> 💡 **Nguyên tắc của column-family**: bạn không thiết kế bảng rồi viết truy vấn; bạn **liệt kê truy vấn rồi thiết kế một bảng cho mỗi truy vấn**. Dư thừa dữ liệu không phải lỗi thiết kế — nó là *cách thanh toán*. Đĩa rẻ; random read ở quy mô này thì không.
+> **Nguyên tắc của column-family**: bạn không thiết kế bảng rồi viết truy vấn; bạn **liệt kê truy vấn rồi thiết kế một bảng cho mỗi truy vấn**. Dư thừa dữ liệu không phải lỗi thiết kế — nó là *cách thanh toán*. Đĩa rẻ; random read ở quy mô này thì không.
 
 ### 7.5 Bộ đếm chưa đọc — cái bẫy nhỏ mà đau
 
@@ -616,7 +616,7 @@ Thuật toán chuẩn là **JWZ** (Jamie Zawinski, viết cho Netscape Mail năm
 2. **Nối cha–con theo `References`**, đọc từ cuối lên (phần tử cuối là cha trực tiếp). Dùng `In-Reply-To` làm dự phòng khi `References` thiếu. Trước khi nối phải **kiểm tra chu trình** — header là dữ liệu bên ngoài, có thể bị dựng để tạo vòng lặp; nối mù là treo cả tiến trình indexing.
 3. **Gom nhóm dự phòng theo subject đã chuẩn hoá** (bỏ tiền tố `Re:`, `Fwd:`, `RE:`, `回复:`, khoảng trắng). Chỉ dùng khi bước 2 thất bại, vì có client cũ không sinh `References`.
 
-> ⚠️ Bước 3 là **con dao hai lưỡi** và đây là chỗ nên tự nêu trước khi bị hỏi: gom theo subject sẽ nhét chung mọi thư tên *"Xin chào"* hoặc *"Hỏi giá"* từ những người xa lạ vào một chuỗi. Ràng buộc thực tế: chỉ gom theo subject khi các thư **cùng tập người tham gia** và **cách nhau dưới ~7 ngày**. Nêu được giới hạn này cho thấy bạn đã va vào nó thật.
+> Bước 3 là **con dao hai lưỡi** và đây là chỗ nên tự nêu trước khi bị hỏi: gom theo subject sẽ nhét chung mọi thư tên *"Xin chào"* hoặc *"Hỏi giá"* từ những người xa lạ vào một chuỗi. Ràng buộc thực tế: chỉ gom theo subject khi các thư **cùng tập người tham gia** và **cách nhau dưới ~7 ngày**. Nêu được giới hạn này cho thấy bạn đã va vào nó thật.
 
 Lưu trữ thì đơn giản: mỗi thư mang thêm cột `thread_id` (bằng `Message-ID` của gốc, chuẩn hoá thành id nội bộ), và một bảng phụ để mở cả chuỗi bằng một lần đọc:
 
@@ -640,7 +640,7 @@ Và một điểm dễ bỏ sót: **`thread_id` là cục bộ theo từng ngư�
  ② Web server: validation RẺ, đồng bộ
       · kích thước sau base64 ≤ 35 MB      · địa chỉ đúng cú pháp
       · quota gửi của user                  · attachment_ids tồn tại trong object store
-      ✗ fail → 4xx NGAY (người dùng còn ngồi đó, sửa được)
+      ✗  fail → 4xx NGAY (người dùng còn ngồi đó, sửa được)
                           │
                           ▼
  ③ Ghi vào folder Sent (metadata store)  ← TRƯỚC khi enqueue. Người dùng phải
@@ -668,7 +668,7 @@ Và một điểm dễ bỏ sót: **`thread_id` là cục bộ theo từng ngư�
 
 **Vì sao bước ③ đứng trước ④?** Vì "thư đã vào Sent" là điều người dùng kiểm chứng được ngay, còn "thư đã tới Bob" thì không. Enqueue trước rồi ghi Sent sau, một sự cố giữa hai bước tạo ra thư đang trên đường đi mà người gửi không thấy dấu vết — không hiển thị được, không thu hồi được. Thứ tự ngược lại chỉ tạo rủi ro nhẹ: thư nằm trong Sent với trạng thái `queued`, một job dò tìm sẽ enqueue lại.
 
-**Vì sao short-circuit nội bộ (⑤) đáng làm?** Với 1 tỉ user, xác suất người nhận cũng ở trên hệ thống ta rất cao; đi vòng ra Internet rồi quay lại là lãng phí DNS/TCP/TLS và đưa thư của ta ra trước bộ lọc spam của chính ta. ⚠️ Nhưng **vẫn phải quét spam** — tài khoản bị chiếm quyền là nguồn spam nội bộ, short-circuit không được thành đường vòng qua kiểm duyệt.
+**Vì sao short-circuit nội bộ (⑤) đáng làm?** Với 1 tỉ user, xác suất người nhận cũng ở trên hệ thống ta rất cao; đi vòng ra Internet rồi quay lại là lãng phí DNS/TCP/TLS và đưa thư của ta ra trước bộ lọc spam của chính ta. Nhưng **vẫn phải quét spam** — tài khoản bị chiếm quyền là nguồn spam nội bộ, short-circuit không được thành đường vòng qua kiểm duyệt.
 
 ### 8.1 Vì sao phải có queue
 
@@ -707,7 +707,7 @@ Một queue phẳng có lỗi chí mạng: yahoo.com sập → hàng triệu th�
 
 Ngoài ra mỗi nhà cung cấp áp giới hạn riêng (số kết nối đồng thời, số thư/kết nối, số thư/giờ trên mỗi IP). Ta phải tôn trọng giới hạn đó **chủ động** — vượt là bị throttle rồi bị chặn. Nên: một hàng đợi logic cho mỗi (domain đích × IP nguồn), mỗi hàng có bộ điều tiết riêng, cộng cơ chế **circuit breaker** — một domain trả 4xx liên tục thì giảm tốc thay vì đập cửa.
 
-> 💡 Metric cần theo dõi không phải "độ dài queue" mà là **tuổi của thư cũ nhất trong mỗi hàng đợi domain**. Queue dài vì lưu lượng tăng là bình thường; thư nằm 4 giờ chưa gửi được là sự cố. Hai điều này trông giống nhau trên biểu đồ tổng.
+> Metric cần theo dõi không phải "độ dài queue" mà là **tuổi của thư cũ nhất trong mỗi hàng đợi domain**. Queue dài vì lưu lượng tăng là bình thường; thư nằm 4 giờ chưa gửi được là sự cố. Hai điều này trông giống nhau trên biểu đồ tổng.
 
 ---
 
@@ -752,7 +752,7 @@ Ngoài ra mỗi nhà cung cấp áp giới hạn riêng (số kết nối đồn
 
 **Vì sao ACK `250 OK` chỉ được trả sau khi thư đã bền?** Đây là ràng buộc ở §1.1: sau mã đó, người gửi có quyền quên thư đi. Nên thứ tự bắt buộc là: ghi attachment vào object store → ghi thư vào incoming queue (có replication, có persist) → **rồi mới** `250 OK`. Không bao giờ ACK dựa trên bộ nhớ.
 
-> ⚠️ **Khử trùng lặp là bắt buộc, không phải tuỳ chọn.** Kịch bản: ta persist thư xong, `250 OK` bị mất trên đường về, server gửi timeout và retry → thư tới lần hai. Đây là chuyện *bình thường* trong SMTP. Khử trùng lặp bằng `(Message-ID, recipient)` trong một cửa sổ vài ngày. Vì `Message-ID` do bên ngoài sinh và có thể thiếu hoặc bị giả, dùng hash của `(Message-ID, envelope_from, rcpt, ngày)` an toàn hơn là tin nó trực tiếp.
+> **Khử trùng lặp là bắt buộc, không phải tuỳ chọn.** Kịch bản: ta persist thư xong, `250 OK` bị mất trên đường về, server gửi timeout và retry → thư tới lần hai. Đây là chuyện *bình thường* trong SMTP. Khử trùng lặp bằng `(Message-ID, recipient)` trong một cửa sổ vài ngày. Vì `Message-ID` do bên ngoài sinh và có thể thiếu hoặc bị giả, dùng hash của `(Message-ID, envelope_from, rcpt, ngày)` an toàn hơn là tin nó trực tiếp.
 
 ---
 
@@ -779,7 +779,7 @@ p=quarantine  → fail thì vào Spam. Tăng dần pct=10 → 50 → 100
 p=reject      → fail thì từ chối thẳng. Đích đến
 ```
 
-> ⚠️ Bật `p=reject` ngay ngày đầu là cách nhanh nhất để chặn chính thư hoá đơn của công ty mình. `rua=` (báo cáo tổng hợp hằng ngày từ các nhà cung cấp lớn) là công cụ duy nhất cho bạn thấy **ai đang gửi thư nhân danh domain của bạn** — kể cả những hệ thống bạn không biết là tồn tại.
+> Bật `p=reject` ngay ngày đầu là cách nhanh nhất để chặn chính thư hoá đơn của công ty mình. `rua=` (báo cáo tổng hợp hằng ngày từ các nhà cung cấp lớn) là công cụ duy nhất cho bạn thấy **ai đang gửi thư nhân danh domain của bạn** — kể cả những hệ thống bạn không biết là tồn tại.
 
 ### 10.2 Danh tiếng IP và warming
 
@@ -820,7 +820,7 @@ Bốn việc còn lại thuộc nhóm "không làm thì hỏng, làm thì không
 - **List-Unsubscribe header** (RFC 8058, một-cú-nhấp): người dùng huỷ đăng ký thay vì bấm "spam". Gmail và Yahoo **bắt buộc** với người gửi khối lượng lớn từ 2024.
 - **Phát hiện tài khoản bị chiếm quyền theo thời gian thực**: một tài khoản đột ngột gửi 5.000 thư trong 10 phút phải bị chặn tự động. Ban spammer chậm một giờ là đủ để đốt reputation của cả một IP pool.
 
-> 💡 **Câu chốt cho phần này**: *"Deliverability không phải tính năng, nó là **tài sản tích luỹ**. Nó được xây trong nhiều tháng và mất trong vài giờ, nên hệ thống phải coi reputation là một tài nguyên chung cần bảo vệ — đó là lý do tôi tách IP pool, tôi áp suppression list ở đường ghi chứ không ở đường gửi, và tôi chặn tài khoản bất thường tự động thay vì chờ người xem."*
+> **Câu chốt cho phần này**: *"Deliverability không phải tính năng, nó là **tài sản tích luỹ**. Nó được xây trong nhiều tháng và mất trong vài giờ, nên hệ thống phải coi reputation là một tài nguyên chung cần bảo vệ — đó là lý do tôi tách IP pool, tôi áp suppression list ở đường ghi chứ không ở đường gửi, và tôi chặn tài khoản bất thường tự động thay vì chờ người xem."*
 
 ---
 
@@ -860,9 +860,9 @@ GET /v1/search ─────────────────────�
 
 Cách tự xây là dùng **LSM-tree** cho chính index ngược: ghi tích trong memtable, flush thành segment bất biến, merge dần xuống tầng dưới. Đường ghi thuần tuần tự — đúng thứ email cần, và đúng thứ Cassandra/BigTable/RocksDB đã làm cho dữ liệu. Vì metadata store của ta **đã là** LSM, việc đặt index vào cùng hệ đó loại bỏ hẳn một lớp đồng bộ và một lớp lệch dữ liệu.
 
-> 💡 Cách trả lời ghi điểm: *"Tôi bắt đầu với OpenSearch, routing theo `user_id`, cập nhật bất đồng bộ qua change-log. Nó đúng trong 2–3 năm đầu. Tôi cũng biết vì sao Gmail không dùng nó: chi phí vận hành hai hệ thống ở quy mô exabyte, và cơ hội gộp index vào chính LSM-tree của store. Nhưng đó là quyết định đúng **sau khi** đã có sản phẩm, không phải ngày đầu."*
+> Cách trả lời ghi điểm: *"Tôi bắt đầu với OpenSearch, routing theo `user_id`, cập nhật bất đồng bộ qua change-log. Nó đúng trong 2–3 năm đầu. Tôi cũng biết vì sao Gmail không dùng nó: chi phí vận hành hai hệ thống ở quy mô exabyte, và cơ hội gộp index vào chính LSM-tree của store. Nhưng đó là quyết định đúng **sau khi** đã có sản phẩm, không phải ngày đầu."*
 
-⚠️ Một chi tiết dễ quên: **xoá.** Người dùng xoá thư thì index phải mất trong vài giây, không phải "eventual". Với ES, xoá là tombstone và tài liệu chỉ biến mất thật sau merge — nên phải lọc lại kết quả dựa trên metadata store trước khi trả về, nếu không người dùng tìm thấy thư mình vừa xoá.
+Một chi tiết dễ quên: **xoá.** Người dùng xoá thư thì index phải mất trong vài giây, không phải "eventual". Với ES, xoá là tombstone và tài liệu chỉ biến mất thật sau merge — nên phải lọc lại kết quả dựa trên metadata store trước khi trả về, nếu không người dùng tìm thấy thư mình vừa xoá.
 
 ---
 
@@ -882,10 +882,10 @@ attachment_blobs
 Ba hệ quả phải nói kèm, vì dedupe không miễn phí:
 
 - **Quét virus cũng dedupe theo.** Một file đã quét sạch thì 200 người sau không cần quét lại — tiết kiệm rất lớn trên thành phần đắt nhất của luồng nhận. Nhưng phải lưu **phiên bản định nghĩa virus** lúc quét, và quét lại khi định nghĩa cập nhật nếu blob vẫn còn được tham chiếu.
-- **Xoá phải theo reference count**, không phải theo thư. Alice xoá thư không có nghĩa xoá blob — 199 người còn lại vẫn cần nó. Giảm `ref_count`, dọn rác bằng job nền quét blob có `ref_count = 0` quá N ngày. ⚠️ Bộ đếm tham chiếu **luôn** lệch theo thời gian; đừng xoá thẳng khi về 0, hãy đánh dấu và chờ.
+- **Xoá phải theo reference count**, không phải theo thư. Alice xoá thư không có nghĩa xoá blob — 199 người còn lại vẫn cần nó. Giảm `ref_count`, dọn rác bằng job nền quét blob có `ref_count = 0` quá N ngày. Bộ đếm tham chiếu **luôn** lệch theo thời gian; đừng xoá thẳng khi về 0, hãy đánh dấu và chờ.
 - **Dedupe xuyên tenant là một existence oracle.** Nếu client hỏi *"blob này có sẵn chưa?"* trước khi upload, kẻ tấn công dò được sự tồn tại của một file cụ thể trên hệ thống. Cách chữa: **dedupe ở phía server** (luôn nhận upload, hợp nhất sau), mất chút băng thông nhưng oracle không tồn tại. Hoặc chỉ dedupe trong phạm vi một tổ chức.
 
-**Thư quá lớn.** Nếu tổng vượt giới hạn, hai lựa chọn: từ chối ngay ở bước validation (rẻ, rõ ràng), hoặc tự động chuyển thành **link chia sẻ** (kiểu Google Drive) — thư mang một URL có thời hạn thay vì byte. Cách hai giữ được trải nghiệm nhưng ⚠️ tạo vấn đề mới: người nhận ngoài hệ thống phải truy cập được link, tức là một mặt phẳng phân quyền hoàn toàn khác.
+**Thư quá lớn.** Nếu tổng vượt giới hạn, hai lựa chọn: từ chối ngay ở bước validation (rẻ, rõ ràng), hoặc tự động chuyển thành **link chia sẻ** (kiểu Google Drive) — thư mang một URL có thời hạn thay vì byte. Cách hai giữ được trải nghiệm nhưng tạo vấn đề mới: người nhận ngoài hệ thống phải truy cập được link, tức là một mặt phẳng phân quyền hoàn toàn khác.
 
 ---
 
@@ -908,7 +908,7 @@ Ba loại dữ liệu, ba mức khác nhau, và việc phân biệt được ch�
 - **Xoá phải lan tới mọi nơi**: metadata store, bảng denormalize, cache, search index, backup, và attachment (giảm `ref_count`). Bỏ sót search index là lỗi kinh điển — dữ liệu "đã xoá" vẫn tìm thấy được.
 - **Backup là vấn đề nan giải**: không thể sửa một snapshot bất biến. Cách xử lý được chấp nhận trong ngành: giữ **danh sách chặn (tombstone)** áp dụng khi khôi phục, cộng với chu kỳ giữ backup hữu hạn (ví dụ 90 ngày) để dữ liệu tự hết hạn.
 - **Crypto-shredding**: mã hoá dữ liệu mỗi user bằng một khoá riêng; xoá user = **huỷ khoá**. Dữ liệu còn trên đĩa nhưng vĩnh viễn không đọc được. Đây là cách duy nhất giải quyết gọn bài toán backup, và là câu trả lời đáng nhớ khi bị hỏi về GDPR.
-- **Data residency**: người dùng EU có thể bị yêu cầu lưu dữ liệu trong EU. May mắn là mô hình phân vùng theo `user_id` khiến việc này khả thi — gán user vào một cụm theo vùng. ⚠️ Nhưng thư **đi qua biên giới** theo bản chất của email; ranh giới cư trú áp cho dữ liệu lưu trữ, không phải cho việc truyền.
+- **Data residency**: người dùng EU có thể bị yêu cầu lưu dữ liệu trong EU. May mắn là mô hình phân vùng theo `user_id` khiến việc này khả thi — gán user vào một cụm theo vùng. Nhưng thư **đi qua biên giới** theo bản chất của email; ranh giới cư trú áp cho dữ liệu lưu trữ, không phải cho việc truyền.
 
 ---
 
@@ -927,16 +927,16 @@ Ba loại dữ liệu, ba mức khác nhau, và việc phân biệt được ch�
 |---|---|---|
 | **Web server** | Không có — stateless | LB gỡ khỏi pool, health check |
 | **Realtime server** | Mất đẩy thư mới | Client fallback long-polling; thư **không mất**, chỉ chậm hiện. Đây là suy giảm đúng đắn |
-| **SMTP inbound worker** | Không nhận thư mới | Server gửi nhận `4xx` → họ **retry trong 72 giờ**. Giao thức tự có lưới an toàn. ⚠️ Nhưng đừng ACK nếu chưa persist được |
+| **SMTP inbound worker** | Không nhận thư mới | Server gửi nhận `4xx` → họ **retry trong 72 giờ**. Giao thức tự có lưới an toàn. Nhưng đừng ACK nếu chưa persist được |
 | **SMTP outbound worker** | Thư ứ trong queue | Không mất. Tăng consumer. Theo dõi **tuổi thư cũ nhất**, không phải độ dài queue |
 | **Metadata store — mất một replica** | Không có | Quorum vẫn đạt với 2/3 |
 | **Metadata store — mất quorum** | Một phần user không sửa được trạng thái | Đọc từ cache vẫn chạy; thư đến vẫn vào queue và replay khi hồi phục. Đây là cái giá của việc chọn C |
-| **Cache** | Độ trễ tăng mạnh, tải store tăng đột ngột | ⚠️ **Thundering herd** — nguy hiểm hơn cả sự cố gốc. Cần request coalescing và khởi động lại cache theo từng phần |
+| **Cache** | Độ trễ tăng mạnh, tải store tăng đột ngột | **Thundering herd** — nguy hiểm hơn cả sự cố gốc. Cần request coalescing và khởi động lại cache theo từng phần |
 | **Search store** | Không tìm kiếm được | Duyệt thư mục vẫn chạy bình thường. Index rebuild từ change-log. Tính năng phụ, không phải đường sống |
 | **Object store** | Không mở/gửi được attachment | Thư vẫn đọc được phần text. Suy giảm cục bộ |
-| **Mất cả một vùng** | Mất dịch vụ cho user thuộc vùng đó | Replication liên vùng + chuyển đổi; ⚠️ **RPO vài phút, phải nói rõ** thay vì hứa bằng 0 |
+| **Mất cả một vùng** | Mất dịch vụ cho user thuộc vùng đó | Replication liên vùng + chuyển đổi; **RPO vài phút, phải nói rõ** thay vì hứa bằng 0 |
 
-> ⚠️ **Chế độ hỏng tệ nhất không nằm trong bảng trên**: IP pool bị đưa vào blocklist lớn. Mọi máy chạy tốt, mọi dashboard xanh, và thư vẫn không tới được ai. Không có health check nội bộ nào phát hiện được. Đây là lý do phải giám sát **tín hiệu bên ngoài**: tỉ lệ bounce theo từng nhà cung cấp, Google Postmaster Tools, seed list (tài khoản thử ở mỗi nhà cung cấp lớn, kiểm tra tự động xem thư vào Inbox hay Spam), và báo cáo DMARC.
+> **Chế độ hỏng tệ nhất không nằm trong bảng trên**: IP pool bị đưa vào blocklist lớn. Mọi máy chạy tốt, mọi dashboard xanh, và thư vẫn không tới được ai. Không có health check nội bộ nào phát hiện được. Đây là lý do phải giám sát **tín hiệu bên ngoài**: tỉ lệ bounce theo từng nhà cung cấp, Google Postmaster Tools, seed list (tài khoản thử ở mỗi nhà cung cấp lớn, kiểm tra tự động xem thư vào Inbox hay Spam), và báo cáo DMARC.
 
 ---
 
@@ -944,23 +944,23 @@ Ba loại dữ liệu, ba mức khác nhau, và việc phân biệt được ch�
 
 | Thành phần thiết kế | Dịch vụ AWS | Vì sao hợp |
 |---|---|---|
-| Gửi thư ra Internet (MTA outbound) | **SES** — SendEmail / SendRawEmail | Thay ta lo phần khó nhất: quan hệ với ISP, hạ tầng IP, ký DKIM, xử lý bounce. ⚠️ Tài khoản mới nằm trong **sandbox** (chỉ gửi tới địa chỉ đã xác minh, 200 thư/ngày) — phải xin thoát sandbox, và hạn mức tăng dần |
-| Nhận thư từ Internet (MTA inbound) | **SES receiving** + rule set → S3 / SNS / Lambda | Ta trỏ MX record về endpoint SES. SES nhận thư, lưu thẳng object vào S3, kích hoạt Lambda. ⚠️ Chỉ có ở một số Region — kiểm tra trước khi chọn Region |
+| Gửi thư ra Internet (MTA outbound) | **SES** — SendEmail / SendRawEmail | Thay ta lo phần khó nhất: quan hệ với ISP, hạ tầng IP, ký DKIM, xử lý bounce. Tài khoản mới nằm trong **sandbox** (chỉ gửi tới địa chỉ đã xác minh, 200 thư/ngày) — phải xin thoát sandbox, và hạn mức tăng dần |
+| Nhận thư từ Internet (MTA inbound) | **SES receiving** + rule set → S3 / SNS / Lambda | Ta trỏ MX record về endpoint SES. SES nhận thư, lưu thẳng object vào S3, kích hoạt Lambda. Chỉ có ở một số Region — kiểm tra trước khi chọn Region |
 | Bounce & complaint | **SES → SNS topic** (`Bounce`, `Complaint`, `Delivery`) | Đây là **feedback loop tự động** ở §10.4. Bắt buộc phải đăng ký và xử lý — SES sẽ tạm ngưng tài khoản nếu tỉ lệ bounce > 5% hoặc complaint > 0,1%. Đẩy vào SQS rồi cập nhật suppression list |
 | Suppression list | **SES account-level suppression** + bảng riêng của ta | SES tự chặn địa chỉ đã hard bounce trên toàn tài khoản. Ta vẫn nên giữ danh sách riêng để kiểm tra **trước khi** gọi API — rẻ hơn và kiểm soát được |
 | Tách luồng transactional / marketing | **SES configuration set** + **dedicated IP pool** riêng cho mỗi loại | Đúng §10.3. Configuration set gắn với mỗi lần gửi, quyết định IP pool, nơi đẩy sự kiện, và chính sách TLS |
-| IP warming | **Dedicated IP (managed)** hoặc dedicated IP tự quản | Managed để AWS tự chạy lịch warming — đúng cho phần lớn trường hợp. Tự quản khi cần kiểm soát chính xác lịch tăng tải. ⚠️ IP dùng chung (mặc định) reputation phụ thuộc khách hàng khác |
+| IP warming | **Dedicated IP (managed)** hoặc dedicated IP tự quản | Managed để AWS tự chạy lịch warming — đúng cho phần lớn trường hợp. Tự quản khi cần kiểm soát chính xác lịch tăng tải. IP dùng chung (mặc định) reputation phụ thuộc khách hàng khác |
 | Theo dõi deliverability | **SES Virtual Deliverability Manager (VDM)** | Cho thấy tỉ lệ vào Inbox theo từng nhà cung cấp, chẩn đoán theo domain — chính là "tín hiệu bên ngoài" ở §14 mà health check nội bộ không thấy |
-| MX, SPF, DKIM, DMARC | **Route 53** (MX + TXT + CNAME) | DKIM qua **Easy DKIM**: SES sinh ba CNAME, tự xoay khoá. ⚠️ Nhớ `_dmarc` với `p=none` trước, và `MAIL FROM` domain riêng để SPF **align** cho DMARC |
+| MX, SPF, DKIM, DMARC | **Route 53** (MX + TXT + CNAME) | DKIM qua **Easy DKIM**: SES sinh ba CNAME, tự xoay khoá. Nhớ `_dmarc` với `p=none` trước, và `MAIL FROM` domain riêng để SPF **align** cho DMARC |
 | Hộp thư người dùng cuối (nếu là sản phẩm doanh nghiệp) | **WorkMail** | Khi yêu cầu là "cho nhân viên một hộp thư" chứ không phải "xây Gmail": IMAP/SMTP/EWS sẵn, tích hợp AD, tuân thủ sẵn. Nói ra để phân biệt *mua* và *xây* |
 | Attachment store | **S3**, key = `sha256(content)` | Blob bất biến, durability 11 số 9, dedupe miễn phí nhờ địa chỉ theo nội dung. **Presigned URL** cho client PUT/GET thẳng — 46 GB/s không chạm server ta |
-| Metadata store | **Keyspaces** (Cassandra-compatible) hoặc **DynamoDB** (PK `user_id#folder_id`, SK `email_id` TimeUUID) | Đúng mô hình §7. DynamoDB: `Query` với `ScanIndexForward=false` cho "mới nhất trước", `TransactWriteItems` cho thao tác nguyên tử trong một user, on-demand cho tải không đoán được. ⚠️ Giới hạn **item 400 KB** → body lớn phải để ngoài trong S3, đúng như §7.3 đã tách bảng |
+| Metadata store | **Keyspaces** (Cassandra-compatible) hoặc **DynamoDB** (PK `user_id#folder_id`, SK `email_id` TimeUUID) | Đúng mô hình §7. DynamoDB: `Query` với `ScanIndexForward=false` cho "mới nhất trước", `TransactWriteItems` cho thao tác nguyên tử trong một user, on-demand cho tải không đoán được. Giới hạn **item 400 KB** → body lớn phải để ngoài trong S3, đúng như §7.3 đã tách bảng |
 | Bộ đếm chưa đọc, cache thư nóng | **ElastiCache (Redis/Valkey)** | `INCR`/`DECR` nguyên tử; cache 30 ngày gần nhất cho tỉ lệ hit rất cao. Cũng làm pub/sub cho thông báo |
-| Outgoing queue | **SQS** (một hàng cho mỗi nhóm domain) + **DLQ** | Tách thang thời gian §8.1. Dùng nhiều hàng để tránh head-of-line blocking. ⚠️ SQS giữ tối đa **14 ngày** — đủ cho retry 72 giờ. `maxReceiveCount` → DLQ cho thư không gửi được |
-| Incoming queue + xử lý | **SQS / Kinesis** → **Lambda** hoặc ECS | Lambda hợp với luồng sự kiện (áp rule người dùng, dựng thread). ⚠️ Quét virus và xử lý attachment lớn thì ECS/Fargate hợp hơn — Lambda giới hạn 15 phút và bộ nhớ tạm |
+| Outgoing queue | **SQS** (một hàng cho mỗi nhóm domain) + **DLQ** | Tách thang thời gian §8.1. Dùng nhiều hàng để tránh head-of-line blocking. SQS giữ tối đa **14 ngày** — đủ cho retry 72 giờ. `maxReceiveCount` → DLQ cho thư không gửi được |
+| Incoming queue + xử lý | **SQS / Kinesis** → **Lambda** hoặc ECS | Lambda hợp với luồng sự kiện (áp rule người dùng, dựng thread). Quét virus và xử lý attachment lớn thì ECS/Fargate hợp hơn — Lambda giới hạn 15 phút và bộ nhớ tạm |
 | Áp rule người dùng khi thư tới | **SES receipt rule → Lambda** | Rule set của SES đã là một cỗ máy quy tắc: theo người nhận, theo domain, kèm hành động (S3, SNS, Lambda, bounce, stop). Lambda cho logic phức tạp hơn |
-| Search | **OpenSearch Service**, `routing = user_id` | §11.2. Cập nhật bất đồng bộ từ **DynamoDB Streams → Lambda**. ⚠️ Chi phí RAM là khoản lớn — cân nhắc UltraWarm cho dữ liệu cũ, và chỉ index thư của N năm gần nhất |
-| Realtime đẩy thư mới | **API Gateway WebSocket API** | Có `@connections` để đẩy, không phải tự quản kết nối. ⚠️ Tính tiền **theo phút kết nối** — ở 250 triệu DAU phải tính kỹ; cân nhắc ALB + ECS tự quản hoặc **AppSync Events** |
+| Search | **OpenSearch Service**, `routing = user_id` | §11.2. Cập nhật bất đồng bộ từ **DynamoDB Streams → Lambda**. Chi phí RAM là khoản lớn — cân nhắc UltraWarm cho dữ liệu cũ, và chỉ index thư của N năm gần nhất |
+| Realtime đẩy thư mới | **API Gateway WebSocket API** | Có `@connections` để đẩy, không phải tự quản kết nối. Tính tiền **theo phút kết nối** — ở 250 triệu DAU phải tính kỹ; cân nhắc ALB + ECS tự quản hoặc **AppSync Events** |
 | Quét virus | **GuardDuty Malware Protection for S3**, hoặc ECS chạy ClamAV | Kích hoạt theo sự kiện S3, kết quả gắn vào tag object. Kết quả cache theo `sha256` → dedupe quét như §12 |
 
 **Ba câu chốt đáng nhớ:**
@@ -981,7 +981,7 @@ Ba loại dữ liệu, ba mức khác nhau, và việc phân biệt được ch�
 
 4. **Phát biểu món quà của bài này thật sớm**: *"Dữ liệu email cô lập tuyệt đối theo user — vài GB mỗi người, không join xuyên user, không feed toàn cục. `user_id` là partition key hoàn hảo, nên scale ngang gần như miễn phí. Vậy phần khó không phải scale."* Câu này vừa cho thấy bạn đã tính, vừa dọn đường để dành thời gian cho đúng chỗ khó.
 
-5. **Dành nhiều thời gian nhất cho metadata store, và dẫn dắt bằng access pattern chứ không bằng tên công nghệ.** Liệt kê sáu đặc tính ở §7.1 trước, rồi mới nói "vậy nên tôi chọn column-family". ⚠️ Tuyệt đối tránh câu *"NoSQL scale tốt hơn SQL"* — thay bằng: *"đường ghi của tôi là 50 tỉ dòng/ngày kiểu append-theo-thời-gian; LSM hợp, B-tree không. Và tôi không mất gì cả, vì tôi vốn không có truy vấn linh hoạt nào."*
+5. **Dành nhiều thời gian nhất cho metadata store, và dẫn dắt bằng access pattern chứ không bằng tên công nghệ.** Liệt kê sáu đặc tính ở §7.1 trước, rồi mới nói "vậy nên tôi chọn column-family". Tuyệt đối tránh câu *"NoSQL scale tốt hơn SQL"* — thay bằng: *"đường ghi của tôi là 50 tỉ dòng/ngày kiểu append-theo-thời-gian; LSM hợp, B-tree không. Và tôi không mất gì cả, vì tôi vốn không có truy vấn linh hoạt nào."*
 
 6. **Giải thích `folder_id` nằm trong partition key kèm cái giá của nó**: *"Đổi lại, di chuyển thư giữa thư mục là xoá + ghi chứ không phải UPDATE. Đó là đánh đổi tốt — người ta mở thư mục nhiều gấp hàng nghìn lần di chuyển thư."* Chủ động nêu cái giá quan trọng hơn nêu cái lợi.
 
@@ -999,4 +999,4 @@ Ba loại dữ liệu, ba mức khác nhau, và việc phân biệt được ch�
 
 13. **Nếu còn thời gian, nêu hai điều ít ai nhắc**: khử trùng lặp khi nhận (retry SMTP giao cùng một thư hai lần là *bình thường*, nên cần `Message-ID` + cửa sổ thời gian), và crypto-shredding cho GDPR (*"không thể sửa một snapshot backup bất biến; nên tôi mã hoá theo từng user và xoá user bằng cách huỷ khoá"*).
 
-> 💡 **Nguyên tắc cuối**: cả bài gói trong một câu — **email là một tỉ cơ sở dữ liệu tí hon, mỗi người một cái, bị ràng buộc bởi một giao thức bạn không kiểm soát.** Vế đầu cho bạn món quà: phân vùng theo `user_id` khiến scale ngang gần như miễn phí, nên đừng tiêu thời gian phỏng vấn vào đó. Vế sau cho bạn bài toán thật: bạn phải tuân thủ SMTP tuyệt đối, phải thiết kế mô hình dữ liệu quanh đúng một hình dạng truy vấn, và phải kiếm được lòng tin của những người bạn không quen — vì **thư gửi đi mà vào Spam thì hệ thống hoàn hảo của bạn cũng bằng không.**
+> **Nguyên tắc cuối**: cả bài gói trong một câu — **email là một tỉ cơ sở dữ liệu tí hon, mỗi người một cái, bị ràng buộc bởi một giao thức bạn không kiểm soát.** Vế đầu cho bạn món quà: phân vùng theo `user_id` khiến scale ngang gần như miễn phí, nên đừng tiêu thời gian phỏng vấn vào đó. Vế sau cho bạn bài toán thật: bạn phải tuân thủ SMTP tuyệt đối, phải thiết kế mô hình dữ liệu quanh đúng một hình dạng truy vấn, và phải kiếm được lòng tin của những người bạn không quen — vì **thư gửi đi mà vào Spam thì hệ thống hoàn hảo của bạn cũng bằng không.**

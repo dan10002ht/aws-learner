@@ -4,7 +4,7 @@ Rate limiter là component bị đánh giá thấp nhất trong System Design: a
 
 Bài này là **bản deep-dive**. Phần cơ bản (định nghĩa 5 thuật toán, "dùng Redis cho distributed") đã có ở `sd-03 — URL Shortener & Rate Limiter`; ở đây ta tóm lại trong một bảng rồi đi thẳng vào chỗ reviewer thật sự đào: sai số của sliding window counter bằng bao nhiêu, race condition nằm ở dòng nào, hot key giết Redis ra sao, và vì sao thứ tự áp dụng multi-tier limit lại làm sai counter.
 
-> 💡 **Nguyên tắc xuyên suốt**: rate limiter không phải bài toán "đếm". Nó là bài toán **đồng thuận về một con số, đủ nhanh để không ai để ý, và đủ sai để vẫn chạy được khi hạ tầng lung lay**. Mọi thiết kế hay đều là chấp nhận sai số có kiểm soát.
+> **Nguyên tắc xuyên suốt**: rate limiter không phải bài toán "đếm". Nó là bài toán **đồng thuận về một con số, đủ nhanh để không ai để ý, và đủ sai để vẫn chạy được khi hạ tầng lung lay**. Mọi thiết kế hay đều là chấp nhận sai số có kiểm soát.
 
 ---
 
@@ -63,9 +63,9 @@ Câu hỏi này quan trọng hơn câu hỏi thuật toán, vì vị trí quyế
 | API Gateway | user/API key/plan | Trước app tier | Tốt (shared store) | Quota thương mại, đa số hệ thống |
 | Sidecar / in-process | Ngữ cảnh nghiệp vụ | Muộn nhất | Tốt nhất | Cost-based limit, service-to-service |
 
-> 💡 **Nguyên tắc**: dùng **nhiều tầng**, không chọn một. Edge chặn thô và rẻ, gateway áp quota hợp đồng, sidecar áp cost-based — mỗi tầng bảo vệ một loại tài nguyên khác nhau.
+> **Nguyên tắc**: dùng **nhiều tầng**, không chọn một. Edge chặn thô và rẻ, gateway áp quota hợp đồng, sidecar áp cost-based — mỗi tầng bảo vệ một loại tài nguyên khác nhau.
 
-> ⚠️ **Bẫy**: đặt limiter **trước** authentication rồi đếm theo `user_id` lấy từ header client gửi. Kẻ tấn công chỉ cần đổi header là có quota mới. Định danh dùng để đếm phải là định danh **đã xác thực**, hoặc thứ client không tự chọn được (IP nguồn ở tầng TCP).
+> **Bẫy**: đặt limiter **trước** authentication rồi đếm theo `user_id` lấy từ header client gửi. Kẻ tấn công chỉ cần đổi header là có quota mới. Định danh dùng để đếm phải là định danh **đã xác thực**, hoặc thứ client không tự chọn được (IP nguồn ở tầng TCP).
 
 ---
 
@@ -104,7 +104,7 @@ Hệ quả rất thực tế: một request hợp lệ có thể phải **đợi
 
 Nên leaking bucket hợp với **traffic async** (đẩy job vào queue, ghi batch) và **outbound** — khi bạn là bên *phải tuân thủ* quota của người khác (Stripe, Shopify, SendGrid). Với HTTP inbound đồng bộ, gần như luôn nên dùng token bucket và trả 429 ngay. Biến thể lai đáng dùng: hàng đợi có **deadline** — ước lượng thời gian chờ vượt ngưỡng (vd 200 ms) thì từ chối luôn thay vì xếp hàng; đây chính là ý tưởng của CoDel trong load shedding (§7).
 
-> ⚠️ **Bẫy**: leaking bucket với hàng đợi không giới hạn là công thức tạo **bufferbloat** — hệ thống trông như còn sống (không trả lỗi) nhưng mọi response đều quá hạn. Hàng đợi phải hữu hạn và phải nhỏ hơn bạn nghĩ.
+> **Bẫy**: leaking bucket với hàng đợi không giới hạn là công thức tạo **bufferbloat** — hệ thống trông như còn sống (không trả lỗi) nhưng mọi response đều quá hạn. Hàng đợi phải hữu hạn và phải nhỏ hơn bạn nghĩ.
 
 ### 2.3 Fixed window counter — lỗi biên, tính bằng con số
 
@@ -118,7 +118,7 @@ Lỗi biên (boundary burst) không phải chuyện lý thuyết. Ví dụ, limi
                           ▲▲▲▲▲      │ ▲▲▲▲▲
                       12:00:58-59    │ 12:01:00-01
                       5 request      │ 5 request
-       counter window 12:00 = 5 ✔    │ counter window 12:01 = 5 ✔
+       counter window 12:00 = 5 ✓    │ counter window 12:01 = 5 ✓
        ╰──────── cửa sổ thật 12:00:58 → 12:01:02 = 10 request ───────╯
                    = 2 × limit, mà cả hai window đều "hợp lệ"
 ```
@@ -143,7 +143,7 @@ so với token bucket: 10M × ~130 B    ≈ 1,3 GB
 
 Chênh **hơn một bậc độ lớn**. Điểm tệ thứ hai thường bị bỏ qua: nếu bạn `ZADD` trước rồi mới đếm, kẻ tấn công bắn 100K request/phút vừa được quyền ghi 100K entry vào Redis — tấn công rate limiter bằng chính rate limiter. Luôn **đếm trước, chỉ ghi khi chấp nhận**.
 
-> 💡 **Khi nào log đáng tiền**: limit nhỏ, hậu quả sai lớn. "3 lần đăng nhập sai/15 phút", "5 OTP/giờ", "10 lần rút tiền/ngày" — memory không đáng kể, độ chính xác thì xứng đáng. Với "1000 request API/phút" thì dùng log là lãng phí thuần tuý.
+> **Khi nào log đáng tiền**: limit nhỏ, hậu quả sai lớn. "3 lần đăng nhập sai/15 phút", "5 OTP/giờ", "10 lần rút tiền/ngày" — memory không đáng kể, độ chính xác thì xứng đáng. Với "1000 request API/phút" thì dùng log là lãng phí thuần tuý.
 
 ### 2.5 Sliding window counter — công thức nội suy và sai số thật
 
@@ -172,13 +172,13 @@ Muốn chính xác hơn mà không tốn như log? **Chia nhỏ cửa sổ**: th
 
 | | Bộ nhớ / key | Sai số | Round-trip | Request "có giá" |
 |---|---|---|---|---|
-| Token bucket | ~2 field | 0 (theo định nghĩa của nó) | 1 (Lua) | ✅ tự nhiên |
-| Leaking bucket | queue | 0 | 1 + worker | ❌ |
-| Fixed window | 1 int | tới 2× ở biên | 1 (`INCR`) | ⚠️ (`INCRBY`) |
-| Sliding log | N × ~80 B | 0 | 1 (Lua) | ❌ |
-| Sliding counter | 2 int | ~0,003% thực tế | 1 (Lua) | ⚠️ (`INCRBY`) |
+| Token bucket | ~2 field | 0 (theo định nghĩa của nó) | 1 (Lua) | ✓ tự nhiên |
+| Leaking bucket | queue | 0 | 1 + worker | ✗ |
+| Fixed window | 1 int | tới 2× ở biên | 1 (`INCR`) | (`INCRBY`) |
+| Sliding log | N × ~80 B | 0 | 1 (Lua) | ✗ |
+| Sliding counter | 2 int | ~0,003% thực tế | 1 (Lua) | (`INCRBY`) |
 
-> 💡 **Câu trả lời mặc định khi phỏng vấn**: "Token bucket cho quota API thương mại vì cho burst có kiểm soát và hỗ trợ request khác giá; sliding window counter khi cần con số 'X/phút' sát nghĩa; sliding window log chỉ cho hành động nhạy cảm có limit nhỏ." Ba lựa chọn cho ba ngữ cảnh mạnh hơn hẳn việc chọn một thuật toán "tốt nhất".
+> **Câu trả lời mặc định khi phỏng vấn**: "Token bucket cho quota API thương mại vì cho burst có kiểm soát và hỗ trợ request khác giá; sliding window counter khi cần con số 'X/phút' sát nghĩa; sliding window log chỉ cho hành động nhạy cảm có limit nhỏ." Ba lựa chọn cho ba ngữ cảnh mạnh hơn hẳn việc chọn một thuật toán "tốt nhất".
 
 ---
 
@@ -215,7 +215,7 @@ Giả định API cỡ trung: **50.000 request/giây** đỉnh, **20 triệu** u
 | Điểm hỏng thêm | LB affinity | Redis |
 | Hợp với | Limit thô, best-effort, latency cực nhạy | Gần như mọi trường hợp còn lại |
 
-> 💡 Có lựa chọn thứ ba đáng nhắc: **gossip / eventual sync**. Mỗi instance đếm cục bộ và phát counter của mình cho các instance khác mỗi ~100 ms, quyết định dựa trên tổng ước lượng. Không có single point of failure, không round-trip trên đường nóng — đổi lại limit lỏng hơn trong cửa sổ đồng bộ. Đây là cách các limiter ở edge (nhiều PoP toàn cầu) buộc phải làm, vì đồng bộ đồng thời xuyên lục địa là bất khả thi.
+> Có lựa chọn thứ ba đáng nhắc: **gossip / eventual sync**. Mỗi instance đếm cục bộ và phát counter của mình cho các instance khác mỗi ~100 ms, quyết định dựa trên tổng ước lượng. Không có single point of failure, không round-trip trên đường nóng — đổi lại limit lỏng hơn trong cửa sổ đồng bộ. Đây là cách các limiter ở edge (nhiều PoP toàn cầu) buộc phải làm, vì đồng bộ đồng thời xuyên lục địa là bất khả thi.
 
 ### 4.2 Race condition — chính xác nó nằm ở dòng nào
 
@@ -232,7 +232,7 @@ Với 20 instance cùng phục vụ một client, tất cả có thể thực th
 
 ```
  t0   A: GET → 99        B: GET → 99        C: GET → 99
- t1   A: 99 < 100 ✔      B: 99 < 100 ✔      C: 99 < 100 ✔
+ t1   A: 99 < 100 ✓      B: 99 < 100 ✓      C: 99 < 100 ✓
  t2   A: INCR → 100      B: INCR → 101      C: INCR → 102
       ⇒ 3 request được chấp nhận khi chỉ còn 1 suất
 ```
@@ -386,7 +386,7 @@ return { 1, 0 }
 3. Tầng **cụ thể nhất** (per-endpoint) phải được nêu trong thông báo lỗi, vì đó là thứ client sửa được.
 4. Tầng **global** nên là cuối, và thực ra nên được coi là *load shedding* (§7): khi nó kích hoạt, ưu tiên bỏ traffic hạng thấp trước, không bỏ đều.
 
-> ⚠️ **Bẫy Redis Cluster**: một Lua script chỉ được đụng các key **cùng hash slot**. `rl:user:u123` và `rl:ip:1.2.3.4` gần như chắc chắn khác slot → lỗi `CROSSSLOT`. Chữa bằng **hash tag**: đặt cùng một phần trong `{}` cho mọi key của một request (`rl:{u123}:user`, `rl:{u123}:ip`). Nhưng như vậy **mọi key của một user rơi về cùng một node** — bạn vừa tự tạo hot key cho tenant lớn. Đây là đánh đổi thật, không có lời giải đẹp: hoặc nhiều script (mất nguyên tử xuyên tầng), hoặc gom slot (mất phân tán). Cách thực dụng phổ biến: gom theo user cho các tầng liên quan user, để tầng global/IP ở script riêng và chấp nhận sai số nhỏ ở đó.
+> **Bẫy Redis Cluster**: một Lua script chỉ được đụng các key **cùng hash slot**. `rl:user:u123` và `rl:ip:1.2.3.4` gần như chắc chắn khác slot → lỗi `CROSSSLOT`. Chữa bằng **hash tag**: đặt cùng một phần trong `{}` cho mọi key của một request (`rl:{u123}:user`, `rl:{u123}:ip`). Nhưng như vậy **mọi key của một user rơi về cùng một node** — bạn vừa tự tạo hot key cho tenant lớn. Đây là đánh đổi thật, không có lời giải đẹp: hoặc nhiều script (mất nguyên tử xuyên tầng), hoặc gom slot (mất phân tán). Cách thực dụng phổ biến: gom theo user cho các tầng liên quan user, để tầng global/IP ở script riêng và chấp nhận sai số nhỏ ở đó.
 
 ### 5.5 Giảm round-trip: local bucket + lease
 
@@ -416,7 +416,7 @@ Triệu chứng: một node Redis 100% CPU trong khi các node khác nhàn rỗi
 
 Chi tiết đáng nói về shard key: chọn shard **ngẫu nhiên** mỗi request thì do phương sai nhị thức, một shard có thể cạn trong khi shard khác còn chỗ → tăng chặn nhầm. Giảm bằng cách chọn shard **theo instance id** (phân bố ổn định hơn), hoặc "power of two choices" — thử 2 shard ngẫu nhiên, dùng cái còn nhiều token hơn. Với `N` nhỏ (4–16) và traffic lớn, sai số này nhỏ và chấp nhận được.
 
-> 💡 **Nguyên tắc**: hot key là bài toán **phân mảnh không gian khoá**, không phải bài toán thêm node. Thêm node không cứu được một key.
+> **Nguyên tắc**: hot key là bài toán **phân mảnh không gian khoá**, không phải bài toán thêm node. Thêm node không cứu được một key.
 
 ---
 
@@ -448,7 +448,7 @@ Body nên ghi rõ **tầng nào** chặn, vì đó là thứ client sửa đư�
 }
 ```
 
-> ⚠️ **Bẫy vận hành**: `Retry-After` không có jitter làm mọi client bị chặn cùng lúc quay lại cùng lúc — một **thundering herd** do chính bạn lên lịch. Thêm jitter ngay phía server (`retry_after × (1 + random(0; 0,3))`). Và đừng để 429 bị CDN cache với TTL dài.
+> **Bẫy vận hành**: `Retry-After` không có jitter làm mọi client bị chặn cùng lúc quay lại cùng lúc — một **thundering herd** do chính bạn lên lịch. Thêm jitter ngay phía server (`retry_after × (1 + random(0; 0,3))`). Và đừng để 429 bị CDN cache với TTL dài.
 
 ### 6.2 Redis chết thì làm gì: fail-open hay fail-closed
 
@@ -467,7 +467,7 @@ Câu trả lời trưởng thành là **cả hai, theo từng tầng**: quota th
 - **Timeout ngắn bắt buộc** (5–20 ms). Redis chậm nguy hiểm hơn Redis chết, vì nó không kích hoạt bất kỳ nhánh xử lý lỗi nào.
 - **Alarm to**: fail-open âm thầm là cách sự cố bảo mật ủ bệnh hàng tháng. Metric `limiter_fail_open_total` phải có alert.
 
-> 💡 Hãy phát biểu chế độ hỏng **trước khi** được hỏi: "Quota API tôi fail-open kèm alarm; login tôi fail-closed và chấp nhận từ chối đăng nhập trong lúc Redis chết, vì rủi ro brute-force lớn hơn."
+> Hãy phát biểu chế độ hỏng **trước khi** được hỏi: "Quota API tôi fail-open kèm alarm; login tôi fail-closed và chấp nhận từ chối đăng nhập trong lúc Redis chết, vì rủi ro brute-force lớn hơn."
 
 ---
 
@@ -522,7 +522,7 @@ Các lớp phòng thủ, theo thứ tự nên áp dụng:
 6. **Leo thang thay vì chặn cứng**: thêm độ trễ (tarpit) → CAPTCHA/proof-of-work → bắt xác thực → chặn. Mỗi bậc tăng chi phí cho kẻ tấn công nhiều hơn cho người dùng thật.
 7. **Tín hiệu ngoài IP**: TLS fingerprint (JA3/JA4), device ID, thứ tự header, tỉ lệ gọi endpoint đắt. Không tín hiệu nào đủ một mình, kết hợp thì khó giả mạo hơn hẳn.
 
-> ⚠️ **Bẫy**: ghép "IP + User-Agent" làm khoá đếm để "chính xác hơn". UA do client tự khai và đổi tự do — bạn vừa biến một khoá không hoàn hảo thành khoá **vô dụng**. Thêm một trường vào khoá luôn làm limiter **lỏng hơn**, không bao giờ chặt hơn. Chỉ ghép thêm trường mà client **không** kiểm soát được.
+> **Bẫy**: ghép "IP + User-Agent" làm khoá đếm để "chính xác hơn". UA do client tự khai và đổi tự do — bạn vừa biến một khoá không hoàn hảo thành khoá **vô dụng**. Thêm một trường vào khoá luôn làm limiter **lỏng hơn**, không bao giờ chặt hơn. Chỉ ghép thêm trường mà client **không** kiểm soát được.
 
 ---
 
@@ -577,4 +577,4 @@ Các lớp phòng thủ, theo thứ tự nên áp dụng:
 9. **Nhắc hợp đồng với client**: header `X-RateLimit-*`, `Retry-After` có jitter, 429 chứ không phải 403, body chỉ rõ tầng nào chặn. Rate limiter là API hướng tới con người, không chỉ là một cái cổng.
 10. **Kết bằng rollout**: "Tôi sẽ bật ở chế độ shadow, đo xem ai lẽ ra bị chặn, rồi mới thực thi theo từng phần trăm khách hàng." Sự cố rate limiter phần lớn đến từ cấu hình chứ không từ hạ tầng — biết điều đó là dấu hiệu đã làm thật.
 
-> 💡 **Nguyên tắc cuối**: một rate limiter hoàn hảo về mặt toán học nhưng chặn nhầm khách trả tiền là một thất bại; một rate limiter xấp xỉ 0,003% nhưng không bao giờ làm ai ngạc nhiên là một thành công. Ba câu hỏi luôn phải trả lời được: **đếm theo gì, state ở đâu, và khi store chết thì chuyện gì xảy ra.**
+> **Nguyên tắc cuối**: một rate limiter hoàn hảo về mặt toán học nhưng chặn nhầm khách trả tiền là một thất bại; một rate limiter xấp xỉ 0,003% nhưng không bao giờ làm ai ngạc nhiên là một thành công. Ba câu hỏi luôn phải trả lời được: **đếm theo gì, state ở đâu, và khi store chết thì chuyện gì xảy ra.**

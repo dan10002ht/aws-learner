@@ -44,7 +44,7 @@ Nếu business yêu cầu **RPO 1 giờ, RTO 4 giờ** thì lần này RTO đạ
 
 Rút ra: **RPO do tần suất sao chép dữ liệu quyết định; RTO do lượng hạ tầng đã dựng sẵn ở nơi dự phòng quyết định.** Bốn strategy dưới đây chính là bốn mức "dựng sẵn" khác nhau.
 
-> 🪤 Bẫy thi: đề cho hai con số, bạn phải gắn đúng. *"Không được mất quá 15 phút dữ liệu"* là **RPO**. *"Phải hoạt động lại trong 1 giờ"* là **RTO**. Hạ RPO thì nhìn vào replication/backup; hạ RTO thì nhìn vào compute chờ sẵn và tự động hoá failover.
+> Bẫy thi: đề cho hai con số, bạn phải gắn đúng. *"Không được mất quá 15 phút dữ liệu"* là **RPO**. *"Phải hoạt động lại trong 1 giờ"* là **RTO**. Hạ RPO thì nhìn vào replication/backup; hạ RTO thì nhìn vào compute chờ sẵn và tự động hoá failover.
 
 ### 2.2 4 DR strategy
 
@@ -80,7 +80,7 @@ Vì sao RPO của Backup & Restore tính bằng giờ còn ba cái sau tính b�
 
 → Chọn theo business criticality. Pricing tăng theo cấp.
 
-> 🪤 Bẫy thi: đề luôn có cụm **"most cost-effective"** đi kèm một cặp RPO/RTO. Cách làm: chọn strategy **rẻ nhất mà vẫn đạt** hai con số đó, không chọn cái xịn nhất. RTO vài giờ → Backup & Restore. RTO vài chục phút, "core/critical components đã chạy sẵn" → Pilot Light. RTO vài phút, "scaled-down but fully functional" → Warm Standby. "Zero/near-zero downtime", "users ở nhiều châu lục" → Active/Active.
+> Bẫy thi: đề luôn có cụm **"most cost-effective"** đi kèm một cặp RPO/RTO. Cách làm: chọn strategy **rẻ nhất mà vẫn đạt** hai con số đó, không chọn cái xịn nhất. RTO vài giờ → Backup & Restore. RTO vài chục phút, "core/critical components đã chạy sẵn" → Pilot Light. RTO vài phút, "scaled-down but fully functional" → Warm Standby. "Zero/near-zero downtime", "users ở nhiều châu lục" → Active/Active.
 
 ---
 
@@ -135,7 +135,7 @@ Kết quả: user **có** thấy một đợt lỗi ngắn, cỡ **1–3 phút**
 
 **Kịch bản 3 — Single instance fail.** Chỉ một máy chết: ALB loại nó sau ngưỡng health check, ASG terminate và launch máy thay thế. Lưu ý phải cấu hình ASG dùng **ELB health check**. Mặc định ASG chỉ nhìn EC2 status check, tức máy còn bật là coi như khoẻ, nên một máy có process app đã treo sẽ không bao giờ được thay.
 
-> 🪤 Bẫy thi: Multi-AZ **không** cứu được ba trường hợp: cả region sập, ai đó `DROP TABLE` (lệnh xoá được replicate đồng bộ sang standby ngay lập tức), và ransomware. Ba trường hợp đó cần backup và/hoặc region thứ hai — tức là DR.
+> Bẫy thi: Multi-AZ **không** cứu được ba trường hợp: cả region sập, ai đó `DROP TABLE` (lệnh xoá được replicate đồng bộ sang standby ngay lập tức), và ransomware. Ba trường hợp đó cần backup và/hoặc region thứ hai — tức là DR.
 
 ---
 
@@ -164,7 +164,7 @@ Kiểm tra, đổi DNS, chờ DNS lan ra                  ~15 phút
 
 Hai điều rút ra. Thứ nhất, nếu hạ tầng **không** có sẵn dưới dạng infrastructure as code (CloudFormation/Terraform) mà phải dựng tay theo trí nhớ thì dòng thứ hai từ 20 phút thành nhiều giờ. Thứ hai, **RPO bằng khoảng cách giữa hai lần backup**: backup mỗi giờ thì trường hợp xấu nhất mất 60 phút dữ liệu.
 
-> 💡 "Restore" luôn tạo ra **resource mới** (database mới với endpoint mới, volume mới), không ghi đè lên cái cũ. App phải được trỏ sang endpoint mới — bước này hay bị quên trong runbook.
+> "Restore" luôn tạo ra **resource mới** (database mới với endpoint mới, volume mới), không ghi đè lên cái cũ. App phải được trỏ sang endpoint mới — bước này hay bị quên trong runbook.
 
 ### 4.2 Pilot Light
 - **Database replicate cross-region** (Aurora Global, RDS Read Replica cross-region, DDB Global Tables). Dữ liệu ở region DR luôn gần như mới nhất nên RPO chỉ còn bằng độ trễ replication, cỡ giây.
@@ -187,7 +187,7 @@ Khác biệt với Pilot Light nằm ở chỗ app **đang chạy thật**, và 
 
 Cái giá: trả tiền 24/7 cho ALB và mấy instance đó (xem phép tính ở §2.2).
 
-> 🪤 Bẫy thi: nếu DR chạy **đủ 100% công suất** nhưng không nhận traffic thì đó là **hot standby** — vẫn là active/passive, đắt ngang Active/Active. Còn nếu region DR đã **đang phục vụ user thật** thì là Active/Active, không còn là Warm Standby.
+> Bẫy thi: nếu DR chạy **đủ 100% công suất** nhưng không nhận traffic thì đó là **hot standby** — vẫn là active/passive, đắt ngang Active/Active. Còn nếu region DR đã **đang phục vụ user thật** thì là Active/Active, không còn là Warm Standby.
 
 ### 4.4 Multi-Site Active/Active
 
@@ -221,7 +221,7 @@ Có ba cách tổ chức việc ghi để sống chung với chuyện này:
 | **Write local** | Ghi ở region gần nhất, chấp nhận xung đột và để hệ thống tự phân xử | **DynamoDB Global Tables** (last-writer-wins) | Ghi nhanh ở mọi nơi. Có thể mất một trong hai bản ghi đồng thời, như ví dụ giỏ hàng |
 | **Write partitioned** ("data partition by region") | Mỗi bản ghi có **một region chủ** cố định, ví dụ theo user: user EU chỉ ghi ở Frankfurt, user châu Á chỉ ghi ở Singapore | Bất kỳ, kể cả S3 replication hai chiều | Không xung đột vì không bao giờ có hai region ghi cùng một bản ghi. App phải tự định tuyến lệnh ghi theo region chủ |
 
-> 🪤 Bẫy thi: Active/Active trên database quan hệ thì **Aurora Global không cho ghi ở nhiều region** — chỉ một region ghi, các region còn lại đọc (hoặc bật *write forwarding* để chuyển lệnh ghi về primary). Đề nói *"multi-region, multi-active/multi-master writes"* → **DynamoDB Global Tables**.
+> Bẫy thi: Active/Active trên database quan hệ thì **Aurora Global không cho ghi ở nhiều region** — chỉ một region ghi, các region còn lại đọc (hoặc bật *write forwarding* để chuyển lệnh ghi về primary). Đề nói *"multi-region, multi-active/multi-master writes"* → **DynamoDB Global Tables**.
 
 ---
 
@@ -256,7 +256,7 @@ Ba dòng này tương ứng đúng ba mức: HA trong region, Pilot Light/Warm S
 
 **Headless secondary** là một cluster secondary **đã xoá hết DB instance**, chỉ còn volume storage vẫn được đồng bộ. Aurora tính tiền compute và storage tách riêng, nên bạn chỉ trả tiền storage và replication. Cái giá nằm ở RTO: trước khi failover sang đó **phải tạo một DB instance** gắn vào cluster rồi mới promote được, tức cộng thêm thời gian tạo instance. Headless là kiểu Pilot Light rẻ nhất cho Aurora, hợp với yêu cầu "phải có bản sao dữ liệu ở region khác" hơn là yêu cầu RTO ngắn.
 
-> 📏 Số liệu: đề thi và nhiều tài liệu dùng **tối đa 5 secondary region, lag < 1 giây, RPO ~1 giây, RTO < 1 phút**. Docs hiện tại ghi **tới 10 secondary region**, mỗi secondary tối đa 16 reader instance, RPO "thường tính bằng giây" và RTO "cỡ vài phút" (switchover trên engine mới thường dưới 30 giây). Đi thi cứ nhớ bộ số "1 giây / 1 phút".
+> Số liệu: đề thi và nhiều tài liệu dùng **tối đa 5 secondary region, lag < 1 giây, RPO ~1 giây, RTO < 1 phút**. Docs hiện tại ghi **tới 10 secondary region**, mỗi secondary tối đa 16 reader instance, RPO "thường tính bằng giây" và RTO "cỡ vài phút" (switchover trên engine mới thường dưới 30 giây). Đi thi cứ nhớ bộ số "1 giây / 1 phút".
 
 ### 5.3 DynamoDB
 - **Global Tables**: multi-region active-active, eventual consistency, last-writer-wins.
@@ -264,11 +264,11 @@ Ba dòng này tương ứng đúng ba mức: HA trong region, Pilot Light/Warm S
 
 **Global Tables.** Một bảng có **replica ở nhiều region và replica nào cũng ghi được**. Bạn ghi vào region gần nhất; DynamoDB tự chép thay đổi sang các region còn lại, thường trong khoảng 1 giây. Vì mọi replica đều nhận ghi nên **không có bước promote**: region A sập thì app chỉ việc gọi sang endpoint của region B. Cái giá là xung đột khi hai region cùng sửa một item, được phân xử bằng last-writer-wins (ví dụ giỏ hàng ở §4.4). Chi phí: mỗi lệnh ghi được tính ở **mọi** region có replica, nên bảng 3 region thì tiền ghi xấp xỉ gấp ba.
 
-> 📏 Global Tables mặc định chạy chế độ eventual consistency như mô tả trên — đây cũng là chế độ đề thi hỏi. AWS đã thêm một chế độ thứ hai là **multi-Region strong consistency (MRSC)**: lệnh ghi được chép đồng bộ sang ít nhất một region khác trước khi báo thành công, nên RPO = 0; đổi lại bảng phải nằm ở đúng 3 region và lệnh ghi chậm hơn.
+> Global Tables mặc định chạy chế độ eventual consistency như mô tả trên — đây cũng là chế độ đề thi hỏi. AWS đã thêm một chế độ thứ hai là **multi-Region strong consistency (MRSC)**: lệnh ghi được chép đồng bộ sang ít nhất một region khác trước khi báo thành công, nên RPO = 0; đổi lại bảng phải nằm ở đúng 3 region và lệnh ghi chậm hơn.
 
 **PITR (Point-in-Time Recovery).** Khi bật, DynamoDB lưu backup liên tục và cho bạn khôi phục bảng về **bất kỳ giây nào trong 35 ngày gần nhất**. PITR trả lời một câu hỏi khác hẳn Global Tables: nếu một bản deploy lỗi ghi rác vào bảng lúc 10:15, Global Tables sẽ **replicate luôn chỗ rác đó** sang mọi region trong một giây; PITR mới cho bạn quay bảng về 10:14. Restore luôn tạo ra một **bảng mới**.
 
-> 🪤 Bẫy thi: **replication không thay được backup.** Replication chống mất hạ tầng (region/AZ sập). Backup và PITR chống mất dữ liệu do xoá nhầm, bug, ransomware. Kiến trúc đủ thường cần cả hai.
+> Bẫy thi: **replication không thay được backup.** Replication chống mất hạ tầng (region/AZ sập). Backup và PITR chống mất dữ liệu do xoá nhầm, bug, ransomware. Kiến trúc đủ thường cần cả hai.
 
 ### 5.4 S3
 - **CRR / SRR** + versioning.
@@ -314,7 +314,7 @@ Trước khi dùng nên hỏi: cache này có **dựng lại được** từ dat
 | EBS | Copy snapshot | Theo lịch | — | Restore volume từ snapshot |
 | ElastiCache | Global Datastore | Async | Không | Tự promote bằng tay |
 
-> 🪤 Bẫy thi: *"RDS MySQL, cần DR sang region khác, RPO thấp"* → cross-region read replica. Vẫn câu đó nhưng thêm *"RPO ~1 giây, RTO ~1 phút"* hoặc *"ít ảnh hưởng hiệu năng primary"* → chuyển sang **Aurora Global Database**. Thêm *"ghi được ở mọi region"* → **DynamoDB Global Tables**.
+> Bẫy thi: *"RDS MySQL, cần DR sang region khác, RPO thấp"* → cross-region read replica. Vẫn câu đó nhưng thêm *"RPO ~1 giây, RTO ~1 phút"* hoặc *"ít ảnh hưởng hiệu năng primary"* → chuyển sang **Aurora Global Database**. Thêm *"ghi được ở mọi region"* → **DynamoDB Global Tables**.
 
 ---
 
@@ -347,7 +347,7 @@ Tên lấy từ **cầu dao điện**: dòng quá tải thì cầu dao tự ng�
 
 Circuit breaker là logic trong **code hoặc sidecar proxy**, không phải một dịch vụ AWS bạn bật lên. Thư viện phổ biến là Resilience4j (Java) và Polly (.NET). Service mesh như Istio đặt logic này vào proxy chạy cạnh mỗi service nên không phải sửa code.
 
-> 📏 AWS **App Mesh** đã ngừng hỗ trợ từ 30/9/2026; AWS hướng người dùng sang Amazon ECS Service Connect. Tài liệu ôn thi cũ vẫn nhắc App Mesh như lựa chọn service mesh của AWS.
+> AWS **App Mesh** đã ngừng hỗ trợ từ 30/9/2026; AWS hướng người dùng sang Amazon ECS Service Connect. Tài liệu ôn thi cũ vẫn nhắc App Mesh như lựa chọn service mesh của AWS.
 
 ### 6.2 Retry with exponential backoff + jitter
 - Retry transient error nhưng tăng wait dần (1s, 2s, 4s, 8s).
@@ -378,7 +378,7 @@ Có full jitter: client A chờ 0,1 → 1,7 → 3,1 → 2,0 giây
 
 AWS SDK đã làm sẵn việc này cho mọi lời gọi tới API của AWS: boto3 mặc định thử tối đa 5 lần với backoff hệ số 2. Bạn chỉ phải tự viết cho lời gọi giữa các service của mình.
 
-> 🪤 Chỉ retry những thao tác **idempotent**, tức gọi hai lần cho kết quả như gọi một lần. Retry một lệnh "trừ tiền" không có idempotency key là trừ tiền hai lần.
+> Chỉ retry những thao tác **idempotent**, tức gọi hai lần cho kết quả như gọi một lần. Retry một lệnh "trừ tiền" không có idempotency key là trừ tiền hai lần.
 
 ### 6.3 Bulkhead
 - Isolate resource per service/tenant — 1 service fail không drain pool chung.
@@ -559,12 +559,12 @@ Fallback thường gặp: dữ liệu cũ từ cache, giá trị mặc định, 
 - **Pilot Light > Active/Active** nếu RTO vài chục phút acceptable: bỏ được toàn bộ compute chạy 24/7 ở region DR (ví dụ ở §2.2: rẻ hơn ~71%).
 
 ### Anti-pattern
-- ❌ Backup không test restore → không biết RTO thật.
-- ❌ Multi-region active-active không cần thiết (RTO 1h OK) → trả gấp đôi hạ tầng cho thứ Pilot Light làm được với ~30% chi phí cộng thêm.
-- ❌ Single AZ prod RDS.
-- ❌ Snapshot cùng region with primary (region down = mất luôn).
-- ❌ DR procedure chỉ trong tài liệu, không tự động → human error in crisis.
-- ❌ Đo RPO/RTO theo lý thuyết, không test thực tế.
+- ✗ Backup không test restore → không biết RTO thật.
+- ✗ Multi-region active-active không cần thiết (RTO 1h OK) → trả gấp đôi hạ tầng cho thứ Pilot Light làm được với ~30% chi phí cộng thêm.
+- ✗ Single AZ prod RDS.
+- ✗ Snapshot cùng region with primary (region down = mất luôn).
+- ✗ DR procedure chỉ trong tài liệu, không tự động → human error in crisis.
+- ✗ Đo RPO/RTO theo lý thuyết, không test thực tế.
 
 ## 13. Foundations
 - [[foundations-06-failure-modes]] — cascading, retry storm, partial failure.

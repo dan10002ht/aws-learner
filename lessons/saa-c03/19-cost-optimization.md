@@ -62,7 +62,7 @@ Cần guaranteed capacity in region (DR)?
 
 "Baseline" là phần tải **lúc nào cũng có**: nếu hệ thống chạy ít nhất 10 instance vào giờ thấp điểm nhất và lên 30 vào giờ cao điểm, thì baseline là 10. Chỉ nên cam kết cho phần baseline, vì phần cam kết phải trả tiền dù có dùng hay không.
 
-> 🪤 Bẫy thi: "cần đảm bảo có capacity ở một AZ cho đợt sự kiện ngắn, không muốn cam kết 1 năm" → **Capacity Reservation** (tạo và huỷ lúc nào cũng được). "Cần giảm chi phí cho workload chạy đều" → SP/RI. Hai câu hỏi khác nhau: một cái mua **chỗ**, một cái mua **giá**.
+> Bẫy thi: "cần đảm bảo có capacity ở một AZ cho đợt sự kiện ngắn, không muốn cam kết 1 năm" → **Capacity Reservation** (tạo và huỷ lúc nào cũng được). "Cần giảm chi phí cho workload chạy đều" → SP/RI. Hai câu hỏi khác nhau: một cái mua **chỗ**, một cái mua **giá**.
 
 ### 3.2 Savings Plans deep
 
@@ -101,7 +101,7 @@ Quy luật chung: **càng linh hoạt thì giảm càng ít**. AWS giảm sâu h
 
 Mức giảm của Standard RI ngang EC2 Instance SP, của Convertible RI ngang Compute SP, nhưng SP tự áp vào usage nào khớp mà không cần bạn theo dõi từng cấu hình. Vì thế với EC2, SP đã thay RI trong hầu hết trường hợp ("RI legacy"). RI vẫn là cách cam kết chính cho **RDS, ElastiCache, Redshift, OpenSearch**.
 
-> 🪤 Bẫy thi: **Spot không được tính vào Savings Plans** — tiền Spot không trừ vào cam kết SP, và SP không giảm thêm cho Spot. Và SP/RI chỉ giảm **giá**, không đảm bảo **capacity** (trừ zonal RI).
+> Bẫy thi: **Spot không được tính vào Savings Plans** — tiền Spot không trừ vào cam kết SP, và SP không giảm thêm cho Spot. Và SP/RI chỉ giảm **giá**, không đảm bảo **capacity** (trừ zonal RI).
 
 → Recommendation: bắt đầu **Compute SP 1y no-upfront** sau khi workload ổn định 1 tháng. Lý do: Compute SP ít rủi ro khoá nhầm nhất, 1 năm ngắn đủ để sửa sai, no-upfront không chôn vốn. Mức cam kết lấy theo baseline, có thể xem gợi ý sẵn trong Cost Explorer (mục Savings Plans recommendations).
 
@@ -132,7 +132,7 @@ Từ đó suy ra vì sao workload Spot phải **stateless và retryable**: mọi
 - **Spot Block** (deprecated, no longer available 2021+): từng cho đặt Spot chạy cố định 1–6 giờ không bị ngắt. Nếu đáp án nhắc tới nó thì đó là đáp án cũ.
 - **Spot Hibernation** — save state khi reclaim: thay vì terminate, instance được **hibernate**, tức RAM được ghi xuống EBS root volume; khi có capacity lại, instance bật lên tiếp tục từ đúng chỗ dừng. Trong lúc ngủ chỉ trả tiền EBS.
 
-> 🪤 Bẫy thi: Spot ngừng do **AWS thu hồi capacity**, không phải do bạn "trả giá thấp". Và "workload không được phép gián đoạn" thì loại Spot ngay, dù đề bài nhấn mạnh rẻ nhất.
+> Bẫy thi: Spot ngừng do **AWS thu hồi capacity**, không phải do bạn "trả giá thấp". Và "workload không được phép gián đoạn" thì loại Spot ngay, dù đề bài nhấn mạnh rẻ nhất.
 
 ### 3.5 Graviton
 - **Graviton** là dòng CPU kiến trúc **ARM** do AWS tự thiết kế, thay cho CPU x86 của Intel/AMD. AWS không phải trả phần lãi cho hãng chip nên bán rẻ hơn.
@@ -214,7 +214,7 @@ Với object lớn thì phí này không đáng kể; với hàng tỷ object nh
 - **Abort multipart** lifecycle bắt buộc. Upload file lớn được chia thành nhiều part (multipart upload). Nếu upload hỏng giữa chừng, các part đã lên **vẫn nằm trong bucket và vẫn bị tính tiền**, nhưng không hiện ra khi list object. Rule `AbortIncompleteMultipartUpload` sau 7 ngày dọn chúng tự động.
 - **Storage Lens** review monthly. Storage Lens là dashboard tổng hợp dung lượng và hoạt động của S3 trên toàn account hoặc toàn Organization: bucket nào phình nhanh, bucket nào còn multipart dở, bao nhiêu dữ liệu là version cũ. Bộ metric cơ bản miễn phí.
 
-> 🪤 Bẫy thi: "không biết access pattern" → **Intelligent-Tiering**. "Biết chắc sau 30 ngày hiếm khi đọc" → **Lifecycle sang Standard-IA**. "Lưu 7–10 năm cho compliance, chờ nửa ngày mới lấy được cũng chấp nhận" → **Glacier Deep Archive**. "Dữ liệu tái tạo được, hiếm đọc" → **One Zone-IA**.
+> Bẫy thi: "không biết access pattern" → **Intelligent-Tiering**. "Biết chắc sau 30 ngày hiếm khi đọc" → **Lifecycle sang Standard-IA**. "Lưu 7–10 năm cho compliance, chờ nửa ngày mới lấy được cũng chấp nhận" → **Glacier Deep Archive**. "Dữ liệu tái tạo được, hiếm đọc" → **One Zone-IA**.
 
 ### 4.2 EBS
 - **gp3** thay gp2 → 20% rẻ: ~$0,08 so với ~$0,10 mỗi GB-tháng. Ngoài giá, gp3 cho sẵn 3.000 IOPS (số thao tác đọc/ghi mỗi giây) và 125 MB/s **không phụ thuộc dung lượng**, còn gp2 buộc IOPS vào kích thước volume (3 IOPS mỗi GB), nên trước đây người ta phải mua volume to hơn cần thiết chỉ để có IOPS. Đổi gp2 → gp3 làm online được bằng Elastic Volumes, không downtime.
@@ -290,7 +290,7 @@ Phép tính chưa gồm tiền thuê đường truyền vật lý từ nhà mạ
 - **ASG balance**: giữ số instance đều giữa các AZ. Nếu AZ-a có 8 máy còn AZ-b có 2, phần lớn request vào node ALB ở AZ-b phải chuyển sang AZ-a, và các lời gọi tiếp theo tới service khác, cache, database cũng bị lệch theo.
 - **Same-AZ data plane** (Kafka, ElastiCache) — partition aware client. "Data plane" là đường đi của dữ liệu thật (đọc/ghi), khác với đường điều khiển. Các hệ như Kafka hay ElastiCache có bản sao (replica) ở nhiều AZ. Client mặc định đọc từ node leader/primary, có thể nằm ở AZ khác, nên mỗi lần đọc là một lần trả phí cross-AZ. Client "biết" mình ở AZ nào thì chọn **replica cùng AZ** để đọc: Kafka gọi là *rack awareness* (khai báo `client.rack` bằng tên AZ để consumer fetch từ follower gần nhất), ElastiCache/Redis là đọc từ read replica cùng AZ. Ghi thì vẫn phải tới leader.
 
-> 🪤 Bẫy thi: "hoá đơn NAT Gateway cao, app chủ yếu gọi S3" → **Gateway Endpoint** (miễn phí), không phải Interface Endpoint. "Giảm chi phí data transfer cho nội dung tĩnh phục vụ người dùng toàn cầu" → **CloudFront**.
+> Bẫy thi: "hoá đơn NAT Gateway cao, app chủ yếu gọi S3" → **Gateway Endpoint** (miễn phí), không phải Interface Endpoint. "Giảm chi phí data transfer cho nội dung tĩnh phục vụ người dùng toàn cầu" → **CloudFront**.
 
 ---
 
@@ -537,15 +537,15 @@ Khác biệt gốc giữa hai cái: Budgets bắt được việc **vượt mộ
 - [ ] Multi-region cost review.
 
 ### Anti-pattern
-- ❌ Không tag → không chargeback được.
-- ❌ Multi-AZ dev/test không cần thiết.
-- ❌ Default CW detailed monitoring mọi EC2 (1 phút metric).
-- ❌ CloudWatch Logs forever retention.
-- ❌ NAT GW serve S3 traffic.
-- ❌ EIP idle.
-- ❌ Snapshot accumulate forever.
-- ❌ Compute SP commit overage (over-commit → trả on-demand cho phần thừa).
-- ❌ Spot cho stateful workload.
+- ✗ Không tag → không chargeback được.
+- ✗ Multi-AZ dev/test không cần thiết.
+- ✗ Default CW detailed monitoring mọi EC2 (1 phút metric).
+- ✗ CloudWatch Logs forever retention.
+- ✗ NAT GW serve S3 traffic.
+- ✗ EIP idle.
+- ✗ Snapshot accumulate forever.
+- ✗ Compute SP commit overage (over-commit → trả on-demand cho phần thừa).
+- ✗ Spot cho stateful workload.
 
 ## 14. Foundations
 Chưa cần. Cost tối ưu nhưng không cùng mục đích distributed system.

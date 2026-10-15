@@ -61,7 +61,7 @@ Có SQS ở giữa:   240.000 message nằm chờ trong queue, không mất cái
 
 Cái giá của load leveling là **độ trễ**: request cuối đợt spike phải chờ gần nửa tiếng mới được xử lý. Muốn rút ngắn thì cho fleet consumer scale theo độ sâu queue (số message đang chờ), thay vì nuôi sẵn 1.000 request/giây công suất cho 5 phút cao điểm mỗi ngày.
 
-> 💡 Mẹo thi: Hễ câu hỏi nhắc "spike traffic làm backend quá tải / mất request", đáp án gần như luôn là **đặt SQS ở giữa** (queue-based load leveling) để buffer.
+> Mẹo thi: Hễ câu hỏi nhắc "spike traffic làm backend quá tải / mất request", đáp án gần như luôn là **đặt SQS ở giữa** (queue-based load leveling) để buffer.
 
 ### Stateless là gì và lưu state ở đâu?
 
@@ -74,7 +74,7 @@ Tier xử lý KHÔNG nên giữ state trên local disk/memory. Đẩy state ra n
 | Dữ liệu chia sẻ giữa instance | EFS, RDS, DynamoDB |
 | Trạng thái workflow | Step Functions |
 
-> ⚠️ Bẫy: ELB "sticky sessions" giúp giữ user trên một instance, nhưng KHÔNG phải giải pháp stateless thật sự — instance chết là mất session. Đề thường muốn câu trả lời "lưu session vào DynamoDB/ElastiCache".
+> Bẫy: ELB "sticky sessions" giúp giữ user trên một instance, nhưng KHÔNG phải giải pháp stateless thật sự — instance chết là mất session. Đề thường muốn câu trả lời "lưu session vào DynamoDB/ElastiCache".
 
 ## 2. Amazon SQS — hàng đợi message
 
@@ -120,9 +120,9 @@ Ví dụ chọn loại queue: hệ thống ghi nhận 5.000 giao dịch/giây, y
 | Tên queue | bất kỳ | phải kết thúc `.fifo` |
 | Dedup | không, consumer phải idempotent | `MessageDeduplicationId` tự cấp, hoặc content-based (SHA-256 của body) |
 
-> 💡 Mẹo thi: "Order of transactions matters" / "no duplicates" → **SQS FIFO**. "Maximum throughput, order không quan trọng" → **SQS Standard**.
+> Mẹo thi: "Order of transactions matters" / "no duplicates" → **SQS FIFO**. "Maximum throughput, order không quan trọng" → **SQS Standard**.
 
-> ⚠️ Bẫy: Standard queue có thể giao **duplicate** và **out-of-order**. Nếu app không idempotent thì xử lý trùng sẽ sai. Đề hay gài "Standard nhưng yêu cầu no duplicates" — sai, phải FIFO.
+> Bẫy: Standard queue có thể giao **duplicate** và **out-of-order**. Nếu app không idempotent thì xử lý trùng sẽ sai. Đề hay gài "Standard nhưng yêu cầu no duplicates" — sai, phải FIFO.
 
 ### Visibility Timeout
 
@@ -161,7 +161,7 @@ Khi consumer nhận message, message bị "ẩn" trong khoảng **visibility tim
   <text x="360" y="234" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">lỗi lặp lại quá N lần</text>
 </svg>
 
-> ⚠️ Bẫy kinh điển: "Message bị xử lý nhiều lần / xử lý trùng" trong khi consumer xử lý lâu → nguyên nhân là **visibility timeout quá ngắn**, tăng nó lên.
+> Bẫy kinh điển: "Message bị xử lý nhiều lần / xử lý trùng" trong khi consumer xử lý lâu → nguyên nhân là **visibility timeout quá ngắn**, tăng nó lên.
 
 ### Long Polling vs Short Polling
 
@@ -182,13 +182,13 @@ Long polling 20 giây:            3 lời gọi/phút × 1.440 phút  =   4.320 
 | Chi phí | Nhiều empty response → tốn API call/tiền | Giảm empty response, **rẻ hơn** |
 | Khuyến nghị | Hiếm khi | Mặc định nên dùng |
 
-> 💡 Mẹo thi: "Giảm số empty response / giảm chi phí SQS / giảm latency phát hiện message" → **Long Polling** (set `ReceiveMessageWaitTimeSeconds = 20`).
+> Mẹo thi: "Giảm số empty response / giảm chi phí SQS / giảm latency phát hiện message" → **Long Polling** (set `ReceiveMessageWaitTimeSeconds = 20`).
 
 ### Dead-Letter Queue (DLQ)
 
 DLQ là queue riêng nhận các message **xử lý thất bại nhiều lần**. Cấu hình `maxReceiveCount`: sau N lần message bị nhận mà không delete (xử lý lỗi), nó được chuyển sang DLQ để điều tra, tránh "poison pill" làm tắc queue.
 
-> 💡 Mẹo thi: "Message lỗi cứ retry vô hạn làm nghẽn queue" / "cần giữ lại message thất bại để debug" → cấu hình **DLQ** với `maxReceiveCount`.
+> Mẹo thi: "Message lỗi cứ retry vô hạn làm nghẽn queue" / "cần giữ lại message thất bại để debug" → cấu hình **DLQ** với `maxReceiveCount`.
 
 ### SQS — các tính năng khác hay hỏi
 
@@ -269,9 +269,9 @@ Pattern kinh điển: publish **một** message lên SNS topic, topic fan-out t�
 - Thêm subscriber mới không cần sửa producer (loose coupling thật sự).
 - Mỗi SQS queue cho khả năng **buffer + retry + DLQ** riêng — không mất message nếu một service down.
 
-> 💡 Mẹo thi: "Một sự kiện cần được nhiều hệ thống xử lý song song, mỗi hệ thống độc lập và không được mất message" → **SNS fan-out tới nhiều SQS queue**. (SNS một mình không có buffer bền vững → ghép SQS để đảm bảo durability.)
+> Mẹo thi: "Một sự kiện cần được nhiều hệ thống xử lý song song, mỗi hệ thống độc lập và không được mất message" → **SNS fan-out tới nhiều SQS queue**. (SNS một mình không có buffer bền vững → ghép SQS để đảm bảo durability.)
 
-> ⚠️ Bẫy: Câu hỏi muốn fan-out + đảm bảo không mất message → đừng chọn "SNS to multiple Lambda". Lambda có thể throttle/lỗi; **SNS → SQS → Lambda** mới có buffer an toàn.
+> Bẫy: Câu hỏi muốn fan-out + đảm bảo không mất message → đừng chọn "SNS to multiple Lambda". Lambda có thể throttle/lỗi; **SNS → SQS → Lambda** mới có buffer an toàn.
 
 ### Amazon MQ — messaging chuẩn công nghiệp (khi nào KHÔNG dùng SQS/SNS)
 
@@ -285,9 +285,9 @@ Pattern kinh điển: publish **một** message lên SNS topic, topic fan-out t�
 | App **cloud-native mới**, chấp nhận API riêng của AWS | **SQS / SNS** |
 | Cần scale gần như vô hạn, ít vận hành nhất, fan-out đơn giản | **SQS / SNS** |
 
-> 💡 Mẹo thi: Cứ thấy các từ khóa **AMQP / MQTT / STOMP / JMS**, **ActiveMQ**, **RabbitMQ**, "migrate messaging without changing code" → đáp án là **Amazon MQ**. Ngược lại, hệ thống dựng mới trên AWS thì **SQS/SNS** là lựa chọn mặc định (rẻ hơn, serverless, scale tự động, không phải quản lý broker).
+> Mẹo thi: Cứ thấy các từ khóa **AMQP / MQTT / STOMP / JMS**, **ActiveMQ**, **RabbitMQ**, "migrate messaging without changing code" → đáp án là **Amazon MQ**. Ngược lại, hệ thống dựng mới trên AWS thì **SQS/SNS** là lựa chọn mặc định (rẻ hơn, serverless, scale tự động, không phải quản lý broker).
 
-> ⚠️ Bẫy: Amazon MQ chạy trên **broker instance** (có thể multi-AZ active/standby) — bạn vẫn phải chọn size/patch ở mức nhất định và throughput **không "vô hạn"** như SQS. Đừng chọn Amazon MQ chỉ vì "cần một hàng đợi"; nó dành cho tương thích **protocol chuẩn**, không phải để thay SQS trong app mới.
+> Bẫy: Amazon MQ chạy trên **broker instance** (có thể multi-AZ active/standby) — bạn vẫn phải chọn size/patch ở mức nhất định và throughput **không "vô hạn"** như SQS. Đừng chọn Amazon MQ chỉ vì "cần một hàng đợi"; nó dành cho tương thích **protocol chuẩn**, không phải để thay SQS trong app mới.
 
 ## 4. Amazon EventBridge — Event Bus
 
@@ -331,7 +331,7 @@ Cả hai đều "một nguồn, nhiều đích", nên đề thi phân biệt b�
 | Số đích | Tới 12,5 triệu subscription/topic | Tối đa **5 target/rule** (mỗi bus 300 rule) |
 | Replay/Archive | Không (topic Standard) | **Có archive & replay event** |
 
-> 💡 Mẹo thi:
+> Mẹo thi:
 > - "React tới event từ AWS service (S3 upload, EC2 state change), hoặc từ SaaS, có filtering phức tạp, hoặc cần schedule (cron)" → **EventBridge**.
 > - "Fan-out đơn giản, throughput cao, độ trễ thấp tới SQS/Lambda/email/SMS" → **SNS**.
 
@@ -374,7 +374,7 @@ Hai dịch vụ khác nhau về bản chất: **Data Streams** là một stream 
 | Vận hành | Quản lý shard/on-demand, quản lý consumer | **Fully managed, tự scale**, không có shard |
 | Transform | Trong consumer của bạn | Lambda transform + convert sang Parquet/ORC |
 
-> 💡 Mẹo thi:
+> Mẹo thi:
 > - "Chỉ cần **đưa streaming data vào S3/Redshift/OpenSearch** mà không viết consumer, ít vận hành" → **Firehose**.
 > - "Cần **xử lý real-time tùy biến**, **replay**, hoặc **nhiều consumer** đọc cùng dữ liệu" → **Data Streams**.
 > - Pattern thường gặp: **Data Streams → Firehose → S3** (stream real-time cho nhiều consumer, đồng thời một nhánh Firehose archive xuống S3).
@@ -390,7 +390,7 @@ Hai dịch vụ khác nhau về bản chất: **Data Streams** là một stream 
 | Muốn **streaming managed thuần AWS, ít vận hành nhất**, tích hợp sẵn AWS | **Kinesis** |
 | Serverless, không muốn quản lý broker/cluster/partition | **Kinesis** (Data Streams / Firehose) |
 
-> 💡 Mẹo thi: Từ khóa **"Kafka" / "Kafka API" / "existing Kafka application"** → **Amazon MSK**. Nếu đề chỉ mô tả nhu cầu streaming chung chung, "managed", "ít ops nhất", "serverless" mà **không nhắc Kafka** → **Kinesis**. (MSK Serverless tồn tại nhưng vẫn là Kafka; điểm mấu chốt phân biệt vẫn là "có ràng buộc Kafka hay không".)
+> Mẹo thi: Từ khóa **"Kafka" / "Kafka API" / "existing Kafka application"** → **Amazon MSK**. Nếu đề chỉ mô tả nhu cầu streaming chung chung, "managed", "ít ops nhất", "serverless" mà **không nhắc Kafka** → **Kinesis**. (MSK Serverless tồn tại nhưng vẫn là Kafka; điểm mấu chốt phân biệt vẫn là "có ràng buộc Kafka hay không".)
 
 ### SQS vs SNS vs EventBridge vs Kinesis
 
@@ -404,9 +404,9 @@ Bốn dịch vụ khác nhau ở hai câu hỏi gốc: message **giao cho một 
 | Event-driven từ AWS services/SaaS, filtering phức tạp, schedule | **EventBridge** |
 | Streaming real-time từ hàng nghìn record/giây, nhiều consumer đọc lại, replay, big data, ordering theo partition key (trong từng shard) | **Kinesis** |
 
-> 💡 Mẹo thi: Tín hiệu nhận diện Kinesis: "real-time analytics", "clickstream", "IoT telemetry", "thousands of records/sec", "multiple consumers replaying data", "ordered per device". Nếu chỉ là "decouple 2 service / buffer task" thì **đừng** chọn Kinesis (overkill) → SQS.
+> Mẹo thi: Tín hiệu nhận diện Kinesis: "real-time analytics", "clickstream", "IoT telemetry", "thousands of records/sec", "multiple consumers replaying data", "ordered per device". Nếu chỉ là "decouple 2 service / buffer task" thì **đừng** chọn Kinesis (overkill) → SQS.
 
-> ⚠️ Bẫy: SQS message bị **xóa sau khi consume** và không replay được. Nếu đề yêu cầu "nhiều ứng dụng đọc cùng stream và có thể replay" → **Kinesis**, không phải SQS.
+> Bẫy: SQS message bị **xóa sau khi consume** và không replay được. Nếu đề yêu cầu "nhiều ứng dụng đọc cùng stream và có thể replay" → **Kinesis**, không phải SQS.
 
 ## 6. API Gateway + Lambda — decoupling tầng API
 
@@ -432,7 +432,7 @@ Với kiểu async, sau 3 lần vẫn lỗi thì Lambda **bỏ event**. Muốn g
 
 Để chống quá tải downstream, dùng **API Gateway → SQS → Lambda** thay vì API Gateway gọi thẳng Lambda. Khi gọi thẳng, 1.000 request tới cùng lúc sẽ thành 1.000 bản Lambda chạy song song cùng mở kết nối vào database. Có queue ở giữa, API Gateway chỉ ghi message vào SQS rồi trả lời client ngay, còn Lambda rút message ra theo nhịp bạn giới hạn được (batch size, maximum concurrency của event source mapping).
 
-> ⚠️ Bẫy: API Gateway có timeout tích hợp **29 giây**: backend không trả lời kịp thì client nhận lỗi 504 dù Lambda vẫn đang chạy. (Hiện nay xin nâng được mức này cho REST API loại Regional và private, đánh đổi bằng việc giảm throttle quota của account; đề thi vẫn coi 29 giây là giới hạn.) Tác vụ chạy lâu → trả về 202 ngay, đẩy job vào **SQS/Step Functions** xử lý bất đồng bộ, đừng giữ kết nối đồng bộ.
+> Bẫy: API Gateway có timeout tích hợp **29 giây**: backend không trả lời kịp thì client nhận lỗi 504 dù Lambda vẫn đang chạy. (Hiện nay xin nâng được mức này cho REST API loại Regional và private, đánh đổi bằng việc giảm throttle quota của account; đề thi vẫn coi 29 giây là giới hạn.) Tác vụ chạy lâu → trả về 202 ngay, đẩy job vào **SQS/Step Functions** xử lý bất đồng bộ, đừng giữ kết nối đồng bộ.
 
 ### Step Functions — orchestration nhiều bước
 
@@ -446,12 +446,12 @@ Khi một quy trình gồm **nhiều bước tuần tự/rẽ nhánh** (gọi La
 | Giá | Theo **state transition** | Theo **số execution + thời gian/bộ nhớ** |
 | Hợp với | Quy trình nghiệp vụ dài (order fulfillment, ETL, human approval) | Sự kiện high-volume, xử lý ngắn (IoT ingestion, streaming backend) |
 
-> 💡 Mẹo thi:
+> Mẹo thi:
 > - "Điều phối **nhiều Lambda/step** với retry và xử lý lỗi, cần **visual workflow** / audit" → **Step Functions** (thay chuỗi Lambda gọi nhau).
 > - Workflow **chạy lâu, chờ approval, tới hàng giờ/ngày** → **Standard**.
 > - Workflow **rất ngắn, tần suất cực cao** → **Express**.
 
-> ⚠️ Bẫy: Đừng chọn "Lambda gọi Lambda nhau" hay "chuỗi SQS thủ công" khi đề nhấn mạnh **orchestration / điều phối / theo dõi trạng thái nhiều bước** — đó là dấu hiệu của **Step Functions**.
+> Bẫy: Đừng chọn "Lambda gọi Lambda nhau" hay "chuỗi SQS thủ công" khi đề nhấn mạnh **orchestration / điều phối / theo dõi trạng thái nhiều bước** — đó là dấu hiệu của **Step Functions**.
 
 Đề thi đôi khi đặt Step Functions cạnh một dịch vụ workflow đời cũ là Amazon SWF; phần so sánh nằm ở §7b bên dưới.
 
@@ -465,7 +465,7 @@ Decoupling ở tầng compute = tách monolith thành **microservices** độc l
 | Quản lý hạ tầng | Bạn quản lý EC2 (patch, scale node) | AWS quản lý, trả theo vCPU/RAM | Bạn (hoặc Fargate) quản lý node |
 | Khi nào dùng | Cần kiểm soát instance, dùng Spot tiết kiệm | Không muốn quản lý server, workload biến động | Đã chuẩn Kubernetes, multi-cloud, hệ sinh thái K8s |
 
-> 💡 Mẹo thi:
+> Mẹo thi:
 > - "Run containers without managing servers/EC2" → **Fargate**.
 > - "Already using Kubernetes / cần portability K8s" → **EKS**.
 > - "Cần kiểm soát instance hoặc tiết kiệm bằng Spot/Reserved" → **ECS on EC2**.
@@ -497,7 +497,7 @@ không phải nuôi decider, tích hợp sẵn với hơn 200 service, có retry
 | Cần **luồng có bước thao tác thủ công của con người** kéo dài, hoặc signal từ hệ thống ngoài, và cần điều khiển ở mức code | **SWF** |
 | Chỉ cần tách producer/consumer, không cần trạng thái workflow | **SQS/SNS/EventBridge** |
 
-> 🪤 Bẫy: SWF vẫn xuất hiện trong đề như một mồi nhử. Trừ khi đề nhấn mạnh **human task** hoặc
+> Bẫy: SWF vẫn xuất hiện trong đề như một mồi nhử. Trừ khi đề nhấn mạnh **human task** hoặc
 > **decider tự viết**, đáp án gần như luôn là Step Functions.
 
 ## 8. Tổng hợp cây quyết định cho đề thi
@@ -517,16 +517,16 @@ không phải nuôi decider, tích hợp sẵn với hơn 200 service, có retry
 
 ## 9. Checklist các bẫy thường gặp
 
-- ❌ Standard queue nhưng yêu cầu **no duplicate/ordering** → phải **FIFO**.
-- ❌ Chọn SNS một mình cho fan-out cần **durability** → phải ghép **SQS**.
-- ❌ Dùng SQS khi cần **replay/nhiều consumer độc lập** → phải **Kinesis**.
-- ❌ Dùng Kinesis cho task decouple đơn giản → **overkill**, dùng **SQS**.
-- ❌ Quên rằng SQS message có trần kích thước (**256 KB** trong đề thi, 1 MiB theo docs hiện tại) → payload lớn dùng **S3 + Extended Client**.
-- ❌ Giữ session trên instance (stateful) → đẩy ra **DynamoDB/ElastiCache**.
-- ❌ Tác vụ > 29s qua API Gateway đồng bộ → chuyển **async**.
-- ❌ Visibility timeout quá ngắn → **double processing**.
+- ✗ Standard queue nhưng yêu cầu **no duplicate/ordering** → phải **FIFO**.
+- ✗ Chọn SNS một mình cho fan-out cần **durability** → phải ghép **SQS**.
+- ✗ Dùng SQS khi cần **replay/nhiều consumer độc lập** → phải **Kinesis**.
+- ✗ Dùng Kinesis cho task decouple đơn giản → **overkill**, dùng **SQS**.
+- ✗ Quên rằng SQS message có trần kích thước (**256 KB** trong đề thi, 1 MiB theo docs hiện tại) → payload lớn dùng **S3 + Extended Client**.
+- ✗ Giữ session trên instance (stateful) → đẩy ra **DynamoDB/ElastiCache**.
+- ✗ Tác vụ > 29s qua API Gateway đồng bộ → chuyển **async**.
+- ✗ Visibility timeout quá ngắn → **double processing**.
 
-> 💡 Tư duy cốt lõi: Khi nghi ngờ giữa các lựa chọn, hỏi 3 câu — (1) Cần **ordering** không? (2) Cần **fan-out** tới nhiều consumer không? (3) Cần **replay/nhiều consumer độc lập** không? Trả lời 3 câu này gần như luôn dẫn thẳng tới SQS / SNS / EventBridge / Kinesis đúng.
+> Tư duy cốt lõi: Khi nghi ngờ giữa các lựa chọn, hỏi 3 câu — (1) Cần **ordering** không? (2) Cần **fan-out** tới nhiều consumer không? (3) Cần **replay/nhiều consumer độc lập** không? Trả lời 3 câu này gần như luôn dẫn thẳng tới SQS / SNS / EventBridge / Kinesis đúng.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Cây quyết định chọn dịch vụ decoupling theo 3 câu hỏi</title>

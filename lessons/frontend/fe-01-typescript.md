@@ -25,10 +25,10 @@ function getDiscount(price: number): number {
   return price * 0.9;
 }
 getDiscount("100");
-// ❌ Argument of type 'string' is not assignable to parameter of type 'number'
+// ✗ Argument of type 'string' is not assignable to parameter of type 'number'
 ```
 
-> 💡 Ghi nhớ: TS không làm app chạy nhanh hơn hay an toàn hơn lúc runtime. Type bị **xoá hoàn toàn** khi build (type erasure). Giá trị của TS nằm ở lúc *viết code* và *bảo trì*.
+> Ghi nhớ: TS không làm app chạy nhanh hơn hay an toàn hơn lúc runtime. Type bị **xoá hoàn toàn** khi build (type erasure). Giá trị của TS nằm ở lúc *viết code* và *bảo trì*.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Type erasure — ranh giới compile-time và runtime</title>
@@ -97,7 +97,7 @@ function add(a: number, b: number) {
 
 Quy tắc thực dụng: **annotate tham số hàm và ranh giới (props, API), để TS tự suy luận biến cục bộ.** Viết `const x: number = 5` là thừa.
 
-> ⚠️ Bẫy: Tránh annotate kiểu rộng hơn cần thiết. `const color: string = "red"` làm mất literal type; để TS suy `"red"` (literal) thường hữu ích hơn — xem phần union & literal.
+> Bẫy: Tránh annotate kiểu rộng hơn cần thiết. `const color: string = "red"` làm mất literal type; để TS suy `"red"` (literal) thường hữu ích hơn — xem phần union & literal.
 
 ## interface vs type
 
@@ -121,11 +121,11 @@ Khác biệt cốt lõi:
 
 | Tiêu chí | `interface` | `type` |
 |---|---|---|
-| Mô tả object/shape | ✅ | ✅ |
+| Mô tả object/shape | ✓ | ✓ |
 | Mở rộng (extends) | `extends` | `&` (intersection) |
-| Union (`A \| B`) | ❌ | ✅ |
-| Tuple, primitive alias, mapped type | ❌ | ✅ |
-| Declaration merging (khai báo trùng tên gộp lại) | ✅ | ❌ |
+| Union (`A \| B`) | ✗ | ✓ |
+| Tuple, primitive alias, mapped type | ✗ | ✓ |
+| Declaration merging (khai báo trùng tên gộp lại) | ✓ | ✗ |
 
 ```typescript
 // interface mở rộng
@@ -140,7 +140,7 @@ type AdminT = User & { role: "admin" };
 type Status = "idle" | "loading" | "error";
 ```
 
-> 💡 Ghi nhớ: Quy ước phổ biến: dùng `interface` cho object/props của component (dễ extend, dễ đọc), dùng `type` cho union, tuple, hoặc alias phức tạp. Chọn một quy ước trong team rồi nhất quán — đừng tranh cãi.
+> Ghi nhớ: Quy ước phổ biến: dùng `interface` cho object/props của component (dễ extend, dễ đọc), dùng `type` cho union, tuple, hoặc alias phức tạp. Chọn một quy ước trong team rồi nhất quán — đừng tranh cãi.
 
 ## Union & literal type
 
@@ -152,16 +152,16 @@ type Id = string | number;           // union kiểu
 
 function setTheme(theme: Theme) { /* ... */ }
 setTheme("dark");   // OK
-setTheme("blue");   // ❌ '"blue"' không gán được cho Theme
+setTheme("blue");   // ✗ '"blue"' không gán được cho Theme
 ```
 
 Đây là cách model state UI rất chuẩn — thay cho boolean rời rạc dễ rơi vào trạng thái vô lý:
 
 ```typescript
-// ❌ dễ sai: có thể vừa loading vừa error?
+// ✗ dễ sai: có thể vừa loading vừa error?
 type BadState = { isLoading: boolean; isError: boolean; data?: User };
 
-// ✅ discriminated union — chỉ một trạng thái tại một thời điểm
+// ✓ discriminated union — chỉ một trạng thái tại một thời điểm
 type FetchState =
   | { status: "idle" }
   | { status: "loading" }
@@ -234,7 +234,7 @@ function render(state: FetchState) {
   </g>
 </svg>
 
-> 💡 Ghi nhớ: Các công cụ narrow thường gặp: `typeof`, `Array.isArray()`, `in` (kiểm tra có property), so sánh literal (`state.status === "..."`), và `instanceof`. Sau khi narrow, đừng ép kiểu `as` nữa — TS đã đúng rồi.
+> Ghi nhớ: Các công cụ narrow thường gặp: `typeof`, `Array.isArray()`, `in` (kiểm tra có property), so sánh literal (`state.status === "..."`), và `instanceof`. Sau khi narrow, đừng ép kiểu `as` nữa — TS đã đúng rồi.
 
 ## Generics — kiểu tham số hoá
 
@@ -265,7 +265,7 @@ async function fetchJson<T>(url: string): Promise<T> {
 const user = await fetchJson<User>("/api/users/1"); // user: User
 ```
 
-> ⚠️ Bẫy: `res.json()` trả về `any` (hay `unknown`) — TS *tin* bạn rằng dữ liệu đúng kiểu `T`, nhưng **không kiểm tra runtime**. Nếu API trả sai shape, type "đúng" nhưng app vẫn nổ. Giải pháp đúng đắn là validate bằng **Zod** (bài Forms & Validation).
+> Bẫy: `res.json()` trả về `any` (hay `unknown`) — TS *tin* bạn rằng dữ liệu đúng kiểu `T`, nhưng **không kiểm tra runtime**. Nếu API trả sai shape, type "đúng" nhưng app vẫn nổ. Giải pháp đúng đắn là validate bằng **Zod** (bài Forms & Validation).
 
 ## Utility types: Partial, Pick, Omit, Record
 
@@ -305,7 +305,7 @@ const labels: RoleLabels = { admin: "Quản trị", user: "Người dùng", gues
 | `Record<K, V>` | Object key→value | Map config, lookup table |
 | `ReturnType<F>` | Kiểu trả về của hàm | Suy type từ hook/selector |
 
-> 💡 Ghi nhớ: Đừng định nghĩa lại kiểu na ná nhau. Có một `interface User` "nguồn", rồi suy ra `CreateUser = Omit<User, "id">`, `UserUpdate = Partial<User>`. Sửa một chỗ, cả hệ thống đồng bộ.
+> Ghi nhớ: Đừng định nghĩa lại kiểu na ná nhau. Có một `interface User` "nguồn", rồi suy ra `CreateUser = Omit<User, "id">`, `UserUpdate = Partial<User>`. Sửa một chỗ, cả hệ thống đồng bộ.
 
 ## Typing props của component
 
@@ -332,7 +332,7 @@ function Button({ label, variant = "primary", disabled, onClick, children }: But
 // Dùng:
 <Button label="Lưu" variant="primary" onClick={() => save()} />;
 <Button label="Xoá" variant="danger" onClick={() => {}} />;
-// ❌ '"danger"' không gán được cho '"primary" | "secondary"'
+// ✗ '"danger"' không gán được cho '"primary" | "secondary"'
 ```
 
 Component nhận dữ liệu thật từ API:
@@ -353,7 +353,7 @@ function UserCard({ user, onSelect }: UserCardProps) {
 }
 ```
 
-> 💡 Ghi nhớ: React 19 bỏ `React.FC` khỏi khuyến nghị. Cứ viết function thường `function C(props: Props)` — gọn hơn, không bị `React.FC` ngầm thêm `children` không mong muốn.
+> Ghi nhớ: React 19 bỏ `React.FC` khỏi khuyến nghị. Cứ viết function thường `function C(props: Props)` — gọn hơn, không bị `React.FC` ngầm thêm `children` không mong muốn.
 
 ## Typing event handler
 
@@ -385,7 +385,7 @@ function SearchInput() {
 }
 ```
 
-> 💡 Ghi nhớ: Nếu handler được khai báo **inline** ngay trong JSX, TS tự suy kiểu event — không cần annotate: `onChange={(e) => setName(e.target.value)}` là đủ. Chỉ annotate khi tách hàm ra ngoài.
+> Ghi nhớ: Nếu handler được khai báo **inline** ngay trong JSX, TS tự suy kiểu event — không cần annotate: `onChange={(e) => setName(e.target.value)}` là đủ. Chỉ annotate khi tách hàm ra ngoài.
 
 ## Typing API response
 
@@ -409,8 +409,8 @@ async function getPosts(): Promise<ApiResponse<Post[]>> {
 }
 
 const result = await getPosts();
-result.data[0].title; // ✅ TS biết là string
-result.meta.page;     // ✅ number
+result.data[0].title; // ✓ TS biết là string
+result.meta.page;     // ✓ number
 ```
 
 ## tsconfig: bật `strict`
@@ -436,10 +436,10 @@ result.meta.page;     // ✅ number
 function greet(name: string) { return `Hi ${name}`; }
 greet(null);
 // strict OFF: chạy ra "Hi null" (bug im lặng)
-// strict ON: ❌ 'null' không gán được cho 'string'
+// strict ON: ✗ 'null' không gán được cho 'string'
 ```
 
-> ⚠️ Bẫy: Dự án mới luôn bật `strict` từ đầu. Tắt rồi bật lại sau sẽ lòi ra hàng trăm lỗi cùng lúc, không ai muốn fix. Đau một lần lúc đầu, sướng cả vòng đời dự án.
+> Bẫy: Dự án mới luôn bật `strict` từ đầu. Tắt rồi bật lại sau sẽ lòi ra hàng trăm lỗi cùng lúc, không ai muốn fix. Đau một lần lúc đầu, sướng cả vòng đời dự án.
 
 ## `any` vs `unknown`
 
@@ -447,10 +447,10 @@ greet(null);
 
 ```typescript
 let a: any = JSON.parse(input);
-a.foo.bar.baz();   // ✅ TS im lặng — và app nổ lúc runtime
+a.foo.bar.baz();   // ✓ TS im lặng — và app nổ lúc runtime
 
 let u: unknown = JSON.parse(input);
-u.foo;             // ❌ TS chặn: phải narrow trước
+u.foo;             // ✗ TS chặn: phải narrow trước
 if (typeof u === "object" && u !== null && "foo" in u) {
   // ở đây mới dùng được, sau khi đã kiểm tra
 }
@@ -458,12 +458,12 @@ if (typeof u === "object" && u !== null && "foo" in u) {
 
 | | `any` | `unknown` |
 |---|---|---|
-| Gán giá trị bất kỳ vào | ✅ | ✅ |
-| Dùng trực tiếp (gọi method, truy cập field) | ✅ (nguy hiểm) | ❌ phải narrow |
-| Lây type-unsafe ra xung quanh | ✅ | ❌ |
+| Gán giá trị bất kỳ vào | ✓ | ✓ |
+| Dùng trực tiếp (gọi method, truy cập field) | ✓ (nguy hiểm) | ✗ phải narrow |
+| Lây type-unsafe ra xung quanh | ✓ | ✗ |
 | Khi nào dùng | gần như không bao giờ | ranh giới dữ liệu chưa rõ kiểu |
 
-> 💡 Ghi nhớ: Coi `any` như "thoát hiểm khẩn cấp" — chỉ dùng tạm khi migrate code cũ. Với dữ liệu từ bên ngoài (API, `JSON.parse`, `localStorage`), dùng `unknown` rồi validate bằng Zod. Bật cờ `noImplicitAny` (đã nằm trong `strict`) để TS báo khi `any` lén vào.
+> Ghi nhớ: Coi `any` như "thoát hiểm khẩn cấp" — chỉ dùng tạm khi migrate code cũ. Với dữ liệu từ bên ngoài (API, `JSON.parse`, `localStorage`), dùng `unknown` rồi validate bằng Zod. Bật cờ `noImplicitAny` (đã nằm trong `strict`) để TS báo khi `any` lén vào.
 
 ## Tổng kết
 

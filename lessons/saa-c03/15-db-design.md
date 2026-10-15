@@ -65,7 +65,7 @@ Nhãn CA/CP/AP ở đây là **cách nhớ gần đúng**, không phải phân l
 
 **Vì sao hai thứ này không thay được nhau.** Standby của Multi-AZ được sao chép đồng bộ ở tầng đĩa và không mở cho client kết nối; nó chỉ tồn tại để thế chỗ primary. Khi failover, RDS đổi bản ghi DNS của endpoint sang standby, nên ứng dụng giữ nguyên connection string và chỉ cần kết nối lại. Read Replica thì ngược lại: là một instance đầy đủ, có endpoint riêng để đọc, nhưng vì async nên có thể thiếu vài giao dịch cuối, và muốn nó thành primary thì phải **promote bằng tay** rồi sửa endpoint trong ứng dụng. Một primary có tối đa **15** read replica (quota mặc định).
 
-> 🪤 Bẫy thi: *"giảm tải đọc / báo cáo làm chậm production"* → **Read Replica**. *"chịu được mất một AZ, tự failover, không mất dữ liệu"* → **Multi-AZ**. Hai tính năng bật được cùng lúc trên một DB.
+> Bẫy thi: *"giảm tải đọc / báo cáo làm chậm production"* → **Read Replica**. *"chịu được mất một AZ, tự failover, không mất dữ liệu"* → **Multi-AZ**. Hai tính năng bật được cùng lúc trên một DB.
 
 ### 3.2 Multi-AZ DB Cluster (mới, 2022)
 
@@ -112,7 +112,7 @@ db.m7g.large chịu được                   ≈   630 kết nối
 - Proxy chỉ truy cập được **trong VPC**, không có endpoint public.
 - Hạn chế cần biết: một số thao tác (đổi biến session, temporary table…) khiến proxy phải gắn chặt một kết nối cho một client (*pinning*), lúc đó mất tác dụng dùng chung.
 
-> 🪤 Bẫy thi: *"Lambda + RDS/Aurora bị too many connections / cạn kết nối"* → **RDS Proxy**. Về kỹ thuật không phải "bắt buộc", nhưng với đề SAA đây là đáp án mặc định cho cặp Lambda + database quan hệ.
+> Bẫy thi: *"Lambda + RDS/Aurora bị too many connections / cạn kết nối"* → **RDS Proxy**. Về kỹ thuật không phải "bắt buộc", nhưng với đề SAA đây là đáp án mặc định cho cặp Lambda + database quan hệ.
 
 ### 3.5 Engine option
 - MySQL, PostgreSQL, MariaDB, Oracle, SQL Server (và IBM Db2, mới thêm sau, ít gặp trong đề).
@@ -179,7 +179,7 @@ Instance trong cluster có thể đổi vai sau failover, nên ứng dụng khô
 - Secondary có thể là **headless** (chỉ có storage, không có instance) để tiết kiệm; khi cần failover phải thêm instance vào trước.
 - Use case: app toàn cầu đọc nhiều, và DR cross-region với RPO/RTO thấp.
 
-> 🪤 Bẫy thi: Aurora Global chỉ có **một region ghi**. Cần *ghi được ở nhiều region cùng lúc* (active-active) → DynamoDB Global Tables (§5.8), không phải Aurora Global.
+> Bẫy thi: Aurora Global chỉ có **một region ghi**. Cần *ghi được ở nhiều region cùng lúc* (active-active) → DynamoDB Global Tables (§5.8), không phải Aurora Global.
 
 ### 4.5 Aurora Serverless v2
 
@@ -249,7 +249,7 @@ Scan                                            → đọc TOÀN BỘ bảng r�
 | Max | 5 per table | 20 per table |
 | Projection | KEYS_ONLY / INCLUDE / ALL | Same |
 
-> 🪤 Bẫy thi: *"cần thêm kiểu truy vấn mới trên bảng đang chạy production"* → **GSI** (LSI không thêm sau được). *"cần đọc strong consistency trên index"* → chỉ **LSI** làm được.
+> Bẫy thi: *"cần thêm kiểu truy vấn mới trên bảng đang chạy production"* → **GSI** (LSI không thêm sau được). *"cần đọc strong consistency trên index"* → chỉ **LSI** làm được.
 
 ### 5.3 Capacity
 
@@ -298,7 +298,7 @@ On-demand:    262,8 triệu ghi × 0,625 + 788,4 triệu đọc × 0,125
 
 Nhưng provisioned hiếm khi dùng hết 100%. Nếu bảng chỉ thật sự bận khoảng **29% thời gian trở xuống** (ví dụ chỉ có tải giờ hành chính, hoặc vài đợt batch mỗi ngày) thì on-demand lại rẻ hơn, vì provisioned vẫn tính tiền những giờ ngồi không.
 
-> 📏 Con số "on-demand đắt **~7x** provisioned" trong nhiều tài liệu ôn thi là theo giá **trước tháng 11/2024**. AWS đã giảm 50% giá on-demand, nên với giá hiện tại tỉ lệ là **~3,5x** ở mức dùng 100%. Kết luận cho đề thi không đổi: **tải đều, đoán trước được → provisioned (kèm auto scaling); tải thất thường, bảng mới, hay có đỉnh đột ngột → on-demand.**
+> Con số "on-demand đắt **~7x** provisioned" trong nhiều tài liệu ôn thi là theo giá **trước tháng 11/2024**. AWS đã giảm 50% giá on-demand, nên với giá hiện tại tỉ lệ là **~3,5x** ở mức dùng 100%. Kết luận cho đề thi không đổi: **tải đều, đoán trước được → provisioned (kèm auto scaling); tải thất thường, bảng mới, hay có đỉnh đột ngột → on-demand.**
 
 ### 5.4 Single-table design (Rick Houlihan)
 
@@ -378,7 +378,7 @@ Cần giữ thay đổi lâu hơn 24 giờ hoặc cho nhiều consumer đọc th
 
 Use case: đọc rất nhiều, lặp lại trên một nhóm key nóng (flash sale, bảng xếp hạng game, real-time bidding), và chấp nhận eventual consistency. DAX còn giúp giảm RCU phải mua.
 
-> 🪤 Bẫy thi: *"giảm độ trễ đọc DynamoDB xuống micro-giây, sửa code ít nhất"* → **DAX**. *"cache kết quả tính toán / dữ liệu từ nhiều nguồn, cần sorted set, pub/sub"* → **ElastiCache** (§6.5). DAX **chỉ** dùng cho DynamoDB.
+> Bẫy thi: *"giảm độ trễ đọc DynamoDB xuống micro-giây, sửa code ít nhất"* → **DAX**. *"cache kết quả tính toán / dữ liệu từ nhiều nguồn, cần sorted set, pub/sub"* → **ElastiCache** (§6.5). DAX **chỉ** dùng cho DynamoDB.
 
 ### 5.8 Global Tables
 
@@ -418,25 +418,25 @@ Bình thường mỗi lệnh ghi DynamoDB độc lập với nhau. **Transaction
 2. Hit → return.
 3. Miss → query DB → write cache TTL → return.
 ```
-✅ Đơn giản. ❌ First request slow (cold miss).
+✓ Đơn giản. ✗ First request slow (cold miss).
 
 ### 6.2 Write-through
 ```
 1. Write DB.
 2. Write cache.
 ```
-✅ Cache always warm. ❌ Write latency cao.
+✓ Cache always warm. ✗ Write latency cao.
 
 ### 6.3 Write-behind
 ```
 1. Write cache.
 2. Async batch flush DB.
 ```
-✅ Write fast. ❌ Risk lose data nếu cache fail.
+✓ Write fast. ✗ Risk lose data nếu cache fail.
 
 ### 6.4 Refresh-ahead
 - Thay vì chờ key hết TTL rồi mới nạp lại (lượt đọc đầu tiên sau đó sẽ chậm), cache **chủ động nạp lại ở nền khi TTL gần hết** cho những key đang được đọc nhiều.
-- ✅ Avoid cold miss spike: tránh cảnh nhiều request cùng trượt cache một lúc và cùng dồn xuống DB. ❌ Complex: phải đoán key nào còn cần; đoán sai thì tốn công nạp thứ không ai đọc.
+- ✓ Avoid cold miss spike: tránh cảnh nhiều request cùng trượt cache một lúc và cùng dồn xuống DB. ✗ Complex: phải đoán key nào còn cần; đoán sai thì tốn công nạp thứ không ai đọc.
 
 ### 6.5 ElastiCache choice
 
@@ -448,9 +448,9 @@ Từ khác biệt gốc đó suy ra cả bảng:
 |--|-------|-----------|
 | Data structures | String, List, Set, Hash, Stream, Sorted Set, HyperLogLog | String only |
 | Persistence | AOF, RDB snapshot | None |
-| Replication | ✅ (cluster mode hoặc primary+replica) | ❌ |
-| HA | ✅ Multi-AZ failover | ❌ |
-| Pub/Sub | ✅ | ❌ |
+| Replication | ✓ (cluster mode hoặc primary+replica) | ✗ |
+| HA | ✓ Multi-AZ failover | ✗ |
+| Pub/Sub | ✓ | ✗ |
 | Cluster sharding | Cluster mode | Auto Discovery client-side |
 | Use case | Cache + queue + leaderboard + session | Simple object cache |
 
@@ -464,7 +464,7 @@ Redis trên ElastiCache có hai kiểu triển khai:
 
 Sao chép của Redis là **async**, nên failover có thể mất vài lượt ghi cuối chưa kịp sang replica. Chấp nhận được với cache; đừng dùng nó làm nơi lưu duy nhất cho dữ liệu không được phép mất.
 
-> 🪤 Bẫy thi: cần **HA / Multi-AZ / lưu lại sau khi restart / leaderboard / pub-sub / session bền** → **Redis**. Chỉ cần cache object đơn giản, đa luồng, không cần HA → **Memcached**.
+> Bẫy thi: cần **HA / Multi-AZ / lưu lại sau khi restart / leaderboard / pub-sub / session bền** → **Redis**. Chỉ cần cache object đơn giản, đa luồng, không cần HA → **Memcached**.
 
 ---
 
@@ -562,13 +562,13 @@ Sao chép của Redis là **async**, nên failover có thể mất vài lượt 
 - **Conditional update + version attribute** chống lost update.
 
 ### Anti-pattern
-- ❌ Self-managed MySQL EC2 prod.
-- ❌ Multi-AZ thay vì Read Replica để scale read.
-- ❌ Read Replica thay vì Multi-AZ cho HA.
-- ❌ DDB scan thay vì query (full table = đắt + slow).
-- ❌ Cache TTL quá dài → stale.
-- ❌ ElastiCache Memcached prod cần HA.
-- ❌ RDS unencrypted prod.
+- ✗ Self-managed MySQL EC2 prod.
+- ✗ Multi-AZ thay vì Read Replica để scale read.
+- ✗ Read Replica thay vì Multi-AZ cho HA.
+- ✗ DDB scan thay vì query (full table = đắt + slow).
+- ✗ Cache TTL quá dài → stale.
+- ✗ ElastiCache Memcached prod cần HA.
+- ✗ RDS unencrypted prod.
 
 ## 11. Foundations
 - [[foundations-01-cap-theorem]] — RDS Multi-AZ là CP, DDB default AP.

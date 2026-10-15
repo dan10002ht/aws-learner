@@ -2,7 +2,7 @@
 
 Prototype LLM thì 30 phút là chạy. Đưa nó ra production phục vụ người dùng thật mới là phần khó: nó **không deterministic**, **đắt**, **chậm**, và đôi khi **nói bậy** hoặc làm lộ dữ liệu. Bài này là checklist của một kỹ sư đưa feature AI từ demo lên production: cách **đo chất lượng** (eval), cách **chặn đầu vào/đầu ra** (guardrails), cách **giảm tiền và độ trễ**, cách **quan sát** hệ thống (observability), và cách **fail an toàn**.
 
-> 💡 Ghi nhớ: Một feature LLM production = `model call` + 4 lớp bọc quanh nó: **eval** (biết nó tốt hay tệ), **guardrails** (chặn input/output xấu), **fallback** (khi nó hỏng), **observability** (nhìn thấy nó đang làm gì). Thiếu lớp nào là bạn đang bay không có đồng hồ.
+> Ghi nhớ: Một feature LLM production = `model call` + 4 lớp bọc quanh nó: **eval** (biết nó tốt hay tệ), **guardrails** (chặn input/output xấu), **fallback** (khi nó hỏng), **observability** (nhìn thấy nó đang làm gì). Thiếu lớp nào là bạn đang bay không có đồng hồ.
 
 ---
 
@@ -77,13 +77,13 @@ Chấm theo 3 tiêu chí, mỗi tiêu chí 0 hoặc 1:
 Trả về JSON: {{"correct":0/1,"grounded":0/1,"tone":0/1,"reason":"..."}}"""
 ```
 
-> ⚠️ Bẫy LLM-as-judge: (1) **Thiên vị độ dài** — judge hay cho điểm cao câu trả lời dài hơn dù không tốt hơn. (2) **Thiên vị vị trí** khi so sánh A/B — đảo thứ tự rồi chấm lại. (3) **Dùng cùng model làm cả app lẫn judge** → nó tự khen mình; nên dùng model khác hoặc model mạnh hơn để chấm. (4) Luôn **calibrate judge với ~30 nhãn người thật** trước khi tin nó.
+> Bẫy LLM-as-judge: (1) **Thiên vị độ dài** — judge hay cho điểm cao câu trả lời dài hơn dù không tốt hơn. (2) **Thiên vị vị trí** khi so sánh A/B — đảo thứ tự rồi chấm lại. (3) **Dùng cùng model làm cả app lẫn judge** → nó tự khen mình; nên dùng model khác hoặc model mạnh hơn để chấm. (4) Luôn **calibrate judge với ~30 nhãn người thật** trước khi tin nó.
 
 ### 2.4 Online eval (trên production thật)
 
-Offline chỉ là phòng thí nghiệm. Trên production cần đo: tỉ lệ user bấm 👍/👎, tỉ lệ thoát giữa chừng, tỉ lệ leo thang sang người thật, và **chạy LLM-as-judge trên một mẫu nhỏ traffic thật** mỗi ngày để bắt regression sớm.
+Offline chỉ là phòng thí nghiệm. Trên production cần đo: tỉ lệ user bấm thích/không thích, tỉ lệ thoát giữa chừng, tỉ lệ leo thang sang người thật, và **chạy LLM-as-judge trên một mẫu nhỏ traffic thật** mỗi ngày để bắt regression sớm.
 
-> 💡 Ghi nhớ: Eval-driven development — sửa prompt mà không có golden set thì bạn đang đoán mò. Quy trình: sửa → chạy offline eval → so baseline → deploy → online eval mẫu. Coi golden set như tài sản, mỗi lần gặp bug production thật thì **thêm case đó vào golden set** (giống regression test).
+> Ghi nhớ: Eval-driven development — sửa prompt mà không có golden set thì bạn đang đoán mò. Quy trình: sửa → chạy offline eval → so baseline → deploy → online eval mẫu. Coi golden set như tài sản, mỗi lần gặp bug production thật thì **thêm case đó vào golden set** (giống regression test).
 
 ---
 
@@ -164,7 +164,7 @@ def input_guard(text):
 - **Grounding / hallucination check**: với RAG, kiểm tra câu trả lời có thực sự dựa trên context đã truy xuất không — nếu không có nguồn thì không khẳng định.
 - **Format/schema**: nếu cần JSON, validate; sai thì retry hoặc reject.
 
-> ⚠️ Bẫy: Đừng tự viết regex chặn jailbreak rồi nghĩ đã xong — attacker sáng tạo hơn regex của bạn. Dùng **lớp guardrail chuyên dụng** (managed như Bedrock Guardrails, hoặc thư viện chuyên trị), và quan trọng nhất: **không bao giờ tin output của LLM một cách mù quáng**. Output đi vào shell/SQL/eval là lỗ hổng injection kinh điển. Treat LLM output như input từ người lạ.
+> Bẫy: Đừng tự viết regex chặn jailbreak rồi nghĩ đã xong — attacker sáng tạo hơn regex của bạn. Dùng **lớp guardrail chuyên dụng** (managed như Bedrock Guardrails, hoặc thư viện chuyên trị), và quan trọng nhất: **không bao giờ tin output của LLM một cách mù quáng**. Output đi vào shell/SQL/eval là lỗ hổng injection kinh điển. Treat LLM output như input từ người lạ.
 
 ---
 
@@ -232,7 +232,7 @@ Prompt dài = đắt + chậm + dễ lạc hướng. Cắt few-shot thừa, nén
 
 Việc nền (tóm tắt hàng loạt, gán nhãn dữ liệu) dùng **Batch API** thường rẻ hơn ~50% so với gọi đồng bộ.
 
-> 💡 Ghi nhớ thứ tự tối ưu: **(1) routing** → đừng dùng dao mổ trâu giết gà. **(2) caching** → đừng trả tiền hai lần cho cùng câu hỏi. **(3) prompt nhỏ** → đừng trả tiền cho token vô dụng. **(4) batch** → việc nền thì đừng gọi real-time.
+> Ghi nhớ thứ tự tối ưu: **(1) routing** → đừng dùng dao mổ trâu giết gà. **(2) caching** → đừng trả tiền hai lần cho cùng câu hỏi. **(3) prompt nhỏ** → đừng trả tiền cho token vô dụng. **(4) batch** → việc nền thì đừng gọi real-time.
 
 ---
 
@@ -284,11 +284,11 @@ Không quan sát được thì không vận hành được. Mỗi request cần 
 
 Ba nhóm chỉ số bắt buộc theo dõi:
 
-- **Chất lượng**: pass-rate eval, tỉ lệ 👍/👎, tỉ lệ guardrail chặn, tỉ lệ leo thang.
+- **Chất lượng**: pass-rate eval, tỉ lệ /, tỉ lệ guardrail chặn, tỉ lệ leo thang.
 - **Chi phí**: token & USD theo request / user / feature; cảnh báo khi vượt ngân sách.
 - **Hiệu năng**: latency p50/p95/p99, TTFT, tỉ lệ lỗi & timeout, cache hit-rate.
 
-> ⚠️ Bẫy: **Không log prompt/response thô chứa PII** vào hệ thống log thường. Redact trước khi log, kiểm soát quyền truy cập, và đặt retention. Một sự cố data leak qua log có thể tốn hơn cả năm tiền API. Với agent, **lưu cả chuỗi reasoning + tool calls** — không có nó thì debug agent là bất khả thi.
+> Bẫy: **Không log prompt/response thô chứa PII** vào hệ thống log thường. Redact trước khi log, kiểm soát quyền truy cập, và đặt retention. Một sự cố data leak qua log có thể tốn hơn cả năm tiền API. Với agent, **lưu cả chuỗi reasoning + tool calls** — không có nó thì debug agent là bất khả thi.
 
 ---
 
@@ -326,7 +326,7 @@ Nguyên tắc fallback:
 - **Degrade duyên dáng**: thà trả câu trả lời cache/đơn giản còn hơn lỗi 500 trắng màn hình.
 - **Đa provider / đa model** cho hệ thống quan trọng: tránh phụ thuộc một nhà cung cấp.
 
-> 💡 Ghi nhớ: Câu hỏi vận hành cốt lõi — "Khi model trả lời sai/chậm/chết thì điều **tệ nhất** có thể xảy ra là gì, và mình chặn nó ở đâu?". Trả lời được câu này tức là bạn đã thiết kế guardrail + fallback đúng chỗ.
+> Ghi nhớ: Câu hỏi vận hành cốt lõi — "Khi model trả lời sai/chậm/chết thì điều **tệ nhất** có thể xảy ra là gì, và mình chặn nó ở đâu?". Trả lời được câu này tức là bạn đã thiết kế guardrail + fallback đúng chỗ.
 
 ---
 
@@ -405,4 +405,4 @@ Một kiến trúc production điển hình trên AWS: API Gateway → Lambda �
   <text x="200" y="200" font-size="10" font-weight="700" fill="currentColor">observability</text>
 </svg>
 
-> 💡 Ghi nhớ: Điểm hấp dẫn nhất của Bedrock Guardrails là **tách rời khỏi model** — bạn đổi model bên dưới, đổi provider, mà policy an toàn/PII/grounding vẫn giữ nguyên. Đúng tinh thần "guardrails là một lớp, không phải vài dòng if trong prompt".
+> Ghi nhớ: Điểm hấp dẫn nhất của Bedrock Guardrails là **tách rời khỏi model** — bạn đổi model bên dưới, đổi provider, mà policy an toàn/PII/grounding vẫn giữ nguyên. Đúng tinh thần "guardrails là một lớp, không phải vài dòng if trong prompt".

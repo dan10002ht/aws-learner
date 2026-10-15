@@ -136,7 +136,7 @@ Lag không phải một hiện tượng, nó là **hàng đợi apply bị ngh�
 <line x1="160" y1="163" x2="558" y2="163" stroke="currentColor" stroke-width="1.5" marker-end="url(#ra)"/>
 <rect x="490" y="180" width="150" height="40" rx="4" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
 <text x="565" y="197" text-anchor="middle" font-size="10" fill="currentColor">replay_lsn = 480</text>
-<text x="565" y="213" text-anchor="middle" font-size="10" fill="currentColor">→ trả AVATAR CŨ ❌</text>
+<text x="565" y="213" text-anchor="middle" font-size="10" fill="currentColor">→ trả AVATAR CŨ ✗</text>
 <line x1="490" y1="200" x2="162" y2="200" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#ra)"/>
 <text x="330" y="245" text-anchor="middle" font-size="11" fill="currentColor">User vừa đổi xong lại thấy ảnh cũ → tưởng hệ thống nuốt mất update</text>
 <defs><marker id="ra" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>

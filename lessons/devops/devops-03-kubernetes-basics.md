@@ -50,7 +50,7 @@ K8s đặt ra một **trạng thái mong muốn (desired state)** dạng khai b�
   <path d="M360 200 v30" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.6" fill="none" stroke-dasharray="4 3"/>
 </svg>
 
-> 💡 Ghi nhớ: Kubernetes là một **vòng lặp điều chỉnh (control loop)**, không phải bộ script chạy một lần. Bạn khai báo desired state, K8s lo phần còn lại — mãi mãi.
+> Ghi nhớ: Kubernetes là một **vòng lặp điều chỉnh (control loop)**, không phải bộ script chạy một lần. Bạn khai báo desired state, K8s lo phần còn lại — mãi mãi.
 
 ---
 
@@ -117,7 +117,7 @@ Một cluster gồm 2 nhóm máy: **control plane** (bộ não, ra quyết đị
 | **container runtime** | Phần mềm chạy container thật. Năm 2025 là **containerd** (Docker shim `dockershim` đã bị gỡ từ K8s 1.24) |
 | **kube-proxy** | Lo network: chuyển traffic tới đúng Pod đứng sau một Service (qua iptables/IPVS) |
 
-> ⚠️ Bẫy production: **etcd là điểm chết người**. Không backup etcd định kỳ = một sự cố lưu trữ là mất sạch state cluster (Deployment, Secret, mọi thứ). Trên self-managed cluster, lập lịch `etcdctl snapshot save` hằng ngày và test restore. Trên managed (EKS), AWS lo việc này — đây là một lý do lớn để dùng managed.
+> Bẫy production: **etcd là điểm chết người**. Không backup etcd định kỳ = một sự cố lưu trữ là mất sạch state cluster (Deployment, Secret, mọi thứ). Trên self-managed cluster, lập lịch `etcdctl snapshot save` hằng ngày và test restore. Trên managed (EKS), AWS lo việc này — đây là một lý do lớn để dùng managed.
 
 ---
 
@@ -150,7 +150,7 @@ kubectl apply -f pod.yaml
 kubectl get pod nginx -o wide   # xem IP + node nó nằm
 ```
 
-> 💡 Ghi nhớ: Đừng bao giờ deploy Pod "trần" cho production. Pod trần chết là không ai dựng lại. Luôn để một **controller** (Deployment) quản lý Pod giúp bạn.
+> Ghi nhớ: Đừng bao giờ deploy Pod "trần" cho production. Pod trần chết là không ai dựng lại. Luôn để một **controller** (Deployment) quản lý Pod giúp bạn.
 
 ---
 
@@ -245,9 +245,9 @@ kubectl rollout status deploy/web             # theo dõi update
 kubectl rollout undo deploy/web               # rollback version trước
 ```
 
-> ⚠️ Bẫy production: **`selector.matchLabels` không khớp `template.labels`** là lỗi kinh điển. K8s sẽ báo `selector does not match template labels` và từ chối. Selector là cách Deployment "nhận con" của mình — sai label thì nó không quản được Pod nào.
+> Bẫy production: **`selector.matchLabels` không khớp `template.labels`** là lỗi kinh điển. K8s sẽ báo `selector does not match template labels` và từ chối. Selector là cách Deployment "nhận con" của mình — sai label thì nó không quản được Pod nào.
 
-> ⚠️ Bẫy production: Không đặt `resources.requests/limits` → scheduler không biết Pod cần bao nhiêu, dồn quá tải lên một node, hoặc một Pod ăn hết RAM làm chết Pod khác (noisy neighbor). Luôn đặt request/limit.
+> Bẫy production: Không đặt `resources.requests/limits` → scheduler không biết Pod cần bao nhiêu, dồn quá tải lên một node, hoặc một Pod ăn hết RAM làm chết Pod khác (noisy neighbor). Luôn đặt request/limit.
 
 ---
 
@@ -321,9 +321,9 @@ kubectl get svc web
 kubectl run tmp --rm -it --image=busybox -- wget -qO- http://web
 ```
 
-> 💡 Ghi nhớ: **DNS nội bộ** là `<service>.<namespace>.svc.cluster.local`. Cùng namespace thì chỉ cần `<service>`. Đây là cách microservice tìm nhau — đừng bao giờ hardcode Pod IP.
+> Ghi nhớ: **DNS nội bộ** là `<service>.<namespace>.svc.cluster.local`. Cùng namespace thì chỉ cần `<service>`. Đây là cách microservice tìm nhau — đừng bao giờ hardcode Pod IP.
 
-> ⚠️ Bẫy production: Service không route được tới Pod thường là do **selector lệch label** hoặc **`targetPort` sai**. Debug bằng `kubectl get endpoints web` — nếu danh sách endpoint **rỗng**, Service không tìm thấy Pod nào → kiểm tra label.
+> Bẫy production: Service không route được tới Pod thường là do **selector lệch label** hoặc **`targetPort` sai**. Debug bằng `kubectl get endpoints web` — nếu danh sách endpoint **rỗng**, Service không tìm thấy Pod nào → kiểm tra label.
 
 ---
 
@@ -343,7 +343,7 @@ kubectl config set-context --current --namespace=staging
 
 Các namespace hệ thống có sẵn: `kube-system` (control plane components), `default`, `kube-public`.
 
-> ⚠️ Bẫy production: "Pod biến mất" — thực ra bạn đang nhìn nhầm namespace. `kubectl get pods` chỉ xem namespace mặc định. Khi hoảng, luôn thêm `--all-namespaces` (viết tắt `-A`).
+> Bẫy production: "Pod biến mất" — thực ra bạn đang nhìn nhầm namespace. `kubectl get pods` chỉ xem namespace mặc định. Khi hoảng, luôn thêm `--all-namespaces` (viết tắt `-A`).
 
 ---
 
@@ -369,7 +369,7 @@ kubectl top pods                              # CPU/RAM thực tế (cần metri
 kubectl rollout status deploy/web             # update xong chưa
 ```
 
-> 💡 Ghi nhớ: Khi một Pod lỗi, ba lệnh vàng theo thứ tự: `kubectl describe pod` (xem Events: tại sao không schedule/start được), `kubectl logs` (app nói gì), `kubectl get events` (toàn cảnh). 90% sự cố lộ ra ở đây.
+> Ghi nhớ: Khi một Pod lỗi, ba lệnh vàng theo thứ tự: `kubectl describe pod` (xem Events: tại sao không schedule/start được), `kubectl logs` (app nói gì), `kubectl get events` (toàn cảnh). 90% sự cố lộ ra ở đây.
 
 ### Bảng lỗi STATUS hay gặp
 
@@ -399,7 +399,7 @@ spec:                   # desired state — bạn KHAI BÁO cái muốn
 
 Mẹo thực hành: gói nhiều manifest vào một file ngăn bằng `---`, hoặc để chung thư mục rồi `kubectl apply -f ./manifests/`. Dùng `kubectl apply --dry-run=server -f x.yaml` để validate trước khi áp thật.
 
-> 💡 Ghi nhớ: `spec` là *bạn viết* (mong muốn), `status` là *K8s viết* (thực tế). Toàn bộ công việc của control loop là kéo `status` về khớp `spec`.
+> Ghi nhớ: `spec` là *bạn viết* (mong muốn), `status` là *K8s viết* (thực tế). Toàn bộ công việc của control loop là kéo `status` về khớp `spec`.
 
 ---
 
@@ -429,4 +429,4 @@ kubectl get nodes
 
 Phần CI/CD deploy lên cluster (build image → push ECR → cập nhật manifest) thường dùng **CodePipeline + CodeBuild**, hoặc GitOps với **ArgoCD** — đó là nội dung các bài sau.
 
-> 💡 Ghi nhớ: Trên cloud, đừng tự dựng control plane trừ khi có lý do rất cụ thể. EKS lo phần khó nhất (control plane + etcd); bạn tập trung vào workload, networking và bảo mật Pod.
+> Ghi nhớ: Trên cloud, đừng tự dựng control plane trừ khi có lý do rất cụ thể. EKS lo phần khó nhất (control plane + etcd); bạn tập trung vào workload, networking và bảo mật Pod.

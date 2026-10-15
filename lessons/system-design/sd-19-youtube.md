@@ -30,7 +30,7 @@ YouTube là case study nặng ký nhất trong bộ System Design kinh điển v
 | **Reliability** | Mất video gốc = mất nội dung không tạo lại được. Durability quan trọng hơn availability ở tầng storage |
 | **Trải nghiệm mượt** | Chỉ số kinh doanh thật của platform video là *rebuffer ratio* và *startup time* |
 
-> 💡 **Nguyên tắc**: Mỗi bài chọn ra **một trục chi phối** và tuyên bố ngay từ đầu. URL Shortener là *read-heavy*. Web Crawler là *politeness + scale*. YouTube là **cost**. Mọi trade-off sau đó phải quy chiếu về trục này, nếu không bạn trôi dạt giữa các lựa chọn mà không có tiêu chí quyết định.
+> **Nguyên tắc**: Mỗi bài chọn ra **một trục chi phối** và tuyên bố ngay từ đầu. URL Shortener là *read-heavy*. Web Crawler là *politeness + scale*. YouTube là **cost**. Mọi trade-off sau đó phải quy chiếu về trục này, nếu không bạn trôi dạt giữa các lựa chọn mà không có tiêu chí quyết định.
 
 **Giả định chốt**
 ```
@@ -78,7 +78,7 @@ Cấu trúc chi phí:
   API / DB     ▏                           <1%
 ```
 
-> 💡 **Nguyên tắc**: Ở bài YouTube, **egress là kẻ thù**. Mọi tối ưu đáng giá đều nhắm vào việc giảm số byte đi qua CDN. Tối ưu database ở đây gần như vô nghĩa về mặt tiền bạc.
+> **Nguyên tắc**: Ở bài YouTube, **egress là kẻ thù**. Mọi tối ưu đáng giá đều nhắm vào việc giảm số byte đi qua CDN. Tối ưu database ở đây gần như vô nghĩa về mặt tiền bạc.
 
 **QPS**
 ```
@@ -87,7 +87,7 @@ Upload QPS = 25,000 / 86,400 ≈ 0.3 rps (!)
 ```
 Rất phản trực giác và rất đáng nêu: **QPS của YouTube thấp đến mức đáng ngạc nhiên**. Cái khó không nằm ở số request/giây mà ở **số byte/giây** — 87 GB/s.
 
-> ⚠️ **Bẫy thiết kế**: Phản xạ "290 rps thì cần LB + 10 app server + Redis" là đúng nhưng lạc đề. Người phỏng vấn muốn nghe: *"QPS ở đây không phải vấn đề — vấn đề là 87 GB/s data plane và hoá đơn CDN."*
+> **Bẫy thiết kế**: Phản xạ "290 rps thì cần LB + 10 app server + Redis" là đúng nhưng lạc đề. Người phỏng vấn muốn nghe: *"QPS ở đây không phải vấn đề — vấn đề là 87 GB/s data plane và hoá đơn CDN."*
 
 **Transcoding cost**
 ```
@@ -131,7 +131,7 @@ GET https://cdn/.../master.m3u8          # player tải manifest
 GET https://cdn/.../720p/seg_042.m4s     # player tải từng segment — đi THẲNG tới CDN
 ```
 
-> 💡 **Nguyên tắc**: Trong mọi hệ thống có file lớn (video, ảnh, backup, dataset), tách **control plane** (API metadata: nhẹ, có auth, có logic) khỏi **data plane** (byte thật: nặng, đi thẳng tới storage/CDN). Trộn hai cái là sai lầm kiến trúc phổ biến nhất ở loại bài này.
+> **Nguyên tắc**: Trong mọi hệ thống có file lớn (video, ảnh, backup, dataset), tách **control plane** (API metadata: nhẹ, có auth, có logic) khỏi **data plane** (byte thật: nặng, đi thẳng tới storage/CDN). Trộn hai cái là sai lầm kiến trúc phổ biến nhất ở loại bài này.
 
 ---
 
@@ -209,7 +209,7 @@ Câu hỏi gần như chắc chắn bị hỏi. Cách ngây thơ — client `POS
 ```
 Chữ ký thay thế việc backend đứng canh: blob storage tự xác thực được mà không cần hỏi lại API. Đổi lại, **URL đó là một bearer token** — ai có URL đều ghi được, nên phải hạn ngắn (15–60 phút) và ràng buộc chặt.
 
-> ⚠️ **Bẫy thiết kế**: Ký presigned URL không ràng buộc `Content-Length` hay key → user ghi đè file người khác hoặc upload 500 GB rác. Presigned URL phải kèm điều kiện: key do server sinh, giới hạn kích thước, cố định content-type.
+> **Bẫy thiết kế**: Ký presigned URL không ràng buộc `Content-Length` hay key → user ghi đè file người khác hoặc upload 500 GB rác. Presigned URL phải kèm điều kiện: key do server sinh, giới hạn kích thước, cố định content-type.
 
 ### Multipart upload
 
@@ -255,7 +255,7 @@ PENDING ──(upload complete)──▶ UPLOADED ──(job enqueued)──▶ 
                                     (báo user, cho retry)   (công khai, prewarm CDN)
 ```
 
-> 💡 **Nguyên tắc**: Mọi pipeline bất đồng bộ cần một **state machine tường minh lưu trong DB**, không phải trạng thái ngầm trong queue. Queue không trả lời được câu hỏi "video này đang ở đâu trong pipeline?" — mà đó là câu người dùng và đội vận hành hỏi mỗi ngày.
+> **Nguyên tắc**: Mọi pipeline bất đồng bộ cần một **state machine tường minh lưu trong DB**, không phải trạng thái ngầm trong queue. Queue không trả lời được câu hỏi "video này đang ở đâu trong pipeline?" — mà đó là câu người dùng và đội vận hành hỏi mỗi ngày.
 
 ### Resumable upload và failure recovery
 
@@ -319,7 +319,7 @@ Nếu chỉ kịp nói kỹ một thứ trong cả bài, hãy chọn phần này
 10M view: tốn thêm ~$0.50,        tiết kiệm 10M × 0.15 GB × $0.02 = $30,000 → LÃI LỚN
 ```
 
-> 💡 **Nguyên tắc**: Số bản encode nên **tỉ lệ thuận với độ phổ biến của video**, không cố định cho mọi video. Đây là một trong những tối ưu chi phí lớn nhất của bài.
+> **Nguyên tắc**: Số bản encode nên **tỉ lệ thuận với độ phổ biến của video**, không cố định cho mọi video. Đây là một trong những tối ưu chi phí lớn nhất của bài.
 
 ### DAG — mô hình hoá công việc transcoding
 
@@ -396,7 +396,7 @@ Ba điểm tinh tế phải xử lý (nêu được thì rất ăn điểm):
 | **Nhấp nháy ở ranh giới** | Encoder "khởi động lại" mỗi chunk, quality ramp-up gây giật nhẹ | Cho worker encode thêm vài GOP **chồng lấn (overlap)** ở đầu chunk rồi bỏ phần thừa |
 | **File cũ GOP không đều** | Video user upload có thể có GOP rất dài hoặc bất thường | **Preprocessor re-align GOP trước**: decode rồi chèn I-frame đều đặn, sau đó mới cắt |
 
-> ⚠️ **Bẫy thiết kế**: Nói "chia video thành các đoạn bằng nhau theo thời gian rồi encode song song" mà không nhắc GOP/I-frame là sai về kỹ thuật. Cắt giữa một GOP tạo ra chunk không giải mã độc lập được, và khi ghép sẽ vỡ hình ở mọi ranh giới.
+> **Bẫy thiết kế**: Nói "chia video thành các đoạn bằng nhau theo thời gian rồi encode song song" mà không nhắc GOP/I-frame là sai về kỹ thuật. Cắt giữa một GOP tạo ra chunk không giải mã độc lập được, và khi ghép sẽ vỡ hình ở mọi ranh giới.
 
 Hệ quả thực tế rất đáng nêu: nhờ chunk-based encoding mà hệ thống **phát hành từng rendition dần dần** — bản 360p encode nhanh nhất nên xong trước, cho xem ngay sau 1–2 phút, trong khi 4K vẫn chạy nền. Đó là lý do video mới upload lúc đầu chỉ có vài mức chất lượng.
 
@@ -482,7 +482,7 @@ Dùng queue:     Encoding ──▶ [completion queue] ──▶ Thumbnail worke
 ```
 Bốn lợi ích: **decoupling** (producer không cần biết ai tiêu thụ); **buffering trước burst** (10,000 video cùng upload thì queue hấp thụ, khỏi phải over-provision cho peak); **retry và dead-letter** (message fail vào DLQ để điều tra thay vì mất luôn); **scale độc lập** (số worker encode và số worker thumbnail điều chỉnh riêng theo độ dài hàng đợi tương ứng).
 
-> 💡 **Nguyên tắc**: Ở mọi chỗ có hai module với **tốc độ xử lý** hoặc **độ tin cậy** khác nhau đáng kể, hãy đặt queue vào giữa. Queue là cách rẻ nhất để một hệ thống chậm không kéo sập một hệ thống nhanh.
+> **Nguyên tắc**: Ở mọi chỗ có hai module với **tốc độ xử lý** hoặc **độ tin cậy** khác nhau đáng kể, hãy đặt queue vào giữa. Queue là cách rẻ nhất để một hệ thống chậm không kéo sập một hệ thống nhanh.
 
 ---
 
@@ -534,7 +534,7 @@ Vì các rendition cắt cùng mốc thời gian và mỗi segment bắt đầu 
 
 Giải pháp hiện đại là **CMAF** — định dạng segment fMP4 chung mà **cả HLS và DASH đều tham chiếu được**: chỉ lưu **một bộ segment**, sinh hai manifest, tiết kiệm ~50% storage tầng transcoded.
 
-> ⚠️ **Bẫy thiết kế**: Encode hai bộ segment riêng cho HLS (`.ts`) và DASH (`.m4s`) là nhân đôi cả chi phí transcoding lẫn storage cho cùng nội dung. Nêu CMAF cho thấy bạn biết thực tế production, không chỉ thuộc sách.
+> **Bẫy thiết kế**: Encode hai bộ segment riêng cho HLS (`.ts`) và DASH (`.m4s`) là nhân đôi cả chi phí transcoding lẫn storage cho cùng nội dung. Nêu CMAF cho thấy bạn biết thực tế production, không chỉ thuộc sách.
 
 ### CDN và cái giá của nó
 
@@ -609,7 +609,7 @@ temp/*         : xoá sau 7 ngày
 multipart dở   : abort sau 7 ngày
 ```
 
-> ⚠️ **Bẫy thiết kế**: Đưa file **đang phục vụ streaming** vào Infrequent Access để "tiết kiệm". IA rẻ hơn ở phí lưu nhưng **tính phí mỗi GET**; segment được đọc hàng triệu lần → hoá đơn retrieval đắt hơn phần tiết kiệm rất nhiều. IA/Archive chỉ dành cho dữ liệu thật sự hiếm khi đọc.
+> **Bẫy thiết kế**: Đưa file **đang phục vụ streaming** vào Infrequent Access để "tiết kiệm". IA rẻ hơn ở phí lưu nhưng **tính phí mỗi GET**; segment được đọc hàng triệu lần → hoá đơn retrieval đắt hơn phần tiết kiệm rất nhiều. IA/Archive chỉ dành cho dữ liệu thật sự hiếm khi đọc.
 
 ### Giảm số bản encode theo mức độ phổ biến
 
@@ -724,7 +724,7 @@ Nói rõ thứ tự này chứng minh bạn không tối ưu nhầm chỗ.
 | **Transcoded storage (origin)** | CDN miss thì video hiếm không xem được | Multi-region replication cho nội dung quan trọng; chấp nhận degrade cho long tail |
 | **Original storage** | Không re-encode được; video đã transcode vẫn phục vụ | Durability 11 số 9 + versioning — dữ liệu không được phép mất |
 
-> 💡 **Nguyên tắc**: Trong hệ thống video, luôn kiểm tra rằng **sự cố ở control plane không làm dừng data plane**. Người đang xem không nên bị ảnh hưởng khi API server hay database gặp sự cố — vì segment họ đang tải đi thẳng từ CDN.
+> **Nguyên tắc**: Trong hệ thống video, luôn kiểm tra rằng **sự cố ở control plane không làm dừng data plane**. Người đang xem không nên bị ảnh hưởng khi API server hay database gặp sự cố — vì segment họ đang tải đi thẳng từ CDN.
 
 ### Error handling theo từng stage
 
@@ -836,4 +836,4 @@ Câu trả lời thực chiến nhất là **hybrid**: bắt đầu bằng Media
 
 12. **Khi được hỏi về AWS, đừng liệt kê — hãy so sánh.** *"MediaConvert để ra mắt nhanh và đo chi phí; khối lượng lớn thì chuyển encode hàng loạt sang FFmpeg trên Spot giảm ~70%, giữ MediaConvert cho ca đặc thù."* Lộ trình theo giai đoạn thuyết phục hơn một lựa chọn cứng nhắc. Còn thời gian thì mở rộng đúng **một** hướng: *live streaming* (MediaLive + MediaPackage + LL-HLS, latency là ràng buộc chính thay vì chi phí) hoặc *per-title encoding* (bitrate ladder riêng theo độ phức tạp từng video, tiết kiệm 20–30% byte).
 
-> 💡 **Nguyên tắc cuối**: Bài YouTube kiểm tra một kỹ năng mà các bài khác không kiểm tra được — **khả năng thiết kế dưới ràng buộc kinh tế**. Ở đây luôn tồn tại một phương án kỹ thuật "tốt hơn" nhưng đắt hơn nhiều lần, và việc của kiến trúc sư là tìm điểm mà chất lượng trải nghiệm và chi phí giao nhau hợp lý. Một thiết kế đẹp mà lỗ vốn là một thiết kế thất bại.
+> **Nguyên tắc cuối**: Bài YouTube kiểm tra một kỹ năng mà các bài khác không kiểm tra được — **khả năng thiết kế dưới ràng buộc kinh tế**. Ở đây luôn tồn tại một phương án kỹ thuật "tốt hơn" nhưng đắt hơn nhiều lần, và việc của kiến trúc sư là tìm điểm mà chất lượng trải nghiệm và chi phí giao nhau hợp lý. Một thiết kế đẹp mà lỗ vốn là một thiết kế thất bại.

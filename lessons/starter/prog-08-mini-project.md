@@ -2,7 +2,7 @@
 
 Chúc mừng bạn đã đi đến bài học tổng kết! Trong bài này, chúng ta sẽ ghép **tất cả** kiến thức đã học — biến, vòng lặp, hàm, class, đọc/ghi file — để xây dựng một ứng dụng hoàn chỉnh: **trình quản lý chi tiêu chạy trên terminal** (cửa sổ dòng lệnh, nơi bạn gõ chữ thay vì bấm nút).
 
-> 💡 Ghi nhớ: **CLI** (Command Line Interface — giao diện dòng lệnh) là ứng dụng tương tác bằng cách gõ phím trong terminal, không có nút bấm hay hình ảnh. Hầu hết lập trình viên đều bắt đầu bằng việc viết app CLI vì nó đơn giản mà vẫn "thật".
+> Ghi nhớ: **CLI** (Command Line Interface — giao diện dòng lệnh) là ứng dụng tương tác bằng cách gõ phím trong terminal, không có nút bấm hay hình ảnh. Hầu hết lập trình viên đều bắt đầu bằng việc viết app CLI vì nó đơn giản mà vẫn "thật".
 
 ## Ứng dụng sẽ làm được gì?
 
@@ -210,7 +210,7 @@ int main() {
 
 Khác biệt đáng chú ý: JavaScript (Node.js) đọc bàn phím qua `readline` và cần `async/await`; Java bắt buộc bọc code trong class và dùng `Scanner`; Go dùng `bufio.Reader` và phải `TrimSpace` để cắt ký tự xuống dòng.
 
-> ⚠️ Lỗi người mới hay gặp: quên lệnh `break` (thoát vòng lặp) ở lựa chọn "Thoát" → app lặp vô tận, phải bấm `Ctrl+C` để giết chương trình. Hãy luôn viết đường thoát **trước tiên** khi làm vòng lặp `while True`.
+> Lỗi người mới hay gặp: quên lệnh `break` (thoát vòng lặp) ở lựa chọn "Thoát" → app lặp vô tận, phải bấm `Ctrl+C` để giết chương trình. Hãy luôn viết đường thoát **trước tiên** khi làm vòng lặp `while True`.
 
 **Chạy thử ngay**: lưu file (vd `expense.py`), chạy `python expense.py`. Menu hiện ra, gõ 4 thì thoát — milestone 1 hoàn thành!
 
@@ -397,9 +397,9 @@ double readAmount() {
 
 Giờ quay lại `main()`, tạo danh sách `expenses = []` trước vòng lặp và nối các hàm vào menu: lựa chọn 1 gọi `add_expense(expenses)`, lựa chọn 2 gọi `list_expenses(expenses)`.
 
-> ⚠️ Lỗi người mới hay gặp: tạo `expenses = []` **bên trong** vòng lặp `while` — mỗi vòng lặp danh sách bị xóa trắng, thêm bao nhiêu cũng "mất". Biến lưu trữ lâu dài phải khai báo **trước** vòng lặp.
+> Lỗi người mới hay gặp: tạo `expenses = []` **bên trong** vòng lặp `while` — mỗi vòng lặp danh sách bị xóa trắng, thêm bao nhiêu cũng "mất". Biến lưu trữ lâu dài phải khai báo **trước** vòng lặp.
 
-> 💡 Ghi nhớ: quy tắc vàng của validate — *"lặp đến khi hợp lệ"*. Đừng từ chối rồi thoát luôn; hãy cho người dùng cơ hội nhập lại ngay trong hàm đọc dữ liệu.
+> Ghi nhớ: quy tắc vàng của validate — *"lặp đến khi hợp lệ"*. Đừng từ chối rồi thoát luôn; hãy cho người dùng cơ hội nhập lại ngay trong hàm đọc dữ liệu.
 
 ---
 
@@ -559,11 +559,11 @@ void saveExpenses(const std::vector<Expense>& expenses) {
 // đọc từng dòng bằng getline, tách theo '|' (dùng getline với delimiter), std::stod cột tiền.
 ```
 
-> ⚠️ Lỗi người mới hay gặp ở Java: `split("|")` không chạy như mong đợi vì tham số là **regex** (biểu thức chính quy) và `|` là ký tự đặc biệt — phải viết `split("\\|")`.
+> Lỗi người mới hay gặp ở Java: `split("|")` không chạy như mong đợi vì tham số là **regex** (biểu thức chính quy) và `|` là ký tự đặc biệt — phải viết `split("\\|")`.
 
 Cách nối vào app: gọi `load_expenses()` **một lần** lúc khởi động, và gọi `save_expenses()` sau mỗi lần thêm (hoặc trước khi thoát). Lưu sau mỗi lần thêm an toàn hơn — lỡ app bị tắt đột ngột cũng không mất gì.
 
-> 💡 Ghi nhớ: mẫu hình "load lúc mở — save lúc thay đổi" xuất hiện trong **mọi** phần mềm có dữ liệu, từ app ghi chú đến game (save game!). Bạn vừa học một mẫu thiết kế thực thụ.
+> Ghi nhớ: mẫu hình "load lúc mở — save lúc thay đổi" xuất hiện trong **mọi** phần mềm có dữ liệu, từ app ghi chú đến game (save game!). Bạn vừa học một mẫu thiết kế thực thụ.
 
 ---
 
@@ -702,4 +702,4 @@ Bạn vừa đi trọn một vòng đời phát triển phần mềm thu nhỏ: 
 | Xử lý lỗi | `try/except`, bắt parse lỗi, file không tồn tại |
 | Đọc/ghi file | `save_expenses`, `load_expenses` |
 
-> 💡 Ghi nhớ: dự án nhỏ nhưng **hoàn chỉnh** dạy bạn nhiều hơn dự án to bỏ dở. Hãy hoàn thiện ít nhất một bản ngôn ngữ khác ngoài Python — việc "dịch" code giữa các ngôn ngữ là cách luyện tư duy lập trình hiệu quả bậc nhất.
+> Ghi nhớ: dự án nhỏ nhưng **hoàn chỉnh** dạy bạn nhiều hơn dự án to bỏ dở. Hãy hoàn thiện ít nhất một bản ngôn ngữ khác ngoài Python — việc "dịch" code giữa các ngôn ngữ là cách luyện tư duy lập trình hiệu quả bậc nhất.

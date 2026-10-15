@@ -20,7 +20,7 @@ docker ps                            # container đang chạy
 docker rm -f web                     # xoá container — image vẫn còn
 ```
 
-> 💡 **Ghi nhớ**: Xoá container không xoá image. Một image có thể sinh ra N container độc lập. Dữ liệu ghi trong writable layer **mất khi xoá container** — muốn giữ thì dùng volume.
+> **Ghi nhớ**: Xoá container không xoá image. Một image có thể sinh ra N container độc lập. Dữ liệu ghi trong writable layer **mất khi xoá container** — muốn giữ thì dùng volume.
 
 ## 2. Dockerfile — các chỉ thị cốt lõi
 
@@ -68,7 +68,7 @@ docker run myapp                 # chạy: python app.py --port 8080
 docker run myapp --port 9090     # chạy: python app.py --port 9090
 ```
 
-> ⚠️ **Lỗi thường gặp**: Viết `CMD node server.js` (shell form) thay vì `CMD ["node", "server.js"]` (exec form). Shell form bọc lệnh trong `/bin/sh -c`, khiến tiến trình không nhận được tín hiệu `SIGTERM` → container không shutdown gọn, ECS phải chờ hết `stopTimeout` rồi kill cứng. **Luôn dùng exec form (mảng JSON).**
+> **Lỗi thường gặp**: Viết `CMD node server.js` (shell form) thay vì `CMD ["node", "server.js"]` (exec form). Shell form bọc lệnh trong `/bin/sh -c`, khiến tiến trình không nhận được tín hiệu `SIGTERM` → container không shutdown gọn, ECS phải chờ hết `stopTimeout` rồi kill cứng. **Luôn dùng exec form (mảng JSON).**
 
 ## 3. Layer & cache — thứ tự lệnh quyết định tốc độ build
 
@@ -145,7 +145,7 @@ docker build -t myapp:1.1 .
 # => [4/4] COPY . .
 ```
 
-> 💡 **Ghi nhớ**: Quy tắc vàng — **ít thay đổi đặt trên, hay thay đổi đặt dưới**. Gộp các lệnh `RUN apt-get update && apt-get install -y ... && rm -rf /var/lib/apt/lists/*` thành một layer để image gọn và tránh cache `apt-get update` cũ.
+> **Ghi nhớ**: Quy tắc vàng — **ít thay đổi đặt trên, hay thay đổi đặt dưới**. Gộp các lệnh `RUN apt-get update && apt-get install -y ... && rm -rf /var/lib/apt/lists/*` thành một layer để image gọn và tránh cache `apt-get update` cũ.
 
 ## 4. Multi-stage build — image nhỏ, bề mặt tấn công nhỏ
 
@@ -233,7 +233,7 @@ Dockerfile
 docker-compose*.yml
 ```
 
-> ⚠️ **Lỗi thường gặp**: Build context vài GB vì thiếu `.dockerignore` → `docker build` treo ở bước "transferring context". Tệ hơn: file `.env` chứa credential bị nướng vào image và đẩy lên registry.
+> **Lỗi thường gặp**: Build context vài GB vì thiếu `.dockerignore` → `docker build` treo ở bước "transferring context". Tệ hơn: file `.env` chứa credential bị nướng vào image và đẩy lên registry.
 
 ## 6. Tag & registry — đẩy image lên ECR
 
@@ -254,7 +254,7 @@ docker tag myapp:1.0 123456789012.dkr.ecr.ap-southeast-1.amazonaws.com/myapp:1.0
 docker push 123456789012.dkr.ecr.ap-southeast-1.amazonaws.com/myapp:1.0
 ```
 
-> 💡 **Ghi nhớ**: Trong production, tag bằng **git SHA hoặc semver** (`myapp:a1b2c3d`), không deploy bằng `:latest` — vì `latest` thay đổi ngầm, rollback và audit đều khó. ECR còn cho bật **tag immutability** để cấm ghi đè tag.
+> **Ghi nhớ**: Trong production, tag bằng **git SHA hoặc semver** (`myapp:a1b2c3d`), không deploy bằng `:latest` — vì `latest` thay đổi ngầm, rollback và audit đều khó. ECR còn cho bật **tag immutability** để cấm ghi đè tag.
 
 ## 7. docker run — port, volume, env
 
@@ -299,7 +299,7 @@ docker stats --no-stream             # CPU/RAM từng container
 docker ps -a                         # gồm cả container đã exit (xem exit code)
 ```
 
-> 💡 **Ghi nhớ**: App trong container nên log ra **stdout/stderr**, không ghi file. Đó chính là cách `awslogs` driver của ECS gom log vào CloudWatch Logs mà không cần agent.
+> **Ghi nhớ**: App trong container nên log ra **stdout/stderr**, không ghi file. Đó chính là cách `awslogs` driver của ECS gom log vào CloudWatch Logs mà không cần agent.
 
 ## 9. docker compose — chạy nhiều service, ví dụ LocalStack lab
 
@@ -366,7 +366,7 @@ aws --endpoint-url http://localhost:4566 s3 ls
 
 Điểm cần hiểu về **network**: Compose tự tạo một network riêng; các service gọi nhau bằng **tên service** (`db`, `localstack`) nhờ DNS nội bộ — đúng mô hình service discovery bạn gặp lại ở ECS Service Connect / Cloud Map.
 
-> ⚠️ **Lỗi thường gặp**: `depends_on` mặc định chỉ chờ container **start**, không chờ app bên trong sẵn sàng. App connect Postgres ngay khi Postgres còn đang khởi tạo → crash. Khắc phục: `condition: service_healthy` + `healthcheck` như trên, và app vẫn nên có retry logic.
+> **Lỗi thường gặp**: `depends_on` mặc định chỉ chờ container **start**, không chờ app bên trong sẵn sàng. App connect Postgres ngay khi Postgres còn đang khởi tạo → crash. Khắc phục: `condition: service_healthy` + `healthcheck` như trên, và app vẫn nên có retry logic.
 
 ## 10. Healthcheck & resource limits trong Dockerfile
 
@@ -422,7 +422,7 @@ docker ps -a
 | 137 | Bị kill vì hết memory (OOM) hoặc `docker stop` quá hạn |
 | 126/127 | Lệnh trong CMD không thực thi được / không tồn tại |
 
-> 💡 **Ghi nhớ**: Container sống nhờ tiến trình PID 1 chạy **foreground**. Lệnh kiểu `nginx` daemon-mode hay script chạy xong là container chết. Debug nhanh: `docker run -it --entrypoint sh myapp` để vào trong xem.
+> **Ghi nhớ**: Container sống nhờ tiến trình PID 1 chạy **foreground**. Lệnh kiểu `nginx` daemon-mode hay script chạy xong là container chết. Debug nhanh: `docker run -it --entrypoint sh myapp` để vào trong xem.
 
 ### Port conflict
 

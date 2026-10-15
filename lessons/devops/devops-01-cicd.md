@@ -14,7 +14,7 @@ Bài này không dạy bạn cú pháp một công cụ cụ thể. Nó dạy b�
 | Continuous Delivery | CD | Mọi artifact xanh đều **sẵn sàng** deploy lên production bất cứ lúc nào, chỉ chờ một cú bấm nút (manual approval) | Artifact nằm sẵn ở cửa prod |
 | Continuous Deployment | CD | Như trên nhưng **bỏ luôn cú bấm nút** — xanh là tự động lên prod | Code đã chạy trên prod |
 
-> 💡 Ghi nhớ: **Delivery = lúc nào cũng deploy được (nhưng người quyết định bấm). Deployment = deploy luôn, không cần người.** Sự khác biệt duy nhất là cái "manual approval gate" trước production. Một đội mới làm CI/CD thường dừng ở Delivery, và đó là lựa chọn đúng đắn cho đến khi test đủ tin cậy.
+> Ghi nhớ: **Delivery = lúc nào cũng deploy được (nhưng người quyết định bấm). Deployment = deploy luôn, không cần người.** Sự khác biệt duy nhất là cái "manual approval gate" trước production. Một đội mới làm CI/CD thường dừng ở Delivery, và đó là lựa chọn đúng đắn cho đến khi test đủ tin cậy.
 
 Trục so sánh dưới đây làm rõ ba khái niệm cùng nằm trên **một đường ống**, chỉ khác nhau ở chỗ đặt **manual approval gate**: CI dừng ở artifact xanh; Delivery tự động tới sát cửa prod rồi chờ người bấm; Deployment xoá luôn cái cửa đó.
 
@@ -70,7 +70,7 @@ Lý do thật sự không phải để đỡ gõ lệnh. Mà là:
 - **Phản hồi nhanh (fast feedback).** Bug được bắt 3 phút sau khi push rẻ hơn rất nhiều so với bug bị khách hàng báo 3 tuần sau.
 - **Tự tin để release nhỏ và thường xuyên.** Deploy 1 dòng code mỗi ngày ít rủi ro hơn deploy 5000 dòng mỗi tháng. Pipeline tốt khiến deploy thành chuyện nhàm chán — và nhàm chán là tốt.
 
-> ⚠️ Bẫy production: Đừng nhầm "có Jenkins/GitHub Actions" với "có CI/CD". Nhiều đội có pipeline nhưng test thì skip, deploy production thì vẫn SSH vào server kéo code. Đó là CI/CD trên giấy. Thước đo thật: **bạn có dám để pipeline tự deploy lên prod lúc 5 giờ chiều thứ Sáu không?**
+> Bẫy production: Đừng nhầm "có Jenkins/GitHub Actions" với "có CI/CD". Nhiều đội có pipeline nhưng test thì skip, deploy production thì vẫn SSH vào server kéo code. Đó là CI/CD trên giấy. Thước đo thật: **bạn có dám để pipeline tự deploy lên prod lúc 5 giờ chiều thứ Sáu không?**
 
 ## Pipeline stages: giải phẫu một đường ống
 
@@ -148,7 +148,7 @@ Các stage điển hình:
 4. **Package / Artifact** — tạo ra artifact bất biến (immutable): một Docker image có tag cố định, một file `.jar`, một zip.
 5. **Deploy** — đẩy artifact đó lên môi trường, tiến dần dev → staging → prod.
 
-> 💡 Ghi nhớ: Sắp xếp stage theo nguyên tắc **rẻ và nhanh chạy trước**. Lint/unit test mất 30 giây nên đặt trước integration test mất 10 phút. Bắt được lỗi ở giây thứ 30 thì tiết kiệm 10 phút cho cả đội.
+> Ghi nhớ: Sắp xếp stage theo nguyên tắc **rẻ và nhanh chạy trước**. Lint/unit test mất 30 giây nên đặt trước integration test mất 10 phút. Bắt được lỗi ở giây thứ 30 thì tiết kiệm 10 phút cho cả đội.
 
 ## Artifact & versioning: build một lần, deploy mọi nơi
 
@@ -216,7 +216,7 @@ docker tag "$IMAGE:$SHA" "$IMAGE:1.4.2"
 docker push "$IMAGE:1.4.2"
 ```
 
-> ⚠️ Bẫy production: **Tuyệt đối không deploy bằng tag `latest` lên production.** `latest` là tag di động — hôm nay nó trỏ image này, mai trỏ image khác. Khi cần rollback bạn sẽ không biết "bản trước" là image nào. Luôn deploy bằng tag bất biến (git SHA hoặc SemVer). Tốt hơn nữa: pin theo digest `@sha256:...`.
+> Bẫy production: **Tuyệt đối không deploy bằng tag `latest` lên production.** `latest` là tag di động — hôm nay nó trỏ image này, mai trỏ image khác. Khi cần rollback bạn sẽ không biết "bản trước" là image nào. Luôn deploy bằng tag bất biến (git SHA hoặc SemVer). Tốt hơn nữa: pin theo digest `@sha256:...`.
 
 ## Environments: dev / staging / prod
 
@@ -230,7 +230,7 @@ Code không nhảy thẳng từ máy lập trình viên lên prod. Nó đi qua m
 
 Quy tắc cốt lõi: **staging phải càng giống prod càng tốt** — cùng version K8s, cùng cấu hình network, cùng cách inject secret. Khác nhau giữa staging và prod chính là nơi bug sống sót qua test. Khác biệt về config phải đến từ biến môi trường / config bên ngoài, **không phải từ việc build lại artifact**.
 
-> 💡 Ghi nhớ: Cùng một artifact, khác config theo môi trường. Đây là tinh thần của 12-Factor App: tách config ra khỏi code.
+> Ghi nhớ: Cùng một artifact, khác config theo môi trường. Đây là tinh thần của 12-Factor App: tách config ra khỏi code.
 
 ## Trunk-based vs GitFlow: chọn nhánh, chọn tốc độ
 
@@ -246,7 +246,7 @@ Branching strategy quyết định pipeline của bạn trông ra sao.
 
 Năm 2025, đa số đội làm CI/CD hiện đại chọn **trunk-based development**: branch sống ngắn, merge thường xuyên vào `main`, dùng feature flag để giấu tính năng chưa hoàn thiện. GitFlow vẫn hợp lý cho phần mềm phát hành theo version (desktop app, thư viện, firmware).
 
-> ⚠️ Bẫy production: GitFlow + deploy liên tục là kết hợp gây đau đớn. Branch sống lâu nghĩa là code của bạn càng ngày càng lệch khỏi `main`, đến lúc merge thì xung đột chồng chất và bạn test một thứ rất khác với thứ sẽ chạy thật.
+> Bẫy production: GitFlow + deploy liên tục là kết hợp gây đau đớn. Branch sống lâu nghĩa là code của bạn càng ngày càng lệch khỏi `main`, đến lúc merge thì xung đột chồng chất và bạn test một thứ rất khác với thứ sẽ chạy thật.
 
 ## Pipeline as Code: pipeline phải nằm trong repo
 
@@ -345,7 +345,7 @@ Triết lý xuyên suốt pipeline: **fail ở chỗ rẻ nhất, sớm nhất.*
 - Stage fail thì pipeline dừng, **không** chạy tiếp các stage sau — đừng tốn 10 phút deploy một build đã fail test.
 - Trong scan, set `exit-code: 1` để CVE nặng làm fail pipeline, thay vì chỉ in cảnh báo rồi cho qua.
 
-> 💡 Ghi nhớ: Pipeline tốt là pipeline **ồn ào khi sai và im lặng khi đúng**. Nếu mọi người đã quen click bỏ qua cảnh báo đỏ, pipeline của bạn đã chết về mặt tác dụng.
+> Ghi nhớ: Pipeline tốt là pipeline **ồn ào khi sai và im lặng khi đúng**. Nếu mọi người đã quen click bỏ qua cảnh báo đỏ, pipeline của bạn đã chết về mặt tác dụng.
 
 ## Liên hệ sang AWS
 

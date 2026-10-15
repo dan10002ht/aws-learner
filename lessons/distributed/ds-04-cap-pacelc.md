@@ -54,7 +54,7 @@ Vậy "bỏ P" nghĩa là gì? Nghĩa là **giả định mạng không bao gi�
 <text x="600" y="162" text-anchor="middle" font-size="11" fill="currentColor">x = 5</text>
 <line x1="160" y1="145" x2="310" y2="145" stroke="currentColor" stroke-width="1.5" stroke-dasharray="6 5"/>
 <line x1="390" y1="145" x2="540" y2="145" stroke="currentColor" stroke-width="1.5" stroke-dasharray="6 5"/>
-<text x="350" y="120" text-anchor="middle" font-size="30" fill="#f43f5e">✂</text>
+<text x="350" y="120" text-anchor="middle" font-size="30" fill="#f43f5e">✗</text>
 <text x="350" y="168" text-anchor="middle" font-size="12" fill="#f43f5e">PARTITION</text>
 <rect x="20" y="215" width="300" height="70" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
 <text x="170" y="240" text-anchor="middle" font-size="12" fill="currentColor">Chọn CP: A từ chối write mới</text>

@@ -129,9 +129,9 @@ Cái giá của io2 là trả tiền theo từng IOPS đã mua:
 → cùng số IOPS, io2 đắt hơn khoảng 10 lần. Chỉ dùng khi thật sự cần độ bền hoặc vượt trần gp3.
 ```
 
-> 📏 Con số "đề thi" và con số hiện tại: tài liệu ôn thi và đề SAA-C03 dùng trần gp3 là **16.000 IOPS / 1.000 MiB/s**, io2 là **64.000 IOPS**, và coi io2 Block Express là một loại riêng đạt **256.000 IOPS / 4.000 MiB/s**. Docs hiện tại đã nâng gp3 lên **80.000 IOPS / 2.000 MiB/s** và gộp io2 với io2 Block Express làm một (mọi ổ io2 đều đạt tới 256.000 IOPS trên instance Nitro). Quy tắc chọn không đổi: gp3 là mặc định, io2 khi cần IOPS rất lớn hoặc durability 99,999%, HDD khi cần throughput tuần tự giá rẻ.
+> Con số "đề thi" và con số hiện tại: tài liệu ôn thi và đề SAA-C03 dùng trần gp3 là **16.000 IOPS / 1.000 MiB/s**, io2 là **64.000 IOPS**, và coi io2 Block Express là một loại riêng đạt **256.000 IOPS / 4.000 MiB/s**. Docs hiện tại đã nâng gp3 lên **80.000 IOPS / 2.000 MiB/s** và gộp io2 với io2 Block Express làm một (mọi ổ io2 đều đạt tới 256.000 IOPS trên instance Nitro). Quy tắc chọn không đổi: gp3 là mặc định, io2 khi cần IOPS rất lớn hoặc durability 99,999%, HDD khi cần throughput tuần tự giá rẻ.
 
-> 🪤 Bẫy thi: *"database cần 50.000 IOPS ổn định"* → io2 / io2 Block Express (vượt trần gp3 của đề). *"giảm chi phí cho các volume gp2 mà không giảm hiệu năng"* → đổi sang gp3. *"xử lý log / big data đọc tuần tự, chi phí thấp"* → st1. *"dữ liệu ít truy cập, rẻ nhất"* → sc1. *"ổ boot"* → không bao giờ là st1/sc1.
+> Bẫy thi: *"database cần 50.000 IOPS ổn định"* → io2 / io2 Block Express (vượt trần gp3 của đề). *"giảm chi phí cho các volume gp2 mà không giảm hiệu năng"* → đổi sang gp3. *"xử lý log / big data đọc tuần tự, chi phí thấp"* → st1. *"dữ liệu ít truy cập, rẻ nhất"* → sc1. *"ổ boot"* → không bao giờ là st1/sc1.
 
 ### 3.2 Features
 
@@ -220,7 +220,7 @@ Bẫy kinh điển nằm ngay trong phép tính: **file system nhỏ mà traffic
 | Rủi ro | Hết credit thì chậm | Trả tiền cho lúc idle | Hoá đơn khó đoán nếu tải tăng bất thường |
 | Hợp khi | Dữ liệu lớn dần và tải tăng theo dữ liệu | Tải đều, biết trước | Tải spike, không muốn tính toán |
 
-> 📏 Tài liệu ôn thi thường ghi Bursting là mode mặc định. Docs hiện tại coi **Elastic** là mặc định và là lựa chọn khuyến nghị. Trên đề, hãy chọn theo mô tả workload chứ đừng dựa vào chữ "default".
+> Tài liệu ôn thi thường ghi Bursting là mode mặc định. Docs hiện tại coi **Elastic** là mặc định và là lựa chọn khuyến nghị. Trên đề, hãy chọn theo mô tả workload chứ đừng dựa vào chữ "default".
 
 ### 4.5 EFS vs EBS
 
@@ -229,13 +229,13 @@ Nguyên nhân gốc của mọi khác biệt trong bảng: EBS là **ổ đĩa c
 | | EFS | EBS |
 |--|-----|-----|
 | Type | File NFS | Block |
-| Multi-AZ | ✅ | ❌ |
-| Multi-EC2 | ✅ (thousands) | Multi-Attach io1/io2 max 16, same AZ |
+| Multi-AZ | ✓ | ✗ |
+| Multi-EC2 | ✓ (thousands) | Multi-Attach io1/io2 max 16, same AZ |
 | Resize | Auto | Manual (Elastic Volumes) |
 | Cost | Cao (~$0.30/GB Std) | gp3 ~$0.08/GB |
 | Use case | Shared content, lift-shift NFS | Boot disk, DB |
 
-> 🪤 Bẫy thi: *"nhiều EC2 ở nhiều AZ cùng đọc ghi một thư mục, Linux"* → EFS. *"database cần độ trễ thấp nhất trên một instance"* → EBS. Đừng chọn EFS cho database chỉ vì nó multi-AZ: HA cho database là việc của RDS Multi-AZ hoặc Aurora.
+> Bẫy thi: *"nhiều EC2 ở nhiều AZ cùng đọc ghi một thư mục, Linux"* → EFS. *"database cần độ trễ thấp nhất trên một instance"* → EBS. Đừng chọn EFS cho database chỉ vì nó multi-AZ: HA cho database là việc của RDS Multi-AZ hoặc Aurora.
 
 ---
 
@@ -312,7 +312,7 @@ Từ khoá nhận diện: *ZFS, migrate NFS file server Linux on-prem, cần sna
 | Use case | Windows file server, .NET app, AD-integrated | HPC, ML training scratch | NetApp customer, hybrid, snapshot+clone | High-perf Linux NFS |
 | Performance | Độ trễ dưới 1 ms với SSD; một file server | **TB/s aggregate** nhờ đọc song song nhiều server | Tới hàng chục GB/s mỗi file system | Độ trễ thấp cho NFS; một file server, không scale-out |
 | Trả tiền theo | Dung lượng + throughput capacity | Per GB + throughput | Dung lượng SSD + throughput + tầng capacity pool (nhiều thành phần nhất) | Dung lượng + IOPS + throughput |
-| Multi-AZ | ✅ | Single-AZ (scratch hoặc persistent) | ✅ | ✅ ở bản hiện tại (tài liệu cũ ghi Single-AZ) |
+| Multi-AZ | ✓ | Single-AZ (scratch hoặc persistent) | ✓ | ✓ ở bản hiện tại (tài liệu cũ ghi Single-AZ) |
 
 **Use case map:**
 - **AD-integrated Windows file share** → FSx Windows.
@@ -320,7 +320,7 @@ Từ khoá nhận diện: *ZFS, migrate NFS file server Linux on-prem, cần sna
 - **NetApp ONTAP customer migrate** → FSx ONTAP.
 - **Linux NFS workload high perf** → FSx OpenZFS.
 
-> 🪤 Bẫy thi: thấy **Windows / SMB / Active Directory** → FSx Windows, không phải EFS (EFS chỉ NFS). Thấy **HPC / ML + S3** → Lustre. Thấy *"cả Linux lẫn Windows cùng truy cập một bộ dữ liệu"* → ONTAP (đa giao thức). Thấy *"Linux, nhiều AZ, không muốn quản lý dung lượng"* mà không có từ khoá nào ở trên → vẫn là EFS.
+> Bẫy thi: thấy **Windows / SMB / Active Directory** → FSx Windows, không phải EFS (EFS chỉ NFS). Thấy **HPC / ML + S3** → Lustre. Thấy *"cả Linux lẫn Windows cùng truy cập một bộ dữ liệu"* → ONTAP (đa giao thức). Thấy *"Linux, nhiều AZ, không muốn quản lý dung lượng"* mà không có từ khoá nào ở trên → vẫn là EFS.
 
 ---
 
@@ -352,7 +352,7 @@ Có TA:     user ── đoạn ngắn ──→ edge location ══ backbone A
 
 Transfer Acceleration và Multipart giải hai chuyện khác nhau nên hay đi cùng nhau: Multipart cắt file để gửi song song và resume được, Transfer Acceleration làm mỗi kết nối đi nhanh hơn.
 
-> 🪤 Bẫy thi: *"user toàn cầu upload vào một bucket trung tâm, cần nhanh hơn"* → Transfer Acceleration. *"user toàn cầu **download** nội dung"* → CloudFront (có cache). *"chuyển dữ liệu từ data center lên S3 định kỳ"* → DataSync (§7.2), không phải Transfer Acceleration.
+> Bẫy thi: *"user toàn cầu upload vào một bucket trung tâm, cần nhanh hơn"* → Transfer Acceleration. *"user toàn cầu **download** nội dung"* → CloudFront (có cache). *"chuyển dữ liệu từ data center lên S3 định kỳ"* → DataSync (§7.2), không phải Transfer Acceleration.
 
 ### 6.3 S3 Select & Glacier Select
 
@@ -364,7 +364,7 @@ Transfer Acceleration và Multipart giải hai chuyện khác nhau nên hay đi 
 - Mỗi request chỉ query **một object**. Không JOIN, không query cả bucket hay cả prefix. Muốn SQL trên nhiều object thì dùng **Athena**.
 - S3 Select không đọc được object đang nằm ở các class lưu trữ lạnh Glacier Flexible Retrieval / Deep Archive. **Glacier Select** là biến thể riêng cho đúng trường hợp đó: chạy SQL trên object đã archive mà không phải restore cả object về trước.
 
-> 📏 Docs hiện ghi: **S3 Select không còn mở cho khách hàng mới**, khách cũ vẫn dùng bình thường. AWS hướng người dùng mới sang Athena hoặc tự lọc ở client. Đề thi và tài liệu ôn vẫn có thể nhắc S3 Select, với ý cần nhớ là *"chỉ lấy một phần dữ liệu trong **một** object bằng SQL, giảm dữ liệu truyền về"*. Còn *"query SQL trên cả tập dữ liệu trong S3"* thì luôn là Athena.
+> Docs hiện ghi: **S3 Select không còn mở cho khách hàng mới**, khách cũ vẫn dùng bình thường. AWS hướng người dùng mới sang Athena hoặc tự lọc ở client. Đề thi và tài liệu ôn vẫn có thể nhắc S3 Select, với ý cần nhớ là *"chỉ lấy một phần dữ liệu trong **một** object bằng SQL, giảm dữ liệu truyền về"*. Còn *"query SQL trên cả tập dữ liệu trong S3"* thì luôn là Athena.
 
 ### 6.4 Object Lock (WORM)
 - Bật khi **tạo bucket** (không enable sau).
@@ -373,7 +373,7 @@ Transfer Acceleration và Multipart giải hai chuyện khác nhau nên hay đi 
 - **Retention period** + **Legal Hold** (vô thời hạn).
 - Use case: SEC 17a-4, FINRA, GDPR.
 
-> 📏 Đề thi và tài liệu ôn dùng quy tắc "chỉ bật được lúc tạo bucket". Docs hiện tại cho phép bật Object Lock trên **bucket đã có** (bucket phải bật versioning). Điều không đổi: đã bật thì **không tắt được**, và không tạm dừng versioning được nữa.
+> Đề thi và tài liệu ôn dùng quy tắc "chỉ bật được lúc tạo bucket". Docs hiện tại cho phép bật Object Lock trên **bucket đã có** (bucket phải bật versioning). Điều không đổi: đã bật thì **không tắt được**, và không tạm dừng versioning được nữa.
 
 ### 6.5 Access Points
 - 1 bucket → nhiều endpoint, mỗi cái policy riêng.
@@ -455,7 +455,7 @@ Tổng hợp lại:
 | **Volume Gateway Stored** | iSCSI, primary on-prem, async backup S3 | Full local + cloud backup |
 | **Tape Gateway** | iSCSI VTL → S3 Glacier | Replace LTO tape library |
 
-> 🪤 Bẫy thi: từ khoá quyết định là **giao thức ứng dụng cần**. NFS/SMB + "file thành object S3" → File Gateway. iSCSI/block + "hết chỗ on-prem" → Volume Cached. iSCSI/block + "độ trễ thấp cho toàn bộ dữ liệu, backup lên AWS" → Volume Stored. "tape, backup software hiện có, VTL" → Tape Gateway. Còn *"chuyển một lần rồi tắt hệ thống cũ"* thì không phải Storage Gateway mà là DataSync.
+> Bẫy thi: từ khoá quyết định là **giao thức ứng dụng cần**. NFS/SMB + "file thành object S3" → File Gateway. iSCSI/block + "hết chỗ on-prem" → Volume Cached. iSCSI/block + "độ trễ thấp cho toàn bộ dữ liệu, backup lên AWS" → Volume Stored. "tape, backup software hiện có, VTL" → Tape Gateway. Còn *"chuyển một lần rồi tắt hệ thống cũ"* thì không phải Storage Gateway mà là DataSync.
 
 ### 7.2 DataSync
 
@@ -495,7 +495,7 @@ Khi con số ra **nhiều tuần tới nhiều tháng**, hoặc khi địa đi�
 
 Mốc "> 10 TB" là quy tắc ngón tay cái của đề thi. Phép tính ở trên mới là cách quyết định thật: 10 TB qua đường 1 Gbps chỉ mất khoảng một ngày, khi đó DataSync hợp lý hơn.
 
-> 📏 Hiện trạng thật khác với đề thi. Đề SAA-C03 và tài liệu ôn vẫn dùng bộ ba Snowcone / Snowball Edge / Snowmobile với các con số ở trên, nên **vẫn phải thuộc**. Ngoài đời: **Snowmobile** đã ngừng từ 2024; **Snowcone** và bản Snowball Edge 80 TB ngừng từ 12/11/2024, chỉ còn Snowball Edge Storage Optimized **210 TB** và Compute Optimized; từ 7/11/2025 Snowball Edge **không nhận khách hàng mới**, và AWS thông báo ngừng hỗ trợ Snowball ở các region thương mại vào 31/12/2026. AWS hướng khách mới sang **DataSync** (online, kèm Direct Connect nếu thiếu băng thông) hoặc **AWS Data Transfer Terminal** (mang ổ cứng tới một điểm của AWS để upload).
+> Hiện trạng thật khác với đề thi. Đề SAA-C03 và tài liệu ôn vẫn dùng bộ ba Snowcone / Snowball Edge / Snowmobile với các con số ở trên, nên **vẫn phải thuộc**. Ngoài đời: **Snowmobile** đã ngừng từ 2024; **Snowcone** và bản Snowball Edge 80 TB ngừng từ 12/11/2024, chỉ còn Snowball Edge Storage Optimized **210 TB** và Compute Optimized; từ 7/11/2025 Snowball Edge **không nhận khách hàng mới**, và AWS thông báo ngừng hỗ trợ Snowball ở các region thương mại vào 31/12/2026. AWS hướng khách mới sang **DataSync** (online, kèm Direct Connect nếu thiếu băng thông) hoặc **AWS Data Transfer Terminal** (mang ổ cứng tới một điểm của AWS để upload).
 
 **Chọn nhanh giữa các cách chuyển dữ liệu:**
 
@@ -613,12 +613,12 @@ Mốc "> 10 TB" là quy tắc ngón tay cái của đề thi. Phép tính ở tr
 - **MRAP** cho global app.
 
 ### Anti-pattern
-- ❌ EBS Multi-Attach với ext4/xfs → corrupt.
-- ❌ EFS không lifecycle IA → cost cao.
-- ❌ S3 versioning không lifecycle expire noncurrent → bucket phình lớn.
-- ❌ Object Lock Compliance + retention quá dài → khóa data vĩnh viễn.
-- ❌ Self-managed NFS trên EC2 → EFS/FSx.
-- ❌ Snapshot không cross-region → DR fail nếu region down.
+- ✗ EBS Multi-Attach với ext4/xfs → corrupt.
+- ✗ EFS không lifecycle IA → cost cao.
+- ✗ S3 versioning không lifecycle expire noncurrent → bucket phình lớn.
+- ✗ Object Lock Compliance + retention quá dài → khóa data vĩnh viễn.
+- ✗ Self-managed NFS trên EC2 → EFS/FSx.
+- ✗ Snapshot không cross-region → DR fail nếu region down.
 
 ## 12. Foundations
 - **CAP** liên quan storage replication. S3 strong consistency (2020+), EFS strong, EBS strong (single-attach).

@@ -2,7 +2,7 @@
 
 Ở bài 1 (`cap-01-plan`) ta đã chốt mọi quyết định kiến trúc cho **TaskShare** — app quản lý task có **đăng nhập**, **project**, và **chia sẻ project** để cộng tác — cùng ERD, schema Prisma và API contract. Bài này biến những quyết định đó thành **code chạy thật**, từng bước có code chính, kết nối **end-to-end**: React (FE) → Express + TS (BE) → PostgreSQL (DB). Ta dựng theo **vertical slice** (milestone M1→M3 của bài 1): làm thông lát cắt mỏng (auth) xuyên cả 3 tầng trước rồi mới đắp CRUD và chia sẻ — lát cắt dọc phát hiện sớm lỗi tích hợp (CORS, shape JSON, auth flow), thứ thường giết tiến độ ở phút chót.
 
-> 💡 Ghi nhớ: mục tiêu bài này không phải code đẹp nhất, mà là **một slice chạy thông**: đăng nhập trên FE → gọi API thật → tạo task → reload vẫn còn (đã lưu DB). Đạt được điều đó rồi mới tối ưu.
+> Ghi nhớ: mục tiêu bài này không phải code đẹp nhất, mà là **một slice chạy thông**: đăng nhập trên FE → gọi API thật → tạo task → reload vẫn còn (đã lưu DB). Đạt được điều đó rồi mới tối ưu.
 
 ## 0. Thứ tự dựng & sơ đồ luồng
 
@@ -80,7 +80,7 @@ export type CreateTaskInput = { title: string; description?: string; dueDate?: s
 export type ApiError = { error: { code: string; message: string } };  // format chốt ở bài 1
 ```
 
-> 💡 Ghi nhớ: data model là quyết định khó đảo ngược nhất, đã chốt ở bài 1 — đừng sửa schema giữa lúc build trừ khi bắt buộc. Quan hệ then chốt: `Task` thuộc một `Project`, quyền truy cập task **kế thừa** từ quyền truy cập project (không có bảng quyền riêng cho task ở MVP).
+> Ghi nhớ: data model là quyết định khó đảo ngược nhất, đã chốt ở bài 1 — đừng sửa schema giữa lúc build trừ khi bắt buộc. Quan hệ then chốt: `Task` thuộc một `Project`, quyền truy cập task **kế thừa** từ quyền truy cập project (không có bảng quyền riêng cho task ở MVP).
 
 ## 2. Backend — config từ env, fail nhanh
 
@@ -113,7 +113,7 @@ app.use("/tasks", tasksRouter);
 app.use(errorHandler);   // PHẢI đặt cuối cùng, sau mọi route
 ```
 
-> ⚠️ Bẫy: đừng hard-code connection string / secret trong code. Mọi thứ phụ thuộc môi trường (DB URL, JWT secret, port, origin FE) nằm trong `.env` ngay từ ngày đầu — nếu không, lúc deploy ở bài 3 bạn phải đi sửa rải rác khắp nơi.
+> Bẫy: đừng hard-code connection string / secret trong code. Mọi thứ phụ thuộc môi trường (DB URL, JWT secret, port, origin FE) nằm trong `.env` ngay từ ngày đầu — nếu không, lúc deploy ở bài 3 bạn phải đi sửa rải rác khắp nơi.
 
 ## 3. Validation tập trung với zod
 
@@ -138,7 +138,7 @@ export const taskSchema     = z.object({ title: z.string().min(1).max(200),
 export const memberSchema   = z.object({ email: z.string().email() });
 ```
 
-> ⚠️ Bẫy: dùng `400` cho body sai/thiếu field. Trả thêm `fields` để FE highlight đúng ô input. Đừng để zod ném exception thô ra ngoài — bắt và biến thành JSON đúng format `{ error: { code, message } }` đã chốt ở bài 1.
+> Bẫy: dùng `400` cho body sai/thiếu field. Trả thêm `fields` để FE highlight đúng ô input. Đừng để zod ném exception thô ra ngoài — bắt và biến thành JSON đúng format `{ error: { code, message } }` đã chốt ở bài 1.
 
 ## 4. Auth — register, login, JWT
 
@@ -199,7 +199,7 @@ meRouter.get("/me", requireAuth, async (req, res, next) => {
 });
 ```
 
-> 💡 Ghi nhớ: hash password bằng bcrypt (cost ~10–12), không bao giờ lưu/trả plaintext hay `passwordHash` ra response. Login sai trả **401 chung chung** — đừng nói riêng "email không tồn tại" vs "sai mật khẩu", đó là kẽ hở liệt kê user.
+> Ghi nhớ: hash password bằng bcrypt (cost ~10–12), không bao giờ lưu/trả plaintext hay `passwordHash` ra response. Login sai trả **401 chung chung** — đừng nói riêng "email không tồn tại" vs "sai mật khẩu", đó là kẽ hở liệt kê user.
 
 ## 5. CRUD project + authorization theo resource
 
@@ -270,7 +270,7 @@ async function roleIn(projectId: string, userId: string): Promise<"owner" | "mem
 }
 ```
 
-> ⚠️ Bẫy authorization phổ biến nhất (IDOR): tin vào `:id` mà không check membership. `prisma.project.delete({ where: { id } })` sẽ xoá project của **bất kỳ ai** nếu biết id. Luôn check `roleIn(...)` trước. Project không phải của mình → trả **404 chứ không 403** để không lộ "project này tồn tại".
+> Bẫy authorization phổ biến nhất (IDOR): tin vào `:id` mà không check membership. `prisma.project.delete({ where: { id } })` sẽ xoá project của **bất kỳ ai** nếu biết id. Luôn check `roleIn(...)` trước. Project không phải của mình → trả **404 chứ không 403** để không lộ "project này tồn tại".
 
 ## 6. CRUD task — quyền kế thừa từ project
 
@@ -306,7 +306,7 @@ tasksRouter.patch("/:id", validate(taskSchema.partial()), async (req, res, next)
 });
 ```
 
-> 💡 Ghi nhớ: quyền task **kế thừa** từ membership project — đây là lý do data model để `tasks.project_id` thay vì bảng quyền riêng. Một hàm `roleIn` duy nhất kiểm soát mọi cửa: dễ audit, khó lọt lỗ hổng. DELETE task lặp lại đúng pattern của PATCH.
+> Ghi nhớ: quyền task **kế thừa** từ membership project — đây là lý do data model để `tasks.project_id` thay vì bảng quyền riêng. Một hàm `roleIn` duy nhất kiểm soát mọi cửa: dễ audit, khó lọt lỗ hổng. DELETE task lặp lại đúng pattern của PATCH.
 
 ## 7. Error handling tập trung
 
@@ -324,7 +324,7 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
 };
 ```
 
-> ⚠️ Bẫy: log chi tiết ở server, trả message gọn ở client. Đừng bao giờ trả stack trace / SQL error thô ra response production — đó là rò rỉ thông tin và bề mặt tấn công.
+> Bẫy: log chi tiết ở server, trả message gọn ở client. Đừng bao giờ trả stack trace / SQL error thô ra response production — đó là rò rỉ thông tin và bề mặt tấn công.
 
 ## 8. CORS — nguyên nhân lỗi "ghép FE-BE" số 1
 
@@ -364,7 +364,7 @@ FE chạy `localhost:5173`, BE `localhost:4000` → **khác origin** → browser
 | Preflight OPTIONS 404 | Route không xử lý OPTIONS | Đặt `app.use(cors())` **trước** mọi route |
 | Header `Authorization` bị chặn | Không nằm trong allowed headers | `cors` mặc định cho phép; nếu custom thì khai báo |
 
-> ⚠️ Bẫy: đừng "fix" CORS bằng `origin: "*"` rồi để lên production. Wildcard không đi cùng `credentials:true` và mở API cho mọi site. Whitelist origin cụ thể đọc từ env (`CORS_ORIGIN`) — mỗi môi trường một giá trị.
+> Bẫy: đừng "fix" CORS bằng `origin: "*"` rồi để lên production. Wildcard không đi cùng `credentials:true` và mở API cho mọi site. Whitelist origin cụ thể đọc từ env (`CORS_ORIGIN`) — mỗi môi trường một giá trị.
 
 ## 9. Frontend — API client với axios interceptor
 
@@ -389,7 +389,7 @@ api.interceptors.response.use((r) => r, (err) => {         // 401 -> dọn token
 });
 ```
 
-> ⚠️ Bẫy env Vite: biến phải có tiền tố `VITE_` mới lộ ra client, đọc qua `import.meta.env` (không phải `process.env`). Sửa `.env` phải **restart `vite dev`** mới ăn.
+> Bẫy env Vite: biến phải có tiền tố `VITE_` mới lộ ra client, đọc qua `import.meta.env` (không phải `process.env`). Sửa `.env` phải **restart `vite dev`** mới ăn.
 
 ## 10. React Query — gọi API, cache, loading/error
 
@@ -434,13 +434,13 @@ export function ProjectPage() {
               onClick={() => create.mutate({ title: "Task mới" })}>
         {create.isPending ? "Đang tạo…" : "+ Thêm task"}
       </button>
-      <ul>{tasks!.map((t) => <li key={t.id}>{t.status === "done" ? "✓ " : ""}{t.title}</li>)}</ul>
+      <ul>{tasks!.map((t) => <li key={t.id}>{t.status === "done" ? "✓  " : ""}{t.title}</li>)}</ul>
     </div>
   );
 }
 ```
 
-> 💡 Ghi nhớ: chìa khoá React Query là **`queryKey` + `invalidateQueries`**. Mutate xong thì invalidate đúng key để list tự refetch — không tự `setState`, không lo cache stale. Đây là khác biệt lớn nhất so với gọi `fetch` trần.
+> Ghi nhớ: chìa khoá React Query là **`queryKey` + `invalidateQueries`**. Mutate xong thì invalidate đúng key để list tự refetch — không tự `setState`, không lo cache stale. Đây là khác biệt lớn nhất so với gọi `fetch` trần.
 
 ## 11. Auth flow phía FE — context, protected route, form
 
@@ -544,7 +544,7 @@ export function LoginPage() {
 }
 ```
 
-> ⚠️ Bẫy bảo mật JWT ở FE: `localStorage` tiện nhưng dính rủi ro XSS (script lạ đọc được token). Trade-off chấp nhận được cho capstone (đã ghi ở bài 1), nhưng phải biết: production thực thụ thường dùng **httpOnly cookie** + chống CSRF, hoặc access token ngắn hạn trong memory + refresh token httpOnly. Ghi rõ lựa chọn này trong README.
+> Bẫy bảo mật JWT ở FE: `localStorage` tiện nhưng dính rủi ro XSS (script lạ đọc được token). Trade-off chấp nhận được cho capstone (đã ghi ở bài 1), nhưng phải biết: production thực thụ thường dùng **httpOnly cookie** + chống CSRF, hoặc access token ngắn hạn trong memory + refresh token httpOnly. Ghi rõ lựa chọn này trong README.
 
 ## 12. Nối end-to-end & test luồng
 
@@ -583,7 +583,7 @@ curl -s -X POST localhost:4000/projects/$PID/tasks -H "Authorization: Bearer $TO
 | 401 vs 403 lẫn lộn | Trả sai code → FE logout nhầm | 401 = chưa biết bạn là ai; 403 = biết nhưng không đủ quyền |
 | Đổi `.env` không ăn | Chưa restart dev server | Restart `vite` và `nodemon` |
 
-> 💡 Ghi nhớ: khi ghép lỗi, **đọc Network tab trước, terminal BE sau**. 90% lỗi tích hợp lộ ra ở status code + response body của request lỗi. Đừng đoán — nhìn request thật.
+> Ghi nhớ: khi ghép lỗi, **đọc Network tab trước, terminal BE sau**. 90% lỗi tích hợp lộ ra ở status code + response body của request lỗi. Đừng đoán — nhìn request thật.
 
 ## Checklist hoàn thành bài này
 

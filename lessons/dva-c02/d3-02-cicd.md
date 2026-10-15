@@ -68,7 +68,7 @@ CodePipeline là **nhạc trưởng** (orchestrator) nối các trạm. CodeBuil
 | CodeArtifact | Lưu trữ package dependency | (không có) | Nexus / Artifactory / private npm |
 | CodeConnections | Kết nối tới Git provider | (không có) | OAuth integration |
 
-> ⚠️ Bẫy kinh điển nhất: **`buildspec.yml` là của CodeBuild**, **`appspec.yml` là của CodeDeploy**. Đề sẽ cho câu "where do you define build commands?" với đáp án appspec.yml để gài bạn. Ghi nhớ: **build → buildspec, deploy → appspec**.
+> Bẫy kinh điển nhất: **`buildspec.yml` là của CodeBuild**, **`appspec.yml` là của CodeDeploy**. Đề sẽ cho câu "where do you define build commands?" với đáp án appspec.yml để gài bạn. Ghi nhớ: **build → buildspec, deploy → appspec**.
 
 ---
 
@@ -100,9 +100,9 @@ Mỗi action có thể có **input artifacts** và **output artifacts**. CodePip
 }
 ```
 
-> ⚠️ Bẫy: Artifact **không** tự động chảy xuyên suốt. Nếu Deploy stage cần file từ Source mà bạn chỉ khai báo `BuildOutput` làm input, file đó sẽ không có. Phải khai báo đúng input artifact mà action cần.
+> Bẫy: Artifact **không** tự động chảy xuyên suốt. Nếu Deploy stage cần file từ Source mà bạn chỉ khai báo `BuildOutput` làm input, file đó sẽ không có. Phải khai báo đúng input artifact mà action cần.
 
-> 💡 Mẹo thi: Artifact store là **S3**, và nếu dùng **CMK** thì bucket phải được mã hóa bằng KMS key đó; mọi action cross-account đều cần KMS key + bucket policy. Câu hỏi "pipeline failed accessing artifacts cross-account" → nghĩ ngay tới **KMS key policy + S3 bucket policy**.
+> Mẹo thi: Artifact store là **S3**, và nếu dùng **CMK** thì bucket phải được mã hóa bằng KMS key đó; mọi action cross-account đều cần KMS key + bucket policy. Câu hỏi "pipeline failed accessing artifacts cross-account" → nghĩ ngay tới **KMS key policy + S3 bucket policy**.
 
 ### Manual approval
 
@@ -112,14 +112,14 @@ Chèn action `Approval` để chặn pipeline chờ người duyệt (thường 
 { "name": "Approve", "actionTypeId": { "category": "Approval", "owner": "AWS", "provider": "Manual", "version": "1" } }
 ```
 
-> 💡 Mẹo thi: "Cần con người duyệt trước khi deploy prod" → **Manual approval action**, không phải Lambda, không phải SNS đơn thuần.
+> Mẹo thi: "Cần con người duyệt trước khi deploy prod" → **Manual approval action**, không phải Lambda, không phải SNS đơn thuần.
 
 ### Trigger pipeline khi có commit
 
 - Với CodeConnections (GitHub) → trigger bằng **webhook** tự động.
 - Với CodeCommit / S3 source → mặc định dùng **Amazon EventBridge** (khuyến nghị) hoặc periodic polling. EventBridge nhanh hơn polling.
 
-> ⚠️ Bẫy: Polling chậm và bị deprecated dần. Đáp án "trigger pipeline tức thì khi push" → **EventBridge rule** (CodeCommit) hoặc **webhook** (CodeConnections), KHÔNG phải polling.
+> Bẫy: Polling chậm và bị deprecated dần. Đáp án "trigger pipeline tức thì khi push" → **EventBridge rule** (CodeCommit) hoặc **webhook** (CodeConnections), KHÔNG phải polling.
 
 ---
 
@@ -130,7 +130,7 @@ CodeConnections (tên cũ: **CodeStar Connections**) là cách AWS kết nối t
 - Dùng cho Source action khi code nằm trên Git provider bên ngoài.
 - Tạo connection ở trạng thái `PENDING` → phải vào console **authorize** thì mới `AVAILABLE`.
 
-> 💡 Mẹo thi: Thấy "GitHub" + "CodePipeline source" + "không muốn lưu token thủ công" → **CodeConnections**. Đây là cách hiện đại; câu cũ có thể nhắc "GitHub webhook + OAuth token" nhưng AWS đang đẩy về CodeConnections.
+> Mẹo thi: Thấy "GitHub" + "CodePipeline source" + "không muốn lưu token thủ công" → **CodeConnections**. Đây là cách hiện đại; câu cũ có thể nhắc "GitHub webhook + OAuth token" nhưng AWS đang đẩy về CodeConnections.
 
 ---
 
@@ -186,7 +186,7 @@ cache:
 | `build` | Lệnh build/compile/test chính | `mvn package`, `npm run build` |
 | `post_build` | Việc sau build | push Docker image, tạo file imagedefinitions |
 
-> ⚠️ Bẫy: Nếu một lệnh trong phase **thất bại (exit non-zero)**, phase đó dừng, nhưng `post_build` **vẫn chạy** (vì nó dọn dẹp). Nếu bạn `docker push` ở post_build mà không kiểm tra build có pass không, có thể push image lỗi. Đề hay hỏi "tại sao image lỗi vẫn được push".
+> Bẫy: Nếu một lệnh trong phase **thất bại (exit non-zero)**, phase đó dừng, nhưng `post_build` **vẫn chạy** (vì nó dọn dẹp). Nếu bạn `docker push` ở post_build mà không kiểm tra build có pass không, có thể push image lỗi. Đề hay hỏi "tại sao image lỗi vẫn được push".
 
 ### Environment variables — thứ tự ưu tiên & bảo mật
 
@@ -196,16 +196,16 @@ cache:
 | `env.parameter-store` | SSM Parameter Store | config, secret nhẹ |
 | `env.secrets-manager` | Secrets Manager | mật khẩu, API key |
 
-> ⚠️ Bẫy: **Không** để mật khẩu trong `env.variables` (plaintext, lộ trong log). Dùng `secrets-manager` hoặc `parameter-store` (SecureString). Đề hỏi "cách an toàn để truyền DB password vào build" → Secrets Manager / Parameter Store, KHÔNG phải plaintext env var.
+> Bẫy: **Không** để mật khẩu trong `env.variables` (plaintext, lộ trong log). Dùng `secrets-manager` hoặc `parameter-store` (SecureString). Đề hỏi "cách an toàn để truyền DB password vào build" → Secrets Manager / Parameter Store, KHÔNG phải plaintext env var.
 
 ### Artifacts & Caching
 
 - `artifacts` định nghĩa file xuất ra. Trong CodePipeline, output này thành **output artifact** của Build action.
 - `cache` (local hoặc **S3**) giúp tái dùng `node_modules`, `.m2`... → build nhanh hơn. Local cache nhanh nhưng không chia sẻ giữa các build host; S3 cache chia sẻ được.
 
-> 💡 Mẹo thi: "Build chậm vì cài lại dependency mỗi lần" → bật **caching** (`cache.paths`), thường là **S3 cache** để dùng lại giữa các lần build.
+> Mẹo thi: "Build chậm vì cài lại dependency mỗi lần" → bật **caching** (`cache.paths`), thường là **S3 cache** để dùng lại giữa các lần build.
 
-> 💡 Mẹo thi: Container muốn push image lên ECR thì CodeBuild project cần **privileged mode = true** (Docker-in-Docker) và IAM role có quyền ECR.
+> Mẹo thi: Container muốn push image lên ECR thì CodeBuild project cần **privileged mode = true** (Docker-in-Docker) và IAM role có quyền ECR.
 
 ---
 
@@ -341,11 +341,11 @@ Với Lambda/ECS, hook trỏ tới **một Lambda function** (để validate), k
   <text x="30" y="416" font-size="10" fill="currentColor" opacity="0.6">EC2/on-prem: hook = shell script trên host. Lambda/ECS: hook = một Lambda function để validate.</text>
 </svg>
 
-> ⚠️ Bẫy CỰC HAY GẶP: Hook EC2 (`ApplicationStop`, `BeforeInstall`, `ApplicationStart`, `ValidateService`) **khác hoàn toàn** hook Lambda (`BeforeAllowTraffic`, `AfterAllowTraffic`). Đề cho 1 đáp án trộn lẫn để gài. Lambda/ECS chỉ có *AllowTraffic* hooks, KHÔNG có Install hook.
+> Bẫy CỰC HAY GẶP: Hook EC2 (`ApplicationStop`, `BeforeInstall`, `ApplicationStart`, `ValidateService`) **khác hoàn toàn** hook Lambda (`BeforeAllowTraffic`, `AfterAllowTraffic`). Đề cho 1 đáp án trộn lẫn để gài. Lambda/ECS chỉ có *AllowTraffic* hooks, KHÔNG có Install hook.
 
-> 💡 Mẹo thi: "Chạy smoke test trước khi route traffic sang version Lambda mới" → **BeforeAllowTraffic** hook. "Kiểm tra sau khi đã route" → **AfterAllowTraffic**.
+> Mẹo thi: "Chạy smoke test trước khi route traffic sang version Lambda mới" → **BeforeAllowTraffic** hook. "Kiểm tra sau khi đã route" → **AfterAllowTraffic**.
 
-> 💡 Mẹo thi: "Kiểm tra app khỏe trên EC2 sau khi start" → **ValidateService** (hook cuối cùng của EC2).
+> Mẹo thi: "Kiểm tra app khỏe trên EC2 sau khi start" → **ValidateService** (hook cuối cùng của EC2).
 
 ### Blue/Green & Rollback
 
@@ -353,7 +353,7 @@ Với Lambda/ECS, hook trỏ tới **một Lambda function** (để validate), k
 - **In-place**: deploy đè lên instance cũ — rẻ nhưng có downtime, rollback chậm (phải deploy lại bản cũ).
 - Rollback tự động khi CloudWatch alarm kích hoạt hoặc deployment fail.
 
-> 💡 Mẹo thi: "Zero downtime + rollback tức thì" → **Blue/Green**. "Lambda canary 10% trong 5 phút" → deployment config `Canary10Percent5Minutes`.
+> Mẹo thi: "Zero downtime + rollback tức thì" → **Blue/Green**. "Lambda canary 10% trong 5 phút" → deployment config `Canary10Percent5Minutes`.
 
 ### appspec.yml cho ECS (nhớ cấu trúc khác EC2)
 
@@ -371,7 +371,7 @@ Hooks:
   - AfterAllowTestTraffic: "LambdaFunctionToValidate"
 ```
 
-> ⚠️ Bẫy: EC2 appspec dùng `files` + `hooks` (script). ECS appspec dùng `Resources` + `TaskDefinition` (không có `files`). Đề trộn cấu trúc để bẫy.
+> Bẫy: EC2 appspec dùng `files` + `hooks` (script). ECS appspec dùng `Resources` + `TaskDefinition` (không có `files`). Đề trộn cấu trúc để bẫy.
 
 ---
 
@@ -393,9 +393,9 @@ export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
 
 - Token mặc định hết hạn **12 giờ** (tối đa cấu hình được).
 
-> 💡 Mẹo thi: "Lưu trữ package nội bộ + proxy public npm + kiểm soát version dependency" → **CodeArtifact**. Trong CodeBuild, chạy `aws codeartifact login` ở phase **`pre_build`** hoặc `install` để cấu hình npm/pip trước khi `npm ci`.
+> Mẹo thi: "Lưu trữ package nội bộ + proxy public npm + kiểm soát version dependency" → **CodeArtifact**. Trong CodeBuild, chạy `aws codeartifact login` ở phase **`pre_build`** hoặc `install` để cấu hình npm/pip trước khi `npm ci`.
 
-> ⚠️ Bẫy: CodeArtifact KHÔNG phải nơi lưu build output/artifact của pipeline (đó là S3 artifact store). Nó lưu **dependency package**. Đừng nhầm "artifact" của pipeline với "package" của CodeArtifact.
+> Bẫy: CodeArtifact KHÔNG phải nơi lưu build output/artifact của pipeline (đó là S3 artifact store). Nó lưu **dependency package**. Đừng nhầm "artifact" của pipeline với "package" của CodeArtifact.
 
 ---
 
@@ -409,7 +409,7 @@ export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
    - `post_build`: `docker push`, tạo `imagedefinitions.json` / appspec → `BuildOutput`.
 3. **Deploy** (CodeDeploy ECS Blue/Green, `appspec.yml`): tạo task set mới, `AfterAllowTestTraffic` gọi Lambda validate, chuyển traffic qua ALB.
 
-> 💡 Mẹo thi: File `imagedefinitions.json` (ECS standard deploy qua CodePipeline ECS action) hay `appspec.yaml + taskdef.json` (ECS Blue/Green qua CodeDeploy) phải nằm trong **output artifact của Build** thì Deploy mới dùng được.
+> Mẹo thi: File `imagedefinitions.json` (ECS standard deploy qua CodePipeline ECS action) hay `appspec.yaml + taskdef.json` (ECS Blue/Green qua CodeDeploy) phải nằm trong **output artifact của Build** thì Deploy mới dùng được.
 
 ---
 

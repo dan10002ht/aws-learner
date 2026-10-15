@@ -28,7 +28,7 @@ Cách nhúng JS vào trang HTML phổ biến nhất là dùng thẻ `<script>`:
 </html>
 ```
 
-> 💡 Ghi nhớ: Mở **Developer Tools** (phím `F12` hoặc chuột phải → Inspect → tab **Console**) để xem kết quả `console.log` và thử code JS trực tiếp. Đây là người bạn thân nhất của bạn khi học JS.
+> Ghi nhớ: Mở **Developer Tools** (phím `F12` hoặc chuột phải → Inspect → tab **Console**) để xem kết quả `console.log` và thử code JS trực tiếp. Đây là người bạn thân nhất của bạn khi học JS.
 
 ## DOM là gì?
 
@@ -98,11 +98,11 @@ Sẽ tạo ra cây DOM như sau:
   </g>
 </svg>
 
-> 💡 Mỗi thẻ HTML thành một **node phần tử** (viền liền), còn chữ bên trong thành **text node** (viền nét đứt). HTML là **bản vẽ**, DOM là **bản dựng sống** trong bộ nhớ.
+> Mỗi thẻ HTML thành một **node phần tử** (viền liền), còn chữ bên trong thành **text node** (viền nét đứt). HTML là **bản vẽ**, DOM là **bản dựng sống** trong bộ nhớ.
 
 JavaScript truy cập cây này qua một đối tượng toàn cục tên là `document`. Từ `document`, bạn có thể tìm bất kỳ phần tử nào, đọc nó, sửa nó, hay tạo node mới.
 
-> 💡 Ghi nhớ: HTML là **bản vẽ ban đầu**, còn DOM là **bản dựng sống** trong bộ nhớ trình duyệt. JS sửa DOM, và trình duyệt vẽ lại trang theo DOM mới — đó là cách trang "động".
+> Ghi nhớ: HTML là **bản vẽ ban đầu**, còn DOM là **bản dựng sống** trong bộ nhớ trình duyệt. JS sửa DOM, và trình duyệt vẽ lại trang theo DOM mới — đó là cách trang "động".
 
 ## Chọn phần tử
 
@@ -130,7 +130,7 @@ const doanVan = document.querySelector("p");
 const danhSach = document.querySelectorAll("li");
 ```
 
-> ⚠️ Lỗi người mới hay gặp: Nếu chọn không trúng phần tử nào, `querySelector` trả về `null`. Khi đó mọi thao tác tiếp theo (như `null.textContent`) sẽ báo lỗi `Cannot read properties of null`. Luôn kiểm tra lại selector và xem phần tử đã tồn tại chưa.
+> Lỗi người mới hay gặp: Nếu chọn không trúng phần tử nào, `querySelector` trả về `null`. Khi đó mọi thao tác tiếp theo (như `null.textContent`) sẽ báo lỗi `Cannot read properties of null`. Luôn kiểm tra lại selector và xem phần tử đã tồn tại chưa.
 
 ## Sửa nội dung, style và class
 
@@ -175,7 +175,7 @@ nut.classList.toggle("active");  // có thì bỏ, không có thì thêm
 nut.classList.contains("active"); // true/false
 ```
 
-> 💡 Ghi nhớ: Ưu tiên `classList` hơn `style`. CSS lo phần "trông như thế nào", JS chỉ lo "khi nào bật class". Code sạch hơn và dễ bảo trì hơn nhiều.
+> Ghi nhớ: Ưu tiên `classList` hơn `style`. CSS lo phần "trông như thế nào", JS chỉ lo "khi nào bật class". Code sạch hơn và dễ bảo trì hơn nhiều.
 
 ## Sự kiện (Events)
 
@@ -234,7 +234,7 @@ form.addEventListener("submit", function (event) {
 });
 ```
 
-> ⚠️ Lỗi người mới hay gặp: Quên `event.preventDefault()` trong sự kiện `submit`. Trang sẽ reload ngay lập tức, mọi thứ JS làm bị "xoá sạch", và bạn tưởng code mình sai trong khi thực ra nó chạy đúng nhưng trang đã nạp lại.
+> Lỗi người mới hay gặp: Quên `event.preventDefault()` trong sự kiện `submit`. Trang sẽ reload ngay lập tức, mọi thứ JS làm bị "xoá sạch", và bạn tưởng code mình sai trong khi thực ra nó chạy đúng nhưng trang đã nạp lại.
 
 ## Tạo và xoá phần tử
 
@@ -298,7 +298,7 @@ danhSach.appendChild(li);
   <text x="569" y="218" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">được gắn vào cây → hiện trên trang</text>
 </svg>
 
-> 💡 Vòng đời gọn trong ba bước **create → set content → append**. Trước bước `appendChild`, node chỉ là một mảnh rời trong bộ nhớ — chỉ khi gắn vào cây DOM nó mới hiện ra.
+> Vòng đời gọn trong ba bước **create → set content → append**. Trước bước `appendChild`, node chỉ là một mảnh rời trong bộ nhớ — chỉ khi gắn vào cây DOM nó mới hiện ra.
 
 Để **xoá** một phần tử:
 
@@ -306,7 +306,7 @@ danhSach.appendChild(li);
 li.remove(); // xoá chính nó khỏi DOM
 ```
 
-> 💡 Ghi nhớ: 3 bước tạo phần tử luôn là **create → set content → append**. Nếu quên bước `appendChild`, phần tử có tồn tại trong bộ nhớ nhưng **không hiện trên trang**, vì nó chưa được gắn vào cây DOM.
+> Ghi nhớ: 3 bước tạo phần tử luôn là **create → set content → append**. Nếu quên bước `appendChild`, phần tử có tồn tại trong bộ nhớ nhưng **không hiện trên trang**, vì nó chưa được gắn vào cây DOM.
 
 ## Ví dụ hoàn chỉnh 1: Nút đếm
 
@@ -478,7 +478,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 ```
 
-> ⚠️ Lỗi người mới hay gặp: Code đúng nhưng "không chạy" và Console báo `null`. 90% trường hợp là do script chạy trước khi DOM load. Hãy kiểm tra: script có nằm cuối `<body>` không, hoặc đã bọc trong `DOMContentLoaded` chưa.
+> Lỗi người mới hay gặp: Code đúng nhưng "không chạy" và Console báo `null`. 90% trường hợp là do script chạy trước khi DOM load. Hãy kiểm tra: script có nằm cuối `<body>` không, hoặc đã bọc trong `DOMContentLoaded` chưa.
 
 ## Tóm tắt
 

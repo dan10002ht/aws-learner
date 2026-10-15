@@ -4,7 +4,7 @@ Notification System bị đánh giá thấp một cách kinh điển: nhìn từ
 
 Thêm một tầng khó mà bản vẽ không thể hiện: notification là thứ **người dùng nhìn thấy trực tiếp**. Một cache miss thì không ai biết; một notification gửi trùng ba lần lúc 2 giờ sáng thì ngày mai có người gỡ app — và nếu đó là email thì complaint tăng, và nếu complaint tăng đủ thì **domain gửi mail của công ty chết**, một sự cố không lệnh rollback nào chữa được trong ngày.
 
-> 💡 **Nguyên tắc xuyên suốt**: ở bài này bạn không thiết kế tốc độ — bạn thiết kế **cách xếp hàng, cách thất bại, và cách không làm phiền người dùng**. Throughput là hệ quả, không phải mục tiêu.
+> **Nguyên tắc xuyên suốt**: ở bài này bạn không thiết kế tốc độ — bạn thiết kế **cách xếp hàng, cách thất bại, và cách không làm phiền người dùng**. Throughput là hệ quả, không phải mục tiêu.
 ---
 
 ## 1. Làm rõ yêu cầu
@@ -39,7 +39,7 @@ Giả định chốt: đây là **nền tảng dùng chung nội bộ** (các te
 2. **"Ai quyết định *có nên gửi* — bên gọi hay chúng ta?"** Câu hỏi kiến trúc quan trọng nhất của bài. Nếu service chỉ là "ống dẫn ngu" thì mỗi team gọi phải tự kiểm tra opt-out, và chắc chắn có team quên. Tôi chọn ngược lại: **service là nơi thực thi chính sách**, bên gọi chỉ nói "có event này với user này".
 3. **"Notification có phải bản ghi pháp lý không?"** Hoá đơn, thông báo đổi điều khoản, cảnh báo bảo mật thường phải lưu bằng chứng nhiều năm — quyết định notification log là bảng tạm 30 ngày hay kho archive dài hạn.
 
-> ⚠️ **Bẫy ở bước này**: nhảy thẳng vào "dùng queue rồi có worker" mà chưa chốt hệ thống có được phép gửi trùng không. Không nói rõ at-least-once thì toàn bộ phần dedupe ở §7 trông như tính năng thừa.
+> **Bẫy ở bước này**: nhảy thẳng vào "dùng queue rồi có worker" mà chưa chốt hệ thống có được phép gửi trùng không. Không nói rõ at-least-once thì toàn bộ phần dedupe ở §7 trông như tính năng thừa.
 ---
 
 ## 2. Back-of-envelope — con số nào dẫn tới quyết định nào
@@ -68,7 +68,7 @@ Con số trung bình này gần như **vô dụng**, và phải nói rõ vì sao
 
 Chỉ tính peak giao dịch thì hệ số peak/avg khoảng 3–5× → **~600–900 msg/s**. Campaign đẩy đỉnh lên **hai bậc độ lớn**, và đây là con số dẫn tới quyết định kiến trúc quan trọng nhất của bài:
 
-> 💡 Bạn **không** provision cho 16.000 msg/s. Bạn provision cho ~1.000 msg/s và dùng **queue để trải campaign ra theo thời gian** — nó không cần tới trong 10 phút, nó cần tới trong 1–2 giờ. Queue ở đây không phải khẩu hiệu "decouple"; nó là **bộ chuyển đổi giữa tốc độ sản xuất bùng nổ và tốc độ tiêu thụ bị provider giới hạn**.
+> Bạn **không** provision cho 16.000 msg/s. Bạn provision cho ~1.000 msg/s và dùng **queue để trải campaign ra theo thời gian** — nó không cần tới trong 10 phút, nó cần tới trong 1–2 giờ. Queue ở đây không phải khẩu hiệu "decouple"; nó là **bộ chuyển đổi giữa tốc độ sản xuất bùng nổ và tốc độ tiêu thụ bị provider giới hạn**.
 
 ### 2.2 Bao nhiêu worker
 
@@ -156,7 +156,7 @@ Rẻ nhất, dung nạp nhất, và **nguy hiểm nhất về lâu dài** — v�
 | Rủi ro dài hạn khi làm sai | User tắt notification | Đốt tiền, vi phạm quy định | **Chết reputation miền** |
 | Batch được không | Không (trừ topic) | Không | **Có** |
 
-> 💡 Bảng này chính là lý do kỹ thuật cho §6.3: ba kênh có tốc độ tiêu thụ, cơ chế retry và hạn mức khác nhau nên **không thể chia sẻ một hàng đợi** — chung queue thì đặc tính của kênh chậm nhất áp đặt lên kênh nhanh nhất.
+> Bảng này chính là lý do kỹ thuật cho §6.3: ba kênh có tốc độ tiêu thụ, cơ chế retry và hạn mức khác nhau nên **không thể chia sẻ một hàng đợi** — chung queue thì đặc tính của kênh chậm nhất áp đặt lên kênh nhanh nhất.
 ---
 
 ## 4. Thu thập và quản lý device token — phần âm thầm làm hỏng hệ thống
@@ -219,9 +219,9 @@ Trong KV store: một item mỗi cặp, `PK = USER#<user_id>`, `SK = DEVICE#<tok
                └──(user logout)──▶ UNLINKED (giữ device, bỏ liên kết user)
 ```
 
-> ⚠️ **Bẫy**: xử lý `410` bằng cách xoá theo `user_id`. User có 3 thiết bị, một cái chết, bạn vừa xoá cả ba. Luôn xoá đúng cặp `(user, token)` — lý do nữa cần chỉ mục ngược.
+> **Bẫy**: xử lý `410` bằng cách xoá theo `user_id`. User có 3 thiết bị, một cái chết, bạn vừa xoá cả ba. Luôn xoá đúng cặp `(user, token)` — lý do nữa cần chỉ mục ngược.
 
-> 💡 Theo dõi **tỉ lệ token chết trên tổng token** như một metric sức khoẻ: tăng chậm là bình thường, tăng đột ngột nghĩa là luồng đăng ký đang sai (đổi cấu hình sandbox/production, đổi bundle id, hoặc bản app mới quên gọi đăng ký).
+> Theo dõi **tỉ lệ token chết trên tổng token** như một metric sức khoẻ: tăng chậm là bình thường, tăng đột ngột nghĩa là luồng đăng ký đang sai (đổi cấu hình sandbox/production, đổi bundle id, hoặc bản app mới quên gọi đăng ký).
 ---
 
 ## 5. API design — tối giản nhưng đúng chỗ
@@ -291,7 +291,7 @@ Bản này **chạy được** — và đó là lý do nó nguy hiểm: nó số
 
 **(3) Không có nơi để chứa công việc dở.** Process chết → message đang xử lý biến mất không dấu vết, không retry được vì không biết cái gì fail, và không có back-pressure: 10 triệu message ập tới thì không có chỗ nào để chúng *đợi*.
 
-> ⚠️ Trong interview đừng chỉ nói "v1 có SPOF" — ai cũng nói được. Hãy nói **cơ chế lan truyền**: "provider chậm → luồng bị giữ → pool cạn → caller timeout → caller retry → tải tăng". Đó là khác biệt giữa nhắc lại thuật ngữ và hiểu nó.
+> Trong interview đừng chỉ nói "v1 có SPOF" — ai cũng nói được. Hãy nói **cơ chế lan truyền**: "provider chậm → luồng bị giữ → pool cạn → caller timeout → caller retry → tải tăng". Đó là khác biệt giữa nhắc lại thuật ngữ và hiểu nó.
 
 ### 6.2 Bản v2 — kiến trúc dùng được
 
@@ -356,7 +356,7 @@ Câu hỏi reviewer hay hỏi nhất, và dễ trả lời hời hợt nhất ("
 | Queue theo kênh × priority | Thêm: OTP không xếp sau marketing | 6–9 queue, routing phức tạp hơn | Đúng khi có cả OTP lẫn campaign (§11) |
 | × thêm region | Tuân thủ dữ liệu theo vùng | Bùng nổ tổ hợp | Chỉ khi có yêu cầu pháp lý |
 
-> 💡 **Cách phát biểu gọn**: *"Tôi tách queue theo kênh vì ba kênh có tốc độ tiêu thụ, cơ chế retry và hạn mức khác nhau. Chung queue thì một lô SMS chậm chặn đầu hàng của email — head-of-line blocking — và một sự cố Twilio buộc tôi giảm tốc cả kênh push đang khoẻ. Queue riêng chính là bulkhead."*
+> **Cách phát biểu gọn**: *"Tôi tách queue theo kênh vì ba kênh có tốc độ tiêu thụ, cơ chế retry và hạn mức khác nhau. Chung queue thì một lô SMS chậm chặn đầu hàng của email — head-of-line blocking — và một sự cố Twilio buộc tôi giảm tốc cả kênh push đang khoẻ. Queue riêng chính là bulkhead."*
 ---
 
 ## 7. Deep dive 1 — Reliability: at-least-once và cái giá của nó
@@ -400,7 +400,7 @@ UPDATE notification_log
 
 Update trả 0 dòng → worker khác đang giữ → ack và bỏ qua. Lease xử lý luôn trường hợp worker chết khi đang giữ. Đây vẫn **không** phải exactly-once — worker cũ có thể sống lại và gửi — nhưng nó thu hẹp cửa sổ trùng từ "mỗi lần retry" xuống "chỉ khi worker treo đúng lúc".
 
-> ⚠️ **Bẫy**: dedupe bằng cache in-memory của worker. Restart là mất bảng; hai worker không thấy nhau. Dedupe phải ở store dùng chung và **phải có TTL** — không TTL thì bảng dedupe lớn vô hạn, thành vấn đề lưu trữ lớn hơn cả notification log.
+> **Bẫy**: dedupe bằng cache in-memory của worker. Restart là mất bảng; hai worker không thấy nhau. Dedupe phải ở store dùng chung và **phải có TTL** — không TTL thì bảng dedupe lớn vô hạn, thành vấn đề lưu trữ lớn hơn cả notification log.
 
 ### 7.3 Notification log — nguồn sự thật, không phải log gỡ lỗi
 
@@ -442,7 +442,7 @@ Số lần thử nên khác nhau theo tính chất message chứ không phải h
 
 **DLQ** nhận message đã cạn số lần thử. Ba điều làm nó hữu ích thay vì thành bãi rác: **có alarm khi DLQ khác rỗng** (DLQ không alarm là DLQ vô dụng); **giữ đủ ngữ cảnh để replay** (payload gốc, lý do lỗi cuối, số lần đã thử); và **replay có kiểm soát** — lọc theo lý do lỗi, giới hạn tốc độ, và **đi lại qua §10** vì message nằm DLQ 3 ngày có thể đã hết ý nghĩa hoặc user đã opt-out trong khoảng đó. Replay cả DLQ một phát vào giờ cao điểm là cách tự tạo sự cố thứ hai.
 
-> 💡 DLQ còn là **chỉ báo chất lượng tích hợp**: DLQ đầy lỗi render nghĩa là một team đang gửi params sai — bug cần sửa ở nguồn, không phải thứ để replay.
+> DLQ còn là **chỉ báo chất lượng tích hợp**: DLQ đầy lỗi render nghĩa là một team đang gửi params sai — bug cần sửa ở nguồn, không phải thứ để replay.
 ---
 
 ## 8. Deep dive 2 — Rate limit của provider và back-pressure
@@ -488,7 +488,7 @@ Kèm theo là một **circuit breaker** cho từng provider: tỉ lệ lỗi vư
 
 Nguyên tắc: **áp lực phải bị từ chối ở tầng ngoài cùng và phải từ chối đúng loại**. Từ chối đồng đều khi quá tải nghĩa là OTP rớt cùng tỉ lệ với email khuyến mãi — một thất bại thiết kế. Biến thể đáng nhắc: message có **deadline** (OTP hết hạn sau 5 phút) nên bị **loại bỏ chủ động** khi lấy ra khỏi queue mà đã quá hạn. Gửi một OTP đã hết hạn tệ hơn không gửi gì, vì người dùng nhập vào rồi thất bại.
 
-> ⚠️ **Bẫy**: coi độ sâu queue tăng là "chỉ cần thêm worker". Nếu điểm nghẽn là hạn mức provider, thêm worker **không tăng throughput** — nó chỉ tăng tỉ lệ 429 và làm provider siết bạn chặt hơn. Trước khi autoscale phải trả lời: nghẽn ở worker hay ở vòi?
+> **Bẫy**: coi độ sâu queue tăng là "chỉ cần thêm worker". Nếu điểm nghẽn là hạn mức provider, thêm worker **không tăng throughput** — nó chỉ tăng tỉ lệ 429 và làm provider siết bạn chặt hơn. Trước khi autoscale phải trả lời: nghẽn ở worker hay ở vòi?
 ---
 
 ## 9. Deep dive 3 — Template, i18n và timezone
@@ -597,7 +597,7 @@ Ngay cả khi mọi notification đều hợp lệ và đều được opt-in, *
 
 Cơ chế gộp đáng nhắc riêng vì nó vừa giảm số message vừa **cải thiện** trải nghiệm — trường hợp hiếm khi tối ưu kỹ thuật và tối ưu sản phẩm trùng nhau. Cài đặt bằng cửa sổ gom: message đầu tiên mở một cửa sổ 5–15 phút, các message cùng `(user, category)` rơi vào đó được gộp, hết cửa sổ gửi một bản tóm tắt. Với push, `apns-collapse-id` / `collapse_key` làm việc tương tự ở phía provider.
 
-> 💡 Cả §10 quy về một câu: **notification service là nơi thực thi chính sách, không phải cái ống**. Nếu bên gọi lách được opt-out bằng cách gọi thẳng provider thì toàn bộ lớp này vô nghĩa — nên về mặt tổ chức, credential của provider phải **chỉ** nằm ở service này.
+> Cả §10 quy về một câu: **notification service là nơi thực thi chính sách, không phải cái ống**. Nếu bên gọi lách được opt-out bằng cách gọi thẳng provider thì toàn bộ lớp này vô nghĩa — nên về mặt tổ chức, credential của provider phải **chỉ** nằm ở service này.
 ---
 
 ## 11. Priority — OTP không bao giờ được xếp sau khuyến mãi
@@ -735,7 +735,7 @@ Ba biện pháp bắt buộc, không phải khuyến nghị:
 2. **Tách miền và IP gửi theo loại thư**: `mail.congty.com` cho giao dịch, `news.congty.com` cho marketing. Marketing làm hỏng danh tiếng của nó thì OTP và hoá đơn vẫn tới nơi — bulkhead ở tầng danh tiếng, và là quyết định có tỉ lệ lợi ích/chi phí cao nhất trong cả bài.
 3. **Warm-up IP mới**: IP chưa có lịch sử mà bắn 5 triệu thư ngày đầu bị coi là spam theo mặc định. Tăng dần trong 2–4 tuần.
 
-> ⚠️ **Bẫy nghiêm trọng nhất của cả bài**: coi bounce/complaint là "việc của marketing". Nó là một **ràng buộc kỹ thuật cứng** y như quota API — chỉ khác ở chỗ vượt quota thì bị 429 vài phút, còn vượt ngưỡng complaint thì hỏng trong vài tuần.
+> **Bẫy nghiêm trọng nhất của cả bài**: coi bounce/complaint là "việc của marketing". Nó là một **ràng buộc kỹ thuật cứng** y như quota API — chỉ khác ở chỗ vượt quota thì bị 429 vài phút, còn vượt ngưỡng complaint thì hỏng trong vài tuần.
 ---
 
 ## 14. Bottleneck & failure mode
@@ -811,4 +811,4 @@ Hai nhà cung cấp SMS và tự chuyển khi một bên chết nghe rất hợp
 11. **Kết bằng bounce/complaint**: vòng phản hồi dương làm chết reputation, hệ quả tệ nhất là *email giao dịch cũng vào spam vì campaign tuần trước*, biện pháp là suppression tự động + tách miền + warm-up IP. Đoạn này thể hiện rõ nhất đã vận hành hệ thống thật.
 12. **Nếu còn thời gian, nêu bất đối xứng fail-open/fail-closed** khi preference store chết: marketing fail-closed, critical fail-open.
 
-> 💡 **Nguyên tắc cuối**: Notification System được đánh giá không phải bằng số message mỗi giây, mà bằng ba câu trả lời — **message có mất không, có gửi trùng làm phiền không, và khi provider chết thì phần còn lại có sống không**. Cả bài chỉ là ba câu đó, trả lời bằng queue tách theo kênh, dedupe nhiều tầng, và kiểm tra chính sách ngay tại thời điểm gửi.
+> **Nguyên tắc cuối**: Notification System được đánh giá không phải bằng số message mỗi giây, mà bằng ba câu trả lời — **message có mất không, có gửi trùng làm phiền không, và khi provider chết thì phần còn lại có sống không**. Cả bài chỉ là ba câu đó, trả lời bằng queue tách theo kênh, dedupe nhiều tầng, và kiểm tra chính sách ngay tại thời điểm gửi.

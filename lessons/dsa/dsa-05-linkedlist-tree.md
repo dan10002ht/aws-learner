@@ -22,7 +22,7 @@ Khác với `array` (các phần tử nằm liền nhau trong bộ nhớ, truy c
 - Không cần **truy cập ngẫu nhiên theo index** (linked list phải đi tuần tự, lấy phần tử thứ k là `O(k)`).
 - Thực tế: implement `Queue`/`Deque`, `LRU cache` (doubly), danh sách phát nhạc, lịch sử trình duyệt.
 
-> 💡 Ghi nhớ: array thắng ở **đọc theo index** và **cache locality**; linked list thắng ở **chèn/xoá tại vị trí đã biết** vì chỉ cần đổi vài con trỏ. Nếu bạn vẫn phải *tìm* vị trí trước khi xoá thì lợi thế biến mất.
+> Ghi nhớ: array thắng ở **đọc theo index** và **cache locality**; linked list thắng ở **chèn/xoá tại vị trí đã biết** vì chỉ cần đổi vài con trỏ. Nếu bạn vẫn phải *tìm* vị trí trước khi xoá thì lợi thế biến mất.
 
 ### Bảng độ phức tạp
 
@@ -134,7 +134,7 @@ Bài toán "must-know" số một. Ý tưởng: đi qua từng node, **bẻ ngư
   </g>
   <g stroke="currentColor" fill="none" marker-end="url(#arrR)"><path d="M168 93 H214"/><path d="M268 93 H314"/></g>
   <text x="392" y="98" font-size="12" fill="currentColor" opacity="0.7">→ null</text>
-  <text x="36" y="98" font-size="11" fill="currentColor" opacity="0.7">null ✕</text>
+  <text x="36" y="98" font-size="11" fill="currentColor" opacity="0.7">null ✗</text>
   <text x="144" y="128" font-size="10.5" text-anchor="middle" fill="#3b82f6">cur</text>
   <text x="16" y="166" font-size="12" font-weight="700" fill="currentColor">Một bước: nxt=cur.next ; cur.next=prev</text>
   <g font-size="13" font-weight="700">
@@ -232,7 +232,7 @@ ListNode* reverseList(ListNode* head) {
 
 Độ phức tạp: thời gian `O(n)`, bộ nhớ `O(1)`.
 
-> ⚠️ Bẫy: phải **lưu `nxt = cur.next` trước** khi gán `cur.next = prev`. Nếu bẻ con trỏ trước thì bạn mất đường đi tới phần còn lại của list.
+> Bẫy: phải **lưu `nxt = cur.next` trước** khi gán `cur.next = prev`. Nếu bẻ con trỏ trước thì bạn mất đường đi tới phần còn lại của list.
 
 ## Fast–slow pointer: phát hiện chu trình
 
@@ -387,7 +387,7 @@ ListNode* middleNode(ListNode* head) {
 
 Thời gian `O(n)`, bộ nhớ `O(1)` — vượt trội so với cách dùng `set` lưu các node đã thăm (tốn `O(n)` bộ nhớ).
 
-> 💡 Ghi nhớ: thấy yêu cầu **tìm giữa / phát hiện vòng lặp / node thứ k từ cuối** trên linked list mà cấm dùng bộ nhớ phụ — phản xạ ngay là **fast–slow pointer**.
+> Ghi nhớ: thấy yêu cầu **tìm giữa / phát hiện vòng lặp / node thứ k từ cuối** trên linked list mà cấm dùng bộ nhớ phụ — phản xạ ngay là **fast–slow pointer**.
 
 ## Binary Tree (cây nhị phân)
 
@@ -704,7 +704,7 @@ std::vector<std::vector<int>> levelOrder(TreeNode* root) {
 }
 ```
 
-> 💡 Ghi nhớ: đề bài có chữ **"theo tầng / theo level / shortest path không trọng số"** → dùng **BFS + queue**. Đề bài về **đường đi gốc-tới-lá / kiểm tra cấu trúc đệ quy** → dùng **DFS**.
+> Ghi nhớ: đề bài có chữ **"theo tầng / theo level / shortest path không trọng số"** → dùng **BFS + queue**. Đề bài về **đường đi gốc-tới-lá / kiểm tra cấu trúc đệ quy** → dùng **DFS**.
 
 ## Binary Search Tree (BST)
 
@@ -921,7 +921,7 @@ TreeNode* deleteBst(TreeNode* root, int key) {
 - Cây **cân bằng (balanced)**: `h ≈ log₂(n)` → thao tác `O(log n)`, rất nhanh.
 - Cây **suy biến (skewed)**: nếu chèn dữ liệu *đã sắp xếp sẵn* vào BST thường, cây biến thành một "danh sách dọc", `h = n` → thao tác tụt về `O(n)`.
 
-> ⚠️ Bẫy: BST chỉ nhanh khi **cân bằng**. Trong sản phẩm thật, đừng tự cài BST thường rồi đổ dữ liệu sắp xếp vào — hãy dùng **self-balancing tree** (AVL, Red-Black). Thực tế `TreeMap` của Java, `std::map` của C++ chính là Red-Black tree; Python/Go thì thường dùng thẳng hash map (`dict`/`map`) trừ khi cần thứ tự.
+> Bẫy: BST chỉ nhanh khi **cân bằng**. Trong sản phẩm thật, đừng tự cài BST thường rồi đổ dữ liệu sắp xếp vào — hãy dùng **self-balancing tree** (AVL, Red-Black). Thực tế `TreeMap` của Java, `std::map` của C++ chính là Red-Black tree; Python/Go thì thường dùng thẳng hash map (`dict`/`map`) trừ khi cần thứ tự.
 
 | Thao tác BST | Cây cân bằng | Cây suy biến |
 |---|---|---|
@@ -938,4 +938,4 @@ Hướng giải: KHÔNG chỉ so node với hai con trực tiếp (sai khi cháu
 **Bài 2 — Độ sâu lớn nhất của cây (Maximum Depth).**
 Hướng giải kinh điển cho đệ quy cây: `depth(node) = 0` nếu node rỗng, ngược lại `1 + max(depth(left), depth(right))`. Đây là khung sườn (xử lý Left/Right rồi kết hợp tại Node — đúng kiểu postorder) tái dùng được cho hàng loạt bài: đếm node, tổng đường đi, kiểm tra cây cân bằng, đường kính cây (diameter).
 
-> 💡 Ghi nhớ: phần lớn bài tree trong phỏng vấn là một biến thể của "DFS đệ quy, xử lý hai cây con rồi kết hợp tại node". Nắm chắc khung postorder `return f(left, right, node)` là gỡ được đa số.
+> Ghi nhớ: phần lớn bài tree trong phỏng vấn là một biến thể của "DFS đệ quy, xử lý hai cây con rồi kết hợp tại node". Nắm chắc khung postorder `return f(left, right, node)` là gỡ được đa số.

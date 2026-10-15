@@ -185,7 +185,7 @@ curl -X POST http://localhost:8083/connectors \
 Giải thích các trường quan trọng:
 - `connector.class`: plugin nào — ở đây là Debezium Postgres.
 - `plugin.name=pgoutput`: dùng **logical decoding** có sẵn của Postgres 10+ (không cần cài thư viện ngoài). Yêu cầu server đặt `wal_level=logical`.
-- `slot.name`: **replication slot** — Postgres giữ WAL chưa được Debezium đọc để không xoá mất. ⚠️ Nếu Debezium chết lâu, slot làm WAL phình to → phải giám sát.
+- `slot.name`: **replication slot** — Postgres giữ WAL chưa được Debezium đọc để không xoá mất. Nếu Debezium chết lâu, slot làm WAL phình to → phải giám sát.
 - `table.include.list`: chỉ bắt bảng cần. Mỗi bảng ra **một topic** riêng: `shop.public.orders`, `shop.public.customers`.
 - `snapshot.mode=initial`: lần đầu chụp toàn bộ rồi mới streaming.
 - `tombstones.on.delete`: khi xoá hàng, phát thêm một record `value=null` (tombstone) — cần cho **log compaction** để đích thực sự xoá được.

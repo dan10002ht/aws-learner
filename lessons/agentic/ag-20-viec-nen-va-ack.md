@@ -465,43 +465,43 @@ Với Codex, worker tương đương là `codex exec --json -o .lanes/last.txt "
 
 ## 5. Bẫy thường gặp
 
-### 🪤 Bẫy 1 — Đọc report vòng trước như report vòng này
+### Bẫy 1 — Đọc report vòng trước như report vòng này
 
 - **Triệu chứng:** report nói PASS nhưng không nhắc gì tới lỗi vừa giao.
 - **Nguyên nhân gốc:** "file tồn tại" không phân biệt được vòng; report cũ chưa bị xoá.
 - **Chặn bằng cơ chế:** nonce ở dòng đầu brief, bộ chờ chỉ chấp nhận report có đúng nonce (mục 3.4). Không cần nhớ xoá report cũ.
 
-### 🪤 Bẫy 2 — Gửi chỉ thị nhiều dòng vào TUI
+### Bẫy 2 — Gửi chỉ thị nhiều dòng vào TUI
 
 - **Triệu chứng:** lane làm một nửa yêu cầu, hoặc không làm gì mà vẫn trông bận.
 - **Nguyên nhân gốc:** xuống dòng = Enter; paste dài thành placeholder chưa submit.
 - **Chặn bằng cơ chế:** wrapper gửi từ chối message có `\n` hoặc dài quá một dòng, và tự động chuyển nội dung ra file rồi gửi một dòng trỏ vào file. Tốt hơn: dùng `claude -p` / `codex exec` thay vì TUI khi không cần hội thoại.
 
-### 🪤 Bẫy 3 — Vòng chờ không có deadline
+### Bẫy 3 — Vòng chờ không có deadline
 
 - **Triệu chứng:** main agent hoặc script "đang chờ" hàng chục phút cho một việc chưa từng bắt đầu.
 - **Nguyên nhân gốc:** vòng chờ chỉ có một lối ra là "thành công".
 - **Chặn bằng cơ chế:** mọi vòng chờ có ba lối ra `DONE` / `DEAD` / `UNKNOWN` với exit code riêng. Claude Code tự áp deadline cho lệnh nền trong phiên không người trông và cho Monitor (mục 3.3) — script của bạn cũng phải có.
 
-### 🪤 Bẫy 4 — Chạy lại lệnh ghi sau timeout
+### Bẫy 4 — Chạy lại lệnh ghi sau timeout
 
 - **Triệu chứng:** dữ liệu bị ghi hai lần; hoặc cả lô bị dừng và báo "thất bại" trong khi thao tác đã thành công.
 - **Nguyên nhân gốc:** coi vắng ack là vắng hiệu ứng. Trong Claude Code, lệnh Bash foreground hết timeout còn được **chuyển nền và chạy tiếp** (mục 3.6).
 - **Chặn bằng cơ chế:** script ghi trả mã riêng cho UNKNOWN; bước sau UNKNOWN chỉ được là lệnh đọc từ nguồn chuẩn. Thao tác có thể bị chạy lại phải có idempotency key ([[ds-21-idempotency]], [[ag-21-loop-la-he-phan-tan]]).
 
-### 🪤 Bẫy 5 — `kill -0` / `pgrep` để hỏi "worker còn chạy không"
+### Bẫy 5 — `kill -0` / `pgrep` để hỏi "worker còn chạy không"
 
 - **Triệu chứng:** worker đã xong mà hệ thống vẫn chờ; lỗi tự biến mất mỗi lần restart bộ điều phối.
 - **Nguyên nhân gốc:** zombie vẫn có pid; init dọn hộ khi cha restart nên lỗi chỉ lộ khi hệ ổn định.
 - **Chặn bằng cơ chế:** cha luôn `waitpid(WNOHANG)` / `Popen.poll()` / `wait` trong shell. Thêm một gate: test dựng zombie như mục 3.7 và đòi hàm `con_song` trả `False`.
 
-### 🪤 Bẫy 6 — Giết worker nhưng sót con của nó
+### Bẫy 6 — Giết worker nhưng sót con của nó
 
 - **Triệu chứng:** sau khi "dừng lane", máy vẫn còn build/test/browser chạy, chiếm CPU/RAM của vòng sau.
 - **Nguyên nhân gốc:** `kill <pid>` chỉ tới một tiến trình; con của nó bị chuyển cho init và sống tiếp.
 - **Chặn bằng cơ chế:** khởi chạy worker trong process group riêng (`set -m`, hoặc `start_new_session=True` trong Python) và giết cả nhóm; gate kiểm "không còn tiến trình sót" sau mỗi vòng.
 
-### 🪤 Bẫy 7 — Giao lại mọi FAIL cho lane
+### Bẫy 7 — Giao lại mọi FAIL cho lane
 
 - **Triệu chứng:** lane sửa đi sửa lại một lỗi không tồn tại; hai agent cãi nhau nhiều vòng.
 - **Nguyên nhân gốc:** không phân loại FAIL; lane và verifier nhìn hai cây khác nhau.

@@ -103,7 +103,7 @@ STARK **không có bước này**: mọi tham số đều là hằng số công 
 <text x="175" y="24" text-anchor="middle" font-size="14" fill="currentColor">ZK-SNARK</text>
 <rect x="90" y="45" width="170" height="45" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
 <text x="175" y="66" text-anchor="middle" font-size="12" fill="currentColor">Trusted setup ceremony</text>
-<text x="175" y="82" text-anchor="middle" font-size="11" fill="currentColor">sinh CRS + toxic waste ☢</text>
+<text x="175" y="82" text-anchor="middle" font-size="11" fill="currentColor">sinh CRS + toxic waste </text>
 <rect x="90" y="120" width="170" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
 <text x="175" y="145" text-anchor="middle" font-size="12" fill="currentColor">Prover → proof nhỏ</text>
 <line x1="175" y1="90" x2="175" y2="118" stroke="currentColor" stroke-width="1.5" marker-end="url(#za)"/>

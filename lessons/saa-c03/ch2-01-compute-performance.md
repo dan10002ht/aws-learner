@@ -133,7 +133,7 @@ Sau 2 giờ 40 phút thì sao? Tuỳ **credit mode**:
 
 Vì vậy T chỉ rẻ khi CPU trung bình thấp. Theo ví dụ trong docs, `t3.large` chạy trung bình trên **42,5%** CPU là đã đắt hơn `m5.large`. Workload bận đều thì chọn M/C ngay từ đầu.
 
-> 🪤 Bẫy thi: "instance t3 chạy tốt lúc đầu, vài giờ sau chậm hẳn dù traffic không đổi" → hết CPU credit. Đáp án là bật Unlimited hoặc chuyển sang M/C, không phải "thêm RAM".
+> Bẫy thi: "instance t3 chạy tốt lúc đầu, vài giờ sau chậm hẳn dù traffic không đổi" → hết CPU credit. Đáp án là bật Unlimited hoặc chuyển sang M/C, không phải "thêm RAM".
 
 ### 3.3 Modifier hay gặp
 
@@ -146,7 +146,7 @@ Chữ đứng sau số generation cho biết biến thể phần cứng:
 - **e** — Thêm RAM (hoặc thêm storage, tuỳ family).
 - **z** — CPU xung nhịp cao, cho code cần tốc độ trên **một luồng**.
 
-> 💡 **Graviton lesson**: code Java/Python/Go/Node chạy trên máy ảo ngôn ngữ hoặc biên dịch lại được cho ARM, nên nếu không phụ thuộc thư viện native chỉ có bản x86 thì thử `m7g` trước `m7i`. Nhiều câu thi SAA gợi ý "cost-optimized" + "compatible workload" → đáp án Graviton. Thứ **không** chạy được: binary x86 không có source, .NET Framework cũ (chỉ chạy Windows x86), một số driver/agent chưa có bản ARM.
+> **Graviton lesson**: code Java/Python/Go/Node chạy trên máy ảo ngôn ngữ hoặc biên dịch lại được cho ARM, nên nếu không phụ thuộc thư viện native chỉ có bản x86 thì thử `m7g` trước `m7i`. Nhiều câu thi SAA gợi ý "cost-optimized" + "compatible workload" → đáp án Graviton. Thứ **không** chạy được: binary x86 không có source, .NET Framework cũ (chỉ chạy Windows x86), một số driver/agent chưa có bản ARM.
 
 ### 3.4 Sizing — đừng over-provision
 
@@ -219,7 +219,7 @@ Spot hợp với: batch, CI, render, ML training có checkpoint, web tier statel
 | **Dedicated Host** | — (trả cho cả host) | On-Demand hoặc đặt trước 1–3 năm | Compliance, BYOL Windows/Oracle |
 | **Capacity Reservation** | 0% (giá On-Demand, trả cả khi không dùng) | Không kỳ hạn | Đảm bảo có capacity trong một AZ cụ thể |
 
-> 🪤 Bẫy thi: "Cần baseline + spike" → đáp án **Savings Plan cho baseline + Spot/On-Demand cho spike**, không phải RI cho cả tổng. RI khoá vào cấu hình instance cụ thể; Compute Savings Plan linh hoạt hơn. Và "đảm bảo có máy trong AZ" là **Capacity Reservation**; RI loại regional và Savings Plan chỉ giảm giá, không giữ chỗ.
+> Bẫy thi: "Cần baseline + spike" → đáp án **Savings Plan cho baseline + Spot/On-Demand cho spike**, không phải RI cho cả tổng. RI khoá vào cấu hình instance cụ thể; Compute Savings Plan linh hoạt hơn. Và "đảm bảo có máy trong AZ" là **Capacity Reservation**; RI loại regional và Savings Plan chỉ giảm giá, không giữ chỗ.
 
 ---
 
@@ -388,7 +388,7 @@ Ba công cụ, giải quyết ba việc khác nhau:
 - **Provisioned concurrency** — trả tiền để Lambda **giữ sẵn N môi trường đã khởi tạo xong**. N request đồng thời đầu tiên không bao giờ gặp cold start. Tính tiền theo giờ kể cả khi không có request, giống trả tiền cho máy bật sẵn.
 - **SnapStart** (Java 11+, Python 3.12+, .NET 8+) — Lambda chạy phần khởi tạo một lần lúc publish version, chụp snapshot bộ nhớ, rồi mỗi cold start chỉ khôi phục từ snapshot thay vì khởi tạo lại. Theo docs, thời gian khởi động giảm từ vài giây xuống dưới một giây. Không dùng chung với provisioned concurrency trên cùng một version.
 
-> 🪤 Bẫy thi: "Lambda cần latency p99 < 100ms cho first request" → **Provisioned concurrency** (hoặc SnapStart). Reserved concurrency không giải quyết cold start. Ngược lại, "Lambda làm sập database vì mở quá nhiều connection" → **Reserved concurrency** (hoặc RDS Proxy), không phải provisioned.
+> Bẫy thi: "Lambda cần latency p99 < 100ms cho first request" → **Provisioned concurrency** (hoặc SnapStart). Reserved concurrency không giải quyết cold start. Ngược lại, "Lambda làm sập database vì mở quá nhiều connection" → **Reserved concurrency** (hoặc RDS Proxy), không phải provisioned.
 
 ---
 
@@ -416,7 +416,7 @@ Lambda không cho chọn vCPU. Ở 128 MB function chỉ nhận một phần r�
 
 Hệ quả về chi phí: function CPU-bound chạy 10 giây ở 512 MB có thể chỉ mất ~2,5 giây ở 2.048 MB. Giá GB-giây x4 nhưng thời gian /4 → hoà tiền mà latency tốt hơn 4 lần. Đó chính là lý do tồn tại của *Lambda Power Tuning* ở mục Đọc thêm.
 
-> 🪤 Bẫy thi: "Lambda xử lý ảnh chậm, code đã tối ưu" → đáp án thường là **tăng memory** (vì CPU tăng theo), không phải "chuyển sang EC2".
+> Bẫy thi: "Lambda xử lý ảnh chậm, code đã tối ưu" → đáp án thường là **tăng memory** (vì CPU tăng theo), không phải "chuyển sang EC2".
 
 ### 6.2 Khi nào đề mô tả một workload mà Lambda là đáp án SAI
 
@@ -446,7 +446,7 @@ Bình thường, mỗi gói tin của máy ảo đi qua một lớp card mạng 
 
 EFA sinh ra cho ai? Cho **HPC tightly-coupled**: một bài toán mô phỏng (thời tiết, khí động học) chia ra hàng trăm node, và các node phải **trao đổi kết quả trung gian với nhau liên tục** ở mỗi bước tính, thường qua thư viện **MPI** (Message Passing Interface — chuẩn gửi nhận message giữa các tiến trình tính toán song song). Node nào chờ mạng thì cả cụm chờ theo, nên độ trễ mạng quyết định tốc độ toàn bài toán. Ngược lại là **loosely-coupled**: mỗi job độc lập, không nói chuyện với nhau (render 10.000 khung hình) — loại này không cần EFA.
 
-> 🪤 Bẫy thi: "HPC, MPI, tightly-coupled, lowest inter-node latency" → **EFA + cluster placement group**. Chỉ thấy "băng thông cao" mà không có MPI/HPC → ENA trên instance dòng `n` là đủ.
+> Bẫy thi: "HPC, MPI, tightly-coupled, lowest inter-node latency" → **EFA + cluster placement group**. Chỉ thấy "băng thông cao" mà không có MPI/HPC → ENA trên instance dòng `n` là đủ.
 
 ### 7.2 Placement Groups
 
@@ -557,7 +557,7 @@ Hai chi tiết phần cứng chỉ đáng quan tâm ở instance rất to hoặc
 
 Đây là chỗ sai kinh điển: provision gp3 **16.000 IOPS / 1.000 MB/s**, benchmark xong chỉ thấy ~500 MB/s, rồi đi đổ lỗi cho EBS. Thủ phạm là instance type.
 
-> 📏 Số liệu gp3: đề thi và phần lớn tài liệu ôn dùng trần **16.000 IOPS / 1.000 MiB/s** mỗi volume, và mục này giữ con số đó. Docs hiện tại đã nâng lên **80.000 IOPS / 2.000 MiB/s** (2.000 MiB/s ≈ 16.000 Mbps — trong bảng m5 bên dưới chỉ `m5.24xlarge` với 19.000 Mbps mới tải nổi). Trần của volume càng cao thì kết luận của mục này càng đúng: chỗ nghẽn nằm ở instance trước.
+> Số liệu gp3: đề thi và phần lớn tài liệu ôn dùng trần **16.000 IOPS / 1.000 MiB/s** mỗi volume, và mục này giữ con số đó. Docs hiện tại đã nâng lên **80.000 IOPS / 2.000 MiB/s** (2.000 MiB/s ≈ 16.000 Mbps — trong bảng m5 bên dưới chỉ `m5.24xlarge` với 19.000 Mbps mới tải nổi). Trần của volume càng cao thì kết luận của mục này càng đúng: chỗ nghẽn nằm ở instance trước.
 
 **Cơ chế**: traffic EBS đi qua một đường mạng riêng giữa instance và EBS (đó là ý nghĩa của "EBS-optimized"). Mọi instance Nitro đời hiện tại đều EBS-optimized mặc định và **không tính thêm tiền**, nhưng mỗi *size* có trần riêng cho đường đó. Có **hai** trần cùng lúc, đạt cái nào trước thì nghẽn cái đó:
 
@@ -602,7 +602,7 @@ Băng thông thực nhận = `min(tổng provision của các volume, trần EBS
 | Cần > 16.000 IOPS trên một filesystem | Trần của một volume gp3 theo số đề thi (docs hiện tại: 80.000) | io2 Block Express, hoặc RAID 0 nhiều gp3 |
 | Cần IOPS cực cao, chấp nhận mất dữ liệu khi stop | Không phải bài toán của EBS | **Instance store NVMe** (`i` family) — nhưng ephemeral |
 
-> 🪤 Bẫy thi: đề nói "đã chuyển sang gp3 và provision IOPS tối đa nhưng throughput không cải thiện" → đáp án là **đổi sang instance size lớn hơn / EBS-optimized instance**, không phải "chuyển sang io2".
+> Bẫy thi: đề nói "đã chuyển sang gp3 và provision IOPS tối đa nhưng throughput không cải thiện" → đáp án là **đổi sang instance size lớn hơn / EBS-optimized instance**, không phải "chuyển sang io2".
 
 ---
 
@@ -654,7 +654,7 @@ Nguồn gốc của mọi khác biệt trong bảng là **bạn không có quy�
 | Thời gian có task mới | Mỗi task phải được cấp môi trường mới rồi kéo image; image càng to càng lâu | Máy đã chạy sẵn và image đã cache thì gần như tức thì; phải thêm máy mới thì chậm như §5.3 | Fargate không có máy "đang chạy sẵn" để tận dụng cache |
 | GPU | Không | Có | Fargate không cho chọn phần cứng |
 
-> 💡 Quy tắc: workload nhỏ tới vừa, traffic thay đổi, team không muốn vận hành máy → Fargate. Workload lớn chạy đều 24/7 (lấp đầy EC2 thì rẻ hơn, lại áp được RI/Savings Plan cho EC2), cần GPU, cần tuỳ biến OS hoặc chạy daemon trên node → EC2.
+> Quy tắc: workload nhỏ tới vừa, traffic thay đổi, team không muốn vận hành máy → Fargate. Workload lớn chạy đều 24/7 (lấp đầy EC2 thì rẻ hơn, lại áp được RI/Savings Plan cho EC2), cần GPU, cần tuỳ biến OS hoặc chạy daemon trên node → EC2.
 
 ### 8.4 Scaling container — hai tầng
 
@@ -717,9 +717,9 @@ Batch là **scheduler cho job chạy đến khi xong** (HPC, render, genomics, b
 | HPC tightly-coupled MPI 100 node | **Batch multi-node parallel** hoặc ParallelCluster | Array job *không* phải MPI — các child không nói chuyện với nhau |
 | Chỉ cần chạy một job theo lịch mỗi đêm | **EventBridge Scheduler → ECS task / Batch job** | Đừng nuôi EC2 chạy cron 24/7 |
 
-> 🪤 Bẫy thi: từ khoá dẫn tới Batch là tổ hợp **"queue of jobs" + "varying compute needs" + "cost-optimized" + "fault-tolerant / can be retried"**. Thiếu chữ "queue"/"batch" mà có "must finish in seconds, event-driven" thì là Lambda.
+> Bẫy thi: từ khoá dẫn tới Batch là tổ hợp **"queue of jobs" + "varying compute needs" + "cost-optimized" + "fault-tolerant / can be retried"**. Thiếu chữ "queue"/"batch" mà có "must finish in seconds, event-driven" thì là Lambda.
 
-> 💡 Chi phí: bản thân AWS Batch **không tính tiền**; bạn chỉ trả cho EC2/Fargate mà nó dựng. Vì thế Batch + Spot + `SPOT_CAPACITY_OPTIMIZED` + retry là kiến trúc rẻ nhất cho workload chịu được gián đoạn — cùng logic với mục 4.
+> Chi phí: bản thân AWS Batch **không tính tiền**; bạn chỉ trả cho EC2/Fargate mà nó dựng. Vì thế Batch + Spot + `SPOT_CAPACITY_OPTIMIZED` + retry là kiến trúc rẻ nhất cho workload chịu được gián đoạn — cùng logic với mục 4.
 
 ---
 
@@ -776,7 +776,7 @@ luôn xuất hiện ở vai trò **nơi đặt front-end**.
 | Web tĩnh, muốn tự kiểm soát cache/behavior/WAF | **S3 + CloudFront** | Phải tự dựng pipeline build |
 | App server-side render/long-running | **ECS/Fargate, Beanstalk, hoặc EC2** | Amplify Hosting không thay thế được |
 
-> 🪤 Bẫy: thấy "serverless web app" đừng mặc định chọn Amplify — nếu đề nhấn mạnh **kiểm soát
+> Bẫy: thấy "serverless web app" đừng mặc định chọn Amplify — nếu đề nhấn mạnh **kiểm soát
 > CloudFront behavior, signed URL, hoặc WAF** thì đáp án là **S3 + CloudFront**.
 
 ## 11. Cạm bẫy đề thi (SAA)

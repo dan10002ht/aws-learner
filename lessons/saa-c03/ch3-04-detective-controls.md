@@ -180,7 +180,7 @@ Query:  quét 100 GB × $0,005 = $0,50 cho một lần quét hết dữ liệu c
 | Lưu tối đa | Không giới hạn (do lifecycle S3) | ~7 hoặc ~10 năm tuỳ gói |
 | Hợp khi | Chủ yếu để lưu trữ dài hạn, ít khi query | Team security query thường xuyên, không muốn vận hành pipeline |
 
-> 🪤 Bẫy thi: *"lưu log API nhiều năm, chi phí thấp nhất"* → trail ra S3 + lifecycle sang Glacier. *"truy vấn SQL trên hoạt động API mà không tự dựng hạ tầng"* → CloudTrail Lake. *"phát hiện tần suất gọi API bất thường"* → CloudTrail Insights.
+> Bẫy thi: *"lưu log API nhiều năm, chi phí thấp nhất"* → trail ra S3 + lifecycle sang Glacier. *"truy vấn SQL trên hoạt động API mà không tự dựng hạ tầng"* → CloudTrail Lake. *"phát hiện tần suất gọi API bất thường"* → CloudTrail Insights.
 
 ---
 
@@ -216,7 +216,7 @@ Xếp các CI của một resource theo thời gian thì được **configuratio
 
 **Remediation.** Bản thân rule chỉ **báo**, không sửa và không chặn. Muốn tự sửa thì gắn rule với một **SSM Automation document** (một kịch bản các bước do Systems Manager chạy). Khi resource thành `NON_COMPLIANT`, Config gọi kịch bản đó, tự động hoặc chờ người bấm. Ví dụ: rule `restricted-ssh` vi phạm thì chạy document `AWS-DisablePublicAccessForSecurityGroup` để gỡ rule 0.0.0.0/0.
 
-> 🪤 Config là **detective**, không phải preventive. Resource sai chuẩn vẫn được tạo ra, rồi vài phút sau mới bị gắn nhãn vi phạm (và được sửa nếu có remediation). Muốn **chặn từ đầu** thì dùng SCP hoặc IAM policy.
+> Config là **detective**, không phải preventive. Resource sai chuẩn vẫn được tạo ra, rồi vài phút sau mới bị gắn nhãn vi phạm (và được sửa nếu có remediation). Muốn **chặn từ đầu** thì dùng SCP hoặc IAM policy.
 
 ### 4.2 Use case
 
@@ -298,7 +298,7 @@ Tên finding có cấu trúc `MụcĐíchTấnCông:Resource/ChiTiết`, đọc 
 | `Discovery:IAMUser/AnomalousBehavior` | Một principal gọi các API dò quyền, liệt kê resource theo cách lệch baseline | CloudTrail management events |
 | `Stealth:IAMUser/CloudTrailLoggingDisabled` | Trail vừa bị tắt, đúng tình huống §1 | CloudTrail management events |
 
-> 📏 Tài liệu cũ nhắc `Recon:IAMUser/UserPermissions` (dò quyền IAM đáng ngờ). Finding này đã bị AWS cho nghỉ; hành vi tương ứng nay được báo qua nhóm `…:IAMUser/AnomalousBehavior` như dòng `Discovery` ở trên.
+> Tài liệu cũ nhắc `Recon:IAMUser/UserPermissions` (dò quyền IAM đáng ngờ). Finding này đã bị AWS cho nghỉ; hành vi tương ứng nay được báo qua nhóm `…:IAMUser/AnomalousBehavior` như dòng `Discovery` ở trên.
 
 ### 5.3 Best practice
 
@@ -310,7 +310,7 @@ Tên finding có cấu trúc `MụcĐíchTấnCông:Resource/ChiTiết`, đọc 
 
 Tính theo **lượng dữ liệu được phân tích**: số management event của CloudTrail (theo triệu event) và số GB của Flow Logs và DNS logs, cộng phí riêng của từng protection plan bật thêm. Tài khoản càng nhiều traffic thì càng tốn, và không đoán trước được bằng số instance. Vì vậy có **30 ngày dùng thử miễn phí** cho mỗi region lần đầu bật; trong thời gian đó console hiện ước tính chi phí hằng tháng theo từng nguồn, dùng con số ấy để dự toán. GuardDuty đọc log qua luồng riêng nên không phát sinh thêm phí CloudTrail hay Flow Logs.
 
-> 🪤 Bẫy thi: *"phát hiện instance bị chiếm, đào coin, credential bị dùng từ IP lạ, ít công vận hành nhất"* → **GuardDuty**. Không cần bật Flow Logs trước, không cần agent.
+> Bẫy thi: *"phát hiện instance bị chiếm, đào coin, credential bị dùng từ IP lạ, ít công vận hành nhất"* → **GuardDuty**. Không cần bật Flow Logs trước, không cần agent.
 
 ---
 
@@ -343,7 +343,7 @@ Finding của Inspector tự chảy sang Security Hub (§8) và EventBridge.
 - **Quét tuân thủ định kỳ:** chứng minh cho auditor rằng hạ tầng được quét lỗ hổng liên tục và lỗi nghiêm trọng được vá trong thời hạn.
 - **CI/CD:** quét image khi push lên ECR, pipeline dừng deploy nếu có CVE mức Critical.
 
-> 🪤 *"lỗ hổng phần mềm, CVE, cổng mở ra internet không chủ ý"* → **Inspector**. *"hành vi đáng ngờ, bị chiếm, mã độc đang chạy"* → **GuardDuty**. *"dữ liệu nhạy cảm trong S3"* → **Macie**.
+> *"lỗ hổng phần mềm, CVE, cổng mở ra internet không chủ ý"* → **Inspector**. *"hành vi đáng ngờ, bị chiếm, mã độc đang chạy"* → **GuardDuty**. *"dữ liệu nhạy cảm trong S3"* → **Macie**.
 
 ---
 
@@ -365,7 +365,7 @@ Macie **chỉ làm việc với S3**. Không quét EBS, RDS hay DynamoDB.
 
 **Bài toán.** Đến đây bạn đã có GuardDuty, Inspector, Macie, Config, mỗi cái một console, một định dạng finding, nhân với 50 account và vài region. Không ai mở 200 màn hình mỗi sáng.
 
-> 📏 Tên gọi: dịch vụ mô tả ở đây nay có tên chính thức là **AWS Security Hub CSPM** (Cloud Security Posture Management). Đề thi và hầu hết tài liệu vẫn gọi là **Security Hub**.
+> Tên gọi: dịch vụ mô tả ở đây nay có tên chính thức là **AWS Security Hub CSPM** (Cloud Security Posture Management). Đề thi và hầu hết tài liệu vẫn gọi là **Security Hub**.
 
 ### 8.1 Role
 
@@ -532,7 +532,7 @@ Quy tắc chọn: cần bằng chứng audit có thể chứng minh không bị 
 
 Chạy ứng dụng trên một dịch vụ AWS đã đạt PCI DSS **không** làm ứng dụng của bạn tự động đạt PCI DSS. Phần của bạn phải tự chứng minh, và ba công cụ ở §13 giúp việc đó.
 
-> 🪤 *"cần tải báo cáo SOC / chứng chỉ ISO của AWS để đưa auditor"* → **AWS Artifact**. Artifact không kiểm tra gì trong tài khoản của bạn.
+> *"cần tải báo cáo SOC / chứng chỉ ISO của AWS để đưa auditor"* → **AWS Artifact**. Artifact không kiểm tra gì trong tài khoản của bạn.
 
 ---
 
@@ -553,7 +553,7 @@ Ba dịch vụ đều nhắc tới "PCI", "CIS" nên rất dễ lẫn. Khác nha
 
 Chúng xếp tầng lên nhau chứ không thay thế nhau: Config rule đánh giá resource, Security Hub gom kết quả thành điểm, Audit Manager lấy cả hai làm bằng chứng.
 
-> 🪤 *"liên tục thu thập bằng chứng để chuẩn bị kiểm toán, giảm công làm tay"* → **Audit Manager**. *"tự động sửa resource sai chuẩn"* → **Config rule + remediation**. *"một màn hình xem điểm tuân thủ CIS của mọi account"* → **Security Hub**.
+> *"liên tục thu thập bằng chứng để chuẩn bị kiểm toán, giảm công làm tay"* → **Audit Manager**. *"tự động sửa resource sai chuẩn"* → **Config rule + remediation**. *"một màn hình xem điểm tuân thủ CIS của mọi account"* → **Security Hub**.
 
 ---
 
@@ -671,7 +671,7 @@ GuardDuty và Security Hub thường được bật thêm cho mọi account qua 
 
 Với một tổ chức mới bắt đầu nhiều account, dùng Control Tower thay vì tự ráp từng mảnh: ít việc hơn, và đúng theo cách AWS khuyến nghị. Cách tổ chức OU, viết SCP và Account Factory được giải thích kỹ ở [[ch3-05-multi-account-governance]].
 
-> 🪤 *"dựng nhanh môi trường nhiều account an toàn theo best practice, ít công nhất"* → **Control Tower**. *"chỉ cần cấm một hành động trên mọi account"* → **SCP** của Organizations là đủ.
+> *"dựng nhanh môi trường nhiều account an toàn theo best practice, ít công nhất"* → **Control Tower**. *"chỉ cần cấm một hành động trên mọi account"* → **SCP** của Organizations là đủ.
 
 ---
 
@@ -704,7 +704,7 @@ Với một tổ chức mới bắt đầu nhiều account, dùng Control Tower 
 5. GuardDuty báo finding `Backdoor:EC2/C&CActivity.B` — instance gọi C2 server. Bước response trong 15 phút đầu?
 6. Cost CloudTrail data event $5000/tháng. Bạn analyze gì để giảm mà không mất visibility?
 
-> 💡 Gợi ý cho bài 6, dùng đơn giá ở §3.1:
+> Gợi ý cho bài 6, dùng đơn giá ở §3.1:
 >
 > ```
 > $5.000 ÷ $0,10 × 100.000        = 5.000.000.000 data event/tháng

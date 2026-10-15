@@ -12,7 +12,7 @@ Disaster Recovery (DR) là khả năng khôi phục hệ thống sau một sự 
 - **RPO = 1 giờ** nghĩa là sau thảm họa, bạn chấp nhận mất tối đa 1 giờ dữ liệu gần nhất → cần backup/replicate ít nhất mỗi giờ.
 - **RTO = 4 giờ** nghĩa là từ lúc sự cố đến lúc hệ thống chạy lại không quá 4 giờ.
 
-> 💡 **Mẹo thi:** RTO gắn với *thời gian khôi phục* (downtime), RPO gắn với *điểm dữ liệu* (data loss). Đề hay đảo hai khái niệm này để gài bẫy. Nhớ: **R-P-O = Point = dữ liệu**, **R-T-O = Time = downtime**.
+> **Mẹo thi:** RTO gắn với *thời gian khôi phục* (downtime), RPO gắn với *điểm dữ liệu* (data loss). Đề hay đảo hai khái niệm này để gài bẫy. Nhớ: **R-P-O = Point = dữ liệu**, **R-T-O = Time = downtime**.
 
 RTO/RPO càng nhỏ → chi phí càng lớn. Toàn bộ bài học này là bài toán đánh đổi giữa "nhanh + không mất dữ liệu" và "rẻ".
 
@@ -116,7 +116,7 @@ Một phần *lõi tối thiểu* luôn chạy ở DR Region — thường là *
 - **Chi phí:** Trung bình-thấp (trả tiền DB replica + storage, không trả compute).
 - **Dùng khi:** Cần phục hồi nhanh hơn Backup & Restore nhưng vẫn tiết kiệm compute.
 
-> ⚠️ **Bẫy:** Điểm phân biệt cốt lõi giữa Pilot Light và Warm Standby là **compute**. Pilot Light: compute *không chạy* (off). Warm Standby: compute *chạy ở quy mô nhỏ* (scaled-down nhưng đang phục vụ được). Đề thường mô tả "a scaled-down but fully functional copy is always running" → đó là **Warm Standby**, không phải Pilot Light.
+> **Bẫy:** Điểm phân biệt cốt lõi giữa Pilot Light và Warm Standby là **compute**. Pilot Light: compute *không chạy* (off). Warm Standby: compute *chạy ở quy mô nhỏ* (scaled-down nhưng đang phục vụ được). Đề thường mô tả "a scaled-down but fully functional copy is always running" → đó là **Warm Standby**, không phải Pilot Light.
 
 ### 3. Warm Standby
 
@@ -169,7 +169,7 @@ Bước nhảy lớn nhất là từ Backup & Restore lên Pilot Light, vì data
 | **Warm Standby** | Chạy nhỏ (scaled-down) | Phút | Giây–phút | $$$ | "scaled-down but fully functional", "always running" |
 | **Multi-Site Active-Active** | Chạy đầy đủ, active | ~0 (giây) | ~0 | $$$$ (cao nhất) | "near-zero RTO/RPO", "both regions serve traffic" |
 
-> 💡 **Mẹo thi — quy tắc chọn nhanh:**
+> **Mẹo thi — quy tắc chọn nhanh:**
 > - Đề nhấn **"lowest cost" / "cost-effective"** + RTO cho phép tính bằng giờ → **Backup & Restore**.
 > - Đề yêu cầu **RTO/RPO gần 0**, không quan tâm giá → **Multi-Site Active-Active**.
 > - "Minimize cost *while* recovering in minutes" → thường là **Pilot Light** hoặc **Warm Standby**; phân biệt bằng việc compute có đang chạy hay không.
@@ -192,9 +192,9 @@ Dịch vụ quản lý backup tập trung cho nhiều service (EBS, EFS, RDS, Au
 
 *Grace time* là khoảng "suy nghĩ lại" ngay sau khi bật compliance mode, tối thiểu **3 ngày** (72 giờ). Trong thời gian đó còn gỡ hoặc sửa được khoá; hết thời gian đó thì vault bất biến vĩnh viễn.
 
-> 🪤 **Bẫy:** Đề nói "backup không được phép bị xoá bởi bất kỳ ai, kể cả root" → **Vault Lock compliance mode**. Governance mode sai vì admin đủ quyền vẫn gỡ được. Đây cũng **không** phải S3 Object Lock (dành cho object trong S3) hay Glacier Vault Lock (dành cho S3 Glacier).
+> **Bẫy:** Đề nói "backup không được phép bị xoá bởi bất kỳ ai, kể cả root" → **Vault Lock compliance mode**. Governance mode sai vì admin đủ quyền vẫn gỡ được. Đây cũng **không** phải S3 Object Lock (dành cho object trong S3) hay Glacier Vault Lock (dành cho S3 Glacier).
 
-> 💡 **Mẹo thi:** Câu hỏi "centralized, automated backup across many services and accounts" → chọn **AWS Backup**, đừng tự dựng script snapshot thủ công.
+> **Mẹo thi:** Câu hỏi "centralized, automated backup across many services and accounts" → chọn **AWS Backup**, đừng tự dựng script snapshot thủ công.
 
 ### S3 Cross-Region Replication (CRR)
 Tự động replicate object sang bucket ở Region khác (bất đồng bộ).
@@ -224,7 +224,7 @@ AWS giải mã bằng K1, mã hoá lại bằng K2 (re-encrypt), lưu ở eu-wes
 
 Nếu bản copy vẫn phụ thuộc K1 thì mất Region nguồn là mất luôn khả năng giải mã, tức backup vô dụng đúng lúc cần. Lựa chọn thay thế là **multi-Region key**: một khoá KMS được nhân bản sang nhiều Region với cùng key material, dùng được ở cả hai nơi.
 
-> 🪤 **Bẫy:** Copy snapshot mã hoá cross-region mà không chỉ định KMS key ở Region đích → lệnh copy **lỗi**. Snapshot đã mã hoá thì bản copy cũng bắt buộc mã hoá; không có đường "copy ra bản không mã hoá".
+> **Bẫy:** Copy snapshot mã hoá cross-region mà không chỉ định KMS key ở Region đích → lệnh copy **lỗi**. Snapshot đã mã hoá thì bản copy cũng bắt buộc mã hoá; không có đường "copy ra bản không mã hoá".
 
 ### RDS Cross-Region Read Replica
 Replica read-only ở Region khác, đồng bộ async từ primary.
@@ -233,7 +233,7 @@ Replica read-only ở Region khác, đồng bộ async từ primary.
 - Phục vụ **Pilot Light** (DB luôn sống ở DR, compute tắt).
 - RPO thấp (async, độ trễ replication); RTO = thời gian promote + chuyển traffic.
 
-> ⚠️ **Bẫy:** Đừng nhầm **Multi-AZ** với DR cross-region. Multi-AZ là **High Availability trong cùng Region** (standby đồng bộ, tự failover khi AZ lỗi) — **không** bảo vệ khỏi mất cả Region. Multi-AZ standby **không** đọc được và **không** phục vụ DR khu vực. Khi đề nói "another Region" → cần Read Replica cross-region / Aurora Global Database, không phải Multi-AZ.
+> **Bẫy:** Đừng nhầm **Multi-AZ** với DR cross-region. Multi-AZ là **High Availability trong cùng Region** (standby đồng bộ, tự failover khi AZ lỗi) — **không** bảo vệ khỏi mất cả Region. Multi-AZ standby **không** đọc được và **không** phục vụ DR khu vực. Khi đề nói "another Region" → cần Read Replica cross-region / Aurora Global Database, không phải Multi-AZ.
 
 ### Aurora Global Database
 **Nó là gì.** Một database Aurora trải trên nhiều Region: **một primary Region** nhận mọi lệnh ghi, và các **secondary Region chỉ đọc** nhận bản sao. Ứng dụng ở châu Âu đọc từ cluster châu Âu với độ trễ nội vùng, còn khi primary Region sập thì một secondary được nâng lên làm primary.
@@ -265,9 +265,9 @@ Cả hai đều **do bạn kích hoạt** (console, CLI hoặc tự động hoá
 
 - Là lựa chọn hàng đầu cho **Warm Standby / Active-Active** ở tầng relational DB toàn cầu.
 
-> 🪤 **Bẫy:** Aurora Global Database **không phải multi-writer**. Chỉ primary Region ghi được; secondary chỉ đọc (có thể bật *write forwarding* để secondary chuyển tiếp lệnh ghi về primary, nhưng người ghi thật vẫn là primary). Cần ghi được ở mọi Region cùng lúc → DynamoDB Global Tables.
+> **Bẫy:** Aurora Global Database **không phải multi-writer**. Chỉ primary Region ghi được; secondary chỉ đọc (có thể bật *write forwarding* để secondary chuyển tiếp lệnh ghi về primary, nhưng người ghi thật vẫn là primary). Cần ghi được ở mọi Region cùng lúc → DynamoDB Global Tables.
 
-> 💡 **Mẹo thi:** Đề yêu cầu **relational DB**, **multi-region**, **RPO ~ 1s / RTO ~ 1 phút**, low-latency global reads → **Aurora Global Database** (không phải RDS read replica thường, vốn chậm hơn).
+> **Mẹo thi:** Đề yêu cầu **relational DB**, **multi-region**, **RPO ~ 1s / RTO ~ 1 phút**, low-latency global reads → **Aurora Global Database** (không phải RDS read replica thường, vốn chậm hơn).
 
 ### DynamoDB Global Tables
 Bảng DynamoDB **multi-region, multi-active** (active-active): mọi Region đều ghi/đọc được, replicate hai chiều với **last-writer-wins** để giải quyết xung đột.
@@ -292,9 +292,9 @@ Bản ghi quantity = 2 biến mất; client ở us-east-1 vẫn nhận "ghi thà
 
 Cả hai Region hội tụ về cùng một giá trị (không bị lệch nhau), nhưng một lần ghi đã mất. Với giỏ hàng thì chấp nhận được; với số dư tài khoản thì không. Cách tránh thường dùng là thiết kế để mỗi item chỉ được ghi ở **một Region "nhà"** (ví dụ theo vùng của user).
 
-> 📏 Chế độ mặc định mô tả ở trên gọi là **MREC** (*multi-Region eventual consistency*). DynamoDB nay có thêm chế độ **MRSC** (*multi-Region strong consistency*): ghi được replicate **đồng bộ** sang ít nhất một Region khác trước khi trả về thành công, nên **RPO = 0**, đổi lại độ trễ ghi cao hơn và phải triển khai trên **đúng 3 Region**. Đề thi SAA-C03 mặc định hiểu Global Tables là kiểu bất đồng bộ, last-writer-wins.
+> Chế độ mặc định mô tả ở trên gọi là **MREC** (*multi-Region eventual consistency*). DynamoDB nay có thêm chế độ **MRSC** (*multi-Region strong consistency*): ghi được replicate **đồng bộ** sang ít nhất một Region khác trước khi trả về thành công, nên **RPO = 0**, đổi lại độ trễ ghi cao hơn và phải triển khai trên **đúng 3 Region**. Đề thi SAA-C03 mặc định hiểu Global Tables là kiểu bất đồng bộ, last-writer-wins.
 
-> 💡 **Mẹo thi:** "NoSQL key-value, multi-region, active-active, low latency global" → **DynamoDB Global Tables**. Ghép cặp tự nhiên với Aurora Global Database cho phần relational.
+> **Mẹo thi:** "NoSQL key-value, multi-region, active-active, low latency global" → **DynamoDB Global Tables**. Ghép cặp tự nhiên với Aurora Global Database cho phần relational.
 
 ### Route 53 cho DR (DNS failover)
 Route 53 là "công tắc traffic" chuyển hướng người dùng từ Region hỏng sang Region khỏe.
@@ -345,7 +345,7 @@ Route 53 là "công tắc traffic" chuyển hướng người dùng từ Region 
   <text x="24" y="284" font-size="11" fill="currentColor" opacity="0.7">TTL thấp (vd 60s) → client cập nhật bản ghi mới nhanh, failover nhanh.</text>
 </svg>
 
-> ⚠️ **Bẫy:** Để Route 53 failover hoạt động, phải gắn **health check** vào primary record. Thiếu health check → Route 53 không biết primary chết → không chuyển. Ngoài ra **TTL cao** là thủ phạm khiến failover "chậm bất thường" trong đề.
+> **Bẫy:** Để Route 53 failover hoạt động, phải gắn **health check** vào primary record. Thiếu health check → Route 53 không biết primary chết → không chuyển. Ngoài ra **TTL cao** là thủ phạm khiến failover "chậm bất thường" trong đề.
 
 ## AWS Elastic Disaster Recovery (AWS DRS)
 
@@ -364,7 +364,7 @@ chạy 24/7.
 | **Di cư** một lần lên AWS rồi thôi | **Application Migration Service (MGN)** | Cùng gốc công nghệ nhưng dành cho migrate, không phải DR lặp lại |
 | Chỉ cần khôi phục dữ liệu, chịu được hàng giờ | **AWS Backup** | Rẻ nhất, nhưng RTO/RPO kém xa |
 
-> 🪤 Bẫy: đề nói "DR cho on-prem, RPO vài giây, không muốn trả tiền cho môi trường chạy sẵn"
+> Bẫy: đề nói "DR cho on-prem, RPO vài giây, không muốn trả tiền cho môi trường chạy sẵn"
 > → **DRS**. Không phải Warm Standby (tốn tiền chạy sẵn), cũng không phải MGN (đó là để migrate).
 
 ## Ghép service vào từng chiến lược
@@ -408,19 +408,19 @@ Lưu ý hệ quả từ hàng Aurora: với database quan hệ, "active-active" 
 
 ## Tổng hợp các bẫy thường gặp
 
-> ⚠️ **Bẫy 1:** Đảo RTO ↔ RPO. RPO = data loss, RTO = downtime.
+> **Bẫy 1:** Đảo RTO ↔ RPO. RPO = data loss, RTO = downtime.
 
-> ⚠️ **Bẫy 2:** Multi-AZ ≠ DR. Multi-AZ là HA trong *một* Region; không bảo vệ khi mất Region. DR cần cross-region.
+> **Bẫy 2:** Multi-AZ ≠ DR. Multi-AZ là HA trong *một* Region; không bảo vệ khi mất Region. DR cần cross-region.
 
-> ⚠️ **Bẫy 3:** Lẫn lộn Pilot Light vs Warm Standby — phân biệt ở chỗ compute có đang *chạy phục vụ được* hay không.
+> **Bẫy 3:** Lẫn lộn Pilot Light vs Warm Standby — phân biệt ở chỗ compute có đang *chạy phục vụ được* hay không.
 
-> ⚠️ **Bẫy 4:** Quên điều kiện của S3 CRR: phải bật **Versioning** hai bên; CRR không tự copy object cũ.
+> **Bẫy 4:** Quên điều kiện của S3 CRR: phải bật **Versioning** hai bên; CRR không tự copy object cũ.
 
-> ⚠️ **Bẫy 5:** Route 53 failover mà thiếu **health check** hoặc đặt **TTL cao** → failover không/chậm hoạt động.
+> **Bẫy 5:** Route 53 failover mà thiếu **health check** hoặc đặt **TTL cao** → failover không/chậm hoạt động.
 
-> ⚠️ **Bẫy 6:** RDS cross-region read replica RPO/RTO chậm hơn **Aurora Global Database**. Đề đòi RPO ~1s / RTO ~1 phút cho relational → chọn Aurora Global Database.
+> **Bẫy 6:** RDS cross-region read replica RPO/RTO chậm hơn **Aurora Global Database**. Đề đòi RPO ~1s / RTO ~1 phút cho relational → chọn Aurora Global Database.
 
-> ⚠️ **Bẫy 7:** Chọn giải pháp đắt hơn yêu cầu. Nếu RTO/RPO cho phép hàng giờ mà đề nhấn "cost-effective", Active-Active là **sai** vì lãng phí — chọn Backup & Restore.
+> **Bẫy 7:** Chọn giải pháp đắt hơn yêu cầu. Nếu RTO/RPO cho phép hàng giờ mà đề nhấn "cost-effective", Active-Active là **sai** vì lãng phí — chọn Backup & Restore.
 
 ## Tóm tắt nhanh trước khi thi
 

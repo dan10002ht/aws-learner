@@ -70,7 +70,7 @@ contract VaultVulnerable {
         uint256 amount = balances[msg.sender];
         require(amount > 0, "no balance");
 
-        // ❌ INTERACTION trước, EFFECT sau
+        // ✗ INTERACTION trước, EFFECT sau
         (bool ok, ) = msg.sender.call{value: amount}("");   // trao quyền cho attacker
         require(ok, "transfer failed");
 
@@ -130,7 +130,7 @@ Hai lớp phòng thủ độc lập:
 1. **Checks-Effects-Interactions (CEI)**: luôn cập nhật state **trước** khi gọi ra ngoài. Khi attacker re-enter, `balances[msg.sender]` đã = 0 → `require` chặn.
 2. **`nonReentrant`**: khoá mutex, mọi lời gọi lồng nhau vào hàm cùng contract đều revert. Dùng CEI làm gốc, guard làm lưới an toàn.
 
-> ⚠️ Có **cross-function** và **read-only reentrancy**: attacker re-enter vào một hàm *khác* (hoặc đọc getter) khi state đang dở dang. Vì thế CEI phải áp dụng nhất quán toàn contract, không chỉ trong đúng hàm bị gọi.
+> Có **cross-function** và **read-only reentrancy**: attacker re-enter vào một hàm *khác* (hoặc đọc getter) khi state đang dở dang. Vì thế CEI phải áp dụng nhất quán toàn contract, không chỉ trong đúng hàm bị gọi.
 
 ---
 
@@ -139,7 +139,7 @@ Hai lớp phòng thủ độc lập:
 Trước Solidity 0.8, số học **wrap quanh vòng** không báo lỗi: `uint8` đạt 255 + 1 → 0; `0 - 1` → 255.
 
 ```solidity
-// ❌ Solidity < 0.8.0 — không có kiểm tra tràn
+// ✗ Solidity < 0.8.0 — không có kiểm tra tràn
 pragma solidity ^0.7.6;
 contract TokenBad {
     mapping(address => uint256) public balanceOf;
@@ -157,7 +157,7 @@ Khi `v > balanceOf[msg.sender]`, phép trừ underflow ra ~2^256, attacker tự 
 **Bản vá:**
 
 ```solidity
-// ✅ Cách 1: Solidity >= 0.8.0 — tràn tự revert
+// ✓ Cách 1: Solidity >= 0.8.0 — tràn tự revert
 pragma solidity ^0.8.20;
 contract TokenGood {
     mapping(address => uint256) public balanceOf;
@@ -167,7 +167,7 @@ contract TokenGood {
     }
 }
 
-// ✅ Cách 2: pre-0.8 phải dùng SafeMath
+// ✓ Cách 2: pre-0.8 phải dùng SafeMath
 using SafeMath for uint256;
 balanceOf[msg.sender] = balanceOf[msg.sender].sub(v);  // .sub revert nếu âm
 ```
@@ -185,7 +185,7 @@ Mempool công khai: giao dịch của bạn **nằm chờ ai cũng thấy** trư
 - **Điển hình lỗ**: pattern `approve` + `transferFrom`, hoặc trò chơi "đoán đáp án nhận thưởng" mà đáp án gửi dạng plaintext.
 
 ```solidity
-// ❌ Lời giải gửi công khai — bot đọc mempool, front-run để nẫng thưởng
+// ✗ Lời giải gửi công khai — bot đọc mempool, front-run để nẫng thưởng
 function submitAnswer(string calldata answer) external {
     require(keccak256(bytes(answer)) == answerHash);
     payable(msg.sender).transfer(reward);
@@ -198,7 +198,7 @@ function submitAnswer(string calldata answer) external {
 - **Private orderflow / batch auction**: Flashbots Protect, CoW Swap — không đưa tx vào mempool công khai.
 
 ```solidity
-// ✅ Commit-reveal
+// ✓ Commit-reveal
 mapping(address => bytes32) public commit;
 function commitAnswer(bytes32 h) external { commit[msg.sender] = h; }   // giai đoạn commit
 function reveal(string calldata answer, uint256 nonce) external {
@@ -215,7 +215,7 @@ function reveal(string calldata answer, uint256 nonce) external {
 `delegatecall` chạy code của contract khác **trong ngữ cảnh storage của contract gọi** — dùng cho proxy/upgradeable. Nếu để attacker **tự chọn target hoặc calldata**, họ ghi đè storage của bạn (kể cả slot `owner`).
 
 ```solidity
-// ❌ Ai cũng có thể trỏ delegatecall vào contract độc hại
+// ✗ Ai cũng có thể trỏ delegatecall vào contract độc hại
 contract ProxyBad {
     address public owner;                     // slot 0
     function forward(address target, bytes calldata data) external {
@@ -234,7 +234,7 @@ Nạn nhân kinh điển: **Parity multisig 2017** — một `delegatecall` tớ
 - Canh **storage layout** giữa proxy và implementation phải khớp; UUPS đặt logic upgrade trong implementation với `onlyOwner`.
 
 ```solidity
-// ✅ Implementation cố định, chỉ admin đổi qua quy trình upgrade chuẩn
+// ✓ Implementation cố định, chỉ admin đổi qua quy trình upgrade chuẩn
 contract ProxyOK {
     address public immutable implementation;   // đặt lúc deploy, không ai đổi tuỳ ý
     constructor(address impl) { implementation = impl; }
@@ -257,7 +257,7 @@ contract ProxyOK {
 `tx.origin` là **EOA khởi phát** cả chuỗi lời gọi; `msg.sender` là **người gọi trực tiếp**. Dùng `tx.origin` để phân quyền cho phép một contract trung gian **mạo danh** nạn nhân.
 
 ```solidity
-// ❌ Kiểm tra bằng tx.origin
+// ✗ Kiểm tra bằng tx.origin
 contract WalletBad {
     address public owner;
     function transfer(address to, uint256 amt) external {
@@ -272,7 +272,7 @@ Kịch bản: owner bị lừa gọi một contract lạ `Evil.claimAirdrop()`. 
 **Bản vá:** luôn dùng `msg.sender` cho authorization.
 
 ```solidity
-// ✅
+// ✓
 require(msg.sender == owner, "not owner");
 ```
 
@@ -285,7 +285,7 @@ require(msg.sender == owner, "not owner");
 Ba cách gửi ETH / gọi ngoài: `transfer` (revert, cap 2300 gas), `send` (trả `bool`, cap 2300 gas), `call` (trả `bool`, forward hết gas). Với `send`/`call`/ low-level, **nếu không kiểm tra giá trị trả về**, thất bại bị nuốt im lặng → state đi sai.
 
 ```solidity
-// ❌ Bỏ qua bool trả về — nếu gửi thất bại, code vẫn coi như thành công
+// ✗ Bỏ qua bool trả về — nếu gửi thất bại, code vẫn coi như thành công
 function payout(address to, uint256 amt) external {
     balances[to] -= amt;
     to.call{value: amt}("");    // không check → mất tiền trên sổ nhưng chưa gửi được
@@ -297,11 +297,11 @@ Với ERC-20 còn tệ hơn: nhiều token (USDT) **không return bool**, hoặc
 **Bản vá:**
 
 ```solidity
-// ✅ ETH: bắt buộc check bool
+// ✓ ETH: bắt buộc check bool
 (bool ok, ) = to.call{value: amt}("");
 require(ok, "eth transfer failed");
 
-// ✅ ERC-20: dùng SafeERC20 để chuẩn hoá token "lệch chuẩn"
+// ✓ ERC-20: dùng SafeERC20 để chuẩn hoá token "lệch chuẩn"
 import {SafeERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 using SafeERC20 for IERC20;
 IERC20(token).safeTransfer(to, amt);   // tự revert khi thất bại
@@ -316,7 +316,7 @@ IERC20(token).safeTransfer(to, amt);   // tự revert khi thất bại
 Hàm đổi trạng thái nhạy cảm mà **quên modifier phân quyền** → ai cũng gọi được. Đây là lớp lỗi phổ biến & tốn tiền nhất theo thống kê audit (ví dụ hàm `initialize` của proxy bị người lạ gọi trước).
 
 ```solidity
-// ❌ mint và đổi owner không giới hạn ai gọi
+// ✗ mint và đổi owner không giới hạn ai gọi
 contract TokenNoAC {
     address public owner;
     function setOwner(address o) external { owner = o; }      // ai cũng chiếm được
@@ -330,7 +330,7 @@ contract TokenNoAC {
 **Bản vá:** dùng modifier / `Ownable` / `AccessControl` (RBAC) và bảo vệ cả `initialize`.
 
 ```solidity
-// ✅
+// ✓
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 contract TokenAC is Ownable {
     mapping(address => uint256) public balanceOf;
@@ -350,7 +350,7 @@ Với contract upgradeable, `initialize` phải có `initializer` modifier (OZ) 
 Nếu contract lấy giá từ **spot price của một AMM pool** (ví dụ `getReserves` của Uniswap V2), attacker dùng **flash loan** vay lượng khổng lồ, **bóp méo giá tức thời** trong cùng 1 transaction, rồi khai thác contract định giá sai (vay/thanh lý/mint).
 
 ```solidity
-// ❌ Định giá bằng spot reserve — bóp được bằng 1 flash-loan swap
+// ✗ Định giá bằng spot reserve — bóp được bằng 1 flash-loan swap
 function collateralValue(uint256 amount) public view returns (uint256) {
     (uint112 r0, uint112 r1, ) = pair.getReserves();
     return amount * r1 / r0;   // giá tức thời, thao túng trong 1 block
@@ -365,7 +365,7 @@ Hàng loạt vụ (bZx, Harvest, Cheese Bank...) mất chục triệu USD theo m
 - Không bao giờ tin **spot price một nguồn** cho quyết định tài chính.
 
 ```solidity
-// ✅ Chainlink có kiểm tra độ tươi
+// ✓ Chainlink có kiểm tra độ tươi
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 AggregatorV3Interface internal feed;
 

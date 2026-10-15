@@ -189,7 +189,7 @@ SCP mạnh nhờ khối `Condition`: chặn theo ngữ cảnh của request ch�
 
 **`aws:PrincipalOrgID` và `aws:ResourceOrgID`.** Hai key này so ID của Org. `aws:ResourceOrgID` dùng trong SCP để cấm principal của bạn ghi dữ liệu ra resource ngoài Org. `aws:PrincipalOrgID` chủ yếu dùng trong resource policy và RCP để chỉ cho principal trong Org vào. Cả hai là nền của data perimeter ở mục 5.2.
 
-> 📏 **Giới hạn kích thước.** Docs hiện tại: một SCP tối đa **10.240 ký tự**, và gắn trực tiếp được tối đa **10 SCP** lên mỗi root, OU hay account (SCP thừa kế từ tầng trên không tính vào con số này). Tài liệu ôn thi cũ ghi **5.120 ký tự và 5 SCP** — gặp con số nào trong đề thì ý cần nhớ vẫn là một: SCP có trần kích thước, nên tách theo chủ đề (một SCP cho region, một cho bảo vệ log…) và gắn ở OU cao thay vì lặp lại ở từng account.
+> **Giới hạn kích thước.** Docs hiện tại: một SCP tối đa **10.240 ký tự**, và gắn trực tiếp được tối đa **10 SCP** lên mỗi root, OU hay account (SCP thừa kế từ tầng trên không tính vào con số này). Tài liệu ôn thi cũ ghi **5.120 ký tự và 5 SCP** — gặp con số nào trong đề thì ý cần nhớ vẫn là một: SCP có trần kích thước, nên tách theo chủ đề (một SCP cho region, một cho bảo vệ log…) và gắn ở OU cao thay vì lặp lại ở từng account.
 
 ---
 
@@ -275,7 +275,7 @@ SCP và RCP là hai loại policy *phân quyền* (authorization): chúng quyế
 
 Khác SCP ở đâu? SCP chặn **từng lời gọi API**, nên dịch vụ ra API mới là bạn phải viết thêm action vào SCP. Declarative policy được thi hành **ngay trong dịch vụ**, không phụ thuộc API nào được gọi, nên vẫn đúng khi có API mới — và nó áp lên cả service-linked role, thứ SCP bỏ qua (mục 4.3). Bạn còn đặt được thông báo lỗi riêng để người bị chặn biết phải hỏi ai.
 
-> 🪤 Bẫy thi: **tag policy không bắt buộc gắn tag.** Nó chỉ kiểm tra tag *khi tag có mặt*; tạo resource không tag nào vẫn qua. Muốn *không tag thì không tạo được* phải dùng **SCP `Deny`** với condition key `aws:RequestTag` (giá trị tag gửi kèm request tạo resource):
+> Bẫy thi: **tag policy không bắt buộc gắn tag.** Nó chỉ kiểm tra tag *khi tag có mặt*; tạo resource không tag nào vẫn qua. Muốn *không tag thì không tạo được* phải dùng **SCP `Deny`** với condition key `aws:RequestTag` (giá trị tag gửi kèm request tạo resource):
 >
 > ```json
 > {
@@ -319,7 +319,7 @@ Ba loại khác nhau vì cơ chế bên dưới khác nhau. **Preventive** dùng
 
 Mỗi control có một mức khuyến nghị: **Mandatory** (bật sẵn, không tắt được — ví dụ cấm sửa bucket log ở Log Archive), **Strongly recommended**, **Elective** (tuỳ chọn).
 
-> 🪤 Bẫy kinh điển là đọc đúng động từ trong đề. "Cần **phát hiện** / báo cáo resource vi phạm" → **detective** (Config rule). "Cần **ngăn** không cho làm" → **preventive** (SCP). "Cần chặn resource sai chuẩn **trước khi được provision bằng CloudFormation**" → **proactive** (hook).
+> Bẫy kinh điển là đọc đúng động từ trong đề. "Cần **phát hiện** / báo cáo resource vi phạm" → **detective** (Config rule). "Cần **ngăn** không cho làm" → **preventive** (SCP). "Cần chặn resource sai chuẩn **trước khi được provision bằng CloudFormation**" → **proactive** (hook).
 
 ### 6.3 Account Factory
 

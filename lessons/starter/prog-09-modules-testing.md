@@ -12,7 +12,7 @@ Một file 2000 dòng có vài vấn đề rất thực tế:
 
 Tách thành **module** (mỗi file lo một việc) giúp code **dễ đọc, dễ tái sử dụng, dễ test**. Nguyên tắc vàng: *một module nên có một trách nhiệm rõ ràng*. File `payment` lo thanh toán, file `email` lo gửi mail — đừng trộn.
 
-> 💡 Ghi nhớ: "Module" chỉ là một file (hoặc thư mục) chứa code có liên quan. "Package" là một nhóm module được đóng gói để chia sẻ. Tách nhỏ không phải để màu mè, mà để **giới hạn vùng ảnh hưởng khi thay đổi**.
+> Ghi nhớ: "Module" chỉ là một file (hoặc thư mục) chứa code có liên quan. "Package" là một nhóm module được đóng gói để chia sẻ. Tách nhỏ không phải để màu mè, mà để **giới hạn vùng ảnh hưởng khi thay đổi**.
 
 ## Import / Export giữa các file
 
@@ -159,7 +159,7 @@ Hình dung quan hệ giữa hai file: `mathutils` **export** ra `add` và `PI`; 
 | Java | `public` trên class/method | Cùng package thì tự thấy, khác thì `import` |
 | Go | Tên **viết hoa** = export ra ngoài | `import "đường-dẫn/mathutils"` rồi gọi `mathutils.Add` |
 
-> ⚠️ Lỗi người mới hay gặp: Trong Go, đặt tên hàm `add` (chữ thường) rồi cố gọi từ package khác sẽ **không thấy**. Quy ước `Add` viết hoa mới là export. Còn trong JS ESM, quên `export` thì `import` sẽ ra `undefined`, không báo lỗi rõ ràng — rất khó chịu.
+> Lỗi người mới hay gặp: Trong Go, đặt tên hàm `add` (chữ thường) rồi cố gọi từ package khác sẽ **không thấy**. Quy ước `Add` viết hoa mới là export. Còn trong JS ESM, quên `export` thì `import` sẽ ra `undefined`, không báo lỗi rõ ràng — rất khó chịu.
 
 ## Package manager & dependency
 
@@ -251,7 +251,7 @@ Mỗi package có **dependency** riêng — nó lại phụ thuộc các package
 
 **Phiên bản (version)** rất quan trọng. Một dòng như `dayjs@^1.11.0` nghĩa là "chấp nhận bản 1.11.0 trở lên nhưng dưới 2.0". Ghim phiên bản giúp dự án của bạn chạy giống nhau trên mọi máy.
 
-> 💡 Ghi nhớ: Luôn commit file khai báo phụ thuộc (`requirements.txt`, `package.json`, `go.mod`) vào git. Người khác clone về chỉ cần một lệnh là cài đủ đồ — không phải đoán xem cần thư viện gì.
+> Ghi nhớ: Luôn commit file khai báo phụ thuộc (`requirements.txt`, `package.json`, `go.mod`) vào git. Người khác clone về chỉ cần một lệnh là cài đủ đồ — không phải đoán xem cần thư viện gì.
 
 ## Virtual env & node_modules — cách ly phụ thuộc
 
@@ -286,7 +286,7 @@ go mod tidy
 vcpkg install
 ```
 
-> ⚠️ Lỗi người mới hay gặp: **Đừng bao giờ commit `node_modules/` hay thư mục `venv/`** lên git. Chúng nặng hàng trăm MB và tái tạo được từ file khai báo. Thêm chúng vào `.gitignore`.
+> Lỗi người mới hay gặp: **Đừng bao giờ commit `node_modules/` hay thư mục `venv/`** lên git. Chúng nặng hàng trăm MB và tái tạo được từ file khai báo. Thêm chúng vào `.gitignore`.
 
 ## Viết unit test — vì sao và như thế nào
 
@@ -493,9 +493,9 @@ TEST(Order, TotalWithTax) {
 
 Tách rõ 3 khối giúp người đọc hiểu ngay test đang kiểm tra điều gì, và khi test đỏ bạn biết ngay sai ở bước nào.
 
-> 💡 Ghi nhớ: Một test tốt là **độc lập** (không phụ thuộc test khác), **lặp lại được** (chạy 100 lần đều ra kết quả như nhau), và **kiểm tra đúng một thứ**. Tên test nên mô tả hành vi: `test_add_negative`, không phải `test1`.
+> Ghi nhớ: Một test tốt là **độc lập** (không phụ thuộc test khác), **lặp lại được** (chạy 100 lần đều ra kết quả như nhau), và **kiểm tra đúng một thứ**. Tên test nên mô tả hành vi: `test_add_negative`, không phải `test1`.
 
-> ⚠️ Lỗi người mới hay gặp: Viết test rồi cho nó luôn xanh bằng cách... so sánh kết quả với chính output của hàm (`assert add(2,3) == add(2,3)`). Như vậy test không kiểm tra gì cả. Luôn so với **giá trị mong đợi tự tính tay** (`== 5`).
+> Lỗi người mới hay gặp: Viết test rồi cho nó luôn xanh bằng cách... so sánh kết quả với chính output của hàm (`assert add(2,3) == add(2,3)`). Như vậy test không kiểm tra gì cả. Luôn so với **giá trị mong đợi tự tính tay** (`== 5`).
 
 ## Tóm tắt
 

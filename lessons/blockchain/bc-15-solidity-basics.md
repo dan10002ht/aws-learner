@@ -133,12 +133,12 @@ contract PointerDemo {
 
     function setViaStorage() external {
         Point storage ref = p;    // ref là CON TRỎ tới p
-        ref.x = 42;               // ✅ ghi thẳng vào state → p.x == 42
+        ref.x = 42;               // ✓ ghi thẳng vào state → p.x == 42
     }
 
     function setViaMemory() external {
         Point memory tmp = p;     // tmp là BẢN SAO của p
-        tmp.x = 99;               // ✏️ chỉ sửa bản sao → p KHÔNG đổi
+        tmp.x = 99;               // chỉ sửa bản sao → p KHÔNG đổi
     }
 }
 ```
@@ -149,14 +149,14 @@ Sau khi gọi `setViaStorage`, `p.x = 42`. Nhưng gọi `setViaMemory` thì `p.x
 
 | Visibility | Gọi từ bên ngoài | Gọi nội bộ | Contract con kế thừa | Ghi chú |
 |------------|:----------------:|:----------:|:--------------------:|---------|
-| `public` | ✅ | ✅ | ✅ | State var mặc định sinh getter |
-| `external` | ✅ | ❌ (phải `this.f()`) | ❌ | **Rẻ gas hơn** cho input lớn |
-| `internal` | ❌ | ✅ | ✅ | Mặc định cho state var |
-| `private` | ❌ | ✅ | ❌ | Chỉ trong đúng contract này |
+| `public` | ✓ | ✓ | ✓ | State var mặc định sinh getter |
+| `external` | ✓ | ✗ (phải `this.f()`) | ✗ | **Rẻ gas hơn** cho input lớn |
+| `internal` | ✗ | ✓ | ✓ | Mặc định cho state var |
+| `private` | ✗ | ✓ | ✗ | Chỉ trong đúng contract này |
 
 Vì sao `external` rẻ hơn `public` cho tham số lớn? Hàm `public` phải **copy tham số từ calldata sang memory** (để dùng được cả khi gọi nội bộ), còn `external` **đọc thẳng từ calldata**. Với một mảng lớn, khác biệt gas là đáng kể.
 
-> ⚠️ **`private`/`internal` KHÔNG phải bí mật.** Chúng chỉ chặn truy cập ở **tầng ngôn ngữ**. Mọi dữ liệu storage đều **đọc được công khai** trên chain (qua `eth_getStorageAt`). Đừng bao giờ lưu bí mật thật (mật khẩu, khóa) on-chain.
+> **`private`/`internal` KHÔNG phải bí mật.** Chúng chỉ chặn truy cập ở **tầng ngôn ngữ**. Mọi dữ liệu storage đều **đọc được công khai** trên chain (qua `eth_getStorageAt`). Đừng bao giờ lưu bí mật thật (mật khẩu, khóa) on-chain.
 
 ### 2.6 Modifier, constructor, require
 
@@ -291,7 +291,7 @@ contract MiniTokenTest is Test {
 | Biến tạm để tính toán, ghép string | **memory** |
 | Tham số reference của hàm `external`, chỉ đọc | **calldata** |
 | Trả về mảng/struct dựng trong hàm | **memory** |
-| Muốn lưu bí mật | ❌ Đừng — mọi thứ on-chain đều công khai |
+| Muốn lưu bí mật | ✗ Đừng — mọi thứ on-chain đều công khai |
 
 ---
 

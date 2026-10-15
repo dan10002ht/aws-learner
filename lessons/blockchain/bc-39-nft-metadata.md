@@ -231,7 +231,7 @@ contract VoidCollection is ERC721, ERC2981, Ownable {
 
 Cách marketplace dùng: khi khớp lệnh bán giá `salePrice`, nó gọi `royaltyInfo(id, salePrice)` để biết trả bao nhiêu cho ai, rồi tách tiền.
 
-⚠️ **Sự thật quan trọng — royalty KHÔNG bắt buộc ở tầng blockchain.** EIP-2981 chỉ **cung cấp thông tin**; nó **không ép** ai phải trả. Hàm `transferFrom` của ERC-721 vẫn chuyển NFT mà chẳng đoái hoài royalty. Việc trả royalty phụ thuộc **thiện chí của marketplace**. Giai đoạn 2022–2023, nhiều sàn (Blur, các sàn "zero-fee") **bỏ qua royalty** để cạnh tranh, khiến thu nhập nghệ sĩ sụp. Một số dự án phản ứng bằng **transfer hook / allowlist** (chặn chuyển NFT tới sàn không trả royalty), nhưng đây là đánh đổi với tính "tự do chuyển nhượng" của NFT. Hãy hiểu rõ: **EIP-2981 = tiêu chuẩn khai báo, không phải cơ chế cưỡng chế.**
+**Sự thật quan trọng — royalty KHÔNG bắt buộc ở tầng blockchain.** EIP-2981 chỉ **cung cấp thông tin**; nó **không ép** ai phải trả. Hàm `transferFrom` của ERC-721 vẫn chuyển NFT mà chẳng đoái hoài royalty. Việc trả royalty phụ thuộc **thiện chí của marketplace**. Giai đoạn 2022–2023, nhiều sàn (Blur, các sàn "zero-fee") **bỏ qua royalty** để cạnh tranh, khiến thu nhập nghệ sĩ sụp. Một số dự án phản ứng bằng **transfer hook / allowlist** (chặn chuyển NFT tới sàn không trả royalty), nhưng đây là đánh đổi với tính "tự do chuyển nhượng" của NFT. Hãy hiểu rõ: **EIP-2981 = tiêu chuẩn khai báo, không phải cơ chế cưỡng chế.**
 
 ### 2.8 NFT ngoài PFP — nơi giá trị thật nằm
 

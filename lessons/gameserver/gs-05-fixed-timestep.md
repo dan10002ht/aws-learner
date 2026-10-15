@@ -154,11 +154,11 @@ Quay lại cú nhảy. Ở tần số thấp mỗi bước "rơi dư" một chú
 
 | Tần số | Đỉnh nhảy | Mép vực 2,45 m |
 |---|---|---|
-| 30 Hz | 2,3847 m | ✗ không qua |
-| 60 Hz | 2,4418 m | ✗ không qua |
-| 120 Hz | 2,4709 m | ✓ qua |
-| 144 Hz | 2,4757 m | ✓ qua |
-| 240 Hz | 2,4854 m | ✓ qua |
+| 30 Hz | 2,3847 m | ✗  không qua |
+| 60 Hz | 2,4418 m | ✗  không qua |
+| 120 Hz | 2,4709 m | ✓  qua |
+| 144 Hz | 2,4757 m | ✓  qua |
+| 240 Hz | 2,4854 m | ✓  qua |
 | *giải tích (v0²/2g)* | *2,5000 m* | *✓* |
 
 <svg viewBox="0 0 700 190" role="img" aria-labelledby="gs5-b-t gs5-b-d" style="width:100%;height:auto">

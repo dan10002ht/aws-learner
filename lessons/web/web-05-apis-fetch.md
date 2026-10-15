@@ -24,7 +24,7 @@ https://jsonplaceholder.typicode.com/users/1
 
 Trình duyệt sẽ hiện ra một đống chữ có dấu ngoặc nhọn `{ }`. Đó chính là **dữ liệu** mà API trả về. Định dạng của nó gọi là JSON.
 
-> 💡 Ghi nhớ: Gọi API = gửi yêu cầu tới một URL → nhận về dữ liệu. Bạn không cần biết server làm gì bên trong, chỉ cần biết gọi và đọc kết quả.
+> Ghi nhớ: Gọi API = gửi yêu cầu tới một URL → nhận về dữ liệu. Bạn không cần biết server làm gì bên trong, chỉ cần biết gọi và đọc kết quả.
 
 ## JSON — ngôn ngữ chung để trao đổi dữ liệu
 
@@ -61,7 +61,7 @@ Vì JSON chỉ là **văn bản (text)**, máy tính nào cũng đọc được 
 
 Khi nhận text JSON, JavaScript cần "dịch" nó thành object thật để dùng được. Việc dịch đó do hàm `response.json()` lo (xem bên dưới).
 
-> ⚠️ Lỗi người mới hay gặp: Nhầm JSON với object JS. JSON là **text** (chuỗi ký tự). Bạn không thể viết `jsonText.name` để lấy tên — phải "parse" (chuyển) nó thành object trước.
+> Lỗi người mới hay gặp: Nhầm JSON với object JS. JSON là **text** (chuỗi ký tự). Bạn không thể viết `jsonText.name` để lấy tên — phải "parse" (chuyển) nó thành object trước.
 
 ## fetch() — gửi yêu cầu lên server
 
@@ -135,7 +135,7 @@ layNguoiDung();
   <text x="140" y="256" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">→ có data, dùng được</text>
 </svg>
 
-> 💡 Ghi nhớ: `await` chỉ dùng được **bên trong** hàm có `async`. Có hai chỗ cần `await` khi gọi API: một cho `fetch()` (chờ server trả lời), một cho `.json()` (chờ đọc xong dữ liệu).
+> Ghi nhớ: `await` chỉ dùng được **bên trong** hàm có `async`. Có hai chỗ cần `await` khi gọi API: một cho `fetch()` (chờ server trả lời), một cho `.json()` (chờ đọc xong dữ liệu).
 
 ## Đọc response: status và dữ liệu
 
@@ -246,9 +246,9 @@ async function taiDuLieuAnToan() {
 }
 ```
 
-> ⚠️ Lỗi người mới hay gặp: Tưởng `fetch()` tự báo lỗi khi gặp 404/500. **KHÔNG.** Bạn phải tự `if (!response.ok) throw new Error(...)`, nếu không code sẽ chạy tiếp với dữ liệu rỗng/sai và sinh ra lỗi khó hiểu ở dòng khác.
+> Lỗi người mới hay gặp: Tưởng `fetch()` tự báo lỗi khi gặp 404/500. **KHÔNG.** Bạn phải tự `if (!response.ok) throw new Error(...)`, nếu không code sẽ chạy tiếp với dữ liệu rỗng/sai và sinh ra lỗi khó hiểu ở dòng khác.
 
-> 💡 Ghi nhớ: Mọi lần gọi API thật đều nên có đủ 3 thứ: **loading state** (báo đang chờ), **kiểm tra status** (`response.ok`), và **try/catch** (bắt lỗi mạng). Thiếu một cái là trải nghiệm người dùng sẽ tệ khi có sự cố.
+> Ghi nhớ: Mọi lần gọi API thật đều nên có đủ 3 thứ: **loading state** (báo đang chờ), **kiểm tra status** (`response.ok`), và **try/catch** (bắt lỗi mạng). Thiếu một cái là trải nghiệm người dùng sẽ tệ khi có sự cố.
 
 ## Loading state — đừng để người dùng "mù"
 
@@ -353,7 +353,7 @@ Analogy: bạn (trang web) muốn vào nhà hàng xóm (server khác) lấy đ�
 - Các public API tử tế (như `jsonplaceholder`) đã bật CORS sẵn, nên ví dụ trong bài chạy ngon.
 - Nếu gặp CORS với API của người khác: hoặc dùng API có hỗ trợ CORS, hoặc cần một **server trung gian (proxy)** của riêng bạn gọi hộ — đây là chủ đề nâng cao hơn.
 
-> ⚠️ Lỗi người mới hay gặp: Thấy lỗi CORS rồi loay hoay sửa JavaScript hàng giờ. Vô ích — CORS do server bên kia kiểm soát. Hãy kiểm tra: API này có công khai và hỗ trợ CORS không? Nếu không, đổi API hoặc dùng proxy.
+> Lỗi người mới hay gặp: Thấy lỗi CORS rồi loay hoay sửa JavaScript hàng giờ. Vô ích — CORS do server bên kia kiểm soát. Hãy kiểm tra: API này có công khai và hỗ trợ CORS không? Nếu không, đổi API hoặc dùng proxy.
 
 ## Tóm tắt
 

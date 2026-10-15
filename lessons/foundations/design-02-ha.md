@@ -16,7 +16,7 @@ Trong hệ phân tán, câu nói kinh điển của Werner Vogels (CTO của Ama
 
 Hệ thống High Availability là hệ thống được **thiết kế để chịu lỗi** (design for failure), chứ không phải hệ thống "may mắn chưa hỏng".
 
-> 💡 **Ghi nhớ:** High Availability không có nghĩa là "không bao giờ có lỗi". Nó có nghĩa là "lỗi xảy ra nhưng dịch vụ vẫn tiếp tục" — vì ta đã chuẩn bị sẵn phương án dự phòng.
+> **Ghi nhớ:** High Availability không có nghĩa là "không bao giờ có lỗi". Nó có nghĩa là "lỗi xảy ra nhưng dịch vụ vẫn tiếp tục" — vì ta đã chuẩn bị sẵn phương án dự phòng.
 
 ## 2. SPOF — Single Point of Failure
 
@@ -60,7 +60,7 @@ Những SPOF hay bị bỏ sót:
 | Con người | Chỉ một người duy nhất biết cách deploy ("bus factor = 1") |
 | Vị trí địa lý | Tất cả server cùng một toà nhà — cháy là mất hết |
 
-> 💡 **Ghi nhớ:** SPOF không chỉ là máy móc. DNS, load balancer, nhà cung cấp bên thứ ba, thậm chí "anh A là người duy nhất biết mật khẩu" — đều là SPOF. Cách tìm: lần lượt giả định từng thành phần biến mất và xem hệ thống còn sống không.
+> **Ghi nhớ:** SPOF không chỉ là máy móc. DNS, load balancer, nhà cung cấp bên thứ ba, thậm chí "anh A là người duy nhất biết mật khẩu" — đều là SPOF. Cách tìm: lần lượt giả định từng thành phần biến mất và xem hệ thống còn sống không.
 
 ## 3. Redundancy — Dự phòng
 
@@ -88,7 +88,7 @@ Một bản **active** phục vụ toàn bộ traffic; bản **passive** (standb
     <text x="36" y="170" font-size="11" fill="currentColor">Users</text>
     <line x1="78" y1="166" x2="118" y2="166" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3 3" marker-end="url(#ah-a)"/>
     <rect x="122" y="150" width="120" height="34" rx="8" fill="#ef4444" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="182" y="166" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.6">Server A ✖</text>
+    <text x="182" y="166" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.6">Server A ✗</text>
     <text x="182" y="179" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.55">chết</text>
     <rect x="122" y="194" width="120" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="182" y="210" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Server B</text>
@@ -137,7 +137,7 @@ Analogy: quán phở có **hai đầu bếp cùng nấu** mỗi ngày. Một ng�
 
 Lưu ý quan trọng: với **database**, active-active khó hơn nhiều vì hai bản cùng **ghi** dữ liệu có thể xung đột. Vì vậy database thường dùng active-passive (một primary ghi, một standby đồng bộ theo), còn tầng web stateless thì dùng active-active thoải mái.
 
-> 💡 **Ghi nhớ:** Active-passive = lốp dự phòng (chờ, có độ trễ khi thay). Active-active = hai đầu bếp cùng nấu (chia tải, chuyển đổi tức thì, nhưng phức tạp hơn — nhất là khi có ghi dữ liệu).
+> **Ghi nhớ:** Active-passive = lốp dự phòng (chờ, có độ trễ khi thay). Active-active = hai đầu bếp cùng nấu (chia tải, chuyển đổi tức thì, nhưng phức tạp hơn — nhất là khi có ghi dữ liệu).
 
 ## 4. Health Check & Failover — phát hiện và chuyển hướng
 
@@ -181,7 +181,7 @@ Vài khái niệm thực tế:
 
 Thời gian từ bước [1] đến [5] gọi là **thời gian failover** — và đây chính là lý do "có dự phòng" không đồng nghĩa "không downtime": phát hiện lỗi và chuyển giao đều tốn thời gian.
 
-> 💡 **Ghi nhớ:** Redundancy là *có* phương án B; health check là *phát hiện* phương án A đã chết; failover là *chuyển sang* phương án B. Thiếu một trong ba thì HA không hoạt động — có lốp dự phòng nhưng không biết lốp thủng thì vẫn nằm đường.
+> **Ghi nhớ:** Redundancy là *có* phương án B; health check là *phát hiện* phương án A đã chết; failover là *chuyển sang* phương án B. Thiếu một trong ba thì HA không hoạt động — có lốp dự phòng nhưng không biết lốp thủng thì vẫn nằm đường.
 
 ## 5. "Nines of availability" — đo độ sẵn sàng bằng số 9
 
@@ -217,7 +217,7 @@ Cách nhớ nhanh con số kinh điển: **99.9% ≈ 43–44 phút downtime mỗ
 
 Chuỗi nối tiếp càng dài, độ sẵn sàng tổng càng giảm. Ngược lại, đặt các bản dự phòng **song song** thì availability tăng vọt: hai server 99% chạy song song (chỉ chết khi cả hai cùng chết) đạt `1 − 0.01 × 0.01 = 99.99%`. Đây chính là lý do toán học khiến redundancy hiệu quả.
 
-> 💡 **Ghi nhớ:** 99.9% = ~43.8 phút downtime/tháng. Thành phần nối tiếp làm availability *nhân nhau* (giảm xuống); thành phần song song dự phòng làm xác suất chết *nhân nhau* (availability tăng lên). Muốn thêm một số 9, chi phí và độ phức tạp tăng theo cấp số nhân.
+> **Ghi nhớ:** 99.9% = ~43.8 phút downtime/tháng. Thành phần nối tiếp làm availability *nhân nhau* (giảm xuống); thành phần song song dự phòng làm xác suất chết *nhân nhau* (availability tăng lên). Muốn thêm một số 9, chi phí và độ phức tạp tăng theo cấp số nhân.
 
 ## 6. RTO vs RPO — hai câu hỏi khi thảm hoạ xảy ra
 
@@ -275,7 +275,7 @@ Analogy: bạn đang viết luận văn và máy tính cháy.
 
 Quy tắc kinh doanh: RTO/RPO càng nhỏ càng đắt. Backup mỗi đêm (RPO = 24 giờ) rất rẻ; đồng bộ từng giao dịch (RPO ≈ 0) đòi hỏi hạ tầng đắt hơn nhiều. Việc của kiến trúc sư là hỏi nghiệp vụ: *"Mất 1 giờ dữ liệu thì thiệt hại bao nhiêu tiền?"* rồi chọn mức đầu tư tương xứng.
 
-> 💡 **Ghi nhớ:** RTO = thời gian chết (bao lâu chạy lại). RPO = lượng dữ liệu mất (save gần nhất cách bao lâu). Mẹo nhớ: **T**ime = thời gian phục hồi, **P**oint = điểm dữ liệu cuối cùng còn giữ được.
+> **Ghi nhớ:** RTO = thời gian chết (bao lâu chạy lại). RPO = lượng dữ liệu mất (save gần nhất cách bao lâu). Mẹo nhớ: **T**ime = thời gian phục hồi, **P**oint = điểm dữ liệu cuối cùng còn giữ được.
 
 ## 7. Graceful Degradation — xuống cấp có kiểm soát
 
@@ -287,8 +287,8 @@ Ví dụ với một trang thương mại điện tử khi service gợi ý sả
 
 | Cách xử lý | Kết quả |
 |---|---|
-| ❌ Không degradation | Trang chủ chờ recommendation → timeout → **cả trang lỗi 500**, không ai mua được hàng |
-| ✅ Graceful degradation | Trang chủ hiện danh sách sản phẩm phổ biến (cache sẵn) thay cho gợi ý cá nhân hoá → **vẫn mua hàng bình thường** |
+| ✗ Không degradation | Trang chủ chờ recommendation → timeout → **cả trang lỗi 500**, không ai mua được hàng |
+| ✓ Graceful degradation | Trang chủ hiện danh sách sản phẩm phổ biến (cache sẵn) thay cho gợi ý cá nhân hoá → **vẫn mua hàng bình thường** |
 
 Các kỹ thuật phổ biến:
 
@@ -297,7 +297,7 @@ Các kỹ thuật phổ biến:
 - **Timeout + circuit breaker**: không chờ mãi một service đang hấp hối — cắt sớm và dùng fallback, tránh việc một service chậm kéo sập cả chuỗi.
 - **Phân loại tính năng từ trước**: cái gì là cốt lõi (thanh toán, đăng nhập), cái gì hy sinh được (gợi ý, ảnh chất lượng cao, thống kê) — quyết định này phải làm lúc thiết kế, không phải lúc đang cháy nhà.
 
-> 💡 **Ghi nhớ:** Câu hỏi thiết kế quan trọng: *"Khi service X chết, người dùng nên thấy gì?"* Nếu câu trả lời là "trang lỗi trắng" thì bạn chưa có graceful degradation. Hệ thống tốt thua từng phần, không thua cả ván.
+> **Ghi nhớ:** Câu hỏi thiết kế quan trọng: *"Khi service X chết, người dùng nên thấy gì?"* Nếu câu trả lời là "trang lỗi trắng" thì bạn chưa có graceful degradation. Hệ thống tốt thua từng phần, không thua cả ván.
 
 ## 8. Blast Radius & Isolation — giới hạn bán kính thiệt hại
 
@@ -353,7 +353,7 @@ Các hình thức isolation thường gặp:
 
 Lưu ý sự đánh đổi: isolation và tận dụng tài nguyên kéo nhau ngược chiều. Gộp chung tất cả vào một cụm thì rẻ và dễ quản lý, nhưng blast radius là 100%. Thiết kế HA là nghệ thuật chọn điểm cân bằng.
 
-> 💡 **Ghi nhớ:** Trước mỗi quyết định kiến trúc hay mỗi lần thay đổi hệ thống, hãy hỏi: *"Nếu cái này hỏng/sai, bao nhiêu phần trăm người dùng bị ảnh hưởng?"* Đó chính là blast radius. Mục tiêu không chỉ là giảm xác suất lỗi, mà là giảm **phạm vi** của lỗi.
+> **Ghi nhớ:** Trước mỗi quyết định kiến trúc hay mỗi lần thay đổi hệ thống, hãy hỏi: *"Nếu cái này hỏng/sai, bao nhiêu phần trăm người dùng bị ảnh hưởng?"* Đó chính là blast radius. Mục tiêu không chỉ là giảm xác suất lỗi, mà là giảm **phạm vi** của lỗi.
 
 ## 9. Ghép tất cả lại: một kiến trúc HA mẫu
 

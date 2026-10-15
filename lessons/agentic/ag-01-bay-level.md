@@ -329,31 +329,31 @@ Quy ước của bài này (không phải chuẩn công nghiệp): **level hiệ
 
 ## 5. Bẫy thường gặp
 
-### 🪤 Bẫy 1: Lấy token làm KPI
+### Bẫy 1: Lấy token làm KPI
 
 - **Triệu chứng:** team đặt mục tiêu "mỗi người X triệu token/ngày", số token tăng, số lỗi lên production không giảm.
 - **Nguyên nhân gốc:** token đo **lượng request × kích thước context** (§3.4), không đo việc đã bỏ. Khi một con số thành mục tiêu, người ta tối ưu con số — một session mở cả ngày với `/loop` đạt KPI mà không ra commit nào qua gate.
 - **Chặn bằng cơ chế:** báo cáo token **luôn đi cặp** với số commit đã qua gate trong cùng khoảng thời gian (lệnh ở 4.3). Token tăng mà commit-qua-gate không tăng là tín hiệu đốt, không phải tín hiệu lên level.
 
-### 🪤 Bẫy 2: Nhảy lên loop khi chưa có gate
+### Bẫy 2: Nhảy lên loop khi chưa có gate
 
 - **Triệu chứng:** dựng xong loop, một đêm ra hàng chục commit, sáng ra phải revert gần hết.
 - **Nguyên nhân gốc:** loop bỏ mắt người; không có gate thì không còn gì phát hiện sai (§3.3). Tốc độ ra lỗi bằng tốc độ ra commit.
 - **Chặn bằng cơ chế:** điều kiện để một task được đưa vào loop là nó có **một lệnh gate ghi sẵn trong brief** và lệnh đó đã từng chạy đỏ trên code sai. Không có lệnh → task không vào loop. Cách viết lệnh như vậy ở [[ag-10-done-criteria-va-gate]]; vì sao "đã từng đỏ" quan trọng ở [[ag-11-gate-xanh-gia]].
 
-### 🪤 Bẫy 3: Chấm level theo công cụ đã cài
+### Bẫy 3: Chấm level theo công cụ đã cài
 
 - **Triệu chứng:** "mình cài 5 MCP server và 10 skill, chắc level 3–4 rồi", nhưng vẫn đọc từng diff trước khi commit.
 - **Nguyên nhân gốc:** level đo bằng **việc đã bỏ**, không bằng công cụ có sẵn. Một skill không bao giờ được gọi, hay một hook không chặn gì, không thay được việc nào của bạn.
 - **Chặn bằng cơ chế:** audit theo task (4.5), không theo cấu hình. Mỗi công cụ trong cấu hình phải trỏ được tới ít nhất một task trong tuần mà nó đã thay bạn làm; không trỏ được thì nó không tính.
 
-### 🪤 Bẫy 4: Nghĩ level cao là hết việc thủ công
+### Bẫy 4: Nghĩ level cao là hết việc thủ công
 
 - **Triệu chứng:** sau khi loop chạy ổn, không ai mở sản phẩm ra dùng thử nữa; lỗi kiểu "nhìn là thấy" lọt tới người dùng.
 - **Nguyên nhân gốc:** cơ chế chỉ bắt được thứ nó được thiết kế để bắt. Case ở §2: 324 ảnh và ~2.000 test case vẫn để lọt một lỗi kích thước modal, và người phải tự tìm, tự sửa. Một ví dụ khác cùng kiểu (kinh nghiệm thực tế từ second brain của tác giả): kho ghi chú có job tự sinh note mỗi ngày nên phía **ghi** rất mạnh, nhưng khi đo phía **đọc** thì chỉ có 13 lượt tra từ trước tới lúc đo — level 7 về mặt cơ chế, mà gần như không ai dùng tới.
 - **Chặn bằng cơ chế:** mỗi cơ chế tự động phải có **một số đo phía dùng** (lỗi lọt tới người dùng, số lượt tra, số kết quả được trích dẫn) và một lượt kiểm tay định kỳ có lịch. Cách đo phía dùng ở [[ag-22-second-brain]]; vì sao so ảnh vẫn sót ở [[ag-13-kiem-ui-bang-anh]].
 
-### 🪤 Bẫy 5: Áp một level cho mọi việc
+### Bẫy 5: Áp một level cho mọi việc
 
 - **Triệu chứng:** đã quen loop, đưa cả việc chạy migration dữ liệu production vào loop; một lần chạy sai không hoàn tác được.
 - **Nguyên nhân gốc:** level là **cách làm cho từng loại việc**, không phải danh hiệu của người. Việc đọc, hoàn tác được, lặp nhiều lần hợp với level cao; việc ghi vào hệ thống thật, không hoàn tác được thì cái giá của một lần sai lớn hơn mọi thời gian tiết kiệm.

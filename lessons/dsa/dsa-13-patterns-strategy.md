@@ -4,7 +4,7 @@ Bạn đã đi qua array, hash, tree, sort, heap, backtracking, graph và DP. Nh
 
 Bài này là bài **xương sống (capstone)** của cả khoá. Nó không dạy thuật toán mới — nó dạy cách *kết nối* mọi thứ bạn đã học thành một bộ khung quyết định, một quy trình phỏng vấn 7 bước, và một lộ trình luyện tập theo pattern (không phải theo số lượng). Đây là phần mà ứng viên giỏi và ứng viên trượt khác nhau rõ nhất — không phải vì ai biết nhiều thuật toán hơn, mà vì ai có **hệ thống** rõ ràng hơn.
 
-> 💡 Ghi nhớ: Mục tiêu của bài này không phải "biết thêm". Mục tiêu là **phản xạ**: đọc đề → trong 60 giây gắn được vào 1-2 pattern → biết ngay độ phức tạp mục tiêu và cấu trúc dữ liệu cần dùng. Phản xạ đó đến từ bảng tra dưới đây cộng với luyện tập có chủ đích.
+> Ghi nhớ: Mục tiêu của bài này không phải "biết thêm". Mục tiêu là **phản xạ**: đọc đề → trong 60 giây gắn được vào 1-2 pattern → biết ngay độ phức tạp mục tiêu và cấu trúc dữ liệu cần dùng. Phản xạ đó đến từ bảng tra dưới đây cộng với luyện tập có chủ đích.
 
 ---
 
@@ -51,7 +51,7 @@ Quá trình giải một bài lạ luôn đi theo cùng một mạch:
   </g>
 </svg>
 
-> 💡 Ghi nhớ: Hai tín hiệu mạnh nhất luôn là (1) **hình dạng input** (mảng đã sort? cây? đồ thị? chuỗi?) và (2) **dạng kết quả cần** (một số đếm? min/max? tất cả tổ hợp? có/không? phần tử thứ k?). Chỉ riêng hai cái này đã loại được 80% pattern không liên quan.
+> Ghi nhớ: Hai tín hiệu mạnh nhất luôn là (1) **hình dạng input** (mảng đã sort? cây? đồ thị? chuỗi?) và (2) **dạng kết quả cần** (một số đếm? min/max? tất cả tổ hợp? có/không? phần tử thứ k?). Chỉ riêng hai cái này đã loại được 80% pattern không liên quan.
 
 ### Ràng buộc `n` tiết lộ độ phức tạp mục tiêu
 
@@ -67,7 +67,7 @@ Trước khi nghĩ thuật toán, hãy nhìn `n` (kích thước input). Nó **b
 | n ≤ 10^7-10^8 | O(n) hoặc O(n log n) | two-pointer, sliding window, prefix sum, hash |
 | n cực lớn / nhiều query | O(log n) / O(1) mỗi query | binary search, công thức toán, precompute |
 
-> ⚠️ Bẫy: Đừng nhảy vào tối ưu O(log n) khi `n ≤ 20`. Với `n` nhỏ, backtracking O(2^n) là **đáp án mong đợi** và sạch hơn nhiều — cố ép DP/greedy phức tạp chỉ tốn thời gian và dễ sai. Luôn để `n` dẫn đường.
+> Bẫy: Đừng nhảy vào tối ưu O(log n) khi `n ≤ 20`. Với `n` nhỏ, backtracking O(2^n) là **đáp án mong đợi** và sạch hơn nhiều — cố ép DP/greedy phức tạp chỉ tốn thời gian và dễ sai. Luôn để `n` dẫn đường.
 
 ---
 
@@ -150,9 +150,9 @@ Trước khi đến bảng tra cụ thể, hãy nắm bộ câu hỏi tổng qu�
 | Dãy con tăng / đặc tính trên subsequence | **DP subsequence** | O(n^2) → O(n log n) | Longest Increasing Subsequence |
 | Chọn item với sức chứa giới hạn | **Knapsack** | O(n·W) | 0/1 Knapsack, Target Sum |
 
-> 💡 Ghi nhớ: Ba từ khoá quyết định nhất trong đề DP là **"đếm số cách"** (count), **"min/max"** (optimize), và **"có thể không"** (feasibility). Thấy một trong ba + có *lựa chọn lặp lại với cấu trúc con chồng lấn* → gần như chắc chắn là DP.
+> Ghi nhớ: Ba từ khoá quyết định nhất trong đề DP là **"đếm số cách"** (count), **"min/max"** (optimize), và **"có thể không"** (feasibility). Thấy một trong ba + có *lựa chọn lặp lại với cấu trúc con chồng lấn* → gần như chắc chắn là DP.
 
-> ⚠️ Bẫy: Đừng nhầm **DP** với **greedy**. Cả hai đều xử lý min/max. Greedy chỉ đúng khi "chọn tốt nhất tại mỗi bước" dẫn tới tối ưu toàn cục (cần chứng minh hoặc ràng buộc đặc biệt). Khi nghi ngờ, DP an toàn hơn — coin change `[1,3,4]` cho `amount=6` là phản ví dụ kinh điển khiến greedy sai.
+> Bẫy: Đừng nhầm **DP** với **greedy**. Cả hai đều xử lý min/max. Greedy chỉ đúng khi "chọn tốt nhất tại mỗi bước" dẫn tới tối ưu toàn cục (cần chứng minh hoặc ràng buộc đặc biệt). Khi nghi ngờ, DP an toàn hơn — coin change `[1,3,4]` cho `amount=6` là phản ví dụ kinh điển khiến greedy sai.
 
 ---
 
@@ -170,7 +170,7 @@ Nhận diện pattern không phải là khớp một-một — nguy hiểm nhấ
 | Heap vs Sort | Có cần *toàn bộ* thứ tự, hay chỉ *top-k*? | Chỉ top-k → heap O(n log k); cần toàn bộ sort → built-in sort |
 | DP vs Greedy | "Chọn tốt nhất mỗi bước" có chắc tối ưu toàn cục? | Không chắc / có phản ví dụ → DP; chứng minh được → greedy |
 
-> 💡 Ghi nhớ: Khi phân vân giữa hai pattern, đừng đoán bừa — hãy tìm một **phản ví dụ nhỏ** cho pattern "rẻ" hơn. Nếu sliding window/greedy sai trên một ví dụ con, bạn vừa loại nó và xác nhận pattern còn lại. Phản ví dụ là công cụ debug tư duy mạnh nhất.
+> Ghi nhớ: Khi phân vân giữa hai pattern, đừng đoán bừa — hãy tìm một **phản ví dụ nhỏ** cho pattern "rẻ" hơn. Nếu sliding window/greedy sai trên một ví dụ con, bạn vừa loại nó và xác nhận pattern còn lại. Phản ví dụ là công cụ debug tư duy mạnh nhất.
 
 ### Mẹo "tháo gỡ" khi hoàn toàn bí
 
@@ -184,7 +184,7 @@ Nếu sau khi tra bảng vẫn không thấy pattern, thử các đòn bẩy sau
 5. Giảm về bài con đã biết → "đây có phải Two Sum/LIS/Island trá hình?"
 ```
 
-> ⚠️ Bẫy: Đừng ngồi im suy nghĩ quá 3-4 phút mà không nói gì. Nếu bí, hãy *nói to* bạn đang thử đòn bẩy nào ("tôi thử sort xem có giúp gì không..."). Phỏng vấn viên thường gợi ý (hint) khi nghe được hướng đi — nhưng họ chỉ gợi ý nếu biết bạn đang nghĩ gì.
+> Bẫy: Đừng ngồi im suy nghĩ quá 3-4 phút mà không nói gì. Nếu bí, hãy *nói to* bạn đang thử đòn bẩy nào ("tôi thử sort xem có giúp gì không..."). Phỏng vấn viên thường gợi ý (hint) khi nghe được hướng đi — nhưng họ chỉ gợi ý nếu biết bạn đang nghĩ gì.
 
 ---
 
@@ -265,7 +265,7 @@ Bảng tra giúp bạn *biết hướng*. Nhưng trong phòng phỏng vấn, **c
 - **Ràng buộc đặc biệt**: input đã sort chưa? có được sửa input gốc không? giới hạn bộ nhớ?
 - **Tie-break**: nếu nhiều đáp án thì trả cái nào? (đầu tiên / bất kỳ / từ điển nhỏ nhất?)
 
-> 💡 Ghi nhớ: Mỗi câu clarify là một **điểm cộng** — nó cho thấy bạn nghĩ về edge case trước khi code. Phỏng vấn viên thường *cố tình* ra đề mơ hồ để xem bạn có hỏi không. Im lặng lao vào code là red flag.
+> Ghi nhớ: Mỗi câu clarify là một **điểm cộng** — nó cho thấy bạn nghĩ về edge case trước khi code. Phỏng vấn viên thường *cố tình* ra đề mơ hồ để xem bạn có hỏi không. Im lặng lao vào code là red flag.
 
 ### Bước 2-3 — Đưa ví dụ + Brute force trước
 
@@ -293,7 +293,7 @@ Chạy code qua **ví dụ gốc** và ít nhất một **edge case**: rỗng, m
 
 Kết bằng phân tích rõ ràng: *"Thời gian O(n) vì duyệt một lượt, bộ nhớ O(n) cho hash map. Nếu input đã sort thì có thể dùng two-pointer để hạ bộ nhớ xuống O(1)."* Chủ động nêu trade-off cho thấy độ chín.
 
-> ⚠️ Bẫy: Quản lý thời gian. Một vòng phỏng vấn coding thường 35-45 phút cho 1-2 bài. Phân bổ khoảng: clarify + plan ~25%, code ~50%, test + phân tích ~25%. **Đừng** dành 30 phút tìm lời giải tối ưu hoàn hảo rồi không kịp code. Một brute force *chạy được* và nêu rõ hướng tối ưu tốt hơn một lời giải tối ưu *dở dang*.
+> Bẫy: Quản lý thời gian. Một vòng phỏng vấn coding thường 35-45 phút cho 1-2 bài. Phân bổ khoảng: clarify + plan ~25%, code ~50%, test + phân tích ~25%. **Đừng** dành 30 phút tìm lời giải tối ưu hoàn hảo rồi không kịp code. Một brute force *chạy được* và nêu rõ hướng tối ưu tốt hơn một lời giải tối ưu *dở dang*.
 
 ---
 
@@ -395,7 +395,7 @@ int longestSubarraySumK(const vector<int>& nums, int k) {
 
 **E — Evaluate**: Time O(n) một lượt, space O(n) hash map. Bẫy chính: phải lưu prefix sum **lần đầu** (early index) để subarray dài nhất, và khởi tạo `{0: -1}` để bắt subarray bắt đầu từ index 0.
 
-> 💡 Ghi nhớ: Lời giải trên minh hoạ điều quý nhất của framework: tín hiệu "subarray liên tục" *gợi ý* sliding window, nhưng tín hiệu "có số âm" *bác bỏ* nó và đẩy sang prefix sum + hash. Nhận diện pattern là một quá trình **lọc**, không phải khớp một-một.
+> Ghi nhớ: Lời giải trên minh hoạ điều quý nhất của framework: tín hiệu "subarray liên tục" *gợi ý* sliding window, nhưng tín hiệu "có số âm" *bác bỏ* nó và đẩy sang prefix sum + hash. Nhận diện pattern là một quá trình **lọc**, không phải khớp một-một.
 
 ---
 
@@ -425,7 +425,7 @@ Mỗi lần ôn, *tự giải lại từ đầu* không nhìn lời giải. Nế
 
 Giữ một file ghi: mỗi pattern → dấu hiệu nhận biết + khung code + 2-3 bài đại diện + bẫy đã mắc. Khi gặp bài mới, đối chiếu sổ này. Sau vài tuần, sổ này trở thành "bộ não thứ hai" và bạn sẽ thấy mình tra nó ngày càng ít.
 
-> 💡 Ghi nhớ: Chất lượng > số lượng. **80 bài làm kỹ theo pattern + ôn ngắt quãng** đánh bại 400 bài cày một lần rồi quên. Mỗi bài bạn nên *học* (rút pattern, ghi sổ, ôn lại), không chỉ *giải*.
+> Ghi nhớ: Chất lượng > số lượng. **80 bài làm kỹ theo pattern + ôn ngắt quãng** đánh bại 400 bài cày một lần rồi quên. Mỗi bài bạn nên *học* (rút pattern, ghi sổ, ôn lại), không chỉ *giải*.
 
 ---
 
@@ -442,7 +442,7 @@ Một lộ trình cụ thể, theo pattern, tăng dần độ khó. Mỗi tuần
 | Tối ưu | 9-10 | DP 1D → 2D → string, knapsack | Định nghĩa state & transition |
 | Tổng hợp | 11-12 | Mock interview, bài hỗn hợp, bài hard, đúng giờ | Vận dụng dưới áp lực |
 
-> ⚠️ Bẫy: Đừng nhảy thẳng vào DP/graph khi chưa vững two-pointer và hash. Các pattern nền tảng xuất hiện *bên trong* bài nâng cao (ví dụ một bài graph có bước dùng hash set để track visited). Bỏ nền tảng = xây nhà trên cát.
+> Bẫy: Đừng nhảy thẳng vào DP/graph khi chưa vững two-pointer và hash. Các pattern nền tảng xuất hiện *bên trong* bài nâng cao (ví dụ một bài graph có bước dùng hash set để track visited). Bỏ nền tảng = xây nhà trên cát.
 
 ---
 
@@ -461,7 +461,7 @@ Một lộ trình cụ thể, theo pattern, tăng dần độ khó. Mỗi tuần
 | Nhầm DP với greedy | Greedy ra đáp án sai | Nghi ngờ → dùng DP; tìm phản ví dụ |
 | Quên cập nhật con trỏ (+1) | Vòng lặp vô hạn | Bám một template binary search cố định |
 
-> 💡 Ghi nhớ: Sai lầm số một khiến ứng viên giỏi vẫn trượt không phải thiếu kiến thức — mà là **giao tiếp kém và bỏ qua quy trình**. Một người giải được 80% bài nhưng trình bày có hệ thống, hỏi clarify, test cẩn thận thường được đánh giá cao hơn người im lặng giải xong 100% nhưng không giải thích.
+> Ghi nhớ: Sai lầm số một khiến ứng viên giỏi vẫn trượt không phải thiếu kiến thức — mà là **giao tiếp kém và bỏ qua quy trình**. Một người giải được 80% bài nhưng trình bày có hệ thống, hỏi clarify, test cẩn thận thường được đánh giá cao hơn người im lặng giải xong 100% nhưng không giải thích.
 
 ---
 

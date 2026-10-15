@@ -111,7 +111,7 @@ Nguyên tắc thứ tự trong mọi hàm đụng tiền/state:
 </svg>
 
 ```solidity
-// ❌ SAI — interaction trước effect: bị reentrancy
+// ✗ SAI — interaction trước effect: bị reentrancy
 function withdrawBad() external {
     uint256 bal = balances[msg.sender];
     require(bal > 0, "no funds");
@@ -120,7 +120,7 @@ function withdrawBad() external {
     balances[msg.sender] = 0;                       // cập nhật SAU → attacker reentrancy
 }
 
-// ✅ ĐÚNG — checks → effects → interactions
+// ✓ ĐÚNG — checks → effects → interactions
 function withdrawGood() external {
     uint256 bal = balances[msg.sender];   // checks
     require(bal > 0, "no funds");

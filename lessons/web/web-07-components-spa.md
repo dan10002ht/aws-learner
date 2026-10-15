@@ -51,7 +51,7 @@ UI = f(props, state)
 
 Ví dụ một thẻ người dùng (`UserCard`) nhận props là `name` và `role`, rồi vẽ ra giao diện. Cùng một component, đổi props là ra giao diện khác nhau — đó là **tái sử dụng**.
 
-> 💡 Ghi nhớ: Component = hàm nhận `props` → trả về UI. Cùng input thì cùng output. Đây là lý do component dễ test, dễ tái dùng và dễ suy luận.
+> Ghi nhớ: Component = hàm nhận `props` → trả về UI. Cùng input thì cùng output. Đây là lý do component dễ test, dễ tái dùng và dễ suy luận.
 
 ## Từ DOM thủ công đến declarative UI
 
@@ -179,7 +179,7 @@ createCounter(document.querySelector("#app"));
   </defs>
 </svg>
 
-> ⚠️ Bẫy: Cách `innerHTML = ...` ở trên **xoá và dựng lại toàn bộ** mỗi lần render. Mọi state của DOM (focus ô input, vị trí cuộn, animation) bị mất, và với danh sách lớn thì rất chậm. Đây chính là vấn đề mà **Virtual DOM** sinh ra để giải quyết.
+> Bẫy: Cách `innerHTML = ...` ở trên **xoá và dựng lại toàn bộ** mỗi lần render. Mọi state của DOM (focus ô input, vị trí cuộn, animation) bị mất, và với danh sách lớn thì rất chậm. Đây chính là vấn đề mà **Virtual DOM** sinh ra để giải quyết.
 
 ## Virtual DOM — ý tưởng
 
@@ -254,7 +254,7 @@ const vnode = {
 
 Nhờ đó bạn vẫn viết kiểu declarative "vẽ lại tất cả", nhưng framework chỉ cập nhật phần tối thiểu — vừa dễ viết vừa nhanh.
 
-> 💡 Ghi nhớ: Virtual DOM = "vẽ lại trên giấy nháp (object JS) rồi chỉ sửa đúng chỗ khác biệt trên giấy thật (DOM)". Bạn được sự đơn giản của declarative mà không trả giá hiệu năng.
+> Ghi nhớ: Virtual DOM = "vẽ lại trên giấy nháp (object JS) rồi chỉ sửa đúng chỗ khác biệt trên giấy thật (DOM)". Bạn được sự đơn giản của declarative mà không trả giá hiệu năng.
 
 ## SPA vs MPA
 
@@ -387,7 +387,7 @@ render(); // render lần đầu
   </g>
   <g>
     <rect x="120" y="166" width="480" height="50" rx="10" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="5 3"/>
-    <text x="360" y="188" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">⚠ Server phải fallback mọi đường dẫn về index.html</text>
+    <text x="360" y="188" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Server phải fallback mọi đường dẫn về index.html</text>
     <text x="360" y="205" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">gõ thẳng URL /about mà không fallback → server trả 404</text>
   </g>
   <defs>
@@ -395,7 +395,7 @@ render(); // render lần đầu
   </defs>
 </svg>
 
-> ⚠️ Bẫy: Vì server không biết về route phía client, gõ thẳng `tên-miền/about` rồi Enter sẽ làm server trả 404. Cấu hình server **fallback mọi đường dẫn về `index.html`** để SPA tự xử lý route. Đây là lỗi deploy SPA kinh điển.
+> Bẫy: Vì server không biết về route phía client, gõ thẳng `tên-miền/about` rồi Enter sẽ làm server trả 404. Cấu hình server **fallback mọi đường dẫn về `index.html`** để SPA tự xử lý route. Đây là lỗi deploy SPA kinh điển.
 
 Trong React/Vue bạn không tự viết đoạn này — dùng thư viện như **React Router** / **Vue Router** đã đóng gói sẵn.
 
@@ -414,7 +414,7 @@ Framework không miễn phí: thêm bundle, thêm khái niệm phải học, th�
 - Nhiều người cùng làm, cần cấu trúc và quy ước chung.
 - Bạn thấy mình đang **tự viết lại** state-management, routing, diffing — tức là đang viết lại một framework tồi hơn.
 
-> 💡 Ghi nhớ: Khi code vanilla của bạn bắt đầu chứa "mini framework" tự chế (hệ thống re-render, router, quản lý state), đó là tín hiệu rõ ràng nên chuyển sang framework thật.
+> Ghi nhớ: Khi code vanilla của bạn bắt đầu chứa "mini framework" tự chế (hệ thống re-render, router, quản lý state), đó là tín hiệu rõ ràng nên chuyển sang framework thật.
 
 ## React/Vue ở mức khái niệm
 
@@ -456,7 +456,7 @@ Hãy đặt cạnh nhau để thấy React chỉ **tự động hoá** những g
 
 Điểm mấu chốt: **tư duy hoàn toàn giống nhau** — `UI = f(state)`, đổi state thì UI tự khớp. React chỉ xoá đi phần lặp đi lặp lại và xử lý hiệu năng. Một khi bạn "thấm" mẫu hình này bằng vanilla, học React/Vue chỉ còn là học cú pháp.
 
-> 💡 Ghi nhớ: Framework không phải phép màu — nó là phần "tự động hoá việc re-render và cập nhật DOM" mà bạn vừa tự viết tay. Hiểu cái tay làm trước, framework sẽ trở nên hiển nhiên.
+> Ghi nhớ: Framework không phải phép màu — nó là phần "tự động hoá việc re-render và cập nhật DOM" mà bạn vừa tự viết tay. Hiểu cái tay làm trước, framework sẽ trở nên hiển nhiên.
 
 ## Tóm tắt
 

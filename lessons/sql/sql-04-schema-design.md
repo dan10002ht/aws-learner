@@ -27,9 +27,9 @@ CREATE TABLE products (
 );
 ```
 
-> ⚠️ Lỗi người mới hay gặp: dùng `FLOAT`/`DOUBLE` cho tiền. Số thực dấu phẩy động làm tròn sai (vd `0.1 + 0.2 ≠ 0.3`). Tiền luôn dùng `DECIMAL(p, s)` — `p` là tổng chữ số, `s` là số chữ số sau dấu phẩy. `DECIMAL(10,2)` chứa tối đa `99999999.99`.
+> Lỗi người mới hay gặp: dùng `FLOAT`/`DOUBLE` cho tiền. Số thực dấu phẩy động làm tròn sai (vd `0.1 + 0.2 ≠ 0.3`). Tiền luôn dùng `DECIMAL(p, s)` — `p` là tổng chữ số, `s` là số chữ số sau dấu phẩy. `DECIMAL(10,2)` chứa tối đa `99999999.99`.
 
-> 💡 Ghi nhớ: `VARCHAR(100)` chỉ tốn chỗ theo độ dài thực tế của chuỗi, còn `CHAR(100)` luôn chiếm đủ 100 ký tự. Với dữ liệu dài không định trước (bài viết, mô tả), dùng `TEXT`.
+> Ghi nhớ: `VARCHAR(100)` chỉ tốn chỗ theo độ dài thực tế của chuỗi, còn `CHAR(100)` luôn chiếm đủ 100 ký tự. Với dữ liệu dài không định trước (bài viết, mô tả), dùng `TEXT`.
 
 ## 2. PRIMARY KEY — khoá chính
 
@@ -67,7 +67,7 @@ Dữ liệu mẫu sau khi chèn vài dòng:
 | 2 | Minh |
 | 3 | Hùng |
 
-> 💡 Ghi nhớ: nên dùng khoá chính là một id "vô nghĩa" (surrogate key) do hệ thống sinh ra, thay vì dữ liệu nghiệp vụ như email hay số điện thoại. Email có thể đổi; id thì không bao giờ đổi.
+> Ghi nhớ: nên dùng khoá chính là một id "vô nghĩa" (surrogate key) do hệ thống sinh ra, thay vì dữ liệu nghiệp vụ như email hay số điện thoại. Email có thể đổi; id thì không bao giờ đổi.
 
 ## 3. FOREIGN KEY & ràng buộc
 
@@ -116,9 +116,9 @@ CREATE TABLE customers (
 );
 ```
 
-> ⚠️ Lỗi người mới hay gặp: quên đặt `UNIQUE` cho email rồi để hai khách trùng email, sau này tính năng "đăng nhập bằng email" loạn lên. Đặt ràng buộc ngay từ đầu rẻ hơn dọn dữ liệu bẩn về sau rất nhiều.
+> Lỗi người mới hay gặp: quên đặt `UNIQUE` cho email rồi để hai khách trùng email, sau này tính năng "đăng nhập bằng email" loạn lên. Đặt ràng buộc ngay từ đầu rẻ hơn dọn dữ liệu bẩn về sau rất nhiều.
 
-> 💡 Ghi nhớ: ràng buộc là "lưới an toàn" ở tầng database. Đừng chỉ kiểm tra ở code ứng dụng — bug ở code vẫn có thể đẩy dữ liệu sai xuống. Database là tuyến phòng thủ cuối cùng.
+> Ghi nhớ: ràng buộc là "lưới an toàn" ở tầng database. Đừng chỉ kiểm tra ở code ứng dụng — bug ở code vẫn có thể đẩy dữ liệu sai xuống. Database là tuyến phòng thủ cuối cùng.
 
 ## 4. Quan hệ giữa các bảng
 
@@ -224,7 +224,7 @@ Dữ liệu mẫu — đơn hàng 1 gồm 2 sản phẩm:
 | 1 | 11 | 1 |
 | 2 | 10 | 5 |
 
-> 💡 Ghi nhớ: dấu hiệu nhận biết n-n là khi cả hai phía đều "nhiều". Lúc đó **luôn** cần bảng trung gian. Khoá chính của nó thường là cặp `(order_id, product_id)` — gọi là khoá chính tổ hợp (composite key).
+> Ghi nhớ: dấu hiệu nhận biết n-n là khi cả hai phía đều "nhiều". Lúc đó **luôn** cần bảng trung gian. Khoá chính của nó thường là cặp `(order_id, product_id)` — gọi là khoá chính tổ hợp (composite key).
 
 ## 5. Chuẩn hoá (Normalization): 1NF, 2NF, 3NF
 
@@ -322,9 +322,9 @@ CREATE TABLE order_items (
 
 Ở đây `city_zip` phụ thuộc vào `customer_city`, mà `customer_city` lại không phải khoá → phụ thuộc bắc cầu (`id → city → zip`). Nếu Hà Nội đổi mã zip, bạn phải sửa nhiều dòng. Tách `city`/`zip` sang bảng riêng.
 
-> 💡 Ghi nhớ nhanh 3NF: "mỗi cột không-khoá phụ thuộc vào **khoá, toàn bộ khoá, và không gì ngoài khoá**" (the key, the whole key, and nothing but the key).
+> Ghi nhớ nhanh 3NF: "mỗi cột không-khoá phụ thuộc vào **khoá, toàn bộ khoá, và không gì ngoài khoá**" (the key, the whole key, and nothing but the key).
 
-> ⚠️ Lỗi người mới hay gặp: lưu lặp dữ liệu suy ra được, ví dụ cột `total` trong `orders` rồi cũng lưu thêm `customer_name` trong từng dòng `order_items`. Tên khách có thể tra qua `JOIN` — lưu lại chỉ tạo cơ hội cho dữ liệu mâu thuẫn.
+> Lỗi người mới hay gặp: lưu lặp dữ liệu suy ra được, ví dụ cột `total` trong `orders` rồi cũng lưu thêm `customer_name` trong từng dòng `order_items`. Tên khách có thể tra qua `JOIN` — lưu lại chỉ tạo cơ hội cho dữ liệu mâu thuẫn.
 
 ## 6. Khi nào denormalize (cố ý lặp lại)?
 
@@ -340,7 +340,7 @@ ALTER TABLE order_items ADD COLUMN unit_price DECIMAL(10,2) NOT NULL;
 -- Lưu giá lúc mua, không tra ngược products.price (đã có thể đổi)
 ```
 
-> 💡 Ghi nhớ: mặc định hãy chuẩn hoá. Chỉ denormalize khi đã đo được vấn đề hiệu năng thật, chứ không phỏng đoán. "Premature optimization" cũng đúng với database.
+> Ghi nhớ: mặc định hãy chuẩn hoá. Chỉ denormalize khi đã đo được vấn đề hiệu năng thật, chứ không phỏng đoán. "Premature optimization" cũng đúng với database.
 
 ## 7. Ghép lại: CREATE TABLE toàn schema
 
@@ -429,7 +429,7 @@ CREATE TABLE order_items (
 );
 ```
 
-> ⚠️ Lỗi người mới hay gặp: tạo bảng sai thứ tự. Bảng được `REFERENCES` (vd `customers`) phải tồn tại **trước** bảng tham chiếu nó (vd `orders`). Tạo cha trước, con sau.
+> Lỗi người mới hay gặp: tạo bảng sai thứ tự. Bảng được `REFERENCES` (vd `customers`) phải tồn tại **trước** bảng tham chiếu nó (vd `orders`). Tạo cha trước, con sau.
 
 ## Bài tập: Thiết kế database cho một blog
 
@@ -503,4 +503,4 @@ Những khái niệm trên áp dụng trực tiếp khi bạn chạy database tr
 
 - **Amazon DynamoDB** (NoSQL, key-value/document): ngược hẳn triết lý ở đây. DynamoDB **khuyến khích denormalize** và thường gộp nhiều thực thể vào một bảng (single-table design), tối ưu cho các mẫu truy vấn biết trước ở quy mô cực lớn. Không có `JOIN` hay `FOREIGN KEY` — bạn đánh đổi tính linh hoạt truy vấn để lấy độ trễ thấp ổn định.
 
-> 💡 Ghi nhớ: hiểu chuẩn hoá giúp bạn chọn đúng công cụ. Dữ liệu quan hệ phức tạp, cần toàn vẹn → RDS/Aurora. Truy vấn đơn giản, lưu lượng khổng lồ, mẫu truy cập cố định → DynamoDB. Thiết kế schema không phải "đúng/sai" tuyệt đối, mà là chọn đánh đổi phù hợp với bài toán.
+> Ghi nhớ: hiểu chuẩn hoá giúp bạn chọn đúng công cụ. Dữ liệu quan hệ phức tạp, cần toàn vẹn → RDS/Aurora. Truy vấn đơn giản, lưu lượng khổng lồ, mẫu truy cập cố định → DynamoDB. Thiết kế schema không phải "đúng/sai" tuyệt đối, mà là chọn đánh đổi phù hợp với bài toán.

@@ -27,7 +27,7 @@ Vấn đề của cách làm tay (ClickOps):
 
 IaC giải quyết: hạ tầng thành **artifact có version**, review qua **Pull Request**, dựng lại **idempotent** (chạy lại không tạo trùng).
 
-> 💡 Ghi nhớ: IaC không chỉ là "script tạo hạ tầng". Điểm cốt lõi là **state** — công cụ biết hiện trạng và chỉ thay đổi phần khác biệt, nên chạy lại nhiều lần vẫn ra cùng kết quả (idempotent).
+> Ghi nhớ: IaC không chỉ là "script tạo hạ tầng". Điểm cốt lõi là **state** — công cụ biết hiện trạng và chỉ thay đổi phần khác biệt, nên chạy lại nhiều lần vẫn ra cùng kết quả (idempotent).
 
 ### Declarative vs Imperative
 
@@ -41,7 +41,7 @@ IaC giải quyết: hạ tầng thành **artifact có version**, review qua **Pu
 
 Terraform là **declarative**: bạn khai báo đích đến, Terraform tự tính ra các bước (tạo / sửa / xoá) bằng cách so trạng thái mong muốn với state hiện tại.
 
-> ⚠️ Bẫy production: OpenTofu là bản fork mã nguồn mở của Terraform (sau khi HashiCorp đổi license sang BSL tháng 8/2023). Cú pháp HCL gần như giống hệt; nhiều công ty đã chuyển sang `tofu`. Kiểm tra license/policy nội bộ trước khi chọn — cú pháp trong bài này áp dụng cho cả hai.
+> Bẫy production: OpenTofu là bản fork mã nguồn mở của Terraform (sau khi HashiCorp đổi license sang BSL tháng 8/2023). Cú pháp HCL gần như giống hệt; nhiều công ty đã chuyển sang `tofu`. Kiểm tra license/policy nội bộ trước khi chọn — cú pháp trong bài này áp dụng cho cả hai.
 
 ---
 
@@ -73,7 +73,7 @@ provider "aws" {
 }
 ```
 
-> 💡 Ghi nhớ: Luôn **pin version** provider (`~> 5.0`) và `required_version`. Không pin → đồng nghiệp chạy `terraform init` ở máy khác có thể kéo provider mới hơn, gây plan khác nhau và "works on my machine".
+> Ghi nhớ: Luôn **pin version** provider (`~> 5.0`) và `required_version`. Không pin → đồng nghiệp chạy `terraform init` ở máy khác có thể kéo provider mới hơn, gây plan khác nhau và "works on my machine".
 
 ### 3.2 Resource — đơn vị hạ tầng
 
@@ -197,7 +197,7 @@ Sau `apply`, Terraform ghi ra `terraform.tfstate` — một file JSON ánh xạ 
   <text x="360" y="232" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">State giúp Terraform biết resource nào để sửa / xoá</text>
 </svg>
 
-> ⚠️ Bẫy production: **KHÔNG BAO GIỜ commit `terraform.tfstate` vào Git.** State chứa secret dạng plaintext (password DB, private key). Thêm vào `.gitignore`: `*.tfstate`, `*.tfstate.*`, `.terraform/`.
+> Bẫy production: **KHÔNG BAO GIỜ commit `terraform.tfstate` vào Git.** State chứa secret dạng plaintext (password DB, private key). Thêm vào `.gitignore`: `*.tfstate`, `*.tfstate.*`, `.terraform/`.
 
 ### 4.2 Vì sao cần remote backend
 
@@ -271,9 +271,9 @@ DynamoDB table cho lock chỉ cần partition key `LockID` (kiểu String). Khi 
   <text x="250" y="168" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">lock đã bận → block</text>
 </svg>
 
-> 💡 Ghi nhớ: Từ khi S3 hỗ trợ **conditional writes** (cuối 2024), Terraform 1.10+ có thể lock state bằng chính S3 với tham số `use_lockfile = true`, **không còn bắt buộc DynamoDB**. Nhưng rất nhiều codebase hiện tại vẫn dùng DynamoDB — bạn cần biết cả hai.
+> Ghi nhớ: Từ khi S3 hỗ trợ **conditional writes** (cuối 2024), Terraform 1.10+ có thể lock state bằng chính S3 với tham số `use_lockfile = true`, **không còn bắt buộc DynamoDB**. Nhưng rất nhiều codebase hiện tại vẫn dùng DynamoDB — bạn cần biết cả hai.
 
-> ⚠️ Bẫy production: Backend **không nhận biến** (`variable`) — block `backend` phải là giá trị literal. Cần tham số hoá thì dùng `terraform init -backend-config=prod.hcl` với partial configuration.
+> Bẫy production: Backend **không nhận biến** (`variable`) — block `backend` phải là giá trị literal. Cần tham số hoá thì dùng `terraform init -backend-config=prod.hcl` với partial configuration.
 
 ---
 
@@ -357,7 +357,7 @@ module "vpc" {
 }
 ```
 
-> 💡 Ghi nhớ: Module công khai trên registry (như `terraform-aws-modules/vpc`) được duy trì tốt, dùng được trong production. Đừng tự viết lại VPC module từ đầu nếu module registry đã đáp ứng.
+> Ghi nhớ: Module công khai trên registry (như `terraform-aws-modules/vpc`) được duy trì tốt, dùng được trong production. Đừng tự viết lại VPC module từ đầu nếu module registry đã đáp ứng.
 
 ---
 
@@ -427,7 +427,7 @@ Ký hiệu trong `plan`:
 | `-/+` | **replace** — xoá rồi tạo lại (downtime!) |
 | `<=` | đọc data source |
 
-> ⚠️ Bẫy production: Thấy `-/+` (force replacement) là phải dừng lại đọc kỹ. Ví dụ đổi `availability_zone` của EC2 → Terraform **xoá instance cũ tạo instance mới** → mất dữ liệu trên ổ đĩa ephemeral và downtime. Plan luôn ghi rõ dòng `# forces replacement`.
+> Bẫy production: Thấy `-/+` (force replacement) là phải dừng lại đọc kỹ. Ví dụ đổi `availability_zone` của EC2 → Terraform **xoá instance cũ tạo instance mới** → mất dữ liệu trên ổ đĩa ephemeral và downtime. Plan luôn ghi rõ dòng `# forces replacement`.
 
 Lưu plan để apply đúng cái đã review (chuẩn cho CI/CD):
 
@@ -451,7 +451,7 @@ Khi phát hiện drift, có 2 hướng:
 - **Code là chân lý** (khuyến nghị): chạy `apply` để kéo thực tế về đúng code.
 - **Thực tế là đúng**: cập nhật code cho khớp, hoặc `terraform apply -refresh-only` để nạp thay đổi vào state.
 
-> ⚠️ Bẫy production: Drift kinh điển — dev sửa tay rule security group trên console để "fix gấp", quên báo. Lần `apply` tiếp theo của người khác sẽ **âm thầm xoá rule đó** (vì code không có). Chính sách: **mọi thay đổi đi qua Terraform**, hoặc bật quy trình phát hiện drift định kỳ.
+> Bẫy production: Drift kinh điển — dev sửa tay rule security group trên console để "fix gấp", quên báo. Lần `apply` tiếp theo của người khác sẽ **âm thầm xoá rule đó** (vì code không có). Chính sách: **mọi thay đổi đi qua Terraform**, hoặc bật quy trình phát hiện drift định kỳ.
 
 ---
 
@@ -474,7 +474,7 @@ resource "aws_instance" "web" {
 }
 ```
 
-> ⚠️ Bẫy production: Workspace **phù hợp cho khác biệt nhỏ** (đổi size, đổi count). Nhiều team production lại **không dùng workspace cho prod** vì dễ nhầm workspace mà `apply` nhầm môi trường. Mẫu phổ biến hơn: **thư mục riêng cho mỗi env** (`envs/dev`, `envs/prod`) với backend `key` khác nhau — cô lập rõ ràng, khó bấm nhầm.
+> Bẫy production: Workspace **phù hợp cho khác biệt nhỏ** (đổi size, đổi count). Nhiều team production lại **không dùng workspace cho prod** vì dễ nhầm workspace mà `apply` nhầm môi trường. Mẫu phổ biến hơn: **thư mục riêng cho mỗi env** (`envs/dev`, `envs/prod`) với backend `key` khác nhau — cô lập rõ ràng, khó bấm nhầm.
 
 ---
 
@@ -502,7 +502,7 @@ terraform apply     # thực hiện import
 
 Cách cũ (vẫn dùng nhiều): `terraform import aws_instance.web i-0abc123def456`.
 
-> 💡 Ghi nhớ: Import **không tự sinh code**. Bạn vẫn phải viết block `resource` cho khớp. Terraform 1.5+ có cờ `-generate-config-out=gen.tf` để sinh khung HCL ban đầu, nhưng cần dọn lại bằng tay.
+> Ghi nhớ: Import **không tự sinh code**. Bạn vẫn phải viết block `resource` cho khớp. Terraform 1.5+ có cờ `-generate-config-out=gen.tf` để sinh khung HCL ban đầu, nhưng cần dọn lại bằng tay.
 
 ---
 
@@ -621,7 +621,7 @@ terraform apply tfplan
 terraform destroy -var="allowed_cidr=203.0.113.10/32"
 ```
 
-> ⚠️ Bẫy production: `security_group` ở trên mở SSH theo `var.allowed_cidr` — **đừng để `0.0.0.0/0`** cho cổng 22. Để cả thế giới SSH vào là lỗi bảo mật phổ biến nhất, bị scanner quét ra trong vài phút.
+> Bẫy production: `security_group` ở trên mở SSH theo `var.allowed_cidr` — **đừng để `0.0.0.0/0`** cho cổng 22. Để cả thế giới SSH vào là lỗi bảo mật phổ biến nhất, bị scanner quét ra trong vài phút.
 
 ---
 
@@ -646,7 +646,7 @@ resource "aws_db_instance" "main" {
 }
 ```
 
-> 💡 Ghi nhớ: 3 nguyên tắc cốt lõi — **state remote + có lock**, **mọi thay đổi qua plan đã review**, **không bao giờ sửa tay**. Giữ được 3 cái này là tránh 90% sự cố Terraform trong production.
+> Ghi nhớ: 3 nguyên tắc cốt lõi — **state remote + có lock**, **mọi thay đổi qua plan đã review**, **không bao giờ sửa tay**. Giữ được 3 cái này là tránh 90% sự cố Terraform trong production.
 
 ---
 

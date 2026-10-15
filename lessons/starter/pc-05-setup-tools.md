@@ -12,7 +12,7 @@ Trước khi học nấu ăn, bạn cần có bếp, dao và nồi. Trước khi
 | **Git** | Cỗ máy thời gian cho file | Lưu lại lịch sử thay đổi của dự án |
 | **DevTools** | Kính hiển vi soi trang web | Xem "bên trong" một trang web |
 
-> 💡 Ghi nhớ: Bạn KHÔNG cần hiểu sâu từng công cụ ngay hôm nay. Mục tiêu của bài này chỉ là **cài xong và chạy thử được** — giống như mua dao về và thử cắt một quả cà chua, chưa cần biết tỉa hoa.
+> Ghi nhớ: Bạn KHÔNG cần hiểu sâu từng công cụ ngay hôm nay. Mục tiêu của bài này chỉ là **cài xong và chạy thử được** — giống như mua dao về và thử cắt một quả cà chua, chưa cần biết tỉa hoa.
 
 ---
 
@@ -52,9 +52,9 @@ Khi mở lên, bạn sẽ thấy màn hình chào "Welcome". Hãy thử:
 
 Nếu làm được 3 bước trên — chúc mừng, bạn đã có "cuốn sổ" của lập trình viên!
 
-> 💡 Ghi nhớ: Giao diện VS Code mặc định là tiếng Anh. Nếu muốn tiếng Việt, bấm biểu tượng 4 ô vuông bên trái (Extensions), gõ "Vietnamese", cài **Vietnamese Language Pack**. Tuy nhiên, lời khuyên thật lòng: **nên để tiếng Anh** để quen dần với thuật ngữ — sau này đọc tài liệu sẽ dễ hơn rất nhiều.
+> Ghi nhớ: Giao diện VS Code mặc định là tiếng Anh. Nếu muốn tiếng Việt, bấm biểu tượng 4 ô vuông bên trái (Extensions), gõ "Vietnamese", cài **Vietnamese Language Pack**. Tuy nhiên, lời khuyên thật lòng: **nên để tiếng Anh** để quen dần với thuật ngữ — sau này đọc tài liệu sẽ dễ hơn rất nhiều.
 
-> ⚠️ Lỗi người mới hay gặp: Tải nhầm **Visual Studio** (không có chữ "Code") — đó là phần mềm khác, nặng cả chục GB, dành cho mục đích khác. Hãy chắc chắn trang web là `code.visualstudio.com` và tên phần mềm là **Visual Studio Code**.
+> Lỗi người mới hay gặp: Tải nhầm **Visual Studio** (không có chữ "Code") — đó là phần mềm khác, nặng cả chục GB, dành cho mục đích khác. Hãy chắc chắn trang web là `code.visualstudio.com` và tên phần mềm là **Visual Studio Code**.
 
 ---
 
@@ -118,9 +118,9 @@ cd hoc-lap-trinh
 
 Thư mục này sẽ là "góc học tập" của bạn trong suốt khoá học.
 
-> 💡 Ghi nhớ: Bộ ba `ls` (nhìn quanh) → `cd` (di chuyển) → `mkdir` (tạo phòng mới) là 80% những gì bạn dùng terminal hằng ngày. Cứ luyện đến khi gõ không cần nghĩ.
+> Ghi nhớ: Bộ ba `ls` (nhìn quanh) → `cd` (di chuyển) → `mkdir` (tạo phòng mới) là 80% những gì bạn dùng terminal hằng ngày. Cứ luyện đến khi gõ không cần nghĩ.
 
-> ⚠️ Lỗi người mới hay gặp: Tên thư mục có **dấu cách** sẽ làm lệnh hiểu nhầm — `cd hoc lap trinh` bị hiểu là 3 từ riêng. Cách xử lý: đặt tên không dấu cách (dùng gạch ngang `hoc-lap-trinh`), hoặc bọc trong ngoặc kép: `cd "hoc lap trinh"`. Ngoài ra, tránh đặt tên file/thư mục có dấu tiếng Việt (ô, ư, đ...) — một số công cụ cũ sẽ trục trặc.
+> Lỗi người mới hay gặp: Tên thư mục có **dấu cách** sẽ làm lệnh hiểu nhầm — `cd hoc lap trinh` bị hiểu là 3 từ riêng. Cách xử lý: đặt tên không dấu cách (dùng gạch ngang `hoc-lap-trinh`), hoặc bọc trong ngoặc kép: `cd "hoc lap trinh"`. Ngoài ra, tránh đặt tên file/thư mục có dấu tiếng Việt (ô, ư, đ...) — một số công cụ cũ sẽ trục trặc.
 
 ---
 
@@ -186,9 +186,9 @@ Nếu màn hình hiện:
 Xin chào! Tôi đã sẵn sàng học lập trình.
 ```
 
-— thì **bạn vừa viết và chạy chương trình máy tính đầu tiên trong đời**. Nghiêm túc đấy: bạn vừa ra lệnh cho máy tính bằng ngôn ngữ lập trình, và nó đã nghe lời. 🎉
+— thì **bạn vừa viết và chạy chương trình máy tính đầu tiên trong đời**. Nghiêm túc đấy: bạn vừa ra lệnh cho máy tính bằng ngôn ngữ lập trình, và nó đã nghe lời.
 
-> ⚠️ Lỗi người mới hay gặp:
+> Lỗi người mới hay gặp:
 > - `'python' is not recognized...` → bạn quên tick "Add to PATH" khi cài. Cách sửa nhanh nhất: gỡ Python ra, cài lại, lần này nhớ tick.
 > - `SyntaxError` → thường do gõ sai một ký tự: thiếu dấu ngoặc `)`, thiếu dấu nháy `"`, hoặc viết hoa `Print` (Python phân biệt hoa/thường — phải là `print`).
 > - Dùng dấu nháy "cong" `“ ”` (do gõ trong Word rồi dán sang) thay vì nháy thẳng `" "` → luôn gõ code trực tiếp trong VS Code.
@@ -232,7 +232,7 @@ git config --global user.email "email-cua-ban@gmail.com"
 
 Hai lệnh này chạy xong **không hiện gì cả** — trong thế giới terminal, im lặng thường có nghĩa là thành công.
 
-> 💡 Ghi nhớ: Git (phần mềm trên máy bạn) khác với **GitHub** (trang web lưu trữ dự án dùng Git, giống "Google Drive cho code"). Khoá Git sẽ làm rõ — hôm nay chỉ cần cài Git là đủ.
+> Ghi nhớ: Git (phần mềm trên máy bạn) khác với **GitHub** (trang web lưu trữ dự án dùng Git, giống "Google Drive cho code"). Khoá Git sẽ làm rõ — hôm nay chỉ cần cài Git là đủ.
 
 ---
 
@@ -278,9 +278,9 @@ AI là gia sư cực kỳ lợi hại — nếu dùng đúng cách:
 - **Tin AI tuyệt đối**: AI đôi khi trả lời sai rất tự tin (hiện tượng gọi là "ảo giác" — hallucination). Luôn chạy thử và kiểm chứng.
 - Hỏi quá chung chung kiểu *"code bị lỗi, sửa giùm"* mà không dán lỗi và code — AI không nhìn thấy màn hình của bạn.
 
-> 💡 Ghi nhớ: Công thức hỏi AI hiệu quả = **(1) Tôi đang làm gì + (2) Tôi mong đợi điều gì + (3) Thực tế xảy ra gì (dán nguyên văn lỗi) + (4) Môi trường của tôi (Windows/Mac, phiên bản)**. Áp dụng công thức này, 90% câu hỏi được giải quyết trong một lần hỏi.
+> Ghi nhớ: Công thức hỏi AI hiệu quả = **(1) Tôi đang làm gì + (2) Tôi mong đợi điều gì + (3) Thực tế xảy ra gì (dán nguyên văn lỗi) + (4) Môi trường của tôi (Windows/Mac, phiên bản)**. Áp dụng công thức này, 90% câu hỏi được giải quyết trong một lần hỏi.
 
-> ⚠️ Lỗi người mới hay gặp: Gặp lỗi là xoá hết cài lại Windows, hoặc bỏ cuộc. Hầu hết lỗi khi cài môi trường chỉ thuộc 3 nhóm: (1) quên "Add to PATH", (2) chưa mở lại terminal sau khi cài, (3) gõ sai chính tả lệnh. Kiểm tra 3 thứ đó trước khi hoảng.
+> Lỗi người mới hay gặp: Gặp lỗi là xoá hết cài lại Windows, hoặc bỏ cuộc. Hầu hết lỗi khi cài môi trường chỉ thuộc 3 nhóm: (1) quên "Add to PATH", (2) chưa mở lại terminal sau khi cài, (3) gõ sai chính tả lệnh. Kiểm tra 3 thứ đó trước khi hoảng.
 
 ---
 
@@ -288,14 +288,14 @@ AI là gia sư cực kỳ lợi hại — nếu dùng đúng cách:
 
 Đánh dấu từng mục — xong hết là bạn đã sẵn sàng cho cả khoá học:
 
-| ✅ | Hạng mục | Cách kiểm tra |
+| ✓ | Hạng mục | Cách kiểm tra |
 |---|---|---|
-| ☐ | VS Code mở được, tạo và lưu được file | Tạo `ghichu.txt` trên Desktop |
-| ☐ | Biết mở terminal và dùng `ls`/`dir`, `cd`, `mkdir` | Tự tạo được thư mục `hoc-lap-trinh` |
-| ☐ | Python cài xong | `python --version` hiện số phiên bản |
-| ☐ | Chạy được chương trình đầu tiên | `python xinchao.py` in ra lời chào |
-| ☐ | Git cài xong và đã khai tên | `git --version` hiện số phiên bản |
-| ☐ | Mở được DevTools | Bấm F12 trong trình duyệt |
-| ☐ | Biết công thức google lỗi & hỏi AI | Thuộc công thức 4 phần ở trên |
+| ☐  | VS Code mở được, tạo và lưu được file | Tạo `ghichu.txt` trên Desktop |
+| ☐  | Biết mở terminal và dùng `ls`/`dir`, `cd`, `mkdir` | Tự tạo được thư mục `hoc-lap-trinh` |
+| ☐  | Python cài xong | `python --version` hiện số phiên bản |
+| ☐  | Chạy được chương trình đầu tiên | `python xinchao.py` in ra lời chào |
+| ☐  | Git cài xong và đã khai tên | `git --version` hiện số phiên bản |
+| ☐  | Mở được DevTools | Bấm F12 trong trình duyệt |
+| ☐  | Biết công thức google lỗi & hỏi AI | Thuộc công thức 4 phần ở trên |
 
 Buổi "sắm đồ nghề" nào cũng hơi lích kích — nhưng bạn chỉ phải làm **một lần duy nhất**. Từ bài sau, mọi thứ đã sẵn sàng: mở VS Code, mở terminal, và bắt tay vào học thật sự. Hẹn gặp ở bài tiếp theo!

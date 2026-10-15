@@ -223,7 +223,7 @@ Kịch bản kinh điển: server xử lý xong nhưng **reply mất**, client t
 <rect x="470" y="82" width="180" height="26" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
 <text x="560" y="100" text-anchor="middle" font-size="10" fill="currentColor">TRỪ $50 (lần 1)</text>
 <line x1="558" y1="122" x2="300" y2="122" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#sa)"/>
-<text x="400" y="115" text-anchor="middle" font-size="10" fill="#f43f5e">reply MẤT ✕</text>
+<text x="400" y="115" text-anchor="middle" font-size="10" fill="#f43f5e">reply MẤT ✗</text>
 <line x1="130" y1="150" x2="180" y2="150" stroke="currentColor" stroke-width="1"/>
 <text x="255" y="147" text-anchor="middle" font-size="10" fill="#f59e0b">timeout — retry</text>
 <line x1="130" y1="172" x2="558" y2="172" stroke="currentColor" stroke-width="1.5" marker-end="url(#sa)"/>

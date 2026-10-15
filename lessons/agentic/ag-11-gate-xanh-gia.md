@@ -129,7 +129,7 @@ I: toi day roi
 
 Hàm `check` có `false` ở dòng đầu, `set -e` đang bật — nhưng gọi trong `if` thì `false` bị bỏ qua, hàm trả exit code của `echo` cuối, và `if` đi nhánh PASS. Gate viết kiểu `if run_checks; then echo PASS` mang đúng lỗi này. Chỉ lần gọi `check` đứng một mình mới làm script dừng (exit 1, dòng J không in).
 
-📏 Luật viết gate rút ra: `set -uo pipefail` ở đầu; mỗi lệnh thật theo mẫu `cmd; c=$?` rồi mới làm gì khác; không dựa vào `set -e` để tạo `rc`.
+Luật viết gate rút ra: `set -uo pipefail` ở đầu; mỗi lệnh thật theo mẫu `cmd; c=$?` rồi mới làm gì khác; không dựa vào `set -e` để tạo `rc`.
 
 ### 3.3. SKIP im lặng và "0 test" — gate chạy, nhưng không kiểm gì
 
@@ -168,7 +168,7 @@ Hai điểm cần biết, đều đã chạy thử:
 
 Mặt đối xứng ở Jest: sau một refactor, một file test chạy mà **đăng ký 0 test case** (lỗi khi dựng mock lúc load). Gate của repo chấm theo dòng `Test Suites:` nên vẫn báo **271 suite pass**; chỉ dòng `Tests:` tụt **2899 → 2857** (case thực tế, một lần chạy). Chiều ngược lại cũng có: một suite chết lúc load đóng góp 0 test nên dòng `Tests:` trông xanh. Hai chiều ngược nhau, nên **không có một con số nào đủ**: đọc cả hai, và so với baseline đo trên chính worktree đang chạy.
 
-💡 Gate tốt **tự dựng hạ tầng nó cần** (container dùng-một-lần với tên riêng, `trap cleanup EXIT`), và coi bất kỳ skip nào không có trong danh sách cho phép là FAIL.
+Gate tốt **tự dựng hạ tầng nó cần** (container dùng-một-lần với tên riêng, `trap cleanup EXIT`), và coi bất kỳ skip nào không có trong danh sách cho phép là FAIL.
 
 ### 3.4. Gate cấm pattern: regex trên text không kín
 
@@ -482,38 +482,38 @@ bash prove-red.sh gate.sh calc.py 's/SUM(v)/COUNT(v)/'    # mutant ở nhánh DB
 - `git diff` (hoặc md5) của `calc.py` sau cùng không đổi so với lúc đầu.
 - Bạn trả lời được bằng một câu: vì sao kiểm "Ran ≥ 2" không bắt được skip (gợi ý: §3.3).
 
-💡 Áp sang repo thật: chọn một gate bạn đang dùng cho agent, viết 2–3 mutant thật (xoá một `await`, đổi một điều kiện, bỏ một field), chạy `prove-red` cho từng cái. Ghi danh sách mutant vào cạnh gate để lần sửa gate sau chạy lại.
+Áp sang repo thật: chọn một gate bạn đang dùng cho agent, viết 2–3 mutant thật (xoá một `await`, đổi một điều kiện, bỏ một field), chạy `prove-red` cho từng cái. Ghi danh sách mutant vào cạnh gate để lần sửa gate sau chạy lại.
 
 ---
 
 ## 5. Bẫy thường gặp
 
-🪤 **Sửa gate cho xanh.**
+**Sửa gate cho xanh.**
 Triệu chứng: gate đỏ mà không ai giải thích được, agent (hoặc người) nới điều kiện, thêm file vào allowlist, hoặc thêm `|| true` cho "khỏi phiền".
 Nguyên nhân gốc: coi gate đỏ là phiền toái chứ không phải phát hiện; và người sửa gate là người đang bị gate chấm.
 Chặn bằng cơ chế: gate và allowlist nằm trong thư mục agent không được ghi (deny trong permission, xem [[ag-08-hook-va-chan-bang-cau-hinh]]); mọi thay đổi gate phải kèm output `prove-red` mới.
 
-🪤 **Gate grep SKIP trên output không `-v`.**
+**Gate grep SKIP trên output không `-v`.**
 Triệu chứng: luật "có SKIP thì FAIL" tồn tại, nhưng chưa từng kích hoạt.
 Nguyên nhân gốc: `go test` không `-v` chỉ in dòng `ok`; chuỗi cần grep không bao giờ xuất hiện.
 Chặn bằng cơ chế: `prove-red` có một mutant "gỡ hạ tầng" (bỏ biến môi trường DB) — gate phải đỏ. Nếu không đỏ, luật SKIP đang mù.
 
-🪤 **Một con số tổng duy nhất làm tiêu chí.**
+**Một con số tổng duy nhất làm tiêu chí.**
 Triệu chứng: "271 suite pass" hoặc "Ran 2 tests" được báo là xong trong khi một suite rỗng hoặc test bị skip.
 Nguyên nhân gốc: con số tổng gộp hai trạng thái khác nhau (chạy-và-qua, không-chạy) thành một.
 Chặn bằng cơ chế: gate in và so **ít nhất hai số** (suite và test, chạy và skip) với baseline đo trên chính worktree vừa dựng; lệch baseline là FAIL.
 
-🪤 **"0 kết quả" được đọc thành "sạch".**
+**"0 kết quả" được đọc thành "sạch".**
 Triệu chứng: báo cáo của agent viết "đã kiểm, không còn chỗ nào dùng X" dựa trên `grep -c`/`grep -rl`.
 Nguyên nhân gốc: 0 có ba nghĩa (không có / pattern sai / đo sai chỗ) và câu lệnh không phân biệt.
 Chặn bằng cơ chế: brief yêu cầu mọi phép đếm in kèm mẫu số và chạy trên `HEAD`; script đếm exit lỗi khi số file quét được là 0.
 
-🪤 **Gate chỉ thử chiều "đúng thì xanh".**
+**Gate chỉ thử chiều "đúng thì xanh".**
 Triệu chứng: gate mới viết, chạy trên code hiện tại ra xanh, được đưa ngay vào loop.
 Nguyên nhân gốc: chiều đó cũng qua với `exit 0` cứng; nó không phân biệt được gì.
 Chặn bằng cơ chế: skill/loop từ chối dùng gate chưa có file `prove-red.log` mới hơn lần sửa gate cuối (so mtime hoặc hash gate ghi trong log).
 
-🪤 **Test xanh trên commit chưa vá.**
+**Test xanh trên commit chưa vá.**
 Triệu chứng: bản vá merge kèm test "chứng minh", sau đó bug quay lại.
 Nguyên nhân gốc: test quan sát tầng hoặc phạm vi mà bug không đi qua (§3.6), hoặc fixture mang cùng giả định với code.
 Chặn bằng cơ chế: done-criteria của task fix bug có dòng "test mới phải ĐỎ trên commit trước bản vá" — verifier chạy nó bằng `git stash`/checkout commit cha, không chỉ đọc test.

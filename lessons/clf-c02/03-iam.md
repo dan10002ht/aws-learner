@@ -85,12 +85,12 @@ Sau bài này bạn có thể:
 ### 2.0.3 Ví dụ cụ thể cho từng entity
 
 #### IAM User — khi nào dùng / không
-✅ **Dùng**:
+✓ **Dùng**:
 - CI/CD legacy không hỗ trợ OIDC (chạy trên server tự host).
 - Cá nhân học AWS lần đầu, 1 account.
 - Service account cho bot Slack/script chạy ngoài AWS.
 
-❌ **Không dùng**:
+✗ **Không dùng**:
 - ≥ 2 account → dùng IAM Identity Center.
 - Workload chạy trên AWS (EC2, Lambda, ECS) → dùng Role.
 - GitHub Actions → dùng OIDC.
@@ -105,7 +105,7 @@ aws iam enable-mfa-device --user-name alice --serial-number arn:aws:iam::1234567
 ```
 
 #### IAM Group — khi nào dùng
-✅ Luôn dùng khi có ≥ 2 user cùng vai trò.
+✓ Luôn dùng khi có ≥ 2 user cùng vai trò.
 
 **Ví dụ phân nhóm thực tế:**
 - `Developers` — `PowerUserAccess` (mọi service trừ IAM).
@@ -300,7 +300,7 @@ IAM trả lời 2 câu hỏi:
 
 Đặc điểm:
 - **Global service** — không theo region. Nhưng console sign-in URL có tên region.
-- **Free** — không tốn phí, chỉ tốn khi bị lộ credential 😅
+- **Free** — không tốn phí, chỉ tốn khi bị lộ credential
 - **Eventually consistent** — tạo user/policy xong, khoảng vài giây mới effective toàn cầu.
 
 ### 2.2 Các entity cốt lõi
@@ -365,7 +365,7 @@ Trước khi đi từng entity, hãy nhìn quan hệ giữa chúng: **User** n�
   - **Password** (để login console).
   - **Access Key** (AccessKeyId + SecretAccessKey, để gọi CLI/SDK). Tối đa 2 active key/user.
 - User có thể thuộc **nhiều Group**.
-- ⚠️ **Access Key = long-term credential**, bị lộ là nguy hiểm. Ưu tiên Role + STS temporary credential.
+- **Access Key = long-term credential**, bị lộ là nguy hiểm. Ưu tiên Role + STS temporary credential.
 
 #### c) IAM Group
 - Tập hợp User. **KHÔNG chứa Group khác** (không nested group).
@@ -430,7 +430,7 @@ Các field:
 - **Condition**: giới hạn thêm (IP, MFA, time, tag, VPC endpoint…).
 - **NotAction / NotResource / NotPrincipal**: inverse match — nguy hiểm, dễ viết sai, hạn chế dùng.
 
-### 2.4 Policy Evaluation Logic (⚠️ cực hay ra đề)
+### 2.4 Policy Evaluation Logic (cực hay ra đề)
 
 Khi 1 principal gọi API, AWS duyệt theo thứ tự:
 
@@ -666,7 +666,7 @@ Dùng console tool: https://policysim.aws.amazon.com — paste policy + chọn a
    <details><summary>Trả lời</summary>**DENY**. SCP là trần, không grant. Dù user có Admin, SCP chặn thì không dùng được.</details>
 
 2. Bucket policy cho phép account B đọc. Trong account B có user C không có bất kỳ IAM policy nào về S3. User C đọc được không?
-   <details><summary>Trả lời</summary>**Không** — cross-account cần **cả 2 bên allow**: resource-based (bucket policy ✅) + identity-based trong account B (cần grant `s3:GetObject` cho user C). Trong **cùng 1 account** thì chỉ cần 1 bên allow là đủ.</details>
+   <details><summary>Trả lời</summary>**Không** — cross-account cần **cả 2 bên allow**: resource-based (bucket policy ✓) + identity-based trong account B (cần grant `s3:GetObject` cho user C). Trong **cùng 1 account** thì chỉ cần 1 bên allow là đủ.</details>
 
 3. Bạn cần cho app chạy trên EC2 ghi vào DynamoDB. Cách an toàn nhất?
    <details><summary>Trả lời</summary>Tạo **IAM Role** với policy ghi DynamoDB, gắn role vào EC2 qua **Instance Profile**. KHÔNG hardcode access key.</details>
@@ -756,12 +756,12 @@ Dùng console tool: https://policysim.aws.amazon.com — paste policy + chọn a
 - Workload on-prem: **IAM Roles Anywhere** thay vì access key.
 
 ### Anti-pattern thường gặp
-- ❌ `Action: "*"` trên `Resource: "*"` cho app user (= Admin).
-- ❌ Access key commit vào `application.properties` / `.env` vào Git.
-- ❌ EC2 với access key hardcode trong user-data.
-- ❌ Role trust policy `Principal: "*"` (ai cũng assume được!).
-- ❌ Dùng `PassRole` không giới hạn resource (privilege escalation).
-- ❌ Disable IMDSv2 cho "dễ debug".
+- ✗ `Action: "*"` trên `Resource: "*"` cho app user (= Admin).
+- ✗ Access key commit vào `application.properties` / `.env` vào Git.
+- ✗ EC2 với access key hardcode trong user-data.
+- ✗ Role trust policy `Principal: "*"` (ai cũng assume được!).
+- ✗ Dùng `PassRole` không giới hạn resource (privilege escalation).
+- ✗ Disable IMDSv2 cho "dễ debug".
 
 ---
 

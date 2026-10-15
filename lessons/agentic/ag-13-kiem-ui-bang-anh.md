@@ -407,37 +407,37 @@ Chi tiết đáng ghi: nếu chỉ chuyển lệnh chèn khối lên ngay trư�
 
 ## 5. Bẫy thường gặp
 
-🪤 **So chữ rồi gọi là kiểm UI**
+**So chữ rồi gọi là kiểm UI**
 - Triệu chứng: verifier PASS, người mở trình duyệt thấy sai bố cục.
 - Nguyên nhân gốc: `innerText` không chứa bố cục, phần tử không chữ, khả năng tương tác, hay phần bị cắt bằng CSS.
 - Chặn: done-criteria của task UI bắt buộc có trường `evidence: screenshots/<state>.png` cho từng state; verifier từ chối PASS khi thiếu ảnh. Đặt luật này trong file định nghĩa verifier ([[ag-12-verifier-doc-lap]]), không trong lời dặn từng task.
 
-🪤 **Miễn trừ khái quát**
+**Miễn trừ khái quát**
 - Triệu chứng: brief ghi "không chấm phần nhìn" / "bỏ qua styling", và lỗi 3 cột vs 2 cột bị xếp vào đó.
 - Nguyên nhân gốc: chữ khái quát để người chấm tự quyết ranh giới, và họ chọn ranh giới ít việc nhất.
 - Chặn: template brief có hai danh sách bắt buộc `PHẢI KHỚP` và `ĐƯỢC LỆCH`; một gate lint brief từ chối khi `ĐƯỢC LỆCH` chứa từ trong danh sách cấm (`styling`, `cosmetic`, `visual`, `look and feel`).
 
-🪤 **Ảnh chụp sớm**
+**Ảnh chụp sớm**
 - Triệu chứng: kết luận "trang trắng" hoặc "kẹt loading" mà người thật mở thì thấy bình thường.
 - Nguyên nhân gốc: chụp theo thời gian cố định hoặc theo `networkidle`, trong khi một request chậm (6,6 s trong case) chưa về.
 - Chặn: helper chụp ảnh nhận tham số bắt buộc `ready: Locator` và gọi `toHaveCount`/`toBeVisible` trước `screenshot`; không có overload chụp mà không có `ready`.
 
-🪤 **Ngưỡng pixel nuốt lỗi**
+**Ngưỡng pixel nuốt lỗi**
 - Triệu chứng: `toHaveScreenshot` PASS trên một màn đổi bố cục.
 - Nguyên nhân gốc: `threshold` mặc định 0.2 bỏ qua màu nhạt (khung xám, viền); `maxDiffPixelRatio` bù phần còn lại.
 - Chặn: một test control đỏ nằm trong suite — chạy `toHaveScreenshot` trên một bản cố ý sai và kỳ vọng nó fail (`test.fail()` của Playwright đánh dấu test phải fail). Ai nới ngưỡng tới mức control pass thì CI đỏ.
 
-🪤 **Thước đo tự nói dối (CLS = 0, innerWidth = 500)**
+**Thước đo tự nói dối (CLS = 0, innerWidth = 500)**
 - Triệu chứng: con số đẹp bất thường, hoặc hai người đo ra hai số.
 - Nguyên nhân gốc: tab nền, thiếu `buffered: true`, sai frame, sàn viewport, `scrollWidth` bị kẹp.
 - Chặn: mọi script đo có một bước assert thước ở đầu (control shift > 0; `innerWidth === width đặt`), fail ngay nếu sai, trước khi in ra số đo thật.
 
-🪤 **Pixel diff giữa hai công nghệ render**
+**Pixel diff giữa hai công nghệ render**
 - Triệu chứng: so mockup HTML với build bằng `toHaveScreenshot`, đỏ 100% mọi lần, team tắt test.
 - Nguyên nhân gốc: font, bo góc, khoảng cách của hai công nghệ không bao giờ trùng pixel.
 - Chặn: chọn phép kiểm theo nguồn baseline (bảng 3.4) — mockup khác công nghệ ⇒ probe cấu trúc + mắt model với checklist; pixel diff chỉ dùng cho baseline cùng công nghệ.
 
-🪤 **Không biết mình bỏ sót state nào**
+**Không biết mình bỏ sót state nào**
 - Triệu chứng: kiểm vài trăm ảnh, sót đúng thứ phải bấm mới hiện (modal, trạng thái rỗng, lỗi).
 - Nguyên nhân gốc: danh sách state được suy từ route/URL, không từ control trên màn hình.
 - Chặn: script liệt kê mọi phần tử tương tác (`getByRole('button')`, `getByRole('tab')`, `getByRole('link')`) trên mockup, đối chiếu với STATES; control không xuất hiện trong STATES nào thì gate báo.

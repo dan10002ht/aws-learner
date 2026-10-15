@@ -13,7 +13,7 @@ Chuỗi:    H  E  L  L  O
 Vị trí:   0  1  2  3  4
 ```
 
-> 💡 Ghi nhớ: Vị trí (gọi là **index** — chỉ số) luôn bắt đầu từ 0. Ký tự cuối của chuỗi dài n nằm ở vị trí n-1.
+> Ghi nhớ: Vị trí (gọi là **index** — chỉ số) luôn bắt đầu từ 0. Ký tự cuối của chuỗi dài n nằm ở vị trí n-1.
 
 ## 2. Thao tác chuỗi cơ bản
 
@@ -112,7 +112,7 @@ std::cout << s.substr(0, 5) << "\n";  // Hello (từ vị trí 0, lấy 5 ký t�
 std::cout << s.substr(6) << "\n";     // World (từ vị trí 6 đến hết)
 ```
 
-> ⚠️ Lỗi người mới hay gặp: nghĩ rằng `s[0:5]` lấy 6 ký tự (0,1,2,3,4,5). Sai! Nó lấy 5 ký tự, **dừng trước** vị trí 5. Mẹo nhớ: số ký tự lấy được = kết thúc − bắt đầu (5 − 0 = 5).
+> Lỗi người mới hay gặp: nghĩ rằng `s[0:5]` lấy 6 ký tự (0,1,2,3,4,5). Sai! Nó lấy 5 ký tự, **dừng trước** vị trí 5. Mẹo nhớ: số ký tự lấy được = kết thúc − bắt đầu (5 − 0 = 5).
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Cắt chuỗi 'Hello World' với chỉ số ký tự</title>
@@ -215,7 +215,7 @@ std::cout << s.find("World") << "\n";  // 6 (trả về std::string::npos nếu 
 | Thay thế | `s.replace(a, b)` | `s.replaceAll(a, b)` | `s.replace(a, b)` | `strings.ReplaceAll(s, a, b)` |
 | Tách thành danh sách | `s.split(",")` | `s.split(",")` | `s.split(",")` | `strings.Split(s, ",")` |
 
-> 💡 Ghi nhớ: chuỗi là **bất biến (immutable)** trong cả 4 ngôn ngữ — các hàm trên KHÔNG sửa chuỗi gốc mà trả về **chuỗi mới**. Viết `s.upper()` rồi vứt kết quả thì `s` vẫn y nguyên; phải gán lại: `s = s.upper()`.
+> Ghi nhớ: chuỗi là **bất biến (immutable)** trong cả 4 ngôn ngữ — các hàm trên KHÔNG sửa chuỗi gốc mà trả về **chuỗi mới**. Viết `s.upper()` rồi vứt kết quả thì `s` vẫn y nguyên; phải gán lại: `s = s.upper()`.
 
 ### 2.6. Định dạng chuỗi (format) — trộn chữ với biến
 
@@ -327,7 +327,7 @@ std::string noidung = buffer.str();
 std::cout << noidung << "\n";
 ```
 
-> ⚠️ Lỗi người mới hay gặp: đọc một file **không tồn tại** → chương trình "văng" ngay lập tức. Đây chính là lý do ta cần học phần tiếp theo: xử lý lỗi.
+> Lỗi người mới hay gặp: đọc một file **không tồn tại** → chương trình "văng" ngay lập tức. Đây chính là lý do ta cần học phần tiếp theo: xử lý lỗi.
 
 ## 4. Vì sao chương trình "văng"? — Exception
 
@@ -509,7 +509,7 @@ std::cout << "Dọn dẹp xong.\n";  // luôn chạy
 
 *Chú thích:* Go không có `finally`; thay vào đó dùng `defer` — "hẹn" một lệnh chạy lúc hàm kết thúc, dù kết thúc kiểu gì.
 
-> ⚠️ Lỗi người mới hay gặp: bọc try/catch quanh **toàn bộ chương trình** rồi catch im lặng không in gì cả. Hậu quả: lỗi xảy ra mà bạn không hề biết, bug "tàng hình" cực khó tìm. Chỉ try những đoạn thật sự có thể lỗi, và trong catch luôn thông báo/ghi lại lỗi.
+> Lỗi người mới hay gặp: bọc try/catch quanh **toàn bộ chương trình** rồi catch im lặng không in gì cả. Hậu quả: lỗi xảy ra mà bạn không hề biết, bug "tàng hình" cực khó tìm. Chỉ try những đoạn thật sự có thể lỗi, và trong catch luôn thông báo/ghi lại lỗi.
 
 ## 6. Validate input — đừng tin người dùng gõ đúng
 
@@ -636,7 +636,7 @@ std::string kiemTraTuoi(std::string chuoi) {
 
 Để ý mẫu hình chung của cả 4 ngôn ngữ: **kiểm tra sớm, trả về thông báo lỗi rõ ràng ngay khi phát hiện vấn đề** — code đọc như một danh sách rào chắn từ trên xuống.
 
-> 💡 Ghi nhớ: thông báo lỗi tốt nói cho người dùng biết **họ cần làm gì** ("Tuổi phải từ 1 đến 120"), không phải thuật ngữ máy móc ("ValueError: invalid literal").
+> Ghi nhớ: thông báo lỗi tốt nói cho người dùng biết **họ cần làm gì** ("Tuổi phải từ 1 đến 120"), không phải thuật ngữ máy móc ("ValueError: invalid literal").
 
 ## 7. Tóm tắt
 

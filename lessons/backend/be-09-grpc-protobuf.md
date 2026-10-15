@@ -79,7 +79,7 @@ Không có dấu ngoặc, dấu phẩy, tên field, hay khoảng trắng — ch�
   <text x="360" y="246" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">Đổi lại: bytes không tự mô tả — phải có schema .proto mới đọc được</text>
 </svg>
 
-> 💡 Ghi nhớ: cái giá của binary là **không self-describing**. Nhìn một chuỗi byte Protobuf không có schema thì không biết field nào là gì — đây vừa là điểm mạnh (nhỏ) vừa là ràng buộc (phải chia sẻ `.proto`, phải có `grpcurl`/reflection để debug).
+> Ghi nhớ: cái giá của binary là **không self-describing**. Nhìn một chuỗi byte Protobuf không có schema thì không biết field nào là gì — đây vừa là điểm mạnh (nhỏ) vừa là ràng buộc (phải chia sẻ `.proto`, phải có `grpcurl`/reflection để debug).
 
 ## 2. Schema evolution: tiến hoá không phá vỡ
 
@@ -87,11 +87,11 @@ Trong hệ phân tán, client cũ và server mới (hoặc ngược lại) luôn
 
 | Thao tác | An toàn? | Vì sao |
 |---|---|---|
-| Thêm field mới (số mới) | ✅ | Bên cũ gặp field lạ thì bỏ qua (giữ trong unknown fields), bên mới thấy field vắng thì nhận default |
-| Đổi **tên** field | ✅ | Tên không đi trên dây, chỉ field number mới quan trọng |
-| Xoá field | ⚠️ có điều kiện | Phải `reserved` số đó để không ai tái dùng |
-| **Đổi field number** của field đang dùng | ❌ | Bên kia đọc byte theo số cũ → lệch dữ liệu hoàn toàn |
-| Đổi **type** không tương thích (vd `int32` → `string`) | ❌ | Wire type khác → parse hỏng |
+| Thêm field mới (số mới) | ✓ | Bên cũ gặp field lạ thì bỏ qua (giữ trong unknown fields), bên mới thấy field vắng thì nhận default |
+| Đổi **tên** field | ✓ | Tên không đi trên dây, chỉ field number mới quan trọng |
+| Xoá field | có điều kiện | Phải `reserved` số đó để không ai tái dùng |
+| **Đổi field number** của field đang dùng | ✗ | Bên kia đọc byte theo số cũ → lệch dữ liệu hoàn toàn |
+| Đổi **type** không tương thích (vd `int32` → `string`) | ✗ | Wire type khác → parse hỏng |
 
 Quy tắc sống còn: khi xoá một field, **cấm vĩnh viễn** field number (và tên) đó để lần sau không ai vô tình tái sử dụng và đọc nhầm dữ liệu cũ:
 
@@ -163,7 +163,7 @@ gRPC bắt buộc HTTP/2. Đây không phải chi tiết kỹ thuật vô thư�
   <text x="360" y="240" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">Cùng lượng RPC, HTTP/2 dùng ít connection hơn → ít handshake, ít tài nguyên, độ trễ thấp hơn</text>
 </svg>
 
-> ⚠️ Bẫy production: chính vì gRPC dồn mọi RPC vào một connection HTTP/2 sống lâu, đặt sau một **L4 load balancer**, toàn bộ traffic của một client sẽ dính vào **một** backend — LB không nhìn thấy từng RPC để rải. Cần client-side load balancing, hoặc L7 proxy hiểu HTTP/2 (Envoy, ALB), hoặc đặt `MAX_CONNECTION_AGE` để ép client mở lại connection và tái cân bằng định kỳ.
+> Bẫy production: chính vì gRPC dồn mọi RPC vào một connection HTTP/2 sống lâu, đặt sau một **L4 load balancer**, toàn bộ traffic của một client sẽ dính vào **một** backend — LB không nhìn thấy từng RPC để rải. Cần client-side load balancing, hoặc L7 proxy hiểu HTTP/2 (Envoy, ALB), hoặc đặt `MAX_CONNECTION_AGE` để ép client mở lại connection và tái cân bằng định kỳ.
 
 ## 4. Định nghĩa service & code generation
 
@@ -211,7 +211,7 @@ protoc --go_out=. --go_opt=paths=source_relative \
 #   TS/Node: protoc --plugin=protoc-gen-ts_proto ...
 ```
 
-> 💡 Ghi nhớ: giá trị lớn nhất của gRPC không phải tốc độ mà là **contract-first + codegen**. `.proto` nằm trong một repo chung (hoặc buf registry), CI chặn breaking change (`buf breaking`), mọi team `import` cùng stub sinh ra — không thể có chuyện client và server hiểu field khác nhau.
+> Ghi nhớ: giá trị lớn nhất của gRPC không phải tốc độ mà là **contract-first + codegen**. `.proto` nằm trong một repo chung (hoặc buf registry), CI chặn breaking change (`buf breaking`), mọi team `import` cùng stub sinh ra — không thể có chuyện client và server hiểu field khác nhau.
 
 ## 5. Bốn kiểu RPC — và code thật
 
@@ -377,7 +377,7 @@ if status.Code(err) == codes.DeadlineExceeded {
 }
 ```
 
-> ⚠️ Bẫy production: **luôn** đặt deadline ở phía client. Mặc định không có deadline nghĩa là một downstream treo có thể giữ goroutine/thread và connection vô thời hạn, kéo sập cả service. Deadline là bắt buộc, không phải tuỳ chọn.
+> Bẫy production: **luôn** đặt deadline ở phía client. Mặc định không có deadline nghĩa là một downstream treo có thể giữ goroutine/thread và connection vô thời hạn, kéo sập cả service. Deadline là bắt buộc, không phải tuỳ chọn.
 
 ### Metadata: header của gRPC
 
@@ -451,7 +451,7 @@ Quy tắc thực dụng:
 
 Kiến trúc phổ biến gộp cả ba: **REST/GraphQL ở edge → dịch xuống gRPC giữa các microservice nội bộ**.
 
-> 💡 Ghi nhớ: đừng ép gRPC ra tới browser vì "nhanh". Browser không nói HTTP/2 trailer thô nên phải dùng **gRPC-Web** kèm proxy (Envoy) dịch sang — thêm hạ tầng, mất một phần streaming (client/bidi streaming bị giới hạn). Nếu consumer là browser/public, REST hoặc GraphQL gần như luôn đúng hơn.
+> Ghi nhớ: đừng ép gRPC ra tới browser vì "nhanh". Browser không nói HTTP/2 trailer thô nên phải dùng **gRPC-Web** kèm proxy (Envoy) dịch sang — thêm hạ tầng, mất một phần streaming (client/bidi streaming bị giới hạn). Nếu consumer là browser/public, REST hoặc GraphQL gần như luôn đúng hơn.
 
 ## Tóm tắt
 

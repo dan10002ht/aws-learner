@@ -6,12 +6,12 @@ Nhánh này chứa kiến thức nền tảng về **hệ phân tán**, được
 
 | # | Bài | Trạng thái | Liên hệ AWS |
 |---|-----|------------|-------------|
-| 01 | [Định lý CAP (và PACELC)](01-cap-theorem.md) | ✅ | DynamoDB, Aurora, RDS Multi-AZ, S3 |
-| 02 | [Consistency Models](02-consistency-models.md) | ✅ | DynamoDB reads, S3, Read Replica |
-| 03 | [Replication & Quorum](03-replication-and-quorum.md) | ✅ | Aurora 4/6, DynamoDB, MSK |
-| 04 | [Latency vs Consistency — Multi-Region](04-latency-vs-consistency.md) | ✅ | Global Tables, Aurora Global, Route53 |
-| 05 | [Partitioning & Sharding](05-partitioning-and-sharding.md) | ✅ | DynamoDB partition key, RDS sharding |
-| 06 | [Failure Modes & Cascading Failures](06-failure-modes.md) | ✅ | Multi-AZ, circuit breaker, retry storm |
+| 01 | [Định lý CAP (và PACELC)](01-cap-theorem.md) | ✓ | DynamoDB, Aurora, RDS Multi-AZ, S3 |
+| 02 | [Consistency Models](02-consistency-models.md) | ✓ | DynamoDB reads, S3, Read Replica |
+| 03 | [Replication & Quorum](03-replication-and-quorum.md) | ✓ | Aurora 4/6, DynamoDB, MSK |
+| 04 | [Latency vs Consistency — Multi-Region](04-latency-vs-consistency.md) | ✓ | Global Tables, Aurora Global, Route53 |
+| 05 | [Partitioning & Sharding](05-partitioning-and-sharding.md) | ✓ | DynamoDB partition key, RDS sharding |
+| 06 | [Failure Modes & Cascading Failures](06-failure-modes.md) | ✓ | Multi-AZ, circuit breaker, retry storm |
 
 ## Cách học
 

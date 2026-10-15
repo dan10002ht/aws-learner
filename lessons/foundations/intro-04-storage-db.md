@@ -49,7 +49,7 @@ Object storage bỏ hẳn khái niệm thư mục và block. Mỗi mẩu dữ li
 | Quy mô | Theo ổ đĩa | Lớn | Gần như vô hạn |
 | Dùng cho | OS, database | Thư mục dùng chung | Ảnh, video, backup, data lake |
 
-> 💡 Ghi nhớ: Block = ngăn kéo cho **một máy** (nhanh nhất). File = tủ hồ sơ **dùng chung** theo đường dẫn. Object = quầy ký gửi **vô hạn** truy cập bằng key qua API.
+> Ghi nhớ: Block = ngăn kéo cho **một máy** (nhanh nhất). File = tủ hồ sơ **dùng chung** theo đường dẫn. Object = quầy ký gửi **vô hạn** truy cập bằng key qua API.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>So sánh ba kiểu lưu trữ: block, file, object và ánh xạ sang AWS</title>
@@ -142,7 +142,7 @@ Cháy ổ đĩa duy nhất: Durability  ↓  (mất dữ liệu vĩnh viễn)
 
 Người ta đo bằng "số 9": availability 99,99% nghĩa là cho phép gián đoạn ~52 phút/năm. Durability "11 số 9" (99,999999999%) nghĩa là gửi 10 triệu object thì trung bình 10.000 năm mới kỳ vọng mất 1 object.
 
-> 💡 Ghi nhớ: Durability = dữ liệu **còn tồn tại** hay không. Availability = dữ liệu **truy cập được lúc này** hay không. Hệ thống có thể tạm "sập" (availability giảm) mà không mất byte nào (durability nguyên vẹn).
+> Ghi nhớ: Durability = dữ liệu **còn tồn tại** hay không. Availability = dữ liệu **truy cập được lúc này** hay không. Hệ thống có thể tạm "sập" (availability giảm) mà không mất byte nào (durability nguyên vẹn).
 
 ## 3. RAID và replication — chống mất dữ liệu bằng bản sao
 
@@ -211,7 +211,7 @@ Hai chế độ chính:
 
 Replica còn có ích phụ: cho phép **đọc** từ bản sao để giảm tải cho primary (read replica).
 
-> 💡 Ghi nhớ: RAID bảo vệ trong phạm vi **một máy**; replication bảo vệ trong phạm vi **nhiều máy / nhiều địa điểm**. Hệ thống cloud nghiêm túc luôn dùng cả hai tầng tư duy này.
+> Ghi nhớ: RAID bảo vệ trong phạm vi **một máy**; replication bảo vệ trong phạm vi **nhiều máy / nhiều địa điểm**. Hệ thống cloud nghiêm túc luôn dùng cả hai tầng tư duy này.
 
 ## 4. SQL vs NoSQL — chọn đúng "kệ" cho đúng "đồ"
 
@@ -243,7 +243,7 @@ Câu hỏi quyết định không phải "cái nào xịn hơn" mà là **"bạn
 - Ghi dồn dập theo thời gian → **wide-column**.
 - Câu hỏi dạng "bạn của bạn của bạn" → **graph**.
 
-> 💡 Ghi nhớ: SQL = sổ kế toán (chặt chẽ, quan hệ, transaction). NoSQL = đánh đổi schema cứng và JOIN để lấy **scale ngang** và **tốc độ theo access pattern**. Chọn database theo **cách bạn truy vấn**, không theo mốt.
+> Ghi nhớ: SQL = sổ kế toán (chặt chẽ, quan hệ, transaction). NoSQL = đánh đổi schema cứng và JOIN để lấy **scale ngang** và **tốc độ theo access pattern**. Chọn database theo **cách bạn truy vấn**, không theo mốt.
 
 ## 5. Index — mục lục của database
 
@@ -252,8 +252,8 @@ Không có index, database tìm một bản ghi bằng cách **đọc lần lư�
 **Index** giống **mục lục/bảng tra cứu cuối sách**: một cấu trúc phụ sắp xếp sẵn (thường là B-tree), trỏ thẳng đến vị trí bản ghi.
 
 ```
-Không index:  [hàng 1]→[hàng 2]→ ... →[hàng 9.999.999]  😫 chậm
-Có index:     tra "Nguyễn Văn A" trong cây sắp xếp → nhảy thẳng tới hàng  ⚡
+Không index:  [hàng 1]→[hàng 2]→ ... →[hàng 9.999.999]  chậm
+Có index:     tra "Nguyễn Văn A" trong cây sắp xếp → nhảy thẳng tới hàng
 ```
 
 Nhưng mục lục không miễn phí:
@@ -263,7 +263,7 @@ Nhưng mục lục không miễn phí:
 
 Vì vậy: đánh index trên các cột **hay dùng để tìm kiếm/lọc**, đừng đánh index mọi cột.
 
-> 💡 Ghi nhớ: Index đổi **dung lượng + tốc độ ghi** lấy **tốc độ đọc**. Đọc nhiều → đáng giá; ghi nhiều mà ít tra cứu → cân nhắc.
+> Ghi nhớ: Index đổi **dung lượng + tốc độ ghi** lấy **tốc độ đọc**. Đọc nhiều → đáng giá; ghi nhiều mà ít tra cứu → cân nhắc.
 
 ## 6. Cache — sổ tay ghi nhanh
 
@@ -289,7 +289,7 @@ Request ──▶ Cache có sẵn?
 
 Cache thường nằm trong RAM nên **mất điện là mất** — cache là bản *tăng tốc*, không bao giờ là nơi *lưu trữ chính* (source of truth vẫn là database).
 
-> 💡 Ghi nhớ: Cache = trả lời từ trí nhớ thay vì tra sổ. Hit = có sẵn, miss = phải đi lấy. TTL điều khiển độ "tươi" của dữ liệu. Cache tăng tốc, **không** thay thế database.
+> Ghi nhớ: Cache = trả lời từ trí nhớ thay vì tra sổ. Hit = có sẵn, miss = phải đi lấy. TTL điều khiển độ "tươi" của dữ liệu. Cache tăng tốc, **không** thay thế database.
 
 ## 7. Backup vs Snapshot — hai cách "quay ngược thời gian"
 
@@ -308,7 +308,7 @@ Hai con số bạn sẽ gặp khi bàn về khôi phục:
 - **RPO (Recovery Point Objective)**: chấp nhận mất tối đa bao nhiêu **dữ liệu** (ví dụ: backup mỗi giờ → có thể mất tới 1 giờ dữ liệu).
 - **RTO (Recovery Time Objective)**: chấp nhận mất tối đa bao nhiêu **thời gian** để hệ thống chạy lại.
 
-> 💡 Ghi nhớ: Snapshot = nhanh, tiện, gắn với hệ thống gốc — tốt cho khôi phục thường ngày. Backup = bản sao độc lập, để được lâu — tấm lưới an toàn cuối cùng. Replication **không thay thế** backup: lệnh xóa nhầm cũng được replicate sang bản sao ngay lập tức!
+> Ghi nhớ: Snapshot = nhanh, tiện, gắn với hệ thống gốc — tốt cho khôi phục thường ngày. Backup = bản sao độc lập, để được lâu — tấm lưới an toàn cuối cùng. Replication **không thay thế** backup: lệnh xóa nhầm cũng được replicate sang bản sao ngay lập tức!
 
 ## 8. Liên hệ sang AWS
 

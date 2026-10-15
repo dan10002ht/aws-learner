@@ -6,7 +6,7 @@ Sau bài này bạn có thể:
 - Nói rõ **vì sao** tách: đọc và ghi có **yêu cầu, tải, và shape dữ liệu khác nhau**; scale riêng; dựng **nhiều read model** từ một nguồn.
 - Hiểu vì sao CQRS thường đi cùng **Event Sourcing**: event là nguồn sự thật, **projection** cập nhật read model.
 - Xử lý **eventual consistency** giữa write side và read side, và cách "giấu" độ trễ đó trong UX.
-- ⚠️ Nhận ra **over-engineering**: đa số CRUD **KHÔNG cần** CQRS. Biết chính xác khi nào nên dùng.
+- Nhận ra **over-engineering**: đa số CRUD **KHÔNG cần** CQRS. Biết chính xác khi nào nên dùng.
 
 ---
 
@@ -150,7 +150,7 @@ Nguyên tắc vàng: **thu hẹp cửa sổ trễ** (projection phải nhanh, th
 
 ---
 
-## 3. ⚠️ Cảnh báo over-engineering: đa số KHÔNG cần CQRS
+## 3. Cảnh báo over-engineering: đa số KHÔNG cần CQRS
 
 Đây là phần quan trọng nhất của bài. CQRS là con dao hai lưỡi: giải quyết đúng vấn đề thì tuyệt, dùng sai thì **nhân đôi độ phức tạp mà chẳng được gì**.
 
@@ -187,7 +187,7 @@ Nguyên tắc vàng: **thu hẹp cửa sổ trễ** (projection phải nhanh, th
 <line x1="523" y1="75" x2="523" y2="100" stroke="currentColor" stroke-width="1" marker-end="url(#ao)"/>
 <line x1="476" y1="115" x2="490" y2="115" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#ao)"/>
 <text x="483" y="170" text-anchor="middle" font-size="10" fill="currentColor">Mạnh nhưng phức tạp,</text>
-<text x="483" y="186" text-anchor="middle" font-size="10" fill="currentColor">eventual consistency ⚠️</text>
+<text x="483" y="186" text-anchor="middle" font-size="10" fill="currentColor">eventual consistency </text>
 <defs><marker id="ao" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
 </svg>
 
@@ -243,6 +243,6 @@ Con số minh hoạ: lúc mở bán, sơ đồ ghế nhận **80.000 lượt đ�
 - Bốn động lực: **yêu cầu nhất quán khác nhau**, **tải đọc/ghi lệch → scale riêng**, **shape dữ liệu khác nhau**, **nhiều read model từ một nguồn**.
 - Thường đi cùng **Event Sourcing**: event là nguồn sự thật, **projection** fold event → cập nhật read model; muốn read model mới thì **replay**.
 - Cái giá là **eventual consistency**: xử lý bằng **optimistic UI, read-your-writes, version token, báo trạng thái** — và thu hẹp lag projection.
-- ⚠️ **Đa số CRUD KHÔNG cần CQRS.** Nó nhân đôi phức tạp; chỉ dùng khi có **áp lực thật** (đọc/ghi lệch mạnh, query nặng, nhiều read model, domain giàu invariant). Mặc định: một model, một DB.
+- **Đa số CRUD KHÔNG cần CQRS.** Nó nhân đôi phức tạp; chỉ dùng khi có **áp lực thật** (đọc/ghi lệch mạnh, query nặng, nhiều read model, domain giàu invariant). Mặc định: một model, một DB.
 
 > **Bài tiếp theo (Bài 17):** **Saga & quản lý transaction phân tán** — khi một nghiệp vụ trải qua nhiều service/aggregate, làm sao giữ nhất quán mà không cần distributed transaction hai pha.

@@ -226,8 +226,8 @@ export function TransferUsdc({ to }: { to: `0x${string}` }) {
         {isPending ? 'Confirm in wallet…' : isConfirming ? 'Confirming…' : 'Send 10 USDC'}
       </button>
       {hash && <p>Tx: {hash}</p>}
-      {isSuccess && <p>✅ Confirmed</p>}
-      {error && <p>❌ {(error as any).shortMessage ?? error.message}</p>}
+      {isSuccess && <p>✓ Confirmed</p>}
+      {error && <p>✗ {(error as any).shortMessage ?? error.message}</p>}
     </div>
   )
 }

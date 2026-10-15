@@ -78,7 +78,7 @@ $ go build main.go      # tạo ra ./main (binary)
 $ ./main                # CPU chạy thẳng, không cần "go" nữa
 ```
 
-> 💡 Ghi nhớ: Binary compiled gắn chặt với cặp `OS` + kiến trúc CPU. Đây chính là lý do Docker image cho ARM (Apple Silicon, AWS Graviton) khác với image cho x86 — và vì sao bạn cần `docker buildx` hoặc multi-arch build khi deploy lên Graviton để tiết kiệm tiền trên AWS.
+> Ghi nhớ: Binary compiled gắn chặt với cặp `OS` + kiến trúc CPU. Đây chính là lý do Docker image cho ARM (Apple Silicon, AWS Graviton) khác với image cho x86 — và vì sao bạn cần `docker buildx` hoặc multi-arch build khi deploy lên Graviton để tiết kiệm tiền trên AWS.
 
 ### Interpreted: dịch lúc chạy, từng dòng
 
@@ -89,7 +89,7 @@ Python và JavaScript (theo mô hình kinh điển) có một chương trình kh
 
 Ví dụ cụ thể về cái giá: một vòng lặp cộng 100 triệu lần trong C chạy ~0.1s, trong Python thuần có thể mất 5-10s. Cùng thuật toán, khác ở việc CPU chạy thẳng hay phải đi qua interpreter mỗi vòng.
 
-> ⚠️ Bẫy: Đừng dịch chữ "interpreted" thành "không bao giờ compile". Python thực ra compile source thành **bytecode** (`.pyc`) rồi mới interpret bytecode đó — đó là vì sao bạn thấy thư mục `__pycache__`. JavaScript trong V8 (Chrome, Node.js) còn có cả JIT. Ranh giới "interpreted vs compiled" ngày nay mờ hơn nhiều so với sách giáo khoa.
+> Bẫy: Đừng dịch chữ "interpreted" thành "không bao giờ compile". Python thực ra compile source thành **bytecode** (`.pyc`) rồi mới interpret bytecode đó — đó là vì sao bạn thấy thư mục `__pycache__`. JavaScript trong V8 (Chrome, Node.js) còn có cả JIT. Ranh giới "interpreted vs compiled" ngày nay mờ hơn nhiều so với sách giáo khoa.
 
 ### Bytecode + JIT: cân bằng giữa hai thế giới
 
@@ -194,7 +194,7 @@ f(0)
 
 Đây chính là **stack overflow**. Mỗi lần gọi `f` đẩy một frame mới mà không bao giờ pop, đến khi stack hết chỗ.
 
-> ⚠️ Bẫy: Đệ quy đẹp về mặt thuật toán nhưng nguy hiểm về stack. Duyệt một cây cân bằng sâu 30 tầng thì ổn; duyệt một linked list 1 triệu phần tử bằng đệ quy sẽ overflow. Với input lớn không kiểm soát được độ sâu, hãy chuyển sang vòng lặp + `stack` tự quản trên heap.
+> Bẫy: Đệ quy đẹp về mặt thuật toán nhưng nguy hiểm về stack. Duyệt một cây cân bằng sâu 30 tầng thì ổn; duyệt một linked list 1 triệu phần tử bằng đệ quy sẽ overflow. Với input lớn không kiểm soát được độ sâu, hãy chuyển sang vòng lặp + `stack` tự quản trên heap.
 
 ### Heap: linh hoạt, sống lâu, phải quản lý
 
@@ -273,7 +273,7 @@ add_item(data)
 print(data)   # [1, 2, 99]  -> chỉ append có tác dụng
 ```
 
-> ⚠️ Bẫy: Đây là nguồn của vô số bug khó chịu: bạn truyền một `dict` config vào hàm để "đọc", hàm vô tình `.update()` nó, và config toàn cục bị thay đổi cho phần còn lại của chương trình. Khi nghi ngờ, hãy copy (`list(x)`, `dict(x)`, deep copy nếu lồng nhau) trước khi đưa vào hàm có thể ghi.
+> Bẫy: Đây là nguồn của vô số bug khó chịu: bạn truyền một `dict` config vào hàm để "đọc", hàm vô tình `.update()` nó, và config toàn cục bị thay đổi cho phần còn lại của chương trình. Khi nghi ngờ, hãy copy (`list(x)`, `dict(x)`, deep copy nếu lồng nhau) trước khi đưa vào hàm có thể ghi.
 
 ## Garbage collection: dọn rác trên heap
 
@@ -349,7 +349,7 @@ Latency p99 = 600ms (??!)   <- nhiều khả năng là GC pause
 
 Một số request lẻ tẻ chậm bất thường dù CPU không cao, thường là dấu hiệu GC. Đây là lý do GC hiện đại (G1, ZGC trong JVM; GC của Go) thiết kế để pause cực ngắn và chạy đồng thời với app, đánh đổi bằng việc tốn CPU/RAM nhiều hơn.
 
-> 💡 Ghi nhớ: GC giải phóng bạn khỏi quản lý bộ nhớ tay, nhưng không miễn phí — nó "ăn" CPU và gây pause. Khi tune một service có GC, ba nút vặn chính là: kích thước heap, thuật toán GC, và **lượng rác bạn tạo ra**. Tạo ít object tạm (đặc biệt trong vòng lặp nóng) là cách rẻ nhất để giảm áp lực GC.
+> Ghi nhớ: GC giải phóng bạn khỏi quản lý bộ nhớ tay, nhưng không miễn phí — nó "ăn" CPU và gây pause. Khi tune một service có GC, ba nút vặn chính là: kích thước heap, thuật toán GC, và **lượng rác bạn tạo ra**. Tạo ít object tạm (đặc biệt trong vòng lặp nóng) là cách rẻ nhất để giảm áp lực GC.
 
 ### Có GC vẫn leak được
 
@@ -373,7 +373,7 @@ element.addEventListener('click', handler);
 
 Các nguồn leak "có GC" hay gặp: cache/collection toàn cục không có giới hạn, event listener/callback không gỡ, closure giữ object lớn, biến `static`/singleton tích luỹ. Cách tìm: dùng **heap profiler** (VisualVM cho JVM, `tracemalloc` cho Python, Chrome DevTools Memory tab cho JS) chụp heap ở hai thời điểm, so sánh xem loại object nào tăng và **ai đang giữ reference** tới nó (gọi là "retention path").
 
-> ⚠️ Bẫy: Triệu chứng "service chạy vài tiếng rồi bị restart liên tục" trên Kubernetes/ECS rất hay là logical leak: RAM chạm `memory limit` của container → bị OOM-kill → restart → lặp lại. Đừng vội tăng limit; hãy profile heap để tìm collection nào đang phình.
+> Bẫy: Triệu chứng "service chạy vài tiếng rồi bị restart liên tục" trên Kubernetes/ECS rất hay là logical leak: RAM chạm `memory limit` của container → bị OOM-kill → restart → lặp lại. Đừng vội tăng limit; hãy profile heap để tìm collection nào đang phình.
 
 ## Ghép lại: một dòng đời ví dụ
 

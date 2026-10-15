@@ -1,6 +1,6 @@
 # Deployment Safety & Progressive Delivery
 
-> 💡 Nguyên tắc: Mỗi lần deploy là một thí nghiệm có chủ đích trên production. Mục tiêu của bạn không phải là "không bao giờ sai", mà là "khi sai thì phát hiện trong vài phút và quay lui trong vài giây, với số người dùng bị ảnh hưởng nhỏ nhất có thể".
+> Nguyên tắc: Mỗi lần deploy là một thí nghiệm có chủ đích trên production. Mục tiêu của bạn không phải là "không bao giờ sai", mà là "khi sai thì phát hiện trong vài phút và quay lui trong vài giây, với số người dùng bị ảnh hưởng nhỏ nhất có thể".
 
 ## Vì sao deploy là nguyên nhân sự cố hàng đầu
 
@@ -11,13 +11,13 @@ Lý do đơn giản: production đang chạy ổn định là bằng chứng th�
 - Nếu MTTR (Mean Time To Recovery) của bạn cao, gần như chắc chắn nguyên nhân nằm ở chỗ **không quay lui được nhanh**, chứ không phải ở chỗ "không debug được".
 - Cách giảm số sự cố hiệu quả nhất không phải là deploy ít đi (deploy lớn, hiếm = blast radius khổng lồ), mà là deploy **nhỏ, thường xuyên, có khả năng quan sát và quay lui tức thì**.
 
-> ⚠️ Bẫy: "Chúng ta deploy mỗi tuần một lần vào thứ Sáu để cho an toàn". Deploy gộp lô lớn nghĩa là khi hỏng bạn có 200 commit để truy vết nguyên nhân, và deploy thứ Sáu nghĩa là on-call phải xử lý sự cố vào cuối tuần. Đây là anti-pattern kinh điển.
+> Bẫy: "Chúng ta deploy mỗi tuần một lần vào thứ Sáu để cho an toàn". Deploy gộp lô lớn nghĩa là khi hỏng bạn có 200 commit để truy vết nguyên nhân, và deploy thứ Sáu nghĩa là on-call phải xử lý sự cố vào cuối tuần. Đây là anti-pattern kinh điển.
 
 ## Rollback nhanh: Forward fix vs Rollback
 
 Khi metric bắt đầu đỏ sau một lần deploy, bạn có hai lựa chọn. Nguyên tắc mặc định phải khắc cốt ghi tâm:
 
-> 💡 Nguyên tắc: **Rollback trước, điều tra sau.** Khôi phục dịch vụ là ưu tiên số một; tìm root cause là việc của hậu sự cố. Đừng cố "sửa nhanh một dòng rồi đẩy lên" trong lúc đang cháy.
+> Nguyên tắc: **Rollback trước, điều tra sau.** Khôi phục dịch vụ là ưu tiên số một; tìm root cause là việc của hậu sự cố. Đừng cố "sửa nhanh một dòng rồi đẩy lên" trong lúc đang cháy.
 
 | Tiêu chí | Rollback (quay về bản cũ) | Forward fix (vá rồi đẩy bản mới) |
 |---|---|---|
@@ -184,9 +184,9 @@ strategy:
       count: 10
 ```
 
-> 💡 Nguyên tắc: Dùng **cả ngưỡng tuyệt đối lẫn ngưỡng so sánh**. Ngưỡng tuyệt đối ("error rate < 1%") bắt lỗi nghiêm trọng. Ngưỡng so sánh ("không tệ hơn baseline 20%") bắt regression tinh vi mà ngưỡng cố định bỏ sót khi baseline vốn đã có chút lỗi nền.
+> Nguyên tắc: Dùng **cả ngưỡng tuyệt đối lẫn ngưỡng so sánh**. Ngưỡng tuyệt đối ("error rate < 1%") bắt lỗi nghiêm trọng. Ngưỡng so sánh ("không tệ hơn baseline 20%") bắt regression tinh vi mà ngưỡng cố định bỏ sót khi baseline vốn đã có chút lỗi nền.
 
-> ⚠️ Bẫy: Canary 1% nhưng SLI tổng hợp trên 100% traffic. Khi đó 1% xấu bị 99% tốt làm loãng, alert không bao giờ kêu. **Phải tách label `version="canary"`** để đánh giá riêng nhóm canary, nếu không canary chỉ là trang trí.
+> Bẫy: Canary 1% nhưng SLI tổng hợp trên 100% traffic. Khi đó 1% xấu bị 99% tốt làm loãng, alert không bao giờ kêu. **Phải tách label `version="canary"`** để đánh giá riêng nhóm canary, nếu không canary chỉ là trang trí.
 
 ## Feature Flag: tách Deploy khỏi Release
 
@@ -216,7 +216,7 @@ Lợi ích vận hành:
 | Phạm vi | Toàn bộ release đi cùng nhau | Từng tính năng độc lập |
 | Rủi ro nợ kỹ thuật | Thấp | Cao nếu flag chết không được dọn |
 
-> ⚠️ Bẫy: Flag debt. Flag tạo ra để rollout rồi quên xóa, tích lũy thành rừng `if/else` không ai dám đụng. Đặt **TTL cho mỗi flag tạm thời** và có quy trình dọn dẹp định kỳ. Một flag tồn tại 18 tháng là một quả mìn cấu hình.
+> Bẫy: Flag debt. Flag tạo ra để rollout rồi quên xóa, tích lũy thành rừng `if/else` không ai dám đụng. Đặt **TTL cho mỗi flag tạm thời** và có quy trình dọn dẹp định kỳ. Một flag tồn tại 18 tháng là một quả mìn cấu hình.
 
 ## Blast radius nhỏ
 
@@ -274,9 +274,9 @@ Ví dụ thứ tự rollout theo region với "bake time":
   <text x="14" y="214" font-size="10" fill="currentColor" opacity="0.7">thời gian →  (bake time tăng dần khi region lớn dần)</text>
 </svg>
 
-> 💡 Nguyên tắc: **Deploy nơi rẻ nhất trước.** Region/cell đầu tiên nên là nơi mà nếu hỏng thì thiệt hại thấp nhất, nhưng vẫn đủ traffic thật để SLI có ý nghĩa thống kê. Staging không có traffic thật thường không bắt được lỗi thật.
+> Nguyên tắc: **Deploy nơi rẻ nhất trước.** Region/cell đầu tiên nên là nơi mà nếu hỏng thì thiệt hại thấp nhất, nhưng vẫn đủ traffic thật để SLI có ý nghĩa thống kê. Staging không có traffic thật thường không bắt được lỗi thật.
 
-> ⚠️ Bẫy: "Global config" đẩy đồng thời mọi region trong 1 giây. Config push thường bị coi nhẹ vì "không phải code", nhưng một dòng config sai (ví dụ timeout = 0) có blast radius toàn cầu tức thì. **Config cũng phải đi qua progressive rollout** như code.
+> Bẫy: "Global config" đẩy đồng thời mọi region trong 1 giây. Config push thường bị coi nhẹ vì "không phải code", nhưng một dòng config sai (ví dụ timeout = 0) có blast radius toàn cầu tức thì. **Config cũng phải đi qua progressive rollout** như code.
 
 ## Error-budget-based release freeze
 
@@ -350,7 +350,7 @@ Ví dụ alert burn-rate (multi-window) để biết budget đang bị đốt nh
 ) > (14.4 * 0.001)   # 0.001 = 1 - SLO 99.9%
 ```
 
-> 💡 Nguyên tắc: Dùng **multi-window, multi-burn-rate alert** (fast burn 1h + slow burn 6h). Fast burn page on-call ngay; slow burn chỉ tạo ticket. Cách này vừa nhạy với sự cố lớn vừa không spam vì những đốt nhỏ kéo dài.
+> Nguyên tắc: Dùng **multi-window, multi-burn-rate alert** (fast burn 1h + slow burn 6h). Fast burn page on-call ngay; slow burn chỉ tạo ticket. Cách này vừa nhạy với sự cố lớn vừa không spam vì những đốt nhỏ kéo dài.
 
 ## Deployment checklist
 
@@ -373,7 +373,7 @@ Một checklist thực dụng để gắn vào pipeline (tự động hóa đư�
 - [ ] Dọn flag tạm, cleanup migration phase contract khi đã ổn định.
 - [ ] Cập nhật post-mortem nếu có abort/rollback.
 
-> 💡 Nguyên tắc: **Nếu một bước trong checklist không tự động hóa được, đó là nợ kỹ thuật cần ghi nhận.** Checklist thủ công sẽ bị bỏ qua vào 2 giờ sáng khi đang vội — chỉ những gate được pipeline ép buộc mới thực sự bảo vệ bạn.
+> Nguyên tắc: **Nếu một bước trong checklist không tự động hóa được, đó là nợ kỹ thuật cần ghi nhận.** Checklist thủ công sẽ bị bỏ qua vào 2 giờ sáng khi đang vội — chỉ những gate được pipeline ép buộc mới thực sự bảo vệ bạn.
 
 ---
 

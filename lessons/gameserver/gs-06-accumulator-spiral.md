@@ -161,9 +161,9 @@ Kiểm lại bằng ba lần chạy thật ở mục 2 và mục 4:
 
 | Lần chạy | ticks | rỗng | bù | `(ticks − rỗng) + bù` | sim steps đo được |
 |---|---|---|---|---|---|
-| 20 s, bình thường | 1200 | 15 | 15 | 1200 | **1200** ✓ |
-| 6 s, `-stall 300ms` | 360 | 17 | 4 | 347 | **347** ✓ |
-| 5 s, 20 triệu entity | 41 | 4 | 140 | 177 | **177** ✓ |
+| 20 s, bình thường | 1200 | 15 | 15 | 1200 | **1200** ✓  |
+| 6 s, `-stall 300ms` | 360 | 17 | 4 | 347 | **347** ✓  |
+| 5 s, 20 triệu entity | 41 | 4 | 140 | 177 | **177** ✓  |
 
 Ba tải hoàn toàn khác nhau, một công thức. Dòng cuối đáng nhìn kỹ: **41 vòng lặp sinh ra 177 bước** — tỉ lệ 1:4,3, không phải 1:1. Còn dòng giữa, 360 vòng chỉ ra 347 bước, là dòng duy nhất bị **mất** thật; mục 3.5 nói vì sao.
 

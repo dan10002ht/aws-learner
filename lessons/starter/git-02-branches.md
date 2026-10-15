@@ -8,7 +8,7 @@ Cách thông minh nhất: **photo một bản ra**, thử nghiệm thoải mái 
 
 **Branch** (nhánh) trong Git chính là "bản photo" đó — nhưng kỳ diệu hơn nhiều: nó không tốn dung lượng gấp đôi, tạo ra trong tích tắc, và Git biết cách **tự động gộp** các thay đổi lại với nhau sau này.
 
-> 💡 Ghi nhớ: Branch là một "vũ trụ song song" của dự án. Mọi thay đổi trong vũ trụ đó KHÔNG ảnh hưởng gì đến vũ trụ chính, cho đến khi bạn chủ động gộp (merge) chúng lại.
+> Ghi nhớ: Branch là một "vũ trụ song song" của dự án. Mọi thay đổi trong vũ trụ đó KHÔNG ảnh hưởng gì đến vũ trụ chính, cho đến khi bạn chủ động gộp (merge) chúng lại.
 
 ## 1. Branch là gì — nhìn sâu hơn một chút
 
@@ -120,7 +120,7 @@ git switch them-trang-gioi-thieu
 
 Git trả lời: `Switched to branch 'them-trang-gioi-thieu'`. Bây giờ dấu `*` đã chuyển sang nhánh mới.
 
-> 💡 Ghi nhớ: Bạn có thể gặp lệnh cũ `git checkout ten-nhanh` trong các tài liệu trên mạng — nó làm điều tương tự. `git switch` là lệnh mới hơn, ra đời để dễ hiểu hơn (checkout làm quá nhiều việc khác nhau nên hay gây nhầm lẫn). Hãy quen dùng `switch`.
+> Ghi nhớ: Bạn có thể gặp lệnh cũ `git checkout ten-nhanh` trong các tài liệu trên mạng — nó làm điều tương tự. `git switch` là lệnh mới hơn, ra đời để dễ hiểu hơn (checkout làm quá nhiều việc khác nhau nên hay gây nhầm lẫn). Hãy quen dùng `switch`.
 
 ### Tạo và chuyển trong MỘT lệnh (dùng nhiều nhất)
 
@@ -140,7 +140,7 @@ Hãy thử nghiệm này để "ngộ" ra branch:
 
 Git đang thay đổi nội dung thư mục của bạn để khớp với từng vũ trụ. Như bước qua cánh cửa thần kỳ của Doraemon — mỗi cửa dẫn đến một phiên bản khác nhau của cùng căn phòng.
 
-> ⚠️ Lỗi người mới hay gặp: Sửa file xong **quên commit** rồi chuyển nhánh. Git có thể từ chối chuyển (báo lỗi "your local changes would be overwritten") hoặc mang luôn thay đổi dở dang sang nhánh kia, gây rối. Thói quen tốt: trước khi `git switch`, luôn gõ `git status` — nếu có thay đổi chưa commit, hãy commit (hoặc tạm cất bằng `git stash`) trước.
+> Lỗi người mới hay gặp: Sửa file xong **quên commit** rồi chuyển nhánh. Git có thể từ chối chuyển (báo lỗi "your local changes would be overwritten") hoặc mang luôn thay đổi dở dang sang nhánh kia, gây rối. Thói quen tốt: trước khi `git switch`, luôn gõ `git status` — nếu có thay đổi chưa commit, hãy commit (hoặc tạm cất bằng `git stash`) trước.
 
 ## 3. Merge: gộp hai vũ trụ làm một
 
@@ -287,7 +287,7 @@ Conflict (xung đột) xảy ra khi **hai nhánh cùng sửa MỘT chỗ trong M
 
 Hình dung: bạn và đồng nghiệp cùng cầm hai bản photo của một tờ thực đơn. Bạn sửa dòng 3 thành "Phở bò - 50.000đ", đồng nghiệp sửa đúng dòng 3 đó thành "Phở bò - 55.000đ". Khi gộp hai tờ lại, máy móc không thể tự quyết định giá nào đúng — **chỉ con người mới biết**. Nên Git dừng lại và hỏi bạn.
 
-> 💡 Ghi nhớ: Conflict KHÔNG phải là lỗi, không phải bạn làm sai gì cả. Nó là Git đang lịch sự nói: "Tôi gặp hai phiên bản trái ngược, bạn là người quyết định nhé." Code của bạn không mất đi đâu cả — cả hai phiên bản đều đang nằm ngay trong file.
+> Ghi nhớ: Conflict KHÔNG phải là lỗi, không phải bạn làm sai gì cả. Nó là Git đang lịch sự nói: "Tôi gặp hai phiên bản trái ngược, bạn là người quyết định nhé." Code của bạn không mất đi đâu cả — cả hai phiên bản đều đang nằm ngay trong file.
 
 ### Nhận diện conflict
 
@@ -350,7 +350,7 @@ git merge --abort
 
 Lệnh này **huỷ toàn bộ cuộc merge**, đưa mọi thứ về đúng trạng thái trước khi bạn gõ `git merge`. Đây là nút "thoát hiểm" an toàn tuyệt đối — biết nó tồn tại là đã bớt 90% nỗi sợ conflict.
 
-> ⚠️ Lỗi người mới hay gặp:
+> Lỗi người mới hay gặp:
 > 1. **Quên xoá ký hiệu** `<<<<<<<`, `=======`, `>>>>>>>` rồi commit luôn — các ký hiệu này sẽ nằm chình ình trong code và làm chương trình lỗi. Trước khi `git add`, đọc lại file lần cuối.
 > 2. **Xoá nhầm cả hai phiên bản** trong lúc hoảng loạn. Bình tĩnh: phiên bản trên là của mình, dưới là của nhánh kia — đọc kỹ rồi mới xoá.
 > 3. **Commit khi chưa giải hết file** — `git status` là bạn thân, gõ nó liên tục để biết còn file nào `both modified`.
@@ -372,7 +372,7 @@ Hai tình huống đặc biệt:
 | Nhánh **chưa được merge** mà gõ `-d` | Git từ chối và cảnh báo, vì xoá sẽ làm các commit trên nhánh đó "mồ côi" — đây là Git đang bảo vệ bạn |
 | Bạn **chắc chắn muốn vứt bỏ** nhánh thử nghiệm thất bại | Dùng chữ D hoa: `git branch -D ten-nhanh` (ép xoá, mất các commit chưa merge) |
 
-> 💡 Ghi nhớ: `-d` là xoá an toàn (Git kiểm tra giúp bạn), `-D` là xoá bất chấp. Khi phân vân, luôn dùng `-d` trước — nếu Git cho xoá nghĩa là an toàn.
+> Ghi nhớ: `-d` là xoá an toàn (Git kiểm tra giúp bạn), `-D` là xoá bất chấp. Khi phân vân, luôn dùng `-d` trước — nếu Git cho xoá nghĩa là an toàn.
 
 Bạn cũng không thể xoá nhánh mình **đang đứng trên đó** — như không thể cưa cành cây mình đang ngồi. Hãy `git switch main` trước rồi mới xoá.
 
@@ -396,7 +396,7 @@ Nguyên tắc vàng khi đặt tên:
 - **Ngắn nhưng đủ nghĩa**: đọc tên là biết nhánh làm gì. `fix/bug` là tên tồi; `fix/anh-dai-dien-khong-hien` là tên tốt.
 - Nếu nhóm dùng công cụ quản lý việc (Jira, GitHub Issues), gắn mã số vào: `feature/123-thanh-toan-momo`.
 
-> ⚠️ Lỗi người mới hay gặp: Đặt tên kiểu `test`, `abc`, `nhanh-moi`, `final`, `final2-that-su-final`. Một tuần sau chính bạn cũng không nhớ nhánh đó chứa gì. Tốn 10 giây đặt tên tử tế, tiết kiệm 10 phút bối rối sau này.
+> Lỗi người mới hay gặp: Đặt tên kiểu `test`, `abc`, `nhanh-moi`, `final`, `final2-that-su-final`. Một tuần sau chính bạn cũng không nhớ nhánh đó chứa gì. Tốn 10 giây đặt tên tử tế, tiết kiệm 10 phút bối rối sau này.
 
 ## 7. Quy trình làm việc chuẩn — ghép tất cả lại
 

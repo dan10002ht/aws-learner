@@ -2079,7 +2079,7 @@ const k1: Question[] = [
     "question": "Bạn sắp gõ mật khẩu ngân hàng vào một trang. Theo bài, cách kiểm tra an toàn ĐÚNG là gì?",
     "options": [
       "Phải có HTTPS, RỒI kiểm tra tên miền có viết đúng từng chữ không",
-      "Chỉ cần thấy ổ khoá 🔒 là chắc chắn trang đáng tin tuyệt đối",
+      "Chỉ cần thấy ổ khoá là chắc chắn trang đáng tin tuyệt đối",
       "Chỉ cần tên miền nghe quen là đủ, không cần để ý ổ khoá",
       "Chỉ cần trang tải nhanh là an toàn để nhập mật khẩu"
     ],
@@ -2181,7 +2181,7 @@ const k1: Question[] = [
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Theo bài, những phát biểu nào về HTTPS và ổ khoá 🔒 là ĐÚNG?",
+    "question": "Theo bài, những phát biểu nào về HTTPS và ổ khoá là ĐÚNG?",
     "options": [
       "HTTPS mã hoá dữ liệu nên kẻ chặn giữa đường chỉ thấy ký tự lộn xộn",
       "HTTPS có chứng chỉ như \"căn cước\" xác nhận trang đúng là trang thật",

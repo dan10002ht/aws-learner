@@ -56,7 +56,7 @@ Hình dung bạn cần tìm từ "PostgreSQL" trong một cuốn sách 900 trang
     <rect x="188" y="98" width="44" height="58" rx="4" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
     <rect x="240" y="98" width="44" height="58" rx="4" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.4"/>
     <rect x="296" y="98" width="44" height="58" rx="4" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="262" y="132" font-size="14" text-anchor="middle" fill="currentColor">★</text>
+    <text x="262" y="132" font-size="14" text-anchor="middle" fill="currentColor">*</text>
   </g>
   <g stroke="currentColor" stroke-opacity="0.45" fill="none" marker-end="url(#sqArr)">
     <path d="M54 164 v8 h52"/>
@@ -79,7 +79,7 @@ Hình dung bạn cần tìm từ "PostgreSQL" trong một cuốn sách 900 trang
   <text x="396" y="156" font-size="10.5" fill="currentColor" opacity="0.8">binh@… → trang</text>
   <text x="396" y="174" font-size="10.5" fill="currentColor" opacity="0.55">… đã sắp xếp …</text>
   <rect x="606" y="120" width="84" height="58" rx="4" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.4"/>
-  <text x="648" y="153" font-size="14" text-anchor="middle" fill="currentColor">★</text>
+  <text x="648" y="153" font-size="14" text-anchor="middle" fill="currentColor">*</text>
   <text x="648" y="170" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">dòng cần</text>
   <g stroke="currentColor" stroke-opacity="0.5" fill="none">
     <path d="M554 138 H600" marker-end="url(#idxArr)"/>
@@ -103,7 +103,7 @@ SELECT * FROM customers WHERE email = 'an@example.com';
 
 Quét tuần tự 2 triệu dòng để tìm 1 dòng là lãng phí khủng khiếp.
 
-> 💡 **Ghi nhớ:** INDEX không thay đổi *kết quả* của truy vấn, chỉ thay đổi *tốc độ* tìm ra kết quả đó. Câu SQL viết y hệt, nhưng chạy nhanh hơn rất nhiều.
+> **Ghi nhớ:** INDEX không thay đổi *kết quả* của truy vấn, chỉ thay đổi *tốc độ* tìm ra kết quả đó. Câu SQL viết y hệt, nhưng chạy nhanh hơn rất nhiều.
 
 ## B-tree — vì sao tìm kiếm nhanh
 
@@ -275,9 +275,9 @@ WHERE status = 'paid';
 
 Giống như tìm trong danh bạ khi bạn chỉ biết *tên* mà không biết *họ* — không thể nhảy thẳng tới, phải dò gần hết.
 
-> 💡 **Ghi nhớ:** Đặt cột hay dùng để lọc *bằng* (`=`) lên trước trong composite index; cột dùng cho khoảng/sắp xếp đặt sau. Một composite index `(a, b)` đã bao luôn vai trò của index `(a)`, nên đừng tạo thừa index `(a)` riêng.
+> **Ghi nhớ:** Đặt cột hay dùng để lọc *bằng* (`=`) lên trước trong composite index; cột dùng cho khoảng/sắp xếp đặt sau. Một composite index `(a, b)` đã bao luôn vai trò của index `(a)`, nên đừng tạo thừa index `(a)` riêng.
 
-> ⚠️ **Lỗi người mới hay gặp:** Tạo composite index rồi đặt sai thứ tự cột. `(status, customer_id)` sẽ vô dụng cho truy vấn lọc theo mỗi `customer_id`, mà đó lại là truy vấn bạn chạy nhiều nhất. Thứ tự cột trong composite index quan trọng sống còn.
+> **Lỗi người mới hay gặp:** Tạo composite index rồi đặt sai thứ tự cột. `(status, customer_id)` sẽ vô dụng cho truy vấn lọc theo mỗi `customer_id`, mà đó lại là truy vấn bạn chạy nhiều nhất. Thứ tự cột trong composite index quan trọng sống còn.
 
 ## EXPLAIN — đọc kế hoạch truy vấn
 
@@ -326,7 +326,7 @@ Execution Time: 0.071 ms
 - `Index Cond` (chứ không phải `Filter`) → điều kiện được giải quyết *bằng* index.
 - `Execution Time: 0.071 ms` → nhanh hơn ~5800 lần.
 
-> 💡 **Ghi nhớ:** Thấy `Index Cond` là index đang gánh việc lọc. Thấy `Filter` kèm `Rows Removed by Filter` lớn nghĩa là database vẫn phải đọc rồi loại thủ công — index chưa giúp được.
+> **Ghi nhớ:** Thấy `Index Cond` là index đang gánh việc lọc. Thấy `Filter` kèm `Rows Removed by Filter` lớn nghĩa là database vẫn phải đọc rồi loại thủ công — index chưa giúp được.
 
 ## Khi nào INDEX KHÔNG được dùng?
 
@@ -353,7 +353,7 @@ SELECT * FROM customers WHERE full_name LIKE 'Nam%';   -- Index Scan (tiền t�
 
 **4. Truy vấn trả về phần lớn bảng.** Nếu `WHERE status = 'paid'` khớp 80% số dòng, database **cố ý** chọn Seq Scan — đọc tuần tự nhanh hơn nhảy index hàng triệu lần. Đây không phải lỗi, mà là tối ưu đúng. Index chỉ đáng giá khi lọc ra **một phần nhỏ** (tính chọn lọc cao).
 
-> ⚠️ **Lỗi người mới hay gặp:** Đánh index lên cột có ít giá trị khác nhau (như `status` chỉ 3 trạng thái, hay cột `gender`). Tính chọn lọc thấp → database vẫn ưu tiên Seq Scan → index tốn chỗ, tốn chi phí ghi mà gần như không bao giờ được dùng.
+> **Lỗi người mới hay gặp:** Đánh index lên cột có ít giá trị khác nhau (như `status` chỉ 3 trạng thái, hay cột `gender`). Tính chọn lọc thấp → database vẫn ưu tiên Seq Scan → index tốn chỗ, tốn chi phí ghi mà gần như không bao giờ được dùng.
 
 ## Vấn đề N+1 query
 
@@ -440,7 +440,7 @@ WHERE c.id IN (1, 2, 3, /* ... */ 100);
 | 2  | Bình Lê   | 5003     | 80000  |
 | 3  | Chi Trần  | NULL     | NULL   |
 
-> 💡 **Ghi nhớ:** Với ORM, tìm các từ khoá "eager loading" / "prefetch" / `JOIN`-loading (ví dụ `includes` trong Rails, `selectinload`/`joinedload` trong SQLAlchemy, `with` trong Laravel) để ép tải kèm trong 1–2 query thay vì N+1.
+> **Ghi nhớ:** Với ORM, tìm các từ khoá "eager loading" / "prefetch" / `JOIN`-loading (ví dụ `includes` trong Rails, `selectinload`/`joinedload` trong SQLAlchemy, `with` trong Laravel) để ép tải kèm trong 1–2 query thay vì N+1.
 
 ## Index làm CHẬM ghi dữ liệu
 
@@ -452,9 +452,9 @@ INDEX không miễn phí. Mỗi index là một cấu trúc **phải được c�
 
 Bảng có 8 index nghĩa là mỗi `INSERT` thực chất ghi vào 9 chỗ (1 bảng + 8 index). Với bảng ghi nhiều (log, sự kiện, đơn hàng giờ cao điểm), index thừa làm ghi chậm rõ rệt và phình dung lượng đĩa.
 
-> ⚠️ **Lỗi người mới hay gặp:** "Cứ đánh index hết mọi cột cho chắc." Sai. Mỗi index giúp *đọc* nhưng phạt *ghi* và tốn bộ nhớ. Chỉ đánh index cho cột thực sự dùng trong `WHERE`, `JOIN`, `ORDER BY` với tần suất cao.
+> **Lỗi người mới hay gặp:** "Cứ đánh index hết mọi cột cho chắc." Sai. Mỗi index giúp *đọc* nhưng phạt *ghi* và tốn bộ nhớ. Chỉ đánh index cho cột thực sự dùng trong `WHERE`, `JOIN`, `ORDER BY` với tần suất cao.
 
-> 💡 **Ghi nhớ:** Index là sự đánh đổi đọc–ghi. Đọc nhanh hơn ↔ ghi chậm hơn. Hãy đo (`EXPLAIN ANALYZE`) trước và sau, đừng đoán.
+> **Ghi nhớ:** Index là sự đánh đổi đọc–ghi. Đọc nhanh hơn ↔ ghi chậm hơn. Hãy đo (`EXPLAIN ANALYZE`) trước và sau, đừng đoán.
 
 ## Bài tập: tối ưu truy vấn chậm
 
@@ -525,4 +525,4 @@ Mọi điều trên là kiến thức SQL thuần, áp dụng nguyên vẹn khi 
 
 - **Amazon DynamoDB** (NoSQL): tư duy về index **khác hẳn**. Bạn không viết `WHERE` tuỳ ý rồi mong có index. DynamoDB bắt buộc thiết kế quanh **partition key / sort key**, và muốn truy vấn theo thuộc tính khác phải tạo **Global Secondary Index (GSI)** *trước*. Triết lý chung thì giống — "muốn truy vấn nhanh phải có cấu trúc tra cứu phù hợp" — nhưng DynamoDB ép bạn quyết định ngay từ lúc thiết kế, không cho thêm index tuỳ hứng như SQL.
 
-> 💡 **Ghi nhớ:** Đổi từ máy chủ tự quản sang RDS/Aurora *không* tự làm truy vấn nhanh lên. Index kém vẫn chậm trên AWS — chỉ là bạn được trả thêm tiền cho phần cứng to hơn để che lấp. Sửa index trước, nâng cấp máy sau.
+> **Ghi nhớ:** Đổi từ máy chủ tự quản sang RDS/Aurora *không* tự làm truy vấn nhanh lên. Index kém vẫn chậm trên AWS — chỉ là bạn được trả thêm tiền cho phần cứng to hơn để che lấp. Sửa index trước, nâng cấp máy sau.

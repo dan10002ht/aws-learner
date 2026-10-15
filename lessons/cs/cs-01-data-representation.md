@@ -8,7 +8,7 @@ Máy tính được xây từ **transistor** — về cơ bản là công tắc 
 
 Vậy nên toàn bộ phần cứng "nói" bằng hệ cơ số 2 (**binary**). Mọi thứ khác — số thập phân, chữ cái, emoji — đều là *quy ước* để con người diễn giải các nhóm bit đó.
 
-> 💡 Ghi nhớ: Máy tính không "biết" gì là số, gì là chữ. Cùng một dãy bit `01000001` có thể là **số 65**, **ký tự `A`**, hoặc một phần của màu pixel — *tuỳ vào kiểu dữ liệu (type) mà code của bạn áp lên nó*. Type chính là "kính lúp" để đọc bit.
+> Ghi nhớ: Máy tính không "biết" gì là số, gì là chữ. Cùng một dãy bit `01000001` có thể là **số 65**, **ký tự `A`**, hoặc một phần của màu pixel — *tuỳ vào kiểu dữ liệu (type) mà code của bạn áp lên nó*. Type chính là "kính lúp" để đọc bit.
 
 ## Bit và byte
 
@@ -68,7 +68,7 @@ Số bit gấp đôi thì số tổ hợp **bình phương lên** (không phải
 | 32 | ~4,3 tỷ | `int` thường, địa chỉ IPv4 |
 | 64 | ~1,8 x 10^19 | `long`, con trỏ 64-bit, timestamp |
 
-> ⚠️ Bẫy: Đừng nhầm **bit** (`b`) với **byte** (`B`). Đường mạng "100 Mbps" là **mega*bit*/giây**, nên tải file thực tế chỉ ~12,5 MB/giây. Hoá đơn băng thông AWS (data transfer) tính bằng **byte** (GB), còn thông số tốc độ link thường bằng **bit**. Lẫn hai cái là sai 8 lần.
+> Bẫy: Đừng nhầm **bit** (`b`) với **byte** (`B`). Đường mạng "100 Mbps" là **mega*bit*/giây**, nên tải file thực tế chỉ ~12,5 MB/giây. Hoá đơn băng thông AWS (data transfer) tính bằng **byte** (GB), còn thông số tốc độ link thường bằng **bit**. Lẫn hai cái là sai 8 lần.
 
 ## Đọc hex (cơ số 16)
 
@@ -95,7 +95,7 @@ hex    :  0xAF   = 175 thập phân
 
 Bạn gặp hex khắp nơi: màu CSS `#FF8800`, địa chỉ MAC, mã màu, dump bộ nhớ trong debugger, hash (`SHA-256` in ra hex), `0x7fff...` trong stack trace. Tiền tố `0x` báo "đây là hex".
 
-> 💡 Ghi nhớ: Thấy `0x` hay chuỗi chỉ gồm `0-9A-F` là nghĩ ngay "mỗi 2 ký tự = 1 byte". `#FF8800` = 3 byte = đỏ 255, lục 136, lam 0 → màu cam.
+> Ghi nhớ: Thấy `0x` hay chuỗi chỉ gồm `0-9A-F` là nghĩ ngay "mỗi 2 ký tự = 1 byte". `#FF8800` = 3 byte = đỏ 255, lục 136, lam 0 → màu cam.
 
 ## Chuyển binary ↔ decimal nhanh
 
@@ -202,12 +202,12 @@ Vì sao thiết kế kỳ lạ này thắng thế? **Vì phép cộng/trừ dùn
 + 11111011   (-5)
 -----------
  100000000   -> tràn bit thứ 9, bị cắt bỏ
-= 00000000   (0)  ✔ đúng, "miễn phí"
+= 00000000   (0)  ✓ đúng, "miễn phí"
 ```
 
 Mẹo lấy số đối (negate): **đảo mọi bit rồi cộng 1**. `5 = 00000101` → đảo `11111010` → +1 → `11111011` = -5.
 
-> ⚠️ Bẫy: Đây là gốc rễ của lỗi "asymmetric range". Với 32-bit có dấu, miền giá trị là `-2.147.483.648 .. +2.147.483.647` — phía âm **nhiều hơn 1**. Nên `abs(Integer.MIN_VALUE)` trong Java vẫn ra số âm (vì `+2.147.483.648` không tồn tại trong 32-bit)! Code phòng thủ phải để ý ca biên này.
+> Bẫy: Đây là gốc rễ của lỗi "asymmetric range". Với 32-bit có dấu, miền giá trị là `-2.147.483.648 .. +2.147.483.647` — phía âm **nhiều hơn 1**. Nên `abs(Integer.MIN_VALUE)` trong Java vẫn ra số âm (vì `+2.147.483.648` không tồn tại trong 32-bit)! Code phòng thủ phải để ý ca biên này.
 
 ## Integer overflow
 
@@ -235,7 +235,7 @@ print(a + a)              # 4000000000, an toàn
 
 Lưu ý sắc thái ngôn ngữ: C/C++/Java/Go dùng số nguyên cố định bit → **tràn im lặng**. Python/Ruby dùng số nguyên độ lớn tuỳ ý → không tràn nhưng số rất lớn sẽ chậm và tốn bộ nhớ. JavaScript thì *mọi số* là float 64-bit, nên `int` an toàn chỉ tới `2^53` (xem mục dưới).
 
-> ⚠️ Bẫy: Overflow là lỗ hổng bảo mật cổ điển. Cấp phát bộ nhớ `len * size` mà `len * size` tràn về số nhỏ → cấp buffer thiếu → ghi đè (buffer overflow). Luôn dùng kiểu đủ rộng cho các phép nhân kích thước, hoặc kiểm tra tràn trước.
+> Bẫy: Overflow là lỗ hổng bảo mật cổ điển. Cấp phát bộ nhớ `len * size` mà `len * size` tràn về số nhỏ → cấp buffer thiếu → ghi đè (buffer overflow). Luôn dùng kiểu đủ rộng cho các phép nhân kích thước, hoặc kiểm tra tràn trước.
 
 ## Số thực: dấu phẩy động (IEEE 754)
 
@@ -299,7 +299,7 @@ def gan_bang(a, b, eps=1e-9):
 gan_bang(0.1 + 0.2, 0.3)     # True
 ```
 
-> 💡 Ghi nhớ: **Không bao giờ so sánh hai số float bằng `==`.** Luôn so "chênh lệch < epsilon". Và đừng tích luỹ float qua hàng triệu phép cộng (ví dụ cộng dồn tiền từng dòng) — sai số gom lại sẽ lệch thấy rõ.
+> Ghi nhớ: **Không bao giờ so sánh hai số float bằng `==`.** Luôn so "chênh lệch < epsilon". Và đừng tích luỹ float qua hàng triệu phép cộng (ví dụ cộng dồn tiền từng dòng) — sai số gom lại sẽ lệch thấy rõ.
 
 ### Khi nào dùng integer/decimal cho tiền
 
@@ -323,7 +323,7 @@ print(Decimal("0.1") + Decimal("0.2"))   # 0.3  (đúng chính xác)
 | ID, đếm, index | `int`/`long` |
 | So sánh "bằng nhau" của số thực | epsilon, không bao giờ `==` |
 
-> ⚠️ Bẫy: Trong DynamoDB, kiểu `Number` được lưu và truyền dưới dạng *chuỗi* chính xác tới 38 chữ số — an toàn cho tiền. Nhưng nếu SDK của bạn (đặc biệt JavaScript) tự ép `Number` về float 64-bit khi đọc lên, bạn lại dính sai số. Hãy đọc dưới dạng string/`BigInt` cho các trường tiền và ID lớn.
+> Bẫy: Trong DynamoDB, kiểu `Number` được lưu và truyền dưới dạng *chuỗi* chính xác tới 38 chữ số — an toàn cho tiền. Nhưng nếu SDK của bạn (đặc biệt JavaScript) tự ép `Number` về float 64-bit khi đọc lên, bạn lại dính sai số. Hãy đọc dưới dạng string/`BigInt` cho các trường tiền và ID lớn.
 
 ## Ký tự: ASCII vs Unicode vs UTF-8
 
@@ -354,7 +354,7 @@ Code point        | Số byte UTF-8 | Ví dụ
 U+0000 .. U+007F  | 1 byte        | A, 0, dấu cách (trùng ASCII!)
 U+0080 .. U+07FF  | 2 byte        | ả, ô, é, ñ
 U+0800 .. U+FFFF  | 3 byte        | 中, 한, hầu hết CJK
-U+10000 ..        | 4 byte        | 😀 emoji, ký tự hiếm
+U+10000 ..        | 4 byte        | 😀  emoji, ký tự hiếm
 ```
 
 Điểm thiên tài: **128 ký tự ASCII vẫn là đúng 1 byte y hệt cũ** → mọi file ASCII cũ tự động là UTF-8 hợp lệ. Đây là lý do UTF-8 thắng tuyệt đối.
@@ -419,9 +419,9 @@ len(s.encode())     # 5  (byte UTF-8: P=1, h=1, ở=3)
 [..."😀"].length     // 1  (đúng số ký tự, dùng iterator)
 ```
 
-> ⚠️ Bẫy phổ biến #1 — **cắt chuỗi giữa ký tự đa byte.** Cột DB `VARCHAR(10)` đôi khi giới hạn theo *byte*, không theo ký tự; cắt một tên tiếng Việt đúng giữa byte của `ở` sẽ tạo byte rác (`�`). Đặt giới hạn theo **ký tự** và dùng `utf8mb4` trong MySQL (chú ý: `utf8` của MySQL cũ chỉ tối đa 3 byte → **lưu emoji bị lỗi**, phải dùng `utf8mb4`).
+> Bẫy phổ biến #1 — **cắt chuỗi giữa ký tự đa byte.** Cột DB `VARCHAR(10)` đôi khi giới hạn theo *byte*, không theo ký tự; cắt một tên tiếng Việt đúng giữa byte của `ở` sẽ tạo byte rác (`�`). Đặt giới hạn theo **ký tự** và dùng `utf8mb4` trong MySQL (chú ý: `utf8` của MySQL cũ chỉ tối đa 3 byte → **lưu emoji bị lỗi**, phải dùng `utf8mb4`).
 
-> ⚠️ Bẫy phổ biến #2 — **mojibake (chữ vỡ).** Khi bạn *ghi* chuỗi bằng UTF-8 nhưng *đọc* lại bằng Latin-1 (hay Windows-1252), từng byte bị diễn giải sai. `é` (2 byte UTF-8 `C3 A9`) hiện thành `Ã©`; tên tiếng Việt thành chuỗi `Ä‘á»™`. Bug này không nằm ở dữ liệu mà ở **encoding lúc đọc/ghi không khớp**.
+> Bẫy phổ biến #2 — **mojibake (chữ vỡ).** Khi bạn *ghi* chuỗi bằng UTF-8 nhưng *đọc* lại bằng Latin-1 (hay Windows-1252), từng byte bị diễn giải sai. `é` (2 byte UTF-8 `C3 A9`) hiện thành `Ã©`; tên tiếng Việt thành chuỗi `Ä‘á»™`. Bug này không nằm ở dữ liệu mà ở **encoding lúc đọc/ghi không khớp**.
 
 ```
 Ghi (UTF-8)     :  é -> bytes C3 A9
@@ -440,7 +440,7 @@ Ghi (UTF-8)     :  é -> bytes C3 A9
     <text x="306" y="92" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">2 byte trên đĩa</text>
     <text x="306" y="111" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">C3 A9</text>
     <rect x="540" y="36" width="120" height="50" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="600" y="58" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">đọc UTF-8 ✔</text>
+    <text x="600" y="58" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">đọc UTF-8 ✓</text>
     <text x="600" y="78" font-size="18" font-weight="700" text-anchor="middle" fill="currentColor">é</text>
     <rect x="540" y="104" width="120" height="50" rx="8" fill="#ef4444" fill-opacity="0.16" stroke="#ef4444" stroke-opacity="0.5"/>
     <text x="600" y="126" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">đọc Latin-1 ✗</text>
@@ -462,7 +462,7 @@ Ghi (UTF-8)     :  é -> bytes C3 A9
   <text x="340" y="186" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.72">Cùng byte, sai bảng mã lúc đọc → chữ vỡ. Lỗi ở encoding, không ở dữ liệu.</text>
 </svg>
 
-> 💡 Ghi nhớ: Quy tắc vàng — **luôn khai báo encoding rõ ràng và thống nhất là UTF-8** ở *mọi* lớp: source file, HTTP header (`Content-Type: ...; charset=utf-8`), kết nối DB, cấu hình client. Mojibake gần như luôn là do một mắt xích trong chuỗi đó "đoán" sai encoding.
+> Ghi nhớ: Quy tắc vàng — **luôn khai báo encoding rõ ràng và thống nhất là UTF-8** ở *mọi* lớp: source file, HTTP header (`Content-Type: ...; charset=utf-8`), kết nối DB, cấu hình client. Mojibake gần như luôn là do một mắt xích trong chuỗi đó "đoán" sai encoding.
 
 ## Vì sao kỹ sư cần biết
 

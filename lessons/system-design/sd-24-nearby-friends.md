@@ -46,7 +46,7 @@ Timeout "không hoạt động":                    10 phút
 Giữ lịch sử vị trí:                           ~1 năm
 ```
 
-> 💡 **Nguyên tắc**: giả định nào không nhân lên thành một con số ở mục sau thì cắt bỏ. Ở bài này, hai giả định *"30 giây"* và *"40 bạn online"* là hai cái quan trọng nhất — chúng là **mẫu số** và **hệ số nhân** của toàn bộ hệ thống. Trong phỏng vấn, hãy hỏi rõ chính xác hai con số này trước mọi thứ khác.
+> **Nguyên tắc**: giả định nào không nhân lên thành một con số ở mục sau thì cắt bỏ. Ở bài này, hai giả định *"30 giây"* và *"40 bạn online"* là hai cái quan trọng nhất — chúng là **mẫu số** và **hệ số nhân** của toàn bộ hệ thống. Trong phỏng vấn, hãy hỏi rõ chính xác hai con số này trước mọi thứ khác.
 
 ---
 
@@ -77,7 +77,7 @@ Giờ cao điểm                        ≈  30.000.000 – 40.000.000/giây
 
 **13,4 triệu thông điệp mỗi giây** trong hệ thống nội bộ. Đây là con số dùng để mua máy, không phải 334k.
 
-> ⚠️ **Bẫy kinh điển**: ứng viên tính ra 334k update/s, gật gù "cũng lớn nhỉ", rồi vẽ kiến trúc. Con số thật lớn hơn **40 lần**, và nó nằm ở chỗ khác hẳn — không phải ở tầng ghi, mà ở **tầng phát tán**. Ai bỏ sót phép nhân này sẽ thiết kế đúng một hệ thống nhỏ hơn 40 lần so với hệ thống thật.
+> **Bẫy kinh điển**: ứng viên tính ra 334k update/s, gật gù "cũng lớn nhỉ", rồi vẽ kiến trúc. Con số thật lớn hơn **40 lần**, và nó nằm ở chỗ khác hẳn — không phải ở tầng ghi, mà ở **tầng phát tán**. Ai bỏ sót phép nhân này sẽ thiết kế đúng một hệ thống nhỏ hơn 40 lần so với hệ thống thật.
 
 Tính lại từ **phía người nhận**, vì cách này soi ra bản chất rõ hơn:
 
@@ -111,7 +111,7 @@ Chỗ đáng nói: **lọc bán kính xảy ra ở server người nhận, sau p
 | Nội bộ pub/sub (fan-out) | **13,4 triệu/s** | **CPU của Redis — nút thắt số một** |
 | Server → client (sau lọc) | ~400k/s | Băng thông egress, tiền điện toán đám mây |
 
-> 💡 Khi ai đó hỏi *"tại sao không lọc khoảng cách trước khi publish cho đỡ tốn?"* — câu trả lời: **người publish không biết bạn bè mình đang ở đâu**, đó chính là thứ đang được truyền đi. Muốn lọc trước thì phải tra vị trí của 400 người bạn *trước mỗi lần publish* → biến 334k ghi/giây thành 134 triệu lượt đọc/giây. Chữa còn tệ hơn bệnh. Ta cố tình **phát tán rộng rồi lọc ở biên**.
+> Khi ai đó hỏi *"tại sao không lọc khoảng cách trước khi publish cho đỡ tốn?"* — câu trả lời: **người publish không biết bạn bè mình đang ở đâu**, đó chính là thứ đang được truyền đi. Muốn lọc trước thì phải tra vị trí của 400 người bạn *trước mỗi lần publish* → biến 334k ghi/giây thành 134 triệu lượt đọc/giây. Chữa còn tệ hơn bệnh. Ta cố tình **phát tán rộng rồi lọc ở biên**.
 
 ### 2.4 Bộ nhớ cho pub/sub — hàng trăm triệu channel
 
@@ -144,7 +144,7 @@ Tổng bộ nhớ pub/sub:  ~180 GB (đơn giản)  hoặc  ~20 GB (có presence
 
 Với ~200 GB, **hai node Redis 100 GB là đủ về bộ nhớ**. Và đây là cú twist đẹp nhất của bài:
 
-> ⚠️ **Bộ nhớ không phải nút thắt. CPU mới là.** Một node Redis đẩy được cỡ **100.000 thông điệp/giây** (pub/sub là single-threaded, mỗi lần publish phải lặp qua danh sách subscriber và ghi vào từng socket). Cần 13,4 triệu/giây → **~140 node**. Ta cần 140 máy không phải vì thiếu RAM (mỗi máy chỉ dùng ~1,5 GB trong số 100 GB), mà **vì thiếu lõi CPU**. Cụm Redis pub/sub của ta bị định cỡ bởi **thông lượng**, và nó sẽ trông cực kỳ "lãng phí RAM" với bất kỳ ai nhìn bảng monitor mà không hiểu vì sao.
+> **Bộ nhớ không phải nút thắt. CPU mới là.** Một node Redis đẩy được cỡ **100.000 thông điệp/giây** (pub/sub là single-threaded, mỗi lần publish phải lặp qua danh sách subscriber và ghi vào từng socket). Cần 13,4 triệu/giây → **~140 node**. Ta cần 140 máy không phải vì thiếu RAM (mỗi máy chỉ dùng ~1,5 GB trong số 100 GB), mà **vì thiếu lõi CPU**. Cụm Redis pub/sub của ta bị định cỡ bởi **thông lượng**, và nó sẽ trông cực kỳ "lãng phí RAM" với bất kỳ ai nhìn bảng monitor mà không hiểu vì sao.
 
 Nhận ra và **nói ra** điều này trong phỏng vấn là một trong hai, ba khoảnh khắc ghi điểm mạnh nhất của bài.
 
@@ -196,7 +196,7 @@ Nhưng xét theo thông điệp: 100k user/máy × 1,33 msg/s = 133k msg/s phả
 | Lịch sử vị trí | 1,3 PB/năm | Tách khỏi đường nóng, ghi qua queue, cân nhắc lấy mẫu |
 | Kết nối đồng thời | 10 triệu | ~150 server stateful → §8, phần khó nhất về vận hành |
 
-> 💡 **Câu kết luận của toàn bộ phần estimation** — và là câu nên nói thành lời trong phỏng vấn: *"Hệ này write-heavy gấp 300 lần một hệ CRUD thông thường, nhưng trạng thái nóng chỉ 3 GB. Dữ liệu thì bé, tốc độ thay đổi thì khổng lồ. Nên tôi sẽ không thiết kế một hệ lưu trữ — tôi sẽ thiết kế một **bus phát tán**, và đối xử với vị trí như **dòng sự kiện phù du (ephemeral stream)** chứ không phải như **bản ghi**."*
+> **Câu kết luận của toàn bộ phần estimation** — và là câu nên nói thành lời trong phỏng vấn: *"Hệ này write-heavy gấp 300 lần một hệ CRUD thông thường, nhưng trạng thái nóng chỉ 3 GB. Dữ liệu thì bé, tốc độ thay đổi thì khổng lồ. Nên tôi sẽ không thiết kế một hệ lưu trữ — tôi sẽ thiết kế một **bus phát tán**, và đối xử với vị trí như **dòng sự kiện phù du (ephemeral stream)** chứ không phải như **bản ghi**."*
 
 ---
 
@@ -229,7 +229,7 @@ Nearby Friends: "Bạn bè nào ở gần tôi?" →  không gian ứng viên = 
                                         →  index không gian là THỪA
 ```
 
-> 💡 **Nguyên tắc sâu hơn một bài toán**: trước khi dựng một cấu trúc dữ liệu, hãy hỏi *"tập ứng viên của tôi thật sự lớn bao nhiêu?"*. Ở đây **đồ thị bạn bè chính là index** — nó thu hẹp không gian tìm kiếm mạnh hơn bất cứ quadtree nào. Đem geohash vào bài này (khi chỉ có bạn bè) là **giải sai bài**, và người phỏng vấn có kinh nghiệm sẽ nhận ra ngay. Geohash chỉ quay lại đúng lúc yêu cầu đổi thành *"cả người lạ"* — §11, và lúc đó nó lại là lựa chọn duy nhất đúng.
+> **Nguyên tắc sâu hơn một bài toán**: trước khi dựng một cấu trúc dữ liệu, hãy hỏi *"tập ứng viên của tôi thật sự lớn bao nhiêu?"*. Ở đây **đồ thị bạn bè chính là index** — nó thu hẹp không gian tìm kiếm mạnh hơn bất cứ quadtree nào. Đem geohash vào bài này (khi chỉ có bạn bè) là **giải sai bài**, và người phỏng vấn có kinh nghiệm sẽ nhận ra ngay. Geohash chỉ quay lại đúng lúc yêu cầu đổi thành *"cả người lạ"* — §11, và lúc đó nó lại là lựa chọn duy nhất đúng.
 
 Nếu muốn ôn lại geohash/quadtree/S2, xem [sd-23 Proximity Service](./sd-23-proximity-service.md). Từ đây trở đi, ta nói về cái khác: **sự chuyển động**.
 
@@ -257,7 +257,7 @@ Chiều xuống **không đoán trước được** chính là lý do quyết đ
 | **Short polling** (hỏi mỗi 3 s) | 0–3 s | ~800 B header HTTP mỗi lần | 10M ÷ 3 = **3,3 triệu request/giây**, >95% trả về rỗng. Đánh thức radio điện thoại 20 lần/phút → **pin chết trong vài giờ** |
 | **Long polling** | ~0 | ~800 B mỗi chu kỳ | Với 1,33 tin/giây thì mỗi kết nối bị đóng và mở lại **hơn một lần mỗi giây** → suy biến thành short polling nhưng tốn hơn. Hợp khi sự kiện *thưa*, ở đây thì *dày* |
 | **SSE (Server-Sent Events)** | ~0 | ~10 B | Đúng cho chiều xuống, nhưng **một chiều**. Chiều lên vẫn phải POST 334k/s riêng → hai kết nối, hai mã nguồn, hai lần bắt tay TLS |
-| **WebSocket** ✅ | ~0 | **2–6 B khung** | Một kết nối, hai chiều, bắt tay một lần rồi thôi. Đổi lại: **server có trạng thái (stateful)** → §8 |
+| **WebSocket** ✓ | ~0 | **2–6 B khung** | Một kết nối, hai chiều, bắt tay một lần rồi thôi. Đổi lại: **server có trạng thái (stateful)** → §8 |
 | **MQTT** | ~0 | ~2 B | Cũng rất hợp (thiết kế cho thiết bị yếu pin, có QoS, có LWT báo mất kết nối). Nhược: cần broker riêng, hệ sinh thái web mỏng hơn. AWS IoT Core chính là cái này — xem phần *Liên hệ sang AWS* |
 | **gRPC bidi streaming** | ~0 | ~5 B | Tốt cho server↔server; trên mobile/trình duyệt thì lôi thôi hơn WebSocket |
 | **UDP/QUIC thuần** | Thấp nhất | Nhỏ nhất | Hấp dẫn về lý thuyết (mất gói vốn chấp nhận được!) nhưng NAT, tường lửa doanh nghiệp, và việc phải tự viết lại mọi thứ khiến nó không đáng — trừ khi bạn là Google |
@@ -273,9 +273,9 @@ SHORT POLLING mỗi 3 giây          WEBSOCKET
                                     → rẻ hơn ~150 LẦN về băng thông
 ```
 
-> 💡 **Cách phát biểu trong phỏng vấn**: *"Tôi chọn WebSocket vì chiều xuống vừa **không đoán trước được** vừa **dày** — đó chính xác là miền mà polling suy biến. Và tôi trả giá bằng thứ đắt nhất trong bài này: server trở thành stateful, nên deploy và autoscaling biến từ chuyện vặt thành một vấn đề thiết kế thật sự. Tôi sẽ nói kỹ chỗ đó."* Tự nêu cái giá trước khi bị hỏi, luôn luôn.
+> **Cách phát biểu trong phỏng vấn**: *"Tôi chọn WebSocket vì chiều xuống vừa **không đoán trước được** vừa **dày** — đó chính xác là miền mà polling suy biến. Và tôi trả giá bằng thứ đắt nhất trong bài này: server trở thành stateful, nên deploy và autoscaling biến từ chuyện vặt thành một vấn đề thiết kế thật sự. Tôi sẽ nói kỹ chỗ đó."* Tự nêu cái giá trước khi bị hỏi, luôn luôn.
 
-> ⚠️ Một hiểu lầm phổ biến: *"WebSocket miễn phí vì nó chỉ là TCP"*. Không. Mỗi kết nối rỗi vẫn tiêu bộ nhớ kernel, vẫn cần ping/pong giữ NAT (thường 30–60 s), vẫn chiếm một khe trong bảng kết nối của load balancer, và — quan trọng nhất — vẫn **trói một người dùng vào một máy cụ thể**. Cái giá không nằm ở byte, nó nằm ở **tính stateful**.
+> Một hiểu lầm phổ biến: *"WebSocket miễn phí vì nó chỉ là TCP"*. Không. Mỗi kết nối rỗi vẫn tiêu bộ nhớ kernel, vẫn cần ping/pong giữ NAT (thường 30–60 s), vẫn chiếm một khe trong bảng kết nối của load balancer, và — quan trọng nhất — vẫn **trói một người dùng vào một máy cụ thể**. Cái giá không nằm ở byte, nó nằm ở **tính stateful**.
 
 ---
 
@@ -344,7 +344,7 @@ GET  /v1/ws/endpoint                    # trả về host WS gần nhất + toke
 
 ```
                         ┌──────────────┐
-    📱 điện thoại  ────►│ Load Balancer│  (L4/NLB cho WS, L7/ALB cho REST)
+       điện thoại  ────►│ Load Balancer│  (L4/NLB cho WS, L7/ALB cho REST)
     (10 triệu cái)      └──────┬───────┘
                                │
             ┌──────────────────┼──────────────────────┐
@@ -399,7 +399,7 @@ GET  /v1/ws/endpoint                    # trả về host WS gần nhất + toke
 | **User/Friend DB** | Đồ thị bạn bè | Đọc lúc `init`, hầu như không đụng trên đường nóng. Shard theo `user_id` |
 | **Queue → Cassandra** | Lịch sử vị trí | Ghi-nặng, không cần đọc realtime → đúng tủ của Cassandra. Qua queue để **không bao giờ** làm chậm đường nóng |
 
-> 💡 Để ý: **không có database nào trên đường nóng**. Cả vòng đời một bản cập nhật — từ lúc rời điện thoại tới lúc hiện trên máy bạn bè — chỉ chạm vào **bộ nhớ**. Không phải trùng hợp, đó là hệ quả trực tiếp của 334k QPS.
+> Để ý: **không có database nào trên đường nóng**. Cả vòng đời một bản cập nhật — từ lúc rời điện thoại tới lúc hiện trên máy bạn bè — chỉ chạm vào **bộ nhớ**. Không phải trùng hợp, đó là hệ quả trực tiếp của 334k QPS.
 
 ---
 
@@ -447,7 +447,7 @@ Từng bước, kèm lý do:
 
 **⑧ Bob thấy Alice nhích trên bản đồ**, tổng độ trễ thường **dưới 200 ms**.
 
-> 💡 **Cái đẹp của luồng này**: người gửi hoàn toàn **không biết** ai là người nhận, còn việc lọc khoảng cách xảy ra **ở biên**, tại nơi vốn đã sẵn có dữ liệu cần thiết. Không có bước nào phải tra "bạn bè của Alice đang ở đâu" — thứ sẽ ngay lập tức biến thành 134 triệu lượt đọc mỗi giây.
+> **Cái đẹp của luồng này**: người gửi hoàn toàn **không biết** ai là người nhận, còn việc lọc khoảng cách xảy ra **ở biên**, tại nơi vốn đã sẵn có dữ liệu cần thiết. Không có bước nào phải tra "bạn bè của Alice đang ở đâu" — thứ sẽ ngay lập tức biến thành 134 triệu lượt đọc mỗi giây.
 
 ### 7.1 Location cache: vì sao TTL thay cho DB
 
@@ -455,11 +455,11 @@ Từng bước, kèm lý do:
 |---|---|
 | Ghi vị trí vào PostgreSQL | 334k UPDATE/giây lên cùng một tập hàng. Vacuum không đuổi kịp, WAL nổ, replica lag. Chết trong vài phút |
 | Ghi vào DynamoDB/Cassandra rồi đọc lại | Có thể chịu được ghi, nhưng thêm 5–20 ms mỗi lượt và **tốn tiền theo từng ghi** — 28,9 tỉ ghi/ngày |
-| Redis + TTL ✅ | O(1), dưới 1 ms, hết hạn tự động, tổng bộ nhớ 3 GB. Mất dữ liệu khi node chết — **và điều đó không sao**, 30 giây sau có bản mới |
+| Redis + TTL ✓ | O(1), dưới 1 ms, hết hạn tự động, tổng bộ nhớ 3 GB. Mất dữ liệu khi node chết — **và điều đó không sao**, 30 giây sau có bản mới |
 
 Vì sao **TTL 10 phút** chứ không phải 30 giây (đúng bằng chu kỳ)? Vì ranh giới giữa *"mạng chập chờn"* và *"thật sự đã đi"* phải đủ rộng. Người dùng đi vào thang máy, mất sóng 90 giây rồi quay lại — nếu TTL là 30 s thì bạn bè thấy anh ta "biến mất rồi hiện lại" liên tục, và UI nhấp nháy như đèn disco. Mười phút biến trạng thái thành thứ **ổn định**. Timestamp gửi kèm cho phép UI tự nói "4 phút trước", nên dữ liệu cũ vẫn trung thực chứ không phải dối trá.
 
-> ⚠️ **Bẫy khi triển khai**: đừng dùng sự kiện hết hạn của Redis (keyspace notification) làm cơ chế báo "user đã offline". Redis xoá key hết hạn theo kiểu **lười (lazy) + lấy mẫu ngẫu nhiên**, nên thông báo có thể tới muộn hàng phút và **không được đảm bảo** gửi tới. Hãy để người nhận tự suy luận từ `ts` — mô hình pull-based mềm mại này chịu lỗi tốt hơn nhiều so với việc phụ thuộc một sự kiện có thể không bao giờ tới.
+> **Bẫy khi triển khai**: đừng dùng sự kiện hết hạn của Redis (keyspace notification) làm cơ chế báo "user đã offline". Redis xoá key hết hạn theo kiểu **lười (lazy) + lấy mẫu ngẫu nhiên**, nên thông báo có thể tới muộn hàng phút và **không được đảm bảo** gửi tới. Hãy để người nhận tự suy luận từ `ts` — mô hình pull-based mềm mại này chịu lỗi tốt hơn nhiều so với việc phụ thuộc một sự kiện có thể không bao giờ tới.
 
 ### 7.2 Bản sao in-memory: hai tầng cache và lý do
 
@@ -480,12 +480,12 @@ Tầng 2 — Redis location cache (dùng chung):
 ### 7.3 Lịch sử vị trí: ra khỏi đường nóng bằng mọi giá
 
 ```
-❌ SAI:  WS server ──(ghi đồng bộ)──► Cassandra ──► rồi mới publish
+✗  SAI:  WS server ──(ghi đồng bộ)──► Cassandra ──► rồi mới publish
           Cassandra GC 200 ms → 334k update/s dồn ứ → buffer đầy →
           rớt kết nối hàng loạt → thundering herd. Một sự cố kho lạnh
           vừa kéo sập tính năng realtime.
 
-✅ ĐÚNG: WS server ──► buffer cục bộ (gộp lô 1 s) ──► Kafka/Kinesis
+✓  ĐÚNG: WS server ──► buffer cục bộ (gộp lô 1 s) ──► Kafka/Kinesis
                                                       └► consumer ──► Cassandra
           Cassandra chết → queue phình → tính năng chính KHÔNG hề hấn gì.
 ```
@@ -554,7 +554,7 @@ Ba hệ quả thiết kế rút ra:
 • Ngẫu nhiên hoá hạn sống → reconnect trải đều, không dồn cụm
 ```
 
-> 💡 **Nguyên tắc**: với hệ thống stateful giữ kết nối lâu, hãy biến **việc mất kết nối thành trạng thái bình thường liên tục xảy ra**, thay vì một sự kiện hiếm. Đường code chạy mỗi phút thì đúng; đường code chạy mỗi quý thì hỏng.
+> **Nguyên tắc**: với hệ thống stateful giữ kết nối lâu, hãy biến **việc mất kết nối thành trạng thái bình thường liên tục xảy ra**, thay vì một sự kiện hiếm. Đường code chạy mỗi phút thì đúng; đường code chạy mỗi quý thì hỏng.
 
 ### 8.2 Connection draining và graceful shutdown — làm cho đúng
 
@@ -587,7 +587,7 @@ GIAI ĐOẠN 4 — Terminate  (t ≈ 30 phút)
    • Nếu còn sót kết nối, chúng nhận RST và đi theo đường reconnect có backoff
 ```
 
-> ⚠️ **Ba bẫy thực chiến, cái nào cũng từng gây sự cố thật:**
+> **Ba bẫy thực chiến, cái nào cũng từng gây sự cố thật:**
 > 1. **Grace period của orchestrator quá ngắn.** Mặc định của ECS/Kubernetes thường 30 giây. Ta cần **30 phút** (`terminationGracePeriodSeconds`, `stopTimeout`). Quên chỉnh → mọi lần deploy là một trận bão reconnect.
 > 2. **Không gửi `bye` mà chỉ đóng socket.** Client không biết phân biệt "server bảo đi chỗ khác" với "mạng rớt", nên nó nối lại **ngay lập tức** — và 100.000 client cùng làm thế. `bye` kèm delay ngẫu nhiên biến một cú sốc thành một dòng chảy.
 > 3. **Quên UNSUBSCRIBE.** Redis vẫn serialize và đẩy tin cho subscriber đã chết cho tới khi TCP phát hiện đứt — có thể hàng phút. Ở 13,4 triệu msg/s, "hàng phút" là rất nhiều công vô ích.
@@ -598,13 +598,13 @@ Deploy 150 máy giữ 10 triệu kết nối, làm ngây thơ là **10 triệu l
 
 | Chiến lược | Cách làm | Đánh giá |
 |---|---|---|
-| **Rolling chậm** ✅ | Mỗi lần 1–2 máy, drain 30 phút mỗi máy | 150 máy × ~10 phút hiệu dụng ≈ **cả ngày** cho một lần deploy. Nghe kinh khủng, nhưng là chuẩn ngành cho tầng kết nối bền |
-| **Deploy lúc thấp điểm** ✅ | 3–5 giờ sáng theo múi giờ đang phục vụ | Ít kết nối hơn 3–5 lần → rẻ hơn đúng chừng đó lần |
-| **Blue/green** ❌ | Dựng cụm mới, chuyển hết sang | Chuyển hết = reconnect 100%, tệ nhất trong các cách. Chỉ dùng khi buộc phải đổi giao thức |
-| **Tách tầng kết nối / tầng logic** ✅✅ | Một tiến trình mỏng *chỉ* giữ socket (gần như không bao giờ đổi), logic nằm ở tiến trình sau nó | Deploy logic **không đụng tới kết nối** — nghiệp vụ đổi hằng tuần, tầng socket đổi hằng quý. Đây là cách các hệ thống trưởng thành làm |
-| **Hot reload / code swap** ⚠️ | Nạp code mới trong tiến trình đang chạy (Erlang làm được thật) | Rất mạnh, nhưng chỉ khả thi trên nền tảng hỗ trợ sẵn |
+| **Rolling chậm** ✓ | Mỗi lần 1–2 máy, drain 30 phút mỗi máy | 150 máy × ~10 phút hiệu dụng ≈ **cả ngày** cho một lần deploy. Nghe kinh khủng, nhưng là chuẩn ngành cho tầng kết nối bền |
+| **Deploy lúc thấp điểm** ✓ | 3–5 giờ sáng theo múi giờ đang phục vụ | Ít kết nối hơn 3–5 lần → rẻ hơn đúng chừng đó lần |
+| **Blue/green** ✗ | Dựng cụm mới, chuyển hết sang | Chuyển hết = reconnect 100%, tệ nhất trong các cách. Chỉ dùng khi buộc phải đổi giao thức |
+| **Tách tầng kết nối / tầng logic** ✓✓ | Một tiến trình mỏng *chỉ* giữ socket (gần như không bao giờ đổi), logic nằm ở tiến trình sau nó | Deploy logic **không đụng tới kết nối** — nghiệp vụ đổi hằng tuần, tầng socket đổi hằng quý. Đây là cách các hệ thống trưởng thành làm |
+| **Hot reload / code swap** | Nạp code mới trong tiến trình đang chạy (Erlang làm được thật) | Rất mạnh, nhưng chỉ khả thi trên nền tảng hỗ trợ sẵn |
 
-> 💡 Chi tiết *tách tầng kết nối khỏi tầng logic* đáng nói ra trong phỏng vấn, vì nó chứng tỏ bạn từng sống với một hệ như thế: *"Tôi sẽ để tầng giữ socket mỏng và gần như bất biến, đẩy mọi logic hay đổi xuống một tầng stateless phía sau. Như vậy nhịp deploy hằng tuần không bao giờ chạm vào 10 triệu kết nối."*
+> Chi tiết *tách tầng kết nối khỏi tầng logic* đáng nói ra trong phỏng vấn, vì nó chứng tỏ bạn từng sống với một hệ như thế: *"Tôi sẽ để tầng giữ socket mỏng và gần như bất biến, đẩy mọi logic hay đổi xuống một tầng stateless phía sau. Như vậy nhịp deploy hằng tuần không bao giờ chạm vào 10 triệu kết nối."*
 
 ### 8.4 Service discovery: etcd / ZooKeeper để làm gì
 
@@ -630,9 +630,9 @@ Mỗi WS server **cache vòng này trong RAM** và **watch** thay đổi; tra ch
 | Cấu hình tĩnh trong file | Không phản ứng được khi node chết; sửa cấu hình phải deploy lại 150 máy |
 | DNS | TTL làm trễ, không có ngữ nghĩa "còn sống" (liveness), không watch được |
 | Tự viết bằng Redis | Ai giữ trạng thái của cái giữ trạng thái? Vòng luẩn quẩn |
-| **etcd/ZooKeeper** ✅ | Watch, lease/ephemeral node, nhất quán mạnh, số lần ghi nhỏ. Đúng công cụ cho **metadata hiếm khi đổi nhưng phải đúng tuyệt đối** |
+| **etcd/ZooKeeper** ✓ | Watch, lease/ephemeral node, nhất quán mạnh, số lần ghi nhỏ. Đúng công cụ cho **metadata hiếm khi đổi nhưng phải đúng tuyệt đối** |
 
-> ⚠️ **Đừng bắt etcd chịu tải đường nóng.** etcd đồng thuận bằng Raft; nó xử lý được cỡ vài nghìn ghi/giây, không phải 334k. Nó lưu **ai ở đâu**, tuyệt đối không lưu **cái gì đang xảy ra**. Nhầm vai trò này là một trong những cách chắc chắn nhất để sập cả cụm.
+> **Đừng bắt etcd chịu tải đường nóng.** etcd đồng thuận bằng Raft; nó xử lý được cỡ vài nghìn ghi/giây, không phải 334k. Nó lưu **ai ở đâu**, tuyệt đối không lưu **cái gì đang xảy ra**. Nhầm vai trò này là một trong những cách chắc chắn nhất để sập cả cụm.
 
 ### 8.5 Đo lường: chỉ số nào nói lên sức khoẻ
 
@@ -658,7 +658,7 @@ Có ba cách phân phối tự nhiên. Đặt cạnh nhau thì lựa chọn gầ
 |---|---|---|---|
 | **Fan-out trực tiếp giữa các server** | Server A tra xem 40 bạn của Alice nằm ở server nào, gửi thẳng | Không cần hạ tầng trung gian | Server A phải **biết topology của mọi kết nối** → cần một registry toàn cục cập nhật 334k lần/giây. Đồ thị kết nối N×N, 150 máy = 22.350 liên kết phải tự quản. Một máy chết là mọi máy phải cập nhật |
 | **Channel theo geohash** | Publish vào ô không gian, ai ở ô đó thì nghe | Hợp với **người lạ**; số channel cố định | Ô Manhattan giờ tan tầm = **hot channel** kinh hoàng; người nhận phải tự lọc bạn/không-bạn trong hàng nghìn tin rác; người đứng ở ranh giới ô phải nghe 4–9 ô |
-| **Channel theo user** ✅ | Mỗi user một channel; ai quan tâm thì subscribe | Người gửi **không cần biết gì** về người nhận; định tuyến trở thành phép hash thuần; tự nhiên song song hoá; hoàn toàn không có hot channel (mỗi channel đúng 1 người publish, đúng 1 tin mỗi 30 s) | Số channel rất lớn (100 triệu) — nhưng §2.4 cho thấy chi phí chấp nhận được |
+| **Channel theo user** ✓ | Mỗi user một channel; ai quan tâm thì subscribe | Người gửi **không cần biết gì** về người nhận; định tuyến trở thành phép hash thuần; tự nhiên song song hoá; hoàn toàn không có hot channel (mỗi channel đúng 1 người publish, đúng 1 tin mỗi 30 s) | Số channel rất lớn (100 triệu) — nhưng §2.4 cho thấy chi phí chấp nhận được |
 
 Lý do sâu nhất đáng phát biểu thành một câu: **channel theo user làm cho việc định tuyến trùng khớp chính xác với đồ thị quan tâm**. Bạn subscribe đúng những người bạn quan tâm, không hơn một ai. Không có tin thừa nào phải lọc bỏ, không có điểm nóng nào, và người publish được giải thoát hoàn toàn khỏi việc biết ai đang nghe.
 
@@ -700,7 +700,7 @@ Một node Redis đẩy được: ~100.000 msg/giây
 
 Và điểm cần nhấn mạnh lần nữa vì nó rất dễ bị hiểu sai khi nhìn dashboard:
 
-> 💡 **Ta mua 140 máy vì CPU, không vì RAM.** Mỗi node chỉ dùng ~1,5 GB trong khi có thể có 16–64 GB. Bất kỳ ai nhìn biểu đồ "memory utilization 3%" cũng sẽ đòi cắt giảm cụm. Hãy viết lý do này vào runbook, và hãy để **msg/s** là chỉ số hiển thị chính chứ không phải bộ nhớ. Đây cũng là lý do nên chọn instance **nhiều lõi nhỏ / nhiều node nhỏ** thay vì ít máy RAM lớn — ngược hoàn toàn với trực giác "Redis thì mua máy nhiều RAM".
+> **Ta mua 140 máy vì CPU, không vì RAM.** Mỗi node chỉ dùng ~1,5 GB trong khi có thể có 16–64 GB. Bất kỳ ai nhìn biểu đồ "memory utilization 3%" cũng sẽ đòi cắt giảm cụm. Hãy viết lý do này vào runbook, và hãy để **msg/s** là chỉ số hiển thị chính chứ không phải bộ nhớ. Đây cũng là lý do nên chọn instance **nhiều lõi nhỏ / nhiều node nhỏ** thay vì ít máy RAM lớn — ngược hoàn toàn với trực giác "Redis thì mua máy nhiều RAM".
 
 ### 9.5 Phân bố channel bằng consistent hashing
 
@@ -734,12 +734,12 @@ Chỉ còn một dạng lệch: **người có quá nhiều bạn** (whale). M�
 
 | Cách xử | Đánh giá |
 |---|---|
-| **Đặt trần số bạn** (Facebook: 5.000) ✅ | Đơn giản nhất, chặn cứng trường hợp xấu nhất. Thường đã có sẵn trong app mẹ |
-| Phân biệt "bạn" với "người theo dõi": chỉ bạn hai chiều mới thấy vị trí ✅ | Vừa đúng về sản phẩm, vừa chặn tự nhiên fan-out. Người nổi tiếng không nên phát vị trí cho 10 triệu follower — đó là **rủi ro an toàn thân thể**, không chỉ là vấn đề kỹ thuật |
+| **Đặt trần số bạn** (Facebook: 5.000) ✓ | Đơn giản nhất, chặn cứng trường hợp xấu nhất. Thường đã có sẵn trong app mẹ |
+| Phân biệt "bạn" với "người theo dõi": chỉ bạn hai chiều mới thấy vị trí ✓ | Vừa đúng về sản phẩm, vừa chặn tự nhiên fan-out. Người nổi tiếng không nên phát vị trí cho 10 triệu follower — đó là **rủi ro an toàn thân thể**, không chỉ là vấn đề kỹ thuật |
 | Dành node riêng cho whale | Phức tạp, hiếm khi đáng |
-| Giãn nhịp cập nhật cho whale (60 s thay vì 30 s) ✅ | Rẻ và hiệu quả. Dùng luôn kênh `cadence` sẵn có |
+| Giãn nhịp cập nhật cho whale (60 s thay vì 30 s) ✓ | Rẻ và hiệu quả. Dùng luôn kênh `cadence` sẵn có |
 
-> 💡 Điểm đáng nói: **trần 5.000 bạn không phải giới hạn kỹ thuật tuỳ tiện — nó là thứ chặn đuôi phân bố (tail) cho cả hệ thống.** Nhiều giới hạn sản phẩm trông có vẻ độc đoán thật ra là quyết định kiến trúc được ngụy trang.
+> Điểm đáng nói: **trần 5.000 bạn không phải giới hạn kỹ thuật tuỳ tiện — nó là thứ chặn đuôi phân bố (tail) cho cả hệ thống.** Nhiều giới hạn sản phẩm trông có vẻ độc đoán thật ra là quyết định kiến trúc được ngụy trang.
 
 ---
 
@@ -760,7 +760,7 @@ Tất cả nối lại NGAY LẬP TỨC, cùng lúc
    ▼  cụm Redis pub/sub ngộp → chậm cho TẤT CẢ
 Các server khác trễ theo → client của họ tưởng đứt → cũng nối lại
    │
-   ▼  ☠️  SỤP ĐỔ DÂY CHUYỀN (cascading failure)
+   ▼   SỤP ĐỔ DÂY CHUYỀN (cascading failure)
 ```
 
 Đây là ví dụ sách giáo khoa của **thundering herd**: một sự cố cục bộ (1/150 công suất) biến thành sự cố toàn cục, và **hồi phục lại chính là thứ giết hệ thống**. Phòng thủ phải xếp nhiều lớp:
@@ -776,7 +776,7 @@ Các server khác trễ theo → client của họ tưởng đứt → cũng n�
 | Hạ tầng | LB **slow start**; cấp dư 30%; rải instance qua nhiều AZ | Đàn client 100.000 phải có chỗ để hạ cánh |
 | Hạ tầng | **Circuit breaker** trước Redis + tách nhóm (bulkhead) theo shard | Ngăn một shard ngộp kéo theo toàn bộ |
 
-> ⚠️ **Nghịch lý phải nói thành lời**: giết một máy chỉ mất 0,7% công suất — nhưng **đàn client quay lại** mới là thứ có thể giết 100%. Với hệ giữ kết nối bền, **đường hồi phục nguy hiểm hơn đường hỏng**. Vì vậy nó phải được diễn tập thường xuyên (§8.1: giới hạn tuổi thọ kết nối chính là bài diễn tập tự động chạy mỗi giờ).
+> **Nghịch lý phải nói thành lời**: giết một máy chỉ mất 0,7% công suất — nhưng **đàn client quay lại** mới là thứ có thể giết 100%. Với hệ giữ kết nối bền, **đường hồi phục nguy hiểm hơn đường hỏng**. Vì vậy nó phải được diễn tập thường xuyên (§8.1: giới hạn tuổi thọ kết nối chính là bài diễn tập tự động chạy mỗi giờ).
 
 ### 10.2 Bảng các chế độ hỏng còn lại
 
@@ -880,12 +880,12 @@ Thay vì Redis + WS server, dùng nền tảng mà **mỗi user online là một
 ### 12.2 Làm mờ vị trí và cuộc tấn công trilateration
 
 ```
-❌ NGÂY THƠ: gửi khoảng cách chính xác tới mét
+✗ NGÂY THƠ: gửi khoảng cách chính xác tới mét
    Kẻ tấn công tạo 3 tài khoản giả, đặt ở 3 điểm đã biết,
    đọc 3 khoảng cách → GIẢI HỆ PHƯƠNG TRÌNH → ra toạ độ chính xác.
    Đây là lỗ hổng đã xảy ra thật ở nhiều app hẹn hò.
 
-✅ ĐÚNG: làm tròn TRƯỚC KHI tính, và làm tròn ỔN ĐỊNH
+✓ ĐÚNG: làm tròn TRƯỚC KHI tính, và làm tròn ỔN ĐỊNH
    1. Bám lưới (grid snapping): quy vị trí về ô ~100 m, KHÔNG ĐỔI
       khi người dùng còn trong ô. Nhiễu ngẫu nhiên mỗi lần gửi thì
       lấy trung bình nhiều mẫu là khử được nhiễu — bám lưới thì không.
@@ -895,7 +895,7 @@ Thay vì Redis + WS server, dùng nền tảng mà **mỗi user online là một
       (ví dụ đang hẹn gặp nhau), và có hạn định thời gian
 ```
 
-> ⚠️ **Nguyên tắc chống trilateration**: tấn công nhắm vào **độ chính xác**, không nhắm vào toạ độ. Nếu output của bạn là một con số đủ mịn và thay đổi trơn theo vị trí thật, thì ba phép đo là đủ để đảo ngược. Cách chữa là làm cho output **rời rạc và ổn định** — rời rạc để mất thông tin, ổn định để không lấy trung bình khử được.
+> **Nguyên tắc chống trilateration**: tấn công nhắm vào **độ chính xác**, không nhắm vào toạ độ. Nếu output của bạn là một con số đủ mịn và thay đổi trơn theo vị trí thật, thì ba phép đo là đủ để đảo ngược. Cách chữa là làm cho output **rời rạc và ổn định** — rời rạc để mất thông tin, ổn định để không lấy trung bình khử được.
 
 ### 12.3 Pin điện thoại và nhịp cập nhật thích ứng
 
@@ -917,7 +917,7 @@ Thủ thuật thực chiến đáng nêu:
 - **Gộp vào chung nhịp với ping/pong giữ kết nối.** Đằng nào cũng phải đánh thức radio để giữ NAT — đính vị trí vào đó thì miễn phí.
 - **Chỉ gửi delta khi đứng yên**: nếu vị trí không đổi quá 10 m, gửi một heartbeat 2 byte thay vì toạ độ đầy đủ. Vừa giữ TTL sống, vừa gần như không tốn gì.
 
-> 💡 Nhịp thích ứng không chỉ cứu pin — nó là **công cụ giảm tải mạnh nhất trong toàn hệ thống**. Nếu 60% người dùng đang đứng yên và họ chuyển sang nhịp 5 phút, write QPS rơi từ 334k xuống khoảng **140k**, và fan-out rơi theo đúng tỉ lệ. Một quyết định phía client vừa xoá sổ hơn một nửa hạ tầng phía server. Trong phỏng vấn, đây là ý làm người nghe ngồi thẳng lên.
+> Nhịp thích ứng không chỉ cứu pin — nó là **công cụ giảm tải mạnh nhất trong toàn hệ thống**. Nếu 60% người dùng đang đứng yên và họ chuyển sang nhịp 5 phút, write QPS rơi từ 334k xuống khoảng **140k**, và fan-out rơi theo đúng tỉ lệ. Một quyết định phía client vừa xoá sổ hơn một nửa hạ tầng phía server. Trong phỏng vấn, đây là ý làm người nghe ngồi thẳng lên.
 
 ---
 
@@ -926,20 +926,20 @@ Thủ thuật thực chiến đáng nêu:
 | Thành phần thiết kế | Dịch vụ AWS | Vì sao hợp (và bẫy) |
 |---|---|---|
 | Tầng WebSocket — **phương án được chọn** | **NLB → ECS/EKS** tự chạy WS (Go/Netty/Elixir) | Kiểm soát hoàn toàn draining, tuổi thọ kết nối, admission control — đúng những thứ §8 cần. NLB là L4 nên hầu như không giới hạn thời gian sống kết nối; đặt `deregistration_delay` = **30 phút** (mặc định 300 s là **quá ngắn**) và `stopTimeout`/`terminationGracePeriodSeconds` tương ứng. Trả tiền theo giờ compute, không theo từng tin |
-| Tầng WebSocket — phương án dựng nhanh | **API Gateway WebSocket API** | Có `@connections` để push, không phải tự quản socket. ⚠️ **Tính tiền theo phút-kết-nối và theo tin**: 10 triệu kết nối × 1.440 phút/ngày = 14,4 tỉ phút-kết-nối/ngày (≈ **3.600 USD/ngày** chỉ riêng kết nối) cộng ~400k tin/s ra client (≈ **34 tỉ tin/ngày**). Hàng triệu đô mỗi tháng. Thêm giới hạn cứng: **idle 10 phút**, **kết nối tối đa 2 giờ**, khung 128 KB. Đúng cho MVP hoặc khi kết nối ít; **sai cho quy mô này** |
+| Tầng WebSocket — phương án dựng nhanh | **API Gateway WebSocket API** | Có `@connections` để push, không phải tự quản socket. **Tính tiền theo phút-kết-nối và theo tin**: 10 triệu kết nối × 1.440 phút/ngày = 14,4 tỉ phút-kết-nối/ngày (≈ **3.600 USD/ngày** chỉ riêng kết nối) cộng ~400k tin/s ra client (≈ **34 tỉ tin/ngày**). Hàng triệu đô mỗi tháng. Thêm giới hạn cứng: **idle 10 phút**, **kết nối tối đa 2 giờ**, khung 128 KB. Đúng cho MVP hoặc khi kết nối ít; **sai cho quy mô này** |
 | Rải kết nối cho REST | **ALB** (L7) | Tách khỏi NLB của WS — hai vòng đời, hai kiểu health check, hai chính sách scale |
 | Tăng tốc bắt tay toàn cầu | **Global Accelerator** | IP anycast tĩnh → gói vào mạng xương sống AWS ở POP gần nhất, rút ngắn TCP+TLS handshake (rất đáng khi 10 triệu client reconnect). IP tĩnh còn giúp client "ghim" endpoint thay vì phụ thuộc TTL DNS lúc sự cố |
-| Redis Pub/Sub cluster | **ElastiCache for Redis/Valkey** — bắt buộc **sharded pub/sub** (`SPUBLISH`/`SSUBSCRIBE`, Redis ≥ 7) | ⚠️ **Bẫy lớn nhất của cả bài trên AWS**: pub/sub *cổ điển* trong cluster mode **phát bản tin tới MỌI node** — thêm node **không** tăng thông lượng, chỉ nhân tải lên. Sharded pub/sub giới hạn bản tin trong slot của channel, khi đó thêm shard mới thật sự scale. Chọn nhiều node **nhiều CPU, ít RAM** (pub/sub single-threaded) — ngược với trực giác mua Redis |
+| Redis Pub/Sub cluster | **ElastiCache for Redis/Valkey** — bắt buộc **sharded pub/sub** (`SPUBLISH`/`SSUBSCRIBE`, Redis ≥ 7) | **Bẫy lớn nhất của cả bài trên AWS**: pub/sub *cổ điển* trong cluster mode **phát bản tin tới MỌI node** — thêm node **không** tăng thông lượng, chỉ nhân tải lên. Sharded pub/sub giới hạn bản tin trong slot của channel, khi đó thêm shard mới thật sự scale. Chọn nhiều node **nhiều CPU, ít RAM** (pub/sub single-threaded) — ngược với trực giác mua Redis |
 | Pub/sub khi cần vượt trần | **Redis/Valkey tự chạy trên EC2**, hoặc **EMQX/NATS trên EKS** | 140–200 node CPU-bound thì chi phí ElastiCache rất đắt; tự vận hành cho phép chỉnh kernel, `SO_REUSEPORT`, pin CPU. Đổi lại gánh nặng vận hành |
 | Location cache (3 GB, TTL 10 phút) | **ElastiCache Redis** (cụm riêng, tách khỏi pub/sub) | Tách vì hai loại tải khác hẳn: cache là ghi O(1) đều đặn, pub/sub là CPU fan-out. Chung cụm thì một bên đói CPU sẽ kéo bên kia. 3 GB → nhân bản thoải mái |
 | Khi cần cache vị trí **bền** | **MemoryDB for Redis** | Tốc độ Redis + nhật ký giao dịch đa AZ (bền vững thật). Ở bài này gần như **không cần** — mất vị trí thì 30 giây sau có bản mới. Chỉ đáng khi phải chịu ràng buộc tuân thủ về trạng thái |
 | Vòng hash + danh sách node sống | **etcd/ZooKeeper tự chạy**, hoặc **Cloud Map / DynamoDB + Streams** | Cloud Map giải quyết đăng ký dịch vụ ở mức cơ bản nhưng không có ngữ nghĩa watch mạnh như etcd. DynamoDB + Streams là mẹo rẻ: bảng vòng hash nhỏ, mỗi WS server nghe Stream để cập nhật cache cục bộ |
 | Bảng bạn bè / cài đặt | **DynamoDB** (PK `user_id`) hoặc **Aurora** sharded | Đọc theo khoá, không có truy vấn phức tạp trên đường nóng. DAX nếu cần che đợt reconnect storm |
-| TTL trạng thái ở tầng bền | **DynamoDB TTL** | ⚠️ **Không dùng cho vòng đời 10 phút của ta**: DynamoDB TTL xoá **trong vòng tối đa 48 giờ**, hoàn toàn không phải cơ chế hết hạn chính xác. Dùng nó để dọn *lịch sử/phiên cũ*, còn hết hạn realtime phải là **TTL của Redis** |
+| TTL trạng thái ở tầng bền | **DynamoDB TTL** | **Không dùng cho vòng đời 10 phút của ta**: DynamoDB TTL xoá **trong vòng tối đa 48 giờ**, hoàn toàn không phải cơ chế hết hạn chính xác. Dùng nó để dọn *lịch sử/phiên cũ*, còn hết hạn realtime phải là **TTL của Redis** |
 | Đường ống lịch sử vị trí | **Kinesis Data Streams → Firehose → S3** (Parquet) | 334k bản ghi/s ≈ **334 shard** (1 MB/s hoặc 1.000 bản ghi/s mỗi shard) — dùng **on-demand** để khỏi tự chia. Firehose gộp lô, nén, chuyển sang Parquet, phân vùng theo ngày. Truy vấn bằng **Athena**. Rẻ hơn Cassandra rất nhiều cho dữ liệu chỉ phân tích |
-| Lịch sử cần đọc theo user, độ trễ thấp | **Keyspaces (Cassandra-compatible)**, hoặc Cassandra tự chạy trên EC2 | Keyspaces bỏ được gánh vận hành, khoá `((user_id, ngày), ts DESC)` như §7.3. ⚠️ Tính tiền **theo từng lượt ghi**: 28,9 tỉ ghi/ngày khiến chế độ on-demand **cực kỳ đắt** — phải dùng provisioned + lấy mẫu, hoặc chỉ dùng S3 nếu không cần đọc điểm |
-| **Lựa chọn ít người nghĩ tới**: tầng vận chuyển | **AWS IoT Core** (MQTT over WSS) | Sinh ra đúng cho bài này: hàng triệu thiết bị pin yếu gửi điểm dữ liệu nhỏ liên tục. Có sẵn **broker được quản lý, topic theo cấu trúc phân cấp, QoS 0/1, last-will (biết thiết bị mất kết nối ngay), Device Shadow (chính là "vị trí gần nhất" + TTL!), Rules Engine định tuyến thẳng sang Kinesis/DynamoDB/Lambda**. Thay được cả WS server *lẫn* pub/sub. ⚠️ Kiểm tra hạn mức: tin/giây mỗi tài khoản, độ dài topic, 128 KB mỗi tin, và mô hình giá theo phút-kết-nối + theo tin ở quy mô 13 triệu tin/s |
-| Điều tiết & backpressure | Kênh `cadence` **của chính ứng dụng** | ⚠️ Đừng trông vào WAF/API Gateway throttling cho đường nóng — chúng cắt request, còn ta cần **giãn nhịp**. Backpressure ở tầng ứng dụng là công cụ duy nhất đúng |
+| Lịch sử cần đọc theo user, độ trễ thấp | **Keyspaces (Cassandra-compatible)**, hoặc Cassandra tự chạy trên EC2 | Keyspaces bỏ được gánh vận hành, khoá `((user_id, ngày), ts DESC)` như §7.3. Tính tiền **theo từng lượt ghi**: 28,9 tỉ ghi/ngày khiến chế độ on-demand **cực kỳ đắt** — phải dùng provisioned + lấy mẫu, hoặc chỉ dùng S3 nếu không cần đọc điểm |
+| **Lựa chọn ít người nghĩ tới**: tầng vận chuyển | **AWS IoT Core** (MQTT over WSS) | Sinh ra đúng cho bài này: hàng triệu thiết bị pin yếu gửi điểm dữ liệu nhỏ liên tục. Có sẵn **broker được quản lý, topic theo cấu trúc phân cấp, QoS 0/1, last-will (biết thiết bị mất kết nối ngay), Device Shadow (chính là "vị trí gần nhất" + TTL!), Rules Engine định tuyến thẳng sang Kinesis/DynamoDB/Lambda**. Thay được cả WS server *lẫn* pub/sub. Kiểm tra hạn mức: tin/giây mỗi tài khoản, độ dài topic, 128 KB mỗi tin, và mô hình giá theo phút-kết-nối + theo tin ở quy mô 13 triệu tin/s |
+| Điều tiết & backpressure | Kênh `cadence` **của chính ứng dụng** | Đừng trông vào WAF/API Gateway throttling cho đường nóng — chúng cắt request, còn ta cần **giãn nhịp**. Backpressure ở tầng ứng dụng là công cụ duy nhất đúng |
 | Quan sát hệ thống | **CloudWatch** (metric tuỳ biến: connections/instance, send-queue depth, msg age p99), **Container Insights**, **X-Ray** cho đường init | Metric autoscaling phải là **connections**, không phải CPU (§8.1). Đặt cảnh báo theo **tuổi bản tin p99** — đó là SLO thật với người dùng |
 | Autoscale theo chỉ số đúng | **ECS/EKS target tracking** trên metric tuỳ biến `connections_per_task` | Đặt ngưỡng ~70%; **scale-in cooldown rất dài** (hàng giờ), scale-out nhanh |
 | Bảo vệ quyền riêng tư | **KMS** cho lịch sử, **CloudTrail + Lake** cho nhật ký truy cập, **Macie** quét rò rỉ, **Cognito** cho auth | Nhật ký truy cập vị trí (§12.1) là **yêu cầu tuân thủ**, không phải tuỳ chọn. Token WS nên ngắn hạn và ràng theo thiết bị |
@@ -981,4 +981,4 @@ Thủ thuật thực chiến đáng nêu:
 
 13. **Đóng lại bằng nhịp cập nhật thích ứng, vì nó là đòn bẩy lớn nhất mà lại nằm ở phía client.** *"Nếu 60% người dùng đang đứng yên và tôi giãn họ xuống 5 phút, write QPS rơi từ 334k xuống 140k và fan-out rơi theo đúng tỉ lệ. Một quyết định phía client vừa xoá bỏ hơn nửa hạ tầng phía server — và đồng thời cứu pin, thứ sẽ quyết định tính năng này sống hay chết."*
 
-> 💡 **Nguyên tắc cuối, gói cả bài trong một câu**: ở Proximity Service, cái khó là **tìm**; ở Nearby Friends, cái khó là **phát tán**. Khi dữ liệu thay đổi nhanh hơn tốc độ nó được truy vấn, hãy thôi thiết kế một kho lưu trữ và bắt đầu thiết kế một **bus**. Từ đó mọi thứ còn lại là hệ quả: trạng thái nóng nhỏ xíu sống trong RAM với TTL, mỗi người là một channel, người gửi không biết người nhận, lọc ở biên nơi đã sẵn dữ liệu, và toàn bộ sự khó nhọc dồn về hai chỗ — **CPU fan-out** và **mười triệu kết nối stateful**.
+> **Nguyên tắc cuối, gói cả bài trong một câu**: ở Proximity Service, cái khó là **tìm**; ở Nearby Friends, cái khó là **phát tán**. Khi dữ liệu thay đổi nhanh hơn tốc độ nó được truy vấn, hãy thôi thiết kế một kho lưu trữ và bắt đầu thiết kế một **bus**. Từ đó mọi thứ còn lại là hệ quả: trạng thái nóng nhỏ xíu sống trong RAM với TTL, mỗi người là một channel, người gửi không biết người nhận, lọc ở biên nơi đã sẵn dữ liệu, và toàn bộ sự khó nhọc dồn về hai chỗ — **CPU fan-out** và **mười triệu kết nối stateful**.

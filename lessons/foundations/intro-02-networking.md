@@ -46,7 +46,7 @@ Ví dụ đọc `10.0.1.0/24`:
 - Phần mạng: `10.0.1` (24 bit đầu).
 - Các host hợp lệ: `10.0.1.0` → `10.0.1.255` (256 địa chỉ, thực tế trừ vài địa chỉ dành riêng).
 
-> 💡 Ghi nhớ: CIDR `/n` nghĩa là n bit đầu cố định cho mạng, phần còn lại dành cho máy. `/16` to, `/24` vừa, `/32` là một máy duy nhất. Khi tạo VPC trên AWS bạn sẽ phải tự chọn CIDR — đây là kỹ năng bắt buộc.
+> Ghi nhớ: CIDR `/n` nghĩa là n bit đầu cố định cho mạng, phần còn lại dành cho máy. `/16` to, `/24` vừa, `/32` là một máy duy nhất. Khi tạo VPC trên AWS bạn sẽ phải tự chọn CIDR — đây là kỹ năng bắt buộc.
 
 ## 2. Public IP vs Private IP, và NAT
 
@@ -78,7 +78,7 @@ Analogy: bạn ở phòng 1502 trong chung cư. Khi gửi thư ra ngoài, **lễ
 
 Hệ quả quan trọng: NAT cho phép **bên trong chủ động gọi ra ngoài**, nhưng **bên ngoài không thể tự gọi vào** một máy private (lễ tân không biết chuyển cho ai nếu không có sổ ghi trước). Đây vừa là hạn chế, vừa là một lớp bảo vệ tự nhiên.
 
-> 💡 Ghi nhớ: Private IP = không ra Internet trực tiếp. NAT = bên trong gọi ra được, bên ngoài không gọi vào được. Mô hình "server private + NAT để cập nhật phần mềm" là kiến trúc chuẩn mực trong cloud.
+> Ghi nhớ: Private IP = không ra Internet trực tiếp. NAT = bên trong gọi ra được, bên ngoài không gọi vào được. Mô hình "server private + NAT để cập nhật phần mềm" là kiến trúc chuẩn mực trong cloud.
 
 ## 3. DNS — danh bạ của Internet
 
@@ -137,7 +137,7 @@ Khi bạn gõ `shop.example.com`, trình duyệt (qua một **DNS resolver**, th
 | `CNAME` | tên → tên khác (bí danh) | `www → example.com` |
 | `MX` | mail server của domain | |
 
-> 💡 Ghi nhớ: DNS là dịch vụ phân tán, phân cấp, có cache. Nếu DNS chết, tên miền không phân giải được — với người dùng thì "cả Internet sập" dù server vẫn chạy. Vì vậy DNS luôn được thiết kế cực kỳ sẵn sàng (Route 53 cam kết SLA 100%).
+> Ghi nhớ: DNS là dịch vụ phân tán, phân cấp, có cache. Nếu DNS chết, tên miền không phân giải được — với người dùng thì "cả Internet sập" dù server vẫn chạy. Vì vậy DNS luôn được thiết kế cực kỳ sẵn sàng (Route 53 cam kết SLA 100%).
 
 ## 4. HTTP/HTTPS và TLS handshake (mức ý tưởng)
 
@@ -201,7 +201,7 @@ HTTP thuần là **bưu thiếp** — ai cầm trên đường đều đọc đ�
 
 Điểm tinh tế đáng nhớ: TLS dùng mã hoá **bất đối xứng** (chậm, dùng để bắt tay an toàn và xác thực) để thống nhất một **khoá đối xứng** (nhanh, dùng cho toàn bộ dữ liệu sau đó). Giống như dùng két sắt nặng nề chỉ để trao nhau chiếc chìa khoá nhà, rồi sau đó ra vào bằng chìa cho nhanh.
 
-> 💡 Ghi nhớ: HTTPS = HTTP chạy trên TLS. Certificate trả lời câu hỏi "anh có đúng là người anh tự xưng không?". Trên AWS, certificate được cấp/quản lý miễn phí qua ACM và "gắn" vào load balancer hoặc CloudFront.
+> Ghi nhớ: HTTPS = HTTP chạy trên TLS. Certificate trả lời câu hỏi "anh có đúng là người anh tự xưng không?". Trên AWS, certificate được cấp/quản lý miễn phí qua ACM và "gắn" vào load balancer hoặc CloudFront.
 
 ## 5. Port, firewall, stateful vs stateless
 
@@ -238,7 +238,7 @@ Hai "tính cách" bảo vệ:
 | Loại luật | Chỉ allow | Allow và deny |
 | Áp dụng ở | từng máy (instance) | ranh giới subnet |
 
-> 💡 Ghi nhớ: Stateful = "đã cho ra thì cho về". Stateless = "kiểm tra từng gói, từng chiều". Trên AWS: Security Group là stateful, NACL là stateless — đây là câu hỏi quen thuộc ở mọi kỳ thi AWS.
+> Ghi nhớ: Stateful = "đã cho ra thì cho về". Stateless = "kiểm tra từng gói, từng chiều". Trên AWS: Security Group là stateful, NACL là stateless — đây là câu hỏi quen thuộc ở mọi kỳ thi AWS.
 
 ## 6. Load balancer — L4 vs L7
 
@@ -320,7 +320,7 @@ Tên gọi đến từ mô hình OSI: Layer 4 là tầng transport (TCP/UDP), La
   <text x="471" y="324" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">server ảnh tĩnh</text>
 </svg>
 
-> 💡 Ghi nhớ: L4 nhìn "bì thư" (IP/port), L7 đọc "lá thư" (HTTP). Cần route theo path/host/header → L7 (ALB). Cần hiệu năng thô, giao thức TCP/UDP bất kỳ, IP tĩnh → L4 (NLB).
+> Ghi nhớ: L4 nhìn "bì thư" (IP/port), L7 đọc "lá thư" (HTTP). Cần route theo path/host/header → L7 (ALB). Cần hiệu năng thô, giao thức TCP/UDP bất kỳ, IP tĩnh → L4 (NLB).
 
 ## 7. Latency vs Bandwidth — hai thước đo dễ lẫn
 
@@ -340,7 +340,7 @@ Ví von kinh điển: một xe tải chở đầy ổ cứng chạy xuyên quố
 
 Một trang web "chậm" thường do **latency × số lượt khứ hồi** (DNS + TCP + TLS + hàng chục request) chứ không phải do thiếu băng thông. Đó là lý do "đem nội dung lại gần người dùng" hiệu quả đến vậy — dẫn tới CDN.
 
-> 💡 Ghi nhớ: Latency = độ trễ (ms), quyết định bởi khoảng cách. Bandwidth = độ rộng ống (Mbps). Tăng bandwidth KHÔNG làm giảm latency. Muốn giảm latency → lại gần người dùng (region gần, edge, CDN, cache).
+> Ghi nhớ: Latency = độ trễ (ms), quyết định bởi khoảng cách. Bandwidth = độ rộng ống (Mbps). Tăng bandwidth KHÔNG làm giảm latency. Muốn giảm latency → lại gần người dùng (region gần, edge, CDN, cache).
 
 ## 8. CDN — đem nội dung lại gần người dùng
 
@@ -363,7 +363,7 @@ Lợi ích chính:
 - **Giảm tải origin**: 90% request không bao giờ chạm tới server gốc.
 - **Chống chịu tốt hơn**: hấp thụ traffic đột biến, lớp đệm trước DDoS.
 
-> 💡 Ghi nhớ: CDN = cache nội dung tại edge gần người dùng. Hai khái niệm điều khiển cache: **TTL** (nội dung sống bao lâu tại edge) và **invalidation** (chủ động xoá cache khi cập nhật nội dung).
+> Ghi nhớ: CDN = cache nội dung tại edge gần người dùng. Hai khái niệm điều khiển cache: **TTL** (nội dung sống bao lâu tại edge) và **invalidation** (chủ động xoá cache khi cập nhật nội dung).
 
 ## 9. Liên hệ sang AWS
 

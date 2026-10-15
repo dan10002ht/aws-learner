@@ -19,7 +19,7 @@ Ba khái niệm này liên quan nhưng KHÔNG đồng nghĩa:
 - **Monitoring** là theo dõi những thứ bạn **biết trước** có thể hỏng ("known unknowns"). Bạn đặt sẵn câu hỏi: "CPU có vượt 80% không?", "Error rate có quá 1% không?"
 - **Observability** là khả năng trả lời những câu hỏi bạn **chưa đặt ra trước** ("unknown unknowns"). Ví dụ: "Tại sao chỉ user ở Đà Nẵng, dùng iOS, thanh toán bằng ví X mới bị lỗi timeout?" — không dashboard nào dựng sẵn cho câu hỏi này, nhưng nếu dữ liệu telemetry đủ giàu, bạn vẫn "đào" ra được câu trả lời.
 
-> 💡 Ghi nhớ: Monitoring cho bạn biết **hệ thống đang hỏng**. Observability cho bạn biết **vì sao nó hỏng**. Monitoring là tập con của hành trình hướng tới observability.
+> Ghi nhớ: Monitoring cho bạn biết **hệ thống đang hỏng**. Observability cho bạn biết **vì sao nó hỏng**. Monitoring là tập con của hành trình hướng tới observability.
 
 Observability (thường viết tắt **o11y** — chữ o, 11 ký tự, chữ y) đứng trên ba "trụ cột" dữ liệu: **logs, metrics, traces**. Ta đi từng trụ một.
 
@@ -65,7 +65,7 @@ Vài nguyên tắc structured logging tốt:
 - **Đừng log dữ liệu nhạy cảm**: mật khẩu, số thẻ, token. Đây là lỗi bảo mật kinh điển.
 - **Log là sự kiện, không phải tiểu thuyết**: mỗi sự kiện đáng quan tâm = một dòng, đủ ngữ cảnh để đứng độc lập.
 
-> 💡 Ghi nhớ: Hãy viết log cho **máy đọc trước, người đọc sau**. Structured log (JSON) với trace ID đính kèm là tiêu chuẩn de facto của hệ phân tán.
+> Ghi nhớ: Hãy viết log cho **máy đọc trước, người đọc sau**. Structured log (JSON) với trace ID đính kèm là tiêu chuẩn de facto của hệ phân tán.
 
 ## 3. Trụ 2 — Metrics: con số đo theo thời gian
 
@@ -109,7 +109,7 @@ Trong ví dụ trên: p50 = 50ms nhưng p99 ≈ 3000ms — chênh lệch khổng
 
 Histogram chính là cấu trúc dữ liệu cho phép tính percentile hiệu quả: thay vì lưu từng giá trị, ta đếm số mẫu rơi vào từng rổ (0-10ms, 10-50ms, 50-100ms...).
 
-> 💡 Ghi nhớ: Đừng bao giờ đánh giá độ trễ bằng giá trị trung bình. Hãy nhìn **p50 + p99**: p50 cho biết trải nghiệm điển hình, p99 cho biết những user khổ nhất khổ đến mức nào.
+> Ghi nhớ: Đừng bao giờ đánh giá độ trễ bằng giá trị trung bình. Hãy nhìn **p50 + p99**: p50 cho biết trải nghiệm điển hình, p99 cho biết những user khổ nhất khổ đến mức nào.
 
 ## 4. Trụ 3 — Traces: theo dấu một request qua nhiều service
 
@@ -236,7 +236,7 @@ Ba trụ cột không thay thế nhau — chúng nối tiếp thành một quy t
   <text x="360" y="232" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.65">trace ID là sợi chỉ nối cả ba trụ lại với nhau</text>
 </svg>
 
-> 💡 Ghi nhớ: Bộ ba hoạt động cùng nhau: **metric** báo "có gì đó chậm" → **trace** chỉ ra "chậm ở service nào, bước nào" → **log** (lọc theo trace ID) kể "chính xác chuyện gì xảy ra ở bước đó". Đó là quy trình điều tra sự cố chuẩn.
+> Ghi nhớ: Bộ ba hoạt động cùng nhau: **metric** báo "có gì đó chậm" → **trace** chỉ ra "chậm ở service nào, bước nào" → **log** (lọc theo trace ID) kể "chính xác chuyện gì xảy ra ở bước đó". Đó là quy trình điều tra sự cố chuẩn.
 
 ## 5. Alerting: đánh thức đúng người, đúng lúc
 
@@ -254,7 +254,7 @@ Câu chuyện "cậu bé chăn cừu" phiên bản DevOps: hệ thống kêu "CP
 - **Có ngưỡng + thời lượng**: "error rate > 2% **kéo dài 5 phút**" thay vì nhảy số một giây cũng kêu — tránh nhiễu do gai (spike) thoáng qua.
 - **Định kỳ dọn rác alert**: alert nào hay kêu sai thì sửa ngưỡng hoặc xóa, như dọn cỏ vườn.
 
-> 💡 Ghi nhớ: Một alert đánh thức bạn lúc 3h sáng phải thỏa hai điều: (1) user đang thực sự bị ảnh hưởng, (2) bạn có thể làm gì đó ngay. Không thỏa cả hai → nó không xứng đáng là page.
+> Ghi nhớ: Một alert đánh thức bạn lúc 3h sáng phải thỏa hai điều: (1) user đang thực sự bị ảnh hưởng, (2) bạn có thể làm gì đó ngay. Không thỏa cả hai → nó không xứng đáng là page.
 
 ## 6. SLI, SLO, SLA — ba chữ S hay nhầm
 
@@ -276,7 +276,7 @@ Analogy giao pizza:
 
 Khái niệm đi kèm rất hay: **error budget** (ngân sách lỗi). SLO 99.9% nghĩa là bạn được "phép hỏng" 0.1% — khoảng 43 phút downtime mỗi tháng. Còn budget → cứ mạnh dạn deploy tính năng mới. Cháy budget → đóng băng release, dồn sức cho độ ổn định. Error budget biến cuộc cãi vã muôn thuở "dev muốn ship nhanh vs ops muốn ổn định" thành một con số khách quan.
 
-> 💡 Ghi nhớ: SLI là **thước đo**, SLO là **mục tiêu nội bộ** (chặt hơn), SLA là **hợp đồng có đền bù** (lỏng hơn). Và 100% không bao giờ là mục tiêu đúng — chi phí tiệm cận vô hạn, trong khi user không phân biệt nổi 99.99% với 100%.
+> Ghi nhớ: SLI là **thước đo**, SLO là **mục tiêu nội bộ** (chặt hơn), SLA là **hợp đồng có đền bù** (lỏng hơn). Và 100% không bao giờ là mục tiêu đúng — chi phí tiệm cận vô hạn, trong khi user không phân biệt nổi 99.99% với 100%.
 
 ## 7. Dashboard tốt trông như thế nào?
 
@@ -306,7 +306,7 @@ Bố cục mẫu cho một service:
         ↑ vạch deploy: 14:02 (release v2.31)
 ```
 
-> 💡 Ghi nhớ: Dashboard tốt được thiết kế cho khoảnh khắc **3h sáng, đầu óc mơ màng**: liếc 10 giây phải trả lời được "có sự cố không, nặng cỡ nào, bắt đầu từ khi nào".
+> Ghi nhớ: Dashboard tốt được thiết kế cho khoảnh khắc **3h sáng, đầu óc mơ màng**: liếc 10 giây phải trả lời được "có sự cố không, nặng cỡ nào, bắt đầu từ khi nào".
 
 ## 8. Liên hệ sang AWS
 

@@ -39,7 +39,7 @@ Năm công cụ dưới đây dùng chung dữ liệu đó nhưng trả lời n�
 
 **CloudWatch Billing Alarm** là công cụ đời cũ nhất và đơn giản nhất nên chỉ nói ở đây: bật "Receive CloudWatch Billing Alerts" trong Billing Preferences, AWS sẽ đẩy metric `EstimatedCharges` (namespace `AWS/Billing`) vào CloudWatch, rồi bạn đặt alarm "lớn hơn $X thì gửi SNS". Hai điều phải nhớ: metric này **chỉ có ở region us-east-1** (dù nó cộng chi phí toàn cầu), và alarm chỉ so với số **đã tiêu thực tế**, không dự báo. Budgets làm được mọi thứ Billing Alarm làm và hơn thế (dự báo, lọc theo tag, tự hành động), nên đề thi gần như luôn muốn bạn chọn Budgets.
 
-> 🪤 Bẫy thi: thấy chữ *"real-time cost"* trong đáp án thì nghi ngờ ngay. Kịch bản §1 nói "lẽ ra có alert trong 24h" chứ không phải "trong 5 phút" — đó là giới hạn thật của dữ liệu billing.
+> Bẫy thi: thấy chữ *"real-time cost"* trong đáp án thì nghi ngờ ngay. Kịch bản §1 nói "lẽ ra có alert trong 24h" chứ không phải "trong 5 phút" — đó là giới hạn thật của dữ liệu billing.
 
 ---
 
@@ -65,7 +65,7 @@ Các chiều (dimension) dùng được cho cả hai thao tác: service, linked 
 | Lịch sử nhiều năm (mức tháng) | Hơn 13 tháng | Phải bật thêm |
 | **Forecast** (dự báo) | **18 tháng** tới | Ngoại suy từ lịch sử tiêu của chính bạn |
 
-> 📏 Đề thi và nhiều tài liệu cũ dùng con số **"12 tháng lịch sử, dự báo 12 tháng"**. Docs hiện tại ghi 13 tháng lịch sử và dự báo 18 tháng. Ý cần nhớ không đổi: Cost Explorer nhìn được **khoảng một năm về trước và có dự báo về sau**; muốn chi tiết từng giờ thì chỉ có 2 tuần gần nhất.
+> Đề thi và nhiều tài liệu cũ dùng con số **"12 tháng lịch sử, dự báo 12 tháng"**. Docs hiện tại ghi 13 tháng lịch sử và dự báo 18 tháng. Ý cần nhớ không đổi: Cost Explorer nhìn được **khoảng một năm về trước và có dự báo về sau**; muốn chi tiết từng giờ thì chỉ có 2 tuần gần nhất.
 
 **Độ trễ.** Cost Explorer làm mới dữ liệu **ít nhất một lần mỗi 24 giờ**. Lần đầu bật, dữ liệu tháng hiện tại có sau khoảng 24 giờ, các tháng cũ lâu hơn vài ngày.
 
@@ -276,7 +276,7 @@ Vì chúng bỏ sót những thứ khác nhau nên dùng **cả hai**, không c�
 - **Định dạng**: CSV (nén gzip) hoặc **Parquet**. Parquet là định dạng lưu theo cột, giúp Athena chỉ đọc những cột cần nên query rẻ và nhanh hơn — xem [[ch2-06-data-ingestion-analytics]] §4.1.
 - **Tần suất**: file trong bucket được cập nhật **ít nhất 1 lần/ngày, tối đa 3 lần**. Số liệu trong tháng là ước tính; AWS chốt sau khi xuất hoá đơn cuối tháng. Report mới tạo mất tới 24 giờ mới có file đầu tiên.
 
-> 📏 Tên gọi: bản hiện tại là **CUR 2.0**, tạo qua tính năng **AWS Data Exports**. Đề thi vẫn gọi chung là *Cost and Usage Report* và mô tả bằng cụm *"most granular / most detailed billing data"* — thấy cụm đó là chọn CUR.
+> Tên gọi: bản hiện tại là **CUR 2.0**, tạo qua tính năng **AWS Data Exports**. Đề thi vẫn gọi chung là *Cost and Usage Report* và mô tả bằng cụm *"most granular / most detailed billing data"* — thấy cụm đó là chọn CUR.
 
 ### 6.2 Analysis stack
 
@@ -361,7 +361,7 @@ Viết quy định "mọi resource phải có tag `Team`" vào wiki thì không 
 
 Thực tế dùng kết hợp: SCP chặn cái mới, Tag Policy giữ value thống nhất, Config tìm những thứ cũ tạo ra trước khi có luật.
 
-> 🪤 Bẫy thi: *"đảm bảo mọi resource mới **phải có** tag CostCenter"* → **SCP** (hoặc IAM condition), không phải Tag Policy. *"chuẩn hoá value của tag trên toàn Organization"* → **Tag Policy**. *"tìm resource hiện có đang thiếu tag"* → **AWS Config**.
+> Bẫy thi: *"đảm bảo mọi resource mới **phải có** tag CostCenter"* → **SCP** (hoặc IAM condition), không phải Tag Policy. *"chuẩn hoá value của tag trên toàn Organization"* → **Tag Policy**. *"tìm resource hiện có đang thiếu tag"* → **AWS Config**.
 
 ### 7.4 Cost allocation tags
 
@@ -448,7 +448,7 @@ Dưới đây là ba guardrail cost phổ biến. Mỗi khối là một stateme
 
 **Kết hợp với Budget Action.** Ba guardrail trên là hàng rào **thường trực**. Có thể thêm một lớp **theo điều kiện**: chuẩn bị sẵn một SCP khắt khe hơn (ví dụ cấm toàn bộ `ec2:RunInstances` và `sagemaker:Create*`), rồi cấu hình Budget Action (§4.2) để khi account vượt budget thì AWS tự gắn SCP đó vào account. Lúc bình thường team làm việc thoải mái trong hàng rào rộng; vượt ngân sách thì hàng rào tự siết lại cho tới khi có người vào xem.
 
-> 🪤 Bẫy thi: *"**ngăn** các account thành viên tạo resource ở region / loại instance không được duyệt, kể cả admin của account đó"* → **SCP**. Budgets và Anomaly Detection chỉ *báo*; IAM policy thì admin account tự gỡ được.
+> Bẫy thi: *"**ngăn** các account thành viên tạo resource ở region / loại instance không được duyệt, kể cả admin của account đó"* → **SCP**. Budgets và Anomaly Detection chỉ *báo*; IAM policy thì admin account tự gỡ được.
 
 ---
 
@@ -498,7 +498,7 @@ Các check cost hay gặp, kèm tiêu chí để thấy "idle" được định 
 
 So với Trusted Advisor: Trusted Advisor quét **rộng** nhiều lĩnh vực với tiêu chí cố định (CPU ≤ 10% là "low utilization") và cần gói Support trả tiền để xem phần cost. Compute Optimizer chỉ làm right-sizing nhưng làm **sâu** hơn, đề xuất đúng loại máy nên chuyển sang, và miễn phí với mọi account.
 
-> 🪤 Bẫy thi: *"đề xuất loại/cỡ instance tối ưu dựa trên mức sử dụng thực tế"* → **Compute Optimizer**. *"đề xuất mua Savings Plan / RI"* → **Cost Explorer**. *"kiểm tra tổng quát theo best practice, gồm cả security và service limits"* → **Trusted Advisor**.
+> Bẫy thi: *"đề xuất loại/cỡ instance tối ưu dựa trên mức sử dụng thực tế"* → **Compute Optimizer**. *"đề xuất mua Savings Plan / RI"* → **Cost Explorer**. *"kiểm tra tổng quát theo best practice, gồm cả security và service limits"* → **Trusted Advisor**.
 
 ---
 
@@ -638,7 +638,7 @@ Tách mỗi team hoặc mỗi môi trường thành một account riêng là cá
 
 ---
 
-**🎉 Chương 4 và SAA-C03 (chapter 1-4) hoàn thành!**
+**Chương 4 và SAA-C03 (chapter 1-4) hoàn thành!**
 
 Bạn đã có nền tảng để:
 - Đọc đề SAA với cách nhìn architect, không phải checklist.

@@ -65,7 +65,7 @@ Merge made by the 'recursive' strategy.
  1 file changed, 12 insertions(+)
 ```
 
-> 💡 Ghi nhớ: Muốn **luôn** có merge commit (kể cả khi fast-forward được) để giữ dấu vết nhánh, dùng `git merge --no-ff feature`. Nhiều team bắt buộc `--no-ff` cho nhánh feature để dễ `git revert` nguyên cụm sau này.
+> Ghi nhớ: Muốn **luôn** có merge commit (kể cả khi fast-forward được) để giữ dấu vết nhánh, dùng `git merge --no-ff feature`. Nhiều team bắt buộc `--no-ff` cho nhánh feature để dễ `git revert` nguyên cụm sau này.
 
 ## Rebase là gì?
 
@@ -96,7 +96,7 @@ Successfully rebased and updated refs/heads/feature.
 
 Chú ý `A'`, `B'`, `C'` có dấu phẩy — đây là **commit MỚI** (khác hash) dù nội dung giống `A`, `B`, `C`. Rebase **viết lại lịch sử**: mỗi commit được tái tạo với cha mới nên SHA đổi hoàn toàn.
 
-> ⚠️ Bẫy: Vì rebase tạo commit mới, nếu bạn rebase rồi push, commit cũ và commit mới **cùng tồn tại** trên remote nếu push không đúng cách. Đây là gốc rễ của golden rule ở cuối bài.
+> Bẫy: Vì rebase tạo commit mới, nếu bạn rebase rồi push, commit cũ và commit mới **cùng tồn tại** trên remote nếu push không đúng cách. Đây là gốc rễ của golden rule ở cuối bài.
 
 ### Quy trình thực chiến: cập nhật feature theo main
 
@@ -186,7 +186,7 @@ Không có cái nào "đúng tuyệt đối". Đây là kim chỉ nam thực t�
 | Dọn các commit "wip", "fix typo" trước khi mở PR | `rebase -i` (squash) | Biến 10 commit lộn xộn thành 1-2 commit nghĩa |
 | Sợ làm hỏng, chưa tự tin | `merge` | An toàn, không viết lại lịch sử |
 
-> 💡 Ghi nhớ: Một quy ước phổ biến — **"rebase để dọn dẹp riêng tư, merge để công bố công khai"**. Rebase trên nhánh cá nhân để làm đẹp, rồi merge vào main để lưu lại sự kiện gộp.
+> Ghi nhớ: Một quy ước phổ biến — **"rebase để dọn dẹp riêng tư, merge để công bố công khai"**. Rebase trên nhánh cá nhân để làm đẹp, rồi merge vào main để lưu lại sự kiện gộp.
 
 ## Interactive rebase — vũ khí dọn lịch sử
 
@@ -310,7 +310,7 @@ f9a0b1c (HEAD -> feature) Add login form
 
 Bốn commit lộn xộn giờ thành **một commit gọn gàng**, reviewer của bạn sẽ cảm ơn.
 
-> 💡 Ghi nhớ: Có một lối tắt cho fixup: khi đang code bạn nhận ra commit cũ thiếu gì đó, dùng `git commit --fixup <hash>`. Sau đó `git rebase -i --autosquash <base>` sẽ tự xếp các commit fixup vào đúng chỗ. Cực tiện.
+> Ghi nhớ: Có một lối tắt cho fixup: khi đang code bạn nhận ra commit cũ thiếu gì đó, dùng `git commit --fixup <hash>`. Sau đó `git rebase -i --autosquash <base>` sẽ tự xếp các commit fixup vào đúng chỗ. Cực tiện.
 
 ### Reword: chỉ sửa message
 
@@ -325,7 +325,7 @@ Git sẽ dừng và mở editor cho commit `a1b2c3d` để bạn gõ message m�
 
 Đây là quy tắc **bất di bất dịch**, sai là gây hoạ cho cả team:
 
-> ⚠️ Bẫy: **KHÔNG BAO GIỜ rebase một nhánh đã được push lên và người khác đang dùng** (nhánh public/shared như `main`, `develop`, hay nhánh feature chung).
+> Bẫy: **KHÔNG BAO GIỜ rebase một nhánh đã được push lên và người khác đang dùng** (nhánh public/shared như `main`, `develop`, hay nhánh feature chung).
 
 Lý do: rebase tạo commit mới (đổi SHA). Nếu đồng nghiệp đã pull các commit cũ, lịch sử của họ và của bạn sẽ "phân nhánh". Khi họ pull lại, Git thấy hai dòng lịch sử khác nhau cho cùng nội dung → conflict hỗn loạn, commit bị nhân đôi, có người vô tình khôi phục lại commit bạn đã bỏ.
 
@@ -368,7 +368,7 @@ git push --force-with-lease
 
 Thấy "stale info" tức là có người vừa đụng nhánh — bạn cần `git fetch` và xem lại, **không** ép push.
 
-> 💡 Ghi nhớ: Đặt alias cho an toàn: `git config --global alias.pushf 'push --force-with-lease'`. Từ nay gõ `git pushf`, vừa nhanh vừa khỏi lỡ tay gõ `--force`.
+> Ghi nhớ: Đặt alias cho an toàn: `git config --global alias.pushf 'push --force-with-lease'`. Từ nay gõ `git pushf`, vừa nhanh vừa khỏi lỡ tay gõ `--force`.
 
 ## Lỗi hay gặp & cách thoát
 
@@ -403,7 +403,7 @@ d4e5f6a HEAD@{2}: commit: fix typo again   <-- đây là trạng thái trước 
 git reset --hard HEAD@{2}     # nhảy về đúng trước khi rebase
 ```
 
-> 💡 Ghi nhớ: `git reflog` cứu bạn khỏi gần như mọi "thảm hoạ" rebase/reset. Commit không thực sự mất ngay — Git giữ chúng vài tuần. Cứ bình tĩnh tra reflog.
+> Ghi nhớ: `git reflog` cứu bạn khỏi gần như mọi "thảm hoạ" rebase/reset. Commit không thực sự mất ngay — Git giữ chúng vài tuần. Cứ bình tĩnh tra reflog.
 
 **3. Lỡ `git rebase -i` quá nhiều commit, choáng.** Trong editor, cứ xoá hết các dòng và lưu file rỗng → rebase **abort** an toàn, không có gì thay đổi.
 

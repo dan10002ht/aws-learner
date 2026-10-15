@@ -56,7 +56,7 @@ INSERT INTO products (id, name, price, stock) VALUES
 | 1 | An | 500.00 |
 | 2 | Bình | 50.00 |
 
-> 💡 Ghi nhớ: Transaction biến **nhiều câu lệnh** thành **một đơn vị không thể chia cắt**. Hệ thống ngân hàng, đặt vé, trừ kho... đều sống nhờ nó.
+> Ghi nhớ: Transaction biến **nhiều câu lệnh** thành **một đơn vị không thể chia cắt**. Hệ thống ngân hàng, đặt vé, trừ kho... đều sống nhờ nó.
 
 ## 1. ACID — bốn lời hứa của transaction
 
@@ -76,7 +76,7 @@ Ví dụ áp vào chuyển tiền:
 - **Isolation**: cùng lúc có người khác đọc số dư, họ không thấy trạng thái "đang nửa chừng".
 - **Durability**: chuyển xong, đèn báo "thành công" rồi thì không bao giờ mất.
 
-> 💡 Ghi nhớ: Cứ thấy chữ "ACID" hãy nhớ tới **độ tin cậy**. Database SQL truyền thống (PostgreSQL, MySQL) cho bạn ACID gần như miễn phí — đó là lý do người ta tin chúng giữ tiền.
+> Ghi nhớ: Cứ thấy chữ "ACID" hãy nhớ tới **độ tin cậy**. Database SQL truyền thống (PostgreSQL, MySQL) cho bạn ACID gần như miễn phí — đó là lý do người ta tin chúng giữ tiền.
 
 ## 2. BEGIN / COMMIT / ROLLBACK
 
@@ -162,7 +162,7 @@ BEGIN;
 COMMIT;
 ```
 
-> ⚠️ Lỗi người mới hay gặp: Quên `COMMIT`. Bạn chạy `BEGIN` rồi `UPDATE`, thấy `SELECT` ra số mới nên tưởng đã xong — nhưng nếu kết nối đóng mà chưa COMMIT, mọi thứ bị ROLLBACK. Người dùng khác cũng **không hề thấy** thay đổi của bạn cho tới khi COMMIT.
+> Lỗi người mới hay gặp: Quên `COMMIT`. Bạn chạy `BEGIN` rồi `UPDATE`, thấy `SELECT` ra số mới nên tưởng đã xong — nhưng nếu kết nối đóng mà chưa COMMIT, mọi thứ bị ROLLBACK. Người dùng khác cũng **không hề thấy** thay đổi của bạn cho tới khi COMMIT.
 
 ## 3. Ví dụ thực chiến: đặt hàng (trừ kho + trừ tiền)
 
@@ -184,7 +184,7 @@ COMMIT;
 
 Nếu bất kỳ bước nào lỗi (hết kho, không đủ tiền), ta ROLLBACK để cả 3 cùng bị huỷ — không bao giờ có cảnh "đã trừ kho mà chưa thu tiền".
 
-> ⚠️ Lỗi người mới hay gặp: Kiểm tra tồn kho bằng câu `SELECT` *trước khi* `BEGIN`, rồi mới trừ kho. Giữa lúc kiểm tra và lúc trừ, người khác có thể đã mua hết. Hãy đặt kiểm tra **bên trong** transaction, hoặc dùng `UPDATE ... WHERE stock >= 2` rồi xem số hàng bị ảnh hưởng.
+> Lỗi người mới hay gặp: Kiểm tra tồn kho bằng câu `SELECT` *trước khi* `BEGIN`, rồi mới trừ kho. Giữa lúc kiểm tra và lúc trừ, người khác có thể đã mua hết. Hãy đặt kiểm tra **bên trong** transaction, hoặc dùng `UPDATE ... WHERE stock >= 2` rồi xem số hàng bị ảnh hưởng.
 
 ## 4. Isolation levels — khi nhiều người cùng làm một lúc
 
@@ -308,7 +308,7 @@ BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ;
 COMMIT;
 ```
 
-> 💡 Ghi nhớ: 99% trường hợp dùng **READ COMMITTED** (mặc định) là đủ. Chỉ nâng lên **SERIALIZABLE** khi logic thật sự nhạy cảm với việc đọc nhất quán (báo cáo tài chính, kiểm kho chính xác). Càng chặt càng dễ bị xung đột phải thử lại.
+> Ghi nhớ: 99% trường hợp dùng **READ COMMITTED** (mặc định) là đủ. Chỉ nâng lên **SERIALIZABLE** khi logic thật sự nhạy cảm với việc đọc nhất quán (báo cáo tài chính, kiểm kho chính xác). Càng chặt càng dễ bị xung đột phải thử lại.
 
 ## 5. Deadlock — hai người chờ nhau mãi mãi
 
@@ -373,7 +373,7 @@ May mắn là database **tự phát hiện** deadlock và **huỷ một trong ha
 
 Cách phòng tránh: **luôn khoá các hàng theo cùng một thứ tự**. Nếu mọi transaction đều update id nhỏ trước id lớn, sẽ không bao giờ có vòng chờ.
 
-> ⚠️ Lỗi người mới hay gặp: Hoảng loạn khi thấy lỗi `deadlock detected` rồi đi tắt isolation. Sai hướng. Hãy (1) chuẩn hoá thứ tự khoá, (2) giữ transaction ngắn gọn, (3) ở tầng app cứ retry vài lần là xong.
+> Lỗi người mới hay gặp: Hoảng loạn khi thấy lỗi `deadlock detected` rồi đi tắt isolation. Sai hướng. Hãy (1) chuẩn hoá thứ tự khoá, (2) giữ transaction ngắn gọn, (3) ở tầng app cứ retry vài lần là xong.
 
 ## 6. UPSERT — chèn nếu chưa có, cập nhật nếu đã có
 
@@ -400,7 +400,7 @@ Sản phẩm 11 vốn có stock = 0, sau câu này thành 20:
 
 Chạy lại lần nữa (cộng thêm 20 nữa) → stock = 40. Nếu chỉ muốn bỏ qua khi trùng, dùng `ON CONFLICT (id) DO NOTHING`.
 
-> 💡 Ghi nhớ: UPSERT là một câu lệnh nguyên tử — không cần `SELECT` trước, không lo hai request cùng tạo trùng. MySQL có cú pháp tương đương `INSERT ... ON DUPLICATE KEY UPDATE`.
+> Ghi nhớ: UPSERT là một câu lệnh nguyên tử — không cần `SELECT` trước, không lo hai request cùng tạo trùng. MySQL có cú pháp tương đương `INSERT ... ON DUPLICATE KEY UPDATE`.
 
 ## 7. VIEW — đặt tên cho một câu truy vấn
 
@@ -431,7 +431,7 @@ Lợi ích của view:
 - **An toàn**: cấp quyền đọc view mà không lộ cột nhạy cảm (ví dụ ẩn `balance`).
 - **Nhất quán**: mọi người dùng chung một định nghĩa "đơn đã thanh toán".
 
-> 💡 Ghi nhớ: View thường **chỉ để đọc**. Nếu cần lưu sẵn kết quả cho nhanh (vì câu truy vấn nặng), hãy tìm hiểu **materialized view** — nó lưu dữ liệu thật và cần `REFRESH`.
+> Ghi nhớ: View thường **chỉ để đọc**. Nếu cần lưu sẵn kết quả cho nhanh (vì câu truy vấn nặng), hãy tìm hiểu **materialized view** — nó lưu dữ liệu thật và cần `REFRESH`.
 
 ## 8. Transaction trong ứng dụng
 
@@ -459,7 +459,7 @@ Nguyên tắc vàng khi viết transaction ở tầng app:
 - **Đừng để transaction "treo"**: luôn có nhánh COMMIT/ROLLBACK rõ ràng.
 - **Sẵn sàng retry**: với SERIALIZABLE hoặc deadlock, lỗi xung đột là bình thường — bắt lỗi rồi chạy lại.
 
-> ⚠️ Lỗi người mới hay gặp: Mở transaction, gọi một API thanh toán bên thứ ba (mất 5 giây), rồi mới COMMIT. Suốt 5 giây đó các hàng bị khoá, người khác phải chờ. Hãy COMMIT phần DB trước, xử lý việc chậm sau.
+> Lỗi người mới hay gặp: Mở transaction, gọi một API thanh toán bên thứ ba (mất 5 giây), rồi mới COMMIT. Suốt 5 giây đó các hàng bị khoá, người khác phải chờ. Hãy COMMIT phần DB trước, xử lý việc chậm sau.
 
 ## 9. SQL vs NoSQL — khi nào dùng gì
 
@@ -479,7 +479,7 @@ Quy tắc thực dụng:
 - Cần **đọc/ghi cực nhanh ở quy mô lớn**, cấu trúc thay đổi liên tục, ít JOIN (giỏ hàng tạm, session, đếm lượt xem) → **NoSQL**.
 - Rất nhiều hệ thống dùng **cả hai**: SQL cho dữ liệu lõi, Redis cache cho tốc độ, DynamoDB cho phần quy mô khủng.
 
-> 💡 Ghi nhớ: "NoSQL nhanh hơn SQL" là hiểu lầm. Chúng giải bài toán khác nhau. Chọn theo **hình dạng dữ liệu và yêu cầu nhất quán**, không theo trào lưu.
+> Ghi nhớ: "NoSQL nhanh hơn SQL" là hiểu lầm. Chúng giải bài toán khác nhau. Chọn theo **hình dạng dữ liệu và yêu cầu nhất quán**, không theo trào lưu.
 
 ## 10. Bài tập (có lời giải)
 

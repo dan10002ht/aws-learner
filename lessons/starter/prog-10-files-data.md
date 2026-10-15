@@ -48,7 +48,7 @@ f << "Dòng 2: Tạm biệt\n";
 
 Chế độ `"w"` (write) **ghi đè** toàn bộ nội dung cũ. Muốn **ghi nối thêm** vào cuối, dùng chế độ `"a"` (append).
 
-> ⚠️ Lỗi người mới hay gặp: Mở file bằng `"w"` để "thêm một dòng" — nó xoá sạch nội dung cũ rồi mới ghi! Muốn thêm vào cuối phải dùng `"a"` (append).
+> Lỗi người mới hay gặp: Mở file bằng `"w"` để "thêm một dòng" — nó xoá sạch nội dung cũ rồi mới ghi! Muốn thêm vào cuối phải dùng `"a"` (append).
 
 ### 1.2. Đọc file
 
@@ -102,7 +102,7 @@ while (std::getline(f, dong)) {           // đọc từng dòng, tiết kiệm 
 
 Đọc **từng dòng** (như Python lặp trực tiếp trên file) tốt hơn đọc cả file vào RAM khi file lớn (vài GB log chẳng hạn) — bạn không cần nạp toàn bộ vào bộ nhớ một lúc.
 
-> 💡 Ghi nhớ: Luôn chỉ định `encoding="utf-8"` khi đọc/ghi text. Nếu không, máy có thể dùng encoding mặc định của hệ điều hành (Windows hay dùng cp1252) khiến tiếng Việt thành ký tự lỗi như `Ã¢`.
+> Ghi nhớ: Luôn chỉ định `encoding="utf-8"` khi đọc/ghi text. Nếu không, máy có thể dùng encoding mặc định của hệ điều hành (Windows hay dùng cp1252) khiến tiếng Việt thành ký tự lỗi như `Ã¢`.
 
 ## 2. JSON — định dạng trao đổi dữ liệu chuẩn
 
@@ -227,7 +227,7 @@ std::cout << config["app_name"] << " "
           << config["max_connections"] << "\n";
 ```
 
-> ⚠️ Lỗi người mới hay gặp: JSON **không cho phép** dấu phẩy thừa ở cuối (`{"a": 1,}`) và bắt buộc dùng nháy kép `"`, không phải nháy đơn `'`. Một dấu phẩy lạc chỗ là cả file parse lỗi. Khi gặp lỗi, dán file vào trình kiểm tra JSON để tìm vị trí sai.
+> Lỗi người mới hay gặp: JSON **không cho phép** dấu phẩy thừa ở cuối (`{"a": 1,}`) và bắt buộc dùng nháy kép `"`, không phải nháy đơn `'`. Một dấu phẩy lạc chỗ là cả file parse lỗi. Khi gặp lỗi, dán file vào trình kiểm tra JSON để tìm vị trí sai.
 
 ## 3. CSV — bảng dữ liệu dạng text
 
@@ -304,7 +304,7 @@ while (std::getline(f, line)) {
 }
 ```
 
-> ⚠️ Lỗi người mới hay gặp: Tự `split(",")` bằng tay sẽ hỏng khi ô dữ liệu chứa dấu phẩy, ví dụ `"Hà Nội, Việt Nam"` được bọc trong nháy. **Hãy dùng thư viện CSV** (`csv` của Python, `encoding/csv` của Go) — chúng xử lý đúng dấu nháy, ký tự xuống dòng trong ô, và escape.
+> Lỗi người mới hay gặp: Tự `split(",")` bằng tay sẽ hỏng khi ô dữ liệu chứa dấu phẩy, ví dụ `"Hà Nội, Việt Nam"` được bọc trong nháy. **Hãy dùng thư viện CSV** (`csv` của Python, `encoding/csv` của Go) — chúng xử lý đúng dấu nháy, ký tự xuống dòng trong ô, và escape.
 
 ## 4. Datetime — ngày giờ
 
@@ -394,7 +394,7 @@ std::cout << d.tm_year + 1900 << "\n";              // 2026
   <text x="360" y="286" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.78">Lưu UTC · đổi sang giờ địa phương chỉ khi hiển thị</text>
 </svg>
 
-> 💡 Ghi nhớ: **Lưu trữ thời gian bằng UTC**, chỉ đổi sang giờ địa phương khi **hiển thị** cho người dùng. Nếu lưu giờ địa phương lẫn lộn, sớm muộn bạn cũng tính sai khoảng cách thời gian giữa hai sự kiện.
+> Ghi nhớ: **Lưu trữ thời gian bằng UTC**, chỉ đổi sang giờ địa phương khi **hiển thị** cho người dùng. Nếu lưu giờ địa phương lẫn lộn, sớm muộn bạn cũng tính sai khoảng cách thời gian giữa hai sự kiện.
 
 Định dạng chuẩn để trao đổi giữa hệ thống là **ISO 8601**: `2026-06-11T09:30:00Z` (chữ `Z` nghĩa là UTC). Hãy ưu tiên định dạng này thay vì kiểu "11/06/2026" dễ nhầm ngày với tháng.
 
@@ -448,7 +448,7 @@ API_KEY=abc123 DATABASE_URL=postgres://... python app.py
 
 Khi có nhiều biến, người ta để chúng trong một file `.env` rồi nạp bằng thư viện (`python-dotenv`, `dotenv` của Node).
 
-> ⚠️ Lỗi người mới hay gặp: **Đừng bao giờ hard-code mật khẩu/API key vào source rồi commit lên Git.** Bí mật bị lộ trong lịch sử Git rất khó xoá và là lỗ hổng bảo mật nghiêm trọng. Luôn dùng biến môi trường, và thêm `.env` vào `.gitignore`.
+> Lỗi người mới hay gặp: **Đừng bao giờ hard-code mật khẩu/API key vào source rồi commit lên Git.** Bí mật bị lộ trong lịch sử Git rất khó xoá và là lỗ hổng bảo mật nghiêm trọng. Luôn dùng biến môi trường, và thêm `.env` vào `.gitignore`.
 
 ## 6. Tham số dòng lệnh (CLI arguments)
 
@@ -722,7 +722,7 @@ Mỗi file đang mở chiếm một "handle" của hệ điều hành. Quên đ�
 
 Đường dẫn tương đối (`"data.csv"`) được tính từ **thư mục bạn chạy lệnh**, không phải thư mục chứa file code. Chạy từ chỗ khác là "không tìm thấy file" ngay. Ngoài ra Windows dùng `\` còn Linux/macOS dùng `/`.
 
-> 💡 Ghi nhớ: Đừng tự nối đường dẫn bằng `+ "/" +`. Dùng công cụ chuẩn của ngôn ngữ — `os.path.join` / `pathlib` (Python), `path.join` (Node), `Paths.get` (Java), `filepath.Join` (Go) — để code chạy được trên mọi hệ điều hành.
+> Ghi nhớ: Đừng tự nối đường dẫn bằng `+ "/" +`. Dùng công cụ chuẩn của ngôn ngữ — `os.path.join` / `pathlib` (Python), `path.join` (Node), `Paths.get` (Java), `filepath.Join` (Go) — để code chạy được trên mọi hệ điều hành.
 
 ## 9. Tóm tắt
 

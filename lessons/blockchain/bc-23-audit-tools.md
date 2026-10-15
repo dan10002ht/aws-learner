@@ -88,7 +88,7 @@ contract Vault {
 
     function withdraw() external {
         uint256 amount = balance[msg.sender];
-        // ❌ Gửi ETH TRƯỚC khi cập nhật state → reentrancy
+        // ✗ Gửi ETH TRƯỚC khi cập nhật state → reentrancy
         (bool ok, ) = msg.sender.call{value: amount}("");
         require(ok, "transfer failed");
         balance[msg.sender] = 0; // cập nhật SAU → quá muộn

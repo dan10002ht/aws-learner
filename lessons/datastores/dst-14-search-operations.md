@@ -56,7 +56,7 @@ Quy tắc vàng: **cái gì chỉ cần lọc "đúng/sai" thì bỏ vào filter
 ### 2.3 Các loại clause thường dùng
 
 - **`match`**: full-text. Chuỗi truy vấn được **phân tích (analyzed)** — tách token, hạ chữ thường, bỏ dấu... rồi khớp từng token vào inverted index. Dùng cho trường `text`.
-- **`term`**: khớp **chính xác, không phân tích**. Dùng cho trường `keyword`, số, boolean, trạng thái. ⚠️ Dùng `term` trên trường `text` thường trượt vì text đã bị analyze còn giá trị bạn đưa vào thì không.
+- **`term`**: khớp **chính xác, không phân tích**. Dùng cho trường `keyword`, số, boolean, trạng thái. Dùng `term` trên trường `text` thường trượt vì text đã bị analyze còn giá trị bạn đưa vào thì không.
 - **`range`**: khoảng — `gte`, `lte`, `gt`, `lt` cho số và ngày.
 - **`bool`**: gộp nhiều clause:
   - `must` — TẤT CẢ phải khớp, **tính điểm** (query context).
@@ -191,7 +191,7 @@ GET /products/_search
 }
 ```
 
-⚠️ Nhớ: aggregation `terms` phải chạy trên trường **keyword** (hoặc số), không phải `text`. Trên `text` sẽ lỗi (cần bật `fielddata`, rất tốn RAM — tránh).
+Nhớ: aggregation `terms` phải chạy trên trường **keyword** (hoặc số), không phải `text`. Trên `text` sẽ lỗi (cần bật `fielddata`, rất tốn RAM — tránh).
 
 ---
 

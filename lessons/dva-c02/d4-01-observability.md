@@ -57,7 +57,7 @@ CloudWatch là "trung tâm quan sát" của AWS: thu thập **logs**, **metrics*
   </g>
 </svg>
 
-> 💡 Mẹo thi: Lambda tự động ghi log vào group `/aws/lambda/<function-name>`. Để ghi được, **execution role** phải có quyền `logs:CreateLogGroup`, `logs:CreateLogStream`, `logs:PutLogEvents`. Nếu function "chạy ok nhưng không thấy log" → gần như chắc chắn là thiếu các quyền này trong IAM role.
+> Mẹo thi: Lambda tự động ghi log vào group `/aws/lambda/<function-name>`. Để ghi được, **execution role** phải có quyền `logs:CreateLogGroup`, `logs:CreateLogStream`, `logs:PutLogEvents`. Nếu function "chạy ok nhưng không thấy log" → gần như chắc chắn là thiếu các quyền này trong IAM role.
 
 ### Retention
 
@@ -71,7 +71,7 @@ aws logs put-retention-policy \
 
 Các giá trị hợp lệ cố định: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 3288, 3653 ngày. Không phải số nào cũng được.
 
-> ⚠️ Bẫy: "Log lưu mãi mãi, chi phí tăng" → câu trả lời là **set retention policy**, KHÔNG phải tự viết Lambda xóa log. Còn muốn lưu lâu/rẻ để audit → **export sang S3** (hoặc subscription filter → Firehose → S3).
+> Bẫy: "Log lưu mãi mãi, chi phí tăng" → câu trả lời là **set retention policy**, KHÔNG phải tự viết Lambda xóa log. Còn muốn lưu lâu/rẻ để audit → **export sang S3** (hoặc subscription filter → Firehose → S3).
 
 ### Metric Filter — biến log thành metric
 
@@ -89,7 +89,7 @@ aws logs put-metric-filter \
 - Pattern dạng `"ERROR"` (term), `"[ip, user, ..., status=5*]"` (space-delimited), hoặc JSON pattern `'{ $.level = "ERROR" }'`.
 - `metricValue=1` → mỗi match đếm 1. Có thể trích giá trị số từ log: `metricValue=$.latency`.
 
-> ⚠️ Bẫy kinh điển: **Metric filter chỉ áp dụng cho log MỚI** ghi vào sau khi tạo filter — không hồi tố log cũ. Muốn phân tích log cũ → dùng **Logs Insights**.
+> Bẫy kinh điển: **Metric filter chỉ áp dụng cho log MỚI** ghi vào sau khi tạo filter — không hồi tố log cũ. Muốn phân tích log cũ → dùng **Logs Insights**.
 
 ### Subscription Filter — stream log real-time đi nơi khác
 
@@ -110,7 +110,7 @@ aws logs put-subscription-filter \
   --role-arn arn:aws:iam::...:role/CWLtoFirehoseRole
 ```
 
-> 💡 Mẹo thi: Phân biệt nhanh:
+> Mẹo thi: Phân biệt nhanh:
 > - **Metric filter** → ra **số (metric)** để alarm. Đích là CloudWatch Metrics.
 > - **Subscription filter** → ra **luồng log** đi tới Lambda/Kinesis/Firehose để xử lý/lưu trữ.
 > - "Real-time analytics / archive log sang OpenSearch hoặc S3" → subscription filter → **Firehose** (không cần code) hoặc → **Kinesis** (cần xử lý phức tạp/nhiều consumer).
@@ -169,7 +169,7 @@ aws logs put-subscription-filter \
 - **Metric**: tên đại lượng (vd `Invocations`, `Duration`).
 - **Dimensions**: cặp key/value phân loại metric (vd `FunctionName=my-func`). Một metric + tổ hợp dimensions = một **time series** riêng. Tối đa **30 dimensions** cho một metric.
 
-> ⚠️ Bẫy: Mỗi tổ hợp dimension **khác nhau** tạo ra một metric **riêng biệt** (và tính phí riêng). Đẩy `userId` làm dimension cho hàng triệu user → nổ chi phí custom metric. Dimension nên có **cardinality thấp** (env, region, service...), không phải id tự do.
+> Bẫy: Mỗi tổ hợp dimension **khác nhau** tạo ra một metric **riêng biệt** (và tính phí riêng). Đẩy `userId` làm dimension cho hàng triệu user → nổ chi phí custom metric. Dimension nên có **cardinality thấp** (env, region, service...), không phải id tự do.
 
 ### Standard vs Custom metrics
 
@@ -205,9 +205,9 @@ cw.put_metric_data(
 | Alarm period tối thiểu | 60s | 10s hoặc 30s |
 | Chi phí | thấp hơn | cao hơn |
 
-> 💡 Mẹo thi: Cần alarm phản ứng **dưới 1 phút** (vd burst traffic) → **high-resolution metric** + alarm period 10s/30s. Mặc định là standard (60s).
+> Mẹo thi: Cần alarm phản ứng **dưới 1 phút** (vd burst traffic) → **high-resolution metric** + alarm period 10s/30s. Mặc định là standard (60s).
 
-> ⚠️ Bẫy: Metric của EC2 mặc định là **5 phút** (basic monitoring). Muốn **1 phút** → bật **detailed monitoring** (tính phí thêm). Đây vẫn không phải high-resolution (1s) — đừng nhầm hai khái niệm.
+> Bẫy: Metric của EC2 mặc định là **5 phút** (basic monitoring). Muốn **1 phút** → bật **detailed monitoring** (tính phí thêm). Đây vẫn không phải high-resolution (1s) — đừng nhầm hai khái niệm.
 
 ---
 
@@ -285,9 +285,9 @@ Chỉ cần **ghi JSON này ra stdout/CloudWatch Logs** (Lambda log tự động
   <text x="16" y="240" font-size="10.5" fill="currentColor" opacity="0.75">EMF: không gọi API, metric sinh ra từ chính log → hợp Lambda. PutMetricData: gọi thẳng CloudWatch → thêm chi phí runtime.</text>
 </svg>
 
-> 💡 Mẹo thi: Trong **Lambda** muốn ghi custom metric mà **không thêm latency / không gọi API đồng bộ** → dùng **EMF**. Nếu đề nhấn "tránh API call thừa, tránh tăng duration, metric đi kèm log" → EMF. Nếu đề chỉ nói "đẩy 1 metric từ ứng dụng on-prem/script" → **PutMetricData** vẫn ổn.
+> Mẹo thi: Trong **Lambda** muốn ghi custom metric mà **không thêm latency / không gọi API đồng bộ** → dùng **EMF**. Nếu đề nhấn "tránh API call thừa, tránh tăng duration, metric đi kèm log" → EMF. Nếu đề chỉ nói "đẩy 1 metric từ ứng dụng on-prem/script" → **PutMetricData** vẫn ổn.
 
-> ⚠️ Bẫy: `aws-embedded-metrics` hay `PutMetricData` đều tạo **custom metric** (tính phí như nhau ở mức metric). Điểm khác là **cách truyền** và **chi phí runtime/API**, không phải giá metric.
+> Bẫy: `aws-embedded-metrics` hay `PutMetricData` đều tạo **custom metric** (tính phí như nhau ở mức metric). Điểm khác là **cách truyền** và **chi phí runtime/API**, không phải giá metric.
 
 ---
 
@@ -327,9 +327,9 @@ Kết hợp nhiều alarm bằng logic `AND`/`OR` để **giảm noise** (chỉ 
 ALARM("HighCPU") AND ALARM("HighLatency")
 ```
 
-> 💡 Mẹo thi: "Quá nhiều cảnh báo lẻ, chỉ muốn báo khi cả CPU cao **và** latency cao" → **Composite alarm**. "Tự động thêm server khi tải cao" → alarm action gọi **Auto Scaling policy** (qua SNS không cần thiết). "Khôi phục instance lỗi phần cứng" → **EC2 recover action**.
+> Mẹo thi: "Quá nhiều cảnh báo lẻ, chỉ muốn báo khi cả CPU cao **và** latency cao" → **Composite alarm**. "Tự động thêm server khi tải cao" → alarm action gọi **Auto Scaling policy** (qua SNS không cần thiết). "Khôi phục instance lỗi phần cứng" → **EC2 recover action**.
 
-> ⚠️ Bẫy: Alarm với high-resolution metric mới được dùng period **10s/30s**; metric thường tối thiểu **60s**. Đề cho "alarm mỗi 10 giây" mà metric là standard → sai.
+> Bẫy: Alarm với high-resolution metric mới được dùng period **10s/30s**; metric thường tối thiểu **60s**. Đề cho "alarm mỗi 10 giây" mà metric là standard → sai.
 
 ---
 
@@ -348,7 +348,7 @@ fields @timestamp, @message, @duration
 - Tự nhận diện field từ JSON log (`@duration`, `@requestId`, hoặc `$.field`).
 - Dùng cho điều tra sự cố ad-hoc, không tạo metric thường trực.
 
-> 💡 Mẹo thi:
+> Mẹo thi:
 > - "Phân tích log **đã có** / điều tra sự cố quá khứ" → **Logs Insights**.
 > - "Đếm liên tục để **alarm** về sau" → **Metric filter**.
 > - "Stream log đi xử lý/lưu real-time" → **Subscription filter**.
@@ -361,7 +361,7 @@ fields @timestamp, @message, @duration
 - **Cross-region & cross-account**: một dashboard có thể hiển thị metric từ nhiều region/account.
 - Định nghĩa được bằng **JSON** (dashboard body) → quản lý bằng IaC.
 
-> 💡 Mẹo thi: Cần một màn hình tổng hợp từ **nhiều region** → CloudWatch dashboard hỗ trợ sẵn, không cần tự gom dữ liệu thủ công.
+> Mẹo thi: Cần một màn hình tổng hợp từ **nhiều region** → CloudWatch dashboard hỗ trợ sẵn, không cần tự gom dữ liệu thủ công.
 
 ---
 
@@ -376,7 +376,7 @@ EC2 **không** tự gửi **memory** và **disk usage** lên CloudWatch (hypervi
 | **Disk space (used %)** | **Không** | **Có** |
 | Log files trong OS (vd `/var/log/app.log`) | Không | Có (đẩy lên CW Logs) |
 
-> ⚠️ Bẫy thi rất hay gặp: "Muốn monitor **memory utilization** của EC2" → cài **CloudWatch Agent** (hoặc CloudWatch unified agent). KHÔNG có sẵn trong metric mặc định, và KHÔNG bật được chỉ bằng detailed monitoring.
+> Bẫy thi rất hay gặp: "Muốn monitor **memory utilization** của EC2" → cài **CloudWatch Agent** (hoặc CloudWatch unified agent). KHÔNG có sẵn trong metric mặc định, và KHÔNG bật được chỉ bằng detailed monitoring.
 
 ---
 
@@ -387,7 +387,7 @@ EC2 **không** tự gửi **memory** và **disk usage** lên CloudWatch (hypervi
 - Custom metric trong Lambda → ưu tiên **EMF** (mục 3) để tránh latency.
 - Lambda cũng phát sẵn metric `Invocations`, `Errors`, `Throttles`, `Duration`, `ConcurrentExecutions` trong `AWS/Lambda`.
 
-> 💡 Mẹo thi: "Theo dõi số lần Lambda lỗi" → dùng metric **`Errors`** có sẵn + alarm, không cần tự ghi metric. "Theo dõi business metric (vd số đơn hàng)" → tự đẩy bằng **EMF**.
+> Mẹo thi: "Theo dõi số lần Lambda lỗi" → dùng metric **`Errors`** có sẵn + alarm, không cần tự ghi metric. "Theo dõi business metric (vd số đơn hàng)" → tự đẩy bằng **EMF**.
 
 ---
 
@@ -407,4 +407,4 @@ EC2 **không** tự gửi **memory** và **disk usage** lên CloudWatch (hypervi
 | Monitor RAM/disk của EC2 | **CloudWatch Agent** |
 | Lambda không ghi được log | Thiếu **IAM logs permission** |
 
-> 💡 Quy tắc ghi nhớ: **filter ra số → metric filter; filter ra luồng → subscription filter; metric không tốn API trong Lambda → EMF; alarm gộp điều kiện → composite; RAM EC2 → agent.**
+> Quy tắc ghi nhớ: **filter ra số → metric filter; filter ra luồng → subscription filter; metric không tốn API trong Lambda → EMF; alarm gộp điều kiện → composite; RAM EC2 → agent.**

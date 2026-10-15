@@ -200,7 +200,7 @@ Lưu ý: Python viết gọn `elif`, ba ngôn ngữ còn lại viết đầy đ�
   <text x="360" y="301" font-size="11" text-anchor="middle" fill="currentColor">else: in "Cần cố gắng"</text>
 </svg>
 
-> 💡 **Ghi nhớ**: Máy tính kiểm tra các điều kiện **từ trên xuống dưới** và chỉ chạy **nhánh đầu tiên đúng**, rồi bỏ qua tất cả nhánh còn lại. Với điểm 7.5, máy thấy `7.5 >= 8` sai, sang `7.5 >= 6.5` đúng → in "Khá" và dừng, không xét tiếp.
+> **Ghi nhớ**: Máy tính kiểm tra các điều kiện **từ trên xuống dưới** và chỉ chạy **nhánh đầu tiên đúng**, rồi bỏ qua tất cả nhánh còn lại. Với điểm 7.5, máy thấy `7.5 >= 8` sai, sang `7.5 >= 6.5` đúng → in "Khá" và dừng, không xét tiếp.
 
 ## 2. So sánh và logic — ngôn ngữ của điều kiện
 
@@ -217,7 +217,7 @@ Lưu ý: Python viết gọn `elif`, ba ngôn ngữ còn lại viết đầy đ�
 | `>=` | lớn hơn hoặc bằng | `5 >= 5` | đúng |
 | `<=` | nhỏ hơn hoặc bằng | `6 <= 5` | sai |
 
-> ⚠️ **Lỗi người mới hay gặp**: Nhầm `=` với `==`. Một dấu bằng (`=`) là **gán giá trị** ("cho hộp `x` chứa số 5"), hai dấu bằng (`==`) là **hỏi xem có bằng nhau không**. Viết `if x = 5` thay vì `if x == 5` là lỗi kinh điển — đa số ngôn ngữ sẽ báo lỗi, nhưng đôi khi nó âm thầm chạy sai.
+> **Lỗi người mới hay gặp**: Nhầm `=` với `==`. Một dấu bằng (`=`) là **gán giá trị** ("cho hộp `x` chứa số 5"), hai dấu bằng (`==`) là **hỏi xem có bằng nhau không**. Viết `if x = 5` thay vì `if x == 5` là lỗi kinh điển — đa số ngôn ngữ sẽ báo lỗi, nhưng đôi khi nó âm thầm chạy sai.
 
 ### 2.2. Toán tử logic: and / or / not — ghép nhiều điều kiện
 
@@ -310,7 +310,7 @@ if (!coBangLai) {
 
 Python dùng chữ tiếng Anh dễ đọc: `and`, `or`, `not`. JavaScript, Java và Go dùng ký hiệu: `&&` (và), `||` (hoặc), `!` (phủ định). Ý nghĩa hoàn toàn giống nhau.
 
-> 💡 **Ghi nhớ**: `and` khó tính — chỉ cần một vế sai là cả câu sai. `or` dễ tính — chỉ cần một vế đúng là cả câu đúng.
+> **Ghi nhớ**: `and` khó tính — chỉ cần một vế sai là cả câu sai. `or` dễ tính — chỉ cần một vế đúng là cả câu đúng.
 
 ## 3. Vòng lặp — dạy máy tính làm việc lặp đi lặp lại
 
@@ -456,7 +456,7 @@ std::cout << "Tiêu được " << ngay << " ngày, còn dư " << tien << std::en
 
 Điểm thú vị: Go **không có** từ khoá `while` — vòng `for` chỉ ghi mỗi điều kiện chính là "while phiên bản Go".
 
-> ⚠️ **Lỗi người mới hay gặp — VÒNG LẶP VÔ HẠN (infinite loop)**: Nếu trong thân vòng `while` bạn **quên thay đổi** thứ liên quan đến điều kiện (ví dụ quên dòng `tien = tien - 30`), điều kiện mãi mãi đúng → chương trình lặp **vĩnh viễn**, treo máy hoặc ngốn CPU. Quy tắc an toàn: mỗi khi viết `while`, tự hỏi ngay *"điều gì trong thân vòng sẽ khiến điều kiện này sai vào một lúc nào đó?"*. Nếu lỡ dính vòng vô hạn, nhấn `Ctrl + C` trong cửa sổ dòng lệnh để ngắt chương trình.
+> **Lỗi người mới hay gặp — VÒNG LẶP VÔ HẠN (infinite loop)**: Nếu trong thân vòng `while` bạn **quên thay đổi** thứ liên quan đến điều kiện (ví dụ quên dòng `tien = tien - 30`), điều kiện mãi mãi đúng → chương trình lặp **vĩnh viễn**, treo máy hoặc ngốn CPU. Quy tắc an toàn: mỗi khi viết `while`, tự hỏi ngay *"điều gì trong thân vòng sẽ khiến điều kiện này sai vào một lúc nào đó?"*. Nếu lỡ dính vòng vô hạn, nhấn `Ctrl + C` trong cửa sổ dòng lệnh để ngắt chương trình.
 
 ## 4. break và continue — hai nút điều khiển khẩn cấp
 
@@ -555,7 +555,7 @@ for (int i = 1; i <= 10; i++) {
 
 Ký hiệu `%` gọi là **phép chia lấy dư (modulo)**: `7 % 2` bằng 1 vì 7 chia 2 được 3 **dư 1**. Đây là cách kinh điển để kiểm tra chẵn/lẻ hoặc "chia hết". (JavaScript có `===` — phiên bản so sánh nghiêm ngặt hơn `==`, người mới cứ ưu tiên dùng `===` trong JavaScript.)
 
-> 💡 **Ghi nhớ**: `break` = "tôi xong việc, ra khỏi vòng lặp". `continue` = "lượt này bỏ qua, cho lượt tiếp theo".
+> **Ghi nhớ**: `break` = "tôi xong việc, ra khỏi vòng lặp". `continue` = "lượt này bỏ qua, cho lượt tiếp theo".
 
 ## 5. Bài toán mẫu 1: FizzBuzz — bài kiểm tra kinh điển
 
@@ -634,7 +634,7 @@ for (int i = 1; i <= 15; i++) {
 
 Kết quả: `1, 2, Fizz, 4, Buzz, Fizz, 7, 8, Fizz, Buzz, 11, Fizz, 13, 14, FizzBuzz`.
 
-> ⚠️ **Lỗi người mới hay gặp**: Đặt nhánh "FizzBuzz" **xuống cuối**. Nhớ rằng if/elif chạy nhánh đầu tiên đúng — số 15 vừa chia hết cho 3, nếu kiểm tra "chia hết cho 3" trước thì máy in "Fizz" rồi dừng, không bao giờ chạm tới "FizzBuzz". **Điều kiện cụ thể nhất phải kiểm tra trước.**
+> **Lỗi người mới hay gặp**: Đặt nhánh "FizzBuzz" **xuống cuối**. Nhớ rằng if/elif chạy nhánh đầu tiên đúng — số 15 vừa chia hết cho 3, nếu kiểm tra "chia hết cho 3" trước thì máy in "Fizz" rồi dừng, không bao giờ chạm tới "FizzBuzz". **Điều kiện cụ thể nhất phải kiểm tra trước.**
 
 ## 6. Bài toán mẫu 2: Đoán số — kết hợp tất cả
 
@@ -764,7 +764,7 @@ Hình dung: hàng rào dài 10 mét, mỗi 1 mét cắm một cọc — cần ba
 | In 1 → 10 (JS/Java/Go) | `i = 1; i <= 10` | `i = 1; i < 10` → thiếu số 10 |
 | Lặp đúng 10 lần từ 0 | `i = 0; i < 10` | `i = 0; i <= 10` → thừa 1 lần (11 lần) |
 
-> ⚠️ **Lỗi người mới hay gặp**: Khi vòng lặp cho kết quả "gần đúng nhưng sai sai", việc đầu tiên hãy nghi ngờ lệch 1. Cách kiểm tra nhanh: **thử bằng tay với trường hợp nhỏ** — thay vì 1000 lần, chạy thử 3 lần rồi đếm xem có đúng 3 không, và kiểm tra **giá trị đầu tiên** lẫn **giá trị cuối cùng** có đúng như mong đợi.
+> **Lỗi người mới hay gặp**: Khi vòng lặp cho kết quả "gần đúng nhưng sai sai", việc đầu tiên hãy nghi ngờ lệch 1. Cách kiểm tra nhanh: **thử bằng tay với trường hợp nhỏ** — thay vì 1000 lần, chạy thử 3 lần rồi đếm xem có đúng 3 không, và kiểm tra **giá trị đầu tiên** lẫn **giá trị cuối cùng** có đúng như mong đợi.
 
 ## 8. Tóm tắt
 

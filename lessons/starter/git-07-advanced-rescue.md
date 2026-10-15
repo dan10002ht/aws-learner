@@ -51,7 +51,7 @@ Sau reset:     A               (main, HEAD)   B,C,D "mat" khoi nhanh
 Phuc hoi:      A---B---C---D   (main, HEAD)   B,C,D quay lai
 ```
 
-> 💡 Ghi nhớ: Trước mọi thao tác "nguy hiểm" (`reset --hard`, `rebase`, `filter-branch`), cứ chạy `git reflog` một lần để nhớ điểm hiện tại. Reflog là phao cứu sinh — nhưng nó là **local**, clone mới sẽ không có.
+> Ghi nhớ: Trước mọi thao tác "nguy hiểm" (`reset --hard`, `rebase`, `filter-branch`), cứ chạy `git reflog` một lần để nhớ điểm hiện tại. Reflog là phao cứu sinh — nhưng nó là **local**, clone mới sẽ không có.
 
 ### Rebase hỏng — quay về trước rebase
 
@@ -71,7 +71,7 @@ git reflog
 git reset --hard HEAD@{7}
 ```
 
-> ⚠️ Bẫy: `ORIG_HEAD` chỉ lưu **một** thao tác gần nhất (reset/rebase/merge). Nếu sau rebase bạn lại làm thêm reset, `ORIG_HEAD` đã bị ghi đè — lúc đó phải dùng `git reflog` để tìm tay.
+> Bẫy: `ORIG_HEAD` chỉ lưu **một** thao tác gần nhất (reset/rebase/merge). Nếu sau rebase bạn lại làm thêm reset, `ORIG_HEAD` đã bị ghi đè — lúc đó phải dùng `git reflog` để tìm tay.
 
 ## 2. git bisect — truy lùng commit gây bug bằng binary search
 
@@ -192,9 +192,9 @@ Sơ đồ binary search trên 8 commit:
   </g>
 </svg>
 
-> 💡 Ghi nhớ: exit code `125` trong `bisect run` nghĩa "commit này không kiểm tra được, bỏ qua" (ví dụ build lỗi vì lý do khác). Đừng dùng nó cho kết quả good/bad.
+> Ghi nhớ: exit code `125` trong `bisect run` nghĩa "commit này không kiểm tra được, bỏ qua" (ví dụ build lỗi vì lý do khác). Đừng dùng nó cho kết quả good/bad.
 
-> ⚠️ Bẫy: bisect cần bug **tái hiện ổn định**. Bug chập chờn (flaky) sẽ khiến bisect chỉ sai thủ phạm. Và đừng quên `git bisect reset` — quên là bạn đang lập lờ ở một commit detached HEAD giữa lịch sử.
+> Bẫy: bisect cần bug **tái hiện ổn định**. Bug chập chờn (flaky) sẽ khiến bisect chỉ sai thủ phạm. Và đừng quên `git bisect reset` — quên là bạn đang lập lờ ở một commit detached HEAD giữa lịch sử.
 
 ## 3. git cherry-pick — lấy đúng commit cần, sang branch khác
 
@@ -281,7 +281,7 @@ Cờ hữu ích: `-x` ghi chú "(cherry picked from commit ...)" vào message đ
 git cherry-pick -x 8e7f6a5
 ```
 
-> ⚠️ Bẫy: cherry-pick tạo commit **trùng nội dung nhưng khác hash**. Nếu sau này bạn merge cả `feature/dashboard` vào `main`, commit đó có thể xuất hiện hai lần (hoặc gây conflict thừa). Với hotfix, chiến lược sạch hơn là vá trên `main` rồi merge `main` ngược vào feature.
+> Bẫy: cherry-pick tạo commit **trùng nội dung nhưng khác hash**. Nếu sau này bạn merge cả `feature/dashboard` vào `main`, commit đó có thể xuất hiện hai lần (hoặc gây conflict thừa). Với hotfix, chiến lược sạch hơn là vá trên `main` rồi merge `main` ngược vào feature.
 
 ## 4. git stash — cất việc dang dở tạm thời
 
@@ -325,9 +325,9 @@ git stash pop
 # Neu pop gay conflict, sua file roi `git add`, stash van con trong list cho an toan
 ```
 
-> 💡 Ghi nhớ: `pop` = `apply` + `drop`. Khi pop gặp conflict, Git **không** tự drop — stash vẫn nằm trong list, bạn xử lý xong rồi `git stash drop` thủ công.
+> Ghi nhớ: `pop` = `apply` + `drop`. Khi pop gặp conflict, Git **không** tự drop — stash vẫn nằm trong list, bạn xử lý xong rồi `git stash drop` thủ công.
 
-> ⚠️ Bẫy: `git stash` mặc định **bỏ qua file untracked** và file đã `.gitignore`. Code mới toanh chưa `git add` sẽ không được cất — nhớ `-u` (untracked) hoặc `-a` (cả ignored).
+> Bẫy: `git stash` mặc định **bỏ qua file untracked** và file đã `.gitignore`. Code mới toanh chưa `git add` sẽ không được cất — nhớ `-u` (untracked) hoặc `-a` (cả ignored).
 
 ## 5. git commit --amend — sửa commit gần nhất
 
@@ -349,7 +349,7 @@ Truoc:  A---B---C       (HEAD)   C = "fix bgu login" (sai chinh ta)
 Sau:    A---B---C'      (HEAD)   C' = "fix bug login", C bi bo
 ```
 
-> ⚠️ Bẫy: amend tạo commit **mới hoàn toàn** (hash đổi). Nếu commit cũ đã `push`, amend rồi push thường sẽ bị từ chối — phải `git push --force-with-lease`. **Đừng amend** commit đã chia sẻ với người khác trên branch chung; chỉ amend khi commit còn nằm local hoặc trên branch riêng của bạn.
+> Bẫy: amend tạo commit **mới hoàn toàn** (hash đổi). Nếu commit cũ đã `push`, amend rồi push thường sẽ bị từ chối — phải `git push --force-with-lease`. **Đừng amend** commit đã chia sẻ với người khác trên branch chung; chỉ amend khi commit còn nằm local hoặc trên branch riêng của bạn.
 
 `--force-with-lease` an toàn hơn `--force`: nó từ chối ghi đè nếu remote có commit mới mà bạn chưa thấy (tránh xoá việc của đồng đội).
 
@@ -395,9 +395,9 @@ git reset --soft HEAD~1       # commit bi go, code van con o staging
 git reset --hard HEAD~1       # mat code chua commit -> nho reflog cuu neu lo
 ```
 
-> 💡 Ghi nhớ: Quy tắc vàng — **lịch sử đã push thì dùng `revert`, lịch sử còn local thì mới `reset`**. `revert` thêm commit (an toàn, ai cũng pull được); `reset` viết lại con trỏ (gây lệch lịch sử với người khác).
+> Ghi nhớ: Quy tắc vàng — **lịch sử đã push thì dùng `revert`, lịch sử còn local thì mới `reset`**. `revert` thêm commit (an toàn, ai cũng pull được); `reset` viết lại con trỏ (gây lệch lịch sử với người khác).
 
-> ⚠️ Bẫy: Trong Git mới, `git checkout` bị tách thành `git switch` (đổi branch) và `git restore` (khôi phục file) cho rõ nghĩa. `git checkout -- file` cũ tương đương `git restore file`. Nếu thấy tài liệu dùng `checkout` để bỏ thay đổi file, đó là cách viết cũ.
+> Bẫy: Trong Git mới, `git checkout` bị tách thành `git switch` (đổi branch) và `git restore` (khôi phục file) cho rõ nghĩa. `git checkout -- file` cũ tương đương `git restore file`. Nếu thấy tài liệu dùng `checkout` để bỏ thay đổi file, đó là cách viết cũ.
 
 ## 7. Cheat-sheet cứu hộ — khi hoảng loạn, mở bài này
 
@@ -431,7 +431,7 @@ git stash -u && git switch hotfix
 git switch - && git stash pop
 ```
 
-> 💡 Ghi nhớ: 90% "thảm hoạ" Git đều cứu được nhờ `reflog` — vì Git gần như không bao giờ thực sự xoá object ngay. Bình tĩnh, đọc reflog, tìm điểm tốt cuối cùng, `reset --hard` về đó. Chỉ thật sự mất khi: chưa từng `add`/`commit` (Git không biết tới nó), hoặc đã quá hạn garbage collection (`git gc` sau ~30–90 ngày).
+> Ghi nhớ: 90% "thảm hoạ" Git đều cứu được nhờ `reflog` — vì Git gần như không bao giờ thực sự xoá object ngay. Bình tĩnh, đọc reflog, tìm điểm tốt cuối cùng, `reset --hard` về đó. Chỉ thật sự mất khi: chưa từng `add`/`commit` (Git không biết tới nó), hoặc đã quá hạn garbage collection (`git gc` sau ~30–90 ngày).
 
 ## Tổng kết
 

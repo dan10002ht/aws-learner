@@ -22,7 +22,7 @@ Bẫy lớn nhất là nhảy vào vẽ box ngay. Hãy hỏi để thu hẹp ph�
 - **Eventual consistency chấp nhận được**: bạn của tôi đăng post, tôi thấy sau 5–10 giây cũng không sao. Không ai chết vì điều đó.
 - High availability quan trọng hơn strong consistency (feed lỗi vài giây tốt hơn feed sập).
 
-> 💡 **Nguyên tắc:** Câu hỏi đầu tiên luôn là *"đọc nhiều hay ghi nhiều?"* và *"cần consistency mạnh tới đâu?"*. Hai câu này quyết định 80% kiến trúc. News Feed = **đọc cực nhiều + consistency yếu** → mở đường cho việc tính toán trước (precompute) và cache mạnh tay.
+> **Nguyên tắc:** Câu hỏi đầu tiên luôn là *"đọc nhiều hay ghi nhiều?"* và *"cần consistency mạnh tới đâu?"*. Hai câu này quyết định 80% kiến trúc. News Feed = **đọc cực nhiều + consistency yếu** → mở đường cho việc tính toán trước (precompute) và cache mạnh tay.
 
 **Câu hỏi nên hỏi interviewer để định hình:**
 - Có ranking phức tạp (ML) hay chỉ reverse-chronological (mới nhất lên trước)?
@@ -68,7 +68,7 @@ Mỗi user cache 500 post-id gần nhất, mỗi id ~ 8 bytes + metadata ~ 20B =
 200tr user x 14 KB ≈ 2.8 TB  -> nằm gọn trong một cluster Redis sharded.
 ```
 
-> 💡 **Nguyên tắc:** Estimation không cần chính xác, cần **đúng order-of-magnitude** để ra quyết định. "2.8 TB cache" cho ta biết: dùng được Redis cluster, không cần kiến trúc kỳ dị. "70k read QPS" cho ta biết: một DB đơn không gánh nổi đường đọc → phải cache / precompute.
+> **Nguyên tắc:** Estimation không cần chính xác, cần **đúng order-of-magnitude** để ra quyết định. "2.8 TB cache" cho ta biết: dùng được Redis cluster, không cần kiến trúc kỳ dị. "70k read QPS" cho ta biết: một DB đơn không gánh nổi đường đọc → phải cache / precompute.
 
 ---
 
@@ -91,7 +91,7 @@ POST /v1/follow   { target_user_id }
 DELETE /v1/follow/{target_user_id}
 ```
 
-> ⚠️ **Bẫy thiết kế:** Đừng dùng `GET /feed?page=5&size=20` (offset pagination). Khi có post mới chèn vào đầu feed, mọi offset bị **lệch** → user thấy post trùng hoặc nhảy mất post. Hơn nữa `OFFSET 100000` bắt DB quét bỏ 100k dòng. Cursor (con trỏ tới vị trí cuối đã đọc, ví dụ `created_at + post_id`) ổn định và O(1).
+> **Bẫy thiết kế:** Đừng dùng `GET /feed?page=5&size=20` (offset pagination). Khi có post mới chèn vào đầu feed, mọi offset bị **lệch** → user thấy post trùng hoặc nhảy mất post. Hơn nữa `OFFSET 100000` bắt DB quét bỏ 100k dòng. Cursor (con trỏ tới vị trí cuối đã đọc, ví dụ `created_at + post_id`) ổn định và O(1).
 
 ---
 
@@ -274,7 +274,7 @@ Hai mô hình đặt cạnh nhau — chú ý công việc nặng nằm ở **lú
 | Độ phức tạp | Cao (queue, worker, cache invalidation) | Thấp hơn |
 | Storage | Tốn (nhân bản feed) | Tiết kiệm |
 
-> 💡 **Nguyên tắc:** Push tối ưu cho **đọc**, Pull tối ưu cho **ghi**. Vì News Feed đọc gấp 20 lần ghi → **mặc định nghiêng về push**. Nhưng push gãy ngay khi gặp celebrity. Lời giải thực tế gần như luôn là **hybrid**.
+> **Nguyên tắc:** Push tối ưu cho **đọc**, Pull tối ưu cho **ghi**. Vì News Feed đọc gấp 20 lần ghi → **mặc định nghiêng về push**. Nhưng push gãy ngay khi gặp celebrity. Lời giải thực tế gần như luôn là **hybrid**.
 
 ---
 
@@ -345,7 +345,7 @@ Phân loại tác giả theo số follower:
 
 Như vậy: số celebrity một người follow thường nhỏ (vài chục) → pull phần này rẻ; còn lại push. Ta lấy phần tốt của cả hai.
 
-> ⚠️ **Bẫy thiết kế:** Ngưỡng phân loại không nên cứng nhắc và vĩnh viễn. Một user có thể "nổi" qua đêm (post viral). Cần job đánh giá lại nhãn celebrity/normal định kỳ, và xử lý lúc chuyển nhãn (backfill feed). Đừng hứa với interviewer một con số ngưỡng "thần thánh" — hãy nói nó là tham số cần đo và điều chỉnh.
+> **Bẫy thiết kế:** Ngưỡng phân loại không nên cứng nhắc và vĩnh viễn. Một user có thể "nổi" qua đêm (post viral). Cần job đánh giá lại nhãn celebrity/normal định kỳ, và xử lý lúc chuyển nhãn (backfill feed). Đừng hứa với interviewer một con số ngưỡng "thần thánh" — hãy nói nó là tham số cần đo và điều chỉnh.
 
 ### 6.2 Các kỹ thuật giảm tải push khác (nêu ra để ghi điểm)
 - **Chỉ push cho user active gần đây**: nếu một follower không mở app 30 ngày, đừng tốn ghi feed cho họ — khi nào họ quay lại thì backfill (pull bù).
@@ -372,7 +372,7 @@ Trade-off:
 
 Thực tế: precompute một **candidate set** (push/pull ra ~vài trăm post ứng viên), rồi **rank tại read-time** bằng model nhẹ trên candidate đó. Tách "lấy ứng viên" (rẻ, cache được) khỏi "chấm điểm" (cá nhân hóa, tươi).
 
-> 💡 **Nguyên tắc:** Khi ranking phức tạp, đừng cố cache feed cuối cùng. Hãy cache **candidate set** ổn định, rank ở tầng đọc. Cache cái ít thay đổi, tính cái hay thay đổi.
+> **Nguyên tắc:** Khi ranking phức tạp, đừng cố cache feed cuối cùng. Hãy cache **candidate set** ổn định, rank ở tầng đọc. Cache cái ít thay đổi, tính cái hay thay đổi.
 
 ---
 
@@ -396,7 +396,7 @@ Lưu cả hai chiều (denormalize) để mỗi truy vấn là O(1) theo partiti
 
 **Feed cache** — Redis, mỗi user một list/sorted-set giới hạn ~500–1000 phần tử (cắt đuôi để không phình). `ZADD` theo score, `ZREVRANGE` để đọc trang đầu.
 
-> ⚠️ **Bẫy thiết kế:** Đừng lưu nội dung post đầy đủ trong feed cache của từng follower (nhân 50tr lần = nổ RAM). Chỉ lưu **post_id** (con trỏ); lúc đọc thì hydrate nội dung từ Post store / một cache post riêng. Tách "danh sách feed" khỏi "nội dung post".
+> **Bẫy thiết kế:** Đừng lưu nội dung post đầy đủ trong feed cache của từng follower (nhân 50tr lần = nổ RAM). Chỉ lưu **post_id** (con trỏ); lúc đọc thì hydrate nội dung từ Post store / một cache post riêng. Tách "danh sách feed" khỏi "nội dung post".
 
 ---
 
@@ -408,7 +408,7 @@ Hệ này **cố tình** không strong-consistent:
 - Unfollow xong nhưng feed cache vẫn còn vài post cũ của người đó → lọc lúc đọc (read-time filter) hoặc để tự rơi khỏi cửa sổ. **Chấp nhận được.**
 - Counter like/comment hiển thị xấp xỉ (approximate). **Chấp nhận được.**
 
-> 💡 **Nguyên tắc:** Eventual consistency không phải "bug được tha thứ" — nó là **lựa chọn kiến trúc** đổi consistency lấy availability + throughput. Điều quan trọng là **nói rõ ranh giới**: cái gì được phép trễ (feed của người khác) và cái gì KHÔNG (chính bạn vừa đăng phải thấy post của mình ngay → "read-your-own-write", thường giải bằng cách chèn post của chính mình vào feed ngay ở client/đọc).
+> **Nguyên tắc:** Eventual consistency không phải "bug được tha thứ" — nó là **lựa chọn kiến trúc** đổi consistency lấy availability + throughput. Điều quan trọng là **nói rõ ranh giới**: cái gì được phép trễ (feed của người khác) và cái gì KHÔNG (chính bạn vừa đăng phải thấy post của mình ngay → "read-your-own-write", thường giải bằng cách chèn post của chính mình vào feed ngay ở client/đọc).
 
 ---
 
@@ -441,7 +441,7 @@ Mở rộng theo trục: **stateless service** (scale ngang sau load balancer), 
 | Media (ảnh/video) | **S3 + CloudFront** | Object storage + CDN ở biên — đúng nguyên tắc "media không đi qua app". |
 | Feed ranking / feature | **DynamoDB (feature)** + **SageMaker** (serving) | Tách candidate (cache) khỏi scoring (model). |
 
-> ⚠️ **Bẫy thiết kế (AWS):** Đừng quăng celebrity fan-out vào DynamoDB không suy nghĩ — 50tr lần ghi dồn vào partition theo author sẽ gây **hot partition** và bị throttle. Đây chính là lý do kỹ thuật để tách celebrity sang nhánh pull. Trade-off ở tầng thiết kế (push vs pull) phản chiếu trực tiếp xuống tầng hạ tầng (hot partition của DynamoDB / hot key của Redis).
+> **Bẫy thiết kế (AWS):** Đừng quăng celebrity fan-out vào DynamoDB không suy nghĩ — 50tr lần ghi dồn vào partition theo author sẽ gây **hot partition** và bị throttle. Đây chính là lý do kỹ thuật để tách celebrity sang nhánh pull. Trade-off ở tầng thiết kế (push vs pull) phản chiếu trực tiếp xuống tầng hạ tầng (hot partition của DynamoDB / hot key của Redis).
 
 **SQS vs Kinesis cho fan-out (một đánh đổi hay bị hỏi):**
 
@@ -465,9 +465,9 @@ Cấu trúc 8–10 phút để không lan man:
 5. **Chủ động tấn công thiết kế của chính mình:** "Điểm gãy là celebrity fan-out storm và hot shard — đây là cách tôi xử lý." Senior là người tự tìm ra bottleneck trước khi bị hỏi.
 6. **Luôn nói trade-off, không nói 'cái này tốt nhất':** "Push đổi chi phí ghi lấy độ trễ đọc thấp; với workload này, đáng."
 
-> 💡 **Nguyên tắc trình bày:** Interviewer không chấm "đáp án đúng" — họ chấm **chất lượng lập luận đánh đổi**. Một câu "tùy vào X, nếu X thì tôi chọn A, nếu Y thì chọn B" giá trị hơn một sơ đồ đẹp mà không giải thích vì sao.
+> **Nguyên tắc trình bày:** Interviewer không chấm "đáp án đúng" — họ chấm **chất lượng lập luận đánh đổi**. Một câu "tùy vào X, nếu X thì tôi chọn A, nếu Y thì chọn B" giá trị hơn một sơ đồ đẹp mà không giải thích vì sao.
 
-> ⚠️ **Bẫy phỏng vấn:** Tránh hai cực: (1) over-engineer ngay từ đầu (nhét Kinesis + ML ranking khi chưa ai hỏi quy mô) — thừa và lộ thiếu phán đoán; (2) bỏ qua celebrity — gần như chắc chắn bị hỏi, không nói trước là mất điểm lớn. Bắt đầu đơn giản (push thuần), rồi **chủ động** phá nó bằng celebrity và nâng lên hybrid.
+> **Bẫy phỏng vấn:** Tránh hai cực: (1) over-engineer ngay từ đầu (nhét Kinesis + ML ranking khi chưa ai hỏi quy mô) — thừa và lộ thiếu phán đoán; (2) bỏ qua celebrity — gần như chắc chắn bị hỏi, không nói trước là mất điểm lớn. Bắt đầu đơn giản (push thuần), rồi **chủ động** phá nó bằng celebrity và nâng lên hybrid.
 
 ---
 

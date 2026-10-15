@@ -24,7 +24,7 @@ Các sort O(n²) như bubble/insertion/selection sort chỉ dùng để học ho
 | Timsort (built-in Python/Java) | O(n log n) | O(n log n) | O(n) | Có | Tận dụng dữ liệu gần sắp xếp |
 | Insertion sort | O(n²) | O(n²) | O(1) | Có | Chỉ tốt với n nhỏ / gần sắp xếp |
 
-> 💡 Ghi nhớ: Quick sort **trung bình** rất nhanh nhưng **xấu nhất** là O(n²) (khi pivot chọn tệ). Merge sort luôn O(n log n) nhưng tốn O(n) bộ nhớ phụ. Built-in của Python (Timsort) và Java (cho object) là **stable**.
+> Ghi nhớ: Quick sort **trung bình** rất nhanh nhưng **xấu nhất** là O(n²) (khi pivot chọn tệ). Merge sort luôn O(n log n) nhưng tốn O(n) bộ nhớ phụ. Built-in của Python (Timsort) và Java (cho object) là **stable**.
 
 ---
 
@@ -205,7 +205,7 @@ vector<int> mergeSort(const vector<int>& arr) {
 
 **Quick sort** — chọn một **pivot**, phân hoạch (partition) mảng thành "nhỏ hơn pivot" và "lớn hơn pivot", rồi đệ quy hai bên. Trung bình O(n log n), nhưng nếu pivot luôn chọn tệ (ví dụ mảng đã sắp xếp + luôn lấy phần tử cuối) thì thành O(n²). Thực tế người ta chọn pivot ngẫu nhiên hoặc "median of three" để tránh trường hợp xấu.
 
-> ⚠️ Bẫy: Đừng nói "quick sort luôn nhanh hơn merge sort". Quick sort không stable và có thể O(n²). Khi phỏng vấn hỏi "chọn sort nào", câu trả lời tốt là tuỳ ràng buộc: cần stable → merge/Timsort; cần in-place tiết kiệm bộ nhớ → heap/quick.
+> Bẫy: Đừng nói "quick sort luôn nhanh hơn merge sort". Quick sort không stable và có thể O(n²). Khi phỏng vấn hỏi "chọn sort nào", câu trả lời tốt là tuỳ ràng buộc: cần stable → merge/Timsort; cần in-place tiết kiệm bộ nhớ → heap/quick.
 
 ---
 
@@ -215,7 +215,7 @@ vector<int> mergeSort(const vector<int>& arr) {
 
 Ví dụ thực tế: bạn có danh sách nhân viên đã sắp theo tên, giờ muốn sort theo phòng ban. Với stable sort, trong cùng một phòng ban, các nhân viên vẫn giữ thứ tự theo tên. Điều này cho phép **sort nhiều tiêu chí bằng cách sort nhiều lần** (sort theo tiêu chí phụ trước, tiêu chí chính sau).
 
-> 💡 Ghi nhớ: Python `sorted()`/`list.sort()` và Java `Collections.sort()` (cho object) đều **stable**. JavaScript `Array.sort()` được đảm bảo stable từ ES2019 trở đi. Go `sort.Slice` **KHÔNG stable** — dùng `sort.SliceStable` nếu cần ổn định.
+> Ghi nhớ: Python `sorted()`/`list.sort()` và Java `Collections.sort()` (cho object) đều **stable**. JavaScript `Array.sort()` được đảm bảo stable từ ES2019 trở đi. Go `sort.Slice` **KHÔNG stable** — dùng `sort.SliceStable` nếu cần ổn định.
 
 ---
 
@@ -311,7 +311,7 @@ sort(people.begin(), people.end(), [](const Person& a, const Person& b) {
 });
 ```
 
-> ⚠️ Bẫy: Trong JS, `arr.sort()` mặc định so sánh theo **chuỗi**, nên `[10, 2, 1].sort()` ra `[1, 10, 2]`. Luôn truyền comparator khi sort số: `arr.sort((a, b) => a - b)`.
+> Bẫy: Trong JS, `arr.sort()` mặc định so sánh theo **chuỗi**, nên `[10, 2, 1].sort()` ra `[1, 10, 2]`. Luôn truyền comparator khi sort số: `arr.sort((a, b) => a - b)`.
 
 ### Khi nào tự cài sort vs dùng built-in?
 
@@ -454,7 +454,7 @@ int binarySearch(const vector<int>& arr, int target) {
 }
 ```
 
-> ⚠️ Bẫy: `mid = (lo + hi) / 2` có thể **tràn số nguyên** với mảng cực lớn trong Java/Go (lo + hi vượt Int max). Luôn viết `lo + (hi - lo) / 2`. Và đừng quên cập nhật `lo = mid + 1` (cộng 1!) — quên `+1` gây vòng lặp vô hạn.
+> Bẫy: `mid = (lo + hi) / 2` có thể **tràn số nguyên** với mảng cực lớn trong Java/Go (lo + hi vượt Int max). Luôn viết `lo + (hi - lo) / 2`. Và đừng quên cập nhật `lo = mid + 1` (cộng 1!) — quên `+1` gây vòng lặp vô hạn.
 
 ---
 
@@ -644,7 +644,7 @@ int count(const vector<int>& arr, int target) {
 }
 ```
 
-> 💡 Ghi nhớ: Khác biệt duy nhất giữa lower và upper bound là dấu so sánh: lower dùng `arr[mid] < target`, upper dùng `arr[mid] <= target`. Hầu hết ngôn ngữ có sẵn: Python `bisect.bisect_left` / `bisect_right`, Java `Arrays.binarySearch` (nhưng vị trí phần tử trùng không xác định), Go `sort.SearchInts`.
+> Ghi nhớ: Khác biệt duy nhất giữa lower và upper bound là dấu so sánh: lower dùng `arr[mid] < target`, upper dùng `arr[mid] <= target`. Hầu hết ngôn ngữ có sẵn: Python `bisect.bisect_left` / `bisect_right`, Java `Arrays.binarySearch` (nhưng vị trí phần tử trùng không xác định), Go `sort.SearchInts`.
 
 ---
 
@@ -748,7 +748,7 @@ int minEatingSpeed(const vector<int>& piles, int h) {
 }
 ```
 
-> 💡 Ghi nhớ: Điều kiện để dùng search on answer là tính **đơn điệu** của `feasible`: khi tăng `x`, kết quả chuyển từ false sang true (hoặc ngược lại) **đúng một lần**. Nếu không đơn điệu thì không dùng được.
+> Ghi nhớ: Điều kiện để dùng search on answer là tính **đơn điệu** của `feasible`: khi tăng `x`, kết quả chuyển từ false sang true (hoặc ngược lại) **đúng một lần**. Nếu không đơn điệu thì không dùng được.
 
 ---
 

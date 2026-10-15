@@ -110,7 +110,7 @@ Các biến thể quan trọng của MergeTree:
 - **Sort key (`ORDER BY`)** phục vụ *đọc nhanh trong* part.
 - **Partition** phục vụ *quản lý vòng đời*: `DROP PARTITION` xoá cả tháng **tức thì** (chỉ xoá thư mục, không quét dòng), TTL dọn dữ liệu cũ theo partition, và giúp bỏ qua nguyên partition không liên quan.
 
-⚠️ Sai lầm phổ biến: partition quá mịn (ví dụ theo ngày hoặc theo `user_id`) → **quá nhiều part**, merge nghẽn, mở file quá nhiều. Quy tắc: giữ số partition ở mức **hàng chục–trăm**, không phải hàng nghìn.
+Sai lầm phổ biến: partition quá mịn (ví dụ theo ngày hoặc theo `user_id`) → **quá nhiều part**, merge nghẽn, mở file quá nhiều. Quy tắc: giữ số partition ở mức **hàng chục–trăm**, không phải hàng nghìn.
 
 ### 2.5 TTL — tự động dọn và hạ tầng lưu trữ theo tuổi
 

@@ -125,7 +125,7 @@ Cascading failure xảy ra khi 1 failure → tạo điều kiện cho failure ti
       <path d="M0 0 L10 5 L0 10 z" fill="#10b981"/>
     </marker>
   </defs>
-  <text x="180" y="50" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">❌ Retry ngay — vòng xoáy</text>
+  <text x="180" y="50" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">✗ Retry ngay — vòng xoáy</text>
   <g fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#fmArrowRed)">
     <path d="M180 88 C 300 78, 300 130, 192 138"/>
     <path d="M168 158 C 60 168, 60 118, 168 102"/>
@@ -142,7 +142,7 @@ Cascading failure xảy ra khi 1 failure → tạo điều kiện cho failure ti
   <text x="180" y="244" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">→ B chết hẳn</text>
   <path d="M180 216 V 232" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#fmArrowRed)"/>
   <line x1="370" y1="44" x2="370" y2="300" stroke="currentColor" stroke-opacity="0.2" stroke-width="1.5" stroke-dasharray="4 4"/>
-  <text x="545" y="50" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">✅ Backoff + jitter — phẳng</text>
+  <text x="545" y="50" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">✓ Backoff + jitter — phẳng</text>
   <g>
     <rect x="461" y="68" width="168" height="28" rx="7" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="545" y="86" font-size="11.5" text-anchor="middle" fill="currentColor">B chậm → A timeout</text>
@@ -184,8 +184,8 @@ Cascading failure xảy ra khi 1 failure → tạo điều kiện cho failure ti
 
 ### 4.1 Retry với exponential backoff + jitter
 
-❌ Sai: `for i in 1..3: retry()` ngay lập tức.
-✅ Đúng: chờ `min(cap, base * 2^attempt) + random_jitter()`.
+✗ Sai: `for i in 1..3: retry()` ngay lập tức.
+✓ Đúng: chờ `min(cap, base * 2^attempt) + random_jitter()`.
 
 - **Backoff**: lần retry sau cách lần trước lâu hơn (2x, 4x, 8x…).
 - **Jitter**: thêm random để 1000 client không retry cùng lúc (chống thundering herd).
@@ -193,7 +193,7 @@ Cascading failure xảy ra khi 1 failure → tạo điều kiện cho failure ti
 
 AWS SDK mặc định có exponential backoff cho hầu hết service.
 
-> 📐 Công thức AWS khuyên dùng: `delay = random_between(0, min(cap, base * 2^attempt))` — "full jitter".
+> Công thức AWS khuyên dùng: `delay = random_between(0, min(cap, base * 2^attempt))` — "full jitter".
 
 ### 4.2 Circuit breaker
 
@@ -245,8 +245,8 @@ AWS SDK mặc định có exponential backoff cho hầu hết service.
 
 ### 4.3 Timeout aggressive
 
-❌ Default `connect timeout = 30s, read timeout = 60s` → quá lâu, giữ connection chết.
-✅ Set timeout **ngắn hơn upstream**. Vd: nếu Lambda timeout 6s, gọi DynamoDB nên timeout 1s.
+✗ Default `connect timeout = 30s, read timeout = 60s` → quá lâu, giữ connection chết.
+✓ Set timeout **ngắn hơn upstream**. Vd: nếu Lambda timeout 6s, gọi DynamoDB nên timeout 1s.
 
 Quy tắc: **timeout phải có**, default vô hạn là bug.
 
@@ -262,7 +262,7 @@ Tên gọi từ tàu thủy: chia khoang để 1 khoang ngập không chìm cả
   <title>Bulkhead — tách thread/connection pool theo loại request</title>
   <desc>So sánh: pool chung khiến recommend quá tải nuốt hết thread làm checkout chết theo; còn tách pool riêng cho checkout và recommend thì recommend chết không kéo checkout chết.</desc>
   <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Bulkhead — chia khoang thread/connection pool</text>
-  <text x="180" y="54" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">❌ Pool chung</text>
+  <text x="180" y="54" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">✗ Pool chung</text>
   <rect x="40" y="68" width="280" height="180" rx="12" fill="#f59e0b" fill-opacity="0.10" stroke="currentColor" stroke-opacity="0.22"/>
   <text x="180" y="90" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">1 thread pool dùng chung</text>
   <g>
@@ -271,23 +271,23 @@ Tên gọi từ tàu thủy: chia khoang để 1 khoang ngập không chìm cả
     <text x="117" y="142" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">(critical)</text>
     <rect x="188" y="104" width="110" height="50" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="243" y="125" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">recommend</text>
-    <text x="243" y="142" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">quá tải 🔥</text>
+    <text x="243" y="142" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">quá tải </text>
   </g>
   <text x="180" y="186" font-size="11.5" text-anchor="middle" fill="currentColor">recommend nuốt hết thread</text>
   <text x="180" y="222" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">→ checkout cũng chết theo</text>
-  <text x="540" y="54" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">✅ Pool tách riêng</text>
+  <text x="540" y="54" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">✓ Pool tách riêng</text>
   <rect x="400" y="68" width="280" height="180" rx="12" fill="#10b981" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.22"/>
   <g>
     <rect x="420" y="100" width="115" height="120" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="477" y="124" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">checkout</text>
     <text x="477" y="142" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">pool riêng</text>
-    <text x="477" y="200" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">vẫn sống ✅</text>
+    <text x="477" y="200" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">vẫn sống ✓</text>
   </g>
   <g>
     <rect x="545" y="100" width="115" height="120" rx="10" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="602" y="124" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">recommend</text>
     <text x="602" y="142" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">pool riêng</text>
-    <text x="602" y="200" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">chết 🔥</text>
+    <text x="602" y="200" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">chết </text>
   </g>
   <text x="540" y="240" font-size="11.5" text-anchor="middle" fill="currentColor">khoang ngập không chìm cả tàu</text>
   <text x="40" y="296" font-size="11" fill="currentColor" opacity="0.7">Tên từ tàu thủy: chia khoang để một khoang ngập không kéo chìm cả con tàu.</text>
@@ -358,7 +358,7 @@ Chủ động inject failure trong production-like → tìm cascading failure tr
 ```python
 while True:
     try: call(); break
-    except: continue  # 🔥 retry storm guaranteed
+    except: continue  # retry storm guaranteed
 ```
 **Fix**: max attempts + exponential backoff + jitter.
 

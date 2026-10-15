@@ -80,7 +80,7 @@ function UncontrolledInput() {
   <text x="360" y="331" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">react-hook-form = hiệu năng uncontrolled + tiện ích controlled</text>
 </svg>
 
-> 💡 Ghi nhớ: đừng tự dựng controlled form thủ công với một đống `useState` cho form thật. `react-hook-form` cho bạn **hiệu năng của uncontrolled** (ít re-render) nhưng vẫn có validate/error/submit như controlled. Đó là lý do nó thắng.
+> Ghi nhớ: đừng tự dựng controlled form thủ công với một đống `useState` cho form thật. `react-hook-form` cho bạn **hiệu năng của uncontrolled** (ít re-render) nhưng vẫn có validate/error/submit như controlled. Đó là lý do nó thắng.
 
 ## 2. react-hook-form: register & handleSubmit
 
@@ -130,7 +130,7 @@ function LoginForm() {
 
 Vì input là uncontrolled, gõ vào field A **không** re-render field B. So với form controlled thủ công (mọi `setState` re-render cả cây form), khác biệt rất lớn khi form có 20-30 field.
 
-> ⚠️ Bẫy: khi cần input **controlled** (component thư viện như MUI Select, react-select, date picker không nhận ref), đừng dùng `register`. Dùng `<Controller>`:
+> Bẫy: khi cần input **controlled** (component thư viện như MUI Select, react-select, date picker không nhận ref), đừng dùng `register`. Dùng `<Controller>`:
 
 ```tsx
 import { Controller } from "react-hook-form";
@@ -184,7 +184,7 @@ type SignupValues = z.infer<typeof signupSchema>;
 
 Schema là **nguồn sự thật duy nhất**: sửa schema thì type tự đổi theo, không bao giờ lệch.
 
-> 💡 Ghi nhớ: `z.coerce.number()` ép `"18"` (string từ input) thành `18`. Input HTML luôn trả string, nên dùng `coerce` thay vì để type là string rồi tự `parseInt`.
+> Ghi nhớ: `z.coerce.number()` ép `"18"` (string từ input) thành `18`. Input HTML luôn trả string, nên dùng `coerce` thay vì để type là string rồi tự `parseInt`.
 
 ### Tích hợp Zod vào react-hook-form
 
@@ -259,7 +259,7 @@ const {
 | `onTouched` | Sau blur lần đầu, rồi onChange | **Khuyên dùng** — tự nhiên nhất |
 | `onChange` | Mỗi ký tự | Realtime nhưng dễ "la mắng" người dùng quá sớm |
 
-> ⚠️ Bẫy: `mode: "onChange"` validate mỗi lần gõ làm field bật đỏ khi người dùng **mới gõ được 2 ký tự** email — gây khó chịu. Nguyên tắc UX: **đừng báo lỗi field người dùng còn đang nhập dở**. `onTouched` (lỗi xuất hiện sau khi blur, rồi mới cập nhật realtime) là điểm cân bằng tốt nhất.
+> Bẫy: `mode: "onChange"` validate mỗi lần gõ làm field bật đỏ khi người dùng **mới gõ được 2 ký tự** email — gây khó chịu. Nguyên tắc UX: **đừng báo lỗi field người dùng còn đang nhập dở**. `onTouched` (lỗi xuất hiện sau khi blur, rồi mới cập nhật realtime) là điểm cân bằng tốt nhất.
 
 ## 4. Error UX
 
@@ -287,7 +287,7 @@ function Field({ label, error, children }: FieldProps) {
 }
 ```
 
-> 💡 Ghi nhớ: lỗi tốt là lỗi **nói cho người dùng cách sửa**, không phải mô tả kỹ thuật. "Mật khẩu tối thiểu 8 ký tự" tốt hơn "Validation failed: minLength". Viết message này ngay trong Zod schema để chỗ nào cũng nhất quán.
+> Ghi nhớ: lỗi tốt là lỗi **nói cho người dùng cách sửa**, không phải mô tả kỹ thuật. "Mật khẩu tối thiểu 8 ký tự" tốt hơn "Validation failed: minLength". Viết message này ngay trong Zod schema để chỗ nào cũng nhất quán.
 
 ## 5. Async validation
 
@@ -312,7 +312,7 @@ const usernameSchema = z.object({
 - `refine` nhận hàm async — Zod chờ Promise. Nhớ dùng `schema.parseAsync()` / RHF tự gọi `safeParseAsync`.
 - **Debounce** lời gọi async, đừng gọi mỗi ký tự — bạn sẽ spam server. Validate async chỉ nên chạy ở `onBlur`.
 
-> ⚠️ Bẫy: async validate trong schema dễ tạo race condition và spam request. Cho check-as-you-type, pattern tốt hơn là tách riêng: dùng `react-query` (xem [[fe-05-routing-data]]) với `enabled` + debounce để check username, rồi merge kết quả vào lỗi của RHF bằng `setError`. Schema-level async để dành cho validate cuối lúc submit.
+> Bẫy: async validate trong schema dễ tạo race condition và spam request. Cho check-as-you-type, pattern tốt hơn là tách riêng: dùng `react-query` (xem [[fe-05-routing-data]]) với `enabled` + debounce để check username, rồi merge kết quả vào lỗi của RHF bằng `setError`. Schema-level async để dành cho validate cuối lúc submit.
 
 ## 6. Accessibility của form (a11y)
 
@@ -341,7 +341,7 @@ Form không accessible = loại bỏ người dùng screen reader, người dùn
 )}
 ```
 
-> 💡 Ghi nhớ: test nhanh a11y bằng cách **chỉ dùng bàn phím** (Tab/Shift+Tab/Enter) hoàn thành form, và bật screen reader (VoiceOver: ⌘+F5) nghe nó đọc label + lỗi. Nếu không nghe được lỗi → thiếu `role="alert"`/`aria-describedby`.
+> Ghi nhớ: test nhanh a11y bằng cách **chỉ dùng bàn phím** (Tab/Shift+Tab/Enter) hoàn thành form, và bật screen reader (VoiceOver: ⌘+F5) nghe nó đọc label + lỗi. Nếu không nghe được lỗi → thiếu `role="alert"`/`aria-describedby`.
 
 ## 7. Form đăng ký hoàn chỉnh
 
@@ -451,7 +451,7 @@ export function SignupForm() {
 | Không disable nút khi submit | Double-submit, tạo 2 record | `disabled={isSubmitting}` |
 | Quên `path` trong `.refine` | Lỗi cross-field không gắn vào field nào | Khai báo `path: [...]` |
 
-> ⚠️ Bẫy lớn nhất: **tin tưởng validate phía client**. Client validate là cho UX (phản hồi nhanh), **không phải bảo mật**. Ai cũng có thể bypass JS và gọi thẳng API. Backend **bắt buộc** validate lại — và đây chính là lý do dùng Zod đẹp ở chỗ tiếp theo.
+> Bẫy lớn nhất: **tin tưởng validate phía client**. Client validate là cho UX (phản hồi nhanh), **không phải bảo mật**. Ai cũng có thể bypass JS và gọi thẳng API. Backend **bắt buộc** validate lại — và đây chính là lý do dùng Zod đẹp ở chỗ tiếp theo.
 
 ## Liên hệ thực tế
 

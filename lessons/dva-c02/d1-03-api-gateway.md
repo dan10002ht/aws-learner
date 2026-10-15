@@ -47,17 +47,17 @@ API Gateway cung cấp 3 loại API khác nhau. Chọn sai loại là bẫy ph�
 | Mục đích | API đầy đủ tính năng | API đơn giản, rẻ, nhanh | Giao tiếp 2 chiều realtime |
 | Chi phí | Cao hơn (~3.5x) | Thấp | Theo message + thời gian kết nối |
 | Latency | Cao hơn một chút | Thấp nhất | - |
-| Mapping templates (VTL) | ✅ | ❌ | ✅ |
-| Request validation | ✅ | ❌ (hạn chế) | ✅ |
-| API keys & usage plans | ✅ | ❌ | ❌ |
-| Caching | ✅ | ❌ | ❌ |
-| Lambda authorizer | ✅ | ✅ | ✅ |
-| Cognito authorizer | ✅ | ✅ (JWT) | ❌ |
-| IAM authorizer | ✅ | ✅ | ✅ |
-| Private API (VPC) | ✅ | ❌ | ❌ |
-| WAF integration | ✅ | ❌ | ❌ |
+| Mapping templates (VTL) | ✓ | ✗ | ✓ |
+| Request validation | ✓ | ✗ (hạn chế) | ✓ |
+| API keys & usage plans | ✓ | ✗ | ✗ |
+| Caching | ✓ | ✗ | ✗ |
+| Lambda authorizer | ✓ | ✓ | ✓ |
+| Cognito authorizer | ✓ | ✓ (JWT) | ✗ |
+| IAM authorizer | ✓ | ✓ | ✓ |
+| Private API (VPC) | ✓ | ✗ | ✗ |
+| WAF integration | ✓ | ✗ | ✗ |
 
-> 💡 Mẹo thi: Câu hỏi nhấn mạnh "lowest cost / lowest latency, chỉ cần proxy đến Lambda hoặc HTTP backend" → chọn **HTTP API**. Câu cần **usage plans, API keys, caching, request validation, mapping templates, WAF, private API** → chỉ **REST API** đáp ứng. Cần realtime / chat / push từ server → **WebSocket API**.
+> Mẹo thi: Câu hỏi nhấn mạnh "lowest cost / lowest latency, chỉ cần proxy đến Lambda hoặc HTTP backend" → chọn **HTTP API**. Câu cần **usage plans, API keys, caching, request validation, mapping templates, WAF, private API** → chỉ **REST API** đáp ứng. Cần realtime / chat / push từ server → **WebSocket API**.
 
 WebSocket API định tuyến message dựa trên **route selection expression** (ví dụ `$request.body.action`), với 3 route hệ thống: `$connect`, `$disconnect`, `$default`. Server đẩy message về client qua `@connections` API:
 
@@ -131,7 +131,7 @@ Cách dùng phổ biến của stage variables:
 
 Trong VTL/mapping template truy cập bằng `$stageVariables.name`; trong integration URI dùng `${stageVariables.name}`.
 
-> ⚠️ Bẫy: Stage variables KHÔNG phải là Lambda environment variables. Stage variables thuộc về API Gateway và dùng để chọn backend/cấu hình tại tầng API. Nếu đề hỏi "cùng một API trỏ tới các Lambda alias khác nhau cho mỗi môi trường" → **stage variables + Lambda alias**, không phải tạo nhiều API.
+> Bẫy: Stage variables KHÔNG phải là Lambda environment variables. Stage variables thuộc về API Gateway và dùng để chọn backend/cấu hình tại tầng API. Nếu đề hỏi "cùng một API trỏ tới các Lambda alias khác nhau cho mỗi môi trường" → **stage variables + Lambda alias**, không phải tạo nhiều API.
 
 ## Integration types
 
@@ -227,7 +227,7 @@ exports.handler = async (event) => {
 | Linh hoạt transform | Thấp (logic nằm trong code) | Cao (VTL) |
 | Đơn giản để setup | Cao | Thấp |
 
-> 💡 Mẹo thi: "Ít cấu hình nhất, để Lambda code tự xử lý request/response" → **Lambda proxy**. "Cần transform/validate ở API Gateway mà không sửa code Lambda" → **non-proxy + mapping template**.
+> Mẹo thi: "Ít cấu hình nhất, để Lambda code tự xử lý request/response" → **Lambda proxy**. "Cần transform/validate ở API Gateway mà không sửa code Lambda" → **non-proxy + mapping template**.
 
 ## Mapping templates (VTL)
 
@@ -251,7 +251,7 @@ Các biến/hàm VTL hay gặp:
 
 Một use case mạnh: **service integration trực tiếp** (API Gateway → DynamoDB/SQS/SNS) bỏ qua Lambda hoàn toàn, dùng mapping template để dựng request → tiết kiệm chi phí và latency.
 
-> 💡 Mẹo thi: "Đẩy message thẳng vào SQS/SNS, hoặc ghi DynamoDB mà không muốn duy trì Lambda" → **AWS service integration + mapping template**.
+> Mẹo thi: "Đẩy message thẳng vào SQS/SNS, hoặc ghi DynamoDB mà không muốn duy trì Lambda" → **AWS service integration + mapping template**.
 
 ## Request validation
 
@@ -276,7 +276,7 @@ REST API validate request **trước khi** gọi backend, giảm tải vô ích.
 
 Request không hợp lệ bị trả `400 Bad Request` ngay tại API Gateway, không tốn invocation Lambda.
 
-> ⚠️ Bẫy: Request validation đầy đủ (body theo model) là tính năng của **REST API**, không phải HTTP API. Đề mô tả "validate JSON body theo schema trước khi vào Lambda" → REST API.
+> Bẫy: Request validation đầy đủ (body theo model) là tính năng của **REST API**, không phải HTTP API. Đề mô tả "validate JSON body theo schema trước khi vào Lambda" → REST API.
 
 ## Authorizers
 
@@ -308,7 +308,7 @@ Kiểm soát ai được gọi API. Có 4 cơ chế chính:
 
 `context` được truyền xuống backend qua `$context.authorizer.org` (hoặc `event.requestContext.authorizer` trong Lambda proxy).
 
-> ⚠️ Bẫy authorizer:
+> Bẫy authorizer:
 > - **TOKEN authorizer**: chỉ nhìn một token trong header → dùng cho JWT/OAuth của bên thứ ba.
 > - **REQUEST authorizer**: cần nhiều tham số (query string, multiple headers, sourceIp) để quyết định.
 > - **Cognito authorizer**: khi user pool là Cognito, KHÔNG cần viết Lambda — API Gateway tự validate JWT. Đề nói "validate Cognito JWT, ít code nhất" → Cognito authorizer, không phải Lambda authorizer.
@@ -335,7 +335,7 @@ aws apigateway create-usage-plan --name "Gold" \
   --quota limit=1000000,period=MONTH
 ```
 
-> ⚠️ Bẫy: API key **một mình không xác thực** (authentication) — nó chỉ để **định danh client cho usage plan**. Đừng dùng API key thay cho authorizer. Để bắt buộc API key, method phải set `apiKeyRequired = true`, client gửi qua header `x-api-key`. Usage plans + API keys **chỉ có ở REST API**.
+> Bẫy: API key **một mình không xác thực** (authentication) — nó chỉ để **định danh client cho usage plan**. Đừng dùng API key thay cho authorizer. Để bắt buộc API key, method phải set `apiKeyRequired = true`, client gửi qua header `x-api-key`. Usage plans + API keys **chỉ có ở REST API**.
 
 ## Caching
 
@@ -346,7 +346,7 @@ Cache nằm ở **stage level**, giảm số lần gọi backend và cải thi�
 - **Cache key** dựa trên các request parameter bạn chỉ định.
 - Client có thể bypass cache bằng header `Cache-Control: max-age=0` (nếu bạn cấp quyền `InvalidateCache`).
 
-> 💡 Mẹo thi: Cache là tính năng **REST API**, cấu hình **per-stage**, và **có phí**. "Giảm tải backend cho request GET lặp lại" → bật stage caching + đặt TTL.
+> Mẹo thi: Cache là tính năng **REST API**, cấu hình **per-stage**, và **có phí**. "Giảm tải backend cho request GET lặp lại" → bật stage caching + đặt TTL.
 
 ## CORS
 
@@ -358,7 +358,7 @@ CORS (Cross-Origin Resource Sharing) cần khi browser gọi API từ origin kh�
 
 Với REST API, thường tạo một method `OPTIONS` dùng **MOCK integration** trả về các header này. HTTP API có cấu hình CORS đơn giản hơn (khai báo trực tiếp trong config).
 
-> ⚠️ Bẫy CORS:
+> Bẫy CORS:
 > - Lỗi CORS xảy ra ở **browser**, không phải khi gọi từ Postman/curl/server-to-server.
 > - Với **Lambda proxy**, header CORS (`Access-Control-Allow-Origin`) phải do **Lambda tự trả về trong response** — bật CORS ở console chỉ xử lý preflight OPTIONS, không tự thêm header vào response của method khác.
 > - "Enable CORS" trên console tạo OPTIONS method nhưng **nhớ deploy lại stage** mới có hiệu lực.

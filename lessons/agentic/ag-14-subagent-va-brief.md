@@ -337,37 +337,37 @@ Sau đó chạy gate repo của bạn **một lần** (lint, link check, build).
 
 ## 5. Bẫy thường gặp
 
-🪤 **Dán brief vào prompt từng agent.**
+**Dán brief vào prompt từng agent.**
 Triệu chứng: các agent làm theo hai phiên bản luật khác nhau; không ai nói được agent nào đọc bản nào.
 Nguyên nhân gốc: nội dung brief tồn tại thành N bản, bản nào cũng là "nguồn".
 Chặn: brief là **một file**, prompt chỉ trỏ tới nó. Sửa luật = sửa file, agent spawn sau đọc bản mới.
 
-🪤 **Mỗi agent tự chạy gate toàn repo.**
+**Mỗi agent tự chạy gate toàn repo.**
 Triệu chứng: việc xếp hàng mãi không spawn được; gate chạy lâu bất thường; máy nóng.
 Nguyên nhân gốc: agent giữ slot cho tới khi kết thúc hẳn, và N lượt gate trùng lặp tranh cùng tài nguyên.
 Chặn: brief chỉ cho phép kiểm **phần của mình**; gate toàn cục thuộc phiên chính, chạy một lần.
 
-🪤 **Agent ghi file chung.**
+**Agent ghi file chung.**
 Triệu chứng: registry/index/lockfile mất dòng, hoặc diff lẫn thay đổi của hai agent.
 Nguyên nhân gốc: N tiến trình cùng đọc-sửa-ghi một file, không có khoá.
 Chặn: danh sách file được ghi trong brief + script kiểm file thay đổi ⊆ danh sách (bước 5 §4). File chung để người điều phối gộp.
 
-🪤 **Tin báo cáo của agent.**
+**Tin báo cáo của agent.**
 Triệu chứng: báo cáo nói "đã kiểm với docs", nhưng số vẫn sai; link trông hợp lý nhưng gãy.
 Nguyên nhân gốc: báo cáo là văn bản do cùng agent sinh ra — nó không chạy, không đỏ được.
 Chặn: verify bằng lệnh (link check, diff phạm vi, build) và tự đối chiếu mẫu vài dữ kiện; giao chấm cho agent khác ([[ag-12-verifier-doc-lap]]).
 
-🪤 **Giao xong rồi quên.**
+**Giao xong rồi quên.**
 Triệu chứng: worker báo failed nằm đó nhiều lượt; người dùng là người phát hiện.
 Nguyên nhân gốc: worker không tự gọi lại; phiên điều phối bị cuốn vào việc khác có vẻ gấp hơn.
 Chặn: mở mỗi lượt bằng việc kiểm trạng thái mọi worker; đóng mỗi lượt bằng khối tiến độ tổng — có khuôn cố định thì không quên được hàng "đang chạy".
 
-🪤 **Brief/spec để trong thư mục tạm.**
+**Brief/spec để trong thư mục tạm.**
 Triệu chứng: agent đợt sau, hoặc phiên sau khi crash, không tìm thấy file nó cần và đứng im.
 Nguyên nhân gốc: thư mục tạm sống theo phiên hoặc theo lần khởi động máy.
 Chặn: brief và spec cần cho việc kéo dài qua nhiều lượt đặt trong repo hoặc thư mục bền, kèm trong danh sách kiểm trước khi giao.
 
-🪤 **Fan-out trước khi có bản mẫu.**
+**Fan-out trước khi có bản mẫu.**
 Triệu chứng: N kết quả đúng brief nhưng mỗi cái hiểu "đạt" một kiểu; phải sửa lại cả N.
 Nguyên nhân gốc: brief chỉ có tính từ ("dễ hiểu", "đầy đủ"), không có thước.
 Chặn: làm và duyệt một bản mẫu trước, brief trỏ thẳng tới nó.

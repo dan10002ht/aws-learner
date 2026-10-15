@@ -86,13 +86,13 @@ Ghép lại thành vòng:
   │ 2. CHỌN       LLM chọn ĐÚNG MỘT lỗi lặp (hoặc trả "không có")       │
   │ 3. ĐỀ XUẤT    LLM soạn diff + hồ sơ JSON; CODE chạy lại metric_cmd  │
   │               để chụp baseline thật, rồi gửi tóm tắt cho người      │
-  │ 4. DUYỆT      người: ✅ áp / ❌ bỏ / im lặng N ngày = hết hạn       │
+  │ 4. DUYỆT      người: ✓  áp / ✗  bỏ / im lặng N ngày = hết hạn       │
   │ 5. ÁP         LLM áp diff → gate (lint, payload giả) → ghi sổ       │
   │               remeasure_on = hôm nay + 7                            │
   └────────────────────────────────────────────────────────────────────┘
 ```
 
-Trong case thật (kinh nghiệm thực tế, cấu hình của một người): một scheduler của hệ điều hành gọi script mỗi giờ trong giờ làm việc; script tự quyết pha nào tới lượt. Đề xuất chạy một lần mỗi tuần ở lượt đầu tiên từ thứ Hai; áp chạy trong vòng một giờ sau khi có ✅; đề xuất im lặng 5 ngày thì hết hạn.
+Trong case thật (kinh nghiệm thực tế, cấu hình của một người): một scheduler của hệ điều hành gọi script mỗi giờ trong giờ làm việc; script tự quyết pha nào tới lượt. Đề xuất chạy một lần mỗi tuần ở lượt đầu tiên từ thứ Hai; áp chạy trong vòng một giờ sau khi có ✓; đề xuất im lặng 5 ngày thì hết hạn.
 
 Pha 1–3 và 5 là phiên agent không người ngồi canh. Với Claude Code đó là chế độ non-interactive: theo docs (`https://code.claude.com/docs/en/headless`), `claude -p "<prompt>"` chạy không tương tác, *"exits with code 0 on success and a non-zero code when the run fails"*; `--output-format json` trả JSON có trường `result`, `session_id` và `total_cost_usd` (docs ghi đó là ước tính phía client); skill gọi bằng `/skill-name` trong chuỗi prompt vẫn chạy ở chế độ `-p`; `--allowedTools` duyệt trước các tool theo cú pháp permission rule. Với Codex, docs (`https://learn.chatgpt.com/docs/non-interactive-mode`) mô tả `codex exec` chạy không tương tác và mặc định sandbox read-only — hợp với pha 1–3 vốn chỉ đọc.
 
@@ -149,7 +149,7 @@ Chỗ sửa gốc là regex trong file hook — **đúng file mà retro đầu �
 
 Đó là cái giá: một lỗi biết rõ phải chờ thêm một tuần. Đổi lại, cả hai phép đo đều còn đọc được.
 
-Lý do thứ ba là **chi phí duyệt**. Người duyệt đọc một tóm tắt ngắn trên điện thoại. Một patch, một file (hoặc một cặp file dính nhau) thì tóm tắt đọc được trong một phút; năm patch thì người duyệt bắt đầu bấm ✅ không đọc.
+Lý do thứ ba là **chi phí duyệt**. Người duyệt đọc một tóm tắt ngắn trên điện thoại. Một patch, một file (hoặc một cặp file dính nhau) thì tóm tắt đọc được trong một phút; năm patch thì người duyệt bắt đầu bấm ✓ không đọc.
 
 ### 3.5 Patch được phép chạm vào đâu
 
@@ -165,9 +165,9 @@ Vì sao không tự áp luôn? Ba lý do (kinh nghiệm thực tế, ghi trong d
 - Audit đòi bản vá harness có người duyệt.
 - LLM soạn patch cũng là LLM sẽ được đo bằng patch đó — cùng lý do người viết không tự chấm.
 
-Vì sao không bắt người mở diff trong editor? Vì vòng sẽ đứt giống hệt skill gõ tay. Bước duyệt phải đặt ở **chỗ người đã có mặt cả ngày** — trong case là kênh chat của team, đề xuất gửi lên dưới dạng tin nhắn có tóm tắt + diff, người thả ✅ hoặc ❌. Emoji là bước duyệt rẻ nhất mà vẫn là duyệt. Chỗ đặt duyệt ở đâu trong một hệ tự động là chủ đề chính của [[ag-25-tu-dong-hoa-co-gioi-han]].
+Vì sao không bắt người mở diff trong editor? Vì vòng sẽ đứt giống hệt skill gõ tay. Bước duyệt phải đặt ở **chỗ người đã có mặt cả ngày** — trong case là kênh chat của team, đề xuất gửi lên dưới dạng tin nhắn có tóm tắt + diff, người thả ✓ hoặc ✗. Emoji là bước duyệt rẻ nhất mà vẫn là duyệt. Chỗ đặt duyệt ở đâu trong một hệ tự động là chủ đề chính của [[ag-25-tu-dong-hoa-co-gioi-han]].
 
-Nói thẳng điểm yếu: người duyệt trên điện thoại có thể bấm ✅ mà không đọc diff. Lưới an toàn vì vậy **không nằm ở cú click**, mà ở bốn thứ quanh nó:
+Nói thẳng điểm yếu: người duyệt trên điện thoại có thể bấm ✓ mà không đọc diff. Lưới an toàn vì vậy **không nằm ở cú click**, mà ở bốn thứ quanh nó:
 
 | Lưới | Chặn cái gì |
 |---|---|
@@ -398,42 +398,42 @@ Rồi `python3 retro.py dang-ky de-xuat.json` — baseline do script chụp, kh�
 
 ## 5. Bẫy thường gặp
 
-🪤 **Bẫy 1 — Đổi thước giữa hai lần đo.**
+**Bẫy 1 — Đổi thước giữa hai lần đo.**
 Triệu chứng: baseline "7 lượt lỗi", đo lại "3 lượt lỗi", ai cũng vui — rồi phát hiện lần đầu đếm 4 ngày, lần sau 7 ngày, hoặc lần sau đếm bằng lệnh khác vì lệnh cũ bị chặn quyền.
 Nguyên nhân gốc: phép đo do LLM chạy theo hướng dẫn văn xuôi; gặp trở ngại nó tự chọn đường vòng.
 Chặn: `metric_cmd` lưu nguyên văn trong sổ, **code** chạy đúng chuỗi đó ở cả hai lần; lệnh đo được duyệt sẵn trong permission của phiên headless; danh sách lệnh đo được phép ghi cứng trong prompt đề xuất.
 
-🪤 **Bẫy 2 — "Bằng 0" vì thứ được đo đã chết.**
+**Bẫy 2 — "Bằng 0" vì thứ được đo đã chết.**
 Triệu chứng: retro "lượt nhiễu = 0" chấm `dat` trong tuần hook bị tắt.
 Nguyên nhân gốc: thước chỉ đếm cái xấu, không đếm tổng.
 Chặn: `min_sample` trên tổng (`prompt_lookups >= 10`); thiếu mẫu thì `chua-du-mau`, không bao giờ `dat`. Thước nào cũng phải kiểm được cả hai chiều ([[ag-11-gate-xanh-gia]]).
 
-🪤 **Bẫy 3 — Hai patch chạm một file trong cùng cửa sổ đo.**
+**Bẫy 3 — Hai patch chạm một file trong cùng cửa sổ đo.**
 Triệu chứng: số đo lại không quy được cho patch nào.
 Nguyên nhân gốc: mỗi vòng chọn lỗi độc lập, không biết vòng trước đang đo gì.
 Chặn: `dang-ky` tự từ chối nếu `patch_files` giao với retro `cho-duyet`/`da-ap` (đã có trong `retro.py`). Chấp nhận cái giá: đôi khi phải vá tầng khác và để gốc chờ một tuần (§3.4).
 
-🪤 **Bẫy 4 — Retro tay đè retro tự động.**
+**Bẫy 4 — Retro tay đè retro tự động.**
 Triệu chứng: một đề xuất đang soạn biến mất; sổ có hai bản ghi cùng id. (Case thực tế: một retro làm tay tự lấy id kế tiếp và đè mất đề xuất tự động cùng id.)
 Nguyên nhân gốc: người (hoặc agent) tự đặt id bằng cách nhìn số lớn nhất hiện có, trong khi job tự động cũng đang giữ số đó cho bản nháp.
 Chặn: chỉ một đường cấp id — lệnh đăng ký của code, và nó tính cả đề xuất đang soạn dở. Retro làm tay chụp baseline *trước* khi sửa rồi đăng ký qua đúng lệnh đó.
 
-🪤 **Bẫy 5 — Dạy cho thi.**
+**Bẫy 5 — Dạy cho thi.**
 Triệu chứng: con số đạt, nhưng không ai thấy agent làm tốt hơn.
 Nguyên nhân gốc: patch và thước dùng chung một định nghĩa (§3.8).
 Chặn: ghi điều đó vào Tradeoff, và chỉ định một thước thứ hai patch không chạm tới (A/B chất lượng, số ca trượt lặp lại).
 
-🪤 **Bẫy 6 — Ép mỗi tuần phải có patch.**
+**Bẫy 6 — Ép mỗi tuần phải có patch.**
 Triệu chứng: patch nhỏ dần, bằng chứng mỏng dần, file hướng dẫn dài dần.
 Nguyên nhân gốc: coi retro là sản lượng.
 Chặn: tiêu chí ≥ 2 lần có nguồn + đếm được bằng JSON là cứng; prompt cho phép trả `{"verdict": "khong-co-loi-lap"}`, và đó là một lượt thành công.
 
-🪤 **Bẫy 7 — Vá đúng nội dung, sai chỗ.**
+**Bẫy 7 — Vá đúng nội dung, sai chỗ.**
 Triệu chứng: luật mới có trong file hướng dẫn mà agent vẫn không theo (1/34 ở §3.7).
 Nguyên nhân gốc: file nạp đầu session ở xa chỗ agent ra quyết định.
 Chặn: khi đề xuất, hỏi thêm "agent đọc cái gì *ngay lúc* nó mắc lỗi này?" — khối hook, output của tool, mô tả skill — và đặt luật ở đó. Không được thì dùng cấu hình chặn hẳn ([[ag-08-hook-va-chan-bang-cau-hinh]]).
 
-🪤 **Bẫy 8 — Tin số trong đề xuất của LLM.**
+**Bẫy 8 — Tin số trong đề xuất của LLM.**
 Triệu chứng: baseline trong decision note khác với output thật của lệnh đo.
 Nguyên nhân gốc: LLM chép số từ trí nhớ hoặc làm tròn.
 Chặn: code chạy lại `metric_cmd` ngay sau khi đề xuất được ghi và lưu object đó làm baseline; số trong văn bản đề xuất chỉ để người đọc.
@@ -450,7 +450,7 @@ Những gì bài dùng lại từ các level dưới:
 - Từ Level 4: thước đo phải đỏ được và verifier không được là người viết — [[ag-10-done-criteria-va-gate]], [[ag-11-gate-xanh-gia]], [[ag-12-verifier-doc-lap]]. Retro là verifier cho chính harness.
 - Từ Level 6: phiên đề xuất/áp là một loop không người canh, với state bền trên đĩa — [[ag-18-brief-la-shared-state]], [[ag-19-vong-lap-nhat-task]].
 
-Ở level này bạn bỏ được việc **tự nhớ mà đi soát lại harness**, và thay nó bằng một sổ retro có ngày đo lại do máy giữ. Thứ còn lại cho người là một quyết định nhỏ mỗi tuần: ✅ hay ❌.
+Ở level này bạn bỏ được việc **tự nhớ mà đi soát lại harness**, và thay nó bằng một sổ retro có ngày đo lại do máy giữ. Thứ còn lại cho người là một quyết định nhỏ mỗi tuần: ✓ hay ✗.
 
 Bài cuối, [[ag-25-tu-dong-hoa-co-gioi-han]], hỏi câu ngược lại: trong tất cả những gì đã tự động hoá ở 24 bài, chỗ nào **phải** giữ người, và làm sao tính chi phí để biết một vòng tự động như retro có đáng chạy.
 

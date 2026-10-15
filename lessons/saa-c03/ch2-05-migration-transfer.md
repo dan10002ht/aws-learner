@@ -118,7 +118,7 @@ Thời gian cho 2 TB mỗi đêm qua đường 1 Gbps:
 2 × 10^12 byte × 8 ÷ 10^9 bit/giây = 16.000 giây ≈ 4,4 giờ   → vừa một cửa sổ ban đêm
 ```
 
-> 💡 DataSync là lựa chọn mặc định cho **"di chuyển/đồng bộ file qua mạng"** khi băng thông đủ. Nếu câu hỏi nói *"scheduled"*, *"ongoing replication"*, *"NFS/SMB sang EFS/FSx"* → gần như chắc chắn là DataSync.
+> DataSync là lựa chọn mặc định cho **"di chuyển/đồng bộ file qua mạng"** khi băng thông đủ. Nếu câu hỏi nói *"scheduled"*, *"ongoing replication"*, *"NFS/SMB sang EFS/FSx"* → gần như chắc chắn là DataSync.
 
 ---
 
@@ -148,7 +148,7 @@ Cùng 500 TB, nhanh gấp 20 lần chỉ vì đổi từ đường WAN sang đư
 
 "Edge" là nơi dữ liệu sinh ra nhưng ở xa data center và thường thiếu mạng ổn định: nhà máy, giàn khoan, tàu biển. Compute Optimized khác Storage Optimized ở **mục đích**: một bên dành ổ đĩa cho dữ liệu cần chở đi, một bên dành tài nguyên để chạy ứng dụng tại chỗ.
 
-> 📏 **Con số đề thi và con số hiện tại.** Đề thi và hầu hết tài liệu ôn vẫn dùng bộ số cũ: Snowcone 8–14 TB, Snowball Edge **~80 TB**, Snowmobile 100 PB. Trên docs hiện tại, Storage Optimized là **210 TB**. Quan trọng hơn: từ **7/11/2025** Snowball Edge chỉ còn bán cho khách hàng hiện hữu, và AWS thông báo **ngừng hỗ trợ thiết bị Snowball tại các region thương mại vào 31/12/2026**. Khách hàng mới được AWS hướng sang **DataSync** (online), **AWS Data Transfer Terminal** (địa điểm của AWS để bạn tự mang ổ cứng tới và upload qua đường truyền tốc độ cao), hoặc **Outposts** cho compute tại edge. Đi thi thì vẫn trả lời theo logic "quá lớn / mạng yếu → Snow"; làm thật thì kiểm tra lại tình trạng dịch vụ trước khi đề xuất.
+> **Con số đề thi và con số hiện tại.** Đề thi và hầu hết tài liệu ôn vẫn dùng bộ số cũ: Snowcone 8–14 TB, Snowball Edge **~80 TB**, Snowmobile 100 PB. Trên docs hiện tại, Storage Optimized là **210 TB**. Quan trọng hơn: từ **7/11/2025** Snowball Edge chỉ còn bán cho khách hàng hiện hữu, và AWS thông báo **ngừng hỗ trợ thiết bị Snowball tại các region thương mại vào 31/12/2026**. Khách hàng mới được AWS hướng sang **DataSync** (online), **AWS Data Transfer Terminal** (địa điểm của AWS để bạn tự mang ổ cứng tới và upload qua đường truyền tốc độ cao), hoặc **Outposts** cho compute tại edge. Đi thi thì vẫn trả lời theo logic "quá lớn / mạng yếu → Snow"; làm thật thì kiểm tra lại tình trạng dịch vụ trước khi đề xuất.
 
 ### 4.3 Tính thử: 500 TB cần mấy thiết bị, mất bao lâu
 
@@ -175,7 +175,7 @@ Cộng lại, một job thực tế mất **khoảng 3 tới 7 tuần**, so vớ
 
 Thiết bị rời khỏi tầm kiểm soát của bạn trong lúc nằm trên xe, nên mọi dữ liệu ghi vào đều được **mã hoá 256-bit, khoá do KMS quản lý** và khoá không nằm trên thiết bị. Vỏ máy có cơ chế chống cạy mở. Nhãn gửi hàng là màn hình **E Ink** tự đổi sang địa chỉ trả về khi job xong, tránh dán nhầm nhãn. Sau khi nạp xong, AWS xoá thiết bị theo chuẩn NIST 800-88.
 
-> 🪤 Bẫy thi: "Nhà máy ở vùng sâu, mạng yếu, cần vừa **thu thập + xử lý** dữ liệu tại chỗ rồi đưa về AWS" → **Snowball Edge Compute Optimized** (không phải DataSync — mạng yếu; không phải Storage Optimized — cần compute).
+> Bẫy thi: "Nhà máy ở vùng sâu, mạng yếu, cần vừa **thu thập + xử lý** dữ liệu tại chỗ rồi đưa về AWS" → **Snowball Edge Compute Optimized** (không phải DataSync — mạng yếu; không phải Storage Optimized — cần compute).
 
 ---
 
@@ -228,7 +228,7 @@ Thực tế mỗi cuộn băng ảo (từ 100 GiB tới 15 TiB, tối đa 1.500 
 | **Volume Gateway** | iSCSI (block) | S3, backup dạng EBS snapshot | **Cached**: dữ liệu chính ở S3, cache nóng on-prem · **Stored**: dữ liệu chính on-prem, async backup lên S3 |
 | **Tape Gateway (VTL)** | iSCSI VTL | S3 / Glacier | **Thay thư viện băng từ vật lý**; backup software cũ vẫn "ghi tape" |
 
-> 🪤 Bẫy thi: "Muốn **bỏ tủ băng từ (tape library)** nhưng giữ nguyên phần mềm backup" → **Tape Gateway**. "App on-prem cần truy cập file qua **SMB** với backend S3" → **File Gateway**. "Hết chỗ đĩa on-prem, muốn dữ liệu chính lên cloud nhưng vẫn truy cập nhanh phần hay dùng" → **Volume Gateway Cached**. "Cần toàn bộ dữ liệu ở on-prem với độ trễ thấp, chỉ backup lên AWS" → **Volume Gateway Stored**.
+> Bẫy thi: "Muốn **bỏ tủ băng từ (tape library)** nhưng giữ nguyên phần mềm backup" → **Tape Gateway**. "App on-prem cần truy cập file qua **SMB** với backend S3" → **File Gateway**. "Hết chỗ đĩa on-prem, muốn dữ liệu chính lên cloud nhưng vẫn truy cập nhanh phần hay dùng" → **Volume Gateway Cached**. "Cần toàn bộ dữ liệu ở on-prem với độ trễ thấp, chỉ backup lên AWS" → **Volume Gateway Stored**.
 
 ---
 
@@ -281,7 +281,7 @@ DMS chuyển **dữ liệu**, không chuyển **logic**. Ở đích nó chỉ t�
 
 SCT là một ứng dụng desktop tải về máy. Hiện DMS còn có **DMS Schema Conversion**, cùng chức năng nhưng chạy ngay trong console. Đề thi dùng chữ "SCT".
 
-> 💡 Từ khoá nhận diện: *"migrate database with minimal downtime"*, *"ongoing replication"* → **DMS**. Nếu **đổi engine** (Oracle→Aurora) → **DMS + SCT**. Đừng nhầm với DataSync (file, không hiểu schema DB).
+> Từ khoá nhận diện: *"migrate database with minimal downtime"*, *"ongoing replication"* → **DMS**. Nếu **đổi engine** (Oracle→Aurora) → **DMS + SCT**. Đừng nhầm với DataSync (file, không hiểu schema DB).
 
 ---
 
@@ -291,7 +291,7 @@ SCT là một ứng dụng desktop tải về máy. Hiện DMS còn có **DMS Sc
 
 Transfer Family là một **endpoint do AWS vận hành** nói đúng các giao thức đó. Đối tác vẫn kết nối bằng client SFTP cũ với tài khoản cũ, nhưng file họ upload **đáp thẳng vào S3 hoặc EFS**. Bạn không phải nuôi server FTP tự quản: không vá hệ điều hành, không lo scale, không lo ổ đĩa đầy.
 
-> 🪤 Bẫy thi: "Nhiều đối tác **đang dùng SFTP** upload file, muốn lưu vào S3 mà không đổi quy trình của họ" → **Transfer Family** (không phải Storage Gateway, không phải DataSync).
+> Bẫy thi: "Nhiều đối tác **đang dùng SFTP** upload file, muốn lưu vào S3 mà không đổi quy trình của họ" → **Transfer Family** (không phải Storage Gateway, không phải DataSync).
 
 Transfer Family khác File Gateway ở chỗ ai là người kết nối: File Gateway phục vụ **app trong mạng nội bộ** của bạn qua NFS/SMB, còn Transfer Family phục vụ **bên ngoài** kết nối vào qua Internet bằng SFTP/FTPS.
 
@@ -371,4 +371,4 @@ Sau khi đã hiểu từng dịch vụ chạy thế nào, bảng dưới gom l�
 - **DMS (+SCT)** = migration database, homogeneous vs heterogeneous, CDC downtime tối thiểu. **Transfer Family** = SFTP/FTPS→S3/EFS. **MGN** = rehost server lên EC2.
 - Thuộc **bảng quyết định (§9)** và **cặp so sánh (§10)** là đủ trả lời hầu hết câu hỏi cụm này.
 
-> 🎯 Nhớ 4 câu quyết định: **DB? → DMS · file online? → DataSync · quá lớn/offline? → Snow · giữ app on-prem? → Storage Gateway.**
+> Nhớ 4 câu quyết định: **DB? → DMS · file online? → DataSync · quá lớn/offline? → Snow · giữ app on-prem? → Storage Gateway.**

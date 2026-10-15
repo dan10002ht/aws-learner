@@ -113,7 +113,7 @@ Về thời hạn: RFC 4787 khuyến nghị giữ mục ánh xạ UDP **tối th
 <rect x="605" y="46" width="72" height="34" rx="5" fill="#3b82f6" fill-opacity="0.28"/>
 <text x="641" y="67" text-anchor="middle" font-size="10" fill="currentColor">Client B</text>
 <line x1="517" y1="63" x2="525" y2="63" stroke="#ef4444" stroke-width="2"/>
-<text x="521" y="38" text-anchor="middle" font-size="13" font-weight="bold" fill="#ef4444">✕</text>
+<text x="521" y="38" text-anchor="middle" font-size="13" font-weight="bold" fill="#ef4444">✗</text>
 <text x="368" y="104" font-size="9" fill="currentColor">A gửi tới B: NAT B chưa có mục nào cho A → RƠI</text>
 <text x="368" y="126" font-size="9" fill="currentColor">B gửi tới A: NAT A chưa có mục nào cho B → RƠI</text>
 <text x="368" y="152" font-size="9" fill="currentColor">Không ai gọi được ai. Cả hai đều đang chờ bên kia</text>

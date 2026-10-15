@@ -337,10 +337,10 @@ OK
 
 | Nhu cầu | Set | HyperLogLog |
 |---------|-----|-------------|
-| Chính xác tuyệt đối | ✅ | ❌ (~0.81% sai số) |
-| Liệt kê được phần tử | ✅ | ❌ |
+| Chính xác tuyệt đối | ✓ | ✗ (~0.81% sai số) |
+| Liệt kê được phần tử | ✓ | ✗ |
 | RAM cho 100M unique | hàng GB | ~12 KB |
-| Kiểm tra thành viên (SISMEMBER) | ✅ | ❌ |
+| Kiểm tra thành viên (SISMEMBER) | ✓ | ✗ |
 
 ---
 

@@ -80,7 +80,7 @@ Hai điều rút ra:
 1. Phần nạp sẵn là nhỏ so với cửa sổ. Thứ làm đầy context thật sự là **file đọc và output lệnh** — mô phỏng trong docs ghi một lần đọc `src/api/auth.ts` tốn 2.400 token, hơn cả `CLAUDE.md` của project.
 2. Nhưng `CLAUDE.md` có mặt trong **mọi request** của phiên. Mỗi lượt agent gọi tool là một request mới mang theo cả context. File 1.800 token × 50 request = 90.000 token đi qua model. Prompt caching làm phần lặp này rẻ hơn về tiền, nhưng không làm nó chiếm ít chỗ hơn trong cửa sổ hay ít "cạnh tranh sự chú ý" hơn.
 
-📏 **Đo trên máy bạn:** gõ `/context` trong Claude Code. Docs: *"To confirm the file loaded, run `/context` in a session and check the list under **Memory files**"* ([memory](https://code.claude.com/docs/en/memory)). Ghi lại số token của từng memory file — đó là con số thật, thay cho mọi ước lượng "một dòng bao nhiêu token".
+**Đo trên máy bạn:** gõ `/context` trong Claude Code. Docs: *"To confirm the file loaded, run `/context` in a session and check the list under **Memory files**"* ([memory](https://code.claude.com/docs/en/memory)). Ghi lại số token của từng memory file — đó là con số thật, thay cho mọi ước lượng "một dòng bao nhiêu token".
 
 ### 3.2 Claude Code: bốn tầng, nối chứ không đè
 
@@ -177,9 +177,9 @@ Và ba thứ **không** viết vào, kèm chỗ đúng của chúng:
 | Quy trình nhiều bước, dùng thỉnh thoảng | tốn chỗ mọi lượt | skill — [[ag-07-skill-va-slash-command]] |
 | Trạng thái việc đang làm ("đang sửa tới bước 3") | đổi liên tục, thối nhanh | file state như `BRIEF.md` — [[ag-18-brief-la-shared-state]] |
 
-💡 **Kinh nghiệm thực tế — file tầng user mỏng.** Tác giả giữ file hướng dẫn tầng user ở 48 dòng (~3,2 KB), được import vào **mọi repo** trên máy. Dòng đầu file tự ghi lý do: vì nó vào context ở mọi repo, *"giữ mỏng. Chỉ thứ đúng bất kể đang ở repo nào"*. Nội dung chỉ có năm loại: ngôn ngữ giao tiếp, cách làm việc lặp lại nhiều lần (research trước khi code, sửa lỗi thì quét hết chỗ tương tự, verify trước khi nói xong), quy tắc git theo loại repo, và chỗ tra kiến thức sâu hơn. Mọi chi tiết theo từng app sống ở kho ghi chú riêng, tra khi cần.
+**Kinh nghiệm thực tế — file tầng user mỏng.** Tác giả giữ file hướng dẫn tầng user ở 48 dòng (~3,2 KB), được import vào **mọi repo** trên máy. Dòng đầu file tự ghi lý do: vì nó vào context ở mọi repo, *"giữ mỏng. Chỉ thứ đúng bất kể đang ở repo nào"*. Nội dung chỉ có năm loại: ngôn ngữ giao tiếp, cách làm việc lặp lại nhiều lần (research trước khi code, sửa lỗi thì quét hết chỗ tương tự, verify trước khi nói xong), quy tắc git theo loại repo, và chỗ tra kiến thức sâu hơn. Mọi chi tiết theo từng app sống ở kho ghi chú riêng, tra khi cần.
 
-💡 **Kinh nghiệm thực tế — luật có đầu ra quan sát được.** Một lần vá harness, tác giả thêm vào file tầng user luật: "khi điều tra, tự tra kho ghi chú trước khi hỏi lại người dùng; kết luận phải có một dòng `Brain:` nêu note đã áp dụng". Chạy A/B cùng một bộ ticket (14 case × 2 lượt, bản sao một repo backend): dòng `Brain:` xuất hiện **0/28** lượt ở bản cũ và **27/28** ở bản mới. Đây là case thực tế, một lần chạy, không phải benchmark — và bản vá đó sửa cùng lúc cả hook lẫn skill, nên con số không tách được phần công của riêng file hướng dẫn. Điều đáng học là **dạng** của luật: nó đòi một dòng chữ cụ thể trong output, nên kiểm được bằng `grep`. "Hãy tra kỹ trước khi làm" thì không đo được.
+**Kinh nghiệm thực tế — luật có đầu ra quan sát được.** Một lần vá harness, tác giả thêm vào file tầng user luật: "khi điều tra, tự tra kho ghi chú trước khi hỏi lại người dùng; kết luận phải có một dòng `Brain:` nêu note đã áp dụng". Chạy A/B cùng một bộ ticket (14 case × 2 lượt, bản sao một repo backend): dòng `Brain:` xuất hiện **0/28** lượt ở bản cũ và **27/28** ở bản mới. Đây là case thực tế, một lần chạy, không phải benchmark — và bản vá đó sửa cùng lúc cả hook lẫn skill, nên con số không tách được phần công của riêng file hướng dẫn. Điều đáng học là **dạng** của luật: nó đòi một dòng chữ cụ thể trong output, nên kiểm được bằng `grep`. "Hãy tra kỹ trước khi làm" thì không đo được.
 
 ### 3.6 Khi context đầy: compaction và cái gì sống sót
 
@@ -206,7 +206,7 @@ Hệ quả cho cách làm việc:
 - Compact có định hướng: `/compact focus on the auth bug fix` — bản tóm tắt giữ thứ bạn chọn thay vì thứ tự động đoán.
 - Đổi sang việc không liên quan thì `/clear`, không phải compact. Docs: *"Old conversation crowds out the files you need next and costs tokens on every message."*
 
-💡 **Kinh nghiệm thực tế:** cần `/compact` giữa một việc nghĩa là state lẽ ra phải ở trên đĩa từ đầu. Trước khi `/clear`, dặn agent một câu: *"Ghi vào `NOTES.md`: đang làm tới đâu, đã thử gì không được (kèm lý do), file nào đã đụng, bước tiếp theo."* Phiên sau đọc file đó là chạy tiếp. Đây là mầm của `BRIEF.md` ở Level 6.
+**Kinh nghiệm thực tế:** cần `/compact` giữa một việc nghĩa là state lẽ ra phải ở trên đĩa từ đầu. Trước khi `/clear`, dặn agent một câu: *"Ghi vào `NOTES.md`: đang làm tới đâu, đã thử gì không được (kèm lý do), file nào đã đụng, bước tiếp theo."* Phiên sau đọc file đó là chạy tiếp. Đây là mầm của `BRIEF.md` ở Level 6.
 
 ### 3.7 Plan mode và "research trước khi code"
 
@@ -333,12 +333,12 @@ Tiêu chí xong: bạn có một bảng hai dòng (luật trong chat / luật tr
 
 ## 5. Bẫy thường gặp
 
-🪤 **Giữ nguyên bản nháp `/init`.**
+**Giữ nguyên bản nháp `/init`.**
 Triệu chứng: file 150–300 dòng, phần lớn là mô tả thư mục; agent vẫn mắc đúng lỗi bạn đã ghi.
 Nguyên nhân gốc: `/init` mô tả lại thứ code đã nói; luật quan trọng bị pha loãng (docs: file dài *"reduce adherence"*).
 Chặn bằng cơ chế: gate đếm dòng trong pre-commit hoặc CI — `test $(wc -l < CLAUDE.md) -le 60 || { echo "CLAUDE.md quá 60 dòng"; exit 1; }`. Định kỳ chạy `/doctor prompt-audit` (Claude Code v2.1.283 trở lên, theo docs [memory](https://code.claude.com/docs/en/memory)) để tìm luật lỗi thời, mâu thuẫn, hoặc trỏ tới file/lệnh không tồn tại.
 
-🪤 **Lệnh trong file đã thối.**
+**Lệnh trong file đã thối.**
 Triệu chứng: agent chạy `npm test`, báo "missing script", rồi tự đoán lệnh khác hoặc báo "repo không có test".
 Nguyên nhân gốc: ai đó đổi tên script trong `package.json`, không ai sửa file hướng dẫn — không có gì nối hai nơi.
 Chặn bằng cơ chế: script kiểm chạy trong CI, đối chiếu mọi `npm run <x>` trong file với `package.json`:
@@ -357,27 +357,27 @@ exit $missing
 
 Kiểm cả hai chiều trước khi tin nó: đổi tạm `test:unit` thành `test:unitx` trong `AGENTS.md`, script phải đỏ.
 
-🪤 **Cấm bằng lời trong file hướng dẫn.**
+**Cấm bằng lời trong file hướng dẫn.**
 Triệu chứng: "KHÔNG push main" nằm trong `CLAUDE.md`, và một ngày agent vẫn push.
 Nguyên nhân gốc: docs — `CLAUDE.md` là *"context, not enforced configuration"*; *"To block an action regardless of what Claude decides, use a PreToolUse hook"*.
 Chặn bằng cơ chế: giữ dòng trong file (để agent hiểu ý), **và** thêm permission deny hoặc hook — [[ag-08-hook-va-chan-bang-cau-hinh]].
 
-🪤 **Thêm `CLAUDE.local.md` làm mất `AGENTS.md` của team.**
+**Thêm `CLAUDE.local.md` làm mất `AGENTS.md` của team.**
 Triệu chứng: sau khi bạn tạo file ghi chú cá nhân, agent quên mọi convention chung.
 Nguyên nhân gốc: `CLAUDE.local.md` được tính là "có CLAUDE.md", nên Claude Code thôi đọc `AGENTS.md` ở chế độ mặc định.
 Chặn bằng cơ chế: dùng mẫu §4.2 (`CLAUDE.md` import `@AGENTS.md`), hoặc đặt Project instructions thành `claude-md-and-agents-md`; sau mỗi thay đổi file hướng dẫn, chạy `/context` hoặc `/memory` xem danh sách file nạp.
 
-🪤 **Sửa file hướng dẫn giữa phiên rồi tưởng đã có hiệu lực.**
+**Sửa file hướng dẫn giữa phiên rồi tưởng đã có hiệu lực.**
 Triệu chứng: bạn thêm luật vào `AGENTS.md`, agent Codex trong phiên đang mở vẫn làm ngược.
 Nguyên nhân gốc: docs Codex — discovery chạy một lần mỗi lần khởi động.
 Chặn bằng cơ chế: quy ước "sửa file hướng dẫn ⇒ mở phiên mới", và kiểm bằng lệnh tóm tắt hướng dẫn ở §4.3 trước khi giao việc.
 
-🪤 **`AGENTS.md` lồng nhau vượt 32 KiB.**
+**`AGENTS.md` lồng nhau vượt 32 KiB.**
 Triệu chứng: luật ở `AGENTS.md` thư mục sâu không bao giờ có tác dụng trong Codex.
 Nguyên nhân gốc: `project_doc_max_bytes` mặc định 32 KiB; chạm trần thì file sau bị bỏ, không báo.
 Chặn bằng cơ chế: gate tổng dung lượng — `find . -name AGENTS.md -not -path './node_modules/*' -exec cat {} + | wc -c` phải nhỏ hơn 32768 (đây là tổng **mọi** file trong repo, chặt hơn thực tế vì Codex chỉ nạp nhánh thư mục đang đứng).
 
-🪤 **Đọc đúng file, sai phiên bản.**
+**Đọc đúng file, sai phiên bản.**
 Triệu chứng: báo cáo audit trích dẫn đầy đủ nhưng kết luận sai về prod (case §2).
 Nguyên nhân gốc: worktree đang mở là nhánh feature lệch master; context không có dòng nào nói phải đọc nhánh nào.
 Chặn bằng cơ chế: dòng "Điều tra / audit" trong §4.2, và đòi con số `rev-list` ở đầu mọi báo cáo audit — người đọc thấy `198` là biết ngay phải hỏi.

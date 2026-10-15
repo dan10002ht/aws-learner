@@ -17,7 +17,7 @@ resp = requests.get("https://payment-svc/charge", timeout=(0.5, 2.0))
 # (connect_timeout=500ms, read_timeout=2s)
 ```
 
-> ⚠️ Bẫy production: `timeout` của Python `requests` là **per-read**, không phải tổng thời gian response. Một server nhỏ giọt 1 byte mỗi 1.9s có thể giữ bạn hàng phút dù `read_timeout=2s`. Nếu cần deadline tổng, phải tự bọc (hoặc dùng `httpx` với `Timeout(pool=..., read=...)` + deadline ở tầng trên).
+> Bẫy production: `timeout` của Python `requests` là **per-read**, không phải tổng thời gian response. Một server nhỏ giọt 1 byte mỗi 1.9s có thể giữ bạn hàng phút dù `read_timeout=2s`. Nếu cần deadline tổng, phải tự bọc (hoặc dùng `httpx` với `Timeout(pool=..., read=...)` + deadline ở tầng trên).
 
 ### Timeout là hợp đồng hai chiều
 
@@ -75,7 +75,7 @@ if (remaining < 150) throw new DeadlineExceeded(); // không gọi nữa, fail f
 const resp = await fetch(url, { signal: AbortSignal.timeout(remaining - 100) });
 ```
 
-> 💡 Ghi nhớ: timeout của tầng trong **phải nhỏ hơn** timeout của tầng ngoài. Nếu Service B có timeout 10s nhưng API Gateway cắt ở 5s, mọi công việc B làm sau giây thứ 5 là vô nghĩa — và client còn có thể retry, nhân đôi tải lên hệ thống đang chậm.
+> Ghi nhớ: timeout của tầng trong **phải nhỏ hơn** timeout của tầng ngoài. Nếu Service B có timeout 10s nhưng API Gateway cắt ở 5s, mọi công việc B làm sau giây thứ 5 là vô nghĩa — và client còn có thể retry, nhân đôi tải lên hệ thống đang chậm.
 
 ## 2. Retry đúng cách
 
@@ -85,12 +85,12 @@ Retry dựa trên một giả định: **lỗi là thoáng qua (transient)**. N�
 
 | Tình huống | Retry? | Lý do |
 |---|---|---|
-| Connect timeout, connection refused | ✅ | Request chưa tới nơi, an toàn |
-| HTTP 503, 429 (tôn trọng `Retry-After`) | ✅ | Server tự khai là tạm thời quá tải |
-| HTTP 500 trên request **idempotent** (GET, PUT có key) | ⚠️ Có điều kiện | Có thể transient, nhưng cần chắc idempotent |
-| Read timeout trên request **không idempotent** (charge tiền) | ❌ (trừ khi có idempotency key) | Request có thể **đã được xử lý** — retry = double charge |
-| HTTP 400, 401, 403, 404, 422 | ❌ | Lỗi của bạn; gửi lại 100 lần vẫn 400 |
-| Lỗi nghiệp vụ (số dư không đủ) | ❌ | Không phải lỗi hạ tầng |
+| Connect timeout, connection refused | ✓ | Request chưa tới nơi, an toàn |
+| HTTP 503, 429 (tôn trọng `Retry-After`) | ✓ | Server tự khai là tạm thời quá tải |
+| HTTP 500 trên request **idempotent** (GET, PUT có key) | Có điều kiện | Có thể transient, nhưng cần chắc idempotent |
+| Read timeout trên request **không idempotent** (charge tiền) | ✗ (trừ khi có idempotency key) | Request có thể **đã được xử lý** — retry = double charge |
+| HTTP 400, 401, 403, 404, 422 | ✗ | Lỗi của bạn; gửi lại 100 lần vẫn 400 |
+| Lỗi nghiệp vụ (số dư không đủ) | ✗ | Không phải lỗi hạ tầng |
 
 Hệ quả thiết kế quan trọng: **muốn retry an toàn cho thao tác ghi, API phải hỗ trợ idempotency key** (kiểu `Idempotency-Key` của Stripe). Resilience không phải chuyện riêng của client — nó là yêu cầu thiết kế API.
 
@@ -202,7 +202,7 @@ class RetryBudget:
 
 Khi DB chậm vì quá tải, amplification này đảm bảo nó **không bao giờ hồi phục được** cho tới khi ai đó tắt bớt traffic bằng tay. Đây là kịch bản đứng sau rất nhiều outage lớn (kể cả các sự cố của chính AWS).
 
-> 💡 Ghi nhớ — quy tắc đặt retry: **retry ở ÍT tầng nhất có thể, lý tưởng là một tầng duy nhất** — thường là tầng gần client nhất có đủ ngữ cảnh để biết lỗi có retryable không. Các tầng giữa: timeout ngắn, fail fast, truyền lỗi lên. Nếu service mesh (Envoy/App Mesh) đã retry, application code đừng retry nữa.
+> Ghi nhớ — quy tắc đặt retry: **retry ở ÍT tầng nhất có thể, lý tưởng là một tầng duy nhất** — thường là tầng gần client nhất có đủ ngữ cảnh để biết lỗi có retryable không. Các tầng giữa: timeout ngắn, fail fast, truyền lỗi lên. Nếu service mesh (Envoy/App Mesh) đã retry, application code đừng retry nữa.
 
 ## 3. Circuit Breaker
 
@@ -267,7 +267,7 @@ class CircuitBreaker {
 }
 ```
 
-> ⚠️ Bẫy production:
+> Bẫy production:
 > - **Breaker phải tách theo dependency** (và đôi khi theo endpoint). Một breaker chung cho "mọi HTTP call" sẽ khiến payment-svc hỏng làm chặn luôn call tới search-svc khoẻ mạnh.
 > - **Đếm timeout là failure.** Breaker chỉ đếm exception mà bỏ qua slow call là vô dụng — chế độ hỏng phổ biến nhất là *chậm*, không phải *throw*. (Resilience4j có riêng `slowCallRateThreshold` vì lý do này.)
 > - Trong môi trường nhiều instance, mỗi instance có breaker riêng với góc nhìn riêng — chấp nhận điều đó; breaker state tập trung qua Redis tạo thêm một dependency và một điểm hỏng mới, hiếm khi đáng giá.
@@ -368,7 +368,7 @@ Khác retry (gửi lại **sau khi** thất bại), hedging gửi request **th�
   <text x="372" y="116" font-size="10.5" fill="currentColor">gửi bản sao → B</text>
   <line x1="560" y1="79" x2="560" y2="68" stroke="#ef4444" stroke-opacity="0.7" stroke-width="1.6"/>
   <circle cx="560" cy="79" r="9" fill="#ef4444" fill-opacity="0.85"/>
-  <text x="560" y="83" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">✕</text>
+  <text x="560" y="83" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">✗</text>
   <text x="572" y="58" font-size="10.5" fill="#ef4444" font-weight="600">cancel A (cái thua)</text>
   <text x="100" y="36" font-size="11" fill="currentColor" opacity="0.8">gửi request → A</text>
   <text x="660" y="178" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.7">chỉ ~5% request vượt p95 → bị hedge, tải tăng ~5%</text>
@@ -401,7 +401,7 @@ Mọi thứ ở trên là góc nhìn caller. Phía callee cần nguyên tắc đ
 | 9 | Fallback phức tạp, không bao giờ được test | Hỏng đúng lúc cần |
 | 10 | Không có load shedding phía server | Chậm đều cho tất cả, goodput về 0 |
 
-> 💡 Ghi nhớ — thứ tự lắp ráp cho một outbound call: **deadline/timeout (luôn luôn) → bulkhead (giới hạn concurrent) → circuit breaker → retry có budget + jitter (chỉ một tầng, chỉ lỗi retryable) → fallback**. Và quan sát được tất cả: metric riêng cho timeout rate, retry rate, breaker state, pool utilization — không có metric thì các cơ chế này hỏng trong im lặng.
+> Ghi nhớ — thứ tự lắp ráp cho một outbound call: **deadline/timeout (luôn luôn) → bulkhead (giới hạn concurrent) → circuit breaker → retry có budget + jitter (chỉ một tầng, chỉ lỗi retryable) → fallback**. Và quan sát được tất cả: metric riêng cho timeout rate, retry rate, breaker state, pool utilization — không có metric thì các cơ chế này hỏng trong im lặng.
 
 ## Liên hệ sang AWS
 

@@ -126,16 +126,16 @@ Nếu 1 PK chiếm > 1000 WCU/s → **throttle**, dù tổng capacity của tabl
 
 **Use case**: log truy cập, 1 triệu request/s, lưu để analytics.
 
-❌ **PK = "logs"** (1 giá trị duy nhất, SK = timestamp)
+✗ **PK = "logs"** (1 giá trị duy nhất, SK = timestamp)
 - Tất cả write dồn vào 1 partition → throttle ở 1000/s.
 
-❌ **PK = `date` (yyyy-mm-dd)**
+✗ **PK = `date` (yyyy-mm-dd)**
 - Hôm nay tất cả write dồn vào 1 partition → throttle.
 
-✅ **PK = `userId`** (nếu mỗi user write ~ nhau)
+✓ **PK = `userId`** (nếu mỗi user write ~ nhau)
 - Phân bố đều theo user.
 
-✅ **PK = `date#shardId`** với shardId = `random(0-9)`
+✓ **PK = `date#shardId`** với shardId = `random(0-9)`
 - Tách 1 ngày thành 10 partition → 10x throughput. Đọc cần scan 10 shard (acceptable cho analytics).
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
@@ -321,9 +321,9 @@ Khi dataset tăng → cần thêm partition. Có 2 cách:
 - Query "tất cả đơn hôm nay" → GSI với PK = `date`, SK = `orderId`. (Note: GSI eventual consistency)
 
 ### 9.2 IoT — sensor data, 1B point/ngày
-- ❌ PK = `sensorId` → sensor lỗi spam data → hot partition.
-- ✅ PK = `sensorId#hour`, SK = `timestamp` → mỗi giờ tạo partition mới. Đọc 1 ngày = 24 partition.
-- ✅ Hoặc dùng **Timestream** (purpose-built).
+- ✗ PK = `sensorId` → sensor lỗi spam data → hot partition.
+- ✓ PK = `sensorId#hour`, SK = `timestamp` → mỗi giờ tạo partition mới. Đọc 1 ngày = 24 partition.
+- ✓ Hoặc dùng **Timestream** (purpose-built).
 
 ### 9.3 Multi-tenant SaaS
 - **Soft tenancy**: PK = `tenantId#entityId`. Mọi tenant share table.

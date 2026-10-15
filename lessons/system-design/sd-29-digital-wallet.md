@@ -14,7 +14,7 @@ Cái khó không nằm ở phép tính. Nó nằm ở **ba ràng buộc đứng 
 
 Ba ràng buộc này ép nhau. Đúng tuyệt đối kéo ta về phía transaction ACID và khoá. Một triệu TPS kéo ta về phía phân tán, không khoá, không đồng bộ. Tái tạo lịch sử kéo ta về phía append-only, bất biến. Cả bài học này là hành trình đi qua **năm phương án**, mỗi phương án giải được một hoặc hai ràng buộc và chết ở ràng buộc còn lại, cho tới khi tới được một kiến trúc giải được cả ba.
 
-> 💡 **Nguyên tắc mở đầu**: khi một bài toán có nhiều ràng buộc đối kháng, đừng đi tìm "kiến trúc đúng" ngay. Hãy đi tuần tự từ phương án ngây thơ nhất và **để từng phương án chết vì một lý do cụ thể**. Lý do chết chính là thứ dẫn đường tới phương án tiếp theo. Trong phỏng vấn, cách kể chuyện này mạnh hơn nhiều so với việc vẽ thẳng ra đáp án cuối — vì nó chứng minh bạn *hiểu* đáp án, chứ không phải *nhớ* nó.
+> **Nguyên tắc mở đầu**: khi một bài toán có nhiều ràng buộc đối kháng, đừng đi tìm "kiến trúc đúng" ngay. Hãy đi tuần tự từ phương án ngây thơ nhất và **để từng phương án chết vì một lý do cụ thể**. Lý do chết chính là thứ dẫn đường tới phương án tiếp theo. Trong phỏng vấn, cách kể chuyện này mạnh hơn nhiều so với việc vẽ thẳng ra đáp án cuối — vì nó chứng minh bạn *hiểu* đáp án, chứ không phải *nhớ* nó.
 
 ---
 
@@ -50,7 +50,7 @@ Trước khi vẽ bất cứ thứ gì, phải chốt phạm vi. Đây là nhữ
 - **Auditability**: mọi thay đổi có dấu vết bất biến, có thể chứng minh với kiểm toán viên bên ngoài.
 - Latency: p99 dưới ~500 ms cho người dùng thấy kết quả (không cần dưới 10 ms — đây là tiền, không phải game).
 
-> ⚠️ **Bẫy thường gặp ngay ở bước này**: rất nhiều ứng viên gộp "reliability" và "availability" làm một. Ở bài ví điện tử chúng **ngược nhau**. 99,99% availability nghĩa là ta chấp nhận 52 phút/năm hệ thống *từ chối phục vụ*. Nhưng ta **không** chấp nhận một giây nào mà hệ thống *phục vụ sai*. Khi mạng bị phân vùng, câu trả lời đúng là **dừng lại**, không phải "cứ cho chuyển rồi hoà giải sau". Nói rõ điều này sớm cho thấy bạn hiểu CAP không phải như một câu đố mà như một chính sách kinh doanh.
+> **Bẫy thường gặp ngay ở bước này**: rất nhiều ứng viên gộp "reliability" và "availability" làm một. Ở bài ví điện tử chúng **ngược nhau**. 99,99% availability nghĩa là ta chấp nhận 52 phút/năm hệ thống *từ chối phục vụ*. Nhưng ta **không** chấp nhận một giây nào mà hệ thống *phục vụ sai*. Khi mạng bị phân vùng, câu trả lời đúng là **dừng lại**, không phải "cứ cho chuyển rồi hoà giải sau". Nói rõ điều này sớm cho thấy bạn hiểu CAP không phải như một câu đố mà như một chính sách kinh doanh.
 
 ### 1.3 Cái gì cố tình để ngoài phạm vi
 
@@ -90,7 +90,7 @@ Bảng này là thứ nên vẽ ra trên bảng trắng ngay phút thứ năm, v
 | 10.000 | 200 | Bắt đầu vận hành được. Cần bỏ index nặng, bỏ B-tree random write, chuyển sang **append-only** |
 | 100.000 | 20 | Chỉ đạt được khi ghi tuần tự vào đĩa cục bộ + gộp lô (batching) + không đi qua mạng cho mỗi ghi |
 
-> 💡 **Nguyên tắc**: ở bài này, **tăng TPS của một node quan trọng hơn tăng số node**. Mỗi node thêm vào không chỉ tốn tiền — nó còn tăng số lượng giao dịch **xuyên shard** (cross-shard), mà giao dịch xuyên shard là thứ đắt đỏ và phức tạp nhất trong cả thiết kế. Giảm số node là giảm bậc hai độ phức tạp. Đây là một trong số ít bài mà câu trả lời "scale up trước, scale out sau" là câu trả lời đúng.
+> **Nguyên tắc**: ở bài này, **tăng TPS của một node quan trọng hơn tăng số node**. Mỗi node thêm vào không chỉ tốn tiền — nó còn tăng số lượng giao dịch **xuyên shard** (cross-shard), mà giao dịch xuyên shard là thứ đắt đỏ và phức tạp nhất trong cả thiết kế. Giảm số node là giảm bậc hai độ phức tạp. Đây là một trong số ít bài mà câu trả lời "scale up trước, scale out sau" là câu trả lời đúng.
 
 ### 2.2 Dung lượng sự kiện
 
@@ -230,7 +230,7 @@ Sẽ có người nói: "Redis có AOF và RDB mà, bật `appendfsync always` l
 
 **Chết vì không có lịch sử.** Map chỉ lưu giá trị hiện tại. Không có gì để kiểm toán, không có gì để replay, không trả lời được câu hỏi `?at=`. Yêu cầu reproducibility bị vi phạm hoàn toàn ngay từ dòng thiết kế đầu tiên.
 
-> 💡 **Cái nên giữ lại từ phương án 1**: ý tưởng "trạng thái sống trong RAM" là **đúng** và sẽ quay lại ở phương án cuối. Cái sai không phải là để state trong RAM — cái sai là để RAM làm **nguồn sự thật (source of truth)**. Ở event sourcing, state trong RAM chỉ là một *projection* có thể vứt đi và dựng lại bất cứ lúc nào. Đó là toàn bộ sự khác biệt.
+> **Cái nên giữ lại từ phương án 1**: ý tưởng "trạng thái sống trong RAM" là **đúng** và sẽ quay lại ở phương án cuối. Cái sai không phải là để state trong RAM — cái sai là để RAM làm **nguồn sự thật (source of truth)**. Ở event sourcing, state trong RAM chỉ là một *projection* có thể vứt đi và dựng lại bất cứ lúc nào. Đó là toàn bộ sự khác biệt.
 
 ---
 
@@ -257,7 +257,7 @@ Và đây là một thiết kế **rất tốt** — cho tới một ngưỡng n
 - **Kiểm tra số dư âm**: mệnh đề `AND balance >= 100` biến việc kiểm tra và trừ tiền thành **một thao tác nguyên tử duy nhất** — không có khe hở race condition giữa "đọc để kiểm tra" và "ghi để trừ". Đây là mẹo quan trọng, ta sẽ dùng lại nguyên tắc này ở §14.
 - **Có lịch sử ở mức thô**: bảng `ledger` cho ta audit trail.
 
-> 💡 Với **90% các hệ thống ví thật ngoài đời** — ví của một sàn thương mại điện tử quốc gia, ví của một app gọi xe — phương án này là **câu trả lời đúng**, và đi thẳng lên event sourcing khi mới có 300 TPS là over-engineering. Trong phỏng vấn, nói ra câu này sẽ ghi điểm rất cao: nó cho thấy bạn biết phân biệt "kiến trúc hay" với "kiến trúc phù hợp".
+> Với **90% các hệ thống ví thật ngoài đời** — ví của một sàn thương mại điện tử quốc gia, ví của một app gọi xe — phương án này là **câu trả lời đúng**, và đi thẳng lên event sourcing khi mới có 300 TPS là over-engineering. Trong phỏng vấn, nói ra câu này sẽ ghi điểm rất cao: nó cho thấy bạn biết phân biệt "kiến trúc hay" với "kiến trúc phù hợp".
 
 ### 5.2 Vì sao nó chết ở 1 triệu TPS
 
@@ -280,7 +280,7 @@ Kể cả nếu giả sử có phép màu cho một RDBMS chạy 2 triệu TPS, 
 
 Khi đó `SUM(ledger)` ≠ `balance`, và ta không có cách nào biết bên nào đúng. Reconciliation sẽ **phát hiện** ra chênh lệch, nhưng nó không cho ta **nguyên nhân** — đúng như yêu cầu ở §1.1 đã cảnh báo.
 
-> ⚠️ **Đây là hạt nhân triết học của cả bài**: khi bạn lưu **cả trạng thái lẫn lịch sử như hai nguồn ngang hàng**, bạn đã tạo ra khả năng chúng mâu thuẫn. Cách chữa triệt để không phải là "đồng bộ chúng cẩn thận hơn", mà là **xoá bỏ một trong hai vai trò**: chỉ lịch sử là sự thật, trạng thái chỉ là kết quả suy ra. Đó chính là event sourcing, và đó là lý do nó tồn tại.
+> **Đây là hạt nhân triết học của cả bài**: khi bạn lưu **cả trạng thái lẫn lịch sử như hai nguồn ngang hàng**, bạn đã tạo ra khả năng chúng mâu thuẫn. Cách chữa triệt để không phải là "đồng bộ chúng cẩn thận hơn", mà là **xoá bỏ một trong hai vai trò**: chỉ lịch sử là sự thật, trạng thái chỉ là kết quả suy ra. Đó chính là event sourcing, và đó là lý do nó tồn tại.
 
 ---
 
@@ -331,7 +331,7 @@ Trạng thái **in-doubt** là chỗ 2PC lộ bản chất: nó **không phải 
 
 Trong thực tế, cách chữa duy nhất là **can thiệp thủ công**: một DBA vào xem, đoán, rồi `COMMIT PREPARED` hoặc `ROLLBACK PREPARED` bằng tay. Vận hành như thế ở 1 triệu TPS là không thể.
 
-> ⚠️ **Bẫy trong phỏng vấn**: rất nhiều người nói "dùng 2PC để đảm bảo nguyên tử" rồi dừng lại, tưởng đã trả lời xong. Câu hỏi tiếp theo *luôn* là "coordinator chết sau prepare thì sao?". Nếu bạn trả lời "bầu coordinator mới" thì phải nói tiếp: coordinator mới phải khôi phục được **log quyết định** — nghĩa là bản thân coordinator phải được nhân bản bằng consensus (Raft/Paxos). Lúc đó bạn vừa thừa nhận rằng **2PC không tự đứng được, nó phải dựa lên một tầng consensus** — và đó chính là lý do ta sẽ đi thẳng tới Raft ở §10.
+> **Bẫy trong phỏng vấn**: rất nhiều người nói "dùng 2PC để đảm bảo nguyên tử" rồi dừng lại, tưởng đã trả lời xong. Câu hỏi tiếp theo *luôn* là "coordinator chết sau prepare thì sao?". Nếu bạn trả lời "bầu coordinator mới" thì phải nói tiếp: coordinator mới phải khôi phục được **log quyết định** — nghĩa là bản thân coordinator phải được nhân bản bằng consensus (Raft/Paxos). Lúc đó bạn vừa thừa nhận rằng **2PC không tự đứng được, nó phải dựa lên một tầng consensus** — và đó chính là lý do ta sẽ đi thẳng tới Raft ở §10.
 
 ### 6.3 Vì sao 2PC không dùng được ở quy mô này
 
@@ -390,11 +390,11 @@ Và đây là bảng so sánh cốt lõi giữa hai giao thức — nên thuộc
 
 Hệ quả trực tiếp của sự khác biệt ấy:
 
-- ✅ **TC/C không giữ khoá xuyên pha.** Đây là toàn bộ lý do nó tồn tại: khoá chỉ tồn tại trong phạm vi một giao dịch cục bộ vài trăm micro-giây. Không còn in-doubt, không còn blocking vô hạn.
-- ✅ **Database-agnostic.** Chỉ cần mỗi shard hỗ trợ giao dịch cục bộ. Không cần XA. Chạy được trên DynamoDB, Cassandra với điều kiện, bất cứ thứ gì.
-- ✅ **Song song được.** Các bước try có thể gửi đồng thời tới nhiều shard (khác với Saga tuyến tính). Đây là lý do chính để chọn TC/C thay vì Saga khi latency quan trọng.
-- ⚠️ **Toàn bộ độ phức tạp chuyển sang tầng ứng dụng.** Database không còn lo giúp bạn nữa. Bạn phải tự viết đường bù trừ, tự viết hồi phục, tự viết dò treo — và **tự test** tất cả những nhánh hiếm gặp đó.
-- ⚠️ **Có khoảnh khắc trạng thái không cân bằng** (§7.4).
+- ✓ **TC/C không giữ khoá xuyên pha.** Đây là toàn bộ lý do nó tồn tại: khoá chỉ tồn tại trong phạm vi một giao dịch cục bộ vài trăm micro-giây. Không còn in-doubt, không còn blocking vô hạn.
+- ✓ **Database-agnostic.** Chỉ cần mỗi shard hỗ trợ giao dịch cục bộ. Không cần XA. Chạy được trên DynamoDB, Cassandra với điều kiện, bất cứ thứ gì.
+- ✓ **Song song được.** Các bước try có thể gửi đồng thời tới nhiều shard (khác với Saga tuyến tính). Đây là lý do chính để chọn TC/C thay vì Saga khi latency quan trọng.
+- **Toàn bộ độ phức tạp chuyển sang tầng ứng dụng.** Database không còn lo giúp bạn nữa. Bạn phải tự viết đường bù trừ, tự viết hồi phục, tự viết dò treo — và **tự test** tất cả những nhánh hiếm gặp đó.
+- **Có khoảnh khắc trạng thái không cân bằng** (§7.4).
 
 ### 7.3 Coordinator chết giữa chừng — bảng trạng thái pha
 
@@ -420,15 +420,15 @@ Trong pha try, phải chọn làm gì với A và với B. Có ba lựa chọn, 
 
 | Lựa chọn pha Try | Ví A | Ví B | Đánh giá |
 |---|---|---|---|
-| 1 | **−1$** | NOP | ✅ **Đúng** |
-| 2 | NOP | **+1$** | ❌ Sai nghiêm trọng |
-| 3 | **−1$** | **+1$** | ❌ Không khả thi |
+| 1 | **−1$** | NOP | ✓ **Đúng** |
+| 2 | NOP | **+1$** | ✗ Sai nghiêm trọng |
+| 3 | **−1$** | **+1$** | ✗ Không khả thi |
 
 - **Lựa chọn 2 sai** vì nó **tạo ra tiền trước khi tiêu huỷ tiền**. Nếu pha 2 hỏng và ta phải cancel, B có thể đã **tiêu mất số tiền đó** rồi — số tiền chưa bao giờ được trừ khỏi A. Ta vừa tự tạo ra một máy in tiền và một lỗ hổng khai thác được. Kẻ tấn công chỉ cần tạo giao dịch luôn-hỏng-ở-pha-2 rồi tiêu ngay khoản vừa nhận.
 - **Lựa chọn 3 không khả thi** vì làm cả hai việc nguyên tử xuyên hai shard **chính là bài toán ta đang cố tránh**. Nếu làm được thì đã không cần TC/C.
 - **Lựa chọn 1 đúng** vì trạng thái trung gian của nó là **an toàn về mặt tài chính**: tiền đã rời A nhưng chưa tới B — hệ thống tạm thời "thiếu" tiền chứ không "thừa" tiền. Thiếu tiền thì sửa được (cancel trả lại A). Thừa tiền thì không, vì nó có thể đã bị tiêu.
 
-> 💡 **Nguyên tắc vàng của mọi hệ thống bù trừ**: **luôn trừ trước, cộng sau.** Đặt trạng thái trung gian ở phía "hệ thống bị thiếu", không bao giờ ở phía "hệ thống bị thừa". Nguyên tắc này áp dụng cho mọi thứ — trừ tồn kho trước khi tạo đơn, trừ hạn mức trước khi cấp quyền, thu hồi token trước khi phát token mới. Đây là một trong những câu đáng nhớ nhất của cả bài.
+> **Nguyên tắc vàng của mọi hệ thống bù trừ**: **luôn trừ trước, cộng sau.** Đặt trạng thái trung gian ở phía "hệ thống bị thiếu", không bao giờ ở phía "hệ thống bị thừa". Nguyên tắc này áp dụng cho mọi thứ — trừ tồn kho trước khi tạo đơn, trừ hạn mức trước khi cấp quyền, thu hồi token trước khi phát token mới. Đây là một trong những câu đáng nhớ nhất của cả bài.
 
 Hệ quả: tại mọi thời điểm có giao dịch đang bay, **tổng số dư thấy được sẽ nhỏ hơn hoặc bằng tổng thật**. Điều này chấp nhận được miễn là (a) ta luôn hồi phục về trạng thái cuối, và (b) người dùng không thể tiêu số tiền đang ở trạng thái trung gian. Cách sạch nhất là mô hình hoá tường minh: mỗi ví có `available_balance` và `held_balance`, pha try chuyển tiền từ available sang held thay vì làm nó biến mất.
 
@@ -563,7 +563,7 @@ Ba điều quan trọng về CQRS ở đây:
 2. **Thêm read model mới không đụng gì tới đường ghi.** Bộ phận rủi ro cần một góc nhìn mới? Viết một consumer mới, replay từ đầu, có ngay dữ liệu đầy đủ từ ngày một — kể cả cho những câu hỏi chưa ai nghĩ tới lúc thiết kế. Trong CRUD, dữ liệu bạn không nghĩ tới việc lưu là dữ liệu đã mất vĩnh viễn.
 3. **Read model là eventually consistent** so với event store. Đây là cái giá phải trả, và nó tạo ra một vấn đề UX thật: người dùng chuyển tiền xong, bấm F5, chưa thấy số dư mới. §11.3 xử lý bằng cơ chế đẩy kết quả về.
 
-> ⚠️ **Bẫy**: CQRS không có nghĩa là "hai database". Nó có nghĩa là **mô hình ghi và mô hình đọc là hai mô hình khác nhau**. Rất nhiều đội dựng hai database rồi vẫn để chúng cùng hình dạng, cùng một schema — lúc đó họ nhận hết chi phí của CQRS mà không nhận được lợi ích nào.
+> **Bẫy**: CQRS không có nghĩa là "hai database". Nó có nghĩa là **mô hình ghi và mô hình đọc là hai mô hình khác nhau**. Rất nhiều đội dựng hai database rồi vẫn để chúng cùng hình dạng, cùng một schema — lúc đó họ nhận hết chi phí của CQRS mà không nhận được lợi ích nào.
 
 ### 8.5 Reproducibility — điều mà bốn phương án trước không làm được
 
@@ -597,7 +597,7 @@ Chiến lược thực tế:
 - **Không bao giờ dùng lại tên trường cũ cho nghĩa mới.** Đây là cách nhanh nhất để làm hỏng lịch sử một cách âm thầm và không thể phát hiện.
 - Dùng định dạng có schema tiến hoá được (Protobuf, Avro) thay vì JSON tự do.
 
-> 💡 Event store là **cam kết vĩnh viễn**. Ngày bạn ghi event đầu tiên là ngày bạn nhận trách nhiệm đọc được nó mười năm sau. Thiết kế schema event xứng đáng được đầu tư nhiều hơn thiết kế bảng database gấp nhiều lần, vì bảng thì migrate được, còn lịch sử thì không.
+> Event store là **cam kết vĩnh viễn**. Ngày bạn ghi event đầu tiên là ngày bạn nhận trách nhiệm đọc được nó mười năm sau. Thiết kế schema event xứng đáng được đầu tư nhiều hơn thiết kế bảng database gấp nhiều lần, vì bảng thì migrate được, còn lịch sử thì không.
 
 ---
 
@@ -617,7 +617,7 @@ Và ta bỏ được hoàn toàn độ trễ mạng (~0,5 ms mỗi vòng) khỏi
 
 Dùng `mmap` để ánh xạ file event vào không gian địa chỉ của tiến trình. Kết quả: **ghi vào bộ nhớ chính là ghi vào file**; kernel lo việc đẩy page bẩn xuống đĩa. Đọc event gần đây thì trúng page cache, không chạm đĩa.
 
-⚠️ Nhưng `mmap` **không tự động cho ta độ bền**. Dữ liệu nằm trong page cache có thể mất nếu máy mất điện trước khi kernel flush. Muốn bền thì vẫn phải `msync`/`fdatasync`. Cách giải quyết đúng: **gộp lô (batching)** — gom các event của 1–5 ms lại, fsync một lần, rồi báo thành công cho cả lô. Một lần fsync 1 ms cho 1.000 event ⇒ chi phí 1 μs/event. Đây chính là "group commit" mà database vẫn làm, chỉ là ta tự làm để kiểm soát được kích thước lô.
+Nhưng `mmap` **không tự động cho ta độ bền**. Dữ liệu nằm trong page cache có thể mất nếu máy mất điện trước khi kernel flush. Muốn bền thì vẫn phải `msync`/`fdatasync`. Cách giải quyết đúng: **gộp lô (batching)** — gom các event của 1–5 ms lại, fsync một lần, rồi báo thành công cho cả lô. Một lần fsync 1 ms cho 1.000 event ⇒ chi phí 1 μs/event. Đây chính là "group commit" mà database vẫn làm, chỉ là ta tự làm để kiểm soát được kích thước lô.
 
 ### 9.3 State ở local store: RocksDB thay vì database từ xa
 
@@ -696,7 +696,7 @@ Nhưng nhân bản **cái gì**? Phân tích cho ra một kết luận gọn gà
 | **State** | Có — từ event | Không |
 | **Snapshot** | Có — từ event | Không (nhưng nhân bản vẫn tiện để khởi động nhanh) |
 | **Command** | Có thể mất; client sẽ retry | Không bắt buộc |
-| **Event** | **KHÔNG.** Không tái tạo được từ command, vì command không tất định | ✅ **Bắt buộc** |
+| **Event** | **KHÔNG.** Không tái tạo được từ command, vì command không tất định | ✓ **Bắt buộc** |
 
 Lý do ở dòng cuối tinh tế và đáng nói rõ: có người sẽ hỏi *"sao không nhân bản command cho rẻ, rồi mỗi replica tự sinh event?"*. Không được — vì command **không tất định** (§8.2). Hai replica xử lý cùng một command ở hai thời điểm khác nhau, với state khác nhau, có thể ra hai event khác nhau: một bên thấy đủ tiền, bên kia thấy không. Chỉ có **event** — đã được tất định hoá — mới an toàn để nhân bản.
 
@@ -741,7 +741,7 @@ Thứ giải quyết đúng bài này là một **thuật toán đồng thuận 
 | **Bầu cử = khoảng chết** | Leader chết ⇒ 150–300 ms không phục vụ được. Ở 1 triệu TPS đó là ~300.000 giao dịch bị hoãn. Phải có retry + hàng đợi phía client |
 | **Rải node theo AZ** | 3 node / 3 AZ chịu được mất một AZ. 3 node cùng một AZ thì mất AZ là mất tất cả |
 
-> 💡 Điểm đáng nhớ: **Raft không giải quyết bài toán mở rộng, nó giải quyết bài toán độ bền.** Nó biến "một node có thể mất dữ liệu" thành "một nhóm 3 node không mất dữ liệu khi 1 node chết". Muốn tăng thông lượng thì vẫn phải chia thành **nhiều nhóm Raft** — và đó là §11.
+> Điểm đáng nhớ: **Raft không giải quyết bài toán mở rộng, nó giải quyết bài toán độ bền.** Nó biến "một node có thể mất dữ liệu" thành "một nhóm 3 node không mất dữ liệu khi 1 node chết". Muốn tăng thông lượng thì vẫn phải chia thành **nhiều nhóm Raft** — và đó là §11.
 
 ---
 
@@ -895,7 +895,7 @@ Hệ quả:
 - **Không có lost update về mặt cấu trúc** — không phải "được phòng chống", mà là *không thể xảy ra*.
 - Mỗi event mang một **số thứ tự tăng dần trong phạm vi ví** (`seq`), cho phép bên tiêu thụ phát hiện thiếu/lặp và cho phép khoá lạc quan ở tầng trên.
 
-> 💡 Đây là câu chốt đáng nhớ của toàn bộ kiến trúc: **sharding theo `wallet_id` + xử lý một luồng cho mỗi shard = tuần tự hoá mà không cần khoá.** Ta không giải quyết bài toán tương tranh — ta **loại bỏ tương tranh**. Hiệu năng đi kèm miễn phí, vì thứ đắt nhất trong hệ thống giao dịch không phải là tính toán, mà là sự phối hợp.
+> Đây là câu chốt đáng nhớ của toàn bộ kiến trúc: **sharding theo `wallet_id` + xử lý một luồng cho mỗi shard = tuần tự hoá mà không cần khoá.** Ta không giải quyết bài toán tương tranh — ta **loại bỏ tương tranh**. Hiệu năng đi kèm miễn phí, vì thứ đắt nhất trong hệ thống giao dịch không phải là tính toán, mà là sự phối hợp.
 
 Đánh đổi: một ví **không thể** được xử lý song song, nên một ví bị giới hạn bởi tốc độ của một luồng. Với ví thường (vài giao dịch/ngày) thì vô nghĩa; với ví merchant nóng thì đó chính là nút thắt đã bàn ở §9.5 và cách chữa là chia ví con.
 
@@ -931,7 +931,7 @@ else:
 | Khoá bi quan | `SELECT ... FOR UPDATE` | Đúng nhưng giữ khoá lâu, dễ deadlock, giới hạn throughput ví nóng |
 | Ghi có điều kiện | `UPDATE ... WHERE balance >= 80` rồi kiểm tra số hàng bị ảnh hưởng | **Nguyên tử, không giữ khoá lâu.** Trên DynamoDB là `ConditionExpression` |
 | Khoá lạc quan | `WHERE version = 42`, retry khi hỏng | Tốt khi ít tranh chấp; **thoái hoá thảm hại** ở ví nóng (retry storm) |
-| CRDT / counter cộng dồn | Cho phép cộng song song | ❌ **Không dùng được cho số dư** vì CRDT không biểu diễn được ràng buộc "không âm" — đó là một bất biến toàn cục, còn CRDT chỉ đảm bảo hội tụ cục bộ |
+| CRDT / counter cộng dồn | Cho phép cộng song song | ✗ **Không dùng được cho số dư** vì CRDT không biểu diễn được ràng buộc "không âm" — đó là một bất biến toàn cục, còn CRDT chỉ đảm bảo hội tụ cục bộ |
 
 Dòng cuối đáng nói vì có người sẽ đề xuất CRDT cho "cộng số dư song song". Nó hợp lý cho ví chỉ-nhận, nhưng **cấm dùng** cho ví có rút tiền: hai replica cùng cho phép rút, hội tụ lại thành số âm, và CRDT không có cách nào ngăn.
 
@@ -977,7 +977,7 @@ Chia tiền là không tránh được (chia hoá đơn, tính phí 2,9%, chia l
 2. **Phân bổ phần dư một cách tường minh.** Chia 10,00$ cho 3 người: `3.33 + 3.33 + 3.33 = 9.99`, dư 1 xu. Phải có quy tắc rõ (người đầu tiên nhận thêm, hoặc chia vòng). Đừng để 1 xu bốc hơi — **tổng phải luôn khớp**.
 3. **Làm tròn một lần, ở cuối.** Tính bằng độ chính xác cao trong suốt chuỗi phép tính, chỉ làm tròn khi ghi ra event. Làm tròn ở mỗi bước trung gian là cách chắc chắn nhất để tích luỹ sai số.
 
-> ⚠️ Khoản lệch 1 xu do làm tròn là nguyên nhân **số một** của các vụ đối soát không khớp trong hệ thống thanh toán thật. Nó không gây thiệt hại tiền bạc đáng kể, nhưng nó đốt hàng trăm giờ điều tra và làm xói mòn niềm tin vào toàn bộ số liệu. Thiết kế nó ngay từ đầu rẻ hơn rất nhiều so với truy tìm nó sau.
+> Khoản lệch 1 xu do làm tròn là nguyên nhân **số một** của các vụ đối soát không khớp trong hệ thống thanh toán thật. Nó không gây thiệt hại tiền bạc đáng kể, nhưng nó đốt hàng trăm giờ điều tra và làm xói mòn niềm tin vào toàn bộ số liệu. Thiết kế nó ngay từ đầu rẻ hơn rất nhiều so với truy tìm nó sau.
 
 ---
 
@@ -1054,7 +1054,7 @@ Theo thứ tự thực tế hay gặp:
 | **Event store hỏng dữ liệu ngầm (bit rot)** | Nguy hiểm nhất vì âm thầm | Chuỗi băm + checksum phát hiện; khôi phục bản sao từ node/S3 |
 | **Bug logic ghi sai event** | Sự kiện sai đã bất biến, không xoá được | Ghi **event bù trừ**, giữ nguyên event sai. Lịch sử phản ánh cả lỗi lẫn việc sửa lỗi — đúng chuẩn kế toán |
 
-> 💡 Dòng cuối là triết lý vận hành quan trọng: **trong event sourcing, bạn không sửa quá khứ, bạn viết thêm vào tương lai.** Ghi đè một event sai là hành vi nguy hiểm nhất có thể làm với hệ thống này — nó phá huỷ chính thứ duy nhất bạn có thể tin tưởng.
+> Dòng cuối là triết lý vận hành quan trọng: **trong event sourcing, bạn không sửa quá khứ, bạn viết thêm vào tương lai.** Ghi đè một event sai là hành vi nguy hiểm nhất có thể làm với hệ thống này — nó phá huỷ chính thứ duy nhất bạn có thể tin tưởng.
 
 ### 17.3 Khi mạng phân vùng: chọn C, không chọn A
 
@@ -1074,7 +1074,7 @@ Câu hỏi luôn được hỏi: *"Sao không cứ Kafka làm event store và Fl
 | Độ bền | Rất tốt (ISR + `acks=all` + `min.insync.replicas=2`) | Rất tốt (Raft) — nhưng **bạn tự chịu trách nhiệm chứng minh** |
 | Thứ tự | Đảm bảo **trong một partition** — khoá partition = `wallet_id` là khớp hoàn hảo | Đảm bảo trong một shard |
 | Exactly-once | Có (transaction của Kafka + checkpoint của Flink) — nhưng đắt về throughput | Tự làm bằng idempotency |
-| Lưu trữ dài hạn | ⚠️ Kafka **không được thiết kế làm kho lưu trữ vĩnh viễn**. Tiered storage giúp được, nhưng replay từ ngày đầu vẫn chậm và tốn | Phân tầng chủ động sang S3 |
+| Lưu trữ dài hạn | Kafka **không được thiết kế làm kho lưu trữ vĩnh viễn**. Tiered storage giúp được, nhưng replay từ ngày đầu vẫn chậm và tốn | Phân tầng chủ động sang S3 |
 | Vận hành | Đội đã biết, công cụ sẵn có, tuyển người dễ | Đội phải thành chuyên gia Raft, mmap, LSM, và phải test bằng fault injection |
 | Rủi ro | Thấp | **Cao** — bug trong tầng nhân bản là bug mất tiền |
 
@@ -1084,7 +1084,7 @@ Câu hỏi luôn được hỏi: *"Sao không cứ Kafka làm event store và Fl
 - **10.000 – 200.000 TPS**: **Kafka (khoá partition = `wallet_id`) + Flink hoặc consumer tự viết**. Điểm ngọt nhất về tỉ lệ giá trị/công sức. Kafka cho ta log có thứ tự, bền, phân vùng — đúng ba thứ event sourcing cần — mà không phải tự viết Raft.
 - **Trên 500.000 TPS**: lúc này chi phí phần cứng và độ trễ mới **thật sự** biện minh cho việc tự xây. Và ngay cả khi đó, hãy giữ Kafka/Kinesis làm **đường ống ra** cho các bên tiêu thụ hạ nguồn, chỉ tự xây phần lõi giao dịch.
 
-> ⚠️ **Bẫy phỏng vấn ngược**: nhảy thẳng vào "tự xây log Raft trên mmap" ngay từ đầu là dấu hiệu của over-engineering, kể cả khi đề bài nói 1 triệu TPS. Câu trả lời ghi điểm cao nhất là **nêu đủ lộ trình**, chỉ ra **ngưỡng nào biện minh cho bước nào**, rồi mới đi sâu vào phương án cuối vì đề bài đã chốt con số. Cho thấy bạn biết *khi nào* không nên xây thứ phức tạp còn giá trị hơn việc biết *cách* xây nó.
+> **Bẫy phỏng vấn ngược**: nhảy thẳng vào "tự xây log Raft trên mmap" ngay từ đầu là dấu hiệu của over-engineering, kể cả khi đề bài nói 1 triệu TPS. Câu trả lời ghi điểm cao nhất là **nêu đủ lộ trình**, chỉ ra **ngưỡng nào biện minh cho bước nào**, rồi mới đi sâu vào phương án cuối vì đề bài đã chốt con số. Cho thấy bạn biết *khi nào* không nên xây thứ phức tạp còn giá trị hơn việc biết *cách* xây nó.
 
 ---
 
@@ -1115,7 +1115,7 @@ Quy trình vận hành đi kèm: khi có khác biệt, không được phép "ch
 - **Chaos + so sánh**: giết node ngẫu nhiên giữa lúc tải cao, sau đó replay toàn bộ event và so với state đang chạy. Phải khớp tuyệt đối. Nếu lệch, tầng nhân bản có bug — và đây là **cách duy nhất** phát hiện loại bug đó trước khi nó ăn tiền thật.
 - **Benchmark bằng tải thật**: replay lưu lượng production giờ cao điểm ở tốc độ 10× để tìm trần thật của một node, thay vì benchmark tổng hợp phân bố đều không giống thực tế.
 
-> 💡 Khi giới thiệu event sourcing cho một đội, đây là lập luận thuyết phục nhất — mạnh hơn cả chuyện audit. **Bạn có thể chứng minh phiên bản mới đúng, bằng chính lịch sử thật của mình, trước khi đưa nó ra production.** Hầu như không hệ thống nào làm được điều đó.
+> Khi giới thiệu event sourcing cho một đội, đây là lập luận thuyết phục nhất — mạnh hơn cả chuyện audit. **Bạn có thể chứng minh phiên bản mới đúng, bằng chính lịch sử thật của mình, trước khi đưa nó ra production.** Hầu như không hệ thống nào làm được điều đó.
 
 ---
 
@@ -1123,26 +1123,26 @@ Quy trình vận hành đi kèm: khi có khác biệt, không được phép "ch
 
 | Thành phần thiết kế | Dịch vụ AWS | Vì sao hợp (và bẫy) |
 |---|---|---|
-| **Event store — phương án được chọn ở quy mô vừa** | **MSK (Managed Kafka)**, khoá partition = `wallet_id` | Khoá partition khớp *chính xác* với yêu cầu §13: Kafka đảm bảo thứ tự **trong một partition**, mà ta cần đúng "thứ tự trong một ví". Đặt `acks=all` + `min.insync.replicas=2` + `unclean.leader.election.enable=false` — thiếu cờ cuối là **cho phép mất dữ liệu đã ack** khi failover. Bật **tiered storage** để giữ log dài. ⚠️ Số partition là trần song song và **rất khó tăng** về sau (tăng partition làm vỡ ánh xạ `hash(key) % n`, phá thứ tự lịch sử) — hãy cấp dư ngay từ đầu |
-| Event store — phương án serverless | **Kinesis Data Streams** | Mỗi shard 1 MB/s hoặc 1.000 bản ghi/s ⇒ 2 triệu event/s cần **~2.000 shard**; dùng on-demand để khỏi tự chia. ⚠️ **Retention tối đa 365 ngày** — nên Kinesis **không thể là nguồn sự thật vĩnh viễn**, chỉ là đường vận chuyển. Bắt buộc phải đổ song song sang S3 |
+| **Event store — phương án được chọn ở quy mô vừa** | **MSK (Managed Kafka)**, khoá partition = `wallet_id` | Khoá partition khớp *chính xác* với yêu cầu §13: Kafka đảm bảo thứ tự **trong một partition**, mà ta cần đúng "thứ tự trong một ví". Đặt `acks=all` + `min.insync.replicas=2` + `unclean.leader.election.enable=false` — thiếu cờ cuối là **cho phép mất dữ liệu đã ack** khi failover. Bật **tiered storage** để giữ log dài. Số partition là trần song song và **rất khó tăng** về sau (tăng partition làm vỡ ánh xạ `hash(key) % n`, phá thứ tự lịch sử) — hãy cấp dư ngay từ đầu |
+| Event store — phương án serverless | **Kinesis Data Streams** | Mỗi shard 1 MB/s hoặc 1.000 bản ghi/s ⇒ 2 triệu event/s cần **~2.000 shard**; dùng on-demand để khỏi tự chia. **Retention tối đa 365 ngày** — nên Kinesis **không thể là nguồn sự thật vĩnh viễn**, chỉ là đường vận chuyển. Bắt buộc phải đổ song song sang S3 |
 | **Kho lưu trữ sự thật vĩnh viễn** | **S3** + **Object Lock (compliance mode)** + Glacier Deep Archive cho dữ liệu nguội | Đây mới là "event store" thật về mặt pháp lý. Object Lock làm cho việc xoá/sửa **bất khả thi về mặt kỹ thuật** kể cả với tài khoản root — đúng thứ kiểm toán viên đòi. Versioning + MFA delete + replication sang tài khoản khác (chống cả trường hợp tài khoản chính bị chiếm) |
 | Replay & truy vấn lịch sử | **Athena** trên event Parquet ở S3, phân vùng theo `ngày/shard` | "Số dư ví X lúc 14:32 ngày 3/6" thành một câu SQL quét đúng vài phân vùng. Rẻ hơn giữ mọi thứ nóng nhiều bậc. Dùng **Glue Catalog** để quản schema và **schema evolution** của event (§8.6) |
-| **Trạng thái + giao dịch, phương án không tự xây** | **DynamoDB** — `TransactWriteItems` + `ConditionExpression` | ⭐ Ứng viên mạnh nhất cho phần lớn hệ thống ví thật. `ConditionExpression: balance >= :amt` cho ta **kiểm tra-và-trừ nguyên tử không cần khoá** (đúng nguyên tắc §14); `TransactWriteItems` cho **ACID xuyên nhiều item, nhiều bảng, cùng region** — tức là ta có transfer hai chân nguyên tử mà **không cần 2PC, không cần saga**, miễn là cả hai ví cùng region. ⚠️ Giới hạn: **100 item/transaction**, tiêu thụ **2× WCU**, và không có giao dịch xuyên region |
-| Event log miễn phí kèm theo | **DynamoDB Streams** | Mọi thay đổi item thành một bản ghi stream có thứ tự **theo partition key** — tức là event log gần như cho không, đúng thứ tự trong mỗi ví. Nối vào Lambda/Kinesis để nuôi projection, chống gian lận, kho dữ liệu. ⚠️ Retention chỉ **24 giờ** — phải đổ ngay sang S3, đừng coi nó là kho lưu trữ |
-| RDBMS cho giai đoạn đầu (< 10k TPS) | **Aurora PostgreSQL/MySQL** | Đúng câu trả lời cho §5 khi chưa tới quy mô này. Aurora tách compute/storage, replica đọc nhanh, failover ~30 s. **Aurora Limitless** khi cần sharding tự động. ⚠️ Vẫn là ~1.000–10.000 TPS ghi có giao dịch; đừng kỳ vọng nó phá trần |
+| **Trạng thái + giao dịch, phương án không tự xây** | **DynamoDB** — `TransactWriteItems` + `ConditionExpression` | * Ứng viên mạnh nhất cho phần lớn hệ thống ví thật. `ConditionExpression: balance >= :amt` cho ta **kiểm tra-và-trừ nguyên tử không cần khoá** (đúng nguyên tắc §14); `TransactWriteItems` cho **ACID xuyên nhiều item, nhiều bảng, cùng region** — tức là ta có transfer hai chân nguyên tử mà **không cần 2PC, không cần saga**, miễn là cả hai ví cùng region. Giới hạn: **100 item/transaction**, tiêu thụ **2× WCU**, và không có giao dịch xuyên region |
+| Event log miễn phí kèm theo | **DynamoDB Streams** | Mọi thay đổi item thành một bản ghi stream có thứ tự **theo partition key** — tức là event log gần như cho không, đúng thứ tự trong mỗi ví. Nối vào Lambda/Kinesis để nuôi projection, chống gian lận, kho dữ liệu. Retention chỉ **24 giờ** — phải đổ ngay sang S3, đừng coi nó là kho lưu trữ |
+| RDBMS cho giai đoạn đầu (< 10k TPS) | **Aurora PostgreSQL/MySQL** | Đúng câu trả lời cho §5 khi chưa tới quy mô này. Aurora tách compute/storage, replica đọc nhanh, failover ~30 s. **Aurora Limitless** khi cần sharding tự động. Vẫn là ~1.000–10.000 TPS ghi có giao dịch; đừng kỳ vọng nó phá trần |
 | Trạng thái nóng trong RAM, **có** độ bền | **MemoryDB for Redis/Valkey** | Tốc độ Redis nhưng có **nhật ký giao dịch phân tán đa AZ** — tức là ghi được xác nhận là ghi bền thật, khác hẳn ElastiCache. Đây chính là câu trả lời cho §4.3: nó vá đúng lỗ hổng durability của phương án 1 bằng một cơ chế đồng thuận, "Raft-like". Vẫn **không** cho ta giao dịch xuyên shard hay lịch sử |
-| Cache đọc thuần (số dư hiển thị) | **ElastiCache** / **DAX** | Chỉ cho projection đọc. ⚠️ **Tuyệt đối không** dùng làm nguồn sự thật cho số dư — nhân bản bất đồng bộ, mất ghi khi failover |
-| **Saga / TC-C coordinator** | **Step Functions** (Standard, không Express) | Sinh ra đúng cho bài này: máy trạng thái bền, mỗi bước có retry/backoff/catch khai báo được, **đường bù trừ là một nhánh tường minh** chứ không phải code rải rác. Bản thân nó đã là "bảng trạng thái pha" của §7.3 — có sẵn lịch sử thực thi để audit. ⚠️ Standard tính tiền **theo mỗi bước chuyển trạng thái** ⇒ ở 1 triệu TPS chi phí là không tưởng. Dùng cho luồng giá trị cao/tần suất thấp (rút tiền lớn, hoàn tiền, xử lý tranh chấp); luồng nóng thì tự viết coordinator |
-| Hàng đợi command | **SQS FIFO** (theo `MessageGroupId = wallet_id`) | Thứ tự + khử trùng lặp 5 phút sẵn có, đúng ngữ nghĩa §13. ⚠️ **Trần 3.000 msg/s mỗi FIFO queue khi bật batching** — cần hàng trăm queue cho quy mô này, hoặc chuyển sang MSK |
-| Xử lý luồng, projection, chống gian lận | **Managed Service for Apache Flink**, hoặc **Lambda** đọc từ stream | Flink cho stateful windowing + exactly-once checkpoint. Lambda đơn giản hơn nhưng ⚠️ chú ý **concurrency và thứ tự**: Lambda đọc Kinesis/DynamoDB Streams giữ thứ tự **trong một shard**, nên một ví vẫn tuần tự — nhưng `BisectBatchOnFunctionError` và `MaximumRetryAttempts` phải cấu hình đúng để không bỏ qua bản ghi lỗi |
+| Cache đọc thuần (số dư hiển thị) | **ElastiCache** / **DAX** | Chỉ cho projection đọc. **Tuyệt đối không** dùng làm nguồn sự thật cho số dư — nhân bản bất đồng bộ, mất ghi khi failover |
+| **Saga / TC-C coordinator** | **Step Functions** (Standard, không Express) | Sinh ra đúng cho bài này: máy trạng thái bền, mỗi bước có retry/backoff/catch khai báo được, **đường bù trừ là một nhánh tường minh** chứ không phải code rải rác. Bản thân nó đã là "bảng trạng thái pha" của §7.3 — có sẵn lịch sử thực thi để audit. Standard tính tiền **theo mỗi bước chuyển trạng thái** ⇒ ở 1 triệu TPS chi phí là không tưởng. Dùng cho luồng giá trị cao/tần suất thấp (rút tiền lớn, hoàn tiền, xử lý tranh chấp); luồng nóng thì tự viết coordinator |
+| Hàng đợi command | **SQS FIFO** (theo `MessageGroupId = wallet_id`) | Thứ tự + khử trùng lặp 5 phút sẵn có, đúng ngữ nghĩa §13. **Trần 3.000 msg/s mỗi FIFO queue khi bật batching** — cần hàng trăm queue cho quy mô này, hoặc chuyển sang MSK |
+| Xử lý luồng, projection, chống gian lận | **Managed Service for Apache Flink**, hoặc **Lambda** đọc từ stream | Flink cho stateful windowing + exactly-once checkpoint. Lambda đơn giản hơn nhưng chú ý **concurrency và thứ tự**: Lambda đọc Kinesis/DynamoDB Streams giữ thứ tự **trong một shard**, nên một ví vẫn tuần tự — nhưng `BisectBatchOnFunctionError` và `MaximumRetryAttempts` phải cấu hình đúng để không bỏ qua bản ghi lỗi |
 | Snapshot | **S3** (có versioning) + checksum trong metadata | Snapshot là dữ liệu vứt đi được ⇒ S3 Standard-IA là đủ. Giữ nhiều mốc theo ngày để trả lời `?at=` nhanh (§9.4) |
-| Bản đồ shard, phát hiện dịch vụ | **etcd/Consul tự chạy trên EKS**, hoặc **DynamoDB + Streams** làm bản đồ nhẹ | Cần ngữ nghĩa watch + epoch để tránh hai node cùng nhận là chủ một ví trong lúc rebalance (§11.1). ⚠️ Cloud Map không có watch đủ mạnh cho việc này |
-| Tự chạy lõi Raft | **EC2 với NVMe cục bộ** (i4i/im4gn/i3en), rải **3 AZ** | Đây là phần **không** dùng dịch vụ quản lý được: cần đĩa cục bộ độ trễ thấp cho mmap + fsync. ⚠️ Instance store là **ephemeral** — mất khi stop instance; đó là lý do Raft 3 AZ và sao lưu liên tục sang S3 là bắt buộc, không phải tuỳ chọn. EBS io2 Block Express là phương án thay thế an toàn hơn nhưng fsync đắt hơn |
+| Bản đồ shard, phát hiện dịch vụ | **etcd/Consul tự chạy trên EKS**, hoặc **DynamoDB + Streams** làm bản đồ nhẹ | Cần ngữ nghĩa watch + epoch để tránh hai node cùng nhận là chủ một ví trong lúc rebalance (§11.1). Cloud Map không có watch đủ mạnh cho việc này |
+| Tự chạy lõi Raft | **EC2 với NVMe cục bộ** (i4i/im4gn/i3en), rải **3 AZ** | Đây là phần **không** dùng dịch vụ quản lý được: cần đĩa cục bộ độ trễ thấp cho mmap + fsync. Instance store là **ephemeral** — mất khi stop instance; đó là lý do Raft 3 AZ và sao lưu liên tục sang S3 là bắt buộc, không phải tuỳ chọn. EBS io2 Block Express là phương án thay thế an toàn hơn nhưng fsync đắt hơn |
 | Bảo vệ khoá và dữ liệu | **KMS** (khoá riêng cho event store), **Nitro Enclaves** nếu cần cách ly cứng | Mã hoá at-rest cho event; chính sách khoá tách quyền để đội vận hành **không** giải mã được nội dung giao dịch |
 | Dấu vết mọi hành động của con người | **CloudTrail** (bật data event cho bucket event store) + **CloudTrail Lake** | Kiểm toán không chỉ hỏi "dữ liệu nói gì" mà cả "ai đã chạm vào". Ghi log sang **tài khoản riêng** mà đội vận hành chính không có quyền xoá |
-| Chứng minh tính bất biến với bên thứ ba | **S3 Object Lock** + hash chain tự ghi (§16.4) | ⚠️ QLDB — dịch vụ sổ cái bất biến có mã hoá xác minh — **đã ngừng nhận khách hàng mới (2025)**; đừng đề xuất nó cho hệ thống mới. Thay bằng hash chain tự làm trên S3 Object Lock, hoặc Aurora PostgreSQL với bảng append-only + trigger chặn UPDATE/DELETE |
+| Chứng minh tính bất biến với bên thứ ba | **S3 Object Lock** + hash chain tự ghi (§16.4) | QLDB — dịch vụ sổ cái bất biến có mã hoá xác minh — **đã ngừng nhận khách hàng mới (2025)**; đừng đề xuất nó cho hệ thống mới. Thay bằng hash chain tự làm trên S3 Object Lock, hoặc Aurora PostgreSQL với bảng append-only + trigger chặn UPDATE/DELETE |
 | Quan sát | **CloudWatch** metric tuỳ biến: độ trễ commit p99, **độ trễ replay (lag)** của từng projection, số giao dịch treo, `Σ balance` mỗi giờ | Cảnh báo quan trọng nhất **không** phải CPU — mà là **`Σ balance` lệch khỏi hằng số** (§16.1) và **số saga treo quá 60 giây**. Hai chỉ số này là hệ thống miễn dịch của cả kiến trúc |
-| Cách ly vùng lỗi | Bắt buộc **3 AZ**; đa region chỉ cho **DR bất đồng bộ**, không phải active-active | ⚠️ Active-active đa region cho ví điện tử nghĩa là ghi đồng thuận xuyên region (30–100 ms/ghi) hoặc chấp nhận chi tiêu kép. Câu trả lời đúng gần như luôn là: **một region là chủ, region kia là dự phòng ấm**, RPO gần 0 nhờ nhân bản event sang S3 tài khoản/region khác |
+| Cách ly vùng lỗi | Bắt buộc **3 AZ**; đa region chỉ cho **DR bất đồng bộ**, không phải active-active | Active-active đa region cho ví điện tử nghĩa là ghi đồng thuận xuyên region (30–100 ms/ghi) hoặc chấp nhận chi tiêu kép. Câu trả lời đúng gần như luôn là: **một region là chủ, region kia là dự phòng ấm**, RPO gần 0 nhờ nhân bản event sang S3 tài khoản/region khác |
 
 **Ba câu chốt đáng nhớ khi nói về AWS ở bài này:**
 
@@ -1182,4 +1182,4 @@ Quy trình vận hành đi kèm: khi có khác biệt, không được phép "ch
 
 14. **Đóng lại bằng lập luận về testing, vì đó là đòn thuyết phục mạnh nhất và ít người nói tới.** *"Lợi ích lớn nhất của kiến trúc này không phải hiệu năng, cũng không phải audit. Là **tôi có thể chạy code mới trên toàn bộ lịch sử production thật và so sánh từng ví với code cũ trước khi phát hành**. Không phải dữ liệu test tôi bịa ra — mà **mọi tình huống kỳ quặc đã thật sự xảy ra**. Khi một khách hàng báo số dư sai, tôi replay đúng luồng event của ví đó trong debugger và tái hiện lỗi 100%. Hầu như không hệ thống nào làm được điều đó."*
 
-> 💡 **Nguyên tắc cuối, gói cả bài trong một câu**: bốn phương án đầu đều hỏi *"làm sao cập nhật số dư cho đúng?"* và đều va vào cùng một bức tường — vì **số dư là một giá trị có thể bị ghi đè, và thứ gì ghi đè được thì nói dối được**. Event sourcing không trả lời câu hỏi đó; nó **xoá bỏ câu hỏi** bằng cách từ chối lưu số dư. Khi sự thật duy nhất là một chuỗi sự kiện chỉ ghi thêm, thì tính đúng đắn không còn là thứ bạn *hi vọng*, mà là thứ bạn **tính lại được bất cứ lúc nào**; audit không còn là tính năng, mà là hệ quả; và mọi bản sao trạng thái đều trở nên vứt đi được — đó chính là lý do hệ thống này vừa nhanh vừa đáng tin, hai thứ mà bình thường bạn phải chọn một.
+> **Nguyên tắc cuối, gói cả bài trong một câu**: bốn phương án đầu đều hỏi *"làm sao cập nhật số dư cho đúng?"* và đều va vào cùng một bức tường — vì **số dư là một giá trị có thể bị ghi đè, và thứ gì ghi đè được thì nói dối được**. Event sourcing không trả lời câu hỏi đó; nó **xoá bỏ câu hỏi** bằng cách từ chối lưu số dư. Khi sự thật duy nhất là một chuỗi sự kiện chỉ ghi thêm, thì tính đúng đắn không còn là thứ bạn *hi vọng*, mà là thứ bạn **tính lại được bất cứ lúc nào**; audit không còn là tính năng, mà là hệ quả; và mọi bản sao trạng thái đều trở nên vứt đi được — đó chính là lý do hệ thống này vừa nhanh vừa đáng tin, hai thứ mà bình thường bạn phải chọn một.

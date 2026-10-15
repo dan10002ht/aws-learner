@@ -27,7 +27,7 @@ Cách đặt tên file thủ công như trên chính là một dạng **quản l
 
 **Git** ra đời để giải quyết đúng vấn đề này.
 
-> 💡 Ghi nhớ: Git là một **hệ thống quản lý phiên bản** (Version Control System — VCS): phần mềm giúp ghi lại *toàn bộ lịch sử thay đổi* của các file, để bạn xem lại, quay lui, so sánh và cộng tác mà không cần tạo hàng tá file `_final_v2`.
+> Ghi nhớ: Git là một **hệ thống quản lý phiên bản** (Version Control System — VCS): phần mềm giúp ghi lại *toàn bộ lịch sử thay đổi* của các file, để bạn xem lại, quay lui, so sánh và cộng tác mà không cần tạo hàng tá file `_final_v2`.
 
 ## Git nghĩ khác: chụp ảnh thay vì nhân bản file
 
@@ -60,7 +60,7 @@ Mỗi "tấm ảnh" như vậy trong Git gọi là một **snapshot** (ảnh ch�
     <text x="60" y="135" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">9b21d05</text>
     <text x="120" y="135" font-size="11.5" fill="currentColor" opacity="0.85">commit A</text>
     <text x="32" y="162" font-size="11.5" fill="currentColor">"Khoi tao du an"</text>
-    <text x="32" y="184" font-size="10.5" fill="currentColor" opacity="0.6">📷 snapshot toàn dự án</text>
+    <text x="32" y="184" font-size="10.5" fill="currentColor" opacity="0.6">snapshot toàn dự án</text>
   </g>
   <line x1="222" y1="154" x2="258" y2="154" stroke="currentColor" stroke-opacity="0.55" stroke-width="2" marker-end="url(#commitArr)"/>
   <g>
@@ -69,7 +69,7 @@ Mỗi "tấm ảnh" như vậy trong Git gọi là một **snapshot** (ảnh ch�
     <text x="300" y="135" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">a3f9c12</text>
     <text x="360" y="135" font-size="11.5" fill="currentColor" opacity="0.85">commit B</text>
     <text x="272" y="162" font-size="11.5" fill="currentColor">"Them file README"</text>
-    <text x="272" y="184" font-size="10.5" fill="currentColor" opacity="0.6">📷 snapshot toàn dự án</text>
+    <text x="272" y="184" font-size="10.5" fill="currentColor" opacity="0.6">snapshot toàn dự án</text>
   </g>
   <line x1="462" y1="154" x2="498" y2="154" stroke="currentColor" stroke-opacity="0.55" stroke-width="2" marker-end="url(#commitArr)"/>
   <g>
@@ -78,7 +78,7 @@ Mỗi "tấm ảnh" như vậy trong Git gọi là một **snapshot** (ảnh ch�
     <text x="540" y="135" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">c7e44af</text>
     <text x="600" y="135" font-size="11.5" fill="currentColor" opacity="0.85">commit C</text>
     <text x="512" y="162" font-size="11.5" fill="currentColor">"Them gitignore"</text>
-    <text x="512" y="184" font-size="10.5" fill="currentColor" opacity="0.6">📷 bản mới nhất (HEAD)</text>
+    <text x="512" y="184" font-size="10.5" fill="currentColor" opacity="0.6">bản mới nhất (HEAD)</text>
   </g>
   <text x="20" y="228" font-size="11" fill="currentColor" opacity="0.6">Thời gian →   mỗi commit = một tấm ảnh + message + hash duy nhất; quay về trang nào cũng được.</text>
 </svg>
@@ -94,7 +94,7 @@ Mỗi "tấm ảnh" như vậy trong Git gọi là một **snapshot** (ảnh ch�
 | Nhiều người cùng sửa | Gửi file qua lại, dễ ghi đè | Git hỗ trợ gộp thay đổi có kiểm soát |
 | Dung lượng | Mỗi bản copy chiếm chỗ | Git lưu rất tiết kiệm |
 
-> 💡 Ghi nhớ: Git không lưu "file_v1, file_v2..." rải rác. Git lưu một chuỗi **snapshot** nối tiếp nhau — như các trang trong album ảnh — và bạn có thể nhảy về bất kỳ trang nào.
+> Ghi nhớ: Git không lưu "file_v1, file_v2..." rải rác. Git lưu một chuỗi **snapshot** nối tiếp nhau — như các trang trong album ảnh — và bạn có thể nhảy về bất kỳ trang nào.
 
 ## Repo là gì?
 
@@ -105,7 +105,7 @@ Cụ thể, khi bạn bảo Git "hãy quản lý thư mục này", Git tạo ra 
 - Thư mục dự án của bạn (các file bạn nhìn thấy, đang sửa) gọi là **working directory** (thư mục làm việc).
 - Thư mục ẩn `.git` là "kho lưu trữ album".
 
-> ⚠️ Lỗi người mới hay gặp: tò mò xoá hoặc sửa tay thư mục `.git`. Xoá `.git` = đốt cả cuốn album, toàn bộ lịch sử mất sạch (file hiện tại vẫn còn, nhưng quá khứ thì không). Đừng đụng vào nó — hãy để Git tự quản lý.
+> Lỗi người mới hay gặp: tò mò xoá hoặc sửa tay thư mục `.git`. Xoá `.git` = đốt cả cuốn album, toàn bộ lịch sử mất sạch (file hiện tại vẫn còn, nhưng quá khứ thì không). Đừng đụng vào nó — hãy để Git tự quản lý.
 
 Lưu ý: **Git** và **GitHub** là hai thứ khác nhau. Git là phần mềm chạy trên máy bạn. GitHub là một trang web để *lưu trữ và chia sẻ* repo Git lên Internet (sẽ học ở bài sau). Quan hệ giống như: ảnh trong điện thoại (Git) và Google Photos để đồng bộ lên mây (GitHub).
 
@@ -165,7 +165,7 @@ Kiểm tra lại:
 git config --list
 ```
 
-> ⚠️ Lỗi người mới hay gặp: gõ thiếu dấu nháy quanh tên có khoảng trắng. `git config --global user.name Nguyen Van A` sẽ sai; phải là `"Nguyen Van A"` trong dấu nháy.
+> Lỗi người mới hay gặp: gõ thiếu dấu nháy quanh tên có khoảng trắng. `git config --global user.name Nguyen Van A` sẽ sai; phải là `"Nguyen Van A"` trong dấu nháy.
 
 ## git init: biến một thư mục thường thành repo
 
@@ -179,7 +179,7 @@ Git trả lời đại loại: `Initialized empty Git repository in .../du-an-da
 
 Vậy là xong — Git đã tạo thư mục ẩn `.git` và bắt đầu "trực sẵn" để ghi lịch sử. Lưu ý: `git init` mới chỉ *mở cuốn album trắng*. Chưa có tấm ảnh nào được chụp cả; bạn phải tự commit.
 
-> 💡 Ghi nhớ: `git init` chỉ chạy **một lần duy nhất** cho mỗi dự án, ở **thư mục gốc** của dự án. Không cần (và không nên) chạy lại nhiều lần hay chạy trong từng thư mục con.
+> Ghi nhớ: `git init` chỉ chạy **một lần duy nhất** cho mỗi dự án, ở **thư mục gốc** của dự án. Không cần (và không nên) chạy lại nhiều lần hay chạy trong từng thư mục con.
 
 ## Quy trình cốt lõi: status → add → commit
 
@@ -205,21 +205,21 @@ Tại sao cần "giỏ hàng" trung gian? Vì không phải lúc nào bạn cũn
     <rect x="16" y="56" width="190" height="96" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="111" y="82" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Working Directory</text>
     <text x="111" y="101" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">thư mục làm việc</text>
-    <text x="111" y="122" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85">🛒 Kệ hàng</text>
+    <text x="111" y="122" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85">Kệ hàng</text>
     <text x="111" y="140" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">file bạn đang sửa</text>
   </g>
   <g>
     <rect x="265" y="56" width="190" height="96" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="360" y="82" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Staging Area</text>
     <text x="360" y="101" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">vùng chờ / index</text>
-    <text x="360" y="122" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85">🧺 Giỏ hàng</text>
+    <text x="360" y="122" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85">Giỏ hàng</text>
     <text x="360" y="140" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">chọn vào lần này</text>
   </g>
   <g>
     <rect x="514" y="56" width="190" height="96" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="609" y="82" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Repository</text>
     <text x="609" y="101" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">kho lịch sử (.git)</text>
-    <text x="609" y="122" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85">🧾 Hoá đơn</text>
+    <text x="609" y="122" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85">Hoá đơn</text>
     <text x="609" y="140" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">commit vĩnh viễn</text>
   </g>
   <defs>
@@ -280,7 +280,7 @@ Changes to be committed:
 
 — tức là "đã nằm trong giỏ, sẵn sàng thanh toán".
 
-> ⚠️ Lỗi người mới hay gặp: sửa file *sau khi* đã `git add`. Giỏ hàng chỉ chứa **phiên bản tại thời điểm bạn add**. Nếu sửa tiếp, phần sửa mới vẫn nằm trên kệ — phải `git add` lại lần nữa thì commit mới gồm bản mới nhất.
+> Lỗi người mới hay gặp: sửa file *sau khi* đã `git add`. Giỏ hàng chỉ chứa **phiên bản tại thời điểm bạn add**. Nếu sửa tiếp, phần sửa mới vẫn nằm trên kệ — phải `git add` lại lần nữa thì commit mới gồm bản mới nhất.
 
 ### Bước 3 — `git commit`: thanh toán, in hoá đơn
 
@@ -293,7 +293,7 @@ git commit -m "Them file ghi chu dau tien"
 
 Mỗi commit giống một **hoá đơn**: ghi rõ mua gì (thay đổi nào), ai mua (user.name/email bạn đã config), lúc nào, kèm một mã số định danh duy nhất (chuỗi ký tự dài như `a3f9c12...`, gọi là *hash*).
 
-> 💡 Ghi nhớ: vòng lặp muôn thuở của Git là — **sửa file → `git status` xem tình hình → `git add` chọn vào giỏ → `git commit -m` chốt đơn**. Lặp lại mỗi khi hoàn thành một thay đổi có ý nghĩa.
+> Ghi nhớ: vòng lặp muôn thuở của Git là — **sửa file → `git status` xem tình hình → `git add` chọn vào giỏ → `git commit -m` chốt đơn**. Lặp lại mỗi khi hoàn thành một thay đổi có ý nghĩa.
 
 ### Viết commit message thế nào cho tốt?
 
@@ -371,7 +371,7 @@ Giải thích ký hiệu:
 
 Sau khi có `.gitignore`, các file/thư mục được liệt kê sẽ **không hiện trong `git status`** và không bao giờ bị `git add .` vô tình gom vào. Bản thân file `.gitignore` thì *nên* được commit, để cả nhóm dùng chung quy tắc.
 
-> ⚠️ Lỗi người mới hay gặp: thêm tên file vào `.gitignore` **sau khi** đã lỡ commit file đó. `.gitignore` chỉ chặn file *chưa từng* được Git theo dõi; file đã commit rồi thì Git vẫn tiếp tục theo dõi. Bài học: tạo `.gitignore` **ngay từ đầu dự án**, đặc biệt trước khi commit file bí mật như `.env`.
+> Lỗi người mới hay gặp: thêm tên file vào `.gitignore` **sau khi** đã lỡ commit file đó. `.gitignore` chỉ chặn file *chưa từng* được Git theo dõi; file đã commit rồi thì Git vẫn tiếp tục theo dõi. Bài học: tạo `.gitignore` **ngay từ đầu dự án**, đặc biệt trước khi commit file bí mật như `.env`.
 
 ## Thực hành trọn vẹn 5 phút
 
@@ -410,4 +410,4 @@ git log --oneline           # lật album: thấy 2 commit
 | `git log` / `--oneline` | Lật xem album, bấm `q` để thoát |
 | `.gitignore` | Danh sách thứ Git phải lờ đi: file tạm, thư viện nặng, bí mật |
 
-> 💡 Ghi nhớ cuối bài: Git chỉ thực sự "ngấm" khi tay bạn gõ. Hãy lặp vòng **status → add → commit** vài lần với file bất kỳ cho đến khi thành phản xạ — đó là nền móng cho mọi bài tiếp theo về branch và GitHub.
+> Ghi nhớ cuối bài: Git chỉ thực sự "ngấm" khi tay bạn gõ. Hãy lặp vòng **status → add → commit** vài lần với file bất kỳ cho đến khi thành phản xạ — đó là nền móng cho mọi bài tiếp theo về branch và GitHub.

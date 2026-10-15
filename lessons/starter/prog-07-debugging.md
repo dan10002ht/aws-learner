@@ -10,7 +10,7 @@ Sự thật bất ngờ: lập trình viên chuyên nghiệp dành phần lớn 
 
 **Bug** (con bọ) là lỗi trong chương trình — khi chương trình chạy sai so với ý muốn của bạn. **Debug** (gỡ lỗi) là quá trình tìm ra nguyên nhân và sửa lỗi đó.
 
-> 💡 Ghi nhớ: Cái tên "bug" có thật! Năm 1947, một con bướm đêm bay vào máy tính Harvard Mark II làm máy chạy sai. Các kỹ sư dán con bướm vào sổ nhật ký và ghi: "Trường hợp đầu tiên tìm thấy bug thật sự".
+> Ghi nhớ: Cái tên "bug" có thật! Năm 1947, một con bướm đêm bay vào máy tính Harvard Mark II làm máy chạy sai. Các kỹ sư dán con bướm vào sổ nhật ký và ghi: "Trường hợp đầu tiên tìm thấy bug thật sự".
 
 ### Ba loại lỗi thường gặp
 
@@ -38,7 +38,7 @@ Người có kinh nghiệm làm như **thám tử điều tra**:
 4. **Lập giả thuyết và kiểm chứng** — "Tôi nghĩ biến `x` đang bằng 0 ở dòng này" → in giá trị ra để xác nhận. Mỗi lần chỉ kiểm tra MỘT giả thuyết.
 5. **Sửa và xác nhận** — sửa xong, chạy lại để chắc chắn lỗi biến mất VÀ không sinh lỗi mới.
 
-> ⚠️ Lỗi người mới hay gặp: sửa 3–4 chỗ cùng lúc rồi chạy lại. Nếu hết lỗi, bạn không biết chỗ nào đã cứu bạn; nếu thêm lỗi, bạn không biết chỗ nào gây ra. **Mỗi lần chỉ thay đổi một thứ.**
+> Lỗi người mới hay gặp: sửa 3–4 chỗ cùng lúc rồi chạy lại. Nếu hết lỗi, bạn không biết chỗ nào đã cứu bạn; nếu thêm lỗi, bạn không biết chỗ nào gây ra. **Mỗi lần chỉ thay đổi một thứ.**
 
 ---
 
@@ -136,7 +136,7 @@ Chú ý nhỏ: ở Java và Go, vì `tong` là số nguyên nên phải đổi s
 - In ở **đầu vào và đầu ra** của hàm nghi vấn: dữ liệu vào có đúng không? Kết quả ra có đúng không? Nếu vào đúng mà ra sai → lỗi nằm TRONG hàm này. Phạm vi đã thu hẹp!
 - **Xóa hoặc tắt** các lệnh in debug khi đã sửa xong, đừng để rác lại.
 
-> 💡 Ghi nhớ: print debugging giống như rải vụn bánh mì dọc đường đi của chương trình. Nhìn vụn bánh, bạn biết chương trình đã đi qua đâu và mang theo giá trị gì.
+> Ghi nhớ: print debugging giống như rải vụn bánh mì dọc đường đi của chương trình. Nhìn vụn bánh, bạn biết chương trình đã đi qua đâu và mang theo giá trị gì.
 
 ---
 
@@ -163,7 +163,7 @@ Chú ý nhỏ: ở Java và Go, vì `tong` là số nguyên nên phải đổi s
 4. Chương trình dừng tại chấm đỏ. Nhìn panel **Variables** bên trái để xem giá trị mọi biến.
 5. Dùng các nút trên thanh điều khiển: Continue (F5), Step Over (F10), Step Into (F11), Step Out (Shift+F11).
 
-> ⚠️ Lỗi người mới hay gặp: nhấn F5 nhưng chương trình chạy vù một cái rồi kết thúc — vì **quên đặt breakpoint**. Không có barie thì xe chạy thẳng về đích! Hãy đặt breakpoint TRƯỚC khi nhấn F5.
+> Lỗi người mới hay gặp: nhấn F5 nhưng chương trình chạy vù một cái rồi kết thúc — vì **quên đặt breakpoint**. Không có barie thì xe chạy thẳng về đích! Hãy đặt breakpoint TRƯỚC khi nhấn F5.
 
 ### Khi nào dùng print, khi nào dùng debugger?
 
@@ -293,11 +293,11 @@ Mỗi dòng trong stack trace ánh xạ tới một mắt xích trong chuỗi g�
     <rect x="470" y="130" width="234" height="60" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="484" y="150" font-size="13" font-weight="700" fill="currentColor">tinh_toan()</text>
     <text x="484" y="168" font-size="10.5" fill="currentColor" opacity="0.75">truyền số 0 → chia(10, 0)</text>
-    <text x="484" y="183" font-size="10.5" font-weight="700" fill="#f59e0b">⚠ nguồn của lỗi gốc</text>
+    <text x="484" y="183" font-size="10.5" font-weight="700" fill="#f59e0b">nguồn của lỗi gốc</text>
     <rect x="470" y="212" width="234" height="60" rx="8" fill="#ef4444" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="484" y="232" font-size="13" font-weight="700" fill="currentColor">chia()</text>
     <text x="484" y="250" font-size="10.5" fill="currentColor" opacity="0.75">a / b với b = 0</text>
-    <text x="484" y="265" font-size="10.5" font-weight="700" fill="#ef4444">💥 nơi chương trình sập</text>
+    <text x="484" y="265" font-size="10.5" font-weight="700" fill="#ef4444">nơi chương trình sập</text>
   </g>
   <g stroke="currentColor" stroke-opacity="0.5" fill="none">
     <defs>
@@ -319,9 +319,9 @@ Mỗi dòng trong stack trace ánh xạ tới một mắt xích trong chuỗi g�
 2. **Tìm dòng đầu tiên trỏ vào FILE CỦA BẠN** — stack trace có thể dài hàng chục dòng, nhiều dòng trỏ vào code của thư viện. Lỗi gần như luôn nằm ở dòng thuộc file bạn viết.
 3. **Đọc chuỗi gọi hàm như chuỗi domino**: `main` gọi `tinh_toan`, `tinh_toan` gọi `chia`, và `chia` là nơi đổ vỡ. Domino đổ ở `chia`, nhưng nguyên nhân (số 0) được truyền từ `tinh_toan` — nơi sập KHÔNG phải lúc nào cũng là nơi có lỗi gốc!
 
-> 💡 Ghi nhớ: Stack trace không phải để dọa bạn — nó là **bản đồ kho báu** chỉ thẳng tới chỗ lỗi. Người mới bỏ chạy khi thấy nó; người giỏi đọc nó đầu tiên.
+> Ghi nhớ: Stack trace không phải để dọa bạn — nó là **bản đồ kho báu** chỉ thẳng tới chỗ lỗi. Người mới bỏ chạy khi thấy nó; người giỏi đọc nó đầu tiên.
 
-> ⚠️ Lỗi người mới hay gặp: copy nguyên cả stack trace lên Google/AI mà chưa đọc dòng tên lỗi. Hãy tự đọc trước — rất nhiều lỗi (sai tên biến, thiếu dấu, index vượt quá) bạn tự sửa được trong 30 giây.
+> Lỗi người mới hay gặp: copy nguyên cả stack trace lên Google/AI mà chưa đọc dòng tên lỗi. Hãy tự đọc trước — rất nhiều lỗi (sai tên biến, thiếu dấu, index vượt quá) bạn tự sửa được trong 30 giây.
 
 ---
 
@@ -338,7 +338,7 @@ Tại sao hiệu quả? Vì khi đọc thầm, não bạn "đọc cái bạn TƯ
 3. Đi qua **từng dòng**: "Dòng này tôi khai báo biến tổng bằng 0. Dòng này tôi lặp qua từng phần tử. Dòng này tôi... ơ, tại sao tôi lại so sánh bằng `=` thay vì `==`?"
 4. Khi phát hiện điểm bạn không giải thích trôi chảy được — **đó chính là nghi phạm số một**.
 
-> 💡 Ghi nhớ: Bạn cũng có thể "rubber duck" với bạn bè. Hiện tượng nổi tiếng: vừa mô tả xong vấn đề cho đồng nghiệp thì tự nhiên thấy đáp án — chưa cần người kia nói gì. Việc DIỄN ĐẠT vấn đề chính là một nửa lời giải.
+> Ghi nhớ: Bạn cũng có thể "rubber duck" với bạn bè. Hiện tượng nổi tiếng: vừa mô tả xong vấn đề cho đồng nghiệp thì tự nhiên thấy đáp án — chưa cần người kia nói gì. Việc DIỄN ĐẠT vấn đề chính là một nửa lời giải.
 
 ---
 
@@ -359,7 +359,7 @@ Vào làm thực tế, bạn sẽ hiếm khi viết chương trình từ con s�
 
 ### Những điều KHÔNG nên làm
 
-> ⚠️ Lỗi người mới hay gặp:
+> Lỗi người mới hay gặp:
 > - **Đọc tuần tự từ dòng 1 đến hết file** như đọc tiểu thuyết — code không chạy theo thứ tự viết, hãy đi theo luồng thực thi.
 > - **Cố hiểu 100% trước khi làm gì đó** — chấp nhận hiểu 70% rồi vừa làm vừa hiểu thêm. Lập trình viên kỳ cựu cũng không hiểu hết codebase lớn.
 > - **Vội phán "code này viết dở, đập đi viết lại"** — code cũ thường chứa những bài học xương máu (xử lý trường hợp đặc biệt) mà bạn chưa thấy. Hiểu trước, sửa sau.
@@ -392,9 +392,9 @@ AI có thể đóng cả hai vai. Bạn chọn vai nào cho nó.
 2. **Khi nhận trả lời từ AI, phải hiểu được từng dòng.** Nếu AI đưa đoạn code có thứ bạn không hiểu, hỏi tiếp: "Dòng này nghĩa là gì?" cho đến khi hiểu hết.
 3. **Gõ lại bằng tay và tự biến tấu**, đừng copy-paste. Sau đó **đóng AI lại và tự viết lại từ đầu** — nếu không viết lại được, tức là bạn chưa học được gì, chỉ mượn tạm.
 
-> 💡 Ghi nhớ: AI cũng **có thể sai** — và sai rất tự tin (hiện tượng gọi là "hallucination" — ảo giác, tức AI bịa ra thông tin nghe rất thuyết phục). Luôn chạy thử và kiểm chứng code AI đưa. Kỹ năng đọc code + debug bạn học trong bài này chính là "máy phát hiện nói dối" của bạn đối với AI.
+> Ghi nhớ: AI cũng **có thể sai** — và sai rất tự tin (hiện tượng gọi là "hallucination" — ảo giác, tức AI bịa ra thông tin nghe rất thuyết phục). Luôn chạy thử và kiểm chứng code AI đưa. Kỹ năng đọc code + debug bạn học trong bài này chính là "máy phát hiện nói dối" của bạn đối với AI.
 
-> ⚠️ Lỗi người mới hay gặp: dùng AI làm hết bài tập trong khóa học, cảm thấy mình tiến bộ thần tốc... cho đến buổi phỏng vấn xin việc đầu tiên, khi phải tự viết một vòng lặp đơn giản trên bảng trắng. Đừng để "cảm giác hiểu" đánh lừa — thước đo thật là **tự làm được khi không có trợ giúp**.
+> Lỗi người mới hay gặp: dùng AI làm hết bài tập trong khóa học, cảm thấy mình tiến bộ thần tốc... cho đến buổi phỏng vấn xin việc đầu tiên, khi phải tự viết một vòng lặp đơn giản trên bảng trắng. Đừng để "cảm giác hiểu" đánh lừa — thước đo thật là **tự làm được khi không có trợ giúp**.
 
 ---
 

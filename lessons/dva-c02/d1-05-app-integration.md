@@ -14,7 +14,7 @@ Truoc khi chon service, hieu hai mo hinh giao tiep:
 | Khi producer nhanh, consumer cham | Producer bi cho/timeout | Buffer trong queue, consumer xu ly dan |
 | Loi 1 thanh phan | Lan truyen ngay | Co the retry, isolate |
 
-> 💡 Meo thi: Tu khoa "decouple", "buffer", "smooth out traffic spike", "absorb bursts" → gan nhu chac chan la **SQS**. Tu khoa "fan-out", "notify multiple subscribers" → **SNS**.
+> Meo thi: Tu khoa "decouple", "buffer", "smooth out traffic spike", "absorb bursts" → gan nhu chac chan la **SQS**. Tu khoa "fan-out", "notify multiple subscribers" → **SNS**.
 
 Bon dich vu messaging chinh co topology khac han nhau — nhin tong the truoc khi di vao tung cai:
 
@@ -127,9 +127,9 @@ Fully managed message queue. Mo hinh **point-to-point**: 1 message → 1 consume
 | Ten queue | tuy y | **phai ket thuc bang `.fifo`** |
 | Truong bat buoc | khong | `MessageGroupId`; `MessageDeduplicationId` (hoac content-based dedup) |
 
-> ⚠️ Bay: De rat hay hoi "can dam bao thu tu xu ly transaction va khong xu ly trung lap" → chon **FIFO**. Nhung neu them "throughput rat cao, hang chuc nghin msg/s, thu tu khong quan trong" → **Standard**. Dung chon FIFO chi vi nghe "an toan hon".
+> Bay: De rat hay hoi "can dam bao thu tu xu ly transaction va khong xu ly trung lap" → chon **FIFO**. Nhung neu them "throughput rat cao, hang chuc nghin msg/s, thu tu khong quan trong" → **Standard**. Dung chon FIFO chi vi nghe "an toan hon".
 
-> ⚠️ Bay: Standard la at-least-once → **consumer phai idempotent**. Cau hoi kieu "lam sao tranh xu ly trung" co the tra loi bang "thiet ke idempotent" thay vi doi sang FIFO.
+> Bay: Standard la at-least-once → **consumer phai idempotent**. Cau hoi kieu "lam sao tranh xu ly trung" co the tra loi bang "thiet ke idempotent" thay vi doi sang FIFO.
 
 ### Visibility Timeout
 
@@ -185,14 +185,14 @@ for msg in resp.get('Messages', []):
     sqs.delete_message(QueueUrl=url, ReceiptHandle=msg['ReceiptHandle'])
 ```
 
-> 💡 Meo thi: Message bi xu ly nhieu lan / Lambda chay lap → kiem tra **visibility timeout co lon hon thoi gian xu ly khong**. Quy tac: voi Lambda trigger, dat visibility timeout **>= 6x function timeout**.
+> Meo thi: Message bi xu ly nhieu lan / Lambda chay lap → kiem tra **visibility timeout co lon hon thoi gian xu ly khong**. Quy tac: voi Lambda trigger, dat visibility timeout **>= 6x function timeout**.
 
 ### Long Polling vs Short Polling
 
 - **Short polling** (`WaitTimeSeconds=0`): tra ve ngay, co the rong du queue co message → nhieu empty response → ton tien API call.
 - **Long polling** (`WaitTimeSeconds` 1-20): cho den khi co message hoac het thoi gian → giam empty response, giam chi phi, giam latency.
 
-> 💡 Meo thi: "Giam so empty receives / giam chi phi polling" → bat **long polling** (set `ReceiveMessageWaitTimeSeconds` len 20). Day la cau hoi gan nhu chac chan xuat hien.
+> Meo thi: "Giam so empty receives / giam chi phi polling" → bat **long polling** (set `ReceiveMessageWaitTimeSeconds` len 20). Day la cau hoi gan nhu chac chan xuat hien.
 
 ### Dead-Letter Queue (DLQ)
 
@@ -205,7 +205,7 @@ Queue phu nhan cac message bi **xu ly that bai nhieu lan**. Cau hinh `maxReceive
 }
 ```
 
-> ⚠️ Bay: DLQ cua FIFO queue cung phai la FIFO; DLQ cua Standard phai la Standard. Khong tron loai.
+> Bay: DLQ cua FIFO queue cung phai la FIFO; DLQ cua Standard phai la Standard. Khong tron loai.
 
 ### SQS + Lambda Trigger
 
@@ -215,7 +215,7 @@ Lambda co the poll SQS tu dong (event source mapping). Lambda batch nhieu messag
 - **Batch window** va **batch size** dieu chinh do gom message.
 - Co the dung `ReportBatchItemFailures` de chi tra lai message loi thay vi ca batch.
 
-> 💡 Meo thi: Voi SQS+Lambda, dat DLQ tren **SQS queue**, khong phai tren Lambda. (Lambda async invoke moi co DLQ/destination rieng — dung nham la bay.)
+> Meo thi: Voi SQS+Lambda, dat DLQ tren **SQS queue**, khong phai tren Lambda. (Lambda async invoke moi co DLQ/destination rieng — dung nham la bay.)
 
 ## 3. Amazon SNS
 
@@ -235,9 +235,9 @@ Producer -> SNS -+--> SQS (Analytics)
                  +--> SQS (Email notify)
 ```
 
-> 💡 Meo thi: "1 su kien can kich hoat NHIEU xu ly doc lap, moi he thong co buffer/retry rieng" → **SNS + SQS fan-out**. Day la cau tra loi dung gan nhu mac dinh khi de mo ta nhieu consumer + can do ben.
+> Meo thi: "1 su kien can kich hoat NHIEU xu ly doc lap, moi he thong co buffer/retry rieng" → **SNS + SQS fan-out**. Day la cau tra loi dung gan nhu mac dinh khi de mo ta nhieu consumer + can do ben.
 
-> ⚠️ Bay: Chi SNS (khong SQS dem) → neu subscriber down, message mat. Can do ben/retry → them SQS giua.
+> Bay: Chi SNS (khong SQS dem) → neu subscriber down, message mat. Can do ben/retry → them SQS giua.
 
 ### Message Filtering
 
@@ -269,7 +269,7 @@ rate(5 minutes)
 cron(0 12 * * ? *)   # 12:00 UTC moi ngay
 ```
 
-> 💡 Meo thi: "Chay task theo lich (cron/rate)" → **EventBridge Scheduler/rule**. Day la cach serverless thay cho cron server.
+> Meo thi: "Chay task theo lich (cron/rate)" → **EventBridge Scheduler/rule**. Day la cach serverless thay cho cron server.
 
 ### SNS vs EventBridge (bay quan trong)
 
@@ -281,7 +281,7 @@ cron(0 12 * * ? *)   # 12:00 UTC moi ngay
 | Throughput/latency | Cao, latency cuc thap | Hoi cao hon SNS |
 | SaaS / schedule / replay | Khong | Co |
 
-> ⚠️ Bay: "Fan-out toi rat nhieu subscriber, throughput cao, latency thap" → **SNS**. "Dinh tuyen theo noi dung event tu nhieu nguon (gom SaaS), tich hop AWS service, theo lich" → **EventBridge**. De thich nhap nhem hai cai nay.
+> Bay: "Fan-out toi rat nhieu subscriber, throughput cao, latency thap" → **SNS**. "Dinh tuyen theo noi dung event tu nhieu nguon (gom SaaS), tich hop AWS service, theo lich" → **EventBridge**. De thich nhap nhem hai cai nay.
 
 ## 5. AWS Step Functions
 
@@ -330,9 +330,9 @@ Orchestration: dieu phoi workflow nhieu buoc bang **state machine** dinh nghia b
 | Use case | Workflow dai, co buoc cho duyet/human, ETL dai | Streaming, IoT, xu ly event tan suat cao, ngan |
 | History | Co lich su chi tiet | Khong (chi qua CloudWatch Logs) |
 
-> 💡 Meo thi: Workflow **dai, can audit/retry chi tiet, co human approval** → **Standard**. Workflow **ngan (<5 phut), throughput cuc cao, event-processing** → **Express**.
+> Meo thi: Workflow **dai, can audit/retry chi tiet, co human approval** → **Standard**. Workflow **ngan (<5 phut), throughput cuc cao, event-processing** → **Express**.
 
-> ⚠️ Bay: Step Functions ho tro **callback pattern** (`waitForTaskToken`) de cho he thong ngoai/nguoi dung phan hoi roi tiep tuc — rat hay hoi cho "human approval step".
+> Bay: Step Functions ho tro **callback pattern** (`waitForTaskToken`) de cho he thong ngoai/nguoi dung phan hoi roi tiep tuc — rat hay hoi cho "human approval step".
 
 ## 6. Choreography vs Orchestration (bay khai niem)
 
@@ -386,7 +386,7 @@ Orchestration: dieu phoi workflow nhieu buoc bang **state machine** dinh nghia b
   <text x="517" y="262" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">khong co dieu khien trung tam</text>
 </svg>
 
-> ⚠️ Bay: "Can dieu phoi nhieu buoc co thu tu, retry, branching, theo doi trang thai tung buoc" → **orchestration = Step Functions**. "Cac service phan ung doc lap voi event, khong co dieu khien trung tam" → **choreography = EventBridge/SNS/SQS**. De rat thich dat tinh huong roi hoi chon cai nao.
+> Bay: "Can dieu phoi nhieu buoc co thu tu, retry, branching, theo doi trang thai tung buoc" → **orchestration = Step Functions**. "Cac service phan ung doc lap voi event, khong co dieu khien trung tam" → **choreography = EventBridge/SNS/SQS**. De rat thich dat tinh huong roi hoi chon cai nao.
 
 ## 7. Amazon Kinesis Data Streams
 
@@ -456,9 +456,9 @@ Cho **real-time streaming** du lieu lon (clickstream, log, IoT, metrics). Khac S
 | Luu giu | 24h–365 ngay | Toi da 14 ngay, xoa khi consume |
 | Use case | Analytics real-time, replay, fan-in stream lon | Decouple, task queue, buffer |
 
-> ⚠️ Bay: "Nhieu ung dung cung phan tich 1 luong du lieu real-time, can replay" → **Kinesis Data Streams**, KHONG phai SQS. SQS xoa message sau khi xu ly, khong replay duoc.
+> Bay: "Nhieu ung dung cung phan tich 1 luong du lieu real-time, can replay" → **Kinesis Data Streams**, KHONG phai SQS. SQS xoa message sau khi xu ly, khong replay duoc.
 
-> 💡 Meo thi: "ProvisionedThroughputExceeded" → shard bi nong (hot shard) do partition key phan bo lech → can tang shard hoac chon partition key tot hon.
+> Meo thi: "ProvisionedThroughputExceeded" → shard bi nong (hot shard) do partition key phan bo lech → can tang shard hoac chon partition key tot hon.
 
 ## 8. Bang chon nhanh dich vu (on tap)
 
@@ -483,7 +483,7 @@ Cho **real-time streaming** du lieu lon (clickstream, log, IoT, metrics). Khac S
 - Giai thich code va de xuat best practice (idempotency, error handling, batch).
 - Security scan: phat hien hardcoded credential, IAM qua rong.
 
-> 💡 Meo thi: Trong de DVA-C02, neu xuat hien "AI coding companion / suggest code in IDE / scan for vulnerabilities" → **Amazon Q Developer**. Nho moc: no thay the ten cu **CodeWhisperer**.
+> Meo thi: Trong de DVA-C02, neu xuat hien "AI coding companion / suggest code in IDE / scan for vulnerabilities" → **Amazon Q Developer**. Nho moc: no thay the ten cu **CodeWhisperer**.
 
 ## Tom tat trong tam thi
 

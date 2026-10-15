@@ -25,7 +25,7 @@ Cố ý **bỏ ngoài phạm vi**, nói ra để định nghĩa rõ bài toán c
 - **Chỉ đường, ETA** — bài *Google Maps*, cần graph đường đi và shortest path.
 - **Tìm kiếm toàn văn** — cần search engine; ta chỉ lọc theo thuộc tính có cấu trúc.
 
-> 💡 **Nguyên tắc**: câu đầu tiên đáng nói trong buổi phỏng vấn bài này là *"dữ liệu business gần như tĩnh"*. Nó không phải một chi tiết nhỏ — nó là **giả định cho phép toàn bộ kiến trúc read-optimized** ở §9 tồn tại. Nếu người phỏng vấn đổi giả định đó, bạn phải đổi thiết kế, và nói ra được điều đó là ghi điểm.
+> **Nguyên tắc**: câu đầu tiên đáng nói trong buổi phỏng vấn bài này là *"dữ liệu business gần như tĩnh"*. Nó không phải một chi tiết nhỏ — nó là **giả định cho phép toàn bộ kiến trúc read-optimized** ở §9 tồn tại. Nếu người phỏng vấn đổi giả định đó, bạn phải đổi thiết kế, và nói ra được điều đó là ghi điểm.
 
 ### Non-functional
 
@@ -49,7 +49,7 @@ Cố ý **bỏ ngoài phạm vi**, nói ra để định nghĩa rõ bài toán c
 - Vị trí business KHÔNG thay đổi (trừ khi chủ sửa)
 ```
 
-> 💡 Mỗi giả định ở trên đều sẽ **nhân lên thành một con số** ở phần sau. "200K bản ghi đổi/ngày" không phải chi tiết trang trí — nó là thứ sẽ quyết định ta chọn **rebuild index theo batch** hay **cập nhật incremental**, ở §10.
+> Mỗi giả định ở trên đều sẽ **nhân lên thành một con số** ở phần sau. "200K bản ghi đổi/ngày" không phải chi tiết trang trí — nó là thứ sẽ quyết định ta chọn **rebuild index theo batch** hay **cập nhật incremental**, ở §10.
 
 ---
 
@@ -68,7 +68,7 @@ Peak (giờ trưa + giờ tan tầm, hệ số 3–5×):
 
 Con số này **nhỏ đến mức đáng ngạc nhiên** — và đó chính là thông tin quan trọng nhất của cả phần estimation. 5.800 QPS là thứ mà **vài chục máy** xử lý được nếu mỗi request chỉ là tra cứu trong RAM. Nói cách khác:
 
-> ⚠️ **Bài này không nghẽn ở throughput mà ở chỗ "một request tốn bao nhiêu việc".** Nếu mỗi request phải quét 20 triệu row MySQL thì 5.800 QPS là thảm hoạ; nếu mỗi request là 9 lệnh `SMEMBERS` trên Redis thì đó là chuyện vặt. **Chênh lệch không nằm ở số máy mà ở cấu trúc dữ liệu** — nên đây là "bài thuật toán", không phải "bài scale".
+> **Bài này không nghẽn ở throughput mà ở chỗ "một request tốn bao nhiêu việc".** Nếu mỗi request phải quét 20 triệu row MySQL thì 5.800 QPS là thảm hoạ; nếu mỗi request là 9 lệnh `SMEMBERS` trên Redis thì đó là chuyện vặt. **Chênh lệch không nằm ở số máy mà ở cấu trúc dữ liệu** — nên đây là "bài thuật toán", không phải "bài scale".
 
 ### QPS xem chi tiết business
 
@@ -86,7 +86,7 @@ Bảng geospatial index (geohash → business_id):
   ≈ 200M × 24 B ≈ 5 GB
 ```
 
-> 💡 **Con số 5 GB này là cú twist của bài.** Toàn bộ index không gian của **200 triệu business trên cả hành tinh** nhét vừa RAM của **một** máy tầm trung. Điều đó có nghĩa là: bạn **không cần shard** geospatial index vì lý do dung lượng. Nếu có shard thì là vì **throughput** hoặc **blast radius**, không phải vì hết chỗ. Nói được câu này trong phỏng vấn sẽ tách bạn khỏi những người phản xạ "dữ liệu lớn → shard".
+> **Con số 5 GB này là cú twist của bài.** Toàn bộ index không gian của **200 triệu business trên cả hành tinh** nhét vừa RAM của **một** máy tầm trung. Điều đó có nghĩa là: bạn **không cần shard** geospatial index vì lý do dung lượng. Nếu có shard thì là vì **throughput** hoặc **blast radius**, không phải vì hết chỗ. Nói được câu này trong phỏng vấn sẽ tách bạn khỏi những người phản xạ "dữ liệu lớn → shard".
 
 Kể cả tính overhead của Redis, con số thực tế vẫn trong khoảng **10–20 GB** — vừa một instance `cache.r7g.xlarge`.
 
@@ -152,7 +152,7 @@ Ba điểm nhỏ nhưng có chủ đích: **`radius` có trần cứng** (20 km)
 | `PUT /v1/businesses/{id}` | Cập nhật | 2,3/s |
 | `DELETE /v1/businesses/{id}` | Xoá (soft delete) | Rất hiếm |
 
-> 💡 **Vì sao tách hai service?** Không phải vì "microservice cho hiện đại", mà vì hai hồ sơ vận hành khác hẳn: LBS **stateless, CPU-bound, đọc thuần**, giữ index trong RAM nên cần nhiều RAM và có thể **khởi động chậm**; Business Service có **ghi**, cần auth/validate/transaction nhưng khởi động trong một giây. Nhốt chung một deployment là tự trói tay mình.
+> **Vì sao tách hai service?** Không phải vì "microservice cho hiện đại", mà vì hai hồ sơ vận hành khác hẳn: LBS **stateless, CPU-bound, đọc thuần**, giữ index trong RAM nên cần nhiều RAM và có thể **khởi động chậm**; Business Service có **ghi**, cần auth/validate/transaction nhưng khởi động trong một giây. Nhốt chung một deployment là tự trói tay mình.
 
 ---
 
@@ -224,7 +224,7 @@ Hai bảng, và **sự tách biệt của chúng chính là ý tưởng chính**
 | `9q9hvu` | 112 |
 | `9q9hvv` | 891 |
 
-> ⚠️ **Bẫy schema hay gặp**: nhiều người thiết kế bảng này thành `geohash → danh sách business_id` gộp chung một dòng (một cột JSON array). Đừng. Một dòng cho một cặp `(geohash, business_id)` với **composite primary key `(geohash, business_id)`** thì: thêm/xoá một business là một câu INSERT/DELETE không cần đọc-sửa-ghi, không có race condition khi hai business cùng ô được thêm đồng thời, và không có dòng nào phình to bất thường ở khu trung tâm. Gộp thành JSON array thì mỗi lần cập nhật phải đọc cả mảng, sửa, ghi lại — kinh điển của lost update.
+> **Bẫy schema hay gặp**: nhiều người thiết kế bảng này thành `geohash → danh sách business_id` gộp chung một dòng (một cột JSON array). Đừng. Một dòng cho một cặp `(geohash, business_id)` với **composite primary key `(geohash, business_id)`** thì: thêm/xoá một business là một câu INSERT/DELETE không cần đọc-sửa-ghi, không có race condition khi hai business cùng ô được thêm đồng thời, và không có dòng nào phình to bất thường ở khu trung tâm. Gộp thành JSON array thì mỗi lần cập nhật phải đọc cả mảng, sửa, ghi lại — kinh điển của lost update.
 
 Còn một lựa chọn nhỏ nhưng đáng nói: lưu **một dòng với geohash dài nhất** rồi truy vấn bằng prefix scan (`LIKE '9q9hvu%'`), hay lưu **nhiều dòng, mỗi độ dài ta thật sự truy vấn một dòng** (4, 5, 6)? Cách sau tốn gấp ba chỗ (vẫn chỉ ~15 GB) nhưng biến mọi truy vấn thành **lookup chính xác theo khoá**, không range scan — và với Redis thì đó là lựa chọn tự nhiên. Đọc gấp 7.700 lần ghi, dung lượng rẻ như cho, nên cách sau thắng.
 
@@ -287,7 +287,7 @@ Database có ba lựa chọn, và cả ba đều tệ:
 | **Index intersection / bitmap AND** | Đọc cả hai index, dựng hai bitmap 20 triệu phần tử, AND lại | Phải **materialise hai tập khổng lồ trong RAM** trước khi biết giao của chúng bé tí. Tốn RAM, tốn CPU, và vẫn phải đọc đủ hai index. |
 | **Composite index `(lat, lng)`** | B-tree sắp theo lat trước, lng sau | **Không giúp gì.** Sau khi chọn dải lat, các hàng trong dải đó được sắp theo lng nhưng **rải rác thành 20 triệu đoạn nhỏ**, không phải một đoạn liên tục. Composite index chỉ hiệu quả khi cột đầu là **đẳng thức**, còn ở đây nó là **khoảng**. |
 
-> ⚠️ **Bẫy phỏng vấn kinh điển**: ứng viên đề xuất composite index `(latitude, longitude)` và tưởng đã giải xong. Hãy nhớ quy tắc *leftmost prefix*: khi cột bên trái của composite index là một **range predicate** (`BETWEEN`), thì mọi cột bên phải **mất khả năng seek** — chúng chỉ còn dùng được để lọc sau khi đã quét. Đó chính xác là tình huống ở đây, và nó cũng là lý do một câu trả lời nghe rất chuyên nghiệp lại hoàn toàn sai.
+> **Bẫy phỏng vấn kinh điển**: ứng viên đề xuất composite index `(latitude, longitude)` và tưởng đã giải xong. Hãy nhớ quy tắc *leftmost prefix*: khi cột bên trái của composite index là một **range predicate** (`BETWEEN`), thì mọi cột bên phải **mất khả năng seek** — chúng chỉ còn dùng được để lọc sau khi đã quét. Đó chính xác là tình huống ở đây, và nó cũng là lý do một câu trả lời nghe rất chuyên nghiệp lại hoàn toàn sai.
 
 ### Phát biểu vấn đề ở dạng trừu tượng
 
@@ -334,7 +334,7 @@ Nó **hỏng vì phân bố business cực kỳ không đều**: một ô 1 km²
 
 Hậu quả, cả hai đều nghiêm trọng: **ô dày đặc** — truy vấn ở Manhattan trả 6.000 business từ một ô, tải hết về, tính khoảng cách, sắp xếp rồi vứt đi 5.980 cái, tức latency tệ nhất ở đúng chỗ đông người dùng nhất; và **ô rỗng** — 70% bề mặt Trái Đất là nước, phần lớn ô trống rỗng nhưng vẫn chiếm không gian khoá.
 
-> 💡 **Bài học tổng quát vượt ra ngoài bài này**: một sơ đồ phân hoạch **đều về mặt hình học** hầu như không bao giờ **đều về mặt tải**, bởi vì dữ liệu thực tế không bao giờ phân bố đều. Đây chính xác là cùng một sai lầm với "hash mod N" trong consistent hashing, với "shard theo khoảng id" trong database, và với "chia đều partition" trong Kafka. Cái ta muốn là chia đều **công việc**, không phải chia đều **không gian**.
+> **Bài học tổng quát vượt ra ngoài bài này**: một sơ đồ phân hoạch **đều về mặt hình học** hầu như không bao giờ **đều về mặt tải**, bởi vì dữ liệu thực tế không bao giờ phân bố đều. Đây chính xác là cùng một sai lầm với "hash mod N" trong consistent hashing, với "shard theo khoảng id" trong database, và với "chia đều partition" trong Kafka. Cái ta muốn là chia đều **công việc**, không phải chia đều **không gian**.
 
 Nhưng even grid không vô dụng — nó là **nền tảng khái niệm** của geohash. Geohash chính là even grid được làm **phân cấp**: thay vì một kích thước ô duy nhất, bạn có 12 mức từ 5.000 km xuống 3,7 cm và **chọn mức phù hợp với truy vấn**. Vẫn không thích ứng theo mật độ dữ liệu, nhưng có một núm vặn.
 
@@ -343,7 +343,7 @@ Nhưng even grid không vô dụng — nó là **nền tảng khái niệm** c�
 | Tiêu chí | **Even grid** | **Geohash** | **Quadtree** | **Google S2** |
 |---|---|---|---|---|
 | **Bản chất** | Lưới cố định một mức | Lưới phân cấp 12 mức, mã hoá thành chuỗi | Cây chia bốn theo dữ liệu | Hilbert curve trên mặt cầu, 30 mức |
-| **Thích ứng mật độ** | ❌ Không | ❌ Không (nhưng chọn được mức) | ✅ Có, tự động | ✅ Có (chọn min/max level) |
+| **Thích ứng mật độ** | ✗ Không | ✗ Không (nhưng chọn được mức) | ✓ Có, tự động | ✓ Có (chọn min/max level) |
 | **Cần build cấu trúc?** | Không | **Không** — chỉ là phép tính | **Có** — dựng cây lúc khởi động | Có, nếu dùng region cover |
 | **Cập nhật một điểm** | O(1), tầm thường | **O(1), tầm thường** | Phức tạp — có thể phải tách/gộp node | Trung bình |
 | **Lưu ở đâu** | KV store bất kỳ | **KV store bất kỳ, chuỗi làm khoá** | **Bắt buộc in-memory** trên mỗi server | KV store (cell id là int64) |
@@ -355,7 +355,7 @@ Nhưng even grid không vô dụng — nó là **nền tảng khái niệm** c�
 
 Còn một cái thứ năm đáng nhắc tên: **H3 của Uber** — lưới **lục giác** phân cấp, nơi cả sáu hàng xóm đều cách tâm một khoảng bằng nhau (ô vuông thì hàng xóm cạnh cách `d`, hàng xóm chéo cách `d√2`). Uber dùng nó cho mô hình cung-cầu chứ không phải tìm kiếm bán kính.
 
-> 💡 **Cách chọn trong 10 giây, dùng được trong phỏng vấn**: dữ liệu **gần như tĩnh + truy vấn bán kính cố định** → **geohash** (đơn giản nhất mà đủ dùng, và đơn giản là một tính năng). Cần **k gần nhất** với k nhỏ và mật độ rất lệch → **quadtree**. Cần **geofence hình dạng bất kỳ** (vùng giao hàng, khu vực cấm, biên giới hành chính) → **S2**. Dữ liệu **chuyển động liên tục** → geohash hoặc S2, **tuyệt đối không quadtree** (lý do ở §8.3).
+> **Cách chọn trong 10 giây, dùng được trong phỏng vấn**: dữ liệu **gần như tĩnh + truy vấn bán kính cố định** → **geohash** (đơn giản nhất mà đủ dùng, và đơn giản là một tính năng). Cần **k gần nhất** với k nhỏ và mật độ rất lệch → **quadtree**. Cần **geofence hình dạng bất kỳ** (vùng giao hàng, khu vực cấm, biên giới hành chính) → **S2**. Dữ liệu **chuyển động liên tục** → geohash hoặc S2, **tuyệt đối không quadtree** (lý do ở §8.3).
 
 ---
 
@@ -410,7 +410,7 @@ Bán kính 2 km   → geohash length 5 (4,9 km)
 Bán kính 20 km  → geohash length 4 (39 km × 19,5 km)
 ```
 
-> ⚠️ Bảng trên là **ở xích đạo**. Ô geohash **hẹp dần theo chiều ngang khi tiến về hai cực** vì kinh tuyến hội tụ — ở vĩ độ 60° một độ kinh độ chỉ còn bằng một nửa chiều dài ở xích đạo. Với Việt Nam (8°–23° N) sai lệch không đáng kể (~3%), nhưng nếu hệ thống của bạn phục vụ Bắc Âu hay Canada, hãy hiệu chỉnh bằng `cos(latitude)` khi chọn độ dài, hoặc chuyển hẳn sang S2 (chia trên mặt cầu nên không có vấn đề này).
+> Bảng trên là **ở xích đạo**. Ô geohash **hẹp dần theo chiều ngang khi tiến về hai cực** vì kinh tuyến hội tụ — ở vĩ độ 60° một độ kinh độ chỉ còn bằng một nửa chiều dài ở xích đạo. Với Việt Nam (8°–23° N) sai lệch không đáng kể (~3%), nhưng nếu hệ thống của bạn phục vụ Bắc Âu hay Canada, hãy hiệu chỉnh bằng `cos(latitude)` khi chọn độ dài, hoặc chuyển hẳn sang S2 (chia trên mặt cầu nên không có vấn đề này).
 
 ### 7.3 Tính chất vàng: tiền tố chung = gần nhau
 
@@ -447,7 +447,7 @@ Có hai dạng hỏng, dạng thứ hai nghiêm trọng hơn nhiều:
    Tiền tố chung của geohash: 0 ký tự
 ```
 
-> ⚠️ **Đây là hệ quả không thể tránh, không phải bug.** Ranh giới của phép chia đôi đầu tiên là một **vết cắt toàn cầu**, và mọi cặp điểm nằm hai bên nó đều bị đẩy ra hai đầu của không gian mã. Mọi space-filling curve đều có các vết cắt như vậy; Hilbert curve của S2 ít và ngắn hơn nên đỡ hơn, nhưng không miễn nhiễm.
+> **Đây là hệ quả không thể tránh, không phải bug.** Ranh giới của phép chia đôi đầu tiên là một **vết cắt toàn cầu**, và mọi cặp điểm nằm hai bên nó đều bị đẩy ra hai đầu của không gian mã. Mọi space-filling curve đều có các vết cắt như vậy; Hilbert curve của S2 ít và ngắn hơn nên đỡ hơn, nhưng không miễn nhiễm.
 
 **Cách giải: luôn tìm cả 8 ô lân cận.** Thay vì hỏi một ô, ta hỏi **9 ô** — ô của mình cộng 8 ô bao quanh:
 
@@ -455,7 +455,7 @@ Có hai dạng hỏng, dạng thứ hai nghiêm trọng hơn nhiều:
     ┌────────┬────────┬────────┐
     │   NW   │    N   │   NE   │
     ├────────┼────────┼────────┤
-    │   W    │  ★ ME  │    E   │     ★ = ô chứa người dùng
+    │   W    │  * ME  │    E   │     * = ô chứa người dùng
     ├────────┼────────┼────────┤
     │   SW   │    S   │   SE   │
     └────────┴────────┴────────┘
@@ -478,7 +478,7 @@ Bắt đầu: geohash length 6  →  9 ô × 1,2 km    →  chỉ được 2 k�
 Chưa đủ 20  →  bỏ 1 ký tự:
          geohash length 5  →  9 ô × 4,9 km    →  được 8 kết quả
 Chưa đủ 20  →  bỏ tiếp:
-         geohash length 4  →  9 ô × 39 km     →  được 47 kết quả  ✓ dừng
+         geohash length 4  →  9 ô × 39 km     →  được 47 kết quả  ✓  dừng
 ```
 
 Cụ thể bằng mã giả:
@@ -501,7 +501,7 @@ def search_nearby(lat, lng, radius_m, want=20, min_len=4):
 
 Ba chi tiết hay bị bỏ qua: (1) **phải có `min_len`** — không có nó, một người dùng giữa Thái Bình Dương sẽ khiến vòng lặp leo lên length 1, tức **đọc một phần tư Trái Đất vào RAM**, và một truy vấn duy nhất hạ cả server; (2) **nới bán kính cùng với nới ô**, nếu không bạn đọc thêm rất nhiều rồi lọc bỏ hết mà vẫn 2 kết quả — và phải **nói rõ trên UI** rằng đây là kết quả trong 2 km chứ không phải 500 m; (3) **tối đa 2–3 lần nới**, vì mỗi bậc tăng khối lượng ~32 lần.
 
-> 💡 Nhìn kỹ thì hai cái bẫy của geohash là **hai đầu của cùng một cái cân**: ô nhỏ → nhanh nhưng dễ thiếu kết quả và dễ sót ở rìa; ô lớn → đủ kết quả nhưng phải lọc bỏ nhiều, tốn băng thông và CPU. Đó chính xác là điểm yếu mà quadtree ra đời để giải: **đừng chọn một kích thước ô, hãy để dữ liệu tự chọn.**
+> Nhìn kỹ thì hai cái bẫy của geohash là **hai đầu của cùng một cái cân**: ô nhỏ → nhanh nhưng dễ thiếu kết quả và dễ sót ở rìa; ô lớn → đủ kết quả nhưng phải lọc bỏ nhiều, tốn băng thông và CPU. Đó chính xác là điểm yếu mà quadtree ra đời để giải: **đừng chọn một kích thước ô, hãy để dữ liệu tự chọn.**
 
 ### 7.6 Code: geohash encode
 
@@ -555,7 +555,7 @@ GEOHASH businesses:restaurant "b_8fa21"              # → "9q8yyw8x7h" (cache k
 GEODIST businesses:restaurant "b_8fa21" "b_1c3d9" m  # khoảng cách
 ```
 
-> 💡 **`GEOSEARCH` đã tự xử lý boundary issue cho bạn.** Nó không chỉ đọc ô của bạn — nó tính ra các ô cần thiết (gồm cả lân cận), quét chúng, rồi lọc bằng khoảng cách thật. Đây là lý do nên dùng nó thay vì tự cài: bạn được cả thuật toán lẫn phần vá lỗ hổng, và kết quả **chính xác** chứ không phải xấp xỉ.
+> **`GEOSEARCH` đã tự xử lý boundary issue cho bạn.** Nó không chỉ đọc ô của bạn — nó tính ra các ô cần thiết (gồm cả lân cận), quét chúng, rồi lọc bằng khoảng cách thật. Đây là lý do nên dùng nó thay vì tự cài: bạn được cả thuật toán lẫn phần vá lỗ hổng, và kết quả **chính xác** chứ không phải xấp xỉ.
 
 Hai điều cần biết trước khi tin tưởng hoàn toàn vào Redis GEO:
 
@@ -628,7 +628,7 @@ Tệ hơn: **mỗi LBS server giữ một bản cây độc lập.** 50 server l
 
 **Thời gian build**: dựng cây là O(n log n) với n = 200 triệu. Trong thực tế, **vài phút** (3–10 phút tuỳ máy và tuỳ có phải đọc từ DB không). Và đây là hệ quả vận hành đau nhất:
 
-> ⚠️ **Trong lúc dựng cây, server KHÔNG phục vụ được traffic.** Với 50 server, nếu bạn deploy một lượt thì hệ thống chết 5 phút. Nên: **rolling deploy từng nhóm nhỏ** (10–20% một lượt), health check phải **đợi cây build xong** mới báo healthy, và load balancer phải tôn trọng health check đó. Nếu instance khởi động trong autoscaling group, nhớ đặt **health check grace period đủ dài** (ví dụ 600 s) — nếu không, ASG sẽ thấy instance "unhealthy" sau 5 phút, giết nó, tạo cái mới, cái mới lại build 5 phút, và bạn có một vòng lặp giết instance vĩnh viễn. Đây là sự cố kinh điển và rất khó chẩn đoán nếu chưa gặp bao giờ.
+> **Trong lúc dựng cây, server KHÔNG phục vụ được traffic.** Với 50 server, nếu bạn deploy một lượt thì hệ thống chết 5 phút. Nên: **rolling deploy từng nhóm nhỏ** (10–20% một lượt), health check phải **đợi cây build xong** mới báo healthy, và load balancer phải tôn trọng health check đó. Nếu instance khởi động trong autoscaling group, nhớ đặt **health check grace period đủ dài** (ví dụ 600 s) — nếu không, ASG sẽ thấy instance "unhealthy" sau 5 phút, giết nó, tạo cái mới, cái mới lại build 5 phút, và bạn có một vòng lặp giết instance vĩnh viễn. Đây là sự cố kinh điển và rất khó chẩn đoán nếu chưa gặp bao giờ.
 
 Hai chiến lược cập nhật, không có cái nào hoàn hảo:
 
@@ -666,7 +666,7 @@ Vì sao điều đó quý? Vì câu hỏi **"điểm P có nằm trong vùng R k
 
 **Nhược điểm của S2**: phức tạp hơn hẳn, nhiều khái niệm phải học (`S2CellId`, `S2Cap`, `S2RegionCoverer`), và **không nên tự cài** — dùng thư viện chính thức. Với bài toán chỉ cần "trong bán kính r", toàn bộ sự tinh vi đó không mang lại lợi ích tương xứng.
 
-> 💡 **Quy tắc chọn, nói thẳng**: geohash cho **bán kính**, S2 cho **vùng**. Nếu yêu cầu của bạn chỉ có chữ "trong bán kính X mét", geohash là đủ và đơn giản hơn nhiều. Ngay khi xuất hiện chữ "trong khu vực này" với khu vực là một hình dạng thật — quận, phường, vùng giao hàng, biên giới — thì S2 là công cụ đúng và mọi thứ khác đều là chắp vá.
+> **Quy tắc chọn, nói thẳng**: geohash cho **bán kính**, S2 cho **vùng**. Nếu yêu cầu của bạn chỉ có chữ "trong bán kính X mét", geohash là đủ và đơn giản hơn nhiều. Ngay khi xuất hiện chữ "trong khu vực này" với khu vực là một hình dạng thật — quận, phường, vùng giao hàng, biên giới — thì S2 là công cụ đúng và mọi thứ khác đều là chắp vá.
 
 ---
 
@@ -680,7 +680,7 @@ Nhắc lại hai con số: geo index ~**5–15 GB**, đọc:ghi ~**7.700:1**. D�
 
 Shard theo prefix geohash có một tính chất rất tiện: **9 ô lân cận trong cùng một truy vấn hầu như luôn chung prefix ngắn**, nên rơi vào cùng shard. Một truy vấn = một shard, không scatter-gather.
 
-> ⚠️ Nhưng nó cũng kế thừa đúng bệnh của even grid: **shard chứa Manhattan sẽ nóng gấp hàng trăm lần shard chứa Thái Bình Dương.** Cách chữa: đừng `hash % N`, hãy dùng **bảng ánh xạ prefix → shard** do bạn kiểm soát, để có thể tách riêng các prefix nóng ra shard riêng và di chuyển chúng khi cần. Và với dữ liệu nhỏ thế này, cách chữa rẻ nhất vẫn là: **đừng shard, nhân bản toàn bộ** — mọi replica đều có Manhattan.
+> Nhưng nó cũng kế thừa đúng bệnh của even grid: **shard chứa Manhattan sẽ nóng gấp hàng trăm lần shard chứa Thái Bình Dương.** Cách chữa: đừng `hash % N`, hãy dùng **bảng ánh xạ prefix → shard** do bạn kiểm soát, để có thể tách riêng các prefix nóng ra shard riêng và di chuyển chúng khi cần. Và với dữ liệu nhỏ thế này, cách chữa rẻ nhất vẫn là: **đừng shard, nhân bản toàn bộ** — mọi replica đều có Manhattan.
 
 ### 9.2 Cache: vì sao khoá phải là geohash chứ không phải toạ độ
 
@@ -697,7 +697,7 @@ Dùng **geohash làm khoá** thì cả ba vấn đề biến mất cùng lúc, v
 
 Hit rate thực tế rất cao vì truy cập theo **luật lũy thừa**: cache 100K ô nóng nhất (vài trăm MB) phục vụ được 90%+ truy vấn.
 
-> 💡 Hãy nhìn kỹ điều vừa xảy ra: geohash không chỉ là **cấu trúc index**, nó là **đơn vị lượng tử hoá** của toàn hệ thống — cache key, partition key, đơn vị invalidate, chiều để gom log và metric. Một khái niệm dùng lại ở năm tầng: dấu hiệu của một trừu tượng đúng.
+> Hãy nhìn kỹ điều vừa xảy ra: geohash không chỉ là **cấu trúc index**, nó là **đơn vị lượng tử hoá** của toàn hệ thống — cache key, partition key, đơn vị invalidate, chiều để gom log và metric. Một khái niệm dùng lại ở năm tầng: dấu hiệu của một trừu tượng đúng.
 
 ### 9.3 Lọc theo thuộc tính: ba cách, chọn cái nào
 
@@ -727,11 +727,11 @@ score = w1 × f_distance(d)      # giảm dần theo khoảng cách, ví dụ 1/
 
 Dùng `f_distance` **giảm dần phi tuyến** thay vì `-d` tuyến tính: chênh lệch 50 m với 200 m rất quan trọng với người đi bộ, còn 4 km với 4,2 km thì gần như vô nghĩa.
 
-> 💡 **Xếp hạng luôn diễn ra SAU khi đã lọc theo không gian**, trên một tập nhỏ (vài chục tới vài nghìn) — đừng để nó lẫn vào bước index. Index trả lời "cái nào gần"; xếp hạng trả lời "cái nào đáng hiện trước".
+> **Xếp hạng luôn diễn ra SAU khi đã lọc theo không gian**, trên một tập nhỏ (vài chục tới vài nghìn) — đừng để nó lẫn vào bước index. Index trả lời "cái nào gần"; xếp hạng trả lời "cái nào đáng hiện trước".
 
 **Phân trang** — và đây là chỗ dễ sai nhất của cả bài:
 
-> ⚠️ **`OFFSET` là sai trong bài này.** Giữa trang 1 và trang 2, người dùng **đã di chuyển**. Toạ độ đổi → tập ô đổi → thứ tự đổi. `OFFSET 20` trên một tập kết quả *khác* sẽ cho bạn kết quả trùng lặp và kết quả bị nhảy cóc. Đây không phải trường hợp hiếm — nó là **trường hợp bình thường**, vì người dùng của bạn đang đi trên đường.
+> **`OFFSET` là sai trong bài này.** Giữa trang 1 và trang 2, người dùng **đã di chuyển**. Toạ độ đổi → tập ô đổi → thứ tự đổi. `OFFSET 20` trên một tập kết quả *khác* sẽ cho bạn kết quả trùng lặp và kết quả bị nhảy cóc. Đây không phải trường hợp hiếm — nó là **trường hợp bình thường**, vì người dùng của bạn đang đi trên đường.
 
 Ba cách, theo thứ tự đáng dùng: **(1) neo truy vấn** — trang đầu trả về một `search_token` chứa toạ độ gốc, bán kính, bộ lọc và con trỏ; các trang sau dùng lại **đúng toạ độ gốc** đó, nhất quán và đúng kỳ vọng người dùng (họ đang duyệt kết quả của *chỗ họ đã tìm*). **(2) cursor theo khoảng cách** (`WHERE distance > last_distance`), nhớ tie-break bằng `business_id`. **(3) không phân trang** — trả 50 kết quả, client tự cuộn; với UI bản đồ đây thường là câu trả lời đúng.
 
@@ -774,7 +774,7 @@ Chủ cửa hàng sửa business
 
 **Mẹo hoán đổi nguyên tử với Redis**: đừng ghi đè key đang phục vụ. Dựng index mới vào một namespace mới (`geo:v42:*`), kiểm tra sanity (số lượng key, vài truy vấn mẫu so với bản cũ), rồi đổi một con trỏ duy nhất (`current_index_version = 42`). Rollback là đổi con trỏ về 41 — **một thao tác, tức thì**. Bản cũ giữ thêm một chu kỳ rồi mới xoá.
 
-> ⚠️ **Bước sanity check không phải thủ tục hình thức.** Nếu job batch gặp lỗi và dựng ra một index có 3 triệu business thay vì 200 triệu, hoán đổi mù quáng sẽ biến "hệ thống hơi trễ" thành "hệ thống trả về rỗng cho 98% truy vấn". Quy tắc đơn giản và hiệu quả: **từ chối hoán đổi nếu số lượng lệch quá ±5% so với bản hiện tại**, và bắt con người xác nhận.
+> **Bước sanity check không phải thủ tục hình thức.** Nếu job batch gặp lỗi và dựng ra một index có 3 triệu business thay vì 200 triệu, hoán đổi mù quáng sẽ biến "hệ thống hơi trễ" thành "hệ thống trả về rỗng cho 98% truy vấn". Quy tắc đơn giản và hiệu quả: **từ chối hoán đổi nếu số lượng lệch quá ±5% so với bản hiện tại**, và bắt con người xác nhận.
 
 ---
 
@@ -791,20 +791,20 @@ Xếp theo thứ tự thực tế sẽ gặp:
 | 3 | **Job batch rebuild** | Đọc 200M row làm DB replica chậm hẳn trong lúc chạy | Chạy trên **replica riêng cho analytics**, vào giờ thấp điểm, đọc theo lô kèm throttle |
 | 4 | **CPU tính khoảng cách** | Haversine cho 6.000 điểm × 5.800 QPS | Lọc bằng **bounding box rẻ** trước rồi mới Haversine; so sánh bình phương khoảng cách để khỏi tính `sqrt` |
 
-> 💡 Điểm số 2 đáng nhấn mạnh vì nó là **tối ưu hiệu quả nhất của cả bài mà ít người nghĩ tới**: nếu geo index lưu sẵn `(business_id, lat, lng, type, rating)` thay vì chỉ `business_id`, thì LBS **lọc và sắp xếp xong toàn bộ mà không cần đọc bảng business một lần nào**. Chỉ 20 kết quả cuối cùng mới cần đọc metadata đầy đủ. Đánh đổi: index phình từ 5 GB lên ~15 GB (vẫn vừa RAM), và phải cập nhật index khi rating đổi. Gần như luôn xứng đáng.
+> Điểm số 2 đáng nhấn mạnh vì nó là **tối ưu hiệu quả nhất của cả bài mà ít người nghĩ tới**: nếu geo index lưu sẵn `(business_id, lat, lng, type, rating)` thay vì chỉ `business_id`, thì LBS **lọc và sắp xếp xong toàn bộ mà không cần đọc bảng business một lần nào**. Chỉ 20 kết quả cuối cùng mới cần đọc metadata đầy đủ. Đánh đổi: index phình từ 5 GB lên ~15 GB (vẫn vừa RAM), và phải cập nhật index khi rating đổi. Gần như luôn xứng đáng.
 
 ### 11.2 Component chết thì sao
 
 | Chết cái gì | Hậu quả | Hành vi mong muốn |
 |---|---|---|
-| **Một LBS instance** | Không ảnh hưởng — stateless | LB loại nó ra, instance mới lên. ⚠️ Nếu dùng quadtree, **grace period phải dài hơn thời gian build** (§8.3) |
+| **Một LBS instance** | Không ảnh hưởng — stateless | LB loại nó ra, instance mới lên. Nếu dùng quadtree, **grace period phải dài hơn thời gian build** (§8.3) |
 | **Redis primary / replica** | Mất replica = mất một phần công suất đọc; mất primary = **không ghi được index nhưng đọc vẫn chạy** | Automatic failover; giữ dư ít nhất một replica. Vài phút không cập nhật index thì người dùng cuối không nhận ra |
 | **Toàn bộ Redis** | Search chết | **Fallback: truy vấn bounding box trên DB replica** — chậm (vài trăm ms), nhưng *có kết quả* còn hơn trang lỗi. Kèm cầu dao (circuit breaker) để đường fallback không giết luôn DB |
 | **DB primary** | Không CRUD được business | Search và xem chi tiết **vẫn hoạt động đầy đủ** (đọc từ replica + cache). Chỉ chủ cửa hàng bị ảnh hưởng — đúng người ít quan trọng nhất trong 3 nhóm |
 | **Index Updater / queue** | Index đứng yên, dần cũ | Cảnh báo theo **tuổi của dữ liệu index**, không phải theo độ dài hàng đợi. Batch rebuild sẽ tự chữa (§10.2) |
 | **Một AZ / region** | Mất một phần công suất | LBS stateless + index nhỏ ⇒ **mỗi region giữ một bản đầy đủ**. Đây là món quà của việc index chỉ 5 GB: replication toàn cầu gần như miễn phí |
 
-> 💡 **Tính chất đẹp nhất của kiến trúc này**: cả hệ thống đọc **suy giảm từ từ chứ không sụp đổ**, vì mọi tầng đều là bản sao chỉ-đọc của dữ liệu ít đổi. Không có tầng nào giữ trạng thái mà mất là mất luôn. Trạng thái duy nhất phải-đúng nằm ở DB primary — nơi chịu **2,3 ghi mỗi giây**. Nói câu đó ra trong phỏng vấn cho thấy bạn đã nhìn ra hình dạng thật của bài toán.
+> **Tính chất đẹp nhất của kiến trúc này**: cả hệ thống đọc **suy giảm từ từ chứ không sụp đổ**, vì mọi tầng đều là bản sao chỉ-đọc của dữ liệu ít đổi. Không có tầng nào giữ trạng thái mà mất là mất luôn. Trạng thái duy nhất phải-đúng nằm ở DB primary — nơi chịu **2,3 ghi mỗi giây**. Nói câu đó ra trong phỏng vấn cho thấy bạn đã nhìn ra hình dạng thật của bài toán.
 
 ### 11.3 Quyền riêng tư — đừng bỏ qua
 
@@ -816,17 +816,17 @@ Toạ độ người dùng là dữ liệu nhạy cảm theo GDPR/CCPA và bài 
 
 | Thành phần thiết kế | Dịch vụ AWS | Vì sao hợp |
 |---|---|---|
-| Geo index chính (geohash → business ids) | **ElastiCache for Redis/Valkey**, dùng `GEOADD` / `GEOSEARCH` / `GEOHASH` | Đúng cấu trúc cần: sorted set với score là geohash 52-bit. Cluster mode cho throughput, read replica cho đọc. 5–15 GB vừa một `cache.r7g.xlarge`. ⚠️ `GEOSEARCH ... COUNT n` vẫn quét hết ô — dùng `ANY` nếu chấp nhận kết quả không sắp xếp tuyệt đối |
+| Geo index chính (geohash → business ids) | **ElastiCache for Redis/Valkey**, dùng `GEOADD` / `GEOSEARCH` / `GEOHASH` | Đúng cấu trúc cần: sorted set với score là geohash 52-bit. Cluster mode cho throughput, read replica cho đọc. 5–15 GB vừa một `cache.r7g.xlarge`. `GEOSEARCH ... COUNT n` vẫn quét hết ô — dùng `ANY` nếu chấp nhận kết quả không sắp xếp tuyệt đối |
 | Bảng `business` (nguồn sự thật) | **Aurora PostgreSQL** (hoặc MySQL) primary + nhiều read replica | 200 GB, ghi 2,3/s, đọc rất nhiều → đúng bài của primary-replica. Aurora tách compute/storage nên thêm replica nhanh và rẻ |
-| Truy vấn không gian **ngay trong SQL** | **Aurora PostgreSQL + PostGIS**, `GEOGRAPHY` + **GiST index**, `ST_DWithin` | Khi bạn không muốn vận hành thêm index riêng. GiST là R-tree — giải đúng bài toán hai chiều ở §5 bên trong database. ⚠️ Chậm hơn Redis vài lần và tốn kết nối DB, nhưng **là fallback tuyệt vời** khi Redis chết (§11.2) và là lựa chọn đúng ở quy mô nhỏ hơn |
-| Geo index dạng serverless, không phải vận hành node | **DynamoDB** với **geohash prefix làm partition key**, `business_id` làm sort key | Mẫu này chính là thứ thư viện `dynamodb-geo` cài đặt: lưu `hashKey` (geohash cắt ngắn) + `geohash` đầy đủ, truy vấn bằng `Query` trên vài ô lân cận rồi lọc. Scale tự động, trả tiền theo request, không có node để patch. ⚠️ Coi chừng **hot partition** ở các ô đô thị — cắt prefix dài hơn cho vùng đông |
-| Lọc nhiều điều kiện + tìm kiếm văn bản + geo | **OpenSearch Service**, field `geo_point`, query `geo_distance` / `geo_bounding_box` / `geo_shape` | Khi yêu cầu vượt quá "trong bán kính r": lọc theo rating, loại, giá, **cộng** tìm theo tên. `geo_shape` làm được cả geofence đa giác. ⚠️ Nặng hơn Redis nhiều, chỉ dùng khi thật sự cần |
+| Truy vấn không gian **ngay trong SQL** | **Aurora PostgreSQL + PostGIS**, `GEOGRAPHY` + **GiST index**, `ST_DWithin` | Khi bạn không muốn vận hành thêm index riêng. GiST là R-tree — giải đúng bài toán hai chiều ở §5 bên trong database. Chậm hơn Redis vài lần và tốn kết nối DB, nhưng **là fallback tuyệt vời** khi Redis chết (§11.2) và là lựa chọn đúng ở quy mô nhỏ hơn |
+| Geo index dạng serverless, không phải vận hành node | **DynamoDB** với **geohash prefix làm partition key**, `business_id` làm sort key | Mẫu này chính là thứ thư viện `dynamodb-geo` cài đặt: lưu `hashKey` (geohash cắt ngắn) + `geohash` đầy đủ, truy vấn bằng `Query` trên vài ô lân cận rồi lọc. Scale tự động, trả tiền theo request, không có node để patch. Coi chừng **hot partition** ở các ô đô thị — cắt prefix dài hơn cho vùng đông |
+| Lọc nhiều điều kiện + tìm kiếm văn bản + geo | **OpenSearch Service**, field `geo_point`, query `geo_distance` / `geo_bounding_box` / `geo_shape` | Khi yêu cầu vượt quá "trong bán kính r": lọc theo rating, loại, giá, **cộng** tìm theo tên. `geo_shape` làm được cả geofence đa giác. Nặng hơn Redis nhiều, chỉ dùng khi thật sự cần |
 | Geocoding địa chỉ → toạ độ, bản đồ, geofence sẵn | **Amazon Location Service** | Đường ghi cần biến "123 Lê Lợi, Q1" thành `(lat, lng)`; tự làm thì vừa sai vừa tốn. Có sẵn Tracker + Geofence Collection nếu sau này cần vị trí động |
-| Tầng API cho LBS | **API Gateway + Lambda** (khởi đầu) hoặc **ALB + ECS/EKS** (quy mô lớn) | Lambda hợp vì LBS stateless và tải lệch theo giờ. ⚠️ Nhưng nếu dùng **quadtree in-memory** thì Lambda **sai hoàn toàn** — không thể build cây 5 phút trong một hàm chạy tối đa 15 phút và mất state giữa các lần gọi. Quadtree ⇒ ECS/EKS với instance sống lâu |
+| Tầng API cho LBS | **API Gateway + Lambda** (khởi đầu) hoặc **ALB + ECS/EKS** (quy mô lớn) | Lambda hợp vì LBS stateless và tải lệch theo giờ. Nhưng nếu dùng **quadtree in-memory** thì Lambda **sai hoàn toàn** — không thể build cây 5 phút trong một hàm chạy tối đa 15 phút và mất state giữa các lần gọi. Quadtree ⇒ ECS/EKS với instance sống lâu |
 | Sự kiện "business đã đổi" → cập nhật index | **DynamoDB Streams** / **Aurora → DMS** → **EventBridge** → **SQS** → Lambda | Đường incremental ở §10.2. SQS + DLQ để sự kiện lỗi không biến mất âm thầm. Ở 2,3 sự kiện/giây thì chi phí gần bằng không |
-| Batch rebuild index hằng đêm | **AWS Glue** / **EMR**, hoặc đơn giản là **ECS scheduled task** | Đọc 200M row và dựng index là việc theo lô. ⚠️ Đọc từ **replica riêng cho analytics**, đừng đụng replica đang phục vụ người dùng |
+| Batch rebuild index hằng đêm | **AWS Glue** / **EMR**, hoặc đơn giản là **ECS scheduled task** | Đọc 200M row và dựng index là việc theo lô. Đọc từ **replica riêng cho analytics**, đừng đụng replica đang phục vụ người dùng |
 | Cache metadata business | **ElastiCache**, hoặc **DAX** nếu nguồn là DynamoDB | 12.000 QPS đọc chi tiết với phân bố lũy thừa ⇒ hit rate rất cao. DAX là cache write-through gắn sẵn, không phải viết code |
-| Ảnh và tài nguyên tĩnh của business | **S3 + CloudFront** | Ảnh **không bao giờ** đi qua application server. CloudFront cũng cache luôn response của các truy vấn geo phổ biến ở tầng biên — ⚠️ nhưng TTL phải ngắn (30–60 s) và **đừng cache theo toạ độ thô**; chuẩn hoá về geohash ở CloudFront Function trước khi làm cache key |
+| Ảnh và tài nguyên tĩnh của business | **S3 + CloudFront** | Ảnh **không bao giờ** đi qua application server. CloudFront cũng cache luôn response của các truy vấn geo phổ biến ở tầng biên — nhưng TTL phải ngắn (30–60 s) và **đừng cache theo toạ độ thô**; chuẩn hoá về geohash ở CloudFront Function trước khi làm cache key |
 | Phục vụ nhiều region, giảm latency | **Aurora Global Database** + **ElastiCache Global Datastore**; **Route 53 latency-based routing** | Index chỉ 5–15 GB nên **mỗi region giữ một bản đầy đủ** — replication toàn cầu gần như miễn phí. Đây là hệ quả trực tiếp của con số ở §2 |
 | Bảo vệ trước truy vấn phá hoại | **WAF rate limiting** + validate tham số ở API Gateway | Chặn `radius` quá lớn và chặn quét toạ độ hàng loạt (cào toàn bộ business bằng cách quét lưới) — mối đe doạ thật với dữ liệu địa điểm |
 | Quyền riêng tư vị trí | **CloudWatch Logs** với log đã làm tròn về geohash; **KMS**; **S3 lifecycle** để tự xoá | §11.3. Đặt TTL/lifecycle ngay từ ngày đầu; sau này đi gỡ ra thì đã muộn |
@@ -863,4 +863,4 @@ Toạ độ người dùng là dữ liệu nhạy cảm theo GDPR/CCPA và bài 
 
 11. **Đóng lại bằng chiến lược cập nhật index**: *"Incremental cho trải nghiệm, batch rebuild hằng đêm cho tính đúng đắn. Batch không cần biết incremental đã làm gì — nó dựng lại từ nguồn sự thật nên mọi drift bị xoá sạch. Hoán đổi bằng cách đổi một con trỏ version, và từ chối hoán đổi nếu số lượng lệch quá 5%."*
 
-> 💡 **Nguyên tắc cuối**: cả bài này là một câu duy nhất được đẩy tới cùng — **tìm kiếm không gian là bài toán hai chiều, còn mọi công cụ index ta có đều là một chiều; nên hãy ánh xạ 2D xuống 1D sao cho giữ được tính gần nhau, rồi vá chỗ ánh xạ bị hở bằng cách hỏi thêm các ô lân cận.** Geohash, quadtree, S2 chỉ là ba cách trả lời cùng một câu hỏi đó với ba mức đánh đổi khác nhau giữa **đơn giản** và **thích ứng**. Và ở bài toán cụ thể này — dữ liệu tĩnh, truy vấn bán kính, đọc gấp 7.700 lần ghi — **cái đơn giản nhất thắng**, bởi vì mọi lợi thế của cái phức tạp đều đang giải những vấn đề mà bài toán này không có.
+> **Nguyên tắc cuối**: cả bài này là một câu duy nhất được đẩy tới cùng — **tìm kiếm không gian là bài toán hai chiều, còn mọi công cụ index ta có đều là một chiều; nên hãy ánh xạ 2D xuống 1D sao cho giữ được tính gần nhau, rồi vá chỗ ánh xạ bị hở bằng cách hỏi thêm các ô lân cận.** Geohash, quadtree, S2 chỉ là ba cách trả lời cùng một câu hỏi đó với ba mức đánh đổi khác nhau giữa **đơn giản** và **thích ứng**. Và ở bài toán cụ thể này — dữ liệu tĩnh, truy vấn bán kính, đọc gấp 7.700 lần ghi — **cái đơn giản nhất thắng**, bởi vì mọi lợi thế của cái phức tạp đều đang giải những vấn đề mà bài toán này không có.

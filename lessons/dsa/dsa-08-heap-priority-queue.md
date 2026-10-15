@@ -100,7 +100,7 @@ Khi đọc đề, hãy bật "radar heap" nếu thấy bất kỳ tín hiệu n�
 | "khoảng cách / chi phí nhỏ nhất tiếp theo" (Dijkstra, Prim) | Priority queue chọn cạnh rẻ nhất |
 | "lập lịch theo độ ưu tiên / thời gian gần nhất" | Priority queue |
 
-> 💡 Ghi nhớ: Cụm từ **"k lớn nhất/nhỏ nhất"**, **"k frequent"**, và **"luôn lấy min/max khi dữ liệu đang đổi"** là ba lá cờ đỏ kinh điển báo hiệu heap. Thấy chúng, đừng sort vội — hỏi xem heap có rẻ hơn không.
+> Ghi nhớ: Cụm từ **"k lớn nhất/nhỏ nhất"**, **"k frequent"**, và **"luôn lấy min/max khi dữ liệu đang đổi"** là ba lá cờ đỏ kinh điển báo hiệu heap. Thấy chúng, đừng sort vội — hỏi xem heap có rẻ hơn không.
 
 ### 1.3. Priority queue — heap mang áo ADT
 
@@ -233,7 +233,7 @@ priority_queue<int, vector<int>, greater<int>> h(data.begin(), data.end());
 priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
 ```
 
-> ⚠️ Bẫy: `heapify` (xây heap từ mảng có sẵn) là **O(n)**, *không* phải O(n log n). Còn push từng phần tử một là O(n log n). Nếu đã có sẵn cả mảng, luôn dùng `heapify`/`heap.Init`/constructor — đừng push vòng lặp.
+> Bẫy: `heapify` (xây heap từ mảng có sẵn) là **O(n)**, *không* phải O(n log n). Còn push từng phần tử một là O(n log n). Nếu đã có sẵn cả mảng, luôn dùng `heapify`/`heap.Init`/constructor — đừng push vòng lặp.
 
 ### 2.1. Vì sao push/pop là O(log n) và heapify là O(n)?
 
@@ -317,7 +317,7 @@ priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
 | **K-th smallest trong cấu trúc đã sắp** | "phần tử thứ k nhỏ nhất trong matrix/2 mảng đã sort" | Min-heap mở rộng dần "biên giới" | O(k log n) | Kth Smallest in a Sorted Matrix (378) |
 | **Greedy + "rẻ nhất tiếp theo"** | "chọn cạnh/chi phí nhỏ nhất kế tiếp" | Priority queue (Dijkstra/Prim/Huffman) | O(E log V) | Network Delay Time (743) |
 
-> 💡 Ghi nhớ về kích thước heap (cực kỳ hay sai): muốn **k phần tử LỚN nhất**, dùng **MIN-heap size k** (gốc là cái nhỏ nhất trong nhóm k → phần tử mới lớn hơn gốc thì đẩy gốc ra). Muốn **k phần tử NHỎ nhất**, dùng **MAX-heap size k**. Nhớ ngược lại là lỗi kinh điển.
+> Ghi nhớ về kích thước heap (cực kỳ hay sai): muốn **k phần tử LỚN nhất**, dùng **MIN-heap size k** (gốc là cái nhỏ nhất trong nhóm k → phần tử mới lớn hơn gốc thì đẩy gốc ra). Muốn **k phần tử NHỎ nhất**, dùng **MAX-heap size k**. Nhớ ngược lại là lỗi kinh điển.
 
 ## 4. Bài mẫu giải chi tiết
 
@@ -664,7 +664,7 @@ public:
 - **Dữ liệu streaming / online**, hoặc `k ≪ n` và cần bộ nhớ nhỏ → **heap** size k. Đây là default an toàn trong phỏng vấn.
 - **Có sẵn toàn bộ mảng trong RAM, chỉ cần top-k một lần, muốn nhanh nhất trung bình** → **quickselect** (Hoare's selection): phân hoạch quanh pivot như quicksort nhưng chỉ đệ quy vào *một* nửa, đạt O(n) kỳ vọng.
 
-> 💡 Ghi nhớ: Câu trả lời "ăn điểm" khi phỏng vấn hỏi Top-K: "Heap cho **O(n log k)** và xử lý được **streaming**; nếu có sẵn cả mảng và muốn nhanh hơn, **quickselect** cho **O(n) trung bình** nhưng xấu nhất O(n²) và không stream được." Nói được trade-off này là khác biệt giữa "biết code" và "hiểu vấn đề".
+> Ghi nhớ: Câu trả lời "ăn điểm" khi phỏng vấn hỏi Top-K: "Heap cho **O(n log k)** và xử lý được **streaming**; nếu có sẵn cả mảng và muốn nhanh hơn, **quickselect** cho **O(n) trung bình** nhưng xấu nhất O(n²) và không stream được." Nói được trade-off này là khác biệt giữa "biết code" và "hiểu vấn đề".
 
 Khung quickselect tham khảo (Kth largest, O(n) trung bình):
 
@@ -785,7 +785,7 @@ int quickselectKthLargest(vector<int>& a, int k) {
 }
 ```
 
-> ⚠️ Bẫy quickselect: **luôn chọn pivot ngẫu nhiên** (hoặc median-of-three). Pivot cố định (luôn lấy phần tử cuối) gặp mảng đã sắp xếp sẽ tụt xuống **O(n²)**. Đây là lỗi khiến nhiều lời giải "đúng" bị TLE.
+> Bẫy quickselect: **luôn chọn pivot ngẫu nhiên** (hoặc median-of-three). Pivot cố định (luôn lấy phần tử cuối) gặp mảng đã sắp xếp sẽ tụt xuống **O(n²)**. Đây là lỗi khiến nhiều lời giải "đúng" bị TLE.
 
 ## 6. Sai lầm thường gặp & cách tránh
 
@@ -801,7 +801,7 @@ int quickselectKthLargest(vector<int>& a, int k) {
 | Pivot cố định trong quickselect | Xấu nhất O(n²), TLE | Pivot ngẫu nhiên |
 | Heap "đẩy hết rồi pop k cái" cho Top-K | O(n log n), không tận dụng heap size k | Giữ heap đúng size k → O(n log k) |
 
-> 💡 Ghi nhớ: 90% lỗi heap trong phỏng vấn chỉ là **chọn sai chiều heap** (min vs max) và **quên giới hạn kích thước**. Trước khi code, viết ra hai câu: "Tôi muốn lấy ra cái gì khi heap đầy?" và "Gốc heap đang là min hay max?". Hai câu này khoá đúng chiều ngay.
+> Ghi nhớ: 90% lỗi heap trong phỏng vấn chỉ là **chọn sai chiều heap** (min vs max) và **quên giới hạn kích thước**. Trước khi code, viết ra hai câu: "Tôi muốn lấy ra cái gì khi heap đầy?" và "Gốc heap đang là min hay max?". Hai câu này khoá đúng chiều ngay.
 
 ## 7. Checklist tự luyện
 
@@ -817,4 +817,4 @@ Luyện theo đúng thứ tự pattern dưới đây để xây phản xạ "th�
 - [ ] **K-th trong cấu trúc đã sắp** — Kth Smallest Element in a Sorted Matrix (378) · *pattern: heap mở rộng biên giới*.
 - [ ] **Greedy + PQ** — Last Stone Weight (1046) khởi động, rồi Network Delay Time (743) · *pattern: priority queue / Dijkstra*.
 
-> 💡 Ghi nhớ cuối bài: Heap không phải để "sắp xếp" — nó là để **luôn biết cực trị trong khi dữ liệu thay đổi**. Mỗi khi đề có chữ "k", "frequent", hay "liên tục lấy min/max", hãy dừng lại hỏi: *heap size k có rẻ hơn sort không? Có cần stream không? Quickselect có gọn hơn không?* Trả lời được ba câu đó, bạn đã giải đúng hướng trước cả khi viết dòng code đầu tiên.
+> Ghi nhớ cuối bài: Heap không phải để "sắp xếp" — nó là để **luôn biết cực trị trong khi dữ liệu thay đổi**. Mỗi khi đề có chữ "k", "frequent", hay "liên tục lấy min/max", hãy dừng lại hỏi: *heap size k có rẻ hơn sort không? Có cần stream không? Quickselect có gọn hơn không?* Trả lời được ba câu đó, bạn đã giải đúng hướng trước cả khi viết dòng code đầu tiên.

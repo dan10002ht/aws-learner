@@ -49,7 +49,7 @@ Cố ý **để ngoài scope**: search đa tiêu chí toàn quốc ("khách sạ
 
 **Audit được.** Mọi thay đổi tồn kho và mọi giao dịch tiền phải có dấu vết. Khi khách cãi nhau với khách sạn, ta phải trả lời được "lúc 14:32:07 hệ thống đã làm gì".
 
-> 💡 **Nguyên tắc**: Trước khi thiết kế, hãy phát biểu một câu "trục chi phối" của bài. Bài URL shortener: *read-heavy*. Bài ad-click: *write-heavy, cần chính xác gần đúng*. Bài này: **low-throughput, high-contention, correctness-critical, có tiền tham gia**. Mọi quyết định phía sau phải chiếu lại câu này.
+> **Nguyên tắc**: Trước khi thiết kế, hãy phát biểu một câu "trục chi phối" của bài. Bài URL shortener: *read-heavy*. Bài ad-click: *write-heavy, cần chính xác gần đúng*. Bài này: **low-throughput, high-contention, correctness-critical, có tiền tham gia**. Mọi quyết định phía sau phải chiếu lại câu này.
 
 ---
 
@@ -125,9 +125,9 @@ Bảng hotel / room / room_type:
 | Contention tập trung ở vài dòng inventory nóng | **Đây mới là chỗ cần đầu tư**: isolation level, locking strategy, retry. |
 | Mỗi booking có tiền và có bên thứ ba (payment gateway) | Cần idempotency, cần saga/compensation, cần reconciliation. |
 
-> 💡 **Nguyên tắc vàng của bài này**: *Đây là bài toán đúng đắn, không phải bài toán tải.* Hãy nói câu này thành tiếng trong phỏng vấn ngay sau khi tính xong estimation. Nó báo hiệu bạn đọc được bản chất bài toán, và nó cho phép bạn dành 80% thời gian còn lại cho phần thực sự khó (concurrency + distributed transaction) thay vì vẽ mười cái box scale.
+> **Nguyên tắc vàng của bài này**: *Đây là bài toán đúng đắn, không phải bài toán tải.* Hãy nói câu này thành tiếng trong phỏng vấn ngay sau khi tính xong estimation. Nó báo hiệu bạn đọc được bản chất bài toán, và nó cho phép bạn dành 80% thời gian còn lại cho phần thực sự khó (concurrency + distributed transaction) thay vì vẽ mười cái box scale.
 
-> ⚠️ **Bẫy thường gặp**: Ứng viên tính ra 3 TPS rồi... vẫn vẽ Kafka, vẫn shard 16 mảnh, vẫn đặt Redis cluster. Người phỏng vấn sẽ hỏi ngược: "3 TPS thì shard để làm gì?" và bạn không có câu trả lời. Over-engineering khi đã có số trong tay là lỗi nặng hơn under-engineering khi chưa tính.
+> **Bẫy thường gặp**: Ứng viên tính ra 3 TPS rồi... vẫn vẽ Kafka, vẫn shard 16 mảnh, vẫn đặt Redis cluster. Người phỏng vấn sẽ hỏi ngược: "3 TPS thì shard để làm gì?" và bạn không có câu trả lời. Over-engineering khi đã có số trong tay là lỗi nặng hơn under-engineering khi chưa tính.
 
 Có một câu hỏi phụ hay được hỏi sau đó: *"Nếu hệ thống này được dùng cho Booking.com, QPS gấp 1,000 lần thì sao?"* — Ta sẽ trả lời ở phần scale cuối bài. Nhưng thứ tự phải đúng: **thiết kế cho quy mô thật trước, rồi mới nói đường mở rộng**, không phải ngược lại.
 
@@ -215,7 +215,7 @@ Ba điểm đáng bàn:
 
 **DELETE là soft delete.** Không bao giờ xoá thật một reservation — nó là chứng từ tài chính. `status` chuyển sang `CANCELLED`, đồng thời trả tồn kho.
 
-> 💡 **Nguyên tắc**: API của hệ thống có tiền phải **idempotent trên mọi thao tác ghi**. Không chỉ "tạo booking" — cả "huỷ booking", "hoàn tiền", "trừ tồn kho" đều phải chịu được gọi lại hai lần. Mạng sẽ timeout, client sẽ retry, message queue sẽ deliver lại. Đó không phải trường hợp hiếm, đó là mặc định.
+> **Nguyên tắc**: API của hệ thống có tiền phải **idempotent trên mọi thao tác ghi**. Không chỉ "tạo booking" — cả "huỷ booking", "hoàn tiền", "trừ tồn kho" đều phải chịu được gọi lại hai lần. Mạng sẽ timeout, client sẽ retry, message queue sẽ deliver lại. Đó không phải trường hợp hiếm, đó là mặc định.
 
 ---
 
@@ -250,7 +250,7 @@ Nhìn vào đó, ta chọn **relational database (RDBMS)**. Lý do — và hãy 
 | Hot partition cực đoan: một sự kiện bán 100K vé trong 60 giây | Contention trên một dòng vượt khả năng của lock | Chuyển sang mô hình *token/seat pre-materialized* + hàng đợi, xem phần cuối |
 | Chỉ cần đếm tồn kho, không cần join phức tạp | Bảng inventory thực chất là một counter theo key | DynamoDB với **conditional write** — đây là ứng viên thay thế nghiêm túc nhất, bàn kỹ ở phần AWS |
 
-> 💡 **Nguyên tắc**: "Chọn SQL vì cần ACID" là câu trả lời đúng nhưng nông. Câu trả lời sâu là: *"Tôi chọn SQL vì tải thấp nên tôi **được phép** chọn thứ mạnh về đảm bảo; nếu tải cao gấp 1,000 lần, tôi sẽ phải đổi mô hình tồn kho trước khi đổi database."*
+> **Nguyên tắc**: "Chọn SQL vì cần ACID" là câu trả lời đúng nhưng nông. Câu trả lời sâu là: *"Tôi chọn SQL vì tải thấp nên tôi **được phép** chọn thứ mạnh về đảm bảo; nếu tải cao gấp 1,000 lần, tôi sẽ phải đổi mô hình tồn kho trước khi đổi database."*
 
 ### 4.2. Schema ngây thơ (và vì sao nó sai với khách sạn)
 
@@ -280,7 +280,7 @@ Mô hình này **đúng cho Airbnb**, nơi mỗi listing là một thực thể 
 
 **Ba, không mô hình hoá được overbooking.** Nếu tồn kho được suy ra gián tiếp từ "phòng nào chưa bị đặt", thì làm sao bán 110% số phòng? Không có phòng số 201 để bán khi khách sạn chỉ có 200 phòng.
 
-> ⚠️ **Bẫy**: Rất nhiều ứng viên dừng ở schema này và nghĩ đã xong data model. Người phỏng vấn hầu như luôn hỏi tiếp: *"Nếu khách sạn có 200 phòng cùng loại thì sao?"* — và nếu bạn phải sửa lại schema tại chỗ, bạn mất điểm. Hãy chủ động nêu shortcoming này trước khi bị hỏi.
+> **Bẫy**: Rất nhiều ứng viên dừng ở schema này và nghĩ đã xong data model. Người phỏng vấn hầu như luôn hỏi tiếp: *"Nếu khách sạn có 200 phòng cùng loại thì sao?"* — và nếu bạn phải sửa lại schema tại chỗ, bạn mất điểm. Hãy chủ động nêu shortcoming này trước khi bị hỏi.
 
 ### 4.3. Schema cải tiến — trái tim là `room_type_inventory`
 
@@ -307,7 +307,7 @@ Mô hình này **đúng cho Airbnb**, nơi mỗi listing là một thực thể 
            │ 1..n               └──────────────────────────┘
 ┌──────────▼───────────┐
 │ room                 │        ┌──────────────────────────────────┐
-│  id (PK)             │        │ room_type_inventory   ★ TRUNG TÂM│
+│  id (PK)             │        │ room_type_inventory   * TRUNG TÂM│
 │  hotel_id (FK)       │        │  hotel_id                        │
 │  room_type_id (FK)   │        │  room_type_id                    │
 │  room_number "1207"  │        │  date                            │
@@ -356,7 +356,7 @@ Bảng `room_type_inventory` là nhân vật chính. Mỗi dòng trả lời đ�
 
 **Lý do 5 — Giá cũng theo ngày.** Bảng `room_type_rate` có đúng cấu trúc key ấy. Đặt hai bảng cùng grain (hotel, room_type, date) khiến việc join "còn phòng và giá bao nhiêu" trở nên tự nhiên.
 
-> 💡 **Nguyên tắc tổng quát**: Khi một ràng buộc tài nguyên trải trên một chiều liên tục (thời gian, không gian), hãy **rời rạc hoá chiều đó thành các hàng có khoá** rồi áp ràng buộc lên từng hàng. Đây chính là kỹ thuật dùng lại ở đặt vé máy bay (theo chuyến × hạng ghế), đặt lịch phòng họp (theo slot 30 phút), rate limiter (theo window), booking sân bóng (theo khung giờ).
+> **Nguyên tắc tổng quát**: Khi một ràng buộc tài nguyên trải trên một chiều liên tục (thời gian, không gian), hãy **rời rạc hoá chiều đó thành các hàng có khoá** rồi áp ràng buộc lên từng hàng. Đây chính là kỹ thuật dùng lại ở đặt vé máy bay (theo chuyến × hạng ghế), đặt lịch phòng họp (theo slot 30 phút), rate limiter (theo window), booking sân bóng (theo khung giờ).
 
 ### 4.5. Tính số dòng — và vì sao con số này làm ta yên tâm
 
@@ -434,7 +434,7 @@ Ta chọn kiến trúc **microservices**, nhưng với một lưu ý quan trọn
 │  Hotel   │ │  Rate  │ │Reservation│ │ Hotel Mgmt      │
 │ Service  │ │Service │ │ Service   │ │ Service (ops)   │
 │          │ │        │ │ + Inventory│ │                │
-│ tĩnh,    │ │giá theo│ │ ★ ACID     │ │ đóng phòng,     │
+│ tĩnh,    │ │giá theo│ │ * ACID     │ │ đóng phòng,     │
 │cache mạnh│ │ngày    │ │  ở đây     │ │ refund, report  │
 └─┬────────┘ └─┬──────┘ └─┬─────────┘ └───┬─────────────┘
   │            │          │               │
@@ -479,7 +479,7 @@ Vai trò từng thành phần:
 
 Giao tiếp giữa các service: **gRPC** cho lời gọi đồng bộ (nhanh, có schema, code-gen), **event bus** cho luồng bất đồng bộ (gửi email xác nhận, cập nhật read model, đồng bộ cache).
 
-> ⚠️ **Bẫy kiến trúc**: Tách "Inventory Service" riêng khỏi "Reservation Service" nghe rất microservice và rất sạch. Nhưng làm thế là bạn **tự tay biến một local transaction thành một distributed transaction** cho thao tác quan trọng nhất hệ thống. Ta sẽ mổ xẻ cái giá đó ở deep dive 3 — và lý do vì sao thiết kế này cố ý giữ chúng chung một DB.
+> **Bẫy kiến trúc**: Tách "Inventory Service" riêng khỏi "Reservation Service" nghe rất microservice và rất sạch. Nhưng làm thế là bạn **tự tay biến một local transaction thành một distributed transaction** cho thao tác quan trọng nhất hệ thống. Ta sẽ mổ xẻ cái giá đó ở deep dive 3 — và lý do vì sao thiết kế này cố ý giữ chúng chung một DB.
 
 ---
 
@@ -541,8 +541,8 @@ t3                                       BEGIN
 t4                                       SELECT total_reserved
                                            → CŨNG đọc được 99
                                            (snapshot riêng, hợp lệ)
-t5 check: 99 + 1 <= 100  ✓ OK
-t6                                       check: 99 + 1 <= 100  ✓ OK
+t5 check: 99 + 1 <= 100  ✓  OK
+t6                                       check: 99 + 1 <= 100  ✓  OK
 t7 UPDATE SET total_reserved
      = total_reserved + 1
      → 100
@@ -556,14 +556,14 @@ t11                                      INSERT reservation B
 t12                                      COMMIT   ← B cũng thành công!
 
    KẾT QUẢ: total_reserved = 101 > total_inventory = 100
-            Hai reservation, một phòng.  ✗ DOUBLE BOOKING
+            Hai reservation, một phòng.  ✗  DOUBLE BOOKING
 ```
 
 Vấn đề nằm ở khoảng **t2 → t7**: A đọc một giá trị, *quyết định dựa trên giá trị đó*, rồi mới ghi. Trong khoảng thời gian ấy giá trị có thể đã thay đổi. Đây chính là **race condition kinh điển read-modify-write**, hay theo ngôn ngữ ANSI SQL là **lost update** / **write skew** tuỳ biến thể.
 
 Một chi tiết tinh tế đáng nói ra để ghi điểm: ở bước t10, câu `UPDATE ... SET total_reserved = total_reserved + 1` **tự nó là nguyên tử** — PostgreSQL/MySQL sẽ khoá dòng, đọc lại giá trị mới nhất (100), rồi cộng. Nên phép cộng không bị mất. Cái bị mất là **quyết định** ở bước t6, vốn dựa trên dữ liệu đã cũ. Đây là lý do "dùng `SET x = x + 1` là đủ" là câu trả lời sai: nó bảo vệ phép cộng chứ không bảo vệ điều kiện.
 
-> ⚠️ **Bẫy hay gặp**: Ứng viên nói "em bọc trong transaction là xong". Hãy hỏi ngược chính mình: *transaction ở isolation level nào?* Chỉ `SERIALIZABLE` mới ngăn được tình huống trên một cách tự động — và nó ngăn bằng cách **abort một trong hai transaction**, tức bạn vẫn phải viết retry.
+> **Bẫy hay gặp**: Ứng viên nói "em bọc trong transaction là xong". Hãy hỏi ngược chính mình: *transaction ở isolation level nào?* Chỉ `SERIALIZABLE` mới ngăn được tình huống trên một cách tự động — và nó ngăn bằng cách **abort một trong hai transaction**, tức bạn vẫn phải viết retry.
 
 ### 5.3. Còn một dạng double booking nữa: cùng một user bấm hai lần
 
@@ -592,8 +592,8 @@ FROM room_type_inventory
 WHERE hotel_id = :hotelId
   AND room_type_id = :roomTypeId
   AND date >= :startDate AND date < :endDate
-ORDER BY date            -- ★ bắt buộc: xem phần deadlock bên dưới
-FOR UPDATE;              -- ★ khoá độc quyền các dòng này tới khi COMMIT
+ORDER BY date            -- * bắt buộc: xem phần deadlock bên dưới
+FOR UPDATE;              -- * khoá độc quyền các dòng này tới khi COMMIT
 
 -- kiểm tra ở tầng app (giờ đã an toàn: không ai đọc/ghi được các dòng này)
 -- UPDATE
@@ -613,15 +613,15 @@ t2 SELECT ... FOR UPDATE
      → đọc 99
 t3                                        BEGIN
 t4                                        SELECT ... FOR UPDATE
-                                            → ⏳ BLOCKED, chờ A
+                                            → BLOCKED, chờ A
 t5 check 99+1 <= 100 ✓
 t6 UPDATE → 100
 t7 INSERT reservation A
 t8 COMMIT → nhả lock
-t9                                        → ⏵ được chạy tiếp
+t9                                        → được chạy tiếp
                                             → đọc lại: 100 (giá trị MỚI)
 t10                                       check 100+1 <= 100  ✗
-t11                                       ROLLBACK → 409 hết phòng ✓ ĐÚNG
+t11                                       ROLLBACK → 409 hết phòng ✓  ĐÚNG
 ```
 
 Tranh chấp được **tuần tự hoá**. B chờ, rồi đọc dữ liệu mới nhất, rồi từ chối đúng.
@@ -648,7 +648,7 @@ Tranh chấp được **tuần tự hoá**. B chờ, rồi đọc dữ liệu m�
 
 **Nhược điểm 2 — Throughput sụp khi transaction dài.** Lock được giữ **từ lúc `FOR UPDATE` tới lúc `COMMIT`**. Nếu giữa hai mốc đó bạn gọi payment gateway (300ms – 3s, đôi khi timeout 30s), thì bạn đang khoá tồn kho của cả khách sạn trong 3 giây cho **một** khách. 30 người xếp hàng = 90 giây. Người thứ 30 bỏ đi. Tệ hơn, connection pool của DB bị chiếm hết bởi các transaction đang chờ, và **toàn bộ hệ thống** (kể cả các khách sạn khác) đứng hình.
 
-> ⚠️ **Quy tắc sắt**: **Không bao giờ giữ database lock qua một lời gọi mạng ra ngoài.** Không gọi payment, không gọi email, không gọi service khác trong lúc đang giữ `FOR UPDATE`. Nếu luồng nghiệp vụ bắt buộc phải làm thế, đó là dấu hiệu bạn cần tách thành nhiều transaction ngắn + trạng thái trung gian (chính là mô hình **hold** ở deep dive 2).
+> **Quy tắc sắt**: **Không bao giờ giữ database lock qua một lời gọi mạng ra ngoài.** Không gọi payment, không gọi email, không gọi service khác trong lúc đang giữ `FOR UPDATE`. Nếu luồng nghiệp vụ bắt buộc phải làm thế, đó là dấu hiệu bạn cần tách thành nhiều transaction ngắn + trạng thái trung gian (chính là mô hình **hold** ở deep dive 2).
 
 **Nhược điểm 3 — Không mở rộng qua nhiều database.** Lock là chuyện nội bộ của một DB instance. Nếu sau này shard, lock không còn tác dụng xuyên shard. (Với bài này thì không sao vì mọi dòng của cùng một `hotel_id` nằm cùng shard.)
 
@@ -675,7 +675,7 @@ UPDATE room_type_inventory
 SET total_reserved = total_reserved + :roomCount,
     version = version + 1
 WHERE hotel_id=:h AND room_type_id=:rt AND date = '2026-07-01'
-  AND version = 42;          -- ★ chỉ ghi nếu version chưa đổi
+  AND version = 42;          -- * chỉ ghi nếu version chưa đổi
 
 -- Nếu affected_rows = 0 → có người chen ngang → ROLLBACK toàn bộ, RETRY từ đầu
 ```
@@ -694,7 +694,7 @@ t5                                        UPDATE ... WHERE version=42
                                             → 0 rows affected!  (version giờ là 43)
 t6                                        ROLLBACK
 t7                                        RETRY: SELECT → reserved=100, ver=43
-t8                                        check 100+1 <= 100 ✗ → 409 ✓ ĐÚNG
+t8                                        check 100+1 <= 100 ✗  → 409 ✓  ĐÚNG
 ```
 
 **Ưu điểm.** Không giữ lock nào ở DB, nên không có hàng đợi, không có deadlock kiểu lock-wait, không có chuyện một transaction chậm kéo cả hệ thống. Khi contention **thấp** — đúng như bài này — gần như không bao giờ retry, nên hiệu năng tốt hơn pessimistic. Nó cũng hoạt động qua nhiều DB, nhiều region, và trên cả NoSQL (DynamoDB conditional write chính là optimistic locking).
@@ -757,7 +757,7 @@ SET total_reserved = total_reserved + :roomCount
 WHERE hotel_id=:h AND room_type_id=:rt
   AND date >= :start AND date < :end
   AND total_reserved + :roomCount
-      <= total_inventory * (1 + overbooking_pct/100.0);   -- ★ điều kiện ở đây
+      <= total_inventory * (1 + overbooking_pct/100.0);   -- * điều kiện ở đây
 
 -- affected_rows phải == số đêm. Nếu ít hơn → có đêm không đủ phòng → ROLLBACK
 ```
@@ -791,7 +791,7 @@ Cách này rất đáng nhớ vì nó là **cùng một ý tưởng với optimi
 3. **Optimistic + retry ở tầng app** cho các luồng cần đọc-rồi-quyết-định phức tạp hơn (ví dụ: tính giá theo occupancy rồi mới trừ, hoặc admin điều chỉnh tồn kho).
 4. **Pessimistic `FOR UPDATE`** chỉ dùng cho **các đợt cao điểm cực đoan** được biết trước (ngày mở bán sự kiện lớn) hoặc cho các thao tác admin cần đọc nhất quán nhiều dòng — và **luôn kèm `ORDER BY date`**, **luôn giữ transaction ngắn**, **tuyệt đối không có network call bên trong**.
 
-> 💡 **Câu trả lời ăn điểm khi phỏng vấn**: *"Ba cách này không loại trừ nhau, chúng ở ba tầng khác nhau. Constraint là bất biến ở tầng dữ liệu — luôn bật. Ghi có điều kiện là cách tôi thực thi nghiệp vụ — mặc định. Lock bi quan là công cụ tôi rút ra khi profile cho thấy tỉ lệ retry vượt ngưỡng. Tôi bắt đầu từ cái rẻ nhất và chỉ leo thang khi có số liệu."*
+> **Câu trả lời ăn điểm khi phỏng vấn**: *"Ba cách này không loại trừ nhau, chúng ở ba tầng khác nhau. Constraint là bất biến ở tầng dữ liệu — luôn bật. Ghi có điều kiện là cách tôi thực thi nghiệp vụ — mặc định. Lock bi quan là công cụ tôi rút ra khi profile cho thấy tỉ lệ retry vượt ngưỡng. Tôi bắt đầu từ cái rẻ nhất và chỉ leo thang khi có số liệu."*
 
 ### 5.8. Nói thêm về isolation level
 
@@ -808,7 +808,7 @@ Câu trả lời trung thực: **có thể, và nó đúng, nhưng bạn vẫn p
 
 Nghĩa là `SERIALIZABLE` không miễn cho bạn việc xử lý xung đột — nó chỉ chuyển việc phát hiện xung đột từ code của bạn sang engine. Với một thao tác đơn giản như "cộng có điều kiện", viết thẳng `UPDATE ... WHERE ... AND <điều kiện>` vừa rẻ hơn vừa rõ ràng hơn nhiều so với nâng isolation cho toàn bộ hệ thống.
 
-> ⚠️ **Bẫy**: Nâng isolation level toàn cục để chữa một race condition cục bộ là một quyết định rất đắt và rất khó rút lại. Hãy nâng isolation cho **đúng transaction cần**, không phải cho cả connection pool.
+> **Bẫy**: Nâng isolation level toàn cục để chữa một race condition cục bộ là một quyết định rất đắt và rất khó rút lại. Hãy nâng isolation cho **đúng transaction cần**, không phải cho cả connection pool.
 
 ---
 
@@ -845,8 +845,8 @@ Vô hiệu hoá nút bấm chỉ chặn được đường thứ nhất, và cò
         server: BEGIN
                 UPDATE inventory ...
                 INSERT reservation (id='3f2b1c7e-...')
-                  ✗ ERROR: duplicate key violates unique constraint
-                ROLLBACK        ← ★ tồn kho ĐƯỢC hoàn nguyên tự động
+                  ✗  ERROR: duplicate key violates unique constraint
+                ROLLBACK        ← * tồn kho ĐƯỢC hoàn nguyên tự động
         server: SELECT * FROM reservation WHERE id='3f2b1c7e-...'
         ◄── 200 CONFIRMED   (trả lại kết quả của lần 1)
 ```
@@ -862,13 +862,13 @@ Vài chi tiết triển khai đáng nêu:
 - **Tình huống "đang xử lý".** Nếu request 2 đến khi request 1 còn chưa commit, request 2 sẽ **bị chặn** ở unique index cho tới khi request 1 xong (ở PostgreSQL, unique index gây lock-wait trên key trùng). Sau đó nó thấy conflict và trả kết quả đúng. Hành vi này miễn phí và rất tiện.
 - Với API Gateway/Stripe-style, header `Idempotency-Key` là cách chuẩn hoá cùng ý tưởng ở tầng hạ tầng.
 
-> 💡 **Nguyên tắc**: Idempotency chữa **duplicate**, locking chữa **race**. Bạn cần cả hai. Một hệ thống có lock hoàn hảo vẫn tạo hai booking khi user bấm hai lần; một hệ thống idempotent hoàn hảo vẫn bán quá phòng khi hai người cùng bấm.
+> **Nguyên tắc**: Idempotency chữa **duplicate**, locking chữa **race**. Bạn cần cả hai. Một hệ thống có lock hoàn hảo vẫn tạo hai booking khi user bấm hai lần; một hệ thống idempotent hoàn hảo vẫn bán quá phòng khi hai người cùng bấm.
 
 Và đừng quên **huỷ cũng phải idempotent**: `DELETE /v1/reservations/{id}` gọi hai lần phải chỉ hoàn tồn kho một lần. Cách làm: chuyển trạng thái có điều kiện.
 
 ```sql
 UPDATE reservation SET status='CANCELLED', cancelled_at=now()
-WHERE id = :id AND status = 'CONFIRMED';     -- ★ chỉ đổi nếu đang CONFIRMED
+WHERE id = :id AND status = 'CONFIRMED';     -- * chỉ đổi nếu đang CONFIRMED
 -- affected_rows = 0 → đã huỷ rồi → trả 200, KHÔNG hoàn tồn kho lần nữa
 -- affected_rows = 1 → mới huỷ → UPDATE inventory SET total_reserved -= room_count
 ```
@@ -943,7 +943,7 @@ Và phải nói cả mặt trái: khi overbooking "nổ" — khách đến mà h
 - Cơ chế **ưu tiên** khi phải walk (khách loyalty cao, khách ở dài ngày được giữ lại).
 - Khả năng **ngắt overbooking khẩn cấp**: set `overbooking_pct = 0` cho một dải ngày — và điều này an toàn vì constraint chỉ chặn **lần bán tiếp theo**, không huỷ các booking đã có.
 
-> ⚠️ **Bẫy**: Đừng implement overbooking bằng cách "cho phép `total_reserved` vượt `total_inventory` tuỳ ý rồi kiểm tra ở tầng app". Ngưỡng phải nằm trong constraint, nếu không bạn đã vứt bỏ lưới an toàn cuối cùng và một bug ở app có thể bán 300%.
+> **Bẫy**: Đừng implement overbooking bằng cách "cho phép `total_reserved` vượt `total_inventory` tuỳ ý rồi kiểm tra ở tầng app". Ngưỡng phải nằm trong constraint, nếu không bạn đã vứt bỏ lưới an toàn cuối cùng và một bug ở app có thể bán 300%.
 
 ---
 
@@ -960,7 +960,7 @@ Trong thiết kế trên, ta cố ý giữ **reservation + inventory chung một
   ─────────────────────                 ──────────────────
   BEGIN                                 Reservation Svc: INSERT reservation ✓
     UPDATE inventory                    Inventory  Svc: UPDATE inventory   ✓
-    INSERT reservation                  Payment    Svc: charge card        ✗ FAIL
+    INSERT reservation                  Payment    Svc: charge card        ✗  FAIL
     (payment ở ngoài)                    
   COMMIT  ← nguyên tử, DB lo             → ai rollback hai cái đầu?
           ← fail thì rollback hết        → không có COMMIT chung
@@ -971,7 +971,7 @@ Khi `reservation` và `room_type_inventory` nằm trong cùng một database, th
 
 Khi tách ra hai service hai DB, chính thao tác đó trở thành **distributed transaction**, và bạn phải tự xây lại tính nguyên tử bằng tay. Bạn đánh đổi một thứ đã đúng sẵn lấy một thứ bạn phải tự làm đúng.
 
-> 💡 **Nguyên tắc**: Ranh giới service nên cắt ở nơi **ít cần tính nguyên tử nhất**. Nếu hai thực thể luôn phải thay đổi cùng nhau trong một transaction, chúng thuộc về **cùng một service**. Đó chính là định nghĩa của aggregate trong DDD, và `(reservation, inventory)` là một aggregate kinh điển.
+> **Nguyên tắc**: Ranh giới service nên cắt ở nơi **ít cần tính nguyên tử nhất**. Nếu hai thực thể luôn phải thay đổi cùng nhau trong một transaction, chúng thuộc về **cùng một service**. Đó chính là định nghĩa của aggregate trong DDD, và `(reservation, inventory)` là một aggregate kinh điển.
 
 Nhưng payment thì **bắt buộc** phải tách — vì lý do tuân thủ PCI-DSS, vì nó gọi ra bên thứ ba, vì nó có vòng đời bất đồng bộ riêng. Nên dù có giữ reservation+inventory chung, ta **vẫn có** một distributed transaction giữa reservation và payment. Không tránh được. Vậy giải quyết thế nào?
 
@@ -1100,7 +1100,7 @@ Có hai cách điều phối một saga.
 
 Lý do: luồng đặt phòng có tiền, có compensation thật (refund), và khi có sự cố thì bộ phận chăm sóc khách hàng cần trả lời được "booking này đang kẹt ở đâu". Orchestrator cho bạn câu trả lời đó ngay. Ngược lại, các việc phụ — gửi email, cập nhật read model tìm kiếm, đẩy dữ liệu vào data warehouse, cập nhật cache — không cần compensation và không cần thứ tự, nên để chúng tự nghe event là gọn nhất.
 
-> ⚠️ **Bẫy**: Saga khiến hệ thống **luôn ở trạng thái trung gian nhìn thấy được**. Trong khoảng giữa T1 và T3, có một reservation `PENDING` mà tiền đã trừ nhưng chưa `CONFIRMED`. UI phải hiển thị được trạng thái đó ("Đang xử lý..."), và API `GET /reservations/{id}` phải trả về nó một cách trung thực. Nếu bạn thiết kế UI giả định mọi thứ nguyên tử, bạn sẽ có một màn hình trắng và một khách hàng hoảng loạn.
+> **Bẫy**: Saga khiến hệ thống **luôn ở trạng thái trung gian nhìn thấy được**. Trong khoảng giữa T1 và T3, có một reservation `PENDING` mà tiền đã trừ nhưng chưa `CONFIRMED`. UI phải hiển thị được trạng thái đó ("Đang xử lý..."), và API `GET /reservations/{id}` phải trả về nó một cách trung thực. Nếu bạn thiết kế UI giả định mọi thứ nguyên tử, bạn sẽ có một màn hình trắng và một khách hàng hoảng loạn.
 
 ### 7.5. Outbox pattern — mắt xích hay bị bỏ quên
 
@@ -1111,15 +1111,15 @@ Có một lỗ hổng ở ngay bước đầu tiên của mọi saga, và nó l�
       BEGIN
         INSERT reservation ...
         UPDATE inventory ...
-      COMMIT                    ✓ thành công
-      eventBus.publish(ReservationCreated)   ✗ CRASH ngay đây
+      COMMIT                    ✓  thành công
+      eventBus.publish(ReservationCreated)   ✗  CRASH ngay đây
 
   → DB có booking, nhưng KHÔNG AI biết → payment không bao giờ chạy
   → tồn kho bị giam, khách chờ mãi không được xác nhận
 
   Đảo ngược thứ tự cũng không cứu được:
       eventBus.publish(...)     ✓
-      COMMIT                    ✗ FAIL
+      COMMIT                    ✗  FAIL
   → event đã bay đi cho một booking KHÔNG TỒN TẠI
   → payment trừ tiền cho một booking ma
 ```
@@ -1144,7 +1144,7 @@ CREATE TABLE outbox (
     UPDATE room_type_inventory SET total_reserved = ... WHERE ...
     INSERT INTO reservation (...) VALUES (...)
     INSERT INTO outbox (aggregate_id, event_type, payload)
-           VALUES (:resId, 'ReservationCreated', '{...}')   ← ★ cùng transaction
+           VALUES (:resId, 'ReservationCreated', '{...}')   ← * cùng transaction
   COMMIT
       ↑ Hoặc CẢ BA cùng có, hoặc CẢ BA cùng không. Không có trạng thái lửng lơ.
 
@@ -1174,7 +1174,7 @@ CREATE TABLE outbox (
 
 Điểm chung: **tất cả đều là bản sao phái sinh (derived), tất cả đều được phép trễ, và không cái nào trong số đó được phép là nguồn sự thật khi bán phòng.** Ý cuối dẫn thẳng sang phần tiếp theo.
 
-> 💡 **Nguyên tắc**: Hễ bạn thấy code có dạng `save(); publish();` thì bạn đang có một dual write chờ ngày hỏng. Outbox biến nó thành một write duy nhất. Đây là một trong những pattern có tỉ lệ "giá trị/độ phức tạp" cao nhất trong kiến trúc microservices.
+> **Nguyên tắc**: Hễ bạn thấy code có dạng `save(); publish();` thì bạn đang có một dual write chờ ngày hỏng. Outbox biến nó thành một write duy nhất. Đây là một trong những pattern có tỉ lệ "giá trị/độ phức tạp" cao nhất trong kiến trúc microservices.
 
 ---
 
@@ -1206,7 +1206,7 @@ Hai loại đầu dễ. Loại thứ ba là chỗ người ta ngã.
 Câu trả lời phụ thuộc hoàn toàn vào một điều: **bạn có tin cache lúc commit hay không.**
 
 ```
-  ✗ THIẾT KẾ SAI                          ✓ THIẾT KẾ ĐÚNG
+  ✗  THIẾT KẾ SAI                          ✓  THIẾT KẾ ĐÚNG
   ───────────────                          ───────────────
   đọc cache → còn 3 phòng                  đọc cache → còn 3 phòng
   → hiển thị "còn phòng"                   → hiển thị "còn phòng"
@@ -1219,7 +1219,7 @@ Câu trả lời phụ thuộc hoàn toàn vào một điều: **bạn có tin c
 
 Hệ thống đúng vẫn *có* dữ liệu cũ — không tránh được, vì cache và DB không bao giờ nhất quán tuyệt đối. Nhưng dữ liệu cũ chỉ gây ra một trải nghiệm hơi khó chịu ("phòng vừa được đặt mất"), chứ không gây ra lỗi tài chính. Và trải nghiệm đó **dù sao cũng phải xử lý**: một user mở trang lúc 14:00 rồi bấm đặt lúc 14:20 thì thông tin họ thấy đã cũ 20 phút, kể cả khi bạn không dùng cache chút nào.
 
-> 💡 **Nguyên tắc bất di bất dịch**: **Không bao giờ tin cache tại thời điểm commit.** Cache là để *trả lời nhanh câu hỏi "có nên hy vọng không"*, không phải để *quyết định "có được bán không"*. Quyết định bán chỉ được đưa ra bởi một phép ghi có điều kiện trên nguồn sự thật. Nguyên tắc này áp dụng nguyên xi cho bán vé, flash sale, và mọi hệ thống tồn kho.
+> **Nguyên tắc bất di bất dịch**: **Không bao giờ tin cache tại thời điểm commit.** Cache là để *trả lời nhanh câu hỏi "có nên hy vọng không"*, không phải để *quyết định "có được bán không"*. Quyết định bán chỉ được đưa ra bởi một phép ghi có điều kiện trên nguồn sự thật. Nguyên tắc này áp dụng nguyên xi cho bán vé, flash sale, và mọi hệ thống tồn kho.
 
 Hệ quả thực tế: cache tồn kho thậm chí **nên cố ý hơi bi quan**. Nếu còn 2 phòng, hiển thị "Chỉ còn vài phòng!" thay vì con số chính xác — vừa đúng về mặt kỹ thuật (con số kia có thể đã sai), vừa tốt cho chuyển đổi.
 
@@ -1266,7 +1266,7 @@ Giả sử hệ thống được dùng cho một OTA cỡ Booking.com: ~3,000 bo
 4. **Sharding** khi primary không còn gánh nổi write. Shard key hiển nhiên là **`hotel_id`** — vì *mọi* truy vấn đều có `hotel_id`, nên mọi truy vấn đều là single-shard, và transaction đặt phòng không bao giờ xuyên shard. Đây là một shard key hiếm hoi gần như hoàn hảo. `hash(hotel_id) % 16` với 30,000 QPS cho ra ~1,875 QPS mỗi shard — nằm trong khả năng của một cluster MySQL/Postgres.
 5. **Archive** reservation cũ: giữ hiện tại + tương lai trong DB nóng, đẩy quá khứ sang cold storage (S3 + Athena) để bảng `reservation` không phình.
 
-> ⚠️ **Bẫy sharding**: `hotel_id` là shard key tốt nhưng **không đều**. Một khách sạn khổng lồ ở Las Vegas hoặc một chuỗi resort hot có thể tạo hot shard. Chuẩn bị sẵn câu trả lời: tách riêng các hotel nóng ra shard riêng (dedicated shard), hoặc đưa `hotel_id` nóng vào một bảng ánh xạ thủ công thay vì hash thuần.
+> **Bẫy sharding**: `hotel_id` là shard key tốt nhưng **không đều**. Một khách sạn khổng lồ ở Las Vegas hoặc một chuỗi resort hot có thể tạo hot shard. Chuẩn bị sẵn câu trả lời: tách riêng các hotel nóng ra shard riêng (dedicated shard), hoặc đưa `hotel_id` nóng vào một bảng ánh xạ thủ công thay vì hash thuần.
 
 ---
 

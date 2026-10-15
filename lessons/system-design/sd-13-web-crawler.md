@@ -4,7 +4,7 @@ Nhìn từ xa, web crawler (trình thu thập dữ liệu web, còn gọi là *s
 
 Nó vỡ vì hàng đợi FIFO thuần dồn hàng trăm request vào đúng một máy chủ trong vài giây và bạn bị chặn IP. Vỡ vì web là đồ thị có chu trình, không có bộ nhớ "đã thấy URL này chưa" thì crawler tải lại cùng một trang vô số lần — mà bộ nhớ đó, ở quy mô mười tỉ URL, **không vừa RAM** nếu lưu nguyên chuỗi. Vỡ vì DNS — một lời gọi đồng bộ 50–200 ms mà không ai để ý — thành nút cổ chai lớn hơn cả băng thông. Vỡ vì có website sinh URL vô hạn một cách hợp lệ (`/calendar?month=1,2,3…` đến năm 9999). Vỡ vì ~30% nội dung tải về là bản trùng. Và vỡ vì ngày càng nhiều trang chỉ có nội dung sau khi JavaScript chạy xong.
 
-> 💡 **Luận điểm xuyên suốt**: web crawler không phải bài toán *tải file*, mà là bài toán **quản lý một hàng đợi khổng lồ dưới ba ràng buộc kéo nhau về ba hướng** — lịch sự với máy chủ người khác (politeness), ưu tiên đúng thứ đáng tải (priority), và giữ dữ liệu tươi (freshness). Toàn bộ độ khó nằm ở chỗ hoà giải ba thứ đó. Phần còn lại là kỹ thuật đã biết cách làm.
+> **Luận điểm xuyên suốt**: web crawler không phải bài toán *tải file*, mà là bài toán **quản lý một hàng đợi khổng lồ dưới ba ràng buộc kéo nhau về ba hướng** — lịch sự với máy chủ người khác (politeness), ưu tiên đúng thứ đáng tải (priority), và giữ dữ liệu tươi (freshness). Toàn bộ độ khó nằm ở chỗ hoà giải ba thứ đó. Phần còn lại là kỹ thuật đã biết cách làm.
 
 ---
 
@@ -230,7 +230,7 @@ kết quả: 429 → 403 → IP bị chặn
 
 **Lý do 2 — không có ưu tiên.** FIFO coi mọi URL bằng nhau, nhưng trang chủ `nytimes.com` và `blog-nao-do.wordpress.com/2009/tag/abc?page=47` không cùng giá trị. Ngân sách crawl hữu hạn; tiêu nó theo thứ tự ngẫu nhiên nghĩa là index đầy rác trước khi có nội dung tốt.
 
-> ⚠️ **Bẫy phỏng vấn**: nói "dùng BFS" rồi dừng. Câu trả lời tốt: *"BFS là hướng đúng, nhưng một FIFO duy nhất hỏng vì nó dồn request vào một host và không biết ưu tiên. Cả hai được chữa bên trong URL frontier — component khó nhất của bài này."*
+> **Bẫy phỏng vấn**: nói "dùng BFS" rồi dừng. Câu trả lời tốt: *"BFS là hướng đúng, nhưng một FIFO duy nhất hỏng vì nó dồn request vào một host và không biết ưu tiên. Cả hai được chữa bên trong URL frontier — component khó nhất của bài này."*
 
 ---
 
@@ -304,7 +304,7 @@ Ba chi tiết dễ bị bỏ qua:
 | Lưu lượng truy cập thật | Log tìm kiếm, toolbar, DNS | Mạnh nhất thực tế — Google có, bạn thì không |
 | Kiểu URL (pattern) | Heuristic thủ công | Rẻ và hiệu quả: hạ điểm mọi URL có `?sort=`, `?page=`, `/tag/` |
 
-> 💡 **Hai tầng, hai câu hỏi**: front queue quyết định **cái gì được tải trước**, back queue quyết định **khi nào được phép tải**. Tách bạch được hai câu này là toàn bộ thiết kế frontier; gộp chúng là chỗ hầu hết thiết kế tự chế thất bại.
+> **Hai tầng, hai câu hỏi**: front queue quyết định **cái gì được tải trước**, back queue quyết định **khi nào được phép tải**. Tách bạch được hai câu này là toàn bộ thiết kế frontier; gộp chúng là chỗ hầu hết thiết kế tự chế thất bại.
 
 ### 6.3 Freshness — crawl lại thế nào cho đúng
 
@@ -319,7 +319,7 @@ Sau mỗi lần crawl lại:
 
 Chu kỳ cố định thì đơn giản nhưng phí với trang tĩnh và quá chậm với trang động; chỉ theo tầm quan trọng thì bỏ rơi long tail; công thức trên kết hợp cả hai, đổi lại có nhiều tham số phải chỉnh. Hai mẹo tiết kiệm băng thông rất lớn: **conditional GET** (`If-Modified-Since` / `If-None-Match`) — response `304` tốn ~300 byte thay vì 500 KB, tức **rẻ hơn 1.700 lần**, và nếu 70% lần recrawl trả 304 thì băng thông recrawl gần như biến mất; và **`sitemap.xml` có `lastmod`** — đọc một file 5 MB rẻ hơn thăm dò từng URL, dù nên hoài nghi vì nhiều CMS đặt `lastmod` bằng thời gian hiện tại cho mọi trang.
 
-> ⚠️ **Bẫy**: đo "trang có đổi không" bằng hash toàn bộ HTML. Hầu hết trang có timestamp, quảng cáo xoay vòng, CSRF token — nên **mọi lần tải đều ra hash khác**, crawler kết luận "trang này đổi liên tục" rồi crawl nó mỗi giờ mãi mãi. Phải hash **phần nội dung chính đã chuẩn hoá** (§7.1).
+> **Bẫy**: đo "trang có đổi không" bằng hash toàn bộ HTML. Hầu hết trang có timestamp, quảng cáo xoay vòng, CSRF token — nên **mọi lần tải đều ra hash khác**, crawler kết luận "trang này đổi liên tục" rồi crawl nó mỗi giờ mãi mãi. Phải hash **phần nội dung chính đã chuẩn hoá** (§7.1).
 
 ### 6.4 Lưu frontier: lai RAM + disk
 
@@ -357,7 +357,7 @@ So từng byte với một tỉ trang cũ là không tưởng, nên rút mỗi t
 
 Chiến lược hai tầng: **hash chính xác** trên đường đi nóng (bắt 100% bản trùng tuyệt đối, chi phí gần bằng 0), rồi **SimHash chạy offline theo lô** để gom nhóm gần trùng và chọn bản đại diện. Đừng đưa SimHash vào đường đồng bộ — tra Hamming ≤ 3 trên một tỉ fingerprint đắt hơn nhiều một lần `GET` khoá chính xác.
 
-> 💡 **Mẹo rẻ, hiệu quả lớn**: tôn trọng `<link rel="canonical">` — lời khai của chính website rằng "URL chính thức là cái kia". Một dòng code loại bỏ đáng kể bản trùng mà không cần hash. Nhưng nhiều site khai sai, nên coi là **tín hiệu mạnh**, không phải chân lý.
+> **Mẹo rẻ, hiệu quả lớn**: tôn trọng `<link rel="canonical">` — lời khai của chính website rằng "URL chính thức là cái kia". Một dòng code loại bỏ đáng kể bản trùng mà không cần hash. Nhưng nhiều site khai sai, nên coi là **tín hiệu mạnh**, không phải chân lý.
 
 ### 7.2 URL-seen — Bloom filter và cái giá của dương tính giả
 
@@ -388,13 +388,13 @@ Bloom filter **không bao giờ âm tính giả** — nói "chưa thấy" thì c
 
 Quan trọng hơn: nếu chọn cấu trúc có thể **âm tính giả**, hậu quả là **crawl lại vô hạn** — vòng lặp chết. Hướng sai của Bloom filter đúng là hướng bài toán này chịu được. *Đó* mới là lý do nó phù hợp, không phải vì "tiết kiệm bộ nhớ".
 
-> ⚠️ **Bẫy 1 — không xoá được.** Bloom filter chuẩn không hỗ trợ xoá (xoá một bit phá các phần tử dùng chung bit đó). Nhưng crawler *cần* crawl lại URL cũ. Nghĩa là nó chỉ trả lời "có nên đưa vào frontier lần đầu không"; **lịch recrawl phải nằm ở cấu trúc khác** (bảng URL storage có `last_crawled_at`). Ai gộp hai vai trò này sẽ không bao giờ crawl lại được gì. Cần xoá thật thì dùng **Counting Bloom filter** (counter 4 bit, tốn gấp 4) hoặc **Cuckoo filter**.
+> **Bẫy 1 — không xoá được.** Bloom filter chuẩn không hỗ trợ xoá (xoá một bit phá các phần tử dùng chung bit đó). Nhưng crawler *cần* crawl lại URL cũ. Nghĩa là nó chỉ trả lời "có nên đưa vào frontier lần đầu không"; **lịch recrawl phải nằm ở cấu trúc khác** (bảng URL storage có `last_crawled_at`). Ai gộp hai vai trò này sẽ không bao giờ crawl lại được gì. Cần xoá thật thì dùng **Counting Bloom filter** (counter 4 bit, tốn gấp 4) hoặc **Cuckoo filter**.
 
-> ⚠️ **Bẫy 2 — filter đầy dần.** `p` tính theo `n` dự kiến; vượt `n` thì tỉ lệ sai tăng rất nhanh và âm thầm — crawler đột nhiên "thấy quen" mọi thứ và ngừng phát hiện trang mới trong khi mọi biểu đồ vẫn bình thường. Phải giám sát **tỉ lệ bit đã bật**; vượt ~50% là lúc xoay vòng, hoặc dùng **Scalable Bloom filter** (đầy thì tạo filter mới lớn hơn, kiểm tra tuần tự qua chuỗi).
+> **Bẫy 2 — filter đầy dần.** `p` tính theo `n` dự kiến; vượt `n` thì tỉ lệ sai tăng rất nhanh và âm thầm — crawler đột nhiên "thấy quen" mọi thứ và ngừng phát hiện trang mới trong khi mọi biểu đồ vẫn bình thường. Phải giám sát **tỉ lệ bit đã bật**; vượt ~50% là lúc xoay vòng, hoặc dùng **Scalable Bloom filter** (đầy thì tạo filter mới lớn hơn, kiểm tra tuần tự qua chuỗi).
 
 **Chuẩn hoá URL trước khi băm**, nếu không filter sẽ tràn bởi các biến thể của cùng một trang: hạ chữ thường scheme/host; bỏ cổng mặc định `:80`/`:443`; thống nhất `www`; **bỏ hẳn fragment** (`#section` không tới server); bỏ tham số theo dõi theo danh sách đen (`utm_*`, `fbclid`, `gclid`, `ref`, `sessionid`); sắp xếp tham số theo tên; thống nhất dấu `/` cuối; giải mã `%7E` → `~`; rút gọn `/a/./b/../c` → `/a/c`. Việc này thường **giảm 20–40% số URL duy nhất** — vừa thu nhỏ Bloom filter, vừa tiết kiệm crawl budget, vừa giảm trùng nội dung.
 
-> ⚠️ **Bẫy 3 — chuẩn hoá quá tay**: bỏ hết query string thì `?id=123` và `?id=456` thành một trang, và bạn mất cả một site thương mại điện tử. Phải là **danh sách đen cụ thể**, không phải quy tắc tổng quát.
+> **Bẫy 3 — chuẩn hoá quá tay**: bỏ hết query string thì `?id=123` và `?id=456` thành một trang, và bạn mất cả một site thương mại điện tử. Phải là **danh sách đen cụ thể**, không phải quy tắc tổng quát.
 
 ### 7.3 URL storage — vẫn cần một bảng thật
 
@@ -417,7 +417,7 @@ worker ─► cache in-process (LRU, vài chục nghìn entry, ns)
 
 Cache lâu hơn TTL là sai (IP đổi, site chuyển nhà), nhưng nhiều CDN đặt TTL 30–60 giây nên gần như không cache được gì. Thoả hiệp: `ttl_hiệu_dụng = clamp(ttl_gốc, 60 giây, 1 giờ)`; khi gặp lỗi kết nối thì **làm mất hiệu lực cache ngay** rồi phân giải lại trước khi kết luận host chết.
 
-> 💡 **Chi tiết thực chiến ít được nhắc**: cache cả **kết quả âm** (NXDOMAIN). Crawler lớn liên tục gặp link tới domain đã chết; không cache lỗi thì bạn bắn hàng nghìn truy vấn/giây vào domain không tồn tại và tự biến mình thành nguồn nhiễu DNS.
+> **Chi tiết thực chiến ít được nhắc**: cache cả **kết quả âm** (NXDOMAIN). Crawler lớn liên tục gặp link tới domain đã chết; không cache lỗi thì bạn bắn hàng nghìn truy vấn/giây vào domain không tồn tại và tự biến mình thành nguồn nhiễu DNS.
 
 ### 8.2 robots.txt — hợp đồng ngầm của web
 
@@ -511,7 +511,7 @@ Không có cách phát hiện tổng quát hoàn hảo, nên phải xếp nhiề
 
 Mạnh nhất là **ngân sách theo domain**, vì nó không cần hiểu bẫy là gì: domain ngốn một triệu URL mà chỉ đóng góp vài nghìn nội dung duy nhất thì tự động bị cắt. Đây cũng là phòng thủ duy nhất hiệu quả với loại bẫy bạn chưa từng thấy.
 
-> 💡 **Tín hiệu vàng**: theo dõi `số nội dung duy nhất / số URL đã crawl` **theo từng host**. Host lành mạnh có tỉ lệ 0,5–0,9; rơi xuống 0,01 thì gần như chắc chắn là spider trap hoặc trang sinh tự động.
+> **Tín hiệu vàng**: theo dõi `số nội dung duy nhất / số URL đã crawl` **theo từng host**. Host lành mạnh có tỉ lệ 0,5–0,9; rơi xuống 0,01 thì gần như chắc chắn là spider trap hoặc trang sinh tự động.
 
 ### 9.2 Redirect loop
 
@@ -553,7 +553,7 @@ URL ─► fetch HTTP (rẻ, 400/s) ─► cần render không?
 
 Giảm chi phí tầng render bằng: **chặn tải ảnh, font, media, quảng cáo, analytics** (giảm 60–80% băng thông và thời gian); ngân sách thời gian cứng (5 giây rồi chụp DOM dù chưa xong); tái dùng browser instance nhưng đổi context mỗi trang; và **tìm nguồn rẻ hơn trước** — nhiều SPA gọi một REST/GraphQL API trả JSON sạch, hoặc có sẵn bản SSR/sitemap; gọi thẳng API rẻ hơn render hàng nghìn lần.
 
-> 💡 **Cách nói khi phỏng vấn**: *"Tôi sẽ không render mọi trang — headless đắt hơn 10–100 lần. Fetch HTTP trước, phát hiện trang rỗng nội dung hoặc không có link, rồi đưa số ít đó vào hàng đợi render riêng có ngân sách giới hạn."* Câu này cho thấy bạn biết cả giải pháp lẫn **giá** của nó — mà biết giá mới là phần khó.
+> **Cách nói khi phỏng vấn**: *"Tôi sẽ không render mọi trang — headless đắt hơn 10–100 lần. Fetch HTTP trước, phát hiện trang rỗng nội dung hoặc không có link, rồi đưa số ít đó vào hàng đợi render riêng có ngân sách giới hạn."* Câu này cho thấy bạn biết cả giải pháp lẫn **giá** của nó — mà biết giá mới là phần khó.
 
 ### 9.5 Nhiễu và spam
 
@@ -587,7 +587,7 @@ Dòng đầu phản trực giác nhưng rất quan trọng: **thêm máy không 
 | Content storage | Không lưu được → không `ack` được | Buffer trên đĩa + retry; frontier tự trả URL về |
 | Robots cache | Tải lại `robots.txt` liên tục | Fail-**closed** cho host chưa biết luật; TTL âm cho lỗi |
 
-> 💡 **Triết lý fail mode**: crawler là hệ thống **chịu mất mát**. Mất một URL không phải thảm hoạ — nó sẽ được tìm lại từ trang khác ở vòng sau. Nên hầu hết thành phần **fail-open**, đánh đổi tính đầy đủ lấy tính sẵn sàng. Hai ngoại lệ **phải fail-closed**: kiểm tra `robots.txt` (crawl chỗ bị cấm là vấn đề pháp lý, không phải chất lượng) và giới hạn politeness (mất kiểm soát tốc độ là tấn công người khác).
+> **Triết lý fail mode**: crawler là hệ thống **chịu mất mát**. Mất một URL không phải thảm hoạ — nó sẽ được tìm lại từ trang khác ở vòng sau. Nên hầu hết thành phần **fail-open**, đánh đổi tính đầy đủ lấy tính sẵn sàng. Hai ngoại lệ **phải fail-closed**: kiểm tra `robots.txt` (crawl chỗ bị cấm là vấn đề pháp lý, không phải chất lượng) và giới hạn politeness (mất kiểm soát tốc độ là tấn công người khác).
 
 **Chỉ số phải giám sát**: `pages_per_second`; `frontier_size` (tăng đều là bình thường, về 0 là sắp đói, bùng nổ là có bẫy); `unique_content / pages_crawled` **theo host**; phân bố mã trạng thái theo host (429/403 tăng = đang bất lịch sự); fill ratio của Bloom filter; tỉ lệ trúng DNS/robots cache; và **tuổi trung bình của nội dung trong index** — chỉ số chất lượng thật sự, đo hiệu quả chiến lược recrawl.
 
@@ -664,4 +664,4 @@ Mỗi module khai báo kiểu nó nhận và trả về nội dung chuẩn hoá 
 11. **Chốt bằng freshness** — nhiều người quên hẳn yêu cầu "phát hiện trang mới và trang đã cập nhật": recrawl thích nghi, conditional GET với ETag, và bẫy hash toàn trang khiến mọi trang trông như luôn thay đổi.
 12. **Kết bằng cách hỏng**: *"Crawler là hệ thống chịu mất mát — mất một URL không nghiêm trọng vì nó sẽ được tìm lại. Nên hầu hết thành phần fail-open, trừ kiểm tra robots.txt và giới hạn politeness phải fail-closed."*
 
-> 💡 **Nếu chỉ nhớ một điều**: độ khó của web crawler không nằm ở việc tải trang, mà ở **một hàng đợi bị kéo về ba hướng** — tải cái quan trọng trước, nhưng đừng làm phiền ai, nhưng cũng đừng để dữ liệu cũ đi. Kiến trúc front queue/back queue là câu trả lời cho hai hướng đầu, recrawl thích nghi là câu trả lời cho hướng thứ ba. Mọi thứ còn lại — Bloom filter, DNS cache, SimHash, headless browser — là kỹ thuật để cái vòng lặp đó chạy được ở quy mô một tỉ trang mà không phá sản và không bị chặn.
+> **Nếu chỉ nhớ một điều**: độ khó của web crawler không nằm ở việc tải trang, mà ở **một hàng đợi bị kéo về ba hướng** — tải cái quan trọng trước, nhưng đừng làm phiền ai, nhưng cũng đừng để dữ liệu cũ đi. Kiến trúc front queue/back queue là câu trả lời cho hai hướng đầu, recrawl thích nghi là câu trả lời cho hướng thứ ba. Mọi thứ còn lại — Bloom filter, DNS cache, SimHash, headless browser — là kỹ thuật để cái vòng lặp đó chạy được ở quy mô một tỉ trang mà không phá sản và không bị chặn.

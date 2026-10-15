@@ -45,7 +45,7 @@ Trước năm ~2005, cách làm phổ biến là: mỗi ứng dụng quan trọn
 - **Triển khai chậm**: muốn có máy chủ mới phải mua → chờ giao hàng → lắp đặt → cài đặt. Mất hàng tuần đến hàng tháng.
 - **Khó co giãn**: lưu lượng tăng đột biến dịp lễ? Không kịp mua thêm máy. Hết lễ? Máy thừa nằm "đắp chiếu".
 
-> 💡 **Ghi nhớ**: Động lực lớn nhất của mọi bước tiến hoá hạ tầng (ảo hoá → container → serverless) đều là **tăng mật độ sử dụng tài nguyên** và **rút ngắn thời gian từ ý tưởng đến triển khai**.
+> **Ghi nhớ**: Động lực lớn nhất của mọi bước tiến hoá hạ tầng (ảo hoá → container → serverless) đều là **tăng mật độ sử dụng tài nguyên** và **rút ngắn thời gian từ ý tưởng đến triển khai**.
 
 ## 2. Ảo hoá (Virtualization) — chia một máy thật thành nhiều máy ảo
 
@@ -85,7 +85,7 @@ Có 2 loại hypervisor:
 | Dùng ở đâu | Datacenter, cloud (production) | Máy cá nhân (dev, học tập) |
 | Ví dụ | VMware ESXi, KVM, Xen, AWS Nitro | VirtualBox, VMware Workstation, Parallels |
 
-> 💡 **Ghi nhớ**: Cloud như AWS chạy trên **hypervisor Type 1**. Khi bạn tạo một "máy chủ" trên AWS (EC2 instance), thực chất bạn nhận một **VM** chạy trên hypervisor của AWS, đặt trong datacenter của AWS.
+> **Ghi nhớ**: Cloud như AWS chạy trên **hypervisor Type 1**. Khi bạn tạo một "máy chủ" trên AWS (EC2 instance), thực chất bạn nhận một **VM** chạy trên hypervisor của AWS, đặt trong datacenter của AWS.
 
 ### 2.3. Lợi ích của việc tách phần mềm khỏi phần cứng
 
@@ -187,7 +187,7 @@ Container không phải công nghệ "ảo hoá phần cứng" — nó là **cá
 - **Namespace** — quyết định container **"nhìn thấy" gì**. Mỗi container có cây tiến trình riêng, hostname riêng, hệ thống file riêng, network riêng… Tiến trình trong container tưởng rằng cả máy chỉ có mình nó. (Giống mỗi phòng ký túc có cửa riêng — bạn không nhìn thấy phòng bên cạnh.)
 - **cgroup (control group)** — quyết định container **"được dùng" bao nhiêu**: giới hạn CPU, RAM, I/O. (Giống công tơ điện riêng từng phòng — bạn không thể xài hết điện của cả toà.)
 
-> 💡 **Ghi nhớ**: VM ảo hoá **phần cứng** (mỗi VM một OS riêng, cách ly mạnh). Container cách ly **tiến trình** trên cùng một OS (namespace = nhìn thấy gì, cgroup = dùng được bao nhiêu). Vì thế container khởi động trong **mili-giây đến giây**, còn VM mất **phút**.
+> **Ghi nhớ**: VM ảo hoá **phần cứng** (mỗi VM một OS riêng, cách ly mạnh). Container cách ly **tiến trình** trên cùng một OS (namespace = nhìn thấy gì, cgroup = dùng được bao nhiêu). Vì thế container khởi động trong **mili-giây đến giây**, còn VM mất **phút**.
 
 ### 3.4. Docker, image và layer
 
@@ -269,7 +269,7 @@ Máy vật lý → VM → Container → Serverless
 
 Analogy về "cách mua điện": máy vật lý = **tự xây nhà máy điện**; VM/container trên cloud = **thuê máy phát điện theo giờ** (chạy hay không vẫn trả tiền giờ thuê); serverless = **cắm điện lưới, trả theo số điện dùng**.
 
-> 💡 **Ghi nhớ**: Trục đánh đổi xuyên suốt: càng đi về phía serverless, bạn càng **bớt việc vận hành** nhưng cũng **bớt quyền kiểm soát** (không chọn được OS, bị giới hạn thời gian chạy…). Không có lựa chọn "tốt nhất tuyệt đối" — chỉ có lựa chọn phù hợp với bài toán.
+> **Ghi nhớ**: Trục đánh đổi xuyên suốt: càng đi về phía serverless, bạn càng **bớt việc vận hành** nhưng cũng **bớt quyền kiểm soát** (không chọn được OS, bị giới hạn thời gian chạy…). Không có lựa chọn "tốt nhất tuyệt đối" — chỉ có lựa chọn phù hợp với bài toán.
 
 ## 6. Liên hệ sang AWS
 
@@ -337,7 +337,7 @@ Bậc thang "mức độ tự quản lý" trên AWS — sẽ xuất hiện rất
   <text x="700" y="278" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.6">"Toàn quyền OS" → phía trái (EC2)</text>
 </svg>
 
-> 💡 **Ghi nhớ**: Khi đề thi AWS hỏi *"ít công sức vận hành nhất (least operational overhead)"*, câu trả lời thường nằm về **phía phải** của bậc thang trên (Fargate, Lambda). Khi hỏi *"toàn quyền kiểm soát OS"*, đáp án nằm về **phía trái** (EC2).
+> **Ghi nhớ**: Khi đề thi AWS hỏi *"ít công sức vận hành nhất (least operational overhead)"*, câu trả lời thường nằm về **phía phải** của bậc thang trên (Fargate, Lambda). Khi hỏi *"toàn quyền kiểm soát OS"*, đáp án nằm về **phía trái** (EC2).
 
 ## Tóm tắt
 

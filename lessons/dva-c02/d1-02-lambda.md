@@ -26,7 +26,7 @@ export const handler = async (event, context) => {
 
 `event` là payload đầu vào (đã parse JSON), `context` chứa metadata: `context.getRemainingTimeInMillis()`, `context.awsRequestId`, `context.functionName`.
 
-> 💡 Mẹo thi: Code **ngoài** handler chạy một lần khi khởi tạo execution context và được tái dùng. Code **trong** handler chạy mỗi invocation. Đặt khởi tạo DB connection, SDK client, tải config ra ngoài handler để giảm latency.
+> Mẹo thi: Code **ngoài** handler chạy một lần khi khởi tạo execution context và được tái dùng. Code **trong** handler chạy mỗi invocation. Đặt khởi tạo DB connection, SDK client, tải config ra ngoài handler để giảm latency.
 
 ## 2. Cấu hình cơ bản: Memory, Timeout, CPU
 
@@ -47,7 +47,7 @@ aws lambda update-function-configuration \
   --ephemeral-storage Size=2048
 ```
 
-> 💡 Mẹo thi: Dùng **AWS Lambda Power Tuning** (state machine Step Functions) để tìm điểm memory tối ưu cost/performance. Câu hỏi kiểu "function chạy chậm, làm gì rẻ nhất?" thường có đáp án là tăng memory, không phải viết lại code.
+> Mẹo thi: Dùng **AWS Lambda Power Tuning** (state machine Step Functions) để tìm điểm memory tối ưu cost/performance. Câu hỏi kiểu "function chạy chậm, làm gì rẻ nhất?" thường có đáp án là tăng memory, không phải viết lại code.
 
 ## 3. Execution Context & /tmp
 
@@ -104,7 +104,7 @@ Sau một invocation, Lambda "đóng băng" (freeze) execution context và có t
   <text x="126" y="214" font-size="9.5" fill="#f59e0b" opacity="0.95" font-weight="700">cold start</text>
 </svg>
 
-> ⚠️ Bẫy: `/tmp` là **ephemeral và cục bộ theo từng execution environment**, KHÔNG chia sẻ giữa các concurrent instance. Cần state chia sẻ → dùng S3, EFS, DynamoDB, ElastiCache. Cần dung lượng > 512MB → tăng `ephemeral-storage`, KHÔNG phải tăng memory.
+> Bẫy: `/tmp` là **ephemeral và cục bộ theo từng execution environment**, KHÔNG chia sẻ giữa các concurrent instance. Cần state chia sẻ → dùng S3, EFS, DynamoDB, ElastiCache. Cần dung lượng > 512MB → tăng `ephemeral-storage`, KHÔNG phải tăng memory.
 
 ## 4. Environment Variables & Encryption
 
@@ -122,7 +122,7 @@ Cơ chế mã hóa env var (rất hay thi):
 - Có thể chỉ định **customer managed KMS key** (CMK) để kiểm soát quyền và rotation.
 - Với secret nhạy cảm, bật **encryption helpers** trong console: giá trị được mã hóa và bạn phải **decrypt bằng KMS trong code** lúc runtime → không hiển thị plaintext trong console.
 
-> ⚠️ Bẫy: Đề hay hỏi "lưu DB password an toàn cho Lambda thế nào?". Env var thường KHÔNG phải đáp án tốt nhất — ưu tiên **Secrets Manager** (có rotation tự động) hoặc **SSM Parameter Store SecureString**. Env var phù hợp config không nhạy cảm. Nếu bắt buộc dùng env var cho secret → bật encryption helper + CMK.
+> Bẫy: Đề hay hỏi "lưu DB password an toàn cho Lambda thế nào?". Env var thường KHÔNG phải đáp án tốt nhất — ưu tiên **Secrets Manager** (có rotation tự động) hoặc **SSM Parameter Store SecureString**. Env var phù hợp config không nhạy cảm. Nếu bắt buộc dùng env var cho secret → bật encryption helper + CMK.
 
 So sánh nhanh nơi lưu cấu hình:
 
@@ -154,7 +154,7 @@ aws lambda publish-layer-version \
 - **Internal extension**: chạy trong cùng process runtime.
 - **External extension**: chạy như process riêng song song với function, có lifecycle riêng (init → invoke → shutdown).
 
-> 💡 Mẹo thi: Câu hỏi kiểu "chạy agent monitoring/secrets caching song song với function code mà không sửa handler" → đáp án là **Lambda Extension** (external). Container image dùng khi package > 250 MB hoặc cần custom OS dependency.
+> Mẹo thi: Câu hỏi kiểu "chạy agent monitoring/secrets caching song song với function code mà không sửa handler" → đáp án là **Lambda Extension** (external). Container image dùng khi package > 250 MB hoặc cần custom OS dependency.
 
 ## 6. Concurrency: Reserved vs Provisioned
 
@@ -219,8 +219,8 @@ aws lambda put-provisioned-concurrency-config \
   --provisioned-concurrent-executions 10
 ```
 
-> ⚠️ Bẫy: Khi vượt concurrency limit → lỗi **throttling (HTTP 429 / `TooManyRequestsException`)**. Với invoke async/event source, Lambda tự retry; với sync, caller nhận lỗi.
-> ⚠️ Bẫy: Provisioned concurrency phải gắn với **alias hoặc version cụ thể** (qualifier), KHÔNG dùng được với `$LATEST`.
+> Bẫy: Khi vượt concurrency limit → lỗi **throttling (HTTP 429 / `TooManyRequestsException`)**. Với invoke async/event source, Lambda tự retry; với sync, caller nhận lỗi.
+> Bẫy: Provisioned concurrency phải gắn với **alias hoặc version cụ thể** (qualifier), KHÔNG dùng được với `$LATEST`.
 
 ## 7. Cold Start & Tuning
 
@@ -240,7 +240,7 @@ Cách giảm cold start:
 - Tăng memory (CPU init nhanh hơn).
 - Với Java: bật **SnapStart** (snapshot execution environment đã init) → giảm cold start mạnh, miễn phí.
 
-> 💡 Mẹo thi: "Giảm cold start, traffic ổn định, sẵn sàng trả tiền" → **Provisioned concurrency**. "Java cold start, không muốn tốn thêm tiền" → **SnapStart**. "Function lâu lâu mới gọi, không quan tâm latency" → để mặc định.
+> Mẹo thi: "Giảm cold start, traffic ổn định, sẵn sàng trả tiền" → **Provisioned concurrency**. "Java cold start, không muốn tốn thêm tiền" → **SnapStart**. "Function lâu lâu mới gọi, không quan tâm latency" → để mặc định.
 
 ## 8. Lambda trong VPC
 
@@ -320,8 +320,8 @@ Cơ chế & bẫy quan trọng:
   <text x="16" y="344" font-size="11" fill="currentColor" opacity="0.78">→ Internet công cộng: bắt buộc NAT Gateway (public subnet) → IGW. Đặt Lambda vào VPC = mất internet mặc định.</text>
 </svg>
 
-> ⚠️ Bẫy kinh điển: "Lambda trong VPC gọi DynamoDB/S3 bị timeout" → không có route ra internet. Sửa: thêm **VPC Gateway Endpoint** cho S3/DynamoDB (miễn phí), hoặc NAT Gateway. Đề rất hay hỏi câu này.
-> ⚠️ Bẫy: "Connection pool tới RDS cạn (too many connections)" khi concurrency cao → mỗi instance mở connection riêng. Giải pháp: **RDS Proxy** (pool connection), không phải tăng memory.
+> Bẫy kinh điển: "Lambda trong VPC gọi DynamoDB/S3 bị timeout" → không có route ra internet. Sửa: thêm **VPC Gateway Endpoint** cho S3/DynamoDB (miễn phí), hoặc NAT Gateway. Đề rất hay hỏi câu này.
+> Bẫy: "Connection pool tới RDS cạn (too many connections)" khi concurrency cao → mỗi instance mở connection riêng. Giải pháp: **RDS Proxy** (pool connection), không phải tăng memory.
 
 ## 9. Triggers (Event Sources)
 
@@ -404,7 +404,7 @@ aws lambda create-event-source-mapping \
   --batch-size 10
 ```
 
-> 💡 Mẹo thi: Phân biệt **sync / async / poll** quyết định cách xử lý lỗi & retry. Sync → caller tự xử lý lỗi. Async → có retry + DLQ/Destinations. Poll (stream) → batch, retry cả batch, có thể chặn shard nếu xử lý lỗi (poison pill).
+> Mẹo thi: Phân biệt **sync / async / poll** quyết định cách xử lý lỗi & retry. Sync → caller tự xử lý lỗi. Async → có retry + DLQ/Destinations. Poll (stream) → batch, retry cả batch, có thể chặn shard nếu xử lý lỗi (poison pill).
 
 ## 10. Error Handling: DLQ vs Destinations
 
@@ -445,8 +445,8 @@ aws lambda put-function-event-invoke-config \
   }'
 ```
 
-> 💡 Mẹo thi: AWS khuyến nghị **Destinations** thay cho DLQ cho async. Nhưng với **event source mapping kiểu SQS/Kinesis/DynamoDB**, bạn dùng **DLQ trên chính source** (redrive policy của SQS, hoặc `OnFailure` destination của ESM cho stream) — không phải Destinations của function.
-> ⚠️ Bẫy: DLQ/Destinations chỉ áp dụng cho **async**. Lỗi ở **sync invoke** trả thẳng về caller, không vào DLQ.
+> Mẹo thi: AWS khuyến nghị **Destinations** thay cho DLQ cho async. Nhưng với **event source mapping kiểu SQS/Kinesis/DynamoDB**, bạn dùng **DLQ trên chính source** (redrive policy của SQS, hoặc `OnFailure` destination của ESM cho stream) — không phải Destinations của function.
+> Bẫy: DLQ/Destinations chỉ áp dụng cho **async**. Lỗi ở **sync invoke** trả thẳng về caller, không vào DLQ.
 
 ## 11. Versions & Aliases
 
@@ -465,7 +465,7 @@ aws lambda update-alias --function-name my-func --name PROD \
   --routing-config AdditionalVersionWeights={"4"=0.1}
 ```
 
-> 💡 Mẹo thi: Provisioned concurrency và env var có thể khác nhau giữa các version. Trigger/permission gắn theo **qualifier** (alias/version). Canary deployment dùng **alias weighted routing** (hoặc CodeDeploy quản lý cho gọn).
+> Mẹo thi: Provisioned concurrency và env var có thể khác nhau giữa các version. Trigger/permission gắn theo **qualifier** (alias/version). Canary deployment dùng **alias weighted routing** (hoặc CodeDeploy quản lý cho gọn).
 
 ## Tổng kết các bẫy hay gặp
 

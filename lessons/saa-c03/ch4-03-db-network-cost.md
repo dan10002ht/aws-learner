@@ -61,7 +61,7 @@ Môi trường non-prod (dev, staging) thì hạ mạnh tay, vì chậm một ch
 - **RDS không có Convertible RI.** Loại RI đổi được họ instance là của EC2. Muốn đổi engine hay họ instance giữa kỳ hạn thì RI cũ coi như bỏ phí, nên **right-size trước rồi mới mua RI** (đúng thứ tự trong câu chuyện ở §1).
 - **Aurora** cũng mua RI theo cách tương tự cho instance provisioned: tới ~45% kỳ 1 năm, ~66% kỳ 3 năm.
 
-> 📏 **Đề thi và thực tế hiện nay.** Đề SAA-C03 coi là đúng: *"Compute Savings Plans không áp cho RDS — database phải dùng Reserved Instance"*. Hiện AWS đã có thêm **Database Savings Plans**: cam kết một mức chi $/giờ trong 1 năm, không trả trước, giảm tới ~35%, áp chung cho Aurora, RDS, DynamoDB, ElastiCache (Valkey), DocumentDB, Neptune và không khoá vào engine hay họ instance. Mức giảm thấp hơn RI nhưng linh hoạt hơn. Gặp câu hỏi thi cũ thì vẫn chọn RI cho RDS.
+> **Đề thi và thực tế hiện nay.** Đề SAA-C03 coi là đúng: *"Compute Savings Plans không áp cho RDS — database phải dùng Reserved Instance"*. Hiện AWS đã có thêm **Database Savings Plans**: cam kết một mức chi $/giờ trong 1 năm, không trả trước, giảm tới ~35%, áp chung cho Aurora, RDS, DynamoDB, ElastiCache (Valkey), DocumentDB, Neptune và không khoá vào engine hay họ instance. Mức giảm thấp hơn RI nhưng linh hoạt hơn. Gặp câu hỏi thi cũ thì vẫn chọn RI cho RDS.
 
 ### 2.3 Storage tier (Aurora I/O-Optimized vs Standard)
 
@@ -121,7 +121,7 @@ gp3 2 TB (có sẵn 12.000 IOPS, gấp 4 lần mức đang dùng):
 
 Nếu thật sự cần Provisioned IOPS (latency dưới 1 ms ổn định, hoặc hơn 64.000 IOPS là trần của gp3 trên RDS) thì chọn **io2 Block Express** thay io1: cùng giá, bền hơn, lên tới 256.000 IOPS.
 
-🪤 **Giảm dung lượng đã cấp phát thì không làm được tại chỗ.** RDS chỉ cho tăng storage. Snapshot rồi restore cũng không thu nhỏ được, vì bản restore phải có dung lượng ít nhất bằng bản gốc. Muốn nhỏ lại phải tạo instance mới với volume nhỏ hơn rồi chuyển dữ liệu sang (dump/restore hoặc DMS). Vì vậy đừng cấp dư "cho chắc": cấp vừa đủ và bật **storage autoscaling** để RDS tự tăng khi gần đầy.
+**Giảm dung lượng đã cấp phát thì không làm được tại chỗ.** RDS chỉ cho tăng storage. Snapshot rồi restore cũng không thu nhỏ được, vì bản restore phải có dung lượng ít nhất bằng bản gốc. Muốn nhỏ lại phải tạo instance mới với volume nhỏ hơn rồi chuyển dữ liệu sang (dump/restore hoặc DMS). Vì vậy đừng cấp dư "cho chắc": cấp vừa đủ và bật **storage autoscaling** để RDS tự tăng khi gần đầy.
 
 ### 2.5 Multi-AZ vs Single-AZ
 
@@ -224,7 +224,7 @@ Provisioned:  $0,00065 / WCU-giờ          $0,00013 / RCU-giờ
 | Trên ~29% (tải đều, hoặc auto scaling bám sát được) | **Provisioned + auto scaling** |
 | Dưới ~29% (tải giật cục, phần lớn thời gian gần 0, hoặc chưa biết tải) | **On-demand** |
 
-> 📏 Nhiều tài liệu ôn thi còn ghi *"on-demand đắt ~7 lần, hoà vốn ở ~18%"* (thực ra 1/7 là ~14%). Đó là giá trước khi AWS **giảm 50% giá on-demand vào tháng 11/2024**. Kết luận định tính mà đề thi kiểm tra thì không đổi: **tải đều và đoán được → provisioned; tải thất thường → on-demand.**
+> Nhiều tài liệu ôn thi còn ghi *"on-demand đắt ~7 lần, hoà vốn ở ~18%"* (thực ra 1/7 là ~14%). Đó là giá trước khi AWS **giảm 50% giá on-demand vào tháng 11/2024**. Kết luận định tính mà đề thi kiểm tra thì không đổi: **tải đều và đoán được → provisioned; tải thất thường → on-demand.**
 
 **Tính thử** — đây là bài tập 2. Bảng đang on-demand, 23 giờ mỗi ngày đọc 5.000 lần/giây, 1 giờ cao điểm đọc 50.000 lần/giây (item dưới 4 KB, strongly consistent):
 
@@ -331,9 +331,9 @@ Không phải "NoSQL luôn rẻ". Chi phí phụ thuộc **hình dạng traffic*
 | Query pattern | Cần **join, transaction đa bảng, ad-hoc SQL, aggregate** | Chỉ **key/PK-SK lookup** đơn giản, biết trước access pattern |
 | Scale write cực lớn | Giới hạn bởi instance size (scale-up) | Scale-out gần như vô hạn, phẳng chi phí theo request |
 
-> 💡 **Quy tắc chọn theo chi phí**: workload **relational + steady + util cao** → RDS/Aurora + RI thường rẻ nhất. Workload **key-value + spiky/khó đoán + có lúc idle** → DynamoDB on-demand thắng vì không trả tiền cho instance nằm không.
+> **Quy tắc chọn theo chi phí**: workload **relational + steady + util cao** → RDS/Aurora + RI thường rẻ nhất. Workload **key-value + spiky/khó đoán + có lúc idle** → DynamoDB on-demand thắng vì không trả tiền cho instance nằm không.
 
-> 🪤 Bẫy thi: đề mô tả app **traffic đều 24/7, cần join phức tạp** nhưng đáp án gài "chuyển sang DynamoDB để tiết kiệm" → **Sai**. Ngược lại, app **traffic burst vài giờ/ngày, còn lại gần 0** mà giữ RDS instance chạy suốt → lãng phí, DynamoDB on-demand mới rẻ.
+> Bẫy thi: đề mô tả app **traffic đều 24/7, cần join phức tạp** nhưng đáp án gài "chuyển sang DynamoDB để tiết kiệm" → **Sai**. Ngược lại, app **traffic burst vài giờ/ngày, còn lại gần 0** mà giữ RDS instance chạy suốt → lãng phí, DynamoDB on-demand mới rẻ.
 
 ---
 
@@ -587,7 +587,7 @@ Chi tiết cần nhớ:
 - **Cam kết để giảm giá.** Hai cơ chế: **Security Savings Bundle** (cam kết mức chi hằng tháng trong 1 năm, giảm tới 30%) và **giá riêng** khi cam kết từ **10 TB/tháng trở lên** trong ít nhất 12 tháng. Tài liệu cũ gọi chung là "reserved capacity pricing".
 - **Origin Shield** là một lớp cache trung tâm nằm giữa các edge và origin. Nó tính thêm phí theo request (~$0,0075 cho 10.000 request ở US), đổi lại nhiều edge cùng trượt cache chỉ sinh ra một request về origin. Đáng bật khi origin đắt hoặc yếu, user rải nhiều vùng.
 
-> 📏 Hiện CloudFront còn có các **gói giá cố định theo tháng** (Free, Pro, Business, Premium) gộp sẵn CDN, WAF và một lượng traffic. Đề SAA-C03 hỏi theo mô hình trả theo GB ở trên.
+> Hiện CloudFront còn có các **gói giá cố định theo tháng** (Free, Pro, Business, Premium) gộp sẵn CDN, WAF và một lượng traffic. Đề SAA-C03 hỏi theo mô hình trả theo GB ở trên.
 
 ### 6.5 NAT Gateway vs NAT Instance — chọn cái nào về chi phí
 
@@ -600,9 +600,9 @@ Cả hai đều cho private subnet ra Internet, nhưng **mô hình chi phí khá
 | Bandwidth | Auto scale tới **~100 Gbps**, không phải lo | Giới hạn bởi **instance type** (network của EC2), phải right-size thủ công |
 | Quản lý | AWS lo hết (patch, scale) | Tự patch OS, quản security group, source/dest check off, monitor |
 
-> 💡 **Khi nào rẻ hơn**: traffic **rất thấp / dev-test** hoặc muốn instance kiêm **bastion** → NAT Instance (t4g.nano/micro) rẻ hơn vì không có phí $0.045/GB. Traffic **vừa–cao hoặc cần HA + zero-ops** → NAT Gateway thắng: phí/GB đáng, nhưng bù lại HA và không tốn công vận hành. Điểm hòa vốn nghiêng về NAT GW rất nhanh khi throughput tăng.
+> **Khi nào rẻ hơn**: traffic **rất thấp / dev-test** hoặc muốn instance kiêm **bastion** → NAT Instance (t4g.nano/micro) rẻ hơn vì không có phí $0.045/GB. Traffic **vừa–cao hoặc cần HA + zero-ops** → NAT Gateway thắng: phí/GB đáng, nhưng bù lại HA và không tốn công vận hành. Điểm hòa vốn nghiêng về NAT GW rất nhanh khi throughput tăng.
 
-> 🪤 Bẫy thi: đề đòi **giảm chi phí NAT cho traffic ra S3/DynamoDB** → đáp án đúng thường **không phải** "đổi sang NAT Instance" mà là **VPC Gateway endpoint** (free, bỏ NAT hoàn toàn cho AWS service đó).
+> Bẫy thi: đề đòi **giảm chi phí NAT cho traffic ra S3/DynamoDB** → đáp án đúng thường **không phải** "đổi sang NAT Instance" mà là **VPC Gateway endpoint** (free, bỏ NAT hoàn toàn cho AWS service đó).
 
 ### 6.6 Hybrid connectivity cost — Internet vs VPN vs Direct Connect
 
@@ -615,7 +615,7 @@ Nối on-prem với VPC có 3 đường, khác nhau ở **chi phí cố định*
 | Độ ổn định / latency | Kém, biến thiên, không SLA băng thông | Trung bình; qua Internet nên latency biến thiên; ~1.25 Gbps/tunnel | **Cao nhất** — dedicated, latency ổn định, có SLA |
 | Bảo mật | Không mã hoá (tự lo TLS) | **IPsec mã hoá** sẵn | Riêng tư (không public); muốn mã hoá thêm VPN over DX |
 
-> 💡 **Break-even theo volume**: VPN thắng khi **volume thấp/vừa** (phí cố định gần như bằng 0, chấp nhận $0.09/GB). Direct Connect có phí port cố định cao nhưng **$/GB egress rẻ hơn ~4-5 lần** → khi **egress lớn và ổn định (nhiều TB/tháng)**, phần tiết kiệm $/GB vượt phí port → DX rẻ hơn tổng thể, đồng thời cho latency ổn định. Pattern thi phổ biến: **DX cho backbone + VPN làm backup** (failover rẻ khi DX chết).
+> **Break-even theo volume**: VPN thắng khi **volume thấp/vừa** (phí cố định gần như bằng 0, chấp nhận $0.09/GB). Direct Connect có phí port cố định cao nhưng **$/GB egress rẻ hơn ~4-5 lần** → khi **egress lớn và ổn định (nhiều TB/tháng)**, phần tiết kiệm $/GB vượt phí port → DX rẻ hơn tổng thể, đồng thời cho latency ổn định. Pattern thi phổ biến: **DX cho backbone + VPN làm backup** (failover rẻ khi DX chết).
 
 ### 6.7 Transit Gateway vs VPC Peering — cost khi nối nhiều VPC
 
@@ -625,9 +625,9 @@ Nối on-prem với VPC có 3 đường, khác nhau ở **chi phí cố định*
 | Topology | **Non-transitive** — phải full mesh: N VPC cần **N·(N-1)/2** kết nối | **Hub-and-spoke, transitive** — mỗi VPC 1 attachment, TGW route giữa tất cả |
 | Độ phức tạp | Rẻ nhưng **bùng nổ số kết nối** và route table khi nhiều VPC | Đơn giản khi scale, quản lý tập trung, hỗ trợ cross-region peering |
 
-> 💡 **Khi nào chọn**: **ít VPC (2-3), cost-sensitive, quan hệ tĩnh** → VPC Peering rẻ hơn (không mất $0.02/GB). **Nhiều VPC / cần transitive / hub trung tâm / nối cả VPN+DX** → Transit Gateway: chấp nhận phí attachment + $0.02/GB để đổi lấy topology gọn, tránh mesh chằng chịt.
+> **Khi nào chọn**: **ít VPC (2-3), cost-sensitive, quan hệ tĩnh** → VPC Peering rẻ hơn (không mất $0.02/GB). **Nhiều VPC / cần transitive / hub trung tâm / nối cả VPN+DX** → Transit Gateway: chấp nhận phí attachment + $0.02/GB để đổi lấy topology gọn, tránh mesh chằng chịt.
 
-> 🪤 Bẫy thi: "TGW luôn rẻ hơn peering" → **Sai**. TGW có phí per-GB processing mà peering không có; peering rẻ hơn cho ít VPC. Ngược lại, "peering scale tốt cho hàng chục VPC" cũng **Sai** vì non-transitive gây mesh bùng nổ.
+> Bẫy thi: "TGW luôn rẻ hơn peering" → **Sai**. TGW có phí per-GB processing mà peering không có; peering rẻ hơn cho ít VPC. Ngược lại, "peering scale tốt cho hàng chục VPC" cũng **Sai** vì non-transitive gây mesh bùng nổ.
 
 ---
 

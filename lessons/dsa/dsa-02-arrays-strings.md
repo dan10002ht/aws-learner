@@ -22,13 +22,13 @@ Cái giá phải trả nằm ở chèn/xoá giữa mảng: muốn chèn vào đ�
 | Binary search | O(log n) | yêu cầu đã sort |
 | Duyệt toàn bộ | O(n) | |
 
-> 💡 Ghi nhớ: `push`/`pop` ở **cuối** mảng là rẻ (O(1) amortized). Mọi thao tác ở **đầu** hoặc **giữa** đều O(n) vì phải dịch dữ liệu. Khi cần thao tác đầu/cuối thường xuyên, hãy nghĩ tới deque/linked list.
+> Ghi nhớ: `push`/`pop` ở **cuối** mảng là rẻ (O(1) amortized). Mọi thao tác ở **đầu** hoặc **giữa** đều O(n) vì phải dịch dữ liệu. Khi cần thao tác đầu/cuối thường xuyên, hãy nghĩ tới deque/linked list.
 
 ### String là array bất biến
 
 Trong đa số ngôn ngữ (Python, Java, JavaScript, Go), string là **immutable** — không sửa được tại chỗ. Mỗi lần "nối chuỗi" thực ra tạo một string mới, sao chép toàn bộ ký tự cũ.
 
-> ⚠️ Bẫy: nối chuỗi trong vòng lặp bằng `s += ...` là **O(n²)** vì mỗi lần nối phải copy lại toàn bộ. Hãy gom các mảnh vào một list/builder rồi `join` một lần ở cuối — O(n).
+> Bẫy: nối chuỗi trong vòng lặp bằng `s += ...` là **O(n²)** vì mỗi lần nối phải copy lại toàn bộ. Hãy gom các mảnh vào một list/builder rồi `join` một lần ở cuối — O(n).
 
 ```python
 # SAI: O(n^2)
@@ -351,7 +351,7 @@ std::vector<int> twoSumSorted(const std::vector<int>& a, int target) {
 }
 ```
 
-> 💡 Ghi nhớ: hễ thấy "mảng **đã sort**" + "tìm cặp/bộ thoả tổng", phản xạ đầu tiên là two-pointer hai đầu.
+> Ghi nhớ: hễ thấy "mảng **đã sort**" + "tìm cặp/bộ thoả tổng", phản xạ đầu tiên là two-pointer hai đầu.
 
 ## 3. Sliding Window (cửa sổ trượt)
 
@@ -424,7 +424,7 @@ Vì mỗi con trỏ chỉ đi một chiều và mỗi phần tử vào/ra cửa 
 - "Dãy con / chuỗi con **liên tiếp** dài nhất / ngắn nhất / tổng lớn nhất thoả điều kiện X".
 - Có hai kiểu: **cửa sổ kích thước cố định** (window size k) và **cửa sổ co giãn** (variable, theo điều kiện).
 
-> ⚠️ Bẫy: sliding window chỉ áp dụng cho **dãy con liên tiếp**. Nếu bài cho phép chọn phần tử **không liền kề** (subsequence) hoặc cho phép số âm phá vỡ tính đơn điệu, cửa sổ trượt thường sai — cân nhắc DP hoặc prefix sum + hash.
+> Bẫy: sliding window chỉ áp dụng cho **dãy con liên tiếp**. Nếu bài cho phép chọn phần tử **không liền kề** (subsequence) hoặc cho phép số âm phá vỡ tính đơn điệu, cửa sổ trượt thường sai — cân nhắc DP hoặc prefix sum + hash.
 
 ### Bài toán điển hình: Longest Substring không lặp ký tự
 
@@ -650,7 +650,7 @@ int rangeSum(const std::vector<int>& pre, int i, int j) { // tong a[i..j]
 }
 ```
 
-> 💡 Ghi nhớ: dùng `pre` có **độ dài n+1** với `pre[0] = 0`. Quy ước này khử trường hợp đặc biệt khi đoạn bắt đầu từ index 0, giúp công thức `pre[j+1] - pre[i]` luôn đúng.
+> Ghi nhớ: dùng `pre` có **độ dài n+1** với `pre[0] = 0`. Quy ước này khử trường hợp đặc biệt khi đoạn bắt đầu từ index 0, giúp công thức `pre[j+1] - pre[i]` luôn đúng.
 
 ### Bài toán điển hình: Maximum Subarray (Kadane)
 
@@ -721,7 +721,7 @@ int maxSubarray(const std::vector<int>& a) {
 }
 ```
 
-> ⚠️ Bẫy: với Max Subarray, đừng khởi tạo `best = 0`. Nếu mọi phần tử đều âm, đáp án phải là số âm lớn nhất; khởi tạo `0` sẽ trả sai. Hãy khởi tạo bằng `a[0]`.
+> Bẫy: với Max Subarray, đừng khởi tạo `best = 0`. Nếu mọi phần tử đều âm, đáp án phải là số âm lớn nhất; khởi tạo `0` sẽ trả sai. Hãy khởi tạo bằng `a[0]`.
 
 ## 5. Tổng kết: chọn kỹ thuật nào?
 
@@ -734,6 +734,6 @@ int maxSubarray(const std::vector<int>& a) {
 | Nhiều truy vấn tổng đoạn / đếm subarray tổng = k | Prefix sum (+ hash) |
 | Tổng subarray lớn nhất (có số âm) | Kadane |
 
-> 💡 Ghi nhớ: khi gặp bài "subarray/substring", trước khi viết hai vòng O(n²), hãy tự hỏi: **đề có nói liên tiếp không? mảng có sort không? có truy vấn lặp lại không?** Câu trả lời thường chỉ thẳng tới one trong bốn kỹ thuật ở trên và đưa lời giải về O(n).
+> Ghi nhớ: khi gặp bài "subarray/substring", trước khi viết hai vòng O(n²), hãy tự hỏi: **đề có nói liên tiếp không? mảng có sort không? có truy vấn lặp lại không?** Câu trả lời thường chỉ thẳng tới one trong bốn kỹ thuật ở trên và đưa lời giải về O(n).
 
 Cả bốn kỹ thuật đều chung một triết lý: **dùng thông tin cấu trúc (đã sort, liên tiếp, tích luỹ) để tránh xét lại công việc đã làm**. Nắm vững chúng, bạn xử lý gọn phần lớn câu hỏi array/string trong phỏng vấn lẫn công việc thực tế.

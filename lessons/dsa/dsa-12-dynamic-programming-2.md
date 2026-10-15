@@ -12,7 +12,7 @@ Một state 1D `dp[i]` đủ khi "vị trí hiện tại" mô tả trọn vẹn 
 - **Tọa độ trên lưới**: state là "đứng tại ô `(r, c)`" → bảng `dp[r][c]`. (Unique paths, min path sum, maximal square.)
 - **Một khoảng con `[i..j]`**: state là "đã giải xong đoạn từ `i` đến `j`" → bảng `dp[i][j]` nhưng `j` là **điểm cuối khoảng**, không phải chuỗi thứ hai. (Interval DP: matrix chain, burst balloons, palindrome.)
 
-> 💡 Ghi nhớ: Hỏi mình một câu — "Cần bao nhiêu con số để định danh duy nhất một bài con?". Một con số → 1D. Hai con số độc lập → 2D. Đó là toàn bộ trực giác về chiều của bảng.
+> Ghi nhớ: Hỏi mình một câu — "Cần bao nhiêu con số để định danh duy nhất một bài con?". Một con số → 1D. Hai con số độc lập → 2D. Đó là toàn bộ trực giác về chiều của bảng.
 
 ### Bảng nhận diện pattern DP (rất quan trọng)
 
@@ -25,7 +25,7 @@ Một state 1D `dp[i]` đủ khi "vị trí hiện tại" mô tả trọn vẹn 
 | Một chuỗi, hỏi về **đối xứng / palindrome** | **Interval DP** (hoặc 2D) | `dp[i][j]` = thông tin về `s[i..j]` |
 | "Số cách đi" / "min-max chi phí" + bài con trùng lặp | DP (chiều tùy bài) | tùy số tham số |
 
-> ⚠️ Bẫy: "Hai chuỗi → 2D" và "chia khoảng → 2D" **trông giống nhau** (đều `dp[i][j]`) nhưng ý nghĩa hai chỉ số khác hẳn. String DP: `i`, `j` thuộc hai chuỗi *khác nhau*. Interval DP: `i`, `j` là *hai đầu* của cùng một dãy. Xác định nhầm là sai từ gốc.
+> Bẫy: "Hai chuỗi → 2D" và "chia khoảng → 2D" **trông giống nhau** (đều `dp[i][j]`) nhưng ý nghĩa hai chỉ số khác hẳn. String DP: `i`, `j` thuộc hai chuỗi *khác nhau*. Interval DP: `i`, `j` là *hai đầu* của cùng một dãy. Xác định nhầm là sai từ gốc.
 
 ## 2. Template/khung code chuẩn
 
@@ -117,7 +117,7 @@ int dp2dTemplate(const string& A, const string& B) {
 }
 ```
 
-> 💡 Ghi nhớ: Quy ước **chỉ số lệch 1** — `dp[i][j]` xét **`i` ký tự đầu** của A và **`j` ký tự đầu** của B, nên ký tự hiện tại là `A[i-1]`, `B[j-1]`. Hàng 0 và cột 0 ứng với "chuỗi rỗng". Quy ước này khử được phần lớn lỗi off-by-one của DP 2D.
+> Ghi nhớ: Quy ước **chỉ số lệch 1** — `dp[i][j]` xét **`i` ký tự đầu** của A và **`j` ký tự đầu** của B, nên ký tự hiện tại là `A[i-1]`, `B[j-1]`. Hàng 0 và cột 0 ứng với "chuỗi rỗng". Quy ước này khử được phần lớn lỗi off-by-one của DP 2D.
 
 ## 3. Bảng DẠNG BÀI (problem patterns)
 
@@ -148,7 +148,7 @@ int dp2dTemplate(const string& A, const string& B) {
 | Gộp/cắt tốn phí | "Chia/gộp dãy, chi phí phụ thuộc cách chia" | `dp[i][j] = min/max over k (dp[i][k] + dp[k+1][j] + cost)` | O(n³) | Matrix Chain, Stone Game, Burst Balloons (LC 312) |
 | Điểm chia tối ưu | "Nổ/ghép phần tử theo thứ tự chọn" | duyệt điểm `k` cuối cùng trong khoảng | O(n³) | Burst Balloons (LC 312) |
 
-> 💡 Ghi nhớ: Dấu hiệu **interval DP** rất đặc trưng — có một vòng lặp `k` *bên trong* `(i, j)` để duyệt "điểm chia/điểm cuối cùng". Đó là điểm phân biệt với string DP (chỉ có 2 vòng `i, j`). Vì có 3 vòng lồng nhau, interval DP thường là **O(n³)**.
+> Ghi nhớ: Dấu hiệu **interval DP** rất đặc trưng — có một vòng lặp `k` *bên trong* `(i, j)` để duyệt "điểm chia/điểm cuối cùng". Đó là điểm phân biệt với string DP (chỉ có 2 vòng `i, j`). Vì có 3 vòng lồng nhau, interval DP thường là **O(n³)**.
 
 ## 4. Bài mẫu giải chi tiết
 
@@ -808,9 +808,9 @@ int lcsRolling(string a, string b) {
 }
 ```
 
-> 💡 Ghi nhớ: Quy tắc nén bộ nhớ DP 2D — nếu transition chỉ chạm **hàng `i-1`** và **cùng hàng bên trái**, bạn nén được xuống 1–2 mảng 1D. Nếu chạm cả `dp[i-1][j-1]`, giữ một biến `prev`/`diag`. Nếu transition chạm ô **cách xa** (như interval DP) thì thường **không** nén được dễ dàng — cứ giữ bảng 2D.
+> Ghi nhớ: Quy tắc nén bộ nhớ DP 2D — nếu transition chỉ chạm **hàng `i-1`** và **cùng hàng bên trái**, bạn nén được xuống 1–2 mảng 1D. Nếu chạm cả `dp[i-1][j-1]`, giữ một biến `prev`/`diag`. Nếu transition chạm ô **cách xa** (như interval DP) thì thường **không** nén được dễ dàng — cứ giữ bảng 2D.
 
-> ⚠️ Bẫy: Trong phỏng vấn, **viết bản 2D đầy đủ trước** cho đúng và dễ giải thích, rồi mới nói "em có thể nén xuống O(m) bộ nhớ thế này". Nhảy thẳng vào bản nén thường gây lỗi chéo và mất điểm vì khó đọc.
+> Bẫy: Trong phỏng vấn, **viết bản 2D đầy đủ trước** cho đúng và dễ giải thích, rồi mới nói "em có thể nén xuống O(m) bộ nhớ thế này". Nhảy thẳng vào bản nén thường gây lỗi chéo và mất điểm vì khó đọc.
 
 ## 7. Checklist tự luyện
 
@@ -827,4 +827,4 @@ Luyện theo đúng quy trình: nói thành lời định nghĩa `dp[i][j]` → 
 - [ ] **Longest Palindromic Substring (LC 5)** — *interval DP*: `dp[i][j]` đúng khi `s[i]==s[j]` và `dp[i+1][j-1]` đúng; điền theo độ dài khoảng.
 - [ ] **Burst Balloons (LC 312)** — *interval DP O(n³)*: duyệt quả bóng nổ **cuối cùng** `k` trong khoảng `(i, j)`. Khó, để cuối.
 
-> 💡 Ghi nhớ cuối bài: Mọi bài DP 2D trong phỏng vấn rút gọn về ba câu hỏi. (1) **Bao nhiêu tham số định danh một bài con?** → ra chiều bảng. (2) **Ô hiện tại phụ thuộc ô nào?** → ra transition và thứ tự điền. (3) **Bài con nhỏ nhất là gì?** → ra base case. Trả lời được ba câu này trên giấy thì code chỉ là chép lại. Kết hợp với DP I, bạn đã có đủ khung để xử lý gần như mọi bài DP mức phỏng vấn.
+> Ghi nhớ cuối bài: Mọi bài DP 2D trong phỏng vấn rút gọn về ba câu hỏi. (1) **Bao nhiêu tham số định danh một bài con?** → ra chiều bảng. (2) **Ô hiện tại phụ thuộc ô nào?** → ra transition và thứ tự điền. (3) **Bài con nhỏ nhất là gì?** → ra base case. Trả lời được ba câu này trên giấy thì code chỉ là chép lại. Kết hợp với DP I, bạn đã có đủ khung để xử lý gần như mọi bài DP mức phỏng vấn.

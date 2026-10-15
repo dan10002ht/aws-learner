@@ -74,9 +74,9 @@ Hãy tưởng tượng một người gõ trống cho đội chèo thuyền: tr�
 
 CPU hiện đại thường có nhiều **nhân** (core) — giống như văn phòng thuê thêm nhân viên. CPU 4 nhân = 4 nhân viên có thể làm 4 việc *cùng lúc*. Đó là lý do bạn có thể vừa nghe nhạc vừa lướt web mà máy không "nghẹn".
 
-> 💡 **Ghi nhớ**: CPU = bộ não làm mọi phép tính. Xung nhịp (GHz) = tốc độ làm việc. Số nhân (core) = số việc làm được cùng lúc.
+> **Ghi nhớ**: CPU = bộ não làm mọi phép tính. Xung nhịp (GHz) = tốc độ làm việc. Số nhân (core) = số việc làm được cùng lúc.
 
-> ⚠️ **Lỗi người mới hay gặp**: Nghĩ rằng "GHz càng cao thì máy chắc chắn càng nhanh". Không hẳn! Một CPU 8 nhân chạy 2.5 GHz có thể mạnh hơn nhiều CPU 2 nhân chạy 3.5 GHz — giống như 8 nhân viên làm việc đều tay thường thắng 2 nhân viên làm hơi nhanh hơn một chút.
+> **Lỗi người mới hay gặp**: Nghĩ rằng "GHz càng cao thì máy chắc chắn càng nhanh". Không hẳn! Một CPU 8 nhân chạy 2.5 GHz có thể mạnh hơn nhiều CPU 2 nhân chạy 3.5 GHz — giống như 8 nhân viên làm việc đều tay thường thắng 2 nhân viên làm hơi nhanh hơn một chút.
 
 ---
 
@@ -116,9 +116,9 @@ Khi bạn mở một file Word:
 | Tắt máy | **Mất hết** | **Giữ nguyên** |
 | Dùng để | Việc đang làm dở | Cất giữ lâu dài |
 
-> 💡 **Ghi nhớ**: RAM = bàn làm việc (nhanh, nhỏ, tắt máy là mất). Ổ cứng = tủ hồ sơ (chậm hơn, to, giữ mãi). Đây là lý do bạn phải **Save** file: chưa Save nghĩa là tài liệu mới chỉ nằm trên "bàn", chưa được cất vào "tủ".
+> **Ghi nhớ**: RAM = bàn làm việc (nhanh, nhỏ, tắt máy là mất). Ổ cứng = tủ hồ sơ (chậm hơn, to, giữ mãi). Đây là lý do bạn phải **Save** file: chưa Save nghĩa là tài liệu mới chỉ nằm trên "bàn", chưa được cất vào "tủ".
 
-> ⚠️ **Lỗi người mới hay gặp**: Nói "máy em có 500 GB RAM". Gần như chắc chắn đó là dung lượng **ổ cứng**, không phải RAM. Khi nghe con số hàng trăm GB trở lên — đó là tủ hồ sơ. RAM thường chỉ 4, 8, 16, 32 GB.
+> **Lỗi người mới hay gặp**: Nói "máy em có 500 GB RAM". Gần như chắc chắn đó là dung lượng **ổ cứng**, không phải RAM. Khi nghe con số hàng trăm GB trở lên — đó là tủ hồ sơ. RAM thường chỉ 4, 8, 16, 32 GB.
 
 ### SSD vs HDD — tủ hồ sơ đời mới
 
@@ -143,7 +143,7 @@ Hãy nghĩ về văn phòng: nếu chỉ có nhân viên (CPU), bàn (RAM), tủ
 4. **Làm phiên dịch với thiết bị**: Bàn phím, chuột, máy in, màn hình — mỗi thứ "nói một thứ tiếng" khác nhau. OS dùng các **driver** (trình điều khiển — phần mềm phiên dịch cho từng thiết bị) để giao tiếp với chúng.
 5. **Cung cấp giao diện cho bạn**: Màn hình desktop, các cửa sổ, biểu tượng — đó là "bộ mặt" của hệ điều hành.
 
-> 💡 **Ghi nhớ**: Bạn không bao giờ nói chuyện trực tiếp với phần cứng. Mọi thao tác của bạn đều đi qua "người quản lý" — hệ điều hành.
+> **Ghi nhớ**: Bạn không bao giờ nói chuyện trực tiếp với phần cứng. Mọi thao tác của bạn đều đi qua "người quản lý" — hệ điều hành.
 
 ---
 
@@ -209,7 +209,7 @@ Khi bạn nháy đúp vào biểu tượng Chrome:
 
 Một chương trình có thể sinh ra nhiều tiến trình cùng lúc — mở 2 cửa sổ Word là có thể có 2 tiến trình từ cùng một "cuốn công thức". Trên Windows, bấm `Ctrl + Shift + Esc` mở **Task Manager** (trình quản lý tác vụ) là bạn thấy danh sách tất cả tiến trình đang chạy — đông hơn bạn tưởng nhiều, vì OS cũng chạy hàng chục tiến trình ngầm của riêng nó.
 
-> ⚠️ **Lỗi người mới hay gặp**: Tắt cửa sổ nhưng tưởng chương trình đã tắt hẳn. Nhiều ứng dụng (Zalo, Skype...) vẫn chạy ngầm dưới dạng tiến trình, tiếp tục chiếm RAM và CPU. Muốn tắt hẳn phải thoát từ khay hệ thống hoặc Task Manager.
+> **Lỗi người mới hay gặp**: Tắt cửa sổ nhưng tưởng chương trình đã tắt hẳn. Nhiều ứng dụng (Zalo, Skype...) vẫn chạy ngầm dưới dạng tiến trình, tiếp tục chiếm RAM và CPU. Muốn tắt hẳn phải thoát từ khay hệ thống hoặc Task Manager.
 
 ---
 
@@ -234,7 +234,7 @@ Tên file thường có phần đuôi sau dấu chấm, gọi là **phần mở 
 
 Mỗi file có một **đường dẫn** (path) — như địa chỉ nhà: `C:\Users\Lan\Documents\baocao.docx` nghĩa là: ổ đĩa C → ngăn Users → ngăn Lan → ngăn Documents → tờ giấy tên baocao.docx.
 
-> 💡 **Ghi nhớ**: File = giấy tờ, thư mục = ngăn kéo, đường dẫn = địa chỉ chỉ chỗ cất. Đặt tên thư mục có hệ thống ngay từ đầu sẽ tiết kiệm cho bạn hàng giờ tìm kiếm sau này.
+> **Ghi nhớ**: File = giấy tờ, thư mục = ngăn kéo, đường dẫn = địa chỉ chỉ chỗ cất. Đặt tên thư mục có hệ thống ngay từ đầu sẽ tiết kiệm cho bạn hàng giờ tìm kiếm sau này.
 
 ---
 
@@ -262,7 +262,7 @@ Vài con số đời thường để có cảm giác:
 - Hệ điều hành Windows: ~25–30 GB
 - Ổ cứng laptop phổ biến: 256 GB – 1 TB
 
-> ⚠️ **Lỗi người mới hay gặp**: Nhầm **bit** với **byte** khi nói về tốc độ mạng. Nhà mạng quảng cáo "100 Mbps" — đó là 100 **megabit**/giây, tức chỉ ~12,5 **megabyte**/giây (chia 8). Tải bộ phim 4 GB với mạng "100 Mb" sẽ mất hơn 5 phút chứ không phải 40 giây.
+> **Lỗi người mới hay gặp**: Nhầm **bit** với **byte** khi nói về tốc độ mạng. Nhà mạng quảng cáo "100 Mbps" — đó là 100 **megabit**/giây, tức chỉ ~12,5 **megabyte**/giây (chia 8). Tải bộ phim 4 GB với mạng "100 Mb" sẽ mất hơn 5 phút chứ không phải 40 giây.
 
 ---
 
@@ -303,7 +303,7 @@ Phần mềm xấu chạy ngầm, âm thầm chiếm CPU, RAM và mạng — nh�
 
 **Cách xử lý**: quét bằng phần mềm diệt virus, chỉ cài phần mềm từ nguồn tin cậy.
 
-> 💡 **Ghi nhớ — quy trình bắt bệnh nhanh**: Máy chậm → mở Task Manager → nhìn xem cột nào đang đỏ rực: CPU (nhân viên quá tải), Memory/RAM (bàn hết chỗ), hay Disk (tủ hồ sơ quá tải) → xử lý đúng thủ phạm. Đừng vội nghĩ "máy hỏng rồi" — đa số trường hợp chỉ là văn phòng đang bừa bộn.
+> **Ghi nhớ — quy trình bắt bệnh nhanh**: Máy chậm → mở Task Manager → nhìn xem cột nào đang đỏ rực: CPU (nhân viên quá tải), Memory/RAM (bàn hết chỗ), hay Disk (tủ hồ sơ quá tải) → xử lý đúng thủ phạm. Đừng vội nghĩ "máy hỏng rồi" — đa số trường hợp chỉ là văn phòng đang bừa bộn.
 
 ---
 

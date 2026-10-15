@@ -115,7 +115,7 @@ Số shard theo số record:   115.740 ÷ 1.000 record/s  → 116 shard
 
 **Cái giá phải trả: bạn tự viết phần đọc.** Kinesis Data Streams chỉ *giữ* dữ liệu, không tự đưa đi đâu cả. Phải có một consumer do bạn dựng: một **Lambda** (gắn stream làm event source), một ứng dụng dùng thư viện **KCL** chạy trên EC2/ECS (KCL lo việc chia shard giữa các worker và lưu checkpoint vào DynamoDB), một job **Flink**, hoặc gắn **Firehose** vào để đổ ra S3.
 
-> 📏 Kích thước một record: đề thi và hầu hết tài liệu dùng con số **tối đa 1 MB/record**. Docs hiện tại đã nới lên tới **10 MiB** cho các record lớn thỉnh thoảng xuất hiện, nhưng hạn mức ghi của shard vẫn là 1 MB/s — Kinesis vẫn là dịch vụ cho **rất nhiều record nhỏ**, không phải để chuyển file.
+> Kích thước một record: đề thi và hầu hết tài liệu dùng con số **tối đa 1 MB/record**. Docs hiện tại đã nới lên tới **10 MiB** cho các record lớn thỉnh thoảng xuất hiện, nhưng hạn mức ghi của shard vẫn là 1 MB/s — Kinesis vẫn là dịch vụ cho **rất nhiều record nhỏ**, không phải để chuyển file.
 
 ### 2.2 Data Firehose — băng chuyền tự đổ dữ liệu vào kho
 
@@ -143,7 +143,7 @@ Gom lô là chủ đích: ghi 1 file 5 MB lên S3 rẻ và dễ query hơn nhi�
 
 **Không làm được:** không replay (giao xong là hết, Firehose không giữ bản nào), không có nhiều consumer đọc độc lập.
 
-> 💡 Hai dịch vụ này hay đi **cùng nhau** chứ không loại trừ nhau: producer → **Data Streams** (giữ 7 ngày, team fraud đọc real-time bằng Lambda) → **Firehose** gắn vào chính stream đó → **S3** (lưu lâu dài cho analytics). Một luồng, hai nhu cầu.
+> Hai dịch vụ này hay đi **cùng nhau** chứ không loại trừ nhau: producer → **Data Streams** (giữ 7 ngày, team fraud đọc real-time bằng Lambda) → **Firehose** gắn vào chính stream đó → **S3** (lưu lâu dài cho analytics). Một luồng, hai nhu cầu.
 
 ### 2.3 Managed Service for Apache Flink — tính toán ngay khi dữ liệu đang chảy
 
@@ -168,7 +168,7 @@ Vì sao không dùng Lambda cho việc này? Lambda xử lý từng lô record r
 | Scale | Shard (tự tính, hoặc on-demand) | Tự động hoàn toàn | AWS scale cụm Flink |
 | Đích đến | Bất kỳ, do consumer của bạn quyết định | S3, Redshift, OpenSearch, Splunk, HTTP | Stream khác, Firehose, S3 |
 
-> 🪤 Bẫy thi: *"nạp streaming data vào S3/Redshift near-real-time, ít vận hành nhất"* → **Firehose**. *"nhiều app xử lý real-time độc lập + replay được"* → **Data Streams**. *"tính toán cửa sổ thời gian trong luồng"* → **Managed Flink**. *"đã có hệ Kafka / cần Kafka API"* → **MSK**.
+> Bẫy thi: *"nạp streaming data vào S3/Redshift near-real-time, ít vận hành nhất"* → **Firehose**. *"nhiều app xử lý real-time độc lập + replay được"* → **Data Streams**. *"tính toán cửa sổ thời gian trong luồng"* → **Managed Flink**. *"đã có hệ Kafka / cần Kafka API"* → **MSK**.
 >
 > Còn *"mỗi message chỉ một worker xử lý, xong thì xoá, không cần thứ tự/replay"* thì không phải Kinesis mà là **SQS** — so sánh chi tiết ở bài resilient-01.
 
@@ -207,7 +207,7 @@ Vì sao không dùng Lambda cho việc này? Lambda xử lý từng lô record r
 | Khi nào chọn | Mặc định trên AWS: nhanh, ít vận hành, tích hợp sẵn Firehose/Lambda/Flink | **Đã có Kafka**, cần Kafka Connect/Streams/Debezium, cần message lớn thường xuyên |
 | Bẫy | Thêm consumer mà không bật EFO → tranh nhau 2 MB/s (xem §3.3) | Chọn MSK chỉ vì "streaming" trong khi đề không hề nhắc Kafka → thừa vận hành |
 
-> 🪤 Bẫy thi: đề **không** nhắc chữ *Kafka*, *Kafka Connect*, *migrate cụm Kafka on-prem* mà bạn chọn MSK thì thường sai — mặc định của exam là **Kinesis** vì "ít vận hành nhất".
+> Bẫy thi: đề **không** nhắc chữ *Kafka*, *Kafka Connect*, *migrate cụm Kafka on-prem* mà bạn chọn MSK thì thường sai — mặc định của exam là **Kinesis** vì "ít vận hành nhất".
 
 ### 3.3 Enhanced Fan-Out (EFO) — khi nhiều consumer tranh nhau một shard
 
@@ -229,7 +229,7 @@ Vì sao không dùng Lambda cho việc này? Lambda xử lý từng lô record r
 | Chi phí | Đã gồm trong giá shard | Tính thêm per consumer-shard-hour + per GB |
 | Khi nào chọn | Ít consumer, latency không gắt | **Nhiều app đọc cùng lúc** hoặc cần latency thấp và ổn định |
 
-> 🪤 Bẫy thi: đề tả *"thêm ứng dụng consumer thứ ba thì các consumer cũ bị chậm / bị throttle, không được tăng số shard"* → **bật Enhanced Fan-Out**, **không** phải "thêm shard" (thêm shard tốn tiền mà vẫn chia chung băng thông) và cũng không phải "chuyển sang Firehose".
+> Bẫy thi: đề tả *"thêm ứng dụng consumer thứ ba thì các consumer cũ bị chậm / bị throttle, không được tăng số shard"* → **bật Enhanced Fan-Out**, **không** phải "thêm shard" (thêm shard tốn tiền mà vẫn chia chung băng thông) và cũng không phải "chuyển sang Firehose".
 
 ---
 
@@ -305,9 +305,9 @@ CSV, không partition:    quét cả 1 TB                       1 TB × $5      
 
 Từ 1 TB xuống 0,67 GB là giảm khoảng **1.500 lần** (99,9%). Tỉ lệ nén 3:1 và giả định "các cột to bằng nhau" là ước lượng — dữ liệu thật sẽ khác — nhưng bậc độ lớn thì đúng, và đó là lý do các tài liệu thường nói gọn là "giảm trên 90%".
 
-> 💡 Athena tính tiền theo **lượng dữ liệu quét**. Chuyển CSV → **Parquet** (columnar, nén) + **partition theo ngày** giảm **trên 90%** dữ liệu quét, nên vừa rẻ hơn vừa nhanh hơn. Trong đề thi, "giảm chi phí Athena" gần như luôn có đáp án là hai việc này.
+> Athena tính tiền theo **lượng dữ liệu quét**. Chuyển CSV → **Parquet** (columnar, nén) + **partition theo ngày** giảm **trên 90%** dữ liệu quét, nên vừa rẻ hơn vừa nhanh hơn. Trong đề thi, "giảm chi phí Athena" gần như luôn có đáp án là hai việc này.
 
-> 🪤 Bẫy thi: *"query log trên S3 thỉnh thoảng, không muốn quản hạ tầng"* → **Athena**. Đáp án nhiễu thường là "nạp vào Redshift/RDS rồi query" (đúng về kỹ thuật, thừa vận hành) hoặc "dựng cụm EMR". Còn *"query Athena chậm và đắt"* → đáp án là **Parquet + partition**, không phải đổi sang dịch vụ khác.
+> Bẫy thi: *"query log trên S3 thỉnh thoảng, không muốn quản hạ tầng"* → **Athena**. Đáp án nhiễu thường là "nạp vào Redshift/RDS rồi query" (đúng về kỹ thuật, thừa vận hành) hoặc "dựng cụm EMR". Còn *"query Athena chậm và đắt"* → đáp án là **Parquet + partition**, không phải đổi sang dịch vụ khác.
 
 ---
 
@@ -351,7 +351,7 @@ Job được kích hoạt bằng **trigger**: theo lịch, chạy tay, hoặc th
 | **Crawler** | Tự suy schema và partition từ file rồi ghi vào Catalog | Không biến đổi dữ liệu | *"tự động phát hiện schema"*, *"schema thay đổi theo thời gian"* |
 | **ETL job** | Biến đổi dữ liệu bằng Spark serverless (CSV → Parquet, làm sạch, join) | Không phải nơi lưu, không phải nơi query | *"chuyển định dạng với ít vận hành nhất"*, *"chỉ xử lý dữ liệu mới"* (job bookmark) |
 
-> 🪤 Bẫy thi: *"đổi CSV sang Parquet, ít vận hành nhất"* → **Glue ETL**, không phải "dựng cụm EMR" (làm được nhưng phải quản cluster, xem §6.2). Nếu dữ liệu đang chảy qua **Firehose** thì bật convert Parquet ngay trong Firehose còn ít việc hơn nữa. Và đừng nhầm vai: Crawler **mô tả**, ETL job **biến đổi**, Athena **query**.
+> Bẫy thi: *"đổi CSV sang Parquet, ít vận hành nhất"* → **Glue ETL**, không phải "dựng cụm EMR" (làm được nhưng phải quản cluster, xem §6.2). Nếu dữ liệu đang chảy qua **Firehose** thì bật convert Parquet ngay trong Firehose còn ít việc hơn nữa. Và đừng nhầm vai: Crawler **mô tả**, ETL job **biến đổi**, Athena **query**.
 
 ---
 
@@ -415,7 +415,7 @@ Cùng dashboard nhưng chỉ 5 query/ngày:
 
 Query càng lặp lại nhiều trên cùng một khối dữ liệu thì warehouse càng có lợi; càng thưa thì trả theo lần quét càng rẻ.
 
-> 🪤 Bẫy thi: *"query S3 thỉnh thoảng, không muốn hạ tầng"* → **Athena**. *"BI dashboard chạy hằng ngày, nhiều join"* → **Redshift**. *"cần Apache Spark/Hadoop cụ thể"* hoặc *"migrate cụm Hadoop on-prem"* → **EMR**. *"dữ liệu chính trong Redshift, cần join thêm với dữ liệu cũ nằm ở S3 mà không nạp vào"* → **Redshift Spectrum**.
+> Bẫy thi: *"query S3 thỉnh thoảng, không muốn hạ tầng"* → **Athena**. *"BI dashboard chạy hằng ngày, nhiều join"* → **Redshift**. *"cần Apache Spark/Hadoop cụ thể"* hoặc *"migrate cụm Hadoop on-prem"* → **EMR**. *"dữ liệu chính trong Redshift, cần join thêm với dữ liệu cũ nằm ở S3 mà không nạp vào"* → **Redshift Spectrum**.
 
 ---
 
@@ -454,7 +454,7 @@ Athena hợp với "quét cả đống file S3 bằng SQL, thỉnh thoảng". Nh
 | Từ khoá đề | *"log analytics"*, *"Kibana/dashboard real-time"*, *"full-text search"* | *"ad-hoc SQL trên S3"*, *"không muốn hạ tầng"* | *"nhân viên hỏi bằng ngôn ngữ tự nhiên"*, *"tìm trong tài liệu nội bộ SharePoint/S3"* |
 | Bẫy | Dùng OpenSearch làm nơi lưu trữ dài hạn thay S3 → đắt; hãy để index cũ sang UltraWarm/cold | Dùng Athena làm dashboard refresh mỗi phút → tiền quét S3 phình to | Nhầm Kendra với OpenSearch khi đề nhấn *"natural language"* |
 
-> 🪤 Bẫy thi: *"search bar cho người dùng gõ từ khoá, kết quả tức thì"* → **OpenSearch**. *"nhân viên hỏi 'chính sách nghỉ phép thế nào?' trên kho tài liệu nội bộ"* → **Kendra**. *"analyst chạy SQL vài lần một tuần trên log S3"* → **Athena**.
+> Bẫy thi: *"search bar cho người dùng gõ từ khoá, kết quả tức thì"* → **OpenSearch**. *"nhân viên hỏi 'chính sách nghỉ phép thế nào?' trên kho tài liệu nội bộ"* → **Kendra**. *"analyst chạy SQL vài lần một tuần trên log S3"* → **Athena**.
 
 ---
 
@@ -476,7 +476,7 @@ Hai dịch vụ này nằm ở hai đầu của data lake: Lake Formation quyế
 
 Người dùng **không cần quyền S3 trực tiếp**. Khi họ query qua Athena, Redshift Spectrum, EMR hay Glue, engine hỏi Lake Formation, nhận quyền truy cập tạm thời và chỉ trả về đúng phần được phép. Quyền quản ở **một chỗ** thay vì rải ở nhiều policy, cấp được cho account khác, và có thể gán theo tag (LF-Tags) thay vì theo từng bảng.
 
-> 🪤 Bẫy thi: *"phân quyền tập trung, chi tiết tới cột/dòng cho data lake"* → **Lake Formation**. Đáp án nhiễu là "viết bucket policy/IAM policy theo prefix" — chỉ chặn được ở mức file, không xuống được tới cột hay dòng.
+> Bẫy thi: *"phân quyền tập trung, chi tiết tới cột/dòng cho data lake"* → **Lake Formation**. Đáp án nhiễu là "viết bucket policy/IAM policy theo prefix" — chỉ chặn được ở mức file, không xuống được tới cột hay dòng.
 
 ### 8.2 Amazon QuickSight — BI serverless
 
@@ -491,7 +491,7 @@ Người dùng **không cần quyền S3 trực tiếp**. Khi họ query qua Ath
 
 Ngoài ra có **ML Insights**: tự phát hiện điểm bất thường và dự báo xu hướng trên dữ liệu mà không cần tự dựng model.
 
-> 🪤 Bẫy thi: *"dashboard/BI cho business users, serverless"* → **QuickSight**. Đừng chọn "dựng web app trên EC2 đọc từ Athena" hay "OpenSearch Dashboards" (cái sau dành cho log đã index trong OpenSearch, không phải BI trên data warehouse).
+> Bẫy thi: *"dashboard/BI cho business users, serverless"* → **QuickSight**. Đừng chọn "dựng web app trên EC2 đọc từ Athena" hay "OpenSearch Dashboards" (cái sau dành cho log đã index trong OpenSearch, không phải BI trên data warehouse).
 
 ---
 
@@ -547,7 +547,7 @@ Ghép các mảnh ở trên lại thành một đường đi hoàn chỉnh cho b
 - **Bỏ chặng Glue ETL** khi không cần biến đổi gì ngoài đổi định dạng: bật convert Parquet ngay trong Firehose (§2.2), dữ liệu xuống S3 đã là Parquet.
 - **Cần thấy dữ liệu trong vài giây** (soi log, cảnh báo): pipeline này không đáp ứng được vì có hai lần gom lô. Thêm một nhánh song song **Firehose → OpenSearch** (§7), hoặc xử lý ngay trong luồng bằng Flink/Lambda đọc từ Data Streams (§2).
 
-> 🪤 Bẫy thi: đề cho pipeline này rồi hỏi *"giảm chi phí query"* → Parquet + partition ở vùng curated. Hỏi *"analyst thấy cột không được phép"* → Lake Formation. Hỏi *"dashboard chậm khi nhiều người xem"* → SPICE. Hỏi *"cần dữ liệu trong vài giây"* → không phải tối ưu pipeline batch này, mà là thêm nhánh real-time.
+> Bẫy thi: đề cho pipeline này rồi hỏi *"giảm chi phí query"* → Parquet + partition ở vùng curated. Hỏi *"analyst thấy cột không được phép"* → Lake Formation. Hỏi *"dashboard chậm khi nhiều người xem"* → SPICE. Hỏi *"cần dữ liệu trong vài giây"* → không phải tối ưu pipeline batch này, mà là thêm nhánh real-time.
 
 ---
 
@@ -611,7 +611,7 @@ Exam SAA không bắt bạn train model, chỉ bắt **nhận ra dịch vụ man
 - **Số hoá chứng từ**: PDF scan vào S3 → sự kiện S3 gọi **Lambda** → **Textract** trích bảng/field → **Comprehend** phân loại → ghi **DynamoDB**.
 - **Nội dung do user upload**: ảnh vào S3 → **Rekognition** content moderation → ảnh vi phạm bị gắn cờ trước khi hiển thị.
 
-> 🪤 Bẫy thi kinh điển: đề mô tả đúng một bài toán có AI service sẵn (OCR hoá đơn, sentiment, phụ đề) mà đáp án lại gồm cả "**train model trên SageMaker**" hoặc "**chạy engine OCR trên EC2**" — cả hai đều làm được, nhưng **operational overhead cao hơn** nên đều sai với câu hỏi kiểu *"least operational overhead"*.
+> Bẫy thi kinh điển: đề mô tả đúng một bài toán có AI service sẵn (OCR hoá đơn, sentiment, phụ đề) mà đáp án lại gồm cả "**train model trên SageMaker**" hoặc "**chạy engine OCR trên EC2**" — cả hai đều làm được, nhưng **operational overhead cao hơn** nên đều sai với câu hỏi kiểu *"least operational overhead"*.
 
 ---
 
@@ -652,4 +652,4 @@ Exam SAA không bắt bạn train model, chỉ bắt **nhận ra dịch vụ man
 - **Lake Formation** = phân quyền tập trung data lake; **QuickSight** = BI/dashboard serverless (SPICE).
 - Pipeline chuẩn: **nguồn → Kinesis → S3 raw → Glue → S3 Parquet → Athena/Redshift → QuickSight**.
 
-> 🎯 Nhớ: Firehose = nạp lười · Data Streams = xử lý tùy biến/replay · MSK = có chữ Kafka · EFO = nhiều consumer · OpenSearch = log/search real-time · Athena = query lười theo GB · Redshift = BI lặp lại · EMR = Spark/Hadoop · Parquet = rẻ hơn CSV · Textract ≠ Rekognition · Kendra ≠ OpenSearch.
+> Nhớ: Firehose = nạp lười · Data Streams = xử lý tùy biến/replay · MSK = có chữ Kafka · EFO = nhiều consumer · OpenSearch = log/search real-time · Athena = query lười theo GB · Redshift = BI lặp lại · EMR = Spark/Hadoop · Parquet = rẻ hơn CSV · Textract ≠ Rekognition · Kendra ≠ OpenSearch.

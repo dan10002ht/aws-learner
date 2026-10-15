@@ -36,7 +36,7 @@ Bài này sẽ giúp bạn:
 
 Ngoài GitHub còn có các dịch vụ tương tự: **GitLab**, **Bitbucket**. Nguyên lý giống hệt nhau, nhưng GitHub phổ biến nhất thế giới (hơn 100 triệu lập trình viên dùng), nên ta học GitHub.
 
-> 💡 Ghi nhớ: Git là công cụ, GitHub là dịch vụ. Bạn có thể dùng Git mà không cần GitHub, nhưng không thể dùng GitHub mà không có Git.
+> Ghi nhớ: Git là công cụ, GitHub là dịch vụ. Bạn có thể dùng Git mà không cần GitHub, nhưng không thể dùng GitHub mà không có Git.
 
 ### Khái niệm "remote"
 
@@ -82,7 +82,7 @@ Hai kho này là hai bản sao **độc lập**. Bạn sửa code trên máy th�
 1. Vào **github.com**, bấm **Sign up** (đăng ký).
 2. Nhập email, đặt mật khẩu, chọn **username** (tên người dùng).
 
-> ⚠️ Lỗi người mới hay gặp: chọn username kiểu `gaubeo_cute_2k5`. Hãy nhớ username này sẽ xuất hiện trong **link portfolio bạn gửi nhà tuyển dụng** (ví dụ `github.com/gaubeo_cute_2k5`). Hãy chọn tên nghiêm túc, gần với tên thật: `nguyenvanan`, `andev`, `an-nguyen`...
+> Lỗi người mới hay gặp: chọn username kiểu `gaubeo_cute_2k5`. Hãy nhớ username này sẽ xuất hiện trong **link portfolio bạn gửi nhà tuyển dụng** (ví dụ `github.com/gaubeo_cute_2k5`). Hãy chọn tên nghiêm túc, gần với tên thật: `nguyenvanan`, `andev`, `an-nguyen`...
 
 ### Tạo repository (repo)
 
@@ -165,9 +165,9 @@ Lệnh này tải các commit mới về **và** hoà trộn vào code hiện t�
 | `git push` | Máy → GitHub | Sau khi commit, muốn lưu lên mây |
 | `git pull` | GitHub → máy | Trước khi làm việc, để lấy bản mới nhất |
 
-> 💡 Ghi nhớ: quy trình làm việc hằng ngày là **pull trước, làm việc, commit, rồi push**. Pull trước để chắc chắn bạn đang sửa trên bản mới nhất, tránh "giẫm chân" lên thay đổi của người khác.
+> Ghi nhớ: quy trình làm việc hằng ngày là **pull trước, làm việc, commit, rồi push**. Pull trước để chắc chắn bạn đang sửa trên bản mới nhất, tránh "giẫm chân" lên thay đổi của người khác.
 
-> ⚠️ Lỗi người mới hay gặp: `git push` bị từ chối với thông báo `rejected... fetch first`. Nghĩa là trên GitHub có commit mà máy bạn chưa có. Cách xử lý: chạy `git pull` trước, giải quyết xung đột nếu có, rồi push lại. **Đừng** vội dùng `git push --force` (đẩy ép buộc) — lệnh này ghi đè lịch sử trên remote và có thể xoá mất công sức của người khác.
+> Lỗi người mới hay gặp: `git push` bị từ chối với thông báo `rejected... fetch first`. Nghĩa là trên GitHub có commit mà máy bạn chưa có. Cách xử lý: chạy `git pull` trước, giải quyết xung đột nếu có, rồi push lại. **Đừng** vội dùng `git push --force` (đẩy ép buộc) — lệnh này ghi đè lịch sử trên remote và có thể xoá mất công sức của người khác.
 
 ---
 
@@ -227,9 +227,9 @@ Nếu thấy `Hi ten-ban! You've successfully authenticated...` là thành công
 git clone git@github.com:ten-ban/hello-git.git
 ```
 
-> ⚠️ Lỗi người mới hay gặp: copy nhầm **private key** (file không có `.pub`) dán lên GitHub, hoặc tệ hơn — đăng private key lên mạng. Nhớ quy tắc: **file có `.pub` mới được chia sẻ**. Lộ private key = người khác mạo danh được bạn.
+> Lỗi người mới hay gặp: copy nhầm **private key** (file không có `.pub`) dán lên GitHub, hoặc tệ hơn — đăng private key lên mạng. Nhớ quy tắc: **file có `.pub` mới được chia sẻ**. Lộ private key = người khác mạo danh được bạn.
 
-> 💡 Ghi nhớ: SSH key gắn với **từng máy tính**. Có laptop mới thì tạo cặp khoá mới trên máy đó và thêm public key vào GitHub (một tài khoản chứa được nhiều key).
+> Ghi nhớ: SSH key gắn với **từng máy tính**. Có laptop mới thì tạo cặp khoá mới trên máy đó và thêm public key vào GitHub (một tài khoản chứa được nhiều key).
 
 ---
 
@@ -279,7 +279,7 @@ Khi ai đó mở repo của bạn, GitHub tự động hiển thị nội dung f
 - Git & GitHub
 ```
 
-> 💡 Ghi nhớ: repo không có README giống cửa hàng không có biển hiệu. Nhà tuyển dụng mở repo của bạn, thứ đầu tiên họ đọc là README — hãy đầu tư cho nó.
+> Ghi nhớ: repo không có README giống cửa hàng không có biển hiệu. Nhà tuyển dụng mở repo của bạn, thứ đầu tiên họ đọc là README — hãy đầu tư cho nó.
 
 ---
 
@@ -338,7 +338,7 @@ Ví von: bạn thấy một công thức nấu ăn hay trên mạng nhưng khôn
 4. Gửi **Pull Request** (yêu cầu kéo — viết tắt **PR**): lời đề nghị "tôi đã sửa thế này, mời chủ dự án xem xét và gộp vào bản gốc".
 5. Chủ dự án xem, góp ý, và nếu ưng thì **merge** (gộp) vào.
 
-> 💡 Ghi nhớ: Fork = photo tài liệu của người khác về tủ của mình trên mây. Pull Request = gửi bản sửa kèm lời nhắn "mời anh/chị xem và dùng nếu thấy hay".
+> Ghi nhớ: Fork = photo tài liệu của người khác về tủ của mình trên mây. Pull Request = gửi bản sửa kèm lời nhắn "mời anh/chị xem và dùng nếu thấy hay".
 
 ---
 
@@ -360,7 +360,7 @@ Với lập trình viên, **GitHub chính là CV sống**. Nhà tuyển dụng k
 - **Ghim dự án tốt nhất**: dùng tính năng **Pin** để ghim tối đa 6 repo tâm đắc lên đầu trang.
 - **Để Public các dự án học tập** — đừng ngại code chưa hoàn hảo; ai cũng từng bắt đầu, và quá trình tiến bộ qua lịch sử commit cũng là một câu chuyện đẹp.
 
-> ⚠️ Lỗi người mới hay gặp: lỡ push **mật khẩu, API key (chìa khoá truy cập dịch vụ), thông tin nhạy cảm** lên repo public. Một khi đã push, thông tin nằm trong lịch sử Git vĩnh viễn dù bạn xoá file sau đó. Nếu lỡ dính: đổi mật khẩu/khoá đó **ngay lập tức**. Phòng tránh: dùng file `.gitignore` để Git bỏ qua các file chứa bí mật (như `.env`).
+> Lỗi người mới hay gặp: lỡ push **mật khẩu, API key (chìa khoá truy cập dịch vụ), thông tin nhạy cảm** lên repo public. Một khi đã push, thông tin nằm trong lịch sử Git vĩnh viễn dù bạn xoá file sau đó. Nếu lỡ dính: đổi mật khẩu/khoá đó **ngay lập tức**. Phòng tránh: dùng file `.gitignore` để Git bỏ qua các file chứa bí mật (như `.env`).
 
 ---
 

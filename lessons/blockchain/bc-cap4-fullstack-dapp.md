@@ -407,7 +407,7 @@ export default function App() {
         })}>
         {mining ? "Đang xác nhận…" : "Đăng"}
       </button>
-      {isSuccess && <p>✓ Đã lên chain! (subgraph sẽ index sau vài giây)</p>}
+      {isSuccess && <p>✓  Đã lên chain! (subgraph sẽ index sau vài giây)</p>}
       <Feed />
     </main>
   );

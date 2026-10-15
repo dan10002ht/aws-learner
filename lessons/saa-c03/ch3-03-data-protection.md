@@ -30,15 +30,15 @@ Nhiều người tưởng "kết nối riêng tư từ on-prem về AWS thì aut
 
 | Kết nối | Mã hoá in-transit mặc định? | Bản chất |
 |---------|------------------------------|----------|
-| **Site-to-Site VPN** | ✅ Có — **IPsec** sẵn | Đi qua Internet public nhưng tunnel đã encrypt |
-| **Direct Connect (DX)** | ❌ **Không** | Đường riêng (private) nhưng traffic là **plaintext** trên layer 2/3 |
+| **Site-to-Site VPN** | ✓ Có — **IPsec** sẵn | Đi qua Internet public nhưng tunnel đã encrypt |
+| **Direct Connect (DX)** | ✗ **Không** | Đường riêng (private) nhưng traffic là **plaintext** trên layer 2/3 |
 
 - DX cho bạn băng thông ổn định, latency thấp, private — **nhưng không đồng nghĩa với encrypted**. "Private" ≠ "encrypted".
 - Muốn encrypt in-transit trên DX, có 2 cách:
   1. **VPN over DX** (IPsec chạy đè lên DX) — dùng public VIF, chồng Site-to-Site VPN lên đường DX. Đơn giản, phổ biến.
   2. **MACsec** (IEEE 802.1AE) — mã hoá layer 2, chỉ hỗ trợ trên DX **dedicated connection** ở các location đủ điều kiện, chỉ với port **10 Gbps hoặc 100 Gbps** (không có ở 1 Gbps). Hiệu năng cao, độ trễ thấp hơn IPsec.
 
-> 🪤 Bẫy thi: đề yêu cầu "kết nối on-prem về AWS **phải mã hoá in-transit**" nhưng đáp án lại chọn Direct Connect trần → **Sai**. Phải là **VPN**, hoặc **VPN over Direct Connect**, hoặc **Direct Connect + MACsec**. Nếu đề nhấn "consistent low latency **và** encrypted" → DX + MACsec (hoặc VPN over DX).
+> Bẫy thi: đề yêu cầu "kết nối on-prem về AWS **phải mã hoá in-transit**" nhưng đáp án lại chọn Direct Connect trần → **Sai**. Phải là **VPN**, hoặc **VPN over Direct Connect**, hoặc **Direct Connect + MACsec**. Nếu đề nhấn "consistent low latency **và** encrypted" → DX + MACsec (hoặc VPN over DX).
 
 ---
 
@@ -84,7 +84,7 @@ Khác biệt giữa AWS owned và AWS managed trong thực tế gói lại ở h
 | **AWS managed key** (`aws/s3`, `aws/rds`…) | Của bạn | Không (chỉ xem) | Có | Free tiền key; request vẫn tính | Mã hoá mặc định, muốn có log, không cần chia sẻ cross-account |
 | **Customer managed key (CMK)** | Của bạn | **Có** | Có | ~$1/key/tháng + request | Cần custom policy, điều khiển rotation, audit, chia sẻ cross-account |
 
-> 🪤 Bẫy thi: đề cần **chia sẻ dữ liệu đã mã hoá sang account khác** (snapshot EBS/RDS, bucket SSE-KMS) → phải là **customer managed key**, vì key policy của AWS managed key không sửa được nên không thêm account kia vào được.
+> Bẫy thi: đề cần **chia sẻ dữ liệu đã mã hoá sang account khác** (snapshot EBS/RDS, bucket SSE-KMS) → phải là **customer managed key**, vì key policy của AWS managed key không sửa được nên không thêm account kia vào được.
 
 ### 3.3 Symmetric vs Asymmetric
 
@@ -195,7 +195,7 @@ Statement này **không** có nghĩa "chỉ root user được dùng". `arn:...:
 | IAM policy `Allow kms:*` nhưng key policy không uỷ quyền cho account và không nêu role | **Bị từ chối** |
 | **Cross-account**: role ở account B dùng key ở account A | Cần **cả hai**: key policy ở A cho phép account B (hoặc role đó), **và** IAM policy ở B cho phép role dùng key ARN của A |
 
-> 🪤 Trap: bạn `Allow kms:*` trong IAM policy cho user nhưng key policy không uỷ quyền cho account và không reference user → vẫn DENY. Key policy là **gateway**.
+> Trap: bạn `Allow kms:*` trong IAM policy cho user nhưng key policy không uỷ quyền cho account và không reference user → vẫn DENY. Key policy là **gateway**.
 
 **Ví dụ cross-account** (cũng là lời giải bài tập 2 ở §14). Account A có bucket mã hoá SSE-KMS, user ở account B cần đọc. Đọc một object SSE-KMS gồm hai việc: S3 trả object đã mã hoá, và KMS giải mã data key. Nên phải mở **hai cánh cửa**, mỗi cửa hai phía:
 
@@ -220,7 +220,7 @@ Thiếu bước 2 hoặc 4 thì user B nhận `AccessDenied` dù đã thấy obj
 
 Người dùng grant nhiều nhất không phải bạn mà là **các dịch vụ AWS**. Ví dụ với EBS: khi bạn gắn một volume mã hoá vào EC2 instance, EC2 dùng quyền của bạn để tạo một grant trên KMS key, cho phép nó giải mã data key của volume đó. Grant chỉ tồn tại chừng nào còn cần; xong việc thì được retire. Tương tự, RDS tạo một grant lúc tạo DB instance và dùng nó suốt vòng đời instance; Auto Scaling cần grant trên CMK để tự launch instance có volume mã hoá.
 
-> 🪤 Bẫy thi: Auto Scaling group không launch được instance, lỗi liên quan tới KMS, volume dùng **customer managed key** → service-linked role của Auto Scaling chưa được phép dùng key. Sửa bằng cách thêm role đó vào key policy (cùng account) hoặc **tạo grant** cho nó (key ở account khác).
+> Bẫy thi: Auto Scaling group không launch được instance, lỗi liên quan tới KMS, volume dùng **customer managed key** → service-linked role của Auto Scaling chưa được phép dùng key. Sửa bằng cách thêm role đó vào key policy (cùng account) hoặc **tạo grant** cho nó (key ở account khác).
 
 Một chi tiết vận hành: grant mới tạo cần vài giây (có khi vài phút) mới lan ra toàn hệ thống KMS. Muốn dùng ngay thì truyền kèm **grant token** mà `CreateGrant` trả về.
 
@@ -263,9 +263,9 @@ Cơ chế của automatic/on-demand rotation:
 > sang mọi replica trước khi dùng. Imported key material (`EXTERNAL`) thì không automatic nhưng **có**
 > on-demand.
 
-> 🪤 Bẫy thi: "compliance bắt rotate key **mỗi 90 ngày**" → **được**, đặt chu kỳ automatic rotation = 90 ngày (cận dưới của dải 90–2560). Đáp án "phải viết Lambda tự tạo key mới mỗi 90 ngày" là đáp án lỗi thời.
+> Bẫy thi: "compliance bắt rotate key **mỗi 90 ngày**" → **được**, đặt chu kỳ automatic rotation = 90 ngày (cận dưới của dải 90–2560). Đáp án "phải viết Lambda tự tạo key mới mỗi 90 ngày" là đáp án lỗi thời.
 
-> 🪤 Bẫy thi 2: key đang dùng là **imported key material** mà đề đòi "enable automatic rotation" → không làm được; hoặc import material mới thủ công, hoặc chuyển sang KMS-generated key.
+> Bẫy thi 2: key đang dùng là **imported key material** mà đề đòi "enable automatic rotation" → không làm được; hoặc import material mới thủ công, hoặc chuyển sang KMS-generated key.
 
 ### 3.7 Multi-region keys
 
@@ -289,7 +289,7 @@ Ba điều dễ hiểu sai:
 
 **Use case**: disaster recovery (Region dự phòng tự giải mã được dữ liệu sao lưu), ứng dụng active-active nhiều Region, và dữ liệu **mã hoá phía client** di chuyển giữa các Region.
 
-> 🪤 Bẫy thi: "S3 Cross-Region Replication với SSE-KMS bắt buộc phải dùng Multi-Region key" → **Sai**. S3 CRR giải mã bằng key Region nguồn rồi mã hoá lại bằng key Region đích, key đích là key single-Region bình thường cũng được (xem §10.2). MRK có giá trị nhất khi **chính ứng dụng** của bạn mã hoá/giải mã ở nhiều Region.
+> Bẫy thi: "S3 Cross-Region Replication với SSE-KMS bắt buộc phải dùng Multi-Region key" → **Sai**. S3 CRR giải mã bằng key Region nguồn rồi mã hoá lại bằng key Region đích, key đích là key single-Region bình thường cũng được (xem §10.2). MRK có giá trị nhất khi **chính ứng dụng** của bạn mã hoá/giải mã ở nhiều Region.
 
 ### 3.8 KMS pricing
 
@@ -328,13 +328,13 @@ Ba thuật ngữ trong bảng bên dưới:
 
 | Yêu cầu | KMS | CloudHSM |
 |---------|-----|----------|
-| FIPS 140 Level 3 (HSM validated) | ✅ (140-2 Level 3 từ 2023 theo đề thi; nay là 140-3) | ✅ |
-| **Single-tenant** HSM (dành riêng cho bạn) | ❌ (multi-tenant) | ✅ |
-| Bạn quản lý key material 100% (AWS không thấy) | ⚠️ Chỉ một phần, qua BYOK (import key material) hoặc External Key Store | ✅ |
+| FIPS 140 Level 3 (HSM validated) | ✓ (140-2 Level 3 từ 2023 theo đề thi; nay là 140-3) | ✓ |
+| **Single-tenant** HSM (dành riêng cho bạn) | ✗ (multi-tenant) | ✓ |
+| Bạn quản lý key material 100% (AWS không thấy) | Chỉ một phần, qua BYOK (import key material) hoặc External Key Store | ✓ |
 | Ai vận hành | AWS lo toàn bộ, không có gì để quản | AWS lo phần cứng, vá lỗi, backup; **bạn lo** user trên HSM, khoá, số HSM và phân bố AZ để có HA |
 | Compliance | Đã nằm trong phạm vi PCI DSS, SOC, FedRAMP, HIPAA — đủ cho phần lớn yêu cầu | Khi quy định/hợp đồng ghi rõ **HSM dành riêng** (bài tập 6 lấy ví dụ PCI-DSS; Common Criteria cũng hay được nhắc) |
-| PKCS#11 / JCE / OpenSSL standard API | ❌ (chỉ API của KMS) | ✅ |
-| Tích hợp sẵn với S3, EBS, RDS… | ✅ Bấm chọn là xong | ❌ Không trực tiếp; phải đi qua *custom key store* bên dưới |
+| PKCS#11 / JCE / OpenSSL standard API | ✗ (chỉ API của KMS) | ✓ |
+| Tích hợp sẵn với S3, EBS, RDS… | ✓ Bấm chọn là xong | ✗ Không trực tiếp; phải đi qua *custom key store* bên dưới |
 
 ### Trade-off
 
@@ -357,7 +357,7 @@ Cái giá: bạn vẫn trả tiền cluster CloudHSM, cluster sập thì mọi k
 
 Có một biến thể nữa là **External Key Store (XKS)**: key material nằm ở HSM **ngoài AWS** (on-prem hoặc nhà cung cấp khác), dành cho yêu cầu "khoá không được nằm trên hạ tầng AWS".
 
-> 🪤 Bẫy thi: "cần HSM **dành riêng** / single-tenant" hoặc "cần PKCS#11" → **CloudHSM**. "Cần HSM dành riêng **và** vẫn dùng SSE-KMS cho S3/EBS" → **KMS custom key store backed by CloudHSM**. Chỉ nói "FIPS 140-2 Level 3" mà không nhắc dành riêng → **KMS là đủ** và rẻ hơn cả nghìn lần.
+> Bẫy thi: "cần HSM **dành riêng** / single-tenant" hoặc "cần PKCS#11" → **CloudHSM**. "Cần HSM dành riêng **và** vẫn dùng SSE-KMS cho S3/EBS" → **KMS custom key store backed by CloudHSM**. Chỉ nói "FIPS 140-2 Level 3" mà không nhắc dành riêng → **KMS là đủ** và rẻ hơn cả nghìn lần.
 
 ---
 
@@ -411,11 +411,11 @@ Encryption bảo vệ data at rest, nhưng data leak lớn nhất của S3 lịc
 - Có **account-level override**: bật BPA ở cấp account thì áp cho **toàn bộ bucket**, kể cả bucket bật public riêng — account-level thắng.
 - Quan hệ với **Object Ownership 'Bucket owner enforced'**: setting này **disable ACL hoàn toàn** — mọi object thuộc bucket owner, ACL bị vô hiệu, quyền chỉ còn qua IAM/bucket policy. Đây là default khuyến nghị của AWS; khi ACL đã tắt thì 2 setting ACL của BPA gần như không còn tác dụng gì để lo.
 
-> 🪤 Bẫy thi: bucket policy `Allow` `s3:GetObject` cho `Principal: "*"` (public) nhưng **BlockPublicPolicy / RestrictPublicBuckets vẫn bật** → object **vẫn không public**. BPA đứng trên bucket policy; policy allow public không thắng được BPA.
+> Bẫy thi: bucket policy `Allow` `s3:GetObject` cho `Principal: "*"` (public) nhưng **BlockPublicPolicy / RestrictPublicBuckets vẫn bật** → object **vẫn không public**. BPA đứng trên bucket policy; policy allow public không thắng được BPA.
 
 **Khi nào dùng S3 Access Points** (thay vì mở bucket rộng): khi một bucket lớn được **nhiều ứng dụng/team share** và bạn muốn **least-privilege per-consumer**. Mỗi Access Point có hostname riêng + **access point policy** riêng, gắn network origin (VPC-only hoặc Internet). Thay vì nhồi một bucket policy khổng lồ khó audit, mỗi team dùng access point của mình với quyền hẹp. BPA cũng cấu hình được **per access point**.
 
-> 💡 Chia sẻ an toàn theo thứ tự ưu tiên: Object Ownership *Bucket owner enforced* (tắt ACL) → BPA bật → cấp quyền hẹp qua **Access Point** thay vì bucket policy rộng.
+> Chia sẻ an toàn theo thứ tự ưu tiên: Object Ownership *Bucket owner enforced* (tắt ACL) → BPA bật → cấp quyền hẹp qua **Access Point** thay vì bucket policy rộng.
 
 ### 5.2 EBS
 
@@ -470,7 +470,7 @@ Cách này có **downtime ghi**: dữ liệu ghi vào instance cũ sau bước 1
 
 **Transparent Data Encryption (TDE)**: tính năng mã hoá **của chính database engine** (Oracle, SQL Server), mã hoá file dữ liệu ở tầng engine. Độc lập với mã hoá storage bằng KMS và dùng chồng lên nhau được. Chỉ chọn khi đề nêu rõ yêu cầu TDE của Oracle/SQL Server.
 
-> 🪤 Bẫy thi: nếu **disable hoặc xoá KMS key** của một DB instance, RDS mất quyền đọc storage và instance rơi vào trạng thái không truy cập được. Xoá key là xoá khả năng đọc mọi thứ đã mã hoá bằng nó — đó là lý do KMS bắt chờ 7–30 ngày trước khi xoá key thật.
+> Bẫy thi: nếu **disable hoặc xoá KMS key** của một DB instance, RDS mất quyền đọc storage và instance rơi vào trạng thái không truy cập được. Xoá key là xoá khả năng đọc mọi thứ đã mã hoá bằng nó — đó là lý do KMS bắt chờ 7–30 ngày trước khi xoá key thật.
 
 ### 5.4 DynamoDB
 
@@ -484,7 +484,7 @@ DynamoDB **luôn mã hoá at rest và không tắt được**: bảng, index, st
 
 Mã hoá trong suốt với ứng dụng: query, scan, độ trễ không đổi.
 
-> 📏 Bài này trước đây ghi mặc định là "AWS managed key". Docs hiện tại ghi mặc định là **AWS owned key**. Trong đề thi, ý đúng cần nhớ vẫn là: *DynamoDB mã hoá at rest mặc định, không cần bật và không tắt được.*
+> Bài này trước đây ghi mặc định là "AWS managed key". Docs hiện tại ghi mặc định là **AWS owned key**. Trong đề thi, ý đúng cần nhớ vẫn là: *DynamoDB mã hoá at rest mặc định, không cần bật và không tắt được.*
 
 ### 5.5 EFS / FSx
 
@@ -492,7 +492,7 @@ Mã hoá trong suốt với ứng dụng: query, scan, độ trễ không đổi
 - **EFS in transit**: không tự có. Bạn bật ở **phía client lúc mount**, dùng EFS mount helper với tuỳ chọn `-o tls`. Helper dựng một đường hầm TLS giữa EC2 và EFS.
 - **FSx**: cũng mã hoá at rest bằng KMS key chọn lúc tạo file system.
 
-> 🪤 Bẫy thi: "EFS đã bật encryption at rest, vậy dữ liệu trên đường truyền cũng được mã hoá" → **Sai**. Hai thứ độc lập; in transit phải mount với `tls`.
+> Bẫy thi: "EFS đã bật encryption at rest, vậy dữ liệu trên đường truyền cũng được mã hoá" → **Sai**. Hai thứ độc lập; in transit phải mount với `tls`.
 
 ### 5.6 SQS / SNS / Kinesis / MSK
 
@@ -507,7 +507,7 @@ Bốn dịch vụ messaging cùng một ý: **at rest là tuỳ chọn KMS** (tr
 
 Với SQS và SNS dùng SSE-KMS, dịch vụ **không gọi KMS cho từng message**. Nó giữ lại một data key và dùng lại trong một khoảng thời gian gọi là *data key reuse period* (SQS: mặc định **5 phút**, chỉnh được từ 1 phút tới 24 giờ). Đây chính là kỹ thuật "cache data key" của §11: kéo dài khoảng này thì ít request KMS hơn, đổi lại data key sống lâu hơn.
 
-> 🪤 Bẫy thi: SNS topic hoặc S3 event gửi vào một **SQS queue mã hoá SSE-KMS** mà message không tới → dịch vụ gửi không có quyền dùng key. AWS managed key `aws/sqs` không sửa policy được, nên phải dùng **CMK** và thêm service principal (ví dụ `sns.amazonaws.com`) vào key policy với `kms:GenerateDataKey` và `kms:Decrypt`.
+> Bẫy thi: SNS topic hoặc S3 event gửi vào một **SQS queue mã hoá SSE-KMS** mà message không tới → dịch vụ gửi không có quyền dùng key. AWS managed key `aws/sqs` không sửa policy được, nên phải dùng **CMK** và thêm service principal (ví dụ `sns.amazonaws.com`) vào key policy với `kms:GenerateDataKey` và `kms:Decrypt`.
 
 ### 5.7 Lambda
 
@@ -573,13 +573,13 @@ Dòng cuối là lý do phải **cache secret trong bộ nhớ** thay vì gọi 
 
 | Feature | Secrets Manager | SSM Parameter Store |
 |---------|----------------|---------------------|
-| Rotation tự động | ✅ Built-in cho RDS, Aurora, Redshift, DocumentDB; secret khác thì tự viết Lambda | ❌ Không có. Phải tự viết Lambda/EventBridge đổi giá trị |
-| Tự sinh mật khẩu ngẫu nhiên | ✅ | ❌ |
-| Cross-region replication | ✅ | ❌ |
+| Rotation tự động | ✓ Built-in cho RDS, Aurora, Redshift, DocumentDB; secret khác thì tự viết Lambda | ✗ Không có. Phải tự viết Lambda/EventBridge đổi giá trị |
+| Tự sinh mật khẩu ngẫu nhiên | ✓ | ✗ |
+| Cross-region replication | ✓ | ✗ |
 | Cost | ~$0.40 / secret / tháng + API | Free (Standard); ~$0.05 / parameter / tháng (Advanced) |
 | Max size | 64 KB | 4 KB (Standard), 8 KB (Advanced) |
-| Versioning | ✅ theo nhãn `AWSCURRENT` / `AWSPREVIOUS` | ✅ lưu lịch sử các version của parameter |
-| KMS integration | ✅ luôn mã hoá | ✅ với kiểu `SecureString` |
+| Versioning | ✓ theo nhãn `AWSCURRENT` / `AWSPREVIOUS` | ✓ lưu lịch sử các version của parameter |
+| KMS integration | ✓ luôn mã hoá | ✓ với kiểu `SecureString` |
 | Use case | Production secret cần rotate | Config + secret không cần rotate |
 
 Hai dịch vụ không loại trừ nhau: Parameter Store đọc được secret của Secrets Manager qua đường dẫn đặc biệt `/aws/reference/secretsmanager/<tên-secret>`, nên app có thể chỉ dùng một API.
@@ -596,7 +596,7 @@ Hai dịch vụ không loại trừ nhau: Parameter Store đọc được secret
 - Secret trong CloudFormation parameter (plaintext in template). Thay bằng *dynamic reference* `{{resolve:secretsmanager:...}}` để template chỉ chứa tên secret.
 - Secret trong code repository (kể cả private).
 
-> 🪤 Bẫy thi: đề có chữ **"automatic rotation"** hoặc "rotate database credentials" → **Secrets Manager**. Đề nhấn **"lowest cost"** / "no additional charge" cho config hoặc secret không cần rotate → **Parameter Store** (SecureString).
+> Bẫy thi: đề có chữ **"automatic rotation"** hoặc "rotate database credentials" → **Secrets Manager**. Đề nhấn **"lowest cost"** / "no additional charge" cho config hoặc secret không cần rotate → **Parameter Store** (SecureString).
 
 ---
 
@@ -615,7 +615,7 @@ Một **TLS certificate** là tấm "chứng minh thư" của server: nó gắn 
 - **Validation**: ACM phải kiểm bạn thật sự sở hữu tên miền. **DNS validation** (recommended) là thêm một bản ghi CNAME do ACM đưa; để yên bản ghi đó thì lần gia hạn sau tự qua. **Email validation** là bấm link trong email, và mỗi lần gia hạn phải bấm lại.
 - **Không xuất được private key** — chỉ AWS service dùng. Đây là điều đề thi dựa vào: private key nằm trong ACM, bạn không tải về để cài lên EC2 hay server on-prem được.
 
-> 📏 Docs hiện tại: từ **17/06/2025** ACM có thêm loại **exportable public certificate**. Bạn phải bật "Enable export" **lúc request** (certificate cấp trước ngày đó hoặc không bật thì vẫn không export được), và loại này **tính phí**: ~$7 cho mỗi tên miền, ~$79 cho mỗi tên wildcard, tính lúc cấp và mỗi lần gia hạn. Đề thi SAA-C03 và hầu hết tài liệu vẫn theo quy tắc cũ: **"ACM public certificate không export được → cần cert trên EC2/on-prem thì dùng Private CA hoặc import cert bên ngoài"**. Trả lời đề theo quy tắc cũ.
+> Docs hiện tại: từ **17/06/2025** ACM có thêm loại **exportable public certificate**. Bạn phải bật "Enable export" **lúc request** (certificate cấp trước ngày đó hoặc không bật thì vẫn không export được), và loại này **tính phí**: ~$7 cho mỗi tên miền, ~$79 cho mỗi tên wildcard, tính lúc cấp và mỗi lần gia hạn. Đề thi SAA-C03 và hầu hết tài liệu vẫn theo quy tắc cũ: **"ACM public certificate không export được → cần cert trên EC2/on-prem thì dùng Private CA hoặc import cert bên ngoài"**. Trả lời đề theo quy tắc cũ.
 
 ### 7.2 ACM Private CA
 
@@ -644,7 +644,7 @@ ACM là dịch vụ **theo Region**. Cert import/issue ở Region nào thì ch�
 | **API Gateway — regional / private** | Cùng Region với API |
 | **AWS Global Accelerator** | **Không dùng cert.** Listener của GA chỉ có TCP/UDP, không terminate TLS — cert nằm ở endpoint phía sau (ALB/NLB), đúng Region của endpoint đó |
 
-> 🪤 Bẫy thi kinh điển: team issue cert ACM ở `ap-southeast-1`, gắn vào CloudFront → **cert không xuất hiện trong dropdown**. Nguyên nhân không phải validation sai, mà là sai Region. Cách xử lý: **request lại cert (miễn phí) ở `us-east-1`** — ACM public cert không copy/move giữa Region được vì không export được private key. Cùng một domain có thể có nhiều cert ở nhiều Region, hoàn toàn hợp lệ.
+> Bẫy thi kinh điển: team issue cert ACM ở `ap-southeast-1`, gắn vào CloudFront → **cert không xuất hiện trong dropdown**. Nguyên nhân không phải validation sai, mà là sai Region. Cách xử lý: **request lại cert (miễn phí) ở `us-east-1`** — ACM public cert không copy/move giữa Region được vì không export được private key. Cùng một domain có thể có nhiều cert ở nhiều Region, hoàn toàn hợp lệ.
 
 ### 7.5 TLS termination — terminate ở đâu, re-encrypt hay không
 
@@ -664,9 +664,9 @@ Khi bắt buộc **traffic không được ai giải mã giữa đường** (LB 
 
 **SNI — nhiều cert trên một listener**: ALB/NLB hỗ trợ **SNI**, cho phép gắn **nhiều cert** lên **một HTTPS/TLS listener** để phục vụ nhiều domain trên cùng IP/port. Một cert là **default certificate** (trả về cho client cũ không gửi SNI), phần còn lại chọn theo hostname client gửi. Đây là đáp án cho "host nhiều domain HTTPS mà **không muốn tạo thêm ALB / thêm IP**".
 
-> 🪤 Bẫy: cert **wildcard** `*.example.com` **không** phủ `example.com` trần, và **không** phủ `a.b.example.com` (chỉ một cấp). Đề mô tả "apex domain vẫn báo lỗi cert" → thêm cả `example.com` vào SAN của cert.
+> Bẫy: cert **wildcard** `*.example.com` **không** phủ `example.com` trần, và **không** phủ `a.b.example.com` (chỉ một cấp). Đề mô tả "apex domain vẫn báo lỗi cert" → thêm cả `example.com` vào SAN của cert.
 
-> 🪤 Bẫy: "cần cert TLS cho **web server chạy on-prem**" → ACM public cert **không export được** → đáp án là **ACM Private CA** (cert export được, dùng cho internal/mTLS) hoặc mua cert bên ngoài. Xem lại §7.1–7.2.
+> Bẫy: "cần cert TLS cho **web server chạy on-prem**" → ACM public cert **không export được** → đáp án là **ACM Private CA** (cert export được, dùng cho internal/mTLS) hoặc mua cert bên ngoài. Xem lại §7.1–7.2.
 
 ---
 
@@ -706,9 +706,9 @@ Kịch bản tấn công thật: attacker lấy được credential admin → xo
 3. **MFA Delete** — thêm rào cho thao tác xoá version / tắt versioning (chỉ root bucket owner bật được, phải dùng CLI).
 4. **CRR sang account/Region khác** — attacker chiếm 1 account vẫn không chạm tới bản sao ở account kia.
 
-> 💡 So sánh nhanh nhóm "chống xoá" hay bị lẫn: **Versioning** = giữ bản cũ; **MFA Delete** = thêm bước xác thực khi xoá; **Object Lock** = **cấm xoá** theo thời hạn; **S3 Glacier Vault Lock** = WORM cho **Vault kiểu Glacier cũ**, policy khoá vĩnh viễn sau khi lock. Đề mô tả "S3 bucket + immutable" → Object Lock, không phải Vault Lock.
+> So sánh nhanh nhóm "chống xoá" hay bị lẫn: **Versioning** = giữ bản cũ; **MFA Delete** = thêm bước xác thực khi xoá; **Object Lock** = **cấm xoá** theo thời hạn; **S3 Glacier Vault Lock** = WORM cho **Vault kiểu Glacier cũ**, policy khoá vĩnh viễn sau khi lock. Đề mô tả "S3 bucket + immutable" → Object Lock, không phải Vault Lock.
 
-> 🪤 Bẫy thi: "bật Object Lock cho bucket **đang chạy**" → theo đề thi và tài liệu cũ, Object Lock chỉ bật được lúc tạo bucket, nên đáp án kiến trúc thường là **tạo bucket mới có Object Lock rồi copy/replicate dữ liệu sang**. Thực tế hiện nay bật được trên bucket có sẵn (cần Versioning), nhưng lưu ý: bật Object Lock **không tự khoá** các object đã có — phải đặt retention/legal hold cho chúng (ví dụ bằng S3 Batch Operations), default retention của bucket chỉ áp cho object mới.
+> Bẫy thi: "bật Object Lock cho bucket **đang chạy**" → theo đề thi và tài liệu cũ, Object Lock chỉ bật được lúc tạo bucket, nên đáp án kiến trúc thường là **tạo bucket mới có Object Lock rồi copy/replicate dữ liệu sang**. Thực tế hiện nay bật được trên bucket có sẵn (cần Versioning), nhưng lưu ý: bật Object Lock **không tự khoá** các object đã có — phải đặt retention/legal hold cho chúng (ví dụ bằng S3 Batch Operations), default retention của bucket chỉ áp cho object mới.
 
 ---
 
@@ -733,7 +733,7 @@ Vì tính theo GB đã đọc, nên giới hạn phạm vi job (theo bucket, pre
 
 **Use case**: kiểm toán compliance (GDPR, HIPAA, PCI-DSS), phân loại dữ liệu trước khi migrate hoặc mở quyền truy cập.
 
-> 🪤 Bẫy thi: "phát hiện **PII / dữ liệu nhạy cảm trong S3**" → **Macie**. Đừng lẫn với **GuardDuty** (phát hiện *hành vi* đáng ngờ từ log) và **Inspector** (quét *lỗ hổng phần mềm* trên EC2/container/Lambda). Macie chỉ làm việc với **S3**.
+> Bẫy thi: "phát hiện **PII / dữ liệu nhạy cảm trong S3**" → **Macie**. Đừng lẫn với **GuardDuty** (phát hiện *hành vi* đáng ngờ từ log) và **Inspector** (quét *lỗ hổng phần mềm* trên EC2/container/Lambda). Macie chỉ làm việc với **S3**.
 
 ---
 
@@ -778,7 +778,7 @@ Mọi phép mã hoá đối xứng (`Encrypt`, `Decrypt`, `GenerateDataKey`, `Re
 | us-east-2, ap-southeast-1 (Singapore), ap-southeast-2, ap-northeast-1, eu-central-1, eu-west-2, eu-south-2 | **20.000** request/giây |
 | us-east-1, us-west-2, eu-west-1 | **100.000** request/giây |
 
-> 📏 Tài liệu cũ và nhiều đề luyện (kể cả bản trước của bài này) ghi dải **5.500 / 10.000 / 30.000** request/giây. AWS đã nâng mặc định nhiều lần; con số chính xác không phải thứ đề thi hỏi. Thứ cần nhớ: quota **có tồn tại**, **dùng chung cho cả account trong Region** (mọi key, mọi dịch vụ gọi thay bạn), **xin nâng được** qua Service Quotas, và key bất đối xứng chỉ có **1.000** request/giây.
+> Tài liệu cũ và nhiều đề luyện (kể cả bản trước của bài này) ghi dải **5.500 / 10.000 / 30.000** request/giây. AWS đã nâng mặc định nhiều lần; con số chính xác không phải thứ đề thi hỏi. Thứ cần nhớ: quota **có tồn tại**, **dùng chung cho cả account trong Region** (mọi key, mọi dịch vụ gọi thay bạn), **xin nâng được** qua Service Quotas, và key bất đối xứng chỉ có **1.000** request/giây.
 
 Request của **AWS owned key** không tính vào quota của bạn; AWS managed key và CMK thì có. Với request cross-account, account **gọi** bị tính quota, không phải account chủ key.
 

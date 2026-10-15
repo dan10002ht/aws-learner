@@ -82,7 +82,7 @@ Mọi account có 20.000 request KMS miễn phí mỗi tháng. Quy tắc chọn 
 | Khoá phải nằm trên HSM dedicated nhưng vẫn muốn dùng KMS API và tích hợp S3/EBS/RDS | **Custom key store** |
 | Cần HSM dedicated và tự gọi bằng PKCS#11/JCE, không qua KMS | **CloudHSM** trực tiếp (§2.11) |
 
-> 🪤 Bẫy thi: *"share encrypted snapshot/AMI sang account khác"* mà khoá đang là `aws/ebs` → không share được. Phải **copy snapshot và mã hoá lại bằng customer managed key**, rồi cấp quyền key đó cho account kia (§2.7).
+> Bẫy thi: *"share encrypted snapshot/AMI sang account khác"* mà khoá đang là `aws/ebs` → không share được. Phải **copy snapshot và mã hoá lại bằng customer managed key**, rồi cấp quyền key đó cho account kia (§2.7).
 
 ### 2.4 Key Policy (resource policy của KMS) — BẮT BUỘC
 
@@ -139,9 +139,9 @@ Policy mẫu dưới đây có đủ ba phần thường gặp: statement uỷ q
 1. **IAM policy mất tác dụng với key này.** Mọi IAM policy `Allow` trên key trở nên vô hiệu (IAM `Deny` thì vẫn có hiệu lực). Chỉ những principal được nêu đích danh trong key policy mới dùng được.
 2. **Key có thể thành "không quản lý được".** Giả sử key policy chỉ nêu đích danh role `KeyAdmin`. Một ngày ai đó xoá role này. Không còn principal nào có quyền `kms:PutKeyPolicy` để sửa lại policy, và admin của account cũng không vào được vì key policy không uỷ quyền cho account. Dữ liệu mã hoá bằng key đó coi như bị khoá ngoài cửa. Lối ra duy nhất là mở case với **AWS Support** để lấy lại quyền truy cập, tức là downtime tính bằng giờ hoặc ngày chứ không tự xử lý được.
 
-⚠️ **Luôn để root trong key policy.** User root của account là principal duy nhất không thể bị xoá, nên statement này là dây an toàn cuối cùng.
+**Luôn để root trong key policy.** User root của account là principal duy nhất không thể bị xoá, nên statement này là dây an toàn cuối cùng.
 
-> 🪤 Bẫy thi: *"IAM user có AdministratorAccess nhưng vẫn AccessDenied khi decrypt"* → nhìn vào **key policy** (thiếu statement root, hoặc không nêu user đó). Còn *"key policy đã cho phép role X nhưng role ở account khác vẫn bị từ chối"* → thiếu IAM policy ở account bên kia (§2.7).
+> Bẫy thi: *"IAM user có AdministratorAccess nhưng vẫn AccessDenied khi decrypt"* → nhìn vào **key policy** (thiếu statement root, hoặc không nêu user đó). Còn *"key policy đã cho phép role X nhưng role ở account khác vẫn bị từ chối"* → thiếu IAM policy ở account bên kia (§2.7).
 
 ### 2.5 Grants — alternative cho key policy
 
@@ -170,7 +170,7 @@ Lệnh trả về hai thứ: `GrantId` (để xoá grant sau này) và `GrantTok
 
 **Vì sao dịch vụ AWS dùng grant.** Khi bạn attach một EBS volume đã mã hoá vào EC2, EC2 cần giải mã data key của volume đó, và chỉ volume đó. EC2 thay mặt bạn tạo một grant hẹp trên key, dùng xong (detach volume) thì tự retire. Với hàng nghìn volume được gắn/tháo mỗi ngày, làm việc này bằng cách sửa key policy là bất khả thi. RDS, Lambda, Redshift cũng theo mẫu này. Đó là lý do key policy mặc định do console tạo có sẵn statement cho phép `kms:CreateGrant` kèm điều kiện `kms:GrantIsForAWSResource = true`, nghĩa là chỉ dịch vụ AWS mới được tạo grant thay bạn.
 
-> 🪤 Bẫy thi: *"cấp quyền dùng khoá tạm thời / theo từng tài nguyên mà không sửa key policy"* → **grant**. *"cần dùng quyền ngay sau khi tạo grant, tránh lỗi AccessDenied chập chờn"* → **grant token**.
+> Bẫy thi: *"cấp quyền dùng khoá tạm thời / theo từng tài nguyên mà không sửa key policy"* → **grant**. *"cần dùng quyền ngay sau khi tạo grant, tránh lỗi AccessDenied chập chờn"* → **grant token**.
 
 ### 2.6 Key rotation
 
@@ -200,7 +200,7 @@ Mỗi ciphertext do KMS tạo ra đều mang kèm metadata cho biết nó đư�
 
 Về chi phí: mỗi lần rotate thêm một phiên bản material phải lưu, KMS tính thêm $1/tháng cho lần rotate thứ nhất và thứ hai, **từ lần thứ ba trở đi không tính thêm**. Tức một key rotate nhiều năm tốn tối đa $3/tháng.
 
-> 📏 Đề thi SAA-C03 quen dùng phát biểu *"auto-rotation của customer managed key là mỗi năm một lần"*. Con số đó nay là **mặc định**, không còn là giá trị duy nhất. Nếu đề hỏi *"cần rotate mỗi 90 ngày, ít công vận hành nhất"* thì đáp án là bật auto-rotation với chu kỳ tuỳ chỉnh; tài liệu cũ sẽ đáp là viết Lambda làm manual rotation.
+> Đề thi SAA-C03 quen dùng phát biểu *"auto-rotation của customer managed key là mỗi năm một lần"*. Con số đó nay là **mặc định**, không còn là giá trị duy nhất. Nếu đề hỏi *"cần rotate mỗi 90 ngày, ít công vận hành nhất"* thì đáp án là bật auto-rotation với chu kỳ tuỳ chỉnh; tài liệu cũ sẽ đáp là viết Lambda làm manual rotation.
 
 ### 2.7 Cross-account & Cross-region
 
@@ -282,7 +282,7 @@ Ba thay đổi kéo theo khi bật Bucket Key: CloudTrail của KMS ghi **ARN c�
 
 Vì sao RDS (và EBS) **không bật mã hoá sau khi tạo được**: mã hoá diễn ra ở tầng storage, mọi block trên đĩa đều phải được ghi ra dưới dạng đã mã hoá. Không có thao tác "mã hoá tại chỗ" cho dữ liệu đang nằm đó, nên cách duy nhất là ghi lại toàn bộ dữ liệu sang một storage mới có mã hoá. Đó chính là chuỗi *snapshot → copy snapshot (bật encryption, chọn key) → restore thành instance mới → trỏ app sang*. Cùng lý do, read replica của một instance chưa mã hoá cũng không mã hoá được.
 
-> 🪤 Bẫy thi: *"hoá đơn KMS tăng vọt / bị throttle KMS sau khi bật SSE-KMS cho bucket nhiều request"* → bật **S3 Bucket Key**. *"mã hoá một RDS/EBS đang chạy mà chưa mã hoá"* → **snapshot → copy có mã hoá → restore**.
+> Bẫy thi: *"hoá đơn KMS tăng vọt / bị throttle KMS sau khi bật SSE-KMS cho bucket nhiều request"* → bật **S3 Bucket Key**. *"mã hoá một RDS/EBS đang chạy mà chưa mã hoá"* → **snapshot → copy có mã hoá → restore**.
 
 ### 2.9 Key deletion
 - **Schedule deletion**: min **7 ngày**, max 30 ngày waiting period.
@@ -290,7 +290,7 @@ Vì sao RDS (và EBS) **không bật mã hoá sau khi tạo được**: mã hoá
 - Sau period: **PERMANENT** — data encrypted bằng key → mất vĩnh viễn = **crypto-shred**.
 - Đây là feature (compliance GDPR right-to-be-forgotten), không phải bug.
 
-> 💡 Key không dùng được **không làm tài nguyên đang chạy chết ngay**. Một EBS volume đang attach vẫn đọc/ghi bình thường, vì EC2 đang giữ data key đã giải mã trong phần cứng Nitro và không cần hỏi lại KMS. Chỉ tới lần cần giải mã data key kế tiếp (detach rồi attach lại, restore snapshot) mới thất bại. Vì vậy "xoá key xong thấy hệ thống vẫn chạy" **không** chứng minh là key không còn được dùng. Nếu chưa chắc, hãy **disable** key thay vì xoá: disable bật lại được, xoá thì không.
+> Key không dùng được **không làm tài nguyên đang chạy chết ngay**. Một EBS volume đang attach vẫn đọc/ghi bình thường, vì EC2 đang giữ data key đã giải mã trong phần cứng Nitro và không cần hỏi lại KMS. Chỉ tới lần cần giải mã data key kế tiếp (detach rồi attach lại, restore snapshot) mới thất bại. Vì vậy "xoá key xong thấy hệ thống vẫn chạy" **không** chứng minh là key không còn được dùng. Nếu chưa chắc, hãy **disable** key thay vì xoá: disable bật lại được, xoá thì không.
 
 ### 2.10 Asymmetric keys + Signing
 Khoá **đối xứng** (mọi thứ từ đầu bài tới đây) dùng cùng một bí mật để mã hoá và giải mã, nên bên nào cần mã hoá cũng phải gọi được KMS. Khoá **bất đối xứng** là một cặp: **public key** phát công khai được, ai cũng dùng nó để mã hoá hoặc kiểm chữ ký; **private key** giữ kín, dùng để giải mã hoặc ký. Nhờ vậy một bên **không có AWS account** vẫn làm việc được với khoá của bạn.
@@ -315,7 +315,7 @@ Ba thuật ngữ trong bảng dưới:
 
 | | KMS | CloudHSM |
 |--|-----|----------|
-| Multi-tenant | ✅ | ❌ (dedicated) |
+| Multi-tenant | ✓ | ✗ (dedicated) |
 | FIPS 140-2 | Level 3 (HSM-backed); HSM hiện tại đã lên FIPS 140-3 Level 3 | Level 3 (loại `hsm2m.medium`: FIPS 140-3 Level 3) |
 | Bạn quản key material | Partial (CMK) | Full |
 | API | AWS API | PKCS#11, JCE, KSP/CNG |
@@ -330,7 +330,7 @@ Cụm tối thiểu cho HA:  2 HSM            ≈ $2.336/tháng   (trả cả kh
 So với KMS:            $1/key/tháng + $0,03 mỗi 10.000 request
 ```
 
-> 🪤 Bẫy thi: vì KMS cũng đã đạt Level 3, câu hỏi chỉ nêu *"FIPS 140-2 Level 3"* **chưa đủ** để chọn CloudHSM. Từ khoá quyết định là *"dedicated / single-tenant HSM"*, *"toàn quyền kiểm soát khoá, AWS không truy cập được"*, hoặc *"ứng dụng dùng PKCS#11/JCE"*. Nếu đề thêm *"nhưng vẫn muốn tích hợp với S3/EBS/RDS"* → **KMS Custom Key Store**.
+> Bẫy thi: vì KMS cũng đã đạt Level 3, câu hỏi chỉ nêu *"FIPS 140-2 Level 3"* **chưa đủ** để chọn CloudHSM. Từ khoá quyết định là *"dedicated / single-tenant HSM"*, *"toàn quyền kiểm soát khoá, AWS không truy cập được"*, hoặc *"ứng dụng dùng PKCS#11/JCE"*. Nếu đề thêm *"nhưng vẫn muốn tích hợp với S3/EBS/RDS"* → **KMS Custom Key Store**.
 
 ---
 
@@ -483,11 +483,11 @@ aws kms cancel-key-deletion --key-id $KEY_ID
 - **Tag key** với `DataClassification=PII` etc.
 
 ### Anti-pattern
-- ❌ Bỏ statement root khỏi key policy → IAM mất tác dụng, key dễ thành không quản lý được.
-- ❌ Schedule key deletion mà còn data dùng key đó → crypto-shred prod.
-- ❌ Cross-account chỉ sửa key policy quên IAM bên kia.
-- ❌ Mua CloudHSM khi KMS đủ ($1k/tháng vs $1/key).
-- ❌ Không bật Bucket Key cho S3 SSE-KMS workload lớn → cost vọt.
+- ✗ Bỏ statement root khỏi key policy → IAM mất tác dụng, key dễ thành không quản lý được.
+- ✗ Schedule key deletion mà còn data dùng key đó → crypto-shred prod.
+- ✗ Cross-account chỉ sửa key policy quên IAM bên kia.
+- ✗ Mua CloudHSM khi KMS đủ ($1k/tháng vs $1/key).
+- ✗ Không bật Bucket Key cho S3 SSE-KMS workload lớn → cost vọt.
 
 ---
 

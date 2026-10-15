@@ -197,10 +197,10 @@ Phân loại theo một tiêu chí duy nhất: **đây là ý định, hay là k
 
 | Gói | Loại | Vì sao |
 |---|---|---|
-| 1. `position (145, 82)` | ✗ **kết quả** | Client tự quyết vị trí = teleport, speed hack |
-| 2. `đang giữ W và D` | ✓ **ý định** | Server tự tính đi được tới đâu |
-| 3. `trúng id 42, 150 dmg` | ✗ **kết quả** | Client tự quyết sát thương = aimbot, one-hit kill |
-| 4. `bấm bắn, hướng này` | ✓ **ý định** | Server tự raycast xem trúng ai |
+| 1. `position (145, 82)` | ✗  **kết quả** | Client tự quyết vị trí = teleport, speed hack |
+| 2. `đang giữ W và D` | ✓  **ý định** | Server tự tính đi được tới đâu |
+| 3. `trúng id 42, 150 dmg` | ✗  **kết quả** | Client tự quyết sát thương = aimbot, one-hit kill |
+| 4. `bấm bắn, hướng này` | ✓  **ý định** | Server tự raycast xem trúng ai |
 | 5. `nhặt item id 7` | **bẫy** | xem dưới |
 
 Gói 5 trông như ý định, nhưng nó nhắc tới `itemId: 7` — một thứ thuộc về thế giới. Client đang khẳng định *item đó tồn tại, ở gần tôi, và chưa ai nhặt*. Ba khẳng định, cả ba đều phải do server kiểm chứng lại: item còn đó không, khoảng cách có hợp lệ không, có ai nhặt trước không.

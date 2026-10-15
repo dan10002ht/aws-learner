@@ -9,7 +9,7 @@ Mọi thứ trên web đều là cuộc trò chuyện giữa hai bên: **client*
 - **Client** (máy khách): là phía *yêu cầu*. Thường chính là **browser** (trình duyệt) — Chrome, Firefox, Safari — trên máy bạn.
 - **Server** (máy chủ): là phía *phục vụ*. Một máy tính ở đâu đó trên thế giới, luôn bật, chứa dữ liệu của website và chờ trả lời các yêu cầu.
 
-> 💡 Ghi nhớ: Analogy nhà hàng. Bạn (client) là **khách**, server là **bếp**. Bạn gọi món qua người phục vụ (mạng Internet), bếp nấu rồi gửi món ra. Bạn không vào bếp, bếp cũng không tự mang đồ ăn nếu bạn chưa gọi. Web cũng vậy: client luôn hỏi trước, server chỉ trả lời.
+> Ghi nhớ: Analogy nhà hàng. Bạn (client) là **khách**, server là **bếp**. Bạn gọi món qua người phục vụ (mạng Internet), bếp nấu rồi gửi món ra. Bạn không vào bếp, bếp cũng không tự mang đồ ăn nếu bạn chưa gọi. Web cũng vậy: client luôn hỏi trước, server chỉ trả lời.
 
 Điểm mấu chốt: **client luôn chủ động mở lời**. Server không tự nhiên gửi trang web cho bạn — nó đợi đến khi bạn (client) yêu cầu.
 
@@ -61,7 +61,7 @@ https://shop.example.com:443/products/ao-thun?size=M#reviews
 | Query (tham số) | `?size=M` | Thông tin thêm gửi kèm |
 | Fragment | `#reviews` | Vị trí cụ thể *trong* trang (browser tự xử lý) |
 
-> 💡 Ghi nhớ: Giống địa chỉ thư tín: scheme là "kiểu vận chuyển", host là "thành phố + tên nhà", path là "phòng nào trong nhà", query là "lời nhắn dán kèm".
+> Ghi nhớ: Giống địa chỉ thư tín: scheme là "kiểu vận chuyển", host là "thành phố + tên nhà", path là "phòng nào trong nhà", query là "lời nhắn dán kèm".
 
 ## URL → Request → Response: từng bước
 
@@ -135,7 +135,7 @@ Dòng đầu có **status code** (`200 OK` = thành công). Sau đó là headers
 
 6. **Browser render.** Browser nhận HTML và vẽ ra màn hình (phần này nói kỹ ở dưới).
 
-> 💡 Ghi nhớ: Một lần tải trang không phải *một* request. Trang HTML thường tham chiếu thêm ảnh, file CSS, file JS... Mỗi thứ là một request riêng. Mở 1 trang tin tức có thể là 80-100 request!
+> Ghi nhớ: Một lần tải trang không phải *một* request. Trang HTML thường tham chiếu thêm ảnh, file CSS, file JS... Mỗi thứ là một request riêng. Mở 1 trang tin tức có thể là 80-100 request!
 
 ## HTTP method: bạn muốn làm gì?
 
@@ -149,7 +149,7 @@ Dòng đầu có **status code** (`200 OK` = thành công). Sau đó là headers
 | `PATCH`| "Cập nhật một phần" | Đổi mỗi ảnh đại diện |
 | `DELETE`| "Xoá cái này đi" | Xoá một bài viết |
 
-> 💡 Ghi nhớ: Gõ địa chỉ vào browser hay bấm link luôn là `GET`. Bấm nút "Gửi" trên form thường là `POST`. Phân biệt dễ: `GET` chỉ *đọc*, `POST` thường *thay đổi* gì đó trên server.
+> Ghi nhớ: Gõ địa chỉ vào browser hay bấm link luôn là `GET`. Bấm nút "Gửi" trên form thường là `POST`. Phân biệt dễ: `GET` chỉ *đọc*, `POST` thường *thay đổi* gì đó trên server.
 
 ## Status code: kết quả ra sao?
 
@@ -162,7 +162,7 @@ Server trả về một con số 3 chữ số để tóm tắt kết quả. Nhó
 | **4xx** | Lỗi từ phía client (bạn sai) | `404 Not Found`, `403 Forbidden`, `401 Unauthorized` |
 | **5xx** | Lỗi từ phía server (họ sai) | `500 Internal Server Error`, `503 Service Unavailable` |
 
-> 💡 Ghi nhớ cách phân biệt 4xx và 5xx: **4xx là "lỗi tại bạn"** (gõ sai địa chỉ, chưa đăng nhập). **5xx là "lỗi tại server"** (code họ bị crash). `404` huyền thoại nghĩa là: địa chỉ đúng cú pháp nhưng server không tìm thấy thứ đó.
+> Ghi nhớ cách phân biệt 4xx và 5xx: **4xx là "lỗi tại bạn"** (gõ sai địa chỉ, chưa đăng nhập). **5xx là "lỗi tại server"** (code họ bị crash). `404` huyền thoại nghĩa là: địa chỉ đúng cú pháp nhưng server không tìm thấy thứ đó.
 
 ## HTML, CSS, JavaScript: bộ ba xây nên trang
 
@@ -199,7 +199,7 @@ nut.addEventListener("click", () => {
 });
 ```
 
-> ⚠️ Lỗi người mới hay gặp: nghĩ rằng "biết HTML là biết lập trình web". HTML chỉ mô tả nội dung — nó *không có* logic (không if/else, không vòng lặp). Phần "suy nghĩ" thuộc về JavaScript.
+> Lỗi người mới hay gặp: nghĩ rằng "biết HTML là biết lập trình web". HTML chỉ mô tả nội dung — nó *không có* logic (không if/else, không vòng lặp). Phần "suy nghĩ" thuộc về JavaScript.
 
 ### Thử ngay
 
@@ -242,7 +242,7 @@ Hai từ bạn sẽ nghe suốt:
 - **Frontend** (phía trước): mọi thứ chạy *trong browser của người dùng* — HTML, CSS, JS. Đây là phần bạn *nhìn thấy và chạm vào*. Nằm ở phía **client**.
 - **Backend** (phía sau): mọi thứ chạy *trên server* — xử lý logic, lưu/lấy dữ liệu từ **database**, kiểm tra mật khẩu. Người dùng không thấy trực tiếp.
 
-> 💡 Ghi nhớ: Analogy nhà hàng lần nữa. Frontend là **phòng ăn** — bàn ghế, thực đơn, cách trình bày món (cái khách thấy). Backend là **bếp + kho** — nơi nấu nướng và cất nguyên liệu (khách không vào). Người phục vụ chạy qua chạy lại giữa hai bên chính là các HTTP request/response.
+> Ghi nhớ: Analogy nhà hàng lần nữa. Frontend là **phòng ăn** — bàn ghế, thực đơn, cách trình bày món (cái khách thấy). Backend là **bếp + kho** — nơi nấu nướng và cất nguyên liệu (khách không vào). Người phục vụ chạy qua chạy lại giữa hai bên chính là các HTTP request/response.
 
 Ví dụ đăng nhập: bạn gõ email + mật khẩu (frontend) → browser gửi `POST` lên server → backend kiểm tra mật khẩu đúng không trong database → trả về `200` (đúng) hoặc `401` (sai) → frontend hiện "Chào mừng" hoặc "Sai mật khẩu".
 
@@ -299,9 +299,9 @@ Khi HTML về tới browser, nó không hiện ra ngay tức thì mà qua mấy 
 4. **Paint (vẽ).** Tô màu, vẽ chữ, ảnh lên màn hình thành các điểm ảnh.
 5. **Chạy JavaScript.** JS có thể *thay đổi* DOM sau đó (thêm phần tử, đổi nội dung), khiến browser vẽ lại phần liên quan.
 
-> 💡 Ghi nhớ: **DOM** là cầu nối quan trọng nhất. HTML là văn bản tĩnh; khi browser đọc xong, nó biến thành DOM — một cấu trúc *sống* mà JavaScript có thể đọc và sửa. Khi bạn viết `document.getElementById(...)`, bạn đang nói chuyện với DOM.
+> Ghi nhớ: **DOM** là cầu nối quan trọng nhất. HTML là văn bản tĩnh; khi browser đọc xong, nó biến thành DOM — một cấu trúc *sống* mà JavaScript có thể đọc và sửa. Khi bạn viết `document.getElementById(...)`, bạn đang nói chuyện với DOM.
 
-> ⚠️ Lỗi người mới hay gặp: đặt thẻ `<script>` ở *đầu* trang (trong `<head>`) rồi tìm phần tử chưa được tạo. Browser đọc từ trên xuống — nếu JS chạy trước khi nút được dựng, `getElementById` trả về `null` và bạn gặp lỗi. Cách an toàn: đặt `<script>` ngay trước thẻ đóng `</body>`, như ví dụ ở trên.
+> Lỗi người mới hay gặp: đặt thẻ `<script>` ở *đầu* trang (trong `<head>`) rồi tìm phần tử chưa được tạo. Browser đọc từ trên xuống — nếu JS chạy trước khi nút được dựng, `getElementById` trả về `null` và bạn gặp lỗi. Cách an toàn: đặt `<script>` ngay trước thẻ đóng `</body>`, như ví dụ ở trên.
 
 ## DevTools: nhìn tận mắt request và response
 
@@ -324,7 +324,7 @@ Mỗi dòng trong danh sách là **một HTTP request**. Bạn sẽ thấy:
 
 Bấm vào một dòng để xem chi tiết: tab **Headers** cho thấy request/response headers, **Response** cho thấy nội dung thật server trả về. Đây chính là toàn bộ "cuộc trò chuyện" client–server mà chúng ta vừa học, hiện ra bằng mắt thường.
 
-> 💡 Ghi nhớ: Khi trang bị lỗi, mở tab Network là phản xạ đầu tiên. Thấy dòng đỏ `404`? Một file bị thiếu. Thấy `500`? Server đang gặp sự cố. DevTools biến những khái niệm trừu tượng trong bài này thành thứ bạn quan sát được trực tiếp.
+> Ghi nhớ: Khi trang bị lỗi, mở tab Network là phản xạ đầu tiên. Thấy dòng đỏ `404`? Một file bị thiếu. Thấy `500`? Server đang gặp sự cố. DevTools biến những khái niệm trừu tượng trong bài này thành thứ bạn quan sát được trực tiếp.
 
 ## Tóm tắt
 

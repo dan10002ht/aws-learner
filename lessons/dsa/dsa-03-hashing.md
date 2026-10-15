@@ -122,7 +122,7 @@ Công thức hash không hoàn hảo: hai key khác nhau có thể cho ra cùng 
 
 Để các danh sách nhỏ không phình to, hash table theo dõi **load factor** = số phần tử / số ô. Khi vượt ngưỡng (thường ~0.75), nó **resize**: cấp mảng lớn gấp đôi và **rehash** toàn bộ phần tử sang mảng mới. Lần resize đó tốn O(n), nhưng vì nó hiếm và được "trải" ra trên rất nhiều thao tác, mỗi thao tác vẫn là **O(1) amortized** (trung bình khấu hao).
 
-> 💡 Ghi nhớ: "O(1) của hash map" là **trung bình**, không phải đảm bảo cho từng lần. Trường hợp xấu nhất (mọi key va chạm vào một ô) là O(n). Trong phỏng vấn, cứ trả lời O(1) trung bình; nhưng phải biết tại sao xấu nhất là O(n) để không bị hỏi đuối.
+> Ghi nhớ: "O(1) của hash map" là **trung bình**, không phải đảm bảo cho từng lần. Trường hợp xấu nhất (mọi key va chạm vào một ô) là O(n). Trong phỏng vấn, cứ trả lời O(1) trung bình; nhưng phải biết tại sao xấu nhất là O(n) để không bị hỏi đuối.
 
 ## 3. Set vs Map — khác gì nhau
 
@@ -289,7 +289,7 @@ int main() {
 }
 ```
 
-> 💡 Ghi nhớ: hễ bài toán có cụm "đã thấy chưa", "bao nhiêu lần", "có cặp/nhóm nào", "loại trùng", "tìm theo id" — phản xạ đầu tiên là hash map/set. Nó thường biến O(n²) thành O(n).
+> Ghi nhớ: hễ bài toán có cụm "đã thấy chưa", "bao nhiêu lần", "có cặp/nhóm nào", "loại trùng", "tìm theo id" — phản xạ đầu tiên là hash map/set. Nó thường biến O(n²) thành O(n).
 
 ## 6. Khi nào KHÔNG dùng hash map
 
@@ -301,9 +301,9 @@ Hash map mạnh nhưng không phải búa vạn năng. Tránh nó khi:
 - **Bộ nhớ căng**. Hash map có overhead lớn: ô trống để giữ load factor thấp, con trỏ, đóng gói object. Một map int→int có thể tốn gấp nhiều lần một mảng tương đương.
 - **Cần hashing mật mã**. Hash table dùng hàm băm nhanh, **không** an toàn mật mã. Đừng nhầm với SHA-256.
 
-> ⚠️ Bẫy: đừng giả định thứ tự duyệt của map. Code "chạy đúng trên máy mình" nhờ thứ tự tình cờ sẽ vỡ khi đổi ngôn ngữ, đổi phiên bản, hoặc khi Go cố tình xáo trộn. Cần thứ tự thì sắp xếp một cách tường minh.
+> Bẫy: đừng giả định thứ tự duyệt của map. Code "chạy đúng trên máy mình" nhờ thứ tự tình cờ sẽ vỡ khi đổi ngôn ngữ, đổi phiên bản, hoặc khi Go cố tình xáo trộn. Cần thứ tự thì sắp xếp một cách tường minh.
 
-> ⚠️ Bẫy: key của map phải **immutable / hashable**. Đừng dùng list hay dict làm key trong Python (sẽ lỗi `unhashable`); trong Java đừng đổi field của object sau khi đã đưa vào map (sẽ "mất" phần tử). Object dùng làm key phải có `hashCode`/`equals` (Java) hoặc là kiểu so sánh được (Go) đúng đắn.
+> Bẫy: key của map phải **immutable / hashable**. Đừng dùng list hay dict làm key trong Python (sẽ lỗi `unhashable`); trong Java đừng đổi field của object sau khi đã đưa vào map (sẽ "mất" phần tử). Object dùng làm key phải có `hashCode`/`equals` (Java) hoặc là kiểu so sánh được (Go) đúng đắn.
 
 ## 7. Bài toán điển hình
 
@@ -597,7 +597,7 @@ int firstUnique(const std::string& s) {
 
 Độ phức tạp: **O(n)** thời gian, **O(1)** bộ nhớ nếu bảng chữ cái cố định (ví dụ 26 chữ thường), ngược lại **O(k)** với k ký tự phân biệt.
 
-> 💡 Ghi nhớ: rất nhiều bài "string/array" tách thành **hai lượt** — lượt một dựng map (count hoặc index), lượt hai dùng map để quyết định. Khi cần kết quả "đầu tiên/theo thứ tự", luôn lấy thứ tự từ dữ liệu gốc, đừng lấy từ map.
+> Ghi nhớ: rất nhiều bài "string/array" tách thành **hai lượt** — lượt một dựng map (count hoặc index), lượt hai dùng map để quyết định. Khi cần kết quả "đầu tiên/theo thứ tự", luôn lấy thứ tự từ dữ liệu gốc, đừng lấy từ map.
 
 ## 8. Tổng kết
 

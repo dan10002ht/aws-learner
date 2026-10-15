@@ -4,7 +4,7 @@
 
 Bài này không có sơ đồ throughput. Nó nói về **đánh đổi giữa kỹ thuật — kinh doanh — con người**, và đa số quyết định ở đây không thể đo bằng benchmark. Đó là lý do nó khó.
 
-> 💡 **Nguyên tắc**: Mỗi dòng code bạn tự viết là một dòng code bạn phải **bảo trì mãi mãi**. Tài sản kỹ thuật cũng là nợ kỹ thuật trá hình. Câu hỏi không phải "xây được không?" mà "đáng để sở hữu suốt vòng đời không?".
+> **Nguyên tắc**: Mỗi dòng code bạn tự viết là một dòng code bạn phải **bảo trì mãi mãi**. Tài sản kỹ thuật cũng là nợ kỹ thuật trá hình. Câu hỏi không phải "xây được không?" mà "đáng để sở hữu suốt vòng đời không?".
 
 ---
 
@@ -56,7 +56,7 @@ Khái niệm từ Geoffrey Moore. Phân loại mọi capability của công ty:
   </g>
 </svg>
 
-> 💡 **Nguyên tắc**: **Build cái Core, Buy cái Context.** Netflix tự xây recommendation engine (core) nhưng dùng AWS cho hạ tầng (context). Một startup fintech build risk-engine (core) nhưng *không bao giờ* tự viết hệ thống gửi email (context).
+> **Nguyên tắc**: **Build cái Core, Buy cái Context.** Netflix tự xây recommendation engine (core) nhưng dùng AWS cho hạ tầng (context). Một startup fintech build risk-engine (core) nhưng *không bao giờ* tự viết hệ thống gửi email (context).
 
 Cái bẫy chết người: kỹ sư **thích** tự xây vì nó vui và "ta làm tốt hơn được". Nhưng "làm tốt hơn" một cái context không tạo ra đồng doanh thu nào — nó chỉ đốt thời gian của những người giỏi nhất vào thứ không ai trả tiền.
 
@@ -96,13 +96,13 @@ So sánh 3 năm:
 
 Tự xây chỉ **rẻ hơn** khi: (a) search là core (giá trị > tiền), hoặc (b) quy mô lớn đến mức license SaaS vượt $250k/năm. Với startup, gần như luôn **BUY**.
 
-> ⚠️ **Bẫy thiết kế**: Bỏ qua chi phí *bảo trì vĩnh viễn* và *chi phí cơ hội*. Đội 5 người tự xây queue thay vì dùng SQS không chỉ tốn tiền — họ **không** xây feature giúp công ty thắng thị trường. Cái mất lớn nhất là thứ bạn không nhìn thấy.
+> **Bẫy thiết kế**: Bỏ qua chi phí *bảo trì vĩnh viễn* và *chi phí cơ hội*. Đội 5 người tự xây queue thay vì dùng SQS không chỉ tốn tiền — họ **không** xây feature giúp công ty thắng thị trường. Cái mất lớn nhất là thứ bạn không nhìn thấy.
 
 ### Trục 3 — Time-to-market
 
 Buy = chạy trong vài ngày. Build = vài tháng. Với startup đang đua giành thị trường, **6 tháng chậm có thể là phá sản** — số tiền tiết kiệm được khi tự xây trở nên vô nghĩa nếu đối thủ chiếm thị trường trước.
 
-> 💡 **Nguyên tắc**: Sớm thì **Buy để đi nhanh**, kiểm chứng product-market fit. Khi đã chứng minh được giá trị và quy mô tăng, mới cân nhắc **build lại phần đã thành core**. Thứ tự ngược lại (build trước, hối tiếc sau) là cái chết của startup.
+> **Nguyên tắc**: Sớm thì **Buy để đi nhanh**, kiểm chứng product-market fit. Khi đã chứng minh được giá trị và quy mô tăng, mới cân nhắc **build lại phần đã thành core**. Thứ tự ngược lại (build trước, hối tiếc sau) là cái chết của startup.
 
 ### Trục 4 — Lock-in & khả năng thoát
 
@@ -140,7 +140,7 @@ Ba "tầng" lựa chọn, không phải nhị phân:
 2. **Managed service trên cloud** (vd RDS, SQS, OpenSearch): bạn quản cấu hình nhưng không quản máy. Cân bằng tốt nhất cho đa số.
 3. **Self-hosted open-source** (vd Postgres trên EC2, Kafka tự quản): rẻ license, kiểm soát tối đa, **nhưng** bạn nhận toàn bộ gánh nặng vận hành — backup, patching, scaling, on-call lúc 3 giờ sáng.
 
-> ⚠️ **Bẫy thiết kế**: "Open-source nên miễn phí" là ảo tưởng. Self-host Kafka không có phí license nhưng cần một đội chuyên trách. Với hầu hết công ty, **managed Kafka (MSK) đắt hơn về license nhưng rẻ hơn về TCO**.
+> **Bẫy thiết kế**: "Open-source nên miễn phí" là ảo tưởng. Self-host Kafka không có phí license nhưng cần một đội chuyên trách. Với hầu hết công ty, **managed Kafka (MSK) đắt hơn về license nhưng rẻ hơn về TCO**.
 
 ---
 
@@ -168,19 +168,19 @@ CTO bị dội bom công nghệ mới mỗi tuần (giờ là AI, hôm qua là b
   <text x="630" y="150" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">năng suất</text>
   <g>
     <rect x="250" y="96" width="200" height="40" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="350" y="113" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">⚠ ĐỪNG đưa vào sản xuất</text>
+    <text x="350" y="113" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">ĐỪNG đưa vào sản xuất</text>
     <text x="350" y="128" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">khi ở đỉnh hype</text>
     <line x1="280" y1="96" x2="226" y2="86" stroke="currentColor" stroke-opacity="0.4"/>
   </g>
   <g>
     <rect x="500" y="230" width="200" height="40" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="600" y="247" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">✔ An toàn hơn để adopt</text>
+    <text x="600" y="247" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">✓ An toàn hơn để adopt</text>
     <text x="600" y="262" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">pattern đã chín</text>
     <line x1="540" y1="230" x2="480" y2="210" stroke="currentColor" stroke-opacity="0.4"/>
   </g>
 </svg>
 
-> 💡 **Nguyên tắc**: Đừng đưa công nghệ vào sản xuất khi nó ở **đỉnh hype** — thiếu best practice, tài liệu sai, công cụ non. Hãy đợi nó leo qua "vực thẳm vỡ mộng" lên **dốc khai sáng**, lúc đó pattern đã chín và rủi ro thấp hơn nhiều. Trừ khi bạn cố tình đặt cược sớm cho lợi thế tiên phong (bet có chủ đích, biết rủi ro).
+> **Nguyên tắc**: Đừng đưa công nghệ vào sản xuất khi nó ở **đỉnh hype** — thiếu best practice, tài liệu sai, công cụ non. Hãy đợi nó leo qua "vực thẳm vỡ mộng" lên **dốc khai sáng**, lúc đó pattern đã chín và rủi ro thấp hơn nhiều. Trừ khi bạn cố tình đặt cược sớm cho lợi thế tiên phong (bet có chủ đích, biết rủi ro).
 
 ### ThoughtWorks Tech Radar — bốn vòng phân loại
 
@@ -195,7 +195,7 @@ CTO bị dội bom công nghệ mới mỗi tuần (giờ là AI, hôm qua là b
 
 Mỗi công nghệ mới nên vào qua **Assess → Trial → Adopt**, không nhảy thẳng vào production. Và đừng quên vòng **Hold** — biết khi nào *ngừng* dùng cái cũ cũng quan trọng như chọn cái mới.
 
-> ⚠️ **Bẫy thiết kế**: "Resume-driven development" — chọn tech vì nó hot trên CV kỹ sư, không vì bài toán cần. Mỗi công nghệ mới thêm vào stack là một thứ phải tuyển người, đào tạo, vận hành, debug. **Sự nhàm chán là một tính năng**: chọn công nghệ "buồn tẻ nhưng đáng tin" cho phần lõi.
+> **Bẫy thiết kế**: "Resume-driven development" — chọn tech vì nó hot trên CV kỹ sư, không vì bài toán cần. Mỗi công nghệ mới thêm vào stack là một thứ phải tuyển người, đào tạo, vận hành, debug. **Sự nhàm chán là một tính năng**: chọn công nghệ "buồn tẻ nhưng đáng tin" cho phần lõi.
 
 ---
 
@@ -217,20 +217,20 @@ Nợ kỹ thuật (technical debt) không phải lúc nào cũng xấu — giố
     <text x="215" y="98" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85" font-style="italic">"Ship trước, refactor</text>
     <text x="215" y="115" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85" font-style="italic">sprint sau"</text>
     <text x="215" y="148" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Nợ CHIẾN LƯỢC</text>
-    <text x="215" y="172" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">✔ OK</text>
+    <text x="215" y="172" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">✓ OK</text>
   </g>
   <g>
     <rect x="358" y="56" width="270" height="160" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="493" y="98" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85" font-style="italic">"Giờ ta biết lẽ ra</text>
     <text x="493" y="115" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85" font-style="italic">nên thiết kế thế này"</text>
     <text x="493" y="148" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Học hỏi</text>
-    <text x="493" y="172" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">✔ OK</text>
+    <text x="493" y="172" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">✓ OK</text>
   </g>
   <g>
     <rect x="80" y="224" width="270" height="160" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="215" y="266" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85" font-style="italic">"Không có thời gian</text>
     <text x="215" y="283" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85" font-style="italic">cho thiết kế tử tế"</text>
-    <text x="215" y="320" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">⚠ Nguy hiểm</text>
+    <text x="215" y="320" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Nguy hiểm</text>
   </g>
   <g>
     <rect x="358" y="224" width="270" height="160" rx="10" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
@@ -250,7 +250,7 @@ Nợ ở góc **Cố ý + Thận trọng** là công cụ kinh doanh hợp lệ.
 - **Ngân sách cố định**: dành ~15–20% năng lực mỗi sprint cho trả nợ. Coi như chi phí vận hành, không phải việc "khi nào rảnh".
 - **Trả nơi đau nhất**: chỉ refactor phần code **thay đổi thường xuyên**. Code xấu nhưng ổn định và không ai đụng tới thì... để yên. Refactor nó là lãng phí.
 
-> 💡 **Nguyên tắc**: Mục tiêu không phải **không có nợ** (bất khả thi và không kinh tế), mà là **nợ luôn nằm trong tầm kiểm soát và minh bạch**. CTO giỏi quản nợ kỹ thuật như CFO quản dòng tiền.
+> **Nguyên tắc**: Mục tiêu không phải **không có nợ** (bất khả thi và không kinh tế), mà là **nợ luôn nằm trong tầm kiểm soát và minh bạch**. CTO giỏi quản nợ kỹ thuật như CFO quản dòng tiền.
 
 ---
 
@@ -272,9 +272,9 @@ Microservices về bản chất là một quyết định **về tổ chức con
 | Chi phí vận hành | Thấp | Cao (service mesh, observability) |
 | Scale từng phần | Khó | Dễ |
 
-> 💡 **Nguyên tắc**: **Bắt đầu bằng monolith** (hay "modular monolith" — ranh giới module rõ ràng bên trong một deploy unit). Tách microservice ra **khi và chỉ khi** một ranh giới module gây đau thực sự về tổ chức: hai team xung đột deploy, một phần cần scale/công nghệ riêng. Tách theo *đau*, không theo lý thuyết.
+> **Nguyên tắc**: **Bắt đầu bằng monolith** (hay "modular monolith" — ranh giới module rõ ràng bên trong một deploy unit). Tách microservice ra **khi và chỉ khi** một ranh giới module gây đau thực sự về tổ chức: hai team xung đột deploy, một phần cần scale/công nghệ riêng. Tách theo *đau*, không theo lý thuyết.
 
-> ⚠️ **Bẫy thiết kế**: "Microservices từ ngày một" với startup 6 người. Bạn dành 80% thời gian xây hạ tầng phân tán thay vì sản phẩm, và mọi feature giờ phải sửa ở 5 repo. Đây là nguyên nhân giết startup thầm lặng nhất.
+> **Bẫy thiết kế**: "Microservices từ ngày một" với startup 6 người. Bạn dành 80% thời gian xây hạ tầng phân tán thay vì sản phẩm, và mọi feature giờ phải sửa ở 5 repo. Đây là nguyên nhân giết startup thầm lặng nhất.
 
 ---
 
@@ -287,7 +287,7 @@ Kỹ sư tối ưu cho cái *đẹp về kỹ thuật*. CTO tối ưu cho cái *
   <desc>Một tam giác với ba đỉnh: Kỹ thuật (đúng đắn, bền vững, scale), Kinh doanh (doanh thu, tốc độ, chi phí) và Con người (kỹ năng đội, tuyển dụng, tinh thần). Vùng cân bằng — quyết định tốt — nằm ở giao điểm cả ba lực, tại trung tâm tam giác.</desc>
   <polygon points="360,60 110,380 610,380" fill="#3b82f6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3" stroke-width="1.5"/>
   <circle cx="360" cy="277" r="62" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="360" y="270" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">✔ vùng</text>
+  <text x="360" y="270" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">✓ vùng</text>
   <text x="360" y="288" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">cân bằng</text>
   <text x="360" y="308" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">giao cả ba</text>
   <g>
@@ -311,7 +311,7 @@ Một giải pháp **hoàn hảo về kỹ thuật** nhưng team không đủ k�
 - "Chọn này khoá ta vào con đường nào trong 3 năm tới?" (kỹ thuật dài hạn)
 - "Nếu sai, ta **quay đầu** được không, tốn bao nhiêu?" (xem mục 7)
 
-> 💡 **Nguyên tắc**: Quyết định kiến trúc tốt nhất thường **không** phải cái tối ưu nhất về kỹ thuật, mà là cái **đủ tốt về kỹ thuật** và **thắng về kinh doanh và con người**. "Boring technology that the team can run" thắng "shiny tech nobody understands".
+> **Nguyên tắc**: Quyết định kiến trúc tốt nhất thường **không** phải cái tối ưu nhất về kỹ thuật, mà là cái **đủ tốt về kỹ thuật** và **thắng về kinh doanh và con người**. "Boring technology that the team can run" thắng "shiny tech nobody understands".
 
 ---
 
@@ -356,7 +356,7 @@ Khung của Jeff Bezos, công cụ ra quyết định mạnh nhất của bài n
   </g>
 </svg>
 
-> ⚠️ **Bẫy thiết kế**: Hai sai lầm đối xứng. (1) Đối xử **two-way door như one-way** → tê liệt phân tích (analysis paralysis), họp 6 tuần để chọn thứ đổi lại trong 1 ngày. (2) Đối xử **one-way door như two-way** → "cứ làm rồi tính", rồi mắc kẹt với public API hay schema sai trong 5 năm vì hàng nghìn client đã phụ thuộc.
+> **Bẫy thiết kế**: Hai sai lầm đối xứng. (1) Đối xử **two-way door như one-way** → tê liệt phân tích (analysis paralysis), họp 6 tuần để chọn thứ đổi lại trong 1 ngày. (2) Đối xử **one-way door như two-way** → "cứ làm rồi tính", rồi mắc kẹt với public API hay schema sai trong 5 năm vì hàng nghìn client đã phụ thuộc.
 
 Mẹo thực dụng để **biến one-way thành two-way**: thêm một lớp trừu tượng. Public API qua một façade/adapter cho phép đổi backend sau. Đặt repository pattern trước database cho phép đổi DB ít đau hơn. **Đầu tư vào tính đảo-ngược-được chính là mua quyền quyết nhanh về sau.**
 
@@ -373,7 +373,7 @@ Mẹo thực dụng để **biến one-way thành two-way**: thêm một lớp t
 5. **Nêu điều kiện đổi ý.** "Tôi sẽ build lại khi license vượt $250k/năm hoặc khi nó thành core" — cho thấy bạn nghĩ động theo thời gian, không quyết một lần rồi quên.
 6. **Thừa nhận chi phí con người.** "Team chưa có kinh nghiệm Kafka nên dù MSK đắt hơn, nó giảm rủi ro vận hành" — rất ít ứng viên nói điều này, và nó cho thấy độ chín.
 
-> 💡 **Nguyên tắc**: Câu trả lời "đúng" duy nhất trong những bài này là: **"Còn tuỳ — và đây là các biến số quyết định nó, cùng cách tôi sẽ cân chúng."** Người trình bày được khung tư duy thắng người đọc thuộc một đáp án.
+> **Nguyên tắc**: Câu trả lời "đúng" duy nhất trong những bài này là: **"Còn tuỳ — và đây là các biến số quyết định nó, cùng cách tôi sẽ cân chúng."** Người trình bày được khung tư duy thắng người đọc thuộc một đáp án.
 
 ---
 
@@ -398,4 +398,4 @@ Vài liên hệ cụ thể về tư duy:
 - **Managed luôn là default hợp lý trên AWS**: dùng RDS thay vì tự cài Postgres, SQS thay vì tự dựng queue — trừ khi capability đó là **core** của bạn hoặc quy mô lớn tới mức TCO tự quản rẻ hơn rõ rệt.
 - **Lock-in có chủ đích**: đi sâu DynamoDB single-table để được scale gần-vô-hạn ở vận hành tối thiểu là một đánh đổi *tốt* — miễn bạn quyết nó như một one-way door, có cân nhắc, chứ không vô tình.
 
-> 💡 **Nguyên tắc cuối cùng**: Cloud không xoá bỏ quyết định build-vs-buy — nó **đẩy ranh giới "buy" lên cao hơn**, cho bạn mua được những thứ trước đây phải tự xây. Việc của kiến trúc sư cấp cao là biết **mua tới đâu thì dừng**, và để dành sức xây thứ duy nhất khiến công ty bạn khác biệt: **core của bạn.**
+> **Nguyên tắc cuối cùng**: Cloud không xoá bỏ quyết định build-vs-buy — nó **đẩy ranh giới "buy" lên cao hơn**, cho bạn mua được những thứ trước đây phải tự xây. Việc của kiến trúc sư cấp cao là biết **mua tới đâu thì dừng**, và để dành sức xây thứ duy nhất khiến công ty bạn khác biệt: **core của bạn.**

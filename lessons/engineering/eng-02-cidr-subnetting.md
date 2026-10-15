@@ -18,7 +18,7 @@ Bit:      128   64   32   16    8    4    2    1
 
 Ví dụ tính tay: `130 = 128 + 2` → `10000010`. Ngược lại, `11000000 = 128 + 64 = 192`.
 
-> 💡 **Ghi nhớ:** Bạn chỉ cần thuộc dãy `128 64 32 16 8 4 2 1`. Mọi phép tính subnet đều quy về dãy này.
+> **Ghi nhớ:** Bạn chỉ cần thuộc dãy `128 64 32 16 8 4 2 1`. Mọi phép tính subnet đều quy về dãy này.
 
 Kiểm tra nhanh bằng lệnh (macOS/Linux có sẵn Python):
 
@@ -94,7 +94,7 @@ Số địa chỉ trong block = 2^(32 − prefix)
 | /28 | 16 | 255.255.255.240 | Cỡ subnet **nhỏ nhất** AWS cho phép |
 | /32 | 1 | 255.255.255.255 | Một host duy nhất (security group rule) |
 
-> 💡 **Ghi nhớ:** Mỗi lần prefix **giảm 1** (vd /24 → /23), số địa chỉ **nhân đôi**. Mỗi lần **tăng 1**, số địa chỉ **chia đôi**.
+> **Ghi nhớ:** Mỗi lần prefix **giảm 1** (vd /24 → /23), số địa chỉ **nhân đôi**. Mỗi lần **tăng 1**, số địa chỉ **chia đôi**.
 
 ## 3. Block size method — tính network/broadcast nhanh bằng tay
 
@@ -136,7 +136,7 @@ python3 -c "import ipaddress; n=ipaddress.ip_network('172.16.37.14/20', strict=F
 # 172.16.32.0/20 172.16.47.255 4096
 ```
 
-> ⚠️ **Lỗi thường gặp:** Quên rằng usable hosts = tổng − 2 (network + broadcast) trong mạng truyền thống. Riêng **AWS trừ 5** (xem mục 8) — đề thi hay gài đúng chỗ này.
+> **Lỗi thường gặp:** Quên rằng usable hosts = tổng − 2 (network + broadcast) trong mạng truyền thống. Riêng **AWS trừ 5** (xem mục 8) — đề thi hay gài đúng chỗ này.
 
 ## 4. Chia subnet từ một VPC CIDR
 
@@ -218,7 +218,7 @@ VPC: 10.0.0.0/16
   <text x="16" y="344" font-size="10.5" fill="currentColor" opacity="0.75">Mỗi block bắt đầu tại bội số block size của nó: /20 tại 0,16,32,48… · /24 tại bất kỳ giá trị octet 3</text>
 </svg>
 
-> 💡 **Ghi nhớ:** Subnet con phải **bắt đầu tại bội số của block size của chính nó**. `10.0.10.0/20` là CIDR **không hợp lệ** vì 10 không chia hết cho 16 — AWS console sẽ báo lỗi "CIDR block is not within valid range" hoặc tự hiểu thành block khác tuỳ tool.
+> **Ghi nhớ:** Subnet con phải **bắt đầu tại bội số của block size của chính nó**. `10.0.10.0/20` là CIDR **không hợp lệ** vì 10 không chia hết cho 16 — AWS console sẽ báo lỗi "CIDR block is not within valid range" hoặc tự hiểu thành block khác tuỳ tool.
 
 ## 5. Public vs Private ranges (RFC 1918)
 
@@ -236,7 +236,7 @@ Các dải đặc biệt khác hay gặp trong đề:
 - `100.64.0.0/10` — Carrier-Grade NAT (RFC 6598). AWS cho phép dùng làm **secondary CIDR** của VPC, hay dùng cho dải "non-routable" của EKS pod hoặc kiến trúc private NAT gateway.
 - `127.0.0.0/8` — loopback; `0.0.0.0/0` — "mọi nơi" (default route).
 
-> ⚠️ **Lỗi thường gặp:** `172.32.0.0` **không** phải private — dải 172 chỉ private từ 172.**16** đến 172.**31** (vì /12 = 16 block /16, bắt đầu tại 16).
+> **Lỗi thường gặp:** `172.32.0.0` **không** phải private — dải 172 chỉ private từ 172.**16** đến 172.**31** (vì /12 = 16 block /16, bắt đầu tại 16).
 
 ## 6. Overlap detection — phát hiện trùng dải
 
@@ -257,7 +257,7 @@ python3 -c "import ipaddress as i; print(i.ip_network('10.0.0.0/16').overlaps(i.
 # True
 ```
 
-> 💡 **Ghi nhớ:** Hai CIDR **cùng prefix** thì hoặc trùng hệt nhau, hoặc không overlap. Overlap "một phần" chỉ xảy ra khi prefix khác nhau.
+> **Ghi nhớ:** Hai CIDR **cùng prefix** thì hoặc trùng hệt nhau, hoặc không overlap. Overlap "một phần" chỉ xảy ra khi prefix khác nhau.
 
 ## 7. Route table & longest-prefix match
 
@@ -305,7 +305,7 @@ Packet tới `10.1.5.40`: khớp cả /16 (peering) lẫn /24 (TGW) → chọn *
   <text x="587" y="262" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">prefix dài nhất = cụ thể nhất</text>
 </svg>
 
-> ⚠️ **Lỗi thường gặp:** Nghĩ rằng `0.0.0.0/0` "ưu tiên cao vì đứng đầu". Sai — /0 là prefix **ngắn nhất**, luôn là lựa chọn cuối cùng (default route). Thứ tự dòng trong route table không có ý nghĩa.
+> **Lỗi thường gặp:** Nghĩ rằng `0.0.0.0/0` "ưu tiên cao vì đứng đầu". Sai — /0 là prefix **ngắn nhất**, luôn là lựa chọn cuối cùng (default route). Thứ tự dòng trong route table không có ý nghĩa.
 
 ## 8. Liên hệ AWS: VPC/subnet sizing — AWS giữ 5 IP
 
@@ -368,7 +368,7 @@ Quy tắc VPC/subnet hiện hành (2025–2026):
 - Có thể gắn **secondary CIDR** vào VPC đang chạy (tối đa 5 IPv4 CIDR mặc định, nâng quota được) — đây là cách "cứu" VPC hết IP mà **không** phải tạo VPC mới. Secondary CIDR có ràng buộc: ví dụ VPC chính 10.x thì không được thêm secondary từ 172.16.0.0/12 hay 192.168.0.0/16, nhưng được thêm 100.64.0.0/10.
 - ENI thứ cấp, mỗi pod EKS (với VPC CNI), mỗi Fargate task, mỗi Lambda trong VPC, mỗi interface endpoint đều "ăn" IP của subnet — subnet production nên rộng hơn bạn nghĩ.
 
-> 💡 **Ghi nhớ cho đề thi:** "Cần 500 instance mỗi subnet" → 500 + 5 = 505 → /23 (512 − 5 = 507) là đáp án **khít** nhất. /24 (251) không đủ.
+> **Ghi nhớ cho đề thi:** "Cần 500 instance mỗi subnet" → 500 + 5 = 505 → /23 (512 − 5 = 507) là đáp án **khít** nhất. /24 (251) không đủ.
 
 ## 9. IPv6 cơ bản — vì sao AWS đẩy mạnh
 
@@ -386,7 +386,7 @@ Những điều cần biết:
 - Không có broadcast trong IPv6; không cần tính usable hosts kiểu IPv4 — một /64 có 2^64 địa chỉ.
 - VPC có thể **dual-stack** (IPv4 + IPv6) hoặc subnet **IPv6-only** (hỗ trợ EC2 Nitro, EKS, ECS).
 
-> ⚠️ **Lỗi thường gặp:** Tưởng NAT gateway dùng được cho IPv6. Sai — IPv6 outbound-only dùng **egress-only internet gateway**; NAT gateway chủ yếu cho IPv4 (riêng tính năng NAT64/DNS64 cho phép subnet IPv6-only gọi ra dịch vụ IPv4).
+> **Lỗi thường gặp:** Tưởng NAT gateway dùng được cho IPv6. Sai — IPv6 outbound-only dùng **egress-only internet gateway**; NAT gateway chủ yếu cho IPv4 (riêng tính năng NAT64/DNS64 cho phép subnet IPv6-only gọi ra dịch vụ IPv4).
 
 ## 10. Bài tập có lời giải
 

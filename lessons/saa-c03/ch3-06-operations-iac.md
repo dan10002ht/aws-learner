@@ -166,7 +166,7 @@ Patch Group = prod    Security mức Critical/Important, sau 7 ngày    Chủ nh
 
 Mỗi lần chạy chọn một trong hai chế độ. **Scan** chỉ so máy với baseline rồi báo cáo máy nào thiếu patch nào (compliance), không đổi gì trên máy. **Install** cài các patch còn thiếu và có thể reboot.
 
-> 🪤 Patch Manager **không** vá thư viện trong code ứng dụng (một gói npm hay một file JAR có lỗ hổng). Việc tìm loại lỗ hổng đó là của Amazon Inspector.
+> Patch Manager **không** vá thư viện trong code ứng dụng (một gói npm hay một file JAR có lỗ hổng). Việc tìm loại lỗ hổng đó là của Amazon Inspector.
 
 ### 5.3 Automation — runbook chạy ở tầng API
 
@@ -310,7 +310,7 @@ Policy trên cho update mọi thứ, trừ việc replace hay xoá tài nguyên 
 
 **Khi update lỗi — Rollback.** Nếu một tài nguyên tạo hoặc sửa thất bại giữa chừng, CloudFormation tự đưa stack về **cấu hình** trước đó: xoá những thứ vừa tạo, trả thuộc tính đã sửa về giá trị cũ. Stack kết thúc ở trạng thái `UPDATE_ROLLBACK_COMPLETE`. Với tài nguyên bị replace, bản cũ chỉ bị xoá ở bước dọn dẹp cuối cùng khi mọi thứ đã thành công, nên rollback đơn giản là quay lại dùng bản cũ.
 
-> 🪤 Rollback khôi phục **cấu hình tài nguyên**, không khôi phục **dữ liệu bên trong**. Nếu bản deploy lỗi đã kịp chạy một migration xoá cột trong database thì rollback của CloudFormation không trả lại cột đó. Muốn có lại dữ liệu thì phải có snapshot/backup (§10).
+> Rollback khôi phục **cấu hình tài nguyên**, không khôi phục **dữ liệu bên trong**. Nếu bản deploy lỗi đã kịp chạy một migration xoá cột trong database thì rollback của CloudFormation không trả lại cột đó. Muốn có lại dữ liệu thì phải có snapshot/backup (§10).
 
 **Khi xoá — `DeletionPolicy`.** Đây là một thuộc tính đặt trên từng resource, quyết định số phận của nó khi stack bị xoá (hoặc khi bạn gỡ nó khỏi template):
 
@@ -329,7 +329,7 @@ Policy trên cho update mọi thứ, trừ việc replace hay xoá tài nguyên 
 
 `DeletionPolicy` **không** áp cho trường hợp tài nguyên bị *replace* trong lúc update (cái `Replacement: True` ở trên). Trường hợp đó do thuộc tính anh em **`UpdateReplacePolicy`** quyết định, với cùng ba giá trị. Vì vậy tài nguyên chứa dữ liệu thường khai cả hai như ví dụ.
 
-> 📏 Ngoại lệ của mặc định `Delete`: `AWS::RDS::DBCluster` và `AWS::RDS::DBInstance` đứng riêng (không thuộc cluster) có mặc định là `Snapshot`. Đề thi thường chỉ cần "mặc định là Delete, muốn giữ thì Retain hoặc Snapshot". Còn một chi tiết: S3 bucket phải **rỗng** thì CloudFormation mới xoá được, nếu không thao tác xoá stack sẽ lỗi.
+> Ngoại lệ của mặc định `Delete`: `AWS::RDS::DBCluster` và `AWS::RDS::DBInstance` đứng riêng (không thuộc cluster) có mặc định là `Snapshot`. Đề thi thường chỉ cần "mặc định là Delete, muốn giữ thì Retain hoặc Snapshot". Còn một chi tiết: S3 bucket phải **rỗng** thì CloudFormation mới xoá được, nếu không thao tác xoá stack sẽ lỗi.
 
 **Sau khi ai đó sửa tay — Drift detection.** *Drift* là độ lệch giữa cái template mô tả và cái đang thật sự chạy, sinh ra khi có người sửa tài nguyên ngoài CloudFormation (thêm một rule vào security group bằng console chẳng hạn). Bạn bấm *Detect drift*, CloudFormation đọc cấu hình thật của từng tài nguyên, so với template và gắn nhãn `IN_SYNC`, `MODIFIED` hoặc `DELETED`, kèm thuộc tính nào khác. Nó **chỉ báo cáo, không tự sửa**. Sửa drift là việc của bạn: update stack để ghi đè lại, hoặc đưa thay đổi vào template. Muốn drift không xảy ra từ đầu thì chặn quyền sửa tay bằng IAM hoặc SCP.
 
@@ -467,7 +467,7 @@ Con số đỉnh giải thích cột *Rollback*. Với hai kiểu rolling, lúc 
 
 **Blue/green không phải là một deployment policy.** Năm giá trị thật sự chọn được trong mục *Deployment policy* của Beanstalk là All at once, Rolling, Rolling with additional batch, Immutable và Traffic splitting. Dòng blue/green trong bảng là một **thao tác vận hành** bạn tự làm: clone environment, deploy bản mới lên bản clone, test, rồi bấm *Swap environment URLs* để hai environment đổi CNAME cho nhau. Vì là đổi DNS nên client còn cache bản ghi cũ sẽ tiếp tục vào environment cũ thêm một lúc.
 
-> 🪤 **RDS tạo bên trong environment sẽ bị xoá cùng environment.** Database khai trong cấu hình Beanstalk là một phần của stack bên dưới, có cùng vòng đời với environment: terminate environment (kể cả environment "blue" sau khi swap xong) là mất database. Production luôn tạo RDS **bên ngoài** Beanstalk rồi truyền connection string vào qua biến môi trường.
+> **RDS tạo bên trong environment sẽ bị xoá cùng environment.** Database khai trong cấu hình Beanstalk là một phần của stack bên dưới, có cùng vòng đời với environment: terminate environment (kể cả environment "blue" sau khi swap xong) là mất database. Production luôn tạo RDS **bên ngoài** Beanstalk rồi truyền connection string vào qua biến môi trường.
 
 ### 8.2 Beanstalk vs các cách deploy khác
 

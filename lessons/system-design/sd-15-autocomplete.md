@@ -29,7 +29,7 @@ Bài này khó ở đúng ba chỗ:
 | Gợi ý trả về; prefix tối đa | 5; 50 ký tự | Chốt cứng để giới hạn payload và độ sâu trie |
 | Độ trễ dữ liệu chấp nhận | hàng tuần (v1), hàng ngày (v2) | Top-k đổi chậm |
 
-> 💡 **Nguyên tắc**: Hai câu hỏi làm rõ có giá trị nhất là *"Prefix-only hay infix?"* và *"Dữ liệu được phép cũ bao lâu?"*. Câu đầu quyết định cấu trúc dữ liệu (trie hay n-gram), câu sau quyết định pipeline là batch hay streaming.
+> **Nguyên tắc**: Hai câu hỏi làm rõ có giá trị nhất là *"Prefix-only hay infix?"* và *"Dữ liệu được phép cũ bao lâu?"*. Câu đầu quyết định cấu trúc dữ liệu (trie hay n-gram), câu sau quyết định pipeline là batch hay streaming.
 
 ---
 
@@ -57,7 +57,7 @@ Autocomplete là **bộ khuếch đại tải (traffic amplifier)** với hệ s
 - Mọi mili-giây tiết kiệm được nhân lên 48.000 lần mỗi giây → ta sẽ chấp nhận **đánh đổi bộ nhớ rất mạnh để lấy thời gian**.
 - **Debounce phía client** không phải tiểu tiết UX mà là biện pháp giảm tải hạng nặng: debounce 200 ms cắt 50–70% request, tức cắt luôn một nửa fleet.
 
-> ⚠️ **Bẫy**: Tính "10M × 10 = 1.2K QPS, dễ mà" rồi vẽ một con DB duy nhất. Người phỏng vấn hỏi lại *"mỗi lần gõ phím thì sao?"* và cả thiết kế sụp. **Luôn nhân với số ký tự.**
+> **Bẫy**: Tính "10M × 10 = 1.2K QPS, dễ mà" rồi vẽ một con DB duy nhất. Người phỏng vấn hỏi lại *"mỗi lần gõ phím thì sao?"* và cả thiết kế sụp. **Luôn nhân với số ký tự.**
 
 ```
 STORAGE — 20% trong 100M query/ngày là query MỚI:
@@ -66,7 +66,7 @@ STORAGE — 20% trong 100M query/ngày là query MỚI:
 BANDWIDTH — response ~200 B × 48K QPS ≈ 9.6 MB/s egress → tí hon
 ```
 
-> 💡 **Nguyên tắc**: Chỉ log **query đã submit**, đừng log từng phím gõ — log phím gõ tạo 2 tỉ dòng/ngày (~200 GB) mà giá trị gần bằng 0. Một câu quyết định giảm 20× chi phí pipeline.
+> **Nguyên tắc**: Chỉ log **query đã submit**, đừng log từng phím gõ — log phím gõ tạo 2 tỉ dòng/ngày (~200 GB) mà giá trị gần bằng 0. Một câu quyết định giảm 20× chi phí pipeline.
 
 Kết luận: **bài này không nghẽn ở băng thông hay storage — nó nghẽn ở QPS và latency.**
 
@@ -97,7 +97,7 @@ GET /api/v1/suggestions?q=tw&limit=5&locale=en-US
 | **`limit` trần 1–10; trả `score`; `Cache-Control` 30–120 s** | Trần chặn DoS xin 1000 kết quả; `score` để client xếp lại nếu muốn trộn lịch sử cá nhân; cache 60 s không mất gì (dữ liệu vốn cũ vài ngày) mà cắt lượng request khổng lồ. |
 | **Không auth trên đường nóng** | Gợi ý là dữ liệu công khai. Xác thực mỗi phím gõ là tự bắn vào chân về latency; chống lạm dụng bằng rate limit theo IP. |
 
-> ⚠️ **Bẫy**: Thêm `user_id` vào API từ v1 "để sau này cá nhân hoá" là **phá vỡ khả năng cache ngay lập tức** — mỗi user một cache key, hit rate gần 0, nhân chi phí lên hàng chục lần để đổi lấy tính năng chưa tồn tại.
+> **Bẫy**: Thêm `user_id` vào API từ v1 "để sau này cá nhân hoá" là **phá vỡ khả năng cache ngay lập tức** — mỗi user một cache key, hit rate gần 0, nhân chi phí lên hàng chục lần để đổi lấy tính năng chưa tồn tại.
 
 ---
 
@@ -123,7 +123,7 @@ WHERE query LIKE 'tw%' ORDER BY frequency DESC LIMIT 5;
 
 Còn một phương án trung gian hay bị nhắc tới: **full-text search engine** (Elasticsearch/OpenSearch mặc định). Nó cũng không hợp ở v1 — inverted index được thiết kế cho khớp *từ*, không phải *tiền tố chuỗi*, và latency 20–100 ms ăn gần hết ngân sách. Đáp án đúng là **materialize sẵn `prefix → top5`**, và **trie** chính là cấu trúc để sinh ra bảng đó.
 
-> 💡 **Nguyên tắc**: Khi truy vấn *đọc* quá nặng nhưng dữ liệu *thay đổi* chậm, lời giải hầu như luôn là **dịch chuyển công việc từ read-time sang write-time**. Bạn trả bằng bộ nhớ và độ tươi, mua về latency và throughput — cùng mô-típ với materialized view, fan-out-on-write của news feed, và CDN.
+> **Nguyên tắc**: Khi truy vấn *đọc* quá nặng nhưng dữ liệu *thay đổi* chậm, lời giải hầu như luôn là **dịch chuyển công việc từ read-time sang write-time**. Bạn trả bằng bộ nhớ và độ tươi, mua về latency và throughput — cùng mô-típ với materialized view, fan-out-on-write của news feed, và CDN.
 
 ---
 
@@ -193,7 +193,7 @@ suggest(prefix):
 
 Tổng **O(p) + O(c) + O(c·log c)**, với `p` = độ dài prefix (≤ 50) và `c` = **số node trong subtree**. Vấn đề nằm trọn ở `c`: với prefix `t`, subtree chứa gần như mọi query bắt đầu bằng `t` — hàng triệu node. Lại đúng nghịch lý cũ: prefix càng ngắn thì `c` càng lớn, mà prefix ngắn được truy vấn nhiều nhất.
 
-> ⚠️ **Bẫy**: Nhiều ứng viên dừng ở đây, hài lòng vì "đã dùng trie". Người phỏng vấn sẽ hỏi: *"Với prefix `a`, subtree có bao nhiêu node? Bạn sort bao nhiêu phần tử, 48.000 lần mỗi giây?"*. Trie **trần** chỉ giải quyết phần tìm prefix, không giải quyết phần top-k.
+> **Bẫy**: Nhiều ứng viên dừng ở đây, hài lòng vì "đã dùng trie". Người phỏng vấn sẽ hỏi: *"Với prefix `a`, subtree có bao nhiêu node? Bạn sort bao nhiêu phần tử, 48.000 lần mỗi giây?"*. Trie **trần** chỉ giải quyết phần tìm prefix, không giải quyết phần top-k.
 
 ### Tối ưu 1: cache top-k ngay tại mỗi node
 
@@ -207,7 +207,7 @@ Tổng **O(p) + O(c) + O(c·log c)**, với `p` = độ dài prefix (≤ 50) và
 
 Dòng cuối là cầu nối sang Deep dive 3: **chính vì cache top-k làm việc cập nhật trở nên đắt, nên ta chấp nhận dựng lại trie theo lô.** Chuỗi nhân quả này cần trình bày liền mạch, không phải hai quyết định rời rạc.
 
-> 💡 **Nguyên tắc — đổi bộ nhớ lấy thời gian**: Nhân bộ nhớ lên 2–3 lần để giảm truy vấn từ O(c·log c) xuống O(p). Với `c` có thể là 10⁶ và `p` ≤ 50, đây là một trong những vụ đổi chác lời nhất trong System Design. RAM mua được; 48.000 lần sort một triệu phần tử mỗi giây thì không.
+> **Nguyên tắc — đổi bộ nhớ lấy thời gian**: Nhân bộ nhớ lên 2–3 lần để giảm truy vấn từ O(c·log c) xuống O(p). Với `c` có thể là 10⁶ và `p` ≤ 50, đây là một trong những vụ đổi chác lời nhất trong System Design. RAM mua được; 48.000 lần sort một triệu phần tử mỗi giây thì không.
 
 **Mẹo cài đặt**: đừng lưu **chuỗi** trong top-k của mỗi node — lưu **id/con trỏ**. Lưu chuỗi đầy đủ thì `twitter` bị lặp ở cả 7 prefix của nó, bộ nhớ phình theo bình phương độ dài; id 4 byte thì 5 mục tốn 20 B/node thay vì ~125 B.
 
@@ -242,7 +242,7 @@ Bộ nhớ ≈ 400,000,000 × 250 B = 100 GB
 
 Áp dụng cả gói, 100 GB xuống còn **10–20 GB** — vẫn nên shard để có dự phòng và phân tải, nhưng đã ở mức một cụm cache vừa phải xử lý được.
 
-> 💡 **Nguyên tắc**: Trong phỏng vấn, đưa con số ngây thơ trước (*"mảng 26 con trỏ → 250 B/node → 100 GB"*) rồi **tự** tối ưu xuống. Trình tự "ước lượng thô → chỉ ra vấn đề → tối ưu có định lượng" thuyết phục hơn nhiều so với nhảy thẳng vào đáp án.
+> **Nguyên tắc**: Trong phỏng vấn, đưa con số ngây thơ trước (*"mảng 26 con trỏ → 250 B/node → 100 GB"*) rồi **tự** tối ưu xuống. Trình tự "ước lượng thô → chỉ ra vấn đề → tối ưu có định lượng" thuyết phục hơn nhiều so với nhảy thẳng vào đáp án.
 
 ### Vì sao phải shard, và shard thế nào
 
@@ -274,7 +274,7 @@ Chia a–f / g–r / s–z thì shard chứa `a` và shard chứa `s` nóng gấ
 
 Hai phương án thay thế đáng cân nhắc: **nhân bản toàn bộ trie lên mọi node** (bỏ hẳn định tuyến, mọi node trả lời mọi prefix — chỉ khả thi khi trie nén xuống vài GB), hoặc **phẳng hoá `prefix → top5` rồi băm** (dùng KV store phân tán sẵn có, scale tự động, mất cấu trúc cây nhưng vận hành đơn giản hơn hẳn).
 
-> 💡 **Nguyên tắc thực chiến**: Nếu sau khi cắt tỉa và nén, trie xuống dưới ~10 GB, hãy **nhân bản thay vì shard** — không shard map, không lệch tải, một node chết chẳng mất prefix nào. Sharding một dataset vài GB là tự chuốc độ phức tạp.
+> **Nguyên tắc thực chiến**: Nếu sau khi cắt tỉa và nén, trie xuống dưới ~10 GB, hãy **nhân bản thay vì shard** — không shard map, không lệch tải, một node chết chẳng mất prefix nào. Sharding một dataset vài GB là tự chuốc độ phức tạp.
 
 ---
 
@@ -288,7 +288,7 @@ Trực giác đầu tiên: mỗi lần user search thì tăng `frequency` và c�
 
 **3. Mỉa mai nhất: kết quả gần như không đổi.** `twitter` đang có 9.832.100 lượt; thêm một lượt thành 9.832.101 — top-5 của `tw` **không đổi**. Ta vừa trả một cái giá vận hành khổng lồ để đổi lấy đúng số 0 về giá trị.
 
-> 💡 **Nguyên tắc**: Hỏi "**kết quả thay đổi nhanh thế nào?**" chứ không phải "**dữ liệu đến nhanh thế nào?**". Dữ liệu đến liên tục, nhưng *kết luận rút ra từ dữ liệu* (top-5) ổn định hàng ngày, hàng tuần. Tần suất cập nhật phải bám theo tốc độ đổi của **kết luận**, không phải của **input** — áp dụng được cho trending, leaderboard, recommendation.
+> **Nguyên tắc**: Hỏi "**kết quả thay đổi nhanh thế nào?**" chứ không phải "**dữ liệu đến nhanh thế nào?**". Dữ liệu đến liên tục, nhưng *kết luận rút ra từ dữ liệu* (top-5) ổn định hàng ngày, hàng tuần. Tần suất cập nhật phải bám theo tốc độ đổi của **kết luận**, không phải của **input** — áp dụng được cho trending, leaderboard, recommendation.
 
 ### Pipeline batch
 
@@ -328,7 +328,7 @@ Cách dung hoà thực tế: **hai tầng** — trie nền dựng theo lô lo ph
 - **Rollback tức thì**: build mới có vấn đề thì trỏ về `v41` — lý do phải **giữ phiên bản**, đừng ghi đè. Triển khai cuốn chiếu từng phần fleet: một phần user thấy v41, một phần thấy v42 — **chấp nhận được**, vì không ai thiệt hại khi thấy gợi ý của tuần trước.
 - **Cái giá**: node cần RAM giữ **hai trie cùng lúc** lúc nạp; phải tính vào sizing, hoặc swap theo từng shard để trải chi phí.
 
-> ⚠️ **Bẫy**: Build trie từ dữ liệu lỗi (job chạy trên partition thiếu, log rỗng do sự cố) rồi swap thẳng vào production — autocomplete trống trơn hoặc đầy rác trên toàn hệ thống trong vài giây. **Luôn có cổng kiểm tra trước khi swap.**
+> **Bẫy**: Build trie từ dữ liệu lỗi (job chạy trên partition thiếu, log rỗng do sự cố) rồi swap thẳng vào production — autocomplete trống trơn hoặc đầy rác trên toàn hệ thống trong vài giây. **Luôn có cổng kiểm tra trước khi swap.**
 
 ---
 
@@ -336,7 +336,7 @@ Cách dung hoà thực tế: **hai tầng** — trie nền dựng theo lô lo ph
 
 Phân biệt rành mạch hai thứ hay bị gộp: **Trie Cache** là bản in-memory phân tán phục vụ mọi request đọc (quyết định latency); **Trie DB** là kho bền vững giữ snapshot để khởi động lại, thêm node, rollback — **không nằm trên đường nóng**.
 
-**Cách A — Document store** (MongoDB / object S3): serialize toàn bộ trie thành blob có phiên bản. ✅ Một lần ghi, một lần đọc, một đơn vị phiên bản; nạp cực nhanh khi khởi động (đọc tuần tự một file lớn nhanh hơn hàng triệu lần đọc điểm); rollback = trỏ về object cũ. ⚠️ Không đọc được một phần; blob nhiều GB cần chia theo shard.
+**Cách A — Document store** (MongoDB / object S3): serialize toàn bộ trie thành blob có phiên bản. ✓ Một lần ghi, một lần đọc, một đơn vị phiên bản; nạp cực nhanh khi khởi động (đọc tuần tự một file lớn nhanh hơn hàng triệu lần đọc điểm); rollback = trỏ về object cũ. Không đọc được một phần; blob nhiều GB cần chia theo shard.
 
 **Cách B — KV store phẳng** (`prefix → top-k`): bỏ cấu trúc cây, mỗi prefix là một khoá.
 
@@ -346,11 +346,11 @@ key "tw"  → ["twitter","twitch","twitter login","twin peaks","twilight"]
 key "twi" → ["twitter","twitch","twitter login","twilight","twilio"]
 ```
 
-✅ Tra cứu **O(1)** thật sự — một hash lookup, không cần đi xuống cây. Dùng được KV store phân tán sẵn có (DynamoDB, Redis, Cassandra) → **sharding, replication, scaling là việc của hệ thống khác**: lợi ích vận hành cực lớn. ⚠️ **Số khoá bùng nổ** (mọi prefix của mọi query là một khoá; với trần độ dài 30 và cắt tần suất thì thực tế ở mức hàng chục tới hàng trăm triệu khoá — vẫn trong tầm DynamoDB/Redis), và mất chia sẻ tiền tố nên tốn chỗ hơn trie.
+✓ Tra cứu **O(1)** thật sự — một hash lookup, không cần đi xuống cây. Dùng được KV store phân tán sẵn có (DynamoDB, Redis, Cassandra) → **sharding, replication, scaling là việc của hệ thống khác**: lợi ích vận hành cực lớn. **Số khoá bùng nổ** (mọi prefix của mọi query là một khoá; với trần độ dài 30 và cắt tần suất thì thực tế ở mức hàng chục tới hàng trăm triệu khoá — vẫn trong tầm DynamoDB/Redis), và mất chia sẻ tiền tố nên tốn chỗ hơn trie.
 
 Tóm lại: document store nhỏ hơn (chia sẻ tiền tố), rollback dễ (đổi phiên bản blob), nhưng **bạn tự lo sharding**; KV phẳng tốn chỗ hơn và cần tiền tố phiên bản trong khoá (`v42#tw`) để rollback, đổi lại **độ phức tạp vận hành thấp hơn đáng kể**.
 
-> 💡 **Nguyên tắc thực chiến**: Ở phần lớn sản phẩm thật, **KV phẳng là lựa chọn tốt hơn** dù "kém thanh lịch" hơn về thuật toán — bạn đẩy toàn bộ bài toán sharding/replication/failover sang một hệ thống đã được vận hành kỹ. Trie khi đó đóng vai trò **công cụ để tính ra bảng đó ở tầng offline**, nơi độ phức tạp không gây hại.
+> **Nguyên tắc thực chiến**: Ở phần lớn sản phẩm thật, **KV phẳng là lựa chọn tốt hơn** dù "kém thanh lịch" hơn về thuật toán — bạn đẩy toàn bộ bài toán sharding/replication/failover sang một hệ thống đã được vận hành kỹ. Trie khi đó đóng vai trò **công cụ để tính ra bảng đó ở tầng offline**, nơi độ phức tạp không gây hại.
 
 **Trie Cache**: dù lưu bền kiểu nào, tầng phục vụ vẫn in-memory — Redis giữ `prefix → top5` (thêm ~0.5–1 ms cho một network hop, đổi lại Query Service nhẹ và scale độc lập với dữ liệu), hoặc trie nạp thẳng vào heap Query Service (nhanh nhất nhưng mỗi node cần đủ RAM, khởi động chậm). Với ngân sách 30 ms, thêm 1 ms là chấp nhận được — Redis thường là lựa chọn đúng.
 
@@ -409,9 +409,9 @@ Phân rã ngân sách 100 ms cho thấy thứ bậc rõ ràng: hit browser cache
 | **Job build lỗi** | Gợi ý "đóng băng" ở bản cuối | **Hầu như không ai nhận ra trong nhiều ngày** — phải alert theo **tuổi của snapshot**, nếu không sẽ đóng băng hàng tháng |
 | **CDN edge lỗi / log ingestion chết** | Latency tăng và tải dồn về origin; hoặc mất dữ liệu một khoảng thời gian | Origin sizing đủ cho trường hợp không CDN; mất log ảnh hưởng nhỏ vì thống kê tích luỹ trên cửa sổ dài, buffer ở stream chịu được gián đoạn ngắn |
 
-> 💡 **Nguyên tắc quan trọng nhất về failure mode**: Autocomplete là tính năng **suy giảm êm ái được (gracefully degradable)** — không có gợi ý thì user vẫn gõ xong và bấm Enter. Vì vậy **luôn fail-open và trả về rỗng, đừng bao giờ để lỗi autocomplete chặn ô tìm kiếm**. Đặt timeout rất ngắn ở client (~300 ms) và bỏ qua response đến muộn.
+> **Nguyên tắc quan trọng nhất về failure mode**: Autocomplete là tính năng **suy giảm êm ái được (gracefully degradable)** — không có gợi ý thì user vẫn gõ xong và bấm Enter. Vì vậy **luôn fail-open và trả về rỗng, đừng bao giờ để lỗi autocomplete chặn ô tìm kiếm**. Đặt timeout rất ngắn ở client (~300 ms) và bỏ qua response đến muộn.
 
-> ⚠️ **Bẫy**: Để autocomplete dùng chung connection pool / thread pool với search service — khi autocomplete quá tải, nó kéo sập luôn search. **Cô lập tài nguyên (bulkhead) là bắt buộc**, vì autocomplete có tải gấp 20 lần và biến động mạnh hơn nhiều.
+> **Bẫy**: Để autocomplete dùng chung connection pool / thread pool với search service — khi autocomplete quá tải, nó kéo sập luôn search. **Cô lập tài nguyên (bulkhead) là bắt buộc**, vì autocomplete có tải gấp 20 lần và biến động mạnh hơn nhiều.
 
 ---
 
@@ -433,13 +433,13 @@ User gõ `twiiter` vẫn mong thấy `twitter`. **Rất khó với trie**, và g
 | **Fuzzy trên trie, ED ≤ 1** — cho phép nhánh thay/chèn/xoá; bản gọn hơn là giữ một hàng ma trận DP Levenshtein khi DFS rồi cắt tỉa | **Số nhánh bùng nổ** — mỗi vị trí lỗi nhân ~26 nhánh. Khả thi cho ED=1, **bất khả thi cho ED=2** ở 48K QPS |
 | **Từ điển sửa lỗi tính trước** — học từ log các cặp (sai → đúng) mà user tự sửa | **Cách các công cụ lớn thực sự dùng** — chuyển bài toán từ runtime sang offline; chỉ phủ lỗi phổ biến, nhưng lỗi phổ biến chiếm đa số |
 
-> 💡 **Nguyên tắc**: **Thử khớp chính xác trước (O(p), rẻ), chỉ khi kết quả quá ít mới rơi xuống đường fuzzy đắt tiền** — hoặc một index n-gram/BK-tree song song. Vì đa số request gõ đúng, chi phí trung bình vẫn gần O(p): mô-típ "fast path / slow path".
+> **Nguyên tắc**: **Thử khớp chính xác trước (O(p), rẻ), chỉ khi kết quả quá ít mới rơi xuống đường fuzzy đắt tiền** — hoặc một index n-gram/BK-tree song song. Vì đa số request gõ đúng, chi phí trung bình vẫn gần O(p): mô-típ "fast path / slow path".
 
 ### 3. Cá nhân hoá (personalization)
 
 **Mâu thuẫn cốt lõi: cá nhân hoá phá huỷ khả năng cache.** Nếu kết quả phụ thuộc `user_id` thì CDN vô dụng, trie dùng chung vô dụng, và bạn phải tính riêng cho 10 triệu người. Bốn mức từ rẻ đến đắt: **trộn ở client** (client trộn lịch sử lưu trong máy vào top-5 chung — gần như miễn phí, giữ nguyên cache, tốt cho quyền riêng tư, hiệu quả bất ngờ vì user hay tìm lại thứ đã tìm); **theo phân khúc** (vài chục segment theo quốc gia/ngôn ngữ/thiết bị, cache key = segment nên vẫn hiệu quả); **tầng cá nhân mỏng** (trie chung + danh sách nhỏ riêng của user ở KV, thêm 1–2 ms trên đường nóng); **rerank bằng ML** trên top-20 lấy từ trie (đắt nhất, cần feature store và model serving).
 
-> 💡 **Nguyên tắc**: Cá nhân hoá nên được **cộng thêm vào một kết quả chung cache được**, không phải thứ *thay thế* nó.
+> **Nguyên tắc**: Cá nhân hoá nên được **cộng thêm vào một kết quả chung cache được**, không phải thứ *thay thế* nó.
 
 ### 4. Trending / realtime — vì sao Twitter khác Google
 
@@ -465,7 +465,7 @@ Bảng tần suất ──▶ [ FILTER LAYER ] ──▶ Worker dựng trie ─�
 
 Vì sao lọc **ở tầng offline, trước khi dựng trie**: đường nóng không phải trả thêm chi phí nào (quan trọng với 48K QPS); luật lọc có thể phức tạp và chậm tuỳ ý vì chạy trong job batch; và nội dung xấu **không bao giờ tồn tại** trong dữ liệu phục vụ nên không rò rỉ qua cache/CDN. Nhưng cần **thêm** một lớp trên đường nóng cho khẩn cấp — khi phát hiện gợi ý xấu trong production, không thể đợi chu kỳ build tiếp theo (có thể một tuần) → một **blocklist nóng, nhỏ, đọc từ cache, áp ngay trước khi trả về**; xoá vật lý khỏi trie/DB làm bất đồng bộ sau.
 
-> 💡 **Nguyên tắc**: **Lọc offline cho toàn bộ, lọc online cho khẩn cấp** — cùng mô hình hai tốc độ với trie nền + overlay trending.
+> **Nguyên tắc**: **Lọc offline cho toàn bộ, lọc online cho khẩn cấp** — cùng mô hình hai tốc độ với trie nền + overlay trending.
 
 Về **spam bơm từ khoá** (kẻ xấu tự động search một cụm từ hàng triệu lần để đẩy nó lên gợi ý — một hình thức SEO đen có thật), phòng thủ nằm ở **tầng aggregate**: **khử trùng lặp theo user** — đếm *số user riêng biệt*, không đếm *số lần tìm*, nên bot dù search một triệu lần cũng chỉ tính một user. Bổ sung: loại traffic từ IP/device bất thường, đặt ngưỡng tối thiểu N user riêng biệt từ M mạng khác nhau.
 
@@ -500,7 +500,7 @@ Câu hỏi gần như chắc chắn sẽ đến trong phỏng vấn thiên về 
 | Xếp hạng; fuzzy; infix | Kiểm soát hoàn toàn; fuzzy phải tự làm (rất khó); không infix | `weight` ít linh hoạt hơn; **fuzzy có sẵn**; infix hạn chế | BM25 + boost; fuzzy có sẵn; **infix làm được** (`ngram`) |
 | Phù hợp khi | Quy mô cực lớn, cần kiểm soát từng ms và từng GB | **Phần lớn trường hợp thực tế** | Cần khớp giữa chuỗi, hoặc đã có OpenSearch cho search chính |
 
-> 💡 **Nguyên tắc thực chiến**: Trong công việc thật, **bắt đầu bằng `completion suggester`** (hoặc đơn giản hơn: một bảng DynamoDB `prefix → top5` sinh từ job Glue), chỉ tự xây trie khi đã **đo được** rằng giải pháp sẵn có không đạt latency hoặc quá đắt. Trong phỏng vấn thì ngược lại — người ta muốn nghe bạn **hiểu trie**; hãy trình bày trie như lõi thuật toán rồi *chủ động* nhắc rằng thực tế `completion suggester` giải quyết 90% nhu cầu với 10% công sức.
+> **Nguyên tắc thực chiến**: Trong công việc thật, **bắt đầu bằng `completion suggester`** (hoặc đơn giản hơn: một bảng DynamoDB `prefix → top5` sinh từ job Glue), chỉ tự xây trie khi đã **đo được** rằng giải pháp sẵn có không đạt latency hoặc quá đắt. Trong phỏng vấn thì ngược lại — người ta muốn nghe bạn **hiểu trie**; hãy trình bày trie như lõi thuật toán rồi *chủ động* nhắc rằng thực tế `completion suggester` giải quyết 90% nhu cầu với 10% công sức.
 
 Ghép lại: **đọc** = Browser (debounce + local cache) → CloudFront → API Gateway → ECS Fargate → DynamoDB (`prefix→top5`, +DAX) hoặc Redis. **Ghi** = Search svc → Kinesis → Firehose → S3 → Glue/EMR → Filter → bulk load DynamoDB (`v42#…`) → Step Functions kiểm tra → đổi con trỏ phiên bản (swap atomic). **Trending** = Kinesis → Managed Service for Apache Flink → Redis sorted set overlay.
 
@@ -528,4 +528,4 @@ Ghép lại: **đọc** = Browser (debounce + local cache) → CloudFront → AP
 
 9. **Với phỏng vấn AWS, chủ động so sánh với OpenSearch.** `completion suggester` về bản chất là một trie (FST) Lucene cài sẵn; thực tế nên bắt đầu từ đó hoặc từ bảng DynamoDB precompute, chỉ tự xây trie khi đã **đo được** là không đủ. Phân biệt được "bài tập thuật toán" và "quyết định kỹ thuật thực tế" là dấu hiệu người đã làm nghề.
 
-> 💡 **Nguyên tắc cuối**: Bài autocomplete là minh hoạ đẹp nhất cho một tư tưởng xuyên suốt System Design — **khi đọc nặng mà dữ liệu đổi chậm, hãy dịch chuyển công việc sang write-time**. Trie có cache top-k, snapshot dựng offline, bảng `prefix → top5` tính sẵn, cache ở CDN và browser: tất cả là cùng một ý tưởng lặp lại ở các tầng khác nhau — trả bằng bộ nhớ và độ tươi, mua về latency và throughput. Nhận ra rằng **năm quyết định tưởng rời rạc thực chất là một nguyên lý duy nhất** — đó mới là thứ người phỏng vấn đang tìm.
+> **Nguyên tắc cuối**: Bài autocomplete là minh hoạ đẹp nhất cho một tư tưởng xuyên suốt System Design — **khi đọc nặng mà dữ liệu đổi chậm, hãy dịch chuyển công việc sang write-time**. Trie có cache top-k, snapshot dựng offline, bảng `prefix → top5` tính sẵn, cache ở CDN và browser: tất cả là cùng một ý tưởng lặp lại ở các tầng khác nhau — trả bằng bộ nhớ và độ tươi, mua về latency và throughput. Nhận ra rằng **năm quyết định tưởng rời rạc thực chất là một nguyên lý duy nhất** — đó mới là thứ người phỏng vấn đang tìm.

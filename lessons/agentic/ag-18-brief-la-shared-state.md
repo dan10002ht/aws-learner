@@ -360,22 +360,22 @@ exit=1
 
 ## 5. Bẫy thường gặp
 
-🪤 **Đánh `[x]` cho task không làm, "cho gọn".**
+**Đánh `[x]` cho task không làm, "cho gọn".**
 Triệu chứng: tuần sau tìm "task X xong bằng commit nào" thì không có commit. Nguyên nhân gốc: `[x]` bị dùng như "không cần quan tâm nữa" thay vì "đã có bằng chứng". Chặn bằng cơ chế: script báo lỗi mọi `[x]` không có `commit`/`verdict` ở dòng con; task bỏ thì chỉ có đường `drop` sang `BRIEF-done.md`.
 
-🪤 **Rút ngưỡng lock cho loop "chạy nhanh hơn".**
+**Rút ngưỡng lock cho loop "chạy nhanh hơn".**
 Triệu chứng: hai agent cùng làm một task, hai nhánh sửa cùng file. Nguyên nhân gốc: ngưỡng nhỏ hơn thời gian thật của task + verifier, nên lock của một agent đang sống bị coi là mồ côi. Chặn: ngưỡng tính từ dữ liệu `lock`→`x` thật (mục 3.3), đặt làm tham số mặc định của script, không sửa tay theo cảm giác.
 
-🪤 **Luật "15 lượt rỗng thì dừng" chỉ nằm trong lời dặn.**
+**Luật "15 lượt rỗng thì dừng" chỉ nằm trong lời dặn.**
 Triệu chứng: luật đã ghi rõ, loop vẫn chạy hàng chục lượt rỗng. Nguyên nhân gốc: model không có bộ đếm bền qua các session. Chặn: bộ đếm nằm trong state — dòng `empty-streak: N` ở đầu `BRIEF.md`; case và cơ chế dừng đầy đủ ở [[ag-19-vong-lap-nhat-task]].
 
-🪤 **Subagent sửa `BRIEF.md` trong worktree của nó.**
+**Subagent sửa `BRIEF.md` trong worktree của nó.**
 Triệu chứng: sau khi merge một nhánh task, vài `[x]` quay về `[ ]`. Nguyên nhân gốc: file nằm trong repo, worktree có bản sao lúc tạo nhánh; merge đưa bản cũ về. Chặn: đặt file ngoài repo code, hoặc thêm vào brief subagent dòng "không sửa file task list" **và** một bước main agent kiểm `git diff --name-only` của nhánh không chứa `BRIEF.md` trước khi commit.
 
-🪤 **Uỷ quyền nói trong chat lúc đi về.**
+**Uỷ quyền nói trong chat lúc đi về.**
 Triệu chứng: sáng hôm sau loop đã push, hoặc ngược lại đã dừng ở việc lẽ ra được làm. Nguyên nhân gốc: chỉ dẫn trong hội thoại có thể mất sau compact (mục 3.1), và session cron mới không thấy hội thoại cũ. Chặn: mục "Uỷ quyền khi người vắng mặt" ở đầu file, script có thể kiểm mục này tồn tại.
 
-🪤 **Tin "pre-existing" mà không đo.**
+**Tin "pre-existing" mà không đo.**
 Triệu chứng: gate đỏ, agent ghi "lỗi có sẵn", verifier gật. Nguyên nhân gốc: số baseline không mốc, không ai chạy lại trên nhánh hiện tại. Chặn: luật 4 + bước đầu mỗi task là chạy gate trên base sạch và ghi số kèm `(đo …)`; cách gate có thể xanh giả ở [[ag-11-gate-xanh-gia]].
 
 ---

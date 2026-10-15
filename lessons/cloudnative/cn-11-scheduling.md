@@ -62,7 +62,7 @@ Hai con số này phục vụ **hai giai đoạn khác nhau**:
 <line x1="380" y1="90" x2="600" y2="90" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3"/>
 <text x="490" y="84" text-anchor="middle" font-size="10" fill="currentColor">limit</text>
 <path d="M380,160 L420,150 L460,130 L500,105 L525,92" fill="none" stroke="currentColor" stroke-width="1.6"/>
-<text x="530" y="88" text-anchor="middle" font-size="16" fill="currentColor">✕</text>
+<text x="530" y="88" text-anchor="middle" font-size="16" fill="currentColor">✗</text>
 <text x="490" y="188" text-anchor="middle" font-size="11" fill="currentColor">Chạm trần → OOMKilled</text>
 <text x="490" y="206" text-anchor="middle" font-size="11" fill="currentColor">giết ngay, exit 137</text>
 </svg>
@@ -288,7 +288,7 @@ kubectl top pods -l app=web             # mức dùng thực (cần metrics-serv
 **VPA (Vertical Pod Autoscaler)** quan sát mức dùng lịch sử rồi **đề xuất/áp** request hợp lý — cực hữu ích khi bạn *không biết* nên đặt request bao nhiêu. Chế độ:
 - `Off`: chỉ khuyến nghị (bạn xem rồi tự chỉnh) — an toàn nhất để bắt đầu.
 - `Auto`/`Recreate`: tự cập nhật request, nhưng phải **restart Pod** (request là bất biến khi Pod đang chạy — cho tới in-place resize còn mới). Vì vậy VPA hợp workload chịu được restart.
-- ⚠️ **Không dùng VPA và HPA cùng trên một metric (CPU/mem)** — chúng "đánh nhau". Mẫu an toàn: HPA theo custom metric (RPS) + VPA chỉnh CPU/mem.
+- **Không dùng VPA và HPA cùng trên một metric (CPU/mem)** — chúng "đánh nhau". Mẫu an toàn: HPA theo custom metric (RPS) + VPA chỉnh CPU/mem.
 
 **Cluster Autoscaler (CA)** điều chỉnh **số node**. Nó nhìn hai tín hiệu: (1) có pod `Pending` vì không node nào đủ chỗ → **scale up** (thêm node vào node group / ASG); (2) node dùng thấp và mọi pod trên đó dời được đi nơi khác → **scale down** (drain rồi xoá) để cắt chi phí. CA tôn trọng `PodDisruptionBudget` để không đuổi quá nhiều bản cùng lúc. Trên cloud hiện đại, **Karpenter** (AWS) là biến thể mạnh hơn: chọn *đúng loại/kích cỡ* instance theo nhu cầu pod thay vì bó buộc vào node group cố định.
 

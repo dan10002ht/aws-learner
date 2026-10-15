@@ -6,7 +6,7 @@
 
 Đó là những câu hỏi **tổng hợp** (aggregate): gộp nhiều dòng lại thành một con số. Bài này dạy bạn biến hàng nghìn dòng dữ liệu thành những con số biết nói — bằng `COUNT/SUM/AVG`, `GROUP BY`, `HAVING`, subquery, CTE và một chút window function.
 
-> 💡 Ghi nhớ: Câu lệnh hay bắt đầu từ một câu hỏi bằng tiếng Việt. Dịch câu hỏi đó sang SQL, đừng dịch SQL ngược lại.
+> Ghi nhớ: Câu lệnh hay bắt đầu từ một câu hỏi bằng tiếng Việt. Dịch câu hỏi đó sang SQL, đừng dịch SQL ngược lại.
 
 ## Schema xuyên suốt: cửa hàng nhỏ
 
@@ -95,7 +95,7 @@ FROM orders;
 |----------|-----------------|
 | 7        | 4               |
 
-> ⚠️ Lỗi người mới hay gặp: `AVG` **bỏ qua** dòng NULL chứ không coi NULL là 0. Nếu 1 trong 4 giá trị là NULL, `AVG` chia cho 3, không phải 4. Muốn coi NULL là 0 thì dùng `AVG(COALESCE(cot, 0))`.
+> Lỗi người mới hay gặp: `AVG` **bỏ qua** dòng NULL chứ không coi NULL là 0. Nếu 1 trong 4 giá trị là NULL, `AVG` chia cho 3, không phải 4. Muốn coi NULL là 0 thì dùng `AVG(COALESCE(cot, 0))`.
 
 ## 2. GROUP BY: tổng hợp theo từng nhóm
 
@@ -189,7 +189,7 @@ Kết quả:
 | Ha Noi  | 21000000  |
 | Da Nang | 1050000   |
 
-> ⚠️ Lỗi người mới hay gặp: viết `SELECT c.city, p.name, SUM(...)` nhưng `GROUP BY c.city`. Một số database báo lỗi, một số (như SQLite/MySQL chế độ lỏng) trả về `p.name` ngẫu nhiên trong rổ — sai âm thầm. Hãy luôn đưa **mọi** cột không-tổng-hợp vào `GROUP BY`.
+> Lỗi người mới hay gặp: viết `SELECT c.city, p.name, SUM(...)` nhưng `GROUP BY c.city`. Một số database báo lỗi, một số (như SQLite/MySQL chế độ lỏng) trả về `p.name` ngẫu nhiên trong rổ — sai âm thầm. Hãy luôn đưa **mọi** cột không-tổng-hợp vào `GROUP BY`.
 
 ## 3. WHERE vs HAVING: lọc trước hay lọc sau?
 
@@ -234,7 +234,7 @@ HAVING COUNT(*) >= 2;
 |-------------|--------|
 | 3           | 2      |
 
-> 💡 Ghi nhớ: thứ tự thực thi logic là `FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY`. Hiểu thứ tự này thì không bao giờ nhầm WHERE với HAVING.
+> Ghi nhớ: thứ tự thực thi logic là `FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY`. Hiểu thứ tự này thì không bao giờ nhầm WHERE với HAVING.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Thứ tự thực thi logic của một câu truy vấn: FROM, WHERE, GROUP BY, HAVING, SELECT, ORDER BY</title>
@@ -326,7 +326,7 @@ FROM (
 |------------------------|
 | 14637500               |
 
-> ⚠️ Lỗi người mới hay gặp: subquery trong `FROM` **bắt buộc** phải có bí danh (`AS theo_khach`). Quên đặt tên là báo lỗi cú pháp ngay.
+> Lỗi người mới hay gặp: subquery trong `FROM` **bắt buộc** phải có bí danh (`AS theo_khach`). Quên đặt tên là báo lỗi cú pháp ngay.
 
 ### 4.3. Subquery trong SELECT (giá trị từng dòng)
 
@@ -397,7 +397,7 @@ JOIN customers c ON c.id = k.customer_id;
 | An   |
 | Dung |
 
-> 💡 Ghi nhớ: CTE và subquery-trong-FROM cho cùng kết quả. Hãy ưu tiên CTE khi câu lệnh dài hoặc tái sử dụng bước trung gian — code dễ đọc, dễ sửa hơn nhiều.
+> Ghi nhớ: CTE và subquery-trong-FROM cho cùng kết quả. Hãy ưu tiên CTE khi câu lệnh dài hoặc tái sử dụng bước trung gian — code dễ đọc, dễ sửa hơn nhiều.
 
 ## 6. Giới thiệu window function
 
@@ -493,7 +493,7 @@ Kết quả:
 
 `SUM(...) OVER (ORDER BY ...)` cộng dồn từ dòng đầu đến dòng hiện tại — cực kỳ hữu ích cho báo cáo tăng trưởng.
 
-> ⚠️ Lỗi người mới hay gặp: không được lồng window function bên trong hàm tổng hợp, cũng không dùng được trong `WHERE`/`HAVING`. Muốn lọc theo kết quả window, hãy bọc nó trong một CTE rồi lọc ở câu ngoài.
+> Lỗi người mới hay gặp: không được lồng window function bên trong hàm tổng hợp, cũng không dùng được trong `WHERE`/`HAVING`. Muốn lọc theo kết quả window, hãy bọc nó trong một CTE rồi lọc ở câu ngoài.
 
 ## Bài tập: dựng báo cáo doanh thu
 
@@ -601,4 +601,4 @@ Những câu `GROUP BY`, subquery, CTE, window function bạn vừa học **ch�
 - **Amazon Redshift** — kho dữ liệu (data warehouse) chuyên cho phân tích: chính là nơi các truy vấn `GROUP BY` + window function trên hàng tỷ dòng được tối ưu để chạy nhanh. Khi báo cáo doanh thu lớn dần, người ta chuyển phần phân tích sang Redshift.
 - **Amazon DynamoDB** — database **NoSQL**, **không** dùng SQL và **không** có `JOIN`/`GROUP BY` kiểu này. Nó cực nhanh cho tra cứu theo khoá (ví dụ "lấy giỏ hàng của user X"), nhưng tổng hợp/báo cáo thì phải xử lý ở tầng khác. Đây là lời nhắc quan trọng: chọn đúng loại database theo bài toán — SQL để phân tích, NoSQL để tra cứu khoá tốc độ cao.
 
-> 💡 Ghi nhớ: kỹ năng SQL không phụ thuộc nhà cung cấp. Học chắc `GROUP BY`/CTE/window function một lần, bạn dùng được trên RDS, Aurora, Redshift và cả database tự dựng — chỉ phần *vận hành* là khác nhau.
+> Ghi nhớ: kỹ năng SQL không phụ thuộc nhà cung cấp. Học chắc `GROUP BY`/CTE/window function một lần, bạn dùng được trên RDS, Aurora, Redshift và cả database tự dựng — chỉ phần *vận hành* là khác nhau.

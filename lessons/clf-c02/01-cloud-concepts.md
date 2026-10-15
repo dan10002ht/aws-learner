@@ -76,25 +76,25 @@ Cùng một việc "build 1 web app to-do list", 4 cách:
 **Level 1 — IaaS (EC2)**: tự kiểm soát nhiều nhất, tốn công nhất.
 - Launch 1 EC2 Ubuntu → `ssh` vào → `apt install nginx postgres` → deploy code → cấu hình systemd → tự `certbot` SSL → tự `apt upgrade` mỗi tháng → tự `pg_dump` backup.
 - Khi user tăng: tự scale, tự cấu hình Load Balancer.
-- ✅ Free Tier 12 tháng. Phù hợp khi cần custom kernel, app legacy, hoặc học.
+- ✓ Free Tier 12 tháng. Phù hợp khi cần custom kernel, app legacy, hoặc học.
 
 **Level 2 — PaaS (Elastic Beanstalk)**: AWS lo OS + scaling.
 - `eb init` + `eb create` → AWS tự tạo EC2 + LB + Auto Scaling + Health Check.
 - Bạn chỉ deploy code (`eb deploy`).
 - Không SSH, không cấu hình. AWS auto patch OS.
-- ✅ Tăng tốc dev, vẫn linh hoạt config.
+- ✓ Tăng tốc dev, vẫn linh hoạt config.
 
 **Level 3 — FaaS / Serverless (Lambda + API Gateway + DynamoDB)**: AWS lo TẤT CẢ trừ code.
 - Viết 1 function `handleRequest(event)` → upload lên Lambda.
 - API Gateway route HTTP → Lambda. DynamoDB lưu data.
 - **Không có server**. Không trả tiền khi không có request.
 - Scale từ 1 → 10,000 concurrent tự động trong giây.
-- ✅ Phù hợp event-driven, traffic không đều.
+- ✓ Phù hợp event-driven, traffic không đều.
 
 **Level 4 — SaaS (Notion / Todoist)**: không build, dùng luôn.
 - Trả $5-10/user/tháng. Login là dùng.
 - Không control hạ tầng, không control code.
-- ✅ Khi không phải core competency của công ty.
+- ✓ Khi không phải core competency của công ty.
 
 → **Càng đi lên (IaaS → SaaS), bạn càng tốn ít công nhưng càng ít control.** Chọn level theo nhu cầu thực, không phải "càng modern càng tốt".
 
@@ -440,12 +440,12 @@ Càng đi từ IaaS sang SaaS, **phần AWS quản tăng dần** còn **phần b
 - Cron mỗi đêm: AWS **Trusted Advisor** check security best practice (free tier có 7 check).
 
 ### Anti-pattern thường gặp
-- ❌ Để mặc region us-east-1 cho user VN.
-- ❌ Không có budget alert → bị attacker mine crypto đốt $20k.
-- ❌ Không tag → cuối tháng không biết bill từ project nào.
-- ❌ Multi-region active-active mà chưa test failover bao giờ.
-- ❌ "Cloud-native" mà thực chất chỉ lift-and-shift VM lên EC2.
-- ❌ Quên xoá resource sau khi xong PoC (NAT Gateway $32/tháng, RDS $15/tháng cứ chạy mãi).
+- ✗ Để mặc region us-east-1 cho user VN.
+- ✗ Không có budget alert → bị attacker mine crypto đốt $20k.
+- ✗ Không tag → cuối tháng không biết bill từ project nào.
+- ✗ Multi-region active-active mà chưa test failover bao giờ.
+- ✗ "Cloud-native" mà thực chất chỉ lift-and-shift VM lên EC2.
+- ✗ Quên xoá resource sau khi xong PoC (NAT Gateway $32/tháng, RDS $15/tháng cứ chạy mãi).
 
 ---
 

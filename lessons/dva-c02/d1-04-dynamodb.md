@@ -73,14 +73,14 @@ Query "tất cả order của customer X trong tháng 3" → siêu nhanh vì cù
 
 DynamoDB chia dữ liệu thành các partition vật lý. Nếu PK có **cardinality thấp** (ít giá trị khác nhau) hoặc traffic dồn vào vài giá trị PK, ta gặp **hot partition** → throttling dù tổng capacity còn dư.
 
-> ⚠️ Bẫy: Câu hỏi kiểu "ứng dụng bị throttle dù chưa hết capacity provisioned" → nguyên nhân thường là **hot partition / poor key design**, KHÔNG phải thiếu RCU/WCU.
+> Bẫy: Câu hỏi kiểu "ứng dụng bị throttle dù chưa hết capacity provisioned" → nguyên nhân thường là **hot partition / poor key design**, KHÔNG phải thiếu RCU/WCU.
 
 Cách chọn PK tốt:
 - Chọn key **high-cardinality** (nhiều giá trị unique): `UserId`, `DeviceId`, `OrderId`...
 - Tránh: `Status` (chỉ vài giá trị), `CountryCode`, ngày tháng cố định.
 - Nếu buộc phải dùng key cardinality thấp → **write sharding**: thêm suffix random/calculated vào PK, ví dụ `2026-06-10#7` (0-9).
 
-> 💡 Mẹo thi: Từ khóa "evenly distribute", "avoid hot partition", "high cardinality" → đáp án luôn nghiêng về việc chọn/tạo partition key phân bố đều.
+> Mẹo thi: Từ khóa "evenly distribute", "avoid hot partition", "high cardinality" → đáp án luôn nghiêng về việc chọn/tạo partition key phân bố đều.
 
 ## 2. Secondary Indexes: GSI vs LSI
 
@@ -136,7 +136,7 @@ Mặc định bạn chỉ query được theo primary key. Muốn query theo att
 
 Cách nhớ: **L**ocal = cùng partition key, **L**ocked vào lúc create table. **G**lobal = tự do PK mới, nhưng chỉ **G**uess được (eventually consistent).
 
-> ⚠️ Bẫy hay gặp:
+> Bẫy hay gặp:
 > - "Cần thêm index theo access pattern mới trên bảng đã chạy production" → **GSI** (LSI không thêm được sau khi tạo bảng).
 > - "Cần strongly consistent read trên index" → **LSI** (GSI không hỗ trợ strong consistency).
 > - GSI có thể bị throttle riêng — nếu GSI thiếu WCU, write vào bảng gốc cũng bị throttle (với provisioned mode).
@@ -172,9 +172,9 @@ resp = table.scan(
 )
 ```
 
-> ⚠️ Bẫy lớn: **FilterExpression KHÔNG giảm RCU tiêu thụ.** DynamoDB đọc hết item rồi mới filter — bạn vẫn trả tiền cho data đã đọc. Filter chỉ giảm lượng data trả về mạng.
+> Bẫy lớn: **FilterExpression KHÔNG giảm RCU tiêu thụ.** DynamoDB đọc hết item rồi mới filter — bạn vẫn trả tiền cho data đã đọc. Filter chỉ giảm lượng data trả về mạng.
 
-> 💡 Mẹo thi: Câu "scan chậm/tốn kém, làm sao tối ưu" → đáp án thường là **thiết kế lại để dùng Query** hoặc thêm **GSI** đúng access pattern. Nếu buộc scan → dùng **Parallel Scan** (chia `Segment`/`TotalSegments`) để tăng tốc.
+> Mẹo thi: Câu "scan chậm/tốn kém, làm sao tối ưu" → đáp án thường là **thiết kế lại để dùng Query** hoặc thêm **GSI** đúng access pattern. Nếu buộc scan → dùng **Parallel Scan** (chia `Segment`/`TotalSegments`) để tăng tốc.
 
 ## 4. Strongly vs Eventually Consistent Reads
 
@@ -185,7 +185,7 @@ resp = table.scan(
 | Hỗ trợ trên GSI | Có | **KHÔNG** |
 | Cách bật | Mặc định | `ConsistentRead=True` |
 
-> ⚠️ Bẫy: Strongly consistent read **không dùng được trên GSI**. Nếu đề nói "phải đọc dữ liệu mới nhất qua một index" → câu trả lời là LSI, không phải GSI.
+> Bẫy: Strongly consistent read **không dùng được trên GSI**. Nếu đề nói "phải đọc dữ liệu mới nhất qua một index" → câu trả lời là LSI, không phải GSI.
 
 ## 5. Capacity: RCU/WCU, On-demand vs Provisioned
 
@@ -201,7 +201,7 @@ Nếu eventually consistent → 2 / 2 = 1 RCU
 Ví dụ: ghi item 3.5KB → làm tròn lên 4KB → cần 4 WCU
 ```
 
-> 💡 Mẹo thi: Học thuộc công thức làm tròn. Đề rất hay hỏi "đọc/ghi item X KB với Y req/s thì cần bao nhiêu RCU/WCU". Read làm tròn bội số **4KB**, write bội số **1KB**.
+> Mẹo thi: Học thuộc công thức làm tròn. Đề rất hay hỏi "đọc/ghi item X KB với Y req/s thì cần bao nhiêu RCU/WCU". Read làm tròn bội số **4KB**, write bội số **1KB**.
 
 ### On-demand vs Provisioned
 
@@ -215,7 +215,7 @@ Ví dụ: ghi item 3.5KB → làm tròn lên 4KB → cần 4 WCU
 
 **Auto Scaling (provisioned)**: đặt target utilization (vd 70%), min/max capacity. DynamoDB tự tăng/giảm provisioned theo CloudWatch. Phản ứng chậm hơn so với on-demand burst.
 
-> 💡 Mẹo thi:
+> Mẹo thi:
 > - "Traffic không dự đoán được / ứng dụng mới / spiky" → **On-demand**.
 > - "Traffic ổn định, muốn tối ưu chi phí" → **Provisioned + Auto Scaling**.
 > - **Reserved Capacity**: cam kết dài hạn để giảm giá provisioned — chỉ áp dụng provisioned mode.
@@ -229,9 +229,9 @@ DAX là **in-memory cache** được quản lý, đặt trước DynamoDB, giả
 - KHÔNG phù hợp khi cần strongly consistent read (DAX phục vụ từ cache → có thể cũ), hoặc write-heavy.
 - Là cluster chạy trong VPC, ứng dụng dùng **DAX SDK** (API tương thích DynamoDB).
 
-> ⚠️ Bẫy: Đừng nhầm DAX với **ElastiCache**. Câu "cache cho DynamoDB với code tối thiểu, API tương thích" → **DAX**. ElastiCache cần viết logic cache-aside thủ công.
+> Bẫy: Đừng nhầm DAX với **ElastiCache**. Câu "cache cho DynamoDB với code tối thiểu, API tương thích" → **DAX**. ElastiCache cần viết logic cache-aside thủ công.
 
-> 💡 Mẹo thi: "Giảm latency read DynamoDB xuống microsecond" → DAX. "Strongly consistent vẫn cần nhanh" → DAX không giúp (vẫn phải đi thẳng DynamoDB).
+> Mẹo thi: "Giảm latency read DynamoDB xuống microsecond" → DAX. "Strongly consistent vẫn cần nhanh" → DAX không giúp (vẫn phải đi thẳng DynamoDB).
 
 ## 7. DynamoDB Streams
 
@@ -248,9 +248,9 @@ Stream ghi lại **thay đổi item** (insert/modify/remove) theo thứ tự, gi
 
 Use case: replicate sang service khác, gửi notification, cập nhật aggregation, audit, ETL.
 
-> 💡 Mẹo thi: "Phản ứng real-time khi item thay đổi" → DynamoDB Streams + Lambda. Cần cả giá trị cũ và mới (vd tính delta) → `NEW_AND_OLD_IMAGES`.
+> Mẹo thi: "Phản ứng real-time khi item thay đổi" → DynamoDB Streams + Lambda. Cần cả giá trị cũ và mới (vd tính delta) → `NEW_AND_OLD_IMAGES`.
 
-> ⚠️ Bẫy: **Global Tables** (multi-region replication) **yêu cầu** DynamoDB Streams bật (`NEW_AND_OLD_IMAGES`).
+> Bẫy: **Global Tables** (multi-region replication) **yêu cầu** DynamoDB Streams bật (`NEW_AND_OLD_IMAGES`).
 
 ## 8. TTL (Time To Live)
 
@@ -269,7 +269,7 @@ table.put_item(Item={
 - Không xóa **chính xác tại giây** đó — có thể trễ tới 48 giờ.
 - Item bị TTL xóa cũng xuất hiện trong Streams (REMOVE event) → có thể archive trước khi mất.
 
-> ⚠️ Bẫy: Attribute TTL phải là **epoch time tính bằng giây (Number)**, KHÔNG phải ISO string hay milliseconds. Sai format → item không bị xóa.
+> Bẫy: Attribute TTL phải là **epoch time tính bằng giây (Number)**, KHÔNG phải ISO string hay milliseconds. Sai format → item không bị xóa.
 
 ## 9. Transactions
 
@@ -280,7 +280,7 @@ DynamoDB hỗ trợ **ACID transaction** trên nhiều item/nhiều bảng (cùn
 
 Mỗi transaction tốn **gấp đôi capacity** (2 underlying read/write per item) so với thao tác thường.
 
-> 💡 Mẹo thi: "Cần đảm bảo nhiều thao tác thành công hoặc thất bại cùng nhau (vd chuyển tiền giữa 2 account)" → **TransactWriteItems**.
+> Mẹo thi: "Cần đảm bảo nhiều thao tác thành công hoặc thất bại cùng nhau (vd chuyển tiền giữa 2 account)" → **TransactWriteItems**.
 
 ## 10. Conditional Writes & Optimistic Locking
 
@@ -307,7 +307,7 @@ table.update_item(
 )
 ```
 
-> 💡 Mẹo thi: "Tránh lost update / nhiều client cùng sửa 1 item" → **Optimistic Locking với version attribute + ConditionExpression**. DynamoDB Mapper (Java) có annotation `@DynamoDBVersionAttribute` làm tự động.
+> Mẹo thi: "Tránh lost update / nhiều client cùng sửa 1 item" → **Optimistic Locking với version attribute + ConditionExpression**. DynamoDB Mapper (Java) có annotation `@DynamoDBVersionAttribute` làm tự động.
 
 ## 11. Batch Operations
 
@@ -319,7 +319,7 @@ table.update_item(
 - **Không** hỗ trợ UpdateItem, **không** transactional (mỗi op độc lập).
 - Có thể trả về `UnprocessedKeys`/`UnprocessedItems` → bạn **phải tự retry** (với exponential backoff).
 
-> ⚠️ Bẫy: Batch **không atomic**. Một số item fail không rollback các item khác. Cần all-or-nothing → dùng **Transactions**, không phải Batch.
+> Bẫy: Batch **không atomic**. Một số item fail không rollback các item khác. Cần all-or-nothing → dùng **Transactions**, không phải Batch.
 
 ## 12. Pagination
 
@@ -337,7 +337,7 @@ while 'LastEvaluatedKey' in resp:
     items += resp['Items']
 ```
 
-> ⚠️ Bẫy: Nếu thiếu vòng lặp `LastEvaluatedKey`, bạn chỉ lấy được trang đầu (≤1MB) và tưởng query "mất data". Đề hay hỏi "tại sao chỉ nhận được một phần kết quả".
+> Bẫy: Nếu thiếu vòng lặp `LastEvaluatedKey`, bạn chỉ lấy được trang đầu (≤1MB) và tưởng query "mất data". Đề hay hỏi "tại sao chỉ nhận được một phần kết quả".
 
 ## Tổng kết bẫy thi nhanh
 

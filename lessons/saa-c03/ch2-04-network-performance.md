@@ -148,7 +148,7 @@ Một tên có thể có nhiều record (ví dụ một record cho mỗi region)
 
 Các policy **lồng nhau được**: tầng ngoài latency-based chọn region, tầng trong mỗi region là một cặp failover. Đó là cách dựng active-active nhiều region có dự phòng.
 
-> 🪤 Bẫy thi: "user phải được phục vụ **nhanh nhất**" → latency-based. "User ở **nước X** phải tới endpoint Y" hoặc có chữ luật/bản quyền → geolocation. Chọn geolocation cho bài toán tốc độ là sai, vì gần về hành chính không có nghĩa là nhanh về mạng.
+> Bẫy thi: "user phải được phục vụ **nhanh nhất**" → latency-based. "User ở **nước X** phải tới endpoint Y" hoặc có chữ luật/bản quyền → geolocation. Chọn geolocation cho bài toán tốc độ là sai, vì gần về hành chính không có nghĩa là nhanh về mạng.
 
 ### 3.2 TTL trade-off
 
@@ -310,7 +310,7 @@ User ◀─(4) viewer response── [ CACHE của POP ] ◀─(3) origin respon
 
 Với 100 triệu lượt mỗi tháng: CloudFront Functions ~100 × $0,10 = **$10**, Lambda@Edge ~100 × $0,60 = **$60** chưa kể tiền thời gian chạy — rẻ hơn ít nhất 6 lần.
 
-> 🪤 Bẫy thi: việc **nhẹ, chạy trên mọi request, không cần gọi ra ngoài** (redirect, sửa header, chuẩn hoá URL) → **CloudFront Functions**. Cần **gọi mạng, đọc body, chạy ở phía origin, hoặc chạy lâu hơn 1 ms** → **Lambda@Edge**.
+> Bẫy thi: việc **nhẹ, chạy trên mọi request, không cần gọi ra ngoài** (redirect, sửa header, chuẩn hoá URL) → **CloudFront Functions**. Cần **gọi mạng, đọc body, chạy ở phía origin, hoặc chạy lâu hơn 1 ms** → **Lambda@Edge**.
 
 ### 4.5 Optimizations
 
@@ -598,7 +598,7 @@ Ba thứ dưới đây quyết định hai EC2 nói chuyện với nhau nhanh t�
 
 **Cluster placement group.** Yêu cầu AWS xếp các instance **sát nhau về vật lý trong cùng một AZ**, để đường đi giữa chúng ngắn nhất. Có một giới hạn ít người biết: một luồng TCP/UDP đơn lẻ (*single flow*) giữa hai instance bị trần **5 Gbps**; trong cùng cluster placement group, trần đó là **10 Gbps**. Cái giá là độ sẵn sàng: mọi thứ nằm chung một cụm phần cứng trong một AZ.
 
-> 🪤 Bẫy thi: "HPC", "MPI", "tightly coupled", "node-to-node latency thấp nhất" → **EFA + cluster placement group**. Chỉ cần "băng thông cao hơn" cho workload thường → chọn instance type lớn hơn có ENA, không phải EFA. Chi tiết placement group ở [[ch2-01-compute-performance]].
+> Bẫy thi: "HPC", "MPI", "tightly coupled", "node-to-node latency thấp nhất" → **EFA + cluster placement group**. Chỉ cần "băng thông cao hơn" cho workload thường → chọn instance type lớn hơn có ENA, không phải EFA. Chi tiết placement group ở [[ch2-01-compute-performance]].
 
 ### 7.4 Jumbo frames
 
@@ -625,7 +625,7 @@ Vì vậy jumbo frame có ích cho **truyền khối lượng lớn giữa các 
 | Qua **Internet Gateway** | **1.500** |
 | Qua **Site-to-Site VPN** | Dưới 1.500 (không hỗ trợ jumbo frame) |
 
-> 🪤 Bẫy thi: jumbo frame **không dùng được cho traffic ra internet hay qua VPN**. Kết nối bị treo khi gửi dữ liệu lớn trong khi ping gói nhỏ vẫn thông là dấu hiệu kinh điển của lệch MTU.
+> Bẫy thi: jumbo frame **không dùng được cho traffic ra internet hay qua VPN**. Kết nối bị treo khi gửi dữ liệu lớn trong khi ping gói nhỏ vẫn thông là dấu hiệu kinh điển của lệch MTU.
 
 ### 7.5 VPC Peering vs Transit Gateway
 
@@ -725,7 +725,7 @@ Consumer gọi IP private đó; AWS chuyển traffic sang NLB của provider. T�
 
 **Dùng khi:** nhà cung cấp SaaS bán dịch vụ cho nhiều khách hàng mà mỗi khách có VPC riêng (*multi-tenant*: một hệ thống phục vụ nhiều khách hàng tách biệt nhau); team platform chia sẻ một dịch vụ nội bộ cho hàng chục account trong công ty.
 
-> 🪤 Bẫy thi: "cho account/VPC khác dùng **một service** mà **không mở cả mạng**", "hai VPC **trùng CIDR**", "SaaS provider tới nhiều khách hàng" → **PrivateLink**. "Hai VPC cần nói chuyện **hai chiều, nhiều dịch vụ**" → peering; nhiều VPC thì Transit Gateway.
+> Bẫy thi: "cho account/VPC khác dùng **một service** mà **không mở cả mạng**", "hai VPC **trùng CIDR**", "SaaS provider tới nhiều khách hàng" → **PrivateLink**. "Hai VPC cần nói chuyện **hai chiều, nhiều dịch vụ**" → peering; nhiều VPC thì Transit Gateway.
 
 ---
 
@@ -800,7 +800,7 @@ Khi một tập đoàn có hàng chục VPC ở nhiều region cùng nhiều vă
 | Same-AZ private IP | Free |
 | To/from VPC endpoint | Free (data through endpoint $0.01/GB) |
 
-> 💡 Egress là **cost trap** lớn nhất. Đưa 1 GB từ AWS ra internet (~$0,09) đắt gấp khoảng 4 lần tiền lưu chính GB đó trên S3 Standard suốt một tháng (~$0,023), và lần nào tải cũng bị tính lại. Trước khi mở một luồng egress lớn, tính tiền.
+> Egress là **cost trap** lớn nhất. Đưa 1 GB từ AWS ra internet (~$0,09) đắt gấp khoảng 4 lần tiền lưu chính GB đó trên S3 Standard suốt một tháng (~$0,023), và lần nào tải cũng bị tính lại. Trước khi mở một luồng egress lớn, tính tiền.
 
 ### Cost optimization patterns
 

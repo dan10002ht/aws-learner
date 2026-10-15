@@ -2,7 +2,7 @@
 
 Bài này dễ bị trả lời sai không phải vì khó hiểu, mà vì hầu hết mọi người trả lời **sai bài toán**. Họ mô tả một cái hàng đợi: producer đẩy vào, consumer lấy ra, lấy xong thì xoá. Mô tả đó đúng với RabbitMQ. Nhưng khi đề bài thêm ba chữ — *giữ lại hai tuần*, *đọc lại được nhiều lần*, *giữ đúng thứ tự* — thì bạn không còn thiết kế một hàng đợi nữa. Bạn đang thiết kế **một cái log phân tán ghi hàng trăm nghìn message mỗi giây lên đĩa, giữ nguyên chúng hàng tuần, và cho N nhóm người đọc độc lập lướt qua với tốc độ khác nhau**. Đó là bài toán **lưu trữ**, không phải bài toán hàng đợi. Và gần như mọi quyết định thú vị trong bài — append-only log, batching, page cache, zero-copy, partition, offset do consumer giữ — đều là hệ quả trực tiếp của việc chuyển góc nhìn đó.
 
-> 💡 **Nguyên tắc xuyên suốt**: message queue truyền thống coi message là **việc cần làm** — làm xong thì xoá. Event streaming platform coi message là **sự thật đã xảy ra** — sự thật thì không xoá, chỉ hết hạn lưu trữ. Hai thế giới quan này đẻ ra hai kiến trúc khác hẳn nhau, và câu đầu tiên bạn phải làm rõ là mình đang xây cái nào.
+> **Nguyên tắc xuyên suốt**: message queue truyền thống coi message là **việc cần làm** — làm xong thì xoá. Event streaming platform coi message là **sự thật đã xảy ra** — sự thật thì không xoá, chỉ hết hạn lưu trữ. Hai thế giới quan này đẻ ra hai kiến trúc khác hẳn nhau, và câu đầu tiên bạn phải làm rõ là mình đang xây cái nào.
 
 ---
 
@@ -28,7 +28,7 @@ Dòng quan trọng nhất là **chi phí state ở broker**. RabbitMQ với 50 t
 
 Đề bài của ta (giữ 2 tuần, đọc lại được, giữ thứ tự) chỉ giải được bằng mô hình thứ hai. Phần còn lại là thiết kế **một Kafka thu nhỏ** — nhưng ta sẽ liên tục quay lại so sánh, vì biết *khi nào không cần Kafka* có giá trị ngang biết cách xây nó.
 
-> ⚠️ **Bẫy phỏng vấn**: nhảy ngay vào "em dùng Kafka" mà không nói vì sao. Nếu yêu cầu thật chỉ là "gửi email bất đồng bộ, không cần thứ tự, không cần replay" thì SQS đơn giản hơn nhiều lần về vận hành và Kafka là over-engineering.
+> **Bẫy phỏng vấn**: nhảy ngay vào "em dùng Kafka" mà không nói vì sao. Nếu yêu cầu thật chỉ là "gửi email bất đồng bộ, không cần thứ tự, không cần replay" thì SQS đơn giản hơn nhiều lần về vận hành và Kafka là over-engineering.
 
 **Hai mô hình giao tiếp** hay bị lẫn với hai họ trên. *Point-to-point*: message vào queue, **đúng một consumer** nhận — thêm consumer nghĩa là làm *nhanh hơn*. *Publish-subscribe*: message gắn với **topic**, **mọi** subscriber nhận bản sao — thêm subscriber nghĩa là thêm một hệ thống quan tâm tới sự kiện.
 
@@ -92,7 +92,7 @@ Về phía đọc, chỉ phần nhỏ thật sự chạm đĩa: consumer bám s�
 
 Mạng thoải mái với NIC 10 Gbps — **mạng không phải bottleneck**. Nhưng nhớ phép nhân: RF=3 nghĩa là mỗi byte producer gửi tạo ra 3 byte qua mạng và 3 byte chạm đĩa. Khi ai đó đề nghị nâng RF lên 5 "cho an toàn", hãy đưa phép nhân này ra.
 
-> 💡 **Bốn con số cần thuộc**: 1 GB/s vào, 750 MB/s ghi đĩa sau replication, 1,2 PB đĩa, ~25 partition tối thiểu (thực tế vài trăm). Mỗi con số dẫn thẳng tới một quyết định: append-only log, HDD rẻ, page cache + zero-copy, partition là đơn vị scale.
+> **Bốn con số cần thuộc**: 1 GB/s vào, 750 MB/s ghi đĩa sau replication, 1,2 PB đĩa, ~25 partition tối thiểu (thực tế vài trăm). Mỗi con số dẫn thẳng tới một quyết định: append-only log, HDD rẻ, page cache + zero-copy, partition là đơn vị scale.
 
 ---
 
@@ -204,7 +204,7 @@ Ghi TUẦN TỰ, NVMe        :                          2–7 GB/s
 
 Hệ quả kinh tế rất cụ thể: ta cần 1,2 PB. Ép được pattern về tuần tự thì dùng được HDD — **rẻ hơn SSD 5–10 lần trên mỗi TB** — mà vẫn đạt throughput. Ở quy mô PB, đó là hàng triệu đô.
 
-> 💡 **Câu để nói trong phỏng vấn**: *"Tôi không tối ưu cho đĩa nhanh, tôi tối ưu cho **pattern truy cập**. Chọn đúng pattern cho 2–3 bậc độ lớn; chọn đúng phần cứng chỉ cho 1 bậc — và tốn 10 lần tiền."*
+> **Câu để nói trong phỏng vấn**: *"Tôi không tối ưu cho đĩa nhanh, tôi tối ưu cho **pattern truy cập**. Chọn đúng pattern cho 2–3 bậc độ lớn; chọn đúng phần cứng chỉ cho 1 bậc — và tốn 10 lần tiền."*
 
 Một sắc thái để không bị bắt bẻ: trên SSD, ghi tuần tự vẫn tốt hơn, không vì seek mà vì **write amplification** — SSD xoá theo block vài MB nhưng ghi theo page 4–16 KB, nên ghi ngẫu nhiên làm garbage collection phải đọc–xoá–ghi lại nhiều dữ liệu hợp lệ, giảm throughput và ăn mòn tuổi thọ ổ.
 
@@ -236,7 +236,7 @@ Nhưng zero-copy có **một điều kiện tiên quyết ít người nói ra**
 - **Không mã hoá lại ở broker.** Bật TLS trên kết nối consumer buộc broker mã hoá → dữ liệu phải vào user space → **mất zero-copy**, throughput giảm đáng kể. Cách giảm đau: mã hoá payload ở tầng ứng dụng, để đường broker↔consumer plaintext trong VPC tin cậy.
 - **Không lọc message theo payload ở broker** (§12.6 dùng tag trong header thay thế).
 
-> ⚠️ **Bẫy**: thêm một tính năng nghe rất hợp lý — "broker lọc giúp consumer cho đỡ tốn băng thông" — và bạn vừa phá vỡ zero-copy cho **mọi** message, kể cả message không bị lọc. Một tính năng nhỏ đánh đổi một thuộc tính kiến trúc lớn.
+> **Bẫy**: thêm một tính năng nghe rất hợp lý — "broker lọc giúp consumer cho đỡ tốn băng thông" — và bạn vừa phá vỡ zero-copy cho **mọi** message, kể cả message không bị lọc. Một tính năng nhỏ đánh đổi một thuộc tính kiến trúc lớn.
 
 ### 5.3 Segment file và index
 
@@ -304,9 +304,9 @@ Hai hiệu ứng phụ rất lớn: **nén hiệu quả hơn hẳn** (một mess
 
 Đây chính là cách yêu cầu "**high throughput OR low latency, cấu hình được**" được hiện thực hoá: **không phải bằng hai kiến trúc, mà bằng ba tham số trên cùng một kiến trúc** — `batch.size`, `linger.ms`, `compression.type`.
 
-> 💡 `linger.ms` là **trần latency bạn tự nguyện trả để mua throughput**. Đặt nó bằng đúng ngân sách trễ mà nghiệp vụ chịu được rồi để batch lớn. Đặt `linger.ms = 0` mà than throughput thấp là hiểu sai công cụ.
+> `linger.ms` là **trần latency bạn tự nguyện trả để mua throughput**. Đặt nó bằng đúng ngân sách trễ mà nghiệp vụ chịu được rồi để batch lớn. Đặt `linger.ms = 0` mà than throughput thấp là hiểu sai công cụ.
 
-> ⚠️ **Bẫy**: batch lớn làm **mất mát khi crash lớn hơn** (1 MB trong buffer RAM, process chết là mất sạch) và làm **một message lỗi kéo cả batch phải retry**. Dữ liệu mà mất là chết người thì batch nhỏ + `acks=all` + retry idempotent.
+> **Bẫy**: batch lớn làm **mất mát khi crash lớn hơn** (1 MB trong buffer RAM, process chết là mất sạch) và làm **một message lỗi kéo cả batch phải retry**. Dữ liệu mà mất là chết người thì batch nhỏ + `acks=all` + retry idempotent.
 
 ---
 
@@ -342,7 +342,7 @@ Lối thoát rất thực dụng: **hầu hết nghiệp vụ không cần thứ
 
 Xử lý **hot key**, ba cách và không cách nào miễn phí: (1) **salt key** `tenant:hash(event_id)%10` — rải ra 10 partition, được throughput nhưng **mất thứ tự trong tenant đó**; (2) **topic riêng** cho tenant lớn — cách ly tốt nhất, vận hành phức tạp hơn; (3) **chấp nhận, scale dọc** — đơn giản, có trần.
 
-> ⚠️ **Bẫy kinh điển**: `null` key → rải round-robin → **không có đảm bảo thứ tự nào**. Nhiều sự cố "sao event thanh toán đến trước event tạo đơn" bắt nguồn từ việc ai đó quên set key. Nếu nghiệp vụ cần thứ tự, key phải bắt buộc và được kiểm ở tầng schema.
+> **Bẫy kinh điển**: `null` key → rải round-robin → **không có đảm bảo thứ tự nào**. Nhiều sự cố "sao event thanh toán đến trước event tạo đơn" bắt nguồn từ việc ai đó quên set key. Nếu nghiệp vụ cần thứ tự, key phải bắt buộc và được kiểm ở tầng schema.
 
 ### 6.3 Số partition — tăng dễ, giảm khó
 
@@ -402,7 +402,7 @@ Tệ hơn là **rebalance dây chuyền**: `session.timeout.ms` quá ngắn ho�
 | **Static membership** (`group.instance.id`) | ID cố định; restart trong `session.timeout` **không** gây rebalance | Consumer chết thật cũng không bị phát hiện ngay |
 | **Tách heartbeat khỏi xử lý** | Heartbeat ở thread riêng; `max.poll.records` nhỏ | Chỉnh sai thì gây rebalance dây chuyền |
 
-> 💡 Đặt `max.poll.interval.ms` lớn hơn **thời gian xử lý xấu nhất** của một batch (không phải trung bình), và giữ `max.poll.records` đủ nhỏ để một vòng poll luôn xong trong ngân sách đó. Phần lớn sự cố rebalance là do chỉnh theo thời gian trung bình.
+> Đặt `max.poll.interval.ms` lớn hơn **thời gian xử lý xấu nhất** của một batch (không phải trung bình), và giữ `max.poll.records` đủ nhỏ để một vòng poll luôn xong trong ngân sách đó. Phần lớn sự cố rebalance là do chỉnh theo thời gian trung bình.
 
 ### 7.3 Offset commit — nơi sinh ra delivery semantics
 
@@ -420,7 +420,7 @@ Ta chọn phương án thứ hai: nó dùng lại đúng thứ đã được t�
 | Rủi ro | Crash sau auto-commit nhưng trước khi xử lý → **mất message trong im lặng** | Quên commit → xử lý lại sau restart |
 | Dùng khi | Metric, log, dữ liệu mất được | Mọi thứ quan trọng |
 
-> ⚠️ **Bẫy phổ biến nhất trong cả bài**: để `enable.auto.commit=true` (mặc định của nhiều client) rồi tin rằng mình có at-least-once. **Bạn không có.** Auto commit chạy theo đồng hồ, không theo tiến độ xử lý. Muốn at-least-once thật thì phải tắt nó và commit sau khi xử lý xong.
+> **Bẫy phổ biến nhất trong cả bài**: để `enable.auto.commit=true` (mặc định của nhiều client) rồi tin rằng mình có at-least-once. **Bạn không có.** Auto commit chạy theo đồng hồ, không theo tiến độ xử lý. Muốn at-least-once thật thì phải tắt nó và commit sau khi xử lý xong.
 
 ---
 
@@ -518,7 +518,7 @@ Consumer downstream đặt `isolation.level=read_committed` sẽ không thấy m
 
 **Giới hạn quan trọng nhất**: exactly-once chỉ đúng **bên trong biên giới hệ thống queue**. Consumer ghi vào Postgres hay gọi Stripe thì transaction của queue **không bao trùm** — không có commit hai pha với thế giới bên ngoài; vẫn phải **idempotent ở downstream**.
 
-> 💡 **Kết luận thực chiến**: bật idempotent producer (gần như miễn phí), dùng at-least-once, làm consumer idempotent. Chỉ dùng transaction khi thật sự làm stream processing queue→queue.
+> **Kết luận thực chiến**: bật idempotent producer (gần như miễn phí), dùng at-least-once, làm consumer idempotent. Chỉ dùng transaction khi thật sự làm stream processing queue→queue.
 
 ---
 
@@ -562,7 +562,7 @@ Ta chọn **pull** vì ba lý do theo thứ tự quan trọng: (1) **backpressur
 
 Nhược điểm duy nhất — request rỗng — được xử lý bằng **long polling**: fetch với `max.wait.ms=500` và `min.bytes=1 MB`, broker **giữ request lại** cho tới khi đủ byte hoặc hết thời gian chờ. Bận thì batch lớn, rảnh thì latency vẫn thấp và không có vòng lặp poll đốt CPU. "Pull chậm hơn push" là lời chê đã lỗi thời.
 
-> 💡 Chú ý **replication cũng dùng pull**: follower fetch từ leader bằng đúng API của consumer. Một cơ chế, hai mục đích — dấu hiệu của một thiết kế đã hội tụ.
+> Chú ý **replication cũng dùng pull**: follower fetch từ leader bằng đúng API của consumer. Một cơ chế, hai mục đích — dấu hiệu của một thiết kế đã hội tụ.
 
 ---
 
@@ -612,7 +612,7 @@ Chiến lược, theo thứ tự áp dụng:
 4. **Alert trên DLQ.** DLQ không ai nhìn là DLQ vô dụng — nó chỉ là nơi lịch sự để đánh mất dữ liệu. Alert trên *tốc độ vào DLQ*, không chỉ số lượng tích luỹ.
 5. **Công cụ replay từ DLQ** phải có sẵn, đừng viết vội lúc đang có sự cố.
 
-> ⚠️ **Bẫy**: dùng retry topic cho message **cần thứ tự**. Đưa lại một message sau 10 phút nghĩa là nó bị xử lý **sau** các message đến sau nó — với chuỗi trạng thái đơn hàng thì kết quả có thể sai nghiêm trọng. Luồng cần thứ tự chặt thì lựa chọn đúng là **dừng partition và báo động**, không phải lặng lẽ đẩy qua một bên.
+> **Bẫy**: dùng retry topic cho message **cần thứ tự**. Đưa lại một message sau 10 phút nghĩa là nó bị xử lý **sau** các message đến sau nó — với chuỗi trạng thái đơn hàng thì kết quả có thể sai nghiêm trọng. Luồng cần thứ tự chặt thì lựa chọn đúng là **dừng partition và báo động**, không phải lặng lẽ đẩy qua một bên.
 
 ### 12.5 Lag là metric số một
 
@@ -678,7 +678,7 @@ Hai điều đặc trưng: **2 MB/s đọc được chia sẻ giữa mọi consu
 
 **Quy tắc chọn nhanh**: (1) message là **việc cần làm**, làm một lần, không replay → **SQS** (FIFO nếu cần thứ tự); (2) message là **sự kiện đã xảy ra**, nhiều bên quan tâm, cần replay và thứ tự → **Kinesis** nếu muốn ít vận hành, **MSK** nếu cần API/hệ sinh thái Kafka hoặc throughput vượt tầm shard; (3) cần **định tuyến theo nội dung** tới nhiều dịch vụ, lưu lượng vừa phải → **EventBridge**; (4) cần **fan-out đơn giản** mà mỗi bên vẫn muốn ngữ nghĩa queue → **SNS → nhiều SQS**.
 
-> 💡 Câu chốt đáng nói: *"MSK là khi tôi cần chính Kafka; Kinesis là khi tôi cần mô hình của Kafka mà không muốn vận hành Kafka; SQS là khi tôi không cần mô hình của Kafka chút nào."*
+> Câu chốt đáng nói: *"MSK là khi tôi cần chính Kafka; Kinesis là khi tôi cần mô hình của Kafka mà không muốn vận hành Kafka; SQS là khi tôi không cần mô hình của Kafka chút nào."*
 
 ---
 
@@ -696,4 +696,4 @@ Hai điều đặc trưng: **2 MB/s đọc được chia sẻ giữa mọi consu
 10. **Kết bằng vận hành, không bằng kiến trúc**: lag là metric số một (alert trên đạo hàm, theo từng partition); retention là đồng hồ đếm ngược cho consumer lag; poison message chặn cả partition nên phải có retry topic + DLQ + công cụ replay.
 11. **Nếu bị hỏi "vì sao không dùng SQS?"** — đừng phòng thủ: *"Bỏ ba yêu cầu retention, replay và ordering thì SQS đúng hơn, vì rẻ hơn về vận hành hàng chục lần. Tôi chọn mô hình log vì ba yêu cầu đó, không phải vì nó hiện đại hơn."*
 
-> 💡 **Nguyên tắc cuối**: cả bài chỉ là một ý tưởng được đẩy tới cùng — **biến mọi thao tác thành ghi thêm vào cuối một file và đọc tuần tự từ một vị trí**. Append-only log cho ghi nhanh; offset do consumer giữ cho phép nhiều người đọc độc lập và replay; partition cho song song; replication cho độ bền; batching cho throughput; page cache và zero-copy để không lãng phí một byte nào. Nếu chỉ nhớ một câu: **đây không phải bài toán hàng đợi, đây là bài toán lưu trữ đội lốt hàng đợi.**
+> **Nguyên tắc cuối**: cả bài chỉ là một ý tưởng được đẩy tới cùng — **biến mọi thao tác thành ghi thêm vào cuối một file và đọc tuần tự từ một vị trí**. Append-only log cho ghi nhanh; offset do consumer giữ cho phép nhiều người đọc độc lập và replay; partition cho song song; replication cho độ bền; batching cho throughput; page cache và zero-copy để không lãng phí một byte nào. Nếu chỉ nhớ một câu: **đây không phải bài toán hàng đợi, đây là bài toán lưu trữ đội lốt hàng đợi.**

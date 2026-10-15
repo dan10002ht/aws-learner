@@ -2,7 +2,7 @@
 
 Chat là bài tập "thử lửa" kinh điển vì nó ép bạn đối mặt với thứ mà CRUD web bình thường né được: **server phải chủ động đẩy dữ liệu xuống client** (server push), kết nối phải **sống lâu** (long-lived), và hệ thống phải **stateful** ở tầng connection. Mọi quyết định ở đây đều là đánh đổi — không có kiến trúc "đúng", chỉ có kiến trúc phù hợp với ràng buộc của bạn.
 
-> 💡 Nguyên tắc: Trước khi vẽ box, hãy hỏi quy mô. Một app chat 10K user nội bộ công ty và một WhatsApp 2 tỷ user là **hai bài toán khác nhau hoàn toàn**. Đừng thiết kế Kafka + 5 tầng cache cho 10K user.
+> Nguyên tắc: Trước khi vẽ box, hãy hỏi quy mô. Một app chat 10K user nội bộ công ty và một WhatsApp 2 tỷ user là **hai bài toán khác nhau hoàn toàn**. Đừng thiết kế Kafka + 5 tầng cache cho 10K user.
 
 ---
 
@@ -23,7 +23,7 @@ Trong phỏng vấn, 5 phút đầu mà lao vào vẽ kiến trúc là trượt.
 - **Consistency**: với tin nhắn, ta chấp nhận eventual consistency về mặt hiển thị ở các thiết bị, nhưng **không được mất tin** và **thứ tự trong một cuộc hội thoại phải ổn định**.
 - Durable: tin đã gửi không được biến mất.
 
-> ⚠️ Bẫy thiết kế: Đừng hứa "global total ordering" cho mọi tin nhắn của cả hệ thống. Bạn chỉ cần **thứ tự nhất quán trong phạm vi một conversation**. Hứa nhiều hơn = tự đào hố scale.
+> Bẫy thiết kế: Đừng hứa "global total ordering" cho mọi tin nhắn của cả hệ thống. Bạn chỉ cần **thứ tự nhất quán trong phạm vi một conversation**. Hứa nhiều hơn = tự đào hố scale.
 
 **Khoanh vùng câu hỏi cần hỏi interviewer:** DAU bao nhiêu? Group tối đa bao nhiêu người? Có cần media (ảnh/video) không? Có cần end-to-end encryption không? (E2EE thay đổi rất nhiều thứ — thường để sau.)
 
@@ -54,7 +54,7 @@ Một node giữ ~ 50,000–100,000 kết nối (thực tế, phụ thuộc tuni
 => cần ~ 50–100 connection node CHỈ để giữ kết nối.
 ```
 
-> 💡 Nguyên tắc: Con số 5 triệu connection đồng thời là lý do tầng connection phải tách riêng khỏi tầng business logic. Bạn scale "chỗ giữ kết nối" độc lập với "chỗ xử lý tin".
+> Nguyên tắc: Con số 5 triệu connection đồng thời là lý do tầng connection phải tách riêng khỏi tầng business logic. Bạn scale "chỗ giữ kết nối" độc lập với "chỗ xử lý tin".
 
 ---
 
@@ -136,7 +136,7 @@ Vấn đề cốt lõi: HTTP là client-hỏi-server-trả. Chat cần server **
   <text x="540" y="259" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">nhưng server stateful</text>
 </svg>
 
-> ⚠️ Bẫy thiết kế: WebSocket biến server thành **stateful** — kết nối "thuộc về" một node cụ thể. Đây là gốc rễ của mọi khó khăn scale phía dưới. Long polling thì stateless hơn nhưng tốn CPU vì đóng/mở liên tục.
+> Bẫy thiết kế: WebSocket biến server thành **stateful** — kết nối "thuộc về" một node cụ thể. Đây là gốc rễ của mọi khó khăn scale phía dưới. Long polling thì stateless hơn nhưng tốn CPU vì đóng/mở liên tục.
 
 ---
 
@@ -166,7 +166,7 @@ GET  /v1/users/{id}/presence           # lấy presence
 { "type": "PRESENCE",  "userId": "u2", "status": "online" }
 ```
 
-> 💡 Nguyên tắc: `clientMsgId` (UUID do client sinh) là chìa khoá cho **idempotency**. Client retry gửi lại cùng `clientMsgId`, server nhận ra trùng và không tạo tin nhân đôi. Đây là chi tiết nhỏ nhưng "phân biệt người đã từng làm thật".
+> Nguyên tắc: `clientMsgId` (UUID do client sinh) là chìa khoá cho **idempotency**. Client retry gửi lại cùng `clientMsgId`, server nhận ra trùng và không tạo tin nhân đôi. Đây là chi tiết nhỏ nhưng "phân biệt người đã từng làm thật".
 
 ---
 
@@ -314,7 +314,7 @@ Vì WS stateful, một tin gửi cho B phải tới **đúng node đang giữ B*
   </g>
 </svg>
 
-> ⚠️ Bẫy thiết kế: Đừng cho các connection node **kết nối mesh trực tiếp** với nhau (N node → N² kết nối). Pub/sub là tầng gián tiếp giúp tránh nổ N². Nhưng nhớ: registry và pub/sub trở thành điểm phụ thuộc nóng — phải HA.
+> Bẫy thiết kế: Đừng cho các connection node **kết nối mesh trực tiếp** với nhau (N node → N² kết nối). Pub/sub là tầng gián tiếp giúp tránh nổ N². Nhưng nhớ: registry và pub/sub trở thành điểm phụ thuộc nóng — phải HA.
 
 ### 6.2. Message ordering & delivery semantics
 
@@ -330,7 +330,7 @@ At-least-once = có thể giao trùng -> KHỬ TRÙNG bằng idempotency key
 
 Khử trùng bằng `clientMsgId`: client dedupe khi hiển thị; server dedupe khi ghi (unique index trên `(convId, clientMsgId)`).
 
-> 💡 Nguyên tắc: "At-least-once + idempotent consumer" là công thức kinh điển của hệ phân tán. Bạn thiết kế để **thà giao trùng còn hơn mất**, rồi dùng key để dọn trùng. Nói được câu này trong phỏng vấn là điểm cộng lớn.
+> Nguyên tắc: "At-least-once + idempotent consumer" là công thức kinh điển của hệ phân tán. Bạn thiết kế để **thà giao trùng còn hơn mất**, rồi dùng key để dọn trùng. Nói được câu này trong phỏng vấn là điểm cộng lớn.
 
 ### 6.3. Lưu lịch sử — sharding theo conversation
 
@@ -348,7 +348,7 @@ c123#  -> [seq:4521 "hi", seq:4520 "...", ...]
 
 Chọn **conversationId** vì truy vấn chính là theo conversation. Xử lý hot shard (group khổng lồ) bằng cách tách thành sub-partition theo khoảng thời gian (`convId#202406`).
 
-> ⚠️ Bẫy thiết kế: 220 TB/năm và tăng mãi. Tin cũ ít được đọc → **tiering**: tin nóng (gần đây) trên store nhanh/đắt, tin nguội archive sang object storage rẻ. Đừng giữ tất cả trong DB nóng đắt tiền mãi.
+> Bẫy thiết kế: 220 TB/năm và tăng mãi. Tin cũ ít được đọc → **tiering**: tin nóng (gần đây) trên store nhanh/đắt, tin nguội archive sang object storage rẻ. Đừng giữ tất cả trong DB nóng đắt tiền mãi.
 
 ### 6.4. Presence (online status)
 
@@ -363,7 +363,7 @@ mỗi 10s u2 gửi heartbeat -> reset EX 30
 mất mạng -> 30s sau key hết hạn -> presence service phát "u2 offline"
 ```
 
-> ⚠️ Bẫy thiết kế: Presence dễ thành "fan-out bomb". Nếu mỗi lần một user online mà broadcast cho 5000 bạn, và hàng triệu user đổi trạng thái mỗi giây → sập. Giới hạn phạm vi fan-out và chấp nhận presence hơi trễ (eventual).
+> Bẫy thiết kế: Presence dễ thành "fan-out bomb". Nếu mỗi lần một user online mà broadcast cho 5000 bạn, và hàng triệu user đổi trạng thái mỗi giây → sập. Giới hạn phạm vi fan-out và chấp nhận presence hơi trễ (eventual).
 
 ### 6.5. Push notification (offline)
 
@@ -448,7 +448,7 @@ Với group N người: một tin sinh ra **N lần delivery**. Group 1000 ngư�
   <polygon points="560,298 556,289 564,289" fill="currentColor" stroke="none"/>
 </svg>
 
-> 💡 Nguyên tắc: Read receipt trong group **đắt gấp bội** số tin. Thường gộp/đếm thay vì hiển thị từng người ("đã xem bởi 87 người") để cắt fan-out của riêng receipt.
+> Nguyên tắc: Read receipt trong group **đắt gấp bội** số tin. Thường gộp/đếm thay vì hiển thị từng người ("đã xem bởi 87 người") để cắt fan-out của riêng receipt.
 
 ---
 
@@ -464,7 +464,7 @@ Với group N người: một tin sinh ra **N lần delivery**. Group 1000 ngư�
 
 **Trình tự scale thực tế:** (1) tách connection tier khỏi logic → (2) thêm registry + pub/sub → (3) shard history theo conversation → (4) tách presence ra Redis riêng → (5) hybrid fan-out cho group lớn.
 
-> ⚠️ Bẫy thiết kế: Đừng nhảy thẳng tới Kafka + Cassandra + global multi-region ngay câu đầu. Interviewer muốn thấy bạn **scale theo nhu cầu** và giải thích *vì sao* mỗi bước, không phải đọc tên công nghệ.
+> Bẫy thiết kế: Đừng nhảy thẳng tới Kafka + Cassandra + global multi-region ngay câu đầu. Interviewer muốn thấy bạn **scale theo nhu cầu** và giải thích *vì sao* mỗi bước, không phải đọc tên công nghệ.
 
 ---
 
@@ -499,4 +499,4 @@ Mobile ──WS──> API Gateway (WebSocket) ──> Lambda/Fargate (chat svc)
                               (registry+presence) (history) (push offline)
 ```
 
-> 💡 Nguyên tắc: Chọn managed service không phải vì "AWS có sẵn", mà vì nó cắt **operational toil** ở chỗ bạn không có lợi thế cạnh tranh (giữ WebSocket, push fan-out). Nhưng luôn biết **giới hạn** của nó (idle timeout, message size, hot partition) — đó là nơi cuộc nói chuyện "managed vs self-hosted" thực sự diễn ra, và là tư duy của một Solutions Architect cấp cao.
+> Nguyên tắc: Chọn managed service không phải vì "AWS có sẵn", mà vì nó cắt **operational toil** ở chỗ bạn không có lợi thế cạnh tranh (giữ WebSocket, push fan-out). Nhưng luôn biết **giới hạn** của nó (idle timeout, message size, hot partition) — đó là nơi cuộc nói chuyện "managed vs self-hosted" thực sự diễn ra, và là tư duy của một Solutions Architect cấp cao.

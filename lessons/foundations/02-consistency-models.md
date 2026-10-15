@@ -121,7 +121,7 @@ Từ trên xuống dưới: **độ chính xác giảm dần, latency và availa
 | **Transactional read** (`TransactGetItems`) | Snapshot isolation | 2 RCU | Đọc nhiều item cùng "ảnh chụp" nhất quán |
 | **Global Tables** cross-region | Eventual + LWW (last-writer-wins) | — | Multi-region active-active |
 
-> 💡 Tại sao strongly consistent read **không khả dụng** cho GSI (Global Secondary Index)? Vì GSI được cập nhật bất đồng bộ từ base table — không có cách nào linearize. Đây là bẫy thi quen thuộc.
+> Tại sao strongly consistent read **không khả dụng** cho GSI (Global Secondary Index)? Vì GSI được cập nhật bất đồng bộ từ base table — không có cách nào linearize. Đây là bẫy thi quen thuộc.
 
 ### 3.2 S3
 
@@ -140,7 +140,7 @@ Trước 2020, S3 chỉ strong cho PUT mới, eventual cho overwrite/delete — 
 - **Multi-AZ standby**: **không phục vụ read**. Chỉ đứng chờ failover. Sync replication → khi failover xong, không mất data đã commit.
 - **Aurora Reader endpoint**: eventual, lag thường < 100ms vì shared storage.
 
-> 🪤 Bẫy thi: "Tôi cần scale read mà vẫn strong consistency" → **không có** lời giải trong RDS. Đáp án thường là (a) chấp nhận eventual với Read Replica, hoặc (b) chuyển sang DynamoDB strongly consistent read, hoặc (c) ElastiCache để giảm tải primary.
+> Bẫy thi: "Tôi cần scale read mà vẫn strong consistency" → **không có** lời giải trong RDS. Đáp án thường là (a) chấp nhận eventual với Read Replica, hoặc (b) chuyển sang DynamoDB strongly consistent read, hoặc (c) ElastiCache để giảm tải primary.
 
 ### 3.4 ElastiCache
 

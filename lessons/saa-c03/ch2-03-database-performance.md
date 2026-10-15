@@ -282,7 +282,7 @@ Hai lợi ích phụ hay ra đề:
 
 Một giới hạn cần biết: nếu session dùng thứ gắn chặt với một kết nối cụ thể (biến session, bảng tạm…), proxy buộc phải giữ riêng kết nối đó cho client tới hết session. Hiện tượng này gọi là **pinning** và làm mất tác dụng multiplexing.
 
-> 🪤 Bẫy thi: *"Lambda + RDS/Aurora, lỗi too many connections"* → **RDS Proxy**, không phải tăng cỡ instance hay thêm read replica. Và RDS Proxy không chỉ dành cho Lambda: app trên Fargate/EC2 scale ra nhiều instance cũng hưởng lợi.
+> Bẫy thi: *"Lambda + RDS/Aurora, lỗi too many connections"* → **RDS Proxy**, không phải tăng cỡ instance hay thêm read replica. Và RDS Proxy không chỉ dành cho Lambda: app trên Fargate/EC2 scale ra nhiều instance cũng hưởng lợi.
 
 ---
 
@@ -296,9 +296,9 @@ Hiệu năng vô nghĩa nếu mất dữ liệu. Đây là nhóm câu "RPO/RTO c
 |----------|----------------------|---------------------|
 | Ai tạo | RDS/Aurora tự tạo hằng ngày trong **backup window** | Bạn gọi `CreateDBSnapshot` / `CreateDBClusterSnapshot` |
 | Retention | **1–35 ngày** (RDS cho phép đặt 0 để tắt; Aurora tối thiểu 1 — **không tắt được**) | **Giữ tới khi bạn xoá**, không có hạn |
-| Cho phép PITR | ✅ — đây là thứ duy nhất bật được PITR | ❌ — chỉ restore về đúng thời điểm chụp |
+| Cho phép PITR | ✓ — đây là thứ duy nhất bật được PITR | ✗ — chỉ restore về đúng thời điểm chụp |
 | Khi xoá DB instance/cluster | Bị xoá theo (trừ final snapshot bạn chọn giữ) | Vẫn còn |
-| Copy cross-Region / share sang account khác | Gián tiếp (phải copy ra snapshot trước) | ✅ trực tiếp |
+| Copy cross-Region / share sang account khác | Gián tiếp (phải copy ra snapshot trước) | ✓ trực tiếp |
 | Ảnh hưởng hiệu năng | Aurora: **không** (backup liên tục ở storage layer). RDS Single-AZ: có thể khựng I/O vài giây lúc chụp | Như trên |
 
 - **Backup window**: cửa sổ ~30 phút/ngày bạn chọn (hoặc AWS chọn hộ theo Region). Đặt vào giờ thấp điểm và **không trùng maintenance window**.
@@ -317,7 +317,7 @@ Automated backup = **snapshot hằng ngày + transaction log liên tục** đẩ
 | Hệ quả vận hành | Phải trỏ app sang endpoint mới (đổi connection string, hoặc CNAME/Route 53) → RTO gồm cả bước này |
 | RPO điển hình | Vài phút (phụ thuộc latest restorable time), **không phải 0** |
 
-> 🪤 Bẫy thi kinh điển: đáp án nào nói "PITR khôi phục tại chỗ, app không phải đổi gì" → **sai**. PITR luôn sinh resource mới.
+> Bẫy thi kinh điển: đáp án nào nói "PITR khôi phục tại chỗ, app không phải đổi gì" → **sai**. PITR luôn sinh resource mới.
 
 ### 4.3 Aurora Backtrack — khác PITR thế nào
 
@@ -381,7 +381,7 @@ DynamoDB không cho bạn chọn cỡ máy. Bạn mua **thông lượng**: bản
 
 (Phép tính cho WCU ra đúng tỉ lệ đó.)
 
-> 📏 Nhiều tài liệu luyện thi còn ghi on-demand "đắt gấp ~7 lần". Đó là giá trước tháng 11/2024; AWS đã giảm 50% giá on-demand nên nay còn ~3,5 lần. Ý mà đề thi kiểm tra không đổi: **tải đều và đoán được → provisioned rẻ hơn; tải thất thường → on-demand**.
+> Nhiều tài liệu luyện thi còn ghi on-demand "đắt gấp ~7 lần". Đó là giá trước tháng 11/2024; AWS đã giảm 50% giá on-demand nên nay còn ~3,5 lần. Ý mà đề thi kiểm tra không đổi: **tải đều và đoán được → provisioned rẻ hơn; tải thất thường → on-demand**.
 
 **Tính thử một bảng có đỉnh ngắn** (đây là bài tập 5): mỗi ngày 1 giờ đỉnh 50.000 lần đọc/giây, 23 giờ còn lại 5.000 lần/giây, mỗi lần đọc tốn 1 read unit.
 
@@ -401,7 +401,7 @@ Phương án (d) rẻ nhất, với điều kiện giờ đỉnh **biết trư�
 
 Đổi qua lại giữa hai mode: từ provisioned sang on-demand được **tối đa 4 lần trong 24 giờ**; chiều ngược lại đổi lúc nào cũng được. (Đề thi và tài liệu cũ hay ghi "mỗi 24 giờ một lần".)
 
-> 💡 Đừng mặc định on-demand cho mọi bảng. Bảng production có tải đều mà để on-demand là trả gấp ~3,5 lần cho cùng lượng request.
+> Đừng mặc định on-demand cho mọi bảng. Bảng production có tải đều mà để on-demand là trả gấp ~3,5 lần cho cùng lượng request.
 
 ### 5.2 Item size & cost
 
@@ -461,8 +461,8 @@ Lý thuyết đầy đủ ở [[foundations-05-partitioning-and-sharding]]. Ba c
 
 | Index | Khoá | Tạo lúc | Lưu ở đâu | Strongly consistent? | Capacity |
 |-------|------|---------|-----------|----------------------|----------|
-| **LSI** | Cùng PK, khác SK | Chỉ lúc tạo bảng, tối đa 5 | Chung partition với bảng gốc | ✅ | Dùng chung RCU/WCU của bảng |
-| **GSI** | PK (và SK) khác hẳn | Bất kỳ lúc nào, mặc định tối đa 20 | Riêng | ❌ (eventual, vì sao chép bất đồng bộ) | RCU/WCU riêng |
+| **LSI** | Cùng PK, khác SK | Chỉ lúc tạo bảng, tối đa 5 | Chung partition với bảng gốc | ✓ | Dùng chung RCU/WCU của bảng |
+| **GSI** | PK (và SK) khác hẳn | Bất kỳ lúc nào, mặc định tối đa 20 | Riêng | ✗ (eventual, vì sao chép bất đồng bộ) | RCU/WCU riêng |
 
 Ba điều về chi phí của GSI:
 
@@ -470,7 +470,7 @@ Ba điều về chi phí của GSI:
 - **Projection** quyết định GSI chép những thuộc tính nào: `KEYS_ONLY` (chỉ khoá), `INCLUDE` (khoá + vài thuộc tính chọn), `ALL` (cả item). `ALL` tiện nhưng nhân đôi dung lượng lưu trữ và làm mọi lần ghi vào index nặng bằng cả item.
 - Nếu GSI khai thiếu WCU, nó throttle **ngược lại lần ghi vào bảng gốc**. Luôn cấp WCU cho GSI ngang với bảng.
 
-> 🪤 Bẫy thi: "Cần strongly consistent với PK khác" → **không có giải pháp 100%**. GSI eventual. Workaround: write thêm record với PK đó vào main table (denormalize).
+> Bẫy thi: "Cần strongly consistent với PK khác" → **không có giải pháp 100%**. GSI eventual. Workaround: write thêm record với PK đó vào main table (denormalize).
 
 ### 5.5 DynamoDB Streams + Lambda
 
@@ -514,7 +514,7 @@ Hệ quả hay ra đề:
 - Mất cả một Region thì app chuyển sang replica khác và **ghi tiếp được ngay**. Dữ liệu chưa kịp chép (khoảng một vài giây cuối) có thể đến muộn, tức RPO nhỏ nhưng khác 0.
 - Đọc strongly consistent chỉ nhất quán **trong một Region**. Nó không thấy lần ghi vừa xảy ra ở Region khác.
 
-> 📏 Mới hơn phạm vi đề thi: Global Tables nay có thêm chế độ **multi-Region strong consistency** (ghi đồng bộ sang ít nhất một Region khác, RPO = 0, phải triển khai đúng 3 Region). Đề SAA-C03 mặc định Global Tables là eventual + last writer wins.
+> Mới hơn phạm vi đề thi: Global Tables nay có thêm chế độ **multi-Region strong consistency** (ghi đồng bộ sang ít nhất một Region khác, RPO = 0, phải triển khai đúng 3 Region). Đề SAA-C03 mặc định Global Tables là eventual + last writer wins.
 
 ---
 
@@ -685,7 +685,7 @@ Cái giá của cluster mode enabled: lệnh đụng nhiều key cùng lúc (tra
 | **Cluster mode disabled** | 1 (1 primary + 0–5 replica) | Thêm replica | Chỉ bằng node to hơn | Dataset vừa một node, tải thiên về đọc |
 | **Cluster mode enabled** | 1–500, mỗi shard 1 primary + 0–5 replica | Thêm replica | **Thêm shard** | Dataset lớn hơn một node, hoặc ghi vượt sức một primary |
 
-> 🪤 Bẫy thi: *"Redis đang nghẽn **ghi**"* mà đáp án là "thêm read replica" → **sai**, replica chỉ nhận đọc. Phải thêm shard (cluster mode enabled) hoặc đổi node lớn hơn. (Đây là bài tập 4.)
+> Bẫy thi: *"Redis đang nghẽn **ghi**"* mà đáp án là "thêm read replica" → **sai**, replica chỉ nhận đọc. Phải thêm shard (cluster mode enabled) hoặc đổi node lớn hơn. (Đây là bài tập 4.)
 
 ### 7.3 Global Datastore
 
@@ -728,7 +728,7 @@ Mỗi cache có TTL riêng, cấu hình được.
 
 **Chỉ tăng tốc được đọc eventually consistent.** Khi app yêu cầu đọc strongly consistent (`ConsistentRead=true`), DAX **chuyển thẳng** request xuống DynamoDB và **không cache** kết quả, vì nó không có cách nào biết bản trong RAM của mình có phải mới nhất hay không. Request đó không nhanh hơn chút nào, còn tốn thêm một chặng mạng.
 
-> 🪤 Bẫy thi: "Read DynamoDB strongly consistent < 1ms" → **DAX không giúp**. DAX chỉ accelerate eventual.
+> Bẫy thi: "Read DynamoDB strongly consistent < 1ms" → **DAX không giúp**. DAX chỉ accelerate eventual.
 
 ### 8.1 DAX vs ElastiCache — chọn cái nào (câu exam kinh điển)
 
@@ -750,9 +750,9 @@ Cả hai đều là in-memory cache, nhưng phục vụ mục đích khác nhau.
 - Cache cho **RDS/Aurora** hoặc **nhiều nguồn**, cần **cấu trúc dữ liệu phong phú** (sorted set, pub/sub...) hoặc pattern cache tùy biến → **ElastiCache Redis**.
 - Cần cache DynamoDB **nhưng** muốn dùng chung một lớp cache với dữ liệu khác, hoặc cần strongly consistent qua cache → ElastiCache cache-aside (tự quản lý).
 
-> 🪤 Bẫy thi: "Cache cho **RDS/Aurora**" mà đáp án có DAX → **loại ngay**. DAX chỉ cache DynamoDB. Ngược lại "cache DynamoDB, ít sửa code nhất" mà chọn ElastiCache thì thua DAX vì phải tự code cache-aside.
+> Bẫy thi: "Cache cho **RDS/Aurora**" mà đáp án có DAX → **loại ngay**. DAX chỉ cache DynamoDB. Ngược lại "cache DynamoDB, ít sửa code nhất" mà chọn ElastiCache thì thua DAX vì phải tự code cache-aside.
 
-> 💡 Không loại trừ nhau: một hệ thống có thể dùng **DAX** cho lớp DynamoDB và **ElastiCache Redis** cho session/leaderboard cùng lúc.
+> Không loại trừ nhau: một hệ thống có thể dùng **DAX** cho lớp DynamoDB và **ElastiCache Redis** cho session/leaderboard cùng lúc.
 
 ---
 
@@ -894,7 +894,7 @@ Khác với thundering herd ở §6.4 (nhiều key hết hạn cùng lúc), ở 
 - Free tier: 7 ngày retention. Long-term: pay.
 - **Quy tắc**: bật cho mọi production DB. Free, low overhead.
 
-> 📏 Đề thi gọi công cụ này là **Performance Insights**. Từ giữa năm 2026 AWS đã gộp nó vào **CloudWatch Database Insights** (console cũ chuyển hướng sang đó); chức năng và mức 7 ngày lưu miễn phí giữ nguyên. Gặp tên nào trong đề cũng là cùng một thứ: công cụ chỉ ra query nào đang làm database chậm.
+> Đề thi gọi công cụ này là **Performance Insights**. Từ giữa năm 2026 AWS đã gộp nó vào **CloudWatch Database Insights** (console cũ chuyển hướng sang đó); chức năng và mức 7 ngày lưu miễn phí giữ nguyên. Gặp tên nào trong đề cũng là cùng một thứ: công cụ chỉ ra query nào đang làm database chậm.
 
 ---
 

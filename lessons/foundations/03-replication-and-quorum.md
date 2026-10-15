@@ -57,7 +57,7 @@ Gia đình bạn có 5 người. Mọi quyết định lớn cần "đồng thu�
       <path d="M374 182 L346 182"/>
     </g>
     <rect x="320" y="156" width="80" height="40" rx="8" fill="#ef4444" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="360" y="180" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">⚡ conflict</text>
+    <text x="360" y="180" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">conflict</text>
     <text x="360" y="232" font-size="10.5" text-anchor="middle" fill="#10b981">+ HA, latency thấp</text>
     <text x="360" y="252" font-size="10.5" text-anchor="middle" fill="#f59e0b">− phải xử conflict</text>
     <text x="360" y="272" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">(LWW dễ mất update)</text>
@@ -131,7 +131,7 @@ Khi leader chết, **failover không tức thời**:
   <polygon points="680,70 670,65 670,75" fill="currentColor" fill-opacity="0.4"/>
   <text x="680" y="62" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.6">thời gian →</text>
   <rect x="40" y="78" width="612" height="26" rx="6" fill="#ef4444" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="346" y="96" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">⛔ unavailable cho write (60-120s)</text>
+  <text x="346" y="96" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">unavailable cho write (60-120s)</text>
   <g font-size="10.5" fill="currentColor">
     <g>
       <circle cx="64" cy="70" r="6" fill="#ef4444" fill-opacity="0.9"/>
@@ -176,7 +176,7 @@ Khi leader chết, **failover không tức thời**:
   <text x="360" y="222" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Mỗi bước cộng dồn độ trễ → DNS TTL thường là thủ phạm lớn nhất. Aurora ~30s nhờ shared storage.</text>
 </svg>
 
-> 🪤 Bẫy thi: "Multi-AZ = high availability nghĩa là zero downtime"? **Sai.** Multi-AZ giảm RTO xuống phút, nhưng **không phải 0**. Muốn ~0 phải dùng Aurora với Global Database + warm standby hoặc active-active multi-region (eventual).
+> Bẫy thi: "Multi-AZ = high availability nghĩa là zero downtime"? **Sai.** Multi-AZ giảm RTO xuống phút, nhưng **không phải 0**. Muốn ~0 phải dùng Aurora với Global Database + warm standby hoặc active-active multi-region (eventual).
 
 ---
 
@@ -197,13 +197,13 @@ Khi leader chết, **failover không tức thời**:
 
 | Service | Multi-leader? | Ghi chú |
 |---------|---------------|---------|
-| **DynamoDB Global Tables** | ✅ | LWW theo timestamp. Conflict → mất update âm thầm. |
-| **Aurora Multi-Master** | ⚠️ Đã **deprecated** (2024) | Quá khó dùng, conflict nhiều. |
-| **Aurora Global Database** | ❌ Single-writer | Region phụ read-only. Có Write Forwarding nhưng latency cao. |
-| **S3 Multi-Region Access Points + CRR** | ✅ active-active | LWW theo timestamp object. |
+| **DynamoDB Global Tables** | ✓ | LWW theo timestamp. Conflict → mất update âm thầm. |
+| **Aurora Multi-Master** | Đã **deprecated** (2024) | Quá khó dùng, conflict nhiều. |
+| **Aurora Global Database** | ✗ Single-writer | Region phụ read-only. Có Write Forwarding nhưng latency cao. |
+| **S3 Multi-Region Access Points + CRR** | ✓ active-active | LWW theo timestamp object. |
 | **CockroachDB / Spanner** (không phải AWS thuần) | Quorum cross-region, không phải multi-leader thuần |  |
 
-> 💡 Pattern thực tế: dùng single-leader trong region (consistency), multi-leader giữa các region (availability). Đó chính là **DynamoDB Global Tables**.
+> Pattern thực tế: dùng single-leader trong region (consistency), multi-leader giữa các region (availability). Đó chính là **DynamoDB Global Tables**.
 
 ---
 
@@ -266,7 +266,7 @@ Vì với W + R > N, mọi write quorum và mọi read quorum đều **có giao 
 
 Aurora lưu **6 copies / 3 AZ** (2 copies/AZ). Write quorum **4/6**, read quorum **3/6**.
 
-- 4 + 3 = 7 > 6 → ✅ strong consistency.
+- 4 + 3 = 7 > 6 → ✓ strong consistency.
 - Mất **1 AZ (2 copies)** → vẫn còn 4 copies → write OK (4/4).
 - Mất **1 AZ + 1 copy** = mất 3 → còn 3 → **write fail** (cần 4), nhưng **read vẫn OK** (cần 3).
 - → Aurora chịu được **AZ failure mà không mất availability ghi**, và **AZ + 1 disk failure** mà không mất khả năng đọc.
@@ -297,8 +297,8 @@ Aurora lưu **6 copies / 3 AZ** (2 copies/AZ). Write quorum **4/6**, read quorum
     <rect x="252" y="210" width="216" height="76" rx="8" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
     <g>
       <text x="300" y="226" font-size="9" fill="currentColor" opacity="0.6">AZ chết</text>
-      <circle cx="288" cy="248" r="12" fill="currentColor" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.6" stroke-dasharray="3 2"/><text x="288" y="252" fill="#ef4444" font-weight="700">✕</text>
-      <circle cx="320" cy="248" r="12" fill="currentColor" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.6" stroke-dasharray="3 2"/><text x="320" y="252" fill="#ef4444" font-weight="700">✕</text>
+      <circle cx="288" cy="248" r="12" fill="currentColor" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.6" stroke-dasharray="3 2"/><text x="288" y="252" fill="#ef4444" font-weight="700">✗</text>
+      <circle cx="320" cy="248" r="12" fill="currentColor" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.6" stroke-dasharray="3 2"/><text x="320" y="252" fill="#ef4444" font-weight="700">✗</text>
     </g>
     <g>
       <circle cx="364" cy="248" r="12" fill="#10b981" fill-opacity="0.85"/><text x="364" y="252" fill="#fff" font-weight="700">✓</text>
@@ -312,9 +312,9 @@ Aurora lưu **6 copies / 3 AZ** (2 copies/AZ). Write quorum **4/6**, read quorum
     <text x="596" y="58" font-size="12.5" font-weight="700" fill="currentColor">Mất AZ + 1 copy (−3)</text>
     <rect x="488" y="68" width="216" height="76" rx="8" fill="#ef4444" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
     <g>
-      <circle cx="520" cy="106" r="12" fill="currentColor" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.6" stroke-dasharray="3 2"/><text x="520" y="110" fill="#ef4444" font-weight="700">✕</text>
-      <circle cx="548" cy="106" r="12" fill="currentColor" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.6" stroke-dasharray="3 2"/><text x="548" y="110" fill="#ef4444" font-weight="700">✕</text>
-      <circle cx="576" cy="106" r="12" fill="currentColor" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.6" stroke-dasharray="3 2"/><text x="576" y="110" fill="#ef4444" font-weight="700">✕</text>
+      <circle cx="520" cy="106" r="12" fill="currentColor" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.6" stroke-dasharray="3 2"/><text x="520" y="110" fill="#ef4444" font-weight="700">✗</text>
+      <circle cx="548" cy="106" r="12" fill="currentColor" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.6" stroke-dasharray="3 2"/><text x="548" y="110" fill="#ef4444" font-weight="700">✗</text>
+      <circle cx="576" cy="106" r="12" fill="currentColor" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.6" stroke-dasharray="3 2"/><text x="576" y="110" fill="#ef4444" font-weight="700">✗</text>
     </g>
     <g>
       <circle cx="612" cy="106" r="12" fill="#10b981" fill-opacity="0.85"/><text x="612" y="110" fill="#fff" font-weight="700">✓</text>

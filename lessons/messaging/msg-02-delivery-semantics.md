@@ -32,7 +32,7 @@ Xét consumer làm 2 việc: (a) xử lý message, (b) báo cho broker "đã xon
 <text x="85" y="164" text-anchor="middle" font-size="10" fill="currentColor">CRASH khi</text>
 <text x="85" y="177" text-anchor="middle" font-size="10" fill="currentColor">đang xử lý</text>
 <text x="165" y="208" text-anchor="middle" font-size="11" fill="currentColor">Broker tưởng xong → không gửi lại</text>
-<text x="165" y="224" text-anchor="middle" font-size="11" fill="currentColor">➜ MẤT message (at-most-once)</text>
+<text x="165" y="224" text-anchor="middle" font-size="11" fill="currentColor">→ MẤT message (at-most-once)</text>
 <line x1="330" y1="40" x2="330" y2="200" stroke="currentColor" stroke-width="0.5" stroke-dasharray="3 3"/>
 <text x="495" y="22" text-anchor="middle" font-size="13" fill="currentColor">Xử lý TRƯỚC, ack sau</text>
 <rect x="450" y="45" width="90" height="30" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
@@ -45,7 +45,7 @@ Xét consumer làm 2 việc: (a) xử lý message, (b) báo cho broker "đã xon
 <text x="495" y="164" text-anchor="middle" font-size="10" fill="currentColor">CRASH trước</text>
 <text x="495" y="177" text-anchor="middle" font-size="10" fill="currentColor">khi kịp ack</text>
 <text x="495" y="208" text-anchor="middle" font-size="11" fill="currentColor">Broker chưa nhận ack → gửi LẠI</text>
-<text x="495" y="224" text-anchor="middle" font-size="11" fill="currentColor">➜ TRÙNG message (at-least-once)</text>
+<text x="495" y="224" text-anchor="middle" font-size="11" fill="currentColor">→ TRÙNG message (at-least-once)</text>
 <defs><marker id="ad" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
 </svg>
 

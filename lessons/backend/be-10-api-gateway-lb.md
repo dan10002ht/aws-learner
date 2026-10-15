@@ -77,7 +77,7 @@ Những việc gateway gánh:
   </g>
 </svg>
 
-> 💡 Ghi nhớ: gateway là nơi hội tụ **policy**, không phải nơi chứa **business logic**. Khi bạn thấy mình viết logic tính giá đơn hàng trong gateway, đó là mùi của "smart gateway" — một cục nghẽn về mặt tổ chức và triển khai. Gateway phải mỏng.
+> Ghi nhớ: gateway là nơi hội tụ **policy**, không phải nơi chứa **business logic**. Khi bạn thấy mình viết logic tính giá đơn hàng trong gateway, đó là mùi của "smart gateway" — một cục nghẽn về mặt tổ chức và triển khai. Gateway phải mỏng.
 
 ### BFF — Backend for Frontend
 
@@ -269,7 +269,7 @@ Chọn backend nào là một quyết định thuật toán, mỗi cái có gi�
   </g>
 </svg>
 
-> ⚠️ Bẫy production: round-robin *nghe* công bằng nhưng thường không phải. Nếu một backend vừa restart (cache lạnh, JIT chưa warm) hoặc request có độ nặng rất lệch, round-robin vẫn dội đều lên nó và gây p99 xấu. **Least-connections** hoặc **least-response-time** phản ứng với thực tế tốt hơn cho tải không đồng nhất.
+> Bẫy production: round-robin *nghe* công bằng nhưng thường không phải. Nếu một backend vừa restart (cache lạnh, JIT chưa warm) hoặc request có độ nặng rất lệch, round-robin vẫn dội đều lên nó và gây p99 xấu. **Least-connections** hoặc **least-response-time** phản ứng với thực tế tốt hơn cho tải không đồng nhất.
 
 ### Health check — chủ động vs bị động
 
@@ -280,7 +280,7 @@ Load balancer chỉ hữu ích nếu nó **ngừng gửi request tới backend c
 
 Thực tế dùng **cả hai**: active để bắt node chết khi rảnh, passive để eject nhanh node đang lỗi dưới tải. Và phân biệt **liveness vs readiness**: readiness check phải phản ánh *có sẵn sàng nhận traffic không* (đã kết nối DB, đã warm cache) — một pod vừa start nhưng chưa nối được DB phải trả *không sẵn sàng* để LB chưa gửi request, dù tiến trình vẫn sống.
 
-> 💡 Ghi nhớ: health endpoint phải kiểm thứ *thực sự cần để phục vụ* (nối được DB, downstream sống) nhưng **đừng cascade**: nếu `/healthz` của bạn gọi sang 5 service khác và một cái chậm, cả cụm bạn bị đánh unhealthy dây chuyền → tự gây outage. Health check nên nông và nhanh.
+> Ghi nhớ: health endpoint phải kiểm thứ *thực sự cần để phục vụ* (nối được DB, downstream sống) nhưng **đừng cascade**: nếu `/healthz` của bạn gọi sang 5 service khác và một cái chậm, cả cụm bạn bị đánh unhealthy dây chuyền → tự gây outage. Health check nên nông và nhanh.
 
 ### Session affinity (sticky session)
 

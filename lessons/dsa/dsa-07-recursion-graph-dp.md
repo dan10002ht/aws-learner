@@ -103,7 +103,7 @@ Mỗi lần một hàm được gọi, máy đẩy một **stack frame** (khung 
 
 Vì mỗi lần gọi tốn một frame, độ sâu đệ quy `d` tiêu tốn **O(d) bộ nhớ stack**. Đệ quy quá sâu (vài chục nghìn lần) sẽ tràn stack — `RecursionError` / `StackOverflowError`.
 
-> ⚠️ Bẫy: Python mặc định giới hạn đệ quy ~1000 lần. Một vòng lặp đơn giản trên mảng 10^5 phần tử nếu viết kiểu đệ quy sẽ crash. Khi độ sâu có thể lớn, hãy chuyển sang **vòng lặp** hoặc dùng stack tường minh.
+> Bẫy: Python mặc định giới hạn đệ quy ~1000 lần. Một vòng lặp đơn giản trên mảng 10^5 phần tử nếu viết kiểu đệ quy sẽ crash. Khi độ sâu có thể lớn, hãy chuyển sang **vòng lặp** hoặc dùng stack tường minh.
 
 ### 1.3. Đệ quy vs lặp (iteration)
 
@@ -116,7 +116,7 @@ Mọi thuật toán đệ quy đều **viết lại được** bằng vòng lặ
 | Cây/graph/chia để trị | Rất tự nhiên | Phải tự quản lý stack |
 | Duyệt mảng tuyến tính | Lãng phí | Phù hợp nhất |
 
-> 💡 Ghi nhớ: Dùng đệ quy khi bài toán **tự định nghĩa bằng chính nó** (cây, graph, chia để trị, backtracking). Dùng lặp khi chỉ đi tuyến tính qua dữ liệu — vừa nhanh hơn vừa không lo tràn stack.
+> Ghi nhớ: Dùng đệ quy khi bài toán **tự định nghĩa bằng chính nó** (cây, graph, chia để trị, backtracking). Dùng lặp khi chỉ đi tuyến tính qua dữ liệu — vừa nhanh hơn vừa không lo tràn stack.
 
 ## 2. Backtracking — quay lui
 
@@ -239,7 +239,7 @@ std::vector<std::vector<int>> permutations(const std::vector<int>& nums) {
 
 Số hoán vị là `n!`, nên độ phức tạp là **O(n × n!)** — backtracking vốn dĩ "đắt", chỉ dùng khi `n` nhỏ.
 
-> 💡 Ghi nhớ: **Tổ hợp (combinations)** chỉ khác hoán vị ở một chỗ — để tránh đếm lặp `{1,2}` và `{2,1}`, ta truyền thêm một chỉ số `start` và vòng lặp chỉ chạy từ `start` trở đi, không quay lại các phần tử đã xét.
+> Ghi nhớ: **Tổ hợp (combinations)** chỉ khác hoán vị ở một chỗ — để tránh đếm lặp `{1,2}` và `{2,1}`, ta truyền thêm một chỉ số `start` và vòng lặp chỉ chạy từ `start` trở đi, không quay lại các phần tử đã xét.
 
 ### 2.3. Ý tưởng N-queens
 
@@ -500,7 +500,7 @@ Cả BFS và DFS đều chạy **O(V + E)** vì mỗi đỉnh và mỗi cạnh �
 | BFS | Queue (FIFO) | Có | Khoảng cách ngắn nhất, lan theo lớp |
 | DFS | Stack / đệ quy | Không | Chu trình, liên thông, topo sort |
 
-> ⚠️ Bẫy: **Luôn đánh dấu `visited`** trước/ngay khi đưa node vào queue/stack. Quên bước này, đồ thị có chu trình sẽ khiến bạn lặp vô hạn. Lỗi kinh điển: đánh dấu `visited` ở lúc *lấy ra* thay vì lúc *đưa vào* queue → cùng một node bị nhồi vào queue nhiều lần.
+> Bẫy: **Luôn đánh dấu `visited`** trước/ngay khi đưa node vào queue/stack. Quên bước này, đồ thị có chu trình sẽ khiến bạn lặp vô hạn. Lỗi kinh điển: đánh dấu `visited` ở lúc *lấy ra* thay vì lúc *đưa vào* queue → cùng một node bị nhồi vào queue nhiều lần.
 
 ## 4. Dynamic Programming nhập môn
 
@@ -736,9 +736,9 @@ int coinChange(const std::vector<int>& coins, int amount) {
 
 Độ phức tạp **O(amount × số loại coin)** thời gian, **O(amount)** bộ nhớ.
 
-> 💡 Ghi nhớ: Quy trình giải mọi bài DP gồm 4 bước — (1) định nghĩa **trạng thái** `dp[...]` nghĩa là gì; (2) viết **công thức truy hồi** nối trạng thái lớn với trạng thái nhỏ; (3) xác định **base case**; (4) chọn thứ tự điền bảng (top-down hay bottom-up). Nắm chắc bước 1 và 2 là giải được 80% bài.
+> Ghi nhớ: Quy trình giải mọi bài DP gồm 4 bước — (1) định nghĩa **trạng thái** `dp[...]` nghĩa là gì; (2) viết **công thức truy hồi** nối trạng thái lớn với trạng thái nhỏ; (3) xác định **base case**; (4) chọn thứ tự điền bảng (top-down hay bottom-up). Nắm chắc bước 1 và 2 là giải được 80% bài.
 
-> ⚠️ Bẫy: Với coin change, **không** tham lam chọn đồng mệnh giá lớn nhất trước. Ví dụ `coins = [1, 3, 4]`, `amount = 6`: tham lam ra `4+1+1 = 3 xu`, nhưng đáp án tối ưu là `3+3 = 2 xu`. Greedy chỉ đúng với một số hệ tiền tệ đặc biệt — DP mới luôn đúng.
+> Bẫy: Với coin change, **không** tham lam chọn đồng mệnh giá lớn nhất trước. Ví dụ `coins = [1, 3, 4]`, `amount = 6`: tham lam ra `4+1+1 = 3 xu`, nhưng đáp án tối ưu là `3+3 = 2 xu`. Greedy chỉ đúng với một số hệ tiền tệ đặc biệt — DP mới luôn đúng.
 
 ## 5. Tổng kết & bản đồ quyết định
 
@@ -753,4 +753,4 @@ int coinChange(const std::vector<int>& coins, int amount) {
 
 Bốn chủ đề này gắn kết hơn vẻ ngoài: backtracking là đệ quy có quay lui; DFS chính là đệ quy trên graph; DP là đệ quy được cache lại. Khi luyện phỏng vấn, hãy tập **đặt tên đúng cho bài toán trước** — nhận ra "à, đây là graph" hay "đây là DP" — vì một khi gắn đúng nhãn, bộ khung lời giải gần như tự hiện ra.
 
-> 💡 Ghi nhớ cuối bài: Đừng học thuộc lời giải từng bài. Hãy thuộc **bộ khung (template)**: khung backtracking (chọn–đi sâu–quay lui), khung BFS/DFS (queue/đệ quy + visited), khung DP (định nghĩa trạng thái + truy hồi). Hàng trăm bài phỏng vấn chỉ là biến thể của vài bộ khung này.
+> Ghi nhớ cuối bài: Đừng học thuộc lời giải từng bài. Hãy thuộc **bộ khung (template)**: khung backtracking (chọn–đi sâu–quay lui), khung BFS/DFS (queue/đệ quy + visited), khung DP (định nghĩa trạng thái + truy hồi). Hàng trăm bài phỏng vấn chỉ là biến thể của vài bộ khung này.

@@ -54,7 +54,7 @@ Dữ liệu mẫu trong bảng `customers` (ta sẽ tham chiếu suốt bài):
 | 5  | Bình  | Đà Nẵng | 19  | binh@mail.com |
 | 6  | Chi   | TP HCM  | 33  | NULL          |
 
-> 💡 Ghi nhớ: **bảng = một loại sự vật, cột = thuộc tính, hàng = một bản ghi cụ thể.** Mọi câu truy vấn đều xoay quanh việc "chọn hàng nào, lấy cột nào".
+> Ghi nhớ: **bảng = một loại sự vật, cột = thuộc tính, hàng = một bản ghi cụ thể.** Mọi câu truy vấn đều xoay quanh việc "chọn hàng nào, lấy cột nào".
 
 **Chạy thử ở đâu?** Cách nhanh nhất là vào [sqliteonline.com](https://sqliteonline.com) hoặc [db-fiddle.com](https://www.db-fiddle.com), dán đoạn `CREATE TABLE` ở trên cùng vài câu `INSERT`, rồi gõ thử từng ví dụ trong bài.
 
@@ -97,7 +97,7 @@ FROM products;
 | 4  | Tai nghe  | Âm thanh | 800   |
 | 5  | Webcam    | Phụ kiện | 600   |
 
-> ⚠️ Lỗi người mới hay gặp: lạm dụng `SELECT *` trong code thật. Khi bảng có hàng chục cột, lấy hết là **lãng phí** và dễ vỡ khi schema đổi. Dùng `*` để thăm dò, nhưng trong ứng dụng hãy liệt kê đúng cột cần.
+> Lỗi người mới hay gặp: lạm dụng `SELECT *` trong code thật. Khi bảng có hàng chục cột, lấy hết là **lãng phí** và dễ vỡ khi schema đổi. Dùng `*` để thăm dò, nhưng trong ứng dụng hãy liệt kê đúng cột cần.
 
 ## WHERE: lọc hàng theo điều kiện
 
@@ -154,7 +154,7 @@ WHERE city = 'Hà Nội';
 | Lan  | Hà Nội |
 | Hoa  | Hà Nội |
 
-> ⚠️ Lỗi người mới hay gặp: trong SQL, so sánh bằng dùng **một** dấu `=` (không phải `==` như nhiều ngôn ngữ lập trình). Và chuỗi văn bản phải đặt trong **dấu nháy đơn**: `'Hà Nội'`, không phải nháy kép.
+> Lỗi người mới hay gặp: trong SQL, so sánh bằng dùng **một** dấu `=` (không phải `==` như nhiều ngôn ngữ lập trình). Và chuỗi văn bản phải đặt trong **dấu nháy đơn**: `'Hà Nội'`, không phải nháy kép.
 
 ### Lớn hơn, nhỏ hơn
 
@@ -238,7 +238,7 @@ WHERE email LIKE '%@mail.com';
 | Tuấn | tuan@mail.com |
 | Bình | binh@mail.com |
 
-> 💡 Ghi nhớ: `'H%'` = bắt đầu bằng H; `'%a'` = kết thúc bằng a; `'%an%'` = chứa "an" ở bất kỳ đâu.
+> Ghi nhớ: `'H%'` = bắt đầu bằng H; `'%a'` = kết thúc bằng a; `'%an%'` = chứa "an" ở bất kỳ đâu.
 
 ## AND / OR / NOT: kết hợp điều kiện
 
@@ -275,7 +275,7 @@ WHERE (city = 'Đà Nẵng' OR city = 'TP HCM')
 
 (Bình ở Đà Nẵng nhưng 19 tuổi nên `NOT age < 20` loại bạn ấy ra.)
 
-> ⚠️ Lỗi người mới hay gặp: trộn `AND` và `OR` mà không dùng ngoặc. `AND` được tính trước `OR`, nên kết quả dễ sai ý bạn. Hãy đặt ngoặc cho rõ ràng:
+> Lỗi người mới hay gặp: trộn `AND` và `OR` mà không dùng ngoặc. `AND` được tính trước `OR`, nên kết quả dễ sai ý bạn. Hãy đặt ngoặc cho rõ ràng:
 > ```sql
 > WHERE (city = 'Hà Nội' OR city = 'Đà Nẵng') AND age >= 30;
 > ```
@@ -344,7 +344,7 @@ LIMIT 3 OFFSET 3;
 | Hoa  | 22  |
 | Bình | 19  |
 
-> 💡 Ghi nhớ: luôn dùng `ORDER BY` đi kèm `LIMIT`. Nếu không sắp xếp, "3 hàng đầu" là 3 hàng **bất kỳ** — chạy lại có thể ra khác.
+> Ghi nhớ: luôn dùng `ORDER BY` đi kèm `LIMIT`. Nếu không sắp xếp, "3 hàng đầu" là 3 hàng **bất kỳ** — chạy lại có thể ra khác.
 
 ## DISTINCT: loại bỏ trùng lặp
 
@@ -367,7 +367,7 @@ Không có `DISTINCT`, câu này trả về 6 hàng (mỗi khách một dòng, "
 
 `NULL` nghĩa là **không có giá trị / chưa biết** — khác hẳn với số 0 hay chuỗi rỗng. Trong bảng `customers`, Hoa và Chi có `email` là `NULL`.
 
-> ⚠️ Lỗi người mới hay gặp: dùng `= NULL` để tìm ô trống. Sai! Vì `NULL` nghĩa là "không biết", nên `email = NULL` không bao giờ TRUE. Phải dùng `IS NULL` / `IS NOT NULL`:
+> Lỗi người mới hay gặp: dùng `= NULL` để tìm ô trống. Sai! Vì `NULL` nghĩa là "không biết", nên `email = NULL` không bao giờ TRUE. Phải dùng `IS NULL` / `IS NOT NULL`:
 
 ```sql
 -- Khách chưa có email
@@ -413,7 +413,7 @@ LIMIT 2;
 
 `AS` cũng dùng cho **bảng** (viết tắt khi câu lệnh dài), và từ khoá `AS` có thể bỏ — `customers c` cũng được hiểu như `customers AS c`. Bạn sẽ thấy điều này rất tiện ở bài JOIN.
 
-> 💡 Ghi nhớ thứ tự viết một câu truy vấn cơ bản:
+> Ghi nhớ thứ tự viết một câu truy vấn cơ bản:
 > `SELECT` cột → `FROM` bảng → `WHERE` lọc → `ORDER BY` sắp xếp → `LIMIT` cắt bớt.
 > Viết sai thứ tự này, database sẽ báo lỗi cú pháp.
 
@@ -515,6 +515,6 @@ Khi đưa ứng dụng lên cloud, bạn hiếm khi tự cài và vận hành m�
 - **Amazon Aurora**: bản database quan hệ của AWS, **tương thích** với MySQL và PostgreSQL nhưng nhanh hơn và tự co giãn lưu trữ. Cùng cú pháp SQL — bạn chuyển từ RDS sang Aurora gần như không phải sửa truy vấn.
 - **Amazon DynamoDB**: đây là **NoSQL** — không dùng bảng/cột/SQL kiểu trên, mà lưu theo key-value/document. Không có `SELECT ... WHERE` tự do; bạn truy vấn theo khoá đã thiết kế trước. Phù hợp khi cần độ trễ cực thấp ở quy mô rất lớn (giỏ hàng, phiên đăng nhập), nhưng đánh đổi sự linh hoạt truy vấn.
 
-> 💡 Ghi nhớ: **RDS và Aurora = SQL quan hệ** (mọi thứ trong bài này áp dụng trực tiếp). **DynamoDB = NoSQL**, một mô hình khác. Khi đề thi hay dự án nhắc "dữ liệu có quan hệ, cần JOIN và truy vấn linh hoạt" → nghĩ tới RDS/Aurora; "key-value đơn giản, quy mô khổng lồ, độ trễ thấp" → nghĩ tới DynamoDB.
+> Ghi nhớ: **RDS và Aurora = SQL quan hệ** (mọi thứ trong bài này áp dụng trực tiếp). **DynamoDB = NoSQL**, một mô hình khác. Khi đề thi hay dự án nhắc "dữ liệu có quan hệ, cần JOIN và truy vấn linh hoạt" → nghĩ tới RDS/Aurora; "key-value đơn giản, quy mô khổng lồ, độ trễ thấp" → nghĩ tới DynamoDB.
 
 Ở bài tiếp theo bạn sẽ học cách **nối nhiều bảng** với `JOIN` — ghép `orders` với `customers` và `products` để trả lời câu hỏi "khách nào mua sản phẩm gì".

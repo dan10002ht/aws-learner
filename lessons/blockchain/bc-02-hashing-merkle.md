@@ -37,7 +37,7 @@ H("hello")  = 2cf24dba...  (lặp lại → LUÔN giống lần trước)
 
 **Fixed-size + avalanche = digest như dấu vân tay.** Không suy ngược ra bản gốc, nhưng ai có bản gốc đều kiểm chứng được. Đó chính là thứ ta cần để "niêm phong" dữ liệu.
 
-> ⚠️ **Phân biệt hash mật mã vs hash thường.** CRC32 hay hàm hash của HashMap cũng cho output cố định và deterministic, nhưng **KHÔNG** one-way và **KHÔNG** collision-resistant — cố tình tạo va chạm rất dễ. Chúng chỉ để phát hiện lỗi ngẫu nhiên / phân bố khóa, **tuyệt đối không** dùng cho bảo mật. Cũng đừng dùng **MD5, SHA-1** (đã bị phá collision — Google SHAttered 2017). Blockchain dùng SHA-256 (Bitcoin), Keccak-256 (Ethereum), BLAKE2/3...
+> **Phân biệt hash mật mã vs hash thường.** CRC32 hay hàm hash của HashMap cũng cho output cố định và deterministic, nhưng **KHÔNG** one-way và **KHÔNG** collision-resistant — cố tình tạo va chạm rất dễ. Chúng chỉ để phát hiện lỗi ngẫu nhiên / phân bố khóa, **tuyệt đối không** dùng cho bảo mật. Cũng đừng dùng **MD5, SHA-1** (đã bị phá collision — Google SHAttered 2017). Blockchain dùng SHA-256 (Bitcoin), Keccak-256 (Ethereum), BLAKE2/3...
 
 ### 2.3 SHA-256 hoạt động thế nào (đủ để hiểu, không cần thuộc)
 

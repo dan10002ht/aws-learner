@@ -2,7 +2,7 @@
 
 Phần lớn lỗ hổng nghiêm trọng không nằm ở thuật toán phức tạp, mà nằm ở chỗ dữ liệu đi vào và đi ra khỏi code của bạn. Là kỹ sư xây hệ thống, bạn không cần biết viết exploit — bạn cần biết dữ liệu nào *không tin được*, nó sẽ bị diễn giải lại ở đâu (SQL engine, trình duyệt, shell, deserializer), và đặt rào chắn đúng chỗ. Bài này đi theo dòng đời của dữ liệu: **vào → xử lý → ra → lưu trữ**.
 
-> 💡 **Nguyên tắc**: Mọi dữ liệu từ bên ngoài process của bạn (HTTP request, file upload, message queue, response của service khác, biến môi trường người dùng kiểm soát) đều là *untrusted* cho đến khi được validate. "Bên ngoài" gồm cả service nội bộ — zero trust không dừng ở mạng.
+> **Nguyên tắc**: Mọi dữ liệu từ bên ngoài process của bạn (HTTP request, file upload, message queue, response của service khác, biến môi trường người dùng kiểm soát) đều là *untrusted* cho đến khi được validate. "Bên ngoài" gồm cả service nội bộ — zero trust không dừng ở mạng.
 
 Cả bài là một dòng chảy: dữ liệu không tin được đi qua từng biên, mỗi biên có **một rào chắn** đặt đúng chỗ. Đây là bản đồ tổng thể:
 
@@ -56,14 +56,14 @@ Sai lầm kinh điển là cố liệt kê những thứ *xấu* để chặn (b
 Ví dụ tấn công: một endpoint nhận `?sort=name` rồi nhét thẳng vào câu SQL `ORDER BY name`. Attacker gửi `?sort=name; DROP TABLE users--`. Bạn thử chặn dấu `;` và `--`, nhưng họ dùng `sort=(SELECT CASE WHEN ...)` để blind SQLi. Blocklist thua.
 
 ```python
-# ❌ TRƯỚC: blocklist + nội suy chuỗi
+# ✗ TRƯỚC: blocklist + nội suy chuỗi
 BAD = [";", "--", "drop"]
 def build_query(sort):
     if any(b in sort.lower() for b in BAD):
         raise ValueError("invalid")
     return f"SELECT * FROM users ORDER BY {sort}"  # vẫn injectable
 
-# ✅ SAU: allowlist — chỉ map các giá trị hợp lệ đã biết
+# ✓ SAU: allowlist — chỉ map các giá trị hợp lệ đã biết
 ALLOWED_SORT = {
     "name":    "name ASC",
     "name_desc": "name DESC",
@@ -99,7 +99,7 @@ app.post("/users", (req, res) => {
 });
 ```
 
-> ⚠️ **Lỗ hổng — Mass assignment**: `User.create(req.body)` cho phép attacker thêm `{"is_admin": true}` vào body. Luôn allowlist các field được nhận; đừng bind thẳng request vào model/ORM.
+> **Lỗ hổng — Mass assignment**: `User.create(req.body)` cho phép attacker thêm `{"is_admin": true}` vào body. Luôn allowlist các field được nhận; đừng bind thẳng request vào model/ORM.
 
 **Checklist validate input**
 - [ ] Validate tại boundary (controller/handler), không rải rác trong business logic.
@@ -113,10 +113,10 @@ app.post("/users", (req, res) => {
 Validate input là *defense in depth*, không phải lớp bảo vệ duy nhất chống SQLi. Lớp đúng đắn là **tách dữ liệu khỏi mã lệnh**: dùng placeholder, để driver gửi data riêng. Khi đó dù input chứa `' OR 1=1--`, nó vẫn chỉ là một chuỗi giá trị, không bao giờ được parse thành SQL.
 
 ```python
-# ❌ TRƯỚC: nội suy → SQL injection
+# ✗ TRƯỚC: nội suy → SQL injection
 cur.execute(f"SELECT * FROM users WHERE email = '{email}'")
 
-# ✅ SAU: parameterized — driver bind tham số an toàn
+# ✓ SAU: parameterized — driver bind tham số an toàn
 cur.execute("SELECT * FROM users WHERE email = %s", (email,))
 ```
 
@@ -134,7 +134,7 @@ Lưu ý: placeholder chỉ bind được **giá trị**, không bind được **
 ```go
 // Go: tránh command injection — truyền args, KHÔNG dùng "sh -c <chuỗi>"
 cmd := exec.Command("convert", inputPath, "-resize", "100x100", outputPath)
-// ❌ exec.Command("sh", "-c", "convert "+inputPath+" ...")
+// ✗ exec.Command("sh", "-c", "convert "+inputPath+" ...")
 ```
 
 ```cpp
@@ -154,11 +154,11 @@ void resizeImage(const std::string& inputPath, const std::string& outputPath) {
         execvp(argv[0], argv.data());  // không qua shell, không bị inject
         _exit(127);
     }
-    // ❌ system(("convert " + inputPath + " ...").c_str());  // qua /bin/sh → injectable
+    // ✗ system(("convert " + inputPath + " ...").c_str());  // qua /bin/sh → injectable
 }
 ```
 
-> 💡 **Nguyên tắc**: Với mỗi interpreter (SQL, shell, LDAP, XPath, template engine), tìm cơ chế "data ≠ code" của nó (parameter binding, arg array) và dùng nó *mặc định*. Nội suy chuỗi vào ngôn ngữ khác là code smell cần review.
+> **Nguyên tắc**: Với mỗi interpreter (SQL, shell, LDAP, XPath, template engine), tìm cơ chế "data ≠ code" của nó (parameter binding, arg array) và dùng nó *mặc định*. Nội suy chuỗi vào ngôn ngữ khác là code smell cần review.
 
 ## 3. Output encoding theo context
 
@@ -217,12 +217,12 @@ Cùng một giá trị toả ra nhiều đích, mỗi đích đòi một bộ en
 </svg>
 
 ```jsx
-// ✅ React mặc định HTML-encode mọi {biểu thức} trong JSX
+// ✓ React mặc định HTML-encode mọi {biểu thức} trong JSX
 function Profile({ name }) {
   return <span>{name}</span>; // an toàn cho HTML body context
 }
 
-// ⚠️ Các "cửa hậu" bỏ qua encoding — chỉ dùng với nội dung đã sanitize
+// Các "cửa hậu" bỏ qua encoding — chỉ dùng với nội dung đã sanitize
 <div dangerouslySetInnerHTML={{ __html: sanitize(userHtml) }} />
 ```
 
@@ -233,7 +233,7 @@ const safe = JSON.stringify(userData)            // encode JS string/object
 res.send(`<script>window.__DATA__ = ${safe};</script>`);
 ```
 
-> ⚠️ **Lỗ hổng — sai context**: HTML-encode một giá trị rồi nhét vào `href="javascript:..."` hay vào `<script>` không hề an toàn, vì `<` không phải ký tự nguy hiểm trong JS context. Encode đúng *đích đến*, không phải đúng *nguồn*.
+> **Lỗ hổng — sai context**: HTML-encode một giá trị rồi nhét vào `href="javascript:..."` hay vào `<script>` không hề an toàn, vì `<` không phải ký tự nguy hiểm trong JS context. Encode đúng *đích đến*, không phải đúng *nguồn*.
 
 Với rich text do user nhập (cho phép một số thẻ), đừng tự viết regex lọc thẻ — dùng thư viện sanitize đã được kiểm chứng (DOMPurify ở client, các sanitizer maintained ở server) với allowlist thẻ/thuộc tính. Bổ sung **Content-Security-Policy** làm lớp chặn cuối: dù lọt một XSS, CSP `script-src 'self'` ngăn inline script và domain lạ thực thi.
 
@@ -244,11 +244,11 @@ Deserialize dữ liệu untrusted bằng cơ chế cho phép tạo object tuỳ 
 Ví dụ tấn công: API nhận một cookie/field là object Java đã serialize. Attacker gửi một "gadget chain" (chuỗi object lợi dụng các class có sẵn trong classpath) khiến server chạy lệnh khi `readObject()` được gọi — không cần biết mật khẩu, không cần lỗ hổng nào khác.
 
 ```python
-# ❌ TRƯỚC: pickle trên dữ liệu từ network = RCE
+# ✗ TRƯỚC: pickle trên dữ liệu từ network = RCE
 import pickle
 obj = pickle.loads(request.body)     # body do attacker kiểm soát
 
-# ✅ SAU: dùng định dạng data-only + schema
+# ✓ SAU: dùng định dạng data-only + schema
 import json
 data = json.loads(request.body)      # JSON không thể khởi tạo class/chạy code
 user = CreateUser(**validate(data))  # validate rồi mới dựng object có kiểm soát
@@ -260,7 +260,7 @@ Nguyên tắc thực dụng:
 - Nếu buộc phải deserialize sang object, dùng cơ chế bind **theo schema/type cụ thể** (Jackson với type cố định, không bật polymorphic typing với input ngoài), và allowlist class.
 - XML: tắt external entity (chống **XXE**) — `disallow-doctype-decl` hoặc tắt DTD/external entities trong parser.
 
-> 💡 **Nguyên tắc**: Hỏi "định dạng này có thể *tạo ra hành vi*, hay chỉ mang *dữ liệu*?". Nếu mang hành vi, không dùng nó với input từ ngoài.
+> **Nguyên tắc**: Hỏi "định dạng này có thể *tạo ra hành vi*, hay chỉ mang *dữ liệu*?". Nếu mang hành vi, không dùng nó với input từ ngoài.
 
 ## 5. Xử lý lỗi không làm lộ thông tin
 
@@ -269,7 +269,7 @@ Thông báo lỗi là kênh rò rỉ kinh điển. Stack trace, câu SQL gốc, 
 Ví dụ tấn công (user enumeration): form login trả `"Email không tồn tại"` vs `"Sai mật khẩu"`. Attacker dò được danh sách email hợp lệ → tập trung brute-force/credential stuffing. Phòng: thông điệp đồng nhất + so sánh thời gian không đổi để tránh timing oracle.
 
 ```python
-# ❌ TRƯỚC: lộ chi tiết + cho phép enumeration
+# ✗ TRƯỚC: lộ chi tiết + cho phép enumeration
 try:
     user = db.get_user(email)        # raise nếu không có
     if user.password_hash != hash(pw):
@@ -277,7 +277,7 @@ try:
 except Exception as e:
     return {"error": str(e), "trace": traceback.format_exc()}, 500
 
-# ✅ SAU: thông điệp generic ra ngoài, chi tiết chỉ vào log nội bộ
+# ✓ SAU: thông điệp generic ra ngoài, chi tiết chỉ vào log nội bộ
 try:
     user = db.get_user(email)
     ok = user is not None and verify_password(pw, user.password_hash)
@@ -321,7 +321,7 @@ const maskEmail = (e: string) =>
   e.replace(/^(.).*(@.*)$/, "$1***$2");        // a***@x.com
 
 logger.info("user login", { email: maskEmail(user.email), userId: user.id });
-// ❌ logger.info("user login", { user });  // dump cả object → rò rỉ PII
+// ✗ logger.info("user login", { user });  // dump cả object → rò rỉ PII
 
 // Hash mật khẩu (KHÔNG mã hoá có thể giải ngược)
 import bcrypt from "bcrypt";
@@ -329,7 +329,7 @@ const hash = await bcrypt.hash(password, 12);   // cost factor ~12
 const ok = await bcrypt.compare(input, hash);   // so sánh constant-time
 ```
 
-> ⚠️ **Lỗ hổng — secret/PII trong log & analytics**: log tập trung, APM, error tracker (Sentry...) thường được nhiều người xem và lưu lâu. Một dòng `console.log(req.body)` có thể đẩy số thẻ vào hệ thống không đạt chuẩn lưu trữ dữ liệu nhạy cảm. Redact ở tầng logger.
+> **Lỗ hổng — secret/PII trong log & analytics**: log tập trung, APM, error tracker (Sentry...) thường được nhiều người xem và lưu lâu. Một dòng `console.log(req.body)` có thể đẩy số thẻ vào hệ thống không đạt chuẩn lưu trữ dữ liệu nhạy cảm. Redact ở tầng logger.
 
 ## 7. Encryption at rest & in transit trong code
 
@@ -340,10 +340,10 @@ Phân loại dữ liệu xong, encryption là cách thực thi nó về mặt k�
 - Bật HSTS; từ chối downgrade về HTTP. Verify certificate (đừng tắt verify cho "tiện").
 
 ```python
-# ❌ TRƯỚC: tắt verify TLS — mở đường cho man-in-the-middle
+# ✗ TRƯỚC: tắt verify TLS — mở đường cho man-in-the-middle
 requests.get(url, verify=False)
 
-# ✅ SAU: verify mặc định (đúng); pin/CA bundle nếu cần
+# ✓ SAU: verify mặc định (đúng); pin/CA bundle nếu cần
 requests.get(url)   # verify=True là mặc định — đừng tắt
 ```
 
@@ -397,7 +397,7 @@ Envelope encryption tách *key* khỏi *dữ liệu*: KMS giữ key gốc, DEK c
   <text x="16" y="344" font-size="11" fill="currentColor" opacity="0.78">Mất DB nhưng không có quyền KMS → chỉ có ciphertext + DEK đã bọc, vô dụng. Mất key = mất tất cả.</text>
 </svg>
 
-> 💡 **Nguyên tắc**: Encryption chuyển bài toán "bảo vệ dữ liệu" thành "bảo vệ key". Nếu key nằm cạnh dữ liệu (hardcode, cùng repo, cùng quyền truy cập), bạn chưa bảo vệ được gì.
+> **Nguyên tắc**: Encryption chuyển bài toán "bảo vệ dữ liệu" thành "bảo vệ key". Nếu key nằm cạnh dữ liệu (hardcode, cùng repo, cùng quyền truy cập), bạn chưa bảo vệ được gì.
 
 ## Tổng kết nhanh
 

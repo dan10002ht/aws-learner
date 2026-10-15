@@ -182,7 +182,7 @@ Có hai nhóm, chia theo đúng hai kiểu workload ở §1.1:
 | **st1** | 500 (I/O 1 MiB) | 500 MiB/s | Không phải chỉ số thiết kế | 99,8–99,9% | Big data, log processing, data warehouse | ~$0.045/GB-tháng |
 | **sc1** | 250 (I/O 1 MiB) | 250 MiB/s | Không phải chỉ số thiết kế | 99,8–99,9% | Cold HDD, ít truy cập, rẻ nhất | ~$0.015/GB-tháng |
 
-> 📏 Hai chỗ con số hiện tại lệch với tài liệu ôn thi:
+> Hai chỗ con số hiện tại lệch với tài liệu ôn thi:
 > - **gp3**: trần đã được nâng lên **80.000 IOPS / 2.000 MiB/s / 64 TiB**. Đề thi và phần lớn tài liệu vẫn dùng **16.000 IOPS / 1.000 MiB/s / 16 TiB**, nên gặp câu "cần hơn 16.000 IOPS" thì đáp án đề thi vẫn là io2.
 > - **io2**: tài liệu cũ tách hai dòng "io2 — 64.000 IOPS / 1.000 MiB/s" và "io2 Block Express — 256.000 IOPS / 4.000 MiB/s". Từ 30/4/2025 mọi volume io2 đều là Block Express. Mốc 64.000 chỉ còn là trần provision khi gắn vào instance không thuộc thế hệ Nitro (và thực tế chỉ đạt 32.000).
 
@@ -243,7 +243,7 @@ Có hai nhóm, chia theo đúng hai kiểu workload ở §1.1:
   <text x="70" y="416" font-size="10.5" fill="currentColor" opacity="0.7">Mỗi điểm: IOPS · throughput(MB/s) · chi phí. gp3 = default. Đề thi: trên 16k IOPS → io2 (thực tế gp3 đã lên 80k); 5 nines → io2 Block Express.</text>
 </svg>
 
-Sơ đồ vẽ theo bộ số **đề thi** (gp3 ở mốc 16k IOPS / 1.000 MiB/s, io2 tách khỏi io2 Block Express). Thứ tự tương đối giữa các loại vẫn đúng; riêng trần gp3 hiện nay đã dịch sang phải tới 80k như ghi chú 📏 ở trên.
+Sơ đồ vẽ theo bộ số **đề thi** (gp3 ở mốc 16k IOPS / 1.000 MiB/s, io2 tách khỏi io2 Block Express). Thứ tự tương đối giữa các loại vẫn đúng; riêng trần gp3 hiện nay đã dịch sang phải tới 80k như ghi chú ở trên.
 
 ### 3.2 gp3 vs gp2 — luôn chọn gp3
 
@@ -352,7 +352,7 @@ Hai điểm còn lại:
 
 Use case: cache layer, temporary scratch space, và các hệ NoSQL **tự replicate ở tầng ứng dụng** (Cassandra, Redis cluster) — mất một node thì dữ liệu vẫn còn ở node khác.
 
-> 🪤 Bẫy thi: "Cần low latency và data persistence" → **không phải instance store**. Là **io2 Block Express** hoặc **EBS io2**.
+> Bẫy thi: "Cần low latency và data persistence" → **không phải instance store**. Là **io2 Block Express** hoặc **EBS io2**.
 
 ---
 
@@ -428,7 +428,7 @@ Giống S3, EFS có nhiều lớp lưu trữ đánh đổi giá lưu lấy phí 
 - Container persistent storage: ECS/EKS/Fargate mount EFS để pod chạy ở AZ nào cũng thấy cùng dữ liệu.
 - Home directory cho EC2 cluster.
 
-> 💡 EFS **không** tối ưu cho database — latency vài ms mỗi thao tác ghi (so với dưới 1 ms của io2), throughput mỗi client có trần. DB cần EBS hoặc io2.
+> EFS **không** tối ưu cho database — latency vài ms mỗi thao tác ghi (so với dưới 1 ms của io2), throughput mỗi client có trần. DB cần EBS hoặc io2.
 
 ---
 
@@ -458,8 +458,8 @@ EFS là filesystem do AWS tự thiết kế và chỉ nói NFS. **FSx** thì ng�
 Dataset 20 TB (≈ 18,2 TiB), muốn > 10 GB/s    → cấp file system 24 TiB
 
 Persistent 2 mức 500:   24 TiB ×   500 MB/s = 12.000 MB/s = 12 GB/s    ✓
-Persistent 2 mức 1.000: 24 TiB × 1.000 MB/s = 24 GB/s                  ✓ (dư)
-Scratch:                24 TiB ×   200 MB/s =  4,8 GB/s baseline       ✗ (chỉ burst mới tới)
+Persistent 2 mức 1.000: 24 TiB × 1.000 MB/s = 24 GB/s                  ✓  (dư)
+Scratch:                24 TiB ×   200 MB/s =  4,8 GB/s baseline       ✗  (chỉ burst mới tới)
 
 Đọc hết 20 TB ở 10 GB/s mất 20.000 GB ÷ 10 GB/s = 2.000 giây ≈ 33 phút.
 ```
@@ -492,7 +492,7 @@ Use case điển hình: ML training với dataset 100 TB ở S3, dùng FSx Lustr
 | Dung lượng | Tự co giãn, trả theo GB dùng | Cấp trước (lớp SSD) |
 | Đọc thẳng dữ liệu từ S3 | Không | Có |
 
-> 🪤 Bẫy thi: *"HPC", "ML training", "hàng trăm/nghìn node đọc song song", "xử lý dữ liệu nằm sẵn trong S3", "sub-millisecond + throughput cao"* → **FSx for Lustre**. *"Nhiều web server/container dùng chung file", "multi-AZ", "không muốn quản lý dung lượng"* → **EFS**. Lustre không phải câu trả lời cho yêu cầu HA liên AZ.
+> Bẫy thi: *"HPC", "ML training", "hàng trăm/nghìn node đọc song song", "xử lý dữ liệu nằm sẵn trong S3", "sub-millisecond + throughput cao"* → **FSx for Lustre**. *"Nhiều web server/container dùng chung file", "multi-AZ", "không muốn quản lý dung lượng"* → **EFS**. Lustre không phải câu trả lời cho yêu cầu HA liên AZ.
 
 ### 6.2 FSx for Windows
 
@@ -706,7 +706,7 @@ gp3 provision 8.000 IOPS, throughput để mặc định 125 MiB/s. Trong 60 gi�
 
 `VolumeQueueLength` là số I/O đang chờ. Mốc tham chiếu của AWS cho SSD là khoảng **1 cho mỗi 1.000 IOPS đã provision**: volume 8.000 IOPS có queue quanh 8 là đang được dùng hết công suất chứ chưa hẳn là hỏng; queue cao hơn hẳn mức đó trong thời gian dài, kèm latency tăng, mới là quá tải. Hai metric trả lời thẳng câu hỏi là `VolumeIOPSExceededCheck` và `VolumeThroughputExceededCheck` (bằng 1 khi workload cố đẩy vượt mức đã provision).
 
-> 🪤 Bẫy thi: "EBS volume slow, làm sao biết bottleneck IOPS hay throughput?" → xem `VolumeQueueLength` có cao kéo dài không (dấu hiệu saturate), rồi so `VolumeReadOps / period` với provisioned IOPS và bytes/giây với trần throughput. Với gp2/st1/sc1 xem thêm `BurstBalance`.
+> Bẫy thi: "EBS volume slow, làm sao biết bottleneck IOPS hay throughput?" → xem `VolumeQueueLength` có cao kéo dài không (dấu hiệu saturate), rồi so `VolumeReadOps / period` với provisioned IOPS và bytes/giây với trần throughput. Với gp2/st1/sc1 xem thêm `BurstBalance`.
 
 ---
 

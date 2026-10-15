@@ -25,7 +25,7 @@ URL Shortener (kiểu bit.ly, tinyurl) là bài "kinh điển" vì nó nhỏ v�
 - High availability cho đọc. Ghi có thể chấp nhận eventual consistency một chút.
 - ShortURL không đoán được tuần tự (tránh lộ thông tin / scraping) — một trade-off với độ ngắn.
 
-> 💡 **Nguyên tắc**: Xác định "trục chi phối" (đây là *read-heavy*) ngay từ đầu. Nó là kim chỉ nam cho mọi đánh đổi sau này: cache, CDN, denormalize đều phục vụ đọc.
+> **Nguyên tắc**: Xác định "trục chi phối" (đây là *read-heavy*) ngay từ đầu. Nó là kim chỉ nam cho mọi đánh đổi sau này: cache, CDN, denormalize đều phục vụ đọc.
 
 ---
 
@@ -81,7 +81,7 @@ DELETE /api/v1/urls/{shortCode}           # auth chủ sở hữu
 GET    /api/v1/urls/{shortCode}/stats     # analytics
 ```
 
-> 💡 **Nguyên tắc**: Tách rõ **write API** (có auth, đi qua app server, ghi DB) khỏi **read path** (redirect, tối ưu cực mạnh bằng cache/CDN, lý tưởng là không chạm DB chính). Hai luồng này scale độc lập.
+> **Nguyên tắc**: Tách rõ **write API** (có auth, đi qua app server, ghi DB) khỏi **read path** (redirect, tối ưu cực mạnh bằng cache/CDN, lý tưởng là không chạm DB chính). Hai luồng này scale độc lập.
 
 ---
 
@@ -103,10 +103,10 @@ Có 3 hướng sinh code — đây là chỗ phải **nêu trade-off**, không c
 
 Mỗi URL nhận một ID số tự tăng (auto-increment), rồi `base62(id)` ra short code.
 
-- ✅ Ngắn nhất có thể, không bao giờ trùng (1 ID = 1 code).
-- ✅ Đơn giản, dễ giải thích.
-- ⚠️ Counter tập trung là **single point of contention**. Auto-increment của một SQL đơn không chịu nổi 2K wps khi scale.
-- ⚠️ **Code đoán được tuần tự** → lộ tổng số link, cho phép enumerate/scrape. Khắc phục: trộn (multiply theo số nguyên tố, XOR mask) hoặc dùng dải counter ngẫu hoá.
+- ✓ Ngắn nhất có thể, không bao giờ trùng (1 ID = 1 code).
+- ✓ Đơn giản, dễ giải thích.
+- Counter tập trung là **single point of contention**. Auto-increment của một SQL đơn không chịu nổi 2K wps khi scale.
+- **Code đoán được tuần tự** → lộ tổng số link, cho phép enumerate/scrape. Khắc phục: trộn (multiply theo số nguyên tố, XOR mask) hoặc dùng dải counter ngẫu hoá.
 
 **Counter phân tán** — đừng để một node phát số. Dùng **dải (range/batch)**: một dịch vụ trung tâm (vd ZooKeeper, hay một bảng "counter" trong DynamoDB) cấp cho mỗi app server một **block 1,000 ID**. Server tiêu hết block mới xin block mới.
 
@@ -122,10 +122,10 @@ Nếu server chết giữa chừng, mất vài ID trong block — chấp nhận 
 
 #### Cách B — Hash longURL (MD5/SHA → lấy 7 ký tự đầu base62)
 
-- ✅ Stateless, không cần counter.
-- ✅ Cùng longURL → cùng short (dedup tự nhiên) — nếu bạn *muốn* thế.
-- ⚠️ **Collision**: cắt 7 ký tự thì hai URL khác nhau có thể đụng nhau. Phải kiểm tra DB (đọc trước khi ghi) và thêm salt/retry khi đụng → thêm round-trip, thêm độ phức tạp.
-- ⚠️ Nếu *không* muốn dedup (hai user rút gọn cùng URL muốn 2 link riêng để analytics tách biệt) thì hash thuần lại sai yêu cầu.
+- ✓ Stateless, không cần counter.
+- ✓ Cùng longURL → cùng short (dedup tự nhiên) — nếu bạn *muốn* thế.
+- **Collision**: cắt 7 ký tự thì hai URL khác nhau có thể đụng nhau. Phải kiểm tra DB (đọc trước khi ghi) và thêm salt/retry khi đụng → thêm round-trip, thêm độ phức tạp.
+- Nếu *không* muốn dedup (hai user rút gọn cùng URL muốn 2 link riêng để analytics tách biệt) thì hash thuần lại sai yêu cầu.
 
 #### Cách C — KGS (Key Generation Service) — sinh sẵn key offline
 
@@ -137,11 +137,11 @@ KGS (offline, batch)
 App server: POP 1 key  ----->  chuyển sang [ used_keys ]
 ```
 
-- ✅ Tách việc sinh key khỏi đường nóng → tạo URL chỉ là một lần "lấy key", rất nhanh.
-- ✅ Không collision (key đã unique sẵn, đánh dấu used là xong).
-- ✅ Code ngẫu nhiên, không đoán tuần tự được.
-- ⚠️ KGS thành component cần HA + tránh **cấp trùng key cho 2 server** (phải đồng bộ khi pop; thường mỗi server load trước một lô key vào memory).
-- ⚠️ Tốn storage cho bảng key (nhưng key 7 byte × vài tỉ = vài chục GB — rẻ).
+- ✓ Tách việc sinh key khỏi đường nóng → tạo URL chỉ là một lần "lấy key", rất nhanh.
+- ✓ Không collision (key đã unique sẵn, đánh dấu used là xong).
+- ✓ Code ngẫu nhiên, không đoán tuần tự được.
+- KGS thành component cần HA + tránh **cấp trùng key cho 2 server** (phải đồng bộ khi pop; thường mỗi server load trước một lô key vào memory).
+- Tốn storage cho bảng key (nhưng key 7 byte × vài tỉ = vài chục GB — rẻ).
 
 #### Bảng so sánh
 
@@ -154,7 +154,7 @@ App server: POP 1 key  ----->  chuyển sang [ used_keys ]
 | Dedup cùng URL | Không | Có (mặc định) | Không |
 | Độ phức tạp | Thấp–TB | TB | Cao hơn |
 
-> ⚠️ **Bẫy thiết kế**: Chọn "hash MD5 rồi lấy 7 ký tự" mà không nói tới collision là dấu hiệu thiếu chín. Luôn nêu: *"cắt hash sẽ đụng, nên cần check + retry, và điều đó thêm một lần đọc DB trên đường ghi."*
+> **Bẫy thiết kế**: Chọn "hash MD5 rồi lấy 7 ký tự" mà không nói tới collision là dấu hiệu thiếu chín. Luôn nêu: *"cắt hash sẽ đụng, nên cần check + retry, và điều đó thêm một lần đọc DB trên đường ghi."*
 
 Ba cơ chế nhìn cạnh nhau — mỗi cột là một luồng sinh code khác nhau:
 
@@ -240,7 +240,7 @@ Access pattern duy nhất quan trọng: **lookup bằng `short_code` → ra `lon
 
 Vì không cần join, ghi đơn giản, và phải scale ngang tới 100 TB / 200K rps → **KV store (DynamoDB) là lựa chọn tự nhiên**, dùng `short_code` làm partition key. SQL vẫn ổn ở quy mô nhỏ và bạn quen vận hành nó hơn — đó là trade-off "đơn giản vận hành" đổi lấy "trần scale thấp hơn".
 
-> 💡 **Nguyên tắc**: Chọn storage theo **access pattern**, không theo "công nghệ tôi thích". Một point-lookup bằng key thì KV thắng; cần truy vấn ad-hoc nhiều chiều thì SQL/search engine thắng.
+> **Nguyên tắc**: Chọn storage theo **access pattern**, không theo "công nghệ tôi thích". Một point-lookup bằng key thì KV thắng; cần truy vấn ad-hoc nhiều chiều thì SQL/search engine thắng.
 
 ---
 
@@ -285,7 +285,7 @@ Vì không cần join, ghi đơn giản, và phải scale ngang tới 100 TB / 2
 - **TTL**: đặt TTL để cache tự làm mới và để xử lý link bị xoá/hết hạn.
 - **Hit ratio**: với 80/20, hit ~80–90% là thực tế → DB chỉ còn gánh ~10–20K rps.
 
-> ⚠️ **Bẫy thiết kế**: Quên xử lý **cache invalidation khi xoá/đổi link**. Nếu user xoá link mà cache vẫn còn, redirect tới đích cũ. Phải xoá cache (hoặc set tombstone) khi DELETE/expire.
+> **Bẫy thiết kế**: Quên xử lý **cache invalidation khi xoá/đổi link**. Nếu user xoá link mà cache vẫn còn, redirect tới đích cũ. Phải xoá cache (hoặc set tombstone) khi DELETE/expire.
 
 ---
 
@@ -468,19 +468,19 @@ Mỗi key có một "xô" chứa token, được nạp đầy với tốc độ 
   </g>
 </svg>
 
-- ✅ Cho phép **burst** tới mức capacity (thân thiện traffic thật).
-- ✅ Ít state: chỉ cần (token còn lại, timestamp lần refill).
-- ⚠️ Chọn capacity vs refill rate cần cân nhắc.
+- ✓ Cho phép **burst** tới mức capacity (thân thiện traffic thật).
+- ✓ Ít state: chỉ cần (token còn lại, timestamp lần refill).
+- Chọn capacity vs refill rate cần cân nhắc.
 
 #### Leaky Bucket
 Request xếp vào hàng đợi, xử lý ra với tốc độ cố định (rò đều). Đầy hàng → drop.
-- ✅ Làm mượt output, tốc độ ra ổn định.
-- ⚠️ **Không cho burst**; request có thể bị giữ trễ; cần quản lý queue.
+- ✓ Làm mượt output, tốc độ ra ổn định.
+- **Không cho burst**; request có thể bị giữ trễ; cần quản lý queue.
 
 #### Fixed Window Counter
 Đếm request trong cửa sổ cố định (vd mỗi phút reset về 0).
-- ✅ Đơn giản nhất, 1 counter/key/window.
-- ⚠️ **Lỗi biên cửa sổ**: 100 req cuối phút này + 100 req đầu phút sau = 200 req trong 1 giây thực → vượt gấp đôi limit.
+- ✓ Đơn giản nhất, 1 counter/key/window.
+- **Lỗi biên cửa sổ**: 100 req cuối phút này + 100 req đầu phút sau = 200 req trong 1 giây thực → vượt gấp đôi limit.
 
 #### Sliding Window Log / Counter
 - *Log*: lưu timestamp từng request, đếm số request trong cửa sổ trượt. Chính xác tuyệt đối nhưng **tốn bộ nhớ** (lưu mọi timestamp).
@@ -494,7 +494,7 @@ Request xếp vào hàng đợi, xử lý ra với tốc độ cố định (rò
 | Sliding log | Mượt | **Cao** | Cao nhất | TB |
 | Sliding counter | Mượt | Thấp | Gần cao | TB |
 
-> 💡 **Nguyên tắc**: Mặc định nói **Token Bucket** (đơn giản, cho burst, ít state) — hoặc **Sliding Window Counter** khi cần chính xác mà vẫn rẻ. Nêu rõ Fixed Window có lỗi biên để chứng tỏ bạn hiểu cạm bẫy.
+> **Nguyên tắc**: Mặc định nói **Token Bucket** (đơn giản, cho burst, ít state) — hoặc **Sliding Window Counter** khi cần chính xác mà vẫn rẻ. Nêu rõ Fixed Window có lỗi biên để chứng tỏ bạn hiểu cạm bẫy.
 
 ### Distributed với Redis
 
@@ -511,7 +511,7 @@ App-3 ┘     INCR + EXPIRE, hoặc token-bucket
 - **Trade-off chính**: gọi Redis mỗi request thêm 1 round-trip (~1 ms) trên đường nóng. Tối ưu: cho phép **đếm xấp xỉ cục bộ** (token bucket local đồng bộ định kỳ về Redis) → nhanh hơn nhưng giới hạn lỏng hơn một chút.
 - Redis chết → quyết định **fail-open** (cho qua, ưu tiên availability) hay **fail-closed** (chặn, ưu tiên bảo vệ). Đây là một đánh đổi nghiệp vụ phải nêu rõ.
 
-> ⚠️ **Bẫy thiết kế**: Đếm rate limit trong memory của từng app server mà quên rằng có N server → limit thực bị nhân lên N lần. Luôn hỏi "có bao nhiêu server, state ở đâu?".
+> **Bẫy thiết kế**: Đếm rate limit trong memory của từng app server mà quên rằng có N server → limit thực bị nhân lên N lần. Luôn hỏi "có bao nhiêu server, state ở đâu?".
 
 ---
 
@@ -542,4 +542,4 @@ App-3 ┘     INCR + EXPIRE, hoặc token-bucket
 6. **Luôn đóng khung bằng đánh đổi**: "Tôi chọn 302 để có analytics, đổi lại server chịu tải cao hơn — nếu ưu tiên giảm tải thì 301." Đừng nói "cái này tốt hơn"; nói "cái này tốt hơn *cho mục tiêu X*, kém hơn ở *Y*".
 7. Khi review thiết kế của người khác, hỏi đúng 3 câu vàng: *"State ở đâu? Cái gì nghẽn trước? Khi component này chết thì sao (fail-open/closed)?"*
 
-> 💡 **Nguyên tắc cuối**: System Design không phải kể tên công nghệ — mà là **liên kết yêu cầu → con số → lựa chọn → đánh đổi**. Người nghe phải thấy được *vì sao* mỗi box xuất hiện, không chỉ *cái gì* trong box.
+> **Nguyên tắc cuối**: System Design không phải kể tên công nghệ — mà là **liên kết yêu cầu → con số → lựa chọn → đánh đổi**. Người nghe phải thấy được *vì sao* mỗi box xuất hiện, không chỉ *cái gì* trong box.

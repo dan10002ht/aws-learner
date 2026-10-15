@@ -16,7 +16,7 @@ Mạng máy tính cũng chia việc y hệt, vì ba lý do:
 
 Nguyên tắc vàng: **mỗi tầng chỉ nói chuyện với tầng ngay trên và ngay dưới nó trên cùng một máy, và "nói chuyện logic" với tầng cùng cấp ở máy bên kia.** Tầng 7 bên gửi tư duy như đang nói trực tiếp với tầng 7 bên nhận, dù thực tế dữ liệu phải đi xuống tận tầng 1 rồi mới sang.
 
-> 💡 **Ghi nhớ:** Phân tầng = mỗi tầng một việc + "hợp đồng" rõ ràng giữa các tầng. Nhờ vậy bạn thay/sửa/debug **một** tầng mà không động đến phần còn lại.
+> **Ghi nhớ:** Phân tầng = mỗi tầng một việc + "hợp đồng" rõ ràng giữa các tầng. Nhờ vậy bạn thay/sửa/debug **một** tầng mà không động đến phần còn lại.
 
 ## 2. OSI 7 tầng — bảng tổng quan
 
@@ -118,7 +118,7 @@ Mô hình **OSI** (Open Systems Interconnection) chia truyền thông mạng th�
 
 Hai mẹo nhớ thứ tự kinh điển (từ 7 xuống 1): **A**ll **P**eople **S**eem **T**o **N**eed **D**ata **P**rocessing → Application, Presentation, Session, Transport, Network, Data link, Physical. Hoặc từ dưới lên (1→7): **P**lease **D**o **N**ot **T**hrow **S**ausage **P**izza **A**way.
 
-> 💡 **Ghi nhớ:** Hai cặp số phải thuộc lòng vì gặp suốt trong đời thực: **L3 = IP (router)**, **L4 = TCP/UDP + port**, **L7 = HTTP**. "L4 vs L7 load balancer" hay "tấn công L3/L4 vs L7" đều quy về bảng này.
+> **Ghi nhớ:** Hai cặp số phải thuộc lòng vì gặp suốt trong đời thực: **L3 = IP (router)**, **L4 = TCP/UDP + port**, **L7 = HTTP**. "L4 vs L7 load balancer" hay "tấn công L3/L4 vs L7" đều quy về bảng này.
 
 ## 3. Mô hình TCP/IP — cái thế giới thật sự chạy
 
@@ -133,7 +133,7 @@ OSI là mô hình **để học và để nói chuyện**. Thứ Internet thật
 
 Vậy học OSI để làm gì nếu thật ra chạy TCP/IP? Vì **từ vựng** chung của cả ngành vẫn theo OSI: người ta nói "L7 firewall", "L2 switch", "vấn đề tầng 4" — và bạn cần dịch ngay ra ý nghĩa. OSI cho bạn cái thước đo chi tiết; TCP/IP cho bạn cái mô hình vận hành.
 
-> 💡 **Ghi nhớ:** OSI = bản đồ chi tiết để mô tả/định vị. TCP/IP = mô hình thực thi (gộp L5–L7 thành "Application"). Khi nghe "tầng application" trong thực tế, hiểu là gộp cả phiên + mã hoá + giao thức app.
+> **Ghi nhớ:** OSI = bản đồ chi tiết để mô tả/định vị. TCP/IP = mô hình thực thi (gộp L5–L7 thành "Application"). Khi nghe "tầng application" trong thực tế, hiểu là gộp cả phiên + mã hoá + giao thức app.
 
 ## 4. Encapsulation — đóng gói qua từng tầng
 
@@ -188,7 +188,7 @@ Dữ liệu **không** được gửi trần. Mỗi khi đi **xuống** một t�
 
 Một header không vô hạn: tầng 2 Ethernet giới hạn payload ~**1500 byte** (MTU). Gói IP lớn hơn MTU phải **phân mảnh** (fragmentation) hoặc bị từ chối — đây là gốc của những lỗi "ping nhỏ thì được, tải file lớn thì treo" (MTU/MSS mismatch, hay gặp trong VPN/tunnel).
 
-> 💡 **Ghi nhớ:** Đi xuống = bọc header; đi lên = bóc header. Tên gói đổi theo tầng (Segment/Packet/Frame). Dùng đúng tên = nói đúng tầng.
+> **Ghi nhớ:** Đi xuống = bọc header; đi lên = bóc header. Tên gói đổi theo tầng (Segment/Packet/Frame). Dùng đúng tên = nói đúng tầng.
 
 ## 5. Tầng 1 & 2 — phần nền ít ai dạy
 
@@ -234,9 +234,9 @@ arp -a              # macOS/Linux: cách cũ, tương đương
 - **Broadcast domain**: vùng mà một gói broadcast (như ARP request) lan tới được. Mặc định **một switch = một broadcast domain**: ARP của ai cũng làm phiền cả LAN. LAN càng lớn, "bão broadcast" càng tốn.
 - **VLAN** (Virtual LAN): chia một switch vật lý thành nhiều broadcast domain **logic**. Máy ở VLAN 10 và VLAN 20 dù cắm chung switch vẫn không thấy broadcast của nhau — muốn liên lạc phải đi qua **router** (tầng 3). Đây là nền của việc cô lập mạng (vd tách subnet "web" khỏi "database").
 
-> 💡 **Ghi nhớ:** **Switch (L2) chuyển theo MAC trong LAN; router (L3) định tuyến theo IP giữa các mạng.** ARP là cầu nối IP→MAC. VLAN cắt một switch thành nhiều broadcast domain để cô lập.
+> **Ghi nhớ:** **Switch (L2) chuyển theo MAC trong LAN; router (L3) định tuyến theo IP giữa các mạng.** ARP là cầu nối IP→MAC. VLAN cắt một switch thành nhiều broadcast domain để cô lập.
 
-> ⚠️ **Lỗi thường gặp:** "Ping được IP này nhưng không ping được IP kia cùng dải" thường là **ARP cache cũ** hoặc **trùng IP** (hai máy cùng IP, ARP trả về MAC chập chờn). Xoá entry ARP (`ip neigh flush`) trước khi đổ lỗi cho tầng cao hơn. Còn "cả LAN chậm đột ngột" có thể là **broadcast storm** do vòng lặp tầng 2 (cần Spanning Tree Protocol chặn loop).
+> **Lỗi thường gặp:** "Ping được IP này nhưng không ping được IP kia cùng dải" thường là **ARP cache cũ** hoặc **trùng IP** (hai máy cùng IP, ARP trả về MAC chập chờn). Xoá entry ARP (`ip neigh flush`) trước khi đổ lỗi cho tầng cao hơn. Còn "cả LAN chậm đột ngột" có thể là **broadcast storm** do vòng lặp tầng 2 (cần Spanning Tree Protocol chặn loop).
 
 ## 6. Tầng 3 & 4 — định vị nhanh (đã có bài sâu)
 
@@ -247,7 +247,7 @@ Hai tầng này là trái tim của Internet, và chương Mạng có hẳn bài
 
 Cặp khác biệt đáng nhớ nhất giữa hai tầng: **L3 chọn *đường* (máy nào tới máy nào), L4 chọn *cửa* (chương trình nào trên máy đó)**. Một gói lạc tầng 3 thì "không tới được host"; lạc tầng 4 thì "tới host nhưng nhầm/đóng port".
 
-> 💡 **Ghi nhớ:** L3 = IP, định tuyến **giữa** mạng (router). L4 = TCP/UDP + port, giao **đúng tiến trình** trên host. "Connection refused" = tới được L3 nhưng L4 đóng port; "no route to host"/timeout = nghẽn ngay ở L3.
+> **Ghi nhớ:** L3 = IP, định tuyến **giữa** mạng (router). L4 = TCP/UDP + port, giao **đúng tiến trình** trên host. "Connection refused" = tới được L3 nhưng L4 đóng port; "no route to host"/timeout = nghẽn ngay ở L3.
 
 ## 7. Tầng 5–7 — vì sao thực tế gộp làm một "Application"
 
@@ -259,7 +259,7 @@ Ba tầng trên cùng hiếm khi tách bạch trong code thật, nhưng tách b�
 
 Vì sao gộp? Một thư viện HTTP client điển hình tự lo cả ba: nó mở phiên (5), thương lượng nén + TLS (6), rồi gửi HTTP request (7) — bạn chỉ gọi một hàm. Nên mô hình TCP/IP gọi chung là **Application**. Nhưng khi debug, hãy tự hỏi *tầng nào trong ba*: "trang trắng" có thể là phiên rớt (5), nội dung lỗi giải nén/charset (6), hay status `500` từ app (7).
 
-> 💡 **Ghi nhớ:** L5 = *phiên* (cookie, TLS resumption, WebSocket). L6 = *dạng* (mã hoá, nén, charset, serialize). L7 = *giao thức app* (HTTP/DNS/SSH). Thực thi gộp lại, nhưng định vị lỗi thì tách ra.
+> **Ghi nhớ:** L5 = *phiên* (cookie, TLS resumption, WebSocket). L6 = *dạng* (mã hoá, nén, charset, serialize). L7 = *giao thức app* (HTTP/DNS/SSH). Thực thi gộp lại, nhưng định vị lỗi thì tách ra.
 
 ## 8. Bản đồ xuyên tầng #1 — Caching ở mỗi tầng
 
@@ -277,7 +277,7 @@ Vì sao gộp? Một thư viện HTTP client điển hình tự lo cả ba: nó 
 
 Quy trình tư duy khi gặp "data cũ": đi **từ gần người dùng xuống** — thử ẩn danh/`Ctrl+F5` (bỏ cache trình duyệt) → kiểm tra header CDN (`x-cache: HIT`) và invalidate → kiểm tra TTL DNS → cuối cùng mới tới object/DB cache. Mỗi bước loại trừ một tầng.
 
-> 💡 **Ghi nhớ:** Cache tồn tại ở **nhiều** tầng cùng lúc (browser → CDN → DNS → app/Redis → DB). "Data cũ" = xác định **đúng tầng** đang giữ bản cũ rồi mới xoá; xoá sai tầng là công cốc. `ETag`+`304` là cache tầng HTTP rẻ nhất mà hay bị bỏ quên.
+> **Ghi nhớ:** Cache tồn tại ở **nhiều** tầng cùng lúc (browser → CDN → DNS → app/Redis → DB). "Data cũ" = xác định **đúng tầng** đang giữ bản cũ rồi mới xoá; xoá sai tầng là công cốc. `ETag`+`304` là cache tầng HTTP rẻ nhất mà hay bị bỏ quên.
 
 ## 9. Bản đồ xuyên tầng #2 — Bảo mật & tấn công theo tầng
 
@@ -297,7 +297,7 @@ Hai điểm cốt lõi:
 1. **WAF không thay được Security Group, và ngược lại.** WAF đọc *nội dung HTTP* (L7) nên chặn được SQLi/XSS nhưng **không** chặn nổi DDoS thể tích L3/L4; còn Security Group lọc IP/port (L3/L4) nhưng **mù** với nội dung HTTP. Xếp chồng cả hai mới là defense in depth. (Chi tiết: [[sec-02-owasp-top10-1]] cho L7, và bài Network Security của khoá SAA cho L3–L7.)
 2. **Mỗi lớp giả định lớp ngoài đã thủng.** Cứ cho WAF bị né — thì parameterized query trong code (L7) vẫn chặn SQLi; cứ cho ai đó vào được LAN — thì TLS (L6) vẫn khiến họ chỉ thấy nhiễu.
 
-> 💡 **Ghi nhớ:** Bản đồ phòng thủ: **L3/L4 = SG + NACL + Shield** (lọc IP/port, chống DDoS thể tích) **+ L7 = WAF + code an toàn** (chống SQLi/XSS). Tấn công đến từ tầng nào thì phòng thủ phải có mặt ở **đúng tầng đó** — không lớp đơn lẻ nào đủ.
+> **Ghi nhớ:** Bản đồ phòng thủ: **L3/L4 = SG + NACL + Shield** (lọc IP/port, chống DDoS thể tích) **+ L7 = WAF + code an toàn** (chống SQLi/XSS). Tấn công đến từ tầng nào thì phòng thủ phải có mặt ở **đúng tầng đó** — không lớp đơn lẻ nào đủ.
 
 ## 10. Bản đồ xuyên tầng #3 — Debug & performance theo tầng
 
@@ -375,7 +375,7 @@ Về **performance**, tổng độ trễ một request là tổng đóng góp c�
 | L6 | TLS handshake (1 RTT) | TLS 1.3, session resumption, HTTP/3 |
 | L7 | Xử lý app + truy vấn DB | cache (mục 8), tối ưu query, CDN |
 
-> 💡 **Ghi nhớ:** Debug đi **từ dưới lên** (link → ARP → route → port → app), dừng ở tầng đầu tiên fail. Latency là **tổng** theo tầng: khoảng cách (L1/L3) và số lần bắt tay (L4/L6) thường là thủ phạm lớn nhất — nên "lại gần + bớt round-trip" hiệu quả hơn "mua thêm băng thông".
+> **Ghi nhớ:** Debug đi **từ dưới lên** (link → ARP → route → port → app), dừng ở tầng đầu tiên fail. Latency là **tổng** theo tầng: khoảng cách (L1/L3) và số lần bắt tay (L4/L6) thường là thủ phạm lớn nhất — nên "lại gần + bớt round-trip" hiệu quả hơn "mua thêm băng thông".
 
 ## 11. Ví dụ tổng hợp — gõ `https://shop.example.com` đến khi thấy trang
 

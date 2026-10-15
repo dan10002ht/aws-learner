@@ -31,7 +31,7 @@ bash -c 'set -o pipefail; grep foo /khong/ton/tai | wc -l; echo "exit: $?"'
 # exit: 2  ← đúng như mong đợi
 ```
 
-> ⚠️ **Lỗi thường gặp:** `set -e` KHÔNG có hiệu lực bên trong `if`, `while`, `&&`, `||`. Ví dụ `if my_func; then ...` — lệnh fail trong `my_func` sẽ không dừng script. Đừng tin `set -e` 100%; vẫn phải check exit code chỗ quan trọng.
+> **Lỗi thường gặp:** `set -e` KHÔNG có hiệu lực bên trong `if`, `while`, `&&`, `||`. Ví dụ `if my_func; then ...` — lệnh fail trong `my_func` sẽ không dừng script. Đừng tin `set -e` 100%; vẫn phải check exit code chỗ quan trọng.
 
 ### 1.2 Quoting đúng — nguồn của 80% bug Bash
 
@@ -80,7 +80,7 @@ backup_bucket() {
 backup_bucket "my-app-config"
 ```
 
-> 💡 **Ghi nhớ:** `trap cleanup EXIT` là "finally" của Bash. Mọi script tạo file tạm, port-forward, hoặc resource tạm đều nên có trap để không để rác lại khi fail giữa chừng.
+> **Ghi nhớ:** `trap cleanup EXIT` là "finally" của Bash. Mọi script tạo file tạm, port-forward, hoặc resource tạm đều nên có trap để không để rác lại khi fail giữa chừng.
 
 ### 1.4 xargs — chạy song song hàng loạt
 
@@ -139,7 +139,7 @@ Bảng tra nhanh jq:
 30 2 * * * /opt/scripts/cleanup-snapshots.sh >> /var/log/cleanup.log 2>&1
 ```
 
-> ⚠️ **Lỗi thường gặp với cron:** (1) PATH của cron rất tối giản — luôn dùng đường dẫn tuyệt đối hoặc set PATH đầu script. (2) Không có biến môi trường AWS — phải chỉ rõ `AWS_PROFILE` hoặc dùng instance role. (3) Quên redirect output → lỗi biến mất không dấu vết.
+> **Lỗi thường gặp với cron:** (1) PATH của cron rất tối giản — luôn dùng đường dẫn tuyệt đối hoặc set PATH đầu script. (2) Không có biến môi trường AWS — phải chỉ rõ `AWS_PROFILE` hoặc dùng instance role. (3) Quên redirect output → lỗi biến mất không dấu vết.
 
 systemd timer hiện đại hơn cron (log vào journal, retry, tránh chạy chồng):
 
@@ -224,7 +224,7 @@ aws s3api list-objects-v2 --bucket big-bucket --max-items 1000 \
   --starting-token "$NEXT_TOKEN"
 ```
 
-> 💡 **Ghi nhớ:** Nếu kết quả "thiếu" một cách bí ẩn, kiểm tra xem bạn có đang dùng `--page-size` nhầm với `--max-items` không. `--page-size` chỉ chỉnh kích thước từng API call (tránh timeout), còn `--max-items` mới giới hạn tổng kết quả.
+> **Ghi nhớ:** Nếu kết quả "thiếu" một cách bí ẩn, kiểm tra xem bạn có đang dùng `--page-size` nhầm với `--max-items` không. `--page-size` chỉ chỉnh kích thước từng API call (tránh timeout), còn `--max-items` mới giới hạn tổng kết quả.
 
 ## 3. Python + boto3
 
@@ -237,7 +237,7 @@ ec2_client = boto3.client("ec2")      # ánh xạ 1-1 với API, trả về dict
 s3_resource = boto3.resource("s3")    # hướng đối tượng, tiện nhưng đã "feature-freeze"
 ```
 
-> 💡 **Ghi nhớ:** Từ 2023, AWS đã ngừng phát triển interface `resource` (vẫn dùng được nhưng không thêm service mới). **Mặc định dùng `client`** — đầy đủ API, dễ tra cứu vì khớp tài liệu API reference.
+> **Ghi nhớ:** Từ 2023, AWS đã ngừng phát triển interface `resource` (vẫn dùng được nhưng không thêm service mới). **Mặc định dùng `client`** — đầy đủ API, dễ tra cứu vì khớp tài liệu API reference.
 
 ### 3.2 Paginator — đừng tự viết vòng while NextToken
 
@@ -281,7 +281,7 @@ def get_object_safe(bucket: str, key: str):
         raise                                # lỗi lạ — đừng nuốt, ném tiếp
 ```
 
-> ⚠️ **Lỗi thường gặp:** `except Exception: pass` trong script vận hành. Khi script "dọn dẹp" nuốt lỗi AccessDenied rồi báo cáo "đã xoá 0 snapshot, thành công!", bạn sẽ phát hiện ra sau 6 tháng kèm hoá đơn EBS. Chỉ catch mã lỗi cụ thể mình hiểu.
+> **Lỗi thường gặp:** `except Exception: pass` trong script vận hành. Khi script "dọn dẹp" nuốt lỗi AccessDenied rồi báo cáo "đã xoá 0 snapshot, thành công!", bạn sẽ phát hiện ra sau 6 tháng kèm hoá đơn EBS. Chỉ catch mã lỗi cụ thể mình hiểu.
 
 ### 3.5 Script thật #1: dọn EBS snapshot cũ (idempotent + dry-run)
 
@@ -384,10 +384,10 @@ for g in rows[:10]:
 | Error handling | Exit code là đủ | Cần phân biệt từng loại lỗi |
 | Song song | `xargs -P` đơn giản | `concurrent.futures`, kiểm soát rate |
 | Test | Khó | `pytest` + `moto`/`botocore stubber` |
-| Glue nhanh trong CI/CD, một lần dùng | ✅ | quá nặng |
-| Chạy định kỳ trong production | rủi ro | ✅ |
+| Glue nhanh trong CI/CD, một lần dùng | ✓ | quá nặng |
+| Chạy định kỳ trong production | rủi ro | ✓ |
 
-> 💡 **Ghi nhớ:** Quy tắc thực dụng — khi bạn bắt đầu viết `if/else` lồng 3 cấp, parse JSON bằng 2 lần `jq` nối nhau, hoặc cần retry logic trong Bash: đó là tín hiệu chuyển sang Python. Chi phí viết lại lúc đó rẻ hơn chi phí debug Bash 300 dòng lúc 2 giờ sáng.
+> **Ghi nhớ:** Quy tắc thực dụng — khi bạn bắt đầu viết `if/else` lồng 3 cấp, parse JSON bằng 2 lần `jq` nối nhau, hoặc cần retry logic trong Bash: đó là tín hiệu chuyển sang Python. Chi phí viết lại lúc đó rẻ hơn chi phí debug Bash 300 dòng lúc 2 giờ sáng.
 
 ## 5. Idempotency cho script vận hành
 
@@ -405,7 +405,7 @@ exec 9>/var/lock/cleanup.lock
 flock -n 9 || { echo "Đang có instance khác chạy, thoát."; exit 0; }
 ```
 
-> ⚠️ **Lỗi thường gặp:** Script "tăng dần" — ví dụ mỗi lần chạy append một rule vào security group mà không kiểm tra rule đã có. Sau 30 ngày cron, bạn có 30 rule trùng và chạm limit. Luôn nghĩ: "lần chạy thứ 2 sẽ làm gì?"
+> **Lỗi thường gặp:** Script "tăng dần" — ví dụ mỗi lần chạy append một rule vào security group mà không kiểm tra rule đã có. Sau 30 ngày cron, bạn có 30 rule trùng và chạm limit. Luôn nghĩ: "lần chạy thứ 2 sẽ làm gì?"
 
 ## Liên hệ sang AWS
 

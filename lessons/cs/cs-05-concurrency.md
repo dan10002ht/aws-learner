@@ -48,7 +48,7 @@ Analogy: một **đầu bếp** nấu 3 món. Anh ta xào món A một lúc, đ�
   <text x="690" y="308" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.6">thời gian →</text>
 </svg>
 
-> 💡 Ghi nhớ: "Concurrency là *cách bạn tổ chức* công việc; parallelism là *cách phần cứng chạy* nó." Một chương trình có thể concurrent mà không parallel (1 core), và bạn viết code concurrent trước, rồi runtime/OS quyết định có chạy parallel hay không.
+> Ghi nhớ: "Concurrency là *cách bạn tổ chức* công việc; parallelism là *cách phần cứng chạy* nó." Một chương trình có thể concurrent mà không parallel (1 core), và bạn viết code concurrent trước, rồi runtime/OS quyết định có chạy parallel hay không.
 
 ## Vì sao cần? — I/O bound vs CPU bound
 
@@ -71,7 +71,7 @@ Concurrent (xen kẽ trong lúc chờ):
 
 Với **CPU bound** thì ngược lại: CPU đã chạy 100%, xen kẽ thêm việc *không giúp gì* — chỉ tốn thêm chi phí chuyển ngữ cảnh. Lúc này cách duy nhất nhanh hơn là **chia việc ra nhiều core thật**.
 
-> ⚠️ Bẫy: Áp nhầm công cụ là sai lầm kinh điển. Dùng đa luồng để "tăng tốc" một vòng lặp tính toán nặng trong Python sẽ **không nhanh hơn** (vì GIL, xem bên dưới). Ngược lại, spawn 1000 process để gọi 1000 API là phí tài nguyên — async một core làm tốt hơn.
+> Bẫy: Áp nhầm công cụ là sai lầm kinh điển. Dùng đa luồng để "tăng tốc" một vòng lặp tính toán nặng trong Python sẽ **không nhanh hơn** (vì GIL, xem bên dưới). Ngược lại, spawn 1000 process để gọi 1000 API là phí tài nguyên — async một core làm tốt hơn.
 
 ## Race condition — gốc rễ mọi rắc rối
 
@@ -134,7 +134,7 @@ Giờ tưởng tượng hai thread bị xen kẽ đúng lúc xấu (`counter` đ
 
 Hai lần `+1` mà `counter` chỉ tăng 1. Mỗi lần chạy, OS lập lịch thread khác nhau → mất số lượng khác nhau → **bug không tái hiện ổn định**. Đoạn code đọc-sửa-ghi chung này gọi là **critical section** (vùng tới hạn): vùng mà tại một thời điểm **chỉ được phép một thread** vào.
 
-> 💡 Ghi nhớ: Race condition không cần parallelism thật mới xảy ra. Chỉ cần **xen kẽ** (concurrency) tại điểm xấu là đủ — kể cả trên 1 core, OS có thể ngắt thread A giữa bước READ và WRITE.
+> Ghi nhớ: Race condition không cần parallelism thật mới xảy ra. Chỉ cần **xen kẽ** (concurrency) tại điểm xấu là đủ — kể cả trên 1 core, OS có thể ngắt thread A giữa bước READ và WRITE.
 
 ## Mutex / Lock — xếp hàng vào critical section
 
@@ -161,7 +161,7 @@ Thread B:        chờ............................^   -> acquire -> vào
 
 Lock đúng đắn nhưng có giá: nó **tuần tự hoá** vùng được khoá. Nếu khoá quá rộng, bạn vô tình biến code song song trở lại thành tuần tự — gọi là **lock contention** (tranh chấp lock), một nguyên nhân tụt performance phổ biến.
 
-> ⚠️ Bẫy: Khoá càng to càng "an toàn" nhưng càng chậm. Quy tắc: **giữ lock càng ngắn càng tốt** — đừng gọi network/đọc file *bên trong* critical section. Khoá đúng cái cần bảo vệ, làm phần chậm ngoài vùng khoá.
+> Bẫy: Khoá càng to càng "an toàn" nhưng càng chậm. Quy tắc: **giữ lock càng ngắn càng tốt** — đừng gọi network/đọc file *bên trong* critical section. Khoá đúng cái cần bảo vệ, làm phần chậm ngoài vùng khoá.
 
 ## Deadlock — khi tất cả cùng kẹt
 
@@ -248,7 +248,7 @@ Deadlock chỉ xảy ra khi **cả 4 điều kiện Coffman** đồng thời đ�
 
 Cách phá vỡ thực tế và dễ nhất là điều kiện **#4**: quy ước **mọi nơi luôn acquire lock theo cùng một thứ tự** (ví dụ luôn `lock_A` trước `lock_B`). Khi đó không thể tạo vòng tròn chờ.
 
-> 💡 Ghi nhớ: Đa số deadlock production đến từ việc **lấy nhiều lock theo thứ tự khác nhau ở các nơi khác nhau**. Đặt một quy tắc thứ tự lock toàn cục và tuân thủ tuyệt đối là liều thuốc rẻ nhất.
+> Ghi nhớ: Đa số deadlock production đến từ việc **lấy nhiều lock theo thứ tự khác nhau ở các nơi khác nhau**. Đặt một quy tắc thứ tự lock toàn cục và tuân thủ tuyệt đối là liều thuốc rẻ nhất.
 
 ## Atomic operation — "một phát ăn ngay"
 
@@ -266,7 +266,7 @@ counter += 1                 # 3 bước -> race
 
 Atomic thường **nhanh hơn lock** cho các cập nhật đơn giản (đếm, set cờ), vì nó dùng chỉ thị phần cứng thay vì xếp hàng chờ. Nhưng nó chỉ hợp với thao tác **một biến, đơn giản**. Cập nhật phối hợp nhiều biến vẫn cần lock.
 
-> ⚠️ Bẫy: "Mỗi lệnh atomic" không bằng "cả khối logic atomic". `if not exists: create()` gồm hai thao tác atomic riêng lẻ vẫn race — giữa `if` và `create`, thread khác có thể chen vào tạo trùng. Đây là bug "check-then-act" kinh điển.
+> Bẫy: "Mỗi lệnh atomic" không bằng "cả khối logic atomic". `if not exists: create()` gồm hai thao tác atomic riêng lẻ vẫn race — giữa `if` và `create`, thread khác có thể chen vào tạo trùng. Đây là bug "check-then-act" kinh điển.
 
 ## 3 mô hình chạy: async/await vs thread vs process
 
@@ -319,7 +319,7 @@ Node.js chạy code JS của bạn trên **một thread duy nhất** với một
 
 Vì chỉ một thread chạy code JS, bạn **không gặp race kiểu hai thread ghi chung biến**. Đổi lại: một vòng lặp tính toán nặng (CPU bound) sẽ **chặn cả event loop** → cả server đứng hình. Đó là lý do trong Node, việc nặng CPU phải đẩy sang worker/process khác.
 
-> ⚠️ Bẫy: Trong Node, một hàm "đồng bộ" tốn 2 giây (ví dụ `JSON.parse` file khổng lồ, hoặc vòng lặp tính toán) làm **mọi** request khác phải chờ 2 giây. Bug "server thỉnh thoảng treo" thường là một chỗ block event loop.
+> Bẫy: Trong Node, một hàm "đồng bộ" tốn 2 giây (ví dụ `JSON.parse` file khổng lồ, hoặc vòng lặp tính toán) làm **mọi** request khác phải chờ 2 giây. Bug "server thỉnh thoảng treo" thường là một chỗ block event loop.
 
 ### Python GIL — vì sao thread không tăng tốc CPU
 
@@ -338,7 +338,7 @@ Nhưng GIL **được nhả ra khi thread chờ I/O**. Nên với I/O bound (g�
 | Gọi 100 API | `asyncio` hoặc threads | I/O bound, GIL nhả khi chờ |
 | Nén 100 ảnh | `multiprocessing` | CPU bound, cần core thật |
 
-> 💡 Ghi nhớ: "Thread trong Python tăng tốc I/O, *không* tăng tốc tính toán." Hiểu một câu này tránh được vô số giờ tối ưu sai hướng.
+> Ghi nhớ: "Thread trong Python tăng tốc I/O, *không* tăng tốc tính toán." Hiểu một câu này tránh được vô số giờ tối ưu sai hướng.
 
 ## Memory visibility — biến đã đổi mà thread khác không thấy
 
@@ -354,7 +354,7 @@ Core B cache: done = False  (đọc cũ -> while chạy mãi)
 
 Giải pháp: dùng cơ chế ngôn ngữ đảm bảo **visibility** — `volatile` (Java), biến atomic, hoặc đơn giản là dùng lock (lock cũng ép đồng bộ memory). Đừng tự chế cờ bằng biến thường rồi giả định thread khác "sẽ thấy ngay".
 
-> ⚠️ Bẫy: Code này có thể "chạy đúng trên máy bạn" rồi treo trên server production — vì kiến trúc CPU, số core, mức tải khác nhau làm lộ ra reordering/cache mà máy dev không lộ. Visibility bug là loại "không tái hiện" tệ nhất.
+> Bẫy: Code này có thể "chạy đúng trên máy bạn" rồi treo trên server production — vì kiến trúc CPU, số core, mức tải khác nhau làm lộ ra reordering/cache mà máy dev không lộ. Visibility bug là loại "không tái hiện" tệ nhất.
 
 ## Vì sao bug concurrency khó tái hiện — và cách né
 
@@ -423,7 +423,7 @@ Triết lý nổi tiếng của Go: *"Đừng giao tiếp bằng cách chia sẻ
 
 Mô hình này không chỉ tránh bug — nó còn **scale ra nhiều máy**: "message qua queue" trên một máy và "message qua queue qua mạng" giữa nhiều máy là **cùng một mô hình tư duy**.
 
-> 💡 Ghi nhớ: Cách an toàn nhất để xử lý concurrency là **giảm tối đa state chia sẻ có thể thay đổi** (shared mutable state). Không có dữ liệu chung bị sửa → không có race. Immutability và message passing đều phục vụ đúng mục tiêu đó.
+> Ghi nhớ: Cách an toàn nhất để xử lý concurrency là **giảm tối đa state chia sẻ có thể thay đổi** (shared mutable state). Không có dữ liệu chung bị sửa → không có race. Immutability và message passing đều phục vụ đúng mục tiêu đó.
 
 ## Vì sao kỹ sư cần biết
 

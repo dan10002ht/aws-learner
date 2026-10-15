@@ -2,7 +2,7 @@
 
 Một hệ thống production không "tự nhiên" đáng tin cậy. Reliability là kết quả của thiết kế có chủ đích cộng với việc *chủ động kiểm chứng* các giả định trước khi sự cố thật xảy ra. Bài này đi qua các pattern cốt lõi và — quan trọng hơn — cách *test* chúng để bạn không phát hiện điểm yếu lúc 3 giờ sáng cùng khách hàng.
 
-> 💡 Nguyên tắc
+> Nguyên tắc
 > Hope is not a strategy. Mọi cơ chế chống lỗi mà bạn chưa từng kích hoạt có chủ đích đều phải coi là *chưa hoạt động*. Untested failover = no failover.
 
 ---
@@ -19,7 +19,7 @@ Bạn không bao giờ chạy ở 100% công suất. Lý do:
 - **Loss of capacity**: mất một AZ/region nghĩa là tải dồn sang phần còn lại.
 - **Latency phi tuyến**: khi utilization vượt ~70-80%, queueing delay tăng theo cấp số nhân (Little's Law / lý thuyết hàng đợi M/M/1).
 
-> ⚠️ Bẫy
+> Bẫy
 > Lập kế hoạch để chạy ở 90% CPU "cho tiết kiệm". Tại 90%, một node chết sẽ đẩy các node còn lại vượt 100% → cascading failure. Đây là kịch bản kinh điển gây ra brownout toàn cụm.
 
 ### N+1 / N+2 redundancy
@@ -30,9 +30,9 @@ Ví dụ cụ thể: service cần 12 instance để xử lý peak 30k RPS. Tri�
 
 | Cấu hình | Instance/AZ | Tổng | Mất 1 AZ còn lại | Đủ peak (12)? |
 |---|---|---|---|---|
-| Không headroom | 4 | 12 | 8 | ❌ thiếu 33% |
-| N+ mỗi AZ chịu lỗi | 6 | 18 | 12 | ✅ vừa khít |
-| An toàn (buffer 20%) | 8 | 24 | 16 | ✅ dư 33% |
+| Không headroom | 4 | 12 | 8 | ✗ thiếu 33% |
+| N+ mỗi AZ chịu lỗi | 6 | 18 | 12 | ✓ vừa khít |
+| An toàn (buffer 20%) | 8 | 24 | 16 | ✓ dư 33% |
 
 Chi phí của cột thứ 3 cao hơn, nhưng đó là cái giá của việc survive một AZ outage mà không degrade.
 
@@ -68,7 +68,7 @@ Chi phí của cột thứ 3 cao hơn, nhưng đó là cái giá của việc su
     <line x1="34" y1="248" x2="88" y2="296" stroke="#ef4444" stroke-width="2.5" stroke-opacity="0.8"/>
     <line x1="88" y1="248" x2="34" y2="296" stroke="#ef4444" stroke-width="2.5" stroke-opacity="0.8"/>
     <rect x="58" y="316" width="154" height="22" rx="11" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="135" y="331" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">còn 12 → vừa khít ✅</text>
+    <text x="135" y="331" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">còn 12 → vừa khít ✓</text>
   </g>
   <g>
     <text x="540" y="232" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Buffer 20% · 8/AZ</text>
@@ -81,7 +81,7 @@ Chi phí của cột thứ 3 cao hơn, nhưng đó là cái giá của việc su
     <line x1="439" y1="248" x2="493" y2="296" stroke="#ef4444" stroke-width="2.5" stroke-opacity="0.8"/>
     <line x1="493" y1="248" x2="439" y2="296" stroke="#ef4444" stroke-width="2.5" stroke-opacity="0.8"/>
     <rect x="463" y="316" width="154" height="22" rx="11" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="540" y="331" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">còn 16 → dư 33% ✅</text>
+    <text x="540" y="331" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">còn 16 → dư 33% ✓</text>
   </g>
   <g>
     <text x="540" y="52" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Chú thích</text>
@@ -115,7 +115,7 @@ avg_over_time(
 ) > 0.70
 ```
 
-> 💡 Nguyên tắc
+> Nguyên tắc
 > Capacity plan phải dựa trên **demand forecast** (số liệu tăng trưởng thực, sự kiện đã biết như Black Friday) chứ không phải cảm tính. Review hàng quý, không phải hàng năm.
 
 ---
@@ -165,10 +165,10 @@ scenarios:
     preAllocatedVUs: 2000
 ```
 
-> ⚠️ Bẫy
+> Bẫy
 > **Coordinated omission**: nếu load tool dừng gửi request khi server chậm, các request bị chậm "biến mất" khỏi thống kê → p99 trông đẹp giả tạo. Dùng arrival-rate executor và đo latency theo expected schedule, không theo actual send time.
 
-> 💡 Nguyên tắc
+> Nguyên tắc
 > Test trên môi trường giống production nhất có thể (cùng instance type, cùng DB size). Test trên môi trường nhỏ hơn rồi nhân tỷ lệ là sai — bottleneck thường phi tuyến.
 
 ---
@@ -208,10 +208,10 @@ Sau game day, mọi alert *không* nổ đúng lúc, mọi runbook lỗi thời,
 - Network partition / packet loss.
 - Instance/AZ termination.
 
-> ⚠️ Bẫy
+> Bẫy
 > Chạy chaos lần đầu thẳng trên production toàn bộ traffic, không có abort condition, lúc nửa đêm. Chaos engineering *giảm* rủi ro chỉ khi có blast radius nhỏ, monitoring tốt, và nút dừng.
 
-> 💡 Nguyên tắc
+> Nguyên tắc
 > Mục tiêu chaos không phải "phá cho vui" mà là **biến unknown-unknowns thành known issues** trước khi khách hàng tìm ra giúp bạn.
 
 ---
@@ -246,7 +246,7 @@ if in_flight_requests > max_concurrency:
     return Response(status=503, headers={"Retry-After": "2"})
 ```
 
-> ⚠️ Bẫy
+> Bẫy
 > **Retry storm**: client gặp lỗi → retry ngay → tăng tải → nhiều lỗi hơn → retry nhiều hơn. Bắt buộc: exponential backoff + jitter, retry budget (vd tối đa 10% request được retry), và circuit breaker.
 
 | Cơ chế | Bảo vệ chống | Thông số ví dụ |
@@ -274,7 +274,7 @@ Redundancy là có nhiều bản sao; failover là cơ chế chuyển sang bản
 | Độ phức tạp | Cao (conflict, consistency) | Thấp hơn |
 | Rủi ro cold standby | Thấp | Cao — standby chưa từng chạy thật |
 
-> ⚠️ Bẫy
+> Bẫy
 > **Cold standby chưa từng nhận traffic**. Khi failover thật xảy ra, standby có config cũ, cache lạnh, hoặc thiếu IAM permission → failover thất bại đúng lúc cần nhất. Hãy *xoay vòng* (rotate) traffic qua standby định kỳ để giữ nó "ấm" và đã được chứng minh.
 
 ### Failover phải tự động và phải được test
@@ -355,10 +355,10 @@ Quy trình drill:
 4. Test cả **failback** — quay về region chính cũng phải an toàn, không mất data.
 5. Ghi nhận sai lệch giữa thực tế và mục tiêu → action item.
 
-> 💡 Nguyên tắc
+> Nguyên tắc
 > Test khôi phục từ **backup**, không phải chỉ test rằng backup *chạy*. "Backup thành công" trong log không có nghĩa restore được. Hãy restore định kỳ vào môi trường sạch và verify tính toàn vẹn dữ liệu.
 
-> ⚠️ Bẫy
+> Bẫy
 > RPO đẹp trên giấy nhờ replication "real-time", nhưng replication lag thực tế là 45 giây dưới tải cao. Đo RPO *dưới tải*, không phải lúc rảnh.
 
 ---
@@ -388,7 +388,7 @@ Mục tiêu: **một soft dependency chết không bao giờ được kéo theo 
 - **Fallback**: giá trị cached, default, hoặc feature-off.
 - **Async / queue**: tách dep không cần đồng bộ ra khỏi critical path.
 
-> ⚠️ Bẫy
+> Bẫy
 > **Shared connection pool**: search service và payment service dùng chung một pool 100 connection tới cùng một DB proxy. Search bị chậm → ăn hết 100 connection → payment cũng timeout. Cô lập pool theo dependency/criticality.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
@@ -399,10 +399,10 @@ Mục tiêu: **một soft dependency chết không bao giờ được kéo theo 
   <line x1="360" y1="40" x2="360" y2="310" stroke="currentColor" stroke-opacity="0.2" stroke-width="1" stroke-dasharray="4 4"/>
   <g>
     <rect x="30" y="48" width="120" height="44" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="90" y="68" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Search 🐌</text>
+    <text x="90" y="68" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Search </text>
     <text x="90" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">chậm</text>
     <rect x="210" y="48" width="120" height="44" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="270" y="68" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Payment 💳</text>
+    <text x="270" y="68" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Payment </text>
     <text x="270" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">critical</text>
     <rect x="40" y="150" width="280" height="80" rx="10" fill="#ef4444" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3"/>
     <text x="180" y="170" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Shared pool · 100 conn</text>
@@ -412,14 +412,14 @@ Mục tiêu: **một soft dependency chết không bao giờ được kéo theo 
     <line x1="90" y1="92" x2="150" y2="148" stroke="currentColor" stroke-opacity="0.4"/>
     <line x1="270" y1="92" x2="210" y2="148" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="3 3"/>
     <rect x="60" y="270" width="240" height="30" rx="8" fill="#ef4444" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="180" y="290" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Payment cũng timeout ❌</text>
+    <text x="180" y="290" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Payment cũng timeout ✗</text>
   </g>
   <g>
     <rect x="390" y="48" width="120" height="44" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="450" y="68" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Search 🐌</text>
+    <text x="450" y="68" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Search </text>
     <text x="450" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">chậm</text>
     <rect x="570" y="48" width="120" height="44" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="630" y="68" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Payment 💳</text>
+    <text x="630" y="68" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Payment </text>
     <text x="630" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">critical</text>
     <line x1="450" y1="92" x2="450" y2="148" stroke="currentColor" stroke-opacity="0.4"/>
     <line x1="630" y1="92" x2="630" y2="148" stroke="currentColor" stroke-opacity="0.4"/>
@@ -432,11 +432,11 @@ Mục tiêu: **một soft dependency chết không bao giờ được kéo theo 
     <text x="630" y="186" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">50 conn · rảnh</text>
     <rect x="584" y="198" width="30" height="12" rx="6" fill="#10b981" fill-opacity="0.7"/>
     <rect x="420" y="270" width="240" height="30" rx="8" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="540" y="290" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Payment vẫn chạy ✅</text>
+    <text x="540" y="290" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Payment vẫn chạy ✓</text>
   </g>
 </svg>
 
-> 💡 Nguyên tắc
+> Nguyên tắc
 > Test dependency failure như một kịch bản first-class trong CI/chaos: tiêm timeout/500 từ mỗi dependency và assert rằng SLO của bạn (cho phần critical) vẫn giữ.
 
 ---
@@ -458,5 +458,5 @@ Mục tiêu: **một soft dependency chết không bao giờ được kéo theo 
 | Service & dependency health | **AWS Health Dashboard** (sự kiện của AWS ảnh hưởng tài khoản bạn), CloudWatch Synthetics canary để phát hiện degradation từ ngoài vào |
 | SLO/error budget | CloudWatch composite alarms, ServiceLcl/Application Signals (SLO tracking) |
 
-> 💡 Nguyên tắc tổng kết
+> Nguyên tắc tổng kết
 > Reliability không phải là *không bao giờ lỗi* — đó là điều bất khả thi. Reliability là **lỗi theo cách đã được dự liệu và diễn tập**: blast radius nhỏ, degrade thay vì sập, failover đã chứng minh, RTO/RPO đã đo bằng đồng hồ thật. Nếu bạn chưa tự tay tiêm lỗi đó, hãy giả định nó sẽ làm bạn bất ngờ.

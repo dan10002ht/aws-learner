@@ -22,7 +22,7 @@ function Child({ count, onIncrement }: { count: number; onIncrement: () => void 
 
 Hiểu mô hình này là chìa khoá: mọi kỹ thuật quản lý state bên dưới chỉ là các cách khác nhau để **đưa dữ liệu xuống đúng component cần nó** mà không phải truyền tay qua từng tầng.
 
-> 💡 Ghi nhớ: State không thuộc về component "hiển thị" nó, mà thuộc về component **thấp nhất chứa tất cả những ai cần nó**. Đây là nguyên tắc đặt state đúng chỗ.
+> Ghi nhớ: State không thuộc về component "hiển thị" nó, mà thuộc về component **thấp nhất chứa tất cả những ai cần nó**. Đây là nguyên tắc đặt state đúng chỗ.
 
 ## 2. Lifting state up — nâng state lên cha chung
 
@@ -55,7 +55,7 @@ function ProductList({ query }: { query: string }) {
 
 `SearchBox` không tự giữ giá trị nữa — nó trở thành **controlled component**, hiển thị `value` từ cha và báo thay đổi qua `onChange`. `ProductPage` là **single source of truth**.
 
-> 💡 Ghi nhớ: Lifting state up là công cụ mặc định, dùng đầu tiên. Đừng vội với tay sang Context hay Zustand khi việc nâng state lên 1-2 tầng đã giải quyết xong.
+> Ghi nhớ: Lifting state up là công cụ mặc định, dùng đầu tiên. Đừng vội với tay sang Context hay Zustand khi việc nâng state lên 1-2 tầng đã giải quyết xong.
 
 ## 3. Prop drilling — khi lifting state đi quá xa
 
@@ -135,7 +135,7 @@ Vấn đề của prop drilling:
 | Đổi shape của dữ liệu | Phải sửa cả chuỗi component dọc đường |
 | Thêm một field mới cần dùng ở sâu | Sửa tay từ trên xuống tận đáy |
 
-> ⚠️ Bẫy: Prop drilling 1-2 tầng là **hoàn toàn bình thường**, đừng vội "chữa". Chỉ khi nó vượt 3-4 tầng và lặp lại nhiều nơi thì mới nghĩ tới Context. Lạm dụng Context để né mọi prop drilling còn tệ hơn chính prop drilling.
+> Bẫy: Prop drilling 1-2 tầng là **hoàn toàn bình thường**, đừng vội "chữa". Chỉ khi nó vượt 3-4 tầng và lặp lại nhiều nơi thì mới nghĩ tới Context. Lạm dụng Context để né mọi prop drilling còn tệ hơn chính prop drilling.
 
 ## 4. Context API — chia sẻ "diện rộng" không qua props
 
@@ -174,7 +174,7 @@ function ThemeToggle() {
 }
 ```
 
-> 💡 Ghi nhớ: Luôn bọc Context bằng một **custom hook** (`useTheme`) thay vì để component tự gọi `useContext(ThemeContext)`. Hook giúp bạn kiểm tra Provider, ẩn chi tiết, và đổi cách lưu state sau này mà không phải sửa nơi dùng.
+> Ghi nhớ: Luôn bọc Context bằng một **custom hook** (`useTheme`) thay vì để component tự gọi `useContext(ThemeContext)`. Hook giúp bạn kiểm tra Provider, ẩn chi tiết, và đổi cách lưu state sau này mà không phải sửa nơi dùng.
 
 ### 4.1. Bẫy re-render của Context
 
@@ -183,10 +183,10 @@ function ThemeToggle() {
 Hai lỗi kinh điển:
 
 ```tsx
-// ❌ SAI: value là object mới mỗi lần Provider render → mọi consumer re-render liên tục
+// ✗ SAI: value là object mới mỗi lần Provider render → mọi consumer re-render liên tục
 <ThemeContext.Provider value={{ theme, toggle: () => setTheme(...) }}>
 
-// ✅ Đúng hơn: memo hoá value để giữ tham chiếu ổn định
+// ✓ Đúng hơn: memo hoá value để giữ tham chiếu ổn định
 const value = useMemo(() => ({ theme, toggle }), [theme]);
 <ThemeContext.Provider value={value}>
 ```
@@ -194,14 +194,14 @@ const value = useMemo(() => ({ theme, toggle }), [theme]);
 Và lỗi gộp quá nhiều thứ vào một Context:
 
 ```tsx
-// ❌ Nhét user + theme + giỏ hàng + filter vào MỘT context.
+// ✗ Nhét user + theme + giỏ hàng + filter vào MỘT context.
 //    Giỏ hàng đổi → component chỉ cần theme cũng re-render.
 
-// ✅ Tách thành nhiều context nhỏ theo nhịp thay đổi:
+// ✓ Tách thành nhiều context nhỏ theo nhịp thay đổi:
 //    AuthContext (đổi rất hiếm), ThemeContext (đổi hiếm), CartContext (đổi thường xuyên)
 ```
 
-> ⚠️ Bẫy: Đừng dùng Context cho state **đổi liên tục, tần suất cao** (vị trí chuột, giá trị ô input đang gõ, state cập nhật mỗi giây). Mỗi lần đổi là một làn sóng re-render toàn cây con. Loại state đó nên dùng local state hoặc thư viện có selector như Zustand.
+> Bẫy: Đừng dùng Context cho state **đổi liên tục, tần suất cao** (vị trí chuột, giá trị ô input đang gõ, state cập nhật mỗi giây). Mỗi lần đổi là một làn sóng re-render toàn cây con. Loại state đó nên dùng local state hoặc thư viện có selector như Zustand.
 
 ## 5. Server state vs client state — khác biệt quan trọng nhất
 
@@ -218,7 +218,7 @@ Và lỗi gộp quá nhiều thứ vào một Context:
 Sai lầm phổ biến nhất: nhét **server state vào Redux/Zustand** rồi tự tay viết logic loading, error, cache, refetch. Bạn sẽ tái phát minh — một cách tệ hơn — đúng những gì React Query làm sẵn.
 
 ```tsx
-// ❌ Cách cũ: dùng useState + useEffect để giữ server state.
+// ✗ Cách cũ: dùng useState + useEffect để giữ server state.
 //    Tự lo loading/error, không có cache, mỗi lần mount lại fetch.
 function UsersBad() {
   const [users, setUsers] = useState([]);
@@ -231,7 +231,7 @@ function UsersBad() {
   // ...còn phải tự lo: refetch, cache, dedupe, đồng bộ giữa nhiều component
 }
 
-// ✅ React Query: khai báo, có cache + dedupe + refetch + stale tự động
+// ✓ React Query: khai báo, có cache + dedupe + refetch + stale tự động
 import { useQuery } from "@tanstack/react-query";
 
 function UsersGood() {
@@ -245,7 +245,7 @@ function UsersGood() {
 }
 ```
 
-> 💡 Ghi nhớ: Quy tắc vàng — **dữ liệu lấy từ API là server state, hãy để React Query/SWR quản lý nó.** Client state mới là phần dùng useState/Context/Zustand. Tách đúng hai loại này, 80% nhu cầu "quản lý state" của bạn biến mất. Chi tiết React Query ở bài [[fe-05-routing-data]].
+> Ghi nhớ: Quy tắc vàng — **dữ liệu lấy từ API là server state, hãy để React Query/SWR quản lý nó.** Client state mới là phần dùng useState/Context/Zustand. Tách đúng hai loại này, 80% nhu cầu "quản lý state" của bạn biến mất. Chi tiết React Query ở bài [[fe-05-routing-data]].
 
 ## 6. Khi nào cần Zustand / Redux Toolkit — và khi nào KHÔNG
 
@@ -264,7 +264,7 @@ Ví dụ hợp lý: giỏ hàng truy cập từ nhiều trang, bộ lọc phức
 | Client state **toàn cục, đổi thường xuyên**, nhiều nơi đọc/ghi | Zustand (hoặc Redux Toolkit) |
 | App rất lớn, cần devtools/middleware/time-travel mạnh, đội đông | Redux Toolkit |
 
-> ⚠️ Bẫy: Đừng cài Redux/Zustand "cho chắc" ngay từ đầu dự án. Phần lớn app vừa và nhỏ năm 2025-2026 chạy tốt **chỉ với useState + Context + React Query**. Thêm state manager khi bạn thực sự thấy đau, không phải vì thói quen. Năm 2026, nếu cần thì Zustand là lựa chọn mặc định gọn nhẹ; Redux Toolkit hợp app lớn cần hệ sinh thái mạnh, KHÔNG dùng Redux "kiểu cũ" với boilerplate `connect`/action creator thủ công.
+> Bẫy: Đừng cài Redux/Zustand "cho chắc" ngay từ đầu dự án. Phần lớn app vừa và nhỏ năm 2025-2026 chạy tốt **chỉ với useState + Context + React Query**. Thêm state manager khi bạn thực sự thấy đau, không phải vì thói quen. Năm 2026, nếu cần thì Zustand là lựa chọn mặc định gọn nhẹ; Redux Toolkit hợp app lớn cần hệ sinh thái mạnh, KHÔNG dùng Redux "kiểu cũ" với boilerplate `connect`/action creator thủ công.
 
 ### Zustand — gọn, không cần Provider
 
@@ -319,7 +319,7 @@ function AddButton({ product }: { product: { id: string; name: string; price: nu
 }
 ```
 
-> 💡 Ghi nhớ: Bí quyết dùng Zustand đúng là **luôn truyền selector** (`useCartStore((s) => s.items.length)`) thay vì lấy cả store (`useCartStore()`). Lấy cả store sẽ khiến component re-render mỗi khi **bất kỳ** field nào trong store đổi — mất sạch lợi thế của Zustand.
+> Ghi nhớ: Bí quyết dùng Zustand đúng là **luôn truyền selector** (`useCartStore((s) => s.items.length)`) thay vì lấy cả store (`useCartStore()`). Lấy cả store sẽ khiến component re-render mỗi khi **bất kỳ** field nào trong store đổi — mất sạch lợi thế của Zustand.
 
 ### Redux Toolkit — khi cần hệ sinh thái mạnh
 
@@ -352,18 +352,18 @@ React (và mọi state manager) phát hiện thay đổi bằng cách **so sánh
 ```tsx
 const [todos, setTodos] = useState<Todo[]>([]);
 
-// ❌ SAI: mutate mảng cũ — cùng tham chiếu, React không re-render
+// ✗ SAI: mutate mảng cũ — cùng tham chiếu, React không re-render
 function addBad(t: Todo) {
   todos.push(t);
   setTodos(todos); // cùng object → React bỏ qua
 }
 
-// ✅ Đúng: tạo MẢNG MỚI
+// ✓ Đúng: tạo MẢNG MỚI
 function addGood(t: Todo) {
   setTodos((prev) => [...prev, t]);
 }
 
-// ✅ Cập nhật 1 phần tử: map ra mảng mới với object mới
+// ✓ Cập nhật 1 phần tử: map ra mảng mới với object mới
 function toggle(id: string) {
   setTodos((prev) =>
     prev.map((todo) => (todo.id === id ? { ...todo, done: !todo.done } : todo))
@@ -378,25 +378,25 @@ function toggle(id: string) {
 | Sửa 1 phần tử | `arr.map((x) => x.id === id ? {...x, ...patch} : x)` |
 | Sửa field object | `{ ...obj, field: newValue }` |
 
-> ⚠️ Bẫy: `push`, `pop`, `splice`, `sort`, `reverse`, hay gán `obj.field = ...` đều **mutate tại chỗ**. Với state lồng sâu, viết spread tay rất rối — khi đó dùng Immer (`produce`) hoặc Zustand/RTK (đã tích hợp Immer) để viết gọn mà vẫn immutable.
+> Bẫy: `push`, `pop`, `splice`, `sort`, `reverse`, hay gán `obj.field = ...` đều **mutate tại chỗ**. Với state lồng sâu, viết spread tay rất rối — khi đó dùng Immer (`produce`) hoặc Zustand/RTK (đã tích hợp Immer) để viết gọn mà vẫn immutable.
 
 ## 8. Single source of truth — một sự thật duy nhất
 
 Nguyên tắc xuyên suốt cả bài: **mỗi mẩu dữ liệu chỉ nên có MỘT nơi sở hữu**. Đừng lưu cùng một thông tin ở hai chỗ rồi tự đồng bộ — chúng chắc chắn sẽ lệch nhau.
 
 ```tsx
-// ❌ SAI: lưu cả user VÀ fullName — hai nguồn sự thật, dễ lệch
+// ✗ SAI: lưu cả user VÀ fullName — hai nguồn sự thật, dễ lệch
 const [user, setUser] = useState({ firstName: "An", lastName: "Le" });
 const [fullName, setFullName] = useState("An Le"); // thừa, sẽ out-of-sync!
 
-// ✅ Đúng: chỉ giữ nguồn gốc, phần dẫn xuất thì TÍNH lúc render
+// ✓ Đúng: chỉ giữ nguồn gốc, phần dẫn xuất thì TÍNH lúc render
 const [user, setUser] = useState({ firstName: "An", lastName: "Le" });
 const fullName = `${user.firstName} ${user.lastName}`; // derived state
 ```
 
 Quy tắc đi kèm: **state dẫn xuất (derived state) thì tính khi render, đừng lưu thành state riêng.** Nếu một giá trị có thể suy ra từ state/props khác, nó không nên là state. Tính nặng thì bọc `useMemo`, nhưng vẫn là tính chứ không lưu.
 
-> 💡 Ghi nhớ: Trước khi tạo một `useState` mới, hỏi: "giá trị này có suy ra được từ thứ tôi đã có không?". Nếu có → đừng tạo state, hãy tính nó. Ít state hơn = ít bug đồng bộ hơn.
+> Ghi nhớ: Trước khi tạo một `useState` mới, hỏi: "giá trị này có suy ra được từ thứ tôi đã có không?". Nếu có → đừng tạo state, hãy tính nó. Ít state hơn = ít bug đồng bộ hơn.
 
 ## 9. Tổng kết: bản đồ ra quyết định
 
@@ -469,7 +469,7 @@ Quy trình suy nghĩ khi gặp một mẩu state mới, theo thứ tự:
 
 Và luôn giữ hai nguyên tắc nền: **immutability** (luôn tạo dữ liệu mới) và **single source of truth** (một nơi sở hữu, phần dẫn xuất thì tính).
 
-> 💡 Ghi nhớ: Phần lớn lỗi state không phải do thiếu thư viện, mà do **đặt state sai chỗ** và **trộn lẫn server state với client state**. Sửa hai điều này trước, đa số dự án không cần Redux.
+> Ghi nhớ: Phần lớn lỗi state không phải do thiếu thư viện, mà do **đặt state sai chỗ** và **trộn lẫn server state với client state**. Sửa hai điều này trước, đa số dự án không cần Redux.
 
 ## Liên hệ thực tế
 

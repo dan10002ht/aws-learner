@@ -27,7 +27,7 @@ HATEOAS "đầy đủ" (client tự khám phá toàn bộ API qua link) gần nh
 - Trả link phân trang (`next`, `prev`) trong response — client không phải tự build URL.
 - Trả các **action khả dụng** theo trạng thái: order ở trạng thái `shipped` thì không có link `cancel`. Client render nút theo link thay vì duplicate business rule.
 
-> 💡 Ghi nhớ: Giá trị thật của REST không phải "đúng chuẩn Fielding" mà là **tính dự đoán được**: dev mới nhìn `GET /users/42/orders?status=paid` là hiểu ngay, cache/proxy/gateway hiểu ngay, không cần đọc docs.
+> Ghi nhớ: Giá trị thật của REST không phải "đúng chuẩn Fielding" mà là **tính dự đoán được**: dev mới nhìn `GET /users/42/orders?status=paid` là hiểu ngay, cache/proxy/gateway hiểu ngay, không cần đọc docs.
 
 ## 2. Pagination: offset vs cursor
 
@@ -82,7 +82,7 @@ Quy tắc thực dụng: **feed/timeline/infinite scroll → cursor; admin table
   <text x="360" y="300" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">↑ index seek nhảy thẳng vào đây — không phụ thuộc trang sâu hay nông</text>
 </svg>
 
-> ⚠️ Bẫy production: cursor phải dựa trên **sort key duy nhất và ổn định**. Sort theo `created_at` đơn thuần sẽ vỡ khi 2 row cùng timestamp — luôn tiebreak bằng `id`: `ORDER BY created_at DESC, id DESC`. Và encode cursor (base64 + ký nếu cần) để client không tự chế cursor truy cập dữ liệu người khác.
+> Bẫy production: cursor phải dựa trên **sort key duy nhất và ổn định**. Sort theo `created_at` đơn thuần sẽ vỡ khi 2 row cùng timestamp — luôn tiebreak bằng `id`: `ORDER BY created_at DESC, id DESC`. Và encode cursor (base64 + ký nếu cần) để client không tự chế cursor truy cập dữ liệu người khác.
 
 ## 3. Versioning: URL vs header
 
@@ -94,7 +94,7 @@ Quy tắc thực dụng: **feed/timeline/infinite scroll → cursor; admin table
 
 Thực tế ngành (Stripe, GitHub, AWS): **URL version cho breaking change lớn, hiếm khi tăng** (v1 sống nhiều năm), kết hợp **additive change không cần version mới** — thêm field mới là non-breaking nếu client tuân thủ "ignore unknown fields". Stripe dùng date-based version trong header (`Stripe-Version: 2025-01-27`) pin theo từng account — rất hay nhưng đắt để vận hành.
 
-> 💡 Ghi nhớ: chiến lược versioning tốt nhất là **ít phải version**: chỉ thêm field, không đổi nghĩa field cũ, không đổi type, deprecate có lộ trình (header `Deprecation` + `Sunset`, RFC 8594).
+> Ghi nhớ: chiến lược versioning tốt nhất là **ít phải version**: chỉ thêm field, không đổi nghĩa field cũ, không đổi type, deprecate có lộ trình (header `Deprecation` + `Sunset`, RFC 8594).
 
 ## 4. Idempotency key cho POST
 
@@ -176,7 +176,7 @@ Các điểm chết người hay bị bỏ qua:
 - Request **đang xử lý dở** mà nhận retry cùng key → trả 409 hoặc chờ, không xử lý song song.
 - Key do **client sinh** (UUID v4) và gắn với một "ý định" nghiệp vụ, không phải mỗi lần bấm nút sinh key mới.
 
-> ⚠️ Bẫy production: idempotency theo HTTP method là chưa đủ. PUT idempotent về mặt giao thức nhưng nếu handler có side effect (gửi email, bắn event) thì retry vẫn nhân đôi side effect. Idempotency phải được thiết kế ở **tầng nghiệp vụ**, không chỉ tầng HTTP.
+> Bẫy production: idempotency theo HTTP method là chưa đủ. PUT idempotent về mặt giao thức nhưng nếu handler có side effect (gửi email, bắn event) thì retry vẫn nhân đôi side effect. Idempotency phải được thiết kế ở **tầng nghiệp vụ**, không chỉ tầng HTTP.
 
 ## 5. Rate limiting & 429
 
@@ -201,7 +201,7 @@ RateLimit-Reset: 30
 
 Thiết kế cần quyết định: limit theo **API key / user / IP / endpoint**? Limit phân biệt **read vs write**? Có **tier** trả phí không? Và quan trọng: rate limiter phải nằm **trước** phần xử lý đắt (ở gateway/edge), state để ở Redis với atomic Lua script hoặc `INCR + EXPIRE` — đếm in-memory từng instance sẽ sai ngay khi scale ngang.
 
-> 💡 Ghi nhớ: client tử tế phải retry với **exponential backoff + jitter** và tôn trọng `Retry-After`. Nếu bạn viết SDK cho API của mình, hãy build sẵn logic này — đừng tin client tự làm đúng.
+> Ghi nhớ: client tử tế phải retry với **exponential backoff + jitter** và tôn trọng `Retry-After`. Nếu bạn viết SDK cho API của mình, hãy build sẵn logic này — đừng tin client tự làm đúng.
 
 ## 6. Error format: RFC 9457 (problem+json)
 
@@ -224,7 +224,7 @@ Thiết kế cần quyết định: limit theo **API key / user / IP / endpoint*
 - `Content-Type: application/problem+json`.
 - Luôn kèm **correlation/trace id** để support đối chiếu log.
 
-> ⚠️ Bẫy production: đừng leak nội bộ trong message lỗi — stack trace, SQL, tên class, version framework đều là quà cho attacker. Lỗi 5xx chỉ nên trả `title` chung chung + trace id; chi tiết nằm trong log/APM.
+> Bẫy production: đừng leak nội bộ trong message lỗi — stack trace, SQL, tên class, version framework đều là quà cho attacker. Lỗi 5xx chỉ nên trả `title` chung chung + trace id; chi tiết nằm trong log/APM.
 
 ## 7. gRPC: khi nào và tại sao
 
@@ -290,7 +290,7 @@ Vị trí hợp lý nhất: **gRPC cho east-west (nội bộ), REST/GraphQL cho 
   <text x="360" y="328" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">gRPC (HTTP/2 · Protobuf · contract-first) giữa các service nội bộ</text>
 </svg>
 
-> ⚠️ Bẫy production: gRPC giữ connection HTTP/2 lâu dài — qua L4 load balancer, toàn bộ traffic của 1 client dồn vào 1 backend. Cần client-side LB, hoặc L7 proxy (Envoy), hoặc đặt `MAX_CONNECTION_AGE` để ép re-balance.
+> Bẫy production: gRPC giữ connection HTTP/2 lâu dài — qua L4 load balancer, toàn bộ traffic của 1 client dồn vào 1 backend. Cần client-side LB, hoặc L7 proxy (Envoy), hoặc đặt `MAX_CONNECTION_AGE` để ép re-balance.
 
 ## 8. GraphQL: khi nào và cái giá phải trả
 
@@ -325,7 +325,7 @@ Lưu ý: DataLoader phải tạo **per-request** (không share cache giữa user
 - **Mọi response là 200**: lỗi nằm trong `errors[]` → monitoring dựa trên status code mù hoàn toàn, phải instrument ở tầng GraphQL.
 - **Authorization per-field**, không phải per-endpoint — dễ sót.
 
-> 💡 Ghi nhớ: GraphQL không thay thế REST, nó là **tầng aggregation cho frontend**. Kiến trúc phổ biến 2025: GraphQL BFF ở edge → gọi xuống các internal service bằng gRPC/REST.
+> Ghi nhớ: GraphQL không thay thế REST, nó là **tầng aggregation cho frontend**. Kiến trúc phổ biến 2025: GraphQL BFF ở edge → gọi xuống các internal service bằng gRPC/REST.
 
 ## 9. Webhooks: API chiều ngược lại
 
@@ -403,7 +403,7 @@ def webhook_handler(request):
 - **At-least-once là mặc định** → consumer bắt buộc idempotent theo `event_id`.
 - Verify HMAC trên **raw body** — body đã qua JSON parse rồi re-serialize sẽ lệch byte và fail signature.
 
-> ⚠️ Bẫy production: endpoint webhook là cửa SSRF/giả mạo nếu chỉ "check IP của provider" hoặc tệ hơn là không verify gì. HMAC + timestamp là tối thiểu. Và nhớ cơ chế **xoay secret** không downtime: chấp nhận 2 secret song song trong giai đoạn chuyển.
+> Bẫy production: endpoint webhook là cửa SSRF/giả mạo nếu chỉ "check IP của provider" hoặc tệ hơn là không verify gì. HMAC + timestamp là tối thiểu. Và nhớ cơ chế **xoay secret** không downtime: chấp nhận 2 secret song song trong giai đoạn chuyển.
 
 ## 10. OpenAPI: hợp đồng là code
 
@@ -414,7 +414,7 @@ OpenAPI (3.1, đã align với JSON Schema) biến REST thành contract-first nh
 - **Chặn breaking change trong CI**: diff spec giữa các commit bằng tool (oasdiff, optic) — đổi type, xoá field, thêm required param đều fail build.
 - Contract testing (Pact, schemathesis) để bảo đảm implementation khớp spec.
 
-> 💡 Ghi nhớ: docs viết tay luôn lệch với thực tế sau 3 tháng. Docs sinh từ spec, và spec được validate trong CI, là cách duy nhất giữ hợp đồng trung thực ở quy mô nhiều team.
+> Ghi nhớ: docs viết tay luôn lệch với thực tế sau 3 tháng. Docs sinh từ spec, và spec được validate trong CI, là cách duy nhất giữ hợp đồng trung thực ở quy mô nhiều team.
 
 ## Checklist quyết định nhanh
 

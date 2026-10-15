@@ -43,7 +43,7 @@ Vertical scaling đơn giản nhưng có **ba điểm chết**:
 
 Horizontal scaling giải quyết cả ba: không trần, chi phí tuyến tính, và một máy hỏng chỉ làm giảm công suất chứ không sập hệ thống. Đây là lý do toàn bộ kiến trúc cloud hiện đại (và toàn bộ triết lý của AWS) xây quanh horizontal scaling.
 
-> 💡 **Ghi nhớ**: Vertical scaling là "mua máy to hơn" — đơn giản nhưng có trần và là single point of failure. Horizontal scaling là "mua nhiều máy" — gần như vô hạn, chịu lỗi tốt, nhưng **đòi hỏi ứng dụng phải được thiết kế để chạy trên nhiều máy**. Cái giá phải trả cho horizontal scaling chính là chủ đề của phần tiếp theo: stateless design.
+> **Ghi nhớ**: Vertical scaling là "mua máy to hơn" — đơn giản nhưng có trần và là single point of failure. Horizontal scaling là "mua nhiều máy" — gần như vô hạn, chịu lỗi tốt, nhưng **đòi hỏi ứng dụng phải được thiết kế để chạy trên nhiều máy**. Cái giá phải trả cho horizontal scaling chính là chủ đề của phần tiếp theo: stateless design.
 
 ## 2. Stateless vs Stateful — cái giá của horizontal scaling
 
@@ -123,7 +123,7 @@ Khi server stateless:
 | Thêm server | Phức tạp | Cắm vào là chạy |
 | Load balancing | Cần sticky session | Tự do hoàn toàn |
 
-> 💡 **Ghi nhớ**: Quy tắc vàng của thiết kế cloud: **app tier phải stateless, state dồn về data tier**. Server ứng dụng nên được coi như "gia súc" (cattle) — giống nhau, thay thế được, huỷ lúc nào cũng được — chứ không phải "thú cưng" (pet) được nuôi nấng riêng.
+> **Ghi nhớ**: Quy tắc vàng của thiết kế cloud: **app tier phải stateless, state dồn về data tier**. Server ứng dụng nên được coi như "gia súc" (cattle) — giống nhau, thay thế được, huỷ lúc nào cũng được — chứ không phải "thú cưng" (pet) được nuôi nấng riêng.
 
 ## 3. Load balancing — người chia việc
 
@@ -148,7 +148,7 @@ Client ──▶ [ LB ] ──┼────▶ Server 2
 
 LB định kỳ "hỏi thăm" từng server (ví dụ gọi `GET /health` mỗi 10 giây). Server nào không trả lời hoặc trả lỗi sẽ bị **loại khỏi danh sách chia tải** cho đến khi khoẻ lại. Nhờ vậy, một máy chết gần như vô hình với người dùng.
 
-> 💡 **Ghi nhớ**: Load balancer làm hai việc: **chia tải** (theo thuật toán) và **phát hiện máy hỏng** (health check). Kết hợp với stateless design, nó biến "nhiều máy nhỏ" thành "một hệ thống lớn đáng tin cậy" trong mắt client.
+> **Ghi nhớ**: Load balancer làm hai việc: **chia tải** (theo thuật toán) và **phát hiện máy hỏng** (health check). Kết hợp với stateless design, nó biến "nhiều máy nhỏ" thành "một hệ thống lớn đáng tin cậy" trong mắt client.
 
 ## 4. Auto scaling — thêm bớt máy tự động
 
@@ -183,7 +183,7 @@ Kèm theo là các tham số an toàn: **min** (số máy tối thiểu, để k
 
 Hãy nối các mảnh lại: auto scaling **tạo và huỷ máy liên tục, không báo trước**. Nếu server chứa session trong RAM, mỗi lần scale in là một đợt user bị đăng xuất oan. Chỉ khi app tier stateless, máy mới "sống chết vô danh" mà người dùng không hề hay biết.
 
-> 💡 **Ghi nhớ**: Auto scaling = **metric → ngưỡng → thêm/bớt máy**, trong khung min/max. Nó chỉ thực sự hoạt động trơn tru khi app tier đã stateless. Đây là sự kết hợp kinh điển: Load balancer + Auto scaling + Stateless app = kiến trúc web co giãn chuẩn cloud.
+> **Ghi nhớ**: Auto scaling = **metric → ngưỡng → thêm/bớt máy**, trong khung min/max. Nó chỉ thực sự hoạt động trơn tru khi app tier đã stateless. Đây là sự kết hợp kinh điển: Load balancer + Auto scaling + Stateless app = kiến trúc web co giãn chuẩn cloud.
 
 ## 5. Caching — đừng nấu lại tô phở đã nấu
 
@@ -209,7 +209,7 @@ User ──▶ [1.Browser cache] ──▶ [2.CDN] ──▶ App ──▶ [3.Ap
 - **Cache hit / miss**: hit là tìm thấy trong cache (nhanh), miss là phải về nguồn lấy (chậm). Tỷ lệ hit càng cao, hệ thống càng nhẹ tải.
 - **Cache invalidation (làm tươi dữ liệu)**: dữ liệu gốc đổi rồi mà cache còn bản cũ thì user thấy dữ liệu **stale** (cũ). Cách phổ biến: đặt **TTL** (time-to-live — bản cache tự hết hạn sau X giây), hoặc chủ động xoá cache khi ghi dữ liệu mới. Đây là một trong những bài toán khó nhất ngành — chấp nhận đánh đổi giữa "tươi" và "nhanh".
 
-> 💡 **Ghi nhớ**: Cache là cách scale rẻ nhất: phục vụ lại kết quả cũ thay vì tính lại. Có 4 tầng: **client → CDN → app cache → DB cache**. Mặt trái duy nhất nhưng dai dẳng: dữ liệu có thể **stale**, kiểm soát bằng TTL và chiến lược invalidation.
+> **Ghi nhớ**: Cache là cách scale rẻ nhất: phục vụ lại kết quả cũ thay vì tính lại. Có 4 tầng: **client → CDN → app cache → DB cache**. Mặt trái duy nhất nhưng dai dẳng: dữ liệu có thể **stale**, kiểm soát bằng TTL và chiến lược invalidation.
 
 ## 6. Database scaling — phần khó nhất
 
@@ -280,7 +280,7 @@ Cái giá: **replication lag** — replica chậm hơn primary một nhịp. Use
 
 Read replica không giúp gì cho **write** — mọi lệnh ghi vẫn dồn vào một primary. Khi write quá tải, các lựa chọn đều đau đớn hơn: scale up primary (quay lại vertical với trần của nó), **sharding** (chia dữ liệu thành nhiều mảnh, mỗi mảnh một DB — phức tạp hơn hẳn, sẽ học ở bài sau), hoặc đổi sang loại database thiết kế sẵn cho phân tán. Hiểu được "đọc dễ scale, ghi khó scale" là đã nắm được nửa môn thiết kế hệ thống.
 
-> 💡 **Ghi nhớ**: Database khó scale vì nó **giữ state phải nhất quán giữa các bản sao**. Chiến lược chuẩn: **read replica** để chia tải đọc (chấp nhận replication lag / eventual consistency), còn tải ghi vẫn về một primary — khi ghi quá tải mới phải dùng đến sharding.
+> **Ghi nhớ**: Database khó scale vì nó **giữ state phải nhất quán giữa các bản sao**. Chiến lược chuẩn: **read replica** để chia tải đọc (chấp nhận replication lag / eventual consistency), còn tải ghi vẫn về một primary — khi ghi quá tải mới phải dùng đến sharding.
 
 ## 7. Ghép tất cả lại — kiến trúc web co giãn kinh điển
 

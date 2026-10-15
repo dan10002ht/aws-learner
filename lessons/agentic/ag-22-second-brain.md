@@ -467,37 +467,37 @@ python3 bin/measure.py
 
 ## 5. Bẫy thường gặp
 
-🪤 **Đo brain bằng số note và số job chạy thành công.**
+**Đo brain bằng số note và số job chạy thành công.**
 Triệu chứng: báo cáo tuần luôn xanh, brain lớn đều, nhưng không ai nhớ lần cuối brain giúp được một task.
 Nguyên nhân gốc: mọi số phía ghi tự tăng và không thể đỏ khi brain vô dụng.
 Chặn bằng cơ chế: báo cáo chỉ gồm bốn số phía đọc (§3.4), script từ chối in tỉ lệ dưới ngưỡng mẫu; luật "số lượt tra/tuần phải tăng trước khi thêm bất kỳ job sinh note nào".
 
-🪤 **Viết note mới cho thứ brain đã có.**
+**Viết note mới cho thứ brain đã có.**
 Triệu chứng: brain có hai, ba note nói cùng một cơ chế với tên khác nhau; ca sau vẫn trượt.
 Nguyên nhân gốc: coi lỗi truy hồi là knowledge gap.
 Chặn bằng cơ chế: trước khi viết note, chạy công cụ tra với câu triệu chứng **và** grep theo cơ chế; grep ra mà tra không ra → sửa summary của note cũ, không tạo note mới. Kết luận task ghi `Brain:` theo ba nhánh của bảng §3.4.
 
-🪤 **Summary chỉ nói nguyên nhân.**
+**Summary chỉ nói nguyên nhân.**
 Triệu chứng: ticket tới, tra brain bằng lời người báo lỗi, trượt; người điều tra mất nửa ngày tìm lại đúng thứ đã ghi tháng trước.
 Nguyên nhân gốc: người viết note đã biết đáp án nên tóm đáp án; người tra chưa biết đáp án nên hỏi bằng triệu chứng.
 Chặn bằng cơ chế: luật "≥ 2 từ phân biệt chung với dòng triệu chứng" nằm trong **prompt của job sinh note** và trong script lint; backtest bằng ca đã đóng với truy vấn chỉ chứa triệu chứng.
 
-🪤 **Hook nói mỗi lượt nên không ai đọc nữa.**
+**Hook nói mỗi lượt nên không ai đọc nữa.**
 Triệu chứng: khối "brain có liên quan" xuất hiện gần như mọi tin nhắn; agent và người đều lờ đi, kể cả lần nó đúng.
 Nguyên nhân gốc: không có cổng — khối không mang thông tin dạy người đọc bỏ qua cả khối.
 Chặn bằng cơ chế: ba cổng (§3.6); đo tỉ lệ lượt hook bắn có `co-co-che`; nếu bắn nhiều mà toàn trượt thì cổng 1 quá rộng.
 
-🪤 **Chèn được note mà agent không mở.**
+**Chèn được note mà agent không mở.**
 Triệu chứng: transcript có khối brain, nhưng agent điều tra từ đầu hoặc hỏi lại người dùng.
 Nguyên nhân gốc: chỉ chèn đường dẫn, không có lý do để mở và không có hành động được yêu cầu.
 Chặn bằng cơ chế: chèn kèm summary + dòng hành động + bắt buộc dòng `Brain:` trong kết luận; đếm "phiên được chèn / phiên mở note" định kỳ ([[ag-24-harness-tu-cai-tien]]).
 
-🪤 **Nhật ký ngày được đếm là "đã có câu trả lời".**
+**Nhật ký ngày được đếm là "đã có câu trả lời".**
 Triệu chứng: tỉ lệ hit đẹp, knowledge gap tuần nào cũng rỗng.
 Nguyên nhân gốc: thước đo "có trả về file" do chính công cụ tra tự đặt.
 Chặn bằng cơ chế: bốn hạng `co-co-che/chi-inbox/chi-nhat-ky/truot`; công cụ tra in cảnh báo ngay trong output khi chỉ có nhật ký; kiểm thước đo bằng log giả cho nó đỏ.
 
-🪤 **Brain rò ra ngoài.**
+**Brain rò ra ngoài.**
 Triệu chứng: một file của task (log, dump dữ liệu, ghi chú có tên khách hàng) nằm trong repo brain, và repo đó được push tự động mỗi tối.
 Nguyên nhân gốc: brain chứa chi tiết công việc thật, và đường ống "file lạ rơi vào brain → `git add -A` → push" chạy không người duyệt. Case thực tế: remote của một brain từng để public gần ba tháng trước khi được chuyển private.
 Chặn bằng cơ chế: remote private; job sync có cổng danh sách thư mục hợp lệ — path ngoài danh sách thì DỪNG, không commit; hook `PreToolUse` chặn phiên agent đang làm việc trong brain ghi file ra ngoài brain ([[ag-08-hook-va-chan-bang-cau-hinh]]).

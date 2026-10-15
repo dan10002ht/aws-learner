@@ -39,7 +39,7 @@ Ba trụ cột của React:
 | **Component-based** | UI chia thành các khối tái dùng | Tách nhỏ, test riêng, ghép lại |
 | **Virtual DOM** | React giữ bản sao UI trong bộ nhớ, so sánh (diff) rồi chỉ sửa phần thay đổi | Bạn "vẽ lại tất cả" về mặt tư duy, nhưng React chỉ cập nhật DOM tối thiểu |
 
-> 💡 Ghi nhớ: Tư tưởng cốt lõi của React gói gọn trong một công thức: **UI = f(state)**. Bạn không cập nhật giao diện, bạn cập nhật state — giao diện là kết quả của một hàm.
+> Ghi nhớ: Tư tưởng cốt lõi của React gói gọn trong một công thức: **UI = f(state)**. Bạn không cập nhật giao diện, bạn cập nhật state — giao diện là kết quả của một hàm.
 
 ## 2. JSX là gì và các quy tắc bắt buộc
 
@@ -78,7 +78,7 @@ function Greeting() {
 }
 ```
 
-> ⚠️ Bẫy: Quên rằng JSX chỉ trả về một phần tử gốc. Trả về hai thẻ `<h1>` và `<p>` cạnh nhau sẽ lỗi compile. Bọc trong Fragment `<>...</>` — nó không tạo thẻ DOM thừa như `<div>`.
+> Bẫy: Quên rằng JSX chỉ trả về một phần tử gốc. Trả về hai thẻ `<h1>` và `<p>` cạnh nhau sẽ lỗi compile. Bọc trong Fragment `<>...</>` — nó không tạo thẻ DOM thừa như `<div>`.
 
 ## 3. Function component & props
 
@@ -165,11 +165,11 @@ UI React là một **cây component**: một gốc (`App`) phân nhánh xuống 
   <text x="100" y="330" font-size="10.5" fill="currentColor" opacity="0.7">Tên component viết hoa chữ đầu · props là read-only ở con</text>
 </svg>
 
-> 💡 Ghi nhớ: One-way data flow giúp bạn luôn biết dữ liệu **đến từ đâu** — cứ lần ngược lên cha là tìm ra nguồn. Đây là lý do bug "UI lệch state" hiếm hơn hẳn so với DOM thủ công, nơi bất kỳ đoạn code nào cũng có thể sửa bất kỳ phần tử nào.
+> Ghi nhớ: One-way data flow giúp bạn luôn biết dữ liệu **đến từ đâu** — cứ lần ngược lên cha là tìm ra nguồn. Đây là lý do bug "UI lệch state" hiếm hơn hẳn so với DOM thủ công, nơi bất kỳ đoạn code nào cũng có thể sửa bất kỳ phần tử nào.
 
 Việc khai báo kiểu props là lý do TypeScript gần như bắt buộc cho frontend hiện đại — nó bắt lỗi ngay khi bạn truyền sai prop. Xem lại [[fe-01-typescript]] nếu cần nền tảng về `type`, union và optional.
 
-> 💡 Ghi nhớ: Một component tốt là một hàm thuần (pure) đối với props: cùng props vào → cùng UI ra, không side effect lúc render. Side effect (gọi API, đụng DOM) thuộc về hook `useEffect`, không nằm thẳng trong thân hàm.
+> Ghi nhớ: Một component tốt là một hàm thuần (pure) đối với props: cùng props vào → cùng UI ra, không side effect lúc render. Side effect (gọi API, đụng DOM) thuộc về hook `useEffect`, không nằm thẳng trong thân hàm.
 
 ## 4. Render & re-render — điều khiến React "phản ứng"
 
@@ -242,7 +242,7 @@ Mỗi lần re-render, React gọi **lại** hàm component từ đầu, tạo v
   <path d="M610 250 L300 264" stroke="#f59e0b" stroke-width="1.8" fill="none" stroke-dasharray="4 3"/>
 </svg>
 
-> 💡 Ghi nhớ: Công thức **UI = f(state)** chính là vòng này: state đổi → React chạy lại `f` → so sánh kết quả với lần trước → vá tối thiểu vào DOM. Bạn chỉ lo đổi state, không bao giờ tự đụng vào DOM.
+> Ghi nhớ: Công thức **UI = f(state)** chính là vòng này: state đổi → React chạy lại `f` → so sánh kết quả với lần trước → vá tối thiểu vào DOM. Bạn chỉ lo đổi state, không bao giờ tự đụng vào DOM.
 
 ```tsx
 function Counter() {
@@ -252,7 +252,7 @@ function Counter() {
 }
 ```
 
-> ⚠️ Bẫy: State trong React là **bất biến (immutable)** về mặt tư duy. Sửa trực tiếp (`count++`, `arr.push(x)`) sẽ KHÔNG kích hoạt re-render vì React so sánh tham chiếu. Luôn tạo giá trị mới: `setCount(count + 1)`, `setItems([...items, x])`. Phần sâu về state/hooks nằm ở [[fe-03-hooks-state]].
+> Bẫy: State trong React là **bất biến (immutable)** về mặt tư duy. Sửa trực tiếp (`count++`, `arr.push(x)`) sẽ KHÔNG kích hoạt re-render vì React so sánh tham chiếu. Luôn tạo giá trị mới: `setCount(count + 1)`, `setItems([...items, x])`. Phần sâu về state/hooks nằm ở [[fe-03-hooks-state]].
 
 ## 5. Render list & vì sao cần `key`
 
@@ -266,7 +266,7 @@ function TodoList({ todos }: { todos: Todo[] }) {
     <ul>
       {todos.map((todo) => (
         <li key={todo.id}>
-          {todo.done ? "✅" : "⬜"} {todo.title}
+          {todo.done ? "✓" : "□"} {todo.title}
         </li>
       ))}
     </ul>
@@ -279,16 +279,16 @@ Mỗi phần tử trong list **phải có prop `key`** là một giá trị **du
 Vì sao **không** dùng index làm key? Vì index không gắn với dữ liệu. Khi bạn xoá/chèn/sắp xếp lại, index của một item đổi, React tưởng nội dung đổi và gắn nhầm state.
 
 ```tsx
-// ❌ SAI: index không ổn định khi list thay đổi
+// ✗ SAI: index không ổn định khi list thay đổi
 {todos.map((todo, i) => <li key={i}>{todo.title}</li>)}
 
-// ✅ ĐÚNG: id gắn chặt với từng item
+// ✓ ĐÚNG: id gắn chặt với từng item
 {todos.map((todo) => <li key={todo.id}>{todo.title}</li>)}
 ```
 
 Lỗi thực tế kinh điển: mỗi `<li>` có một `<input>` (ô tick hoặc ô sửa). Dùng `key={i}`, khi bạn xoá item đầu danh sách, nội dung gõ dở trong các input bị "trượt" sang item khác — vì React tái dùng nhầm DOM theo index.
 
-> ⚠️ Bẫy: `key` chỉ cần **duy nhất trong cùng một list**, không cần duy nhất toàn app. Và `key` **không phải prop** — component con không đọc được `props.key`; nó chỉ dành cho React. Cần giá trị đó bên trong con thì truyền thêm một prop khác (ví dụ `id={todo.id}`).
+> Bẫy: `key` chỉ cần **duy nhất trong cùng một list**, không cần duy nhất toàn app. Và `key` **không phải prop** — component con không đọc được `props.key`; nó chỉ dành cho React. Cần giá trị đó bên trong con thì truyền thêm một prop khác (ví dụ `id={todo.id}`).
 
 ## 6. Conditional rendering
 
@@ -314,7 +314,7 @@ function Page({ loading, error }: { loading: boolean; error?: string }) {
 }
 ```
 
-> ⚠️ Bẫy: `&&` với số `0`. Viết `{items.length && <List />}` — khi `items.length === 0`, React **render ra số `0`** chứ không phải "không hiện gì", vì `0` là falsy nhưng vẫn là giá trị hợp lệ để render. Sửa: `{items.length > 0 && <List />}` hoặc `{items.length ? <List /> : null}`.
+> Bẫy: `&&` với số `0`. Viết `{items.length && <List />}` — khi `items.length === 0`, React **render ra số `0`** chứ không phải "không hiện gì", vì `0` là falsy nhưng vẫn là giá trị hợp lệ để render. Sửa: `{items.length > 0 && <List />}` hoặc `{items.length ? <List /> : null}`.
 
 ## 7. Event handling
 
@@ -345,12 +345,12 @@ function SearchBox() {
 Lưu ý cách truyền handler — phân biệt **truyền hàm** với **gọi hàm**:
 
 ```tsx
-<button onClick={handleClick}>OK</button>        // ✅ truyền tham chiếu hàm
-<button onClick={() => handleClick(id)}>OK</button> // ✅ cần tham số → bọc arrow
-<button onClick={handleClick()}>OK</button>      // ❌ GỌI ngay lúc render → sai
+<button onClick={handleClick}>OK</button>        // ✓ truyền tham chiếu hàm
+<button onClick={() => handleClick(id)}>OK</button> // ✓ cần tham số → bọc arrow
+<button onClick={handleClick()}>OK</button>      // ✗ GỌI ngay lúc render → sai
 ```
 
-> 💡 Ghi nhớ: `onClick={handleClick()}` chạy `handleClick` **ngay khi render** rồi gán giá trị trả về (thường `undefined`) làm handler — đây là lỗi cú pháp logic rất hay gặp ở người mới. Cần tham số thì bọc trong arrow function: `onClick={() => handleClick(id)}`.
+> Ghi nhớ: `onClick={handleClick()}` chạy `handleClick` **ngay khi render** rồi gán giá trị trả về (thường `undefined`) làm handler — đây là lỗi cú pháp logic rất hay gặp ở người mới. Cần tham số thì bọc trong arrow function: `onClick={() => handleClick(id)}`.
 
 ## 8. `children` — ghép component như hộp chứa
 
@@ -433,7 +433,7 @@ export default function TodoApp() {
         <ul>
           {todos.map((todo) => (
             <li key={todo.id} onClick={() => toggle(todo.id)}>
-              {todo.done ? "✅" : "⬜"} {todo.title}
+              {todo.done ? "✓" : "□"} {todo.title}
             </li>
           ))}
         </ul>
@@ -445,7 +445,7 @@ export default function TodoApp() {
 }
 ```
 
-> 💡 Ghi nhớ: Cú "aha" khi chuyển từ JS thuần sang React là bỏ thói quen "đụng vào DOM khi có gì đó xảy ra". Trong React bạn chỉ làm hai việc: (1) giữ dữ liệu trong state, (2) mô tả UI theo state đó. Mọi cập nhật DOM còn lại React lo.
+> Ghi nhớ: Cú "aha" khi chuyển từ JS thuần sang React là bỏ thói quen "đụng vào DOM khi có gì đó xảy ra". Trong React bạn chỉ làm hai việc: (1) giữ dữ liệu trong state, (2) mô tả UI theo state đó. Mọi cập nhật DOM còn lại React lo.
 
 ## Liên hệ thực tế
 

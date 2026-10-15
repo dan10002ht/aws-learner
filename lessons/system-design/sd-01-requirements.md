@@ -4,7 +4,7 @@ Câu phỏng vấn "Thiết kế Twitter" không có đáp án đúng. Nó có *
 
 Bài này không dạy bạn vẽ kiến trúc. Bài này dạy bạn hai kỹ năng đến *trước* khi vẽ: (1) biến một câu hỏi mơ hồ thành tập yêu cầu rõ ràng, và (2) ước lượng quy mô bằng số học lớp 5 để mọi quyết định sau đó có cơ sở. Bỏ qua hai bước này, bạn sẽ thiết kế một hệ thống đúng cho bài toán mà không ai hỏi.
 
-> 💡 Nguyên tắc: Một thiết kế không có con số chỉ là ý kiến. "Cần cache" là ý kiến. "10k QPS đọc, 95% trùng key, một node Redis làm được 100k ops/s nên 1 node thừa sức" là một lập luận. Architect nói bằng vế thứ hai.
+> Nguyên tắc: Một thiết kế không có con số chỉ là ý kiến. "Cần cache" là ý kiến. "10k QPS đọc, 95% trùng key, một node Redis làm được 100k ops/s nên 1 node thừa sức" là một lập luận. Architect nói bằng vế thứ hai.
 
 ## 1. Functional vs non-functional requirements
 
@@ -23,7 +23,7 @@ Mọi bài toán thiết kế tách làm hai loại yêu cầu, và người m�
 | Durability | Mất dữ liệu có chấp nhận được không? | Replication factor, write quorum, backup |
 | Read/write ratio | Đọc nhiều hay ghi nhiều? | Quyết định *toàn bộ* hình dạng kiến trúc |
 
-> 💡 Nguyên tắc: Read/write ratio là con số quan trọng nhất bạn hỏi được sớm. Hệ thống đọc-nhiều (Twitter feed ~100:1) thì cache và read replica giải quyết 90% vấn đề. Hệ thống ghi-nhiều (ingest metric, log) thì cache vô dụng, vấn đề chuyển sang write throughput và partition. Hai hệ thống này gần như không có gì chung dù functional requirements giống nhau.
+> Nguyên tắc: Read/write ratio là con số quan trọng nhất bạn hỏi được sớm. Hệ thống đọc-nhiều (Twitter feed ~100:1) thì cache và read replica giải quyết 90% vấn đề. Hệ thống ghi-nhiều (ingest metric, log) thì cache vô dụng, vấn đề chuyển sang write throughput và partition. Hai hệ thống này gần như không có gì chung dù functional requirements giống nhau.
 
 ## 2. Làm rõ yêu cầu — clarifying questions
 
@@ -48,7 +48,7 @@ Ví dụ với "Thiết kế URL shortener", câu hỏi và giả định bạn 
 - *"Custom alias không?"* → để sau, MVP sinh mã tự động.
 - *"p99 redirect?"* → dưới 100ms (đây là tính năng đọc nóng).
 
-> ⚠️ Bẫy thiết kế: Đừng hỏi 20 câu rồi mới làm. Hỏi 4–5 câu *có ảnh hưởng tới con số*, tự đưa ra giả định cho phần còn lại và **nói to giả định đó** ("tôi giả định mỗi URL ~500 bytes, anh thấy hợp lý không?"). Người phỏng vấn đánh giá khả năng ra quyết định dưới điều kiện thiếu thông tin, chứ không phải khả năng moi đủ thông tin.
+> Bẫy thiết kế: Đừng hỏi 20 câu rồi mới làm. Hỏi 4–5 câu *có ảnh hưởng tới con số*, tự đưa ra giả định cho phần còn lại và **nói to giả định đó** ("tôi giả định mỗi URL ~500 bytes, anh thấy hợp lý không?"). Người phỏng vấn đánh giá khả năng ra quyết định dưới điều kiện thiếu thông tin, chứ không phải khả năng moi đủ thông tin.
 
 ## 3. Đơn vị & con số phải thuộc lòng
 
@@ -154,7 +154,7 @@ Không ước lượng được nếu không nhớ các bậc độ lớn. Đây
   <text x="590" y="298" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">DC → xuyên lục địa: ~300× → CDN, gộp request</text>
 </svg>
 
-> 💡 Nguyên tắc: Hệ quả thực dụng của bảng này: (1) *Memory nhanh hơn disk ~1000 lần* → cache đáng giá. (2) *Cùng datacenter nhanh hơn xuyên lục địa ~300 lần* → đặt data gần user, dùng CDN. (3) *Network round-trip đắt* → gộp request, tránh N+1, dùng batch. Mọi tối ưu kiến trúc đều là hệ quả của ba dòng này.
+> Nguyên tắc: Hệ quả thực dụng của bảng này: (1) *Memory nhanh hơn disk ~1000 lần* → cache đáng giá. (2) *Cùng datacenter nhanh hơn xuyên lục địa ~300 lần* → đặt data gần user, dùng CDN. (3) *Network round-trip đắt* → gộp request, tránh N+1, dùng batch. Mọi tối ưu kiến trúc đều là hệ quả của ba dòng này.
 
 ## 4. Back-of-envelope estimation — công thức
 
@@ -243,7 +243,7 @@ Cache feed nóng — 80/20: 20% user active sinh ra phần lớn read.
 
 **Kết luận rút ra từ số:** 800k read QPS so với 8k write QPS — chênh 100 lần — nói thẳng rằng đây là **read-heavy**, và kiến trúc phải dồn sức vào đường đọc: cache feed, fan-out, read replica. Đường ghi 8k QPS một cụm DB sharded vừa phải là làm được. Không có những con số này, bạn sẽ tốn thời gian tối ưu nhầm chỗ.
 
-> ⚠️ Bẫy thiết kế: Làm tròn quá tay sai dấu phẩy. `86.400 ≈ 10^5` là ổn (sai ~15%, không đổi bậc độ lớn). Nhưng nhầm GB với TB, hay quên nhân replication factor, làm lệch kết quả 1000 lần và mọi quyết định sau đó sai theo. Luôn viết đơn vị ra giấy và kiểm tra bậc độ lớn ở cuối: "1 PB cho 200M user, ~5 MB/user — nghe hợp lý."
+> Bẫy thiết kế: Làm tròn quá tay sai dấu phẩy. `86.400 ≈ 10^5` là ổn (sai ~15%, không đổi bậc độ lớn). Nhưng nhầm GB với TB, hay quên nhân replication factor, làm lệch kết quả 1000 lần và mọi quyết định sau đó sai theo. Luôn viết đơn vị ra giấy và kiểm tra bậc độ lớn ở cuối: "1 PB cho 200M user, ~5 MB/user — nghe hợp lý."
 
 ## 6. Khi nào thực sự cần scale?
 
@@ -303,7 +303,7 @@ Cache feed nóng — 80/20: 20% user active sinh ra phần lớn read.
   <text x="370" y="312" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Cache hoặc 1 replica thường đã đủ — đừng vội shard</text>
 </svg>
 
-> 💡 Nguyên tắc: Thứ tự nâng cấp gần như luôn là: **scale up (máy to hơn) → cache → read replica → sharding/scale out**. Sharding là bước đắt nhất về độ phức tạp (cross-shard query, rebalancing, transaction phân tán) — đừng nhảy tới nó khi cache hoặc một replica đã giải quyết được. "Cần Cassandra" cho hệ thống 500 QPS là dấu hiệu over-engineering, không phải năng lực.
+> Nguyên tắc: Thứ tự nâng cấp gần như luôn là: **scale up (máy to hơn) → cache → read replica → sharding/scale out**. Sharding là bước đắt nhất về độ phức tạp (cross-shard query, rebalancing, transaction phân tán) — đừng nhảy tới nó khi cache hoặc một replica đã giải quyết được. "Cần Cassandra" cho hệ thống 500 QPS là dấu hiệu over-engineering, không phải năng lực.
 
 ## 7. Cách trình bày khi phỏng vấn / review
 
@@ -315,7 +315,7 @@ Cache feed nóng — 80/20: 20% user active sinh ra phần lớn read.
 4. **Làm estimation ra giấy**, vừa tính vừa nói. Sai số nhỏ không sao; *bỏ quên cả bước* mới là vấn đề. Khoanh tròn con số định hình kiến trúc (ở ví dụ Twitter là 800k read QPS).
 5. **Kết nối số → quyết định.** "Vì đọc gấp 100 lần ghi, tôi sẽ ưu tiên cache và replica ở đường đọc" — đừng để con số mồ côi, luôn rút ra hệ quả thiết kế.
 
-> ⚠️ Bẫy thiết kế: Đừng vẽ hộp khi chưa có số. Một ứng viên vẽ ngay load balancer, microservice, Kafka mà chưa biết hệ thống chịu 50 QPS hay 50k QPS đang tự bắn vào chân: nếu hoá ra là 50 QPS, toàn bộ kiến trúc đó là over-engineering và người review sẽ thấy ngay bạn thiết kế theo phản xạ, không theo bài toán.
+> Bẫy thiết kế: Đừng vẽ hộp khi chưa có số. Một ứng viên vẽ ngay load balancer, microservice, Kafka mà chưa biết hệ thống chịu 50 QPS hay 50k QPS đang tự bắn vào chân: nếu hoá ra là 50 QPS, toàn bộ kiến trúc đó là over-engineering và người review sẽ thấy ngay bạn thiết kế theo phản xạ, không theo bài toán.
 
 ## 8. Liên hệ sang AWS
 
@@ -332,7 +332,7 @@ Những con số ước lượng trên ánh xạ trực tiếp sang lựa chọn
 | Số app server co giãn theo Peak QPS | **Auto Scaling + ALB** | Khớp số node với tải thực, không trả tiền dư |
 | Cần ước lượng RAM để chọn instance | **EC2 instance types** | RAM cache đã tính ở §4.4 → chọn r-series (memory) |
 
-> 💡 Nguyên tắc: Ước lượng quy mô là *đầu vào* cho quyết định service. Cùng một functional requirement "lưu dữ liệu", nhưng "73 TB/năm read-heavy" dẫn tới DynamoDB + DAX, còn "5 GB query phức tạp" dẫn tới Aurora. AWS không chọn giúp bạn — con số mới chọn. Hãy luôn quay lại bảng estimation trước khi gọi tên một service.
+> Nguyên tắc: Ước lượng quy mô là *đầu vào* cho quyết định service. Cùng một functional requirement "lưu dữ liệu", nhưng "73 TB/năm read-heavy" dẫn tới DynamoDB + DAX, còn "5 GB query phức tạp" dẫn tới Aurora. AWS không chọn giúp bạn — con số mới chọn. Hãy luôn quay lại bảng estimation trước khi gọi tên một service.
 
 ---
 

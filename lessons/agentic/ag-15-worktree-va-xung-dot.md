@@ -391,7 +391,7 @@ git worktree list
 
 ## 5. Bẫy thường gặp
 
-### 🪤 Bẫy 1 — Worker không thấy thay đổi chưa commit
+### Bẫy 1 — Worker không thấy thay đổi chưa commit
 
 **Triệu chứng.** Bạn sửa dở vài file ở working copy chính, giao subagent "làm tiếp phần còn lại" trong worktree; nó báo không tìm thấy hàm bạn vừa viết, hoặc viết lại từ đầu.
 
@@ -399,7 +399,7 @@ git worktree list
 
 **Chặn bằng cơ chế.** Commit (hoặc tạo nhánh nháp) trước khi giao; với Claude Code đặt `"worktree": { "baseRef": "head" }` trong settings khi subagent cần làm trên việc đang dở. Brief ghi rõ commit gốc (`git rev-parse HEAD`) để worker tự kiểm `git log -1` của nó khớp.
 
-### 🪤 Bẫy 2 — "Dọn rác" xoá việc của session khác
+### Bẫy 2 — "Dọn rác" xoá việc của session khác
 
 **Triệu chứng.** Thấy `.claude/worktrees/` có năm thư mục, nghĩ là rác, `rm -rf` hoặc `git worktree remove --force` hết. Một session khác đang chạy mất file chưa commit.
 
@@ -407,7 +407,7 @@ git worktree list
 
 **Chặn bằng cơ chế.** Agent `lock --reason "<task> <thời điểm>"` khi bắt đầu, `unlock` khi xong. Dọn chỉ bằng script kiểu `wt-reap.sh` (bỏ qua lock, bẩn, chưa push). Cấm `--force` trong skill dọn — có thể chặn hẳn bằng permission deny cho `git worktree remove -f*` theo cách ở [[ag-08-hook-va-chan-bang-cau-hinh]].
 
-### 🪤 Bẫy 3 — Worker tự đổi tên nhánh
+### Bẫy 3 — Worker tự đổi tên nhánh
 
 **Triệu chứng.** Coordinator checkout nhánh `agent/T3` để chấm thì lỗi; hoặc tệ hơn, checkout thất bại im lặng và verifier chấm lại commit cũ.
 
@@ -415,7 +415,7 @@ git worktree list
 
 **Chặn bằng cơ chế.** Coordinator neo vào **SHA**, không vào tên nhánh: chấm bằng `git -C <worktree> rev-parse HEAD` rồi `checkout --detach <sha>`, và kiểm mã thoát. Brief cấm `branch -m` / `checkout -b` và nói rõ tên nhánh là khoá liên kết.
 
-### 🪤 Bẫy 4 — Hai agent cùng cổng, cùng DB
+### Bẫy 4 — Hai agent cùng cổng, cùng DB
 
 **Triệu chứng.** Test của agent B fail ngẫu nhiên ("bản ghi lạ", "cổng đã dùng") trong khi chạy riêng thì xanh.
 
@@ -423,7 +423,7 @@ git worktree list
 
 **Chặn bằng cơ chế.** Brief cấp cho mỗi worker một tài nguyên riêng: cổng = cổng gốc + số thứ tự task, tên DB/namespace có hậu tố task. Không cấp được thì đưa task đó vào nhóm verify **tuần tự** thay vì song song.
 
-### 🪤 Bẫy 5 — Báo cáo "đã gỡ worktree" mà nhánh vẫn khoá
+### Bẫy 5 — Báo cáo "đã gỡ worktree" mà nhánh vẫn khoá
 
 **Triệu chứng.** Agent báo xong, nhưng `git checkout <nhánh>` vẫn `already used by worktree`.
 

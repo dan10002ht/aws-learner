@@ -254,7 +254,7 @@ Redis có thể **tự publish** một sự kiện Pub/Sub mỗi khi một key t
 # Sau 5s subscriber nhận: message __keyevent@0__:expired "order:99:hold"
 ```
 
-⚠️ Đây vẫn là **Pub/Sub bên dưới** → *at-most-once, mất nếu subscriber offline*. Với sự kiện hết-hạn **không được bỏ sót**, đừng chỉ dựa vào notification; hãy kết hợp một job quét định kỳ hoặc dùng Streams làm nguồn sự thật. Ngoài ra event `expired` bắn khi key **thực sự bị xoá** (lazy/active expiry), có thể **trễ** so với thời điểm TTL=0.
+Đây vẫn là **Pub/Sub bên dưới** → *at-most-once, mất nếu subscriber offline*. Với sự kiện hết-hạn **không được bỏ sót**, đừng chỉ dựa vào notification; hãy kết hợp một job quét định kỳ hoặc dùng Streams làm nguồn sự thật. Ngoài ra event `expired` bắn khi key **thực sự bị xoá** (lazy/active expiry), có thể **trễ** so với thời điểm TTL=0.
 
 ---
 

@@ -114,7 +114,7 @@ Defense in depth là **bọc nhiều lớp quanh dữ liệu**: 4 vòng phòng t
 - Auto-renew.
 - Tích hợp **ALB / NLB / CloudFront / API Gateway**.
 - Cert public hoặc private (ACM Private CA — đắt, có hierarchy CA).
-- ❌ Không xuất cert ra file (trừ Private CA).
+- ✗ Không xuất cert ra file (trừ Private CA).
 
 ---
 
@@ -122,12 +122,12 @@ Defense in depth là **bọc nhiều lớp quanh dữ liệu**: 4 vòng phòng t
 
 | Feature | **Secrets Manager** | **SSM Parameter Store** |
 |---------|---------------------|--------------------------|
-| Auto rotation | ✅ Built-in (RDS, Aurora, Redshift, DocumentDB; custom Lambda cho khác) | ❌ Phải tự code Lambda |
+| Auto rotation | ✓ Built-in (RDS, Aurora, Redshift, DocumentDB; custom Lambda cho khác) | ✗ Phải tự code Lambda |
 | Pricing | $0.40/secret/tháng + API | Standard tier **free** (10k param) |
-| Cross-region replication | ✅ | ❌ |
-| Versioning | ✅ | ✅ |
+| Cross-region replication | ✓ | ✗ |
+| Versioning | ✓ | ✓ |
 | Encryption | KMS | KMS (SecureString type) |
-| Generate password | ✅ | ❌ |
+| Generate password | ✓ | ✗ |
 | Use case | RDS password rotate tự động, API key có rotation | Config app (DB host, feature flag), secret đơn giản |
 
 **Mẹo**: Cần rotate? → **Secrets Manager**. Cần rẻ? → **Parameter Store**.

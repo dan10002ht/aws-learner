@@ -49,9 +49,9 @@ Một startup khởi đầu với 1 account, mọi thứ chung nhau. Nó hoạt 
   <text x="560" y="246" font-size="10" fill="currentColor" opacity="0.7">3 dòng rõ ràng</text>
 </svg>
 
-> 💡 Nguyên tắc: Account là đơn vị cô lập VÀ đơn vị tính tiền. Hãy vẽ ranh giới account theo *blast radius bạn muốn chặn* và *chi phí bạn muốn đo riêng* — thường hai cái này trùng nhau.
+> Nguyên tắc: Account là đơn vị cô lập VÀ đơn vị tính tiền. Hãy vẽ ranh giới account theo *blast radius bạn muốn chặn* và *chi phí bạn muốn đo riêng* — thường hai cái này trùng nhau.
 
-> ⚠️ Bẫy thiết kế: Tách quá tay. 200 account cho 200 microservice nghe "cô lập tuyệt đối" nhưng tạo gánh nặng vận hành khổng lồ (networking, IAM, quản lý baseline). Đa số tổ chức chia theo **team/business unit + môi trường**, không phải theo service.
+> Bẫy thiết kế: Tách quá tay. 200 account cho 200 microservice nghe "cô lập tuyệt đối" nhưng tạo gánh nặng vận hành khổng lồ (networking, IAM, quản lý baseline). Đa số tổ chức chia theo **team/business unit + môi trường**, không phải theo service.
 
 ---
 
@@ -98,7 +98,7 @@ Một startup khởi đầu với 1 account, mọi thứ chung nhau. Nó hoạt 
   </g>
 </svg>
 
-> ⚠️ Bẫy thiết kế: Chạy workload trong management account. Đừng. Account này nắm quyền tối thượng trên cả org; mọi compromise ở đây là game over. Giữ nó trống, chỉ làm billing và quản lý Organizations.
+> Bẫy thiết kế: Chạy workload trong management account. Đừng. Account này nắm quyền tối thượng trên cả org; mọi compromise ở đây là game over. Giữ nó trống, chỉ làm billing và quản lý Organizations.
 
 ---
 
@@ -115,7 +115,7 @@ Dựng 30 account thủ công, mỗi cái phải cấu hình CloudTrail, Config,
 | Bảo trì | Bạn tự gánh | AWS quản phần lõi |
 | Phù hợp | Team platform mạnh, yêu cầu đặc thù | Đa số tổ chức, muốn chuẩn nhanh |
 
-> 💡 Nguyên tắc: Control Tower để *khởi động nhanh và đúng*; khi nhu cầu vượt khuôn của nó, bổ sung bằng IaC chứ đừng vứt bỏ. "Buy then extend" rẻ hơn "build from zero" cho hạ tầng nền.
+> Nguyên tắc: Control Tower để *khởi động nhanh và đúng*; khi nhu cầu vượt khuôn của nó, bổ sung bằng IaC chứ đừng vứt bỏ. "Buy then extend" rẻ hơn "build from zero" cho hạ tầng nền.
 
 ---
 
@@ -143,9 +143,9 @@ Ví dụ guardrail thường gặp — chặn mọi region ngoài danh sách cho
 
 Vài SCP "kinh điển" nên có: chặn region ngoài danh sách (giảm bề mặt tấn công + bill bất ngờ), chặn tắt CloudTrail/GuardDuty, chặn xoá log bucket, chặn tạo IAM user (ép dùng SSO/role).
 
-> ⚠️ Bẫy thiết kế: Đặt SCP `Deny *` lên OU chứa account của bạn rồi tự khoá mình ra ngoài. Luôn test SCP trên một OU sandbox trước; nhớ rằng management account **không** bị SCP ràng buộc (nên đừng dựa vào SCP để bảo vệ chính nó).
+> Bẫy thiết kế: Đặt SCP `Deny *` lên OU chứa account của bạn rồi tự khoá mình ra ngoài. Luôn test SCP trên một OU sandbox trước; nhớ rằng management account **không** bị SCP ràng buộc (nên đừng dựa vào SCP để bảo vệ chính nó).
 
-> 💡 Nguyên tắc: SCP đặt *ranh giới không bao giờ được vượt* (vd. "không region lạ", "không tắt audit"). IAM lo *quyền hằng ngày*. Đừng nhồi logic chi tiết vào SCP — nó là hàng rào, không phải cánh cửa.
+> Nguyên tắc: SCP đặt *ranh giới không bao giờ được vượt* (vd. "không region lạ", "không tắt audit"). IAM lo *quyền hằng ngày*. Đừng nhồi logic chi tiết vào SCP — nó là hàng rào, không phải cánh cửa.
 
 ---
 
@@ -222,7 +222,7 @@ Nhiều account = nhiều VPC. Kết nối chúng thế nào?
   <text x="540" y="270" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.65">route table trung tâm · phí/giờ + phí/GB</text>
 </svg>
 
-> ⚠️ Bẫy thiết kế: Dùng TGW như default cho mọi thứ. TGW tính tiền theo *attachment-hour* **và** *GB xử lý*. Nếu hai service chỉ cần gọi nhau một API, **PrivateLink** rẻ và an toàn hơn nhiều việc nối phẳng cả hai mạng.
+> Bẫy thiết kế: Dùng TGW như default cho mọi thứ. TGW tính tiền theo *attachment-hour* **và** *GB xử lý*. Nếu hai service chỉ cần gọi nhau một API, **PrivateLink** rẻ và an toàn hơn nhiều việc nối phẳng cả hai mạng.
 
 ---
 
@@ -293,9 +293,9 @@ Hầu hết engineer định giá theo compute & storage, rồi sốc khi đọc
 
 Một kiến trúc microservice "chuẩn HA" trải đều 3 AZ, gọi nhau chéo AZ liên tục, có thể đốt một khoản cross-AZ transfer mà không ai nhìn thấy trong sơ đồ.
 
-> ⚠️ Bẫy thiết kế: Chatty service span nhiều AZ. Hai service gọi nhau hàng triệu lần/ngày nhưng nằm khác AZ → bạn trả tiền cross-AZ cho từng cuộc gọi. Cân nhắc AZ-affinity (giữ cặp service cùng AZ, chỉ failover khi cần) — đánh đổi *một chút reliability* lấy *cắt mạnh transfer cost*.
+> Bẫy thiết kế: Chatty service span nhiều AZ. Hai service gọi nhau hàng triệu lần/ngày nhưng nằm khác AZ → bạn trả tiền cross-AZ cho từng cuộc gọi. Cân nhắc AZ-affinity (giữ cặp service cùng AZ, chỉ failover khi cần) — đánh đổi *một chút reliability* lấy *cắt mạnh transfer cost*.
 
-> 💡 Nguyên tắc: Trước khi tối ưu compute, **vẽ luồng dữ liệu và hỏi "byte này đi qua ranh giới tính tiền nào?"**. Egress, cross-AZ, NAT, cross-region — đó mới là nơi tiền rò rỉ.
+> Nguyên tắc: Trước khi tối ưu compute, **vẽ luồng dữ liệu và hỏi "byte này đi qua ranh giới tính tiền nào?"**. Egress, cross-AZ, NAT, cross-region — đó mới là nơi tiền rò rỉ.
 
 Vài đòn bẩy chi phí khác đáng nhớ: **S3 lifecycle** (chuyển sang Infrequent Access / Glacier theo tuổi dữ liệu), **VPC Gateway Endpoint cho S3/DynamoDB** (miễn phí, tránh trả NAT cho traffic tới S3), **CloudFront** trước origin (cache giảm egress origin), **Graviton** (ARM, rẻ hơn ~20% cùng hiệu năng), **Spot** cho workload chịu gián đoạn.
 
@@ -316,9 +316,9 @@ Owner       = email / team
 
 Áp **tag policy** (qua Organizations) để ép định dạng, kích hoạt **Cost Allocation Tags** để tag xuất hiện trong Cost Explorer. Đặt **Budgets** với alert khi vượt ngưỡng, và **Cost Anomaly Detection** để bắt vọt chi phí bất thường (thường là leak hoặc bị tấn công).
 
-> 💡 Nguyên tắc: Cost không phải báo cáo cuối tháng — nó là *signal real-time*. Một service tự nhiên đắt gấp đôi tuần này là một incident, hãy xử lý như incident.
+> Nguyên tắc: Cost không phải báo cáo cuối tháng — nó là *signal real-time*. Một service tự nhiên đắt gấp đôi tuần này là một incident, hãy xử lý như incident.
 
-> ⚠️ Bẫy thiết kế: Để tagging "làm sau". Untagged resource gần như không bao giờ được dọn; nợ tag tích luỹ tới mức không thể truy ngược ai sở hữu cái gì. Ép tag *ngay từ provisioning* (SCP/IaC từ chối resource thiếu tag).
+> Bẫy thiết kế: Để tagging "làm sau". Untagged resource gần như không bao giờ được dọn; nợ tag tích luỹ tới mức không thể truy ngược ai sở hữu cái gì. Ép tag *ngay từ provisioning* (SCP/IaC từ chối resource thiếu tag).
 
 ---
 
@@ -365,7 +365,7 @@ Một khung quyết định thực dụng khi đứng trước lựa chọn ki�
 3. **Đội ngũ chịu được vận hành tới đâu?** Team nhỏ → managed/serverless (đắt hơn nhưng đổi lấy speed & ít người). Team platform mạnh → tự build rẻ hơn.
 4. **Chi phí thực sự nằm ở đâu?** Thường không phải compute mà là data transfer & idle resource.
 
-> 💡 Nguyên tắc: "Tiết kiệm tối đa" không phải mục tiêu. Mục tiêu là **chi tiền đúng chỗ tạo giá trị** và **không trả cho thứ không dùng**. Một kiến trúc rẻ 30% nhưng làm team mất 2 tuần/tháng đi vá là kiến trúc đắt.
+> Nguyên tắc: "Tiết kiệm tối đa" không phải mục tiêu. Mục tiêu là **chi tiền đúng chỗ tạo giá trị** và **không trả cho thứ không dùng**. Một kiến trúc rẻ 30% nhưng làm team mất 2 tuần/tháng đi vá là kiến trúc đắt.
 
 ---
 
@@ -379,7 +379,7 @@ Một khung quyết định thực dụng khi đứng trước lựa chọn ki�
 - **Đưa con số khi nói cost:** "Với ~500 req/s đều, EC2 reserved rẻ hơn Lambda; nhưng nếu traffic bursty 10:1 thì ngược lại." Con số > tính từ.
 - **Chốt bằng cách bạn *đo*:** tagging, Budgets, Anomaly Detection — cho thấy bạn nghĩ về vận hành lâu dài, không chỉ ngày launch.
 
-> 💡 Nguyên tắc trình bày: Người phỏng vấn cấp cao không tìm "đáp án đúng" — họ tìm xem bạn có *nhận ra mình đang đánh đổi gì* và *có khung để quyết định* hay không. Một câu "tuỳ vào X, nếu X thì A, nếu không thì B" giá trị hơn một sơ đồ hoàn hảo không kèm lý do.
+> Nguyên tắc trình bày: Người phỏng vấn cấp cao không tìm "đáp án đúng" — họ tìm xem bạn có *nhận ra mình đang đánh đổi gì* và *có khung để quyết định* hay không. Một câu "tuỳ vào X, nếu X thì A, nếu không thì B" giá trị hơn một sơ đồ hoàn hảo không kèm lý do.
 
 ---
 

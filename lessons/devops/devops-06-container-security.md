@@ -38,7 +38,7 @@ Trước khi sửa, phải biết đang sửa cái gì. Một image production c
   <text x="360" y="282" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">Ba lớp chồng nhau — cần cả ba, không lớp nào thay được lớp nào</text>
 </svg>
 
-> 💡 Ghi nhớ: Scan chỉ tìm lỗ hổng **đã biết**. Hạ quyền runtime giới hạn thiệt hại của lỗ hổng **chưa biết**. Signing + SBOM trả lời câu "image này từ đâu ra, có đúng thứ tôi build không". Cần cả ba, không thay thế nhau.
+> Ghi nhớ: Scan chỉ tìm lỗ hổng **đã biết**. Hạ quyền runtime giới hạn thiệt hại của lỗ hổng **chưa biết**. Signing + SBOM trả lời câu "image này từ đâu ra, có đúng thứ tôi build không". Cần cả ba, không thay thế nhau.
 
 ## 1. Image scanning: tìm CVE trước khi attacker tìm
 
@@ -69,7 +69,7 @@ Trong GitHub Actions:
     output: trivy.sarif
 ```
 
-> ⚠️ Bẫy production: Scan **một lần lúc build là không đủ**. CVE mới được công bố mỗi ngày — một image "sạch" hôm nay có thể "bẩn" sau hai tuần dù không đổi một dòng code. Phải scan lại định kỳ các image đang chạy trong registry, không chỉ lúc CI.
+> Bẫy production: Scan **một lần lúc build là không đủ**. CVE mới được công bố mỗi ngày — một image "sạch" hôm nay có thể "bẩn" sau hai tuần dù không đổi một dòng code. Phải scan lại định kỳ các image đang chạy trong registry, không chỉ lúc CI.
 
 ## 2. Minimal base image: bề mặt tấn công nhỏ thì khó bị bắn
 
@@ -149,7 +149,7 @@ Image cuối chỉ có đúng một binary tĩnh + tag `:nonroot` đã sẵn use
   </g>
 </svg>
 
-> 💡 Ghi nhớ: `alpine` dùng `musl` libc thay vì `glibc`. Vài binary biên dịch sẵn cho `glibc` sẽ lỗi khó hiểu trên alpine (DNS resolution, một số lib native). Nếu gặp lỗi lạ kiểu "not found" với một binary rõ ràng tồn tại, nghĩ tới musl vs glibc ngay.
+> Ghi nhớ: `alpine` dùng `musl` libc thay vì `glibc`. Vài binary biên dịch sẵn cho `glibc` sẽ lỗi khó hiểu trên alpine (DNS resolution, một số lib native). Nếu gặp lỗi lạ kiểu "not found" với một binary rõ ràng tồn tại, nghĩ tới musl vs glibc ngay.
 
 ## 3. Chạy non-root & read-only filesystem
 
@@ -202,18 +202,18 @@ Giải thích các field then chốt:
 - `capabilities.drop: ["ALL"]` — Linux capability chia nhỏ quyền root. Phần lớn app web **không cần một capability nào cả**. Nếu cần bind port < 1024, thêm `add: ["NET_BIND_SERVICE"]` thay vì chạy root.
 - `allowPrivilegeEscalation: false` — chặn `setuid` binary leo thang quyền.
 
-> ⚠️ Bẫy production: Bật `readOnlyRootFilesystem` xong app crash với lỗi `read-only file system`. Nguyên nhân quen thuộc: app ghi log ra file, ghi `/tmp`, hoặc framework ghi cache vào thư mục app. Đừng tắt cờ — hãy tìm đúng path app ghi và mount `emptyDir` vào đó. Mỗi path ghi được phải là một quyết định có chủ đích.
+> Bẫy production: Bật `readOnlyRootFilesystem` xong app crash với lỗi `read-only file system`. Nguyên nhân quen thuộc: app ghi log ra file, ghi `/tmp`, hoặc framework ghi cache vào thư mục app. Đừng tắt cờ — hãy tìm đúng path app ghi và mount `emptyDir` vào đó. Mỗi path ghi được phải là một quyết định có chủ đích.
 
 ## 4. Không nhúng secret vào image
 
 Image là **read-once, distribute-everywhere**. Bất cứ thứ gì trong image, ai pull được image đều đọc được — kể cả secret bạn tưởng đã "xoá".
 
 ```dockerfile
-# ❌ SAI: layer này nằm vĩnh viễn trong lịch sử image
+# ✗ SAI: layer này nằm vĩnh viễn trong lịch sử image
 ENV AWS_SECRET_ACCESS_KEY=wJalrXUt...
 COPY .env /app/.env
 
-# ❌ Cũng SAI: xoá ở layer sau KHÔNG xoá khỏi layer trước
+# ✗ Cũng SAI: xoá ở layer sau KHÔNG xoá khỏi layer trước
 COPY secrets.json /tmp/secrets.json
 RUN ./use-secret.sh && rm /tmp/secrets.json   # secret vẫn còn trong layer COPY
 ```
@@ -235,7 +235,7 @@ docker build --secret id=npmtoken,src=$HOME/.npmtoken .
 
 - **Runtime secret** (DB password, API key): tiêm lúc chạy qua secret manager, không bao giờ vào image. Trên K8s dùng Secret tham chiếu từ external store; trên AWS dùng Secrets Manager / SSM Parameter Store.
 
-> 💡 Ghi nhớ: Quy tắc một câu — *image chỉ chứa code, secret đến lúc runtime*. Scan bằng `trivy image --scanners secret myapp` để bắt secret lỡ lọt vào trước khi push.
+> Ghi nhớ: Quy tắc một câu — *image chỉ chứa code, secret đến lúc runtime*. Scan bằng `trivy image --scanners secret myapp` để bắt secret lỡ lọt vào trước khi push.
 
 ## 5. Registry & image signing với cosign
 
@@ -283,7 +283,7 @@ spec:
 
 Pod nào dùng image chưa ký (hoặc ký bằng key lạ) sẽ bị từ chối ngay tại admission.
 
-> ⚠️ Bẫy production: Luôn ký và verify theo **digest** (`@sha256:...`), không theo **tag**. Tag là con trỏ có thể di chuyển — `myapp:1.4` hôm nay và tuần sau có thể trỏ tới hai image khác nhau. Ký tag là ký một cái tên, không phải ký nội dung.
+> Bẫy production: Luôn ký và verify theo **digest** (`@sha256:...`), không theo **tag**. Tag là con trỏ có thể di chuyển — `myapp:1.4` hôm nay và tuần sau có thể trỏ tới hai image khác nhau. Ký tag là ký một cái tên, không phải ký nội dung.
 
 ## 6. SBOM: danh sách thành phần để truy vết
 
@@ -325,7 +325,7 @@ Mọi thứ ở trên là phòng thủ tĩnh, tại thời điểm build/deploy.
 
 Những hành vi đáng cảnh báo điển hình: spawn shell trong container production, ghi vào `/etc` hoặc binary path, kết nối ra ngoài tới IP lạ, đọc `/etc/shadow`, hay tiến trình đào crypto. Distroless + read-only fs khiến những hành vi này gần như chắc chắn là tấn công, vì app bình thường không bao giờ làm vậy.
 
-> 💡 Ghi nhớ: Phòng thủ theo tầng (defense in depth). Image minimal làm attacker khó leo thang; non-root + drop caps + read-only fs giới hạn thiệt hại; runtime security phát hiện khi tầng trên thủng. Đừng dồn hết kỳ vọng vào một tầng.
+> Ghi nhớ: Phòng thủ theo tầng (defense in depth). Image minimal làm attacker khó leo thang; non-root + drop caps + read-only fs giới hạn thiệt hại; runtime security phát hiện khi tầng trên thủng. Đừng dồn hết kỳ vọng vào một tầng.
 
 ## 8. Supply chain: khoá toàn bộ đường đi của image
 
@@ -401,7 +401,7 @@ Ráp tất cả thành một chuỗi liền mạch từ source tới chạy:
   <text x="360" y="300" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">source → build → registry → cluster → runtime: mỗi tầng giả định tầng trước có thể thủng</text>
 </svg>
 
-> ⚠️ Bẫy production: Mắt xích yếu nhất thường là **dependency của dependency**. App của bạn import lib A, lib A kéo theo 200 transitive dependency bạn chưa từng đọc tên. SBOM + scan trên SBOM là cách duy nhất nhìn thấy chúng. Một typosquat package (tên gần giống package thật) lọt vào là cả chuỗi sụp.
+> Bẫy production: Mắt xích yếu nhất thường là **dependency của dependency**. App của bạn import lib A, lib A kéo theo 200 transitive dependency bạn chưa từng đọc tên. SBOM + scan trên SBOM là cách duy nhất nhìn thấy chúng. Một typosquat package (tên gần giống package thật) lọt vào là cả chuỗi sụp.
 
 ## Liên hệ sang AWS
 

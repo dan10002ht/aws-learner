@@ -352,43 +352,43 @@ Giao agent: *"Dùng store.js bật cờ newCheckout=true cho shop-test-1, rồi 
 
 ## 5. Bẫy thường gặp
 
-### 🪤 Bẫy 1 — Tin `/rewind` lùi được mọi thứ agent làm
+### Bẫy 1 — Tin `/rewind` lùi được mọi thứ agent làm
 
 **Triệu chứng:** sau rewind, test vẫn đỏ; có file đã bị đổi tên hoặc xoá mà không quay lại.
 **Nguyên nhân gốc:** checkpoint chụp ở tầng tool sửa file. Docs nói thẳng: thay đổi bởi Bash, đa số sửa đổi của subagent, và thay đổi từ ngoài session không được theo dõi.
 **Chặn bằng cơ chế:** commit (hoặc `git stash`) trước mỗi bước có lệnh shell sửa file hoặc trước khi giao cho subagent. Rewind dùng cho "đổi ý về cách sửa", git dùng cho "lùi trạng thái repo".
 
-### 🪤 Bẫy 2 — "Yes, and don't ask again" cho một prefix quá rộng
+### Bẫy 2 — "Yes, and don't ask again" cho một prefix quá rộng
 
 **Triệu chứng:** agent chạy một lệnh bạn chưa bao giờ định cho phép, mà không hỏi.
 **Nguyên nhân gốc:** với Bash, lựa chọn này nhớ **vĩnh viễn theo repo và lệnh**. Docs chỉ ra `Bash(git *)` cho phép *mọi* lệnh git, kể cả `-c` — thứ khiến git chạy một chương trình bạn chỉ định.
 **Chặn bằng cơ chế:** viết allow theo subcommand (`Bash(git diff *)`, không `Bash(git *)`); đặt các lệnh nguy hiểm vào `deny`/`ask` — vì deny và ask luôn được xét trước allow. Định kỳ mở `/permissions` xem danh sách đã tích luỹ.
 
-### 🪤 Bẫy 3 — Commit lên nhánh không phải nhánh bạn nghĩ
+### Bẫy 3 — Commit lên nhánh không phải nhánh bạn nghĩ
 
 **Triệu chứng:** commit của agent nằm trên `main`, hoặc trên nhánh của việc khác.
 **Nguyên nhân gốc:** trạng thái git agent thấy lúc đầu phiên là ảnh chụp; người dùng có thể đã checkout nhánh khác ở terminal khác (kinh nghiệm thực tế, đã gặp).
 **Chặn bằng cơ chế:** đưa `git branch --show-current` vào quy trình commit trong file hướng dẫn repo; chặt hơn, một hook kiểm nhánh trước lệnh `git commit` ([[ag-08-hook-va-chan-bang-cau-hinh]]).
 
-### 🪤 Bẫy 4 — Đẩy cả lệnh đọc sang cho người chạy
+### Bẫy 4 — Đẩy cả lệnh đọc sang cho người chạy
 
 **Triệu chứng:** trong một buổi điều tra, phần lớn thời gian là người copy-paste output qua lại.
 **Nguyên nhân gốc:** ranh giới đặt theo "có credentials production không" thay vì "có ghi không". Một lần sandbox chặn một script bị diễn giải thành luật chung.
 **Chặn bằng cơ chế:** allow-list tường minh cho lệnh/script chỉ đọc; tách script thành `read` và `apply` để luật permission phân biệt được hai chế độ theo chuỗi lệnh. Khi sandbox chặn một lệnh đọc, nói rõ "bị sandbox chặn" chứ không suy ra luật mới.
 
-### 🪤 Bẫy 5 — Ghi ra ngoài repo mà không có đường lùi
+### Bẫy 5 — Ghi ra ngoài repo mà không có đường lùi
 
 **Triệu chứng:** sai một cờ trên dữ liệu thật, và không ai biết giá trị cũ là gì.
 **Nguyên nhân gốc:** git và checkpoint đều không chạm tới hệ thống ngoài; nếu đường lùi không được viết *trước* khi ghi thì sau đó không dựng lại được.
 **Chặn bằng cơ chế:** mọi script ghi có `read` / `apply` / `revert`, backup trạng thái trước khi ghi, từ chối flag/mode lạ thay vì bỏ qua. Ghi lên dữ liệu của khách thì thêm dry-run và người chạy.
 
-### 🪤 Bẫy 6 — `revert` của bạn phá mốc của người khác
+### Bẫy 6 — `revert` của bạn phá mốc của người khác
 
 **Triệu chứng:** một việc khác đang so sánh trước/sau trên cùng môi trường test bỗng ra kết quả vô nghĩa.
 **Nguyên nhân gốc:** dữ liệu trên môi trường test thường đồng thời là **mốc so sánh** của việc khác (ảnh BEFORE, kiểm parity). Revert giữa chừng làm lệch mốc mà không ai biết vì sao (kinh nghiệm thực tế).
 **Chặn bằng cơ chế:** trước khi `apply` hoặc `revert` trên môi trường dùng chung, agent phải in ra nó đổi gì, ở đâu; ghi lại vào chỗ team cùng đọc. Môi trường riêng cho từng việc giải triệt để hơn ([[ag-15-worktree-va-xung-dot]] cho phía repo).
 
-### 🪤 Bẫy 7 — Duyệt "đóng việc" khi còn một khe hở đã biết
+### Bẫy 7 — Duyệt "đóng việc" khi còn một khe hở đã biết
 
 **Triệu chứng:** sau nhiều vòng sửa, agent đề xuất "hướng đã đạt mục tiêu, khe còn lại nhỏ", và bạn đồng ý.
 **Nguyên nhân gốc:** đó là agent **tự chấm** bài của mình, và lời duyệt của bạn chỉ dựa trên lời tóm tắt đó. Case thực tế: sau 8 vòng vá một chỗ rò token qua log bằng regex, agent đề nghị đóng; người dev bác; vòng 9 đổi hẳn cách tiếp cận (quét bằng AST thay vì regex) và đóng được thật. Khe bị bỏ qua không biến mất, nó chỉ ngừng được nhắc tới.

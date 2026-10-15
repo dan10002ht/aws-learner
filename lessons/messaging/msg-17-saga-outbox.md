@@ -137,7 +137,7 @@ Orchestrator → command CancelOrder                (compensation)
 Cả Saga choreography lẫn hệ event-driven nói chung đều vấp một cái bẫy kinh điển: service phải **vừa cập nhật DB của mình, vừa publish event** ra broker. Đoạn code ngây thơ:
 
 ```java
-// ❌ SAI: hai hệ thống, hai lần ghi, KHÔNG atomic
+// ✗ SAI: hai hệ thống, hai lần ghi, KHÔNG atomic
 @Transactional
 public void placeOrder(Order o) {
     orderRepository.save(o);          // (1) ghi vào Postgres
@@ -149,10 +149,10 @@ public void placeOrder(Order o) {
 
 | Thứ tự | (1) DB | (2) Publish | Kết quả |
 |--------|--------|-------------|---------|
-| A | commit ✓ | send ✓ | Đúng |
-| B | commit ✓ | **send fail** ✗ | DB có đơn, **không có event** → downstream không bao giờ biết. Lệch! |
-| C | rollback ✗ | (không gọi) | Đúng (không có gì xảy ra) |
-| D | commit ✓ | send ✓ nhưng **app crash trước khi ack** | Có thể **gửi lại** → event trùng |
+| A | commit ✓  | send ✓  | Đúng |
+| B | commit ✓  | **send fail** ✗  | DB có đơn, **không có event** → downstream không bao giờ biết. Lệch! |
+| C | rollback ✗  | (không gọi) | Đúng (không có gì xảy ra) |
+| D | commit ✓  | send ✓  nhưng **app crash trước khi ack** | Có thể **gửi lại** → event trùng |
 
 Đảo thứ tự (publish trước, save sau) cũng không cứu được: publish xong rồi DB rollback → có **event ma** cho một đơn không tồn tại. **Không có thứ tự nào đúng** vì hai lần ghi vào hai hệ thống không thể atomic nếu không có 2PC — mà ta vừa từ chối 2PC.
 

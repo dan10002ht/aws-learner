@@ -112,7 +112,7 @@ Chữ ký chứng minh **đồng thời hai điều** chỉ trong một cặp s�
 
 Nói cách khác: chữ ký là **bằng chứng zero-knowledge kiểu nhẹ** — nó thuyết phục cả thế giới rằng "tôi biết private key" **mà không tiết lộ private key**. Bạn có thể phát cùng một public key cho hàng tỷ người, ký hàng triệu giao dịch, và không giao dịch nào rò rỉ một bit nào của `k`.
 
-> ⚠️ **Cạm bẫy chí mạng — nonce phải thật sự ngẫu nhiên & không tái dùng.** Nếu ví dùng **lại cùng một nonce `k`** cho hai chữ ký khác nhau, kẻ tấn công **giải hệ hai phương trình** và **lấy được private key** ngay lập tức. Đây chính là lỗi từng làm crack ký PlayStation 3 (Sony dùng nonce cố định). Ví hiện đại dùng **RFC 6979** (nonce tất định, sinh từ chính message + private key) để triệt tiêu rủi ro này. Đây là lý do lớn khiến EdDSA được ưa chuộng — xem 2.7.
+> **Cạm bẫy chí mạng — nonce phải thật sự ngẫu nhiên & không tái dùng.** Nếu ví dùng **lại cùng một nonce `k`** cho hai chữ ký khác nhau, kẻ tấn công **giải hệ hai phương trình** và **lấy được private key** ngay lập tức. Đây chính là lỗi từng làm crack ký PlayStation 3 (Sony dùng nonce cố định). Ví hiện đại dùng **RFC 6979** (nonce tất định, sinh từ chính message + private key) để triệt tiêu rủi ro này. Đây là lý do lớn khiến EdDSA được ưa chuộng — xem 2.7.
 
 ### 2.6 Ví dụ code — ký & verify bằng thư viện chuẩn
 

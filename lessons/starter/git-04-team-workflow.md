@@ -14,7 +14,7 @@ branch → push → Pull Request → review → merge
 
 Bài này sẽ đi qua từng bước của quy trình đó, đúng như cách bạn sẽ làm trong ngày đầu đi làm.
 
-> 💡 Ghi nhớ: **Pull Request (PR)** — tạm dịch "yêu cầu kéo code" — là lời đề nghị: *"Tôi đã làm xong phần này trên nhánh riêng, mời mọi người xem xét, nếu ổn thì gộp vào bản chung."* Trên GitLab nó được gọi là **Merge Request (MR)** — cùng một khái niệm.
+> Ghi nhớ: **Pull Request (PR)** — tạm dịch "yêu cầu kéo code" — là lời đề nghị: *"Tôi đã làm xong phần này trên nhánh riêng, mời mọi người xem xét, nếu ổn thì gộp vào bản chung."* Trên GitLab nó được gọi là **Merge Request (MR)** — cùng một khái niệm.
 
 ---
 
@@ -107,7 +107,7 @@ Nhiều team có quy ước tên nhánh, ví dụ:
 | `fix/` | Sửa lỗi | `fix/sai-gia-gio-hang` |
 | `docs/` | Sửa tài liệu | `docs/cap-nhat-readme` |
 
-> ⚠️ Lỗi người mới hay gặp: quên `git pull` trên `main` trước khi tạo nhánh mới. Kết quả là bạn làm việc trên nền code cũ cả tuần trước, sau này dễ bị **conflict** (xung đột — sẽ nói ở phần dưới).
+> Lỗi người mới hay gặp: quên `git pull` trên `main` trước khi tạo nhánh mới. Kết quả là bạn làm việc trên nền code cũ cả tuần trước, sau này dễ bị **conflict** (xung đột — sẽ nói ở phần dưới).
 
 ---
 
@@ -160,12 +160,12 @@ Trước: [ảnh] — Sau: [ảnh]
 
 So sánh hai tiêu đề PR:
 
-| ❌ Tệ | ✅ Tốt |
+| ✗ Tệ | ✓ Tốt |
 |-------|--------|
 | `update code` | `Sửa nút đăng nhập bị lệch trên màn hình điện thoại` |
 | `fix bug` | `Fix: giỏ hàng tính sai tổng tiền khi có mã giảm giá` |
 
-> 💡 Ghi nhớ: PR nên **nhỏ**. Một PR 200 dòng được review kỹ trong 15 phút; một PR 2000 dòng thường chỉ được liếc qua rồi bấm duyệt đại — và đó là lúc lỗi lọt lưới. Nếu việc lớn, hãy chia thành nhiều PR nhỏ nối tiếp nhau.
+> Ghi nhớ: PR nên **nhỏ**. Một PR 200 dòng được review kỹ trong 15 phút; một PR 2000 dòng thường chỉ được liếc qua rồi bấm duyệt đại — và đó là lúc lỗi lọt lưới. Nếu việc lớn, hãy chia thành nhiều PR nhỏ nối tiếp nhau.
 
 ---
 
@@ -194,12 +194,12 @@ Trên GitHub, người review có thể bình luận vào **từng dòng code c�
 
 ### Khi bạn là người CHO feedback
 
-- **Góp ý vào code, không vào con người.** ❌ "Bạn viết sai rồi" → ✅ "Đoạn này có vẻ chưa xử lý trường hợp danh sách rỗng, mình nghĩ sẽ lỗi khi..."
+- **Góp ý vào code, không vào con người.** ✗ "Bạn viết sai rồi" → ✓ "Đoạn này có vẻ chưa xử lý trường hợp danh sách rỗng, mình nghĩ sẽ lỗi khi..."
 - **Đặt câu hỏi thay vì ra lệnh**: "Mình thắc mắc tại sao chọn cách này? Nếu dùng X thì có gọn hơn không?"
 - **Khen điều tốt**: thấy đoạn code hay thì nói ra. Review không chỉ để chê.
 - **Phân biệt mức độ**: lỗi nghiêm trọng phải chặn (Request changes), còn ý kiến nhỏ kiểu "tên biến này mình sẽ đặt khác" thì ghi rõ là `nit:` (nitpick — góp ý vụn vặt, sửa hay không tuỳ tác giả).
 
-> ⚠️ Lỗi người mới hay gặp: tự ái khi bị "Request changes" và tranh cãi gay gắt trong phần bình luận. Hãy nhớ: PR bị yêu cầu sửa là chuyện **hằng ngày** của cả lập trình viên 10 năm kinh nghiệm. Mục tiêu chung là code tốt hơn, không phải ai thắng ai.
+> Lỗi người mới hay gặp: tự ái khi bị "Request changes" và tranh cãi gay gắt trong phần bình luận. Hãy nhớ: PR bị yêu cầu sửa là chuyện **hằng ngày** của cả lập trình viên 10 năm kinh nghiệm. Mục tiêu chung là code tốt hơn, không phải ai thắng ai.
 
 ---
 
@@ -248,9 +248,9 @@ git push
 
 PR trên GitHub sẽ tự chuyển sang màu xanh, sẵn sàng merge.
 
-> ⚠️ Lỗi người mới hay gặp: thấy ký hiệu `<<<<<<<` thì hoảng và xoá đại một bên mà không đọc kỹ — vô tình **xoá mất công sức của đồng nghiệp**. Luôn đọc cả hai phiên bản, và khi nghi ngờ, hỏi.
+> Lỗi người mới hay gặp: thấy ký hiệu `<<<<<<<` thì hoảng và xoá đại một bên mà không đọc kỹ — vô tình **xoá mất công sức của đồng nghiệp**. Luôn đọc cả hai phiên bản, và khi nghi ngờ, hỏi.
 
-> 💡 Ghi nhớ: cách phòng conflict tốt nhất là **PR nhỏ + merge sớm + thường xuyên kéo `main` mới về nhánh của mình**. Nhánh sống càng lâu, xung đột càng nhiều.
+> Ghi nhớ: cách phòng conflict tốt nhất là **PR nhỏ + merge sớm + thường xuyên kéo `main` mới về nhánh của mình**. Nhánh sống càng lâu, xung đột càng nhiều.
 
 ---
 
@@ -272,7 +272,7 @@ Giả sử nhánh của bạn có 5 commit lặt vặt: "làm dở", "sửa typo
 - **Squash**: lịch sử `main` cực gọn — mỗi PR đúng 1 commit, đọc như mục lục sách. Đổi lại, mất chi tiết từng bước nhỏ. Rất nhiều công ty chọn cách này làm mặc định.
 - **Merge commit**: giữ đầy đủ lịch sử từng bước, nhưng `main` dễ thành "rừng" commit vụn khó đọc.
 
-> 💡 Ghi nhớ: bạn **không cần tự quyết** chuyện này khi mới vào công ty — mỗi team đã có quy ước sẵn. Việc của bạn là biết hai khái niệm để không bỡ ngỡ khi thấy nút "Squash and merge".
+> Ghi nhớ: bạn **không cần tự quyết** chuyện này khi mới vào công ty — mỗi team đã có quy ước sẵn. Việc của bạn là biết hai khái niệm để không bỡ ngỡ khi thấy nút "Squash and merge".
 
 Sau khi merge, GitHub thường gợi ý **xoá nhánh** (Delete branch). Cứ xoá — nhánh đã hoàn thành sứ mệnh, code của nó đã nằm trong `main`. Lần sau làm việc mới thì tạo nhánh mới từ `main`.
 
@@ -285,7 +285,7 @@ Mỗi commit có một dòng thông điệp (**commit message**). Sáu tháng sa
 ### Quy tắc thực dụng
 
 1. **Dòng đầu ngắn gọn (~50-72 ký tự)**, tóm tắt thay đổi.
-2. **Mô tả việc đã làm**, không mô tả cảm xúc: ❌ `sửa lung tung`, ❌ `cuối cùng cũng chạy!!!` 
+2. **Mô tả việc đã làm**, không mô tả cảm xúc: ✗ `sửa lung tung`, ✗ `cuối cùng cũng chạy!!!`
 3. Nhiều team viết theo kiểu **mệnh lệnh** (quy ước chung của Git): "Thêm...", "Sửa...", "Xoá..." — như đang ra lệnh cho code phải trở thành gì.
 4. Cần giải thích *tại sao*? Bỏ qua một dòng trống rồi viết đoạn chi tiết phía dưới.
 
@@ -299,7 +299,7 @@ mã giảm giá sau, theo yêu cầu của bộ phận kế toán.
 
 ### So sánh nhanh
 
-| ❌ Tệ | ✅ Tốt |
+| ✗ Tệ | ✓ Tốt |
 |-------|--------|
 | `update` | `Thêm trang Câu hỏi thường gặp` |
 | `fix` | `Sửa lỗi không gửi được email có dấu tiếng Việt` |
@@ -307,7 +307,7 @@ mã giảm giá sau, theo yêu cầu của bộ phận kế toán.
 
 Nhiều công ty còn dùng quy ước **Conventional Commits**: thêm tiền tố loại thay đổi, ví dụ `feat: thêm đăng nhập bằng Google`, `fix: sửa lỗi tràn bộ nhớ`, `docs: cập nhật hướng dẫn cài đặt`. Gặp thì bạn hiểu ngay: `feat` = tính năng, `fix` = sửa lỗi, `docs` = tài liệu.
 
-> ⚠️ Lỗi người mới hay gặp: commit message kiểu `wip`, `test`, `aaa` rồi nghĩ "tí nữa sửa sau" — nhưng không bao giờ sửa. Nếu team dùng **squash merge** thì các message nháp này sẽ bị nén mất nên đỡ hại; nhưng đừng ỷ lại — tập thói quen viết tử tế ngay từ đầu.
+> Lỗi người mới hay gặp: commit message kiểu `wip`, `test`, `aaa` rồi nghĩ "tí nữa sửa sau" — nhưng không bao giờ sửa. Nếu team dùng **squash merge** thì các message nháp này sẽ bị nén mất nên đỡ hại; nhưng đừng ỷ lại — tập thói quen viết tử tế ngay từ đầu.
 
 ---
 
@@ -355,4 +355,4 @@ git pull
 | Commit message | Dòng thông điệp mô tả mỗi lần lưu thay đổi |
 | nit | Góp ý vụn vặt trong review, không bắt buộc sửa |
 
-> 💡 Ghi nhớ cuối bài: quy trình **branch → push → PR → review → merge** là "nghi thức giao tiếp" chuẩn của ngành. Thành thạo nó — kèm kỹ năng viết mô tả rõ ràng và nhận góp ý điềm tĩnh — thường gây ấn tượng với đồng nghiệp mới nhiều hơn cả việc code giỏi.
+> Ghi nhớ cuối bài: quy trình **branch → push → PR → review → merge** là "nghi thức giao tiếp" chuẩn của ngành. Thành thạo nó — kèm kỹ năng viết mô tả rõ ràng và nhận góp ý điềm tĩnh — thường gây ấn tượng với đồng nghiệp mới nhiều hơn cả việc code giỏi.

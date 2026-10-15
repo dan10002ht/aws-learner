@@ -148,7 +148,7 @@ pg_repack -d shop --table=orders --jobs=4
 
 | | `VACUUM FULL` | `REINDEX CONCURRENTLY` | `pg_repack` |
 |---|---|---|---|
-| Khoá | ACCESS EXCLUSIVE (chặn tất cả) ❌ | Không chặn ghi ✓ | Chỉ khoá ngắn lúc swap ✓ |
+| Khoá | ACCESS EXCLUSIVE (chặn tất cả) ✗ | Không chặn ghi ✓  | Chỉ khoá ngắn lúc swap ✓  |
 | Phạm vi | Cả bảng + index | Chỉ index | Bảng + index |
 | Cần dung lượng dư | ~2x bảng | ~2x index | ~2x bảng |
 | Production-safe | Không | Có | Có |
@@ -177,7 +177,7 @@ WHERE idx_scan = 0                             -- KHÔNG dùng lần nào
 ORDER BY pg_relation_size(indexrelid) DESC;
 ```
 
-⚠️ **Cẩn trọng khi đọc `idx_scan = 0`:**
+**Cẩn trọng khi đọc `idx_scan = 0`:**
 - Thống kê tính từ lần **reset gần nhất** — nếu vừa reset hôm qua thì "chưa dùng" là vô nghĩa. Xem `stats_reset` trong `pg_stat_database`.
 - Index có thể chỉ dùng **theo mùa** (báo cáo cuối tháng, job đêm). Quan sát ít nhất **một chu kỳ nghiệp vụ đầy đủ**.
 - Trên hệ có **replica**, thống kê `idx_scan` là **cục bộ mỗi node** — một index có thể idle ở primary nhưng bận rộn ở read replica. Phải tổng hợp qua tất cả node.

@@ -50,9 +50,9 @@ spec:
       configMap: { name: app-config }
 ```
 
-> 💡 **Ghi nhớ**: Env var được nạp **một lần lúc Pod khởi động** — sửa ConfigMap không tự reload env. Mount dạng volume thì file **được cập nhật** (trễ ~60s do kubelet sync cache), nhưng app phải tự đọc lại file. Muốn rolling khi config đổi: thêm checksum config vào annotation của Pod template để Deployment thấy "thay đổi" và rollout.
+> **Ghi nhớ**: Env var được nạp **một lần lúc Pod khởi động** — sửa ConfigMap không tự reload env. Mount dạng volume thì file **được cập nhật** (trễ ~60s do kubelet sync cache), nhưng app phải tự đọc lại file. Muốn rolling khi config đổi: thêm checksum config vào annotation của Pod template để Deployment thấy "thay đổi" và rollout.
 
-> ⚠️ **Bẫy production**: `Secret` mặc định chỉ là **base64, KHÔNG mã hoá** — ai đọc được etcd hoặc có quyền `get secret` là thấy plaintext. Bật `EncryptionConfiguration` ở etcd, dùng RBAC chặt, và cân nhắc External Secrets Operator kéo từ Vault/AWS Secrets Manager. Đừng commit Secret vào Git.
+> **Bẫy production**: `Secret` mặc định chỉ là **base64, KHÔNG mã hoá** — ai đọc được etcd hoặc có quyền `get secret` là thấy plaintext. Bật `EncryptionConfiguration` ở etcd, dùng RBAC chặt, và cân nhắc External Secrets Operator kéo từ Vault/AWS Secrets Manager. Đừng commit Secret vào Git.
 
 ## Ingress & Ingress Controller
 
@@ -145,7 +145,7 @@ spec:
 | Số LB | 1 LB / service | 1 LB / nhiều service | 1 / nhiều |
 | Trạng thái 2025 | Vẫn dùng cho TCP/UDP | Phổ biến nhất | Đang thay thế Ingress dần |
 
-> 💡 **Ghi nhớ**: Gateway API (`HTTPRoute`, `Gateway`) là hướng tương lai — tách vai trò infra (Gateway) khỏi app (HTTPRoute), hỗ trợ traffic splitting/canary native. Học Ingress để vận hành hệ thống hiện tại, học Gateway API cho hệ thống mới.
+> **Ghi nhớ**: Gateway API (`HTTPRoute`, `Gateway`) là hướng tương lai — tách vai trò infra (Gateway) khỏi app (HTTPRoute), hỗ trợ traffic splitting/canary native. Học Ingress để vận hành hệ thống hiện tại, học Gateway API cho hệ thống mới.
 
 ## Probes — liveness / readiness / startup
 
@@ -217,7 +217,7 @@ containers:
   </defs>
 </svg>
 
-> ⚠️ **Bẫy production**: **liveness probe gọi tới dependency** (database, downstream) là thảm hoạ — DB chậm một nhịp → liveness fail → toàn bộ Pod bị restart đồng loạt → cascading outage. Liveness chỉ kiểm tra **chính process còn phản hồi không**. Việc "phụ thuộc còn khoẻ không" để cho readiness. Và nếu app boot chậm, dùng `startupProbe` thay vì nới `initialDelaySeconds` của liveness (nới quá tay thì lúc treo thật cũng chậm phát hiện).
+> **Bẫy production**: **liveness probe gọi tới dependency** (database, downstream) là thảm hoạ — DB chậm một nhịp → liveness fail → toàn bộ Pod bị restart đồng loạt → cascading outage. Liveness chỉ kiểm tra **chính process còn phản hồi không**. Việc "phụ thuộc còn khoẻ không" để cho readiness. Và nếu app boot chậm, dùng `startupProbe` thay vì nới `initialDelaySeconds` của liveness (nới quá tay thì lúc treo thật cũng chậm phát hiện).
 
 ## Resource requests / limits & QoS
 
@@ -248,9 +248,9 @@ Tổ hợp requests/limits quyết định **QoS class** — yếu tố quyết 
 | **Burstable** | có requests, nhưng != limits | Evict giữa |
 | **BestEffort** | không set gì | **Evict đầu tiên** |
 
-> 💡 **Ghi nhớ**: Workload quan trọng (payment, DB) → đặt **Guaranteed** (requests = limits) để khỏi bị evict. Đặt `requests` sát thực tế dùng — đặt thấp quá thì node bị overcommit và Pod đói tài nguyên; đặt cao quá thì lãng phí và Pod không schedule được (`Pending`).
+> **Ghi nhớ**: Workload quan trọng (payment, DB) → đặt **Guaranteed** (requests = limits) để khỏi bị evict. Đặt `requests` sát thực tế dùng — đặt thấp quá thì node bị overcommit và Pod đói tài nguyên; đặt cao quá thì lãng phí và Pod không schedule được (`Pending`).
 
-> ⚠️ **Bẫy production**: Bỏ trống `memory limit` cho app rò rỉ bộ nhớ → Pod ăn hết RAM node → kéo theo cả node và các Pod khác chết. Luôn set memory limit. Với CPU, xu hướng 2025 là **bỏ CPU limit** (chỉ giữ request) để cho phép burst, tránh throttle oan — nhưng phải hiểu rõ hệ quả trước khi làm.
+> **Bẫy production**: Bỏ trống `memory limit` cho app rò rỉ bộ nhớ → Pod ăn hết RAM node → kéo theo cả node và các Pod khác chết. Luôn set memory limit. Với CPU, xu hướng 2025 là **bỏ CPU limit** (chỉ giữ request) để cho phép burst, tránh throttle oan — nhưng phải hiểu rõ hệ quả trước khi làm.
 
 ## HorizontalPodAutoscaler (HPA)
 
@@ -334,9 +334,9 @@ Công thức cốt lõi: `desiredReplicas = ceil(currentReplicas × currentMetri
   </defs>
 </svg>
 
-> 💡 **Ghi nhớ**: HPA scale **số Pod ngang**, Cluster Autoscaler/Karpenter scale **số node**, VPA scale **request/limit dọc**. Đừng dùng HPA và VPA cùng trên CPU/memory cho một workload — chúng đánh nhau. Muốn scale theo queue depth/RPS, dùng **KEDA** (event-driven, scale-to-zero).
+> **Ghi nhớ**: HPA scale **số Pod ngang**, Cluster Autoscaler/Karpenter scale **số node**, VPA scale **request/limit dọc**. Đừng dùng HPA và VPA cùng trên CPU/memory cho một workload — chúng đánh nhau. Muốn scale theo queue depth/RPS, dùng **KEDA** (event-driven, scale-to-zero).
 
-> ⚠️ **Bẫy production**: HPA flapping (lên xuống liên tục) thường do thiếu `stabilizationWindowSeconds` hoặc target quá sát baseline. Và HPA vô dụng nếu cluster không còn chỗ — Pod mới sẽ `Pending`; cần Cluster Autoscaler đi kèm.
+> **Bẫy production**: HPA flapping (lên xuống liên tục) thường do thiếu `stabilizationWindowSeconds` hoặc target quá sát baseline. Và HPA vô dụng nếu cluster không còn chỗ — Pod mới sẽ `Pending`; cần Cluster Autoscaler đi kèm.
 
 ## Rolling update & rollback
 
@@ -418,9 +418,9 @@ kubectl rollout resume deployment/api
   <text x="16" y="216" font-size="10.5" fill="currentColor" opacity="0.7">v2* = Pod mới đang chờ Ready · luôn ≥ 3 Pod phục vụ → không downtime</text>
 </svg>
 
-> 💡 **Ghi nhớ**: `maxUnavailable: 0` + `maxSurge: 1` = zero-downtime nhưng rollout chậm hơn. Để rollback hoạt động đúng, **readiness probe phải chuẩn** — nếu không, K8s tưởng Pod lỗi đã "Ready" và đẩy traffic vào, rolling update vẫn "thành công" trên giấy nhưng user gặp lỗi.
+> **Ghi nhớ**: `maxUnavailable: 0` + `maxSurge: 1` = zero-downtime nhưng rollout chậm hơn. Để rollback hoạt động đúng, **readiness probe phải chuẩn** — nếu không, K8s tưởng Pod lỗi đã "Ready" và đẩy traffic vào, rolling update vẫn "thành công" trên giấy nhưng user gặp lỗi.
 
-> ⚠️ **Bẫy production**: Rolling update **không tự rollback** khi Pod mới crash — nó chỉ dừng (`progressDeadlineSeconds` hết hạn → `Progressing=False`). Bạn phải `rollout undo` thủ công, hoặc dùng Argo Rollouts/Flagger để auto-rollback theo metric. Chạy DB migration **không tương thích ngược** trong rolling update sẽ làm Pod cũ (chưa update) chết — luôn migrate theo kiểu expand/contract.
+> **Bẫy production**: Rolling update **không tự rollback** khi Pod mới crash — nó chỉ dừng (`progressDeadlineSeconds` hết hạn → `Progressing=False`). Bạn phải `rollout undo` thủ công, hoặc dùng Argo Rollouts/Flagger để auto-rollback theo metric. Chạy DB migration **không tương thích ngược** trong rolling update sẽ làm Pod cũ (chưa update) chết — luôn migrate theo kiểu expand/contract.
 
 ## Label & selector
 
@@ -448,7 +448,7 @@ kubectl get pods -l 'tier!=frontend'
 kubectl label pod api-xxx canary=true               # gắn label runtime
 ```
 
-> ⚠️ **Bẫy production**: `spec.selector` của Deployment là **immutable** — sửa sau khi tạo sẽ bị từ chối. Và nếu hai Deployment dùng selector trùng nhau, chúng sẽ tranh nhau "nhận" cùng Pod → hành vi hỗn loạn. Đặt label đủ riêng (`app` + `version`).
+> **Bẫy production**: `spec.selector` của Deployment là **immutable** — sửa sau khi tạo sẽ bị từ chối. Và nếu hai Deployment dùng selector trùng nhau, chúng sẽ tranh nhau "nhận" cùng Pod → hành vi hỗn loạn. Đặt label đủ riêng (`app` + `version`).
 
 ## Taints & tolerations (ý tưởng)
 
@@ -470,7 +470,7 @@ tolerations:
 
 Ba `effect`: `NoSchedule` (không xếp Pod mới), `PreferNoSchedule` (cố tránh), `NoExecute` (đuổi cả Pod đang chạy).
 
-> 💡 **Ghi nhớ**: Taint/toleration là cơ chế **"đẩy ra"** (repel) — chỉ cho phép, không bắt buộc Pod lên node đó. Muốn **"kéo vào"** (attract) một loại node cụ thể, dùng **nodeSelector** hoặc **nodeAffinity**. Thường kết hợp cả hai: taint để dành riêng node + toleration + nodeAffinity để buộc Pod đúng vào đó.
+> **Ghi nhớ**: Taint/toleration là cơ chế **"đẩy ra"** (repel) — chỉ cho phép, không bắt buộc Pod lên node đó. Muốn **"kéo vào"** (attract) một loại node cụ thể, dùng **nodeSelector** hoặc **nodeAffinity**. Thường kết hợp cả hai: taint để dành riêng node + toleration + nodeAffinity để buộc Pod đúng vào đó.
 
 ## Debug Pod — quy trình thực chiến
 
@@ -510,7 +510,7 @@ Bảng triệu chứng → nguyên nhân:
 | `0/1 Running` (not Ready) | readiness probe fail | `describe` → probe; test endpoint `/ready` |
 | `Terminating` mãi | finalizer treo / SIGTERM bị bỏ qua | `describe`; kiểm tra graceful shutdown |
 
-> 💡 **Ghi nhớ**: `kubectl logs --previous` là lệnh cứu mạng cho `CrashLoopBackOff` — log của container hiện tại trống vì nó chưa kịp chạy; bí mật nằm trong container **đã chết trước đó**. Còn `CrashLoopBackOff` không phải lỗi, nó là **trạng thái chờ** (back-off tăng dần tới 5 phút) sau khi container liên tục chết.
+> **Ghi nhớ**: `kubectl logs --previous` là lệnh cứu mạng cho `CrashLoopBackOff` — log của container hiện tại trống vì nó chưa kịp chạy; bí mật nằm trong container **đã chết trước đó**. Còn `CrashLoopBackOff` không phải lỗi, nó là **trạng thái chờ** (back-off tăng dần tới 5 phút) sau khi container liên tục chết.
 
 ## Liên hệ sang AWS
 
@@ -525,6 +525,6 @@ Bảng triệu chứng → nguyên nhân:
 | HPA theo metric AWS | Metric từ **CloudWatch Container Insights**; KEDA scale theo SQS/Kinesis |
 | Persistent storage | **EBS CSI** (block, 1 AZ) / **EFS CSI** (shared, multi-AZ) driver |
 
-> 💡 **Ghi nhớ**: Trên EKS, ưu tiên **IRSA/Pod Identity** thay vì nhét AWS access key vào Secret — Pod nhận quyền IAM tạm thời, tự xoay vòng. Đây là khác biệt vận hành lớn nhất so với cluster tự dựng.
+> **Ghi nhớ**: Trên EKS, ưu tiên **IRSA/Pod Identity** thay vì nhét AWS access key vào Secret — Pod nhận quyền IAM tạm thời, tự xoay vòng. Đây là khác biệt vận hành lớn nhất so với cluster tự dựng.
 
-> ⚠️ **Bẫy production**: EKS Fargate hợp cho workload nhẹ, cách ly mạnh, nhưng **đắt hơn EC2 khi tải cao và ổn định**, lạnh khởi động chậm (~60s), không gắn được EBS, không chạy DaemonSet (nên agent log/monitoring phải chạy dạng sidecar). Mô hình thực dụng 2025: workload nền dùng Managed Node Group + Karpenter (rẻ, dùng Spot), tác vụ bursty/batch ngắn dùng Fargate.
+> **Bẫy production**: EKS Fargate hợp cho workload nhẹ, cách ly mạnh, nhưng **đắt hơn EC2 khi tải cao và ổn định**, lạnh khởi động chậm (~60s), không gắn được EBS, không chạy DaemonSet (nên agent log/monitoring phải chạy dạng sidecar). Mô hình thực dụng 2025: workload nền dùng Managed Node Group + Karpenter (rẻ, dùng Spot), tác vụ bursty/batch ngắn dùng Fargate.

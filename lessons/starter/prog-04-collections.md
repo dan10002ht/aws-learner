@@ -97,7 +97,7 @@ Analogy: index giống như "bạn đứng cách đầu hàng bao nhiêu bước
   </g>
   <g>
     <rect x="510" y="50" width="150" height="62" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="6 4"/>
-    <text x="585" y="78" font-size="22" font-weight="700" text-anchor="middle" fill="#f59e0b">✕</text>
+    <text x="585" y="78" font-size="22" font-weight="700" text-anchor="middle" fill="#f59e0b">✗</text>
     <text x="585" y="100" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">không tồn tại</text>
     <text x="585" y="135" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">index 3</text>
   </g>
@@ -134,7 +134,7 @@ std::cout << traiCay[0] << std::endl;   // táo
 std::cout << traiCay[2] << std::endl;   // chuối
 ```
 
-> ⚠️ **Lỗi người mới hay gặp:** truy cập `trai_cay[3]` khi danh sách chỉ có 3 phần tử (index hợp lệ là 0, 1, 2). Chương trình sẽ báo lỗi "index out of range" (vượt quá phạm vi) hoặc trả về `undefined` (JavaScript). Quy tắc: danh sách có N phần tử thì index cuối cùng là **N − 1**.
+> **Lỗi người mới hay gặp:** truy cập `trai_cay[3]` khi danh sách chỉ có 3 phần tử (index hợp lệ là 0, 1, 2). Chương trình sẽ báo lỗi "index out of range" (vượt quá phạm vi) hoặc trả về `undefined` (JavaScript). Quy tắc: danh sách có N phần tử thì index cuối cùng là **N − 1**.
 
 ### 2.2. Thêm và xóa phần tử
 
@@ -235,7 +235,7 @@ std::cout << "Tổng điểm: " << tong << std::endl;   // 34
 
 Chú thích: Go dùng `range`, trả về cả index lẫn giá trị; dấu `_` nghĩa là "bỏ qua index, tôi không cần". JavaScript dùng `for...of` để lấy giá trị (đừng nhầm với `for...in` — cái đó lấy index).
 
-> 💡 **Ghi nhớ:** List = dãy **có thứ tự**, truy cập bằng **index từ 0**, được phép **trùng giá trị** (hai học sinh cùng được 8 điểm là chuyện bình thường).
+> **Ghi nhớ:** List = dãy **có thứ tự**, truy cập bằng **index từ 0**, được phép **trùng giá trị** (hai học sinh cùng được 8 điểm là chuyện bình thường).
 
 ## 3. Dictionary/Map — tra cứu theo khóa
 
@@ -363,9 +363,9 @@ for (const auto& [ten, sdt] : danhBa) {   // structured binding (C++17)
 }
 ```
 
-> ⚠️ **Lỗi người mới hay gặp:** tra một khóa **không tồn tại**. Python ném lỗi `KeyError`; JavaScript `Map.get` trả về `undefined`; Java trả về `null`; Go trả về "giá trị rỗng" (chuỗi `""`, số `0`) một cách lặng lẽ — dễ gây nhầm. Luôn kiểm tra khóa tồn tại trước khi dùng, hoặc dùng cách lấy "có giá trị mặc định".
+> **Lỗi người mới hay gặp:** tra một khóa **không tồn tại**. Python ném lỗi `KeyError`; JavaScript `Map.get` trả về `undefined`; Java trả về `null`; Go trả về "giá trị rỗng" (chuỗi `""`, số `0`) một cách lặng lẽ — dễ gây nhầm. Luôn kiểm tra khóa tồn tại trước khi dùng, hoặc dùng cách lấy "có giá trị mặc định".
 
-> 💡 **Ghi nhớ:** Khóa trong từ điển là **duy nhất** — gán lại cùng khóa sẽ **ghi đè** giá trị cũ (lưu số mới của Lan thì số cũ biến mất). Thứ tự các cặp nói chung **không quan trọng** (Go thậm chí duyệt theo thứ tự ngẫu nhiên có chủ đích).
+> **Ghi nhớ:** Khóa trong từ điển là **duy nhất** — gán lại cùng khóa sẽ **ghi đè** giá trị cũ (lưu số mới của Lan thì số cũ biến mất). Thứ tự các cặp nói chung **không quan trọng** (Go thậm chí duyệt theo thứ tự ngẫu nhiên có chủ đích).
 
 ## 4. Set — túi đựng không trùng lặp
 
@@ -624,4 +624,4 @@ Hãy thử trả lời (không chạy code) rồi mới kiểm chứng:
 - Chọn cấu trúc theo **câu hỏi bạn cần trả lời**, không phải theo thói quen: thứ tự → list, tra cứu → dictionary, tồn tại/khử trùng → set.
 - Bài đếm tần suất từ là khuôn mẫu "list + dictionary" mà bạn sẽ gặp lại suốt đời lập trình: duyệt một dãy, gom kết quả vào một bảng tra cứu.
 
-> 💡 **Ghi nhớ cuối bài:** Gần như mọi chương trình thực tế đều xoay quanh hai động tác: **duyệt một danh sách** và **tra một từ điển**. Thành thạo hai thứ này, bạn đã nắm được trái tim của lập trình xử lý dữ liệu.
+> **Ghi nhớ cuối bài:** Gần như mọi chương trình thực tế đều xoay quanh hai động tác: **duyệt một danh sách** và **tra một từ điển**. Thành thạo hai thứ này, bạn đã nắm được trái tim của lập trình xử lý dữ liệu.

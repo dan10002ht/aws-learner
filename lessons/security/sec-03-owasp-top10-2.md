@@ -4,7 +4,7 @@ Phần này đi tiếp 6 hạng mục còn lại trong OWASP Top 10 (2021). Khá
 
 Với kỹ sư xây hệ thống, đây chính là vùng bạn kiểm soát được nhiều nhất — và cũng là vùng dễ bị bỏ quên nhất vì "code chạy là được".
 
-> 💡 Nguyên tắc: Phần lớn breach thực tế không đến từ exploit tinh vi, mà từ một S3 bucket public, một dependency lỗi thời, hoặc một endpoint nội bộ gọi được URL tùy ý. Phòng thủ tốt = giảm bề mặt tấn công + giả định "thứ gì cũng có thể bị lạm dụng".
+> Nguyên tắc: Phần lớn breach thực tế không đến từ exploit tinh vi, mà từ một S3 bucket public, một dependency lỗi thời, hoặc một endpoint nội bộ gọi được URL tùy ý. Phòng thủ tốt = giảm bề mặt tấn công + giả định "thứ gì cũng có thể bị lạm dụng".
 
 ---
 
@@ -71,7 +71,7 @@ Cách phòng A04 không phải là một thư viện, mà là **quy trình**: l�
 | **D**enial of service | Từ chối dịch vụ | Có rate limit / quota? |
 | **E**levation of privilege | Leo thang quyền | Có thể vượt quyền? |
 
-> 💡 Nguyên tắc: Viết "abuse case" song song với "use case". Mỗi khi định nghĩa một tính năng, hãy hỏi "nếu user này là kẻ xấu thì họ lạm dụng tính năng này thế nào?".
+> Nguyên tắc: Viết "abuse case" song song với "use case". Mỗi khi định nghĩa một tính năng, hãy hỏi "nếu user này là kẻ xấu thì họ lạm dụng tính năng này thế nào?".
 
 ---
 
@@ -139,7 +139,7 @@ app.use(helmet({
 - [ ] Hardening qua **Infrastructure as Code** — cấu hình lặp lại được, review qua PR.
 - [ ] Scan cấu hình tự động trong CI (ví dụ `tfsec`, `checkov`, image scanning).
 
-> ⚠️ Lỗ hổng: Cấu hình "tạm để debug" rồi quên gỡ là nguồn breach kinh điển — verbose logging, `0.0.0.0` bind, admin panel không auth, CORS `*`. Mọi thay đổi cấu hình phải đi qua IaC + review, không SSH sửa tay.
+> Lỗ hổng: Cấu hình "tạm để debug" rồi quên gỡ là nguồn breach kinh điển — verbose logging, `0.0.0.0` bind, admin panel không auth, CORS `*`. Mọi thay đổi cấu hình phải đi qua IaC + review, không SSH sửa tay.
 
 ---
 
@@ -194,7 +194,7 @@ updates:
 - [ ] Sinh **SBOM** (Software Bill of Materials) để biết chính xác mình đang chạy gì.
 - [ ] Chỉ lấy package từ registry chính thức; cảnh giác **typosquatting** (tên gần giống).
 
-> 💡 Nguyên tắc: "Patch nhanh" quan trọng hơn "patch hoàn hảo". Khoảng thời gian từ lúc CVE công bố đến lúc bạn vá là cửa sổ bị tấn công — mục tiêu là rút ngắn nó xuống ngày, không phải tháng.
+> Nguyên tắc: "Patch nhanh" quan trọng hơn "patch hoàn hảo". Khoảng thời gian từ lúc CVE công bố đến lúc bạn vá là cửa sổ bị tấn công — mục tiêu là rút ngắn nó xuống ngày, không phải tháng.
 
 ---
 
@@ -251,7 +251,7 @@ FROM node:20-slim@sha256:5e7f...c1a2
 - [ ] CI/CD: hạn chế quyền, review thay đổi pipeline, bảo vệ secret, dùng OIDC thay long-lived key.
 - [ ] SRI (`integrity="sha384-..."`) cho script bên thứ ba nhúng trên web.
 
-> ⚠️ Lỗ hổng: `pickle.loads`, `yaml.load` (không `SafeLoader`), `unserialize()`, `ObjectInputStream` trên input người dùng = RCE. Hãy coi mọi byte từ client/queue/cache là thù địch cho đến khi parse bằng format không-thực-thi và validate schema.
+> Lỗ hổng: `pickle.loads`, `yaml.load` (không `SafeLoader`), `unserialize()`, `ObjectInputStream` trên input người dùng = RCE. Hãy coi mọi byte từ client/queue/cache là thù địch cho đến khi parse bằng format không-thực-thi và validate schema.
 
 ---
 
@@ -287,7 +287,7 @@ Các sự kiện **bắt buộc** phải log: đăng nhập (thành công/thất
 ### Cảnh báo: log đúng cách, tránh tự gây lỗ hổng
 
 ```python
-# ⚠️ KHÔNG BAO GIỜ log những thứ này:
+# KHÔNG BAO GIỜ log những thứ này:
 log.info("login", password=password)        # SAI: lộ credential
 log.info("payment", card_number=card)       # SAI: lộ PII/PCI
 log.info("session", token=jwt)              # SAI: lộ token
@@ -305,7 +305,7 @@ log.info("payment", card_last4=card[-4:], user_id=user.id)
 - [ ] Đồng bộ thời gian (NTP) và chuẩn timezone (UTC) để correlate log đa hệ thống.
 - [ ] Định kỳ diễn tập: "nếu bị tấn công lúc này, log có đủ để điều tra không?".
 
-> 💡 Nguyên tắc: Log là để **phát hiện và điều tra**, không phải để debug đơn thuần. Một log security tốt phải trả lời được: ai, làm gì, lúc nào, từ đâu, kết quả ra sao — mà không chứa bí mật nào.
+> Nguyên tắc: Log là để **phát hiện và điều tra**, không phải để debug đơn thuần. Một log security tốt phải trả lời được: ai, làm gì, lúc nào, từ đâu, kết quả ra sao — mà không chứa bí mật nào.
 
 ---
 
@@ -436,9 +436,9 @@ def fetch_avatar(url: str):
 | Network | Đặt egress firewall; service fetch URL không có route tới subnet nhạy cảm |
 | Cloud | Bắt buộc **IMDSv2** (token bắt buộc) — vô hiệu hóa SSRF kiểu cũ tới metadata |
 
-> ⚠️ Lỗ hổng: Blocklist IP đơn thuần dễ bị vượt qua bằng nhiều cách biểu diễn (`0x`, `[::]`, octal, DNS rebinding, redirect). Allowlist (chỉ cho phép domain/IP biết trước) luôn an toàn hơn blocklist. Và phải kiểm tra IP **sau khi resolve DNS**, không kiểm tra trên chuỗi hostname.
+> Lỗ hổng: Blocklist IP đơn thuần dễ bị vượt qua bằng nhiều cách biểu diễn (`0x`, `[::]`, octal, DNS rebinding, redirect). Allowlist (chỉ cho phép domain/IP biết trước) luôn an toàn hơn blocklist. Và phải kiểm tra IP **sau khi resolve DNS**, không kiểm tra trên chuỗi hostname.
 
-> 💡 Nguyên tắc: Bất kỳ chỗ nào server fetch theo input của user (URL avatar, webhook, import, PDF render, SSR fetch) đều là điểm SSRF tiềm năng. Mặc định **deny**, chỉ mở cho đích bạn thực sự cần.
+> Nguyên tắc: Bất kỳ chỗ nào server fetch theo input của user (URL avatar, webhook, import, PDF render, SSR fetch) đều là điểm SSRF tiềm năng. Mặc định **deny**, chỉ mở cho đích bạn thực sự cần.
 
 ---
 
@@ -463,4 +463,4 @@ Một số ánh xạ đáng nhớ:
 - **A08 + IAM Roles + OIDC**: Cho CI/CD dùng OIDC federation thay vì long-lived access key — bảo vệ tính toàn vẹn pipeline bằng credential ngắn hạn, không có secret tĩnh để lộ.
 - **A05 + IAM least privilege**: Cấu hình sai nguy hiểm nhất trên cloud thường là **IAM quá rộng** (`Action: "*"`). Dùng IAM Access Analyzer để phát hiện quyền dư thừa và public access ngoài ý muốn.
 
-> 💡 Nguyên tắc: Trên AWS, "secure by design" nghĩa là để dịch vụ quản lý lo phần khó — đừng tự code rate limit khi có WAF, đừng tự quản key khi có **KMS**, đừng tự gom log khi có CloudTrail. Việc của kỹ sư là **bật đúng, cấu hình chặt, và giám sát** — phần lớn OWASP Top 10 ở tầng hạ tầng được giải quyết bằng cấu hình đúng, không phải bằng code.
+> Nguyên tắc: Trên AWS, "secure by design" nghĩa là để dịch vụ quản lý lo phần khó — đừng tự code rate limit khi có WAF, đừng tự quản key khi có **KMS**, đừng tự gom log khi có CloudTrail. Việc của kỹ sư là **bật đúng, cấu hình chặt, và giám sát** — phần lớn OWASP Top 10 ở tầng hạ tầng được giải quyết bằng cấu hình đúng, không phải bằng code.

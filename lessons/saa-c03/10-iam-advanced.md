@@ -48,7 +48,7 @@ Thứ tự AWS duyệt, sau khi đã quét explicit deny ở mọi nơi:
 5. Session Policy                (trần của riêng phiên, truyền vào AssumeRole)
 ```
 
-> 📏 Docs hiện tại chèn thêm một lớp trần nữa ngay sau SCP: **RCP (Resource Control Policy)**, ra mắt cuối 2024 — giống SCP nhưng đặt trần lên *resource* của account thay vì lên principal. Đề SAA-C03 và hầu hết tài liệu vẫn dùng mô hình 5 lớp ở trên.
+> Docs hiện tại chèn thêm một lớp trần nữa ngay sau SCP: **RCP (Resource Control Policy)**, ra mắt cuối 2024 — giống SCP nhưng đặt trần lên *resource* của account thay vì lên principal. Đề SAA-C03 và hầu hết tài liệu vẫn dùng mô hình 5 lớp ở trên.
 
 **Đi thử một request qua đủ 5 lớp.** Account `111` là member của một organization. Alice assume role `dev-app` kèm một session policy, rồi gọi `s3:PutObject` lên bucket `reports` nằm trong chính account `111`:
 
@@ -88,9 +88,9 @@ Ví dụ: bucket policy ở account A ghi `Principal: arn:aws:iam::B:role/reader
 - **SCP áp principal trong account đó**, **không áp management account**, **không áp principal từ account khác** (kể cả khi gọi vào resource account này).
 - **Boundary + Identity**: hiệu lực **= giao** của 2 cái.
 
-> 🪤 Bẫy thi: thấy một policy trần (SCP, boundary, session policy) có `Allow` rộng rồi kết luận "được phép". Sai — trần không cấp quyền, vẫn cần identity hoặc resource policy cấp.
+> Bẫy thi: thấy một policy trần (SCP, boundary, session policy) có `Allow` rộng rồi kết luận "được phép". Sai — trần không cấp quyền, vẫn cần identity hoặc resource policy cấp.
 >
-> 📏 Chi tiết nâng cao, ít khi ra đề: trong **cùng account**, nếu resource policy cấp thẳng cho **ARN của một IAM user** (hoặc ARN của một role session), quyền đó **không** bị implicit deny của permission boundary cắt — boundary chỉ là trần cho *identity policy*. Nếu resource policy cấp cho **ARN của role** thì boundary và session policy vẫn cắt. Explicit Deny trong boundary thì luôn thắng. Đề thi thường chỉ kiểm mô hình đơn giản "boundary là trần của user/role".
+> Chi tiết nâng cao, ít khi ra đề: trong **cùng account**, nếu resource policy cấp thẳng cho **ARN của một IAM user** (hoặc ARN của một role session), quyền đó **không** bị implicit deny của permission boundary cắt — boundary chỉ là trần cho *identity policy*. Nếu resource policy cấp cho **ARN của role** thì boundary và session policy vẫn cắt. Explicit Deny trong boundary thì luôn thắng. Đề thi thường chỉ kiểm mô hình đơn giản "boundary là trần của user/role".
 
 ### 2.2 Resource-based vs Identity-based — bảng so sánh
 
@@ -102,7 +102,7 @@ Hai loại policy cấp quyền ở §2.1 khác nhau ở chỗ **gắn vào đâ
 
 Không phải service nào cũng có resource policy. Nhóm hay gặp trong đề: **S3** (bucket policy), **KMS** (key policy), **SQS**, **SNS**, **Lambda**, **ECR**, **EFS**, **Secrets Manager**, và trust policy của **IAM role** (cũng là một resource policy: nó nói ai được assume role). Nhóm **không có**: EC2 instance, RDS instance — muốn vào từ account khác chỉ có đường AssumeRole.
 
-> 📏 **DynamoDB**: tài liệu luyện thi cũ (và các câu hỏi cũ) coi DynamoDB **không có** resource policy nên cross-account bắt buộc AssumeRole. Từ **20/3/2024** DynamoDB đã hỗ trợ resource-based policy cho table, index và stream (tối đa 20 KB mỗi policy), nên giờ cả hai đường đều làm được. Gặp câu hỏi cross-account DynamoDB: nếu có đáp án "resource-based policy trên table" thì nó hợp lệ; nếu chỉ có đáp án AssumeRole thì chọn AssumeRole.
+> **DynamoDB**: tài liệu luyện thi cũ (và các câu hỏi cũ) coi DynamoDB **không có** resource policy nên cross-account bắt buộc AssumeRole. Từ **20/3/2024** DynamoDB đã hỗ trợ resource-based policy cho table, index và stream (tối đa 20 KB mỗi policy), nên giờ cả hai đường đều làm được. Gặp câu hỏi cross-account DynamoDB: nếu có đáp án "resource-based policy trên table" thì nó hợp lệ; nếu chỉ có đáp án AssumeRole thì chọn AssumeRole.
 
 **`NotPrincipal`** là phép phủ định của `Principal`, chỉ dùng được trong resource policy: "áp statement này cho *mọi người trừ* danh sách sau". Hầu như chỉ đi với `Deny`, ví dụ "Deny tất cả, trừ role `admin`". AWS khuyên tránh dùng vì dễ khoá nhầm chính mình; thay bằng `Principal: "*"` kèm condition `ArnNotEquals` trên `aws:PrincipalArn`.
 
@@ -125,7 +125,7 @@ Hệ quả thực tế của việc đổi danh tính: khi đã assume role củ
 **Use case quyết định:**
 - S3 bucket cho partner account đọc → **Resource policy** (đơn giản hơn AssumeRole: không phải tạo role, không phải đổi credential trong code).
 - Audit trace ai làm gì → **AssumeRole**. Mỗi lần assume sinh một event `AssumeRole` trong CloudTrail kèm tên phiên (`role-session-name`), nên biết chính xác ai vào, lúc nào.
-- DynamoDB cross-account → đề thi cũ: **AssumeRole**; hiện nay có thêm resource policy trên table (xem ghi chú 📏 ở trên).
+- DynamoDB cross-account → đề thi cũ: **AssumeRole**; hiện nay có thêm resource policy trên table (xem ghi chú ở trên).
 - EC2, RDS cross-account → không có resource policy → bắt buộc **AssumeRole**.
 - Lambda cross-account invoke → có **resource policy** (`lambda:InvokeFunction`), không cần AssumeRole.
 
@@ -295,7 +295,7 @@ Dùng khi workload chạy ngoài AWS (on-prem, cloud khác) cần gọi AWS API 
 | **IAM Identity Center** (best for AWS) | Multi-account SSO | AWS managed (hoặc external) | Do Identity Center lo | Internal |
 | **IAM Roles Anywhere** | Workload on-prem | Private CA + X.509 cert | X.509 certificate + chữ ký bằng private key | `CreateSession` (signed) |
 
-> 🪤 Bẫy thi: *"nhân viên dùng tài khoản công ty vào nhiều AWS account"* → **IAM Identity Center**. *"pipeline CI không lưu access key"* → **OIDC**. *"server on-prem không lưu access key"* → **IAM Roles Anywhere**. *"IdP của công ty chỉ hỗ trợ SAML, vào một account"* → **SAML 2.0 federation**.
+> Bẫy thi: *"nhân viên dùng tài khoản công ty vào nhiều AWS account"* → **IAM Identity Center**. *"pipeline CI không lưu access key"* → **OIDC**. *"server on-prem không lưu access key"* → **IAM Roles Anywhere**. *"IdP của công ty chỉ hỗ trợ SAML, vào một account"* → **SAML 2.0 federation**.
 
 #### GitHub Actions OIDC — pattern cực phổ biến
 1. Tạo OIDC provider 1 lần (đăng ký "tôi tin IdP này" với IAM):
@@ -376,7 +376,7 @@ Mobile app SDK upload S3 trực tiếp (chỉ với prefix /users/{sub}/)
 
 Role có condition `${cognito-identity.amazonaws.com:sub}` giới hạn user chỉ upload prefix của họ. Biến này được thay bằng ID riêng của từng người dùng lúc đánh giá policy, nên **một** role dùng chung cho cả triệu người mà mỗi người vẫn chỉ chạm được thư mục của mình.
 
-> 🪤 Bẫy thi: *"đăng ký / đăng nhập cho app, không tự xây hệ thống user"* → **User Pool**. *"app mobile cần upload thẳng lên S3"* hoặc *"cấp quyền AWS cho khách chưa đăng nhập"* → **Identity Pool**.
+> Bẫy thi: *"đăng ký / đăng nhập cho app, không tự xây hệ thống user"* → **User Pool**. *"app mobile cần upload thẳng lên S3"* hoặc *"cấp quyền AWS cho khách chưa đăng nhập"* → **Identity Pool**.
 
 ### 2.6 ABAC — attribute-based access control
 
@@ -488,7 +488,7 @@ Các tính năng, theo thứ tự hay gặp trong đề:
 
 Về vận hành, nên review **findings** định kỳ (ví dụ hàng tuần): cái nào chủ ý thì archive, cái nào không thì sửa policy.
 
-> 🪤 Bẫy thi: *"phát hiện resource bị share ra ngoài account/organization"* → **Access Analyzer**. Đừng nhầm với **GuardDuty** (phát hiện hành vi đáng ngờ từ log), **Macie** (tìm dữ liệu nhạy cảm trong S3), hay **Access Advisor** (§2.12: quyền nào không dùng tới).
+> Bẫy thi: *"phát hiện resource bị share ra ngoài account/organization"* → **Access Analyzer**. Đừng nhầm với **GuardDuty** (phát hiện hành vi đáng ngờ từ log), **Macie** (tìm dữ liệu nhạy cảm trong S3), hay **Access Advisor** (§2.12: quyền nào không dùng tới).
 
 ### 2.10 STS deep
 
@@ -536,7 +536,7 @@ Trong thực tế bạn hiếm khi phải tính thế này trên EC2/Lambda/ECS:
 
 Lý do: endpoint global `sts.amazonaws.com` từ trước tới nay được phục vụ bởi **một Region duy nhất, us-east-1 (N. Virginia)**. Workload ở Singapore gọi nó nghĩa là mỗi lần xin credential phải đi nửa vòng trái đất, và nếu us-east-1 gặp sự cố thì workload ở Singapore **không lấy được credential mới** dù mọi thứ ở Singapore vẫn chạy tốt. Endpoint theo Region (`sts.ap-southeast-1.amazonaws.com`) nằm ngay trong Region của bạn nên vừa nhanh hơn, vừa không phụ thuộc Region khác.
 
-> 📏 Gần đây AWS đã đổi hành vi: request tới endpoint global xuất phát từ một Region **bật mặc định** (và dùng DNS của Amazon trong VPC) được phục vụ ngay tại Region đó. Request từ **opt-in Region** hoặc qua DNS bên ngoài vẫn về us-east-1. Khuyến nghị của AWS và đáp án đề thi không đổi: **dùng regional endpoint**.
+> Gần đây AWS đã đổi hành vi: request tới endpoint global xuất phát từ một Region **bật mặc định** (và dùng DNS của Amazon trong VPC) được phục vụ ngay tại Region đó. Request từ **opt-in Region** hoặc qua DNS bên ngoài vẫn về us-east-1. Khuyến nghị của AWS và đáp án đề thi không đổi: **dùng regional endpoint**.
 
 ### 2.11 IMDSv2 — chặn SSRF lấy credential của instance role
 
@@ -569,7 +569,7 @@ Ba lớp chắn nằm trong hai bước đó:
 
 **Bắt buộc dùng v2**: đặt `HttpTokens = required` trên instance hoặc launch template; khi đó request kiểu v1 nhận lỗi `401`. Ở mức account có thiết lập mặc định + *enforce* IMDSv2 cho từng Region (instance không yêu cầu v2 sẽ không launch được); ở mức organization thì dùng SCP chặn việc launch instance không bật IMDSv2.
 
-> 🪤 Bẫy thi: *"ứng dụng trên EC2 bị SSRF làm lộ credential của instance role"* → **bắt buộc IMDSv2**. Không phải đổi sang access key, cũng không phải thêm rule Security Group.
+> Bẫy thi: *"ứng dụng trên EC2 bị SSRF làm lộ credential của instance role"* → **bắt buộc IMDSv2**. Không phải đổi sang access key, cũng không phải thêm rule Security Group.
 
 ### 2.12 Credential Report và Access Advisor — dọn quyền thừa
 
@@ -676,7 +676,7 @@ Tự vẽ flowchart 6 step (SCP → resource → identity → boundary → sessi
    <details><summary>Đáp án</summary>Trust `Principal: arn:aws:iam::999:root` + **bắt buộc ExternalId** (random secret X cung cấp) + Condition `sts:ExternalId`. Không có ExternalId → confused deputy risk.</details>
 
 4. User có Permission Boundary chỉ `s3:Get*`. Identity policy allow `s3:*`. Bucket policy allow `s3:PutObject`. Gọi `s3:PutObject`?
-   <details><summary>Đáp án</summary>Đáp án đề thi mong đợi: **DENY** — boundary là trần của user, `s3:PutObject` nằm ngoài `s3:Get*`. Điều này đúng khi bucket ở **account khác**, hoặc bucket policy cấp cho cả account (`:root`) hay cho một role: lượt đánh giá phía user vẫn phải qua boundary. Ngoại lệ theo docs (xem ghi chú 📏 cuối §2.1): nếu bucket **cùng account** và bucket policy ghi đích danh **ARN của IAM user đó** làm `Principal`, thì implicit deny của boundary không cắt được quyền này và kết quả là ALLOW. Muốn chặn chắc chắn thì boundary phải có **explicit Deny**.</details>
+   <details><summary>Đáp án</summary>Đáp án đề thi mong đợi: **DENY** — boundary là trần của user, `s3:PutObject` nằm ngoài `s3:Get*`. Điều này đúng khi bucket ở **account khác**, hoặc bucket policy cấp cho cả account (`:root`) hay cho một role: lượt đánh giá phía user vẫn phải qua boundary. Ngoại lệ theo docs (xem ghi chú cuối §2.1): nếu bucket **cùng account** và bucket policy ghi đích danh **ARN của IAM user đó** làm `Principal`, thì implicit deny của boundary không cắt được quyền này và kết quả là ALLOW. Muốn chặn chắc chắn thì boundary phải có **explicit Deny**.</details>
 
 5. Developer cần tạo Lambda role cho app, không được tạo Admin role. Setup gì?
    <details><summary>Đáp án</summary>(1) Permission Boundary `DevBoundary` cap quyền. (2) Policy cho dev: `iam:CreateRole` + `iam:PassRole` **bắt buộc** `iam:PermissionsBoundary = DevBoundary` và `iam:PassedToService = lambda.amazonaws.com`. (3) Deny `iam:DeleteRolePermissionsBoundary`.</details>
@@ -789,13 +789,13 @@ Tự vẽ flowchart 6 step (SCP → resource → identity → boundary → sessi
 - **Quarterly access review**: list role/user 90 ngày không dùng → disable/delete.
 
 ### Anti-pattern
-- ❌ `iam:PassRole` trên `*` → escalation.
-- ❌ Trust policy `Principal: "*"` (ai cũng assume).
-- ❌ 3rd-party role không ExternalId → confused deputy.
-- ❌ Permission Boundary thiếu — dev tự nâng quyền qua tạo role.
-- ❌ Access key trong code/env file → OIDC/Roles Anywhere.
-- ❌ Disable IMDSv2 vì "dễ debug" → SSRF tăng risk.
-- ❌ KMS key policy không có root → khóa key vĩnh viễn không recover được.
+- ✗ `iam:PassRole` trên `*` → escalation.
+- ✗ Trust policy `Principal: "*"` (ai cũng assume).
+- ✗ 3rd-party role không ExternalId → confused deputy.
+- ✗ Permission Boundary thiếu — dev tự nâng quyền qua tạo role.
+- ✗ Access key trong code/env file → OIDC/Roles Anywhere.
+- ✗ Disable IMDSv2 vì "dễ debug" → SSRF tăng risk.
+- ✗ KMS key policy không có root → khóa key vĩnh viễn không recover được.
 
 ---
 

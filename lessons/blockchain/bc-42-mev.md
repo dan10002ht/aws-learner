@@ -146,7 +146,7 @@ ePBS thường gắn với các thiết kế như **two-slot PBS** hoặc **PTC 
 
 ## 3. Ví dụ code — một bundle sandwich (minh họa để HIỂU cách phòng thủ)
 
-> ⚠️ **Cảnh báo đạo đức**: sandwich attack **rút giá trị của user**. Đoạn code dưới đây minh họa cấu trúc bundle để bạn **hiểu và phòng thủ**, KHÔNG khuyến khích triển khai tấn công.
+> **Cảnh báo đạo đức**: sandwich attack **rút giá trị của user**. Đoạn code dưới đây minh họa cấu trúc bundle để bạn **hiểu và phòng thủ**, KHÔNG khuyến khích triển khai tấn công.
 
 Searcher không gửi tx qua mempool mà gửi **bundle** qua Flashbots RPC. Ví dụ với `ethers.js` + `@flashbots/ethers-provider-bundle`:
 

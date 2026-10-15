@@ -7,7 +7,7 @@ Hai từ này hay bị gộp làm một, nhưng đây là hai câu hỏi khác n
 
 Là kỹ sư xây hệ thống, bạn sẽ viết cả hai. Phần lớn lỗ hổng nghiêm trọng nhất trong OWASP Top 10 2021 nằm ở đây: **A01 Broken Access Control** đứng đầu bảng, và **A07 Identification and Authentication Failures**. Bài này đi từ phiên đăng nhập, qua OAuth/OIDC, tới phân quyền và những bẫy phổ biến nhất — luôn kèm ví dụ tấn công cụ thể và code trước/sau.
 
-> 💡 Nguyên tắc: AuthN sai thì kẻ tấn công giả danh người khác. AuthZ sai thì kẻ tấn công đã là chính mình nhưng chạm được dữ liệu của người khác. Bug AuthZ khó phát hiện hơn vì request trông hoàn toàn "hợp lệ".
+> Nguyên tắc: AuthN sai thì kẻ tấn công giả danh người khác. AuthZ sai thì kẻ tấn công đã là chính mình nhưng chạm được dữ liệu của người khác. Bug AuthZ khó phát hiện hơn vì request trông hoàn toàn "hợp lệ".
 
 ## 1. Quản lý phiên: Session (cookie) vs Token (JWT)
 
@@ -36,7 +36,7 @@ Set-Cookie: sid=a1b2c3...; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=3600
 | `Path` / `Domain` hẹp | Giảm phạm vi rò rỉ |
 | `__Host-` prefix | Bắt buộc Secure + Path=/ + không Domain → chống cookie injection |
 
-> ⚠️ Lỗ hổng: lưu JWT trong `localStorage` "cho tiện". `localStorage` đọc được bằng JavaScript, nên một lỗ XSS bất kỳ là đánh cắp được token đăng nhập của mọi user. Cookie `HttpOnly` thì XSS không đọc nổi. Đừng đổi một lớp phòng thủ lấy chút tiện lợi.
+> Lỗ hổng: lưu JWT trong `localStorage` "cho tiện". `localStorage` đọc được bằng JavaScript, nên một lỗ XSS bất kỳ là đánh cắp được token đăng nhập của mọi user. Cookie `HttpOnly` thì XSS không đọc nổi. Đừng đổi một lớp phòng thủ lấy chút tiện lợi.
 
 ### Token-based / JWT (stateless)
 
@@ -108,14 +108,14 @@ Lời khuyên thực dụng cho hầu hết web app: **dùng session + cookie Ht
 
 JWT chỉ an toàn khi verify đúng. Đây là vùng có nhiều lỗ hổng kinh điển.
 
-> ⚠️ Lỗ hổng `alg: none`: kẻ tấn công sửa header thành `{"alg":"none"}` và bỏ chữ ký. Thư viện cũ/cấu hình lỏng sẽ chấp nhận token "không cần chữ ký" → giả mạo bất kỳ user nào.
+> Lỗ hổng `alg: none`: kẻ tấn công sửa header thành `{"alg":"none"}` và bỏ chữ ký. Thư viện cũ/cấu hình lỏng sẽ chấp nhận token "không cần chữ ký" → giả mạo bất kỳ user nào.
 
-> ⚠️ Lỗ hổng nhầm RS256 → HS256: token thật ký bằng RSA (RS256, private key). Kẻ tấn công đổi header sang HS256 rồi ký HMAC bằng **public key** (vốn ai cũng biết). Nếu code verify "tự suy alg từ token", nó dùng public key làm HMAC secret → chữ ký hợp lệ. Luôn **cố định danh sách thuật toán cho phép**.
+> Lỗ hổng nhầm RS256 → HS256: token thật ký bằng RSA (RS256, private key). Kẻ tấn công đổi header sang HS256 rồi ký HMAC bằng **public key** (vốn ai cũng biết). Nếu code verify "tự suy alg từ token", nó dùng public key làm HMAC secret → chữ ký hợp lệ. Luôn **cố định danh sách thuật toán cho phép**.
 
 Code sai (Node.js):
 
 ```js
-// ❌ Tin tưởng alg trong token, không kiểm exp/aud/iss
+// ✗ Tin tưởng alg trong token, không kiểm exp/aud/iss
 const payload = jwt.decode(token);        // decode KHÔNG verify chữ ký!
 if (payload.sub) grantAccess(payload.sub); // ai cũng vào được
 ```
@@ -123,7 +123,7 @@ if (payload.sub) grantAccess(payload.sub); // ai cũng vào được
 Code đúng (Node.js, jsonwebtoken):
 
 ```js
-// ✅ Verify chữ ký + ép thuật toán + kiểm claim
+// ✓ Verify chữ ký + ép thuật toán + kiểm claim
 const payload = jwt.verify(token, publicKey, {
   algorithms: ["RS256"],     // KHÔNG để thư viện tự suy alg
   issuer: "https://auth.example.com",
@@ -153,7 +153,7 @@ OAuth 2.1 (bản hợp nhất các best practice) bắt buộc **Authorization C
 
 ### PKCE chống điều gì
 
-> ⚠️ Lỗ hổng authorization code interception: app gửi user qua trình duyệt để lấy `code`, rồi đổi `code` lấy token. Trên mobile/SPA, một app độc hại có thể chặn `code` ở bước redirect và đổi lấy token. PKCE chặn điều này.
+> Lỗ hổng authorization code interception: app gửi user qua trình duyệt để lấy `code`, rồi đổi `code` lấy token. Trên mobile/SPA, một app độc hại có thể chặn `code` ở bước redirect và đổi lấy token. PKCE chặn điều này.
 
 PKCE thêm một bí mật dùng-một-lần do client tự sinh:
 
@@ -197,7 +197,7 @@ Các tham số phòng thủ bắt buộc khác:
 
 Access token sống ngắn để giảm thiệt hại nếu bị lộ. Để user không phải đăng nhập lại liên tục, ta dùng **refresh token** (sống dài) để xin access token mới.
 
-> ⚠️ Lỗ hổng: refresh token bị đánh cắp. Nó sống lâu, nên kẻ tấn công cứ thế xin access token mới mãi mà không ai biết. **Rotation** biến việc đánh cắp thành phát hiện được.
+> Lỗ hổng: refresh token bị đánh cắp. Nó sống lâu, nên kẻ tấn công cứ thế xin access token mới mãi mà không ai biết. **Rotation** biến việc đánh cắp thành phát hiện được.
 
 Cơ chế **rotation + reuse detection**:
 
@@ -247,7 +247,7 @@ Cơ chế **rotation + reuse detection**:
 </svg>
 
 ```python
-# ✅ Pseudocode phía server cho /refresh
+# ✓ Pseudocode phía server cho /refresh
 def refresh(old_token):
     rec = store.get(old_token)
     if rec is None:
@@ -267,7 +267,7 @@ Refresh token nên đặt trong cookie `HttpOnly` riêng, path hẹp (vd `/auth/
 
 ### Hash mật khẩu đúng cách
 
-> ⚠️ Lỗ hổng: lưu mật khẩu plaintext, hoặc hash bằng MD5/SHA-256 "thường". SHA tính cực nhanh → GPU dò hàng tỉ hash/giây. Khi DB rò rỉ, mọi mật khẩu yếu bị crack trong vài phút.
+> Lỗ hổng: lưu mật khẩu plaintext, hoặc hash bằng MD5/SHA-256 "thường". SHA tính cực nhanh → GPU dò hàng tỉ hash/giây. Khi DB rò rỉ, mọi mật khẩu yếu bị crack trong vài phút.
 
 Dùng **hàm hash chuyên cho mật khẩu**: chậm có chủ đích, tốn bộ nhớ, có salt tự động.
 
@@ -278,7 +278,7 @@ Dùng **hàm hash chuyên cho mật khẩu**: chậm có chủ đích, tốn b�
 | **scrypt / PBKDF2** | Khi môi trường bắt buộc (FIPS); PBKDF2 cần iteration cao |
 
 ```python
-# ✅ Argon2id (thư viện argon2-cffi)
+# ✓ Argon2id (thư viện argon2-cffi)
 from argon2 import PasswordHasher
 ph = PasswordHasher()                 # tham số mặc định đã an toàn
 hash = ph.hash(password)              # salt sinh tự động, nằm trong chuỗi hash
@@ -292,7 +292,7 @@ except VerifyMismatchError:
 ```
 
 ```js
-// ✅ bcrypt (Node.js) — cost 12 trở lên
+// ✓ bcrypt (Node.js) — cost 12 trở lên
 const hash = await bcrypt.hash(password, 12);
 const ok   = await bcrypt.compare(password, hash); // KHÔNG tự so chuỗi
 ```
@@ -303,7 +303,7 @@ Thêm: kiểm mật khẩu rò rỉ qua Have I Been Pwned (k-anonymity API), kh�
 
 MFA kết hợp các yếu tố: **biết** (mật khẩu), **có** (điện thoại/khóa), **là** (sinh trắc).
 
-> ⚠️ Lỗ hổng SMS OTP: dễ bị SIM-swap và phishing thời gian thực (kẻ tấn công dựng trang giả, user nhập OTP, chúng chuyển tiếp ngay). SMS tốt hơn không có gì, nhưng đừng coi là mạnh.
+> Lỗ hổng SMS OTP: dễ bị SIM-swap và phishing thời gian thực (kẻ tấn công dựng trang giả, user nhập OTP, chúng chuyển tiếp ngay). SMS tốt hơn không có gì, nhưng đừng coi là mạnh.
 
 Thứ tự ưu tiên thực dụng:
 
@@ -360,7 +360,7 @@ Vì sao chống phishing: chữ ký gắn chặt với **origin** (tên miền t
 
 Thực tế hay kết hợp: RBAC cho thao tác thô (ai được vào màn hình Admin), ABAC cho dữ liệu tinh (user này có sở hữu *bản ghi cụ thể* này không).
 
-> 💡 Nguyên tắc: phân quyền phải kiểm tra ở **server, cho từng tài nguyên cụ thể**, ngay trước khi truy cập dữ liệu. Ẩn nút trên UI không phải là bảo mật — attacker gọi API trực tiếp.
+> Nguyên tắc: phân quyền phải kiểm tra ở **server, cho từng tài nguyên cụ thể**, ngay trước khi truy cập dữ liệu. Ẩn nút trên UI không phải là bảo mật — attacker gọi API trực tiếp.
 
 ## 7. Bẫy phân quyền: BOLA và BFLA
 
@@ -368,10 +368,10 @@ Thực tế hay kết hợp: RBAC cho thao tác thô (ai được vào màn hìn
 
 ### BOLA — Broken Object Level Authorization (IDOR)
 
-> ⚠️ Lỗ hổng: API tin vào ID trong request mà không kiểm "object này có thuộc về user gọi không". User A đổi `/api/invoices/1001` thành `1002` và đọc hóa đơn của user B.
+> Lỗ hổng: API tin vào ID trong request mà không kiểm "object này có thuộc về user gọi không". User A đổi `/api/invoices/1001` thành `1002` và đọc hóa đơn của user B.
 
 ```js
-// ❌ BOLA: lấy theo ID, không kiểm chủ sở hữu
+// ✗ BOLA: lấy theo ID, không kiểm chủ sở hữu
 app.get("/api/invoices/:id", auth, async (req, res) => {
   const inv = await db.invoice.findById(req.params.id);
   res.json(inv);                       // ai có token cũng đọc được MỌI hóa đơn
@@ -379,7 +379,7 @@ app.get("/api/invoices/:id", auth, async (req, res) => {
 ```
 
 ```js
-// ✅ Gắn truy vấn vào chính user, hoặc kiểm ownership rõ ràng
+// ✓ Gắn truy vấn vào chính user, hoặc kiểm ownership rõ ràng
 app.get("/api/invoices/:id", auth, async (req, res) => {
   const inv = await db.invoice.findOne({
     id: req.params.id,
@@ -394,21 +394,21 @@ Chống BOLA: luôn ràng `ownerId`/`tenantId` vào mọi truy vấn; cân nhắ
 
 ### BFLA — Broken Function Level Authorization
 
-> ⚠️ Lỗ hổng: endpoint quản trị không kiểm role. UI ẩn nút "Xóa user" với user thường, nhưng `DELETE /api/admin/users/55` vẫn chạy nếu gọi trực tiếp.
+> Lỗ hổng: endpoint quản trị không kiểm role. UI ẩn nút "Xóa user" với user thường, nhưng `DELETE /api/admin/users/55` vẫn chạy nếu gọi trực tiếp.
 
 ```python
-# ❌ BFLA: chỉ kiểm đăng nhập, không kiểm quyền chức năng
+# ✗ BFLA: chỉ kiểm đăng nhập, không kiểm quyền chức năng
 @app.delete("/api/admin/users/{uid}")
 def delete_user(uid, current=Depends(auth)):
     db.delete_user(uid)               # bất kỳ user đăng nhập nào cũng gọi được
 
-# ✅ Ép quyền theo chức năng, mặc định từ chối
+# ✓ Ép quyền theo chức năng, mặc định từ chối
 @app.delete("/api/admin/users/{uid}")
 def delete_user(uid, current=Depends(require_role("admin"))):
     db.delete_user(uid)
 ```
 
-> 💡 Nguyên tắc: **deny by default**. Mỗi route có một guard quyền tường minh; không có guard thì route bị chặn. Đừng để "quên thêm middleware" trở thành lỗ hổng.
+> Nguyên tắc: **deny by default**. Mỗi route có một guard quyền tường minh; không có guard thì route bị chặn. Đừng để "quên thêm middleware" trở thành lỗ hổng.
 
 ## Checklist AuthN/AuthZ trước khi lên production
 

@@ -56,7 +56,7 @@ Nhìn `10.31.4.17` là biết ngay đây là prod ở Singapore, và không có 
 /28 →  16 − 5 =  11 IP dùng được
 ```
 
-> 🪤 Bẫy thi: *"subnet /28 chứa được bao nhiêu instance?"* → **11**, không phải 16 hay 14.
+> Bẫy thi: *"subnet /28 chứa được bao nhiêu instance?"* → **11**, không phải 16 hay 14.
 
 ### 2.2 Subnet pattern
 
@@ -123,7 +123,7 @@ Thêm ba ý:
 - NAT Gateway không làm NAT cho IPv6-sang-IPv6. Nó chỉ có NAT64: cho workload chỉ-có-IPv6 gọi tới đích IPv4.
 - **Public IPv4 tính phí $0,005/giờ mỗi địa chỉ** từ 1/2/2024, kể cả đang dùng hay để không (~$3,65/tháng/địa chỉ). Địa chỉ IPv6 thì miễn phí, đó là một lý do kinh tế để chuyển dần sang IPv6.
 
-> 🪤 Bẫy thi: *"instance IPv6 trong private subnet cần tải bản vá từ Internet, không cho Internet kết nối vào"* → **Egress-only Internet Gateway**. Đáp án "NAT Gateway" là mồi nhử.
+> Bẫy thi: *"instance IPv6 trong private subnet cần tải bản vá từ Internet, không cho Internet kết nối vào"* → **Egress-only Internet Gateway**. Đáp án "NAT Gateway" là mồi nhử.
 
 ---
 
@@ -193,7 +193,7 @@ Phép tính cho thấy vì sao **không bật Interface Endpoint cho mọi dịc
 | Dùng được từ on-prem / VPC khác | Không | Có |
 | Kiểm soát truy cập | Endpoint policy | Endpoint policy + security group |
 
-> 🪤 Bẫy thi: *"private subnet truy cập S3, rẻ nhất"* → **Gateway Endpoint**. *"on-prem qua Direct Connect truy cập S3 bằng private IP"* → **Interface Endpoint cho S3** (Gateway Endpoint không dùng được từ ngoài VPC). *"truy cập SQS/ECR/Secrets Manager không qua Internet"* → **Interface Endpoint** (Gateway không hỗ trợ các dịch vụ này).
+> Bẫy thi: *"private subnet truy cập S3, rẻ nhất"* → **Gateway Endpoint**. *"on-prem qua Direct Connect truy cập S3 bằng private IP"* → **Interface Endpoint cho S3** (Gateway Endpoint không dùng được từ ngoài VPC). *"truy cập SQS/ECR/Secrets Manager không qua Internet"* → **Interface Endpoint** (Gateway không hỗ trợ các dịch vụ này).
 
 ### 3.3 PrivateLink pattern
 
@@ -323,15 +323,15 @@ Sau khi hiểu cơ chế của cả hai, bảng dưới đây chỉ là tóm t�
 | | Peering | TGW |
 |--|---------|-----|
 | Topology | Mesh | Hub-spoke |
-| Transitive | ❌ | ✅ |
+| Transitive | ✗ | ✓ |
 | Scale | < 5 VPC | 1000s |
 | Cost | Free (same region) | Per attachment + GB |
 | Latency | Lower | Higher (qua hub) |
-| Cross-account | ✅ | ✅ (qua RAM share) |
+| Cross-account | ✓ | ✓ (qua RAM share) |
 
 Hai dòng cần lời giải thích. **Latency**: peering là đường thẳng giữa hai VPC, còn TGW thêm một chặng trung gian nên chậm hơn một chút. **Cross-account**: peering thì account kia bấm chấp nhận lời mời; TGW thì account chủ dùng **AWS RAM** (Resource Access Manager, dịch vụ chia sẻ tài nguyên giữa các account) để chia sẻ TGW, rồi account khác gắn VPC của họ vào.
 
-> 🪤 Bẫy thi: *"hai VPC, lưu lượng lớn, chi phí thấp nhất"* → **Peering**. *"hàng chục VPC + on-prem, quản lý tập trung, cần bắc cầu"* → **TGW**.
+> Bẫy thi: *"hai VPC, lưu lượng lớn, chi phí thấp nhất"* → **Peering**. *"hàng chục VPC + on-prem, quản lý tập trung, cần bắc cầu"* → **TGW**.
 
 ### 5.5 Cloud WAN (2022)
 
@@ -414,7 +414,7 @@ On-prem ── DX connection ── Private VIF ── DX Gateway ──┬─�
 
 Vì vậy hệ thống quan trọng luôn cần **hai đường DX ở hai location khác nhau**, hoặc tối thiểu **một DX + VPN backup**.
 
-> 🪤 Bẫy thi: *"băng thông ổn định, độ trễ nhất quán, lưu lượng lớn"* → **Direct Connect**. *"cần ngay, rẻ, chấp nhận Internet"* → **VPN**. *"DX phải được mã hoá"* → **MACsec** (nếu là dedicated 10/100 Gbps) hoặc **VPN over DX**. *"một DX, nhiều VPC nhiều region"* → **DX Gateway**. *"DX tới TGW"* → **Transit VIF**.
+> Bẫy thi: *"băng thông ổn định, độ trễ nhất quán, lưu lượng lớn"* → **Direct Connect**. *"cần ngay, rẻ, chấp nhận Internet"* → **VPN**. *"DX phải được mã hoá"* → **MACsec** (nếu là dedicated 10/100 Gbps) hoặc **VPN over DX**. *"một DX, nhiều VPC nhiều region"* → **DX Gateway**. *"DX tới TGW"* → **Transit VIF**.
 
 ### 6.4 DX + VPN
 
@@ -448,14 +448,14 @@ So với CloudFront, cả hai đều dùng edge location của AWS nhưng làm v
 | | CloudFront | Global Accelerator |
 |--|-----------|---------------------|
 | Layer | 7 (HTTP/HTTPS) | 4 (TCP/UDP) |
-| Cache | ✅ | ❌ |
-| Static IP | ❌ | ✅ (2 anycast) |
+| Cache | ✓ | ✗ |
+| Static IP | ✗ | ✓ (2 anycast) |
 | Use case | Web cache static + dynamic | Global TCP/UDP |
 | Pricing | Per GB egress + req | $0.025/h + per GB |
 
 Phí cố định của một accelerator là ~$18,25/tháng (730 giờ × $0,025), cộng phí "Data Transfer-Premium" theo GB, tuỳ cặp region–edge.
 
-> 🪤 Bẫy thi: *"static IP"*, *"UDP"*, *"game / VoIP"*, *"failover nhanh không phụ thuộc DNS"* → **Global Accelerator**. *"cache nội dung"*, *"HTTP"*, *"giảm tải origin"* → **CloudFront**.
+> Bẫy thi: *"static IP"*, *"UDP"*, *"game / VoIP"*, *"failover nhanh không phụ thuộc DNS"* → **Global Accelerator**. *"cache nội dung"*, *"HTTP"*, *"giảm tải origin"* → **CloudFront**.
 
 ---
 
@@ -638,12 +638,12 @@ Mẹo nhớ chiều: **Inbound = câu hỏi đi VÀO AWS**, **Outbound = câu h�
 - **RAM share** subnet/TGW cross-account.
 
 ### Anti-pattern
-- ❌ Full mesh peering > 5 VPC → TGW.
-- ❌ NAT GW serve S3 traffic → Gateway Endpoint.
-- ❌ Single NAT GW cho 3 AZ → AZ-A down = mất egress AZ-A,B,C.
-- ❌ DX không backup VPN → SLA của một connection đơn lẻ chỉ 95%, không đủ.
-- ❌ VPC CIDR overlap → cannot peer/TGW future.
-- ❌ Public RDS với SG `0.0.0.0/0`.
+- ✗ Full mesh peering > 5 VPC → TGW.
+- ✗ NAT GW serve S3 traffic → Gateway Endpoint.
+- ✗ Single NAT GW cho 3 AZ → AZ-A down = mất egress AZ-A,B,C.
+- ✗ DX không backup VPN → SLA của một connection đơn lẻ chỉ 95%, không đủ.
+- ✗ VPC CIDR overlap → cannot peer/TGW future.
+- ✗ Public RDS với SG `0.0.0.0/0`.
 
 ## 12. Foundations
 - [[foundations-06-failure-modes]] — network partition là chủ đề CAP.

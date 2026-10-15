@@ -137,7 +137,7 @@ kubectl run t --rm -it --image=busybox -- nslookup db-0.db.default.svc.cluster.l
 kubectl delete pod db-1
 ```
 
-> ⚠️ Xoá StatefulSet **không** tự xoá PVC (an toàn cho dữ liệu). Muốn dọn sạch phải `kubectl delete pvc -l app=db` thủ công.
+> Xoá StatefulSet **không** tự xoá PVC (an toàn cho dữ liệu). Muốn dọn sạch phải `kubectl delete pvc -l app=db` thủ công.
 
 ### 2.4 DaemonSet — đúng 1 pod trên MỖI node
 

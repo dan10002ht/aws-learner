@@ -33,7 +33,7 @@ Bảng trên là thứ ai cũng thuộc. Phần ít ai nói ra — và là phầ
 
 **Bất biến giết chết bài toán đồng thời (concurrency).** Nếu object không bao giờ bị sửa tại chỗ, thì bản sao của nó ở AZ khác không bao giờ "cũ theo kiểu sai" — nó hoặc là chính nó, hoặc chưa tồn tại. Không cần khoá phân tán, không cần giao thức ghi có phối hợp, không cần lo hai writer cùng sửa một byte. Cache có thể giữ vô thời hạn nếu khoá gắn với nội dung. Retry trở nên idempotent tự nhiên: `PUT` lại cùng byte thì kết quả không đổi. Và quan trọng nhất — **bất biến biến "ghi" thành "append", mà append là thao tác rẻ nhất trên đĩa quay**.
 
-> 💡 **Nguyên tắc**: khả năng mở rộng hiếm khi đến từ việc thêm máy. Nó đến từ việc **bỏ bớt lời hứa** cho tới khi không còn thao tác nào cần phối hợp giữa các máy. Object store là ví dụ sạch nhất của nguyên tắc này: nó bỏ cây, bỏ in-place update, bỏ khoá POSIX — và nhận lại exabyte.
+> **Nguyên tắc**: khả năng mở rộng hiếm khi đến từ việc thêm máy. Nó đến từ việc **bỏ bớt lời hứa** cho tới khi không còn thao tác nào cần phối hợp giữa các máy. Object store là ví dụ sạch nhất của nguyên tắc này: nó bỏ cây, bỏ in-place update, bỏ khoá POSIX — và nhận lại exabyte.
 
 ---
 
@@ -115,7 +115,7 @@ Con số này là **cú twist đầu tiên của bài**, và đáng dừng lại
 | Yêu cầu nhất quán | Bất biến → dễ | Mutable, phải đúng → khó |
 | Cách mở rộng | Thêm ổ, thêm data node | Sharding + replica đọc |
 
-> 💡 **Đây là lý do gốc của quyết định kiến trúc lớn nhất cả bài: tách data plane và metadata plane thành hai hệ độc lập.** Không phải vì "tách ra cho sạch", mà vì hai khối này có **hình dạng tải, loại phần cứng, mô hình nhất quán và đường cong mở rộng hoàn toàn khác nhau**. Nhét chung vào một hệ thì bạn buộc phải chọn một điểm thoả hiệp tệ cho cả hai: hoặc trả tiền SSD cho 100 PB, hoặc chịu độ trễ HDD cho mọi lần tra khoá.
+> **Đây là lý do gốc của quyết định kiến trúc lớn nhất cả bài: tách data plane và metadata plane thành hai hệ độc lập.** Không phải vì "tách ra cho sạch", mà vì hai khối này có **hình dạng tải, loại phần cứng, mô hình nhất quán và đường cong mở rộng hoàn toàn khác nhau**. Nhét chung vào một hệ thì bạn buộc phải chọn một điểm thoả hiệp tệ cho cả hai: hoặc trả tiền SSD cho 100 PB, hoặc chịu độ trễ HDD cho mọi lần tra khoá.
 
 ### IOPS và thông lượng
 
@@ -252,7 +252,7 @@ x-amz-storage-class: STANDARD_IA
 
 **Metadata store** — nơi ánh xạ `(bucket, key) → object_id` cùng mọi thuộc tính. Nhỏ nhưng **nóng**: mỗi request đọc hay ghi đều phải qua nó ít nhất một lần.
 
-> 💡 **Phép loại suy đáng dùng trong phỏng vấn**: object store hoạt động y hệt **inode của UNIX**. Trong UNIX, tên file nằm trong directory entry, trỏ tới một inode; inode chứa metadata cộng danh sách con trỏ tới các block dữ liệu nằm rải rác trên đĩa. Object store dựng đúng cấu trúc đó nhưng **kéo giãn ra quy mô cụm**: metadata store đóng vai inode table, data store đóng vai vùng block, và `object_id` (một UUID) đóng vai số inode. Nói được câu này trong phỏng vấn thì bạn vừa giải thích xong toàn bộ kiến trúc trong 20 giây, và cho thấy bạn hiểu tại sao phải tách hai mặt phẳng chứ không chỉ thuộc lòng rằng phải tách.
+> **Phép loại suy đáng dùng trong phỏng vấn**: object store hoạt động y hệt **inode của UNIX**. Trong UNIX, tên file nằm trong directory entry, trỏ tới một inode; inode chứa metadata cộng danh sách con trỏ tới các block dữ liệu nằm rải rác trên đĩa. Object store dựng đúng cấu trúc đó nhưng **kéo giãn ra quy mô cụm**: metadata store đóng vai inode table, data store đóng vai vùng block, và `object_id` (một UUID) đóng vai số inode. Nói được câu này trong phỏng vấn thì bạn vừa giải thích xong toàn bộ kiến trúc trong 20 giây, và cho thấy bạn hiểu tại sao phải tách hai mặt phẳng chứ không chỉ thuộc lòng rằng phải tách.
 
 ### 4.1 Vì sao tách data plane / metadata plane là quyết định lớn nhất
 
@@ -312,7 +312,7 @@ Sự khác biệt này không hàn lâm — nó gây hậu quả thật:
 | Thư mục rỗng | Tồn tại được | **Không tồn tại** — không có object thì không có gì cả |
 | Kiểm tra quyền | Kế thừa từ cây | Chỉ theo policy trên bucket/prefix, không kế thừa thật |
 
-> ⚠️ **Bẫy production kinh điển**: `aws s3 mv s3://b/folder/ s3://b/folder2/ --recursive` trên một prefix 5 triệu object. Nó **không** phải rename — nó là 5 triệu lần COPY cộng 5 triệu lần DELETE, chạy hàng giờ, tốn phí request khủng khiếp, và nếu đứt giữa chừng thì bạn có nửa ở chỗ này nửa ở chỗ kia mà không có giao dịch nào để rollback. Biết trước điều này là khác biệt giữa người đã dùng S3 và người mới đọc về nó.
+> **Bẫy production kinh điển**: `aws s3 mv s3://b/folder/ s3://b/folder2/ --recursive` trên một prefix 5 triệu object. Nó **không** phải rename — nó là 5 triệu lần COPY cộng 5 triệu lần DELETE, chạy hàng giờ, tốn phí request khủng khiếp, và nếu đứt giữa chừng thì bạn có nửa ở chỗ này nửa ở chỗ kia mà không có giao dịch nào để rollback. Biết trước điều này là khác biệt giữa người đã dùng S3 và người mới đọc về nó.
 
 ---
 
@@ -402,7 +402,7 @@ Vì sao cách này thắng:
 - **File đã đóng là bất biến** → nhân bản chỉ là copy byte, kiểm tra toàn vẹn chỉ là hash lại một lần, cache tầng OS hoạt động tốt.
 - **Khớp hoàn hảo với tính bất biến của object.** Không bao giờ cần ghi đè giữa file, vì object không bao giờ sửa tại chỗ.
 
-> ⚠️ **Nhược điểm phải tự nêu ra**: chỉ có một con trỏ ghi cho mỗi file, nên **mọi luồng ghi phải nối đuôi nhau** — tranh khoá (lock contention) giữa các core. Cách gỡ chuẩn: **gán file cho core** — mỗi core (hoặc mỗi worker thread) sở hữu file đang mở riêng, ghi vào đó mà không cần khoá. Đánh đổi: nhiều file mở hơn, phân mảnh hơn một chút. Đây là mẫu "phân vùng để khỏi khoá" (partition instead of lock) rất đáng nêu trong phỏng vấn vì nó cho thấy bạn nghĩ tới cả tầng CPU chứ không chỉ tầng kiến trúc.
+> **Nhược điểm phải tự nêu ra**: chỉ có một con trỏ ghi cho mỗi file, nên **mọi luồng ghi phải nối đuôi nhau** — tranh khoá (lock contention) giữa các core. Cách gỡ chuẩn: **gán file cho core** — mỗi core (hoặc mỗi worker thread) sở hữu file đang mở riêng, ghi vào đó mà không cần khoá. Đánh đổi: nhiều file mở hơn, phân mảnh hơn một chút. Đây là mẫu "phân vùng để khỏi khoá" (partition instead of lock) rất đáng nêu trong phỏng vấn vì nó cho thấy bạn nghĩ tới cả tầng CPU chứ không chỉ tầng kiến trúc.
 
 ### 6.4 Bảng `object_mapping` — cái inode của riêng ta
 
@@ -480,7 +480,7 @@ Bản 2 → AZ-b, rack 40, ổ 7      ← khác toà nhà, khác nguồn, khác 
 Bản 3 → AZ-c, rack 77, ổ 1
 ```
 
-> 💡 **Sự kiện tương quan (correlated failure) là kẻ giết người thật sự.** Phép nhân xác suất chỉ đúng khi các biến cố độc lập. Trong thực tế, ổ cùng lô sản xuất hỏng cùng thời điểm, firmware lỗi làm hỏng cả đội, một bug trong chính phần mềm của bạn ghi sai lên cả ba bản cùng lúc. Đây là lý do các nhà cung cấp lớn còn trộn nhiều nhà sản xuất ổ, nhiều lô, và triển khai phần mềm theo từng đợt qua các AZ chứ không đồng loạt. Nói được điều này là bạn vượt hẳn mức "đọc sách".
+> **Sự kiện tương quan (correlated failure) là kẻ giết người thật sự.** Phép nhân xác suất chỉ đúng khi các biến cố độc lập. Trong thực tế, ổ cùng lô sản xuất hỏng cùng thời điểm, firmware lỗi làm hỏng cả đội, một bug trong chính phần mềm của bạn ghi sai lên cả ba bản cùng lúc. Đây là lý do các nhà cung cấp lớn còn trộn nhiều nhà sản xuất ổ, nhiều lô, và triển khai phần mềm theo từng đợt qua các AZ chứ không đồng loạt. Nói được điều này là bạn vượt hẳn mức "đọc sách".
 
 Giá phải trả: **overhead 200%** — 100 PB dữ liệu tốn 300 PB đĩa thật.
 
@@ -571,7 +571,7 @@ Phát hiện sai → sửa ngay từ bản sao hoặc từ parity → ghi lại 
 đánh dấu vùng hỏng để không dùng lại.
 ```
 
-> ⚠️ Chu kỳ scrub phải **ngắn hơn nhiều** so với thời gian kỳ vọng để đủ số bản bị hỏng chồng lên nhau. Scrub 14 ngày với 8+4 nghĩa là để mất dữ liệu, bạn cần 5 mảnh hỏng trong cùng cửa sổ 14 ngày — xác suất cực nhỏ. Scrub 6 tháng thì cửa sổ dài gấp 13 lần, và con số durability tụt đi vài bậc. **Tần suất scrub là một tham số durability chứ không phải một chi tiết vận hành.**
+> Chu kỳ scrub phải **ngắn hơn nhiều** so với thời gian kỳ vọng để đủ số bản bị hỏng chồng lên nhau. Scrub 14 ngày với 8+4 nghĩa là để mất dữ liệu, bạn cần 5 mảnh hỏng trong cùng cửa sổ 14 ngày — xác suất cực nhỏ. Scrub 6 tháng thì cửa sổ dài gấp 13 lần, và con số durability tụt đi vài bậc. **Tần suất scrub là một tham số durability chứ không phải một chi tiết vận hành.**
 
 ### 7.6 Placement service: bộ não cần phải luôn đúng
 
@@ -682,7 +682,7 @@ Ta vừa cố tình đánh đổi:
 | Cách chịu lệch | — | Tách bucket khổng lồ ra shard riêng; chia nhỏ theo dải prefix |
 | Nhất quán | Nguồn sự thật | **Cập nhật bất đồng bộ** — trễ vài trăm ms tới vài giây |
 
-> 💡 Đây là mẫu **CQRS thu nhỏ**: cùng một dữ liệu, hai cách tổ chức, mỗi cách phục vụ một hình dạng truy vấn, đồng bộ bất đồng bộ giữa chúng. Chấp nhận ghi trùng lặp và độ trễ nhỏ để đổi lấy việc cả hai truy vấn đều nhanh. Chính vì vậy mà **LIST của S3 có thể trả về kết quả hơi cũ ngay cả khi GET đã strong consistency** — đây không phải bug, nó là hệ quả trực tiếp của việc bảng liệt kê là một chỉ mục phụ cập nhật sau.
+> Đây là mẫu **CQRS thu nhỏ**: cùng một dữ liệu, hai cách tổ chức, mỗi cách phục vụ một hình dạng truy vấn, đồng bộ bất đồng bộ giữa chúng. Chấp nhận ghi trùng lặp và độ trễ nhỏ để đổi lấy việc cả hai truy vấn đều nhanh. Chính vì vậy mà **LIST của S3 có thể trả về kết quả hơi cũ ngay cả khi GET đã strong consistency** — đây không phải bug, nó là hệ quả trực tiếp của việc bảng liệt kê là một chỉ mục phụ cập nhật sau.
 
 ---
 
@@ -712,7 +712,7 @@ bucket_id │ object_name │ object_version │ object_id │ is_delete_marker
 - Khôi phục = xoá delete marker (`DELETE ?versionId=v3`) → v2 lại thành mới nhất. Một thao tác, không cần copy byte nào.
 - Dung lượng **vẫn bị tính tiền cho cả v1 và v2** — đây là nguồn gốc của vô số hoá đơn S3 gây sốc.
 
-> ⚠️ **Bẫy vận hành hay gặp nhất với versioning**: xoá một bucket 50 TB rồi ngạc nhiên vì hoá đơn không giảm. Xoá chỉ tạo delete marker; byte vẫn nằm đó. Phải có **lifecycle rule xoá các phiên bản không phải bản mới nhất (noncurrent versions)** sau N ngày, và dọn cả **delete marker đã hết tác dụng (expired object delete marker)** — nếu không, bucket của bạn đầy những "bia mộ" trỏ vào hư không, làm chậm mọi lần LIST.
+> **Bẫy vận hành hay gặp nhất với versioning**: xoá một bucket 50 TB rồi ngạc nhiên vì hoá đơn không giảm. Xoá chỉ tạo delete marker; byte vẫn nằm đó. Phải có **lifecycle rule xoá các phiên bản không phải bản mới nhất (noncurrent versions)** sau N ngày, và dọn cả **delete marker đã hết tác dụng (expired object delete marker)** — nếu không, bucket của bạn đầy những "bia mộ" trỏ vào hư không, làm chậm mọi lần LIST.
 
 ### 10.2 Multipart upload cho file lớn
 
@@ -734,7 +734,7 @@ Upload một file 5 TB bằng một request HTTP hỏng ở mọi phương diệ
 
 **Trạng thái upload nằm ở metadata store, không ở RAM của API server.** Nếu không, một lần deploy giữa chừng sẽ giết mọi upload đang dở — mà upload 5 TB có thể kéo dài nhiều giờ.
 
-> ⚠️ Upload dở dang mà không ai hoàn tất hay huỷ sẽ **nằm lại vĩnh viễn và vẫn bị tính tiền** — chúng vô hình với `LIST` thường, nên nhiều tổ chức trả tiền cho hàng chục TB rác suốt nhiều năm mà không biết. Bắt buộc phải có lifecycle rule huỷ multipart dở dang sau 7 ngày.
+> Upload dở dang mà không ai hoàn tất hay huỷ sẽ **nằm lại vĩnh viễn và vẫn bị tính tiền** — chúng vô hình với `LIST` thường, nên nhiều tổ chức trả tiền cho hàng chục TB rác suốt nhiều năm mà không biết. Bắt buộc phải có lifecycle rule huỷ multipart dở dang sau 7 ngày.
 
 ### 10.3 Garbage collection
 
@@ -793,7 +793,7 @@ Vì sao thay đổi này khó tới mức mất 14 năm? Vì eventual consistenc
 
 Cách thứ ba là chìa khoá và nó **được mở ra chính bởi lựa chọn shard ở §8.2**: vì `hash(bucket, key)` đưa mọi thao tác trên một khoá vào **đúng một shard**, ta có thể dùng giao dịch cục bộ của shard đó để đổi con trỏ một cách nguyên tử — **không cần đồng thuận phân tán**. Tính bất biến của object lo phần còn lại: byte mới đã nằm sẵn trên đĩa từ trước khi con trỏ đổi, nên khoảnh khắc con trỏ đổi là khoảnh khắc ghi có hiệu lực, và nó là nguyên tử.
 
-> ⚠️ Lưu ý: strong consistency áp dụng cho **GET/HEAD theo khoá**. **LIST vẫn có thể trễ** vì nó phục vụ từ bảng phi chuẩn hoá cập nhật bất đồng bộ (§9). Và **nhân bản chéo region luôn là bất đồng bộ** (§12) — "strong" chỉ có nghĩa trong phạm vi một region.
+> Lưu ý: strong consistency áp dụng cho **GET/HEAD theo khoá**. **LIST vẫn có thể trễ** vì nó phục vụ từ bảng phi chuẩn hoá cập nhật bất đồng bộ (§9). Và **nhân bản chéo region luôn là bất đồng bộ** (§12) — "strong" chỉ có nghĩa trong phạm vi một region.
 
 ---
 
@@ -825,7 +825,7 @@ Vì 95% thao tác là đọc nhưng phần lớn object hầu như **không bao 
 | Lạnh | > 90 ngày, hiếm khi đọc | ~0,15× | phút → giờ | EC với k lớn hơn (vd 12+4), ổ mật độ cao, có thể tắt bớt điện |
 | Băng giá | Lưu trữ tuân thủ, > 180 ngày | ~0,036× | tới 12 giờ | Băng từ hoặc ổ tắt nguồn, chỉ bật khi cần |
 
-> ⚠️ **Cái bẫy đắt tiền nhất của phân tầng**: **thời gian lưu tối thiểu và phí chuyển tầng**. Chuyển một object xuống tầng lạnh rồi xoá nó sau một tuần thường **đắt hơn** là cứ để yên, vì bạn vẫn bị tính đủ số ngày tối thiểu cộng phí chuyển tính theo *từng object*. Với hàng trăm triệu object nhỏ, phí per-object có thể nuốt trọn phần tiết kiệm dung lượng. Nguyên tắc: **chỉ phân tầng khi object đủ lớn và đủ già**; với object nhỏ, gộp lại trước hoặc đừng phân tầng.
+> **Cái bẫy đắt tiền nhất của phân tầng**: **thời gian lưu tối thiểu và phí chuyển tầng**. Chuyển một object xuống tầng lạnh rồi xoá nó sau một tuần thường **đắt hơn** là cứ để yên, vì bạn vẫn bị tính đủ số ngày tối thiểu cộng phí chuyển tính theo *từng object*. Với hàng trăm triệu object nhỏ, phí per-object có thể nuốt trọn phần tiết kiệm dung lượng. Nguyên tắc: **chỉ phân tầng khi object đủ lớn và đủ già**; với object nhỏ, gộp lại trước hoặc đừng phân tầng.
 
 ---
 
@@ -853,9 +853,9 @@ Vì 95% thao tác là đọc nhưng phần lớn object hầu như **không bao 
 | Một **AZ** | Mất ~1/3 bản sao | Vẫn phục vụ đủ; khôi phục dư thừa trong nền, có giới hạn tốc độ |
 | Một **region** | Mất toàn bộ nếu không nhân bản chéo | Chuyển sang region khác, chấp nhận RPO khác 0 |
 
-> ⚠️ **Chế độ hỏng nguy hiểm nhất không có trong bảng: cơn bão khôi phục.** Một sự kiện làm nhiều node "chết" cùng lúc (thường là lỗi mạng chứ không phải lỗi ổ) khiến hệ khởi động khôi phục hàng PB, lưu lượng khôi phục làm nghẽn mạng, mạng nghẽn làm thêm node lỡ heartbeat, và vòng lặp tự khuếch đại. Ba lớp bảo vệ bắt buộc: **giới hạn tốc độ khôi phục** (không bao giờ vượt X% băng thông cụm), **độ trễ trước khi hành động** (chờ vài phút trước khi coi là chết thật), và **cầu dao an toàn** (nếu > X% cụm có vẻ chết thì dừng tự động và gọi người — vì gần như chắc chắn lỗi nằm ở ta, không ở ổ).
+> **Chế độ hỏng nguy hiểm nhất không có trong bảng: cơn bão khôi phục.** Một sự kiện làm nhiều node "chết" cùng lúc (thường là lỗi mạng chứ không phải lỗi ổ) khiến hệ khởi động khôi phục hàng PB, lưu lượng khôi phục làm nghẽn mạng, mạng nghẽn làm thêm node lỡ heartbeat, và vòng lặp tự khuếch đại. Ba lớp bảo vệ bắt buộc: **giới hạn tốc độ khôi phục** (không bao giờ vượt X% băng thông cụm), **độ trễ trước khi hành động** (chờ vài phút trước khi coi là chết thật), và **cầu dao an toàn** (nếu > X% cụm có vẻ chết thì dừng tự động và gọi người — vì gần như chắc chắn lỗi nằm ở ta, không ở ổ).
 
-> 💡 Một chế độ hỏng thứ hai ít ai nêu: **hỏng do chính phần mềm của ta**. Dư thừa bảo vệ trước ổ hỏng, **không** bảo vệ trước một bug ghi sai dữ liệu lên cả 3 bản hay cả 12 mảnh cùng lúc. Phòng thủ ở đây không phải dư thừa mà là: checksum tính ở **phía client** (end-to-end), versioning để có đường lùi, Object Lock/WORM cho dữ liệu không được phép đổi, và triển khai theo từng đợt qua các AZ để một bản build lỗi không chạm mọi bản sao trong cùng một giờ.
+> Một chế độ hỏng thứ hai ít ai nêu: **hỏng do chính phần mềm của ta**. Dư thừa bảo vệ trước ổ hỏng, **không** bảo vệ trước một bug ghi sai dữ liệu lên cả 3 bản hay cả 12 mảnh cùng lúc. Phòng thủ ở đây không phải dư thừa mà là: checksum tính ở **phía client** (end-to-end), versioning để có đường lùi, Object Lock/WORM cho dữ liệu không được phép đổi, và triển khai theo từng đợt qua các AZ để một bản build lỗi không chạm mọi bản sao trong cùng một giờ.
 
 ---
 
@@ -864,12 +864,12 @@ Vì 95% thao tác là đọc nhưng phần lớn object hầu như **không bao 
 | Thành phần thiết kế | Dịch vụ AWS | Vì sao hợp |
 |---|---|---|
 | Toàn bộ object store | **Amazon S3** | Chính là hệ ta vừa thiết kế: 11 số 9 durability, 99,99% availability (S3 Standard), API REST `PUT/GET/LIST`, không gian tên phẳng, object bất biến |
-| Phân tầng nóng/ấm/lạnh | **S3 Storage Class**: Standard → Standard-IA → Glacier Instant/Flexible → Deep Archive | Đúng bốn tầng §12.2. ⚠️ Mỗi hạng có **thời gian lưu tối thiểu** (IA 30 ngày, Glacier 90, Deep Archive 180) và **phí truy xuất** — chuyển sớm rồi xoá sớm thì đắt hơn để yên |
+| Phân tầng nóng/ấm/lạnh | **S3 Storage Class**: Standard → Standard-IA → Glacier Instant/Flexible → Deep Archive | Đúng bốn tầng §12.2. Mỗi hạng có **thời gian lưu tối thiểu** (IA 30 ngày, Glacier 90, Deep Archive 180) và **phí truy xuất** — chuyển sớm rồi xoá sớm thì đắt hơn để yên |
 | Dữ liệu tái tạo được, chấp nhận mất một AZ | **S3 One Zone-IA** | Rẻ hơn ~20% vì chỉ giữ trong **một AZ** — tức bỏ đi lớp cách ly miền lỗi ở §7.2. Chỉ dùng cho thứ dựng lại được (thumbnail, cache, bản sao thứ hai) |
-| Truy cập không đoán trước được | **S3 Intelligent-Tiering** | Tự chuyển hạng theo hành vi thật, không phí truy xuất. ⚠️ Có phí giám sát **tính theo từng object**; object < 128 KB không được phân hạng — với hàng trăm triệu object nhỏ thì phí này có thể lớn hơn phần tiết kiệm |
+| Truy cập không đoán trước được | **S3 Intelligent-Tiering** | Tự chuyển hạng theo hành vi thật, không phí truy xuất. Có phí giám sát **tính theo từng object**; object < 128 KB không được phân hạng — với hàng trăm triệu object nhỏ thì phí này có thể lớn hơn phần tiết kiệm |
 | Lấy dữ liệu từ băng giá | **Glacier retrieval tiers**: Expedited (1–5 phút) / Standard (3–5 giờ) / Bulk (5–12 giờ) | Đúng đánh đổi "chi phí ↔ thời gian lấy ra" ở §12.2. Expedited cần đặt chỗ trước (provisioned capacity) nếu muốn đảm bảo trong sự cố |
 | Tự động chuyển tầng và dọn rác | **S3 Lifecycle** | Chuyển hạng theo tuổi; **xoá phiên bản không phải bản mới nhất**; **huỷ multipart dở dang sau 7 ngày**; xoá delete marker hết tác dụng. Hai quy tắc sau là §10.2–10.3, và là hai quy tắc bị quên nhiều nhất |
-| Versioning + delete marker | **S3 Versioning** (+ **MFA Delete**) | Cài đặt y hệt §10.1. ⚠️ Bật rồi **không tắt được**, chỉ suspend; và dung lượng phiên bản cũ **vẫn tính tiền** cho tới khi có lifecycle dọn |
+| Versioning + delete marker | **S3 Versioning** (+ **MFA Delete**) | Cài đặt y hệt §10.1. Bật rồi **không tắt được**, chỉ suspend; và dung lượng phiên bản cũ **vẫn tính tiền** cho tới khi có lifecycle dọn |
 | Bất biến bắt buộc, chống cả admin | **S3 Object Lock** (WORM) — Governance / Compliance mode | Phòng thủ trước **bug của chính ta** và trước ransomware (§13). Compliance mode thì **kể cả tài khoản gốc cũng không xoá được** trước hạn — đúng yêu cầu của SEC 17a-4, FINRA |
 | Upload file lớn | **S3 Multipart Upload** | Part 5 MB–5 GB, tối đa 10.000 part, object tối đa 5 TB. Part lỗi chỉ gửi lại part đó; tải song song để lấp đủ băng thông (§10.2) |
 | Client ở xa region | **S3 Transfer Acceleration** | Đi vào edge CloudFront gần nhất rồi qua **xương sống nội bộ AWS** tới bucket — thắng ~50–500% khi độ trễ và mất gói cao. Tính phí thêm mỗi GB; chỉ bật khi đo được lợi |
@@ -881,7 +881,7 @@ Vì 95% thao tác là đọc nhưng phần lớn object hầu như **không bao 
 | Metadata store của ta | **DynamoDB** (khoá phân mảnh `hash(bucket,key)`), hoặc **Aurora** sharded | Tra khoá chính xác hàng chục nghìn rps, độ trễ vài ms, tự mở rộng. Đúng hình dạng §8.2 |
 | Bảng `object_listing` phi chuẩn hoá | **DynamoDB** PK `bucket_id`, SK `object_name` + **GSI** | Quét khoảng theo prefix trong một phân mảnh, phân trang bằng một `LastEvaluatedKey` — đúng §9 |
 | Placement service | **etcd / Consul** tự vận hành, hoặc **DynamoDB** làm kho cấu hình | Cần đồng thuận (Paxos/Raft) — không có dịch vụ AWS đóng gói sẵn cho đúng vai trò này |
-| Mã hoá | **SSE-S3** (mặc định), **SSE-KMS** + **S3 Bucket Keys**, hoặc **DSSE-KMS** | ⚠️ Với SSE-KMS **bắt buộc bật Bucket Keys** — nếu không, mỗi GET là một lời gọi KMS; ở hàng chục nghìn rps bạn vừa đụng trần quota vừa đội chi phí (Bucket Keys giảm ~99% số lời gọi) |
+| Mã hoá | **SSE-S3** (mặc định), **SSE-KMS** + **S3 Bucket Keys**, hoặc **DSSE-KMS** | Với SSE-KMS **bắt buộc bật Bucket Keys** — nếu không, mỗi GET là một lời gọi KMS; ở hàng chục nghìn rps bạn vừa đụng trần quota vừa đội chi phí (Bucket Keys giảm ~99% số lời gọi) |
 | Nhân bản chéo region / trong region | **S3 Replication** (CRR / SRR), **RTC** nếu cần SLA | Đúng §12.1 — bất đồng bộ. **RTC** cam kết 99,99% object sao chép trong **15 phút**, tức biến RPO mơ hồ thành con số có hợp đồng |
 
 ### So sánh với các dịch vụ lưu trữ khác của AWS
@@ -931,4 +931,4 @@ Vì 95% thao tác là đọc nhưng phần lớn object hầu như **không bao 
 
 10. **Đóng lại bằng chi phí, vì với hệ storage thì chi phí *là* kiến trúc.** Erasure coding cắt một nửa hoá đơn đĩa; phân tầng cắt tiếp một bậc độ lớn cho dữ liệu nguội; nhưng cả hai đều có ngưỡng dưới mà bên dưới đó chúng **lỗ**. Câu chốt: *"Tôi không chọn một sơ đồ dư thừa — tôi chọn một chính sách, và chính sách đó lấy kích thước object và tuổi của nó làm đầu vào."*
 
-> 💡 **Nguyên tắc cuối**: cả bài chỉ là một ý tưởng được đẩy tới cùng — **object bất biến và không gian tên phẳng**. Từ đó mọi thứ còn lại là hệ quả: tách được metadata khỏi data vì hai bên có hình dạng khác nhau; gộp được object vào file WAL vì không bao giờ phải ghi đè giữa file; nhân bản được không cần khoá vì hai bản sao không thể mâu thuẫn; cache được vĩnh viễn theo `object_id`; retry idempotent tự nhiên; và nhất quán rút gọn về một cập nhật con trỏ nguyên tử. Cái giá — rename O(n), LIST chậm, không in-place write, không POSIX — chính là **học phí mua lấy exabyte**. Nếu chỉ nhớ một câu: **object store không mở rộng được vì nó làm được nhiều; nó mở rộng được vì nó từ chối làm gần hết mọi thứ.**
+> **Nguyên tắc cuối**: cả bài chỉ là một ý tưởng được đẩy tới cùng — **object bất biến và không gian tên phẳng**. Từ đó mọi thứ còn lại là hệ quả: tách được metadata khỏi data vì hai bên có hình dạng khác nhau; gộp được object vào file WAL vì không bao giờ phải ghi đè giữa file; nhân bản được không cần khoá vì hai bản sao không thể mâu thuẫn; cache được vĩnh viễn theo `object_id`; retry idempotent tự nhiên; và nhất quán rút gọn về một cập nhật con trỏ nguyên tử. Cái giá — rename O(n), LIST chậm, không in-place write, không POSIX — chính là **học phí mua lấy exabyte**. Nếu chỉ nhớ một câu: **object store không mở rộng được vì nó làm được nhiều; nó mở rộng được vì nó từ chối làm gần hết mọi thứ.**

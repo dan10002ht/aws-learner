@@ -100,7 +100,7 @@ kubectl logs web-xyz --since=10m --tail=100
 kubectl logs -l app=web --all-containers   # gộp log theo label (nhiều Pod)
 ```
 
-⚠️ **`-p` (previous) là chìa khoá của CrashLoopBackOff.** Khi container crash, kubelet giết nó và tạo container **mới**. `kubectl logs` mặc định soi container *mới* (chưa kịp lỗi hoặc đang chờ restart) → thường **rỗng**. Log lý do chết nằm ở container *trước đó* → phải `-p`.
+**`-p` (previous) là chìa khoá của CrashLoopBackOff.** Khi container crash, kubelet giết nó và tạo container **mới**. `kubectl logs` mặc định soi container *mới* (chưa kịp lỗi hoặc đang chờ restart) → thường **rỗng**. Log lý do chết nằm ở container *trước đó* → phải `-p`.
 
 ### 2.5 `exec`, `debug`, `top`
 

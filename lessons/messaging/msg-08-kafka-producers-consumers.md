@@ -58,7 +58,7 @@ Khi bạn gửi một `ProducerRecord(topic, key, value)`, partitioner mặc đ�
 <defs><marker id="pm" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
 </svg>
 
-> ⚠️ **Bẫy số partition**: thứ tự per-key chỉ vững nếu **số partition không đổi**. Tăng partition sau này → `hash(key) % N` đổi → key cũ có thể nhảy sang partition khác, phá thứ tự lịch sử. Vì vậy chọn số partition **rộng rãi từ đầu** hoặc dùng custom partitioner ổn định.
+> **Bẫy số partition**: thứ tự per-key chỉ vững nếu **số partition không đổi**. Tăng partition sau này → `hash(key) % N` đổi → key cũ có thể nhảy sang partition khác, phá thứ tự lịch sử. Vì vậy chọn số partition **rộng rãi từ đầu** hoặc dùng custom partitioner ổn định.
 
 ---
 

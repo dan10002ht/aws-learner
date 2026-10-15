@@ -13,7 +13,7 @@ Hãy tưởng tượng chiếc máy tính hay điện thoại là **một nhân 
 
 Phân biệt với **phần cứng (hardware)** — những thứ sờ được: màn hình, chip, pin, bàn phím.
 
-> 💡 **Ghi nhớ:** Phần cứng là cơ thể, phần mềm là suy nghĩ. Một chiếc điện thoại không có phần mềm chỉ là cục kim loại đẹp đẽ vô dụng.
+> **Ghi nhớ:** Phần cứng là cơ thể, phần mềm là suy nghĩ. Một chiếc điện thoại không có phần mềm chỉ là cục kim loại đẹp đẽ vô dụng.
 
 Phần mềm được viết bằng **ngôn ngữ lập trình (programming language)** — những ngôn ngữ đặc biệt (như Python, JavaScript) mà con người dùng để "viết bản hướng dẫn" cho máy. Người viết gọi là **lập trình viên (developer)**.
 
@@ -56,7 +56,7 @@ Là phần mềm **cài lên điện thoại** qua App Store (iPhone) hoặc Goo
 | Dùng camera/GPS | Hạn chế | Hạn chế | Rất tốt |
 | Ví dụ | Word, Photoshop | Gmail, Google Docs | Zalo, TikTok |
 
-> ⚠️ **Lỗi người mới hay gặp:** Nghĩ rằng "vào Facebook trên Chrome" và "mở app Facebook" là hai dịch vụ khác nhau. Thực ra đó là **cùng một dịch vụ**, chỉ khác "cửa ra vào". Dữ liệu của bạn (bạn bè, tin nhắn) nằm ở một nơi chung — phía sau, trên server. Server là gì? Đọc tiếp nhé.
+> **Lỗi người mới hay gặp:** Nghĩ rằng "vào Facebook trên Chrome" và "mở app Facebook" là hai dịch vụ khác nhau. Thực ra đó là **cùng một dịch vụ**, chỉ khác "cửa ra vào". Dữ liệu của bạn (bạn bè, tin nhắn) nằm ở một nơi chung — phía sau, trên server. Server là gì? Đọc tiếp nhé.
 
 ## 3. Frontend và Backend: nhà hàng có hai khu vực
 
@@ -96,7 +96,7 @@ Nó gọi là "máy chủ" vì nó **phục vụ (serve)** hàng triệu máy "k
 | Analogy nhà hàng | Bàn ghế, thực đơn, không gian | Căn bếp, kho nguyên liệu |
 | Ví dụ | Nút "Thích", ô nhập mật khẩu | Kiểm tra mật khẩu, tính số dư |
 
-> 💡 **Ghi nhớ:** Frontend = những gì bạn THẤY. Backend = những gì THẬT SỰ XẢY RA. Cả hai phải phối hợp, như khu khách ngồi và căn bếp của nhà hàng.
+> **Ghi nhớ:** Frontend = những gì bạn THẤY. Backend = những gì THẬT SỰ XẢY RA. Cả hai phải phối hợp, như khu khách ngồi và căn bếp của nhà hàng.
 
 ## 4. Database: cuốn sổ ghi chép khổng lồ
 
@@ -118,7 +118,7 @@ Database thường lưu dữ liệu dưới dạng **bảng** — giống bảng
 | 1 | Lan | lan@gmail.com | 01/03/2024 |
 | 2 | Minh | minh@gmail.com | 15/07/2024 |
 
-> ⚠️ **Lỗi người mới hay gặp:** Nhầm database với "bộ nhớ điện thoại". Ảnh bạn chụp lưu trong máy là **lưu cục bộ** — mất máy là mất ảnh. Tin nhắn Zalo, bài đăng Facebook lưu trong **database trên server** — mất máy vẫn còn, vì chúng nằm "trong tủ hồ sơ của công ty", không nằm trong túi bạn.
+> **Lỗi người mới hay gặp:** Nhầm database với "bộ nhớ điện thoại". Ảnh bạn chụp lưu trong máy là **lưu cục bộ** — mất máy là mất ảnh. Tin nhắn Zalo, bài đăng Facebook lưu trong **database trên server** — mất máy vẫn còn, vì chúng nằm "trong tủ hồ sơ của công ty", không nằm trong túi bạn.
 
 ## 5. API: người phục vụ của nhà hàng
 
@@ -139,7 +139,7 @@ Ví dụ thực tế:
 - Khi app đặt xe hiển thị bản đồ, nó gọi **API của Google Maps** — Google "nấu" bản đồ, app chỉ "gọi món".
 - Khi một trang web cho bạn "Đăng nhập bằng Facebook", trang đó đang dùng **API của Facebook** để xác nhận danh tính bạn.
 
-> 💡 **Ghi nhớ:** API = người phục vụ + thực đơn chuẩn. Nó cho phép các phần mềm dùng dịch vụ của nhau mà không cần biết "công thức bí mật trong bếp" của nhau. Cả Internet hiện đại vận hành nhờ hàng triệu API gọi qua gọi lại như vậy.
+> **Ghi nhớ:** API = người phục vụ + thực đơn chuẩn. Nó cho phép các phần mềm dùng dịch vụ của nhau mà không cần biết "công thức bí mật trong bếp" của nhau. Cả Internet hiện đại vận hành nhờ hàng triệu API gọi qua gọi lại như vậy.
 
 Bốn mảnh ghép — frontend, API, backend, database — xếp thành các tầng nối tiếp nhau. Có một ranh giới quan trọng: những gì **bạn thấy** nằm trên máy của bạn, còn phần xử lý thật **ẩn phía sau** trên server:
 
@@ -218,7 +218,7 @@ Lợi ích dễ hiểu:
 - Netflix không tự xây data center cho phần lớn hệ thống — họ **thuê của Amazon**.
 - File "lưu trên Google Drive" = file nằm trong data center của Google đâu đó trên thế giới.
 
-> ⚠️ **Lỗi người mới hay gặp:** Nghĩ "đám mây" là thứ gì đó lơ lửng trên trời, không có thật. **Cloud chỉ là máy tính của người khác** — những server rất thật, đặt trong những tòa nhà rất thật, chỉ là bạn truy cập chúng qua Internet thay vì đặt trong nhà mình.
+> **Lỗi người mới hay gặp:** Nghĩ "đám mây" là thứ gì đó lơ lửng trên trời, không có thật. **Cloud chỉ là máy tính của người khác** — những server rất thật, đặt trong những tòa nhà rất thật, chỉ là bạn truy cập chúng qua Internet thay vì đặt trong nhà mình.
 
 ## 7. Open source: công thức nấu ăn công khai
 
@@ -246,7 +246,7 @@ Ví dụ open source nổi tiếng (bạn đang hưởng lợi mà không biết
 | Ai sửa lỗi/cải tiến | Chỉ công ty sở hữu | Cộng đồng toàn cầu |
 | Analogy | Công thức gia truyền giấu kín | Công thức đăng công khai, ai cũng góp ý |
 
-> 💡 **Ghi nhớ:** Open source không có nghĩa là "kém chất lượng vì miễn phí". Ngược lại, nhiều phần mềm quan trọng nhất thế giới (Linux chạy server, nền tảng của Android) là open source — vì hàng nghìn con mắt cùng soi thì lỗi khó trốn.
+> **Ghi nhớ:** Open source không có nghĩa là "kém chất lượng vì miễn phí". Ngược lại, nhiều phần mềm quan trọng nhất thế giới (Linux chạy server, nền tảng của Android) là open source — vì hàng nghìn con mắt cùng soi thì lỗi khó trốn.
 
 ## 8. Ghép tất cả lại: một lần bấm "Đặt hàng"
 

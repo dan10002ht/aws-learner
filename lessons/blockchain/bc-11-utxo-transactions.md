@@ -105,7 +105,7 @@ Ba quy tắc bất biến của một giao dịch UTXO hợp lệ:
 
 Đây là chỗ người mới hay hiểu sai. Khi bạn dùng một UTXO làm input, bạn **tiêu toàn bộ value của nó** — không có chuyện "tiêu 0.3 trong tờ 0.6". Nếu bạn chỉ cần gửi 1.0 BTC nhưng phải gom hai UTXO tổng 1.1 BTC, thì 0.1 BTC còn lại **không tự động quay về túi bạn**. Bạn phải **tự tạo một output trả cho chính mình** — đó là change output (thường vào một địa chỉ change mới của ví bạn).
 
-> ⚠️ Cạm bẫy chết người: nếu bạn **quên** tạo change output, toàn bộ phần chênh sẽ bị coi là **phí** và mất cho miner. Đã có người mất hàng chục BTC vì tự tay dựng giao dịch thiếu change. Ví (wallet) làm việc này tự động, nhưng khi code tay bạn phải nhớ.
+> Cạm bẫy chết người: nếu bạn **quên** tạo change output, toàn bộ phần chênh sẽ bị coi là **phí** và mất cho miner. Đã có người mất hàng chục BTC vì tự tay dựng giao dịch thiếu change. Ví (wallet) làm việc này tự động, nhưng khi code tay bạn phải nhớ.
 
 ### 2.5 Phí = Σ input − Σ output
 

@@ -22,7 +22,7 @@ Hai file `.title` cùng tồn tại. File nào load sau thắng. Card của bạ
 
 Đây là lý do mọi giải pháp styling hiện đại đều giải quyết cùng một bài toán: **làm sao để style của component này không rò rỉ sang component khác**. Khác nhau ở cách làm.
 
-> 💡 **Ghi nhớ:** Mọi tranh luận "Tailwind vs CSS Modules vs CSS-in-JS" thực chất là tranh luận về cách **giới hạn phạm vi (scope)** và cách **tổ chức** style. Bản thân CSS thuộc tính (`display`, `color`...) thì giống nhau ở mọi cách.
+> **Ghi nhớ:** Mọi tranh luận "Tailwind vs CSS Modules vs CSS-in-JS" thực chất là tranh luận về cách **giới hạn phạm vi (scope)** và cách **tổ chức** style. Bản thân CSS thuộc tính (`display`, `color`...) thì giống nhau ở mọi cách.
 
 ## Ba trường phái styling
 
@@ -98,7 +98,7 @@ Mạnh ở chỗ style nhận **props** động. Nhưng nó có cái giá: tính
 | HTML/JSX gọn | Gọn (1 class) | Rối (nhiều class) | Gọn |
 | Phù hợp dự án lớn nhiều người | Khá | Rất tốt | Trung bình |
 
-> 💡 **Ghi nhớ — khi nào dùng gì:** Dự án mới đi làm năm 2025–2026 → **mặc định chọn Tailwind**, nó là tiêu chuẩn thực tế và hợp React hiện đại nhất. Thích tách CSS ra file riêng, đội đã quen CSS thuần → **CSS Modules**. Cần style cực kỳ động theo props và đội đã có sẵn → CSS-in-JS, nhưng đừng chọn mới cho dự án 2025.
+> **Ghi nhớ — khi nào dùng gì:** Dự án mới đi làm năm 2025–2026 → **mặc định chọn Tailwind**, nó là tiêu chuẩn thực tế và hợp React hiện đại nhất. Thích tách CSS ra file riêng, đội đã quen CSS thuần → **CSS Modules**. Cần style cực kỳ động theo props và đội đã có sẵn → CSS-in-JS, nhưng đừng chọn mới cho dự án 2025.
 
 ## Tailwind: tư duy utility-first
 
@@ -138,7 +138,7 @@ function Tab({ active }: { active: boolean }) {
 }
 ```
 
-> ⚠️ **Bẫy:** Đừng ghép class Tailwind bằng template string thô (`` `px-4 ${active && "bg-blue-600"}` ``). Khi `active` là `false`, bạn nhét chuỗi `"false"` vào className. Luôn dùng `clsx`/`cn` để xử lý điều kiện sạch sẽ.
+> **Bẫy:** Đừng ghép class Tailwind bằng template string thô (`` `px-4 ${active && "bg-blue-600"}` ``). Khi `active` là `false`, bạn nhét chuỗi `"false"` vào className. Luôn dùng `clsx`/`cn` để xử lý điều kiện sạch sẽ.
 
 ## Responsive & mobile-first
 
@@ -161,7 +161,7 @@ Các prefix `sm: md: lg: xl:` là các **breakpoint** ngưỡng tối thiểu (`
 | `lg:` | 1024px | Laptop |
 | `xl:` | 1280px | Desktop |
 
-> ⚠️ **Bẫy:** `md:flex` **không** có nghĩa "chỉ trên tablet". Nó nghĩa là "từ 768px trở lên". Nhiều người mới tưởng prefix giới hạn một dải màn hình — không, nó là ngưỡng sàn. Muốn style *chỉ* cho mobile thì viết không prefix, rồi *ghi đè* ở `md:`.
+> **Bẫy:** `md:flex` **không** có nghĩa "chỉ trên tablet". Nó nghĩa là "từ 768px trở lên". Nhiều người mới tưởng prefix giới hạn một dải màn hình — không, nó là ngưỡng sàn. Muốn style *chỉ* cho mobile thì viết không prefix, rồi *ghi đè* ở `md:`.
 
 ## Design tokens & theme với CSS variables
 
@@ -192,7 +192,7 @@ Dùng trong CSS thuần hoặc trong Tailwind v4 (Tailwind v4 cấu hình theme 
 
 Token nên có **2 tầng**: token nguyên thuỷ (`--blue-600`) và token ngữ nghĩa (`--color-primary` trỏ vào `--blue-600`). Component chỉ dùng tầng ngữ nghĩa — nhờ vậy đổi `--color-primary` sang màu khác là cả app theo, mà không cần biết màu thật là gì.
 
-> 💡 **Ghi nhớ:** Component nên hỏi "đây là màu *primary*" chứ không phải "đây là màu *xanh #2563eb*". Token ngữ nghĩa tách *ý định* khỏi *giá trị* — đó là toàn bộ tinh thần của design system.
+> **Ghi nhớ:** Component nên hỏi "đây là màu *primary*" chứ không phải "đây là màu *xanh #2563eb*". Token ngữ nghĩa tách *ý định* khỏi *giá trị* — đó là toàn bộ tinh thần của design system.
 
 Sơ đồ dưới thể hiện luồng 3 chặng và cơ chế dark mode chỉ "gán lại" tầng ngữ nghĩa:
 
@@ -312,7 +312,7 @@ export function ThemeToggle() {
 }
 ```
 
-> ⚠️ **Bẫy — FOUC (Flash of Unstyled Content):** Nếu đọc `localStorage` trong `useEffect`, trang loads ở chế độ sáng *rồi mới* nhảy sang tối → một cú nháy chói mắt. Cách xử lý: chạy một đoạn script nhỏ đặt class `dark` **trước khi** React render (trong Next.js là script trong `<head>`, hoặc dùng thư viện `next-themes`).
+> **Bẫy — FOUC (Flash of Unstyled Content):** Nếu đọc `localStorage` trong `useEffect`, trang loads ở chế độ sáng *rồi mới* nhảy sang tối → một cú nháy chói mắt. Cách xử lý: chạy một đoạn script nhỏ đặt class `dark` **trước khi** React render (trong Next.js là script trong `<head>`, hoặc dùng thư viện `next-themes`).
 
 ## Ý tưởng đằng sau shadcn / Radix
 
@@ -353,7 +353,7 @@ export function Button({ className, variant, size, ...props }: ButtonProps) {
 
 Dùng: `<Button variant="outline" size="sm">Huỷ</Button>`. Để ý `bg-primary`, `text-primary-foreground` — đó là **token ngữ nghĩa**. Nút này tự đổi màu theo theme và dark mode mà không sửa một dòng.
 
-> 💡 **Ghi nhớ:** "Headless" = tách *hành vi/accessibility* khỏi *giao diện*. Radix lo phần khó (a11y), bạn chỉ lo phần đẹp. Đây là kiến trúc component library hiện đại — và lý do shadcn thắng lớn 2024–2026.
+> **Ghi nhớ:** "Headless" = tách *hành vi/accessibility* khỏi *giao diện*. Radix lo phần khó (a11y), bạn chỉ lo phần đẹp. Đây là kiến trúc component library hiện đại — và lý do shadcn thắng lớn 2024–2026.
 
 ## Tránh CSS spaghetti — quy tắc thực chiến
 
@@ -363,7 +363,7 @@ Dùng: `<Button variant="outline" size="sm">Huỷ</Button>`. Để ý `bg-primar
 4. **Tránh selector lồng sâu** (`.card .body .title span`). Selector càng cụ thể càng khó ghi đè, càng dễ vỡ. Class phẳng (Tailwind) hoặc CSS Modules giải quyết tận gốc.
 5. **Một nguồn sự thật cho design.** Token là nơi duy nhất định nghĩa màu/khoảng cách. Component *tiêu thụ* token, không tự chế giá trị.
 
-> ⚠️ **Bẫy:** Trộn nhiều giải pháp styling trong cùng dự án (vài chỗ Tailwind, vài chỗ CSS Modules, vài chỗ inline style) tạo ra mớ hỗn loạn tệ hơn cả spaghetti — vì giờ không ai biết style một phần tử đến từ đâu. Chọn **một** cách chủ đạo và tuân thủ.
+> **Bẫy:** Trộn nhiều giải pháp styling trong cùng dự án (vài chỗ Tailwind, vài chỗ CSS Modules, vài chỗ inline style) tạo ra mớ hỗn loạn tệ hơn cả spaghetti — vì giờ không ai biết style một phần tử đến từ đâu. Chọn **một** cách chủ đạo và tuân thủ.
 
 ## Component có theme hoàn chỉnh
 
