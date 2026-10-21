@@ -62,11 +62,9 @@ Vì sao OAuth thiết kế một vé vừa dùng-một-lần vừa chết sau 60
 
 Một bản sai cần dọn trước: "OAuth là giao thức login". `security/sec-05-authn-authz.md` đã nói OAuth là ủy quyền; ở đây chỉ thêm bằng chứng. Bốn grant của RFC 6749 đều kết thúc ở access token, và RFC định nghĩa nó là *"An access token is a string representing an authorization issued to the client. The string is usually opaque to the client."* Access token Keycloak phát cho `spa` trên lab có `"azp":"spa"` nhưng `"aud":"account"`: nó ghi địa chỉ cho chỗ khác, không cho app đang cầm. App "login" bằng cách đọc access token là đọc thư không gửi cho mình; thứ gửi cho app là `id_token`, bài 3.
 
-Bốn bên, mỗi bên một cột trong sơ đồ: **Browser** (user agent, nơi gõ mật khẩu), **App backend** (client), **Keycloak** (authorization server), **API** (resource server). Hai kênh:
+Bốn bên, mỗi bên một cột: **Browser** (user agent, nơi gõ mật khẩu), **App backend** (client), **Keycloak** (authorization server), **API** (resource server). **Front channel** đi qua trình duyệt bằng 302 hoặc form, nên nằm trong lịch sử trình duyệt, log proxy, tầm với của extension. **Back channel** là app backend gọi thẳng Keycloak qua TLS.
 
-- **Front channel**: request đi qua trình duyệt bằng redirect 302 hoặc form, nên nằm trong lịch sử trình duyệt, log của proxy, tầm với của extension.
-- **Back channel**: app backend gọi thẳng Keycloak qua TLS, trình duyệt không thấy.
-
+<step-flow>
 <svg viewBox="0 0 760 560" role="img" aria-labelledby="kc2-a-t kc2-a-d" style="width:100%;height:auto">
 <title id="kc2-a-t">Authorization code flow, 10 request đánh số</title>
 <desc id="kc2-a-d">Sơ đồ sequence giữa Browser, App backend, Keycloak và API: request 1 đến 7 đi qua trình duyệt (front channel), request 8 và 9 đi thẳng giữa app backend và Keycloak (back channel), request 10 là app gọi API bằng Bearer token.</desc>
@@ -89,31 +87,62 @@ Bốn bên, mỗi bên một cột trong sơ đồ: **Browser** (user agent, nơ
 <line x1="280" y1="47" x2="280" y2="545" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 4"/>
 <line x1="530" y1="47" x2="530" y2="545" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 4"/>
 <line x1="700" y1="47" x2="700" y2="545" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 4"/>
+<g data-step="1">
 <text x="175" y="78" text-anchor="middle" font-size="10" fill="currentColor">1  GET /login</text>
 <line x1="72" y1="85" x2="276" y2="85" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc2-a-arrow)"/>
+</g>
+<g data-step="2">
 <text x="175" y="113" text-anchor="middle" font-size="10" fill="currentColor">2  302 + Set-Cookie (giữ state)</text>
 <line x1="278" y1="120" x2="74" y2="120" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc2-a-arrow)"/>
+</g>
+<g data-step="3">
 <text x="300" y="148" text-anchor="middle" font-size="10" fill="currentColor">3  GET /auth?response_type=code&amp;client_id&amp;redirect_uri&amp;scope&amp;state</text>
 <line x1="72" y1="155" x2="526" y2="155" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc2-a-arrow)"/>
+</g>
+<g data-step="4">
 <text x="300" y="183" text-anchor="middle" font-size="10" fill="currentColor">4  200 form login (cookie phiên của Keycloak)</text>
 <line x1="528" y1="190" x2="74" y2="190" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc2-a-arrow)"/>
+</g>
+<g data-step="5">
 <text x="300" y="218" text-anchor="middle" font-size="10" fill="currentColor">5  POST username + password (chỉ Keycloak thấy)</text>
 <line x1="72" y1="225" x2="526" y2="225" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc2-a-arrow)"/>
+</g>
+<g data-step="6">
 <text x="300" y="253" text-anchor="middle" font-size="10" fill="currentColor">6  302 Location: redirect_uri?state=…&amp;iss=…&amp;code=…</text>
 <line x1="528" y1="260" x2="74" y2="260" stroke="#f59e0b" stroke-width="2" marker-end="url(#kc2-a-arrow)"/>
+</g>
+<g data-step="7">
 <text x="175" y="288" text-anchor="middle" font-size="10" fill="currentColor">7  GET /callback?code&amp;state</text>
 <line x1="72" y1="295" x2="276" y2="295" stroke="#f59e0b" stroke-width="2" marker-end="url(#kc2-a-arrow)"/>
 <text x="175" y="318" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.8">app so state với cookie</text>
+</g>
+<g data-step="8">
 <text x="405" y="373" text-anchor="middle" font-size="10" fill="currentColor">8  POST /token: code + redirect_uri + secret</text>
 <line x1="282" y1="380" x2="526" y2="380" stroke="#8b5cf6" stroke-width="2" marker-end="url(#kc2-a-arrow)"/>
+</g>
+<g data-step="9">
 <text x="405" y="408" text-anchor="middle" font-size="10" fill="currentColor">9  200 access_token, refresh_token</text>
 <line x1="528" y1="415" x2="284" y2="415" stroke="#8b5cf6" stroke-width="2" marker-end="url(#kc2-a-arrow)"/>
+</g>
+<g data-step="10">
 <text x="490" y="488" text-anchor="middle" font-size="10" fill="currentColor">10  GET /orders, Authorization: Bearer …</text>
 <line x1="282" y1="495" x2="696" y2="495" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc2-a-arrow)"/>
+</g>
 <text x="490" y="525" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.8">code đi front channel (6, 7); token chỉ đi back channel (9)</text>
 </svg>
+<step-note data-step="1">Browser mở <code>/login</code> của app.</step-note>
+<step-note data-step="2">App sinh <code>state</code> ngẫu nhiên, cất vào cookie, rồi 302 sang Keycloak. Nửa đầu của phép kiểm ở bước 7.</step-note>
+<step-note data-step="3">Mọi tham số nằm trên URL, ai cũng tự dựng được request này. Keycloak kiểm <code>redirect_uri</code> khớp chính xác danh sách đã đăng ký trước tiên.</step-note>
+<step-note data-step="4">Keycloak trả form đăng nhập, đặt cookie phiên trên domain của nó; app không đọc được.</step-note>
+<step-note data-step="5">Mật khẩu đi đúng một chặng: trình duyệt tới Keycloak. App không bao giờ thấy nó.</step-note>
+<step-note data-step="6">Keycloak redirect về <code>redirect_uri</code> kèm <code>code</code> và nguyên <code>state</code>. Code nằm trên URL nên chỉ dùng một lần, sống 60 giây.</step-note>
+<step-note data-step="7">Trình duyệt mang code về app. App so <code>state</code> với cookie đặt ở bước 2: lệch là huỷ, để code của kẻ tấn công không bị tiêm vào phiên của nạn nhân.</step-note>
+<step-note data-step="8">Back channel: app gọi thẳng Keycloak, gửi code + <code>redirect_uri</code> + client secret. Nhặt được code ở bước 6–7 mà không có secret thì không đổi được.</step-note>
+<step-note data-step="9">Token về thẳng app qua TLS, không chạm front channel.</step-note>
+<step-note data-step="10">App gọi API bằng <code>Authorization: Bearer</code>. API chỉ kiểm token, không biết login diễn ra thế nào.</step-note>
+</step-flow>
 
-Mười request cho một lần bấm "Sign in", chưa tính lần tải trang sau callback. Trong đó **mật khẩu chỉ đi một chặng** (request 5, browser tới Keycloak), app không bao giờ thấy nó. Và **token không bao giờ chạm front channel**: thứ duy nhất Keycloak gửi qua trình duyệt là `code` (request 6, 7).
+Mười request cho một lần bấm "Sign in". **Mật khẩu chỉ đi một chặng** (request 5, browser tới Keycloak) và **token không bao giờ chạm front channel**: thứ duy nhất Keycloak gửi qua trình duyệt là `code` (request 6, 7).
 
 ### 3.3 Request 3: năm tham số, năm cuộc tấn công
 
@@ -130,13 +159,13 @@ GET /realms/demo/protocol/openid-connect/auth
 
 **`redirect_uri`: địa chỉ Keycloak gửi code về.** Request 3 do trình duyệt gửi, nên kẻ tấn công tự dựng được nó: gửi nạn nhân link `/auth?client_id=spa&redirect_uri=https://evil.com/cb`, nạn nhân đăng nhập thật, code bay tới evil.com. Cơ chế chặn: client đăng ký trước danh sách redirect_uri, và RFC 9700 đòi so khớp chuỗi chính xác: *"When comparing client redirection URIs against pre-registered URIs, authorization servers MUST utilize exact string matching except for port numbers in localhost redirection URIs of native apps"*. Trên lab, client `spa` đăng ký `http://localhost:3000/callback`; gửi `redirect_uri=http://evil.com/callback` thì nhận **400 và trang lỗi "Invalid parameter: redirect_uri", không redirect**.
 
-Thứ tự kiểm ở đây đáng nhớ. Với lỗi khác ở request 3 (client bắt PKCE mà request thiếu `code_challenge`), lab thấy Keycloak trả **302 về redirect_uri** kèm `error=invalid_request`. Gửi cùng request thiếu đó nhưng kèm `redirect_uri=http://evil.com/callback` thì nhận **400 tại chỗ, không redirect** (đo trên lab critic, 26.8.1, cổng 7700): Keycloak kiểm redirect_uri trước rồi mới dám trả lỗi về đó.
+Thứ tự kiểm đáng nhớ. Client bắt PKCE mà request thiếu `code_challenge`: Keycloak trả **302 về redirect_uri** kèm `error=invalid_request`. Cùng request đó kèm `redirect_uri=http://evil.com/callback`: **400 tại chỗ, không redirect** (lab critic, 26.8.1, cổng 7700). Keycloak kiểm redirect_uri trước rồi mới dám trả lỗi về đó.
 
 > **Suy luận.** Docs không phát biểu thứ tự này. Lý do suy ra từ cơ chế: redirect cả lỗi về một URI chưa kiểm thì chính trang lỗi thành open redirect.
 
 Cơ chế này chỉ mạnh bằng chuỗi đã đăng ký (wildcard rộng thì mất, bài 7) và vô dụng nếu đường về không mã hoá: *"In production for web applications always use https for all redirect URIs. Do not allow redirects to http."*
 
-**`client_id`: khoá để tra các luật còn lại.** Nó công khai, một mình không chứng minh gì; Keycloak dùng nó để tra redirect_uri, flow được bật, cấu hình PKCE: nó chọn bộ luật để chặn.
+**`client_id`** công khai, không chứng minh gì; Keycloak dùng nó để tra bộ luật (redirect_uri, flow được bật, PKCE).
 
 **`response_type=code`: chọn thứ gì đi trên front channel.** `code` là "trả tôi một vé đổi token", không phải token. Giá trị `token` chính là implicit flow (mục 3.6). Tham số này chặn việc **token nằm trong URL**.
 
@@ -164,9 +193,7 @@ Gom lại:
 | `scope` | Không chặn trực tiếp; giới hạn thiệt hại khi lộ | Keycloak quyết, app đọc response | xin `openid`, nhận `openid profile email` |
 | `state` | Tiêm code của kẻ tấn công vào phiên nạn nhân | **App** | Keycloak trả nguyên `st123` |
 
-Redirect ở request 6 còn có hai tham số app không xin: `session_state` và `iss`. Theo ghi chú lab, `iss` đến từ RFC 9207 (chống "mix-up" khi app nói chuyện với nhiều authorization server), Keycloak gửi cả khi không ai yêu cầu.
-
-> **Nguồn.** Các câu trích trong mục này: redirect_uri từ [rfc9700](https://www.rfc-editor.org/rfc/rfc9700); `state` từ [rfc6749](https://www.rfc-editor.org/rfc/rfc6749) và [openid-connect-core](https://openid.net/specs/openid-connect-core-1_0.html); https từ [oidc-layers](https://www.keycloak.org/securing-apps/oidc-layers). Ghi chú `iss`/RFC 9207 là của file lab, không phải bảng nguồn.
+> **Nguồn.** Các câu trích trong mục này: redirect_uri từ [rfc9700](https://www.rfc-editor.org/rfc/rfc9700); `state` từ [rfc6749](https://www.rfc-editor.org/rfc/rfc6749) và [openid-connect-core](https://openid.net/specs/openid-connect-core-1_0.html); https từ [oidc-layers](https://www.keycloak.org/securing-apps/oidc-layers).
 
 ## ⏸ Dừng lại — đoán trước #2
 
@@ -189,7 +216,7 @@ Request 6 đã là một lượt Keycloak trả lời trình duyệt. Nếu Keyc
 
 **Nửa thứ hai: back channel có xác thực client.** Ở request 8, app gửi `code` kèm client secret. Keycloak chỉ đổi code cho đúng client mà code được phát cho, và code trên lab mang theo chủ của nó: dạng `<uuid>.<session id>.<client uuid>` (4.2), đoạn thứ hai trùng `session_state`, đoạn thứ ba khớp `id` của client trong log Keycloak. Code lộ mà không có secret thì vô dụng.
 
-Ghép hai nửa: **tách "nhận kết quả" (front channel, chịu được rò) khỏi "lĩnh token" (back channel, đòi danh tính)**. Đó là lý do đáng trả thêm một round trip.
+Ghép lại: **tách "nhận kết quả" (front channel, chịu được rò) khỏi "lĩnh token" (back channel, đòi danh tính)**, đáng một round trip.
 
 **Giới hạn của lập luận này.** Nửa thứ hai chỉ đứng được khi client **có** secret. Docs Keycloak: *"HTML5/JavaScript clients have to be public clients because there is no way to securely transmit the client secret to HTML5/JavaScript clients."* Với public client (không secret), request 8 chỉ có `code` và `client_id`, cả hai đã nằm trên front channel. Lab chạy đúng ca này với `spa-nopkce` (public, không cấu hình PKCE) ở mục 4.2: **đổi code thành công, nhận đủ access, refresh và id token**. Không gì ở request 8 phân biệt app thật với ai đó nhặt được code. Bài 3 lấp lỗ này.
 
@@ -231,7 +258,7 @@ Mức độ phải trích đúng: RFC 9700 nói *"clients SHOULD NOT use the imp
 
 Ở đây mức độ là **MUST NOT**. RFC 9700: *"The resource owner password credentials grant [RFC6749] MUST NOT be used."* Docs Keycloak viết cùng mức: *"this flow MUST NOT be used, preferring alternative methods such as Device Authorization Grant or Authorization code."*
 
-**OAuth 2.1 gom các quyết định này lại, nhưng nó chưa là RFC.** Bản hiện hành trong nguồn là `draft-ietf-oauth-v2-1-16`, ngày 3 September 2026, hết hạn 7 March 2027. Nó bỏ cả hai grant: *"The Implicit grant (response_type=token) is omitted from this specification as per Section 2.1.2 of [RFC9700]"* và *"The Resource Owner Password Credentials grant is omitted from this specification as per Section 2.4 of [RFC9700]"*. Keycloak tự nói: *"OAuth 2.1 specification is still a draft and it may change in the future."* Trong tài liệu thiết kế, viết "theo RFC 9700 và draft OAuth 2.1", không viết "theo chuẩn OAuth 2.1".
+**OAuth 2.1 gom các quyết định này lại, nhưng nó chưa là RFC.** Bản hiện hành là `draft-ietf-oauth-v2-1-16` (hết hạn 7 March 2027); nó bỏ cả implicit lẫn password grant, viện dẫn RFC 9700. Keycloak tự nói: *"OAuth 2.1 specification is still a draft and it may change in the future."* Trong tài liệu thiết kế, viết "theo RFC 9700 và draft OAuth 2.1", không viết "theo chuẩn OAuth 2.1".
 
 > **Nguồn.** [rfc9700](https://www.rfc-editor.org/rfc/rfc9700), [rfc6750](https://www.rfc-editor.org/rfc/rfc6750), [draft-ietf-oauth-v2-1-16](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-16), [oidc-layers](https://www.keycloak.org/securing-apps/oidc-layers). Hằng số 900 giây là mặc định trong code: *"public static final int DEFAULT_ACCESS_TOKEN_LIFESPAN_FOR_IMPLICIT_FLOW_TIMEOUT = 900;"* ([Constants.java#L62](https://github.com/keycloak/keycloak/blob/26.8.1/server-spi-private/src/main/java/org/keycloak/models/Constants.java#L62)). DPoP: *"DPoP is not supported for flows that issue access tokens in the front channel (implicit and hybrid flows)."* ([dpop](https://www.keycloak.org/securing-apps/dpop)).
 
@@ -374,15 +401,14 @@ Mỗi lần thử tốn Keycloak khoảng 13–16 ms (p50 lab, bậc độ lớn
 ## 7. Tóm tắt
 
 - OAuth phát giấy ủy quyền tới API, không phát danh tính tới app: access token Keycloak phát cho `spa` có `azp: spa` nhưng `aud: account`.
-- Authorization code là khoảng 10 request giữa browser, app, Keycloak, API. Mật khẩu chỉ đi browser tới Keycloak; token chỉ đi back channel.
-- `redirect_uri` phải khớp chuỗi chính xác (RFC 9700 MUST). Keycloak 26.8.1 từ chối redirect_uri lạ bằng trang lỗi 400, không redirect.
+- `redirect_uri` khớp chuỗi chính xác (RFC 9700 MUST); Keycloak 26.8.1 trả 400 tại chỗ, không redirect.
 - `state` chặn việc tiêm code của kẻ tấn công vào phiên nạn nhân. Keycloak chỉ chở `state`; app là bên duy nhất kiểm nó.
-- `scope` là lời xin: xin `openid`, Keycloak trả `openid profile email` vì default client scopes. Đọc scope trong response.
-- Code dùng một lần (RFC 6749 MUST NOT dùng lại) và sống 60 giây ở Keycloak (mặc định trong code), chặt gấp 10 lần trần 10 phút của RFC. Dùng lại trả `invalid_grant` "Code not valid": request đổi code không được retry mù.
-- Đổi code qua back channel để tách "nhận kết quả" (front channel, chịu được rò) khỏi "lĩnh token" (đòi xác thực client). Lập luận này gãy với public client: `spa-nopkce` đổi code thành công chỉ với code và `client_id`.
-- Client credentials: chỉ cho confidential client, không refresh token, không user session (lab: `refresh_expires_in: 0`, `jti` tiền tố `trrtcc:`), p50 1,58 ms trên lab. Sai secret Keycloak trả `401 unauthorized_client`, không phải `invalid_client`.
-- Implicit: RFC 9700 SHOULD NOT. Token nằm trong URL, không có refresh token, Keycloak cho nó sống 900 giây so với 300.
-- Password grant: RFC 9700 MUST NOT, docs Keycloak MUST NOT. Client mới tắt sẵn, nhưng `admin-cli` built-in của mỗi realm vẫn bật, public, không cần secret; discovery vẫn quảng cáo `password` và `implicit`.
-- OAuth 2.1 là Internet-Draft (draft-ietf-oauth-v2-1-16, hết hạn 7 March 2027), không phải RFC. Nó bỏ implicit và password grant theo RFC 9700.
+- `scope` là lời xin: xin `openid`, nhận `openid profile email` (default client scopes).
+- Code dùng một lần và sống 60 giây (mặc định trong code, trần RFC là 10 phút). Dùng lại trả `invalid_grant` "Code not valid": không retry mù request đổi code.
+- Back channel tách "nhận kết quả" (chịu được rò) khỏi "lĩnh token" (đòi xác thực client). Gãy với public client: `spa-nopkce` đổi code chỉ bằng code và `client_id`.
+- Client credentials: confidential client, không refresh token, không user session (`refresh_expires_in: 0`). Sai secret: `401 unauthorized_client`, không phải `invalid_client`.
+- Implicit: RFC 9700 SHOULD NOT. Token trong URL, không refresh token, sống 900 giây thay vì 300.
+- Password grant: RFC 9700 và docs Keycloak MUST NOT. Client mới tắt sẵn, nhưng `admin-cli` của mỗi realm vẫn bật, public, không secret.
+- OAuth 2.1 vẫn là Internet-Draft, không phải RFC.
 
 → **Bài 3 — PKCE và OIDC**: câu hỏi cuối của mục 6 là lỗ duy nhất authorization code chưa lấp: code bị chặn giữa đường ở một public client thì sao? PKCE trả lời bằng đúng một tham số gửi ở request 3 và một tham số kiểm ở request 8, rồi OIDC thêm `id_token` để app cuối cùng biết người dùng là ai.

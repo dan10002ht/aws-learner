@@ -331,3 +331,27 @@ html { scroll-behavior: smooth; }
 .scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
 .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
 .scrollbar-thin::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+
+/* ----- Step-through diagram (components/StepFlow.tsx) ----- */
+.step-flow:focus-visible { box-shadow: 0 0 0 2px #0ea5e9; }
+.step-flow svg [data-step] { transition: opacity 0.35s ease; }
+.step-flow[data-active="1"] svg [data-state="future"] { opacity: 0.12; }
+.step-flow[data-active="1"] svg [data-state="past"]   { opacity: 0.45; }
+.step-flow[data-active="1"] svg [data-state="active"] text { font-weight: 700; }
+.step-flow[data-active="1"] svg [data-state="active"] line { stroke-opacity: 1; filter: drop-shadow(0 0 3px #0ea5e9); }
+.step-flow svg .sf-dot { pointer-events: none; }
+/* Fullscreen ("Toàn cảnh"): native fullscreen or fixed overlay */
+.step-flow-full {
+  position: fixed; inset: 0; z-index: 100;
+  margin: 0 !important; border: 0 !important; border-radius: 0 !important;
+  display: flex; flex-direction: column;
+  padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+}
+.step-flow-full .step-flow-figure { flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column; }
+.step-flow-full .step-flow-figure svg { width: 100%; height: auto; max-width: 1100px; margin: auto; display: block; flex-shrink: 0; }
+.step-flow-full .step-flow-note { min-height: 0; }
+.step-flow-rotate { display: none; }
+@media (orientation: portrait) and (max-width: 640px) { .step-flow-rotate { display: block; } }
+/* Short landscape screens: drop the header row, the controls carry the close button */
+.step-flow-min { display: none !important; }
+@media (max-height: 500px) { .step-flow-full .step-flow-head { display: none; } .step-flow-full .step-flow-min { display: inline-flex !important; } .step-flow-full .step-flow-note { max-height: 4.5rem; overflow: auto; } }
