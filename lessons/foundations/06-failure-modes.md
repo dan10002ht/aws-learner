@@ -35,56 +35,136 @@ Tiền đề: [[foundations-01-cap-theorem]], [[foundations-03-replication-and-q
 
 → **Single instance failure → site down 10 phút.** Đây là **cascading failure**, và nó **bình thường** trong mọi hệ phân tán không thiết kế chống.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Anatomy của cascading failure theo timeline Black Friday</title>
-  <desc>Chuỗi sự kiện từ 12h00 đến 12h05: một EC2 chết, dồn tải, latency tăng, user retry tạo retry storm, instance còn lại OOM, ASG bootstrap chậm, DB connection exhausted, cuối cùng site down.</desc>
-  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Cascading failure — chuỗi domino 12h00 → 12h05</text>
-  <line x1="40" y1="52" x2="40" y2="402" stroke="currentColor" stroke-opacity="0.3" stroke-width="2"/>
-  <g>
-    <circle cx="40" cy="72" r="5" fill="#10b981" fill-opacity="0.95"/>
-    <text x="56" y="68" font-size="11" font-weight="700" fill="currentColor">12h00m30s</text>
-    <rect x="150" y="56" width="554" height="28" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
-    <text x="164" y="74" font-size="12" fill="currentColor">1 trong 3 EC2 chết → ALB dồn traffic sang 2 EC2 còn lại (load 90%), latency 100ms → 500ms</text>
-  </g>
-  <g>
-    <circle cx="40" cy="116" r="5" fill="#f59e0b" fill-opacity="0.95"/>
-    <text x="56" y="112" font-size="11" font-weight="700" fill="currentColor">12h01m00s</text>
-    <rect x="150" y="100" width="554" height="28" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
-    <text x="164" y="118" font-size="12" fill="currentColor">User refresh vì chậm → QPS x2 → request queue, latency 5s → ALB đánh 1 EC2 unhealthy</text>
-  </g>
-  <g>
-    <circle cx="40" cy="160" r="5" fill="#f59e0b" fill-opacity="0.95"/>
-    <text x="56" y="156" font-size="11" font-weight="700" fill="currentColor">12h01m30s</text>
-    <rect x="150" y="144" width="554" height="28" rx="7" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/>
-    <text x="164" y="162" font-size="12" fill="currentColor">1 EC2 còn lại nhận toàn bộ traffic → CPU 100%, OOM, restart → client retry storm (x10)</text>
-  </g>
-  <g>
-    <circle cx="40" cy="204" r="5" fill="#f59e0b" fill-opacity="0.95"/>
-    <text x="56" y="200" font-size="11" font-weight="700" fill="currentColor">12h02m00s</text>
-    <rect x="150" y="188" width="554" height="28" rx="7" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/>
-    <text x="164" y="206" font-size="12" fill="currentColor">ASG launch instance mới (3 phút bootstrap) → 3 phút không capacity → site down</text>
-  </g>
-  <g>
-    <circle cx="40" cy="248" r="5" fill="#8b5cf6" fill-opacity="0.95"/>
-    <text x="56" y="244" font-size="11" font-weight="700" fill="currentColor">12h05m00s</text>
-    <rect x="150" y="232" width="554" height="44" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
-    <text x="164" y="250" font-size="12" fill="currentColor">Instance mới lên, nhưng RDS connection pool exhausted (old instance không close sạch)</text>
-    <text x="164" y="268" font-size="12" fill="currentColor">→ DB CPU 100% → Lambda timeout → SQS DLQ tràn → pager loạn</text>
-  </g>
-  <g>
-    <rect x="40" y="300" width="664" height="40" rx="9" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="60" y="318" font-size="12.5" font-weight="700" fill="currentColor">Kết quả: 1 instance chết → site down 10 phút.</text>
-    <text x="60" y="334" font-size="11.5" fill="currentColor" opacity="0.8">Mỗi bước tạo điều kiện cho bước sau — snowball, không tự thoát ra.</text>
-  </g>
-  <g font-size="11" fill="currentColor" opacity="0.75">
-    <circle cx="56" cy="368" r="5" fill="#10b981" fill-opacity="0.95"/>
-    <text x="68" y="372">bình thường</text>
-    <circle cx="178" cy="368" r="5" fill="#f59e0b" fill-opacity="0.95"/>
-    <text x="190" y="372">quá tải lan rộng</text>
-    <circle cx="330" cy="368" r="5" fill="#8b5cf6" fill-opacity="0.95"/>
-    <text x="342" y="372">cạn tài nguyên tầng sâu</text>
-  </g>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 704" role="img" aria-labelledby="fd06a-t fd06a-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fd06a-t">Cascading failure Black Friday: chuỗi domino 12h00 đến 12h05</title>
+<desc id="fd06a-d">Sáu mốc thời gian. Mỗi hàng có trạng thái 3 slot EC2, sự kiện và thứ khuếch đại sự cố: 1 EC2 chết dồn tải 90% lên 2 máy, user refresh làm QPS x2 và health check loại thêm 1 máy, máy cuối OOM kéo theo retry storm x10, ASG bootstrap 3 phút khiến site down, rồi RDS connection pool exhausted làm DB, Lambda, SQS hỏng theo. Kết quả: 1 instance chết, site down 10 phút.</desc>
+<defs><marker id="fd06a-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="16" y="26" font-size="16" font-weight="700" fill="currentColor">Cascading failure: chuỗi domino 12h00 → 12h05</text>
+<text x="16" y="56" font-size="13" fill="currentColor" opacity="0.65">Mốc</text>
+<text x="108" y="56" font-size="13" fill="currentColor" opacity="0.65">3 slot EC2</text>
+<text x="248" y="56" font-size="13" fill="currentColor" opacity="0.65">Chuyện gì xảy ra</text>
+<text x="622" y="56" font-size="13" fill="currentColor" opacity="0.65">Thứ khuếch đại</text>
+<g data-step="1">
+<text x="16" y="95" font-size="13" font-weight="700" fill="currentColor">12h00m00s</text>
+<rect x="108" y="84.0" width="34" height="30" rx="5" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="125.0" y="103.5" font-size="13" text-anchor="middle" fill="currentColor">60%</text>
+<rect x="147" y="84.0" width="34" height="30" rx="5" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="164.0" y="103.5" font-size="13" text-anchor="middle" fill="currentColor">60%</text>
+<rect x="186" y="84.0" width="34" height="30" rx="5" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="203.0" y="103.5" font-size="13" text-anchor="middle" fill="currentColor">60%</text>
+<rect x="236" y="74" width="362" height="50" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="248" y="95" font-size="13" fill="currentColor">Bình thường: app 60% CPU, RDS 50% CPU</text>
+<rect x="612" y="74" width="136" height="50" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 3"/>
+<text x="622" y="95" font-size="13" font-weight="400" fill="currentColor">mức nền</text>
+<text x="622" y="112" font-size="13" font-weight="400" fill="currentColor">mỗi máy dư 40%</text>
+</g>
+<g data-step="2">
+<line x1="417.0" y1="126" x2="417.0" y2="143" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#fd06a-arr)"/>
+<text x="16" y="167" font-size="13" font-weight="700" fill="currentColor">12h00m30s</text>
+<rect x="108" y="164.5" width="34" height="30" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="125.0" y="184.0" font-size="13" text-anchor="middle" fill="currentColor">✗</text>
+<rect x="147" y="164.5" width="34" height="30" rx="5" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="164.0" y="184.0" font-size="13" text-anchor="middle" fill="currentColor">90%</text>
+<rect x="186" y="164.5" width="34" height="30" rx="5" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="203.0" y="184.0" font-size="13" text-anchor="middle" fill="currentColor">90%</text>
+<rect x="236" y="146" width="362" height="67" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="248" y="167" font-size="13" fill="currentColor">1 trong 3 EC2 chết, ALB dồn traffic sang 2 máy</text>
+<text x="248" y="184" font-size="13" fill="currentColor">2 EC2 còn lại load 90%</text>
+<text x="248" y="201" font-size="13" fill="currentColor">latency 100ms → 500ms</text>
+<rect x="612" y="146" width="136" height="67" rx="7" fill="#f43f5e" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="0"/>
+<text x="622" y="167" font-size="13" font-weight="600" fill="currentColor">N-1 không đủ dư:</text>
+<text x="622" y="184" font-size="13" font-weight="600" fill="currentColor">60% × 3/2 = 90%</text>
+</g>
+<g data-step="3">
+<line x1="417.0" y1="215" x2="417.0" y2="232" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#fd06a-arr)"/>
+<text x="16" y="256" font-size="13" font-weight="700" fill="currentColor">12h01m00s</text>
+<rect x="108" y="253.5" width="34" height="30" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="125.0" y="273.0" font-size="13" text-anchor="middle" fill="currentColor">✗</text>
+<rect x="147" y="253.5" width="34" height="30" rx="5" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="164.0" y="273.0" font-size="11.5" text-anchor="middle" fill="currentColor">loại</text>
+<rect x="186" y="253.5" width="34" height="30" rx="5" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="203.0" y="273.0" font-size="13" text-anchor="middle" fill="currentColor">đầy</text>
+<rect x="236" y="235" width="362" height="67" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="248" y="256" font-size="13" fill="currentColor">User refresh vì chậm → QPS x2</text>
+<text x="248" y="273" font-size="13" fill="currentColor">2 EC2 đầy → request queue → latency 5s</text>
+<text x="248" y="290" font-size="13" fill="currentColor">health check timeout → ALB đánh 1 EC2 unhealthy</text>
+<rect x="612" y="235" width="136" height="67" rx="7" fill="#f43f5e" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="0"/>
+<text x="622" y="256" font-size="13" font-weight="600" fill="currentColor">user refresh x2</text>
+<text x="622" y="273" font-size="13" font-weight="600" fill="currentColor">+ health check loại</text>
+<text x="622" y="290" font-size="13" font-weight="600" fill="currentColor">máy còn sống</text>
+</g>
+<g data-step="4">
+<line x1="417.0" y1="304" x2="417.0" y2="321" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#fd06a-arr)"/>
+<text x="16" y="345" font-size="13" font-weight="700" fill="currentColor">12h01m30s</text>
+<rect x="108" y="342.5" width="34" height="30" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="125.0" y="362.0" font-size="13" text-anchor="middle" fill="currentColor">✗</text>
+<rect x="147" y="342.5" width="34" height="30" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="164.0" y="362.0" font-size="13" text-anchor="middle" fill="currentColor">✗</text>
+<rect x="186" y="342.5" width="34" height="30" rx="5" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="203.0" y="362.0" font-size="13" text-anchor="middle" fill="currentColor">OOM</text>
+<rect x="236" y="324" width="362" height="67" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="248" y="345" font-size="13" fill="currentColor">1 EC2 còn lại nhận toàn bộ traffic</text>
+<text x="248" y="362" font-size="13" fill="currentColor">CPU 100%, OOM, restart → request rớt</text>
+<text x="248" y="379" font-size="13" fill="currentColor">client retry → traffic vào ALB x10</text>
+<rect x="612" y="324" width="136" height="67" rx="7" fill="#f43f5e" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="0"/>
+<text x="622" y="345" font-size="13" font-weight="600" fill="currentColor">retry storm x10</text>
+</g>
+<g data-step="5">
+<line x1="417.0" y1="393" x2="417.0" y2="410" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#fd06a-arr)"/>
+<text x="16" y="434" font-size="13" font-weight="700" fill="currentColor">12h02m00s</text>
+<rect x="108" y="431.5" width="34" height="30" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="3 3"/>
+<text x="125.0" y="451.0" font-size="11.5" text-anchor="middle" fill="currentColor">boot</text>
+<rect x="147" y="431.5" width="34" height="30" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="164.0" y="451.0" font-size="13" text-anchor="middle" fill="currentColor">✗</text>
+<rect x="186" y="431.5" width="34" height="30" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="203.0" y="451.0" font-size="13" text-anchor="middle" fill="currentColor">✗</text>
+<rect x="236" y="413" width="362" height="67" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="248" y="434" font-size="13" fill="currentColor">ASG launch instance mới, bootstrap mất 3 phút</text>
+<text x="248" y="451" font-size="13" fill="currentColor">3 phút không có capacity → toàn site down</text>
+<rect x="612" y="413" width="136" height="67" rx="7" fill="#f43f5e" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="0"/>
+<text x="622" y="434" font-size="13" font-weight="600" fill="currentColor">ASG cần vài phút,</text>
+<text x="622" y="451" font-size="13" font-weight="600" fill="currentColor">sự cố lan</text>
+<text x="622" y="468" font-size="13" font-weight="600" fill="currentColor">theo giây</text>
+</g>
+<g data-step="6">
+<line x1="417.0" y1="482" x2="417.0" y2="499" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#fd06a-arr)"/>
+<text x="16" y="523" font-size="13" font-weight="700" fill="currentColor">12h05m00s</text>
+<rect x="108" y="529.0" width="34" height="30" rx="5" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="125.0" y="548.5" font-size="13" text-anchor="middle" fill="currentColor">mới</text>
+<rect x="147" y="529.0" width="34" height="30" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="164.0" y="548.5" font-size="13" text-anchor="middle" fill="currentColor">✗</text>
+<rect x="186" y="529.0" width="34" height="30" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="203.0" y="548.5" font-size="13" text-anchor="middle" fill="currentColor">✗</text>
+<rect x="236" y="502" width="362" height="84" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="248" y="523" font-size="13" fill="currentColor">Instance mới lên, nhưng RDS connection pool exhausted</text>
+<text x="248" y="540" font-size="13" fill="currentColor">(old instance không close connection sạch)</text>
+<text x="248" y="557" font-size="13" fill="currentColor">DB CPU 100% → Lambda timeout</text>
+<text x="248" y="574" font-size="13" fill="currentColor">→ SQS DLQ tràn → alert pager loạn</text>
+<rect x="612" y="502" width="136" height="84" rx="7" fill="#f43f5e" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="0"/>
+<text x="622" y="523" font-size="13" font-weight="600" fill="currentColor">connection rò</text>
+<text x="622" y="540" font-size="13" font-weight="600" fill="currentColor">→ cạn tài nguyên</text>
+<text x="622" y="557" font-size="13" font-weight="600" fill="currentColor">tầng sâu</text>
+</g>
+<rect x="16" y="604" width="728" height="44" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="32" y="622" font-size="13.5" font-weight="700" fill="currentColor">Kết quả: 1 instance chết → site down 10 phút.</text>
+<text x="32" y="640" font-size="13" fill="currentColor" opacity="0.85">Mỗi bước tạo điều kiện cho bước sau: snowball, không tự thoát ra.</text>
+<rect x="22" y="663" width="13" height="13" rx="3" fill="#10b981" fill-opacity="0.5"/>
+<text x="41" y="674" font-size="13" fill="currentColor" opacity="0.8">bình thường</text>
+<rect x="146.2" y="663" width="13" height="13" rx="3" fill="#f59e0b" fill-opacity="0.5"/>
+<text x="165.2" y="674" font-size="13" fill="currentColor" opacity="0.8">quá tải lan rộng</text>
+<rect x="306.4" y="663" width="13" height="13" rx="3" fill="#8b5cf6" fill-opacity="0.5"/>
+<text x="325.4" y="674" font-size="13" fill="currentColor" opacity="0.8">cạn tài nguyên tầng sâu</text>
+<rect x="517.0" y="663" width="13" height="13" rx="3" fill="#f43f5e" fill-opacity="0.5"/>
+<text x="536.0" y="674" font-size="13" fill="currentColor" opacity="0.8">slot chết / thứ khuếch đại</text>
 </svg>
+<step-note data-step="1">Mỗi máy chạy 60% nghĩa là còn dư 40%, trông thoải mái. Nhưng mức dư này chỉ tính khi đủ cả 3 máy.</step-note>
+<step-note data-step="2">Tải của máy chết chia cho 2 máy còn lại: 60% × 3/2 = 90%. Ở 90% CPU hàng đợi trong máy dài ra, nên latency tăng gấp 5 dù chưa máy nào sập thêm.</step-note>
+<step-note data-step="3">Chậm khiến người dùng bấm lại, tải tăng đúng lúc capacity giảm. Health check không phân biệt chậm vì quá tải với chết thật, nên ALB tự rút thêm một máy vẫn đang phục vụ.</step-note>
+<step-note data-step="4">Toàn bộ tải dồn vào một máy là vượt sức chứa, máy OOM và restart. Request rớt làm client retry, tải vào ALB gấp 10 đúng lúc gần như không còn ai phục vụ.</step-note>
+<step-note data-step="5">Auto Scaling phản ứng theo phút còn sự cố lan theo giây. Suốt 3 phút bootstrap không có instance healthy nào, ALB không còn chỗ gửi request.</step-note>
+<step-note data-step="6">Instance cũ chết không trả connection về RDS, pool cạn nên capacity đã về mà vẫn lỗi. Nghẽn lan xuống tầng sâu (DB, Lambda, SQS), nên sự cố chưa dừng khi lớp EC2 đã hồi.</step-note>
+</step-flow>
 
 ---
 

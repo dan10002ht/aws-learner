@@ -102,35 +102,68 @@ Vấn đề: `counter += 1` **không phải** một thao tác nguyên tử. CPU 
 
 Giờ tưởng tượng hai thread bị xen kẽ đúng lúc xấu (`counter` đang là 41):
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Race condition: hai thread xen kẽ làm mất một lần tăng counter</title>
-  <desc>Thread A và Thread B xen kẽ các bước READ, ADD, WRITE theo thời gian đi xuống. B đọc giá trị 41 trước khi A kịp ghi, nên hai lần tăng chỉ làm counter từ 41 lên 42 thay vì 43.</desc>
-  <text x="120" y="26" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Thread A</text>
-  <text x="360" y="26" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Thread B</text>
-  <text x="630" y="26" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">counter</text>
-  <g stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4">
-    <line x1="120" y1="36" x2="120" y2="330"/>
-    <line x1="360" y1="36" x2="360" y2="330"/>
-    <line x1="630" y1="36" x2="630" y2="330"/>
-  </g>
-  <g font-size="12" font-weight="700" text-anchor="middle">
-    <rect x="44" y="52" width="152" height="28" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="120" y="71" fill="currentColor">READ tmp=41</text>
-    <text x="630" y="71" fill="currentColor">41</text>
-    <rect x="284" y="96" width="152" height="28" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="360" y="115" fill="currentColor">READ tmp=41</text>
-    <text x="630" y="115" fill="currentColor">41</text>
-    <text x="630" y="135" font-size="10" font-weight="400" fill="#f59e0b">B đọc trước khi A ghi!</text>
-    <rect x="44" y="148" width="152" height="28" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="120" y="167" fill="currentColor">ADD tmp=42</text>
-    <text x="630" y="167" fill="currentColor">41</text>
-    <rect x="284" y="192" width="152" height="28" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="360" y="211" fill="currentColor">ADD tmp=42</text>
-    <text x="630" y="211" fill="currentColor">41</text>
-    <rect x="44" y="236" width="152" height="28" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="120" y="255" fill="currentColor">WRITE counter=42</text>
-    <text x="630" y="255" fill="currentColor">42</text>
-    <rect x="284" y="280" width="152" height="28" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="360" y="299" fill="currentColor">WRITE counter=42</text>
-    <text x="630" y="299" fill="#f59e0b">42</text>
-    <text x="630" y="320" font-size="10" font-weight="400" fill="#f59e0b">mất 1 lần tăng (43→42)</text>
-  </g>
-  <text x="16" y="200" font-size="10.5" fill="currentColor" opacity="0.6" transform="rotate(-90 16 200)" text-anchor="middle">thời gian ↓</text>
+<step-flow>
+<svg viewBox="0 0 660 420" role="img" aria-labelledby="cs05b-t cs05b-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="cs05b-t">Race condition: hai thread xen kẽ làm mất một lần tăng counter</title>
+<desc id="cs05b-d">Thread A và Thread B xen kẽ các bước READ, ADD, WRITE theo thời gian đi xuống. B đọc giá trị 41 trước khi A kịp ghi, nên hai lần tăng chỉ làm counter từ 41 lên 42 thay vì 43.</desc>
+<defs><marker id="cs05b-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="120" y="30" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Thread A</text>
+<text x="330" y="30" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Thread B</text>
+<text x="540" y="30" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">counter (bộ nhớ chung)</text>
+<line x1="120" y1="40" x2="120" y2="395" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4"/>
+<line x1="330" y1="40" x2="330" y2="395" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4"/>
+<line x1="540" y1="40" x2="540" y2="395" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4"/>
+<text x="22" y="220" font-size="13" fill="currentColor" opacity="0.6" transform="rotate(-90 22 220)" text-anchor="middle">thời gian ↓</text>
+<g data-step="1">
+<rect x="35" y="60" width="170" height="32" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="120" y="81" font-size="14" font-weight="600" text-anchor="middle" fill="currentColor">READ tmp=41</text>
+<rect x="500" y="60" width="80" height="32" rx="6" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="540" y="82" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">41</text>
+<line x1="498" y1="76" x2="207" y2="76" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#cs05b-arrow)"/>
+</g>
+<g data-step="2">
+<rect x="245" y="116" width="170" height="32" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="330" y="137" font-size="14" font-weight="600" text-anchor="middle" fill="currentColor">READ tmp=41</text>
+<rect x="500" y="116" width="80" height="32" rx="6" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="540" y="138" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">41</text>
+<line x1="498" y1="132" x2="417" y2="132" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#cs05b-arrow)"/>
+<text x="423" y="164" font-size="13" fill="#f59e0b" font-weight="600">B đọc trước khi A ghi!</text>
+</g>
+<g data-step="3">
+<rect x="35" y="172" width="170" height="32" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="120" y="193" font-size="14" font-weight="600" text-anchor="middle" fill="currentColor">ADD tmp=42</text>
+<rect x="500" y="172" width="80" height="32" rx="6" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="540" y="194" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">41</text>
+</g>
+<g data-step="4">
+<rect x="245" y="228" width="170" height="32" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="330" y="249" font-size="14" font-weight="600" text-anchor="middle" fill="currentColor">ADD tmp=42</text>
+<rect x="500" y="228" width="80" height="32" rx="6" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="540" y="250" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">41</text>
+</g>
+<g data-step="5">
+<rect x="35" y="284" width="170" height="32" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="120" y="305" font-size="14" font-weight="600" text-anchor="middle" fill="currentColor">WRITE counter=42</text>
+<rect x="500" y="284" width="80" height="32" rx="6" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="540" y="306" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">42</text>
+<line x1="207" y1="300" x2="498" y2="300" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#cs05b-arrow)"/>
+</g>
+<g data-step="6">
+<rect x="245" y="340" width="170" height="32" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="330" y="361" font-size="14" font-weight="600" text-anchor="middle" fill="currentColor">WRITE counter=42</text>
+<rect x="500" y="340" width="80" height="32" rx="6" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="540" y="362" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">42</text>
+<line x1="417" y1="356" x2="498" y2="356" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#cs05b-arrow)"/>
+<text x="540" y="396" font-size="13" text-anchor="middle" fill="#f43f5e" font-weight="600">mất 1 lần tăng (43→42)</text>
+</g>
 </svg>
+<step-note data-step="1">A nạp giá trị hiện tại vào thanh ghi riêng <code>tmp</code>. Từ giờ A làm việc trên bản sao, không nhìn lại <code>counter</code> nữa.</step-note>
+<step-note data-step="2">OS chuyển sang B trước khi A kịp ghi. <code>counter</code> trong bộ nhớ vẫn là 41, nên B cũng chép được 41: đây là điểm xen kẽ xấu.</step-note>
+<step-note data-step="3">A cộng trên bản sao của mình. <code>counter</code> chưa đổi vì kết quả mới nằm trong thanh ghi.</step-note>
+<step-note data-step="4">B cũng ra 42 từ bản sao 41 cũ. Hai thread đã cùng tính ra một kết quả, chỉ chưa ai ghi.</step-note>
+<step-note data-step="5">A ghi 42 xuống bộ nhớ. Đến đây vẫn đúng: một lần <code>+1</code>, <code>counter</code> tăng 1.</step-note>
+<step-note data-step="6">B ghi đè 42 lên 42, xoá mất công của A. Hai lần <code>+1</code> mà <code>counter</code> chỉ lên 42 thay vì 43.</step-note>
+</step-flow>
 
 Hai lần `+1` mà `counter` chỉ tăng 1. Mỗi lần chạy, OS lập lịch thread khác nhau → mất số lượng khác nhau → **bug không tái hiện ổn định**. Đoạn code đọc-sửa-ghi chung này gọi là **critical section** (vùng tới hạn): vùng mà tại một thời điểm **chỉ được phép một thread** vào.
 

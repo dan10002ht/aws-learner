@@ -146,40 +146,114 @@ Khi chương trình chạy, nó xin `OS` cấp một vùng RAM. Vùng này chia 
 
 Mỗi khi bạn **gọi một hàm**, một khối gọi là **stack frame** được đẩy lên stack. Frame đó chứa: tham số của hàm, biến local, và địa chỉ để quay về sau khi hàm xong. Khi hàm `return`, frame của nó bị **pop** (gỡ bỏ) ngay lập tức — bộ nhớ tự thu hồi, không cần ai dọn.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 320" role="img" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Stack frame theo LIFO: chuỗi gọi a, b, c đẩy frame chồng lên rồi pop khi return</title>
-  <desc>Bên trái: chuỗi gọi main gọi a, a gọi b, b gọi c, mỗi lần gọi đẩy một stack frame chồng lên trên. Khi đang ở trong c, stack từ dưới lên là main, frame a, frame b, frame c ở đỉnh đang chạy. Khi c return, frame c bị pop ngay lập tức và biến local x biến mất, theo nguyên tắc vào sau ra trước.</desc>
-  <text x="20" y="26" font-size="13" font-weight="700" fill="currentColor">Chuỗi gọi hàm</text>
-  <g font-size="11.5" fill="currentColor" text-anchor="middle">
-    <rect x="20" y="44" width="150" height="34" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="95" y="66">main()</text>
-    <rect x="40" y="98" width="150" height="34" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="115" y="120">a() → gọi b()</text>
-    <rect x="60" y="152" width="150" height="34" rx="6" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="135" y="174">b() → gọi c()</text>
-    <rect x="80" y="206" width="150" height="48" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="155" y="226">c()</text>
-    <text x="155" y="243" font-size="10" opacity="0.7">x := 5 (local)</text>
-  </g>
-  <line x1="395" y1="40" x2="395" y2="296" stroke="currentColor" stroke-opacity="0.15"/>
-  <text x="430" y="26" font-size="13" font-weight="700" fill="currentColor">STACK lúc đang ở trong c()</text>
-  <g font-size="11.5" fill="currentColor" text-anchor="middle">
-    <rect x="430" y="44" width="160" height="34" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
-    <text x="510" y="66" font-weight="700">frame c</text>
-    <text x="608" y="65" font-size="10" text-anchor="start" opacity="0.75">← top (đang chạy)</text>
-    <rect x="430" y="84" width="160" height="34" rx="6" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="510" y="106">frame b</text>
-    <rect x="430" y="124" width="160" height="34" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="510" y="146">frame a</text>
-    <rect x="430" y="164" width="160" height="34" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="510" y="186">main</text>
-  </g>
-  <line x1="615" y1="60" x2="615" y2="232" stroke="currentColor" stroke-opacity="0.4"/>
-  <text x="624" y="150" font-size="10" fill="currentColor" opacity="0.65">đẩy chồng lên (LIFO)</text>
-  <rect x="430" y="244" width="250" height="52" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.18" stroke-dasharray="4 4"/>
-  <text x="445" y="266" font-size="11" fill="currentColor" text-anchor="start">c() return → frame c <tspan font-weight="700">pop ngay</tspan>,</text>
-  <text x="445" y="284" font-size="11" fill="currentColor" text-anchor="start">biến local x biến mất.</text>
+<step-flow>
+<svg viewBox="0 0 760 400" role="img" aria-labelledby="cs03c-t cs03c-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="cs03c-t">Stack frame theo LIFO: main gọi a, a gọi b, b gọi c, rồi return ngược lại</title>
+<desc id="cs03c-d">Bảy ảnh chụp stack theo thời gian. Bước 1 đến 4: main chạy rồi gọi a, a gọi b, b gọi c, mỗi lần gọi đẩy một frame chồng lên; lúc đang ở trong c, stack từ dưới lên là main, frame a, frame b, frame c ở đỉnh đang chạy, giữ biến local x := 5. Bước 5 đến 7: c return thì frame c bị pop ngay và x biến mất, rồi b return, a return, frame ra theo thứ tự ngược lúc vào (LIFO).</desc>
+<defs><marker id="cs03c-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="12" y="22" font-size="13" font-weight="700" fill="currentColor">Stack qua từng lần gọi / return (đáy ở dưới)</text>
+<g data-step="1">
+<text x="54.0" y="52" font-size="12" font-weight="700" fill="currentColor" text-anchor="middle">main() chạy</text>
+<text x="54.0" y="70" font-size="11" fill="#10b981" text-anchor="middle">push main</text>
+<rect x="18" y="286" width="72" height="40" rx="5" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="54.0" y="310" font-size="11.5" fill="currentColor" text-anchor="middle">main</text>
+<text x="93" y="310" font-size="10" fill="currentColor" opacity="0.75">← top</text>
+<line x1="54.0" y1="80" x2="54.0" y2="283" stroke="#10b981" stroke-width="2" marker-end="url(#cs03c-arr)"/>
+<line x1="14" y1="330" x2="98" y2="330" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+</g>
+<g data-step="2">
+<text x="160.0" y="52" font-size="12" font-weight="700" fill="currentColor" text-anchor="middle">main gọi a()</text>
+<text x="160.0" y="70" font-size="11" fill="#10b981" text-anchor="middle">push a</text>
+<rect x="124" y="286" width="72" height="40" rx="5" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.22"/>
+<text x="160.0" y="310" font-size="11.5" fill="currentColor" text-anchor="middle">main</text>
+<rect x="124" y="242" width="72" height="40" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="160.0" y="266" font-size="11.5" fill="currentColor" text-anchor="middle">frame a</text>
+<text x="199" y="266" font-size="10" fill="currentColor" opacity="0.75">← top</text>
+<line x1="160.0" y1="80" x2="160.0" y2="239" stroke="#10b981" stroke-width="2" marker-end="url(#cs03c-arr)"/>
+<line x1="120" y1="330" x2="204" y2="330" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+</g>
+<g data-step="3">
+<text x="266.0" y="52" font-size="12" font-weight="700" fill="currentColor" text-anchor="middle">a gọi b()</text>
+<text x="266.0" y="70" font-size="11" fill="#10b981" text-anchor="middle">push b</text>
+<rect x="230" y="286" width="72" height="40" rx="5" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.22"/>
+<text x="266.0" y="310" font-size="11.5" fill="currentColor" text-anchor="middle">main</text>
+<rect x="230" y="242" width="72" height="40" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+<text x="266.0" y="266" font-size="11.5" fill="currentColor" text-anchor="middle">frame a</text>
+<rect x="230" y="198" width="72" height="40" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="266.0" y="222" font-size="11.5" fill="currentColor" text-anchor="middle">frame b</text>
+<text x="305" y="222" font-size="10" fill="currentColor" opacity="0.75">← top</text>
+<line x1="266.0" y1="80" x2="266.0" y2="195" stroke="#10b981" stroke-width="2" marker-end="url(#cs03c-arr)"/>
+<line x1="226" y1="330" x2="310" y2="330" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+</g>
+<g data-step="4">
+<text x="372.0" y="52" font-size="12" font-weight="700" fill="currentColor" text-anchor="middle">b gọi c()</text>
+<text x="372.0" y="70" font-size="11" fill="#10b981" text-anchor="middle">push c</text>
+<rect x="336" y="286" width="72" height="40" rx="5" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.22"/>
+<text x="372.0" y="310" font-size="11.5" fill="currentColor" text-anchor="middle">main</text>
+<rect x="336" y="242" width="72" height="40" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+<text x="372.0" y="266" font-size="11.5" fill="currentColor" text-anchor="middle">frame a</text>
+<rect x="336" y="198" width="72" height="40" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+<text x="372.0" y="222" font-size="11.5" fill="currentColor" text-anchor="middle">frame b</text>
+<rect x="336" y="154" width="72" height="40" rx="5" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="372.0" y="171" font-size="11.5" fill="currentColor" text-anchor="middle">frame c</text>
+<text x="372.0" y="186" font-size="10.5" fill="currentColor" text-anchor="middle" opacity="0.75">x := 5</text>
+<text x="411" y="178" font-size="10" fill="currentColor" opacity="0.75">← top</text>
+<line x1="372.0" y1="80" x2="372.0" y2="151" stroke="#10b981" stroke-width="2" marker-end="url(#cs03c-arr)"/>
+<line x1="332" y1="330" x2="416" y2="330" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+</g>
+<g data-step="5">
+<text x="478.0" y="52" font-size="12" font-weight="700" fill="currentColor" text-anchor="middle">c return</text>
+<text x="478.0" y="70" font-size="11" fill="#f43f5e" text-anchor="middle">pop c</text>
+<rect x="442" y="286" width="72" height="40" rx="5" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.22"/>
+<text x="478.0" y="310" font-size="11.5" fill="currentColor" text-anchor="middle">main</text>
+<rect x="442" y="242" width="72" height="40" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+<text x="478.0" y="266" font-size="11.5" fill="currentColor" text-anchor="middle">frame a</text>
+<rect x="442" y="198" width="72" height="40" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="478.0" y="222" font-size="11.5" fill="currentColor" text-anchor="middle">frame b</text>
+<text x="517" y="222" font-size="10" fill="currentColor" opacity="0.75">← top</text>
+<rect x="442" y="154" width="72" height="40" rx="5" fill="none" stroke="#f43f5e" stroke-opacity="0.7" stroke-dasharray="4 3"/>
+<text x="478.0" y="178" font-size="11" fill="#f43f5e" text-anchor="middle">x mất</text>
+<line x1="478.0" y1="151" x2="478.0" y2="80" stroke="#f43f5e" stroke-width="2" marker-end="url(#cs03c-arr)"/>
+<line x1="438" y1="330" x2="522" y2="330" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+</g>
+<g data-step="6">
+<text x="584.0" y="52" font-size="12" font-weight="700" fill="currentColor" text-anchor="middle">b return</text>
+<text x="584.0" y="70" font-size="11" fill="#f43f5e" text-anchor="middle">pop b</text>
+<rect x="548" y="286" width="72" height="40" rx="5" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.22"/>
+<text x="584.0" y="310" font-size="11.5" fill="currentColor" text-anchor="middle">main</text>
+<rect x="548" y="242" width="72" height="40" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="584.0" y="266" font-size="11.5" fill="currentColor" text-anchor="middle">frame a</text>
+<text x="623" y="266" font-size="10" fill="currentColor" opacity="0.75">← top</text>
+<rect x="548" y="198" width="72" height="40" rx="5" fill="none" stroke="#f43f5e" stroke-opacity="0.7" stroke-dasharray="4 3"/>
+<text x="584.0" y="222" font-size="11" fill="#f43f5e" text-anchor="middle">b ✗</text>
+<line x1="584.0" y1="195" x2="584.0" y2="80" stroke="#f43f5e" stroke-width="2" marker-end="url(#cs03c-arr)"/>
+<line x1="544" y1="330" x2="628" y2="330" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+</g>
+<g data-step="7">
+<text x="690.0" y="52" font-size="12" font-weight="700" fill="currentColor" text-anchor="middle">a return</text>
+<text x="690.0" y="70" font-size="11" fill="#f43f5e" text-anchor="middle">pop a</text>
+<rect x="654" y="286" width="72" height="40" rx="5" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="690.0" y="310" font-size="11.5" fill="currentColor" text-anchor="middle">main</text>
+<text x="729" y="310" font-size="10" fill="currentColor" opacity="0.75">← top</text>
+<rect x="654" y="242" width="72" height="40" rx="5" fill="none" stroke="#f43f5e" stroke-opacity="0.7" stroke-dasharray="4 3"/>
+<text x="690.0" y="266" font-size="11" fill="#f43f5e" text-anchor="middle">a ✗</text>
+<line x1="690.0" y1="239" x2="690.0" y2="80" stroke="#f43f5e" stroke-width="2" marker-end="url(#cs03c-arr)"/>
+<line x1="650" y1="330" x2="734" y2="330" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+</g>
+<path d="M14 342 V350 H410 V342" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="212" y="368" font-size="11.5" fill="currentColor" text-anchor="middle">gọi hàm: đẩy frame chồng lên (push)</text>
+<path d="M438 342 V350 H728 V342" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="583" y="368" font-size="11.5" fill="currentColor" text-anchor="middle">return: pop ngay, ngược thứ tự gọi</text>
+<text x="380" y="392" font-size="11.5" font-weight="700" fill="currentColor" text-anchor="middle">LIFO: vào sau ra trước · top = frame đang chạy</text>
 </svg>
+<step-note data-step="1">Chương trình bắt đầu ở <code>main</code>: frame đầu tiên nằm ở đáy và ở đó tới khi chương trình kết thúc.</step-note>
+<step-note data-step="2">Gọi <code>a()</code> đẩy một frame chứa tham số, biến local và địa chỉ quay về trong <code>main</code>. Cấp phát chỉ là dịch con trỏ top lên, không phải đi tìm chỗ trống.</step-note>
+<step-note data-step="3"><code>a</code> chưa xong đã gọi <code>b()</code>, nên frame <code>a</code> phải nằm lại bên dưới để lát nữa quay về đúng chỗ.</step-note>
+<step-note data-step="4">Đang ở trong <code>c()</code>: frame ở đỉnh luôn là hàm đang chạy, và biến local <code>x</code> của <code>c</code> chỉ sống trong frame này.</step-note>
+<step-note data-step="5"><code>c()</code> return: frame bị gỡ ngay, <code>x</code> biến mất mà không cần ai dọn; chạy tiếp ở <code>b</code> theo địa chỉ quay về đã lưu trong frame.</step-note>
+<step-note data-step="6">Frame ra theo thứ tự ngược lúc vào: <code>c</code> vào sau cùng nên ra trước, giờ tới lượt <code>b</code>.</step-note>
+<step-note data-step="7">Stack về lại đúng như bước 1. Nếu cứ gọi lồng mà không bao giờ return, top dịch lên mãi tới khi hết chỗ: stack overflow ở phần dưới.</step-note>
+</step-flow>
 
 Stack nhanh vì cấp phát chỉ là "dịch con trỏ top lên/xuống" — không phải đi tìm chỗ trống. Và nó tự dọn theo đúng thứ tự gọi hàm (vào sau ra trước, LIFO).
 

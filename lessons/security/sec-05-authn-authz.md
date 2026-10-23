@@ -157,35 +157,72 @@ OAuth 2.1 (bản hợp nhất các best practice) bắt buộc **Authorization C
 
 PKCE thêm một bí mật dùng-một-lần do client tự sinh:
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>OAuth 2.1 Authorization Code + PKCE: sequence chống chặn code</title>
-  <desc>Sequence diagram hai cột Client và Auth Server theo thời gian đi xuống. Client sinh code_verifier rồi tính challenge = SHA256(verifier), gọi /authorize kèm challenge, nhận về code. Kẻ tấn công chặn được code nhưng không có verifier. Client gọi /token kèm code và verifier gốc; server tự hash verifier so với challenge đã lưu, khớp mới cấp token.</desc>
-  <text x="360" y="22" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Authorization Code + PKCE</text>
-  <text x="150" y="50" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Client (app)</text>
-  <text x="570" y="50" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Auth Server</text>
-  <line x1="150" y1="60" x2="150" y2="400" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-  <line x1="570" y1="60" x2="570" y2="400" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-  <rect x="36" y="74" width="228" height="40" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="150" y="90" font-size="10.5" text-anchor="middle" fill="currentColor">sinh code_verifier (ngẫu nhiên)</text>
-  <text x="150" y="105" font-size="10.5" text-anchor="middle" fill="currentColor">challenge = SHA256(verifier)</text>
-  <line x1="150" y1="134" x2="570" y2="134" stroke="currentColor" stroke-opacity="0.65" marker-end="url(#pa)"/>
-  <text x="360" y="128" font-size="10.5" text-anchor="middle" fill="currentColor">/authorize ... &amp;code_challenge=hash &amp;method=S256</text>
-  <line x1="570" y1="164" x2="150" y2="164" stroke="currentColor" stroke-opacity="0.65" marker-end="url(#pa)"/>
-  <text x="360" y="158" font-size="10.5" text-anchor="middle" fill="currentColor">trả về authorization code</text>
-  <rect x="180" y="184" width="360" height="50" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="360" y="204" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Kẻ tấn công chặn được CODE...</text>
-  <text x="360" y="222" font-size="10.5" text-anchor="middle" fill="currentColor">nhưng KHÔNG có verifier → vô dụng</text>
-  <line x1="150" y1="264" x2="570" y2="264" stroke="currentColor" stroke-opacity="0.65" marker-end="url(#pa)"/>
-  <text x="360" y="258" font-size="10.5" text-anchor="middle" fill="currentColor">/token ... &amp;code=code &amp;code_verifier=verifier gốc</text>
-  <rect x="456" y="284" width="228" height="50" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="570" y="304" font-size="10.5" text-anchor="middle" fill="currentColor">hash(verifier) == challenge?</text>
-  <text x="570" y="320" font-size="10.5" text-anchor="middle" fill="currentColor">khớp → cấp token</text>
-  <line x1="570" y1="364" x2="150" y2="364" stroke="currentColor" stroke-opacity="0.65" marker-end="url(#pa)"/>
-  <text x="360" y="358" font-size="10.5" text-anchor="middle" fill="currentColor">access token (+ refresh, id token)</text>
-  <defs>
-    <marker id="pa" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0 0 L7 3.2 L0 6.4 z" fill="currentColor"/></marker>
-  </defs>
+<step-flow>
+<svg viewBox="0 0 760 580" role="img" aria-labelledby="sec5a-t sec5a-d" style="width:100%;height:auto">
+<title id="sec5a-t">OAuth 2.1 Authorization Code + PKCE: kẻ tấn công chặn được code nhưng thiếu verifier</title>
+<desc id="sec5a-d">Sequence ba cột: kẻ tấn công (app độc hại), Client (app) và Auth Server. Client sinh code_verifier ngẫu nhiên, tính challenge = SHA256(verifier), gọi /authorize kèm code_challenge và method=S256; server lưu challenge cạnh code rồi trả authorization code qua redirect. Kẻ tấn công chặn được code ở bước redirect và đem đổi ở /token nhưng không có verifier nên bị từ chối: code vô dụng. Client gọi /token kèm code và verifier gốc; server hash verifier so với challenge đã lưu, khớp mới cấp access token (cùng refresh token, id token).</desc>
+<defs>
+<marker id="sec5a-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker>
+</defs>
+<rect x="5" y="15" width="190" height="32" rx="8" fill="#f43f5e" fill-opacity="0.16"/>
+<text x="100" y="36" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Kẻ tấn công (app độc hại)</text>
+<rect x="295" y="15" width="130" height="32" rx="8" fill="#3b82f6" fill-opacity="0.16"/>
+<text x="360" y="36" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Client (app)</text>
+<rect x="570" y="15" width="140" height="32" rx="8" fill="#10b981" fill-opacity="0.16"/>
+<text x="640" y="36" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Auth Server</text>
+<line x1="100" y1="47" x2="100" y2="520" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="360" y1="47" x2="360" y2="520" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="640" y1="47" x2="640" y2="520" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 4"/>
+<g data-step="1">
+<rect x="230" y="60" width="260" height="46" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="360" y="79" text-anchor="middle" font-size="12" fill="currentColor">sinh code_verifier (ngẫu nhiên)</text>
+<text x="360" y="97" text-anchor="middle" font-size="12" fill="currentColor">challenge = SHA256(verifier)</text>
+</g>
+<g data-step="2">
+<text x="500" y="126" text-anchor="middle" font-size="12" fill="currentColor">/authorize … &amp;code_challenge=hash</text>
+<text x="500" y="142" text-anchor="middle" font-size="12" fill="currentColor">&amp;method=S256</text>
+<line x1="362" y1="150" x2="636" y2="150" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#sec5a-arrow)"/>
+<rect x="560" y="160" width="160" height="28" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="640" y="179" text-anchor="middle" font-size="12" fill="currentColor">lưu challenge</text>
+</g>
+<g data-step="3">
+<text x="500" y="214" text-anchor="middle" font-size="12" fill="currentColor">trả về authorization code (redirect)</text>
+<line x1="638" y1="222" x2="364" y2="222" stroke="#f59e0b" stroke-width="2" marker-end="url(#sec5a-arrow)"/>
+<text x="230" y="246" text-anchor="middle" font-size="12" fill="currentColor">chặn được code</text>
+<line x1="358" y1="254" x2="104" y2="254" stroke="#f43f5e" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#sec5a-arrow)"/>
+</g>
+<g data-step="4">
+<text x="370" y="286" text-anchor="middle" font-size="12" fill="currentColor">/token &amp;code=code, KHÔNG có verifier</text>
+<line x1="102" y1="294" x2="636" y2="294" stroke="#f43f5e" stroke-width="2" marker-end="url(#sec5a-arrow)"/>
+<rect x="548" y="304" width="184" height="28" rx="8" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="640" y="323" text-anchor="middle" font-size="12" fill="currentColor">không có verifier khớp</text>
+<text x="370" y="352" text-anchor="middle" font-size="12" fill="currentColor">từ chối, không cấp token</text>
+<line x1="638" y1="360" x2="104" y2="360" stroke="#f43f5e" stroke-width="2" marker-end="url(#sec5a-arrow)"/>
+<rect x="30" y="370" width="140" height="28" rx="8" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="100" y="389" text-anchor="middle" font-size="12" fill="currentColor">code → vô dụng</text>
+</g>
+<g data-step="5">
+<text x="500" y="418" text-anchor="middle" font-size="12" fill="currentColor">/token &amp;code=code</text>
+<text x="500" y="434" text-anchor="middle" font-size="12" fill="currentColor">&amp;code_verifier=verifier gốc</text>
+<line x1="362" y1="442" x2="636" y2="442" stroke="#8b5cf6" stroke-width="2" marker-end="url(#sec5a-arrow)"/>
+<rect x="540" y="450" width="200" height="44" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="640" y="468" text-anchor="middle" font-size="12" fill="currentColor">hash(verifier) == challenge?</text>
+<text x="640" y="485" text-anchor="middle" font-size="12" fill="currentColor">khớp → cấp token</text>
+</g>
+<g data-step="6">
+<text x="500" y="506" text-anchor="middle" font-size="12" fill="currentColor">access token (+ refresh, id token)</text>
+<line x1="638" y1="514" x2="364" y2="514" stroke="#10b981" stroke-width="2" marker-end="url(#sec5a-arrow)"/>
+</g>
+<text x="380" y="550" text-anchor="middle" font-size="12" opacity="0.8" fill="currentColor">Chỉ challenge (bản hash) đi ra trước; verifier chỉ xuất hiện ở /token,</text>
+<text x="380" y="568" text-anchor="middle" font-size="12" opacity="0.8" fill="currentColor">nên chặn được code ở redirect vẫn không đổi được ra token.</text>
 </svg>
+<step-note data-step="1">Client tự sinh bí mật dùng-một-lần cho riêng lượt đăng nhập này. Verifier nằm yên trong client; thứ đem ra ngoài chỉ là bản hash của nó.</step-note>
+<step-note data-step="2">Request này đi qua trình duyệt nên ai cũng có thể thấy <code>code_challenge</code>. Không sao: SHA-256 là hàm một chiều, có hash không tính ngược ra được verifier.</step-note>
+<step-note data-step="3">Đây là chỗ hở mà PKCE nhắm tới: trên mobile/SPA, app độc hại có thể nhận được redirect và lấy <code>code</code>. Không có PKCE, chừng đó là đủ để đổi ra token.</step-note>
+<step-note data-step="4">Server đòi <code>code_verifier</code> có hash khớp challenge đã lưu cùng code. Kẻ tấn công chỉ có code, không có verifier, nên lượt đổi bị từ chối.</step-note>
+<step-note data-step="5">Client gửi kèm verifier gốc. Server tự hash rồi so: chỉ bên đã sinh verifier ở bước 1 mới qua được phép so này.</step-note>
+<step-note data-step="6">Token chỉ về tay client thật. Bắt chước được code chưa đủ, phải có cả bí mật chưa từng đi qua redirect.</step-note>
+</step-flow>
 
 Các tham số phòng thủ bắt buộc khác:
 
@@ -201,50 +238,74 @@ Access token sống ngắn để giảm thiệt hại nếu bị lộ. Để use
 
 Cơ chế **rotation + reuse detection**:
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Refresh token rotation và reuse detection</title>
-  <desc>Mỗi lần /refresh cấp access token mới và refresh token mới (RT1 đổi thành RT2, RT2 thành RT3) đồng thời vô hiệu token cũ. Nếu một refresh token cũ đã dùng (ví dụ RT1 do bị lộ) lại tái xuất hiện thì server phát hiện reuse và thu hồi toàn bộ token family của user, bắt đăng nhập lại.</desc>
-  <text x="360" y="24" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Rotation + reuse detection</text>
-  <text x="360" y="52" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.85">Luồng bình thường — mỗi refresh xoay token</text>
-  <g>
-    <rect x="36" y="64" width="120" height="48" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="96" y="84" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">RT1</text>
-    <text x="96" y="101" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">family F</text>
-    <rect x="300" y="64" width="120" height="48" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="360" y="84" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">RT2</text>
-    <text x="360" y="101" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">family F</text>
-    <rect x="564" y="64" width="120" height="48" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="624" y="84" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">RT3</text>
-    <text x="624" y="101" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">family F</text>
-    <line x1="156" y1="88" x2="300" y2="88" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ra)"/>
-    <text x="228" y="80" font-size="10" text-anchor="middle" fill="currentColor">/refresh</text>
-    <text x="228" y="126" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">RT1 đánh dấu đã dùng</text>
-    <line x1="420" y1="88" x2="564" y2="88" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ra)"/>
-    <text x="492" y="80" font-size="10" text-anchor="middle" fill="currentColor">/refresh</text>
-    <text x="492" y="126" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">RT2 đánh dấu đã dùng</text>
-  </g>
-  <line x1="16" y1="156" x2="704" y2="156" stroke="currentColor" stroke-opacity="0.18"/>
-  <text x="360" y="184" font-size="12" font-weight="700" text-anchor="middle" fill="#f59e0b" opacity="0.95">Token bị lộ — RT1 (đã dùng) tái xuất hiện</text>
-  <g>
-    <rect x="36" y="200" width="150" height="48" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="111" y="220" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Kẻ tấn công</text>
-    <text x="111" y="237" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">gửi RT1 đã dùng</text>
-    <line x1="186" y1="224" x2="300" y2="224" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ra)"/>
-    <text x="243" y="216" font-size="10" text-anchor="middle" fill="currentColor">/refresh</text>
-    <rect x="300" y="196" width="170" height="56" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
-    <text x="385" y="217" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">RT1.used == true?</text>
-    <text x="385" y="234" font-size="10.5" text-anchor="middle" fill="currentColor">→ phát hiện REUSE</text>
-    <line x1="470" y1="224" x2="540" y2="224" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ra)"/>
-    <rect x="540" y="196" width="160" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
-    <text x="620" y="217" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">revoke family F</text>
-    <text x="620" y="234" font-size="10.5" text-anchor="middle" fill="currentColor">bắt đăng nhập lại</text>
-  </g>
-  <text x="360" y="296" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">RT2, RT3 cùng family F cũng bị thu hồi → cả người dùng thật lẫn kẻ tấn công đều mất quyền.</text>
-  <text x="360" y="320" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">Người dùng thật đăng nhập lại an toàn; việc đánh cắp trở thành phát hiện được.</text>
-  <defs>
-    <marker id="ra" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0 0 L7 3.2 L0 6.4 z" fill="currentColor"/></marker>
-  </defs>
+<step-flow>
+<svg viewBox="0 0 760 600" role="img" aria-labelledby="sec5b-t sec5b-d" style="width:100%;height:auto">
+<title id="sec5b-t">Refresh token rotation và reuse detection</title>
+<desc id="sec5b-d">Sequence ba cột: người dùng thật, server, kẻ tấn công. Đăng nhập cấp RT1 thuộc family F; RT1 bị lộ sang kẻ tấn công. Mỗi lần /refresh, server đánh dấu token cũ đã dùng và cấp access token mới cùng refresh token mới: RT1 đổi thành RT2, RT2 thành RT3, đều family F. Khi RT1 đã dùng tái xuất hiện từ kẻ tấn công, server thấy RT1.used == true, phát hiện reuse và thu hồi toàn bộ family F gồm cả RT2, RT3: cả người dùng thật lẫn kẻ tấn công đều mất quyền, người dùng thật đăng nhập lại.</desc>
+<defs>
+<marker id="sec5b-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker>
+</defs>
+<rect x="30" y="15" width="160" height="32" rx="8" fill="#3b82f6" fill-opacity="0.16"/>
+<text x="110" y="36" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Người dùng thật</text>
+<rect x="315" y="15" width="130" height="32" rx="8" fill="#10b981" fill-opacity="0.16"/>
+<text x="380" y="36" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Server</text>
+<rect x="580" y="15" width="140" height="32" rx="8" fill="#f43f5e" fill-opacity="0.16"/>
+<text x="650" y="36" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Kẻ tấn công</text>
+<line x1="110" y1="47" x2="110" y2="520" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="380" y1="47" x2="380" y2="520" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="650" y1="47" x2="650" y2="520" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 4"/>
+<g data-step="1">
+<text x="245" y="72" text-anchor="middle" font-size="12" fill="currentColor">đăng nhập: access + RT1</text>
+<line x1="378" y1="80" x2="114" y2="80" stroke="#10b981" stroke-width="2" marker-end="url(#sec5b-arrow)"/>
+<rect x="292" y="90" width="176" height="28" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="380" y="109" text-anchor="middle" font-size="12" fill="currentColor">RT1 · family F · chưa dùng</text>
+</g>
+<g data-step="2">
+<text x="380" y="146" text-anchor="middle" font-size="12" fill="currentColor">RT1 bị lộ (kẻ tấn công giữ một bản sao)</text>
+<line x1="112" y1="154" x2="646" y2="154" stroke="#f43f5e" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#sec5b-arrow)"/>
+</g>
+<g data-step="3">
+<text x="245" y="182" text-anchor="middle" font-size="12" fill="currentColor">/refresh RT1</text>
+<line x1="112" y1="190" x2="376" y2="190" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#sec5b-arrow)"/>
+<rect x="292" y="198" width="176" height="28" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="380" y="217" text-anchor="middle" font-size="12" fill="currentColor">RT1 đánh dấu đã dùng</text>
+<text x="245" y="246" text-anchor="middle" font-size="12" fill="currentColor">access mới + RT2 (family F)</text>
+<line x1="378" y1="254" x2="114" y2="254" stroke="#10b981" stroke-width="2" marker-end="url(#sec5b-arrow)"/>
+</g>
+<g data-step="4">
+<text x="245" y="282" text-anchor="middle" font-size="12" fill="currentColor">/refresh RT2</text>
+<line x1="112" y1="290" x2="376" y2="290" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#sec5b-arrow)"/>
+<rect x="292" y="298" width="176" height="28" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="380" y="317" text-anchor="middle" font-size="12" fill="currentColor">RT2 đánh dấu đã dùng</text>
+<text x="245" y="346" text-anchor="middle" font-size="12" fill="currentColor">access mới + RT3 (family F)</text>
+<line x1="378" y1="354" x2="114" y2="354" stroke="#10b981" stroke-width="2" marker-end="url(#sec5b-arrow)"/>
+</g>
+<g data-step="5">
+<text x="515" y="382" text-anchor="middle" font-size="12" fill="currentColor">/refresh RT1 (đã dùng)</text>
+<line x1="648" y1="390" x2="384" y2="390" stroke="#f43f5e" stroke-width="2" marker-end="url(#sec5b-arrow)"/>
+<rect x="285" y="398" width="190" height="44" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="380" y="416" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor">RT1.used == true?</text>
+<text x="380" y="433" text-anchor="middle" font-size="12" fill="currentColor">→ phát hiện REUSE</text>
+</g>
+<g data-step="6">
+<rect x="270" y="452" width="220" height="44" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="380" y="470" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor">revoke family F</text>
+<text x="380" y="487" text-anchor="middle" font-size="12" fill="currentColor">RT1, RT2, RT3 đều chết</text>
+<text x="190" y="504" text-anchor="middle" font-size="12" fill="currentColor">401: đăng nhập lại</text>
+<line x1="268" y1="512" x2="114" y2="512" stroke="#8b5cf6" stroke-width="2" marker-end="url(#sec5b-arrow)"/>
+<text x="570" y="504" text-anchor="middle" font-size="12" fill="currentColor">401</text>
+<line x1="492" y1="512" x2="646" y2="512" stroke="#8b5cf6" stroke-width="2" marker-end="url(#sec5b-arrow)"/>
+</g>
+<text x="380" y="548" text-anchor="middle" font-size="12" opacity="0.85" fill="currentColor">RT2, RT3 cùng family F cũng bị thu hồi → cả người dùng thật lẫn kẻ tấn công đều mất quyền.</text>
+<text x="380" y="570" text-anchor="middle" font-size="12" opacity="0.75" fill="currentColor">Người dùng thật đăng nhập lại an toàn; việc đánh cắp trở thành phát hiện được.</text>
 </svg>
+<step-note data-step="1">Mỗi lần đăng nhập mở một <code>family</code> mới. Mọi refresh token xoay ra từ lần đăng nhập này đều mang chung <code>family_id</code>, để sau này thu hồi được cả chuỗi bằng một lệnh.</step-note>
+<step-note data-step="2">Không ai nhận ra lúc token bị lộ. Không có rotation, bản sao RT1 cứ thế xin access token mới mãi vì refresh token sống dài.</step-note>
+<step-note data-step="3">Mỗi refresh token chỉ tiêu được một lần: server ghi <code>used = True</code> trước khi cấp RT2. Từ giây này, RT1 trong tay bất kỳ ai cũng là token cũ.</step-note>
+<step-note data-step="4">Chuỗi tiếp tục xoay, mỗi mắt xích cũ bị đánh dấu. Người dùng thật luôn cầm token mới nhất, nên với họ không có gì thay đổi.</step-note>
+<step-note data-step="5">Một token đã dùng mà quay lại thì chỉ có thể là có hai bên cùng cầm nó. Server không cần biết bên nào là kẻ gian. Đảo thứ tự cũng vậy: hắn đổi RT1 trước thì người dùng thật gửi RT1 sau sẽ là lần reuse.</step-note>
+<step-note data-step="6">Vì không phân biệt được ai là ai, server khoá cả family qua <code>revoke_family</code>. Token mới nhất trong tay bất kỳ bên nào cũng mất hiệu lực; người dùng thật chỉ phải đăng nhập lại.</step-note>
+</step-flow>
 
 ```python
 # ✓ Pseudocode phía server cho /refresh

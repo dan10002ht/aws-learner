@@ -163,41 +163,51 @@ HTTP thuần là **bưu thiếp** — ai cầm trên đường đều đọc đ�
 
 ### TLS handshake — màn "bắt tay" mức ý tưởng
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Trình tự bắt tay TLS giữa client và server</title>
-  <desc>Client gửi ClientHello; server trả ServerHello kèm certificate; client kiểm tra cert; hai bên trao đổi nguyên liệu tính ra khoá phiên chung; từ đó mọi dữ liệu được mã hoá bằng session key.</desc>
-  <defs>
-    <marker id="tlsArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
-    </marker>
-  </defs>
-  <rect x="40" y="16" width="140" height="38" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="110" y="40" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
-  <rect x="540" y="16" width="140" height="38" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="610" y="40" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Server</text>
-  <g stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4">
-    <line x1="110" y1="54" x2="110" y2="344"/>
-    <line x1="610" y1="54" x2="610" y2="344"/>
-  </g>
-  <g stroke="currentColor" fill="none" stroke-width="1.4" marker-end="url(#tlsArrow)">
-    <line x1="110" y1="82" x2="608" y2="82"/>
-    <line x1="610" y1="128" x2="112" y2="128"/>
-    <line x1="110" y1="220" x2="608" y2="220"/>
-  </g>
-  <text x="120" y="76" font-size="11" fill="currentColor">ClientHello — "tôi hỗ trợ thuật toán A, B, C"</text>
-  <text x="600" y="122" font-size="11" text-anchor="end" fill="currentColor">ServerHello — "chọn B" + certificate</text>
-  <rect x="40" y="142" width="220" height="50" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="52" y="161" font-size="10.5" fill="currentColor">Client kiểm tra cert:</text>
-  <text x="52" y="177" font-size="10.5" fill="currentColor" opacity="0.8">đúng tên miền? CA uy tín ký? còn hạn?</text>
-  <text x="120" y="214" font-size="11" fill="currentColor">Trao đổi "nguyên liệu" tạo khoá</text>
-  <rect x="180" y="238" width="360" height="46" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="360" y="257" font-size="10.5" text-anchor="middle" fill="currentColor">Hai bên cùng tính ra KHOÁ PHIÊN chung</text>
-  <text x="360" y="273" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">mà kẻ nghe lén không tính được</text>
-  <g stroke="#10b981" stroke-width="3" stroke-opacity="0.7">
-    <line x1="110" y1="312" x2="610" y2="312"/>
-  </g>
-  <text x="360" y="334" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Kênh mã hoá: mọi dữ liệu dùng session key</text>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 470" role="img" aria-labelledby="i02b-t i02b-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="i02b-t">Trình tự bắt tay TLS giữa client và server, bấm từng bước</title>
+<desc id="i02b-d">Bước 1: client gửi ClientHello liệt kê thuật toán A, B, C, server trả ServerHello chọn B. Bước 2: server gửi kèm certificate, client kiểm tra đúng tên miền, CA uy tín ký, còn hạn. Bước 3: hai bên trao đổi nguyên liệu tạo khoá và cùng tính ra khoá phiên chung mà kẻ nghe lén không tính được. Bước 4: từ đó mọi dữ liệu đi trong kênh mã hoá bằng session key.</desc>
+<defs>
+<marker id="i02b-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker>
+</defs>
+<rect x="40" y="14" width="140" height="40" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="110" y="39" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
+<rect x="580" y="14" width="140" height="40" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="650" y="39" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Server</text>
+<g stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4">
+<line x1="110" y1="54" x2="110" y2="456"/>
+<line x1="650" y1="54" x2="650" y2="456"/>
+</g>
+<g data-step="1">
+<text x="120" y="88" font-size="14" fill="currentColor">1  ClientHello: "tôi hỗ trợ thuật toán A, B, C"</text>
+<line x1="110" y1="98" x2="648" y2="98" stroke="currentColor" stroke-width="1.5" marker-end="url(#i02b-arrow)"/>
+<text x="640" y="132" font-size="14" text-anchor="end" fill="currentColor">ServerHello: "chọn B"</text>
+<line x1="650" y1="142" x2="112" y2="142" stroke="currentColor" stroke-width="1.5" marker-end="url(#i02b-arrow)"/>
+</g>
+<g data-step="2">
+<text x="640" y="176" font-size="14" text-anchor="end" fill="currentColor">2  certificate (gửi kèm ServerHello)</text>
+<line x1="650" y1="186" x2="112" y2="186" stroke="#f59e0b" stroke-width="2" marker-end="url(#i02b-arrow)"/>
+<rect x="40" y="200" width="360" height="56" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
+<text x="54" y="222" font-size="14" font-weight="700" fill="currentColor">Client kiểm tra cert:</text>
+<text x="54" y="244" font-size="14" fill="currentColor" opacity="0.85">đúng tên miền? CA uy tín ký? còn hạn?</text>
+</g>
+<g data-step="3">
+<text x="120" y="290" font-size="14" fill="currentColor">3  Trao đổi "nguyên liệu" tạo khoá</text>
+<line x1="110" y1="300" x2="648" y2="300" stroke="#8b5cf6" stroke-width="2" marker-end="url(#i02b-arrow)" marker-start="url(#i02b-arrow)"/>
+<rect x="190" y="316" width="380" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+<text x="380" y="338" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Hai bên cùng tính ra KHOÁ PHIÊN chung</text>
+<text x="380" y="360" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.85">mà kẻ nghe lén không tính được</text>
+</g>
+<g data-step="4">
+<line x1="110" y1="404" x2="650" y2="404" stroke="#10b981" stroke-width="4" stroke-opacity="0.75"/>
+<text x="380" y="432" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">4  Kênh mã hoá: mọi dữ liệu dùng session key</text>
+</g>
 </svg>
+<step-note data-step="1">Hai bên phải nói chung một "thứ tiếng" mã hoá trước đã: client kể hết thuật toán mình biết, server chọn một cái cả hai cùng hỗ trợ.</step-note>
+<step-note data-step="2">Đây là bài toán <b>xác thực</b>: mã hoá hoàn hảo cũng vô nghĩa nếu đầu bên kia là kẻ giả danh. Cert do một CA uy tín ký chứng minh server đúng là <code>bank.com</code> thật; sai tên, sai chữ ký hay hết hạn là client dừng ngay.</step-note>
+<step-note data-step="3">Chặng này dùng mã hoá <b>bất đối xứng</b> (chậm, như két sắt nặng nề): kẻ nghe lén thấy hết các gói đi qua nhưng vẫn không tự tính ra được khoá phiên.</step-note>
+<step-note data-step="4">Khoá phiên là khoá <b>đối xứng</b> (nhanh, như chìa khoá nhà), dùng cho toàn bộ dữ liệu sau đó: kẻ nghe lén chỉ thấy nhiễu, và dữ liệu bị sửa giữa đường sẽ bị phát hiện.</step-note>
+</step-flow>
 
 Điểm tinh tế đáng nhớ: TLS dùng mã hoá **bất đối xứng** (chậm, dùng để bắt tay an toàn và xác thực) để thống nhất một **khoá đối xứng** (nhanh, dùng cho toàn bộ dữ liệu sau đó). Giống như dùng két sắt nặng nề chỉ để trao nhau chiếc chìa khoá nhà, rồi sau đó ra vào bằng chìa cho nhanh.
 

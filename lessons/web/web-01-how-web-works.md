@@ -67,45 +67,70 @@ https://shop.example.com:443/products/ao-thun?size=M#reviews
 
 Khi bạn nhấn Enter trên một URL, đây là chuỗi sự kiện:
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Sơ đồ tuần tự 6 bước: từ URL tới khi browser render trang</title>
-  <desc>Thời gian đi xuống. Browser bên trái, DNS và Server bên phải. Sáu bước: DNS lookup, mở kết nối, gửi HTTP request, server xử lý và truy vấn database, trả HTTP response, browser render.</desc>
-  <defs>
-    <marker id="sq-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
-    </marker>
-  </defs>
-  <text x="120" y="26" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Browser (client)</text>
-  <text x="600" y="26" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">DNS / Server</text>
-  <g stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 5">
-    <line x1="120" y1="38" x2="120" y2="448"/>
-    <line x1="600" y1="38" x2="600" y2="448"/>
-  </g>
-  <g stroke="currentColor" fill="none" stroke-width="2">
-    <path d="M124 80 L596 80" marker-end="url(#sq-arrow)"/>
-    <path d="M596 118 L124 118" stroke-opacity="0.55" stroke-dasharray="6 5" marker-end="url(#sq-arrow)"/>
-    <path d="M124 168 L596 168" marker-end="url(#sq-arrow)"/>
-    <path d="M124 226 L596 226" marker-end="url(#sq-arrow)"/>
-    <path d="M596 350 L124 350" stroke-opacity="0.55" stroke-dasharray="6 5" marker-end="url(#sq-arrow)"/>
-  </g>
-  <g font-size="12" fill="currentColor">
-    <text x="360" y="73" font-weight="700" text-anchor="middle">① DNS lookup: "example.com là IP nào?"</text>
-    <text x="360" y="111" text-anchor="middle" opacity="0.8">→ trả về 93.184.216.34</text>
-    <text x="360" y="161" font-weight="700" text-anchor="middle">② Mở kết nối (port 443 cho https)</text>
-    <text x="360" y="219" font-weight="700" text-anchor="middle">③ Gửi HTTP request — GET /products/ao-thun</text>
-  </g>
-  <rect x="486" y="252" width="228" height="78" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="600" y="278" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">④ Server xử lý</text>
-  <text x="600" y="298" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">đọc request · truy vấn DB</text>
-  <text x="600" y="316" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">tạo nội dung trả về</text>
-  <text x="360" y="343" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">⑤ Trả HTTP response — 200 OK + body (HTML)</text>
-  <rect x="22" y="378" width="196" height="74" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="120" y="404" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">⑥ Browser render</text>
-  <text x="120" y="424" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">đọc HTML, vẽ ra</text>
-  <text x="120" y="441" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">màn hình</text>
+<step-flow>
+<svg viewBox="0 0 760 500" role="img" aria-labelledby="w01b-t w01b-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="w01b-t">Sáu bước từ lúc nhấn Enter tới khi trang hiện ra</title>
+<desc id="w01b-d">Sơ đồ tuần tự, thời gian đi xuống, giữa Browser, DNS, Server và Database. Bước 1: browser hỏi DNS shop.example.com là IP nào, DNS trả về 93.184.216.34. Bước 2: mở kết nối tới server, port 443 cho https. Bước 3: gửi HTTP request GET /products/ao-thun. Bước 4: server đọc request, truy vấn database, tạo nội dung trả về. Bước 5: server trả HTTP response 200 OK kèm body HTML. Bước 6: browser đọc HTML và vẽ ra màn hình.</desc>
+<defs><marker id="w01b-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<rect x="28" y="14" width="124" height="34" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="90" y="36" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">Browser</text>
+<rect x="258" y="14" width="124" height="34" rx="8" fill="#14b8a6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="320" y="36" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">DNS</text>
+<rect x="458" y="14" width="124" height="34" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="520" y="36" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">Server</text>
+<rect x="618" y="14" width="124" height="34" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="680" y="36" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">Database</text>
+<g stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 5">
+<line x1="90" y1="48" x2="90" y2="404"/>
+<line x1="320" y1="48" x2="320" y2="142"/>
+<line x1="520" y1="48" x2="520" y2="238"/>
+<line x1="520" y1="350" x2="520" y2="488"/>
+<line x1="680" y1="48" x2="680" y2="238"/>
+<line x1="680" y1="350" x2="680" y2="488"/>
+</g>
+<g data-step="1">
+<text x="205" y="84" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">① shop.example.com là IP nào?</text>
+<line x1="93" y1="94" x2="317" y2="94" stroke="currentColor" stroke-width="2" marker-end="url(#w01b-arrow)"/>
+<text x="205" y="120" text-anchor="middle" font-size="13" fill="currentColor">93.184.216.34</text>
+<line x1="317" y1="130" x2="93" y2="130" stroke="currentColor" stroke-width="2" stroke-opacity="0.6" stroke-dasharray="6 5" marker-end="url(#w01b-arrow)"/>
+</g>
+<g data-step="2">
+<text x="305" y="166" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">② Mở kết nối tới 93.184.216.34 (port 443 cho https)</text>
+<line x1="93" y1="176" x2="517" y2="176" stroke="currentColor" stroke-width="2" marker-end="url(#w01b-arrow)"/>
+</g>
+<g data-step="3">
+<text x="305" y="208" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">③ HTTP request: GET /products/ao-thun</text>
+<line x1="93" y1="218" x2="517" y2="218" stroke="currentColor" stroke-width="2" marker-end="url(#w01b-arrow)"/>
+</g>
+<g data-step="4">
+<rect x="440" y="238" width="310" height="112" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="452" y="258" font-size="13" font-weight="700" fill="currentColor">④ Server xử lý</text>
+<text x="600" y="280" text-anchor="middle" font-size="13" fill="currentColor">truy vấn DB</text>
+<line x1="523" y1="289" x2="677" y2="289" stroke="currentColor" stroke-width="2" marker-end="url(#w01b-arrow)"/>
+<text x="600" y="308" text-anchor="middle" font-size="13" fill="currentColor">dữ liệu</text>
+<line x1="677" y1="316" x2="523" y2="316" stroke="currentColor" stroke-width="2" stroke-opacity="0.6" stroke-dasharray="6 5" marker-end="url(#w01b-arrow)"/>
+<text x="595" y="340" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">đọc request · tạo nội dung trả về</text>
+</g>
+<g data-step="5">
+<text x="305" y="380" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">⑤ HTTP response: 200 OK + body (HTML)</text>
+<line x1="517" y1="390" x2="93" y2="390" stroke="currentColor" stroke-width="2" stroke-opacity="0.6" stroke-dasharray="6 5" marker-end="url(#w01b-arrow)"/>
+</g>
+<g data-step="6">
+<rect x="14" y="408" width="210" height="72" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="119" y="432" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">⑥ Browser render</text>
+<text x="119" y="454" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">đọc HTML, vẽ ra</text>
+<text x="119" y="472" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">màn hình</text>
+</g>
 </svg>
+<step-note data-step="1">Máy tính tìm nhau bằng số IP, còn tên miền chỉ để con người dễ nhớ. Nên việc đầu tiên là tra "danh bạ" DNS để đổi tên ra số.</step-note>
+<step-note data-step="2">Có địa chỉ rồi thì phải "nhấc máy gọi" trước khi nói chuyện. Địa chỉ bắt đầu bằng <code>https</code> nên mặc định gọi vào port 443.</step-note>
+<step-note data-step="3">Request là một mẩu văn bản nói rõ "tôi muốn gì": <code>GET</code> nghĩa là "cho tôi xem", theo sau là đường dẫn tới đúng trang.</step-note>
+<step-note data-step="4">Trang thường chưa làm sẵn: server phải đọc yêu cầu, lấy dữ liệu cần thiết (có thể từ database) rồi mới ghép thành nội dung gửi về.</step-note>
+<step-note data-step="5"><code>200 OK</code> báo "thành công". Phần body phía sau mới là nội dung thật mà bạn sẽ thấy, thường là HTML.</step-note>
+<step-note data-step="6">HTML chỉ là chữ; browser phải đọc rồi vẽ thành trang. Trang đó lại kéo thêm ảnh, CSS, JS, mỗi thứ là một request riêng.</step-note>
+</step-flow>
 
-1. **Phân giải tên miền (DNS lookup).** Browser hỏi hệ thống **DNS** (Domain Name System — như "danh bạ điện thoại của Internet"): `example.com` ứng với địa chỉ **IP** nào? DNS trả về ví dụ `93.184.216.34`. Máy tính giao tiếp bằng số IP, con người dùng tên cho dễ nhớ.
+1. **Phân giải tên miền (DNS lookup).** Browser hỏi hệ thống **DNS** (Domain Name System — như "danh bạ điện thoại của Internet"): `shop.example.com` ứng với địa chỉ **IP** nào? DNS trả về ví dụ `93.184.216.34`. Máy tính giao tiếp bằng số IP, con người dùng tên cho dễ nhớ.
 
 2. **Mở kết nối.** Browser kết nối tới server tại IP đó (qua port, mặc định 443 cho https).
 
