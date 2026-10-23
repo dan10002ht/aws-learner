@@ -43,24 +43,77 @@ Bỏ bất kỳ điều kiện nào cũng thay đổi bức tranh MEV — đây 
 
 **Sandwich attack** — cơ chế chi tiết: nạn nhân gửi lệnh `swapExactTokensForTokens` mua token X với `amountOutMin` (dung sai slippage) lỏng lẻo. Searcher thấy trong mempool và:
 
-<svg viewBox="0 0 720 250" role="img" aria-labelledby="sw-t sw-d" style="width:100%;max-width:680px;height:auto;display:block;margin:1.25rem auto">
-<title id="sw-t">Sandwich attack trong một block</title>
-<desc id="sw-d">Ba giao dịch được sắp xếp: front-run mua trước, giao dịch nạn nhân ở giữa, back-run bán ra sau</desc>
-<rect x="30" y="90" width="180" height="70" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="120" y="118" text-anchor="middle" font-size="13" fill="currentColor">1. Front-run</text>
-<text x="120" y="138" text-anchor="middle" font-size="11" fill="currentColor">searcher MUA X → đẩy giá lên</text>
-<rect x="270" y="90" width="180" height="70" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="360" y="118" text-anchor="middle" font-size="13" fill="currentColor">2. Victim swap</text>
-<text x="360" y="138" text-anchor="middle" font-size="11" fill="currentColor">mua X ở giá đã bị đẩy cao</text>
-<rect x="510" y="90" width="180" height="70" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="600" y="118" text-anchor="middle" font-size="13" fill="currentColor">3. Back-run</text>
-<text x="600" y="138" text-anchor="middle" font-size="11" fill="currentColor">searcher BÁN X → chốt lời</text>
-<line x1="210" y1="125" x2="268" y2="125" stroke="currentColor" stroke-width="1.5" marker-end="url(#sah)"/>
-<line x1="450" y1="125" x2="508" y2="125" stroke="currentColor" stroke-width="1.5" marker-end="url(#sah)"/>
-<text x="360" y="40" text-anchor="middle" font-size="13" fill="currentColor">Cùng 1 block — searcher kiểm soát thứ tự 1→2→3</text>
-<text x="360" y="205" text-anchor="middle" font-size="11" fill="currentColor">Lợi nhuận searcher = slippage bị ép thêm của nạn nhân (giá trị bị rút ra)</text>
-<defs><marker id="sah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<step-flow>
+<svg viewBox="0 0 760 470" role="img" aria-labelledby="bc42a-t bc42a-d" style="width:100%;height:auto">
+<title id="bc42a-t">Sandwich attack trong một block: pool đổi qua từng giao dịch</title>
+<desc id="bc42a-d">Pool AMM x nhân y bằng k, ban đầu 100 ETH và 100 X, giá 1 ETH mỗi X. Searcher front-run mua X bằng 10 ETH đẩy giá lên 1.21, nạn nhân swap 10 ETH chỉ nhận 7.576 X thay vì 9.091 X, searcher back-run bán 9.091 X nhận 11.803 ETH, lời 1.803 ETH. Đặt amountOutMin 9.045 X thì giao dịch nạn nhân revert.</desc>
+<defs><marker id="bc42a-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="380" y="22" text-anchor="middle" font-size="14" fill="currentColor">Cùng 1 block — searcher kiểm soát thứ tự 1→2→3</text>
+<text x="12" y="140" font-size="12" fill="currentColor" opacity="0.75">POOL (x · y = k = 10 000)</text>
+<g data-step="1">
+<rect x="12" y="36" width="165" height="80" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
+<text x="94.5" y="58" text-anchor="middle" font-size="14" fill="currentColor">0. Mempool</text>
+<text x="94.5" y="80" text-anchor="middle" font-size="13" fill="currentColor">nạn nhân: 10 ETH → X</text>
+<text x="94.5" y="100" text-anchor="middle" font-size="13" fill="currentColor">amountOutMin lỏng</text>
+<rect x="12" y="148" width="165" height="96" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.6"/>
+<text x="94.5" y="172" text-anchor="middle" font-size="13" fill="currentColor">100 ETH</text>
+<text x="94.5" y="194" text-anchor="middle" font-size="13" fill="currentColor">100 X</text>
+<text x="94.5" y="226" text-anchor="middle" font-size="15" fill="currentColor">giá 1.00 ETH/X</text>
+<text x="94.5" y="272" text-anchor="middle" font-size="13" fill="currentColor">nếu không bị kẹp:</text>
+<text x="94.5" y="292" text-anchor="middle" font-size="13" fill="currentColor">nhận 9.091 X</text>
+</g>
+<g data-step="2">
+<line x1="178" y1="76" x2="201" y2="76" stroke="currentColor" stroke-width="1.5" marker-end="url(#bc42a-arr)"/>
+<rect x="202" y="36" width="165" height="80" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
+<text x="284.5" y="58" text-anchor="middle" font-size="14" fill="currentColor">1. Front-run</text>
+<text x="284.5" y="80" text-anchor="middle" font-size="13" fill="currentColor">searcher MUA X</text>
+<text x="284.5" y="100" text-anchor="middle" font-size="13" fill="currentColor">bằng 10 ETH → đẩy giá</text>
+<rect x="202" y="148" width="165" height="96" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.6"/>
+<text x="284.5" y="172" text-anchor="middle" font-size="13" fill="currentColor">110 ETH</text>
+<text x="284.5" y="194" text-anchor="middle" font-size="13" fill="currentColor">90.909 X</text>
+<text x="284.5" y="226" text-anchor="middle" font-size="15" fill="currentColor" font-weight="700">giá 1.21 ETH/X</text>
+<text x="284.5" y="272" text-anchor="middle" font-size="13" fill="currentColor">searcher nhận 9.091 X</text>
+</g>
+<g data-step="3">
+<line x1="368" y1="76" x2="391" y2="76" stroke="currentColor" stroke-width="1.5" marker-end="url(#bc42a-arr)"/>
+<rect x="392" y="36" width="165" height="80" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
+<text x="474.5" y="58" text-anchor="middle" font-size="14" fill="currentColor">2. Nạn nhân swap</text>
+<text x="474.5" y="80" text-anchor="middle" font-size="13" fill="currentColor">10 ETH → X ở giá</text>
+<text x="474.5" y="100" text-anchor="middle" font-size="13" fill="currentColor">đã bị đẩy cao</text>
+<rect x="392" y="148" width="165" height="96" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.6"/>
+<text x="474.5" y="172" text-anchor="middle" font-size="13" fill="currentColor">120 ETH</text>
+<text x="474.5" y="194" text-anchor="middle" font-size="13" fill="currentColor">83.333 X</text>
+<text x="474.5" y="226" text-anchor="middle" font-size="15" fill="currentColor" font-weight="700">giá 1.44 ETH/X</text>
+<text x="474.5" y="272" text-anchor="middle" font-size="13" fill="currentColor">nhận 7.576 X</text>
+<text x="474.5" y="292" text-anchor="middle" font-size="13" fill="currentColor">hụt 1.515 X (−16.7%)</text>
+</g>
+<g data-step="4">
+<line x1="558" y1="76" x2="581" y2="76" stroke="currentColor" stroke-width="1.5" marker-end="url(#bc42a-arr)"/>
+<rect x="582" y="36" width="165" height="80" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
+<text x="664.5" y="58" text-anchor="middle" font-size="14" fill="currentColor">3. Back-run</text>
+<text x="664.5" y="80" text-anchor="middle" font-size="13" fill="currentColor">searcher BÁN 9.091 X</text>
+<text x="664.5" y="100" text-anchor="middle" font-size="13" fill="currentColor">→ chốt lời</text>
+<rect x="582" y="148" width="165" height="96" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.6"/>
+<text x="664.5" y="172" text-anchor="middle" font-size="13" fill="currentColor">108.197 ETH</text>
+<text x="664.5" y="194" text-anchor="middle" font-size="13" fill="currentColor">92.424 X</text>
+<text x="664.5" y="226" text-anchor="middle" font-size="15" fill="currentColor">giá 1.17 ETH/X</text>
+<text x="664.5" y="272" text-anchor="middle" font-size="13" fill="currentColor">nhận 11.803 ETH</text>
+<text x="664.5" y="292" text-anchor="middle" font-size="13" fill="currentColor">lời 1.803 ETH</text>
+</g>
+<g data-step="5">
+<rect x="12" y="324" width="736" height="70" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor"/>
+<text x="380" y="352" text-anchor="middle" font-size="14" fill="currentColor">Lá chắn: amountOutMin = 9.091 × 99.5% = 9.045 X (trượt tối đa 0.5%)</text>
+<text x="380" y="376" text-anchor="middle" font-size="14" fill="currentColor">Bước 2 chỉ ra 7.576 X &lt; 9.045 X → giao dịch nạn nhân REVERT, không bị ăn</text>
+</g>
+<text x="380" y="422" text-anchor="middle" font-size="13" fill="currentColor">Lợi nhuận searcher = slippage bị ép thêm của nạn nhân (giá trị bị rút ra)</text>
+<text x="380" y="446" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.75">Số minh hoạ: bỏ qua phí swap 0.3%, gas và tip cho builder</text>
 </svg>
+<step-note data-step="1">Swap của nạn nhân nằm công khai trong mempool. Với pool <code>100 ETH / 100 X</code>, 10 ETH lẽ ra đổi được <code>100 − 10 000/110 = 9.091 X</code>; <code>amountOutMin</code> lỏng nghĩa là nhận ít hơn nhiều vẫn chấp nhận.</step-note>
+<step-note data-step="2">Searcher chen lên trước, mua X bằng 10 ETH: pool còn <code>10 000/110 = 90.909 X</code>. X trong pool ít đi nên giá X tăng 21% trước khi nạn nhân kịp chạy.</step-note>
+<step-note data-step="3">Cùng 10 ETH nhưng pool đã lệch: nạn nhân nhận <code>90.909 − 10 000/120 = 7.576 X</code>. Phần hụt 1.515 X là slippage bị ép thêm, và giá bị đẩy tiếp lên 1.44.</step-note>
+<step-note data-step="4">Searcher bán đúng số X vừa mua vào pool đã bị nạn nhân đẩy giá: <code>120 − 10 000/92.424 = 11.803 ETH</code>. Bỏ 10 ETH, thu 11.803 ETH, chênh 1.803 ETH chính là giá trị rút từ nạn nhân.</step-note>
+<step-note data-step="5">Đặt <code>amountOutMin</code> sát kỳ vọng thì front-run đẩy giá vượt ngưỡng sẽ làm swap nạn nhân revert, searcher không có gì để chốt lời.</step-note>
+</step-flow>
 
 Đặt `amountOutMin` sát (slippage thấp, ví dụ 0.5%) là lá chắn cơ bản: nếu searcher đẩy giá vượt ngưỡng, giao dịch nạn nhân **revert** thay vì bị ăn.
 

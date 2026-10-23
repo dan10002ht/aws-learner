@@ -29,30 +29,76 @@ Không có biến, không con trỏ, không vòng lặp (`OP_*` không có nhả
 
 Ví dụ một câu đố cộng số: `2 3 OP_ADD 5 OP_EQUAL`
 
-<svg viewBox="0 0 720 250" role="img" aria-labelledby="st-t st-d" style="width:100%;max-width:700px;height:auto;display:block;margin:1.25rem auto">
-<title id="st-t">Thực thi script trên stack</title>
-<desc id="st-d">Bốn bước thực thi 2 3 OP_ADD 5 OP_EQUAL, mỗi bước hiển thị trạng thái ngăn xếp</desc>
-<text x="70" y="24" text-anchor="middle" font-size="12" fill="currentColor">push 2</text>
-<rect x="30" y="150" width="80" height="34" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="70" y="172" text-anchor="middle" font-size="13" fill="currentColor">2</text>
-<text x="210" y="24" text-anchor="middle" font-size="12" fill="currentColor">push 3</text>
-<rect x="170" y="150" width="80" height="34" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="210" y="172" text-anchor="middle" font-size="13" fill="currentColor">2</text>
-<rect x="170" y="112" width="80" height="34" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="210" y="134" text-anchor="middle" font-size="13" fill="currentColor">3</text>
-<text x="360" y="24" text-anchor="middle" font-size="12" fill="currentColor">OP_ADD</text>
-<rect x="320" y="150" width="80" height="34" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="360" y="172" text-anchor="middle" font-size="13" fill="currentColor">5</text>
-<text x="510" y="24" text-anchor="middle" font-size="12" fill="currentColor">push 5</text>
-<rect x="470" y="150" width="80" height="34" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="510" y="172" text-anchor="middle" font-size="13" fill="currentColor">5</text>
-<rect x="470" y="112" width="80" height="34" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="510" y="134" text-anchor="middle" font-size="13" fill="currentColor">5</text>
-<text x="650" y="24" text-anchor="middle" font-size="12" fill="currentColor">OP_EQUAL</text>
-<rect x="610" y="150" width="80" height="34" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="650" y="172" text-anchor="middle" font-size="13" fill="currentColor">TRUE</text>
-<text x="360" y="230" text-anchor="middle" font-size="11" fill="currentColor">Kết thúc: đỉnh stack là TRUE → script hợp lệ, coin được tiêu</text>
+<step-flow>
+<svg viewBox="0 0 760 345" role="img" aria-labelledby="bc12a-t bc12a-d" style="width:100%;height:auto">
+<title id="bc12a-t">Thực thi script trên stack</title>
+<desc id="bc12a-d">Script 2 3 OP_ADD 5 OP_EQUAL chạy từ trái sang phải, năm bước: push 2, push 3, OP_ADD lấy 3 và 2 rồi đẩy 5, push 5, OP_EQUAL lấy hai số 5 rồi đẩy TRUE. Kết thúc đỉnh stack là TRUE nên script hợp lệ.</desc>
+<defs><marker id="bc12a-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="20" y="22" font-size="13" fill="currentColor" opacity="0.8">Script (đọc trái → phải, một lần, không quay lại)</text>
+<rect x="20" y="34" width="120" height="36" rx="6" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor"/>
+<text x="80" y="57" text-anchor="middle" font-size="14" font-family="ui-monospace,monospace" fill="currentColor">2</text>
+<rect x="170" y="34" width="120" height="36" rx="6" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor"/>
+<text x="230" y="57" text-anchor="middle" font-size="14" font-family="ui-monospace,monospace" fill="currentColor">3</text>
+<rect x="320" y="34" width="120" height="36" rx="6" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor"/>
+<text x="380" y="57" text-anchor="middle" font-size="14" font-family="ui-monospace,monospace" fill="currentColor">OP_ADD</text>
+<rect x="470" y="34" width="120" height="36" rx="6" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor"/>
+<text x="530" y="57" text-anchor="middle" font-size="14" font-family="ui-monospace,monospace" fill="currentColor">5</text>
+<rect x="620" y="34" width="120" height="36" rx="6" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor"/>
+<text x="680" y="57" text-anchor="middle" font-size="14" font-family="ui-monospace,monospace" fill="currentColor">OP_EQUAL</text>
+<rect x="20" y="85" width="12" height="12" fill="#3b82f6" fill-opacity="0.5"/><text x="38" y="96" font-size="13" fill="currentColor" opacity="0.8">dữ liệu: đẩy lên</text>
+<rect x="170" y="85" width="12" height="12" fill="#8b5cf6" fill-opacity="0.5"/><text x="188" y="96" font-size="13" fill="currentColor" opacity="0.8">opcode: lấy ra, tính, đẩy kết quả</text>
+<g data-step="1">
+<line x1="80" y1="104" x2="80" y2="126" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#bc12a-arr)"/>
+<text x="80" y="146" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">push 2</text>
+<rect x="30" y="246" width="100" height="34" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor"/>
+<text x="80" y="268" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+<line x1="22" y1="284" x2="138" y2="284" stroke="currentColor" stroke-width="2"/>
+</g>
+<g data-step="2">
+<line x1="230" y1="104" x2="230" y2="126" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#bc12a-arr)"/>
+<text x="230" y="146" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">push 3</text>
+<rect x="180" y="246" width="100" height="34" rx="5" fill="#3b82f6" fill-opacity="0.07" stroke="currentColor"/>
+<text x="230" y="268" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+<rect x="180" y="208" width="100" height="34" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor"/>
+<text x="230" y="230" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+<line x1="172" y1="284" x2="288" y2="284" stroke="currentColor" stroke-width="2"/>
+</g>
+<g data-step="3">
+<line x1="380" y1="104" x2="380" y2="126" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#bc12a-arr)"/>
+<text x="380" y="146" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">OP_ADD</text>
+<text x="380" y="164" text-anchor="middle" font-size="13" fill="currentColor">lấy 3, lấy 2</text>
+<text x="380" y="182" text-anchor="middle" font-size="13" fill="currentColor">đẩy 2+3 = 5</text>
+<rect x="330" y="246" width="100" height="34" rx="5" fill="#10b981" fill-opacity="0.16" stroke="currentColor"/>
+<text x="380" y="268" text-anchor="middle" font-size="14" fill="currentColor">5</text>
+<line x1="322" y1="284" x2="438" y2="284" stroke="currentColor" stroke-width="2"/>
+</g>
+<g data-step="4">
+<line x1="530" y1="104" x2="530" y2="126" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#bc12a-arr)"/>
+<text x="530" y="146" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">push 5</text>
+<rect x="480" y="246" width="100" height="34" rx="5" fill="#3b82f6" fill-opacity="0.07" stroke="currentColor"/>
+<text x="530" y="268" text-anchor="middle" font-size="14" fill="currentColor">5</text>
+<rect x="480" y="208" width="100" height="34" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor"/>
+<text x="530" y="230" text-anchor="middle" font-size="14" fill="currentColor">5</text>
+<line x1="472" y1="284" x2="588" y2="284" stroke="currentColor" stroke-width="2"/>
+</g>
+<g data-step="5">
+<line x1="680" y1="104" x2="680" y2="126" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#bc12a-arr)"/>
+<text x="680" y="146" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">OP_EQUAL</text>
+<text x="680" y="164" text-anchor="middle" font-size="13" fill="currentColor">lấy 5, lấy 5</text>
+<text x="680" y="182" text-anchor="middle" font-size="13" fill="currentColor">bằng nhau → TRUE</text>
+<rect x="630" y="246" width="100" height="34" rx="5" fill="#10b981" fill-opacity="0.16" stroke="currentColor"/>
+<text x="680" y="268" text-anchor="middle" font-size="14" fill="currentColor">TRUE</text>
+<line x1="622" y1="284" x2="738" y2="284" stroke="currentColor" stroke-width="2"/>
+<text x="380" y="330" text-anchor="middle" font-size="14" fill="currentColor">Kết thúc: đỉnh stack là TRUE → script hợp lệ, coin được tiêu</text>
+</g>
+<text x="20" y="304" font-size="12" fill="currentColor" opacity="0.7">đáy stack</text>
 </svg>
+<step-note data-step="1">Phần tử <code>2</code> là dữ liệu: máy chỉ đẩy nó lên đỉnh, không tính gì.</step-note>
+<step-note data-step="2"><code>3</code> nằm trên <code>2</code>. Máy chỉ chạm được đỉnh, nên phép tính kế tiếp sẽ lấy <code>3</code> ra trước.</step-note>
+<step-note data-step="3"><code>OP_ADD</code> không có tham số: toán hạng của nó chính là hai phần tử trên cùng của stack. Lấy ra hai, đẩy lại một, stack thấp đi một tầng.</step-note>
+<step-note data-step="4">Số <code>5</code> trong script là đáp án của câu đố, đẩy lên cạnh kết quả vừa tính.</step-note>
+<step-note data-step="5"><code>OP_EQUAL</code> so hai phần tử trên cùng. Script hết, đỉnh khác 0 nên hợp lệ; nếu lúc đầu đẩy <code>4</code> thay cho <code>3</code> thì đỉnh là FALSE và coin không tiêu được.</step-note>
+</step-flow>
 
 ### 2.3 Vì sao KHÔNG Turing-complete — và đó là điểm mạnh
 

@@ -77,31 +77,68 @@ Câu trả lời là **HTLC — Hashed Timelock Contract**: một output có đi
 - **Nhánh hash (thành công):** ai xuất trình được **preimage** `R` sao cho `SHA256(R) = H` thì nhận tiền.
 - **Nhánh timelock (hoàn tiền):** nếu sau thời hạn `T` không ai xuất trình `R`, người gửi được hoàn tiền.
 
-<svg viewBox="0 0 720 300" role="img" aria-labelledby="ht-t ht-d" style="width:100%;max-width:700px;height:auto;display:block;margin:1.25rem auto">
-<title id="ht-t">Định tuyến đa hop bằng HTLC</title>
-<desc id="ht-d">Dave tạo bí mật R và hash H, gửi H ngược về Alice; HTLC được khóa dọc tuyến bằng H; preimage R lan ngược từ Dave về Alice để giải tiền từng chặng</desc>
-<rect x="20" y="120" width="110" height="55" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="75" y="152" text-anchor="middle" font-size="13" fill="currentColor">Alice</text>
-<rect x="215" y="120" width="110" height="55" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="270" y="152" text-anchor="middle" font-size="13" fill="currentColor">Bob</text>
-<rect x="410" y="120" width="110" height="55" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="465" y="152" text-anchor="middle" font-size="13" fill="currentColor">Carol</text>
-<rect x="600" y="120" width="110" height="55" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="655" y="150" text-anchor="middle" font-size="13" fill="currentColor">Dave</text>
-<text x="655" y="166" text-anchor="middle" font-size="10" fill="currentColor">tạo R, H=SHA256(R)</text>
-<line x1="130" y1="140" x2="213" y2="140" stroke="currentColor" stroke-width="1.5" marker-end="url(#a2)"/>
-<line x1="325" y1="140" x2="408" y2="140" stroke="currentColor" stroke-width="1.5" marker-end="url(#a2)"/>
-<line x1="520" y1="140" x2="598" y2="140" stroke="currentColor" stroke-width="1.5" marker-end="url(#a2)"/>
-<text x="172" y="132" text-anchor="middle" font-size="10" fill="currentColor">HTLC(H)</text>
-<text x="367" y="132" text-anchor="middle" font-size="10" fill="currentColor">HTLC(H)</text>
-<text x="559" y="132" text-anchor="middle" font-size="10" fill="currentColor">HTLC(H)</text>
-<line x1="598" y1="200" x2="520" y2="200" stroke="#10b981" stroke-width="2" marker-end="url(#a3)"/>
-<line x1="408" y1="200" x2="325" y2="200" stroke="#10b981" stroke-width="2" marker-end="url(#a3)"/>
-<line x1="213" y1="200" x2="130" y2="200" stroke="#10b981" stroke-width="2" marker-end="url(#a3)"/>
-<text x="367" y="222" text-anchor="middle" font-size="11" fill="#10b981">preimage R lan NGƯỢC, giải tiền từng chặng</text>
-<text x="360" y="255" text-anchor="middle" font-size="11" fill="currentColor">Timelock giảm dần dọc tuyến (Alice&gt;Bob&gt;Carol&gt;Dave) để mỗi node có thời gian claim an toàn</text>
-<defs><marker id="a2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker><marker id="a3" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#10b981"/></marker></defs>
+<step-flow>
+<svg viewBox="0 0 760 360" role="img" aria-labelledby="bc13b-t bc13b-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc13b-t">Định tuyến đa hop bằng HTLC, từng bước</title>
+<desc id="bc13b-d">Dave tạo bí mật R và hash H, gửi invoice chứa H về Alice. HTLC khóa bằng cùng H được lập xuôi Alice tới Bob tới Carol tới Dave với timelock giảm dần T1 lớn hơn T2 lớn hơn T3. Sau đó Dave lộ preimage R cho Carol, R lan ngược Carol tới Bob tới Alice, giải tiền từng chặng.</desc>
+<defs><marker id="bc13b-ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker><marker id="bc13b-ag" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#10b981"/></marker></defs>
+<rect x="20" y="62" width="120" height="50" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+<text x="80" y="92" text-anchor="middle" font-size="14" fill="currentColor">Alice</text>
+<rect x="220" y="62" width="120" height="50" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
+<text x="280" y="92" text-anchor="middle" font-size="14" fill="currentColor">Bob</text>
+<rect x="420" y="62" width="120" height="50" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
+<text x="480" y="92" text-anchor="middle" font-size="14" fill="currentColor">Carol</text>
+<rect x="620" y="62" width="120" height="50" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
+<text x="680" y="92" text-anchor="middle" font-size="14" fill="currentColor">Dave</text>
+<text x="20" y="152" font-size="12" fill="currentColor" opacity="0.7">khóa xuôi</text>
+<text x="20" y="262" font-size="12" fill="currentColor" opacity="0.7">R lan ngược</text>
+<g data-step="1">
+<text x="380" y="28" text-anchor="middle" font-size="13" fill="currentColor">invoice: H = SHA256(R), không chứa R</text>
+<line x1="680" y1="40" x2="84" y2="40" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#bc13b-ar)"/>
+<line x1="680" y1="40" x2="680" y2="60" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="680" y="132" text-anchor="middle" font-size="12" fill="#10b981">tạo R, chỉ Dave biết</text>
+</g>
+<g data-step="2">
+<text x="180" y="148" text-anchor="middle" font-size="13" fill="currentColor">HTLC(H)</text>
+<line x1="86" y1="158" x2="274" y2="158" stroke="currentColor" stroke-width="1.8" marker-end="url(#bc13b-ar)"/>
+<rect x="86" y="170" width="180" height="12" rx="3" fill="#f59e0b" fill-opacity="0.35"/>
+<text x="86" y="200" font-size="12" fill="currentColor">hạn T₁</text>
+</g>
+<g data-step="3">
+<text x="380" y="148" text-anchor="middle" font-size="13" fill="currentColor">HTLC(H)</text>
+<line x1="286" y1="158" x2="474" y2="158" stroke="currentColor" stroke-width="1.8" marker-end="url(#bc13b-ar)"/>
+<rect x="286" y="170" width="130" height="12" rx="3" fill="#f59e0b" fill-opacity="0.35"/>
+<text x="286" y="200" font-size="12" fill="currentColor">hạn T₂  (&lt; T₁)</text>
+</g>
+<g data-step="4">
+<text x="580" y="148" text-anchor="middle" font-size="13" fill="currentColor">HTLC(H)</text>
+<line x1="486" y1="158" x2="674" y2="158" stroke="currentColor" stroke-width="1.8" marker-end="url(#bc13b-ar)"/>
+<rect x="486" y="170" width="80" height="12" rx="3" fill="#f59e0b" fill-opacity="0.35"/>
+<text x="486" y="200" font-size="12" fill="currentColor">hạn T₃  (&lt; T₂)</text>
+</g>
+<g data-step="5">
+<line x1="674" y1="232" x2="486" y2="232" stroke="#10b981" stroke-width="2" marker-end="url(#bc13b-ag)"/>
+<text x="580" y="252" text-anchor="middle" font-size="13" fill="#10b981">R, Dave nhận tiền</text>
+</g>
+<g data-step="6">
+<line x1="474" y1="232" x2="286" y2="232" stroke="#10b981" stroke-width="2" marker-end="url(#bc13b-ag)"/>
+<text x="380" y="252" text-anchor="middle" font-size="13" fill="#10b981">R, Carol nhận tiền</text>
+</g>
+<g data-step="7">
+<line x1="274" y1="232" x2="86" y2="232" stroke="#10b981" stroke-width="2" marker-end="url(#bc13b-ag)"/>
+<text x="180" y="252" text-anchor="middle" font-size="13" fill="#10b981">R, Bob nhận tiền</text>
+</g>
+<text x="380" y="300" text-anchor="middle" font-size="13" fill="currentColor">Timelock giảm dần dọc tuyến (Alice &gt; Bob &gt; Carol &gt; Dave): mỗi node có thời gian claim an toàn</text>
+<text x="380" y="326" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">Ai đó biến mất giữa chừng: hết timelock, mọi chặng hoàn tiền, không ai mất tiền</text>
 </svg>
+<step-note data-step="1">Dave là người nhận nên Dave giữ bí mật. Alice chỉ cần <code>H</code> để khóa tiền; <code>R</code> chưa lộ thì chưa ai rút được.</step-note>
+<step-note data-step="2">Alice không tin Bob, nên tiền chỉ mở cho ai xuất trình <code>R</code> trước <code>T₁</code>. Bob không có <code>R</code> thì sau <code>T₁</code> tiền hoàn Alice.</step-note>
+<step-note data-step="3">Bob chỉ chuyển tiếp khi đã có HTLC từ Alice giữ sẵn. Hạn <code>T₂</code> ngắn hơn để khi Carol lộ <code>R</code> sát hạn, Bob vẫn còn khoảng <code>T₁ − T₂</code> để đòi Alice.</step-note>
+<step-note data-step="4">Cả tuyến khóa bằng cùng một <code>H</code>, nên cùng một <code>R</code> sẽ mở mọi chặng. <code>T₃</code> ngắn nhất vì Dave là người duy nhất không phải đòi tiếp ai.</step-note>
+<step-note data-step="5">Dave muốn tiền thì buộc phải đưa <code>R</code> cho Carol. Nhận tiền và lộ bí mật là một hành động, Dave không thể lấy tiền mà giấu <code>R</code>.</step-note>
+<step-note data-step="6">Carol vừa trả tiền cho Dave nên có động lực đòi lại ngay: dùng <code>R</code> vừa biết mở HTLC của Bob trước <code>T₂</code>.</step-note>
+<step-note data-step="7">Bob mở HTLC của Alice trước <code>T₁</code>. Mọi trung gian hoà vốn cộng phí; <code>R</code> trong tay Alice là bằng chứng Dave đã nhận tiền.</step-note>
+</step-flow>
 
 Luồng thanh toán Alice → Dave qua Bob, Carol:
 1. **Dave** tạo bí mật ngẫu nhiên `R`, tính `H = SHA256(R)`, gửi **hóa đơn (invoice)** chứa `H` (không chứa `R`) cho Alice.

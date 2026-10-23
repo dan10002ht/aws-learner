@@ -32,26 +32,92 @@ Hãy tưởng tượng một thu ngân làm theo đúng thứ tự sai: **đưa 
 
 ### 3.1 Cơ chế tấn công
 
-<svg viewBox="0 0 720 320" role="img" aria-labelledby="re-t re-d" style="width:100%;max-width:680px;height:auto;display:block;margin:1.25rem auto">
-<title id="re-t">Vòng lặp reentrancy</title>
-<desc id="re-d">Contract nạn nhân gửi ETH cho attacker, hàm fallback của attacker gọi ngược withdraw trước khi số dư được cập nhật</desc>
-<rect x="60" y="40" width="180" height="240" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="150" y="66" text-anchor="middle" font-size="14" fill="currentColor">Vault (nạn nhân)</text>
-<rect x="480" y="40" width="180" height="240" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="570" y="66" text-anchor="middle" font-size="14" fill="currentColor">Attacker</text>
-<line x1="240" y1="110" x2="478" y2="110" stroke="currentColor" stroke-width="1.5" marker-end="url(#rah)"/>
-<text x="360" y="102" text-anchor="middle" font-size="11" fill="currentColor">1. call{value} gửi ETH</text>
-<line x1="480" y1="160" x2="242" y2="160" stroke="#f43f5e" stroke-width="1.5" marker-end="url(#rah2)"/>
-<text x="360" y="152" text-anchor="middle" font-size="11" fill="#f43f5e">2. fallback() gọi lại withdraw()</text>
-<line x1="240" y1="210" x2="478" y2="210" stroke="currentColor" stroke-width="1.5" marker-end="url(#rah)"/>
-<text x="360" y="202" text-anchor="middle" font-size="11" fill="currentColor">3. lại gửi ETH (số dư CHƯA trừ)</text>
-<text x="360" y="248" text-anchor="middle" font-size="11" fill="#f43f5e">lặp 2↔3 tới khi Vault cạn tiền</text>
-<text x="150" y="255" text-anchor="middle" font-size="10" fill="currentColor">balances[x] trừ sau → sai</text>
+<step-flow>
+<svg viewBox="0 0 760 540" role="img" aria-labelledby="bc21a-t bc21a-d" style="width:100%;height:auto">
+<title id="bc21a-t">Vòng lặp reentrancy, từng lời gọi</title>
+<desc id="bc21a-d">Attacker nạp 1 ETH rồi gọi withdraw. Vault gửi ETH trước khi trừ số dư, receive() của attacker gọi lại withdraw ba lần tới khi Vault cạn; bảng bên phải ghi số dư Vault, balances[attacker] và ETH của attacker sau mỗi bước.</desc>
 <defs>
-<marker id="rah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker>
-<marker id="rah2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#f43f5e"/></marker>
+<marker id="bc21a-arr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker>
+<marker id="bc21a-arr-r" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#f43f5e"/></marker>
 </defs>
+<rect x="40" y="16" width="160" height="40" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
+<text x="120" y="41" text-anchor="middle" font-size="14" fill="currentColor">Attacker</text>
+<rect x="300" y="16" width="160" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+<text x="380" y="41" text-anchor="middle" font-size="14" fill="currentColor">Vault (nạn nhân)</text>
+<line x1="120" y1="56" x2="120" y2="470" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<line x1="380" y1="56" x2="380" y2="470" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="480" y="16" width="272" height="440" rx="8" fill="#10b981" fill-opacity="0.08"/>
+<text x="530" y="34" text-anchor="middle" font-size="13" fill="currentColor">Vault</text>
+<text x="530" y="51" text-anchor="middle" font-size="13" fill="currentColor">(ETH)</text>
+<text x="620" y="34" text-anchor="middle" font-size="13" fill="currentColor">balances</text>
+<text x="620" y="51" text-anchor="middle" font-size="13" fill="currentColor">[attacker]</text>
+<text x="710" y="34" text-anchor="middle" font-size="13" fill="currentColor">Attacker</text>
+<text x="710" y="51" text-anchor="middle" font-size="13" fill="currentColor">(ETH)</text>
+<line x1="480" y1="60" x2="752" y2="60" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="250" y="88" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">giả sử: Vault giữ 2 ETH của user khác</text>
+<text x="530" y="88" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+<text x="620" y="88" text-anchor="middle" font-size="14" fill="currentColor">0</text>
+<text x="710" y="88" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+<line x1="480" y1="100" x2="752" y2="100" stroke="currentColor" stroke-opacity="0.15"/>
+<g data-step="1">
+<text x="250" y="124" text-anchor="middle" font-size="13" fill="currentColor">deposit{value: 1 ether}</text>
+<line x1="124" y1="132" x2="376" y2="132" stroke="currentColor" stroke-width="1.8" marker-end="url(#bc21a-arr)"/>
+<text x="530" y="132" text-anchor="middle" font-size="14" fill="#f43f5e" font-weight="bold">3</text>
+<text x="620" y="132" text-anchor="middle" font-size="14" fill="#f43f5e" font-weight="bold">1</text>
+<text x="710" y="132" text-anchor="middle" font-size="14" fill="#f43f5e" font-weight="bold">0</text>
+<line x1="480" y1="144" x2="752" y2="144" stroke="currentColor" stroke-opacity="0.15"/>
+</g>
+<g data-step="2">
+<rect x="376" y="176" width="8" height="256" fill="#3b82f6" fill-opacity="0.35" stroke="currentColor" stroke-width="0.8"/>
+<text x="250" y="168" text-anchor="middle" font-size="13" fill="currentColor">withdraw() #1</text>
+<line x1="124" y1="176" x2="376" y2="176" stroke="currentColor" stroke-width="1.8" marker-end="url(#bc21a-arr)"/>
+<text x="250" y="202" text-anchor="middle" font-size="13" fill="currentColor">1. call{value: 1 ETH} gửi ETH</text>
+<line x1="376" y1="210" x2="124" y2="210" stroke="currentColor" stroke-width="1.8" marker-end="url(#bc21a-arr)"/>
+<text x="530" y="196" text-anchor="middle" font-size="14" fill="#f43f5e" font-weight="bold">2</text>
+<text x="620" y="196" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+<text x="710" y="196" text-anchor="middle" font-size="14" fill="#f43f5e" font-weight="bold">1</text>
+<line x1="480" y1="208" x2="752" y2="208" stroke="currentColor" stroke-opacity="0.15"/>
+</g>
+<g data-step="3">
+<rect x="384" y="256" width="8" height="160" fill="#f43f5e" fill-opacity="0.3" stroke="currentColor" stroke-width="0.8"/>
+<text x="250" y="248" text-anchor="middle" font-size="13" fill="#f43f5e">2. receive(): 2 ≥ 1 → withdraw() #2</text>
+<line x1="124" y1="256" x2="376" y2="256" stroke="#f43f5e" stroke-width="1.8" marker-end="url(#bc21a-arr-r)"/>
+<text x="250" y="282" text-anchor="middle" font-size="13" fill="currentColor">3. lại gửi 1 ETH (số dư CHƯA trừ)</text>
+<line x1="376" y1="290" x2="124" y2="290" stroke="currentColor" stroke-width="1.8" marker-end="url(#bc21a-arr)"/>
+<text x="530" y="276" text-anchor="middle" font-size="14" fill="#f43f5e" font-weight="bold">1</text>
+<text x="620" y="276" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+<text x="710" y="276" text-anchor="middle" font-size="14" fill="#f43f5e" font-weight="bold">2</text>
+<line x1="480" y1="288" x2="752" y2="288" stroke="currentColor" stroke-opacity="0.15"/>
+</g>
+<g data-step="4">
+<rect x="392" y="336" width="8" height="80" fill="#f43f5e" fill-opacity="0.3" stroke="currentColor" stroke-width="0.8"/>
+<text x="250" y="328" text-anchor="middle" font-size="13" fill="#f43f5e">receive(): 1 ≥ 1 → withdraw() #3</text>
+<line x1="124" y1="336" x2="376" y2="336" stroke="#f43f5e" stroke-width="1.8" marker-end="url(#bc21a-arr-r)"/>
+<text x="250" y="362" text-anchor="middle" font-size="13" fill="currentColor">gửi 1 ETH, Vault về 0</text>
+<line x1="376" y1="370" x2="124" y2="370" stroke="currentColor" stroke-width="1.8" marker-end="url(#bc21a-arr)"/>
+<text x="530" y="356" text-anchor="middle" font-size="14" fill="#f43f5e" font-weight="bold">0</text>
+<text x="620" y="356" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+<text x="710" y="356" text-anchor="middle" font-size="14" fill="#f43f5e" font-weight="bold">3</text>
+<line x1="480" y1="368" x2="752" y2="368" stroke="currentColor" stroke-opacity="0.15"/>
+</g>
+<g data-step="5">
+<text x="250" y="410" text-anchor="middle" font-size="13" fill="currentColor">receive(): 0 &lt; 1 → dừng</text>
+<text x="370" y="440" text-anchor="end" font-size="13" fill="#f43f5e">unwind #3→#2→#1: balances = 0</text>
+<text x="370" y="458" text-anchor="end" font-size="13" fill="#f43f5e">trừ sau → sai, quá muộn</text>
+<text x="530" y="436" text-anchor="middle" font-size="14" fill="currentColor">0</text>
+<text x="620" y="436" text-anchor="middle" font-size="14" fill="#f43f5e" font-weight="bold">0</text>
+<text x="710" y="436" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+<line x1="480" y1="448" x2="752" y2="448" stroke="currentColor" stroke-opacity="0.15"/>
+</g>
+<text x="380" y="500" text-anchor="middle" font-size="13" fill="#f43f5e">lặp 2↔3 tới khi Vault cạn tiền: nạp 1 ETH, rút về 3 ETH</text>
+<text x="380" y="524" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">cột xanh/đỏ trên lifeline Vault = các lần withdraw() đang dở, chưa return</text>
 </svg>
+<step-note data-step="1">Attacker nạp đúng 1 ETH để có <code>balances[attacker] = 1</code>, điều kiện để <code>require(amount &gt; 0)</code> cho qua.</step-note>
+<step-note data-step="2"><code>withdraw()</code> đọc <code>amount = 1</code> rồi gọi ra ngoài <em>trước</em> khi ghi sổ. Gửi ETH vào một contract là chạy code của nó: quyền điều khiển chuyển sang attacker trong khi lần #1 chưa xong.</step-note>
+<step-note data-step="3"><code>receive()</code> thấy Vault còn 2 ETH nên gọi lại <code>withdraw()</code>. Dòng <code>balances[msg.sender] = 0</code> của lần #1 chưa chạy tới, nên lần #2 vẫn đọc <code>amount = 1</code> và qua <code>require</code>.</step-note>
+<step-note data-step="4">Cùng một dư nợ 1 ETH được chi lần thứ ba. Vault giờ 0 ETH, nhưng sổ vẫn ghi attacker còn 1.</step-note>
+<step-note data-step="5">Vault còn 0 &lt; 1 ETH nên <code>receive()</code> không gọi lại nữa; các lần #3, #2, #1 lần lượt return và mỗi lần đặt <code>balances = 0</code>. Sổ trông sạch, nhưng attacker đã lấy 2 ETH của người khác.</step-note>
+</step-flow>
 
 ### 3.2 Code lỗ hổng
 
