@@ -15,6 +15,7 @@ import { ChevronLeft, ChevronRight, ListChecks } from "lucide-react";
 import { courses, getCourse } from "@/data/courses";
 import { getLessonBySlug, lessonsOfCourse, chaptersOfCourse } from "@/data/lessons";
 import { readLessonMarkdown } from "@/lib/lessonContent";
+import { iconSprite } from "@/lib/diagramIcons";
 import { questionsInLesson } from "@/lib/questions";
 import { extractToc } from "@/lib/toc";
 import MarkLessonRead from "@/components/MarkLessonRead";
@@ -55,6 +56,7 @@ export default function LessonPage({ params }: { params: { courseId: string; slu
   const next = lessons[idx + 1];
   const practiceCount = questionsInLesson(course.id, params.slug).length;
   const toc = md ? extractToc(md) : [];
+  const sprite = md ? iconSprite(md) : null;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[200px_minmax(0,1fr)_200px] gap-6 xl:gap-8">
@@ -105,6 +107,8 @@ export default function LessonPage({ params }: { params: { courseId: string; slu
 
         {md ? (
           <div className="prose-article">
+            {/* icon symbols used by this lesson; markup comes from the repo-built data/diagramIcons.json */}
+            {sprite && <div dangerouslySetInnerHTML={{ __html: sprite }} />}
             <ReactMarkdown
               remarkPlugins={[remarkGfm, remarkWikiLinks]}
               rehypePlugins={[rehypeRaw, rehypeSlug, rehypeHighlight, rehypeCodeTabs, rehypeCallouts]}
