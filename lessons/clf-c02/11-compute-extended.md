@@ -259,47 +259,33 @@ Bạn cần ship 1 gói hàng:
 
 ### 2.9 Pattern HA cổ điển
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 480" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Pattern HA cổ điển trên AWS</title>
-  <desc>Luồng từ User qua CloudFront (CDN, DDoS L3/4, TLS), tới ALB multi-AZ (routing L7, WAF), tới ASG chạy EC2/ECS trải nhiều AZ, xuống RDS Multi-AZ với standby đồng bộ ở AZ khác; mỗi tầng chú thích vai trò.</desc>
-  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Pattern HA cổ điển — vai trò từng tầng</text>
-  <defs>
-    <marker id="haArr" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0 0 L8 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <rect x="280" y="40" width="160" height="40" rx="9" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="360" y="65" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">User</text>
-  <line x1="360" y1="80" x2="360" y2="104" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#haArr)"/>
-  <rect x="220" y="106" width="280" height="56" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="360" y="128" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">CloudFront (CDN)</text>
-  <text x="360" y="148" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">cache edge · DDoS L3/4 · TLS</text>
-  <line x1="360" y1="162" x2="360" y2="186" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#haArr)"/>
-  <rect x="220" y="188" width="280" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="360" y="210" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">ALB (multi-AZ)</text>
-  <text x="360" y="230" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">routing L7 · TLS termination · WAF</text>
-  <rect x="60" y="280" width="600" height="110" rx="11" fill="#10b981" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="74" y="300" font-size="11.5" font-weight="700" fill="currentColor">Auto Scaling Group — EC2/ECS trải nhiều AZ</text>
-  <g>
-    <rect x="80" y="312" width="150" height="62" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="155" y="333" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">AZ-a</text>
-    <text x="155" y="352" font-size="11" text-anchor="middle" fill="currentColor">EC2/ECS</text>
-    <rect x="285" y="312" width="150" height="62" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="360" y="333" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">AZ-b</text>
-    <text x="360" y="352" font-size="11" text-anchor="middle" fill="currentColor">EC2/ECS</text>
-    <rect x="490" y="312" width="150" height="62" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="565" y="333" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">AZ-c</text>
-    <text x="565" y="352" font-size="11" text-anchor="middle" fill="currentColor">EC2/ECS</text>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
-    <path d="M300 246 L155 312" marker-end="url(#haArr)"/>
-    <path d="M360 246 L360 312" marker-end="url(#haArr)"/>
-    <path d="M420 246 L565 312" marker-end="url(#haArr)"/>
-  </g>
-  <line x1="360" y1="390" x2="360" y2="414" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#haArr)"/>
-  <rect x="200" y="416" width="320" height="50" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="280" y="445" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">RDS primary</text>
-  <text x="420" y="438" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">standby AZ khác</text>
-  <text x="420" y="453" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">sync replica · auto failover</text>
-  <line x1="356" y1="441" x2="375" y2="441" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="3 3"/>
+<svg viewBox="0 0 520 504" role="img" aria-labelledby="c11b-t c11b-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="c11b-t">Pattern HA cổ điển trên AWS: CloudFront, ALB, Auto Scaling Group, RDS Multi-AZ</title>
+<desc id="c11b-d">Luồng từ User qua CloudFront (CDN: cache edge, DDoS L3/4, TLS), tới ALB multi-AZ (routing L7, TLS termination, WAF), ALB chia tải cho Auto Scaling Group chạy EC2/ECS trải ba AZ (AZ-a, AZ-b, AZ-c), xuống RDS primary có standby ở AZ khác, sync replica và auto failover.</desc>
+<defs><marker id="c11b-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="14" y="22" font-size="14" font-weight="700" fill="currentColor">Pattern HA cổ điển: vai trò từng tầng</text>
+<use href="#aws-res-user" x="150" y="36" width="44" height="44"/><text x="210" y="64" font-size="13" fill="currentColor" font-weight="600">User</text>
+<path d="M172 82 V102" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#c11b-arr)"/>
+<rect x="140" y="102" width="340" height="56" rx="9" fill="#3b82f6" fill-opacity="0.14"/>
+<use href="#aws-cloudfront" x="150" y="108" width="44" height="44"/><text x="210" y="126" font-size="13" fill="currentColor" font-weight="600">CloudFront (CDN)</text><text x="210" y="145" font-size="13" fill="currentColor" opacity="0.8">cache edge · DDoS L3/4 · TLS</text>
+<path d="M172 160 V178" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#c11b-arr)"/>
+<rect x="140" y="178" width="340" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.14"/>
+<use href="#aws-alb" x="150" y="184" width="44" height="44"/><text x="210" y="202" font-size="13" fill="currentColor" font-weight="600">ALB (multi-AZ)</text><text x="210" y="221" font-size="13" fill="currentColor" opacity="0.8">routing L7 · TLS termination · WAF</text>
+<rect x="10" y="256" width="500" height="128" rx="10" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="6 4"/>
+<rect x="24" y="268" width="150" height="84" rx="8" fill="none" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="4 3"/>
+<text x="99" y="286" text-anchor="middle" font-size="13" fill="currentColor" font-weight="600">AZ-a</text><use href="#aws-ec2" x="83" y="292" width="32" height="32"/><text x="99" y="343" text-anchor="middle" font-size="13" fill="currentColor">EC2/ECS</text>
+<path d="M172 236 L99 266" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#c11b-arr)"/>
+<rect x="185" y="268" width="150" height="84" rx="8" fill="none" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="4 3"/>
+<text x="260" y="286" text-anchor="middle" font-size="13" fill="currentColor" font-weight="600">AZ-b</text><use href="#aws-ec2" x="244" y="292" width="32" height="32"/><text x="260" y="343" text-anchor="middle" font-size="13" fill="currentColor">EC2/ECS</text>
+<path d="M172 236 L260 266" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#c11b-arr)"/>
+<rect x="346" y="268" width="150" height="84" rx="8" fill="none" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="4 3"/>
+<text x="421" y="286" text-anchor="middle" font-size="13" fill="currentColor" font-weight="600">AZ-c</text><use href="#aws-ec2" x="405" y="292" width="32" height="32"/><text x="421" y="343" text-anchor="middle" font-size="13" fill="currentColor">EC2/ECS</text>
+<path d="M172 236 L421 266" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#c11b-arr)"/>
+<use href="#aws-group-auto-scaling-group" x="20" y="358" width="20" height="20"/><text x="46" y="374" font-size="13" fill="currentColor" font-weight="600">Auto Scaling Group: EC2/ECS trải nhiều AZ</text>
+<path d="M110 386 V404" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#c11b-arr)"/>
+<use href="#aws-rds" x="88" y="408" width="44" height="44"/><text x="110" y="470" text-anchor="middle" font-size="13" fill="currentColor" font-weight="600">RDS primary</text>
+<path d="M140 430 H322" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" stroke-dasharray="5 4"/><text x="231" y="422" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">sync replica</text><text x="231" y="448" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">auto failover</text>
+<use href="#aws-rds" x="330" y="408" width="44" height="44"/><text x="352" y="470" text-anchor="middle" font-size="13" fill="currentColor" font-weight="600">RDS standby</text><text x="352" y="488" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">AZ khác</text>
 </svg>
 
 Pattern này **xuất hiện trong 30%+ câu thi**. Phải hiểu role từng layer:

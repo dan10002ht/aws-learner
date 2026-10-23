@@ -162,56 +162,12 @@ Cac deployment policy o tren deu deploy **in-place** (cap nhat ngay tren environ
 
 Uu diem: **zero downtime**, **rollback gan nhu lap tuc**, test toan dien tren moi truong that truoc khi nhan luong. Nhuoc: chi phi gap doi trong luc chay song song, va phai tu lo dong bo du lieu (DB...).
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Blue/Green qua swap CNAME — trước và sau khi đổi DNS</title>
-  <desc>Trước swap: CNAME app.example.com trỏ tới environment Blue đang chạy prod, Green chạy version mới chờ test. Sau swap-environment-cnames: CNAME trỏ sang Green, traffic chuyển sang version mới; muốn rollback thì swap ngược lại. DNS có TTL nên một số client còn trỏ về Blue một lúc.</desc>
-  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Blue/Green qua swap CNAME (đổi DNS record)</text>
-  <defs>
-    <marker id="bgArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <text x="16" y="52" font-size="12" font-weight="700" fill="currentColor">TRƯỚC swap</text>
-  <g>
-    <rect x="16" y="62" width="120" height="34" rx="8" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="76" y="79" font-size="10" font-weight="700" text-anchor="middle" fill="currentColor">CNAME</text>
-    <text x="76" y="91" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">app.example.com</text>
-  </g>
-  <line x1="136" y1="79" x2="186" y2="79" stroke="#3b82f6" stroke-opacity="0.8" stroke-width="2" marker-end="url(#bgArr)"/>
-  <g>
-    <rect x="188" y="58" width="140" height="42" rx="9" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="258" y="76" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Blue (prod)</text>
-    <text x="258" y="91" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">version hiện tại</text>
-  </g>
-  <g>
-    <rect x="188" y="108" width="140" height="42" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="258" y="126" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Green</text>
-    <text x="258" y="141" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">version mới — test</text>
-  </g>
-  <line x1="358" y1="100" x2="408" y2="100" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="5 3" marker-end="url(#bgArr)"/>
-  <text x="383" y="92" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">swap-</text>
-  <text x="383" y="116" font-size="8.5" text-anchor="middle" fill="currentColor" opacity="0.7">environment-cnames</text>
-  <text x="420" y="52" font-size="12" font-weight="700" fill="currentColor">SAU swap</text>
-  <g>
-    <rect x="420" y="62" width="120" height="34" rx="8" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="480" y="79" font-size="10" font-weight="700" text-anchor="middle" fill="currentColor">CNAME</text>
-    <text x="480" y="91" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">app.example.com</text>
-  </g>
-  <line x1="490" y1="96" x2="555" y2="124" stroke="#10b981" stroke-opacity="0.85" stroke-width="2" marker-end="url(#bgArr)"/>
-  <g>
-    <rect x="560" y="58" width="144" height="42" rx="9" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="632" y="76" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Blue (cũ)</text>
-    <text x="632" y="91" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">giữ lại để rollback</text>
-  </g>
-  <g>
-    <rect x="560" y="108" width="144" height="42" rx="9" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/>
-    <text x="632" y="126" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Green (prod)</text>
-    <text x="632" y="141" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.75">nhận toàn bộ traffic</text>
-  </g>
-  <line x1="16" y1="172" x2="704" y2="172" stroke="currentColor" stroke-opacity="0.15"/>
-  <text x="16" y="196" font-size="10.5" fill="currentColor" opacity="0.85">Rollback = swap NGƯỢC lại (Green -> Blue), gần như tức thì vì Blue vẫn còn sống.</text>
-  <rect x="16" y="210" width="688" height="44" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="30" y="230" font-size="11" font-weight="700" fill="currentColor">DNS TTL: một số client còn cache bản ghi cũ</text>
-  <text x="30" y="246" font-size="10" fill="currentColor" opacity="0.78">chờ hết TTL nên vẫn trỏ về Blue một lúc — chưa chuyển ngay 100% sang Green.</text>
-</svg>
+<ab-toggle data-labels="Trước swap|Sau swap">
+<svg viewBox="0 0 480 340" role="img" aria-labelledby="d304b-a-t d304b-a-d" style="width:100%;max-width:480px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="d304b-a-t">Blue/Green trước swap CNAME</title><desc id="d304b-a-d">Trước swap: CNAME app.example.com trỏ tới environment Blue (prod) chạy version hiện tại. Green chạy song song version mới, đang test, chưa nhận traffic. Bước tiếp theo là lệnh swap-environment-cnames.</desc><defs><marker id="d304b-a-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><text x="20" y="24" font-size="14" font-weight="700" fill="currentColor">Blue/Green qua swap CNAME (đổi DNS record)</text><use href="#aws-res-users" x="28" y="52" width="40" height="40"/><text x="48" y="108" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">client</text><path d="M74 73 H126" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" fill="none" marker-end="url(#d304b-a-m)"/><rect x="130" y="46" width="220" height="54" rx="8" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.3"/><use href="#aws-route-53" x="140" y="53" width="40" height="40"/><text x="192" y="69" font-size="14" font-weight="700" fill="currentColor">CNAME</text><text x="192" y="88" font-size="13" fill="currentColor" opacity="0.8">app.example.com</text><rect x="20" y="150" width="210" height="76" rx="9" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><use href="#aws-elastic-beanstalk" x="30" y="168" width="40" height="40"/><text x="78" y="182" font-size="14" font-weight="700" fill="currentColor">Blue (prod)</text><text x="78" y="203" font-size="13" fill="currentColor" opacity="0.8">version hiện tại</text><rect x="250" y="150" width="210" height="76" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/><use href="#aws-elastic-beanstalk" x="260" y="168" width="40" height="40"/><text x="308" y="182" font-size="14" font-weight="700" fill="currentColor">Green</text><text x="308" y="203" font-size="13" fill="currentColor" opacity="0.8">version mới — test</text><path d="M218 102 L140 146" stroke="#3b82f6" stroke-width="2.5" fill="none" marker-end="url(#d304b-a-m)"/><text x="20" y="254" font-size="13" fill="currentColor" opacity="0.85">Green chạy song song, chưa nhận traffic: test kỹ</text><text x="20" y="272" font-size="13" fill="currentColor" opacity="0.85">trên môi trường thật trước khi swap.</text><rect x="20" y="284" width="440" height="48" rx="9" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/><text x="32" y="304" font-size="13" font-weight="700" fill="currentColor">Bước sau: swap-environment-cnames</text><text x="32" y="322" font-size="13" fill="currentColor" opacity="0.8">qua console hoặc CLI, đổi CNAME giữa Blue và Green.</text></svg>
+<svg viewBox="0 0 480 340" role="img" aria-labelledby="d304b-b-t d304b-b-d" style="width:100%;max-width:480px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="d304b-b-t">Blue/Green sau swap CNAME</title><desc id="d304b-b-d">Sau swap-environment-cnames: CNAME app.example.com trỏ sang Green (prod), nhận toàn bộ traffic. Blue (cũ) vẫn sống, giữ lại để rollback bằng cách swap ngược. DNS có TTL nên một số client còn cache bản ghi cũ vẫn trỏ về Blue một lúc.</desc><defs><marker id="d304b-b-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><text x="20" y="24" font-size="14" font-weight="700" fill="currentColor">Blue/Green qua swap CNAME (đổi DNS record)</text><use href="#aws-res-users" x="28" y="52" width="40" height="40"/><text x="48" y="108" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">client</text><path d="M74 73 H126" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" fill="none" marker-end="url(#d304b-b-m)"/><rect x="130" y="46" width="220" height="54" rx="8" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.3"/><use href="#aws-route-53" x="140" y="53" width="40" height="40"/><text x="192" y="69" font-size="14" font-weight="700" fill="currentColor">CNAME</text><text x="192" y="88" font-size="13" fill="currentColor" opacity="0.8">app.example.com</text><rect x="20" y="150" width="210" height="76" rx="9" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.3"/><use href="#aws-elastic-beanstalk" x="30" y="168" width="40" height="40"/><text x="78" y="182" font-size="14" font-weight="700" fill="currentColor">Blue (cũ)</text><text x="78" y="203" font-size="13" fill="currentColor" opacity="0.8">giữ lại để rollback</text><rect x="250" y="150" width="210" height="76" rx="9" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/><use href="#aws-elastic-beanstalk" x="260" y="168" width="40" height="40"/><text x="308" y="182" font-size="14" font-weight="700" fill="currentColor">Green (prod)</text><text x="308" y="203" font-size="13" fill="currentColor" opacity="0.8">nhận toàn bộ traffic</text><path d="M262 102 L340 146" stroke="#10b981" stroke-width="2.5" fill="none" marker-end="url(#d304b-b-m)"/><path d="M218 102 L140 146" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5 4" fill="none" marker-end="url(#d304b-b-m)"/><text x="150" y="128" text-anchor="end" font-size="13" fill="currentColor" opacity="0.8">cache TTL</text><text x="20" y="254" font-size="13" fill="currentColor" opacity="0.85">Rollback = swap NGƯỢC lại (Green -&gt; Blue), gần như</text><text x="20" y="272" font-size="13" fill="currentColor" opacity="0.85">tức thì vì Blue vẫn còn sống.</text><rect x="20" y="284" width="440" height="48" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="32" y="304" font-size="13" font-weight="700" fill="currentColor">DNS TTL: một số client còn cache bản ghi cũ</text><text x="32" y="322" font-size="13" fill="currentColor" opacity="0.8">vẫn trỏ về Blue một lúc, chưa chuyển ngay 100%.</text></svg>
+<ab-note>Hai environment chạy song song nhưng CNAME chỉ trỏ Blue, nên người dùng chưa chạm tới Green. Nhờ vậy version mới được test trên môi trường thật mà không rủi ro cho prod.</ab-note>
+<ab-note>Swap chỉ đổi bản ghi DNS, không deploy lại gì, nên Blue vẫn nguyên vẹn để swap ngược khi lỗi. Mũi tên đứt nét: client còn cache bản ghi cũ đến khi hết TTL.</ab-note>
+</ab-toggle>
 
 > Bay: Blue/Green qua **CNAME swap** chinh la doi **DNS record**. DNS co **TTL** -> mot so client co the con tro ve Blue mot luc cho cache het han. De thi co the hoi "tai sao mot so user van thay version cu sau khi swap" -> dap an: **DNS TTL caching**.
 

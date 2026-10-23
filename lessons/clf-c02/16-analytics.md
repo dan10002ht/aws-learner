@@ -30,64 +30,60 @@ Sau bài này bạn có thể:
 
 ### 2.1 Pattern data lake chuẩn AWS
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Pipeline data lake chuẩn trên AWS</title>
-  <desc>Luồng xử lý từ trái sang phải: Nguồn (Apps, DB, IoT) đi vào lớp Ingest (Kinesis, DMS, MSK), đổ vào S3 làm data lake, qua Glue để Crawler, Catalog và ETL, rồi được truy vấn bằng Athena, Redshift hoặc EMR, cuối cùng trực quan hoá bằng QuickSight.</desc>
-  <defs>
-    <marker id="al-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
-    </marker>
-  </defs>
-  <text x="12" y="20" font-size="13" font-weight="700" fill="currentColor">Pipeline data lake chuẩn AWS</text>
-  <text x="60" y="48" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">Source</text>
-  <text x="186" y="48" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">Ingest</text>
-  <text x="312" y="48" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">Lake</text>
-  <text x="430" y="48" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">Catalog / ETL</text>
-  <text x="556" y="48" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">Query</text>
-  <text x="672" y="48" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">Visualize</text>
-  <g>
-    <rect x="14" y="60" width="92" height="92" rx="9" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="60" y="90" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Apps</text>
-    <text x="60" y="112" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">DB</text>
-    <text x="60" y="134" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">IoT</text>
-  </g>
-  <g>
-    <rect x="140" y="60" width="92" height="92" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="186" y="90" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Kinesis</text>
-    <text x="186" y="112" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">DMS</text>
-    <text x="186" y="134" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">MSK</text>
-  </g>
-  <g>
-    <rect x="266" y="60" width="92" height="92" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="312" y="105" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">S3</text>
-    <text x="312" y="124" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">data lake</text>
-  </g>
-  <g>
-    <rect x="384" y="60" width="92" height="92" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="430" y="88" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Glue</text>
-    <text x="430" y="108" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Crawler</text>
-    <text x="430" y="124" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Catalog</text>
-    <text x="430" y="140" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">ETL Job</text>
-  </g>
-  <g>
-    <rect x="510" y="60" width="92" height="92" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="556" y="90" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Athena</text>
-    <text x="556" y="112" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Redshift</text>
-    <text x="556" y="134" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">EMR</text>
-  </g>
-  <g>
-    <rect x="626" y="60" width="80" height="92" rx="9" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="666" y="102" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Quick</text>
-    <text x="666" y="118" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Sight</text>
-  </g>
-  <g stroke="currentColor" stroke-width="2" fill="none">
-    <line x1="106" y1="106" x2="138" y2="106" marker-end="url(#al-arrow)"/>
-    <line x1="232" y1="106" x2="264" y2="106" marker-end="url(#al-arrow)"/>
-    <line x1="358" y1="106" x2="382" y2="106" marker-end="url(#al-arrow)"/>
-    <line x1="476" y1="106" x2="508" y2="106" marker-end="url(#al-arrow)"/>
-    <line x1="602" y1="106" x2="624" y2="106" marker-end="url(#al-arrow)"/>
-  </g>
-  <text x="360" y="190" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">Nguồn dữ liệu → thu nạp → hồ lưu trữ → lập danh mục/biến đổi → truy vấn → trực quan hoá</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 470" role="img" aria-labelledby="clf16a-t clf16a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="clf16a-t">Pipeline data lake chuẩn trên AWS</title>
+<desc id="clf16a-d">Luồng xử lý 6 chặng: Nguồn (Apps, DB, IoT) đi vào lớp Ingest (Kinesis, DMS, MSK), đổ vào S3 làm data lake, qua Glue để Crawler, Catalog và ETL Job, rồi được truy vấn bằng Athena, Redshift hoặc EMR, cuối cùng trực quan hoá bằng QuickSight.</desc>
+<defs><marker id="clf16a-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="10" y="26" font-size="15" font-weight="700" fill="currentColor">Pipeline data lake chuẩn AWS</text>
+<rect x="10" y="48" width="148" height="150" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="20" y="68" font-size="13" font-weight="700" fill="currentColor" opacity="0.7">1. Source</text>
+<use href="#aws-res-mobile-client" x="22" y="82" width="32" height="32"/>
+<text x="64" y="103" font-size="14" font-weight="600" fill="currentColor">Apps</text>
+<use href="#aws-res-database" x="22" y="120" width="32" height="32"/>
+<text x="64" y="141" font-size="14" font-weight="600" fill="currentColor">DB</text>
+<g fill="none" stroke="currentColor" stroke-width="1.6"><rect x="28" y="164" width="20" height="20" rx="3"/><rect x="34" y="170" width="8" height="8" fill="currentColor" fill-opacity="0.35"/><path d="M33 159V164M43 159V164M33 184V189M43 184V189M23 169H28M23 179H28M48 169H53M48 179H53"/></g>
+<text x="64" y="179" font-size="14" font-weight="600" fill="currentColor">IoT</text>
+<rect x="186" y="48" width="148" height="150" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="196" y="68" font-size="13" font-weight="700" fill="currentColor" opacity="0.7">2. Ingest</text>
+<use href="#aws-kinesis" x="198" y="82" width="32" height="32"/>
+<text x="240" y="103" font-size="14" font-weight="600" fill="currentColor">Kinesis</text>
+<use href="#aws-dms" x="198" y="120" width="32" height="32"/>
+<text x="240" y="141" font-size="14" font-weight="600" fill="currentColor">DMS</text>
+<use href="#aws-msk" x="198" y="158" width="32" height="32"/>
+<text x="240" y="179" font-size="14" font-weight="600" fill="currentColor">MSK</text>
+<rect x="362" y="48" width="148" height="150" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="372" y="68" font-size="13" font-weight="700" fill="currentColor" opacity="0.7">3. Lake</text>
+<use href="#aws-s3" x="412" y="78" width="48" height="48"/>
+<text x="436" y="145" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">S3</text>
+<text x="436" y="165" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.75">data lake</text>
+<rect x="362" y="256" width="148" height="150" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="372" y="276" font-size="13" font-weight="700" fill="currentColor" opacity="0.7">4. Catalog / ETL</text>
+<use href="#aws-glue" x="412" y="286" width="48" height="48"/>
+<text x="436" y="353" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Glue</text>
+<text x="436" y="373" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.75">Crawler · Catalog</text>
+<text x="436" y="390" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.75">ETL Job</text>
+<rect x="186" y="256" width="148" height="150" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="196" y="276" font-size="13" font-weight="700" fill="currentColor" opacity="0.7">5. Query</text>
+<use href="#aws-athena" x="198" y="290" width="32" height="32"/>
+<text x="240" y="311" font-size="14" font-weight="600" fill="currentColor">Athena</text>
+<use href="#aws-redshift" x="198" y="328" width="32" height="32"/>
+<text x="240" y="349" font-size="14" font-weight="600" fill="currentColor">Redshift</text>
+<use href="#aws-emr" x="198" y="366" width="32" height="32"/>
+<text x="240" y="387" font-size="14" font-weight="600" fill="currentColor">EMR</text>
+<rect x="10" y="256" width="148" height="150" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="20" y="276" font-size="13" font-weight="700" fill="currentColor" opacity="0.7">6. Visualize</text>
+<use href="#aws-quick" x="60" y="286" width="48" height="48"/>
+<text x="84" y="353" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">QuickSight</text>
+<text x="84" y="373" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.75">dashboard BI</text>
+<g stroke="currentColor" stroke-width="2" fill="none">
+<line x1="160" y1="123.0" x2="183" y2="123.0" marker-end="url(#clf16a-arr)"/>
+<line x1="336" y1="123.0" x2="359" y2="123.0" marker-end="url(#clf16a-arr)"/>
+<line x1="436.0" y1="200" x2="436.0" y2="253" marker-end="url(#clf16a-arr)"/>
+<line x1="360" y1="331.0" x2="337" y2="331.0" marker-end="url(#clf16a-arr)"/>
+<line x1="184" y1="331.0" x2="161" y2="331.0" marker-end="url(#clf16a-arr)"/>
+</g>
+<text x="260" y="436" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">Nguồn dữ liệu → thu nạp → hồ lưu trữ →</text>
+<text x="260" y="455" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">lập danh mục/biến đổi → truy vấn → trực quan hoá</text>
 </svg>
 
 ---

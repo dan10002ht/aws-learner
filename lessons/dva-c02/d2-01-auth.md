@@ -134,58 +134,77 @@ Identity Pool gắn với **2 IAM role**:
 
 ### 3.3 Luồng kết hợp User Pool + Identity Pool
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 410" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Luồng kết hợp User Pool + Identity Pool + STS để lấy AWS credentials tạm thời</title>
-  <desc>Sơ đồ tuần tự theo thời gian: App đăng nhập vào User Pool và nhận ID token (JWT); App đưa ID token cho Identity Pool; Identity Pool gọi STS AssumeRoleWithWebIdentity; STS trả credentials tạm thời; App dùng credentials gọi thẳng S3 và DynamoDB. User Pool cấp token, Identity Pool cấp credentials.</desc>
-  <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">User Pool cấp TOKEN — Identity Pool cấp CREDENTIALS</text>
-  <g font-size="11" font-weight="700" text-anchor="middle">
-    <rect x="20" y="38" width="96" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="68" y="59" fill="currentColor">App (client)</text>
-    <rect x="160" y="38" width="116" height="34" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="218" y="55" fill="currentColor">User Pool</text>
-    <text x="218" y="68" font-size="9.5" font-weight="400" fill="currentColor" opacity="0.7">= token</text>
-    <rect x="320" y="38" width="124" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="382" y="55" fill="currentColor">Identity Pool</text>
-    <text x="382" y="68" font-size="9.5" font-weight="400" fill="currentColor" opacity="0.7">= credentials</text>
-    <rect x="488" y="38" width="92" height="34" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="534" y="59" fill="currentColor">STS</text>
-    <rect x="600" y="38" width="104" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="652" y="55" fill="currentColor">S3 / DynamoDB</text>
-    <text x="652" y="68" font-size="9.5" font-weight="400" fill="currentColor" opacity="0.7">AWS service</text>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4">
-    <line x1="68" y1="74" x2="68" y2="392"/>
-    <line x1="218" y1="74" x2="218" y2="392"/>
-    <line x1="382" y1="74" x2="382" y2="392"/>
-    <line x1="534" y1="74" x2="534" y2="392"/>
-    <line x1="652" y1="74" x2="652" y2="392"/>
-  </g>
-  <defs>
-    <marker id="seqArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.65"/></marker>
-  </defs>
-  <g font-size="10.5" fill="currentColor">
-    <line x1="68" y1="100" x2="214" y2="100" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#seqArr)"/>
-    <text x="72" y="95" opacity="0.9">1. đăng nhập (user/pass, SRP)</text>
-    <line x1="218" y1="132" x2="72" y2="132" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#seqArr)"/>
-    <text x="214" y="127" text-anchor="end" opacity="0.9" font-weight="700">2. ID token (JWT)</text>
-    <line x1="68" y1="166" x2="378" y2="166" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#seqArr)"/>
-    <text x="72" y="161" opacity="0.9">3. gửi ID token (qua logins)</text>
-    <line x1="382" y1="200" x2="530" y2="200" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#seqArr)"/>
-    <text x="378" y="195" text-anchor="end" opacity="0.9">4. AssumeRoleWithWebIdentity</text>
-    <line x1="534" y1="234" x2="386" y2="234" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#seqArr)"/>
-    <text x="530" y="229" text-anchor="end" opacity="0.9">5. temp credentials</text>
-    <line x1="382" y1="268" x2="72" y2="268" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#seqArr)"/>
-    <text x="378" y="263" text-anchor="end" opacity="0.9" font-weight="700">6. AWS credentials tạm thời</text>
-    <line x1="68" y1="302" x2="648" y2="302" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#seqArr)"/>
-    <text x="72" y="297" opacity="0.9">7. gọi thẳng AWS service (SigV4) — KHÔNG qua backend</text>
-  </g>
-  <g>
-    <rect x="20" y="324" width="684" height="58" rx="9" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="32" y="345" font-size="11" font-weight="700" fill="currentColor">Phân vai rạch ròi:</text>
-    <text x="32" y="362" font-size="10.5" fill="currentColor" opacity="0.9">• User Pool = xác thực &amp; cấp TOKEN (ID/access/refresh) — KHÔNG cấp AWS credentials.</text>
-    <text x="32" y="377" font-size="10.5" fill="currentColor" opacity="0.9">• Identity Pool = đổi token lấy CREDENTIALS tạm thời qua STS. Dùng ID token (không phải access token).</text>
-  </g>
+<step-flow>
+<svg viewBox="0 0 720 480" role="img" aria-labelledby="d201a-t d201a-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="d201a-t">Luồng kết hợp User Pool + Identity Pool + STS để lấy AWS credentials tạm thời</title>
+<desc id="d201a-d">Sơ đồ tuần tự 7 bước: App đăng nhập vào User Pool và nhận ID token (JWT); App đưa ID token cho Identity Pool qua logins; Identity Pool gọi STS AssumeRoleWithWebIdentity; STS trả temp credentials; Identity Pool trả AWS credentials tạm thời cho App; App dùng credentials gọi thẳng S3 và DynamoDB bằng SigV4, không qua backend. User Pool cấp token, Identity Pool cấp credentials.</desc>
+<defs><marker id="d201a-arr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+<text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">User Pool cấp TOKEN, Identity Pool cấp CREDENTIALS</text>
+<rect x="10" y="32" width="100" height="74" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+<use href="#aws-res-mobile-client" x="46" y="37" width="28" height="28"/>
+<text x="60" y="82" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">App (client)</text>
+<rect x="132" y="32" width="116" height="74" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+<use href="#aws-cognito" x="176" y="37" width="28" height="28"/>
+<text x="190" y="82" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">User Pool</text>
+<text x="190" y="98" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.75">= token</text>
+<rect x="278" y="32" width="124" height="74" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+<use href="#aws-cognito" x="326" y="37" width="28" height="28"/>
+<text x="340" y="82" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Identity Pool</text>
+<text x="340" y="98" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.75">= credentials</text>
+<rect x="450" y="32" width="100" height="74" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+<use href="#aws-iam" x="486" y="37" width="28" height="28"/>
+<text x="500" y="82" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">STS</text>
+<rect x="594" y="32" width="112" height="74" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
+<use href="#aws-s3" x="619" y="37" width="28" height="28"/>
+<use href="#aws-dynamodb" x="653" y="37" width="28" height="28"/>
+<text x="650" y="82" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">S3 / DynamoDB</text>
+<text x="650" y="98" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.75">AWS service</text>
+<line x1="60" y1="106" x2="60" y2="392" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<line x1="190" y1="106" x2="190" y2="392" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<line x1="340" y1="106" x2="340" y2="392" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<line x1="500" y1="106" x2="500" y2="392" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<line x1="650" y1="106" x2="650" y2="392" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<g data-step="1">
+<text x="66" y="133" text-anchor="start" font-size="12.5" fill="currentColor">1. đăng nhập (user/pass, SRP)</text>
+<line x1="62" y1="140" x2="186" y2="140" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#d201a-arr)"/>
+</g>
+<g data-step="2">
+<text x="184" y="171" text-anchor="end" font-size="12.5" font-weight="700" fill="currentColor">2. ID token (JWT)</text>
+<line x1="188" y1="178" x2="64" y2="178" stroke="#f59e0b" stroke-width="2" marker-end="url(#d201a-arr)"/>
+</g>
+<g data-step="3">
+<text x="66" y="209" text-anchor="start" font-size="12.5" fill="currentColor">3. gửi ID token (qua logins)</text>
+<line x1="62" y1="216" x2="336" y2="216" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#d201a-arr)"/>
+</g>
+<g data-step="4">
+<text x="420" y="247" text-anchor="middle" font-size="12.5" fill="currentColor">4. AssumeRoleWithWebIdentity</text>
+<line x1="342" y1="254" x2="496" y2="254" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#d201a-arr)"/>
+</g>
+<g data-step="5">
+<text x="494" y="285" text-anchor="end" font-size="12.5" fill="currentColor">5. temp credentials</text>
+<line x1="498" y1="292" x2="344" y2="292" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#d201a-arr)"/>
+</g>
+<g data-step="6">
+<text x="334" y="323" text-anchor="end" font-size="12.5" font-weight="700" fill="currentColor">6. AWS credentials tạm thời</text>
+<line x1="338" y1="330" x2="64" y2="330" stroke="#f59e0b" stroke-width="2" marker-end="url(#d201a-arr)"/>
+</g>
+<g data-step="7">
+<text x="66" y="361" text-anchor="start" font-size="12.5" fill="currentColor">7. gọi thẳng AWS service (SigV4), KHÔNG qua backend</text>
+<line x1="62" y1="368" x2="646" y2="368" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#d201a-arr)"/>
+</g>
+<rect x="16" y="402" width="688" height="68" rx="9" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="28" y="422" font-size="12.5" font-weight="700" fill="currentColor">Phân vai rạch ròi:</text>
+<text x="28" y="441" font-size="12" fill="currentColor" opacity="0.9">• User Pool = xác thực &amp; cấp TOKEN (ID/access/refresh), KHÔNG cấp AWS credentials.</text>
+<text x="28" y="459" font-size="12" fill="currentColor" opacity="0.9">• Identity Pool = đổi token lấy CREDENTIALS tạm thời qua STS. Dùng ID token (không phải access token).</text>
 </svg>
+<step-note data-step="1">User Pool giữ danh bạ user và mật khẩu, nên chỉ nó xác thực được. SRP giúp mật khẩu không đi nguyên văn trên đường truyền.</step-note>
+<step-note data-step="2">JWT chứng minh <em>ai</em> đang dùng app, nhưng AWS API không nhận JWT: request tới S3/DynamoDB phải ký SigV4 bằng credentials IAM. Vì vậy cần thêm một bước đổi.</step-note>
+<step-note data-step="3">App đặt ID token vào map <code>logins</code> với key là provider của User Pool. Phải là ID token, vì nó mang danh tính (<code>sub</code>, claims) mà Identity Pool cần; access token không dùng được ở đây.</step-note>
+<step-note data-step="4">Quyền thật nằm ở IAM role (authenticated role), không nằm trong token. Identity Pool kiểm token xong thì nhờ STS cho danh tính web này assume role đó.</step-note>
+<step-note data-step="5">STS cấp credentials tạm (có <code>SessionToken</code>, tự hết hạn). App không phải nhúng access key dài hạn, lộ ra cũng chỉ dùng được trong thời hạn ngắn.</step-note>
+<step-note data-step="6">Credentials về tới app. Từ đây quyền của app đúng bằng policy của authenticated role, vd chỉ đọc/ghi <code>s3://bucket/${user-id}/*</code>.</step-note>
+<step-note data-step="7">App ký SigV4 và gọi thẳng S3/DynamoDB, không cần backend làm trung gian. IAM policy của role, không phải code của bạn, quyết định request nào được phép.</step-note>
+</step-flow>
 
 Bên dưới, Identity Pool gọi STS **`AssumeRoleWithWebIdentity`** để lấy credentials.
 

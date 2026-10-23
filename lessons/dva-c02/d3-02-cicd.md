@@ -4,58 +4,53 @@ Domain 3 (Deployment) chiếm ~24% đề DVA-C02, và đây là nhóm dịch v�
 
 ## Bức tranh tổng thể: một commit chạy qua đâu
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Luồng CodePipeline: Source → Build → Deploy với artifact lưu ở S3</title>
-  <desc>CodePipeline điều phối ba stage trái sang phải. Source dùng CodeConnections kéo từ Git, xuất SourceArtifact. Build dùng CodeBuild đọc buildspec.yml và kéo package từ CodeArtifact, xuất BuildArtifact. Deploy dùng CodeDeploy đọc appspec.yml triển khai lên EC2, Lambda hoặc ECS. Artifact giữa các stage lưu trong S3 artifact store.</desc>
-  <defs>
-    <marker id="cpArr" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0 0 L8 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">CodePipeline — nhạc trưởng điều phối các stage</text>
-  <rect x="16" y="40" width="688" height="120" rx="11" fill="#8b5cf6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="5 4"/>
-  <text x="30" y="58" font-size="11" font-weight="700" fill="currentColor" opacity="0.75">CodePipeline</text>
-  <g>
-    <rect x="34" y="68" width="190" height="80" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="48" y="88" font-size="12.5" font-weight="700" fill="currentColor">Source</text>
-    <text x="48" y="106" font-size="10.5" fill="currentColor" opacity="0.72">CodeConnections → Git</text>
-    <text x="48" y="121" font-size="10.5" fill="currentColor" opacity="0.72">(GitHub/Bitbucket/S3)</text>
-    <text x="48" y="138" font-size="10" fill="currentColor" opacity="0.55">webhook khi push</text>
-  </g>
-  <g>
-    <rect x="265" y="68" width="190" height="80" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="279" y="88" font-size="12.5" font-weight="700" fill="currentColor">Build</text>
-    <text x="279" y="106" font-size="10.5" fill="currentColor" opacity="0.72">CodeBuild · buildspec.yml</text>
-    <text x="279" y="121" font-size="10.5" fill="currentColor" opacity="0.72">compile + test</text>
-    <text x="279" y="138" font-size="10" fill="currentColor" opacity="0.55">kéo package ← CodeArtifact</text>
-  </g>
-  <g>
-    <rect x="496" y="68" width="190" height="80" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="510" y="88" font-size="12.5" font-weight="700" fill="currentColor">Deploy</text>
-    <text x="510" y="106" font-size="10.5" fill="currentColor" opacity="0.72">CodeDeploy · appspec.yml</text>
-    <text x="510" y="123" font-size="10.5" fill="currentColor" opacity="0.72">→ EC2 / Lambda / ECS</text>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.55" fill="none">
-    <path d="M224 108 H263" marker-end="url(#cpArr)"/>
-    <path d="M455 108 H494" marker-end="url(#cpArr)"/>
-  </g>
-  <text x="243" y="100" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">Source</text>
-  <text x="243" y="123" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">Artifact</text>
-  <text x="474" y="100" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">Build</text>
-  <text x="474" y="123" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8">Artifact</text>
-  <g stroke="currentColor" stroke-opacity="0.4" fill="none" stroke-dasharray="4 3">
-    <path d="M129 148 V216" marker-end="url(#cpArr)"/>
-    <path d="M360 148 V216" marker-end="url(#cpArr)"/>
-  </g>
-  <rect x="34" y="222" width="440" height="56" rx="9" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="254" y="244" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">S3 artifact store</text>
-  <text x="254" y="262" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">artifact giữa các stage lưu/đọc ở đây (mã hoá KMS nếu cross-account)</text>
-  <rect x="496" y="222" width="190" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="591" y="244" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">CodeArtifact</text>
-  <text x="591" y="262" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">kho package (npm/pip/maven)</text>
-  <g stroke="currentColor" stroke-opacity="0.4" fill="none" stroke-dasharray="4 3">
-    <path d="M600 220 C 600 175, 520 150, 456 132" marker-end="url(#cpArr)"/>
-  </g>
-  <text x="612" y="200" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">pull</text>
-  <text x="16" y="308" font-size="10.5" fill="currentColor" opacity="0.6">Artifact store (S3) ≠ CodeArtifact: S3 giữ build output của pipeline; CodeArtifact giữ dependency package.</text>
+<svg viewBox="0 0 520 510" role="img" aria-labelledby="d302a-t d302a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="d302a-t">Luồng CodePipeline: Source, Build, Deploy với artifact lưu ở S3</title>
+<desc id="d302a-d">CodePipeline điều phối ba stage từ trên xuống. Source dùng CodeConnections kéo từ Git (GitHub/Bitbucket/S3), webhook khi push, xuất SourceArtifact. Build dùng CodeBuild đọc buildspec.yml, compile và test, kéo package từ CodeArtifact, xuất BuildArtifact. Deploy dùng CodeDeploy đọc appspec.yml triển khai lên EC2, Lambda hoặc ECS. Artifact giữa các stage lưu và đọc ở S3 artifact store, mã hoá KMS nếu cross-account. CodeArtifact là kho package npm/pip/maven, khác với artifact store.</desc>
+<defs><marker id="d302a-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<use href="#aws-codepipeline" x="14" y="8" width="40" height="40"/>
+<text x="62" y="25" text-anchor="start" font-size="13" font-weight="700" fill="currentColor">CodePipeline</text>
+<text x="62" y="43" text-anchor="start" font-size="13" fill="currentColor" opacity="0.75">nhạc trưởng điều phối các stage</text>
+<rect x="14" y="58" width="302" height="392" rx="11" fill="#8b5cf6" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="6 4"/>
+<rect x="26" y="72" width="278" height="100" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<use href="#aws-res-git-repository" x="36" y="88" width="44" height="44"/>
+<text x="90" y="96" text-anchor="start" font-size="13" font-weight="700" fill="currentColor">Source</text>
+<text x="90" y="116" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">CodeConnections → Git</text>
+<text x="90" y="136" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">(GitHub/Bitbucket/S3)</text>
+<text x="90" y="156" text-anchor="start" font-size="13" fill="currentColor" opacity="0.65">webhook khi push</text>
+<rect x="26" y="204" width="278" height="100" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<use href="#aws-codebuild" x="36" y="220" width="44" height="44"/>
+<text x="90" y="228" text-anchor="start" font-size="13" font-weight="700" fill="currentColor">Build</text>
+<text x="90" y="248" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">CodeBuild · buildspec.yml</text>
+<text x="90" y="268" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">compile + test</text>
+<text x="90" y="288" text-anchor="start" font-size="13" fill="currentColor" opacity="0.65">kéo package ← CodeArtifact</text>
+<rect x="26" y="336" width="278" height="100" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<use href="#aws-codedeploy" x="36" y="352" width="44" height="44"/>
+<text x="90" y="360" text-anchor="start" font-size="13" font-weight="700" fill="currentColor">Deploy</text>
+<text x="90" y="380" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">CodeDeploy · appspec.yml</text>
+<text x="90" y="400" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">→ EC2 / Lambda / ECS</text>
+<path d="M150 172 V200" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#d302a-arr)"/>
+<text x="160" y="191" text-anchor="start" font-size="13" fill="currentColor" opacity="0.85">SourceArtifact</text>
+<path d="M150 304 V332" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#d302a-arr)"/>
+<text x="160" y="323" text-anchor="start" font-size="13" fill="currentColor" opacity="0.85">BuildArtifact</text>
+<rect x="340" y="72" width="168" height="190" rx="10" fill="#3b82f6" fill-opacity="0.1" stroke="none"/>
+<use href="#aws-s3" x="402" y="82" width="44" height="44"/>
+<text x="424" y="146" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">S3 artifact store</text>
+<text x="424" y="166" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">artifact giữa các</text>
+<text x="424" y="186" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">stage lưu/đọc ở đây</text>
+<text x="424" y="206" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">mã hoá KMS nếu</text>
+<text x="424" y="226" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">cross-account</text>
+<path d="M304 104 H394" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#d302a-arr)"/>
+<path d="M304 236 H322 V118 H394" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#d302a-arr)"/>
+<rect x="340" y="300" width="168" height="126" rx="10" fill="#8b5cf6" fill-opacity="0.13" stroke="none"/>
+<use href="#aws-codeartifact" x="402" y="310" width="44" height="44"/>
+<text x="424" y="374" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">CodeArtifact</text>
+<text x="424" y="394" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">kho package</text>
+<text x="424" y="414" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">(npm/pip/maven)</text>
+<path d="M372 300 V284 H308" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#d302a-arr)"/>
+<text x="380" y="291" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">pull</text>
+<text x="14" y="480" text-anchor="start" font-size="13" fill="currentColor" opacity="0.7">Artifact store (S3) ≠ CodeArtifact: S3 giữ build output</text>
+<text x="14" y="500" text-anchor="start" font-size="13" fill="currentColor" opacity="0.7">của pipeline; CodeArtifact giữ dependency package.</text>
 </svg>
 
 CodePipeline là **nhạc trưởng** (orchestrator) nối các trạm. CodeBuild/CodeDeploy là **công nhân** thực thi. CodeArtifact là **kho package** (npm/pip/maven). Đừng nhầm vai trò — đề rất hay đánh tráo.
