@@ -108,37 +108,75 @@ Bài 2 chốt cơ chế ở bước 9: node ghi kết quả vào hàng đợi b�
 
 Hàng đợi bền — Redis Stream, Kafka, SQS, hay một bảng outbox trong Postgres — đều cho **at-least-once**, không cái nào cho exactly-once. Lý do luôn giống nhau: giữa lúc worker xử lý xong và lúc nó ack có một khe; worker chết trong khe đó → bản ghi được giao lại → xử lý lần hai.
 
-<svg viewBox="0 0 720 250" role="img" aria-labelledby="gs31-a-t gs31-a-d" style="width:100%;height:auto">
-<title id="gs31-a-t">Khe giữa xử lý và ack sinh ra bản ghi trùng</title>
-<desc id="gs31-a-d">Worker đọc bản ghi kết quả, cộng vàng vào database, rồi ack hàng đợi. Nếu worker chết sau khi cộng vàng nhưng trước khi ack, hàng đợi giao lại bản ghi và người chơi được cộng vàng lần thứ hai.</desc>
-<text x="14" y="20" font-size="12" font-weight="bold" fill="currentColor">Đường đi bình thường</text>
-<rect x="14" y="30" width="120" height="40" rx="6" fill="#3b82f6" fill-opacity="0.25"/>
-<text x="74" y="55" text-anchor="middle" font-size="10" fill="currentColor">1. đọc bản ghi</text>
-<rect x="164" y="30" width="150" height="40" rx="6" fill="#3b82f6" fill-opacity="0.25"/>
-<text x="239" y="49" text-anchor="middle" font-size="10" fill="currentColor">2. UPDATE gold += 500</text>
-<text x="239" y="63" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.7">commit xong</text>
-<rect x="344" y="30" width="110" height="40" rx="6" fill="#84cc16" fill-opacity="0.3"/>
-<text x="399" y="55" text-anchor="middle" font-size="10" fill="currentColor">3. ack hàng đợi</text>
-<line x1="134" y1="50" x2="162" y2="50" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5"/>
-<line x1="314" y1="50" x2="342" y2="50" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5"/>
-<rect x="314" y="22" width="30" height="56" rx="4" fill="#ef4444" fill-opacity="0.28"/>
-<text x="470" y="46" font-size="10" fill="currentColor">KHE — worker chết ở đây</text>
-<text x="470" y="62" font-size="10" fill="currentColor" opacity="0.75">DB đã đổi, hàng đợi chưa biết</text>
-<text x="14" y="112" font-size="12" font-weight="bold" fill="currentColor">Sau khi worker sống lại</text>
-<rect x="14" y="122" width="120" height="40" rx="6" fill="#f59e0b" fill-opacity="0.3"/>
-<text x="74" y="147" text-anchor="middle" font-size="10" fill="currentColor">1'. đọc LẠI</text>
-<rect x="164" y="122" width="150" height="40" rx="6" fill="#ef4444" fill-opacity="0.3"/>
-<text x="239" y="141" text-anchor="middle" font-size="10" fill="currentColor">2'. gold += 500 lần hai</text>
-<text x="239" y="155" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.75">người chơi được 1.000</text>
-<line x1="134" y1="142" x2="162" y2="142" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5"/>
-<text x="14" y="196" font-size="12" font-weight="bold" fill="currentColor">Sửa: idempotency key</text>
-<rect x="14" y="206" width="440" height="34" rx="6" fill="#84cc16" fill-opacity="0.22"/>
-<text x="28" y="227" font-size="10" fill="currentColor">INSERT INTO applied(key) VALUES (match_id + ':' + player_id) — trùng thì bỏ qua cả giao dịch</text>
-<text x="470" y="112" font-size="10" fill="currentColor" opacity="0.75">Không có exactly-once.</text>
-<text x="470" y="128" font-size="10" fill="currentColor" opacity="0.75">Chỉ có at-least-once</text>
-<text x="470" y="144" font-size="10" fill="currentColor" opacity="0.75">cộng với bên nhận</text>
-<text x="470" y="160" font-size="10" fill="currentColor" opacity="0.75">tự chống trùng.</text>
+<step-flow>
+<svg viewBox="0 0 760 600" role="img" aria-labelledby="gs31a-t gs31a-d" style="width:100%;height:auto">
+<title id="gs31a-t">Khe giữa xử lý và ack sinh ra bản ghi trùng</title>
+<desc id="gs31a-d">Node ghi bản ghi kết quả vào hàng đợi bền rồi giải phóng room. Worker đọc bản ghi, cộng 500 vàng vào database và commit, rồi mới ack hàng đợi. Nếu worker chết sau commit nhưng trước ack, hàng đợi giao lại bản ghi và người chơi được cộng vàng lần hai, thành 1.000. Sửa bằng idempotency key match_id:player_id insert trong cùng transaction: lần giao lại đụng khoá, bỏ qua cả giao dịch và ack.</desc>
+<defs><marker id="gs31a-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<rect x="10" y="12" width="140" height="34" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="80" y="34" text-anchor="middle" font-size="14" font-weight="bold" fill="currentColor">Game node</text>
+<line x1="80" y1="46" x2="80" y2="452" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="200" y="12" width="140" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="270" y="34" text-anchor="middle" font-size="14" font-weight="bold" fill="currentColor">Hàng đợi bền</text>
+<line x1="270" y1="46" x2="270" y2="452" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="400" y="12" width="140" height="34" rx="8" fill="#14b8a6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="470" y="34" text-anchor="middle" font-size="14" font-weight="bold" fill="currentColor">Worker</text>
+<line x1="470" y1="46" x2="470" y2="452" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="595" y="12" width="140" height="34" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="665" y="34" text-anchor="middle" font-size="14" font-weight="bold" fill="currentColor">Database</text>
+<line x1="665" y1="46" x2="665" y2="452" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<g data-step="1">
+<text x="175.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">ghi bản ghi kết quả</text>
+<line x1="84" y1="80" x2="266" y2="80" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#gs31a-arr)"/>
+<text x="80" y="102" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">giải phóng room ngay</text>
+</g>
+<g data-step="2">
+<text x="370.0" y="122" text-anchor="middle" font-size="13" fill="currentColor">1. đọc bản ghi</text>
+<line x1="274" y1="130" x2="466" y2="130" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#gs31a-arr)"/>
+</g>
+<g data-step="3">
+<text x="567.5" y="167" text-anchor="middle" font-size="13" fill="currentColor">2. UPDATE gold += 500</text>
+<line x1="474" y1="175" x2="661" y2="175" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#gs31a-arr)"/>
+<rect x="590" y="188" width="150" height="40" rx="6" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="665.0" y="204.5" text-anchor="middle" font-size="13" fill="currentColor">commit xong</text>
+<text x="665.0" y="221.5" text-anchor="middle" font-size="13" fill="currentColor" font-weight="bold">gold = 500</text>
+</g>
+<g data-step="4">
+<rect x="280" y="238" width="465" height="70" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" stroke-opacity="0.7" stroke-dasharray="5 3"/>
+<text x="370.0" y="254" text-anchor="middle" font-size="13" fill="currentColor">3. ack hàng đợi</text>
+<line x1="466" y1="262" x2="274" y2="262" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#gs31a-arr)"/>
+<text x="370.0" y="268" text-anchor="middle" font-size="18" font-weight="bold" fill="#f43f5e">✗</text>
+<text x="485" y="266" font-size="13" font-weight="bold" fill="currentColor">KHE: worker chết ở đây</text>
+<text x="485" y="284" font-size="13" fill="currentColor">DB đã đổi,</text>
+<text x="485" y="300" font-size="13" fill="currentColor">hàng đợi chưa biết</text>
+</g>
+<g data-step="5">
+<text x="370.0" y="337" text-anchor="middle" font-size="13" fill="currentColor">1'. đọc LẠI (giao lại)</text>
+<line x1="274" y1="345" x2="466" y2="345" stroke="#f59e0b" stroke-width="2" marker-end="url(#gs31a-arr)"/>
+<text x="370.0" y="365" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">bản ghi chưa được ack</text>
+</g>
+<g data-step="6">
+<text x="567.5" y="387" text-anchor="middle" font-size="13" fill="currentColor">2'. gold += 500 lần hai</text>
+<line x1="474" y1="395" x2="661" y2="395" stroke="#f43f5e" stroke-width="2" marker-end="url(#gs31a-arr)"/>
+<rect x="580" y="406" width="170" height="40" rx="6" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="665.0" y="431.0" text-anchor="middle" font-size="13" fill="currentColor" font-weight="bold">người chơi được 1.000</text>
+</g>
+<g data-step="7">
+<rect x="20" y="462" width="720" height="122" rx="8" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="36" y="486" font-size="14" font-weight="bold" fill="currentColor">Sửa: idempotency key, cùng transaction với UPDATE</text>
+<text x="36" y="510" font-size="13" fill="currentColor" font-family="monospace">INSERT INTO applied(key) VALUES (match_id + ':' + player_id)</text>
+<text x="36" y="532" font-size="13" fill="currentColor">Lần giao lại đụng PRIMARY KEY → trùng thì bỏ qua cả giao dịch, ack luôn → gold vẫn 500 ✓</text>
+<text x="36" y="560" font-size="13" fill="currentColor" opacity="0.8">Không có exactly-once. Chỉ có at-least-once cộng với bên nhận tự chống trùng.</text>
+</g>
 </svg>
+<step-note data-step="1">Node đẩy kết quả trận vào hàng đợi bền rồi giải phóng room, không chờ meta plane (bước 9 của bài 2). Từ đây trách nhiệm "cộng đúng một lần" nằm ở phía worker.</step-note>
+<step-note data-step="2">Hàng đợi giao bản ghi cho worker nhưng chưa xoá: nó chỉ xoá khi nhận được ack.</step-note>
+<step-note data-step="3">Worker cộng vàng và commit. Với DB, việc đã xong và bền.</step-note>
+<step-note data-step="4">Ack là một lệnh riêng, đi sau commit. Worker chết (hoặc ack mất, timeout mạng) đúng khoảng này thì hai hệ thống lệch nhau: DB nói đã làm, hàng đợi nói chưa.</step-note>
+<step-note data-step="5">Hàng đợi làm đúng hợp đồng at-least-once: chưa ack nghĩa là giao lại. Lần giao lại có thể chạy song song với worker cũ đang treo, khi hết visibility timeout.</step-note>
+<step-note data-step="6">Worker không có cách nào biết bản ghi này đã áp dụng, nên cộng lần nữa. Ở 10.000 CCU khe này sinh khoảng 2.580 bản ghi trùng mỗi ngày.</step-note>
+<step-note data-step="7">Khoá <code>match_id:player_id</code> do node sinh, không đổi khi giao lại. <code>INSERT</code> nó trong cùng transaction với <code>UPDATE</code>: lần hai đụng unique constraint, rollback rồi ack, DB serialize giúp cả khi hai lần giao chạy song song.</step-note>
+</step-flow>
 
 Định lượng ở **10.000 CCU**:
 

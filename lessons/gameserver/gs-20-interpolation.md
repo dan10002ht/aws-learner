@@ -90,38 +90,50 @@ alpha := float32(tRender-a.T) / float32(b.T-a.T)   // 0..1
 pos := a.Pos.Add(b.Pos.Sub(a.Pos).Scale(alpha))
 ```
 
-<svg viewBox="0 0 720 250" role="img" aria-labelledby="gs20-a-t gs20-a-d" style="width:100%;height:auto">
-<title id="gs20-a-t">Đầu render lùi 100 ms so với snapshot mới nhất</title>
-<desc id="gs20-a-d">Trục thời gian với snapshot đến mỗi 50 mili giây. Đầu render đặt tại thời điểm hiện tại trừ 100 mili giây, luôn nằm giữa hai snapshot đã nhận, nên mọi khung hình đều nội suy được. Vùng 100 mili giây bên phải đầu render là dữ liệu đã có nhưng cố tình chưa dùng.</desc>
-<line x1="40" y1="150" x2="690" y2="150" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5"/>
-<rect x="450" y="60" width="200" height="90" fill="#8b5cf6" fill-opacity="0.16"/>
-<text x="550" y="50" text-anchor="middle" font-size="11" font-weight="bold" fill="currentColor">d = 100 ms — đã nhận nhưng cố tình CHƯA vẽ</text>
-<line x1="450" y1="60" x2="450" y2="150" stroke="#8b5cf6" stroke-width="2"/>
-<line x1="650" y1="60" x2="650" y2="150" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="4 3"/>
-<circle cx="50" cy="150" r="6" fill="#84cc16" fill-opacity="0.75"/>
-<circle cx="150" cy="150" r="6" fill="#84cc16" fill-opacity="0.75"/>
-<circle cx="250" cy="150" r="6" fill="#84cc16" fill-opacity="0.75"/>
-<circle cx="350" cy="150" r="6" fill="#84cc16" fill-opacity="0.75"/>
-<circle cx="450" cy="150" r="6" fill="#84cc16" fill-opacity="0.75"/>
-<circle cx="550" cy="150" r="6" fill="#84cc16" fill-opacity="0.75"/>
-<circle cx="650" cy="150" r="6" fill="#84cc16" fill-opacity="0.75"/>
-<text x="50" y="176" text-anchor="middle" font-size="9" fill="currentColor">S0</text>
-<text x="150" y="176" text-anchor="middle" font-size="9" fill="currentColor">S1</text>
-<text x="250" y="176" text-anchor="middle" font-size="9" fill="currentColor">S2</text>
-<text x="350" y="176" text-anchor="middle" font-size="9" fill="currentColor">S3</text>
-<text x="450" y="176" text-anchor="middle" font-size="9" fill="currentColor">S4</text>
-<text x="550" y="176" text-anchor="middle" font-size="9" fill="currentColor">S5</text>
-<text x="650" y="176" text-anchor="middle" font-size="9" fill="currentColor">S6</text>
-<text x="350" y="196" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.75">snapshot cách nhau T = 50 ms</text>
-<text x="650" y="196" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.75">t_now</text>
-<polygon points="480,150 472,136 488,136" fill="#f59e0b" fill-opacity="0.9"/>
-<line x1="480" y1="136" x2="480" y2="104" stroke="#f59e0b" stroke-width="2"/>
-<text x="480" y="96" text-anchor="middle" font-size="11" font-weight="bold" fill="currentColor">đầu render</text>
-<text x="480" y="82" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.8">t_now − 100</text>
-<text x="500" y="128" font-size="9" fill="currentColor" opacity="0.85">lerp giữa S4 và S5, alpha = 0,3</text>
-<text x="40" y="228" font-size="10" fill="currentColor">Mỗi khung hình 16,67 ms: đầu render bò đều sang phải, luôn có hai snapshot kẹp hai bên.</text>
-<text x="40" y="242" font-size="10" fill="currentColor" opacity="0.8">Mất S5 thì đầu render vẫn còn 50 ms nữa mới chạm S6 — đó là toàn bộ giá trị của cái đệm.</text>
+<auto-anim data-dur="10">
+<svg viewBox="0 0 520 340" role="img" aria-labelledby="gs20a-t gs20a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="gs20a-t">Snapshot đến lệch nhịp, đầu render lùi 100 ms nên vẫn chạy đều</title>
+<desc id="gs20a-d">Mô phỏng chậm. Server gửi snapshot S0 đến S7 cách nhau đúng 50 mili giây nhưng gói tới client muộn lệch nhau từ 0 đến 40 mili giây. Đầu render đặt tại t_now trừ 100 mili giây, trượt sang phải đều đặn, luôn có hai snapshot đã nhận kẹp hai bên nên lerp được. Dải 100 mili giây giữa đầu render và t_now là dữ liệu đã nhận nhưng cố tình chưa vẽ. Hàng dưới so sánh: vẽ snapshot mới nhất thì nhân vật đứng rồi nhảy 25 cm theo nhịp gói tới, còn nội suy thì nhân vật trượt đều.</desc>
+<text x="20" y="34" font-size="13" font-weight="bold" fill="currentColor">Gói tới client: muộn lệch nhau 0–40 ms</text>
+<line x1="50.0" y1="62" x2="490.00000000000006" y2="62" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="20" y="94" font-size="13" font-weight="bold" fill="currentColor">Đệm snapshot, theo timestamp: T = 50 ms</text>
+<rect x="50.0" y="102" width="110.0" height="16" fill="#8b5cf6" fill-opacity="0.16"><animate attributeName="x" dur="10s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.9;1" values="50.0;380.0;380.0"/></rect>
+<line x1="50.0" y1="118" x2="490.00000000000006" y2="118" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5"/>
+<g opacity="1"><line x1="50.0" y1="54" x2="50.0" y2="70" stroke="#3b82f6" stroke-width="2.5"/><line x1="50.0" y1="70" x2="50.0" y2="112" stroke="#3b82f6" stroke-opacity="0.45" stroke-dasharray="3 3"/><circle cx="50.0" cy="118" r="6" fill="#10b981" fill-opacity="0.85"/></g>
+<text x="50.0" y="140" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">S0</text>
+<g opacity="1"><line x1="138.0" y1="54" x2="138.0" y2="70" stroke="#3b82f6" stroke-width="2.5"/><line x1="138.0" y1="70" x2="105.0" y2="112" stroke="#3b82f6" stroke-opacity="0.45" stroke-dasharray="3 3"/><circle cx="105.0" cy="118" r="6" fill="#10b981" fill-opacity="0.85"/></g>
+<text x="105.0" y="140" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">S1</text>
+<g opacity="0"><animate attributeName="opacity" dur="10s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.0290;0.0300;1" values="0;0;1;1"/><line x1="171.0" y1="54" x2="171.0" y2="70" stroke="#3b82f6" stroke-width="2.5"/><line x1="171.0" y1="70" x2="160.0" y2="112" stroke="#3b82f6" stroke-opacity="0.45" stroke-dasharray="3 3"/><circle cx="160.0" cy="118" r="6" fill="#10b981" fill-opacity="0.85"/></g>
+<text x="160.0" y="140" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">S2</text>
+<g opacity="0"><animate attributeName="opacity" dur="10s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.2690;0.2700;1" values="0;0;1;1"/><line x1="259.0" y1="54" x2="259.0" y2="70" stroke="#3b82f6" stroke-width="2.5"/><line x1="259.0" y1="70" x2="215.0" y2="112" stroke="#3b82f6" stroke-opacity="0.45" stroke-dasharray="3 3"/><circle cx="215.0" cy="118" r="6" fill="#10b981" fill-opacity="0.85"/></g>
+<text x="215.0" y="140" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">S3</text>
+<g opacity="0"><animate attributeName="opacity" dur="10s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.3140;0.3150;1" values="0;0;1;1"/><line x1="275.5" y1="54" x2="275.5" y2="70" stroke="#3b82f6" stroke-width="2.5"/><line x1="275.5" y1="70" x2="270.0" y2="112" stroke="#3b82f6" stroke-opacity="0.45" stroke-dasharray="3 3"/><circle cx="270.0" cy="118" r="6" fill="#10b981" fill-opacity="0.85"/></g>
+<text x="270.0" y="140" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">S4</text>
+<g opacity="0"><animate attributeName="opacity" dur="10s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.5240;0.5250;1" values="0;0;1;1"/><line x1="352.5" y1="54" x2="352.5" y2="70" stroke="#3b82f6" stroke-width="2.5"/><line x1="352.5" y1="70" x2="325.0" y2="112" stroke="#3b82f6" stroke-opacity="0.45" stroke-dasharray="3 3"/><circle cx="325.0" cy="118" r="6" fill="#10b981" fill-opacity="0.85"/></g>
+<text x="325.0" y="140" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">S5</text>
+<g opacity="0"><animate attributeName="opacity" dur="10s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.5990;0.6000;1" values="0;0;1;1"/><line x1="380.0" y1="54" x2="380.0" y2="70" stroke="#3b82f6" stroke-width="2.5"/><line x1="380.0" y1="70" x2="380.0" y2="112" stroke="#3b82f6" stroke-opacity="0.45" stroke-dasharray="3 3"/><circle cx="380.0" cy="118" r="6" fill="#10b981" fill-opacity="0.85"/></g>
+<text x="380.0" y="140" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">S6</text>
+<g opacity="0"><animate attributeName="opacity" dur="10s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.8540;0.8550;1" values="0;0;1;1"/><line x1="473.5" y1="54" x2="473.5" y2="70" stroke="#3b82f6" stroke-width="2.5"/><line x1="473.5" y1="70" x2="435.0" y2="112" stroke="#3b82f6" stroke-opacity="0.45" stroke-dasharray="3 3"/><circle cx="435.0" cy="118" r="6" fill="#10b981" fill-opacity="0.85"/></g>
+<text x="435.0" y="140" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">S7</text>
+<line x1="160.0" y1="46" x2="160.0" y2="124" stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="4 3"><animate attributeName="x1" dur="10s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.9;1" values="160.0;490.0;490.0"/><animate attributeName="x2" dur="10s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.9;1" values="160.0;490.0;490.0"/></line>
+<line x1="160.0" y1="200" x2="160.0" y2="224" stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="4 3"><animate attributeName="x1" dur="10s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.9;1" values="160.0;490.0;490.0"/><animate attributeName="x2" dur="10s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.9;1" values="160.0;490.0;490.0"/></line>
+<text x="160.0" y="162" text-anchor="middle" font-size="13" fill="currentColor">t_now<animate attributeName="x" dur="10s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.9;1" values="160.0;490.0;490.0"/></text>
+<line x1="50.0" y1="100" x2="50.0" y2="124" stroke="#f59e0b" stroke-width="2.5"><animate attributeName="x1" dur="10s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.9;1" values="50.0;380.0;380.0"/><animate attributeName="x2" dur="10s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.9;1" values="50.0;380.0;380.0"/></line>
+<line x1="50.0" y1="256" x2="50.0" y2="280" stroke="#f59e0b" stroke-width="2.5"><animate attributeName="x1" dur="10s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.9;1" values="50.0;380.0;380.0"/><animate attributeName="x2" dur="10s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.9;1" values="50.0;380.0;380.0"/></line>
+<text x="50.0" y="162" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">đầu render<animate attributeName="x" dur="10s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.9;1" values="50.0;380.0;380.0"/></text>
+<text x="20" y="190" font-size="13" font-weight="bold" fill="currentColor">Vẽ snapshot mới nhất: đứng rồi nhảy 25 cm</text>
+<line x1="50.0" y1="212" x2="490.00000000000006" y2="212" stroke="currentColor" stroke-opacity="0.2" stroke-width="6" stroke-linecap="round"/>
+<circle cx="105.0" cy="212" r="9" fill="#f43f5e" fill-opacity="0.75" stroke="currentColor" stroke-width="1"><animate attributeName="cx" dur="10s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.0300;0.2700;0.3150;0.5250;0.6000;0.8550;1" values="105.0;160.0;215.0;270.0;325.0;380.0;435.0;435.0"/></circle>
+<text x="20" y="246" font-size="13" font-weight="bold" fill="currentColor">Nội suy tại t_now − 100 ms: trượt đều</text>
+<line x1="50.0" y1="268" x2="490.00000000000006" y2="268" stroke="currentColor" stroke-opacity="0.2" stroke-width="6" stroke-linecap="round"/>
+<circle cx="50.0" cy="268" r="9" fill="#10b981" fill-opacity="0.75" stroke="currentColor" stroke-width="1"><animate attributeName="cx" dur="10s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.9;1" values="50.0;380.0;380.0"/></circle>
+<rect x="20" y="298" width="22" height="14" fill="#8b5cf6" fill-opacity="0.16" stroke="#8b5cf6" stroke-opacity="0.5"/>
+<text x="50" y="310" font-size="13" fill="currentColor">d = 100 ms: đã nhận nhưng cố tình CHƯA vẽ</text>
+<text x="20" y="332" font-size="13" fill="currentColor" opacity="0.8">Mô phỏng chậm 30 lần; render 60 fps, 16,67 ms/khung</text>
 </svg>
+</auto-anim>
+
+Đọc hình: S0–S7 rời server đúng mỗi T = 50 ms nhưng tới client lệch nhịp 0–40 ms (đường đứt nối lúc tới với timestamp). Mỗi khung hình 16,67 ms, đầu render ở `t_now − 100` bò đều sang phải và luôn có hai snapshot đã nhận kẹp hai bên, vd đi được 30% đoạn S4→S5 thì lerp giữa S4 và S5 với alpha = 0,3. Hình chỉ cho lệch nhịp, không mất gói; nếu mất S5 thì đầu render vẫn còn 50 ms nữa mới chạm S6 — đó là toàn bộ giá trị của cái đệm.
 
 Được: chuyển động **hoàn toàn mượt** ở mọi FPS, kể cả khi snapshot đến lệch nhịp — nhịp vẽ do đồng hồ client, không do nhịp gói tới. Đây đúng là jitter buffer bài 15 mô tả. Mất: bạn **luôn nhìn thấy người khác ở quá khứ**, đúng `d` mili giây. Mục 4.3 tính nó ra mét.
 

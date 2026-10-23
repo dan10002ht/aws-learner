@@ -90,39 +90,85 @@ func OnSnapshot(s Snapshot) {
 
 `dt` ở bước 3 là `dt` cố định của bài 5, không phải thời gian thật giữa hai frame — mười lăm bước replay xảy ra trong **cùng một khung hình**, nên đo đồng hồ để lấy `dt` thì cả mười lăm bước có `dt` gần 0 và nhân vật không nhúc nhích.
 
-<svg viewBox="0 0 720 300" role="img" aria-labelledby="gs19-a-t gs19-a-d" style="width:100%;height:auto">
+<step-flow>
+<svg viewBox="0 0 760 452" role="img" aria-labelledby="gs19-a-t gs19-a-d" style="width:100%;height:auto;display:block;margin:1.25rem auto">
 <title id="gs19-a-t">Ba bước của một lần reconcile</title>
-<desc id="gs19-a-d">Trước khi snapshot về, pending chứa sáu input từ seq 45 tới seq 50 và vị trí dự đoán nằm ở bên phải. Snapshot mang state của server kèm lastProcessedSeq bằng 47, ứng với một vị trí lùi lại phía sau. Bước một vứt ba input 45, 46, 47. Bước hai đặt vị trí về đúng state server. Bước ba chạy lại ba input còn lại 48, 49, 50 và đưa vị trí trở lại gần chỗ ban đầu.</desc>
-<text x="14" y="18" font-size="12" font-weight="bold" fill="currentColor">TRƯỚC — pending giữ 6 input chưa ack, client đang vẽ P</text>
-<rect x="60" y="30" width="62" height="26" rx="4" fill="#64748b" fill-opacity="0.3"/><text x="91" y="47" text-anchor="middle" font-size="11" fill="currentColor">45</text>
-<rect x="126" y="30" width="62" height="26" rx="4" fill="#64748b" fill-opacity="0.3"/><text x="157" y="47" text-anchor="middle" font-size="11" fill="currentColor">46</text>
-<rect x="192" y="30" width="62" height="26" rx="4" fill="#64748b" fill-opacity="0.3"/><text x="223" y="47" text-anchor="middle" font-size="11" fill="currentColor">47</text>
-<rect x="258" y="30" width="62" height="26" rx="4" fill="#3b82f6" fill-opacity="0.45"/><text x="289" y="47" text-anchor="middle" font-size="11" fill="currentColor">48</text>
-<rect x="324" y="30" width="62" height="26" rx="4" fill="#3b82f6" fill-opacity="0.45"/><text x="355" y="47" text-anchor="middle" font-size="11" fill="currentColor">49</text>
-<rect x="390" y="30" width="62" height="26" rx="4" fill="#3b82f6" fill-opacity="0.45"/><text x="421" y="47" text-anchor="middle" font-size="11" fill="currentColor">50</text>
-<circle cx="560" cy="43" r="7" fill="#f59e0b"/><text x="600" y="47" font-size="11" fill="currentColor">P — vị trí đang vẽ</text>
-<text x="14" y="88" font-size="12" font-weight="bold" fill="currentColor">SNAPSHOT VỀ — state Q, LastProcessedSeq = 47</text>
-<circle cx="322" cy="112" r="7" fill="#8b5cf6"/><text x="360" y="116" font-size="11" fill="currentColor">Q — sự thật, nhưng của 48,3 ms trước</text>
-<line x1="322" y1="112" x2="548" y2="112" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4 3"/>
-<text x="435" y="132" text-anchor="middle" font-size="10" fill="currentColor">khoảng cách P–Q = 241,5 mm</text>
-<text x="14" y="164" font-size="12" font-weight="bold" fill="currentColor">BƯỚC 1 — vứt 45, 46, 47 · BƯỚC 2 — local = Q</text>
-<rect x="60" y="176" width="194" height="26" rx="4" fill="#ef4444" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 3"/>
-<text x="157" y="193" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.7">đã ack — bỏ</text>
-<rect x="258" y="176" width="62" height="26" rx="4" fill="#3b82f6" fill-opacity="0.45"/><text x="289" y="193" text-anchor="middle" font-size="11" fill="currentColor">48</text>
-<rect x="324" y="176" width="62" height="26" rx="4" fill="#3b82f6" fill-opacity="0.45"/><text x="355" y="193" text-anchor="middle" font-size="11" fill="currentColor">49</text>
-<rect x="390" y="176" width="62" height="26" rx="4" fill="#3b82f6" fill-opacity="0.45"/><text x="421" y="193" text-anchor="middle" font-size="11" fill="currentColor">50</text>
-<text x="14" y="234" font-size="12" font-weight="bold" fill="currentColor">BƯỚC 3 — chạy lại 48, 49, 50 trên Q, trong CÙNG một khung hình</text>
-<circle cx="322" cy="258" r="6" fill="#8b5cf6"/>
-<path d="M322 258 L 400 258" stroke="#84cc16" stroke-width="5" stroke-opacity="0.6"/>
-<path d="M400 258 L 478 258" stroke="#84cc16" stroke-width="5" stroke-opacity="0.6"/>
-<path d="M478 258 L 556 258" stroke="#84cc16" stroke-width="5" stroke-opacity="0.6"/>
-<circle cx="556" cy="258" r="7" fill="#84cc16"/>
-<text x="361" y="250" text-anchor="middle" font-size="9" fill="currentColor">48</text>
-<text x="439" y="250" text-anchor="middle" font-size="9" fill="currentColor">49</text>
-<text x="517" y="250" text-anchor="middle" font-size="9" fill="currentColor">50</text>
-<text x="600" y="262" font-size="11" fill="currentColor">P' — vừa đúng, vừa ở hiện tại</text>
-<text x="14" y="290" font-size="10" font-style="italic" fill="currentColor" opacity="0.8">Bỏ bước 3 thì nhân vật dừng ở Q: lùi 241,5 mm, hai mươi lần mỗi giây. Đó là triệu chứng ở mục 2.</text>
+<desc id="gs19-a-d">Trước khi snapshot về, pending chứa sáu input từ seq 45 tới seq 50 và vị trí dự đoán P nằm ở bên phải. Snapshot mang state Q của server kèm LastProcessedSeq bằng 47, ứng với một vị trí lùi lại 241,5 mm, là sự thật của 48,3 ms trước. Bước một vứt ba input 45, 46, 47. Bước hai đặt local về đúng Q. Bước ba chạy lại ba input còn lại 48, 49, 50 trong cùng một khung hình và đưa vị trí tới P', gần chỗ ban đầu. Bỏ bước ba thì nhân vật dừng ở Q, lùi 241,5 mm hai mươi lần mỗi giây.</desc>
+<defs><marker id="gs19-a-arrow" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<g data-step="1">
+<text x="14" y="22" font-size="13" font-weight="bold" fill="currentColor">TRƯỚC: pending giữ 6 input chưa ack, client đang vẽ P</text>
+<rect x="60" y="34" width="62" height="28" rx="4" fill="#64748b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="91" y="53" text-anchor="middle" font-size="13" fill="currentColor">45</text>
+<rect x="126" y="34" width="62" height="28" rx="4" fill="#64748b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="157" y="53" text-anchor="middle" font-size="13" fill="currentColor">46</text>
+<rect x="192" y="34" width="62" height="28" rx="4" fill="#64748b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="223" y="53" text-anchor="middle" font-size="13" fill="currentColor">47</text>
+<rect x="258" y="34" width="62" height="28" rx="4" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="289" y="53" text-anchor="middle" font-size="13" fill="currentColor">48</text>
+<rect x="324" y="34" width="62" height="28" rx="4" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="355" y="53" text-anchor="middle" font-size="13" fill="currentColor">49</text>
+<rect x="390" y="34" width="62" height="28" rx="4" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="421" y="53" text-anchor="middle" font-size="13" fill="currentColor">50</text>
+<circle cx="560" cy="48" r="8" fill="#f59e0b"/>
+<text x="576" y="53" font-size="13" fill="currentColor">P: vị trí đang vẽ</text>
+</g>
+<g data-step="2">
+<text x="14" y="102" font-size="13" font-weight="bold" fill="currentColor">SNAPSHOT VỀ: state Q, LastProcessedSeq = 47</text>
+<circle cx="560" cy="126" r="8" fill="none" stroke="#f59e0b" stroke-width="2"/>
+<text x="576" y="131" font-size="13" fill="currentColor">P</text>
+<line x1="332" y1="126" x2="550" y2="126" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="4 3"/>
+<circle cx="322" cy="126" r="8" fill="#8b5cf6"/>
+<text x="306" y="131" text-anchor="end" font-size="13" fill="currentColor">Q: sự thật, nhưng của 48,3 ms trước</text>
+<text x="441" y="150" text-anchor="middle" font-size="13" fill="currentColor">khoảng cách P–Q = 241,5 mm</text>
+</g>
+<g data-step="3">
+<text x="14" y="186" font-size="13" font-weight="bold" fill="currentColor">BƯỚC 1: vứt 45, 46, 47 (seq ≤ 47, server đã xử lý)</text>
+<rect x="60" y="198" width="62" height="28" rx="4" fill="#f43f5e" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="3 3"/>
+<text x="91" y="217" text-anchor="middle" font-size="13" fill="currentColor">45</text>
+<line x1="68" y1="226" x2="114" y2="198" stroke="#f43f5e" stroke-width="1.5" stroke-opacity="0.6"/>
+<rect x="126" y="198" width="62" height="28" rx="4" fill="#f43f5e" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="3 3"/>
+<text x="157" y="217" text-anchor="middle" font-size="13" fill="currentColor">46</text>
+<line x1="134" y1="226" x2="180" y2="198" stroke="#f43f5e" stroke-width="1.5" stroke-opacity="0.6"/>
+<rect x="192" y="198" width="62" height="28" rx="4" fill="#f43f5e" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="3 3"/>
+<text x="223" y="217" text-anchor="middle" font-size="13" fill="currentColor">47</text>
+<line x1="200" y1="226" x2="246" y2="198" stroke="#f43f5e" stroke-width="1.5" stroke-opacity="0.6"/>
+<rect x="258" y="198" width="62" height="28" rx="4" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="289" y="217" text-anchor="middle" font-size="13" fill="currentColor">48</text>
+<rect x="324" y="198" width="62" height="28" rx="4" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="355" y="217" text-anchor="middle" font-size="13" fill="currentColor">49</text>
+<rect x="390" y="198" width="62" height="28" rx="4" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="421" y="217" text-anchor="middle" font-size="13" fill="currentColor">50</text>
+<text x="466" y="217" font-size="13" fill="currentColor">pending còn 3: 48, 49, 50</text>
+</g>
+<g data-step="4">
+<text x="14" y="266" font-size="13" font-weight="bold" fill="currentColor">BƯỚC 2: local = Q</text>
+<circle cx="560" cy="290" r="8" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3 2"/>
+<text x="576" y="295" font-size="13" fill="currentColor">P bị bỏ</text>
+<line x1="550" y1="290" x2="334" y2="290" stroke="#8b5cf6" stroke-width="2" marker-end="url(#gs19-a-arrow)"/>
+<circle cx="322" cy="290" r="8" fill="#8b5cf6"/>
+<text x="306" y="295" text-anchor="end" font-size="13" fill="currentColor">local đứng ở Q</text>
+<text x="441" y="314" text-anchor="middle" font-size="13" fill="currentColor">lùi 241,5 mm về quá khứ</text>
+</g>
+<g data-step="5">
+<text x="14" y="350" font-size="13" font-weight="bold" fill="currentColor">BƯỚC 3: chạy lại 48, 49, 50 trên Q, trong CÙNG một khung hình</text>
+<circle cx="322" cy="380" r="7" fill="#8b5cf6"/>
+<line x1="331" y1="380" x2="398" y2="380" stroke="#10b981" stroke-width="3" marker-end="url(#gs19-a-arrow)"/>
+<text x="361" y="370" text-anchor="middle" font-size="13" fill="currentColor">48</text>
+<line x1="402" y1="380" x2="476" y2="380" stroke="#10b981" stroke-width="3" marker-end="url(#gs19-a-arrow)"/>
+<text x="439" y="370" text-anchor="middle" font-size="13" fill="currentColor">49</text>
+<line x1="480" y1="380" x2="554" y2="380" stroke="#10b981" stroke-width="3" marker-end="url(#gs19-a-arrow)"/>
+<text x="517" y="370" text-anchor="middle" font-size="13" fill="currentColor">50</text>
+<circle cx="560" cy="380" r="8" fill="#10b981"/>
+<text x="560" y="406" text-anchor="middle" font-size="13" fill="currentColor">P': vừa đúng, vừa ở hiện tại</text>
+</g>
+<text x="14" y="440" font-size="13" font-style="italic" fill="currentColor" opacity="0.85">Bỏ bước 3 thì nhân vật dừng ở Q: lùi 241,5 mm, hai mươi lần mỗi giây. Đó là triệu chứng ở mục 2.</text>
 </svg>
+<step-note data-step="1">Mỗi frame client chạy input mới lên <code>local</code> ngay, rồi cất vào <code>pending</code> chờ server xác nhận. P là kết quả của cả sáu input; client chưa biết server đã xử lý tới đâu.</step-note>
+<step-note data-step="2">Snapshot rời server khi server mới xử lý tới seq 47, rồi mất RTT/2 để bay về; trong lúc đó 48, 49, 50 đã được bấm. Vì thế Q nằm sau P đúng một cửa sổ round-trip: 5 m/s × 48,3 ms.</step-note>
+<step-note data-step="3">Tác dụng của 45, 46, 47 đã nằm sẵn trong Q. Giữ chúng lại thì bước 3 sẽ tính chúng lần thứ hai, nên chỉ giữ input có <code>Seq &gt; LastProcessedSeq</code>.</step-note>
+<step-note data-step="4">Q là state authoritative, mọi sai lệch tích luỹ của prediction bị xoá ở đây. Đoạn code lỗi đầu bài dừng đúng ở bước này.</step-note>
+<step-note data-step="5">Replay dùng <code>sim.Step</code> với <code>dt</code> cố định của bài 5, không đo đồng hồ. Nhờ determinism mức A, ba bước này cho lại đúng chỗ prediction đã tới, cộng phần server vừa sửa nếu có.</step-note>
+</step-flow>
 
 ### 3.2 Bỏ bước 3 = trả lại toàn bộ tiền bài 18 vừa kiếm được
 

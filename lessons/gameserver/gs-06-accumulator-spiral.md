@@ -110,37 +110,54 @@ Tick 2 chính là một dòng `tick rỗng` trong log ở mục 2: xô có 16,63
 
 Và nhìn cột cuối cùng: 50,2 ms đời thật đã sinh ra đúng 3 bước = 50,00 ms thời gian mô phỏng, còn 0,20 ms nằm trong xô chờ tick sau. **Không mất, không thừa.**
 
-<svg viewBox="0 0 720 300" role="img" aria-labelledby="gs6-a-t gs6-a-d" style="width:100%;height:auto">
-<title id="gs6-a-t">Accumulator nạp thời gian thật và rút ra các khối dt nguyên vẹn</title>
-<desc id="gs6-a-d">Ba tick liên tiếp. Tick một nạp 17,2 mili giây và rút ra một bước, dư 0,53. Tick hai nạp 16,1 nhưng tổng mới chỉ 16,63 nên không rút được bước nào, xô giữ nguyên 16,63. Tick ba nạp 16,9 thành 33,53 nên rút ra hai bước, dư 0,20. Tổng 50,2 mili giây thật cho ra đúng ba bước mô phỏng.</desc>
-<text x="14" y="20" font-size="12" font-weight="bold" fill="currentColor">Nạp vào — thời gian THẬT trôi qua</text>
-<rect x="14" y="30" width="180" height="30" rx="6" fill="#f59e0b" fill-opacity="0.28"/>
-<text x="104" y="50" text-anchor="middle" font-size="11" fill="currentColor">tick 1 — 17,2 ms</text>
-<rect x="204" y="30" width="168" height="30" rx="6" fill="#f59e0b" fill-opacity="0.28"/>
-<text x="288" y="50" text-anchor="middle" font-size="11" fill="currentColor">tick 2 — 16,1 ms</text>
-<rect x="382" y="30" width="177" height="30" rx="6" fill="#f59e0b" fill-opacity="0.28"/>
-<text x="470" y="50" text-anchor="middle" font-size="11" fill="currentColor">tick 3 — 16,9 ms</text>
-<text x="14" y="118" font-size="12" font-weight="bold" fill="currentColor">Xô — accumulator (rút khi đủ 16,6667), phần dư không bao giờ bị vứt</text>
-<rect x="14" y="128" width="690" height="44" rx="8" fill="#64748b" fill-opacity="0.10" stroke="currentColor" stroke-opacity="0.25"/>
-<text x="90" y="146" text-anchor="middle" font-size="10" fill="currentColor">sau tick 1</text>
-<text x="90" y="164" text-anchor="middle" font-size="11" font-weight="bold" fill="currentColor">dư 0,53</text>
-<text x="330" y="146" text-anchor="middle" font-size="10" fill="currentColor">sau tick 2 — chưa đủ dt</text>
-<text x="330" y="164" text-anchor="middle" font-size="11" font-weight="bold" fill="currentColor">giữ 16,63</text>
-<text x="590" y="146" text-anchor="middle" font-size="10" fill="currentColor">sau tick 3</text>
-<text x="590" y="164" text-anchor="middle" font-size="11" font-weight="bold" fill="currentColor">dư 0,20</text>
-<text x="14" y="204" font-size="12" font-weight="bold" fill="currentColor">Rút ra — bước MÔ PHỎNG, luôn đúng 16,6667 ms</text>
-<rect x="14" y="214" width="172" height="30" rx="6" fill="#84cc16" fill-opacity="0.30"/>
-<text x="100" y="234" text-anchor="middle" font-size="11" fill="currentColor">step 1</text>
-<rect x="196" y="214" width="120" height="30" rx="6" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3"/>
-<text x="256" y="234" text-anchor="middle" font-size="11" fill="currentColor">0 step</text>
-<rect x="326" y="214" width="172" height="30" rx="6" fill="#84cc16" fill-opacity="0.30"/>
-<text x="412" y="234" text-anchor="middle" font-size="11" fill="currentColor">step 2</text>
-<rect x="508" y="214" width="172" height="30" rx="6" fill="#84cc16" fill-opacity="0.30"/>
-<text x="594" y="234" text-anchor="middle" font-size="11" fill="currentColor">step 3</text>
-<line x1="14" y1="258" x2="704" y2="258" stroke="currentColor" stroke-opacity="0.35" stroke-width="1"/>
-<text x="14" y="278" font-size="11" fill="currentColor">3 vòng lặp · 50,2 ms thật</text>
-<text x="704" y="278" text-anchor="end" font-size="11" font-weight="bold" fill="currentColor">3 sim step = 50,00 ms mô phỏng, dư 0,20 chờ tiếp</text>
+<auto-anim data-dur="12">
+<svg viewBox="0 0 520 400" role="img" aria-labelledby="gs6a-t gs6a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="gs6a-t">Accumulator nạp thời gian thật và rút ra các khối dt nguyên vẹn</title>
+<desc id="gs6a-d">Ba tick liên tiếp với dt bằng 16,6667 mili giây, xô bắt đầu rỗng. Tick một nạp 17,2 mili giây, xô 17,20 nên rút ra một bước, dư 0,53. Tick hai nạp 16,1, xô mới 16,63, thiếu 0,04 so với dt nên không rút được bước nào, đây là tick rỗng. Tick ba nạp 16,9 thành 33,53, đủ hai khối nên rút ra hai bước liền nhau, đây là catch-up, dư 0,20. Tổng 50,2 mili giây thật cho ra đúng ba bước mô phỏng bằng 50,00 mili giây, phần dư 0,20 ở lại trong xô chờ tick sau.</desc>
+<text x="20" y="22" font-size="14" font-weight="700" fill="currentColor">Thời gian THẬT — mỗi tick vòng lặp thức dậy 1 lần</text>
+<rect x="20" y="34" width="0" height="28" fill="#f59e0b" fill-opacity="0.30"><animate attributeName="width" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.0417;0.2137;0.2803;0.4413;0.5080;0.6770;0.9833;0.9842;1.0000" values="0;0;164.46215139442228;164.46215139442228;318.40637450199193;318.40637450199193;480;480;0;0"/></rect>
+<rect x="20.0" y="34" width="164.5" height="28" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="102.2" y="53" text-anchor="middle" font-size="13" fill="currentColor">tick 1 · 17,2 ms</text>
+<rect x="184.5" y="34" width="153.9" height="28" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="261.4" y="53" text-anchor="middle" font-size="13" fill="currentColor">tick 2 · 16,1 ms</text>
+<rect x="338.4" y="34" width="161.6" height="28" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="419.2" y="53" text-anchor="middle" font-size="13" fill="currentColor">tick 3 · 16,9 ms</text>
+<text x="20" y="96" font-size="14" font-weight="700" fill="currentColor">Xô acc</text>
+<rect x="20" y="320.0" width="90" height="0" fill="#f59e0b" fill-opacity="0.45"><animate attributeName="y" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.0417;0.2137;0.2470;0.2803;0.4413;0.5080;0.6770;0.7103;0.7437;0.7770;0.9833;1.0000" values="320.0;320.0;229.7;317.2;317.2;232.68;232.68;143.95;231.45;231.45;318.95;318.95;320.0"/><animate attributeName="height" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.0417;0.2137;0.2470;0.2803;0.4413;0.5080;0.6770;0.7103;0.7437;0.7770;0.9833;1.0000" values="0.0;0.0;90.3;2.8;2.8;87.33;87.32;176.05;88.55;88.55;1.05;1.05;0.0"/></rect>
+<path d="M20 120.5 V320 H110 V120.5" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5"/>
+<line x1="20" y1="232.5" x2="114" y2="232.5" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="4 3"/>
+<text x="118" y="237.5" font-size="13" fill="currentColor">dt</text>
+<line x1="20" y1="145.0" x2="114" y2="145.0" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="4 3"/>
+<text x="118" y="150.0" font-size="13" fill="currentColor">2·dt</text>
+<text x="65.0" y="340" text-anchor="middle" font-size="13" fill="currentColor">dt = 16,6667 ms</text>
+<text x="65.0" y="226.5" text-anchor="middle" font-size="13" font-weight="700" fill="#f43f5e" opacity="0">✗ thiếu 0,04<animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.4397;0.4413;0.5080;0.5097;1.0000" values="0;0;1;1;0;0"/></text>
+<text x="200" y="96" font-size="14" font-weight="700" fill="currentColor">Rút ra — mỗi khối đúng dt</text>
+<rect x="200" y="108" width="94" height="44" rx="6" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3"/>
+<rect x="20" y="0" width="94" height="44" rx="6" fill="#10b981" fill-opacity="0.45" opacity="0"><animate attributeName="x" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.2137;0.2287;0.2470;1.0000" values="20;20;20;200;200"/><animate attributeName="y" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.2137;0.2287;0.2470;1.0000" values="229.7;229.7;108;108;108"/><animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.2120;0.2137;0.2470;0.2487;1.0000" values="0;0;1;1;0;0"/></rect>
+<g opacity="0"><rect x="200" y="108" width="94" height="44" rx="6" fill="#10b981" fill-opacity="0.16" stroke="#10b981" stroke-opacity="0.8"/><text x="247" y="127" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">step 1</text><text x="247" y="144" text-anchor="middle" font-size="13" fill="currentColor">từ tick 1</text><animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.2453;0.2470;0.9833;0.9850;1.0000" values="0;0;1;1;0;0"/></g>
+<rect x="302" y="108" width="94" height="44" rx="6" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3"/>
+<rect x="20" y="0" width="94" height="44" rx="6" fill="#10b981" fill-opacity="0.45" opacity="0"><animate attributeName="x" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.6770;0.6920;0.7103;1.0000" values="20;20;20;302;302"/><animate attributeName="y" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.6770;0.6920;0.7103;1.0000" values="143.95;143.95;108;108;108"/><animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.6753;0.6770;0.7103;0.7120;1.0000" values="0;0;1;1;0;0"/></rect>
+<g opacity="0"><rect x="302" y="108" width="94" height="44" rx="6" fill="#10b981" fill-opacity="0.16" stroke="#10b981" stroke-opacity="0.8"/><text x="349" y="127" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">step 2</text><text x="349" y="144" text-anchor="middle" font-size="13" fill="currentColor">từ tick 3</text><animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.7087;0.7103;0.9833;0.9850;1.0000" values="0;0;1;1;0;0"/></g>
+<rect x="404" y="108" width="94" height="44" rx="6" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3"/>
+<rect x="20" y="0" width="94" height="44" rx="6" fill="#10b981" fill-opacity="0.45" opacity="0"><animate attributeName="x" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.7437;0.7587;0.7770;1.0000" values="20;20;20;404;404"/><animate attributeName="y" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.7437;0.7587;0.7770;1.0000" values="231.45;231.45;108;108;108"/><animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.7420;0.7437;0.7770;0.7787;1.0000" values="0;0;1;1;0;0"/></rect>
+<g opacity="0"><rect x="404" y="108" width="94" height="44" rx="6" fill="#10b981" fill-opacity="0.16" stroke="#10b981" stroke-opacity="0.8"/><text x="451" y="127" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">step 3</text><text x="451" y="144" text-anchor="middle" font-size="13" fill="currentColor">từ tick 3</text><animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.7753;0.7770;0.9833;0.9850;1.0000" values="0;0;1;1;0;0"/></g>
+<text x="200" y="186" font-size="13" fill="currentColor" opacity="0">tick 1 → 1 step, dư 0,53<animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.2453;0.2470;0.9833;0.9850;1.0000" values="0;0;1;1;0;0"/></text>
+<text x="200" y="210" font-size="13" fill="currentColor" opacity="0">tick 2 → 0 step: tick rỗng, giữ 16,63<animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.4397;0.4413;0.9833;0.9850;1.0000" values="0;0;1;1;0;0"/></text>
+<text x="200" y="234" font-size="13" fill="currentColor" opacity="0">tick 3 → 2 step: catch-up, dư 0,20<animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.7753;0.7770;0.9833;0.9850;1.0000" values="0;0;1;1;0;0"/></text>
+<rect x="196" y="252" width="308" height="34" rx="6" fill="#3b82f6" fill-opacity="0.13"/>
+<text x="206" y="274" font-size="13" font-weight="700" fill="currentColor" opacity="0">xô rỗng, chờ vòng lặp thức dậy<animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.0417;0.0433;1.0000" values="1;1;0;0"/></text>
+<text x="206" y="274" font-size="13" font-weight="700" fill="currentColor" opacity="0">đời thật trôi 17,2 ms → nạp vào xô<animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.0400;0.0417;0.2137;0.2153;1.0000" values="0;0;1;1;0;0"/></text>
+<text x="206" y="274" font-size="13" font-weight="700" fill="currentColor" opacity="0">17,20 ≥ dt → rút 1 step<animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.2120;0.2137;0.2803;0.2820;1.0000" values="0;0;1;1;0;0"/></text>
+<text x="206" y="274" font-size="13" font-weight="700" fill="currentColor" opacity="0">trôi 16,1 ms → xô 0,53 + 16,1 = 16,63<animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.2787;0.2803;0.4413;0.4430;1.0000" values="0;0;1;1;0;0"/></text>
+<text x="206" y="274" font-size="13" font-weight="700" fill="currentColor" opacity="0">16,63 &lt; dt → 0 step, sim đứng yên<animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.4397;0.4413;0.5080;0.5097;1.0000" values="0;0;1;1;0;0"/></text>
+<text x="206" y="274" font-size="13" font-weight="700" fill="currentColor" opacity="0">trôi 16,9 ms → xô 33,53<animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.5063;0.5080;0.6770;0.6787;1.0000" values="0;0;1;1;0;0"/></text>
+<text x="206" y="274" font-size="13" font-weight="700" fill="currentColor" opacity="0">33,53 ≥ 2·dt → catch-up 2 step liền<animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.6753;0.6770;0.8103;0.8120;1.0000" values="0;0;1;1;0;0"/></text>
+<text x="206" y="274" font-size="13" font-weight="700" fill="currentColor" opacity="0">dư 0,20 ở lại trong xô, chờ tick sau<animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0000;0.8087;0.8103;1.0000" values="0;0;1;1"/></text>
+<line x1="20" y1="350" x2="500" y2="350" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="20" y="372" font-size="13" fill="currentColor">3 vòng lặp · 50,2 ms thật → 3 sim step = 50,00 ms mô phỏng</text>
+<text x="20" y="392" font-size="13" font-weight="700" fill="currentColor">dư 0,20 chờ tiếp · không mất, không thừa</text>
 </svg>
+</auto-anim>
 
 ### 3.3 Hệ quả 1: số tick ≠ số sim step, và đó không phải lỗi
 

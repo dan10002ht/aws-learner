@@ -81,42 +81,77 @@ func (w *World) ResolveShot(p *Player, cmd FireCmd, now Tick) HitResult {
 
 `defer snap.Undo()` là dòng dễ quên nhất và hỏng nặng nhất. Trong lúc world bị tua ngược, **không được** chạy vật lý, không xử lý gói của người khác, không tick — nếu cửa sổ vài micro giây đó rò ra ngoài thì mọi va chạm của mọi người trong tick này tính theo một thế giới quá khứ.
 
-<svg viewBox="0 0 720 280" role="img" aria-labelledby="gs21-a-t gs21-a-d" style="width:100%;height:auto">
-<title id="gs21-a-t">Server tua ngược thế giới về thời điểm người bắn đã nhìn thấy</title>
-<desc id="gs21-a-d">Trục thời gian ở server. Vòng đệm lịch sử ghi vị trí nạn nhân mỗi tick. Gói bắn tới ở hiện tại, server lùi một trăm hai mươi mili giây gồm nửa RTT là hai mươi và đệm nội suy là một trăm, khôi phục hitbox nạn nhân tại đó rồi raycast, sau đó trả thế giới về hiện tại.</desc>
-<line x1="40" y1="170" x2="690" y2="170" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5"/>
-<rect x="180" y="120" width="440" height="50" fill="#64748b" fill-opacity="0.14"/>
-<text x="400" y="112" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.85">vòng đệm lịch sử — mỗi tick một bản ghi</text>
-<circle cx="200" cy="170" r="4" fill="#64748b" fill-opacity="0.7"/>
-<circle cx="240" cy="170" r="4" fill="#64748b" fill-opacity="0.7"/>
-<circle cx="280" cy="170" r="4" fill="#64748b" fill-opacity="0.7"/>
-<circle cx="320" cy="170" r="4" fill="#64748b" fill-opacity="0.7"/>
-<circle cx="360" cy="170" r="4" fill="#64748b" fill-opacity="0.7"/>
-<circle cx="400" cy="170" r="4" fill="#64748b" fill-opacity="0.7"/>
-<circle cx="440" cy="170" r="4" fill="#64748b" fill-opacity="0.7"/>
-<circle cx="480" cy="170" r="4" fill="#64748b" fill-opacity="0.7"/>
-<circle cx="520" cy="170" r="4" fill="#64748b" fill-opacity="0.7"/>
-<circle cx="560" cy="170" r="4" fill="#64748b" fill-opacity="0.7"/>
-<circle cx="600" cy="170" r="4" fill="#64748b" fill-opacity="0.7"/>
-<circle cx="320" cy="170" r="8" fill="#3b82f6" fill-opacity="0.45" stroke="#3b82f6" stroke-width="2"/>
-<circle cx="640" cy="170" r="8" fill="#ef4444" fill-opacity="0.35" stroke="#ef4444" stroke-width="2"/>
-<line x1="320" y1="170" x2="640" y2="170" stroke="#f59e0b" stroke-width="2.5"/>
-<polygon points="320,170 334,164 334,176" fill="#f59e0b"/>
-<text x="480" y="190" text-anchor="middle" font-size="11" font-weight="bold" fill="currentColor">tua ngược 120 ms</text>
-<text x="480" y="204" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.8">= RTT/2 (20) + đệm nội suy d (100)</text>
-<text x="640" y="196" text-anchor="middle" font-size="10" font-weight="bold" fill="currentColor">now</text>
-<text x="640" y="210" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.8">gói Fire tới</text>
-<text x="320" y="230" text-anchor="middle" font-size="10" font-weight="bold" fill="currentColor">t_view</text>
-<text x="320" y="244" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.8">thế giới P17 đã THẤY</text>
-<rect x="300" y="52" width="40" height="52" rx="4" fill="#3b82f6" fill-opacity="0.3" stroke="#3b82f6"/>
-<text x="320" y="44" text-anchor="middle" font-size="9" fill="currentColor">nạn nhân lúc đó</text>
-<rect x="620" y="52" width="40" height="52" rx="4" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-dasharray="4 3"/>
-<text x="660" y="44" text-anchor="middle" font-size="9" fill="currentColor">bây giờ: đã nấp</text>
-<line x1="120" y1="78" x2="298" y2="78" stroke="#84cc16" stroke-width="2"/>
-<polygon points="298,78 286,72 286,84" fill="#84cc16"/>
-<text x="120" y="68" font-size="10" font-weight="bold" fill="currentColor">tia raycast bắn vào ĐÂY</text>
-<text x="40" y="268" font-size="10" fill="currentColor">Sau raycast: Undo() trả mọi hitbox về hiện tại. Cửa sổ tua ngược không được sống qua một dòng lệnh nào khác.</text>
+<step-flow>
+<svg viewBox="0 0 760 440" role="img" aria-labelledby="gs21-a-t gs21-a-d" style="width:100%;height:auto">
+<title id="gs21-a-t">Server tua ngược thế giới về thời điểm người bắn đã nhìn thấy, ba bước rồi trả về</title>
+<desc id="gs21-a-d">Trục thời gian ở server, vòng đệm lịch sử ghi vị trí nạn nhân mỗi tick 16,67 ms. Gói Fire tới ở now, lúc đó nạn nhân đã nấp. Bước 1: tính lùi 120 ms gồm nửa RTT là 20 và đệm nội suy d là 100, dưới trần MaxRewind 200 ms, khoảng 7 tick. Bước 2: RestoreAt lấy bản ghi tại t_view, đặt lại hitbox nạn nhân, chỉ entity gần tia. Bước 3: raycast vào hitbox đó, trúng. Bước 4: Undo trả mọi hitbox về hiện tại. Bên dưới là năm dòng code tương ứng.</desc>
+<defs><marker id="gs21-a-arr" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="40" y="150" font-size="13" fill="currentColor" opacity="0.85">vòng đệm lịch sử: mỗi tick (16,67 ms) một bản ghi</text>
+<rect x="180" y="160" width="520" height="40" fill="#14b8a6" fill-opacity="0.13"/>
+<line x1="30" y1="200" x2="730" y2="200" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5"/>
+<circle cx="680" cy="200" r="4" fill="currentColor" fill-opacity="0.45"/>
+<circle cx="640" cy="200" r="4" fill="currentColor" fill-opacity="0.45"/>
+<circle cx="600" cy="200" r="4" fill="currentColor" fill-opacity="0.45"/>
+<circle cx="560" cy="200" r="4" fill="currentColor" fill-opacity="0.45"/>
+<circle cx="520" cy="200" r="4" fill="currentColor" fill-opacity="0.45"/>
+<circle cx="480" cy="200" r="4" fill="currentColor" fill-opacity="0.45"/>
+<circle cx="440" cy="200" r="4" fill="currentColor" fill-opacity="0.45"/>
+<circle cx="400" cy="200" r="4" fill="currentColor" fill-opacity="0.45"/>
+<circle cx="360" cy="200" r="4" fill="currentColor" fill-opacity="0.45"/>
+<circle cx="320" cy="200" r="4" fill="currentColor" fill-opacity="0.45"/>
+<circle cx="280" cy="200" r="4" fill="currentColor" fill-opacity="0.45"/>
+<circle cx="240" cy="200" r="4" fill="currentColor" fill-opacity="0.45"/>
+<circle cx="200" cy="200" r="4" fill="currentColor" fill-opacity="0.45"/>
+<line x1="200" y1="160" x2="200" y2="214" stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="3 3"/>
+<text x="200" y="230" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">trần 200 ms</text>
+<text x="200" y="246" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">= 12 tick</text>
+<text x="680" y="230" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">now</text>
+<text x="680" y="246" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">gói Fire tới</text>
+<rect x="660" y="60" width="40" height="60" rx="4" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" stroke-dasharray="4 3"/>
+<text x="680" y="50" text-anchor="middle" font-size="13" fill="currentColor">bây giờ: đã nấp</text>
+<rect x="20" y="282" width="720" height="146" rx="8" fill="#8b5cf6" fill-opacity="0.08"/>
+<g data-step="1">
+<rect x="28" y="289" width="704" height="24" rx="4" fill="#f59e0b" fill-opacity="0.22"/>
+<rect x="28" y="315" width="704" height="24" rx="4" fill="#f59e0b" fill-opacity="0.22"/>
+<line x1="674" y1="180" x2="408" y2="180" stroke="#f59e0b" stroke-width="2.5" marker-end="url(#gs21-a-arr)"/>
+<circle cx="400" cy="200" r="8" fill="#f59e0b" fill-opacity="0.35" stroke="#f59e0b" stroke-width="2"/>
+<text x="400" y="230" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">t_view</text>
+<text x="400" y="246" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">thế giới người bắn đã THẤY</text>
+<text x="540" y="268" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">tua ngược 120 ms = RTT/2 (20) + đệm nội suy d (100)</text>
+</g>
+<g data-step="2">
+<rect x="28" y="341" width="704" height="24" rx="4" fill="#3b82f6" fill-opacity="0.22"/>
+<circle cx="400" cy="200" r="8" fill="#3b82f6" fill-opacity="0.45" stroke="#3b82f6" stroke-width="2"/>
+<line x1="400" y1="190" x2="400" y2="124" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#gs21-a-arr)"/>
+<rect x="380" y="60" width="40" height="60" rx="4" fill="#3b82f6" fill-opacity="0.3" stroke="#3b82f6"/>
+<text x="400" y="50" text-anchor="middle" font-size="13" fill="currentColor">nạn nhân lúc t_view</text>
+</g>
+<g data-step="3">
+<rect x="28" y="393" width="704" height="24" rx="4" fill="#10b981" fill-opacity="0.22"/>
+<line x1="40" y1="92" x2="378" y2="92" stroke="#10b981" stroke-width="2.5" marker-end="url(#gs21-a-arr)"/>
+<text x="40" y="80" font-size="13" font-weight="bold" fill="currentColor">tia raycast bắn vào ĐÂY</text>
+<text x="340" y="112" text-anchor="end" font-size="13" font-weight="bold" fill="#10b981">HIT</text>
+</g>
+<g data-step="4">
+<rect x="28" y="367" width="704" height="24" rx="4" fill="#8b5cf6" fill-opacity="0.22"/>
+<line x1="424" y1="132" x2="656" y2="132" stroke="#8b5cf6" stroke-width="2" marker-end="url(#gs21-a-arr)"/>
+<text x="540" y="122" text-anchor="middle" font-size="13" fill="currentColor">Undo(): mọi hitbox về hiện tại</text>
+</g>
+<text x="36" y="306" font-size="13" font-family="ui-monospace,Menlo,monospace" fill="currentColor">lag := clampDur(p.RTT/2+p.InterpBuf, 0, MaxRewind)</text>
+<text x="470" y="306" font-size="13" font-family="ui-monospace,Menlo,monospace" fill="currentColor" opacity="0.7">// 20 + 100 = 120 ms</text>
+<text x="36" y="332" font-size="13" font-family="ui-monospace,Menlo,monospace" fill="currentColor">tView := now - Tick(lag/w.TickDur)</text>
+<text x="470" y="332" font-size="13" font-family="ui-monospace,Menlo,monospace" fill="currentColor" opacity="0.7">// 120 / 16,67 ≈ 7 tick</text>
+<text x="36" y="358" font-size="13" font-family="ui-monospace,Menlo,monospace" fill="currentColor">snap := w.hist.RestoreAt(tView, cmd.Ray)</text>
+<text x="470" y="358" font-size="13" font-family="ui-monospace,Menlo,monospace" fill="currentColor" opacity="0.7">// chỉ entity gần tia</text>
+<text x="36" y="384" font-size="13" font-family="ui-monospace,Menlo,monospace" fill="currentColor">defer snap.Undo()</text>
+<text x="470" y="384" font-size="13" font-family="ui-monospace,Menlo,monospace" fill="currentColor" opacity="0.7">// chạy SAU return</text>
+<text x="36" y="410" font-size="13" font-family="ui-monospace,Menlo,monospace" fill="currentColor">return w.raycast(cmd.Ray, snap.Bodies)</text>
 </svg>
+<step-note data-step="1">Bài 20 đã chốt người bắn nhìn thế giới lệch <code>RTT/2 + d</code>, nên server lùi đúng chừng ấy: 20 + 100 = 120 ms. <code>clampDur</code> chặn ở <code>MaxRewind</code> 200 ms vì <code>d</code> do client khai (mục 3.3); 120 / 16,67 ≈ 7 tick.</step-note>
+<step-note data-step="2">Vòng đệm còn bản ghi của tick đó, nên server đặt lại hitbox nạn nhân đúng chỗ người bắn đã thấy. Chỉ tua entity gần tia: tua cả world cho mỗi phát bắn là phí.</step-note>
+<step-note data-step="3">Tia bắn vào thế giới quá khứ nên trúng thứ người bắn đã ngắm, dù lúc này nạn nhân đã nấp sau cửa. Nạn nhân chịu trọn sai số <code>e_v</code> của mục 3.5.</step-note>
+<step-note data-step="4"><code>defer</code> đăng ký trước nhưng chạy sau <code>return</code>, nên mọi đường thoát đều trả world về hiện tại. Trong cửa sổ đó không vật lý, không tick, không gói của người khác: rò ra là cả tick tính theo thế giới quá khứ.</step-note>
+</step-flow>
 
 ### 3.3 Con số tua ngược một phần do client khai
 

@@ -133,6 +133,76 @@ Về thời hạn: RFC 4787 khuyến nghị giữ mục ánh xạ UDP **tối th
 
 **Hole punching — hai bên cùng gửi ra một lúc.** A gửi tới `B_pub`, B gửi tới `A_pub`, **cùng lúc**. Gói đầu của A tới NAT B thì bị vứt — nhưng trên đường ra nó đã tạo mục ánh xạ ở **NAT A**; gói đầu của B cũng vậy. Từ gói thứ hai trở đi cả hai mục đều tồn tại và đường thông hai chiều. Mỗi bên tự đục lỗ ở NAT của **chính mình** bằng cách gửi ra.
 
+<step-flow>
+<svg viewBox="0 0 760 450" role="img" aria-labelledby="gs16c-t gs16c-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto">
+<title id="gs16c-t">Hole punching: A và B sau NAT tự đục lỗ cho nhau</title>
+<desc id="gs16c-d">Client A 10.0.0.5:5000 sau NAT A 203.0.113.7, Client B 192.168.1.20:6000 sau NAT B 192.0.2.44. Bước 1: mỗi bên hỏi server STUN để biết địa chỉ công cộng, A_pub 203.0.113.7:41287 và B_pub 192.0.2.44:50122. Bước 2: server ghép trận trao B_pub cho A và A_pub cho B. Bước 3: A gửi tới B_pub, NAT A tạo mục ánh xạ, gói rơi ở NAT B. Bước 4: B gửi tới A_pub, NAT B tạo mục, gói lọt NAT A vì khớp mục vừa tạo. Bước 5: đường thông hai chiều.</desc>
+<defs><marker id="gs16c-m0" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker><marker id="gs16c-m1" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker><marker id="gs16c-m2" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 z" fill="#f59e0b"/></marker><marker id="gs16c-m3" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 z" fill="#8b5cf6"/></marker><marker id="gs16c-m4" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 z" fill="#3b82f6"/></marker></defs>
+<rect x="110" y="12" width="200" height="52" rx="8" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="210.0" y="35" text-anchor="middle" font-size="14" fill="currentColor" font-weight="bold">Server STUN</text>
+<text x="210.0" y="54" text-anchor="middle" font-size="13" fill="currentColor">công cộng</text>
+<rect x="450" y="12" width="200" height="52" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="550.0" y="35" text-anchor="middle" font-size="14" fill="currentColor" font-weight="bold">Server ghép trận</text>
+<text x="550.0" y="54" text-anchor="middle" font-size="13" fill="currentColor">rendezvous, công cộng</text>
+<rect x="15" y="150" width="135" height="56" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="82.5" y="173" text-anchor="middle" font-size="14" fill="currentColor" font-weight="bold">Client A</text>
+<text x="82.5" y="192" text-anchor="middle" font-size="13" fill="currentColor">10.0.0.5:5000</text>
+<rect x="180" y="150" width="160" height="56" rx="8" fill="#14b8a6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="260.0" y="173" text-anchor="middle" font-size="14" fill="currentColor" font-weight="bold">NAT A</text>
+<text x="260.0" y="192" text-anchor="middle" font-size="13" fill="currentColor">203.0.113.7</text>
+<rect x="420" y="150" width="160" height="56" rx="8" fill="#14b8a6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="500.0" y="173" text-anchor="middle" font-size="14" fill="currentColor" font-weight="bold">NAT B</text>
+<text x="500.0" y="192" text-anchor="middle" font-size="13" fill="currentColor">192.0.2.44</text>
+<rect x="610" y="150" width="135" height="56" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="677.5" y="173" text-anchor="middle" font-size="14" fill="currentColor" font-weight="bold">Client B</text>
+<text x="677.5" y="192" text-anchor="middle" font-size="13" fill="currentColor">192.168.1.20:6000</text>
+<text x="380" y="183" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.7">Internet</text>
+<text x="260" y="226" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.7">mục ánh xạ NAT A</text>
+<text x="500" y="226" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.7">mục ánh xạ NAT B</text>
+<line x1="82.5" y1="206" x2="82.5" y2="418" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<line x1="677.5" y1="206" x2="677.5" y2="418" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<line x1="260" y1="280" x2="260" y2="418" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<line x1="500" y1="280" x2="500" y2="418" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<g data-step="1">
+<line x1="245" y1="150" x2="205" y2="66" stroke="#8b5cf6" stroke-width="2" marker-end="url(#gs16c-m3)"/>
+<line x1="222" y1="66" x2="262" y2="148" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#gs16c-m3)"/>
+<line x1="470" y1="150" x2="296" y2="66" stroke="#8b5cf6" stroke-width="2" marker-end="url(#gs16c-m3)"/>
+<line x1="318" y1="64" x2="498" y2="148" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#gs16c-m3)"/>
+<text x="15" y="100" text-anchor="start" font-size="13" fill="currentColor">A_pub = 203.0.113.7:41287</text>
+<text x="745" y="100" text-anchor="end" font-size="13" fill="currentColor">B_pub = 192.0.2.44:50122</text>
+</g>
+<g data-step="2">
+<line x1="520" y1="66" x2="290" y2="148" stroke="#3b82f6" stroke-width="2" marker-end="url(#gs16c-m4)"/>
+<line x1="566" y1="66" x2="520" y2="148" stroke="#3b82f6" stroke-width="2" marker-end="url(#gs16c-m4)"/>
+<text x="745" y="128" text-anchor="end" font-size="13" fill="currentColor">A nhận B_pub, B nhận A_pub</text>
+</g>
+<g data-step="3">
+<text x="260" y="246" text-anchor="middle" font-size="13" fill="currentColor">10.0.0.5:5000 ↔ :41287</text>
+<text x="260" y="264" text-anchor="middle" font-size="12" fill="currentColor">(đích B_pub)</text>
+<text x="290" y="293" text-anchor="middle" font-size="13" fill="currentColor">A gửi tới 192.0.2.44:50122</text>
+<line x1="84" y1="302" x2="488" y2="302" stroke="#f59e0b" stroke-width="2" marker-end="url(#gs16c-m2)"/>
+<text x="504" y="308" text-anchor="middle" font-size="18" fill="currentColor" font-weight="bold" fill-opacity="1" style="fill:#f43f5e">✗</text>
+<text x="520" y="308" text-anchor="start" font-size="13" fill="currentColor">rơi ở NAT B</text>
+</g>
+<g data-step="4">
+<text x="500" y="246" text-anchor="middle" font-size="13" fill="currentColor">192.168.1.20:6000 ↔ :50122</text>
+<text x="500" y="264" text-anchor="middle" font-size="12" fill="currentColor">(đích A_pub)</text>
+<text x="380" y="341" text-anchor="middle" font-size="13" fill="currentColor">B gửi tới 203.0.113.7:41287: NAT A có mục khớp, lọt</text>
+<line x1="676" y1="350" x2="86" y2="350" stroke="#10b981" stroke-width="2" marker-end="url(#gs16c-m1)"/>
+</g>
+<g data-step="5">
+<line x1="84" y1="384" x2="674" y2="384" stroke="#10b981" stroke-width="2" marker-end="url(#gs16c-m1)"/>
+<line x1="676" y1="398" x2="86" y2="398" stroke="#10b981" stroke-width="2" marker-end="url(#gs16c-m1)"/>
+<text x="380" y="440" text-anchor="middle" font-size="13" fill="currentColor" font-weight="bold">Hai chiều thông: không gói nào phải đi qua server</text>
+</g>
+</svg>
+<step-note data-step="1">A chỉ biết <code>10.0.0.5:5000</code>; port công cộng do NAT A gán nên phải nhờ một máy bên ngoài nhìn gói rồi báo lại. Gói tới STUN là gói đi ra, nên câu trả lời về lọt đúng như mục 3.2. B làm y hệt.</step-note>
+<step-note data-step="2">A và B chưa nói được với nhau, nhưng cả hai đều đã tự gọi ra server công cộng, nên server ghép trận làm trạm trao địa chỉ. Nó chỉ trao địa chỉ, không chuyển dữ liệu game.</step-note>
+<step-note data-step="3">Mục đích của gói này là đi ra để NAT A tạo mục cho đích <code>B_pub</code>; việc nó rơi ở NAT B là dự tính trước, vì B chưa gửi gì ra cho <code>A_pub</code>.</step-note>
+<step-note data-step="4">Gói của B đi ra nên tạo mục ở NAT B, và khi tới NAT A thì khớp mục vừa tạo ở bước 3 (đúng nguồn <code>B_pub</code>). Nếu B gửi trước khi A kịp gửi, gói đầu của B cũng rơi y như của A, nên cả hai bắn liên tục và cùng lúc thay vì chờ nhau.</step-note>
+<step-note data-step="5">Gói tiếp theo của A tới NAT B khớp mục ở bước 4. Toàn bộ dựa trên việc port mà STUN thấy (<code>:41287</code>, <code>:50122</code>) cũng là port NAT dùng khi gửi cho bên kia; NAT symmetric cấp port mới cho mỗi đích nên lỗ đục sai chỗ, phải xuống TURN.</step-note>
+</step-flow>
+
 **TURN — bỏ cuộc, dùng relay.** Khi hole punching thất bại, cách duy nhất còn lại là một máy chủ công cộng đứng giữa: A gửi cho TURN, TURN chuyển tiếp cho B và ngược lại. Cả hai bên chỉ gửi ra một đích công cộng nên NAT không cản — đúng cơ chế mục 3.2.
 
 Vì sao hole punching thất bại? Vì NAT không hành xử giống nhau. Điểm khác biệt quyết định là **khi đổi đích đến, NAT có giữ nguyên port công cộng không**:

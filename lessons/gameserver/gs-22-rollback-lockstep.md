@@ -150,56 +150,89 @@ Rollback không hoãn input: ở frame N, máy của bạn phải bước tiếp
 
 Khi input thật tới và khác dự đoán, máy làm bốn việc **trong cùng một frame**, không việc nào được tràn sang frame sau: **tua ngược** về state đã lưu ở frame bắt đầu sai → **thay input** đã đoán bằng input thật → **chạy lại** tới frame hiện tại → **vẽ** đúng frame cuối. Người chơi không bao giờ thấy các frame trung gian.
 
-<svg viewBox="0 0 720 300" role="img" aria-labelledby="gs22-b-t gs22-b-d" style="width:100%;height:auto">
+<step-flow>
+<svg viewBox="0 0 760 380" role="img" aria-labelledby="gs22-b-t gs22-b-d" style="width:100%;height:auto">
 <title id="gs22-b-t">Một lần rollback: đoán sai ở frame 13, phát hiện ở frame 16, chạy lại 3 frame</title>
-<desc id="gs22-b-d">Hàng trên là bảy frame từ 10 tới 16, mỗi frame lưu một bản state vào ring buffer. Input của đối thủ ở frame 13, 14, 15 là dự đoán. Tới frame 16, input thật của frame 13 về và khác dự đoán. Hàng dưới cho thấy máy nạp lại state đã lưu ở frame 13, thay input, rồi chạy lại frame 13, 14, 15 và 16, tất cả nằm gọn trong 16,67 mili giây của frame 16, và chỉ frame 16 được vẽ ra màn hình.</desc>
-<text x="14" y="18" font-size="12" font-weight="bold" fill="currentColor">ĐƯỜNG BÌNH THƯỜNG — mỗi frame lưu một bản state vào ring buffer</text>
-<rect x="80" y="34" width="62" height="34" rx="5" fill="#3b82f6" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/>
-<text x="111" y="49" text-anchor="middle" font-size="10" fill="currentColor">f10</text>
-<text x="111" y="62" text-anchor="middle" font-size="8" fill="currentColor" opacity="0.8">thật</text>
-<rect x="150" y="34" width="62" height="34" rx="5" fill="#3b82f6" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/>
-<text x="181" y="49" text-anchor="middle" font-size="10" fill="currentColor">f11</text>
-<text x="181" y="62" text-anchor="middle" font-size="8" fill="currentColor" opacity="0.8">thật</text>
-<rect x="220" y="34" width="62" height="34" rx="5" fill="#3b82f6" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/>
-<text x="251" y="49" text-anchor="middle" font-size="10" fill="currentColor">f12</text>
-<text x="251" y="62" text-anchor="middle" font-size="8" fill="currentColor" opacity="0.8">thật</text>
-<rect x="290" y="34" width="62" height="34" rx="5" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.3"/>
-<text x="321" y="49" text-anchor="middle" font-size="10" font-weight="bold" fill="currentColor">f13</text>
-<text x="321" y="62" text-anchor="middle" font-size="8" fill="currentColor" opacity="0.85">đoán</text>
-<rect x="360" y="34" width="62" height="34" rx="5" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.3"/>
-<text x="391" y="49" text-anchor="middle" font-size="10" fill="currentColor">f14</text>
-<text x="391" y="62" text-anchor="middle" font-size="8" fill="currentColor" opacity="0.85">đoán</text>
-<rect x="430" y="34" width="62" height="34" rx="5" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.3"/>
-<text x="461" y="49" text-anchor="middle" font-size="10" fill="currentColor">f15</text>
-<text x="461" y="62" text-anchor="middle" font-size="8" fill="currentColor" opacity="0.85">đoán</text>
-<rect x="500" y="34" width="62" height="34" rx="5" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.3"/>
-<text x="531" y="49" text-anchor="middle" font-size="10" fill="currentColor">f16</text>
-<text x="531" y="62" text-anchor="middle" font-size="8" fill="currentColor" opacity="0.85">đoán</text>
-<circle cx="531" cy="92" r="6" fill="#ef4444"/>
-<text x="580" y="96" font-size="10" font-weight="bold" fill="currentColor">input THẬT của f13 vừa tới</text>
-<text x="580" y="110" font-size="9" fill="currentColor" opacity="0.8">và nó khác cái đã đoán</text>
-<path d="M525 100 C 430 128, 360 128, 321 100" fill="none" stroke="#ef4444" stroke-width="2" stroke-opacity="0.8"/>
-<text x="415" y="128" text-anchor="middle" font-size="10" font-weight="bold" fill="currentColor">① tua ngược về f13</text>
-<text x="14" y="164" font-size="12" font-weight="bold" fill="currentColor">TRONG ĐÚNG FRAME 16 — nạp lại, thay input, chạy lại</text>
-<rect x="290" y="180" width="62" height="34" rx="5" fill="#84cc16" fill-opacity="0.35" stroke="currentColor" stroke-opacity="0.35"/>
-<text x="321" y="195" text-anchor="middle" font-size="10" font-weight="bold" fill="currentColor">f13</text>
-<text x="321" y="208" text-anchor="middle" font-size="8" fill="currentColor">thật</text>
-<rect x="360" y="180" width="62" height="34" rx="5" fill="#84cc16" fill-opacity="0.35" stroke="currentColor" stroke-opacity="0.35"/>
-<text x="391" y="195" text-anchor="middle" font-size="10" fill="currentColor">f14</text>
-<text x="391" y="208" text-anchor="middle" font-size="8" fill="currentColor">chạy lại</text>
-<rect x="430" y="180" width="62" height="34" rx="5" fill="#84cc16" fill-opacity="0.35" stroke="currentColor" stroke-opacity="0.35"/>
-<text x="461" y="195" text-anchor="middle" font-size="10" fill="currentColor">f15</text>
-<text x="461" y="208" text-anchor="middle" font-size="8" fill="currentColor">chạy lại</text>
-<rect x="500" y="180" width="62" height="34" rx="5" fill="#8b5cf6" fill-opacity="0.4" stroke="currentColor" stroke-opacity="0.4"/>
-<text x="531" y="195" text-anchor="middle" font-size="10" font-weight="bold" fill="currentColor">f16</text>
-<text x="531" y="208" text-anchor="middle" font-size="8" fill="currentColor">VẼ</text>
-<text x="150" y="200" font-size="10" fill="currentColor">② nạp state đã lưu</text>
-<line x1="278" y1="197" x2="288" y2="197" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5"/>
-<line x1="290" y1="228" x2="562" y2="228" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
-<text x="426" y="244" text-anchor="middle" font-size="10" font-weight="bold" fill="currentColor">③ tất cả nằm trong 16,67 ms của frame 16</text>
-<text x="426" y="258" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.8">chỉ f16 ra màn hình — người chơi không thấy f13, f14, f15 chạy lần hai</text>
-<text x="14" y="286" font-size="10" font-style="italic" fill="currentColor" opacity="0.8">Khoảng cách tua ngược d = 3 frame ứng với RTT 100 ms. Ring buffer phải sâu ít nhất d frame.</text>
+<desc id="gs22-b-d">Hàng trên là bảy frame từ 10 tới 16, mỗi frame lưu một bản state vào ring buffer. Input của đối thủ ở frame 13, 14, 15 và 16 là dự đoán. Tới frame 16, input thật của frame 13 về và khác dự đoán. Hàng dưới cho thấy máy tua ngược, nạp lại state đã lưu ở frame 13, thay input, chạy lại frame 13, 14, 15 rồi chạy frame 16, tất cả nằm gọn trong 16,67 mili giây của frame 16, và chỉ frame 16 được vẽ ra màn hình.</desc>
+<defs><marker id="gs22-b-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="20" y="24" font-size="14" font-weight="bold" fill="currentColor">LẦN ĐẦU: frame nào cũng lưu state</text>
+<text x="20" y="68" font-size="13" fill="currentColor" opacity="0.8">lần đầu</text>
+<text x="20" y="214" font-size="14" font-weight="bold" fill="currentColor">TRONG ĐÚNG FRAME 16</text>
+<text x="20" y="252" font-size="13" fill="currentColor" opacity="0.8">tua + chạy lại</text>
+<text x="20" y="368" font-size="13" font-style="italic" fill="currentColor" opacity="0.8">Khoảng cách tua ngược d = 3 frame ứng với RTT 100 ms. Ring buffer phải sâu ít nhất d frame.</text>
+<g data-step="1">
+<rect x="110" y="40" width="80" height="46" rx="6" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="150" y="60" text-anchor="middle" font-size="15" font-weight="bold" fill="currentColor">f10</text>
+<text x="150" y="78" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">input thật</text>
+<text x="150" y="104" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">lưu S10</text>
+<rect x="200" y="40" width="80" height="46" rx="6" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="240" y="60" text-anchor="middle" font-size="15" font-weight="bold" fill="currentColor">f11</text>
+<text x="240" y="78" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">input thật</text>
+<text x="240" y="104" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">lưu S11</text>
+<rect x="290" y="40" width="80" height="46" rx="6" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="330" y="60" text-anchor="middle" font-size="15" font-weight="bold" fill="currentColor">f12</text>
+<text x="330" y="78" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">input thật</text>
+<text x="330" y="104" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">lưu S12</text>
+</g>
+<g data-step="2">
+<text x="515" y="30" text-anchor="middle" font-size="13" fill="currentColor">đối thủ: giữ nguyên input frame trước</text>
+<rect x="380" y="40" width="80" height="46" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="420" y="60" text-anchor="middle" font-size="15" font-weight="bold" fill="currentColor">f13</text>
+<text x="420" y="78" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">đoán</text>
+<text x="420" y="104" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">lưu S13</text>
+<rect x="470" y="40" width="80" height="46" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="510" y="60" text-anchor="middle" font-size="15" font-weight="bold" fill="currentColor">f14</text>
+<text x="510" y="78" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">đoán</text>
+<text x="510" y="104" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">lưu S14</text>
+<rect x="560" y="40" width="80" height="46" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="600" y="60" text-anchor="middle" font-size="15" font-weight="bold" fill="currentColor">f15</text>
+<text x="600" y="78" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">đoán</text>
+<text x="600" y="104" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">lưu S15</text>
+</g>
+<g data-step="3">
+<rect x="650" y="40" width="80" height="46" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="690" y="60" text-anchor="middle" font-size="15" font-weight="bold" fill="currentColor">f16</text>
+<text x="690" y="78" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">đoán</text>
+<text x="452" y="57" text-anchor="middle" font-size="15" font-weight="bold" fill="#f43f5e">✗</text>
+<circle cx="690" cy="124" r="7" fill="#f43f5e"/>
+<text x="678" y="129" text-anchor="end" font-size="13" font-weight="bold" fill="currentColor">input THẬT của f13 tới, khác cái đã đoán</text>
+</g>
+<g data-step="4">
+<path d="M690 134 C 680 178, 390 178, 394 114" fill="none" stroke="#f43f5e" stroke-width="2" marker-end="url(#gs22-b-arrow)"/>
+<text x="555" y="184" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">① tua ngược về f13</text>
+<rect x="200" y="228" width="170" height="46" rx="6" fill="#14b8a6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="285" y="248" text-anchor="middle" font-size="15" font-weight="bold" fill="currentColor">② nạp S13</text>
+<text x="285" y="266" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">thay input f13 = thật</text>
+</g>
+<g data-step="5">
+<line x1="371" y1="251" x2="378" y2="251" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#gs22-b-arrow)"/>
+<rect x="380" y="228" width="80" height="46" rx="6" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="420" y="248" text-anchor="middle" font-size="15" font-weight="bold" fill="currentColor">f13</text>
+<text x="420" y="266" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">thật</text>
+<rect x="470" y="228" width="80" height="46" rx="6" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="510" y="248" text-anchor="middle" font-size="15" fill="currentColor">f14</text>
+<text x="510" y="266" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">chạy lại</text>
+<rect x="560" y="228" width="80" height="46" rx="6" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="600" y="248" text-anchor="middle" font-size="15" fill="currentColor">f15</text>
+<text x="600" y="266" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">chạy lại</text>
+<text x="510" y="296" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">③ chạy lại 3 frame</text>
+</g>
+<g data-step="6">
+<rect x="650" y="228" width="80" height="46" rx="6" fill="#8b5cf6" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="690" y="248" text-anchor="middle" font-size="15" font-weight="bold" fill="currentColor">f16</text>
+<text x="690" y="266" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">④ VẼ</text>
+<line x1="200" y1="306" x2="730" y2="306" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+<text x="465" y="324" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">tất cả nằm trong 16,67 ms của frame 16</text>
+<text x="465" y="340" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">chỉ f16 ra màn hình — người chơi không thấy f13, f14, f15 chạy lần hai</text>
+</g>
 </svg>
+<step-note data-step="1">Mỗi frame chụp state đầu frame vào ring buffer <em>trước khi</em> biết input có đúng không, vì lúc phát hiện sai thì đã quá muộn để chụp.</step-note>
+<step-note data-step="2">Input của đối thủ chưa tới nên máy không chờ như lockstep: lấy input frame trước làm input frame này và chạy tiếp. Game vẫn đi đều 60 frame/giây.</step-note>
+<step-note data-step="3">Input thật của f13 tới muộn 3 frame (RTT 100 ms) và khác cái đã đoán. Mọi frame từ f13 trở đi được tính trên một giả định sai.</step-note>
+<step-note data-step="4">Không sửa được state hiện tại tại chỗ, nên máy quay về bản chụp S13, chỗ cuối cùng còn đúng, rồi ghi input thật vào f13.</step-note>
+<step-note data-step="5">Chạy lại f13, f14, f15 với input đã sửa, không vẽ frame nào. Mỗi bước chạy lại cũng ghi đè <code>saved[f%W]</code>, vì state mới khác state lần đầu.</step-note>
+<step-note data-step="6">Chạy nốt f16 và vẽ đúng một lần. Toàn bộ <code>d+1</code> = 4 bước phải gói trong ngân sách một frame; tràn ra là người chơi thấy giật.</step-note>
+</step-flow>
 
 ### 3.4 Cơ chế: ring buffer, và nó phải sâu bao nhiêu
 
