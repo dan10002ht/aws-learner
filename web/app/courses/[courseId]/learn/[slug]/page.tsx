@@ -9,6 +9,7 @@ import rehypeRaw from "rehype-raw";
 import rehypeCodeTabs from "@/lib/rehypeCodeTabs";
 import rehypeCallouts from "@/lib/rehypeCallouts";
 import StepFlow from "@/components/StepFlow";
+import AutoAnim from "@/components/AutoAnim";
 import CodeTabs from "@/components/CodeTabs";
 import Callout from "@/components/Callout";
 import { ChevronLeft, ChevronRight, ListChecks } from "lucide-react";
@@ -112,7 +113,7 @@ export default function LessonPage({ params }: { params: { courseId: string; slu
             <ReactMarkdown
               remarkPlugins={[remarkGfm, remarkWikiLinks]}
               rehypePlugins={[rehypeRaw, rehypeSlug, rehypeHighlight, rehypeCodeTabs, rehypeCallouts]}
-              components={{ "code-tabs": CodeTabs, "step-flow": StepFlow, blockquote: Callout } as never}
+              components={{ "code-tabs": CodeTabs, "step-flow": StepFlow, "auto-anim": AutoAnim, blockquote: Callout } as never}
             >
               {md}
             </ReactMarkdown>

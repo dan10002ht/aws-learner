@@ -355,3 +355,6 @@ html { scroll-behavior: smooth; }
 /* Short landscape screens: drop the header row, the controls carry the close button */
 .step-flow-min { display: none !important; }
 @media (max-height: 500px) { .step-flow-full .step-flow-head { display: none; } .step-flow-full .step-flow-min { display: inline-flex !important; } .step-flow-full .step-flow-note { max-height: 4.5rem; overflow: auto; } }
+
+/* ----- Self-running SVG group (components/AutoAnim.tsx) ----- */
+.auto-anim-figs > svg { flex: 1 1 300px; min-width: 0; height: auto; }
