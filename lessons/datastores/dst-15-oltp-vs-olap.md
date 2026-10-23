@@ -45,53 +45,102 @@ Giả sử bảng `orders`:
 | 2  | 42      | VN      | 250    |
 | 3  | 77      | US      | 90     |
 
-<svg viewBox="0 0 660 300" role="img" aria-labelledby="rc-t rc-d" style="width:100%;max-width:640px;height:auto;display:block;margin:1.25rem auto">
-<title id="rc-t">Row-oriented vs Columnar layout trên đĩa</title>
-<desc id="rc-d">Row store lưu các cột của cùng một dòng cạnh nhau; columnar store lưu tất cả giá trị của cùng một cột cạnh nhau</desc>
-<text x="150" y="24" text-anchor="middle" font-size="14" fill="currentColor">Row-oriented (OLTP)</text>
-<rect x="20" y="40" width="60" height="30" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<rect x="80" y="40" width="60" height="30" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<rect x="140" y="40" width="60" height="30" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<rect x="200" y="40" width="60" height="30" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="50" y="60" text-anchor="middle" font-size="11" fill="currentColor">1</text>
-<text x="110" y="60" text-anchor="middle" font-size="11" fill="currentColor">42</text>
-<text x="170" y="60" text-anchor="middle" font-size="11" fill="currentColor">VN</text>
-<text x="230" y="60" text-anchor="middle" font-size="11" fill="currentColor">100</text>
-<rect x="20" y="70" width="60" height="30" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<rect x="80" y="70" width="60" height="30" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<rect x="140" y="70" width="60" height="30" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<rect x="200" y="70" width="60" height="30" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="50" y="90" text-anchor="middle" font-size="11" fill="currentColor">2</text>
-<text x="110" y="90" text-anchor="middle" font-size="11" fill="currentColor">42</text>
-<text x="170" y="90" text-anchor="middle" font-size="11" fill="currentColor">VN</text>
-<text x="230" y="90" text-anchor="middle" font-size="11" fill="currentColor">250</text>
-<text x="150" y="128" text-anchor="middle" font-size="11" fill="currentColor">Cả một dòng nằm liền nhau →</text>
-<text x="150" y="144" text-anchor="middle" font-size="11" fill="currentColor">lấy trọn 1 order rất rẻ</text>
-<text x="510" y="24" text-anchor="middle" font-size="14" fill="currentColor">Columnar (OLAP)</text>
-<rect x="380" y="40" width="60" height="30" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<rect x="440" y="40" width="60" height="30" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<rect x="500" y="40" width="60" height="30" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="410" y="60" text-anchor="middle" font-size="11" fill="currentColor">1</text>
-<text x="470" y="60" text-anchor="middle" font-size="11" fill="currentColor">2</text>
-<text x="530" y="60" text-anchor="middle" font-size="11" fill="currentColor">3</text>
-<text x="600" y="60" font-size="10" fill="currentColor">id</text>
-<rect x="380" y="70" width="60" height="30" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<rect x="440" y="70" width="60" height="30" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<rect x="500" y="70" width="60" height="30" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="410" y="90" text-anchor="middle" font-size="11" fill="currentColor">VN</text>
-<text x="470" y="90" text-anchor="middle" font-size="11" fill="currentColor">VN</text>
-<text x="530" y="90" text-anchor="middle" font-size="11" fill="currentColor">US</text>
-<text x="600" y="90" font-size="10" fill="currentColor">country</text>
-<rect x="380" y="100" width="60" height="30" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor"/>
-<rect x="440" y="100" width="60" height="30" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor"/>
-<rect x="500" y="100" width="60" height="30" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="410" y="120" text-anchor="middle" font-size="11" fill="currentColor">100</text>
-<text x="470" y="120" text-anchor="middle" font-size="11" fill="currentColor">250</text>
-<text x="530" y="120" text-anchor="middle" font-size="11" fill="currentColor">90</text>
-<text x="600" y="120" font-size="10" fill="currentColor">amount</text>
-<text x="470" y="164" text-anchor="middle" font-size="11" fill="currentColor">Cả một cột nằm liền nhau →</text>
-<text x="470" y="180" text-anchor="middle" font-size="11" fill="currentColor">SUM(amount) chỉ đọc đúng 1 dải</text>
+<ab-toggle data-labels="Row store|Column store">
+<svg viewBox="0 0 520 300" role="img" aria-labelledby="dst15a-t dst15a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dst15a-t">Row store: SUM(amount) phải đọc cả 12 ô</title>
+<desc id="dst15a-d">Bảng orders xếp theo dòng trên đĩa: (1,42,VN,100)(2,42,VN,250)(3,77,US,90). Để cộng amount phải đọc cả 3 dòng, tức 12/12 ô, rồi bỏ 9 ô không dùng. Ngược lại lấy trọn một order chỉ cần đọc một vùng liền.</desc>
+<text x="260" y="26" text-anchor="middle" font-size="15" font-weight="600" font-family="ui-monospace, monospace" fill="currentColor">SELECT SUM(amount) FROM orders</text>
+<text x="20" y="56" font-size="14" font-weight="600" fill="currentColor">Row-oriented (OLTP): xếp theo dòng</text>
+<text x="500" y="56" text-anchor="end" font-size="13" fill="currentColor" opacity="0.75">đĩa, địa chỉ tăng →</text>
+<rect x="20" y="68" width="40" height="40" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
+<text x="40.0" y="94" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+<rect x="60" y="68" width="40" height="40" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
+<text x="80.0" y="94" text-anchor="middle" font-size="14" fill="currentColor">42</text>
+<rect x="100" y="68" width="40" height="40" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
+<text x="120.0" y="94" text-anchor="middle" font-size="14" fill="currentColor">VN</text>
+<rect x="140" y="68" width="40" height="40" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-width="2"/>
+<text x="160.0" y="94" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">100</text>
+<rect x="180" y="68" width="40" height="40" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
+<text x="200.0" y="94" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+<rect x="220" y="68" width="40" height="40" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
+<text x="240.0" y="94" text-anchor="middle" font-size="14" fill="currentColor">42</text>
+<rect x="260" y="68" width="40" height="40" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
+<text x="280.0" y="94" text-anchor="middle" font-size="14" fill="currentColor">VN</text>
+<rect x="300" y="68" width="40" height="40" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-width="2"/>
+<text x="320.0" y="94" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">250</text>
+<rect x="340" y="68" width="40" height="40" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
+<text x="360.0" y="94" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+<rect x="380" y="68" width="40" height="40" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
+<text x="400.0" y="94" text-anchor="middle" font-size="14" fill="currentColor">77</text>
+<rect x="420" y="68" width="40" height="40" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
+<text x="440.0" y="94" text-anchor="middle" font-size="14" fill="currentColor">US</text>
+<rect x="460" y="68" width="40" height="40" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-width="2"/>
+<text x="480.0" y="94" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">90</text>
+<line x1="20" y1="62" x2="20" y2="114" stroke="currentColor" stroke-width="2.5"/>
+<text x="100.0" y="130" text-anchor="middle" font-size="13" fill="currentColor">dòng id=1</text>
+<line x1="180" y1="62" x2="180" y2="114" stroke="currentColor" stroke-width="2.5"/>
+<text x="260.0" y="130" text-anchor="middle" font-size="13" fill="currentColor">dòng id=2</text>
+<line x1="340" y1="62" x2="340" y2="114" stroke="currentColor" stroke-width="2.5"/>
+<text x="420.0" y="130" text-anchor="middle" font-size="13" fill="currentColor">dòng id=3</text>
+<line x1="500" y1="62" x2="500" y2="114" stroke="currentColor" stroke-width="2.5"/>
+<path d="M20 152 V162 H500 V152" fill="none" stroke="#10b981" stroke-width="3"/>
+<text x="260.0" y="184" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">phải đọc 12/12 ô, dùng 3, bỏ 9</text>
+<rect x="20" y="212" width="16" height="16" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-width="2"/><text x="42" y="225" font-size="13" fill="currentColor">cần cho SUM</text>
+<rect x="185" y="212" width="16" height="16" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/><text x="207" y="225" font-size="13" fill="currentColor">đọc rồi bỏ</text>
+<rect x="340" y="212" width="16" height="16" fill="none" stroke="currentColor" stroke-dasharray="4 3" opacity="0.5"/><text x="362" y="225" font-size="13" fill="currentColor">không đọc</text>
+<text x="20" y="262" font-size="13" fill="currentColor">Lấy trọn 1 order (vd id=2) = 4 ô liền nhau,</text>
+<text x="20" y="282" font-size="13" fill="currentColor">đọc một vùng là xong: rất rẻ cho OLTP</text>
 </svg>
+<svg viewBox="0 0 520 300" role="img" aria-labelledby="dst15b-t dst15b-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dst15b-t">Column store: SUM(amount) chỉ đọc 3 ô</title>
+<desc id="dst15b-d">Cùng bảng orders xếp theo cột: [1,2,3][42,42,77][VN,VN,US][100,250,90]. Để cộng amount chỉ đọc đúng dải amount, 3/12 ô, bỏ qua hoàn toàn id, user_id, country.</desc>
+<text x="260" y="26" text-anchor="middle" font-size="15" font-weight="600" font-family="ui-monospace, monospace" fill="currentColor">SELECT SUM(amount) FROM orders</text>
+<text x="20" y="56" font-size="14" font-weight="600" fill="currentColor">Columnar (OLAP): xếp theo cột</text>
+<text x="500" y="56" text-anchor="end" font-size="13" fill="currentColor" opacity="0.75">đĩa, địa chỉ tăng →</text>
+<rect x="20" y="68" width="40" height="40" fill="none" stroke="currentColor" stroke-dasharray="4 3" opacity="0.5"/>
+<text x="40.0" y="94" text-anchor="middle" font-size="14" fill="currentColor" opacity="0.45">1</text>
+<rect x="60" y="68" width="40" height="40" fill="none" stroke="currentColor" stroke-dasharray="4 3" opacity="0.5"/>
+<text x="80.0" y="94" text-anchor="middle" font-size="14" fill="currentColor" opacity="0.45">2</text>
+<rect x="100" y="68" width="40" height="40" fill="none" stroke="currentColor" stroke-dasharray="4 3" opacity="0.5"/>
+<text x="120.0" y="94" text-anchor="middle" font-size="14" fill="currentColor" opacity="0.45">3</text>
+<rect x="140" y="68" width="40" height="40" fill="none" stroke="currentColor" stroke-dasharray="4 3" opacity="0.5"/>
+<text x="160.0" y="94" text-anchor="middle" font-size="14" fill="currentColor" opacity="0.45">42</text>
+<rect x="180" y="68" width="40" height="40" fill="none" stroke="currentColor" stroke-dasharray="4 3" opacity="0.5"/>
+<text x="200.0" y="94" text-anchor="middle" font-size="14" fill="currentColor" opacity="0.45">42</text>
+<rect x="220" y="68" width="40" height="40" fill="none" stroke="currentColor" stroke-dasharray="4 3" opacity="0.5"/>
+<text x="240.0" y="94" text-anchor="middle" font-size="14" fill="currentColor" opacity="0.45">77</text>
+<rect x="260" y="68" width="40" height="40" fill="none" stroke="currentColor" stroke-dasharray="4 3" opacity="0.5"/>
+<text x="280.0" y="94" text-anchor="middle" font-size="14" fill="currentColor" opacity="0.45">VN</text>
+<rect x="300" y="68" width="40" height="40" fill="none" stroke="currentColor" stroke-dasharray="4 3" opacity="0.5"/>
+<text x="320.0" y="94" text-anchor="middle" font-size="14" fill="currentColor" opacity="0.45">VN</text>
+<rect x="340" y="68" width="40" height="40" fill="none" stroke="currentColor" stroke-dasharray="4 3" opacity="0.5"/>
+<text x="360.0" y="94" text-anchor="middle" font-size="14" fill="currentColor" opacity="0.45">US</text>
+<rect x="380" y="68" width="40" height="40" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-width="2"/>
+<text x="400.0" y="94" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">100</text>
+<rect x="420" y="68" width="40" height="40" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-width="2"/>
+<text x="440.0" y="94" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">250</text>
+<rect x="460" y="68" width="40" height="40" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-width="2"/>
+<text x="480.0" y="94" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">90</text>
+<line x1="20" y1="62" x2="20" y2="114" stroke="currentColor" stroke-width="2.5"/>
+<text x="80.0" y="130" text-anchor="middle" font-size="13" fill="currentColor">id</text>
+<line x1="140" y1="62" x2="140" y2="114" stroke="currentColor" stroke-width="2.5"/>
+<text x="200.0" y="130" text-anchor="middle" font-size="13" fill="currentColor">user_id</text>
+<line x1="260" y1="62" x2="260" y2="114" stroke="currentColor" stroke-width="2.5"/>
+<text x="320.0" y="130" text-anchor="middle" font-size="13" fill="currentColor">country</text>
+<line x1="380" y1="62" x2="380" y2="114" stroke="currentColor" stroke-width="2.5"/>
+<text x="440.0" y="130" text-anchor="middle" font-size="13" fill="currentColor">amount</text>
+<line x1="500" y1="62" x2="500" y2="114" stroke="currentColor" stroke-width="2.5"/>
+<path d="M380 152 V162 H500 V152" fill="none" stroke="#10b981" stroke-width="3"/>
+<text x="500" y="184" text-anchor="end" font-size="14" font-weight="600" fill="currentColor">chỉ đọc 3/12 ô: đúng dải amount</text>
+<rect x="20" y="212" width="16" height="16" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-width="2"/><text x="42" y="225" font-size="13" fill="currentColor">cần cho SUM</text>
+<rect x="185" y="212" width="16" height="16" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/><text x="207" y="225" font-size="13" fill="currentColor">đọc rồi bỏ</text>
+<rect x="340" y="212" width="16" height="16" fill="none" stroke="currentColor" stroke-dasharray="4 3" opacity="0.5"/><text x="362" y="225" font-size="13" fill="currentColor">không đọc</text>
+<text x="20" y="262" font-size="13" fill="currentColor">Cả cột amount nằm liền nhau: SUM(amount)</text>
+<text x="20" y="282" font-size="13" fill="currentColor">chỉ đọc 1 dải, không chạm user_id, country</text>
+</svg>
+<ab-note>Đĩa đọc theo trang/khối liền nhau, mà mỗi dòng trộn cả 4 cột, nên muốn cộng <code>amount</code> vẫn phải kéo cả dòng lên. Bảng thật có 200 cột thì vẫn phải lôi cả 200 cột lên chỉ để cộng một cột.</ab-note>
+<ab-note>Cùng dữ liệu, chỉ đổi thứ tự xếp: giá trị cùng cột nằm liền nhau, nên câu aggregate chỉ chạm đúng dải nó cần. Đổi lại, lấy trọn một order phải nhặt 4 chỗ ở 4 dải khác nhau.</ab-note>
+</ab-toggle>
 
 - **Row store** ghi lần lượt `(1,42,VN,100)(2,42,VN,250)(3,77,US,90)`. Muốn lấy toàn bộ order id=2 → đọc **một** vùng liền mạch. Tuyệt cho OLTP: một dòng = một record nghiệp vụ.
 - **Column store** ghi `[1,2,3][42,42,77][VN,VN,US][100,250,90]`. Muốn `SELECT SUM(amount)` → chỉ đọc **đúng dải `amount`**, bỏ qua hoàn toàn `user_id`, `country`.

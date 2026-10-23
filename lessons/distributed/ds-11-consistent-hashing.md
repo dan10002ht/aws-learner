@@ -32,35 +32,125 @@ Giả sử N = 4, xét key có `hash(key) = 100`:
 | 4 | 0 | node 0 |
 | 5 (thêm 1 node) | 0 | node 0 |
 
-Trông may mắn, nhưng hãy nhìn toàn cục. Khi N đổi từ 4 → 5, một key **giữ nguyên node** chỉ khi `h % 4 == h % 5`. Tỉ lệ đó rất nhỏ: về mặt xác suất **khoảng (N-1)/N ≈ 80%** số key phải đổi node. Không phải 1/5 — mà là **gần hết**.
+Trông may mắn, nhưng hãy nhìn toàn cục. Khi N đổi từ 4 → 5, một key **giữ nguyên node** chỉ khi `h % 4 == h % 5`. Tỉ lệ đó rất nhỏ: về mặt xác suất **khoảng (N-1)/N với N là số node mới, ở đây 4/5 = 80%** số key phải đổi node. Không phải 1/5 — mà là **gần hết**.
 
-<svg viewBox="0 0 700 250" role="img" aria-labelledby="mod-t mod-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto">
-<title id="mod-t">hash mod N: thêm 1 node làm rehash gần hết key</title>
-<desc id="mod-d">So sánh phân bố 8 key khi N=4 và N=5, hầu hết key nhảy sang node khác</desc>
-<text x="60" y="30" font-size="13" fill="currentColor">N = 4</text>
-<text x="60" y="150" font-size="13" fill="currentColor">N = 5</text>
-<rect x="60" y="45" width="70" height="34" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="95" y="67" text-anchor="middle" font-size="11" fill="currentColor">k→n0</text>
-<rect x="140" y="45" width="70" height="34" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="175" y="67" text-anchor="middle" font-size="11" fill="currentColor">k→n1</text>
-<rect x="220" y="45" width="70" height="34" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="255" y="67" text-anchor="middle" font-size="11" fill="currentColor">k→n2</text>
-<rect x="300" y="45" width="70" height="34" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="335" y="67" text-anchor="middle" font-size="11" fill="currentColor">k→n3</text>
-<rect x="60" y="165" width="60" height="34" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="90" y="187" text-anchor="middle" font-size="11" fill="currentColor">k→n2</text>
-<rect x="128" y="165" width="60" height="34" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="158" y="187" text-anchor="middle" font-size="11" fill="currentColor">k→n4</text>
-<rect x="196" y="165" width="60" height="34" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="226" y="187" text-anchor="middle" font-size="11" fill="currentColor">k→n0</text>
-<rect x="264" y="165" width="60" height="34" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="294" y="187" text-anchor="middle" font-size="11" fill="currentColor">k→n3</text>
-<rect x="332" y="165" width="60" height="34" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="362" y="187" text-anchor="middle" font-size="11" fill="currentColor">k→n1</text>
-<text x="470" y="100" font-size="12" fill="currentColor">Chỉ +1 node,</text>
-<text x="470" y="120" font-size="12" fill="#f43f5e">~80% key đổi chỗ</text>
-<text x="470" y="140" font-size="12" fill="currentColor">= rehash gần hết</text>
+<ab-toggle data-labels="N = 4|N = 5 (thêm 1 node)">
+<svg viewBox="0 0 500 316" role="img" aria-labelledby="ds11a-t ds11a-d" style="width:100%;max-width:500px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="ds11a-t">hash mod 4: 20 key chia đều cho 4 node</title><desc id="ds11a-d">20 key có hash từ 100 đến 119, node = hash % 4, mỗi node n0 đến n3 giữ 5 key; node n4 chưa tồn tại.</desc>
+<text x="250" y="24" text-anchor="middle" font-size="15" font-weight="600" fill="currentColor">node = hash(key) % 4</text>
+<rect x="20" y="40" width="84" height="30" rx="6" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor"/>
+<text x="62.0" y="60" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">n0</text>
+<rect x="112" y="40" width="84" height="30" rx="6" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor"/>
+<text x="154.0" y="60" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">n1</text>
+<rect x="204" y="40" width="84" height="30" rx="6" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor"/>
+<text x="246.0" y="60" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">n2</text>
+<rect x="296" y="40" width="84" height="30" rx="6" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor"/>
+<text x="338.0" y="60" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">n3</text>
+<rect x="388" y="40" width="84" height="30" rx="6" fill="#8b5cf6" fill-opacity="0" stroke="currentColor" stroke-dasharray="4 3"/>
+<text x="430.0" y="60" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor" opacity="0.6">n4</text>
+<text x="430.0" y="160" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.6">chưa có</text>
+<rect x="20" y="80" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="62.0" y="98" text-anchor="middle" font-size="13" fill="currentColor">100</text>
+<rect x="20" y="112" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="62.0" y="130" text-anchor="middle" font-size="13" fill="currentColor">104</text>
+<rect x="20" y="144" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="62.0" y="162" text-anchor="middle" font-size="13" fill="currentColor">108</text>
+<rect x="20" y="176" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="62.0" y="194" text-anchor="middle" font-size="13" fill="currentColor">112</text>
+<rect x="20" y="208" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="62.0" y="226" text-anchor="middle" font-size="13" fill="currentColor">116</text>
+<rect x="112" y="80" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="154.0" y="98" text-anchor="middle" font-size="13" fill="currentColor">101</text>
+<rect x="112" y="112" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="154.0" y="130" text-anchor="middle" font-size="13" fill="currentColor">105</text>
+<rect x="112" y="144" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="154.0" y="162" text-anchor="middle" font-size="13" fill="currentColor">109</text>
+<rect x="112" y="176" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="154.0" y="194" text-anchor="middle" font-size="13" fill="currentColor">113</text>
+<rect x="112" y="208" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="154.0" y="226" text-anchor="middle" font-size="13" fill="currentColor">117</text>
+<rect x="204" y="80" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="246.0" y="98" text-anchor="middle" font-size="13" fill="currentColor">102</text>
+<rect x="204" y="112" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="246.0" y="130" text-anchor="middle" font-size="13" fill="currentColor">106</text>
+<rect x="204" y="144" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="246.0" y="162" text-anchor="middle" font-size="13" fill="currentColor">110</text>
+<rect x="204" y="176" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="246.0" y="194" text-anchor="middle" font-size="13" fill="currentColor">114</text>
+<rect x="204" y="208" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="246.0" y="226" text-anchor="middle" font-size="13" fill="currentColor">118</text>
+<rect x="296" y="80" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="338.0" y="98" text-anchor="middle" font-size="13" fill="currentColor">103</text>
+<rect x="296" y="112" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="338.0" y="130" text-anchor="middle" font-size="13" fill="currentColor">107</text>
+<rect x="296" y="144" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="338.0" y="162" text-anchor="middle" font-size="13" fill="currentColor">111</text>
+<rect x="296" y="176" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="338.0" y="194" text-anchor="middle" font-size="13" fill="currentColor">115</text>
+<rect x="296" y="208" width="84" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="338.0" y="226" text-anchor="middle" font-size="13" fill="currentColor">119</text>
+<text x="250" y="272" text-anchor="middle" font-size="13" fill="currentColor">20 key, hash 100…119 (số trong ô là hash)</text>
+<text x="250" y="294" text-anchor="middle" font-size="13" fill="currentColor">mỗi node 5 key, phân bố rất đều</text>
 </svg>
+<svg viewBox="0 0 500 316" role="img" aria-labelledby="ds11b-t ds11b-d" style="width:100%;max-width:500px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="ds11b-t">hash mod 5: thêm 1 node, 16 trên 20 key đổi chỗ</title><desc id="ds11b-d">Cùng 20 key, node = hash % 5. Chỉ 4 key 100, 101, 102, 103 giữ node cũ; 16 key còn lại nhảy sang node khác, tức 80%, rehash gần hết.</desc>
+<text x="250" y="24" text-anchor="middle" font-size="15" font-weight="600" fill="currentColor">node = hash(key) % 5</text>
+<rect x="20" y="40" width="84" height="30" rx="6" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor"/>
+<text x="62.0" y="60" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">n0</text>
+<rect x="112" y="40" width="84" height="30" rx="6" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor"/>
+<text x="154.0" y="60" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">n1</text>
+<rect x="204" y="40" width="84" height="30" rx="6" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor"/>
+<text x="246.0" y="60" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">n2</text>
+<rect x="296" y="40" width="84" height="30" rx="6" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor"/>
+<text x="338.0" y="60" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">n3</text>
+<rect x="388" y="40" width="84" height="30" rx="6" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor"/>
+<text x="430.0" y="60" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">n4</text>
+<rect x="20" y="80" width="84" height="26" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="62.0" y="98" text-anchor="middle" font-size="13" fill="currentColor">100 ✓</text>
+<rect x="20" y="112" width="84" height="26" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="62.0" y="130" text-anchor="middle" font-size="13" fill="currentColor">105 ←n1</text>
+<rect x="20" y="144" width="84" height="26" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="62.0" y="162" text-anchor="middle" font-size="13" fill="currentColor">110 ←n2</text>
+<rect x="20" y="176" width="84" height="26" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="62.0" y="194" text-anchor="middle" font-size="13" fill="currentColor">115 ←n3</text>
+<rect x="112" y="80" width="84" height="26" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="154.0" y="98" text-anchor="middle" font-size="13" fill="currentColor">101 ✓</text>
+<rect x="112" y="112" width="84" height="26" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="154.0" y="130" text-anchor="middle" font-size="13" fill="currentColor">106 ←n2</text>
+<rect x="112" y="144" width="84" height="26" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="154.0" y="162" text-anchor="middle" font-size="13" fill="currentColor">111 ←n3</text>
+<rect x="112" y="176" width="84" height="26" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="154.0" y="194" text-anchor="middle" font-size="13" fill="currentColor">116 ←n0</text>
+<rect x="204" y="80" width="84" height="26" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="246.0" y="98" text-anchor="middle" font-size="13" fill="currentColor">102 ✓</text>
+<rect x="204" y="112" width="84" height="26" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="246.0" y="130" text-anchor="middle" font-size="13" fill="currentColor">107 ←n3</text>
+<rect x="204" y="144" width="84" height="26" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="246.0" y="162" text-anchor="middle" font-size="13" fill="currentColor">112 ←n0</text>
+<rect x="204" y="176" width="84" height="26" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="246.0" y="194" text-anchor="middle" font-size="13" fill="currentColor">117 ←n1</text>
+<rect x="296" y="80" width="84" height="26" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="338.0" y="98" text-anchor="middle" font-size="13" fill="currentColor">103 ✓</text>
+<rect x="296" y="112" width="84" height="26" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="338.0" y="130" text-anchor="middle" font-size="13" fill="currentColor">108 ←n0</text>
+<rect x="296" y="144" width="84" height="26" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="338.0" y="162" text-anchor="middle" font-size="13" fill="currentColor">113 ←n1</text>
+<rect x="296" y="176" width="84" height="26" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="338.0" y="194" text-anchor="middle" font-size="13" fill="currentColor">118 ←n2</text>
+<rect x="388" y="80" width="84" height="26" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="430.0" y="98" text-anchor="middle" font-size="13" fill="currentColor">104 ←n0</text>
+<rect x="388" y="112" width="84" height="26" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="430.0" y="130" text-anchor="middle" font-size="13" fill="currentColor">109 ←n1</text>
+<rect x="388" y="144" width="84" height="26" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="430.0" y="162" text-anchor="middle" font-size="13" fill="currentColor">114 ←n2</text>
+<rect x="388" y="176" width="84" height="26" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-width="0.8"/>
+<text x="430.0" y="194" text-anchor="middle" font-size="13" fill="currentColor">119 ←n3</text>
+<text x="250" y="272" text-anchor="middle" font-size="13" fill="currentColor">Chỉ +1 node: <tspan fill="#10b981" font-weight="600">4/20 giữ chỗ</tspan>, <tspan fill="#f43f5e" font-weight="600">16/20 = 80% đổi chỗ</tspan></text>
+<text x="250" y="294" text-anchor="middle" font-size="13" fill="currentColor">= rehash gần hết (←n1: trước ở n1)</text>
+</svg>
+<ab-note>Trước khi thêm node: <code>hash % 4</code> chia 20 key đều 5 key mỗi node. Nhớ vị trí từng ô rồi bấm sang N = 5.</ab-note>
+<ab-note>Chỉ key có <code>hash % 4 == hash % 5</code> mới đứng yên: ở đây là 100 đến 103. 16 key còn lại nhảy node, gần như toàn bộ cache phải nạp lại.</ab-note>
+</ab-toggle>
 
 Trong thực tế điều này nghĩa là: chỉ cần **một node chết** hay bạn **thêm một node để scale**, gần như **toàn bộ cache bị invalid**, mọi request biến thành cache miss, database bị **thundering herd** đánh sập. `mod N` khiến việc co giãn cụm — thứ ta làm suốt — trở thành thảm hoạ.
 

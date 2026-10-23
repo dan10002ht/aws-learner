@@ -39,41 +39,82 @@ Analogy đời thường: **ba người cùng ký một hợp đồng ba bên**.
 5. Coordinator ghi quyết định vào **recovery log** (điểm "no return" — commit point), rồi gửi `COMMIT`/`ABORT` tới tất cả.
 6. Mỗi participant thi hành (release khoá, làm thay đổi vĩnh viễn hoặc rollback), rồi gửi `ACK`. Coordinator nhận đủ ACK thì kết thúc, dọn log.
 
-<svg viewBox="0 0 700 360" role="img" aria-labelledby="pc-t pc-d" style="width:100%;max-width:680px;height:auto;display:block;margin:1.25rem auto">
-<title id="pc-t">Sequence diagram của two-phase commit thành công</title>
-<desc id="pc-d">Coordinator gửi prepare, hai participant vote yes, coordinator ghi commit point rồi gửi commit và nhận ack</desc>
-<rect x="40" y="20" width="120" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="100" y="42" text-anchor="middle" font-size="13" fill="currentColor">Coordinator</text>
-<rect x="300" y="20" width="120" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="360" y="42" text-anchor="middle" font-size="13" fill="currentColor">Participant 1</text>
-<rect x="540" y="20" width="120" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="600" y="42" text-anchor="middle" font-size="13" fill="currentColor">Participant 2</text>
-<line x1="100" y1="54" x2="100" y2="345" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
-<line x1="360" y1="54" x2="360" y2="345" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
-<line x1="600" y1="54" x2="600" y2="345" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
-<text x="60" y="78" font-size="11" fill="currentColor" font-weight="bold">Phase 1</text>
-<line x1="100" y1="90" x2="360" y2="90" stroke="currentColor" stroke-width="1.5" marker-end="url(#tx)"/>
-<text x="230" y="84" text-anchor="middle" font-size="11" fill="currentColor">PREPARE</text>
-<line x1="100" y1="108" x2="600" y2="108" stroke="currentColor" stroke-width="1.5" marker-end="url(#tx)"/>
-<text x="350" y="102" text-anchor="middle" font-size="11" fill="currentColor">PREPARE</text>
-<text x="360" y="132" text-anchor="middle" font-size="10" fill="#f59e0b">ghi log, khoá row</text>
-<line x1="360" y1="150" x2="100" y2="150" stroke="currentColor" stroke-width="1.5" marker-end="url(#tx)"/>
-<text x="230" y="144" text-anchor="middle" font-size="11" fill="#10b981">VOTE-COMMIT</text>
-<line x1="600" y1="168" x2="100" y2="168" stroke="currentColor" stroke-width="1.5" marker-end="url(#tx)"/>
-<text x="350" y="162" text-anchor="middle" font-size="11" fill="#10b981">VOTE-COMMIT</text>
-<rect x="30" y="184" width="140" height="30" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="100" y="203" text-anchor="middle" font-size="10" fill="currentColor">ghi COMMIT (điểm no-return)</text>
-<text x="60" y="238" font-size="11" fill="currentColor" font-weight="bold">Phase 2</text>
-<line x1="100" y1="250" x2="360" y2="250" stroke="currentColor" stroke-width="1.5" marker-end="url(#tx)"/>
-<text x="230" y="244" text-anchor="middle" font-size="11" fill="currentColor">COMMIT</text>
-<line x1="100" y1="268" x2="600" y2="268" stroke="currentColor" stroke-width="1.5" marker-end="url(#tx)"/>
-<text x="350" y="262" text-anchor="middle" font-size="11" fill="currentColor">COMMIT</text>
-<line x1="360" y1="300" x2="100" y2="300" stroke="currentColor" stroke-width="1.5" marker-end="url(#tx)"/>
-<text x="230" y="294" text-anchor="middle" font-size="11" fill="currentColor">ACK</text>
-<line x1="600" y1="318" x2="100" y2="318" stroke="currentColor" stroke-width="1.5" marker-end="url(#tx)"/>
-<text x="350" y="312" text-anchor="middle" font-size="11" fill="currentColor">ACK</text>
-<defs><marker id="tx" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<step-flow>
+<svg viewBox="0 0 700 560" role="img" aria-labelledby="ds19a-t ds19a-d" style="width:100%;height:auto">
+<title id="ds19a-t">Sequence diagram của two-phase commit thành công</title>
+<desc id="ds19a-d">Coordinator gửi PREPARE tới hai participant; mỗi participant ghi log, khoá row rồi VOTE-COMMIT và chuyển sang in-doubt; coordinator ghi COMMIT vào log bền, đó là điểm no-return; sau đó gửi COMMIT, participant thi hành, nhả khoá và gửi ACK.</desc>
+<defs><marker id="ds19a-arr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<rect x="45" y="15" width="130" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
+<text x="110" y="37" text-anchor="middle" font-size="13" fill="currentColor">Coordinator</text>
+<line x1="110" y1="49" x2="110" y2="550" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="3 3"/>
+<rect x="315" y="15" width="130" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+<text x="380" y="37" text-anchor="middle" font-size="13" fill="currentColor">Participant 1</text>
+<line x1="380" y1="49" x2="380" y2="550" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="3 3"/>
+<rect x="545" y="15" width="130" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+<text x="610" y="37" text-anchor="middle" font-size="13" fill="currentColor">Participant 2</text>
+<line x1="610" y1="49" x2="610" y2="550" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="3 3"/>
+<text x="12" y="74" font-size="13" font-weight="bold" fill="currentColor">Phase 1</text>
+<text x="12" y="350" font-size="13" font-weight="bold" fill="currentColor">Phase 2</text>
+<g data-step="1">
+<text x="245" y="93" text-anchor="middle" font-size="13" fill="currentColor">PREPARE</text>
+<line x1="114" y1="100" x2="376" y2="100" stroke="currentColor" stroke-width="1.5" marker-end="url(#ds19a-arr)"/>
+<text x="495" y="118" text-anchor="middle" font-size="13" fill="currentColor">PREPARE</text>
+<line x1="114" y1="125" x2="606" y2="125" stroke="currentColor" stroke-width="1.5" marker-end="url(#ds19a-arr)"/>
+</g>
+<g data-step="2">
+<rect x="310" y="140" width="140" height="44" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor"/>
+<text x="380" y="159" text-anchor="middle" font-size="13" fill="currentColor">ghi log prepare</text>
+<text x="380" y="176" text-anchor="middle" font-size="13" fill="currentColor">khoá row</text>
+<rect x="540" y="140" width="140" height="44" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor"/>
+<text x="610" y="159" text-anchor="middle" font-size="13" fill="currentColor">ghi log prepare</text>
+<text x="610" y="176" text-anchor="middle" font-size="13" fill="currentColor">khoá row</text>
+</g>
+<g data-step="3">
+<text x="245" y="208" text-anchor="middle" font-size="13" fill="#10b981">VOTE-COMMIT</text>
+<line x1="376" y1="215" x2="114" y2="215" stroke="currentColor" stroke-width="1.5" marker-end="url(#ds19a-arr)"/>
+<text x="495" y="233" text-anchor="middle" font-size="13" fill="#10b981">VOTE-COMMIT</text>
+<line x1="606" y1="240" x2="114" y2="240" stroke="currentColor" stroke-width="1.5" marker-end="url(#ds19a-arr)"/>
+<rect x="375" y="218" width="10" height="142" fill="#f59e0b" fill-opacity="0.45"/>
+<rect x="605" y="243" width="10" height="142" fill="#f59e0b" fill-opacity="0.45"/>
+<text x="390" y="275" font-size="13" fill="#f59e0b">in-doubt</text>
+<text x="620" y="300" font-size="13" fill="#f59e0b">in-doubt</text>
+</g>
+<g data-step="4">
+<rect x="25" y="256" width="170" height="44" rx="6" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor"/>
+<text x="110" y="275" text-anchor="middle" font-size="13" fill="currentColor">ghi COMMIT vào log</text>
+<text x="110" y="292" text-anchor="middle" font-size="13" fill="currentColor">(điểm no-return)</text>
+<line x1="10" y1="318" x2="690" y2="318" stroke="#f43f5e" stroke-width="2" stroke-dasharray="7 4"/>
+<text x="398" y="312" font-size="13" fill="#f43f5e">trên vạch: còn abort được</text>
+<text x="398" y="336" font-size="13" fill="#f43f5e">dưới vạch: bất khả huỷ</text>
+</g>
+<g data-step="5">
+<text x="245" y="368" text-anchor="middle" font-size="13" fill="currentColor">COMMIT</text>
+<line x1="114" y1="375" x2="376" y2="375" stroke="currentColor" stroke-width="1.5" marker-end="url(#ds19a-arr)"/>
+<text x="495" y="393" text-anchor="middle" font-size="13" fill="currentColor">COMMIT</text>
+<line x1="114" y1="400" x2="606" y2="400" stroke="currentColor" stroke-width="1.5" marker-end="url(#ds19a-arr)"/>
+</g>
+<g data-step="6">
+<rect x="310" y="412" width="140" height="44" rx="6" fill="#10b981" fill-opacity="0.15" stroke="currentColor"/>
+<text x="380" y="431" text-anchor="middle" font-size="13" fill="currentColor">thi hành,</text>
+<text x="380" y="448" text-anchor="middle" font-size="13" fill="currentColor">nhả khoá</text>
+<rect x="540" y="412" width="140" height="44" rx="6" fill="#10b981" fill-opacity="0.15" stroke="currentColor"/>
+<text x="610" y="431" text-anchor="middle" font-size="13" fill="currentColor">thi hành,</text>
+<text x="610" y="448" text-anchor="middle" font-size="13" fill="currentColor">nhả khoá</text>
+<text x="245" y="473" text-anchor="middle" font-size="13" fill="currentColor">ACK</text>
+<line x1="376" y1="480" x2="114" y2="480" stroke="currentColor" stroke-width="1.5" marker-end="url(#ds19a-arr)"/>
+<text x="495" y="498" text-anchor="middle" font-size="13" fill="currentColor">ACK</text>
+<line x1="606" y1="505" x2="114" y2="505" stroke="currentColor" stroke-width="1.5" marker-end="url(#ds19a-arr)"/>
+<rect x="25" y="515" width="170" height="26" rx="6" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor"/>
+<text x="110" y="533" text-anchor="middle" font-size="13" fill="currentColor">đủ ACK: dọn log</text>
+</g>
 </svg>
+<step-note data-step="1">Coordinator chưa quyết gì cả. Nó hỏi mọi bên trước, để không bên nào commit trong khi bên khác hoá ra không làm được.</step-note>
+<step-note data-step="2">Participant làm hết mọi việc trừ commit, và ghi prepare record xuống log bền: crash rồi khởi động lại vẫn biết mình đã hứa. Khoá giữ để không transaction nào sửa row trước khi có kết cục.</step-note>
+<step-note data-step="3">Vote YES là tự trói tay: từ đây participant không được đơn phương abort, chỉ còn chờ lệnh. Chỉ cần một bên vote NO (hoặc timeout) là coordinator chọn ABORT. Coordinator chết trong khoảng này là kịch bản blocking ở §2.3.</step-note>
+<step-note data-step="4">Commit point là khoảnh khắc coordinator flush bản ghi <code>COMMIT</code> xuống log bền. Coordinator chết ngay sau đó thì khi sống lại vẫn đọc log thấy <code>COMMIT</code> và gửi tiếp, nên không còn đường quay về abort.</step-note>
+<step-note data-step="5">Quyết định đi tới tất cả participant; ai chưa nhận thì coordinator gửi lại. Lúc này participant mới thoát in-doubt.</step-note>
+<step-note data-step="6">Participant làm thay đổi vĩnh viễn và nhả khoá đã giữ từ bước 2. Coordinator chỉ dọn log khi đã đủ ACK, vì còn thiếu ai thì phải gửi lại cho người đó.</step-note>
+</step-flow>
 
 Điểm cốt lõi: **commit point** là khoảnh khắc coordinator flush bản ghi `COMMIT` xuống log bền. Trước đó, mọi thứ có thể abort. Sau đó, quyết định là **bất khả huỷ** — dù coordinator có chết ngay lúc đó, khi sống lại nó đọc log thấy `COMMIT` và tiếp tục gửi lệnh commit cho tới khi mọi participant ACK.
 

@@ -69,26 +69,35 @@ Hai thành phần **không được thiếu**:
 ### 3.3 Vì sao BẮT BUỘC unique token?
 Value của lock **phải là một token duy nhất** (UUID) của người giữ. Lý do nằm ở kịch bản chết người sau:
 
-<svg viewBox="0 0 640 250" role="img" aria-labelledby="lk-t lk-d" style="width:100%;max-width:600px;height:auto;display:block;margin:1.25rem auto">
-<title id="lk-t">Vì sao cần unique token khi nhả lock</title>
-<desc id="lk-d">Pod A bị chậm quá TTL, lock hết hạn, Pod B giành lock; nếu A xoá mù nó sẽ xoá nhầm lock của B</desc>
-<text x="60" y="24" font-size="12" fill="currentColor">Pod A</text>
-<text x="60" y="150" font-size="12" fill="currentColor">Pod B</text>
-<line x1="100" y1="30" x2="600" y2="30" stroke="currentColor" stroke-width="0.5"/>
-<line x1="100" y1="156" x2="600" y2="156" stroke="currentColor" stroke-width="0.5"/>
-<rect x="110" y="16" width="120" height="26" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="170" y="33" text-anchor="middle" font-size="10" fill="currentColor">giành lock (TTL 30s)</text>
-<rect x="250" y="16" width="150" height="26" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="325" y="33" text-anchor="middle" font-size="10" fill="currentColor">GC pause / chậm &gt; 30s</text>
-<line x1="410" y1="30" x2="410" y2="156" stroke="currentColor" stroke-width="0.5" stroke-dasharray="3 3"/>
-<text x="410" y="98" text-anchor="middle" font-size="10" fill="currentColor">TTL hết → lock tự nhả</text>
-<rect x="420" y="142" width="120" height="26" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="480" y="159" text-anchor="middle" font-size="10" fill="currentColor">B giành lock mới</text>
-<rect x="450" y="16" width="150" height="26" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="525" y="33" text-anchor="middle" font-size="10" fill="currentColor">A tỉnh dậy, DEL mù</text>
-<text x="320" y="205" text-anchor="middle" font-size="11" fill="currentColor">DEL mù của A xoá nhầm lock của B → hai pod cùng chạy!</text>
-<text x="320" y="228" text-anchor="middle" font-size="11" fill="currentColor">Chỉ xoá nếu token khớp mới an toàn</text>
+<step-flow>
+<svg viewBox="0 0 760 430" role="img" aria-labelledby="dst06b-t dst06b-d" style="width:100%;height:auto">
+<title id="dst06b-t">Vì sao cần unique token khi nhả lock</title>
+<desc id="dst06b-d">Dòng thời gian của Pod A, key lock:report trên Redis, Pod B và Pod C. A giành lock TTL 30s rồi bị GC pause quá 30s; TTL hết, lock tự nhả; B giành lock mới; A tỉnh dậy DEL mù và xoá nhầm lock của B; C giành được lock nên B và C cùng chạy. Chỉ xoá khi token khớp mới an toàn.</desc>
+<defs><marker id="dst06b-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="12" y="65" text-anchor="start" font-size="13" fill="currentColor" font-weight="600">Pod A</text>
+<text x="12" y="155" text-anchor="start" font-size="13" fill="currentColor" font-weight="600">Redis</text>
+<text x="12" y="245" text-anchor="start" font-size="13" fill="currentColor" font-weight="600">Pod B</text>
+<text x="12" y="315" text-anchor="start" font-size="13" fill="currentColor" font-weight="600">Pod C</text>
+<text x="12" y="171" text-anchor="start" font-size="12" fill="currentColor" opacity="0.8">lock:report</text>
+<line x1="110" y1="350" x2="750" y2="350" stroke="currentColor" stroke-opacity="0.6"/>
+<line x1="120" y1="345" x2="120" y2="355" stroke="currentColor"/><text x="120" y="368" text-anchor="middle" font-size="12" fill="currentColor">t = 0</text>
+<text x="750" y="368" text-anchor="end" font-size="12" fill="currentColor" opacity="0.8">thời gian →</text>
+<g data-step="1"><rect x="120" y="48" width="80" height="24" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="1"/><text x="160" y="65" text-anchor="middle" font-size="12" fill="currentColor">chạy job</text><line x1="130" y1="72" x2="130" y2="136" stroke="currentColor" stroke-width="1.6" marker-end="url(#dst06b-arrow)"/><text x="138" y="108" text-anchor="start" font-size="12" fill="currentColor">SET NX PX 30000 → OK</text><rect x="120" y="138" width="280" height="24" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="1"/><text x="260" y="155" text-anchor="middle" font-size="12" fill="currentColor">tokenA (TTL 30s)</text></g>
+<g data-step="2"><rect x="200" y="48" width="300" height="24" rx="5" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-width="1"/><text x="310" y="65" text-anchor="middle" font-size="12" fill="currentColor">GC pause / chậm &gt; 30s</text></g>
+<g data-step="3"><line x1="400" y1="36" x2="400" y2="350" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="3 3"/><line x1="400" y1="345" x2="400" y2="355" stroke="currentColor"/><text x="400" y="368" text-anchor="middle" font-size="12" fill="currentColor">t = 30s</text><text x="394" y="190" text-anchor="end" font-size="12" fill="currentColor">TTL hết → lock tự nhả</text></g>
+<g data-step="4"><rect x="440" y="228" width="310" height="24" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-width="1"/><text x="525" y="245" text-anchor="middle" font-size="12" fill="currentColor">B chạy job</text><line x1="446" y1="228" x2="446" y2="164" stroke="currentColor" stroke-width="1.6" marker-end="url(#dst06b-arrow)"/><text x="452" y="200" text-anchor="start" font-size="12" fill="currentColor">SET NX → OK</text><rect x="440" y="138" width="90" height="24" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-width="1"/><text x="485" y="155" text-anchor="middle" font-size="12" fill="currentColor">tokenB</text></g>
+<g data-step="5"><rect x="500" y="48" width="30" height="24" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="1"/><line x1="530" y1="72" x2="530" y2="136" stroke="#f43f5e" stroke-width="2" marker-end="url(#dst06b-arrow)"/><text x="538" y="100" text-anchor="start" font-size="12" fill="currentColor">DEL lock:report (mù)</text><rect x="440" y="138" width="90" height="24" rx="5" fill="none" stroke="#f43f5e" stroke-width="2.5" stroke-dasharray="5 3"/><text x="570" y="155" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.8">trống</text><text x="538" y="118" text-anchor="start" font-size="12" fill="currentColor">xoá nhầm lock của B</text></g>
+<g data-step="6"><rect x="610" y="224" width="140" height="102" rx="6" fill="#f43f5e" fill-opacity="0.13"/><rect x="610" y="298" width="140" height="24" rx="5" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-width="1"/><text x="680" y="315" text-anchor="middle" font-size="12" fill="currentColor">C chạy job</text><line x1="620" y1="298" x2="620" y2="164" stroke="currentColor" stroke-width="1.6" marker-end="url(#dst06b-arrow)"/><text x="626" y="200" text-anchor="start" font-size="12" fill="currentColor">SET NX → OK</text><rect x="610" y="138" width="140" height="24" rx="5" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-width="1"/><text x="680" y="155" text-anchor="middle" font-size="12" fill="currentColor">tokenC</text><text x="680" y="278" text-anchor="middle" font-size="12" fill="currentColor" font-weight="600">hai pod cùng chạy!</text></g>
+<g data-step="7"><rect x="110" y="384" width="640" height="40" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-width="1"/><text x="430" y="400" text-anchor="middle" font-size="12" fill="currentColor">Nhả bằng Lua compare-and-del: GET = tokenB ≠ tokenA → return 0, lock của B còn nguyên.</text><text x="430" y="417" text-anchor="middle" font-size="12" fill="currentColor" font-weight="600">Chỉ xoá nếu token khớp mới an toàn.</text></g>
 </svg>
+<step-note data-step="1">A giành lock bằng token riêng của mình. TTL 30s có mặt để lock tự nhả nếu A chết giữa chừng (mục 3.2).</step-note>
+<step-note data-step="2">Stop-the-world GC, máy quá tải hay mạng treo đóng băng A lâu hơn TTL. A không thấy thời gian trôi: với A, nó vẫn đang giữ lock.</step-note>
+<step-note data-step="3">Redis không biết A còn sống hay đã chết, hết 30s là xoá key. Chính cơ chế chống deadlock giờ mở cửa cho người khác.</step-note>
+<step-note data-step="4">Key đang trống nên <code>NX</code> thành công cho B một cách hoàn toàn hợp lệ. Từ lúc này B mới là chủ lock thật.</step-note>
+<step-note data-step="5">A làm nốt rồi nhả lock mà không kiểm ai đang giữ, nên lệnh <code>DEL</code> xoá mất lock của B. B không nhận được báo gì, vẫn tin mình giữ lock.</step-note>
+<step-note data-step="6">Key lại trống nên C cũng giành được. B và C cùng ở trong vùng găng: vỡ mutual exclusion, đúng điều lock sinh ra để ngăn.</step-note>
+<step-note data-step="7">Token duy nhất cộng so-rồi-mới-xoá atomic (mục 3.4) chặn đúng bước 5. Đoạn ngắn A và B cùng chạy sau khi A tỉnh thì token không chặn được, đó là việc của fencing token ở mục 3.5.</step-note>
+</step-flow>
 
 Nếu nhả lock bằng `DEL lock:report` mù (không kiểm tra ai đang giữ): A bị pause quá TTL, lock hết hạn, B giành được lock, rồi A tỉnh dậy và `DEL` — **xoá nhầm lock của B**. Giờ B tưởng mình còn giữ nhưng thực tế lock trống, pod thứ ba lại giành được → vỡ mutual exclusion.
 

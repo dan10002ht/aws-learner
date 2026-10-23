@@ -32,35 +32,64 @@ Các node đóng ba **vai** (một tiến trình có thể kiêm nhiều vai):
 
 Mỗi lần đề xuất mang một **proposal number** `n` — số **tăng đơn điệu & duy nhất toàn cục** (ví dụ ghép `(counter, serverId)`). Số lớn hơn "át" số nhỏ hơn. Consensus chạy qua **hai pha**:
 
-<svg viewBox="0 0 700 300" role="img" aria-labelledby="px-t px-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto">
-<title id="px-t">Hai pha của Paxos: Prepare và Accept</title>
-<desc id="px-d">Proposer gửi prepare(n) tới các acceptor rồi accept(n,v), cần đa số phản hồi ở mỗi pha</desc>
-<text x="60" y="24" text-anchor="middle" font-size="13" fill="currentColor">Proposer</text>
-<text x="300" y="24" text-anchor="middle" font-size="13" fill="currentColor">Acceptor A</text>
-<text x="440" y="24" text-anchor="middle" font-size="13" fill="currentColor">Acceptor B</text>
-<text x="580" y="24" text-anchor="middle" font-size="13" fill="currentColor">Acceptor C</text>
-<line x1="60" y1="34" x2="60" y2="290" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
-<line x1="300" y1="34" x2="300" y2="290" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
-<line x1="440" y1="34" x2="440" y2="290" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
-<line x1="580" y1="34" x2="580" y2="290" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
-<rect x="20" y="52" width="200" height="26" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="120" y="69" text-anchor="middle" font-size="12" fill="currentColor">Pha 1: PREPARE(n)</text>
-<line x1="60" y1="90" x2="300" y2="98" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar)"/>
-<line x1="60" y1="90" x2="440" y2="104" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar)"/>
-<line x1="60" y1="90" x2="580" y2="110" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar)"/>
-<text x="150" y="128" text-anchor="middle" font-size="11" fill="currentColor">promise(n): không nhận n' &lt; n</text>
-<line x1="300" y1="135" x2="60" y2="150" stroke="currentColor" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#ar)"/>
-<line x1="440" y1="140" x2="60" y2="152" stroke="currentColor" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#ar)"/>
-<rect x="20" y="168" width="230" height="26" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="135" y="185" text-anchor="middle" font-size="12" fill="currentColor">Pha 2: ACCEPT(n, v)</text>
-<line x1="60" y1="206" x2="300" y2="214" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar)"/>
-<line x1="60" y1="206" x2="440" y2="220" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar)"/>
-<line x1="60" y1="206" x2="580" y2="226" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar)"/>
-<text x="150" y="250" text-anchor="middle" font-size="11" fill="#10b981">accepted(n,v) từ đa số =&gt; CHỐT</text>
-<line x1="300" y1="256" x2="60" y2="268" stroke="currentColor" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#ar)"/>
-<line x1="440" y1="258" x2="60" y2="270" stroke="currentColor" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#ar)"/>
-<defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<step-flow>
+<svg viewBox="0 0 700 430" role="img" aria-labelledby="ds15a-t ds15a-d" style="width:100%;max-width:700px;height:auto;display:block;margin:1.25rem auto">
+<title id="ds15a-t">Hai pha của Paxos: Prepare và Accept</title>
+<desc id="ds15a-d">Proposer gửi prepare(n) tới ba acceptor A, B, C; A và B trả promise(n) (đa số 2/3, C chậm); proposer chọn v rồi gửi accept(n, v) tới cả ba; A và B trả accepted(n, v), đa số accepted nên v được chốt và learner học ra v.</desc>
+<defs><marker id="ds15a-ar" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<rect x="10" y="52" width="680" height="168" rx="8" fill="#3b82f6" fill-opacity="0.10"/>
+<text x="20" y="72" font-size="13" font-weight="600" fill="currentColor">Pha 1: PREPARE(n) — giành quyền</text>
+<rect x="10" y="228" width="680" height="194" rx="8" fill="#10b981" fill-opacity="0.10"/>
+<text x="20" y="248" font-size="13" font-weight="600" fill="currentColor">Pha 2: ACCEPT(n, v) — chốt</text>
+<rect x="18" y="8" width="104" height="30" rx="7" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor"/>
+<text x="70" y="28" text-anchor="middle" font-size="13" fill="currentColor">Proposer</text>
+<line x1="70" y1="38" x2="70" y2="420" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 4"/>
+<rect x="308" y="8" width="104" height="30" rx="7" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor"/>
+<text x="360" y="28" text-anchor="middle" font-size="13" fill="currentColor">Acceptor A</text>
+<line x1="360" y1="38" x2="360" y2="420" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 4"/>
+<rect x="438" y="8" width="104" height="30" rx="7" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor"/>
+<text x="490" y="28" text-anchor="middle" font-size="13" fill="currentColor">Acceptor B</text>
+<line x1="490" y1="38" x2="490" y2="420" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 4"/>
+<rect x="568" y="8" width="104" height="30" rx="7" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor"/>
+<text x="620" y="28" text-anchor="middle" font-size="13" fill="currentColor">Acceptor C</text>
+<line x1="620" y1="38" x2="620" y2="420" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 4"/>
+<g data-step="1">
+<text x="200" y="92" text-anchor="middle" font-size="13" fill="currentColor">prepare(n)</text>
+<line x1="72" y1="102" x2="357" y2="102" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds15a-ar)"/>
+<line x1="72" y1="113" x2="487" y2="113" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds15a-ar)"/>
+<line x1="72" y1="124" x2="617" y2="124" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds15a-ar)"/>
+</g>
+<g data-step="2">
+<text x="210" y="146" text-anchor="middle" font-size="13" fill="currentColor">promise(n): không nhận n' &lt; n</text>
+<line x1="358" y1="154" x2="73" y2="166" stroke="currentColor" stroke-width="1.6" stroke-dasharray="5 3" marker-end="url(#ds15a-ar)"/>
+<line x1="488" y1="160" x2="73" y2="172" stroke="currentColor" stroke-width="1.6" stroke-dasharray="5 3" marker-end="url(#ds15a-ar)"/>
+<text x="82" y="190" font-size="12" fill="currentColor" opacity="0.85">kèm (n', v') đã accept: chưa có</text>
+<text x="82" y="208" font-size="12" fill="currentColor" opacity="0.85">2/3 promise = đa số</text>
+<text x="620" y="160" text-anchor="middle" font-size="12" fill="#f43f5e">✗ chậm / mất</text>
+</g>
+<g data-step="3">
+<rect x="20" y="258" width="300" height="28" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor"/>
+<text x="170" y="277" text-anchor="middle" font-size="12" fill="currentColor">chưa ai accept gì ⇒ tự chọn v của mình</text>
+<text x="210" y="302" text-anchor="middle" font-size="13" fill="currentColor">accept(n, v)</text>
+<line x1="72" y1="312" x2="357" y2="312" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds15a-ar)"/>
+<line x1="72" y1="323" x2="487" y2="323" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds15a-ar)"/>
+<line x1="72" y1="334" x2="617" y2="334" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds15a-ar)"/>
+</g>
+<g data-step="4">
+<text x="210" y="352" text-anchor="middle" font-size="13" fill="currentColor">accepted(n, v)</text>
+<text x="368" y="350" font-size="12" fill="currentColor" opacity="0.85">ghi bền</text>
+<text x="498" y="350" font-size="12" fill="currentColor" opacity="0.85">ghi bền</text>
+<line x1="358" y1="358" x2="73" y2="370" stroke="#10b981" stroke-width="1.6" stroke-dasharray="5 3" marker-end="url(#ds15a-ar)"/>
+<line x1="488" y1="362" x2="73" y2="374" stroke="#10b981" stroke-width="1.6" stroke-dasharray="5 3" marker-end="url(#ds15a-ar)"/>
+<rect x="20" y="384" width="440" height="28" rx="6" fill="#10b981" fill-opacity="0.16" stroke="#10b981"/>
+<text x="240" y="403" text-anchor="middle" font-size="13" fill="currentColor">accepted từ đa số (2/3) ⇒ v CHỐT, Learner học ra v</text>
+</g>
 </svg>
+<step-note data-step="1">Proposer chọn <code>n</code> tăng đơn điệu, duy nhất toàn cục (vd <code>(counter, serverId)</code>) rồi hỏi mọi acceptor: trạng thái bền nằm ở acceptor và phải gom được đa số trong chúng.</step-note>
+<step-note data-step="2">A, B chưa từng thấy số nào lớn hơn <code>n</code> nên hứa từ chối mọi số nhỏ hơn, để proposer cũ không chen vào được nữa. Hai trên ba là đủ đa số; C chậm cũng không chặn được tiến độ.</step-note>
+<step-note data-step="3">Không promise nào mang giá trị cũ nên proposer được tự chọn <code>v</code>. Nếu có, nó buộc phải dùng lại giá trị có số cao nhất, vì giá trị đó có thể đã được chốt.</step-note>
+<step-note data-step="4">A, B chưa hứa với số nào <code>&gt; n</code> nên accept và ghi bền. Mọi quorum sau này đều giao quorum A, B ở ít nhất một acceptor, nên không giá trị nào khác chốt được nữa.</step-note>
+</step-flow>
 
 **Pha 1 — Prepare (giành quyền):** proposer chọn `n` rồi gửi `prepare(n)` tới các acceptor.
 - Acceptor nhận `prepare(n)`: nếu `n` **lớn hơn** mọi số nó từng thấy, nó **hứa (promise)** sẽ không chấp nhận đề xuất nào có số `< n` nữa, và **kèm theo** giá trị nó đã accept trước đó (nếu có) cùng số của giá trị đó.
