@@ -335,6 +335,108 @@ Bản này **chạy được** — và đó là lý do nó nguy hiểm: nó số
            └──▶ Stream → object storage → analytics         (§13)
 ```
 
+Phóng to nửa dưới của sơ đồ — phần quyết định hệ thống chịu được sự cố provider hay không:
+
+<svg viewBox="0 0 520 486" role="img" aria-labelledby="sd14a-t sd14a-d" font-family="ui-sans-serif, system-ui, sans-serif" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="sd14a-t">Bản v2: queue, worker và provider tách theo kênh</title>
+<desc id="sd14a-d">Dispatcher đẩy message vào ba queue riêng cho push, sms và email; mỗi queue tách tiếp theo priority (push và sms có crit, norm, bulk; email có norm, bulk). Mỗi queue có pool worker riêng với rate limiter riêng: push theo connection/stream, sms 10–100 tin mỗi giây, email theo tin mỗi giây và quota 24 giờ. Worker gọi provider của kênh: APNs và FCM, Twilio và SNS, SES và SendGrid. Message lỗi cạn retry đi vào DLQ chung.</desc>
+<defs><marker id="sd14a-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor" fill-opacity="0.7"/></marker></defs>
+<text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Mỗi kênh một làn riêng từ queue tới provider</text>
+<rect x="16" y="38" width="488" height="48" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="260" y="58" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Dispatcher / Router</text>
+<text x="260" y="77" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">đã chọn kênh, đã render nội dung</text>
+<line x1="92.0" y1="86" x2="92.0" y2="108" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd14a-ar)"/>
+<rect x="16" y="112" width="152" height="100" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="26" y="131" font-size="14" font-weight="700" fill="currentColor">Q: push</text>
+<rect x="26" y="140" width="132" height="18" rx="4" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.22"/>
+<text x="32" y="154" font-size="13" fill="currentColor">crit</text>
+<rect x="146" y="144" width="8" height="10" rx="1.5" fill="#3b82f6" fill-opacity="0.85"/>
+<rect x="135" y="144" width="8" height="10" rx="1.5" fill="#3b82f6" fill-opacity="0.85"/>
+<rect x="124" y="144" width="8" height="10" rx="1.5" fill="#3b82f6" fill-opacity="0.85"/>
+<rect x="113" y="144" width="8" height="10" rx="1.5" fill="#3b82f6" fill-opacity="0.85"/>
+<rect x="26" y="162" width="132" height="18" rx="4" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.22"/>
+<text x="32" y="176" font-size="13" fill="currentColor">norm</text>
+<rect x="146" y="166" width="8" height="10" rx="1.5" fill="#3b82f6" fill-opacity="0.85"/>
+<rect x="135" y="166" width="8" height="10" rx="1.5" fill="#3b82f6" fill-opacity="0.85"/>
+<rect x="124" y="166" width="8" height="10" rx="1.5" fill="#3b82f6" fill-opacity="0.85"/>
+<rect x="26" y="184" width="132" height="18" rx="4" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.22"/>
+<text x="32" y="198" font-size="13" fill="currentColor">bulk</text>
+<rect x="146" y="188" width="8" height="10" rx="1.5" fill="#3b82f6" fill-opacity="0.85"/>
+<rect x="135" y="188" width="8" height="10" rx="1.5" fill="#3b82f6" fill-opacity="0.85"/>
+<rect x="124" y="188" width="8" height="10" rx="1.5" fill="#3b82f6" fill-opacity="0.85"/>
+<rect x="113" y="188" width="8" height="10" rx="1.5" fill="#3b82f6" fill-opacity="0.85"/>
+<rect x="102" y="188" width="8" height="10" rx="1.5" fill="#3b82f6" fill-opacity="0.85"/>
+<line x1="92.0" y1="212" x2="92.0" y2="234" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd14a-ar)"/>
+<rect x="16" y="238" width="152" height="84" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="92.0" y="258" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">push worker</text>
+<text x="92.0" y="276" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">rate limiter:</text>
+<text x="92.0" y="294" font-size="13" font-weight="600" text-anchor="middle" fill="currentColor">connection /</text>
+<text x="92.0" y="311" font-size="13" font-weight="600" text-anchor="middle" fill="currentColor">stream</text>
+<line x1="92.0" y1="322" x2="92.0" y2="344" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd14a-ar)"/>
+<rect x="16" y="348" width="152" height="38" rx="19" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="92.0" y="372" font-size="13" font-weight="600" text-anchor="middle" fill="currentColor">APNs · FCM</text>
+<line x1="260.0" y1="86" x2="260.0" y2="108" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd14a-ar)"/>
+<rect x="184" y="112" width="152" height="100" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="194" y="131" font-size="14" font-weight="700" fill="currentColor">Q: sms</text>
+<rect x="194" y="140" width="132" height="18" rx="4" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.22"/>
+<text x="200" y="154" font-size="13" fill="currentColor">crit</text>
+<rect x="314" y="144" width="8" height="10" rx="1.5" fill="#f59e0b" fill-opacity="0.85"/>
+<rect x="303" y="144" width="8" height="10" rx="1.5" fill="#f59e0b" fill-opacity="0.85"/>
+<rect x="292" y="144" width="8" height="10" rx="1.5" fill="#f59e0b" fill-opacity="0.85"/>
+<rect x="281" y="144" width="8" height="10" rx="1.5" fill="#f59e0b" fill-opacity="0.85"/>
+<rect x="194" y="162" width="132" height="18" rx="4" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.22"/>
+<text x="200" y="176" font-size="13" fill="currentColor">norm</text>
+<rect x="314" y="166" width="8" height="10" rx="1.5" fill="#f59e0b" fill-opacity="0.85"/>
+<rect x="303" y="166" width="8" height="10" rx="1.5" fill="#f59e0b" fill-opacity="0.85"/>
+<rect x="292" y="166" width="8" height="10" rx="1.5" fill="#f59e0b" fill-opacity="0.85"/>
+<rect x="194" y="184" width="132" height="18" rx="4" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.22"/>
+<text x="200" y="198" font-size="13" fill="currentColor">bulk</text>
+<rect x="314" y="188" width="8" height="10" rx="1.5" fill="#f59e0b" fill-opacity="0.85"/>
+<rect x="303" y="188" width="8" height="10" rx="1.5" fill="#f59e0b" fill-opacity="0.85"/>
+<rect x="292" y="188" width="8" height="10" rx="1.5" fill="#f59e0b" fill-opacity="0.85"/>
+<rect x="281" y="188" width="8" height="10" rx="1.5" fill="#f59e0b" fill-opacity="0.85"/>
+<rect x="270" y="188" width="8" height="10" rx="1.5" fill="#f59e0b" fill-opacity="0.85"/>
+<line x1="260.0" y1="212" x2="260.0" y2="234" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd14a-ar)"/>
+<rect x="184" y="238" width="152" height="84" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="260.0" y="258" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">sms worker</text>
+<text x="260.0" y="276" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">rate limiter:</text>
+<text x="260.0" y="294" font-size="13" font-weight="600" text-anchor="middle" fill="currentColor">10–100 tin/s</text>
+<line x1="260.0" y1="322" x2="260.0" y2="344" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd14a-ar)"/>
+<rect x="184" y="348" width="152" height="38" rx="19" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="260.0" y="372" font-size="13" font-weight="600" text-anchor="middle" fill="currentColor">Twilio · SNS</text>
+<line x1="428.0" y1="86" x2="428.0" y2="108" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd14a-ar)"/>
+<rect x="352" y="112" width="152" height="100" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="362" y="131" font-size="14" font-weight="700" fill="currentColor">Q: email</text>
+<rect x="362" y="140" width="132" height="18" rx="4" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.22"/>
+<text x="368" y="154" font-size="13" fill="currentColor">norm</text>
+<rect x="482" y="144" width="8" height="10" rx="1.5" fill="#10b981" fill-opacity="0.85"/>
+<rect x="471" y="144" width="8" height="10" rx="1.5" fill="#10b981" fill-opacity="0.85"/>
+<rect x="460" y="144" width="8" height="10" rx="1.5" fill="#10b981" fill-opacity="0.85"/>
+<rect x="362" y="162" width="132" height="18" rx="4" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.22"/>
+<text x="368" y="176" font-size="13" fill="currentColor">bulk</text>
+<rect x="482" y="166" width="8" height="10" rx="1.5" fill="#10b981" fill-opacity="0.85"/>
+<rect x="471" y="166" width="8" height="10" rx="1.5" fill="#10b981" fill-opacity="0.85"/>
+<rect x="460" y="166" width="8" height="10" rx="1.5" fill="#10b981" fill-opacity="0.85"/>
+<rect x="449" y="166" width="8" height="10" rx="1.5" fill="#10b981" fill-opacity="0.85"/>
+<rect x="438" y="166" width="8" height="10" rx="1.5" fill="#10b981" fill-opacity="0.85"/>
+<rect x="427" y="166" width="8" height="10" rx="1.5" fill="#10b981" fill-opacity="0.85"/>
+<line x1="428.0" y1="212" x2="428.0" y2="234" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd14a-ar)"/>
+<rect x="352" y="238" width="152" height="84" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="428.0" y="258" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">email worker</text>
+<text x="428.0" y="276" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">rate limiter:</text>
+<text x="428.0" y="294" font-size="13" font-weight="600" text-anchor="middle" fill="currentColor">tin/s +</text>
+<text x="428.0" y="311" font-size="13" font-weight="600" text-anchor="middle" fill="currentColor">quota/24h</text>
+<line x1="428.0" y1="322" x2="428.0" y2="344" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd14a-ar)"/>
+<rect x="352" y="348" width="152" height="38" rx="19" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="428.0" y="372" font-size="13" font-weight="600" text-anchor="middle" fill="currentColor">SES · SendGrid</text>
+<rect x="16" y="414" width="488" height="34" rx="9" fill="#f43f5e" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="260" y="436" font-size="13" text-anchor="middle" fill="currentColor"><tspan font-weight="700">DLQ</tspan> · message lỗi cạn retry (§7.4)</text>
+<line x1="92.0" y1="386" x2="92.0" y2="410" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#sd14a-ar)"/>
+<line x1="260.0" y1="386" x2="260.0" y2="410" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#sd14a-ar)"/>
+<line x1="428.0" y1="386" x2="428.0" y2="410" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#sd14a-ar)"/>
+<text x="260" y="474" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">Queue, pool, hạn mức riêng: làn này kẹt, làn kia vẫn chạy</text>
+</svg>
+
 Ba đường dữ liệu cần nhận ra: **đường gửi đi** (trái sang phải, bất đồng bộ, có queue), **đường phản hồi** (webhook đi ngược, cập nhật trạng thái và suppression), **đường phân tích** (stream sang kho lạnh). Bản v1 chỉ có đường thứ nhất — đó là lý do nó không biết gì về kết quả việc mình làm.
 
 ### 6.3 Vì sao phải tách queue theo kênh

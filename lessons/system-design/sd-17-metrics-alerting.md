@@ -261,63 +261,94 @@ Bộ ba `start/end/step` là chữ ký nhận dạng của query time series: **
 
 ## 6. High-level design
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         HẠ TẦNG ĐƯỢC GIÁM SÁT                           │
-│  app server · DB · queue · LB · k8s node · batch job (100.000 máy)       │
-│   mỗi máy expose /metrics   hoặc   chạy agent đẩy metric đi              │
-└───────┬─────────────────────────────────────────┬───────────────────────┘
-        │ ① PULL (scrape mỗi 10 s)                │ ① PUSH (agent/StatsD)
-        │                                         │
-┌───────▼─────────────────────────────────────────▼───────────────────────┐
-│                    METRICS COLLECTOR POOL (stateless)                    │
-│   ┌──────────┐  ┌──────────┐  ┌──────────┐   phân mảnh bằng             │
-│   │collector1│  │collector2│  │collector3│   consistent hashing          │
-│   └──────────┘  └──────────┘  └──────────┘   trên tập target            │
-│        ▲ ② danh sách target + cấu hình scrape                            │
-│   ┌────┴──────────────────┐                                              │
-│   │ SERVICE DISCOVERY     │  etcd / Consul / k8s API / EC2 tags          │
-│   └───────────────────────┘                                              │
-└──────────────────────────────┬──────────────────────────────────────────┘
-                               │ ③ write (nén, batch)
-                  ┌────────────▼─────────────┐
-                  │   KAFKA (tuỳ chọn)       │  buffer · decouple ·
-                  │   partition theo         │  replay khi TSDB chết
-                  │   hash(series_key)       │
-                  └────────────┬─────────────┘
-                               │ ④ consumer / stream processor (Flink)
-                               │    tính rollup, lọc, làm giàu label
-        ┌──────────────────────▼───────────────────────┐
-        │        TIME-SERIES DATABASE (sharded)        │
-        │  ┌────────┐ ┌────────┐ ┌────────┐            │
-        │  │shard 1 │ │shard 2 │ │shard 3 │  ×RF3      │
-        │  └────────┘ └────────┘ └────────┘            │
-        │  tầng nóng: WAL + head chunk trong RAM       │
-        │  tầng ấm : block nén trên SSD (7–30 ngày)    │
-        │  tầng lạnh: object storage (S3) 1 năm        │
-        └───────┬──────────────────────────┬───────────┘
-                │ ⑤                        │ ⑤
-      ┌─────────▼──────────┐     ┌─────────▼──────────┐
-      │   QUERY SERVICE    │     │ DOWNSAMPLING /     │
-      │  + CACHE (Redis)   │     │ COMPACTION JOB     │
-      │  + rate limit      │     │ 10 s→1 m→1 h       │
-      └────┬──────────┬────┘     └────────────────────┘
-           │ ⑥        │ ⑥
-  ┌────────▼───┐  ┌───▼────────────────────────────────┐
-  │ DASHBOARD  │  │        ALERTING SYSTEM             │
-  │ (Grafana)  │  │ ┌────────────┐   ┌──────────────┐  │
-  └────────────┘  │ │ rule engine│──▶│alert manager │  │
-                  │ │ eval 15 s  │   │dedupe/group/ │  │
-                  │ │ for: 5m    │   │silence/inhibit│ │
-                  │ └────────────┘   └──────┬───────┘  │
-                  │   alert store (KV)      │          │
-                  └─────────────────────────┼──────────┘
-                                            │ ⑦
-                  ┌─────────────────────────▼──────────┐
-                  │ Email · SMS · PagerDuty · Slack ·  │
-                  │ webhook                            │
-                  └────────────────────────────────────┘
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 1032" role="img" aria-labelledby="sd17a-t sd17a-d" style="width:100%;max-width:480px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd17a-t">Kiến trúc tổng thể hệ thống metrics và alerting</title>
+<desc id="sd17a-d">Từ trên xuống: hạ tầng 100.000 máy được pull mỗi 10 giây hoặc push metric vào collector pool stateless chia target bằng consistent hashing, lấy danh sách target từ service discovery; collector ghi theo batch vào Kafka tuỳ chọn; consumer Flink tính rollup rồi ghi vào time-series database sharded RF3 với ba tầng nóng, ấm, lạnh; query service có cache và rate limit cùng job downsampling đọc TSDB; query service phục vụ dashboard và alerting system gồm rule engine eval 15 giây, alert manager dedupe, group, silence, inhibit; alert manager gửi email, SMS, PagerDuty, Slack, webhook.</desc>
+<defs><marker id="sd17a-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+<rect x="16" y="12" width="448" height="72" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="240" y="34" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">HẠ TẦNG ĐƯỢC GIÁM SÁT · 100.000 máy</text>
+<text x="240" y="54" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">app server · DB · queue · LB · k8s node · batch job</text>
+<text x="240" y="73" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">expose /metrics  hoặc  chạy agent đẩy metric đi</text>
+<line x1="100" y1="84" x2="100" y2="126" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd17a-ah)"/>
+<text x="108" y="101" font-size="13" font-weight="700" fill="currentColor">① PULL</text>
+<text x="108" y="119" font-size="13" opacity="0.8" fill="currentColor">scrape mỗi 10 s</text>
+<line x1="300" y1="84" x2="300" y2="126" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd17a-ah)"/>
+<text x="308" y="101" font-size="13" font-weight="700" fill="currentColor">① PUSH</text>
+<text x="308" y="119" font-size="13" opacity="0.8" fill="currentColor">agent / StatsD</text>
+<rect x="16" y="128" width="448" height="176" rx="10" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="240" y="150" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">METRICS COLLECTOR POOL (stateless)</text>
+<text x="240" y="169" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">chia target bằng consistent hashing</text>
+<rect x="40" y="180" width="120" height="32" rx="7" fill="#14b8a6" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="100" y="201" font-size="13" text-anchor="middle" fill="currentColor">collector1</text>
+<rect x="180" y="180" width="120" height="32" rx="7" fill="#14b8a6" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="240" y="201" font-size="13" text-anchor="middle" fill="currentColor">collector2</text>
+<rect x="320" y="180" width="120" height="32" rx="7" fill="#14b8a6" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="380" y="201" font-size="13" text-anchor="middle" fill="currentColor">collector3</text>
+<line x1="100" y1="244" x2="100" y2="216" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd17a-ah)"/>
+<line x1="240" y1="244" x2="240" y2="216" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd17a-ah)"/>
+<line x1="380" y1="244" x2="380" y2="216" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd17a-ah)"/>
+<text x="108" y="234" font-size="13" font-weight="700" fill="currentColor">②</text>
+<rect x="40" y="244" width="400" height="52" rx="7" fill="#8b5cf6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="240" y="264" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">SERVICE DISCOVERY: danh sách target + cấu hình</text>
+<text x="240" y="284" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">etcd · Consul · k8s API · EC2 tags</text>
+<line x1="240" y1="304" x2="240" y2="340" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd17a-ah)"/>
+<text x="250" y="327" font-size="13" fill="currentColor">③ write (nén, batch)</text>
+<rect x="16" y="342" width="448" height="78" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="6 4"/>
+<text x="240" y="364" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">KAFKA (tuỳ chọn)</text>
+<text x="240" y="384" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">partition theo hash(series_key)</text>
+<text x="240" y="404" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">buffer · decouple · replay khi TSDB chết</text>
+<line x1="60" y1="420" x2="60" y2="472" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd17a-ah)"/>
+<text x="74" y="441" font-size="13" fill="currentColor">④ consumer / stream processor (Flink)</text>
+<text x="74" y="460" font-size="13" opacity="0.8" fill="currentColor">tính rollup, lọc, làm giàu label</text>
+<rect x="16" y="474" width="448" height="138" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="240" y="496" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">TIME-SERIES DATABASE (sharded)</text>
+<rect x="40" y="506" width="88" height="28" rx="6" fill="#8b5cf6" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="84" y="525" font-size="13" text-anchor="middle" fill="currentColor">shard 1</text>
+<rect x="140" y="506" width="88" height="28" rx="6" fill="#8b5cf6" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="184" y="525" font-size="13" text-anchor="middle" fill="currentColor">shard 2</text>
+<rect x="240" y="506" width="88" height="28" rx="6" fill="#8b5cf6" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="284" y="525" font-size="13" text-anchor="middle" fill="currentColor">shard 3</text>
+<text x="342" y="525" font-size="13" font-weight="700" fill="currentColor">× RF3</text>
+<text x="40" y="556" font-size="13" fill="currentColor">nóng: WAL + head chunk trong RAM</text>
+<text x="40" y="576" font-size="13" fill="currentColor">ấm: block nén trên SSD (7–30 ngày)</text>
+<text x="40" y="596" font-size="13" fill="currentColor">lạnh: object storage (S3), 1 năm</text>
+<line x1="124" y1="612" x2="124" y2="650" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd17a-ah)"/>
+<text x="132" y="636" font-size="13" font-weight="700" fill="currentColor">⑤</text>
+<line x1="356" y1="612" x2="356" y2="650" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd17a-ah)"/>
+<text x="364" y="636" font-size="13" font-weight="700" fill="currentColor">⑤</text>
+<rect x="16" y="652" width="216" height="80" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="124" y="674" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">QUERY SERVICE</text>
+<text x="124" y="694" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">+ cache (Redis)</text>
+<text x="124" y="713" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">+ rate limit</text>
+<rect x="248" y="652" width="216" height="80" rx="10" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="356" y="674" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">DOWNSAMPLING /</text>
+<text x="356" y="693" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">COMPACTION JOB</text>
+<text x="356" y="713" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">10 s → 1 m → 1 h</text>
+<line x1="70" y1="732" x2="70" y2="770" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd17a-ah)"/>
+<text x="78" y="756" font-size="13" font-weight="700" fill="currentColor">⑥</text>
+<line x1="200" y1="732" x2="200" y2="770" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd17a-ah)"/>
+<text x="208" y="756" font-size="13" font-weight="700" fill="currentColor">⑥</text>
+<rect x="16" y="772" width="120" height="60" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="76" y="797" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">DASHBOARD</text>
+<text x="76" y="817" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">(Grafana)</text>
+<rect x="148" y="772" width="316" height="150" rx="10" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="306" y="794" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">ALERTING SYSTEM</text>
+<rect x="160" y="806" width="132" height="70" rx="7" fill="#f43f5e" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="226" y="826" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">rule engine</text>
+<text x="226" y="846" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">eval 15 s</text>
+<text x="226" y="865" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">for: 5m</text>
+<line x1="292" y1="841" x2="318" y2="841" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd17a-ah)"/>
+<rect x="320" y="806" width="132" height="70" rx="7" fill="#f43f5e" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="386" y="826" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">alert manager</text>
+<text x="386" y="846" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">dedupe · group</text>
+<text x="386" y="865" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">silence · inhibit</text>
+<text x="226" y="904" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">alert store (KV)</text>
+<line x1="386" y1="876" x2="386" y2="960" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd17a-ah)"/>
+<text x="394" y="944" font-size="13" font-weight="700" fill="currentColor">⑦</text>
+<rect x="148" y="962" width="316" height="58" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="306" y="986" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Email · SMS · PagerDuty</text>
+<text x="306" y="1006" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Slack · webhook</text>
+</svg>
 
 Hai điểm cần nhấn ngay: **đường ghi và đường alert có đảm bảo khác nhau** (ghi là best-effort, alert là at-least-once), và **query service là lớp cách ly bắt buộc** chứ không phải tầng thừa (§10).
 

@@ -170,15 +170,57 @@ Hệ thống tách làm hai nửa gần như **độc lập hoàn toàn**, và n
 
 **Trie** (prefix tree, từ chữ re*trie*val) là cây mà **đường đi từ gốc xuống một node chính là một tiền tố**. Mỗi cạnh mang một ký tự; node ở độ sâu *k* đại diện prefix dài *k*.
 
-```
-      (root)
-     /  |  \      node "tw"  → top5 = [twitter, twitch, twitter login,
-    t   c   b                          twin peaks, twilight]
-   / \                 
-  w   o             node "twi" → top5 = [twitter, twitch, twitter login,
- /|\                                    twilight, twilio]
-i t e  →  "twitter" freq 9.8M,  "twitch" freq 5.1M
-```
+<svg viewBox="0 0 520 456" role="img" aria-labelledby="sd15a-t sd15a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="sd15a-t">Trie có top-5 lưu sẵn ở mỗi node</title>
+<desc id="sd15a-d">Cây trie từ root xuống t, w, i, t; node tw và twi mỗi node giữ sẵn danh sách top-5 của subtree. Tra prefix twi chỉ cần đi 3 bước rồi đọc danh sách có sẵn.</desc>
+<defs><marker id="sd15a-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<line x1="90" y1="49" x2="40" y2="87" stroke="currentColor" stroke-width="2.5"  marker-end="url(#sd15a-ar)"/>
+<line x1="90" y1="49" x2="100" y2="87" stroke="currentColor" stroke-width="1.2" stroke-opacity="0.6" />
+<line x1="90" y1="49" x2="160" y2="87" stroke="currentColor" stroke-width="1.2" stroke-opacity="0.6" />
+<line x1="40" y1="113" x2="40" y2="157" stroke="currentColor" stroke-width="2.5"  marker-end="url(#sd15a-ar)"/>
+<line x1="40" y1="183" x2="40" y2="227" stroke="currentColor" stroke-width="2.5"  marker-end="url(#sd15a-ar)"/>
+<line x1="40" y1="253" x2="40" y2="297" stroke="currentColor" stroke-width="1.2" stroke-opacity="0.6" />
+<rect x="64.0" y="23" width="52" height="26" rx="6" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-width="1.6"/>
+<text x="90" y="41" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">root</text>
+<rect x="16.0" y="87" width="48" height="26" rx="6" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-width="1.6"/>
+<text x="40" y="105" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">t</text>
+<rect x="76.0" y="87" width="48" height="26" rx="6" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-width="1"/>
+<text x="100" y="105" text-anchor="middle" font-size="13" font-weight="400" fill="currentColor">c</text>
+<rect x="136.0" y="87" width="48" height="26" rx="6" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-width="1"/>
+<text x="160" y="105" text-anchor="middle" font-size="13" font-weight="400" fill="currentColor">b</text>
+<rect x="16.0" y="157" width="48" height="26" rx="6" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-width="1.6"/>
+<text x="40" y="175" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">tw</text>
+<rect x="16.0" y="227" width="48" height="26" rx="6" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-width="1.6"/>
+<text x="40" y="245" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">twi</text>
+<rect x="14.0" y="297" width="52" height="26" rx="6" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-width="1"/>
+<text x="40" y="315" text-anchor="middle" font-size="13" font-weight="400" fill="currentColor">twit</text>
+<line x1="40" y1="323" x2="56" y2="377" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3" stroke-opacity="0.7"/>
+<rect x="4" y="377" width="104" height="26" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-width="1"/>
+<text x="56" y="395" text-anchor="middle" font-size="13" fill="currentColor">twitter · 9.8M</text>
+<line x1="40" y1="323" x2="166" y2="377" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3" stroke-opacity="0.7"/>
+<rect x="114" y="377" width="104" height="26" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-width="1"/>
+<text x="166" y="395" text-anchor="middle" font-size="13" fill="currentColor">twitch · 5.1M</text>
+<text x="118" y="350" font-size="13" fill="currentColor" fill-opacity="0.75">… vài bước nữa</text>
+<text x="111" y="420" text-anchor="middle" font-size="13" fill="currentColor" fill-opacity="0.75">lá: query + frequency</text>
+<text x="104" y="210" font-size="13" fill="currentColor" font-weight="700">3 bước = O(p)</text>
+<rect x="250" y="112" width="262" height="128" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-width="1.2"/>
+<text x="262" y="133" font-size="13" font-weight="700" fill="currentColor">node "tw" · top5 lưu sẵn</text>
+<text x="262" y="156" font-size="13" fill="currentColor">1. twitter</text>
+<text x="262" y="174" font-size="13" fill="currentColor">2. twitch</text>
+<text x="262" y="192" font-size="13" fill="currentColor">3. twitter login</text>
+<text x="262" y="210" font-size="13" fill="currentColor">4. twin peaks</text>
+<text x="262" y="228" font-size="13" fill="currentColor">5. twilight</text>
+<line x1="66" y1="170" x2="248" y2="176" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3" stroke-opacity="0.7"/>
+<rect x="250" y="262" width="262" height="128" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-width="1.2"/>
+<text x="262" y="283" font-size="13" font-weight="700" fill="currentColor">node "twi" · top5 lưu sẵn</text>
+<text x="262" y="306" font-size="13" fill="currentColor">1. twitter</text>
+<text x="262" y="324" font-size="13" fill="currentColor">2. twitch</text>
+<text x="262" y="342" font-size="13" fill="currentColor">3. twitter login</text>
+<text x="262" y="360" font-size="13" fill="currentColor">4. twilight</text>
+<text x="262" y="378" font-size="13" fill="currentColor">5. twilio</text>
+<line x1="66" y1="240" x2="248" y2="326" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3" stroke-opacity="0.7"/>
+<text x="260" y="440" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">suggest("twi") = đi 3 bước rồi trả node.top5, không DFS, không sort</text>
+</svg>
 
 Vì sao trie hợp tự nhiên: **tra prefix = đi xuống đúng `p` bước** (không quét, không so chuỗi đầy đủ); các query **chia sẻ tiền tố** nên `twitter`, `twitter login`, `twitter status` dùng chung nhánh `t-w-i-t-t-e-r`; và cấu trúc cây khớp đúng ngữ nghĩa **"prefix-only"** đã chốt ở Bước 1 — nếu yêu cầu là infix thì trie mất giá trị ngay.
 

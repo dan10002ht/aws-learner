@@ -140,49 +140,73 @@ Ba chi tiết đáng chú ý. `next()` và `ack()` **tách rời** — đúng m�
 
 ## 4. High-level design
 
-```
-   ┌──────────┐
-   │Seed URLs │ chọn theo địa lý / chủ đề / độ phổ biến
-   └────┬─────┘
-        ▼
- ╔═══════════════════════════════════════╗
- ║           URL FRONTIER                ║◄───────────────────┐
- ║ front queues (priority) → back queues ║                    │
- ║              (politeness: 1 host/hàng)║                    │
- ╚══════════════┬════════════════════════╝                    │
-                ▼ next(url)                                   │
-     ┌─────────────────────┐    ┌──────────────┐              │
-     │  HTML DOWNLOADER    │◄──►│ DNS resolver │              │
-     │ async I/O · timeout │    │  + DNS cache │              │
-     │ retry · gzip        │◄──►│ robots cache │              │
-     └──────────┬──────────┘    └──────────────┘              │
-                ▼ HTML thô                                    │
-     ┌─────────────────────┐                                  │
-     │   CONTENT PARSER    │ loại trang lỗi/rác; trích text,  │
-     └──────────┬──────────┘ title, lang, canonical           │
-                ▼                                             │
-     ┌─────────────────────┐   đã có    ┌──────────────────┐  │
-     │   CONTENT SEEN?     │───────────►│ content hash set │  │
-     └──────────┬──────────┘   → bỏ     └──────────────────┘  │
-                ▼ nội dung mới                                │
-     ┌─────────────────────┐            ┌──────────────────┐  │
-     │  CONTENT STORAGE    │───────────►│  S3 / HDFS       │  │
-     └──────────┬──────────┘            └──────────────────┘  │
-                ▼                                             │
-     ┌─────────────────────┐                                  │
-     │   LINK EXTRACTOR    │ <a href> → URL tuyệt đối         │
-     └──────────┬──────────┘                                  │
-                ▼                                             │
-     ┌─────────────────────┐ bỏ đuôi file không cần,          │
-     │     URL FILTER      │ blocklist, URL sai/quá dài       │
-     └──────────┬──────────┘                                  │
-                ▼                                             │
-     ┌─────────────────────┐   đã có    ┌──────────────────┐  │
-     │     URL SEEN?       │───────────►│  Bloom filter    │  │
-     └──────────┬──────────┘   → bỏ     │  + URL storage   │  │
-                │ URL mới               └──────────────────┘  │
-                └──────────────────────────────────────────────┘
-```
+<svg viewBox="0 0 520 872" role="img" aria-labelledby="sd13a-t sd13a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd13a-t">Kiến trúc web crawler: chín khối và vòng lặp về frontier</title>
+<desc id="sd13a-d">Luồng từ trên xuống: Seed URLs vào URL Frontier, Downloader (dùng DNS và robots cache), Content Parser, Content Seen (tra content hash set), Content Storage (ghi S3/HDFS), Link Extractor, URL Filter, URL Seen (tra Bloom filter và URL storage). URL mới quay lại frontier.</desc>
+<defs><marker id="sd13a-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker><marker id="sd13a-arrows" markerWidth="9" markerHeight="9" refX="1" refY="4" orient="auto"><path d="M8 0 L0 4 L8 8 z" fill="currentColor"/></marker></defs>
+<text x="16" y="26" text-anchor="start" font-size="15" font-weight="700" fill="currentColor" opacity="1">Một vòng crawl, đi từ trên xuống</text>
+<rect x="44" y="48" width="236" height="50" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="162.0" y="69.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">Seed URLs</text>
+<text x="162.0" y="87.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">địa lý · chủ đề · độ phổ biến</text>
+<line x1="162.0" y1="100" x2="162.0" y2="125" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd13a-arrow)"/>
+<rect x="44" y="128" width="236" height="68" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="162.0" y="149" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">URL Frontier</text>
+<text x="162.0" y="167" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">front queues: ưu tiên</text>
+<text x="162.0" y="184" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">back queues: lịch sự, 1 host/hàng</text>
+<line x1="162.0" y1="198" x2="162.0" y2="223" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd13a-arrow)"/>
+<text x="172.0" y="216.0" text-anchor="start" font-size="13" fill="currentColor" opacity="0.7">next(url)</text>
+<rect x="44" y="226" width="236" height="68" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="162.0" y="247" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">HTML Downloader</text>
+<text x="162.0" y="265" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">async I/O · timeout</text>
+<text x="162.0" y="282" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">retry · gzip</text>
+<rect x="330" y="226" width="178" height="68" rx="8" fill="#3b82f6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="419.0" y="247" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">DNS resolver</text>
+<text x="419.0" y="265" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">+ DNS cache</text>
+<text x="419.0" y="282" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">+ robots cache</text>
+<line x1="282" y1="260.0" x2="327" y2="260.0" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd13a-arrow)" marker-start="url(#sd13a-arrows)"/>
+<line x1="162.0" y1="296" x2="162.0" y2="321" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd13a-arrow)"/>
+<text x="172.0" y="314.0" text-anchor="start" font-size="13" fill="currentColor" opacity="0.7">HTML thô</text>
+<rect x="44" y="324" width="236" height="68" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="162.0" y="345" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">Content Parser</text>
+<text x="162.0" y="363" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">bỏ trang lỗi/rác; trích text,</text>
+<text x="162.0" y="380" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">title, lang, canonical</text>
+<line x1="162.0" y1="394" x2="162.0" y2="419" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd13a-arrow)"/>
+<rect x="44" y="422" width="236" height="50" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="162.0" y="443.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">Content Seen?</text>
+<text x="162.0" y="461.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">hash nội dung chuẩn hoá</text>
+<rect x="330" y="422" width="178" height="50" rx="8" fill="#10b981" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="419.0" y="443.0" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Content hash set</text>
+<text x="419.0" y="461.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">có rồi → bỏ trang</text>
+<line x1="282" y1="447.0" x2="327" y2="447.0" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd13a-arrow)" marker-start="url(#sd13a-arrows)"/>
+<line x1="162.0" y1="474" x2="162.0" y2="499" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd13a-arrow)"/>
+<text x="172.0" y="492.0" text-anchor="start" font-size="13" fill="currentColor" opacity="0.7">nội dung mới</text>
+<rect x="44" y="502" width="236" height="50" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="162.0" y="523.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">Content Storage</text>
+<text x="162.0" y="541.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">HTML thô + metadata</text>
+<rect x="330" y="502" width="178" height="50" rx="8" fill="#f59e0b" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="419.0" y="523.0" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">S3 / HDFS</text>
+<text x="419.0" y="541.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">object store</text>
+<line x1="282" y1="527.0" x2="327" y2="527.0" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd13a-arrow)"/>
+<line x1="162.0" y1="554" x2="162.0" y2="579" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd13a-arrow)"/>
+<rect x="44" y="582" width="236" height="50" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="162.0" y="603.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">Link Extractor</text>
+<text x="162.0" y="621.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">&lt;a href&gt; → URL tuyệt đối</text>
+<line x1="162.0" y1="634" x2="162.0" y2="659" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd13a-arrow)"/>
+<rect x="44" y="662" width="236" height="68" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="162.0" y="683" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">URL Filter</text>
+<text x="162.0" y="701" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">bỏ đuôi file không cần,</text>
+<text x="162.0" y="718" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">blocklist, URL sai / quá dài</text>
+<line x1="162.0" y1="732" x2="162.0" y2="757" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd13a-arrow)"/>
+<rect x="44" y="760" width="236" height="50" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="162.0" y="781.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">URL Seen?</text>
+<text x="162.0" y="799.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">check_and_add nguyên tử</text>
+<rect x="330" y="760" width="178" height="50" rx="8" fill="#f43f5e" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="419.0" y="781.0" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Bloom filter</text>
+<text x="419.0" y="799.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">+ URL storage</text>
+<line x1="282" y1="785.0" x2="327" y2="785.0" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd13a-arrow)" marker-start="url(#sd13a-arrows)"/>
+<path d="M162.0 812 V838 H18 V162.0 H41" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#sd13a-arrow)"/>
+<text x="172.0" y="858" text-anchor="start" font-size="13" fill="currentColor" opacity="0.85">URL mới → frontier.add()</text>
+</svg>
 
 Khi trình bày sơ đồ này, điều quan trọng không phải đọc tên từng hộp mà là chỉ ra **mỗi hộp chữa một cách hỏng cụ thể** của vòng lặp bốn dòng ban đầu:
 
@@ -305,6 +329,100 @@ Ba chi tiết dễ bị bỏ qua:
 | Kiểu URL (pattern) | Heuristic thủ công | Rẻ và hiệu quả: hạ điểm mọi URL có `?sort=`, `?page=`, `/tag/` |
 
 > **Hai tầng, hai câu hỏi**: front queue quyết định **cái gì được tải trước**, back queue quyết định **khi nào được phép tải**. Tách bạch được hai câu này là toàn bộ thiết kế frontier; gộp chúng là chỗ hầu hết thiết kế tự chế thất bại.
+
+<step-flow>
+<svg viewBox="0 0 720 690" role="img" aria-labelledby="sd13b-t sd13b-d" style="width:100%;height:auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd13b-t">URL frontier hai tầng: front queue chọn cái gì trước, back queue chọn khi nào</title>
+<desc id="sd13b-d">Hai URL đi qua prioritizer vào front queue f1 và f4, selector rút theo trọng số 8:4:2:1, router tra mapping table đưa wikipedia.org vào back queue b1, selector phía sau chỉ giao hàng nào đã tới next_allowed_at cho worker, rồi đặt lại delay bằng 10 lần thời gian tải.</desc>
+<defs><marker id="sd13b-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker><marker id="sd13b-arrows" markerWidth="9" markerHeight="9" refX="1" refY="4" orient="auto"><path d="M8 0 L0 4 L8 8 z" fill="currentColor"/></marker></defs>
+<rect x="8" y="8" width="704" height="300" rx="10" fill="#8b5cf6" fill-opacity="0.08"/>
+<text x="20" y="30" text-anchor="start" font-size="13" font-weight="700" fill="currentColor" opacity="0.9">FRONT QUEUES: cái gì tải trước</text>
+<rect x="8" y="320" width="704" height="362" rx="10" fill="#14b8a6" fill-opacity="0.08"/>
+<text x="20" y="342" text-anchor="start" font-size="13" font-weight="700" fill="currentColor" opacity="0.9">BACK QUEUES: khi nào được tải</text>
+<rect x="250" y="74" width="220" height="50" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="360.0" y="95.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">Prioritizer</text>
+<text x="360.0" y="113.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">độ sâu, PageRank, pattern</text>
+<rect x="108.0" y="162" width="84" height="40" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="150.0" y="187.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">f1</text>
+<text x="150" y="220" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">trọng số 8</text>
+<rect x="228.0" y="162" width="84" height="40" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="270.0" y="187.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">f2</text>
+<text x="270" y="220" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">4</text>
+<rect x="348.0" y="162" width="84" height="40" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="390.0" y="187.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">f3</text>
+<text x="390" y="220" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">2</text>
+<rect x="468.0" y="162" width="84" height="40" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="510.0" y="187.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">f4</text>
+<text x="510" y="220" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">1</text>
+<rect x="220" y="246" width="280" height="48" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="360.0" y="266.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">Queue selector</text>
+<text x="360.0" y="284.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">ngẫu nhiên có thiên vị</text>
+<rect x="220" y="356" width="200" height="48" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="320.0" y="376.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">Queue router</text>
+<text x="320.0" y="394.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">đọc host của URL</text>
+<rect x="500" y="352" width="196" height="56" rx="8" fill="#14b8a6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="512" y="374" text-anchor="start" font-size="13" fill="currentColor" opacity="0.9">wikipedia.org → b1</text>
+<text x="512" y="397" text-anchor="start" font-size="13" fill="currentColor" opacity="0.9">nytimes.com → b2</text>
+<rect x="108.0" y="444" width="84" height="40" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="150.0" y="469.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">b1</text>
+<rect x="228.0" y="444" width="84" height="40" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="270.0" y="469.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">b2</text>
+<rect x="348.0" y="444" width="84" height="40" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="390.0" y="469.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">b3</text>
+<rect x="468.0" y="444" width="84" height="40" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="510.0" y="469.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">bn</text>
+<text x="564" y="469" text-anchor="start" font-size="13" fill="currentColor" opacity="0.7">1 host/hàng</text>
+<rect x="110" y="530" width="440" height="48" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="330.0" y="550.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">Queue selector</text>
+<text x="330.0" y="568.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">chỉ hàng có now ≥ next_allowed_at</text>
+<text x="150" y="640" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">worker 1</text>
+<text x="270" y="640" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">worker 2</text>
+<text x="390" y="640" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">worker 3</text>
+<text x="510" y="640" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">worker n</text>
+<g data-step="1">
+<text x="40" y="60" text-anchor="start" font-size="13" font-weight="700" fill="currentColor" opacity="0.95">wiki/A</text>
+<text x="560" y="60" text-anchor="start" font-size="13" font-weight="700" fill="currentColor" opacity="0.95">…/tag/abc?page=47</text>
+<line x1="90" y1="66" x2="248" y2="90" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd13b-arrow)"/>
+<line x1="600" y1="66" x2="472" y2="90" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd13b-arrow)"/>
+</g>
+<g data-step="2">
+<line x1="330" y1="126" x2="154" y2="159" stroke="#8b5cf6" stroke-width="2.2" marker-end="url(#sd13b-arrow)"/>
+<line x1="400" y1="126" x2="506" y2="159" stroke="#8b5cf6" stroke-width="2.2" marker-end="url(#sd13b-arrow)"/>
+<text x="80" y="146" text-anchor="start" font-size="13" fill="currentColor" opacity="0.9">điểm cao</text>
+<text x="528" y="146" text-anchor="start" font-size="13" fill="currentColor" opacity="0.9">điểm thấp</text>
+</g>
+<g data-step="3">
+<line x1="150" y1="228" x2="300" y2="244" stroke="#8b5cf6" stroke-width="2.2" marker-end="url(#sd13b-arrow)"/>
+<line x1="510" y1="228" x2="420" y2="244" stroke="#8b5cf6" stroke-width="1.4" marker-end="url(#sd13b-arrow)" stroke-dasharray="5 4"/>
+<text x="580" y="268" text-anchor="start" font-size="13" fill="currentColor" opacity="0.95">f1: 8/15 lượt</text>
+<text x="580" y="288" text-anchor="start" font-size="13" fill="currentColor" opacity="0.95">f4: 1/15 lượt</text>
+</g>
+<g data-step="4">
+<line x1="360" y1="296" x2="330" y2="353" stroke="#14b8a6" stroke-width="2.2" marker-end="url(#sd13b-arrow)"/>
+<line x1="422" y1="380" x2="497" y2="380" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd13b-arrow)" marker-start="url(#sd13b-arrows)"/>
+<line x1="260" y1="406" x2="156" y2="441" stroke="#14b8a6" stroke-width="2.2" marker-end="url(#sd13b-arrow)"/>
+<text x="32" y="425" text-anchor="start" font-size="13" fill="currentColor" opacity="0.9">wiki/A vào b1</text>
+</g>
+<g data-step="5">
+<line x1="270" y1="486" x2="270" y2="527" stroke="#14b8a6" stroke-width="2.2" marker-end="url(#sd13b-arrow)"/>
+<line x1="270" y1="580" x2="270" y2="622" stroke="#14b8a6" stroke-width="2.2" marker-end="url(#sd13b-arrow)"/>
+<text x="138" y="510" text-anchor="end" font-size="13" fill="currentColor" opacity="0.9">✗ chưa tới giờ</text>
+<text x="278" y="510" text-anchor="start" font-size="13" fill="currentColor" opacity="0.9">✓ tới giờ</text>
+</g>
+<g data-step="6">
+<line x1="150" y1="486" x2="150" y2="527" stroke="#14b8a6" stroke-width="2.2" marker-end="url(#sd13b-arrow)"/>
+<line x1="150" y1="580" x2="150" y2="622" stroke="#14b8a6" stroke-width="2.2" marker-end="url(#sd13b-arrow)"/>
+<text x="360" y="610" text-anchor="start" font-size="13" fill="currentColor" opacity="0.95">tải 100 ms → delay = 10 × 100 ms = 1 s</text>
+<text x="360" y="668" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor" opacity="0.95">next_allowed_at(b1) = now + 1 s</text>
+</g>
+</svg>
+<step-note data-step="1">Mọi URL mới đều qua prioritizer trước, được chấm một điểm. <code>wiki/A</code> gần seed nên điểm cao; URL có <code>?page=</code>, <code>/tag/</code> bị hạ điểm theo pattern.</step-note>
+<step-note data-step="2">Điểm chỉ quyết định URL nằm ở hàng nào. Nằm ở <code>f4</code> không có nghĩa là bị bỏ, chỉ là được rút ít lượt hơn.</step-note>
+<step-note data-step="3">Tổng trọng số 8+4+2+1 = 15. Luôn lấy <code>f1</code> trước thì <code>f4</code> chết đói vì <code>f1</code> trên web gần như không bao giờ cạn; rút ngẫu nhiên theo trọng số vẫn cho <code>f4</code> 1/15 số lượt.</step-note>
+<step-note data-step="4">Router đọc host rồi tra mapping table. Mọi URL của <code>wikipedia.org</code> đều vào đúng <code>b1</code>, nên một host không bao giờ nằm rải ở hai hàng.</step-note>
+<step-note data-step="5">Selector phía sau không chọn theo ưu tiên mà theo giờ: <code>b1</code> còn đang nghỉ thì bỏ qua, giao <code>b2</code> cho worker. Đủ nhiều back queue thì luôn có hàng đã tới giờ, worker không ngồi chờ.</step-note>
+<step-note data-step="6">Mỗi hàng chỉ một worker tải tuần tự, nên không có hai request đồng thời vào một host mà không cần khoá. Delay tỉ lệ với tốc độ host: host trả 3 s thì phải nghỉ 30 s.</step-note>
+</step-flow>
 
 ### 6.3 Freshness — crawl lại thế nào cho đúng
 
