@@ -249,6 +249,119 @@ Các anomaly cần biết:
 - **Lost update**: hai transaction cùng read-modify-write, một bên ghi đè bên kia.
 - **Write skew**: hai transaction đọc tập dữ liệu giao nhau rồi ghi vào dòng khác nhau, vi phạm bất biến tổng thể (ví dụ: hai bác sĩ cùng rút khỏi ca trực vì mỗi người đều thấy "còn người khác trực").
 
+Ba anomaly đầu lộ ra rõ nhất khi đặt hai transaction lên cùng một trục thời gian. Ví dụ dùng lại phép trừ `balance - 100` ở dưới, với số dư ban đầu 500:
+
+<step-flow>
+<svg viewBox="0 0 760 730" role="img" aria-labelledby="be02iso-t be02iso-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto">
+<title id="be02iso-t">Ba anomaly isolation trên timeline hai transaction T1 và T2</title>
+<desc id="be02iso-d">Thời gian chạy từ trên xuống. Cột trái là T1, cột giữa là dữ liệu trong bảng accounts, cột phải là T2. Phần A: T2 trừ 100 khỏi balance 500 nhưng chưa commit, T1 đọc được 400, rồi T2 rollback về 500: dirty read. Phần B: T1 đọc 500, T2 trừ 100 và commit, T1 đọc lại thấy 400: non-repeatable read. Phần C: T1 đếm 2 dòng có balance &gt;= 100, T2 chèn dòng id 3 balance 300 và commit, T1 chạy lại cùng WHERE thấy 3 dòng: phantom read.</desc>
+<defs><marker id="be02iso-ar" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<rect x="20" y="8" width="240" height="32" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="140.0" y="29" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">T1</text>
+<rect x="300" y="8" width="160" height="32" rx="8" fill="#64748b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="380.0" y="29" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">bảng accounts</text>
+<rect x="500" y="8" width="240" height="32" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="620.0" y="29" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">T2</text>
+<line x1="140.0" y1="40" x2="140.0" y2="690" stroke="currentColor" stroke-opacity="0.18" stroke-dasharray="4 4"/>
+<line x1="380.0" y1="40" x2="380.0" y2="690" stroke="currentColor" stroke-opacity="0.18" stroke-dasharray="4 4"/>
+<line x1="620.0" y1="40" x2="620.0" y2="690" stroke="currentColor" stroke-opacity="0.18" stroke-dasharray="4 4"/>
+<line x1="752" y1="50" x2="752" y2="684" stroke="currentColor" stroke-opacity="0.45" marker-end="url(#be02iso-ar)"/>
+<text x="756" y="702" text-anchor="end" font-size="13" fill="currentColor" opacity="0.8">thời gian</text>
+<rect x="10" y="52" width="730" height="204" rx="8" fill="#f43f5e" fill-opacity="0.07"/>
+<text x="20" y="71" font-size="13" font-weight="600" fill="currentColor">A. Dirty read: Read Uncommitted cho phép</text>
+<g data-step="1">
+<rect x="500" y="80" width="240" height="46" rx="6" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="620.0" y="100.0" text-anchor="middle" font-size="13" fill="currentColor">BEGIN; UPDATE accounts</text>
+<text x="620.0" y="116.0" text-anchor="middle" font-size="13" fill="currentColor">SET balance = balance - 100</text>
+<rect x="300" y="80" width="160" height="46" rx="6" fill="#64748b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="380.0" y="100.0" text-anchor="middle" font-size="13" fill="currentColor">id=1: 500 → 400</text>
+<text x="380.0" y="116.0" text-anchor="middle" font-size="13" fill="currentColor">(chưa commit)</text>
+<line x1="498" y1="103.0" x2="466" y2="103.0" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#be02iso-ar)"/>
+</g>
+<g data-step="2">
+<rect x="20" y="138" width="240" height="46" rx="6" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.6"/>
+<text x="140.0" y="158.0" text-anchor="middle" font-size="13" fill="currentColor">SELECT balance WHERE id=1</text>
+<text x="140.0" y="174.0" text-anchor="middle" font-size="13" fill="currentColor">→ 400  ✗ dirty read</text>
+<rect x="300" y="138" width="160" height="46" rx="6" fill="#64748b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="380.0" y="158.0" text-anchor="middle" font-size="13" fill="currentColor">T1 thấy 400</text>
+<text x="380.0" y="174.0" text-anchor="middle" font-size="13" fill="currentColor">của T2 chưa commit</text>
+<line x1="298" y1="161.0" x2="266" y2="161.0" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#be02iso-ar)"/>
+</g>
+<g data-step="3">
+<rect x="500" y="196" width="240" height="46" rx="6" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="620.0" y="224.0" text-anchor="middle" font-size="13" fill="currentColor">ROLLBACK</text>
+<rect x="300" y="196" width="160" height="46" rx="6" fill="#64748b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="380.0" y="224.0" text-anchor="middle" font-size="13" fill="currentColor">id=1: 400 → 500</text>
+<line x1="498" y1="219.0" x2="466" y2="219.0" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#be02iso-ar)"/>
+</g>
+<rect x="10" y="264" width="730" height="204" rx="8" fill="#8b5cf6" fill-opacity="0.07"/>
+<text x="20" y="283" font-size="13" font-weight="600" fill="currentColor">B. Non-repeatable read: Read Committed cho phép</text>
+<g data-step="4">
+<rect x="20" y="292" width="240" height="46" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="140.0" y="312.0" text-anchor="middle" font-size="13" fill="currentColor">SELECT balance WHERE id=1</text>
+<text x="140.0" y="328.0" text-anchor="middle" font-size="13" fill="currentColor">→ 500</text>
+<rect x="300" y="292" width="160" height="46" rx="6" fill="#64748b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="380.0" y="320.0" text-anchor="middle" font-size="13" fill="currentColor">id=1: 500</text>
+<line x1="298" y1="315.0" x2="266" y2="315.0" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#be02iso-ar)"/>
+</g>
+<g data-step="5">
+<rect x="500" y="350" width="240" height="46" rx="6" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="620.0" y="370.0" text-anchor="middle" font-size="13" fill="currentColor">UPDATE balance - 100;</text>
+<text x="620.0" y="386.0" text-anchor="middle" font-size="13" fill="currentColor">COMMIT</text>
+<rect x="300" y="350" width="160" height="46" rx="6" fill="#64748b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="380.0" y="370.0" text-anchor="middle" font-size="13" fill="currentColor">id=1: 500 → 400</text>
+<text x="380.0" y="386.0" text-anchor="middle" font-size="13" fill="currentColor">(đã commit)</text>
+<line x1="498" y1="373.0" x2="466" y2="373.0" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#be02iso-ar)"/>
+</g>
+<g data-step="6">
+<rect x="20" y="408" width="240" height="46" rx="6" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.6"/>
+<text x="140.0" y="428.0" text-anchor="middle" font-size="13" fill="currentColor">SELECT lại y hệt → 400  ✗</text>
+<text x="140.0" y="444.0" text-anchor="middle" font-size="13" fill="currentColor">Repeatable Read: vẫn 500 ✓</text>
+<rect x="300" y="408" width="160" height="46" rx="6" fill="#64748b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="380.0" y="436.0" text-anchor="middle" font-size="13" fill="currentColor">id=1: 400</text>
+<line x1="298" y1="431.0" x2="266" y2="431.0" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#be02iso-ar)"/>
+</g>
+<rect x="10" y="476" width="730" height="204" rx="8" fill="#14b8a6" fill-opacity="0.07"/>
+<text x="20" y="495" font-size="13" font-weight="600" fill="currentColor">C. Phantom read: Read Committed cho phép</text>
+<g data-step="7">
+<rect x="20" y="504" width="240" height="46" rx="6" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="140.0" y="524.0" text-anchor="middle" font-size="13" fill="currentColor">SELECT id WHERE balance &gt;= 100</text>
+<text x="140.0" y="540.0" text-anchor="middle" font-size="13" fill="currentColor">→ 2 dòng (id 1, 2)</text>
+<rect x="300" y="504" width="160" height="46" rx="6" fill="#64748b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="380.0" y="532.0" text-anchor="middle" font-size="13" fill="currentColor">2 dòng khớp</text>
+<line x1="298" y1="527.0" x2="266" y2="527.0" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#be02iso-ar)"/>
+</g>
+<g data-step="8">
+<rect x="500" y="562" width="240" height="46" rx="6" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="620.0" y="582.0" text-anchor="middle" font-size="13" fill="currentColor">INSERT id=3, balance 300;</text>
+<text x="620.0" y="598.0" text-anchor="middle" font-size="13" fill="currentColor">COMMIT</text>
+<rect x="300" y="562" width="160" height="46" rx="6" fill="#64748b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="380.0" y="582.0" text-anchor="middle" font-size="13" fill="currentColor">+ id=3 (300)</text>
+<text x="380.0" y="598.0" text-anchor="middle" font-size="13" fill="currentColor">3 dòng khớp</text>
+<line x1="498" y1="585.0" x2="466" y2="585.0" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#be02iso-ar)"/>
+</g>
+<g data-step="9">
+<rect x="20" y="620" width="240" height="46" rx="6" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.6"/>
+<text x="140.0" y="640.0" text-anchor="middle" font-size="13" fill="currentColor">SELECT lại cùng WHERE</text>
+<text x="140.0" y="656.0" text-anchor="middle" font-size="13" fill="currentColor">→ 3 dòng  ✗ phantom</text>
+<rect x="300" y="620" width="160" height="46" rx="6" fill="#64748b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="380.0" y="640.0" text-anchor="middle" font-size="13" fill="currentColor">id=3 hiện ra</text>
+<text x="380.0" y="656.0" text-anchor="middle" font-size="13" fill="currentColor">giữa transaction</text>
+<line x1="298" y1="643.0" x2="266" y2="643.0" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#be02iso-ar)"/>
+</g>
+<text x="380.0" y="716" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">Ô đỏ = T1 thấy dữ liệu khác với lúc nó bắt đầu (hoặc chưa từng tồn tại)</text>
+</svg>
+<step-note data-step="1">T2 đã sửa dòng nhưng chưa commit: con số 400 lúc này chỉ là bản nháp, T2 vẫn có thể huỷ.</step-note>
+<step-note data-step="2">Ở <code>Read Uncommitted</code>, T1 đọc thẳng bản nháp đó. Postgres không thực sự có mức này: xin Read Uncommitted vẫn chạy như Read Committed, nên không bao giờ dirty read.</step-note>
+<step-note data-step="3">T2 huỷ, bảng quay về 500. T1 đã tính toán trên 400, một giá trị chưa từng được commit. Từ <code>Read Committed</code> trở lên chặn được ca này.</step-note>
+<step-note data-step="4">Phần B chạy ở <code>Read Committed</code>, mặc định của Postgres. T1 đọc dòng id=1 lần đầu.</step-note>
+<step-note data-step="5">T2 commit giữa chừng. Read Committed không giữ gì cho T1 cả: mỗi câu lệnh lấy snapshot mới.</step-note>
+<step-note data-step="6">Cùng một câu SELECT trong cùng transaction trả về hai giá trị khác nhau. <code>Repeatable Read</code> giữ snapshot từ đầu transaction nên T1 vẫn thấy 500.</step-note>
+<step-note data-step="7">Phần C: lần này T1 đọc một <em>tập</em> dòng theo điều kiện <code>WHERE balance &gt;= 100</code>, không phải một dòng cố định.</step-note>
+<step-note data-step="8">T2 không sửa dòng nào T1 đã đọc, nó chèn dòng mới khớp điều kiện. Khoá từng dòng đã đọc không chặn được việc này.</step-note>
+<step-note data-step="9">Dòng id=3 "hiện ra" giữa transaction. Postgres <code>Repeatable Read</code> (snapshot) vẫn thấy 2 dòng; MySQL Repeatable Read chặn phần lớn bằng gap lock; <code>Serializable</code> chặn hẳn.</step-note>
+</step-flow>
+
 | Isolation level | Dirty read | Non-repeatable | Phantom | Ghi chú |
 |---|---|---|---|---|
 | Read Uncommitted | ✗ có thể | ✗ | ✗ | Postgres không thực sự có mức này |

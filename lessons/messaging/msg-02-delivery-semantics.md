@@ -18,36 +18,55 @@ Mọi delivery semantics sinh ra từ **một sự thật khó chịu**: giữa 
 
 Xét consumer làm 2 việc: (a) xử lý message, (b) báo cho broker "đã xong" (**ack**). Câu hỏi chí mạng: **làm (a) trước hay (b) trước?** Không có lựa chọn nào an toàn tuyệt đối — và đó chính là nguồn gốc của at-most-once vs at-least-once.
 
-<svg viewBox="0 0 660 250" role="img" aria-labelledby="da-t da-d" style="width:100%;max-width:640px;height:auto;display:block;margin:1.25rem auto">
-<title id="da-t">Ack trước hay xử lý trước quyết định delivery semantics</title>
-<desc id="da-d">Nếu ack trước rồi crash thì mất message (at-most-once); nếu xử lý trước rồi crash trước khi ack thì broker gửi lại gây trùng (at-least-once)</desc>
-<text x="165" y="22" text-anchor="middle" font-size="13" fill="currentColor">Ack TRƯỚC, xử lý sau</text>
-<rect x="40" y="45" width="90" height="30" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="85" y="64" text-anchor="middle" font-size="10" fill="currentColor">nhận msg</text>
-<line x1="85" y1="75" x2="85" y2="95" stroke="currentColor" stroke-width="1" marker-end="url(#ad)"/>
-<rect x="40" y="97" width="90" height="30" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="85" y="116" text-anchor="middle" font-size="10" fill="currentColor">ack ngay</text>
-<line x1="85" y1="127" x2="85" y2="147" stroke="currentColor" stroke-width="1" marker-end="url(#ad)"/>
-<rect x="30" y="149" width="110" height="34" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="85" y="164" text-anchor="middle" font-size="10" fill="currentColor">CRASH khi</text>
-<text x="85" y="177" text-anchor="middle" font-size="10" fill="currentColor">đang xử lý</text>
-<text x="165" y="208" text-anchor="middle" font-size="11" fill="currentColor">Broker tưởng xong → không gửi lại</text>
-<text x="165" y="224" text-anchor="middle" font-size="11" fill="currentColor">→ MẤT message (at-most-once)</text>
-<line x1="330" y1="40" x2="330" y2="200" stroke="currentColor" stroke-width="0.5" stroke-dasharray="3 3"/>
-<text x="495" y="22" text-anchor="middle" font-size="13" fill="currentColor">Xử lý TRƯỚC, ack sau</text>
-<rect x="450" y="45" width="90" height="30" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="495" y="64" text-anchor="middle" font-size="10" fill="currentColor">nhận msg</text>
-<line x1="495" y1="75" x2="495" y2="95" stroke="currentColor" stroke-width="1" marker-end="url(#ad)"/>
-<rect x="450" y="97" width="90" height="30" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="495" y="116" text-anchor="middle" font-size="10" fill="currentColor">xử lý xong</text>
-<line x1="495" y1="127" x2="495" y2="147" stroke="currentColor" stroke-width="1" marker-end="url(#ad)"/>
-<rect x="440" y="149" width="110" height="34" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="495" y="164" text-anchor="middle" font-size="10" fill="currentColor">CRASH trước</text>
-<text x="495" y="177" text-anchor="middle" font-size="10" fill="currentColor">khi kịp ack</text>
-<text x="495" y="208" text-anchor="middle" font-size="11" fill="currentColor">Broker chưa nhận ack → gửi LẠI</text>
-<text x="495" y="224" text-anchor="middle" font-size="11" fill="currentColor">→ TRÙNG message (at-least-once)</text>
-<defs><marker id="ad" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<ab-toggle data-labels="ack trước xử lý|ack sau xử lý">
+<svg viewBox="0 0 480 300" role="img" aria-labelledby="msg02a-t msg02a-d" style="width:100%;max-width:480px;height:auto;display:block;margin:1.25rem auto">
+<title id="msg02a-t">Ack trước, xử lý sau: crash sau khi ack thì mất message</title>
+<desc id="msg02a-d">Consumer nhận msg, ack ngay, rồi crash khi đang xử lý. Broker đã nhận ack nên tưởng xong, không gửi lại: mất message, đó là at-most-once.</desc>
+<defs><marker id="msg02a-ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<text x="125" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">Consumer</text>
+<text x="365" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">Broker</text>
+<rect x="30" y="32" width="190" height="34" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+<text x="125" y="54" text-anchor="middle" font-size="13" fill="currentColor">1. nhận msg</text>
+<line x1="125" y1="66" x2="125" y2="84" stroke="currentColor" marker-end="url(#msg02a-ar)"/>
+<rect x="30" y="86" width="190" height="34" rx="5" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor"/>
+<text x="125" y="108" text-anchor="middle" font-size="13" fill="currentColor">2. ack ngay</text>
+<rect x="270" y="80" width="190" height="46" rx="5" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor"/>
+<text x="365" y="99" text-anchor="middle" font-size="13" fill="currentColor">nhận ack</text>
+<text x="365" y="117" text-anchor="middle" font-size="13" fill="currentColor">→ coi như xong, xoá msg</text>
+<line x1="220" y1="103" x2="266" y2="103" stroke="currentColor" stroke-width="1.5" marker-end="url(#msg02a-ar)"/>
+<line x1="20" y1="140" x2="460" y2="140" stroke="#f43f5e" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="240" y="159" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">✗ CRASH khi đang xử lý</text>
+<rect x="30" y="170" width="190" height="34" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-dasharray="4 3"/>
+<text x="125" y="192" text-anchor="middle" font-size="13" fill="currentColor" fill-opacity="0.7">3. xử lý — dở dang</text>
+<rect x="20" y="222" width="440" height="62" rx="6" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor"/>
+<text x="240" y="247" text-anchor="middle" font-size="13" fill="currentColor">Broker tưởng xong → không gửi lại</text>
+<text x="240" y="270" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">→ MẤT message (at-most-once)</text>
 </svg>
+<svg viewBox="0 0 480 300" role="img" aria-labelledby="msg02b-t msg02b-d" style="width:100%;max-width:480px;height:auto;display:block;margin:1.25rem auto">
+<title id="msg02b-t">Xử lý trước, ack sau: crash trước khi ack thì trùng message</title>
+<desc id="msg02b-d">Consumer nhận msg, xử lý xong, rồi crash trước khi kịp ack. Broker chưa nhận ack nên gửi lại: message bị xử lý lần hai, đó là at-least-once.</desc>
+<defs><marker id="msg02b-ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<text x="125" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">Consumer</text>
+<text x="365" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">Broker</text>
+<rect x="30" y="32" width="190" height="34" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+<text x="125" y="54" text-anchor="middle" font-size="13" fill="currentColor">1. nhận msg</text>
+<line x1="125" y1="66" x2="125" y2="84" stroke="currentColor" marker-end="url(#msg02b-ar)"/>
+<rect x="30" y="86" width="190" height="34" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor"/>
+<text x="125" y="108" text-anchor="middle" font-size="13" fill="currentColor">2. xử lý xong</text>
+<rect x="270" y="80" width="190" height="46" rx="5" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor"/>
+<text x="365" y="99" text-anchor="middle" font-size="13" fill="currentColor">chưa nhận ack</text>
+<text x="365" y="117" text-anchor="middle" font-size="13" fill="currentColor">→ vẫn giữ msg</text>
+<line x1="20" y1="140" x2="460" y2="140" stroke="#f43f5e" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="240" y="159" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">✗ CRASH trước khi kịp ack</text>
+<rect x="30" y="170" width="190" height="34" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-dasharray="4 3"/>
+<text x="125" y="192" text-anchor="middle" font-size="13" fill="currentColor" fill-opacity="0.7">3. ack — chưa kịp gửi</text>
+<rect x="20" y="222" width="440" height="62" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor"/>
+<text x="240" y="247" text-anchor="middle" font-size="13" fill="currentColor">Broker chưa nhận ack → gửi LẠI</text>
+<text x="240" y="270" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">→ TRÙNG message (at-least-once)</text>
+</svg>
+<ab-note>Ack đi trước nên broker xoá message ngay. Crash ở bước 3 làm phần xử lý dở dang, nhưng không ai còn giữ bản nào để gửi lại.</ab-note>
+<ab-note>Cùng điểm crash, nhưng việc đã làm xong còn ack thì chưa đi. Broker không phân biệt được "chưa xử lý" với "xử lý rồi mà mất ack", nên gửi lại và việc bị làm lần hai.</ab-note>
+</ab-toggle>
 
 ### 2.2 Ba delivery semantics
 

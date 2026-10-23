@@ -289,51 +289,83 @@ process.on("SIGTERM", async () => {
 });
 ```
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Chuỗi graceful shutdown 3 bên theo timeline: orchestrator, load balancer và app</title>
-  <desc>Sequence diagram ba cột (orchestrator, load balancer, app) với thời gian đi xuống. Orchestrator quyết định tắt, deregister khỏi LB, gửi SIGTERM. App set readiness false, drain request đang chạy, đóng pool, exit 0. Nếu quá grace period thì orchestrator gửi SIGKILL.</desc>
-  <defs>
-    <marker id="gs-arrow" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
-      <path d="M0 0 L8 4 L0 8 z" fill="currentColor"/>
-    </marker>
-  </defs>
-  <text x="110" y="26" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Orchestrator</text>
-  <text x="110" y="42" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">ECS / K8s</text>
-  <text x="360" y="26" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Load Balancer</text>
-  <text x="610" y="26" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">App (process)</text>
-  <line x1="110" y1="52" x2="110" y2="400" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4"/>
-  <line x1="360" y1="52" x2="360" y2="400" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4"/>
-  <line x1="610" y1="52" x2="610" y2="400" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4"/>
-  <text x="22" y="86" font-size="13" fill="currentColor" opacity="0.4" text-anchor="middle">▼</text>
-  <text x="22" y="100" font-size="9" fill="currentColor" opacity="0.4" text-anchor="middle">thời</text>
-  <text x="22" y="110" font-size="9" fill="currentColor" opacity="0.4" text-anchor="middle">gian</text>
-  <rect x="72" y="62" width="76" height="34" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="110" y="78" font-size="10" text-anchor="middle" fill="currentColor">quyết định</text>
-  <text x="110" y="90" font-size="10" text-anchor="middle" fill="currentColor">tắt instance</text>
-  <path d="M110 100 L356 112" stroke="currentColor" stroke-opacity="0.6" fill="none" marker-end="url(#gs-arrow)"/>
-  <text x="232" y="107" font-size="10.5" text-anchor="middle" fill="currentColor">deregister</text>
-  <rect x="300" y="118" width="120" height="28" rx="7" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="360" y="136" font-size="10" text-anchor="middle" fill="currentColor">ngừng đẩy request mới</text>
-  <path d="M110 162 L606 178" stroke="currentColor" stroke-opacity="0.6" fill="none" marker-end="url(#gs-arrow)"/>
-  <text x="300" y="160" font-size="10.5" text-anchor="middle" fill="currentColor">SIGTERM</text>
-  <rect x="510" y="184" width="200" height="116" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="610" y="202" font-size="10.5" text-anchor="middle" fill="currentColor">1. readiness = false</text>
-  <text x="610" y="220" font-size="10.5" text-anchor="middle" fill="currentColor">2. drain request đang chạy</text>
-  <text x="610" y="238" font-size="10.5" text-anchor="middle" fill="currentColor">3. đóng connection pool</text>
-  <text x="610" y="256" font-size="10.5" text-anchor="middle" fill="currentColor" font-weight="700">4. exit 0 (chủ động)</text>
-  <text x="610" y="280" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">app chết sạch sẽ,</text>
-  <text x="610" y="292" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">không request nào trả lỗi</text>
-  <line x1="110" y1="162" x2="110" y2="348" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="2 3"/>
-  <text x="120" y="324" font-size="10" fill="currentColor" opacity="0.75">chờ grace period (ECS stopTimeout)</text>
-  <path d="M606 310 L114 338" stroke="#10b981" stroke-opacity="0.8" fill="none" marker-end="url(#gs-arrow)"/>
-  <text x="362" y="306" font-size="10.5" text-anchor="middle" fill="currentColor">exit 0 trước hạn → orchestrator thay instance</text>
-  <line x1="40" y1="360" x2="700" y2="360" stroke="currentColor" stroke-opacity="0.2"/>
-  <rect x="72" y="370" width="120" height="30" rx="7" fill="#ef4444" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="132" y="384" font-size="10" text-anchor="middle" fill="currentColor">nếu QUÁ grace period</text>
-  <text x="132" y="396" font-size="10" text-anchor="middle" fill="currentColor">và app chưa thoát</text>
-  <path d="M192 392 L606 414" stroke="#ef4444" stroke-opacity="0.85" fill="none" marker-end="url(#gs-arrow)"/>
-  <text x="400" y="409" font-size="10.5" text-anchor="middle" fill="currentColor" font-weight="700">SIGKILL (không đỡ được — request dở dang đứt)</text>
+<step-flow>
+<svg viewBox="0 0 760 640" role="img" aria-labelledby="be06c-t be06c-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="be06c-t">Graceful shutdown theo timeline: orchestrator, load balancer và app</title>
+<desc id="be06c-d">Sequence diagram ba cột, thời gian đi xuống. Orchestrator quyết định tắt instance, deregister khỏi load balancer (deregistration delay mặc định 300s, API thường 30-60s), gửi SIGTERM và bắt đầu đếm grace period (ECS stopTimeout mặc định 30s, tối đa 120s trên Fargate). App đặt readiness false, đợi 5-10s, drain request đang chạy, đóng connection pool rồi exit 0 trước hạn để orchestrator thay instance. Nếu quá grace period mà app chưa thoát thì SIGKILL, request dở dang đứt.</desc>
+<defs><marker id="be06c-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="170" y="26" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">Orchestrator</text>
+<text x="170" y="44" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.7">ECS / K8s</text>
+<text x="400" y="26" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">Load Balancer</text>
+<text x="630" y="26" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">App (process)</text>
+<line x1="170" y1="54" x2="170" y2="626" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4"/>
+<line x1="400" y1="54" x2="400" y2="626" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4"/>
+<line x1="630" y1="54" x2="630" y2="626" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4"/>
+<text x="24" y="80" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.5">▼</text>
+<text x="24" y="96" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.5">thời</text>
+<text x="24" y="110" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.5">gian</text>
+<g data-step="1">
+<rect x="75" y="62" width="190" height="48" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="170" y="82" font-size="13" text-anchor="middle" fill="currentColor">quyết định tắt instance</text>
+<text x="170" y="100" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.75">deploy / scale-in / node drain</text>
+</g>
+<g data-step="2">
+<text x="285.0" y="132" font-size="13" text-anchor="middle" fill="currentColor">deregister</text>
+<line x1="172" y1="140" x2="396" y2="140" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#be06c-arrow)"/>
+<rect x="300" y="150" width="200" height="64" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="400" y="170" font-size="13" text-anchor="middle" fill="currentColor">draining: ngừng đẩy</text>
+<text x="400" y="186" font-size="13" text-anchor="middle" fill="currentColor">request mới</text>
+<text x="400" y="205" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">delay 300s mặc định, API 30-60s</text>
+</g>
+<g data-step="3">
+<text x="300" y="238" font-size="13" text-anchor="middle" fill="currentColor">SIGTERM</text>
+<line x1="172" y1="246" x2="626" y2="246" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#be06c-arrow)"/>
+<circle cx="170" cy="246" r="4" fill="currentColor"/>
+<path d="M64 246 L56 246 L56 528 L64 528" fill="none" stroke="#f43f5e" stroke-opacity="0.8" stroke-width="1.6"/>
+<text x="44" y="387" font-size="12" text-anchor="middle" fill="currentColor" transform="rotate(-90 44 387)">grace period = ECS stopTimeout</text>
+<rect x="75" y="262" width="190" height="48" rx="8" fill="#f43f5e" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="170" y="282" font-size="13" text-anchor="middle" fill="currentColor">bắt đầu đếm grace period</text>
+<text x="170" y="300" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.8">30s mặc định, Fargate ≤ 120s</text>
+</g>
+<g data-step="4">
+<rect x="515" y="262" width="230" height="48" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="630" y="282" font-size="13" text-anchor="middle" fill="currentColor">1. readiness = false</text>
+<text x="630" y="300" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.8">đợi 5-10s rồi mới close</text>
+<line x1="402" y1="296" x2="513" y2="296" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#be06c-arrow)"/>
+<text x="459.5" y="324" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.8">request lạc (eventual)</text>
+</g>
+<g data-step="5">
+<rect x="515" y="340" width="230" height="48" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="630" y="360" font-size="13" text-anchor="middle" fill="currentColor">2. drain request/job</text>
+<text x="630" y="378" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.8">đang chạy (server.close)</text>
+</g>
+<g data-step="6">
+<rect x="515" y="400" width="230" height="66" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="630" y="420" font-size="13" text-anchor="middle" fill="currentColor">3. đóng connection pool</text>
+<text x="630" y="438" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">4. exit 0 (chủ động)</text>
+<text x="630" y="456" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.8">chết sạch, không request lỗi</text>
+<line x1="513" y1="490" x2="174" y2="490" stroke="#10b981" stroke-opacity="0.9" stroke-width="1.8" marker-end="url(#be06c-arrow)"/>
+<text x="395" y="482" font-size="13" text-anchor="middle" fill="currentColor">exit 0 trước hạn → orchestrator thay instance</text>
+</g>
+<g data-step="7">
+<line x1="56" y1="528" x2="748" y2="528" stroke="#f43f5e" stroke-opacity="0.8" stroke-dasharray="6 4"/>
+<text x="746" y="522" font-size="12" text-anchor="end" fill="currentColor" opacity="0.85">hết grace period</text>
+<rect x="75" y="540" width="190" height="48" rx="8" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="170" y="560" font-size="13" text-anchor="middle" fill="currentColor">nếu QUÁ grace period</text>
+<text x="170" y="578" font-size="13" text-anchor="middle" fill="currentColor">và app chưa thoát</text>
+<line x1="267" y1="564" x2="626" y2="564" stroke="#f43f5e" stroke-opacity="0.9" stroke-width="1.8" marker-end="url(#be06c-arrow)"/>
+<text x="445" y="556" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">SIGKILL</text>
+<text x="445" y="584" font-size="12" text-anchor="middle" fill="currentColor">không đỡ được, request dở dang đứt</text>
+</g>
 </svg>
+<step-note data-step="1">Lý do tắt có thể là deploy mới, scale-in hay node drain; dù vì gì, chuỗi phía sau giống hệt nhau và app không được biết trước.</step-note>
+<step-note data-step="2">Rút instance khỏi LB <b>trước</b> để không request mới nào được xếp vào nó. Target chuyển sang <code>draining</code> và chờ request đang chạy trong ALB <code>deregistration delay</code>: mặc định 300s, API thường chỉnh xuống 30-60s.</step-note>
+<step-note data-step="3">Từ lúc gửi <code>SIGTERM</code>, đồng hồ grace period bắt đầu chạy (ECS <code>stopTimeout</code>: mặc định 30s, tối đa 120s trên Fargate). Mọi việc dọn dẹp của app phải xong trong khoảng này.</step-note>
+<step-note data-step="4">Deregistration là eventual: vài giây sau <code>SIGTERM</code> LB vẫn có thể đẩy request tới. Nên app báo readiness fail rồi đợi 5-10s mới đóng listener, để request lạc vẫn được phục vụ thay vì bị từ chối.</step-note>
+<step-note data-step="5"><code>server.close()</code> chỉ chặn connection <b>mới</b>; request và job đang chạy được làm nốt (<code>jobQueue.drain()</code>). Grace period phải lớn hơn thời gian request dài nhất cộng deregistration delay.</step-note>
+<step-note data-step="6">Đóng pool để DB không giữ connection mồ côi, rồi <code>process.exit(0)</code> chủ động trước hạn: orchestrator thấy task thoát sạch và thay instance ngay, không phải chờ hết grace period.</step-note>
+<step-note data-step="7">Quá hạn mà process chưa thoát (không bắt <code>SIGTERM</code>, hay PID 1 là <code>npm</code>/<code>sh</code> không forward tín hiệu) thì nhận <code>SIGKILL</code>: không bắt được, request dở dang đứt, transaction bỏ lửng.</step-note>
+</step-flow>
 
 Ba lỗi kinh điển:
 

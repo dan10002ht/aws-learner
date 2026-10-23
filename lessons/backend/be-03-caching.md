@@ -168,45 +168,65 @@ T2 (writer): update DB → DEL cache key
 T1 (reader): SET cache = giá trị CŨ   ← cache giờ sai cho đến hết TTL!
 ```
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 360" role="img" style="width:100%;max-width:700px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Race condition kinh điển của cache-aside theo timeline</title>
-  <desc>Sequence theo thời gian đi xuống với hai tác nhân T1 reader và T2 writer cùng tác động lên Cache và DB. T1 đọc DB được giá trị cũ, T2 update DB rồi DEL cache, sau đó T1 SET lại giá trị cũ khiến cache sai đến hết TTL.</desc>
-  <defs>
-    <marker id="ra2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
-    </marker>
-  </defs>
-  <g font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">
-    <text x="100" y="26">T1 (reader)</text>
-    <text x="300" y="26">Cache</text>
-    <text x="480" y="26">DB</text>
-    <text x="630" y="26">T2 (writer)</text>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4">
-    <path d="M100 36 V340"/>
-    <path d="M300 36 V340"/>
-    <path d="M480 36 V340"/>
-    <path d="M630 36 V340"/>
-  </g>
-  <text x="16" y="50" font-size="10" fill="currentColor" opacity="0.55">thời gian</text>
-  <path d="M24 58 V330" stroke="currentColor" stroke-opacity="0.4" marker-end="url(#ra2)" fill="none"/>
-  <g stroke="currentColor" fill="none" marker-end="url(#ra2)">
-    <path d="M100 78 H296"/>
-    <path d="M100 130 H476"/>
-    <path d="M630 200 H484"/>
-    <path d="M630 250 H304"/>
-    <path d="M100 308 H296"/>
-  </g>
-  <g font-size="10.5" fill="currentColor">
-    <text x="120" y="72">① đọc cache → MISS</text>
-    <text x="120" y="124">② đọc DB → nhận giá trị CŨ (v1)</text>
-    <text x="350" y="194" text-anchor="end">③ UPDATE DB → v2</text>
-    <text x="350" y="244" text-anchor="end">④ DEL cache key</text>
-    <text x="120" y="302" fill="#f59e0b">⑤ SET cache = v1 (CŨ!)</text>
-  </g>
-  <rect x="44" y="318" width="612" height="30" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="350" y="337" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Cache giữ v1 (sai) đến khi hết TTL — dù DB đã là v2</text>
+<step-flow>
+<svg viewBox="0 0 760 490" role="img" aria-labelledby="be03r-t be03r-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="be03r-t">Race condition kinh điển của cache-aside theo timeline</title>
+<desc id="be03r-d">Sequence theo thời gian đi xuống với hai tác nhân T1 reader và T2 writer cùng tác động lên Cache và DB. T1 đọc cache bị MISS, đọc DB được giá trị cũ v1; T2 update DB thành v2 rồi DEL cache key; sau đó T1 SET cache bằng v1 cũ khiến cache sai đến hết TTL dù DB đã là v2.</desc>
+<defs><marker id="be03r-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<rect x="50.0" y="14" width="120" height="34" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="110" y="36" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">T1 (reader)</text>
+<rect x="270.0" y="14" width="100" height="34" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="320" y="36" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">Cache</text>
+<rect x="475.0" y="14" width="90" height="34" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="520" y="36" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">DB</text>
+<rect x="620.0" y="14" width="120" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="680" y="36" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">T2 (writer)</text>
+<line x1="110" y1="48" x2="110" y2="410" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4"/>
+<line x1="320" y1="48" x2="320" y2="410" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4"/>
+<line x1="520" y1="48" x2="520" y2="410" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4"/>
+<line x1="680" y1="48" x2="680" y2="410" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4"/>
+<text x="34" y="68" font-size="13" fill="currentColor" opacity="0.6" text-anchor="middle">thời gian</text>
+<path d="M34 78 V400" stroke="currentColor" stroke-opacity="0.4" fill="none" marker-end="url(#be03r-ar)"/>
+<g data-step="1">
+<text x="215.0" y="92" text-anchor="middle" font-size="13" fill="currentColor" font-weight="400">① đọc cache → MISS</text>
+<line x1="112" y1="100" x2="316" y2="100" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.7" marker-end="url(#be03r-ar)"/>
+<rect x="294.0" y="108" width="52" height="22" rx="6" fill="#64748b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="320" y="124" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">MISS</text>
+</g>
+<g data-step="2">
+<text x="315.0" y="158" text-anchor="middle" font-size="13" fill="currentColor" font-weight="400">② đọc DB → nhận giá trị CŨ (v1)</text>
+<line x1="112" y1="166" x2="516" y2="166" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.7" marker-end="url(#be03r-ar)"/>
+<rect x="498.0" y="174" width="44" height="22" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="520" y="190" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">v1</text>
+</g>
+<g data-step="3">
+<text x="600.0" y="224" text-anchor="middle" font-size="13" fill="currentColor" font-weight="400">③ UPDATE DB → v2</text>
+<line x1="678" y1="232" x2="524" y2="232" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.7" marker-end="url(#be03r-ar)"/>
+<rect x="498.0" y="240" width="44" height="22" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="520" y="256" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">v2</text>
+</g>
+<g data-step="4">
+<text x="500.0" y="290" text-anchor="middle" font-size="13" fill="currentColor" font-weight="400">④ DEL cache key</text>
+<line x1="678" y1="298" x2="324" y2="298" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.7" marker-end="url(#be03r-ar)"/>
+<rect x="280.5" y="306" width="79" height="22" rx="6" fill="#64748b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="320" y="322" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">(trống)</text>
+</g>
+<g data-step="5">
+<text x="215.0" y="356" text-anchor="middle" font-size="13" fill="#f43f5e" font-weight="700">⑤ SET cache = v1 (CŨ!)</text>
+<line x1="112" y1="364" x2="316" y2="364" stroke="#f43f5e" stroke-width="2" stroke-opacity="1" marker-end="url(#be03r-ar)"/>
+<rect x="289.5" y="372" width="61" height="22" rx="6" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="320" y="388" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">v1 CŨ</text>
+<rect x="60" y="420" width="660" height="34" rx="7" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="390" y="442" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Cache giữ v1 (sai) đến khi hết TTL — dù DB đã là v2</text>
+</g>
+<text x="390" y="478" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">ô dưới mũi tên: giá trị Cache / DB ngay sau bước đó</text>
 </svg>
+<step-note data-step="1">T1 không thấy key trong cache nên phải tự đi lấy từ DB: nhánh miss bình thường của cache-aside, chưa có gì sai.</step-note>
+<step-note data-step="2">T1 cầm <code>v1</code> trong bộ nhớ của nó. Từ giờ tới lúc <code>SET</code>, giá trị này có thể cũ đi mà T1 không hề biết.</step-note>
+<step-note data-step="3">Writer chen vào đúng khe hở đó: DB thành <code>v2</code> trong khi T1 vẫn đang giữ <code>v1</code> chờ ghi vào cache.</step-note>
+<step-note data-step="4">Writer làm đúng thứ tự "update DB trước, xoá cache sau", nhưng lúc này cache vốn đang trống nên <code>DEL</code> chẳng xoá được gì.</step-note>
+<step-note data-step="5">T1 ghi <code>v1</code> sau khi <code>DEL</code> đã chạy xong. Không còn ai xoá nữa, nên chỉ TTL mới gỡ được giá trị sai này.</step-note>
+</step-flow>
 
 Cửa sổ race này nhỏ nhưng ở traffic lớn thì *chắc chắn* xảy ra. Giải pháp thực dụng: luôn đặt TTL làm lưới an toàn (stale tối đa = TTL), hoặc dùng versioning/compare-and-set, hoặc "delayed double delete" (xoá lần 2 sau vài trăm ms).
 

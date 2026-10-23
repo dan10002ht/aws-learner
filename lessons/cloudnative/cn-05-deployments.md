@@ -157,27 +157,139 @@ Khi bạn đổi `image: nginx:1.25` → `nginx:1.27`, Deployment **không** s�
 3. Chờ Pod mới **Ready** (qua readinessProbe) rồi mới hạ tiếp Pod cũ.
 4. Lặp đến khi RS mới = 3, RS cũ = 0.
 
-<svg viewBox="0 0 640 260" role="img" aria-labelledby="ru-t ru-d" style="width:100%;max-width:600px;height:auto;display:block;margin:1.25rem auto">
-<title id="ru-t">Rolling update chuyển dần từ v1 sang v2</title>
-<desc id="ru-d">Ba bước rolling update với maxSurge 1 maxUnavailable 0, số Pod v1 giảm dần trong khi v2 tăng dần</desc>
-<text x="60" y="30" font-size="11" fill="currentColor">Bước 1</text>
-<rect x="120" y="15" width="34" height="30" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/><text x="137" y="35" text-anchor="middle" font-size="9" fill="currentColor">v1</text>
-<rect x="160" y="15" width="34" height="30" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/><text x="177" y="35" text-anchor="middle" font-size="9" fill="currentColor">v1</text>
-<rect x="200" y="15" width="34" height="30" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/><text x="217" y="35" text-anchor="middle" font-size="9" fill="currentColor">v1</text>
-<rect x="248" y="15" width="34" height="30" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-dasharray="3 2"/><text x="265" y="35" text-anchor="middle" font-size="9" fill="currentColor">v2</text>
-<text x="330" y="35" font-size="10" fill="currentColor">+1 Pod v2 (surge), v1 vẫn đủ 3 → không mất phục vụ</text>
-<text x="60" y="115" font-size="11" fill="currentColor">Bước 2</text>
-<rect x="120" y="100" width="34" height="30" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/><text x="137" y="120" text-anchor="middle" font-size="9" fill="currentColor">v1</text>
-<rect x="160" y="100" width="34" height="30" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/><text x="177" y="120" text-anchor="middle" font-size="9" fill="currentColor">v1</text>
-<rect x="208" y="100" width="34" height="30" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/><text x="225" y="120" text-anchor="middle" font-size="9" fill="currentColor">v2</text>
-<rect x="248" y="100" width="34" height="30" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/><text x="265" y="120" text-anchor="middle" font-size="9" fill="currentColor">v2</text>
-<text x="330" y="120" font-size="10" fill="currentColor">v2 mới Ready → hạ 1 v1. Luôn có 3 Pod Ready</text>
-<text x="60" y="200" font-size="11" fill="currentColor">Bước 3</text>
-<rect x="128" y="185" width="34" height="30" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/><text x="145" y="205" text-anchor="middle" font-size="9" fill="currentColor">v2</text>
-<rect x="168" y="185" width="34" height="30" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/><text x="185" y="205" text-anchor="middle" font-size="9" fill="currentColor">v2</text>
-<rect x="208" y="185" width="34" height="30" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/><text x="225" y="205" text-anchor="middle" font-size="9" fill="currentColor">v2</text>
-<text x="330" y="205" font-size="10" fill="currentColor">Xong. RS v1 desired=0 (giữ lại để rollback)</text>
+<step-flow>
+<svg viewBox="0 0 760 592" role="img" aria-labelledby="cn05r-t cn05r-d" style="width:100%;height:auto">
+<title id="cn05r-t">Rolling update 3 Pod từ v1 sang v2 với maxSurge 1, maxUnavailable 0</title>
+<desc id="cn05r-d">Bảy bước: mỗi lần tạo thêm 1 Pod v2 (tổng lên 4), chờ readinessProbe pass rồi mới hạ 1 Pod v1 (tổng về 3). Số Pod Ready luôn bằng 3; cuối cùng RS v1 desired 0 được giữ lại để rollback.</desc>
+<text x="20" y="26" font-size="14" fill="currentColor" font-weight="700">replicas: 3 · maxSurge: 1 · maxUnavailable: 0</text>
+<text x="20" y="48" font-size="13" fill="currentColor" opacity="0.85">Luật: Ready ≥ 3 (3 − maxUnavailable 0) và Tổng Pod ≤ 4 (3 + maxSurge 1)</text>
+<text x="30" y="84" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">Bước</text>
+<text x="146" y="84" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">RS v1 (nginx:1.25)</text>
+<text x="356" y="84" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">RS v2 (nginx:1.27)</text>
+<text x="500" y="84" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">Ready</text>
+<text x="562" y="84" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">Tổng</text>
+<text x="604" y="84" font-size="13" fill="currentColor" opacity="0.8">Việc vừa làm</text>
+<line x1="10" y1="94" x2="750" y2="94" stroke="currentColor" stroke-opacity="0.3"/>
+<g data-step="1">
+<rect x="10" y="102" width="740" height="50" rx="6" fill="#3b82f6" fill-opacity="0.04"/>
+<text x="30" y="132" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">1</text>
+<rect x="60" y="110" width="54" height="34" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor"/>
+<text x="87" y="132" text-anchor="middle" font-size="13" fill="currentColor">v1</text>
+<rect x="122" y="110" width="54" height="34" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor"/>
+<text x="149" y="132" text-anchor="middle" font-size="13" fill="currentColor">v1</text>
+<rect x="184" y="110" width="54" height="34" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor"/>
+<text x="211" y="132" text-anchor="middle" font-size="13" fill="currentColor">v1</text>
+<text x="356" y="132" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">desired 0, chưa có Pod</text>
+<text x="500" y="132" text-anchor="middle" font-size="15" font-weight="700" fill="#10b981">3</text>
+<text x="562" y="132" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">3</text>
+<text x="604" y="132" font-size="13" fill="currentColor">RS v2 mới, desired 0</text>
+</g>
+<g data-step="2">
+<rect x="10" y="158" width="740" height="50" rx="6" fill="#3b82f6" fill-opacity="0.04"/>
+<text x="30" y="188" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">2</text>
+<rect x="60" y="166" width="54" height="34" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor"/>
+<text x="87" y="188" text-anchor="middle" font-size="13" fill="currentColor">v1</text>
+<rect x="122" y="166" width="54" height="34" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor"/>
+<text x="149" y="188" text-anchor="middle" font-size="13" fill="currentColor">v1</text>
+<rect x="184" y="166" width="54" height="34" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor"/>
+<text x="211" y="188" text-anchor="middle" font-size="13" fill="currentColor">v1</text>
+<rect x="270" y="166" width="54" height="34" rx="6" fill="#10b981" fill-opacity="0.06" stroke="currentColor" stroke-dasharray="4 3"/>
+<text x="297" y="188" text-anchor="middle" font-size="13" fill="currentColor">v2 ⏸</text>
+<text x="500" y="188" text-anchor="middle" font-size="15" font-weight="700" fill="#10b981">3</text>
+<text x="562" y="188" text-anchor="middle" font-size="15" font-weight="700" fill="#f59e0b">4</text>
+<text x="604" y="188" font-size="13" fill="currentColor">surge: +1 Pod v2</text>
+</g>
+<g data-step="3">
+<rect x="10" y="214" width="740" height="50" rx="6" fill="#3b82f6" fill-opacity="0.04"/>
+<text x="30" y="244" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">3</text>
+<rect x="60" y="222" width="54" height="34" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor"/>
+<text x="87" y="244" text-anchor="middle" font-size="13" fill="currentColor">v1</text>
+<rect x="122" y="222" width="54" height="34" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor"/>
+<text x="149" y="244" text-anchor="middle" font-size="13" fill="currentColor">v1</text>
+<rect x="184" y="222" width="54" height="34" rx="6" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="2 3"/>
+<text x="211" y="244" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.6">v1 ✗</text>
+<rect x="270" y="222" width="54" height="34" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor"/>
+<text x="297" y="244" text-anchor="middle" font-size="13" fill="currentColor">v2</text>
+<text x="500" y="244" text-anchor="middle" font-size="15" font-weight="700" fill="#10b981">3</text>
+<text x="562" y="244" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">3</text>
+<text x="604" y="244" font-size="13" fill="currentColor">v2 Ready → hạ 1 v1</text>
+</g>
+<g data-step="4">
+<rect x="10" y="270" width="740" height="50" rx="6" fill="#3b82f6" fill-opacity="0.04"/>
+<text x="30" y="300" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">4</text>
+<rect x="60" y="278" width="54" height="34" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor"/>
+<text x="87" y="300" text-anchor="middle" font-size="13" fill="currentColor">v1</text>
+<rect x="122" y="278" width="54" height="34" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor"/>
+<text x="149" y="300" text-anchor="middle" font-size="13" fill="currentColor">v1</text>
+<rect x="270" y="278" width="54" height="34" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor"/>
+<text x="297" y="300" text-anchor="middle" font-size="13" fill="currentColor">v2</text>
+<rect x="332" y="278" width="54" height="34" rx="6" fill="#10b981" fill-opacity="0.06" stroke="currentColor" stroke-dasharray="4 3"/>
+<text x="359" y="300" text-anchor="middle" font-size="13" fill="currentColor">v2 ⏸</text>
+<text x="500" y="300" text-anchor="middle" font-size="15" font-weight="700" fill="#10b981">3</text>
+<text x="562" y="300" text-anchor="middle" font-size="15" font-weight="700" fill="#f59e0b">4</text>
+<text x="604" y="300" font-size="13" fill="currentColor">surge: +1 Pod v2</text>
+</g>
+<g data-step="5">
+<rect x="10" y="326" width="740" height="50" rx="6" fill="#3b82f6" fill-opacity="0.04"/>
+<text x="30" y="356" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">5</text>
+<rect x="60" y="334" width="54" height="34" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor"/>
+<text x="87" y="356" text-anchor="middle" font-size="13" fill="currentColor">v1</text>
+<rect x="122" y="334" width="54" height="34" rx="6" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="2 3"/>
+<text x="149" y="356" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.6">v1 ✗</text>
+<rect x="270" y="334" width="54" height="34" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor"/>
+<text x="297" y="356" text-anchor="middle" font-size="13" fill="currentColor">v2</text>
+<rect x="332" y="334" width="54" height="34" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor"/>
+<text x="359" y="356" text-anchor="middle" font-size="13" fill="currentColor">v2</text>
+<text x="500" y="356" text-anchor="middle" font-size="15" font-weight="700" fill="#10b981">3</text>
+<text x="562" y="356" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">3</text>
+<text x="604" y="356" font-size="13" fill="currentColor">v2 Ready → hạ 1 v1</text>
+</g>
+<g data-step="6">
+<rect x="10" y="382" width="740" height="50" rx="6" fill="#3b82f6" fill-opacity="0.04"/>
+<text x="30" y="412" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">6</text>
+<rect x="60" y="390" width="54" height="34" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor"/>
+<text x="87" y="412" text-anchor="middle" font-size="13" fill="currentColor">v1</text>
+<rect x="270" y="390" width="54" height="34" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor"/>
+<text x="297" y="412" text-anchor="middle" font-size="13" fill="currentColor">v2</text>
+<rect x="332" y="390" width="54" height="34" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor"/>
+<text x="359" y="412" text-anchor="middle" font-size="13" fill="currentColor">v2</text>
+<rect x="394" y="390" width="54" height="34" rx="6" fill="#10b981" fill-opacity="0.06" stroke="currentColor" stroke-dasharray="4 3"/>
+<text x="421" y="412" text-anchor="middle" font-size="13" fill="currentColor">v2 ⏸</text>
+<text x="500" y="412" text-anchor="middle" font-size="15" font-weight="700" fill="#10b981">3</text>
+<text x="562" y="412" text-anchor="middle" font-size="15" font-weight="700" fill="#f59e0b">4</text>
+<text x="604" y="412" font-size="13" fill="currentColor">surge: +1 Pod v2</text>
+</g>
+<g data-step="7">
+<rect x="10" y="438" width="740" height="50" rx="6" fill="#3b82f6" fill-opacity="0.04"/>
+<text x="30" y="468" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">7</text>
+<rect x="60" y="446" width="54" height="34" rx="6" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="2 3"/>
+<text x="87" y="468" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.6">v1 ✗</text>
+<rect x="270" y="446" width="54" height="34" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor"/>
+<text x="297" y="468" text-anchor="middle" font-size="13" fill="currentColor">v2</text>
+<rect x="332" y="446" width="54" height="34" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor"/>
+<text x="359" y="468" text-anchor="middle" font-size="13" fill="currentColor">v2</text>
+<rect x="394" y="446" width="54" height="34" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor"/>
+<text x="421" y="468" text-anchor="middle" font-size="13" fill="currentColor">v2</text>
+<text x="500" y="468" text-anchor="middle" font-size="15" font-weight="700" fill="#10b981">3</text>
+<text x="562" y="468" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">3</text>
+<text x="604" y="468" font-size="13" fill="currentColor">hạ v1 cuối, xong</text>
+</g>
+<rect x="20" y="498" width="30" height="20" rx="4" fill="#10b981" fill-opacity="0.16" stroke="currentColor"/>
+<text x="58" y="513" font-size="13" fill="currentColor">Ready: readinessProbe pass, nhận traffic</text>
+<rect x="400" y="498" width="30" height="20" rx="4" fill="#10b981" fill-opacity="0.06" stroke="currentColor" stroke-dasharray="4 3"/>
+<text x="438" y="513" font-size="13" fill="currentColor">⏸ đang khởi động, probe chưa pass</text>
+<rect x="20" y="526" width="30" height="20" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="2 3"/>
+<text x="58" y="541" font-size="13" fill="currentColor">✗ đang tắt (Terminating), không tính vào Ready / Tổng</text>
+<text x="20" y="569" font-size="13" fill="currentColor" opacity="0.85">Tổng = desired RS v1 + desired RS v2. Cuối cùng RS v1 desired=0 nhưng vẫn được giữ lại để rollback.</text>
 </svg>
+<step-note data-step="1">Đổi <code>image</code> làm pod-template-hash đổi, Deployment tạo ReplicaSet mới với desired 0. Chưa Pod nào bị đụng: 3 Pod v1 vẫn phục vụ.</step-note>
+<step-note data-step="2"><code>maxUnavailable: 0</code> cấm hạ v1 khi chưa có Pod thay, nên chỉ còn đường tạo thêm. <code>maxSurge: 1</code> cho tổng lên 4. Pod v2 chưa Ready nên chưa nhận traffic, Ready vẫn 3 nhờ đủ 3 v1.</step-note>
+<step-note data-step="3">readinessProbe của v2 pass, Ready tạm lên 4, dư 1 so với mức tối thiểu 3. Chỉ lúc này controller mới được hạ 1 v1 về lại Ready 3.</step-note>
+<step-note data-step="4">Tổng vừa về 3 nên lại có 1 slot surge: tạo Pod v2 thứ hai. Nó chưa Ready nên 2 v1 + 1 v2 vẫn gánh đủ 3.</step-note>
+<step-note data-step="5">v2 thứ hai Ready, Ready tạm lên 4 nên hạ được thêm 1 v1. Không có probe thì k8s coi Pod Ready ngay khi container start và hạ v1 quá sớm, đó là lúc rớt request.</step-note>
+<step-note data-step="6">Slot surge cuối: tạo Pod v2 thứ ba. 1 v1 còn lại cùng 2 v2 giữ Ready ở 3.</step-note>
+<step-note data-step="7">v2 thứ ba Ready, hạ v1 cuối cùng. RS v1 về desired 0 nhưng không bị xoá: <code>kubectl rollout undo</code> chỉ cần nâng nó lên lại.</step-note>
+</step-flow>
 
 ### 4.2 maxSurge & maxUnavailable — hai nút vặn
 

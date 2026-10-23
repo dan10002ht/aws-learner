@@ -169,50 +169,110 @@ kubectl apply -f web-deploy.yaml
 
 Chuyện gì xảy ra bên trong? Theo dõi từng chặng:
 
-<svg viewBox="0 0 700 430" role="img" aria-labelledby="fl-t fl-d" style="width:100%;max-width:700px;height:auto;display:block;margin:1.25rem auto">
-<title id="fl-t">Luồng kubectl apply tạo Deployment đi qua các thành phần</title>
-<desc id="fl-d">kubectl gửi tới apiserver, apiserver xác thực phân quyền admission rồi ghi vào etcd; deployment controller tạo replicaset, replicaset controller tạo pod, scheduler gán node, kubelet chạy container qua runtime rồi báo lại</desc>
-<line x1="70" y1="30" x2="70" y2="410" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3"/>
-<line x1="250" y1="30" x2="250" y2="410" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3"/>
-<line x1="410" y1="30" x2="410" y2="410" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3"/>
-<line x1="560" y1="30" x2="560" y2="410" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3"/>
-<text x="70" y="22" text-anchor="middle" font-size="10" fill="currentColor">kubectl</text>
-<text x="250" y="22" text-anchor="middle" font-size="10" fill="currentColor">apiserver+etcd</text>
-<text x="410" y="22" text-anchor="middle" font-size="10" fill="currentColor">controllers</text>
-<text x="500" y="22" text-anchor="middle" font-size="10" fill="currentColor">scheduler</text>
-<text x="620" y="22" text-anchor="middle" font-size="10" fill="currentColor">kubelet+runtime</text>
-<line x1="70" y1="55" x2="250" y2="55" stroke="currentColor" stroke-width="1.3" marker-end="url(#a3)"/>
-<text x="160" y="49" text-anchor="middle" font-size="9" fill="currentColor">1. POST Deployment (YAML)</text>
-<rect x="200" y="68" width="110" height="40" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="255" y="84" text-anchor="middle" font-size="8.5" fill="currentColor">2. authn/authz</text>
-<text x="255" y="98" text-anchor="middle" font-size="8.5" fill="currentColor">admission → etcd</text>
-<line x1="250" y1="120" x2="410" y2="120" stroke="currentColor" stroke-width="1.3" marker-end="url(#a3)"/>
-<text x="330" y="114" text-anchor="middle" font-size="9" fill="currentColor">3. watch: có Deployment mới</text>
-<rect x="360" y="132" width="110" height="34" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="415" y="153" text-anchor="middle" font-size="8.5" fill="currentColor">4. tạo ReplicaSet</text>
-<line x1="410" y1="180" x2="250" y2="180" stroke="currentColor" stroke-width="1.3" marker-end="url(#a3)"/>
-<text x="330" y="174" text-anchor="middle" font-size="9" fill="currentColor">ghi ReplicaSet → etcd</text>
-<rect x="360" y="192" width="110" height="34" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="415" y="207" text-anchor="middle" font-size="8.5" fill="currentColor">5. tạo 3 Pod</text>
-<text x="415" y="219" text-anchor="middle" font-size="8" fill="currentColor">(chưa có node)</text>
-<line x1="410" y1="240" x2="250" y2="240" stroke="currentColor" stroke-width="1.3" marker-end="url(#a3)"/>
-<text x="330" y="234" text-anchor="middle" font-size="9" fill="currentColor">ghi 3 Pod → etcd</text>
-<line x1="250" y1="265" x2="500" y2="265" stroke="currentColor" stroke-width="1.3" marker-end="url(#a3)"/>
-<text x="375" y="259" text-anchor="middle" font-size="9" fill="currentColor">6. watch: Pod chưa gán node</text>
-<rect x="450" y="277" width="100" height="34" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="500" y="292" text-anchor="middle" font-size="8.5" fill="currentColor">7. filter+score</text>
-<text x="500" y="304" text-anchor="middle" font-size="8.5" fill="currentColor">chọn node</text>
-<line x1="500" y1="325" x2="250" y2="325" stroke="currentColor" stroke-width="1.3" marker-end="url(#a3)"/>
-<text x="375" y="319" text-anchor="middle" font-size="9" fill="currentColor">8. set nodeName → etcd</text>
-<line x1="250" y1="350" x2="620" y2="350" stroke="currentColor" stroke-width="1.3" marker-end="url(#a3)"/>
-<text x="430" y="344" text-anchor="middle" font-size="9" fill="currentColor">9. watch: Pod gán cho node tôi</text>
-<rect x="575" y="362" width="105" height="34" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="627" y="377" text-anchor="middle" font-size="8.5" fill="currentColor">10. pull image</text>
-<text x="627" y="389" text-anchor="middle" font-size="8.5" fill="currentColor">start container</text>
-<line x1="620" y1="405" x2="250" y2="405" stroke="currentColor" stroke-width="1.3" marker-end="url(#a3)"/>
-<text x="430" y="399" text-anchor="middle" font-size="9" fill="currentColor">11. báo status Running → etcd</text>
-<defs><marker id="a3" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<step-flow>
+<svg viewBox="0 0 760 668" role="img" aria-labelledby="cn2b-t cn2b-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto">
+<title id="cn2b-t">kubectl apply tạo Deployment: 11 bước qua apiserver, etcd, controller, scheduler, kubelet</title>
+<desc id="cn2b-d">Sequence diagram sáu cột kubectl, etcd, apiserver, controllers, scheduler, kubelet cộng runtime. kubectl POST Deployment; apiserver chạy authn, authz, admission rồi ghi etcd và trả 201 Created; Deployment controller watch thấy, tạo ReplicaSet; ReplicaSet controller tạo 3 Pod chưa có node; scheduler watch thấy, filter và score rồi ghi spec.nodeName; kubelet watch thấy Pod của node mình, pull image nginx:1.27 và start container qua CRI, network qua CNI, rồi báo status Running. Mọi lần ghi đều đi qua apiserver vào etcd, mọi lần nhận việc đều qua watch.</desc>
+<defs><marker id="cn2b-arr" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker><marker id="cn2b-arw" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#3b82f6"/></marker></defs>
+<rect x="2" y="8" width="96" height="34" rx="8" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="50" y="30" text-anchor="middle" font-size="13" fill="currentColor" font-weight="600">kubectl</text>
+<line x1="50" y1="42" x2="50" y2="626" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="102" y="8" width="96" height="34" rx="8" fill="#14b8a6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="150" y="30" text-anchor="middle" font-size="13" fill="currentColor" font-weight="600">etcd</text>
+<line x1="150" y1="42" x2="150" y2="626" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="215" y="8" width="110" height="34" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="270" y="30" text-anchor="middle" font-size="13" fill="currentColor" font-weight="600">apiserver</text>
+<line x1="270" y1="42" x2="270" y2="626" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="355" y="8" width="110" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="410" y="30" text-anchor="middle" font-size="13" fill="currentColor" font-weight="600">controllers</text>
+<line x1="410" y1="42" x2="410" y2="626" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="490" y="8" width="110" height="34" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="545" y="30" text-anchor="middle" font-size="13" fill="currentColor" font-weight="600">scheduler</text>
+<line x1="545" y1="42" x2="545" y2="626" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="625" y="8" width="110" height="46" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="680" y="30" text-anchor="middle" font-size="13" fill="currentColor" font-weight="600">kubelet</text>
+<text x="680" y="46" text-anchor="middle" font-size="13" fill="currentColor">+ runtime</text>
+<line x1="680" y1="54" x2="680" y2="626" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<g data-step="1">
+<text x="160" y="80" text-anchor="middle" font-size="13" fill="currentColor">1  POST Deployment (YAML)</text>
+<line x1="50" y1="88" x2="266" y2="88" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#cn2b-arr)"/>
+</g>
+<g data-step="2">
+<rect x="185" y="100" width="170" height="48" rx="7" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="270" y="121" text-anchor="middle" font-size="13" fill="currentColor">2  authn → authz (RBAC)</text>
+<text x="270" y="138" text-anchor="middle" font-size="13" fill="currentColor">→ admission</text>
+<line x1="270" y1="166" x2="154" y2="166" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#cn2b-arr)"/>
+<text x="210" y="159" text-anchor="middle" font-size="13" fill="currentColor">Deployment</text>
+<line x1="270" y1="190" x2="54" y2="190" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#cn2b-arr)"/>
+<text x="100" y="183" text-anchor="middle" font-size="13" fill="currentColor">201 Created</text>
+</g>
+<g data-step="3">
+<line x1="270" y1="222" x2="406" y2="222" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#cn2b-arw)"/>
+<text x="340" y="214" text-anchor="middle" font-size="13" fill="currentColor">3  watch: Deployment mới</text>
+</g>
+<g data-step="4">
+<rect x="330" y="234" width="160" height="48" rx="7" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="410" y="255" text-anchor="middle" font-size="13" fill="currentColor">4  Deployment ctrl</text>
+<text x="410" y="272" text-anchor="middle" font-size="13" fill="currentColor">tạo ReplicaSet</text>
+<line x1="410" y1="300" x2="274" y2="300" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#cn2b-arr)"/>
+<line x1="270" y1="300" x2="154" y2="300" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#cn2b-arr)"/>
+<circle cx="270" cy="300" r="3.5" fill="currentColor"/>
+<text x="340" y="293" text-anchor="middle" font-size="13" fill="currentColor">ghi ReplicaSet</text>
+</g>
+<g data-step="5">
+<rect x="325" y="314" width="170" height="48" rx="7" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="410" y="335" text-anchor="middle" font-size="13" fill="currentColor">5  ReplicaSet ctrl</text>
+<text x="410" y="352" text-anchor="middle" font-size="13" fill="currentColor">tạo 3 Pod, nodeName rỗng</text>
+<line x1="410" y1="380" x2="274" y2="380" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#cn2b-arr)"/>
+<line x1="270" y1="380" x2="154" y2="380" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#cn2b-arr)"/>
+<circle cx="270" cy="380" r="3.5" fill="currentColor"/>
+<text x="340" y="373" text-anchor="middle" font-size="13" fill="currentColor">ghi 3 Pod</text>
+</g>
+<g data-step="6">
+<line x1="270" y1="412" x2="541" y2="412" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#cn2b-arw)"/>
+<text x="408" y="404" text-anchor="middle" font-size="13" fill="currentColor">6  watch: Pod chưa gán node</text>
+</g>
+<g data-step="7">
+<rect x="470" y="424" width="150" height="48" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="545" y="445" text-anchor="middle" font-size="13" fill="currentColor">7  filter + score</text>
+<text x="545" y="462" text-anchor="middle" font-size="13" fill="currentColor">chọn node</text>
+</g>
+<g data-step="8">
+<line x1="545" y1="490" x2="274" y2="490" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#cn2b-arr)"/>
+<line x1="270" y1="490" x2="154" y2="490" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#cn2b-arr)"/>
+<circle cx="270" cy="490" r="3.5" fill="currentColor"/>
+<text x="407" y="483" text-anchor="middle" font-size="13" fill="currentColor">8  binding: spec.nodeName</text>
+</g>
+<g data-step="9">
+<line x1="270" y1="522" x2="676" y2="522" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#cn2b-arw)"/>
+<text x="475" y="514" text-anchor="middle" font-size="13" fill="currentColor">9  watch: Pod gán cho node tôi</text>
+</g>
+<g data-step="10">
+<rect x="605" y="532" width="150" height="65" rx="7" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="680" y="553" text-anchor="middle" font-size="13" fill="currentColor">10  CRI: pull</text>
+<text x="680" y="570" text-anchor="middle" font-size="13" fill="currentColor">nginx:1.27, start</text>
+<text x="680" y="587" text-anchor="middle" font-size="13" fill="currentColor">CNI: network</text>
+</g>
+<g data-step="11">
+<line x1="680" y1="614" x2="274" y2="614" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#cn2b-arr)"/>
+<line x1="270" y1="614" x2="154" y2="614" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#cn2b-arr)"/>
+<circle cx="270" cy="614" r="3.5" fill="currentColor"/>
+<text x="475" y="607" text-anchor="middle" font-size="13" fill="currentColor">11  status Running</text>
+</g>
+<text x="380" y="652" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">nét liền: ghi object qua apiserver vào etcd · nét đứt xanh: watch báo có việc</text>
 </svg>
+<step-note data-step="1"><code>kubectl</code> chỉ biến YAML thành một HTTP request tới apiserver; nó không nói chuyện với node hay etcd nào khác.</step-note>
+<step-note data-step="2">apiserver là cửa duy nhất được ghi etcd, nên mọi object phải qua đủ 3 chốt trước khi thành sự thật. Trả <code>201 Created</code> lúc này mới chỉ là ý định đã lưu, chưa có container nào chạy.</step-note>
+<step-note data-step="3">Deployment controller không được ai gọi; nó đang watch và thấy object mới, nên controller chết rồi sống lại vẫn bắt kịp bằng cách đọc lại state.</step-note>
+<step-note data-step="4">Deployment controller chỉ lo lớp Deployment → ReplicaSet; nó ghi ReplicaSet qua apiserver rồi giao phần còn lại cho controller kế tiếp.</step-note>
+<step-note data-step="5">ReplicaSet controller so <code>replicas: 3</code> với actual = 0 nên tạo 3 object Pod. Chưa gán node vì xếp chỗ không phải việc của nó.</step-note>
+<step-note data-step="6">Scheduler chỉ quan tâm Pod có <code>spec.nodeName</code> rỗng; watch cho nó biết ngay khi 3 Pod xuất hiện.</step-note>
+<step-note data-step="7">Mỗi Pod được lọc node không đủ CPU/RAM, sai affinity, dính taint, rồi chấm điểm các node còn lại; node điểm cao nhất thắng.</step-note>
+<step-note data-step="8">Scheduler không tự chạy Pod: nó chỉ ghi quyết định (binding) vào etcd qua apiserver, để kubelet đọc.</step-note>
+<step-note data-step="9">kubelet chỉ chạy Pod mà apiserver giao cho node của nó (<code>nodeName</code> khớp), nên không hai node nào cùng chạy một Pod.</step-note>
+<step-note data-step="10">kubelet là cầu nối duy nhất sang thế giới thực thi: gọi container runtime qua CRI để pull và start, thiết lập mạng qua CNI.</step-note>
+<step-note data-step="11">kubelet báo trạng thái ngược về để actual state trong etcd khớp thực tế. Song song, kube-proxy cập nhật iptables nếu có Service trỏ tới các Pod này.</step-note>
+</step-flow>
 
 Diễn giải từng bước:
 
