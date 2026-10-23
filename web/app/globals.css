@@ -358,3 +358,6 @@ html { scroll-behavior: smooth; }
 
 /* ----- Self-running SVG group (components/AutoAnim.tsx) ----- */
 .auto-anim-figs > svg { flex: 1 1 300px; min-width: 0; height: auto; }
+
+/* ----- A/B state toggle (components/ABToggle.tsx) ----- */
+.ab-toggle-stage svg { width: 100%; max-width: 640px; height: auto; display: block; margin: 0 auto; }
