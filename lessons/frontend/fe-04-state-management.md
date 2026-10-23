@@ -71,61 +71,14 @@ Lifting state lên cha là tốt, nhưng nếu component cần dữ liệu nằm
         <Avatar user={user} />
 ```
 
-So sánh trực quan hai cách đưa `user` xuống `Avatar` nằm sâu trong cây component:
+Bấm qua lại để so sánh hai cách đưa `user` xuống `Avatar` nằm sâu trong cây component:
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Prop drilling qua nhiều tầng so với Context phát sóng</title>
-  <desc>Bên trái: user phải truyền props lần lượt qua Page, Layout, Sidebar, Menu rồi mới tới Avatar dù các tầng giữa không dùng tới. Bên phải: Provider phát sóng giá trị thẳng tới Avatar qua useContext, các tầng giữa không cần đụng vào.</desc>
-  <text x="180" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Prop drilling — truyền tay qua từng tầng</text>
-  <text x="540" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Context — phát sóng thẳng tới nơi cần</text>
-  <line x1="360" y1="36" x2="360" y2="350" stroke="currentColor" stroke-opacity="0.15"/>
-  <g font-size="11.5">
-    <rect x="116" y="42" width="128" height="34" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="180" y="64" text-anchor="middle" fill="currentColor">Page · giữ user</text>
-    <rect x="116" y="100" width="128" height="34" rx="8" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="180" y="122" text-anchor="middle" fill="currentColor" opacity="0.75">Layout</text>
-    <rect x="116" y="158" width="128" height="34" rx="8" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="180" y="180" text-anchor="middle" fill="currentColor" opacity="0.75">Sidebar</text>
-    <rect x="116" y="216" width="128" height="34" rx="8" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="180" y="238" text-anchor="middle" fill="currentColor" opacity="0.75">Menu</text>
-    <rect x="116" y="274" width="128" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="180" y="296" text-anchor="middle" fill="currentColor">Avatar · cần user</text>
-  </g>
-  <g stroke="#f59e0b" stroke-width="2" fill="none" marker-end="url(#dot)">
-    <line x1="180" y1="76" x2="180" y2="100"/>
-    <line x1="180" y1="134" x2="180" y2="158"/>
-    <line x1="180" y1="192" x2="180" y2="216"/>
-    <line x1="180" y1="250" x2="180" y2="274"/>
-  </g>
-  <g font-size="9.5" fill="#f59e0b" font-style="italic">
-    <text x="190" y="92">user ↓</text>
-    <text x="190" y="150">user ↓ (không dùng)</text>
-    <text x="190" y="208">user ↓ (không dùng)</text>
-    <text x="190" y="266">user ↓ (không dùng)</text>
-  </g>
-  <g font-size="11.5">
-    <rect x="476" y="42" width="128" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="540" y="64" text-anchor="middle" fill="currentColor">Provider · giữ user</text>
-    <rect x="476" y="100" width="128" height="34" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="540" y="122" text-anchor="middle" fill="currentColor" opacity="0.6">Layout</text>
-    <rect x="476" y="158" width="128" height="34" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="540" y="180" text-anchor="middle" fill="currentColor" opacity="0.6">Sidebar · Menu</text>
-    <rect x="476" y="274" width="128" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="540" y="296" text-anchor="middle" fill="currentColor">Avatar · useContext</text>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.25" fill="none">
-    <line x1="540" y1="76" x2="540" y2="100"/>
-    <line x1="540" y1="134" x2="540" y2="158"/>
-    <line x1="540" y1="192" x2="540" y2="274"/>
-  </g>
-  <path d="M608 59 C 680 59 680 291 608 291" stroke="#8b5cf6" stroke-width="2.5" fill="none" marker-end="url(#dot)"/>
-  <text x="688" y="178" font-size="9.5" fill="#8b5cf6" font-style="italic" text-anchor="middle" transform="rotate(90 688 178)">phát sóng thẳng</text>
-  <defs>
-    <marker id="dot" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="5" markerHeight="5">
-      <circle cx="4" cy="4" r="3.5" fill="currentColor"/>
-    </marker>
-  </defs>
-</svg>
+<ab-toggle data-labels="Prop drilling|Context">
+<svg viewBox="0 0 480 372" role="img" aria-labelledby="fe04a-t fe04a-d" font-family="ui-sans-serif, system-ui, sans-serif"><title id="fe04a-t">Prop drilling: user truyền tay qua từng tầng</title><desc id="fe04a-d">Page giữ user và truyền props user lần lượt qua Layout, Sidebar, Menu rồi mới tới Avatar; ba tầng giữa nhận user nhưng không dùng, chỉ chuyển tiếp.</desc><defs><marker id="fe04a-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f59e0b"/></marker></defs><text x="40" y="24" font-size="13" fill="currentColor" opacity="0.75">Cùng cây component, chỉ khác cách đưa user xuống</text><rect x="40" y="42" width="190" height="38" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="135" y="66" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor" opacity="1">Page · giữ user</text><rect x="40" y="104" width="190" height="38" rx="8" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/><text x="135" y="128" text-anchor="middle" font-size="14" fill="currentColor" opacity="1">Layout</text><rect x="40" y="166" width="190" height="38" rx="8" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/><text x="135" y="190" text-anchor="middle" font-size="14" fill="currentColor" opacity="1">Sidebar</text><rect x="40" y="228" width="190" height="38" rx="8" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/><text x="135" y="252" text-anchor="middle" font-size="14" fill="currentColor" opacity="1">Menu</text><rect x="40" y="290" width="190" height="38" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="135" y="314" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor" opacity="1">Avatar · cần user</text><path d="M135 81 V102" stroke="#f59e0b" stroke-width="2.5" fill="none" marker-end="url(#fe04a-m)"/><text x="145" y="97" font-size="13" font-weight="600" fill="#f59e0b">user</text><path d="M135 143 V164" stroke="#f59e0b" stroke-width="2.5" fill="none" marker-end="url(#fe04a-m)"/><text x="145" y="159" font-size="13" font-weight="600" fill="#f59e0b">user</text><path d="M135 205 V226" stroke="#f59e0b" stroke-width="2.5" fill="none" marker-end="url(#fe04a-m)"/><text x="145" y="221" font-size="13" font-weight="600" fill="#f59e0b">user</text><path d="M135 267 V288" stroke="#f59e0b" stroke-width="2.5" fill="none" marker-end="url(#fe04a-m)"/><text x="145" y="283" font-size="13" font-weight="600" fill="#f59e0b">user</text><text x="242" y="128" font-size="13" font-style="italic" fill="#f59e0b" opacity="1">nhận user, không dùng</text><text x="242" y="190" font-size="13" font-style="italic" fill="#f59e0b" opacity="1">nhận user, không dùng</text><text x="242" y="252" font-size="13" font-style="italic" fill="#f59e0b" opacity="1">nhận user, không dùng</text><text x="40" y="358" font-size="13" font-weight="700" fill="#f59e0b">user truyền tay 4 lần; 3 tầng giữa chỉ chuyển tiếp</text></svg>
+<svg viewBox="0 0 480 372" role="img" aria-labelledby="fe04b-t fe04b-d" font-family="ui-sans-serif, system-ui, sans-serif"><title id="fe04b-t">Context: Provider phát sóng user thẳng tới Avatar</title><desc id="fe04b-d">Cùng cây component; Provider giữ user, Avatar đọc thẳng bằng useContext; Layout, Sidebar, Menu không nhận cũng không đụng tới user.</desc><defs><marker id="fe04b-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8b5cf6"/></marker></defs><text x="40" y="24" font-size="13" fill="currentColor" opacity="0.75">Cùng cây component, chỉ khác cách đưa user xuống</text><rect x="40" y="42" width="190" height="38" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="135" y="66" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor" opacity="1">Provider · giữ user</text><rect x="40" y="104" width="190" height="38" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/><text x="135" y="128" text-anchor="middle" font-size="14" fill="currentColor" opacity="0.6">Layout</text><rect x="40" y="166" width="190" height="38" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/><text x="135" y="190" text-anchor="middle" font-size="14" fill="currentColor" opacity="0.6">Sidebar</text><rect x="40" y="228" width="190" height="38" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/><text x="135" y="252" text-anchor="middle" font-size="14" fill="currentColor" opacity="0.6">Menu</text><rect x="40" y="290" width="190" height="38" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/><text x="135" y="314" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor" opacity="1">Avatar · useContext</text><path d="M135 80 V104" stroke="currentColor" stroke-opacity="0.3" fill="none"/><path d="M135 142 V166" stroke="currentColor" stroke-opacity="0.3" fill="none"/><path d="M135 204 V228" stroke="currentColor" stroke-opacity="0.3" fill="none"/><path d="M135 266 V290" stroke="currentColor" stroke-opacity="0.3" fill="none"/><text x="242" y="128" font-size="13" font-style="italic" fill="currentColor" opacity="0.6">không đụng tới user</text><text x="242" y="190" font-size="13" font-style="italic" fill="currentColor" opacity="0.6">không đụng tới user</text><text x="242" y="252" font-size="13" font-style="italic" fill="currentColor" opacity="0.6">không đụng tới user</text><path d="M232 61 C 470 61 470 309 236 309" stroke="#8b5cf6" stroke-width="2.5" fill="none" marker-end="url(#fe04b-m)"/><text x="242" y="53" font-size="13" font-weight="600" fill="#8b5cf6">phát sóng thẳng</text><text x="40" y="358" font-size="13" font-weight="700" fill="#8b5cf6">0 prop qua tầng giữa; Avatar tự lấy user</text></svg>
+<ab-note>Ba tầng giữa phải khai báo và chuyển tiếp prop <code>user</code> dù không dùng tới. Đổi shape của <code>user</code> hay thêm field là sửa cả chuỗi.</ab-note>
+<ab-note>Provider đặt <code>user</code> vào context; chỉ Avatar gọi <code>useContext</code> để đọc. Layout, Sidebar, Menu không còn dính gì tới <code>user</code>, nên refactor chúng không ảnh hưởng luồng dữ liệu.</ab-note>
+</ab-toggle>
 
 Vấn đề của prop drilling:
 

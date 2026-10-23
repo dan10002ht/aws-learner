@@ -74,67 +74,12 @@ docker run myapp --port 9090     # chạy: python app.py --port 9090
 
 Mỗi chỉ thị `FROM/COPY/RUN` tạo một **layer**. Docker cache theo nguyên tắc: layer nào thay đổi thì layer đó **và mọi layer phía sau** phải build lại.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Thứ tự lệnh trong Dockerfile và ranh giới cache-hit khi sửa code</title>
-  <desc>So sánh thứ tự lệnh tệ và tốt: đặt COPY . . trước npm ci làm hỏng cache, đặt COPY package*.json và npm ci trước rồi COPY . . sau giúp npm ci lấy từ cache khi chỉ sửa code.</desc>
-  <text x="180" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Tệ — sửa code build lại hết</text>
-  <text x="540" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Tốt — npm ci lấy từ cache</text>
-  <g>
-    <rect x="24" y="44" width="312" height="44" rx="8" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="40" y="64" font-size="12.5" font-weight="700" fill="currentColor">FROM node:22-alpine</text>
-    <text x="40" y="81" font-size="11" fill="currentColor" opacity="0.62">layer nền — ổn định</text>
-    <rect x="276" y="54" width="50" height="22" rx="11" fill="#10b981" fill-opacity="0.9"/>
-    <text x="301" y="69" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">cache</text>
-  </g>
-  <g>
-    <rect x="24" y="96" width="312" height="44" rx="8" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="40" y="116" font-size="12.5" font-weight="700" fill="currentColor">COPY . .</text>
-    <text x="40" y="133" font-size="11" fill="currentColor" opacity="0.62">đổi mỗi khi sửa 1 dòng code</text>
-    <rect x="266" y="106" width="60" height="22" rx="11" fill="#ef4444" fill-opacity="0.9"/>
-    <text x="296" y="121" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">đổi</text>
-  </g>
-  <g>
-    <rect x="24" y="148" width="312" height="44" rx="8" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="40" y="168" font-size="12.5" font-weight="700" fill="currentColor">RUN npm ci</text>
-    <text x="40" y="185" font-size="11" fill="currentColor" opacity="0.62">PHẢI chạy lại — vài phút</text>
-    <rect x="236" y="158" width="90" height="22" rx="11" fill="#ef4444" fill-opacity="0.9"/>
-    <text x="281" y="173" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">rebuild</text>
-  </g>
-  <text x="180" y="216" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">COPY . . ở trên → mọi layer sau đều mất cache</text>
-  <g>
-    <rect x="384" y="44" width="312" height="44" rx="8" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="400" y="64" font-size="12.5" font-weight="700" fill="currentColor">FROM node:22-alpine</text>
-    <text x="400" y="81" font-size="11" fill="currentColor" opacity="0.62">layer nền — ổn định</text>
-    <rect x="636" y="54" width="50" height="22" rx="11" fill="#10b981" fill-opacity="0.9"/>
-    <text x="661" y="69" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">cache</text>
-  </g>
-  <g>
-    <rect x="384" y="96" width="312" height="44" rx="8" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="400" y="116" font-size="12.5" font-weight="700" fill="currentColor">COPY package*.json ./</text>
-    <text x="400" y="133" font-size="11" fill="currentColor" opacity="0.62">hiếm đổi</text>
-    <rect x="636" y="106" width="50" height="22" rx="11" fill="#10b981" fill-opacity="0.9"/>
-    <text x="661" y="121" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">cache</text>
-  </g>
-  <g>
-    <rect x="384" y="148" width="312" height="44" rx="8" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="400" y="168" font-size="12.5" font-weight="700" fill="currentColor">RUN npm ci</text>
-    <text x="400" y="185" font-size="11" fill="currentColor" opacity="0.62">CACHED — vài giây</text>
-    <rect x="636" y="158" width="50" height="22" rx="11" fill="#10b981" fill-opacity="0.9"/>
-    <text x="661" y="173" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">cache</text>
-  </g>
-  <g stroke="#10b981" stroke-opacity="0.9" stroke-width="2" stroke-dasharray="6 4">
-    <line x1="384" y1="201" x2="696" y2="201"/>
-  </g>
-  <text x="540" y="216" font-size="11" text-anchor="middle" fill="#10b981" font-weight="700">↑ ranh giới cache-hit — sửa code không vượt lên trên</text>
-  <g>
-    <rect x="384" y="232" width="312" height="44" rx="8" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="400" y="252" font-size="12.5" font-weight="700" fill="currentColor">COPY . .</text>
-    <text x="400" y="269" font-size="11" fill="currentColor" opacity="0.62">chỉ layer này chạy lại</text>
-    <rect x="636" y="242" width="50" height="22" rx="11" fill="#ef4444" fill-opacity="0.9"/>
-    <text x="661" y="257" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">đổi</text>
-  </g>
-  <text x="540" y="300" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">COPY . . xuống cuối → npm ci nằm trên ranh giới, được cache</text>
-</svg>
+<ab-toggle data-labels="Code trước deps|Deps trước code">
+<svg viewBox="0 0 480 400" role="img" aria-labelledby="eng05a-t eng05a-d" font-family="ui-sans-serif, system-ui, sans-serif" style="width:100%;max-width:480px;height:auto;display:block;margin:1.25rem auto"><title id="eng05a-t">Dockerfile tệ: COPY . . đặt trước npm ci</title><desc id="eng05a-d">FROM node:22-alpine lấy từ cache; COPY . . đổi mỗi khi sửa 1 dòng code nên ranh giới cache-hit nằm ngay dưới FROM; RUN npm ci phía sau phải chạy lại, mất vài phút.</desc><text x="240" y="26" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">Tệ — sửa code build lại hết</text><text x="240" y="50" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">Tình huống: sửa 1 dòng code rồi docker build lại</text><rect x="20" y="70" width="440" height="50" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="36" y="91" font-size="15" font-weight="700" fill="currentColor" font-family="ui-monospace, monospace">FROM node:22-alpine</text><text x="36" y="111" font-size="13" fill="currentColor" opacity="0.75">layer nền — ổn định</text><rect x="370" y="83" width="78" height="24" rx="12" fill="#10b981" fill-opacity="0.9"/><text x="409.0" y="100" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">cache</text><rect x="20" y="144" width="440" height="50" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="36" y="165" font-size="15" font-weight="700" fill="currentColor" font-family="ui-monospace, monospace">COPY . .</text><text x="36" y="185" font-size="13" fill="currentColor" opacity="0.75">đổi mỗi khi sửa 1 dòng code</text><rect x="370" y="157" width="78" height="24" rx="12" fill="#f43f5e" fill-opacity="0.9"/><text x="409.0" y="174" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">đổi</text><rect x="20" y="218" width="440" height="50" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="36" y="239" font-size="15" font-weight="700" fill="currentColor" font-family="ui-monospace, monospace">RUN npm ci</text><text x="36" y="259" font-size="13" fill="currentColor" opacity="0.75">PHẢI chạy lại — vài phút</text><rect x="370" y="231" width="78" height="24" rx="12" fill="#f43f5e" fill-opacity="0.9"/><text x="409.0" y="248" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">rebuild</text><line x1="20" y1="132" x2="268" y2="132" stroke="#10b981" stroke-width="2.5" stroke-dasharray="7 4"/><text x="460" y="137" font-size="13" font-weight="700" text-anchor="end" fill="#10b981">↑ ranh giới cache-hit</text><rect x="20" y="292" width="440" height="50" rx="8" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 4"/><text x="240" y="322" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">(bản này chỉ có 3 bước)</text><text x="240" y="364" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">COPY . . ở trên → mọi layer sau đều mất cache</text><text x="240" y="388" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Build: vài phút</text></svg>
+<svg viewBox="0 0 480 400" role="img" aria-labelledby="eng05b-t eng05b-d" font-family="ui-sans-serif, system-ui, sans-serif" style="width:100%;max-width:480px;height:auto;display:block;margin:1.25rem auto"><title id="eng05b-t">Dockerfile tốt: COPY package*.json, npm ci, rồi COPY . .</title><desc id="eng05b-d">FROM node:22-alpine, COPY package*.json ./ (hiếm đổi) và RUN npm ci đều lấy từ cache; ranh giới cache-hit nằm trên COPY . .; sửa code chỉ làm layer COPY . . chạy lại, build vài giây.</desc><text x="240" y="26" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">Tốt — npm ci lấy từ cache</text><text x="240" y="50" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">Tình huống: sửa 1 dòng code rồi docker build lại</text><rect x="20" y="70" width="440" height="50" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="36" y="91" font-size="15" font-weight="700" fill="currentColor" font-family="ui-monospace, monospace">FROM node:22-alpine</text><text x="36" y="111" font-size="13" fill="currentColor" opacity="0.75">layer nền — ổn định</text><rect x="370" y="83" width="78" height="24" rx="12" fill="#10b981" fill-opacity="0.9"/><text x="409.0" y="100" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">cache</text><rect x="20" y="144" width="440" height="50" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="36" y="165" font-size="15" font-weight="700" fill="currentColor" font-family="ui-monospace, monospace">COPY package*.json ./</text><text x="36" y="185" font-size="13" fill="currentColor" opacity="0.75">hiếm đổi</text><rect x="370" y="157" width="78" height="24" rx="12" fill="#10b981" fill-opacity="0.9"/><text x="409.0" y="174" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">cache</text><rect x="20" y="218" width="440" height="50" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="36" y="239" font-size="15" font-weight="700" fill="currentColor" font-family="ui-monospace, monospace">RUN npm ci</text><text x="36" y="259" font-size="13" fill="currentColor" opacity="0.75">CACHED — vài giây</text><rect x="370" y="231" width="78" height="24" rx="12" fill="#10b981" fill-opacity="0.9"/><text x="409.0" y="248" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">cache</text><rect x="20" y="292" width="440" height="50" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="36" y="313" font-size="15" font-weight="700" fill="currentColor" font-family="ui-monospace, monospace">COPY . .</text><text x="36" y="333" font-size="13" fill="currentColor" opacity="0.75">chỉ layer này chạy lại</text><rect x="370" y="305" width="78" height="24" rx="12" fill="#f43f5e" fill-opacity="0.9"/><text x="409.0" y="322" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">đổi</text><line x1="20" y1="280" x2="268" y2="280" stroke="#10b981" stroke-width="2.5" stroke-dasharray="7 4"/><text x="460" y="285" font-size="13" font-weight="700" text-anchor="end" fill="#10b981">↑ ranh giới cache-hit</text><text x="240" y="364" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">COPY . . xuống cuối → npm ci nằm trên ranh giới, được cache</text><text x="240" y="388" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Build: vài giây</text></svg>
+<ab-note>Sửa 1 dòng code làm layer <code>COPY . .</code> đổi. Vì nó nằm thứ 2, ranh giới cache-hit dừng ngay dưới <code>FROM</code>: <code>RUN npm ci</code> phía sau mất cache và cài lại toàn bộ dependency.</ab-note>
+<ab-note>Cùng một dòng code bị sửa, nhưng <code>package*.json</code> không đổi nên ba layer đầu vẫn trùng cache. Ranh giới tụt xuống dưới <code>npm ci</code>, chỉ còn <code>COPY . .</code> chạy lại: sửa code không vượt lên trên ranh giới.</ab-note>
+</ab-toggle>
 
 Với cấu trúc tốt: sửa 1 dòng code → chỉ bước `COPY . .` chạy lại, `npm ci` lấy từ cache, build vài giây thay vì vài phút.
 

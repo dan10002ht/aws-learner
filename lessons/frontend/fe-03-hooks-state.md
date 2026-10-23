@@ -230,76 +230,91 @@ function Good({ show }: { show: boolean }) {
 
 Đây là bẫy tinh vi nhất. Mỗi render tạo ra closure mới "chụp" lại giá trị state *tại thời điểm đó*. Nếu một callback sống lâu (timer, listener) được tạo ở render cũ, nó vẫn ôm giá trị cũ.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Dòng thời gian render và bẫy stale closure qua các lần render</title>
-  <desc>Mỗi lần render chạy hàm component, chụp lại giá trị state hiện tại vào closure, rồi commit DOM, chạy useEffect và cleanup. Effect với mảng phụ thuộc rỗng chỉ chạy một lần nên closure mãi ôm count cũ; thêm count vào deps thì cleanup chạy rồi effect tạo lại với count mới.</desc>
-  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Dòng thời gian: render → commit DOM → useEffect → cleanup</text>
-  <line x1="16" y1="44" x2="704" y2="44" stroke="currentColor" stroke-opacity="0.5"/>
-  <polygon points="704,44 694,40 694,48" fill="currentColor" fill-opacity="0.5"/>
-  <text x="700" y="38" font-size="10" text-anchor="end" fill="currentColor" opacity="0.6">thời gian →</text>
-  <text x="170" y="68" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">RENDER #1 (count = 0)</text>
-  <g>
-    <rect x="24" y="78" width="120" height="44" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="84" y="96" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">1. Gọi hàm</text>
-    <text x="84" y="112" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">component()</text>
-  </g>
-  <g>
-    <rect x="156" y="78" width="120" height="44" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="216" y="96" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">2. Commit DOM</text>
-    <text x="216" y="112" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">React cập nhật UI</text>
-  </g>
-  <g>
-    <rect x="288" y="78" width="120" height="44" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="348" y="96" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">3. useEffect</text>
-    <text x="348" y="112" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">chạy SAU render</text>
-  </g>
-  <path d="M144 100 h12" stroke="currentColor" stroke-opacity="0.6" fill="none"/>
-  <polygon points="156,100 148,96 148,104" fill="currentColor" fill-opacity="0.6"/>
-  <path d="M276 100 h12" stroke="currentColor" stroke-opacity="0.6" fill="none"/>
-  <polygon points="288,100 280,96 280,104" fill="currentColor" fill-opacity="0.6"/>
-  <rect x="430" y="74" width="266" height="52" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="442" y="92" font-size="11" font-weight="700" fill="currentColor">Closure #1 "chụp" count = 0</text>
-  <text x="442" y="108" font-size="10.5" fill="currentColor" opacity="0.78">setInterval(() => setCount(count + 1))</text>
-  <text x="442" y="121" font-size="10.5" fill="currentColor" opacity="0.78">count ở đây MÃI là 0</text>
-  <line x1="16" y1="150" x2="704" y2="150" stroke="currentColor" stroke-opacity="0.18" stroke-dasharray="4 4"/>
-  <text x="200" y="178" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Sau setCount → RENDER #2 (count = 1)</text>
-  <g>
-    <rect x="24" y="188" width="120" height="44" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="84" y="206" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">1. Gọi lại hàm</text>
-    <text x="84" y="222" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">biến local sinh lại</text>
-  </g>
-  <g>
-    <rect x="156" y="188" width="120" height="44" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="216" y="206" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">2. Commit DOM</text>
-    <text x="216" y="222" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.72">UI hiện count = 1</text>
-  </g>
-  <path d="M144 210 h12" stroke="currentColor" stroke-opacity="0.6" fill="none"/>
-  <polygon points="156,210 148,206 148,214" fill="currentColor" fill-opacity="0.6"/>
-  <rect x="288" y="184" width="408" height="92" rx="9" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="300" y="202" font-size="11.5" font-weight="700" fill="currentColor">3. useEffect có chạy lại không? → tuỳ deps</text>
-  <rect x="300" y="210" width="186" height="58" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="393" y="227" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">deps = [] (rỗng)</text>
-  <text x="393" y="242" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.78">effect KHÔNG chạy lại</text>
-  <text x="393" y="256" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.78">→ vẫn dùng closure #1 (count=0)</text>
-  <rect x="498" y="210" width="186" height="58" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="591" y="227" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">deps = [count]</text>
-  <text x="591" y="242" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.78">cleanup #1 → effect chạy lại</text>
-  <text x="591" y="256" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.78">→ closure #2 mới (count=1)</text>
-  <text x="84" y="306" font-size="12" font-weight="700" fill="currentColor">Cleanup — khi nào dọn closure cũ?</text>
-  <g>
-    <rect x="24" y="316" width="320" height="48" rx="9" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="36" y="334" font-size="10.5" fill="currentColor" opacity="0.85">deps=[]: cleanup CHỈ chạy khi unmount</text>
-    <text x="36" y="350" font-size="10.5" fill="currentColor" opacity="0.85">→ stale closure: count kẹt ở 0</text>
-  </g>
-  <g>
-    <rect x="360" y="316" width="336" height="48" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="372" y="334" font-size="10.5" fill="currentColor" opacity="0.85">deps=[count]: cleanup chạy TRƯỚC mỗi lần</text>
-    <text x="372" y="350" font-size="10.5" fill="currentColor" opacity="0.85">effect tạo lại → closure luôn thấy count mới</text>
-  </g>
-  <rect x="24" y="378" width="672" height="40" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="360" y="396" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Cách chắc ăn: setCount(c => c + 1) — functional update không phụ thuộc count đã chụp</text>
-  <text x="360" y="411" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.72">React tự đưa giá trị mới nhất vào c, miễn nhiễm với closure cũ</text>
+<step-flow>
+<svg viewBox="0 0 760 465" role="img" aria-labelledby="fe03a-t fe03a-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fe03a-t">Trace bẫy stale closure với Timer: mỗi render chụp count riêng, interval vẫn gọi closure của render đầu</title>
+<desc id="fe03a-d">Render 1 có count bằng 0, useEffect với deps rỗng tạo interval giữ closure 1 chụp count bằng 0. Giây thứ 1 interval gọi setCount(0 + 1) nên render 2 có count bằng 1 và tạo closure 2, nhưng effect không chạy lại nên interval vẫn giữ closure 1. Giây thứ 2 và 3 vẫn gọi setCount(0 + 1), count đứng ở 1, UI kẹt ở 1; cleanup chỉ chạy khi unmount. Hai cách sửa: deps bằng [count] để cleanup rồi tạo lại effect với closure mới, hoặc functional update setCount(c => c + 1).</desc>
+<defs><marker id="fe03a-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#f43f5e"/></marker></defs>
+<text x="20" y="20" font-size="13" fill="currentColor" opacity="0.8">Mỗi render: gọi hàm component → commit DOM → useEffect chạy SAU (cleanup trước lần chạy lại)</text>
+<g data-step="1">
+<rect x="20" y="32" width="230" height="150" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="135" y="54" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Render #1</text>
+<text x="135" y="76" font-size="13" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor">useState(0) → count = 0</text>
+<text x="135" y="96" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">UI hiện 0</text>
+</g>
+<g data-step="2">
+<rect x="28" y="108" width="214" height="62" rx="9" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="135" y="130" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">closure #1 chụp count = 0</text>
+<text x="135" y="152" font-size="13" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor" opacity="0.85">() =&gt; setCount(count + 1)</text>
+<rect x="20" y="200" width="720" height="105" rx="9" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="32" y="294" font-size="13" font-weight="700" fill="currentColor">setInterval tạo 1 lần ở render #1 (deps = []) → mỗi giây gọi đúng closure #1</text>
+<line x1="40" y1="245" x2="730" y2="245" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.2"/>
+<line x1="135" y1="239" x2="135" y2="251" stroke="currentColor" stroke-opacity="0.6"/>
+<text x="135" y="268" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.75">0s</text>
+<line x1="380" y1="239" x2="380" y2="251" stroke="currentColor" stroke-opacity="0.6"/>
+<text x="380" y="268" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.75">1s</text>
+<line x1="560" y1="239" x2="560" y2="251" stroke="currentColor" stroke-opacity="0.6"/>
+<text x="560" y="268" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.75">2s</text>
+<line x1="680" y1="239" x2="680" y2="251" stroke="currentColor" stroke-opacity="0.6"/>
+<text x="680" y="268" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.75">3s</text>
+<path d="M135 170 V239" stroke="#8b5cf6" stroke-width="1.6" stroke-dasharray="4 3" fill="none"/>
+</g>
+<g data-step="3">
+<circle cx="380" cy="245" r="5" fill="#f43f5e"/>
+<text x="380" y="230" font-size="13" text-anchor="middle" fill="currentColor">setCount(0 + 1)</text>
+<line x1="380" y1="216" x2="380" y2="186" stroke="#f43f5e" stroke-width="1.6" marker-end="url(#fe03a-arrow)"/>
+</g>
+<g data-step="4">
+<rect x="265" y="32" width="230" height="150" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="380" y="54" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Render #2</text>
+<text x="380" y="76" font-size="13" text-anchor="middle" fill="currentColor">count = 1 (biến local sinh lại)</text>
+<text x="380" y="96" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">UI hiện 1</text>
+<rect x="277" y="108" width="206" height="62" rx="9" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 4"/>
+<text x="380" y="130" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">closure #2 thấy count = 1</text>
+<text x="380" y="152" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">deps = [] → effect không chạy lại</text>
+</g>
+<g data-step="5">
+<circle cx="560" cy="245" r="5" fill="#f43f5e"/>
+<text x="560" y="230" font-size="13" text-anchor="middle" fill="currentColor">setCount(0 + 1)</text>
+<line x1="560" y1="216" x2="560" y2="186" stroke="#f43f5e" stroke-width="1.6" marker-end="url(#fe03a-arrow)"/>
+<circle cx="680" cy="245" r="5" fill="#f43f5e"/>
+<text x="680" y="230" font-size="13" text-anchor="middle" fill="currentColor">setCount(0 + 1)</text>
+<line x1="680" y1="216" x2="680" y2="186" stroke="#f43f5e" stroke-width="1.6" marker-end="url(#fe03a-arrow)"/>
+<rect x="510" y="32" width="230" height="150" rx="9" fill="#f43f5e" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="625" y="54" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Không có render mới</text>
+<text x="625" y="76" font-size="13" text-anchor="middle" fill="currentColor">setCount(1) khi count đã = 1</text>
+<text x="625" y="96" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">UI kẹt ở 1</text>
+<text x="625" y="128" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">cleanup với deps = []</text>
+<text x="625" y="148" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">CHỈ chạy khi unmount</text>
+<text x="625" y="168" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">→ closure #1 sống mãi</text>
+</g>
+<g data-step="6">
+<rect x="20" y="320" width="355" height="130" rx="9" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="32" y="342" font-size="14" font-weight="700" fill="currentColor">Sửa: deps = [count]</text>
+<text x="32" y="366" font-size="13" fill="currentColor">count đổi → cleanup #1 chạy TRƯỚC:</text>
+<text x="32" y="386" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor">clearInterval(id)</text>
+<text x="32" y="406" font-size="13" fill="currentColor">→ effect tạo lại, closure #2 thấy count = 1</text>
+<text x="32" y="432" font-size="13" fill="currentColor" opacity="0.75">giá: interval bị reset mỗi giây</text>
+</g>
+<g data-step="7">
+<rect x="385" y="320" width="355" height="130" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="397" y="342" font-size="14" font-weight="700" fill="currentColor">Sửa tốt nhất: functional update</text>
+<text x="397" y="366" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor">setCount(c =&gt; c + 1)</text>
+<text x="397" y="386" font-size="13" fill="currentColor">không đọc count đã chụp; React đưa</text>
+<text x="397" y="406" font-size="13" fill="currentColor">giá trị mới nhất vào c</text>
+<text x="397" y="432" font-size="13" fill="currentColor" opacity="0.85">tick 1s: 0→1</text>
+<text x="500" y="432" font-size="13" fill="currentColor" opacity="0.85">2s: 1→2</text>
+<text x="575" y="432" font-size="13" fill="currentColor" opacity="0.85">3s: 2→3</text>
+</g>
 </svg>
+<step-note data-step="1">Lần render đầu, <code>useState(0)</code> trả <code>count = 0</code>; mọi biến trong hàm component là của riêng lần render này.</step-note>
+<step-note data-step="2">useEffect chạy sau khi commit DOM. Hàm truyền cho <code>setInterval</code> được tạo trong render #1 nên chụp <code>count = 0</code>, và với <code>[]</code> effect không bao giờ chạy lại để thay nó.</step-note>
+<step-note data-step="3">Giây thứ nhất: closure #1 đọc <code>count</code> nó đã chụp là 0, tính <code>0 + 1</code>. State đổi nên React render lại.</step-note>
+<step-note data-step="4">Render #2 là một lần gọi hàm mới: <code>count</code> mới = 1, closure mới cũng thấy 1. Nhưng interval không biết closure #2, nó vẫn cầm closure #1.</step-note>
+<step-note data-step="5">Mỗi tick sau vẫn là <code>setCount(0 + 1)</code>, tức đặt lại 1. State không tăng nữa, đúng như dòng <code>// kẹt ở 1</code> trong code.</step-note>
+<step-note data-step="6">Có <code>count</code> trong deps thì mỗi lần count đổi, React chạy cleanup cũ rồi tạo interval mới với closure đọc count mới. Đúng, nhưng phá và dựng lại timer mỗi giây.</step-note>
+<step-note data-step="7">Functional update không cần biết <code>count</code> lúc tạo closure: React đưa state hiện tại vào <code>c</code>, nên closure cũ cũng cho kết quả đúng mà deps vẫn là <code>[]</code>.</step-note>
+</step-flow>
 
 
 ```tsx

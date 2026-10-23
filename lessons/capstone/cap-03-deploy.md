@@ -10,58 +10,70 @@ Bài 1 (`cap-01-plan`) đã chốt kiến trúc, bài 2 (`cap-02-build`) đã d�
 
 Trước khi gõ lệnh, vẽ ra sơ đồ. Nếu không vẽ được, bạn chưa hiểu hệ thống của mình. Đây chính là kiến trúc 3-tier ở bài 1, nay được "đổ" vào hạ tầng thật:
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 560" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Kiến trúc deploy production của TaskShare</title>
-  <desc>Browser gọi tới taskshare.app phục vụ bởi Vercel CDN, và api.taskshare.app đi qua ALB cổng 443 với chứng chỉ ACM vào ECS Fargate chạy ít nhất 2 task trong VPC; Fargate kết nối RDS PostgreSQL ở private subnet, đọc secret từ Secrets Manager lúc start và ghi log/metric vào CloudWatch. Ranh giới VPC và private subnet được tô nổi.</desc>
-  <defs>
-    <marker id="archArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <rect x="278" y="20" width="164" height="46" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="360" y="40" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Người dùng (Browser)</text>
-  <text x="360" y="57" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">HTTPS</text>
-  <line x1="220" y1="66" x2="160" y2="98" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#archArr)"/>
-  <line x1="500" y1="66" x2="560" y2="98" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#archArr)"/>
-  <rect x="40" y="100" width="220" height="64" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="150" y="120" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">taskshare.app — Vercel CDN</text>
-  <text x="150" y="137" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">React+TS (Vite) · static</text>
-  <text x="150" y="153" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">build-time env (VITE_API_URL)</text>
-  <line x1="262" y1="132" x2="556" y2="132" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="5 4" marker-end="url(#archArr)"/>
-  <text x="410" y="124" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">fetch JSON + Bearer JWT (CORS)</text>
-  <rect x="468" y="100" width="216" height="64" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="576" y="121" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">api.taskshare.app — ALB</text>
-  <text x="576" y="138" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">:443 listener · ACM cert</text>
-  <text x="576" y="154" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">health check /health</text>
-  <rect x="296" y="196" width="408" height="344" rx="14" fill="#8b5cf6" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="7 4"/>
-  <text x="312" y="216" font-size="11.5" font-weight="700" fill="currentColor" opacity="0.85">VPC</text>
-  <rect x="316" y="228" width="368" height="92" rx="11" fill="#8b5cf6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 3"/>
-  <text x="332" y="247" font-size="11" font-weight="700" fill="currentColor" opacity="0.85">Private subnet</text>
-  <rect x="430" y="256" width="240" height="52" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="550" y="277" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">ECS Fargate Service</text>
-  <text x="550" y="294" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Express container · ≥2 task (autoscale)</text>
-  <line x1="576" y1="164" x2="566" y2="254" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#archArr)"/>
-  <text x="592" y="212" font-size="10" fill="currentColor" opacity="0.7">private</text>
-  <rect x="316" y="396" width="368" height="128" rx="11" fill="#8b5cf6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 3"/>
-  <text x="332" y="415" font-size="11" font-weight="700" fill="currentColor" opacity="0.85">Private subnet (data + quan sát)</text>
-  <rect x="330" y="426" width="150" height="78" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="405" y="450" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">RDS PostgreSQL</text>
-  <text x="405" y="467" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">private · SG cho ECS</text>
-  <text x="405" y="483" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">SQL :5432 (sslmode)</text>
-  <rect x="496" y="426" width="86" height="78" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="539" y="450" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Secrets</text>
-  <text x="539" y="465" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Manager</text>
-  <text x="539" y="484" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">inject lúc start</text>
-  <text x="539" y="496" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">DATABASE_URL/JWT</text>
-  <rect x="598" y="426" width="76" height="78" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="636" y="450" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Cloud</text>
-  <text x="636" y="465" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Watch</text>
-  <text x="636" y="486" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">Logs +</text>
-  <text x="636" y="497" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">Metrics</text>
-  <line x1="500" y1="308" x2="420" y2="424" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#archArr)"/>
-  <text x="430" y="360" font-size="9.5" fill="currentColor" opacity="0.7">SQL trong VPC</text>
-  <line x1="545" y1="308" x2="540" y2="424" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#archArr)"/>
-  <line x1="585" y1="308" x2="630" y2="424" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#archArr)"/>
-  <text x="650" y="360" font-size="9.5" text-anchor="end" fill="currentColor" opacity="0.7">log/metric</text>
+<svg viewBox="0 0 520 584" role="img" aria-labelledby="cap03a-t cap03a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="cap03a-t">Kiến trúc deploy production của TaskShare</title>
+<desc id="cap03a-d">Browser gọi qua HTTPS tới taskshare.app do Vercel CDN phục vụ (React+TS build bằng Vite, static, env VITE_API_URL gắn lúc build) và tới api.taskshare.app. Code FE fetch JSON kèm Bearer JWT sang API (CORS). Trong AWS Cloud, VPC có public subnet chứa ALB (listener 443, chứng chỉ ACM, health check /health), ALB chuyển vào private subnet nơi ECS Fargate Service chạy container Express với ít nhất 2 task (autoscale). Fargate nói SQL trong VPC tới RDS PostgreSQL ở private subnet riêng (không public, SG chỉ cho ECS, cổng 5432, sslmode). Ngoài VPC là dịch vụ cấp region: ECR chứa image để task kéo về, Secrets Manager inject DATABASE_URL và JWT lúc task start, CloudWatch nhận log và metric.</desc>
+<defs><marker id="cap03a-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<rect x="8" y="8" width="240" height="88" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="128" y="30" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">taskshare.app — Vercel CDN</text>
+<text x="128" y="52" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">React+TS (Vite) · static</text>
+<text x="128" y="72" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">build-time env (VITE_API_URL)</text>
+<use href="#aws-res-client" x="290" y="12" width="40" height="40"/>
+<text x="338" y="30" font-size="13" font-weight="700" text-anchor="start" fill="currentColor">Người dùng</text>
+<text x="338" y="48" font-size="13" text-anchor="start" fill="currentColor" opacity="0.8">(Browser) · HTTPS</text>
+<path d="M288 34 H252" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.6" marker-end="url(#cap03a-arr)"/>
+<path d="M298 56 V250" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.6" marker-end="url(#cap03a-arr)"/>
+<path d="M128 96 V126 H318 V250" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#cap03a-arr)"/>
+<text x="292" y="146" font-size="13" text-anchor="end" fill="currentColor" opacity="0.85">fetch JSON + Bearer JWT (CORS)</text>
+<rect x="8" y="160" width="504" height="416" rx="10" fill="#f59e0b" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="0"/>
+<use href="#aws-group-cloud" x="14" y="166" width="22" height="22"/>
+<text x="42" y="182" font-size="13" font-weight="700" text-anchor="start" fill="currentColor">AWS Cloud</text>
+<rect x="18" y="194" width="340" height="374" rx="10" fill="#8b5cf6" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="6 4"/>
+<use href="#aws-group-virtual-private-cloud-vpc" x="24" y="200" width="20" height="20"/>
+<text x="50" y="215" font-size="13" font-weight="700" text-anchor="start" fill="currentColor">VPC</text>
+<rect x="30" y="228" width="316" height="90" rx="10" fill="#10b981" fill-opacity="0.10" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"/>
+<use href="#aws-group-public-subnet" x="36" y="234" width="18" height="18"/>
+<text x="60" y="248" font-size="13" font-weight="700" text-anchor="start" fill="currentColor" opacity="0.85">Public subnet</text>
+<use href="#aws-alb" x="288" y="254" width="40" height="40"/>
+<text x="278" y="270" font-size="13" font-weight="700" text-anchor="end" fill="currentColor">api.taskshare.app — ALB</text>
+<text x="278" y="288" font-size="13" text-anchor="end" fill="currentColor" opacity="0.8">:443 listener · ACM cert</text>
+<text x="278" y="306" font-size="13" text-anchor="end" fill="currentColor" opacity="0.8">health check /health</text>
+<path d="M308 296 V360" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.6" marker-end="url(#cap03a-arr)"/>
+<text x="300" y="334" font-size="13" text-anchor="end" fill="currentColor" opacity="0.8">private</text>
+<rect x="30" y="340" width="316" height="94" rx="10" fill="#3b82f6" fill-opacity="0.10" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"/>
+<use href="#aws-group-private-subnet" x="36" y="346" width="18" height="18"/>
+<text x="60" y="360" font-size="13" font-weight="700" text-anchor="start" fill="currentColor" opacity="0.85">Private subnet</text>
+<use href="#aws-fargate" x="288" y="366" width="40" height="40"/>
+<text x="278" y="382" font-size="13" font-weight="700" text-anchor="end" fill="currentColor">ECS Fargate Service</text>
+<text x="278" y="400" font-size="13" text-anchor="end" fill="currentColor" opacity="0.8">Express container</text>
+<text x="278" y="418" font-size="13" text-anchor="end" fill="currentColor" opacity="0.8">≥2 task (autoscale)</text>
+<path d="M308 408 V474" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.6" marker-end="url(#cap03a-arr)"/>
+<text x="300" y="446" font-size="13" text-anchor="end" fill="currentColor" opacity="0.8">SQL trong VPC</text>
+<rect x="30" y="452" width="316" height="104" rx="10" fill="#3b82f6" fill-opacity="0.10" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"/>
+<use href="#aws-group-private-subnet" x="36" y="458" width="18" height="18"/>
+<text x="60" y="472" font-size="13" font-weight="700" text-anchor="start" fill="currentColor" opacity="0.85">Private subnet (data)</text>
+<use href="#aws-rds" x="288" y="478" width="40" height="40"/>
+<text x="278" y="496" font-size="13" font-weight="700" text-anchor="end" fill="currentColor">RDS PostgreSQL</text>
+<text x="278" y="514" font-size="13" text-anchor="end" fill="currentColor" opacity="0.8">private · SG cho ECS</text>
+<text x="278" y="532" font-size="13" text-anchor="end" fill="currentColor" opacity="0.8">SQL :5432 (sslmode)</text>
+<text x="440" y="215" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.7">Dịch vụ region</text>
+<use href="#aws-ecr" x="422" y="226" width="36" height="36"/>
+<text x="440" y="278" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">ECR</text>
+<text x="440" y="294" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">image :SHA</text>
+<use href="#aws-secrets-manager" x="422" y="330" width="36" height="36"/>
+<text x="440" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Secrets Manager</text>
+<text x="440" y="398" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">inject lúc start</text>
+<text x="440" y="414" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">DATABASE_URL/JWT</text>
+<use href="#aws-cloudwatch" x="422" y="456" width="36" height="36"/>
+<text x="440" y="508" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">CloudWatch</text>
+<text x="440" y="524" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">Logs + Metrics</text>
+<path d="M420 244 L332 370" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.6" marker-end="url(#cap03a-arr)"/>
+<path d="M420 350 L332 386" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.6" marker-end="url(#cap03a-arr)"/>
+<path d="M332 398 L420 466" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.6" marker-end="url(#cap03a-arr)"/>
+<text x="440" y="548" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">ECS → log/metric</text>
 </svg>
+
+ALB đứng ở public subnet vì nó là cửa duy nhất nhận traffic từ internet; task và DB nằm sau nó, ở private subnet. ECR, Secrets Manager và CloudWatch là dịch vụ cấp region, nằm ngoài VPC.
 
 Vì sao tách FE (Vercel) và BE (AWS) — đã giải thích ở bài 1: FE là static asset → CDN phục vụ cực nhanh, free, preview deploy mỗi PR; BE là process long-running cần ở gần DB trong VPC. Cái giá phải trả là **CORS** giữa hai origin — ta xử lý ở mục 8.
 

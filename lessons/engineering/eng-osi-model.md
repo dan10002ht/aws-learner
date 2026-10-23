@@ -118,7 +118,7 @@ Mô hình **OSI** (Open Systems Interconnection) chia truyền thông mạng th�
 
 Hai mẹo nhớ thứ tự kinh điển (từ 7 xuống 1): **A**ll **P**eople **S**eem **T**o **N**eed **D**ata **P**rocessing → Application, Presentation, Session, Transport, Network, Data link, Physical. Hoặc từ dưới lên (1→7): **P**lease **D**o **N**ot **T**hrow **S**ausage **P**izza **A**way.
 
-> **Ghi nhớ:** Hai cặp số phải thuộc lòng vì gặp suốt trong đời thực: **L3 = IP (router)**, **L4 = TCP/UDP + port**, **L7 = HTTP**. "L4 vs L7 load balancer" hay "tấn công L3/L4 vs L7" đều quy về bảng này.
+> **Ghi nhớ:** Ba con số tầng phải thuộc lòng vì gặp suốt trong đời thực: **L3 = IP (router)**, **L4 = TCP/UDP + port**, **L7 = HTTP**. "L4 vs L7 load balancer" hay "tấn công L3/L4 vs L7" đều quy về bảng này.
 
 ## 3. Mô hình TCP/IP — cái thế giới thật sự chạy
 
@@ -139,54 +139,115 @@ Vậy học OSI để làm gì nếu thật ra chạy TCP/IP? Vì **từ vựng*
 
 Dữ liệu **không** được gửi trần. Mỗi khi đi **xuống** một tầng, nó được bọc thêm một lớp **header** (và ở tầng 2 có cả "đuôi" — trailer) của tầng đó — gọi là **encapsulation** (đóng gói). Ở đầu nhận, quá trình ngược lại — **decapsulation** — bóc dần từng lớp đi lên. Giống lá thư (data) bỏ vào phong bì có địa chỉ (header IP), phong bì cho vào bao của hãng vận chuyển (header Ethernet)...
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Encapsulation và decapsulation — header lồng nhau qua từng tầng</title>
-  <desc>Đi xuống bên gửi, dữ liệu HTTP được bọc thêm header mỗi tầng thành các hộp lồng nhau: Data, Segment (TCP), Packet (IP), Frame (Ethernet có trailer), Bits; đi lên bên nhận thì bóc dần.</desc>
-  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Bên GỬI — đi xuống, bọc thêm header mỗi tầng</text>
-  <text x="16" y="356" font-size="11.5" fill="currentColor" opacity="0.7">Bên NHẬN — đi lên, bóc dần từng header (decapsulation).</text>
-  <rect x="16" y="38" width="688" height="44" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-  <rect x="28" y="50" width="62" height="20" rx="10" fill="#8b5cf6" fill-opacity="0.9"/>
-  <text x="59" y="64" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">L2 Frame</text>
-  <text x="100" y="64" font-size="11" fill="currentColor" opacity="0.85">Eth hdr</text>
-  <rect x="152" y="44" width="540" height="32" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-  <rect x="160" y="50" width="58" height="20" rx="10" fill="#f59e0b" fill-opacity="0.9"/>
-  <text x="189" y="64" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">L3 IP</text>
-  <text x="228" y="64" font-size="11" fill="currentColor" opacity="0.85">IP hdr</text>
-  <rect x="272" y="50" width="356" height="20" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="284" y="64" font-size="10.5" font-weight="700" fill="currentColor">L4</text>
-  <text x="304" y="64" font-size="11" fill="currentColor" opacity="0.85">TCP hdr</text>
-  <rect x="356" y="52" width="208" height="16" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="460" y="64" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">L7 · HTTP data</text>
-  <rect x="572" y="44" width="116" height="32" rx="7" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="630" y="64" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">Eth trailer</text>
-  <g font-size="11" fill="currentColor" opacity="0.8">
-    <text x="16" y="108">L7</text><text x="92" y="108" font-weight="700">Data</text>
-    <line x1="160" y1="104" x2="170" y2="104" stroke="currentColor" stroke-opacity="0.5"/>
-    <text x="180" y="108">[ HTTP data ]</text>
-    <text x="16" y="138">L4</text><text x="92" y="138" font-weight="700">Segment</text>
-    <text x="180" y="138">[ TCP hdr | HTTP data ]</text>
-    <text x="16" y="168">L3</text><text x="92" y="168" font-weight="700">Packet</text>
-    <text x="180" y="168">[ IP hdr | TCP hdr | data ]</text>
-    <text x="16" y="198">L2</text><text x="92" y="198" font-weight="700">Frame</text>
-    <text x="180" y="198">[ Eth hdr | IP | TCP | data | Eth trailer ]</text>
-    <text x="16" y="228">L1</text><text x="92" y="228" font-weight="700">Bits</text>
-    <text x="180" y="228">101000110101...  (bit lên dây)</text>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.45" fill="none">
-    <path d="M52 240 v76" marker-end="url(#encDown)"/>
-    <path d="M668 316 v-76" marker-end="url(#encUp)"/>
-  </g>
-  <defs>
-    <marker id="encDown" markerWidth="9" markerHeight="9" refX="4.5" refY="7" orient="auto"><path d="M0 0 L4.5 7 L9 0" fill="none" stroke="currentColor" stroke-opacity="0.6"/></marker>
-    <marker id="encUp" markerWidth="9" markerHeight="9" refX="4.5" refY="2" orient="auto"><path d="M0 9 L4.5 2 L9 9" fill="none" stroke="currentColor" stroke-opacity="0.6"/></marker>
-  </defs>
-  <text x="64" y="284" font-size="11" fill="currentColor" opacity="0.75">GỬI: bọc</text>
-  <text x="656" y="284" font-size="11" text-anchor="end" fill="currentColor" opacity="0.75">NHẬN: bóc</text>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 440" role="img" aria-labelledby="osi-b-t osi-b-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="osi-b-t">Encapsulation và decapsulation: header bọc dần khi đi xuống, bóc dần khi đi lên</title>
+<desc id="osi-b-d">Bên gửi (trái) đi xuống: HTTP data ở L7 thành Segment khi thêm TCP hdr ở L4, thành Packet khi thêm IP hdr ở L3, thành Frame khi thêm Eth hdr và Eth trailer ở L2, rồi thành Bits ở L1 đi trên dây. Bên nhận (phải) đi lên: L2 bóc Eth hdr và trailer, L3 bóc IP hdr, L4 bóc TCP hdr, L7 nhận lại đúng HTTP data.</desc>
+<defs><marker id="osi-b-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="12" y="28" font-size="14" font-weight="700" fill="currentColor">Bên GỬI: đi xuống, bọc header</text>
+<text x="748" y="28" font-size="14" font-weight="700" text-anchor="end" fill="currentColor">Bên NHẬN: đi lên, bóc header</text>
+<text x="12" y="50" font-size="13" fill="currentColor" opacity="0.7">encapsulation</text>
+<text x="748" y="50" font-size="13" text-anchor="end" fill="currentColor" opacity="0.7">decapsulation</text>
+<rect x="330" y="84" width="100" height="36" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="380" y="107" font-size="13" text-anchor="middle" fill="currentColor"><tspan font-weight="700">L7</tspan> Data</text>
+<rect x="330" y="144" width="100" height="36" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="380" y="167" font-size="13" text-anchor="middle" fill="currentColor"><tspan font-weight="700">L4</tspan> Segment</text>
+<rect x="330" y="204" width="100" height="36" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="380" y="227" font-size="13" text-anchor="middle" fill="currentColor"><tspan font-weight="700">L3</tspan> Packet</text>
+<rect x="330" y="264" width="100" height="36" rx="8" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="380" y="287" font-size="13" text-anchor="middle" fill="currentColor"><tspan font-weight="700">L2</tspan> Frame</text>
+<rect x="330" y="324" width="100" height="36" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="380" y="347" font-size="13" text-anchor="middle" fill="currentColor"><tspan font-weight="700">L1</tspan> Bits</text>
+<g data-step="1">
+<rect x="183" y="84" width="82" height="36" rx="6" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-width="2"/>
+<text x="224.0" y="107" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor" >HTTP data</text>
+</g>
+<g data-step="2">
+<line x1="224" y1="122" x2="224" y2="142" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#osi-b-arrow)"/>
+<rect x="123" y="144" width="58" height="36" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-width="2"/>
+<text x="152.0" y="167" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor" >TCP hdr</text>
+<rect x="183" y="144" width="82" height="36" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="224.0" y="167" font-size="13" text-anchor="middle" fill="currentColor" >HTTP data</text>
+</g>
+<g data-step="3">
+<line x1="224" y1="182" x2="224" y2="202" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#osi-b-arrow)"/>
+<rect x="71" y="204" width="50" height="36" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-width="2"/>
+<text x="96.0" y="227" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor" >IP hdr</text>
+<rect x="123" y="204" width="58" height="36" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="152.0" y="227" font-size="13" text-anchor="middle" fill="currentColor" >TCP hdr</text>
+<rect x="183" y="204" width="82" height="36" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="224.0" y="227" font-size="13" text-anchor="middle" fill="currentColor" >HTTP data</text>
+</g>
+<g data-step="4">
+<line x1="224" y1="242" x2="224" y2="262" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#osi-b-arrow)"/>
+<rect x="13" y="264" width="56" height="36" rx="6" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-width="2"/>
+<text x="41.0" y="287" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor" >Eth hdr</text>
+<rect x="71" y="264" width="50" height="36" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="96.0" y="287" font-size="13" text-anchor="middle" fill="currentColor" >IP hdr</text>
+<rect x="123" y="264" width="58" height="36" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="152.0" y="287" font-size="13" text-anchor="middle" fill="currentColor" >TCP hdr</text>
+<rect x="183" y="264" width="82" height="36" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="224.0" y="287" font-size="13" text-anchor="middle" fill="currentColor" >HTTP data</text>
+<rect x="267" y="264" width="54" height="36" rx="6" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-width="2"/>
+<text x="294.0" y="287" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor" >trailer</text>
+</g>
+<g data-step="5">
+<line x1="224" y1="302" x2="224" y2="322" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#osi-b-arrow)"/>
+<text x="170" y="347" font-size="13" text-anchor="middle" fill="currentColor" font-family="ui-monospace, monospace">101000110101…</text>
+<text x="590" y="347" font-size="13" text-anchor="middle" fill="currentColor" font-family="ui-monospace, monospace">101000110101…</text>
+<line x1="40" y1="376" x2="716" y2="376" stroke="currentColor" stroke-opacity="0.6" stroke-width="2" marker-end="url(#osi-b-arrow)"/>
+<text x="380" y="396" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">bit lên dây (cáp, sóng): tầng 1 không đọc header nào</text>
+</g>
+<g data-step="6">
+<line x1="650" y1="320" x2="650" y2="302" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#osi-b-arrow)"/>
+<rect x="439" y="264" width="56" height="36" rx="6" fill="#8b5cf6" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="467.0" y="287" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.55" text-decoration="line-through">Eth hdr</text>
+<rect x="497" y="264" width="50" height="36" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="522.0" y="287" font-size="13" text-anchor="middle" fill="currentColor" >IP hdr</text>
+<rect x="549" y="264" width="58" height="36" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="578.0" y="287" font-size="13" text-anchor="middle" fill="currentColor" >TCP hdr</text>
+<rect x="609" y="264" width="82" height="36" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="650.0" y="287" font-size="13" text-anchor="middle" fill="currentColor" >HTTP data</text>
+<rect x="693" y="264" width="54" height="36" rx="6" fill="#8b5cf6" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="720.0" y="287" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.55" text-decoration="line-through">trailer</text>
+</g>
+<g data-step="7">
+<line x1="650" y1="262" x2="650" y2="242" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#osi-b-arrow)"/>
+<rect x="497" y="204" width="50" height="36" rx="6" fill="#f59e0b" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="522.0" y="227" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.55" text-decoration="line-through">IP hdr</text>
+<rect x="549" y="204" width="58" height="36" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="578.0" y="227" font-size="13" text-anchor="middle" fill="currentColor" >TCP hdr</text>
+<rect x="609" y="204" width="82" height="36" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="650.0" y="227" font-size="13" text-anchor="middle" fill="currentColor" >HTTP data</text>
+</g>
+<g data-step="8">
+<line x1="650" y1="202" x2="650" y2="182" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#osi-b-arrow)"/>
+<rect x="549" y="144" width="58" height="36" rx="6" fill="#10b981" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="578.0" y="167" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.55" text-decoration="line-through">TCP hdr</text>
+<rect x="609" y="144" width="82" height="36" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="650.0" y="167" font-size="13" text-anchor="middle" fill="currentColor" >HTTP data</text>
+</g>
+<g data-step="9">
+<line x1="650" y1="142" x2="650" y2="122" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#osi-b-arrow)"/>
+<rect x="609" y="84" width="82" height="36" rx="6" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-width="2"/>
+<text x="650.0" y="107" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor" >HTTP data</text>
+</g>
+<text x="380" y="430" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">viền liền đậm: header vừa bọc · viền đứt, gạch ngang: header bị bóc</text>
 </svg>
+<step-note data-step="1">App chỉ đưa xuống mấy byte HTTP. Ở đây nó chưa biết gì về port, IP hay MAC, nên PDU chỉ gọi là <code>Data</code>.</step-note>
+<step-note data-step="2">TCP gắn header mang port và số thứ tự vào trước data, để bên nhận giao đúng tiến trình và đúng thứ tự. Từ đây gọi là <code>Segment</code>.</step-note>
+<step-note data-step="3">IP gắn địa chỉ IP nguồn và đích để router chuyển gói giữa các mạng. Cả segment giờ chỉ là payload với IP, nên gọi là <code>Packet</code>.</step-note>
+<step-note data-step="4">Ethernet gắn MAC cho chặng kế tiếp trong LAN, và là tầng duy nhất thêm cả đuôi (trailer chứa mã kiểm lỗi CRC). Payload của frame bị chặn ở MTU ~1500 byte.</step-note>
+<step-note data-step="5">Tầng 1 chỉ biến bit thành tín hiệu trên môi trường truyền. Với nó, header hay data đều chỉ là bit.</step-note>
+<step-note data-step="6">Bên nhận ghép bit lại thành frame, kiểm trailer (sai CRC thì bỏ), rồi bóc Eth hdr và trailer, đưa packet lên L3.</step-note>
+<step-note data-step="7">L3 đọc IP đích, thấy đúng của mình thì bóc IP hdr và đưa segment lên TCP.</step-note>
+<step-note data-step="8">TCP dùng port để tìm đúng tiến trình, sắp lại thứ tự, rồi bóc TCP hdr.</step-note>
+<step-note data-step="9">App nhận lại đúng mấy byte đã gửi ở bước 1. Mỗi tầng chỉ đọc header của chính nó; đó là điều phân tầng mua được.</step-note>
+</step-flow>
 
 Để ý cái tên PDU đổi theo tầng: **Data → Segment (L4) → Packet (L3) → Frame (L2) → Bits (L1)**. Khi ai đó nói "drop packet" họ ngụ ý tầng 3; "frame lỗi CRC" là tầng 2; "segment retransmit" là tầng 4. Dùng đúng từ giúp bạn (và đồng nghiệp) biết ngay đang nói về tầng nào.
 
-Một header không vô hạn: tầng 2 Ethernet giới hạn payload ~**1500 byte** (MTU). Gói IP lớn hơn MTU phải **phân mảnh** (fragmentation) hoặc bị từ chối — đây là gốc của những lỗi "ping nhỏ thì được, tải file lớn thì treo" (MTU/MSS mismatch, hay gặp trong VPN/tunnel).
+Một frame không lớn vô hạn: tầng 2 Ethernet giới hạn payload ~**1500 byte** (MTU). Gói IP lớn hơn MTU phải **phân mảnh** (fragmentation) hoặc bị từ chối — đây là gốc của những lỗi "ping nhỏ thì được, tải file lớn thì treo" (MTU/MSS mismatch, hay gặp trong VPN/tunnel).
 
 > **Ghi nhớ:** Đi xuống = bọc header; đi lên = bóc header. Tên gói đổi theo tầng (Segment/Packet/Frame). Dùng đúng tên = nói đúng tầng.
 

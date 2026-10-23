@@ -491,6 +491,77 @@ const toggleStock = useMutation({
 });
 ```
 
+<step-flow>
+<svg viewBox="0 0 760 600" role="img" aria-labelledby="fe05b-t fe05b-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto">
+<title id="fe05b-t">Optimistic update cho toggleStock, 8 bước</title>
+<desc id="fe05b-d">Sequence giữa UI, cache React Query với key products và id, và server. onMutate huỷ refetch, chụp snapshot previous, ghi inStock false vào cache nên UI đổi ngay; sau đó mới gửi updateProduct. Server lỗi thì onError ghi lại previous, UI về Còn hàng; thành công thì giữ. onSettled luôn invalidate để refetch giá trị thật.</desc>
+<defs><marker id="fe05b-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<rect x="30" y="12" width="160" height="36" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="110" y="35" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">UI</text>
+<line x1="110" y1="48" x2="110" y2="588" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="265" y="12" width="230" height="36" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="380" y="35" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">Cache ["products", id]</text>
+<line x1="380" y1="48" x2="380" y2="588" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="570" y="12" width="160" height="36" rx="8" fill="#64748b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="650" y="35" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">Server</text>
+<line x1="650" y1="48" x2="650" y2="588" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="50" y="62" width="120" height="26" rx="6" fill="#10b981" fill-opacity="0.15" stroke="#10b981" stroke-opacity="0.7"/>
+<text x="110" y="82" text-anchor="middle" font-size="13" fill="currentColor">Còn hàng</text>
+<g data-step="1">
+<line x1="114" y1="118" x2="376" y2="118" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#fe05b-arrow)"/>
+<text x="245" y="110" text-anchor="middle" font-size="13" fill="currentColor">1  toggleStock.mutate(p)</text>
+</g>
+<g data-step="2">
+<rect x="230" y="136" width="300" height="30" rx="6" fill="#8b5cf6" fill-opacity="0.15" stroke="#8b5cf6" stroke-opacity="0.7"/>
+<text x="380" y="156" text-anchor="middle" font-size="13" fill="currentColor">2  onMutate: cancelQueries(key)</text>
+</g>
+<g data-step="3">
+<rect x="230" y="180" width="300" height="30" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="#f59e0b" stroke-opacity="0.7"/>
+<text x="380" y="200" text-anchor="middle" font-size="13" fill="currentColor">3  previous = { inStock: true }</text>
+</g>
+<g data-step="4">
+<rect x="230" y="224" width="300" height="30" rx="6" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6" stroke-opacity="0.7"/>
+<text x="380" y="244" text-anchor="middle" font-size="13" fill="currentColor">4  setQueryData → inStock: false</text>
+<line x1="376" y1="284" x2="114" y2="284" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#fe05b-arrow)"/>
+<text x="245" y="276" text-anchor="middle" font-size="13" fill="currentColor">đổi ngay, chưa hỏi server</text>
+<rect x="50" y="294" width="120" height="26" rx="6" fill="#f43f5e" fill-opacity="0.15" stroke="#f43f5e" stroke-opacity="0.7"/>
+<text x="110" y="314" text-anchor="middle" font-size="13" fill="currentColor">Hết hàng</text>
+</g>
+<g data-step="5">
+<line x1="384" y1="352" x2="646" y2="352" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#fe05b-arrow)"/>
+<text x="515" y="344" text-anchor="middle" font-size="13" fill="currentColor">5  updateProduct(id, {inStock: false})</text>
+<text x="110" y="352" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">⏸ đang chờ</text>
+</g>
+<g data-step="6">
+<line x1="646" y1="396" x2="384" y2="396" stroke="#f43f5e" stroke-opacity="1" stroke-width="2" marker-end="url(#fe05b-arrow)"/>
+<text x="515" y="388" text-anchor="middle" font-size="13" fill="currentColor">6  ✗ lỗi (mạng, 500)</text>
+<line x1="646" y1="426" x2="384" y2="426" stroke="#10b981" stroke-opacity="1" stroke-width="2" marker-end="url(#fe05b-arrow)"/>
+<text x="515" y="444" text-anchor="middle" font-size="13" fill="currentColor">✓ 200 OK: giữ Hết hàng, không rollback</text>
+</g>
+<g data-step="7">
+<rect x="230" y="456" width="300" height="30" rx="6" fill="#f43f5e" fill-opacity="0.15" stroke="#f43f5e" stroke-opacity="0.7"/>
+<text x="380" y="476" text-anchor="middle" font-size="13" fill="currentColor">7  onError: setQueryData(previous)</text>
+<line x1="376" y1="508" x2="114" y2="508" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#fe05b-arrow)"/>
+<text x="245" y="500" text-anchor="middle" font-size="13" fill="currentColor">chỉ khi lỗi: rollback</text>
+<rect x="50" y="518" width="120" height="26" rx="6" fill="#10b981" fill-opacity="0.15" stroke="#10b981" stroke-opacity="0.7"/>
+<text x="110" y="538" text-anchor="middle" font-size="13" fill="currentColor">Còn hàng</text>
+</g>
+<g data-step="8">
+<line x1="384" y1="566" x2="646" y2="566" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#fe05b-arrow)"/>
+<text x="515" y="558" text-anchor="middle" font-size="13" fill="currentColor">8  onSettled: invalidateQueries</text>
+<text x="515" y="586" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">refetch lấy giá trị thật</text>
+</g>
+</svg>
+<step-note data-step="1">Người dùng bấm; React Query gọi <code>onMutate</code> trước cả <code>mutationFn</code>, nên mọi việc tới bước 4 xảy ra trước khi có request nào.</step-note>
+<step-note data-step="2">Nếu một refetch cũ đang bay về sau lúc này, nó sẽ ghi đè giá trị lạc quan. <code>await cancelQueries</code> chặn điều đó.</step-note>
+<step-note data-step="3">Chụp giá trị hiện tại và <code>return { previous }</code>: đây là thứ duy nhất để quay về nếu server từ chối.</step-note>
+<step-note data-step="4">Ghi thẳng vào cache, component đọc key này render lại ngay: người dùng thấy phản hồi tức thì thay vì chờ một vòng mạng.</step-note>
+<step-note data-step="5">Giờ <code>mutationFn</code> mới gửi request thật. Trong lúc chờ, UI đã hiện kết quả như thể đã xong.</step-note>
+<step-note data-step="6">Server chỉ có hai khả năng: lỗi hoặc thành công. Bước 7 xử lý nhánh lỗi; nhánh thành công không cần làm gì vì cache đã đúng sẵn.</step-note>
+<step-note data-step="7"><code>onError</code> nhận lại <code>context.previous</code> từ bước 3 và ghi đè, UI về như cũ. Thiếu bước này UI kẹt ở "Hết hàng" dù server chưa đổi gì.</step-note>
+<step-note data-step="8"><code>onSettled</code> chạy cả hai nhánh: đánh dấu key cũ để refetch, phòng khi server đã sửa thêm field khác hoặc người khác đổi cùng lúc.</step-note>
+</step-flow>
+
 > **Bẫy:** Optimistic update *bắt buộc* phải có rollback (`onError`) và đồng bộ lại (`onSettled`). Thiếu rollback, khi request lỗi, UI sẽ kẹt ở trạng thái sai mà người dùng tưởng đã thành công. Chỉ dùng optimistic cho hành động *rất hay thành công* và *dễ đảo ngược*.
 
 ## Suspense & Error Boundary

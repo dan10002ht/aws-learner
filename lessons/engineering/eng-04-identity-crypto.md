@@ -53,56 +53,88 @@ openssl genrsa -out rsa-private.pem 3072
 
 Mô hình KMS dùng cho S3, EBS, RDS:
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 410" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Envelope encryption với AWS KMS — 5 bước</title>
-  <desc>KMS giữ master key không rời khỏi KMS; GenerateDataKey trả về data key plaintext và data key đã mã hoá; dùng data key plaintext mã hoá file rồi xoá plaintext; lưu file mã hoá cùng data key đã mã hoá; khi giải mã gửi data key mã hoá lên KMS để lấy lại plaintext.</desc>
-  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Envelope encryption (KMS)</text>
-  <!-- KMS box giữ master key -->
-  <rect x="16" y="44" width="200" height="86" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="32" y="68" font-size="13" font-weight="700" fill="currentColor">AWS KMS</text>
-  <rect x="32" y="80" width="168" height="36" rx="7" fill="#8b5cf6" fill-opacity="0.9"/>
-  <text x="116" y="98" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">Master key (KMS key)</text>
-  <text x="116" y="111" font-size="9.5" text-anchor="middle" fill="#fff" opacity="0.9">không bao giờ rời KMS</text>
-  <!-- Step 1+2: GenerateDataKey -->
-  <text x="240" y="62" font-size="11.5" font-weight="700" fill="currentColor">① ② GenerateDataKey →</text>
-  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.4">
-    <path d="M216 88 H470" marker-end="url(#ar1)"/>
-  </g>
-  <defs>
-    <marker id="ar1" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker>
-  </defs>
-  <!-- Two data keys returned -->
-  <rect x="476" y="48" width="228" height="38" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="590" y="64" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Data key (plaintext)</text>
-  <text x="590" y="78" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">32 byte — dùng ngay rồi xoá</text>
-  <rect x="476" y="92" width="228" height="38" rx="7" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="590" y="108" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Data key (đã mã hoá)</text>
-  <text x="590" y="122" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">mã hoá bởi master key</text>
-  <!-- Step 3: encrypt file local + delete plaintext -->
-  <text x="16" y="172" font-size="11.5" font-weight="700" fill="currentColor">③ Mã hoá file local bằng AES-256 với data key plaintext, rồi xoá plaintext khỏi RAM</text>
-  <g stroke="currentColor" stroke-opacity="0.4" fill="none"><path d="M590 86 V152" stroke-dasharray="4 3"/></g>
-  <rect x="16" y="186" width="160" height="64" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="96" y="214" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">File gốc</text>
-  <text x="96" y="232" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">plaintext</text>
-  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.4"><path d="M176 218 H236" marker-end="url(#ar1)"/></g>
-  <text x="206" y="210" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">AES</text>
-  <rect x="240" y="186" width="160" height="64" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="320" y="214" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">File mã hoá</text>
-  <text x="320" y="232" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">ciphertext</text>
-  <!-- Step 4: store side by side -->
-  <text x="16" y="288" font-size="11.5" font-weight="700" fill="currentColor">④ Lưu cạnh nhau:</text>
-  <rect x="150" y="274" width="170" height="34" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="235" y="296" font-size="10.5" text-anchor="middle" fill="currentColor">File mã hoá</text>
-  <text x="330" y="296" font-size="13" fill="currentColor">+</text>
-  <rect x="346" y="274" width="200" height="34" rx="7" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="446" y="296" font-size="10.5" text-anchor="middle" fill="currentColor">Data key (đã mã hoá)</text>
-  <!-- Step 5: decrypt -->
-  <text x="16" y="344" font-size="11.5" font-weight="700" fill="currentColor">⑤ Giải mã: gửi data key đã mã hoá lên KMS → KMS dùng master key → trả data key plaintext → giải mã file</text>
-  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.4">
-    <path d="M446 308 C446 348, 160 348, 120 132" marker-end="url(#ar1)"/>
-  </g>
-  <text x="300" y="376" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">data key chỉ KMS giải được — file lớn hơn 4 KB vẫn mã hoá được vì AES chạy local</text>
+<step-flow>
+<svg viewBox="0 0 760 670" role="img" aria-labelledby="eng04a-t eng04a-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="eng04a-t">Envelope encryption với AWS KMS: mã hoá file 1 GB rồi giải mã, 9 bước</title>
+<desc id="eng04a-d">Sơ đồ tuần tự ba lifeline App, AWS KMS giữ master key không bao giờ rời KMS, và Lưu trữ. Mã hoá: App gọi GenerateDataKey, nhận data key bản rõ 32 byte cùng data key đã mã hoá bởi master key, mã hoá file 1 GB bằng AES-256 ngay trên máy, xoá ngay bản rõ khỏi RAM, rồi lưu file mã hoá cạnh data key đã mã hoá. Giải mã: đọc cả hai, gửi data key đã mã hoá lên KMS, KMS dùng master key trả lại data key bản rõ, App giải mã file local rồi xoá bản rõ. Gọi KMS trực tiếp chỉ được tối đa 4 KB mỗi lần.</desc>
+<defs>
+<marker id="eng04a-arr" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0 0 L7 3.2 L0 6.4 z" fill="currentColor"/></marker>
+</defs>
+<rect x="50" y="14" width="200" height="50" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="150" y="44" text-anchor="middle" font-size="14" fill="currentColor" font-weight="700">App (RAM)</text>
+<rect x="320" y="14" width="200" height="50" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="420" y="35" text-anchor="middle" font-size="14" fill="currentColor" font-weight="700">AWS KMS</text>
+<text x="420" y="54" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.8">master key không rời KMS</text>
+<rect x="580" y="14" width="160" height="50" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="660" y="35" text-anchor="middle" font-size="14" fill="currentColor" font-weight="700">Lưu trữ</text>
+<text x="660" y="54" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.8">S3 / EBS / RDS</text>
+<line x1="150" y1="64" x2="150" y2="590" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+<line x1="420" y1="64" x2="420" y2="590" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+<line x1="660" y1="64" x2="660" y2="590" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+<text x="16" y="92" text-anchor="start" font-size="14" fill="currentColor" font-weight="700">A · MÃ HOÁ file 1 GB</text>
+<g data-step="1">
+<text x="285" y="113" text-anchor="middle" font-size="13" fill="currentColor">1 · GenerateDataKey</text>
+<line x1="152" y1="122" x2="414" y2="122" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#eng04a-arr)"/>
+</g>
+<g data-step="2">
+<text x="285" y="148" text-anchor="middle" font-size="13" fill="currentColor">2 · cùng một data key, hai bản</text>
+<line x1="418" y1="157" x2="156" y2="157" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#eng04a-arr)"/>
+<rect x="16" y="168" width="290" height="28" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="161" y="187" text-anchor="middle" font-size="13" fill="currentColor">data key bản rõ · 32 byte</text>
+<rect x="16" y="202" width="290" height="28" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="161" y="221" text-anchor="middle" font-size="13" fill="currentColor">data key đã mã hoá (bởi master key)</text>
+</g>
+<g data-step="3">
+<rect x="16" y="240" width="380" height="46" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="206" y="259" text-anchor="middle" font-size="13" fill="currentColor">3 · AES-256 local: file gốc 1 GB → file mã hoá</text>
+<text x="206" y="277" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.8">dùng data key bản rõ; 1 GB không đi tới KMS</text>
+</g>
+<g data-step="4">
+<line x1="28" y1="182" x2="294" y2="182" stroke="#f43f5e" stroke-width="2.5"/>
+<text x="318" y="187" text-anchor="start" font-size="16" fill="currentColor" fill-opacity="1">✗</text>
+<rect x="16" y="296" width="290" height="28" rx="8" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="161" y="315" text-anchor="middle" font-size="13" fill="currentColor">4 · xoá ngay bản rõ khỏi RAM</text>
+</g>
+<g data-step="5">
+<text x="405" y="346" text-anchor="middle" font-size="13" fill="currentColor">5 · lưu cạnh nhau</text>
+<line x1="152" y1="355" x2="654" y2="355" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#eng04a-arr)"/>
+<rect x="560" y="364" width="190" height="46" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="655" y="383" text-anchor="middle" font-size="13" fill="currentColor">file mã hoá</text>
+<text x="655" y="401" text-anchor="middle" font-size="13" fill="currentColor">+ data key đã mã hoá</text>
+</g>
+<line x1="16" y1="424" x2="744" y2="424" stroke="currentColor" stroke-opacity="0.18"/>
+<text x="16" y="448" text-anchor="start" font-size="14" fill="currentColor" font-weight="700">B · GIẢI MÃ</text>
+<g data-step="6">
+<text x="405" y="470" text-anchor="middle" font-size="13" fill="currentColor">6 · đọc file mã hoá + data key đã mã hoá</text>
+<line x1="658" y1="479" x2="156" y2="479" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#eng04a-arr)"/>
+</g>
+<g data-step="7">
+<text x="285" y="503" text-anchor="middle" font-size="13" fill="currentColor">7 · Decrypt(data key đã mã hoá)</text>
+<line x1="152" y1="512" x2="414" y2="512" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#eng04a-arr)"/>
+<rect x="330" y="520" width="180" height="28" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="420" y="539" text-anchor="middle" font-size="13" fill="currentColor">mở bằng master key</text>
+</g>
+<g data-step="8">
+<text x="285" y="566" text-anchor="middle" font-size="13" fill="currentColor">8 · data key bản rõ</text>
+<line x1="418" y1="575" x2="156" y2="575" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#eng04a-arr)"/>
+</g>
+<g data-step="9">
+<rect x="16" y="584" width="290" height="28" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="161" y="603" text-anchor="middle" font-size="13" fill="currentColor">9 · giải mã file local → xoá bản rõ</text>
+</g>
+<text x="16" y="638" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">Gọi KMS trực tiếp: tối đa 4 KB mỗi lần. Qua phong bì: chỉ data key 32 byte tới KMS,</text>
+<text x="16" y="658" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">còn AES chạy local nên file lớn hơn 4 KB (1 GB, 100 GB…) vẫn mã hoá được. Nét đứt = response.</text>
 </svg>
+<step-note data-step="1">App cần một khoá để mã hoá, nhưng master key không bao giờ rời KMS. Nên app xin KMS sinh riêng một data key cho file này.</step-note>
+<step-note data-step="2">Một lần gọi trả về hai bản của <b>cùng</b> một khoá: bản rõ để dùng ngay, bản bọc bằng master key để cất. Lúc ghi không cần gọi KMS thêm lần nào.</step-note>
+<step-note data-step="3">Mã hoá chạy trên máy app nên 1 GB không đi qua mạng và không vướng giới hạn 4 KB mỗi lần gọi KMS (gọi thẳng thì 1 GB / 4 KB ≈ 262 nghìn lần).</step-note>
+<step-note data-step="4">Bản rõ bị xoá ngay khi mã hoá xong: kể từ đây chỉ KMS mở được file. Nếu giữ bản rõ cạnh file thì master key không còn bảo vệ gì.</step-note>
+<step-note data-step="5">Data key đã mã hoá là cái phong bì đi kèm file: lộ nó vô hại vì chỉ KMS giải được, và app không phải tự nhớ khoá nào ứng file nào.</step-note>
+<step-note data-step="6">Đọc lên cả hai, nhưng chưa giải mã được gì vì data key vẫn đang bị master key bọc.</step-note>
+<step-note data-step="7">Chỉ 32 byte đi lên KMS. Đây là cửa duy nhất để mở phong bì: không được KMS cho dùng master key thì dừng tại đây.</step-note>
+<step-note data-step="8">KMS trả bản rõ của data key; master key vẫn chưa từng rời KMS.</step-note>
+<step-note data-step="9">Giải mã 1 GB chạy local như lúc mã hoá, xong lại xoá bản rõ giống bước 4.</step-note>
+</step-flow>
 
 1. KMS giữ **master key (KMS key)** — không bao giờ rời khỏi KMS.
 2. Gọi `GenerateDataKey` → nhận về **data key dạng plaintext** + **data key đã mã hoá** bởi master key.
@@ -199,53 +231,69 @@ OAuth giải quyết bài toán **uỷ quyền (authorization)**: app A muốn t
 
 ### 4.1 Authorization Code + PKCE — luồng chuẩn duy nhất cần nhớ
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 440" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>OAuth 2.1 Authorization Code + PKCE — sequence diagram</title>
-  <desc>Luồng theo thời gian giữa App, User và Authorization Server: App tạo code_verifier và code_challenge, redirect user kèm code_challenge, user đăng nhập và đồng ý, server trả authorization code, App đổi code lấy token kèm code_verifier, server hash verifier so với challenge rồi cấp token.</desc>
-  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Authorization Code + PKCE</text>
-  <!-- lifelines headers -->
-  <rect x="40" y="40" width="150" height="34" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="115" y="62" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">App (client)</text>
-  <rect x="290" y="40" width="140" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="360" y="62" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">User</text>
-  <rect x="530" y="40" width="170" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="615" y="62" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Authorization Server</text>
-  <!-- lifelines -->
-  <g stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4">
-    <line x1="115" y1="74" x2="115" y2="420"/>
-    <line x1="360" y1="74" x2="360" y2="420"/>
-    <line x1="615" y1="74" x2="615" y2="420"/>
-  </g>
-  <defs>
-    <marker id="arO" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker>
-  </defs>
-  <!-- step 1: App self -->
-  <rect x="40" y="86" width="150" height="40" rx="7" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="115" y="103" font-size="10" text-anchor="middle" fill="currentColor">① tạo code_verifier</text>
-  <text x="115" y="118" font-size="10" text-anchor="middle" fill="currentColor">② challenge = SHA256(verifier)</text>
-  <!-- step 3: App -> User redirect (qua browser) tới server -->
-  <g stroke="currentColor" stroke-opacity="0.6" fill="none" stroke-width="1.4"><line x1="115" y1="156" x2="610" y2="156" marker-end="url(#arO)"/></g>
-  <text x="362" y="150" font-size="10" text-anchor="middle" fill="currentColor">③ redirect /authorize?code_challenge=… (qua trình duyệt user)</text>
-  <!-- step 4a: User login at server -->
-  <g stroke="currentColor" stroke-opacity="0.6" fill="none" stroke-width="1.4"><line x1="360" y1="186" x2="610" y2="186" marker-end="url(#arO)"/></g>
-  <text x="486" y="180" font-size="10" text-anchor="middle" fill="currentColor">④ đăng nhập + đồng ý</text>
-  <!-- step 4b: server -> app code -->
-  <g stroke="currentColor" stroke-opacity="0.6" fill="none" stroke-width="1.4"><line x1="615" y1="216" x2="118" y2="216" marker-end="url(#arO)"/></g>
-  <text x="365" y="210" font-size="10" text-anchor="middle" fill="currentColor">redirect về ?code=AUTH_CODE</text>
-  <!-- step 5: App -> server token + verifier -->
-  <g stroke="currentColor" stroke-opacity="0.7" fill="none" stroke-width="1.6"><line x1="115" y1="250" x2="610" y2="250" marker-end="url(#arO)"/></g>
-  <text x="362" y="244" font-size="10" text-anchor="middle" fill="currentColor">⑤ POST /token: code + code_verifier (gốc)</text>
-  <!-- step 6: server self check -->
-  <rect x="500" y="266" width="200" height="40" rx="7" fill="#8b5cf6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="600" y="283" font-size="10" text-anchor="middle" fill="currentColor">⑥ SHA256(verifier) ?= challenge</text>
-  <text x="600" y="298" font-size="10" text-anchor="middle" fill="currentColor">khớp → cấp token</text>
-  <!-- step 6b: server -> app token -->
-  <g stroke="currentColor" stroke-opacity="0.7" fill="none" stroke-width="1.6"><line x1="615" y1="330" x2="118" y2="330" marker-end="url(#arO)"/></g>
-  <text x="365" y="324" font-size="10" text-anchor="middle" fill="currentColor">access token (+ id token, refresh token)</text>
-  <text x="360" y="372" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Kẻ chặn AUTH_CODE mà không có code_verifier → không đổi được token</text>
-  <line x1="80" y1="386" x2="640" y2="386" stroke="currentColor" stroke-opacity="0.15"/>
-  <text x="360" y="406" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">thời gian đi từ trên xuống dưới</text>
+<step-flow>
+<svg viewBox="0 0 760 560" role="img" aria-labelledby="eng04b-t eng04b-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="eng04b-t">OAuth 2.1 Authorization Code + PKCE, 6 bước</title>
+<desc id="eng04b-d">Sơ đồ tuần tự ba lifeline App (client), User (trình duyệt) và Authorization Server, thời gian đi từ trên xuống. App tạo code_verifier ngẫu nhiên 43-128 ký tự, tính code_challenge = BASE64URL(SHA256(verifier)), redirect user qua trình duyệt tới /authorize kèm code_challenge và method S256; user đăng nhập và đồng ý, server redirect về kèm code=AUTH_CODE; App POST /token kèm code và code_verifier gốc; server hash verifier so với challenge, khớp mới cấp access token cùng id token và refresh token. Kẻ chặn AUTH_CODE mà không có code_verifier không đổi được token.</desc>
+<defs>
+<marker id="eng04b-arr" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0 0 L7 3.2 L0 6.4 z" fill="currentColor"/></marker>
+</defs>
+<rect x="40" y="14" width="160" height="34" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="120" y="36" text-anchor="middle" font-size="13" fill="currentColor" font-weight="700">App (client)</text>
+<rect x="290" y="14" width="180" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="380" y="36" text-anchor="middle" font-size="13" fill="currentColor" font-weight="700">User (trình duyệt)</text>
+<rect x="540" y="14" width="200" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="640" y="36" text-anchor="middle" font-size="13" fill="currentColor" font-weight="700">Authorization Server</text>
+<line x1="120" y1="48" x2="120" y2="486" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+<line x1="380" y1="48" x2="380" y2="486" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+<line x1="640" y1="48" x2="640" y2="486" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+<g data-step="1">
+<rect x="10" y="60" width="240" height="46" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="130" y="79" text-anchor="middle" font-size="13" fill="currentColor">1 · code_verifier =</text>
+<text x="130" y="97" text-anchor="middle" font-size="12" fill="currentColor">chuỗi ngẫu nhiên 43-128 ký tự</text>
+</g>
+<g data-step="2">
+<rect x="10" y="114" width="240" height="46" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="130" y="133" text-anchor="middle" font-size="13" fill="currentColor">2 · code_challenge =</text>
+<text x="130" y="151" text-anchor="middle" font-size="12" fill="currentColor">BASE64URL(SHA256(verifier))</text>
+</g>
+<g data-step="3">
+<text x="380" y="182" text-anchor="middle" font-size="13" fill="currentColor">3 · redirect qua trình duyệt → GET /authorize?response_type=code&amp;…</text>
+<text x="380" y="198" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.8">&amp;code_challenge=…&amp;code_challenge_method=S256 (+ client_id, redirect_uri, scope, state)</text>
+<line x1="122" y1="208" x2="634" y2="208" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#eng04b-arr)"/>
+<rect x="545" y="216" width="190" height="28" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="640" y="235" text-anchor="middle" font-size="13" fill="currentColor">ghi nhớ challenge</text>
+</g>
+<g data-step="4">
+<text x="510" y="268" text-anchor="middle" font-size="13" fill="currentColor">4 · đăng nhập + đồng ý</text>
+<line x1="382" y1="276" x2="634" y2="276" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#eng04b-arr)"/>
+<text x="380" y="302" text-anchor="middle" font-size="13" fill="currentColor">redirect về redirect_uri?code=AUTH_CODE</text>
+<line x1="638" y1="310" x2="126" y2="310" stroke="#f59e0b" stroke-width="2" marker-end="url(#eng04b-arr)"/>
+<text x="380" y="332" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.8">AUTH_CODE nằm trên URL: có thể lộ qua log, app độc hại bắt redirect</text>
+</g>
+<g data-step="5">
+<text x="380" y="360" text-anchor="middle" font-size="13" fill="currentColor">5 · POST /token  grant_type=authorization_code&amp;code=AUTH_CODE</text>
+<text x="380" y="376" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.8">&amp;code_verifier=… (gốc) &amp;redirect_uri=… &amp;client_id=abc</text>
+<line x1="122" y1="386" x2="634" y2="386" stroke="#8b5cf6" stroke-width="2" marker-end="url(#eng04b-arr)"/>
+</g>
+<g data-step="6">
+<rect x="470" y="396" width="280" height="46" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="610" y="415" text-anchor="middle" font-size="13" fill="currentColor">6 · BASE64URL(SHA256(verifier))</text>
+<text x="610" y="433" text-anchor="middle" font-size="12" fill="currentColor">?= challenge bước 3 → khớp mới cấp</text>
+<text x="380" y="460" text-anchor="middle" font-size="13" fill="currentColor">access token (+ id token, refresh token)</text>
+<line x1="638" y1="468" x2="126" y2="468" stroke="#10b981" stroke-width="2" marker-end="url(#eng04b-arr)"/>
+</g>
+<line x1="16" y1="494" x2="744" y2="494" stroke="currentColor" stroke-opacity="0.15"/>
+<text x="380" y="518" text-anchor="middle" font-size="13" fill="currentColor" font-weight="700">Kẻ chặn AUTH_CODE mà không có code_verifier → không đổi được token</text>
+<text x="380" y="542" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.65">thời gian đi từ trên xuống dưới</text>
 </svg>
+<step-note data-step="1">Verifier là bí mật dùng một lần cho riêng lượt đăng nhập này. Nó nằm yên trong app, không đi đâu cho tới bước 5.</step-note>
+<step-note data-step="2">Thứ được đem ra ngoài chỉ là hash. SHA-256 một chiều nên ai thấy <code>code_challenge</code> cũng không tính ngược ra verifier.</step-note>
+<step-note data-step="3">Request đi qua trình duyệt nên mọi tham số lộ trên URL, kể cả challenge. Không sao: server chỉ cần ghi nhớ nó để so ở bước 6.</step-note>
+<step-note data-step="4">Mật khẩu chỉ đi giữa user và authorization server, app không thấy. Code quay về trên URL: đây là chỗ hở PKCE nhắm tới.</step-note>
+<step-note data-step="5">Lần đầu tiên verifier rời app, và nó đi trong body của <code>POST /token</code> chứ không qua redirect, nên kẻ nhặt code ở bước 4 không có nó.</step-note>
+<step-note data-step="6">Server tự hash verifier rồi so với challenge đã ghi ở bước 3: chỉ bên đã sinh verifier ở bước 1 mới khớp. Chỉ có <code>AUTH_CODE</code> thì bị từ chối.</step-note>
+</step-flow>
 
 ```
 1. App tạo code_verifier = chuỗi ngẫu nhiên 43-128 ký tự

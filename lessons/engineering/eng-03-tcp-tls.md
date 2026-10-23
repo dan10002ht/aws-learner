@@ -82,53 +82,12 @@ ss -tan | awk '{print $1}' | sort | uniq -c | sort -rn
 
 ## 4. HTTP/1.1 vs HTTP/2 vs HTTP/3
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Head-of-line blocking: HTTP/2 trên TCP so với HTTP/3 trên QUIC</title>
-  <desc>Bên trái HTTP/2: nhiều stream chung một dòng byte TCP, một gói mất chặn toàn bộ stream. Bên phải HTTP/3 QUIC: mỗi stream độc lập, gói mất chỉ chặn đúng stream của nó, các stream khác vẫn chạy.</desc>
-  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Head-of-line blocking — mất 1 gói thì ai bị chặn?</text>
-  <g>
-    <text x="180" y="48" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">HTTP/2 trên TCP</text>
-    <text x="180" y="66" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">3 stream gộp vào 1 dòng byte TCP có thứ tự</text>
-    <rect x="30" y="80" width="300" height="80" rx="9" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="44" y="96" font-size="9.5" fill="currentColor" opacity="0.75">1 connection TCP</text>
-    <g>
-      <rect x="44" y="104" width="40" height="20" rx="4" fill="#3b82f6" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.25"/>
-      <text x="64" y="118" font-size="9" text-anchor="middle" fill="currentColor">S1</text>
-      <rect x="90" y="104" width="40" height="20" rx="4" fill="#ef4444" fill-opacity="0.35" stroke="currentColor" stroke-opacity="0.4"/>
-      <text x="110" y="118" font-size="9" text-anchor="middle" fill="currentColor">mất</text>
-      <rect x="136" y="104" width="40" height="20" rx="4" fill="#3b82f6" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.25"/>
-      <text x="156" y="118" font-size="9" text-anchor="middle" fill="currentColor">S2</text>
-      <rect x="182" y="104" width="40" height="20" rx="4" fill="#3b82f6" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.25"/>
-      <text x="202" y="118" font-size="9" text-anchor="middle" fill="currentColor">S3</text>
-      <rect x="228" y="104" width="40" height="20" rx="4" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="3 2"/>
-      <text x="248" y="118" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.6">chờ</text>
-      <rect x="274" y="104" width="40" height="20" rx="4" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="3 2"/>
-      <text x="294" y="118" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.6">chờ</text>
-    </g>
-    <text x="180" y="148" font-size="9.5" text-anchor="middle" fill="#ef4444">1 gói TCP mất → S2, S3 cũng bị chặn (chờ truyền lại)</text>
-    <rect x="30" y="172" width="300" height="22" rx="8" fill="#ef4444" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="180" y="187" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Cả connection đứng lại</text>
-  </g>
-  <g>
-    <text x="540" y="48" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">HTTP/3 trên QUIC</text>
-    <text x="540" y="66" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">mỗi stream có thứ tự riêng, độc lập</text>
-    <rect x="390" y="80" width="300" height="80" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="404" y="96" font-size="9.5" fill="currentColor" opacity="0.75">1 connection QUIC (UDP)</text>
-    <g>
-      <rect x="404" y="104" width="84" height="20" rx="4" fill="#ef4444" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.35"/>
-      <text x="446" y="118" font-size="9" text-anchor="middle" fill="currentColor">S1 — gói mất, chờ</text>
-      <rect x="496" y="104" width="84" height="20" rx="4" fill="#10b981" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.25"/>
-      <text x="538" y="118" font-size="9" text-anchor="middle" fill="currentColor">S2 — chạy tiếp</text>
-      <rect x="588" y="104" width="88" height="20" rx="4" fill="#10b981" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.25"/>
-      <text x="632" y="118" font-size="9" text-anchor="middle" fill="currentColor">S3 — chạy tiếp</text>
-    </g>
-    <text x="540" y="148" font-size="9.5" text-anchor="middle" fill="#10b981">Gói mất chỉ chặn S1; S2, S3 không liên quan</text>
-    <rect x="390" y="172" width="300" height="22" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="540" y="187" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Chỉ đúng stream đó bị chặn</text>
-  </g>
-  <text x="360" y="232" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">TCP coi cả connection là một dòng byte → mọi stream phụ thuộc nhau.</text>
-  <text x="360" y="250" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">QUIC quản thứ tự ở từng stream → cô lập mất gói, đây là khác biệt cốt lõi của HTTP/3.</text>
-</svg>
+<ab-toggle data-labels="HTTP/2 trên TCP|HTTP/3 trên QUIC">
+<svg viewBox="0 0 520 372" role="img" aria-labelledby="eng03a-t eng03a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="eng03a-t">HTTP/2 trên TCP: mất 1 gói của S1 thì cả connection đứng lại</title><desc id="eng03a-d">Ba stream S1, S2, S3 gộp vào một dòng byte TCP có thứ tự. Gói S1·2 mất trên đường; S2·2 và S3·2 đã tới nhưng TCP giữ lại chờ truyền lại S1·2, nên cả ba stream đứng.</desc><text x="16" y="24" font-size="15" text-anchor="start" fill="currentColor" font-weight="700">Mất 1 gói — stream nào bị chặn?</text><text x="16" y="46" font-size="13" text-anchor="start" fill="currentColor" opacity="0.8">1 connection TCP: 3 stream gộp 1 dòng byte có thứ tự</text><text x="16" y="74" font-size="13" text-anchor="start" fill="currentColor" font-weight="700">Trên đường truyền (theo thứ tự gửi)</text><rect x="16" y="84" width="72" height="28" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><text x="52" y="103" font-size="13" text-anchor="middle" fill="currentColor">S1·1</text><rect x="98" y="84" width="72" height="28" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><text x="134" y="103" font-size="13" text-anchor="middle" fill="currentColor">S2·1</text><rect x="180" y="84" width="72" height="28" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><text x="216" y="103" font-size="13" text-anchor="middle" fill="currentColor">S3·1</text><rect x="262" y="84" width="72" height="28" rx="4" fill="#f43f5e" fill-opacity="0.16" stroke="#f43f5e" stroke-dasharray="4 3"/><text x="298" y="103" font-size="13" text-anchor="middle" fill="currentColor">S1·2</text><text x="298" y="130" font-size="13" text-anchor="middle" fill="#f43f5e" font-weight="700">✗ mất</text><rect x="344" y="84" width="72" height="28" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><text x="380" y="103" font-size="13" text-anchor="middle" fill="currentColor">S2·2</text><rect x="426" y="84" width="72" height="28" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><text x="462" y="103" font-size="13" text-anchor="middle" fill="currentColor">S3·2</text><text x="16" y="160" font-size="13" text-anchor="start" fill="currentColor" font-weight="700">Ứng dụng nhận được</text><text x="16" y="190" font-size="13" text-anchor="start" fill="currentColor" font-weight="700">S1</text><rect x="50" y="170" width="92" height="28" rx="4" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/><text x="96" y="189" font-size="13" text-anchor="middle" fill="currentColor">S1·1 ✓</text><rect x="150" y="170" width="230" height="28" rx="4" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"/><text x="265" y="189" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">S1·2 chờ truyền lại</text><rect x="390" y="170" width="114" height="28" rx="14" fill="#f43f5e" fill-opacity="0.15" stroke="#f43f5e" stroke-opacity="0.6"/><text x="447" y="189" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">chờ</text><text x="16" y="228" font-size="13" text-anchor="start" fill="currentColor" font-weight="700">S2</text><rect x="50" y="208" width="92" height="28" rx="4" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/><text x="96" y="227" font-size="13" text-anchor="middle" fill="currentColor">S2·1 ✓</text><rect x="150" y="208" width="230" height="28" rx="4" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"/><text x="265" y="227" font-size="13" text-anchor="middle" fill="currentColor">S2·2 tới rồi, TCP giữ lại</text><rect x="390" y="208" width="114" height="28" rx="14" fill="#f43f5e" fill-opacity="0.15" stroke="#f43f5e" stroke-opacity="0.6"/><text x="447" y="227" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">chờ</text><text x="16" y="266" font-size="13" text-anchor="start" fill="currentColor" font-weight="700">S3</text><rect x="50" y="246" width="92" height="28" rx="4" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/><text x="96" y="265" font-size="13" text-anchor="middle" fill="currentColor">S3·1 ✓</text><rect x="150" y="246" width="230" height="28" rx="4" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"/><text x="265" y="265" font-size="13" text-anchor="middle" fill="currentColor">S3·2 tới rồi, TCP giữ lại</text><rect x="390" y="246" width="114" height="28" rx="14" fill="#f43f5e" fill-opacity="0.15" stroke="#f43f5e" stroke-opacity="0.6"/><text x="447" y="265" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">chờ</text><rect x="16" y="290" width="488" height="30" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="260" y="310" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Cả connection đứng lại: S2, S3 chờ gói của S1</text><text x="260" y="342" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">TCP coi cả connection là một dòng byte</text><text x="260" y="360" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">→ mọi stream phụ thuộc nhau.</text></svg>
+<svg viewBox="0 0 520 372" role="img" aria-labelledby="eng03b-t eng03b-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="eng03b-t">HTTP/3 trên QUIC: mất 1 gói của S1 thì chỉ S1 phải chờ</title><desc id="eng03b-d">Cùng sáu gói, cùng gói S1·2 mất. QUIC (chạy trên UDP) giữ thứ tự riêng từng stream: S2·2 và S3·2 giao ngay cho ứng dụng, chỉ S1 chờ truyền lại S1·2.</desc><text x="16" y="24" font-size="15" text-anchor="start" fill="currentColor" font-weight="700">Mất 1 gói — stream nào bị chặn?</text><text x="16" y="46" font-size="13" text-anchor="start" fill="currentColor" opacity="0.8">1 connection QUIC (UDP): mỗi stream thứ tự riêng</text><text x="16" y="74" font-size="13" text-anchor="start" fill="currentColor" font-weight="700">Trên đường truyền (theo thứ tự gửi)</text><rect x="16" y="84" width="72" height="28" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><text x="52" y="103" font-size="13" text-anchor="middle" fill="currentColor">S1·1</text><rect x="98" y="84" width="72" height="28" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><text x="134" y="103" font-size="13" text-anchor="middle" fill="currentColor">S2·1</text><rect x="180" y="84" width="72" height="28" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><text x="216" y="103" font-size="13" text-anchor="middle" fill="currentColor">S3·1</text><rect x="262" y="84" width="72" height="28" rx="4" fill="#f43f5e" fill-opacity="0.16" stroke="#f43f5e" stroke-dasharray="4 3"/><text x="298" y="103" font-size="13" text-anchor="middle" fill="currentColor">S1·2</text><text x="298" y="130" font-size="13" text-anchor="middle" fill="#f43f5e" font-weight="700">✗ mất</text><rect x="344" y="84" width="72" height="28" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><text x="380" y="103" font-size="13" text-anchor="middle" fill="currentColor">S2·2</text><rect x="426" y="84" width="72" height="28" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><text x="462" y="103" font-size="13" text-anchor="middle" fill="currentColor">S3·2</text><text x="16" y="160" font-size="13" text-anchor="start" fill="currentColor" font-weight="700">Ứng dụng nhận được</text><text x="16" y="190" font-size="13" text-anchor="start" fill="currentColor" font-weight="700">S1</text><rect x="50" y="170" width="92" height="28" rx="4" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/><text x="96" y="189" font-size="13" text-anchor="middle" fill="currentColor">S1·1 ✓</text><rect x="150" y="170" width="230" height="28" rx="4" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"/><text x="265" y="189" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">S1·2 chờ truyền lại</text><rect x="390" y="170" width="114" height="28" rx="14" fill="#f43f5e" fill-opacity="0.15" stroke="#f43f5e" stroke-opacity="0.6"/><text x="447" y="189" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">chờ</text><text x="16" y="228" font-size="13" text-anchor="start" fill="currentColor" font-weight="700">S2</text><rect x="50" y="208" width="92" height="28" rx="4" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/><text x="96" y="227" font-size="13" text-anchor="middle" fill="currentColor">S2·1 ✓</text><rect x="150" y="208" width="230" height="28" rx="4" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/><text x="265" y="227" font-size="13" text-anchor="middle" fill="currentColor">S2·2 ✓ giao ngay</text><rect x="390" y="208" width="114" height="28" rx="14" fill="#10b981" fill-opacity="0.15" stroke="#10b981" stroke-opacity="0.6"/><text x="447" y="227" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">chạy tiếp</text><text x="16" y="266" font-size="13" text-anchor="start" fill="currentColor" font-weight="700">S3</text><rect x="50" y="246" width="92" height="28" rx="4" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/><text x="96" y="265" font-size="13" text-anchor="middle" fill="currentColor">S3·1 ✓</text><rect x="150" y="246" width="230" height="28" rx="4" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/><text x="265" y="265" font-size="13" text-anchor="middle" fill="currentColor">S3·2 ✓ giao ngay</text><rect x="390" y="246" width="114" height="28" rx="14" fill="#10b981" fill-opacity="0.15" stroke="#10b981" stroke-opacity="0.6"/><text x="447" y="265" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">chạy tiếp</text><rect x="16" y="290" width="488" height="30" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/><text x="260" y="310" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Chỉ đúng stream S1 bị chặn; S2, S3 không liên quan</text><text x="260" y="342" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">QUIC quản thứ tự ở từng stream → cô lập mất gói,</text><text x="260" y="360" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">khác biệt cốt lõi của HTTP/3.</text></svg>
+<ab-note>Sáu gói tới theo thứ tự gửi, chỉ <code>S1·2</code> rơi. <code>S2·2</code> và <code>S3·2</code> đã nằm trong buffer của máy nhận, nhưng TCP chỉ giao byte liền mạch nên giữ chúng tới khi <code>S1·2</code> được truyền lại: multiplexing của HTTP/2 hết head-of-line blocking ở tầng HTTP nhưng vẫn dính ở tầng TCP.</ab-note>
+<ab-note>Cùng sáu gói, cùng gói rơi. QUIC đánh thứ tự riêng cho từng stream nên <code>S2·2</code>, <code>S3·2</code> giao ngay cho ứng dụng; chỉ S1 phải đợi bản truyền lại.</ab-note>
+</ab-toggle>
 
 | | HTTP/1.1 | HTTP/2 | HTTP/3 |
 |---|---|---|---|
@@ -219,18 +178,48 @@ curl -sI --http3 https://www.cloudflare.com -o /dev/null -w '%{http_version}\n'
 
 ### Handshake TLS 1.3 (1-RTT)
 
-```text
-Client                                Server
-  | -- ClientHello                       |
-  |    + key_share (đoán sẵn khoá DH)    |
-  |    + SNI, ALPN ------------------->  |
-  |                                      |
-  | <-- ServerHello + key_share          |
-  |     {EncryptedExtensions,            |
-  |      Certificate, CertVerify,        |
-  |      Finished}  -------------------- |
-  | -- Finished + HTTP request --------> |   ← chỉ 1 RTT!
-```
+Bấm từng bước để xem từng gói trong lần bắt tay:
+
+<step-flow>
+<svg viewBox="0 0 640 372" role="img" aria-labelledby="eng03c-t eng03c-d" style="width:100%;height:auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="eng03c-t">Handshake TLS 1.3: 1 RTT trước khi gửi request</title><desc id="eng03c-d">Client gửi ClientHello kèm key_share (đoán sẵn khoá DH), SNI, ALPN. Server trả ServerHello kèm key_share, rồi cùng chuyến đó gửi EncryptedExtensions, Certificate, CertVerify, Finished đã mã hoá. Client gửi Finished kèm HTTP request: chỉ 1 RTT.</desc>
+<defs><marker id="eng03c-m" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<rect x="70" y="12" width="100" height="32" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="120" y="33" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">Client</text>
+<line x1="120" y1="44" x2="120" y2="358" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="510" y="12" width="100" height="32" rx="8" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="560" y="33" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">Server</text>
+<line x1="560" y1="44" x2="560" y2="358" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<g data-step="1">
+<text x="340" y="72" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">ClientHello</text>
+<text x="340" y="92" font-size="13" text-anchor="middle" fill="currentColor">+ key_share (đoán sẵn khoá DH) + SNI, ALPN</text>
+<line x1="122" y1="104" x2="556" y2="104" stroke="currentColor" stroke-width="1.6" marker-end="url(#eng03c-m)"/>
+</g>
+<g data-step="2">
+<text x="340" y="144" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">ServerHello + key_share</text>
+<line x1="558" y1="156" x2="124" y2="156" stroke="currentColor" stroke-width="1.6" marker-end="url(#eng03c-m)"/>
+<line x1="120" y1="174" x2="560" y2="174" stroke="#8b5cf6" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text x="340" y="192" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">hai bên đã có khoá chung: từ đây trở xuống mã hoá</text>
+</g>
+<g data-step="3">
+<rect x="140" y="206" width="400" height="64" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" stroke-opacity="0.6"/>
+<text x="340" y="228" font-size="13" text-anchor="middle" fill="currentColor">{EncryptedExtensions, Certificate,</text>
+<text x="340" y="246" font-size="13" text-anchor="middle" fill="currentColor">CertVerify, Finished}</text>
+<line x1="558" y1="260" x2="124" y2="260" stroke="currentColor" stroke-width="1.6" marker-end="url(#eng03c-m)"/>
+</g>
+<g data-step="4">
+<text x="340" y="304" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">Finished + HTTP request</text>
+<line x1="122" y1="316" x2="556" y2="316" stroke="#10b981" stroke-width="2.2" marker-end="url(#eng03c-m)"/>
+<path d="M106 104 L96 104 L96 260 L106 260" fill="none" stroke="#f59e0b" stroke-width="2"/>
+<text x="88" y="178" font-size="14" text-anchor="end" fill="currentColor" font-weight="700">1 RTT</text>
+<text x="88" y="196" font-size="13" text-anchor="end" fill="currentColor" opacity="0.8">(chỉ 1!)</text>
+<text x="340" y="350" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">request HTTP lên đường ngay sau 1 RTT</text>
+</g>
+</svg>
+<step-note data-step="1">Client không chờ thoả thuận: nó đoán nhóm khoá server sẽ chọn và gửi luôn khoá công khai DH trong <code>key_share</code>. <code>SNI</code> cho server biết tên miền cần cert nào, <code>ALPN</code> chọn h2 hay http/1.1.</step-note>
+<step-note data-step="2">Server gửi lại nửa DH của mình. Có hai nửa <code>key_share</code> là cả hai bên tự tính ra cùng một khoá bí mật, không cần thêm chuyến nào.</step-note>
+<step-note data-step="3">Cùng chuyến với ServerHello nên không tốn thêm RTT. Certificate đã nằm trong phần mã hoá, người nghe lén không thấy cert của server.</step-note>
+<step-note data-step="4">Client kiểm cert + <code>Finished</code> của server rồi gửi <code>Finished</code> của mình kèm luôn request. TLS 1.2 phải thêm một vòng nữa mới tới đây.</step-note>
+</step-flow>
 
 Khác biệt then chốt so với TLS 1.2:
 
