@@ -51,56 +51,67 @@ Chọn trước khi đọc tiếp.
 
 Đáp án là **(c)**.
 
-`security/sec-05-authn-authz.md` đã cho ý tưởng PKCE (sinh verifier, gửi hash, sau gửi verifier gốc). Ở đây hỏi tiếp: PKCE ràng **cái gì** vào **cái gì**, ai giữ đầu ràng. Lỗ hở cuối bài 2: với public client, request 8 chỉ chứa `code` và `client_id`, cả hai đã đi qua front channel. RFC 7636 gọi tên cuộc tấn công: *"OAuth 2.0 public clients utilizing the Authorization Code Grant are susceptible to the authorization code interception attack."*
+`security/sec-05-authn-authz.md` đã cho ý tưởng PKCE. Ở đây hỏi tiếp: PKCE ràng **cái gì** vào **cái gì**, ai giữ đầu ràng. Lỗ hở cuối bài 2: với public client, request 8 chỉ chứa `code` và `client_id`, cả hai đã đi qua front channel. RFC 7636 gọi tên cuộc tấn công: *"OAuth 2.0 public clients utilizing the Authorization Code Grant are susceptible to the authorization code interception attack."*
 
-PKCE (Proof Key for Code Exchange) lấp lỗ bằng một bí mật do **chính phiên chạy flow** tự sinh:
+PKCE (Proof Key for Code Exchange) lấp lỗ bằng bí mật do **chính phiên chạy flow** tự sinh. Thứ bị ràng: **code** với **bên đã gửi request 3**; bên kiểm: **Keycloak** ở token endpoint, khác `state` (app kiểm, bài 2).
 
-1. Trước request 3, SPA sinh `code_verifier` V (chuỗi ngẫu nhiên) và giữ trong bộ nhớ.
-2. Request 3 mang `code_challenge` C = hàm một chiều của V. Keycloak lưu C cạnh code nó sắp phát.
-3. Request 8 mang V. Keycloak tính lại hàm của V, so với C đã lưu. Khớp mới đổi.
-
-Thứ bị ràng: **code** với **bên đã gửi request 3**. Bên kiểm: **Keycloak**, ở token endpoint, khác `state` (app kiểm, bài 2). Sơ đồ dưới thêm cột kẻ tấn công vào sơ đồ của sec-05, và vẽ đúng điều lab đo được ở 4.3: lần đổi hỏng của kẻ tấn công **đốt luôn code**, nên PKCE chặn được việc lấy token nhưng không chặn được việc phá lượt login.
-
-<svg viewBox="0 0 760 510" role="img" aria-labelledby="kc3-a-t kc3-a-d" style="width:100%;height:auto">
+<step-flow>
+<svg viewBox="0 0 760 520" role="img" aria-labelledby="kc3-a-t kc3-a-d" style="width:100%;height:auto">
 <title id="kc3-a-t">PKCE S256 khi code bị đọc trộm</title>
-<desc id="kc3-a-d">Sơ đồ sequence ba cột: kẻ tấn công đọc được URL, trình duyệt chạy SPA, và Keycloak. SPA gửi code_challenge ở request 1, kẻ tấn công đọc được challenge và code nhưng không có verifier nên lần đổi code của hắn bị từ chối với Code mismatch; lần đổi hỏng đó đã đốt code, nên SPA gửi verifier đúng sau đó cũng nhận Code not valid: kẻ tấn công không có token nhưng làm hỏng lượt login.</desc>
+<desc id="kc3-a-d">Sơ đồ sequence ba cột: kẻ tấn công đọc được URL, trình duyệt chạy SPA, và Keycloak. SPA sinh verifier V, gửi code_challenge C ở request 3; kẻ tấn công đọc được C và code K nhưng không có V nên lần đổi code của hắn bị từ chối với Code mismatch; lần đổi hỏng đó đã đốt K, nên SPA gửi V đúng sau đó cũng nhận Code not valid: kẻ tấn công không có token nhưng làm hỏng lượt login.</desc>
 <defs>
 <marker id="kc3-a-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker>
 </defs>
-<rect x="15" y="15" width="150" height="32" rx="8" fill="#ef4444" fill-opacity="0.22"/>
+<rect x="15" y="15" width="150" height="32" rx="8" fill="#f43f5e" fill-opacity="0.16"/>
 <text x="90" y="36" text-anchor="middle" font-size="12" fill="currentColor">Kẻ tấn công</text>
-<rect x="245" y="15" width="170" height="32" rx="8" fill="#3b82f6" fill-opacity="0.25"/>
+<rect x="245" y="15" width="170" height="32" rx="8" fill="#3b82f6" fill-opacity="0.16"/>
 <text x="330" y="36" text-anchor="middle" font-size="12" fill="currentColor">Browser + SPA</text>
-<rect x="560" y="15" width="120" height="32" rx="8" fill="#84cc16" fill-opacity="0.25"/>
+<rect x="560" y="15" width="120" height="32" rx="8" fill="#10b981" fill-opacity="0.16"/>
 <text x="620" y="36" text-anchor="middle" font-size="12" fill="currentColor">Keycloak</text>
-<line x1="90" y1="47" x2="90" y2="495" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 4"/>
-<line x1="330" y1="47" x2="330" y2="495" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 4"/>
-<line x1="620" y1="47" x2="620" y2="495" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 4"/>
-<rect x="200" y="62" width="260" height="30" rx="8" fill="#3b82f6" fill-opacity="0.15"/>
-<text x="330" y="81" text-anchor="middle" font-size="10" fill="currentColor">sinh V ngẫu nhiên, giữ trong bộ nhớ; C = S256(V)</text>
-<text x="475" y="117" text-anchor="middle" font-size="10" fill="currentColor">1  GET /auth?...&amp;code_challenge=C&amp;method=S256</text>
-<line x1="332" y1="124" x2="616" y2="124" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc3-a-arrow)"/>
-<text x="210" y="147" text-anchor="middle" font-size="10" fill="currentColor">đọc URL: có C, không đảo ra V</text>
-<line x1="328" y1="154" x2="94" y2="154" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#kc3-a-arrow)"/>
-<rect x="545" y="170" width="150" height="30" rx="8" fill="#84cc16" fill-opacity="0.15"/>
-<text x="620" y="189" text-anchor="middle" font-size="10" fill="currentColor">lưu C cạnh code K</text>
-<text x="475" y="222" text-anchor="middle" font-size="10" fill="currentColor">2  302 /callback?state=…&amp;code=K</text>
-<line x1="618" y1="229" x2="334" y2="229" stroke="#f59e0b" stroke-width="2" marker-end="url(#kc3-a-arrow)"/>
-<text x="210" y="252" text-anchor="middle" font-size="10" fill="currentColor">đọc URL: có K</text>
-<line x1="328" y1="259" x2="94" y2="259" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#kc3-a-arrow)"/>
-<text x="355" y="292" text-anchor="middle" font-size="10" fill="currentColor">3  POST /token code=K, client_id, verifier đoán bừa</text>
-<line x1="92" y1="299" x2="616" y2="299" stroke="#ef4444" stroke-width="2" marker-end="url(#kc3-a-arrow)"/>
-<text x="355" y="327" text-anchor="middle" font-size="10" fill="currentColor">400 invalid_grant: PKCE verification failed: Code mismatch</text>
-<line x1="618" y1="334" x2="94" y2="334" stroke="#ef4444" stroke-width="2" marker-end="url(#kc3-a-arrow)"/>
-<rect x="530" y="344" width="180" height="26" rx="8" fill="#ef4444" fill-opacity="0.15"/>
-<text x="620" y="361" text-anchor="middle" font-size="10" fill="currentColor">K đã bị đốt bởi lần đổi hỏng</text>
-<text x="475" y="392" text-anchor="middle" font-size="10" fill="currentColor">4  POST /token code=K + code_verifier=V</text>
+<line x1="90" y1="47" x2="90" y2="470" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="330" y1="47" x2="330" y2="470" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="620" y1="47" x2="620" y2="470" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 4"/>
+<g data-step="1">
+<rect x="190" y="60" width="280" height="30" rx="8" fill="#3b82f6" fill-opacity="0.15"/>
+<text x="330" y="80" text-anchor="middle" font-size="11" fill="currentColor">sinh V ngẫu nhiên, giữ trong bộ nhớ; C = S256(V)</text>
+</g>
+<g data-step="2">
+<text x="475" y="115" text-anchor="middle" font-size="11" fill="currentColor">3  GET /auth?...&amp;code_challenge=C&amp;method=S256</text>
+<line x1="332" y1="122" x2="616" y2="122" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc3-a-arrow)"/>
+<text x="210" y="145" text-anchor="middle" font-size="11" fill="currentColor">đọc URL: có C, không đảo ra V</text>
+<line x1="328" y1="152" x2="94" y2="152" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#kc3-a-arrow)"/>
+</g>
+<g data-step="3">
+<rect x="545" y="168" width="150" height="30" rx="8" fill="#10b981" fill-opacity="0.15"/>
+<text x="620" y="188" text-anchor="middle" font-size="11" fill="currentColor">lưu C cạnh code K</text>
+<text x="475" y="220" text-anchor="middle" font-size="11" fill="currentColor">6  302 /callback?state=…&amp;code=K</text>
+<line x1="618" y1="227" x2="334" y2="227" stroke="#f59e0b" stroke-width="2" marker-end="url(#kc3-a-arrow)"/>
+<text x="210" y="250" text-anchor="middle" font-size="11" fill="currentColor">đọc URL: có K</text>
+<line x1="328" y1="257" x2="94" y2="257" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#kc3-a-arrow)"/>
+</g>
+<g data-step="4">
+<text x="355" y="290" text-anchor="middle" font-size="11" fill="currentColor">8  POST /token code=K, client_id, verifier đoán bừa</text>
+<line x1="92" y1="297" x2="616" y2="297" stroke="#ef4444" stroke-width="2" marker-end="url(#kc3-a-arrow)"/>
+<text x="355" y="325" text-anchor="middle" font-size="11" fill="currentColor">400 invalid_grant: PKCE verification failed: Code mismatch</text>
+<line x1="618" y1="332" x2="94" y2="332" stroke="#ef4444" stroke-width="2" marker-end="url(#kc3-a-arrow)"/>
+<rect x="520" y="342" width="200" height="26" rx="8" fill="#f43f5e" fill-opacity="0.15"/>
+<text x="620" y="359" text-anchor="middle" font-size="11" fill="currentColor">K đã bị đốt bởi lần đổi hỏng</text>
+</g>
+<g data-step="5">
+<text x="475" y="392" text-anchor="middle" font-size="11" fill="currentColor">8  POST /token code=K + code_verifier=V</text>
 <line x1="332" y1="399" x2="616" y2="399" stroke="#8b5cf6" stroke-width="2" marker-end="url(#kc3-a-arrow)"/>
-<text x="475" y="432" text-anchor="middle" font-size="10" fill="currentColor">5  400 invalid_grant: Code not valid</text>
-<line x1="618" y1="439" x2="334" y2="439" stroke="#8b5cf6" stroke-width="2" marker-end="url(#kc3-a-arrow)"/>
-<text x="380" y="472" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.8">V không bao giờ đi front channel: kẻ tấn công không có token, nhưng lượt login này hỏng</text>
-<text x="380" y="488" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.8">(SPA đổi trước thì nhận 200 và lần đổi của hắn gặp Code not valid)</text>
+<text x="475" y="430" text-anchor="middle" font-size="11" fill="currentColor">400 invalid_grant: Code not valid</text>
+<line x1="618" y1="437" x2="334" y2="437" stroke="#8b5cf6" stroke-width="2" marker-end="url(#kc3-a-arrow)"/>
+</g>
+<text x="380" y="490" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.8">V không bao giờ đi front channel: kẻ tấn công không có token, nhưng lượt login này hỏng</text>
+<text x="380" y="508" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.8">(SPA đổi trước thì nhận 200 và lần đổi của hắn gặp Code not valid)</text>
 </svg>
+<step-note data-step="1">V không rời bộ nhớ của phiên chạy flow; chỉ C đi ra ngoài.</step-note>
+<step-note data-step="2">C nằm trên URL front channel nên kẻ tấn công thấy; SHA256 một chiều nên có C không tính ngược ra V.</step-note>
+<step-note data-step="3">Keycloak gắn C vào K lúc phát. K lộ đúng như RFC 7636 tả, nhưng giờ chỉ bên cầm V đổi được K.</step-note>
+<step-note data-step="4">Keycloak tính S256 của verifier, so với C: lệch thì từ chối. Code dùng một lần nên lần đổi hỏng đốt luôn K (lab 4.3).</step-note>
+<step-note data-step="5">PKCE giữ được token, không giữ được lượt login.</step-note>
+</step-flow>
 
 Vì sao triệu chứng ở mục 2 vẫn xảy ra? Ràng buộc chỉ tồn tại khi request 3 **có** C. Kẻ tấn công không phá ràng buộc của SPA thật; hắn dựng request 3 **không có** C. Docs Keycloak, cho client để trống mục PKCE method: *"Keycloak does not apply PKCE unless the client sends the appropriate PKCE parameters to Keycloak authorization endpoint. So PKCE is still possible to use, but it is not required."* Bài 2 (mục 4.2) đã chạy đúng ca này với `spa-nopkce`.
 

@@ -44,7 +44,7 @@ Token mang `sub` của bob. Chuyện gì đã xảy ra?
 
 Bản sai thường gặp: "brokering và federation là một, đều là Keycloak lấy user từ chỗ khác". Hai thứ nằm ở hai chương tách riêng trong docs, và nguyên nhân gốc của sự khác biệt là **nơi credential được kiểm**.
 
-**Identity broker** là trung gian nối service provider (app) với identity provider ngoài. Với brokering, Keycloak redirect trình duyệt sang IdP ngoài (Google, Azure AD, một realm Keycloak khác, một IdP SAML). User gõ mật khẩu vào form **của IdP ngoài**. Keycloak không bao giờ thấy mật khẩu đó; nó chỉ nhận về một kết quả đã ký (code đổi lấy token OIDC, hoặc assertion SAML), rồi tự phát token **của chính nó** cho app. Giao thức broker được: SAML 2.0 và OIDC 1.0.
+**Identity broker** là trung gian nối service provider (app) với identity provider ngoài. Với brokering, Keycloak redirect trình duyệt sang IdP ngoài (Google, Azure AD, một realm Keycloak khác, một IdP SAML). User gõ mật khẩu vào form **của IdP ngoài**. Keycloak chỉ nhận về một kết quả đã ký (code đổi lấy token OIDC, hoặc assertion SAML), rồi tự phát token **của chính nó** cho app. Giao thức broker được: SAML 2.0 và OIDC 1.0.
 
 **User federation** (bài 16) thì ngược lại: user gõ mật khẩu vào form **của Keycloak**, Keycloak cầm mật khẩu đó đi hỏi LDAP/AD. Với LDAP, Keycloak không bao giờ import mật khẩu, việc kiểm luôn diễn ra ở LDAP server.
 
@@ -62,66 +62,91 @@ Chỗ dễ lẫn: đoạn brokering của docs dùng đúng chữ "identity fede
 
 ### 3.2 Luồng: hai cuộc OAuth lồng nhau, và token ngoài dừng ở Keycloak
 
-Bản sai thứ hai: "login bằng Google qua Keycloak thì app nhận token của Google". Luồng thật trên lab (mục 4) là hai authorization code flow (bài 2) lồng nhau:
+Bản sai thứ hai: "login bằng Google qua Keycloak thì app nhận token của Google". Luồng thật trên lab (mục 4) là hai authorization code flow (bài 2) lồng nhau.
 
-- **Vòng ngoài**: app `webapp` là client của realm `app`. Nó nhận code của realm `app`, đổi lấy token có `iss = .../realms/app`.
-- **Vòng trong**: realm `app` là **client** của realm `corp`, với client id `app-broker`, secret riêng, và `redirect_uri = .../realms/app/broker/corp/endpoint`. Đoạn `/broker/corp/` đến từ alias; đổi alias là phải sửa redirect URI ở IdP ngoài.
-
-<svg viewBox="0 0 700 470" role="img" aria-labelledby="kc15-a-t kc15-a-d" style="width:100%;height:auto">
+<step-flow>
+<svg viewBox="0 0 760 540" role="img" aria-labelledby="kc15-a-t kc15-a-d" style="width:100%;height:auto">
 <title id="kc15-a-t">Sequence brokering OIDC: webapp, realm app, realm corp</title>
-<desc id="kc15-a-d">Trình duyệt đi từ realm app sang realm corp để đăng nhập, realm app đổi code của corp qua back-channel rồi phát code và token của chính nó cho webapp; token của corp dừng lại ở realm app.</desc>
+<desc id="kc15-a-d">Hai authorization code flow lồng nhau. Vòng ngoài (xanh): webapp là client của realm app. Vòng trong (tím): realm app là client app-broker của realm corp; trình duyệt sang corp để đăng nhập, realm app đổi code của corp qua back-channel (POST /token, GET /userinfo), chạy first broker login, rồi phát code và token của chính nó cho webapp. Token của corp dừng ở realm app; JWT webapp nhận có iss = realms/app.</desc>
 <defs>
-<marker id="kc15-a-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
-<marker id="kc15-a-arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker>
+<marker id="kc15-a-arr-o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3b82f6"/></marker>
+<marker id="kc15-a-arr-i" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8b5cf6"/></marker>
 </defs>
-<rect x="20" y="16" width="120" height="34" rx="8" fill="#64748b" fill-opacity="0.25"/>
-<text x="80" y="38" text-anchor="middle" font-size="11" fill="currentColor">Trình duyệt</text>
-<rect x="170" y="16" width="120" height="34" rx="8" fill="#84cc16" fill-opacity="0.25"/>
-<text x="230" y="38" text-anchor="middle" font-size="11" fill="currentColor">webapp (client)</text>
-<rect x="345" y="16" width="150" height="34" rx="8" fill="#3b82f6" fill-opacity="0.25"/>
-<text x="420" y="38" text-anchor="middle" font-size="11" fill="currentColor">Keycloak realm app</text>
-<rect x="535" y="16" width="150" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.25"/>
-<text x="610" y="38" text-anchor="middle" font-size="11" fill="currentColor">realm corp (IdP ngoài)</text>
-<line x1="80" y1="50" x2="80" y2="455" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-<line x1="230" y1="50" x2="230" y2="455" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-<line x1="420" y1="50" x2="420" y2="455" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-<line x1="610" y1="50" x2="610" y2="455" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-<text x="250" y="76" text-anchor="middle" font-size="11" fill="currentColor">1 GET /auth (webapp, kc_idp_hint=corp) → 303</text>
-<line x1="80" y1="82" x2="418" y2="82" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc15-a-arrow)"/>
-<text x="250" y="108" text-anchor="middle" font-size="11" fill="currentColor">2 GET /broker/corp/login → 303 sang corp</text>
-<line x1="80" y1="114" x2="418" y2="114" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc15-a-arrow)"/>
-<text x="345" y="140" text-anchor="middle" font-size="11" fill="currentColor">3 GET corp /auth (client_id=app-broker) → 200 form login</text>
-<line x1="80" y1="146" x2="608" y2="146" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc15-a-arrow)"/>
-<text x="345" y="172" text-anchor="middle" font-size="11" fill="currentColor">4 POST mật khẩu của corp → 302 kèm code của corp</text>
-<line x1="80" y1="178" x2="608" y2="178" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc15-a-arrow)"/>
-<text x="250" y="204" text-anchor="middle" font-size="11" fill="currentColor">5 GET /broker/corp/endpoint?code=…</text>
-<line x1="80" y1="210" x2="418" y2="210" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc15-a-arrow)"/>
-<text x="515" y="234" text-anchor="middle" font-size="11" fill="currentColor">5a POST /token + secret</text>
-<line x1="420" y1="240" x2="608" y2="240" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#kc15-a-arrow2)"/>
-<text x="515" y="262" text-anchor="middle" font-size="11" fill="currentColor">token corp dừng ở đây</text>
-<line x1="610" y1="268" x2="422" y2="268" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#kc15-a-arrow2)"/>
-<text x="515" y="290" text-anchor="middle" font-size="11" fill="currentColor">5b GET /userinfo</text>
-<line x1="420" y1="296" x2="608" y2="296" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#kc15-a-arrow2)"/>
-<rect x="335" y="312" width="170" height="44" rx="8" fill="#3b82f6" fill-opacity="0.18"/>
-<text x="420" y="330" text-anchor="middle" font-size="11" fill="currentColor">first broker login</text>
-<text x="420" y="346" text-anchor="middle" font-size="11" fill="currentColor">tạo user hoặc link</text>
-<text x="250" y="378" text-anchor="middle" font-size="11" fill="currentColor">6–7 302 về /cb?code=… (code của realm app)</text>
-<line x1="418" y1="384" x2="82" y2="384" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#kc15-a-arrow)"/>
-<text x="155" y="406" text-anchor="middle" font-size="11" fill="currentColor">8 /cb?code</text>
-<line x1="80" y1="412" x2="228" y2="412" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc15-a-arrow)"/>
-<text x="325" y="434" text-anchor="middle" font-size="11" fill="currentColor">9 POST /token</text>
-<line x1="230" y1="440" x2="418" y2="440" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc15-a-arrow)"/>
-<text x="430" y="452" font-size="11" fill="currentColor">→ JWT iss = realms/app</text>
+<rect x="0" y="14" width="160" height="34" rx="8" fill="#64748b" fill-opacity="0.25"/>
+<text x="80" y="36" text-anchor="middle" font-size="13" fill="currentColor">Trình duyệt</text>
+<rect x="170" y="14" width="160" height="34" rx="8" fill="#84cc16" fill-opacity="0.25"/>
+<text x="250" y="36" text-anchor="middle" font-size="13" fill="currentColor">webapp (client)</text>
+<rect x="380" y="14" width="160" height="34" rx="8" fill="#3b82f6" fill-opacity="0.25"/>
+<text x="460" y="36" text-anchor="middle" font-size="13" fill="currentColor">Keycloak realm app</text>
+<rect x="590" y="14" width="160" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.25"/>
+<text x="670" y="36" text-anchor="middle" font-size="13" fill="currentColor">realm corp (IdP ngoài)</text>
+<line x1="20" y1="68" x2="50" y2="68" stroke="#3b82f6" stroke-width="2.5"/>
+<text x="56" y="72" font-size="12" fill="currentColor">vòng ngoài: webapp là client của realm app</text>
+<line x1="400" y1="68" x2="430" y2="68" stroke="#8b5cf6" stroke-width="2.5"/>
+<text x="436" y="72" font-size="12" fill="currentColor">vòng trong: realm app là client app-broker</text>
+<rect x="450" y="250" width="240" height="108" rx="8" fill="#f59e0b" fill-opacity="0.13"/>
+<text x="444" y="314" text-anchor="end" font-size="11" fill="currentColor" opacity="0.8">back-channel</text>
+<line x1="80" y1="48" x2="80" y2="528" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<line x1="250" y1="48" x2="250" y2="528" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<line x1="460" y1="48" x2="460" y2="528" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<line x1="670" y1="48" x2="670" y2="528" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<g data-step="1">
+<text x="270" y="103" text-anchor="middle" font-size="12" fill="currentColor">1 GET /auth (webapp, kc_idp_hint=corp) → 303</text>
+<line x1="82" y1="110" x2="458" y2="110" stroke="#3b82f6" stroke-width="2" marker-end="url(#kc15-a-arr-o)"/>
+</g>
+<g data-step="2">
+<text x="270" y="137" text-anchor="middle" font-size="12" fill="currentColor">2 GET /broker/corp/login → 303 sang corp</text>
+<line x1="82" y1="144" x2="458" y2="144" stroke="#8b5cf6" stroke-width="2" marker-end="url(#kc15-a-arr-i)"/>
+</g>
+<g data-step="3">
+<text x="375" y="171" text-anchor="middle" font-size="12" fill="currentColor">3 GET corp /auth (client_id=app-broker) → 200 form login</text>
+<line x1="82" y1="178" x2="668" y2="178" stroke="#8b5cf6" stroke-width="2" marker-end="url(#kc15-a-arr-i)"/>
+</g>
+<g data-step="4">
+<text x="375" y="205" text-anchor="middle" font-size="12" fill="currentColor">4 POST mật khẩu của corp → 302 kèm code của corp</text>
+<line x1="82" y1="212" x2="668" y2="212" stroke="#8b5cf6" stroke-width="2" marker-end="url(#kc15-a-arr-i)"/>
+</g>
+<g data-step="5">
+<text x="270" y="239" text-anchor="middle" font-size="12" fill="currentColor">5 GET /broker/corp/endpoint?code=…</text>
+<line x1="82" y1="246" x2="458" y2="246" stroke="#8b5cf6" stroke-width="2" marker-end="url(#kc15-a-arr-i)"/>
+</g>
+<g data-step="6">
+<text x="565" y="271" text-anchor="middle" font-size="12" fill="currentColor">5a POST /token + secret</text>
+<line x1="462" y1="278" x2="668" y2="278" stroke="#8b5cf6" stroke-width="2" marker-end="url(#kc15-a-arr-i)"/>
+<text x="565" y="303" text-anchor="middle" font-size="12" fill="currentColor">token corp dừng ở đây</text>
+<line x1="668" y1="310" x2="462" y2="310" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#kc15-a-arr-i)"/>
+</g>
+<g data-step="7">
+<text x="545" y="335" text-anchor="middle" font-size="12" fill="currentColor">5b GET /userinfo</text>
+<line x1="462" y1="342" x2="668" y2="342" stroke="#8b5cf6" stroke-width="2" marker-end="url(#kc15-a-arr-i)"/>
+</g>
+<g data-step="8">
+<rect x="370" y="370" width="180" height="46" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="460" y="389" text-anchor="middle" font-size="12" fill="currentColor">first broker login</text>
+<text x="460" y="406" text-anchor="middle" font-size="12" fill="currentColor">tạo user hoặc link</text>
+<text x="270" y="441" text-anchor="middle" font-size="12" fill="currentColor">6–7 302 về /cb?code=… (code của realm app)</text>
+<line x1="458" y1="448" x2="82" y2="448" stroke="#3b82f6" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#kc15-a-arr-o)"/>
+</g>
+<g data-step="9">
+<text x="165" y="475" text-anchor="middle" font-size="12" fill="currentColor">8 /cb?code</text>
+<line x1="82" y1="482" x2="248" y2="482" stroke="#3b82f6" stroke-width="2" marker-end="url(#kc15-a-arr-o)"/>
+<text x="355" y="509" text-anchor="middle" font-size="12" fill="currentColor">9 POST /token</text>
+<line x1="252" y1="516" x2="458" y2="516" stroke="#3b82f6" stroke-width="2" marker-end="url(#kc15-a-arr-o)"/>
+<text x="470" y="520" font-size="12" fill="currentColor">→ JWT iss = realms/app</text>
+</g>
 </svg>
-
-Bước 5a, 5b là **back-channel**: event của realm `corp` cho mỗi lần login là `LOGIN`, `CODE_TO_TOKEN`, `USER_INFO_REQUEST`, cả ba `clientId = app-broker`. Token `corp` trả ở 5a không đi tiếp: token `webapp` nhận có `iss = http://localhost:8680/realms/app`. Muốn Keycloak giữ token của IdP ngoài (để gọi API của IdP thay user) phải bật Store Tokens; lab để mặc định.
+<step-note data-step="1">Vòng ngoài, như bài 2.</step-note>
+<step-note data-step="2">Đoạn cuối <code>state</code> (dạng <code>ngẫu-nhiên.tab_id.….client_data</code>) base64url-decode ra <code>{"ru":"http://localhost:3000/cb","rt":"code","st":"s1"}</code>: ngữ cảnh vòng ngoài, để khi code <code>corp</code> quay về Keycloak biết trả user cho client nào.</step-note>
+<step-note data-step="3">Không có <code>code_challenge</code>: confidential client (<code>client_secret_post</code>), code bị chặn chưa đổi được nếu thiếu secret.</step-note>
+<step-note data-step="4">Mật khẩu chỉ tới <code>corp</code> (event <code>LOGIN</code>).</step-note>
+<step-note data-step="5">Đoạn <code>/broker/corp/</code> của <code>redirect_uri</code> đến từ alias; đổi alias là phải sửa redirect URI ở IdP ngoài.</step-note>
+<step-note data-step="6">Event <code>CODE_TO_TOKEN</code>. Token <code>corp</code> không đi tiếp; muốn Keycloak giữ nó để gọi API của IdP thay user phải bật Store Tokens (lab: mặc định).</step-note>
+<step-note data-step="7">Event <code>USER_INFO_REQUEST</code>. Cả ba event của <code>corp</code> mang <code>clientId = app-broker</code>.</step-note>
+<step-note data-step="8">Mục 3.3. Xong thì vòng ngoài nối lại chỗ bước 1 dừng.</step-note>
+<step-note data-step="9">Issuer duy nhất <code>webapp</code> thấy là realm <code>app</code>; nó không biết <code>corp</code> tồn tại.</step-note>
+</step-flow>
 
 Cái lợi của thiết kế này: app chỉ tin **một** issuer. Thêm IdP thứ hai, thứ ba không đổi `issuer-uri` của Spring (bài 12), và claim vẫn do mapper của realm `app` quyết định (bài 9).
-
-Hai chi tiết đọc được trên URL ở bước 2:
-
-- `state` gửi sang `corp` có dạng `<ngẫu nhiên>.<tab_id>.<...>.<client_data>`; đoạn cuối base64url-decode ra `{"ru":"http://localhost:3000/cb","rt":"code","st":"s1"}`, ngữ cảnh của vòng ngoài. Nhờ nó, khi code của `corp` quay về, Keycloak biết trả user cho client nào.
-- Không có `code_challenge`. Vòng trong là confidential client (`client_secret_post`), code bị chặn giữa đường chưa đổi được nếu thiếu secret.
 
 IdP ngoài là SAML thì realm `app` đóng vai **SP** (bài 5): SP Entity ID mặc định là base URL của realm, metadata SP ở `/realms/{realm}/broker/{alias}/endpoint/descriptor`, và mọi phép kiểm của bài 5 là việc của Keycloak. Ô dễ bỏ trống: Identity Provider Entity ID; trống thì không kiểm `Issuer`.
 
@@ -275,7 +300,7 @@ kc update events/config -r app -s eventsEnabled=true
 access_token: {"iss": "http://localhost:8680/realms/app", "azp": "webapp", "email_verified": false}
 ```
 
-Thấy: code ở bước 4 có `iss=...corp`, ở bước 7 có `iss=...realms%2Fapp`: hai issuer, hai vòng OAuth. Bước 6 không dừng ở form nào vì alice không trùng ai. `email_verified: false` vì Trust Email OFF. Login lại với cookie jar mới: chỉ còn [1] tới [5], [5] trả thẳng về `localhost:3000/cb`.
+Thấy: code ở bước 4 có `iss=...corp`, ở bước 7 có `iss=...realms%2Fapp`. Bước 6 không dừng ở form nào vì alice không trùng ai. `email_verified: false` vì Trust Email OFF. Login lại với cookie jar mới: chỉ còn [1] tới [5], [5] trả thẳng về `localhost:3000/cb`.
 
 **Bước 3: user ở realm `app`.**
 
@@ -369,8 +394,7 @@ Với import (mặc định lab): không bao giờ. Thay tên bằng `department
 ## 7. Tóm tắt
 
 - Brokering: mật khẩu gõ vào form của IdP ngoài. Federation (bài 16): gõ vào form của Keycloak, Keycloak đem đi hỏi LDAP.
-- Luồng OIDC brokering là hai vòng authorization code lồng nhau. Lab: lần đầu 7 request trình duyệt + 1 đổi code của app + 2 back-channel (token, userinfo) sang IdP; lần sau 5 + 1 + 2.
-- Token của IdP ngoài dừng ở Keycloak; app nhận token `iss = .../realms/app`.
+- Luồng OIDC brokering là hai vòng authorization code lồng nhau; token của IdP ngoài dừng ở Keycloak, app nhận `iss = .../realms/app`. Lab: lần đầu 7 request trình duyệt + 1 đổi code của app + 2 back-channel (token, userinfo) sang IdP; lần sau 5 + 1 + 2.
 - User vào qua broker có bản ghi local, `credentials` rỗng, liên kết khoá theo `sub` của IdP ngoài. Tạo user qua broker không phụ thuộc công tắc User Registration.
 - First broker login mặc định: email trùng thì hỏi, chọn link thì phải chứng minh sở hữu account local bằng email (cần SMTP) hoặc mật khẩu. Không SMTP thì Keycloak bỏ qua nhánh email (`KC-SERVICES0023`).
 - `idp-auto-link` gắn danh tính ngoài vào account trùng email mà không kiểm gì. Lab: mallory, email chưa xác minh, Trust Email OFF, nhận token `sub` của bob. Dấu vết: `identity_provider_identity` khác `username` trong event.
