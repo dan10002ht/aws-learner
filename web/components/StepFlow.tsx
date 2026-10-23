@@ -153,29 +153,42 @@ export default function StepFlow(props: { children?: React.ReactNode }) {
     // Fullscreen lays out asynchronously: wait, then bring the active step into view.
     const scrollT = full && act ? setTimeout(() => act.scrollIntoView?.({ block: "center", behavior: "smooth" }), 350) : 0;
 
-    svg.querySelector(".sf-dot")?.remove();
+    // A dot runs along every arrow of the active step: straight <line>s and
+    // elbow <path>s (architecture diagrams) alike.
+    svg.querySelectorAll(".sf-dot").forEach((d) => d.remove());
     const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    if (!line || reduce) return () => clearTimeout(scrollT);
-    const [x1, y1, x2, y2] = ["x1", "y1", "x2", "y2"].map((a) => num(line, a));
-    const stroke = line.getAttribute("stroke");
-    const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    dot.setAttribute("class", "sf-dot");
-    dot.setAttribute("r", "6");
-    dot.setAttribute("fill", stroke && stroke !== "currentColor" ? stroke : "#0ea5e9");
-    svg.appendChild(dot);
-    const anim = dot.animate(
-      [
-        { transform: `translate(${x1}px, ${y1}px)`, opacity: 0 },
-        { opacity: 1, offset: 0.15 },
-        { opacity: 1, offset: 0.85 },
-        { transform: `translate(${x2}px, ${y2}px)`, opacity: 0 },
-      ],
-      { duration: 1100, iterations: Infinity, easing: "ease-in-out" },
-    );
+    const arrows = act ? Array.from(act.querySelectorAll<SVGGeometryElement>("line[marker-end], path[marker-end]")) : [];
+    if (!arrows.length && line) arrows.push(line);
+    if (!arrows.length || reduce) return () => clearTimeout(scrollT);
+    const runs = arrows.map((a) => {
+      const stroke = a.getAttribute("stroke");
+      const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      dot.setAttribute("class", "sf-dot");
+      dot.setAttribute("r", "6");
+      dot.setAttribute("fill", stroke && stroke !== "currentColor" ? stroke : "#0ea5e9");
+      svg.appendChild(dot);
+      return { a, dot, len: a.getTotalLength() };
+    });
+    const DOT_MS = 1100;
+    let raf = 0;
+    const t0 = performance.now();
+    const tick = (now: number) => {
+      const p = ((now - t0) % DOT_MS) / DOT_MS;
+      const e = p < 0.5 ? 2 * p * p : 1 - (-2 * p + 2) ** 2 / 2;
+      const opacity = p < 0.15 ? p / 0.15 : p > 0.85 ? (1 - p) / 0.15 : 1;
+      for (const r of runs) {
+        const pt = r.a.getPointAtLength(e * r.len);
+        r.dot.setAttribute("cx", String(pt.x));
+        r.dot.setAttribute("cy", String(pt.y));
+        r.dot.setAttribute("opacity", String(opacity));
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
     return () => {
       clearTimeout(scrollT);
-      anim.cancel();
-      dot.remove();
+      cancelAnimationFrame(raf);
+      runs.forEach((r) => r.dot.remove());
     };
   }, [step, narrow, full, moveCamera]);
 
@@ -323,7 +336,7 @@ export default function StepFlow(props: { children?: React.ReactNode }) {
             {notes.get(step)}
           </>
         ) : (
-          <span className="text-[var(--text-dim)]">Bấm Chạy, hoặc dùng nút / phím mũi tên để đi từng request.</span>
+          <span className="text-[var(--text-dim)]">Bấm Chạy, hoặc dùng nút / phím mũi tên để đi từng bước.</span>
         )}
       </div>
     </div>
