@@ -469,11 +469,31 @@ Client dùng hai tên miền khác nhau cho hai đường: một tên trỏ vào
 ## 5. Pattern thiết kế global app
 
 ### 5.1 Standard global web app
-```
-User → Route 53 (latency) → CloudFront → ALB region → ASG
-                              ↓
-                           S3 origin (static)
-```
+
+<svg viewBox="0 0 520 456" role="img" aria-labelledby="s17a-t s17a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="s17a-t">Kiến trúc web app global chuẩn: Route 53, CloudFront, ALB, ASG, S3</title>
+<desc id="s17a-d">User hỏi Route 53 (latency routing) để lấy địa chỉ, rồi gửi request HTTPS tới CloudFront ở edge gần nhất. CloudFront chia theo behavior: đường dẫn /static/* lấy từ S3 origin (bucket private, chỉ CloudFront đọc qua OAC); còn lại (default *) đi tới ALB trong region, ALB chia tải cho các EC2 trong Auto Scaling Group.</desc>
+<defs><marker id="s17a-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<use href="#aws-res-user" x="40" y="30" width="48" height="48"/><text x="64" y="96" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">User</text>
+<path d="M94 54 H224" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#s17a-arr)" stroke-dasharray="5 4"/><text x="159" y="46" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">1. DNS</text>
+<use href="#aws-route-53" x="232" y="30" width="48" height="48"/><text x="256" y="96" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Route 53</text><text x="256" y="113" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">latency routing</text>
+<path d="M64 106 V176" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#s17a-arr)"/><text x="72" y="146" text-anchor="start" font-size="13" fill="currentColor" opacity="0.85">2. HTTPS</text>
+<rect x="14" y="174" width="100" height="108" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="none"/>
+<use href="#aws-cloudfront" x="40" y="182" width="48" height="48"/><text x="64" y="248" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">CloudFront</text><text x="64" y="265" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">edge gần user</text>
+<rect x="176" y="156" width="332" height="140" rx="10" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="6 4"/>
+<use href="#aws-group-region" x="176" y="156" width="22" height="22"/><text x="204" y="172" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">AWS Region</text>
+<path d="M116 206 H218" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#s17a-arr)"/><text x="142" y="198" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">*</text>
+<text x="142" y="226" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">default</text>
+<use href="#aws-alb" x="226" y="184" width="48" height="48"/><text x="250" y="250" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">ALB</text>
+<rect x="336" y="178" width="152" height="96" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="4 3"/>
+<path d="M278 206 H382" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#s17a-arr)"/>
+<use href="#aws-ec2-auto-scaling" x="390" y="184" width="48" height="48"/><text x="414" y="250" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">ASG</text><text x="414" y="266" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">(EC2)</text>
+<path d="M64 284 V378 H218" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#s17a-arr)"/><text x="72" y="334" text-anchor="start" font-size="13" fill="currentColor" opacity="0.85">/static/*</text>
+<use href="#aws-s3" x="226" y="354" width="48" height="48"/><text x="250" y="420" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">S3 origin</text><text x="250" y="437" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">static</text>
+<text x="300" y="374" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">bucket private,</text><text x="300" y="392" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">chỉ CloudFront đọc</text><text x="300" y="410" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">(OAC, §3.3)</text>
+</svg>
+
+Route 53 chỉ trả lời DNS (bước 1), không nằm trên đường đi của dữ liệu; mọi request HTTPS vào CloudFront, rồi CloudFront chọn origin theo behavior (§3.1): `/static/*` sang S3, còn lại sang ALB của region, ALB chia tải cho ASG.
 
 ### 5.2 Multi-region active-active
 ```

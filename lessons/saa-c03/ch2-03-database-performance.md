@@ -797,54 +797,47 @@ Hai tính năng khác hay ra đề, không liên quan cache nhưng cùng nằm �
 
 ### 10.1 Web stack điển hình
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Web stack nhiều tầng cache — Client tới CloudFront, ALB, ECS/EC2, ElastiCache, RDS/Aurora</title>
-  <desc>Luồng request trái sang phải: Client tới CloudFront (cache edge) tới ALB tới ECS/EC2 (app tier) tới ElastiCache theo cache-aside, miss thì xuống RDS/Aurora. CloudFront và ElastiCache là hai tầng cache giảm tải.</desc>
-  <defs>
-    <marker id="wsArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Web stack điển hình — request đi trái sang phải</text>
-  <g>
-    <rect x="14" y="70" width="92" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="60" y="96" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
-    <text x="60" y="114" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">trình duyệt</text>
-  </g>
-  <g>
-    <rect x="132" y="70" width="100" height="56" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="182" y="92" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">CloudFront</text>
-    <rect x="146" y="100" width="72" height="18" rx="9" fill="#10b981" fill-opacity="0.9"/>
-    <text x="182" y="113" font-size="9.5" font-weight="700" text-anchor="middle" fill="#fff">cache edge</text>
-  </g>
-  <g>
-    <rect x="258" y="70" width="84" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="300" y="96" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">ALB</text>
-    <text x="300" y="114" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">L7 LB</text>
-  </g>
-  <g>
-    <rect x="368" y="70" width="96" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="416" y="92" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">ECS/EC2</text>
-    <text x="416" y="114" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">app tier</text>
-  </g>
-  <g>
-    <rect x="490" y="70" width="104" height="56" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="542" y="92" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">ElastiCache</text>
-    <rect x="502" y="100" width="80" height="18" rx="9" fill="#10b981" fill-opacity="0.9"/>
-    <text x="542" y="113" font-size="9.5" font-weight="700" text-anchor="middle" fill="#fff">cache-aside</text>
-  </g>
-  <g>
-    <rect x="620" y="70" width="86" height="56" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="663" y="92" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">RDS/</text>
-    <text x="663" y="108" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Aurora</text>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.6">
-    <line x1="106" y1="98" x2="128" y2="98" marker-end="url(#wsArr)"/>
-    <line x1="232" y1="98" x2="254" y2="98" marker-end="url(#wsArr)"/>
-    <line x1="342" y1="98" x2="364" y2="98" marker-end="url(#wsArr)"/>
-    <line x1="464" y1="98" x2="486" y2="98" marker-end="url(#wsArr)"/>
-    <line x1="594" y1="98" x2="616" y2="98" marker-end="url(#wsArr)"/>
-  </g>
-  <text x="542" y="150" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">miss → đọc DB</text>
-  <text x="16" y="186" font-size="10.5" fill="currentColor" opacity="0.72">Hai tầng cache giảm tải: CloudFront chặn ở edge cho nội dung tĩnh; ElastiCache (cache-aside) đỡ DB cho app tier.</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 352" role="img" aria-labelledby="sd203c-t sd203c-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd203c-t">Web stack nhiều tầng cache: Client, CloudFront, ALB, ECS/EC2, ElastiCache, RDS/Aurora</title>
+<desc id="sd203c-d">Request đi từ Client (trình duyệt) qua CloudFront (cache edge), ALB (load balancer L7) tới app tier ECS/EC2. App hỏi ElastiCache trước theo cache-aside; miss thì đọc RDS/Aurora. CloudFront và ElastiCache là hai tầng cache giảm tải.</desc>
+<defs><marker id="sd203c-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Web stack điển hình: request đi theo mũi tên</text>
+<rect x="150" y="38" width="100" height="104" rx="10" fill="#10b981" fill-opacity="0.14" stroke="#10b981" stroke-opacity="0.6"/>
+<use href="#aws-res-client" x="48" y="46" width="44" height="44"/>
+<text x="70" y="110" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Client</text>
+<text x="70" y="127" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">trình duyệt</text>
+<use href="#aws-cloudfront" x="178" y="46" width="44" height="44"/>
+<text x="200" y="110" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">CloudFront</text>
+<rect x="155" y="115" width="90" height="19" rx="9.5" fill="#10b981" fill-opacity="0.9"/>
+<text x="200" y="129" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">cache edge</text>
+<use href="#aws-alb" x="308" y="46" width="44" height="44"/>
+<text x="330" y="110" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">ALB</text>
+<text x="330" y="127" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">L7 LB</text>
+<path d="M96 68 H144" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd203c-arr)"/>
+<path d="M254 68 H298" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd203c-arr)"/>
+<rect x="400" y="52" width="16" height="16" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981" stroke-opacity="0.6"/>
+<text x="422" y="65" font-size="13" fill="currentColor">tầng cache</text>
+<path d="M330 134 V176" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd203c-arr)"/>
+<rect x="120" y="174" width="100" height="104" rx="10" fill="#10b981" fill-opacity="0.14" stroke="#10b981" stroke-opacity="0.6"/>
+<use href="#aws-elasticache" x="148" y="182" width="44" height="44"/>
+<text x="170" y="246" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">ElastiCache</text>
+<rect x="125" y="251" width="90" height="19" rx="9.5" fill="#10b981" fill-opacity="0.9"/>
+<text x="170" y="265" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">cache-aside</text>
+<use href="#aws-elastic-container-service" x="290" y="184" width="38" height="38"/>
+<use href="#aws-ec2" x="332" y="184" width="38" height="38"/>
+<text x="330" y="246" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">ECS/EC2</text>
+<text x="330" y="263" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">app tier</text>
+<use href="#aws-rds" x="426" y="184" width="38" height="38"/>
+<use href="#aws-aurora" x="468" y="184" width="38" height="38"/>
+<text x="466" y="246" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">RDS/Aurora</text>
+<path d="M284 203 H226" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd203c-arr)"/>
+<text x="255" y="196" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">1. hỏi</text>
+<text x="255" y="222" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">cache</text>
+<path d="M374 203 H420" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd203c-arr)"/>
+<text x="397" y="196" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">2. miss</text>
+<text x="397" y="222" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">đọc DB</text>
+<text x="16" y="318" font-size="13" fill="currentColor" opacity="0.8">Hai tầng cache giảm tải: CloudFront chặn ở edge cho nội dung tĩnh;</text>
+<text x="16" y="336" font-size="13" fill="currentColor" opacity="0.8">ElastiCache (cache-aside) đỡ DB cho app tier.</text>
 </svg>
 
 ### 10.2 DynamoDB heavy read

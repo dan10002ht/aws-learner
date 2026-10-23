@@ -142,6 +142,85 @@ ASG phát sự kiện ra **EventBridge** (hoặc SNS/SQS), bạn bắt sự ki�
 
 Nếu bạn không gọi, máy tự đi tiếp khi hết **heartbeat timeout** — mặc định **1 giờ**. Cần lâu hơn thì gửi heartbeat để gia hạn, nhưng tổng thời gian chờ tối đa là **48 giờ hoặc 100 lần heartbeat timeout, lấy số nhỏ hơn**. Với hook ở Lab 2 (`--heartbeat-timeout 300`): `100 × 300 giây = 30.000 giây ≈ 8,3 giờ`, chứ không phải 48 giờ.
 
+Bấm từng bước để xem hook giữ máy ở đâu và cái gì cho máy đi tiếp:
+
+<step-flow>
+<svg viewBox="0 0 760 560" role="img" aria-labelledby="saa12a-t saa12a-d" style="width:100%;height:auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="saa12a-t">Lifecycle hook chèn trạng thái chờ vào lúc bật và lúc tắt máy</title>
+<desc id="saa12a-d">Hàng trên: máy mới đi từ Pending vào Pending:Wait, ASG phát sự kiện qua EventBridge cho Lambda hoặc script chuẩn bị máy, gọi complete-lifecycle-action thì máy thành InService và nhận traffic từ ELB. Hàng dưới: máy InService bị scale-in vào Terminating:Wait, Lambda xử lý nốt request, đẩy log lên S3, lưu state, gọi complete-lifecycle-action thì máy Terminated; nếu không ai gọi thì hết heartbeat timeout (mặc định 1 giờ) máy vẫn đi tiếp, tổng thời gian chờ tối đa là 48 giờ hoặc 100 lần heartbeat timeout, lấy số nhỏ hơn.</desc>
+<defs><marker id="saa12a-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="20" y="24" text-anchor="start" font-size="15" fill="currentColor" font-weight="600">Scale-out: máy mới bật</text>
+<path d="M95 70 V50 H665 V64" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.2" stroke-dasharray="4 4" marker-end="url(#saa12a-arr)"/>
+<text x="380" y="44" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">không có hook: đi thẳng</text>
+<rect x="20" y="70" width="150" height="48" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="95" y="99" text-anchor="middle" font-size="15" fill="currentColor">Pending</text>
+<rect x="590" y="70" width="150" height="48" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="665" y="99" text-anchor="middle" font-size="15" fill="currentColor">InService</text>
+<g data-step="1">
+<path d="M172 94 H296" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#saa12a-arr)"/>
+<text x="234" y="86" text-anchor="middle" font-size="13" fill="currentColor">hook</text>
+<rect x="300" y="70" width="170" height="48" rx="8" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="385" y="99" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">Pending:Wait</text>
+<text x="385" y="136" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">đã chạy, chưa nhận traffic</text>
+</g>
+<g data-step="2">
+<path d="M385 142 V158" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#saa12a-arr)"/>
+<rect x="165" y="162" width="375" height="82" rx="8" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35"/>
+<use href="#aws-eventbridge" x="195" y="172" width="40" height="40"/>
+<use href="#aws-lambda" x="245" y="172" width="40" height="40"/>
+<text x="240" y="232" text-anchor="middle" font-size="13" fill="currentColor">EventBridge → Lambda</text>
+<text x="320" y="186" text-anchor="start" font-size="13" fill="currentColor">cài phần mềm, kéo config,</text>
+<text x="320" y="206" text-anchor="start" font-size="13" fill="currentColor">làm nóng cache</text>
+</g>
+<g data-step="3">
+<path d="M540 203 H640 V122" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#saa12a-arr)"/>
+<text x="648" y="170" text-anchor="start" font-size="13" fill="currentColor" font-family="ui-monospace, monospace">complete-</text>
+<text x="648" y="186" text-anchor="start" font-size="13" fill="currentColor" font-family="ui-monospace, monospace">lifecycle-</text>
+<text x="648" y="202" text-anchor="start" font-size="13" fill="currentColor" font-family="ui-monospace, monospace">action</text>
+</g>
+<line x1="20" y1="270" x2="740" y2="270" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="20" y="300" text-anchor="start" font-size="15" fill="currentColor" font-weight="600">Scale-in: máy sắp bị tắt</text>
+<rect x="20" y="320" width="150" height="48" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="95" y="349" text-anchor="middle" font-size="15" fill="currentColor">InService</text>
+<rect x="590" y="320" width="150" height="48" rx="8" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="665" y="349" text-anchor="middle" font-size="15" fill="currentColor">Terminated</text>
+<g data-step="4">
+<path d="M172 344 H296" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#saa12a-arr)"/>
+<text x="234" y="336" text-anchor="middle" font-size="13" fill="currentColor">hook</text>
+<rect x="300" y="320" width="170" height="48" rx="8" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="385" y="349" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">Terminating:Wait</text>
+<path d="M385 370 V408" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#saa12a-arr)"/>
+<text x="392" y="393" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">vẫn còn sống</text>
+<rect x="165" y="412" width="375" height="82" rx="8" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35"/>
+<use href="#aws-eventbridge" x="195" y="422" width="40" height="40"/>
+<use href="#aws-lambda" x="245" y="422" width="40" height="40"/>
+<text x="240" y="482" text-anchor="middle" font-size="13" fill="currentColor">EventBridge → Lambda</text>
+<text x="320" y="432" text-anchor="start" font-size="13" fill="currentColor">xử lý nốt request dở,</text>
+<text x="320" y="452" text-anchor="start" font-size="13" fill="currentColor">đẩy log lên S3,</text>
+<text x="320" y="472" text-anchor="start" font-size="13" fill="currentColor">lưu state</text>
+</g>
+<g data-step="5">
+<path d="M540 453 H640 V372" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#saa12a-arr)"/>
+<text x="648" y="420" text-anchor="start" font-size="13" fill="currentColor" font-family="ui-monospace, monospace">complete-</text>
+<text x="648" y="436" text-anchor="start" font-size="13" fill="currentColor" font-family="ui-monospace, monospace">lifecycle-</text>
+<text x="648" y="452" text-anchor="start" font-size="13" fill="currentColor" font-family="ui-monospace, monospace">action</text>
+</g>
+<g data-step="6">
+<path d="M472 334 H586" fill="none" stroke="#f43f5e" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#saa12a-arr)"/>
+<text x="530" y="312" text-anchor="middle" font-size="13" fill="currentColor">hết heartbeat</text>
+<text x="530" y="326" text-anchor="middle" font-size="13" fill="currentColor">timeout</text>
+<text x="380" y="522" text-anchor="middle" font-size="13" fill="currentColor">không ai gọi: mặc định 1 giờ thì máy tự đi tiếp</text>
+<text x="380" y="544" text-anchor="middle" font-size="13" fill="currentColor">tối đa min(48 giờ, 100 × timeout); timeout 300 s → 30.000 s ≈ 8,3 giờ</text>
+</g>
+</svg>
+<step-note data-step="1">Máy đã chạy nhưng ASG chưa coi là <code>InService</code>, nên load balancer chưa gửi request vào một máy còn trống.</step-note>
+<step-note data-step="2">ASG phát sự kiện ra EventBridge (hoặc SNS/SQS); Lambda hay script trên máy bắt sự kiện và làm việc chuẩn bị trong lúc máy đang bị giữ lại.</step-note>
+<step-note data-step="3">Chỉ khi có <code>complete-lifecycle-action</code> máy mới vào phục vụ, nên request đầu tiên gặp một máy đã sẵn sàng.</step-note>
+<step-note data-step="4">Khi scale-in, hook giữ máy lại trước khi tắt: đây là cửa sổ cuối để cứu dữ liệu còn nằm trên máy.</step-note>
+<step-note data-step="5">Dọn xong thì báo ngay để máy được tắt luôn, không phải ngồi chờ hết timeout.</step-note>
+<step-note data-step="6">Hook lúc terminate chỉ là cố gắng hết mức: hết timeout máy vẫn bị tắt. Cần lâu hơn thì gửi heartbeat để gia hạn, nhưng không vượt được trần ở dưới hình.</step-note>
+</step-flow>
+
 > Hook lúc terminate chỉ là "cố gắng hết mức": hết timeout thì máy vẫn bị tắt. Và với Spot Instance, hook **không** chặn được việc AWS thu hồi máy sau thông báo 2 phút.
 
 ### 2.4 Warm Pool
@@ -332,18 +411,14 @@ Nhắc lại từ đầu §3: mỗi AZ có một load balancer node, và client 
 
 Hai cách cho kết quả giống nhau khi các AZ có số target bằng nhau. Chúng khác xa khi lệch:
 
-```
-3 AZ, tổng 9.000 request/giây → mỗi node nhận 3.000 request/giây
-Target: AZ-a có 6, AZ-b có 2, AZ-c có 1
+Ví dụ: 3 AZ, tổng 9.000 request/giây nên mỗi node nhận 3.000; AZ-a có 6 target, AZ-b có 2, AZ-c có 1. Bấm qua lại giữa OFF và ON:
 
-Cross-zone OFF:
-  AZ-a: 3.000 ÷ 6 =   500 request/giây mỗi target   (5,6% tổng tải)
-  AZ-b: 3.000 ÷ 2 = 1.500 request/giây mỗi target   (16,7%)
-  AZ-c: 3.000 ÷ 1 = 3.000 request/giây cho 1 target (33,3%) → gấp 6 lần target ở AZ-a, dễ sập
-
-Cross-zone ON:
-  9.000 ÷ 9 = 1.000 request/giây mỗi target (11,1%), không phân biệt AZ
-```
+<ab-toggle data-labels="Cross-zone OFF|Cross-zone ON">
+<svg viewBox="0 0 520 430" role="img" aria-labelledby="saa12b-t saa12b-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="saa12b-t">Cross-zone OFF: mỗi node chỉ chia cho target trong AZ của nó</title><desc id="saa12b-d">3 AZ, tổng 9.000 request/giây, mỗi node nhận 3.000. AZ-a có 6 target, AZ-b có 2, AZ-c có 1. Cross-zone OFF: AZ-a 3.000 ÷ 6 = 500 request/giây mỗi target (5,6% tổng tải), AZ-b 3.000 ÷ 2 = 1.500 (16,7%), AZ-c 3.000 ÷ 1 = 3.000 cho 1 target (33,3%), gấp 6 lần target ở AZ-a, dễ sập.</desc><defs><marker id="saa12b-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs><text x="260" y="20" text-anchor="middle" font-size="14" fill="currentColor">9.000 request/giây, DNS chia đều 3 node</text><rect x="10" y="32" width="160" height="340" rx="10" fill="#3b82f6" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 4"/><text x="20" y="51" text-anchor="start" font-size="13" fill="currentColor" font-weight="600">AZ-a</text><rect x="30" y="60" width="120" height="44" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><use href="#aws-elb" x="38" y="66" width="32" height="32"/><text x="110" y="80" text-anchor="middle" font-size="13" fill="currentColor">node</text><text x="110" y="97" text-anchor="middle" font-size="13" fill="currentColor">3.000/giây</text><rect x="180" y="32" width="160" height="340" rx="10" fill="#3b82f6" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 4"/><text x="190" y="51" text-anchor="start" font-size="13" fill="currentColor" font-weight="600">AZ-b</text><rect x="200" y="60" width="120" height="44" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><use href="#aws-elb" x="208" y="66" width="32" height="32"/><text x="280" y="80" text-anchor="middle" font-size="13" fill="currentColor">node</text><text x="280" y="97" text-anchor="middle" font-size="13" fill="currentColor">3.000/giây</text><rect x="350" y="32" width="160" height="340" rx="10" fill="#3b82f6" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 4"/><text x="360" y="51" text-anchor="start" font-size="13" fill="currentColor" font-weight="600">AZ-c</text><rect x="370" y="60" width="120" height="44" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><use href="#aws-elb" x="378" y="66" width="32" height="32"/><text x="450" y="80" text-anchor="middle" font-size="13" fill="currentColor">node</text><text x="450" y="97" text-anchor="middle" font-size="13" fill="currentColor">3.000/giây</text><path d="M90 106 V160" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#saa12b-arr)"/><path d="M260 106 V160" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#saa12b-arr)"/><path d="M430 106 V160" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#saa12b-arr)"/><use href="#aws-ec2" x="34" y="166" width="32" height="32"/><use href="#aws-ec2" x="74" y="166" width="32" height="32"/><use href="#aws-ec2" x="114" y="166" width="32" height="32"/><use href="#aws-ec2" x="34" y="206" width="32" height="32"/><use href="#aws-ec2" x="74" y="206" width="32" height="32"/><use href="#aws-ec2" x="114" y="206" width="32" height="32"/><text x="90" y="262" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">6 target</text><text x="90" y="288" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">500/giây</text><text x="90" y="306" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">mỗi target · 5,6%</text><rect x="60" y="350.7" width="60" height="7.3" fill="#3b82f6" fill-opacity="0.45"/><line x1="40" y1="358" x2="140" y2="358" stroke="currentColor" stroke-opacity="0.4"/><use href="#aws-ec2" x="224" y="166" width="32" height="32"/><use href="#aws-ec2" x="264" y="166" width="32" height="32"/><text x="260" y="262" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">2 target</text><text x="260" y="288" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">1.500/giây</text><text x="260" y="306" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">mỗi target · 16,7%</text><rect x="230" y="336.0" width="60" height="22.0" fill="#3b82f6" fill-opacity="0.45"/><line x1="210" y1="358" x2="310" y2="358" stroke="currentColor" stroke-opacity="0.4"/><use href="#aws-ec2" x="414" y="166" width="32" height="32"/><text x="430" y="262" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">1 target</text><text x="430" y="288" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">3.000/giây</text><text x="430" y="306" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">mỗi target · 33,3%</text><rect x="400" y="314.0" width="60" height="44.0" fill="#f43f5e" fill-opacity="0.55"/><line x1="380" y1="358" x2="480" y2="358" stroke="currentColor" stroke-opacity="0.4"/><text x="260" y="398" text-anchor="middle" font-size="13" fill="currentColor">AZ-c: 1 target gánh 3.000/giây,</text><text x="260" y="418" text-anchor="middle" font-size="13" fill="currentColor" font-weight="600">gấp 6 lần target ở AZ-a, dễ sập</text></svg>
+<svg viewBox="0 0 520 430" role="img" aria-labelledby="saa12c-t saa12c-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="saa12c-t">Cross-zone ON: mỗi node chia cho mọi target ở mọi AZ</title><desc id="saa12c-d">3 AZ, tổng 9.000 request/giây, mỗi node nhận 3.000. AZ-a có 6 target, AZ-b có 2, AZ-c có 1. Cross-zone ON: mọi node chia sang cả 9 target, mỗi target nhận 9.000 ÷ 9 = 1.000 request/giây (11,1% tổng tải), không phân biệt AZ.</desc><defs><marker id="saa12c-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs><text x="260" y="20" text-anchor="middle" font-size="14" fill="currentColor">9.000 request/giây, DNS chia đều 3 node</text><rect x="10" y="32" width="160" height="340" rx="10" fill="#3b82f6" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 4"/><text x="20" y="51" text-anchor="start" font-size="13" fill="currentColor" font-weight="600">AZ-a</text><rect x="30" y="60" width="120" height="44" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><use href="#aws-elb" x="38" y="66" width="32" height="32"/><text x="110" y="80" text-anchor="middle" font-size="13" fill="currentColor">node</text><text x="110" y="97" text-anchor="middle" font-size="13" fill="currentColor">3.000/giây</text><rect x="180" y="32" width="160" height="340" rx="10" fill="#3b82f6" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 4"/><text x="190" y="51" text-anchor="start" font-size="13" fill="currentColor" font-weight="600">AZ-b</text><rect x="200" y="60" width="120" height="44" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><use href="#aws-elb" x="208" y="66" width="32" height="32"/><text x="280" y="80" text-anchor="middle" font-size="13" fill="currentColor">node</text><text x="280" y="97" text-anchor="middle" font-size="13" fill="currentColor">3.000/giây</text><rect x="350" y="32" width="160" height="340" rx="10" fill="#3b82f6" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 4"/><text x="360" y="51" text-anchor="start" font-size="13" fill="currentColor" font-weight="600">AZ-c</text><rect x="370" y="60" width="120" height="44" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><use href="#aws-elb" x="378" y="66" width="32" height="32"/><text x="450" y="80" text-anchor="middle" font-size="13" fill="currentColor">node</text><text x="450" y="97" text-anchor="middle" font-size="13" fill="currentColor">3.000/giây</text><path d="M90 106 L90 160" fill="none" stroke="#10b981" stroke-width="1.6" stroke-opacity="0.85" marker-end="url(#saa12c-arr)"/><path d="M102 106 L248 160" fill="none" stroke="#10b981" stroke-width="1.6" stroke-opacity="0.85" marker-end="url(#saa12c-arr)"/><path d="M114 106 L406 160" fill="none" stroke="#10b981" stroke-width="1.6" stroke-opacity="0.85" marker-end="url(#saa12c-arr)"/><path d="M248 106 L102 160" fill="none" stroke="#10b981" stroke-width="1.6" stroke-opacity="0.85" marker-end="url(#saa12c-arr)"/><path d="M260 106 L260 160" fill="none" stroke="#10b981" stroke-width="1.6" stroke-opacity="0.85" marker-end="url(#saa12c-arr)"/><path d="M272 106 L418 160" fill="none" stroke="#10b981" stroke-width="1.6" stroke-opacity="0.85" marker-end="url(#saa12c-arr)"/><path d="M406 106 L114 160" fill="none" stroke="#10b981" stroke-width="1.6" stroke-opacity="0.85" marker-end="url(#saa12c-arr)"/><path d="M418 106 L272 160" fill="none" stroke="#10b981" stroke-width="1.6" stroke-opacity="0.85" marker-end="url(#saa12c-arr)"/><path d="M430 106 L430 160" fill="none" stroke="#10b981" stroke-width="1.6" stroke-opacity="0.85" marker-end="url(#saa12c-arr)"/><use href="#aws-ec2" x="34" y="166" width="32" height="32"/><use href="#aws-ec2" x="74" y="166" width="32" height="32"/><use href="#aws-ec2" x="114" y="166" width="32" height="32"/><use href="#aws-ec2" x="34" y="206" width="32" height="32"/><use href="#aws-ec2" x="74" y="206" width="32" height="32"/><use href="#aws-ec2" x="114" y="206" width="32" height="32"/><text x="90" y="262" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">6 target</text><text x="90" y="288" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">1.000/giây</text><text x="90" y="306" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">mỗi target · 11,1%</text><rect x="60" y="343.3" width="60" height="14.7" fill="#10b981" fill-opacity="0.45"/><line x1="40" y1="358" x2="140" y2="358" stroke="currentColor" stroke-opacity="0.4"/><use href="#aws-ec2" x="224" y="166" width="32" height="32"/><use href="#aws-ec2" x="264" y="166" width="32" height="32"/><text x="260" y="262" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">2 target</text><text x="260" y="288" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">1.000/giây</text><text x="260" y="306" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">mỗi target · 11,1%</text><rect x="230" y="343.3" width="60" height="14.7" fill="#10b981" fill-opacity="0.45"/><line x1="210" y1="358" x2="310" y2="358" stroke="currentColor" stroke-opacity="0.4"/><use href="#aws-ec2" x="414" y="166" width="32" height="32"/><text x="430" y="262" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">1 target</text><text x="430" y="288" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">1.000/giây</text><text x="430" y="306" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">mỗi target · 11,1%</text><rect x="400" y="343.3" width="60" height="14.7" fill="#10b981" fill-opacity="0.45"/><line x1="380" y1="358" x2="480" y2="358" stroke="currentColor" stroke-opacity="0.4"/><text x="260" y="398" text-anchor="middle" font-size="13" fill="currentColor">9.000 ÷ 9 = 1.000/giây mỗi target,</text><text x="260" y="418" text-anchor="middle" font-size="13" fill="currentColor">không phân biệt AZ</text></svg>
+<ab-note>Mỗi node chỉ chia 3.000 request/giây cho target trong AZ của nó: AZ-a 3.000 ÷ 6 = 500, AZ-b 3.000 ÷ 2 = 1.500, AZ-c 3.000 ÷ 1 = 3.000. Số target lệch thì tải mỗi target lệch theo.</ab-note>
+<ab-note>Mỗi node chia cho cả 9 target ở mọi AZ, nên 9.000 ÷ 9 = 1.000 request/giây mỗi target (11,1% tổng tải), dù AZ-c chỉ có 1 target.</ab-note>
+</ab-toggle>
 
 **Vì sao mặc định lại khác nhau giữa ALB và NLB?**
 

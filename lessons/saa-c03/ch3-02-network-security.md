@@ -25,42 +25,65 @@ Junior cấu hình ALB → EC2. Bật SG chỉ cho phép `0.0.0.0/0 → 443`. De
 
 ### 2.1 Subnet tier hóa
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>VPC isolation theo tier — Public, Private và Database subnet</title>
-  <desc>Internet qua Internet Gateway vào Public subnet chứa ALB, NAT Gateway, Bastion. Public subnet nối xuống Private subnet (App tier EC2/ECS/Lambda ENI), App tier nối xuống Database subnet (RDS, ElastiCache) không có đường ra internet. Traffic ra ngoài của App tier đi qua NAT Gateway.</desc>
-  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">VPC isolation theo tier — cô lập theo lớp subnet</text>
-  <defs>
-    <marker id="vpcArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <rect x="240" y="36" width="240" height="32" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="360" y="56" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Internet — 0.0.0.0/0</text>
-  <line x1="360" y1="68" x2="360" y2="86" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#vpcArr)"/>
-  <rect x="285" y="86" width="150" height="26" rx="13" fill="#f59e0b" fill-opacity="0.9"/>
-  <text x="360" y="104" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">Internet Gateway</text>
-  <rect x="20" y="122" width="680" height="218" rx="12" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="34" y="142" font-size="12" font-weight="700" fill="currentColor" opacity="0.75">VPC</text>
-  <line x1="360" y1="112" x2="360" y2="150" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#vpcArr)"/>
-  <rect x="40" y="150" width="640" height="50" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="52" y="170" font-size="12.5" font-weight="700" fill="currentColor">Public subnet — route → IGW</text>
-  <rect x="430" y="160" width="78" height="30" rx="7" fill="#3b82f6" fill-opacity="0.85"/>
-  <text x="469" y="179" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">ALB</text>
-  <rect x="516" y="160" width="78" height="30" rx="7" fill="#3b82f6" fill-opacity="0.85"/>
-  <text x="555" y="179" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">NAT GW</text>
-  <rect x="602" y="160" width="66" height="30" rx="7" fill="#3b82f6" fill-opacity="0.85"/>
-  <text x="635" y="179" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">Bastion</text>
-  <line x1="200" y1="200" x2="200" y2="222" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#vpcArr)"/>
-  <rect x="40" y="222" width="640" height="50" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="52" y="242" font-size="12.5" font-weight="700" fill="currentColor">Private subnet — no IGW</text>
-  <text x="52" y="260" font-size="10.5" fill="currentColor" opacity="0.7">App tier: EC2 / ECS / Lambda ENI — ra internet qua NAT GW</text>
-  <line x1="560" y1="222" x2="560" y2="200" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="4 3" marker-end="url(#vpcArr)"/>
-  <text x="600" y="216" font-size="9.5" fill="currentColor" opacity="0.7">egress qua NAT</text>
-  <line x1="200" y1="272" x2="200" y2="294" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#vpcArr)"/>
-  <rect x="40" y="294" width="640" height="50" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="52" y="314" font-size="12.5" font-weight="700" fill="currentColor">Database subnet — no IGW, no route to public</text>
-  <text x="52" y="332" font-size="10.5" fill="currentColor" opacity="0.7">RDS, ElastiCache — backup qua VPC endpoint S3, không ra internet</text>
+<svg viewBox="0 0 520 552" role="img" aria-labelledby="s302a-t s302a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="s302a-t">VPC isolation theo tier — Public, Private và Database subnet</title>
+<desc id="s302a-d">Internet (0.0.0.0/0) đi qua Internet Gateway vào Public subnet (route tới IGW) chứa ALB, NAT Gateway và Bastion. ALB chuyển vào Private subnet không có IGW, nơi App tier chạy EC2, ECS, Lambda ENI và ra internet qua NAT Gateway. App tier gọi xuống Database subnet chứa RDS và ElastiCache, không có IGW, không route ra public, không ra internet; backup sang S3 qua VPC endpoint.</desc>
+<defs><marker id="s302a-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<use href="#aws-res-internet" x="250" y="8" width="40" height="40"/>
+<text x="300" y="26" font-size="13" font-weight="700" text-anchor="start" fill="currentColor">Internet</text>
+<text x="300" y="42" font-size="13" text-anchor="start" fill="currentColor" opacity="0.8">0.0.0.0/0</text>
+<path d="M270 50 V88" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#s302a-arr)"/>
+<rect x="10" y="114" width="400" height="428" rx="10" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+<use href="#aws-group-virtual-private-cloud-vpc" x="10" y="114" width="24" height="24"/>
+<text x="42" y="131" font-size="13" font-weight="700" text-anchor="start" fill="currentColor">VPC</text>
+<use href="#aws-internet-gateway" x="250" y="94" width="40" height="40"/>
+<text x="300" y="108" font-size="13" font-weight="700" text-anchor="start" fill="currentColor">Internet Gateway</text>
+<rect x="20" y="146" width="380" height="124" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<use href="#aws-group-public-subnet" x="20" y="146" width="22" height="22"/>
+<text x="28" y="186" font-size="13" font-weight="700" text-anchor="start" fill="currentColor">Public subnet</text>
+<text x="28" y="204" font-size="13" text-anchor="start" fill="currentColor" opacity="0.8">route → IGW</text>
+<path d="M270 136 V184" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#s302a-arr)"/>
+<use href="#aws-nat-gateway" x="165" y="190" width="40" height="40"/>
+<text x="185" y="250" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">NAT GW</text>
+<use href="#aws-alb" x="250" y="190" width="40" height="40"/>
+<text x="270" y="250" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">ALB</text>
+<use href="#aws-ec2" x="335" y="190" width="40" height="40"/>
+<text x="355" y="250" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Bastion</text>
+<rect x="20" y="286" width="380" height="112" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<use href="#aws-group-private-subnet" x="20" y="286" width="22" height="22"/>
+<text x="28" y="326" font-size="13" font-weight="700" text-anchor="start" fill="currentColor">Private subnet</text>
+<text x="28" y="344" font-size="13" text-anchor="start" fill="currentColor" opacity="0.8">app tier, no IGW</text>
+<text x="28" y="362" font-size="13" text-anchor="start" fill="currentColor" opacity="0.8">egress qua NAT</text>
+<path d="M270 258 V334" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#s302a-arr)"/>
+<path d="M218 338 H150 V210 H159" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#s302a-arr)"/>
+<use href="#aws-ec2" x="220" y="318" width="40" height="40"/>
+<text x="240" y="380" font-size="13" text-anchor="middle" fill="currentColor">EC2</text>
+<use href="#aws-ecs" x="280" y="318" width="40" height="40"/>
+<text x="300" y="380" font-size="13" text-anchor="middle" fill="currentColor">ECS</text>
+<use href="#aws-lambda" x="340" y="318" width="40" height="40"/>
+<text x="360" y="380" font-size="13" text-anchor="middle" fill="currentColor">Lambda ENI</text>
+<rect x="20" y="414" width="380" height="120" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<use href="#aws-group-private-subnet" x="20" y="414" width="22" height="22"/>
+<text x="28" y="454" font-size="13" font-weight="700" text-anchor="start" fill="currentColor">Database subnet</text>
+<text x="28" y="472" font-size="13" text-anchor="start" fill="currentColor" opacity="0.8">no IGW,</text>
+<text x="28" y="490" font-size="13" text-anchor="start" fill="currentColor" opacity="0.8">no route to public,</text>
+<text x="28" y="508" font-size="13" text-anchor="start" fill="currentColor" opacity="0.8">không ra internet</text>
+<path d="M270 388 V468" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#s302a-arr)"/>
+<use href="#aws-elasticache" x="220" y="448" width="40" height="40"/>
+<text x="240" y="510" font-size="13" text-anchor="middle" fill="currentColor">ElastiCache</text>
+<use href="#aws-rds" x="300" y="448" width="40" height="40"/>
+<text x="320" y="510" font-size="13" text-anchor="middle" fill="currentColor">RDS</text>
+<path d="M342 468 H386" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#s302a-arr)"/>
+<use href="#aws-res-vpc-endpoints" x="390" y="448" width="40" height="40"/>
+<text x="410" y="508" font-size="13" text-anchor="middle" fill="currentColor">VPC</text>
+<text x="410" y="522" font-size="13" text-anchor="middle" fill="currentColor">endpoint</text>
+<path d="M432 468 H456" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#s302a-arr)"/>
+<use href="#aws-s3" x="460" y="448" width="40" height="40"/>
+<text x="480" y="510" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">S3</text>
+<text x="480" y="440" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">backup</text>
 </svg>
 
-- Public chỉ chứa LB và NAT.
+- Public chỉ chứa LB, NAT (và bastion nếu còn dùng, xem §9).
 - App tier private, ra internet qua NAT.
 - DB không ra internet — backup qua VPC endpoint S3.
 

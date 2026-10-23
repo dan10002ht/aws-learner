@@ -96,6 +96,15 @@ for (const f of find(top(/^Resource-Icons/), /^Res_.*_48_Light\.svg$/)) {
   add(id, icon);
 }
 
+// 3b. Networking resource icons that architecture diagrams draw as their own box
+// (NAT gateway, internet gateway, ALB/NLB, ...). Kept in AWS colours.
+const NET_RES = /^Res_(Amazon-VPC_(NAT-Gateway|Internet-Gateway|Endpoints|Router|VPN-Gateway|Customer-Gateway|Peering-Connection|Network-Access-Control-List|Flow-Logs)|Elastic-Load-Balancing_(Application|Network|Gateway)-Load-Balancer|Amazon-Route-53-Hosted-Zone|Amazon-CloudFront_Edge-Location)_48\.svg$/;
+for (const f of find(top(/^Resource-Icons/), NET_RES)) {
+  const name = path.basename(f).replace(/^Res_/, "").replace(/_48\.svg$/, "");
+  const id = `aws-res-${slug(name)}`;
+  add(id, clean(fs.readFileSync(f, "utf8"), id));
+}
+
 // Short names people actually type.
 const aliases = {
   "aws-s3": "aws-simple-storage-service",
@@ -119,6 +128,10 @@ const aliases = {
   "aws-identity-center": "aws-iam-identity-center",
   "aws-flink": "aws-managed-service-for-apache-flink",
   "aws-mwaa": "aws-managed-workflows-for-apache-airflow",
+  "aws-nat-gateway": "aws-res-vpc-nat-gateway",
+  "aws-internet-gateway": "aws-res-vpc-internet-gateway",
+  "aws-alb": "aws-res-elastic-load-balancing-application-load-balancer",
+  "aws-nlb": "aws-res-elastic-load-balancing-network-load-balancer",
 };
 for (const [a, target] of Object.entries(aliases)) {
   if (!icons[target]) throw new Error(`alias ${a} -> missing ${target}`);

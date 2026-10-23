@@ -34,52 +34,54 @@ Các SPOF kinh điển trong đề:
 
 > Bẫy: NAT Gateway **bản thân nó đã redundant trong AZ đó**, nhưng nó vẫn nằm trong MỘT AZ. Nếu cả AZ đó chết, NAT Gateway chết theo. Kiến trúc HA thật sự cần **một NAT Gateway cho mỗi AZ**, và route table của mỗi private subnet trỏ về NAT Gateway cùng AZ.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 410" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Kiến trúc khử SPOF — VPC trải 2 AZ, NAT Gateway riêng mỗi AZ</title>
-  <desc>Một VPC gồm hai Availability Zone. Mỗi AZ có một public subnet chứa NAT Gateway riêng và một private subnet; route table của private subnet trỏ về NAT Gateway cùng AZ. Auto Scaling Group trải instance qua cả hai AZ. Nếu một AZ chết, AZ còn lại vẫn phục vụ — không còn điểm lỗi đơn.</desc>
-  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Khử SPOF: NAT Gateway riêng mỗi AZ + ASG trải đa AZ</text>
-  <rect x="14" y="38" width="692" height="356" rx="12" fill="#3b82f6" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 4"/>
-  <text x="28" y="58" font-size="11.5" font-weight="700" fill="currentColor" opacity="0.75">VPC</text>
-  <g>
-    <rect x="32" y="70" width="316" height="312" rx="10" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="48" y="90" font-size="12" font-weight="700" fill="currentColor">Availability Zone A</text>
-    <rect x="48" y="102" width="284" height="78" rx="8" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="62" y="120" font-size="10.5" fill="currentColor" opacity="0.7">Public subnet A</text>
-    <rect x="62" y="128" width="120" height="40" rx="7" fill="#f59e0b" fill-opacity="0.9"/>
-    <text x="122" y="145" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">NAT GW A</text>
-    <text x="122" y="160" font-size="9.5" text-anchor="middle" fill="#fff" opacity="0.9">(trong AZ A)</text>
-    <rect x="48" y="196" width="284" height="170" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="62" y="214" font-size="10.5" fill="currentColor" opacity="0.7">Private subnet A — RT → NAT GW A</text>
-    <rect x="68" y="226" width="116" height="36" rx="7" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="126" y="249" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">EC2</text>
-    <rect x="196" y="226" width="116" height="36" rx="7" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="254" y="249" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">EC2</text>
-  </g>
-  <g>
-    <rect x="372" y="70" width="316" height="312" rx="10" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="388" y="90" font-size="12" font-weight="700" fill="currentColor">Availability Zone B</text>
-    <rect x="388" y="102" width="284" height="78" rx="8" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="402" y="120" font-size="10.5" fill="currentColor" opacity="0.7">Public subnet B</text>
-    <rect x="402" y="128" width="120" height="40" rx="7" fill="#f59e0b" fill-opacity="0.9"/>
-    <text x="462" y="145" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">NAT GW B</text>
-    <text x="462" y="160" font-size="9.5" text-anchor="middle" fill="#fff" opacity="0.9">(trong AZ B)</text>
-    <rect x="388" y="196" width="284" height="170" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="402" y="214" font-size="10.5" fill="currentColor" opacity="0.7">Private subnet B — RT → NAT GW B</text>
-    <rect x="408" y="226" width="116" height="36" rx="7" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="466" y="249" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">EC2</text>
-    <rect x="536" y="226" width="116" height="36" rx="7" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="594" y="249" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">EC2</text>
-  </g>
-  <defs>
-    <marker id="spofArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
-  </defs>
-  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
-    <path d="M126 226 V190 H122 V172" marker-end="url(#spofArr)"/>
-    <path d="M466 226 V190 H462 V172" marker-end="url(#spofArr)"/>
-  </g>
-  <rect x="32" y="330" width="656" height="44" rx="8" fill="#10b981" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="360" y="349" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Auto Scaling Group — trải instance qua AZ A và AZ B</text>
-  <text x="360" y="366" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">AZ A chết → ASG launch bù ở AZ B, NAT GW B vẫn sống → không còn SPOF</text>
+<svg viewBox="0 0 520 466" role="img" aria-labelledby="r02a-t r02a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="r02a-t">Kiến trúc khử SPOF — VPC trải 2 AZ, NAT Gateway riêng mỗi AZ</title>
+<desc id="r02a-d">Một VPC gồm hai Availability Zone. Mỗi AZ có một public subnet chứa NAT Gateway riêng và một private subnet; route table của private subnet trỏ về NAT Gateway cùng AZ. Auto Scaling Group trải instance EC2 qua cả hai AZ. Nếu AZ A chết, ASG launch bù ở AZ B và NAT Gateway B vẫn sống, nên không còn điểm lỗi đơn.</desc>
+<defs><marker id="r02a-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="260" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">Khử SPOF: NAT GW riêng mỗi AZ + ASG đa AZ</text>
+<rect x="8" y="36" width="504" height="360" rx="4" fill="#8b5cf6" fill-opacity="0.05" stroke="#8b5cf6" stroke-width="1.5"/>
+<use href="#aws-group-virtual-private-cloud-vpc" x="8" y="36" width="24" height="24"/>
+<text x="38" y="53" font-size="13" font-weight="700" fill="currentColor">VPC</text>
+<rect x="20" y="66" width="234" height="322" rx="4" fill="none" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="137" y="86" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Availability Zone A</text>
+<rect x="30" y="96" width="214" height="98" fill="#10b981" fill-opacity="0.14" stroke="#10b981" stroke-width="1.2"/>
+<use href="#aws-group-public-subnet" x="30" y="96" width="22" height="22"/>
+<text x="58" y="112" font-size="13" fill="currentColor">Public subnet A</text>
+<use href="#aws-nat-gateway" x="184" y="126" width="40" height="40"/>
+<text x="42" y="146" font-size="13" font-weight="700" fill="currentColor">NAT GW A</text>
+<text x="42" y="164" font-size="13" fill="currentColor" opacity="0.8">(trong AZ A)</text>
+<rect x="30" y="208" width="214" height="172" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6" stroke-width="1.2"/>
+<use href="#aws-group-private-subnet" x="30" y="208" width="22" height="22"/>
+<text x="58" y="224" font-size="13" fill="currentColor">Private subnet A</text>
+<text x="58" y="242" font-size="13" fill="currentColor" opacity="0.85">RT → NAT GW A</text>
+<path d="M204 208 V172" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#r02a-arr)"/>
+<rect x="266" y="66" width="234" height="322" rx="4" fill="none" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="383" y="86" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Availability Zone B</text>
+<rect x="276" y="96" width="214" height="98" fill="#10b981" fill-opacity="0.14" stroke="#10b981" stroke-width="1.2"/>
+<use href="#aws-group-public-subnet" x="276" y="96" width="22" height="22"/>
+<text x="304" y="112" font-size="13" fill="currentColor">Public subnet B</text>
+<use href="#aws-nat-gateway" x="430" y="126" width="40" height="40"/>
+<text x="288" y="146" font-size="13" font-weight="700" fill="currentColor">NAT GW B</text>
+<text x="288" y="164" font-size="13" fill="currentColor" opacity="0.8">(trong AZ B)</text>
+<rect x="276" y="208" width="214" height="172" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6" stroke-width="1.2"/>
+<use href="#aws-group-private-subnet" x="276" y="208" width="22" height="22"/>
+<text x="304" y="224" font-size="13" fill="currentColor">Private subnet B</text>
+<text x="304" y="242" font-size="13" fill="currentColor" opacity="0.85">RT → NAT GW B</text>
+<path d="M450 208 V172" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#r02a-arr)"/>
+<rect x="40" y="256" width="440" height="108" rx="4" fill="#f59e0b" fill-opacity="0.08" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="7 4"/>
+<use href="#aws-group-auto-scaling-group" x="40" y="256" width="22" height="22"/>
+<text x="68" y="272" font-size="13" font-weight="700" fill="currentColor">Auto Scaling Group</text>
+<use href="#aws-ec2" x="77" y="286" width="40" height="40"/>
+<text x="97" y="344" text-anchor="middle" font-size="13" fill="currentColor">EC2</text>
+<use href="#aws-ec2" x="157" y="286" width="40" height="40"/>
+<text x="177" y="344" text-anchor="middle" font-size="13" fill="currentColor">EC2</text>
+<use href="#aws-ec2" x="323" y="286" width="40" height="40"/>
+<text x="343" y="344" text-anchor="middle" font-size="13" fill="currentColor">EC2</text>
+<use href="#aws-ec2" x="403" y="286" width="40" height="40"/>
+<text x="423" y="344" text-anchor="middle" font-size="13" fill="currentColor">EC2</text>
+<text x="260" y="418" text-anchor="middle" font-size="13" fill="currentColor">ASG trải instance qua cả AZ A và AZ B.</text>
+<text x="260" y="437" text-anchor="middle" font-size="13" fill="currentColor">AZ A chết → ASG launch bù ở AZ B,</text>
+<text x="260" y="456" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">NAT GW B vẫn sống → không còn SPOF</text>
 </svg>
 
 ## 2. Multi-AZ: nền tảng của HA trong một Region

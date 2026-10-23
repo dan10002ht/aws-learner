@@ -108,61 +108,76 @@ Vấn đề: KMS giới hạn ~4KB cho `Encrypt` API. Encrypt 1GB không khả t
 
 **Giải pháp**: envelope encryption.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Sequence diagram envelope encryption với KMS GenerateDataKey và Decrypt</title>
-  <desc>Sơ đồ tuần tự ba lifeline dọc — App (client), KMS, Lưu trữ — đọc từ trên xuống theo trục thời gian. Encrypt: App gọi GenerateDataKey, KMS trả plaintext data key và encrypted data key, App encrypt 1GB ở local bằng AES-GCM, lưu encrypted data kèm encrypted data key, rồi vứt plaintext key khỏi RAM. Decrypt: App đọc dữ liệu, gửi encrypted data key cho KMS Decrypt, KMS trả plaintext data key, App decrypt local rồi vứt plaintext key.</desc>
-  <defs>
-    <marker id="ee-arr" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
-      <path d="M0 0 L7 3.2 L0 6.4 z" fill="currentColor"/>
-    </marker>
-  </defs>
-  <!-- lifeline heads -->
-  <rect x="60" y="16" width="140" height="40" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="130" y="41" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">App (client)</text>
-  <rect x="320" y="16" width="140" height="40" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="390" y="35" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">KMS</text>
-  <text x="390" y="49" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">key không rời KMS</text>
-  <rect x="580" y="16" width="120" height="40" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="640" y="41" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Lưu trữ</text>
-  <!-- lifelines -->
-  <line x1="130" y1="56" x2="130" y2="410" stroke="currentColor" stroke-opacity="0.22" stroke-dasharray="4 4"/>
-  <line x1="390" y1="56" x2="390" y2="410" stroke="currentColor" stroke-opacity="0.22" stroke-dasharray="4 4"/>
-  <line x1="640" y1="56" x2="640" y2="410" stroke="currentColor" stroke-opacity="0.22" stroke-dasharray="4 4"/>
-  <!-- ENCRYPT band -->
-  <text x="16" y="80" font-size="13" font-weight="700" fill="currentColor">A · ENCRYPT (mã hoá 1GB)</text>
-  <!-- 1 GenerateDataKey: App -> KMS -->
-  <text x="260" y="98" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.9">1 · GenerateDataKey</text>
-  <line x1="130" y1="104" x2="390" y2="104" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ee-arr)"/>
-  <!-- 2 return keys: KMS --> App (dashed = response) -->
-  <text x="260" y="124" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.9">2 · plaintext key + encrypted data key</text>
-  <line x1="390" y1="130" x2="130" y2="130" stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="5 3" marker-end="url(#ee-arr)"/>
-  <!-- 3 self: encrypt local -->
-  <rect x="40" y="146" width="180" height="28" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="130" y="164" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.9">3 · encrypt 1GB local (AES-GCM)</text>
-  <!-- 4 store: App -> Storage -->
-  <text x="385" y="194" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.9">4 · lưu encrypted data + encrypted data key</text>
-  <line x1="130" y1="200" x2="640" y2="200" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ee-arr)"/>
-  <!-- 5 self: discard -->
-  <rect x="40" y="216" width="180" height="28" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="130" y="234" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.9">5 · vứt plaintext key khỏi RAM</text>
-  <line x1="16" y1="262" x2="704" y2="262" stroke="currentColor" stroke-opacity="0.15"/>
-  <!-- DECRYPT band -->
-  <text x="16" y="286" font-size="13" font-weight="700" fill="currentColor">B · DECRYPT (giải mã)</text>
-  <!-- 6 read: Storage -> App -->
-  <text x="385" y="304" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.9">6 · đọc encrypted data + encrypted data key</text>
-  <line x1="640" y1="310" x2="130" y2="310" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ee-arr)"/>
-  <!-- 7 Decrypt request: App -> KMS -->
-  <text x="260" y="330" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.9">7 · Decrypt(encrypted data key)</text>
-  <line x1="130" y1="336" x2="390" y2="336" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ee-arr)"/>
-  <!-- 8 return plaintext key: KMS --> App -->
-  <text x="260" y="356" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.9">8 · plaintext data key</text>
-  <line x1="390" y1="362" x2="130" y2="362" stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="5 3" marker-end="url(#ee-arr)"/>
-  <!-- 9 self: decrypt + discard -->
-  <rect x="40" y="378" width="180" height="28" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="130" y="396" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.9">9 · decrypt local → vứt plaintext key</text>
-  <text x="16" y="438" font-size="10.5" fill="currentColor" opacity="0.7">KMS chỉ xử lý data key 256-bit (nhẹ); heavy lifting 1GB nằm ở client.</text>
-  <text x="16" y="456" font-size="10.5" fill="currentColor" opacity="0.7">Mũi tên nét liền = request; nét đứt = response. Đọc số 1→9 từ trên xuống theo thời gian.</text>
+<step-flow>
+<svg viewBox="0 0 760 560" role="img" aria-labelledby="sd303a-t sd303a-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd303a-t">Envelope encryption với KMS: GenerateDataKey rồi Decrypt, 9 bước</title>
+<desc id="sd303a-d">Sơ đồ tuần tự ba lifeline App (client), KMS, Lưu trữ. Encrypt: App gọi GenerateDataKey, KMS trả plaintext key và encrypted data key, App encrypt 1GB ở local bằng AES-GCM, lưu encrypted data kèm encrypted data key, rồi vứt plaintext key khỏi RAM. Decrypt: App đọc encrypted data và encrypted data key, gửi encrypted data key cho KMS Decrypt, KMS trả plaintext data key, App decrypt local rồi vứt plaintext key.</desc>
+<defs>
+<marker id="sd303a-arr" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0 0 L7 3.2 L0 6.4 z" fill="currentColor"/></marker>
+</defs>
+<rect x="50" y="14" width="160" height="50" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="130" y="44" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">App (client)</text>
+<rect x="300" y="14" width="200" height="50" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<use href="#aws-kms" x="310" y="19" width="40" height="40"/>
+<text x="424" y="35" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">KMS</text>
+<text x="424" y="54" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.75">key không rời KMS</text>
+<rect x="580" y="14" width="140" height="50" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="650" y="44" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">Lưu trữ</text>
+<line x1="130" y1="64" x2="130" y2="484" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+<line x1="400" y1="64" x2="400" y2="484" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+<line x1="650" y1="64" x2="650" y2="484" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+<text x="16" y="92" font-size="14" font-weight="700" fill="currentColor">A · ENCRYPT (mã hoá 1GB)</text>
+<g data-step="1">
+<text x="265" y="115" text-anchor="middle" font-size="13" fill="currentColor">1 · GenerateDataKey</text>
+<line x1="132" y1="124" x2="394" y2="124" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#sd303a-arr)"/>
+</g>
+<g data-step="2">
+<text x="265" y="151" text-anchor="middle" font-size="13" fill="currentColor">2 · plaintext key + encrypted data key</text>
+<line x1="398" y1="160" x2="136" y2="160" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#sd303a-arr)"/>
+</g>
+<g data-step="3">
+<rect x="16" y="174" width="250" height="32" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="141" y="195" text-anchor="middle" font-size="13" fill="currentColor">3 · encrypt 1GB local (AES-GCM)</text>
+</g>
+<g data-step="4">
+<text x="390" y="231" text-anchor="middle" font-size="13" fill="currentColor">4 · lưu encrypted data + encrypted data key</text>
+<line x1="132" y1="240" x2="644" y2="240" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#sd303a-arr)"/>
+</g>
+<g data-step="5">
+<rect x="16" y="254" width="250" height="32" rx="8" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="141" y="275" text-anchor="middle" font-size="13" fill="currentColor">5 · vứt plaintext key khỏi RAM</text>
+</g>
+<line x1="16" y1="302" x2="744" y2="302" stroke="currentColor" stroke-opacity="0.18"/>
+<text x="16" y="326" font-size="14" font-weight="700" fill="currentColor">B · DECRYPT (giải mã)</text>
+<g data-step="6">
+<text x="390" y="349" text-anchor="middle" font-size="13" fill="currentColor">6 · đọc encrypted data + encrypted data key</text>
+<line x1="648" y1="358" x2="136" y2="358" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#sd303a-arr)"/>
+</g>
+<g data-step="7">
+<text x="265" y="385" text-anchor="middle" font-size="13" fill="currentColor">7 · Decrypt(encrypted data key)</text>
+<line x1="132" y1="394" x2="394" y2="394" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#sd303a-arr)"/>
+</g>
+<g data-step="8">
+<text x="265" y="421" text-anchor="middle" font-size="13" fill="currentColor">8 · plaintext data key</text>
+<line x1="398" y1="430" x2="136" y2="430" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#sd303a-arr)"/>
+</g>
+<g data-step="9">
+<rect x="16" y="444" width="250" height="32" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="141" y="465" text-anchor="middle" font-size="13" fill="currentColor">9 · decrypt local → vứt plaintext key</text>
+</g>
+<text x="16" y="512" font-size="13" fill="currentColor" opacity="0.75">KMS chỉ xử lý data key 256-bit (nhẹ); heavy lifting 1GB nằm ở client.</text>
+<text x="16" y="536" font-size="13" fill="currentColor" opacity="0.75">Mũi tên nét liền = request; nét đứt = response. Thứ tự 1→9 là thứ tự theo thời gian.</text>
 </svg>
+<step-note data-step="1">App xin KMS một data key mới. KMS key nằm yên trong KMS, nên app không thể lấy nó về để tự mã hoá dữ liệu.</step-note>
+<step-note data-step="2">Một lần gọi trả về hai bản của <b>cùng</b> một data key: bản rõ để dùng ngay, bản đã mã hoá bằng KMS key để cất. Lúc ghi không cần gọi KMS thêm lần nào.</step-note>
+<step-note data-step="3">Mã hoá chạy ở client nên không vướng giới hạn ~4KB của API <code>Encrypt</code>; 1GB không đi qua mạng tới KMS.</step-note>
+<step-note data-step="4">Encrypted data key được cất ngay cạnh dữ liệu, đó chính là cái phong bì. Lộ nó cũng vô hại vì chỉ KMS mở được.</step-note>
+<step-note data-step="5">Chỉ còn bản đã mã hoá tồn tại. Nếu lưu plaintext key cạnh dữ liệu thì KMS không còn bảo vệ gì nữa.</step-note>
+<step-note data-step="6">Phong bì đi kèm dữ liệu nên app không cần tự nhớ key nào ứng với object nào.</step-note>
+<step-note data-step="7">Chỉ data key nhỏ được gửi lên KMS. Đây là lúc key policy và IAM (§3.5) được kiểm: không có quyền <code>kms:Decrypt</code> thì dừng tại đây.</step-note>
+<step-note data-step="8">KMS trả lại bản rõ của data key; KMS key vẫn không rời KMS.</step-note>
+<step-note data-step="9">Giải mã 1GB chạy local, rồi vứt plaintext key giống bước 5.</step-note>
+</step-flow>
 
 → KMS chỉ encrypt/decrypt 256-bit data key, nhẹ. Heavy lifting ở client. **S3, EBS, RDS, DynamoDB đều dùng pattern này internal.**
 
