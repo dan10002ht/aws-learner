@@ -432,7 +432,7 @@ L2:  HEAD ──────────► 5000 ──────────�
 L1:  HEAD ─► 11500 ─► 5000 ─► 2100 ─► 1200 ─► 900 ─► 850 ─► 400
 L0:  ...  → 851 → 850 → 849 → ... → 843 → 842 → 841 → ...
                                               ▲
-   Đi 3 bước ở L3/L2, ~4 bước ở L1, ~4 bước ở L0 = ~11 bước
+   Đi 1 bước ở L3, 0 ở L2, 1 ở L1 (900 → 850), 8 ở L0 (850 → 842) = 10 bước
    Danh sách liên kết thường: 62 bước.
 ```
 
@@ -451,6 +451,158 @@ typedef struct zskiplistNode {
 ```
 
 Nhờ `span`, khi tìm một phần tử, Redis chỉ cần **cộng dồn span của các bước đã đi** là ra ngay vị trí tuyệt đối của phần tử đó. Đó chính là `ZRANK` — và nó là **O(log n)**, không phải O(n).
+
+<step-flow>
+<svg viewBox="0 0 760 450" role="img" aria-labelledby="sd26a-t sd26a-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto">
+<title id="sd26a-t">ZREVRANK trên skip list: nhảy tầng và cộng dồn span</title>
+<desc id="sd26a-d">Skip list thu nhỏ 10 phần tử xếp điểm giảm dần, 4 tầng L0 đến L3, mỗi mũi tên ghi span. Tìm 842: L3 nhảy HEAD tới 900 cộng 6, tụt qua L2 vì 400 vượt quá, L1 nhảy 900 tới 850 cộng 1, L0 nhảy 850 tới 842 cộng 1, tổng 8, ZREVRANK bằng 7.</desc>
+<defs><marker id="sd26a-ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L7 4 L0 8 z" fill="currentColor"/></marker><marker id="sd26a-ao" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L7 4 L0 8 z" fill="#f59e0b"/></marker></defs>
+<text x="380" y="28" text-anchor="middle" font-size="14" font-weight="bold" fill="currentColor">Ví dụ thu nhỏ: 10 phần tử, xếp điểm giảm dần, tìm hạng của 842</text>
+<text x="380" y="50" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">số nhỏ trên mũi tên = span (số phần tử tầng 0 mà bước nhảy đi qua)</text>
+<text x="45" y="70" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">HEAD</text>
+<rect x="20" y="77" width="50" height="26" rx="4" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="45" y="95" text-anchor="middle" font-size="13" fill="currentColor">L3</text>
+<rect x="20" y="137" width="50" height="26" rx="4" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="45" y="155" text-anchor="middle" font-size="13" fill="currentColor">L2</text>
+<rect x="20" y="197" width="50" height="26" rx="4" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="45" y="215" text-anchor="middle" font-size="13" fill="currentColor">L1</text>
+<rect x="20" y="257" width="50" height="26" rx="4" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="45" y="275" text-anchor="middle" font-size="13" fill="currentColor">L0</text>
+<rect x="88" y="257" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="110" y="275" text-anchor="middle" font-size="13" fill="currentColor">12543</text>
+<text x="110" y="305" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">1</text>
+<rect x="152" y="257" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="174" y="275" text-anchor="middle" font-size="13" fill="currentColor">11500</text>
+<rect x="152" y="197" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="174" y="215" text-anchor="middle" font-size="13" fill="currentColor">11500</text>
+<text x="174" y="305" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">2</text>
+<rect x="216" y="257" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="238" y="275" text-anchor="middle" font-size="13" fill="currentColor">5000</text>
+<rect x="216" y="197" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="238" y="215" text-anchor="middle" font-size="13" fill="currentColor">5000</text>
+<rect x="216" y="137" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="238" y="155" text-anchor="middle" font-size="13" fill="currentColor">5000</text>
+<text x="238" y="305" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">3</text>
+<rect x="280" y="257" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="302" y="275" text-anchor="middle" font-size="13" fill="currentColor">2100</text>
+<rect x="280" y="197" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="302" y="215" text-anchor="middle" font-size="13" fill="currentColor">2100</text>
+<text x="302" y="305" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">4</text>
+<rect x="344" y="257" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="366" y="275" text-anchor="middle" font-size="13" fill="currentColor">1200</text>
+<rect x="344" y="197" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="366" y="215" text-anchor="middle" font-size="13" fill="currentColor">1200</text>
+<text x="366" y="305" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">5</text>
+<rect x="408" y="257" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="430" y="275" text-anchor="middle" font-size="13" fill="currentColor">900</text>
+<rect x="408" y="197" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="430" y="215" text-anchor="middle" font-size="13" fill="currentColor">900</text>
+<rect x="408" y="137" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="430" y="155" text-anchor="middle" font-size="13" fill="currentColor">900</text>
+<rect x="408" y="77" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="430" y="95" text-anchor="middle" font-size="13" fill="currentColor">900</text>
+<text x="430" y="305" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">6</text>
+<rect x="472" y="257" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="494" y="275" text-anchor="middle" font-size="13" fill="currentColor">850</text>
+<rect x="472" y="197" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="494" y="215" text-anchor="middle" font-size="13" fill="currentColor">850</text>
+<text x="494" y="305" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">7</text>
+<rect x="536" y="257" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="558" y="275" text-anchor="middle" font-size="13" fill="currentColor">842</text>
+<text x="558" y="305" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">8</text>
+<rect x="600" y="257" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="622" y="275" text-anchor="middle" font-size="13" fill="currentColor">841</text>
+<text x="622" y="305" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">9</text>
+<rect x="664" y="257" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="686" y="275" text-anchor="middle" font-size="13" fill="currentColor">400</text>
+<rect x="664" y="197" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="686" y="215" text-anchor="middle" font-size="13" fill="currentColor">400</text>
+<rect x="664" y="137" width="44" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="686" y="155" text-anchor="middle" font-size="13" fill="currentColor">400</text>
+<text x="686" y="305" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">10</text>
+<text x="45" y="305" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">vị trí</text>
+<line x1="70" y1="90" x2="407" y2="90" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="239" y="73" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">6</text>
+<line x1="452" y1="90" x2="728" y2="90" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="742" y="95" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+<line x1="70" y1="150" x2="215" y2="150" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="143" y="133" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">3</text>
+<line x1="260" y1="150" x2="407" y2="150" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="334" y="133" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">3</text>
+<line x1="452" y1="150" x2="663" y2="150" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="558" y="133" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">4</text>
+<line x1="708" y1="150" x2="728" y2="150" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="742" y="155" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+<line x1="70" y1="210" x2="151" y2="210" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="111" y="193" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">2</text>
+<line x1="196" y1="210" x2="215" y2="210" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="206" y="193" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">1</text>
+<line x1="260" y1="210" x2="279" y2="210" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="270" y="193" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">1</text>
+<line x1="324" y1="210" x2="343" y2="210" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="334" y="193" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">1</text>
+<line x1="388" y1="210" x2="407" y2="210" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="398" y="193" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">1</text>
+<line x1="452" y1="210" x2="471" y2="210" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="462" y="193" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">1</text>
+<line x1="516" y1="210" x2="663" y2="210" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="590" y="193" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">3</text>
+<line x1="708" y1="210" x2="728" y2="210" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="742" y="215" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+<line x1="70" y1="270" x2="87" y2="270" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="79" y="253" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">1</text>
+<line x1="132" y1="270" x2="151" y2="270" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="142" y="253" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">1</text>
+<line x1="196" y1="270" x2="215" y2="270" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="206" y="253" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">1</text>
+<line x1="260" y1="270" x2="279" y2="270" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="270" y="253" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">1</text>
+<line x1="324" y1="270" x2="343" y2="270" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="334" y="253" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">1</text>
+<line x1="388" y1="270" x2="407" y2="270" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="398" y="253" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">1</text>
+<line x1="452" y1="270" x2="471" y2="270" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="462" y="253" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">1</text>
+<line x1="516" y1="270" x2="535" y2="270" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="526" y="253" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">1</text>
+<line x1="580" y1="270" x2="599" y2="270" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="590" y="253" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">1</text>
+<line x1="644" y1="270" x2="663" y2="270" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="654" y="253" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">1</text>
+<line x1="708" y1="270" x2="728" y2="270" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" marker-end="url(#sd26a-ar)"/>
+<text x="742" y="275" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+<g data-step="1">
+<line x1="70" y1="90" x2="407" y2="90" stroke="#f59e0b" stroke-width="3.5" marker-end="url(#sd26a-ao)"/>
+<text x="20" y="347" font-size="13" fill="currentColor"><tspan font-weight="bold">1.</tspan> L3: HEAD → 900, span 6 → rank = 6</text>
+</g>
+<g data-step="2">
+<line x1="430" y1="103" x2="430" y2="135" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="5 3" marker-end="url(#sd26a-ao)"/>
+<text x="558" y="156" text-anchor="middle" font-size="18" font-weight="bold" fill="#f43f5e">✗</text>
+<line x1="430" y1="163" x2="430" y2="195" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="5 3" marker-end="url(#sd26a-ao)"/>
+<text x="20" y="369" font-size="13" fill="currentColor"><tspan font-weight="bold">2.</tspan> L3 hết (∅); L2: 900 → 400 vượt qua 842 → tụt xuống L1, rank giữ 6</text>
+</g>
+<g data-step="3">
+<line x1="452" y1="210" x2="471" y2="210" stroke="#f59e0b" stroke-width="3.5" marker-end="url(#sd26a-ao)"/>
+<text x="590" y="216" text-anchor="middle" font-size="18" font-weight="bold" fill="#f43f5e">✗</text>
+<line x1="494" y1="223" x2="494" y2="255" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="5 3" marker-end="url(#sd26a-ao)"/>
+<text x="20" y="391" font-size="13" fill="currentColor"><tspan font-weight="bold">3.</tspan> L1: 900 → 850, span 1 → rank = 7; 850 → 400 vượt → tụt xuống L0</text>
+</g>
+<g data-step="4">
+<line x1="516" y1="270" x2="535" y2="270" stroke="#f59e0b" stroke-width="3.5" marker-end="url(#sd26a-ao)"/>
+<rect x="532" y="253" width="52" height="34" rx="6" fill="none" stroke="#f59e0b" stroke-width="2.5"/>
+<text x="20" y="413" font-size="13" fill="currentColor"><tspan font-weight="bold">4.</tspan> L0: 850 → 842, span 1 → rank = 8 = vị trí của 842 (đếm từ 1)</text>
+</g>
+<g data-step="5">
+<path d="M88 312 v6 H516 v-6" fill="none" stroke="#10b981" stroke-width="2"/>
+<text x="20" y="435" font-size="13" fill="currentColor"><tspan font-weight="bold">5.</tspan> ZREVRANK = 8 − 1 = 7 (0-based): đúng 7 người đứng trên, chỉ cộng 6 + 1 + 1</text>
+</g>
+</svg>
+<step-note data-step="1">Bắt đầu ở tầng cao nhất của HEAD. 900 vẫn đứng trước 842 (điểm cao hơn) nên nhảy luôn, và span <code>6</code> nói rằng bước này vừa vượt qua 6 phần tử: 900 đang ở vị trí 6.</step-note>
+<step-note data-step="2">Phía sau 900 ở L3 không còn gì; ở L2 bước kế tiếp đến 400, đã nằm sau 842, nên không được nhảy. Tụt tầng không đi qua phần tử nào nên không cộng span.</step-note>
+<step-note data-step="3">Tầng thấp hơn có con trỏ ngắn hơn: 900 → 850 vẫn chưa vượt 842 nên nhảy và cộng 1. Bước kế đến 400 lại vượt, nên tụt xuống tầng 0.</step-note>
+<step-note data-step="4">Ở tầng 0 mỗi span luôn bằng 1, giống danh sách liên kết thường. Gặp đúng 842: tổng span đã cộng chính là vị trí tuyệt đối của nó, không cần đếm lại ai.</step-note>
+<step-note data-step="5">Vị trí đếm từ 1 nên <code>ZREVRANK</code> trả 8 − 1 = 7. Số phép cộng tỉ lệ với số bước nhảy, tức O(log n); B-tree không lưu span thì phải đếm tay 7 phần tử phía trước.</step-note>
+</step-flow>
 
 Nói cách khác: **skip list của Redis là một order-statistic tree**. Đây là câu trả lời chính xác cho câu hỏi "vì sao MySQL không làm được?" — B-tree của MySQL không lưu `span`, nên nó phải đếm tay.
 

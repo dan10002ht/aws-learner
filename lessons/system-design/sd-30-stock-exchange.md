@@ -309,66 +309,81 @@ GET  /v1/reports/daily?date=2026-03-14         # đối soát cuối ngày
 
 ### 5.1 Bức tranh tổng thể
 
-```
-   ┌──────────┐        ┌──────────┐
-   │  Nhà đầu │        │ Khách tổ │
-   │ tư cá nhân│       │  chức/HFT│
-   └────┬─────┘        └────┬─────┘
-        │ app/web            │ máy đặt COLOCATION trong DC của sàn
-        ▼                    │
-   ┌──────────┐              │
-   │  BROKER  │              │
-   │ (KYC,ví, │              │
-   │ gom lệnh)│              │
-   └────┬─────┘              │
-        │  FIX / nhị phân    │ nhị phân, cross-connect 10–40 Gbps
-        └──────────┬─────────┘
-                   ▼
-╔═══════════════════════════════════════════════════════════════════════╗
-║                        SÀN GIAO DỊCH (EXCHANGE)                       ║
-║                                                                       ║
-║  ┌─────────────────┐   ① lệnh                                         ║
-║  │ CLIENT GATEWAY  │───────────┐    (nhiều gateway, STATELESS,        ║
-║  │ xác thực, giới  │◀────────┐ │     scale ngang thoải mái)           ║
-║  │ hạn nhịp, giải  │  ⑦ fill │ │                                      ║
-║  │ mã, chuẩn hoá   │         │ │                                      ║
-║  └─────────────────┘         │ ▼                                      ║
-║                        ┌───────────────────┐                          ║
-║                        │   ORDER MANAGER   │  ② risk check            ║
-║                        │ trạng thái lệnh,  │─────▶┌──────────────┐    ║
-║                        │ giữ tiền trong ví │◀─────│ RISK MANAGER │    ║
-║                        └─────────┬─────────┘      │ hạn mức, ví  │    ║
-║                                  │ ③              └──────────────┘    ║
-║                                  ▼                                    ║
-║              ╔═══════════════════════════════════════╗                ║
-║              ║           SEQUENCER                   ║                ║
-║              ║  người viết DUY NHẤT, gán seq_id      ║                ║
-║              ║  tăng đơn điệu cho MỌI sự kiện        ║                ║
-║              ╚════════════════╤══════════════════════╝                ║
-║                               │ ④ dòng sự kiện đã đánh số             ║
-║                     ┌─────────┴──────────────────────────┐            ║
-║                     ▼                                    │            ║
-║        ┌─────────────────────────┐                       │            ║
-║        │    MATCHING ENGINE      │                       │            ║
-║        │  ĐƠN LUỒNG, ghim 1 core │   ⑤ fill              │            ║
-║        │  sổ lệnh 100 mã in-RAM  │──────────┐            │            ║
-║        │  price-time priority    │          │            │            ║
-║        └─────────────────────────┘          ▼            ▼            ║
-║                                    ┌────────────────┐  ┌───────────┐  ║
-║                                    │ MARKET DATA    │  │ REPORTER  │  ║
-║                                    │ PUBLISHER      │  │ ghi DB,   │  ║
-║                                    │ dựng L1/L2/L3, │  │ tuân thủ, │  ║
-║                                    │ nến            │  │ đối soát  │  ║
-║                                    └───────┬────────┘  └─────┬─────┘  ║
-║                                            │ ⑥ MULTICAST UDP │        ║
-╚════════════════════════════════════════════╪═════════════════╪════════╝
-                                             ▼                 ▼
-                                   ┌──────────────────┐  ┌────────────┐
-                                   │ 500 người nhận   │  │ Kho lịch sử│
-                                   │ (broker, MM,     │  │ + giám sát │
-                                   │  nhà cung cấp DL)│  │  (T+1)     │
-                                   └──────────────────┘  └────────────┘
-```
+<svg viewBox="0 0 520 900" role="img" aria-labelledby="sd30a-t sd30a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd30a-t">Kiến trúc tổng thể của sàn giao dịch</title>
+<desc id="sd30a-d">Nhà đầu tư cá nhân đi qua broker bằng FIX hoặc nhị phân, khách tổ chức/HFT đặt máy colocation nối thẳng bằng cross-connect 10–40 Gbps. Trong sàn: client gateway (1) chuyển lệnh tới order manager, order manager (2) gọi risk manager, (3) đưa lệnh vào sequencer; sequencer (4) phát dòng sự kiện đã đánh số tới matching engine và reporter; matching engine (5) gửi fill tới market data publisher, publisher (6) phát multicast UDP tới 500 người nhận; reporter ghi kho lịch sử và giám sát (T+1); (7) fill quay về gateway.</desc>
+<defs><marker id="sd30a-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<rect x="20" y="10" width="180" height="52" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
+<text x="110.0" y="41.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">Nhà đầu tư cá nhân</text>
+<rect x="300" y="10" width="200" height="52" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
+<text x="400.0" y="41.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">Khách tổ chức / HFT</text>
+<line x1="110" y1="62" x2="110" y2="98" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd30a-arr)"/>
+<text x="118" y="86" text-anchor="start" font-size="13" fill="currentColor">app/web</text>
+<rect x="20" y="100" width="180" height="60" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
+<text x="110.0" y="126.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">BROKER</text>
+<text x="110.0" y="144.0" text-anchor="middle" font-size="13" fill="currentColor">KYC, ví, gom lệnh</text>
+<text x="392" y="92" text-anchor="end" font-size="13" fill="currentColor">máy đặt COLOCATION</text>
+<text x="392" y="110" text-anchor="end" font-size="13" fill="currentColor">trong DC của sàn</text>
+<text x="392" y="150" text-anchor="end" font-size="13" fill="currentColor">nhị phân, cross-connect</text>
+<text x="392" y="168" text-anchor="end" font-size="13" fill="currentColor">10–40 Gbps</text>
+<line x1="110" y1="160" x2="110" y2="242" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd30a-arr)"/>
+<text x="118" y="182" text-anchor="start" font-size="13" fill="currentColor">FIX / nhị phân</text>
+<rect x="8" y="212" width="504" height="590" rx="12" fill="#14b8a6" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.55" stroke-width="2" stroke-dasharray="7 4"/>
+<text x="260" y="205" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">SÀN GIAO DỊCH (EXCHANGE)</text>
+<path d="M400 62 L400 228 L250 228 L250 242" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd30a-arr)"/>
+<rect x="30" y="244" width="260" height="68" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
+<text x="160.0" y="265.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">CLIENT GATEWAY</text>
+<text x="160.0" y="283.0" text-anchor="middle" font-size="13" fill="currentColor">xác thực, giới hạn nhịp,</text>
+<text x="160.0" y="301.0" text-anchor="middle" font-size="13" fill="currentColor">giải mã, chuẩn hoá</text>
+<text x="305" y="266" text-anchor="start" font-size="13" opacity="0.85" fill="currentColor">nhiều gateway, STATELESS,</text>
+<text x="305" y="284" text-anchor="start" font-size="13" opacity="0.85" fill="currentColor">scale ngang thoải mái</text>
+<line x1="110" y1="312" x2="110" y2="350" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd30a-arr)"/>
+<text x="118" y="336" text-anchor="start" font-size="13" fill="currentColor">① lệnh</text>
+<line x1="210" y1="352" x2="210" y2="314" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd30a-arr)"/>
+<text x="218" y="336" text-anchor="start" font-size="13" fill="currentColor">⑦ fill</text>
+<rect x="30" y="352" width="240" height="64" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
+<text x="150.0" y="371.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">ORDER MANAGER</text>
+<text x="150.0" y="389.0" text-anchor="middle" font-size="13" fill="currentColor">trạng thái lệnh,</text>
+<text x="150.0" y="407.0" text-anchor="middle" font-size="13" fill="currentColor">giữ tiền trong ví</text>
+<rect x="330" y="352" width="170" height="64" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
+<text x="415.0" y="380.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">RISK MANAGER</text>
+<text x="415.0" y="398.0" text-anchor="middle" font-size="13" fill="currentColor">hạn mức, ví</text>
+<text x="300" y="344" text-anchor="middle" font-size="13" fill="currentColor">② risk check</text>
+<line x1="270" y1="372" x2="328" y2="372" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd30a-arr)"/>
+<line x1="330" y1="396" x2="272" y2="396" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd30a-arr)"/>
+<line x1="150" y1="416" x2="150" y2="448" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd30a-arr)"/>
+<text x="158" y="437" text-anchor="start" font-size="13" fill="currentColor">③</text>
+<rect x="30" y="450" width="460" height="74" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.6" stroke-width="2.5"/>
+<text x="260.0" y="474.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">SEQUENCER</text>
+<text x="260.0" y="492.0" text-anchor="middle" font-size="13" fill="currentColor">người viết DUY NHẤT, gán seq_id tăng đơn điệu</text>
+<text x="260.0" y="510.0" text-anchor="middle" font-size="13" fill="currentColor">cho MỌI sự kiện</text>
+<line x1="145" y1="524" x2="145" y2="578" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd30a-arr)"/>
+<line x1="400" y1="524" x2="400" y2="698" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd30a-arr)"/>
+<text x="155" y="552" text-anchor="start" font-size="13" fill="currentColor">④ dòng sự kiện đã đánh số</text>
+<rect x="30" y="580" width="230" height="90" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.6" stroke-width="2"/>
+<text x="145.0" y="603.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">MATCHING ENGINE</text>
+<text x="145.0" y="621.0" text-anchor="middle" font-size="13" fill="currentColor">ĐƠN LUỒNG, ghim 1 core</text>
+<text x="145.0" y="639.0" text-anchor="middle" font-size="13" fill="currentColor">sổ lệnh 100 mã in-RAM</text>
+<text x="145.0" y="657.0" text-anchor="middle" font-size="13" fill="currentColor">price-time priority</text>
+<line x1="145" y1="670" x2="145" y2="698" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd30a-arr)"/>
+<text x="153" y="690" text-anchor="start" font-size="13" fill="currentColor">⑤ fill</text>
+<rect x="30" y="700" width="230" height="80" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
+<text x="145.0" y="736.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">MARKET DATA PUBLISHER</text>
+<text x="145.0" y="754.0" text-anchor="middle" font-size="13" fill="currentColor">dựng L1/L2/L3, nến</text>
+<rect x="300" y="700" width="200" height="80" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
+<text x="400.0" y="727.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">REPORTER</text>
+<text x="400.0" y="745.0" text-anchor="middle" font-size="13" fill="currentColor">ghi DB, tuân thủ,</text>
+<text x="400.0" y="763.0" text-anchor="middle" font-size="13" fill="currentColor">đối soát</text>
+<line x1="145" y1="780" x2="145" y2="828" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd30a-arr)"/>
+<text x="153" y="819" text-anchor="start" font-size="13" fill="currentColor">⑥ MULTICAST UDP</text>
+<line x1="400" y1="780" x2="400" y2="828" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd30a-arr)"/>
+<rect x="30" y="830" width="230" height="62" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
+<text x="145.0" y="857.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">500 người nhận</text>
+<text x="145.0" y="875.0" text-anchor="middle" font-size="13" fill="currentColor">(broker, MM, nhà cung cấp DL)</text>
+<rect x="300" y="830" width="200" height="62" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
+<text x="400.0" y="857.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">Kho lịch sử</text>
+<text x="400.0" y="875.0" text-anchor="middle" font-size="13" fill="currentColor">+ giám sát (T+1)</text>
+</svg>
 
 ### 5.2 Ba luồng, ba ngân sách độ trễ hoàn toàn khác nhau
 
@@ -576,21 +591,76 @@ Xuất phát từ sổ lệnh AAPL sau (mỗi mức giá liệt kê từng lện
 
 Engine so `100.06` với `bestAsk = 100.05`. Vì `100.06 ≥ 100.05`, lệnh này **khớp được ngay**. Bắt đầu quét bên ask từ mức giá tốt nhất đi lên:
 
-```
- Bước 1: mức 100.05, head = #S1 (300 cổ)
-         khớp min(600, 300) = 300 cổ @ GIÁ 100.05
-         → sinh 2 fill: mua #newOrder 300@100.05, bán #S1 300@100.05
-         → #S1 hết hàng, gỡ khỏi list, mức 100.05 rỗng → bestAsk nhảy lên 100.06
-         → còn phải mua 300
-
- Bước 2: mức 100.06, head = #S2 (500 cổ, đến lúc t5)  ← TIME PRIORITY ở đây
-         khớp min(300, 500) = 300 cổ @ GIÁ 100.06
-         → 2 fill nữa
-         → #S2 còn lại 200, VẪN Ở ĐẦU HÀNG (giữ nguyên vị trí thời gian)
-         → #S3 KHÔNG được khớp chút nào, dù nó cùng giá — vì đến sau
-
- Lệnh mới đã khớp đủ 600 → không còn gì để đưa vào sổ.
-```
+<step-flow>
+<svg viewBox="0 0 760 500" role="img" aria-labelledby="sd30b-t sd30b-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd30b-t">Lệnh BUY 600 @ 100.06 khớp với bên ask theo price-time priority</title>
+<desc id="sd30b-d">Bên ask có ba mức: 100.05 với #S1 300 (t2); 100.06 với #S2 500 (t5) rồi #S3 300 (t7); 100.07 với #S4 400 (t9). Lệnh mua 600 @ 100.06 khớp 300 với #S1 ở giá 100.05, rồi 300 với #S2 ở giá 100.06; #S2 còn 200 và vẫn đứng đầu hàng; #S3 không được khớp vì đến sau. Sau sự kiện best ask là 100.06, spread nới từ 0.02 lên 0.03.</desc>
+<defs><marker id="sd30b-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<rect x="20" y="12" width="280" height="58" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5"/>
+<text x="160" y="36" text-anchor="middle" font-size="13" opacity="0.85" fill="currentColor">LỆNH ĐẾN (taker, giới hạn)</text>
+<text x="160" y="58" text-anchor="middle" font-size="16" font-weight="700" fill="currentColor">BUY 600 @ 100.06</text>
+<text x="330" y="36" text-anchor="start" font-size="13" fill="currentColor">Trước sự kiện: best bid 100.03</text>
+<text x="330" y="56" text-anchor="start" font-size="13" fill="currentColor">best ask 100.05 · spread 0.02</text>
+<text x="140" y="106" text-anchor="start" font-size="13" font-weight="700" fill="currentColor">ASKS — mỗi mức là một hàng FIFO, đầu hàng ở bên trái</text>
+<rect x="20" y="120" width="100" height="56" rx="8" fill="#f43f5e" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="70" y="145" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">100.05</text>
+<text x="70" y="165" text-anchor="middle" font-size="13" opacity="0.85" fill="currentColor">KL 300</text>
+<rect x="140" y="120" width="125" height="56" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="202.5" y="145" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">#S1 300</text>
+<text x="202.5" y="165" text-anchor="middle" font-size="13" opacity="0.85" fill="currentColor">đến lúc t2</text>
+<rect x="20" y="220" width="100" height="56" rx="8" fill="#f43f5e" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="70" y="245" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">100.06</text>
+<text x="70" y="265" text-anchor="middle" font-size="13" opacity="0.85" fill="currentColor">KL 800</text>
+<rect x="140" y="220" width="125" height="56" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="202.5" y="245" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">#S2 500</text>
+<text x="202.5" y="265" text-anchor="middle" font-size="13" opacity="0.85" fill="currentColor">đến lúc t5</text>
+<rect x="279" y="220" width="125" height="56" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="341.5" y="245" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">#S3 300</text>
+<text x="341.5" y="265" text-anchor="middle" font-size="13" opacity="0.85" fill="currentColor">đến lúc t7</text>
+<rect x="20" y="320" width="100" height="56" rx="8" fill="#f43f5e" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="70" y="345" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">100.07</text>
+<text x="70" y="365" text-anchor="middle" font-size="13" opacity="0.85" fill="currentColor">KL 400</text>
+<rect x="140" y="320" width="125" height="56" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="202.5" y="345" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">#S4 400</text>
+<text x="202.5" y="365" text-anchor="middle" font-size="13" opacity="0.85" fill="currentColor">đến lúc t9</text>
+<g data-step="1">
+<line x1="60" y1="70" x2="60" y2="118" stroke="#3b82f6" stroke-width="2" marker-end="url(#sd30b-arr)"/>
+<text x="435" y="136" text-anchor="start" font-size="13" font-weight="700" fill="currentColor">100.06 ≥ best ask 100.05</text>
+<text x="435" y="154" text-anchor="start" font-size="13" fill="currentColor">→ khớp được ngay, quét ask từ giá thấp nhất lên</text>
+</g>
+<g data-step="2">
+<line x1="146" y1="126" x2="259" y2="170" stroke="#f43f5e" stroke-width="2.5"/>
+<line x1="259" y1="126" x2="146" y2="170" stroke="#f43f5e" stroke-width="2.5"/>
+<line x1="273" y1="150" x2="425" y2="178" stroke="#f43f5e" stroke-width="1.6" marker-end="url(#sd30b-arr)"/>
+<text x="435" y="182" text-anchor="start" font-size="13" font-weight="700" fill="currentColor">min(600, 300) = 300 @ 100.05</text>
+<text x="435" y="200" text-anchor="start" font-size="13" fill="currentColor">2 fill · #S1 hết, mức 100.05 rỗng</text>
+<text x="435" y="218" text-anchor="start" font-size="13" fill="currentColor">→ best ask 100.06 · còn mua 300</text>
+</g>
+<g data-step="3">
+<rect x="140" y="268" width="75" height="8" rx="3" fill="#10b981" fill-opacity="0.9"/>
+<text x="202.5" y="294" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">còn 200,</text>
+<text x="202.5" y="311" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">vẫn đầu hàng</text>
+<text x="435" y="254" text-anchor="start" font-size="13" font-weight="700" fill="currentColor">head #S2: min(300, 500) = 300 @ 100.06</text>
+<text x="435" y="272" text-anchor="start" font-size="13" fill="currentColor">2 fill nữa · #S2 còn 200, giữ chỗ</text>
+</g>
+<g data-step="4">
+<rect x="275" y="216" width="133" height="64" rx="10" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5 4"/>
+<text x="341.5" y="294" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">✗ đến sau,</text>
+<text x="341.5" y="311" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">không khớp</text>
+</g>
+<g data-step="5">
+<rect x="20" y="400" width="720" height="84" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="380" y="426" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">Đủ 600 = 300 @ 100.05 + 300 @ 100.06 · 4 fill · không còn gì đưa vào sổ</text>
+<text x="380" y="448" text-anchor="middle" font-size="13" fill="currentColor">Ask sau sự kiện: 100.06 KL 500 (#S2 200, #S3 300) · 100.07 KL 400 (#S4 400)</text>
+<text x="380" y="470" text-anchor="middle" font-size="13" fill="currentColor">best ask 100.06 · spread nới rộng 0.02 → 0.03</text>
+</g>
+</svg>
+<step-note data-step="1">Engine chỉ so giá lệnh mới với <code>bestAsk</code>: mua sẵn sàng trả tới 100.06, có người bán ở 100.05 nên giao nhau. Đó là <b>ưu tiên giá</b>: mức rẻ nhất được phục vụ trước.</step-note>
+<step-note data-step="2">Khớp ở giá của lệnh nằm sẵn (100.05), không phải 100.06 người mua đặt: bên taker nhận giá của bên maker, nên người mua được <i>price improvement</i>. Một lần khớp sinh đúng hai fill (mua <code>#newOrder</code>, bán <code>#S1</code>) cùng <code>seq_id</code>.</step-note>
+<step-note data-step="3">Mức 100.05 rỗng nên <code>bestAsk</code> nhảy lên 100.06. Cùng mức giá thì <b>ưu tiên thời gian</b>: <code>#S2</code> (t5) đứng đầu nên ăn trước. Phần dư 200 giữ nguyên vị trí; gỡ ra chèn lại là cướp ưu tiên thời gian của nó.</step-note>
+<step-note data-step="4"><code>#S3</code> cùng giá 100.06 nhưng đến lúc t7, sau <code>#S2</code>. Lệnh mới đã đủ 600 trước khi tới lượt nó, nên nó không nhận được cổ nào.</step-note>
+<step-note data-step="5">Lệnh mới khớp hết nên không có phần nào nằm lại trong sổ. Bên ask mất cả mức 100.05: lệnh lớn ăn thanh khoản làm spread nới và đẩy giá lên (market impact).</step-note>
+</step-flow>
 
 Ba điểm phải nói rõ khi trình bày, vì mỗi điểm là một câu hỏi phụ điển hình:
 
@@ -621,7 +691,7 @@ Lệnh thị trường không có giá, nên nó quét bên bids từ tốt nh�
  100.01: #B4 400 → khớp 300 @ 100.01       (cộng dồn 1000) — #B4 còn 100
  → HẾT 1000. Giá khớp trung bình = (200×100.03 + 500×100.02 + 300×100.01)/1000
                                   = 100.019  → TRƯỢT GIÁ (slippage) so với 100.03
- → best bid tụt từ 100.03 xuống 100.01. Ba mức giá bị xoá sổ trong một sự kiện.
+ → best bid tụt từ 100.03 xuống 100.01. Một sự kiện quét qua ba mức giá: hai mức bị xoá sổ, mức thứ ba bị ăn một phần.
 ```
 
 > **Vì sao lệnh thị trường nguy hiểm về mặt hệ thống**: nếu sổ lệnh mỏng, một lệnh thị trường đủ lớn có thể quét sạch hàng chục mức giá và khiến giá nhảy vài phần trăm trong vài micro-giây. Đây chính là cơ chế đã gây ra "Flash Crash" ngày 6/5/2010. Phòng thủ có hai lớp: **giới hạn dải giá cho lệnh thị trường** (biến nó ngầm thành lệnh giới hạn với giá trần/sàn rộng) và **circuit breaker** (§15).

@@ -292,23 +292,86 @@ Nếu một database không đủ, hãy chia dữ liệu ra nhiều database và
 
 Có một **coordinator** (điều phối viên — ở đây là Wallet Service) và các **participant** (những database shard tham gia).
 
-```
-          Coordinator                RM-1 (ví A)         RM-2 (ví B)
-              |                          |                    |
- Pha 1  ------|--- PREPARE ------------->|                    |
- (bỏ phiếu)   |--- PREPARE --------------|------------------->|
-              |                          | ghi WAL "prepared" |
-              |                          | GIỮ KHOÁ trên A    | ghi WAL "prepared"
-              |                          |                    | GIỮ KHOÁ trên B
-              |<-- YES ------------------|                    |
-              |<-- YES ------------------|--------------------|
-              |
-              | ghi quyết định COMMIT vào log của coordinator  <-- điểm không quay đầu
-              |
- Pha 2  ------|--- COMMIT -------------->| áp dụng + nhả khoá |
- (thực thi)   |--- COMMIT ---------------|------------------->| áp dụng + nhả khoá
-              |<-- ACK ------------------|<-------------------|
-```
+<step-flow>
+<svg viewBox="0 0 760 640" role="img" aria-labelledby="sd29a-t sd29a-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto">
+<title id="sd29a-t">Two-phase commit giữa coordinator và hai participant</title>
+<desc id="sd29a-d">Pha 1: coordinator gửi PREPARE tới RM-1 (ví A) và RM-2 (ví B); mỗi RM ghi WAL prepared, giữ khoá rồi trả YES. Coordinator ghi quyết định COMMIT vào log của mình, điểm không quay đầu. Pha 2: gửi COMMIT, mỗi RM áp dụng và nhả khoá, trả ACK. Bước cuối chỉ ra khoảng khoá bị giữ và chỗ coordinator chết làm RM kẹt in-doubt.</desc>
+<defs><marker id="sd29a-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<rect x="8" y="62" width="744" height="214" rx="8" fill="#f59e0b" fill-opacity="0.1"/>
+<text x="18" y="80" font-size="13" font-weight="600" fill="currentColor">Pha 1 (bỏ phiếu)</text>
+<rect x="8" y="352" width="744" height="182" rx="8" fill="#10b981" fill-opacity="0.1"/>
+<text x="18" y="370" font-size="13" font-weight="600" fill="currentColor">Pha 2 (thực thi)</text>
+<rect x="80" y="12" width="140" height="34" rx="8" fill="#3b82f6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="150" y="34" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">Coordinator</text>
+<line x1="150" y1="46" x2="150" y2="545" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4" stroke-opacity="0.35"/>
+<rect x="350" y="12" width="140" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="420" y="34" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">RM-1 (ví A)</text>
+<line x1="420" y1="46" x2="420" y2="545" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4" stroke-opacity="0.35"/>
+<rect x="570" y="12" width="140" height="34" rx="8" fill="#14b8a6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="640" y="34" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">RM-2 (ví B)</text>
+<line x1="640" y1="46" x2="640" y2="545" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4" stroke-opacity="0.35"/>
+<g data-step="1">
+<text x="285.0" y="100" text-anchor="middle" font-size="13" fill="currentColor">PREPARE</text>
+<line x1="152" y1="107" x2="417" y2="107" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd29a-arrow)"/>
+<text x="300" y="130" text-anchor="middle" font-size="13" fill="currentColor">PREPARE</text>
+<line x1="152" y1="137" x2="637" y2="137" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd29a-arrow)"/>
+</g>
+<g data-step="2">
+<rect x="342" y="150" width="156" height="50" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="420" y="170" text-anchor="middle" font-size="13" fill="currentColor">ghi WAL "prepared"</text>
+<text x="420" y="190" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">GIỮ KHOÁ trên A</text>
+<rect x="562" y="150" width="156" height="50" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="640" y="170" text-anchor="middle" font-size="13" fill="currentColor">ghi WAL "prepared"</text>
+<text x="640" y="190" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">GIỮ KHOÁ trên B</text>
+</g>
+<g data-step="3">
+<text x="285.0" y="225" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">YES</text>
+<line x1="418" y1="232" x2="153" y2="232" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd29a-arrow)"/>
+<text x="530" y="255" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">YES</text>
+<line x1="638" y1="262" x2="153" y2="262" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd29a-arrow)"/>
+</g>
+<g data-step="4">
+<rect x="22" y="290" width="256" height="46" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="150" y="309" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">ghi quyết định COMMIT</text>
+<text x="150" y="327" text-anchor="middle" font-size="13" fill="currentColor">vào log của coordinator</text>
+<line x1="282" y1="313" x2="748" y2="313" stroke="currentColor" stroke-width="1.6" stroke-dasharray="6 4"/>
+<text x="530" y="333" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">điểm không quay đầu</text>
+</g>
+<g data-step="5">
+<text x="285.0" y="393" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">COMMIT</text>
+<line x1="152" y1="400" x2="417" y2="400" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd29a-arrow)"/>
+<text x="428" y="393" font-size="13" fill="currentColor">áp dụng + nhả khoá</text>
+<text x="300" y="423" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">COMMIT</text>
+<line x1="152" y1="430" x2="637" y2="430" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd29a-arrow)"/>
+<text x="640" y="450" text-anchor="middle" font-size="13" fill="currentColor">áp dụng + nhả khoá</text>
+</g>
+<g data-step="6">
+<text x="285.0" y="481" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">ACK</text>
+<line x1="418" y1="488" x2="153" y2="488" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd29a-arrow)"/>
+<text x="530" y="511" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">ACK</text>
+<line x1="638" y1="518" x2="153" y2="518" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd29a-arrow)"/>
+</g>
+<g data-step="7">
+<rect x="415" y="200" width="10" height="200" fill="#f43f5e" fill-opacity="0.45" stroke="#f43f5e"/>
+<text x="408" y="290" text-anchor="end" font-size="13" font-weight="600" fill="currentColor">khoá A bị giữ</text>
+<rect x="635" y="200" width="10" height="230" fill="#f43f5e" fill-opacity="0.45" stroke="#f43f5e"/>
+<text x="628" y="290" text-anchor="end" font-size="13" font-weight="600" fill="currentColor">khoá B bị giữ</text>
+<path d="M139 265 L161 287 M161 265 L139 287" stroke="#f43f5e" stroke-width="3.5"/>
+<text x="132" y="282" text-anchor="end" font-size="13" font-weight="700" fill="currentColor">chết</text>
+<rect x="22" y="556" width="716" height="72" rx="8" fill="#f43f5e" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="380" y="578" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Coordinator chết sau khi RM đã YES, log quyết định mất:</text>
+<text x="380" y="598" text-anchor="middle" font-size="13" fill="currentColor">RM ở trạng thái in-doubt, không được tự commit hay abort,</text>
+<text x="380" y="617" text-anchor="middle" font-size="13" fill="currentColor">giữ khoá vô hạn (blocking problem của 2PC)</text>
+</g>
+</svg>
+<step-note data-step="1">Coordinator hỏi mọi participant có dữ liệu trong giao dịch: shard giữ ví A và shard giữ ví B. Chưa ai ghi gì vĩnh viễn.</step-note>
+<step-note data-step="2">RM làm mọi thứ trừ commit: kiểm ràng buộc, ghi thay đổi xuống WAL (fsync lần 1). Khoá phải giữ để giao dịch khác không phá được lời hứa sắp đưa ra.</step-note>
+<step-note data-step="3"><code>YES</code> là lời hứa không rút lại: được bảo commit thì commit được, kể cả khi restart ngay. Từ đây RM mất quyền tự quyết.</step-note>
+<step-note data-step="4">Quyết định chỉ có thật khi đã nằm trong log bền của coordinator. Trước dòng này còn abort được; sau dòng này mọi RM bắt buộc commit.</step-note>
+<step-note data-step="5">RM áp dụng thay đổi (fsync lần 2) rồi mới nhả khoá; chỉ từ lúc này giao dịch khác mới đụng được ví A, ví B.</step-note>
+<step-note data-step="6">ACK cho coordinator biết mọi RM đã áp dụng xong. Cả luồng là 2 vòng mạng đồng bộ cộng nhiều lần fsync, nên ~1 ms thành ~5–10 ms (§6.3).</step-note>
+<step-note data-step="7">Khoá giữ từ prepare tới COMMIT. Coordinator chết trong khoảng đó mà log quyết định mất thì RM không có ai để hỏi; tự abort có thể mất tiền, tự commit có thể tạo ra tiền, nên nó đứng im cho tới khi DBA gõ <code>COMMIT PREPARED</code> hoặc <code>ROLLBACK PREPARED</code> (§6.2).</step-note>
+</step-flow>
 
 Hai pha có ý nghĩa rất cụ thể:
 
@@ -517,19 +580,96 @@ Và nó **bắt buộc phải tất định**: cùng một chuỗi event đầu 
 
 ### 8.3 Luồng một giao dịch
 
-```
-1. Nhận: TransferMoney{tx_id, A, B, 25.50 USD}          <- COMMAND
-2. Xếp vào command queue của shard chứa A
-3. State machine lấy command ra, đọc state: balance(A) = 100.00
-4. Kiểm tra: đủ tiền? ví A có bị khoá? tx_id đã xử lý chưa?
-5a. Không hợp lệ -> sinh event TransferRejected{lý do} (VẪN là một event!)
-5b. Hợp lệ -> sinh 2 event:
-       BalanceDebited { wallet: A, amount: 25.50, tx_id, seq: 1042 }
-       BalanceCredited{ wallet: B, amount: 25.50, tx_id, seq:  77  }
-6. GHI EVENT VÀO EVENT STORE (append, fsync, nhân bản)   <- ĐIỂM COMMIT THẬT SỰ
-7. Áp dụng event -> state: balance(A) = 74.50, balance(B) += 25.50
-8. Phát event cho các bên tiêu thụ (đọc, thông báo, chống gian lận, kho dữ liệu)
-```
+<step-flow>
+<svg viewBox="0 0 760 640" role="img" aria-labelledby="sd29b-t sd29b-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto">
+<title id="sd29b-t">Một giao dịch chuyển tiền qua event sourcing, 8 bước</title>
+<desc id="sd29b-d">Command TransferMoney vào command queue của shard chứa A; state machine đọc balance(A) = 100.00, kiểm tra rồi sinh TransferRejected hoặc hai event BalanceDebited seq 1042 và BalanceCredited seq 77; event được append, fsync, nhân bản vào event store, đó là điểm commit thật sự; sau đó áp dụng vào state (A = 74.50, B += 25.50) và phát cho các bên tiêu thụ: đọc qua CQRS, thông báo, chống gian lận, kho dữ liệu.</desc>
+<defs><marker id="sd29b-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<g data-step="1">
+<text x="24" y="48" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">1</text>
+<rect x="40" y="18" width="360" height="52" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="220.0" y="40" text-anchor="middle" font-size="13" font-family="ui-monospace,Menlo,monospace" fill="currentColor">TransferMoney{tx_id, A, B, 25.50 USD}</text>
+<text x="220.0" y="60" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">COMMAND</text>
+</g>
+<g data-step="2">
+<line x1="220.0" y1="70" x2="220.0" y2="94" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd29b-arrow)"/>
+<text x="24" y="118" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">2</text>
+<rect x="40" y="96" width="360" height="36" rx="8" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="220.0" y="119" text-anchor="middle" font-size="13" fill="currentColor">Command queue (FIFO) của shard chứa A</text>
+</g>
+<g data-step="3">
+<line x1="220.0" y1="132" x2="220.0" y2="156" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd29b-arrow)"/>
+<text x="24" y="180" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">3</text>
+<rect x="40" y="158" width="360" height="36" rx="8" fill="#14b8a6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="220.0" y="181" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">State machine lấy command ra</text>
+<rect x="470" y="158" width="270" height="36" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="605" y="181" text-anchor="middle" font-size="13" font-family="ui-monospace,Menlo,monospace" fill="currentColor">State: balance(A) = 100.00</text>
+<line x1="468" y1="176" x2="403" y2="176" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd29b-arrow)"/>
+<text x="436" y="170" text-anchor="middle" font-size="13" fill="currentColor">đọc</text>
+</g>
+<g data-step="4">
+<line x1="220.0" y1="194" x2="220.0" y2="218" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd29b-arrow)"/>
+<text x="24" y="244" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">4</text>
+<rect x="40" y="220" width="360" height="50" rx="8" fill="#14b8a6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="220.0" y="241" text-anchor="middle" font-size="13" fill="currentColor">Kiểm tra: đủ tiền? ví A có bị khoá?</text>
+<text x="220.0" y="260" text-anchor="middle" font-size="13" fill="currentColor">tx_id đã xử lý chưa?</text>
+</g>
+<g data-step="5">
+<text x="24" y="332" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">5</text>
+<line x1="140" y1="270" x2="120" y2="304" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd29b-arrow)"/>
+<text x="112" y="292" text-anchor="end" font-size="13" fill="currentColor">không hợp lệ</text>
+<line x1="330" y1="270" x2="420" y2="304" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd29b-arrow)"/>
+<text x="392" y="288" font-size="13" fill="currentColor">hợp lệ</text>
+<rect x="40" y="306" width="210" height="74" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="145" y="326" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">5a</text>
+<text x="145" y="346" text-anchor="middle" font-size="13" font-family="ui-monospace,Menlo,monospace" fill="currentColor">TransferRejected{lý do}</text>
+<text x="145" y="368" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">VẪN là một event</text>
+<rect x="262" y="306" width="488" height="74" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="506" y="326" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">5b  sinh 2 event</text>
+<text x="506" y="346" text-anchor="middle" font-size="12" font-family="ui-monospace,Menlo,monospace" fill="currentColor">BalanceDebited {wallet: A, amount: 25.50, tx_id, seq: 1042}</text>
+<text x="506" y="366" text-anchor="middle" font-size="12" font-family="ui-monospace,Menlo,monospace" fill="currentColor">BalanceCredited{wallet: B, amount: 25.50, tx_id, seq: 77}</text>
+</g>
+<g data-step="6">
+<line x1="145" y1="380" x2="230" y2="414" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd29b-arrow)"/>
+<line x1="506" y1="380" x2="440" y2="414" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd29b-arrow)"/>
+<text x="24" y="446" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">6</text>
+<rect x="150" y="416" width="460" height="56" rx="8" fill="#8b5cf6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="380" y="438" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Event Store: append, fsync, nhân bản</text>
+<text x="380" y="460" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">ĐIỂM COMMIT THẬT SỰ</text>
+</g>
+<g data-step="7">
+<line x1="540" y1="472" x2="590" y2="506" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd29b-arrow)"/>
+<text x="578" y="490" font-size="13" fill="currentColor">áp dụng</text>
+<text x="456" y="539" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">7</text>
+<rect x="470" y="508" width="270" height="52" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="605" y="529" text-anchor="middle" font-size="13" font-family="ui-monospace,Menlo,monospace" fill="currentColor">balance(A) = 74.50</text>
+<text x="605" y="549" text-anchor="middle" font-size="13" font-family="ui-monospace,Menlo,monospace" fill="currentColor">balance(B) += 25.50</text>
+</g>
+<g data-step="8">
+<line x1="250" y1="472" x2="210" y2="506" stroke="currentColor" stroke-width="1.6" marker-end="url(#sd29b-arrow)"/>
+<text x="222" y="490" text-anchor="end" font-size="13" fill="currentColor">phát</text>
+<text x="24" y="536" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">8</text>
+<rect x="40" y="508" width="400" height="120" rx="8" fill="#3b82f6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="240" y="528" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Bên tiêu thụ</text>
+<rect x="52" y="540" width="182" height="34" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="143" y="562" text-anchor="middle" font-size="13" fill="currentColor">đọc (CQRS)</text>
+<rect x="246" y="540" width="182" height="34" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="337" y="562" text-anchor="middle" font-size="13" fill="currentColor">thông báo</text>
+<rect x="52" y="582" width="182" height="34" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="143" y="604" text-anchor="middle" font-size="13" fill="currentColor">chống gian lận</text>
+<rect x="246" y="582" width="182" height="34" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="337" y="604" text-anchor="middle" font-size="13" fill="currentColor">kho dữ liệu</text>
+</g>
+</svg>
+<step-note data-step="1">Command chỉ là ý định từ bên ngoài, nên nó còn có thể bị từ chối. Mang theo <code>tx_id</code> để lần gửi lại không thành hai giao dịch.</step-note>
+<step-note data-step="2">Command cần thứ tự toàn cục trong phạm vi ví, nên mọi command chạm ví A xếp vào cùng một hàng FIFO của shard chứa A.</step-note>
+<step-note data-step="3">State machine đọc state hiện tại để áp luật nghiệp vụ. Nó phải tất định: không đọc đồng hồ, không gọi API ngoài.</step-note>
+<step-note data-step="4">Đây là chỗ duy nhất được nói “không”. Kiểm <code>tx_id</code> là chặn trùng lặp khi client retry.</step-note>
+<step-note data-step="5">Command bị từ chối vẫn sinh event: lý do thất bại trở thành sự thật lịch sử cho CSKH và chống gian lận. Command hợp lệ sinh hai event, mỗi ví một <code>seq</code> riêng.</step-note>
+<step-note data-step="6">Event nằm bền trên đĩa và đã nhân bản đủ quorum thì giao dịch đã xảy ra vĩnh viễn, kể cả khi mọi máy chết ngay sau đó.</step-note>
+<step-note data-step="7">State chỉ là bản sao tiện lợi: 100.00 − 25.50 = 74.50. Mất state thì áp dụng lại event từ store là có lại đúng con số này.</step-note>
+<step-note data-step="8">Cùng luồng event nuôi nhiều mô hình đọc, mỗi cái tối ưu cho một truy vấn (CQRS, §8.4); chúng chậm hơn event store một nhịp (eventually consistent).</step-note>
+</step-flow>
 
 **Bước 6 là điểm commit của toàn hệ thống.** Sau khi event nằm bền trên đĩa và đã được nhân bản đủ quorum, giao dịch **đã xảy ra vĩnh viễn** — kể cả khi mọi máy chủ chết ngay giây sau. Bước 7 chỉ là cập nhật một bản sao tiện lợi; mất nó thì chạy lại bước 7 từ event là xong.
 
