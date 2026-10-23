@@ -402,62 +402,91 @@ Nhận xét quan trọng nhất, và là câu chuyển ý vào kiến trúc mớ
 
 ## 6. High-level design
 
-```
-                                    ┌──────────────────────────────────┐
-  ┌───────────┐                     │       INTERNET (SMTP :25)        │
-  │ Web /     │                     │  gmail · outlook · yahoo · spam  │
-  │ Mobile    │                     └───────────┬──────────────────────┘
-  └─────┬─────┘                                 │
-        │ HTTPS + WSS                           │ vào
-        ▼                                       ▼
-  ┌───────────────┐                    ┌──────────────────┐
-  │ Load Balancer │                    │  SMTP Load Bal.  │  ← IP nằm trong MX
-  │  (HTTP/WS)    │                    │  (NLB, lớp 4)    │
-  └───┬───────┬───┘                    └────────┬─────────┘
-      │       │                                 │
-      │       └──────────────┐         ┌────────▼─────────┐
-      ▼                      ▼         │  SMTP workers    │ ── chặn sớm:
-┌───────────────┐   ┌────────────────┐ │  (nhận thư)      │    RBL, rate limit,
-│  Web servers  │   │ Realtime srv   │ └────────┬─────────┘    SPF/DKIM, SIZE
-│  (CRUD REST)  │   │ (WebSocket)    │          │
-└───┬───┬───┬───┘   └───────▲────────┘          ▼
-    │   │   │               │           ┌───────────────┐
-    │   │   │               │           │ Incoming queue│
-    │   │   │               │           └───────┬───────┘
-    │   │   │               │                   ▼
-    │   │   │               │           ┌────────────────────────┐
-    │   │   │               │           │  Mail processing       │
-    │   │   │               │           │  spam · virus · rule   │
-    │   │   │               │           │  · thread · index      │
-    │   │   │               │           └───┬────────────┬───────┘
-    │   │   │               └───────────────┘            │
-    │   │   │              (đẩy "thư mới")               │
-    │   │   ▼                                            ▼
-    │   │  ┌──────────────────────────────────────────────────────┐
-    │   │  │  METADATA STORE  —  NoSQL column-family               │
-    │   │  │  partition key = user_id, sort key = time-UUID        │
-    │   │  │  (Cassandra / HBase / BigTable) · replica 3 · multi-AZ│
-    │   │  └──────────────────────────────────────────────────────┘
-    │   │
-    │   ▼
-    │  ┌──────────────────┐     ┌──────────────────┐
-    │  │ Distributed cache│     │  Search store    │ ← cập nhật async qua
-    │  │ (thư 30 ngày,    │     │  (ES, shard theo │   change-log/Kafka
-    │  │  unread counter) │     │   user_id)       │
-    │  └──────────────────┘     └──────────────────┘
-    │
-    ▼
-  ┌──────────────────────┐        ┌──────────────────────────┐
-  │  Attachment store    │        │  Outgoing queue          │
-  │  (object store,      │        │  (phân theo domain đích) │
-  │   key = sha256)      │        └────────────┬─────────────┘
-  │  client PUT/GET      │                     ▼
-  │  thẳng bằng presign  │        ┌──────────────────────────┐
-  └──────────────────────┘        │ SMTP outgoing workers    │ ──▶ MX của
-                                  │ retry 4xx · bounce 5xx   │     người nhận
-                                  │ DKIM sign · IP pool      │
-                                  └──────────────────────────┘
-```
+<svg viewBox="0 0 520 826" role="img" aria-labelledby="sd22a-t sd22a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd22a-t">Kiến trúc tổng thể của dịch vụ email phân tán</title>
+<desc id="sd22a-d">Bên trái là mặt tiền HTTP: client Web/Mobile qua HTTPS và WSS tới Load Balancer HTTP/WS, rồi tới Web servers CRUD REST và Realtime servers WebSocket. Bên phải là mặt tiền SMTP cổng 25: Internet (gmail, outlook, yahoo, spam) vào SMTP Load Balancer NLB lớp 4 có IP nằm trong MX, tới SMTP workers chặn sớm bằng RBL, rate limit, SPF/DKIM, SIZE, rồi Incoming queue và Mail processing (spam, virus, rule, thread, index). Mail processing đẩy thư mới tới Realtime servers và ghi vào Metadata store NoSQL column-family (partition key user_id, sort key time-UUID, Cassandra/HBase/BigTable, replica 3, multi-AZ). Web servers đọc ghi Metadata store, Distributed cache (thư 30 ngày, unread counter), Attachment store (object store, key sha256, client PUT/GET thẳng bằng presign) và enqueue vào Outgoing queue phân theo domain đích. Search store (ES, shard theo user_id) cập nhật async qua change-log/Kafka. SMTP outgoing workers (retry 4xx, bounce 5xx, DKIM sign, IP pool) giao thư tới MX của người nhận.</desc>
+<defs><marker id="sd22a-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor" fill-opacity="0.7"/></marker></defs>
+<text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Hai mặt tiền tách biệt, chung tầng lưu trữ</text>
+<text x="138.0" y="50" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.65" font-weight="700">Mặt tiền HTTP (client của ta)</text>
+<text x="388.0" y="50" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.65" font-weight="700">Mặt tiền SMTP :25 (Internet)</text>
+<rect x="28" y="60" width="220" height="50" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="138.0" y="81.5" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Web / Mobile</text>
+<text x="138.0" y="98.5" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">client</text>
+<rect x="272" y="60" width="232" height="50" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="388.0" y="81.5" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">INTERNET (SMTP :25)</text>
+<text x="388.0" y="98.5" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">gmail · outlook · yahoo · spam</text>
+<path d="M138.0,110 V134" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#sd22a-arr)"/>
+<text x="146.0" y="127" font-size="13" text-anchor="start" fill="currentColor" opacity="0.75">HTTPS + WSS</text>
+<path d="M388.0,110 V134" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#sd22a-arr)"/>
+<text x="396.0" y="127" font-size="13" text-anchor="start" fill="currentColor" opacity="0.75">vào</text>
+<rect x="28" y="136" width="220" height="50" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="138.0" y="157.5" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Load Balancer</text>
+<text x="138.0" y="174.5" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">HTTP/WS</text>
+<rect x="272" y="136" width="232" height="50" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="388.0" y="157.5" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">SMTP Load Balancer</text>
+<text x="388.0" y="174.5" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">NLB, lớp 4 · IP nằm trong MX</text>
+<path d="M80,186 V212" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#sd22a-arr)"/>
+<path d="M196,186 V212" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#sd22a-arr)"/>
+<rect x="28" y="214" width="104" height="50" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="80.0" y="235.5" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Web servers</text>
+<text x="80.0" y="252.5" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">CRUD REST</text>
+<rect x="144" y="214" width="104" height="50" rx="9" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="196.0" y="235.5" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Realtime srv</text>
+<text x="196.0" y="252.5" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">WebSocket</text>
+<path d="M388.0,186 V212" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#sd22a-arr)"/>
+<rect x="272" y="214" width="232" height="66" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="388.0" y="235.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">SMTP workers (nhận thư)</text>
+<text x="388.0" y="252.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">chặn sớm: RBL, rate limit,</text>
+<text x="388.0" y="269.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">SPF/DKIM, SIZE</text>
+<path d="M388.0,280 V298" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#sd22a-arr)"/>
+<rect x="272" y="300" width="232" height="34" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="388.0" y="322.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Incoming queue</text>
+<path d="M388.0,334 V352" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#sd22a-arr)"/>
+<rect x="272" y="354" width="232" height="58" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="388.0" y="371.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Mail processing</text>
+<text x="388.0" y="388.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">spam · virus · rule</text>
+<text x="388.0" y="405.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">· thread · index</text>
+<path d="M272,383 H196 V266" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#sd22a-arr)"/>
+<text x="188" y="322" font-size="13" text-anchor="end" fill="currentColor" opacity="0.8">đẩy “thư mới”</text>
+<path d="M80,264 V446" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#sd22a-arr)"/>
+<path d="M388.0,412 V446" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#sd22a-arr)"/>
+<rect x="28" y="448" width="476" height="70" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="266.0" y="471.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">METADATA STORE — NoSQL column-family</text>
+<text x="266.0" y="488.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">partition key = user_id, sort key = time-UUID</text>
+<text x="266.0" y="505.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">Cassandra / HBase / BigTable · replica 3 · multi-AZ</text>
+<path d="M388.0,518 V550" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#sd22a-arr)"/>
+<text x="396.0" y="538" font-size="13" text-anchor="start" fill="currentColor" opacity="0.75">change-log/Kafka</text>
+<rect x="28" y="552" width="220" height="72" rx="9" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="138.0" y="576.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Distributed cache</text>
+<text x="138.0" y="593.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">thư 30 ngày,</text>
+<text x="138.0" y="610.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">unread counter</text>
+<rect x="272" y="552" width="232" height="72" rx="9" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="388.0" y="576.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Search store</text>
+<text x="388.0" y="593.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">ES, shard theo user_id</text>
+<text x="388.0" y="610.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">cập nhật async</text>
+<path d="M28,239 H12 V700" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5"/>
+<path d="M12,588 H26" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#sd22a-arr)"/>
+<path d="M12,700 H26" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#sd22a-arr)"/>
+<path d="M12,644 H388.0 V662" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#sd22a-arr)"/>
+<text x="150" y="639" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.75">enqueue thư gửi</text>
+<rect x="28" y="664" width="220" height="72" rx="9" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="138.0" y="679.5" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Attachment store</text>
+<text x="138.0" y="696.5" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">object store, key = sha256</text>
+<text x="138.0" y="713.5" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">client PUT/GET thẳng</text>
+<text x="138.0" y="730.5" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">bằng presign</text>
+<rect x="272" y="664" width="232" height="50" rx="9" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="388.0" y="685.5" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Outgoing queue</text>
+<text x="388.0" y="702.5" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">phân theo domain đích</text>
+<path d="M388.0,714 V738" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#sd22a-arr)"/>
+<rect x="272" y="740" width="232" height="72" rx="9" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="388.0" y="764.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">SMTP outgoing workers</text>
+<text x="388.0" y="781.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">retry 4xx · bounce 5xx</text>
+<text x="388.0" y="798.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">DKIM sign · IP pool</text>
+<path d="M272,776 H250" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#sd22a-arr)"/>
+<rect x="28" y="752" width="220" height="48" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="5 4"/>
+<text x="138.0" y="772.5" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">MX của người nhận</text>
+<text x="138.0" y="789.5" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">(Internet)</text>
+</svg>
 
 Điểm cần nêu rõ khi trình bày sơ đồ này: **có hai mặt tiền (front door) hoàn toàn tách biệt.** Mặt tiền HTTP phục vụ client của ta — ta kiểm soát cả hai đầu, muốn đổi gì cũng được. Mặt tiền SMTP cổng 25 phục vụ Internet — ta không kiểm soát gì cả, phải tuân thủ tuyệt đối, và phần lớn lưu lượng tới đó là rác. Trộn hai mặt tiền này vào cùng một tầng server là sai lầm kiến trúc: chúng khác nhau về mô hình bảo mật, về hình dạng lưu lượng, về cách scale, và về hậu quả khi quá tải.
 

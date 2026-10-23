@@ -214,39 +214,68 @@ x-amz-storage-class: STANDARD_IA
 
 ## 4. High-level design
 
-```
-                          ┌──────────┐
-      Client ───HTTPS───▶ │ Load     │
-                          │ Balancer │
-                          └────┬─────┘
-                               │
-                    ┌──────────▼───────────┐        ┌─────────┐
-                    │   API Service        │◀──────▶│   IAM   │  xác thực +
-                    │   (stateless, N bản) │        │ service │  phân quyền
-                    └───┬──────────────┬───┘        └─────────┘
-                        │              │
-        ══ luồng ═══════│══════════════│════════════ luồng ═══
-           METADATA     │              │               DỮ LIỆU
-        ════════════════│══════════════│═══════════════════════
-                        │              │
-            ┌───────────▼──────┐   ┌───▼─────────────────────────────────┐
-            │  Metadata Store  │   │            Data Store               │
-            │  ~0,7 TB, SSD    │   │            100 PB, HDD              │
-            │                  │   │                                     │
-            │  bucket  (nhỏ)   │   │  ┌────────────────────────────┐     │
-            │  object  (shard) │   │  │   Data Routing Service     │     │
-            │  listing (denorm)│   │  │   (stateless)              │     │
-            └──────────────────┘   │  └──────┬──────────────┬──────┘     │
-                                   │         │              │            │
-                                   │   ┌─────▼──────┐   ┌───▼────────┐   │
-                                   │   │ Placement  │   │ Data Nodes │   │
-                                   │   │ Service    │   │ (375 máy,  │   │
-                                   │   │ 5–7 replica│   │ 7.500 ổ)   │   │
-                                   │   │ Paxos/Raft │   │            │   │
-                                   │   └─────┬──────┘   └───▲────────┘   │
-                                   │         └──heartbeat───┘            │
-                                   └─────────────────────────────────────┘
-```
+<svg viewBox="0 0 520 600" role="img" aria-labelledby="sd21a-t sd21a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="sd21a-t">Kiến trúc object store: API stateless đứng trên hai plane tách rời</title>
+<desc id="sd21a-d">Client gọi HTTPS qua Load Balancer tới API Service stateless (N bản), API hỏi IAM để xác thực và phân quyền. Dưới API chia hai luồng: metadata plane gồm Metadata Store khoảng 0,7 TB trên SSD với bảng bucket nhỏ, object shard, listing denorm; data plane gồm Data Store 100 PB trên HDD với Data Routing Service stateless, Placement Service 5 đến 7 replica chạy Paxos hoặc Raft, và Data Nodes 375 máy 7.500 ổ, gửi heartbeat lên Placement.</desc>
+<defs><marker id="sd21a-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<rect x="20" y="16" width="110" height="40" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="75" y="41" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">Client</text>
+<line x1="132" y1="36" x2="186" y2="36" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.6" marker-end="url(#sd21a-arr)"/>
+<text x="159" y="28" text-anchor="middle" font-size="13" opacity="0.8" fill="currentColor">HTTPS</text>
+<rect x="190" y="16" width="140" height="40" rx="8" fill="#64748b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="260" y="41" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">Load Balancer</text>
+<line x1="260" y1="58" x2="260" y2="84" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.6" marker-end="url(#sd21a-arr)"/>
+<rect x="160" y="88" width="200" height="56" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="260" y="111" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">API Service</text>
+<text x="260" y="131" text-anchor="middle" font-size="13" opacity="0.85" fill="currentColor">stateless, N bản</text>
+<line x1="362" y1="116" x2="398" y2="116" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.6" marker-end="url(#sd21a-arr)" marker-start="url(#sd21a-arr)"/>
+<rect x="400" y="80" width="110" height="72" rx="8" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="455" y="101" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">IAM service</text>
+<text x="455" y="121" text-anchor="middle" font-size="13" opacity="0.85" fill="currentColor">xác thực +</text>
+<text x="455" y="139" text-anchor="middle" font-size="13" opacity="0.85" fill="currentColor">phân quyền</text>
+<rect x="10" y="190" width="178" height="400" rx="10" fill="#8b5cf6" fill-opacity="0.08"/>
+<rect x="196" y="190" width="314" height="400" rx="10" fill="#10b981" fill-opacity="0.08"/>
+<text x="20" y="212" text-anchor="start" font-size="13" font-weight="700" opacity="0.8" fill="currentColor">METADATA PLANE</text>
+<text x="208" y="212" text-anchor="start" font-size="13" font-weight="700" opacity="0.8" fill="currentColor">DATA PLANE</text>
+<path d="M210 146 L210 166 L160 166 L160 224" fill="none" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.6" marker-end="url(#sd21a-arr)"/>
+<path d="M310 146 L310 166 L470 166 L470 224" fill="none" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.6" marker-end="url(#sd21a-arr)"/>
+<rect x="22" y="228" width="154" height="230" rx="8" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="99" y="252" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">Metadata Store</text>
+<text x="99" y="272" text-anchor="middle" font-size="13" opacity="0.85" fill="currentColor">~0,7 TB, SSD</text>
+<rect x="36" y="290" width="126" height="42" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="99" y="308" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">bucket</text>
+<text x="99" y="325" text-anchor="middle" font-size="13" opacity="0.8" fill="currentColor">(nhỏ)</text>
+<rect x="36" y="344" width="126" height="42" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="99" y="362" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">object</text>
+<text x="99" y="379" text-anchor="middle" font-size="13" opacity="0.8" fill="currentColor">(shard)</text>
+<rect x="36" y="398" width="126" height="42" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="99" y="416" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">listing</text>
+<text x="99" y="433" text-anchor="middle" font-size="13" opacity="0.8" fill="currentColor">(denorm)</text>
+<rect x="208" y="228" width="290" height="350" rx="8" fill="#10b981" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="353" y="252" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">Data Store</text>
+<text x="353" y="272" text-anchor="middle" font-size="13" opacity="0.85" fill="currentColor">100 PB, HDD</text>
+<rect x="228" y="288" width="250" height="50" rx="8" fill="#14b8a6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="353" y="309" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Data Routing Service</text>
+<text x="353" y="328" text-anchor="middle" font-size="13" opacity="0.8" fill="currentColor">(stateless)</text>
+<line x1="300" y1="340" x2="284" y2="374" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.6" marker-end="url(#sd21a-arr)"/>
+<line x1="406" y1="340" x2="422" y2="374" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.6" marker-end="url(#sd21a-arr)"/>
+<rect x="218" y="378" width="132" height="104" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="284" y="400" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Placement</text>
+<text x="284" y="418" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Service</text>
+<text x="284" y="440" text-anchor="middle" font-size="13" opacity="0.85" fill="currentColor">5–7 replica</text>
+<text x="284" y="460" text-anchor="middle" font-size="13" opacity="0.85" fill="currentColor">Paxos/Raft</text>
+<rect x="358" y="378" width="132" height="104" rx="8" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="424" y="400" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Data Nodes</text>
+<text x="424" y="432" text-anchor="middle" font-size="13" opacity="0.85" fill="currentColor">375 máy</text>
+<text x="424" y="454" text-anchor="middle" font-size="13" opacity="0.85" fill="currentColor">7.500 ổ</text>
+<path d="M424 484 L424 512 L284 512 L284 484" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#sd21a-arr)"/>
+<text x="354" y="532" text-anchor="middle" font-size="13" opacity="0.8" fill="currentColor">heartbeat</text>
+<text x="353" y="562" text-anchor="middle" font-size="13" opacity="0.7" fill="currentColor">byte bất biến, không cần giao dịch</text>
+<text x="99" y="486" text-anchor="middle" font-size="13" font-weight="600" opacity="0.85" fill="currentColor">lệch ~150.000 lần</text>
+<text x="99" y="504" text-anchor="middle" font-size="13" opacity="0.8" fill="currentColor">về kích thước</text>
+<text x="99" y="540" text-anchor="middle" font-size="13" opacity="0.7" fill="currentColor">mutable, cần</text>
+<text x="99" y="558" text-anchor="middle" font-size="13" opacity="0.7" fill="currentColor">giao dịch</text>
+</svg>
 
 **API service** — **không lưu trạng thái (stateless)**, và đây là điều kiện tiên quyết để mở rộng ngang. Nó là nhạc trưởng: xác thực với IAM, tra metadata, gọi data store, ghép kết quả. Nó **không bao giờ tự lưu dữ liệu**, cũng không giữ trạng thái phiên upload trong RAM — mọi trạng thái (kể cả trạng thái multipart đang dở) đều nằm ở metadata store, nếu không thì một máy API chết giữa chừng sẽ làm hỏng upload đang chạy.
 
@@ -320,27 +349,95 @@ Sự khác biệt này không hàn lâm — nó gây hậu quả thật:
 
 ### 6.1 Luồng upload, từng bước một
 
-```
- Client          API svc         IAM       Metadata      Data Routing     Placement    Data Node
-   │                │             │           │               │               │            │
-   │ PUT /b/k ─────▶│             │           │               │               │            │
-   │                │──authz─────▶│           │               │               │            │
-   │                │◀──ok────────│           │               │               │            │
-   │                │                                         │               │            │
-   │                │──── stream byte + content-length ──────▶│               │            │
-   │                │                                         │──"cho tôi ba ─▶│           │
-   │                │                                         │  node cho UUID"│           │
-   │                │                                         │◀─[n17,n42,n88]─│           │
-   │                │                                         │                            │
-   │                │                                         │──── ghi (primary n17) ────▶│
-   │                │                                         │                            │──▶ n42
-   │                │                                         │                            │──▶ n88
-   │                │                                         │◀─── ack sau khi đủ bản ────│
-   │                │◀──────────── object_id (UUID) ──────────│                            │
-   │                │                                                                      │
-   │                │──ghi hàng object(bucket_id, key, object_id, size, etag,...)──▶ Metadata
-   │◀── 200 OK ─────│    ETag: "9b2cf5..."
-```
+<step-flow>
+<svg viewBox="0 0 760 600" role="img" aria-labelledby="sd21b-t sd21b-d" style="width:100%;height:auto">
+<title id="sd21b-t">Luồng PUT một object qua bảy thành phần, chín bước</title>
+<desc id="sd21b-d">Client gửi PUT tới API service; API hỏi IAM; stream byte sang Data Routing; Data Routing xin Placement ba node cho UUID và nhận n17, n42, n88; ghi vào primary n17, n17 nhân bản đồng bộ sang n42 và n88 rồi mới ack; Data Routing trả object_id cho API; API ghi hàng object vào Metadata sau cùng; trả 200 OK kèm ETag cho client.</desc>
+<defs><marker id="sd21b-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<rect x="4.0" y="12" width="92" height="34" rx="8" fill="#3b82f6" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="50" y="34" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Client</text>
+<line x1="50" y1="46" x2="50" y2="586" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+<rect x="114.0" y="12" width="92" height="34" rx="8" fill="#3b82f6" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="160" y="34" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">API svc</text>
+<line x1="160" y1="46" x2="160" y2="586" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+<rect x="216.0" y="12" width="92" height="34" rx="8" fill="#f43f5e" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="262" y="34" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">IAM</text>
+<line x1="262" y1="46" x2="262" y2="586" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+<rect x="314.0" y="12" width="92" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="360" y="34" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Metadata</text>
+<line x1="360" y1="46" x2="360" y2="586" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+<rect x="414.0" y="12" width="112" height="34" rx="8" fill="#14b8a6" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="470" y="34" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Data Routing</text>
+<line x1="470" y1="46" x2="470" y2="586" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+<rect x="536.0" y="12" width="92" height="34" rx="8" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="582" y="34" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Placement</text>
+<line x1="582" y1="46" x2="582" y2="586" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+<rect x="644.0" y="12" width="92" height="34" rx="8" fill="#10b981" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="690" y="34" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Data Node</text>
+<line x1="690" y1="46" x2="690" y2="586" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
+<g data-step="1">
+<line x1="53" y1="82" x2="157" y2="82" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.6" marker-end="url(#sd21b-arr)"/>
+<text x="105.0" y="75" text-anchor="middle" font-size="12" fill="currentColor">1  PUT /b/k</text>
+</g>
+<g data-step="2">
+<line x1="163" y1="118" x2="259" y2="118" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.6" marker-end="url(#sd21b-arr)"/>
+<text x="211.0" y="111" text-anchor="middle" font-size="12" fill="currentColor">2  authz</text>
+<line x1="259" y1="146" x2="163" y2="146" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.6" marker-end="url(#sd21b-arr)"/>
+<text x="211.0" y="139" text-anchor="middle" font-size="12" fill="currentColor">ok</text>
+</g>
+<g data-step="3">
+<line x1="163" y1="186" x2="467" y2="186" stroke="#10b981" stroke-opacity="1" stroke-width="2.2" marker-end="url(#sd21b-arr)"/>
+<text x="315.0" y="179" text-anchor="middle" font-size="12" fill="currentColor">3  stream byte + content-length</text>
+</g>
+<g data-step="4">
+<line x1="473" y1="226" x2="579" y2="226" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.6" marker-end="url(#sd21b-arr)"/>
+<text x="526" y="218" text-anchor="middle" font-size="12" fill="currentColor">4  “cho tôi ba node cho UUID”</text>
+<line x1="579" y1="256" x2="473" y2="256" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.6" marker-end="url(#sd21b-arr)"/>
+<text x="526.0" y="249" text-anchor="middle" font-size="12" fill="currentColor">[n17, n42, n88]</text>
+</g>
+<g data-step="5">
+<line x1="473" y1="300" x2="687" y2="300" stroke="#10b981" stroke-opacity="1" stroke-width="2.2" marker-end="url(#sd21b-arr)"/>
+<text x="580.0" y="293" text-anchor="middle" font-size="12" fill="currentColor">5  ghi (primary n17)</text>
+</g>
+<g data-step="6">
+<rect x="664" y="318" width="52" height="26" rx="5" fill="#10b981" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="690" y="336" text-anchor="middle" font-size="12" font-weight="600" fill="currentColor">n17</text>
+<rect x="622" y="384" width="52" height="26" rx="5" fill="#10b981" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="648" y="402" text-anchor="middle" font-size="12" font-weight="600" fill="currentColor">n42</text>
+<rect x="704" y="384" width="52" height="26" rx="5" fill="#10b981" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="730" y="402" text-anchor="middle" font-size="12" font-weight="600" fill="currentColor">n88</text>
+<line x1="682" y1="346" x2="656" y2="380" stroke="#10b981" stroke-width="2" marker-end="url(#sd21b-arr)"/>
+<line x1="698" y1="346" x2="722" y2="380" stroke="#10b981" stroke-width="2" marker-end="url(#sd21b-arr)"/>
+<text x="612" y="360" text-anchor="end" font-size="12" opacity="0.85" fill="currentColor">nhân bản</text>
+<text x="612" y="376" text-anchor="end" font-size="12" opacity="0.85" fill="currentColor">đồng bộ</text>
+<line x1="687" y1="446" x2="473" y2="446" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.6" marker-end="url(#sd21b-arr)"/>
+<text x="580.0" y="439" text-anchor="middle" font-size="12" fill="currentColor">6  ack sau khi đủ bản</text>
+</g>
+<g data-step="7">
+<line x1="467" y1="488" x2="163" y2="488" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.6" marker-end="url(#sd21b-arr)"/>
+<text x="315.0" y="481" text-anchor="middle" font-size="12" fill="currentColor">7  object_id (UUID)</text>
+</g>
+<g data-step="8">
+<line x1="163" y1="516" x2="357" y2="516" stroke="#8b5cf6" stroke-opacity="1" stroke-width="2.2" marker-end="url(#sd21b-arr)"/>
+<text x="262" y="508" text-anchor="middle" font-size="12" fill="currentColor">8  ghi hàng object</text>
+<text x="262" y="536" text-anchor="middle" font-size="12" opacity="0.85" fill="currentColor">(bucket_id, key, object_id, size, etag,...)</text>
+</g>
+<g data-step="9">
+<line x1="157" y1="568" x2="53" y2="568" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.6" marker-end="url(#sd21b-arr)"/>
+<text x="105" y="558" text-anchor="middle" font-size="12" fill="currentColor">9  200 OK</text>
+<text x="105" y="588" text-anchor="middle" font-size="12" opacity="0.85" fill="currentColor">ETag: “9b2cf5...”</text>
+</g>
+</svg>
+<step-note data-step="1">Client chỉ nói chuyện với API service; nó không biết node nào sẽ giữ byte của mình.</step-note>
+<step-note data-step="2">Phân quyền trước khi chạm data plane: request không có quyền dừng ngay ở API, không tốn chỗ trên data node nào.</step-note>
+<step-note data-step="3">Byte đi thẳng xuống data plane, không ghé metadata store: 100 PB và 0,7 TB không bao giờ chung đường ống.</step-note>
+<step-note data-step="4">Placement trả một <em>nhóm</em> được tính tất định từ UUID bằng consistent hashing, nên lúc đọc data routing tự tính lại được mà không cần tra bảng.</step-note>
+<step-note data-step="5">Chỉ một lần ghi vào primary; việc chép sang các bản còn lại là trách nhiệm của primary, không phải của data routing.</step-note>
+<step-note data-step="6">Ack chỉ về khi đủ bản sao. Ack sớm hơn là để hở một cửa sổ vài trăm ms dữ liệu chỉ có một bản: primary chết trong đó là mất vĩnh viễn.</step-note>
+<step-note data-step="7">Tới đây byte đã bền nhưng chưa có tên: chưa có <code>(bucket, key)</code> nào trỏ tới <code>object_id</code> này.</step-note>
+<step-note data-step="8">Metadata ghi <strong>sau cùng</strong>. Chết trước bước này chỉ để lại byte mồ côi chờ GC dọn, không bao giờ có khoá tồn tại mà đọc không được.</step-note>
+<step-note data-step="9"><code>ETag</code> (với upload thường là MD5 của nội dung): client so với checksum tự tính để phát hiện byte hỏng trên đường truyền.</step-note>
+</step-flow>
 
 **1. Placement service chọn nhóm node, không chọn từng node.** Nó trả về một **replication group** được xác định **tất định (deterministic)** từ UUID bằng consistent hashing. Tất định là điểm mấu chốt: khi đọc lại, data routing service tính đúng nhóm đó mà **không cần tra bảng nào**, tiết kiệm một vòng round-trip trên mọi lượt đọc.
 

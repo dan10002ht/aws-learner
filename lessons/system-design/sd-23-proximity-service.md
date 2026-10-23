@@ -371,16 +371,144 @@ Nhưng mẹo nằm ở chỗ: **mỗi bước ta đổi trục**. Bit đầu chi
 
 Cụ thể với điểm `(37.7767, -122.4167)` — San Francisco:
 
-```
-Kinh độ, khoảng đầu [-180, 180]:      Vĩ độ, khoảng đầu [-90, 90]:
- bit1: -122.4 < 0     → 0  [-180,  0]  bit1: 37.8 > 0    → 1  [  0, 90]
- bit2: -122.4 < -90   → 0  [-180,-90]  bit2: 37.8 < 45   → 0  [  0, 45]
- bit3: -122.4 > -135  → 1  [-135,-90]  bit3: 37.8 > 22.5 → 1  [22.5,45]
- bit4: -122.4 < -112.5→ 0  ...          ...
+<step-flow>
+<svg viewBox="0 0 760 600" role="img" aria-labelledby="sd23a-t sd23a-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto">
+<title id="sd23a-t">Geohash: chia đôi xen kẽ kinh độ và vĩ độ cho điểm San Francisco</title>
+<desc id="sd23a-d">Bản đồ Trái Đất kinh độ -180 tới 180, vĩ độ -90 tới 90, điểm (37.7767, -122.4167). Bảy lần chia đôi xen kẽ, bắt đầu bằng kinh độ: bit 1 lng -122.4 &lt; 0 cho 0, khoảng [-180, 0]; bit 2 lat 37.8 &gt; 0 cho 1, khoảng [0, 90]; bit 3 lng -122.4 &lt; -90 cho 0, [-180, -90]; bit 4 lat 37.8 &lt; 45 cho 0, [0, 45]; bit 5 lng -122.4 &gt; -135 cho 1, [-135, -90]; bit 6 lat 37.8 &gt; 22.5 cho 1, [22.5, 45]; bit 7 lng -122.4 &lt; -112.5 cho 0, [-135, -112.5]. Chuỗi bit 0100110; năm bit đầu 01001 bằng 9, thành ký tự base32 đầu tiên là 9.</desc>
+<defs><marker id="sd23a-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="20" y="30" font-size="15" font-weight="700" fill="currentColor">Điểm (37.7767, -122.4167), San Francisco</text>
+<rect x="60" y="64" width="480" height="240" fill="#14b8a6" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.6"/>
+<text x="60.0" y="322" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">-180</text>
+<text x="180.0" y="322" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">-90</text>
+<text x="300.0" y="322" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">0</text>
+<text x="420.0" y="322" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">90</text>
+<text x="540.0" y="322" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">180</text>
+<text x="54" y="68.0" text-anchor="end" font-size="13" fill="currentColor" opacity="0.75">90</text>
+<text x="54" y="128.0" text-anchor="end" font-size="13" fill="currentColor" opacity="0.75">45</text>
+<text x="54" y="188.0" text-anchor="end" font-size="13" fill="currentColor" opacity="0.75">0</text>
+<text x="54" y="248.0" text-anchor="end" font-size="13" fill="currentColor" opacity="0.75">-45</text>
+<text x="54" y="308.0" text-anchor="end" font-size="13" fill="currentColor" opacity="0.75">-90</text>
+<text x="300.0" y="340" text-anchor="middle" font-size="13" fill="#3b82f6">kinh độ (lng) [-180, 180]</text>
+<text x="54" y="54" text-anchor="end" font-size="13" fill="#f59e0b">vĩ độ (lat)</text>
+<text x="560" y="68" font-size="14" font-weight="700" fill="currentColor">Chuỗi bit (xen kẽ)</text>
+<rect x="560" y="214" width="14" height="14" fill="#3b82f6" fill-opacity="0.35"/><text x="580" y="226" font-size="13" fill="currentColor">bit kinh độ</text>
+<rect x="560" y="236" width="14" height="14" fill="#f59e0b" fill-opacity="0.35"/><text x="580" y="248" font-size="13" fill="currentColor">bit vĩ độ</text>
+<line x1="20" y1="368" x2="740" y2="368" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="30" y="360" font-size="13" font-weight="700" fill="currentColor" opacity="0.8">bit</text>
+<text x="70" y="360" font-size="13" font-weight="700" fill="currentColor" opacity="0.8">trục</text>
+<text x="125" y="360" font-size="13" font-weight="700" fill="currentColor" opacity="0.8">so sánh với điểm giữa</text>
+<text x="300" y="360" font-size="13" font-weight="700" fill="currentColor" opacity="0.8">→ bit</text>
+<text x="350" y="360" font-size="13" font-weight="700" fill="currentColor" opacity="0.8">khoảng giữ lại</text>
+<g data-step="1">
+<rect x="60.0" y="64.0" width="240.0" height="240.0" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" stroke-width="2"/>
+<line x1="300.0" y1="64.0" x2="300.0" y2="304.0" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 3"/>
+<rect x="560" y="96" width="24" height="30" rx="3" fill="#3b82f6" fill-opacity="0.3" stroke="#3b82f6"/>
+<text x="572" y="117" text-anchor="middle" font-size="16" font-weight="700" fill="currentColor">0</text>
+<text x="572" y="142" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">1</text>
+<rect x="20" y="369" width="720" height="26" fill="#3b82f6" fill-opacity="0.08"/>
+<text x="30" y="388" font-size="13" fill="currentColor">1</text>
+<text x="70" y="388" font-size="13" fill="currentColor">lng</text>
+<text x="125" y="388" font-size="13" fill="currentColor">-122.4 &lt; 0</text>
+<text x="300" y="388" font-size="13" fill="currentColor">0</text>
+<text x="350" y="388" font-size="13" fill="currentColor">[-180, 0]</text>
+</g>
+<g data-step="2">
+<rect x="60.0" y="64.0" width="240.0" height="120.0" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" stroke-width="2"/>
+<line x1="60.0" y1="184.0" x2="300.0" y2="184.0" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 3"/>
+<rect x="586" y="96" width="24" height="30" rx="3" fill="#f59e0b" fill-opacity="0.3" stroke="#f59e0b"/>
+<text x="598" y="117" text-anchor="middle" font-size="16" font-weight="700" fill="currentColor">1</text>
+<text x="598" y="142" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">2</text>
+<rect x="20" y="397" width="720" height="26" fill="#f59e0b" fill-opacity="0.08"/>
+<text x="30" y="416" font-size="13" fill="currentColor">2</text>
+<text x="70" y="416" font-size="13" fill="currentColor">lat</text>
+<text x="125" y="416" font-size="13" fill="currentColor">37.8 &gt; 0</text>
+<text x="300" y="416" font-size="13" fill="currentColor">1</text>
+<text x="350" y="416" font-size="13" fill="currentColor">[0, 90]</text>
+</g>
+<g data-step="3">
+<rect x="60.0" y="64.0" width="120.0" height="120.0" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" stroke-width="2"/>
+<line x1="180.0" y1="64.0" x2="180.0" y2="184.0" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 3"/>
+<rect x="612" y="96" width="24" height="30" rx="3" fill="#3b82f6" fill-opacity="0.3" stroke="#3b82f6"/>
+<text x="624" y="117" text-anchor="middle" font-size="16" font-weight="700" fill="currentColor">0</text>
+<text x="624" y="142" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">3</text>
+<rect x="20" y="425" width="720" height="26" fill="#3b82f6" fill-opacity="0.08"/>
+<text x="30" y="444" font-size="13" fill="currentColor">3</text>
+<text x="70" y="444" font-size="13" fill="currentColor">lng</text>
+<text x="125" y="444" font-size="13" fill="currentColor">-122.4 &lt; -90</text>
+<text x="300" y="444" font-size="13" fill="currentColor">0</text>
+<text x="350" y="444" font-size="13" fill="currentColor">[-180, -90]</text>
+</g>
+<g data-step="4">
+<rect x="60.0" y="124.0" width="120.0" height="60.0" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" stroke-width="2"/>
+<line x1="60.0" y1="124.0" x2="180.0" y2="124.0" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 3"/>
+<rect x="638" y="96" width="24" height="30" rx="3" fill="#f59e0b" fill-opacity="0.3" stroke="#f59e0b"/>
+<text x="650" y="117" text-anchor="middle" font-size="16" font-weight="700" fill="currentColor">0</text>
+<text x="650" y="142" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">4</text>
+<rect x="20" y="453" width="720" height="26" fill="#f59e0b" fill-opacity="0.08"/>
+<text x="30" y="472" font-size="13" fill="currentColor">4</text>
+<text x="70" y="472" font-size="13" fill="currentColor">lat</text>
+<text x="125" y="472" font-size="13" fill="currentColor">37.8 &lt; 45</text>
+<text x="300" y="472" font-size="13" fill="currentColor">0</text>
+<text x="350" y="472" font-size="13" fill="currentColor">[0, 45]</text>
+</g>
+<g data-step="5">
+<rect x="120.0" y="124.0" width="60.0" height="60.0" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" stroke-width="2"/>
+<line x1="120.0" y1="124.0" x2="120.0" y2="184.0" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 3"/>
+<rect x="664" y="96" width="24" height="30" rx="3" fill="#3b82f6" fill-opacity="0.3" stroke="#3b82f6"/>
+<text x="676" y="117" text-anchor="middle" font-size="16" font-weight="700" fill="currentColor">1</text>
+<text x="676" y="142" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">5</text>
+<rect x="20" y="481" width="720" height="26" fill="#3b82f6" fill-opacity="0.08"/>
+<text x="30" y="500" font-size="13" fill="currentColor">5</text>
+<text x="70" y="500" font-size="13" fill="currentColor">lng</text>
+<text x="125" y="500" font-size="13" fill="currentColor">-122.4 &gt; -135</text>
+<text x="300" y="500" font-size="13" fill="currentColor">1</text>
+<text x="350" y="500" font-size="13" fill="currentColor">[-135, -90]</text>
+</g>
+<g data-step="6">
+<rect x="120.0" y="124.0" width="60.0" height="30.0" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" stroke-width="2"/>
+<line x1="120.0" y1="154.0" x2="180.0" y2="154.0" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 3"/>
+<rect x="690" y="96" width="24" height="30" rx="3" fill="#f59e0b" fill-opacity="0.3" stroke="#f59e0b"/>
+<text x="702" y="117" text-anchor="middle" font-size="16" font-weight="700" fill="currentColor">1</text>
+<text x="702" y="142" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">6</text>
+<rect x="20" y="509" width="720" height="26" fill="#f59e0b" fill-opacity="0.08"/>
+<text x="30" y="528" font-size="13" fill="currentColor">6</text>
+<text x="70" y="528" font-size="13" fill="currentColor">lat</text>
+<text x="125" y="528" font-size="13" fill="currentColor">37.8 &gt; 22.5</text>
+<text x="300" y="528" font-size="13" fill="currentColor">1</text>
+<text x="350" y="528" font-size="13" fill="currentColor">[22.5, 45]</text>
+</g>
+<g data-step="7">
+<rect x="120.0" y="124.0" width="30.0" height="30.0" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" stroke-width="2"/>
+<line x1="150.0" y1="124.0" x2="150.0" y2="154.0" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 3"/>
+<rect x="716" y="96" width="24" height="30" rx="3" fill="#3b82f6" fill-opacity="0.3" stroke="#3b82f6"/>
+<text x="728" y="117" text-anchor="middle" font-size="16" font-weight="700" fill="currentColor">0</text>
+<text x="728" y="142" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">7</text>
+<rect x="20" y="537" width="720" height="26" fill="#3b82f6" fill-opacity="0.08"/>
+<text x="30" y="556" font-size="13" fill="currentColor">7</text>
+<text x="70" y="556" font-size="13" fill="currentColor">lng</text>
+<text x="125" y="556" font-size="13" fill="currentColor">-122.4 &lt; -112.5</text>
+<text x="300" y="556" font-size="13" fill="currentColor">0</text>
+<text x="350" y="556" font-size="13" fill="currentColor">[-135, -112.5]</text>
+</g>
+<g data-step="8">
+<path d="M560 150 v8 h128 v-8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<line x1="624" y1="158" x2="624" y2="184" stroke="currentColor" stroke-width="1.5" marker-end="url(#sd23a-arrow)"/>
+<text x="560" y="204" font-size="14" fill="currentColor">01001 = 9 → ký tự <tspan font-weight="700">9</tspan></text>
+<text x="20" y="596" font-size="13" fill="currentColor">Sau 5 bit gom thành 1 ký tự base32: 0 1 0 0 1 = 9 → geohash bắt đầu bằng <tspan font-weight="700">9</tspan>; bit 6, 7 mở ký tự thứ hai.</text>
+</g>
+<circle cx="136.8" cy="133.6" r="4.5" fill="#f43f5e" stroke="currentColor" stroke-width="1"/>
+</svg>
+<step-note data-step="1">Khoảng kinh độ <code>[-180, 180]</code> có điểm giữa <code>0</code>; điểm nằm nửa tây nên ghi <code>0</code>. Một bit vừa loại bỏ một nửa Trái Đất.</step-note>
+<step-note data-step="2">Đổi trục: giờ chia vĩ độ tại <code>0</code>. Điểm ở bắc bán cầu nên ghi <code>1</code>. Ô còn lại là một phần tư Trái Đất.</step-note>
+<step-note data-step="3">Quay lại kinh độ, nhưng chỉ chia khoảng đã giữ ở bit 1 (<code>[-180, 0]</code>), điểm giữa <code>-90</code>.</step-note>
+<step-note data-step="4">Vĩ độ chia khoảng <code>[0, 90]</code> tại <code>45</code>. Mỗi trục chỉ bị chia một lần mỗi hai bit, nên ô co đều theo cả hai chiều.</step-note>
+<step-note data-step="5">Kinh độ <code>[-180, -90]</code> chia tại <code>-135</code>; điểm ở nửa đông nên ghi <code>1</code>.</step-note>
+<step-note data-step="6">Vĩ độ <code>[0, 45]</code> chia tại <code>22.5</code>. Sau 6 bit, ô chỉ còn 45° × 22.5°.</step-note>
+<step-note data-step="7">Kinh độ <code>[-135, -90]</code> chia tại <code>-112.5</code>. Lặp tiếp tới khi đủ số bit cần cho độ dài geohash muốn có.</step-note>
+<step-note data-step="8">Năm bit đầu <code>01001</code> là số 9, tra bảng base32 ra ký tự <code>9</code>. Nếu nối 4 bit lng rồi mới tới lat, hai điểm cùng vĩ độ lệch kinh độ một chút sẽ có mã cách xa nhau.</step-note>
+</step-flow>
 
-Xen kẽ (bắt đầu bằng kinh độ):  lng 0 0 1 0…  lat 1 0 1…
-                          →  0 1 0 0 1 0 1 0 …
-```
+Xen kẽ (bắt đầu bằng kinh độ): bit kinh độ `0 0 1 0…` và bit vĩ độ `1 0 1…` đan vào nhau thành `0 1 0 0 1 1 0…`.
 
 Mỗi lần thêm **một bit** là **giảm một nửa** kích thước ô theo một chiều. Sau 5 bit ta gom thành một ký tự **base32**.
 
@@ -435,17 +563,51 @@ Có hai dạng hỏng, dạng thứ hai nghiêm trọng hơn nhiều:
 
 **Dạng 1 — gần nhau nhưng khác ô.** Hai quán cà phê đối diện nhau qua một con phố, cách 20 m, nhưng con phố đó trùng ranh giới ô: một quán ở `9q9hvu`, quán kia ở `9q9hvv`. Bạn đứng ở quán A tìm bán kính 200 m và **không thấy quán B** dù nó ngay trước mặt.
 
-**Dạng 2 — rất gần nhau nhưng KHÔNG chung ký tự nào.** Hai điểm cách nhau 1 m nhưng nằm hai bên **xích đạo** (hoặc **kinh tuyến gốc**, hoặc **đường đổi ngày**). Bit đầu tiên — bit quyết định "bán cầu nào" — **khác nhau**, nên ký tự base32 đầu tiên khác nhau, và tiền tố chung là **chuỗi rỗng**.
+**Dạng 2 — rất gần nhau nhưng KHÔNG chung ký tự nào.** Hai điểm cách nhau chưa tới 1 m (ví dụ dưới: khoảng 20 cm) nhưng nằm hai bên **xích đạo** (hoặc **kinh tuyến gốc**, hoặc **đường đổi ngày**). Bit đầu tiên — bit quyết định "bán cầu nào" — **khác nhau**, nên ký tự base32 đầu tiên khác nhau, và tiền tố chung là **chuỗi rỗng**.
 
-```
-                 ↑ vĩ độ
-   ●  điểm P: lat = +0.000001   → bit đầu (lat) = 1
-─────────────────────────────── XÍCH ĐẠO (lat = 0)
-   ●  điểm Q: lat = -0.000001   → bit đầu (lat) = 0
-
-   Khoảng cách thực tế: ~20 cm
-   Tiền tố chung của geohash: 0 ký tự
-```
+<svg viewBox="0 0 520 580" role="img" aria-labelledby="sd23b-t sd23b-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="sd23b-t">Hai điểm gần nhau nhưng khác prefix geohash</title>
+<desc id="sd23b-d">Trên: dạng 1, quán A ở ô 9q9hvu và quán B ở ô kề 9q9hvv, cách nhau 20 m qua con phố trùng ranh giới ô; vòng tìm 200 m quanh A tràn sang ô kia, tra một ô thì mất B. Dưới: dạng 2, điểm P vĩ độ +0.000001 và Q vĩ độ -0.000001 nằm hai bên xích đạo (lat = 0), cách nhau khoảng 20 cm; bit vĩ độ đầu tiên của P là 1, của Q là 0, nên geohash chung 0 ký tự tiền tố.</desc>
+<text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Dạng 1: gần nhau nhưng khác ô</text>
+<rect x="30" y="44" width="260" height="120" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.6"/>
+<rect x="30" y="164" width="260" height="120" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.6"/>
+<text x="40" y="66" font-size="14" font-weight="700" fill="currentColor">9q9hvv</text>
+<text x="280" y="274" text-anchor="end" font-size="14" font-weight="700" fill="currentColor">9q9hvu</text>
+<line x1="30" y1="164" x2="290" y2="164" stroke="currentColor" stroke-width="5" stroke-opacity="0.25"/>
+<text x="282" y="156" text-anchor="end" font-size="13" fill="currentColor" opacity="0.8">con phố = biên ô</text>
+<circle cx="100" cy="182" r="60" fill="#3b82f6" fill-opacity="0.08" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="5 3"/>
+<circle cx="100" cy="182" r="6" fill="#10b981" stroke="currentColor"/>
+<text x="112" y="187" font-size="14" font-weight="700" fill="currentColor">A</text>
+<circle cx="100" cy="146" r="6" fill="#8b5cf6" stroke="currentColor"/>
+<text x="112" y="151" font-size="14" font-weight="700" fill="currentColor">B</text>
+<line x1="86" y1="146" x2="86" y2="182" stroke="currentColor" stroke-width="1"/>
+<text x="80" y="157" text-anchor="end" font-size="13" fill="currentColor">20 m</text>
+<text x="38" y="274" font-size="13" fill="#3b82f6">vòng tìm 200 m quanh A</text>
+<text x="305" y="84" font-size="13" fill="currentColor">Đứng ở A, chỉ tra</text>
+<text x="305" y="106" font-size="13" font-weight="700" fill="currentColor">ô 9q9hvu:</text>
+<text x="305" y="128" font-size="13" fill="currentColor">thấy A</text>
+<text x="305" y="150" font-size="13" font-weight="700" fill="currentColor">không thấy B</text>
+<text x="305" y="172" font-size="13" fill="currentColor">dù B ngay đối diện.</text>
+<text x="305" y="208" font-size="13" opacity="0.7" fill="currentColor">(không theo tỉ lệ:</text>
+<text x="305" y="230" font-size="13" opacity="0.7" fill="currentColor">ô dài 6 là</text>
+<text x="305" y="252" font-size="13" opacity="0.7" fill="currentColor">1,2 km × 0,6 km)</text>
+<line x1="16" y1="328" x2="504" y2="328" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="16" y="350" font-size="15" font-weight="700" fill="currentColor">Dạng 2: rất gần nhưng 0 ký tự chung</text>
+<text x="16" y="380" font-size="13" fill="currentColor" opacity="0.8">↑ vĩ độ</text>
+<rect x="60" y="390" width="440" height="60" fill="#f59e0b" fill-opacity="0.13"/>
+<rect x="60" y="450" width="440" height="60" fill="#14b8a6" fill-opacity="0.13"/>
+<line x1="60" y1="450" x2="500" y2="450" stroke="currentColor" stroke-width="2.5"/>
+<text x="494" y="444" text-anchor="end" font-size="13" font-weight="700" fill="currentColor">XÍCH ĐẠO (lat = 0)</text>
+<circle cx="90" cy="428" r="6" fill="#f59e0b" stroke="currentColor"/>
+<text x="104" y="433" font-size="13" fill="currentColor"><tspan font-weight="700">P</tspan>: lat = +0.000001 → bit lat đầu = <tspan font-weight="700">1</tspan></text>
+<circle cx="90" cy="472" r="6" fill="#14b8a6" stroke="currentColor"/>
+<text x="104" y="477" font-size="13" fill="currentColor"><tspan font-weight="700">Q</tspan>: lat = -0.000001 → bit lat đầu = <tspan font-weight="700">0</tspan></text>
+<line x1="74" y1="428" x2="74" y2="472" stroke="currentColor" stroke-width="1"/>
+<text x="60" y="455" text-anchor="end" font-size="13" fill="currentColor">~20 cm</text>
+<text x="16" y="532" font-size="13" fill="currentColor">Khoảng cách thực tế: ~20 cm. Bit lat đầu khác → ký tự</text>
+<text x="16" y="552" font-size="13" fill="currentColor">base32 đầu khác → tiền tố chung: <tspan font-weight="700">0 ký tự</tspan>.</text>
+<text x="16" y="572" font-size="13" fill="currentColor" opacity="0.8">Cùng kiểu vết cắt: kinh tuyến gốc, đường đổi ngày.</text>
+</svg>
 
 > **Đây là hệ quả không thể tránh, không phải bug.** Ranh giới của phép chia đôi đầu tiên là một **vết cắt toàn cầu**, và mọi cặp điểm nằm hai bên nó đều bị đẩy ra hai đầu của không gian mã. Mọi space-filling curve đều có các vết cắt như vậy; Hilbert curve của S2 ít và ngắn hơn nên đỡ hơn, nhưng không miễn nhiễm.
 

@@ -139,39 +139,60 @@ GET https://cdn/.../720p/seg_042.m4s     # player tải từng segment — đi T
 
 Hệ thống có **hai luồng gần như độc lập** dùng chung một kho storage.
 
-```
-                         ┌──────────────────────────────┐
-                         │           CLIENT             │
-                         └───────┬──────────────┬───────┘
-             ── LUỒNG UPLOAD ────┘              └──── LUỒNG XEM ──
-                                 │                            │
-                                 v                            v
-                   ┌─────────────────────────┐      ┌────────────────────┐
-                   │      API SERVERS        │      │        CDN         │
-                   │ auth, metadata, presign │      │  (edge, toàn cầu)  │
-                   └───┬──────────────┬──────┘      └─────────┬──────────┘
-                       │              │                       │ miss
-                       v              v                       v
-              ┌────────────────┐  ┌─────────────────────────────────┐
-              │  METADATA DB   │  │       TRANSCODED STORAGE        │
-              │ (video, user,  │  │  (segment HLS/DASH nhiều mức    │
-              │  trạng thái)   │  │   + manifest)                   │
-              └────────────────┘  └─────────────────▲───────────────┘
-                                                    │ ghi output
-   client PUT byte thẳng ─────┐                     │
-   (presigned URL)            v                     │
-              ┌────────────────────┐      ┌─────────┴───────────┐
-              │  ORIGINAL STORAGE  │─────▶│  TRANSCODING FARM   │
-              │  (file gốc)        │ job  │  (DAG + task worker)│
-              └────────────────────┘      └─────────┬───────────┘
-                                                    │ event "xong"
-                                          ┌─────────▼───────────┐
-                                          │  COMPLETION QUEUE   │
-                                          │  → cập nhật DB,     │
-                                          │    notify user,     │
-                                          │    prewarm CDN      │
-                                          └─────────────────────┘
-```
+<svg viewBox="0 0 520 500" role="img" aria-labelledby="sd19a-t sd19a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd19a-t">High-level design của YouTube: luồng upload và luồng xem</title>
+<desc id="sd19a-d">Client có hai luồng. Luồng upload: client gọi API servers (auth, metadata, presign), API ghi metadata DB; client PUT byte thẳng vào original storage bằng presigned URL; original storage đẩy job sang transcoding farm; farm ghi output vào transcoded storage và phát event xong vào completion queue để cập nhật DB, notify user, prewarm CDN. Luồng xem: client lấy video từ CDN, CDN miss thì đọc transcoded storage.</desc>
+<defs><marker id="sd19a-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<rect x="8" y="62" width="250" height="300" rx="10" fill="#f59e0b" fill-opacity="0.06"/>
+<rect x="280" y="62" width="234" height="190" rx="10" fill="#3b82f6" fill-opacity="0.06"/>
+<rect x="10" y="10" width="500" height="40" rx="9" fill="#64748b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="260.0" y="35.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">CLIENT</text>
+<text x="54" y="80" text-anchor="start" font-size="13" font-weight="700" fill="currentColor" opacity="0.75">LUỒNG UPLOAD</text>
+<text x="300" y="80" text-anchor="start" font-size="13" font-weight="700" fill="currentColor" opacity="0.75">LUỒNG XEM</text>
+<rect x="44" y="92" width="200" height="56" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="144.0" y="116.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">API SERVERS</text>
+<text x="144.0" y="134.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">auth, metadata, presign</text>
+<rect x="290" y="92" width="220" height="56" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="400.0" y="116.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">CDN</text>
+<text x="400.0" y="134.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">edge, toàn cầu</text>
+<path d="M200 50 L200 90" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd19a-arrow)"/>
+<path d="M450 50 L450 90" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd19a-arrow)"/>
+<rect x="44" y="186" width="200" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="144.0" y="210.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">METADATA DB</text>
+<text x="144.0" y="228.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">video, user, trạng thái</text>
+<rect x="290" y="180" width="220" height="68" rx="9" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="400.0" y="201.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">TRANSCODED STORAGE</text>
+<text x="400.0" y="219.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">segment HLS/DASH</text>
+<text x="400.0" y="237.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">nhiều mức + manifest</text>
+<path d="M150 148 L150 184" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd19a-arrow)"/>
+<path d="M230 148 L300 178" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd19a-arrow)"/>
+<path d="M400 148 L400 178" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd19a-arrow)"/>
+<text x="408" y="168" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">miss</text>
+<text x="44" y="284" text-anchor="start" font-size="13" fill="currentColor" opacity="0.85">client PUT byte thẳng</text>
+<text x="44" y="300" text-anchor="start" font-size="13" fill="currentColor" opacity="0.7">(presigned URL)</text>
+<rect x="44" y="310" width="200" height="50" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="144.0" y="331.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">ORIGINAL STORAGE</text>
+<text x="144.0" y="349.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">file gốc</text>
+<rect x="290" y="310" width="220" height="50" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="400.0" y="331.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">TRANSCODING FARM</text>
+<text x="400.0" y="349.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">DAG + task worker</text>
+<path d="M22 50 L22 335 L42 335" fill="none" stroke="#f59e0b" stroke-opacity="1" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#sd19a-arrow)"/>
+<path d="M244 335 L288 335" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd19a-arrow)"/>
+<text x="266" y="326" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">job</text>
+<path d="M400 310 L400 250" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd19a-arrow)"/>
+<text x="408" y="284" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">ghi output</text>
+<rect x="290" y="400" width="220" height="90" rx="9" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="400.0" y="423.0" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">COMPLETION QUEUE</text>
+<text x="400.0" y="441.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">cập nhật DB</text>
+<text x="400.0" y="459.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">notify user</text>
+<text x="400.0" y="477.0" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">prewarm CDN</text>
+<path d="M400 360 L400 398" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd19a-arrow)"/>
+<text x="408" y="384" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">event "xong"</text>
+<text x="44" y="420" text-anchor="start" font-size="13" fill="currentColor" opacity="0.75">Hai luồng gần như độc lập,</text>
+<text x="44" y="438" text-anchor="start" font-size="13" fill="currentColor" opacity="0.75">dùng chung kho storage.</text>
+<text x="44" y="462" text-anchor="start" font-size="13" fill="currentColor" opacity="0.75">Byte video không đi</text>
+<text x="44" y="480" text-anchor="start" font-size="13" fill="currentColor" opacity="0.75">qua API servers.</text>
+</svg>
 
 | Thành phần | Vai trò | Vì sao tách riêng |
 |---|---|---|
@@ -373,16 +394,108 @@ DAG mang lại ba thứ:
 ```
 Mấu chốt: **I-frame là điểm cắt an toàn** — mọi thứ sau một I-frame không cần biết gì về những gì đứng trước. Vậy ta cắt video tại biên GOP thành các **chunk độc lập** và encode từng chunk trên một máy khác nhau.
 
-```
-Video 2 giờ
-   ├── cắt tại biên GOP (mỗi chunk ~30 giây, đúng vào I-frame)
-   ├── chunk 001 ──▶ worker A ──▶ encode 360p/720p/1080p ─┐
-   ├── chunk 002 ──▶ worker B ──▶ ...                     ├──▶ ghép lại
-   ├── ...        (240 chunk trên 240 worker)             │   (concat bitstream)
-   └── chunk 240 ──▶ worker Z ──▶ ...                     ┘
-                                                          ▼
-   Thời gian: 4 GIỜ tuần tự  →  ~2 PHÚT song song    video hoàn chỉnh
-```
+<step-flow>
+<svg viewBox="0 0 680 540" role="img" aria-labelledby="sd19b-t sd19b-d" style="width:100%;height:auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd19b-t">Chia video 2 giờ thành chunk, encode song song rồi ghép</title>
+<desc id="sd19b-d">Video 2 giờ được cắt tại biên GOP thành 240 chunk khoảng 30 giây, mỗi chunk bắt đầu đúng ở I-frame. Chunk 001 tới worker A, chunk 002 tới worker B, chunk 240 tới worker Z; mỗi worker encode 360p, 720p, 1080p. Các chunk đã encode được ghép lại bằng concat bitstream thành video hoàn chỉnh. Tuần tự mất 4 giờ, song song khoảng 2 phút.</desc>
+<defs><marker id="sd19b-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="40" y="26" text-anchor="start" font-size="14" font-weight="700" fill="currentColor" opacity="0.9">Video 2 giờ (file gốc)</text>
+<rect x="40" y="36" width="600" height="38" rx="6" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<g data-step="1">
+<rect x="41" y="37" width="148" height="36" fill="#3b82f6" fill-opacity="0.16"/>
+<rect x="44" y="42" width="18" height="26" rx="3" fill="#f43f5e" fill-opacity="0.3"/>
+<text x="53" y="60" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor" opacity="1">I</text>
+<text x="125.0" y="60" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.9">chunk 001</text>
+<rect x="191" y="37" width="148" height="36" fill="#3b82f6" fill-opacity="0.16"/>
+<line x1="190" y1="30" x2="190" y2="80" stroke="#f43f5e" stroke-width="2.2"/>
+<rect x="194" y="42" width="18" height="26" rx="3" fill="#f43f5e" fill-opacity="0.3"/>
+<text x="203" y="60" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor" opacity="1">I</text>
+<text x="275.0" y="60" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.9">chunk 002</text>
+<rect x="341" y="37" width="148" height="36" fill="#3b82f6" fill-opacity="0.08"/>
+<line x1="340" y1="30" x2="340" y2="80" stroke="#f43f5e" stroke-width="2.2"/>
+<rect x="344" y="42" width="18" height="26" rx="3" fill="#f43f5e" fill-opacity="0.3"/>
+<text x="353" y="60" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor" opacity="1">I</text>
+<text x="425.0" y="60" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.9">003 … 239</text>
+<rect x="491" y="37" width="148" height="36" fill="#3b82f6" fill-opacity="0.16"/>
+<line x1="490" y1="30" x2="490" y2="80" stroke="#f43f5e" stroke-width="2.2"/>
+<rect x="494" y="42" width="18" height="26" rx="3" fill="#f43f5e" fill-opacity="0.3"/>
+<text x="503" y="60" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor" opacity="1">I</text>
+<text x="575.0" y="60" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.9">chunk 240</text>
+<text x="340" y="98" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">cắt tại biên GOP: mỗi chunk ~30 giây, bắt đầu đúng ở I-frame</text>
+</g>
+<g data-step="2">
+<path d="M115.0 106 L115.0 140" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd19b-arrow)"/>
+<rect x="55.0" y="142" width="120" height="36" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="115.0" y="165" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor" opacity="0.9">worker A</text>
+<path d="M265.0 106 L265.0 140" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd19b-arrow)"/>
+<rect x="205.0" y="142" width="120" height="36" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="265.0" y="165" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor" opacity="0.9">worker B</text>
+<path d="M415.0 106 L415.0 140" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#sd19b-arrow)"/>
+<rect x="355.0" y="142" width="120" height="36" rx="8" fill="#10b981" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="415.0" y="165" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor" opacity="0.9">…</text>
+<path d="M565.0 106 L565.0 140" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd19b-arrow)"/>
+<rect x="505.0" y="142" width="120" height="36" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="565.0" y="165" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor" opacity="0.9">worker Z</text>
+<text x="340" y="200" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">240 chunk trên 240 worker, chạy cùng lúc</text>
+</g>
+<g data-step="3">
+<path d="M115.0 208 L115.0 226" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd19b-arrow)"/>
+<rect x="44.0" y="228" width="46" height="28" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="67.0" y="247" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.9">360p</text>
+<rect x="92.0" y="228" width="46" height="28" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="115.0" y="247" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.9">720p</text>
+<rect x="140.0" y="228" width="46" height="28" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="163.0" y="247" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.9">1080p</text>
+<path d="M265.0 208 L265.0 226" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd19b-arrow)"/>
+<rect x="194.0" y="228" width="46" height="28" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="217.0" y="247" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.9">360p</text>
+<rect x="242.0" y="228" width="46" height="28" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="265.0" y="247" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.9">720p</text>
+<rect x="290.0" y="228" width="46" height="28" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="313.0" y="247" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.9">1080p</text>
+<path d="M415.0 208 L415.0 226" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#sd19b-arrow)"/>
+<rect x="344.0" y="228" width="46" height="28" rx="5" fill="#8b5cf6" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="367.0" y="247" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.9">360p</text>
+<rect x="392.0" y="228" width="46" height="28" rx="5" fill="#8b5cf6" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="415.0" y="247" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.9">720p</text>
+<rect x="440.0" y="228" width="46" height="28" rx="5" fill="#8b5cf6" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="463.0" y="247" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.9">1080p</text>
+<path d="M565.0 208 L565.0 226" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd19b-arrow)"/>
+<rect x="494.0" y="228" width="46" height="28" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="517.0" y="247" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.9">360p</text>
+<rect x="542.0" y="228" width="46" height="28" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="565.0" y="247" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.9">720p</text>
+<rect x="590.0" y="228" width="46" height="28" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="613.0" y="247" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.9">1080p</text>
+<text x="340" y="276" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">mỗi worker encode chunk của mình ra 360p / 720p / 1080p</text>
+</g>
+<g data-step="4">
+<path d="M115.0 284 L115.0 300 L261.25 318" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd19b-arrow)"/>
+<path d="M265.0 284 L265.0 300 L313.75 318" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd19b-arrow)"/>
+<path d="M415.0 284 L415.0 300 L366.25 318" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#sd19b-arrow)"/>
+<path d="M565.0 284 L565.0 300 L418.75 318" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd19b-arrow)"/>
+<rect x="200" y="320" width="280" height="40" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="340" y="345" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor" opacity="0.95">ghép lại (concat bitstream)</text>
+<path d="M340 360 L340 380" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" marker-end="url(#sd19b-arrow)"/>
+<rect x="230" y="382" width="220" height="36" rx="9" fill="#14b8a6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="340" y="405" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor" opacity="0.95">video hoàn chỉnh</text>
+</g>
+<g data-step="5">
+<text x="40" y="452" text-anchor="start" font-size="14" font-weight="700" fill="currentColor" opacity="0.9">Thời gian</text>
+<text x="40" y="480" text-anchor="start" font-size="13" fill="currentColor" opacity="0.85">1 máy, tuần tự</text>
+<rect x="190" y="466" width="450" height="20" rx="4" fill="#f43f5e" fill-opacity="0.35"/>
+<text x="415" y="481" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor" opacity="1">4 GIỜ</text>
+<text x="40" y="516" text-anchor="start" font-size="13" fill="currentColor" opacity="0.85">240 worker song song</text>
+<rect x="190" y="502" width="6" height="20" rx="2" fill="#10b981" fill-opacity="0.8"/>
+<text x="206" y="517" text-anchor="start" font-size="13" font-weight="700" fill="currentColor" opacity="1">~2 PHÚT</text>
+</g>
+</svg>
+<step-note data-step="1">I-frame giải mã độc lập, nên chunk mở đầu bằng I-frame không cần biết gì về chunk đứng trước. 2 giờ chia chunk 30 giây ra 240 chunk.</step-note>
+<step-note data-step="2">Một tiến trình FFmpeg không scale vượt quá một máy; muốn thêm máy rút ngắn thời gian thì phải chia dữ liệu, mỗi chunk một worker.</step-note>
+<step-note data-step="3">Các rendition của một chunk không phụ thuộc nhau, nên worker sinh đủ mọi mức chất lượng cho phần của mình.</step-note>
+<step-note data-step="4">Mỗi chunk trọn GOP, nên nối các chunk đã encode chỉ là thao tác trên container, không decode rồi encode lại.</step-note>
+<step-note data-step="5">Tổng thời gian gần bằng thời gian của một chunk cộng chi phí cắt và ghép: 4 giờ chia 240 worker là cỡ 1 phút mỗi chunk.</step-note>
+</step-flow>
 
 Vì sao việc này không làm hỏng video:
 - **Ghép không cần re-encode.** Mỗi chunk bắt đầu bằng I-frame và kết thúc trọn một GOP, nên nối các chunk đã encode chỉ là thao tác trên container, không phải decode rồi encode lại.

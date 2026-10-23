@@ -342,49 +342,63 @@ GET  /v1/ws/endpoint                    # trả về host WS gần nhất + toke
 
 ### 6.1 Kiến trúc tổng thể
 
-```
-                        ┌──────────────┐
-       điện thoại  ────►│ Load Balancer│  (L4/NLB cho WS, L7/ALB cho REST)
-    (10 triệu cái)      └──────┬───────┘
-                               │
-            ┌──────────────────┼──────────────────────┐
-            ▼                  ▼                      ▼
-   ┌─────────────────┐  ┌──────────────┐   ┌────────────────────┐
-   │ WebSocket       │  │ WebSocket    │   │ REST API servers   │
-   │ server #1       │  │ server #150  │   │ (STATELESS, dễ     │
-   │ (STATEFUL)      │  │              │   │  autoscale)        │
-   │ ~100k kết nối   │  │              │   └─────────┬──────────┘
-   └───┬──────┬──────┘  └──────────────┘             │
-       │      │                                       ▼
-       │      │                            ┌────────────────────┐
-       │      │                            │ User / Friend DB   │
-       │      │                            │ (shard theo user)  │
-       │      │                            └────────────────────┘
-       │      │
-       │      └──────────────────────────┐
-       ▼                                 ▼
-┌──────────────────────┐      ┌────────────────────────────────┐
-│ Location Cache       │      │  Redis Pub/Sub CLUSTER         │
-│ Redis, TTL 10 phút   │      │  ~140 node                     │
-│ key: loc:{user_id}   │      │  channel: loc:{user_id}        │
-│ ~3 GB TỔNG           │      │  13,4 triệu msg/giây           │
-└──────────────────────┘      └────────────┬───────────────────┘
-                                            │ vị trí channel nào ở node nào?
-                                            ▼
-                              ┌────────────────────────────────┐
-                              │ etcd / ZooKeeper               │
-                              │ vòng consistent hashing        │
-                              │ + danh sách node còn sống      │
-                              └────────────────────────────────┘
-       │
-       │ (bất đồng bộ, KHÔNG chặn đường nóng)
-       ▼
-┌──────────────┐    ┌──────────────────┐    ┌────────────────────┐
-│ Queue / Kafka│───►│ History consumer │───►│ Cassandra          │
-│ (đệm ghi)    │    │ (ghi theo lô)    │    │ location_history   │
-└──────────────┘    └──────────────────┘    │ ~1,3 PB/năm        │
-                                             └────────────────────┘
-```
+<svg viewBox="0 0 520 610" role="img" aria-labelledby="sd24a-t sd24a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd24a-t">Kiến trúc tổng thể Nearby Friends</title>
+<desc id="sd24a-d">Điện thoại đi qua load balancer tới WebSocket server (stateful) hoặc REST API server (stateless). REST đọc User/Friend DB. WebSocket server ghi Location Cache Redis TTL 10 phút, publish vào cụm Redis Pub/Sub khoảng 140 node do etcd/ZooKeeper quản vòng consistent hashing, và đẩy bất đồng bộ lịch sử qua Kafka, consumer ghi lô vào Cassandra.</desc>
+<defs><marker id="sd24a-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<rect x="140" y="10" width="240" height="44" rx="9" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="260" y="37" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Điện thoại (10 triệu cái)</text>
+<path d="M260 54 L260 78" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd24a-arrow)"/>
+<rect x="50" y="80" width="420" height="54" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="260" y="102" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Load Balancer</text>
+<text x="260" y="122" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">L4/NLB cho WebSocket · L7/ALB cho REST</text>
+<path d="M155 134 L155 170" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd24a-arrow)"/>
+<path d="M420 134 L420 170" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd24a-arrow)"/>
+<rect x="18" y="164" width="290" height="80" rx="9" fill="#3b82f6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.25"/>
+<rect x="10" y="172" width="290" height="80" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="155" y="195" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">WebSocket server #1 … #150</text>
+<text x="155" y="215" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700" opacity="0.85">STATEFUL</text>
+<text x="155" y="236" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">~100k kết nối mỗi máy</text>
+<rect x="330" y="172" width="180" height="80" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="420" y="195" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">REST API servers</text>
+<text x="420" y="215" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700" opacity="0.85">STATELESS</text>
+<text x="420" y="236" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">dễ autoscale</text>
+<path d="M420 252 L420 282" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd24a-arrow)"/>
+<rect x="330" y="284" width="180" height="56" rx="9" fill="#10b981" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="420" y="307" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">User / Friend DB</text>
+<text x="420" y="327" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">shard theo user</text>
+<rect x="76" y="284" width="224" height="80" rx="9" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="188" y="306" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Location Cache (Redis)</text>
+<text x="188" y="326" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">TTL 10 phút · ~3 GB TỔNG</text>
+<text x="188" y="347" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">key: loc:{user_id}</text>
+<path d="M185 252 L185 282" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd24a-arrow)"/>
+<path d="M52 252 L52 398" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd24a-arrow)"/>
+<rect x="36" y="400" width="264" height="84" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="168" y="423" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Redis Pub/Sub CLUSTER</text>
+<text x="168" y="443" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">~140 node · 13,4 triệu msg/giây</text>
+<text x="168" y="465" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">channel: loc:{user_id}</text>
+<text x="420" y="376" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.75">channel nào ở node nào?</text>
+<path d="M300 442 L328 442" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd24a-arrow)"/>
+<rect x="330" y="388" width="180" height="96" rx="9" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="420" y="411" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">etcd / ZooKeeper</text>
+<text x="420" y="432" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">vòng consistent</text>
+<text x="420" y="450" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">hashing + danh sách</text>
+<text x="420" y="468" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">node còn sống</text>
+<path d="M22 252 L22 528" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#sd24a-arrow)"/>
+<text x="34" y="512" font-size="13" text-anchor="start" fill="currentColor" opacity="0.75">bất đồng bộ, KHÔNG chặn đường nóng</text>
+<rect x="10" y="530" width="150" height="70" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="85" y="558" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Queue / Kafka</text>
+<text x="85" y="579" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">(đệm ghi)</text>
+<rect x="184" y="530" width="150" height="70" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="259" y="558" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">History consumer</text>
+<text x="259" y="579" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">(ghi theo lô)</text>
+<path d="M160 565 L182 565" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd24a-arrow)"/>
+<path d="M334 565 L356 565" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#sd24a-arrow)"/>
+<rect x="358" y="530" width="152" height="70" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="434" y="551" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Cassandra</text>
+<text x="434" y="570" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">location_history</text>
+<text x="434" y="590" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">~1,3 PB/năm</text>
+</svg>
 
 ### 6.2 Vai trò từng thành phần — và vì sao nó ở đó
 
@@ -407,27 +421,82 @@ GET  /v1/ws/endpoint                    # trả về host WS gần nhất + toke
 
 Đây là phần nên vẽ chậm và kỹ trong phỏng vấn, vì nó chứa toàn bộ ý tưởng của bài.
 
-```
- Alice (đang đi bộ ở SF)                              Bob (bạn Alice, cách 1 km)
-        │                                                        ▲
-   ① {"t":"loc", lat, lng, ts}                                   │ ⑧
-        ▼                                                        │
-  ┌─────────────────────┐                          ┌──────────────────────────┐
-  │ WS server A         │                          │ WS server B              │
-  │ (giữ kết nối Alice) │                          │ (giữ kết nối Bob)        │
-  └──────┬──────────────┘                          └──────────────▲───────────┘
-         │                                                        │
-   ② ghi cache: SET loc:alice "37.77,-122.41,t" EX 600            │ ⑦ tính d(Bob,Alice)
-   ③ đẩy vào queue → Cassandra (bất đồng bộ, fire-and-forget)     │   1 km ≤ 8 km ✓
-   ④ cập nhật bản sao in-memory của Alice trên server A           │
-         │                                                        │
-   ⑤ PUBLISH loc:alice {lat,lng,ts}                               │
-         ▼                                                        │
-  ┌────────────────────────────────────────────────────────────┐  │
-  │            REDIS PUB/SUB   channel = loc:alice             │  │
-  │  subscriber: mọi WS server đang giữ ÍT NHẤT MỘT bạn Alice  │──┘ ⑥
-  └────────────────────────────────────────────────────────────┘
-```
+<step-flow>
+<svg viewBox="0 0 760 560" role="img" aria-labelledby="sd24b-t sd24b-d" style="width:100%;height:auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd24b-t">Luồng một bản cập nhật vị trí từ Alice tới Bob, 8 bước</title>
+<desc id="sd24b-d">Alice gửi loc tới WS server A; server A ghi location cache với TTL 600 giây, đẩy bất đồng bộ vào queue tới Cassandra, cập nhật bản sao in-memory, rồi PUBLISH vào channel loc:alice. Redis Pub/Sub phát tới WS server B, server B tính khoảng cách 1 km nhỏ hơn 8 km và đẩy xuống Bob.</desc>
+<defs><marker id="sd24b-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<rect x="20" y="16" width="240" height="52" rx="9" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="140" y="38" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Alice</text>
+<text x="140" y="58" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">đang đi bộ ở SF</text>
+<rect x="500" y="16" width="240" height="52" rx="9" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="620" y="38" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Bob</text>
+<text x="620" y="58" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">bạn Alice, cách 1 km</text>
+<rect x="20" y="120" width="300" height="112" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="170" y="143" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">WS server A</text>
+<text x="170" y="162" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">giữ kết nối Alice</text>
+<rect x="500" y="120" width="240" height="112" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="620" y="143" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">WS server B</text>
+<text x="620" y="162" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">giữ kết nối Bob</text>
+<rect x="110" y="276" width="320" height="74" rx="9" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="270" y="297" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Location cache (Redis)</text>
+<rect x="20" y="380" width="410" height="44" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="225" y="407" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Queue → Cassandra (lịch sử vị trí)</text>
+<rect x="20" y="470" width="720" height="74" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="380" y="494" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">REDIS PUB/SUB · channel = loc:alice</text>
+<text x="380" y="520" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">subscriber: mọi WS server đang giữ ÍT NHẤT MỘT bạn của Alice</text>
+<g data-step="1">
+<path d="M140 68 L140 118" fill="none" stroke="#f43f5e" stroke-width="2" marker-end="url(#sd24b-arrow)"/>
+<circle cx="122" cy="93" r="11" fill="#f43f5e" fill-opacity="0.9"/><text x="122" y="97.5" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">1</text>
+<text x="152" y="98" font-size="13" text-anchor="start" fill="currentColor" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">{"t":"loc", lat, lng, ts}</text>
+</g>
+<g data-step="2">
+<path d="M270 232 L270 274" fill="none" stroke="#f43f5e" stroke-width="2" marker-end="url(#sd24b-arrow)"/>
+<circle cx="252" cy="253" r="11" fill="#f43f5e" fill-opacity="0.9"/><text x="252" y="257.5" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">2</text>
+<text x="270" y="318" font-size="13" text-anchor="middle" fill="currentColor" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">SET loc:alice "37.77,-122.41,t"</text>
+<text x="270" y="338" font-size="13" text-anchor="middle" fill="currentColor" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">EX 600  (TTL 10 phút)</text>
+</g>
+<g data-step="3">
+<path d="M60 232 L60 378" fill="none" stroke="#f43f5e" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#sd24b-arrow)"/>
+<circle cx="42" cy="300" r="11" fill="#f43f5e" fill-opacity="0.9"/><text x="42" y="304.5" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">3</text>
+<text x="24" y="450" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">bất đồng bộ, fire-and-forget</text>
+</g>
+<g data-step="4">
+<rect x="36" y="176" width="268" height="44" rx="7" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" stroke-width="1.5"/>
+<circle cx="36" cy="176" r="11" fill="#f43f5e" fill-opacity="0.9"/><text x="36" y="180.5" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">4</text>
+<text x="170" y="203" font-size="13" text-anchor="middle" fill="currentColor">bản sao in-memory của Alice</text>
+</g>
+<g data-step="5">
+<path d="M320 190 L460 190 L460 468" fill="none" stroke="#f43f5e" stroke-width="2" marker-end="url(#sd24b-arrow)"/>
+<circle cx="460" cy="300" r="11" fill="#f43f5e" fill-opacity="0.9"/><text x="460" y="304.5" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">5</text>
+<text x="476" y="288" font-size="13" text-anchor="start" fill="currentColor" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">PUBLISH loc:alice</text>
+<text x="476" y="308" font-size="13" text-anchor="start" fill="currentColor" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">{lat,lng,ts}</text>
+</g>
+<g data-step="6">
+<path d="M700 470 L700 234" fill="none" stroke="#f43f5e" stroke-width="2" marker-end="url(#sd24b-arrow)"/>
+<circle cx="700" cy="400" r="11" fill="#f43f5e" fill-opacity="0.9"/><text x="700" y="404.5" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">6</text>
+<text x="686" y="360" font-size="13" text-anchor="end" fill="currentColor" opacity="0.85">phát tới server B</text>
+</g>
+<g data-step="7">
+<rect x="516" y="176" width="208" height="44" rx="7" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" stroke-width="1.5"/>
+<circle cx="516" cy="176" r="11" fill="#f43f5e" fill-opacity="0.9"/><text x="516" y="180.5" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">7</text>
+<text x="620" y="203" font-size="13" text-anchor="middle" fill="currentColor">d(Bob,Alice) = 1 km ≤ 8 km ✓</text>
+</g>
+<g data-step="8">
+<path d="M620 120 L620 70" fill="none" stroke="#f43f5e" stroke-width="2" marker-end="url(#sd24b-arrow)"/>
+<circle cx="638" cy="95" r="11" fill="#f43f5e" fill-opacity="0.9"/><text x="638" y="99.5" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">8</text>
+<text x="604" y="100" font-size="13" text-anchor="end" fill="currentColor" opacity="0.85">đẩy xuống Bob</text>
+</g>
+</svg>
+<step-note data-step="1">Client gửi <code>loc</code> mỗi 30 giây (nhanh hơn khi di chuyển nhanh, thưa hơn khi đứng yên). Payload nhị phân, không chờ phản hồi.</step-note>
+<step-note data-step="2">Một lệnh O(1), không transaction. TTL 10 phút hiện thực đúng yêu cầu "không hoạt động 10 phút thì biến mất": không cần job quét ai offline, Redis tự quên.</step-note>
+<step-note data-step="3">Đường lịch sử đi vòng qua queue để Cassandra chậm một nhịp không bao giờ dội ngược lên đường nóng (§7.3). Mất thì thôi.</step-note>
+<step-note data-step="4">Server A cũng giữ kết nối của những người bạn khác của Alice và cần vị trí cô để tính khoảng cách cho họ; giữ trong RAM tiến trình thì 400 triệu lượt tra mỗi chu kỳ không đi ra mạng.</step-note>
+<step-note data-step="5">Alice publish vào <b>channel của chính mình</b>. Cô không biết, và không cần biết, ai đang nghe.</step-note>
+<step-note data-step="6">Subscriber là WS server, không phải người dùng. 40 bạn online rải trên 150 server thì ~40 server nhận; mỗi server subscribe một lần cho một channel dù giữ 5 bạn của Alice (§9.3).</step-note>
+<step-note data-step="7">Vị trí Bob nằm sẵn trong RAM server B, Haversine cỡ 50 ns. Trong bán kính thì gửi; vừa vượt ra ngoài thì gửi <code>gone{why:"out_of_range"}</code>.</step-note>
+<step-note data-step="8">Bob thấy Alice nhích trên bản đồ, tổng độ trễ thường dưới 200 ms. Không bước nào phải tra "bạn của Alice đang ở đâu".</step-note>
+</step-flow>
 
 Từng bước, kèm lý do:
 
