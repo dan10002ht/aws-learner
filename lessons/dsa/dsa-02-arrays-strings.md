@@ -364,60 +364,154 @@ Sliding window là two-pointer áp dụng cho bài toán **dãy con liên tiếp
 
 Vì mỗi con trỏ chỉ đi một chiều và mỗi phần tử vào/ra cửa sổ tối đa một lần → tổng cộng **O(n)**, dù trông như hai vòng lồng nhau.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Sliding window co và giãn trên một dãy</title>
-  <desc>Cửa sổ [left, right] mở rộng khi tăng right để thu nạp phần tử mới, và co lại khi tăng left lúc vi phạm điều kiện; mỗi phần tử vào và ra cửa sổ tối đa một lần.</desc>
-  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Sliding window — mở rộng (right++) rồi co lại (left++)</text>
-  <text x="16" y="58" font-size="12" font-weight="700" fill="currentColor">1. Mở rộng: tăng right thu nạp phần tử mới</text>
-  <g font-size="13" fill="currentColor">
-    <rect x="16" y="70" width="48" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
-    <rect x="72" y="70" width="48" height="44" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <rect x="128" y="70" width="48" height="44" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <rect x="184" y="70" width="48" height="44" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <rect x="240" y="70" width="48" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
-    <rect x="296" y="70" width="48" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="40" y="98" text-anchor="middle">a</text>
-    <text x="96" y="98" text-anchor="middle">b</text>
-    <text x="152" y="98" text-anchor="middle">c</text>
-    <text x="208" y="98" text-anchor="middle">d</text>
-    <text x="264" y="98" text-anchor="middle">e</text>
-    <text x="320" y="98" text-anchor="middle">f</text>
-  </g>
-  <text x="96" y="134" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">left</text>
-  <text x="208" y="134" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">right</text>
-  <g stroke="#10b981" stroke-width="2" fill="none">
-    <path d="M232 92 h44" marker-end="url(#swarr)"/>
-  </g>
-  <text x="296" y="88" font-size="11" fill="#10b981">right++</text>
-  <text x="16" y="178" font-size="12" font-weight="700" fill="currentColor">2. Vi phạm điều kiện → co lại: tăng left bỏ phần tử trái</text>
-  <g font-size="13" fill="currentColor">
-    <rect x="16" y="190" width="48" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
-    <rect x="72" y="190" width="48" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
-    <rect x="128" y="190" width="48" height="44" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <rect x="184" y="190" width="48" height="44" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <rect x="240" y="190" width="48" height="44" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <rect x="296" y="190" width="48" height="44" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="40" y="218" text-anchor="middle">a</text>
-    <text x="96" y="218" text-anchor="middle">b</text>
-    <text x="152" y="218" text-anchor="middle">c</text>
-    <text x="208" y="218" text-anchor="middle">d</text>
-    <text x="264" y="218" text-anchor="middle">e</text>
-    <text x="320" y="218" text-anchor="middle">f</text>
-  </g>
-  <text x="152" y="254" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">left</text>
-  <text x="264" y="254" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">right</text>
-  <g stroke="#f59e0b" stroke-width="2" fill="none">
-    <path d="M120 212 h44" marker-end="url(#swarr2)"/>
-  </g>
-  <text x="76" y="208" font-size="11" fill="#f59e0b">left++</text>
-  <text x="380" y="148" font-size="11.5" fill="currentColor" opacity="0.85">Mỗi phần tử vào (right++)</text>
-  <text x="380" y="166" font-size="11.5" fill="currentColor" opacity="0.85">và ra (left++) cửa sổ</text>
-  <text x="380" y="184" font-size="11.5" fill="currentColor" opacity="0.85">tối đa một lần → O(n).</text>
-  <defs>
-    <marker id="swarr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 Z" fill="#10b981"/></marker>
-    <marker id="swarr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 Z" fill="#f59e0b"/></marker>
-  </defs>
+Hình dưới chạy hàm `longest_unique("pwwkew")` ở mục bài toán điển hình bên dưới, mỗi hàng là một vòng `right`; bấm từng bước để xem lúc nào cửa sổ giãn, lúc nào co.
+
+<step-flow>
+<svg viewBox="0 0 720 476" role="img" aria-labelledby="dsa02b-t dsa02b-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa02b-t">Sliding window chạy từng vòng right trên chuỗi pwwkew</title>
+<desc id="dsa02b-d">Mỗi hàng là một vòng right của longest_unique("pwwkew"): right tăng để thu nạp ký tự mới; khi ký tự mới đã có trong cửa sổ thì left tăng, bỏ ký tự bên trái cho tới hết trùng. right đi 6 lần, left đi 3 lần, đáp án best = 3 (wke). Mỗi phần tử vào và ra cửa sổ tối đa một lần nên tổng là O(n).</desc>
+<defs>
+<marker id="dsa02b-am" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 Z" fill="#f59e0b"/></marker>
+</defs>
+<text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Sliding window: mở rộng (right++), trùng thì co lại (left++)</text>
+<rect x="16" y="38" width="16" height="16" rx="3" fill="#3b82f6" fill-opacity="0.16" stroke="#3b82f6"/>
+<text x="38" y="51" font-size="13" fill="currentColor" opacity="0.85">cửa sổ [left, right]</text>
+<rect x="208.0" y="38" width="16" height="16" rx="3" fill="#10b981" fill-opacity="0.16" stroke="#10b981"/>
+<text x="230.0" y="51" font-size="13" fill="currentColor" opacity="0.85">ký tự vừa vào</text>
+<rect x="348.2" y="38" width="16" height="16" rx="3" fill="#f59e0b" fill-opacity="0.16" stroke="#f59e0b"/>
+<text x="370.2" y="51" font-size="13" fill="currentColor" opacity="0.85">bị đẩy ra (left++)</text>
+<text x="16" y="82" font-size="13" fill="currentColor" opacity="0.7">chỉ số</text>
+<text x="124" y="82" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">0</text>
+<text x="170" y="82" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">1</text>
+<text x="216" y="82" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">2</text>
+<text x="262" y="82" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">3</text>
+<text x="308" y="82" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">4</text>
+<text x="354" y="82" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">5</text>
+<text x="392" y="82" font-size="13" fill="currentColor" opacity="0.7">trạng thái sau vòng</text>
+<g data-step="1">
+<text x="16" y="114" font-size="13" font-weight="700" fill="currentColor">right=0</text>
+<rect x="104" y="96" width="40" height="28" rx="5" fill="#10b981" fill-opacity="0.16" stroke="#10b981" stroke-width="2"/>
+<text x="124" y="115" font-size="14" text-anchor="middle" fill="currentColor">p</text>
+<rect x="150" y="96" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="170" y="115" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">w</text>
+<rect x="196" y="96" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="216" y="115" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">w</text>
+<rect x="242" y="96" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="262" y="115" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">k</text>
+<rect x="288" y="96" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="308" y="115" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">e</text>
+<rect x="334" y="96" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="354" y="115" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">w</text>
+<path d="M106 135 V139 H142 V135" stroke="#3b82f6" stroke-width="2" fill="none"/>
+<text x="392" y="108" font-size="13" fill="currentColor">left=0 · seen={p} · best=1</text>
+<text x="392" y="128" font-size="13" fill="#10b981">p chưa có: thêm vào; độ dài 1</text>
+</g>
+<g data-step="2">
+<text x="16" y="168" font-size="13" font-weight="700" fill="currentColor">right=1</text>
+<rect x="104" y="150" width="40" height="28" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-width="1"/>
+<text x="124" y="169" font-size="14" text-anchor="middle" fill="currentColor">p</text>
+<rect x="150" y="150" width="40" height="28" rx="5" fill="#10b981" fill-opacity="0.16" stroke="#10b981" stroke-width="2"/>
+<text x="170" y="169" font-size="14" text-anchor="middle" fill="currentColor">w</text>
+<rect x="196" y="150" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="216" y="169" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">w</text>
+<rect x="242" y="150" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="262" y="169" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">k</text>
+<rect x="288" y="150" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="308" y="169" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">e</text>
+<rect x="334" y="150" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="354" y="169" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">w</text>
+<path d="M106 189 V193 H188 V189" stroke="#3b82f6" stroke-width="2" fill="none"/>
+<text x="392" y="162" font-size="13" fill="currentColor">left=0 · seen={p, w} · best=2</text>
+<text x="392" y="182" font-size="13" fill="#10b981">w chưa có: thêm vào; độ dài 2</text>
+</g>
+<g data-step="3">
+<text x="16" y="222" font-size="13" font-weight="700" fill="currentColor">right=2</text>
+<rect x="104" y="204" width="40" height="28" rx="5" fill="#f59e0b" fill-opacity="0.16" stroke="#f59e0b" stroke-width="1.5"/>
+<text x="124" y="223" font-size="14" text-anchor="middle" fill="currentColor">p</text>
+<rect x="150" y="204" width="40" height="28" rx="5" fill="#f59e0b" fill-opacity="0.16" stroke="#f59e0b" stroke-width="1.5"/>
+<text x="170" y="223" font-size="14" text-anchor="middle" fill="currentColor">w</text>
+<rect x="196" y="204" width="40" height="28" rx="5" fill="#10b981" fill-opacity="0.16" stroke="#10b981" stroke-width="2"/>
+<text x="216" y="223" font-size="14" text-anchor="middle" fill="currentColor">w</text>
+<rect x="242" y="204" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="262" y="223" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">k</text>
+<rect x="288" y="204" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="308" y="223" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">e</text>
+<rect x="334" y="204" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="354" y="223" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">w</text>
+<path d="M124 237 H204" stroke="#f59e0b" stroke-width="2" fill="none" marker-end="url(#dsa02b-am)"/>
+<path d="M198 243 V247 H234 V243" stroke="#3b82f6" stroke-width="2" fill="none"/>
+<text x="392" y="216" font-size="13" fill="currentColor">left=2 · seen={w} · best=2</text>
+<text x="392" y="236" font-size="13" fill="#f59e0b">w trùng: bỏ p, w, left 0→2; độ dài 1</text>
+</g>
+<g data-step="4">
+<text x="16" y="276" font-size="13" font-weight="700" fill="currentColor">right=3</text>
+<rect x="104" y="258" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="124" y="277" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">p</text>
+<rect x="150" y="258" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="170" y="277" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">w</text>
+<rect x="196" y="258" width="40" height="28" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-width="1"/>
+<text x="216" y="277" font-size="14" text-anchor="middle" fill="currentColor">w</text>
+<rect x="242" y="258" width="40" height="28" rx="5" fill="#10b981" fill-opacity="0.16" stroke="#10b981" stroke-width="2"/>
+<text x="262" y="277" font-size="14" text-anchor="middle" fill="currentColor">k</text>
+<rect x="288" y="258" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="308" y="277" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">e</text>
+<rect x="334" y="258" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="354" y="277" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">w</text>
+<path d="M198 297 V301 H280 V297" stroke="#3b82f6" stroke-width="2" fill="none"/>
+<text x="392" y="270" font-size="13" fill="currentColor">left=2 · seen={w, k} · best=2</text>
+<text x="392" y="290" font-size="13" fill="#10b981">k chưa có: thêm vào; độ dài 2</text>
+</g>
+<g data-step="5">
+<text x="16" y="330" font-size="13" font-weight="700" fill="currentColor">right=4</text>
+<rect x="104" y="312" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="124" y="331" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">p</text>
+<rect x="150" y="312" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="170" y="331" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">w</text>
+<rect x="196" y="312" width="40" height="28" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-width="1"/>
+<text x="216" y="331" font-size="14" text-anchor="middle" fill="currentColor">w</text>
+<rect x="242" y="312" width="40" height="28" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-width="1"/>
+<text x="262" y="331" font-size="14" text-anchor="middle" fill="currentColor">k</text>
+<rect x="288" y="312" width="40" height="28" rx="5" fill="#10b981" fill-opacity="0.16" stroke="#10b981" stroke-width="2"/>
+<text x="308" y="331" font-size="14" text-anchor="middle" fill="currentColor">e</text>
+<rect x="334" y="312" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="354" y="331" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">w</text>
+<path d="M198 351 V355 H326 V351" stroke="#3b82f6" stroke-width="2" fill="none"/>
+<text x="392" y="324" font-size="13" fill="currentColor">left=2 · seen={w, k, e} · best=3</text>
+<text x="392" y="344" font-size="13" fill="#10b981">e chưa có: thêm vào; độ dài 3</text>
+</g>
+<g data-step="6">
+<text x="16" y="384" font-size="13" font-weight="700" fill="currentColor">right=5</text>
+<rect x="104" y="366" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="124" y="385" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">p</text>
+<rect x="150" y="366" width="40" height="28" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="170" y="385" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.45">w</text>
+<rect x="196" y="366" width="40" height="28" rx="5" fill="#f59e0b" fill-opacity="0.16" stroke="#f59e0b" stroke-width="1.5"/>
+<text x="216" y="385" font-size="14" text-anchor="middle" fill="currentColor">w</text>
+<rect x="242" y="366" width="40" height="28" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-width="1"/>
+<text x="262" y="385" font-size="14" text-anchor="middle" fill="currentColor">k</text>
+<rect x="288" y="366" width="40" height="28" rx="5" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-width="1"/>
+<text x="308" y="385" font-size="14" text-anchor="middle" fill="currentColor">e</text>
+<rect x="334" y="366" width="40" height="28" rx="5" fill="#10b981" fill-opacity="0.16" stroke="#10b981" stroke-width="2"/>
+<text x="354" y="385" font-size="14" text-anchor="middle" fill="currentColor">w</text>
+<path d="M216 399 H250" stroke="#f59e0b" stroke-width="2" fill="none" marker-end="url(#dsa02b-am)"/>
+<path d="M244 405 V409 H372 V405" stroke="#3b82f6" stroke-width="2" fill="none"/>
+<text x="392" y="378" font-size="13" fill="currentColor">left=3 · seen={k, e, w} · best=3</text>
+<text x="392" y="398" font-size="13" fill="#f59e0b">w trùng: bỏ w, left 2→3; độ dài 3</text>
+</g>
+<g data-step="7">
+<rect x="12" y="416" width="696" height="44" rx="8" fill="#8b5cf6" fill-opacity="0.13"/>
+<text x="24" y="434" font-size="13" font-weight="700" fill="currentColor">Kết quả best = 3 (cửa sổ "wke", chỉ số 2..4). right đi 6 lần, left đi 3 lần: 9 ≤ 2n = 12.</text>
+<text x="24" y="452" font-size="13" fill="currentColor">Mỗi phần tử vào (right++) và ra (left++) cửa sổ tối đa một lần → O(n).</text>
+</g>
 </svg>
+<step-note data-step="1">Cửa sổ rỗng, <code>right</code> thu nạp <code>p</code>. Mọi ký tự trong cửa sổ khác nhau nên độ dài 1 là một đáp án hợp lệ.</step-note>
+<step-note data-step="2"><code>w</code> chưa có trong <code>seen</code> nên chỉ việc mở rộng; không có gì phải bỏ. Tra set là O(1), nên mỗi vòng không quét lại cửa sổ.</step-note>
+<step-note data-step="3">Thêm <code>w</code> sẽ có hai chữ <code>w</code>: vi phạm. Vòng <code>while</code> tăng <code>left</code> tới khi hết trùng; phải bỏ cả <code>p</code> vì cửa sổ chỉ được liên tiếp, không thể nhảy qua <code>w</code> cũ mà giữ <code>p</code>.</step-note>
+<step-note data-step="4"><code>left</code> không lùi lại: các cửa sổ bắt đầu ở 0 hay 1 đã chứa hai chữ <code>w</code> khi tới chỉ số 2, nên không cần thử lại.</step-note>
+<step-note data-step="5">Độ dài 3 vượt <code>best</code> cũ, cập nhật <code>best = right - left + 1 = 3</code>.</step-note>
+<step-note data-step="6">Lần này chỉ bỏ một ký tự (<code>w</code> ở chỉ số 2) là hết trùng. Cửa sổ <code>kew</code> cũng dài 3, không vượt <code>best</code>.</step-note>
+<step-note data-step="7">Tổng số lần dịch con trỏ bị chặn bởi <code>2n</code> dù code có hai vòng lồng nhau: vòng <code>while</code> trong không bao giờ đưa <code>left</code> vượt quá <code>right</code>.</step-note>
+</step-flow>
 
 ### Khi nào dùng
 

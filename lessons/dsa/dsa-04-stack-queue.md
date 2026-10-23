@@ -553,53 +553,142 @@ std::vector<int> nextGreater(const std::vector<int>& nums) {
 }
 ```
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Monotonic stack tìm Next Greater Element</title>
-  <desc>Duyệt mảng [2, 1, 5, 3] từ phải sang trái; stack giữ thứ tự giảm dần, pop các phần tử nhỏ hơn hoặc bằng phần tử hiện tại rồi đọc đỉnh làm đáp án.</desc>
-  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Next Greater Element: nums = [2, 1, 5, 3]</text>
-  <text x="16" y="46" font-size="11.5" fill="currentColor" opacity="0.7">Duyệt phải → trái · stack giảm dần (đỉnh ở trên) · đáp án = đỉnh sau khi pop</text>
-  <defs>
-    <marker id="msarrow" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker>
-  </defs>
-  <g font-size="12">
-    <text x="80" y="92" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">i=3, x=3</text>
-    <rect x="40" y="104" width="80" height="30" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
-    <text x="80" y="124" text-anchor="middle" fill="currentColor">[3]</text>
-    <text x="80" y="156" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">stack rỗng</text>
-    <text x="80" y="172" font-size="11.5" text-anchor="middle" fill="currentColor">res[3] = -1</text>
-  </g>
-  <g font-size="12">
-    <text x="240" y="92" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">i=2, x=5</text>
-    <rect x="200" y="104" width="80" height="30" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
-    <text x="240" y="124" text-anchor="middle" fill="currentColor">[5]</text>
-    <text x="240" y="156" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">pop 3 (≤ 5)</text>
-    <text x="240" y="172" font-size="11.5" text-anchor="middle" fill="currentColor">res[2] = -1</text>
-  </g>
-  <g font-size="12">
-    <text x="400" y="92" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">i=1, x=1</text>
-    <rect x="360" y="104" width="80" height="30" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
-    <text x="400" y="124" text-anchor="middle" fill="currentColor">[5, 1]</text>
-    <text x="400" y="156" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">5 &gt; 1 → giữ</text>
-    <text x="400" y="172" font-size="11.5" font-weight="600" text-anchor="middle" fill="currentColor">res[1] = 5</text>
-  </g>
-  <g font-size="12">
-    <text x="560" y="92" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">i=0, x=2</text>
-    <rect x="520" y="104" width="80" height="30" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
-    <text x="560" y="124" text-anchor="middle" fill="currentColor">[5, 2]</text>
-    <text x="560" y="156" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">pop 1 (≤ 2)</text>
-    <text x="560" y="172" font-size="11.5" font-weight="600" text-anchor="middle" fill="currentColor">res[0] = 5</text>
-  </g>
-  <path d="M620 119 h60" stroke="currentColor" fill="none" marker-end="url(#msarrow)" stroke-opacity="0.6"/>
-  <text x="650" y="111" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">thời gian</text>
-  <g>
-    <rect x="40" y="210" width="640" height="120" rx="9" fill="#10b981" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="60" y="236" font-size="12.5" font-weight="700" fill="currentColor">Ý tưởng</text>
-    <text x="60" y="260" font-size="11.5" fill="currentColor" opacity="0.85">1. Trước khi xét nums[i], pop hết phần tử ≤ nums[i] — chúng bị che, không còn là next greater.</text>
-    <text x="60" y="282" font-size="11.5" fill="currentColor" opacity="0.85">2. Đỉnh stack còn lại (nếu có) chính là phần tử lớn hơn gần nhất bên phải → res[i].</text>
-    <text x="60" y="304" font-size="11.5" fill="currentColor" opacity="0.85">3. Push nums[i] vào để làm ứng viên cho các phần tử bên trái.</text>
-    <text x="60" y="324" font-size="11.5" font-weight="600" fill="currentColor">Mỗi phần tử push/pop đúng 1 lần → O(n). Kết quả: [5, 5, -1, -1].</text>
-  </g>
+<step-flow>
+<svg viewBox="0 0 760 548" role="img" aria-labelledby="dsa04b-t dsa04b-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa04b-t">Monotonic stack tìm Next Greater Element</title>
+<desc id="dsa04b-d">Duyệt mảng [2, 1, 5, 3] từ phải sang trái; stack giữ thứ tự giảm dần, pop các phần tử nhỏ hơn hoặc bằng phần tử hiện tại rồi đọc đỉnh làm đáp án. Kết quả [5, 5, -1, -1].</desc>
+<defs><marker id="dsa04b-arrow" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="20" y="28" font-size="17" font-weight="700" fill="currentColor">Next Greater Element: nums = [2, 1, 5, 3]</text>
+<text x="20" y="50" font-size="13" fill="currentColor" opacity="0.75">Duyệt phải → trái · stack giảm dần, đỉnh ở bên phải · đáp án = đỉnh sau khi pop</text>
+<text x="20" y="92" font-size="13" font-weight="700" fill="currentColor" opacity="0.8">i, x = nums[i] · thao tác</text>
+<text x="300" y="92" font-size="13" font-weight="700" fill="currentColor" opacity="0.8">stack (đáy → đỉnh)</text>
+<text x="500" y="80" font-size="13" font-weight="700" fill="currentColor" opacity="0.8">res</text>
+<text x="526" y="100" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">[0]</text>
+<text x="586" y="100" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">[1]</text>
+<text x="646" y="100" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">[2]</text>
+<text x="706" y="100" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">[3]</text>
+<line x1="20" y1="110" x2="740" y2="110" stroke="currentColor" stroke-opacity="0.25"/>
+<g data-step="1">
+<rect x="14" y="114" width="732" height="54" rx="7" fill="#3b82f6" fill-opacity="0.06"/>
+<text x="30" y="137" font-size="14" font-weight="700" fill="currentColor">i=3, x=3</text>
+<text x="120" y="137" font-size="13" fill="currentColor">stack rỗng: res[3] = -1</text>
+<text x="120" y="158" font-size="13" fill="currentColor" opacity="0.75">push 3</text>
+<rect x="300" y="124" width="40" height="34" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="320" y="146" font-size="15" text-anchor="middle" fill="currentColor">3</text>
+<rect x="500" y="124" width="52" height="34" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+<text x="526" y="146" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.35">-1</text>
+<rect x="560" y="124" width="52" height="34" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+<text x="586" y="146" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.35">-1</text>
+<rect x="620" y="124" width="52" height="34" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+<text x="646" y="146" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.35">-1</text>
+<rect x="680" y="124" width="52" height="34" rx="5" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="706" y="146" font-size="15" text-anchor="middle" fill="currentColor" font-weight="700">-1</text>
+</g>
+<g data-step="2">
+<rect x="14" y="174" width="732" height="54" rx="7" fill="#3b82f6" fill-opacity="0.06"/>
+<text x="30" y="197" font-size="14" font-weight="700" fill="currentColor">i=2, x=5</text>
+<text x="120" y="197" font-size="13" fill="currentColor">pop 3 (3 ≤ 5)</text>
+<text x="120" y="218" font-size="13" fill="currentColor" opacity="0.75">3 bị 5 che từ đây về trái</text>
+<rect x="300" y="184" width="40" height="34" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" stroke-dasharray="4 3"/>
+<text x="320" y="206" font-size="15" text-anchor="middle" fill="currentColor" opacity="0.6">3</text>
+<line x1="304" y1="214" x2="336" y2="188" stroke="#f43f5e" stroke-width="2"/>
+<text x="350" y="206" font-size="13" fill="#f43f5e">pop</text>
+<text x="384" y="206" font-size="13" fill="currentColor" opacity="0.75">→ rỗng</text>
+<rect x="500" y="184" width="52" height="34" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+<text x="526" y="206" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.35">-1</text>
+<rect x="560" y="184" width="52" height="34" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+<text x="586" y="206" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.35">-1</text>
+<rect x="620" y="184" width="52" height="34" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+<text x="646" y="206" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.35">-1</text>
+<rect x="680" y="184" width="52" height="34" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="706" y="206" font-size="15" text-anchor="middle" fill="currentColor">-1</text>
+</g>
+<g data-step="3">
+<rect x="14" y="234" width="732" height="54" rx="7" fill="#3b82f6" fill-opacity="0.06"/>
+<text x="30" y="257" font-size="14" font-weight="700" fill="currentColor">i=2, x=5</text>
+<text x="120" y="257" font-size="13" fill="currentColor">stack rỗng: res[2] = -1</text>
+<text x="120" y="278" font-size="13" fill="currentColor" opacity="0.75">push 5</text>
+<rect x="300" y="244" width="40" height="34" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="320" y="266" font-size="15" text-anchor="middle" fill="currentColor">5</text>
+<rect x="500" y="244" width="52" height="34" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+<text x="526" y="266" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.35">-1</text>
+<rect x="560" y="244" width="52" height="34" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+<text x="586" y="266" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.35">-1</text>
+<rect x="620" y="244" width="52" height="34" rx="5" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="646" y="266" font-size="15" text-anchor="middle" fill="currentColor" font-weight="700">-1</text>
+<rect x="680" y="244" width="52" height="34" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="706" y="266" font-size="15" text-anchor="middle" fill="currentColor">-1</text>
+</g>
+<g data-step="4">
+<rect x="14" y="294" width="732" height="54" rx="7" fill="#3b82f6" fill-opacity="0.06"/>
+<text x="30" y="317" font-size="14" font-weight="700" fill="currentColor">i=1, x=1</text>
+<text x="120" y="317" font-size="13" fill="currentColor">đỉnh 5 &gt; 1, giữ: res[1] = 5</text>
+<text x="120" y="338" font-size="13" fill="currentColor" opacity="0.75">push 1</text>
+<rect x="300" y="304" width="40" height="34" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="320" y="326" font-size="15" text-anchor="middle" fill="currentColor">5</text>
+<rect x="346" y="304" width="40" height="34" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="366" y="326" font-size="15" text-anchor="middle" fill="currentColor">1</text>
+<rect x="500" y="304" width="52" height="34" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+<text x="526" y="326" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.35">-1</text>
+<rect x="560" y="304" width="52" height="34" rx="5" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="586" y="326" font-size="15" text-anchor="middle" fill="currentColor" font-weight="700">5</text>
+<rect x="620" y="304" width="52" height="34" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="646" y="326" font-size="15" text-anchor="middle" fill="currentColor">-1</text>
+<rect x="680" y="304" width="52" height="34" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="706" y="326" font-size="15" text-anchor="middle" fill="currentColor">-1</text>
+</g>
+<g data-step="5">
+<rect x="14" y="354" width="732" height="54" rx="7" fill="#3b82f6" fill-opacity="0.06"/>
+<text x="30" y="377" font-size="14" font-weight="700" fill="currentColor">i=0, x=2</text>
+<text x="120" y="377" font-size="13" fill="currentColor">pop 1 (1 ≤ 2)</text>
+<text x="120" y="398" font-size="13" fill="currentColor" opacity="0.75">đỉnh lộ ra là 5</text>
+<rect x="300" y="364" width="40" height="34" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="320" y="386" font-size="15" text-anchor="middle" fill="currentColor">5</text>
+<rect x="346" y="364" width="40" height="34" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" stroke-dasharray="4 3"/>
+<text x="366" y="386" font-size="15" text-anchor="middle" fill="currentColor" opacity="0.6">1</text>
+<line x1="350" y1="394" x2="382" y2="368" stroke="#f43f5e" stroke-width="2"/>
+<text x="396" y="386" font-size="13" fill="#f43f5e">pop</text>
+<rect x="500" y="364" width="52" height="34" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+<text x="526" y="386" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.35">-1</text>
+<rect x="560" y="364" width="52" height="34" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="586" y="386" font-size="15" text-anchor="middle" fill="currentColor">5</text>
+<rect x="620" y="364" width="52" height="34" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="646" y="386" font-size="15" text-anchor="middle" fill="currentColor">-1</text>
+<rect x="680" y="364" width="52" height="34" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="706" y="386" font-size="15" text-anchor="middle" fill="currentColor">-1</text>
+</g>
+<g data-step="6">
+<rect x="14" y="414" width="732" height="54" rx="7" fill="#3b82f6" fill-opacity="0.06"/>
+<text x="30" y="437" font-size="14" font-weight="700" fill="currentColor">i=0, x=2</text>
+<text x="120" y="437" font-size="13" fill="currentColor">đỉnh 5 &gt; 2: res[0] = 5</text>
+<text x="120" y="458" font-size="13" fill="currentColor" opacity="0.75">push 2</text>
+<rect x="300" y="424" width="40" height="34" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="320" y="446" font-size="15" text-anchor="middle" fill="currentColor">5</text>
+<rect x="346" y="424" width="40" height="34" rx="5" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="366" y="446" font-size="15" text-anchor="middle" fill="currentColor">2</text>
+<rect x="500" y="424" width="52" height="34" rx="5" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="526" y="446" font-size="15" text-anchor="middle" fill="currentColor" font-weight="700">5</text>
+<rect x="560" y="424" width="52" height="34" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="586" y="446" font-size="15" text-anchor="middle" fill="currentColor">5</text>
+<rect x="620" y="424" width="52" height="34" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="646" y="446" font-size="15" text-anchor="middle" fill="currentColor">-1</text>
+<rect x="680" y="424" width="52" height="34" rx="5" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="706" y="446" font-size="15" text-anchor="middle" fill="currentColor">-1</text>
+</g>
+<g data-step="7">
+<rect x="14" y="484" width="732" height="54" rx="8" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="30" y="506" font-size="14" font-weight="700" fill="currentColor">Kết quả: res = [5, 5, -1, -1]</text>
+<text x="30" y="527" font-size="13" fill="currentColor" opacity="0.85">4 lần push, 2 lần pop: mỗi phần tử vào stack 1 lần, ra nhiều nhất 1 lần → O(n)</text>
+</g>
 </svg>
+<step-note data-step="1">Bắt đầu từ phần tử cuối: bên phải nó không còn gì, nên <code>res[3]</code> giữ <code>-1</code>. Push 3 để làm ứng viên cho các phần tử bên trái.</step-note>
+<step-note data-step="2">3 ≤ 5 nên pop: mọi phần tử bên trái đều nhìn thấy 5 trước 3, và 5 lớn hơn, nên 3 không bao giờ là next greater của ai nữa.</step-note>
+<step-note data-step="3">Pop xong stack rỗng: không có gì lớn hơn 5 ở bên phải, <code>res[2] = -1</code>. Push 5.</step-note>
+<step-note data-step="4">Đỉnh 5 lớn hơn 1 nên không pop; đỉnh chính là phần tử lớn hơn gần nhất bên phải. Push 1 lên trên 5, stack vẫn giảm dần.</step-note>
+<step-note data-step="5">1 ≤ 2 nên pop 1: nó bị 2 che với mọi phần tử còn lại bên trái. Vòng <code>while</code> dừng vì đỉnh mới là 5 &gt; 2.</step-note>
+<step-note data-step="6">Đỉnh 5 là đáp án của 2. Push 2; nếu mảng còn phần tử bên trái, ứng viên của nó là 2 rồi tới 5.</step-note>
+<step-note data-step="7">Vòng <code>while</code> nằm trong <code>for</code> nhưng không thành O(n²): tổng số pop của cả thuật toán không vượt tổng số push, tức n.</step-note>
+</step-flow>
 
 > **Ghi nhớ**: Hỏi "phần tử lớn hơn gần nhất" → stack giảm dần. Hỏi "phần tử nhỏ hơn gần nhất" → stack tăng dần. Thường lưu **index** thay vì giá trị để tính được khoảng cách.
 

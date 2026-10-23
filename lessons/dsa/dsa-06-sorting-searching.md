@@ -205,6 +205,199 @@ vector<int> mergeSort(const vector<int>& arr) {
 
 **Quick sort** — chọn một **pivot**, phân hoạch (partition) mảng thành "nhỏ hơn pivot" và "lớn hơn pivot", rồi đệ quy hai bên. Trung bình O(n log n), nhưng nếu pivot luôn chọn tệ (ví dụ mảng đã sắp xếp + luôn lấy phần tử cuối) thì thành O(n²). Thực tế người ta chọn pivot ngẫu nhiên hoặc "median of three" để tránh trường hợp xấu.
 
+Có nhiều cách partition; dễ hiểu nhất là **Lomuto**: pivot là phần tử cuối, con trỏ `j` quét từ trái sang, con trỏ `i` giữ ranh giới vùng nhỏ hơn pivot. Mỗi lần gặp `a[j] < pivot` thì đổi `a[i]` với `a[j]` rồi tăng `i`; quét xong đổi pivot vào `a[i]`. Hình dưới chạy trên mảng ví dụ tự chọn `[7, 2, 9, 4, 1, 5]`.
+
+<step-flow>
+<svg viewBox="0 0 760 740" role="img" aria-labelledby="ds6q-t ds6q-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="ds6q-t">Quick sort: phân hoạch Lomuto trên mảng ví dụ [7, 2, 9, 4, 1, 5]</title>
+<desc id="ds6q-d">Ví dụ tự chọn. Pivot là phần tử cuối, 5. Con trỏ j quét từ index 0 đến 4, con trỏ i đánh dấu ranh giới vùng nhỏ hơn pivot. 7 bỏ qua; 2 đổi với a[0]; 9 bỏ qua; 4 đổi với a[1]; 1 đổi với a[2]. Cuối cùng đổi pivot vào a[3], được [2, 4, 1, 5, 9, 7]: bên trái nhỏ hơn 5, bên phải lớn hơn 5, rồi đệ quy hai bên.</desc>
+<text x="16" y="24" font-size="15" text-anchor="start" fill="currentColor" font-weight="700">Quick sort: phân hoạch Lomuto (ví dụ tự chọn)</text>
+<rect x="16" y="36" width="18" height="14" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="40" y="48" font-size="13" text-anchor="start" fill="currentColor">pivot</text>
+<rect x="98.0" y="36" width="18" height="14" fill="#10b981" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="122.0" y="48" font-size="13" text-anchor="start" fill="currentColor">&lt; pivot  [0, i)</text>
+<rect x="252.0" y="36" width="18" height="14" fill="#f43f5e" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="276.0" y="48" font-size="13" text-anchor="start" fill="currentColor">≥ pivot  [i, j]</text>
+<rect x="406.0" y="36" width="18" height="14" fill="none" stroke="#8b5cf6" stroke-width="2.5"/>
+<text x="430.0" y="48" font-size="13" text-anchor="start" fill="currentColor">vừa đổi chỗ</text>
+<text x="16" y="72" font-size="13" text-anchor="start" fill="currentColor" opacity="0.6">chỉ số</text>
+<text x="158.0" y="72" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">0</text>
+<text x="214.0" y="72" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">1</text>
+<text x="270.0" y="72" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">2</text>
+<text x="326.0" y="72" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">3</text>
+<text x="382.0" y="72" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">4</text>
+<text x="438.0" y="72" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">5</text>
+<g data-step="1">
+<text x="16" y="119" font-size="13" text-anchor="start" fill="currentColor" font-weight="700">bắt đầu</text>
+<rect x="130" y="96" width="56" height="36" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="158.0" y="119" font-size="14" text-anchor="middle" fill="currentColor">7</text>
+<rect x="186" y="96" width="56" height="36" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="214.0" y="119" font-size="14" text-anchor="middle" fill="currentColor">2</text>
+<rect x="242" y="96" width="56" height="36" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="270.0" y="119" font-size="14" text-anchor="middle" fill="currentColor">9</text>
+<rect x="298" y="96" width="56" height="36" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="326.0" y="119" font-size="14" text-anchor="middle" fill="currentColor">4</text>
+<rect x="354" y="96" width="56" height="36" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="382.0" y="119" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<rect x="410" y="96" width="56" height="36" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="438.0" y="119" font-size="14" text-anchor="middle" fill="currentColor">5</text>
+<text x="158.0" y="148" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">↑ i</text>
+<text x="486" y="110" font-size="13" text-anchor="start" fill="currentColor">pivot = a[5] = 5 (phần tử cuối)</text>
+<text x="486" y="128" font-size="13" text-anchor="start" fill="currentColor">i = 0: vùng &lt; 5 đang rỗng</text>
+</g>
+<g data-step="2">
+<text x="16" y="201" font-size="13" text-anchor="start" fill="currentColor" font-weight="700">j = 0</text>
+<rect x="130" y="178" width="56" height="36" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="158.0" y="201" font-size="14" text-anchor="middle" fill="currentColor">7</text>
+<rect x="186" y="178" width="56" height="36" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="214.0" y="201" font-size="14" text-anchor="middle" fill="currentColor">2</text>
+<rect x="242" y="178" width="56" height="36" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="270.0" y="201" font-size="14" text-anchor="middle" fill="currentColor">9</text>
+<rect x="298" y="178" width="56" height="36" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="326.0" y="201" font-size="14" text-anchor="middle" fill="currentColor">4</text>
+<rect x="354" y="178" width="56" height="36" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="382.0" y="201" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<rect x="410" y="178" width="56" height="36" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="438.0" y="201" font-size="14" text-anchor="middle" fill="currentColor">5</text>
+<text x="158.0" y="173" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">↓ j</text>
+<text x="158.0" y="230" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">↑ i</text>
+<text x="486" y="192" font-size="13" text-anchor="start" fill="currentColor">7 ≥ 5 → bỏ qua</text>
+<text x="486" y="210" font-size="13" text-anchor="start" fill="currentColor">i giữ nguyên = 0</text>
+</g>
+<g data-step="3">
+<text x="16" y="283" font-size="13" text-anchor="start" fill="currentColor" font-weight="700">j = 1</text>
+<rect x="130" y="260" width="56" height="36" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="158.0" y="283" font-size="14" text-anchor="middle" fill="currentColor">2</text>
+<rect x="186" y="260" width="56" height="36" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="214.0" y="283" font-size="14" text-anchor="middle" fill="currentColor">7</text>
+<rect x="242" y="260" width="56" height="36" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="270.0" y="283" font-size="14" text-anchor="middle" fill="currentColor">9</text>
+<rect x="298" y="260" width="56" height="36" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="326.0" y="283" font-size="14" text-anchor="middle" fill="currentColor">4</text>
+<rect x="354" y="260" width="56" height="36" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="382.0" y="283" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<rect x="410" y="260" width="56" height="36" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="438.0" y="283" font-size="14" text-anchor="middle" fill="currentColor">5</text>
+<rect x="133" y="263" width="50" height="30" fill="none" stroke="#8b5cf6" stroke-width="2.5"/>
+<rect x="189" y="263" width="50" height="30" fill="none" stroke="#8b5cf6" stroke-width="2.5"/>
+<text x="214.0" y="255" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">↓ j</text>
+<text x="214.0" y="312" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">↑ i</text>
+<text x="486" y="274" font-size="13" text-anchor="start" fill="currentColor">2 &lt; 5 → đổi a[1]↔a[0]</text>
+<text x="486" y="292" font-size="13" text-anchor="start" fill="currentColor">i tăng lên 1</text>
+</g>
+<g data-step="4">
+<text x="16" y="365" font-size="13" text-anchor="start" fill="currentColor" font-weight="700">j = 2</text>
+<rect x="130" y="342" width="56" height="36" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="158.0" y="365" font-size="14" text-anchor="middle" fill="currentColor">2</text>
+<rect x="186" y="342" width="56" height="36" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="214.0" y="365" font-size="14" text-anchor="middle" fill="currentColor">7</text>
+<rect x="242" y="342" width="56" height="36" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="270.0" y="365" font-size="14" text-anchor="middle" fill="currentColor">9</text>
+<rect x="298" y="342" width="56" height="36" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="326.0" y="365" font-size="14" text-anchor="middle" fill="currentColor">4</text>
+<rect x="354" y="342" width="56" height="36" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="382.0" y="365" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<rect x="410" y="342" width="56" height="36" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="438.0" y="365" font-size="14" text-anchor="middle" fill="currentColor">5</text>
+<text x="270.0" y="337" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">↓ j</text>
+<text x="214.0" y="394" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">↑ i</text>
+<text x="486" y="356" font-size="13" text-anchor="start" fill="currentColor">9 ≥ 5 → bỏ qua</text>
+<text x="486" y="374" font-size="13" text-anchor="start" fill="currentColor">i giữ nguyên = 1</text>
+</g>
+<g data-step="5">
+<text x="16" y="447" font-size="13" text-anchor="start" fill="currentColor" font-weight="700">j = 3</text>
+<rect x="130" y="424" width="56" height="36" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="158.0" y="447" font-size="14" text-anchor="middle" fill="currentColor">2</text>
+<rect x="186" y="424" width="56" height="36" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="214.0" y="447" font-size="14" text-anchor="middle" fill="currentColor">4</text>
+<rect x="242" y="424" width="56" height="36" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="270.0" y="447" font-size="14" text-anchor="middle" fill="currentColor">9</text>
+<rect x="298" y="424" width="56" height="36" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="326.0" y="447" font-size="14" text-anchor="middle" fill="currentColor">7</text>
+<rect x="354" y="424" width="56" height="36" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="382.0" y="447" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<rect x="410" y="424" width="56" height="36" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="438.0" y="447" font-size="14" text-anchor="middle" fill="currentColor">5</text>
+<rect x="189" y="427" width="50" height="30" fill="none" stroke="#8b5cf6" stroke-width="2.5"/>
+<rect x="301" y="427" width="50" height="30" fill="none" stroke="#8b5cf6" stroke-width="2.5"/>
+<text x="326.0" y="419" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">↓ j</text>
+<text x="270.0" y="476" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">↑ i</text>
+<text x="486" y="438" font-size="13" text-anchor="start" fill="currentColor">4 &lt; 5 → đổi a[3]↔a[1]</text>
+<text x="486" y="456" font-size="13" text-anchor="start" fill="currentColor">i tăng lên 2</text>
+</g>
+<g data-step="6">
+<text x="16" y="529" font-size="13" text-anchor="start" fill="currentColor" font-weight="700">j = 4</text>
+<rect x="130" y="506" width="56" height="36" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="158.0" y="529" font-size="14" text-anchor="middle" fill="currentColor">2</text>
+<rect x="186" y="506" width="56" height="36" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="214.0" y="529" font-size="14" text-anchor="middle" fill="currentColor">4</text>
+<rect x="242" y="506" width="56" height="36" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="270.0" y="529" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<rect x="298" y="506" width="56" height="36" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="326.0" y="529" font-size="14" text-anchor="middle" fill="currentColor">7</text>
+<rect x="354" y="506" width="56" height="36" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="382.0" y="529" font-size="14" text-anchor="middle" fill="currentColor">9</text>
+<rect x="410" y="506" width="56" height="36" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="438.0" y="529" font-size="14" text-anchor="middle" fill="currentColor">5</text>
+<rect x="245" y="509" width="50" height="30" fill="none" stroke="#8b5cf6" stroke-width="2.5"/>
+<rect x="357" y="509" width="50" height="30" fill="none" stroke="#8b5cf6" stroke-width="2.5"/>
+<text x="382.0" y="501" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">↓ j</text>
+<text x="326.0" y="558" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">↑ i</text>
+<text x="486" y="520" font-size="13" text-anchor="start" fill="currentColor">1 &lt; 5 → đổi a[4]↔a[2]</text>
+<text x="486" y="538" font-size="13" text-anchor="start" fill="currentColor">i tăng lên 3</text>
+</g>
+<g data-step="7">
+<text x="16" y="611" font-size="13" text-anchor="start" fill="currentColor" font-weight="700">chốt pivot</text>
+<rect x="130" y="588" width="56" height="36" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="158.0" y="611" font-size="14" text-anchor="middle" fill="currentColor">2</text>
+<rect x="186" y="588" width="56" height="36" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="214.0" y="611" font-size="14" text-anchor="middle" fill="currentColor">4</text>
+<rect x="242" y="588" width="56" height="36" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="270.0" y="611" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<rect x="298" y="588" width="56" height="36" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="326.0" y="611" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">5</text>
+<rect x="354" y="588" width="56" height="36" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="382.0" y="611" font-size="14" text-anchor="middle" fill="currentColor">9</text>
+<rect x="410" y="588" width="56" height="36" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="438.0" y="611" font-size="14" text-anchor="middle" fill="currentColor">7</text>
+<rect x="301" y="591" width="50" height="30" fill="none" stroke="#8b5cf6" stroke-width="2.5"/>
+<rect x="413" y="591" width="50" height="30" fill="none" stroke="#8b5cf6" stroke-width="2.5"/>
+<text x="326.0" y="640" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">↑ i</text>
+<text x="486" y="602" font-size="13" text-anchor="start" fill="currentColor">hết vòng j: đổi a[5]↔a[3]</text>
+<text x="486" y="620" font-size="13" text-anchor="start" fill="currentColor">pivot 5 nằm yên ở index 3</text>
+</g>
+<g data-step="8">
+<text x="16" y="693" font-size="13" text-anchor="start" fill="currentColor" font-weight="700">đệ quy</text>
+<rect x="130" y="670" width="56" height="36" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="158.0" y="693" font-size="14" text-anchor="middle" fill="currentColor">2</text>
+<rect x="186" y="670" width="56" height="36" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="214.0" y="693" font-size="14" text-anchor="middle" fill="currentColor">4</text>
+<rect x="242" y="670" width="56" height="36" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="270.0" y="693" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<rect x="298" y="670" width="56" height="36" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="326.0" y="693" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">5</text>
+<rect x="354" y="670" width="56" height="36" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="382.0" y="693" font-size="14" text-anchor="middle" fill="currentColor">9</text>
+<rect x="410" y="670" width="56" height="36" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="438.0" y="693" font-size="14" text-anchor="middle" fill="currentColor">7</text>
+<path d="M134 708 L134 713 L294 713 L294 708" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5"/>
+<path d="M358 708 L358 713 L462 713 L462 708" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5"/>
+<text x="214.0" y="728" font-size="13" text-anchor="middle" fill="currentColor">đệ quy [2, 4, 1]</text>
+<text x="410.0" y="728" font-size="13" text-anchor="middle" fill="currentColor">đệ quy [9, 7]</text>
+<text x="486" y="684" font-size="13" text-anchor="start" fill="currentColor">sort tiếp hai bên,</text>
+<text x="486" y="702" font-size="13" text-anchor="start" fill="currentColor">bỏ qua pivot</text>
+</g>
+</svg>
+<step-note data-step="1">Lomuto lấy phần tử cuối làm pivot. <code>i</code> là ô sẽ nhận phần tử nhỏ hơn pivot tiếp theo; bất biến suốt vòng lặp: <code>[0, i)</code> &lt; pivot, <code>[i, j]</code> ≥ pivot.</step-note>
+<step-note data-step="2">Phần tử ≥ pivot cứ nằm yên: vùng hồng tự nới ra khi <code>j</code> tiến lên, không tốn hoán đổi nào.</step-note>
+<step-note data-step="3">Gặp phần tử nhỏ hơn pivot thì đổi nó với ô đầu vùng hồng (ô <code>i</code>) rồi <code>i += 1</code>. Vùng xanh lớn thêm 1, vùng hồng chỉ dịch sang phải.</step-note>
+<step-note data-step="4">Lại bỏ qua: 9 nằm đúng phía của nó so với pivot.</step-note>
+<step-note data-step="5">4 về vùng xanh, còn 7 nhảy từ index 1 sang 3. Những cú nhảy xa kiểu này đảo được thứ tự hai phần tử bằng nhau, nên quick sort không stable.</step-note>
+<step-note data-step="6">Hoán đổi cuối của vòng: <code>j</code> đã quét hết index 0..4, vùng xanh có 3 phần tử nên <code>i = 3</code>.</step-note>
+<step-note data-step="7">Đổi pivot vào ô <code>i</code>: ranh giới giữa hai vùng chính là chỗ của 5 trong mảng đã sort, nên từ đây pivot không bao giờ di chuyển nữa. Tất cả chỉ một lần quét O(n), in-place.</step-note>
+<step-note data-step="8">Đệ quy hai đoạn hai bên pivot. Pivot rơi gần giữa thì mỗi tầng chia đôi, log n tầng; mảng đã sort mà vẫn lấy phần tử cuối thì một bên luôn rỗng, n tầng, thành O(n²).</step-note>
+</step-flow>
+
 > Bẫy: Đừng nói "quick sort luôn nhanh hơn merge sort". Quick sort không stable và có thể O(n²). Khi phỏng vấn hỏi "chọn sort nào", câu trả lời tốt là tuỳ ràng buộc: cần stable → merge/Timsort; cần in-place tiết kiệm bộ nhớ → heap/quick.
 
 ---
@@ -334,55 +527,112 @@ Binary search tìm phần tử trong **mảng ĐÃ sắp xếp** với O(log n):
 
 Quy ước an toàn: dùng nửa khoảng `[lo, hi)` với `hi = len(arr)` và điều kiện vòng lặp `lo < hi`, tính `mid = lo + (hi - lo) // 2` để tránh tràn số.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Binary search thu hẹp khoảng [lo, hi) tìm target 23</title>
-  <desc>Trên dãy đã sort [3,9,14,23,31,42,55,68], mỗi bước tính mid và loại nửa không chứa target. Bước 1 loại nửa phải, bước 2 loại nửa trái, bước 3 tìm thấy target 23. Khoảng [lo, hi) thu nhỏ một nửa mỗi bước.</desc>
-  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Binary search — mỗi bước loại một nửa (target = 23)</text>
-  <g font-size="12" fill="currentColor" text-anchor="middle">
-    <g transform="translate(0,44)">
-      <text x="14" y="40" font-size="11" text-anchor="start" fill="currentColor" opacity="0.6">B1</text>
-      <g>
-        <rect x="80" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-        <rect x="148" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-        <rect x="216" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-        <rect x="284" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-        <rect x="352" y="22" width="68" height="36" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.35"/>
-        <rect x="420" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-        <rect x="488" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-        <rect x="556" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-      </g>
-      <g fill="currentColor"><text x="114" y="45">3</text><text x="182" y="45">9</text><text x="250" y="45">14</text><text x="318" y="45">23</text><text x="386" y="45">31</text><text x="454" y="45">42</text><text x="522" y="45">55</text><text x="590" y="45">68</text></g>
-      <text x="386" y="14" font-size="10" fill="#f59e0b">mid=31 &gt; 23 → bỏ phải</text>
-      <text x="640" y="45" font-size="10" text-anchor="start" fill="currentColor" opacity="0.6">[0,8)</text>
-    </g>
-    <g transform="translate(0,124)">
-      <text x="14" y="40" font-size="11" text-anchor="start" fill="currentColor" opacity="0.6">B2</text>
-      <g>
-        <rect x="80" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-        <rect x="148" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-        <rect x="216" y="22" width="68" height="36" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.35"/>
-        <rect x="284" y="22" width="68" height="36" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-        <rect x="352" y="22" width="68" height="36" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.12"/>
-        <rect x="420" y="22" width="204" height="36" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.12"/>
-      </g>
-      <g fill="currentColor"><text x="114" y="45">3</text><text x="182" y="45">9</text><text x="250" y="45">14</text><text x="318" y="45">23</text></g>
-      <g fill="currentColor" opacity="0.35"><text x="386" y="45">31</text><text x="522" y="45">loại bỏ</text></g>
-      <text x="250" y="14" font-size="10" fill="#f59e0b">mid=14 &lt; 23 → bỏ trái</text>
-      <text x="640" y="45" font-size="10" text-anchor="start" fill="currentColor" opacity="0.6">[0,4)</text>
-    </g>
-    <g transform="translate(0,204)">
-      <text x="14" y="40" font-size="11" text-anchor="start" fill="currentColor" opacity="0.6">B3</text>
-      <g>
-        <rect x="80" y="22" width="204" height="36" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.12"/>
-        <rect x="284" y="22" width="68" height="36" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.4"/>
-      </g>
-      <g fill="currentColor" opacity="0.35"><text x="182" y="45">loại bỏ</text></g>
-      <text x="318" y="45" font-size="12" font-weight="700" fill="currentColor">23</text>
-      <text x="318" y="14" font-size="10" fill="#10b981">mid=23 == target → tìm thấy!</text>
-      <text x="640" y="45" font-size="10" text-anchor="start" fill="currentColor" opacity="0.6">[3,4)</text>
-    </g>
-  </g>
+<step-flow>
+<svg viewBox="0 0 760 460" role="img" aria-labelledby="ds6b-t ds6b-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="ds6b-t">Binary search thu hẹp nửa khoảng [lo, hi) tìm target 23</title>
+<desc id="ds6b-d">Dãy đã sort [3,9,14,23,31,42,55,68], target 23. B1: [0,8), mid=4, 31 lớn hơn 23 nên bỏ nửa phải, hi = mid = 4. B2: [0,4), mid=2, 14 nhỏ hơn 23 nên bỏ nửa trái, lo = mid + 1 = 3. B3: [3,4), mid=3, 23 bằng target, tìm thấy ở index 3. Khoảng thu nhỏ một nửa mỗi bước.</desc>
+<text x="16" y="24" font-size="15" text-anchor="start" fill="currentColor" font-weight="700">Binary search: mỗi bước loại một nửa (target = 23)</text>
+<text x="16" y="56" font-size="13" text-anchor="start" fill="currentColor" opacity="0.6">chỉ số</text>
+<text x="201.0" y="56" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">0</text>
+<text x="263.0" y="56" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">1</text>
+<text x="325.0" y="56" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">2</text>
+<text x="387.0" y="56" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">3</text>
+<text x="449.0" y="56" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">4</text>
+<text x="511.0" y="56" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">5</text>
+<text x="573.0" y="56" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">6</text>
+<text x="635.0" y="56" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">7</text>
+<text x="697.0" y="56" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">8</text>
+<g data-step="1">
+<text x="16" y="110" font-size="14" text-anchor="start" fill="currentColor" font-weight="700">B1</text>
+<text x="16" y="130" font-size="13" text-anchor="start" fill="currentColor">[lo, hi) = [0, 8)</text>
+<rect x="170" y="92" width="62" height="38" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="201.0" y="116" font-size="14" text-anchor="middle" fill="currentColor">3</text>
+<rect x="232" y="92" width="62" height="38" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="263.0" y="116" font-size="14" text-anchor="middle" fill="currentColor">9</text>
+<rect x="294" y="92" width="62" height="38" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="325.0" y="116" font-size="14" text-anchor="middle" fill="currentColor">14</text>
+<rect x="356" y="92" width="62" height="38" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="387.0" y="116" font-size="14" text-anchor="middle" fill="currentColor">23</text>
+<rect x="418" y="92" width="62" height="38" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="449.0" y="116" font-size="14" text-anchor="middle" fill="currentColor">31</text>
+<rect x="480" y="92" width="62" height="38" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="511.0" y="116" font-size="14" text-anchor="middle" fill="currentColor">42</text>
+<rect x="542" y="92" width="62" height="38" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="573.0" y="116" font-size="14" text-anchor="middle" fill="currentColor">55</text>
+<rect x="604" y="92" width="62" height="38" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="635.0" y="116" font-size="14" text-anchor="middle" fill="currentColor">68</text>
+<rect x="666" y="92" width="62" height="38" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"/>
+<text x="697.0" y="116" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.6">ngoài</text>
+<text x="201.0" y="150" font-size="13" text-anchor="middle" fill="currentColor">↑ lo=0</text>
+<text x="697.0" y="150" font-size="13" text-anchor="middle" fill="currentColor">↑ hi=8</text>
+</g>
+<g data-step="2">
+<rect x="420" y="94" width="58" height="34" fill="#f59e0b" fill-opacity="0.22" stroke="#f59e0b" stroke-width="2.5"/>
+<text x="449.0" y="85" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">mid=4</text>
+<text x="170" y="176" font-size="13" text-anchor="start" fill="currentColor">mid = 0 + (8−0)//2 = 4 · arr[4] = 31 &gt; 23 → bỏ phải, hi = mid = 4</text>
+</g>
+<g data-step="3">
+<text x="16" y="238" font-size="14" text-anchor="start" fill="currentColor" font-weight="700">B2</text>
+<text x="16" y="258" font-size="13" text-anchor="start" fill="currentColor">[lo, hi) = [0, 4)</text>
+<rect x="170" y="220" width="62" height="38" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="201.0" y="244" font-size="14" text-anchor="middle" fill="currentColor">3</text>
+<rect x="232" y="220" width="62" height="38" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="263.0" y="244" font-size="14" text-anchor="middle" fill="currentColor">9</text>
+<rect x="294" y="220" width="62" height="38" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="325.0" y="244" font-size="14" text-anchor="middle" fill="currentColor">14</text>
+<rect x="356" y="220" width="62" height="38" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="387.0" y="244" font-size="14" text-anchor="middle" fill="currentColor">23</text>
+<rect x="418" y="220" width="62" height="38" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12"/>
+<text x="449.0" y="244" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.3">31</text>
+<rect x="480" y="220" width="62" height="38" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12"/>
+<text x="511.0" y="244" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.3">42</text>
+<rect x="542" y="220" width="62" height="38" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12"/>
+<text x="573.0" y="244" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.3">55</text>
+<rect x="604" y="220" width="62" height="38" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12"/>
+<text x="635.0" y="244" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.3">68</text>
+<text x="201.0" y="278" font-size="13" text-anchor="middle" fill="currentColor">↑ lo=0</text>
+<text x="449.0" y="278" font-size="13" text-anchor="middle" fill="currentColor">↑ hi=4</text>
+</g>
+<g data-step="4">
+<rect x="296" y="222" width="58" height="34" fill="#f59e0b" fill-opacity="0.22" stroke="#f59e0b" stroke-width="2.5"/>
+<text x="325.0" y="213" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">mid=2</text>
+<text x="170" y="304" font-size="13" text-anchor="start" fill="currentColor">mid = 0 + (4−0)//2 = 2 · arr[2] = 14 &lt; 23 → bỏ trái, lo = mid + 1 = 3</text>
+</g>
+<g data-step="5">
+<text x="16" y="366" font-size="14" text-anchor="start" fill="currentColor" font-weight="700">B3</text>
+<text x="16" y="386" font-size="13" text-anchor="start" fill="currentColor">[lo, hi) = [3, 4)</text>
+<rect x="170" y="348" width="62" height="38" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12"/>
+<text x="201.0" y="372" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.3">3</text>
+<rect x="232" y="348" width="62" height="38" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12"/>
+<text x="263.0" y="372" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.3">9</text>
+<rect x="294" y="348" width="62" height="38" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12"/>
+<text x="325.0" y="372" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.3">14</text>
+<rect x="356" y="348" width="62" height="38" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="387.0" y="372" font-size="14" text-anchor="middle" fill="currentColor">23</text>
+<rect x="418" y="348" width="62" height="38" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12"/>
+<text x="449.0" y="372" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.3">31</text>
+<rect x="480" y="348" width="62" height="38" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12"/>
+<text x="511.0" y="372" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.3">42</text>
+<rect x="542" y="348" width="62" height="38" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12"/>
+<text x="573.0" y="372" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.3">55</text>
+<rect x="604" y="348" width="62" height="38" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12"/>
+<text x="635.0" y="372" font-size="14" text-anchor="middle" fill="currentColor" opacity="0.3">68</text>
+<text x="387.0" y="406" font-size="13" text-anchor="middle" fill="currentColor">↑ lo=3</text>
+<text x="449.0" y="406" font-size="13" text-anchor="middle" fill="currentColor">↑ hi=4</text>
+</g>
+<g data-step="6">
+<rect x="358" y="350" width="58" height="34" fill="#10b981" fill-opacity="0.22" stroke="#10b981" stroke-width="2.5"/>
+<text x="387.0" y="341" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">mid=3</text>
+<text x="170" y="432" font-size="13" text-anchor="start" fill="currentColor">mid = 3 + (4−3)//2 = 3 · arr[3] = 23 == 23 → return 3</text>
+</g>
 </svg>
+<step-note data-step="1">Nửa khoảng: <code>hi = len(arr) = 8</code> trỏ ra ngoài mảng nên ô 8 không bao giờ bị đọc. Khoảng rỗng đúng khi <code>lo == hi</code>, khớp điều kiện dừng <code>lo &lt; hi</code>.</step-note>
+<step-note data-step="2">Mảng đã sort, nên <code>31 &gt; 23</code> kéo theo mọi ô từ index 4 trở đi đều lớn hơn 23: một phép so sánh loại được 4 ô.</step-note>
+<step-note data-step="3">Gán <code>hi = mid</code>, không phải <code>mid - 1</code>: hi là biên mở nên gán bằng mid là đã loại luôn ô mid. Còn 4 ô trên 8.</step-note>
+<step-note data-step="4"><code>14 &lt; 23</code> nên index 0, 1 và chính mid đều quá nhỏ.</step-note>
+<step-note data-step="5"><code>lo = mid + 1</code> vì lo là biên đóng: ô mid đã xét, phải bước qua nó. Quên <code>+1</code> thì khi còn 1 ô, mid luôn bằng lo và vòng lặp đứng yên mãi.</step-note>
+<step-note data-step="6">Còn 1 ô và đúng là target nên trả về index 3. 8 phần tử chỉ tốn 3 lần so sánh, đúng log₂ 8 = 3.</step-note>
+</step-flow>
 
 ```python
 def binary_search(arr, target):

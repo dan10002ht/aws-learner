@@ -167,77 +167,113 @@ Xét ký tự cuối đang so — `text1[i-1]` và `text2[j-1]`:
 
 Base case: nếu một chuỗi rỗng thì LCS = 0 → hàng 0 và cột 0 toàn 0 (đã tự đúng nhờ khởi tạo).
 
-**Bảng DP minh họa** với `text1 = "abcde"` (hàng), `text2 = "ace"` (cột). Ô tô đậm là nơi ký tự khớp (lấy chéo + 1):
+**Bảng DP minh họa** với `text1 = "abcde"` (hàng), `text2 = "ace"` (cột). Mỗi bước điền một hàng của `text1`; ô tô màu là nơi ký tự khớp (lấy chéo + 1), bước cuối truy vết ra chuỗi:
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 400" role="img" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Bảng DP của LCS giữa "abcde" và "ace"</title>
-  <desc>Bảng quy hoạch động 6x4 cho longest common subsequence: ô khớp ký tự lấy giá trị chéo trên-trái cộng 1, ô lệch lấy max của ô trên và ô trái; đáp án 3 nằm ở góc dưới-phải.</desc>
-  <text x="260" y="22" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">LCS: "abcde" × "ace"</text>
-  <text x="60" y="54" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">text1 ↓ / text2 →</text>
-  <g font-size="13" font-weight="700" fill="currentColor">
-    <text x="148" y="78" text-anchor="middle">""</text>
-    <text x="228" y="78" text-anchor="middle">a</text>
-    <text x="308" y="78" text-anchor="middle">c</text>
-    <text x="388" y="78" text-anchor="middle">e</text>
-    <text x="100" y="116" text-anchor="middle">""</text>
-    <text x="100" y="166" text-anchor="middle">a</text>
-    <text x="100" y="216" text-anchor="middle">b</text>
-    <text x="100" y="266" text-anchor="middle">c</text>
-    <text x="100" y="316" text-anchor="middle">d</text>
-    <text x="100" y="366" text-anchor="middle">e</text>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.18" fill="none">
-    <rect x="120" y="90" width="320" height="300" rx="6"/>
-    <line x1="200" y1="90" x2="200" y2="390"/>
-    <line x1="280" y1="90" x2="280" y2="390"/>
-    <line x1="360" y1="90" x2="360" y2="390"/>
-    <line x1="120" y1="140" x2="440" y2="140"/>
-    <line x1="120" y1="190" x2="440" y2="190"/>
-    <line x1="120" y1="240" x2="440" y2="240"/>
-    <line x1="120" y1="290" x2="440" y2="290"/>
-    <line x1="120" y1="340" x2="440" y2="340"/>
-  </g>
-  <g font-size="13" fill="currentColor">
-    <text x="160" y="120" text-anchor="middle" opacity="0.45">0</text>
-    <text x="240" y="120" text-anchor="middle" opacity="0.45">0</text>
-    <text x="320" y="120" text-anchor="middle" opacity="0.45">0</text>
-    <text x="400" y="120" text-anchor="middle" opacity="0.45">0</text>
-    <text x="160" y="170" text-anchor="middle" opacity="0.45">0</text>
-    <text x="320" y="170" text-anchor="middle">1</text>
-    <text x="400" y="170" text-anchor="middle">1</text>
-    <text x="160" y="220" text-anchor="middle" opacity="0.45">0</text>
-    <text x="240" y="220" text-anchor="middle">1</text>
-    <text x="320" y="220" text-anchor="middle">1</text>
-    <text x="400" y="220" text-anchor="middle">1</text>
-    <text x="160" y="270" text-anchor="middle" opacity="0.45">0</text>
-    <text x="240" y="270" text-anchor="middle">1</text>
-    <text x="400" y="270" text-anchor="middle">2</text>
-    <text x="160" y="320" text-anchor="middle" opacity="0.45">0</text>
-    <text x="240" y="320" text-anchor="middle">1</text>
-    <text x="320" y="320" text-anchor="middle">2</text>
-    <text x="400" y="320" text-anchor="middle">2</text>
-    <text x="160" y="370" text-anchor="middle" opacity="0.45">0</text>
-    <text x="240" y="370" text-anchor="middle">1</text>
-    <text x="320" y="370" text-anchor="middle">2</text>
-  </g>
-  <g>
-    <rect x="201" y="141" width="78" height="48" fill="#10b981" fill-opacity="0.16"/>
-    <text x="240" y="170" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">1</text>
-    <rect x="281" y="241" width="78" height="48" fill="#10b981" fill-opacity="0.16"/>
-    <text x="320" y="270" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">2</text>
-    <rect x="361" y="341" width="78" height="48" fill="#f59e0b" fill-opacity="0.16"/>
-    <text x="400" y="370" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">3</text>
-  </g>
-  <defs>
-    <marker id="lcsArrow" markerWidth="7" markerHeight="7" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#10b981"/></marker>
-  </defs>
-  <g stroke="#10b981" stroke-width="1.6" fill="none" marker-end="url(#lcsArrow)">
-    <line x1="170" y1="130" x2="222" y2="160"/>
-    <line x1="250" y1="230" x2="302" y2="260"/>
-    <line x1="330" y1="330" x2="382" y2="360"/>
-  </g>
-  <text x="260" y="396" font-size="10.5" text-anchor="middle" fill="#10b981" opacity="0.9">khớp → lấy chéo + 1; góc dưới-phải = đáp án</text>
+<step-flow>
+<svg viewBox="0 0 640 460" role="img" aria-labelledby="dsa12a-t dsa12a-d" style="width:100%;max-width:640px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa12a-t">Điền bảng DP của LCS giữa "abcde" và "ace" theo từng hàng</title>
+<desc id="dsa12a-d">Bảng 6x4: hàng 0 và cột 0 bằng 0; mỗi bước điền một hàng của text1. Ô khớp ký tự lấy chéo trên-trái cộng 1 (a=a ra 1, c=c ra 2, e=e ra 3), ô lệch lấy max của ô trên và ô trái. Đáp án dp[5][3] = 3 ở góc dưới-phải; truy vết ngược qua các ô khớp ra chuỗi ace.</desc>
+<defs>
+<marker id="dsa12a-ag" markerWidth="8" markerHeight="8" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#10b981"/></marker>
+<marker id="dsa12a-aa" markerWidth="8" markerHeight="8" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#f59e0b"/></marker>
+</defs>
+<text x="280" y="24" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">LCS: "abcde" × "ace"</text>
+<text x="60" y="54" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">text1 ↓ / text2 →</text>
+<g font-size="14" font-weight="700" fill="currentColor" text-anchor="middle">
+<text x="160" y="80">""</text>
+<text x="240" y="80">a</text>
+<text x="320" y="80">c</text>
+<text x="400" y="80">e</text>
+<text x="100" y="120">""</text>
+<text x="100" y="170">a</text>
+<text x="100" y="220">b</text>
+<text x="100" y="270">c</text>
+<text x="100" y="320">d</text>
+<text x="100" y="370">e</text>
+</g>
+<g stroke="currentColor" stroke-opacity="0.25" fill="none">
+<rect x="120" y="90" width="320" height="300" rx="6"/>
+<line x1="200" y1="90" x2="200" y2="390"/>
+<line x1="280" y1="90" x2="280" y2="390"/>
+<line x1="360" y1="90" x2="360" y2="390"/>
+<line x1="120" y1="140" x2="440" y2="140"/>
+<line x1="120" y1="190" x2="440" y2="190"/>
+<line x1="120" y1="240" x2="440" y2="240"/>
+<line x1="120" y1="290" x2="440" y2="290"/>
+<line x1="120" y1="340" x2="440" y2="340"/>
+</g>
+<g data-step="1">
+<text x="160" y="120" font-size="14" text-anchor="middle" fill="currentColor">0</text>
+<text x="240" y="120" font-size="14" text-anchor="middle" fill="currentColor">0</text>
+<text x="320" y="120" font-size="14" text-anchor="middle" fill="currentColor">0</text>
+<text x="400" y="120" font-size="14" text-anchor="middle" fill="currentColor">0</text>
+<text x="160" y="170" font-size="14" text-anchor="middle" fill="currentColor">0</text>
+<text x="160" y="220" font-size="14" text-anchor="middle" fill="currentColor">0</text>
+<text x="160" y="270" font-size="14" text-anchor="middle" fill="currentColor">0</text>
+<text x="160" y="320" font-size="14" text-anchor="middle" fill="currentColor">0</text>
+<text x="160" y="370" font-size="14" text-anchor="middle" fill="currentColor">0</text>
+<text x="456" y="120" font-size="13" fill="currentColor">base: chuỗi rỗng → 0</text>
+</g>
+<g data-step="2">
+<line x1="174" y1="127" x2="226" y2="155" stroke="#10b981" stroke-width="1.8" marker-end="url(#dsa12a-ag)"/>
+<rect x="201" y="141" width="78" height="48" fill="#10b981" fill-opacity="0.18"/>
+<text x="240" y="170" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">1</text>
+<text x="320" y="170" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<text x="400" y="170" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<text x="456" y="170" font-size="13" fill="#10b981">a = a: chéo 0 + 1 = 1</text>
+</g>
+<g data-step="3">
+<text x="240" y="220" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<text x="320" y="220" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<text x="400" y="220" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<text x="456" y="220" font-size="13" fill="currentColor">lệch: max(trên, trái)</text>
+</g>
+<g data-step="4">
+<line x1="254" y1="227" x2="306" y2="255" stroke="#10b981" stroke-width="1.8" marker-end="url(#dsa12a-ag)"/>
+<text x="240" y="270" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<rect x="281" y="241" width="78" height="48" fill="#10b981" fill-opacity="0.18"/>
+<text x="320" y="270" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">2</text>
+<text x="400" y="270" font-size="14" text-anchor="middle" fill="currentColor">2</text>
+<text x="456" y="270" font-size="13" fill="#10b981">c = c: chéo 1 + 1 = 2</text>
+</g>
+<g data-step="5">
+<text x="240" y="320" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<text x="320" y="320" font-size="14" text-anchor="middle" fill="currentColor">2</text>
+<text x="400" y="320" font-size="14" text-anchor="middle" fill="currentColor">2</text>
+<text x="456" y="320" font-size="13" fill="currentColor">lệch: max(trên, trái)</text>
+</g>
+<g data-step="6">
+<line x1="334" y1="327" x2="386" y2="355" stroke="#10b981" stroke-width="1.8" marker-end="url(#dsa12a-ag)"/>
+<text x="240" y="370" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<text x="320" y="370" font-size="14" text-anchor="middle" fill="currentColor">2</text>
+<rect x="361" y="341" width="78" height="48" fill="#f59e0b" fill-opacity="0.2"/>
+<text x="400" y="370" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">3</text>
+<text x="456" y="370" font-size="13" fill="#10b981">e = e: chéo 2 + 1 = 3</text>
+</g>
+<g data-step="7">
+<line x1="376" y1="361" x2="328" y2="335" stroke="#f59e0b" stroke-width="2" marker-end="url(#dsa12a-aa)"/>
+<line x1="342" y1="309" x2="342" y2="275" stroke="#f59e0b" stroke-width="2" marker-end="url(#dsa12a-aa)"/>
+<line x1="296" y1="261" x2="248" y2="235" stroke="#f59e0b" stroke-width="2" marker-end="url(#dsa12a-aa)"/>
+<line x1="262" y1="209" x2="262" y2="175" stroke="#f59e0b" stroke-width="2" marker-end="url(#dsa12a-aa)"/>
+<line x1="216" y1="161" x2="168" y2="135" stroke="#f59e0b" stroke-width="2" marker-end="url(#dsa12a-aa)"/>
+<rect x="364" y="344" width="72" height="42" rx="5" fill="none" stroke="#f59e0b" stroke-width="2"/>
+<rect x="284" y="294" width="72" height="42" rx="5" fill="none" stroke="#f59e0b" stroke-width="2"/>
+<rect x="284" y="244" width="72" height="42" rx="5" fill="none" stroke="#f59e0b" stroke-width="2"/>
+<rect x="204" y="194" width="72" height="42" rx="5" fill="none" stroke="#f59e0b" stroke-width="2"/>
+<rect x="204" y="144" width="72" height="42" rx="5" fill="none" stroke="#f59e0b" stroke-width="2"/>
+<rect x="124" y="94" width="72" height="42" rx="5" fill="none" stroke="#f59e0b" stroke-width="2"/>
+<text x="280" y="446" font-size="13" text-anchor="middle" fill="#f59e0b">truy vết: khớp → nhận ký tự, đi chéo; lệch → lên ô cùng giá trị ⇒ "ace"</text>
+</g>
+<text x="280" y="418" font-size="13" text-anchor="middle" fill="#10b981">khớp → lấy chéo + 1; lệch → max(trên, trái); góc dưới-phải = đáp án</text>
 </svg>
+<step-note data-step="1">Hàng 0 và cột 0 là LCS với một chuỗi rỗng nên luôn bằng 0. Khởi tạo bảng toàn 0 là đã có sẵn base case.</step-note>
+<step-note data-step="2">Hàng <code>i = 1</code> (<code>a</code>): chỉ cột <code>a</code> khớp nên lấy <code>dp[0][0] + 1 = 1</code>. Hai ô sau lệch, lấy max(trên 0, trái 1) = 1: đã có LCS dài 1 thì nối thêm ký tự vào <code>text2</code> không làm nó ngắn đi.</step-note>
+<step-note data-step="3"><code>b</code> không có trong <code>"ace"</code>, nên cả hàng đều lấy max(trên, trái) và chép lại hàng trên: thêm một ký tự không khớp không làm LCS dài ra.</step-note>
+<step-note data-step="4"><code>(c, c)</code> khớp: chéo <code>dp[2][1] = 1</code> cộng 1 thành 2. Ô <code>(c, e)</code> lệch: max(trên 1, trái 2) = 2, tức là kế thừa luôn kết quả vừa tạo ở ô bên trái.</step-note>
+<step-note data-step="5"><code>d</code> không khớp ký tự nào của <code>"ace"</code>: hàng chép lại 1, 2, 2 từ hàng trên.</step-note>
+<step-note data-step="6"><code>(e, e)</code> khớp: chéo <code>dp[4][2] = 2</code> cộng 1 thành 3. Ô góc <code>dp[5][3] = 3</code> là đáp án vì nó xét đủ 5 ký tự của <code>text1</code> và 3 ký tự của <code>text2</code>.</step-note>
+<step-note data-step="7">Bảng chỉ cho độ dài. Muốn lấy chính chuỗi thì đi ngược từ góc: ô khớp thì nhận ký tự rồi đi chéo, ô lệch thì đi tới láng giềng (trên hoặc trái) có cùng giá trị. Gom được <code>e, c, a</code>, đảo lại là <code>"ace"</code>.</step-note>
+</step-flow>
 
 Đọc bảng: ô `(a, a)` khớp → lấy chéo `0 + 1 = 1`. Ô `(c, c)` khớp → chéo `1 + 1 = 2`. Ô `(e, e)` khớp → chéo `2 + 1 = 3`. Các ô không khớp lấy max(trên, trái). Đáp án nằm ở góc dưới-phải: `dp[5][3] = 3`.
 

@@ -118,46 +118,125 @@ void printList(ListNode* head) {
 
 Bài toán "must-know" số một. Ý tưởng: đi qua từng node, **bẻ ngược con trỏ** `next` về node phía trước. Dùng ba biến: `prev`, `cur`, `nxt`.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Đảo ngược linked list bằng ba con trỏ prev, cur, nxt</title>
-  <desc>Từng bước bẻ ngược con trỏ next: lưu nxt = cur.next, gán cur.next = prev, rồi dời prev và cur sang phải; cuối cùng prev là head mới.</desc>
-  <defs>
-    <marker id="arrR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker>
-    <marker id="arrB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#3b82f6"/></marker>
-  </defs>
-  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Đảo ngược: mỗi bước bẻ một con trỏ next về phía trước</text>
-  <text x="16" y="64" font-size="12" font-weight="700" fill="currentColor">Bắt đầu: prev = null</text>
-  <g font-size="13" font-weight="700">
-    <rect x="120" y="76" width="48" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="144" y="98" text-anchor="middle" fill="currentColor">1</text>
-    <rect x="220" y="76" width="48" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="244" y="98" text-anchor="middle" fill="currentColor">2</text>
-    <rect x="320" y="76" width="48" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="344" y="98" text-anchor="middle" fill="currentColor">3</text>
-  </g>
-  <g stroke="currentColor" fill="none" marker-end="url(#arrR)"><path d="M168 93 H214"/><path d="M268 93 H314"/></g>
-  <text x="392" y="98" font-size="12" fill="currentColor" opacity="0.7">→ null</text>
-  <text x="36" y="98" font-size="11" fill="currentColor" opacity="0.7">null ✗</text>
-  <text x="144" y="128" font-size="10.5" text-anchor="middle" fill="#3b82f6">cur</text>
-  <text x="16" y="166" font-size="12" font-weight="700" fill="currentColor">Một bước: nxt=cur.next ; cur.next=prev</text>
-  <g font-size="13" font-weight="700">
-    <rect x="120" y="180" width="48" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="144" y="202" text-anchor="middle" fill="currentColor">1</text>
-    <rect x="220" y="180" width="48" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="244" y="202" text-anchor="middle" fill="currentColor">2</text>
-    <rect x="320" y="180" width="48" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="344" y="202" text-anchor="middle" fill="currentColor">3</text>
-  </g>
-  <path d="M220 210 Q186 246 130 218" stroke="#3b82f6" fill="none" marker-end="url(#arrB)" stroke-width="1.6"/>
-  <text x="170" y="252" font-size="10.5" text-anchor="middle" fill="#3b82f6">cur.next = prev (bẻ ngược)</text>
-  <path d="M268 197 H314" stroke="currentColor" stroke-opacity="0.4" fill="none" marker-end="url(#arrR)" stroke-dasharray="3 3"/>
-  <text x="290" y="172" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">nxt</text>
-  <text x="144" y="172" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">prev</text>
-  <text x="244" y="232" font-size="10.5" text-anchor="middle" fill="#3b82f6">cur</text>
-  <text x="16" y="294" font-size="12" font-weight="700" fill="currentColor">Kết thúc: prev là head mới</text>
-  <g font-size="13" font-weight="700">
-    <rect x="120" y="306" width="48" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5"/><text x="144" y="328" text-anchor="middle" fill="currentColor">1</text>
-    <rect x="220" y="306" width="48" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5"/><text x="244" y="328" text-anchor="middle" fill="currentColor">2</text>
-    <rect x="320" y="306" width="48" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5"/><text x="344" y="328" text-anchor="middle" fill="currentColor">3</text>
-  </g>
-  <g stroke="currentColor" fill="none" marker-end="url(#arrR)"><path d="M320 323 H274"/><path d="M220 323 H174"/></g>
-  <text x="392" y="328" font-size="12" fill="currentColor" opacity="0.7">null</text>
-  <text x="344" y="300" font-size="10.5" text-anchor="middle" fill="#10b981">prev (head)</text>
+<step-flow>
+<svg viewBox="0 0 760 590" role="img" aria-labelledby="dsa05a-t dsa05a-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa05a-t">Đảo ngược linked list 1, 2, 3 bằng ba con trỏ prev, cur, nxt</title>
+<desc id="dsa05a-d">Năm hàng: bắt đầu với prev = null và cur ở node 1; ba vòng lặp, mỗi vòng lưu nxt = cur.next, bẻ cur.next = prev, rồi dời prev = cur và cur = nxt; kết thúc khi cur = null, prev ở node 3 là head mới.</desc>
+<defs>
+<marker id="dsa05a-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker>
+<marker id="dsa05a-arrB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#3b82f6"/></marker>
+</defs>
+<text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Đảo ngược [1]→[2]→[3]: mỗi vòng bẻ đúng một con trỏ next</text>
+<line x1="16" y1="44" x2="38" y2="44" stroke="#3b82f6" stroke-width="2.4" marker-end="url(#dsa05a-arrB)"/>
+<text x="46" y="49" font-size="13" fill="currentColor" opacity="0.8">con trỏ vừa bẻ trong vòng này; nhãn dưới node là vị trí lúc vừa bẻ, trước hai dòng dời</text>
+<g data-step="1">
+<rect x="8" y="66" width="744" height="96" rx="8" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.15"/>
+<text x="20" y="86" font-size="14" font-weight="700" fill="currentColor">Bắt đầu</text>
+<text x="20" y="104" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor" opacity="0.85">prev = null</text>
+<text x="20" y="121" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor" opacity="0.85">cur = head = [1]</text>
+<text x="300" y="110" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">null</text>
+<text x="700" y="110" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">null</text>
+<rect x="344" y="88" width="52" height="34" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/><text x="370" y="110" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">1</text>
+<rect x="454" y="88" width="52" height="34" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/><text x="480" y="110" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">2</text>
+<rect x="564" y="88" width="52" height="34" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/><text x="590" y="110" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">3</text>
+<line x1="396" y1="105" x2="451" y2="105" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa05a-arr)"/>
+<line x1="506" y1="105" x2="561" y2="105" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa05a-arr)"/>
+<line x1="616" y1="105" x2="680" y2="105" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa05a-arr)"/>
+<text x="300" y="144" text-anchor="middle" font-size="13" font-weight="700" fill="#10b981">prev</text>
+<text x="370" y="144" text-anchor="middle" font-size="13" font-weight="700" fill="#3b82f6">cur</text>
+</g>
+<g data-step="2">
+<rect x="8" y="170" width="744" height="96" rx="8" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.15"/>
+<text x="20" y="190" font-size="14" font-weight="700" fill="currentColor">Vòng 1</text>
+<text x="20" y="208" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor" opacity="0.85">nxt = cur.next → [2]</text>
+<text x="20" y="225" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor" opacity="0.85">cur.next = prev → null</text>
+<text x="20" y="242" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor" opacity="0.85">prev = cur → [1]</text>
+<text x="20" y="259" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor" opacity="0.85">cur = nxt → [2]</text>
+<text x="235" y="208" font-size="13" fill="currentColor" opacity="0.6">lưu</text>
+<text x="235" y="225" font-size="13" fill="#3b82f6">bẻ</text>
+<text x="235" y="242" font-size="13" fill="currentColor" opacity="0.6">dời</text>
+<text x="235" y="259" font-size="13" fill="currentColor" opacity="0.6">dời</text>
+<text x="300" y="214" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">null</text>
+<text x="700" y="214" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">null</text>
+<rect x="344" y="192" width="52" height="34" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/><text x="370" y="214" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">1</text>
+<rect x="454" y="192" width="52" height="34" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/><text x="480" y="214" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">2</text>
+<rect x="564" y="192" width="52" height="34" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/><text x="590" y="214" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">3</text>
+<line x1="344" y1="209" x2="320" y2="209" stroke="#3b82f6" stroke-width="2.4" marker-end="url(#dsa05a-arrB)"/>
+<line x1="506" y1="209" x2="561" y2="209" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa05a-arr)"/>
+<line x1="616" y1="209" x2="680" y2="209" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa05a-arr)"/>
+<text x="300" y="248" text-anchor="middle" font-size="13" font-weight="700" fill="#10b981">prev</text>
+<text x="370" y="248" text-anchor="middle" font-size="13" font-weight="700" fill="#3b82f6">cur</text>
+<text x="480" y="248" text-anchor="middle" font-size="13" font-weight="700" fill="#f59e0b">nxt</text>
+</g>
+<g data-step="3">
+<rect x="8" y="274" width="744" height="96" rx="8" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.15"/>
+<text x="20" y="294" font-size="14" font-weight="700" fill="currentColor">Vòng 2</text>
+<text x="20" y="312" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor" opacity="0.85">nxt = cur.next → [3]</text>
+<text x="20" y="329" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor" opacity="0.85">cur.next = prev → [1]</text>
+<text x="20" y="346" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor" opacity="0.85">prev = cur → [2]</text>
+<text x="20" y="363" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor" opacity="0.85">cur = nxt → [3]</text>
+<text x="235" y="312" font-size="13" fill="currentColor" opacity="0.6">lưu</text>
+<text x="235" y="329" font-size="13" fill="#3b82f6">bẻ</text>
+<text x="235" y="346" font-size="13" fill="currentColor" opacity="0.6">dời</text>
+<text x="235" y="363" font-size="13" fill="currentColor" opacity="0.6">dời</text>
+<text x="300" y="318" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">null</text>
+<text x="700" y="318" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">null</text>
+<rect x="344" y="296" width="52" height="34" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/><text x="370" y="318" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">1</text>
+<rect x="454" y="296" width="52" height="34" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/><text x="480" y="318" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">2</text>
+<rect x="564" y="296" width="52" height="34" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/><text x="590" y="318" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">3</text>
+<line x1="344" y1="313" x2="320" y2="313" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa05a-arr)"/>
+<line x1="454" y1="313" x2="399" y2="313" stroke="#3b82f6" stroke-width="2.4" marker-end="url(#dsa05a-arrB)"/>
+<line x1="616" y1="313" x2="680" y2="313" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa05a-arr)"/>
+<text x="370" y="352" text-anchor="middle" font-size="13" font-weight="700" fill="#10b981">prev</text>
+<text x="480" y="352" text-anchor="middle" font-size="13" font-weight="700" fill="#3b82f6">cur</text>
+<text x="590" y="352" text-anchor="middle" font-size="13" font-weight="700" fill="#f59e0b">nxt</text>
+</g>
+<g data-step="4">
+<rect x="8" y="378" width="744" height="96" rx="8" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.15"/>
+<text x="20" y="398" font-size="14" font-weight="700" fill="currentColor">Vòng 3</text>
+<text x="20" y="416" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor" opacity="0.85">nxt = cur.next → null</text>
+<text x="20" y="433" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor" opacity="0.85">cur.next = prev → [2]</text>
+<text x="20" y="450" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor" opacity="0.85">prev = cur → [3]</text>
+<text x="20" y="467" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor" opacity="0.85">cur = nxt → null</text>
+<text x="235" y="416" font-size="13" fill="currentColor" opacity="0.6">lưu</text>
+<text x="235" y="433" font-size="13" fill="#3b82f6">bẻ</text>
+<text x="235" y="450" font-size="13" fill="currentColor" opacity="0.6">dời</text>
+<text x="235" y="467" font-size="13" fill="currentColor" opacity="0.6">dời</text>
+<text x="300" y="422" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">null</text>
+<text x="700" y="422" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">null</text>
+<rect x="344" y="400" width="52" height="34" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/><text x="370" y="422" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">1</text>
+<rect x="454" y="400" width="52" height="34" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/><text x="480" y="422" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">2</text>
+<rect x="564" y="400" width="52" height="34" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/><text x="590" y="422" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">3</text>
+<line x1="344" y1="417" x2="320" y2="417" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa05a-arr)"/>
+<line x1="454" y1="417" x2="399" y2="417" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa05a-arr)"/>
+<line x1="564" y1="417" x2="509" y2="417" stroke="#3b82f6" stroke-width="2.4" marker-end="url(#dsa05a-arrB)"/>
+<text x="480" y="456" text-anchor="middle" font-size="13" font-weight="700" fill="#10b981">prev</text>
+<text x="590" y="456" text-anchor="middle" font-size="13" font-weight="700" fill="#3b82f6">cur</text>
+<text x="700" y="456" text-anchor="middle" font-size="13" font-weight="700" fill="#f59e0b">nxt</text>
+</g>
+<g data-step="5">
+<rect x="8" y="482" width="744" height="96" rx="8" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.15"/>
+<text x="20" y="502" font-size="14" font-weight="700" fill="currentColor">Kết thúc</text>
+<text x="20" y="520" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor" opacity="0.85">cur = null: thoát while</text>
+<text x="20" y="537" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="currentColor" opacity="0.85">return prev → [3]</text>
+<text x="300" y="526" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">null</text>
+<text x="700" y="526" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">null</text>
+<rect x="344" y="504" width="52" height="34" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/><text x="370" y="526" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">1</text>
+<rect x="454" y="504" width="52" height="34" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/><text x="480" y="526" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">2</text>
+<rect x="564" y="504" width="52" height="34" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.5"/><text x="590" y="526" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">3</text>
+<line x1="344" y1="521" x2="320" y2="521" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa05a-arr)"/>
+<line x1="454" y1="521" x2="399" y2="521" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa05a-arr)"/>
+<line x1="564" y1="521" x2="509" y2="521" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa05a-arr)"/>
+<text x="590" y="560" text-anchor="middle" font-size="13" font-weight="700" fill="#10b981">prev (head mới)</text>
+<text x="700" y="560" text-anchor="middle" font-size="13" font-weight="700" fill="#3b82f6">cur</text>
+</g>
 </svg>
+<step-note data-step="1"><code>prev = null</code> vì node đầu sẽ thành đuôi, <code>next</code> của nó phải trỏ về <code>null</code>. <code>cur</code> đứng ở head.</step-note>
+<step-note data-step="2">Lưu <code>nxt</code> trước: ngay khi <code>[1].next = null</code>, đường duy nhất từ <code>[1]</code> tới <code>[2]</code> mất, chỉ còn <code>nxt</code> giữ <code>[2]</code>. Hai dòng dời sau đó đưa <code>prev</code>, <code>cur</code> sang phải đúng một ô.</step-note>
+<step-note data-step="3">Bên trái <code>cur</code> là đoạn đã đảo (đầu đoạn là <code>prev</code>), từ <code>nxt</code> trở đi là đoạn chưa đụng tới. Mỗi vòng chuyển đúng một node từ đoạn này sang đoạn kia.</step-note>
+<step-note data-step="4"><code>[3]</code> là node cuối nên <code>nxt = null</code>. Sau hai dòng dời, <code>cur = null</code> và điều kiện <code>while</code> sai.</step-note>
+<step-note data-step="5">Trả <code>prev</code> vì <code>cur</code> đã là <code>null</code>. Mỗi node được bẻ đúng một lần: thời gian <code>O(n)</code>, bộ nhớ <code>O(1)</code>.</step-note>
+</step-flow>
 
 ```
 prev=null  cur=[1]->[2]->[3]
