@@ -208,6 +208,128 @@ Giảm tải ticket server **1,000 lần**, ID sinh trong process (nhanh như Sn
 
 ## Deep dive 1 — Mổ xẻ Snowflake tới từng bit
 
+Dải 64 bit vẽ đúng tỉ lệ (mỗi vạch là 1 bit); bảng dưới là vị trí bit, sức chứa và phép dịch mà đoạn code bên dưới dùng để ghép ID:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 380" role="img" aria-labelledby="sd11a-t sd11a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="sd11a-t">Snowflake ID: dải 64 bit vẽ đúng tỉ lệ</title>
+<desc id="sd11a-d">Từ bit 63 xuống bit 0: 1 bit dấu luôn bằng 0, 41 bit timestamp (bit 62 tới 22, dịch trái 22, 2 mũ 41 ms khoảng 69.7 năm), 5 bit datacenter và 5 bit node (bit 21 tới 12, 32 nhân 32 bằng 1,024 node, dịch trái 12), 12 bit sequence (bit 11 tới 0, 4,096 ID mỗi ms mỗi node, không dịch). Công thức ghép: id bằng (now trừ EPOCH) dịch trái 22, OR nodeId dịch trái 12, OR seq.</desc>
+<rect x="16.00" y="38" width="7.62" height="50" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-width="1.3"/>
+<rect x="23.62" y="38" width="312.62" height="50" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-width="1.3"/>
+<rect x="336.25" y="38" width="38.12" height="50" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-width="1.3"/>
+<rect x="374.38" y="38" width="38.12" height="50" fill="#14b8a6" fill-opacity="0.15" stroke="currentColor" stroke-width="1.3"/>
+<rect x="412.50" y="38" width="91.50" height="50" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-width="1.3"/>
+<line x1="23.62" y1="81" x2="23.62" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="31.25" y1="81" x2="31.25" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="38.88" y1="81" x2="38.88" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="46.50" y1="81" x2="46.50" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="54.12" y1="81" x2="54.12" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="61.75" y1="81" x2="61.75" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="69.38" y1="81" x2="69.38" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="77.00" y1="81" x2="77.00" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="84.62" y1="81" x2="84.62" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="92.25" y1="81" x2="92.25" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="99.88" y1="81" x2="99.88" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="107.50" y1="81" x2="107.50" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="115.12" y1="81" x2="115.12" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="122.75" y1="81" x2="122.75" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="130.38" y1="81" x2="130.38" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="138.00" y1="81" x2="138.00" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="145.62" y1="81" x2="145.62" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="153.25" y1="81" x2="153.25" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="160.88" y1="81" x2="160.88" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="168.50" y1="81" x2="168.50" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="176.12" y1="81" x2="176.12" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="183.75" y1="81" x2="183.75" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="191.38" y1="81" x2="191.38" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="199.00" y1="81" x2="199.00" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="206.62" y1="81" x2="206.62" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="214.25" y1="81" x2="214.25" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="221.88" y1="81" x2="221.88" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="229.50" y1="81" x2="229.50" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="237.12" y1="81" x2="237.12" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="244.75" y1="81" x2="244.75" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="252.38" y1="81" x2="252.38" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="260.00" y1="81" x2="260.00" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="267.62" y1="81" x2="267.62" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="275.25" y1="81" x2="275.25" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="282.88" y1="81" x2="282.88" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="290.50" y1="81" x2="290.50" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="298.12" y1="81" x2="298.12" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="305.75" y1="81" x2="305.75" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="313.38" y1="81" x2="313.38" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="321.00" y1="81" x2="321.00" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="328.62" y1="81" x2="328.62" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="336.25" y1="81" x2="336.25" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="343.88" y1="81" x2="343.88" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="351.50" y1="81" x2="351.50" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="359.12" y1="81" x2="359.12" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="366.75" y1="81" x2="366.75" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="374.38" y1="81" x2="374.38" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="382.00" y1="81" x2="382.00" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="389.62" y1="81" x2="389.62" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="397.25" y1="81" x2="397.25" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="404.88" y1="81" x2="404.88" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="412.50" y1="81" x2="412.50" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="420.12" y1="81" x2="420.12" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="427.75" y1="81" x2="427.75" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="435.38" y1="81" x2="435.38" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="443.00" y1="81" x2="443.00" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="450.62" y1="81" x2="450.62" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="458.25" y1="81" x2="458.25" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="465.88" y1="81" x2="465.88" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="473.50" y1="81" x2="473.50" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="481.12" y1="81" x2="481.12" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="488.75" y1="81" x2="488.75" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<line x1="496.38" y1="81" x2="496.38" y2="88" stroke="currentColor" stroke-width="0.6" opacity="0.45"/>
+<text x="179.94" y="59" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">timestamp</text>
+<text x="179.94" y="76" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.75">41 bit</text>
+<text x="355.31" y="59" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">DC</text>
+<text x="355.31" y="76" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.75">5</text>
+<text x="393.44" y="59" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">node</text>
+<text x="393.44" y="76" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.75">5</text>
+<text x="458.25" y="59" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">seq</text>
+<text x="458.25" y="76" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.75">12</text>
+<text x="16.00" y="28" font-size="13" font-family="ui-monospace,monospace" text-anchor="start" fill="currentColor" opacity="0.8">bit 63</text>
+<text x="336.25" y="28" font-size="13" font-family="ui-monospace,monospace" text-anchor="end" fill="currentColor" opacity="0.8">bit 22</text>
+<text x="412.50" y="28" font-size="13" font-family="ui-monospace,monospace" text-anchor="end" fill="currentColor" opacity="0.8">bit 12</text>
+<text x="504.00" y="28" font-size="13" font-family="ui-monospace,monospace" text-anchor="end" fill="currentColor" opacity="0.8">bit 0</text>
+<text x="38" y="120" font-size="13" font-weight="700" fill="currentColor" opacity="0.7">vùng</text>
+<text x="128" y="120" font-size="13" font-weight="700" fill="currentColor" opacity="0.7">bit</text>
+<text x="190" y="120" font-size="13" font-weight="700" fill="currentColor" opacity="0.7">sức chứa / ai lo</text>
+<text x="504" y="120" font-size="13" font-weight="700" text-anchor="end" fill="currentColor" opacity="0.7">phép dịch</text>
+<line x1="16" y1="130" x2="504" y2="130" stroke="currentColor" stroke-opacity="0.2"/>
+<rect x="16" y="140" width="14" height="14" rx="3" fill="#f43f5e" fill-opacity="0.5" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="38" y="152" font-size="13" font-weight="700" fill="currentColor">sign</text>
+<text x="128" y="152" font-size="13" font-family="ui-monospace,monospace" fill="currentColor">63</text>
+<text x="190" y="150" font-size="13" font-weight="700" fill="currentColor">luôn 0</text>
+<text x="190" y="167" font-size="13" fill="currentColor" opacity="0.8">→ long dương, sort đúng</text>
+<text x="504" y="152" font-size="13" font-family="ui-monospace,monospace" text-anchor="end" fill="currentColor">—</text>
+<line x1="16" y1="176" x2="504" y2="176" stroke="currentColor" stroke-opacity="0.2"/>
+<rect x="16" y="186" width="14" height="14" rx="3" fill="#3b82f6" fill-opacity="0.5" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="38" y="198" font-size="13" font-weight="700" fill="currentColor">timestamp</text>
+<text x="128" y="198" font-size="13" font-family="ui-monospace,monospace" fill="currentColor">62…22</text>
+<text x="190" y="196" font-size="13" font-weight="700" fill="currentColor">2⁴¹ ms ≈ 69.7 năm</text>
+<text x="190" y="213" font-size="13" fill="currentColor" opacity="0.8">đồng hồ lo → sortable</text>
+<text x="504" y="198" font-size="13" font-family="ui-monospace,monospace" text-anchor="end" fill="currentColor">&lt;&lt; 22</text>
+<line x1="16" y1="222" x2="504" y2="222" stroke="currentColor" stroke-opacity="0.2"/>
+<rect x="16" y="232" width="14" height="14" rx="3" fill="#8b5cf6" fill-opacity="0.5" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="38" y="244" font-size="13" font-weight="700" fill="currentColor">DC + node</text>
+<text x="128" y="244" font-size="13" font-family="ui-monospace,monospace" fill="currentColor">21…12</text>
+<text x="190" y="242" font-size="13" font-weight="700" fill="currentColor">32 × 32 = 1,024 node</text>
+<text x="190" y="259" font-size="13" fill="currentColor" opacity="0.8">config lo → duy nhất</text>
+<text x="504" y="244" font-size="13" font-family="ui-monospace,monospace" text-anchor="end" fill="currentColor">&lt;&lt; 12</text>
+<line x1="16" y1="268" x2="504" y2="268" stroke="currentColor" stroke-opacity="0.2"/>
+<rect x="16" y="278" width="14" height="14" rx="3" fill="#f59e0b" fill-opacity="0.5" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="38" y="290" font-size="13" font-weight="700" fill="currentColor">sequence</text>
+<text x="128" y="290" font-size="13" font-family="ui-monospace,monospace" fill="currentColor">11…0</text>
+<text x="190" y="288" font-size="13" font-weight="700" fill="currentColor">4,096 ID / ms / node</text>
+<text x="190" y="305" font-size="13" fill="currentColor" opacity="0.8">counter cục bộ lo</text>
+<text x="504" y="290" font-size="13" font-family="ui-monospace,monospace" text-anchor="end" fill="currentColor">không dịch</text>
+<line x1="16" y1="314" x2="504" y2="314" stroke="currentColor" stroke-opacity="0.2"/>
+<rect x="16" y="328" width="488" height="40" rx="8" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.35"/>
+<text x="260" y="353" font-size="13" font-family="ui-monospace,monospace" text-anchor="middle" fill="currentColor">id = ((now − EPOCH) &lt;&lt; 22) | (nodeId &lt;&lt; 12) | seq</text>
+</svg>
+
 ### Từng vùng bit làm gì, và vì sao chia như thế
 
 **1 bit dấu (sign bit) — luôn bằng 0.**

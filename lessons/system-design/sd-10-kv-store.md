@@ -220,17 +220,81 @@ Ba tham số, và chúng là **núm vặn của application**, không phải h�
 
 **Công thức vàng: `W + R > N` ⇒ đọc luôn thấy ghi mới nhất.** Lý do là nguyên lý chuồng bồ câu:
 
-```
-N = 3 replica:  [ A ]  [ B ]  [ C ]
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 600" role="img" aria-labelledby="sd10a-t sd10a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd10a-t">Quorum N=3: tập ghi và tập đọc giao nhau khi W+R lớn hơn N</title>
+<desc id="sd10a-d">Trên: N=3, W=2, R=2: ghi vào A và B; ba cách chọn 2 node để đọc đều chứa ít nhất một node đã có giá trị mới. Dưới: N=3, W=1, R=1: ghi vào A, đọc ở C, hai tập không giao nhau nên đọc ra giá trị cũ.</desc>
+<rect x="10" y="10" width="480" height="330" rx="10" fill="#10b981" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.18"/>
+<text x="250" y="38" font-size="15" text-anchor="middle" font-weight="700" fill="currentColor">W=2, R=2:  W+R = 4 &gt; 3</text>
+<text x="24" y="85" font-size="14" font-weight="600" fill="currentColor">Ghi</text>
+<circle cx="140" cy="80" r="17" fill="#10b981" fill-opacity="0.35" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="140" y="85" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">A</text>
+<circle cx="195" cy="80" r="17" fill="#10b981" fill-opacity="0.35" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="195" y="85" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">B</text>
+<circle cx="250" cy="80" r="17" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="250" y="85" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">C</text>
+<text x="290" y="85" font-size="14" opacity="0.85" fill="currentColor">A, B có v2</text>
+<line x1="24" y1="112" x2="476" y2="112" stroke="currentColor" stroke-opacity="0.18"/>
+<text x="24" y="153" font-size="14" font-weight="600" fill="currentColor">Đọc 1</text>
+<rect x="117" y="125" width="46" height="46" rx="11" fill="none" stroke="#3b82f6" stroke-width="2.2" stroke-dasharray="6 4"/>
+<rect x="172" y="125" width="46" height="46" rx="11" fill="none" stroke="#3b82f6" stroke-width="2.2" stroke-dasharray="6 4"/>
+<circle cx="140" cy="148" r="17" fill="#10b981" fill-opacity="0.35" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="140" y="153" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">A</text>
+<circle cx="195" cy="148" r="17" fill="#10b981" fill-opacity="0.35" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="195" y="153" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">B</text>
+<circle cx="250" cy="148" r="17" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="250" y="153" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">C</text>
+<text x="290" y="153" font-size="14" font-weight="700" fill="currentColor">giao {A,B} ✓</text>
+<text x="24" y="213" font-size="14" font-weight="600" fill="currentColor">Đọc 2</text>
+<rect x="117" y="185" width="46" height="46" rx="11" fill="none" stroke="#3b82f6" stroke-width="2.2" stroke-dasharray="6 4"/>
+<rect x="227" y="185" width="46" height="46" rx="11" fill="none" stroke="#3b82f6" stroke-width="2.2" stroke-dasharray="6 4"/>
+<circle cx="140" cy="208" r="17" fill="#10b981" fill-opacity="0.35" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="140" y="213" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">A</text>
+<circle cx="195" cy="208" r="17" fill="#10b981" fill-opacity="0.35" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="195" y="213" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">B</text>
+<circle cx="250" cy="208" r="17" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="250" y="213" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">C</text>
+<text x="290" y="213" font-size="14" font-weight="700" fill="currentColor">giao {A} ✓</text>
+<text x="24" y="273" font-size="14" font-weight="600" fill="currentColor">Đọc 3</text>
+<rect x="172" y="245" width="46" height="46" rx="11" fill="none" stroke="#3b82f6" stroke-width="2.2" stroke-dasharray="6 4"/>
+<rect x="227" y="245" width="46" height="46" rx="11" fill="none" stroke="#3b82f6" stroke-width="2.2" stroke-dasharray="6 4"/>
+<circle cx="140" cy="268" r="17" fill="#10b981" fill-opacity="0.35" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="140" y="273" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">A</text>
+<circle cx="195" cy="268" r="17" fill="#10b981" fill-opacity="0.35" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="195" y="273" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">B</text>
+<circle cx="250" cy="268" r="17" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="250" y="273" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">C</text>
+<text x="290" y="273" font-size="14" font-weight="700" fill="currentColor">giao {B} ✓</text>
+<text x="250" y="322" font-size="13.5" text-anchor="middle" opacity="0.85" fill="currentColor">Mọi tập đọc 2 node đều chạm ≥1 node có v2</text>
+<rect x="10" y="352" width="480" height="200" rx="10" fill="#f43f5e" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.18"/>
+<text x="250" y="380" font-size="15" text-anchor="middle" font-weight="700" fill="currentColor">W=1, R=1:  W+R = 2 ≤ 3</text>
+<text x="24" y="427" font-size="14" font-weight="600" fill="currentColor">Ghi</text>
+<circle cx="140" cy="422" r="17" fill="#10b981" fill-opacity="0.35" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="140" y="427" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">A</text>
+<circle cx="195" cy="422" r="17" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="195" y="427" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">B</text>
+<circle cx="250" cy="422" r="17" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="250" y="427" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">C</text>
+<text x="290" y="427" font-size="14" opacity="0.85" fill="currentColor">chỉ A có v2</text>
+<line x1="24" y1="454" x2="476" y2="454" stroke="currentColor" stroke-opacity="0.18"/>
+<text x="24" y="495" font-size="14" font-weight="600" fill="currentColor">Đọc</text>
+<rect x="227" y="467" width="46" height="46" rx="11" fill="none" stroke="#3b82f6" stroke-width="2.2" stroke-dasharray="6 4"/>
+<circle cx="140" cy="490" r="17" fill="#10b981" fill-opacity="0.35" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="140" y="495" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">A</text>
+<circle cx="195" cy="490" r="17" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="195" y="495" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">B</text>
+<circle cx="250" cy="490" r="17" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="250" y="495" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">C</text>
+<text x="290" y="495" font-size="14" font-weight="700" fill="currentColor">giao = ∅ ✗</text>
+<text x="250" y="538" font-size="13.5" text-anchor="middle" opacity="0.85" fill="currentColor">C vẫn giữ v1: đọc ra giá trị cũ</text>
+<circle cx="26" cy="580" r="8" fill="#10b981" fill-opacity="0.35" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="40" y="585" font-size="13" fill="currentColor">có v2 (mới)</text>
+<circle cx="186" cy="580" r="8" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+<text x="200" y="585" font-size="13" fill="currentColor">còn v1 (cũ)</text>
+<rect x="336" y="571" width="22" height="18" rx="5" fill="none" stroke="#3b82f6" stroke-width="2" stroke-dasharray="5 3"/>
+<text x="366" y="585" font-size="13" fill="currentColor">tập đọc R</text>
+</svg>
 
-W = 2 → ghi xong nghĩa là ít nhất 2/3 đã có giá trị mới, vd {A, B}.
-R = 2 → đọc chạm ít nhất 2/3. Mọi tập 2 phần tử đều GIAO với {A,B}:
-        {A,B}∩{A,B}={A,B} ✓    {A,C}∩{A,B}={A} ✓    {B,C}∩{A,B}={B} ✓
-
-W + R = 4 > 3 = N ⇒ tập ghi và tập đọc BẮT BUỘC chồng nhau
-                  ⇒ luôn có ≥1 node giữ giá trị mới nhất
-                  ⇒ coordinator so version, chọn cái mới → đọc đúng.
-```
+`W + R = 4 > 3 = N` ⇒ tập ghi và tập đọc **bắt buộc chồng nhau** ⇒ luôn có ≥1 node giữ giá trị mới nhất ⇒ coordinator so version, chọn cái mới → đọc đúng.
 
 Ngược lại nếu `W + R ≤ N` (vd W=1, R=1, N=3), tập ghi có thể là `{A}` còn tập đọc là `{C}` — **không giao nhau** — client đọc ra dữ liệu cũ. Không sai; chỉ là bạn đã cố tình mua tốc độ bằng độ tươi.
 
@@ -285,32 +349,86 @@ So sánh hai phiên bản X, Y:
 
 ### Ví dụ số cụ thể — giỏ hàng
 
-```
-t1  Client ghi v1 qua Sx, giỏ = {sách}        D1([Sx, 1])
-
-t2  Client đọc D1, thêm "bút", ghi qua Sx     D2([Sx, 2])
-    Sx đã có trong clock → tăng 1→2
-    D1 là TỔ TIÊN của D2 (1 ≤ 2) → vứt D1. Không xung đột.
-
-t3  ── MẠNG BỊ CHIA CẮT ──
-
-t4  Client A đọc D2, thêm "vở", ghi qua Sy    D3([Sx, 2], [Sy, 1])
-t5  Client B cũng đọc D2, thêm "tẩy", qua Sz  D4([Sx, 2], [Sz, 1])
-
-t6  ── MẠNG NỐI LẠI, so D3 và D4 ──
-    D3 = ([Sx,2], [Sy,1], [Sz,0])
-    D4 = ([Sx,2], [Sy,0], [Sz,1])
-         Sy: 1 > 0 → D3 đi trước ở chiều Sy
-         Sz: 0 < 1 → D4 đi trước ở chiều Sz
-    ⇒ không cái nào là tổ tiên của cái kia ⇒ SIBLING ⇒ XUNG ĐỘT
-
-t7  get(cart) trả về CẢ HAI + context = clock hợp nhất.
-    Application hoà giải. Với giỏ hàng luật hợp lý là HỢP NHẤT:
-    giỏ = {sách, bút, vở, tẩy}
-
-t8  Ghi bản đã hoà giải qua Sx    D5([Sx, 3], [Sy, 1], [Sz, 1])
-    → D5 là hậu duệ của cả D3 lẫn D4 → xung đột biến mất.
-```
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 440" role="img" aria-labelledby="sd10d-t sd10d-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd10d-t">Vector clock của giỏ hàng qua 8 mốc thời gian</title>
+<desc id="sd10d-d">D1 rồi D2 ghi tuần tự qua Sx. Mạng chia cắt; D3 ghi qua Sy, D4 ghi qua Sz song song từ D2. So D3 và D4: mỗi bên lớn hơn ở một chiều nên là sibling. Application hợp nhất thành D5 ghi qua Sx.</desc>
+<defs><marker id="sd10d-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<g data-step="1">
+<rect x="10" y="110" width="125" height="80" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="72.5" y="132" font-size="13.5" text-anchor="middle" font-weight="700" fill="currentColor">D1 · t1 · Sx</text>
+<text x="72.5" y="154" font-size="13" text-anchor="middle" fill="currentColor">{sách}</text>
+<text x="72.5" y="176" font-size="13" text-anchor="middle" font-weight="600" opacity="0.9" fill="currentColor">[Sx,1]</text>
+</g>
+<g data-step="2">
+<line x1="137" y1="150" x2="162" y2="150" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#sd10d-arr)"/>
+<rect x="165" y="110" width="125" height="80" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="227.5" y="132" font-size="13.5" text-anchor="middle" font-weight="700" fill="currentColor">D2 · t2 · Sx</text>
+<text x="227.5" y="154" font-size="13" text-anchor="middle" fill="currentColor">{sách, bút}</text>
+<text x="227.5" y="176" font-size="13" text-anchor="middle" font-weight="600" opacity="0.9" fill="currentColor">[Sx,2]</text>
+<text x="227" y="212" font-size="12.5" text-anchor="middle" opacity="0.85" fill="currentColor">1 ≤ 2: D1 là tổ tiên</text>
+</g>
+<g data-step="3">
+<line x1="300" y1="150" x2="530" y2="150" stroke="#f43f5e" stroke-width="2.2" stroke-dasharray="8 5"/>
+<text x="415" y="143" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">t3 mạng chia cắt</text>
+</g>
+<g data-step="4">
+<path d="M292 140 C310 140 310 70 336 70" fill="none" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#sd10d-arr)"/>
+<rect x="340" y="30" width="180" height="80" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="430.0" y="52" font-size="13.5" text-anchor="middle" font-weight="700" fill="currentColor">D3 · t4 · Sy (client A)</text>
+<text x="430.0" y="74" font-size="13" text-anchor="middle" fill="currentColor">{sách, bút, vở}</text>
+<text x="430.0" y="96" font-size="13" text-anchor="middle" font-weight="600" opacity="0.9" fill="currentColor">[Sx,2] [Sy,1]</text>
+</g>
+<g data-step="5">
+<path d="M292 160 C310 160 310 230 336 230" fill="none" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#sd10d-arr)"/>
+<rect x="340" y="190" width="180" height="80" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="430.0" y="212" font-size="13.5" text-anchor="middle" font-weight="700" fill="currentColor">D4 · t5 · Sz (client B)</text>
+<text x="430.0" y="234" font-size="13" text-anchor="middle" fill="currentColor">{sách, bút, tẩy}</text>
+<text x="430.0" y="256" font-size="13" text-anchor="middle" font-weight="600" opacity="0.9" fill="currentColor">[Sx,2] [Sz,1]</text>
+</g>
+<g data-step="6">
+<rect x="10" y="300" width="510" height="130" rx="8" fill="#f43f5e" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="24" y="324" font-size="13.5" font-weight="700" fill="currentColor">t6 mạng nối lại, so từng chiều</text>
+<text x="200" y="350" font-size="13" text-anchor="middle" font-weight="700" opacity="0.8" fill="currentColor">Sx</text>
+<text x="270" y="350" font-size="13" text-anchor="middle" font-weight="700" opacity="0.8" fill="currentColor">Sy</text>
+<text x="340" y="350" font-size="13" text-anchor="middle" font-weight="700" opacity="0.8" fill="currentColor">Sz</text>
+<text x="130" y="374" font-size="13.5" text-anchor="middle" font-weight="700" fill="currentColor">D3</text>
+<text x="200" y="374" font-size="13.5" text-anchor="middle" fill="currentColor">2</text>
+<text x="270" y="374" font-size="13.5" text-anchor="middle" fill="currentColor">1</text>
+<text x="340" y="374" font-size="13.5" text-anchor="middle" fill="currentColor">0</text>
+<text x="130" y="398" font-size="13.5" text-anchor="middle" font-weight="700" fill="currentColor">D4</text>
+<text x="200" y="398" font-size="13.5" text-anchor="middle" fill="currentColor">2</text>
+<text x="270" y="398" font-size="13.5" text-anchor="middle" fill="currentColor">0</text>
+<text x="340" y="398" font-size="13.5" text-anchor="middle" fill="currentColor">1</text>
+<text x="270" y="420" font-size="12.5" text-anchor="middle" opacity="0.85" fill="currentColor">D3 hơn</text>
+<text x="340" y="420" font-size="12.5" text-anchor="middle" opacity="0.85" fill="currentColor">D4 hơn</text>
+<text x="395" y="374" font-size="13.5" font-weight="700" fill="currentColor">⇒ SIBLING</text>
+<text x="395" y="398" font-size="13.5" font-weight="700" fill="currentColor">xung đột</text>
+</g>
+<g data-step="7">
+<line x1="522" y1="70" x2="560" y2="136" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#sd10d-arr)"/>
+<line x1="522" y1="230" x2="560" y2="168" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#sd10d-arr)"/>
+<text x="650" y="40" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">t7 get trả CẢ HAI</text>
+<text x="650" y="60" font-size="13" text-anchor="middle" opacity="0.85" fill="currentColor">app hợp nhất (union)</text>
+</g>
+<g data-step="8">
+<rect x="565" y="104" width="185" height="96" rx="8" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="657.5" y="126" font-size="13.5" text-anchor="middle" font-weight="700" fill="currentColor">D5 · t8 · Sx</text>
+<text x="657.5" y="148" font-size="13" text-anchor="middle" fill="currentColor">{sách, bút, vở, tẩy}</text>
+<text x="657.5" y="170" font-size="13" text-anchor="middle" font-weight="600" opacity="0.9" fill="currentColor">[Sx,3] [Sy,1]</text>
+<text x="657.5" y="188" font-size="13" text-anchor="middle" font-weight="600" opacity="0.9" fill="currentColor">[Sz,1]</text>
+<text x="657" y="228" font-size="12.5" text-anchor="middle" opacity="0.85" fill="currentColor">hậu duệ của cả D3, D4</text>
+</g>
+</svg>
+<step-note data-step="1">Lần ghi đầu qua <code>Sx</code>: <code>Sx</code> chưa có trong clock nên thêm mục <code>[Sx,1]</code>.</step-note>
+<step-note data-step="2">Client đọc D1 rồi ghi tiếp qua <code>Sx</code>: đã có mục nên tăng 1 lên 2. Mọi counter của D1 ≤ D2, nên D1 bị vứt, không xung đột.</step-note>
+<step-note data-step="3">Mạng chia cắt: phía <code>Sy</code> và phía <code>Sz</code> không thấy ghi của nhau, nhưng vẫn nhận ghi để giữ availability.</step-note>
+<step-note data-step="4">Client A đọc D2, thêm vở, ghi qua <code>Sy</code>: clock giữ <code>[Sx,2]</code> và thêm <code>[Sy,1]</code>.</step-note>
+<step-note data-step="5">Client B cũng đọc D2 (không thấy D3), thêm tẩy, ghi qua <code>Sz</code>: thêm <code>[Sz,1]</code>. Hai nhánh mọc song song từ cùng D2.</step-note>
+<step-note data-step="6">Mục thiếu tính là 0. D3 lớn hơn ở chiều <code>Sy</code>, D4 lớn hơn ở chiều <code>Sz</code>: không cái nào là tổ tiên của cái kia. Kết luận không dựa vào đồng hồ.</step-note>
+<step-note data-step="7">Hệ thống không tự chọn: <code>get(cart)</code> trả cả hai kèm context là clock hợp nhất. Với giỏ hàng, union là luật hoà giải hợp lý.</step-note>
+<step-note data-step="8">Ghi bản đã hoà giải qua <code>Sx</code>: <code>Sx</code> tăng lên 3, giữ <code>[Sy,1]</code> và <code>[Sz,1]</code>. D5 trội hơn cả D3 lẫn D4 nên xung đột biến mất.</step-note>
+</step-flow>
 
 Điểm quan trọng nhất: **hệ thống không tự quyết**. Nó chỉ **phát hiện** xung đột một cách chắc chắn (không phụ thuộc đồng hồ) rồi đẩy quyết định lên application — nơi duy nhất biết "giỏ hàng thì union được, còn số dư tài khoản thì tuyệt đối không".
 
@@ -395,34 +513,91 @@ Node chết đĩa, thay máy, hoặc offline quá lâu → lệch hẳn so với
 
 **Merkle tree (hash tree)**: **lá** = hash của một *bucket* key (một khoảng key); **nút trong** = `hash(H(left) || H(right))`; **gốc** = một hash duy nhất đại diện toàn bộ dataset.
 
-```
-Bước 1 — chia không gian key thành bucket:
-   [ b1: 0000–3FFF ] [ b2: 4000–7FFF ] [ b3: 8000–BFFF ] [ b4: C000–FFFF ]
-Bước 2 — hash từng key trong bucket bằng hàm băm đều
-Bước 3 — gộp thành MỘT hash cho mỗi bucket:  b1→H1  b2→H2  b3→H3  b4→H4
-Bước 4 — gộp lên tầng trên tới gốc
+Xây cây cho 4 bucket:
 
-                        ┌──────────────┐
-                        │ ROOT = H1234 │
-                        └──────┬───────┘
-                  ┌────────────┴────────────┐
-                ┌─┴───┐                   ┌─┴───┐
-                │ H12 │                   │ H34 │
-                └─┬───┘                   └─┬───┘
-             ┌────┴────┐               ┌────┴────┐
-           ┌─┴─┐     ┌─┴─┐           ┌─┴─┐     ┌─┴─┐
-           │H1 │     │H2 │           │H3 │     │H4 │
-           └─┬─┘     └─┬─┘           └─┬─┘     └─┬─┘
-            b1        b2              b3        b4
+1. Chia không gian key thành bucket: `b1: 0000–3FFF`, `b2: 4000–7FFF`, `b3: 8000–BFFF`, `b4: C000–FFFF`.
+2. Hash từng key trong bucket bằng hàm băm đều.
+3. Gộp thành MỘT hash cho mỗi bucket: `b1→H1`, `b2→H2`, `b3→H3`, `b4→H4`.
+4. Gộp lên tầng trên (`H12`, `H34`) tới gốc `H1234`.
 
-Đồng bộ A và B:
- 1. So ROOT. GIỐNG → hai replica y hệt nhau, DỪNG (chi phí: 32 byte).
-    KHÁC → đi xuống.
- 2. So H12 và H34. H12 giống, H34 khác → NỬA TRÁI ĐÚNG, bỏ qua hoàn toàn.
-    ▶ loại 50% dữ liệu khỏi diện nghi vấn bằng 1 phép so 32 byte.
- 3. So H3, H4 → chỉ H4 khác ⇒ lệch nằm gọn trong bucket b4.
- 4. Chỉ đồng bộ dữ liệu của b4.
-```
+Đồng bộ replica A và B, số trên hình là thứ tự so:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 440" role="img" aria-labelledby="sd10b-t sd10b-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd10b-t">So hai replica bằng Merkle tree: đi từ gốc xuống lá</title>
+<desc id="sd10b-d">Cây băm 4 bucket. So gốc thấy khác; so H12 thấy giống nên bỏ qua cả nửa trái; H34 khác nên đi xuống; H3 giống, H4 khác; chỉ đồng bộ bucket b4 (C000–FFFF).</desc>
+<line x1="250" y1="60" x2="125" y2="102" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.6"/>
+<line x1="250" y1="60" x2="375" y2="102" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.6"/>
+<line x1="125" y1="150" x2="65" y2="191" stroke="currentColor" stroke-opacity="0.2" stroke-width="1.6"/>
+<line x1="125" y1="150" x2="185" y2="191" stroke="currentColor" stroke-opacity="0.2" stroke-width="1.6"/>
+<line x1="375" y1="150" x2="315" y2="191" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.6"/>
+<line x1="375" y1="150" x2="435" y2="191" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.6"/>
+<rect x="175.0" y="12" width="150" height="48" rx="8" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="250" y="33" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">ROOT = H1234</text>
+<text x="250" y="51" font-size="13" text-anchor="middle" opacity="0.85" fill="currentColor">A ≠ B</text>
+<circle cx="175.0" cy="12" r="11" fill="#3b82f6" fill-opacity="0.9"/>
+<text x="175.0" y="16.5" font-size="13" text-anchor="middle" font-weight="700" fill="#fff">1</text>
+<rect x="73.0" y="102" width="104" height="48" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="125" y="123" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">H12</text>
+<text x="125" y="141" font-size="13" text-anchor="middle" opacity="0.85" fill="currentColor">A = B</text>
+<circle cx="73.0" cy="102" r="11" fill="#3b82f6" fill-opacity="0.9"/>
+<text x="73.0" y="106.5" font-size="13" text-anchor="middle" font-weight="700" fill="#fff">2</text>
+<rect x="323.0" y="102" width="104" height="48" rx="8" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="375" y="123" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">H34</text>
+<text x="375" y="141" font-size="13" text-anchor="middle" opacity="0.85" fill="currentColor">A ≠ B</text>
+<circle cx="323.0" cy="102" r="11" fill="#3b82f6" fill-opacity="0.9"/>
+<text x="323.0" y="106.5" font-size="13" text-anchor="middle" font-weight="700" fill="#fff">2</text>
+<g opacity="0.45">
+<rect x="13.0" y="191" width="104" height="48" rx="8" fill="#64748b" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="65" y="212" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">H1</text>
+<text x="65" y="230" font-size="13" text-anchor="middle" opacity="0.85" fill="currentColor">không cần so</text>
+</g>
+<g opacity="0.45">
+<rect x="133.0" y="191" width="104" height="48" rx="8" fill="#64748b" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="185" y="212" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">H2</text>
+<text x="185" y="230" font-size="13" text-anchor="middle" opacity="0.85" fill="currentColor">không cần so</text>
+</g>
+<rect x="263.0" y="191" width="104" height="48" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="315" y="212" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">H3</text>
+<text x="315" y="230" font-size="13" text-anchor="middle" opacity="0.85" fill="currentColor">A = B</text>
+<circle cx="263.0" cy="191" r="11" fill="#3b82f6" fill-opacity="0.9"/>
+<text x="263.0" y="195.5" font-size="13" text-anchor="middle" font-weight="700" fill="#fff">3</text>
+<rect x="383.0" y="191" width="104" height="48" rx="8" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="435" y="212" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">H4</text>
+<text x="435" y="230" font-size="13" text-anchor="middle" opacity="0.85" fill="currentColor">A ≠ B</text>
+<circle cx="383.0" cy="191" r="11" fill="#3b82f6" fill-opacity="0.9"/>
+<text x="383.0" y="195.5" font-size="13" text-anchor="middle" font-weight="700" fill="#fff">3</text>
+<line x1="65" y1="239" x2="65" y2="280" stroke="currentColor" stroke-opacity="0.2" stroke-width="1.6"/>
+<g opacity="0.45">
+<rect x="11" y="280" width="108" height="46" rx="8" fill="#64748b" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 4"/>
+<text x="65" y="299" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">b1</text>
+<text x="65" y="317" font-size="13" text-anchor="middle" opacity="0.85" fill="currentColor">0000–3FFF</text>
+</g>
+<line x1="185" y1="239" x2="185" y2="280" stroke="currentColor" stroke-opacity="0.2" stroke-width="1.6"/>
+<g opacity="0.45">
+<rect x="131" y="280" width="108" height="46" rx="8" fill="#64748b" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 4"/>
+<text x="185" y="299" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">b2</text>
+<text x="185" y="317" font-size="13" text-anchor="middle" opacity="0.85" fill="currentColor">4000–7FFF</text>
+</g>
+<line x1="315" y1="239" x2="315" y2="280" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.6"/>
+<rect x="261" y="280" width="108" height="46" rx="8" fill="#64748b" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 4"/>
+<text x="315" y="299" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">b3</text>
+<text x="315" y="317" font-size="13" text-anchor="middle" opacity="0.85" fill="currentColor">8000–BFFF</text>
+<line x1="435" y1="239" x2="435" y2="280" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.6"/>
+<rect x="381" y="280" width="108" height="46" rx="8" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="435" y="299" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">b4</text>
+<text x="435" y="317" font-size="13" text-anchor="middle" opacity="0.85" fill="currentColor">C000–FFFF</text>
+<circle cx="381" cy="280" r="11" fill="#3b82f6" fill-opacity="0.9"/>
+<text x="381" y="284.5" font-size="13" text-anchor="middle" font-weight="700" fill="#fff">4</text>
+<text x="250" y="356" font-size="13.5" text-anchor="middle" font-weight="600" fill="currentColor">Nửa trái: bỏ qua hoàn toàn</text>
+<text x="250" y="375" font-size="13" text-anchor="middle" opacity="0.85" fill="currentColor">1 phép so 32 byte loại 50% dữ liệu</text>
+<text x="250" y="407" font-size="13.5" text-anchor="middle" font-weight="600" fill="currentColor">Chỉ dữ liệu b4 được truyền</text>
+<text x="250" y="426" font-size="13" text-anchor="middle" opacity="0.85" fill="currentColor">tỉ lệ với lượng lệch, không với dataset</text>
+</svg>
+
+1. So ROOT. GIỐNG → hai replica y hệt nhau, DỪNG (chi phí: 32 byte). KHÁC → đi xuống.
+2. So H12 và H34. H12 giống, H34 khác → NỬA TRÁI ĐÚNG, bỏ qua hoàn toàn: loại 50% dữ liệu khỏi diện nghi vấn bằng 1 phép so 32 byte.
+3. So H3, H4 → chỉ H4 khác ⇒ lệch nằm gọn trong bucket b4.
+4. Chỉ đồng bộ dữ liệu của b4.
 
 **Vì sao Merkle tree giảm mạnh dữ liệu phải so** — hai vế:
 
@@ -467,25 +642,101 @@ Xong phần phân tán. Nhưng một node vẫn phải cất dữ liệu lên đ
 
 ### Write path & read path
 
-```
-   put(k, v)                              get(k)
-      │                                      │
-      ▼                                      ▼
-  ┌──────────────────┐ ghi TUẦN TỰ,      ┌──────────────────┐ có → trả ngay
-  │ COMMIT LOG (đĩa) │ append + fsync    │ MEMTABLE (RAM)   │
-  └────────┬─────────┘ → DURABILITY      └────────┬─────────┘ miss
-           ▼                                      ▼
-  ┌──────────────────┐ skip list/RB-tree  ┌──────────────────┐ "CHẮC CHẮN không
-  │ MEMTABLE (RAM)   │ → ack client NGAY  │ BLOOM FILTER     │  có trong file này"
-  └────────┬─────────┘ tại đây            │ (1 cái/SSTable)  │ → bỏ qua, khỏi đọc đĩa
-           │ đầy ngưỡng (vd 64 MB)        └────────┬─────────┘
-           ▼                                       ▼
-  ┌──────────────────┐ ghi một lượt,      ┌──────────────────┐ sparse index +
-  │ SSTable-3 (đĩa)  │ IMMUTABLE,         │ SSTable trên đĩa │ binary search
-  └──────────────────┘ key đã sắp xếp     └────────┬─────────┘ (key đã sắp xếp)
-   SSTable-1 -2 -3 ... (ngày càng nhiều)           ▼
-                                    gộp kết quả nhiều SSTable, lấy version mới nhất
-```
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 500" role="img" aria-labelledby="sd10c-t sd10c-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd10c-t">Write path và read path trong một node LSM</title>
+<desc id="sd10c-d">Bên trái đường ghi: commit log trên đĩa, memtable trong RAM, đầy thì flush thành SSTable mới. Bên phải đường đọc: memtable, bloom filter mỗi SSTable, đọc SSTable bằng sparse index, gộp lấy version mới nhất.</desc>
+<defs><marker id="sd10c-arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="190" y="24" font-size="13.5" text-anchor="middle" font-weight="700" opacity="0.7" fill="currentColor">WRITE PATH</text>
+<text x="570" y="24" font-size="13.5" text-anchor="middle" font-weight="700" opacity="0.7" fill="currentColor">READ PATH</text>
+<line x1="380" y1="10" x2="380" y2="490" stroke="currentColor" stroke-opacity="0.15" stroke-dasharray="4 4"/>
+<rect x="130" y="38" width="120" height="32" rx="16" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="190" y="59" font-size="13.5" text-anchor="middle" font-weight="700" fill="currentColor">put(k, v)</text>
+<rect x="80" y="120" width="220" height="54" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="190" y="142" font-size="13.5" text-anchor="middle" font-weight="700" fill="currentColor">COMMIT LOG · đĩa</text>
+<text x="190" y="162" font-size="12.5" text-anchor="middle" opacity="0.8" fill="currentColor">append-only</text>
+<rect x="80" y="225" width="220" height="54" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="190" y="247" font-size="13.5" text-anchor="middle" font-weight="700" fill="currentColor">MEMTABLE · RAM</text>
+<text x="190" y="267" font-size="12.5" text-anchor="middle" opacity="0.8" fill="currentColor">skip list, key đã sắp xếp</text>
+<rect x="30" y="380" width="105" height="50" rx="8" fill="#64748b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="82" y="402" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">SSTable-1</text>
+<text x="82" y="420" font-size="12.5" text-anchor="middle" opacity="0.7" fill="currentColor">đĩa</text>
+<rect x="145" y="380" width="105" height="50" rx="8" fill="#64748b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="197" y="402" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">SSTable-2</text>
+<text x="197" y="420" font-size="12.5" text-anchor="middle" opacity="0.7" fill="currentColor">đĩa</text>
+<rect x="510" y="38" width="120" height="32" rx="16" fill="#14b8a6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="570" y="59" font-size="13.5" text-anchor="middle" font-weight="700" fill="currentColor">get(k)</text>
+<rect x="470" y="120" width="200" height="54" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="570" y="142" font-size="13.5" text-anchor="middle" font-weight="700" fill="currentColor">MEMTABLE · RAM</text>
+<text x="570" y="162" font-size="12.5" text-anchor="middle" opacity="0.8" fill="currentColor">bản ghi mới nhất</text>
+<rect x="470" y="225" width="200" height="54" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="570" y="247" font-size="13.5" text-anchor="middle" font-weight="700" fill="currentColor">BLOOM FILTER · RAM</text>
+<text x="570" y="267" font-size="12.5" text-anchor="middle" opacity="0.8" fill="currentColor">1 cái / SSTable</text>
+<rect x="470" y="330" width="200" height="54" rx="8" fill="#64748b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="570" y="352" font-size="13.5" text-anchor="middle" font-weight="700" fill="currentColor">SSTable trên đĩa</text>
+<text x="570" y="372" font-size="12.5" text-anchor="middle" opacity="0.8" fill="currentColor">sparse index + binary search</text>
+<rect x="470" y="430" width="200" height="50" rx="8" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="570" y="452" font-size="13.5" text-anchor="middle" font-weight="700" fill="currentColor">gộp nhiều SSTable</text>
+<text x="570" y="470" font-size="12.5" text-anchor="middle" opacity="0.8" fill="currentColor">lấy version mới nhất</text>
+<g data-step="1">
+<line x1="190" y1="72" x2="190" y2="117" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#sd10c-arr)"/>
+<circle cx="168" cy="95" r="11" fill="#f59e0b" fill-opacity="0.9"/>
+<text x="168" y="99.5" font-size="12.5" text-anchor="middle" font-weight="700" fill="#fff">1</text>
+<text x="202" y="100" font-size="12.5" fill="currentColor">ghi tuần tự + fsync</text>
+</g>
+<g data-step="2">
+<line x1="190" y1="176" x2="190" y2="222" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#sd10c-arr)"/>
+<circle cx="168" cy="199" r="11" fill="#8b5cf6" fill-opacity="0.9"/>
+<text x="168" y="203.5" font-size="12.5" text-anchor="middle" font-weight="700" fill="#fff">2</text>
+<path d="M300 252 H345 V54 H254" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#sd10c-arr)"/>
+<text x="337" y="200" font-size="13" text-anchor="end" font-weight="700" fill="currentColor">ack</text>
+</g>
+<g data-step="3">
+<rect x="260" y="380" width="105" height="50" rx="8" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="312" y="402" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">SSTable-3</text>
+<text x="312" y="420" font-size="12.5" text-anchor="middle" opacity="0.8" fill="currentColor">mới, immutable</text>
+<line x1="250" y1="281" x2="300" y2="377" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#sd10c-arr)"/>
+<circle cx="258" cy="330" r="11" fill="#64748b" fill-opacity="0.9"/>
+<text x="258" y="334.5" font-size="12.5" text-anchor="middle" font-weight="700" fill="#fff">3</text>
+<text x="282" y="322" font-size="12.5" fill="currentColor">đầy 64 MB</text>
+<text x="282" y="340" font-size="12.5" fill="currentColor">→ flush</text>
+<text x="190" y="455" font-size="12.5" text-anchor="middle" opacity="0.8" fill="currentColor">số SSTable tăng dần theo thời gian</text>
+</g>
+<g data-step="4">
+<line x1="570" y1="72" x2="570" y2="117" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#sd10c-arr)"/>
+<circle cx="548" cy="95" r="11" fill="#14b8a6" fill-opacity="0.9"/>
+<text x="548" y="99.5" font-size="12.5" text-anchor="middle" font-weight="700" fill="#fff">4</text>
+<text x="682" y="142" font-size="12.5" opacity="0.9" fill="currentColor">có →</text>
+<text x="682" y="160" font-size="12.5" opacity="0.9" fill="currentColor">trả ngay</text>
+</g>
+<g data-step="5">
+<line x1="570" y1="176" x2="570" y2="222" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#sd10c-arr)"/>
+<circle cx="548" cy="199" r="11" fill="#10b981" fill-opacity="0.9"/>
+<text x="548" y="203.5" font-size="12.5" text-anchor="middle" font-weight="700" fill="#fff">5</text>
+<text x="582" y="204" font-size="12.5" fill="currentColor">miss</text>
+<text x="682" y="247" font-size="12.5" opacity="0.9" fill="currentColor">không có</text>
+<text x="682" y="265" font-size="12.5" opacity="0.9" fill="currentColor">→ bỏ file</text>
+</g>
+<g data-step="6">
+<line x1="570" y1="281" x2="570" y2="327" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#sd10c-arr)"/>
+<circle cx="548" cy="304" r="11" fill="#64748b" fill-opacity="0.9"/>
+<text x="548" y="308.5" font-size="12.5" text-anchor="middle" font-weight="700" fill="#fff">6</text>
+<text x="582" y="309" font-size="12.5" fill="currentColor">có thể có (~1% sai)</text>
+</g>
+<g data-step="7">
+<line x1="570" y1="386" x2="570" y2="427" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.8" marker-end="url(#sd10c-arr)"/>
+<circle cx="548" cy="407" r="11" fill="#3b82f6" fill-opacity="0.9"/>
+<text x="548" y="411.5" font-size="12.5" text-anchor="middle" font-weight="700" fill="#fff">7</text>
+</g>
+</svg>
+<step-note data-step="1">Ghi log trước tiên vì đây là append tuần tự, rẻ, và là bản để replay khi máy mất điện làm bay RAM.</step-note>
+<step-note data-step="2">Vào memtable xong là ack client ngay: ghi RAM nhanh, còn độ bền đã có log ở bước 1 lo.</step-note>
+<step-note data-step="3">Memtable đầy ngưỡng (vd 64 MB) mới flush thành một file mới ghi một lượt từ đầu tới cuối, vẫn tuần tự. File không bao giờ sửa lại, key đã sắp xếp nên đọc được bằng binary search.</step-note>
+<step-note data-step="4">Đọc hỏi memtable trước vì nó giữ các ghi mới nhất chưa flush; có là trả, không chạm đĩa.</step-note>
+<step-note data-step="5">Miss thì hỏi bloom filter của từng SSTable (~10 bit/key, nằm hết trong RAM). Nó không bao giờ false negative, nên câu <code>chắc chắn không có</code> cho phép bỏ qua file an toàn.</step-note>
+<step-note data-step="6">Chỉ file bị báo <code>có thể có</code> mới tốn lần đọc đĩa. Khoảng 1% là false positive: đọc xong mới biết key không có.</step-note>
+<step-note data-step="7">Cùng một key có thể nằm ở nhiều SSTable từ các lần ghi khác nhau, nên phải gộp và giữ version mới nhất.</step-note>
+</step-flow>
 
 Cái hay nằm ở chỗ **mọi thao tác ghi xuống đĩa đều là ghi tuần tự**: commit log là append, flush memtable là ghi một file mới từ đầu tới cuối. Không random write, không seek — trên HDD là khác biệt 100×, trên SSD vẫn quan trọng vì tránh write amplification ở tầng flash.
 
