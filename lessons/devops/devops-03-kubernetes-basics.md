@@ -21,34 +21,13 @@ Bài này không dạy lý thuyết suông. Bạn sẽ viết manifest YAML ch�
 
 K8s đặt ra một **trạng thái mong muốn (desired state)** dạng khai báo (declarative): "tôi muốn 5 bản sao của app này luôn chạy". K8s liên tục **reconcile** — so trạng thái thực với mong muốn, và tự sửa cho khớp. Đây là tư duy cốt lõi: bạn mô tả *cái muốn có*, không phải *các bước để làm*.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Vòng lặp điều chỉnh (control loop) của Kubernetes</title>
-  <desc>Controller liên tục so sánh desired state (spec bạn khai báo) với actual state (status thực tế). Nếu lệch, controller hành động để kéo actual về khớp desired, rồi lặp lại mãi mãi.</desc>
-  <rect x="40" y="110" width="200" height="80" rx="12" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="140" y="142" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">DESIRED (spec)</text>
-  <text x="140" y="164" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.75">bạn khai báo: replicas=5</text>
-  <rect x="480" y="110" width="200" height="80" rx="12" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="580" y="142" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">ACTUAL (status)</text>
-  <text x="580" y="164" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.75">thực tế: đang có 4 Pod</text>
-  <rect x="290" y="20" width="140" height="46" rx="10" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
-  <text x="360" y="42" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">controller</text>
-  <text x="360" y="58" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">so sánh + hành động</text>
-  <defs>
-    <marker id="ar4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
-    </marker>
-  </defs>
-  <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.6">
-    <path d="M240 130 C280 90 270 70 290 55" marker-end="url(#ar4)"/>
-    <path d="M480 130 C440 90 450 70 430 55" marker-end="url(#ar4)"/>
-    <path d="M360 66 C360 110 430 150 478 150" marker-end="url(#ar4)"/>
-  </g>
-  <text x="240" y="90" font-size="10.5" fill="currentColor" opacity="0.7">đọc spec</text>
-  <text x="420" y="90" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.7">đọc status</text>
-  <text x="360" y="240" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">lệch? → tạo thêm 1 Pod để khớp</text>
-  <text x="360" y="262" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">rồi lặp lại — mãi mãi</text>
-  <path d="M360 200 v30" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.6" fill="none" stroke-dasharray="4 3"/>
+<auto-anim data-dur="8">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 335" role="img" aria-labelledby="do03-loop-t do03-loop-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="sans-serif" font-size="13">
+<title id="do03-loop-t">Pod mất và controller tạo bù</title>
+<desc id="do03-loop-d">Năm Pod khớp desired; một Pod bị mất, còn bốn; controller tạo Pod mới để trở lại năm rồi tiếp tục quan sát.</desc>
+<rect x="20" y="30" width="185" height="60" rx="6" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/><text x="112" y="55" text-anchor="middle" fill="currentColor">DESIRED (spec)</text><text x="112" y="77" text-anchor="middle" fill="currentColor">replicas = 5</text><rect x="315" y="30" width="185" height="60" rx="6" fill="#8b5cf6" fill-opacity="0.15" stroke="#8b5cf6"/><text x="407" y="55" text-anchor="middle" fill="currentColor">Controller</text><text x="407" y="77" text-anchor="middle" fill="currentColor">so sánh + tạo bù</text><defs><marker id="do03-loop-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><path marker-end="url(#do03-loop-arrow)" d="M205 60 H315" fill="none" stroke="#3b82f6" stroke-width="2"/><path marker-end="url(#do03-loop-arrow)" d="M407 90 V135" fill="none" stroke="#3b82f6" stroke-width="2"/><path marker-end="url(#do03-loop-arrow)" d="M20 200 V110 H335 V90" fill="none" stroke="#3b82f6" stroke-width="2"/><text x="25" y="230" text-anchor="start" fill="currentColor">ACTUAL (status): mỗi ô là một Pod</text><rect x="25" y="145" width="78" height="50" rx="6" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/><text x="64" y="176" text-anchor="middle" fill="currentColor">Pod</text><rect x="123" y="145" width="78" height="50" rx="6" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/><text x="162" y="176" text-anchor="middle" fill="currentColor">Pod</text><rect x="221" y="145" width="78" height="50" rx="6" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/><text x="260" y="176" text-anchor="middle" fill="currentColor">Pod</text><rect x="319" y="145" width="78" height="50" rx="6" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/><text x="358" y="176" text-anchor="middle" fill="currentColor">Pod</text><g opacity="1"><animate attributeName="opacity" values="1;0;0;0;1" keyTimes="0;0.25;0.5;0.75;1" dur="8s" calcMode="discrete" repeatCount="indefinite"/><rect x="417" y="145" width="78" height="50" rx="6" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/><text x="456" y="176" text-anchor="middle" fill="currentColor">Pod cũ</text></g><g opacity="0"><animate attributeName="opacity" values="0;0;0;1;0" keyTimes="0;0.25;0.5;0.75;1" dur="8s" calcMode="discrete" repeatCount="indefinite"/><rect x="417" y="145" width="78" height="50" rx="6" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/><text x="456" y="176" text-anchor="middle" fill="currentColor">Pod mới</text></g><text x="25" y="280" text-anchor="start" fill="currentColor">5 khớp</text><text x="150" y="280" text-anchor="start" fill="currentColor">4 lệch</text><text x="275" y="280" text-anchor="start" fill="currentColor">tạo bù</text><text x="400" y="280" text-anchor="start" fill="currentColor">5 khớp</text><path d="M25 255 H495" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="25" cy="255" r="5" fill="#f59e0b"><animate attributeName="cx" values="25;150;275;400;25" keyTimes="0;0.25;0.5;0.75;1" dur="8s" calcMode="discrete" repeatCount="indefinite"/></circle><text x="25" y="315" text-anchor="start" fill="currentColor">Một chu kỳ minh hoạ; không phải thời gian thực.</text>
 </svg>
+</auto-anim>
 
 > Ghi nhớ: Kubernetes là một **vòng lặp điều chỉnh (control loop)**, không phải bộ script chạy một lần. Bạn khai báo desired state, K8s lo phần còn lại — mãi mãi.
 

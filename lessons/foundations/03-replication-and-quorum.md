@@ -271,61 +271,118 @@ Aurora lưu **6 copies / 3 AZ** (2 copies/AZ). Write quorum **4/6**, read quorum
 - Mất **1 AZ + 1 copy** = mất 3 → còn 3 → **write fail** (cần 4), nhưng **read vẫn OK** (cần 3).
 - → Aurora chịu được **AZ failure mà không mất availability ghi**, và **AZ + 1 disk failure** mà không mất khả năng đọc.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Aurora N=6, W=4, R=3 qua 3 AZ và khả năng chịu lỗi</title>
-  <desc>Aurora lưu 6 copy trên 3 AZ, mỗi AZ 2 copy. Kịch bản mất 1 AZ còn 4 copy nên vẫn ghi được khi cần W=4. Kịch bản mất 1 AZ cộng 1 copy còn 3 copy nên không ghi được nhưng vẫn đọc được khi cần R=3.</desc>
-  <text x="360" y="24" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Aurora: 6 copy / 3 AZ — W=4, R=3</text>
-  <g font-size="10.5" text-anchor="middle">
-    <text x="124" y="58" font-size="12.5" font-weight="700" fill="currentColor">Bình thường</text>
-    <text x="124" y="74" fill="#10b981">6/6 → write &amp; read OK</text>
-    <g>
-      <rect x="20" y="84" width="208" height="62" rx="8" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
-      <text x="40" y="100" font-size="9.5" text-anchor="start" fill="currentColor" opacity="0.7">AZ-a</text>
-      <circle cx="80" cy="118" r="13" fill="#10b981" fill-opacity="0.85"/><text x="80" y="122" fill="#fff" font-weight="700">✓</text>
-      <circle cx="116" cy="118" r="13" fill="#10b981" fill-opacity="0.85"/><text x="116" y="122" fill="#fff" font-weight="700">✓</text>
-    </g>
-    <g>
-      <rect x="20" y="84" width="208" height="62" rx="8" fill="none"/>
-      <text x="148" y="100" font-size="9.5" fill="currentColor" opacity="0.7">AZ-b</text>
-      <circle cx="148" cy="118" r="13" fill="#10b981" fill-opacity="0.85"/><text x="148" y="122" fill="#fff" font-weight="700">✓</text>
-      <circle cx="184" cy="118" r="13" fill="#10b981" fill-opacity="0.85"/><text x="184" y="122" fill="#fff" font-weight="700">✓</text>
-    </g>
-    <text x="124" y="166" font-size="9.5" fill="currentColor" opacity="0.6">(AZ-c: 2 copy nữa, tổng 6)</text>
-  </g>
-  <g font-size="10.5" text-anchor="middle">
-    <text x="360" y="200" font-size="12.5" font-weight="700" fill="currentColor">Mất 1 AZ (−2 copy)</text>
-    <rect x="252" y="210" width="216" height="76" rx="8" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
-    <g>
-      <text x="300" y="226" font-size="9" fill="currentColor" opacity="0.6">AZ chết</text>
-      <circle cx="288" cy="248" r="12" fill="currentColor" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.6" stroke-dasharray="3 2"/><text x="288" y="252" fill="#ef4444" font-weight="700">✗</text>
-      <circle cx="320" cy="248" r="12" fill="currentColor" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.6" stroke-dasharray="3 2"/><text x="320" y="252" fill="#ef4444" font-weight="700">✗</text>
-    </g>
-    <g>
-      <circle cx="364" cy="248" r="12" fill="#10b981" fill-opacity="0.85"/><text x="364" y="252" fill="#fff" font-weight="700">✓</text>
-      <circle cx="392" cy="248" r="12" fill="#10b981" fill-opacity="0.85"/><text x="392" y="252" fill="#fff" font-weight="700">✓</text>
-      <circle cx="420" cy="248" r="12" fill="#10b981" fill-opacity="0.85"/><text x="420" y="252" fill="#fff" font-weight="700">✓</text>
-      <circle cx="448" cy="248" r="12" fill="#10b981" fill-opacity="0.85"/><text x="448" y="252" fill="#fff" font-weight="700">✓</text>
-    </g>
-    <text x="360" y="278" font-size="10.5" fill="#10b981">còn 4/6 ≥ W=4 → vẫn GHI được ✓</text>
-  </g>
-  <g font-size="10.5" text-anchor="middle">
-    <text x="596" y="58" font-size="12.5" font-weight="700" fill="currentColor">Mất AZ + 1 copy (−3)</text>
-    <rect x="488" y="68" width="216" height="76" rx="8" fill="#ef4444" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
-    <g>
-      <circle cx="520" cy="106" r="12" fill="currentColor" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.6" stroke-dasharray="3 2"/><text x="520" y="110" fill="#ef4444" font-weight="700">✗</text>
-      <circle cx="548" cy="106" r="12" fill="currentColor" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.6" stroke-dasharray="3 2"/><text x="548" y="110" fill="#ef4444" font-weight="700">✗</text>
-      <circle cx="576" cy="106" r="12" fill="currentColor" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.6" stroke-dasharray="3 2"/><text x="576" y="110" fill="#ef4444" font-weight="700">✗</text>
-    </g>
-    <g>
-      <circle cx="612" cy="106" r="12" fill="#10b981" fill-opacity="0.85"/><text x="612" y="110" fill="#fff" font-weight="700">✓</text>
-      <circle cx="640" cy="106" r="12" fill="#10b981" fill-opacity="0.85"/><text x="640" y="110" fill="#fff" font-weight="700">✓</text>
-      <circle cx="668" cy="106" r="12" fill="#10b981" fill-opacity="0.85"/><text x="668" y="110" fill="#fff" font-weight="700">✓</text>
-    </g>
-    <text x="596" y="166" font-size="10.5" fill="#f59e0b">còn 3/6 &lt; W=4 → KHÔNG ghi</text>
-    <text x="596" y="183" font-size="10.5" fill="#10b981">nhưng 3 ≥ R=3 → vẫn ĐỌC được ✓</text>
-  </g>
-  <text x="360" y="312" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">4+3=7 &gt; 6 → strong consistency · mất ≥4 copy mới mất data (11 nines durability)</text>
+<ab-toggle data-labels="Bình thường|Mất 1 AZ|AZ + 1 copy">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" role="img" aria-labelledby="fd03-aur-0-t fd03-aur-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="fd03-aur-0-t">Quorum khi còn 6 copy</title>
+<desc id="fd03-aur-0-d">Quorum khi còn 6 copy</desc>
+<text x="260" y="25" font-size="14" text-anchor="middle" fill="currentColor">Aurora • 6 copy / 3 AZ • W=4, R=3</text>
+<rect x="25" y="50" width="130" height="125" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="90" y="76" font-size="14" text-anchor="middle" fill="currentColor">AZ-a</text>
+<circle cx="65" cy="120" r="20" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="65" y="125" font-size="14" text-anchor="middle" fill="currentColor">✓</text>
+<circle cx="115" cy="120" r="20" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="115" y="125" font-size="14" text-anchor="middle" fill="currentColor">✓</text>
+<rect x="195" y="50" width="130" height="125" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="260" y="76" font-size="14" text-anchor="middle" fill="currentColor">AZ-b</text>
+<circle cx="235" cy="120" r="20" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="235" y="125" font-size="14" text-anchor="middle" fill="currentColor">✓</text>
+<circle cx="285" cy="120" r="20" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="285" y="125" font-size="14" text-anchor="middle" fill="currentColor">✓</text>
+<rect x="365" y="50" width="130" height="125" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="430" y="76" font-size="14" text-anchor="middle" fill="currentColor">AZ-c</text>
+<circle cx="405" cy="120" r="20" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="405" y="125" font-size="14" text-anchor="middle" fill="currentColor">✓</text>
+<circle cx="455" cy="120" r="20" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="455" y="125" font-size="14" text-anchor="middle" fill="currentColor">✓</text>
+<text x="45" y="212" font-size="13" text-anchor="end" fill="currentColor">Còn</text>
+<rect x="65" y="190" width="60" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<rect x="130" y="190" width="60" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<rect x="195" y="190" width="60" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<rect x="260" y="190" width="60" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<rect x="325" y="190" width="60" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<rect x="390" y="190" width="60" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<line x1="257" y1="185" x2="257" y2="245" stroke="#3b82f6" stroke-width="2" />
+<text x="257" y="264" font-size="14" text-anchor="middle" fill="currentColor">R=3</text>
+<line x1="322" y1="185" x2="322" y2="225" stroke="#8b5cf6" stroke-width="2" />
+<text x="322" y="242" font-size="14" text-anchor="middle" fill="currentColor">W=4</text>
+<text x="260" y="296" font-size="14" text-anchor="middle" fill="currentColor">6/6 copy: đọc OK • ghi OK</text>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" role="img" aria-labelledby="fd03-aur-1-t fd03-aur-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="fd03-aur-1-t">Quorum khi còn 4 copy</title>
+<desc id="fd03-aur-1-d">Quorum khi còn 4 copy</desc>
+<text x="260" y="25" font-size="14" text-anchor="middle" fill="currentColor">Aurora • 6 copy / 3 AZ • W=4, R=3</text>
+<rect x="25" y="50" width="130" height="125" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="90" y="76" font-size="14" text-anchor="middle" fill="currentColor">AZ-a</text>
+<circle cx="65" cy="120" r="20" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<text x="65" y="125" font-size="14" text-anchor="middle" fill="currentColor">✗</text>
+<circle cx="115" cy="120" r="20" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<text x="115" y="125" font-size="14" text-anchor="middle" fill="currentColor">✗</text>
+<rect x="195" y="50" width="130" height="125" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="260" y="76" font-size="14" text-anchor="middle" fill="currentColor">AZ-b</text>
+<circle cx="235" cy="120" r="20" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="235" y="125" font-size="14" text-anchor="middle" fill="currentColor">✓</text>
+<circle cx="285" cy="120" r="20" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="285" y="125" font-size="14" text-anchor="middle" fill="currentColor">✓</text>
+<rect x="365" y="50" width="130" height="125" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="430" y="76" font-size="14" text-anchor="middle" fill="currentColor">AZ-c</text>
+<circle cx="405" cy="120" r="20" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="405" y="125" font-size="14" text-anchor="middle" fill="currentColor">✓</text>
+<circle cx="455" cy="120" r="20" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="455" y="125" font-size="14" text-anchor="middle" fill="currentColor">✓</text>
+<text x="45" y="212" font-size="13" text-anchor="end" fill="currentColor">Còn</text>
+<rect x="65" y="190" width="60" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<rect x="130" y="190" width="60" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<rect x="195" y="190" width="60" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<rect x="260" y="190" width="60" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<rect x="325" y="190" width="60" height="30" rx="7" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" />
+<rect x="390" y="190" width="60" height="30" rx="7" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" />
+<line x1="257" y1="185" x2="257" y2="245" stroke="#3b82f6" stroke-width="2" />
+<text x="257" y="264" font-size="14" text-anchor="middle" fill="currentColor">R=3</text>
+<line x1="322" y1="185" x2="322" y2="225" stroke="#8b5cf6" stroke-width="2" />
+<text x="322" y="242" font-size="14" text-anchor="middle" fill="currentColor">W=4</text>
+<text x="260" y="296" font-size="14" text-anchor="middle" fill="currentColor">4/6 copy: đọc OK • ghi OK</text>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" role="img" aria-labelledby="fd03-aur-2-t fd03-aur-2-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="fd03-aur-2-t">Quorum khi còn 3 copy</title>
+<desc id="fd03-aur-2-d">Quorum khi còn 3 copy</desc>
+<text x="260" y="25" font-size="14" text-anchor="middle" fill="currentColor">Aurora • 6 copy / 3 AZ • W=4, R=3</text>
+<rect x="25" y="50" width="130" height="125" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="90" y="76" font-size="14" text-anchor="middle" fill="currentColor">AZ-a</text>
+<circle cx="65" cy="120" r="20" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<text x="65" y="125" font-size="14" text-anchor="middle" fill="currentColor">✗</text>
+<circle cx="115" cy="120" r="20" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<text x="115" y="125" font-size="14" text-anchor="middle" fill="currentColor">✗</text>
+<rect x="195" y="50" width="130" height="125" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="260" y="76" font-size="14" text-anchor="middle" fill="currentColor">AZ-b</text>
+<circle cx="235" cy="120" r="20" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<text x="235" y="125" font-size="14" text-anchor="middle" fill="currentColor">✗</text>
+<circle cx="285" cy="120" r="20" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="285" y="125" font-size="14" text-anchor="middle" fill="currentColor">✓</text>
+<rect x="365" y="50" width="130" height="125" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="430" y="76" font-size="14" text-anchor="middle" fill="currentColor">AZ-c</text>
+<circle cx="405" cy="120" r="20" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="405" y="125" font-size="14" text-anchor="middle" fill="currentColor">✓</text>
+<circle cx="455" cy="120" r="20" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="455" y="125" font-size="14" text-anchor="middle" fill="currentColor">✓</text>
+<text x="45" y="212" font-size="13" text-anchor="end" fill="currentColor">Còn</text>
+<rect x="65" y="190" width="60" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<rect x="130" y="190" width="60" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<rect x="195" y="190" width="60" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<rect x="260" y="190" width="60" height="30" rx="7" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" />
+<rect x="325" y="190" width="60" height="30" rx="7" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" />
+<rect x="390" y="190" width="60" height="30" rx="7" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" />
+<line x1="257" y1="185" x2="257" y2="245" stroke="#3b82f6" stroke-width="2" />
+<text x="257" y="264" font-size="14" text-anchor="middle" fill="currentColor">R=3</text>
+<line x1="322" y1="185" x2="322" y2="225" stroke="#8b5cf6" stroke-width="2" />
+<text x="322" y="242" font-size="14" text-anchor="middle" fill="currentColor">W=4</text>
+<text x="260" y="296" font-size="14" text-anchor="middle" fill="currentColor">3/6 copy: đọc OK • ghi fail</text>
+</svg>
+<ab-note>Sáu copy vượt cả hai ngưỡng quorum; 4 + 3 > 6.</ab-note>
+<ab-note>Hai copy trong cùng AZ mất: bốn copy còn lại đủ nhận write.</ab-note>
+<ab-note>Ba copy còn lại đủ read quorum nhưng không đủ write quorum.</ab-note>
+</ab-toggle>
+
+Mất ≥4 copy mới mất data (11 nines durability).
 
 > Đây là lý do AWS quảng cáo Aurora "11 nines of durability" — phải mất ≥4 copies cùng lúc (gần như impossible) mới mất data.
 

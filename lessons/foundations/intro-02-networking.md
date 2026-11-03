@@ -76,6 +76,49 @@ Analogy: bạn ở phòng 1502 trong chung cư. Khi gửi thư ra ngoài, **lễ
                             203.0.113.7  ← cả nhà "đội chung" 1 IP
 ```
 
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 710 430" role="img" aria-labelledby="fdnet-nat-t fdnet-nat-d" style="width:100%;max-width:710px;height:auto;display:block;margin:1.25rem auto">
+<title id="fdnet-nat-t">NAT dùng địa chỉ và port để đưa gói hồi âm về đúng laptop</title>
+<desc id="fdnet-nat-d">NAT dùng địa chỉ và port để đưa gói hồi âm về đúng laptop</desc>
+<defs><marker id="fdnet-nat-a" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="currentColor"/></marker></defs>
+<rect x="30" y="15" width="130" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="95" y="40" font-size="14" text-anchor="middle" fill="currentColor">Laptop</text>
+<line x1="95" y1="53" x2="95" y2="415" stroke="currentColor" stroke-width="2" stroke-dasharray="4 5"/>
+<rect x="290" y="15" width="130" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="355" y="40" font-size="14" text-anchor="middle" fill="currentColor">Router NAT</text>
+<line x1="355" y1="53" x2="355" y2="415" stroke="currentColor" stroke-width="2" stroke-dasharray="4 5"/>
+<rect x="545" y="15" width="130" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="610" y="40" font-size="14" text-anchor="middle" fill="currentColor">Internet</text>
+<line x1="610" y1="53" x2="610" y2="415" stroke="currentColor" stroke-width="2" stroke-dasharray="4 5"/>
+<text x="95" y="77" font-size="13" text-anchor="middle" fill="currentColor">192.168.1.10</text>
+<text x="355" y="77" font-size="13" text-anchor="middle" fill="currentColor">203.0.113.7</text>
+<g data-step="1">
+<path d="M95 115 H350" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fdnet-nat-a)"/>
+<text x="220" y="104" font-size="13" text-anchor="middle" fill="currentColor">Đi: .10:51000 → web:443</text>
+</g>
+<g data-step="2">
+<rect x="220" y="143" width="270" height="72" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="355" y="165" font-size="14" text-anchor="middle" fill="currentColor">Bảng dịch kết nối</text>
+<text x="355" y="187" font-size="13" text-anchor="middle" fill="currentColor">.10:51000 ↔ public:62000</text>
+<text x="355" y="205" font-size="13" text-anchor="middle" fill="currentColor">đích: web:443</text>
+<path d="M355 248 H605" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fdnet-nat-a)"/>
+<text x="480" y="237" font-size="13" text-anchor="middle" fill="currentColor">Nguồn: public:62000</text>
+</g>
+<g data-step="3">
+<path d="M610 295 H360" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fdnet-nat-a)"/>
+<text x="485" y="284" font-size="13" text-anchor="middle" fill="currentColor">Về: web:443 → public:62000</text>
+</g>
+<g data-step="4">
+<path d="M355 370 H100" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fdnet-nat-a)"/>
+<text x="220" y="359" font-size="13" text-anchor="middle" fill="currentColor">Tra bảng → .10:51000</text>
+</g>
+</svg>
+<step-note data-step="1">Laptop chủ động mở kết nối; port nguồn phân biệt kết nối này với các thiết bị dùng chung public IP.</step-note>
+<step-note data-step="2">Ví dụ NAT kèm dịch port lưu ánh xạ trước khi chuyển gói ra Internet; phone .11 và TV .12 dùng các ánh xạ riêng.</step-note>
+<step-note data-step="3">Gói hồi âm chỉ biết public IP và port đã dịch, chưa biết địa chỉ private của laptop.</step-note>
+<step-note data-step="4">Router tra ánh xạ để đổi đích về laptop. Không có ánh xạ phù hợp thì không thể tự suy ra thiết bị nhận.</step-note>
+</step-flow>
+
 Hệ quả quan trọng: NAT cho phép **bên trong chủ động gọi ra ngoài**, nhưng **bên ngoài không thể tự gọi vào** một máy private (lễ tân không biết chuyển cho ai nếu không có sổ ghi trước). Đây vừa là hạn chế, vừa là một lớp bảo vệ tự nhiên.
 
 > Ghi nhớ: Private IP = không ra Internet trực tiếp. NAT = bên trong gọi ra được, bên ngoài không gọi vào được. Mô hình "server private + NAT để cập nhật phần mềm" là kiến trúc chuẩn mực trong cloud.

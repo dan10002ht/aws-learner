@@ -282,6 +282,17 @@ B → (trả riêng cho A):  "192.168.1.20 là a4:83:e7:1c:9b:02"       (ARP rep
 A lưu cặp (IP → MAC) vào ARP cache để lần sau khỏi hỏi lại.
 ```
 
+<step-flow>
+<svg viewBox="0 0 520 388" role="img" aria-labelledby="engosi-arp-t engosi-arp-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="engosi-arp-t">ARP broadcast và unicast</title>
+<desc id="engosi-arp-d">A gửi request qua switch đến B và C trong LAN; chỉ B trả lời riêng A; A lưu ánh xạ IP MAC vào cache.</desc>
+<defs><marker id="engosi-arp-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs><text x="16" y="24" font-size="14" text-anchor="start" fill="currentColor">ARP trong cùng một LAN</text><rect x="20" y="70" width="150" height="44" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="95" y="98" font-size="14" text-anchor="middle" fill="currentColor">Máy A</text><rect x="330" y="70" width="150" height="44" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="405" y="98" font-size="14" text-anchor="middle" fill="currentColor">Máy B</text><rect x="330" y="212" width="150" height="44" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="405" y="240" font-size="14" text-anchor="middle" fill="currentColor">Máy C</text><rect x="200" y="140" width="110" height="42" rx="4" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="255" y="167" font-size="14" text-anchor="middle" fill="currentColor">Switch</text><text x="405" y="135" font-size="13" text-anchor="middle" fill="currentColor">192.168.1.20</text><g data-step="1"><path d="M170 92 L250 140" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#engosi-arp-a)"/><path d="M280 140 L330 92" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#engosi-arp-a)"/><path d="M280 182 L330 234" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#engosi-arp-a)"/><text x="16" y="49" font-size="13" text-anchor="start" fill="currentColor">Request: ai có 192.168.1.20?</text></g><g data-step="2"><path d="M330 100 Q255 310 170 106" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#engosi-arp-a)"/><text x="16" y="290" font-size="13" text-anchor="start" fill="currentColor">Reply B → A: a4:83:e7:1c:9b:02</text></g><g data-step="3"><rect x="20" y="315" width="474" height="52" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="34" y="337" font-size="13" text-anchor="start" fill="currentColor">ARP cache của A</text><text x="34" y="357" font-size="13" text-anchor="start" fill="currentColor">192.168.1.20 → a4:83:e7:1c:9b:02</text></g>
+</svg>
+<step-note data-step="1">Chưa biết MAC đích nên A phải broadcast trong LAN; switch chuyển request ra các cổng còn lại.</step-note>
+<step-note data-step="2">B sở hữu IP cần tìm và trả lời unicast về A; C nhận request nhưng không phải máy cần trả lời.</step-note>
+<step-note data-step="3">Lưu ánh xạ giúp lần gửi tiếp theo không cần broadcast lại khi entry còn hợp lệ.</step-note>
+</step-flow>
+
 Xem ARP cache trên máy bạn:
 
 ```bash

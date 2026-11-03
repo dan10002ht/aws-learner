@@ -407,55 +407,20 @@ Total:       %{time_total}s\n'
 - NLB hoạt động ở tầng TCP/UDP: có thể **passthrough** TLS nguyên vẹn đến backend (backend tự terminate, giữ end-to-end encryption), hoặc terminate TLS tại NLB với cert ACM.
 - **Bẫy đề thi**: cần client IP thật + hiệu năng cực cao + giao thức không phải HTTP (game UDP, MQTT, database) → chọn **NLB**. Cần routing theo path/header → **ALB**. UDP listener → chỉ NLB.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>ALB terminate TLS (L7) so với NLB passthrough TLS (L4)</title>
-  <desc>Trên: ALB tầng 7 giải mã TLS để đọc HTTP và routing rồi mã hoá lại tới target — TLS đứt làm hai chặng. Dưới: NLB tầng 4 passthrough TLS nguyên vẹn, backend tự giải mã — mã hoá end-to-end client tới target.</desc>
-  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Điểm mã hoá / giải mã: ALB vs NLB</text>
-  <g>
-    <text x="16" y="48" font-size="12" font-weight="700" fill="currentColor">ALB (L7) — terminate TLS</text>
-    <rect x="20" y="58" width="120" height="50" rx="9" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="80" y="80" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
-    <text x="80" y="96" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">gửi HTTPS</text>
-    <rect x="300" y="52" width="150" height="62" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="375" y="73" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">ALB</text>
-    <text x="375" y="89" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.78">giải mã → đọc HTTP</text>
-    <text x="375" y="102" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.78">routing path/host → mã hoá lại</text>
-    <rect x="600" y="58" width="100" height="50" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="650" y="80" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Target</text>
-    <text x="650" y="96" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">backend</text>
-    <g stroke="currentColor" stroke-width="1.6" fill="none">
-      <path d="M140 83 L296 83" marker-end="url(#l1)"/>
-      <path d="M450 83 L596 83" marker-end="url(#l1)"/>
-    </g>
-    <text x="218" y="76" font-size="9" text-anchor="middle" fill="currentColor">TLS chặng 1</text>
-    <text x="218" y="129" font-size="9" text-anchor="middle" fill="#f59e0b">cert ACM ở ALB</text>
-    <text x="523" y="76" font-size="9" text-anchor="middle" fill="currentColor">TLS chặng 2 (re-encrypt)</text>
-    <text x="375" y="132" font-size="9" text-anchor="middle" fill="#ef4444">● TLS đứt tại ALB → ALB thấy nội dung HTTP</text>
-  </g>
-  <line x1="20" y1="158" x2="700" y2="158" stroke="currentColor" stroke-opacity="0.18"/>
-  <g>
-    <text x="16" y="186" font-size="12" font-weight="700" fill="currentColor">NLB (L4) — passthrough TLS</text>
-    <rect x="20" y="198" width="120" height="50" rx="9" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="80" y="220" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
-    <text x="80" y="236" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">gửi HTTPS</text>
-    <rect x="300" y="198" width="150" height="50" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="375" y="219" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">NLB</text>
-    <text x="375" y="235" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.78">chuyển byte L4, KHÔNG giải mã</text>
-    <rect x="600" y="198" width="100" height="50" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="650" y="216" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Target</text>
-    <text x="650" y="232" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">tự terminate TLS</text>
-    <g stroke="#10b981" stroke-width="2.2" fill="none">
-      <path d="M140 223 L296 223" marker-end="url(#l2)"/>
-      <path d="M450 223 L596 223" marker-end="url(#l2)"/>
-    </g>
-    <text x="375" y="268" font-size="9.5" text-anchor="middle" fill="#10b981">● TLS nguyên vẹn end-to-end: client → target, NLB không đọc được nội dung</text>
-  </g>
-  <text x="360" y="300" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">Terminate = đọc được HTTP (routing/WAF) nhưng đứt mã hoá; passthrough = end-to-end nhưng LB mù nội dung.</text>
-  <defs>
-    <marker id="l1" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker>
-    <marker id="l2" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#10b981"/></marker>
-  </defs>
+<ab-toggle data-labels="ALB terminate|NLB passthrough">
+<svg viewBox="0 0 520 288" role="img" aria-labelledby="eng03-alb-t eng03-alb-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="eng03-alb-t">TLS qua ALB</title>
+<desc id="eng03-alb-d">Cùng vị trí client load balancer target; dải TLS chia hai tại ALB hoặc liên tục qua NLB tới target.</desc>
+<defs><marker id="eng03-alb-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs><text x="16" y="26" font-size="14" text-anchor="start" fill="currentColor">Điểm giải mã TLS: vị trí đường mã hoá dừng</text><rect x="16" y="68" width="112" height="44" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="72" y="96" font-size="14" text-anchor="middle" fill="currentColor">Client</text><rect x="204" y="68" width="112" height="44" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="260" y="96" font-size="14" text-anchor="middle" fill="currentColor">ALB (L7)</text><rect x="392" y="68" width="112" height="44" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="448" y="96" font-size="14" text-anchor="middle" fill="currentColor">Target</text><text x="72" y="137" font-size="13" text-anchor="middle" fill="currentColor">HTTPS</text><text x="448" y="137" font-size="13" text-anchor="middle" fill="currentColor">backend</text><path d="M128 90 L200 90" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#eng03-alb-a)"/><path d="M316 90 L388 90" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#eng03-alb-a)"/><rect x="16" y="168" width="244" height="32" rx="4" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><rect x="268" y="168" width="236" height="32" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="138" y="190" font-size="13" text-anchor="middle" fill="currentColor">TLS chặng 1</text><text x="386" y="190" font-size="13" text-anchor="middle" fill="currentColor">TLS chặng 2</text><path d="M260 153 L260 215" fill="none" stroke="#f43f5e" stroke-width="1.5"/><text x="260" y="240" font-size="14" text-anchor="middle" fill="currentColor">Giải mã tại ALB · cert ACM</text><text x="260" y="265" font-size="13" text-anchor="middle" fill="currentColor">Đọc HTTP → routing path/host → mã hoá lại</text>
 </svg>
+<svg viewBox="0 0 520 288" role="img" aria-labelledby="eng03-nlb-t eng03-nlb-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="eng03-nlb-t">TLS qua NLB</title>
+<desc id="eng03-nlb-d">Cùng vị trí client load balancer target; dải TLS chia hai tại ALB hoặc liên tục qua NLB tới target.</desc>
+<defs><marker id="eng03-nlb-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs><text x="16" y="26" font-size="14" text-anchor="start" fill="currentColor">Điểm giải mã TLS: vị trí đường mã hoá dừng</text><rect x="16" y="68" width="112" height="44" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="72" y="96" font-size="14" text-anchor="middle" fill="currentColor">Client</text><rect x="204" y="68" width="112" height="44" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="260" y="96" font-size="14" text-anchor="middle" fill="currentColor">NLB (L4)</text><rect x="392" y="68" width="112" height="44" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="448" y="96" font-size="14" text-anchor="middle" fill="currentColor">Target</text><text x="72" y="137" font-size="13" text-anchor="middle" fill="currentColor">HTTPS</text><text x="448" y="137" font-size="13" text-anchor="middle" fill="currentColor">backend</text><path d="M128 90 L200 90" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#eng03-nlb-a)"/><path d="M316 90 L388 90" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#eng03-nlb-a)"/><rect x="16" y="168" width="488" height="32" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="260" y="190" font-size="13" text-anchor="middle" fill="currentColor">TLS end-to-end: client → target</text><path d="M504 153 L504 215" fill="none" stroke="#f43f5e" stroke-width="1.5"/><text x="260" y="240" font-size="14" text-anchor="middle" fill="currentColor">Target tự terminate TLS</text><text x="260" y="265" font-size="13" text-anchor="middle" fill="currentColor">NLB chỉ chuyển byte; không đọc nội dung</text>
+</svg>
+<ab-note>ALB giải mã để đọc HTTP, routing theo path/host và tích hợp WAF; ví dụ này mã hoá lại tới target nên có hai chặng TLS riêng.</ab-note>
+<ab-note>NLB tầng 4 chuyển nguyên byte TLS tới backend: mã hoá end-to-end, nhưng load balancer không đọc được HTTP để routing theo nội dung.</ab-note>
+</ab-toggle>
 
 ### CloudFront + TLS
 - Edge của CloudFront hỗ trợ **TLS 1.3 và HTTP/3 (QUIC)** — bật HTTP/3 chỉ là một checkbox, giảm độ trễ kết nối cho user xa (đúng bài toán 1-RTT/0-RTT ở phần 4–5).

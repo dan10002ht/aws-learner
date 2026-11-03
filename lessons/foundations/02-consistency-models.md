@@ -18,34 +18,52 @@ Hai vợ chồng dùng chung một app ghi chi tiêu, app đồng bộ qua cloud
 
 Từ trên xuống dưới: **độ chính xác giảm dần, latency và availability tăng dần**. Không có "tốt nhất" — chỉ có "phù hợp use case".
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Timeline strong vs eventual consistency — vợ ghi, chồng đọc sau 0.1 giây</title>
-  <desc>Lúc t0 vợ ghi "mua rau 50k". Với strong consistency chồng đọc lúc t0+0.1s thấy ngay 50k; với eventual consistency chồng thấy giá trị cũ rồi vài giây sau replica mới hội tụ về 50k.</desc>
-  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Vợ ghi "mua rau 50k" lúc t0 — chồng đọc lúc t0+0.1s</text>
-  <line x1="120" y1="44" x2="120" y2="220" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-  <text x="120" y="40" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">t0 (ghi)</text>
-  <line x1="300" y1="44" x2="300" y2="220" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-  <text x="300" y="40" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">t0+0.1s (đọc)</text>
-  <rect x="16" y="56" width="688" height="64" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.18"/>
-  <text x="28" y="80" font-size="12.5" font-weight="700" fill="currentColor">Strong</text>
-  <rect x="100" y="68" width="40" height="22" rx="6" fill="#10b981" fill-opacity="0.9"/>
-  <text x="120" y="83" font-size="11" text-anchor="middle" fill="#fff">50k</text>
-  <line x1="140" y1="100" x2="296" y2="100" stroke="currentColor" stroke-opacity="0.5"/>
-  <rect x="280" y="68" width="40" height="22" rx="6" fill="#10b981" fill-opacity="0.9"/>
-  <text x="300" y="83" font-size="11" text-anchor="middle" fill="#fff">50k</text>
-  <text x="332" y="83" font-size="11" fill="currentColor" opacity="0.8">chồng thấy ngay 50k ✓</text>
-  <rect x="16" y="132" width="688" height="92" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.18"/>
-  <text x="28" y="156" font-size="12.5" font-weight="700" fill="currentColor">Eventual</text>
-  <rect x="100" y="144" width="40" height="22" rx="6" fill="#10b981" fill-opacity="0.9"/>
-  <text x="120" y="159" font-size="11" text-anchor="middle" fill="#fff">50k</text>
-  <rect x="280" y="144" width="48" height="22" rx="6" fill="#f59e0b" fill-opacity="0.9"/>
-  <text x="304" y="159" font-size="11" text-anchor="middle" fill="#fff">cũ</text>
-  <text x="340" y="159" font-size="11" fill="currentColor" opacity="0.8">chồng thấy giá trị cũ ✗</text>
-  <line x1="140" y1="176" x2="520" y2="176" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="3 3"/>
-  <rect x="500" y="186" width="40" height="22" rx="6" fill="#10b981" fill-opacity="0.9"/>
-  <text x="520" y="201" font-size="11" text-anchor="middle" fill="#fff">50k</text>
-  <text x="552" y="201" font-size="11" fill="currentColor" opacity="0.8">vài giây sau mới hội tụ</text>
+<ab-toggle data-labels="Strong|Eventual">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-labelledby="fd02-time-0-t fd02-time-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="fd02-time-0-t">Giá trị đọc theo thời gian: strong</title>
+<desc id="fd02-time-0-d">Giá trị đọc theo thời gian: strong</desc>
+<text x="260" y="24" font-size="14" text-anchor="middle" fill="currentColor">Vợ ghi “mua rau 50k”; chồng đọc sau 0.1s</text>
+<text x="60" y="58" font-size="14" text-anchor="middle" fill="currentColor">t0: ghi</text>
+<text x="245" y="58" font-size="14" text-anchor="middle" fill="currentColor">+0.1s: đọc</text>
+<text x="435" y="58" font-size="14" text-anchor="middle" fill="currentColor">vài giây sau</text>
+<line x1="60" y1="80" x2="470" y2="80" stroke="currentColor" stroke-width="2" />
+<rect x="60" y="100" width="375" height="44" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="50" y="128" font-size="13" text-anchor="end" fill="currentColor">50k</text>
+<text x="50" y="197" font-size="13" text-anchor="end" fill="currentColor">cũ</text>
+<line x1="60" y1="200" x2="470" y2="200" stroke="currentColor" stroke-width="2" />
+<line x1="60" y1="80" x2="60" y2="220" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
+<line x1="245" y1="80" x2="245" y2="220" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
+<line x1="435" y1="80" x2="435" y2="220" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
+<line x1="60" y1="123" x2="470" y2="123" stroke="#10b981" stroke-width="2" />
+<text x="260" y="265" font-size="14" text-anchor="middle" fill="currentColor">Đọc sau write hoàn tất → thấy 50k</text>
+<circle cx="245" cy="123" r="6" fill="currentColor"/>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-labelledby="fd02-time-1-t fd02-time-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="fd02-time-1-t">Giá trị đọc theo thời gian: eventual</title>
+<desc id="fd02-time-1-d">Giá trị đọc theo thời gian: eventual</desc>
+<text x="260" y="24" font-size="14" text-anchor="middle" fill="currentColor">Vợ ghi “mua rau 50k”; chồng đọc sau 0.1s</text>
+<text x="60" y="58" font-size="14" text-anchor="middle" fill="currentColor">t0: ghi</text>
+<text x="245" y="58" font-size="14" text-anchor="middle" fill="currentColor">+0.1s: đọc</text>
+<text x="435" y="58" font-size="14" text-anchor="middle" fill="currentColor">vài giây sau</text>
+<line x1="60" y1="80" x2="470" y2="80" stroke="currentColor" stroke-width="2" />
+<rect x="60" y="100" width="375" height="44" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="50" y="128" font-size="13" text-anchor="end" fill="currentColor">50k</text>
+<text x="50" y="197" font-size="13" text-anchor="end" fill="currentColor">cũ</text>
+<line x1="60" y1="200" x2="470" y2="200" stroke="currentColor" stroke-width="2" />
+<line x1="60" y1="80" x2="60" y2="220" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
+<line x1="245" y1="80" x2="245" y2="220" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
+<line x1="435" y1="80" x2="435" y2="220" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
+<rect x="60" y="158" width="375" height="52" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<line x1="60" y1="192" x2="435" y2="192" stroke="#f59e0b" stroke-width="2" />
+<line x1="435" y1="192" x2="435" y2="123" stroke="#10b981" stroke-width="2" />
+<line x1="435" y1="123" x2="470" y2="123" stroke="#10b981" stroke-width="2" />
+<text x="260" y="245" font-size="14" text-anchor="middle" fill="currentColor">Vùng cam: có thể đọc giá trị cũ</text>
+<text x="260" y="272" font-size="14" text-anchor="middle" fill="currentColor">Hội tụ về 50k nếu không ghi thêm</text>
+<circle cx="245" cy="192" r="6" fill="currentColor"/>
+</svg>
+<ab-note>Mốc t0 biểu diễn write đã hoàn tất; độ cao của đường là giá trị người đọc thấy.</ab-note>
+<ab-note>Độ rộng vùng cam minh họa cửa sổ dữ liệu cũ, không phải cam kết về thời gian hội tụ.</ab-note>
+</ab-toggle>
 
 ---
 

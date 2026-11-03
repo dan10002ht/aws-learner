@@ -85,6 +85,81 @@ Replication (bài 03) **không** giải quyết 1 & 2. Replication chỉ làm nh
 - **Nhược**: dễ skew nếu phân bố lệch. Vd: nhiều user tên bắt đầu bằng "N" hơn "X".
 - **AWS**: Aurora MySQL/Postgres native partitioning (theo cột); DynamoDB **không** dùng range cho partition (chỉ cho sort key trong cùng partition).
 
+<ab-toggle data-labels="Range|Hash">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 310" role="img" aria-labelledby="fd05-range-0-t fd05-range-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="fd05-range-0-t">Phân bố key theo range</title>
+<desc id="fd05-range-0-d">Phân bố key theo range</desc>
+<text x="260" y="25" font-size="14" text-anchor="middle" fill="currentColor">Cùng dải key A…Z • truy vấn A–C</text>
+<text x="260" y="50" font-size="13" text-anchor="middle" fill="currentColor">Màu = shard giữ key; viền đậm = key cần đọc</text>
+<rect x="12" y="75" width="40" height="35" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" stroke-width="3"/>
+<text x="32" y="98" font-size="14" text-anchor="middle" fill="currentColor">A</text>
+<rect x="76" y="75" width="40" height="35" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" stroke-width="3"/>
+<text x="96" y="98" font-size="14" text-anchor="middle" fill="currentColor">B</text>
+<rect x="140" y="75" width="40" height="35" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" stroke-width="3"/>
+<text x="160" y="98" font-size="14" text-anchor="middle" fill="currentColor">C</text>
+<rect x="204" y="75" width="40" height="35" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="224" y="98" font-size="14" text-anchor="middle" fill="currentColor">G</text>
+<rect x="268" y="75" width="40" height="35" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="288" y="98" font-size="14" text-anchor="middle" fill="currentColor">M</text>
+<rect x="332" y="75" width="40" height="35" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" />
+<text x="352" y="98" font-size="14" text-anchor="middle" fill="currentColor">N</text>
+<rect x="396" y="75" width="40" height="35" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" />
+<text x="416" y="98" font-size="14" text-anchor="middle" fill="currentColor">X</text>
+<rect x="460" y="75" width="40" height="35" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" />
+<text x="480" y="98" font-size="14" text-anchor="middle" fill="currentColor">Z</text>
+<rect x="25" y="190" width="130" height="58" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="90" y="214" font-size="14" text-anchor="middle" fill="currentColor">A–F</text>
+<text x="90" y="236" font-size="14" text-anchor="middle" fill="currentColor">hot: A, B, C</text>
+<rect x="195" y="190" width="130" height="58" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="260" y="214" font-size="14" text-anchor="middle" fill="currentColor">G–M</text>
+<text x="260" y="236" font-size="14" text-anchor="middle" fill="currentColor"></text>
+<rect x="365" y="190" width="130" height="58" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" />
+<text x="430" y="214" font-size="14" text-anchor="middle" fill="currentColor">N–Z</text>
+<text x="430" y="236" font-size="14" text-anchor="middle" fill="currentColor"></text>
+<line x1="32" y1="110" x2="90" y2="190" stroke="#3b82f6" stroke-width="2" />
+<line x1="96" y1="110" x2="90" y2="190" stroke="#3b82f6" stroke-width="2" />
+<line x1="160" y1="110" x2="90" y2="190" stroke="#3b82f6" stroke-width="2" />
+<text x="260" y="286" font-size="14" text-anchor="middle" fill="currentColor">A–C tập trung một shard</text>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 310" role="img" aria-labelledby="fd05-range-1-t fd05-range-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="fd05-range-1-t">Phân bố key theo hash</title>
+<desc id="fd05-range-1-d">Phân bố key theo hash</desc>
+<text x="260" y="25" font-size="14" text-anchor="middle" fill="currentColor">Cùng dải key A…Z • truy vấn A–C</text>
+<text x="260" y="50" font-size="13" text-anchor="middle" fill="currentColor">Màu = shard giữ key; viền đậm = key cần đọc</text>
+<rect x="12" y="75" width="40" height="35" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" stroke-width="3"/>
+<text x="32" y="98" font-size="14" text-anchor="middle" fill="currentColor">A</text>
+<rect x="76" y="75" width="40" height="35" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" stroke-width="3"/>
+<text x="96" y="98" font-size="14" text-anchor="middle" fill="currentColor">B</text>
+<rect x="140" y="75" width="40" height="35" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" stroke-width="3"/>
+<text x="160" y="98" font-size="14" text-anchor="middle" fill="currentColor">C</text>
+<rect x="204" y="75" width="40" height="35" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="224" y="98" font-size="14" text-anchor="middle" fill="currentColor">G</text>
+<rect x="268" y="75" width="40" height="35" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" />
+<text x="288" y="98" font-size="14" text-anchor="middle" fill="currentColor">M</text>
+<rect x="332" y="75" width="40" height="35" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="352" y="98" font-size="14" text-anchor="middle" fill="currentColor">N</text>
+<rect x="396" y="75" width="40" height="35" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="416" y="98" font-size="14" text-anchor="middle" fill="currentColor">X</text>
+<rect x="460" y="75" width="40" height="35" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" />
+<text x="480" y="98" font-size="14" text-anchor="middle" fill="currentColor">Z</text>
+<rect x="25" y="190" width="130" height="58" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="90" y="214" font-size="14" text-anchor="middle" fill="currentColor">Hash shard 0</text>
+<text x="90" y="236" font-size="14" text-anchor="middle" fill="currentColor"></text>
+<rect x="195" y="190" width="130" height="58" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="260" y="214" font-size="14" text-anchor="middle" fill="currentColor">Hash shard 1</text>
+<text x="260" y="236" font-size="14" text-anchor="middle" fill="currentColor"></text>
+<rect x="365" y="190" width="130" height="58" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" />
+<text x="430" y="214" font-size="14" text-anchor="middle" fill="currentColor">Hash shard 2</text>
+<text x="430" y="236" font-size="14" text-anchor="middle" fill="currentColor"></text>
+<line x1="32" y1="110" x2="90" y2="190" stroke="#3b82f6" stroke-width="2" />
+<line x1="96" y1="110" x2="260" y2="190" stroke="#10b981" stroke-width="2" />
+<line x1="160" y1="110" x2="430" y2="190" stroke="#8b5cf6" stroke-width="2" />
+<text x="260" y="286" font-size="14" text-anchor="middle" fill="currentColor">A–C cần scatter-gather qua 3 shard</text>
+</svg>
+<ab-note>Nếu A–C nhận nhiều request, tải dồn vào cùng khoảng; range query chỉ chạm một shard.</ab-note>
+<ab-note>Ví dụ hash phân tán A–C: giảm tập trung tải nhưng phải hỏi nhiều shard cho range query.</ab-note>
+</ab-toggle>
+
 ### 3.2 Hash partitioning
 - `hash(key) mod N` → node nào giữ key đó.
 - **Ưu**: phân bố đều (giả sử hash function tốt).

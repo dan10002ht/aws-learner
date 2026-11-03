@@ -209,6 +209,37 @@ Cả hai đều nói về "đáp ứng tải", nhưng khác nhau ở **chiều v
  On-prem:  ████████████████ (mua cố định cho đỉnh tải → lãng phí lúc thấp điểm)
 ```
 
+<ab-toggle data-labels="Cố định|Co giãn">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" role="img" aria-labelledby="fdcloud-elastic-0-t fdcloud-elastic-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="fdcloud-elastic-0-t">Tải và capacity: cố định</title>
+<desc id="fdcloud-elastic-0-d">Tải và capacity: cố định</desc>
+<text x="260" y="24" font-size="14" text-anchor="middle" fill="currentColor">Cùng tải lên xuống • sơ đồ khái niệm</text>
+<text x="20" y="63" font-size="13" text-anchor="start" fill="currentColor">Năng lực</text>
+<line x1="60" y1="250" x2="485" y2="250" stroke="currentColor" stroke-width="2" />
+<line x1="60" y1="250" x2="60" y2="70" stroke="currentColor" stroke-width="2" />
+<text x="460" y="276" font-size="13" text-anchor="middle" fill="currentColor">Thời gian</text>
+<text x="260" y="302" font-size="13" text-anchor="middle" fill="currentColor">Cam: tải • xanh: capacity</text>
+<rect x="70" y="80" width="400" height="145" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<line x1="70" y1="80" x2="470" y2="80" stroke="#3b82f6" stroke-width="2" />
+<text x="380" y="150" font-size="13" text-anchor="middle" fill="currentColor">Dư capacity</text>
+<polyline points="70,225 135,205 200,110 265,95 330,175 395,220 470,225" fill="none" stroke="#f59e0b" stroke-width="3"/>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" role="img" aria-labelledby="fdcloud-elastic-1-t fdcloud-elastic-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="fdcloud-elastic-1-t">Tải và capacity: co giãn</title>
+<desc id="fdcloud-elastic-1-d">Tải và capacity: co giãn</desc>
+<text x="260" y="24" font-size="14" text-anchor="middle" fill="currentColor">Cùng tải lên xuống • sơ đồ khái niệm</text>
+<text x="20" y="63" font-size="13" text-anchor="start" fill="currentColor">Năng lực</text>
+<line x1="60" y1="250" x2="485" y2="250" stroke="currentColor" stroke-width="2" />
+<line x1="60" y1="250" x2="60" y2="70" stroke="currentColor" stroke-width="2" />
+<text x="460" y="276" font-size="13" text-anchor="middle" fill="currentColor">Thời gian</text>
+<text x="260" y="302" font-size="13" text-anchor="middle" fill="currentColor">Cam: tải • xanh: capacity</text>
+<path d="M70 210 H135 V180 H200 V85 H265 V80 H330 V155 H395 V205 H470" fill="none" stroke="#3b82f6" stroke-width="4"/>
+<polyline points="70,225 135,205 200,110 265,95 330,175 395,220 470,225" fill="none" stroke="#f59e0b" stroke-width="3"/>
+</svg>
+<ab-note>Năng lực mua cho đỉnh tải tạo khoảng trống lớn khi ít request. Trục thời gian minh họa một chu kỳ tăng rồi giảm tải.</ab-note>
+<ab-note>Đường bậc thang thể hiện thêm rồi bớt tài nguyên theo tải. Đây là minh họa lý tưởng, không cam kết scale tức thì.</ab-note>
+</ab-toggle>
+
 Analogy: scalability là **nhà hàng có thể xây thêm tầng**; elasticity là **nhà hàng buffet tự động kê thêm bàn giờ cao điểm và cất bớt bàn lúc vắng**.
 
 > Ghi nhớ: Scalability = *có thể* lớn lên. Elasticity = *tự động* co giãn hai chiều theo nhu cầu. Elasticity là lý do kinh tế lớn nhất khiến cloud thắng on-premises.

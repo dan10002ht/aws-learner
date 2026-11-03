@@ -70,52 +70,48 @@ Thuốc giải cho SPOF là **redundancy**: có **nhiều hơn một** bản c�
 
 Một bản **active** phục vụ toàn bộ traffic; bản **passive** (standby) đứng chờ, chỉ tiếp quản khi bản chính chết.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Active-Passive so với Active-Active</title>
-  <desc>Active-passive: server A phục vụ, server B đứng chờ và chỉ tiếp quản sau độ trễ failover khi A chết. Active-active: cả A và B cùng phục vụ traffic sau một load balancer.</desc>
-  <text x="180" y="22" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Active-Passive</text>
-  <text x="540" y="22" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Active-Active</text>
-  <line x1="360" y1="36" x2="360" y2="232" stroke="currentColor" stroke-opacity="0.18"/>
-  <g>
-    <text x="36" y="62" font-size="11" fill="currentColor">Users</text>
-    <line x1="78" y1="58" x2="118" y2="58" stroke="#10b981" stroke-width="2" marker-end="url(#ah-g)"/>
-    <rect x="122" y="42" width="120" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="182" y="58" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Server A</text>
-    <text x="182" y="71" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">active — phục vụ</text>
-    <rect x="122" y="92" width="120" height="34" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 3"/>
-    <text x="182" y="108" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.65">Server B</text>
-    <text x="182" y="121" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.55">passive — ngủ chờ</text>
-    <text x="36" y="170" font-size="11" fill="currentColor">Users</text>
-    <line x1="78" y1="166" x2="118" y2="166" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3 3" marker-end="url(#ah-a)"/>
-    <rect x="122" y="150" width="120" height="34" rx="8" fill="#ef4444" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="182" y="166" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.6">Server A ✗</text>
-    <text x="182" y="179" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.55">chết</text>
-    <rect x="122" y="194" width="120" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="182" y="210" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Server B</text>
-    <text x="182" y="223" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">tiếp quản (failover)</text>
-    <text x="300" y="166" font-size="9.5" fill="#f59e0b" font-weight="700">độ trễ</text>
-    <text x="300" y="178" font-size="9.5" fill="#f59e0b" font-weight="700">failover</text>
-  </g>
-  <g>
-    <text x="406" y="135" font-size="11" fill="currentColor">Users</text>
-    <line x1="448" y1="131" x2="486" y2="131" stroke="#3b82f6" stroke-width="2" marker-end="url(#ah-b)"/>
-    <rect x="490" y="114" width="60" height="34" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="520" y="135" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">LB</text>
-    <path d="M550 131 H580 V72" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#ah-g)"/>
-    <path d="M550 131 H580 V190" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#ah-g)"/>
-    <rect x="592" y="55" width="116" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="650" y="71" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Server A</text>
-    <text x="650" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">đang phục vụ</text>
-    <rect x="592" y="173" width="116" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="650" y="189" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Server B</text>
-    <text x="650" y="202" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">đang phục vụ</text>
-  </g>
-  <defs>
-    <marker id="ah-g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#10b981"/></marker>
-    <marker id="ah-a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#f59e0b"/></marker>
-    <marker id="ah-b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#3b82f6"/></marker>
-  </defs>
+<ab-toggle data-labels="Active-Passive|Active-Active">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" role="img" aria-labelledby="fdha-topo-0-t fdha-topo-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="fdha-topo-0-t">Cùng cặp server: active-passive</title>
+<desc id="fdha-topo-0-d">Cùng cặp server: active-passive</desc>
+<text x="260" y="25" font-size="14" text-anchor="middle" fill="currentColor">Users → cặp server dự phòng</text>
+<rect x="20" y="115" width="90" height="44" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="65" y="142" font-size="14" text-anchor="middle" fill="currentColor">Users</text>
+<rect x="150" y="115" width="65" height="44" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="182" y="142" font-size="14" text-anchor="middle" fill="currentColor">Route</text>
+<line x1="110" y1="137" x2="150" y2="137" stroke="currentColor" stroke-width="2" />
+<rect x="345" y="60" width="150" height="65" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="420" y="86" font-size="14" text-anchor="middle" fill="currentColor">Server A</text>
+<text x="420" y="109" font-size="14" text-anchor="middle" fill="currentColor">phục vụ</text>
+<rect x="345" y="195" width="150" height="65" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" stroke-dasharray="5 4"/>
+<text x="420" y="220" font-size="14" text-anchor="middle" fill="currentColor">Server B</text>
+<text x="420" y="244" font-size="14" text-anchor="middle" fill="currentColor">standby</text>
+<path d="M215 137 H280 V92 H345" fill="none" stroke="#10b981" stroke-width="3"/>
+<path d="M215 137 H280 V227 H345" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="5 5" opacity="0.3"/>
+<text x="260" y="295" font-size="14" text-anchor="middle" fill="currentColor">A chết → B tiếp quản sau độ trễ failover</text>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" role="img" aria-labelledby="fdha-topo-1-t fdha-topo-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="fdha-topo-1-t">Cùng cặp server: active-active</title>
+<desc id="fdha-topo-1-d">Cùng cặp server: active-active</desc>
+<text x="260" y="25" font-size="14" text-anchor="middle" fill="currentColor">Users → cặp server dự phòng</text>
+<rect x="20" y="115" width="90" height="44" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="65" y="142" font-size="14" text-anchor="middle" fill="currentColor">Users</text>
+<rect x="150" y="115" width="65" height="44" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="182" y="142" font-size="14" text-anchor="middle" fill="currentColor">LB</text>
+<line x1="110" y1="137" x2="150" y2="137" stroke="currentColor" stroke-width="2" />
+<rect x="345" y="60" width="150" height="65" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="420" y="86" font-size="14" text-anchor="middle" fill="currentColor">Server A</text>
+<text x="420" y="109" font-size="14" text-anchor="middle" fill="currentColor">phục vụ</text>
+<rect x="345" y="195" width="150" height="65" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="420" y="220" font-size="14" text-anchor="middle" fill="currentColor">Server B</text>
+<text x="420" y="244" font-size="14" text-anchor="middle" fill="currentColor">phục vụ</text>
+<path d="M215 137 H280 V92 H345" fill="none" stroke="#10b981" stroke-width="3"/>
+<path d="M215 137 H280 V227 H345" fill="none" stroke="#10b981" stroke-width="3" />
+<text x="260" y="295" font-size="14" text-anchor="middle" fill="currentColor">A chết → LB ngừng gửi A, B gánh traffic</text>
+</svg>
+<ab-note>Đường nét đứt tới B chưa mang traffic; server A chết thì B mới tiếp quản.</ab-note>
+<ab-note>Hai đường liền đều mang traffic qua LB. Việc phát hiện server chết vẫn cần thời gian.</ab-note>
+</ab-toggle>
 
 Analogy: **lốp dự phòng** trong cốp xe. Bình thường nó nằm im, không giúp xe chạy nhanh hơn; nhưng khi thủng lốp, bạn thay vào và đi tiếp (mất vài phút thay lốp = thời gian failover).
 
@@ -178,6 +174,49 @@ Vài khái niệm thực tế:
         │
 [5] Người dùng tiếp tục dùng (lý tưởng là không nhận ra gì)
 ```
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 350" role="img" aria-labelledby="fdha-health-t fdha-health-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto">
+<title id="fdha-health-t">LB phát hiện lỗi rồi chuyển traffic trên cùng topology</title>
+<desc id="fdha-health-d">LB phát hiện lỗi rồi chuyển traffic trên cùng topology</desc>
+<defs><marker id="fdha-health-a" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="currentColor"/></marker></defs>
+<rect x="20" y="130" width="100" height="55" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="70" y="161" font-size="14" text-anchor="middle" fill="currentColor">Users</text>
+<rect x="220" y="130" width="110" height="55" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="275" y="161" font-size="14" text-anchor="middle" fill="currentColor">LB</text>
+<rect x="470" y="50" width="140" height="65" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="540" y="78" font-size="14" text-anchor="middle" fill="currentColor">Server A</text>
+<rect x="470" y="260" width="140" height="65" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="540" y="298" font-size="14" text-anchor="middle" fill="currentColor">Server B</text>
+<line x1="120" y1="158" x2="220" y2="158" stroke="currentColor" stroke-width="2" />
+<line x1="330" y1="158" x2="400" y2="158" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4"/>
+<line x1="400" y1="158" x2="400" y2="83" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4"/>
+<line x1="400" y1="83" x2="470" y2="83" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4"/>
+<g data-step="1">
+<line x1="600" y1="55" x2="616" y2="71" stroke="#f43f5e" stroke-width="2" />
+<line x1="616" y1="55" x2="600" y2="71" stroke="#f43f5e" stroke-width="2" />
+</g>
+<g data-step="2">
+<path d="M275 130 V30 H540 V50" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fdha-health-a)"/>
+<text x="350" y="22" font-size="14" text-anchor="middle" fill="currentColor">/health • fail liên tiếp N lần</text>
+<text x="275" y="215" font-size="14" text-anchor="middle" fill="currentColor">Interval: ví dụ 10s</text>
+</g>
+<g data-step="3">
+<rect x="450" y="40" width="180" height="85" rx="7" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" />
+<text x="540" y="106" font-size="14" text-anchor="middle" fill="currentColor">UNHEALTHY</text>
+<line x1="389" y1="105" x2="411" y2="127" stroke="#f43f5e" stroke-width="2" />
+<line x1="411" y1="105" x2="389" y2="127" stroke="#f43f5e" stroke-width="2" />
+</g>
+<g data-step="4">
+<path d="M330 170 H400 V292 H470" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fdha-health-a)"/>
+<text x="330" y="320" font-size="14" text-anchor="middle" fill="currentColor">Traffic tới B</text>
+</g>
+</svg>
+<step-note data-step="1">A ngừng phục vụ nhưng LB chưa biết ngay, nên traffic có thể còn gặp lỗi.</step-note>
+<step-note data-step="2">Đợi đủ N lần fail liên tiếp để tránh loại server chỉ vì một lần mạng chập chờn.</step-note>
+<step-note data-step="3">LB loại A khỏi danh sách healthy sau ngưỡng phát hiện; đây chưa phải toàn bộ thời gian failover.</step-note>
+<step-note data-step="4">LB gửi request mới tới B. DNS failover phải đổi bản ghi; database failover cần promote standby, là các cơ chế khác.</step-note>
+</step-flow>
 
 Thời gian từ bước [1] đến [5] gọi là **thời gian failover** — và đây chính là lý do "có dự phòng" không đồng nghĩa "không downtime": phát hiện lỗi và chuyển giao đều tốn thời gian.
 

@@ -10,6 +10,12 @@ Docker là kỹ năng nền bắt buộc trước khi đụng tới ECS, Fargate
 | **Container** | Một tiến trình đang chạy từ image + 1 layer ghi (writable layer) | Object, máy đang bật, EC2 instance |
 | **Registry** | Nơi lưu trữ và phân phối image | Docker Hub, **Amazon ECR** |
 
+<svg viewBox="0 0 520 372" role="img" aria-labelledby="eng05-layers-t eng05-layers-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="eng05-layers-t">Image và writable layer của container</title>
+<desc id="eng05-layers-d">Hai lớp ghi độc lập nằm trên cùng ba lớp image chỉ đọc; xoá container không xoá image.</desc>
+<text x="16" y="25" font-size="14" text-anchor="start" fill="currentColor">Hai container — dùng chung các layer image</text><text x="130" y="59" font-size="14" text-anchor="middle" fill="currentColor">Container A</text><rect x="20" y="76" width="220" height="48" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="130" y="105" font-size="14" text-anchor="middle" fill="currentColor">Writable layer riêng</text><path d="M130 124 L130 158" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="384" y="59" font-size="14" text-anchor="middle" fill="currentColor">Container B</text><rect x="274" y="76" width="220" height="48" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="384" y="105" font-size="14" text-anchor="middle" fill="currentColor">Writable layer riêng</text><path d="M384 124 L384 158" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="20" y="158" width="474" height="39" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="257" y="183" font-size="14" text-anchor="middle" fill="currentColor">Ứng dụng</text><rect x="20" y="203" width="474" height="39" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="257" y="228" font-size="14" text-anchor="middle" fill="currentColor">Runtime / thư viện</text><rect x="20" y="248" width="474" height="39" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="257" y="273" font-size="14" text-anchor="middle" fill="currentColor">Base image</text><text x="257" y="318" font-size="14" text-anchor="middle" fill="currentColor">Image: các layer chỉ đọc được chia sẻ</text><text x="257" y="350" font-size="13" text-anchor="middle" fill="currentColor">Xoá A: mất layer ghi A; image và B vẫn còn</text>
+</svg>
+
 Chạy thử để thấy sự khác biệt:
 
 ```bash

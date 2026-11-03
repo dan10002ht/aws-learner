@@ -236,6 +236,21 @@ Quy tắc cốt lõi: **staging phải càng giống prod càng tốt** — cùn
 
 Branching strategy quyết định pipeline của bạn trông ra sao.
 
+<ab-toggle data-labels="Trunk-based|GitFlow">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 305" role="img" aria-labelledby="do01-branch-0-t do01-branch-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="sans-serif" font-size="13">
+<title id="do01-branch-0-t">Tuổi đời nhánh</title>
+<desc id="do01-branch-0-d">Khoảng ngang biểu thị thời gian tồn tại; nhánh tách khỏi main rồi nhập lại. GitFlow có develop và feature tồn tại lâu hơn.</desc>
+<text x="20" y="25" text-anchor="start" fill="currentColor">Cùng một trục thời gian (minh hoạ)</text><text x="20" y="75" text-anchor="start" fill="currentColor">main</text><path d="M100 70 H495" fill="none" stroke="#3b82f6" stroke-width="2"/><circle cx="110" cy="70" r="4" fill="#3b82f6"/><circle cx="190" cy="70" r="4" fill="#3b82f6"/><circle cx="270" cy="70" r="4" fill="#3b82f6"/><circle cx="350" cy="70" r="4" fill="#3b82f6"/><circle cx="430" cy="70" r="4" fill="#3b82f6"/><circle cx="490" cy="70" r="4" fill="#3b82f6"/><path d="M110 70 L125 135 H160 L180 70" fill="none" stroke="#10b981" stroke-width="2"/><path d="M230 70 L245 135 H280 L300 70" fill="none" stroke="#10b981" stroke-width="2"/><path d="M350 70 L365 135 H400 L420 70" fill="none" stroke="#10b981" stroke-width="2"/><text x="20" y="140" text-anchor="start" fill="currentColor">feature</text><text x="100" y="190" text-anchor="start" fill="currentColor">Nhánh ngắn → merge thường xuyên</text><path d="M100 265 H495" fill="none" stroke="currentColor" stroke-width="2"/><text x="100" y="285" text-anchor="start" fill="currentColor">sớm</text><text x="495" y="285" text-anchor="end" fill="currentColor">muộn</text>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 305" role="img" aria-labelledby="do01-branch-1-t do01-branch-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="sans-serif" font-size="13">
+<title id="do01-branch-1-t">Tuổi đời nhánh</title>
+<desc id="do01-branch-1-d">Khoảng ngang biểu thị thời gian tồn tại; nhánh tách khỏi main rồi nhập lại. GitFlow có develop và feature tồn tại lâu hơn.</desc>
+<text x="20" y="25" text-anchor="start" fill="currentColor">Cùng một trục thời gian (minh hoạ)</text><text x="20" y="75" text-anchor="start" fill="currentColor">main</text><path d="M100 70 H495" fill="none" stroke="#3b82f6" stroke-width="2"/><circle cx="110" cy="70" r="4" fill="#3b82f6"/><circle cx="190" cy="70" r="4" fill="#3b82f6"/><circle cx="270" cy="70" r="4" fill="#3b82f6"/><circle cx="350" cy="70" r="4" fill="#3b82f6"/><circle cx="430" cy="70" r="4" fill="#3b82f6"/><circle cx="490" cy="70" r="4" fill="#3b82f6"/><text x="20" y="140" text-anchor="start" fill="currentColor">develop</text><path d="M110 70 L130 135 H450 L490 70" fill="none" stroke="#10b981" stroke-width="2"/><text x="20" y="205" text-anchor="start" fill="currentColor">feature</text><path d="M150 135 L175 200 H370 L410 135" fill="none" stroke="#f59e0b" stroke-width="2"/><text x="100" y="245" text-anchor="start" fill="currentColor">Nhánh dài → tích hợp muộn hơn</text><path d="M100 265 H495" fill="none" stroke="currentColor" stroke-width="2"/><text x="100" y="285" text-anchor="start" fill="currentColor">sớm</text><text x="495" y="285" text-anchor="end" fill="currentColor">muộn</text>
+</svg>
+<ab-note>Các vòng ngắn đưa thay đổi về main sớm; tính năng chưa hoàn thiện được giấu bằng feature flag.</ab-note>
+<ab-note>Feature tích hợp vào develop trước khi release về main; sơ đồ lược bỏ release/hotfix để tập trung vào tuổi đời nhánh.</ab-note>
+</ab-toggle>
+
 | | Trunk-based | GitFlow |
 |---|---|---|
 | Nhánh chính | Một `main`, mọi người merge thẳng (qua PR ngắn) | `main` + `develop` + nhiều `feature/`, `release/`, `hotfix/` |

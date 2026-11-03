@@ -442,6 +442,21 @@ terraform apply tfplan       # apply CHÍNH XÁC plan đã lưu, không hỏi l�
 
 **Drift** = trạng thái thật trên AWS khác với state/code, thường do ai đó sửa tay trên console hoặc dịch vụ khác thay đổi resource.
 
+<ab-toggle data-labels="Đồng bộ|Sửa tay">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 280" role="img" aria-labelledby="do02-drift-0-t do02-drift-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="sans-serif" font-size="13">
+<title id="do02-drift-0-t">Drift qua một rule ngoài code</title>
+<desc id="do02-drift-0-d">Hai vùng có cùng vị trí rule; chỉ thực tế xuất hiện rule thêm sau sửa tay. Ô nét đứt là không có rule.</desc>
+<text x="20" y="25" text-anchor="start" fill="currentColor">Rule security group: code và thực tế</text><text x="25" y="60" text-anchor="start" fill="currentColor">Code</text><rect x="25" y="75" width="210" height="145" rx="6" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/><rect x="40" y="95" width="180" height="35" rx="6" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/><text x="130" y="117" text-anchor="middle" fill="currentColor">Rule khai báo</text><rect x="40" y="155" width="180" height="35" rx="6" fill="none" stroke="currentColor" stroke-dasharray="4 4"/><text x="285" y="60" text-anchor="start" fill="currentColor">AWS thực tế</text><rect x="285" y="75" width="210" height="145" rx="6" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/><rect x="300" y="95" width="180" height="35" rx="6" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/><text x="390" y="117" text-anchor="middle" fill="currentColor">Rule khai báo</text><rect x="300" y="155" width="180" height="35" rx="6" fill="none" stroke="currentColor" stroke-dasharray="4 4"/><text x="260" y="255" text-anchor="middle" fill="currentColor">plan: code khớp thực tế</text>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 280" role="img" aria-labelledby="do02-drift-1-t do02-drift-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="sans-serif" font-size="13">
+<title id="do02-drift-1-t">Drift qua một rule ngoài code</title>
+<desc id="do02-drift-1-d">Hai vùng có cùng vị trí rule; chỉ thực tế xuất hiện rule thêm sau sửa tay. Ô nét đứt là không có rule.</desc>
+<text x="20" y="25" text-anchor="start" fill="currentColor">Rule security group: code và thực tế</text><text x="25" y="60" text-anchor="start" fill="currentColor">Code</text><rect x="25" y="75" width="210" height="145" rx="6" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/><rect x="40" y="95" width="180" height="35" rx="6" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/><text x="130" y="117" text-anchor="middle" fill="currentColor">Rule khai báo</text><rect x="40" y="155" width="180" height="35" rx="6" fill="none" stroke="currentColor" stroke-dasharray="4 4"/><text x="285" y="60" text-anchor="start" fill="currentColor">AWS thực tế</text><rect x="285" y="75" width="210" height="145" rx="6" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/><rect x="300" y="95" width="180" height="35" rx="6" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/><text x="390" y="117" text-anchor="middle" fill="currentColor">Rule khai báo</text><rect x="300" y="155" width="180" height="35" rx="6" fill="#f43f5e" fill-opacity="0.15" stroke="#f43f5e"/><text x="390" y="177" text-anchor="middle" fill="currentColor">Rule sửa tay</text><text x="260" y="255" text-anchor="middle" fill="currentColor">plan: phát hiện rule ngoài code</text>
+</svg>
+<ab-note>Các ô rule tương ứng khớp nhau trước khi có thay đổi ngoài Terraform.</ab-note>
+<ab-note>Rule thêm chỉ xuất hiện phía AWS. Diff cụ thể và khả năng quản lý rule phụ thuộc resource/provider; apply theo code có thể xoá thay đổi này.</ab-note>
+</ab-toggle>
+
 ```bash
 terraform plan                 # plan tự refresh state, hiện drift dưới dạng diff
 terraform plan -refresh-only   # CHỈ xem drift, không đề xuất đổi gì

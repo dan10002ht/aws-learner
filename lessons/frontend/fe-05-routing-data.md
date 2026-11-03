@@ -159,6 +159,26 @@ function Layout() {
 
 > **Ghi nhớ:** `Outlet` cho route giống như `children` cho component — nó là chỗ React Router "cắm" component của route con vào layout cha.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 395" role="img" aria-labelledby="fe05med-outlet-t fe05med-outlet-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="system-ui, sans-serif">
+<title id="fe05med-outlet-t">Route con nằm trong Outlet của Layout</title>
+<desc id="fe05med-outlet-d">Route con nằm trong Outlet của Layout</desc>
+<text x="18" y="25" font-size="14" fill="currentColor">URL chọn nội dung trong cùng một khung</text>
+<rect x="18" y="45" width="484" height="300" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="33" y="70" font-size="14" fill="currentColor">Layout</text>
+<rect x="34" y="85" width="452" height="44" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="48" y="113" font-size="13" fill="currentColor">Header • &lt;Link to=&quot;/&quot;&gt;Shop&lt;/Link&gt;</text>
+<rect x="34" y="147" width="452" height="180" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="48" y="172" font-size="14" fill="currentColor">&lt;main&gt; → &lt;Outlet /&gt;</text>
+<rect x="50" y="186" width="420" height="55" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="62" y="209" font-size="14" fill="currentColor">/ → ProductList</text>
+<text x="62" y="229" font-size="13" fill="currentColor">Route index</text>
+<rect x="50" y="253" width="420" height="55" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="62" y="276" font-size="14" fill="currentColor">/products/:id → ProductDetail</text>
+<text x="62" y="296" font-size="13" fill="currentColor">Route con theo URL</text>
+<text x="20" y="373" font-size="13" fill="currentColor">Chỉ một route con khớp được cắm vào Outlet.</text>
+</svg>
+
+
 ## Data fetching: cách "ngây thơ" với useEffect + fetch
 
 Trước khi thấy React Query, hãy xem cách ai cũng viết lần đầu — và vì sao nó đau:

@@ -60,56 +60,20 @@ spec:
 
 Quan trọng: **Ingress object chỉ là cấu hình, vô dụng nếu không có Ingress Controller** (ingress-nginx, Traefik, hoặc AWS Load Balancer Controller) đang chạy để đọc và thực thi nó.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>So sánh: một LoadBalancer mỗi Service vs Ingress L7 dùng chung một entrypoint</title>
-  <desc>Bên trái: mỗi Service có một LoadBalancer riêng nên nhiều LB tốn kém. Bên phải: một Ingress Controller (ALB) làm entrypoint duy nhất, route theo host/path — /api tới api-svc, / tới web-svc.</desc>
-  <text x="180" y="24" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Service type=LoadBalancer</text>
-  <text x="180" y="42" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">1 LB / mỗi service — tốn kém, không route L7</text>
-  <line x1="360" y1="16" x2="360" y2="344" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 4"/>
-  <text x="540" y="24" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Ingress (L7)</text>
-  <text x="540" y="42" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">1 entrypoint chung, route theo host/path</text>
-  <g font-size="11.5">
-    <rect x="36" y="60" width="120" height="34" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="96" y="81" text-anchor="middle" fill="currentColor">LB #1</text>
-    <rect x="204" y="60" width="120" height="34" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="264" y="81" text-anchor="middle" fill="currentColor">LB #2</text>
-    <rect x="36" y="150" width="120" height="40" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="96" y="166" text-anchor="middle" fill="currentColor">api-svc</text>
-    <text x="96" y="182" text-anchor="middle" fill="currentColor" opacity="0.6" font-size="10">Service</text>
-    <rect x="204" y="150" width="120" height="40" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="264" y="166" text-anchor="middle" fill="currentColor">web-svc</text>
-    <text x="264" y="182" text-anchor="middle" fill="currentColor" opacity="0.6" font-size="10">Service</text>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
-    <path d="M96 94 V150" marker-end="url(#aH)"/>
-    <path d="M264 94 V150" marker-end="url(#aH)"/>
-  </g>
-  <g font-size="11.5">
-    <rect x="450" y="60" width="180" height="40" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="540" y="78" text-anchor="middle" fill="currentColor" font-weight="700">Ingress Controller</text>
-    <text x="540" y="93" text-anchor="middle" fill="currentColor" opacity="0.7" font-size="10">ALB / nginx — 1 LB duy nhất</text>
-    <rect x="430" y="150" width="120" height="40" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="490" y="166" text-anchor="middle" fill="currentColor">api-svc</text>
-    <text x="490" y="182" text-anchor="middle" fill="currentColor" opacity="0.6" font-size="10">Service</text>
-    <rect x="566" y="150" width="120" height="40" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="626" y="166" text-anchor="middle" fill="currentColor">web-svc</text>
-    <text x="626" y="182" text-anchor="middle" fill="currentColor" opacity="0.6" font-size="10">Service</text>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
-    <path d="M512 100 L490 150" marker-end="url(#aH)"/>
-    <path d="M568 100 L626 150" marker-end="url(#aH)"/>
-  </g>
-  <g font-size="10.5" fill="currentColor" opacity="0.85">
-    <text x="448" y="128" text-anchor="middle">path /api</text>
-    <text x="630" y="128" text-anchor="middle">path /</text>
-  </g>
-  <text x="540" y="218" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">phân luồng theo host shop.example.com + path</text>
-  <defs>
-    <marker id="aH" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M0 0 L10 5 L0 10 z" fill="currentColor" fill-opacity="0.5"/>
-    </marker>
-  </defs>
+<ab-toggle data-labels="LB mỗi Service|Ingress">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 315" role="img" aria-labelledby="do04-ingress-0-t do04-ingress-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="sans-serif" font-size="13">
+<title id="do04-ingress-0-t">Số entrypoint thay đổi</title>
+<desc id="do04-ingress-0-d">Hai Service ở vị trí cố định; hai LB riêng được thay bằng một entrypoint dùng chung route theo path.</desc>
+<text x="260" y="25" text-anchor="middle" fill="currentColor">shop.example.com</text><rect x="40" y="60" width="180" height="55" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="#f59e0b"/><text x="130" y="93" text-anchor="middle" fill="currentColor">LB #1</text><path d="M130 115 V200" fill="none" stroke="#3b82f6" stroke-width="2"/><rect x="300" y="60" width="180" height="55" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="#f59e0b"/><text x="390" y="93" text-anchor="middle" fill="currentColor">LB #2</text><path d="M390 115 V200" fill="none" stroke="#3b82f6" stroke-width="2"/><rect x="40" y="200" width="180" height="55" rx="6" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/><text x="130" y="223" text-anchor="middle" fill="currentColor">api-svc</text><text x="130" y="244" text-anchor="middle" fill="currentColor">Service</text><rect x="300" y="200" width="180" height="55" rx="6" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/><text x="390" y="223" text-anchor="middle" fill="currentColor">web-svc</text><text x="390" y="244" text-anchor="middle" fill="currentColor">Service</text><text x="260" y="290" text-anchor="middle" fill="currentColor">2 LB, không route L7</text>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 315" role="img" aria-labelledby="do04-ingress-1-t do04-ingress-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="sans-serif" font-size="13">
+<title id="do04-ingress-1-t">Số entrypoint thay đổi</title>
+<desc id="do04-ingress-1-d">Hai Service ở vị trí cố định; hai LB riêng được thay bằng một entrypoint dùng chung route theo path.</desc>
+<text x="260" y="25" text-anchor="middle" fill="currentColor">shop.example.com</text><rect x="140" y="60" width="240" height="55" rx="6" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/><text x="260" y="83" text-anchor="middle" fill="currentColor">Ingress Controller</text><text x="260" y="103" text-anchor="middle" fill="currentColor">ALB / nginx</text><path d="M260 115 V145 H130 V200" fill="none" stroke="#3b82f6" stroke-width="2"/><path d="M260 145 H390 V200" fill="none" stroke="#3b82f6" stroke-width="2"/><text x="130" y="175" text-anchor="middle" fill="currentColor">/api</text><text x="390" y="175" text-anchor="middle" fill="currentColor">/</text><rect x="40" y="200" width="180" height="55" rx="6" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/><text x="130" y="223" text-anchor="middle" fill="currentColor">api-svc</text><text x="130" y="244" text-anchor="middle" fill="currentColor">Service</text><rect x="300" y="200" width="180" height="55" rx="6" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/><text x="390" y="223" text-anchor="middle" fill="currentColor">web-svc</text><text x="390" y="244" text-anchor="middle" fill="currentColor">Service</text><text x="260" y="290" text-anchor="middle" fill="currentColor">1 entrypoint, route theo host/path</text>
+</svg>
+<ab-note>Mỗi Service type LoadBalancer có một LB riêng; ví dụ dùng hai Service nên cần hai LB.</ab-note>
+<ab-note>Ingress object là cấu hình; cần controller thực thi. ALB là data plane do AWS Load Balancer Controller quản lý; nginx thường đứng sau một LB.</ab-note>
+</ab-toggle>
 
 ```yaml
 apiVersion: networking.k8s.io/v1

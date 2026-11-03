@@ -147,6 +147,46 @@ function UserCard({ userId }: { userId: number }) {
 
 > Bẫy "gọi API hai lần": Ở React 19 với Strict Mode, dev sẽ cố tình mount → unmount → mount lại để lộ effect thiếu cleanup. Thấy effect chạy 2 lần trong `dev` là *tính năng cảnh báo*, không phải bug — chỉ xảy ra ở development.
 
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 415" role="img" aria-labelledby="fe03med-race-t fe03med-race-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="system-ui, sans-serif">
+<title id="fe03med-race-t">Cleanup chặn phản hồi cũ ghi đè state</title>
+<desc id="fe03med-race-d">Cleanup chặn phản hồi cũ ghi đè state</desc>
+<defs><marker id="fe03med-race-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="currentColor"/></marker></defs>
+<text x="16" y="24" font-size="14" fill="currentColor">Thời gian ↓ • userId: 1 → 2</text>
+<text x="38" y="55" font-size="14" fill="currentColor">Effect / UI</text>
+<text x="320" y="55" font-size="14" fill="currentColor">Mạng</text>
+<path d="M100 65 V370" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<path d="M390 65 V370" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<g data-step="1">
+<path d="M100 90 L390 90" fill="none" stroke="#3b82f6" stroke-width="2"  marker-end="url(#fe03med-race-a)"/>
+<text x="135" y="80" font-size="14" fill="currentColor">fetch user 1</text>
+</g>
+<g data-step="2">
+<rect x="12" y="120" width="230" height="58" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="23" y="143" font-size="14" fill="currentColor">userId = 2: cleanup #1</text>
+<text x="23" y="165" font-size="14" fill="currentColor">ignore₁ = true</text>
+<path d="M100 200 L390 200" fill="none" stroke="#3b82f6" stroke-width="2"  marker-end="url(#fe03med-race-a)"/>
+<text x="150" y="190" font-size="14" fill="currentColor">fetch user 2</text>
+</g>
+<g data-step="3">
+<path d="M390 255 L100 255" fill="none" stroke="#10b981" stroke-width="2"  marker-end="url(#fe03med-race-a)"/>
+<text x="140" y="245" font-size="14" fill="currentColor">user 2 về trước</text>
+<rect x="12" y="277" width="230" height="32" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="24" y="299" font-size="14" fill="currentColor">UI ← user 2</text>
+</g>
+<g data-step="4">
+<path d="M390 345 L100 345" fill="none" stroke="#f43f5e" stroke-width="2"  marker-end="url(#fe03med-race-a)"/>
+<text x="150" y="335" font-size="14" fill="currentColor">user 1 về sau</text>
+<text x="16" y="393" font-size="14" fill="currentColor">Bỏ kết quả #1: không ghi đè UI</text>
+</g>
+</svg>
+<step-note data-step="1">Effect đầu tạo cờ riêng cho request user 1. Độ trễ mạng không bảo đảm thứ tự phản hồi.</step-note>
+<step-note data-step="2">Cleanup của effect cũ chạy trước effect mới. Cờ cũ đổi thành true; request cũ vẫn có thể tiếp tục trên mạng.</step-note>
+<step-note data-step="3">Effect user 2 chưa bị cleanup nên được phép cập nhật state khi phản hồi về.</step-note>
+<step-note data-step="4">Request user 1 về muộn nhưng cờ của chính effect đó đã bật. Điều kiện <code>!ignore</code> chặn ghi state, giữ đúng người dùng đang chọn.</step-note>
+</step-flow>
+
+
 ## `useRef` — giá trị "nhớ" mà không gây render
 
 `useRef` cho một hộp `{ current: ... }` tồn tại suốt vòng đời component. Khác `useState` ở chỗ: **đổi `.current` KHÔNG trigger render**. Hai công dụng chính:

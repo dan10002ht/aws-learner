@@ -325,6 +325,51 @@ npx lighthouse https://myapp.com --view   # report Core Web Vitals + gợi ý
 
 > **Bẫy — lab vs field:** Lighthouse chạy trên máy bạn (lab data) thường đẹp hơn thực tế. Số liệu **thật** là **field data** từ người dùng (CrUX / `web-vitals` gửi về). Đừng tối ưu mù theo điểm Lighthouse rồi ngạc nhiên vì user vẫn than chậm — họ ở mạng yếu, máy yếu.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 435" role="img" aria-labelledby="fe09med-vitals-t fe09med-vitals-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="system-ui, sans-serif">
+<title id="fe09med-vitals-t">Ba thang đo ngưỡng Core Web Vitals</title>
+<desc id="fe09med-vitals-d">Ba thang đo ngưỡng Core Web Vitals</desc>
+<text x="18" y="24" font-size="14" fill="currentColor">Ngưỡng tốt → cần cải thiện → kém</text>
+<text x="18" y="47" font-size="13" fill="currentColor">Mỗi hàng có thang đo riêng; tăng là xấu.</text>
+<text x="18" y="80" font-size="14" fill="currentColor">LCP</text>
+<rect x="80.0" y="95" width="210.0" height="25" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<rect x="290.0" y="95" width="126.0" height="25" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<rect x="416.0" y="95" width="84.0" height="25" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<path d="M80.0 122 v8" stroke="currentColor"/>
+<text x="70.0" y="149" font-size="13" fill="currentColor">0s</text>
+<path d="M290.0 122 v8" stroke="currentColor"/>
+<text x="280.0" y="149" font-size="13" fill="currentColor">2.5s</text>
+<path d="M416.0 122 v8" stroke="currentColor"/>
+<text x="406.0" y="149" font-size="13" fill="currentColor">4s</text>
+<path d="M500.0 122 v8" stroke="currentColor"/>
+<text x="455.0" y="167" font-size="13" fill="currentColor">5s</text>
+<text x="18" y="190" font-size="14" fill="currentColor">INP</text>
+<rect x="80.0" y="205" width="140.0" height="25" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<rect x="220.0" y="205" width="210.0" height="25" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<rect x="430.0" y="205" width="70.0" height="25" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<path d="M80.0 232 v8" stroke="currentColor"/>
+<text x="70.0" y="259" font-size="13" fill="currentColor">0ms</text>
+<path d="M220.0 232 v8" stroke="currentColor"/>
+<text x="210.0" y="259" font-size="13" fill="currentColor">200ms</text>
+<path d="M430.0 232 v8" stroke="currentColor"/>
+<text x="420.0" y="259" font-size="13" fill="currentColor">500ms</text>
+<path d="M500.0 232 v8" stroke="currentColor"/>
+<text x="455.0" y="277" font-size="13" fill="currentColor">600ms</text>
+<text x="18" y="300" font-size="14" fill="currentColor">CLS</text>
+<rect x="80.0" y="315" width="140.0" height="25" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<rect x="220.0" y="315" width="210.0" height="25" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<rect x="430.0" y="315" width="70.0" height="25" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<path d="M80.0 342 v8" stroke="currentColor"/>
+<text x="70.0" y="369" font-size="13" fill="currentColor">0</text>
+<path d="M220.0 342 v8" stroke="currentColor"/>
+<text x="210.0" y="369" font-size="13" fill="currentColor">0.1</text>
+<path d="M430.0 342 v8" stroke="currentColor"/>
+<text x="420.0" y="369" font-size="13" fill="currentColor">0.25</text>
+<path d="M500.0 342 v8" stroke="currentColor"/>
+<text x="455.0" y="387" font-size="13" fill="currentColor">0.3</text>
+<text x="18" y="410" font-size="13" fill="currentColor">Tốt: ≤ ngưỡng 1 • Kém: &gt; ngưỡng 2</text>
+</svg>
+
+
 ## Tối ưu render: memo đúng chỗ
 
 React re-render khi state/props đổi. Phần lớn thời gian điều này **không phải vấn đề** — React rất nhanh. Chỉ tối ưu khi đã *đo* thấy chậm (React DevTools Profiler).

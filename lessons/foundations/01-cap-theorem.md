@@ -15,41 +15,54 @@ Một buổi sáng, **đường truyền giữa HN ↔ SG đứt** (network part
 
 **Bạn không có lựa chọn thứ ba**. Đó chính là CAP.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Hai chi nhánh ngân hàng mất liên lạc và hai lựa chọn A hay C</title>
-  <desc>Chi nhánh Hà Nội và TP.HCM bị đứt đường truyền (partition). Khi khách rút tiền tại Hà Nội, ngân hàng phải rẽ nhánh: chọn A là cho rút ngay nhưng lệch sổ, hoặc chọn C là từ chối phục vụ để giữ nhất quán.</desc>
-  <rect x="20" y="36" width="180" height="74" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="110" y="66" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Chi nhánh HN</text>
-  <text x="110" y="88" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">sổ: số dư = 10tr</text>
-  <rect x="520" y="36" width="180" height="74" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="610" y="66" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Chi nhánh SG</text>
-  <text x="610" y="88" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">sổ: số dư = 10tr</text>
-  <g stroke="currentColor" stroke-width="2" stroke-dasharray="7 6" stroke-opacity="0.5">
-    <line x1="200" y1="73" x2="340" y2="73"/>
-    <line x1="380" y1="73" x2="520" y2="73"/>
-  </g>
-  <g stroke="#ef4444" stroke-width="3" stroke-opacity="0.85">
-    <line x1="345" y1="58" x2="375" y2="88"/>
-    <line x1="375" y1="58" x2="345" y2="88"/>
-  </g>
-  <text x="360" y="108" font-size="11" font-weight="700" text-anchor="middle" fill="#ef4444">đứt (partition)</text>
-  <text x="360" y="138" font-size="11.5" text-anchor="middle" fill="currentColor">Khách rút 10tr tại HN — không hỏi được SG</text>
-  <g stroke="currentColor" stroke-opacity="0.4" fill="none" stroke-width="1.5">
-    <path d="M360 146 L360 168 L185 168 L185 186"/>
-    <path d="M360 168 L535 168 L535 186"/>
-  </g>
-  <rect x="120" y="188" width="360" height="0" fill="none"/>
-  <rect x="40" y="188" width="290" height="104" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="185" y="212" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">(A) Cho rút ngay</text>
-  <text x="185" y="234" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">ghi sổ HN, SG lệch tới khi nối lại</text>
-  <rect x="120" y="248" width="130" height="26" rx="13" fill="#10b981" fill-opacity="0.9"/>
-  <text x="185" y="265" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">Available, mất C</text>
-  <rect x="390" y="188" width="290" height="104" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="535" y="212" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">(C) Từ chối phục vụ</text>
-  <text x="535" y="234" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">chờ xác nhận số dư với SG</text>
-  <rect x="470" y="248" width="130" height="26" rx="13" fill="#3b82f6" fill-opacity="0.9"/>
-  <text x="535" y="265" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">Consistent, mất A</text>
+<ab-toggle data-labels="Chọn A|Chọn C">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 290" role="img" aria-labelledby="fd01-cap-0-t fd01-cap-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="fd01-cap-0-t">Hai sổ khi partition: Cho rút ngay</title>
+<desc id="fd01-cap-0-d">Hai sổ khi partition: Cho rút ngay</desc>
+<text x="260" y="25" font-size="14" text-anchor="middle" fill="currentColor">Rút 10tr tại HN • đường truyền bị đứt</text>
+<rect x="25" y="55" width="190" height="175" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<rect x="305" y="55" width="190" height="175" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="120" y="82" font-size="14" text-anchor="middle" fill="currentColor">Chi nhánh HN</text>
+<text x="400" y="82" font-size="14" text-anchor="middle" fill="currentColor">Chi nhánh SG</text>
+<line x1="215" y1="110" x2="245" y2="110" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4"/>
+<line x1="275" y1="110" x2="305" y2="110" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4"/>
+<line x1="250" y1="100" x2="270" y2="120" stroke="#f43f5e" stroke-width="2" />
+<line x1="270" y1="100" x2="250" y2="120" stroke="#f43f5e" stroke-width="2" />
+<text x="260" y="145" font-size="13" text-anchor="middle" fill="currentColor">partition</text>
+<text x="120" y="115" font-size="14" text-anchor="middle" fill="currentColor">Cho rút ngay</text>
+<text x="120" y="153" font-size="14" text-anchor="middle" fill="currentColor">Số dư: 0tr</text>
+<text x="400" y="153" font-size="14" text-anchor="middle" fill="currentColor">Số dư: 10tr</text>
+<rect x="50" y="172" width="140" height="28" rx="7" fill="#10b981" fill-opacity="0" stroke="#10b981" stroke-dasharray="3 3"/>
+<rect x="330" y="172" width="140" height="28" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="120" y="192" font-size="14" text-anchor="middle" fill="currentColor">0</text>
+<text x="400" y="192" font-size="14" text-anchor="middle" fill="currentColor">10tr</text>
+<text x="260" y="264" font-size="14" text-anchor="middle" fill="currentColor">Available, lệch sổ</text>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 290" role="img" aria-labelledby="fd01-cap-1-t fd01-cap-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="fd01-cap-1-t">Hai sổ khi partition: Từ chối rút</title>
+<desc id="fd01-cap-1-d">Hai sổ khi partition: Từ chối rút</desc>
+<text x="260" y="25" font-size="14" text-anchor="middle" fill="currentColor">Rút 10tr tại HN • đường truyền bị đứt</text>
+<rect x="25" y="55" width="190" height="175" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<rect x="305" y="55" width="190" height="175" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="120" y="82" font-size="14" text-anchor="middle" fill="currentColor">Chi nhánh HN</text>
+<text x="400" y="82" font-size="14" text-anchor="middle" fill="currentColor">Chi nhánh SG</text>
+<line x1="215" y1="110" x2="245" y2="110" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4"/>
+<line x1="275" y1="110" x2="305" y2="110" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4"/>
+<line x1="250" y1="100" x2="270" y2="120" stroke="#f43f5e" stroke-width="2" />
+<line x1="270" y1="100" x2="250" y2="120" stroke="#f43f5e" stroke-width="2" />
+<text x="260" y="145" font-size="13" text-anchor="middle" fill="currentColor">partition</text>
+<text x="120" y="115" font-size="14" text-anchor="middle" fill="currentColor">Từ chối rút</text>
+<text x="120" y="153" font-size="14" text-anchor="middle" fill="currentColor">Số dư: 10tr</text>
+<text x="400" y="153" font-size="14" text-anchor="middle" fill="currentColor">Số dư: 10tr</text>
+<rect x="50" y="172" width="140" height="28" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<rect x="330" y="172" width="140" height="28" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="120" y="192" font-size="14" text-anchor="middle" fill="currentColor">10tr</text>
+<text x="400" y="192" font-size="14" text-anchor="middle" fill="currentColor">10tr</text>
+<text x="260" y="264" font-size="14" text-anchor="middle" fill="currentColor">Consistent, mất availability</text>
+</svg>
+<ab-note>HN ghi giảm số dư ngay; SG còn 10tr cho tới khi đường truyền nối lại.</ab-note>
+<ab-note>HN chờ xác nhận từ SG; giữ hai sổ giống nhau bằng cách từ chối phục vụ.</ab-note>
+</ab-toggle>
 
 ---
 

@@ -290,6 +290,64 @@ Lỗi thực tế kinh điển: mỗi `<li>` có một `<input>` (ô tick hoặc
 
 > Bẫy: `key` chỉ cần **duy nhất trong cùng một list**, không cần duy nhất toàn app. Và `key` **không phải prop** — component con không đọc được `props.key`; nó chỉ dành cho React. Cần giá trị đó bên trong con thì truyền thêm một prop khác (ví dụ `id={todo.id}`).
 
+<ab-toggle data-labels="Key vị trí|Key ổn định">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 395" role="img" aria-labelledby="fe02med-index-t fe02med-index-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="system-ui, sans-serif">
+<title id="fe02med-index-t">State của ô nhập khi chèn đầu danh sách</title>
+<desc id="fe02med-index-d">Hai ô A và B ban đầu chứa An và Bình. Với key theo vị trí, state ở lại slot nên C nhận An; với key ổn định, state di chuyển cùng A và B.</desc>
+<defs><marker id="fe02med-index-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="currentColor"/></marker></defs>
+<text x="18" y="25" font-size="14" fill="currentColor">Chèn C vào đầu • ô nhập có state riêng</text>
+<text x="18" y="57" font-size="14" fill="currentColor">Trước</text>
+<text x="290" y="57" font-size="14" fill="currentColor">Sau</text>
+<rect x="18" y="76" width="170" height="58" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="30" y="98" font-size="14" fill="currentColor">A</text>
+<text x="60" y="119" font-size="14" fill="currentColor">An</text>
+<rect x="18" y="166" width="170" height="58" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="30" y="188" font-size="14" fill="currentColor">B</text>
+<text x="60" y="209" font-size="14" fill="currentColor">Bình</text>
+<rect x="290" y="76" width="210" height="58" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="302" y="98" font-size="14" fill="currentColor">C</text>
+<text x="340" y="119" font-size="14" fill="currentColor">An</text>
+<rect x="290" y="166" width="210" height="58" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="302" y="188" font-size="14" fill="currentColor">A</text>
+<text x="340" y="209" font-size="14" fill="currentColor">Bình</text>
+<rect x="290" y="256" width="210" height="58" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="302" y="278" font-size="14" fill="currentColor">B</text>
+<text x="340" y="299" font-size="14" fill="currentColor">(trống)</text>
+<path d="M188 105 L288 105" fill="none" stroke="#3b82f6" stroke-width="2"  marker-end="url(#fe02med-index-a)"/>
+<path d="M188 195 L288 195" fill="none" stroke="#3b82f6" stroke-width="2"  marker-end="url(#fe02med-index-a)"/>
+<text x="18" y="375" font-size="13" fill="currentColor">Mũi tên nối cùng instance → giữ state ô nhập.</text>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 395" role="img" aria-labelledby="fe02med-key-t fe02med-key-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="system-ui, sans-serif">
+<title id="fe02med-key-t">State của ô nhập khi chèn đầu danh sách</title>
+<desc id="fe02med-key-d">Hai ô A và B ban đầu chứa An và Bình. Với key theo vị trí, state ở lại slot nên C nhận An; với key ổn định, state di chuyển cùng A và B.</desc>
+<defs><marker id="fe02med-key-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="currentColor"/></marker></defs>
+<text x="18" y="25" font-size="14" fill="currentColor">Chèn C vào đầu • ô nhập có state riêng</text>
+<text x="18" y="57" font-size="14" fill="currentColor">Trước</text>
+<text x="290" y="57" font-size="14" fill="currentColor">Sau</text>
+<rect x="18" y="76" width="170" height="58" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="30" y="98" font-size="14" fill="currentColor">A</text>
+<text x="60" y="119" font-size="14" fill="currentColor">An</text>
+<rect x="18" y="166" width="170" height="58" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="30" y="188" font-size="14" fill="currentColor">B</text>
+<text x="60" y="209" font-size="14" fill="currentColor">Bình</text>
+<rect x="290" y="76" width="210" height="58" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="302" y="98" font-size="14" fill="currentColor">C</text>
+<text x="340" y="119" font-size="14" fill="currentColor">(trống)</text>
+<rect x="290" y="166" width="210" height="58" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="302" y="188" font-size="14" fill="currentColor">A</text>
+<text x="340" y="209" font-size="14" fill="currentColor">An</text>
+<rect x="290" y="256" width="210" height="58" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="302" y="278" font-size="14" fill="currentColor">B</text>
+<text x="340" y="299" font-size="14" fill="currentColor">Bình</text>
+<path d="M188 105 L288 195" fill="none" stroke="#3b82f6" stroke-width="2"  marker-end="url(#fe02med-key-a)"/>
+<path d="M188 195 L288 285" fill="none" stroke="#3b82f6" stroke-width="2"  marker-end="url(#fe02med-key-a)"/>
+<text x="18" y="375" font-size="13" fill="currentColor">Mũi tên nối cùng instance → giữ state ô nhập.</text>
+</svg>
+<ab-note>Key theo index (hoặc thiếu key) khiến React ghép theo vị trí: C nhận state từng thuộc A, A nhận state từng thuộc B.</ab-note>
+<ab-note>Key theo id giữ danh tính A và B khi đổi vị trí. C là instance mới nên ô nhập ban đầu trống.</ab-note>
+</ab-toggle>
+
+
 ## 6. Conditional rendering
 
 Vì `{ }` chỉ nhận biểu thức, ta render có điều kiện bằng:
