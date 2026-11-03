@@ -384,83 +384,38 @@ Base case (rất quan trọng ở bài này, **không** mặc định 0): biến
 
 **Bảng DP minh họa** với `word1 = "horse"` (hàng), `word2 = "ros"` (cột). Lưu ý hàng 0 = `0,1,2,3` và cột 0 = `0,1,2,3,4,5` (chính là base case):
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 420" role="img" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Bảng DP của edit distance giữa "horse" và "ros"</title>
-  <desc>Bảng quy hoạch động cho khoảng cách chỉnh sửa: hàng 0 và cột 0 là base case 0..n; mỗi ô lệch lấy min của ba ô láng giềng (chéo = replace, trên = delete, trái = insert) rồi cộng 1; đáp án 3 ở góc dưới-phải.</desc>
-  <text x="260" y="22" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Edit Distance: "horse" → "ros"</text>
-  <text x="60" y="54" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">word1 ↓ / word2 →</text>
-  <g font-size="13" font-weight="700" fill="currentColor">
-    <text x="160" y="78" text-anchor="middle">""</text>
-    <text x="240" y="78" text-anchor="middle">r</text>
-    <text x="320" y="78" text-anchor="middle">o</text>
-    <text x="400" y="78" text-anchor="middle">s</text>
-    <text x="110" y="116" text-anchor="middle">""</text>
-    <text x="110" y="166" text-anchor="middle">h</text>
-    <text x="110" y="216" text-anchor="middle">o</text>
-    <text x="110" y="266" text-anchor="middle">r</text>
-    <text x="110" y="316" text-anchor="middle">s</text>
-    <text x="110" y="366" text-anchor="middle">e</text>
-  </g>
-  <g>
-    <rect x="120" y="90" width="80" height="300" fill="#3b82f6" fill-opacity="0.10"/>
-    <rect x="120" y="90" width="320" height="50" fill="#3b82f6" fill-opacity="0.10"/>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.18" fill="none">
-    <rect x="120" y="90" width="320" height="300" rx="6"/>
-    <line x1="200" y1="90" x2="200" y2="390"/>
-    <line x1="280" y1="90" x2="280" y2="390"/>
-    <line x1="360" y1="90" x2="360" y2="390"/>
-    <line x1="120" y1="140" x2="440" y2="140"/>
-    <line x1="120" y1="190" x2="440" y2="190"/>
-    <line x1="120" y1="240" x2="440" y2="240"/>
-    <line x1="120" y1="290" x2="440" y2="290"/>
-    <line x1="120" y1="340" x2="440" y2="340"/>
-  </g>
-  <g font-size="13" fill="currentColor">
-    <text x="160" y="120" text-anchor="middle" font-weight="700">0</text>
-    <text x="240" y="120" text-anchor="middle" font-weight="700">1</text>
-    <text x="320" y="120" text-anchor="middle" font-weight="700">2</text>
-    <text x="400" y="120" text-anchor="middle" font-weight="700">3</text>
-    <text x="160" y="170" text-anchor="middle" font-weight="700">1</text>
-    <text x="240" y="170" text-anchor="middle">1</text>
-    <text x="320" y="170" text-anchor="middle">2</text>
-    <text x="400" y="170" text-anchor="middle">3</text>
-    <text x="160" y="220" text-anchor="middle" font-weight="700">2</text>
-    <text x="240" y="220" text-anchor="middle">2</text>
-    <text x="320" y="220" text-anchor="middle">1</text>
-    <text x="400" y="220" text-anchor="middle">2</text>
-    <text x="160" y="270" text-anchor="middle" font-weight="700">3</text>
-    <text x="320" y="270" text-anchor="middle">2</text>
-    <text x="400" y="270" text-anchor="middle">2</text>
-    <text x="160" y="320" text-anchor="middle" font-weight="700">4</text>
-    <text x="240" y="320" text-anchor="middle">3</text>
-    <text x="320" y="320" text-anchor="middle">3</text>
-    <text x="400" y="320" text-anchor="middle">2</text>
-    <text x="160" y="370" text-anchor="middle" font-weight="700">5</text>
-    <text x="240" y="370" text-anchor="middle">4</text>
-    <text x="320" y="370" text-anchor="middle">4</text>
-  </g>
-  <g>
-    <rect x="201" y="241" width="78" height="48" fill="#8b5cf6" fill-opacity="0.16"/>
-    <text x="240" y="270" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">2</text>
-    <rect x="361" y="341" width="78" height="48" fill="#f59e0b" fill-opacity="0.16"/>
-    <text x="400" y="370" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">3</text>
-  </g>
-  <defs>
-    <marker id="edArrow" markerWidth="7" markerHeight="7" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#8b5cf6"/></marker>
-  </defs>
-  <g stroke="#8b5cf6" stroke-width="1.6" fill="none" marker-end="url(#edArrow)">
-    <line x1="232" y1="262" x2="190" y2="232"/>
-    <line x1="255" y1="256" x2="255" y2="230"/>
-    <line x1="230" y1="270" x2="186" y2="270"/>
-  </g>
-  <g font-size="9.5" fill="#8b5cf6" font-weight="700">
-    <text x="176" y="232" text-anchor="end">replace (chéo)</text>
-    <text x="255" y="206">delete (trên)</text>
-    <text x="176" y="285" text-anchor="end">insert (trái)</text>
-  </g>
-  <text x="260" y="412" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">ô lệch = 1 + min(3 láng giềng); biên xanh = base case</text>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 380" role="img" aria-labelledby="dsa12c-edit-t dsa12c-edit-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa12c-edit-t">Edit distance điền bảng horse và ros</title>
+<desc id="dsa12c-edit-d">Hàng/cột base tương ứng chuỗi rỗng, mỗi hàng xuất hiện theo bước; ô cuối bằng 3.</desc>
+<defs><marker id="dsa12c-edit-a" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="currentColor"/></marker></defs>
+<text x="260" y="25" font-size="14" text-anchor="middle" fill="currentColor">Edit Distance: horse → ros</text><text x="146" y="56" font-size="14" text-anchor="middle" fill="currentColor">∅</text><text x="208" y="56" font-size="14" text-anchor="middle" fill="currentColor">r</text><text x="270" y="56" font-size="14" text-anchor="middle" fill="currentColor">o</text><text x="332" y="56" font-size="14" text-anchor="middle" fill="currentColor">s</text><text x="95" y="90" font-size="14" text-anchor="middle" fill="currentColor">∅</text><rect x="118" y="65" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="180" y="65" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="242" y="65" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="304" y="65" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="95" y="137" font-size="14" text-anchor="middle" fill="currentColor">h</text><rect x="118" y="112" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="180" y="112" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="242" y="112" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="304" y="112" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="95" y="184" font-size="14" text-anchor="middle" fill="currentColor">o</text><rect x="118" y="159" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="180" y="159" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="242" y="159" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="304" y="159" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="95" y="231" font-size="14" text-anchor="middle" fill="currentColor">r</text><rect x="118" y="206" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="180" y="206" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="242" y="206" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="304" y="206" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="95" y="278" font-size="14" text-anchor="middle" fill="currentColor">s</text><rect x="118" y="253" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="180" y="253" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="242" y="253" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="304" y="253" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="95" y="325" font-size="14" text-anchor="middle" fill="currentColor">e</text><rect x="118" y="300" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="180" y="300" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="242" y="300" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="304" y="300" width="56" height="41" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+<g data-step="1">
+<text x="146" y="90" font-size="14" text-anchor="middle" fill="currentColor">0</text><text x="208" y="90" font-size="14" text-anchor="middle" fill="currentColor">1</text><text x="270" y="90" font-size="14" text-anchor="middle" fill="currentColor">2</text><text x="332" y="90" font-size="14" text-anchor="middle" fill="currentColor">3</text><text x="146" y="137" font-size="14" text-anchor="middle" fill="currentColor">1</text><text x="146" y="184" font-size="14" text-anchor="middle" fill="currentColor">2</text><text x="146" y="231" font-size="14" text-anchor="middle" fill="currentColor">3</text><text x="146" y="278" font-size="14" text-anchor="middle" fill="currentColor">4</text><text x="146" y="325" font-size="14" text-anchor="middle" fill="currentColor">5</text>
+</g>
+<g data-step="2">
+<text x="208" y="137" font-size="14" text-anchor="middle" fill="currentColor">1</text><text x="270" y="137" font-size="14" text-anchor="middle" fill="currentColor">2</text><text x="332" y="137" font-size="14" text-anchor="middle" fill="currentColor">3</text><line x1="174" y1="105" x2="180" y2="112" stroke="currentColor" stroke-width="2"  marker-end="url(#dsa12c-edit-a)"/><text x="435" y="145" font-size="14" text-anchor="middle" fill="currentColor">h ≠ r:</text><text x="435" y="170" font-size="14" text-anchor="middle" fill="currentColor">1+min(0,1,1)=1</text>
+</g>
+<g data-step="3">
+<text x="208" y="184" font-size="14" text-anchor="middle" fill="currentColor">2</text><text x="270" y="184" font-size="14" text-anchor="middle" fill="currentColor">1</text><text x="332" y="184" font-size="14" text-anchor="middle" fill="currentColor">2</text>
+</g>
+<g data-step="4">
+<text x="208" y="231" font-size="14" text-anchor="middle" fill="currentColor">2</text><text x="270" y="231" font-size="14" text-anchor="middle" fill="currentColor">2</text><text x="332" y="231" font-size="14" text-anchor="middle" fill="currentColor">2</text>
+</g>
+<g data-step="5">
+<text x="208" y="278" font-size="14" text-anchor="middle" fill="currentColor">3</text><text x="270" y="278" font-size="14" text-anchor="middle" fill="currentColor">3</text><text x="332" y="278" font-size="14" text-anchor="middle" fill="currentColor">2</text>
+</g>
+<g data-step="6">
+<text x="208" y="325" font-size="14" text-anchor="middle" fill="currentColor">4</text><text x="270" y="325" font-size="14" text-anchor="middle" fill="currentColor">4</text><text x="332" y="325" font-size="14" text-anchor="middle" fill="currentColor">3</text>
+</g>
 </svg>
+<step-note data-step="1">Khởi tạo hàng 0 bằng số lần insert, cột 0 bằng số lần delete. Biên không thể để toàn 0 như LCS.</step-note>
+<step-note data-step="2">Điền hàng h từ trái sang phải; khớp thì giữ chéo, lệch lấy min(trên, trái, chéo)+1. Mỗi ô O(1).</step-note>
+<step-note data-step="3">Điền hàng o từ trái sang phải; khớp thì giữ chéo, lệch lấy min(trên, trái, chéo)+1. Mỗi ô O(1).</step-note>
+<step-note data-step="4">Điền hàng r từ trái sang phải; khớp thì giữ chéo, lệch lấy min(trên, trái, chéo)+1. Mỗi ô O(1).</step-note>
+<step-note data-step="5">Điền hàng s từ trái sang phải; khớp thì giữ chéo, lệch lấy min(trên, trái, chéo)+1. Mỗi ô O(1).</step-note>
+<step-note data-step="6">Điền hàng e từ trái sang phải; khớp thì giữ chéo, lệch lấy min(trên, trái, chéo)+1. Mỗi ô O(1).</step-note>
+</step-flow>
 
 Đọc vài ô: `(o, o)` khớp → lấy chéo `dp[1][1]=1`, giữ nguyên `1`. `(r, r)` khớp → chéo `dp[2][0]=2`. Ô `(s, s)`: `s==s` khớp → chéo `dp[3][2]=2`, nên `dp[4][3]=2`. Hàng cuối là `e` (ký tự cuối của `horse`); góc dưới-phải `dp[5][3] = 3` (ô màu cam) chính là đáp án.
 
@@ -620,7 +575,7 @@ So sánh hai kiểu phụ thuộc ô trên lưới — grid DP thường (unique
     <line x1="127" y1="130" x2="151" y2="130"/>
   </g>
   <text x="160" y="234" font-size="10.5" text-anchor="middle" fill="#3b82f6">dp[r][c] = dp[r-1][c] + dp[r][c-1]</text>
-  <text x="160" y="250" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">(min path sum: thay + bằng min)</text>
+  <text x="160" y="250" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.6">(min path sum: grid[r][c] + min(trên, trái))</text>
   <g stroke="currentColor" stroke-opacity="0.18" fill="none">
     <rect x="420" y="50" width="160" height="160" rx="6"/>
     <line x1="473" y1="50" x2="473" y2="210"/>
@@ -648,6 +603,31 @@ So sánh hai kiểu phụ thuộc ô trên lưới — grid DP thường (unique
 </svg>
 
 **Code.**
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 290" role="img" aria-labelledby="dsa12c-square-t dsa12c-square-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa12c-square-t">Maximal Square mọc từ ba láng giềng</title>
+<desc id="dsa12c-square-d">Ví dụ 2×2 toàn 1, ba láng giềng cho cạnh 1, ô cuối cạnh 2, diện tích 4.</desc>
+<defs><marker id="dsa12c-square-a" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="currentColor"/></marker></defs>
+<text x="260" y="25" font-size="14" text-anchor="middle" fill="currentColor">Ví dụ nhỏ: matrix = [[1,1],[1,1]]</text><text x="260" y="50" font-size="14" text-anchor="middle" fill="currentColor">dp có hàng 0, cột 0 đệm bằng 0</text><rect x="125" y="75" width="58" height="48" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="190" y="75" width="58" height="48" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="255" y="75" width="58" height="48" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="125" y="130" width="58" height="48" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="190" y="130" width="58" height="48" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="255" y="130" width="58" height="48" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="125" y="185" width="58" height="48" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="190" y="185" width="58" height="48" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="255" y="185" width="58" height="48" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+<g data-step="1">
+<text x="154" y="104" font-size="14" text-anchor="middle" fill="currentColor">0</text><text x="219" y="104" font-size="14" text-anchor="middle" fill="currentColor">0</text><text x="284" y="104" font-size="14" text-anchor="middle" fill="currentColor">0</text><text x="154" y="159" font-size="14" text-anchor="middle" fill="currentColor">0</text><text x="154" y="214" font-size="14" text-anchor="middle" fill="currentColor">0</text>
+</g>
+<g data-step="2">
+<text x="219" y="159" font-size="14" text-anchor="middle" fill="currentColor">1</text><text x="284" y="159" font-size="14" text-anchor="middle" fill="currentColor">1</text><text x="219" y="214" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+</g>
+<g data-step="3">
+<text x="284" y="214" font-size="14" text-anchor="middle" fill="currentColor">2</text><line x1="245" y1="166" x2="259" y2="190" stroke="currentColor" stroke-width="2"  marker-end="url(#dsa12c-square-a)"/><line x1="284" y1="178" x2="284" y2="188" stroke="currentColor" stroke-width="2"  marker-end="url(#dsa12c-square-a)"/><line x1="248" y1="207" x2="251" y2="207" stroke="currentColor" stroke-width="2"  marker-end="url(#dsa12c-square-a)"/>
+</g>
+<g data-step="4">
+<rect x="190" y="130" width="123" height="103" fill="#10b981" fill-opacity="0.14" stroke="#10b981" stroke-width="3"/><text x="260" y="265" font-size="14" text-anchor="middle" fill="currentColor">best=2 → diện tích=2²=4</text>
+</g>
+</svg>
+<step-note data-step="1">Đệm biên 0 để ô đầu tiên cũng dùng được cùng một công thức, không cần nhánh riêng.</step-note>
+<step-note data-step="2">Ba ô 1 đầu tiên đều có ít nhất một láng giềng biên bằng 0 nên cạnh lớn nhất ở đó là 1.</step-note>
+<step-note data-step="3">Ô cuối: 1+min(1,1,1)=2. Cả trên, trái và chéo đều phải hỗ trợ thì hình vuông mới mở rộng được.</step-note>
+<step-note data-step="4">Viền xanh bao đúng vùng 2×2 toàn 1. Code trả best*best=4, không trả độ dài cạnh 2.</step-note>
+</step-flow>
 
 ```python
 def maximal_square(matrix):
@@ -738,12 +718,12 @@ int maximalSquare(vector<vector<char>>& matrix) {
 }
 ```
 
-**Phân tích độ phức tạp.** **Thời gian O(n·m)**, **bộ nhớ O(n·m)** (giảm xuống O(m) bằng rolling array vì mỗi ô chỉ cần hàng trên + ô trái). **Bẫy:** trả về **diện tích** (`cạnh²`) chứ không phải cạnh; và đề dùng ký tự `'1'`/`'0'` (char), không phải số nguyên.
+**Phân tích độ phức tạp.** **Thời gian O(n·m)**, **bộ nhớ O(n·m)** (giảm xuống O(m) bằng rolling array vì mỗi ô chỉ cần hàng trên, ô trái và ô chéo trên-trái). **Bẫy:** trả về **diện tích** (`cạnh²`) chứ không phải cạnh; và đề dùng ký tự `'1'`/`'0'` (char), không phải số nguyên.
 
 ## 5. Sai lầm thường gặp & cách tránh
 
 - **Nhầm ý nghĩa hai chỉ số.** Với string DP, `i`/`j` thuộc hai chuỗi khác nhau; với interval DP, chúng là hai đầu của một dãy. Trước khi code, viết ra giấy đúng một câu định nghĩa `dp[i][j]`. Nếu không nói thành lời được, đừng code.
-- **Quên/đặt sai base case.** Grid và LCS thường base = 0; edit distance base = `i`, `j`. Sai base làm cả bảng sai mà không có lỗi runtime — rất khó debug. Luôn điền biên trước.
+- **Quên/đặt sai base case.** LCS có hàng/cột rỗng bằng 0; Unique Paths không có vật cản có biên bằng 1; edit distance có biên `i`, `j`. Sai base làm cả bảng sai mà không có lỗi runtime — rất khó debug. Luôn điền biên trước.
 - **Off-by-one giữa kích thước bảng và chỉ số.** Quy ước `(n+1)×(m+1)` và `A[i-1]`/`B[j-1]` cho tiền tố rỗng; trộn lẫn quy ước "đệm 1" với "không đệm" là nguồn lỗi số một.
 - **Thứ tự điền sai trong interval DP.** Phải điền theo **độ dài khoảng tăng dần** (khoảng ngắn trước), vì `dp[i][j]` cần `dp[i+1][j-1]` (khoảng ngắn hơn) đã sẵn sàng. Vòng `for length`, rồi `for i`, suy ra `j = i + length - 1`.
 - **Tối ưu rolling array khi vế phải còn cần giá trị cũ.** Khi nén 2D xuống 1D, ô `dp[i-1][j-1]` (chéo) bị `dp[j-1]` của hàng mới đè mất nếu duyệt sai chiều. Phải lưu lại giá trị chéo trong một biến tạm trước khi cập nhật (xem 6).
@@ -755,7 +735,32 @@ Nhiều bài DP 2D chỉ phụ thuộc **hàng trước** (`dp[i-1][...]`) và *
 
 Khó duy nhất: ô chéo `dp[i-1][j-1]`. Khi duyệt `j` tăng dần trên mảng 1D, `dp[j-1]` đã bị giá trị **hàng mới** đè trước khi ta dùng. Cách xử lý: dùng một biến `prev` giữ lại giá trị "chéo" (hàng cũ tại `j-1`) ngay trước khi ghi đè.
 
-Ví dụ LCS nén xuống O(min(n, m)) bộ nhớ:
+Ví dụ LCS dưới đây dùng **hai mảng** `prev` (hàng cũ) và `cur` (hàng mới), nén xuống O(min(n, m)) bộ nhớ. Vì không ghi đè `prev` khi tính `cur`, code không cần biến `diag` riêng:
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" role="img" aria-labelledby="dsa12c-roll-t dsa12c-roll-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa12c-roll-t">Rolling array hai hàng cho LCS</title>
+<desc id="dsa12c-roll-d">Hai mảng prev và cur cố định, nối đúng các nguồn trên, trái, chéo khi điền hàng c.</desc>
+<defs><marker id="dsa12c-roll-a" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="currentColor"/></marker></defs>
+<text x="260" y="25" font-size="14" text-anchor="middle" fill="currentColor">LCS: từ hàng b sang hàng c (abcde / ace)</text><text x="70" y="110" font-size="14" text-anchor="middle" fill="currentColor">prev</text><text x="70" y="210" font-size="14" text-anchor="middle" fill="currentColor">cur</text><text x="158" y="60" font-size="14" text-anchor="middle" fill="currentColor">∅</text><rect x="130" y="80" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="158.0" y="105.0" font-size="14" text-anchor="middle" fill="currentColor">0</text><rect x="130" y="180" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="233" y="60" font-size="14" text-anchor="middle" fill="currentColor">a</text><rect x="205" y="80" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="233.0" y="105.0" font-size="14" text-anchor="middle" fill="currentColor">1</text><rect x="205" y="180" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="308" y="60" font-size="14" text-anchor="middle" fill="currentColor">c</text><rect x="280" y="80" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="308.0" y="105.0" font-size="14" text-anchor="middle" fill="currentColor">1</text><rect x="280" y="180" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="383" y="60" font-size="14" text-anchor="middle" fill="currentColor">e</text><rect x="355" y="80" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="383.0" y="105.0" font-size="14" text-anchor="middle" fill="currentColor">1</text><rect x="355" y="180" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+<g data-step="1">
+<text x="158" y="205" font-size="14" text-anchor="middle" fill="currentColor">0</text>
+</g>
+<g data-step="2">
+<text x="233" y="205" font-size="14" text-anchor="middle" fill="currentColor">1</text><line x1="233" y1="123" x2="233" y2="177" stroke="currentColor" stroke-width="2"  marker-end="url(#dsa12c-roll-a)"/><line x1="187" y1="200" x2="200" y2="200" stroke="currentColor" stroke-width="2"  marker-end="url(#dsa12c-roll-a)"/>
+</g>
+<g data-step="3">
+<text x="308" y="205" font-size="14" text-anchor="middle" fill="currentColor">2</text><line x1="248" y1="123" x2="292" y2="177" stroke="currentColor" stroke-width="2"  marker-end="url(#dsa12c-roll-a)"/>
+</g>
+<g data-step="4">
+<text x="383" y="205" font-size="14" text-anchor="middle" fill="currentColor">2</text><line x1="383" y1="123" x2="383" y2="177" stroke="currentColor" stroke-width="2"  marker-end="url(#dsa12c-roll-a)"/><line x1="337" y1="200" x2="350" y2="200" stroke="currentColor" stroke-width="2"  marker-end="url(#dsa12c-roll-a)"/>
+</g>
+</svg>
+<step-note data-step="1">Đang tính i=3, ký tự c; prev chứa hàng b=[0,1,1,1]. Tạo cur mới với base cur[0]=0, không ghi đè prev.</step-note>
+<step-note data-step="2">j=1: c khác a, cur[1]=max(prev[1],cur[0])=1. Hai ô được đọc đều đã có.</step-note>
+<step-note data-step="3">j=2: c khớp c, lấy chéo prev[1]+1=2. Hai mảng giữ nguyên chéo hàng cũ, không cần biến diag riêng.</step-note>
+<step-note data-step="4">j=3: c khác e, max(prev[3],cur[2])=2. Xong hàng mới gán prev=cur, lặp tiếp; bộ nhớ O(m).</step-note>
+</step-flow>
 
 ```python
 def lcs_rolling(text1, text2):

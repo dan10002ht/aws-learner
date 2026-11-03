@@ -54,6 +54,58 @@ Hai thao tác cốt lõi:
 - `pop()`: lấy phần tử ở đỉnh ra.
 - `peek()`/`top()`: xem đỉnh mà không lấy ra.
 
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 345" role="img" aria-labelledby="dsa04a-stack-t dsa04a-stack-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa04a-stack-t">Stack: pop lấy ô 2 ra khỏi đỉnh</title>
+<desc id="dsa04a-stack-d">Ô 2 chỉ ở trong stack ở bước 2; khi pop, nó xuất hiện bên trên stack và top dời xuống ô 1.</desc>
+<defs>
+<marker id="dsa04a-stack-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">Stack: pop lấy ô 2 ra khỏi đỉnh</text>
+<path d="M150 130 L150 260 L270 260 L270 130" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="210" y="285" text-anchor="middle" font-size="14" fill="currentColor">đáy</text>
+<g data-step="1">
+<rect x="160" y="205" width="100" height="43" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="210.0" y="231.5" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+</g>
+<g data-step="2" data-until="2">
+<rect x="160" y="155" width="100" height="43" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="210.0" y="181.5" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+</g>
+<g data-step="3">
+<rect x="160" y="65" width="100" height="43" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="210.0" y="91.5" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+<path d="M210 150 L210 113" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa04a-stack-ar)"/>
+</g>
+<g data-step="1" data-until="1">
+<path d="M330 226 L275 226" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa04a-stack-ar)"/>
+<text x="375" y="231" text-anchor="middle" font-size="14" fill="currentColor">top</text>
+</g>
+<g data-step="2" data-until="2">
+<path d="M330 176 L275 176" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa04a-stack-ar)"/>
+<text x="375" y="181" text-anchor="middle" font-size="14" fill="currentColor">top</text>
+</g>
+<g data-step="3">
+<path d="M330 226 L275 226" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa04a-stack-ar)"/>
+<text x="375" y="231" text-anchor="middle" font-size="14" fill="currentColor">top</text>
+</g>
+<g data-step="1" data-until="1">
+<text x="260" y="320" text-anchor="middle" font-size="14" fill="currentColor">push(1)</text>
+</g>
+<g data-step="2" data-until="2">
+<text x="260" y="320" text-anchor="middle" font-size="14" fill="currentColor">push(2); peek() = 2</text>
+</g>
+<g data-step="3">
+<text x="260" y="320" text-anchor="middle" font-size="14" fill="currentColor">pop() → 2 đã lấy ra</text>
+</g>
+</svg>
+<step-note data-step="1">Push 1 vào stack rỗng; top chỉ tới 1 ở đáy.</step-note>
+<step-note data-step="2">Push 2 lên trên 1; top dời tới 2. Peek đọc 2, không lấy ra.</step-note>
+<step-note data-step="3">Pop lấy ô 2 ra ngoài, top trở lại 1; không còn ô 2 trong stack. Pop O(1), push trên mảng động O(1) amortized.</step-note>
+</step-flow>
+
 ### Khi nào dùng Stack?
 
 - **Kiểm tra ngoặc hợp lệ** (parser, compiler, formatter).
@@ -122,6 +174,13 @@ bool empty = stack.empty();
 ```
 
 > **Bẫy**: Trong Java, đừng dùng class `java.util.Stack` cũ (nó kế thừa `Vector`, có khoá đồng bộ chậm). Hãy dùng `ArrayDeque` làm stack.
+
+### Tự tay thử: stack
+
+Nhập số rồi bấm **Thêm (push)** hoặc **Lấy (pop)**: mọi thao tác chỉ đụng phần tử trên cùng (`top`), nên dù stack dài bao nhiêu chi phí vẫn là O(1). Thử pop đến khi rỗng để xem trường hợp stack rỗng.
+
+<ds-playground data-type="stack" data-init="3,7,1">
+</ds-playground>
 
 ### Bài toán điển hình: Ngoặc hợp lệ (Valid Parentheses)
 
@@ -206,6 +265,83 @@ bool isValid(const std::string& s) {
 }
 ```
 
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 405" role="img" aria-labelledby="dsa04a-brackets-t dsa04a-brackets-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa04a-brackets-t">Ngoặc hợp lệ: pop làm stack ngắn lại</title>
+<desc id="dsa04a-brackets-d">Với chuỗi ([]), hai ngoặc mở được push, rồi dấu đóng lần lượt pop đúng đỉnh cho tới stack rỗng.</desc>
+<defs>
+<marker id="dsa04a-brackets-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">Ngoặc hợp lệ: pop làm stack ngắn lại</text>
+<rect x="100" y="75" width="74" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="137.0" y="60" text-anchor="middle" font-size="13" fill="currentColor">0</text>
+<rect x="180" y="75" width="74" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="217.0" y="60" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="260" y="75" width="74" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="297.0" y="60" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="340" y="75" width="74" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="377.0" y="60" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<text x="137" y="102" text-anchor="middle" font-size="14" fill="currentColor">(</text>
+<text x="217" y="102" text-anchor="middle" font-size="14" fill="currentColor">[</text>
+<text x="297" y="102" text-anchor="middle" font-size="14" fill="currentColor">]</text>
+<text x="377" y="102" text-anchor="middle" font-size="14" fill="currentColor">)</text>
+<path d="M170 195 L170 335 L290 335 L290 195" fill="none" stroke="currentColor" stroke-width="2"/>
+<g data-step="1" data-until="3">
+<rect x="180" y="280" width="100" height="43" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="230.0" y="306.5" text-anchor="middle" font-size="14" fill="currentColor">(</text>
+</g>
+<g data-step="2" data-until="2">
+<rect x="180" y="230" width="100" height="43" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="230.0" y="256.5" text-anchor="middle" font-size="14" fill="currentColor">[</text>
+</g>
+<g data-step="3" data-until="3">
+<rect x="360" y="225" width="70" height="43" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="395.0" y="251.5" text-anchor="middle" font-size="14" fill="currentColor">[</text>
+<path d="M285 251 L355 251" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa04a-brackets-ar)"/>
+</g>
+<g data-step="4">
+<rect x="360" y="280" width="70" height="43" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="395.0" y="306.5" text-anchor="middle" font-size="14" fill="currentColor">(</text>
+<path d="M285 301 L355 301" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa04a-brackets-ar)"/>
+<text x="230" y="290" text-anchor="middle" font-size="14" fill="currentColor">rỗng</text>
+</g>
+<g data-step="1" data-until="1">
+<path d="M137.0 142 L137.0 125" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa04a-brackets-ar)"/>
+<text x="137.0" y="162" text-anchor="middle" font-size="13" fill="currentColor">đọc (</text>
+</g>
+<g data-step="2" data-until="2">
+<path d="M217.0 142 L217.0 125" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa04a-brackets-ar)"/>
+<text x="217.0" y="162" text-anchor="middle" font-size="13" fill="currentColor">đọc [</text>
+</g>
+<g data-step="3" data-until="3">
+<path d="M297.0 142 L297.0 125" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa04a-brackets-ar)"/>
+<text x="297.0" y="162" text-anchor="middle" font-size="13" fill="currentColor">đọc ]</text>
+</g>
+<g data-step="4">
+<path d="M377.0 142 L377.0 125" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa04a-brackets-ar)"/>
+<text x="377.0" y="162" text-anchor="middle" font-size="13" fill="currentColor">đọc )</text>
+</g>
+<g data-step="1" data-until="1">
+<text x="260" y="375" text-anchor="middle" font-size="14" fill="currentColor">push (</text>
+</g>
+<g data-step="2" data-until="2">
+<text x="260" y="375" text-anchor="middle" font-size="14" fill="currentColor">push [</text>
+</g>
+<g data-step="3" data-until="3">
+<text x="260" y="375" text-anchor="middle" font-size="14" fill="currentColor">] khớp [: pop [</text>
+</g>
+<g data-step="4">
+<text x="260" y="375" text-anchor="middle" font-size="14" fill="currentColor">) khớp (: pop (; true</text>
+</g>
+</svg>
+<step-note data-step="1">Input "([])": gặp ( thì push. Ngoặc mở gần nhất đang ở đỉnh.</step-note>
+<step-note data-step="2">Gặp [ thì push lên trên (. Dấu [ phải được đóng trước dấu (.</step-note>
+<step-note data-step="3">Gặp ]: đỉnh [ khớp nên pop ra ngoài; ô [ trong stack biến mất. Nếu đỉnh khác thì trả false ngay.</step-note>
+<step-note data-step="4">Gặp ): pop ( ra ngoài; stack rỗng nên trả true. Mỗi ký tự push hoặc pop tối đa một lần, O(n) time và O(n) space.</step-note>
+</step-flow>
+
 ## Queue (FIFO)
 
 `Queue` hoạt động theo nguyên tắc **FIFO** (First In, First Out): phần tử vào trước sẽ ra trước, đúng như xếp hàng mua vé. Người đến trước được phục vụ trước.
@@ -213,6 +349,63 @@ bool isValid(const std::string& s) {
 Hai thao tác cốt lõi:
 - `enqueue(x)`/`push`: thêm vào **cuối** hàng.
 - `dequeue()`/`pop`: lấy ra từ **đầu** hàng.
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 315" role="img" aria-labelledby="dsa04a-queue-t dsa04a-queue-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa04a-queue-t">Queue: dequeue lấy 1 khỏi đầu hàng</title>
+<desc id="dsa04a-queue-d">Ô 1 biến mất khỏi hàng khi dequeue và xuất hiện phía ngoài bên trái; front chỉ tới ô 2, back vẫn là 2.</desc>
+<defs>
+<marker id="dsa04a-queue-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">Queue: dequeue lấy 1 khỏi đầu hàng</text>
+<text x="260" y="57" text-anchor="middle" font-size="14" fill="currentColor">enqueue ở cuối; dequeue ở đầu</text>
+<g data-step="1" data-until="2">
+<rect x="160" y="145" width="85" height="48" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="202.5" y="174.0" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+</g>
+<g data-step="2">
+<rect x="310" y="145" width="85" height="48" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="352.5" y="174.0" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+</g>
+<g data-step="3">
+<rect x="25" y="145" width="75" height="48" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="62.5" y="174.0" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+<path d="M155 169 L105 169" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa04a-queue-ar)"/>
+</g>
+<g data-step="1" data-until="1">
+<text x="202" y="125" text-anchor="middle" font-size="13" fill="currentColor">front</text>
+<path d="M202 130 L202 141" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa04a-queue-ar)"/>
+<text x="202" y="229" text-anchor="middle" font-size="13" fill="currentColor">back</text>
+<path d="M202 211 L202 197" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa04a-queue-ar)"/>
+</g>
+<g data-step="2" data-until="2">
+<text x="202" y="125" text-anchor="middle" font-size="13" fill="currentColor">front</text>
+<path d="M202 130 L202 141" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa04a-queue-ar)"/>
+<text x="352" y="229" text-anchor="middle" font-size="13" fill="currentColor">back</text>
+<path d="M352 211 L352 197" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa04a-queue-ar)"/>
+</g>
+<g data-step="3">
+<text x="352" y="125" text-anchor="middle" font-size="13" fill="currentColor">front</text>
+<path d="M352 130 L352 141" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa04a-queue-ar)"/>
+<text x="352" y="229" text-anchor="middle" font-size="13" fill="currentColor">back</text>
+<path d="M352 211 L352 197" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa04a-queue-ar)"/>
+</g>
+<g data-step="1" data-until="1">
+<text x="260" y="285" text-anchor="middle" font-size="14" fill="currentColor">enqueue(1)</text>
+</g>
+<g data-step="2" data-until="2">
+<text x="260" y="285" text-anchor="middle" font-size="14" fill="currentColor">enqueue(2)</text>
+</g>
+<g data-step="3">
+<text x="260" y="285" text-anchor="middle" font-size="14" fill="currentColor">dequeue() → 1 đã ra ngoài</text>
+</g>
+</svg>
+<step-note data-step="1">Enqueue 1: front và back cùng chỉ tới 1.</step-note>
+<step-note data-step="2">Enqueue 2 ở cuối, giữ 1 ở đầu. Thứ tự chờ là 1 rồi 2.</step-note>
+<step-note data-step="3">Dequeue đưa 1 ra ngoài, front chuyển sang 2. Với deque hoặc head index chỉ đổi đầu hàng, không dịch cả mảng; thao tác lấy đầu O(1).</step-note>
+</step-flow>
 
 ### Khi nào dùng Queue?
 
@@ -281,9 +474,16 @@ q.pop();              // ... lấy phần tử đầu ra
 bool empty = q.empty();
 ```
 
+### Tự tay thử: queue
+
+Phần tử vào ở `rear` và ra ở `front`: bấm **Thêm (enqueue)** vài lần rồi **Lấy (dequeue)** để thấy phần tử vào trước luôn ra trước (FIFO), phần còn lại dồn lên.
+
+<ds-playground data-type="queue" data-init="3,7,1">
+</ds-playground>
+
 ### Bài toán điển hình: BFS trên lưới (số bước ngắn nhất)
 
-Cho lưới 0/1, tìm số bước ít nhất đi từ ô `(0,0)` đến `(n-1,m-1)` (0 là đi được).
+Cho lưới 0/1 hình chữ nhật, không rỗng, tìm số bước ít nhất đi từ ô `(0,0)` đến `(n-1,m-1)` (0 là đi được).
 
 **Hướng giải**: Đặt ô xuất phát vào queue với khoảng cách 0, đánh dấu đã thăm. Lặp: lấy ô đầu hàng, mở rộng 4 hướng; ô hợp lệ & chưa thăm thì enqueue với `dist+1`. Vì BFS mở rộng theo từng lớp, lần đầu chạm đích chính là đường ngắn nhất. O(n·m) time.
 
@@ -291,6 +491,8 @@ Cho lưới 0/1, tìm số bước ít nhất đi từ ô `(0,0)` đến `(n-1,m
 from collections import deque
 def shortest_path(grid):
     n, m = len(grid), len(grid[0])
+    if grid[0][0] != 0 or grid[n - 1][m - 1] != 0:
+        return -1
     q = deque([(0, 0, 0)])          # (row, col, dist)
     seen = {(0, 0)}
     while q:
@@ -308,6 +510,7 @@ def shortest_path(grid):
 ```javascript
 function shortestPath(grid) {
   const n = grid.length, m = grid[0].length;
+  if (grid[0][0] !== 0 || grid[n - 1][m - 1] !== 0) return -1;
   const q = [[0, 0, 0]];                 // [row, col, dist]
   const seen = new Set(["0,0"]);
   let head = 0;
@@ -330,6 +533,7 @@ function shortestPath(grid) {
 ```java
 int shortestPath(int[][] grid) {
     int n = grid.length, m = grid[0].length;
+    if (grid[0][0] != 0 || grid[n - 1][m - 1] != 0) return -1;
     Deque<int[]> q = new ArrayDeque<>();
     q.offer(new int[]{0, 0, 0});            // row, col, dist
     boolean[][] seen = new boolean[n][m];
@@ -354,6 +558,9 @@ int shortestPath(int[][] grid) {
 ```go
 func shortestPath(grid [][]int) int {
     n, m := len(grid), len(grid[0])
+    if grid[0][0] != 0 || grid[n-1][m-1] != 0 {
+        return -1
+    }
     type node struct{ r, c, d int }
     q := []node{{0, 0, 0}}
     seen := make([][]bool, n)
@@ -387,6 +594,7 @@ func shortestPath(grid [][]int) int {
 #include <array>
 int shortestPath(const std::vector<std::vector<int>>& grid) {
     int n = grid.size(), m = grid[0].size();
+    if (grid[0][0] != 0 || grid[n - 1][m - 1] != 0) return -1;
     std::queue<std::array<int, 3>> q;      // {row, col, dist}
     q.push({0, 0, 0});
     std::vector<std::vector<bool>> seen(n, std::vector<bool>(m, false));
@@ -410,6 +618,165 @@ int shortestPath(const std::vector<std::vector<int>>& grid) {
 ```
 
 > **Ghi nhớ**: `Stack` → `DFS`, `Queue` → `BFS`. BFS luôn cho đường ngắn nhất khi mỗi cạnh có trọng số bằng nhau (đếm theo số bước).
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 455" role="img" aria-labelledby="dsa04a-grid-t dsa04a-grid-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa04a-grid-t">BFS: frontier và queue đổi cùng nhau</title>
+<desc id="dsa04a-grid-d">Mỗi bước dequeue một ô, enqueue các ô mới và thay nội dung queue tại chỗ; khoảng cách đã phát hiện được giữ lại, đích trả 4.</desc>
+<defs>
+<marker id="dsa04a-grid-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">BFS: frontier và queue đổi cùng nhau</text>
+<text x="260" y="55" text-anchor="middle" font-size="14" fill="currentColor">grid = [[0,0,0], [0,1,0], [0,0,0]]</text>
+<text x="260" y="79" text-anchor="middle" font-size="14" fill="currentColor">Chữ số trong ô đi được = khoảng cách</text>
+<rect x="110" y="110" width="70" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<g data-step="1">
+<rect x="110" y="110" width="70" height="42" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="145" y="136" text-anchor="middle" font-size="14" fill="currentColor">0</text>
+</g>
+<rect x="195" y="110" width="70" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<g data-step="2">
+<rect x="195" y="110" width="70" height="42" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="230" y="136" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+</g>
+<rect x="280" y="110" width="70" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<g data-step="4">
+<rect x="280" y="110" width="70" height="42" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="315" y="136" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+</g>
+<rect x="110" y="165" width="70" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<g data-step="2">
+<rect x="110" y="165" width="70" height="42" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="145" y="191" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+</g>
+<rect x="195" y="165" width="70" height="42" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="230" y="191" text-anchor="middle" font-size="13" fill="currentColor">chặn</text>
+<rect x="280" y="165" width="70" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<g data-step="6">
+<rect x="280" y="165" width="70" height="42" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="315" y="191" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+</g>
+<rect x="110" y="220" width="70" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<g data-step="3">
+<rect x="110" y="220" width="70" height="42" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="145" y="246" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+</g>
+<rect x="195" y="220" width="70" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<g data-step="5">
+<rect x="195" y="220" width="70" height="42" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="230" y="246" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+</g>
+<rect x="280" y="220" width="70" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<g data-step="7">
+<rect x="280" y="220" width="70" height="42" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="315" y="246" text-anchor="middle" font-size="14" fill="currentColor">4</text>
+</g>
+<g data-step="2" data-until="2">
+<rect x="110" y="110" width="70" height="42" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+</g>
+<g data-step="3" data-until="3">
+<rect x="110" y="165" width="70" height="42" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+</g>
+<g data-step="4" data-until="4">
+<rect x="195" y="110" width="70" height="42" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+</g>
+<g data-step="5" data-until="5">
+<rect x="110" y="220" width="70" height="42" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+</g>
+<g data-step="6" data-until="6">
+<rect x="280" y="110" width="70" height="42" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+</g>
+<g data-step="7" data-until="7">
+<rect x="195" y="220" width="70" height="42" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+</g>
+<g data-step="8" data-until="8">
+<rect x="280" y="165" width="70" height="42" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+</g>
+<g data-step="9">
+<rect x="280" y="220" width="70" height="42" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+</g>
+<text x="260" y="297" text-anchor="middle" font-size="14" fill="currentColor">queue: front → back</text>
+<rect x="95" y="315" width="140" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<rect x="270" y="315" width="140" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<g data-step="1" data-until="1">
+<text x="165" y="342" text-anchor="middle" font-size="14" fill="currentColor">(0,0): 0</text>
+<text x="340" y="342" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="2" data-until="2">
+<text x="165" y="342" text-anchor="middle" font-size="14" fill="currentColor">(1,0): 1</text>
+<text x="340" y="342" text-anchor="middle" font-size="14" fill="currentColor">(0,1): 1</text>
+</g>
+<g data-step="3" data-until="3">
+<text x="165" y="342" text-anchor="middle" font-size="14" fill="currentColor">(0,1): 1</text>
+<text x="340" y="342" text-anchor="middle" font-size="14" fill="currentColor">(2,0): 2</text>
+</g>
+<g data-step="4" data-until="4">
+<text x="165" y="342" text-anchor="middle" font-size="14" fill="currentColor">(2,0): 2</text>
+<text x="340" y="342" text-anchor="middle" font-size="14" fill="currentColor">(0,2): 2</text>
+</g>
+<g data-step="5" data-until="5">
+<text x="165" y="342" text-anchor="middle" font-size="14" fill="currentColor">(0,2): 2</text>
+<text x="340" y="342" text-anchor="middle" font-size="14" fill="currentColor">(2,1): 3</text>
+</g>
+<g data-step="6" data-until="6">
+<text x="165" y="342" text-anchor="middle" font-size="14" fill="currentColor">(2,1): 3</text>
+<text x="340" y="342" text-anchor="middle" font-size="14" fill="currentColor">(1,2): 3</text>
+</g>
+<g data-step="7" data-until="7">
+<text x="165" y="342" text-anchor="middle" font-size="14" fill="currentColor">(1,2): 3</text>
+<text x="340" y="342" text-anchor="middle" font-size="14" fill="currentColor">(2,2): 4</text>
+</g>
+<g data-step="8" data-until="8">
+<text x="165" y="342" text-anchor="middle" font-size="14" fill="currentColor">(2,2): 4</text>
+<text x="340" y="342" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="9">
+<text x="165" y="342" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+<text x="340" y="342" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="1" data-until="1">
+<text x="260" y="390" text-anchor="middle" font-size="14" fill="currentColor">Khởi tạo; d = 0</text>
+</g>
+<g data-step="2" data-until="2">
+<text x="260" y="390" text-anchor="middle" font-size="14" fill="currentColor">pop (0,0), d = 0</text>
+</g>
+<g data-step="3" data-until="3">
+<text x="260" y="390" text-anchor="middle" font-size="14" fill="currentColor">pop (1,0), d = 1</text>
+</g>
+<g data-step="4" data-until="4">
+<text x="260" y="390" text-anchor="middle" font-size="14" fill="currentColor">pop (0,1), d = 1</text>
+</g>
+<g data-step="5" data-until="5">
+<text x="260" y="390" text-anchor="middle" font-size="14" fill="currentColor">pop (2,0), d = 2</text>
+</g>
+<g data-step="6" data-until="6">
+<text x="260" y="390" text-anchor="middle" font-size="14" fill="currentColor">pop (0,2), d = 2</text>
+</g>
+<g data-step="7" data-until="7">
+<text x="260" y="390" text-anchor="middle" font-size="14" fill="currentColor">pop (2,1), d = 3</text>
+</g>
+<g data-step="8" data-until="8">
+<text x="260" y="390" text-anchor="middle" font-size="14" fill="currentColor">pop (1,2), d = 3</text>
+</g>
+<g data-step="9">
+<text x="260" y="390" text-anchor="middle" font-size="14" fill="currentColor">pop (2,2), d = 4</text>
+</g>
+<g data-step="9">
+<text x="260" y="425" text-anchor="middle" font-size="14" fill="currentColor">Đích được dequeue: trả 4</text>
+</g>
+</svg>
+<step-note data-step="1">Queue khởi tạo [(0,0):0], đánh dấu seen ngay khi enqueue. Ô giữa là vật cản.</step-note>
+<step-note data-step="2">Pop (0,0), rồi enqueue (1,0) và (0,1) với d = 1 theo thứ tự hướng trong code.</step-note>
+<step-note data-step="3">Pop (1,0), enqueue (2,0) với d = 2. (0,1) vẫn ở đầu, tới lượt trước ô mới.</step-note>
+<step-note data-step="4">Pop (0,1), enqueue (0,2) với d = 2. Queue đang giữ hai ô cùng khoảng cách 2.</step-note>
+<step-note data-step="5">Pop (2,0), enqueue (2,1) với d = 3. Ô cũ không còn nằm trong queue.</step-note>
+<step-note data-step="6">Pop (0,2), enqueue (1,2) với d = 3. Khoảng cách trên lưới giữ lại để thấy vùng đã phát hiện.</step-note>
+<step-note data-step="7">Pop (2,1), enqueue đích (2,2) với d = 4 và đánh dấu seen.</step-note>
+<step-note data-step="8">Pop (1,2): đích đã seen nên không enqueue trùng. Queue chỉ còn đích.</step-note>
+<step-note data-step="9">Pop đích (2,2), queue trở về rỗng và trả 4. Mỗi ô enqueue tối đa một lần, toàn bộ O(n·m).</step-note>
+</step-flow>
 
 ## Deque (Double-Ended Queue)
 
@@ -461,6 +828,60 @@ dq.pop_back();      // xoá cuối
 dq.pop_front();     // xoá đầu
 ```
 
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-labelledby="dsa04a-deque-t dsa04a-deque-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa04a-deque-t">Deque: pop cuối rồi popleft đầu</title>
+<desc id="dsa04a-deque-d">Sau thêm đầu 0, deque có 0 và 1; pop loại 1 ở cuối, popleft loại 0 ở đầu rồi deque rỗng.</desc>
+<defs>
+<marker id="dsa04a-deque-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">Deque: pop cuối rồi popleft đầu</text>
+<path d="M90 140 L90 208 L350 208 L350 140" fill="none" stroke="currentColor" stroke-width="2"/>
+<g data-step="1" data-until="2">
+<rect x="110" y="155" width="80" height="43" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="150.0" y="181.5" text-anchor="middle" font-size="14" fill="currentColor">0</text>
+</g>
+<g data-step="1" data-until="1">
+<rect x="250" y="155" width="80" height="43" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="290.0" y="181.5" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+</g>
+<g data-step="2" data-until="2">
+<rect x="250" y="65" width="80" height="43" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="290.0" y="91.5" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+<path d="M290 150 L290 113" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa04a-deque-ar)"/>
+</g>
+<g data-step="3">
+<rect x="15" y="155" width="75" height="43" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="52.5" y="181.5" text-anchor="middle" font-size="14" fill="currentColor">0</text>
+<path d="M105 177 L94 177" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa04a-deque-ar)"/>
+</g>
+<g data-step="1" data-until="1">
+<text x="150" y="132" text-anchor="middle" font-size="13" fill="currentColor">front</text>
+<text x="290" y="132" text-anchor="middle" font-size="13" fill="currentColor">back</text>
+</g>
+<g data-step="2" data-until="2">
+<text x="150" y="132" text-anchor="middle" font-size="13" fill="currentColor">front = back</text>
+</g>
+<g data-step="3">
+<text x="260" y="175" text-anchor="middle" font-size="14" fill="currentColor">deque rỗng</text>
+</g>
+<g data-step="1" data-until="1">
+<text x="260" y="270" text-anchor="middle" font-size="14" fill="currentColor">appendleft(0): [0, 1]</text>
+</g>
+<g data-step="2" data-until="2">
+<text x="260" y="270" text-anchor="middle" font-size="14" fill="currentColor">pop() → 1, còn [0]</text>
+</g>
+<g data-step="3">
+<text x="260" y="270" text-anchor="middle" font-size="14" fill="currentColor">popleft() → 0, còn []</text>
+</g>
+</svg>
+<step-note data-step="1">Bắt đầu từ append(1), thêm đầu 0 bằng appendleft(0). Deque có [0, 1], hai đầu riêng biệt.</step-note>
+<step-note data-step="2">pop() lấy 1 ở cuối ra ngoài, deque chỉ còn 0. Front và back cùng chỉ tới 0.</step-note>
+<step-note data-step="3">popleft() lấy 0 ở đầu, deque rỗng thật sự. Với deque thích hợp, các thao tác hai đầu O(1).</step-note>
+</step-flow>
+
 ## Monotonic Stack
 
 `Monotonic stack` là một stack mà các phần tử bên trong luôn được giữ **đơn điệu** (tăng dần hoặc giảm dần). Trước khi `push` phần tử mới, ta `pop` hết những phần tử phá vỡ tính đơn điệu. Mẹo này biến bài toán "tìm phần tử lớn/nhỏ hơn gần nhất" từ O(n²) xuống **O(n)** vì mỗi phần tử chỉ vào và ra stack đúng một lần.
@@ -475,7 +896,7 @@ dq.pop_front();     // xoá đầu
 
 Cho mảng `nums`, với mỗi phần tử tìm giá trị lớn hơn đầu tiên nằm bên phải; nếu không có thì `-1`.
 
-**Hướng giải**: Duyệt từ phải sang trái, giữ một stack **giảm dần** chứa các "ứng viên" lớn hơn. Trước khi xét `nums[i]`, pop hết các phần tử nhỏ hơn hoặc bằng nó (chúng không bao giờ là next greater của ai nữa). Đỉnh stack còn lại chính là đáp án. Rồi push `nums[i]`. O(n) time.
+**Hướng giải**: Duyệt từ phải sang trái, giữ một stack **giảm dần** chứa các "ứng viên" lớn hơn. Trước khi xét `nums[i]`, pop hết các phần tử nhỏ hơn hoặc bằng nó (chúng không còn là ứng viên cho các phần tử chưa xét bên trái). Đỉnh stack còn lại chính là đáp án. Rồi push `nums[i]`. O(n) time.
 
 ```python
 def next_greater(nums):
@@ -739,7 +1160,7 @@ Mỗi index vào/ra deque một lần → O(n) time, O(k) space.
     <text x="40" y="200" fill="currentColor"><tspan font-weight="600">i=1</tspan>  pop 0 (1≤3) → [1]   (val 3)</text>
     <text x="40" y="222" fill="currentColor"><tspan font-weight="600">i=2</tspan>  -1&lt;3 → [1, 2]      → cửa sổ [1,3,-1], max = nums[1] = 3</text>
     <text x="40" y="244" fill="currentColor"><tspan font-weight="600">i=3</tspan>  -3&lt;-1 → [1, 2, 3]  → cửa sổ [3,-1,-3], max = nums[1] = 3</text>
-    <text x="40" y="266" fill="currentColor"><tspan font-weight="600">i=4</tspan>  pop 3,2 (≤5); pop đầu 1 (ra cửa sổ) → [4]</text>
+    <text x="40" y="266" fill="currentColor"><tspan font-weight="600">i=4</tspan>  pop cuối 3,2,1 (≤5) → [4]</text>
     <text x="76" y="287" fill="currentColor">→ cửa sổ [-1,-3,5], max = nums[4] = 5</text>
   </g>
   <g>
@@ -847,7 +1268,3 @@ std::vector<int> maxSlidingWindow(const std::vector<int>& nums, int k) {
 | Monotonic queue | Đơn điệu + cửa sổ | pop 2 đầu | Sliding window max/min |
 
 > **Ghi nhớ cuối**: Khi gặp bài "với mỗi phần tử, tìm phần tử lân cận thoả điều kiện so sánh" → nghĩ tới **monotonic stack**. Khi gặp "max/min của mọi cửa sổ trượt cố định" → nghĩ tới **monotonic queue**. Cả hai đều biến O(n²) thành O(n).
-
----
-
-Lưu ý: kho repo này (`/Users/dantt1002/projects/aws/web`) hiện chỉ chứa nội dung luyện thi chứng chỉ AWS (`data/lessons.ts`, `data/courses.ts`), không có khoá DSA hay file Markdown bài học nào. Tôi đã trả về phần thân bài học dạng Markdown ở trên (khoảng 330 dòng, không frontmatter, không bọc trong code fence) để script điều phối tự lưu vào nơi phù hợp.

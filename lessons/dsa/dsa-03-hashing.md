@@ -124,6 +124,183 @@ Công thức hash không hoàn hảo: hai key khác nhau có thể cho ra cùng 
 
 > Ghi nhớ: "O(1) của hash map" là **trung bình**, không phải đảm bảo cho từng lần. Trường hợp xấu nhất (mọi key va chạm vào một ô) là O(n). Trong phỏng vấn, cứ trả lời O(1) trung bình; nhưng phải biết tại sao xấu nhất là O(n) để không bị hỏi đuối.
 
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 305" role="img" aria-labelledby="dsa03a-probe-t dsa03a-probe-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa03a-probe-t">Linear probing: ô trống đổi thành key</title>
+<desc id="dsa03a-probe-d">Bình va chạm An ở bucket 1, được chèn vào bucket 2; lookup lặp lại chuỗi dò 1 rồi 2.</desc>
+<defs>
+<marker id="dsa03a-probe-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">Linear probing: ô trống đổi thành key</text>
+<text x="260" y="58" text-anchor="middle" font-size="14" fill="currentColor">hash(&quot;An&quot;) % 4 = hash(&quot;Bình&quot;) % 4 = 1</text>
+<rect x="100" y="120" width="74" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="137.0" y="105" text-anchor="middle" font-size="13" fill="currentColor">0</text>
+<rect x="180" y="120" width="74" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="217.0" y="105" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="260" y="120" width="74" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="297.0" y="105" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="340" y="120" width="74" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="377.0" y="105" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<g data-step="1">
+<text x="137.0" y="147" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="1">
+<text x="217.0" y="147" text-anchor="middle" font-size="14" fill="currentColor">An</text>
+</g>
+<g data-step="1" data-until="2">
+<text x="297.0" y="147" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="3">
+<text x="297.0" y="147" text-anchor="middle" font-size="14" fill="currentColor">Bình</text>
+</g>
+<g data-step="1">
+<text x="377.0" y="147" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="1" data-until="1">
+<path d="M217.0 195 L217.0 178" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-probe-ar)"/>
+<text x="217.0" y="215" text-anchor="middle" font-size="13" fill="currentColor">bucket 1</text>
+</g>
+<g data-step="2" data-until="2">
+<path d="M217.0 195 L217.0 178" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-probe-ar)"/>
+<text x="217.0" y="215" text-anchor="middle" font-size="13" fill="currentColor">bucket 1</text>
+</g>
+<g data-step="3" data-until="3">
+<path d="M297.0 195 L297.0 178" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-probe-ar)"/>
+<text x="297.0" y="215" text-anchor="middle" font-size="13" fill="currentColor">bucket 2</text>
+</g>
+<g data-step="4">
+<path d="M297.0 195 L297.0 178" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-probe-ar)"/>
+<text x="297.0" y="215" text-anchor="middle" font-size="13" fill="currentColor">bucket 2</text>
+</g>
+<g data-step="1" data-until="1">
+<text x="260" y="275" text-anchor="middle" font-size="14" fill="currentColor">insert &quot;Bình&quot;</text>
+</g>
+<g data-step="2" data-until="2">
+<text x="260" y="275" text-anchor="middle" font-size="14" fill="currentColor">Ô 1: key khác, dò tiếp</text>
+</g>
+<g data-step="3" data-until="3">
+<text x="260" y="275" text-anchor="middle" font-size="14" fill="currentColor">Ô 2 trống: lưu &quot;Bình&quot;</text>
+</g>
+<g data-step="4">
+<text x="260" y="275" text-anchor="middle" font-size="14" fill="currentColor">lookup &quot;Bình&quot;: 1 → 2</text>
+</g>
+<g data-step="3" data-until="3">
+<path d="M217 113 Q257 70 297 113" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-probe-ar)"/>
+</g>
+<g data-step="4">
+<path d="M217 113 Q257 70 297 113" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-probe-ar)"/>
+</g>
+</svg>
+<step-note data-step="1">An đã nằm tại bucket 1; Bình băm tới cùng bucket. Ô 2 vẫn trống, chưa chèn Bình.</step-note>
+<step-note data-step="2">So key: Bình khác An nên không cập nhật value của An. Chọn linear probing, chuyển sang bucket 2.</step-note>
+<step-note data-step="3">Bucket 2 trống nên ghi Bình ngay tại ô này; ký hiệu ∅ cũ biến mất. Không ghi đè An.</step-note>
+<step-note data-step="4">Tra Bình phải thử 1 rồi 2, theo đúng chuỗi dò đã dùng lúc chèn. Trung bình O(1) khi load thấp, worst case O(n).</step-note>
+</step-flow>
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 365" role="img" aria-labelledby="dsa03a-rehash-t dsa03a-rehash-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa03a-rehash-t">Rehash: chuyển key rồi bỏ bảng cũ</title>
+<desc id="dsa03a-rehash-d">Key 1 rời chain ở bảng bốn bucket tới bucket 1 của bảng mới; key 5 rời tới bucket 5, cuối cùng bảng cũ biến mất.</desc>
+<defs>
+<marker id="dsa03a-rehash-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">Rehash: chuyển key rồi bỏ bảng cũ</text>
+<text x="260" y="55" text-anchor="middle" font-size="14" fill="currentColor">Mô hình h(k) = k; rehash từ %4 sang %8</text>
+<g data-step="1" data-until="3">
+<text x="73" y="97" text-anchor="middle" font-size="14" fill="currentColor">Cũ: %4</text>
+<rect x="150" y="75" width="65" height="38" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="182.5" y="99.0" text-anchor="middle" font-size="14" fill="currentColor">0</text>
+<rect x="225" y="75" width="65" height="38" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="257.5" y="99.0" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+<rect x="300" y="75" width="65" height="38" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="332.5" y="99.0" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+<rect x="375" y="75" width="65" height="38" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="407.5" y="99.0" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+</g>
+<g data-step="1" data-until="1">
+<rect x="200" y="135" width="55" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="227.5" y="158.0" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+</g>
+<g data-step="1" data-until="2">
+<rect x="300" y="135" width="55" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="327.5" y="158.0" text-anchor="middle" font-size="14" fill="currentColor">5</text>
+</g>
+<g data-step="1" data-until="1">
+<path d="M255 153 L295 153" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-rehash-ar)"/>
+</g>
+<g data-step="1" data-until="1">
+<path d="M257 115 L227 130" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-rehash-ar)"/>
+</g>
+<g data-step="2" data-until="2">
+<path d="M257 115 L327 130" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-rehash-ar)"/>
+</g>
+<text x="73" y="219" text-anchor="middle" font-size="14" fill="currentColor">Mới: %8</text>
+<rect x="22" y="240" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="50" y="307" text-anchor="middle" font-size="13" fill="currentColor">0</text>
+<rect x="84" y="240" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="112" y="307" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="146" y="240" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="174" y="307" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="208" y="240" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="236" y="307" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<rect x="270" y="240" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="298" y="307" text-anchor="middle" font-size="13" fill="currentColor">4</text>
+<rect x="332" y="240" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="360" y="307" text-anchor="middle" font-size="13" fill="currentColor">5</text>
+<rect x="394" y="240" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="422" y="307" text-anchor="middle" font-size="13" fill="currentColor">6</text>
+<rect x="456" y="240" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="484" y="307" text-anchor="middle" font-size="13" fill="currentColor">7</text>
+<g data-step="1">
+<text x="50" y="266" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="1" data-until="1">
+<text x="112" y="266" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="2">
+<text x="112" y="266" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+</g>
+<g data-step="1">
+<text x="174" y="266" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="1">
+<text x="236" y="266" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="1">
+<text x="298" y="266" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="1" data-until="2">
+<text x="360" y="266" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="3">
+<text x="360" y="266" text-anchor="middle" font-size="14" fill="currentColor">5</text>
+</g>
+<g data-step="1">
+<text x="422" y="266" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="1">
+<text x="484" y="266" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="2" data-until="2">
+<path d="M227 175 Q110 190 112 233" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-rehash-ar)"/>
+</g>
+<g data-step="3" data-until="3">
+<path d="M327 175 Q360 195 360 233" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-rehash-ar)"/>
+</g>
+<g data-step="4">
+<text x="260" y="342" text-anchor="middle" font-size="14" fill="currentColor">Đã chuyển đủ key; giải phóng bảng cũ</text>
+</g>
+</svg>
+<step-note data-step="1">Bảng cũ: 1 và 5 cùng bucket 1 vì lấy modulo 4. Bảng mới có tám bucket còn trống; đây là minh hoạ rehash, không phải hai key đã vượt ngưỡng 0.75.</step-note>
+<step-note data-step="2">Tính 1 % 8 = 1 rồi chuyển key 1 tới bucket 1 mới. Key 1 ở chain cũ biến mất; key 5 vẫn chờ chuyển.</step-note>
+<step-note data-step="3">Tính 5 % 8 = 5, chuyển key 5 sang bucket 5 và bỏ nó khỏi chain cũ. Bảng cũ đã hết key, không còn mũi tên bucket trỏ tới key cũ.</step-note>
+<step-note data-step="4">Tất cả key đã chuyển nên giải phóng bảng cũ. Không thể copy nguyên chain vào bucket 1; rehash đủ n phần tử tốn O(n).</step-note>
+</step-flow>
+
 ## 3. Set vs Map — khác gì nhau
 
 Cả hai dùng cùng bộ máy hash table bên dưới. Khác biệt chỉ ở chỗ bạn lưu gì:
@@ -291,6 +468,75 @@ int main() {
 
 > Ghi nhớ: hễ bài toán có cụm "đã thấy chưa", "bao nhiêu lần", "có cặp/nhóm nào", "loại trùng", "tìm theo id" — phản xạ đầu tiên là hash map/set. Nó thường biến O(n²) thành O(n).
 
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 310" role="img" aria-labelledby="dsa03a-count-t dsa03a-count-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa03a-count-t">Counter: gặp lại key thì tăng value</title>
+<desc id="dsa03a-count-d">Counter: gặp lại key thì tăng value; các vị trí và mũi tên biểu diễn dữ liệu cùng hướng thao tác.</desc>
+<defs>
+<marker id="dsa03a-count-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">Counter: gặp lại key thì tăng value</text>
+<text x="260" y="55" text-anchor="middle" font-size="14" fill="currentColor">nums = [1, 2, 2, 3, 3, 3]</text>
+<text x="260" y="85" text-anchor="middle" font-size="14" fill="currentColor">Mỗi ô xanh = một lần xuất hiện</text>
+<text x="100" y="285" text-anchor="middle" font-size="14" fill="currentColor">key = 1</text>
+<path d="M60 252 L140 252" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="260" y="285" text-anchor="middle" font-size="14" fill="currentColor">key = 2</text>
+<path d="M220 252 L300 252" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="420" y="285" text-anchor="middle" font-size="14" fill="currentColor">key = 3</text>
+<path d="M380 252 L460 252" fill="none" stroke="currentColor" stroke-width="2"/>
+<g data-step="1">
+<rect x="70" y="207" width="60" height="38" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="2">
+<rect x="230" y="207" width="60" height="38" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="3">
+<rect x="230" y="162" width="60" height="38" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="4">
+<rect x="390" y="207" width="60" height="38" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="5">
+<rect x="390" y="162" width="60" height="38" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="6">
+<rect x="390" y="117" width="60" height="38" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="1">
+<text x="100" y="110" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+</g>
+<g data-step="1" data-until="1">
+<text x="260" y="110" text-anchor="middle" font-size="14" fill="currentColor">0</text>
+</g>
+<g data-step="2" data-until="2">
+<text x="260" y="110" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+</g>
+<g data-step="3">
+<text x="260" y="110" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+</g>
+<g data-step="1" data-until="3">
+<text x="420" y="110" text-anchor="middle" font-size="14" fill="currentColor">0</text>
+</g>
+<g data-step="4" data-until="4">
+<text x="420" y="110" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+</g>
+<g data-step="5" data-until="5">
+<text x="420" y="110" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+</g>
+<g data-step="6">
+<text x="420" y="110" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+</g>
+</svg>
+<step-note data-step="1">Đọc 1 lần đầu: tạo key 1 với value = 1. Không cần lưu riêng từng bản sao của 1.</step-note>
+<step-note data-step="2">Đọc 2 lần đầu: tạo key 2 với value = 1.</step-note>
+<step-note data-step="3">Đọc lại 2: cập nhật cùng key thành value = 2, không tạo key mới.</step-note>
+<step-note data-step="4">Đọc 3 lần đầu: tạo key 3 với value = 1.</step-note>
+<step-note data-step="5">Đọc lại 3: value của key 3 tăng thành 2.</step-note>
+<step-note data-step="6">Đọc 3 lần cuối: kết quả {1: 1, 2: 2, 3: 3}. Sáu lượt đọc, mỗi lần cập nhật trung bình O(1), tổng O(n); set chỉ giữ ba key mà không giữ độ cao đếm này.</step-note>
+</step-flow>
+
 ## 6. Khi nào KHÔNG dùng hash map
 
 Hash map mạnh nhưng không phải búa vạn năng. Tránh nó khi:
@@ -376,6 +622,74 @@ std::vector<int> twoSum(const std::vector<int>& nums, int target) {
 
 Độ phức tạp: **O(n)** thời gian, **O(n)** bộ nhớ.
 
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 375" role="img" aria-labelledby="dsa03a-twosum-t dsa03a-twosum-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa03a-twosum-t">Two Sum: lookup trước, lưu sau</title>
+<desc id="dsa03a-twosum-d">Con trỏ i di chuyển trên mảng, map chỉ giữ các phần tử đã xét; gặp 2 ở index 2 thì tìm thấy phần bù tại index 1.</desc>
+<defs>
+<marker id="dsa03a-twosum-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">Two Sum: lookup trước, lưu sau</text>
+<text x="260" y="56" text-anchor="middle" font-size="14" fill="currentColor">nums = [1, 2, 2, 3, 3, 3]; target = 4</text>
+<rect x="45" y="105" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="77.0" y="90" text-anchor="middle" font-size="13" fill="currentColor">0</text>
+<rect x="115" y="105" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="147.0" y="90" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="185" y="105" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="217.0" y="90" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="255" y="105" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="287.0" y="90" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<rect x="325" y="105" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="357.0" y="90" text-anchor="middle" font-size="13" fill="currentColor">4</text>
+<rect x="395" y="105" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="427.0" y="90" text-anchor="middle" font-size="13" fill="currentColor">5</text>
+<text x="77" y="132" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+<text x="147" y="132" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+<text x="217" y="132" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+<text x="287" y="132" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+<text x="357" y="132" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+<text x="427" y="132" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+<g data-step="1">
+<rect x="75" y="230" width="120" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="135.0" y="256.0" text-anchor="middle" font-size="14" fill="currentColor">1 → 0</text>
+</g>
+<g data-step="2">
+<rect x="235" y="230" width="120" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="295.0" y="256.0" text-anchor="middle" font-size="14" fill="currentColor">2 → 1</text>
+</g>
+<text x="260" y="218" text-anchor="middle" font-size="14" fill="currentColor">seen: value → index</text>
+<g data-step="1" data-until="1">
+<path d="M77.0 178 L77.0 161" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-twosum-ar)"/>
+<text x="77.0" y="198" text-anchor="middle" font-size="13" fill="currentColor">i = 0</text>
+</g>
+<g data-step="2" data-until="2">
+<path d="M147.0 178 L147.0 161" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-twosum-ar)"/>
+<text x="147.0" y="198" text-anchor="middle" font-size="13" fill="currentColor">i = 1</text>
+</g>
+<g data-step="3">
+<path d="M217.0 178 L217.0 161" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-twosum-ar)"/>
+<text x="217.0" y="198" text-anchor="middle" font-size="13" fill="currentColor">i = 2</text>
+</g>
+<g data-step="1" data-until="1">
+<text x="260" y="315" text-anchor="middle" font-size="14" fill="currentColor">need = 3: chưa có</text>
+</g>
+<g data-step="2" data-until="2">
+<text x="260" y="315" text-anchor="middle" font-size="14" fill="currentColor">need = 2: chưa có</text>
+</g>
+<g data-step="3">
+<text x="260" y="315" text-anchor="middle" font-size="14" fill="currentColor">need = 2: có ở index 1</text>
+</g>
+<g data-step="3">
+<text x="260" y="350" text-anchor="middle" font-size="14" fill="currentColor">Trả [1, 2]</text>
+</g>
+</svg>
+<step-note data-step="1">i = 0 đọc 1, cần 3 nhưng map rỗng. Lookup thất bại rồi mới lưu 1 → 0.</step-note>
+<step-note data-step="2">i = 1 đọc 2, cần 2 nhưng chưa có: lưu 2 → 1 sau lookup. Nhờ thứ tự này không dùng cùng index 1 hai lần.</step-note>
+<step-note data-step="3">i = 2 đọc 2, tra được phần bù ở index 1 nên trả [1, 2]. Không cần xét phần còn lại; trung bình O(n) time và O(n) space.</step-note>
+</step-flow>
+
 ### 7.2 Group Anagrams — gom các từ đảo chữ
 
 > Cho danh sách từ, gom những từ là **anagram** của nhau (cùng tập chữ cái, khác thứ tự): `["eat","tea","tan","ate","nat","bat"]` → `[["eat","tea","ate"],["tan","nat"],["bat"]]`.
@@ -454,6 +768,62 @@ std::vector<std::vector<std::string>> groupAnagrams(const std::vector<std::strin
 ```
 
 Độ phức tạp: **O(n·k log k)** với n từ, mỗi từ dài k (chi phí sort signature). Có thể bỏ sort, dùng mảng đếm 26 chữ cái làm key → **O(n·k)**.
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 340" role="img" aria-labelledby="dsa03a-group-t dsa03a-group-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa03a-group-t">Group Anagrams: thêm từ vào đúng nhóm</title>
+<desc id="dsa03a-group-d">Group Anagrams: thêm từ vào đúng nhóm; các vị trí và mũi tên biểu diễn dữ liệu cùng hướng thao tác.</desc>
+<defs>
+<marker id="dsa03a-group-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">Group Anagrams: thêm từ vào đúng nhóm</text>
+<text x="260" y="55" text-anchor="middle" font-size="14" fill="currentColor">Khoá = các chữ cái đã sort</text>
+<rect x="25" y="100" width="80" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="65.0" y="125.0" text-anchor="middle" font-size="14" fill="currentColor">aet</text>
+<g data-step="1">
+<rect x="145" y="100" width="95" height="40" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="192.5" y="125.0" text-anchor="middle" font-size="14" fill="currentColor">eat</text>
+<path d="M107 120 L140 120" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-group-ar)"/>
+</g>
+<g data-step="2">
+<rect x="260" y="100" width="95" height="40" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="307.5" y="125.0" text-anchor="middle" font-size="14" fill="currentColor">tea</text>
+<path d="M240 120 L255 120" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-group-ar)"/>
+</g>
+<g data-step="4">
+<rect x="375" y="100" width="95" height="40" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="422.5" y="125.0" text-anchor="middle" font-size="14" fill="currentColor">ate</text>
+<path d="M355 120 L370 120" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-group-ar)"/>
+</g>
+<rect x="25" y="170" width="80" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="65.0" y="195.0" text-anchor="middle" font-size="14" fill="currentColor">ant</text>
+<g data-step="3">
+<rect x="145" y="170" width="95" height="40" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="192.5" y="195.0" text-anchor="middle" font-size="14" fill="currentColor">tan</text>
+<path d="M107 190 L140 190" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-group-ar)"/>
+</g>
+<g data-step="5">
+<rect x="260" y="170" width="95" height="40" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="307.5" y="195.0" text-anchor="middle" font-size="14" fill="currentColor">nat</text>
+<path d="M240 190 L255 190" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-group-ar)"/>
+</g>
+<rect x="25" y="240" width="80" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="65.0" y="265.0" text-anchor="middle" font-size="14" fill="currentColor">abt</text>
+<g data-step="6">
+<rect x="145" y="240" width="95" height="40" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="192.5" y="265.0" text-anchor="middle" font-size="14" fill="currentColor">bat</text>
+<path d="M107 260 L140 260" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa03a-group-ar)"/>
+</g>
+</svg>
+<step-note data-step="1">eat có signature aet: tạo nhóm đầu và append eat.</step-note>
+<step-note data-step="2">tea cũng có signature aet: append vào cùng nhóm, giữ eat.</step-note>
+<step-note data-step="3">tan có signature ant: tạo nhóm riêng.</step-note>
+<step-note data-step="4">ate có signature aet: nhóm này tăng thành ba từ.</step-note>
+<step-note data-step="5">nat có signature ant: append sau tan.</step-note>
+<step-note data-step="6">bat có signature abt: tạo nhóm thứ ba. Ba hàng là ba danh sách độc lập; chi phí chính là sort signature O(k log k) mỗi từ.</step-note>
+</step-flow>
 
 ### 7.3 Đếm tần suất + Top-K phần tử hay gặp
 

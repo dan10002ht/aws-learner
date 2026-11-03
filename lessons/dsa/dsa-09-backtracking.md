@@ -76,45 +76,23 @@ Mỗi đường đi từ gốc xuống lá là một tập con. Backtracking đi
 
 Cốt lõi là ta **dùng chung một biến trạng thái** `path` (đường đi hiện tại) cho toàn bộ cây thay vì copy ở mỗi node — nhờ vậy tiết kiệm bộ nhớ. Nhưng dùng chung thì sau khi đi sâu xong phải **trả lại trạng thái như cũ**, nếu không nhánh sau sẽ "dính" rác của nhánh trước. Đó là lý do mọi `choose` (thêm vào path) đều phải có một `unchoose` (gỡ ra) đối xứng.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Vòng choose – explore – unchoose trên một nhánh</title>
-  <desc>Trên một nhánh, path được thêm phần tử (choose), đi sâu đệ quy (explore), rồi gỡ chính phần tử đó ra (unchoose) để khôi phục trạng thái cho nhánh kế. Choose và unchoose phải đối xứng.</desc>
-  <defs>
-    <marker id="bkArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
-    </marker>
-  </defs>
-  <g font-size="12.5" text-anchor="middle">
-    <g>
-      <rect x="40" y="40" width="180" height="56" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-      <text x="130" y="64" font-weight="700" fill="currentColor">1. choose</text>
-      <text x="130" y="82" font-size="11" fill="currentColor" opacity="0.7">path.push(x)</text>
-    </g>
-    <g>
-      <rect x="270" y="40" width="180" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-      <text x="360" y="64" font-weight="700" fill="currentColor">2. explore</text>
-      <text x="360" y="82" font-size="11" fill="currentColor" opacity="0.7">backtrack(...) đệ quy</text>
-    </g>
-    <g>
-      <rect x="500" y="40" width="180" height="56" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-      <text x="590" y="64" font-weight="700" fill="currentColor">3. unchoose</text>
-      <text x="590" y="82" font-size="11" fill="currentColor" opacity="0.7">path.pop()</text>
-    </g>
-  </g>
-  <g stroke="currentColor" fill="none" stroke-width="1.5">
-    <path d="M220 68 L264 68" marker-end="url(#bkArr)"/>
-    <path d="M450 68 L494 68" marker-end="url(#bkArr)"/>
-    <path d="M590 100 L590 150 L130 150 L130 102" marker-end="url(#bkArr)"/>
-  </g>
-  <text x="360" y="170" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">quay lại trạng thái như trước khi vào nhánh → sẵn sàng cho lựa chọn kế tiếp</text>
-  <line x1="40" y1="196" x2="680" y2="196" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="40" y="222" font-size="12" font-weight="700" fill="currentColor">Vì sao BẮT BUỘC unchoose? path dùng chung cho cả cây:</text>
-  <g font-size="11.5" font-family="ui-monospace, monospace">
-    <text x="40" y="248" fill="currentColor" opacity="0.85">path=[1]   → choose 2 → path=[1,2]  → đi sâu nhánh "2"</text>
-    <text x="40" y="270" fill="#10b981">path=[1]   ← unchoose 2  (khôi phục, ĐÚNG)  → choose 3 → [1,3]</text>
-    <text x="40" y="292" fill="#f59e0b">path=[1,2] ✗ quên unchoose → choose 3 → [1,2,3] (rác của nhánh trước → SAI)</text>
-  </g>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 230" role="img" aria-labelledby="ds9-undo-t ds9-undo-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="ds9-undo-t">Choose → explore → unchoose</title>
+<desc id="ds9-undo-d">Một path cố định: [1], [1,2], pop về [1], rồi [1,3]. Giá trị 2 biến mất hẳn sau pop. Nếu quên pop, nhánh sau sai thành [1,2,3].</desc>
+<defs><marker id="ds9-undo-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260" y="25" text-anchor="middle" font-size="15" fill="currentColor">Choose → explore → unchoose</text>
+<text x="260" y="60" text-anchor="middle" font-size="14" fill="currentColor">path dùng chung; nums=[1,2,3]</text><text x="65" y="124" text-anchor="middle" font-size="13" fill="currentColor">path</text><rect x="145" y="100" width="60" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><rect x="215" y="100" width="60" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><rect x="285" y="100" width="60" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<g data-step="1" data-until="1"><text x="175" y="126" text-anchor="middle" font-size="16" fill="currentColor">1</text><text x="260" y="185" text-anchor="middle" font-size="13" fill="currentColor">Trạng thái ban đầu</text></g>
+<g data-step="2" data-until="2"><text x="175" y="126" text-anchor="middle" font-size="16" fill="currentColor">1</text><text x="245" y="126" text-anchor="middle" font-size="16" fill="currentColor">2</text><text x="260" y="185" text-anchor="middle" font-size="13" fill="currentColor">Choose 2 → explore nhánh 2</text></g>
+<g data-step="3" data-until="3"><text x="175" y="126" text-anchor="middle" font-size="16" fill="currentColor">1</text><text x="260" y="185" text-anchor="middle" font-size="13" fill="currentColor">Unchoose: pop 2, gỡ used[1]</text></g>
+<g data-step="4"><text x="175" y="126" text-anchor="middle" font-size="16" fill="currentColor">1</text><text x="245" y="126" text-anchor="middle" font-size="16" fill="currentColor">3</text><text x="260" y="185" text-anchor="middle" font-size="13" fill="currentColor">Choose 3 từ path đã khôi phục</text></g>
 </svg>
+<step-note data-step="1">Đang ở path=[1]; đây là trạng thái cần khôi phục sau mỗi nhánh con.</step-note>
+<step-note data-step="2">Choose 2 và explore toàn bộ nhánh [1,2]; các lời giải được lưu bằng bản copy.</step-note>
+<step-note data-step="3">Sau khi nhánh 2 trả về, pop 2 và gỡ used[1]. Path lại là [1], chi phí undo O(1).</step-note>
+<step-note data-step="4">Choose 3 từ trạng thái sạch để vào [1,3]. Cặp choose/unchoose đối xứng ngăn dữ liệu nhánh trước lọt sang nhánh sau.</step-note>
+</step-flow>
 
 ### 1.3. Pruning — cắt nhánh, thứ làm backtracking "sống được"
 
@@ -549,6 +527,24 @@ Nếu đề CHỈ hỏi "bao nhiêu cách" / "max/min" (không cần liệt kê 
 
 **Ý tưởng / vì sao.** Một hoán vị là một cách *xếp hết* các phần tử vào n vị trí. Tại mỗi vị trí, ta thử mọi phần tử *chưa được dùng*. Cần mảng `used[]` để biết phần tử nào còn rảnh — đây chính là điểm khác combinations: hoán vị được "quay lại" các phần tử đứng trước, miễn là chưa dùng trong đường đi hiện tại. Khi `path` đủ `n` phần tử là một hoán vị hoàn chỉnh → ghi nhận (nhớ **copy** vì `path` còn bị sửa tiếp).
 
+<auto-anim data-dur="14">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 280" role="img" aria-labelledby="ds9-used-t ds9-used-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="ds9-used-t">Permutations: used được gỡ khi quay lui</title>
+<desc id="ds9-used-d">Permutations: used được gỡ khi quay lui. Các vị trí trong cấu trúc cố định; các bước lần lượt làm nổi phần đang xử lý.</desc>
+<defs><marker id="ds9-used-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260.0" y="25" font-size="15" text-anchor="middle" fill="currentColor">Permutations: used được gỡ khi quay lui</text>
+<text x="260" y="58" font-size="14" text-anchor="middle" fill="currentColor">nums:       1          2          3</text><text x="65" y="102" font-size="13" text-anchor="middle" fill="currentColor">used</text><text x="65" y="180" font-size="13" text-anchor="middle" fill="currentColor">path</text><rect x="140" y="75" width="60" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><rect x="140" y="155" width="60" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><rect x="220" y="75" width="60" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><rect x="220" y="155" width="60" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><rect x="300" y="75" width="60" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><rect x="300" y="155" width="60" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+<g opacity="1"><animate attributeName="opacity" dur="14s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0;0.142857;0.285714;0.428571;0.571429;0.714286;0.857143;1.0" values="1;0;0;0;0;0;0;1"/><text x="170" y="99" font-size="14" text-anchor="middle" fill="currentColor">T</text><text x="250" y="99" font-size="14" text-anchor="middle" fill="currentColor">F</text><text x="330" y="99" font-size="14" text-anchor="middle" fill="currentColor">F</text><text x="170" y="179" font-size="14" text-anchor="middle" fill="currentColor">1</text><text x="260" y="238" font-size="13" text-anchor="middle" fill="currentColor">Chọn 1; không thể dùng lại index 0</text></g>
+<g opacity="0"><animate attributeName="opacity" dur="14s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0;0.142857;0.285714;0.428571;0.571429;0.714286;0.857143;1.0" values="0;1;0;0;0;0;0;0"/><text x="170" y="99" font-size="14" text-anchor="middle" fill="currentColor">T</text><text x="250" y="99" font-size="14" text-anchor="middle" fill="currentColor">T</text><text x="330" y="99" font-size="14" text-anchor="middle" fill="currentColor">F</text><text x="170" y="179" font-size="14" text-anchor="middle" fill="currentColor">1</text><text x="250" y="179" font-size="14" text-anchor="middle" fill="currentColor">2</text><text x="260" y="238" font-size="13" text-anchor="middle" fill="currentColor">Chọn 2; used[0] và used[1] đã bật</text></g>
+<g opacity="0"><animate attributeName="opacity" dur="14s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0;0.142857;0.285714;0.428571;0.571429;0.714286;0.857143;1.0" values="0;0;1;0;0;0;0;0"/><text x="170" y="99" font-size="14" text-anchor="middle" fill="currentColor">T</text><text x="250" y="99" font-size="14" text-anchor="middle" fill="currentColor">T</text><text x="330" y="99" font-size="14" text-anchor="middle" fill="currentColor">T</text><text x="170" y="179" font-size="14" text-anchor="middle" fill="currentColor">1</text><text x="250" y="179" font-size="14" text-anchor="middle" fill="currentColor">2</text><text x="330" y="179" font-size="14" text-anchor="middle" fill="currentColor">3</text><text x="260" y="238" font-size="13" text-anchor="middle" fill="currentColor">Chọn 3: đủ n → copy [1,2,3]</text></g>
+<g opacity="0"><animate attributeName="opacity" dur="14s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0;0.142857;0.285714;0.428571;0.571429;0.714286;0.857143;1.0" values="0;0;0;1;0;0;0;0"/><text x="170" y="99" font-size="14" text-anchor="middle" fill="currentColor">T</text><text x="250" y="99" font-size="14" text-anchor="middle" fill="currentColor">T</text><text x="330" y="99" font-size="14" text-anchor="middle" fill="currentColor">F</text><text x="170" y="179" font-size="14" text-anchor="middle" fill="currentColor">1</text><text x="250" y="179" font-size="14" text-anchor="middle" fill="currentColor">2</text><text x="260" y="238" font-size="13" text-anchor="middle" fill="currentColor">Pop 3 và gỡ used[2]</text></g>
+<g opacity="0"><animate attributeName="opacity" dur="14s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0;0.142857;0.285714;0.428571;0.571429;0.714286;0.857143;1.0" values="0;0;0;0;1;0;0;0"/><text x="170" y="99" font-size="14" text-anchor="middle" fill="currentColor">T</text><text x="250" y="99" font-size="14" text-anchor="middle" fill="currentColor">F</text><text x="330" y="99" font-size="14" text-anchor="middle" fill="currentColor">F</text><text x="170" y="179" font-size="14" text-anchor="middle" fill="currentColor">1</text><text x="260" y="238" font-size="13" text-anchor="middle" fill="currentColor">Nhánh [1,2] hết lựa chọn: pop 2</text></g>
+<g opacity="0"><animate attributeName="opacity" dur="14s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0;0.142857;0.285714;0.428571;0.571429;0.714286;0.857143;1.0" values="0;0;0;0;0;1;0;0"/><text x="170" y="99" font-size="14" text-anchor="middle" fill="currentColor">T</text><text x="250" y="99" font-size="14" text-anchor="middle" fill="currentColor">F</text><text x="330" y="99" font-size="14" text-anchor="middle" fill="currentColor">T</text><text x="170" y="179" font-size="14" text-anchor="middle" fill="currentColor">1</text><text x="250" y="179" font-size="14" text-anchor="middle" fill="currentColor">3</text><text x="260" y="238" font-size="13" text-anchor="middle" fill="currentColor">Chọn 3 ở vị trí thứ hai</text></g>
+<g opacity="0"><animate attributeName="opacity" dur="14s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0;0.142857;0.285714;0.428571;0.571429;0.714286;0.857143;1.0" values="0;0;0;0;0;0;1;0"/><text x="170" y="99" font-size="14" text-anchor="middle" fill="currentColor">T</text><text x="250" y="99" font-size="14" text-anchor="middle" fill="currentColor">T</text><text x="330" y="99" font-size="14" text-anchor="middle" fill="currentColor">T</text><text x="170" y="179" font-size="14" text-anchor="middle" fill="currentColor">1</text><text x="250" y="179" font-size="14" text-anchor="middle" fill="currentColor">3</text><text x="330" y="179" font-size="14" text-anchor="middle" fill="currentColor">2</text><text x="260" y="238" font-size="13" text-anchor="middle" fill="currentColor">Chọn lại 2: copy [1,3,2]</text></g>
+<path d="M30 262 H490" stroke="currentColor" stroke-opacity="0.3"/><circle cx="30" cy="262" r="4" fill="currentColor"><animate attributeName="cx" dur="14s" repeatCount="indefinite" values="30;490"/></circle>
+</svg>
+</auto-anim>
+
 ```python
 def permute(nums):
     res, used, path = [], [False] * len(nums), []
@@ -645,7 +641,7 @@ vector<vector<int>> permute(vector<int>& nums) {
 }
 ```
 
-**Phân tích độ phức tạp.** Cây có `n!` lá; để tạo mỗi lá ta đi qua `n` mức và mỗi mức copy `O(n)` khi ghi nhận → **thời gian `O(n · n!)`**. Bộ nhớ phụ (không tính output): `O(n)` cho `path`, `used` và độ sâu đệ quy.
+**Phân tích độ phức tạp.** Cây có `n!` lá; mỗi lá ghi nhận một bản copy dài `n` trong `O(n)` → **thời gian `O(n · n!)`**. Bộ nhớ phụ (không tính output): `O(n)` cho `path`, `used` và độ sâu đệ quy.
 
 **Bẫy.** (1) Quên copy `path[:]` → tất cả phần tử trong `res` trỏ về cùng một list, cuối cùng rỗng hết. (2) Dùng `start` thay vì `used[]` → ra combinations chứ không phải permutations. (3) Với `nums` *có phần tử trùng* (bài 47), phải sort trước rồi thêm cắt nhánh `if i>0 and nums[i]==nums[i-1] and not used[i-1]: continue` để khử hoán vị trùng.
 
@@ -654,6 +650,27 @@ vector<vector<int>> permute(vector<int>& nums) {
 **Hiểu đề.** Cho `candidates` (số dương, *phân biệt*) và `target`. Tìm **mọi tổ hợp** mà tổng `= target`; mỗi số được **dùng lại nhiều lần**. Ví dụ `candidates=[2,3,6,7]`, `target=7` → `[[2,2,3],[7]]`.
 
 **Ý tưởng / vì sao.** Vì thứ tự không quan trọng (`[2,2,3]` và `[3,2,2]` là một), ta dùng `start` để chỉ tiến *không lùi* — tránh sinh tổ hợp trùng. Vì được dùng lại số, khi đệ quy ta truyền lại **`i`** (không phải `i+1`) để cho phép chọn lại chính nó. Trừ dần `target`: khi `target == 0` là một tổ hợp đúng; khi `target < 0` thì cắt nhánh ngay (đây là pruning quan trọng). Nếu sort `candidates` trước, có thể `break` ngay khi `candidates[i] > target` — cắt mạnh hơn.
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 330" role="img" aria-labelledby="ds9-comb-t ds9-comb-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="ds9-comb-t">Combination Sum: dùng lại i, cắt khi vượt</title>
+<desc id="ds9-comb-d">Combination Sum: dùng lại i, cắt khi vượt. Các vị trí trong cấu trúc cố định; các bước lần lượt làm nổi phần đang xử lý.</desc>
+<defs><marker id="ds9-comb-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260.0" y="25" font-size="15" text-anchor="middle" fill="currentColor">Combination Sum: dùng lại i, cắt khi vượt</text>
+<text x="260" y="55" font-size="14" text-anchor="middle" fill="currentColor">candidates=[2,3,6,7], target=7</text>
+<g data-step="1"><rect x="198" y="67" width="124" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="260.0" y="91" font-size="14" text-anchor="middle" fill="currentColor">[]; r=7</text></g>
+<g data-step="2"><path d="M260 105 L150 122" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#ds9-comb-a)"/><rect x="88" y="127" width="124" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="150.0" y="151" font-size="14" text-anchor="middle" fill="currentColor">[2]; r=5</text></g>
+<g data-step="3"><path d="M150 165 L95 182" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#ds9-comb-a)"/><rect x="33" y="187" width="124" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="95.0" y="211" font-size="14" text-anchor="middle" fill="currentColor">[2,2]; r=3</text></g>
+<g data-step="3" data-until="3"><path d="M160 205 L300 205" fill="none" stroke="#f43f5e" stroke-width="2" marker-end="url(#ds9-comb-a)"/><text x="385" y="210" font-size="13" text-anchor="middle" fill="currentColor">6 &gt; remain 3: break</text></g>
+<g data-step="4"><path d="M95 225 L100 257" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#ds9-comb-a)"/><rect x="38" y="262" width="124" height="36" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="100.0" y="286" font-size="14" text-anchor="middle" fill="currentColor">[2,2,3]; r=0</text></g>
+<g data-step="5"><path d="M260 105 L390 122" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#ds9-comb-a)"/><rect x="328" y="127" width="124" height="36" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="390.0" y="151" font-size="14" text-anchor="middle" fill="currentColor">[7]; r=0</text></g>
+</svg>
+<step-note data-step="1">Bắt đầu start=0, remain=7. Chỉ đi từ start trở đi để không sinh tổ hợp đảo thứ tự.</step-note>
+<step-note data-step="2">Chọn 2, truyền lại i=0 nên 2 vẫn dùng được; remain=5.</step-note>
+<step-note data-step="3">Chọn thêm 2, remain=3. Sau khi thử 2 và 3, gặp 6 > 3 thì break; không cần thử 7.</step-note>
+<step-note data-step="4">Chọn 3 tạo remain=0: copy [2,2,3]. Sau return phải pop từng lựa chọn khi quay về.</step-note>
+<step-note data-step="5">Sau các nhánh bắt đầu bằng 2, 3, 6, gốc thử 7: copy [7]. Hình lược bớt nhánh thất bại, hai lá xanh là toàn bộ nghiệm.</step-note>
+</step-flow>
 
 ```python
 def combination_sum(candidates, target):
@@ -758,6 +775,24 @@ vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
 **Hiểu đề.** Cho lưới ký tự `board` `m×n` và chuỗi `word`. Hỏi `word` có tồn tại trong lưới không, đi qua các ô **kề cạnh (4 hướng)**, mỗi ô **dùng tối đa một lần** trong một đường. Trả `true/false`.
 
 **Ý tưởng / vì sao.** Đây là backtracking trên lưới (grid DFS). Từ mỗi ô làm điểm xuất phát, ta thử khớp dần từng ký tự của `word`. Tại bước `k`, nếu ô hiện tại khớp `word[k]`, ta **đánh dấu đã thăm** rồi đi 4 hướng tìm `word[k+1]`; sau khi thử xong **gỡ dấu** để ô đó còn dùng được cho đường đi khác (đây là phần "unchoose"). Mẹo tiết kiệm bộ nhớ: thay vì mảng `visited` riêng, tạm ghi đè ô bằng ký tự lính canh (vd `#`) rồi khôi phục. Pruning tự nhiên: ký tự không khớp → `return false` ngay.
+
+<auto-anim data-dur="14">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 330" role="img" aria-labelledby="ds9-word-t ds9-word-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="ds9-word-t">Word Search: xét ô, cắt nhánh, khôi phục</title>
+<desc id="ds9-word-d">Ô đang xét màu vàng; ô trên path màu xanh; ô C bị loại màu đỏ. Mũi tên từ A chỉ hướng đang thử: xuống C rồi phải sang B. Sau khi tìm được AB, khôi phục B và A.</desc>
+<defs><marker id="ds9-word-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260" y="25" text-anchor="middle" font-size="15" fill="currentColor">Word Search: xét ô, cắt nhánh, khôi phục</text>
+<text x="260" y="55" text-anchor="middle" font-size="14" fill="currentColor">board = [[A,B],[C,D]], word = &quot;AB&quot;</text><text x="260" y="80" text-anchor="middle" font-size="13" fill="currentColor">Vàng: đang xét · xanh: path · đỏ: loại</text><rect x="170" y="105" width="60" height="50" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"><animate attributeName="fill" dur="14s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0;0.14285714285714285;0.2857142857142857;0.42857142857142855;0.5714285714285714;0.7142857142857143;0.8571428571428571;1.0" values="#f59e0b;#10b981;#10b981;#10b981;#10b981;#10b981;#3b82f6;#f59e0b"/></rect><rect x="260" y="105" width="60" height="50" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"><animate attributeName="fill" dur="14s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0;0.14285714285714285;0.2857142857142857;0.42857142857142855;0.5714285714285714;0.7142857142857143;0.8571428571428571;1.0" values="#3b82f6;#3b82f6;#3b82f6;#f59e0b;#10b981;#3b82f6;#3b82f6;#3b82f6"/></rect><rect x="170" y="185" width="60" height="50" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"><animate attributeName="fill" dur="14s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0;0.14285714285714285;0.2857142857142857;0.42857142857142855;0.5714285714285714;0.7142857142857143;0.8571428571428571;1.0" values="#3b82f6;#f59e0b;#f43f5e;#3b82f6;#3b82f6;#3b82f6;#3b82f6;#3b82f6"/></rect><rect x="260" y="185" width="60" height="50" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"><animate attributeName="fill" dur="14s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0;0.14285714285714285;0.2857142857142857;0.42857142857142855;0.5714285714285714;0.7142857142857143;0.8571428571428571;1.0" values="#3b82f6;#3b82f6;#3b82f6;#3b82f6;#3b82f6;#3b82f6;#3b82f6;#3b82f6"/></rect>
+<g opacity="1"><animate attributeName="opacity" dur="14s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0;0.14285714285714285;0.2857142857142857;0.42857142857142855;0.5714285714285714;0.7142857142857143;0.8571428571428571;1.0" values="1;0;0;0;0;0;0;1"/><text x="200" y="137" text-anchor="middle" font-size="18" fill="currentColor">A</text><text x="290" y="137" text-anchor="middle" font-size="18" fill="currentColor">B</text><text x="200" y="217" text-anchor="middle" font-size="18" fill="currentColor">C</text><text x="290" y="217" text-anchor="middle" font-size="18" fill="currentColor">D</text><text x="260" y="282" text-anchor="middle" font-size="13" fill="currentColor">Xét A tại (0,0): khớp word[0]</text></g>
+<g opacity="0"><animate attributeName="opacity" dur="14s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0;0.14285714285714285;0.2857142857142857;0.42857142857142855;0.5714285714285714;0.7142857142857143;0.8571428571428571;1.0" values="0;1;0;0;0;0;0;0"/><text x="200" y="137" text-anchor="middle" font-size="18" fill="currentColor">#</text><text x="290" y="137" text-anchor="middle" font-size="18" fill="currentColor">B</text><text x="200" y="217" text-anchor="middle" font-size="18" fill="currentColor">C</text><text x="290" y="217" text-anchor="middle" font-size="18" fill="currentColor">D</text><path d="M200 157 V181" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#ds9-word-a)"/><text x="260" y="282" text-anchor="middle" font-size="13" fill="currentColor">Đánh dấu A; thử xuống C để tìm B</text></g>
+<g opacity="0"><animate attributeName="opacity" dur="14s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0;0.14285714285714285;0.2857142857142857;0.42857142857142855;0.5714285714285714;0.7142857142857143;0.8571428571428571;1.0" values="0;0;1;0;0;0;0;0"/><text x="200" y="137" text-anchor="middle" font-size="18" fill="currentColor">#</text><text x="290" y="137" text-anchor="middle" font-size="18" fill="currentColor">B</text><text x="200" y="217" text-anchor="middle" font-size="18" fill="currentColor">C</text><text x="290" y="217" text-anchor="middle" font-size="18" fill="currentColor">D</text><path d="M200 157 V181" fill="none" stroke="#f43f5e" stroke-width="2" marker-end="url(#ds9-word-a)"/><text x="260" y="282" text-anchor="middle" font-size="13" fill="currentColor">C ≠ B: loại ô C, quay về A</text></g>
+<g opacity="0"><animate attributeName="opacity" dur="14s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0;0.14285714285714285;0.2857142857142857;0.42857142857142855;0.5714285714285714;0.7142857142857143;0.8571428571428571;1.0" values="0;0;0;1;0;0;0;0"/><text x="200" y="137" text-anchor="middle" font-size="18" fill="currentColor">#</text><text x="290" y="137" text-anchor="middle" font-size="18" fill="currentColor">B</text><text x="200" y="217" text-anchor="middle" font-size="18" fill="currentColor">C</text><text x="290" y="217" text-anchor="middle" font-size="18" fill="currentColor">D</text><path d="M234 130 H256" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#ds9-word-a)"/><text x="260" y="282" text-anchor="middle" font-size="13" fill="currentColor">Thử sang phải: xét B tại (0,1)</text></g>
+<g opacity="0"><animate attributeName="opacity" dur="14s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0;0.14285714285714285;0.2857142857142857;0.42857142857142855;0.5714285714285714;0.7142857142857143;0.8571428571428571;1.0" values="0;0;0;0;1;0;0;0"/><text x="200" y="137" text-anchor="middle" font-size="18" fill="currentColor">#</text><text x="290" y="137" text-anchor="middle" font-size="18" fill="currentColor">#</text><text x="200" y="217" text-anchor="middle" font-size="18" fill="currentColor">C</text><text x="290" y="217" text-anchor="middle" font-size="18" fill="currentColor">D</text><text x="260" y="282" text-anchor="middle" font-size="13" fill="currentColor">B khớp: đánh dấu, k=2 đạt len(word)</text></g>
+<g opacity="0"><animate attributeName="opacity" dur="14s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0;0.14285714285714285;0.2857142857142857;0.42857142857142855;0.5714285714285714;0.7142857142857143;0.8571428571428571;1.0" values="0;0;0;0;0;1;0;0"/><text x="200" y="137" text-anchor="middle" font-size="18" fill="currentColor">#</text><text x="290" y="137" text-anchor="middle" font-size="18" fill="currentColor">B</text><text x="200" y="217" text-anchor="middle" font-size="18" fill="currentColor">C</text><text x="290" y="217" text-anchor="middle" font-size="18" fill="currentColor">D</text><text x="260" y="282" text-anchor="middle" font-size="13" fill="currentColor">Return true qua B: khôi phục B</text></g>
+<g opacity="0"><animate attributeName="opacity" dur="14s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0;0.14285714285714285;0.2857142857142857;0.42857142857142855;0.5714285714285714;0.7142857142857143;0.8571428571428571;1.0" values="0;0;0;0;0;0;1;0"/><text x="200" y="137" text-anchor="middle" font-size="18" fill="currentColor">A</text><text x="290" y="137" text-anchor="middle" font-size="18" fill="currentColor">B</text><text x="200" y="217" text-anchor="middle" font-size="18" fill="currentColor">C</text><text x="290" y="217" text-anchor="middle" font-size="18" fill="currentColor">D</text><text x="260" y="282" text-anchor="middle" font-size="13" fill="currentColor">Return true qua A: khôi phục A</text></g>
+<path d="M30 310 H490" stroke="currentColor" stroke-opacity="0.3"/><circle cx="30" cy="310" r="4" fill="currentColor"><animate attributeName="cx" dur="14s" repeatCount="indefinite" values="30;490"/></circle>
+</svg>
+</auto-anim>
 
 ```python
 def exist(board, word):

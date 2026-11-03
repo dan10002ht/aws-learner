@@ -137,7 +137,7 @@ Mỗi bước **loại bỏ một nửa** dữ liệu còn lại. Kinh điển l
     <rect x="16" y="192" width="26" height="30" rx="6" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
     <rect x="42" y="192" width="390" height="30" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12" stroke-dasharray="3 3"/>
     <text x="29" y="212" text-anchor="middle" fill="currentColor" font-weight="700">1</text>
-    <text x="448" y="212" fill="currentColor" opacity="0.7">bước 4 → tìm thấy</text>
+    <text x="448" y="212" fill="currentColor" opacity="0.7">bước 4 → còn 1</text>
   </g>
   <text x="540" y="130" font-size="12" fill="currentColor" opacity="0.85">16 → 8 → 4 → 2 → 1</text>
   <text x="540" y="150" font-size="12" fill="currentColor" opacity="0.85">log₂16 = 4 bước</text>
@@ -328,6 +328,75 @@ bool hasDupNaive(const std::vector<int>& arr) {   // O(n^2)
     return false;
 }
 ```
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-labelledby="dsa01a-pairs-t dsa01a-pairs-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa01a-pairs-t">has_dup_naive: n = 4, không có phần tử trùng</title>
+<desc id="dsa01a-pairs-d">has_dup_naive: n = 4, không có phần tử trùng; các vị trí và mũi tên biểu diễn dữ liệu cùng hướng thao tác.</desc>
+<defs>
+<marker id="dsa01a-pairs-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">has_dup_naive: n = 4, không có phần tử trùng</text>
+<text x="260" y="52" text-anchor="middle" font-size="14" fill="currentColor">Ô (i, j) = một phép so sánh arr[i] với arr[j]</text>
+<text x="190" y="83" text-anchor="middle" font-size="13" fill="currentColor">j=0</text>
+<text x="245" y="83" text-anchor="middle" font-size="13" fill="currentColor">j=1</text>
+<text x="300" y="83" text-anchor="middle" font-size="13" fill="currentColor">j=2</text>
+<text x="355" y="83" text-anchor="middle" font-size="13" fill="currentColor">j=3</text>
+<text x="118" y="117" text-anchor="middle" font-size="13" fill="currentColor">i=0</text>
+<rect x="168" y="95" width="44" height="35" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="190.0" y="117.5" text-anchor="middle" font-size="14" fill="currentColor">—</text>
+<rect x="223" y="95" width="44" height="35" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<rect x="278" y="95" width="44" height="35" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<rect x="333" y="95" width="44" height="35" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="118" y="162" text-anchor="middle" font-size="13" fill="currentColor">i=1</text>
+<rect x="168" y="140" width="44" height="35" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="190.0" y="162.5" text-anchor="middle" font-size="14" fill="currentColor">—</text>
+<rect x="223" y="140" width="44" height="35" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="245.0" y="162.5" text-anchor="middle" font-size="14" fill="currentColor">—</text>
+<rect x="278" y="140" width="44" height="35" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<rect x="333" y="140" width="44" height="35" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="118" y="207" text-anchor="middle" font-size="13" fill="currentColor">i=2</text>
+<rect x="168" y="185" width="44" height="35" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="190.0" y="207.5" text-anchor="middle" font-size="14" fill="currentColor">—</text>
+<rect x="223" y="185" width="44" height="35" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="245.0" y="207.5" text-anchor="middle" font-size="14" fill="currentColor">—</text>
+<rect x="278" y="185" width="44" height="35" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="300.0" y="207.5" text-anchor="middle" font-size="14" fill="currentColor">—</text>
+<rect x="333" y="185" width="44" height="35" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="118" y="252" text-anchor="middle" font-size="13" fill="currentColor">i=3</text>
+<rect x="168" y="230" width="44" height="35" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="190.0" y="252.5" text-anchor="middle" font-size="14" fill="currentColor">—</text>
+<rect x="223" y="230" width="44" height="35" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="245.0" y="252.5" text-anchor="middle" font-size="14" fill="currentColor">—</text>
+<rect x="278" y="230" width="44" height="35" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="300.0" y="252.5" text-anchor="middle" font-size="14" fill="currentColor">—</text>
+<rect x="333" y="230" width="44" height="35" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="355.0" y="252.5" text-anchor="middle" font-size="14" fill="currentColor">—</text>
+<g data-step="1">
+<rect x="223" y="95" width="44" height="35" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="245.0" y="117.5" text-anchor="middle" font-size="14" fill="currentColor">≠</text>
+<rect x="278" y="95" width="44" height="35" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="300.0" y="117.5" text-anchor="middle" font-size="14" fill="currentColor">≠</text>
+<rect x="333" y="95" width="44" height="35" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="355.0" y="117.5" text-anchor="middle" font-size="14" fill="currentColor">≠</text>
+</g>
+<g data-step="2">
+<rect x="278" y="140" width="44" height="35" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="300.0" y="162.5" text-anchor="middle" font-size="14" fill="currentColor">≠</text>
+<rect x="333" y="140" width="44" height="35" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="355.0" y="162.5" text-anchor="middle" font-size="14" fill="currentColor">≠</text>
+</g>
+<g data-step="3">
+<rect x="333" y="185" width="44" height="35" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="355.0" y="207.5" text-anchor="middle" font-size="14" fill="currentColor">≠</text>
+</g>
+</svg>
+<step-note data-step="1">Với i = 0, j chạy qua 1, 2, 3: so sánh ba cặp khác nhau. Giả sử chưa có cặp trùng để hàm không trả về sớm.</step-note>
+<step-note data-step="2">Với i = 1, chỉ xét j = 2, 3. Không xét lại cặp đảo chiều và không so phần tử với chính nó.</step-note>
+<step-note data-step="3">Với i = 2 còn một cặp; i = 3 không có cặp. Tổng 3 + 2 + 1 = 6, tổng quát n(n−1)/2 nên worst case O(n²), bộ nhớ phụ O(1).</step-note>
+</step-flow>
 
 ### O(2^n) — hàm mũ
 
@@ -521,6 +590,64 @@ for (int i = 0; i < n; i++) {
 ```
 
 > Bẫy: "Amortized O(1)" **không** có nghĩa "mỗi lần luôn O(1)". Một lần `append` cá biệt vẫn có thể tốn `O(n)`. Trong hệ thống real-time nhạy độ trễ (latency-sensitive), cú giật `O(n)` đó có thể đáng lo — khi đó hãy `reserve`/pre-allocate dung lượng trước.
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 310" role="img" aria-labelledby="dsa01a-resize-t dsa01a-resize-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa01a-resize-t">Resize: copy rồi chuyển sang mảng mới</title>
+<desc id="dsa01a-resize-d">Mảng cũ chứa 0 và 1 được copy sang mảng mới bốn ô; khi ghi 2 thì mảng cũ biến mất.</desc>
+<defs>
+<marker id="dsa01a-resize-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">Resize: copy rồi chuyển sang mảng mới</text>
+<text x="260" y="55" text-anchor="middle" font-size="14" fill="currentColor">Append 2: capacity 2 → 4</text>
+<g data-step="1" data-until="2">
+<text x="90" y="88" text-anchor="middle" font-size="14" fill="currentColor">Mảng cũ</text>
+<rect x="35" y="110" width="62" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="66.0" y="136.0" text-anchor="middle" font-size="14" fill="currentColor">0</text>
+<rect x="105" y="110" width="62" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="136.0" y="136.0" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+</g>
+<text x="220" y="198" text-anchor="middle" font-size="14" fill="currentColor">Mảng mới</text>
+<rect x="35" y="215" width="62" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="66" y="279" text-anchor="middle" font-size="13" fill="currentColor">0</text>
+<rect x="105" y="215" width="62" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="136" y="279" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="175" y="215" width="62" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="206" y="279" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="245" y="215" width="62" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="276" y="279" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<g data-step="1">
+<text x="66" y="241" text-anchor="middle" font-size="14" fill="currentColor">0</text>
+</g>
+<g data-step="2">
+<text x="136" y="241" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+</g>
+<g data-step="3">
+<text x="206" y="241" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+</g>
+<g data-step="1" data-until="1">
+<path d="M66 155 L66 210" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa01a-resize-ar)"/>
+</g>
+<g data-step="2" data-until="2">
+<path d="M136 155 L136 210" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa01a-resize-ar)"/>
+</g>
+<text x="407" y="238" text-anchor="middle" font-size="14" fill="currentColor">capacity = 4</text>
+<g data-step="1" data-until="1">
+<text x="407" y="266" text-anchor="middle" font-size="14" fill="currentColor">size = 1</text>
+</g>
+<g data-step="2" data-until="2">
+<text x="407" y="266" text-anchor="middle" font-size="14" fill="currentColor">size = 2</text>
+</g>
+<g data-step="3">
+<text x="407" y="266" text-anchor="middle" font-size="14" fill="currentColor">size = 3</text>
+</g>
+</svg>
+<step-note data-step="1">Cấp mảng mới có bốn ô và copy phần tử 0. Mảng mới hiện chứa một phần tử, mảng cũ vẫn giữ dữ liệu nguồn.</step-note>
+<step-note data-step="2">Copy tiếp phần tử 1, giữ nguyên index. Với size n, copy đủ n phần tử cũ tốn O(n).</step-note>
+<step-note data-step="3">Ghi 2 vào ô tiếp theo, dùng mảng mới và bỏ mảng cũ. Kết quả [0, 1, 2] có size 3, capacity 4; lần append này gồm hai copy và một ghi mới.</step-note>
+</step-flow>
 
 ## Cách ước lượng nhanh từ vòng lặp
 

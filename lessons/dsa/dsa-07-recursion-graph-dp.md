@@ -56,50 +56,32 @@ long long factorial(int n) {
 Mỗi lần một hàm được gọi, máy đẩy một **stack frame** (khung chứa tham số, biến cục bộ, vị trí quay về) lên **call stack**. Với `factorial(4)`, stack chồng lên: `factorial(4)` → `factorial(3)` → `factorial(2)` → `factorial(1)`. Khi chạm base case, các frame lần lượt được lấy ra (pop) và nhân ngược lại: `1 → 2 → 6 → 24`.
 
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Call stack của factorial(4): đẩy frame xuống base case rồi pop nhân ngược</title>
-  <desc>Bên trái các stack frame chồng lên nhau từ factorial(4) tới factorial(1); chạm base case rồi lần lượt pop và nhân ngược 1, 2, 6, 24. Độ sâu 4 frame minh hoạ O(d) bộ nhớ.</desc>
-  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Call stack của factorial(4)</text>
-  <text x="120" y="48" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">PUSH (đi xuống base case)</text>
-  <rect x="40" y="58" width="160" height="38" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="120" y="82" font-size="12.5" text-anchor="middle" fill="currentColor">factorial(4)</text>
-  <rect x="40" y="100" width="160" height="38" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="120" y="124" font-size="12.5" text-anchor="middle" fill="currentColor">factorial(3)</text>
-  <rect x="40" y="142" width="160" height="38" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="120" y="166" font-size="12.5" text-anchor="middle" fill="currentColor">factorial(2)</text>
-  <rect x="40" y="184" width="160" height="38" rx="7" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="120" y="203" font-size="12.5" text-anchor="middle" fill="currentColor">factorial(1)</text>
-  <text x="120" y="217" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">base case → 1</text>
-  <line x1="40" y1="234" x2="200" y2="234" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="120" y="250" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.6">độ sâu d=4 → O(d) bộ nhớ</text>
-  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
-    <path d="M232 77 h60" marker-end="url(#arr1)"/>
-    <path d="M232 119 h60" marker-end="url(#arr1)"/>
-    <path d="M232 161 h60" marker-end="url(#arr1)"/>
-  </g>
-  <defs>
-    <marker id="arr1" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <text x="540" y="48" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">POP (nhân ngược)</text>
-  <rect x="460" y="58" width="160" height="34" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="540" y="80" font-size="12" text-anchor="middle" fill="currentColor">4 × 6 = 24</text>
-  <rect x="460" y="100" width="160" height="34" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="540" y="122" font-size="12" text-anchor="middle" fill="currentColor">3 × 2 = 6</text>
-  <rect x="460" y="142" width="160" height="34" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="540" y="164" font-size="12" text-anchor="middle" fill="currentColor">2 × 1 = 2</text>
-  <rect x="460" y="184" width="160" height="34" rx="7" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="540" y="206" font-size="12" text-anchor="middle" fill="currentColor">1 (base case)</text>
-  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
-    <path d="M636 184 v-8 q0 -8 -8 -8" marker-end="url(#arr2)"/>
-    <path d="M636 142 v-8 q0 -8 -8 -8" marker-end="url(#arr2)"/>
-    <path d="M636 100 v-8 q0 -8 -8 -8" marker-end="url(#arr2)"/>
-    <path d="M636 184 v-126" stroke-opacity="0.28"/>
-  </g>
-  <defs>
-    <marker id="arr2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <text x="540" y="250" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">kết quả: 24</text>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 310" role="img" aria-labelledby="ds7-stack-t ds7-stack-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="ds7-stack-t">factorial(4): push rồi pop từ đỉnh</title>
+<desc id="ds7-stack-d">Frame biến mất hẳn khi pop. Toàn cảnh chỉ còn stack trống và kết quả 24.</desc>
+<defs><marker id="ds7-stack-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260" y="25" text-anchor="middle" font-size="15" fill="currentColor">factorial(4): push rồi pop từ đỉnh</text>
+<text x="155" y="58" text-anchor="middle" font-size="14" fill="currentColor">Call stack</text><text x="385" y="58" text-anchor="middle" font-size="14" fill="currentColor">Giá trị trả về</text><path d="M65 85 V287 H245 V85" fill="none" stroke="currentColor" stroke-opacity="0.3"/>
+<g data-step="1" data-until="7"><rect x="75" y="245" width="160" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="155" y="269" text-anchor="middle" font-size="14" fill="currentColor">factorial(4)</text></g>
+<g data-step="2" data-until="6"><rect x="75" y="201" width="160" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="155" y="225" text-anchor="middle" font-size="14" fill="currentColor">factorial(3)</text></g>
+<g data-step="3" data-until="5"><rect x="75" y="157" width="160" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="155" y="181" text-anchor="middle" font-size="14" fill="currentColor">factorial(2)</text></g>
+<g data-step="4" data-until="4"><rect x="75" y="113" width="160" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="155" y="137" text-anchor="middle" font-size="14" fill="currentColor">factorial(1)</text></g>
+<g data-step="5" data-until="5"><text x="385" y="180" text-anchor="middle" font-size="17" fill="currentColor">base case → 1</text></g>
+<g data-step="6" data-until="6"><text x="385" y="180" text-anchor="middle" font-size="17" fill="currentColor">2 × 1 = 2</text></g>
+<g data-step="7" data-until="7"><text x="385" y="180" text-anchor="middle" font-size="17" fill="currentColor">3 × 2 = 6</text></g>
+<g data-step="8"><text x="385" y="180" text-anchor="middle" font-size="17" fill="currentColor">4 × 6 = 24</text></g>
+<g data-step="8"><text x="155" y="180" text-anchor="middle" font-size="14" fill="currentColor">Stack trống</text></g>
 </svg>
+<step-note data-step="1">Push factorial(4), chờ kết quả factorial(3).</step-note>
+<step-note data-step="2">Push factorial(3), chờ factorial(2).</step-note>
+<step-note data-step="3">Push factorial(2), chờ factorial(1).</step-note>
+<step-note data-step="4">Push factorial(1), chạm base case; độ sâu tối đa 4 frame.</step-note>
+<step-note data-step="5">Pop factorial(1), trả 1; stack còn 3 frame.</step-note>
+<step-note data-step="6">Pop factorial(2), trả 2; stack còn 2 frame.</step-note>
+<step-note data-step="7">Pop factorial(3), trả 6; stack còn 1 frame.</step-note>
+<step-note data-step="8">Pop factorial(4), trả 24; stack trống. Thời gian O(n), bộ nhớ stack O(d).</step-note>
+</step-flow>
 
 Vì mỗi lần gọi tốn một frame, độ sâu đệ quy `d` tiêu tốn **O(d) bộ nhớ stack**. Đệ quy quá sâu (vài chục nghìn lần) sẽ tràn stack — `RecursionError` / `StackOverflowError`.
 
@@ -443,57 +425,45 @@ void dfs(std::unordered_map<int, std::vector<int>>& graph, int node,
 
 Cả BFS và DFS đều chạy **O(V + E)** vì mỗi đỉnh và mỗi cạnh được xét đúng một lần.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>BFS so với DFS trên cùng một đồ thị, đánh số thứ tự thăm</title>
-  <desc>Cùng một đồ thị bắt đầu từ A. BFS dùng queue lan theo lớp nên thứ tự thăm là A, B, C, D, E, F. DFS dùng stack hoặc đệ quy đi sâu hết nhánh nên thứ tự là A, B, D, E, C, F.</desc>
-  <text x="180" y="22" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">BFS — queue, lan theo lớp</text>
-  <text x="540" y="22" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">DFS — stack/đệ quy, đi sâu hết nhánh</text>
-  <line x1="360" y1="36" x2="360" y2="300" stroke="currentColor" stroke-opacity="0.18"/>
-  <g stroke="currentColor" stroke-opacity="0.35" fill="none">
-    <path d="M180 70 L100 140"/><path d="M180 70 L260 140"/>
-    <path d="M100 140 L70 220"/><path d="M100 140 L160 220"/>
-    <path d="M260 140 L280 220"/>
-  </g>
-  <g font-size="13" text-anchor="middle">
-    <circle cx="180" cy="70" r="20" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="180" y="75" fill="currentColor" font-weight="700">A</text>
-    <circle cx="100" cy="140" r="20" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="100" y="145" fill="currentColor" font-weight="700">B</text>
-    <circle cx="260" cy="140" r="20" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="260" y="145" fill="currentColor" font-weight="700">C</text>
-    <circle cx="70" cy="220" r="20" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="70" y="225" fill="currentColor" font-weight="700">D</text>
-    <circle cx="160" cy="220" r="20" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="160" y="225" fill="currentColor" font-weight="700">E</text>
-    <circle cx="280" cy="220" r="20" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="280" y="225" fill="currentColor" font-weight="700">F</text>
-  </g>
-  <g font-size="11" font-weight="700">
-    <circle cx="204" cy="52" r="10" fill="#3b82f6"/><text x="204" y="56" text-anchor="middle" fill="#fff">1</text>
-    <circle cx="78" cy="124" r="10" fill="#3b82f6"/><text x="78" y="128" text-anchor="middle" fill="#fff">2</text>
-    <circle cx="282" cy="124" r="10" fill="#3b82f6"/><text x="282" y="128" text-anchor="middle" fill="#fff">3</text>
-    <circle cx="48" cy="204" r="10" fill="#3b82f6"/><text x="48" y="208" text-anchor="middle" fill="#fff">4</text>
-    <circle cx="160" cy="196" r="10" fill="#3b82f6"/><text x="160" y="200" text-anchor="middle" fill="#fff">5</text>
-    <circle cx="302" cy="204" r="10" fill="#3b82f6"/><text x="302" y="208" text-anchor="middle" fill="#fff">6</text>
-  </g>
-  <text x="180" y="296" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">thứ tự thăm: A → B → C → D → E → F</text>
-  <g stroke="currentColor" stroke-opacity="0.35" fill="none">
-    <path d="M540 70 L460 140"/><path d="M540 70 L620 140"/>
-    <path d="M460 140 L430 220"/><path d="M460 140 L520 220"/>
-    <path d="M620 140 L640 220"/>
-  </g>
-  <g font-size="13" text-anchor="middle">
-    <circle cx="540" cy="70" r="20" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="540" y="75" fill="currentColor" font-weight="700">A</text>
-    <circle cx="460" cy="140" r="20" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="460" y="145" fill="currentColor" font-weight="700">B</text>
-    <circle cx="620" cy="140" r="20" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="620" y="145" fill="currentColor" font-weight="700">C</text>
-    <circle cx="430" cy="220" r="20" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="430" y="225" fill="currentColor" font-weight="700">D</text>
-    <circle cx="520" cy="220" r="20" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="520" y="225" fill="currentColor" font-weight="700">E</text>
-    <circle cx="640" cy="220" r="20" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/><text x="640" y="225" fill="currentColor" font-weight="700">F</text>
-  </g>
-  <g font-size="11" font-weight="700">
-    <circle cx="564" cy="52" r="10" fill="#10b981"/><text x="564" y="56" text-anchor="middle" fill="#fff">1</text>
-    <circle cx="438" cy="124" r="10" fill="#10b981"/><text x="438" y="128" text-anchor="middle" fill="#fff">2</text>
-    <circle cx="408" cy="204" r="10" fill="#10b981"/><text x="408" y="208" text-anchor="middle" fill="#fff">3</text>
-    <circle cx="520" cy="196" r="10" fill="#10b981"/><text x="520" y="200" text-anchor="middle" fill="#fff">4</text>
-    <circle cx="642" cy="124" r="10" fill="#10b981"/><text x="642" y="128" text-anchor="middle" fill="#fff">5</text>
-    <circle cx="662" cy="204" r="10" fill="#10b981"/><text x="662" y="208" text-anchor="middle" fill="#fff">6</text>
-  </g>
-  <text x="540" y="296" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">thứ tự thăm: A → B → D → E → C → F</text>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 290" role="img" aria-labelledby="ds7-bfs-t ds7-bfs-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="ds7-bfs-t">BFS: frontier lan theo lớp</title>
+<desc id="ds7-bfs-d">BFS: frontier lan theo lớp. Các vị trí trong cấu trúc cố định; các bước lần lượt làm nổi phần đang xử lý.</desc>
+<defs><marker id="ds7-bfs-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260.0" y="25" font-size="15" text-anchor="middle" fill="currentColor">BFS: frontier lan theo lớp</text>
+<path d="M260 65 L150 140" stroke="currentColor" stroke-opacity="0.2"/><path d="M260 65 L370 140" stroke="currentColor" stroke-opacity="0.2"/><path d="M150 140 L85 230" stroke="currentColor" stroke-opacity="0.2"/><path d="M150 140 L215 230" stroke="currentColor" stroke-opacity="0.2"/><path d="M370 140 L410 230" stroke="currentColor" stroke-opacity="0.2"/>
+<g data-step="1"><circle cx="260" cy="65" r="21" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="260" y="70" font-size="14" text-anchor="middle" fill="currentColor">A</text><text x="290" y="53" font-size="13" text-anchor="middle" fill="currentColor">1</text></g>
+<g data-step="2"><circle cx="150" cy="140" r="21" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="150" y="145" font-size="14" text-anchor="middle" fill="currentColor">B</text><text x="180" y="128" font-size="13" text-anchor="middle" fill="currentColor">2</text><circle cx="370" cy="140" r="21" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="370" y="145" font-size="14" text-anchor="middle" fill="currentColor">C</text><text x="400" y="128" font-size="13" text-anchor="middle" fill="currentColor">3</text></g>
+<g data-step="3"><circle cx="85" cy="230" r="21" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="85" y="235" font-size="14" text-anchor="middle" fill="currentColor">D</text><text x="115" y="218" font-size="13" text-anchor="middle" fill="currentColor">4</text><circle cx="215" cy="230" r="21" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="215" y="235" font-size="14" text-anchor="middle" fill="currentColor">E</text><text x="245" y="218" font-size="13" text-anchor="middle" fill="currentColor">5</text></g>
+<g data-step="4"><circle cx="410" cy="230" r="21" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="410" y="235" font-size="14" text-anchor="middle" fill="currentColor">F</text><text x="440" y="218" font-size="13" text-anchor="middle" fill="currentColor">6</text></g>
 </svg>
+<step-note data-step="1">Khởi tạo queue [A], đánh dấu A ngay khi enqueue.</step-note>
+<step-note data-step="2">Pop A, enqueue B rồi C: queue [B,C]. Hai node ở lớp cách A một cạnh đã được đánh dấu.</step-note>
+<step-note data-step="3">Pop B, enqueue D rồi E: queue [C,D,E]. D và E cách A hai cạnh, vẫn phải đợi C.</step-note>
+<step-note data-step="4">Pop C, enqueue F: queue [D,E,F]. Sau đó pop D, E, F, queue rỗng; thứ tự A, B, C, D, E, F. Tổng O(V+E).</step-note>
+</step-flow>
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 290" role="img" aria-labelledby="ds7-dfs-t ds7-dfs-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="ds7-dfs-t">DFS: đi sâu rồi quay về</title>
+<desc id="ds7-dfs-d">DFS: đi sâu rồi quay về. Các vị trí trong cấu trúc cố định; các bước lần lượt làm nổi phần đang xử lý.</desc>
+<defs><marker id="ds7-dfs-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260.0" y="25" font-size="15" text-anchor="middle" fill="currentColor">DFS: đi sâu rồi quay về</text>
+<path d="M260 65 L150 140" stroke="currentColor" stroke-opacity="0.2"/><path d="M260 65 L370 140" stroke="currentColor" stroke-opacity="0.2"/><path d="M150 140 L85 230" stroke="currentColor" stroke-opacity="0.2"/><path d="M150 140 L215 230" stroke="currentColor" stroke-opacity="0.2"/><path d="M370 140 L410 230" stroke="currentColor" stroke-opacity="0.2"/>
+<g data-step="1"><circle cx="260" cy="65" r="21" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="260" y="70" font-size="14" text-anchor="middle" fill="currentColor">A</text><text x="290" y="53" font-size="13" text-anchor="middle" fill="currentColor">1</text></g>
+<g data-step="2"><circle cx="150" cy="140" r="21" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="150" y="145" font-size="14" text-anchor="middle" fill="currentColor">B</text><text x="180" y="128" font-size="13" text-anchor="middle" fill="currentColor">2</text></g>
+<g data-step="3"><circle cx="85" cy="230" r="21" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="85" y="235" font-size="14" text-anchor="middle" fill="currentColor">D</text><text x="115" y="218" font-size="13" text-anchor="middle" fill="currentColor">3</text></g>
+<g data-step="4"><circle cx="215" cy="230" r="21" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="215" y="235" font-size="14" text-anchor="middle" fill="currentColor">E</text><text x="245" y="218" font-size="13" text-anchor="middle" fill="currentColor">4</text></g>
+<g data-step="5"><circle cx="370" cy="140" r="21" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="370" y="145" font-size="14" text-anchor="middle" fill="currentColor">C</text><text x="400" y="128" font-size="13" text-anchor="middle" fill="currentColor">5</text></g>
+<g data-step="6"><circle cx="410" cy="230" r="21" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="410" y="235" font-size="14" text-anchor="middle" fill="currentColor">F</text><text x="440" y="218" font-size="13" text-anchor="middle" fill="currentColor">6</text></g>
+</svg>
+<step-note data-step="1">Vào A, đánh dấu visited; thử B trước C.</step-note>
+<step-note data-step="2">Vào B; A đã thăm nên bỏ qua cạnh quay về.</step-note>
+<step-note data-step="3">Vào D; hết hàng xóm chưa thăm nên trả về B.</step-note>
+<step-note data-step="4">B thử E sau khi D trả về; xong E, B trả về A.</step-note>
+<step-note data-step="5">A tiếp tục vào C: nhánh B đã hoàn tất.</step-note>
+<step-note data-step="6">Vào F rồi trả về C và A. Thứ tự A, B, D, E, C, F; O(V+E).</step-note>
+</step-flow>
 
 | Thuật toán | Cấu trúc | Đường ngắn nhất (không trọng số)? | Hợp cho |
 | --- | --- | --- | --- |
@@ -845,6 +815,38 @@ Có `n` bậc thang, mỗi bước leo 1 hoặc 2 bậc. Hỏi có bao nhiêu c�
 ### 4.4. Coin change — bài toán điển hình
 
 Cho danh sách mệnh giá `coins` và số tiền `amount`, tìm **số đồng xu ít nhất** để gộp đúng `amount` (mỗi loại dùng vô hạn lần). Công thức truy hồi:
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 275" role="img" aria-labelledby="ds7-coins-t ds7-coins-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="ds7-coins-t">Coin change: điền bảng từ trái sang phải</title>
+<desc id="ds7-coins-d">Coin change: điền bảng từ trái sang phải. Các vị trí trong cấu trúc cố định; các bước lần lượt làm nổi phần đang xử lý.</desc>
+<defs><marker id="ds7-coins-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260.0" y="25" font-size="15" text-anchor="middle" fill="currentColor">Coin change: điền bảng từ trái sang phải</text>
+<text x="260" y="55" font-size="14" text-anchor="middle" fill="currentColor">coins = [1,3,4], amount = 6</text><rect x="40" y="180" width="52" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="66" y="240" font-size="13" text-anchor="middle" fill="currentColor">x=0</text><rect x="104" y="180" width="52" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="130" y="240" font-size="13" text-anchor="middle" fill="currentColor">x=1</text><rect x="168" y="180" width="52" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="194" y="240" font-size="13" text-anchor="middle" fill="currentColor">x=2</text><rect x="232" y="180" width="52" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="258" y="240" font-size="13" text-anchor="middle" fill="currentColor">x=3</text><rect x="296" y="180" width="52" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="322" y="240" font-size="13" text-anchor="middle" fill="currentColor">x=4</text><rect x="360" y="180" width="52" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="386" y="240" font-size="13" text-anchor="middle" fill="currentColor">x=5</text><rect x="424" y="180" width="52" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="450" y="240" font-size="13" text-anchor="middle" fill="currentColor">x=6</text>
+<g data-step="1"><text x="66" y="204" font-size="16" text-anchor="middle" fill="currentColor">0</text></g>
+<g data-step="2"><text x="130" y="204" font-size="16" text-anchor="middle" fill="currentColor">1</text></g>
+<g data-step="2" data-until="2"><path d="M66 175 V145 H130 V175" fill="none" stroke="#3b82f6" marker-end="url(#ds7-coins-a)"/></g>
+<g data-step="3"><text x="194" y="204" font-size="16" text-anchor="middle" fill="currentColor">2</text></g>
+<g data-step="3" data-until="3"><path d="M130 175 V145 H194 V175" fill="none" stroke="#3b82f6" marker-end="url(#ds7-coins-a)"/></g>
+<g data-step="4"><text x="258" y="204" font-size="16" text-anchor="middle" fill="currentColor">1</text></g>
+<g data-step="4" data-until="4"><path d="M194 175 V145 H258 V175" fill="none" stroke="#3b82f6" marker-end="url(#ds7-coins-a)"/><path d="M66 175 V117 H258 V175" fill="none" stroke="#10b981" marker-end="url(#ds7-coins-a)"/></g>
+<g data-step="5"><text x="322" y="204" font-size="16" text-anchor="middle" fill="currentColor">1</text></g>
+<g data-step="5" data-until="5"><path d="M258 175 V145 H322 V175" fill="none" stroke="#3b82f6" marker-end="url(#ds7-coins-a)"/><path d="M130 175 V117 H322 V175" fill="none" stroke="#10b981" marker-end="url(#ds7-coins-a)"/><path d="M66 175 V89 H322 V175" fill="none" stroke="#f59e0b" marker-end="url(#ds7-coins-a)"/></g>
+<g data-step="6"><text x="386" y="204" font-size="16" text-anchor="middle" fill="currentColor">2</text></g>
+<g data-step="6" data-until="6"><path d="M322 175 V145 H386 V175" fill="none" stroke="#3b82f6" marker-end="url(#ds7-coins-a)"/><path d="M194 175 V117 H386 V175" fill="none" stroke="#10b981" marker-end="url(#ds7-coins-a)"/><path d="M130 175 V89 H386 V175" fill="none" stroke="#f59e0b" marker-end="url(#ds7-coins-a)"/></g>
+<g data-step="7"><text x="450" y="204" font-size="16" text-anchor="middle" fill="currentColor">2</text></g>
+<g data-step="7" data-until="7"><path d="M386 175 V145 H450 V175" fill="none" stroke="#3b82f6" marker-end="url(#ds7-coins-a)"/><path d="M258 175 V117 H450 V175" fill="none" stroke="#10b981" marker-end="url(#ds7-coins-a)"/><path d="M194 175 V89 H450 V175" fill="none" stroke="#f59e0b" marker-end="url(#ds7-coins-a)"/></g>
+<g data-step="8"><text x="260" y="267" font-size="13" text-anchor="middle" fill="currentColor">dp[6] = 2: dùng 3 + 3</text></g>
+</svg>
+<step-note data-step="1">Khởi tạo <code>dp[0]=0</code>; các ô còn lại khởi tạo INF để biểu diễn chưa tạo được số tiền.</step-note>
+<step-note data-step="2">Với x=1, xét dp[0]=0; lấy min rồi cộng 1 → <code>dp[1]=1</code>. Chỉ đọc ô đã tính ở bên trái.</step-note>
+<step-note data-step="3">Với x=2, xét dp[1]=1; lấy min rồi cộng 1 → <code>dp[2]=2</code>. Chỉ đọc ô đã tính ở bên trái.</step-note>
+<step-note data-step="4">Với x=3, xét dp[2]=2, dp[0]=0; lấy min rồi cộng 1 → <code>dp[3]=1</code>. Chỉ đọc ô đã tính ở bên trái.</step-note>
+<step-note data-step="5">Với x=4, xét dp[3]=1, dp[1]=1, dp[0]=0; lấy min rồi cộng 1 → <code>dp[4]=1</code>. Chỉ đọc ô đã tính ở bên trái.</step-note>
+<step-note data-step="6">Với x=5, xét dp[4]=1, dp[2]=2, dp[1]=1; lấy min rồi cộng 1 → <code>dp[5]=2</code>. Chỉ đọc ô đã tính ở bên trái.</step-note>
+<step-note data-step="7">Với x=6, xét dp[5]=2, dp[3]=1, dp[2]=2; lấy min rồi cộng 1 → <code>dp[6]=2</code>. Hai đồng 3 tạo 6, tốt hơn 4+1+1; tổng O(amount × số loại coin).</step-note>
+<step-note data-step="8">Hoàn tất: chỉ giữ kết quả; bỏ cung chuyển tạm. Hai đồng 3 là tối ưu; tổng O(amount × số loại coin).</step-note>
+</step-flow>
 
 ```text
 dp[x] = số xu ít nhất tạo ra x

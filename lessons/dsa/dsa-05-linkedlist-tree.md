@@ -8,10 +8,28 @@ Bài này tập trung vào phần **thực dụng**: nhận diện khi nào dùn
 
 Khác với `array` (các phần tử nằm liền nhau trong bộ nhớ, truy cập theo chỉ số `O(1)`), **linked list** là chuỗi các **node** rời rạc, mỗi node giữ một giá trị và một con trỏ `next` chỉ tới node kế tiếp.
 
-```
-[10|•] -> [20|•] -> [30|•] -> null
- head
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 180" role="img" aria-labelledby="dsa05a-list-t dsa05a-list-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa05a-list-t">Linked list: mỗi node giữ value và next</title>
+<desc id="dsa05a-list-d">Linked list: mỗi node giữ value và next; các vị trí và mũi tên biểu diễn dữ liệu cùng hướng thao tác.</desc>
+<defs>
+<marker id="dsa05a-list-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">Linked list: mỗi node giữ value và next</text>
+<text x="65" y="62" text-anchor="middle" font-size="14" fill="currentColor">head</text>
+<path d="M65 70 L65 98" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa05a-list-ar)"/>
+<rect x="25" y="105" width="95" height="45" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="72.5" y="132.5" text-anchor="middle" font-size="14" fill="currentColor">10</text>
+<path d="M123 127 L160 127" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa05a-list-ar)"/>
+<rect x="165" y="105" width="95" height="45" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="212.5" y="132.5" text-anchor="middle" font-size="14" fill="currentColor">20</text>
+<path d="M263 127 L300 127" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa05a-list-ar)"/>
+<rect x="305" y="105" width="95" height="45" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="352.5" y="132.5" text-anchor="middle" font-size="14" fill="currentColor">30</text>
+<path d="M403 127 L440 127" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa05a-list-ar)"/>
+<text x="470" y="132" text-anchor="middle" font-size="14" fill="currentColor">null</text>
+</svg>
 
 - **Singly linked list**: mỗi node chỉ có `next`.
 - **Doubly linked list**: mỗi node có thêm `prev` (đi lùi được) — nền tảng của LRU cache, deque.
@@ -113,6 +131,68 @@ void printList(ListNode* head) {
     std::cout << "null" << std::endl;
 }
 ```
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 335" role="img" aria-labelledby="dsa05a-links-t dsa05a-links-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa05a-links-t">Linked list: tạo, nối, rồi xoá node 15</title>
+<desc id="dsa05a-links-d">Node 15 nằm dưới khe giữa 10 và 20; mỗi cạnh cũ biến mất khi được thay, bước cuối chỉ còn 10 sang 20 sang 30.</desc>
+<defs>
+<marker id="dsa05a-links-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">Linked list: tạo, nối, rồi xoá node 15</text>
+<rect x="20" y="105" width="80" height="43" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="60.0" y="131.5" text-anchor="middle" font-size="14" fill="currentColor">10</text>
+<rect x="230" y="105" width="80" height="43" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="270.0" y="131.5" text-anchor="middle" font-size="14" fill="currentColor">20</text>
+<rect x="410" y="105" width="80" height="43" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="450.0" y="131.5" text-anchor="middle" font-size="14" fill="currentColor">30</text>
+<text x="60" y="75" text-anchor="middle" font-size="14" fill="currentColor">head</text>
+<path d="M60 80 L60 100" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa05a-links-ar)"/>
+<path d="M315 126 L405 126" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#dsa05a-links-ar)"/>
+<g data-step="1" data-until="2">
+<path d="M105 126 L225 126" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#dsa05a-links-ar)"/>
+</g>
+<g data-step="4">
+<path d="M105 126 L225 126" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa05a-links-ar)"/>
+</g>
+<g data-step="1" data-until="3">
+<rect x="125" y="190" width="80" height="43" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="165.0" y="216.5" text-anchor="middle" font-size="14" fill="currentColor">15</text>
+<text x="165" y="260" text-anchor="middle" font-size="13" fill="currentColor">new</text>
+</g>
+<g data-step="2" data-until="3">
+<path d="M205 204 L250 153" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa05a-links-ar)"/>
+</g>
+<g data-step="3" data-until="3">
+<path d="M80 153 L125 188" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa05a-links-ar)"/>
+</g>
+<g data-step="1" data-until="1">
+<text x="260" y="305" text-anchor="middle" font-size="14" fill="currentColor">Tạo new = node(15)</text>
+</g>
+<g data-step="2" data-until="2">
+<text x="260" y="305" text-anchor="middle" font-size="14" fill="currentColor">new.next = node20</text>
+</g>
+<g data-step="3" data-until="3">
+<text x="260" y="305" text-anchor="middle" font-size="14" fill="currentColor">node10.next = new</text>
+</g>
+<g data-step="4">
+<text x="260" y="305" text-anchor="middle" font-size="14" fill="currentColor">node10.next = node20; bỏ 15</text>
+</g>
+</svg>
+<step-note data-step="1">Bắt đầu với 10 → 20 → 30, tạo node 15 ở dưới khe giữa 10 và 20. Chưa thay liên kết của list.</step-note>
+<step-note data-step="2">Gán new.next = node10.next, tức node 20. Giữ đường tới phần còn lại trước khi sửa node10.next.</step-note>
+<step-note data-step="3">Gán node10.next = new: cạnh 10 → 20 cũ biến mất, list thành 10 → 15 → 20 → 30. Chỉ đổi con trỏ, không dịch dữ liệu.</step-note>
+<step-note data-step="4">Xoá 15 bằng node10.next = node10.next.next: cạnh 10 → 15 và node 15 biến mất, cạnh 10 → 20 trở lại. Có sẵn con trỏ node trước nên chèn/xoá này O(1).</step-note>
+</step-flow>
+
+### Tự tay thử: linked list
+
+Thử **Chèn tại i** hoặc **Xoá giá trị**: con trỏ `cur` phải đi từ `head` tới đúng vị trí (O(n)), sau đó chỉ việc nối lại vài con trỏ `next` (O(1)). Bấm **Đảo ngược** và bật **Từng bước** để theo dõi ba con trỏ `prev`/`cur`/`next` giống đoạn code ở mục dưới.
+
+<ds-playground data-type="linked-list" data-init="10,20,30">
+</ds-playground>
 
 ## Đảo ngược linked list
 
@@ -238,10 +318,7 @@ Bài toán "must-know" số một. Ý tưởng: đi qua từng node, **bẻ ngư
 <step-note data-step="5">Trả <code>prev</code> vì <code>cur</code> đã là <code>null</code>. Mỗi node được bẻ đúng một lần: thời gian <code>O(n)</code>, bộ nhớ <code>O(1)</code>.</step-note>
 </step-flow>
 
-```
-prev=null  cur=[1]->[2]->[3]
-mỗi bước: nxt = cur.next ; cur.next = prev ; prev = cur ; cur = nxt
-```
+Khởi tạo `prev = null`, `cur = head` trên list `1 → 2 → 3`. Mỗi vòng: lưu `nxt`, bẻ `cur.next`, rồi dời `prev` và `cur` như hình trên.
 
 ```python
 def reverse_list(head):
@@ -671,10 +748,11 @@ def level_order(root):
 function levelOrder(root) {
   if (!root) return [];
   const result = [], q = [root];
-  while (q.length) {
-    const level = [], size = q.length;
+  let head = 0;
+  while (head < q.length) {
+    const level = [], size = q.length - head;
     for (let i = 0; i < size; i++) {
-      const node = q.shift();
+      const node = q[head++];
       level.push(node.val);
       if (node.left) q.push(node.left);
       if (node.right) q.push(node.right);
@@ -751,17 +829,158 @@ std::vector<std::vector<int>> levelOrder(TreeNode* root) {
 
 > Ghi nhớ: đề bài có chữ **"theo tầng / theo level / shortest path không trọng số"** → dùng **BFS + queue**. Đề bài về **đường đi gốc-tới-lá / kiểm tra cấu trúc đệ quy** → dùng **DFS**.
 
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 490" role="img" aria-labelledby="dsa05a-bfs-t dsa05a-bfs-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa05a-bfs-t">BFS theo tầng: dequeue làm queue đổi</title>
+<desc id="dsa05a-bfs-d">Mỗi node rời queue khi được xử lý; level và result thay tại chỗ, size mỗi tầng cố định dù các con được enqueue.</desc>
+<defs>
+<marker id="dsa05a-bfs-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">BFS theo tầng: dequeue làm queue đổi</text>
+<path d="M260 97 L130 123" fill="none" stroke="currentColor" stroke-width="2"/>
+<path d="M260 97 L390 123" fill="none" stroke="currentColor" stroke-width="2"/>
+<path d="M130 167 L65 203" fill="none" stroke="currentColor" stroke-width="2"/>
+<path d="M130 167 L195 203" fill="none" stroke="currentColor" stroke-width="2"/>
+<path d="M390 167 L450 203" fill="none" stroke="currentColor" stroke-width="2"/>
+<circle cx="260" cy="75" r="22" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="260" y="80" text-anchor="middle" font-size="14" fill="currentColor">8</text>
+<circle cx="130" cy="145" r="22" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="130" y="150" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+<circle cx="390" cy="145" r="22" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="390" y="150" text-anchor="middle" font-size="14" fill="currentColor">10</text>
+<circle cx="65" cy="225" r="22" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="65" y="230" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+<circle cx="195" cy="225" r="22" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="195" y="230" text-anchor="middle" font-size="14" fill="currentColor">6</text>
+<circle cx="450" cy="225" r="22" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="450" y="230" text-anchor="middle" font-size="14" fill="currentColor">14</text>
+<text x="260" y="285" text-anchor="middle" font-size="14" fill="currentColor">queue: front → back</text>
+<rect x="100" y="302" width="100" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<rect x="210" y="302" width="100" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<rect x="320" y="302" width="100" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<g data-step="1" data-until="1">
+<text x="150" y="329" text-anchor="middle" font-size="14" fill="currentColor">8</text>
+<text x="260" y="329" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+<text x="370" y="329" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="2" data-until="2">
+<text x="150" y="329" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+<text x="260" y="329" text-anchor="middle" font-size="14" fill="currentColor">10</text>
+<text x="370" y="329" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="2">
+<circle cx="260" cy="75" r="26" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="2" data-until="2">
+<circle cx="260" cy="75" r="29" fill="none" stroke="#f59e0b" stroke-width="3"/>
+</g>
+<g data-step="3" data-until="3">
+<text x="150" y="329" text-anchor="middle" font-size="14" fill="currentColor">10</text>
+<text x="260" y="329" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+<text x="370" y="329" text-anchor="middle" font-size="14" fill="currentColor">6</text>
+</g>
+<g data-step="3">
+<circle cx="130" cy="145" r="26" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="3" data-until="3">
+<circle cx="130" cy="145" r="29" fill="none" stroke="#f59e0b" stroke-width="3"/>
+</g>
+<g data-step="4" data-until="4">
+<text x="150" y="329" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+<text x="260" y="329" text-anchor="middle" font-size="14" fill="currentColor">6</text>
+<text x="370" y="329" text-anchor="middle" font-size="14" fill="currentColor">14</text>
+</g>
+<g data-step="4">
+<circle cx="390" cy="145" r="26" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="4" data-until="4">
+<circle cx="390" cy="145" r="29" fill="none" stroke="#f59e0b" stroke-width="3"/>
+</g>
+<g data-step="5" data-until="5">
+<text x="150" y="329" text-anchor="middle" font-size="14" fill="currentColor">6</text>
+<text x="260" y="329" text-anchor="middle" font-size="14" fill="currentColor">14</text>
+<text x="370" y="329" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="5">
+<circle cx="65" cy="225" r="26" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="5" data-until="5">
+<circle cx="65" cy="225" r="29" fill="none" stroke="#f59e0b" stroke-width="3"/>
+</g>
+<g data-step="6" data-until="6">
+<text x="150" y="329" text-anchor="middle" font-size="14" fill="currentColor">14</text>
+<text x="260" y="329" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+<text x="370" y="329" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="6">
+<circle cx="195" cy="225" r="26" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="6" data-until="6">
+<circle cx="195" cy="225" r="29" fill="none" stroke="#f59e0b" stroke-width="3"/>
+</g>
+<g data-step="7">
+<text x="150" y="329" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+<text x="260" y="329" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+<text x="370" y="329" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="7">
+<circle cx="450" cy="225" r="26" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="7">
+<circle cx="450" cy="225" r="29" fill="none" stroke="#f59e0b" stroke-width="3"/>
+</g>
+<text x="260" y="373" text-anchor="middle" font-size="14" fill="currentColor">level đang xét / vừa hoàn tất</text>
+<g data-step="1" data-until="1">
+<text x="260" y="399" text-anchor="middle" font-size="14" fill="currentColor">[]</text>
+</g>
+<g data-step="2" data-until="2">
+<text x="260" y="399" text-anchor="middle" font-size="14" fill="currentColor">[8]</text>
+</g>
+<g data-step="3" data-until="3">
+<text x="260" y="399" text-anchor="middle" font-size="14" fill="currentColor">[3]</text>
+</g>
+<g data-step="4" data-until="4">
+<text x="260" y="399" text-anchor="middle" font-size="14" fill="currentColor">[3, 10]</text>
+</g>
+<g data-step="5" data-until="5">
+<text x="260" y="399" text-anchor="middle" font-size="14" fill="currentColor">[1]</text>
+</g>
+<g data-step="6" data-until="6">
+<text x="260" y="399" text-anchor="middle" font-size="14" fill="currentColor">[1, 6]</text>
+</g>
+<g data-step="7">
+<text x="260" y="399" text-anchor="middle" font-size="14" fill="currentColor">[1, 6, 14]</text>
+</g>
+<text x="260" y="434" text-anchor="middle" font-size="14" fill="currentColor">result</text>
+<g data-step="1" data-until="1">
+<text x="260" y="460" text-anchor="middle" font-size="14" fill="currentColor">[]</text>
+</g>
+<g data-step="2" data-until="3">
+<text x="260" y="460" text-anchor="middle" font-size="14" fill="currentColor">[[8]]</text>
+</g>
+<g data-step="4" data-until="6">
+<text x="260" y="460" text-anchor="middle" font-size="14" fill="currentColor">[[8], [3, 10]]</text>
+</g>
+<g data-step="7">
+<text x="260" y="460" text-anchor="middle" font-size="14" fill="currentColor">[[8], [3, 10], [1, 6, 14]]</text>
+</g>
+</svg>
+<step-note data-step="1">Khởi tạo queue [8]. Chốt size = 1 cho tầng gốc, level rỗng.</step-note>
+<step-note data-step="2">Pop 8, enqueue 3 và 10; đủ một node của tầng gốc nên lưu result [[8]]. Bắt đầu tầng tiếp theo với size = 2.</step-note>
+<step-note data-step="3">Pop 3, enqueue 1 và 6; queue thành [10, 1, 6]. Chưa xử lý hai con mới vì tầng hiện tại còn node 10.</step-note>
+<step-note data-step="4">Pop 10, enqueue 14; level [3, 10] hoàn tất. Queue [1, 6, 14] là tầng tiếp theo, chốt size = 3.</step-note>
+<step-note data-step="5">Pop 1 là lá, không enqueue con; queue còn [6, 14]. Level mới là [1].</step-note>
+<step-note data-step="6">Pop 6 là lá, queue còn [14]. Level đang xử lý thành [1, 6], chưa đưa vào result.</step-note>
+<step-note data-step="7">Pop 14, queue rỗng và lưu level [1, 6, 14]; hoàn tất kết quả ba tầng trong O(n) time. Queue logic O(w), riêng mảng nền JavaScript dùng head index giữ O(n).</step-note>
+</step-flow>
+
 ## Binary Search Tree (BST)
 
-BST là binary tree có thêm **bất biến sắp xếp**: với mọi node, **mọi giá trị bên trái nhỏ hơn** node, **mọi giá trị bên phải lớn hơn** node. Nhờ đó tìm/thêm/xoá chỉ cần đi xuống một nhánh — `O(h)`.
+Trong bài này BST lưu các giá trị phân biệt (không chèn trùng). BST là binary tree có thêm **bất biến sắp xếp**: với mọi node, **mọi giá trị bên trái nhỏ hơn** node, **mọi giá trị bên phải lớn hơn** node. Nhờ đó tìm/thêm/xoá chỉ cần đi xuống một nhánh — `O(h)`.
 
-```
-        8
-       / \
-      3   10
-     / \    \
-    1   6    14
-```
+Cây minh hoạ bên dưới có gốc 8, hai con 3 và 10; node 3 có hai con 1 và 6, node 10 có con phải 14.
 
 Inorder của cây trên: `1 3 6 8 10 14` — **luôn sắp xếp**. Đây là cách kiểm tra một cây có phải BST hợp lệ hay không.
 
@@ -1007,11 +1226,78 @@ TreeNode* deleteBst(TreeNode* root, int key) {
 }
 ```
 
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 330" role="img" aria-labelledby="dsa05a-delete-t dsa05a-delete-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa05a-delete-t">Xoá BST: đổi gốc và nối lại con phải</title>
+<desc id="dsa05a-delete-d">Giá trị gốc 8 biến mất, thay bằng 10 tại cùng toạ độ; node kế vị cũ được xoá và node 14 dời lên làm con phải trực tiếp.</desc>
+<defs>
+<marker id="dsa05a-delete-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">Xoá BST: đổi gốc và nối lại con phải</text>
+<path d="M260 97 L130 123" fill="none" stroke="currentColor" stroke-width="2"/>
+<path d="M130 167 L65 203" fill="none" stroke="currentColor" stroke-width="2"/>
+<path d="M130 167 L195 203" fill="none" stroke="currentColor" stroke-width="2"/>
+<circle cx="260" cy="75" r="22" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<g data-step="1" data-until="1">
+<text x="260" y="80" text-anchor="middle" font-size="14" fill="currentColor">8</text>
+</g>
+<g data-step="2">
+<text x="260" y="80" text-anchor="middle" font-size="14" fill="currentColor">10</text>
+</g>
+<circle cx="130" cy="145" r="22" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="130" y="150" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+<circle cx="65" cy="225" r="22" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="65" y="230" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+<circle cx="195" cy="225" r="22" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="195" y="230" text-anchor="middle" font-size="14" fill="currentColor">6</text>
+<g data-step="1" data-until="2">
+<path d="M260 97 L390 123" fill="none" stroke="currentColor" stroke-width="2"/>
+<path d="M390 167 L450 203" fill="none" stroke="currentColor" stroke-width="2"/>
+<circle cx="390" cy="145" r="22" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="390" y="150" text-anchor="middle" font-size="14" fill="currentColor">10</text>
+<circle cx="450" cy="225" r="22" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="450" y="230" text-anchor="middle" font-size="14" fill="currentColor">14</text>
+</g>
+<g data-step="1" data-until="1">
+<circle cx="390" cy="145" r="27" fill="none" stroke="#10b981" stroke-width="3"/>
+</g>
+<g data-step="2" data-until="2">
+<path d="M365 130 L284 86" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa05a-delete-ar)"/>
+</g>
+<g data-step="3">
+<path d="M260 97 L390 123" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa05a-delete-ar)"/>
+<circle cx="390" cy="145" r="22" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="390" y="150" text-anchor="middle" font-size="14" fill="currentColor">14</text>
+</g>
+<g data-step="1" data-until="1">
+<text x="260" y="295" text-anchor="middle" font-size="14" fill="currentColor">Tìm kế vị: 10 không có con trái</text>
+</g>
+<g data-step="2" data-until="2">
+<text x="260" y="295" text-anchor="middle" font-size="14" fill="currentColor">root.val = 10; còn hai node giá trị 10</text>
+</g>
+<g data-step="3">
+<text x="260" y="295" text-anchor="middle" font-size="14" fill="currentColor">Xoá 10 cũ; root.right = node14</text>
+</g>
+</svg>
+<step-note data-step="1">Xoá key 8 có hai con: sang cây con phải tìm kế vị nhỏ nhất. Node 10 không có con trái nên là kế vị.</step-note>
+<step-note data-step="2">Chép succ.val lên root.val: số 8 trong gốc biến mất, thay bằng 10 tại chỗ. Tạm thời còn node 10 cũ ở cây con phải.</step-note>
+<step-note data-step="3">Xoá node 10 cũ chỉ có con phải 14, trả về 14 để gốc nối thẳng tới nó. Node 14 dời lên, cạnh cũ biến mất; inorder cuối [1, 3, 6, 10, 14], tổng O(h).</step-note>
+</step-flow>
+
+### Tự tay thử: BST
+
+Cây dưới đây cùng dữ liệu với hình chèn ở trên. Thử **Tìm** và **Chèn** để thấy đường đi chỉ rẽ trái/phải ở mỗi tầng (O(h)). **Xoá** đủ ba trường hợp: một lá (1), một node một con, và gốc 8 có hai con (thay bằng successor nhỏ nhất bên phải). Các nút **Inorder**/**Preorder**/**Postorder**/**BFS** tô lần lượt từng node và ghi dãy kết quả. Thử **Đặt lại** rồi chèn dãy tăng dần 1, 2, 3, 4, 5 để thấy cây suy biến thành một đường thẳng, độ cao tăng theo n.
+
+<ds-playground data-type="bst" data-init="8,3,10,1,6,14">
+</ds-playground>
+
 ### Độ cao & cân bằng (ý tưởng)
 
-- **Chiều cao (height)** `h` = số cạnh trên đường đi dài nhất từ gốc xuống lá. Mọi thao tác BST là `O(h)`.
+- **Chiều cao (height)** `h` = số cạnh trên đường đi dài nhất từ gốc xuống lá. Tìm/thêm/xoá BST là `O(h + 1)` (thường viết gọn `O(h)` khi h ≥ 1); duyệt toàn cây vẫn là `O(n)`.
 - Cây **cân bằng (balanced)**: `h ≈ log₂(n)` → thao tác `O(log n)`, rất nhanh.
-- Cây **suy biến (skewed)**: nếu chèn dữ liệu *đã sắp xếp sẵn* vào BST thường, cây biến thành một "danh sách dọc", `h = n` → thao tác tụt về `O(n)`.
+- Cây **suy biến (skewed)**: nếu chèn dữ liệu *đã sắp xếp sẵn* vào BST thường, cây biến thành một "danh sách dọc", `h = n - 1` → thao tác tụt về `O(n)`.
 
 > Bẫy: BST chỉ nhanh khi **cân bằng**. Trong sản phẩm thật, đừng tự cài BST thường rồi đổ dữ liệu sắp xếp vào — hãy dùng **self-balancing tree** (AVL, Red-Black). Thực tế `TreeMap` của Java, `std::map` của C++ chính là Red-Black tree; Python/Go thì thường dùng thẳng hash map (`dict`/`map`) trừ khi cần thứ tự.
 

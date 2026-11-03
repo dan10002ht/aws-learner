@@ -10,6 +10,118 @@ Array là một vùng nhớ **liên tục** (contiguous). Vì các phần tử n
 
 Cái giá phải trả nằm ở chèn/xoá giữa mảng: muốn chèn vào đầu, bạn phải dịch toàn bộ phần tử phía sau sang phải → **O(n)**.
 
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 285" role="img" aria-labelledby="dsa02a-insert-t dsa02a-insert-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa02a-insert-t">Chèn đầu mảng: dịch rồi ghi tại chỗ</title>
+<desc id="dsa02a-insert-d">Từng ô đích được ghi đè từ phải sang trái; cuối cùng mảng là 9,2,4,1,7,3,5.</desc>
+<defs>
+<marker id="dsa02a-insert-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">Chèn đầu mảng: dịch rồi ghi tại chỗ</text>
+<text x="260" y="57" text-anchor="middle" font-size="14" fill="currentColor">Chèn 9 vào đầu [2, 4, 1, 7, 3, 5]</text>
+<rect x="25" y="125" width="62" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="56.0" y="110" text-anchor="middle" font-size="13" fill="currentColor">0</text>
+<rect x="93" y="125" width="62" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="124.0" y="110" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="161" y="125" width="62" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="192.0" y="110" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="229" y="125" width="62" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="260.0" y="110" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<rect x="297" y="125" width="62" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="328.0" y="110" text-anchor="middle" font-size="13" fill="currentColor">4</text>
+<rect x="365" y="125" width="62" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="396.0" y="110" text-anchor="middle" font-size="13" fill="currentColor">5</text>
+<rect x="433" y="125" width="62" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="464.0" y="110" text-anchor="middle" font-size="13" fill="currentColor">6</text>
+<g data-step="1" data-until="7">
+<text x="56.0" y="152" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+</g>
+<g data-step="8">
+<text x="56.0" y="152" text-anchor="middle" font-size="14" fill="currentColor">9</text>
+</g>
+<g data-step="1" data-until="6">
+<text x="124.0" y="152" text-anchor="middle" font-size="14" fill="currentColor">4</text>
+</g>
+<g data-step="7">
+<text x="124.0" y="152" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+</g>
+<g data-step="1" data-until="5">
+<text x="192.0" y="152" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+</g>
+<g data-step="6">
+<text x="192.0" y="152" text-anchor="middle" font-size="14" fill="currentColor">4</text>
+</g>
+<g data-step="1" data-until="4">
+<text x="260.0" y="152" text-anchor="middle" font-size="14" fill="currentColor">7</text>
+</g>
+<g data-step="5">
+<text x="260.0" y="152" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+</g>
+<g data-step="1" data-until="3">
+<text x="328.0" y="152" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+</g>
+<g data-step="4">
+<text x="328.0" y="152" text-anchor="middle" font-size="14" fill="currentColor">7</text>
+</g>
+<g data-step="1" data-until="2">
+<text x="396.0" y="152" text-anchor="middle" font-size="14" fill="currentColor">5</text>
+</g>
+<g data-step="3">
+<text x="396.0" y="152" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+</g>
+<g data-step="1" data-until="1">
+<text x="464.0" y="152" text-anchor="middle" font-size="14" fill="currentColor">∅</text>
+</g>
+<g data-step="2">
+<text x="464.0" y="152" text-anchor="middle" font-size="14" fill="currentColor">5</text>
+</g>
+<g data-step="2" data-until="2">
+<path d="M396 119 Q430.0 70 464 119" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-insert-ar)"/>
+<rect x="433" y="125" width="62" height="44" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="3" data-until="3">
+<path d="M328 119 Q362.0 70 396 119" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-insert-ar)"/>
+<rect x="365" y="125" width="62" height="44" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="4" data-until="4">
+<path d="M260 119 Q294.0 70 328 119" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-insert-ar)"/>
+<rect x="297" y="125" width="62" height="44" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="5" data-until="5">
+<path d="M192 119 Q226.0 70 260 119" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-insert-ar)"/>
+<rect x="229" y="125" width="62" height="44" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="6" data-until="6">
+<path d="M124 119 Q158.0 70 192 119" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-insert-ar)"/>
+<rect x="161" y="125" width="62" height="44" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="7" data-until="7">
+<path d="M56 119 Q90.0 70 124 119" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-insert-ar)"/>
+<rect x="93" y="125" width="62" height="44" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="8">
+<rect x="25" y="125" width="62" height="44" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+</g>
+<g data-step="1" data-until="7">
+<text x="260" y="217" text-anchor="middle" font-size="14" fill="currentColor">size = 6</text>
+</g>
+<g data-step="8">
+<text x="260" y="217" text-anchor="middle" font-size="14" fill="currentColor">size = 7</text>
+</g>
+<text x="260" y="253" text-anchor="middle" font-size="14" fill="currentColor">Dịch phải → trái; giá trị ô đích đổi tại chỗ</text>
+</svg>
+<step-note data-step="1">Mảng có sáu phần tử và một ô sức chứa dư (∅). Chưa cần resize; bắt đầu dịch từ cuối để không mất dữ liệu.</step-note>
+<step-note data-step="2">Gán a[6] = a[5]: giá trị 5 xuất hiện ngay ở ô đích, thay giá trị cũ. Ô nguồn vẫn giữ nguyên để bước trước đó chưa bị mất dữ liệu.</step-note>
+<step-note data-step="3">Gán a[5] = a[4]: giá trị 3 xuất hiện ngay ở ô đích, thay giá trị cũ. Tiếp tục đi sang trái, mỗi lần gán O(1).</step-note>
+<step-note data-step="4">Gán a[4] = a[3]: giá trị 7 xuất hiện ngay ở ô đích, thay giá trị cũ. Tiếp tục đi sang trái, mỗi lần gán O(1).</step-note>
+<step-note data-step="5">Gán a[3] = a[2]: giá trị 1 xuất hiện ngay ở ô đích, thay giá trị cũ. Tiếp tục đi sang trái, mỗi lần gán O(1).</step-note>
+<step-note data-step="6">Gán a[2] = a[1]: giá trị 4 xuất hiện ngay ở ô đích, thay giá trị cũ. Tiếp tục đi sang trái, mỗi lần gán O(1).</step-note>
+<step-note data-step="7">Gán a[1] = a[0]: giá trị 2 xuất hiện ngay ở ô đích, thay giá trị cũ. Tiếp tục đi sang trái, mỗi lần gán O(1).</step-note>
+<step-note data-step="8">Ghi 9 vào a[0], tăng size thành 7. Hàng duy nhất trở thành [9, 2, 4, 1, 7, 3, 5]; tổng chi phí dịch O(n).</step-note>
+</step-flow>
+
 ### Bảng chi phí
 
 | Thao tác | Array (dynamic) | Ghi chú |
@@ -168,6 +280,116 @@ std::vector<int> reverse(std::vector<int>& a) {
 }
 ```
 
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 295" role="img" aria-labelledby="dsa02a-reverse-t dsa02a-reverse-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa02a-reverse-t">reverse: đổi giá trị trong cùng một mảng</title>
+<desc id="dsa02a-reverse-d">Ba cặp giá trị đổi chỗ tại index cố định; left và right tiến vào giữa rồi vượt nhau.</desc>
+<defs>
+<marker id="dsa02a-reverse-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">reverse: đổi giá trị trong cùng một mảng</text>
+<rect x="45" y="110" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="77.0" y="95" text-anchor="middle" font-size="13" fill="currentColor">0</text>
+<rect x="115" y="110" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="147.0" y="95" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="185" y="110" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="217.0" y="95" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="255" y="110" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="287.0" y="95" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<rect x="325" y="110" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="357.0" y="95" text-anchor="middle" font-size="13" fill="currentColor">4</text>
+<rect x="395" y="110" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="427.0" y="95" text-anchor="middle" font-size="13" fill="currentColor">5</text>
+<g data-step="1" data-until="1">
+<text x="77.0" y="137" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+</g>
+<g data-step="2">
+<text x="77.0" y="137" text-anchor="middle" font-size="14" fill="currentColor">15</text>
+</g>
+<g data-step="1" data-until="2">
+<text x="147.0" y="137" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+</g>
+<g data-step="3">
+<text x="147.0" y="137" text-anchor="middle" font-size="14" fill="currentColor">11</text>
+</g>
+<g data-step="1" data-until="3">
+<text x="217.0" y="137" text-anchor="middle" font-size="14" fill="currentColor">5</text>
+</g>
+<g data-step="4">
+<text x="217.0" y="137" text-anchor="middle" font-size="14" fill="currentColor">8</text>
+</g>
+<g data-step="1" data-until="3">
+<text x="287.0" y="137" text-anchor="middle" font-size="14" fill="currentColor">8</text>
+</g>
+<g data-step="4">
+<text x="287.0" y="137" text-anchor="middle" font-size="14" fill="currentColor">5</text>
+</g>
+<g data-step="1" data-until="2">
+<text x="357.0" y="137" text-anchor="middle" font-size="14" fill="currentColor">11</text>
+</g>
+<g data-step="3">
+<text x="357.0" y="137" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+</g>
+<g data-step="1" data-until="1">
+<text x="427.0" y="137" text-anchor="middle" font-size="14" fill="currentColor">15</text>
+</g>
+<g data-step="2">
+<text x="427.0" y="137" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+</g>
+<text x="260" y="60" text-anchor="middle" font-size="14" fill="currentColor">a = [1, 3, 5, 8, 11, 15]</text>
+<g data-step="1" data-until="1">
+<path d="M77.0 184 L77.0 167" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-reverse-ar)"/>
+<text x="77.0" y="204" text-anchor="middle" font-size="13" fill="currentColor">left</text>
+</g>
+<g data-step="1" data-until="1">
+<path d="M427.0 245 L427.0 228" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#dsa02a-reverse-ar)"/>
+<text x="427.0" y="265" text-anchor="middle" font-size="13" fill="currentColor">right</text>
+</g>
+<g data-step="2" data-until="2">
+<path d="M147.0 184 L147.0 167" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-reverse-ar)"/>
+<text x="147.0" y="204" text-anchor="middle" font-size="13" fill="currentColor">left</text>
+</g>
+<g data-step="2" data-until="2">
+<path d="M357.0 245 L357.0 228" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#dsa02a-reverse-ar)"/>
+<text x="357.0" y="265" text-anchor="middle" font-size="13" fill="currentColor">right</text>
+</g>
+<g data-step="2" data-until="2">
+<path d="M77 103 Q252.0 45 427 103" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-reverse-ar)"/>
+<path d="M427 157 Q252.0 186 77 157" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-reverse-ar)"/>
+</g>
+<g data-step="3" data-until="3">
+<path d="M217.0 184 L217.0 167" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-reverse-ar)"/>
+<text x="217.0" y="204" text-anchor="middle" font-size="13" fill="currentColor">left</text>
+</g>
+<g data-step="3" data-until="3">
+<path d="M287.0 245 L287.0 228" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#dsa02a-reverse-ar)"/>
+<text x="287.0" y="265" text-anchor="middle" font-size="13" fill="currentColor">right</text>
+</g>
+<g data-step="3" data-until="3">
+<path d="M147 103 Q252.0 45 357 103" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-reverse-ar)"/>
+<path d="M357 157 Q252.0 186 147 157" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-reverse-ar)"/>
+</g>
+<g data-step="4">
+<path d="M287.0 184 L287.0 167" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-reverse-ar)"/>
+<text x="287.0" y="204" text-anchor="middle" font-size="13" fill="currentColor">left</text>
+</g>
+<g data-step="4">
+<path d="M217.0 245 L217.0 228" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#dsa02a-reverse-ar)"/>
+<text x="217.0" y="265" text-anchor="middle" font-size="13" fill="currentColor">right</text>
+</g>
+<g data-step="4">
+<path d="M217 103 Q252.0 45 287 103" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-reverse-ar)"/>
+<path d="M287 157 Q252.0 186 217 157" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-reverse-ar)"/>
+</g>
+</svg>
+<step-note data-step="1">Ban đầu left = 0, right = 5. Chỉ đổi chỗ khi left nhỏ hơn right.</step-note>
+<step-note data-step="2">Đổi a[0] với a[5], rồi đưa left tới 1 và right về 4. Hai ô đầu/cuối nay mang 15 và 1.</step-note>
+<step-note data-step="3">Đổi a[1] với a[4], rồi left = 2, right = 3. Đoạn chưa xử lý còn hai ô.</step-note>
+<step-note data-step="4">Đổi a[2] với a[3], rồi left = 3 vượt right = 2 nên dừng. Mảng cuối [15, 11, 8, 5, 3, 1]; O(n) time, O(1) space.</step-note>
+</step-flow>
+
 ### Remove in-place (cùng chiều)
 
 Xoá mọi phần tử bằng `val`, trả về độ dài mới. `slow` đánh dấu vị trí ghi tiếp theo; `fast` quét toàn mảng.
@@ -230,6 +452,171 @@ int removeElement(std::vector<int>& a, int val) {
     return slow;
 }
 ```
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 350" role="img" aria-labelledby="dsa02a-remove-t dsa02a-remove-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa02a-remove-t">Remove in-place: slow ghi đè tại chỗ</title>
+<desc id="dsa02a-remove-d">Fast quét sang phải; slow ghi các giá trị giữ lại vào prefix. Ô 5 ở đuôi cuối cùng mờ vì không thuộc kết quả.</desc>
+<defs>
+<marker id="dsa02a-remove-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">Remove in-place: slow ghi đè tại chỗ</text>
+<text x="260" y="56" text-anchor="middle" font-size="14" fill="currentColor">remove_element(a, 5)</text>
+<rect x="45" y="105" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="77.0" y="90" text-anchor="middle" font-size="13" fill="currentColor">0</text>
+<rect x="115" y="105" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="147.0" y="90" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="185" y="105" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="217.0" y="90" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="255" y="105" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="287.0" y="90" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<rect x="325" y="105" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="357.0" y="90" text-anchor="middle" font-size="13" fill="currentColor">4</text>
+<rect x="395" y="105" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="427.0" y="90" text-anchor="middle" font-size="13" fill="currentColor">5</text>
+<g data-step="1">
+<text x="77" y="132" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+</g>
+<g data-step="1">
+<text x="147" y="132" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+</g>
+<g data-step="1" data-until="4">
+<text x="217" y="132" text-anchor="middle" font-size="14" fill="currentColor">5</text>
+</g>
+<g data-step="5">
+<text x="217" y="132" text-anchor="middle" font-size="14" fill="currentColor">8</text>
+</g>
+<g data-step="1" data-until="5">
+<text x="287" y="132" text-anchor="middle" font-size="14" fill="currentColor">8</text>
+</g>
+<g data-step="6">
+<text x="287" y="132" text-anchor="middle" font-size="14" fill="currentColor">11</text>
+</g>
+<g data-step="1" data-until="6">
+<text x="357" y="132" text-anchor="middle" font-size="14" fill="currentColor">11</text>
+</g>
+<g data-step="7">
+<text x="357" y="132" text-anchor="middle" font-size="14" fill="currentColor">15</text>
+</g>
+<g data-step="1" data-until="6">
+<text x="427" y="132" text-anchor="middle" font-size="14" fill="currentColor">15</text>
+</g>
+<g data-step="7">
+<g opacity="0.28">
+<text x="427" y="132" text-anchor="middle" font-size="14" fill="currentColor">15</text>
+</g>
+</g>
+<g data-step="1" data-until="1">
+<path d="M77.0 190 L77.0 173" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-remove-ar)"/>
+<text x="77.0" y="210" text-anchor="middle" font-size="13" fill="currentColor">slow</text>
+</g>
+<g data-step="1" data-until="1">
+<path d="M77.0 255 L77.0 238" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#dsa02a-remove-ar)"/>
+<text x="77.0" y="275" text-anchor="middle" font-size="13" fill="currentColor">fast</text>
+</g>
+<g data-step="2" data-until="2">
+<rect x="45" y="98" width="64" height="58" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="2" data-until="2">
+<path d="M147.0 190 L147.0 173" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-remove-ar)"/>
+<text x="147.0" y="210" text-anchor="middle" font-size="13" fill="currentColor">slow</text>
+</g>
+<g data-step="2" data-until="2">
+<path d="M147.0 255 L147.0 238" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#dsa02a-remove-ar)"/>
+<text x="147.0" y="275" text-anchor="middle" font-size="13" fill="currentColor">fast</text>
+</g>
+<g data-step="3" data-until="3">
+<rect x="45" y="98" width="134" height="58" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="3" data-until="3">
+<path d="M217.0 190 L217.0 173" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-remove-ar)"/>
+<text x="217.0" y="210" text-anchor="middle" font-size="13" fill="currentColor">slow</text>
+</g>
+<g data-step="3" data-until="3">
+<path d="M217.0 255 L217.0 238" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#dsa02a-remove-ar)"/>
+<text x="217.0" y="275" text-anchor="middle" font-size="13" fill="currentColor">fast</text>
+</g>
+<g data-step="4" data-until="4">
+<rect x="45" y="98" width="134" height="58" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="4" data-until="4">
+<path d="M217.0 190 L217.0 173" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-remove-ar)"/>
+<text x="217.0" y="210" text-anchor="middle" font-size="13" fill="currentColor">slow</text>
+</g>
+<g data-step="4" data-until="4">
+<path d="M287.0 255 L287.0 238" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#dsa02a-remove-ar)"/>
+<text x="287.0" y="275" text-anchor="middle" font-size="13" fill="currentColor">fast</text>
+</g>
+<g data-step="5" data-until="5">
+<rect x="45" y="98" width="204" height="58" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="5" data-until="5">
+<path d="M287.0 190 L287.0 173" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-remove-ar)"/>
+<text x="287.0" y="210" text-anchor="middle" font-size="13" fill="currentColor">slow</text>
+</g>
+<g data-step="5" data-until="5">
+<path d="M357.0 255 L357.0 238" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#dsa02a-remove-ar)"/>
+<text x="357.0" y="275" text-anchor="middle" font-size="13" fill="currentColor">fast</text>
+</g>
+<g data-step="5" data-until="5">
+<path d="M287 101 Q252.0 65 217 101" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-remove-ar)"/>
+</g>
+<g data-step="6" data-until="6">
+<rect x="45" y="98" width="274" height="58" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="6" data-until="6">
+<path d="M357.0 190 L357.0 173" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-remove-ar)"/>
+<text x="357.0" y="210" text-anchor="middle" font-size="13" fill="currentColor">slow</text>
+</g>
+<g data-step="6" data-until="6">
+<path d="M427.0 255 L427.0 238" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#dsa02a-remove-ar)"/>
+<text x="427.0" y="275" text-anchor="middle" font-size="13" fill="currentColor">fast</text>
+</g>
+<g data-step="6" data-until="6">
+<path d="M357 101 Q322.0 65 287 101" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-remove-ar)"/>
+</g>
+<g data-step="7">
+<rect x="45" y="98" width="344" height="58" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="7">
+<path d="M427.0 190 L427.0 173" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-remove-ar)"/>
+<text x="427.0" y="210" text-anchor="middle" font-size="13" fill="currentColor">slow</text>
+</g>
+<g data-step="7">
+<text x="420" y="275" text-anchor="middle" font-size="14" fill="currentColor">fast = n; dừng</text>
+</g>
+<g data-step="7">
+<path d="M427 101 Q392.0 65 357 101" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-remove-ar)"/>
+</g>
+<g data-step="1" data-until="1">
+<text x="260" y="325" text-anchor="middle" font-size="14" fill="currentColor">Prefix hợp lệ: 0 phần tử</text>
+</g>
+<g data-step="2" data-until="2">
+<text x="260" y="325" text-anchor="middle" font-size="14" fill="currentColor">Prefix hợp lệ: 1 phần tử</text>
+</g>
+<g data-step="3" data-until="4">
+<text x="260" y="325" text-anchor="middle" font-size="14" fill="currentColor">Prefix hợp lệ: 2 phần tử</text>
+</g>
+<g data-step="5" data-until="5">
+<text x="260" y="325" text-anchor="middle" font-size="14" fill="currentColor">Prefix hợp lệ: 3 phần tử</text>
+</g>
+<g data-step="6" data-until="6">
+<text x="260" y="325" text-anchor="middle" font-size="14" fill="currentColor">Prefix hợp lệ: 4 phần tử</text>
+</g>
+<g data-step="7">
+<text x="260" y="325" text-anchor="middle" font-size="14" fill="currentColor">Prefix hợp lệ: 5 phần tử</text>
+</g>
+</svg>
+<step-note data-step="1">Khởi tạo slow = fast = 0, chưa có prefix hợp lệ. slow là vị trí sẽ ghi tiếp theo.</step-note>
+<step-note data-step="2">fast đọc 1: giữ ở a[0], slow tăng thành 1. fast chuyển tới index 1.</step-note>
+<step-note data-step="3">fast đọc 3: giữ ở a[1], slow tăng thành 2. fast chuyển tới phần tử 5 ở index 2.</step-note>
+<step-note data-step="4">fast đọc 5 bằng val nên bỏ qua, không ghi và không tăng slow. fast tới index 3.</step-note>
+<step-note data-step="5">Ghi 8 từ index 3 đè lên 5 tại index 2, rồi slow = 3. Giá trị 5 cũ biến mất khỏi ô đích.</step-note>
+<step-note data-step="6">Ghi 11 từ index 4 vào index 3, rồi slow = 4. Không ghi vào vùng chưa được fast đọc.</step-note>
+<step-note data-step="7">Ghi 15 từ index 5 vào index 4, trả slow = 5. Chỉ [1, 3, 8, 11, 15] là kết quả; ô đuôi mờ không thuộc prefix, O(n) time và O(1) space.</step-note>
+</step-flow>
 
 ### Bài toán điển hình: Two Sum II (mảng đã sort)
 
@@ -674,6 +1061,84 @@ sum(i..j) = pre[j + 1] - pre[i]
 
 Ta đánh đổi một lần tiền xử lý O(n) và O(n) bộ nhớ để mỗi truy vấn đoạn về O(1), thay vì O(n) mỗi lần cộng lại.
 
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-labelledby="dsa02a-prefix-t dsa02a-prefix-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa02a-prefix-t">build_prefix: điền từ trái sang phải</title>
+<desc id="dsa02a-prefix-d">build_prefix: điền từ trái sang phải; các vị trí và mũi tên biểu diễn dữ liệu cùng hướng thao tác.</desc>
+<defs>
+<marker id="dsa02a-prefix-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">build_prefix: điền từ trái sang phải</text>
+<rect x="42" y="80" width="60" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="72.0" y="106.0" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+<text x="72.0" y="68" text-anchor="middle" font-size="13" fill="currentColor">0</text>
+<rect x="107" y="80" width="60" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="137.0" y="106.0" text-anchor="middle" font-size="14" fill="currentColor">4</text>
+<text x="137.0" y="68" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="172" y="80" width="60" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="202.0" y="106.0" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+<text x="202.0" y="68" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="237" y="80" width="60" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="267.0" y="106.0" text-anchor="middle" font-size="14" fill="currentColor">7</text>
+<text x="267.0" y="68" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<rect x="302" y="80" width="60" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="332.0" y="106.0" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+<text x="332.0" y="68" text-anchor="middle" font-size="13" fill="currentColor">4</text>
+<rect x="367" y="80" width="60" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="397.0" y="106.0" text-anchor="middle" font-size="14" fill="currentColor">5</text>
+<text x="397.0" y="68" text-anchor="middle" font-size="13" fill="currentColor">5</text>
+<text x="260" y="51" text-anchor="middle" font-size="14" fill="currentColor">a</text>
+<text x="260" y="176" text-anchor="middle" font-size="14" fill="currentColor">pre: mỗi ô lấy ô trước cộng a[i]</text>
+<rect x="25" y="210" width="62" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="56.0" y="236.0" text-anchor="middle" font-size="14" fill="currentColor">0</text>
+<text x="56" y="278" text-anchor="middle" font-size="13" fill="currentColor">0</text>
+<rect x="93" y="210" width="62" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="124" y="278" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="161" y="210" width="62" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="192" y="278" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="229" y="210" width="62" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="260" y="278" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<rect x="297" y="210" width="62" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="328" y="278" text-anchor="middle" font-size="13" fill="currentColor">4</text>
+<rect x="365" y="210" width="62" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="396" y="278" text-anchor="middle" font-size="13" fill="currentColor">5</text>
+<rect x="433" y="210" width="62" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="464" y="278" text-anchor="middle" font-size="13" fill="currentColor">6</text>
+<g data-step="1" data-until="1"><path d="M56 205 Q90 170 124 205" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-prefix-ar)"/></g>
+<g data-step="1">
+<text x="124" y="237" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+</g>
+<g data-step="2" data-until="2"><path d="M124 205 Q158 170 192 205" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-prefix-ar)"/></g>
+<g data-step="2">
+<text x="192" y="237" text-anchor="middle" font-size="14" fill="currentColor">6</text>
+</g>
+<g data-step="3" data-until="3"><path d="M192 205 Q226 170 260 205" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-prefix-ar)"/></g>
+<g data-step="3">
+<text x="260" y="237" text-anchor="middle" font-size="14" fill="currentColor">7</text>
+</g>
+<g data-step="4" data-until="4"><path d="M260 205 Q294 170 328 205" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-prefix-ar)"/></g>
+<g data-step="4">
+<text x="328" y="237" text-anchor="middle" font-size="14" fill="currentColor">14</text>
+</g>
+<g data-step="5" data-until="5"><path d="M328 205 Q362 170 396 205" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-prefix-ar)"/></g>
+<g data-step="5">
+<text x="396" y="237" text-anchor="middle" font-size="14" fill="currentColor">17</text>
+</g>
+<g data-step="6"><path d="M396 205 Q430 170 464 205" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-prefix-ar)"/></g>
+<g data-step="6">
+<text x="464" y="237" text-anchor="middle" font-size="14" fill="currentColor">22</text>
+</g>
+</svg>
+<step-note data-step="1">pre[1] = pre[0] + a[0] = 0 + 2 = 2. pre[0] = 0 là mốc ban đầu, không đọc a[-1].</step-note>
+<step-note data-step="2">pre[2] = pre[1] + a[1] = 2 + 4 = 6. Mỗi ô dùng kết quả đã tính ngay bên trái, tốn O(1).</step-note>
+<step-note data-step="3">pre[3] = pre[2] + a[2] = 6 + 1 = 7. Mỗi ô dùng kết quả đã tính ngay bên trái, tốn O(1).</step-note>
+<step-note data-step="4">pre[4] = pre[3] + a[3] = 7 + 7 = 14. Mỗi ô dùng kết quả đã tính ngay bên trái, tốn O(1).</step-note>
+<step-note data-step="5">pre[5] = pre[4] + a[4] = 14 + 3 = 17. Mỗi ô dùng kết quả đã tính ngay bên trái, tốn O(1).</step-note>
+<step-note data-step="6">pre[6] = pre[5] + a[5] = 17 + 5 = 22. Mỗi ô dùng kết quả đã tính ngay bên trái, tốn O(1).</step-note>
+</step-flow>
+
 ### Khi nào dùng
 
 - Nhiều truy vấn "tổng của đoạn con" trên mảng **không đổi**.
@@ -816,6 +1281,128 @@ int maxSubarray(const std::vector<int>& a) {
 ```
 
 > Bẫy: với Max Subarray, đừng khởi tạo `best = 0`. Nếu mọi phần tử đều âm, đáp án phải là số âm lớn nhất; khởi tạo `0` sẽ trả sai. Hãy khởi tạo bằng `a[0]`.
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 335" role="img" aria-labelledby="dsa02a-kadane-t dsa02a-kadane-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa02a-kadane-t">Kadane: cập nhật hai biến cur và best</title>
+<desc id="dsa02a-kadane-d">Hai ô cur và best thay giá trị tại chỗ; thanh tím chỉ đoạn kết thúc tại i, thanh xanh chỉ đoạn tốt nhất đã gặp.</desc>
+<defs>
+<marker id="dsa02a-kadane-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">Kadane: cập nhật hai biến cur và best</text>
+<text x="260" y="56" text-anchor="middle" font-size="14" fill="currentColor">a = [-2, 4, -1, 7, -3, 5]</text>
+<rect x="45" y="100" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="77.0" y="85" text-anchor="middle" font-size="13" fill="currentColor">0</text>
+<rect x="115" y="100" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="147.0" y="85" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="185" y="100" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="217.0" y="85" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="255" y="100" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="287.0" y="85" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<rect x="325" y="100" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="357.0" y="85" text-anchor="middle" font-size="13" fill="currentColor">4</text>
+<rect x="395" y="100" width="64" height="44" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="427.0" y="85" text-anchor="middle" font-size="13" fill="currentColor">5</text>
+<text x="77" y="127" text-anchor="middle" font-size="14" fill="currentColor">-2</text>
+<text x="147" y="127" text-anchor="middle" font-size="14" fill="currentColor">4</text>
+<text x="217" y="127" text-anchor="middle" font-size="14" fill="currentColor">-1</text>
+<text x="287" y="127" text-anchor="middle" font-size="14" fill="currentColor">7</text>
+<text x="357" y="127" text-anchor="middle" font-size="14" fill="currentColor">-3</text>
+<text x="427" y="127" text-anchor="middle" font-size="14" fill="currentColor">5</text>
+<rect x="85" y="260" width="140" height="48" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<rect x="295" y="260" width="140" height="48" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="155" y="255" text-anchor="middle" font-size="14" fill="currentColor">cur</text>
+<text x="365" y="255" text-anchor="middle" font-size="14" fill="currentColor">best</text>
+<g data-step="1" data-until="1">
+<text x="155" y="291" text-anchor="middle" font-size="14" fill="currentColor">-2</text>
+</g>
+<g data-step="2" data-until="2">
+<text x="155" y="291" text-anchor="middle" font-size="14" fill="currentColor">4</text>
+</g>
+<g data-step="3" data-until="3">
+<text x="155" y="291" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+</g>
+<g data-step="4" data-until="4">
+<text x="155" y="291" text-anchor="middle" font-size="14" fill="currentColor">10</text>
+</g>
+<g data-step="5" data-until="5">
+<text x="155" y="291" text-anchor="middle" font-size="14" fill="currentColor">7</text>
+</g>
+<g data-step="6">
+<text x="155" y="291" text-anchor="middle" font-size="14" fill="currentColor">12</text>
+</g>
+<g data-step="1" data-until="1">
+<text x="365" y="291" text-anchor="middle" font-size="14" fill="currentColor">-2</text>
+</g>
+<g data-step="2" data-until="3">
+<text x="365" y="291" text-anchor="middle" font-size="14" fill="currentColor">4</text>
+</g>
+<g data-step="4" data-until="5">
+<text x="365" y="291" text-anchor="middle" font-size="14" fill="currentColor">10</text>
+</g>
+<g data-step="6">
+<text x="365" y="291" text-anchor="middle" font-size="14" fill="currentColor">12</text>
+</g>
+<text x="260" y="175" text-anchor="middle" font-size="14" fill="currentColor">Đoạn kết thúc tại i</text>
+<text x="260" y="218" text-anchor="middle" font-size="14" fill="currentColor">Đoạn tốt nhất đã gặp</text>
+<g data-step="1" data-until="1">
+<rect x="45" y="100" width="64" height="44" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<path d="M77 88 L77 96" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-kadane-ar)"/>
+</g>
+<g data-step="1" data-until="1">
+<rect x="45" y="184" width="64" height="9" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<rect x="45" y="228" width="64" height="9" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="2" data-until="2">
+<rect x="115" y="100" width="64" height="44" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<path d="M147 88 L147 96" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-kadane-ar)"/>
+</g>
+<g data-step="2" data-until="2">
+<rect x="115" y="184" width="64" height="9" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<rect x="115" y="228" width="64" height="9" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="3" data-until="3">
+<rect x="185" y="100" width="64" height="44" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<path d="M217 88 L217 96" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-kadane-ar)"/>
+</g>
+<g data-step="3" data-until="3">
+<rect x="115" y="184" width="134" height="9" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<rect x="115" y="228" width="64" height="9" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="4" data-until="4">
+<rect x="255" y="100" width="64" height="44" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<path d="M287 88 L287 96" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-kadane-ar)"/>
+</g>
+<g data-step="4" data-until="4">
+<rect x="115" y="184" width="204" height="9" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<rect x="115" y="228" width="204" height="9" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="5" data-until="5">
+<rect x="325" y="100" width="64" height="44" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<path d="M357 88 L357 96" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-kadane-ar)"/>
+</g>
+<g data-step="5" data-until="5">
+<rect x="115" y="184" width="274" height="9" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<rect x="115" y="228" width="204" height="9" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="6">
+<rect x="395" y="100" width="64" height="44" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<path d="M427 88 L427 96" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#dsa02a-kadane-ar)"/>
+</g>
+<g data-step="6">
+<rect x="115" y="184" width="344" height="9" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<rect x="115" y="228" width="344" height="9" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+</svg>
+<step-note data-step="1">Khởi tạo cur = best = −2 từ a[0]. Đoạn không rỗng nên không khởi tạo bằng 0.</step-note>
+<step-note data-step="2">Tại 4: max(4, −2 + 4) = 4, bắt đầu lại từ index 1. Cả cur và best đổi thành 4.</step-note>
+<step-note data-step="3">Tại −1: nối được cur = 3 nhưng best vẫn 4. Đoạn tốt nhất đã gặp vẫn chỉ gồm phần tử 4.</step-note>
+<step-note data-step="4">Tại 7: nối thành cur = 10 và cập nhật best = 10. Cả hai đoạn đang là index 1..3.</step-note>
+<step-note data-step="5">Tại −3: cur giảm còn 7, best giữ 10. Thanh tím kéo dài nhưng tổng không vượt đoạn xanh cũ.</step-note>
+<step-note data-step="6">Tại 5: cur = best = 12 từ đoạn index 1..5. Mỗi bước cập nhật hai biến O(1), toàn bộ O(n) time và O(1) space.</step-note>
+</step-flow>
 
 ## 5. Tổng kết: chọn kỹ thuật nào?
 

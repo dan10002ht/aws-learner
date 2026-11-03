@@ -404,6 +404,41 @@ int climbMemo(int n) {
 
 **Bước 3 — tabulation + tối ưu O(1) bộ nhớ.** Vì chỉ cần 2 state liền trước, ta cuộn bằng 2 biến:
 
+<step-flow>
+<svg id="dsa11c-stairs-figure" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-labelledby="dsa11c-stairs-t dsa11c-stairs-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa11c-stairs-t">Climbing Stairs: n=5, điền từ trái sang phải</title>
+<desc id="dsa11c-stairs-d">Các ô cố định, giá trị xuất hiện theo thứ tự tính; cung chỉ hiện ở bước đang điền, các giá trị đã tính được giữ lại.</desc>
+<defs><marker id="dsa11c-stairs-a" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="currentColor"/></marker></defs>
+<style>#dsa11c-stairs-figure .dsa11c-dependency { opacity: 0; } #dsa11c-stairs-figure [data-state="active"] .dsa11c-dependency { opacity: 1; }</style>
+<text x="16" y="165" font-size="14" text-anchor="middle" fill="currentColor">dp</text>
+<text x="260" y="25" font-size="14" text-anchor="middle" fill="currentColor">Climbing Stairs: n=5, điền từ trái sang phải</text><rect x="35" y="140" width="56" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="63" y="128" font-size="14" text-anchor="middle" fill="currentColor">0</text><rect x="99" y="140" width="56" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="127" y="128" font-size="14" text-anchor="middle" fill="currentColor">1</text><rect x="163" y="140" width="56" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="191" y="128" font-size="14" text-anchor="middle" fill="currentColor">2</text><rect x="227" y="140" width="56" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="255" y="128" font-size="14" text-anchor="middle" fill="currentColor">3</text><rect x="291" y="140" width="56" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="319" y="128" font-size="14" text-anchor="middle" fill="currentColor">4</text><rect x="355" y="140" width="56" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="383" y="128" font-size="14" text-anchor="middle" fill="currentColor">5</text>
+<g data-step="1">
+<text x="63" y="167" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+</g>
+<g data-step="2">
+<text x="127" y="167" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+</g>
+<g data-step="3">
+<text x="191" y="167" font-size="14" text-anchor="middle" fill="currentColor">2</text><path class="dsa11c-dependency" d="M63 183 Q127 241 191 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-stairs-a)"/><path class="dsa11c-dependency" d="M127 183 Q159 223 191 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-stairs-a)"/>
+</g>
+<g data-step="4">
+<text x="255" y="167" font-size="14" text-anchor="middle" fill="currentColor">3</text><path class="dsa11c-dependency" d="M127 183 Q191 241 255 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-stairs-a)"/><path class="dsa11c-dependency" d="M191 183 Q223 223 255 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-stairs-a)"/>
+</g>
+<g data-step="5">
+<text x="319" y="167" font-size="14" text-anchor="middle" fill="currentColor">5</text><path class="dsa11c-dependency" d="M191 183 Q255 241 319 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-stairs-a)"/><path class="dsa11c-dependency" d="M255 183 Q287 223 319 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-stairs-a)"/>
+</g>
+<g data-step="6">
+<text x="383" y="167" font-size="14" text-anchor="middle" fill="currentColor">8</text><path class="dsa11c-dependency" d="M255 183 Q319 241 383 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-stairs-a)"/><path class="dsa11c-dependency" d="M319 183 Q351 223 383 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-stairs-a)"/>
+</g>
+</svg>
+<step-note data-step="1">ways(0)=1: không bước nào cũng là một cách; đây là base case.</step-note>
+<step-note data-step="2">ways(1)=1, chỉ có bước 1; hai base case khởi tạo trong O(1).</step-note>
+<step-note data-step="3">ways(2)=1+1=2, đọc hai ô đã tính trong O(1).</step-note>
+<step-note data-step="4">ways(3)=2+1=3; không gọi lại các nhánh đệ quy.</step-note>
+<step-note data-step="5">ways(4)=3+2=5; mỗi ô dùng đúng hai giá trị liền trước.</step-note>
+<step-note data-step="6">ways(5)=5+3=8. Chỉ cần giữ hai ô trước nên cuộn được xuống O(1) bộ nhớ.</step-note>
+</step-flow>
+
 ```python
 def climb(n):
     a, b = 1, 1                 # ways(0), ways(1)
@@ -466,6 +501,37 @@ dp[1] = max(nums[0], nums[1])
 
 **Code (tabulation cuộn O(1) — vì chỉ cần 2 state trước).**
 
+<step-flow>
+<svg id="dsa11c-rob-figure" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-labelledby="dsa11c-rob-t dsa11c-rob-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa11c-rob-t">House Robber: chọn nhà, bỏ hàng xóm</title>
+<desc id="dsa11c-rob-d">Các ô cố định, giá trị xuất hiện theo thứ tự tính; cung chỉ hiện ở bước đang điền, các giá trị đã tính được giữ lại.</desc>
+<defs><marker id="dsa11c-rob-a" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="currentColor"/></marker></defs>
+<style>#dsa11c-rob-figure .dsa11c-dependency { opacity: 0; } #dsa11c-rob-figure [data-state="active"] .dsa11c-dependency { opacity: 1; }</style>
+<text x="16" y="80" font-size="14" text-anchor="middle" fill="currentColor">a</text><text x="16" y="165" font-size="14" text-anchor="middle" fill="currentColor">dp</text>
+<text x="260" y="25" font-size="14" text-anchor="middle" fill="currentColor">House Robber: chọn nhà, bỏ hàng xóm</text><rect x="35" y="140" width="56" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="63" y="128" font-size="14" text-anchor="middle" fill="currentColor">0</text><rect x="35" y="55" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="63.0" y="80.0" font-size="14" text-anchor="middle" fill="currentColor">2</text><rect x="99" y="140" width="56" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="127" y="128" font-size="14" text-anchor="middle" fill="currentColor">1</text><rect x="99" y="55" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="127.0" y="80.0" font-size="14" text-anchor="middle" fill="currentColor">7</text><rect x="163" y="140" width="56" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="191" y="128" font-size="14" text-anchor="middle" fill="currentColor">2</text><rect x="163" y="55" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="191.0" y="80.0" font-size="14" text-anchor="middle" fill="currentColor">9</text><rect x="227" y="140" width="56" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="255" y="128" font-size="14" text-anchor="middle" fill="currentColor">3</text><rect x="227" y="55" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="255.0" y="80.0" font-size="14" text-anchor="middle" fill="currentColor">3</text><rect x="291" y="140" width="56" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="319" y="128" font-size="14" text-anchor="middle" fill="currentColor">4</text><rect x="291" y="55" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="319.0" y="80.0" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<g data-step="1">
+<text x="63" y="167" font-size="14" text-anchor="middle" fill="currentColor">2</text>
+</g>
+<g data-step="2">
+<text x="127" y="167" font-size="14" text-anchor="middle" fill="currentColor">7</text><path class="dsa11c-dependency" d="M63 183 Q95 223 127 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-rob-a)"/>
+</g>
+<g data-step="3">
+<text x="191" y="167" font-size="14" text-anchor="middle" fill="currentColor">11</text><path class="dsa11c-dependency" d="M63 183 Q127 241 191 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-rob-a)"/><path class="dsa11c-dependency" d="M127 183 Q159 223 191 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-rob-a)"/>
+</g>
+<g data-step="4">
+<text x="255" y="167" font-size="14" text-anchor="middle" fill="currentColor">11</text><path class="dsa11c-dependency" d="M127 183 Q191 241 255 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-rob-a)"/><path class="dsa11c-dependency" d="M191 183 Q223 223 255 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-rob-a)"/>
+</g>
+<g data-step="5">
+<text x="319" y="167" font-size="14" text-anchor="middle" fill="currentColor">12</text><path class="dsa11c-dependency" d="M191 183 Q255 241 319 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-rob-a)"/><path class="dsa11c-dependency" d="M255 183 Q287 223 319 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-rob-a)"/>
+</g>
+</svg>
+<step-note data-step="1">Nhà 0: max(0,2)=2, xem các trạng thái trước đầu mảng là 0.</step-note>
+<step-note data-step="2">Nhà 1: max(2,7)=7; chọn 7 phải bỏ nhà 0.</step-note>
+<step-note data-step="3">Nhà 2: max(7,2+9)=11; lấy 9 ghép với kết quả nhà 0.</step-note>
+<step-note data-step="4">Nhà 3: max(11,7+3)=11; bỏ 3 giữ kết quả cũ.</step-note>
+<step-note data-step="5">Nhà 4: max(11,11+1)=12. Các nhà 0,2,4 tạo 2+9+1; mỗi transition O(1).</step-note>
+</step-flow>
+
 ```python
 def rob(nums):
     prev2, prev1 = 0, 0            # dp[i-2], dp[i-1]
@@ -518,7 +584,7 @@ int rob(vector<int>& nums) {
 
 **Phân tích độ phức tạp.** Một lần quét: **O(n)** thời gian, **O(1)** bộ nhớ (đã cuộn `dp` thành 2 biến).
 
-> Bẫy: Cám dỗ greedy "cứ trộm nhà nhiều tiền nhất rồi nhảy cách 1" là **sai**. Ví dụ `[2, 1, 1, 2]`: greedy lấy hai số `2` ở hai đầu... nhưng chúng cách nhau hợp lệ nên ra 4 (đúng tình cờ); thử `[2, 7, 9, 3, 1]`: tối ưu là `2+9+1=12` chứ không phải chọn `9` rồi `7` (kề). Chỉ DP mới quét hết được mọi tổ hợp hợp lệ.
+> Bẫy: Greedy “chọn nhà nhiều tiền nhất còn hợp lệ” là **sai**. Với `[2,3,2]`, nó chọn nhà giữa được 3, còn DP chọn hai nhà đầu/cuối được `2+2=4`. Với ví dụ `[2,7,9,3,1]` trong hình, tối ưu là `2+9+1=12`; cần so sánh cả nhánh lấy và bỏ ở mỗi nhà.
 
 > Ghi nhớ: **House Robber II** (LC 213) chỉ thêm một twist — nhà xếp **thành vòng tròn** (nhà đầu và cuối cũng kề nhau). Cách giải: chạy House Robber hai lần — một lần bỏ nhà đầu, một lần bỏ nhà cuối — rồi lấy max. Mẹo "phá vòng thành 2 đoạn thẳng" này rất hay gặp.
 
@@ -693,6 +759,52 @@ int coinMemo(vector<int>& coins, int amount) {
 ```
 
 **Bước 3 — tabulation (bottom-up).** Điền `dp[0..amount]` tăng dần:
+
+<step-flow>
+<svg id="dsa11c-coin-figure" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-labelledby="dsa11c-coin-t dsa11c-coin-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa11c-coin-t">Coin Change: coins=[1,3,4], amount=6</title>
+<desc id="dsa11c-coin-d">Các ô cố định, giá trị xuất hiện theo thứ tự tính; cung chỉ hiện ở bước đang điền, các giá trị đã tính được giữ lại.</desc>
+<defs><marker id="dsa11c-coin-a" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="currentColor"/></marker></defs>
+<style>#dsa11c-coin-figure .dsa11c-dependency { opacity: 0; } #dsa11c-coin-figure [data-state="active"] .dsa11c-dependency { opacity: 1; }</style>
+<text x="16" y="165" font-size="14" text-anchor="middle" fill="currentColor">dp</text>
+<text x="260" y="25" font-size="14" text-anchor="middle" fill="currentColor">Coin Change: coins=[1,3,4], amount=6</text><rect x="35" y="140" width="56" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="63" y="128" font-size="14" text-anchor="middle" fill="currentColor">0</text><rect x="99" y="140" width="56" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="127" y="128" font-size="14" text-anchor="middle" fill="currentColor">1</text><rect x="163" y="140" width="56" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="191" y="128" font-size="14" text-anchor="middle" fill="currentColor">2</text><rect x="227" y="140" width="56" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="255" y="128" font-size="14" text-anchor="middle" fill="currentColor">3</text><rect x="291" y="140" width="56" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="319" y="128" font-size="14" text-anchor="middle" fill="currentColor">4</text><rect x="355" y="140" width="56" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="383" y="128" font-size="14" text-anchor="middle" fill="currentColor">5</text><rect x="419" y="140" width="56" height="42" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="447" y="128" font-size="14" text-anchor="middle" fill="currentColor">6</text>
+<g data-step="1">
+<text x="63" y="167" font-size="14" text-anchor="middle" fill="currentColor">0</text>
+</g>
+<g data-step="2">
+<text x="127" y="167" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<path class="dsa11c-dependency" d="M63 183 Q95 223 127 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-coin-a)"/>
+</g>
+<g data-step="3">
+<text x="191" y="167" font-size="14" text-anchor="middle" fill="currentColor">2</text>
+<path class="dsa11c-dependency" d="M127 183 Q159 223 191 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-coin-a)"/>
+</g>
+<g data-step="4">
+<text x="255" y="167" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<path class="dsa11c-dependency" d="M63 183 Q159 259 255 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-coin-a)"/>
+</g>
+<g data-step="5">
+<text x="319" y="167" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<path class="dsa11c-dependency" d="M63 183 Q191 277 319 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-coin-a)"/>
+</g>
+<g data-step="6">
+<text x="383" y="167" font-size="14" text-anchor="middle" fill="currentColor">2</text>
+<path class="dsa11c-dependency" d="M319 183 Q351 223 383 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-coin-a)"/>
+</g>
+<g data-step="7">
+<text x="447" y="167" font-size="14" text-anchor="middle" fill="currentColor">2</text>
+<path class="dsa11c-dependency" d="M255 183 Q351 259 447 183" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dsa11c-coin-a)"/>
+</g>
+<text x="260" y="275" font-size="13" text-anchor="middle" fill="currentColor">Cung: nhánh tối ưu của ô đang điền</text>
+</svg>
+<step-note data-step="1">dp[0]=0; các ô chưa tính coi là INF=7, không phải 0.</step-note>
+<step-note data-step="2">x=1: chỉ coin 1 hợp lệ → dp[0]+1=1.</step-note>
+<step-note data-step="3">x=2: coin 1 → dp[1]+1=2.</step-note>
+<step-note data-step="4">x=3: min(dp[2]+1,dp[0]+1)=1.</step-note>
+<step-note data-step="5">x=4: min(dp[3]+1,dp[1]+1,dp[0]+1)=1.</step-note>
+<step-note data-step="6">x=5: min(dp[4]+1,dp[2]+1,dp[1]+1)=2.</step-note>
+<step-note data-step="7">x=6: min(dp[5]+1,dp[3]+1,dp[2]+1)=2, dùng 3+3. Mỗi ô xét tối đa số loại coin.</step-note>
+</step-flow>
 
 ```python
 def coin_change(coins, amount):

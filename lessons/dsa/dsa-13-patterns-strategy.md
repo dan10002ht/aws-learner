@@ -126,9 +126,9 @@ Trước khi đến bảng tra cụ thể, hãy nắm bộ câu hỏi tổng qu�
 | Duyệt cây, đường đi gốc→lá, đối xứng | **DFS đệ quy trên tree** | O(n) | Max Depth, Path Sum, Invert Tree |
 | Cây theo **từng tầng (level)** | **BFS (level-order)** | O(n) | Level Order Traversal, Right Side View |
 | "Có **đường đi** giữa hai node", "**connected**" | **Graph BFS/DFS / Union-Find** | O(V+E) | Number of Islands, Graph Valid Tree |
-| Đếm "số cụm/đảo/nhóm" | **DSU (Union-Find)** hoặc flood fill | O(V·α) | Number of Provinces, Number of Islands |
+| Đếm "số cụm/đảo/nhóm" | **DSU (Union-Find)** hoặc flood fill | O((V+E)·α(V)) | Number of Provinces, Number of Islands |
 | Có **chu trình (cycle)** không / thứ tự phụ thuộc | **Topological sort / DFS cycle** | O(V+E) | Course Schedule I/II |
-| Đường đi **ngắn nhất, trọng số dương** | **Dijkstra (heap)** | O(E log V) | Network Delay Time, Cheapest Flights |
+| Đường đi **ngắn nhất, trọng số dương** | **Dijkstra (heap)** | O(E log V) | Network Delay Time, Path with Minimum Effort |
 | Đường ngắn nhất trên **grid không trọng số** | **BFS** | O(V+E) | Rotting Oranges, Shortest Path in Binary Matrix |
 
 ### Nhóm D — Đệ quy / Tổ hợp
@@ -171,6 +171,23 @@ Nhận diện pattern không phải là khớp một-một — nguy hiểm nhấ
 | DP vs Greedy | "Chọn tốt nhất mỗi bước" có chắc tối ưu toàn cục? | Không chắc / có phản ví dụ → DP; chứng minh được → greedy |
 
 > Ghi nhớ: Khi phân vân giữa hai pattern, đừng đoán bừa — hãy tìm một **phản ví dụ nhỏ** cho pattern "rẻ" hơn. Nếu sliding window/greedy sai trên một ví dụ con, bạn vừa loại nó và xác nhận pattern còn lại. Phản ví dụ là công cụ debug tư duy mạnh nhất.
+
+<ab-toggle data-labels="Greedy|DP">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 220" role="img" aria-labelledby="dsa13c-greedy0-t dsa13c-greedy0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa13c-greedy0-t">Greedy tạo tổng 6</title>
+<desc id="dsa13c-greedy0-d">Chọn 4 trước, còn 2 nên cần thêm 1+1: tổng 3 xu.</desc>
+<defs><marker id="dsa13c-greedy0-a" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="currentColor"/></marker></defs>
+<text x="260" y="28" font-size="14" text-anchor="middle" fill="currentColor">coins=[1,3,4], amount=6</text><text x="50" y="80" font-size="14" text-anchor="middle" fill="currentColor">0</text><text x="120" y="80" font-size="14" text-anchor="middle" fill="currentColor">1</text><text x="190" y="80" font-size="14" text-anchor="middle" fill="currentColor">2</text><text x="260" y="80" font-size="14" text-anchor="middle" fill="currentColor">3</text><text x="330" y="80" font-size="14" text-anchor="middle" fill="currentColor">4</text><text x="400" y="80" font-size="14" text-anchor="middle" fill="currentColor">5</text><text x="470" y="80" font-size="14" text-anchor="middle" fill="currentColor">6</text><rect x="50" y="100" width="280" height="55" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="190" y="133" font-size="14" text-anchor="middle" fill="currentColor">4</text><rect x="330" y="100" width="70" height="55" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="365" y="133" font-size="14" text-anchor="middle" fill="currentColor">1</text><rect x="400" y="100" width="70" height="55" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="435" y="133" font-size="14" text-anchor="middle" fill="currentColor">1</text><text x="260" y="195" font-size="14" text-anchor="middle" fill="currentColor">3 xu, tổng = 6</text>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 220" role="img" aria-labelledby="dsa13c-greedy1-t dsa13c-greedy1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa13c-greedy1-t">DP tạo tổng 6</title>
+<desc id="dsa13c-greedy1-d">Thử các bài con, chọn 3+3: cùng tổng 6 nhưng chỉ cần 2 xu.</desc>
+<defs><marker id="dsa13c-greedy1-a" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="currentColor"/></marker></defs>
+<text x="260" y="28" font-size="14" text-anchor="middle" fill="currentColor">coins=[1,3,4], amount=6</text><text x="50" y="80" font-size="14" text-anchor="middle" fill="currentColor">0</text><text x="120" y="80" font-size="14" text-anchor="middle" fill="currentColor">1</text><text x="190" y="80" font-size="14" text-anchor="middle" fill="currentColor">2</text><text x="260" y="80" font-size="14" text-anchor="middle" fill="currentColor">3</text><text x="330" y="80" font-size="14" text-anchor="middle" fill="currentColor">4</text><text x="400" y="80" font-size="14" text-anchor="middle" fill="currentColor">5</text><text x="470" y="80" font-size="14" text-anchor="middle" fill="currentColor">6</text><rect x="50" y="100" width="210" height="55" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="155" y="133" font-size="14" text-anchor="middle" fill="currentColor">3</text><rect x="260" y="100" width="210" height="55" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="365" y="133" font-size="14" text-anchor="middle" fill="currentColor">3</text><text x="260" y="195" font-size="14" text-anchor="middle" fill="currentColor">2 xu, tổng = 6</text>
+</svg>
+<ab-note>Chọn đồng lớn nhất trước để lại hai đơn vị; ba đoạn biểu diễn ba đồng xu.</ab-note>
+<ab-note>Hai đoạn dài 3 phủ cùng tổng 6, cho thấy lựa chọn tại chỗ của greedy chưa tối ưu.</ab-note>
+</ab-toggle>
 
 ### Mẹo "tháo gỡ" khi hoàn toàn bí
 
@@ -392,6 +409,39 @@ int longestSubarraySumK(const vector<int>& nums, int k) {
 ```
 
 **R — Review**: Chạy `nums=[1,-1,5,-2,3], k=3`. prefix: 1,0,5,3,6. Tại j=3, prefix=3, tìm `3-3=0` → index -1 và 1 (lưu lần đầu là -1) → độ dài `3-(-1)=4`. Đúng (subarray `[1,-1,5,-2]`).
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 335" role="img" aria-labelledby="dsa13c-prefix-t dsa13c-prefix-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa13c-prefix-t">Prefix sum giữ mốc sớm nhất</title>
+<desc id="dsa13c-prefix-d">Mỗi ô input và mỗi mốc prefix vẽ một lần; mũi tên từ prefix 0 tại -1 tới prefix 3 tại index 3 biểu diễn đoạn dài 4.</desc>
+<defs><marker id="dsa13c-prefix-a" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="currentColor"/></marker></defs>
+<text x="260" y="25" font-size="14" text-anchor="middle" fill="currentColor">nums=[1,-1,5,-2,3], k=3</text><text x="50" y="136" font-size="14" text-anchor="middle" fill="currentColor">index</text><text x="30" y="185" font-size="14" text-anchor="middle" fill="currentColor">prefix</text><rect x="110" y="75" width="60" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="140.0" y="100.0" font-size="14" text-anchor="middle" fill="currentColor">1</text><text x="140" y="136" font-size="14" text-anchor="middle" fill="currentColor">0</text><rect x="180" y="75" width="60" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="210.0" y="100.0" font-size="14" text-anchor="middle" fill="currentColor">-1</text><text x="210" y="136" font-size="14" text-anchor="middle" fill="currentColor">1</text><rect x="250" y="75" width="60" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="280.0" y="100.0" font-size="14" text-anchor="middle" fill="currentColor">5</text><text x="280" y="136" font-size="14" text-anchor="middle" fill="currentColor">2</text><rect x="320" y="75" width="60" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="350.0" y="100.0" font-size="14" text-anchor="middle" fill="currentColor">-2</text><text x="350" y="136" font-size="14" text-anchor="middle" fill="currentColor">3</text><rect x="390" y="75" width="60" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><text x="420.0" y="100.0" font-size="14" text-anchor="middle" fill="currentColor">3</text><text x="420" y="136" font-size="14" text-anchor="middle" fill="currentColor">4</text><rect x="65" y="155" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="135" y="155" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="205" y="155" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="275" y="155" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="345" y="155" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/><rect x="415" y="155" width="56" height="40" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
+<g data-step="1">
+<text x="93" y="181" font-size="14" text-anchor="middle" fill="currentColor">0</text><text x="93" y="220" font-size="14" text-anchor="middle" fill="currentColor">i=-1</text>
+</g>
+<g data-step="2">
+<text x="163" y="181" font-size="14" text-anchor="middle" fill="currentColor">1</text><text x="163" y="242" font-size="14" text-anchor="middle" fill="currentColor">1→0</text>
+</g>
+<g data-step="3">
+<text x="233" y="181" font-size="14" text-anchor="middle" fill="currentColor">0</text><text x="233" y="220" font-size="14" text-anchor="middle" fill="currentColor">giữ -1</text>
+</g>
+<g data-step="4">
+<text x="303" y="181" font-size="14" text-anchor="middle" fill="currentColor">5</text><text x="303" y="242" font-size="14" text-anchor="middle" fill="currentColor">5→2</text>
+</g>
+<g data-step="5">
+<text x="373" y="181" font-size="14" text-anchor="middle" fill="currentColor">3</text><line x1="93" y1="285" x2="373" y2="285" stroke="currentColor" stroke-width="2"  marker-end="url(#dsa13c-prefix-a)"/><text x="233" y="310" font-size="14" text-anchor="middle" fill="currentColor">3−0=3; dài 3−(-1)=4</text>
+</g>
+<g data-step="6">
+<text x="443" y="181" font-size="14" text-anchor="middle" fill="currentColor">6</text><text x="443" y="242" font-size="14" text-anchor="middle" fill="currentColor">6→4</text>
+</g>
+</svg>
+<step-note data-step="1">Khởi tạo map[0]=-1: prefix trước đầu mảng. Mốc này cho phép lấy cả đoạn bắt đầu từ index 0.</step-note>
+<step-note data-step="2">j=0, prefix=1, cần -2 chưa có; lưu map[1]=0. Lookup và insert trung bình O(1).</step-note>
+<step-note data-step="3">j=1, prefix=0 đã có tại -1 nên không ghi đè bằng 1. Giữ mốc sớm nhất để đoạn sau dài nhất.</step-note>
+<step-note data-step="4">j=2, prefix=5, cần 2 chưa có; lưu map[5]=2.</step-note>
+<step-note data-step="5">j=3, cần prefix=0: map trả -1. Đoạn index 0..3 là [1,-1,5,-2], tổng 3, dài 4; nếu ghi đè mốc 0 thành 1 thì chỉ được 2.</step-note>
+<step-note data-step="6">j=4, cần prefix=3 ở index 3 nên dài 1, best vẫn là 4. Duyệt một lần O(n), map O(n) bộ nhớ.</step-note>
+</step-flow>
 
 **E — Evaluate**: Time O(n) một lượt, space O(n) hash map. Bẫy chính: phải lưu prefix sum **lần đầu** (early index) để subarray dài nhất, và khởi tạo `{0: -1}` để bắt subarray bắt đầu từ index 0.
 
