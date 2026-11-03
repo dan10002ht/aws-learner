@@ -11,6 +11,7 @@ import rehypeCallouts from "@/lib/rehypeCallouts";
 import StepFlow from "@/components/StepFlow";
 import AutoAnim from "@/components/AutoAnim";
 import ABToggle from "@/components/ABToggle";
+import DSPlayground from "@/components/DSPlayground";
 import CodeTabs from "@/components/CodeTabs";
 import Callout from "@/components/Callout";
 import { ChevronLeft, ChevronRight, ListChecks } from "lucide-react";
@@ -114,7 +115,7 @@ export default function LessonPage({ params }: { params: { courseId: string; slu
             <ReactMarkdown
               remarkPlugins={[remarkGfm, remarkWikiLinks]}
               rehypePlugins={[rehypeRaw, rehypeSlug, rehypeHighlight, rehypeCodeTabs, rehypeCallouts]}
-              components={{ "code-tabs": CodeTabs, "step-flow": StepFlow, "auto-anim": AutoAnim, "ab-toggle": ABToggle, blockquote: Callout } as never}
+              components={{ "code-tabs": CodeTabs, "step-flow": StepFlow, "auto-anim": AutoAnim, "ab-toggle": ABToggle, "ds-playground": DSPlayground, blockquote: Callout } as never}
             >
               {md}
             </ReactMarkdown>

@@ -3,7 +3,8 @@
 // <step-flow> in lesson markdown: an inline SVG whose parts carry data-step="N",
 // plus <step-note data-step="N"> captions. Renders Prev/Play/Next controls,
 // dims future steps, highlights the current one and runs a dot along its first
-// line. On narrow screens the camera (SVG viewBox) zooms onto the active step;
+// line. A part with data-until="M" disappears after step M, so a figure can
+// show pops, deletes and overwrites. On narrow screens the camera (SVG viewBox) zooms onto the active step;
 // "Toàn cảnh" opens the whole diagram fullscreen. Without JS (SSR, print,
 // search) the full static diagram stays visible.
 
@@ -117,10 +118,16 @@ export default function StepFlow(props: { children?: React.ReactNode }) {
     const svg = box?.querySelector<SVGSVGElement>(".step-flow-figure svg");
     if (!box || !svg) return;
     box.dataset.active = step ? "1" : "0";
+    // Figures that remove parts (data-until) draw replacements on the same spot, so
+    // their future parts stay hidden instead of ghosting under the current state.
+    box.dataset.stateful = svg.querySelector("[data-until]") ? "1" : "0";
     let activeEl: SVGGraphicsElement | null = null;
-    box.querySelectorAll<SVGGraphicsElement>(".step-flow-figure svg [data-step]").forEach((el) => {
-      const n = Number(el.getAttribute("data-step"));
-      const state = !step ? "" : n < step ? "past" : n === step ? "active" : "future";
+    box.querySelectorAll<SVGGraphicsElement>(".step-flow-figure svg [data-step], .step-flow-figure svg [data-until]").forEach((el) => {
+      const n = Number(el.getAttribute("data-step") ?? 0);
+      // data-until="M": the part leaves the picture after step M (popped, deleted, overwritten);
+      // the overview (step 0) shows the final picture, so it is hidden there too.
+      const until = el.hasAttribute("data-until") ? Number(el.getAttribute("data-until")) : Infinity;
+      const state = !step ? (until < Infinity ? "gone" : "") : step > until ? "gone" : n < step ? "past" : n === step ? "active" : "future";
       el.setAttribute("data-state", state);
       if (state === "active" && !activeEl) activeEl = el;
     });
