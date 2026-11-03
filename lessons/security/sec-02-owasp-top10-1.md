@@ -16,6 +16,19 @@ Mỗi mục theo cùng một khuôn: **kẻ tấn công làm gì → code dễ v
 
 **Kẻ tấn công làm gì:** Người dùng hợp lệ `alice` gọi `GET /api/invoices/1001` và thấy hóa đơn của mình. Cô ta thử đổi sang `GET /api/invoices/1002` — và xem được hóa đơn của người khác, vì server chỉ kiểm tra "đã đăng nhập" chứ không kiểm tra "hóa đơn này có phải của bạn không".
 
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 390" role="img" aria-labelledby="sec02-idor-t sec02-idor-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="sec02-idor-t">IDOR: đổi object ID vượt biên sở hữu khi server thiếu kiểm quyền</title>
+<desc id="sec02-idor-d">IDOR: đổi object ID vượt biên sở hữu khi server thiếu kiểm quyền</desc>
+<defs><marker id="sec02-idor-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs><rect x="16" y="12" width="108" height="34" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="70" y="34" font-size="15" text-anchor="middle" fill="currentColor">Client</text><path d="M70 46 V360" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/><rect x="216" y="12" width="108" height="34" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="270" y="34" font-size="15" text-anchor="middle" fill="currentColor">Server</text><path d="M270 46 V360" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/><rect x="396" y="12" width="108" height="34" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="450" y="34" font-size="15" text-anchor="middle" fill="currentColor">Invoices</text><path d="M450 46 V360" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/><g data-step="1"><text x="170.0" y="91" font-size="13" text-anchor="middle" fill="currentColor">1 · session alice · id=1001</text><path d="M70 100 L270 100" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#sec02-idor-a)"/></g><g data-step="2"><text x="360.0" y="147" font-size="13" text-anchor="middle" fill="currentColor">2 · id=1001</text><path d="M270 156 L450 156" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#sec02-idor-a)"/></g><g data-step="3"><text x="170.0" y="219" font-size="13" text-anchor="middle" fill="currentColor">3 · cùng session · id=1002</text><path d="M70 228 L270 228" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#sec02-idor-a)"/></g><g data-step="4"><text x="360.0" y="275" font-size="13" text-anchor="middle" fill="currentColor">4 · id=1002, thiếu owner</text><path d="M270 284 L450 284" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#sec02-idor-a)"/></g><g data-step="5"><text x="170.0" y="335" font-size="13" text-anchor="middle" fill="currentColor">5 · hoá đơn của người khác</text><path d="M270 344 L70 344" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#sec02-idor-a)"/></g>
+</svg>
+<step-note data-step="1">Đăng nhập chỉ xác định chủ thể; request đầu truy cập đúng tài nguyên của chủ thể đó.</step-note>
+<step-note data-step="2">Tra theo ID trả hoá đơn 1001 của alice, nên đường đi bình thường chưa bộc lộ thiếu kiểm quyền.</step-note>
+<step-note data-step="3">Chỉ ID trên URL đổi; danh tính trong session vẫn là alice.</step-note>
+<step-note data-step="4">Tra id=1002 mà không ràng buộc ownerId cho phép lấy tài nguyên của người khác.</step-note>
+<step-note data-step="5">Đã xác thực vẫn có thể truy cập trái phép. Lọc đồng thời id và ownerId lấy từ session phía server để chặn tại truy vấn.</step-note>
+</step-flow>
+
 ```js
 // Code dễ vỡ — chỉ check đăng nhập, không check ownership
 app.get("/api/invoices/:id", requireAuth, async (req, res) => {
@@ -166,56 +179,20 @@ db.execute(
 )
 ```
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Nối chuỗi gây SQL Injection so với parameterized query</title>
-  <desc>Nhánh trên nối chuỗi: input người dùng hoà vào câu lệnh nên engine parse thành code độc. Nhánh dưới placeholder: data đi kênh riêng, luôn chỉ là giá trị. Minh hoạ nguyên tắc tách data khỏi code.</desc>
-  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Tách data khỏi code — gốc rễ chống SQL Injection</text>
-  <g>
-    <text x="16" y="52" font-size="12.5" font-weight="700" fill="#f59e0b">Nối chuỗi — input hoà vào câu lệnh</text>
-    <rect x="16" y="62" width="150" height="44" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="91" y="80" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Input người dùng</text>
-    <text x="91" y="97" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">admin' --</text>
-    <rect x="266" y="62" width="186" height="44" rx="9" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="359" y="80" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Hoà thẳng vào SQL</text>
-    <text x="359" y="97" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">"...name = '" + input + "'"</text>
-    <rect x="552" y="62" width="152" height="44" rx="9" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="628" y="80" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Engine parse</text>
-    <text x="628" y="97" font-size="10.5" text-anchor="middle" fill="#f59e0b">input → CODE độc</text>
-    <g stroke="#f59e0b" stroke-width="2" fill="none">
-      <path d="M166 84 H260" marker-end="url(#ah)"/>
-      <path d="M452 84 H546" marker-end="url(#ah)"/>
-    </g>
-  </g>
-  <line x1="16" y1="138" x2="704" y2="138" stroke="currentColor" stroke-opacity="0.2"/>
-  <g>
-    <text x="16" y="170" font-size="12.5" font-weight="700" fill="#10b981">Placeholder — data đi kênh riêng</text>
-    <rect x="16" y="180" width="150" height="44" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="91" y="198" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Input người dùng</text>
-    <text x="91" y="215" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">admin' --</text>
-    <rect x="266" y="180" width="186" height="44" rx="9" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="359" y="198" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Câu lệnh có %s</text>
-    <text x="359" y="215" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">"...name = %s" + (input,)</text>
-    <rect x="552" y="180" width="152" height="44" rx="9" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="628" y="198" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Engine bind</text>
-    <text x="628" y="215" font-size="10.5" text-anchor="middle" fill="#10b981">input chỉ là GIÁ TRỊ</text>
-    <g stroke="#10b981" stroke-width="2" fill="none">
-      <path d="M166 202 H260" marker-end="url(#ah2)"/>
-      <path d="M452 202 H546" marker-end="url(#ah2)"/>
-    </g>
-  </g>
-  <g>
-    <text x="16" y="262" font-size="11.5" font-weight="700" fill="currentColor">Hai kênh tách biệt khi parameterize:</text>
-    <rect x="16" y="274" width="340" height="30" rx="8" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="32" y="293" font-size="11" fill="currentColor">Kênh CODE — câu lệnh cố định, do dev viết</text>
-    <rect x="364" y="274" width="340" height="30" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="380" y="293" font-size="11" fill="currentColor">Kênh DATA — giá trị người dùng, không bao giờ thành code</text>
-    <text x="16" y="330" font-size="11" fill="currentColor" opacity="0.8">Input không thể "thoát" sang kênh code → dấu nháy, -- chỉ là ký tự thường.</text>
-  </g>
-  <defs>
-    <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#f59e0b"/></marker>
-    <marker id="ah2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#10b981"/></marker>
-  </defs>
+<ab-toggle data-labels="Nối chuỗi|Placeholder">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 362" role="img" aria-labelledby="sec02-sqli-0-t sec02-sqli-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="sec02-sqli-0-t">Nối chuỗi đưa input vào code SQL</title>
+<desc id="sec02-sqli-0-d">Nối chuỗi đưa input vào code SQL</desc>
+<defs><marker id="sec02-sqli-0-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs><text x="16" y="26" font-size="15" text-anchor="start" fill="currentColor">Input: admin' --</text><rect x="16" y="58" width="488" height="94" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="28" y="82" font-size="15" text-anchor="start" fill="currentColor">CODE · câu lệnh SQL</text><text x="28" y="110" font-size="13" text-anchor="start" fill="currentColor">SELECT … WHERE name = 'admin' --</text><rect x="16" y="194" width="488" height="70" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="28" y="218" font-size="15" text-anchor="start" fill="currentColor">DATA · giá trị bind</text><text x="28" y="244" font-size="13" text-anchor="start" fill="currentColor">Không có kênh bind riêng</text><path d="M160 32 L290 95" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#sec02-sqli-0-a)"/><text x="16" y="302" font-size="13" text-anchor="start" fill="currentColor">-- trở thành comment SQL, bỏ điều kiện sau nó.</text><text x="16" y="338" font-size="15" text-anchor="start" fill="currentColor">Engine: parse input thành CODE</text>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 362" role="img" aria-labelledby="sec02-sqli-1-t sec02-sqli-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="sec02-sqli-1-t">Tách code và data bằng placeholder</title>
+<desc id="sec02-sqli-1-d">Tách code và data bằng placeholder</desc>
+<defs><marker id="sec02-sqli-1-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs><text x="16" y="26" font-size="15" text-anchor="start" fill="currentColor">Input: admin' --</text><rect x="16" y="58" width="488" height="94" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="28" y="82" font-size="15" text-anchor="start" fill="currentColor">CODE · câu lệnh SQL</text><text x="28" y="110" font-size="13" text-anchor="start" fill="currentColor">SELECT … WHERE name = %s</text><rect x="16" y="194" width="488" height="70" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="28" y="218" font-size="15" text-anchor="start" fill="currentColor">DATA · giá trị bind</text><text x="28" y="244" font-size="13" text-anchor="start" fill="currentColor">(admin' --,)</text><text x="275" y="26" font-size="13" fill="currentColor">SQL cố định</text><path d="M330 32 V58" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#sec02-sqli-1-a)"/><path d="M125 32 H512 V230 H504" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#sec02-sqli-1-a)"/><text x="16" y="302" font-size="13" text-anchor="start" fill="currentColor">Dấu nháy và -- nằm trong giá trị dữ liệu.</text><text x="16" y="338" font-size="15" text-anchor="start" fill="currentColor">Engine: bind input chỉ như GIÁ TRỊ</text>
+</svg>
+<ab-note>Input đi vào chính chuỗi SQL trước khi parse; dấu comment có thể loại bỏ kiểm tra mật khẩu ở phần sau.</ab-note>
+<ab-note>Câu lệnh cố định và tham số đi riêng; driver không diễn giải nội dung tham số thành cú pháp SQL.</ab-note>
+</ab-toggle>
 
 Quy tắc: **luôn parameterize**. Nếu phải truyền tên bảng/cột động (không parameterize được), hãy **whitelist** giá trị cho phép, không nối thẳng. ORM giúp nhiều nhưng `raw()` / string interpolation trong ORM vẫn vỡ như thường.
 

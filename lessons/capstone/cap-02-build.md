@@ -330,32 +330,46 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
 
 FE chạy `localhost:5173`, BE `localhost:4000` → **khác origin** → browser chặn nếu BE không cho phép. Ta đã bật `cors({ origin: env.CORS_ORIGIN })` ở mục 2.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>CORS preflight — chuỗi trao đổi giữa Browser và Backend theo thời gian</title>
-  <desc>Browser ở localhost:5173 gửi OPTIONS preflight tới Backend ở localhost:4000; Backend trả Access-Control-Allow-Origin, Allow-Methods, Allow-Headers; sau đó Browser mới gửi request thật kèm header Authorization và Backend trả dữ liệu. Thời gian đi từ trên xuống.</desc>
+<step-flow>
+<svg aria-labelledby="cap02pf-t cap02pf-d" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title id="cap02pf-t">CORS preflight — chuỗi trao đổi giữa Browser và Backend theo thời gian</title>
+  <desc id="cap02pf-d">Browser ở localhost:5173 gửi OPTIONS preflight tới Backend ở localhost:4000; Backend trả Access-Control-Allow-Origin, Allow-Methods, Allow-Headers; sau đó Browser mới gửi request thật kèm header Authorization và Backend trả dữ liệu. Thời gian đi từ trên xuống.</desc>
   <defs>
-    <marker id="corsArr" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0 0 L8 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
+    <marker id="cap02pf-arr" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0 0 L8 3.5 L0 7 z" fill="currentColor" fill-opacity="0.6"/></marker>
   </defs>
   <rect x="60" y="20" width="200" height="40" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="160" y="38" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Browser</text>
-  <text x="160" y="53" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">localhost:5173</text>
+  <text x="160" y="38" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Browser</text>
+  <text x="160" y="53" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">localhost:5173</text>
   <rect x="460" y="20" width="200" height="40" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="560" y="38" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Backend (BE)</text>
-  <text x="560" y="53" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">localhost:4000</text>
+  <text x="560" y="38" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Backend (BE)</text>
+  <text x="560" y="53" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">localhost:4000</text>
   <line x1="160" y1="60" x2="160" y2="288" stroke="currentColor" stroke-opacity="0.28" stroke-dasharray="3 4"/>
   <line x1="560" y1="60" x2="560" y2="288" stroke="currentColor" stroke-opacity="0.28" stroke-dasharray="3 4"/>
-  <line x1="160" y1="96" x2="558" y2="96" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#corsArr)"/>
-  <text x="360" y="89" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">preflight: OPTIONS (Origin, Access-Control-Request-*)</text>
-  <line x1="560" y1="136" x2="162" y2="136" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#corsArr)"/>
-  <text x="360" y="129" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Access-Control-Allow-Origin: http://localhost:5173</text>
-  <line x1="560" y1="166" x2="162" y2="166" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#corsArr)"/>
-  <text x="360" y="159" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">Allow-Methods / Allow-Headers</text>
-  <line x1="160" y1="220" x2="558" y2="220" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#corsArr)"/>
-  <text x="360" y="213" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">request thật (kèm Authorization: Bearer …)</text>
-  <line x1="560" y1="260" x2="162" y2="260" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#corsArr)"/>
-  <text x="360" y="253" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">200 + dữ liệu JSON</text>
-  <text x="64" y="192" font-size="10" fill="currentColor" opacity="0.6">— browser duyệt header OK rồi mới gửi tiếp —</text>
+<g data-step="1">
+  <line x1="160" y1="96" x2="558" y2="96" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#cap02pf-arr)"/>
+  <text x="360" y="89" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">preflight: OPTIONS (Origin, Access-Control-Request-*)</text>
+</g>
+<g data-step="2">
+  <line x1="560" y1="136" x2="162" y2="136" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#cap02pf-arr)"/>
+  <text x="360" y="129" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">Access-Control-Allow-Origin: http://localhost:5173</text>
+  <line x1="560" y1="166" x2="162" y2="166" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#cap02pf-arr)"/>
+  <text x="360" y="159" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">Allow-Methods / Allow-Headers</text>
+  <text x="64" y="192" font-size="13" fill="currentColor" opacity="0.6">— browser duyệt header OK rồi mới gửi tiếp —</text>
+</g>
+<g data-step="3">
+  <line x1="160" y1="220" x2="558" y2="220" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#cap02pf-arr)"/>
+  <text x="360" y="213" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">request thật (kèm Authorization: Bearer …)</text>
+</g>
+<g data-step="4">
+  <line x1="560" y1="260" x2="162" y2="260" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#cap02pf-arr)"/>
+  <text x="360" y="253" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">200 + dữ liệu JSON</text>
+</g>
 </svg>
+<step-note data-step="1">Header Authorization khiến browser kiểm tra quyền gửi request khác origin trước khi gửi dữ liệu ứng dụng.</step-note>
+<step-note data-step="2">Browser kiểm tra origin, method và header trong cùng phản hồi preflight; các dòng trả về minh hoạ các header, không phải hai response.</step-note>
+<step-note data-step="3">Chỉ khi preflight được chấp nhận, browser mới gửi request thật kèm Bearer token.</step-note>
+<step-note data-step="4">Backend trả JSON; browser chỉ cho code FE đọc phản hồi khi các header CORS của phản hồi thật cũng hợp lệ.</step-note>
+</step-flow>
 
 
 | Triệu chứng | Nguyên nhân thật | Cách sửa |

@@ -248,6 +248,31 @@ Lợi ích:
 
 Khi code truy cập một page chưa có trong RAM (đang nằm trên swap), CPU phát sinh **page fault**, kernel phải nạp page đó từ đĩa về. RAM truy cập ~100 ns; ổ đĩa (kể cả SSD) chậm hơn hàng nghìn lần.
 
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 350" role="img" aria-labelledby="cs04pf-t cs04pf-d" style="width:100%;max-width:640px;height:auto;display:block;margin:1.25rem auto" font-size="14" fill="currentColor">
+<title id="cs04pf-t">Page fault khi trang đang ở swap</title>
+<desc id="cs04pf-d">Bốn thành phần cố định: CPU, kernel, swap và RAM. CPU trap vào kernel; trang được nạp từ swap vào RAM; kernel cập nhật ánh xạ rồi chạy lại lệnh.</desc>
+<defs><marker id="cs04pf-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="30" y="30" width="150" height="65" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="105" y="57" text-anchor="middle">CPU</text><text x="105" y="80" text-anchor="middle">lệnh đọc trang P</text>
+<rect x="410" y="30" width="195" height="65" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="507" y="57" text-anchor="middle">Kernel</text><text x="507" y="80" text-anchor="middle">page table</text>
+<rect x="30" y="230" width="150" height="85" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="105" y="254" text-anchor="middle">Swap / đĩa</text>
+<rect x="70" y="267" width="70" height="30" fill="#f59e0b" fill-opacity="0.16" stroke="#f59e0b"/><text x="105" y="288" text-anchor="middle">P</text>
+<rect x="410" y="230" width="195" height="85" rx="8" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="507" y="254" text-anchor="middle">RAM</text>
+<g data-step="1"><path d="M180 48 H405" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#cs04pf-a)"/><text x="294" y="36" text-anchor="middle">1 · page fault (trap)</text></g>
+<g data-step="2"><path d="M460 95 L145 226" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#cs04pf-a)"/><text x="230" y="135">2 · yêu cầu đọc P</text></g>
+<g data-step="3"><path d="M180 282 H405" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#cs04pf-a)"/><text x="294" y="273" text-anchor="middle">3 · nạp trang</text><rect x="472" y="267" width="70" height="30" fill="#10b981" fill-opacity="0.16" stroke="#10b981"/><text x="507" y="288" text-anchor="middle">P</text></g>
+<g data-step="4"><path d="M560 230 V100" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#cs04pf-a)"/><text x="547" y="184" text-anchor="end">4 · ánh xạ P → RAM</text><path d="M410 88 H185" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#cs04pf-a)"/><text x="294" y="111" text-anchor="middle">chạy lại lệnh đọc</text></g>
+</svg>
+<step-note data-step="1">Trường hợp minh hoạ là trang hợp lệ đang ở swap: CPU không thể hoàn tất lệnh đọc nên chuyển quyền xử lý cho kernel.</step-note>
+<step-note data-step="2">Kernel xác định vị trí trang trên swap và yêu cầu I/O; thread gây fault phải chờ dữ liệu, CPU có thể chạy thread khác.</step-note>
+<step-note data-step="3">Dữ liệu phải về một frame RAM trước khi lệnh có thể đọc nó; độ trễ đĩa làm lần truy cập này đắt hơn truy cập RAM.</step-note>
+<step-note data-step="4">Kernel cập nhật page table và cho thread tiếp tục khi được lập lịch; lệnh gây fault chạy lại với ánh xạ đã có trong RAM.</step-note>
+</step-flow>
+
 > Bẫy: Khi RAM gần đầy, OS swap liên tục — gọi là **thrashing**. Triệu chứng: CPU thấp nhưng app chậm kinh khủng, disk I/O cao ngất. Nhiều người tưởng "thiếu CPU" nhưng thật ra là **thiếu RAM**. Trong container, swap thường bị tắt → thay vì chậm, process bị giết thẳng (OOMKilled).
 
 ## File descriptor & signal: hai khái niệm hay gặp khi debug

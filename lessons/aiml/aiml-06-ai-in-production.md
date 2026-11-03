@@ -244,6 +244,40 @@ LLM chậm vì nó sinh **từng token một**. Hai vũ khí:
 
 Stream token ngay khi model sinh ra. **Time-to-first-token (TTFT)** mới là thứ user cảm nhận, không phải tổng thời gian. User thấy chữ chạy ngay = cảm giác nhanh dù tổng thời gian không đổi.
 
+<ab-toggle data-labels="Gom response|Streaming">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 285" font-family="ui-sans-serif, system-ui, sans-serif" role="img" aria-labelledby="aiml06-med-stream0-t aiml06-med-stream0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="aiml06-med-stream0-t">Streaming và thời điểm client nhận token</title>
+<desc id="aiml06-med-stream0-d">Hai bảng dùng cùng timeline: không streaming gom bốn token ở giây 4; streaming trả từng token tại giây 1, 2, 3, 4. Số chỉ để minh hoạ.</desc>
+<text x="20" y="24" text-anchor="start" font-size="13" fill="currentColor">Ví dụ giả định: sinh 4 token trong 4 giây</text><text x="20" y="48" text-anchor="start" font-size="13" fill="currentColor">Model sinh</text>
+<rect x="100" y="62" width="86" height="28" rx="3" fill="#8b5cf6" fill-opacity="0.15" stroke="#8b5cf6"/><text x="143" y="81" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="190" y="62" width="86" height="28" rx="3" fill="#8b5cf6" fill-opacity="0.15" stroke="#8b5cf6"/><text x="233" y="81" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="280" y="62" width="86" height="28" rx="3" fill="#8b5cf6" fill-opacity="0.15" stroke="#8b5cf6"/><text x="323" y="81" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<rect x="370" y="62" width="86" height="28" rx="3" fill="#8b5cf6" fill-opacity="0.15" stroke="#8b5cf6"/><text x="413" y="81" text-anchor="middle" font-size="13" fill="currentColor">4</text>
+<text x="20" y="124" text-anchor="start" font-size="13" fill="currentColor">Client nhận</text>
+<rect x="420" y="140" width="80" height="28" rx="3" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/><text x="460" y="159" text-anchor="middle" font-size="13" fill="currentColor">1 2 3 4</text><path d="M460 92 V136" stroke="#10b981"/>
+<path d="M100 207 H460" stroke="currentColor"/><text x="100" y="229" text-anchor="middle" font-size="13" fill="currentColor">0s</text><text x="190" y="229" text-anchor="middle" font-size="13" fill="currentColor">1s</text><text x="280" y="229" text-anchor="middle" font-size="13" fill="currentColor">2s</text><text x="370" y="229" text-anchor="middle" font-size="13" fill="currentColor">3s</text><text x="460" y="229" text-anchor="middle" font-size="13" fill="currentColor">4s</text>
+<text x="20" y="262" text-anchor="start" font-size="13" fill="currentColor">Chữ đầu ở 4s; xong ở 4s.</text>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 285" font-family="ui-sans-serif, system-ui, sans-serif" role="img" aria-labelledby="aiml06-med-stream1-t aiml06-med-stream1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="aiml06-med-stream1-t">Streaming và thời điểm client nhận token</title>
+<desc id="aiml06-med-stream1-d">Hai bảng dùng cùng timeline: không streaming gom bốn token ở giây 4; streaming trả từng token tại giây 1, 2, 3, 4. Số chỉ để minh hoạ.</desc>
+<text x="20" y="24" text-anchor="start" font-size="13" fill="currentColor">Ví dụ giả định: sinh 4 token trong 4 giây</text><text x="20" y="48" text-anchor="start" font-size="13" fill="currentColor">Model sinh</text>
+<rect x="100" y="62" width="86" height="28" rx="3" fill="#8b5cf6" fill-opacity="0.15" stroke="#8b5cf6"/><text x="143" y="81" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="190" y="62" width="86" height="28" rx="3" fill="#8b5cf6" fill-opacity="0.15" stroke="#8b5cf6"/><text x="233" y="81" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="280" y="62" width="86" height="28" rx="3" fill="#8b5cf6" fill-opacity="0.15" stroke="#8b5cf6"/><text x="323" y="81" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<rect x="370" y="62" width="86" height="28" rx="3" fill="#8b5cf6" fill-opacity="0.15" stroke="#8b5cf6"/><text x="413" y="81" text-anchor="middle" font-size="13" fill="currentColor">4</text>
+<text x="20" y="124" text-anchor="start" font-size="13" fill="currentColor">Client nhận</text>
+<rect x="150" y="140" width="80" height="28" rx="3" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/><text x="190" y="159" text-anchor="middle" font-size="13" fill="currentColor">1</text><path d="M190 92 V136" stroke="#10b981"/>
+<rect x="240" y="140" width="80" height="28" rx="3" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/><text x="280" y="159" text-anchor="middle" font-size="13" fill="currentColor">2</text><path d="M280 92 V136" stroke="#10b981"/>
+<rect x="330" y="140" width="80" height="28" rx="3" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/><text x="370" y="159" text-anchor="middle" font-size="13" fill="currentColor">3</text><path d="M370 92 V136" stroke="#10b981"/>
+<rect x="420" y="140" width="80" height="28" rx="3" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/><text x="460" y="159" text-anchor="middle" font-size="13" fill="currentColor">4</text><path d="M460 92 V136" stroke="#10b981"/>
+<path d="M100 207 H460" stroke="currentColor"/><text x="100" y="229" text-anchor="middle" font-size="13" fill="currentColor">0s</text><text x="190" y="229" text-anchor="middle" font-size="13" fill="currentColor">1s</text><text x="280" y="229" text-anchor="middle" font-size="13" fill="currentColor">2s</text><text x="370" y="229" text-anchor="middle" font-size="13" fill="currentColor">3s</text><text x="460" y="229" text-anchor="middle" font-size="13" fill="currentColor">4s</text>
+<text x="20" y="262" text-anchor="start" font-size="13" fill="currentColor">Chữ đầu ở 1s; xong ở 4s.</text>
+</svg>
+<ab-note>Client đợi toàn bộ response dù model đã sinh được token đầu tiên.</ab-note>
+<ab-note>Trả token sớm giảm thời gian chờ chữ đầu; tổng thời gian sinh giữ nguyên trong ví dụ.</ab-note>
+</ab-toggle>
+
 ```python
 for chunk in client.stream(prompt):      # gửi từng phần xuống client
     yield chunk.text                     # SSE / WebSocket

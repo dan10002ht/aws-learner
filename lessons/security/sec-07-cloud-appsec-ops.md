@@ -268,49 +268,20 @@ Một microservice xử lý ảnh thumbnail bị RCE qua một thư viện image
 
 Cùng một lỗ RCE, hai role khác nhau cho ra blast radius khác hẳn:
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Lateral movement và blast radius — role rộng vs least privilege</title>
-  <desc>Hai kịch bản. Bên trái: service thumbnail bị RCE chạy với role star-star lan tới toàn bộ DB prod và S3 khách hàng, blast radius lớn. Bên phải: cùng service nhưng role chỉ có s3 GetObject và PutObject trên một bucket, thiệt hại bị giới hạn ở bucket đó.</desc>
-  <text x="360" y="24" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Cùng một lỗ RCE — blast radius theo quyền của role</text>
-  <text x="180" y="52" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Role "*:*" — thảm họa</text>
-  <text x="540" y="52" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Least privilege — giới hạn</text>
-  <line x1="360" y1="64" x2="360" y2="360" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="5 5"/>
-  <g>
-    <rect x="120" y="74" width="120" height="44" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="180" y="93" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">thumbnail svc</text>
-    <text x="180" y="109" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">RCE · role *:*</text>
-    <g stroke="#ef4444" stroke-opacity="0.75" fill="none" stroke-width="1.5">
-      <path d="M150 118 L70 180"/><polygon points="70,180 79,176 76,184" fill="#ef4444" fill-opacity="0.75" stroke="none"/>
-      <path d="M180 118 L180 180"/><polygon points="180,180 176,172 184,172" fill="#ef4444" fill-opacity="0.75" stroke="none"/>
-      <path d="M210 118 L290 180"/><polygon points="290,180 281,176 284,184" fill="#ef4444" fill-opacity="0.75" stroke="none"/>
-    </g>
-    <rect x="24" y="182" width="92" height="40" rx="8" fill="#ef4444" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="70" y="206" font-size="10" text-anchor="middle" fill="currentColor">DB prod</text>
-    <rect x="134" y="182" width="92" height="40" rx="8" fill="#ef4444" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="180" y="206" font-size="10" text-anchor="middle" fill="currentColor">S3 khách hàng</text>
-    <rect x="244" y="182" width="92" height="40" rx="8" fill="#ef4444" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="290" y="201" font-size="10" text-anchor="middle" fill="currentColor">mọi service</text>
-    <text x="290" y="214" font-size="10" text-anchor="middle" fill="currentColor">khác</text>
-    <text x="180" y="252" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Blast radius LỚN — lan toàn account</text>
-  </g>
-  <g>
-    <rect x="480" y="74" width="120" height="44" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="540" y="93" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">thumbnail svc</text>
-    <text x="540" y="109" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">RCE · role hẹp</text>
-    <g stroke="#10b981" stroke-opacity="0.85" fill="none" stroke-width="1.5">
-      <path d="M540 118 L540 180"/><polygon points="540,180 536,172 544,172" fill="#10b981" fill-opacity="0.85" stroke="none"/>
-    </g>
-    <rect x="474" y="182" width="132" height="40" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="540" y="201" font-size="10" text-anchor="middle" fill="currentColor">thumbnails-prod</text>
-    <text x="540" y="214" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">chỉ Get/PutObject</text>
-    <g stroke="currentColor" stroke-opacity="0.25" fill="none" stroke-dasharray="4 4">
-      <path d="M474 202 L420 240"/><path d="M606 202 L660 240"/>
-    </g>
-    <text x="420" y="256" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.5">DB prod ✗</text>
-    <text x="660" y="256" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.5">S3 khác ✗</text>
-    <text x="540" y="292" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Thiệt hại bị giới hạn ở 1 bucket</text>
-  </g>
+<ab-toggle data-labels="Role rộng|Role hẹp">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 412" role="img" aria-labelledby="sec07-radius-0-t sec07-radius-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="sec07-radius-0-t">Blast radius với role *:*</title>
+<desc id="sec07-radius-0-d">Blast radius với role *:*</desc>
+<defs><marker id="sec07-radius-0-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs><text x="16" y="26" font-size="16" text-anchor="start" fill="currentColor">Cùng service thumbnail bị RCE</text><rect x="8" y="46" width="504" height="310" rx="24" fill="#f43f5e" fill-opacity="0.13" stroke="#f43f5e" stroke-dasharray="6 4"/><rect x="24" y="164" width="176" height="58" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="36" y="187" font-size="15" text-anchor="start" fill="currentColor">thumbnail svc</text><text x="36" y="208" font-size="13" text-anchor="start" fill="currentColor">RCE · role *:*</text><rect x="276" y="68" width="220" height="58" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="286" y="92" font-size="13" text-anchor="start" fill="currentColor">DB prod</text><path d="M200 193 L274 97" fill="none" stroke="#f43f5e" stroke-width="2" marker-end="url(#sec07-radius-0-a)"/><rect x="276" y="164" width="220" height="58" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="286" y="188" font-size="13" text-anchor="start" fill="currentColor">thumbnails-prod</text><path d="M200 193 L274 193" fill="none" stroke="#f43f5e" stroke-width="2" marker-end="url(#sec07-radius-0-a)"/><text x="286" y="209" font-size="13" text-anchor="start" fill="currentColor">mọi action được cấp</text><rect x="276" y="260" width="220" height="58" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="286" y="284" font-size="13" text-anchor="start" fill="currentColor">S3 khác / service khác</text><path d="M200 193 L274 289" fill="none" stroke="#f43f5e" stroke-width="2" marker-end="url(#sec07-radius-0-a)"/><text x="16" y="386" font-size="15" text-anchor="start" fill="currentColor">Vùng đỏ: blast radius toàn account</text>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 412" role="img" aria-labelledby="sec07-radius-1-t sec07-radius-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="sec07-radius-1-t">Blast radius với least privilege</title>
+<desc id="sec07-radius-1-d">Blast radius với least privilege</desc>
+<defs><marker id="sec07-radius-1-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs><text x="16" y="26" font-size="16" text-anchor="start" fill="currentColor">Cùng service thumbnail bị RCE</text><rect x="252" y="157" width="258" height="72" rx="24" fill="#f43f5e" fill-opacity="0.13" stroke="#f43f5e" stroke-dasharray="6 4"/><rect x="24" y="164" width="176" height="58" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="36" y="187" font-size="15" text-anchor="start" fill="currentColor">thumbnail svc</text><text x="36" y="208" font-size="13" text-anchor="start" fill="currentColor">RCE · role hẹp</text><rect x="276" y="68" width="220" height="58" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="286" y="92" font-size="13" text-anchor="start" fill="currentColor">DB prod</text><path d="M200 193 L274 97" stroke="currentColor" stroke-dasharray="4 4" stroke-opacity="0.35"/><text x="286" y="113" font-size="13" text-anchor="start" fill="currentColor">Không được role cấp quyền</text><rect x="276" y="164" width="220" height="58" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="286" y="188" font-size="13" text-anchor="start" fill="currentColor">thumbnails-prod</text><path d="M200 193 L274 193" fill="none" stroke="#f43f5e" stroke-width="2" marker-end="url(#sec07-radius-1-a)"/><text x="286" y="209" font-size="13" text-anchor="start" fill="currentColor">GetObject / PutObject</text><rect x="276" y="260" width="220" height="58" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="286" y="284" font-size="13" text-anchor="start" fill="currentColor">S3 khác / service khác</text><path d="M200 193 L274 289" stroke="currentColor" stroke-dasharray="4 4" stroke-opacity="0.35"/><text x="286" y="305" font-size="13" text-anchor="start" fill="currentColor">Không được role cấp quyền</text><text x="16" y="386" font-size="15" text-anchor="start" fill="currentColor">Vùng đỏ: giới hạn ở một bucket</text>
+</svg>
+<ab-note>Role cho phép mọi action trên mọi resource khiến RCE có thể lan tới DB prod, S3 khách hàng và các service khác.</ab-note>
+<ab-note>Chỉ cấp s3:GetObject và s3:PutObject trên thumbnails-prod: RCE vẫn gây thiệt hại trong bucket đó, nhưng role không cấp quyền tới DB hay S3 khác.</ab-note>
+</ab-toggle>
 
 Checklist least-privilege:
 

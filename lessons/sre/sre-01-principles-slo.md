@@ -199,35 +199,22 @@ Error budget là **phần "được phép hỏng" còn lại**, suy ra trực ti
 Error Budget = 100% − SLO
 ```
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>100% chia thành SLO và Error Budget, kèm tốc độ đốt theo burn rate</title>
-  <desc>Trục ngang 100% chia làm phần SLO 99.9% và Error Budget 0.1% là phần được phép hỏng. Bên dưới minh hoạ burn rate: 1x ăn mòn budget hết đúng window 28 ngày, 14.4x chạy sạch trong khoảng 2 ngày.</desc>
-  <text x="360" y="26" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">100% = SLO + Error Budget</text>
-  <!-- thanh 100% (Error budget phóng đại để nhìn thấy) -->
-  <text x="20" y="64" font-size="11.5" fill="currentColor" opacity="0.7">tổng 100% request</text>
-  <rect x="120" y="74" width="492" height="40" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="366" y="99" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">SLO = 99.9% (phải đạt)</text>
-  <rect x="540" y="74" width="72" height="40" rx="7" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="576" y="93" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">0.1%</text>
-  <text x="576" y="107" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">budget</text>
-  <text x="612" y="134" font-size="10" text-anchor="end" fill="currentColor" opacity="0.6">("được phép hỏng" — phóng đại để thấy)</text>
-  <!-- burn rate: ăn mòn budget theo thời gian -->
-  <text x="360" y="172" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Burn rate — tốc độ ăn mòn 0.1% budget</text>
-  <!-- khung budget còn lại cho 2 dòng -->
-  <text x="20" y="214" font-size="11.5" font-weight="700" fill="currentColor">1×</text>
-  <text x="20" y="229" font-size="9.5" fill="currentColor" opacity="0.6">tiêu đều</text>
-  <text x="612" y="194" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.75">hết đúng window 28 ngày</text>
-  <rect x="120" y="200" width="492" height="24" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.18"/>
-  <rect x="120" y="200" width="100" height="24" rx="5" fill="#10b981" fill-opacity="0.35"/>
-  <text x="20" y="270" font-size="11.5" font-weight="700" fill="currentColor">14.4×</text>
-  <text x="20" y="285" font-size="9.5" fill="currentColor" opacity="0.6">đốt nhanh</text>
-  <text x="612" y="250" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.75">cháy sạch trong ~2 ngày</text>
-  <rect x="120" y="256" width="492" height="24" rx="5" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.18"/>
-  <rect x="120" y="256" width="466" height="24" rx="5" fill="#f59e0b" fill-opacity="0.45"/>
-  <!-- trục thời gian -->
-  <text x="120" y="304" font-size="10" fill="currentColor" opacity="0.55">đầu chu kỳ</text>
-  <text x="612" y="304" font-size="10" text-anchor="end" fill="currentColor" opacity="0.55">budget = 0 → dừng deploy</text>
+<auto-anim data-dur="14">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 310" font-family="ui-sans-serif, system-ui, sans-serif" role="img" aria-labelledby="sre01-med-budget-t sre01-med-budget-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="sre01-med-budget-t">Budget còn lại theo burn rate</title>
+<desc id="sre01-med-budget-d">Cùng đồng hồ 28 ngày: thanh 1× giảm đều hết ở ngày 28; thanh 14.4× hết ở ngày 1.94, sau đó nằm ở 0.</desc>
+<text x="20" y="24" text-anchor="start" font-size="13" fill="currentColor">100% = SLO 99.9% + budget 0.1%</text>
+<text x="20" y="46" text-anchor="start" font-size="13" fill="currentColor">Budget phóng đại; dưới đây là phần còn lại.</text>
+<text x="20" y="86" text-anchor="start" font-size="13" fill="currentColor">1×: hết ở ngày 28</text>
+<rect x="110" y="98" width="390" height="24" rx="3" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<rect x="110" y="98" width="390" height="24" fill="#10b981" fill-opacity="0.15" stroke="#10b981"><animate attributeName="width" dur="14s" repeatCount="indefinite" keyTimes="0;1" values="390;0"/></rect><text x="20" y="116" text-anchor="start" font-size="13" fill="currentColor">100% → 0</text>
+<text x="20" y="158" text-anchor="start" font-size="13" fill="currentColor">14.4×: hết ở ngày 1.94 ≈ 2</text>
+<rect x="110" y="170" width="390" height="24" rx="3" fill="#f59e0b" fill-opacity="0.15" stroke="#f59e0b"/>
+<rect x="110" y="170" width="390" height="24" fill="#f59e0b" fill-opacity="0.15" stroke="#f59e0b"><animate attributeName="width" dur="14s" repeatCount="indefinite" keyTimes="0;0.0694444444;1" values="390;0;0"/></rect><text x="20" y="188" text-anchor="start" font-size="13" fill="currentColor">100% → 0</text>
+<path d="M110 244 H500" stroke="currentColor"/><text x="110" y="266" text-anchor="start" font-size="13" fill="currentColor">0 ngày</text><text x="500" y="266" text-anchor="end" font-size="13" fill="currentColor">28 ngày</text>
+<path d="M110 238 V250" stroke="currentColor"><animate attributeName="d" dur="14s" repeatCount="indefinite" keyTimes="0;1" values="M110 238 V250;M500 238 V250"/></path><text x="20" y="292" text-anchor="start" font-size="13" fill="currentColor">Budget = 0 → dừng deploy; 14 giây = 28 ngày</text>
 </svg>
+</auto-anim>
 
 Nó biến reliability từ cuộc tranh cãi cảm tính ("hệ thống có ổn định không?") thành một con số ngân sách mà cả Dev và SRE đều nhìn vào.
 

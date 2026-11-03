@@ -126,6 +126,230 @@ Vét cạn thuần là quá đắt. **Pruning** là *từ chối đi vào* nhữ
 
 > Ghi nhớ: Hiệu năng của backtracking **quyết định gần như hoàn toàn bởi pruning**, không phải bởi vi tối ưu code. Một dòng `if (sum > target) return;` đặt đúng chỗ có thể cắt 99% cây.
 
+<ab-toggle data-labels="Vét cạn|Cắt theo cận">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 330" role="img" aria-labelledby="dsa09-prune-0-t dsa09-prune-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa09-prune-0-t">Cắt nhánh khi tổng vượt target</title>
+<desc id="dsa09-prune-0-d">Giá trị node là tổng các số đã chọn. Cùng một cây tìm kiếm trước và sau bound pruning.</desc>
+<text x="260" y="24" font-size="13" text-anchor="middle" fill="currentColor">Chọn 2 hoặc 4; target = 5; tối đa 3 lượt</text>
+<g opacity="1">
+<circle cx="260" cy="58" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="260" y="63" font-size="13" text-anchor="middle" fill="currentColor">0</text>
+</g>
+<g opacity="1">
+<path d="M260 73 L130 111" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="130" cy="126" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="130" y="131" font-size="13" text-anchor="middle" fill="currentColor">2</text>
+</g>
+<g opacity="1">
+<path d="M260 73 L390 111" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="390" cy="126" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="390" y="131" font-size="13" text-anchor="middle" fill="currentColor">4</text>
+</g>
+<g opacity="1">
+<path d="M130 141 L65 179" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="65" cy="194" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="65" y="199" font-size="13" text-anchor="middle" fill="currentColor">4</text>
+</g>
+<g opacity="1">
+<path d="M130 141 L195 179" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="195" cy="194" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="195" y="199" font-size="13" text-anchor="middle" fill="currentColor">6</text>
+</g>
+<g opacity="1">
+<path d="M390 141 L325 179" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="325" cy="194" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="325" y="199" font-size="13" text-anchor="middle" fill="currentColor">6</text>
+</g>
+<g opacity="1">
+<path d="M390 141 L455 179" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="455" cy="194" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="455" y="199" font-size="13" text-anchor="middle" fill="currentColor">8</text>
+</g>
+<g opacity="1">
+<path d="M65 209 L35 247" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="35" cy="262" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="35" y="267" font-size="13" text-anchor="middle" fill="currentColor">6</text>
+</g>
+<g opacity="1">
+<path d="M65 209 L95 247" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="95" cy="262" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="95" y="267" font-size="13" text-anchor="middle" fill="currentColor">8</text>
+</g>
+<g opacity="1">
+<path d="M195 209 L165 247" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="165" cy="262" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="165" y="267" font-size="13" text-anchor="middle" fill="currentColor">8</text>
+</g>
+<g opacity="1">
+<path d="M195 209 L225 247" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="225" cy="262" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="225" y="267" font-size="13" text-anchor="middle" fill="currentColor">10</text>
+</g>
+<g opacity="1">
+<path d="M325 209 L295 247" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="295" cy="262" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="295" y="267" font-size="13" text-anchor="middle" fill="currentColor">8</text>
+</g>
+<g opacity="1">
+<path d="M325 209 L355 247" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="355" cy="262" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="355" y="267" font-size="13" text-anchor="middle" fill="currentColor">10</text>
+</g>
+<g opacity="1">
+<path d="M455 209 L425 247" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="425" cy="262" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="425" y="267" font-size="13" text-anchor="middle" fill="currentColor">10</text>
+</g>
+<g opacity="1">
+<path d="M455 209 L485 247" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="485" cy="262" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="485" y="267" font-size="13" text-anchor="middle" fill="currentColor">12</text>
+</g>
+<text x="260" y="305" font-size="13" text-anchor="middle" fill="currentColor">Mọi node đều được mở rộng</text>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 330" role="img" aria-labelledby="dsa09-prune-1-t dsa09-prune-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa09-prune-1-t">Cắt nhánh khi tổng vượt target</title>
+<desc id="dsa09-prune-1-d">Giá trị node là tổng các số đã chọn. Cùng một cây tìm kiếm trước và sau bound pruning.</desc>
+<text x="260" y="24" font-size="13" text-anchor="middle" fill="currentColor">Chọn 2 hoặc 4; target = 5; tối đa 3 lượt</text>
+<g opacity="1">
+<circle cx="260" cy="58" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="260" y="63" font-size="13" text-anchor="middle" fill="currentColor">0</text>
+</g>
+<g opacity="1">
+<path d="M260 73 L130 111" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="130" cy="126" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="130" y="131" font-size="13" text-anchor="middle" fill="currentColor">2</text>
+</g>
+<g opacity="1">
+<path d="M260 73 L390 111" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="390" cy="126" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="390" y="131" font-size="13" text-anchor="middle" fill="currentColor">4</text>
+</g>
+<g opacity="1">
+<path d="M130 141 L65 179" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="65" cy="194" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="65" y="199" font-size="13" text-anchor="middle" fill="currentColor">4</text>
+</g>
+<g opacity="1">
+<path d="M130 141 L195 179" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="195" cy="194" r="16" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<text x="195" y="199" font-size="13" text-anchor="middle" fill="currentColor">6</text>
+</g>
+<path d="M183 214 L207 214" fill="none" stroke="#f43f5e" stroke-width="3"/>
+<g opacity="1">
+<path d="M390 141 L325 179" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="325" cy="194" r="16" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<text x="325" y="199" font-size="13" text-anchor="middle" fill="currentColor">6</text>
+</g>
+<path d="M313 214 L337 214" fill="none" stroke="#f43f5e" stroke-width="3"/>
+<g opacity="1">
+<path d="M390 141 L455 179" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="455" cy="194" r="16" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<text x="455" y="199" font-size="13" text-anchor="middle" fill="currentColor">8</text>
+</g>
+<path d="M443 214 L467 214" fill="none" stroke="#f43f5e" stroke-width="3"/>
+<g opacity="1">
+<path d="M65 209 L35 247" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="35" cy="262" r="16" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<text x="35" y="267" font-size="13" text-anchor="middle" fill="currentColor">6</text>
+</g>
+<g opacity="1">
+<path d="M65 209 L95 247" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<circle cx="95" cy="262" r="16" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<text x="95" y="267" font-size="13" text-anchor="middle" fill="currentColor">8</text>
+</g>
+<g opacity="0.1">
+<path d="M195 209 L165 247" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="0.1">
+<circle cx="165" cy="262" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="165" y="267" font-size="13" text-anchor="middle" fill="currentColor">8</text>
+</g>
+<g opacity="0.1">
+<path d="M195 209 L225 247" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="0.1">
+<circle cx="225" cy="262" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="225" y="267" font-size="13" text-anchor="middle" fill="currentColor">10</text>
+</g>
+<g opacity="0.1">
+<path d="M325 209 L295 247" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="0.1">
+<circle cx="295" cy="262" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="295" y="267" font-size="13" text-anchor="middle" fill="currentColor">8</text>
+</g>
+<g opacity="0.1">
+<path d="M325 209 L355 247" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="0.1">
+<circle cx="355" cy="262" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="355" y="267" font-size="13" text-anchor="middle" fill="currentColor">10</text>
+</g>
+<g opacity="0.1">
+<path d="M455 209 L425 247" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="0.1">
+<circle cx="425" cy="262" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="425" y="267" font-size="13" text-anchor="middle" fill="currentColor">10</text>
+</g>
+<g opacity="0.1">
+<path d="M455 209 L485 247" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="0.1">
+<circle cx="485" cy="262" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="485" y="267" font-size="13" text-anchor="middle" fill="currentColor">12</text>
+</g>
+<text x="260" y="305" font-size="13" text-anchor="middle" fill="currentColor">Đỏ: tổng &gt; 5; mờ: không được gọi</text>
+</svg>
+<ab-note>Cây giới hạn ba lựa chọn để dễ nhìn. Nhãn là tổng, mỗi cạnh cộng 2 (trái) hoặc 4 (phải); đây là cây minh hoạ cận, chưa khử tổ hợp trùng.</ab-note>
+<ab-note>Ở tổng 6 hoặc 8, mọi số còn lại đều dương nên không thể về target 5. Dừng ngay tại node đỏ, bỏ toàn bộ hậu duệ mờ.</ab-note>
+</ab-toggle>
+
 ### 1.4. Backtracking vs DP — phân biệt cho chuẩn
 
 Đây là chỗ rất nhiều người nhầm. Cả hai đều là đệ quy trên không gian con, nhưng:

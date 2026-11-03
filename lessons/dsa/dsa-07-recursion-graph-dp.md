@@ -520,39 +520,230 @@ DP áp dụng khi bài toán có **hai dấu hiệu**:
 
 `fib(n) = fib(n-1) + fib(n-2)`. Đệ quy ngây thơ là **O(2^n)** vì `fib(n-2)` bị tính lại vô số lần. Thêm cache → **O(n)**.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Cây gọi fib(5) chưa cache với các bài con trùng lặp</title>
-  <desc>Cây đệ quy của fib(5) phân nhánh thành fib(4) và fib(3). Nhiều nút lặp lại: fib(3) tính 2 lần, fib(2) tính 3 lần, fib(1) và fib(0) nhiều lần. Đây là overlapping subproblems, động lực của memoization.</desc>
-  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Cây gọi fib(5) chưa cache</text>
-  <text x="704" y="22" font-size="11" text-anchor="end" fill="#f59e0b">■ nút bị tính lại (trùng lặp)</text>
-  <g stroke="currentColor" stroke-opacity="0.35" fill="none">
-    <path d="M360 56 L200 106"/><path d="M360 56 L540 106"/>
-    <path d="M200 106 L120 166"/><path d="M200 106 L300 166"/>
-    <path d="M540 106 L460 166"/><path d="M540 106 L620 166"/>
-    <path d="M120 166 L70 226"/><path d="M120 166 L180 226"/>
-    <path d="M300 166 L260 226"/><path d="M300 166 L360 226"/>
-    <path d="M460 166 L420 226"/><path d="M460 166 L500 226"/>
-    <path d="M70 226 L40 286"/><path d="M70 226 L110 286"/>
-  </g>
-  <g font-size="11.5" text-anchor="middle">
-    <g><rect x="334" y="40" width="52" height="30" rx="7" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/><text x="360" y="60" fill="currentColor" font-weight="700">fib(5)</text></g>
-    <g><rect x="174" y="90" width="52" height="30" rx="7" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/><text x="200" y="110" fill="currentColor" font-weight="700">fib(4)</text></g>
-    <g><rect x="514" y="90" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="540" y="110" fill="currentColor" font-weight="700">fib(3)</text></g>
-    <g><rect x="94" y="150" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="120" y="170" fill="currentColor" font-weight="700">fib(3)</text></g>
-    <g><rect x="274" y="150" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="300" y="170" fill="currentColor" font-weight="700">fib(2)</text></g>
-    <g><rect x="434" y="150" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="460" y="170" fill="currentColor" font-weight="700">fib(2)</text></g>
-    <g><rect x="594" y="150" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="620" y="170" fill="currentColor" font-weight="700">fib(1)</text></g>
-    <g><rect x="44" y="210" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="70" y="230" fill="currentColor" font-weight="700">fib(2)</text></g>
-    <g><rect x="154" y="210" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="180" y="230" fill="currentColor" font-weight="700">fib(1)</text></g>
-    <g><rect x="234" y="210" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="260" y="230" fill="currentColor" font-weight="700">fib(1)</text></g>
-    <g><rect x="334" y="210" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="360" y="230" fill="currentColor" font-weight="700">fib(0)</text></g>
-    <g><rect x="394" y="210" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="420" y="230" fill="currentColor" font-weight="700">fib(1)</text></g>
-    <g><rect x="474" y="210" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="500" y="230" fill="currentColor" font-weight="700">fib(0)</text></g>
-    <g><rect x="14" y="270" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="40" y="290" fill="currentColor" font-weight="700">fib(1)</text></g>
-    <g><rect x="84" y="270" width="52" height="30" rx="7" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.35"/><text x="110" y="290" fill="currentColor" font-weight="700">fib(0)</text></g>
-  </g>
-  <text x="360" y="332" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.85">fib(3) tính 2 lần, fib(2) tính 3 lần — overlapping subproblems → động lực của memoization</text>
+<ab-toggle data-labels="Chưa cache|Có memo">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 374" role="img" aria-labelledby="dsa07-memo-0-t dsa07-memo-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa07-memo-0-t">Cây fib(5) có và không memo</title>
+<desc id="dsa07-memo-0-d">Cùng cây lời gọi, các cây con dưới cache hit bị làm mờ. Duyệt nhánh trái trước.</desc>
+<text x="260" y="22" font-size="14" text-anchor="middle" fill="currentColor">fib(5) : cây lời gọi</text>
+<g opacity="1">
+<path d="M260 62 L166 94" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M260 62 L406 94" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M166 122 L102 154" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M166 122 L240 154" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M406 122 L364 154" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M406 122 L462 154" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M102 182 L62 214" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M102 182 L154 214" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M240 182 L210 214" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M240 182 L274 214" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M364 182 L336 214" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M364 182 L400 214" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M62 242 L32 274" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M62 242 L92 274" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<rect x="237" y="34" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="260" y="53" font-size="13" text-anchor="middle" fill="currentColor">f(5)</text>
+</g>
+<g opacity="1">
+<rect x="143" y="94" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="166" y="113" font-size="13" text-anchor="middle" fill="currentColor">f(4)</text>
+</g>
+<g opacity="1">
+<rect x="383" y="94" width="46" height="28" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="406" y="113" font-size="13" text-anchor="middle" fill="currentColor">f(3)</text>
+</g>
+<g opacity="1">
+<rect x="79" y="154" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="102" y="173" font-size="13" text-anchor="middle" fill="currentColor">f(3)</text>
+</g>
+<g opacity="1">
+<rect x="217" y="154" width="46" height="28" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="240" y="173" font-size="13" text-anchor="middle" fill="currentColor">f(2)</text>
+</g>
+<g opacity="1">
+<rect x="341" y="154" width="46" height="28" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="364" y="173" font-size="13" text-anchor="middle" fill="currentColor">f(2)</text>
+</g>
+<g opacity="1">
+<rect x="439" y="154" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="462" y="173" font-size="13" text-anchor="middle" fill="currentColor">f(1)</text>
+</g>
+<g opacity="1">
+<rect x="39" y="214" width="46" height="28" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="62" y="233" font-size="13" text-anchor="middle" fill="currentColor">f(2)</text>
+</g>
+<g opacity="1">
+<rect x="131" y="214" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="154" y="233" font-size="13" text-anchor="middle" fill="currentColor">f(1)</text>
+</g>
+<g opacity="1">
+<rect x="187" y="214" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="210" y="233" font-size="13" text-anchor="middle" fill="currentColor">f(1)</text>
+</g>
+<g opacity="1">
+<rect x="251" y="214" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="274" y="233" font-size="13" text-anchor="middle" fill="currentColor">f(0)</text>
+</g>
+<g opacity="1">
+<rect x="313" y="214" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="336" y="233" font-size="13" text-anchor="middle" fill="currentColor">f(1)</text>
+</g>
+<g opacity="1">
+<rect x="377" y="214" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="400" y="233" font-size="13" text-anchor="middle" fill="currentColor">f(0)</text>
+</g>
+<g opacity="1">
+<rect x="9" y="274" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="32" y="293" font-size="13" text-anchor="middle" fill="currentColor">f(1)</text>
+</g>
+<g opacity="1">
+<rect x="69" y="274" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="92" y="293" font-size="13" text-anchor="middle" fill="currentColor">f(0)</text>
+</g>
+<text x="260" y="330" font-size="13" text-anchor="middle" fill="currentColor">f(3): 2 lần; f(2): 3 lần</text>
+<text x="260" y="354" font-size="13" text-anchor="middle" fill="currentColor">Cam: bài con lặp</text>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 374" role="img" aria-labelledby="dsa07-memo-1-t dsa07-memo-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa07-memo-1-t">Cây fib(5) có và không memo</title>
+<desc id="dsa07-memo-1-d">Cùng cây lời gọi, các cây con dưới cache hit bị làm mờ. Duyệt nhánh trái trước.</desc>
+<text x="260" y="22" font-size="14" text-anchor="middle" fill="currentColor">fib(5) : cây lời gọi</text>
+<g opacity="1">
+<path d="M260 62 L166 94" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M260 62 L406 94" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M166 122 L102 154" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M166 122 L240 154" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="0.12">
+<path d="M406 122 L364 154" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="0.12">
+<path d="M406 122 L462 154" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M102 182 L62 214" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M102 182 L154 214" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="0.12">
+<path d="M240 182 L210 214" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="0.12">
+<path d="M240 182 L274 214" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="0.12">
+<path d="M364 182 L336 214" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="0.12">
+<path d="M364 182 L400 214" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M62 242 L32 274" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<path d="M62 242 L92 274" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+</g>
+<g opacity="1">
+<rect x="237" y="34" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="260" y="53" font-size="13" text-anchor="middle" fill="currentColor">f(5)</text>
+</g>
+<g opacity="1">
+<rect x="143" y="94" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="166" y="113" font-size="13" text-anchor="middle" fill="currentColor">f(4)</text>
+</g>
+<g opacity="1">
+<rect x="383" y="94" width="46" height="28" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="406" y="113" font-size="13" text-anchor="middle" fill="currentColor">f(3)</text>
+</g>
+<text x="406" y="139" font-size="13" text-anchor="middle" fill="currentColor">hit</text>
+<g opacity="1">
+<rect x="79" y="154" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="102" y="173" font-size="13" text-anchor="middle" fill="currentColor">f(3)</text>
+</g>
+<g opacity="1">
+<rect x="217" y="154" width="46" height="28" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="240" y="173" font-size="13" text-anchor="middle" fill="currentColor">f(2)</text>
+</g>
+<text x="240" y="199" font-size="13" text-anchor="middle" fill="currentColor">hit</text>
+<g opacity="0.12">
+<rect x="341" y="154" width="46" height="28" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="364" y="173" font-size="13" text-anchor="middle" fill="currentColor">f(2)</text>
+</g>
+<g opacity="0.12">
+<rect x="439" y="154" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="462" y="173" font-size="13" text-anchor="middle" fill="currentColor">f(1)</text>
+</g>
+<g opacity="1">
+<rect x="39" y="214" width="46" height="28" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="62" y="233" font-size="13" text-anchor="middle" fill="currentColor">f(2)</text>
+</g>
+<g opacity="1">
+<rect x="131" y="214" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="154" y="233" font-size="13" text-anchor="middle" fill="currentColor">f(1)</text>
+</g>
+<g opacity="0.12">
+<rect x="187" y="214" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="210" y="233" font-size="13" text-anchor="middle" fill="currentColor">f(1)</text>
+</g>
+<g opacity="0.12">
+<rect x="251" y="214" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="274" y="233" font-size="13" text-anchor="middle" fill="currentColor">f(0)</text>
+</g>
+<g opacity="0.12">
+<rect x="313" y="214" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="336" y="233" font-size="13" text-anchor="middle" fill="currentColor">f(1)</text>
+</g>
+<g opacity="0.12">
+<rect x="377" y="214" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="400" y="233" font-size="13" text-anchor="middle" fill="currentColor">f(0)</text>
+</g>
+<g opacity="1">
+<rect x="9" y="274" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="32" y="293" font-size="13" text-anchor="middle" fill="currentColor">f(1)</text>
+</g>
+<g opacity="1">
+<rect x="69" y="274" width="46" height="28" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="92" y="293" font-size="13" text-anchor="middle" fill="currentColor">f(0)</text>
+</g>
+<text x="260" y="330" font-size="13" text-anchor="middle" fill="currentColor">Hit: trả cache; không mở rộng cây con</text>
+<text x="260" y="354" font-size="13" text-anchor="middle" fill="currentColor">Mờ: lời gọi không xảy ra; xanh lá: hit</text>
+</svg>
+<ab-note>fib(3) được tính hai lần, fib(2) ba lần; fib(1) và fib(0) cũng bị gọi lặp lại.</ab-note>
+<ab-note>Duyệt trái trước: các hit ở fib(2) và fib(3) dùng kết quả đã tính. Node hit vẫn là một lời gọi; chỉ các hậu duệ mờ bị bỏ qua. Base case không cần cache trong ví dụ này.</ab-note>
+</ab-toggle>
 
 ```python
 from functools import lru_cache

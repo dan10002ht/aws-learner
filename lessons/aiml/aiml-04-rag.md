@@ -30,92 +30,103 @@ So sánh nhanh các cách đưa kiến thức riêng vào:
 
 Có hai giai đoạn: **Indexing (offline)** làm trước, và **Query (online)** chạy mỗi lần user hỏi.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Pipeline RAG end-to-end: pha Indexing offline và pha Query online</title>
-  <desc>Hai luồng trái sang phải. Pha Indexing offline: Tài liệu, Chunking, Embedding, Vector DB. Pha Query online: Câu hỏi, Embedding, Similarity search top-k, Re-rank, Inject context, LLM generate, Trả lời kèm nguồn. Vector DB nối xuống bước Similarity search của pha online.</desc>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" aria-labelledby="aiml04-med-pipe-t aiml04-med-pipe-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title id="aiml04-med-pipe-t">Pipeline RAG end-to-end: pha Indexing offline và pha Query online</title>
+  <desc id="aiml04-med-pipe-d">Hai luồng trái sang phải. Pha Indexing offline: Tài liệu, Chunking, Embedding, Vector DB. Pha Query online: Câu hỏi, Embedding, Similarity search top-k, Re-rank, Inject context, LLM generate, Trả lời kèm nguồn. Vector DB nối xuống bước Similarity search của pha online.</desc>
   <defs>
-    <marker id="rag-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <marker id="aiml04-med-pipe-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
     </marker>
   </defs>
-  <rect x="8" y="34" width="704" height="132" rx="12" fill="#3b82f6" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.18"/>
+  <g data-step="1">
+<rect x="8" y="34" width="704" height="132" rx="12" fill="#3b82f6" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.18"/>
   <text x="24" y="56" font-size="13" font-weight="700" fill="currentColor">INDEXING — offline</text>
-  <text x="24" y="72" font-size="10.5" fill="currentColor" opacity="0.6">chạy 1 lần / khi tài liệu thay đổi</text>
+  <text x="24" y="72" font-size="13" fill="currentColor" opacity="0.6">chạy 1 lần / khi tài liệu thay đổi</text>
   <g>
     <rect x="24" y="92" width="120" height="52" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="84" y="116" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Tài liệu</text>
-    <text x="84" y="132" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">PDF · wiki · code</text>
+    <text x="84" y="116" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Tài liệu</text>
+    <text x="84" y="132" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.65">PDF · wiki · code</text>
   </g>
   <g>
     <rect x="194" y="92" width="120" height="52" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="254" y="116" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Chunking</text>
-    <text x="254" y="132" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">cắt mảnh nhỏ</text>
+    <text x="254" y="116" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Chunking</text>
+    <text x="254" y="132" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.65">cắt mảnh nhỏ</text>
   </g>
   <g>
     <rect x="364" y="92" width="120" height="52" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="424" y="116" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Embedding</text>
-    <text x="424" y="132" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">text → vector</text>
+    <text x="424" y="116" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Embedding</text>
+    <text x="424" y="132" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.65">text → vector</text>
   </g>
   <g>
     <rect x="534" y="92" width="154" height="52" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
-    <text x="611" y="114" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Vector DB</text>
-    <text x="611" y="131" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">vector + text + metadata</text>
+    <text x="611" y="114" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Vector DB</text>
+    <text x="611" y="131" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.65">vector, text, metadata</text>
   </g>
-  <g stroke="currentColor" fill="none" marker-end="url(#rag-arrow)">
+  <g stroke="currentColor" fill="none" marker-end="url(#aiml04-med-pipe-arrow)">
     <line x1="144" y1="118" x2="190" y2="118"/>
     <line x1="314" y1="118" x2="360" y2="118"/>
     <line x1="484" y1="118" x2="530" y2="118"/>
   </g>
-  <rect x="8" y="190" width="704" height="232" rx="12" fill="#f59e0b" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.18"/>
+  </g>
+<g data-step="2">
+<rect x="8" y="190" width="704" height="232" rx="12" fill="#f59e0b" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.18"/>
   <text x="24" y="212" font-size="13" font-weight="700" fill="currentColor">QUERY — online</text>
-  <text x="24" y="228" font-size="10.5" fill="currentColor" opacity="0.6">chạy mỗi lần user hỏi</text>
+  <text x="24" y="228" font-size="13" fill="currentColor" opacity="0.6">chạy mỗi lần user hỏi</text>
   <g>
     <rect x="24" y="248" width="120" height="48" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="84" y="277" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Câu hỏi</text>
+    <text x="84" y="277" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Câu hỏi</text>
   </g>
   <g>
     <rect x="180" y="248" width="120" height="48" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="240" y="277" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Embedding</text>
+    <text x="240" y="277" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Embedding</text>
   </g>
   <g>
     <rect x="336" y="240" width="150" height="64" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
-    <text x="411" y="266" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Similarity search</text>
-    <text x="411" y="284" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">lấy top-k (k≈20–50)</text>
+    <text x="411" y="266" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Similarity search</text>
+    <text x="411" y="284" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.65">lấy top-k (k≈20–50)</text>
   </g>
   <g>
     <rect x="522" y="248" width="166" height="48" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="605" y="270" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Re-rank</text>
-    <text x="605" y="286" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">lọc còn top 3–6</text>
+    <text x="605" y="270" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Re-rank</text>
+    <text x="605" y="286" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.65">lọc còn top 3–6</text>
   </g>
-  <g stroke="currentColor" fill="none" marker-end="url(#rag-arrow)">
+  <g stroke="currentColor" fill="none" marker-end="url(#aiml04-med-pipe-arrow)">
     <line x1="144" y1="272" x2="176" y2="272"/>
     <line x1="300" y1="272" x2="332" y2="272"/>
     <line x1="486" y1="272" x2="518" y2="272"/>
   </g>
-  <g>
+    <g stroke="currentColor" stroke-opacity="0.55" stroke-dasharray="5 4" fill="none" marker-end="url(#aiml04-med-pipe-arrow)">
+    <path d="M611 144 V200 H411 V236"/>
+  </g>
+  <text x="430" y="184" font-size="13" fill="currentColor" opacity="0.7">DB đã dựng offline phục vụ truy vấn online</text>
+</g>
+<g data-step="3">
+<g>
     <rect x="378" y="344" width="166" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="461" y="368" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Inject context</text>
-    <text x="461" y="385" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">ghép chunk vào prompt</text>
+    <text x="461" y="368" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Inject context</text>
+    <text x="461" y="385" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.65">ghép chunk vào prompt</text>
   </g>
   <g>
     <rect x="192" y="344" width="150" height="56" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="267" y="368" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">LLM generate</text>
+    <text x="267" y="368" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">LLM generate</text>
   </g>
   <g>
     <rect x="24" y="344" width="130" height="56" rx="9" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.4"/>
-    <text x="89" y="368" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Trả lời</text>
-    <text x="89" y="385" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">+ trích dẫn nguồn</text>
+    <text x="89" y="368" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Trả lời</text>
+    <text x="89" y="385" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.65">+ trích dẫn nguồn</text>
   </g>
-  <g stroke="currentColor" fill="none" marker-end="url(#rag-arrow)">
+  <g stroke="currentColor" fill="none" marker-end="url(#aiml04-med-pipe-arrow)">
     <path d="M605 296 V322 H461 V340"/>
     <line x1="378" y1="372" x2="346" y2="372"/>
     <line x1="192" y1="372" x2="158" y2="372"/>
   </g>
-  <g stroke="currentColor" stroke-opacity="0.55" stroke-dasharray="5 4" fill="none" marker-end="url(#rag-arrow)">
-    <path d="M611 144 V200 H411 V236"/>
-  </g>
-  <text x="430" y="194" font-size="9.5" fill="currentColor" opacity="0.7">DB đã dựng offline phục vụ truy vấn online</text>
+</g>
 </svg>
+<step-note data-step="1">Indexing tính vector trước để truy vấn không phải embed lại toàn bộ kho tài liệu. Cập nhật chỉ khi nguồn thay đổi.</step-note>
+<step-note data-step="2">Query dùng embedding cùng không gian để tìm ứng viên; re-rank thu hẹp 20–50 xuống 3–6 chunk trước khi đưa vào context.</step-note>
+<step-note data-step="3">Context được ghép vào prompt để model có bằng chứng tạo câu trả lời và trích dẫn nguồn. Vector DB dựng offline phục vụ bước search online.</step-note>
+</step-flow>
 
 Đi qua từng bước.
 
@@ -219,6 +230,69 @@ Câu chỉ thị "nếu không có thì nói không biết" là tuyến phòng t
 | Rủi ro | Cắt mất ngữ cảnh cần thiết | Nhét rác vào context, "lẫn" tín hiệu |
 
 **Overlap** (chunk sau chồng lấn chunk trước ~10–20%) giúp tránh việc một câu/ý quan trọng bị cắt đúng ranh giới hai chunk và mất hẳn.
+
+<ab-toggle data-labels="Không overlap|Có overlap">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" font-family="ui-sans-serif, system-ui, sans-serif" role="img" aria-labelledby="aiml04-med-overlap0-t aiml04-med-overlap0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="aiml04-med-overlap0-t">Ranh giới chunk và overlap</title>
+<desc id="aiml04-med-overlap0-d">Các đoạn của cùng tài liệu giữ vị trí cố định. Vùng xanh lá là một ý bị chia khi không overlap; overlap kéo chunk A sang phải để chứa trọn ý.</desc>
+<text x="20" y="25" text-anchor="start" font-size="13" fill="currentColor">Cùng tài liệu; mỗi vạch = một đoạn token</text><text x="20" y="50" text-anchor="start" font-size="13" fill="currentColor">Ý cần giữ: vùng xanh lá qua ranh giới</text>
+<rect x="30" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="53" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="76" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="99" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="122" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="145" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="168" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="191" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="214" y="70" width="20" height="22" rx="3" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<rect x="237" y="70" width="20" height="22" rx="3" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<rect x="260" y="70" width="20" height="22" rx="3" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<rect x="283" y="70" width="20" height="22" rx="3" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<rect x="306" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="329" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="352" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="375" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="398" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="421" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="444" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="467" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="30" y="130" width="227" height="32" rx="3" fill="#8b5cf6" fill-opacity="0.15" stroke="#8b5cf6"/><text x="38" y="151" text-anchor="start" font-size="13" fill="currentColor">Chunk A</text>
+<rect x="260" y="185" width="227" height="32" rx="3" fill="#8b5cf6" fill-opacity="0.15" stroke="#8b5cf6"/><text x="268" y="206" text-anchor="start" font-size="13" fill="currentColor">Chunk B</text>
+<path d="M259 63 V225" stroke="currentColor" stroke-dasharray="4 4"/>
+<text x="20" y="251" text-anchor="start" font-size="13" fill="currentColor">Ý bị chia giữa A và B.</text><text x="20" y="276" text-anchor="start" font-size="13" fill="currentColor">Minh hoạ ranh giới, không phải độ dài token thực.</text>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" font-family="ui-sans-serif, system-ui, sans-serif" role="img" aria-labelledby="aiml04-med-overlap1-t aiml04-med-overlap1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="aiml04-med-overlap1-t">Ranh giới chunk và overlap</title>
+<desc id="aiml04-med-overlap1-d">Các đoạn của cùng tài liệu giữ vị trí cố định. Vùng xanh lá là một ý bị chia khi không overlap; overlap kéo chunk A sang phải để chứa trọn ý.</desc>
+<text x="20" y="25" text-anchor="start" font-size="13" fill="currentColor">Cùng tài liệu; mỗi vạch = một đoạn token</text><text x="20" y="50" text-anchor="start" font-size="13" fill="currentColor">Ý cần giữ: vùng xanh lá qua ranh giới</text>
+<rect x="30" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="53" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="76" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="99" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="122" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="145" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="168" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="191" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="214" y="70" width="20" height="22" rx="3" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<rect x="237" y="70" width="20" height="22" rx="3" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<rect x="260" y="70" width="20" height="22" rx="3" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<rect x="283" y="70" width="20" height="22" rx="3" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<rect x="306" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="329" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="352" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="375" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="398" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="421" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="444" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="467" y="70" width="20" height="22" rx="3" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="30" y="130" width="273" height="32" rx="3" fill="#8b5cf6" fill-opacity="0.15" stroke="#8b5cf6"/><text x="38" y="151" text-anchor="start" font-size="13" fill="currentColor">Chunk A</text>
+<rect x="260" y="185" width="227" height="32" rx="3" fill="#8b5cf6" fill-opacity="0.15" stroke="#8b5cf6"/><text x="268" y="206" text-anchor="start" font-size="13" fill="currentColor">Chunk B</text>
+<path d="M259 63 V225" stroke="currentColor" stroke-dasharray="4 4"/>
+<text x="20" y="251" text-anchor="start" font-size="13" fill="currentColor">A chứa trọn ý; A và B trùng 2/12 đoạn ≈ 17%.</text><text x="20" y="276" text-anchor="start" font-size="13" fill="currentColor">Minh hoạ ranh giới, không phải độ dài token thực.</text>
+</svg>
+<ab-note>Ranh giới chia ý qua hai chunk: nếu chỉ lấy một chunk, ngữ cảnh có thể thiếu.</ab-note>
+<ab-note>Phần giao nhau giữ ý trọn trong chunk A, đổi lại phải lưu và xử lý token lặp.</ab-note>
+</ab-toggle>
 
 > Ghi nhớ: Không có con số vàng. Điểm khởi đầu hợp lý: **chunk 500–800 token, overlap 10–15%**, rồi đo bằng eval (xem dưới) và điều chỉnh theo dữ liệu thật của bạn.
 

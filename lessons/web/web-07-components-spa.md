@@ -262,49 +262,63 @@ Nhờ đó bạn vẫn viết kiểu declarative "vẽ lại tất cả", nhưng
 
 **SPA (Single Page Application)** — tải **một** trang HTML duy nhất lúc đầu, sau đó JS **tự thay đổi nội dung** ngay trên trình duyệt mà không reload. Dữ liệu mới lấy về qua `fetch` (API), JS dựng lại phần UI cần thiết.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>So sánh MPA và SPA khi người dùng bấm link</title>
-  <desc>MPA: mỗi click tải một trang HTML mới từ server, reload toàn trang. SPA: tải HTML một lần, sau đó JS đổi nội dung và fetch dữ liệu, không reload.</desc>
-  <g>
-    <rect x="14" y="40" width="334" height="226" rx="12" fill="#f59e0b" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="181" y="64" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">MPA — đa trang</text>
-    <text x="181" y="82" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">mỗi click = reload toàn trang</text>
-    <rect x="38" y="100" width="90" height="40" rx="8" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="83" y="124" font-size="10.5" text-anchor="middle" fill="currentColor">Trình duyệt</text>
-    <rect x="234" y="100" width="90" height="40" rx="8" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="279" y="124" font-size="10.5" text-anchor="middle" fill="currentColor">Server</text>
-    <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.5">
-      <path d="M128 112 H 232" marker-end="url(#ar4)"/>
-      <path d="M232 130 H 130" marker-end="url(#ar4)"/>
-    </g>
-    <text x="181" y="108" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">click → xin trang</text>
-    <text x="181" y="152" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">trả HTML MỚI</text>
-    <text x="181" y="186" font-size="11" text-anchor="middle" fill="currentColor">↻ vẽ lại toàn bộ trang</text>
-    <text x="181" y="210" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">mỗi điều hướng lặp lại vòng này</text>
-    <text x="181" y="244" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">VD: Wikipedia, blog</text>
-  </g>
-  <g>
-    <rect x="372" y="40" width="334" height="226" rx="12" fill="#3b82f6" fill-opacity="0.11" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="539" y="64" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">SPA — đơn trang</text>
-    <text x="539" y="82" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">tải 1 lần, JS đổi nội dung, không reload</text>
-    <rect x="396" y="100" width="90" height="40" rx="8" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="441" y="124" font-size="10.5" text-anchor="middle" fill="currentColor">Trình duyệt</text>
-    <rect x="592" y="100" width="90" height="40" rx="8" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="637" y="124" font-size="10.5" text-anchor="middle" fill="currentColor">Server / API</text>
-    <g stroke="currentColor" stroke-opacity="0.4" fill="none" stroke-width="1.5" stroke-dasharray="4 3">
-      <path d="M486 112 H 590" marker-end="url(#ar4)"/>
-      <path d="M590 130 H 488" marker-end="url(#ar4)"/>
-    </g>
-    <text x="539" y="108" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">chỉ fetch dữ liệu (JSON)</text>
-    <text x="539" y="152" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">không gửi lại HTML</text>
-    <text x="539" y="186" font-size="11" text-anchor="middle" fill="currentColor">JS dựng lại phần UI cần</text>
-    <text x="539" y="210" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">trang không reload, mượt như app</text>
-    <text x="539" y="244" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">VD: Gmail, Trello, Figma</text>
-  </g>
-  <defs>
-    <marker id="ar4" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="currentColor" fill-opacity="0.55"/></marker>
-  </defs>
+<ab-toggle data-labels="MPA|SPA">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 366" role="img" aria-labelledby="web07-page-0-t web07-page-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="web07-page-0-t">Phạm vi cập nhật khi điều hướng</title>
+<desc id="web07-page-0-d">Màu cam đánh dấu vùng thay: MPA thay cả tài liệu, SPA giữ khung và thay nội dung.</desc>
+<text x="260" y="24" font-size="14" text-anchor="middle" fill="currentColor">Sau khi bấm một link nội bộ</text>
+<rect x="24" y="48" width="290" height="260" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="169" y="72" font-size="14" text-anchor="middle" fill="currentColor">Trình duyệt</text>
+<rect x="354" y="48" width="142" height="78" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="425" y="77" font-size="14" text-anchor="middle" fill="currentColor">Server / API</text>
+<defs>
+<marker id="web07-page-0-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="currentColor"/>
+</marker>
+</defs>
+<path d="M316 89 L352 89" fill="none" stroke="currentColor" marker-end="url(#web07-page-0-ar)"/>
+<path d="M354 114 L316 114" fill="none" stroke="currentColor" marker-end="url(#web07-page-0-ar)"/>
+<rect x="42" y="91" width="254" height="47" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="169" y="120" font-size="14" text-anchor="middle" fill="currentColor">Header / navigation</text>
+<rect x="42" y="151" width="68" height="138" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="76" y="225" font-size="14" text-anchor="middle" fill="currentColor">Menu</text>
+<rect x="122" y="151" width="174" height="138" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="209" y="218" font-size="14" text-anchor="middle" fill="currentColor">Nội dung mới</text>
+<rect x="36" y="85" width="266" height="210" rx="8" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="6 4"/>
+<text x="425" y="160" font-size="14" text-anchor="middle" fill="currentColor">HTML mới</text>
+<text x="425" y="187" font-size="14" text-anchor="middle" fill="currentColor">Reload</text>
+<rect x="24" y="329" width="18" height="18" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="54" y="343" font-size="13" text-anchor="start" fill="currentColor">Vùng được thay khi điều hướng</text>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 366" role="img" aria-labelledby="web07-page-1-t web07-page-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="web07-page-1-t">Phạm vi cập nhật khi điều hướng</title>
+<desc id="web07-page-1-d">Màu cam đánh dấu vùng thay: MPA thay cả tài liệu, SPA giữ khung và thay nội dung.</desc>
+<text x="260" y="24" font-size="14" text-anchor="middle" fill="currentColor">Sau khi bấm một link nội bộ</text>
+<rect x="24" y="48" width="290" height="260" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="169" y="72" font-size="14" text-anchor="middle" fill="currentColor">Trình duyệt</text>
+<rect x="354" y="48" width="142" height="78" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="425" y="77" font-size="14" text-anchor="middle" fill="currentColor">Server / API</text>
+<defs>
+<marker id="web07-page-1-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="currentColor"/>
+</marker>
+</defs>
+<path d="M316 89 L352 89" fill="none" stroke="currentColor" marker-end="url(#web07-page-1-ar)"/>
+<path d="M354 114 L316 114" fill="none" stroke="currentColor" marker-end="url(#web07-page-1-ar)"/>
+<rect x="42" y="91" width="254" height="47" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="169" y="120" font-size="14" text-anchor="middle" fill="currentColor">Header / navigation</text>
+<rect x="42" y="151" width="68" height="138" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="76" y="225" font-size="14" text-anchor="middle" fill="currentColor">Menu</text>
+<rect x="122" y="151" width="174" height="138" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="209" y="218" font-size="14" text-anchor="middle" fill="currentColor">Nội dung mới</text>
+<text x="425" y="160" font-size="14" text-anchor="middle" fill="currentColor">JSON</text>
+<text x="425" y="187" font-size="14" text-anchor="middle" fill="currentColor">fetch()</text>
+<rect x="24" y="329" width="18" height="18" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="54" y="343" font-size="13" text-anchor="start" fill="currentColor">Vùng được thay khi điều hướng</text>
+</svg>
+<ab-note>Mỗi lần điều hướng, server trả HTML mới và trình duyệt tải lại toàn trang. Ví dụ: Wikipedia, blog.</ab-note>
+<ab-note>Sau lần tải HTML đầu, JS lấy JSON và cập nhật phần UI cần thiết; khung trang được giữ lại. Ví dụ: Gmail, Trello, Figma.</ab-note>
+</ab-toggle>
 
 | | MPA (đa trang) | SPA (đơn trang) |
 |---|---|---|

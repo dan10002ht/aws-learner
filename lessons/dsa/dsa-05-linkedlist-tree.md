@@ -799,6 +799,53 @@ BST là binary tree có thêm **bất biến sắp xếp**: với mọi node, **
 
 Inorder của cây trên: `1 3 6 8 10 14` — **luôn sắp xếp**. Đây là cách kiểm tra một cây có phải BST hợp lệ hay không.
 
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 345" role="img" aria-labelledby="dsa05-insert-t dsa05-insert-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa05-insert-t">Chèn một giá trị vào BST</title>
+<desc id="dsa05-insert-d">Theo đường 8 sang trái tới 3, sang phải tới 6 rồi chèn 5 vào con trái đang rỗng.</desc>
+<text x="260" y="24" font-size="14" text-anchor="middle" fill="currentColor">Chèn 5 vào BST (các giá trị phân biệt)</text>
+<path d="M260 84 L130 121" fill="none" stroke="currentColor" stroke-opacity="0.3"/>
+<path d="M260 84 L390 121" fill="none" stroke="currentColor" stroke-opacity="0.3"/>
+<path d="M130 159 L65 201" fill="none" stroke="currentColor" stroke-opacity="0.3"/>
+<path d="M130 159 L195 201" fill="none" stroke="currentColor" stroke-opacity="0.3"/>
+<path d="M390 159 L450 201" fill="none" stroke="currentColor" stroke-opacity="0.3"/>
+<circle cx="260" cy="65" r="21" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="260" y="70" font-size="14" text-anchor="middle" fill="currentColor">8</text>
+<circle cx="130" cy="140" r="21" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="130" y="145" font-size="14" text-anchor="middle" fill="currentColor">3</text>
+<circle cx="390" cy="140" r="21" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="390" y="145" font-size="14" text-anchor="middle" fill="currentColor">10</text>
+<circle cx="65" cy="220" r="21" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="65" y="225" font-size="14" text-anchor="middle" fill="currentColor">1</text>
+<circle cx="195" cy="220" r="21" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="195" y="225" font-size="14" text-anchor="middle" fill="currentColor">6</text>
+<circle cx="450" cy="220" r="21" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="450" y="225" font-size="14" text-anchor="middle" fill="currentColor">14</text>
+<defs>
+<marker id="dsa05-insert-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+<path d="M0 0 L10 5 L0 10z" fill="#10b981"/>
+</marker>
+</defs>
+<g data-step="1">
+<path d="M260 87 L130 117" fill="none" stroke="#10b981" stroke-width="3" marker-end="url(#dsa05-insert-ar)"/>
+<text x="153" y="84" font-size="13" text-anchor="middle" fill="currentColor">5 &lt; 8</text>
+</g>
+<g data-step="2">
+<path d="M130 162 L195 197" fill="none" stroke="#10b981" stroke-width="3" marker-end="url(#dsa05-insert-ar)"/>
+<text x="219" y="168" font-size="13" text-anchor="middle" fill="currentColor">5 &gt; 3</text>
+</g>
+<g data-step="3">
+<path d="M187 241 L145 286" fill="none" stroke="#10b981" stroke-width="3" marker-end="url(#dsa05-insert-ar)"/>
+<text x="238" y="277" font-size="13" text-anchor="middle" fill="currentColor">5 &lt; 6; trái rỗng</text>
+<circle cx="130" cy="310" r="21" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="130" y="315" font-size="14" text-anchor="middle" fill="currentColor">5</text>
+</g>
+</svg>
+<step-note data-step="1">5 nhỏ hơn 8, nên bất biến BST loại toàn bộ cây con phải khỏi tìm kiếm.</step-note>
+<step-note data-step="2">5 lớn hơn 3; tiếp tục ở cây con phải, không cần xét node 1.</step-note>
+<step-note data-step="3">5 nhỏ hơn 6 và vị trí con trái còn rỗng: gắn node mới tại đây, giữ bất biến sắp xếp.</step-note>
+</step-flow>
+
 ### Tìm & thêm
 
 ```python

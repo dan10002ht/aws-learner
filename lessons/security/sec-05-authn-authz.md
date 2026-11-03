@@ -374,39 +374,56 @@ Thứ tự ưu tiên thực dụng:
 
 **Passkeys** dùng public-key cryptography: thiết bị giữ private key (trong Secure Enclave/TPM), server chỉ giữ public key. Đăng nhập là ký một challenge bằng sinh trắc.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Passkey / WebAuthn: đăng ký và đăng nhập challenge-response</title>
-  <desc>Sequence diagram hai cột Thiết bị và Server. Khi đăng ký, thiết bị sinh cặp khoá và gửi public key cho server lưu. Khi đăng nhập, server gửi challenge ngẫu nhiên, thiết bị mở private key bằng vân tay và ký challenge kèm origin, gửi chữ ký về; server verify bằng public key đã lưu. Vì chữ ký gắn với origin nên trang phishing không lấy được chữ ký hợp lệ.</desc>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" aria-labelledby="sec05-pass-t sec05-pass-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title id="sec05-pass-t">Passkey / WebAuthn: đăng ký và đăng nhập challenge-response</title>
+  <desc id="sec05-pass-d">Sequence diagram hai cột Thiết bị và Server. Khi đăng ký, thiết bị sinh cặp khoá và gửi public key cho server lưu. Khi đăng nhập, server gửi challenge ngẫu nhiên, thiết bị mở private key bằng vân tay và ký challenge kèm origin, gửi chữ ký về; server verify bằng public key đã lưu. Vì chữ ký gắn với origin nên trang phishing không lấy được chữ ký hợp lệ.</desc>
   <text x="360" y="22" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Passkey / WebAuthn — challenge-response</text>
   <text x="150" y="48" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Thiết bị</text>
   <text x="570" y="48" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Server</text>
   <line x1="150" y1="58" x2="150" y2="404" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
   <line x1="570" y1="58" x2="570" y2="404" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
   <rect x="22" y="66" width="676" height="22" rx="6" fill="#3b82f6" fill-opacity="0.14"/>
-  <text x="36" y="81" font-size="11" font-weight="700" fill="currentColor">Đăng ký (1 lần)</text>
+  <text x="36" y="81" font-size="13" font-weight="700" fill="currentColor">Đăng ký (1 lần)</text>
+<g data-step="1">
   <rect x="36" y="96" width="228" height="40" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="150" y="112" font-size="10.5" text-anchor="middle" fill="currentColor">sinh cặp khoá (private giữ trong</text>
-  <text x="150" y="127" font-size="10.5" text-anchor="middle" fill="currentColor">Secure Enclave/TPM)</text>
-  <line x1="150" y1="152" x2="570" y2="152" stroke="currentColor" stroke-opacity="0.65" marker-end="url(#wa)"/>
-  <text x="360" y="146" font-size="10.5" text-anchor="middle" fill="currentColor">gửi PUBLIC key</text>
+  <text x="150" y="112" font-size="13" text-anchor="middle" fill="currentColor">sinh cặp khoá; private trong</text>
+  <text x="150" y="127" font-size="13" text-anchor="middle" fill="currentColor">Secure Enclave/TPM)</text>
+</g>
+<g data-step="2">
+  <line x1="150" y1="152" x2="570" y2="152" stroke="currentColor" stroke-opacity="0.65" marker-end="url(#sec05-pass-a)"/>
+  <text x="360" y="146" font-size="13" text-anchor="middle" fill="currentColor">gửi PUBLIC key</text>
   <rect x="456" y="162" width="228" height="30" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="570" y="182" font-size="10.5" text-anchor="middle" fill="currentColor">lưu public key của user</text>
+  <text x="570" y="182" font-size="13" text-anchor="middle" fill="currentColor">lưu public key của user</text>
+</g>
   <rect x="22" y="206" width="676" height="22" rx="6" fill="#8b5cf6" fill-opacity="0.16"/>
-  <text x="36" y="221" font-size="11" font-weight="700" fill="currentColor">Đăng nhập (mỗi lần)</text>
-  <line x1="570" y1="248" x2="150" y2="248" stroke="currentColor" stroke-opacity="0.65" marker-end="url(#wa)"/>
-  <text x="360" y="242" font-size="10.5" text-anchor="middle" fill="currentColor">gửi challenge (ngẫu nhiên)</text>
+  <text x="36" y="221" font-size="13" font-weight="700" fill="currentColor">Đăng nhập (mỗi lần)</text>
+<g data-step="3">
+  <line x1="570" y1="248" x2="150" y2="248" stroke="currentColor" stroke-opacity="0.65" marker-end="url(#sec05-pass-a)"/>
+  <text x="360" y="242" font-size="13" text-anchor="middle" fill="currentColor">gửi challenge (ngẫu nhiên)</text>
+</g>
+<g data-step="4">
   <rect x="36" y="262" width="228" height="44" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="150" y="282" font-size="10.5" text-anchor="middle" fill="currentColor">mở bằng vân tay → ký challenge</text>
-  <text x="150" y="298" font-size="10.5" text-anchor="middle" fill="currentColor">+ origin bằng PRIVATE key</text>
-  <line x1="150" y1="324" x2="570" y2="324" stroke="currentColor" stroke-opacity="0.65" marker-end="url(#wa)"/>
-  <text x="360" y="318" font-size="10.5" text-anchor="middle" fill="currentColor">gửi chữ ký</text>
+  <text x="150" y="282" font-size="13" text-anchor="middle" fill="currentColor">vân tay → ký challenge</text>
+  <text x="150" y="298" font-size="13" text-anchor="middle" fill="currentColor">+ origin bằng PRIVATE key</text>
+</g>
+<g data-step="5">
+  <line x1="150" y1="324" x2="570" y2="324" stroke="currentColor" stroke-opacity="0.65" marker-end="url(#sec05-pass-a)"/>
+  <text x="360" y="318" font-size="13" text-anchor="middle" fill="currentColor">gửi chữ ký</text>
   <rect x="456" y="334" width="228" height="30" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="570" y="354" font-size="10.5" text-anchor="middle" fill="currentColor">verify bằng public key đã lưu</text>
-  <text x="360" y="392" font-size="10.5" text-anchor="middle" fill="#f59e0b" opacity="0.95">Chữ ký gắn với ORIGIN → trang phishing examp1e.com không có chữ ký hợp lệ.</text>
+  <text x="570" y="354" font-size="13" text-anchor="middle" fill="currentColor">verify bằng public key đã lưu</text>
+</g>
+  <text x="360" y="392" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.95">ORIGIN thật ≠ examp1e.com → không có chữ ký hợp lệ</text>
   <defs>
-    <marker id="wa" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0 0 L7 3.2 L0 6.4 z" fill="currentColor"/></marker>
+    <marker id="sec05-pass-a" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0 0 L7 3.2 L0 6.4 z" fill="currentColor"/></marker>
   </defs>
 </svg>
+<step-note data-step="1">Thiết bị tạo cặp khoá để server không cần giữ bí mật đăng nhập của người dùng.</step-note>
+<step-note data-step="2">Chỉ public key được gửi và lưu ở server; private key dùng ký vẫn ở phía thiết bị.</step-note>
+<step-note data-step="3">Challenge ngẫu nhiên mới cho mỗi lần đăng nhập chống phát lại chữ ký cũ.</step-note>
+<step-note data-step="4">Xác minh người dùng cho phép sử dụng private key. Dữ liệu được ký gắn với challenge và origin của phiên.</step-note>
+<step-note data-step="5">Server kiểm chữ ký bằng public key cùng challenge và origin mong đợi, rồi mới chấp nhận đăng nhập.</step-note>
+</step-flow>
 
 Vì sao chống phishing: chữ ký gắn chặt với **origin** (tên miền thật). Trang giả `examp1e.com` không lấy được chữ ký hợp lệ cho `example.com`. Không có "mã" nào để user lỡ tay nhập vào trang giả. Dùng thư viện như SimpleWebAuthn (server + browser) thay vì tự code.
 

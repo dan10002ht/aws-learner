@@ -398,6 +398,92 @@ bool hasDupFast(const std::vector<int>& arr) {   // time O(n), space O(n)
 
 Ví dụ kinh điển: **dynamic array** (`list` Python, `ArrayList` Java, slice Go, array JS). Khi `append` mà mảng đầy, nó cấp một mảng mới **gấp đôi** và copy toàn bộ phần tử cũ — lần đó tốn `O(n)`. Nhưng vì dung lượng nhân đôi, những lần copy như vậy rất thưa: thêm `n` phần tử chỉ tốn tổng cộng `~2n` thao tác copy. Chia đều ra, mỗi `append` là **amortized O(1)**.
 
+<auto-anim data-dur="10">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 442" role="img" aria-labelledby="dsa01-amortized-t dsa01-amortized-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsa01-amortized-t">Chi phí append khi mảng nhân đôi</title>
+<desc id="dsa01-amortized-d">Các cột có đỉnh tại lần 2, 3, 5, 9; đường tổng chỉ tăng tuyến tính. Vạch tím lần lượt đánh dấu từng append.</desc>
+<text x="260" y="23" font-size="14" text-anchor="middle" fill="currentColor">Mô hình nhân đôi: sức chứa ban đầu = 1</text>
+<text x="260" y="46" font-size="13" text-anchor="middle" fill="currentColor">1 thao tác = ghi mới hoặc copy 1 phần tử</text>
+<text x="28" y="75" font-size="13" text-anchor="start" fill="currentColor">Chi phí mỗi append</text>
+<path d="M48 183 L490 183" fill="none" stroke="currentColor" stroke-opacity="0.15"/>
+<text x="34" y="188" font-size="13" text-anchor="middle" fill="currentColor">0</text>
+<path d="M48 133 L490 133" fill="none" stroke="currentColor" stroke-opacity="0.15"/>
+<text x="34" y="138" font-size="13" text-anchor="middle" fill="currentColor">5</text>
+<path d="M48 93 L490 93" fill="none" stroke="currentColor" stroke-opacity="0.15"/>
+<text x="34" y="98" font-size="13" text-anchor="middle" fill="currentColor">9</text>
+<rect x="55" y="173" width="26" height="10" rx="2" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="68" y="201" font-size="13" text-anchor="middle" fill="currentColor">1</text>
+<text x="68" y="167" font-size="13" text-anchor="middle" fill="currentColor">1</text>
+<rect x="102" y="163" width="26" height="20" rx="2" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="115" y="201" font-size="13" text-anchor="middle" fill="currentColor">2</text>
+<text x="115" y="157" font-size="13" text-anchor="middle" fill="currentColor">2</text>
+<rect x="149" y="153" width="26" height="30" rx="2" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="162" y="201" font-size="13" text-anchor="middle" fill="currentColor">3</text>
+<text x="162" y="147" font-size="13" text-anchor="middle" fill="currentColor">3</text>
+<rect x="196" y="173" width="26" height="10" rx="2" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="209" y="201" font-size="13" text-anchor="middle" fill="currentColor">4</text>
+<text x="209" y="167" font-size="13" text-anchor="middle" fill="currentColor">1</text>
+<rect x="243" y="133" width="26" height="50" rx="2" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="256" y="201" font-size="13" text-anchor="middle" fill="currentColor">5</text>
+<text x="256" y="127" font-size="13" text-anchor="middle" fill="currentColor">5</text>
+<rect x="290" y="173" width="26" height="10" rx="2" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="303" y="201" font-size="13" text-anchor="middle" fill="currentColor">6</text>
+<text x="303" y="167" font-size="13" text-anchor="middle" fill="currentColor">1</text>
+<rect x="337" y="173" width="26" height="10" rx="2" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="350" y="201" font-size="13" text-anchor="middle" fill="currentColor">7</text>
+<text x="350" y="167" font-size="13" text-anchor="middle" fill="currentColor">1</text>
+<rect x="384" y="173" width="26" height="10" rx="2" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="397" y="201" font-size="13" text-anchor="middle" fill="currentColor">8</text>
+<text x="397" y="167" font-size="13" text-anchor="middle" fill="currentColor">1</text>
+<rect x="431" y="93" width="26" height="90" rx="2" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="444" y="201" font-size="13" text-anchor="middle" fill="currentColor">9</text>
+<text x="444" y="87" font-size="13" text-anchor="middle" fill="currentColor">9</text>
+<text x="260" y="224" font-size="13" text-anchor="middle" fill="currentColor">Lần append →</text>
+<text x="28" y="251" font-size="13" text-anchor="start" fill="currentColor">Tổng chi phí (gồm cả ghi mới)</text>
+<path d="M48 365 L490 365" fill="none" stroke="currentColor" stroke-opacity="0.15"/>
+<text x="34" y="370" font-size="13" text-anchor="middle" fill="currentColor">0</text>
+<path d="M48 305 L490 305" fill="none" stroke="currentColor" stroke-opacity="0.15"/>
+<text x="34" y="310" font-size="13" text-anchor="middle" fill="currentColor">15</text>
+<path d="M48 257 L490 257" fill="none" stroke="currentColor" stroke-opacity="0.15"/>
+<text x="34" y="262" font-size="13" text-anchor="middle" fill="currentColor">27</text>
+<polyline points="68,361 115,353 162,341 209,337 256,317 303,313 350,309 397,305 444,269" fill="none" stroke="#10b981" stroke-width="3"/>
+<circle cx="68" cy="361" r="3" fill="#10b981"/>
+<text x="68" y="352" font-size="13" text-anchor="middle" fill="currentColor">1</text>
+<circle cx="115" cy="353" r="3" fill="#10b981"/>
+<text x="115" y="344" font-size="13" text-anchor="middle" fill="currentColor">3</text>
+<circle cx="162" cy="341" r="3" fill="#10b981"/>
+<text x="162" y="332" font-size="13" text-anchor="middle" fill="currentColor">6</text>
+<circle cx="209" cy="337" r="3" fill="#10b981"/>
+<text x="209" y="328" font-size="13" text-anchor="middle" fill="currentColor">7</text>
+<circle cx="256" cy="317" r="3" fill="#10b981"/>
+<text x="256" y="308" font-size="13" text-anchor="middle" fill="currentColor">12</text>
+<circle cx="303" cy="313" r="3" fill="#10b981"/>
+<text x="303" y="304" font-size="13" text-anchor="middle" fill="currentColor">13</text>
+<circle cx="350" cy="309" r="3" fill="#10b981"/>
+<text x="350" y="300" font-size="13" text-anchor="middle" fill="currentColor">14</text>
+<circle cx="397" cy="305" r="3" fill="#10b981"/>
+<text x="397" y="296" font-size="13" text-anchor="middle" fill="currentColor">15</text>
+<circle cx="444" cy="269" r="3" fill="#10b981"/>
+<text x="444" y="260" font-size="13" text-anchor="middle" fill="currentColor">24</text>
+<text x="68" y="387" font-size="13" text-anchor="middle" fill="currentColor">1</text>
+<text x="115" y="387" font-size="13" text-anchor="middle" fill="currentColor">2</text>
+<text x="162" y="387" font-size="13" text-anchor="middle" fill="currentColor">3</text>
+<text x="209" y="387" font-size="13" text-anchor="middle" fill="currentColor">4</text>
+<text x="256" y="387" font-size="13" text-anchor="middle" fill="currentColor">5</text>
+<text x="303" y="387" font-size="13" text-anchor="middle" fill="currentColor">6</text>
+<text x="350" y="387" font-size="13" text-anchor="middle" fill="currentColor">7</text>
+<text x="397" y="387" font-size="13" text-anchor="middle" fill="currentColor">8</text>
+<text x="444" y="387" font-size="13" text-anchor="middle" fill="currentColor">9</text>
+<line x1="68" y1="79" x2="68" y2="395" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="4 4">
+<animate attributeName="x1" values="68;115;162;209;256;303;350;397;444;444" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;1" calcMode="discrete" dur="10s" repeatCount="indefinite"/>
+<animate attributeName="x2" values="68;115;162;209;256;303;350;397;444;444" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;1" calcMode="discrete" dur="10s" repeatCount="indefinite"/>
+</line>
+<text x="260" y="420" font-size="13" text-anchor="middle" fill="currentColor">n = 9 : 15 copies + 9 ghi mới = 24</text>
+</svg>
+</auto-anim>
+
+Trong mô hình minh hoạ nhân đôi (không phải hệ số tăng cam kết của mọi thư viện), các lần resize copy 1, 2, 4, 8 phần tử. Với 9 lần append: 15 copies cộng 9 lần ghi mới, tổng 24 thao tác.
+
 ```python
 arr = []
 for i in range(n):

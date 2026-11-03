@@ -313,12 +313,13 @@ Deadlock xảy ra khi hai transaction giữ khoá (lock) của nhau và cùng ch
 -- Cả hai chờ nhau → DEADLOCK
 ```
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Deadlock vòng chờ tròn và cách phá bằng khoá theo cùng thứ tự id</title>
-  <desc>Bên trái: T1 giữ khoá hàng 1 và chờ hàng 2, T2 giữ khoá hàng 2 và chờ hàng 1, tạo vòng chờ tròn nên bế tắc. Bên phải: cả T1 và T2 đều khoá id nhỏ trước rồi tới id lớn, nên không tạo vòng tròn và không deadlock.</desc>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" aria-labelledby="sql06-dead-t sql06-dead-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title id="sql06-dead-t">Deadlock vòng chờ tròn và cách phá bằng khoá theo cùng thứ tự id</title>
+  <desc id="sql06-dead-d">Bên trái: T1 giữ khoá hàng 1 và chờ hàng 2, T2 giữ khoá hàng 2 và chờ hàng 1, tạo vòng chờ tròn nên bế tắc. Bên phải: cả T1 và T2 đều khoá id nhỏ trước rồi tới id lớn, nên không tạo vòng tròn và không deadlock.</desc>
   <defs>
-    <marker id="dlHold" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="#10b981" fill-opacity="0.85"/></marker>
-    <marker id="dlWait" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="#f59e0b" fill-opacity="0.9"/></marker>
+    <marker id="sql06-dead-hold" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="#10b981" fill-opacity="0.85"/></marker>
+    <marker id="sql06-dead-wait" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="#f59e0b" fill-opacity="0.9"/></marker>
   </defs>
   <text x="180" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Vòng chờ tròn → DEADLOCK</text>
   <text x="545" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Cùng thứ tự id → an toàn</text>
@@ -326,39 +327,52 @@ Deadlock xảy ra khi hai transaction giữ khoá (lock) của nhau và cùng ch
   <!-- LEFT: deadlock cycle -->
   <g>
     <rect x="40" y="60" width="84" height="40" rx="9" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="82" y="85" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">T1</text>
+    <text x="82" y="85" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">T1</text>
     <rect x="240" y="60" width="84" height="40" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="282" y="85" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">T2</text>
+    <text x="282" y="85" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">T2</text>
     <rect x="40" y="230" width="84" height="40" rx="9" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="82" y="255" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">hàng 1</text>
+    <text x="82" y="255" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">hàng 1</text>
     <rect x="240" y="230" width="84" height="40" rx="9" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="282" y="255" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">hàng 2</text>
-    <line x1="82" y1="100" x2="82" y2="228" stroke="#10b981" stroke-opacity="0.7" marker-end="url(#dlHold)"/>
-    <text x="60" y="170" font-size="9.5" text-anchor="end" fill="#10b981" font-weight="700">giữ</text>
-    <line x1="282" y1="100" x2="282" y2="228" stroke="#10b981" stroke-opacity="0.7" marker-end="url(#dlHold)"/>
-    <text x="304" y="170" font-size="9.5" fill="#10b981" font-weight="700">giữ</text>
-    <line x1="120" y1="240" x2="238" y2="92" stroke="#f59e0b" stroke-opacity="0.85" stroke-dasharray="5 3" marker-end="url(#dlWait)"/>
-    <text x="208" y="178" font-size="9.5" fill="#f59e0b" font-weight="700">chờ hàng 2</text>
-    <line x1="244" y1="240" x2="126" y2="92" stroke="#f59e0b" stroke-opacity="0.85" stroke-dasharray="5 3" marker-end="url(#dlWait)"/>
-    <text x="112" y="135" font-size="9.5" text-anchor="end" fill="#f59e0b" font-weight="700">chờ hàng 1</text>
-    <text x="182" y="298" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7" font-style="italic">vòng tròn → bế tắc mãi mãi</text>
+    <text x="282" y="255" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">hàng 2</text>
+<g data-step="1">
+    <line x1="82" y1="100" x2="82" y2="228" stroke="#10b981" stroke-opacity="0.7" marker-end="url(#sql06-dead-hold)"/>
+    <text x="60" y="170" font-size="13" text-anchor="end" fill="currentColor" font-weight="700">giữ</text>
+</g>
+<g data-step="2">
+    <line x1="282" y1="100" x2="282" y2="228" stroke="#10b981" stroke-opacity="0.7" marker-end="url(#sql06-dead-hold)"/>
+    <text x="304" y="170" font-size="13" fill="currentColor" font-weight="700">giữ</text>
+</g>
+<g data-step="3">
+    <line x1="120" y1="240" x2="238" y2="92" stroke="#f59e0b" stroke-opacity="0.85" stroke-dasharray="5 3" marker-end="url(#sql06-dead-wait)"/>
+    <text x="195" y="185" font-size="13" fill="currentColor" font-weight="700">T2 chờ 1</text>
+</g>
+<g data-step="4">
+    <line x1="244" y1="240" x2="126" y2="92" stroke="#f59e0b" stroke-opacity="0.85" stroke-dasharray="5 3" marker-end="url(#sql06-dead-wait)"/>
+    <text x="155" y="135" font-size="13" text-anchor="end" fill="currentColor" font-weight="700">T1 chờ 2</text>
+</g>
+    <text x="182" y="298" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7" font-style="italic">vòng tròn → deadlock</text>
   </g>
   <!-- RIGHT: ordered locking -->
   <g>
     <rect x="412" y="60" width="84" height="40" rx="9" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="454" y="85" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">T1</text>
+    <text x="454" y="85" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">T1</text>
     <rect x="600" y="60" width="84" height="40" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="642" y="85" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">T2</text>
+    <text x="642" y="85" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">T2</text>
     <rect x="476" y="160" width="144" height="38" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="548" y="184" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">khoá id NHỎ trước</text>
+    <text x="548" y="184" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">khoá id NHỎ trước</text>
     <rect x="476" y="232" width="144" height="38" rx="9" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="548" y="256" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">rồi id LỚN</text>
-    <line x1="454" y1="100" x2="510" y2="158" stroke="#10b981" stroke-opacity="0.7" marker-end="url(#dlHold)"/>
-    <line x1="642" y1="100" x2="586" y2="158" stroke="#10b981" stroke-opacity="0.7" marker-end="url(#dlHold)"/>
-    <line x1="548" y1="198" x2="548" y2="230" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#dlHold)"/>
-    <text x="548" y="298" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7" font-style="italic">không có vòng tròn → không deadlock</text>
+    <text x="548" y="256" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">rồi id LỚN</text>
+    <line x1="454" y1="100" x2="510" y2="158" stroke="#10b981" stroke-opacity="0.7" marker-end="url(#sql06-dead-hold)"/>
+    <line x1="642" y1="100" x2="586" y2="158" stroke="#10b981" stroke-opacity="0.7" marker-end="url(#sql06-dead-hold)"/>
+    <line x1="548" y1="198" x2="548" y2="230" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#sql06-dead-hold)"/>
+    <text x="548" y="298" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7" font-style="italic">cùng thứ tự → không vòng chờ</text>
   </g>
 </svg>
+<step-note data-step="1">T1 giữ khoá hàng 1 tới khi kết thúc transaction; transaction khác cần hàng này phải đợi.</step-note>
+<step-note data-step="2">T2 giữ khoá hàng 2, tạo điều kiện cho việc chờ chéo.</step-note>
+<step-note data-step="3">T2 cần hàng 1 nhưng hàng đó đang bị T1 giữ; chưa có vòng chờ khi T1 chưa đợi T2.</step-note>
+<step-note data-step="4">T1 lại cần hàng 2 của T2: vòng chờ khép kín. Database phá vòng bằng cách huỷ một transaction; khoá theo cùng thứ tự id ngăn vòng hình thành như phía phải.</step-note>
+</step-flow>
 
 May mắn là database **tự phát hiện** deadlock và **huỷ một trong hai** transaction (báo lỗi `deadlock detected`). Transaction bị huỷ chỉ cần... chạy lại.
 
