@@ -97,25 +97,22 @@ Cơ chế đằng sau redelivery: khi consumer nhận một message, broker **kh
 - Consumer **ack** → broker xóa hẳn message. Xong.
 - Hết timeout mà **chưa ack** → broker cho rằng consumer đã chết/treo → **hiện lại** message cho consumer khác lấy → redelivery.
 
-<svg viewBox="0 0 620 210" role="img" aria-labelledby="vt-t vt-d" style="width:100%;max-width:600px;height:auto;display:block;margin:1.25rem auto">
-<title id="vt-t">Vòng đời một message với visibility timeout</title>
-<desc id="vt-d">Message đi từ trạng thái sẵn sàng sang đang xử lý ẩn tạm; nếu ack thì xóa, nếu hết timeout thì hiện lại để gửi lại</desc>
-<rect x="30" y="80" width="110" height="44" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="85" y="100" text-anchor="middle" font-size="11" fill="currentColor">Ready</text>
-<text x="85" y="115" text-anchor="middle" font-size="9" fill="currentColor">(trong queue)</text>
-<line x1="140" y1="102" x2="210" y2="102" stroke="currentColor" stroke-width="1" marker-end="url(#av)"/>
-<text x="175" y="94" text-anchor="middle" font-size="9" fill="currentColor">nhận</text>
-<rect x="212" y="78" width="130" height="48" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="277" y="98" text-anchor="middle" font-size="11" fill="currentColor">In-flight (ẩn)</text>
-<text x="277" y="114" text-anchor="middle" font-size="9" fill="currentColor">visibility timeout chạy</text>
-<line x1="342" y1="92" x2="470" y2="60" stroke="currentColor" stroke-width="1" marker-end="url(#av)"/>
-<text x="408" y="66" text-anchor="middle" font-size="9" fill="currentColor">ack kịp</text>
-<rect x="472" y="42" width="120" height="40" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="532" y="66" text-anchor="middle" font-size="11" fill="currentColor">Deleted ✓</text>
-<path d="M277,126 C277,165 150,165 90,128" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#av)"/>
-<text x="200" y="172" text-anchor="middle" font-size="9" fill="currentColor">hết timeout, chưa ack → hiện lại (redelivery)</text>
-<defs><marker id="av" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<ab-toggle data-labels="Song song|Tuần tự">
+<svg viewBox="0 0 520 300" role="img" aria-labelledby="msg02-order0-t msg02-order0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="msg02-order0-t">Thứ tự hoàn tất khi xử lý song song</title>
+<desc id="msg02-order0-d">Thứ tự hoàn tất khi xử lý song song</desc>
+<defs><marker id="msg02-order0-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="25" text-anchor="middle" font-size="13" fill="currentColor">1 queue, 2 worker</text><path d="M120 220 L490 220" fill="none" stroke="currentColor" marker-end="url(#msg02-order0-a)"/><text x="305" y="246" text-anchor="middle" font-size="13" fill="currentColor">Thời gian →</text><text x="60" y="88" text-anchor="middle" font-size="13" fill="currentColor">A: m1 (chậm)</text><rect x="130" y="65" width="300" height="36" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="280.0" y="88.0" text-anchor="middle" font-size="13" fill="currentColor">m1</text><text x="60" y="163" text-anchor="middle" font-size="13" fill="currentColor">B: m2 (nhanh)</text><rect x="130" y="140" width="90" height="36" rx="7" fill="#14b8a6" fill-opacity="0.14" stroke="#14b8a6"/><text x="175.0" y="163.0" text-anchor="middle" font-size="13" fill="currentColor">m2</text><text x="260" y="280" text-anchor="middle" font-size="13" fill="currentColor">Hoàn tất: m2 → m1</text>
 </svg>
+<svg viewBox="0 0 520 300" role="img" aria-labelledby="msg02-order1-t msg02-order1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="msg02-order1-t">Thứ tự hoàn tất khi xử lý tuần tự</title>
+<desc id="msg02-order1-d">Thứ tự hoàn tất khi xử lý tuần tự</desc>
+<defs><marker id="msg02-order1-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="25" text-anchor="middle" font-size="13" fill="currentColor">1 partition, 1 consumer</text><path d="M120 220 L490 220" fill="none" stroke="currentColor" marker-end="url(#msg02-order1-a)"/><text x="305" y="246" text-anchor="middle" font-size="13" fill="currentColor">Thời gian →</text><text x="60" y="88" text-anchor="middle" font-size="13" fill="currentColor">consumer</text><rect x="130" y="65" width="145" height="36" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="202.5" y="88.0" text-anchor="middle" font-size="13" fill="currentColor">m1</text><text x="60" y="138" text-anchor="middle" font-size="13" fill="currentColor">consumer</text><rect x="280" y="115" width="65" height="36" rx="7" fill="#14b8a6" fill-opacity="0.14" stroke="#14b8a6"/><text x="312.5" y="138.0" text-anchor="middle" font-size="13" fill="currentColor">m2</text><text x="60" y="188" text-anchor="middle" font-size="13" fill="currentColor">consumer</text><rect x="350" y="165" width="75" height="36" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="387.5" y="188.0" text-anchor="middle" font-size="13" fill="currentColor">m3</text><text x="260" y="280" text-anchor="middle" font-size="13" fill="currentColor">Hoàn tất: m1 → m2 → m3</text>
+</svg>
+<ab-note>m1 được lấy trước nhưng xử lý lâu hơn m2; thứ tự nhận không đảm bảo thứ tự hiệu ứng.</ab-note>
+<ab-note>Cùng key phải vào cùng partition/FIFO group, và được xử lý tuần tự để giữ thứ tự.</ab-note>
+</ab-toggle>
 
 **Bẫy kinh điển:** nếu xử lý *lâu hơn* visibility timeout (vd job nặng 40s nhưng timeout 30s), broker sẽ *hiện lại* message *trong khi bạn vẫn đang xử lý* → **hai consumer chạy cùng một message song song**. Cách chữa: đặt timeout > thời gian xử lý p99, hoặc *gia hạn* timeout định kỳ (SQS `ChangeMessageVisibility`, RabbitMQ heartbeat + prefetch hợp lý).
 

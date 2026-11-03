@@ -87,35 +87,22 @@ Read-through **gọn code** và tập trung logic nạp một chỗ, nhưng đò
 
 Mọi lệnh **ghi đi qua cache**: app ghi vào cache, cache **ghi tiếp xuống DB ngay trong cùng thao tác**, và chỉ báo "thành công" khi **cả hai đã ghi xong**.
 
-<svg viewBox="0 0 640 210" role="img" aria-labelledby="wt-t wt-d" style="width:100%;max-width:600px;height:auto;display:block;margin:1.25rem auto">
-<title id="wt-t">Write-through so với write-behind</title>
-<desc id="wt-d">Write-through ghi cache rồi ghi DB đồng bộ trước khi trả về; write-behind trả về ngay sau khi ghi cache và flush DB sau theo lô</desc>
-<text x="160" y="24" text-anchor="middle" font-size="12" fill="currentColor">Write-through (đồng bộ)</text>
-<rect x="30" y="45" width="80" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="70" y="69" text-anchor="middle" font-size="11" fill="currentColor">App</text>
-<rect x="150" y="45" width="80" height="40" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="190" y="69" text-anchor="middle" font-size="11" fill="currentColor">Cache</text>
-<rect x="270" y="45" width="80" height="40" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="310" y="69" text-anchor="middle" font-size="11" fill="currentColor">DB</text>
-<line x1="110" y1="65" x2="150" y2="65" stroke="currentColor" stroke-width="1.5" marker-end="url(#wt-a)"/>
-<line x1="230" y1="65" x2="270" y2="65" stroke="currentColor" stroke-width="1.5" marker-end="url(#wt-a)"/>
-<text x="70" y="110" text-anchor="middle" font-size="9" fill="currentColor">ghi</text>
-<text x="310" y="110" text-anchor="middle" font-size="9" fill="currentColor">chờ DB xong</text>
-<text x="190" y="130" text-anchor="middle" font-size="9" fill="currentColor">→ trả OK sau cùng: bền, nhưng chậm hơn</text>
-<text x="490" y="24" text-anchor="middle" font-size="12" fill="currentColor">Write-behind (bất đồng bộ)</text>
-<rect x="360" y="45" width="80" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="400" y="69" text-anchor="middle" font-size="11" fill="currentColor">App</text>
-<rect x="480" y="45" width="80" height="40" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="520" y="69" text-anchor="middle" font-size="11" fill="currentColor">Cache</text>
-<rect x="600" y="45" width="30" height="40" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="615" y="69" text-anchor="middle" font-size="10" fill="currentColor">DB</text>
-<line x1="440" y1="65" x2="480" y2="65" stroke="currentColor" stroke-width="1.5" marker-end="url(#wt-a)"/>
-<line x1="480" y1="60" x2="440" y2="60" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#wt-a)"/>
-<text x="460" y="42" text-anchor="middle" font-size="8" fill="currentColor">OK ngay</text>
-<line x1="560" y1="80" x2="600" y2="80" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#wt-a)"/>
-<text x="520" y="130" text-anchor="middle" font-size="9" fill="currentColor">flush theo lô sau → nhanh, rủi ro mất data</text>
-<defs><marker id="wt-a" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<ab-toggle data-labels="Write-through|Write-behind">
+<svg viewBox="0 0 520 330" role="img" aria-labelledby="dst07med0-t dst07med0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="dst07med0-t">Write-through chờ cả cache và DB</title>
+<desc id="dst07med0-d">Write-through chờ cả cache và DB</desc>
+<defs><marker id="dst07med0-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="15" y="15" width="90" height="35" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="60.0" y="37.5" text-anchor="middle" font-size="14" fill="currentColor">App</text><line x1="60" y1="50" x2="60" y2="275" stroke="currentColor" stroke-dasharray="4 4"/><rect x="210" y="15" width="90" height="35" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="255.0" y="37.5" text-anchor="middle" font-size="14" fill="currentColor">Cache</text><line x1="255" y1="50" x2="255" y2="275" stroke="currentColor" stroke-dasharray="4 4"/><rect x="410" y="15" width="90" height="35" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="455.0" y="37.5" text-anchor="middle" font-size="14" fill="currentColor">DB</text><line x1="455" y1="50" x2="455" y2="275" stroke="currentColor" stroke-dasharray="4 4"/><rect x="40" y="70" width="40" height="175" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><line x1="60" y1="78" x2="255" y2="78" stroke="currentColor" marker-end="url(#dst07med0-a)"/><text x="160" y="70" text-anchor="middle" font-size="14" fill="currentColor">ghi</text><line x1="255" y1="130" x2="455" y2="130" stroke="currentColor" marker-end="url(#dst07med0-a)"/><text x="355" y="120" text-anchor="middle" font-size="14" fill="currentColor">ghi đồng bộ</text><line x1="455" y1="195" x2="255" y2="195" stroke="currentColor" marker-end="url(#dst07med0-a)"/><text x="355" y="185" text-anchor="middle" font-size="14" fill="currentColor">DB xong</text><line x1="255" y1="245" x2="60" y2="245" stroke="currentColor" marker-end="url(#dst07med0-a)"/><text x="157" y="235" text-anchor="middle" font-size="14" fill="currentColor">OK</text><text x="260" y="306" text-anchor="middle" font-size="14" fill="currentColor">Vùng vàng = thời gian App chờ; thời gian ↓</text>
 </svg>
+<svg viewBox="0 0 520 330" role="img" aria-labelledby="dst07med1-t dst07med1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="dst07med1-t">Write-behind trả trước khi flush</title>
+<desc id="dst07med1-d">Write-behind trả trước khi flush</desc>
+<defs><marker id="dst07med1-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="15" y="15" width="90" height="35" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="60.0" y="37.5" text-anchor="middle" font-size="14" fill="currentColor">App</text><line x1="60" y1="50" x2="60" y2="275" stroke="currentColor" stroke-dasharray="4 4"/><rect x="210" y="15" width="90" height="35" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="255.0" y="37.5" text-anchor="middle" font-size="14" fill="currentColor">Cache</text><line x1="255" y1="50" x2="255" y2="275" stroke="currentColor" stroke-dasharray="4 4"/><rect x="410" y="15" width="90" height="35" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="455.0" y="37.5" text-anchor="middle" font-size="14" fill="currentColor">DB</text><line x1="455" y1="50" x2="455" y2="275" stroke="currentColor" stroke-dasharray="4 4"/><rect x="40" y="70" width="40" height="65" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><line x1="60" y1="78" x2="255" y2="78" stroke="currentColor" marker-end="url(#dst07med1-a)"/><text x="160" y="70" text-anchor="middle" font-size="14" fill="currentColor">ghi</text><line x1="255" y1="125" x2="60" y2="125" stroke="currentColor" marker-end="url(#dst07med1-a)"/><text x="157" y="115" text-anchor="middle" font-size="14" fill="currentColor">OK ngay</text><line x1="255" y1="190" x2="455" y2="190" stroke="currentColor" stroke-dasharray="4 3" marker-end="url(#dst07med1-a)"/><text x="355" y="180" text-anchor="middle" font-size="14" fill="currentColor">flush theo lô sau</text><line x1="455" y1="245" x2="255" y2="245" stroke="currentColor" marker-end="url(#dst07med1-a)"/><text x="355" y="235" text-anchor="middle" font-size="14" fill="currentColor">DB xong</text><text x="260" y="306" text-anchor="middle" font-size="14" fill="currentColor">Vùng vàng = thời gian App chờ; thời gian ↓</text>
+</svg>
+<ab-note>Chỉ trả OK sau khi cache và DB ghi thành công: bền hơn nhưng tăng latency.</ab-note>
+<ab-note>Trả OK sau khi ghi cache; flush theo lô giảm latency nhưng có thể mất dữ liệu chưa flush nếu cache chết.</ab-note>
+</ab-toggle>
 
 **Ưu**: cache **luôn khớp DB** (write-through cache không bao giờ stale so với dữ liệu vừa ghi), và dữ liệu **bền ngay** vì đã nằm ở DB. Thường ghép với read-through để cache luôn "nóng và đúng".
 

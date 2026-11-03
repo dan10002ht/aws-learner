@@ -32,41 +32,22 @@ Ba vấn đề nảy sinh:
 
 Messaging bất đồng bộ đảo ngược mô hình: Order chỉ **gửi một message** "OrderPlaced" vào **broker** rồi **trả lời user ngay**. Các service khác **tự lấy** message về xử lý theo nhịp của mình.
 
-<svg viewBox="0 0 660 250" role="img" aria-labelledby="ms-t ms-d" style="width:100%;max-width:620px;height:auto;display:block;margin:1.25rem auto">
-<title id="ms-t">Gọi đồng bộ trực tiếp vs qua broker bất đồng bộ</title>
-<desc id="ms-d">Bên trái Order gọi thẳng ba service và phải chờ; bên phải Order chỉ gửi vào broker rồi ba consumer tự lấy</desc>
-<text x="150" y="20" text-anchor="middle" font-size="13" fill="currentColor">Đồng bộ (coupling chặt)</text>
-<rect x="20" y="100" width="80" height="40" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="60" y="124" text-anchor="middle" font-size="11" fill="currentColor">Order</text>
-<line x1="100" y1="110" x2="250" y2="55" stroke="currentColor" stroke-width="1" marker-end="url(#am)"/>
-<line x1="100" y1="120" x2="250" y2="120" stroke="currentColor" stroke-width="1" marker-end="url(#am)"/>
-<line x1="100" y1="130" x2="250" y2="185" stroke="currentColor" stroke-width="1" marker-end="url(#am)"/>
-<rect x="255" y="38" width="70" height="32" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="290" y="59" text-anchor="middle" font-size="10" fill="currentColor">Email</text>
-<rect x="255" y="104" width="70" height="32" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="290" y="125" text-anchor="middle" font-size="10" fill="currentColor">Inventory</text>
-<rect x="255" y="170" width="70" height="32" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="290" y="191" text-anchor="middle" font-size="10" fill="currentColor">Analytics</text>
-<line x1="360" y1="125" x2="360" y2="125" stroke="currentColor"/>
-<text x="510" y="20" text-anchor="middle" font-size="13" fill="currentColor">Bất đồng bộ (qua broker)</text>
-<rect x="380" y="104" width="70" height="40" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="415" y="128" text-anchor="middle" font-size="11" fill="currentColor">Order</text>
-<line x1="450" y1="124" x2="490" y2="124" stroke="currentColor" stroke-width="1.5" marker-end="url(#am)"/>
-<rect x="493" y="98" width="60" height="52" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="523" y="120" text-anchor="middle" font-size="10" fill="currentColor">Broker</text>
-<text x="523" y="136" text-anchor="middle" font-size="9" fill="currentColor">(queue)</text>
-<line x1="553" y1="112" x2="600" y2="60" stroke="currentColor" stroke-width="1" marker-end="url(#am)"/>
-<line x1="553" y1="124" x2="600" y2="124" stroke="currentColor" stroke-width="1" marker-end="url(#am)"/>
-<line x1="553" y1="136" x2="600" y2="188" stroke="currentColor" stroke-width="1" marker-end="url(#am)"/>
-<rect x="603" y="44" width="52" height="30" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="629" y="63" text-anchor="middle" font-size="9" fill="currentColor">Email</text>
-<rect x="603" y="110" width="52" height="30" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="629" y="129" text-anchor="middle" font-size="9" fill="currentColor">Invent.</text>
-<rect x="603" y="176" width="52" height="30" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="629" y="195" text-anchor="middle" font-size="9" fill="currentColor">Analyt.</text>
-<text x="510" y="230" text-anchor="middle" font-size="11" fill="currentColor">Order trả lời user ngay, không chờ 3 service</text>
-<defs><marker id="am" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<ab-toggle data-labels="Đồng bộ|Qua broker">
+<svg viewBox="0 0 520 300" role="img" aria-labelledby="msg01-compare0-t msg01-compare0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="msg01-compare0-t">Gọi đồng bộ</title>
+<desc id="msg01-compare0-d">Gọi đồng bộ</desc>
+<defs><marker id="msg01-compare0-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="15" y="105" width="90" height="45" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="60.0" y="132.5" text-anchor="middle" font-size="13" fill="currentColor">Order</text><rect x="380" y="25" width="120" height="40" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="440.0" y="50.0" text-anchor="middle" font-size="13" fill="currentColor">Email</text><path d="M105 128 L380 45" fill="none" stroke="currentColor" marker-end="url(#msg01-compare0-a)"/><rect x="380" y="115" width="120" height="40" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="440.0" y="140.0" text-anchor="middle" font-size="13" fill="currentColor">Inventory</text><path d="M105 128 L380 135" fill="none" stroke="currentColor" marker-end="url(#msg01-compare0-a)"/><rect x="380" y="205" width="120" height="40" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="440.0" y="230.0" text-anchor="middle" font-size="13" fill="currentColor">Analytics</text><path d="M105 128 L380 225" fill="none" stroke="currentColor" marker-end="url(#msg01-compare0-a)"/><text x="260" y="278" text-anchor="middle" font-size="13" fill="currentColor">Order chờ 3 service</text>
 </svg>
+<svg viewBox="0 0 520 300" role="img" aria-labelledby="msg01-compare1-t msg01-compare1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="msg01-compare1-t">Gửi qua broker</title>
+<desc id="msg01-compare1-d">Gửi qua broker</desc>
+<defs><marker id="msg01-compare1-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="15" y="105" width="90" height="45" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="60.0" y="132.5" text-anchor="middle" font-size="13" fill="currentColor">Order</text><rect x="380" y="25" width="120" height="40" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="440.0" y="50.0" text-anchor="middle" font-size="13" fill="currentColor">Email</text><path d="M315 128 L380 45" fill="none" stroke="currentColor" marker-end="url(#msg01-compare1-a)"/><rect x="380" y="115" width="120" height="40" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="440.0" y="140.0" text-anchor="middle" font-size="13" fill="currentColor">Inventory</text><path d="M315 128 L380 135" fill="none" stroke="currentColor" marker-end="url(#msg01-compare1-a)"/><rect x="380" y="205" width="120" height="40" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="440.0" y="230.0" text-anchor="middle" font-size="13" fill="currentColor">Analytics</text><path d="M315 128 L380 225" fill="none" stroke="currentColor" marker-end="url(#msg01-compare1-a)"/><rect x="200" y="100" width="115" height="55" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="257.5" y="132.5" text-anchor="middle" font-size="13" fill="currentColor">Broker (queue)</text><path d="M105 128 L200 128" fill="none" stroke="currentColor" marker-end="url(#msg01-compare1-a)"/><text x="260" y="278" text-anchor="middle" font-size="13" fill="currentColor">Order trả lời user sau khi gửi broker</text>
+</svg>
+<ab-note>Ba cạnh đi thẳng khiến Order phụ thuộc vào cả ba service.</ab-note>
+<ab-note>Broker giữ message để các consumer tự xử lý theo nhịp riêng.</ab-note>
+</ab-toggle>
 
 ### 2.3 Ba lợi ích cốt lõi
 

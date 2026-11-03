@@ -114,33 +114,47 @@ Lag không phải một hiện tượng, nó là **hàng đợi apply bị ngh�
 
 Đây là cái bẫy làm hỏng UX kinh điển nhất. Kiến trúc phổ biến: **ghi vào master, đọc từ replica** để giảm tải. Nhưng replication là **bất đồng bộ** — có độ trễ.
 
-<svg viewBox="0 0 660 280" role="img" aria-labelledby="rw-t rw-d" style="width:100%;max-width:620px;height:auto;display:block;margin:1.25rem auto">
-<title id="rw-t">Read-your-writes bị stale khi đọc replica ngay sau khi ghi master</title>
-<desc id="rw-d">User ghi vào master rồi đọc replica trước khi WAL kịp replay nên thấy dữ liệu cũ</desc>
+<step-flow>
+<svg viewBox="0 0 660 280" role="img" aria-labelledby="dst22b-t dst22b-d" style="width:100%;max-width:620px;height:auto;display:block;margin:1.25rem auto">
+<title id="dst22b-t">Read-your-writes bị stale khi đọc replica ngay sau khi ghi master</title>
+<desc id="dst22b-d">User ghi vào master rồi đọc replica trước khi WAL kịp replay nên thấy dữ liệu cũ</desc>
 <line x1="90" y1="40" x2="90" y2="250" stroke="currentColor" stroke-width="1"/>
 <line x1="330" y1="40" x2="330" y2="250" stroke="currentColor" stroke-width="1"/>
 <line x1="560" y1="40" x2="560" y2="250" stroke="currentColor" stroke-width="1"/>
-<text x="90" y="30" text-anchor="middle" font-size="12" fill="currentColor">User</text>
-<text x="330" y="30" text-anchor="middle" font-size="12" fill="currentColor">Master</text>
-<text x="560" y="30" text-anchor="middle" font-size="12" fill="currentColor">Replica</text>
-<rect x="20" y="55" width="140" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="90" y="72" text-anchor="middle" font-size="10" fill="currentColor">POST cập nhật avatar</text>
-<line x1="160" y1="68" x2="328" y2="68" stroke="currentColor" stroke-width="1.5" marker-end="url(#ra)"/>
-<rect x="270" y="88" width="120" height="24" rx="4" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="330" y="104" text-anchor="middle" font-size="10" fill="currentColor">commit (LSN 500)</text>
-<line x1="330" y1="118" x2="558" y2="150" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#ra)"/>
-<text x="450" y="128" text-anchor="middle" font-size="9" fill="#f59e0b">WAL async (trễ)</text>
+<text x="90" y="30" text-anchor="middle" font-size="13" fill="currentColor">User</text>
+<text x="330" y="30" text-anchor="middle" font-size="13" fill="currentColor">Master</text>
+<text x="560" y="30" text-anchor="middle" font-size="13" fill="currentColor">Replica</text>
+<g data-step="1">
+<rect x="10" y="55" width="160" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+<text x="90" y="72" text-anchor="middle" font-size="13" fill="currentColor">POST cập nhật avatar</text>
+<line x1="160" y1="68" x2="328" y2="68" stroke="currentColor" stroke-width="1.5" marker-end="url(#dst22b-arrow)"/>
+</g>
+<g data-step="2">
+<rect x="250" y="88" width="160" height="24" rx="4" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
+<text x="330" y="104" text-anchor="middle" font-size="13" fill="currentColor">commit (LSN 500)</text>
+<line x1="330" y1="118" x2="558" y2="150" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#dst22b-arrow)"/>
+<text x="450" y="128" text-anchor="middle" font-size="13" fill="#f59e0b">WAL async (trễ)</text>
+</g>
+<g data-step="3">
 <line x1="90" y1="130" x2="90" y2="150" stroke="currentColor" stroke-width="1"/>
-<rect x="20" y="150" width="140" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="90" y="167" text-anchor="middle" font-size="10" fill="currentColor">GET trang profile</text>
-<line x1="160" y1="163" x2="558" y2="163" stroke="currentColor" stroke-width="1.5" marker-end="url(#ra)"/>
+<rect x="10" y="150" width="160" height="26" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
+<text x="90" y="167" text-anchor="middle" font-size="13" fill="currentColor">GET trang profile</text>
+<line x1="160" y1="163" x2="558" y2="163" stroke="currentColor" stroke-width="1.5" marker-end="url(#dst22b-arrow)"/>
+</g>
+<g data-step="4">
 <rect x="490" y="180" width="150" height="40" rx="4" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="565" y="197" text-anchor="middle" font-size="10" fill="currentColor">replay_lsn = 480</text>
-<text x="565" y="213" text-anchor="middle" font-size="10" fill="currentColor">→ trả AVATAR CŨ ✗</text>
-<line x1="490" y1="200" x2="162" y2="200" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#ra)"/>
-<text x="330" y="245" text-anchor="middle" font-size="11" fill="currentColor">User vừa đổi xong lại thấy ảnh cũ → tưởng hệ thống nuốt mất update</text>
-<defs><marker id="ra" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<text x="565" y="197" text-anchor="middle" font-size="13" fill="currentColor">replay_lsn = 480</text>
+<text x="565" y="213" text-anchor="middle" font-size="13" fill="currentColor">→ trả AVATAR CŨ ✗</text>
+<line x1="490" y1="200" x2="162" y2="200" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#dst22b-arrow)"/>
+<text x="330" y="245" text-anchor="middle" font-size="13" fill="currentColor">User vừa đổi xong lại thấy ảnh cũ → tưởng hệ thống nuốt mất update</text>
+</g>
+<defs><marker id="dst22b-arrow" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
 </svg>
+<step-note data-step="1">Ghi đi tới master; đọc từ replica là một đường riêng nên không tự kế thừa trạng thái của lần ghi.</step-note>
+<step-note data-step="2">Commit ở LSN 500 chưa có nghĩa replica đã replay tới 500: WAL được chuyển bất đồng bộ.</step-note>
+<step-note data-step="3">Trang profile được tải lại trước khi replica bắt kịp. Thứ tự request của user không ép thứ tự replay trên replica.</step-note>
+<step-note data-step="4">Replica mới replay tới 480 nên trả avatar cũ; update vẫn tồn tại ở master, nhưng đường đọc chưa bảo đảm read-your-writes.</step-note>
+</step-flow>
 
 User đổi avatar (ghi LSN 500 vào master), rồi ngay lập tức load lại trang. Request đọc rơi vào replica **mới replay tới LSN 480** → trả **ảnh cũ**. Từ góc nhìn user: "tôi vừa lưu mà nó mất". Đây là vi phạm **read-your-writes consistency**.
 

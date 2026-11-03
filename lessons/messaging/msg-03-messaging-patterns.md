@@ -119,30 +119,22 @@ Hai mảnh ghép làm nên phép màu:
 - **reply-to**: request mang header ghi rõ **gửi trả lời về queue nào**. Client thường tạo một **reply queue riêng** (thường là temporary/exclusive) và lắng nghe ở đó.
 - **correlation id**: một id duy nhất gắn vào request; server **copy nguyên** id đó vào reply. Nhờ vậy client — vốn gửi *nhiều* request song song về *cùng* một reply queue — biết **reply nào ứng với request nào**.
 
-<svg viewBox="0 0 620 250" role="img" aria-labelledby="rr-t rr-d" style="width:100%;max-width:580px;height:auto;display:block;margin:1.25rem auto">
-<title id="rr-t">Request-reply bất đồng bộ với correlation id và reply-to</title>
-<desc id="rr-d">Client gửi request kèm correlation id và reply-to queue, server xử lý rồi gửi reply về đúng queue với cùng correlation id</desc>
-<rect x="30" y="30" width="90" height="180" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="75" y="52" text-anchor="middle" font-size="11" fill="currentColor">Client</text>
-<rect x="500" y="30" width="90" height="180" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="545" y="52" text-anchor="middle" font-size="11" fill="currentColor">Server</text>
-<rect x="250" y="30" width="120" height="26" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="310" y="47" text-anchor="middle" font-size="9" fill="currentColor">rpc_queue</text>
-<rect x="250" y="150" width="120" height="26" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="310" y="167" text-anchor="middle" font-size="9" fill="currentColor">reply_to (riêng)</text>
-<line x1="120" y1="72" x2="250" y2="46" stroke="currentColor" stroke-width="1" marker-end="url(#ra)"/>
-<text x="185" y="66" text-anchor="middle" font-size="8" fill="currentColor">1. request</text>
-<text x="185" y="88" text-anchor="middle" font-size="8" fill="currentColor">corr_id=abc, reply_to=Q</text>
-<line x1="370" y1="46" x2="500" y2="80" stroke="currentColor" stroke-width="1" marker-end="url(#ra)"/>
-<text x="435" y="60" text-anchor="middle" font-size="8" fill="currentColor">2. consume</text>
-<rect x="505" y="105" width="80" height="34" rx="4" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="545" y="126" text-anchor="middle" font-size="8" fill="currentColor">xử lý → kết quả</text>
-<line x1="500" y1="150" x2="370" y2="160" stroke="currentColor" stroke-width="1" marker-end="url(#ra)"/>
-<text x="435" y="146" text-anchor="middle" font-size="8" fill="currentColor">3. reply corr_id=abc</text>
-<line x1="250" y1="163" x2="120" y2="180" stroke="currentColor" stroke-width="1" marker-end="url(#ra)"/>
-<text x="185" y="196" text-anchor="middle" font-size="8" fill="currentColor">4. khớp corr_id → resolve</text>
-<defs><marker id="ra" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<step-flow>
+<svg viewBox="0 0 760 320" role="img" aria-labelledby="msg03-rpc-t msg03-rpc-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto">
+<title id="msg03-rpc-t">Request-reply: hai queue, một vòng đi và về</title>
+<desc id="msg03-rpc-d">Request-reply: hai queue, một vòng đi và về</desc>
+<defs><marker id="msg03-rpc-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="20" y="35" width="110" height="250" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="75.0" y="165.0" text-anchor="middle" font-size="13" fill="currentColor">Client</text><rect x="620" y="35" width="120" height="250" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="680.0" y="60" text-anchor="middle" font-size="13" fill="currentColor">Server</text><rect x="290" y="35" width="160" height="40" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="370.0" y="60.0" text-anchor="middle" font-size="13" fill="currentColor">rpc_queue</text><rect x="290" y="205" width="160" height="40" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="370.0" y="230.0" text-anchor="middle" font-size="13" fill="currentColor">reply_to = Q</text>
+<g data-step="1"><path d="M130 95 L290 60" fill="none" stroke="currentColor" marker-end="url(#msg03-rpc-a)"/><text x="210" y="115" text-anchor="middle" font-size="13" fill="currentColor">1. request</text><text x="270" y="140" text-anchor="middle" font-size="13" fill="currentColor">corr_id=abc, reply_to=Q</text></g>
+<g data-step="2"><path d="M450 60 L620 95" fill="none" stroke="currentColor" marker-end="url(#msg03-rpc-a)"/><text x="530" y="55" text-anchor="middle" font-size="13" fill="currentColor">2. consume</text><rect x="630" y="135" width="100" height="40" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="680.0" y="160.0" text-anchor="middle" font-size="13" fill="currentColor">xử lý</text></g>
+<g data-step="3"><path d="M620 225 L450 225" fill="none" stroke="currentColor" marker-end="url(#msg03-rpc-a)"/><text x="535" y="205" text-anchor="middle" font-size="13" fill="currentColor">3. corr_id=abc</text></g>
+<g data-step="4"><path d="M290 225 L130 255" fill="none" stroke="currentColor" marker-end="url(#msg03-rpc-a)"/><text x="230" y="280" text-anchor="middle" font-size="13" fill="currentColor">4. match → resolve</text></g>
 </svg>
+<step-note data-step="1">Client chỉ rõ queue nhận kết quả để server không cần giữ kết nối trực tiếp.</step-note>
+<step-note data-step="2">Queue đệm request cho đến khi server sẵn sàng xử lý.</step-note>
+<step-note data-step="3">Server copy nguyên correlation id để kết quả giữ được liên hệ với request.</step-note>
+<step-note data-step="4">Client dùng correlation id để resolve đúng request khi nhiều lời gọi dùng chung reply queue.</step-note>
+</step-flow>
 
 ```python
 # RabbitMQ RPC client — bản rút gọn

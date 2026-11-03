@@ -19,29 +19,22 @@ Nhớ từ [[dst-01-redis-intro]]: Redis xử lý lệnh trên **một thread ev
 
 Redis cho gửi một đoạn **Lua script** qua `EVAL`. Server chạy **trọn vẹn cả script như MỘT lệnh**: trong lúc script chạy, **không lệnh nào khác được xen vào** (vì vẫn là single-thread). Do đó chuỗi read-modify-write bên trong script là **atomic** — không cần lock, không cần `WATCH/MULTI` optimistic.
 
-<svg viewBox="0 0 640 220" role="img" aria-labelledby="lua-t lua-d" style="width:100%;max-width:600px;height:auto;display:block;margin:1.25rem auto">
-<title id="lua-t">Vì sao Lua script atomic trong Redis</title>
-<desc id="lua-d">So sánh ba lệnh rời có thể bị chen ngang với một Lua script chạy trọn vẹn không bị xen kẽ trên event loop single-thread</desc>
-<text x="150" y="24" text-anchor="middle" font-size="12" fill="currentColor">3 lệnh rời (GET, so sánh, DEL)</text>
-<rect x="40" y="38" width="70" height="28" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="75" y="56" text-anchor="middle" font-size="11" fill="currentColor">GET</text>
-<rect x="120" y="38" width="90" height="28" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="165" y="56" text-anchor="middle" font-size="11" fill="currentColor">lệnh client B</text>
-<rect x="220" y="38" width="70" height="28" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="255" y="56" text-anchor="middle" font-size="11" fill="currentColor">DEL</text>
-<text x="150" y="86" text-anchor="middle" font-size="11" fill="currentColor">B chen vào giữa → xoá nhầm lock của người khác</text>
-<line x1="20" y1="110" x2="620" y2="110" stroke="currentColor" stroke-width="0.5" stroke-dasharray="4 4"/>
-<text x="150" y="140" text-anchor="middle" font-size="12" fill="currentColor">EVAL 1 Lua script</text>
-<rect x="40" y="154" width="250" height="30" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="165" y="173" text-anchor="middle" font-size="11" fill="currentColor">GET + so sánh + DEL (trọn vẹn)</text>
-<text x="165" y="204" text-anchor="middle" font-size="11" fill="currentColor">Không lệnh nào xen vào → atomic</text>
-<rect x="360" y="40" width="250" height="150" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="485" y="70" text-anchor="middle" font-size="12" fill="currentColor">Event loop single-thread</text>
-<text x="485" y="95" text-anchor="middle" font-size="11" fill="currentColor">chạy tuần tự từng lệnh</text>
-<text x="485" y="118" text-anchor="middle" font-size="11" fill="currentColor">Lua = 1 đơn vị thực thi</text>
-<text x="485" y="141" text-anchor="middle" font-size="11" fill="currentColor">→ read-modify-write</text>
-<text x="485" y="162" text-anchor="middle" font-size="11" fill="currentColor">không bị race</text>
+<ab-toggle data-labels="Lệnh rời|Lua atomic">
+<svg viewBox="0 0 520 280" role="img" aria-labelledby="dst06luamed0-t dst06luamed0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="dst06luamed0-t">Lệnh rời bị client B chen</title>
+<desc id="dst06luamed0-d">Lệnh rời bị client B chen</desc>
+<defs><marker id="dst06luamed0-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="24" text-anchor="middle" font-size="14" fill="currentColor">Event loop: thời gian →</text><line x1="30" y1="185" x2="490" y2="185" stroke="currentColor" marker-end="url(#dst06luamed0-a)"/><text x="28" y="75" text-anchor="start" font-size="14" fill="currentColor">A</text><text x="28" y="135" text-anchor="start" font-size="14" fill="currentColor">B</text><rect x="60" y="50" width="90" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="105.0" y="73.0" text-anchor="middle" font-size="14" fill="currentColor">GET</text><rect x="190" y="110" width="120" height="36" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><text x="250.0" y="133.0" text-anchor="middle" font-size="14" fill="currentColor">B ghi lock</text><rect x="350" y="50" width="110" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="405.0" y="73.0" text-anchor="middle" font-size="14" fill="currentColor">DEL</text><line x1="150" y1="68" x2="190" y2="128" stroke="currentColor" marker-end="url(#dst06luamed0-a)"/><line x1="310" y1="128" x2="350" y2="68" stroke="currentColor" marker-end="url(#dst06luamed0-a)"/><text x="255" y="215" text-anchor="middle" font-size="14" fill="currentColor">So sánh token ở client giữa GET và DEL</text><text x="260" y="242" text-anchor="middle" font-size="14" fill="currentColor">DEL có thể xoá lock mới của B</text>
 </svg>
+<svg viewBox="0 0 520 280" role="img" aria-labelledby="dst06luamed1-t dst06luamed1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="dst06luamed1-t">Lua atomic</title>
+<desc id="dst06luamed1-d">Lua atomic</desc>
+<defs><marker id="dst06luamed1-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="24" text-anchor="middle" font-size="14" fill="currentColor">Event loop: thời gian →</text><line x1="30" y1="185" x2="490" y2="185" stroke="currentColor" marker-end="url(#dst06luamed1-a)"/><text x="28" y="75" text-anchor="start" font-size="14" fill="currentColor">A</text><text x="28" y="135" text-anchor="start" font-size="14" fill="currentColor">B</text><rect x="55" y="37" width="310" height="68" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><rect x="65" y="50" width="80" height="36" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="105.0" y="73.0" text-anchor="middle" font-size="14" fill="currentColor">GET</text><rect x="150" y="50" width="105" height="36" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="202.5" y="73.0" text-anchor="middle" font-size="14" fill="currentColor">so token</text><rect x="260" y="50" width="95" height="36" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="307.5" y="73.0" text-anchor="middle" font-size="14" fill="currentColor">DEL</text><rect x="380" y="110" width="125" height="36" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><text x="442.5" y="133.0" text-anchor="middle" font-size="14" fill="currentColor">B ghi lock</text><line x1="365" y1="70" x2="380" y2="128" stroke="currentColor" marker-end="url(#dst06luamed1-a)"/><text x="260" y="215" text-anchor="middle" font-size="14" fill="currentColor">EVAL = một đơn vị thực thi không bị chen</text><text x="260" y="242" text-anchor="middle" font-size="14" fill="currentColor">Script ngắn: chặn server trong lúc chạy</text>
+</svg>
+<ab-note>GET, so sánh ở client và DEL không tạo thành một thao tác atomic.</ab-note>
+<ab-note>GET, so sánh và DEL nằm trong script; lệnh của B chỉ chạy khi script đã kết thúc.</ab-note>
+</ab-toggle>
 
 > **Cảnh báo song hành:** vì script chặn cả server, **giữ script ngắn**. Đừng loop hàng triệu key trong Lua — sẽ block mọi client như một lệnh O(N) lớn.
 
@@ -168,6 +161,24 @@ return 1        -- cho qua
 ```
 
 **Nhược điểm cố hữu — burst ở mép cửa sổ:** 100 req lúc 12:00:59 và 100 req lúc 12:01:00 = 200 req trong 1 giây mà vẫn "hợp lệ" vì rơi vào hai cửa sổ khác nhau. Đây là lý do có sliding window.
+
+
+<ab-toggle data-labels="Fixed window|Sliding window">
+<svg viewBox="0 0 520 310" role="img" aria-labelledby="dst06ratemed0-t dst06ratemed0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="dst06ratemed0-t">Fixed window reset tại ranh giới</title>
+<desc id="dst06ratemed0-d">Fixed window reset tại ranh giới</desc>
+<defs><marker id="dst06ratemed0-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">Giới hạn 100 request / 60 giây</text><rect x="40" y="45" width="220" height="155" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><rect x="260" y="45" width="220" height="155" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="145" y="66" text-anchor="middle" font-size="14" fill="currentColor">Phút 12:00</text><text x="365" y="66" text-anchor="middle" font-size="14" fill="currentColor">Phút 12:01</text><rect x="222" y="87" width="25" height="100" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><rect x="273" y="87" width="25" height="100" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="210" y="210" text-anchor="middle" font-size="14" fill="currentColor">12:00:59</text><text x="320" y="235" text-anchor="middle" font-size="14" fill="currentColor">12:01:00</text><line x1="35" y1="190" x2="490" y2="190" stroke="currentColor" marker-end="url(#dst06ratemed0-a)"/><text x="165" y="114" text-anchor="middle" font-size="14" fill="currentColor">100 qua</text><text x="369" y="114" text-anchor="middle" font-size="14" fill="currentColor">100 qua</text><text x="260" y="275" text-anchor="middle" font-size="14" fill="currentColor">Hai counter: 200 request trong 1 giây</text>
+</svg>
+<svg viewBox="0 0 520 310" role="img" aria-labelledby="dst06ratemed1-t dst06ratemed1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="dst06ratemed1-t">Sliding window chặn burst thứ hai</title>
+<desc id="dst06ratemed1-d">Sliding window chặn burst thứ hai</desc>
+<defs><marker id="dst06ratemed1-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">Giới hạn 100 request / 60 giây</text><rect x="40" y="45" width="220" height="155" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><rect x="260" y="45" width="220" height="155" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="145" y="66" text-anchor="middle" font-size="14" fill="currentColor">Phút 12:00</text><text x="365" y="66" text-anchor="middle" font-size="14" fill="currentColor">Phút 12:01</text><rect x="222" y="87" width="25" height="100" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><rect x="273" y="87" width="25" height="100" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><text x="210" y="210" text-anchor="middle" font-size="14" fill="currentColor">12:00:59</text><text x="320" y="235" text-anchor="middle" font-size="14" fill="currentColor">12:01:00</text><line x1="35" y1="190" x2="490" y2="190" stroke="currentColor" marker-end="url(#dst06ratemed1-a)"/><text x="165" y="114" text-anchor="middle" font-size="14" fill="currentColor">100 qua</text><text x="369" y="114" text-anchor="middle" font-size="14" fill="currentColor">100 chặn</text><path d="M70 250 V260 H298 V250" fill="none" stroke="#8b5cf6" stroke-width="3"/><text x="175" y="282" text-anchor="middle" font-size="14" fill="currentColor">60s gần nhất đã đủ 100</text>
+</svg>
+<ab-note>Hai nhóm thuộc hai counter khác nhau nên đều được nhận.</ab-note>
+<ab-note>Minh hoạ sliding window log chính xác: ở 12:01:00, 100 request lúc 12:00:59 vẫn còn trong 60 giây gần nhất.</ab-note>
+</ab-toggle>
 
 ### 4.2 Sliding window log — sorted set
 Lưu **timestamp từng request** vào một sorted set, mỗi lần đến thì bỏ các timestamp cũ hơn (now − window) rồi đếm số còn lại.

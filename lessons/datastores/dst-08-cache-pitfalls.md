@@ -213,27 +213,22 @@ def get_with_bloom(uid):
 
 **Bản chất:** khác stampede (1 key hot), avalanche là **số lượng lớn key hết hạn trong cùng một khoảnh khắc**. Kịch bản điển hình: bạn warm-up cache lúc deploy bằng một vòng lặp `set(key, val, ex=3600)` → **tất cả** có TTL 3600 giống hệt, nên **1 giờ sau tất cả chết cùng giây**. Hoặc Redis restart/mất cả cụm → toàn bộ miss cùng lúc. Kết quả: DB nhận đợt sóng miss khổng lồ.
 
-<svg viewBox="0 0 640 210" role="img" aria-labelledby="av-t av-d" style="width:100%;max-width:600px;height:auto;display:block;margin:1.25rem auto">
-<title id="av-t">Avalanche: TTL đồng loạt vs TTL có jitter</title>
-<desc id="av-d">So sánh trước sau: TTL giống hệt khiến mọi key chết cùng lúc; thêm jitter làm hạn hết trải đều</desc>
-<text x="160" y="20" text-anchor="middle" font-size="12" fill="currentColor">TTL cố định (xấu)</text>
-<line x1="40" y1="90" x2="280" y2="90" stroke="currentColor" stroke-width="1"/>
-<line x1="250" y1="35" x2="250" y2="95" stroke="#f43f5e" stroke-width="2"/>
-<circle cx="250" cy="45" r="4" fill="#f43f5e" fill-opacity="0.6" stroke="currentColor"/>
-<circle cx="250" cy="55" r="4" fill="#f43f5e" fill-opacity="0.6" stroke="currentColor"/>
-<circle cx="250" cy="65" r="4" fill="#f43f5e" fill-opacity="0.6" stroke="currentColor"/>
-<circle cx="250" cy="75" r="4" fill="#f43f5e" fill-opacity="0.6" stroke="currentColor"/>
-<text x="250" y="110" text-anchor="middle" font-size="10" fill="currentColor">mọi key chết 1 điểm</text>
-<text x="480" y="20" text-anchor="middle" font-size="12" fill="currentColor">TTL + jitter (tốt)</text>
-<line x1="360" y1="90" x2="620" y2="90" stroke="currentColor" stroke-width="1"/>
-<circle cx="440" cy="70" r="4" fill="#10b981" fill-opacity="0.6" stroke="currentColor"/>
-<circle cx="475" cy="60" r="4" fill="#10b981" fill-opacity="0.6" stroke="currentColor"/>
-<circle cx="510" cy="72" r="4" fill="#10b981" fill-opacity="0.6" stroke="currentColor"/>
-<circle cx="545" cy="58" r="4" fill="#10b981" fill-opacity="0.6" stroke="currentColor"/>
-<circle cx="580" cy="68" r="4" fill="#10b981" fill-opacity="0.6" stroke="currentColor"/>
-<text x="490" y="110" text-anchor="middle" font-size="10" fill="currentColor">hạn trải đều theo thời gian</text>
-<text x="320" y="150" text-anchor="middle" font-size="11" fill="currentColor">Trục ngang = thời gian; mỗi chấm = một key hết hạn</text>
+<ab-toggle data-labels="TTL cố định|TTL ±10%">
+<svg viewBox="0 0 520 310" role="img" aria-labelledby="dst08med0-t dst08med0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="dst08med0-t">TTL cố định: cùng hết hạn 3600s</title>
+<desc id="dst08med0-d">TTL cố định: cùng hết hạn 3600s</desc>
+<defs><marker id="dst08med0-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="22" text-anchor="middle" font-size="14" fill="currentColor">Cùng lúc nạp key; xem đoạn cuối vòng đời</text><text x="35" y="63" text-anchor="middle" font-size="14" fill="currentColor">k1</text><rect x="90" y="48" width="210.0" height="18" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><circle cx="300.0" cy="57" r="4" fill="#f43f5e"/><text x="35" y="92" text-anchor="middle" font-size="14" fill="currentColor">k2</text><rect x="90" y="77" width="210.0" height="18" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><circle cx="300.0" cy="86" r="4" fill="#f43f5e"/><text x="35" y="121" text-anchor="middle" font-size="14" fill="currentColor">k3</text><rect x="90" y="106" width="210.0" height="18" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><circle cx="300.0" cy="115" r="4" fill="#f43f5e"/><text x="35" y="150" text-anchor="middle" font-size="14" fill="currentColor">k4</text><rect x="90" y="135" width="210.0" height="18" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><circle cx="300.0" cy="144" r="4" fill="#f43f5e"/><text x="35" y="179" text-anchor="middle" font-size="14" fill="currentColor">k5</text><rect x="90" y="164" width="210.0" height="18" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><circle cx="300.0" cy="173" r="4" fill="#f43f5e"/><text x="35" y="208" text-anchor="middle" font-size="14" fill="currentColor">k6</text><rect x="90" y="193" width="210.0" height="18" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><circle cx="300.0" cy="202" r="4" fill="#f43f5e"/><line x1="85" y1="234" x2="455" y2="234" stroke="currentColor" marker-end="url(#dst08med0-a)"/><text x="90" y="255" text-anchor="middle" font-size="14" fill="currentColor">2800s</text><text x="300" y="255" text-anchor="middle" font-size="14" fill="currentColor">3600s</text><text x="390" y="255" text-anchor="middle" font-size="14" fill="currentColor">3960s</text><text x="260" y="285" text-anchor="middle" font-size="14" fill="currentColor">Chấm = key hết hạn; trục ngang = thời gian</text>
 </svg>
+<svg viewBox="0 0 520 310" role="img" aria-labelledby="dst08med1-t dst08med1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="dst08med1-t">TTL jitter trải hạn 3240–3960s</title>
+<desc id="dst08med1-d">TTL jitter trải hạn 3240–3960s</desc>
+<defs><marker id="dst08med1-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="22" text-anchor="middle" font-size="14" fill="currentColor">Cùng lúc nạp key; xem đoạn cuối vòng đời</text><text x="35" y="63" text-anchor="middle" font-size="14" fill="currentColor">k1</text><rect x="90" y="48" width="120.0" height="18" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><circle cx="210.0" cy="57" r="4" fill="#10b981"/><text x="35" y="92" text-anchor="middle" font-size="14" fill="currentColor">k2</text><rect x="90" y="77" width="165.0" height="18" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><circle cx="255.0" cy="86" r="4" fill="#10b981"/><text x="35" y="121" text-anchor="middle" font-size="14" fill="currentColor">k3</text><rect x="90" y="106" width="197.5" height="18" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><circle cx="287.5" cy="115" r="4" fill="#10b981"/><text x="35" y="150" text-anchor="middle" font-size="14" fill="currentColor">k4</text><rect x="90" y="135" width="227.5" height="18" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><circle cx="317.5" cy="144" r="4" fill="#10b981"/><text x="35" y="179" text-anchor="middle" font-size="14" fill="currentColor">k5</text><rect x="90" y="164" width="262.5" height="18" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><circle cx="352.5" cy="173" r="4" fill="#10b981"/><text x="35" y="208" text-anchor="middle" font-size="14" fill="currentColor">k6</text><rect x="90" y="193" width="300.0" height="18" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><circle cx="390.0" cy="202" r="4" fill="#10b981"/><line x1="85" y1="234" x2="455" y2="234" stroke="currentColor" marker-end="url(#dst08med1-a)"/><text x="90" y="255" text-anchor="middle" font-size="14" fill="currentColor">2800s</text><text x="300" y="255" text-anchor="middle" font-size="14" fill="currentColor">3600s</text><text x="390" y="255" text-anchor="middle" font-size="14" fill="currentColor">3960s</text><text x="260" y="285" text-anchor="middle" font-size="14" fill="currentColor">Chấm = key hết hạn; trục ngang = thời gian</text>
+</svg>
+<ab-note>Nạp gần đồng thời với TTL bằng nhau khiến nhiều key cùng miss và dồn tải DB.</ab-note>
+<ab-note>Jitter phân tán thời điểm hết hạn; không bảo vệ khỏi mất toàn bộ cụm cache.</ab-note>
+</ab-toggle>
 
 **Fix 1 — Jitter TTL:** thêm một lượng **ngẫu nhiên** vào mỗi TTL để rải điểm hết hạn:
 

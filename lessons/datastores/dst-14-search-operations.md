@@ -264,6 +264,30 @@ PUT /products/_settings
 POST /products/_refresh
 ```
 
+<svg viewBox="0 0 520 250" role="img" aria-labelledby="dst14n-t dst14n-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="dst14n-t">Khoảng chờ từ ghi tới searchable</title>
+<desc id="dst14n-d">Một document được ghi giữa hai lần refresh. Vùng chờ màu cam kết thúc tại lần refresh kế tiếp; sau đó document xuất hiện trong segment có thể tìm kiếm.</desc>
+<defs><marker id="dst14n-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="25" y="25" font-size="14" fill="currentColor">Ví dụ: refresh định kỳ mỗi 1 giây</text>
+<rect x="150" y="45" width="220" height="145" fill="#f59e0b" fill-opacity="0.14"/>
+<rect x="370" y="45" width="125" height="145" fill="#10b981" fill-opacity="0.14"/>
+<line x1="25" y1="190" x2="500" y2="190" stroke="currentColor" marker-end="url(#dst14n-arrow)"/>
+<line x1="40" y1="45" x2="40" y2="200" stroke="#3b82f6"/>
+<line x1="370" y1="45" x2="370" y2="200" stroke="#10b981" stroke-width="2"/>
+<circle cx="150" cy="190" r="5" fill="#f59e0b"/>
+<text x="40" y="220" text-anchor="middle" font-size="13" fill="currentColor">0s</text>
+<text x="150" y="220" text-anchor="middle" font-size="13" fill="currentColor">ghi doc</text>
+<text x="370" y="220" text-anchor="middle" font-size="13" fill="currentColor">1s: refresh</text>
+<text x="260" y="76" text-anchor="middle" font-size="14" fill="currentColor">Chưa searchable</text>
+<rect x="175" y="95" width="170" height="35" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="260" y="117" text-anchor="middle" font-size="13" fill="currentColor">doc trong buffer</text>
+<text x="260" y="157" text-anchor="middle" font-size="13" fill="currentColor">+ translog để bền</text>
+<line x1="345" y1="112" x2="390" y2="112" stroke="currentColor" marker-end="url(#dst14n-arrow)"/>
+<rect x="395" y="90" width="90" height="65" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="440" y="115" text-anchor="middle" font-size="13" fill="currentColor">segment</text>
+<text x="440" y="138" text-anchor="middle" font-size="13" fill="currentColor">searchable</text>
+</svg>
+
 Đây là đòn bẩy hiệu năng lớn: mỗi lần refresh tạo segment tốn CPU/IO; với batch load, tắt refresh có thể tăng tốc gấp nhiều lần.
 
 ### 5.4 ILM — Index Lifecycle Management

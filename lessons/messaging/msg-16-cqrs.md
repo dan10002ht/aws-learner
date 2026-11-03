@@ -112,27 +112,42 @@ Projection "order_summary" fold các event → 1 row read model:
 
 Khi write store và read store **tách rời**, có một khoảng trễ giữa lúc command thành công và lúc read model phản ánh nó. Đây là **eventual consistency**: read side rồi *sẽ* đúng, nhưng **không tức thì**.
 
-<svg viewBox="0 0 620 250" role="img" aria-labelledby="ec-t ec-d" style="width:100%;max-width:600px;height:auto;display:block;margin:1.25rem auto">
-<title id="ec-t">Độ trễ eventual consistency giữa write side và read side</title>
-<desc id="ec-d">Command ghi thành công ngay nhưng projection cập nhật read model sau một khoảng trễ, query giữa khoảng đó thấy dữ liệu cũ</desc>
-<line x1="40" y1="40" x2="40" y2="210" stroke="currentColor" stroke-width="1"/>
-<line x1="40" y1="210" x2="580" y2="210" stroke="currentColor" stroke-width="1" marker-end="url(#ae)"/>
-<text x="575" y="230" text-anchor="middle" font-size="10" fill="currentColor">thời gian</text>
-<circle cx="110" cy="70" r="5" fill="#3b82f6" fill-opacity="0.6" stroke="currentColor"/>
-<text x="110" y="55" text-anchor="middle" font-size="9" fill="currentColor">t0: command OK</text>
-<text x="110" y="90" text-anchor="middle" font-size="8" fill="currentColor">write store đã ghi</text>
-<circle cx="420" cy="70" r="5" fill="#10b981" fill-opacity="0.6" stroke="currentColor"/>
-<text x="420" y="55" text-anchor="middle" font-size="9" fill="currentColor">t1: projection xong</text>
-<text x="420" y="90" text-anchor="middle" font-size="8" fill="currentColor">read model cập nhật</text>
-<rect x="110" y="120" width="310" height="40" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="265" y="138" text-anchor="middle" font-size="10" fill="currentColor">cửa sổ trễ (lag): read model còn CŨ</text>
-<text x="265" y="152" text-anchor="middle" font-size="9" fill="currentColor">query lúc này thấy dữ liệu trước command</text>
-<line x1="110" y1="75" x2="110" y2="120" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
-<line x1="420" y1="75" x2="420" y2="120" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
-<circle cx="265" cy="185" r="5" fill="#f43f5e" fill-opacity="0.6" stroke="currentColor"/>
-<text x="265" y="203" text-anchor="middle" font-size="9" fill="currentColor">user query ở đây → stale</text>
-<defs><marker id="ae" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<auto-anim data-dur="8">
+<svg viewBox="0 0 520 385" role="img" aria-labelledby="msg16-lag-t msg16-lag-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="msg16-lag-t">Read model đổi sau write model</title>
+<desc id="msg16-lag-d">Con trỏ tím chạy từ t0 command OK tới t1 projection xong. Trong dải vàng query thấy dữ liệu cũ; qua t1 kết quả chuyển sang mới. Chu kỳ minh họa 8 giây không phải độ trễ thực tế.</desc>
+<defs><marker id="msg16-lag-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="23" text-anchor="middle" font-size="13" fill="currentColor" >Command OK trước khi projection bắt kịp</text>
+<rect x="140" y="42" width="220" height="199" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="250" y="62" text-anchor="middle" font-size="13" fill="currentColor" >cửa sổ lag</text>
+<text x="55" y="107" text-anchor="middle" font-size="13" fill="currentColor" >Write</text>
+<text x="55" y="187" text-anchor="middle" font-size="13" fill="currentColor" >Read</text>
+<path d="M100 120 H140 V90 H480" fill="none" stroke="#3b82f6" stroke-width="3"/>
+<path d="M100 200 H360 V170 H480" fill="none" stroke="#10b981" stroke-width="3"/>
+<text x="205" y="87" text-anchor="middle" font-size="13" fill="currentColor" >đã ghi mới</text>
+<text x="245" y="217" text-anchor="middle" font-size="13" fill="currentColor" >query → dữ liệu cũ</text>
+<text x="422" y="162" text-anchor="middle" font-size="13" fill="currentColor" >đã cập nhật</text>
+<line x1="140" y1="70" x2="140" y2="245" stroke="currentColor" stroke-dasharray="4 4"/>
+<text x="140" y="263" text-anchor="middle" font-size="13" fill="currentColor" >t0</text>
+<line x1="360" y1="70" x2="360" y2="245" stroke="currentColor" stroke-dasharray="4 4"/>
+<text x="360" y="263" text-anchor="middle" font-size="13" fill="currentColor" >t1</text>
+<line x1="100" y1="245" x2="485" y2="245" stroke="currentColor" stroke-width="1.5" marker-end="url(#msg16-lag-a)" />
+<text x="445" y="283" text-anchor="middle" font-size="13" fill="currentColor" >thời gian</text>
+<text x="140" y="302" text-anchor="middle" font-size="13" fill="currentColor" >command OK</text>
+<text x="360" y="302" text-anchor="middle" font-size="13" fill="currentColor" >projection xong</text>
+<g>
+<line x1="140" y1="72" x2="140" y2="240" stroke="#8b5cf6" stroke-width="2"><animate attributeName="x1" values="140;360;470;470" keyTimes="0;0.6;0.9;1" dur="8s" repeatCount="indefinite"/><animate attributeName="x2" values="140;360;470;470" keyTimes="0;0.6;0.9;1" dur="8s" repeatCount="indefinite"/></line>
+</g>
+<rect x="110" y="325" width="300" height="42" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<g opacity="1"><animate attributeName="opacity" values="1;0;0" keyTimes="0;0.6;1" calcMode="discrete" dur="8s" repeatCount="indefinite"/>
+<text x="260" y="351" text-anchor="middle" font-size="13" fill="currentColor" >Query hiện tại: CŨ</text>
+</g>
+<g opacity="0"><animate attributeName="opacity" values="0;1;1" keyTimes="0;0.6;1" calcMode="discrete" dur="8s" repeatCount="indefinite"/>
+<rect x="110" y="325" width="300" height="42" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="260" y="351" text-anchor="middle" font-size="13" fill="currentColor" >Query hiện tại: MỚI</text>
+</g>
 </svg>
+</auto-anim>
 
 Ví dụ kinh điển: user bấm "Đăng bài", server trả 200 OK, nhưng khi màn hình reload danh sách bài **chưa thấy bài vừa đăng** vì projection chậm 300ms. User hoang mang "mất bài rồi?".
 

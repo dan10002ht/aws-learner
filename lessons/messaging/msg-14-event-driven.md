@@ -38,40 +38,51 @@ Sau bài này bạn có thể:
 
 Còn **MESSAGE** ở nghĩa hẹp (khác command/event) đôi khi chỉ **document/dữ liệu thô** truyền đi mà không mang ý định mệnh lệnh cũng chẳng khẳng định một sự kiện — ví dụ đẩy một bản ghi để đồng bộ. Trong thực tế, ranh giới quan trọng nhất cần thuộc là **COMMAND vs EVENT**.
 
-<svg viewBox="0 0 660 250" role="img" aria-labelledby="ce-t ce-d" style="width:100%;max-width:620px;height:auto;display:block;margin:1.25rem auto">
-<title id="ce-t">Command point-to-point vs Event broadcast</title>
-<desc id="ce-d">Bên trái một command đi tới đúng một service đích đã biết; bên phải một event được phát cho nhiều subscriber mà nguồn không biết</desc>
-<text x="160" y="20" text-anchor="middle" font-size="13" fill="currentColor">COMMAND — "hãy làm X"</text>
-<rect x="30" y="95" width="90" height="40" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="75" y="112" text-anchor="middle" font-size="10" fill="currentColor">Order svc</text>
-<text x="75" y="126" text-anchor="middle" font-size="9" fill="currentColor">(người gửi)</text>
-<line x1="120" y1="115" x2="205" y2="115" stroke="currentColor" stroke-width="1.5" marker-end="url(#ae)"/>
-<text x="162" y="108" text-anchor="middle" font-size="9" fill="currentColor">ReserveStock</text>
-<rect x="208" y="95" width="95" height="40" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="255" y="112" text-anchor="middle" font-size="10" fill="currentColor">Inventory</text>
-<text x="255" y="126" text-anchor="middle" font-size="9" fill="currentColor">(đích đã biết)</text>
-<text x="160" y="165" text-anchor="middle" font-size="10" fill="currentColor">1 đích cụ thể · có thể từ chối</text>
-<line x1="330" y1="30" x2="330" y2="210" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4"/>
-<text x="500" y="20" text-anchor="middle" font-size="13" fill="currentColor">EVENT — "X đã xảy ra"</text>
-<rect x="352" y="95" width="90" height="40" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="397" y="112" text-anchor="middle" font-size="10" fill="currentColor">Order svc</text>
-<text x="397" y="126" text-anchor="middle" font-size="9" fill="currentColor">(nguồn)</text>
-<line x1="442" y1="115" x2="482" y2="115" stroke="currentColor" stroke-width="1.5" marker-end="url(#ae)"/>
-<text x="470" y="88" text-anchor="middle" font-size="9" fill="currentColor">OrderPlaced</text>
-<rect x="485" y="98" width="46" height="34" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="508" y="119" text-anchor="middle" font-size="9" fill="currentColor">Topic</text>
-<line x1="531" y1="108" x2="575" y2="60" stroke="currentColor" stroke-width="1" marker-end="url(#ae)"/>
-<line x1="531" y1="115" x2="575" y2="115" stroke="currentColor" stroke-width="1" marker-end="url(#ae)"/>
-<line x1="531" y1="122" x2="575" y2="170" stroke="currentColor" stroke-width="1" marker-end="url(#ae)"/>
-<rect x="578" y="45" width="70" height="28" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="613" y="63" text-anchor="middle" font-size="9" fill="currentColor">Email</text>
-<rect x="578" y="101" width="70" height="28" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="613" y="119" text-anchor="middle" font-size="9" fill="currentColor">Inventory</text>
-<rect x="578" y="157" width="70" height="28" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="613" y="175" text-anchor="middle" font-size="9" fill="currentColor">Analytics</text>
-<text x="500" y="215" text-anchor="middle" font-size="10" fill="currentColor">0..N subscriber · nguồn không biết ai</text>
-<defs><marker id="ae" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<ab-toggle data-labels="Command|Event">
+<svg viewBox="0 0 520 330" role="img" aria-labelledby="msg14-command-t msg14-command-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="msg14-command-t">Command một đích</title>
+<desc id="msg14-command-d">Cùng Order và ba vị trí nhận: command chỉ nối Inventory; event qua Topic phân nhánh tới cả ba subscriber.</desc>
+<defs><marker id="msg14-command-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="15" y="113" width="110" height="56" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="70" y="137" text-anchor="middle" font-size="13" fill="currentColor" >Order svc</text>
+<text x="70" y="156" text-anchor="middle" font-size="13" fill="currentColor" >người gửi</text>
+<rect x="375" y="35" width="130" height="40" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" opacity="0.25"/>
+<text x="440" y="60" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.25">Email</text>
+<rect x="375" y="121" width="130" height="40" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" />
+<text x="440" y="146" text-anchor="middle" font-size="13" fill="currentColor" >Inventory</text>
+<rect x="375" y="207" width="130" height="40" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" opacity="0.25"/>
+<text x="440" y="232" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.25">Analytics</text>
+<line x1="125" y1="141" x2="375" y2="141" stroke="currentColor" stroke-width="1.5" marker-end="url(#msg14-command-a)" />
+<text x="250" y="121" text-anchor="middle" font-size="13" fill="currentColor" >ReserveStock</text>
+<text x="260" y="285" text-anchor="middle" font-size="13" fill="currentColor" >Hãy làm X · một đích đã biết</text>
+<text x="260" y="307" text-anchor="middle" font-size="13" fill="currentColor" >Inventory có thể từ chối</text>
 </svg>
+<svg viewBox="0 0 520 330" role="img" aria-labelledby="msg14-event-t msg14-event-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="msg14-event-t">Event fan-out</title>
+<desc id="msg14-event-d">Cùng Order và ba vị trí nhận: command chỉ nối Inventory; event qua Topic phân nhánh tới cả ba subscriber.</desc>
+<defs><marker id="msg14-event-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="15" y="113" width="110" height="56" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="70" y="137" text-anchor="middle" font-size="13" fill="currentColor" >Order svc</text>
+<text x="70" y="156" text-anchor="middle" font-size="13" fill="currentColor" >người gửi</text>
+<rect x="375" y="35" width="130" height="40" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" />
+<text x="440" y="60" text-anchor="middle" font-size="13" fill="currentColor" >Email</text>
+<rect x="375" y="121" width="130" height="40" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" />
+<text x="440" y="146" text-anchor="middle" font-size="13" fill="currentColor" >Inventory</text>
+<rect x="375" y="207" width="130" height="40" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" />
+<text x="440" y="232" text-anchor="middle" font-size="13" fill="currentColor" >Analytics</text>
+<rect x="205" y="121" width="80" height="40" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="245" y="146" text-anchor="middle" font-size="13" fill="currentColor" >Topic</text>
+<line x1="125" y1="141" x2="205" y2="141" stroke="currentColor" stroke-width="1.5" marker-end="url(#msg14-event-a)" />
+<text x="245" y="103" text-anchor="middle" font-size="13" fill="currentColor" >OrderPlaced</text>
+<line x1="285" y1="141" x2="375" y2="55" stroke="currentColor" stroke-width="1.5" marker-end="url(#msg14-event-a)" />
+<line x1="285" y1="141" x2="375" y2="141" stroke="currentColor" stroke-width="1.5" marker-end="url(#msg14-event-a)" />
+<line x1="285" y1="141" x2="375" y2="227" stroke="currentColor" stroke-width="1.5" marker-end="url(#msg14-event-a)" />
+<text x="260" y="285" text-anchor="middle" font-size="13" fill="currentColor" >X đã xảy ra · 0..N subscriber</text>
+<text x="260" y="307" text-anchor="middle" font-size="13" fill="currentColor" >Nguồn không biết ai nhận</text>
+</svg>
+<ab-note>Đường gửi kết thúc ở một đích đã biết. Các service mờ không nhận command này; bên nhận quyết định có thực hiện hay từ chối.</ab-note>
+<ab-note>Topic tách nguồn khỏi người nhận: nhánh fan-out có thể có 0..N subscriber. Đây là thông báo sự thật đã xảy ra, không chờ reply.</ab-note>
+</ab-toggle>
 
 Một quy tắc đặt tên đơn giản mà đắt giá: **đặt tên event ở thì quá khứ** (`PaymentCaptured`, `UserRegistered`). Nếu bạn thấy mình muốn đặt tên ở thể mệnh lệnh (`SendEmail`, `ChargeCard`) thì đó là **command** trá hình — và nếu bạn broadcast một command qua topic pub/sub, bạn đang vô tình để *nhiều* consumer cùng thực thi một mệnh lệnh đáng lẽ chỉ chạy một lần. Đây là lỗi thiết kế event-driven phổ biến nhất.
 

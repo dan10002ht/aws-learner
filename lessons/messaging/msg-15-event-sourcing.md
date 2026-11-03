@@ -37,35 +37,73 @@ State-oriented (CRUD):   lưu STATE, mất lịch sử khi ghi đè
 Event-sourced:           lưu EVENTS (append-only), state = fold(events)
 ```
 
-<svg viewBox="0 0 680 250" role="img" aria-labelledby="es-t es-d" style="width:100%;max-width:640px;height:auto;display:block;margin:1.25rem auto">
-<title id="es-t">CRUD ghi đè state vs Event Sourcing append event rồi fold</title>
-<desc id="es-d">Bên trái mỗi thay đổi ghi đè ô balance làm mất giá trị cũ; bên phải mỗi thay đổi là một event append vào log và balance được tính bằng fold</desc>
-<text x="150" y="20" text-anchor="middle" font-size="13" fill="currentColor">CRUD: UPDATE ghi đè</text>
-<rect x="70" y="40" width="160" height="34" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="150" y="61" text-anchor="middle" font-size="11" fill="currentColor">balance = 5.000.000</text>
-<line x1="150" y1="74" x2="150" y2="100" stroke="currentColor" stroke-width="1" marker-end="url(#ea)"/>
-<text x="205" y="92" text-anchor="middle" font-size="9" fill="currentColor">rút 800k</text>
-<rect x="70" y="103" width="160" height="34" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="150" y="124" text-anchor="middle" font-size="11" fill="currentColor">balance = 4.200.000</text>
-<line x1="150" y1="137" x2="150" y2="163" stroke="currentColor" stroke-width="1" marker-end="url(#ea)"/>
-<text x="205" y="155" text-anchor="middle" font-size="9" fill="currentColor">nạp 300k</text>
-<rect x="70" y="166" width="160" height="34" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="150" y="187" text-anchor="middle" font-size="11" fill="currentColor">balance = 4.500.000</text>
-<text x="150" y="224" text-anchor="middle" font-size="10" fill="currentColor">5tr và 4.2tr đã mất — chỉ còn ảnh chụp</text>
-<text x="520" y="20" text-anchor="middle" font-size="13" fill="currentColor">Event Sourcing: append-only</text>
-<rect x="400" y="40" width="240" height="28" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="520" y="58" text-anchor="middle" font-size="10" fill="currentColor">#1 Deposited 5.000.000</text>
-<rect x="400" y="72" width="240" height="28" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="520" y="90" text-anchor="middle" font-size="10" fill="currentColor">#2 Withdrawn 800.000</text>
-<rect x="400" y="104" width="240" height="28" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="520" y="122" text-anchor="middle" font-size="10" fill="currentColor">#3 Deposited 300.000</text>
-<line x1="520" y1="132" x2="520" y2="158" stroke="currentColor" stroke-width="1" marker-end="url(#ea)"/>
-<text x="590" y="150" text-anchor="middle" font-size="9" fill="currentColor">fold</text>
-<rect x="400" y="161" width="240" height="34" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="520" y="182" text-anchor="middle" font-size="11" fill="currentColor">balance = 4.500.000 (dẫn xuất)</text>
-<text x="520" y="224" text-anchor="middle" font-size="10" fill="currentColor">Toàn bộ lịch sử còn nguyên, tái tạo được</text>
-<defs><marker id="ea" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<ab-toggle data-labels="CRUD|Event Sourcing">
+<svg viewBox="0 0 520 370" role="img" aria-labelledby="msg15-crud-t msg15-crud-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="msg15-crud-t">CRUD mất số dư trước đó</title>
+<desc id="msg15-crud-d">Độ dài thanh biểu diễn 5 triệu, 4,2 triệu và 4,5 triệu trên cùng thang. CRUD gạch bỏ hai trạng thái cũ; event sourcing giữ ba sự kiện để fold.</desc>
+<defs><marker id="msg15-crud-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="132" y="24" text-anchor="middle" font-size="13" fill="currentColor" >Các lần ghi đè</text>
+<text x="390" y="24" text-anchor="middle" font-size="13" fill="currentColor" >Số dư (triệu đồng)</text>
+<line x1="25" y1="43" x2="25" y2="242" stroke="currentColor" stroke-width="1.5" marker-end="url(#msg15-crud-a)" />
+<g opacity="0.55">
+<circle cx="25" cy="65" r="5" fill="currentColor"/>
+<text x="145" y="70" text-anchor="middle" font-size="13" fill="currentColor" >#1 Deposited +5.000.000</text>
+<rect x="305" y="47" width="160" height="30" rx="7" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" />
+<text x="385.0" y="67" text-anchor="middle" font-size="13" fill="currentColor" >5,0</text>
+</g>
+<path d="M55 56 L245 74 M305 47 L465 77" stroke="#f43f5e" stroke-width="2"/>
+<g opacity="0.55">
+<circle cx="25" cy="135" r="5" fill="currentColor"/>
+<text x="145" y="140" text-anchor="middle" font-size="13" fill="currentColor" >#2 Withdrawn −800.000</text>
+<rect x="305" y="117" width="134.4" height="30" rx="7" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" />
+<text x="372.2" y="137" text-anchor="middle" font-size="13" fill="currentColor" >4,2</text>
+</g>
+<path d="M55 126 L245 144 M305 117 L439.4 147" stroke="#f43f5e" stroke-width="2"/>
+<g opacity="1">
+<circle cx="25" cy="205" r="5" fill="currentColor"/>
+<text x="145" y="210" text-anchor="middle" font-size="13" fill="currentColor" >#3 Deposited +300.000</text>
+<rect x="305" y="187" width="144" height="30" rx="7" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" />
+<text x="377.0" y="207" text-anchor="middle" font-size="13" fill="currentColor" >4,5</text>
+</g>
+<text x="260" y="260" text-anchor="middle" font-size="13" fill="currentColor" >Giá trị cũ bị ghi đè; lịch sử không được lưu</text>
+<rect x="120" y="280" width="280" height="40" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="260" y="305" text-anchor="middle" font-size="13" fill="currentColor" >balance = 4.500.000</text>
+<text x="260" y="349" text-anchor="middle" font-size="13" fill="currentColor" >Chỉ còn ảnh chụp cuối cùng</text>
 </svg>
+<svg viewBox="0 0 520 370" role="img" aria-labelledby="msg15-log-t msg15-log-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="msg15-log-t">Event log và số dư dẫn xuất</title>
+<desc id="msg15-log-d">Độ dài thanh biểu diễn 5 triệu, 4,2 triệu và 4,5 triệu trên cùng thang. CRUD gạch bỏ hai trạng thái cũ; event sourcing giữ ba sự kiện để fold.</desc>
+<defs><marker id="msg15-log-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="132" y="24" text-anchor="middle" font-size="13" fill="currentColor" >Log append-only</text>
+<text x="390" y="24" text-anchor="middle" font-size="13" fill="currentColor" >Số dư (triệu đồng)</text>
+<line x1="25" y1="43" x2="25" y2="242" stroke="currentColor" stroke-width="1.5" marker-end="url(#msg15-log-a)" />
+<g opacity="1">
+<circle cx="25" cy="65" r="5" fill="currentColor"/>
+<text x="145" y="70" text-anchor="middle" font-size="13" fill="currentColor" >#1 Deposited +5.000.000</text>
+<rect x="305" y="47" width="160" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="385.0" y="67" text-anchor="middle" font-size="13" fill="currentColor" >5,0</text>
+</g>
+<g opacity="1">
+<circle cx="25" cy="135" r="5" fill="currentColor"/>
+<text x="145" y="140" text-anchor="middle" font-size="13" fill="currentColor" >#2 Withdrawn −800.000</text>
+<rect x="305" y="117" width="134.4" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="372.2" y="137" text-anchor="middle" font-size="13" fill="currentColor" >4,2</text>
+</g>
+<g opacity="1">
+<circle cx="25" cy="205" r="5" fill="currentColor"/>
+<text x="145" y="210" text-anchor="middle" font-size="13" fill="currentColor" >#3 Deposited +300.000</text>
+<rect x="305" y="187" width="144" height="30" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="377.0" y="207" text-anchor="middle" font-size="13" fill="currentColor" >4,5</text>
+</g>
+<path d="M270 47 H282 V222 H270 M282 135 H295" fill="none" stroke="currentColor"/>
+<text x="260" y="260" text-anchor="middle" font-size="13" fill="currentColor" >fold: +5.000.000 − 800.000 + 300.000</text>
+<rect x="120" y="280" width="280" height="40" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="260" y="305" text-anchor="middle" font-size="13" fill="currentColor" >balance = 4.500.000 · dẫn xuất</text>
+<text x="260" y="349" text-anchor="middle" font-size="13" fill="currentColor" >Giữ toàn bộ lịch sử, tái tạo được</text>
+</svg>
+<ab-note>Hai thanh cũ bị gạch và làm mờ: UPDATE chỉ giữ 4.500.000. Các dòng phía trên mô tả những lần ghi đã xảy ra, không phải lịch sử còn lưu trong DB.</ab-note>
+<ab-note>Ba dấu mốc và ba event còn nguyên. Fold theo thứ tự tái tạo số dư 4.500.000; state là view dẫn xuất từ log.</ab-note>
+</ab-toggle>
 
 ### 2.3 Event là quá khứ, bất biến, và có nghĩa nghiệp vụ
 

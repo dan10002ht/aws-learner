@@ -38,34 +38,49 @@ Kết luận: ta **từ bỏ atomicity phân tán tức thì**, đổi lấy **e
 
 Điểm mấu chốt: **compensation là nghiệp vụ, không phải kỹ thuật**. "Trừ tiền" bù bằng "hoàn tiền" (một giao dịch mới, có dấu vết), không phải xoá dòng như chưa từng xảy ra. Vì thế Saga chỉ đúng khi mỗi bước **có thể bù trừ được** về mặt nghiệp vụ.
 
-<svg viewBox="0 0 680 250" role="img" aria-labelledby="sg-t sg-d" style="width:100%;max-width:640px;height:auto;display:block;margin:1.25rem auto">
-<title id="sg-t">Saga: chuỗi local transaction và compensation ngược khi lỗi</title>
-<desc id="sg-d">Hàng trên T1 T2 T3 tiến tới thành công; khi T3 lỗi thì chạy C2 rồi C1 ngược lại để bù trừ</desc>
-<text x="340" y="22" text-anchor="middle" font-size="13" fill="currentColor">Happy path: T1 → T2 → T3 commit lần lượt</text>
-<rect x="40" y="40" width="120" height="42" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="100" y="60" text-anchor="middle" font-size="11" fill="currentColor">T1 Order</text>
-<text x="100" y="75" text-anchor="middle" font-size="9" fill="currentColor">tạo PENDING</text>
-<line x1="160" y1="61" x2="230" y2="61" stroke="currentColor" stroke-width="1.5" marker-end="url(#sa)"/>
-<rect x="232" y="40" width="120" height="42" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="292" y="60" text-anchor="middle" font-size="11" fill="currentColor">T2 Payment</text>
-<text x="292" y="75" text-anchor="middle" font-size="9" fill="currentColor">trừ tiền</text>
-<line x1="352" y1="61" x2="422" y2="61" stroke="currentColor" stroke-width="1.5" marker-end="url(#sa)"/>
-<rect x="424" y="40" width="120" height="42" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="484" y="60" text-anchor="middle" font-size="11" fill="currentColor">T3 Inventory</text>
-<text x="484" y="75" text-anchor="middle" font-size="9" fill="currentColor">hết hàng ✗</text>
-<text x="340" y="130" text-anchor="middle" font-size="13" fill="currentColor">Lỗi → compensation chạy NGƯỢC lại</text>
-<rect x="232" y="150" width="120" height="42" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="292" y="170" text-anchor="middle" font-size="11" fill="currentColor">C2 Refund</text>
-<text x="292" y="185" text-anchor="middle" font-size="9" fill="currentColor">hoàn tiền</text>
-<rect x="40" y="150" width="120" height="42" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="100" y="170" text-anchor="middle" font-size="11" fill="currentColor">C1 Cancel</text>
-<text x="100" y="185" text-anchor="middle" font-size="9" fill="currentColor">huỷ đơn</text>
-<line x1="424" y1="171" x2="354" y2="171" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#sa)"/>
-<line x1="232" y1="171" x2="162" y2="171" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#sa)"/>
-<line x1="484" y1="82" x2="484" y2="150" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#sa)"/>
-<text x="600" y="171" text-anchor="middle" font-size="9" fill="currentColor">(bù trừ nghiệp vụ)</text>
-<defs><marker id="sa" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<step-flow>
+<svg viewBox="0 0 680 260" role="img" aria-labelledby="msg17-saga-t msg17-saga-d" style="width:100%;max-width:680px;height:auto;display:block;margin:1.25rem auto">
+<title id="msg17-saga-t">Saga bù trừ ngược sau lỗi hết hàng</title>
+<desc id="msg17-saga-d">T1 tạo đơn PENDING, T2 trừ tiền, T3 Inventory hết hàng; đường quay về C2 Refund rồi C1 Cancel. Mỗi action vẽ một lần ở vị trí cố định.</desc>
+<defs><marker id="msg17-saga-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="340" y="23" text-anchor="middle" font-size="13" fill="currentColor" >Luồng thuận: T1 → T2 → T3</text>
+<g data-step="1">
+<rect x="40" y="43" width="145" height="58" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="112.5" y="66" text-anchor="middle" font-size="13" fill="currentColor" >T1 Order</text>
+<text x="112.5" y="86" text-anchor="middle" font-size="13" fill="currentColor" >tạo PENDING</text>
+</g>
+<g data-step="2">
+<line x1="185" y1="72" x2="232" y2="72" stroke="currentColor" stroke-width="1.5" marker-end="url(#msg17-saga-a)" />
+<rect x="232" y="43" width="145" height="58" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="304.5" y="66" text-anchor="middle" font-size="13" fill="currentColor" >T2 Payment</text>
+<text x="304.5" y="86" text-anchor="middle" font-size="13" fill="currentColor" >trừ tiền</text>
+</g>
+<g data-step="3">
+<line x1="377" y1="72" x2="424" y2="72" stroke="currentColor" stroke-width="1.5" marker-end="url(#msg17-saga-a)" />
+<rect x="424" y="43" width="145" height="58" rx="7" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" />
+<text x="496.5" y="66" text-anchor="middle" font-size="13" fill="currentColor" >T3 Inventory</text>
+<text x="496.5" y="86" text-anchor="middle" font-size="13" fill="currentColor" >hết hàng ✗</text>
+</g>
+<text x="340" y="145" text-anchor="middle" font-size="13" fill="currentColor" >Lỗi T3: bù trừ nghiệp vụ theo chiều ngược</text>
+<g data-step="4">
+<path d="M496 101 V199 H377" fill="none" stroke="currentColor" stroke-dasharray="4 3" marker-end="url(#msg17-saga-a)"/>
+<rect x="232" y="171" width="145" height="58" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="304.5" y="194" text-anchor="middle" font-size="13" fill="currentColor" >C2 Refund</text>
+<text x="304.5" y="214" text-anchor="middle" font-size="13" fill="currentColor" >hoàn tiền</text>
+</g>
+<g data-step="5">
+<line x1="232" y1="199" x2="185" y2="199" stroke="currentColor" stroke-width="1.5" marker-end="url(#msg17-saga-a)" stroke-dasharray="4 3"/>
+<rect x="40" y="171" width="145" height="58" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="112.5" y="194" text-anchor="middle" font-size="13" fill="currentColor" >C1 Cancel</text>
+<text x="112.5" y="214" text-anchor="middle" font-size="13" fill="currentColor" >huỷ đơn</text>
+</g>
 </svg>
+<step-note data-step="1">T1 commit trong DB của Order; các service khác chưa cùng commit một transaction toàn cục.</step-note>
+<step-note data-step="2">T2 commit khoản trừ tiền độc lập. T1 và T2 đã bền vững nên lỗi phía sau không rollback chúng được.</step-note>
+<step-note data-step="3">T3 không giữ được hàng; nhánh thành công (T1 → T2 → T3 commit) dừng tại đây và chuyển sang bù trừ.</step-note>
+<step-note data-step="4">Bù bước thành công gần nhất trước: Refund tạo giao dịch hoàn tiền mới, không xoá dấu vết trừ tiền.</step-note>
+<step-note data-step="5">Sau khi hoàn tiền mới huỷ đơn PENDING. Thứ tự C2 rồi C1 ngược với T1 rồi T2, khôi phục trạng thái nghiệp vụ.</step-note>
+</step-flow>
 
 Chi tiết Saga (ACD chứ không ACID — thiếu **I**solation) và các anomaly (dirty read giữa các bước, lost update) được đào sâu ở **[[ds-20-saga]]**; bài này ta tập trung phần **triển khai qua messaging**.
 

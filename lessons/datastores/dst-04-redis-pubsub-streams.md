@@ -64,6 +64,24 @@ Con số `(integer) 1` trả về từ `PUBLISH` chính là **số subscriber đ
 
 ---
 
+
+<ab-toggle data-labels="Pub/Sub|Streams">
+<svg viewBox="0 0 520 280" role="img" aria-labelledby="dst04med0-t dst04med0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="dst04med0-t">Pub/Sub mất message khi offline</title>
+<desc id="dst04med0-d">Pub/Sub mất message khi offline</desc>
+<defs><marker id="dst04med0-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="24" text-anchor="middle" font-size="14" fill="currentColor">Cùng một message phát lúc subscriber offline</text><rect x="130" y="42" width="250" height="155" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="255" y="64" text-anchor="middle" font-size="14" fill="currentColor">Subscriber offline</text><line x1="40" y1="170" x2="480" y2="170" stroke="currentColor" marker-end="url(#dst04med0-a)"/><text x="40" y="193" text-anchor="middle" font-size="14" fill="currentColor">t₀</text><text x="480" y="193" text-anchor="middle" font-size="14" fill="currentColor">t₁</text><rect x="52" y="85" width="82" height="34" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="93.0" y="107.0" text-anchor="middle" font-size="14" fill="currentColor">Gửi m₁</text><line x1="135" y1="102" x2="220" y2="102" stroke="currentColor" marker-end="url(#dst04med0-a)"/><line x1="235" y1="86" x2="263" y2="118" stroke="currentColor" marker-end="url(#dst04med0-a)"/><line x1="235" y1="118" x2="263" y2="86" stroke="currentColor" marker-end="url(#dst04med0-a)"/><text x="300" y="136" text-anchor="middle" font-size="14" fill="currentColor">m₁ mất</text><rect x="405" y="205" width="100" height="35" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="455.0" y="227.5" text-anchor="middle" font-size="14" fill="currentColor">Online</text><text x="260" y="261" text-anchor="middle" font-size="14" fill="currentColor">Không có lịch sử để đọc</text>
+</svg>
+<svg viewBox="0 0 520 280" role="img" aria-labelledby="dst04med1-t dst04med1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="dst04med1-t">Streams giữ message</title>
+<desc id="dst04med1-d">Streams giữ message</desc>
+<defs><marker id="dst04med1-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="24" text-anchor="middle" font-size="14" fill="currentColor">Cùng một message phát lúc subscriber offline</text><rect x="130" y="42" width="250" height="155" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="255" y="64" text-anchor="middle" font-size="14" fill="currentColor">Subscriber offline</text><line x1="40" y1="170" x2="480" y2="170" stroke="currentColor" marker-end="url(#dst04med1-a)"/><text x="40" y="193" text-anchor="middle" font-size="14" fill="currentColor">t₀</text><text x="480" y="193" text-anchor="middle" font-size="14" fill="currentColor">t₁</text><rect x="52" y="85" width="82" height="34" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="93.0" y="107.0" text-anchor="middle" font-size="14" fill="currentColor">Gửi m₁</text><line x1="135" y1="102" x2="220" y2="102" stroke="currentColor" marker-end="url(#dst04med1-a)"/><rect x="225" y="84" width="110" height="36" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="280.0" y="107.0" text-anchor="middle" font-size="14" fill="currentColor">Log: m₁</text><line x1="335" y1="103" x2="447" y2="103" stroke="currentColor" marker-end="url(#dst04med1-a)"/><line x1="447" y1="103" x2="447" y2="145" stroke="currentColor" marker-end="url(#dst04med1-a)"/><text x="405" y="83" text-anchor="middle" font-size="14" fill="currentColor">đọc lại</text><rect x="405" y="205" width="100" height="35" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="455.0" y="227.5" text-anchor="middle" font-size="14" fill="currentColor">Online</text><text x="260" y="261" text-anchor="middle" font-size="14" fill="currentColor">Message còn trong log</text>
+</svg>
+<ab-note>Không có subscriber kết nối lúc publish nên không có nơi lưu để replay.</ab-note>
+<ab-note>Reader trở lại có thể đọc từ ID cuối nếu entry vẫn còn; restart cần persistence phù hợp.</ab-note>
+</ab-toggle>
+
 ### 2.3 Redis Streams — log bền
 
 Streams sinh ra để vá đúng lỗ hổng đó. Một stream là một **append-only log** với ID tăng dần và message **nằm lại** cho tới khi bạn chủ động xoá/cắt.

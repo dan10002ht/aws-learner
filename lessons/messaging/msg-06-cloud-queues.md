@@ -48,30 +48,16 @@ Hệ quả tư duy: với SQS **không có khái niệm "queue đầy sập serv
 3. Consumer xử lý xong → gọi `DeleteMessage`. **Xóa mới là "ack".**
 4. Nếu consumer **crash / xử lý quá lâu / quên delete** → hết timeout, message **hiện lại** (visible) và một consumer khác lấy về xử lý.
 
-<svg viewBox="0 0 640 260" role="img" aria-labelledby="vt-t vt-d" style="width:100%;max-width:600px;height:auto;display:block;margin:1.25rem auto">
-<title id="vt-t">Vòng đời một message với visibility timeout</title>
-<desc id="vt-d">Message từ trạng thái hiện, sang ẩn khi được receive, rồi hoặc bị xóa hoặc hiện lại nếu hết timeout</desc>
-<rect x="30" y="100" width="120" height="56" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="90" y="124" text-anchor="middle" font-size="12" fill="currentColor">Visible</text>
-<text x="90" y="142" text-anchor="middle" font-size="9" fill="currentColor">(trong queue)</text>
-<rect x="270" y="100" width="130" height="56" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="335" y="122" text-anchor="middle" font-size="12" fill="currentColor">In-flight</text>
-<text x="335" y="140" text-anchor="middle" font-size="9" fill="currentColor">(ẩn, đang xử lý)</text>
-<rect x="510" y="40" width="110" height="48" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="565" y="68" text-anchor="middle" font-size="11" fill="currentColor">Deleted (ack)</text>
-<rect x="510" y="168" width="110" height="48" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="565" y="190" text-anchor="middle" font-size="10" fill="currentColor">Hết timeout</text>
-<text x="565" y="205" text-anchor="middle" font-size="9" fill="currentColor">→ hiện lại</text>
-<line x1="150" y1="128" x2="266" y2="128" stroke="currentColor" stroke-width="1.2" marker-end="url(#av)"/>
-<text x="208" y="120" text-anchor="middle" font-size="9" fill="currentColor">ReceiveMessage</text>
-<line x1="400" y1="118" x2="506" y2="70" stroke="currentColor" stroke-width="1.2" marker-end="url(#av)"/>
-<text x="452" y="88" text-anchor="middle" font-size="9" fill="currentColor">DeleteMessage</text>
-<line x1="400" y1="140" x2="506" y2="190" stroke="currentColor" stroke-width="1.2" marker-end="url(#av)"/>
-<text x="452" y="176" text-anchor="middle" font-size="9" fill="currentColor">crash / timeout</text>
-<path d="M560,168 C560,110 300,60 210,96" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#av)"/>
-<text x="330" y="66" text-anchor="middle" font-size="9" fill="currentColor">message quay lại Visible (redelivery)</text>
-<defs><marker id="av" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<auto-anim data-dur="8">
+<svg viewBox="0 0 520 315" role="img" aria-labelledby="msg06-lease-t msg06-lease-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="msg06-lease-t">Visibility timeout: message mờ khi ẩn, hiện lại sau 30 giây</title>
+<desc id="msg06-lease-d">Visibility timeout: message mờ khi ẩn, hiện lại sau 30 giây</desc>
+<defs><marker id="msg06-lease-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="20" y="40" width="480" height="90" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="260.0" y="65" text-anchor="middle" font-size="13" fill="currentColor">SQS queue</text><g><rect x="220" y="85" width="80" height="35" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="260.0" y="107.5" text-anchor="middle" font-size="13" fill="currentColor">msg</text><animate attributeName="opacity" dur="8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.125;0.75;1" values="1;0.15;1;1"/></g><text x="260" y="160" text-anchor="middle" font-size="13" fill="currentColor">ReceiveMessage → ẩn; hết 30s → hiện lại</text><path d="M40 205 L480 205" fill="none" stroke="currentColor" marker-end="url(#msg06-lease-a)"/><text x="40" y="230" text-anchor="middle" font-size="13" fill="currentColor">0s</text><text x="440" y="230" text-anchor="middle" font-size="13" fill="currentColor">30s</text><text x="260" y="260" text-anchor="middle" font-size="13" fill="currentColor">Thời gian từ lúc receive</text><rect x="40" y="185" width="0" height="15" fill="#f59e0b" fill-opacity="0.5"><animate attributeName="width" dur="8s" repeatCount="indefinite" calcMode="linear" keyTimes="0;0.125;0.75;1" values="0;0;400;400"/></rect><text x="260" y="290" text-anchor="middle" font-size="13" fill="currentColor">Crash / không delete: message vẫn còn trong queue</text>
 </svg>
+</auto-anim>
+
+Nếu gọi `DeleteMessage` trước khi hết hạn thì message bị xóa hẳn (ack); hình mô phỏng nhánh crash/không delete để thấy redelivery sau timeout mặc định 30s.
 
 **Bản chất:** visibility timeout là một **lease (thuê có hạn)**. Consumer "thuê" độc quyền message trong X giây; không trả kết quả (delete) đúng hạn thì lease hết, message thuộc về người khác. Cơ chế này cho SQS tính **chịu lỗi**: consumer chết giữa chừng không làm mất việc.
 

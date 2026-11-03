@@ -31,31 +31,47 @@ Ta cần hai thứ:
 
 Đó chính là vai trò của **Schema Registry**. Producer đăng ký schema, registry kiểm tra "schema mới này có tương thích với các phiên bản cũ không?"; nếu không → chặn ngay lúc produce, không để consumer chết lúc 3 giờ sáng.
 
-<svg viewBox="0 0 660 250" role="img" aria-labelledby="sr-t sr-d" style="width:100%;max-width:640px;height:auto;display:block;margin:1.25rem auto">
-<title id="sr-t">Producer và consumer tra Schema Registry qua schema id</title>
-<desc id="sr-d">Producer đăng ký schema nhận về id, gắn id vào message; consumer đọc id rồi tra registry lấy schema để giải mã</desc>
-<rect x="20" y="95" width="90" height="46" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="65" y="115" text-anchor="middle" font-size="11" fill="currentColor">Producer</text>
-<text x="65" y="131" text-anchor="middle" font-size="9" fill="currentColor">serialize</text>
-<rect x="285" y="30" width="120" height="52" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="345" y="52" text-anchor="middle" font-size="11" fill="currentColor">Schema Registry</text>
-<text x="345" y="68" text-anchor="middle" font-size="9" fill="currentColor">subject · version · id</text>
-<rect x="270" y="150" width="150" height="40" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="345" y="167" text-anchor="middle" font-size="10" fill="currentColor">Kafka topic (log)</text>
-<text x="345" y="182" text-anchor="middle" font-size="9" fill="currentColor">[id=42][payload nhị phân]</text>
-<rect x="560" y="95" width="90" height="46" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="605" y="115" text-anchor="middle" font-size="11" fill="currentColor">Consumer</text>
-<text x="605" y="131" text-anchor="middle" font-size="9" fill="currentColor">deserialize</text>
-<line x1="90" y1="95" x2="290" y2="70" stroke="currentColor" stroke-width="1" marker-end="url(#sa)"/>
-<text x="175" y="72" text-anchor="middle" font-size="9" fill="currentColor">1. register → id=42</text>
-<line x1="110" y1="128" x2="268" y2="165" stroke="currentColor" stroke-width="1.5" marker-end="url(#sa)"/>
-<text x="180" y="158" text-anchor="middle" font-size="9" fill="currentColor">2. produce (kèm id)</text>
-<line x1="420" y1="165" x2="580" y2="132" stroke="currentColor" stroke-width="1.5" marker-end="url(#sa)"/>
-<text x="505" y="158" text-anchor="middle" font-size="9" fill="currentColor">3. đọc [id=42]+payload</text>
-<line x1="575" y1="95" x2="400" y2="72" stroke="currentColor" stroke-width="1" marker-end="url(#sa)"/>
-<text x="490" y="80" text-anchor="middle" font-size="9" fill="currentColor">4. lookup id=42 → schema</text>
-<defs><marker id="sa" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<step-flow>
+<svg viewBox="0 0 700 310" role="img" aria-labelledby="msg12-reg-t msg12-reg-d" style="width:100%;max-width:700px;height:auto;display:block;margin:1.25rem auto">
+<title id="msg12-reg-t">Tra schema ngoài luồng dữ liệu</title>
+<desc id="msg12-reg-d">Producer bên trái, Registry trên, Kafka dưới và Consumer bên phải. Bốn bước làm sáng các cạnh; schema không đi kèm payload.</desc>
+<defs><marker id="msg12-reg-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="15" y="115" width="130" height="58" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="80.0" y="139" text-anchor="middle" font-size="13" fill="currentColor" >Producer</text>
+<text x="80.0" y="159" text-anchor="middle" font-size="13" fill="currentColor" >serialize</text>
+<rect x="260" y="25" width="180" height="62" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" />
+<text x="350.0" y="49" text-anchor="middle" font-size="13" fill="currentColor" >Schema Registry</text>
+<text x="350.0" y="69" text-anchor="middle" font-size="13" fill="currentColor" >subject · version · id</text>
+<rect x="255" y="215" width="190" height="64" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="350.0" y="239" text-anchor="middle" font-size="13" fill="currentColor" >Kafka topic (log)</text>
+<text x="350.0" y="259" text-anchor="middle" font-size="13" fill="currentColor" >id=42 + binary payload</text>
+<rect x="555" y="115" width="130" height="58" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="620.0" y="139" text-anchor="middle" font-size="13" fill="currentColor" >Consumer</text>
+<text x="620.0" y="159" text-anchor="middle" font-size="13" fill="currentColor" >deserialize</text>
+<g data-step="1">
+<line x1="105" y1="115" x2="280" y2="87" stroke="currentColor" stroke-width="1.5" marker-end="url(#msg12-reg-a)" />
+<text x="160" y="58" text-anchor="middle" font-size="13" fill="currentColor" >1. register schema</text>
+<text x="166" y="78" text-anchor="middle" font-size="13" fill="currentColor" >← id=42</text>
+</g>
+<g data-step="2">
+<line x1="145" y1="158" x2="255" y2="235" stroke="currentColor" stroke-width="1.5" marker-end="url(#msg12-reg-a)" />
+<text x="156" y="212" text-anchor="middle" font-size="13" fill="currentColor" >2. produce + id</text>
+</g>
+<g data-step="3">
+<line x1="445" y1="245" x2="573" y2="173" stroke="currentColor" stroke-width="1.5" marker-end="url(#msg12-reg-a)" />
+<text x="565" y="230" text-anchor="middle" font-size="13" fill="currentColor" >3. đọc id + payload</text>
+</g>
+<g data-step="4">
+<line x1="580" y1="115" x2="420" y2="87" stroke="currentColor" stroke-width="1.5" marker-end="url(#msg12-reg-a)" />
+<text x="540" y="57" text-anchor="middle" font-size="13" fill="currentColor" >4. lookup id=42</text>
+<text x="540" y="78" text-anchor="middle" font-size="13" fill="currentColor" >writer schema →</text>
+</g>
 </svg>
+<step-note data-step="1">Registry kiểm compatibility trước khi nhận schema mới; schema hợp lệ mới có id để produce.</step-note>
+<step-note data-step="2">Chỉ gắn id vào payload nhị phân nên từng record không phải mang toàn bộ định nghĩa schema.</step-note>
+<step-note data-step="3">Consumer cần giữ cả id và payload: byte dữ liệu chỉ giải mã được với đúng writer schema.</step-note>
+<step-note data-step="4">Consumer lấy writer schema theo id để deserialize; cache giúp tránh gọi mạng lại cho id đã biết.</step-note>
+</step-flow>
 
 Chú ý điều tinh tế: message trên wire **không chứa cả schema** (sẽ phình to kinh khủng nếu mỗi record đính kèm định nghĩa field). Nó chỉ chứa một **schema id** 4 byte. Consumer thấy id → tra registry (có cache) → lấy đúng schema đã dùng để ghi. Đây là mấu chốt giúp binary format vừa nhỏ vừa an toàn.
 

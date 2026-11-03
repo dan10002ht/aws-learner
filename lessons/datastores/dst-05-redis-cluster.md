@@ -209,6 +209,22 @@ Một **smart client** (Lettuce, redis-py cluster, ioredis, go-redis...) sẽ: l
 
 **Resharding** = chuyển một số slot từ node này sang node khác (khi thêm node mới, hoặc rebalance). Quá trình chuyển từng slot: node nguồn đánh dấu slot đang `MIGRATING`, node đích `IMPORTING`; key đã chuyển thì trả `ASK`, key chưa chuyển vẫn phục vụ tại nguồn — nhờ vậy resharding chạy **online**, không downtime.
 
+
+<step-flow>
+<svg viewBox="0 0 660 490" role="img" aria-labelledby="dst05med-t dst05med-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto">
+<title id="dst05med-t">MOVED và ASK: client tự đi theo redirect</title>
+<desc id="dst05med-d">MOVED và ASK: client tự đi theo redirect</desc>
+<defs><marker id="dst05med-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="15" y="15" width="110" height="35" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="70.0" y="37.5" text-anchor="middle" font-size="14" fill="currentColor">Client</text><line x1="70" y1="50" x2="70" y2="470" stroke="currentColor" stroke-dasharray="4 4"/><rect x="235" y="15" width="110" height="35" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="290.0" y="37.5" text-anchor="middle" font-size="14" fill="currentColor">Node A</text><line x1="290" y1="50" x2="290" y2="470" stroke="currentColor" stroke-dasharray="4 4"/><rect x="515" y="15" width="110" height="35" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="570.0" y="37.5" text-anchor="middle" font-size="14" fill="currentColor">Node B</text><line x1="570" y1="50" x2="570" y2="470" stroke="currentColor" stroke-dasharray="4 4"/><g data-step="1"><text x="180.0" y="83" text-anchor="middle" font-size="14" fill="currentColor">GET key → node sai</text><line x1="70" y1="95" x2="290" y2="95" stroke="currentColor" marker-end="url(#dst05med-a)"/></g><g data-step="2"><text x="180.0" y="143" text-anchor="middle" font-size="14" fill="currentColor">MOVED slot → B</text><line x1="290" y1="155" x2="70" y2="155" stroke="currentColor" marker-end="url(#dst05med-a)"/></g><g data-step="3"><text x="320.0" y="203" text-anchor="middle" font-size="14" fill="currentColor">GET key → B; cập nhật slot map</text><line x1="70" y1="215" x2="570" y2="215" stroke="currentColor" marker-end="url(#dst05med-a)"/></g><g data-step="4"><text x="180.0" y="288" text-anchor="middle" font-size="14" fill="currentColor">Lần khác: key đang migrate</text><line x1="70" y1="300" x2="290" y2="300" stroke="currentColor" marker-end="url(#dst05med-a)"/></g><g data-step="5"><text x="180.0" y="348" text-anchor="middle" font-size="14" fill="currentColor">ASK slot → B</text><line x1="290" y1="360" x2="70" y2="360" stroke="currentColor" marker-end="url(#dst05med-a)"/></g><g data-step="6"><text x="320.0" y="413" text-anchor="middle" font-size="14" fill="currentColor">ASKING rồi GET trên cùng kết nối</text><line x1="70" y1="425" x2="570" y2="425" stroke="currentColor" marker-end="url(#dst05med-a)"/></g>
+</svg>
+<step-note data-step="1">Node không proxy; client phải tự gửi lại request.</step-note>
+<step-note data-step="2">MOVED báo chủ slot đã đổi, nên client học lại bản đồ.</step-note>
+<step-note data-step="3">Các request sau đi thẳng tới B nhờ slot map mới.</step-note>
+<step-note data-step="4">Đây là tình huống riêng trong quá trình chuyển slot, không phải bước tiếp của MOVED.</step-note>
+<step-note data-step="5">ASK chỉ định đích tạm cho request này; không đổi slot map.</step-note>
+<step-note data-step="6">ASKING cho phép node IMPORTING nhận lệnh kế tiếp trên cùng kết nối.</step-note>
+</step-flow>
+
 ### 2.6 Multi-key phải cùng slot — hash tag `{}`
 
 Đây là **ràng buộc khó chịu nhất** của Cluster và hay bị bỏ sót. Một lệnh đụng **nhiều key** (`MGET`, `MSET`, `SUNION`, transaction `MULTI/EXEC`, script Lua nhiều key...) chỉ chạy được nếu **tất cả key cùng một slot** — vì một lệnh không thể trải qua nhiều node.
